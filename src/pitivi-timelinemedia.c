@@ -167,7 +167,8 @@ struct _PitiviTimelineMediaPrivate
   guint64	   original_height;
   gboolean	   dispose_has_run;
   
-  // Caching Operation  
+  // Caching Operation
+  PitiviThumbTab   **thumbs;
   GdkPixmap	   *pixmapcache;
   GdkPixbuf	   *pixbuf;
 };
@@ -348,20 +349,81 @@ pitivi_timelinemedia_get_track (PitiviTimelineMedia *media)
   return GTK_WIDGET (media->private->cell);
 }
 
+
+void
+draw_video_thumbs (PitiviTimelineMedia	*this, GdkPixbuf **pixs, int nb, int width)
+{
+  GdkPixbuf*  scale;
+  int count, i = 0;
+
+  for (i=0,count=0; i < nb; i++, count+=width)
+    {
+      if (pixs[i] && GDK_IS_PIXBUF (pixs[i]))
+	{
+	  scale = gdk_pixbuf_scale_simple
+	    (GDK_PIXBUF (pixs[i]),
+	     width,
+	     GTK_WIDGET (this->track)->allocation.height,
+	     GDK_INTERP_NEAREST);
+	  
+	  gdk_draw_pixbuf( this->private->pixmapcache, GTK_WIDGET(this)->style->white_gc, 
+			   scale, 
+			   0, 0,
+			   count+1, 0,
+			   width,
+			   GTK_WIDGET (this->track)->allocation.height,
+			   GDK_RGB_DITHER_MAX, 0, 0);
+	  
+	  gdk_draw_line (this->private->pixmapcache,
+			 GTK_WIDGET(this)->style->white_gc,
+			 count, 0, count, GTK_WIDGET (this->track)->allocation.height);
+	  g_free (scale);
+	}
+    }
+}
+
 void
 show_video_media (GtkWidget *widget)
 {
   PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
+  GdkPixbuf *pixs[this->sourceitem->srcfile->nbthumbs+1];
+  int pix_width, width, i,j, nb_img = 0;
   
   if (GTK_IS_WIDGET ( widget ) )
     {
-      if ( this->private->pixbuf )
+      if (this->private->thumbs && this->private->thumbs[0])
 	{
-	  gdk_draw_pixbuf( this->private->pixmapcache, NULL, 
-			   this->private->pixbuf, 0, 0, 1, 1, 
-			   -1, 
-			   -1, 
-			   GDK_RGB_DITHER_MAX, 0, 0);
+	  pix_width = gdk_pixbuf_get_width ( this->private->thumbs[0]->pixbuf );
+	  for (i=0; i<this->sourceitem->srcfile->nbthumbs; i++) pixs[i] = NULL;
+	  if (widget->allocation.width < pix_width)
+	    {
+	      pixs[0] = this->private->thumbs[0]->pixbuf;
+	      draw_video_thumbs (this, pixs, 1, widget->allocation.width);
+	    }
+	  else
+	    {
+	      nb_img = widget->allocation.width / pix_width;
+	      if ( nb_img < this->sourceitem->srcfile->nbthumbs)
+		{
+		  j = 0;
+		  for (i=0; i<this->sourceitem->srcfile->nbthumbs && j < nb_img; i++)
+		    {
+		      pixs[j] = this->private->thumbs[i]->pixbuf;
+		      j++;
+		    }
+		  pixs[nb_img] = this->private->thumbs[this->sourceitem->srcfile->nbthumbs-1]->pixbuf;
+		  draw_video_thumbs (this, pixs, nb_img,  widget->allocation.width / nb_img);
+		}
+	      else
+		{
+		  if (this->sourceitem->srcfile->nbthumbs)
+		    width = widget->allocation.width / this->sourceitem->srcfile->nbthumbs;
+		  else
+		    width = widget->allocation.width;
+		  for (i=0; i<this->sourceitem->srcfile->nbthumbs; i++) pixs[i] = this->private->thumbs[i]->pixbuf;
+		  draw_video_thumbs (this, pixs, this->sourceitem->srcfile->nbthumbs, width);
+		}
+	    }
 	}
     }
 }
@@ -452,7 +514,7 @@ draw_media (GtkWidget *widget)
         
       if (this->selected)
 	{
-	  GdkColor selection = {0, 65355, 0};
+	  GdkColor selection = {1, 65535, 0, 0};
 	  draw_selection_dash (widget, this->private->pixmapcache, &selection, 2);
 	}        
       gdk_draw_rectangle ( this->private->pixmapcache, 
@@ -527,14 +589,13 @@ pitivi_timelinemedia_constructor (GType type,
 	  if (!(bin = pitivi_sourcefile_get_video_bin(this->sourceitem->srcfile)))
 	    return NULL;
 	  this->sourceitem->gnlobject = (GnlObject *)gnl_source_new (name, bin);
-	  this->private->pixbuf = gdk_pixbuf_copy (this->sourceitem->srcfile->thumbs_video);
+	  this->private->thumbs = this->sourceitem->srcfile->thumbs;
 	}
       else if ( this->track->track_type == PITIVI_AUDIO_TRACK )
 	{
 	  if (!(bin = pitivi_sourcefile_get_audio_bin(this->sourceitem->srcfile)))
 	    return NULL;
 	  this->sourceitem->gnlobject = (GnlObject *) gnl_source_new (name, bin);
-	  this->private->pixbuf = gdk_pixbuf_copy (this->sourceitem->srcfile->thumbs_audio);
 	}
     }
   this->original_width = this->private->width;

@@ -618,14 +618,19 @@ pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop)
   int	i = 0;
   PitiviThumbTab	**res = NULL;
 
-  while (sf->private->vcache[i]) {
+  sf->nbthumbs = sf->private->cacheidx;
+  if (stop > sf->length)
+    stop = sf->length;
+  while (i < sf->private->cacheidx && sf->private->vcache[i]) {
     if ((sf->private->vcache[i]->time >= start) && (sf->private->vcache[i]->time < stop)) {
       /* valid thumbnail */
       if (!sf->private->vthumb[i]) {
 	sf->private->vthumb[i] = g_new0(PitiviThumbTab, 1);
 	sf->private->vthumb[i]->time = sf->private->vcache[i]->time;
-	if (!(sf->private->vthumb[i]->pixbuf = gdk_pixbuf_new_from_file(sf->private->vcache[i]->filename, NULL)))
-	  g_warning ("Error getting file %s", sf->private->vcache[i]->filename);
+	g_printf ("%d %s\n", i, sf->private->vcache[i]->filename);
+	if (sf->private->vcache[i]->filename)
+	  if (!(sf->private->vthumb[i]->pixbuf = gdk_pixbuf_new_from_file(sf->private->vcache[i]->filename, NULL)))
+	    g_warning ("Error getting file %s", sf->private->vcache[i]->filename);
       }
       if (!res) /* Setting first one */
 	res = &(sf->private->vthumb[i]);
@@ -759,8 +764,8 @@ pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp)
   pitivi_sourcefile_type_find (sourcefile);
 
   sourcefile->pipeline = create_new_bin (sourcefile, IS_AUDIO_VIDEO);
- 
   g_printf("Created new PitiviSourceFile %p\n", sourcefile);
+  sourcefile->thumbs = pitivi_sourcefile_get_vthumb (sourcefile, 0LL, sourcefile->length);
   return sourcefile;
 }
 

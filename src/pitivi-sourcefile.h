@@ -69,9 +69,11 @@ struct _PitiviSourceFile
   /* number of bins used */
   gint	nbbins;
 
+  PitiviThumbTab  **thumbs;
   GdkPixbuf  *thumbs_audio;
   GdkPixbuf  *thumbs_video;
   GdkPixbuf  *thumbs_effect;
+  gint	     nbthumbs;
   GstElement *pipeline;
   
   /* caching intervals */

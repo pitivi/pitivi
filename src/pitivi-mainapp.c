@@ -276,7 +276,6 @@ pitivi_mainapp_create_timelinewin (PitiviMainApp *self, PitiviProject *project)
   gint height;
   gint tmp_w;
   gint tmp_h;
-  
   width = gdk_screen_width ();
   height = gdk_screen_height ();
     

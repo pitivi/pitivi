@@ -1549,12 +1549,6 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	}
       else
 	pitivi_calculate_priorities ( GTK_WIDGET (container) );
-      PitiviThumbs* thumb = pitivi_thumbs_new (PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile->filename, 
-					       G_OBJECT (media[0]),
-					       0);
-      /* To do calculate frame thumb */
-      g_object_set (thumb, "frame", 200LL, NULL);
-      PITIVI_THUMBS_GET_CLASS (thumb)->generate_thumb (thumb);
     }
 }
 
