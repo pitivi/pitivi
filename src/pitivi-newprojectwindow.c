@@ -73,10 +73,14 @@ GtkWidget	*pitivi_make_cat_frame(PitiviNewProjectWindow *self);
 /* Signals Definitions */
 void			pitivi_close_window(GtkButton *button, gpointer user_data);
 void			pitivi_add_settings(GtkButton *button, gpointer user_data);
+gboolean		pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer user_data);
 
 /*
  * Insert "added-value" functions here
  */
+
+#define DESC_TEXT	"Description:\nInsert a description of the setting"
+
 void 
 pitivi_close_window(GtkButton *button, gpointer user_data)
 {
@@ -98,6 +102,35 @@ pitivi_add_settings(GtkButton *button, gpointer user_data)
 	 gtk_text_buffer_get_text ( GTK_TEXT_BUFFER(self->private->name_text_buffer),
 				    &self->private->start_description_iter, 
 				    &self->private->end_description_iter, FALSE) );
+}
+
+gboolean
+pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer user_data)
+{
+  PitiviNewProjectWindow	*self;
+  gchar				*desc_text;
+
+
+  self = (PitiviNewProjectWindow *) user_data;
+
+  gtk_text_buffer_get_start_iter(self->private->name_text_buffer, &self->private->start_description_iter);
+  gtk_text_buffer_get_end_iter(self->private->name_text_buffer, &self->private->end_description_iter);
+
+  if (event->type == GDK_BUTTON_PRESS && event->button == 1)
+    {
+      desc_text = gtk_text_buffer_get_text (self->private->name_text_buffer,
+					    &self->private->start_description_iter,
+					    &self->private->end_description_iter,
+					    FALSE);
+      
+      if (!strncmp (DESC_TEXT, desc_text, strlen(DESC_TEXT)))
+	{
+	  gtk_text_buffer_delete (self->private->name_text_buffer,
+				  &self->private->start_description_iter,
+				  &self->private->end_description_iter);
+	}
+    }
+  return FALSE;
 }
 
 void
@@ -418,12 +451,12 @@ pitivi_make_name_frame(PitiviNewProjectWindow *self)
   GtkWidget		*name_frame;
   GtkWidget		*name_table;
   GtkTextTagTable	*name_tag_table;
-  gchar			*name_settings;
   GtkTextIter		name_iter;
   GtkWidget		*name_text_settings;
   GtkWidget		*name_scroll;
   GtkWidget		*name_label;
   GtkWidget		*desc_label;
+  GdkEventButton	mouse_clic;
 
   name_frame = gtk_frame_new("General");
   name_table =  gtk_table_new(2, 2, FALSE);
@@ -445,16 +478,19 @@ pitivi_make_name_frame(PitiviNewProjectWindow *self)
   /* Creation du buffer text */
   self->private->name_text_buffer = gtk_text_buffer_new(name_tag_table);
   /* Creation du champs Text */
-  name_settings = "Description:\nInsert a description of the setting";
+
+  gtk_text_buffer_set_text (self->private->name_text_buffer, DESC_TEXT, strlen(DESC_TEXT));
     
   gtk_text_buffer_get_start_iter(self->private->name_text_buffer, &self->private->start_description_iter);
   gtk_text_buffer_get_end_iter(self->private->name_text_buffer, &self->private->end_description_iter);
-  
-  gtk_text_buffer_set_text (self->private->name_text_buffer, name_settings, strlen(name_settings));
+
   name_text_settings = gtk_text_view_new_with_buffer (self->private->name_text_buffer);
   gtk_text_view_set_right_margin  (GTK_TEXT_VIEW(name_text_settings), 3);
   gtk_text_view_set_left_margin  (GTK_TEXT_VIEW(name_text_settings), 3);
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW(name_text_settings), GTK_WRAP_WORD);
+
+  g_signal_connect( G_OBJECT(name_text_settings), "button-press-event",
+		    G_CALLBACK(pitivi_del_desc), (gpointer) (GTK_WIDGET(self)) );
 
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(name_scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(name_scroll), name_text_settings);
