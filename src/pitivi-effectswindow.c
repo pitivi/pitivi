@@ -423,31 +423,10 @@ pitivi_effectstree_exp (GtkTreeView *treeview,
 }
 
 void
-pitivi_effectstree_insert_smpte  (PitiviEffectsTree *tree_effect,
-				 GtkTreeIter *child,
-				 GtkTreeIter *parent,
-				 PitiviTransProp *elm,
-				 gchar *icon)
-{
-  GdkPixbuf *pixbuf;
-
-  pixbuf = gtk_widget_render_icon(tree_effect->window, icon, GTK_ICON_SIZE_MENU, NULL);
-  gtk_tree_store_append (tree_effect->model, child, parent);
-  gtk_tree_store_set(tree_effect->model, child,
-		     PITIVI_ICON_COLUMN, pixbuf,
-		     PITIVI_TEXT_COLUMN, elm->name,
-		     PITIVI_BG_COLOR_COLUMN, NULL,
-		     PITIVI_FG_COLOR_COLUMN, NULL,
-		     -1);
-  tree_effect->pixbuf = pixbuf;
-}
-
-
-void
 pitivi_effectstree_insert_child (PitiviEffectsTree *tree_effect,
 				 GtkTreeIter *child,
 				 GtkTreeIter *parent,
-				 gpointer *data,
+				 const gchar *name,
 				 gchar *icon)
 {
   GdkPixbuf *pixbuf;
@@ -653,11 +632,11 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 					    GDK_TYPE_COLOR,
 					    GDK_TYPE_COLOR,
 					    -1);
-  pitivi_effectstree_insert_category (tree_effect, 
-				&tree_effect->treeiter,
-				NULL,
-				"Simple Effects",
-				PITIVI_STOCK_EFFECT_CAT);
+  pitivi_effectstree_insert_child (tree_effect, 
+				   &tree_effect->treeiter,
+				   NULL,
+				   "Simple Effects",
+				   PITIVI_STOCK_EFFECT_CAT);
   /* On check le type d'effet a inserer (video/audio/transition) */
   switch (eneffects)
     {
@@ -746,8 +725,8 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 	      /* On test les elements du tableau et on les insere dans les differentes categories */
 	      if (nb_tcat == tab_category[nb].id_categorie && tab_category[nb].name)
 		{
-		  pitivi_effectstree_insert_smpte (tree_effect, &child, &Trans_iter[nb_tcat],
-						   tab_category[nb], PITIVI_STOCK_EFFECT_SOUND);
+		  pitivi_effectstree_insert_child (tree_effect, &child, &Trans_iter[nb_tcat],
+						   tab_category[nb].name, PITIVI_STOCK_EFFECT_SOUND);
 		}
 	    }
 	}
