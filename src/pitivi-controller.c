@@ -134,6 +134,7 @@ static void
 pitivi_controller_callb_play (GtkWidget *widget, gpointer user_data)
 {
   PitiviController *self = (PitiviController *) user_data;
+  g_printf ("coucou %d ... \n", self->private->viewerwin);
   if ( self->private->viewerwin )
     {
       gtk_widget_show_all ( self->private->viewerwin );

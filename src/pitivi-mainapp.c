@@ -278,32 +278,18 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
     exit(0);
   }
   self->project = project;
-  
-  /* Timeline Window */
-  pitivi_mainapp_create_timelinewin (self, project);
-    
-  /* Source List Window */
-
-  if (self->private->srclistwin == NULL)
-    {
-      self->private->srclistwin = pitivi_sourcelistwindow_new(self, project);
-      gtk_widget_show_all (GTK_WIDGET (self->private->srclistwin) );
-      gtk_window_move (GTK_WINDOW (self->private->srclistwin), 0, 0);
-      gtk_window_get_size (GTK_WINDOW (self->private->srclistwin), &tmp_w, &tmp_h);
-      gtk_signal_connect (GTK_OBJECT (self->private->srclistwin), "destroy"\
-			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_sourcelist), self);
-    }
-
+   
   /* Viewer Window */
 
   if (self->private->viewerwin == NULL)
     {
       self->private->viewerwin = pitivi_viewerwindow_new(self, project);
-      gtk_window_move (GTK_WINDOW (self->private->viewerwin), (tmp_w + BORDER), 0);
+      gtk_widget_show_all (GTK_WIDGET (self->private->viewerwin) );
+      gtk_window_move (GTK_WINDOW (self->private->viewerwin), (width - 400 + BORDER), 0);
       gtk_signal_connect (GTK_OBJECT (self->private->viewerwin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_viewer), self);
     }
-    
+  
   /* Effect Window */
 
   if (self->private->effectswin == NULL) {
@@ -315,11 +301,25 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 		     (height - (420 + BORDER + BOTTOM))
 		     );
   }
+
+  /* Timeline Window */
+  pitivi_mainapp_create_timelinewin (self, project);
+   
+  /* Source List Window */
+
+  if (self->private->srclistwin == NULL)
+    {
+      self->private->srclistwin = pitivi_sourcelistwindow_new(self, project);
+      gtk_widget_show_all (GTK_WIDGET (self->private->srclistwin) );
+      gtk_window_move (GTK_WINDOW (self->private->srclistwin), 0, 0);
+      gtk_window_get_size (GTK_WINDOW (self->private->srclistwin), &tmp_w, &tmp_h);
+      gtk_signal_connect (GTK_OBJECT (self->private->srclistwin), "destroy"\
+			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_sourcelist), self);
+    }
   
-  
+  gtk_window_set_transient_for (GTK_WINDOW (self->private->srclistwin), GTK_WINDOW (self->private->timelinewin));
   gtk_window_set_transient_for (GTK_WINDOW (self->private->effectswin), GTK_WINDOW (self->private->timelinewin));
   gtk_window_set_transient_for (GTK_WINDOW (self->private->viewerwin),  GTK_WINDOW (self->private->timelinewin));
-  gtk_window_set_transient_for (GTK_WINDOW (self->private->srclistwin), GTK_WINDOW (self->private->timelinewin));
 }
 
 /**

@@ -1146,11 +1146,6 @@ void
 pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
 { 
   GList *childlist; 
-  
-  /* Viewer control  */
-  
-  g_object_set (self, "viewer-window", ((GtkWidget *)pitivi_mainapp_get_viewerwin ( ((PitiviWindows *)self)->mainapp )), NULL);
-  connect2viewer (self->private->controller, self->private->viewer);
 
   /* Loading Select Cursor */
   
@@ -1177,6 +1172,12 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   gtk_widget_set_sensitive (GTK_WIDGET(self->private->hpaned), TRUE);
   
   g_signal_connect (self, "associate-effect-to-media", G_CALLBACK (pitivi_timelinewindow_associate_effect), NULL);
+
+    
+  /* Viewer control  */
+  
+  self->private->viewer = ((GtkWidget *)pitivi_mainapp_get_viewerwin ( ((PitiviWindows *)self)->mainapp ));
+  connect2viewer (self->private->controller, self->private->viewer);
 }
 
 void
