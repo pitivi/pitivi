@@ -202,6 +202,12 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
 
   PitiviToolbox *self = (PitiviToolbox *) instance;
   GtkToolbar *tbar = GTK_TOOLBAR (instance);
+  
+  GdkPixmap	*pixmap;
+  GdkPixmap	 *mask;
+  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */  
+
 
   self->private = g_new0 (PitiviToolboxPrivate, 1);
   self->private->group_button = NULL;
@@ -243,7 +249,6 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[2]), tooltips, "main", NULL);
   gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[3]), tooltips, "zoom", NULL);
 
-
   /*
    * We'll have to modify these functions so that they set the cursor
    * to work in the good window (i.e: PitiviTimelineWindow)
@@ -267,6 +272,15 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[1]), 1);
   gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[2]), 2);
   gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[3]), 3);
+
+/*   Cursor initialisation */
+  pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, width, height);
+  mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, mask_width, mask_height);
+  self->pitivi_cursor->cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg, mask_x_hot, mask_y_hot);
+  self->pitivi_cursor->type = PITIVI_CURSOR_SELECT;
+  gdk_pixmap_unref (pixmap);
+  gdk_pixmap_unref (mask);
+  gdk_cursor_unref (self->pitivi_cursor->cursor);
 }
 
 static void
