@@ -23,6 +23,7 @@ pitivi_SOURCES		= \
 	pitivi-sourcelistwindow.c \
 	pitivi-projectsourcelist.c \
 	pitivi-newprojectwindow.c  \
+	pitivi-codecconfwindow.c  \
 	pitivi-viewerwindow.c \
 	pitivi-viewerplayer.c \
 	pitivi-viewercontroller.c \
