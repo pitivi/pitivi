@@ -152,6 +152,7 @@ pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
       self->private->trees[count]->order = count;
       pitivi_effectstree_set_gst (self->private->trees[count], count+1);
       pitivi_effectswindow_insert_newtab (GTK_NOTEBOOK (self->private->notebook), self->private->trees[count]);
+      gtk_tree_view_expand_all (GTK_TREE_VIEW (self->private->trees[count]->treeview));
     }
 }
 

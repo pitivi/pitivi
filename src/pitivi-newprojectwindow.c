@@ -696,7 +696,8 @@ pitivi_tree_show(PitiviNewProjectWindow *self)
 
   gtk_tree_selection_set_select_function(select, (GtkTreeSelectionFunc)setting_is_selected,
 					 (gpointer)(GTK_WIDGET(self)), NULL);
-  
+  gtk_tree_view_expand_all (GTK_TREE_VIEW (show_tree));
+
   return (show_tree);
 }
 
