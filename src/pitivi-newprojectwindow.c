@@ -636,12 +636,8 @@ pitivi_make_audio_frame()
 		    0, 1, 2, 3, FALSE, FALSE, 10, 10);
   
 /*   Champ texte "canaux" */
-  audio_combo_ech = gtk_combo_box_new_text();
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 0, "mono");
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 1, "stereo");
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 2, "5.1");
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 3, "7.1");
-  gtk_combo_box_set_active(GTK_COMBO_BOX (audio_combo_ech), 0); /*  Choix par defaut */
+  audio_combo_ech = gtk_spin_button_new_with_range(1, 8, 1);
+
   gtk_table_attach (GTK_TABLE(audio_table), audio_combo_ech, 
 		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 10, 10);
 
