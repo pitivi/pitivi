@@ -141,6 +141,7 @@ set_tracksize ( PitiviTimelineCellRenderer *self )
 	gtk_widget_set_size_request(GTK_WIDGET(self), 
 				    convert_time_pix(self, track_sizes[count][1]),
 				    track_sizes[count][2]);
+	self->private->width = track_sizes[count][1];
 	break;
       }
 }
@@ -883,6 +884,7 @@ pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
   GList	*child;
   GnlSource	*source;
   gint64	start,mstart,mstop;
+  guint	height;
 
   // redraw all childs at the good position and at the good width
   for (child = gtk_container_get_children(GTK_CONTAINER(self)); child; child = child->next) {

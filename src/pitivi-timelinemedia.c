@@ -478,6 +478,7 @@ pitivi_timelinemedia_realize (GtkWidget *widget)
   attributes.wclass = GDK_INPUT_OUTPUT;
   attributes.event_mask |= gtk_widget_get_events (widget);
   attributes.event_mask |= GDK_EXPOSURE_MASK;
+  attributes.event_mask |= GDK_POINTER_MOTION_MASK;
   
   attributes.visual = gtk_widget_get_visual (widget);
   attributes.colormap = gtk_widget_get_colormap (widget);
@@ -499,6 +500,10 @@ static
 gint pitivi_timelinemedia_motion_notify_event (GtkWidget        *widget,
 					       GdkEventMotion   *event)
 {
+
+  // recalculer le x du event
+  event->x += widget->allocation.x;
+  return FALSE;
 }
 
 
@@ -551,7 +556,7 @@ pitivi_timelinemedia_button_press_event (GtkWidget      *widget,
 	  gtk_menu_popup(GTK_MENU (self->private->menu), NULL, NULL, NULL, NULL, event->button, event->time);
 	}
     }
-  return FALSE;
+  return TRUE;
 }
 
 static gint
@@ -590,7 +595,7 @@ pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
 	}
       g_signal_emit_by_name (container, "source-cut", event->x, &self);
     }
-  return FALSE;
+  return TRUE;
 }
 
 void
