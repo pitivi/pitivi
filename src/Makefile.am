@@ -43,6 +43,7 @@ pitivi_SOURCES		= \
 	pitivi-ruler.c \
 	pitivi-mediatrackinfo.c \
 	pitivi-controller.c \
+	pitivi-debug.c \
 	main.c
 
 # our CFLAGS and LDFLAGS used for compiling and linking
