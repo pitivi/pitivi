@@ -334,7 +334,7 @@ gnl_timeline_timer_loop (GstElement *element)
       GstClockTime time;
       GstPad *srcpad;
       GnlGroup *group;
-      GstFormat format;
+/*       GstFormat format; */
 
       /* if the buffer is an EOS event */
     
@@ -345,8 +345,10 @@ gnl_timeline_timer_loop (GstElement *element)
 	 (should in fact be the next useful position)
       */
       
-      format = GST_FORMAT_TIME;
-      gst_element_query (GST_ELEMENT (group), GST_QUERY_POSITION, &format, &time);
+/*       format = GST_FORMAT_TIME; */
+/*       gst_element_query (GST_ELEMENT (group), GST_QUERY_POSITION, &format, &time); */
+
+      time = GNL_OBJECT (group)->current_time;
 
       GST_INFO ("got EOS on group %s, time %lld",
 		 gst_element_get_name (GST_ELEMENT (group)),
@@ -388,6 +390,7 @@ gnl_timeline_timer_loop (GstElement *element)
       } else {
 	/* If there isn't anything else in that group (real EOS) */
 	GST_INFO("Nothing else in that group, sending real EOS and setting timegrouplink time to 0");
+	gst_pad_unlink (GST_PAD_PEER (sinkpad), sinkpad);
         gst_pad_set_active (sinkpad, FALSE);
         gst_pad_push (to_schedule->srcpad, (GstData *) buf);
 	to_schedule->time = 0LL;

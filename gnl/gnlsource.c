@@ -577,17 +577,33 @@ source_queue_media (GnlSource *source)
   gboolean filled = TRUE;
   GstElement		*prerollpipeline;
   GstProbe		*probe;
+  GstElement		*fakesink;
+  GstPad		*prevpad;
 
   if ((source->queueing) || (source->private->queued))
     return TRUE;
   GST_INFO ("prerolling/queueing in seperate pipeline");
 
+  /* Disconnect pad and remember it */
+  prevpad = GST_PAD_PEER (gst_element_get_pad (source->element, "src"));
+  gst_pad_unlink (gst_element_get_pad (source->element, "src"), prevpad);
+
   /* moving source->Bin to pre-roll pipeline */
   prerollpipeline = gst_pipeline_new ("preroll-pipeline");
+
+  fakesink = gst_element_factory_make ("fakesink", "afakesink");
 
   gst_object_ref (GST_OBJECT (source->element));
   gst_bin_remove (GST_BIN (source->bin), GST_ELEMENT (source->element));
   gst_bin_add (GST_BIN(prerollpipeline), GST_ELEMENT (source->element));
+  gst_bin_add (GST_BIN(prerollpipeline), fakesink);
+
+  gst_element_set_state (GST_ELEMENT (prerollpipeline), GST_STATE_PAUSED);
+
+  if (!gst_element_link (GST_ELEMENT (source->element), fakesink)) {
+    GST_ERROR ("Couldn't link...");
+    return FALSE;
+  }
 
   probe = gst_probe_new (FALSE, queueing_probe, source);
   gst_pad_add_probe (gst_element_get_pad (source->element, "src"),
@@ -618,7 +634,10 @@ source_queue_media (GnlSource *source)
 
   gst_bin_remove (GST_BIN (prerollpipeline), GST_ELEMENT (source->element));
   gst_bin_add (GST_BIN (source->bin), GST_ELEMENT (source->element));
+  gst_object_unref (GST_OBJECT (prerollpipeline));
 
+  /* Reconnect element's pad */
+  gst_pad_link (gst_element_get_pad (source->element, "src"), prevpad);
   
   GST_INFO("END : source media is queued [%d]",
 	   filled);

@@ -414,7 +414,7 @@ gnl_composition_set_default_source (GnlComposition *comp,
   GnlCompositionEntry	*entry;
 
   gnl_object_set_priority (GNL_OBJECT (source), G_MAXINT);
-  gnl_object_set_start_stop (GNL_OBJECT (source), 0LL, GST_CLOCK_TIME_NONE - 1);
+  gnl_object_set_start_stop (GNL_OBJECT (source), 0LL, G_MAXUINT64);
 
   entry = g_new0(GnlCompositionEntry, 1);
   gst_object_ref (GST_OBJECT (source));
@@ -643,6 +643,12 @@ gnl_composition_schedule_operation (GnlComposition *comp, GnlOperation *oper,
 		   GST_DEBUG_PAD_NAME(GST_PAD_PEER (newpad)));
       gst_pad_unlink (newpad, GST_PAD_PEER (newpad));
     }
+    if (GST_PAD_PEER(sinkpad)) {
+      GST_WARNING ("sinkpad %s:%s is still connectd to %s:%s. Unlinking them !!",
+		   GST_DEBUG_PAD_NAME(sinkpad),
+		   GST_DEBUG_PAD_NAME (GST_PAD_PEER(sinkpad)));
+      gst_pad_unlink (GST_PAD_PEER(sinkpad), sinkpad);
+    }
     if (!gst_pad_link (newpad, sinkpad)) {
       GST_WARNING ("Couldn't link source pad %s:%s to operation pad %s:%s",
 		   GST_DEBUG_PAD_NAME (newpad),
@@ -787,8 +793,9 @@ gnl_composition_schedule_entries(GnlComposition *comp, GstClockTime start,
 
   if (keep) {
 
-    GST_INFO("next[%s] [%lld]->[%lld]",
-	     gst_element_get_name(GST_ELEMENT(tmp)),
+    GST_INFO("next[%s]keep[%s] [%lld]->[%lld]",
+	     gst_element_get_name (GST_ELEMENT (obj)),
+	     gst_element_get_name(GST_ELEMENT(keep)),
 	     keep->start, keep->stop);
     if (keep->priority > obj->priority)
       stop = obj->stop;
@@ -899,10 +906,11 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
 					  comp->next_stop, 0, &pad);
   GST_INFO ("%s : Finished really scheduling",
 	    gst_element_get_name (GST_ELEMENT (comp)));
-  if (!res)
+  if (!res) {
     GST_ERROR ("Something went awfully wrong while preparing %s",
 	       gst_element_get_name (GST_ELEMENT (comp)));
-
+    return FALSE;
+  }
   if (pad) {
 
     GST_INFO("%s : Have a pad",
