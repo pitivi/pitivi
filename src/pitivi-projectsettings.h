@@ -97,14 +97,14 @@ GType			pitivi_projectsettings_get_type (void);
  * Method definitions.
  */
 PitiviProjectSettings	*pitivi_projectsettings_new (void);
-PitiviMediaSettings	*pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps/* , GList *property */, gint index );
+PitiviMediaSettings	*pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps);
 void			pitivi_projectsettings_print(PitiviProjectSettings *self);
 
 PitiviProjectSettings	*pitivi_projectsettings_new_with_name(gchar *name, gchar *desc/* , GSList *list */);
 PitiviCategorieSettings	*pitivi_projectsettings_categorie_new(gchar *name/* , GSList *list_settings */ );
 GSList			*pitivi_projectsettings_list_make( );
 
-GstCaps			*pitivi_projectsettings_vcaps_create ( int width, int height, int framerate );
+GstCaps			*pitivi_projectsettings_vcaps_create ( int width, int height, gdouble framerate );
 GstCaps			*pitivi_projectsettings_acaps_create ( int rate, int channel, int depth );
 
 gdouble			pitivi_projectsettings_get_videorate(PitiviProjectSettings *ps);

@@ -46,25 +46,29 @@ struct _PitiviProjectSettingsWindowPrivate
  * Insert "added-value" functions here
  */
 
-void
+static void
 apply_clicked (GtkButton *button, PitiviProjectSettingsWindow *self)
 {
+  PitiviProjectSettings	*res;
 
+  res = pitivi_projectsettingswidget_get_copy (self->private->widget);
+/*   pitivi_projectsettings_print (res); */
+  g_object_unref (G_OBJECT (res));
 }
 
-void
+static void
 cancel_clicked (GtkButton *button, PitiviProjectSettingsWindow *self)
 {
 
 }
 
-void
+static void
 ok_clicked (GtkButton *button, PitiviProjectSettingsWindow *self)
 {
 
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_projectsettingswindow_make_buttons_box (PitiviProjectSettingsWindow *self)
 {
   GtkWidget	*applyb, *cancelb, *okb;

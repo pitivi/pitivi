@@ -281,7 +281,7 @@ pitivi_npw_get_a_media(PitiviNewProjectWindow *self)
   depth = adepth_tab[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_depth))];
 
   caps_audio = pitivi_projectsettings_acaps_create ( freq, rate, depth );
-  media = pitivi_projectsettings_media_new( factory_name, caps_audio, index);
+  media = pitivi_projectsettings_media_new( factory_name, caps_audio);
 
 // PROPERTIES
   media->codec_properties = NULL;
@@ -303,7 +303,7 @@ pitivi_npw_get_v_media(PitiviNewProjectWindow *self)
 						     atoi ( gtk_entry_get_text(GTK_ENTRY(self->private->size_height))),
 						     atoi ( gtk_entry_get_text(GTK_ENTRY(self->private->fps_text))) );
   index = gtk_combo_box_get_active (GTK_COMBO_BOX(self->private->video_combo_codec) );
-  media = pitivi_projectsettings_media_new( factory_name, caps_video, index );
+  media = pitivi_projectsettings_media_new( factory_name, caps_video);
   
 // PROPERTIES
   media->codec_properties = NULL;

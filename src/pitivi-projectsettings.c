@@ -56,7 +56,7 @@ pitivi_settingsvalue_from_settingsioelement (PitiviSettingsIoElement *io)
   gint	i;
   
   for (i = 0; i < io->n_param; i++)
-    res = g_list_append (res, (PitiviSettingsValue *) &(io->params[0]));
+    res = g_list_append (res, (PitiviSettingsValue *) &(io->params[i]));
   return res;
 }
 
@@ -112,7 +112,7 @@ pitivi_containersettings_to_settingsioelement (PitiviProjectSettings *ps)
 
 /* Creation des GstCaps Audio et Video */
 GstCaps *
-pitivi_projectsettings_vcaps_create (int width, int height, int framerate)
+pitivi_projectsettings_vcaps_create (int width, int height, gdouble framerate)
 {
   GstCaps	*caps;
   
@@ -223,7 +223,7 @@ pitivi_projectsettings_new_with_name(gchar *name, gchar *desc)
 {
   PitiviProjectSettings	*projectsettings;
 
-  projectsettings = g_new0(PitiviProjectSettings, 1);
+  projectsettings = pitivi_projectsettings_new ();
   projectsettings->name = g_strdup(name);
   projectsettings->description = g_strdup(desc);
   projectsettings->media_settings = NULL;
@@ -248,14 +248,12 @@ pitivi_projectsettings_categorie_new(gchar *name)
 
 /* Creation d'un PitiviMediaSetting */
 PitiviMediaSettings *
-pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps, gint index )
+pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps)
 {
   PitiviMediaSettings	*media_new;
 
   media_new = g_new0(PitiviMediaSettings, 1);
   media_new->codec_factory_name = g_strdup(codec_factory_name);
-/*   media_new->combo_box_codec_index = index; */
-  media_new->codec_properties = NULL;
 
   media_new->caps = g_new0(GstCaps, 1);
   media_new->caps = gst_caps_copy(caps);
@@ -276,10 +274,19 @@ pitivi_projectsettings_print(PitiviProjectSettings *self)
   PitiviSettingsValue	*cset;
   gchar			*tmp;
   
-  g_printf("ProjectSettings Name[%s] Description[%s] Container[%s]\n", 
+  g_printf("ProjectSettings Name[%s] Description[%s]", 
 	   self->name, 
-	   self->description,
-	   self->container_factory_name);
+	   self->description);
+  g_printf ("Container [%s]\n", self->container_factory_name);
+  for (t2 = self->container_properties; t2; t2 = g_list_next(t2)) {
+    cset = t2->data;
+    if (cset) {
+      tmp = g_strdup_value_contents(&(cset->value));
+      g_printf("  Codec Settings [%s]:[%s]\n", cset->name, tmp);
+      g_free(tmp);
+    } else
+      g_printf("empty codec settings...\n");
+  };
   for (t1 = self->media_settings; t1; t1 = t1->next) {
     mset = (PitiviMediaSettings *) t1->data;
     if (mset) {

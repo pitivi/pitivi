@@ -26,11 +26,11 @@
 /*
   TODO
 
-  * Implement GUI => PitiviProjectSettings ( _get_copy() )
+  DONE * Implement GUI => PitiviProjectSettings ( _get_copy() )
   DONE * Implement PitiviProjectSettings => GUI ( update_gui() )
-  * Implement Audio/Video/Container codecs control (Configure Button)
+  DONE * Implement Audio/Video/Container codecs control (Configure Button)
   DONE * (de)Activate Custom controls depending on combobox selection
-  * Implement codecs settings <=> PitiviGstElementSettings
+  DONE * Implement codecs settings <=> PitiviGstElementSettings
   * Make the graphical layout less ugly
 */
 
@@ -243,25 +243,52 @@ PitiviProjectSettings *
 pitivi_projectsettingswidget_get_copy (PitiviProjectSettingsWidget *self)
 {
   PitiviProjectSettings	*res = NULL;
+  GtkTextIter	start,stop;
+  PitiviMediaSettings	*ms = NULL;
+  gint		adepth;
+  GstCaps	*caps;
   /*
     Create a new PitiviProjectSettings for the values in the widget 
     and return it. Return NULL if there's a problem
   */
+  gtk_text_buffer_get_start_iter (self->private->descentry, &start);
+  gtk_text_buffer_get_end_iter (self->private->descentry, &stop);
+  res = pitivi_projectsettings_new_with_name 
+    ((gchar *) gtk_entry_get_text(GTK_ENTRY (self->private->nameentry)),
+     gtk_text_buffer_get_text (self->private->descentry, &start, &stop, FALSE));
+  
+  /* Create and append video PitiviMediaSettings */
+  caps = pitivi_projectsettings_vcaps_create 
+    (gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON (self->private->videowidthentry)),
+     gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON (self->private->videoheightentry)),
+     g_ascii_strtod(gtk_entry_get_text(GTK_ENTRY (self->private->videorateentry)), NULL));
+  ms = pitivi_projectsettings_media_new 
+    ((gchar *) get_cbox_selected_item_name (GTK_COMBO_BOX (self->private->videocodeccbox), self->private->venc_list),
+     caps);
+  if (self->private->videocodecprops)
+    ms->codec_properties = pitivi_settingsvalue_from_settingsioelement (self->private->videocodecprops);
+  res->media_settings = g_slist_append (res->media_settings, ms);
+  
+  /* Create and append audio PitiviMediaSettings */
+  adepth = audiodepthtab[gtk_combo_box_get_active (GTK_COMBO_BOX (self->private->audiodepthcbox))].depth;
+  caps = pitivi_projectsettings_acaps_create
+    (gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (self->private->audiorateentry)),
+     gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (self->private->audiochannentry)),
+     adepth);
+  ms = pitivi_projectsettings_media_new
+    ((gchar *) get_cbox_selected_item_name (GTK_COMBO_BOX (self->private->audiocodeccbox), self->private->aenc_list),
+     caps);
+  if (self->private->audiocodecprops)
+    ms->codec_properties = pitivi_settingsvalue_from_settingsioelement (self->private->audiocodecprops);
+  res->media_settings = g_slist_append (res->media_settings, ms);
+
+  /* Fill container info */
+  res->container_factory_name = g_strdup (get_cbox_selected_item_name (GTK_COMBO_BOX (self->private->containercbox), self->private->container_list));
+  if (self->private->containercodecprops)
+    res->container_properties = pitivi_settingsvalue_from_settingsioelement (self->private->containercodecprops);
+  
   return res;
 }
-
-/* PitiviProjectSettings * */
-/* pitivi_projectsettingswidget_get_modified (PitiviProjectSettingsWidget *self) */
-/* { */
-/*   PitiviProjectSettings *res = NULL; */
-/*   /\* */
-/*     Modify the values of self->settings according to the values in the widget */
-/*     and return it. If there's no self->settings, return NULL. */
-/*   *\/ */
-/*   if (!self->settings) */
-/*     return NULL; */
-/*   return res; */
-/* } */
 
 static void
 video_rate_cbox_changed (GtkComboBox *cbox, PitiviProjectSettingsWidget *self)
@@ -358,6 +385,8 @@ video_conf_clicked (GtkButton *button, PitiviProjectSettingsWidget *self)
   switch (gtk_dialog_run (GTK_DIALOG (dialog))) {
   case GTK_RESPONSE_ACCEPT:
     PITIVI_DEBUG ("OK");
+    self->private->videocodecprops =
+      pitivi_gstelementsettings_get_settings_elem (PITIVI_GSTELEMENTSETTINGS (widget));
     break;
   case GTK_RESPONSE_CANCEL:
   default:
@@ -370,13 +399,103 @@ video_conf_clicked (GtkButton *button, PitiviProjectSettingsWidget *self)
 static void
 audio_conf_clicked (GtkButton *button, PitiviProjectSettingsWidget *self)
 {
-  
+  GtkWidget	*dialog;
+  GtkWidget	*widget;
+  PitiviSettingsIoElement	*io;
+  const gchar		*selectedfactory;
+
+  PITIVI_DEBUG ("clicked...");
+  dialog = gtk_dialog_new_with_buttons ("Configure Audio Codec properties",
+					NULL,
+					GTK_DIALOG_MODAL,
+					GTK_STOCK_OK,
+					GTK_RESPONSE_ACCEPT,
+					GTK_STOCK_CANCEL,
+					GTK_RESPONSE_CANCEL,
+					NULL);
+
+  selectedfactory = get_cbox_selected_item_name(GTK_COMBO_BOX (self->private->audiocodeccbox), 
+						self->private->aenc_list);
+  PITIVI_DEBUG ("got selectedfactory");
+  if ((!self->private->audiocodecprops)
+      || ( g_ascii_strcasecmp (selectedfactory,
+			       gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(self->private->audiocodecprops->factory))) )) {
+    PITIVI_DEBUG ("no existing IO or not same as selected codec");
+    io = pitivi_settings_new_io_element_with_factory (gst_element_factory_find (selectedfactory));
+  } else {
+    PITIVI_DEBUG ("taking existing IO");
+    io = self->private->audiocodecprops;
+  }
+  widget = GTK_WIDGET (pitivi_gstelementsettings_new (io, 0));
+
+  gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox),
+		     widget);
+  PITIVI_DEBUG ("Added widget to dialog box's vbox");
+
+  gtk_widget_show_all (dialog);
+  switch (gtk_dialog_run (GTK_DIALOG (dialog))) {
+  case GTK_RESPONSE_ACCEPT:
+    PITIVI_DEBUG ("OK");
+    self->private->audiocodecprops =
+      pitivi_gstelementsettings_get_settings_elem (PITIVI_GSTELEMENTSETTINGS (widget));
+    break;
+  case GTK_RESPONSE_CANCEL:
+  default:
+    PITIVI_DEBUG ("Cancel...");
+    break;
+  }
+  gtk_widget_destroy (dialog);
 }
 
 static void
 container_conf_clicked (GtkButton *button, PitiviProjectSettingsWidget *self)
 {
-  
+  GtkWidget	*dialog;
+  GtkWidget	*widget;
+  PitiviSettingsIoElement	*io;
+  const gchar		*selectedfactory;
+
+  PITIVI_DEBUG ("clicked...");
+  dialog = gtk_dialog_new_with_buttons ("Configure Container properties",
+					NULL,
+					GTK_DIALOG_MODAL,
+					GTK_STOCK_OK,
+					GTK_RESPONSE_ACCEPT,
+					GTK_STOCK_CANCEL,
+					GTK_RESPONSE_CANCEL,
+					NULL);
+
+  selectedfactory = get_cbox_selected_item_name(GTK_COMBO_BOX (self->private->containercbox), 
+						self->private->container_list);
+  PITIVI_DEBUG ("got selectedfactory");
+  if ((!self->private->containercodecprops)
+      || ( g_ascii_strcasecmp (selectedfactory,
+			       gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(self->private->containercodecprops->factory))) )) {
+    PITIVI_DEBUG ("no existing IO or not same as selected codec");
+    io = pitivi_settings_new_io_element_with_factory (gst_element_factory_find (selectedfactory));
+  } else {
+    PITIVI_DEBUG ("taking existing IO");
+    io = self->private->containercodecprops;
+  }
+  widget = GTK_WIDGET (pitivi_gstelementsettings_new (io, 0));
+
+  gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox),
+		     widget);
+  PITIVI_DEBUG ("Added widget to dialog box's vbox");
+
+  gtk_widget_show_all (dialog);
+  switch (gtk_dialog_run (GTK_DIALOG (dialog))) {
+  case GTK_RESPONSE_ACCEPT:
+    PITIVI_DEBUG ("OK");
+    self->private->containercodecprops =
+      pitivi_gstelementsettings_get_settings_elem (PITIVI_GSTELEMENTSETTINGS (widget));
+    break;
+  case GTK_RESPONSE_CANCEL:
+  default:
+    PITIVI_DEBUG ("Cancel...");
+    break;
+  }
+  gtk_widget_destroy (dialog);  
 }
 
 /* activate_combobox_entry : ONLY for codec combobox */
@@ -539,6 +658,20 @@ static void
 pitivi_projectsettingswidget_reset_gui (PitiviProjectSettingsWidget *self)
 {
   /* Set every widget to their default value */
+  gtk_entry_set_text (GTK_ENTRY (self->private->nameentry),
+		      "");
+  gtk_text_buffer_set_text (self->private->descentry,
+			    "", -1);
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->videocodeccbox), 1);
+  update_video_width_height (self, 0, 0);
+  update_video_framerate (self, 0.0f);
+
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->audiocodeccbox), 1);
+  update_audio_depth (self, 8);
+  update_audio_chann (self, 1);
+  update_audio_rate (self, 22050);
+
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->containercbox), 1);
 }
 
 static void
