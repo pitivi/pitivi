@@ -31,6 +31,7 @@
 #include "pitivi.h"
 #include "pitivi-sourcelistwindow.h"
 #include "pitivi-projectsourcelist.h"
+#include "pitivi-settings.h"
 
 static GtkWindowClass *parent_class = NULL;
 
@@ -188,277 +189,6 @@ gboolean FOUND = FALSE;
 /*
  * insert "added-value" functions here
  */
-
-/* temporary functions */
-
-static GList		*container;
-static GList		*codec;
-
-enum {
-  ENC_LIST,
-  DEC_LIST
-};
-
-
-typedef struct	s_mime_type
-{
-  gchar		*flux;
-  GList		*encoder;
-  GList		*decoder;
-}		t_mime_type;
-
-
-/* ############################################ */
-
-/* 
-   affiche les infos d un element
-*/
-void		aff_info_factory (GstElementFactory *factory)
-{
-  g_print ("%s\t%s\t%s\n", 
-	   gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)),
-	   gst_element_factory_get_longname (factory), 
-	   gst_element_factory_get_klass (factory)
-	   );
-  return ;
-}
-
-
-/* 
-   affiche la list des coder 
-   (Encoder|Decoder)
-*/
-void		aff_coder (GList *list)
-{
-  for (; list; list = g_list_next (list)) {
-    g_print ("    %s\n", (gchar *) list->data);
-  }
-  return ;
-}
-
-
-/* 
-   affiche la structure d un flux
-*/
-void		aff_mime_type (t_mime_type *mime_type)
-{
-  g_print ("%s\n", mime_type->flux);
-  g_print ("  Encoder:\n");
-  aff_coder (mime_type->encoder);
-  g_print ("  Decoder:\n");
-  aff_coder (mime_type->decoder);
-  return ;
-}
-
-
-/* 
-   affiche le contenu de la list 
-   (Container|Codec)
-*/
-void		aff_all_list (GList *list)
-{
-  for (; list; list = g_list_next (list)) {
-    aff_mime_type ((t_mime_type *) list->data);
-  }  
-  return ;
-}
-
-
-/* ############################################ */
-
-
-/* 
-   initialise une nouvelle structure 
-   pour un nouveau flux
-*/
-t_mime_type	*init_mime_type (gchar *flux)
-{
-  t_mime_type	*new;
-
-  new = g_malloc (sizeof (t_mime_type));
-  new->flux = g_strdup (flux);
-  new->encoder = 0;
-  new->decoder = 0;
-  return (new);
-}
-
-
-/* 
-   retourne la structure assigne au flux
-   si elle existe sinon retourne NULL
-*/
-t_mime_type	*search_flux (GList *list, gchar *flux, gboolean type)
-{
-  t_mime_type	*tmp;
-  gchar		*current_flux;
-  gint		i;
-
-  //g_printf("flux ==> %s\n", flux);
-  for (; list; list = g_list_next (list)) {
-    tmp = (t_mime_type	*) list->data;
-    //g_printf("tmp->flux ==> %s\n", tmp->flux);
-    if ((strstr(tmp->flux, flux))) {
-      if (type == DEC_LIST)
-	if (!tmp->decoder)
-	  continue;
-      if (type == ENC_LIST)
-	if (!tmp->encoder)
-	  continue;
-
-      return (tmp);
-    }
-  }
-  tmp = 0;
-  return (tmp);
-}
-
-
-/* 
-   parcours la list 
-   et retourne la list des coder demande
-   (Encoder|Decoder) assigne au flux
-   si le flux n existe pas retourne -1
-   si la valeur de retour est NULL 
-   c est que la list est vide
-*/
-GList		*get_flux_coder_list (GList *list, gchar *flux, gboolean LIST)
-{
-  t_mime_type	*tmp;
-
-  if ((tmp = search_flux (list, flux, LIST))) {
-    if (LIST == DEC_LIST) {
-      return (tmp->decoder);
-    } else if (LIST == ENC_LIST) {
-      return (tmp->encoder);
-    } else {
-      g_print ("Don't know this list\n");
-    }
-  }
-  return ((GList*)-1);
-}
-
-
-/* 
-   ajoute un l element factory name
-   dans la list (encoder|decoder) 
-   assignee au flux tmp->flux
-   suivant son pad  (src|sink) 
-*/
-t_mime_type	*ajout_factory_element (t_mime_type *tmp, gchar *element, gboolean MY_PAD)
-{
-
-  if (MY_PAD == GST_PAD_SRC) {
-    tmp->encoder = g_list_append (tmp->encoder, (gpointer) element);
-  } else if (MY_PAD == GST_PAD_SINK) {
-    tmp->decoder = g_list_append (tmp->decoder, (gpointer) element);
-  } else {
-    g_print ("ERROR in (ajout_factory_element) : MY_PAD \n");
-  }
-
-  return (tmp);
-}
-
-
-/* 
-   recupere les flux gerer par l element
-   si le flux existe dans la list
-   ajoute un l element dans la structure de flux
-   sinon cree la struct du flux et lui assigne l element
-   
-*/
-GList		*ajout_element (GList *list, GstElementFactory *factory, gboolean MY_PAD)
-{
-  GstPadTemplate *padtemplate;
-
-  if (factory->numpadtemplates) {
-    gint i;
-    const GList *pads;
-
-    pads = factory->padtemplates;
-    for (i = 0; pads; i++, pads = g_list_next (pads)) {
-      padtemplate = (GstPadTemplate *) (pads->data);
-      if (padtemplate->direction == MY_PAD) {
-	gint j;
-	
-	for (j = 0; j < padtemplate->caps->structs->len; j++) {
-	  t_mime_type	*tmp;
-
-	  /* CHERCHE SI LE TYPE EST DEJA DEFINI */
-	  if ((tmp = search_flux (list, gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j)), -1))) {
-	    tmp = ajout_factory_element (tmp, 
-					 (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
-					 MY_PAD);
-	  } else {
-	    /* SINON L AJOUTE */
-	    tmp = init_mime_type (gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j)));
-	    tmp = ajout_factory_element (tmp, 
-					 (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
-					 MY_PAD);
-	    list = g_list_append (list, (gpointer) tmp);
-	  }
-	}
-      }      
-    }
-  }
-  return (list);
-}
-
-
-/* ############################################ */
-
-
-/* */
-int		init_element_list ()
-{
-  GList		*element;
-  GstElementFactory *factory;
-
-  //  gst_init (&ac, &av);
-
-  /* PARSE TOUS LES ELEMENTS GST */
-  codec = 0;
-  container = 0;
-  element = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
-  while (element) {
-    factory = (GstElementFactory *) element->data;
-    if (!strncmp (gst_element_factory_get_klass (factory), "Codec/Demuxer", 13)) {
-      container = ajout_element (container, factory, GST_PAD_SINK);
-    } else if (!strncmp (gst_element_factory_get_klass (factory), "Codec/Muxer", 11)) {
-      container = ajout_element (container, factory, GST_PAD_SRC);
-    } else if (!strncmp (gst_element_factory_get_klass (factory), "Codec/Encoder/Audio", 19) || 
-	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Audio/Encoder", 19) ||
-	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Video/Encoder", 19) ||
-	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Encoder/Video", 19)
-	       ) {
-      codec = ajout_element (codec, factory, GST_PAD_SRC);
-    } else if (!strncmp (gst_element_factory_get_klass (factory), "Codec/Audio/Decoder", 19) ||
-	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Decoder/Audio", 19) ||
-	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Decoder/Video", 19) ||
-	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Video/Decoder", 19)
-	       ) {
-      codec = ajout_element (codec, factory, GST_PAD_SINK);      
-    }
-    element = element->next;
-  }
-
-  /* AFFICHE LES DEUX LISTES */
-  //g_print ("CODECS : \n");
-  //aff_all_list (codec);
-  //g_print ("CONTAINERS : \n");
-  //aff_all_list (container);
-
-
-  /* AFFICHE LES CODERS DU FLUX DONNER */
-  //aff_coder (get_flux_coder_list (codec, "audio/x-flac", ENC_LIST));
-  //aff_coder (get_flux_coder_list (codec, "audio/x-flac", DEC_LIST));
-
-  return (0);
-}
-
-
-/* ########################################################################## */
-
-
 
 gint	get_selected_row(gchar *path, gint *depth)
 {
@@ -764,9 +494,9 @@ void	new_pad_created(GstElement *parse, GstPad *pad, GstElement *pipeline)
 	}
       i++;
     }
-  decoderlist = get_flux_coder_list (codec, caps_str, DEC_LIST);
+  //  decoderlist = pitivi_settings_get_flux_coder_list (codec, caps_str, DEC_LIST);
   //aff_coder(decoderlist);
-  if ((gint)decoderlist != -1)
+  if ((gint)decoderlist != -1 && decoderlist)
     {
       name = g_malloc(12);
       sprintf(name, "thread%d", thread_number);
@@ -872,9 +602,9 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   gst_bin_add(GST_BIN(pipeline), src);
 
   /* test if it's a container */
-  demuxlist = get_flux_coder_list (container, self->private->mediatype, DEC_LIST);
+  //demuxlist = pitivi_settings_get_flux_coder_list (container, self->private->mediatype, DEC_LIST);
   /* create a demuxer if it's a container */
-  if ((gint)demuxlist != -1)
+  if ((gint)demuxlist != -1 && demuxlist)
     {
       /* choose the first demuxer */
       g_printf("demuxer ==> %s\n", (gchar*)demuxlist->data);
@@ -893,8 +623,8 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
     }
   if ((gint)demuxlist == -1) /* search for a decoder */
     {
-      decoderlist = get_flux_coder_list (codec, self->private->mediatype, DEC_LIST);
-      if ((gint)decoderlist != -1)
+      //  decoderlist = pitivi_settings_get_flux_coder_list (codec, self->private->mediatype, DEC_LIST);
+      if ((gint)decoderlist != -1 && decoderlist)
 	{
 	  /* choose the first decoder */
 	  g_printf("decoder ==> %s\n", (gchar*)decoderlist->data);
@@ -961,7 +691,7 @@ void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
   if (self->private->mediatype == NULL)
     return;
 
-  build_pipeline_by_mime(self, filename);
+  // build_pipeline_by_mime(self, filename);
 }
 
 char	*my_strcat(char *dst, char *src)
@@ -1858,8 +1588,6 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   new_bin(self, g_strdup("bin 1"));
   nbrchutier++;
   
-  init_element_list();
-
   gtk_window_set_default_size(GTK_WINDOW(self), 600, 200);
 
   gtk_container_add(GTK_CONTAINER(self), self->private->hpaned);
