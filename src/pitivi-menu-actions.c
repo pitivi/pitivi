@@ -27,6 +27,7 @@
 #include "pitivi-menu.h"
 #include "pitivi-menu-actions.h"
 #include "pitivi-stockicons.h"
+#include "pitivi-newprojectwindow.h"
 #include "pitivi-sourcelistwindow.h"
 
 static GtkActionGroup *actions_group[EA_LAST_ACTION];
@@ -40,8 +41,8 @@ default_action (GtkAction *action, gpointer data )
 static void
 pitivi_callb_menufile_new ( GtkAction *action, gpointer data )
 {  
-  GtkWidget *win_new_project;
-  GtkWidget *srclistwin;
+  PitiviNewProjectWindow *win_new_project;
+  PitiviSourceListWindow *srclistwin;
 
   /* New Project window */
   win_new_project = pitivi_newprojectwindow_new();

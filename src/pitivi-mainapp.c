@@ -97,7 +97,7 @@ pitivi_mainapp_instance_init (GTypeInstance * instance, gpointer g_class)
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
-  pitivi_stock_icons_register ();
+  pitivi_stockicons_register ();
   self->private->tbxwin = pitivi_toolboxwindow_new ();
   g_signal_connect(G_OBJECT(self->private->tbxwin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
