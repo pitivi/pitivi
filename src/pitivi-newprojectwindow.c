@@ -157,6 +157,8 @@ struct _PitiviNewProjectWindowPrivate
   GtkWidget		*button_mod;
   GtkWidget		*button_del;
 
+  GtkWidget		*button_new;
+
   /* Position de la selection */
   gint			*position;
 };
@@ -258,7 +260,7 @@ pitivi_npw_add_category(GtkButton *button, gpointer user_data)
   PitiviSettings		*global_settings;
 
   if ( strlen(gtk_entry_get_text(GTK_ENTRY(self->private->cat_text))) )
-    { 
+    {
       pitivi_settings_add_category( pitivi_mainapp_settings(mainapp), 
 				    gtk_entry_get_text ( GTK_ENTRY (self->private->cat_text) ) );
       gtk_tree_store_append(self->private->tree, &self->private->pIter2, NULL);
@@ -480,10 +482,20 @@ pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer u
 }
 
 
-
 /* 
 *  Personal Fonctions
 */
+
+void
+pitivi_npw_select_first_setting(PitiviNewProjectWindow *self)
+{
+  GtkTreePath		*path;
+  GtkTreeSelection	*selection;
+
+  path = gtk_tree_path_new_from_string  ("0:0");
+  selection = gtk_tree_view_get_selection ( GTK_TREE_VIEW(self->private->show_tree) );
+  gtk_tree_selection_select_path  (selection, path);
+}
 
 /* element de la liste de proprietes */
 PitiviConfProperties *
@@ -508,16 +520,15 @@ pitivi_fill_hbox(PitiviNewProjectWindow *self)
   pitivi_tree_create(self);
   self->private->show_tree = pitivi_tree_show( self );
 
-/*   Ajout du scrolling pour la selection */
+  
+/* Ajout du scrolling pour la selection */
   scroll = gtk_scrolled_window_new(NULL, NULL);
   gtk_widget_set_usize (scroll, 150, -1);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), GTK_POLICY_AUTOMATIC,
 				 GTK_POLICY_AUTOMATIC);
   
   gtk_container_add(GTK_CONTAINER(scroll), self->private->show_tree);
-  
   notebook = pitivi_notebook_new(self);
-  
   gtk_box_pack_start (GTK_BOX (self->private->hbox), scroll, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (self->private->hbox), notebook, TRUE, TRUE, 0);
 }
@@ -531,7 +542,7 @@ pitivi_tree_create(PitiviNewProjectWindow *self)
   PitiviProjectSettings		*setting;
   int				i;
   int				j;
-  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
+  PitiviMainApp			*mainapp = ((PitiviWindows *) self)->mainapp;
   
 /*   Nouvel arbre */
   self->private->tree = gtk_tree_store_new(1, G_TYPE_STRING);
@@ -575,12 +586,18 @@ setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
       gtk_tree_model_get(model, &self->private->pIter2, TEXT_COLUMN, &setting_name, -1);
       if (!value && !(gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2)))
 	{
+	  gtk_widget_set_sensitive(self->private->button_new, FALSE);
+
 	  gtk_tree_model_get_iter(model, &self->private->pIter, path);
 	  gtk_text_buffer_set_text(self->private->preset_text_buffer, setting_name, strlen(setting_name));
 	  gtk_entry_set_text(GTK_ENTRY(self->private->cat_text), setting_name);
+
+/* 	  printf("select categorie : \" %s \"\n", setting_name); */
 	}
       else if (!value && (gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2)))
 	{
+	  gtk_widget_set_sensitive(self->private->button_new, TRUE);
+
 	  pitivi_newprojectwindow_put_info( self, setting_name );
 	  gtk_tree_model_iter_parent (model, &self->private->pIter, &self->private->pIter2);
 	  gtk_tree_model_get(model, &self->private->pIter, TEXT_COLUMN, &parent_name, -1);
@@ -813,25 +830,25 @@ pitivi_tree_show(PitiviNewProjectWindow *self)
   GtkCellRenderer	*cell;
   GtkTreeViewColumn	*column;
   GtkTreeSelection	*select;
-  GtkTreeIter		*iter;
 
 /*   Creation de la vue */
-  show_tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(self->private->tree));
+  show_tree = gtk_tree_view_new_with_model( GTK_TREE_MODEL(self->private->tree) );
   gtk_tree_view_expand_all ( GTK_TREE_VIEW(show_tree));
   
 /*   Creation de la premiere colonne */
   cell = gtk_cell_renderer_text_new();
   column = gtk_tree_view_column_new_with_attributes("Selection", cell, "text", TEXT_COLUMN, NULL);
   gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+
 /*   Ajout de la colonne à la vue */
   gtk_tree_view_append_column(GTK_TREE_VIEW(show_tree), column);
+
 
 /*   selection d'un element */
   select = gtk_tree_view_get_selection(GTK_TREE_VIEW(show_tree));
   gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
-
-  gtk_tree_selection_set_select_function(select, (GtkTreeSelectionFunc)setting_is_selected,
-					 (gpointer)(GTK_WIDGET(self)), NULL);
+  gtk_tree_selection_set_select_function( select, (GtkTreeSelectionFunc) setting_is_selected,
+					 (gpointer) (GTK_WIDGET(self)), NULL);
   
   return (show_tree);
 }
@@ -899,7 +916,8 @@ pitivi_create_new_project ( GtkAction *action, PitiviNewProjectWindow *self )
     return ;
 
 /*   On recupere une copie du PitiviProjectSettings selectionne */
-  settings = pitivi_projectsettings_copy ((PitiviProjectSettings *) g_slist_nth_data(categorie->list_settings, self->private->position[1]));
+  settings = pitivi_projectsettings_copy ((PitiviProjectSettings *) 
+					  g_slist_nth_data(categorie->list_settings, self->private->position[1]));
 
 /*   Creation d'un nouveau projet avec ces settings */
   project = pitivi_project_new( settings );
@@ -908,7 +926,7 @@ pitivi_create_new_project ( GtkAction *action, PitiviNewProjectWindow *self )
 /*      P.S. c'est un peu cra-cra de faire comme ca, vaudrait mieux emmettre un signal et faire que */
 /*      ca soit le PitiviMainApp ou la PitiviToolboxWindow qui gere ca */
   //if (pitivi_mainapp_add_project(mainapp, project))
-    pitivi_mainapp_create_wintools (mainapp, project);
+  pitivi_mainapp_create_wintools (mainapp, project);
   
   gtk_widget_destroy (GTK_WIDGET (self));
 }
@@ -921,7 +939,7 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
   GtkTextIter		iter;
   GtkTextTagTable	*tag_table;
   gchar			*presets;
-  GtkWidget		*button_new;
+/*   GtkWidget		*button_new; */
   GtkWidget		*button_cancel;
   GtkWidget		*text_presets;
   GtkWidget		*table;			/* contient la presets et les boutons New 
@@ -958,14 +976,10 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
 		    5, 5);
 
 /*   Bouton Nouveau projet */
-  button_new = gtk_button_new_from_stock(GTK_STOCK_NEW);
-  gtk_table_attach( GTK_TABLE(table),
-		    button_new,
-		    0,1,1,2,
-		    GTK_EXPAND, FALSE,
-		    1, 1);
+  self->private->button_new = gtk_button_new_from_stock(GTK_STOCK_NEW);
+  gtk_table_attach( GTK_TABLE(table), self->private->button_new, 0, 1, 1, 2, GTK_EXPAND, FALSE, 1, 1);
   
-  g_signal_connect(button_new, "clicked", G_CALLBACK(pitivi_create_new_project), self);
+  g_signal_connect(self->private->button_new, "clicked", G_CALLBACK(pitivi_create_new_project), self);
 
 /*   Bouton Annuler projet */
   button_cancel = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
@@ -2617,7 +2631,6 @@ pitivi_newprojectwindow_new( PitiviMainApp *mainapp )
     g_object_new(PITIVI_NEWPROJECTWINDOW_TYPE, "mainapp", mainapp, NULL);
   
   g_assert(newprojectwindow != NULL);
-  newprojectwindow->private->position = g_new0(gint, 2);
   return newprojectwindow;
 }
 
@@ -2645,8 +2658,10 @@ pitivi_newprojectwindow_constructor (GType type,
   
   /* Creation des elements de la fenetre NewProject */
   pitivi_fill_hbox(self);
-  
   gtk_container_add (GTK_CONTAINER (self), self->private->hbox);
+
+  self->private->position = g_new0(gint, 2);
+  
   return object;
 }
 

@@ -61,11 +61,13 @@ void
 pitivi_callb_toolbox_filenew_project ( GtkAction *action, PitiviToolboxWindow *self )
 {
   PitiviNewProjectWindow *win_new_project;
-  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
-    
+  PitiviMainApp		*mainapp = ((PitiviWindows *) self)->mainapp;
+
   /* New Project window */
   win_new_project = pitivi_newprojectwindow_new( mainapp );
   gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
+  
+  pitivi_npw_select_first_setting(win_new_project);
 }
 
 void

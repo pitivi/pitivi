@@ -82,6 +82,10 @@ void			pitivi_mainapp_del_settings		( PitiviMainApp *self, gint *position );
  * Insert "added-value" functions here
  */
 
+/* PitiviSettings * */
+/* pitivi_mainapp_get_win_new_project(PitiviMainApp *self) { */
+/*   return self->private->win_new_project; */
+/* } */
 
 PitiviSettings *
 pitivi_mainapp_settings(PitiviMainApp *self) {
