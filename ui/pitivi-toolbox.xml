@@ -7,6 +7,9 @@
             <menuitem name="FileBoxExit"  action="FileBoxExit"/>
             <separator/>
        </menu>      
+       <menu action="WindowsMenu">
+            <menuitem name="EffectsWindow" action="EffectWindows"/>
+       </menu>      
        <menu action="HelpMenu">
             <menuitem name="HelpIndex"  action="HelpIndex"/>
             <menuitem name="HelpSearch"  action="HelpSearch"/>

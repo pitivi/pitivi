@@ -217,6 +217,20 @@ pitivi_mainapp_callb_timelinewin (GtkWindow *win, gpointer data)
 }
 
 void
+pitivi_mainapp_activate_effectswindow (PitiviMainApp *self, gboolean activate)
+{
+  if (activate && (self->private->effectswin == NULL)) {
+      self->private->effectswin = pitivi_effectswindow_new(self);
+      gtk_widget_show_all (GTK_WIDGET (self->private->effectswin) );
+      gtk_window_move (GTK_WINDOW (self->private->effectswin), 720, 450);
+      gtk_signal_connect (GTK_OBJECT (self->private->effectswin), "destroy"\
+			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_effects), self);
+  } else {
+    gtk_widget_destroy(GTK_WIDGET (self->private->effectswin));
+  }
+}
+
+void
 pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 {
   
@@ -242,16 +256,6 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_sourcelist), self);
     }
   
-  /* Effects Window */
-  
-  if (self->private->effectswin == NULL)
-    {
-      self->private->effectswin = pitivi_effectswindow_new(self);
-      gtk_widget_show_all (GTK_WIDGET (self->private->effectswin) );
-      gtk_window_move (GTK_WINDOW (self->private->effectswin), 720, 450);
-      gtk_signal_connect (GTK_OBJECT (self->private->effectswin), "destroy"\
-			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_effects), self);
-    }
   
   if (self->private->viewerwin == NULL)
     {

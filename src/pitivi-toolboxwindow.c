@@ -104,11 +104,25 @@ pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *
 
 }
 
+void
+pitivi_toolboxwindow_cb_effectswindow_toggle( GtkAction *action, PitiviToolboxWindow *self)
+{
+  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
+
+  pitivi_mainapp_activate_effectswindow(mainapp,
+					gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
+}
+
 static GtkActionEntry toolbox_menu_entries[] = {
   { "FileBoxMenu", NULL, "_File" },
+  { "WindowsMenu", NULL, "_Windows" },
   { "FileBoxNew", PITIVI_STOCK_NEW_PROJECT, "Ne_w", "<control>N", "New File", G_CALLBACK (pitivi_callb_toolbox_filenew_project) },
   { "FileBoxOpen", GTK_STOCK_OPEN, "_Open", "<control>O", "Open a file",  G_CALLBACK (pitivi_callb_toolbox_fileopen_project) },
   { "FileBoxExit", GTK_STOCK_QUIT, "E_xit", "<control>Q", "Exit the program", G_CALLBACK (pitivi_callb_toolbox_exit)},
+};
+
+static GtkToggleActionEntry toolbox_windows_entries[] ={
+  { "EffectWindows", NULL, "E_ffects", "<control>F", "Toggle the effects window", G_CALLBACK(pitivi_toolboxwindow_cb_effectswindow_toggle), FALSE}
 };
 
 static GtkActionEntry toolbox_recent_entries[]= {
@@ -153,12 +167,15 @@ pitivi_toolboxwindow_constructor (GType type,
   
   GtkActionGroup *ag1 = gtk_action_group_new ("FileBoxRecent");
   GtkActionGroup *ag2 = gtk_action_group_new ("FileBoxMenu");
+  GtkActionGroup *ag3 = gtk_action_group_new ("WindowsMenu");
   
   gtk_action_group_add_actions (ag1, toolbox_menu_entries, G_N_ELEMENTS (toolbox_menu_entries), self);
   gtk_action_group_add_actions (ag2, toolbox_recent_entries, G_N_ELEMENTS (toolbox_recent_entries), self);
-  
+  gtk_action_group_add_toggle_actions (ag3, toolbox_windows_entries, G_N_ELEMENTS (toolbox_windows_entries), self);
+
   gtk_ui_manager_insert_action_group (menumgr->public->ui, ag1, 0);
   gtk_ui_manager_insert_action_group (menumgr->public->ui, ag2, 0);
+  gtk_ui_manager_insert_action_group (menumgr->public->ui, ag3, 1);
   
   PITIVI_MENU_GET_CLASS(menumgr)->public->configure (menumgr);
   

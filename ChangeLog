@@ -1,5 +1,11 @@
 2004-06-29    <bilboed@localhost>
 
+	* src/pitivi-mainapp.c (pitivi_mainapp_activate_effectswindow): function to (de)activate the PitiviEffectsWindow
+
+	* ui/pitivi-toolbox.xml:
+	* src/pitivi-toolboxwindow.c (pitivi_toolboxwindow_cb_effectswindow_toggle): 
+	Added Windows Menu to PitiviToolboxWindow with callback
+
 	* src/pitivi-projectsettings.c (pitivi_projectsettings_media_new): removed bad codec_settings list initialisation
 
 2004-06-28    <bilboed@localhost>
