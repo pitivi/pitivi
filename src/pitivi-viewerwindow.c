@@ -522,11 +522,14 @@ static void
 pitivi_viewerwindow_finalize (GObject *object)
 {
   PitiviViewerWindow	*self = PITIVI_VIEWERWINDOW(object);
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
   /* 
    * Here, complete object destruction. 
    * You might not need to do much... 
    */
+
+  gst_element_set_state(project->pipeline, GST_STATE_NULL);
 
   g_free (self->private);
   G_OBJECT_CLASS (parent_class)->finalize (object);
