@@ -69,37 +69,6 @@ typedef enum {
   
 } PitiviEffectsTypeEnum;
 
-typedef enum {
-  PITIVI_BARWIPE,
-  PITIVI_BOXWIPE,
-  PITIVI_FOURBOXWIPE,
-  PITIVI_BARNDOORWIPE,
-  PITIVI_DIAGONALWIPE,
-  PITIVI_BOWTIEWIPE,
-  PITIVI_MISCDIAGONALWIPE,
-  PITIVI_VEEWIPE,
-  PITIVI_BARNVEEWIPE,
-  PITIVI_IRISWIPE,
-  PITIVI_CLOCKWIPE,
-  PITIVI_PINWHEELWIPE,
-  PITIVI_FANWIPE,
-  PITIVI_DOUBLEFANWIPE,
-  PITIVI_SINGLESWEEPWIPE, 
-  PITIVI_DOUBLESWEEPWIPE,
-  PITIVI_SALOONDOORWIPE,
-  PITIVI_WINDSHIELDWIPE,
-  PITIVI_LAST_WIPE
-} PitiviSmpteEnum;
-
-typedef struct _PitiviTransProp
-{
-  gint		id_categorie;
-  gchar		*name;
-  gchar		*description;
-  gchar		*image;
-  gint		smpte_num;
-}		PitiviTransProp;
-
 struct _PitiviEffectsTree
 {
   GtkWidget     *window;

@@ -26,6 +26,7 @@
 #include "pitivi.h"
 #include "pitivi-effectswindow.h"
 #include "pitivi-dragdrop.h"
+#include "pitivi-effects_cat.h"
 
 static GtkWindowClass *parent_class = NULL;
 
@@ -35,230 +36,6 @@ gchar* labels[PITIVI_EFFECT_NBCAT_TYPE+1]={
   PITIVI_VIDEO_EFFECT_LABEL,
   PITIVI_AUDIO_EFFECT_LABEL,
   0
-};
-
-gchar* transition_cat[PITIVI_LAST_WIPE+1] = 
-  {
-    "BarWipe", "BoxWipe", "FourBoxWipe", "BarnDoorWipe",
-    "DiagonalWipe", "BowTieWipe", "MiscDiagonalWipe",
-    "VeeWipe", "BarnVeeWipe", "IrisWipe", "ClockWipe",
-    "PinWheelWipe","FanWipe", "DoubleFanWipe", "SingleSweepWipe", 
-    "DoubleSweepWipe", "SaloonDoorWipe", "WindshieldWipe",
-    0
-  };
-
-static PitiviTransProp tab_category[] = {
-  {PITIVI_BARWIPE, "LeftToRight",
-   "A bar moves from left to right", PITIVI_SMPTE_1, 1},
-  {PITIVI_BARWIPE, "TopToBottom",
-   "A bar moves from top to bottom",PITIVI_SMPTE_2, 2},
-  {PITIVI_BOXWIPE, "TopLeft",
-   "A box expands from the upper-left corner to the lower-right corner",
-  PITIVI_SMPTE_3, 3},
-  {PITIVI_BOXWIPE, "TopRight",
-   "A box expands from the upper-right corner to the lower-left corner",
-  PITIVI_SMPTE_4, 4},
-  {PITIVI_BOXWIPE, "BottomRight",
-   "A box expands from the lower-right corner to the upper-left corner",
-  PITIVI_SMPTE_5, 5},
-  {PITIVI_BOXWIPE, "BottomLeft",
-   "A box expands from the lower-left corner to the upper-right corner",
-  PITIVI_SMPTE_6, 6},
-  {PITIVI_BOXWIPE, "TopCenter",
-   "A box expands from the top edge's midpoint to the bottom corners",
-  PITIVI_SMPTE_23, 23},
-  {PITIVI_BOXWIPE, "RightCenter",
-   "A box expands from the right edge's midpoint to the left corners",
-  PITIVI_SMPTE_24, 24},
-  {PITIVI_BOXWIPE, "BottomCenter",
-   "A box expands from the bottom edge's midpoint to the top corners",
-  PITIVI_SMPTE_25, 25},
-  {PITIVI_BOXWIPE, "LeftCenter",
-   "A box expands from the left edge's midpoint to the right corners",
-  PITIVI_SMPTE_26, 26},
-  {PITIVI_FOURBOXWIPE, "CornersIn",
-   "A box shape expands from each of the four corners toward the center",
-  PITIVI_SMPTE_7, 7},
-  {PITIVI_FOURBOXWIPE, "CornersOut",
-   "A box shape expands from the center of each quadrant toward the corners of each quadrant",
-  PITIVI_SMPTE_8, 8},
-  {PITIVI_BARNDOORWIPE,"Vertical",
-   "A central, vertical line splits and expands toward the left and right edges",
-  PITIVI_SMPTE_21, 21},
-  {PITIVI_BARNDOORWIPE,"Horizontal",
-   "A central, horizontal line splits and expands toward the top and bottom edges",
-  PITIVI_SMPTE_22, 22},
-  {PITIVI_BARNDOORWIPE,"DiagonalBottomLeft",
-   "A diagonal line from the lower-left to upper-right corners splits and expands toward the opposite corners",
-  PITIVI_SMPTE_45, 45},
-  {PITIVI_BARNDOORWIPE,"DiagonalTopLeft",
-   "A diagonal line from upper-left to lower-right corners splits and expands toward the opposite corners",
-  PITIVI_SMPTE_46, 46},
-  {PITIVI_DIAGONALWIPE, "TopLeft",
-   "A diagonal line moves from the upper-left corner to the lower-right corner",
-  PITIVI_SMPTE_41, 41},
-  {PITIVI_DIAGONALWIPE, "TopRight",
-   "A diagonal line moves from the upper right corner to the lower-left corner",
-  PITIVI_SMPTE_42, 42},
-  {PITIVI_BOWTIEWIPE, "Vertical",
-   "Two wedge shapes slide in from the top and bottom edges toward the center",
-  PITIVI_SMPTE_43, 43},
-  {PITIVI_BOWTIEWIPE, "Horizontal",
-   "Two wedge shapes slide in from the left and right edges toward the center",
-  PITIVI_SMPTE_44, 44},
-  {PITIVI_MISCDIAGONALWIPE, "DoubleBarnDoor",
-   "Four wedge shapes split from the center and retract toward the four edges",
-  PITIVI_SMPTE_47, 47},
-  {PITIVI_MISCDIAGONALWIPE, "DoubleDiamond",
-   "A diamond connecting the four edge midpoints simultaneously contracts toward the center and expands toward the edges",
-  PITIVI_SMPTE_48, 48},
-  {PITIVI_VEEWIPE, "Down",
-   "A wedge shape moves from top to bottom", 
-  PITIVI_SMPTE_61, 61},
-  {PITIVI_VEEWIPE, "Left",
-   "A wedge shape moves from right to left",
-  PITIVI_SMPTE_62, 62},
-  {PITIVI_VEEWIPE, "Up",
-   "A wedge shape moves from bottom to top",
-  PITIVI_SMPTE_63, 63},
-  {PITIVI_VEEWIPE, "Right",
-   "A wedge shape moves from left to right",
-  PITIVI_SMPTE_64, 64},
-  {PITIVI_BARNVEEWIPE,"Down",
-   "A \"V\" shape extending from the bottom edge's midpoint to the opposite corners contracts toward the center and expands toward the edges",
-  PITIVI_SMPTE_65, 65},
-  {PITIVI_BARNVEEWIPE, "Left",
-   "A \"V\" shape extending from the left edge's midpoint to the opposite corners contracts toward the center and expands toward the edges",
-  PITIVI_SMPTE_66, 66},
-  {PITIVI_BARNVEEWIPE, "Up",
-   "A \"V\" shape extending from the top edge's midpoint to the opposite corners contracts toward the center and expands toward the edges",
-  PITIVI_SMPTE_67, 67},
-  {PITIVI_BARNVEEWIPE, "Right",
-   "A \"V\" shape extending from the right edge's midpoint to the opposite corners contracts toward the center and expands toward the edges",
-  PITIVI_SMPTE_68, 68},
-  {PITIVI_IRISWIPE, "Rectangle",
-   "A rectangle expands from the center",
-  PITIVI_SMPTE_101, 101},
-  {PITIVI_IRISWIPE, "Diamond",
-   "A four-sided diamond expands from the center",
-  PITIVI_SMPTE_102, 102},
-  {PITIVI_CLOCKWIPE," ClockwiseTwelve",
-   "A radial hand sweeps clockwise from the twelve o'clock position",
-  PITIVI_SMPTE_201, 201},
-  {PITIVI_CLOCKWIPE," ClockwiseThree", 
-   "A radial hand sweeps clockwise from the three o'clock position",
-  PITIVI_SMPTE_202, 202},
-  {PITIVI_CLOCKWIPE," ClockwiseSix",
-   "A radial hand sweeps clockwise from the six o'clock position",
-  PITIVI_SMPTE_203, 203},
-  {PITIVI_CLOCKWIPE," ClockwiseNine",
-   "A radial hand sweeps clockwise from the nine o'clock position",
-  PITIVI_SMPTE_204, 204},
-  {PITIVI_PINWHEELWIPE, "TwoBladeVertical",
-   "Two radial hands sweep clockwise from the twelve and six o'clock positions",
-  PITIVI_SMPTE_205, 205},
-  {PITIVI_PINWHEELWIPE, "TwoBladeHorizontal",
-   "Two radial hands sweep clockwise from the nine and three o'clock positions",
-  PITIVI_SMPTE_206, 206},
-  {PITIVI_PINWHEELWIPE, "FourBlade",
-   "Four radial hands sweep clockwise",
-  PITIVI_SMPTE_207, 207},
-  {PITIVI_FANWIPE, "CenterTop",
-   "A fan unfolds from the top edge, the fan axis at the center",
-  PITIVI_SMPTE_211, 211},
-  {PITIVI_FANWIPE, "CenterRight",
-   "A fan unfolds from the right edge, the fan axis at the center",
-  PITIVI_SMPTE_212, 212},
-  {PITIVI_FANWIPE, "Top",
-   "A fan unfolds from the bottom, the fan axis at the top edge's midpoint",
-  PITIVI_SMPTE_231, 231},
-  {PITIVI_FANWIPE, "Right",
-   "A fan unfolds from the left, the fan axis at the right edge's midpoint",
-  PITIVI_SMPTE_232, 232},
-  {PITIVI_FANWIPE, "Bottom",
-   "A fan unfolds from the top, the fan axis at the bottom edge's midpoint",
-  PITIVI_SMPTE_233, 233},
-  {PITIVI_FANWIPE, "Left",
-   "A fan unfolds from the right, the fan axis at the left edge's midpoint", 
-  PITIVI_SMPTE_234, 234},
-  {PITIVI_DOUBLEFANWIPE, "FanOutVertical",
-   "Two fans, their axes at the center, unfold from the top and bottom",
-  PITIVI_SMPTE_213, 213},
-  {PITIVI_DOUBLEFANWIPE, "FanOutHorizontal",
-   "Two fans, their axes at the center, unfold from the left and right",
-  PITIVI_SMPTE_214, 214},
-  {PITIVI_DOUBLEFANWIPE, "FanInVertical",
-   "Two fans, their axes at the top and bottom, unfold from the center",
-  PITIVI_SMPTE_235, 235},
-  {PITIVI_DOUBLEFANWIPE, "FanInHorizontal",
-   "Two fans, their axes at the left and right, unfold from the center",
-  PITIVI_SMPTE_236, 236},
-  {PITIVI_SINGLESWEEPWIPE, "ClockwiseTop",
-   "A radial hand sweeps clockwise from the top edge's midpoint",
-  PITIVI_SMPTE_221, 221},
-  {PITIVI_SINGLESWEEPWIPE, "ClockwiseRight",
-   "A radial hand sweeps clockwise from the right edge's midpoint",
-  PITIVI_SMPTE_222, 222},
-  {PITIVI_SINGLESWEEPWIPE, "ClockwiseBottom",
-   "A radial hand sweeps clockwise from the bottom edge's midpoint",
-  PITIVI_SMPTE_223, 223},
-  {PITIVI_SINGLESWEEPWIPE, "ClockwiseLeft",
-   "A radial hand sweeps clockwise from the left edge's midpoint",
-  PITIVI_SMPTE_224, 224},
-  {PITIVI_SINGLESWEEPWIPE, "ClockwiseTopLeft",
-   "A radial hand sweeps clockwise from the upper-left corner",
-  PITIVI_SMPTE_241, 241},
-  {PITIVI_SINGLESWEEPWIPE, "CounterClockwiseBottomLeft",
-   "A radial hand sweeps counter-clockwise from the lower-left corner",
-  PITIVI_SMPTE_242, 242},
-  {PITIVI_SINGLESWEEPWIPE, "ClockwiseBottomRight",
-   "A radial hand sweeps clockwise from the lower-right corner",
-  PITIVI_SMPTE_243, 243},
-  {PITIVI_SINGLESWEEPWIPE, "CounterClockwiseTopRight",
-   "A radial hand sweeps counter-clockwise from the upper-right corner",
-  PITIVI_SMPTE_244, 244},
-  {PITIVI_DOUBLESWEEPWIPE, "ParallelVertical",
-   "Two radial hands sweep clockwise and counter-clockwise from the top and bottom edges' midpoints",
-  PITIVI_SMPTE_225, 225},
-  {PITIVI_DOUBLESWEEPWIPE, "ParallelDiagonal",
-   "Two radial hands sweep clockwise and counter-clockwise from the left and right edges' midpoints",
-  PITIVI_SMPTE_226, 226},
-  {PITIVI_DOUBLESWEEPWIPE, "OppositeVertical",
-   "Two radial hands attached at the top and bottom edges' midpoints sweep from right to left",
-  PITIVI_SMPTE_227, 227},
-  {PITIVI_DOUBLESWEEPWIPE, "OppositeHorizontal",
-   "Two radial hands attached at the left and right edges' midpoints sweep from top to bottom",
-  PITIVI_SMPTE_228, 228},
-  {PITIVI_DOUBLESWEEPWIPE, "ParallelDiagonalTopToLeft",
-   "Two radial hands attached at the upper-left and lower-right corners sweep down and up",
-  PITIVI_SMPTE_245, 245},
-  {PITIVI_DOUBLESWEEPWIPE, "ParallelDiagonalBottomToLeft",
-   "Two radial hands attached at the lower-left and upper-right corners sweep down and up",
-  PITIVI_SMPTE_246, 246},
-  {PITIVI_SALOONDOORWIPE, "Top",
-   "Two radial hands attached at the upper-left and upper-right corners sweep down",
-  PITIVI_SMPTE_251, 251},
-  {PITIVI_SALOONDOORWIPE, "Left",
-   "Two radial hands attached at the upper-left and lower-left corners sweep to the right",
-  PITIVI_SMPTE_252, 252},
-  {PITIVI_SALOONDOORWIPE, "Bottom",
-   "Two radial hands attached at the lower-left and lower-right corners sweep up",
-  PITIVI_SMPTE_253, 253},
-  {PITIVI_SALOONDOORWIPE, "Right", 
-   "Two radial hands attached at the upper-right and lower-right corners sweep to the left",
-  PITIVI_SMPTE_254, 254},
-  {PITIVI_WINDSHIELDWIPE, "Right",
-   "Two radial hands attached at the midpoints of the top and bottom halves sweep from right to left",
-  PITIVI_SMPTE_261, 261},
-  {PITIVI_WINDSHIELDWIPE, "Up",
-   "Two radial hands attached at the midpoints of the left and right halves sweep from top to bottom",
-  PITIVI_SMPTE_262, 262},
-  {PITIVI_WINDSHIELDWIPE, "Vertical",
-   "Two sets of radial hands attached at the midpoints of the top and bottom halves sweep from top to bottom and bottom to top",
-  PITIVI_SMPTE_263, 263},
-  {PITIVI_WINDSHIELDWIPE, "Horizontal",
-   "Two sets of radial hands attached at the midpoints of the left and right halves sweep from left to right and right to left",
-  PITIVI_SMPTE_264, 264}
 };
 
 struct _PitiviEffectsWindowPrivate
@@ -279,6 +56,7 @@ enum {
     PITIVI_TEXT_COLUMN,
     PITIVI_BG_COLOR_COLUMN,
     PITIVI_FG_COLOR_COLUMN,
+    PITIVI_POINTER_COLUMN,
     PITIVI_NB_COLUMN
 };
 
@@ -390,11 +168,14 @@ pitivi_effects_action_on_colexp (GtkTreeView *treeview,
   GtkTreeModel	      *model;
   PitiviEffectsTree   *effectstree;
   gchar		      *name;
+  gchar		      *test;
    
   effectstree = (PitiviEffectsTree *) data;
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (treeview));
   pixbuf = gtk_widget_render_icon(effectstree->window, icon, GTK_ICON_SIZE_MENU, NULL);  
   gtk_tree_model_get (GTK_TREE_MODEL (model), TreeIter, PITIVI_TEXT_COLUMN, &name, -1);
+  gtk_tree_model_get (GTK_TREE_MODEL (model), TreeIter, PITIVI_POINTER_COLUMN, &test, -1);
+  g_printf ("collpase %s %s\n", name, test);
   gtk_tree_store_set(GTK_TREE_STORE (model), TreeIter,
 		     PITIVI_ICON_COLUMN, pixbuf,
 		     -1);
@@ -424,7 +205,8 @@ pitivi_effectstree_insert_child (PitiviEffectsTree *tree_effect,
 				 GtkTreeIter *child,
 				 GtkTreeIter *parent,
 				 const gchar *name,
-				 gchar *icon)
+				 gchar *icon,
+				 gpointer data)
 {
   GdkPixbuf *pixbuf;
 
@@ -435,6 +217,7 @@ pitivi_effectstree_insert_child (PitiviEffectsTree *tree_effect,
 		     PITIVI_TEXT_COLUMN, name,
 		     PITIVI_BG_COLOR_COLUMN, NULL,
 		     PITIVI_FG_COLOR_COLUMN, NULL,
+		     PITIVI_POINTER_COLUMN, data,
 		     -1);
   tree_effect->pixbuf = pixbuf;
 }
@@ -540,7 +323,7 @@ pitivi_effectswindow_drag_begin (GtkWidget		*widget,
 }
 
 GList	*
-get_transition_effects_list(GstElementFactory		*factory)
+get_transition_effects_list (GstElementFactory		*factory)
 {
   GstElementFactory		*trans_fact;
   const gchar			*intern_name;
@@ -590,6 +373,39 @@ get_transition_effects_list(GstElementFactory		*factory)
   return(fx_prop_list);
 }
 
+
+void
+insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect, 
+			      GtkTreeIter *child, 
+			      PitiviSettings *settingslist)
+{
+  const gchar	*klass;
+  const gchar	*effectname;
+  const gchar	*desc;
+  GList *fx_audio = NULL;
+
+  pitivi_effectstree_insert_child (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, NULL);
+  /* On recupere la liste des effets audio via la structure self */
+  while ( settingslist->audio_effects )
+    {
+      fx_audio = g_list_append(fx_audio,  settingslist->audio_effects->data);
+      settingslist->audio_effects = settingslist->audio_effects->next;
+    }
+  /* On insere les elements audio dans le tree pour le menu des effets */
+  while ( fx_audio )
+    {
+      klass = gst_element_factory_get_klass (fx_audio->data);
+      effectname = gst_element_factory_get_longname (fx_audio->data);
+      desc = gst_element_factory_get_description (fx_audio->data);
+      if (!strncmp (klass, "Filter/Effect/Audio", 19))
+	{
+	  pitivi_effectstree_insert_child (tree_effect, child, &tree_effect->treeiter,
+					   effectname, PITIVI_STOCK_EFFECT_SOUND, NULL);
+	}
+      fx_audio = fx_audio->next;
+    }
+}
+
 void
 pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, 
 			    PitiviEffectsTypeEnum eneffects,  
@@ -628,18 +444,16 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 					    G_TYPE_STRING,
 					    GDK_TYPE_COLOR,
 					    GDK_TYPE_COLOR,
+					    G_TYPE_POINTER,
 					    -1);
-  pitivi_effectstree_insert_child (tree_effect, 
-				   &tree_effect->treeiter,
-				   NULL,
-				   "Simple Effects",
-				   PITIVI_STOCK_EFFECT_CAT);
+  
   /* On check le type d'effet a inserer (video/audio/transition) */
   switch (eneffects)
     {
       GtkTreeIter child;
 
     case PITIVI_EFFECT_VIDEO_TYPE:
+      pitivi_effectstree_insert_child (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, NULL);
       /* On recupere la liste des effets video via la structure self */
       while (self->video_effects)
 	{
@@ -648,15 +462,16 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 	}
       /* On creer deux sous categories */
       pitivi_effectstree_insert_child (tree_effect, &Tv_iter, NULL,
-				       "Tv Effects", PITIVI_STOCK_EFFECT_CAT);
+				       "Tv Effects", PITIVI_STOCK_EFFECT_CAT, NULL);
       pitivi_effectstree_insert_child (tree_effect, &Video_iter, NULL,
-				       "Video Effects", PITIVI_STOCK_EFFECT_CAT);
+				       "Video Effects", PITIVI_STOCK_EFFECT_CAT, NULL);
       /* On insere les elements video dans le tree pour le menu des effets */
       while (fx_video)
 	{
 	  klass = gst_element_factory_get_klass (fx_video->data);
 	  effectname = gst_element_factory_get_longname (fx_video->data);
 	  desc = gst_element_factory_get_description (fx_video->data);
+	  g_printf ("video :%s %s\n", effectname, desc);
 	  if (!strncmp (klass, "Filter/Effect/Video", 19))
 	    {
 	      gchar *idx;
@@ -665,17 +480,17 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 		{
 		  *idx = '\0';
 		  pitivi_effectstree_insert_child (tree_effect, &child, &Tv_iter,
-						   effectname, PITIVI_STOCK_EFFECT_TV);
+						   effectname, PITIVI_STOCK_EFFECT_TV, NULL);
 		}
 	      else if ((idx = strstr (effectname, "ideo")))
 		{
 		  pitivi_effectstree_insert_child (tree_effect, &child, &Video_iter,
-						   effectname + 6, PITIVI_STOCK_EFFECT_TV);
+						   effectname + 6, PITIVI_STOCK_EFFECT_TV, NULL);
 		}
 	      else
 		{
 		  pitivi_effectstree_insert_child (tree_effect, &child, &tree_effect->treeiter,
-						   effectname, PITIVI_STOCK_EFFECT_TV);
+						   effectname, PITIVI_STOCK_EFFECT_TV, NULL);
 		} 
 	    }
 	  fx_video = fx_video->next;
@@ -683,27 +498,8 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
       break;
 
     case PITIVI_EFFECT_AUDIO_TYPE:
-      /* On recupere la liste des effets audio via la structure self */
-      while (self->audio_effects)
-	{
-	  fx_audio = g_list_append(fx_audio, self->audio_effects->data);
-	  self->audio_effects = self->audio_effects->next;
-	}
-      /* On insere les elements audio dans le tree pour le menu des effets */
-      while (fx_audio)
-	{
-	  klass = gst_element_factory_get_klass (fx_audio->data);
-	  effectname = gst_element_factory_get_longname (fx_audio->data);
-	  desc = gst_element_factory_get_description (fx_audio->data);
-	  if (!strncmp (klass, "Filter/Effect/Audio", 19))
-	    {
-	      pitivi_effectstree_insert_child (tree_effect, &child, &tree_effect->treeiter,
-					       effectname, PITIVI_STOCK_EFFECT_SOUND);
-	    }
-	  fx_audio = fx_audio->next;
-	}	 
+      insert_audio_effects_on_tree (tree_effect, &child, self);
       break;
-
     case PITIVI_EFFECT_TRANSITION_TYPE:
       /* On recupere la liste des effets de transition via la structure self */
       while (self->transition_effects)
@@ -712,21 +508,31 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 	  self->transition_effects = self->transition_effects->next;
 	}
 
+      while ( fx_transition )
+	{
+	  klass = gst_element_factory_get_klass ( fx_transition->data );
+	  effectname = gst_element_factory_get_longname (  fx_transition->data );
+	  desc = gst_element_factory_get_description (  fx_transition->data );
+	  g_printf ("transition :%s %s\n", effectname, desc);
+	  fx_transition = fx_transition->next;
+	}
+
       /* On creer 18 sous categories */
       for (nb_tcat = 0; nb_tcat < PITIVI_LAST_WIPE; nb_tcat++)
 	{
 	  pitivi_effectstree_insert_child (tree_effect, &Trans_iter[nb_tcat], NULL,
-					   transition_cat[nb_tcat], PITIVI_STOCK_EFFECT_CAT);
-	  for (nb = 0; nb < (sizeof (tab_category)/sizeof (PitiviTransProp)); nb++)
+					   transition_cat[nb_tcat], PITIVI_STOCK_EFFECT_CAT, NULL);
+	  for (nb = 0; nb < (sizeof (tab_category) / sizeof (PitiviTransProp)); nb++)
 	    {
 	      /* On test les elements du tableau et on les insere dans les differentes categories */
 	      if (nb_tcat == tab_category[nb].id_categorie && tab_category[nb].name)
 		{
 		  pitivi_effectstree_insert_child (tree_effect, &child, &Trans_iter[nb_tcat],
-						   tab_category[nb].name, tab_category[nb].image);
+						   tab_category[nb].name, tab_category[nb].image, NULL);
 		}
 	    }
 	}
+      pitivi_effectstree_insert_child (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, "toto");
       break;
     }
 
