@@ -664,9 +664,6 @@ pitivi_timelinemedia_constructor (GType type,
   this->sourceitem->srcfile = this->private->sf;
   this->sourceitem->id = this->track->nb_added[0];
   
-  if (this->track->track_type == PITIVI_AUDIO_TRACK)
-    this->sourceitem->isaudio = TRUE;
-
   if ( this->sourceitem->srcfile )
     {    
       name = g_strdup_printf ("%s_%s_%lld", this->sourceitem->srcfile->filename, 

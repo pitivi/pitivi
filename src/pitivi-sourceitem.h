@@ -31,20 +31,9 @@
 
 typedef struct _PitiviSourceItem PitiviSourceItem;
 
-typedef enum
-{
-  VIDEO_A,
-  VIDEO_B,
-  TRANS_AB,
-  AUDIO_A,
-  AUDIO_B
-} PitiviPiste;
-
 struct _PitiviSourceItem
 {
   gint64	        id;
-  PitiviPiste		piste;
-  gboolean		isaudio;
   PitiviSourceFile	*srcfile;
   GnlObject		*gnlobject;
 };
