@@ -11,7 +11,7 @@
 # *************************************************************
 
 
-pixmapdir = $(datadir)/pitivi/pixmaps
+pixmapdir = $(datadir)/pixmaps/pitivi/
 
 pixmap_DATA = backward.xpm\
 bg_audio.xpm\

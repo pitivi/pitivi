@@ -34,9 +34,10 @@ pitivi_file (const char *filename)
   static char *paths[] = {
     DATADIR "/",
     DATADIR "/pixmaps/",
-    DATADIR "/pitivi/",
+    DATADIR "/pixmaps/pitivi/",
     DATADIR "/pitivi/pixmaps/",
     DATADIR "/pitivi/ui/",
+    DATADIR "/ui/pitivi",
     DATADIR "/ui/",
     /* Developpement */
     "../pixmaps/",

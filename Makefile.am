@@ -10,6 +10,7 @@ SUBDIRS			= gnl src pixmaps docs ui conf
 
 EXTRA_DIST = \
 	pitivi.spec \
+	pitivi.desktop \
 	depcomp \
 	ChangeLog \
 	autogen.sh \
@@ -21,6 +22,7 @@ EXTRA_DIST = \
 AUTOMAKE_OPTIONS = dist-bzip2
 
 MMdir = $(datadir)/applications
+MM_DATA = pitivi.desktop
 
 release: dist
 	make @PACKAGE@-@VERSION@.tar.gz.md5
