@@ -23,6 +23,7 @@
 #ifndef __GNL_SOURCE_H__
 #define __GNL_SOURCE_H__
 
+#include <gnl/gnl.h>
 #include <gnl/gnlobject.h>
 
 G_BEGIN_DECLS

@@ -23,14 +23,18 @@
 #include <glib.h>
 #include <gst/gst.h>
 
-#include <gnl/gnlversion.h>
-#include <gnl/gnloperation.h>
-#include <gnl/gnlcomposition.h>
-#include <gnl/gnlsource.h>
-#include <gnl/gnltimeline.h>
-#include <gnl/gnlgroup.h>
+/* #include <gnl/gnlversion.h> */
+/* #include <gnl/gnlobject.h> */
+/* #include <gnl/gnlsource.h> */
+/* #include <gnl/gnloperation.h> */
+/* #include <gnl/gnlcomposition.h> */
+/* #include <gnl/gnlgroup.h> */
+/* #include <gnl/gnltimeline.h> */
 
 G_BEGIN_DECLS
+
+#define GST_CAT_DEFAULT gnonlin
+GST_DEBUG_CATEGORY_EXTERN(GST_CAT_DEFAULT);
 
 /* initialize GNL */
 void gnl_init(int *argc,char **argv[]);

@@ -27,9 +27,12 @@
 #ifndef PITIVI_PROJECTSOURCELIST_H
 #define PITIVI_PROJECTSOURCELIST_H
 
+typedef struct _PitiviProjectSourceList PitiviProjectSourceList;
+
 /*
  * Potentially, include other headers on which this header depends.
  */
+
 #include <gst/gst.h>
 #include <gtk/gtk.h>
 #include "pitivi-sourcefile.h"
@@ -45,7 +48,6 @@
 #define PITIVI_IS_PROJECTSOURCELIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_PROJECTSOURCELIST_TYPE))
 #define PITIVI_PROJECTSOURCELIST_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_PROJECTSOURCELIST_TYPE, PitiviProjectSourceListClass))
 
-typedef struct _PitiviProjectSourceList PitiviProjectSourceList;
 typedef struct _PitiviProjectSourceListClass PitiviProjectSourceListClass;
 typedef struct _PitiviProjectSourceListPrivate PitiviProjectSourceListPrivate;
 typedef struct _PitiviSourceBin PitiviSourceBin;

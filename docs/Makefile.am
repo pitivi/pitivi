@@ -1,1 +1,1 @@
-SUBDIRS = gnl
+SUBDIRS = gnl #pitivi

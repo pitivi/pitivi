@@ -129,6 +129,7 @@ GNL_IS_GROUP_CLASS
 gnl_init
 gnl_main
 gnl_main_quit
+GST_CAT_DEFAULT
 </SECTION>
 
 <SECTION>

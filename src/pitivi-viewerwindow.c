@@ -106,40 +106,6 @@ static  guint viewersignals[LAST_SIGNAL] = {0};
  * forward definitions
  */
 
-GstElement	*get_file_source(GstElement *pipeline)
-{
-  GList		*pipelist;
-  GstElement	*elem;
-  
-
-  pipelist = (GList *) gst_bin_get_list(GST_BIN(pipeline)); 
-  elem = NULL;
-
- 
-  while (pipelist)
-    {
-      elem = (GstElement*)pipelist->data;
-      if (strstr(gst_element_get_name(elem), "bin_"))
-	break;
-      pipelist = pipelist->next;
-    }
-  
-  if (GST_IS_BIN(elem))
-    {
-      pipelist = (GList *) gst_bin_get_list(GST_BIN(elem));
-      while (pipelist)
-	{
-	  elem = (GstElement*)pipelist->data;
-	  if (strstr(gst_element_get_name(elem), "src_"))
-	    break;
-	  pipelist = pipelist->next;
-	}
-    }
-  else
-    return NULL;
-  return elem;
-}
-
 gboolean	do_seek(GstElement *elem, gint64 value)
 {
   GstEvent	*event;
@@ -385,58 +351,6 @@ static gint pitivi_viewerwindow_expose_event( GtkWidget      *widget,
   return FALSE;
 }
 
-static void
-pitivi_viewerwindow_drag_data_received (GtkWidget *widget, GdkDragContext *drag_context,
-					gint x, gint y, GtkSelectionData *data,
-					guint info, guint time, gpointer user_data)
-{
-  PitiviSourceFile	*sf;
-  PitiviViewerWindow *self = (PitiviViewerWindow *) user_data;
-  
-  g_printf("drag-data-received viewer\n");
-  sf = (void *) data->data;
-  g_printf("Received file [%s] in viewer\n",
-	   sf->filename);
-  g_printf("pipeline ==> %p\n", sf->pipeline);
-
-  pitivi_viewerwindow_set_source(self, sf);
-}
-
-static gboolean
-pitivi_viewerwindow_drag_drop (GtkWidget *widget, GdkDragContext *dc,
-			       gint x, gint y, guint time, gpointer user_data)
-{
-
-  g_printf("drag-drop viewer\n");
-  gtk_drag_finish (dc, TRUE, FALSE, time);
-
-
-  return TRUE;
-}
-
-void	pitivi_viewerwindow_set_source(PitiviViewerWindow *self, 
-				       PitiviSourceFile *sf)
-{
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  GstElement	*elem;
-  GList		*binlist;
-
-  elem = NULL;
-  self->private->play_status = STOP;
-  binlist = (GList *) gst_bin_get_list(GST_BIN(sf->pipeline));
-  while (binlist)
-    {
-      elem = (GstElement*)binlist->data;
-      if (strstr(gst_element_get_name(elem), "src_"))
-	break;
-      binlist = binlist->next;
-    }
-  //self->private->timeline sf->length
-  // gtk_range_set_range (self->private);
-  do_seek(elem, 0);
-  // pitivi_project_set_source_element(project, sf->pipeline);
-}
-
 void
 viewerwindow_start_stop_changed (GnlTimeline *timeline, GParamSpec *arg, gpointer udata)
 {
@@ -478,16 +392,6 @@ create_gui (gpointer data)
 			 | GDK_BUTTON_PRESS_MASK
 			 | GDK_POINTER_MOTION_MASK
 			 | GDK_POINTER_MOTION_HINT_MASK);
-
-  gtk_drag_dest_set(GTK_WIDGET(self->private->video_area), 
-		    GTK_DEST_DEFAULT_ALL,
-		    TargetEntries, iNbTargetEntries,
-		    GDK_ACTION_COPY);
-
-  g_signal_connect (G_OBJECT(self->private->video_area), "drag_data_received",
-		    G_CALLBACK (pitivi_viewerwindow_drag_data_received), self);
-  g_signal_connect (G_OBJECT(self->private->video_area), "drag_drop",
-		    G_CALLBACK (pitivi_viewerwindow_drag_drop), self);
 
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->video_area, TRUE, TRUE, 0);
   

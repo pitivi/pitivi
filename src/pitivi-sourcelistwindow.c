@@ -885,11 +885,14 @@ drag_data_get_cb (GtkWidget          *widget,
 	  if ( !self->private->dndsf )
 	    return ;
 	}
+      g_printf("PitiviSourceListWindow , drag_data_get_cb, sf = %p\n",
+	       self->private->dndsf);
+      sf = self->private->dndsf;
       gtk_selection_data_set (selection_data, 
 			      selection_data->target, 
 			      8, 
-			      (void *) self->private->dndsf, 
-			      sizeof (PitiviSourceFile));
+			      (void *) &sf,
+			      sizeof (PitiviSourceFile *));
     }
 }
 
@@ -942,7 +945,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 
   /* Creation de la premiere colonne */
   pCellRenderer = gtk_cell_renderer_pixbuf_new();
-  pColumn = gtk_tree_view_column_new_with_attributes("Elements", pCellRenderer,
+  pColumn = gtk_tree_view_column_new_with_attributes("Icon", pCellRenderer,
 						     "pixbuf", BMP_LISTCOLUMN1,
 						     NULL);
   
@@ -951,7 +954,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 
   /* Creation de la deuxieme colonne */
   pCellRenderer = gtk_cell_renderer_text_new();
-  pColumn = gtk_tree_view_column_new_with_attributes("Nom", pCellRenderer,
+  pColumn = gtk_tree_view_column_new_with_attributes("Filename", pCellRenderer,
 						     "text", TEXT_LISTCOLUMN2,
 						     NULL);
   
@@ -960,7 +963,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 
   /* Creation de la troisieme colonne */
   pCellRenderer = gtk_cell_renderer_text_new();
-  pColumn = gtk_tree_view_column_new_with_attributes("Type de media",
+  pColumn = gtk_tree_view_column_new_with_attributes("Media Type",
 						     pCellRenderer,
 						     "text", TEXT_LISTCOLUMN3,
 						     NULL);
@@ -970,7 +973,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 
   /* Creation de la quatrieme colonne */
   pCellRenderer = gtk_cell_renderer_text_new();
-  pColumn = gtk_tree_view_column_new_with_attributes("Duree", pCellRenderer,
+  pColumn = gtk_tree_view_column_new_with_attributes("Length", pCellRenderer,
 						     "text", TEXT_LISTCOLUMN4,
 						     NULL);
   
@@ -979,7 +982,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 
   /* Creation de la cinquieme colonne */
   pCellRenderer = gtk_cell_renderer_text_new();
-  pColumn = gtk_tree_view_column_new_with_attributes("Info video",
+  pColumn = gtk_tree_view_column_new_with_attributes("Video",
 						     pCellRenderer,
 						     "text", TEXT_LISTCOLUMN5,
 						     NULL);
@@ -989,7 +992,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 
   /* Creation de la sixieme colonne */
   pCellRenderer = gtk_cell_renderer_text_new();
-  pColumn = gtk_tree_view_column_new_with_attributes("Info audio",
+  pColumn = gtk_tree_view_column_new_with_attributes("Audio",
 						     pCellRenderer,
 						     "text", TEXT_LISTCOLUMN6,
 						     NULL);
@@ -999,7 +1002,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 
   /* Creation de la septieme colonne */
   pCellRenderer = gtk_cell_renderer_text_new();
-  pColumn = gtk_tree_view_column_new_with_attributes("Commentaire",
+  pColumn = gtk_tree_view_column_new_with_attributes("Comment",
 						     pCellRenderer,
 						     "text", TEXT_LISTCOLUMN7,
 						     NULL);
@@ -1297,6 +1300,7 @@ void	OnNewBin(gpointer data, gint action, GtkWidget *widget)
 void	import_from_gtkchooser (PitiviSourceListWindow *self, gchar *labelchooser, guint signal)
 {
   GtkWidget	*dialog;
+  gboolean	accept = FALSE;
 
   if (signal == FILEIMPORT_SIGNAL)
     dialog = gtk_file_chooser_dialog_new(labelchooser,
@@ -1315,15 +1319,17 @@ void	import_from_gtkchooser (PitiviSourceListWindow *self, gchar *labelchooser, 
   
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
     {
+      accept = TRUE;
       if (signal == FILEIMPORT_SIGNAL)
 	self->private->filepath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
       else
 	self->private->folderpath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-      g_signal_emit(self, pitivi_sourcelistwindow_signal[signal],
-		    0 /* details */, 
-		    NULL);
     }
   gtk_widget_destroy(dialog);
+  if (accept)
+    g_signal_emit(self, pitivi_sourcelistwindow_signal[signal],
+		  0 /* details */, 
+		  NULL);
 }
 
 void	OnImportFile(gpointer data, gint action, GtkWidget *widget)
@@ -1416,7 +1422,22 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
   if (!OnSelectItem(self, &iter, &liststore, (void **) &self->private->dndsf, POINTER_LISTCOLUMN8, &item_select, 
 		   &folder_select))
     return;
-  
+
+  /* If the PitiviSourceFile is used , dialogbox "Can't delete" */
+  if (self->private->dndsf->nbbins) {
+    GtkWidget	*dialog;
+
+    dialog = gtk_message_dialog_new (GTK_WINDOW (self),
+				     GTK_DIALOG_DESTROY_WITH_PARENT,
+				     GTK_MESSAGE_ERROR,
+				     GTK_BUTTONS_CLOSE,
+				     "This source is used %d times in the project\nYou must remove it from the timeline before deleting it",
+				     self->private->dndsf->nbbins);
+    gtk_dialog_run (GTK_DIALOG (dialog));
+    gtk_widget_destroy (dialog);
+    return;
+  }
+
   g_printf("remove item from bin\n");
   if (strcmp(sMediaType, "Bin"))
     {
@@ -1426,6 +1447,7 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
 						    self->private->treepath,
 						    item_select);
       gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
+      g_object_unref(self->private->dndsf);
     }
   else /* need to remove folder */
     {

@@ -157,6 +157,7 @@ pitivi_timelinemedia_new ( PitiviSourceFile *sf, int width, PitiviTimelineCellRe
   PitiviTimelineMedia	*this;
   PitiviLayerType	type;
  
+  g_printf("PitiviTimelineMedia new, sf = %p\n", sf);
   type = PITIVI_NO_TRACK;
   if (sf)
     type = check_media_type (sf);
@@ -274,12 +275,12 @@ pitivi_timelinemedia_constructor (GType type,
 				  guint n_construct_properties,
 				  GObjectConstructParam * construct_properties)
 {
-  GObject *object;
+  GObject	*object;
   PitiviTimelineMedia *this;
-  gchar *name;
+  gchar		*name;
+  GstElement	*bin;
   
   /* Constructor  */
-  
   object = (* G_OBJECT_CLASS (parent_class)->constructor) 
     (type, n_construct_properties, construct_properties);
   
@@ -292,33 +293,43 @@ pitivi_timelinemedia_constructor (GType type,
   /* Source Item  */
 
   this->sourceitem = g_new0 (PitiviSourceItem, 1);
-  this->sourceitem->srcfile = g_object_ref (this->private->sf);
-  this->sourceitem->srcfile = g_new0 (PitiviSourceFile, 1);
-  memcpy (this->sourceitem->srcfile, this->private->sf, sizeof (*this->private->sf)); 
+  this->sourceitem->srcfile = this->private->sf;
+/*   this->sourceitem->srcfile = g_new0 (PitiviSourceFile, 1); */
+/*   memcpy (this->sourceitem->srcfile, this->private->sf, sizeof (*this->private->sf));  */
   this->sourceitem->id = this->track->nb_added[0];
   
   if (this->track->track_type == PITIVI_AUDIO_TRACK)
     this->sourceitem->isaudio = TRUE;
 
-  if ( this->sourceitem->srcfile->pipeline )
+  if ( this->sourceitem->srcfile )
     {
-      pitivi_printf_element(this->sourceitem->srcfile->pipeline );
+      /* pitivi_printf_element(this->sourceitem->srcfile->pipeline ); */
       /* Construct Id : filename + '_' + mediatype  + '_' + id */
-      name = g_malloc (strlen (this->sourceitem->srcfile->filename) + 
-		       strlen (this->sourceitem->srcfile->mediatype) + 10);
-      sprintf (name, "%s_%s_%lld", this->sourceitem->srcfile->filename, 
-	       this->sourceitem->srcfile->mediatype, this->sourceitem->id);
+      
+      name = g_strdup_printf ("%s_%s_%lld", this->sourceitem->srcfile->filename, 
+			      this->sourceitem->srcfile->mediatype, this->sourceitem->id);
       if ( this->track->track_type == PITIVI_EFFECTS_TRACK ||  this->track->track_type == PITIVI_TRANSITION_TRACK )
 	{
-	  this->sourceitem->gnlobject = (GnlObject *)gnl_operation_new (name, this->sourceitem->srcfile->pipeline);
+	  if (!(bin = pitivi_sourcefile_get_effect_bin(this->sourceitem->srcfile))) {
+	    g_warning ("Coudn't get Sourcefile effect bin");
+	    return NULL;
+	  }
+	  this->sourceitem->gnlobject = (GnlObject *)gnl_operation_new (name, bin);
 	  if ( this->track->track_type == PITIVI_TRANSITION_TRACK )
-	    /* specific to transition */
+	    /* specific to transition TODO : Do we actually need to set the priority here ? */
 	    pitivi_timelinemedia_set_priority (this, 1);
 	}
-      else
+      else if ( this->track->track_type == PITIVI_VIDEO_TRACK )
 	{
-	  this->sourceitem->gnlobject = (GnlObject *)gnl_source_new (name, this->sourceitem->srcfile->pipeline);
-	  //gnl_object_set_media_start_stop (GNL_OBJECT(this->sourceitem->gnlobject), 0, this->sourceitem->srcfile->length);
+	  if (!(bin = pitivi_sourcefile_get_video_bin(this->sourceitem->srcfile)))
+	    return NULL;
+	  this->sourceitem->gnlobject = (GnlObject *)gnl_source_new (name, bin);
+	}
+      else if ( this->track->track_type == PITIVI_AUDIO_TRACK )
+	{
+	  if (!(bin = pitivi_sourcefile_get_audio_bin(this->sourceitem->srcfile)))
+	    return NULL;
+	  this->sourceitem->gnlobject = (GnlObject *) gnl_source_new (name, bin);
 	}
     }
     
@@ -327,6 +338,8 @@ pitivi_timelinemedia_constructor (GType type,
   /* Setting Tooltip */
   pitivi_timelinemedia_update_tooltip (this);
   
+  g_printf("pitivi_timelinemedia_constructor END\n");
+
   return object;
 }
 

@@ -251,7 +251,7 @@ gnl_timeline_timer_loop (GstElement *element)
       format = GST_FORMAT_TIME;
       gst_element_query (GST_ELEMENT (group), GST_QUERY_POSITION, &format, &time);
 
-      GST_INFO ("got EOS on group %s, time %lld\n",
+      GST_INFO ("got EOS on group %s, time %lld",
 		 gst_element_get_name (GST_ELEMENT (group)),
 	         time);
 
@@ -261,7 +261,7 @@ gnl_timeline_timer_loop (GstElement *element)
 
         gst_pad_unlink (to_schedule->sinkpad, GST_PAD_PEER (to_schedule->sinkpad));
 
-        GST_INFO ("reactivating group %s, seek to time %lld %lld\n",
+        GST_INFO ("reactivating group %s, seek to time %lld %lld",
 		 gst_element_get_name (GST_ELEMENT (group)),
 	         time, G_MAXINT64);
 
@@ -281,7 +281,7 @@ gnl_timeline_timer_loop (GstElement *element)
           gst_pad_link (srcpad, to_schedule->sinkpad);
           gst_element_set_state (GST_ELEMENT (group), GST_STATE_PLAYING);
 	} else  {
-	  g_warning ("group %s has no pad\n", 
+	  g_warning ("group %s has no pad", 
 		     gst_element_get_name (GST_ELEMENT (group)));
 	}
       } else {

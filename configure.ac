@@ -144,5 +144,6 @@ AC_OUTPUT(Makefile
 	 ui/Makefile
 	 gnl/Makefile
 	 docs/Makefile
+dnl	 docs/pitivi/Makefile
 	 docs/gnl/Makefile
 	 )

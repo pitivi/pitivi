@@ -110,7 +110,8 @@ GType pitivi_effectswindow_get_type (void);
 
 PitiviEffectsWindow	*pitivi_effectswindow_new(PitiviMainApp *mainapp);
 
-void			pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, 
+void			pitivi_effectstree_set_gst (PitiviEffectsWindow *win,
+						    PitiviEffectsTree *tree_effect, 
 						    PitiviEffectsTypeEnum eneffects,  
 						    PitiviSettings *self);
 gchar			*get_icon_fx(G_CONST_RETURN gchar *name, gint type);

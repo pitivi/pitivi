@@ -146,7 +146,7 @@ pitivi_thumbs_set_property (GObject * object,
       this->info = g_value_get_int (value);
       break;
     case PROP_FRAME:
-      this->private->frame = g_value_get_int (value);
+      this->private->frame = g_value_get_int64 (value);
       break;
     default:
       g_assert (FALSE);
@@ -196,6 +196,7 @@ pitivi_thumbnail_pngenc_get (PitiviThumbs *this)
   GstElement *gnomevfssrc;
   GstElement *snapshot;
   GstElement *sink;
+  GstElement *spider;
   GstPad *pad;
   GstEvent *event;
   gboolean res;
@@ -203,7 +204,7 @@ pitivi_thumbnail_pngenc_get (PitiviThumbs *this)
   int i;
   
   this->private->pipeline = gst_parse_launch ("gnomevfssrc name=gnomevfssrc ! spider ! " 
-					      "videoscale ! ffcolorspace ! video/x-raw-rgb,width=48,height=48 !"
+					      "videoscale name=spider ! ffcolorspace ! video/x-raw-rgb,width=48,height=48 !"
 					      "pngenc name=snapshot",
 					      &error);
   
@@ -214,12 +215,19 @@ pitivi_thumbnail_pngenc_get (PitiviThumbs *this)
     }
   gnomevfssrc = gst_bin_get_by_name (GST_BIN (this->private->pipeline), "gnomevfssrc");
   snapshot = gst_bin_get_by_name (GST_BIN (this->private->pipeline), "snapshot");
+  spider = gst_bin_get_by_name (GST_BIN (this->private->pipeline), "spider");
   g_assert (GST_IS_ELEMENT (snapshot));
   g_assert (GST_IS_ELEMENT (gnomevfssrc));
+  g_assert (GST_IS_ELEMENT (spider));
   g_object_set (G_OBJECT (gnomevfssrc), "location", this->private->filename, NULL);
 
   gst_element_set_state (this->private->pipeline, GST_STATE_PLAYING);
-    
+  
+/*   g_warning("Seeking"); */
+/*   if (!gst_element_seek(spider, */
+/* 			GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH, */
+/* 			this->private->frame)) */
+/*     g_warning ("Couldn't seek to make thumb :("); */
   for (i = 0; i < this->private->frame; ++i)
     gst_bin_iterate (GST_BIN (this->private->pipeline));
 	
@@ -314,8 +322,9 @@ pitivi_thumbs_class_init (gpointer g_class, gpointer g_class_data)
 							 G_PARAM_READWRITE));
   
   g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_FRAME,
-				   g_param_spec_pointer ("frame","frame","frame",
-							 G_PARAM_READWRITE));
+				   g_param_spec_int64 ("frame","frame","frame",
+						       G_MININT64, G_MAXINT64, 0,
+						       G_PARAM_READWRITE));
 
   thumb_class->generate_thumb = pitivi_thumbs_generate;
 }

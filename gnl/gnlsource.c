@@ -484,7 +484,7 @@ source_is_media_queued (GnlSource *source)
     SourcePadPrivate *private = gst_pad_get_element_private (pad);
 
     if (!private->queue) {
-      GST_INFO("Pad %s hasn't any queue...",
+      GST_WARNING("Pad %s hasn't any queue...",
 	       gst_pad_get_name(pad));
       return FALSE;
     }
@@ -507,7 +507,7 @@ source_send_seek (GnlSource *source, GstEvent *event)
     return FALSE;
 
   if (!pads)
-    GST_INFO("%s has no pads...",
+    GST_WARNING("%s has no pads...",
 	     gst_element_get_name (GST_ELEMENT (source->element)));
 
   source->private->seek_start = GST_EVENT_SEEK_OFFSET (event);
@@ -523,7 +523,7 @@ source_send_seek (GnlSource *source, GstEvent *event)
   if (GST_STATE(source->bin) == GST_STATE_PLAYING)
     wasinplay = TRUE;
   if (!(gst_element_set_state(source->bin, GST_STATE_PAUSED)))
-    g_warning("couldn't set GnlSource's bin to PAUSED !!!");
+    GST_WARNING("couldn't set GnlSource's bin to PAUSED !!!");
   while (pads) {  
     GstPad *pad = GST_PAD (pads->data);
 /*     GstEvent *event; */
@@ -572,7 +572,7 @@ source_queue_media (GnlSource *source)
   GST_INFO("%s switching to PLAYING for media buffering", gst_element_get_name(GST_ELEMENT(source)));
 
   if (!gst_element_set_state (source->bin, GST_STATE_PLAYING)) {
-    GST_INFO("END : couldn't change bin to PLAYING");
+    GST_WARNING("END : couldn't change bin to PLAYING");
     return FALSE;
   }
   g_slist_foreach (source->links, 
@@ -605,7 +605,7 @@ source_queue_media (GnlSource *source)
 
   GST_INFO("going back to PAUSED state after media buffering");
   if (!gst_element_set_state (source->bin, GST_STATE_PAUSED)) {
-    GST_INFO("error : couldn't put bin back to PAUSED");
+    GST_ERROR("error : couldn't put bin back to PAUSED");
     filled = FALSE;
   }
 
@@ -817,8 +817,8 @@ gnl_source_change_state (GstElement *element)
   GstElementStateReturn	res = GST_STATE_SUCCESS;
 
   if (!GNL_OBJECT(source)->active)
-    g_warning("Trying to change state but Source %s is not active ! This might be normal...",
-	     gst_element_get_name(element));
+    GST_WARNING("Trying to change state but Source %s is not active ! This might be normal...",
+		gst_element_get_name(element));
   if (GNL_OBJECT(source)->active)
     switch (GST_STATE_TRANSITION (source)) {
     case GST_STATE_NULL_TO_READY:
@@ -846,8 +846,8 @@ gnl_source_change_state (GstElement *element)
   if (res == GST_STATE_SUCCESS)
     res = GST_ELEMENT_CLASS (parent_class)->change_state (element);
   else
-    GST_INFO("%s : something went wrong",
-	     gst_element_get_name(element));
+    GST_WARNING("%s : something went wrong",
+		gst_element_get_name(element));
   GST_INFO("%s : change_state returns %d",
 	   gst_element_get_name(element),
 	   res);

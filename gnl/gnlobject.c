@@ -653,6 +653,7 @@ gnl_object_set_property (GObject *object, guint prop_id,
       gnlobject->media_stop = g_value_get_uint64 (value);
       break;
     case ARG_PRIORITY:
+      g_printf("gnlobject set priority\n");
       gnl_object_set_priority (gnlobject, g_value_get_int (value));
       break;
     case ARG_ACTIVE:

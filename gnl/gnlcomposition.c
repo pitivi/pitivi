@@ -17,11 +17,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#define GST_INFO_ENABLED
-
 #include "config.h"
-#include "gnlcomposition.h"
+#include "gnlsource.h"
 #include "gnloperation.h"
+#include "gnlcomposition.h"
 
 static GstElementDetails gnl_composition_details = GST_ELEMENT_DETAILS ( "GNL Composition",
 		      "Filter/Editor",
@@ -726,7 +725,7 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
     gst_pad_set_element_private(ghost, (gpointer) probe);
   }
   else {
-    GST_INFO("Haven't got a pad :(");
+    GST_WARNING("Haven't got a pad :(");
     res = FALSE;
   }
 

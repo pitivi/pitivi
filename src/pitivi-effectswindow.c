@@ -148,7 +148,8 @@ pitivi_effectswindow_constructor (GType type,
       self->private->trees[count]->treeview = gtk_tree_view_new ();
       self->private->trees[count]->scroll = gtk_scrolled_window_new (NULL, NULL);
       self->private->trees[count]->order = count;
-      pitivi_effectstree_set_gst (self->private->trees[count], 
+      pitivi_effectstree_set_gst (self,
+				  self->private->trees[count], 
 				  count+1, 
 				  ((PitiviWindows *)self)->mainapp->global_settings);
       pitivi_effectswindow_insert_newtab (GTK_NOTEBOOK (self->private->notebook), self->private->trees[count]);
@@ -255,25 +256,27 @@ pitivi_effectstree_insert_node (PitiviEffectsTree *tree_effect,
   tree_effect->pixbuf = pixbuf;
 }
 
-PitiviSourceFile *
-pitivi_create_effect_sourcefile (const gchar *name,
-				 const gchar *mediatype,
-				 GstElement *elm,
-				 GdkPixbuf *pixbuf)
-{
-  PitiviSourceFile *se;
+/* PitiviSourceFile * */
+/* pitivi_create_effect_sourcefile (const gchar *name, */
+/* 				 const gchar *mediatype, */
+/* 				 GstElement *elm, */
+/* 				 GdkPixbuf *pixbuf) */
+/* { */
+/*   PitiviSourceFile *se; */
   
-  se = g_new0 (PitiviSourceFile, 1);
-  se->filename = g_strdup (name);
-  se->thumbs_effect = pixbuf;
-  se->mediatype = g_strdup (mediatype);
-  se->pipeline = elm;
-  se->length = 500000LL;
-  return se;
-}
+/*   se = pitivi_sourcefile_new_effect(name, elm, mediatype, ); */
+/*   se = g_new0 (PitiviSourceFile, 1); */
+/*   se->filename = g_strdup (name); */
+/*   se->thumbs_effect = pixbuf; */
+/*   se->mediatype = g_strdup (mediatype); */
+/*   se->pipeline = elm; */
+/*   se->length = 500000LL; */
+/*   return se; */
+/* } */
 
 void
-pitivi_effectstree_insert_effect (PitiviEffectsTree *tree_effect,
+pitivi_effectstree_insert_effect (PitiviEffectsWindow *win,
+				  PitiviEffectsTree *tree_effect,
 				  GtkTreeIter *child,
 				  GtkTreeIter *parent,
 				  const gchar *name,
@@ -287,7 +290,9 @@ pitivi_effectstree_insert_effect (PitiviEffectsTree *tree_effect,
 
   pixbuf = gtk_widget_render_icon(tree_effect->window, icon, GTK_ICON_SIZE_MENU, NULL);
   thumb = gtk_widget_render_icon(tree_effect->window, icon, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
-  se = pitivi_create_effect_sourcefile (name, desc, (GstElement *)data, thumb);
+  se = pitivi_sourcefile_new_effect ((gchar *) name, GST_ELEMENT_FACTORY (data), 
+				     pixbuf, (gchar *) desc, PITIVI_WINDOWS(win)->mainapp);
+  //  se = pitivi_create_effect_sourcefile (name, desc, (GstElement *)data, thumb, PITIVI_WINDOWS(win)->mainapp);
   gtk_tree_store_append (tree_effect->model, child, parent);
   gtk_tree_store_set(tree_effect->model, child,
 		     PITIVI_ICON_COLUMN, pixbuf,
@@ -413,7 +418,8 @@ gchar	*get_icon_fx(G_CONST_RETURN gchar *name, gint type)
 }
 
 void
-insert_video_effects_on_tree (PitiviEffectsTree *tree_effect, 
+insert_video_effects_on_tree (PitiviEffectsWindow *win,
+			      PitiviEffectsTree *tree_effect, 
 			      GtkTreeIter *child, 
 			      GList *settingslist)
 {
@@ -459,7 +465,8 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
 	    {
 	      *idx = '\0';
 	      icon_fx = get_icon_fx(name, 1);
-	      pitivi_effectstree_insert_effect (tree_effect, 
+	      pitivi_effectstree_insert_effect (win,
+					       tree_effect, 
 					       child,
 					       &video_iter[0],
 					       effectname,
@@ -470,7 +477,8 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
 	  else if ((idx = strstr (effectname, "ideo")))
 	    {
 	      icon_fx = get_icon_fx(name, 1);
-	      pitivi_effectstree_insert_effect (tree_effect, 
+	      pitivi_effectstree_insert_effect (win,
+					       tree_effect, 
 					       child,
 					       &video_iter[1],
 					       effectname,
@@ -481,7 +489,8 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
 	  else
 	    {
 	      icon_fx = get_icon_fx(name, 1);
-	      pitivi_effectstree_insert_effect (tree_effect, 
+	      pitivi_effectstree_insert_effect (win,
+					       tree_effect, 
 					       child,
 					       &tree_effect->treeiter,
 					       effectname,
@@ -495,7 +504,8 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
 }
 
 void
-insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect, 
+insert_audio_effects_on_tree (PitiviEffectsWindow *win,
+			      PitiviEffectsTree *tree_effect, 
 			      GtkTreeIter *child, 
 			      GList *settingslist)
 {
@@ -525,7 +535,8 @@ insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect,
       if (!strncmp (klass, "Filter/Effect/Audio", 19))
 	{
 	  icon_fx = get_icon_fx(name, 2);
-	  pitivi_effectstree_insert_effect (tree_effect, 
+	  pitivi_effectstree_insert_effect (win,
+					   tree_effect, 
 					   child, 
 					   &tree_effect->treeiter,
 					   effectname,
@@ -538,7 +549,8 @@ insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect,
 }
 
 void
-insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect, 
+insert_transition_effects_on_tree (PitiviEffectsWindow *win,
+				   PitiviEffectsTree *tree_effect, 
 				   GtkTreeIter *child, 
 				   GList *settingslist)
 {
@@ -579,7 +591,8 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
 	  
 	  if (nb_tcat == tab_category[nb].id_categorie && tab_category[nb].name)
 	    {
-	      pitivi_effectstree_insert_effect (tree_effect, 
+	      pitivi_effectstree_insert_effect (win,
+					       tree_effect, 
 					       child, 
 					       &Trans_iter[nb_tcat],
 					       tab_category[nb].name,
@@ -598,7 +611,8 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
 }
 
 void
-pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
+pitivi_effectstree_set_gst (PitiviEffectsWindow *win,
+			    PitiviEffectsTree *tree_effect,
 			    PitiviEffectsTypeEnum eneffects,  
 			    PitiviSettings *setting)
 {
@@ -625,13 +639,13 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
       GtkTreeIter child;
 
     case PITIVI_EFFECT_VIDEO_TYPE:
-      insert_video_effects_on_tree (tree_effect, &child, setting->video_effects);
+      insert_video_effects_on_tree (win, tree_effect, &child, setting->video_effects);
       break;
     case PITIVI_EFFECT_AUDIO_TYPE:
-      insert_audio_effects_on_tree (tree_effect, &child, setting->audio_effects);
+      insert_audio_effects_on_tree (win, tree_effect, &child, setting->audio_effects);
       break;
     case PITIVI_EFFECT_TRANSITION_TYPE:
-      insert_transition_effects_on_tree (tree_effect, &child, setting->transition_effects);
+      insert_transition_effects_on_tree (win, tree_effect, &child, setting->transition_effects);
       break;
     }
   

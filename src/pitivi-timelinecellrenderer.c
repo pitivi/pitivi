@@ -23,6 +23,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-sourcefile.h"
 #include "pitivi-timelinewindow.h"
 #include "pitivi-timelinecellrenderer.h"
 #include "pitivi-timelinemedia.h"
@@ -568,7 +569,7 @@ check_media_type (PitiviSourceFile *sf)
   PitiviLayerType layer;
   gchar *media;
 
-  if (sf)
+  if (PITIVI_IS_SOURCEFILE (sf))
     {
       if (sf->mediatype)
 	{
@@ -941,14 +942,14 @@ pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *sel
 						 int x, 
 						 int y)
 {
-  PitiviSourceFile	*sf;
+  PitiviSourceFile	**sf;
   PitiviLayerType	type_track_cmp;
   
   x -= self->private->slide_width/2;
   if ( x < 0)
     x = 0;
-  sf = (PitiviSourceFile *) selection->data;
-  dispose_medias (self, sf, x);
+  sf = (PitiviSourceFile **) selection->data;
+  dispose_medias (self, *sf, x);
 }
 
 
@@ -959,13 +960,13 @@ pitivi_timelinecellrenderer_drag_on_effects (PitiviTimelineCellRenderer *self,
 					     int x,
 					     int y)
 {
-  PitiviSourceFile  *sf = NULL;
+  PitiviSourceFile  **sf = NULL;
   
-  sf = (PitiviSourceFile *) selection->data;
-  if (sf)
+  sf = (PitiviSourceFile **) selection->data;
+  if (*sf)
     {
       if ((self->track_type == PITIVI_EFFECTS_TRACK || self->track_type == PITIVI_TRANSITION_TRACK))
-	create_effect_on_track (self, sf, x);
+	create_effect_on_track (self, *sf, x);
     }
 }
 
@@ -1030,6 +1031,8 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
   GtkWidget    *source;
   PitiviTimelineCellRenderer *self;
 
+  g_printf("TimelineCellRenderer Drag_data_received, sf = %p\n", 
+	   *(selection->data));
   self = PITIVI_TIMELINECELLRENDERER (object);
   self->private->current_selection = selection;
   if (!selection->data) {
@@ -1038,7 +1041,7 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
   }
   
   cursor = pitivi_getcursor_id (GTK_WIDGET(self));
-  self->private->current_selection = selection;
+  //  self->private->current_selection = selection;
   source = gtk_drag_get_source_widget(dc);
   switch (info) 
     {
@@ -1290,7 +1293,7 @@ static void
 pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *container, guint x, gpointer data)
 {
   PitiviTimelineMedia *media[2], *link;
-  PitiviSourceFile	*sf;
+/*   PitiviSourceFile	*sf; */
   GtkWidget *widget;
   gint64 frame;
   gint64 start1, start2, stop1, stop2, mstart1, mstart2, mstop1, mstop2;
@@ -1313,9 +1316,11 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 
       // TODO / PABO : Creation d'un nouveau PitiviSourceFile pour le placer dans le nouveau PitiviTimelineMedia
       
-      sf = pitivi_sourcefile_new(PITIVI_TIMELINEMEDIA(widget)->sourceitem->srcfile->filename,
-				 PITIVI_WINDOWS(container->private->timewin)->mainapp);
-      media[0] = pitivi_timelinemedia_new ( sf, widget->allocation.width, container );
+/*       sf = pitivi_sourcefile_new(PITIVI_TIMELINEMEDIA(widget)->sourceitem->srcfile->filename, */
+/* 				 PITIVI_WINDOWS(container->private->timewin)->mainapp); */
+      g_printf("Creating a new timeline media with PitiviSourceFile %p\n", PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile);
+      media[0] = pitivi_timelinemedia_new ( PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile,
+					    widget->allocation.width, container );
       g_printf("Setting values for existing media\n");
       // donner un nouveau stop/media_stop a l'ancien media
       pitivi_timelinemedia_set_start_stop(PITIVI_TIMELINEMEDIA(widget), start1, stop1);
@@ -1333,7 +1338,8 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	{
 	  link = PITIVI_TIMELINEMEDIA (PITIVI_TIMELINEMEDIA (widget)->linked);
 	  GTK_WIDGET ( link )->allocation.width = widget->allocation.width;
-	  media[1] = pitivi_timelinemedia_new ( sf, widget->allocation.width, container->linked_track );
+	  media[1] = pitivi_timelinemedia_new (PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile,
+					       widget->allocation.width, container->linked_track );
 	  pitivi_media_set_size ( PITIVI_TIMELINEMEDIA (widget)->linked, x, GTK_WIDGET (container)->allocation.height);
 	  link_widgets (media[0], media[1]);
 	  g_printf("Setting values for existing media\n");
@@ -1352,7 +1358,7 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 					       G_OBJECT (media[0]),
 					       0);
       /* To do calculate frame thumb */
-      g_object_set (thumb, "frame", 200, NULL);
+      g_object_set (thumb, "frame", 200LL, NULL);
       PITIVI_THUMBS_GET_CLASS (thumb)->generate_thumb (thumb);
     }
 }

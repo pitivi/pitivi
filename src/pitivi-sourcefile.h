@@ -26,11 +26,14 @@
 #ifndef PITIVI_SOURCEFILE_H
 #define PITIVI_SOURCEFILE_H
 
+typedef struct _PitiviSourceFile PitiviSourceFile;
+
 /*
  * Potentially, include other headers on which this header depends.
  */
 #include <gst/gst.h>
 #include <gtk/gtk.h>
+#include <pitivi-mainapp.h>
 
 
 /*
@@ -40,11 +43,10 @@
 #define PITIVI_SOURCEFILE_TYPE (pitivi_sourcefile_get_type ())
 #define PITIVI_SOURCEFILE(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), PITIVI_SOURCEFILE_TYPE, PitiviSourceFile))
 #define PITIVI_SOURCEFILE_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), PITIVI_SOURCEFILE_TYPE, PitiviSourceFileClass))
-#define PITIVI_IS_SOURCEFILE(obj) (G_TYPE_CHECK_TYPE ((obj), PITIVI_SOURCEFILE_TYPE))
+#define PITIVI_IS_SOURCEFILE(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PITIVI_SOURCEFILE_TYPE))
 #define PITIVI_IS_SOURCEFILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_SOURCEFILE_TYPE))
 #define PITIVI_SOURCEFILE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_SOURCEFILE_TYPE, PitiviSourceFileClass))
 
-typedef struct _PitiviSourceFile PitiviSourceFile;
 typedef struct _PitiviSourceFileClass PitiviSourceFileClass;
 typedef struct _PitiviSourceFilePrivate PitiviSourceFilePrivate;
 
@@ -60,6 +62,9 @@ struct _PitiviSourceFile
   gchar *infoaudio;
   gint64 length;
   
+  /* number of bins used */
+  gint	nbbins;
+
   GdkPixbuf  *thumbs_audio;
   GdkPixbuf  *thumbs_video;
   GdkPixbuf  *thumbs_effect;
@@ -67,10 +72,9 @@ struct _PitiviSourceFile
   GstElement *pipeline_video;
   GstElement *pipeline_audio;
   
-  /* private */
-  
   gboolean    haveaudio;
   gboolean    havevideo;
+  gboolean    haveeffect;
 
   PitiviSourceFilePrivate *private;
 };
@@ -88,6 +92,14 @@ GType pitivi_sourcefile_get_type (void);
  * Method definitions.
  */
 
-PitiviSourceFile	*pitivi_sourcefile_new ();
+PitiviSourceFile	*pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp);
+PitiviSourceFile	*pitivi_sourcefile_new_effect (gchar *name, GstElementFactory *factory,
+						       GdkPixbuf *pixbuf, gchar *mediatype,
+						       PitiviMainApp *mainapp);
+
+GstElement		*pitivi_sourcefile_get_bin (PitiviSourceFile *sf);
+GstElement		*pitivi_sourcefile_get_audio_bin (PitiviSourceFile *sf);
+GstElement		*pitivi_sourcefile_get_video_bin (PitiviSourceFile *sf);
+GstElement		*pitivi_sourcefile_get_effect_bin (PitiviSourceFile *sf);
 
 #endif

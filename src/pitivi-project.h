@@ -26,6 +26,8 @@
 #ifndef PITIVI_PROJECT_H
 #define PITIVI_PROJECT_H
 
+typedef struct _PitiviProject PitiviProject;
+
 /*
  * Potentially, include other headers on which this header depends.
  */
@@ -46,7 +48,6 @@
 #define PITIVI_IS_PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_PROJECT_TYPE))
 #define PITIVI_PROJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_PROJECT_TYPE, PitiviProjectClass))
 
-typedef struct _PitiviProject PitiviProject;
 typedef struct _PitiviProjectClass PitiviProjectClass;
 typedef struct _PitiviProjectPrivate PitiviProjectPrivate;
 

@@ -26,7 +26,8 @@
 #include <glib/gprintf.h>
 
 #include <gst/gst.h>
-#include <gnl/gnlsource.h>
+#include <gnl/gnl.h>
+#include <gnl/gnlobject.h>
 
 G_BEGIN_DECLS
 

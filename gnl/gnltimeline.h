@@ -23,6 +23,7 @@
 #ifndef __GNL_TIMELINE_H__
 #define __GNL_TIMELINE_H__
 
+#include <gnl/gnl.h>
 #include <gnl/gnlcomposition.h>
 #include <gnl/gnlgroup.h>
 

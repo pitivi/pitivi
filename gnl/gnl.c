@@ -5,8 +5,7 @@
 
 gchar *_gnl_progname;
 
-
-
+GST_DEBUG_CATEGORY (GST_CAT_DEFAULT);
 
 #if 0
 extern gboolean gnl_elements_plugin_init (GstPlugin *plugin); 
@@ -39,12 +38,15 @@ gnl_init (int *argc, char **argv[])
 #if 0
   GstPlugin *plugin;
 #endif
-  
+
+  GST_DEBUG_CATEGORY_INIT (gnonlin, "gnonlin", GST_DEBUG_FG_GREEN, "gnonlin non-linear library"); 
+ 
   if (!gnl_init_check (argc,argv)) {
     exit (0);
   }
 
   gst_init (argc, argv);
+
   gst_scheduler_factory_set_default_name ("opt");
 
 #if 0
