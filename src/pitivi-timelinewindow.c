@@ -373,7 +373,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
       if (count < (PITIVI_MAX_PISTE/2))
 	{
 	  cell = pitivi_timelinecellrenderer_new (pv, PITIVI_VIDEO_TRACK);
-	  g_sprintf (&label, "Video %d", pv);
+	  g_sprintf ((char *)label, "Video %d", pv);
 	  gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new (label), FALSE, FALSE, 0);
 	  g_signal_connect(G_OBJECT (check), "clicked", G_CALLBACK (check_track), cell);
 	  pv++;
@@ -381,7 +381,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
       else
 	{
 	  cell = pitivi_timelinecellrenderer_new (pa, PITIVI_AUDIO_TRACK);
-	  g_sprintf (&label, "Audio %d", pa);
+	  g_sprintf ((char *)label, "Audio %d", pa);
 	  gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new (label), FALSE, FALSE, 0);
 	  g_signal_connect(G_OBJECT (check), "clicked", G_CALLBACK (check_track), cell);
 	  pa++;

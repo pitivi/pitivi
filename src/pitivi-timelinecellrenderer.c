@@ -382,7 +382,7 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
     return;
   }
   
-  cursor = pitivi_getcursor_id (self);
+  cursor = pitivi_getcursor_id (GTK_WIDGET(self));
   self->private->current_selection = selection;
   switch (info) 
     {

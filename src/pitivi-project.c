@@ -363,11 +363,11 @@ pitivi_project_set_audio_output(PitiviProject *project, GstElement *output)
 
   project->private->audioqueue = gst_element_factory_make("queue", "queue");
   project->private->audioout = output;
-  gst_element_link(project->private->audioqueue, output);
   gst_bin_add_many(GST_BIN(project->private->asinkthread), 
 		   project->private->audioqueue,
 		   project->private->audioout,
 		   NULL);
+  gst_element_link(project->private->audioqueue, output);
 }
 
 static GObject *
