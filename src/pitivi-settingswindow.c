@@ -88,6 +88,28 @@ pitivi_settingswindow_combobox_get_active (GtkWidget *widget)
   return (elm);
 }
 
+void 
+pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *self)
+{
+  GList *list;
+    
+  g_print ("######################################################\n");
+  g_print ("ACCEPT\n");
+  g_print ("SAVE %s\n", self->elm);
+
+  list = pitivi_gstelementsettings_get_list (self);
+
+  for (; list; list = g_list_next (list)) {
+    PitiviGstElementSettingsProp *prop = (PitiviGstElementSettingsProp *) list->data;
+    g_print ("------------------------\n");
+    g_print ("name:%s\n", prop->name);
+  }
+
+  g_print ("######################################################\n");
+
+  return ;
+}
+
 void
 pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 {
@@ -127,11 +149,7 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
   result  = gtk_dialog_run (GTK_DIALOG (Dialog));
   switch (result) {
   case GTK_RESPONSE_ACCEPT:
-    g_print ("######################################################\n");
-    g_print ("ACCEPT\n");
-    g_print ("SAVE %s\n", Properties->elm);
-    pitivi_gstelementsettings_get_list (Properties);
-    g_print ("######################################################\n");
+    pitivi_settingswindow_accept_reponse (Properties);
     break;
   default:
     g_print ("CANCEL\n");
