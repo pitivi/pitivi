@@ -1295,7 +1295,7 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   /* Activating ruler */
   
   PitiviProject	*proj = PITIVI_WINDOWS(self)->mainapp->project;
-  int videorate = pitivi_projectsettings_get_videorate(proj->settings);
+  gdouble videorate = pitivi_projectsettings_get_videorate(proj->settings);
   g_object_set (self->hruler, "ruler-videorate", videorate, NULL);
   
   /* Activate Windows Menu */

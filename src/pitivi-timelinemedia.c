@@ -210,16 +210,12 @@ pitivi_timelinemedia_update_tooltip (PitiviTimelineMedia *this)
   GnlObject		*obj = this->sourceitem->gnlobject;
 
   /* Make the string */
-  str = g_strdup_printf("%s\nposition : %4lld:%3lld->%4lld:%3lld\nMedia : %4lld:%3lld->%4lld:%3lld\nPriority : %d\n",
+  str = g_strdup_printf("%s\nposition : %03lld:%02lld:%03lld -> %03lld:%02lld:%03lld\nMedia : %03lld:%02lld:%03lld -> %03lld:%02lld:%03lld\nPriority : %d",
 			gst_element_get_name(GST_ELEMENT (obj)),
-			(signed long long int) (obj->start / GST_SECOND),
-			(signed long long int) ((obj->start % GST_SECOND) / GST_MSECOND),
-			(signed long long int) (obj->stop / GST_SECOND), 
-			(signed long long int) ((obj->stop % GST_SECOND) / GST_MSECOND),
-			(signed long long int) (obj->media_start / GST_SECOND), 
-			(signed long long int) ((obj->media_start % GST_SECOND) / GST_MSECOND),
-			(signed long long int) (obj->media_stop / GST_SECOND), 
-			(signed long long int) ((obj->media_stop % GST_SECOND) / GST_MSECOND),
+			GST_M_S_M (obj->start),
+			GST_M_S_M (obj->stop),
+			GST_M_S_M (obj->media_start),
+			GST_M_S_M (obj->media_stop),
 			obj->priority);
   gtk_tooltips_set_tip (this->private->tooltips, GTK_WIDGET(this),
 			str, NULL);

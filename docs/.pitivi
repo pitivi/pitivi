@@ -11,7 +11,7 @@ Insert a description of the setting</pitivi:description>
           <pitivi:container_factory>avimux</pitivi:container_factory>
           <pitivi:media_settings>
             <pitivi:codec_factory_name>ffenc_dvvideo</pitivi:codec_factory_name>
-            <pitivi:caps>video/x-raw-yuv, width=(int)720, height=(int)576, framerate=(int)25</pitivi:caps>
+            <pitivi:caps>video/x-raw-yuv, width=(int)720, height=(int)576, framerate=(double)25</pitivi:caps>
             <pitivi:codec_properties/>
           </pitivi:media_settings>
           <pitivi:media_settings>

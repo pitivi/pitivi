@@ -891,6 +891,7 @@ guint
 convert_time_pix (PitiviTimelineCellRenderer *self, gint64 timelength)
 {
   gint64 len = timelength;
+  gdouble	ratio;
   PitiviProject	*proj = PITIVI_WINDOWS(self->private->timewin)->mainapp->project;
   
   switch (self->private->timewin->unit)
@@ -902,13 +903,16 @@ convert_time_pix (PitiviTimelineCellRenderer *self, gint64 timelength)
       len = (timelength / GST_SECOND) * self->private->timewin->zoom;
       break;
     case PITIVI_FRAMES:
-      len = (timelength / GST_SECOND) 
-	* pitivi_projectsettings_get_videorate(proj->settings)
-	* self->private->timewin->zoom;
+      ratio = ( pitivi_projectsettings_get_videorate(proj->settings)
+		* self->private->timewin->zoom );
+	
+      len = (timelength / GST_SECOND) * ratio;
       break;
     default:
       break;
     }
+/*   g_printf ("Converting time %03lld:%02lld:%03lld  -> pixels %lld\n", */
+/* 	    GST_M_S_M (timelength), len); */
   return len;
 }
 
@@ -922,7 +926,7 @@ gint64
 convert_sub_pix_time (guint pos,
 		      guint unit,
 		      guint zoom,
-		      guint videorate)
+		      gdouble videorate)
 {
   gint64 res;
 
@@ -932,13 +936,15 @@ convert_sub_pix_time (guint pos,
     break;
   case PITIVI_FRAMES:
     res = (pos * GST_SECOND)
-      / (videorate * zoom);
+      / ((gint64) (videorate * zoom));
     break;
   case PITIVI_NANOSECONDS:
   default:
     res = pos;
     break;
   }
+/*   g_printf ("Converting pos %d to time %03lld:%02lld:%03lld\n", */
+/* 	    pos, GST_M_S_M(res)); */
   return res;
 }
 
@@ -946,7 +952,7 @@ gint64
 convert_pix_time (PitiviTimelineCellRenderer *self, guint pos)
 {
   PitiviProject	*proj = PITIVI_WINDOWS(self->private->timewin)->mainapp->project;
-  guint videorate = 0;
+  gdouble videorate;
   
   videorate = pitivi_projectsettings_get_videorate (proj->settings);
   return convert_sub_pix_time (pos,
@@ -1253,14 +1259,15 @@ pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
 {
   GList	*child;
   GnlObject	*source;
-  gint64	start,mstart,mstop;
-
+  gint64	start,stop,mstart,mstop;
+  
   // redraw all childs at the good position and at the good width
   for (child = gtk_container_get_children(GTK_CONTAINER(self)); child; child = child->next) {
     if (PITIVI_IS_TIMELINEMEDIA(child->data)) {
       // get the child time position, it's length
       source = PITIVI_TIMELINEMEDIA(child->data)->sourceitem->gnlobject;
       start = GNL_OBJECT(source)->start;
+      stop = GNL_OBJECT(source)->stop;
       gnl_object_get_start_stop(GNL_OBJECT(source), &mstart, &mstop);
       // resize the child
       pitivi_media_set_size(GTK_WIDGET (child->data),
@@ -1268,6 +1275,11 @@ pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
       // move it to the good position
       pitivi_layout_move(GTK_LAYOUT(self), GTK_WIDGET(child->data), 
 			 convert_time_pix(self, start) ,0);
+      if ((start != GNL_OBJECT(source)->start) || (stop != GNL_OBJECT(source)->stop))
+	g_warning ("%s was at %03lld:%02lld:%03lld -> %03lld:%02lld:%03lld  and is now at %03lld:%02lld:%03lld -> %03lld:%02lld:%03lld",
+		   gst_element_get_name(GST_ELEMENT(source)),
+		   GST_M_S_M(start), GST_M_S_M(stop),
+		   GST_M_S_M(GNL_OBJECT(source)->start), GST_M_S_M(GNL_OBJECT(source)->stop));
     }
   }
 }

@@ -48,7 +48,7 @@ static void pitivi_ruler_draw_pos      (GtkRuler       *ruler);
 struct _PitiviRulerPrivate
 {
   PitiviConvert	 unit;
-  guint		 videorate;
+  gdouble	 videorate;
   guint		 idx;
   GdkGC		 *gc_play;
   guint		 timeline_x;
@@ -195,7 +195,7 @@ pitivi_ruler_set_property (GObject * object,
       self->private->unit = g_value_get_int (value); 
       break;
     case PROP_VIDEORATE:
-      self->private->videorate = g_value_get_int (value); 
+      self->private->videorate = g_value_get_double (value); 
       break;
     default:
       g_assert (FALSE);
@@ -320,8 +320,8 @@ pitivi_ruler_class_init (PitiviRulerClass *klass)
 						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE));
  
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_VIDEORATE,
-				   g_param_spec_int ("ruler-videorate", "ruler-videorate", "ruler-videorate",
-						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE));
+				   g_param_spec_double ("ruler-videorate", "ruler-videorate", "ruler-videorate",
+							0.0, G_MAXDOUBLE, 0.0, G_PARAM_READWRITE));
   g_signal_new ("moving-play",
 		G_TYPE_FROM_CLASS (pitivi_class),
 		G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,

@@ -746,7 +746,7 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
       val = (GValue *) gst_structure_get_value (structure, "height");
       gtk_entry_set_text( GTK_ENTRY (self->private->size_height ), pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
       val = (GValue *) gst_structure_get_value (structure, "framerate"); 
-      gtk_entry_set_text(GTK_ENTRY (self->private->fps_text ), pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
+      gtk_entry_set_text(GTK_ENTRY (self->private->fps_text ), pitivi_newprojectwindow_getstr( g_value_get_double (val) ));
 
       index = pitivi_npw_get_index_from_tabname ( self, self->private->video_tabname, vmedia->codec_factory_name );
       if (index != -1)

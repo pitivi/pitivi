@@ -155,6 +155,73 @@ cache_audio_video (PitiviSourceFile *sf)
   }
 }
 
+void
+bin_new_pad_fake_output (GstPad *pad, bindata *data)
+{
+  GstElement	*sink;
+  char		*tmp;
+
+  tmp = g_strdup_printf("fakesink%d", data->sf->private->lastsinkid++);
+  sink = gst_element_factory_make ("fakesink", tmp);
+  g_free(tmp);
+  gst_bin_add(GST_BIN (data->bin), sink);
+  if (!(gst_pad_link(pad, gst_element_get_pad(sink, "sink"))))
+    g_warning("Error linking decodebin pad to fakesink !!!");
+}
+
+void
+bin_new_pad_audio_output (GstPad *pad, bindata *data)
+{
+  /* TODO : Add the audio adapters */
+  if (data->bintype == IS_AUDIO_VIDEO)
+    gst_element_add_ghost_pad (data->bin, pad, "asrc");
+  else
+    gst_element_add_ghost_pad (data->bin, pad, "src");
+}
+
+void
+bin_new_pad_video_output (GstPad *pad, bindata *data)
+{
+  GstElement	*vrate, *vscale, *cspace, *identity, *bcspace;
+  PitiviMediaSettings	*ms;
+  
+  /*
+    If we always keep the following chain, it'l adapt if the PitiviProjectSettings change
+  */
+
+  /* dbin ! videorate ! videoscale ! ffmpegcolorspace ! videocaps ! identity ! */
+      
+  vrate = gst_element_factory_make ("videorate", NULL);
+  vscale = gst_element_factory_make ("videoscale", NULL);
+  bcspace = gst_element_factory_make ("ffmpegcolorspace", NULL);
+  cspace = gst_element_factory_make ("ffmpegcolorspace", NULL);
+  identity = gst_element_factory_make ("identity", NULL);
+
+  gst_bin_add_many (GST_BIN (data->bin),
+		    bcspace, vrate, vscale, cspace, identity,
+		    NULL);
+
+  if (!(gst_pad_link(pad, gst_element_get_pad(bcspace, "sink"))))
+    g_warning("Error linking decodebin pad to first colorspace sink !!!");
+  if (!(gst_element_link_many (bcspace, vrate, vscale, cspace, NULL)))
+    g_warning("Error linking vrate, vscale and cspace");
+      
+  ms = data->sf->private->mainapp->project->settings->media_settings->data;
+      
+  if (!(gst_element_link_filtered(cspace, identity, ms->caps)))
+    g_warning ("Couldn't link filtered colorspace->identity with caps %s",
+	       gst_caps_to_string(ms->caps));
+
+  if (data->bintype == IS_AUDIO_VIDEO) {
+    gst_element_add_ghost_pad (data->bin, 
+			       gst_element_get_pad(identity, "src"), "vsrc");
+  } else {
+    gst_element_add_ghost_pad (data->bin,
+			       gst_element_get_pad(identity, "src"), "src");
+  }
+  
+}
+
 /* bin_new_pad_cb , callback used by outgoing bins when there's a new pad */
 
 void
@@ -162,47 +229,27 @@ bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udat
 {
   gint	padtype;
   bindata	*data = (bindata *) udata;
-  char		*tmp;
-  GstElement	*sink;
   
   padtype = get_pad_type (pad);
   if (!padtype)
     return;
-/*   g_printf("Adding pad type[%d]->[%d] : %s:%s\n", padtype, data->bintype, GST_DEBUG_PAD_NAME(pad)); */
+  g_printf("Adding pad type[%d]->[%d] : %s:%s\n", padtype, data->bintype, GST_DEBUG_PAD_NAME(pad));
   /* Connect (adapters and) ghost pads */
   if (padtype == IS_AUDIO) {
-    if (data->bintype != IS_VIDEO) {
-      /* TODO : Add the adapters */
-      if (data->bintype == IS_AUDIO_VIDEO) {
-	gst_element_add_ghost_pad (data->bin, pad, "asrc");
-      } else {
-	gst_element_add_ghost_pad (data->bin, pad, "src");
-      }
-    } else {
-      tmp = g_strdup_printf("fakesink%d", data->sf->private->lastsinkid++);
-      sink = gst_element_factory_make ("fakesink", tmp);
-      g_free(tmp);
-      gst_bin_add(GST_BIN (data->bin), sink);
-      if (!(gst_pad_link(pad, gst_element_get_pad(sink, "sink"))))
-	g_warning("Error linking decodebin pad to fakesink !!!");
-    }
+    if (data->bintype != IS_VIDEO)
+      bin_new_pad_audio_output (pad, data);
+    else
+      bin_new_pad_fake_output (pad, data);
+
+    gst_bin_sync_children_state (GST_BIN(data->bin));
     data->audioready = TRUE;
   } else if (padtype == IS_VIDEO) {
-    if (data->bintype != IS_AUDIO) {
-      /* TODO : Add the adapter */
-      if (data->bintype == IS_AUDIO_VIDEO) {
-	gst_element_add_ghost_pad (data->bin, pad, "vsrc");
-      } else {
-	gst_element_add_ghost_pad (data->bin, pad, "src");
-      }
-    } else {
-      tmp = g_strdup_printf("fakesink%d", data->sf->private->lastsinkid++);
-      sink = gst_element_factory_make ("fakesink", tmp);
-      g_free(tmp);
-      gst_bin_add(GST_BIN (data->bin), sink);
-      if (!(gst_pad_link(pad, gst_element_get_pad(sink, "sink"))))
-	g_warning("Error linking decodebin pad to fakesink !!!");
-    }
+    if (data->bintype != IS_AUDIO)
+      bin_new_pad_video_output (pad, data);
+    else
+      bin_new_pad_fake_output (pad, data);
+
+    gst_bin_sync_children_state (GST_BIN(data->bin));
     data->videoready = TRUE;
   }
   /* update ready flag */
@@ -252,9 +299,9 @@ create_new_bin (PitiviSourceFile *self, int type)
 
   if (!gst_element_seek (decode, GST_FORMAT_BYTES | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH, 0))
     g_printf("ERROR SEEKING BACK TO 0!!!!\n");
-  gst_element_set_state (container, GST_STATE_PAUSED);
   gst_object_ref(GST_OBJECT(pipeline));
   gst_bin_remove (GST_BIN (container), pipeline);
+  gst_element_set_state (container, GST_STATE_READY);
   return pipeline;
 }
 

@@ -59,7 +59,7 @@ pitivi_projectsettings_vcaps_create (int width, int height, int framerate)
 			     "video/x-raw-yuv",
 			     "width", G_TYPE_INT, width,
 			     "height", G_TYPE_INT, height,
-			     "framerate", G_TYPE_INT, framerate,
+			     "framerate", G_TYPE_DOUBLE, (double) framerate,
 			     NULL );
   return (caps);
 }
@@ -97,15 +97,15 @@ pitivi_projectsettings_get_videosize (PitiviProjectSettings *ps, gint *width, gi
   return TRUE;
 }
 
-int
+gdouble
 pitivi_projectsettings_get_videorate(PitiviProjectSettings *ps)
 {
-  int	res;
+  gdouble	res;
   PitiviMediaSettings	*ms;
   
   ms = ps->media_settings->data;
 
-  if (gst_structure_get_int(gst_caps_get_structure(ms->caps, 0), "framerate", &res))
+  if (gst_structure_get_double(gst_caps_get_structure(ms->caps, 0), "framerate", &res))
     return res;
   return 0;
 }

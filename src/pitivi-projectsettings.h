@@ -110,7 +110,7 @@ GSList			*pitivi_projectsettings_list_make( );
 GstCaps			*pitivi_projectsettings_vcaps_create ( int width, int height, int framerate );
 GstCaps			*pitivi_projectsettings_acaps_create ( int rate, int channel, int depth );
 
-int			pitivi_projectsettings_get_videorate(PitiviProjectSettings *ps);
+gdouble			pitivi_projectsettings_get_videorate(PitiviProjectSettings *ps);
 int			pitivi_projectsettings_get_audiorate(PitiviProjectSettings *ps);
 int			pitivi_projectsettings_get_audiodepth(PitiviProjectSettings *ps);
 gboolean		pitivi_projectsettings_get_videosize (PitiviProjectSettings *ps, 
