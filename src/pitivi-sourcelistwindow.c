@@ -47,7 +47,6 @@ struct _PitiviSourceListWindowPrivate
 {
   /* instance private members */
   gboolean	dispose_has_run;
-  PitiviProjectSourceList	*prjsrclist;
   GtkWidget	*hpaned;
   GtkWidget	*selectfile;
   GtkWidget	*selectfolder;
@@ -60,6 +59,8 @@ struct _PitiviSourceListWindowPrivate
   /* GST variable */
   GstElement	*pipeline;
   GstCaps	*mediacaps;
+  GSList       	*padlist;
+
   /* Property of the media */
   gchar		*mainmediatype;
   gchar		*mediatype;
@@ -123,6 +124,13 @@ enum
     FOLDERIMPORT_SIGNAL,
     LAST_SIGNAL
   };
+
+enum
+  {
+    TARGET_STRING,
+    TARGET_URL
+  };
+
 
 static guint pitivi_sourcelistwindow_signal[LAST_SIGNAL] = { 0 };
 
@@ -210,6 +218,14 @@ static gchar	*BaseMediaType[] =
     0
   };
 
+static GtkTargetEntry TargetEntries[] =
+  {
+    { "STRING",	       0, TARGET_STRING },
+    { "text/plain",    0, TARGET_STRING },
+    { "text/uri-list", 0, TARGET_URL },
+  };
+
+static gint	iNbTargetEntries = sizeof(TargetEntries)/sizeof(TargetEntries[0]);
 /*
  * insert "added-value" functions here
  */
@@ -441,7 +457,7 @@ void	show_file_in_current_bin(PitiviSourceListWindow *self)
   gtk_tree_view_set_model(GTK_TREE_VIEW(self->private->listview), 
 			  GTK_TREE_MODEL(liststore));
 
-  pitivi_projectsourcelist_showfile(self->private->prjsrclist, self->private->treepath);
+  pitivi_projectsourcelist_showfile(((PitiviProjectWindows*)self)->project->sources, self->private->treepath);
 }
 void	
 pitivi_sourcelistwindow_set_media_property(PitiviSourceListWindow *self,
@@ -602,93 +618,187 @@ void	eof(GstElement *src)
 void	new_pad_created(GstElement *parse, GstPad *pad, gpointer data)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
-  GstElement	*thread;
-  GstElement	*queue;
-  GstElement	*decoder;
-  GstElement	*play;
-  GstElement	*color;
-  GstElement	*show;
-  GstCaps	*caps;
-  GList		*decoderlist;
-  gchar		*caps_str;
-  gchar		*name;
-  gint		i;
-  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
-
+  
+  gchar	*padname;
   PitiviSettings	*settings;
-
-  static gint	thread_number = 0;
+  gchar	*tmp;
 
   g_printf("a new pad %s was created\n", gst_pad_get_name(pad));
 
-  gst_element_set_state(GST_ELEMENT(self->private->pipeline), GST_STATE_PAUSED);
+  g_printf("caps is ==> %s\n", gst_caps_to_string(gst_pad_get_caps(pad)));
 
-  caps = gst_pad_get_caps(pad);
-  
-  caps_str = gst_caps_to_string(caps);
-  
-  g_printf("pad mine type ==> %s\n", caps_str);
-
-  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )), caps, DEC_LIST);
-
-  if (decoderlist)
-    {
-      name = g_strdup_printf("thread%d", thread_number);
-
-      //g_printf("thread name ==> %s\n", name);
-
-      /* create a thread for the decoder pipeline */
-      thread = gst_thread_new(name);
-      g_assert(thread != NULL);
-      
-      g_free(name);
-
-      /* choose the first decoder */
-      g_printf("decoder ==> %s\n", (gchar*)decoderlist->data);
-      
-      name = g_strdup_printf("decoder%d", thread_number);
-      decoder = gst_element_factory_make((gchar*)decoderlist->data, name);
-      g_assert(decoder != NULL);
-      g_free(name);
-
-      self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(decoder, "src")));
-
-      g_printf("decoder source media type ==> %s\n", self->private->mediatype);
-      pitivi_sourcelistwindow_set_media_property(self, caps_str);
-      /* create a queue for link the pipeline with the thread */
-
-      name = g_strdup_printf("queue%d", thread_number);
-      queue = gst_element_factory_make("queue", name);
-      g_assert(queue != NULL);
-      g_free(name);
-
-      /* add the elements to the thread */
-      gst_bin_add_many(GST_BIN(thread), queue, decoder, NULL);
-
-      gst_element_add_ghost_pad(thread, gst_element_get_pad(queue, "sink"),
-				"sink");
-
-      /* link the elements */
-      gst_element_link(queue, decoder);
-
-      /* add the thread to the main pipeline */
-      gst_bin_add(GST_BIN(self->private->pipeline), thread);
-
-      /* link the pad to the sink pad of the thread */
-      gst_pad_link(pad, gst_element_get_pad(thread, "sink"));
-
-      g_printf("setting to READY state\n");
-
-      gst_element_set_state(GST_ELEMENT(thread), GST_STATE_READY);
-
-      thread_number++;
-    }
-  else
-    g_printf("no decoder found for type %s \n", caps_str);
-
-  gst_element_set_state(GST_ELEMENT(self->private->pipeline), GST_STATE_PLAYING);
+  self->private->padlist = g_slist_append(self->private->padlist, pad);  
 }
 
+gboolean	
+pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filename)
+{
+  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
+  GstElement	*demuxer;
+  GstElement	*thread;
+  GstElement	*queue;
+  GstElement	*decoder;
+  GstElement	*parser;
+  GstPad	*pad;
+  GstCaps	*caps;
+  GList       	*decoderlist;
+  GSList	*padlist;
+  GList		*parserlist;
+  gchar		*caps_str;
+  gchar		*name;
+  static gint	thread_number = 0;
+  gboolean	flag;
+
+  gst_element_set_state(GST_ELEMENT(self->private->pipeline), GST_STATE_PAUSED);
+  padlist = self->private->padlist;
+  while (padlist)
+    {
+      thread = NULL;
+      flag = FALSE;
+      pad = (GstPad*)padlist->data;
+      
+      g_printf("padname for decoder ==> %s\n", gst_pad_get_name(pad));
+
+      caps = gst_pad_get_caps(pad);
+  
+      caps_str = gst_caps_to_string(caps);
+      
+      g_printf("pad mine type ==> %s\n", caps_str);
+      
+      self->private->mediatype = caps_str;
+
+      while (pitivi_sourcelistwindow_check_for_base_type(self->private->mediatype))
+	{
+	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )), caps, DEC_LIST);
+	   
+	  g_printf("decoderlist ==> 0x%x\n", decoderlist);
+	   
+	  if (decoderlist)
+	    {
+	      if (!thread)
+		{
+		  flag = TRUE;
+		  name = g_strdup_printf("thread%d", thread_number);
+		  
+		  /* create a thread for the decoder pipeline */
+		  thread = gst_thread_new(name);
+		  g_assert(thread != NULL);
+		   
+		  g_free(name);
+		}
+	      
+	      /* choose the first decoder */
+	      g_printf("decoder ==> %s\n", (gchar*)decoderlist->data);
+	      
+	      name = g_strdup_printf("decoder%d", thread_number);
+	      decoder = gst_element_factory_make((gchar*)decoderlist->data, name);
+	      
+	      g_assert(decoder != NULL);
+	      g_free(name);
+	      
+	      self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(decoder, "src")));
+	       
+	      g_printf("decoder source media type ==> %s\n", self->private->mediatype);
+	      pitivi_sourcelistwindow_set_media_property(self, caps_str);
+	      
+	      if (flag)
+		{
+		  /* create a queue for link the pipeline with the thread */
+		  
+		  name = g_strdup_printf("queue%d", thread_number);
+		  queue = gst_element_factory_make("queue", name);
+		  g_assert(queue != NULL);
+		  g_free(name);
+		  
+		  /* add the elements to the thread */
+		  gst_bin_add_many(GST_BIN(thread), queue, decoder, NULL);
+		  gst_element_add_ghost_pad(thread, gst_element_get_pad(queue, "sink"), "sink");
+		  /* link the elements */
+		  gst_element_link(queue, decoder);
+		  
+		  /* add the thread to the main pipeline */
+		  gst_bin_add(GST_BIN(self->private->pipeline), thread);
+		  
+		  /* link the pad to the sink pad of the thread */
+		  gst_pad_link(pad, gst_element_get_pad(thread, "sink"));
+		  
+		}
+	      else
+		{
+		  gst_bin_add(GST_BIN(thread), decoder);	       
+		  
+		  /* link the elements */
+		  gst_element_link(parser, decoder);
+		}
+	    }
+	  else
+	    {
+	      g_printf("no decoder found for type %s \n", caps_str);
+	      
+	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(pitivi_mainapp_settings( mainapp )), caps, DEC_LIST);
+	      
+	      if (parserlist)
+		{
+		  
+		  name = g_strdup_printf("thread%d", thread_number);
+		  
+		  //g_printf("thread name ==> %s\n", name);
+		  
+		  /* create a thread for the decoder pipeline */
+		  thread = gst_thread_new(name);
+		  g_assert(thread != NULL);
+		  
+		  g_free(name);
+		  
+		  g_printf("parser ==> %s\n", (gchar*)parserlist->data);
+		  
+		  name = g_strdup_printf("parser_%s", filename);
+		  parser = gst_element_factory_make((gchar*)parserlist->data, name);
+		  g_free(name);
+		  g_assert(parser != NULL);
+		  
+		  self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(parser, "src")));
+		  self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(parser, "src"));
+		  
+		  g_printf("parser media type ==> %s\n", self->private->mediatype);
+		  caps = self->private->mediacaps;
+		  
+		  /* create a queue for link the pipeline with the thread */
+		  
+		  name = g_strdup_printf("queue%d", thread_number);
+		  queue = gst_element_factory_make("queue", name);
+		  g_assert(queue != NULL);
+		  g_free(name);
+		  
+		  /* add the elements to the thread */
+		  gst_bin_add_many(GST_BIN(thread), queue, parser, NULL);
+		  
+		  gst_element_add_ghost_pad(thread, gst_element_get_pad(queue,
+									"sink"),
+					    "sink");
+		  
+		  /* link the elements */
+		  gst_element_link(queue, parser);
+		  
+		  /* add the thread to the main pipeline */
+		  gst_bin_add(GST_BIN(self->private->pipeline), thread);
+		  
+		  /* link the pad to the sink pad of the thread */
+		  gst_pad_link(pad, gst_element_get_pad(thread, "sink"));
+		  
+		  
+		} 
+	    }
+	}
+      g_printf("setting to READY state\n");
+      
+      gst_element_set_state(GST_ELEMENT(thread), GST_STATE_READY);
+      
+      thread_number++;
+      padlist = padlist->next;
+    }
+  gst_element_set_state(GST_ELEMENT(self->private->pipeline), GST_STATE_PLAYING);
+}
 gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 {
   GList *elements;
@@ -721,6 +831,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 
   /* Init some variables */
   demux = decoder = parser = NULL;
+  self->private->padlist = NULL;
 
   /* create a pipeline */
   tmpname = g_strdup_printf("pipeline_%s", filename);
@@ -779,19 +890,21 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 
 	  gst_element_set_state(GST_ELEMENT(self->private->pipeline), GST_STATE_PLAYING);
   
-	  
+
 	  /*   while (gst_bin_iterate(GST_BIN(self->private->pipeline))) */
 	  /*     g_printf("iterate pipeline\n"); */
 	  
-	  for (i = 0; i < 50; i++)
+	  for (i = 0; i < 8; i++)
 	    {
 	      gst_bin_iterate(GST_BIN(self->private->pipeline));
 	      g_printf("iterate pipeline\n");
 	    }
 	  
+	 
+	  pitivi_sourcelistwindow_add_decoder(self, filename);
+	  
 	  gst_element_set_state(GST_ELEMENT(self->private->pipeline), 
-				GST_STATE_READY);
-
+ 				GST_STATE_READY); 
 	}
       else /* search for a decoder */
 	{
@@ -1053,7 +1166,7 @@ void	new_folder(GtkWidget *widget, gpointer data)
 
   self->private->treepath[strlen(self->private->treepath) - 2] = 0;
 
-  pitivi_projectsourcelist_add_folder_to_bin(self->private->prjsrclist, 
+  pitivi_projectsourcelist_add_folder_to_bin(((PitiviProjectWindows*)self)->project->sources,
 					     self->private->treepath, name);
 
   /* retrieve GtkTreepath for current folder */
@@ -1105,7 +1218,7 @@ void	new_file(GtkWidget *widget, gpointer data)
       return;
     }
   /* call pitivi_projectsourcelist_add_file_to_bin */
-  add = pitivi_projectsourcelist_add_file_to_bin(self->private->prjsrclist, 
+  add = pitivi_projectsourcelist_add_file_to_bin(((PitiviProjectWindows*)self)->project->sources, 
 						 self->private->treepath,
 						 self->private->filepath,
 						 self->private->mediatype,
@@ -1170,7 +1283,7 @@ void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
   GtkTreeIter	iter;
   GtkListStore	*liststore;
 
-  pitivi_projectsourcelist_new_bin(self->private->prjsrclist, bin_name);
+  pitivi_projectsourcelist_new_bin(((PitiviProjectWindows*)self)->project->sources, bin_name);
  
   pixbufa = gtk_widget_render_icon(self->private->treeview, GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU, NULL);
   /* Insertion des elements */
@@ -1235,6 +1348,22 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 
   /* Creation de la vue */
   pListView = gtk_tree_view_new();
+
+  g_printf("enable drag n drop\n");
+  /* enable drag and drop for listview */
+ /*  gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(pListView),  */
+/* 					 GDK_BUTTON1_MASK, */
+/* 					 TargetEntries, iNbTargetEntries,  */
+/* 					 GDK_ACTION_COPY); */
+  gtk_drag_source_set(pListView, 
+		      GDK_BUTTON1_MASK,
+		      TargetEntries, iNbTargetEntries, 
+		      GDK_ACTION_COPY);
+  
+  g_printf("end of enable drag N drop\n");
+
+  gtk_drag_source_set_icon_stock(pListView, PITIVI_STOCK_EFFECT_SOUND);
+
   self->private->listview = pListView;
 
   /* Creation du menu popup */
@@ -1477,38 +1606,6 @@ gboolean	my_popup_handler(gpointer data, GdkEvent *event,
 }
 
 
-void	retrieve_path(GtkWidget *bouton, gpointer data)
-{
-  PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
-  
-  self->private->filepath = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(self->private->selectfile)));
-
-
-  g_signal_emit(self, pitivi_sourcelistwindow_signal[FILEIMPORT_SIGNAL],
-                       0 /* details */, 
-                       NULL);
-
-  gtk_widget_destroy(self->private->selectfile);
-}
-
-void	retrieve_folderpath(GtkWidget *bouton, gpointer data)
-{
-  PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
-
-  self->private->folderpath = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(self->private->selectfolder)));
-
-
-  g_signal_emit(self, pitivi_sourcelistwindow_signal[FOLDERIMPORT_SIGNAL],
-                       0 /* details */, 
-                       NULL);
-
-  g_printf("before destroy\n");
-
-  gtk_widget_destroy(self->private->selectfolder);
-  
-  g_printf("== end of retrieve folderpath ==\n");
-}
-
 void	OnNewBin(gpointer data, gint action, GtkWidget *widget)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
@@ -1563,41 +1660,97 @@ void	OnNewBin(gpointer data, gint action, GtkWidget *widget)
 void	OnImportFile(gpointer data, gint action, GtkWidget *widget)
 {
   PitiviSourceListWindow	*self = (PitiviSourceListWindow*)data;
+  GtkWidget	*dialog;
 
-  self->private->selectfile = gtk_file_selection_new("Import File");
+  dialog = gtk_file_chooser_dialog_new("Import File",
+				       GTK_WINDOW(self), 
+				       GTK_FILE_CHOOSER_ACTION_OPEN,
+				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				       NULL);
 
-  gtk_window_set_modal(GTK_WINDOW(self->private->selectfile), TRUE);
+  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
+    {
+      self->private->filepath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+    }
 
-  gtk_file_selection_complete(GTK_FILE_SELECTION(self->private->selectfile), "*.c");
+  gtk_widget_destroy(dialog);
 
-  g_signal_connect(GTK_FILE_SELECTION(self->private->selectfile)->ok_button, 
-		   "clicked",
-		   G_CALLBACK(retrieve_path), self);
-
-  g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(self->private->selectfile)->cancel_button),
-			   "clicked", G_CALLBACK(gtk_widget_destroy), 
-			   self->private->selectfile);
-
-  gtk_widget_show(self->private->selectfile);  
+  g_signal_emit(self, pitivi_sourcelistwindow_signal[FILEIMPORT_SIGNAL],
+		0 /* details */, 
+		NULL);
+    
 }
 
 void	OnImportFolder(gpointer data, gint action, GtkWidget *widget)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
 
-  self->private->selectfolder = gtk_file_selection_new("Import Folder");
+GtkWidget	*dialog;
 
-  gtk_window_set_modal(GTK_WINDOW(self->private->selectfolder), TRUE);
+  dialog = gtk_file_chooser_dialog_new("Import Folder",
+				       GTK_WINDOW(self), 
+				       GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				       NULL);
 
-  g_signal_connect(GTK_FILE_SELECTION(self->private->selectfolder)->ok_button, 
-		   "clicked",
-		   G_CALLBACK(retrieve_folderpath), self);
+  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
+    {
+      self->private->folderpath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+    }
 
-  g_signal_connect_swapped(G_OBJECT(GTK_FILE_SELECTION(self->private->selectfolder)->cancel_button),
-			   "clicked", G_CALLBACK(gtk_widget_destroy), 
-			   self->private->selectfolder);
+  gtk_widget_destroy(dialog);
 
-  gtk_widget_show(self->private->selectfolder);  
+  g_signal_emit(self, pitivi_sourcelistwindow_signal[FOLDERIMPORT_SIGNAL],
+		0 /* details */, 
+		NULL);   
+}
+
+gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
+			     GtkListStore **liststore, gchar **sMediaType,
+			     gint *item_select, gint *folder_select)
+{
+  GtkTreeIter	iternext;
+  GtkTreePath	*listpath;
+  gchar		*tmpMediaType;
+  gint		i;
+  gint		selected_tree_row;
+  guint		selected_list_row;
+  gint		depth;
+
+  listpath = gtk_tree_path_new_from_string(self->private->listpath);
+  
+  selected_list_row = get_selected_row(self->private->listpath, &depth);
+  *liststore = get_liststore_for_bin(self, selected_tree_row);
+  if (!gtk_tree_model_get_iter(GTK_TREE_MODEL(*liststore), iter, listpath))
+    {
+      gtk_tree_path_free(listpath);
+      return FALSE;
+    }
+  
+  gtk_tree_path_free(listpath);
+  
+  gtk_tree_model_get(GTK_TREE_MODEL(*liststore), iter, TEXT_LISTCOLUMN3, &(*sMediaType), -1);
+
+  gtk_tree_model_get_iter_first(GTK_TREE_MODEL(*liststore), &iternext);
+
+  *item_select = 0;
+  *folder_select = 0;
+  
+  i = 0;
+
+  while (i++ < selected_list_row)
+    {
+      gtk_tree_model_get(GTK_TREE_MODEL(*liststore), &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
+      if (!strcmp(tmpMediaType, "Bin"))
+	(*folder_select)++;
+      else
+	(*item_select)++;
+      gtk_tree_model_iter_next(GTK_TREE_MODEL(*liststore), &iternext);
+    }
+
+  return TRUE;
 }
 
 void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
@@ -1605,50 +1758,21 @@ void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
   GtkListStore	*liststore;
   GtkTreeIter	iter;
-  GtkTreeIter	iternext;
-  GtkTreePath	*listpath;
   gchar		*sMediaType;
-  gchar		*tmpMediaType;
   gint		item_select;
   gint		folder_select;
-  gint		i;
-  gint	selected_tree_row;
-  guint	selected_list_row;
-  gint	depth;
 
-  listpath = gtk_tree_path_new_from_string(self->private->listpath);
-  
-  selected_list_row = get_selected_row(self->private->listpath, &depth);
-  liststore = get_liststore_for_bin(self, selected_tree_row);
-  if (!gtk_tree_model_get_iter(GTK_TREE_MODEL(liststore), &iter, listpath))
+  if (!OnSelectItem(self, &iter, &liststore, &sMediaType, &item_select, 
+		   &folder_select))
     return;
-
-  gtk_tree_model_get(GTK_TREE_MODEL(liststore), &iter, TEXT_LISTCOLUMN3, &sMediaType, -1);
-
-  gtk_tree_model_get_iter_first(GTK_TREE_MODEL(liststore), &iternext);
-
-  item_select = folder_select = 0;
-  
-  i = 0;
-
-  while (i++ < selected_list_row)
-    {
-      gtk_tree_model_get(GTK_TREE_MODEL(liststore), &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
-      if (!strcmp(tmpMediaType, "Bin"))
-	folder_select++;
-      else
-	item_select++;
-      gtk_tree_model_iter_next(GTK_TREE_MODEL(liststore), &iternext);
-    }
 
   gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
 
   if (strcmp(sMediaType, "Bin"))
-    pitivi_projectsourcelist_remove_file_from_bin(self->private->prjsrclist, 
+    pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
 						  self->private->treepath,
 						  item_select);
 
-  gtk_tree_path_free(listpath);
 }
 
 void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget)
@@ -1737,7 +1861,7 @@ void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget)
   gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
   remove_liststore_for_bin(self, selected_tree_row);
   
-  pitivi_projectsourcelist_remove_bin(self->private->prjsrclist, 
+  pitivi_projectsourcelist_remove_bin(((PitiviProjectWindows*)self)->project->sources, 
 				      self->private->treepath);
 
   /* need to select another bin */
@@ -1760,6 +1884,27 @@ void	OnFind(void)
 void	OnOptionProject(void)
 {
   printf(" == Options Project ==\n");
+}
+
+PitiviSourceFile *
+pitivi_sourcelistwindow_get_file(PitiviSourceListWindow *self)
+{
+  GtkTreeIter	iter;
+  GtkListStore	*liststore;
+  gchar		*sMediaType;
+  gint		item_select;
+  gint		folder_select;
+
+  if (OnSelectItem(self, &iter, &liststore, &sMediaType, &item_select,
+		   &folder_select))
+    return;
+
+  if (!strcmp(sMediaType, "Bin"))
+    return NULL;
+
+  return pitivi_projectsourcelist_get_sourcefile(((PitiviProjectWindows*)self)->project->sources, 
+						 self->private->treepath,
+						 item_select);
 }
 
 GtkWidget	*create_projectview(PitiviSourceListWindow *self)
@@ -1791,15 +1936,21 @@ GtkWidget	*create_projectview(PitiviSourceListWindow *self)
   return pHpaned;
 }
 
+
 PitiviSourceListWindow *
 pitivi_sourcelistwindow_new(PitiviMainApp *mainapp, PitiviProject *project)
 {
   PitiviSourceListWindow	*sourcelistwindow;
 
+  g_printf("mainapp ==> %p\nproject ==> %p\n", mainapp, project);
+
   sourcelistwindow = (PitiviSourceListWindow *) g_object_new(PITIVI_SOURCELISTWINDOW_TYPE,
 							     "mainapp", mainapp,
 							     "project", project,
 							     NULL);
+ 
+  g_printf("show class ==> %p\n", ((PitiviWindows*)sourcelistwindow));
+
   g_assert(sourcelistwindow != NULL);
   return sourcelistwindow;
 }
@@ -1817,7 +1968,8 @@ pitivi_sourcelistwindow_constructor (GType type,
   }
 
   /* do stuff. */
-
+  new_bin((PitiviSourceListWindow*)obj, g_strdup("bin 1"));
+  nbrchutier++;
   return obj;
 }
 
@@ -1837,8 +1989,6 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
    * delay initialization completion until the property is set. 
    */
 
-  self->private->prjsrclist = pitivi_projectsourcelist_new();
-
   self->private->hpaned = create_projectview(self);
  
   self->private->liststore = NULL;
@@ -1846,8 +1996,6 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   /* add a bin to validate model of  list view */
   /* for the first bin we need to set treepath manually */
   self->private->treepath = g_strdup("0");
-  new_bin(self, g_strdup("bin 1"));
-  nbrchutier++;
   
   gtk_window_set_default_size(GTK_WINDOW(self), 600, 200);
 

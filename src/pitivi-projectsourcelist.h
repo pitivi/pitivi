@@ -105,6 +105,11 @@ void
 pitivi_projectsourcelist_add_folder_to_bin(PitiviProjectSourceList *self, 
 					   gchar *treepath,
 					   gchar *folder_name);
+
+PitiviSourceFile *
+pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
+					gchar *treepath, gint file_pos);
+
 /* only for debug */
 void	pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self, 
 					  gchar *treepath);

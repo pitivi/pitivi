@@ -50,6 +50,8 @@ pitivi_project_new (PitiviProjectSettings *settings)
 
   project->settings = settings;
 
+  project->sources = pitivi_projectsourcelist_new();
+
   return project;
 }
 
@@ -147,6 +149,8 @@ pitivi_project_save_thyself(PitiviProject *project)
   if (project->settings)
     pitivi_projectsettings_save_thyself ( project->settings , projectnode);
 
+/*   pitivi_projectsourcelist_save_thyself(project->sources, projectnode); */
+
   return doc;  
 }
 
@@ -212,7 +216,12 @@ pitivi_project_save_to_file(PitiviProject *project, const gchar *filename)
   return TRUE;
 }
 
+void
+pitivi_project_set_sources(PitiviProject *project, PitiviProjectSourceList *sources)
+{
+  project->sources = sources;
 
+}
 static GObject *
 pitivi_project_constructor (GType type,
 			    guint n_construct_properties,
@@ -250,7 +259,7 @@ pitivi_project_instance_init (GTypeInstance * instance, gpointer g_class)
    */
 
   self->settings = NULL;
-  self->sources = NULL;
+  self->sources = NULL; 
   self->filename = NULL;
 }
 

@@ -49,6 +49,7 @@ typedef struct _PitiviSourceListWindowClass PitiviSourceListWindowClass;
 typedef struct _PitiviSourceListWindowPrivate PitiviSourceListWindowPrivate;
 typedef struct _PitiviListStore PitiviListStore;
 
+
 struct _PitiviSourceListWindow
 {
   PitiviProjectWindows parent;

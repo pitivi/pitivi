@@ -79,6 +79,7 @@ PitiviProject	*pitivi_project_new_from_file (const gchar *filename);
 gboolean	pitivi_project_save_to_file(PitiviProject *project, const gchar *filename);
 void		pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self);
 xmlDocPtr	pitivi_project_save_thyself(PitiviProject *project);
+void		pitivi_project_set_sources(PitiviProject *project, PitiviProjectSourceList *sources);
 
 
 #endif

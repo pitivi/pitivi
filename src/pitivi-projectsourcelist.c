@@ -112,7 +112,7 @@ pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self,
       g_printf("mediatype ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->mediatype);
       g_printf("info video ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->infovideo);
       g_printf("info audio ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->infoaudio);
-      g_printf("length ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->length);
+      g_printf("length ==> %lld\n", ((PitiviSourceFile*)sourcelist->data)->length);
 
       sourcelist = sourcelist->next;
     }
@@ -315,8 +315,8 @@ pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self,
 {
   PitiviSourceBin	*sourcebin;
   PitiviSourceBin	*bin;
-  GSList		*list;
   PitiviSourceFile	*sourcefile;
+  GSList		*list;
   gint			row;
 
   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
@@ -326,14 +326,82 @@ pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self,
   sourcefile->mediatype = g_strdup(mediatype);
   sourcefile->infovideo = g_strdup(infovideo);
   sourcefile->infoaudio = g_strdup(infoaudio);
-  sourcefile->length = g_strdup(length);
+  sourcefile->length = length;
   sourcefile->pipeline = pipeline;
 
   sourcebin->source = g_slist_append(sourcebin->source, sourcefile);
   
   return TRUE;
 }
-					  
+
+PitiviSourceFile*	
+pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
+					gchar *treepath, gint file_pos)
+{
+  PitiviSourceBin	*sourcebin;
+  PitiviSourceBin	*bin;
+  PitiviSourceFile	*sourcefile;
+  GSList		*list;
+  gint			row;
+
+  sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
+  
+  sourcefile = (PitiviSourceFile*)pitivi_projectsourcelist_get_file_info(self,
+									 treepath,
+									 file_pos);
+
+  return sourcefile;
+}
+
+
+void
+pitivi_projectsourcelist_restore_thyself(PitiviProjectSourceList *SourceList, xmlNodePtr self)
+{
+
+}
+
+/*
+  pitivi_project_save_thyself
+
+  Returns a pointer to the XMLDocument filled with the contents of the PitiviProject
+*/
+
+xmlDocPtr
+pitivi_projectsourcelist_save_thyself(PitiviProjectSourceList *self, xmlNodePtr parent)
+{
+  xmlNodePtr	selfptr, msetptr;
+  GSList	*sourcelist;
+  GSList	*binlist;
+
+  PitiviSourceBin	*sourcebin;
+  PitiviSourceBin	*childbin;
+  PitiviSourceFile	*sourcefile;
+  
+
+  selfptr = xmlNewChild (parent, NULL, "projectsourcelist", NULL);
+
+  for (binlist = self->private->bin_tree; sourcelist; binlist = binlist->next) 
+    {
+      sourcebin = (PitiviSourceBin*) binlist->data;
+      msetptr = xmlNewChild (selfptr, NULL, "name", sourcebin->bin_name);
+      
+      /* list of source */
+      for (sourcelist = sourcebin->source; sourcelist; sourcelist = sourcelist->next)
+	{
+	  sourcefile = (PitiviSourceFile*)sourcelist->data;
+	  xmlNewChild (msetptr, NULL, "name", sourcefile->filename);
+	  xmlNewChild (msetptr, NULL, "mediatype", sourcefile->mediatype);
+	  xmlNewChild (msetptr, NULL, "infovideo", sourcefile->infovideo);
+	  xmlNewChild (msetptr, NULL, "infoaudio", sourcefile->infoaudio);
+	  xmlNewChild (msetptr, NULL, "length", atoi(sourcefile->length));
+	}
+      
+    }
+
+
+  return parent;
+}
+
 PitiviProjectSourceList *
 pitivi_projectsourcelist_new(void)
 {
