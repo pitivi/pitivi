@@ -261,7 +261,7 @@ pitivi_settingswindow_ajout_button (GtkWidget *Table, gint row, gint col,
   Button = gtk_button_new_from_stock (stock_id);
   g_signal_connect (G_OBJECT (Button), "clicked",
 		    G_CALLBACK (pitivi_settingswindow_cb_button), pt);
-  //g_object_set (G_OBJECT (Button), "sensitive", FALSE, NULL);
+/*   g_object_set (G_OBJECT (Button), "sensitive", FALSE, NULL); */
   pitivi_settingswindow_table_widget_add (Table, Button, row, col);
   gtk_widget_show (Button);
 
