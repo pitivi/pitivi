@@ -419,16 +419,20 @@ pitivi_npw_get_properties(GList *properties)
   gchar			*vprop;
   gchar			*tmp;
 
-  vprop = g_new0(gchar, 2000);
+  vprop = "";
   for (list = properties; list; list = list->next) {
     if ( list->data ) {
       setting_value = (PitiviSettingsValue *) list->data;
-      tmp = g_strdup_value_contents( &(setting_value->value) );
-      vprop = strcat(vprop, "\n\tPropertie Name : ");
-      vprop = strcat(vprop, setting_value->name);
-      vprop = strcat(vprop, "\n\tPropertie Value : ");
-      vprop = strcat(vprop, tmp);
-      g_free(tmp);
+      tmp = g_strdup_printf ("%s\n\tProperty Name : %s\n\tProperty Value : %s",
+			     vprop,
+			     setting_value->name,
+			     g_strdup_value_contents( &(setting_value->value)));
+/*       tmp = g_strdup_value_contents( &(setting_value->value) ); */
+/*       vprop = strcat(vprop, "\n\tPropertie Name : "); */
+/*       vprop = strcat(vprop, setting_value->name); */
+/*       vprop = strcat(vprop, "\n\tPropertie Value : "); */
+      g_free(vprop);
+      vprop = tmp;
     }
   }
   return (vprop);
@@ -875,7 +879,8 @@ pitivi_newprojectwindow_finalize (GObject *object)
    * Here, complete object destruction. 
    * You might not need to do much... 
    */
-
+  
+  g_free (self->private->position);
   g_free (self->private);
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }

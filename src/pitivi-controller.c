@@ -114,25 +114,6 @@ pitivi_controller_constructor (GType type,
   return obj;
 }
 
-/* static gboolean */
-/* pitivi_controller_seek_started_handler (GtkWidget       *widget, */
-/* 					GdkEventButton   *event, */
-/* 					gpointer         user_data) */
-/* { */
-
-/*   return FALSE; */
-/* } */
-
-
-/* static gboolean */
-/* pitivi_controller_seek_changed_handler (GtkWidget       *widget, */
-/* 					GdkEventButton  *event, */
-/* 					gpointer         user_data) */
-/* { */
-  
-/*   return FALSE; */
-/* } */
-
 static void
 pitivi_controller_callb_play (GtkWidget *widget, gpointer user_data)
 {
@@ -202,8 +183,6 @@ pitivi_controller_instance_init (GTypeInstance * instance, gpointer g_class)
   /* Gestion des bouttons de controle */
   
   self->private->toolbar = gtk_toolbar_new();   
-  self->private->group_ffrev = g_new(GSList, 1);
-  self->private->group_playing = g_new(GSList, 1);
 
   /* Creation Avance/Rembobinage Rapide Pause */
   
@@ -275,6 +254,7 @@ static void
 pitivi_controller_dispose (GObject *object)
 {
   PitiviController	*self = PITIVI_CONTROLLER(object);
+  int	i = 5;
 
   /* If dispose did already run, return. */
   if (self->private->dispose_has_run)
@@ -289,7 +269,13 @@ pitivi_controller_dispose (GObject *object)
    * the most simple solution is to unref all members on which you own a 
    * reference. 
    */
-
+  while (i--) {
+    if (self->private->b_ffrev[i])
+      gtk_widget_unref (GTK_WIDGET(self->private->b_ffrev[i]));
+    if (self->private->b_playing[i])
+      gtk_widget_unref (GTK_WIDGET(self->private->b_playing[i]));
+  }
+  gtk_widget_unref (self->private->toolbar);
 }
 
 static void
@@ -301,7 +287,6 @@ pitivi_controller_finalize (GObject *object)
    * Here, complete object destruction. 
    * You might not need to do much... 
    */
-  
   g_slist_free (self->private->group_playing);
   g_slist_free (self->private->group_ffrev);
   g_free (self->private);

@@ -217,7 +217,10 @@ pitivi_effectswindowproperties_dispose (GObject *object)
     return;
   
   /* Make sure dispose does not run twice. */
-  self->private->dispose_has_run = TRUE;	
+  self->private->dispose_has_run = TRUE;
+
+  gtk_widget_unref (GTK_WIDGET (self->private->widget_element));
+
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 

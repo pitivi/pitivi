@@ -724,6 +724,7 @@ static void
 pitivi_effectswindow_dispose (GObject *object)
 {
   PitiviEffectsWindow	*self = PITIVI_EFFECTSWINDOW(object);
+  int	count = PITIVI_EFFECT_NBCAT_TYPE - 1;
 
   /* If dispose did already run, return. */
   if (self->private->dispose_has_run)
@@ -738,7 +739,12 @@ pitivi_effectswindow_dispose (GObject *object)
    * the most simple solution is to unref all members on which you own a 
    * reference. 
    */
- 
+  while (count--) {
+    gtk_widget_unref (self->private->trees[count]->label);
+    gtk_widget_unref (self->private->trees[count]->treeview);
+    gtk_widget_unref (self->private->trees[count]->scroll);
+  }
+  gtk_widget_unref (self->private->notebook);
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
@@ -746,12 +752,14 @@ static void
 pitivi_effectswindow_finalize (GObject *object)
 {
   PitiviEffectsWindow	*self = PITIVI_EFFECTSWINDOW(object);
+  int count = PITIVI_EFFECT_NBCAT_TYPE - 1;
 
   /* 
    * Here, complete object destruction. 
    * You might not need to do much... 
    */
-
+  while (count --)
+    g_free (self->private->trees[count]);
   g_free (self->private);
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }

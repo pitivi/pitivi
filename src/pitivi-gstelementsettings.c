@@ -829,7 +829,6 @@ pitivi_gstelementsettings_get_settings_entry (GtkWidget *widget, PitiviGstElemen
 
     }
 
-    //PITIVI_DEBUG ("spin type : %s\t %g \n", i, gtk_spin_button_get_value (GTK_SPIN_BUTTON (widget)));
 
   } else {
     g_value_init(&value, G_TYPE_STRING);

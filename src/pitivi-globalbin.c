@@ -133,49 +133,20 @@ struct _PitiviGlobalBinPrivate
  * Insert "added-value" functions here
  */
 
-/* static void */
-/* sink_eos_cb	(GstElement *element, PitiviGlobalBin *gbin) */
-/* { */
-
-/*   PITIVI_WARNING ("Sink EOS"); */
-
-/*   if (element == gbin->videoout) */
-/*     gbin->private->vsinkeos = TRUE; */
-/*   else if (element == gbin->audioout) */
-/*     gbin->private->asinkeos = TRUE; */
-/*   else if (element == gbin->private->filesink) */
-/*     gbin->private->filesinkeos = TRUE; */
-
-/*   if (((gbin->render && gbin->private->filesinkeos) || !gbin->render) */
-/*       && ((gbin->preview && gbin->videoout && gbin->private->vsinkeos) || !(gbin->preview && gbin->videoout)) */
-/*       && ((gbin->preview && gbin->audioout && gbin->private->asinkeos) || !(gbin->preview && gbin->audioout))) { */
-/*     gbin->eos = TRUE; */
-/*     gst_element_set_eos (GST_ELEMENT (gbin)); */
-/*     /\*     if (!gst_element_set_state (GST_ELEMENT (gbin), GST_STATE_READY)) *\/ */
-/*     /\*       PITIVI_WARNING ("ACHTUNG, Can't set the timelinebin to READY !!!"); *\/ */
-/*     /\*     else *\/ */
-/*     /\*       PITIVI_WARNING ("TimelineBin was put to READY"); *\/ */
-/*   } */
-/* } */
-
 void
 pitivi_globalbin_set_video_output (PitiviGlobalBin *gbin, GstElement *videoout)
 {
-/*   PITIVI_WARNING ("set_video_output"); */
   if (GST_STATE(GST_ELEMENT(gbin)) > GST_STATE_READY)
     return;
   if (gbin->videoout) {
     /* unlink and remove existing videoout */
     REMOVE_WEAK_POINTER (gbin->videoout);
     gst_element_unlink (gbin->private->videoqueue, gbin->videoout);
-/*     g_signal_handler_disconnect (gbin->videoout, gbin->private->vsinkeossignal); */
     gst_bin_remove (GST_BIN (gbin->private->vsinkthread),
 		    gbin->videoout);
   }
   gbin->videoout = videoout;
   ADD_WEAK_POINTER (gbin->videoout);
-/*   gbin->private->vsinkeossignal =  */
-/*     g_signal_connect (G_OBJECT (gbin->videoout), "eos", G_CALLBACK (sink_eos_cb), gbin); */
   gst_bin_add (GST_BIN(gbin->private->vsinkthread),
 	       gbin->videoout);
   if (!(gst_element_link (gbin->private->videoqueue, gbin->videoout)))
@@ -185,21 +156,17 @@ pitivi_globalbin_set_video_output (PitiviGlobalBin *gbin, GstElement *videoout)
 void
 pitivi_globalbin_set_audio_output (PitiviGlobalBin *gbin, GstElement *audioout)
 {
-/*   PITIVI_WARNING ("set_audio_output"); */
   if (GST_STATE(GST_ELEMENT(gbin)) > GST_STATE_READY)
     return;
   if (gbin->audioout) {
     /* unlink and remove existing audioout */
     REMOVE_WEAK_POINTER (gbin->audioout);
     gst_element_unlink (gbin->private->audioqueue, gbin->audioout);
-/*     g_signal_handler_disconnect (gbin->audioout, gbin->private->asinkeossignal); */
     gst_bin_remove (GST_BIN (gbin->private->asinkthread),
 		    gbin->audioout);
   }
   gbin->audioout = audioout;
   ADD_WEAK_POINTER (gbin->audioout);
-/*   gbin->private->asinkeossignal =  */
-/*     g_signal_connect (G_OBJECT (gbin->audioout), "eos", G_CALLBACK (sink_eos_cb), gbin); */
   gst_bin_add (GST_BIN(gbin->private->asinkthread),
 	       gbin->audioout);
   if (!(gst_element_link (gbin->private->audioqueue, gbin->audioout)))
@@ -209,7 +176,6 @@ pitivi_globalbin_set_audio_output (PitiviGlobalBin *gbin, GstElement *audioout)
 static void
 pitivi_globalbin_set_video_encoder (PitiviGlobalBin *gbin, GstElement *vencoder)
 {
-/*   PITIVI_WARNING ("Set Video Encoder"); */
   if (GST_STATE(GST_ELEMENT(gbin)) > GST_STATE_READY)
     return;
   if (gbin->vencoder) {
@@ -236,7 +202,6 @@ pitivi_globalbin_set_video_encoder (PitiviGlobalBin *gbin, GstElement *vencoder)
 static void
 pitivi_globalbin_set_audio_encoder (PitiviGlobalBin *gbin, GstElement *aencoder)
 {
-/*   PITIVI_WARNING ("Set Audio Encoder"); */
   if (GST_STATE(GST_ELEMENT(gbin)) > GST_STATE_READY)
     return;
   if (gbin->aencoder) {
@@ -282,7 +247,6 @@ pitivi_globalbin_set_muxer (PitiviGlobalBin *gbin, GstElement *muxer)
 void
 pitivi_globalbin_set_encoded_file (PitiviGlobalBin *gbin, const gchar *filename)
 {
-/*   PITIVI_WARNING ("Set Encoded file"); */
   if (GST_STATE(GST_ELEMENT(gbin)) > GST_STATE_READY)
     return;
   if (gbin->encodedfile)
@@ -291,8 +255,6 @@ pitivi_globalbin_set_encoded_file (PitiviGlobalBin *gbin, const gchar *filename)
 
   if (!gbin->private->filesink) {
     gbin->private->filesink = gst_element_factory_make ("filesink", "encodedfilesink");
-/*     gbin->private->filesinkeossignal =  */
-/*       g_signal_connect (G_OBJECT (gbin->private->filesink), "eos", G_CALLBACK (sink_eos_cb), gbin); */
     gst_bin_add (GST_BIN (gbin->private->muxthread), gbin->private->filesink);
   }
 
@@ -571,16 +533,6 @@ pitivi_globalbin_instance_init (GTypeInstance * instance, gpointer g_class)
 
   self->private->vencoutqueue = gst_element_factory_make ("queue", "vencoutqueue");
   self->private->aencoutqueue = gst_element_factory_make ("queue", "aencoutqueue");
-
-/*   g_object_set (G_OBJECT (self->private->vencoutqueue), */
-/* 		"max-size-bytes", 300000000, */
-/* 		"max-size-time", 10 * GST_SECOND, */
-/* 		NULL); */
-
-/*   g_object_set (G_OBJECT (self->private->aencoutqueue), */
-/* 		"max-size-bytes", 300000000, */
-/* 		"max-size-time", 10 * GST_SECOND, */
-/* 		NULL); */
 
   gst_bin_add_many (GST_BIN (self->private->vencbin),
 		    self->private->vencthread,

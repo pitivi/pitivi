@@ -796,6 +796,16 @@ pitivi_sourcefile_finalize (GObject *object)
 
   if (this->private->bins)
     g_slist_free(this->private->bins);
+  if (this->private->vcache) {
+    while (this->private->cacheidx--) {
+      g_free (this->private->vcache[this->private->cacheidx]);
+      if (this->private->vthumb && this->private->vthumb[this->private->cacheidx])
+	g_free (this->private->vthumb[this->private->cacheidx]);
+    }
+    g_free (this->private->vcache);
+  }
+  if (this->private->vthumb)
+    g_free(this->private->vthumb);
   g_free (this->private);
   if (this->filename)
     g_free(this->filename);

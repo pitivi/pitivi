@@ -1368,13 +1368,16 @@ static gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
 static void
 remove_source (PitiviSourceListWindow *self, GtkListStore *liststore, gint *item_select, GtkTreeIter *iter)
 {
+  PITIVI_DEBUG ("removing source");
   if ( self->private->dndsf && self->private->dndsf->nbbins )
     g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", self->private->dndsf);
   pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
 						self->private->treepath,
 						*item_select);
   gtk_list_store_remove(GTK_LIST_STORE(liststore), iter);
-  g_object_unref(self->private->dndsf);
+  if (self->private->dndsf)
+    g_object_unref(self->private->dndsf);
+  self->private->dndsf = NULL;
 }
 
 static void
