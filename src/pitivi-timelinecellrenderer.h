@@ -31,6 +31,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "pitivi-cursor.h"
 
 /*
  * Type macros.
@@ -100,5 +101,6 @@ GType pitivi_timelinecellrenderer_get_type (void);
 GtkWidget	*pitivi_timelinecellrenderer_new ();
 void		pitivi_timelinecellrenderer_remove (GtkContainer *container, GtkWidget *child);
 void		pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
+PitiviCursor    *pitivi_getcursor_id (GtkWidget *widget);
 
 #endif

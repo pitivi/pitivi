@@ -61,7 +61,6 @@ struct _PitiviToolboxPrivate
  * CALLBACKS
  */
 
-
 void
 load_cursor (GdkWindow *win, PitiviCursor *pitivi_cursor, PitiviCursorType PiCursorType)
 {
