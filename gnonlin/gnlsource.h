@@ -43,6 +43,7 @@ gboolean gnl_source_factory_init (GstElementFactory *factory);
 
 typedef struct _GnlSource GnlSource;
 typedef struct _GnlSourceClass GnlSourceClass;
+typedef struct _GnlSourcePrivate GnlSourcePrivate;
 
 struct _GnlSource {
   GnlObject 		 parent;
@@ -58,6 +59,7 @@ struct _GnlSource {
   GstEvent		*pending_seek;
 
   gboolean		 queueing;
+  GnlSourcePrivate	*private;
 };
 
 struct _GnlSourceClass {

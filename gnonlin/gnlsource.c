@@ -30,6 +30,11 @@ GstElementDetails gnl_source_details = GST_ELEMENT_DETAILS
   "Wim Taymans <wim.taymans@chello.be>"
 );
 
+struct _GnlSourcePrivate {
+  gint64	seek_start;
+  gint64	seek_stop;
+};
+
 enum {
   ARG_0,
   ARG_ELEMENT,
@@ -82,6 +87,7 @@ typedef struct {
   GstPad *srcpad,
          *sinkpad;
   gboolean active;
+  GstProbe	*probe;
 } SourcePadPrivate;
 
 #define CLASS(source)  GNL_SOURCE_CLASS (G_OBJECT_GET_CLASS (source))
@@ -174,6 +180,7 @@ gnl_source_init (GnlSource *source)
   source->total_pads = 0;
   source->links = NULL;
   source->pending_seek = NULL;
+  source->private = g_new0(GnlSourcePrivate, 1);
 }
 
 static void
@@ -283,6 +290,8 @@ gnl_source_set_element (GnlSource *source, GstElement *element)
   source->total_pads = 0;
   source->links = NULL;
   source->pending_seek = NULL;
+  source->private->seek_start = GST_CLOCK_TIME_NONE;
+  source->private->seek_stop = GST_CLOCK_TIME_NONE;
 
   gst_bin_add (GST_BIN (source->bin), source->element);
 }
@@ -311,6 +320,41 @@ source_link (GstPad *pad, const GstCaps *caps)
   otherpad = (GST_PAD_IS_SRC (pad)? private->sinkpad : private->srcpad);
 
   return gst_pad_try_set_caps (otherpad, caps);
+}
+
+/*
+  source_probe
+
+  Checks if the data coming out of the source's element is not after the seek_stop position
+  If it is, it sets the source's element to EOS and discards the data
+*/
+
+gboolean
+source_probe (GstProbe *probe, GstData **data, gpointer udata)
+{
+  GnlSource *source = GNL_SOURCE(udata);
+  
+  GST_INFO("source probe %s --> %lld  object[%lld]->[%lld]  media[%lld]->[%lld] seek[%lld]->[%lld]",
+	   gst_element_get_name(GST_ELEMENT(source)),
+	   (long long int) GST_BUFFER_TIMESTAMP(*data),
+	   GNL_OBJECT(source)->start,
+	   GNL_OBJECT(source)->stop,
+	   GNL_OBJECT(source)->media_start,
+	   GNL_OBJECT(source)->media_stop,
+	   source->private->seek_start,
+	   source->private->seek_stop);
+
+  if (GST_IS_BUFFER (*data) 
+      && GST_CLOCK_TIME_IS_VALID(source->private->seek_stop)
+      && (GST_BUFFER_TIMESTAMP(*data) >= source->private->seek_stop)) {
+    GST_INFO("buffer is older than seek_stop, sending EOS on GnlSourceElement");
+    /* The data is after the end of seek , set the source element to EOS */
+    gst_element_set_eos(source->element);
+    GNL_OBJECT(source)->active = FALSE;
+    return FALSE; /* We don't want this data to carry on */
+  }
+  
+  return TRUE;
 }
 
 /** 
@@ -365,6 +409,10 @@ gnl_source_get_pad_for_stream (GnlSource *source, const gchar *padname)
   pad = gst_element_get_pad (source->element, padname);
 
   source->total_pads++;
+
+  /* Adding probe to private->srcpad */
+/*   private->probe = gst_probe_new (FALSE, source_probe, source); */
+/*   gst_pad_add_probe (private->srcpad, private->probe); */
 
   if (pad) {
     GST_INFO("%s linked straight away with %s",
@@ -443,6 +491,7 @@ static gboolean
 source_send_seek (GnlSource *source, GstEvent *event)
 {
   const GList *pads;
+  gboolean	wasinplay = FALSE;
 
   /* ghost all pads */
   pads = gst_element_get_pad_list (source->element);
@@ -450,6 +499,24 @@ source_send_seek (GnlSource *source, GstEvent *event)
   if (!event)
     return FALSE;
 
+  if (!pads)
+    GST_INFO("%s has no pads...",
+	     gst_element_get_name (GST_ELEMENT (source->element)));
+
+  source->private->seek_start = GST_EVENT_SEEK_OFFSET (event);
+  source->private->seek_stop = GST_EVENT_SEEK_ENDOFFSET (event);
+
+  GST_INFO("seek from %lld to %lld",
+	   source->private->seek_start,
+	   source->private->seek_stop);
+
+  event = gst_event_new_seek(GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH,
+			     source->private->seek_start);
+
+  if (GST_STATE(source->bin) == GST_STATE_PLAYING)
+    wasinplay = TRUE;
+  if (!(gst_element_set_state(source->bin, GST_STATE_PAUSED)))
+    g_warning("couldn't set GnlSource's bin to PAUSED !!!");
   while (pads) {  
     GstPad *pad = GST_PAD (pads->data);
 /*     GstEvent *event; */
@@ -457,10 +524,9 @@ source_send_seek (GnlSource *source, GstEvent *event)
 /*     event = source->pending_seek; */
     gst_event_ref (event);
 
-    GST_INFO ("%s: seeking to %lld %lld", 
+    GST_INFO ("%s: seeking to %lld", 
 	      gst_element_get_name (GST_ELEMENT (source)), 
-	      (long long int) GST_EVENT_SEEK_OFFSET (event),
-	      (long long int) GST_EVENT_SEEK_ENDOFFSET (event));
+	      source->private->seek_start);
     
     if (!gst_pad_send_event (pad, event)) {
       g_warning ("%s: could not seek", 
@@ -469,6 +535,8 @@ source_send_seek (GnlSource *source, GstEvent *event)
 
     pads = g_list_next (pads);
   }
+  if (wasinplay)
+    gst_element_set_state(source->bin, GST_STATE_PLAYING);
 /*   gst_event_unref (source->pending_seek); */
 /*   source->pending_seek = NULL; */
 
@@ -494,7 +562,7 @@ source_queue_media (GnlSource *source)
 {
   gboolean filled;
 
-  GST_INFO("%s", gst_element_get_name(GST_ELEMENT(source)));
+  GST_INFO("%s switching to PLAYING for media buffering", gst_element_get_name(GST_ELEMENT(source)));
 
   if (!gst_element_set_state (source->bin, GST_STATE_PLAYING)) {
     GST_INFO("END : couldn't change bin to PLAYING");
@@ -528,6 +596,7 @@ source_queue_media (GnlSource *source)
 		   (GFunc) deactivate_internal_sinkpads,
 		   source);
 
+  GST_INFO("going back to PAUSED state after media buffering");
   if (!gst_element_set_state (source->bin, GST_STATE_PAUSED)) {
     GST_INFO("error : couldn't put bin back to PAUSED");
     filled = FALSE;
@@ -577,6 +646,7 @@ source_chainfunction (GstPad *pad, GstData *buf)
   }
   
   private->queue = g_slist_append (private->queue, buffer);
+  GST_INFO("end of chaining");
 }
 
 static GstData*
@@ -640,17 +710,24 @@ source_getfunction (GstPad *pad)
 
         intime = GST_BUFFER_TIMESTAMP (buffer);
 
-        outtime = intime - object->media_start + object->start;
-	      
-        object->current_time = outtime;
-
-        GST_INFO ("%s: get %lld corrected to %lld", 
-	       gst_element_get_name (GST_ELEMENT (source)), 
-	       intime, 
-	       outtime);
-
-        GST_BUFFER_TIMESTAMP (buffer) = outtime;
-
+	/* check if buffer is outside seek range */
+	if ((GST_CLOCK_TIME_IS_VALID(source->private->seek_stop)
+	     && (intime >= source->private->seek_stop))) {
+	  GST_INFO("Data is after seek_stop, creating EOS");
+	  gst_object_unref(buffer);
+	  buffer = GST_BUFFER (gst_event_new (GST_EVENT_EOS));
+	}
+	outtime = intime - object->media_start + object->start;
+	
+	object->current_time = outtime;
+	
+	GST_INFO ("%s: get %lld corrected to %lld", 
+		  gst_element_get_name (GST_ELEMENT (source)), 
+		  intime, 
+		  outtime);
+	
+	GST_BUFFER_TIMESTAMP (buffer) = outtime;
+	
         found = TRUE;
       }
       /* flush last element in queue */
@@ -679,6 +756,8 @@ source_getfunction (GstPad *pad)
     }
   }
   GST_INFO("END");
+  if (GST_IS_EVENT(buffer) && (GST_EVENT_TYPE (buffer) == GST_EVENT_EOS))
+    object->active = FALSE;
   return (GstData *) buffer;
 }
 
@@ -688,17 +767,18 @@ gnl_source_prepare (GnlObject *object, GstEvent *event)
   GnlSource *source = GNL_SOURCE (object);
   gboolean res = TRUE;
 
-  GST_INFO("Object[%s] [%lld]->[%lld]",
+  GST_INFO("Object[%s] [%lld]->[%lld] State:%d",
 	   gst_element_get_name(GST_ELEMENT(object)),
 	   GST_EVENT_SEEK_OFFSET(event),
-	   GST_EVENT_SEEK_ENDOFFSET(event));
+	   GST_EVENT_SEEK_ENDOFFSET(event),
+	   gst_element_get_state (GST_ELEMENT(object)));
 
   source->pending_seek = event;
 
   if (gst_element_get_state (GST_ELEMENT (object)) >= GST_STATE_READY) {
     res = source_send_seek (source, source->pending_seek);
   }
-
+  
   return res;
 }
 
@@ -723,8 +803,9 @@ gnl_source_change_state (GstElement *element)
 {
   GnlSource *source = GNL_SOURCE (element);
   GstElementStateReturn	res = GST_STATE_SUCCESS;
-  
-  switch (GST_STATE_TRANSITION (source)) {
+
+  if (GNL_OBJECT(source)->active)
+    switch (GST_STATE_TRANSITION (source)) {
     case GST_STATE_NULL_TO_READY:
       break;
     case GST_STATE_READY_TO_PAUSED:
@@ -745,7 +826,7 @@ gnl_source_change_state (GstElement *element)
       break;
     default:
       break;
-  }
+    }
   
   if (res == GST_STATE_SUCCESS)
     res = GST_ELEMENT_CLASS (parent_class)->change_state (element);

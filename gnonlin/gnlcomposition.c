@@ -441,7 +441,8 @@ gnl_composition_schedule_object (GnlComposition *comp, GnlObject *object,
 						      start,
 						      stop)
 			  );
-  
+  /* Activate object */
+  object->active = TRUE;
   *pad = gst_element_get_pad (GST_ELEMENT (object), "src");
   
   GST_INFO("end of gnl_composition_schedule_object");
@@ -486,6 +487,9 @@ gnl_composition_schedule_operation (GnlComposition *comp, GnlOperation *oper,
 
     gst_pad_link (newpad, sinkpad);
   }
+
+  /* Activate Operation */
+  GNL_OBJECT(oper)->active = TRUE;
 
   GST_INFO("Finished");
   return TRUE;
