@@ -40,7 +40,6 @@ pitivi_SOURCES		= \
 	pitivi-splashscreenwindow.c \
 	pitivi-gstelementsettings.c \
 	pitivi-thumbs.c \
-	pitivi-videothumbnails.c \
 	pitivi-drawing.c \
 	pitivi-mediatrackinfo.c \
 	pitivi-controller.c \
