@@ -333,91 +333,95 @@ pitivi_gstelementsettings_value_conf_double (gchar *name, GValue value, GParamSp
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_default (gchar *name, GValue value, GParamSpec *param)
+pitivi_gstelementsettings_aff_enum (gchar *name, GValue value, GParamSpec *param)
 {
-
-  if (G_IS_PARAM_SPEC_ENUM (param)) {    
-
-    gint		i;
-    gint		*enum_values;
-    gchar		*label;
-    GtkWidget		*prop_value_label;
-    GtkWidget		*prop_value_combobox;
+  gint			i;
+  gint			*enum_values;
+  gchar			*label;
+  GtkWidget		*prop_value_label;
+  GtkWidget		*prop_value_combobox;
+  
+  prop_value_combobox = gtk_combo_box_new_text();
+  
+  GEnumClass *class = G_ENUM_CLASS (g_type_class_ref (param->value_type));
+  enum_values = g_new0 (gint, class->n_values);
+  
+  for (i=0; i < class->n_values; i++) {
+    GEnumValue *evalue = &class->values[i];
+    gint tmp;
     
-    prop_value_combobox = gtk_combo_box_new_text();
-
-    GEnumClass *class = G_ENUM_CLASS (g_type_class_ref (param->value_type));
-    enum_values = g_new0 (gint, class->n_values);
-    
-    for (i=0; i < class->n_values; i++) {
-      GEnumValue *evalue = &class->values[i];
-      gint tmp;
-      
-      enum_values[i] = evalue->value;
-      label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
-      gtk_combo_box_insert_text (GTK_COMBO_BOX (prop_value_combobox), i, label);
-    }
-
-    gtk_combo_box_set_active (GTK_COMBO_BOX (prop_value_combobox), g_value_get_enum(&value));
-
-    g_object_set_data (G_OBJECT(prop_value_combobox), "tab", enum_values);
-    g_object_set_data (G_OBJECT(prop_value_combobox), "name", name);
-    
-    return (prop_value_combobox);
-    
-  } else if (G_IS_PARAM_SPEC_FLAGS (param)) {
-    
-    GtkWidget		*Tab;
-    GFlagsValue		*values;
-    guint		j;
-    gint		flags_value;
-    gint		nb_value;
-    GString		*flags = NULL;
-      
-    values = G_FLAGS_CLASS (g_type_class_ref (param->value_type))->values;
-    nb_value = G_FLAGS_CLASS (g_type_class_ref (param->value_type))->n_values;
-    flags_value = g_value_get_flags (&value);
-    g_print ("FLAG_VALUE:%s\nNB_VALUE:%d\n", flags_value, nb_value);
-    
-    Tab = gtk_table_new (nb_value, 2, FALSE);
-
-    for (j = 0; j < nb_value; j++) {
-      GtkWidget*	check;
-      GtkWidget*	label;
-      gint		tmp;
-
-      check = gtk_check_button_new ();
-
-      tmp = values[j].value;
-      g_object_set_data (G_OBJECT (check), "value", GINT_TO_POINTER (tmp));
-      g_print ("VALUE:%d\n", values[j].value);
-      pitivi_gstelementsettings_table_widget_add (Tab, check, j, 1);
-      
-      label = gtk_label_new (values[j].value_nick);
-      pitivi_gstelementsettings_table_widget_add (Tab, label, j, 2);
-      
-      //g_print ("%s(%d):%s\n",
-      //     values[j].value_name, values[j].value, values[j].value_nick);
-
-      if (values[j].value & flags_value) {
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), TRUE);
-      } else {
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), FALSE);
-      }
-
-    }
-
-    g_object_set_data (G_OBJECT(Tab), "name", name);
-
-    return (Tab);
-    
-  } else {
-    GtkWidget *Label;
-
-    Label = gtk_label_new("Default Case for Value");
-    return (Label);
+    enum_values[i] = evalue->value;
+    label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
+    gtk_combo_box_insert_text (GTK_COMBO_BOX (prop_value_combobox), i, label);
   }
   
+  gtk_combo_box_set_active (GTK_COMBO_BOX (prop_value_combobox), g_value_get_enum(&value));
+  
+  g_object_set_data (G_OBJECT(prop_value_combobox), "tab", enum_values);
+  g_object_set_data (G_OBJECT(prop_value_combobox), "name", name);
+  
+  return (prop_value_combobox);
+}
+
+GtkWidget *
+pitivi_gstelementsettings_aff_flags (gchar *name, GValue value, GParamSpec *param)
+{
+  GtkWidget		*Tab;
+  GFlagsValue		*values;
+  guint			j;
+  gint			flags_value;
+  gint			nb_value;
+  GString		*flags = NULL;
+  
+  values = G_FLAGS_CLASS (g_type_class_ref (param->value_type))->values;
+  nb_value = G_FLAGS_CLASS (g_type_class_ref (param->value_type))->n_values;
+  flags_value = g_value_get_flags (&value);
+  g_print ("FLAG_VALUE:%s\nNB_VALUE:%d\n", flags_value, nb_value);
+  
+  Tab = gtk_table_new (nb_value, 2, FALSE);
+  
+  for (j = 0; j < nb_value; j++) {
+    GtkWidget*	check;
+    GtkWidget*	label;
+    gint		tmp;
+    
+    check = gtk_check_button_new ();
+    
+    tmp = values[j].value;
+    g_object_set_data (G_OBJECT (check), "value", GINT_TO_POINTER (tmp));
+    g_print ("VALUE:%d\n", values[j].value);
+    pitivi_gstelementsettings_table_widget_add (Tab, check, j, 1);
+    
+    label = gtk_label_new (values[j].value_nick);
+    pitivi_gstelementsettings_table_widget_add (Tab, label, j, 2);
+    
+    //g_print ("%s(%d):%s\n",
+    //     values[j].value_name, values[j].value, values[j].value_nick);
+    
+    if (values[j].value & flags_value) {
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), TRUE);
+    } else {
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), FALSE);
+    }
+    
+  }  
+  g_object_set_data (G_OBJECT(Tab), "name", name);  
+  return (Tab);
+}
+
+GtkWidget *
+pitivi_gstelementsettings_value_conf_default (gchar *name, GValue value, GParamSpec *param)
+{
+  GtkWidget *tmp;
+  
+  if (G_IS_PARAM_SPEC_ENUM (param)) {    
+    tmp = pitivi_gstelementsettings_aff_enum (name, value, param);    
+  } else if (G_IS_PARAM_SPEC_FLAGS (param)) {
+    tmp = pitivi_gstelementsettings_aff_flags (name, value, param);    
+  } else {
+    tmp = gtk_label_new("Default Case for Value");
+  }
+  return (tmp);  
 }
 
 

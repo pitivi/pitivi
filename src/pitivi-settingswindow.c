@@ -687,7 +687,9 @@ pitivi_settingswindow_create_gui (PitiviSettingsWindow *self)
 }
 
 /*
- * Insert "added-value" functions here
+ * ##################################################################################
+ * ################### Insert "added-value" functions here ##########################
+ * ##################################################################################
  */
 
 PitiviSettingsWindow *
