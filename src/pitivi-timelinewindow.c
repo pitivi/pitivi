@@ -1360,13 +1360,6 @@ pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self)
       g_signal_emit_by_name (GTK_OBJECT (tmp->data), "zoom-changed");
 }
 
-
-void
-pitivi_timelinewindow_stop (PitiviTimelineWindow *self)
-{
-   PITIVI_RULER (self->hruler)->time_pix = 0;
-}
-
 /**
  * pitivi_timelinewindow_update_time:
  * @self: The #PitiviTimelineWindow

@@ -120,22 +120,34 @@ static  guint viewersignals[LAST_SIGNAL] = {0};
 gboolean	do_seek(GstElement *elem, gint64 value)
 {
   GstEvent	*event;
-  gboolean	res;
+  GstElementState	prev;
 
   //  pad = gst_element_get_pad(elem, "src");
+/*   g_printf ("do_seek %s -> %lld:%02lld:%03lld\n", */
+/* 	    gst_element_get_name (elem), */
+/* 	    GST_M_S_M (value)); */
+/*   pitivi_printf_element (elem); */
   event = gst_event_new_seek (
 			      GST_FORMAT_TIME |	    /* seek on nanoseconds */
 			      GST_SEEK_METHOD_SET | /* set the absolute position */
 			      GST_SEEK_FLAG_FLUSH,  /* flush any pending data */
 			      value);	    /* the seek offset in bytes */
+
   
+  prev = gst_element_get_state (elem);
+  if (prev != GST_STATE_PAUSED)
+    gst_element_set_state (elem, GST_STATE_PAUSED);
   /* res = gst_element_send_event (GST_ELEMENT (elem), event); */
-  if (!(res = gst_element_send_event(elem, event)))
+  if (!(gst_element_send_event(elem, event)))
     {
       g_warning ("seek on element %s failed",
 		 gst_element_get_name(elem));
+      if (prev != GST_STATE_PAUSED)
+	gst_element_set_state (elem, prev);
       return FALSE;
     }
+  if (prev != GST_STATE_PAUSED)
+    gst_element_set_state (elem, prev);
   return TRUE;
 }
 
@@ -161,8 +173,6 @@ acitve_widget (GtkWidget *bin, GtkWidget *w1, GtkWidget *w2)
   gtk_container_add (GTK_CONTAINER (bin), w1);
   return ;
 }
-void
-pitivi_ruler_set_pos_changed (GtkWidget *ruler, gboolean status);
 
 void	video_play(GtkWidget *widget, gpointer data)
 {
@@ -189,6 +199,7 @@ void	video_play(GtkWidget *widget, gpointer data)
   } else if (self->private->play_status == STOP) {
     g_print ("[CallBack]:video_play STOP STATUS\n");
     self->private->play_status = PLAY;
+    do_seek (GST_ELEMENT (project->timeline), 0);
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
       g_warning("Couldn't set the project pipeline to PLAYING");
     else {
@@ -268,39 +279,6 @@ gboolean	pause_stream(GtkWidget *widget,
 
   gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
 
-  return FALSE;
-}
-
-gboolean	seek_stream(GtkWidget *widget,
-			    GdkEventButton *event,
-			    gpointer data)
-{
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  gdouble	pourcent;
-
-  /* query total size */
-  //value1  = do_query(GST_ELEMENT (project->timeline), GST_QUERY_TOTAL);
-  
-  pourcent = gtk_range_get_value(GTK_RANGE (widget));
-
-  //value2 = (gint64)((pourcent * value1) / 500);
-  
-  g_printf("seeking to %g\n",
-	   pourcent);
-
-  /* rewind the movie */
-  if (do_seek(GST_ELEMENT (project->timeline), pourcent))
-    g_printf("performing  seek\n");
-  
-  if (self->private->play_status != PLAY) {
-    self->private->play_status = PLAY;
-    g_idle_add(idle_func_video, self);
-    gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
-    gst_x_overlay_set_xwindow_id
-	( GST_X_OVERLAY ( self->private->sink ),
-	  GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
-  }
   return FALSE;
 }
 
@@ -399,7 +377,6 @@ output_probe (GstProbe *probe, GstData **data, gpointer udata)
     self->private->new_time = GST_BUFFER_TIMESTAMP(*data);
     g_idle_add (updated_time, self);
   } else if (GST_IS_EVENT(*data) && (GST_EVENT_TYPE(*data) == GST_EVENT_EOS)) {
-    g_printf ("Got EOS, dropping it\n");
     /* 
        This is really a crude hack. We have to drop the EOS Event and stop iterating manually,
        otherwise the app segfaults on a gst_object_unref of that EOS event :(
@@ -518,19 +495,13 @@ gboolean	idle_func_video (gpointer data)
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
   
-/*   GstElement *elem; */
-/*   gint64	value1; */
-
   // remove the idle_func if we're not playing !
   if (self->private->play_status == STOP) {
-    g_printf ("viewer idle FALSE\n");
+    video_stop (GTK_WIDGET (self), self);
     return FALSE;
   }
   
   if ( gst_element_get_state (project->pipeline) == GST_STATE_PLAYING ) {
-/*     gst_x_overlay_set_xwindow_id */
-/*       ( GST_X_OVERLAY ( self->private->sink ), */
-/* 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) ); */
     gst_bin_iterate (GST_BIN (project->pipeline));
   }
   return TRUE;
@@ -723,7 +694,7 @@ static void
 pitivi_viewer_callb_stop (PitiviViewerWindow *self)
 {
   video_stop (GTK_WIDGET(self), self);
-  pitivi_timelinewindow_stop (pitivi_mainapp_get_timelinewin (((PitiviWindows *) self)->mainapp));
+/*   pitivi_timelinewindow_stop (pitivi_mainapp_get_timelinewin (((PitiviWindows *) self)->mainapp)); */
 }
 
 static gboolean

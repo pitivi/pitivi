@@ -45,9 +45,8 @@ pitivi_printf_element_nb(GstElement *elt, int dep) {
 
   tp = g_strnfill((gsize) dep + 1, '.');
   /* Global info about element */
-  g_printf("%sElement : %s\n", tp, pitivi_element_debug(elt));
-  g_printf("%sState:%d\n", tp,
-	   gst_element_get_state(elt));
+  g_printf("%sElement : %s State:%d\n", tp, pitivi_element_debug(elt),
+	   gst_element_get_state (elt));
 
   /* Element Scheduler and state */
   msched = GST_ELEMENT_SCHED(elt);

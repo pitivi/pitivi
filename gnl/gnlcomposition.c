@@ -249,7 +249,7 @@ gnl_composition_find_entry_priority (GnlComposition *comp, GstClockTime time,
 	    return entry;
 	  break;
 	default:
-	  g_warning ("%s: unkown find method", gst_element_get_name (GST_ELEMENT (comp)));
+	  GST_WARNING ("%s: unkown find method", gst_element_get_name (GST_ELEMENT (comp)));
 	  break;
 	}
       objects = g_list_next(objects);
@@ -787,10 +787,10 @@ gnl_composition_covers_func (GnlObject *object, GstClockTime start,
   
   switch (type) {
   case GNL_COVER_ALL:
-    g_warning ("comp covers all, implement me");
+    GST_WARNING ("comp covers all, implement me");
     break;
   case GNL_COVER_SOME:
-    g_warning ("comp covers some, implement me");
+    GST_WARNING ("comp covers some, implement me");
     break;
   case GNL_COVER_START:
     if (gnl_composition_find_entry (comp, start, GNL_FIND_AT)) {

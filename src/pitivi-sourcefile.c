@@ -350,10 +350,18 @@ pitivi_sourcefile_store_pad (PitiviSourceFile *sf, GstPad *pad)
   if (!type)
     return 0;
   if (type == IS_AUDIO) {
+    if (sf->private->audiopad) {
+/*       g_warning ("More than one audiopad in %s", sf->filename); */
+      return 0;
+    }
     sf->private->audiopad = pad;
     return IS_AUDIO;
   }
   if (type == IS_VIDEO) {
+    if (sf->private->videopad) {
+/*       g_warning ("More than one videopad in %s", sf->filename); */
+      return 0;
+    }
     sf->private->videopad = pad;
     return IS_VIDEO;
   }
@@ -622,7 +630,7 @@ pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop)
       if (!sf->private->vthumb[i]) {
 	sf->private->vthumb[i] = g_new0(PitiviThumbTab, 1);
 	sf->private->vthumb[i]->time = sf->private->vcache[i]->time;
-	g_printf ("filename:%s\n", sf->private->vcache[i]->filename);
+/* 	g_printf ("filename:%s\n", sf->private->vcache[i]->filename); */
 	if (sf->private->vcache[i]->filename)
 	  if (!(sf->private->vthumb[i]->pixbuf = gdk_pixbuf_new_from_file(sf->private->vcache[i]->filename, NULL)))
 	    g_warning ("Error getting file %s", sf->private->vcache[i]->filename);

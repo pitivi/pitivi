@@ -276,6 +276,9 @@ gnl_timeline_timer_loop (GstElement *element)
     buf = (GstBuffer *) gst_pad_pull (sinkpad);
     GST_INFO("Buffer pulled");
 
+    if (GST_IS_EVENT(buf))
+      GST_INFO ("Buffer is an Event : %d", GST_EVENT_TYPE (GST_EVENT (buf)));
+
     if (GST_IS_EVENT (buf) && GST_EVENT_TYPE (buf) == GST_EVENT_EOS) {
       GstClockTime time;
       GstPad *srcpad;
@@ -324,8 +327,8 @@ gnl_timeline_timer_loop (GstElement *element)
           gst_pad_link (srcpad, to_schedule->sinkpad);
           gst_element_set_state (GST_ELEMENT (group), GST_STATE_PLAYING);
 	} else  {
-	  g_warning ("group %s has no pad", 
-		     gst_element_get_name (GST_ELEMENT (group)));
+	  GST_WARNING ("group %s has no pad", 
+		       gst_element_get_name (GST_ELEMENT (group)));
 	}
       } else {
 	/* If there isn't anything else in that group (real EOS) */
@@ -645,12 +648,12 @@ gnl_timeline_prepare (GnlObject *object, GstEvent *event)
 	gst_pad_unlink (GST_PAD_PEER(link->sinkpad), link->sinkpad);
       
       if (!gst_pad_link (srcpad, link->sinkpad))
-	g_warning("Couldn't link group [%s] to the Timeline Timer !!",
-		  gst_element_get_name (GST_ELEMENT (group)));
+	GST_WARNING ("Couldn't link group [%s] to the Timeline Timer !!",
+		     gst_element_get_name (GST_ELEMENT (group)));
     }
     else {
-      g_warning ("group %s does not have a 'src' pad", 
-		 gst_element_get_name (GST_ELEMENT (group)));
+      GST_WARNING ("group %s does not have a 'src' pad",
+		   gst_element_get_name (GST_ELEMENT (group)));
     }
 
     walk = g_list_next (walk);
@@ -678,6 +681,8 @@ gnl_timeline_query (GstElement *element, GstQueryType type,
 static GstElementStateReturn
 gnl_timeline_change_state (GstElement *element)
 {
+  GstElementStateReturn	res = GST_STATE_SUCCESS;
+  GstElementStateReturn	res2;
   GnlTimeline *timeline = GNL_TIMELINE (element);
   gint transition = GST_STATE_TRANSITION (element);
 
@@ -699,7 +704,7 @@ gnl_timeline_change_state (GstElement *element)
 
       event = gst_event_new_segment_seek (seek_type, 0, G_MAXINT64);
       if (!gnl_timeline_prepare (GNL_OBJECT (timeline), event))
-	return GST_STATE_FAILURE;
+	res = GST_STATE_FAILURE;
       break;
     }
     case GST_STATE_PAUSED_TO_PLAYING:
@@ -713,6 +718,7 @@ gnl_timeline_change_state (GstElement *element)
     default:
       break;
   }
-  return GST_ELEMENT_CLASS (parent_class)->change_state (element);
+  res2 = GST_ELEMENT_CLASS (parent_class)->change_state (element);
+  return ((res2 && res) ? res2 : GST_STATE_FAILURE);
 }
 
