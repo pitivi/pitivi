@@ -380,13 +380,20 @@ gboolean
 output_probe (GstProbe *probe, GstData **data, gpointer udata)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) udata;
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
   if (GST_IS_BUFFER(*data)) {
     g_printf ("output probe %lld:%lld:%lld\n", GST_M_S_M(GST_BUFFER_TIMESTAMP(*data)));
     gtk_range_set_value(GTK_RANGE (self->private->timeline) , GST_BUFFER_TIMESTAMP(*data));
   } else if (GST_IS_EVENT(*data) && (GST_EVENT_TYPE(*data) == GST_EVENT_EOS)) {
-    g_printf ("Got EOS\n");
+    g_printf ("Got EOS, dropping it\n");
+    /* 
+       This is really a crude hack. We have to drop the EOS Event and stop iterating manually,
+       otherwise the app segfaults on a gst_object_unref of that EOS event :(
+    */
+    gst_element_set_state (project->pipeline, GST_STATE_PAUSED);
     self->private->play_status = STOP;
+    return FALSE;
   }
   return TRUE;
 }
@@ -464,7 +471,7 @@ create_stream (gpointer data)
   self->private->sink = gst_element_factory_make ("xvimagesink", "video_display");
   g_assert (self->private->sink != NULL);
   self->private->probe = gst_probe_new(FALSE, output_probe, self);
-  gst_pad_add_probe (gst_element_get_pad (self->private->sink, "sink"),
+  gst_pad_add_probe (gnl_timeline_get_pad_for_group (project->timeline, project->videogroup),
 		     self->private->probe);
 
   timeoverlay = gst_element_factory_make ("timeoverlay", "timeoverlay");
