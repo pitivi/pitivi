@@ -216,6 +216,26 @@ GtkWidget **layout_intersection_widget (GtkWidget *self, GtkWidget *widget, gint
   return p;
 }
 
+void move_media (GtkWidget *cell, GtkWidget *widget, guint x, guint way)
+{
+  GtkWidget **intersec;
+  GtkWidget *first;
+  int       xbegin;
+
+  intersec = layout_intersection_widget (cell, widget, x);
+  first = intersec[way];
+  if (first && GTK_IS_WIDGET (first) && first->allocation.x != x)
+    {
+      if (!way)
+	xbegin = first->allocation.x - ((first->allocation.x+first->allocation.width) - x);
+      if (way)
+	xbegin = x + first->allocation.width;
+      gtk_layout_move (GTK_LAYOUT (cell), first, xbegin, 0);
+      move_media (cell, first, xbegin, way);
+    }
+  return;
+}
+
 void
 move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
 {
@@ -235,26 +255,6 @@ move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
       move_media (self, widget, x, 1);
     }
   gtk_layout_move (GTK_LAYOUT (self), widget, x, 0);
-}
-
-void move_media (GtkWidget *cell, GtkWidget *widget, guint x, guint way)
-{
-  GtkWidget **intersec;
-  GtkWidget *first;
-  int       xbegin;
-
-  intersec = layout_intersection_widget (cell, widget, x);
-  first = intersec[way];
-  if (first && GTK_IS_WIDGET (first) && first->allocation.x != x)
-    {
-      if (!way)
-	xbegin = first->allocation.x - ((first->allocation.x+first->allocation.width) - x);
-      if (way)
-	xbegin = x + first->allocation.width;
-      gtk_layout_move (GTK_LAYOUT (cell), first, xbegin, 0);
-      move_media (cell, first, xbegin, way);
-    }
-  return;
 }
 
 int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)

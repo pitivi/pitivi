@@ -1442,8 +1442,8 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
     {
       gtk_combo_box_insert_text (GTK_COMBO_BOX (self->private->audio_combo_freq), i, freq_tab[i]);
     }
-/*   gtk_combo_box_insert_text (GTK_COMBO_BOX (self->private->audio_combo_freq), 1, "24000 Hz"); */
-/*   gtk_combo_box_insert_text (GTK_COMBO_BOX (self->private->audio_combo_freq), 2, "12000 Hz"); */
+  /* gtk_combo_box_insert_text (GTK_COMBO_BOX (self->private->audio_combo_freq), 1, "24000 Hz"); */
+  /* gtk_combo_box_insert_text (GTK_COMBO_BOX (self->private->audio_combo_freq), 2, "12000 Hz"); */
   gtk_combo_box_set_active(GTK_COMBO_BOX (self->private->audio_combo_freq), 0); /*  Choix par defaut */
   gtk_box_pack_start(GTK_BOX (arate_hbox), self->private->audio_combo_freq, TRUE, TRUE, 0);
   gtk_table_attach (GTK_TABLE(audio_table), arate_hbox, 
