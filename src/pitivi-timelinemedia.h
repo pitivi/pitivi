@@ -61,7 +61,6 @@ struct _PitiviTimelineMedia
 {
   GtkWidget parent;
   GdkWindow *event_window;
-  
   /* instance public members */
   
   PitiviTimelineCellRenderer *track;
@@ -86,6 +85,7 @@ struct _PitiviTimelineMediaClass
   void (* deselect) (PitiviTimelineMedia *cell);
   void (* dissociate) (PitiviTimelineMedia *self, gpointer data);
   void (* associate_effect) (PitiviTimelineMedia *self, gpointer data);
+  void (* snapped_effect) (PitiviTimelineMedia *self, gpointer data);
 };
 
 /* used by PITIVI_TIMELINEMEDIA_TYPE */

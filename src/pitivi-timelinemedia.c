@@ -29,11 +29,12 @@
 #include "pitivi-dragdrop.h"
 #include "pitivi-sourceitem.h"
 #include "pitivi-stockicons.h"
+#include "pitivi-drawing.h"
 
 static	GtkWidgetClass	*parent_class = NULL;
 
 // Caching Operation  
-static	GdkPixmap	*pixmap = NULL;
+static	GdkPixmap	*pixmapcache = NULL;
 
 
 // Properties Enumaration
@@ -61,6 +62,7 @@ enum
     MEDIA_SELECT_SIGNAL,
     MEDIA_DISSOCIATE_SIGNAL,
     MEDIA_ASSOCIATE_EFEFCT_SIGNAL,
+    MEDIA_SNAPPED_EFEFCT_SIGNAL,
     LAST_SIGNAL
   };
 
@@ -245,15 +247,14 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
 			     GdkEventExpose *event)
 {
   PitiviTimelineMedia  *self = PITIVI_TIMELINEMEDIA (widget);
-  GtkWidget *container = gtk_widget_get_parent (GTK_WIDGET (widget));
   GdkColor selection = {0, 65355, 0};
   GtkStyle *style;
-  guint	   len;
-
+ 
   gdk_draw_rectangle (widget->window, widget->style->white_gc,
 		      TRUE, 0, 0,
 		      widget->allocation.width-2, -1);
-  switch (((PitiviTimelineCellRenderer *)container)->track_type)
+  
+  switch (((PitiviTimelineCellRenderer *)self->track)->track_type)
     {
     case PITIVI_AUDIO_TRACK:
       show_audio_media (widget, event);
@@ -265,7 +266,7 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
     case PITIVI_TRANSITION_TRACK:
       show_effects_media (widget, event);
       break;
-    }
+    }  
   if (self->selected)
     draw_selection_dash (widget, &selection, 2);
   return FALSE;
@@ -344,8 +345,20 @@ pitivi_timelinemedia_drag_begin (GtkWidget          *widget,
 }
 
 static void
+connect_drag_and_drop (GtkWidget *widget)
+{
+  media_signals[MEDIA_DRAG_BEGIN_SIGNAL] = g_signal_connect (widget, "drag_begin",
+							     G_CALLBACK (pitivi_timelinemedia_drag_begin), NULL);
+  media_signals[MEDIA_DRAG_GET_SIGNAL] = g_signal_connect (widget, "drag_data_get",	      
+							   G_CALLBACK (pitivi_timelinemedia_drag_get), NULL);
+  media_signals[MEDIA_DRAG_DELETE_SIGNAL] = g_signal_connect (widget, "drag_data_delete",
+							      G_CALLBACK (pitivi_timelinemedia_drag_delete), NULL);  
+}
+
+static void
 pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
 {
+  GdkPixbuf *pixbuf;
   PitiviTimelineMedia *self = (PitiviTimelineMedia *) instance;
   PitiviTimelineCellRenderer *container;
   PitiviCursor  *cursor;
@@ -359,7 +372,8 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
   /* Do only initialisation here */
   /* The construction of the object should be done in the Constructor
      So that properties set at instanciation can be set */
-  
+ 
+  self->effectschilds = NULL;
   self->selected = FALSE;
   self->copied = FALSE;
   
@@ -369,12 +383,9 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
 			iNbTargetSameEntry, 
 			GDK_ACTION_COPY|GDK_ACTION_MOVE);
   
-  media_signals[MEDIA_DRAG_BEGIN_SIGNAL] = g_signal_connect (GTK_WIDGET (self), "drag_begin",
-							     G_CALLBACK (pitivi_timelinemedia_drag_begin), NULL);
-  media_signals[MEDIA_DRAG_GET_SIGNAL] = g_signal_connect (GTK_WIDGET (self), "drag_data_get",	      
-							   G_CALLBACK (pitivi_timelinemedia_drag_get), NULL);
-  media_signals[MEDIA_DRAG_DELETE_SIGNAL] = g_signal_connect (GTK_WIDGET (self), "drag_data_delete",
-							      G_CALLBACK (pitivi_timelinemedia_drag_delete), NULL);
+  pixbuf = gtk_widget_render_icon(GTK_WIDGET (self), PITIVI_STOCK_HAND, GTK_ICON_SIZE_DND, NULL);
+  gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (self), pixbuf);
+  connect_drag_and_drop (GTK_WIDGET (self));
   gtk_widget_show_all (GTK_WIDGET (self));
 }
 
@@ -527,9 +538,6 @@ static
 gint pitivi_timelinemedia_motion_notify_event (GtkWidget        *widget,
 					       GdkEventMotion   *event)
 {
-  int x;
-  
-  x = event->x;
   // recalculer le x du event
   event->x += widget->allocation.x;
   return FALSE;
@@ -574,7 +582,7 @@ pitivi_timelinemedia_button_press_event (GtkWidget      *widget,
 		((PitiviTimelineMedia *) self->linked)->selected = FALSE;
 	    }
 	  gtk_widget_grab_focus ( widget );
-	  pitivi_send_expose_event (self);
+	  pitivi_send_expose_event (GTK_WIDGET (self));
 	  if ( self->linked )
 	    pitivi_send_expose_event (self->linked);
 	}
@@ -608,7 +616,7 @@ void
 pitivi_timelinemedia_callb_deselect (PitiviTimelineMedia *self)
 {
   self->selected = FALSE;
-  pitivi_send_expose_event (self);
+  pitivi_send_expose_event (GTK_WIDGET (self));
 }
 
 void
@@ -628,7 +636,10 @@ void
 pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *self, gpointer data)
 {
   PitiviSourceFile *se =  (PitiviSourceFile *)data;
-  PitiviTimelineMedia *effect;
+  PitiviTimelineMedia *neareffect, *effect;
+  GList	*listeffects = NULL;
+  int offset_currenteffect = 0;
+  
   
   se->length = self->sourceitem->srcfile->length;
   if ( self->track->effects_track)
@@ -637,13 +648,29 @@ pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *self, gpointer
 	  ||
 	  (strstr (se->mediatype, "video") && self->track->track_type == PITIVI_VIDEO_TRACK))
 	{
-	  effect = pitivi_timelinemedia_new ( se, PITIVI_TIMELINECELLRENDERER (self->track->effects_track) );
-	  gtk_widget_set_size_request (GTK_WIDGET (effect),  GTK_WIDGET (self)->allocation.width, self->track->effects_track->allocation.height);
-	  pitivi_layout_put (GTK_LAYOUT (self->track->effects_track), GTK_WIDGET (effect), GTK_WIDGET (self)->allocation.x, 0);
-	  gtk_widget_show (GTK_WIDGET (effect));
-	  calculate_priorities ( self->track );
-	  if ( self->track->linked_track )
-	    calculate_priorities ( self->track->linked_track );
+	  if (self->effectschilds && g_list_length (self->effectschilds) > 0)
+	    {
+	      listeffects = g_list_last ( self->effectschilds );
+	      neareffect = listeffects->data;
+	      offset_currenteffect = GTK_WIDGET (neareffect)->allocation.x + GTK_WIDGET (neareffect)->allocation.width;
+	      /* to do Recalculate Se */
+	    }
+	  /* Testing if place is left to insert effect on double click */
+	  if ( offset_currenteffect < GTK_WIDGET (self)->allocation.x + GTK_WIDGET (self)->allocation.width ) 
+	    {
+	      effect = pitivi_timelinemedia_new ( se, PITIVI_TIMELINECELLRENDERER (self->track->effects_track) );
+	      gtk_widget_set_size_request (GTK_WIDGET (effect),  GTK_WIDGET (self)->allocation.width, 
+					   self->track->effects_track->allocation.height);
+	      pitivi_layout_put (GTK_LAYOUT (self->track->effects_track), 
+				 GTK_WIDGET (effect), 
+				 GTK_WIDGET (self)->allocation.x, 
+				 0);
+	      gtk_widget_show (GTK_WIDGET (effect));
+	      self->effectschilds = g_list_append (self->effectschilds, effect);
+	      self->effectschilds = g_list_sort (self->effectschilds, compare_littlechild);
+	      calculate_priorities ( self->track );
+	    }
+	  /* ----------------------------------------------------------- */
 	}
     }
 }
@@ -673,6 +700,12 @@ pitivi_timelinemedia_callb_key_release_event (GtkWidget *widget,
   PitiviTimelineMedia *self = PITIVI_TIMELINEMEDIA (widget);
   pitivi_timelinemedia_callb_destroy (self, event);
   return TRUE;
+}
+
+static void
+pitivi_timelinemedia_callb_snapped_effect (PitiviTimelineMedia *media, gpointer data)
+{
+  
 }
 
 static void
@@ -738,9 +771,19 @@ pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
 							       g_cclosure_marshal_VOID__POINTER,
 							       G_TYPE_NONE, 1, G_TYPE_POINTER);
   
+ media_signals[MEDIA_SNAPPED_EFEFCT_SIGNAL] = g_signal_new ("snapped",
+							    G_TYPE_FROM_CLASS (g_class),
+							    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+							    G_STRUCT_OFFSET (PitiviTimelineMediaClass, snapped_effect),
+							    NULL, 
+							    NULL,                
+							    g_cclosure_marshal_VOID__POINTER,
+							    G_TYPE_NONE, 1, G_TYPE_POINTER);
+ 
   media_class->deselect = pitivi_timelinemedia_callb_deselect;
   media_class->dissociate = pitivi_timelinemedia_callb_dissociate;
   media_class->associate_effect = pitivi_timelinemedia_callb_associate_effect;
+  media_class->snapped_effect = pitivi_timelinemedia_callb_snapped_effect;
 }
 
 GType

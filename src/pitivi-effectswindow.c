@@ -47,10 +47,6 @@ struct _PitiviEffectsWindowPrivate
   PitiviEffectsTree	*trees[PITIVI_EFFECT_NBCAT_TYPE];
   PitiviSourceFile	*dndse;
   GtkWidget		*timelinewin;
-  
-  /* selected media */
-  
-  GtkWidget	        *selected_media;
 };
 
 /*
@@ -60,8 +56,6 @@ struct _PitiviEffectsWindowPrivate
 enum {
     PITIVI_ICON_COLUMN,
     PITIVI_TEXT_COLUMN,
-    PITIVI_BG_COLOR_COLUMN,
-    PITIVI_FG_COLOR_COLUMN,
     PITIVI_POINTER_COLUMN,
     PITIVI_NB_COLUMN
 };
@@ -198,20 +192,25 @@ effectstree_on_row_activated (GtkTreeView        *treeview,
 			      GtkTreeViewColumn  *col,
 			      gpointer            data)
 {
+  GtkTreeSelection    *selection;
   PitiviEffectsWindow *self;
   GtkTreeModel	      *model;
   PitiviSourceFile    *info;
-  GtkTreeIter	      child;
-
+  GtkTreeIter	      iter;
+  
   self = (PitiviEffectsWindow *) gtk_widget_get_toplevel (GTK_WIDGET (treeview));
-  model = gtk_tree_view_get_model (GTK_TREE_VIEW (treeview));
-  gtk_tree_model_get (GTK_TREE_MODEL (model), &child, PITIVI_POINTER_COLUMN, &info, -1);
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
+  if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+    g_warning("No elements selected!");
+    return;
+  }
+  
+  gtk_tree_model_get (GTK_TREE_MODEL (model), &iter, PITIVI_POINTER_COLUMN, &info, -1);
   if ( data && info )
     {
       g_signal_emit_by_name (GTK_OBJECT (pitivi_mainapp_get_timelinewin(((PitiviWindows *)self)->mainapp)), 
 			     "associate-effect-to-media", info);
-      self->private->selected_media = NULL;
-   }
+    }
 }
 
 void
@@ -250,8 +249,6 @@ pitivi_effectstree_insert_node (PitiviEffectsTree *tree_effect,
   gtk_tree_store_set(tree_effect->model, child,
 		     PITIVI_ICON_COLUMN, pixbuf,
 		     PITIVI_TEXT_COLUMN, name,
-		     PITIVI_BG_COLOR_COLUMN, NULL,
-		     PITIVI_FG_COLOR_COLUMN, NULL,
 		     PITIVI_POINTER_COLUMN, data,
 		     -1);
   tree_effect->pixbuf = pixbuf;
@@ -294,65 +291,9 @@ pitivi_effectstree_insert_effect (PitiviEffectsTree *tree_effect,
   gtk_tree_store_set(tree_effect->model, child,
 		     PITIVI_ICON_COLUMN, pixbuf,
 		     PITIVI_TEXT_COLUMN, name,
-		     PITIVI_BG_COLOR_COLUMN, NULL,
-		     PITIVI_FG_COLOR_COLUMN, NULL,
 		     PITIVI_POINTER_COLUMN, se,
 		     -1);
 }
-
-void
-pitivi_effectstree_clear_old_selection (GtkTreeModel *model, GtkTreeIter *parent)
-{
-  int  count, nb = 0;
-  gboolean    valid = TRUE;
-  gchar	      *name;
-  GdkColor    fg[1];
-  GtkTreeIter child;
-    
-  fg[0].red = 0;
-  fg[0].green = 0;
-  fg[0].blue = 0;
-  
-  if (gtk_tree_model_iter_children (model, &child, parent))
-    {
-      while (valid)
-	{
-	  gtk_tree_model_get (model, &child, PITIVI_TEXT_COLUMN, &name, -1);
-	  gtk_tree_store_set(GTK_TREE_STORE (model), &child,
-			     PITIVI_FG_COLOR_COLUMN, fg,
-			     -1);
-	  pitivi_effectstree_clear_old_selection (model, &child);
-	  valid = gtk_tree_model_iter_next (model, &child);
-	}
-    }
-}
-
-void
-pitivi_effectstree_selected_color (GtkTreeView *treeview, gpointer user_data)
-{
-  PitiviEffectsTree	*effectstree;
-  GtkTreeSelection	*selection;
-  GtkTreeModel		*model;
-  GtkTreeIter		TreeIter;
-  GdkColor		fg[1];
-  gchar			*name;
-  
-  fg[0].red = 65535;
-  fg[0].green = 0;
-  fg[0].blue = 0;
-  
-  effectstree = (PitiviEffectsTree *) user_data;  
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
-  if (gtk_tree_selection_get_selected(selection, &model, &TreeIter))
-    {      
-      pitivi_effectstree_clear_old_selection (model, NULL);
-      gtk_tree_model_get (model, &TreeIter, PITIVI_TEXT_COLUMN, &name, -1);
-      gtk_tree_store_set(GTK_TREE_STORE (model), &TreeIter,
-			 PITIVI_FG_COLOR_COLUMN, fg,
-			 -1);
-    }
-}
-
 
 /**************************************************************
  * Callbacks Signal Drag and Drop          		      *
@@ -672,10 +613,10 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
   tree_effect->model = gtk_tree_store_new ( PITIVI_NB_COLUMN,
 					    GDK_TYPE_PIXBUF,
 					    G_TYPE_STRING,
-					    GDK_TYPE_COLOR,
-					    GDK_TYPE_COLOR,
 					    G_TYPE_POINTER,
 					    -1);
+  
+  gtk_tree_view_set_model(GTK_TREE_VIEW(tree_effect->treeview), GTK_TREE_MODEL(tree_effect->model));
   
   /* On check le type d'effet a inserer (video/audio/transition) */
 
@@ -693,8 +634,7 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
       insert_transition_effects_on_tree (tree_effect, &child, setting->transition_effects);
       break;
     }
-
-  gtk_tree_view_set_model(GTK_TREE_VIEW(tree_effect->treeview), GTK_TREE_MODEL(tree_effect->model));
+  
   pCellRenderer = gtk_cell_renderer_pixbuf_new();
   pColumn = gtk_tree_view_column_new_with_attributes("",
 						     pCellRenderer,
@@ -709,14 +649,8 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 						     pCellRenderer,
 						     "text",
 						     PITIVI_TEXT_COLUMN,
-						     "background-gdk",
-						     PITIVI_BG_COLOR_COLUMN,
-						     "foreground-gdk",
-						     PITIVI_FG_COLOR_COLUMN,
 						     NULL);
   
-  g_signal_connect (tree_effect->treeview, "cursor-changed", G_CALLBACK ( pitivi_effectstree_selected_color ), \
-		    (gpointer) tree_effect);
   g_signal_connect (tree_effect->treeview, "row-expanded", G_CALLBACK ( effectstree_on_row_expanded ),\
 		    (gpointer) tree_effect);
   g_signal_connect (tree_effect->treeview, "row-collapsed", G_CALLBACK ( effectstree_on_row_collapsed ),\
@@ -740,13 +674,6 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
   g_signal_connect (tree_effect->treeview, "row-activated", 
 		    G_CALLBACK  ( effectstree_on_row_activated ), 
 		    self);
-}
-
-
-static void
-pitivi_effectswindow_selected_media (PitiviEffectsWindow *self, gpointer data)
-{
-  self->private->selected_media = &(*GTK_WIDGET (data));
 }
 
 
@@ -837,17 +764,6 @@ pitivi_effectswindow_class_init (gpointer g_class, gpointer g_class_data)
 
   gobject_class->set_property = pitivi_effectswindow_set_property;
   gobject_class->get_property = pitivi_effectswindow_get_property;
-  
-  effects_signals[SELECT_MEDIA_SOURCE_SIGNAL] = g_signal_new ("selected-source",
-							      G_TYPE_FROM_CLASS (g_class),
-							      G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-							      G_STRUCT_OFFSET (PitiviEffectsWindowClass, selected_media),
-							      NULL, 
-							      NULL,                
-							      g_cclosure_marshal_VOID__POINTER,
-							      G_TYPE_NONE, 1, G_TYPE_POINTER);
-  
-  klass->selected_media = pitivi_effectswindow_selected_media;
 }
 
 GType

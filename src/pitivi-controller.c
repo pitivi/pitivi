@@ -27,7 +27,6 @@
 
 enum {
   PITIVI_CONTROLLER_BUTTON_BACKWARD = 1,
-  PITIVI_CONTROLLER_BUTTON_PAUSE,
   PITIVI_CONTROLLER_BUTTON_FORWARD,
 };
 
@@ -206,10 +205,6 @@ pitivi_controller_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->group_ffrev = \
     gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_FORWARD]));
     
-  self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_PAUSE] = \
-    gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_PAUSE);
-  self->private->group_ffrev = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_PAUSE]));
-  
   self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_BACKWARD] = \
     gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_PREVIOUS);
   self->private->group_ffrev = \
@@ -236,8 +231,6 @@ pitivi_controller_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
 		      , GTK_TOOL_ITEM (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_PLAY]), -1);
   gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
-		      , GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_PAUSE]), -1);
-  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
 		      , GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_FORWARD]), -1);  
   gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
 		      , GTK_TOOL_ITEM (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_STOP]), -1);
@@ -257,9 +250,6 @@ pitivi_controller_instance_init (GTypeInstance * instance, gpointer g_class)
   
   g_signal_connect (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_PLAY]\
 		    , "clicked", G_CALLBACK(pitivi_controller_callb_play), self);
-
-  g_signal_connect (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_PAUSE]\
-		    , "clicked", G_CALLBACK(pitivi_controller_callb_pause), self);
 
   g_signal_connect (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_FORWARD]\
 		    , "clicked", G_CALLBACK(pitivi_controller_callb_forward), self);

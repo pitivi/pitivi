@@ -27,9 +27,10 @@
 #include <gtk/gtk.h>
 
 #define DIR_LENGTH 50
-#define FRAME	20	/* which frame to snapshot */
+#define FRAME	10	/* which frame to snapshot */
 #define TIMEOUT	5000	/* how long before we give up, msec */
 
+gint64	   frame = FRAME;
 gboolean   finished = FALSE;
 gboolean   can_finish = FALSE;
 GtkWidget  *myreceiver = NULL;
@@ -71,7 +72,7 @@ gst_thumbnail_pngenc_get (const char *media, const char *thumbnail, GtkWidget *r
   int i;
 
   pipeline = gst_parse_launch ("gnomevfssrc name=gnomevfssrc ! spider ! "
-			       "colorspace ! pngenc name=snapshot",
+			       "colorspace ! pngenc name=snapshot width=80 height=80",
 			       &error);
   
   if (!GST_IS_PIPELINE (pipeline))
@@ -87,7 +88,7 @@ gst_thumbnail_pngenc_get (const char *media, const char *thumbnail, GtkWidget *r
 
   gst_element_set_state (pipeline, GST_STATE_PLAYING);
     
-  for (i = 0; i < FRAME; ++i)
+  for (i = 0; i < frame; ++i)
     gst_bin_iterate (GST_BIN (pipeline));
 	
   gst_element_set_state (pipeline, GST_STATE_PAUSED);
@@ -147,6 +148,29 @@ generate_thumb (char *filename, GtkWidget *widget, int i)
 	  myreceiver = widget;
 	  myoutput = g_malloc (strlen (filename) + DIR_LENGTH);
 	  g_sprintf (myoutput, "/tmp/%s%c%d", tmp, '\0', i);
+	  if ( gst_thumbnail_pngenc_get (filename, myoutput, widget) > 0)
+	      return myoutput;
+	}
+    }
+  return NULL;
+}
+
+gchar *
+generate_thumb_snap_on_frame (char *filename, GtkWidget *widget, gint64 pframe)
+{
+  GstElement *pngenc = NULL;
+  gchar	     *tmp = NULL;
+
+  pngenc = gst_element_factory_make ("pngenc", "pngenc");
+  if (filename && pngenc != NULL)
+    {
+      tmp = get_last_charoccur (filename, '/');
+      if ( tmp )
+	{
+	  frame = pframe;
+	  myreceiver = widget;
+	  myoutput = g_malloc (strlen (filename) + DIR_LENGTH);
+	  g_sprintf (myoutput, "/tmp/%s", tmp);
 	  if ( gst_thumbnail_pngenc_get (filename, myoutput, widget) > 0)
 	      return myoutput;
 	}

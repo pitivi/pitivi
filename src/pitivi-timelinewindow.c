@@ -77,7 +77,8 @@ struct _PitiviTimelineWindowPrivate
   PitiviController	*controller;
   GtkComboBox		*unitcombobox;
   GtkComboBox		*scalecombobox;
-  
+  GtkWidget		*timer;
+
   /* WinSettings */
   
   PitiviSettingsWindow	*WinSettings;
@@ -422,9 +423,9 @@ create_timelabel (PitiviTimelineWindow *self, GtkWidget *container)
   label =  gtk_label_new ("Current Time :");
   pitivi_widget_changefont (label, "helvetica 9");
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 4);
-  timelabel = gtk_label_new ("--:--:--");
+  self->private->timer = gtk_label_new ("--:--:--");
   pitivi_widget_changefont (timelabel, "helvetica 9");
-  gtk_box_pack_start (GTK_BOX (hbox), timelabel, FALSE, TRUE, 4);
+  gtk_box_pack_start (GTK_BOX (hbox), self->private->timer, FALSE, TRUE, 4);
   gtk_box_pack_start (GTK_BOX (container), hbox, FALSE, TRUE, 4);  
 }
 
@@ -1004,8 +1005,7 @@ pitivi_timelinewindow_get_mainApp (PitiviTimelineWindow	*timelinewindow)
   return ( timelinewindow->private->mainapp );
 }
 
-GtkWidget *
-pitivi_timelinewindow_get_main_vbox_right(PitiviTimelineWindow *self) {
+GtkWidget *pitivi_timelinewindow_get_container (PitiviTimelineWindow *self) {
   if (!self)
     return NULL;
   return self->private->layout_container;

@@ -35,7 +35,7 @@ struct _PitiviToolboxPrivate
 {
   /* instance private members */
   gboolean	dispose_has_run;
-  GtkWidget	*button[4];
+  GtkWidget	*button[5];
   GSList	*group_button;
   PitiviMainApp	*mainapp;
 };
@@ -47,6 +47,30 @@ struct _PitiviToolboxPrivate
 /*
  * Insert "added-value" functions here
  */
+
+void cursor_change_select  (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
+void cursor_change_cut     (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
+void cursor_change_hand    (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
+void cursor_change_zoom    (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
+void cursor_change_resize  (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
+
+typedef struct _InfoBox
+{
+  gchar *image;
+  gchar *tooltip;
+  void (*callback)  (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
+}	       InfoBox;
+
+
+InfoBox button_info [] = {
+  {PITIVI_STOCK_POINTER, "pointer", cursor_change_select},
+  {PITIVI_STOCK_CUT, "cut", cursor_change_cut},
+  {PITIVI_STOCK_HAND, "hand", cursor_change_hand},
+  {PITIVI_STOCK_ZOOM, "zoom", cursor_change_zoom},
+  {PITIVI_STOCK_RESIZE, "resize", cursor_change_resize},
+  {0, 0}
+};
+
 
 /*
  * CALLBACKS
@@ -110,14 +134,14 @@ void
 cursor_change_select(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   PitiviTimelineWindow	*timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
-  GtkWidget		*main_vbox_right;
+  GtkWidget		*container;
 
   if (!timelinewin)
     return;
-  main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
+  container = (GtkWidget *) pitivi_timelinewindow_get_container(timelinewin);
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
-      load_cursor (GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor, PITIVI_CURSOR_SELECT);
+      load_cursor (GDK_WINDOW(GTK_WIDGET(container)->window), self->pitivi_cursor, PITIVI_CURSOR_SELECT);
       gdk_cursor_unref (self->pitivi_cursor->cursor);
     }
 }
@@ -126,14 +150,14 @@ void
 cursor_change_cut(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
-  GtkWidget		*main_vbox_right;
+  GtkWidget		*container;
   
   if (!timelinewin)
     return;
-  main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
+  container = (GtkWidget *) pitivi_timelinewindow_get_container(timelinewin);
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
-      load_cursor (GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor, PITIVI_CURSOR_CUT);
+      load_cursor (GDK_WINDOW(GTK_WIDGET(container)->window), self->pitivi_cursor, PITIVI_CURSOR_CUT);
       gdk_cursor_unref (self->pitivi_cursor->cursor);
     }
 }
@@ -142,14 +166,14 @@ void
 cursor_change_hand(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
-  GtkWidget		*main_vbox_right;
+  GtkWidget		*container;
 
   if (!timelinewin)
     return;
-  main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
+  container = (GtkWidget *) pitivi_timelinewindow_get_container(timelinewin);
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
-      load_cursor (GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor, PITIVI_CURSOR_HAND);
+      load_cursor (GDK_WINDOW(GTK_WIDGET(container)->window), self->pitivi_cursor, PITIVI_CURSOR_HAND);
       gdk_cursor_unref (self->pitivi_cursor->cursor);
     }
 }
@@ -158,19 +182,33 @@ void
 cursor_change_zoom (GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
-  GtkWidget		*main_vbox_right;
+  GtkWidget		*container;
 
   if (!timelinewin)
     return;
-  main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
+  container = (GtkWidget *) pitivi_timelinewindow_get_container(timelinewin);
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
    {
-     load_cursor (GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor, PITIVI_CURSOR_ZOOM);
+     load_cursor (GDK_WINDOW(GTK_WIDGET(container)->window), self->pitivi_cursor, PITIVI_CURSOR_ZOOM);
      gdk_cursor_unref (self->pitivi_cursor->cursor);
    }
 }
 
+void
+cursor_change_resize (GtkRadioToolButton *radiobutton, PitiviToolbox *self)
+{
+  PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
+  GtkWidget	       *container;
 
+  if (!timelinewin)
+    return;
+  container = (GtkWidget *) pitivi_timelinewindow_get_container(timelinewin);
+  if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
+   {
+     load_cursor (GDK_WINDOW(GTK_WIDGET(container)->window), self->pitivi_cursor, PITIVI_CURSOR_RESIZE);
+     gdk_cursor_unref (self->pitivi_cursor->cursor);
+   }
+}
 /*
  * Standard GObject functions
  */
@@ -210,6 +248,7 @@ pitivi_toolbox_constructor (GType type,
 static void
 pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
 {
+  int		count;
   GtkTooltips	*tooltips;
 
   PitiviToolbox *self = (PitiviToolbox *) instance;
@@ -218,8 +257,7 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   GdkPixmap	*pixmap;
   GdkPixmap	 *mask;
   GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
-  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */  
-
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
 
   self->private = g_new0 (PitiviToolboxPrivate, 1);
   self->private->group_button = NULL;
@@ -238,61 +276,27 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
-
-  self->private->button[0] =
-    GTK_WIDGET (gtk_radio_tool_button_new_from_stock
-		(NULL, PITIVI_STOCK_POINTER));
-  self->private->group_button =
-    gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON
-				     (self->private->button[0]));
-  self->private->button[1] =
-    GTK_WIDGET (gtk_radio_tool_button_new_from_stock
-		(self->private->group_button, PITIVI_STOCK_CUT));
-  self->private->group_button =
-    gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON
-				     (self->private->button[0]));
-  self->private->button[2] =
-    GTK_WIDGET (gtk_radio_tool_button_new_from_stock
-		(self->private->group_button, PITIVI_STOCK_HAND));
-  self->private->group_button =
-    gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON
-				     (self->private->button[0]));
-  self->private->button[3] =
-    GTK_WIDGET (gtk_radio_tool_button_new_from_stock
-		(self->private->group_button, PITIVI_STOCK_ZOOM));
-
+    
   tooltips = gtk_tooltips_new();
-  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[0]), tooltips, "select", NULL);
-  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[1]), tooltips, "cut", NULL);
-  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[2]), tooltips, "move", NULL);
-  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[3]), tooltips, "zoom", NULL);
-
-  /*
-   * We'll have to modify these functions so that they set the cursor
-   * to work in the good window (i.e: PitiviTimelineWindow)
-   */
-
-  g_signal_connect (G_OBJECT (self->private->button[0]), "toggled",
-		    G_CALLBACK (cursor_change_select), self);
-  g_signal_connect (G_OBJECT (self->private->button[1]), "toggled",
-		    G_CALLBACK (cursor_change_cut), self);
-  g_signal_connect (G_OBJECT (self->private->button[2]), "toggled",
-		    G_CALLBACK (cursor_change_hand), self);
-  g_signal_connect(G_OBJECT(self->private->button[3]), "toggled",
-		   G_CALLBACK(cursor_change_zoom), self) ;
-
+  for (count = 0; count <= 4; count++)
+    {
+      self->private->button[count] =
+	GTK_WIDGET (gtk_radio_tool_button_new_from_stock
+		    (self->private->group_button, button_info[count].image));
+      self->private->group_button = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON
+								     (self->private->button[0]));
+      gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[count]), tooltips, button_info[count].tooltip, NULL);
+      gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[count]), count);
+      g_signal_connect (G_OBJECT (self->private->button[count]), "toggled",
+			G_CALLBACK (button_info[count].callback), self);
+    }
   
-  //gtk_toolbar_set_orientation (tbar, GTK_ORIENTATION_VERTICAL);
   gtk_toolbar_set_orientation (tbar, GTK_ORIENTATION_HORIZONTAL);
   gtk_toolbar_set_show_arrow (tbar, FALSE);
   gtk_toolbar_set_style (tbar, GTK_TOOLBAR_ICONS);
-  gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[0]), 0);
-  gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[1]), 1);
-  gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[2]), 2);
-  gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[3]), 3);
-
-/*   Cursor initialisation */
-
+  
+  /*   Cursor initialisation */
+  
   pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, CST_WIDTH, CST_HEIGHT);
   mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, CST_MASK_WIDTH, CST_MASK_HEIGHT);
   self->pitivi_cursor->cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg,  CST_X_HOT, CST_Y_HOT);
@@ -313,26 +317,12 @@ pitivi_toolbox_dispose (GObject * object)
 
   /* Make sure dispose does not run twice. */
   self->private->dispose_has_run = TRUE;
-
-  /* 
-   * In dispose, you are supposed to free all types referenced from this 
-   * object which might themselves hold a reference to self. Generally, 
-   * the most simple solution is to unref all members on which you own a 
-   * reference. 
-   */
-
 }
 
 static void
 pitivi_toolbox_finalize (GObject * object)
 {
   PitiviToolbox *self = PITIVI_TOOLBOX (object);
-
-  /* 
-   * Here, complete object destruction. 
-   * You might not need to do much... 
-   */
-
   g_free (self->private);
 }
 
@@ -345,12 +335,6 @@ pitivi_toolbox_set_property (GObject * object,
 
   switch (property_id)
     {
-      /*   case PITIVI_TOOLBOX_PROPERTY: { */
-      /*     g_free (self->private->name); */
-      /*     self->private->name = g_value_dup_string (value); */
-      /*     g_print ("maman: %s\n",self->private->name); */
-      /*   } */
-      /*     break; */
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -367,10 +351,6 @@ pitivi_toolbox_get_property (GObject * object,
 
   switch (property_id)
     {
-      /*  case PITIVI_TOOLBOX_PROPERTY: { */
-      /*     g_value_set_string (value, self->private->name); */
-      /*   } */
-      /*     break; */
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -390,18 +370,6 @@ pitivi_toolbox_class_init (gpointer g_class, gpointer g_class_data)
 
   gobject_class->set_property = pitivi_toolbox_set_property;
   gobject_class->get_property = pitivi_toolbox_get_property;
-
-  /* Install the properties in the class here ! */
-  /*   pspec = g_param_spec_string ("maman-name", */
-  /*                                "Maman construct prop", */
-  /*                                "Set maman's name", */
-  /*                                "no-name-set" /\* default value *\/, */
-  /*                                G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE); */
-  /*   g_object_class_install_property (gobject_class, */
-  /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
-  /*                                    pspec); */
-
-
 }
 
 GType

@@ -38,6 +38,7 @@
 #define PITIVI_STOCK_HAND		  "pitivi-hand"
 #define PITIVI_STOCK_POINTER		  "pitivi-pointer"
 #define PITIVI_STOCK_ZOOM		  "pitivi-zoom"
+#define PITIVI_STOCK_RESIZE		  "pitivi-resize"
 #define PITIVI_STOCK_NEW_PROJECT	  "pitivi-new-sample"
 #define PITIVI_STOCK_SELECTION_GROW	  "pitivi-selection-grow"
 #define PITIVI_STOCK_SELECT_ALL		  "pitivi-select-all"

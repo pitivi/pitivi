@@ -98,8 +98,6 @@ struct _PitiviEffectsWindow
 struct _PitiviEffectsWindowClass
 {
   PitiviWindowsClass parent;
-  /* class members */
-  void (*selected_media)  (PitiviEffectsWindow *self, gpointer data);
 };
 
 /* used by PITIVI_EFFECTSWINDOW_TYPE */

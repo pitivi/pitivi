@@ -32,6 +32,7 @@ static const char *items [] =
 	PITIVI_STOCK_HAND,
 	PITIVI_STOCK_POINTER,
 	PITIVI_STOCK_ZOOM,
+	PITIVI_STOCK_RESIZE,
 	PITIVI_STOCK_EFFECT_CAT,
 	PITIVI_STOCK_EFFECT_CAT_OPEN,
 	PITIVI_STOCK_EFFECT_SOUND,
@@ -165,4 +166,5 @@ pitivi_stockicons_register (void)
       }
   }
   g_object_unref (G_OBJECT (factory));
+  gtk_rc_parse ("../ui/style.rc");
 }

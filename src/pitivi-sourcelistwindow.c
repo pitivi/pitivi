@@ -1702,6 +1702,7 @@ drag_data_get_cb (GtkWidget          *widget,
 GtkWidget	*create_listview(PitiviSourceListWindow *self,
 				 GtkWidget *pWindow)
 {
+  GdkPixbuf             *pixbuf;
   GtkWidget		*menupopup;
   GtkWidget		*pListView;
   GtkWidget		*pScrollbar;
@@ -1722,8 +1723,9 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 		    G_CALLBACK (drag_end_cb), self);
   g_signal_connect (pListView, "drag_begin",	      
 		    G_CALLBACK (drag_begin_cb), self);
-
-  gtk_drag_source_set_icon_stock(pListView, PITIVI_STOCK_EFFECT_SOUND);
+  
+  pixbuf = gtk_widget_render_icon(pListView, PITIVI_STOCK_HAND, GTK_ICON_SIZE_DND, NULL);
+  gtk_drag_source_set_icon_pixbuf (pListView, pixbuf);
   self->private->listview = pListView;
 
   /* Creation du menu popup */
@@ -2099,53 +2101,37 @@ void	OnNewBin(gpointer data, gint action, GtkWidget *widget)
   g_free(stexte);
 }
 
-void	OnImportFile(gpointer data, gint action, GtkWidget *widget)
+void	import_file_from_gtkchooser (PitiviSourceListWindow *self, gchar *labelchooser, guint signal)
 {
-  PitiviSourceListWindow	*self = (PitiviSourceListWindow*)data;
   GtkWidget	*dialog;
 
-  dialog = gtk_file_chooser_dialog_new("Import File",
+  dialog = gtk_file_chooser_dialog_new(labelchooser,
 				       GTK_WINDOW(self), 
 				       GTK_FILE_CHOOSER_ACTION_OPEN,
 				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 				       NULL);
-
+  
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
     {
       self->private->filepath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-      g_signal_emit(self, pitivi_sourcelistwindow_signal[FILEIMPORT_SIGNAL],
+      g_signal_emit(self, pitivi_sourcelistwindow_signal[signal],
 		    0 /* details */, 
 		    NULL);
     }
-
   gtk_widget_destroy(dialog);
+}
+
+void	OnImportFile(gpointer data, gint action, GtkWidget *widget)
+{
+  PitiviSourceListWindow	*self = (PitiviSourceListWindow*)data;
+  import_file_from_gtkchooser (self, "Import File", FILEIMPORT_SIGNAL);
 }
 
 void	OnImportFolder(gpointer data, gint action, GtkWidget *widget)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
-
-GtkWidget	*dialog;
-
-  dialog = gtk_file_chooser_dialog_new("Import Folder",
-				       GTK_WINDOW(self), 
-				       GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
-				       NULL);
-
-  if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
-    {
-      self->private->folderpath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
-      g_signal_emit(self, pitivi_sourcelistwindow_signal[FOLDERIMPORT_SIGNAL],
-		    0 /* details */, 
-		    NULL);   
-    }
-
-  gtk_widget_destroy(dialog);
-
-
+  import_file_from_gtkchooser (self, "Import Folder", FOLDERIMPORT_SIGNAL);
 }
 
 gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,

@@ -175,7 +175,6 @@ pitivi_mediatrackinfo_constructor (GType type,
   /* label */
 
   label = gtk_label_new (self->private->trackname);
-  pitivi_widget_changefont (label, self->private->font_desc);
   gtk_box_pack_start (GTK_BOX(hbox), label, TRUE, FALSE, 0);
 
   /* Packing ans sizing */
