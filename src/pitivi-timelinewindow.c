@@ -93,8 +93,6 @@ struct _PitiviTimelineWindowPrivate
   /* WinSettings */
   
   PitiviSettingsWindow	*WinSettings;
-
-  gint64		current;
 };
 
 
@@ -1315,7 +1313,7 @@ pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self)
 void
 pitivi_timelinewindow_stop (PitiviTimelineWindow *self)
 {
-  self->private->current = 0;
+   PITIVI_RULER (self->hruler)->time_pix = 0;
 }
 
 /**
@@ -1337,12 +1335,12 @@ pitivi_timelinewindow_update_time (PitiviTimelineWindow *self, gint64 ntime)
   pos = ((gint64) ntime/GST_SECOND);
   if (!pos)
     {
-      self->private->current = 0;
+      PITIVI_RULER (self->hruler)->time_pix = 0;
       g_signal_emit_by_name (self->hruler, "moving-play", &pos, NULL);
     }
-  if (pos > self->private->current)
+  if (pos >  PITIVI_RULER (self->hruler)->time_pix)
     {
-      self->private->current = pos;
+      PITIVI_RULER (self->hruler)->time_pix = pos;
       g_signal_emit_by_name (self->hruler, "moving-play", &pos, NULL);
     }
 }

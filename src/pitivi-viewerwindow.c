@@ -160,6 +160,8 @@ acitve_widget (GtkWidget *bin, GtkWidget *w1, GtkWidget *w2)
   gtk_container_add (GTK_CONTAINER (bin), w1);
   return ;
 }
+void
+pitivi_ruler_set_pos_changed (GtkWidget *ruler, gboolean status);
 
 void	video_play(GtkWidget *widget, gpointer data)
 {

@@ -99,8 +99,8 @@ typedef struct _PitiviRulerPrivate PitiviRulerPrivate;
 
 struct _PitiviRuler
 {
-  GtkRuler ruler;
-  guint	   timeline_x;
+  GtkRuler  ruler;
+  guint	    time_pix;
   PitiviRulerPrivate *private;
 };
 
