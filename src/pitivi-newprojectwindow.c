@@ -130,7 +130,6 @@ struct _PitiviNewProjectWindowPrivate
   
   /* Codecs Videos */
   GtkWidget		*video_combo_codec;
-  GList			*video_codec_list;
   GtkWidget		*size_width;
   GtkWidget		*size_height;
   GtkWidget		*fps_text;
@@ -141,7 +140,6 @@ struct _PitiviNewProjectWindowPrivate
   GtkWidget		*audio_combo_codec;
   GtkWidget		*audio_combo_freq;
   GtkWidget		*audio_combo_ech;
-  GList			*audio_codec_list;
   GList			*audio_listname;
   gchar			**audio_tabname;
   
