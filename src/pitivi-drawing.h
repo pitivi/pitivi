@@ -31,6 +31,9 @@
 
 #include "../pixmaps/blank.xpm"
 #include "../pixmaps/bg.xpm"
+#include "../pixmaps/bg_audio.xpm"
+#include "../pixmaps/bg_video.xpm"
+#include "../pixmaps/bg_effects.xpm"
 
 void
 pitivi_drawing_set_pixmap_bg (GtkWidget *widget, GdkPixmap *pixmap);
@@ -69,6 +72,10 @@ pitivi_drawing_getgdkwindow (GtkWidget *widget);
 
 
 /* Defining GCs for graphical debug */
+
+#define DEFAULT_WIDTH_DASHES 4
+#define DEFAULT_MEDIA_SIZE 100
+
 
 #define pitivi_drawing_bluegc() pitivi_drawing_GdkGCcolor_new (0, 0, 255)
 #define pitivi_drawing_redgc() pitivi_drawing_GdkGCcolor_new (255, 0, 0)

@@ -40,6 +40,9 @@ pitivi_SOURCES		= \
 	pitivi-splashscreenwindow.c \
 	pitivi-gstelementsettings.c \
 	pitivi-drawing.c \
+	pitivi-ruler.c \
+	pitivi-mediatrackinfo.c \
+	pitivi-controller.c \
 	main.c
 
 # our CFLAGS and LDFLAGS used for compiling and linking

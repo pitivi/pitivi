@@ -32,6 +32,7 @@
 
 #include <gtk/gtk.h>
 #include "pitivi-cursor.h"
+#include "pitivi-trackenum.h"
 
 /*
  * Type macros.
@@ -43,9 +44,6 @@
 #define FIXED_HEIGHT  50
 
 // Move on graphic source
-
-#define DEFAULT_WIDTH_DASHES 4
-#define DEFAULT_MEDIA_SIZE 100
 #define MY_MAX 100000000
 
 
@@ -54,8 +52,6 @@
 #define PITIVI_MOUSE_LEFT_CLICK   1
 #define PITIVI_MOUSE_CENTER_CLICK 2
 #define PITIVI_MOUSE_RIGHT_CLICK  3
-
-
 
 
 #define PITIVI_TIMELINECELLRENDERER_TYPE (pitivi_timelinecellrenderer_get_type ())
@@ -69,14 +65,6 @@ typedef struct _PitiviTimelineCellRenderer PitiviTimelineCellRenderer;
 typedef struct _PitiviTimelineCellRendererClass PitiviTimelineCellRendererClass;
 typedef struct _PitiviTimelineCellRendererPrivate PitiviTimelineCellRendererPrivate;
 typedef struct _PitiviTimelineMediaChild PitiviTimelineMediaChild;
-
-typedef enum
-{
-  PITIVI_VIDEO_TRACK = 1,
-  PITIVI_AUDIO_TRACK = 2,
-  PITIVI_VIDEO_AUDIO_TRACK = 3,
-  PITIVI_NO_TRACK = -1,
-} PitiviLayerType;
 
 struct _PitiviTimelineCellRenderer
 {
@@ -95,7 +83,11 @@ struct _PitiviTimelineCellRenderer
 struct _PitiviTimelineCellRendererClass
 {
   GtkLayoutClass parent;
+
   /* class members */
+  
+  void (* activate) (PitiviTimelineCellRenderer *cell);
+  void (* deactivate) (PitiviTimelineCellRenderer *cell);
 };
 
 /* used by PITIVI_TIMELINECELLRENDERER_TYPE */
@@ -106,9 +98,21 @@ GType pitivi_timelinecellrenderer_get_type (void);
  */
 
 GtkWidget	*pitivi_timelinecellrenderer_new ();
+
 void		pitivi_timelinecellrenderer_remove (GtkContainer *container, GtkWidget *child);
+
 void		pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
+
 PitiviCursor    *pitivi_getcursor_id (GtkWidget *widget);
+
 int		add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y);
+
+
+/* Deactivation of signals */
+
+void		pitivi_timelinecellrenderer_activate (PitiviTimelineCellRenderer *self);
+void		pitivi_timelinecellrenderer_deactivate (PitiviTimelineCellRenderer *self);
+void		pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self );
+void		pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
 
 #endif

@@ -215,7 +215,7 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
   
   if (!GTK_IS_WIDGET (self->private->timelinewin))
     {
-      self->private->timelinewin = pitivi_timelinewindow_new(self, project);
+      self->private->timelinewin = pitivi_timelinewindow_new(self);
       gtk_widget_show_all (GTK_WIDGET (self->private->timelinewin));
       gtk_window_get_size (GTK_WINDOW (self->private->timelinewin), &tmp_w, &tmp_h);
       gtk_window_move (GTK_WINDOW (self->private->timelinewin), 0, (height - (tmp_h + BORDER + BOTTOM)));
@@ -280,7 +280,7 @@ pitivi_mainapp_constructor (GType type,
 
   /* Lancement du splash screen */
   self->private->splash_screen = pitivi_splashscreenwindow_new();
-  usleep (5);
+  usleep (10);
 
   /* Enregistrement des Icones */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
@@ -288,7 +288,7 @@ pitivi_mainapp_constructor (GType type,
   pitivi_stockicons_register ();
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.2, "Loading Default Settings");
-/*   self->private->project_settings = pitivi_projectsettings_list_make(); */
+  /*   self->private->project_settings = pitivi_projectsettings_list_make(); */
 
   /* Creation des settings globaux */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
@@ -303,8 +303,9 @@ pitivi_mainapp_constructor (GType type,
   /* Creation de la toolboxwindow */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.6, "Loading Toolbox");
+  
   self->private->tbxwin = pitivi_toolboxwindow_new(self);
-
+  
   /* Connection des Signaux */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.8, "Loading Signals");

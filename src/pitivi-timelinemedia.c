@@ -38,7 +38,8 @@ static	GdkPixmap	*pixmap = NULL;
 // Properties Enumaration
 
 typedef enum {
-  PITIVI_MEDIA_TYPE_PROPERTY = 1,
+  PROP_MEDIA_TYPE = 1,
+  PROP_SOURCEFILE,
 } PitiviMediaProperty;
 
 
@@ -89,15 +90,17 @@ pitivi_timelinemedia_new (PitiviSourceFile *sf)
 {
   PitiviTimelineMedia	*timelinemedia;
   PitiviLayerType	type;
-  
+   
+  type = PITIVI_VIDEO_AUDIO_TRACK;
   if (sf)
     type = check_media_type (sf);
-  else
-    type = PITIVI_VIDEO_AUDIO_TRACK;
-  timelinemedia = (PitiviTimelineMedia *) g_object_new(PITIVI_TIMELINEMEDIA_TYPE, "media_type", type, NULL);
-  memcpy (timelinemedia->sf, sf, sizeof (sf));
-  timelinemedia->sf->mediatype = g_strdup (sf->mediatype);
-  timelinemedia->sf->filename = g_strdup (sf->filename);
+  
+  timelinemedia = (PitiviTimelineMedia *) g_object_new(PITIVI_TIMELINEMEDIA_TYPE, 
+						       "sourcefile", 
+						       sf,
+						       "media_type",
+						       type,
+						       NULL);
   g_assert(timelinemedia != NULL);
   return timelinemedia;
 }
@@ -299,9 +302,12 @@ pitivi_timelinemedia_set_property (GObject * object,
 
   switch (property_id)
     {
-    case PITIVI_MEDIA_TYPE_PROPERTY:
-      self->private->media_type = g_value_get_int (value);
+    case PROP_SOURCEFILE:
+      self->sf = g_value_get_pointer (value);
       break;
+    case PROP_MEDIA_TYPE:
+      self->sf = g_value_get_pointer (value);
+      break; 
     default:
       g_assert (FALSE);
       break;
@@ -589,9 +595,16 @@ pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
   //widget_class->leave_notify_event = pitivi_timelinemedia_leave_notify_event;
   widget_class->button_release_event = pitivi_timelinemedia_button_release_event;
   
-  g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PITIVI_MEDIA_TYPE_PROPERTY,
+  g_object_class_install_property (gobject_class,
+                                   PROP_SOURCEFILE,
+                                   g_param_spec_pointer ("sourcefile",
+							 "sourcefile",
+							 "Pointer on the PitiviTimecellRenederer instance",
+							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY) );
+  
+  g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_MEDIA_TYPE,
 				   g_param_spec_int ("media_type","media_type","media_type",
-						     G_MININT, G_MAXINT, 0,G_PARAM_READWRITE));
+						     G_MININT, G_MAXINT, 0,G_PARAM_READWRITE)); 
 }
 
 GType

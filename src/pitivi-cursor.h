@@ -30,8 +30,8 @@
 #define CST_HEIGHT 32
 #define CST_MASK_WIDTH 32
 #define CST_MASK_HEIGHT 32
-#define CST_X_HOT 8
-#define CST_Y_HOT 8
+#define CST_X_HOT 0
+#define CST_Y_HOT 0
 
 typedef struct _PitiviCursor PitiviCursor;
 
@@ -43,6 +43,7 @@ typedef enum
   PITIVI_CURSOR_HAND2,
   PITIVI_CURSOR_ZOOM,
   PITIVI_CURSOR_RESIZE,
+  PITIVI_CURSOR_NOALLOW,
   PITIVI_CURSOR_ALL
   
 } PitiviCursorType;

@@ -24,6 +24,9 @@
 
 #include "pitivi-drawing.h"
 
+// default Dashes
+static char gdefault_dash [2] = {5, 4};
+
 void
 pitivi_drawing_set_pixmap_bg (GtkWidget *widget, GdkPixmap *pixmap)
 {
@@ -127,7 +130,8 @@ pitivi_drawing_pixslide (GtkWidget *widget,
 }
 
 
-GdkGC *pitivi_drawing_GdkGCcolor_new(guint8 red, guint8 green, guint8 blue)
+GdkGC *
+pitivi_drawing_GdkGCcolor_new(guint8 red, guint8 green, guint8 blue)
 {
   static GdkPixmap *window=NULL;
   GdkColor *color;
@@ -148,14 +152,72 @@ GdkGC *pitivi_drawing_GdkGCcolor_new(guint8 red, guint8 green, guint8 blue)
   return gc;
 }
 
-void draw_gdk_text_centered (GdkDrawable *drawable, GdkFont *font, GdkGC *gc,
-				gint x, gint y, gint width, gint height,
-				const gchar *text, gint text_length)
+void
+pitivi_widget_changefont (GtkWidget *widget, const char *fontname)
 {
-	gint text_width = gdk_text_width(font, text, text_length);
-	gint text_height = gdk_text_height(font, text, text_length);
-	
-	gdk_draw_text (drawable, font, gc,
-			x+width/2-text_width/2, y+height/2+text_height/2,
-			text, text_length);
+  PangoFontDescription *font_desc = pango_font_description_new ();
+  font_desc = pango_font_description_from_string (fontname);
+  gtk_widget_modify_font (widget, font_desc);
+  pango_font_description_free (font_desc);
 }
+
+void 
+pitivi_drawing_selection_area (GtkWidget *widget, GdkRectangle *area, int width, char **dash)
+{
+  GdkGC *style = gdk_gc_new ( widget->window );
+  GdkWindow *window;
+  
+  if (width == 0)
+    width = DEFAULT_WIDTH_DASHES;
+  if (dash == NULL)
+    gdk_gc_set_dashes ( style, 0, (gint8*)gdefault_dash, sizeof (gdefault_dash) / 2);
+  else
+    gdk_gc_set_dashes ( style, 0, (gint8*)dash, sizeof (dash) / 2); 
+  gdk_gc_set_line_attributes ( style, width, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  if (GTK_IS_LAYOUT (widget))
+    window = GDK_WINDOW (GTK_LAYOUT (widget)->bin_window);
+  else
+    window = GDK_WINDOW (widget->window);
+  gdk_draw_rectangle ( window, style, 
+		       FALSE, 
+		       area->x, area->y,
+		       area->width, 
+		       area->height);
+}
+
+void 
+pitivi_drawing_selection (GtkWidget *widget, int width, char **dash)
+{
+  GdkGC *style = gdk_gc_new ( widget->window );
+  GdkWindow *window;
+  
+  if (width == 0)
+    width = DEFAULT_WIDTH_DASHES;
+  if (dash == NULL)
+    gdk_gc_set_dashes ( style, 0, (gint8*)gdefault_dash, sizeof (gdefault_dash) / 2);
+  else
+    gdk_gc_set_dashes ( style, 0, (gint8*)dash, sizeof (dash) / 2); 
+  gdk_gc_set_line_attributes ( style, width, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  if (GTK_IS_LAYOUT (widget))
+    window = GDK_WINDOW (GTK_LAYOUT (widget)->bin_window);
+  else
+    window = GDK_WINDOW (widget->window);
+  gdk_draw_rectangle ( window, style, 
+		       FALSE, 
+		       widget->allocation.x, 0, 
+		       widget->allocation.width, widget->allocation.height);
+}
+
+void 
+draw_gdk_text_centered (GdkDrawable *drawable, GdkFont *font, GdkGC *gc,
+			gint x, gint y, gint width, gint height,
+			const gchar *text, gint text_length)
+{
+  gint text_width = gdk_text_width(font, text, text_length);
+  gint text_height = gdk_text_height(font, text, text_length);
+  
+  gdk_draw_text (drawable, font, gc,
+		 x+width/2-text_width/2, y+height/2+text_height/2,
+		 text, text_length);
+}
+

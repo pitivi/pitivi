@@ -73,7 +73,11 @@ struct _PitiviTimelineWindow
 struct _PitiviTimelineWindowClass
 {
   PitiviProjectWindowsClass parent;
+ 
   /* class members */
+  
+  void (* activate) (PitiviTimelineWindow *timew);
+  void (* deactivate) (PitiviTimelineWindow  *timew);
 };
 
 /* used by PITIVI_TIMELINEWINDOW_TYPE */
@@ -83,8 +87,44 @@ GType pitivi_timelinewindow_get_type (void);
  * Method definitions.
  */
 
-PitiviTimelineWindow	*pitivi_timelinewindow_new (PitiviMainApp *mainapp, PitiviProject *project);
+PitiviTimelineWindow	*pitivi_timelinewindow_new (PitiviMainApp *mainapp);
 PitiviMainApp		*pitivi_timelinewindow_get_mainApp (PitiviTimelineWindow	*timelinewindow);
 GtkWidget		*pitivi_timelinewindow_get_right_view (PitiviTimelineWindow *self);
+
+
+/* ********* */
+/* Callbacks */
+/* ********* */
+
+void
+pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_saveas ( GtkAction *action, PitiviTimelineWindow *self);
+
+void
+pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self );
+
+/* ********* */
+/* Utils     */
+/* ********* */
+
+void
+pitivi_timelinewindow_deactivate (PitiviTimelineWindow *self);
+
+void
+pitivi_timelinewindow_activate (PitiviTimelineWindow *self);
+
+gboolean
+pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 
 #endif
