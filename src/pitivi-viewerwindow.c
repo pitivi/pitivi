@@ -653,6 +653,7 @@ pitivi_viewerwindow_get_property (GObject * object,
 static void
 pitivi_viewver_callb_play (PitiviViewerWindow *self)
 {
+  gtk_widget_show (GTK_WIDGET (self));
   video_play (GTK_WIDGET (self), self);
 }
 
@@ -681,14 +682,28 @@ pitivi_viewer_callb_stop (PitiviViewerWindow *self)
   video_stop (GTK_WIDGET(self), self);
 }
 
-static void
-pitivi_viewerwindow_class_init (gpointer g_class, gpointer g_class_data)
+static gboolean
+pitivi_viewerwindow_delete_event ( GtkWidget  *widget,
+				   GdkEventAny *event )
 {
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
+  gtk_widget_hide (widget);
+  pitivi_timelinewindow_windows_set_action (pitivi_mainapp_get_timelinewin (((PitiviWindows *) widget)->mainapp), 
+					    "ViewerWindows", FALSE);
+  return TRUE;
+}
+
+static void
+pitivi_viewerwindow_class_init (gpointer g_class, gpointer g_class_data )
+{
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (g_class);
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   PitiviViewerWindowClass *klass = PITIVI_VIEWERWINDOW_CLASS (g_class);
 
   parent_class = g_type_class_peek_parent (g_class);
 
+  widget_class->delete_event = pitivi_viewerwindow_delete_event;
+  
   gobject_class->constructor = pitivi_viewerwindow_constructor;
   gobject_class->dispose = pitivi_viewerwindow_dispose;
   gobject_class->finalize = pitivi_viewerwindow_finalize;

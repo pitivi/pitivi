@@ -146,15 +146,6 @@ static  guint signals[LAST_SIGNAL];
  **********************************************************
 */
 
-enum {
-  EA_DEFAULT_FILE,
-  EA_RECENT_FILE,
-  EA_WINDOWMENU_FILE,
-  EA_LAST_ACTION
-};
-
-static  GtkActionGroup *actions_group[EA_LAST_ACTION];
-
 static GtkActionEntry file_entries[] = {
   { "FileMenu",     NULL, "_File" },
   { "WindowsMenu",  NULL, "_Windows" },
@@ -171,7 +162,9 @@ static GtkActionEntry recent_entry[]= {
 };
 
 static GtkToggleActionEntry windows_entries[] ={
-  { "EffectWindows", NULL, "E_ffects", "<control>F", "Toggle the effects window", G_CALLBACK (pitivi_callb_menufile_effectswindow_toggle), FALSE},
+  { "EffectWindows", PITIVI_STOCK_TOOLS, "E_ffects", "<control>F", "Toggle the effects window", G_CALLBACK (pitivi_callb_menufile_effectswindow_toggle), TRUE},
+  { "SourceListWindows",PITIVI_STOCK_TOOLS, "S_ourceList", "<control>L", "Toggle the source list window", G_CALLBACK (pitivi_callb_menufile_sourcelistwindow_toggle), TRUE},
+  { "ViewerWindows", PITIVI_STOCK_TOOLS, "V_iewer", "<control>V", "Toggle the viewer window", G_CALLBACK (pitivi_callb_menufile_viewerwindow_toggle), TRUE},
 };
 
 /*
@@ -207,23 +200,24 @@ create_timeline_menu (PitiviTimelineWindow *self)
   gtk_widget_show (self->private->menu_dock);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->menu_dock,
 		      FALSE, TRUE, 0);
-
-  actions_group[EA_DEFAULT_FILE] = gtk_action_group_new ("MenuFile");
-  gtk_action_group_add_actions (actions_group[EA_DEFAULT_FILE], file_entries\
+  
+  self->actions_group[EA_DEFAULT_FILE] = gtk_action_group_new ("MenuFile");
+  gtk_action_group_add_actions (self->actions_group[EA_DEFAULT_FILE], file_entries\
 				, G_N_ELEMENTS (file_entries), self);
-  actions_group[EA_RECENT_FILE] = gtk_action_group_new ("MenuFileRecent");
-  gtk_action_group_add_actions (actions_group[EA_DEFAULT_FILE], file_entries\
+  self->actions_group[EA_RECENT_FILE] = gtk_action_group_new ("MenuFileRecent");
+  gtk_action_group_add_actions (self->actions_group[EA_DEFAULT_FILE], file_entries\
 				, G_N_ELEMENTS (recent_entry), self);
-
-  actions_group[EA_WINDOWMENU_FILE] = gtk_action_group_new ("WindowsMenu");
-  gtk_action_group_add_toggle_actions (actions_group[EA_WINDOWMENU_FILE], windows_entries\
+  
+  self->actions_group[EA_WINDOWMENU_FILE] = gtk_action_group_new ("WindowsMenu");
+  gtk_action_group_add_toggle_actions (self->actions_group[EA_WINDOWMENU_FILE], windows_entries\
 				       , G_N_ELEMENTS (windows_entries), self);
   
+  gtk_action_group_set_sensitive (self->actions_group[EA_WINDOWMENU_FILE], FALSE);
+
   menumgr = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TIMELINE_FILE);
   for (pa = 0, pv = 0, count = 0; count < EA_LAST_ACTION; count++)
-    if (actions_group[count])
-      gtk_ui_manager_insert_action_group (menumgr->public->ui, actions_group[count], 0);
-  
+    if (self->actions_group[count])
+      gtk_ui_manager_insert_action_group (menumgr->public->ui, self->actions_group[count], 0);
   
   PITIVI_MENU_GET_CLASS(menumgr)->public->configure (menumgr);
     
@@ -231,6 +225,13 @@ create_timeline_menu (PitiviTimelineWindow *self)
   
   gtk_box_pack_start (GTK_BOX (self->private->menu_dock), menumgr->public->menu,
 		      FALSE, TRUE, 0);
+}
+
+void
+pitivi_timelinewindow_windows_set_action (PitiviTimelineWindow *self, gchar *name, gboolean status)
+{
+  GtkAction *action = gtk_action_group_get_action  (self->actions_group[EA_WINDOWMENU_FILE], name);
+  gtk_toggle_action_set_active (((GtkToggleAction *)action), status);
 }
 
 void
@@ -974,12 +975,30 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
 }
 
 void
+pitivi_callb_menufile_sourcelistwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self)
+{
+  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
+  
+  pitivi_mainapp_activate_sourcelistwindow(mainapp,
+					   gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
+}
+
+void
 pitivi_callb_menufile_effectswindow_toggle ( GtkAction *action, PitiviTimelineWindow *self)
 {
   PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
   
   pitivi_mainapp_activate_effectswindow(mainapp,
 					gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
+}
+
+void
+pitivi_callb_menufile_viewerwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self)
+{
+  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
+  
+  pitivi_mainapp_activate_viewerwindow(mainapp,
+				       gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
 }
 
 void
@@ -1085,6 +1104,9 @@ pitivi_timelinewindow_deactivate ( PitiviTimelineWindow *self )
   /* Loading X Cursor */
   
   load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), self->toolbox->pitivi_cursor, PITIVI_CURSOR_NOALLOW);
+
+  /* Deactivate Windows Menu */
+  gtk_action_group_set_sensitive (self->actions_group[EA_WINDOWMENU_FILE], FALSE);
 }
 
 void
@@ -1126,10 +1148,14 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), self->toolbox->pitivi_cursor, PITIVI_CURSOR_SELECT);
   
   /* Activating ruler */
+  
   PitiviProject	*proj = PITIVI_WINDOWS(self)->mainapp->project;
   int videorate = pitivi_projectsettings_get_videorate(proj->settings);
   g_object_set (self->hruler, "ruler-videorate", videorate, NULL);
   
+  /* Deactivate Windows Menu */
+  gtk_action_group_set_sensitive (self->actions_group[EA_WINDOWMENU_FILE], TRUE);
+
   /* Activate childs */
 
   GList *childwidget = gtk_container_get_children (GTK_CONTAINER (self->private->layout_container));

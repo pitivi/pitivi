@@ -256,24 +256,6 @@ pitivi_effectstree_insert_node (PitiviEffectsTree *tree_effect,
   tree_effect->pixbuf = pixbuf;
 }
 
-/* PitiviSourceFile * */
-/* pitivi_create_effect_sourcefile (const gchar *name, */
-/* 				 const gchar *mediatype, */
-/* 				 GstElement *elm, */
-/* 				 GdkPixbuf *pixbuf) */
-/* { */
-/*   PitiviSourceFile *se; */
-  
-/*   se = pitivi_sourcefile_new_effect(name, elm, mediatype, ); */
-/*   se = g_new0 (PitiviSourceFile, 1); */
-/*   se->filename = g_strdup (name); */
-/*   se->thumbs_effect = pixbuf; */
-/*   se->mediatype = g_strdup (mediatype); */
-/*   se->pipeline = elm; */
-/*   se->length = 500000LL; */
-/*   return se; */
-/* } */
-
 void
 pitivi_effectstree_insert_effect (PitiviEffectsWindow *win,
 				  PitiviEffectsTree *tree_effect,
@@ -285,14 +267,11 @@ pitivi_effectstree_insert_effect (PitiviEffectsWindow *win,
 				  gpointer data)
 {
   GdkPixbuf *pixbuf;
-  GdkPixbuf *thumb;
   PitiviSourceFile *se;
-
-  pixbuf = gtk_widget_render_icon(tree_effect->window, icon, GTK_ICON_SIZE_MENU, NULL);
-  thumb = gtk_widget_render_icon(tree_effect->window, icon, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
+  
+  pixbuf = gtk_widget_render_icon  (tree_effect->window, icon, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
   se = pitivi_sourcefile_new_effect ((gchar *) name, GST_ELEMENT_FACTORY (data), 
 				     pixbuf, (gchar *) desc, PITIVI_WINDOWS(win)->mainapp);
-  //  se = pitivi_create_effect_sourcefile (name, desc, (GstElement *)data, thumb, PITIVI_WINDOWS(win)->mainapp);
   gtk_tree_store_append (tree_effect->model, child, parent);
   gtk_tree_store_set(tree_effect->model, child,
 		     PITIVI_ICON_COLUMN, pixbuf,
@@ -767,10 +746,22 @@ pitivi_effectswindow_get_property (GObject * object,
     }
 }
 
+static gboolean
+pitivi_effectswindow_delete_event ( GtkWidget  *widget,
+				    GdkEventAny *event )
+{
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
+  gtk_widget_hide (widget);
+  pitivi_timelinewindow_windows_set_action (pitivi_mainapp_get_timelinewin (((PitiviWindows *) widget)->mainapp), 
+					    "EffectWindows", FALSE);
+  return TRUE;
+}
+
 static void
 pitivi_effectswindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (g_class);
   PitiviEffectsWindowClass *klass = PITIVI_EFFECTSWINDOW_CLASS (g_class);
   
   parent_class = g_type_class_peek_parent (g_class);
@@ -781,6 +772,8 @@ pitivi_effectswindow_class_init (gpointer g_class, gpointer g_class_data)
 
   gobject_class->set_property = pitivi_effectswindow_set_property;
   gobject_class->get_property = pitivi_effectswindow_get_property;
+
+  widget_class->delete_event = pitivi_effectswindow_delete_event;
 }
 
 GType

@@ -69,6 +69,13 @@ typedef struct _PitiviTimelineWindow PitiviTimelineWindow;
 typedef struct _PitiviTimelineWindowClass PitiviTimelineWindowClass;
 typedef struct _PitiviTimelineWindowPrivate PitiviTimelineWindowPrivate;
 
+enum {
+  EA_DEFAULT_FILE,
+  EA_RECENT_FILE,
+  EA_WINDOWMENU_FILE,
+  EA_LAST_ACTION
+};
+
 struct _PitiviTimelineWindow
 {
   PitiviProjectWindows parent;
@@ -91,6 +98,10 @@ struct _PitiviTimelineWindow
   /* copy */
   GtkWidget		*copy;
 
+  /* actions menu */
+  
+  GtkActionGroup *actions_group[EA_LAST_ACTION];
+  
   /* private */
   PitiviTimelineWindowPrivate *private;
 };
@@ -153,6 +164,12 @@ pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self )
 
 void
 pitivi_callb_menufile_effectswindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
+
+void
+pitivi_callb_menufile_sourcelistwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
+
+void
+pitivi_callb_menufile_viewerwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
 
 gboolean
 pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow * widget, GdkEventKey* event, gpointer data);

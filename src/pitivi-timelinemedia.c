@@ -240,10 +240,6 @@ pitivi_timelinemedia_set_media_start_stop (PitiviTimelineMedia *media, gint64 st
 void
 pitivi_timelinemedia_set_priority (PitiviTimelineMedia *media, gint priority)
 {
-  g_printf ("####################Priority : %d--TRACK : %d--TYPE : %d#####################\n", 
-	    priority,
-	    media->track->track_nb, 
-	    media->track->track_type);
   gnl_object_set_priority (media->sourceitem->gnlobject, priority);
   pitivi_timelinemedia_update_tooltip (media);
 }
@@ -315,9 +311,6 @@ pitivi_timelinemedia_constructor (GType type,
 	    return NULL;
 	  }
 	  this->sourceitem->gnlobject = (GnlObject *)gnl_operation_new (name, bin);
-	  if ( this->track->track_type == PITIVI_TRANSITION_TRACK )
-	    /* specific to transition TODO : Do we actually need to set the priority here ? */
-	    pitivi_timelinemedia_set_priority (this, 1);
 	}
       else if ( this->track->track_type == PITIVI_VIDEO_TRACK )
 	{
@@ -337,9 +330,7 @@ pitivi_timelinemedia_constructor (GType type,
   gtk_drawing_area_size (GTK_DRAWING_AREA (this), this->private->width, GTK_WIDGET (this->track)->allocation.height);
   /* Setting Tooltip */
   pitivi_timelinemedia_update_tooltip (this);
-  
   g_printf("pitivi_timelinemedia_constructor END\n");
-
   return object;
 }
 
@@ -383,6 +374,41 @@ connect_drag_and_drop (GtkWidget *widget)
 							      G_CALLBACK (pitivi_timelinemedia_drag_delete), NULL);  
 }
 
+
+void
+show_effects_media (GtkWidget *widget)
+{
+  PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
+  int count, pix_width, width = 0;
+  
+  if (GTK_IS_WIDGET ( widget ))
+    {
+      width = widget->allocation.width;
+      if (width <= 1)
+	width = this->private->width;
+      if ( this->sourceitem->srcfile->thumbs_effect )
+	{
+	  pix_width = gdk_pixbuf_get_width (this->sourceitem->srcfile->thumbs_effect);
+	  for (count = 0; count < width; count+= pix_width )
+	    gdk_draw_pixbuf( this->private->pixmapcache, NULL, GDK_PIXBUF 
+			     (  this->sourceitem->srcfile->thumbs_effect  ), 0, 0, count, 0, -1, -1,
+			     GDK_RGB_DITHER_MAX, 0, 0);
+	}
+    }
+}
+
+
+static void
+pitivi_timelinemedia_size_request  (GtkWidget *widget,
+				    GtkRequisition *requisition,
+				    gpointer user_data)
+{
+  PitiviTimelineMedia *this = (PitiviTimelineMedia *) widget;
+  
+  if (this->track->track_type == PITIVI_EFFECTS_TRACK)
+    show_effects_media (widget);
+}
+
 static void
 pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
 {
@@ -391,7 +417,8 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
   PitiviTimelineCellRenderer *container;
   PitiviCursor  *cursor;
   
-  gtk_widget_set_events (GTK_WIDGET (this), GDK_EXPOSURE_MASK
+  gtk_widget_set_events (GTK_WIDGET (this), 
+			 GDK_EXPOSURE_MASK
 			 | GDK_ENTER_NOTIFY_MASK
                          | GDK_LEAVE_NOTIFY_MASK
                          | GDK_BUTTON_PRESS_MASK
@@ -421,6 +448,8 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
   pixbuf = gtk_widget_render_icon(GTK_WIDGET (this), PITIVI_STOCK_HAND, GTK_ICON_SIZE_DND, NULL);
   gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (this), pixbuf);
   connect_drag_and_drop (GTK_WIDGET (this));
+  gtk_signal_connect (GTK_OBJECT (this), "size_request"\
+		      ,GTK_SIGNAL_FUNC ( pitivi_timelinemedia_size_request ), this);
   gtk_widget_show_all (GTK_WIDGET (this));
 }
 
@@ -539,24 +568,6 @@ show_video_media (GtkWidget *widget)
 			   -1, 
 			   -1, 
 			   GDK_RGB_DITHER_MAX, 0, 0);
-	}
-    }
-}
-
-void
-show_effects_media (GtkWidget *widget)
-{
-  PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
-  int count, pix_width = 0;
-  
-  if (GTK_IS_WIDGET ( widget ))
-    {
-      if ( this->sourceitem->srcfile->thumbs_effect )
-	{
-	  pix_width = gdk_pixbuf_get_width (this->sourceitem->srcfile->thumbs_effect);
-	  for (count = 0; count < this->private->width; count+= pix_width )
-	    gdk_draw_pixbuf( this->private->pixmapcache, NULL, GDK_PIXBUF 
-			     (  this->sourceitem->srcfile->thumbs_effect  ), 0, 0, count, 0, -1, -1, GDK_RGB_DITHER_MAX, 0, 0);
 	}
     }
 }

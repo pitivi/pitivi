@@ -162,6 +162,67 @@ pitivi_mainapp_activate_effectswindow (PitiviMainApp *self, gboolean activate)
     }
 }
 
+/**
+ * pitivi_mainapp_activate_sourcelistwindow: Active the Sourcelist Window
+ * @PitiviMainApp: The object containing all references of the application
+ * @gboolean: A flag to control if the Effect Window is shown or not
+ *
+ * Returns: void
+ */
+
+void
+pitivi_mainapp_activate_sourcelistwindow (PitiviMainApp *self, gboolean activate)
+{
+  if (self->private->srclistwin)
+    {
+    if (!activate)
+      gtk_widget_hide (GTK_WIDGET (self->private->srclistwin));
+    else
+      {
+	gtk_widget_show_all (GTK_WIDGET (self->private->srclistwin));
+	gtk_window_move (GTK_WINDOW (self->private->srclistwin), 0, 0);
+      }
+    }
+  else
+    if (activate) {
+      self->private->srclistwin = pitivi_sourcelistwindow_new(self, self->project);
+      gtk_widget_show_all (GTK_WIDGET (self->private->srclistwin) );
+      gtk_window_move (GTK_WINDOW (self->private->srclistwin), 0, 0);
+      gtk_signal_connect (GTK_OBJECT (self->private->srclistwin), "destroy"\
+			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_sourcelist), self);
+    }
+}
+
+/**
+ * pitivi_mainapp_activate_viewerwindow: Active the Viewer Window
+ * @PitiviMainApp: The object containing all references of the application
+ * @gboolean: A flag to control if the Effect Window is shown or not
+ *
+ * Returns: void
+ */
+
+void
+pitivi_mainapp_activate_viewerwindow (PitiviMainApp *self, gboolean activate)
+{
+  if (self->private->viewerwin)
+    {
+      if (!activate)
+	gtk_widget_hide (GTK_WIDGET (self->private->viewerwin));
+      else
+	gtk_widget_show (GTK_WIDGET (self->private->viewerwin));
+    }
+  else
+    {
+      if (activate) {
+	self->private->viewerwin = pitivi_viewerwindow_new(self);
+	gtk_widget_show_all (GTK_WIDGET (self->private->viewerwin) );
+	gtk_window_move (GTK_WINDOW (self->private->viewerwin), 0, 0);
+	gtk_signal_connect (GTK_OBJECT (self->private->viewerwin), "destroy"\
+			    , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_viewer), self);
+      }
+    }
+}
+
 void
 pitivi_mainapp_create_timelinewin (PitiviMainApp *self, PitiviProject *project)
 {
@@ -218,6 +279,9 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
   }
   self->project = project;
 
+  /* Timeline Window */
+  pitivi_mainapp_create_timelinewin (self, project);
+
   /* Source List Window */
 
   if (self->private->srclistwin == NULL)
@@ -239,9 +303,6 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
       gtk_signal_connect (GTK_OBJECT (self->private->viewerwin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_viewer), self);
     }
-
-  /* Timeline Window */
-  pitivi_mainapp_create_timelinewin (self, project);
   
   /* Effect Window */
 
@@ -254,6 +315,10 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 		     (height - (420 + BORDER + BOTTOM))
 		     );
   }
+  
+  gtk_window_set_transient_for (GTK_WINDOW (self->private->effectswin), GTK_WINDOW (self->private->timelinewin));
+  gtk_window_set_transient_for (GTK_WINDOW (self->private->viewerwin),  GTK_WINDOW (self->private->timelinewin));
+  gtk_window_set_transient_for (GTK_WINDOW (self->private->srclistwin), GTK_WINDOW (self->private->timelinewin));
 }
 
 /**

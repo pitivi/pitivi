@@ -32,4 +32,7 @@
     EA_LAST_ACTION,
   };
 
+GtkAction *
+pitivi_groupaction_find_action (GtkActionGroup *actions, gchar *name);
+
 #endif

@@ -243,7 +243,7 @@ pretty_caps_to_string (GstCaps *caps)
     gst_structure_get_int(struc, "width", &width);
     gst_structure_get_int(struc, "height", &height);
     gst_structure_get_double(struc, "framerate", &framerate);
-    return g_strdup_printf("%dx%d@%gfps", width, height, framerate);
+    return g_strdup_printf("%dx%d\n%g fps", width, height, framerate);
   }
   if (!g_ascii_strncasecmp("audio", gst_structure_get_name(struc), 5)) {
     gint	width, rate, channels;
@@ -251,7 +251,7 @@ pretty_caps_to_string (GstCaps *caps)
     gst_structure_get_int(struc, "width", &width);
     gst_structure_get_int(struc, "rate", &rate);
     gst_structure_get_int(struc, "channels", &channels);
-    return g_strdup_printf("%d x %dHz@%dbit", channels, rate, width);
+    return g_strdup_printf("%d x %dHz\n%d bit", channels, rate, width);
   }
   return g_strdup("Unknown");
 }

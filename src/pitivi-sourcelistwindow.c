@@ -137,8 +137,7 @@ enum
     TEXT_LISTCOLUMN4,
     TEXT_LISTCOLUMN5,
     TEXT_LISTCOLUMN6,
-    TEXT_LISTCOLUMN7,
-    POINTER_LISTCOLUMN8,
+    POINTER_LISTCOLUMN7,
     N_LISTCOLOUMN
   };
 
@@ -560,8 +559,7 @@ pitivi_sourcelistwindow_set_folder(PitiviSourceListWindow *self,
 		     TEXT_LISTCOLUMN4, "",
 		     TEXT_LISTCOLUMN5, "",
 		     TEXT_LISTCOLUMN6, "",
-		     TEXT_LISTCOLUMN7, "",
-		     POINTER_LISTCOLUMN8, "", -1);
+		     POINTER_LISTCOLUMN7, "", -1);
     
   g_free(sMediaType);
 
@@ -583,8 +581,7 @@ pitivi_sourcelistwindow_set_folder(PitiviSourceListWindow *self,
   liststore = gtk_list_store_new(N_LISTCOLOUMN, GDK_TYPE_PIXBUF,
 				 G_TYPE_STRING, G_TYPE_STRING,
 				 G_TYPE_STRING, G_TYPE_STRING,
-				 G_TYPE_STRING, G_TYPE_STRING
-				,G_TYPE_POINTER);
+				 G_TYPE_STRING, G_TYPE_POINTER);
   
   add_liststore_for_bin(self, liststore);
 
@@ -695,8 +692,6 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
 					   sf->pipeline_video,
 					   sf->pipeline_audio);
   
-  sExempleTexte = g_malloc(12);
-  sprintf(sExempleTexte, "exemple %d\0", i);
   gtk_list_store_set(liststore,
 		     &pIter, 
 		     BMP_LISTCOLUMN1,  pixbufa,
@@ -705,8 +700,7 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
 		     TEXT_LISTCOLUMN4, g_strdup_printf("%ds", sf->length / GST_SECOND),
 		     TEXT_LISTCOLUMN5, sf->infovideo,
 		     TEXT_LISTCOLUMN6, sf->infoaudio,
-		     TEXT_LISTCOLUMN7, sExempleTexte,
-		     POINTER_LISTCOLUMN8, (gpointer)sf, -1);
+		     POINTER_LISTCOLUMN7, (gpointer)sf, -1);
   
   PitiviThumbs* thumb = pitivi_thumbs_new (self->private->filepath, G_OBJECT (self) , i);
   PITIVI_THUMBS_GET_CLASS (thumb)->generate_thumb (thumb);
@@ -746,8 +740,7 @@ pitivi_sourcelistwindow_set_bin(PitiviSourceListWindow *self, gchar *bin_name)
   liststore = gtk_list_store_new(N_LISTCOLOUMN, GDK_TYPE_PIXBUF,
 				 G_TYPE_STRING, G_TYPE_STRING,
 				 G_TYPE_STRING, G_TYPE_STRING,
-				 G_TYPE_STRING, G_TYPE_STRING,
-				 G_TYPE_POINTER);
+				 G_TYPE_STRING, G_TYPE_POINTER);
   
   gtk_tree_view_set_model(GTK_TREE_VIEW(self->private->listview),
 			  GTK_TREE_MODEL(liststore));
@@ -833,7 +826,7 @@ drag_begin_cb (GtkWidget          *widget,
   for (i = 0; i < selected_list_row+1; i++)
     {
       gtk_tree_model_get (model, &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
-      gtk_tree_model_get (model, &iternext, POINTER_LISTCOLUMN8, &sf, -1);
+      gtk_tree_model_get (model, &iternext, POINTER_LISTCOLUMN7, &sf, -1);
       if (!strcmp(tmpMediaType, "Bin"))
 	folder_select++;
       else
@@ -999,17 +992,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
   
   /* Ajout de la colonne a la vue */
   gtk_tree_view_append_column(GTK_TREE_VIEW(pListView), pColumn);
-
-  /* Creation de la septieme colonne */
-  pCellRenderer = gtk_cell_renderer_text_new();
-  pColumn = gtk_tree_view_column_new_with_attributes("Comment",
-						     pCellRenderer,
-						     "text", TEXT_LISTCOLUMN7,
-						     NULL);
   
-  /* Ajout de la colonne a la vue */
-  gtk_tree_view_append_column(GTK_TREE_VIEW(pListView), pColumn);
-
   /* Ajout de la vue a la fenetre */
   pScrollbar = gtk_scrolled_window_new(NULL, NULL);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(pScrollbar),
@@ -1174,7 +1157,7 @@ void	on_row_activated (GtkTreeView        *listview,
   
   /* set the lispath */
   self->private->listpath = gtk_tree_path_to_string(path);
-  OnSelectItem(self, &iter, &liststore, &sf, POINTER_LISTCOLUMN8, &item_select, &folder_select);
+  OnSelectItem(self, &iter, &liststore, &sf, POINTER_LISTCOLUMN7, &item_select, &folder_select);
   if (!sf && OnSelectItem(self, &iter, &liststore, &sMediaType, TEXT_LISTCOLUMN3, &item_select, &folder_select))
     {
       if (!strcmp(sMediaType, "Bin"))
@@ -1419,7 +1402,7 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
 		   &folder_select))
     return;
   
-  if (!OnSelectItem(self, &iter, &liststore, (void **) &self->private->dndsf, POINTER_LISTCOLUMN8, &item_select, 
+  if (!OnSelectItem(self, &iter, &liststore, (void **) &self->private->dndsf, POINTER_LISTCOLUMN7, &item_select, 
 		   &folder_select))
     return;
 
@@ -1755,10 +1738,10 @@ snapped (PitiviSourceListWindow *self, PitiviThumbs *data)
       model = gtk_tree_view_get_model (GTK_TREE_VIEW (self->private->listview));
       gtk_tree_model_get_iter_first (model, &iter);
       for (i =  0; i <  data->info; i++) gtk_tree_model_iter_next (model, &iter);
-      gtk_tree_model_get (model, &iter, POINTER_LISTCOLUMN8, &sf, -1);
+      gtk_tree_model_get (model, &iter, POINTER_LISTCOLUMN7, &sf, -1);
       sf->thumbs_video = pixbuf;
-      icon = gdk_pixbuf_scale_simple (pixbuf, 45,
-				      25,
+      icon = gdk_pixbuf_scale_simple (pixbuf, 50,
+				      50,
 				      GDK_INTERP_NEAREST);
       gtk_list_store_set(GTK_LIST_STORE (model), &iter,
 			 BMP_LISTCOLUMN1, icon,
@@ -1846,21 +1829,35 @@ pitivi_sourcelistwindow_get_property (GObject * object,
     }
 }
 
+static gboolean
+pitivi_sourcelistwindow_delete_event ( GtkWidget  *widget,
+				       GdkEventAny *event)
+{
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
+  gtk_widget_hide (widget);
+  pitivi_timelinewindow_windows_set_action (pitivi_mainapp_get_timelinewin (((PitiviWindows *) widget)->mainapp), 
+					    "SourceListWindows", FALSE);
+  return TRUE;
+}
+
+
 static void
 pitivi_sourcelistwindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (g_class);
   PitiviSourceListWindowClass *klass = PITIVI_SOURCELISTWINDOW_CLASS (g_class);
-
+  
   parent_class = g_type_class_peek_parent (g_class);
 
   gobject_class->constructor = pitivi_sourcelistwindow_constructor;
   gobject_class->dispose = pitivi_sourcelistwindow_dispose;
   gobject_class->finalize = pitivi_sourcelistwindow_finalize;
-
+  
   gobject_class->set_property = pitivi_sourcelistwindow_set_property;
   gobject_class->get_property = pitivi_sourcelistwindow_get_property;
 
+  widget_class->delete_event = pitivi_sourcelistwindow_delete_event;
   pitivi_sourcelistwindow_signal[FILEIMPORT_SIGNAL] = g_signal_newv("newfile",
 								    G_TYPE_FROM_CLASS (g_class),
 								    G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,

@@ -60,14 +60,19 @@ enum {
 
 static const GtkRulerMetric pitivi_ruler_metrics[] =
   {
-    {"NanoSeconds", "ns", 1.0, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }}, 
-    {"Seconds", "s",  1.0,  { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
-    {"Seconds 2x", "s2x",  2.0,  { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 5, 10, 50, 100 }},
-    {"Seconds 4x", "s4x",  4.0,  { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 5, 10, 50, 100 }},
-    {"Seconds 8x", "s8x",  8.0,  { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 5, 10, 50, 100 }},
-    {"Seconds 16x", "s16x",  16.0,  { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 5, 10, 50, 100 }},
-    {"Frames", "Fm", 1.0, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
-    {"Pixels", "Pi", 1.0, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
+    {"NanoSeconds", "ns",     100.0, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }}, 
+    {"Seconds",     "s",      1.0,   { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
+    {"Seconds 2x",  "s2x",    2.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 16, 32, 64, 128 }},
+    {"Seconds 4x",  "s4x",    4.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 8, 16, 32, 64 }},
+    {"Seconds 8x",  "s8x",    8.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 4, 8, 16, 32 }},
+    {"Seconds 16x", "s16x",  16.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 2, 4, 8, 16  }},
+    /* If in the future we want represent Frames with different subdivision compared to seconds */
+    {"Frames",      "Fm",     1.0,   { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
+    {"Frames 2x",   "Fm2x",   2.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 16, 32, 64, 128 }},
+    {"Frames 4x",   "Fm4x",   4.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 8, 16, 32, 64 }},
+    {"Frames 8x",   "Fm8x",   8.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 4, 8, 16, 32 }},
+    {"Frames 16x",  "Fm16x", 16.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 2, 4, 8, 16 }},
+    /* ------------ */
   };
 
 void
@@ -97,22 +102,27 @@ pitivi_ruler_set_data_metric (GtkRuler *ruler,
 void
 pitivi_ruler_set_zoom_metric (GtkRuler *ruler, guint unit, guint zoom)
 {
-  int count = 0;
+  int count, start, end = 0;
   
   PITIVI_RULER(ruler)->private->unit = unit;
   if ( unit == PITIVI_SECONDS )
     {
-      for (count = PITIVI_RSECONDS; count <= PITIVI_RSECONDS16x; count++)
-	{
-	  if ((int)pitivi_ruler_metrics[count].pixels_per_unit == (int)zoom)
-	    {
-	      pitivi_ruler_set_metric (ruler, (count));
-	      break;
-	    }
-	}
+      start = PITIVI_RSECONDS;
+      end  = PITIVI_RSECONDS16x;
     }
   else if ( unit == PITIVI_FRAMES )
-    pitivi_ruler_set_metric (ruler, (PITIVI_RFRAMES));
+    {
+      start = PITIVI_RFRAMES;
+      end  = PITIVI_RFRAMES16x;
+    }
+  for (count = start; count <= end; count++)
+    {
+      if ((int)pitivi_ruler_metrics[count].pixels_per_unit == (int)zoom)
+	{
+	  pitivi_ruler_set_metric (ruler, (count));
+	  break;
+	}
+    }
 }
 
 
@@ -300,7 +310,7 @@ pitivi_draw_label  (GtkRuler *ruler, int cur)
   PitiviRuler *self = ( PitiviRuler *) ruler;
   gchar unit_str[1024];
   gchar *label;
-  guint frames;
+  gint64 frames;
 
   label = unit_str;
   switch  ( self->private->unit )
@@ -313,10 +323,10 @@ pitivi_draw_label  (GtkRuler *ruler, int cur)
       break;
     case PITIVI_FRAMES:
       frames = (cur * GST_SECOND / PITIVI_RULER (ruler)->private->videorate);
-      g_snprintf (unit_str, sizeof (unit_str), "%d" , ( int ) frames);
+      g_snprintf (unit_str, sizeof (unit_str), "%lld" , ( gint64 ) frames);
       break;
     default:
-      g_snprintf (unit_str, sizeof (unit_str), "%d" , ( int ) cur);
+      g_snprintf (unit_str, sizeof (unit_str), "%lld" , ( gint64 ) cur);
       break;
     }
   return label;
@@ -504,10 +514,11 @@ pitivi_ruler_draw_pos (GtkRuler *ruler)
 	  y = (height + bs_height) / 2 + ythickness;
 
 	  for (i = 0; i < bs_height; i++)
-	    gdk_draw_line (widget->window, gc,
-			   x + i, y + i,
-			   x + bs_width - 1 - i, y + i);
-
+	    {
+	      gdk_draw_line (widget->window, gc,
+			     x + i, y + i,
+			     x + bs_width - 1 - i, y + i);
+	    }
 
 	  ruler->xsrc = x;
 	  ruler->ysrc = y;

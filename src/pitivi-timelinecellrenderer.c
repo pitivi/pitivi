@@ -558,7 +558,8 @@ check_media_type_str (gchar *media)
     return (PITIVI_VIDEO_TRACK);
   else if (!g_strcasecmp (media, "audio"))
     return (PITIVI_AUDIO_TRACK);
-  else if (!g_strcasecmp (media, "video/audio") || !g_strcasecmp (media, "audio/video"))
+  else if (!g_strcasecmp (media, "video/audio") 
+	   || !g_strcasecmp (media, "audio/video"))
     return (PITIVI_VIDEO_AUDIO_TRACK);
   return (PITIVI_NO_TRACK);
 }
@@ -965,8 +966,9 @@ pitivi_timelinecellrenderer_drag_on_effects (PitiviTimelineCellRenderer *self,
   sf = (PitiviSourceFile **) selection->data;
   if (*sf)
     {
-      if ((self->track_type == PITIVI_EFFECTS_TRACK || self->track_type == PITIVI_TRANSITION_TRACK))
-	create_effect_on_track (self, *sf, x);
+      if ((self->track_type == PITIVI_EFFECTS_TRACK || 
+	   self->track_type == PITIVI_TRANSITION_TRACK))
+	create_effect_on_track (self, sf, x);
     }
 }
 
@@ -1246,7 +1248,8 @@ pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimelineCellRenderer
   GtkWidget *media;
   GList	*childlist;
   
-  for (childlist = gtk_container_get_children (GTK_CONTAINER (cell)); childlist; childlist = childlist->next)
+  for (childlist = gtk_container_get_children (GTK_CONTAINER (cell)); 
+       childlist; childlist = childlist->next)
     {
       media = GTK_WIDGET (childlist->data);
       if ( PITIVI_TIMELINEMEDIA (media)->selected )

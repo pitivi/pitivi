@@ -76,21 +76,3 @@ pitivi_menubar_configure (GtkUIManager *ui_manager, gpointer data)
        gtk_ui_manager_insert_action_group (ui_manager, actions_group[count], 0);
   return ( actions_group );
 }
-
-
-static GtkAction *
-pitivi_groupaction_find_action (GtkActionGroup *actions, gchar *name)
-{
-  GList	*glist;
-
-  if (!name)
-    return NULL;
-  for (glist = gtk_action_group_list_actions (actions); glist != NULL; glist = glist->next)
-    {
-      GtkActionGroup *actions = glist->data;
-      GtkAction *action = gtk_action_group_get_action (actions, name);
-      if (action)
-	return action;
-    }
-  return NULL;
-}

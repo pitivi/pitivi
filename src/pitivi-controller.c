@@ -135,7 +135,10 @@ pitivi_controller_callb_play (GtkWidget *widget, gpointer user_data)
 {
   PitiviController *self = (PitiviController *) user_data;
   if ( self->private->viewerwin )
-    g_signal_emit_by_name (self->private->viewerwin, "play");
+    {
+      gtk_widget_show_all ( self->private->viewerwin );
+      g_signal_emit_by_name ( self->private->viewerwin, "play" );
+    }
 }
 
 static void
