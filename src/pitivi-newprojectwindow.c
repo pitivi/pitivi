@@ -140,40 +140,6 @@ GtkTreeStore	*pitivi_tree_create()
   gtk_tree_store_append(tree, &pIter2, &pIter);
   gtk_tree_store_set(tree, &pIter2, 0, "Quicktime for Web", -1);
 
-
-
-/* /\* fils 2*\/ */
-/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
-/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1); */
-/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
-/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1); */
-
-/* /\* pere 3*\/ */
-/*   gtk_tree_store_append(tree, &pIter, NULL); */
-/*   gtk_tree_store_set(tree, &pIter, 0, "category 3", -1); */
-
-/* /\* fils 3*\/ */
-/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
-/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1); */
-/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
-/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1); */
-/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
-/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 3", -1); */
-
-/* /\* pere 4*\/ */
-/*   gtk_tree_store_append(tree, &pIter, NULL); */
-/*   gtk_tree_store_set(tree, &pIter, 0, "category 4", -1); */
-
-/* /\* fils 4*\/ */
-/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
-/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1); */
-/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
-/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1); */
-/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
-/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 3", -1); */
-/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
-/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 4", -1); */
-
   return (tree);
 }
 
