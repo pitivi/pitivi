@@ -33,7 +33,6 @@ pitivi_SOURCES		= \
 	pitivi-stockicons.c \
 	pitivi-menu-actions.c \
 	pitivi-menu.c \
-	pitivi-pitivisettings.c \
 	main.c
 
 # our CFLAGS and LDFLAGS used for compiling and linking

@@ -33,6 +33,8 @@
  * Potentially, include other headers on which this header depends.
  */
 
+#include	"pitivi-projectsettings.h"
+
 /*
  * Type macros.
  */
@@ -70,8 +72,9 @@ GType		pitivi_mainapp_get_type (void);
  * Method definitions.
  */
 
-PitiviMainApp	*pitivi_mainapp_new (void);
-GSList		*pitivi_projectsettings_list_make();
-GSList		*pitivi_mainapp_project_settings( PitiviMainApp *self );
+PitiviCategorieSettings	*pitivi_mainapp_get_selected_category	( PitiviMainApp *self, gint *position );
+PitiviMainApp		*pitivi_mainapp_new (void);
+GSList			*pitivi_projectsettings_list_make();
+GSList			*pitivi_mainapp_project_settings( PitiviMainApp *self );
 
 #endif

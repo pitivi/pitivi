@@ -101,6 +101,7 @@ GType			pitivi_projectsettings_get_type (void);
 
 PitiviProjectSettings	*pitivi_projectsettings_new (void);
 PitiviProjectSettings	*pitivi_projectsettings_new_with_name(gchar *name, gchar *desc, GSList *list);
+PitiviCategorieSettings	*pitivi_projectsettings_categorie_new(gchar *name, GSList *list_settings );
 
 GstCaps			*pitivi_projectsettings_vcaps_create ( int width, int height, int framerate );
 GstCaps			*pitivi_projectsettings_acaps_create ( int rate, int channel );

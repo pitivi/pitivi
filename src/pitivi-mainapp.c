@@ -25,8 +25,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-
-
 /* Recuperation des caps */
 /*   pad_sink = gst_element_get_pad(element, "sink"); */
 /*   media_setting->caps = gst_pad_get_caps(pad_sink); */
@@ -37,13 +35,11 @@
 /*   media_setting->caps = gst_caps_new_simple ("my_caps", "audio/wav",  */
 /* 					     NULL); */
 
-
 /* 
 - Affichage des champs des Settings lorsqu'on clique sur un reglage de la liste
 - Modifier un reglage
 - Supprimer un reglage
 */
-
 
 #include <gst/gst.h>
 #include "pitivi.h"
@@ -67,8 +63,10 @@ struct _PitiviMainAppPrivate
 /*
  * forward definitions
  */
-void			pitivi_mainapp_add_newsetting		( PitiviMainApp	*self, PitiviProjectSettings *new_setting );
+void			pitivi_mainapp_destroy			(GtkWidget *pWidget, gpointer pData);
 GSList			*pitivi_mainapp_project_settings	( PitiviMainApp *self );
+void			pitivi_mainapp_add_newcategory		( PitiviMainApp *self, const gchar *cat_name);
+void			pitivi_mainapp_add_newsetting		( PitiviMainApp *self, PitiviProjectSettings *new_setting, gint *position );
 
 
 /*
@@ -80,44 +78,98 @@ pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
   gtk_main_quit();
 }
 
+PitiviCategorieSettings *
+pitivi_mainapp_get_selected_category( PitiviMainApp *self, gint *position )
+{
+  PitiviCategorieSettings	*selected_category;
+
+  selected_category = (PitiviCategorieSettings *) 
+    g_slist_nth_data(self->private->project_settings_list, 
+		     position[0]);
+  
+  return (selected_category);
+}
+
+/* 
+   Add 'new_category' into the project_category_list when 
+   the Add_category is clicked in the PitiviNewProjectWindow
+*/
+void
+pitivi_mainapp_add_newcategory (PitiviMainApp *self, 
+				const gchar *cat_name)
+{
+  PitiviCategorieSettings	*new_category;
+  
+
+  new_category = pitivi_projectsettings_categorie_new( (gchar *) cat_name, 
+						       NULL );
+  
+  self->private->project_settings_list = g_slist_append( self->private->project_settings_list,
+							 (gpointer) new_category );
+}
+
 /* 
    Add 'new_setting' into the project_settings_list when 
    the Add_button is clicked in the PitiviNewProjectWindow
 */
 void
-pitivi_mainapp_add_newsetting(PitiviMainApp *self, 
-			      PitiviProjectSettings *new_setting)
+pitivi_mainapp_add_newsetting( PitiviMainApp *self, 
+			       PitiviProjectSettings *new_setting,
+			       gint *position )
 {
-  GSList			*list;
-  PitiviMediaSettings	*media_temp;
-  PitiviCategorieSettings	*categorie;
-  PitiviCategorieSettings	*selected_category;
-  GSList			*list_categories;
-  GSList			*list_reglages;
+  PitiviCategorieSettings	*category;
   PitiviProjectSettings		*reglage;
+  PitiviMediaSettings		*media_temp;
   int				i;
   int				j;
-
-  list = self->private->project_settings_list ;
-  while ( g_slist_next(list) )
-    {
-      categorie = (PitiviCategorieSettings *) g_slist_nth_data(list, 0);
-      g_print( "CATEGORY NAME : %s.\n", categorie->name );
-      list = g_slist_next(list);
-    }
-  categorie = (PitiviCategorieSettings *) g_slist_nth_data(list, 0);
-  g_print( "SELECTED CATEGORY NAME : %s.\n", categorie->name );
   
-/* Pointeur vers la categorie selectionnee */
-  selected_category = (PitiviCategorieSettings *) list->data;
+  g_print("DANS MAINAPP : POSITION[0]:%d, POSITION[1]:%d\n", position[0], position[1] );
+  category = (PitiviCategorieSettings *) g_slist_nth_data(self->private->project_settings_list, position[0] );
+  g_print( "SELECTED CATEGORY NAME : %s.\n", category->name );
+  category->list_settings = g_slist_append( category->list_settings,
+					    (gpointer) new_setting );
 
-/* Insertion du nouveau setting ctree dans la liste des settings */
-  selected_category->list_settings = g_slist_append( selected_category->list_settings,
-						     (gpointer) new_setting );
+/*   GSList			*list; */
+/*   PitiviMediaSettings		*media_temp; */
+/*   PitiviCategorieSettings	*categorie; */
+/*   PitiviCategorieSettings	*selected_category; */
+/*   GSList			*list_categories; */
+/*   GSList			*list_reglages; */
+/*   PitiviProjectSettings		*reglage; */
+/*   int				i; */
+/*   int				j; */
+/*   gchar				*path; */
+
+/*   list = self->private->project_settings_list ; */
   
-  for (i = 0; (reglage = g_slist_nth_data(selected_category->list_settings, i)) ; i++)
+
+/*   g_print("DANS MAINAPP : POSITION[0]:%d, POSITION[1]:%d\n", position[0], position[1] ); */
+
+/* /\*   while (*position) *\/ */
+/* /\*     { *\/ */
+/* /\*       g_print("POS : %d\n", position[0]); *\/ */
+/* /\*       position++; *\/ */
+/* /\*     } *\/ */
+
+/*   for ( i = 0; i < position[0]; i++, g_slist_next(list) ) */
+/*     { */
+/*       categorie = (PitiviCategorieSettings *) g_slist_nth_data(list, 0); */
+/*       g_print( "CATEGORY NAME : %s.\n", categorie->name ); */
+/*       list = g_slist_next(list); */
+/*     } */
+/*   categorie = (PitiviCategorieSettings *) g_slist_nth_data(list, 0); */
+  
+/* /\* Pointeur vers la categorie selectionnee *\/ */
+/*   selected_category = (PitiviCategorieSettings *) list->data; */
+  
+/* /\* Insertion du nouveau setting ctree dans la liste des settings *\/ */
+/*   selected_category->list_settings = g_slist_append( selected_category->list_settings, */
+/* 						     (gpointer) new_setting ); */
+
+  g_print("\nPITIVIMAINAPP");
+  for (i = 0; (reglage = g_slist_nth_data(category->list_settings, i)) ; i++)
     {
-      g_print( "\ti : %d, PitiviMainApp \n\tNAME SETTING : %s.\n\tDescription SETTING : %s.\n\n", i, reglage->name, reglage->description);
+      g_print( "\nELEMENT %d\nNAME SETTING : \n%s.\nDESCRIPTION SETTING :\n%s.\nLIST MEDIA : \n", i, reglage->name, reglage->description);
       for (j = 0; (media_temp = (PitiviMediaSettings *) g_slist_nth_data(reglage->media_settings, j) ); j++)
 	g_print("\t\tCodec Name:%s\n\t\tCaps : %s.\n\n\n", media_temp->codec_factory_name, gst_caps_to_string(media_temp->caps) );
     }
