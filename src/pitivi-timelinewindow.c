@@ -1467,7 +1467,8 @@ pitivi_timelinewindow_update_time (PitiviTimelineWindow *self, gint64 ntime)
 
   tmp = g_strdup_printf("%lld:%02lld:%03lld", GST_M_S_M(ntime));
   gtk_label_set_text (GTK_LABEL (self->private->timer),tmp);
-  pos = ((gint64) ntime/GST_SECOND);
+/*   pos = ((gint64) ntime / ( GST_SECOND / 10 )); */
+  pos = ntime;
   if (!pos)
     {
       PITIVI_RULER (self->hruler)->time_pix = 0;

@@ -225,13 +225,13 @@ pitivi_ruler_get_property (GObject * object,
 
 
 static void
-pitivi_ruler_moving (PitiviRuler *pitivi_ruler, gint *gpos)
+pitivi_ruler_moving (PitiviRuler *pitivi_ruler, gint64 *gpos)
 {  
   GtkRuler *ruler = (GtkRuler *) pitivi_ruler;
   gint bs_width, bs_height, slide_width;
   gint i, height, x, y;
  
-  gint pos = *gpos;
+  gint64 pos = *gpos;
   height = GTK_WIDGET(pitivi_ruler)->allocation.height - GTK_WIDGET(pitivi_ruler)->style->ythickness * 2;
   bs_width = height / 2;
   bs_width |= 1;
@@ -249,7 +249,7 @@ pitivi_ruler_moving (PitiviRuler *pitivi_ruler, gint *gpos)
 			 bs_width, height);
     }
   
-  PITIVI_RULER (ruler)->private->timeline_x=pos*pitivi_ruler_get_pixel_per_unit (pitivi_ruler);
+  PITIVI_RULER (ruler)->private->timeline_x=pos*pitivi_ruler_get_pixel_per_unit (pitivi_ruler) / GST_SECOND;
   x = PITIVI_RULER (ruler)->private->timeline_x - slide_width;
   if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(ruler)))
     {
@@ -333,7 +333,7 @@ pitivi_ruler_class_init (PitiviRulerClass *klass)
 		NULL, 
 		NULL,                
 		g_cclosure_marshal_VOID__POINTER,
-		G_TYPE_NONE, 1, G_TYPE_POINTER);
+		G_TYPE_NONE, 1, G_TYPE_INT64);
   pitivi_class->moving = pitivi_ruler_moving;
 }
 
