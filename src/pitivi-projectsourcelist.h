@@ -56,6 +56,7 @@ struct _PitiviSourceFile
   gchar *infoaudio;
   gint64 length;
   GstElement *pipeline;
+  GList *thumbs;
 };
 
 struct _PitiviProjectSourceList

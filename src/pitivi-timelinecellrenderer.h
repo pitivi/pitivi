@@ -77,7 +77,7 @@ struct _PitiviTimelineCellRenderer
   guint			track_nb;
   GList			*children;
   GtkWidget		*linked_track;
-  GdkRectangle		*motion_area;
+  GdkGC		        **gcs;
   
   /* private */
   PitiviTimelineCellRendererPrivate	*private;
@@ -89,14 +89,16 @@ struct _PitiviTimelineCellRendererClass
 
   /* class members */
   
-  void (* activate)	    (PitiviTimelineCellRenderer *cell);
-  void (* deactivate)	    (PitiviTimelineCellRenderer *cell);
-  void (* select)	    (PitiviTimelineCellRenderer *cell);
-  void (* deselect)	    (PitiviTimelineCellRenderer *cell);
-  void (* delete)	    (PitiviTimelineCellRenderer *cell, gpointer data);
-  void (*drag_source_begin) (PitiviTimelineCellRenderer *cell, gpointer data);
-  void (*dbk_source)	    (PitiviTimelineCellRenderer *cell, gpointer data);
-  void (* zoom_changed)	    (PitiviTimelineCellRenderer *cell);
+  void (* activate)	     (PitiviTimelineCellRenderer *cell);
+  void (* deactivate)	     (PitiviTimelineCellRenderer *cell);
+  void (* select)	     (PitiviTimelineCellRenderer *cell);
+  void (* deselect)	     (PitiviTimelineCellRenderer *cell);
+  void (* key_delete)	     (PitiviTimelineCellRenderer *cell);
+  void (* delete)	     (PitiviTimelineCellRenderer *cell, gpointer data);
+  void (* drag_source_begin) (PitiviTimelineCellRenderer *cell, gpointer data);
+  void (* dbk_source)	     (PitiviTimelineCellRenderer *cell, gpointer data);
+  void (* cut_source)	     (PitiviTimelineCellRenderer *cell, guint x, gpointer data);
+  void (* zoom_changed)	     (PitiviTimelineCellRenderer *cell);
 };
 
 

@@ -140,7 +140,6 @@ pitivi_effectswindow_constructor (GType type,
       pitivi_effectswindow_insert_newtab (GTK_NOTEBOOK (self->private->notebook), self->private->trees[count]);
       gtk_tree_view_expand_all (GTK_TREE_VIEW (self->private->trees[count]->treeview));
     }
-
   return obj;
 }
 

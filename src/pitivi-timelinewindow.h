@@ -31,6 +31,7 @@
  */
 
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include "pitivi.h"
 #include "pitivi-projectwindows.h"
 #include "pitivi-toolbox.h"
@@ -66,13 +67,19 @@ struct _PitiviTimelineWindow
   PitiviProjectWindows parent;
 
   /* instance public members */
+  
   PitiviToolbox	       *toolbox;
   GtkWidget	       *hruler;
   GtkWidget	       *current_time;
-  int			unit;	// scale unit for the ruler
-  int			zoom;	// zoom level
+  int			unit;		// scale unit for the ruler
+  int			zoom;		// zoom level
   GtkAdjustment		*hscrollbar;	// Adjustment for the horizontal scrollbar
-
+  
+  /* Backgrounds fro tracks */
+  
+  GdkPixmap		*bgs[5];
+  GdkGC			*gcs[4];
+  
   /* private */
   PitiviTimelineWindowPrivate *private;
 };
@@ -131,6 +138,9 @@ pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self )
 
 void
 pitivi_callb_menufile_effectswindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
+
+gboolean
+pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow * widget, GdkEventKey* event, gpointer data);
 
 /* ********* */
 /* Utils     */

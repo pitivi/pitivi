@@ -31,6 +31,7 @@
 #include "pitivi-newprojectwindow.h"
 #include "pitivi-settingswindow.h"
 #include "pitivi-controller.h"
+#include "pitivi-drawing.h"
 
 static	GdkPixbuf *window_icon = NULL;
 static  PitiviWindowsClass *parent_class = NULL;
@@ -228,7 +229,6 @@ create_timeline_menu (PitiviTimelineWindow *self)
   
   gtk_box_pack_start (GTK_BOX (self->private->menu_dock), menumgr->public->menu,
 		      FALSE, TRUE, 0);
-  
 }
 
 void
@@ -308,13 +308,6 @@ create_timeline_toolbar (PitiviTimelineWindow *self)
   GtkWidget	*hbox;
 
   hbox = gtk_hbox_new (FALSE, 0);
-  
-  /* Toolbox */
-  
-  //  mainapp = ((PitiviWindows *) self)->mainapp;
-  // self->toolbox = pitivi_toolbox_new (mainapp);
-  // gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET(self->toolbox),
-  //		      FALSE, TRUE, 0);
   
   /* Separator */
   
@@ -549,7 +542,20 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
     window_icon = gdk_pixbuf_new_from_file (filename, NULL);
     g_free (filename);
   }
+  
   gtk_window_set_icon (GTK_WINDOW (self), window_icon);
+  
+  /* Initialising Pixmaps Background */
+  
+  self->bgs[PITIVI_VIDEO_TRACK] = pitivi_drawing_getpixmap (GTK_WIDGET (self), bg_video_xpm );
+  self->bgs[PITIVI_AUDIO_TRACK] = pitivi_drawing_getpixmap (GTK_WIDGET (self), bg_audio_xpm );
+  self->bgs[PITIVI_TRANSITION_TRACK] = pitivi_drawing_getpixmap (GTK_WIDGET (self), bg_trans_xpm );
+  self->bgs[PITIVI_EFFECTS_TRACK] = pitivi_drawing_getpixmap (GTK_WIDGET (self), bg_effects_xpm );
+  self->bgs[PITIVI_LAST_TRACK] = pitivi_drawing_getpixmap (GTK_WIDGET (self), bg_xpm );
+ 
+  /* Key events */
+  g_signal_connect (GTK_WIDGET (self), "key_release_event",
+		    G_CALLBACK (pitivi_timelinewindow_callb_key_press), NULL);
 }
 
 static void
@@ -1006,4 +1012,31 @@ pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self)
   for (tmp = list; tmp; tmp = tmp->next)
     if (GTK_IS_LAYOUT (tmp->data))
       g_signal_emit_by_name (GTK_OBJECT (tmp->data), "zoom-changed");
+}
+
+/*
+ **********************************************************
+ * Key events						  *
+ * From keyboard				          *
+ **********************************************************
+*/
+
+gboolean
+pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow * widget, GdkEventKey* event, gpointer data) 
+{
+  switch(event->keyval) 
+    {
+    case GDK_Return:
+      g_printf ("Rendering\n");
+      break;
+    case GDK_Delete:
+      send_signal_to_childs (widget, "key-delete-source", NULL);
+      break;
+    case GDK_Escape:
+      g_printf ("Escape\n");
+      break;
+    case GDK_Pause:
+      g_printf ("Pause\n");
+      break;
+    }
 }

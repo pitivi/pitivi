@@ -59,7 +59,8 @@ typedef struct _PitiviTimelineMediaPrivate PitiviTimelineMediaPrivate;
 struct _PitiviTimelineMedia
 {
   GtkWidget parent;
-
+  GdkWindow *event_window;
+  
   /* instance public members */
   
   PitiviSourceItem *sourceitem;

@@ -156,9 +156,11 @@ pitivi_mainapp_activate_effectswindow (PitiviMainApp *self, gboolean activate)
       gtk_window_move (GTK_WINDOW (self->private->effectswin), 720, 450);
       gtk_signal_connect (GTK_OBJECT (self->private->effectswin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_effects), self);
-  } else if (self->private->effectswin){
-    gtk_widget_destroy(GTK_WIDGET (self->private->effectswin));
+  } else if (activate && self->private->effectswin){
+    gtk_widget_hide (GTK_WIDGET (self->private->effectswin));
   }
+  else
+    gtk_widget_show (GTK_WIDGET (self->private->effectswin));
 }
 
 void
