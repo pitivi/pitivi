@@ -275,6 +275,8 @@ pitivi_timelinemedia_put (PitiviTimelineMedia *media, gint64 start)
 
   // check the size of the widget !!!
   gnl_object_get_media_start_stop (media->sourceitem->gnlobject, &mstart, &mstop);
+  if ((!GST_CLOCK_TIME_IS_VALID (mstart)) || (!GST_CLOCK_TIME_IS_VALID (mstop)))
+    gnl_object_get_start_stop (media->sourceitem->gnlobject, &mstart, &mstop);
   gnl_object_set_start_stop (media->sourceitem->gnlobject, start, start + mstop - mstart);
   pitivi_timelinemedia_update_tooltip(media);
 }

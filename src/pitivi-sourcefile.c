@@ -35,6 +35,8 @@
 
 static  GObjectClass *parent_class;
 
+#define DEFAULT_EFFECT_LENGTH 3 * GST_SECOND;
+
 enum {
   IS_AUDIO = 1,
   IS_VIDEO,
@@ -780,7 +782,7 @@ pitivi_sourcefile_new_transition (gchar *name, GstElementFactory *factory, GdkPi
   sf->private->factory = factory;
   sf->mediatype = g_strdup (mediatype);
   sf->thumbs_effect = pixbuf;
-  sf->length = 500000LL;
+  sf->length = DEFAULT_EFFECT_LENGTH;
   sf->haveeffect = TRUE;
   sf->private->transitionid = transitionid;
 
@@ -807,10 +809,6 @@ pitivi_sourcefile_new_effect (gchar *name, GstElementFactory *factory, GdkPixbuf
   sf = (PitiviSourceFile *) g_object_new(PITIVI_SOURCEFILE_TYPE,
 					 "mainapp", mainapp,
 					 NULL);
-  g_printf ("new_effect %s[MediaType:%s] %s\n",
-	    name,
-	    mediatype,
-	    gst_element_factory_get_longname(factory));
   g_assert (sf != NULL);
   /* TODO : Prepare the SourceFile for effects */
   sf->filename = g_strdup (name);
@@ -818,7 +816,7 @@ pitivi_sourcefile_new_effect (gchar *name, GstElementFactory *factory, GdkPixbuf
   sf->private->factory = factory;
   sf->mediatype = g_strdup (mediatype);
   sf->thumbs_effect = pixbuf;
-  sf->length = 500000LL;
+  sf->length = DEFAULT_EFFECT_LENGTH;
   sf->haveeffect = TRUE;
  
   return sf;

@@ -905,6 +905,7 @@ create_media_track (PitiviTimelineCellRenderer *self,
   
   width = convert_time_pix(self, length);
   media = pitivi_timelinemedia_new (sf, width, self);
+  pitivi_timelinemedia_set_media_start_stop (media, 0, length);
   gtk_widget_show (GTK_WIDGET (media));
   if (invert) {
     pitivi_add_to_layout ( GTK_WIDGET (self->linked_track), GTK_WIDGET (media), x, 0);
@@ -920,11 +921,12 @@ create_effect_on_track (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf, 
 {
   PitiviTimelineMedia *media;
   PitiviLayerType	type_track_cmp;
-  
+
   type_track_cmp = pitivi_check_media_type (sf);
   if (self->track_type == type_track_cmp)
     {
       media = pitivi_timelinemedia_new (sf, self->private->slide_width, self);
+      pitivi_timelinemedia_set_media_start_stop (media, 0, sf->length);
       pitivi_add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (media), x, 0);
       pitivi_layout_add_to_composition (self, media);
     }
@@ -1439,7 +1441,6 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
       pitivi_timelinemedia_set_media_start_stop(PITIVI_TIMELINEMEDIA(widget), mstart1, mstop1);
       // donner un stop/media_start/media_stop au nouveau media
       pitivi_timelinemedia_set_media_start_stop(media[0], mstart2, mstop2);
-      //      pitivi_timelinemedia_set_start_stop(media[0], start2, stop2);
 
       pitivi_layout_put (GTK_LAYOUT (container),  GTK_WIDGET ( media[0] ), pos, 0); // placement du nouveau media
       pitivi_media_set_size ( widget, x); // retaillage de l'ancien media
@@ -1454,9 +1455,7 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	  pitivi_media_set_size ( PITIVI_TIMELINEMEDIA (widget)->linked, x);
 	  link_widgets (media[0], media[1]);
 	  pitivi_timelinemedia_set_media_start_stop(PITIVI_TIMELINEMEDIA(link), mstart1, mstop1);
-	  //pitivi_timelinemedia_set_start_stop(PITIVI_TIMELINEMEDIA(link), start1, stop1);
 	  pitivi_timelinemedia_set_media_start_stop(media[1], mstart2, mstop2);
-	  //pitivi_timelinemedia_set_start_stop(media[1], start2, stop2);
 	  pitivi_layout_put (GTK_LAYOUT ( container->linked_track ), GTK_WIDGET ( media[1] ), pos, 0);
 	  pitivi_layout_add_to_composition (PITIVI_TIMELINECELLRENDERER (container->linked_track),
 					    PITIVI_TIMELINEMEDIA (media[1]));
