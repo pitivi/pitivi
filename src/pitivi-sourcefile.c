@@ -325,7 +325,7 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer 
     } 
   else 
     {
-      sf->private->colorspace = gst_element_factory_make ("ffcolorspace", "cspace");
+      sf->private->colorspace = gst_element_factory_make ("ffmpegcolorspace", "cspace");
       sf->private->videoscale = gst_element_factory_make ("videoscale", "vscale");
       sf->private->pngenc = gst_element_factory_make ("pngenc", "pngenc");
       g_object_set (sf->private->pngenc, "snapshot", FALSE, NULL);
