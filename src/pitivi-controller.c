@@ -177,7 +177,7 @@ pitivi_controller_callb_stop (GtkWidget *widget, gpointer user_data)
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_ffrev[0]), TRUE);
   if (!gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_playing[0])))
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_playing[0]), TRUE);
-   if ( self->private->viewerwin && gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_playing[2])))
+   if ( self->private->viewerwin )
      g_signal_emit_by_name (self->private->viewerwin, "stop");
 }
 
@@ -200,18 +200,13 @@ pitivi_controller_instance_init (GTypeInstance * instance, gpointer g_class)
 
   /* Creation Avance/Rembobinage Rapide Pause */
   
-  self->private->b_ffrev[0] = gtk_radio_tool_button_new (NULL);
-  self->private->group_ffrev = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[0]));
-    
-  self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_FORWARD] = \
-    gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_NEXT);
+  self->private->b_ffrev[0] = \
+    gtk_radio_tool_button_new (NULL);
   self->private->group_ffrev = \
-    gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_FORWARD]));
-    
-  self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_BACKWARD] = \
-    gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_PREVIOUS);
-  self->private->group_ffrev = \
-    gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_BACKWARD]));
+    gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[0]));
+  
+  self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_FORWARD]  = gtk_tool_button_new_from_stock (PITIVI_STOCK_VIEWER_NEXT);
+  self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_BACKWARD] = gtk_tool_button_new_from_stock (PITIVI_STOCK_VIEWER_PREVIOUS);
     
   /* Creation boutton Stop */
 
@@ -220,13 +215,9 @@ pitivi_controller_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->group_playing = \
     gtk_radio_tool_button_get_group GTK_RADIO_TOOL_BUTTON ((self->private->b_playing[0]));
   
-  self->private->b_playing[PITIVI_CONTROLLER_BUTTON_PLAY] \
-    = gtk_radio_tool_button_new_from_stock (self->private->group_playing, PITIVI_STOCK_VIEWER_PLAY);
-  self->private->group_playing = \
-    gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_PLAY]));
-  
+  self->private->b_playing[PITIVI_CONTROLLER_BUTTON_PLAY] = gtk_tool_button_new_from_stock (PITIVI_STOCK_VIEWER_PLAY);
   self->private->b_playing[PITIVI_CONTROLLER_BUTTON_STOP] = gtk_tool_button_new_from_stock (PITIVI_STOCK_VIEWER_STOP);
-
+  
   /* Toolbar Insertion */
   
   gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
