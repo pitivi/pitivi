@@ -1,11 +1,25 @@
 <ui>
   <menubar name="MainMenu">
       <menu action="FileMenu">
-       <menuitem name="FileOpen" action="FileOpen"/>
-       <menuitem name="FileSave" action="FileSave"/>
-       <menuitem name="FileSaveAs" action="FileSaveAs"/>
-       <menuitem name="FileExit" action="FileExit"/>
-      </menu>  
+            <menuitem name="FileNew" action="FileNew"/>
+            <menuitem name="FileOpen" action="FileOpen"/>
+            <menuitem name="FileSave" action="FileSave"/>
+            <menuitem name="FileSaveAs" action="FileSaveAs"/>
+            <separator/>
+            <menuitem name="FileSettings" action="FileSettings"/>
+            <separator/>
+            <menuitem name="FileExit"  action="FileExit"/>
+       </menu>
+       <menu action="WindowsMenu">
+            <menuitem name="EffectsWindow" action="EffectWindows"/>
+       </menu>
+       <menu action="HelpMenu">
+            <menuitem name="HelpIndex"  action="HelpIndex"/>
+            <menuitem name="HelpSearch"  action="HelpSearch"/>
+            <menuitem name="HelpContents" action="HelpContents"/>
+            <menuitem name="HelpAbout"  action="HelpAbout"/>
+            <separator/>
+       </menu>
   </menubar>
 </ui>
 
