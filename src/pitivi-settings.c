@@ -371,6 +371,7 @@ pitivi_settings_instance_init (GTypeInstance * instance, gpointer g_class)
 
   self->codec = 0;
   self->container = 0;
+  self->parser = 0;
   self->element = 0;
 
   self->element = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
@@ -393,11 +394,17 @@ pitivi_settings_instance_init (GTypeInstance * instance, gpointer g_class)
 	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Video/Decoder", 19)
 	       ) {
       self->codec = pitivi_settings_ajout_element (self->codec, factory, GST_PAD_SINK);      
+    } else if (!strncmp (gst_element_factory_get_klass (factory), "Codec/Parser", 12) ||
+	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Parser/Audio", 18) ||
+	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Parser/Video", 18)
+	       ) {
+      self->parser = pitivi_settings_ajout_element (self->parser, factory, GST_PAD_SINK);      
     }
     sv = sv->next;
   }
   pitivi_settings_aff_all_list (self->container);
   pitivi_settings_aff_all_list (self->codec);
+  pitivi_settings_aff_all_list (self->parser);
 }
 
 static void

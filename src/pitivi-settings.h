@@ -73,6 +73,7 @@ struct _PitiviSettings
 
   GList		*container;
   GList		*codec;
+  GList		*parser;
   GList		*element;
   
   /* private */
