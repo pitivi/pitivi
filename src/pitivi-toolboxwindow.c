@@ -106,7 +106,6 @@ pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *
   gtk_widget_show_all (GTK_WIDGET (effectswin) );
   
   viewerwin = pitivi_viewerwindow_new();
-  GtkWidget *widget = gtk_widget_get_parent (GTK_WIDGET(self));
 }
 
 static GtkActionEntry toolbox_menu_entries[] = {

@@ -28,6 +28,7 @@
 #include	"pitivi.h"
 #include	"pitivi-codecconfwindow.h"
 #include	"pitivi-newprojectwindow.h"
+#include	"pitivi-viewerwindow.h"
 #include	"pitivi-projectsettings.h"
 #include	"pitivi-mainapp.h"
 
@@ -355,7 +356,8 @@ pitivi_create_new_project ( GtkAction *action, PitiviToolboxWindow *self )
   PitiviTimelineWindow *timelinewin;
   PitiviSourceListWindow *srclistwin;
   PitiviEffectsWindow *effectswin;
-  
+  PitiviViewerWindow *viewerwin;
+ 
   /* Timeline List Window */
   timelinewin = pitivi_timelinewindow_new();
   gtk_widget_show_all (GTK_WIDGET (timelinewin) ); 
@@ -366,6 +368,8 @@ pitivi_create_new_project ( GtkAction *action, PitiviToolboxWindow *self )
   effectswin = pitivi_effectswindow_new();
   gtk_widget_show_all (GTK_WIDGET (effectswin) );
   gtk_widget_destroy (GTK_WIDGET(self));
+
+  viewerwin = pitivi_viewerwindow_new();
 }
 
 
