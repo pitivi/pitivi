@@ -28,37 +28,105 @@
 #include "pitivi-toolboxwindow.h"
 #include "pitivi-sourcelistwindow.h"
 #include "pitivi-newprojectwindow.h"
+#include "pitivi-projectsettings.h"
+
 
 struct _PitiviMainAppPrivate
 {
   /* instance private members */
-  gboolean dispose_has_run;
-  PitiviToolboxWindow *tbxwin;
-  PitiviSourceListWindow *srclistwin;
-  PitiviNewProjectWindow *win_new_project;
+  gboolean			dispose_has_run;
+  GSList			*project_settings_list;
+  PitiviToolboxWindow		*tbxwin;
+  PitiviSourceListWindow	*srclistwin;
+  PitiviNewProjectWindow	*win_new_project;
 };
 
 /*
  * forward definitions
  */
+GSList			*pitivi_mainapp_project_settings	( PitiviMainApp *self );
+PitiviCategorieSettings	*pitivi_create_new_categorie		( gchar *name, GSList *list_settings);
 
 /*
  * Insert "added-value" functions here
  */
 
-void	
+void
 pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
 {
   gtk_main_quit();
+}
+
+PitiviCategorieSettings *
+pitivi_create_new_categorie(gchar *name, GSList *list_settings)
+{
+  PitiviCategorieSettings	*categorie;
+  PitiviProjectSettings		*setting;
+  
+  categorie = g_new0(PitiviCategorieSettings, 1);
+  categorie->list_settings = g_new0(GSList, 1);
+
+  categorie->name = g_strdup(name);
+  categorie->list_settings = list_settings;
+  return (categorie);
+}
+
+GSList *
+pitivi_projectsettings_list_make()
+{
+  GSList			*list_categories;
+  GSList			*list_settings;
+
+/* Initialisation du debut de la liste des categories */
+  list_categories = NULL;
+  list_settings = NULL;
+  
+/* Categorie 1 */
+  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", "Description") );
+  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Standard 48kHz", "Description") );
+  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 32kHz", "Description") );
+  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 48kHz", "Description") );
+  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("DV - NTSC", list_settings) );
+  /***************/
+  
+/* Categorie 2 */
+  list_settings = NULL;
+  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", "Description") );
+  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Standard 48kHz", "Description") );
+  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 32kHz", "Description") );
+  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 48kHz", "Description") );
+  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("DV - PAL", list_settings) );
+/***************/
+
+/* Categorie 3 */
+  list_settings = NULL;
+  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Multimedia Video", "Description") );
+  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Quicktime for Web", "Description") );
+  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Petit test", "Description") );
+  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("Custom Settings", list_settings) );
+/***************/
+
+/* Categorie 4 */
+  list_settings = NULL;
+  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("Personnal Settings", list_settings) );
+
+  return (list_categories);
+}
+
+GSList *
+pitivi_mainapp_project_settings(PitiviMainApp *self)
+{
+  return ( self->private->project_settings_list );
 }
 
 PitiviMainApp *
 pitivi_mainapp_new (void)
 {
   PitiviMainApp *mainapp;
-
+  
   mainapp = (PitiviMainApp *) g_object_new (PITIVI_MAINAPP_TYPE, NULL);
   g_assert (mainapp != NULL);
+
   return mainapp;
 }
 
@@ -67,7 +135,8 @@ pitivi_mainapp_constructor (GType type,
 			    guint n_construct_properties,
 			    GObjectConstructParam * construct_properties)
 {
-  GObject *obj;
+  PitiviMainApp	*self;
+  GObject	*obj;
   {
     /* Invoke parent constructor. */
     PitiviMainAppClass *klass;
@@ -80,17 +149,29 @@ pitivi_mainapp_constructor (GType type,
 
   /* do stuff. */
 
+  self = (PitiviMainApp *) obj;
+  /* Enregistrement des Icones */
+  pitivi_stockicons_register ();
+  /* Creation de la liste des settings */
+  self->private->project_settings_list = pitivi_projectsettings_list_make();
+  /* Creation de la toolboxwindow */
+  self->private->tbxwin = pitivi_toolboxwindow_new(self);
+  /* Connection des Signaux */
+  g_signal_connect(G_OBJECT(self->private->tbxwin), "delete_event",
+		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
+  gtk_widget_show_all (GTK_WIDGET (self->private->tbxwin));
+
   return obj;
 }
 
 static void
 pitivi_mainapp_instance_init (GTypeInstance * instance, gpointer g_class)
 {
-  PitiviMainApp *self = (PitiviMainApp *) instance;
-  PitiviSourceListWindow *sourcelist;
+  PitiviMainApp			*self = (PitiviMainApp *) instance;
+  PitiviSourceListWindow	*sourcelist;
 
   self->private = g_new0 (PitiviMainAppPrivate, 1);
-  
+
   /* initialize all public and private members to reasonable default values. */
 
   self->private->dispose_has_run = FALSE;
@@ -98,12 +179,6 @@ pitivi_mainapp_instance_init (GTypeInstance * instance, gpointer g_class)
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
-  pitivi_stockicons_register ();
-  self->private->tbxwin = pitivi_toolboxwindow_new ();
-  g_signal_connect(G_OBJECT(self->private->tbxwin), "delete_event",
-		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
-  gtk_widget_show_all (GTK_WIDGET (self->private->tbxwin));
-  
 }
 
 static void

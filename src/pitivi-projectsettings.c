@@ -30,12 +30,12 @@ struct _PitiviProjectSettingsPrivate
 {
   /* instance private members */
   gboolean	dispose_has_run;
+  
 };
 
 /*
  * forward definitions
  */
-
 /*
  * Insert "added-value" functions here
  */
@@ -58,33 +58,48 @@ struct _PitiviProjectSettingsPrivate
 	)
  */
 
-
 PitiviProjectSettings *
 pitivi_projectsettings_new(void)
 {
   PitiviProjectSettings	*projectsettings;
 
-  projectsettings = (PitiviProjectSettings *) g_object_new(PITIVI_PROJECTSETTINGS_TYPE, NULL);
+  projectsettings = (PitiviProjectSettings *) 
+    g_object_new(PITIVI_PROJECTSETTINGS_TYPE, NULL);
   g_assert(projectsettings != NULL);
   return projectsettings;
 }
 
+PitiviProjectSettings *
+pitivi_projectsettings_new_with_name(gchar *name, gchar *desc)
+{
+  PitiviProjectSettings	*projectsettings;
+  
+  projectsettings = g_new0(PitiviProjectSettings, 1);
+  /* Remplit les champs name et description */
+  projectsettings->name = g_strdup(name);
+  projectsettings->description = g_strdup(desc);
+  
+  return projectsettings;
+}
+
+
 static GObject *
-pitivi_projectsettings_constructor (GType type,
-			     guint n_construct_properties,
-			     GObjectConstructParam * construct_properties)
+pitivi_projectsettings_constructor (GType type, 
+				    guint n_construct_properties,
+				    GObjectConstructParam *construct_properties)
 {
   GObject *obj;
   {
     /* Invoke parent constructor. */
-    PitiviProjectSettingsClass *klass;
-    GObjectClass *parent_class;
+    PitiviProjectSettingsClass	*klass;
+    GObjectClass		*parent_class;
     klass = PITIVI_PROJECTSETTINGS_CLASS (g_type_class_peek (PITIVI_PROJECTSETTINGS_TYPE));
     parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
-    obj = parent_class->constructor (type, n_construct_properties,
+    obj = parent_class->constructor (type, 
+				     n_construct_properties,
 				     construct_properties);
   }
-
+  
   /* do stuff. */
 
   return obj;

@@ -34,6 +34,8 @@
 #include "pitivi-toolboxwindow.h"
 #include "pitivi-timelinewindow.h"
 #include "pitivi-sourcelistwindow.h"
+#include "pitivi-mainapp.h"
+
 /*
  * Type macros.
  */
@@ -66,12 +68,12 @@ struct _PitiviNewProjectWindowClass
 };
 
 /* used by PITIVI_NEWPROJECTWINDOW_TYPE */
-GType pitivi_newprojectwindow_get_type (void);
+GType			pitivi_newprojectwindow_get_type (void);
 
 /*
  * Method definitions.
  */
 
-PitiviNewProjectWindow	*pitivi_newprojectwindow_new(void);
+PitiviNewProjectWindow	*pitivi_newprojectwindow_new(PitiviMainApp *main_app);
 
 #endif

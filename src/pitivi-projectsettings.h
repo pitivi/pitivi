@@ -49,18 +49,19 @@ typedef struct _PitiviProjectSettingsClass PitiviProjectSettingsClass;
 typedef struct _PitiviProjectSettingsPrivate PitiviProjectSettingsPrivate;
 
 typedef struct _PitiviMediaSettings PitiviMediaSettings;
+typedef struct _PitiviCategorieSettings PitiviCategorieSettings;
 
 struct _PitiviProjectSettings
 {
-  GObject parent;
+  GObject	parent;
 
   /* instance public members */
-  gchar		*name;
-  char		*description;
-  GSList	*media_settings;
-
+  gchar				*name;
+  gchar				*description;
+  GSList			*media_settings;
+  
   /* private */
-  PitiviProjectSettingsPrivate *private;
+  PitiviProjectSettingsPrivate	*private;
 };
 
 struct _PitiviProjectSettingsClass
@@ -82,14 +83,20 @@ struct _PitiviMediaSettings
   GstCaps	*caps;
 };
 
+struct _PitiviCategorieSettings
+{
+  gchar		*name;
+  GSList	*list_settings;
+};
+
 /* used by PITIVI_PROJECTSETTINGS_TYPE */
 
-GType pitivi_projectsettings_get_type (void);
+GType			pitivi_projectsettings_get_type (void);
 
 /*
  * Method definitions.
  */
 
-PitiviProjectSettings	*pitivi_projectsettings_new(void);
+PitiviProjectSettings	*pitivi_projectsettings_new (void);
 
 #endif

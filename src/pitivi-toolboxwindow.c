@@ -23,26 +23,33 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <gtk/gtk.h>
 #include "pitivi.h"
+#include "pitivi-toolboxwindow.h"
 #include "pitivi-menu.h"
 #include "pitivi-stockicons.h"
 #include "pitivi-toolbox.h"
 #include "pitivi-timelinewindow.h"
-#include "pitivi-toolboxwindow.h"
 #include "pitivi-sourcelistwindow.h"
-#include "pitivi-newprojectwindow.h"
 #include "pitivi-effectswindow.h"
+#include "pitivi-projectsettings.h"
+#include "pitivi-newprojectwindow.h"
 #include "pitivi-viewerwindow.h"
 
-static GtkWindowClass *parent_class = NULL;
+
+static GtkWindowClass	*parent_class = NULL;
+
+enum {
+  PROP_0,
+  PROP_MAINAPP
+};
 
 struct _PitiviToolboxWindowPrivate
 {
   /* instance private members */
-  gboolean dispose_has_run;
-  GtkWidget *vbox;
-  PitiviToolbox *toolbox;
+  gboolean		dispose_has_run;
+  GtkWidget		*vbox;
+  PitiviToolbox		*toolbox;
+  PitiviMainApp		*mainapp;
 };
 
 /*
@@ -53,24 +60,13 @@ struct _PitiviToolboxWindowPrivate
  * Insert "added-value" functions here
  */
 
-PitiviToolboxWindow *
-pitivi_toolboxwindow_new (void)
-{
-  PitiviToolboxWindow *toolboxwindow;
-
-  toolboxwindow =
-    (PitiviToolboxWindow *) g_object_new (PITIVI_TOOLBOXWINDOW_TYPE, NULL);
-  g_assert (toolboxwindow != NULL);
-  return toolboxwindow;
-}
-
 void
 pitivi_callb_toolbox_filenew_project ( GtkAction *action, PitiviToolboxWindow *self )
-{  
+{
   PitiviNewProjectWindow *win_new_project;
-
+    
   /* New Project window */
-  win_new_project = pitivi_newprojectwindow_new();
+  win_new_project = pitivi_newprojectwindow_new(self->private->mainapp);
   gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
 }
 
@@ -124,14 +120,66 @@ static GtkActionEntry toolbox_recent_entries[]= {
 };
 
 
-static void
-pitivi_toolboxwindow_instance_init (GTypeInstance * instance,
-				    gpointer g_class)
+PitiviToolboxWindow *
+pitivi_toolboxwindow_new (PitiviMainApp *mainapp)
 {
-  PitiviMenu *menumgr;
-  GtkWidget  *menu;
-  PitiviToolboxWindow *self = (PitiviToolboxWindow *) instance;
+  PitiviToolboxWindow		*toolboxwindow;
+
+  toolboxwindow = (PitiviToolboxWindow *) 
+    g_object_new (PITIVI_TOOLBOXWINDOW_TYPE, "mainapp", mainapp, NULL);
+
+  g_assert (toolboxwindow != NULL);
+
+  return (toolboxwindow);
+}
+
+static GObject *
+pitivi_toolboxwindow_constructor (GType type, 
+				  guint n_construct_properties,
+				  GObjectConstructParam *construct_properties)
+{
+  GObject			*object;
+  PitiviToolboxWindow		*self;
+  PitiviMenu			*menumgr;
+  GtkWidget			*menu;
+
+  object = (* G_OBJECT_CLASS (parent_class)->constructor) 
+    (type, n_construct_properties, construct_properties);
+
+/* Construction de la PitiviToolBoxWindow */
+  self = (PitiviToolboxWindow *) object;
   
+  self->private->toolbox = pitivi_toolbox_new ();
+  self->private->vbox = gtk_vbox_new (FALSE, 0);
+  gtk_window_set_title (GTK_WINDOW (self), PITIVI_TOOLBOXWINDOW_DF_TITLE);
+  
+  menumgr = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TOOLBOX_FILENAME);
+  
+  GtkActionGroup *ag1 = gtk_action_group_new ("FileBoxRecent");
+  GtkActionGroup *ag2 = gtk_action_group_new ("FileBoxMenu");
+  
+  gtk_action_group_add_actions (ag1, toolbox_menu_entries, G_N_ELEMENTS (toolbox_menu_entries), self);
+  gtk_action_group_add_actions (ag2, toolbox_recent_entries, G_N_ELEMENTS (toolbox_recent_entries), self);
+  
+  gtk_ui_manager_insert_action_group (menumgr->public->ui, ag1, 0);
+  gtk_ui_manager_insert_action_group (menumgr->public->ui, ag2, 0);
+  
+  PITIVI_MENU_GET_CLASS(menumgr)->public->configure (menumgr);
+  
+  gtk_box_pack_start (GTK_BOX (self->private->vbox),
+		      GTK_WIDGET (menumgr->public->menu), FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->vbox),
+		     GTK_WIDGET (self->private->toolbox), FALSE, FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (self), self->private->vbox);
+
+  return (object);
+}
+
+static void
+pitivi_toolboxwindow_instance_init (GTypeInstance * instance, gpointer g_class)
+{
+  PitiviToolboxWindow	*self = (PitiviToolboxWindow *) instance;
+
   self->private = g_new0 (PitiviToolboxWindowPrivate, 1);
   
   /* initialize all public and private members to reasonable default values. */
@@ -141,23 +189,7 @@ pitivi_toolboxwindow_instance_init (GTypeInstance * instance,
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
-  
-  self->private->toolbox = pitivi_toolbox_new ();
-  self->private->vbox = gtk_vbox_new (FALSE, 0);
-  gtk_window_set_title (GTK_WINDOW (self), PITIVI_TOOLBOXWINDOW_DF_TITLE);
-  menumgr = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TOOLBOX_FILENAME);
-  GtkActionGroup *ag1 = gtk_action_group_new ("FileBoxRecent");
-  GtkActionGroup *ag2 = gtk_action_group_new ("FileBoxMenu");
-  gtk_action_group_add_actions (ag1, toolbox_menu_entries, G_N_ELEMENTS (toolbox_menu_entries), self);
-  gtk_action_group_add_actions (ag2, toolbox_recent_entries, G_N_ELEMENTS (toolbox_recent_entries), self);
-  gtk_ui_manager_insert_action_group (menumgr->public->ui, ag1, 0);
-  gtk_ui_manager_insert_action_group (menumgr->public->ui, ag2, 0);
-  PITIVI_MENU_GET_CLASS(menumgr)->public->configure (menumgr);
-  gtk_box_pack_start (GTK_BOX (self->private->vbox),
-		      GTK_WIDGET (menumgr->public->menu), FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (self->private->vbox),
-		     GTK_WIDGET (self->private->toolbox), FALSE, FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (self), self->private->vbox);
+    
 }
 
 static void
@@ -211,6 +243,10 @@ pitivi_toolboxwindow_set_property (GObject * object,
       /*     g_print ("maman: %s\n",self->private->name); */
       /*   } */
       /*     break; */
+    case PROP_MAINAPP:
+      self->private->mainapp = g_value_get_pointer (value);
+      break;
+
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -231,6 +267,10 @@ pitivi_toolboxwindow_get_property (GObject * object,
       /*     g_value_set_string (value, self->private->name); */
       /*   } */
       /*     break; */
+    case PROP_MAINAPP:
+      g_value_set_pointer (value, self->private->mainapp);
+      break;
+      
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -246,6 +286,9 @@ pitivi_toolboxwindow_class_init (gpointer g_class, gpointer g_class_data)
 
   parent_class = g_type_class_peek_parent (g_class);
   
+
+  gobject_class->constructor = pitivi_toolboxwindow_constructor;
+
   gobject_class->dispose = pitivi_toolboxwindow_dispose;
   gobject_class->finalize = pitivi_toolboxwindow_finalize;
 
@@ -262,7 +305,12 @@ pitivi_toolboxwindow_class_init (gpointer g_class, gpointer g_class_data)
   /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
   /*                                    pspec); */
 
-
+  g_object_class_install_property (gobject_class,
+                                   PROP_MAINAPP,
+                                   g_param_spec_pointer ("mainapp",
+							 "mainapp",
+							 "Pointer on the PitiviMainApp instance",
+							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY) );
 }
 
 GType

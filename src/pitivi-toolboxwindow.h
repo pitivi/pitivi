@@ -29,8 +29,8 @@
 /*
  * Potentially, include other headers on which this header depends.
  */
-
 #include <gtk/gtk.h>
+#include "pitivi-mainapp.h"
 
 /*
  * Type macros.
@@ -72,6 +72,7 @@ GType pitivi_toolboxwindow_get_type (void);
  * Method definitions.
  */
 
-PitiviToolboxWindow	*pitivi_toolboxwindow_new (void);
+PitiviToolboxWindow	*pitivi_toolboxwindow_new (PitiviMainApp *main_app);
 void			pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *self );
+
 #endif

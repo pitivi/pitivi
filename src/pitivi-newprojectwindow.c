@@ -23,28 +23,42 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include	<gst/gst.h>
 #include	"pitivi.h"
 #include	"pitivi-newprojectwindow.h"
-#include	<gst/gst.h>
+#include	"pitivi-projectsettings.h"
+#include	"pitivi-mainapp.h"
 
 
 static GtkWindowClass	*parent_class = NULL;
+
+enum {
+  PROP_0,
+  PROP_MAINAPP
+};
 
 enum
   {
     TEXT_COLUMN,
     NUM_COLUMN
   };
- 
+
 struct _PitiviNewProjectWindowPrivate
 {
   /* instance private members */
   gboolean		dispose_has_run;
   GtkWidget		*hbox;
 
-  /* Arbre des reglages */
+  /* PitiviMainApp object */
+  PitiviMainApp		*mainapp;
 
-   /* Settings */
+  /* Arbre des reglages */
+  GtkTreeStore		*tree;
+  GtkWidget		*show_tree;
+  GtkTreeIter		pIter;
+  GtkTreeIter		pIter2;
+
+  /* Custom Settings */
   GtkWidget		*name_text;
   GtkWidget		*button_add;
   GtkWidget		*button_mod;
@@ -64,16 +78,20 @@ struct _PitiviNewProjectWindowPrivate
  * forward definitions
  */
 void		pitivi_fill_hbox		( PitiviNewProjectWindow	*self );
-GtkTreeStore	*pitivi_tree_create		( );
-GtkWidget	*pitivi_tree_show		( GtkTreeStore			*tree, PitiviNewProjectWindow	*self );
+void		 pitivi_tree_create		( PitiviNewProjectWindow	*self );
+GtkWidget	*pitivi_tree_show		( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_notebook_new		( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_presets_hbox	( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_create_presets_table	( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_settings_table	( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_video_frame	( );
 GtkWidget	*pitivi_make_audio_frame	( );
-GtkWidget	*pitivi_make_name_frame(PitiviNewProjectWindow *self);
-GtkWidget	*pitivi_make_cat_frame(PitiviNewProjectWindow *self);
+GtkWidget	*pitivi_make_name_frame		( PitiviNewProjectWindow	*self );
+GtkWidget	*pitivi_make_cat_frame		( PitiviNewProjectWindow	*self );
+
+/* Signals Definitions */
+
+GSList			*pitivi_mainapp_project_settings	( PitiviMainApp *self );
 
 
 /* Signals Definitions */
@@ -89,6 +107,9 @@ gboolean		pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, 
 
 #define DESC_TEXT	"Description:\nInsert a description of the setting"
 
+/* 
+ * Signals
+ */
 void 
 pitivi_close_window(GtkButton *button, gpointer user_data)
 {
@@ -105,11 +126,14 @@ pitivi_add_settings(GtkButton *button, gpointer user_data)
   gtk_text_buffer_get_start_iter(self->private->name_text_buffer, &self->private->start_description_iter);
   gtk_text_buffer_get_end_iter(self->private->name_text_buffer, &self->private->end_description_iter);
   
-  printf("Add Settings : Nom:%s\nDescription:%s\n", 
-	 gtk_entry_get_text(GTK_ENTRY(self->private->name_text)),
-	 gtk_text_buffer_get_text ( GTK_TEXT_BUFFER(self->private->name_text_buffer),
-				    &self->private->start_description_iter, 
-				    &self->private->end_description_iter, FALSE) );
+  if ( strlen(gtk_entry_get_text(GTK_ENTRY(self->private->name_text))) )
+    {
+      gtk_tree_store_append(self->private->tree, 
+			    &self->private->pIter2, 
+			    &self->private->pIter);
+      gtk_tree_store_set(self->private->tree, &self->private->pIter2, 
+			 0, gtk_entry_get_text(GTK_ENTRY(self->private->name_text)), -1);
+    }
 }
 
 gboolean
@@ -117,7 +141,6 @@ pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer u
 {
   PitiviNewProjectWindow	*self;
   gchar				*desc_text;
-
 
   self = (PitiviNewProjectWindow *) user_data;
 
@@ -130,7 +153,6 @@ pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer u
 					    &self->private->start_description_iter,
 					    &self->private->end_description_iter,
 					    FALSE);
-      
       if (!strncmp (DESC_TEXT, desc_text, strlen(DESC_TEXT)))
 	{
 	  gtk_text_buffer_delete (self->private->name_text_buffer,
@@ -141,22 +163,27 @@ pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer u
   return FALSE;
 }
 
+
+/* 
+ * Personal Fonctions
+ */
+
 void
 pitivi_fill_hbox(PitiviNewProjectWindow *self)
 {
-  GtkTreeStore	*tree;
-  GtkWidget	*show_tree;
   GtkWidget	*notebook;
   GtkWidget	*scroll;
 
-  tree = pitivi_tree_create();
-  show_tree = pitivi_tree_show(tree, self);
-  
+  pitivi_tree_create(self);
+  self->private->show_tree = pitivi_tree_show( self );
+
 /* Ajout du scrolling pour la selection */
   scroll = gtk_scrolled_window_new(NULL, NULL);
   gtk_widget_set_usize (scroll, 150, -1);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_container_add(GTK_CONTAINER(scroll), show_tree);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), GTK_POLICY_AUTOMATIC,
+				 GTK_POLICY_AUTOMATIC);
+  
+  gtk_container_add(GTK_CONTAINER(scroll), self->private->show_tree);
   
   notebook = pitivi_notebook_new(self);
   
@@ -164,74 +191,30 @@ pitivi_fill_hbox(PitiviNewProjectWindow *self)
   gtk_box_pack_start (GTK_BOX (self->private->hbox), notebook, TRUE, TRUE, 0);
 }
 
-GtkTreeStore*
-pitivi_tree_create()
+void
+pitivi_tree_create(PitiviNewProjectWindow *self)
 {
-  GtkTreeStore	*tree;
-  GtkTreeIter	pIter;
-  GtkTreeIter	pIter2;
-
-/* Nouvel arbre */ 
-  tree = gtk_tree_store_new(NUM_COLUMN, G_TYPE_STRING);
-
-/* pere 1*/
-  gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, TEXT_COLUMN, "DV - NTSC", -1);
+  GSList			*list;
+  PitiviCategorieSettings	*categorie;
+  PitiviProjectSettings		*setting;
+  int				i;
+  int				j;
   
-/* fils 1*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Standard 32kHz", -1);
+  /* Nouvel arbre */
+  self->private->tree = gtk_tree_store_new(1, G_TYPE_STRING);
   
-/* fils 2*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Standard 48kHz", -1);
-
-/* fils 3*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Widescreen 32kHz", -1);
-
-/* fils 4*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Widescreen 48kHz", -1);
-
-/* pere 2*/
-  gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, TEXT_COLUMN, "DV - PAL", -1);
-
-/* fils 1*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Standard 32kHz", -1);
-
-/* fils 2*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Standard 48kHz", -1);
-
-/* fils 3*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Widescreen 32kHz", -1);
-
-/* fils 4*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Widescreen 48kHz", -1);
-
-/* pere 3*/
-  gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, TEXT_COLUMN, "Custom Settings", -1);
-
-/* fils 1*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Multimedia Video", -1);
-
-/* fils 2*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Quicktime for Web", -1);
-
-/* Pere par default */
-  gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, TEXT_COLUMN, "Personnal Settings", -1);
-
-
-  return (tree);
+  /* Liste des PitiviCategorieSettings et des PitiviProjectSettings */
+  list = pitivi_mainapp_project_settings( self->private->mainapp );
+  for (i = 0; (categorie = (PitiviCategorieSettings *) g_slist_nth_data (list, i) ) ; i++)
+    {
+      gtk_tree_store_append(self->private->tree, &self->private->pIter, NULL);
+      gtk_tree_store_set(self->private->tree, &self->private->pIter, 0, (gchar *) categorie->name, -1);
+      for (j = 0; (setting = (PitiviProjectSettings *) g_slist_nth_data(categorie->list_settings, j)); j++)
+	{
+	  gtk_tree_store_append(self->private->tree, &self->private->pIter2, &self->private->pIter);
+	  gtk_tree_store_set(self->private->tree, &self->private->pIter2, 0, setting->name, -1);
+	}
+    }
 }
 
 gboolean			setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model, 
@@ -266,7 +249,7 @@ gboolean			setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
 }
 
 GtkWidget*
-pitivi_tree_show(GtkTreeStore *tree, PitiviNewProjectWindow *self)
+pitivi_tree_show(PitiviNewProjectWindow *self)
 {
   GtkWidget		*show_tree;
   GtkCellRenderer	*cell;
@@ -275,8 +258,8 @@ pitivi_tree_show(GtkTreeStore *tree, PitiviNewProjectWindow *self)
   GtkTreeIter		*iter;
 
 /* Creation de la vue */
-  show_tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(tree));
-
+  show_tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(self->private->tree));
+  
   /* Creation de la premiere colonne */
   cell = gtk_cell_renderer_text_new();
   column = gtk_tree_view_column_new_with_attributes("Selection", cell, "text", TEXT_COLUMN, NULL);
@@ -820,45 +803,61 @@ pitivi_make_audio_frame()
   return (audio_frame);   
 }
 
+
 /* 
  * Object PitiviNewProject initialisation 
 */
 
 PitiviNewProjectWindow *
-pitivi_newprojectwindow_new(void)
+pitivi_newprojectwindow_new(PitiviMainApp *mainapp)
 {
   PitiviNewProjectWindow	*newprojectwindow;
   
-  newprojectwindow = (PitiviNewProjectWindow *) g_object_new(PITIVI_NEWPROJECTWINDOW_TYPE, NULL);
+  newprojectwindow = (PitiviNewProjectWindow *) 
+    g_object_new(PITIVI_NEWPROJECTWINDOW_TYPE, "mainapp", mainapp, NULL);
+  
   g_assert(newprojectwindow != NULL);
+  
   return newprojectwindow;
 }
 
 static GObject *
 pitivi_newprojectwindow_constructor (GType type,
-			     guint n_construct_properties,
-			     GObjectConstructParam * construct_properties)
+				     guint n_construct_properties,
+				     GObjectConstructParam * construct_properties)
 {
-  GObject *obj;
-  {
-    /* Invoke parent constructor. */
-    PitiviNewProjectWindowClass *klass;
-    GObjectClass *parent_class;
-    klass = PITIVI_NEWPROJECTWINDOW_CLASS (g_type_class_peek (PITIVI_NEWPROJECTWINDOW_TYPE));
-    parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
-    obj = parent_class->constructor (type, n_construct_properties,
-				     construct_properties);
-  }
+  GObject			*object;
+  PitiviNewProjectWindow	*self;
 
+  object = (* G_OBJECT_CLASS (parent_class)->constructor) 
+    (type, n_construct_properties, construct_properties);
+  
   /* do stuff. */
-
-  return obj;
+  /*   Creation de la fenetre de reglages d'un nouveau projet */
+  self = (PitiviNewProjectWindow *) object;
+  
+  gtk_window_set_title (GTK_WINDOW (self), "New Project");
+  gtk_window_set_position (GTK_WINDOW (self), GTK_WIN_POS_CENTER);
+  gtk_window_set_modal (GTK_WINDOW(self), TRUE);
+  
+  /* Creation de hBox et Insertion dans la window du projet */
+  self->private->hbox = gtk_hbox_new (FALSE, 0);
+  
+  /* Creation des elements de la fenetre NewProject */
+  pitivi_fill_hbox(self);
+  
+  gtk_container_add (GTK_CONTAINER (self), self->private->hbox);
+  return object;
 }
 
 static void
 pitivi_newprojectwindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) instance;
+
+  GSList			*list;
+  PitiviCategorieSettings	*categorie;
+  PitiviProjectSettings		*setting;
   
   self->private = g_new0(PitiviNewProjectWindowPrivate, 1);
   
@@ -869,19 +868,6 @@ pitivi_newprojectwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
-  
-  /*   Creation de la fenetre de reglages d'un nouveau projet */
-  gtk_window_set_title (GTK_WINDOW (self), "New Project");
-  gtk_window_set_position (GTK_WINDOW (self), GTK_WIN_POS_CENTER);
-  gtk_window_set_modal (GTK_WINDOW(self), TRUE);
-  
-/* Creation de hBox et Insertion dans la window du projet */
-  self->private->hbox = gtk_hbox_new (FALSE, 0);
-/* Creation des elements de la fenetre NewProject */
-  pitivi_fill_hbox(self);
-  gtk_container_add (GTK_CONTAINER (self), self->private->hbox);
-  
-  gtk_widget_show_all( GTK_WIDGET(self->private->hbox));
 }
 
 static void
@@ -934,6 +920,10 @@ pitivi_newprojectwindow_set_property (GObject * object, guint property_id,
       /*     g_print ("maman: %s\n",self->private->name); */
       /*   } */
       /*     break; */
+    case PROP_MAINAPP:
+      self->private->mainapp = g_value_get_pointer (value);
+      break;
+
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -953,6 +943,10 @@ pitivi_newprojectwindow_get_property (GObject * object, guint property_id,
       /*     g_value_set_string (value, self->private->name); */
       /*   } */
       /*     break; */
+    case PROP_MAINAPP:
+      g_value_set_pointer (value, self->private->mainapp);
+      break;
+      
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -969,6 +963,7 @@ pitivi_newprojectwindow_class_init (gpointer g_class, gpointer g_class_data)
   parent_class = g_type_class_peek_parent (g_class);
   
   gobject_class->constructor = pitivi_newprojectwindow_constructor;
+
   gobject_class->dispose = pitivi_newprojectwindow_dispose;
   gobject_class->finalize = pitivi_newprojectwindow_finalize;
 
@@ -985,6 +980,12 @@ pitivi_newprojectwindow_class_init (gpointer g_class, gpointer g_class_data)
   /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
   /*                                    pspec); */
 
+  g_object_class_install_property (gobject_class,
+                                   PROP_MAINAPP,
+                                   g_param_spec_pointer ("mainapp",
+							 "mainapp",
+							 "Pointer on the PitiviMainApp instance",
+							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY) );
 }
 
 GType	

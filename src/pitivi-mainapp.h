@@ -50,7 +50,6 @@ struct _PitiviMainApp
   GObject parent;
 
   /* instance public members */
-
   /* private */
   PitiviMainAppPrivate *private;
 };
@@ -62,12 +61,13 @@ struct _PitiviMainAppClass
 };
 
 /* used by PITIVI_MAINAPP_TYPE */
-GType pitivi_mainapp_get_type (void);
+GType		pitivi_mainapp_get_type (void);
 
 /*
  * Method definitions.
  */
 
-PitiviMainApp *pitivi_mainapp_new (void);
+PitiviMainApp	*pitivi_mainapp_new (void);
+GSList		*pitivi_projectsettings_list_make();
 
 #endif
