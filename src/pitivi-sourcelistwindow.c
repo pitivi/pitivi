@@ -631,18 +631,6 @@ void	new_folder(GtkWidget *widget, gpointer data)
   self->private->treepath = save;
 }
 
-/*
-  extract_audio_video_pipelines
-
-  The given PitiviSourceFile has a mixed audio/video pipeline
-  Extracts separate audio and video pipelines
-*/
-
-void	extract_audio_video_pipelines(PitiviSourceFile *sf)
-{
-  /* Rien C'est normal Bilbo ??? */
-}
-
 PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 {
   GtkTreeIter	pIter;
@@ -706,14 +694,6 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
 					   sf->pipeline,
 					   sf->pipeline_video,
 					   sf->pipeline_audio);
-  if (sf->infoaudio)
-    if (sf->infovideo) {
-      extract_audio_video_pipelines(sf);
-    } else {
-      sf->pipeline_audio = sf->pipeline;
-    }
-  else
-    sf->pipeline_video = sf->pipeline;
   
   sExempleTexte = g_malloc(12);
   sprintf(sExempleTexte, "exemple %d\0", i);
