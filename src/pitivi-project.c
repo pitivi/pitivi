@@ -25,6 +25,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-project.h"
 
 struct _PitiviProjectPrivate
@@ -309,6 +310,15 @@ pitivi_project_set_file_to_encode (PitiviProject *project, gchar *filename)
   pitivi_globalbin_set_encoded_file (PITIVI_GLOBALBIN (project->bin), (const gchar *) filename);
 }
 
+void
+bin_state_change (GstElement *element, GstElementState pstate, GstElementState state, PitiviProject *project)
+{
+  PitiviGlobalBin	*gbin = PITIVI_GLOBALBIN (element);
+
+  if ((pstate == GST_STATE_PLAYING) && (state == GST_STATE_PAUSED) && gbin->eos)
+    gst_element_set_state (element, GST_STATE_READY);
+}
+
 static GObject *
 pitivi_project_constructor (GType type,
 			    guint n_construct_properties,
@@ -344,7 +354,7 @@ pitivi_project_constructor (GType type,
   
   if (project->filename) {
     if (!(pitivi_project_internal_restore_file (project))) {
-      g_warning ("Error restoring from file !!!");
+      PITIVI_WARNING ("Error restoring from file !!!");
       project->bin = NULL;
     }
   } else
@@ -354,10 +364,12 @@ pitivi_project_constructor (GType type,
 					   project->settings);
   
   /* add timeline and sink threads to timeline pipe */
-  if (project->bin)
+  if (project->bin) {
+    g_signal_connect (G_OBJECT (project->bin), "state_change", G_CALLBACK (bin_state_change), project);
     gst_bin_add_many (GST_BIN(project->private->thread),
 		      GST_ELEMENT(project->bin),
 		      NULL);
+  }
   return obj;
 }
 

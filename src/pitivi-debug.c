@@ -23,7 +23,23 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include <glib.h>
+#include <glib/gprintf.h>
+#include <gst/gst.h>
+
 #include "pitivi-debug.h"
+
+GST_DEBUG_CATEGORY (pitivi_debug_cat);
+
+void
+pitivi_debug_init (void)
+{
+  GST_DEBUG_CATEGORY_INIT (pitivi_debug_cat, "pitivi", 0, "PiTiVi messages");
+}
 
 
 char *

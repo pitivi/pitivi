@@ -29,6 +29,7 @@
 #include <unistd.h>
 #include <gst/gst.h>
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-newprojectwindow.h"
 #include "pitivi-sourcelistwindow.h"
@@ -120,7 +121,7 @@ pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
   conf = g_strdup_printf("%s/.pitivi", g_get_home_dir());
   /* Save settings before exiting */
   if (pitivi_settings_save_to_file(mainapp->global_settings, conf) == FALSE)
-    g_printf("Error saving configuration file");
+    PITIVI_WARNING("Error saving configuration file");
   g_free(conf);
   gtk_main_quit();
 }
@@ -135,7 +136,7 @@ pitivi_mainapp_callb_sourcelist (GtkWindow *win, gpointer data)
 void
 pitivi_mainapp_callb_effects (GtkWindow *win, gpointer data)
 {
-  g_printf("removed the effects window...\n");
+  PITIVI_DEBUG("removed the effects window...\n");
   PitiviMainApp *self = data;
   self->private->effectswin = NULL;
 }

@@ -262,7 +262,6 @@ pitivi_npw_put_properties(PitiviMediaSettings *media, GList *properties)
     prop->name = g_strdup(tmp->name);
     g_value_init(&(prop->value), G_VALUE_TYPE(&(tmp->value)));
     g_value_copy(&(tmp->value), &(prop->value));
-/*     g_printf("  AUDIO Codec Settings [%s]:[%s]\n", prop->name, g_strdup_value_contents(&(tmp->value))); */
     media->codec_properties = g_list_append(media->codec_properties, (gpointer) prop);
   }
 }

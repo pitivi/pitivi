@@ -22,6 +22,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "pitivi-debug.h"
 #include "pitivi-sourcefilebin.h"
 
 static gchar *
@@ -100,9 +101,9 @@ bin_make_new_audiobin (gchar *name, GstCaps *caps)
   gst_bin_add_many (GST_BIN(bin),
 		    arate, aconv, ident, NULL);
   if (!(gst_element_link_many( aconv, arate, NULL)))
-    g_warning ("Unable to link elements in audiobin");
+    PITIVI_WARNING ("Unable to link elements in audiobin");
   if (!(gst_element_link_filtered(arate, ident, caps)))
-    g_warning ("Couldn't link audioconv to ident with caps!");
+    PITIVI_WARNING ("Couldn't link audioconv to ident with caps!");
   gst_element_add_ghost_pad (GST_ELEMENT(bin),
 			     gst_element_get_pad (aconv, "sink"),
 			     "sink");
@@ -117,13 +118,14 @@ GstElement *
 bin_make_new_videobin (gchar *name, GstCaps *caps)
 {
   GstElement	*bin;
-  GstElement	*vrate, *vscale, *cspace, *identity;
+  GstElement	*vscale, *cspace, *identity;
+/*   GstElement	*vrate; */
 /*   GstProbe	*probe, *probe4; */
 
   /* dbin ! videorate ! videoscale ! ffmpegcolorspace ! videocaps ! identity ! */
 
   bin = gst_bin_new (name);
-  vrate = gst_element_factory_make ("videorate", NULL);
+/*   vrate = gst_element_factory_make ("videorate", NULL); */
   vscale = gst_element_factory_make ("videoscale", NULL);
   cspace = gst_element_factory_make ("ffmpegcolorspace", NULL);
   /* TODO : Think about moving from identity to queue */
@@ -147,15 +149,15 @@ bin_make_new_videobin (gchar *name, GstCaps *caps)
 /*   gst_pad_add_probe (gst_element_get_pad(identity, "src"), probe4); */
   
   gst_bin_add_many (GST_BIN (bin),
-		    vrate, vscale, cspace, identity,
+		    vscale, cspace, identity,
 		    NULL);
-  if (!(gst_element_link_many (vrate, vscale, cspace, NULL)))
-    g_warning("Error linking vrate, vscale and cspace");
+  if (!(gst_element_link_many (vscale, cspace, NULL)))
+    PITIVI_WARNING("Error linking vrate, vscale and cspace");
   if (!(gst_element_link_filtered(cspace, identity, caps)))
-    g_warning ("Couldn't link filtered colorspace->identity with caps %s",
+    PITIVI_WARNING ("Couldn't link filtered colorspace->identity with caps %s",
 	       gst_caps_to_string(caps));
   gst_element_add_ghost_pad (bin, gst_element_get_pad (identity, "src"), "src");
-  gst_element_add_ghost_pad (bin, gst_element_get_pad (vrate, "sink"), "sink");
+  gst_element_add_ghost_pad (bin, gst_element_get_pad (vscale, "sink"), "sink");
 
   return bin;
 }
@@ -179,11 +181,11 @@ bin_add_audiobin (bindata *data)
   if (data->bintype == IS_AUDIO_VIDEO) {
     if (!(gst_element_add_ghost_pad (data->bin,
 				     gst_element_get_pad (data->audiobin, "src"), "asrc")))
-      g_warning ("problem adding audio ghost pad to bin");
+      PITIVI_WARNING ("problem adding audio ghost pad to bin");
   } else {
     if (!(gst_element_add_ghost_pad (data->bin,
 				     gst_element_get_pad (data->audiobin, "src"), "src")))
-      g_warning ("problem adding audio ghost pad to bin");
+      PITIVI_WARNING ("problem adding audio ghost pad to bin");
   }
 }
 
@@ -203,11 +205,11 @@ bin_add_videobin (bindata *data)
     if (data->bintype == IS_AUDIO_VIDEO) {
       if (!(gst_element_add_ghost_pad (data->bin, 
 				       gst_element_get_pad(data->videobin, "src"), "vsrc")))
-	g_warning ("problem adding video ghost pad to bin");
+	PITIVI_WARNING ("problem adding video ghost pad to bin");
     } else {
       if (!(gst_element_add_ghost_pad (data->bin, 
 				       gst_element_get_pad(data->videobin, "src"), "src")))
-	g_warning ("problem adding video ghost pad to bin");
+	PITIVI_WARNING ("problem adding video ghost pad to bin");
     }
   }
 }
@@ -235,7 +237,7 @@ bin_new_pad_fake_output (GstPad *pad, bindata *data, int padtype)
       sink = data->videofakesink;
 
   if (!(gst_pad_link(pad, gst_element_get_pad(sink, "sink"))))
-    g_warning("Error linking decodebin pad to fakesink !!!");
+    PITIVI_WARNING("Error linking decodebin pad to fakesink !!!");
 }
 
 void
@@ -243,10 +245,10 @@ bin_new_pad_audio_output (GstPad *pad, bindata *data)
 {
   /* TODO : Add the audio adapters */
   /* TODO : Make it in such a way that it re-uses existing data->audiobin */
-/*   g_printf ("New Pad Audio Output for pad %s:%s\n", */
-/* 	    GST_DEBUG_PAD_NAME (pad)); */
+  PITIVI_DEBUG ("New Pad Audio Output for pad %s:%s",
+	    GST_DEBUG_PAD_NAME (pad));
   if (!(gst_pad_link (pad, gst_element_get_pad (data->audiobin, "sink"))))
-    g_warning ("Couldn't link pad %s:%s to audiobin sink",
+    PITIVI_WARNING ("Couldn't link pad %s:%s to audiobin sink",
 	       GST_DEBUG_PAD_NAME (pad));
 /*   if (data->bintype == IS_AUDIO_VIDEO) */
 /*     gst_element_add_ghost_pad (data->bin, pad, "asrc"); */
@@ -257,10 +259,10 @@ bin_new_pad_audio_output (GstPad *pad, bindata *data)
 void
 bin_new_pad_video_output (GstPad *pad, bindata *data)
 {  
-/*   g_printf ("New Pad Video Output for pad %s:%s\n", */
-/* 	    GST_DEBUG_PAD_NAME (pad)); */
+  PITIVI_DEBUG ("New Pad Video Output for pad %s:%s",
+		GST_DEBUG_PAD_NAME (pad));
   if (!(gst_pad_link (pad, gst_element_get_pad (data->videobin, "sink"))))
-    g_warning ("Couldn't link pad %s:%s to videobin sink",
+    PITIVI_WARNING ("Couldn't link pad %s:%s to videobin sink",
 	       GST_DEBUG_PAD_NAME (pad));
 }
 
@@ -275,7 +277,7 @@ bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udat
   padtype = get_pad_type (pad);
   if (!padtype)
     return;
-/*   g_printf("Adding pad type[%d]->[%d] : %s:%s\n", padtype, data->bintype, GST_DEBUG_PAD_NAME(pad)); */
+  PITIVI_DEBUG("Adding pad type[%d]->[%d] : %s:%s", padtype, data->bintype, GST_DEBUG_PAD_NAME(pad));
 
   /* Connect (adapters and) ghost pads */
   if (padtype == IS_AUDIO) {
@@ -327,7 +329,7 @@ bin_preroll (GstElement *container, bindata *data)
 
   pipeline = gst_pipeline_new(NULL);
   pstate = gst_element_get_state (data->bin);
-/*   g_printf ("Element was in state %s\n", gst_element_state_get_name(pstate)); */
+/*   PITIVI_DEBUG ("Element was in state %s", gst_element_state_get_name(pstate)); */
   if ((father = (GstElement *) gst_object_get_parent (GST_OBJECT(data->bin)))) {
     /* remove it from father */
     hadfather = TRUE;
@@ -340,7 +342,7 @@ bin_preroll (GstElement *container, bindata *data)
   data->ready = data->audioready = data->videoready = FALSE;
   
   if (!(gst_element_set_state (pipeline, GST_STATE_PLAYING)))
-    g_warning ("couldn't set bin to PLAYING during pre_roll");
+    PITIVI_WARNING ("couldn't set bin to PLAYING during pre_roll");
   
   while (i--) {
     if (!(gst_bin_iterate(GST_BIN(pipeline))))
@@ -350,12 +352,12 @@ bin_preroll (GstElement *container, bindata *data)
   }  
 
   if (!(gst_element_set_state (pipeline, pstate)))
-    g_warning ("couldn't set bin to PLAYING during pre_roll");
+    PITIVI_WARNING ("couldn't set bin to PLAYING during pre_roll");
   
   gst_object_ref (GST_OBJECT(data->bin));
   gst_bin_remove (GST_BIN (pipeline), data->bin);
   
-/*   g_printf ("Element after pre-roll is in state %s\n", */
+/*   PITIVI_DEBUG ("Element after pre-roll is in state %s\n", */
 /* 	    gst_element_state_get_name (gst_element_get_state (data->bin))); */
   gst_element_set_state (data->bin, pstate);
   if (hadfather) {
@@ -367,7 +369,7 @@ bin_preroll (GstElement *container, bindata *data)
 /* void */
 /* decodebin_change_state (GstElement *element, GstElementState pstate, GstElementState state, bindata *data) */
 /* { */
-/*   g_warning ("Bin for file %s went from state %d to state %d", */
+/*   PITIVI_WARNING ("Bin for file %s went from state %d to state %d", */
 /* 	     data->sf->filename, pstate, state); */
 /*   if ((pstate == GST_STATE_READY) && (state == GST_STATE_PAUSED)) */
 /*     bin_preroll(element, data); */
@@ -377,14 +379,14 @@ bin_preroll (GstElement *container, bindata *data)
 /* void */
 /* decodebin_eos (GstElement *element, bindata *data) */
 /* { */
-/*   g_warning ("decodebin for file %s went EOS !", */
+/*   PITIVI_WARNING ("decodebin for file %s went EOS !", */
 /* 	     data->sf->filename); */
 /* } */
 
 /* void */
 /* decodebin_pad_removed (GstElement *element, GstPad *pad, bindata *data) */
 /* { */
-/*   g_warning ("pad %s:%s was removed !", */
+/*   PITIVI_WARNING ("pad %s:%s was removed !", */
 /* 	     GST_DEBUG_PAD_NAME(pad)); */
 /* } */
 
@@ -434,12 +436,9 @@ pad_is_video_yuv(GstPad *pad)
 
   caps = gst_caps_from_string("video/x-raw-yuv,format=(fourcc)I420");
   if (gst_caps_is_always_compatible(caps, gst_pad_get_caps(pad))) {
-    g_printf("Found yuv I420 compatible stream\n");
     gst_caps_free (caps);
     return TRUE;
   }
-  g_warning ("Didn't found compatible YUV/I420 stream %s\n",
-	     gst_caps_to_string(gst_pad_get_caps(pad)));
   gst_caps_free (caps);
   return FALSE;
 }
@@ -467,7 +466,7 @@ pitivi_sourcefile_bin_new_effect (PitiviSourceFile *self, GstElementFactory *fac
 			       gst_element_get_pad (inadapt, "sink"),
 			       "sink");
     if (!(gst_element_link (inadapt, effect)))
-      g_warning ("Couldn't link input adapter to effect");
+      PITIVI_WARNING ("Couldn't link input adapter to effect");
   } else {
     gst_element_add_ghost_pad (GST_ELEMENT(bin),
 			       gst_element_get_pad (effect, "sink"),
@@ -481,7 +480,7 @@ pitivi_sourcefile_bin_new_effect (PitiviSourceFile *self, GstElementFactory *fac
 			       gst_element_get_pad (outadapt, "src"),
 			       "src");
     if (!(gst_element_link (effect, outadapt)))
-      g_warning ("Couldn't link output adapter to effect");
+      PITIVI_WARNING ("Couldn't link output adapter to effect");
   } else {
     gst_element_add_ghost_pad (GST_ELEMENT(bin),
 			       gst_element_get_pad (effect, "src"),

@@ -379,6 +379,7 @@ gnl_timeline_timer_loop (GstElement *element)
       
     }
     /*     gst_element_set_eos(element); */
+    gst_element_set_eos (element);
     gst_element_set_eos (GST_ELEMENT(gst_element_get_parent(element)));
     
   }
@@ -709,18 +710,18 @@ gnl_timeline_change_state (GstElement *element)
   gint transition = GST_STATE_TRANSITION (element);
 
   switch (transition) {
-    case GST_STATE_NULL_TO_READY:
-      GST_INFO ("%s: 1 null->ready", gst_element_get_name (element));
-      break;
-    case GST_STATE_READY_TO_PAUSED:
+  case GST_STATE_NULL_TO_READY:
+    GST_INFO ("%s: 1 null->ready", gst_element_get_name (element));
+    break;
+  case GST_STATE_READY_TO_PAUSED:
     {
       GstEvent *event;
       GstSeekType seek_type;
 
       seek_type = GST_FORMAT_TIME |
-                  GST_SEEK_METHOD_SET |
-                  GST_SEEK_FLAG_FLUSH |
-                  GST_SEEK_FLAG_ACCURATE;
+	GST_SEEK_METHOD_SET |
+	GST_SEEK_FLAG_FLUSH |
+	GST_SEEK_FLAG_ACCURATE;
 
       GST_INFO ("%s: 1 ready->paused", gst_element_get_name (element));
 
@@ -729,16 +730,16 @@ gnl_timeline_change_state (GstElement *element)
 	res = GST_STATE_FAILURE;
       break;
     }
-    case GST_STATE_PAUSED_TO_PLAYING:
-      GST_INFO ("%s: 1 paused->playing", gst_element_get_name (element));
-      break;
-    case GST_STATE_PLAYING_TO_PAUSED:
-      GST_INFO ("%s: 1 playing->paused", gst_element_get_name (element));
-      break;
-    case GST_STATE_PAUSED_TO_READY:
-      break;
-    default:
-      break;
+  case GST_STATE_PAUSED_TO_PLAYING:
+    GST_INFO ("%s: 1 paused->playing", gst_element_get_name (element));
+    break;
+  case GST_STATE_PLAYING_TO_PAUSED:
+    GST_INFO ("%s: 1 playing->paused", gst_element_get_name (element));
+    break;
+  case GST_STATE_PAUSED_TO_READY:
+    break;
+  default:
+    break;
   }
   res2 = GST_ELEMENT_CLASS (parent_class)->change_state (element);
   return ((res2 && res) ? res2 : GST_STATE_FAILURE);

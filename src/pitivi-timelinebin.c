@@ -64,8 +64,10 @@ pitivi_timelinebin_output_file(PitiviTimelineBin *bin, gchar *filename)
 }
 
 PitiviTimelineBin *
-pitivi_timelinebin_new(GnlTimeline *timeline, GnlGroup *audiogroup, 
-		       GnlGroup *videogroup, PitiviProjectSettings *psettings)
+pitivi_timelinebin_new(GnlTimeline	*timeline,
+		       GnlGroup	*audiogroup,
+		       GnlGroup	*videogroup,
+		       PitiviProjectSettings *psettings)
 {
   PitiviTimelineBin	*timelinebin;
 
@@ -154,19 +156,27 @@ static gboolean
 pitivi_timelinebin_connect_source (PitiviGlobalBin *gbin)
 {
   PitiviTimelineBin	*self = PITIVI_TIMELINEBIN (gbin);
+  GSList	*tmp;
+  PitiviMediaSettings *ms;
 
   /* connect timeline's output to the tees */
   if (!gst_element_set_state(GST_ELEMENT (self->timeline), GST_STATE_PAUSED)) {
-    g_warning ("wasn't able to set the timeline to PAUSED");
+    PITIVI_WARNING ("wasn't able to set the timeline to PAUSED");
     return FALSE;
   }
+  tmp = self->private->psettings->media_settings;
+  ms = tmp->data;
   if (gbin->videoout)
-    if (!(gst_pad_link(gnl_timeline_get_pad_for_group (self->timeline, self->private->videogroup),
-		       gst_element_get_pad (gbin->vtee, "sink"))))
+    if (!(gst_pad_link_filtered(gnl_timeline_get_pad_for_group (self->timeline, self->private->videogroup),
+				gst_element_get_pad (gbin->vtee, "sink"),
+				ms->caps)))
       return FALSE;
+  tmp = g_slist_next (tmp);
+  ms = tmp->data;
   if (gbin->audioout)
-    if (!(gst_pad_link(gnl_timeline_get_pad_for_group (self->timeline, self->private->audiogroup),
-		       gst_element_get_pad (gbin->atee, "sink"))))
+    if (!(gst_pad_link_filtered(gnl_timeline_get_pad_for_group (self->timeline, self->private->audiogroup),
+				gst_element_get_pad (gbin->atee, "sink"),
+				ms->caps)))
       return FALSE;
   return TRUE;
 }
@@ -194,7 +204,7 @@ pitivi_timelinebin_setup_encoding (PitiviTimelineBin *self)
   GSList	*tmp;
   GstElement	*vencoder, *aencoder, *muxer;
 
-/*   g_warning ("timelinebin_setup_encoding"); */
+  PITIVI_DEBUG ("timelinebin_setup_encoding");
   if (!(gbin->render))
     return TRUE;
   if (!(gbin->encodedfile))

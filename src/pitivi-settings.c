@@ -38,6 +38,7 @@
 
 #include <glib/gprintf.h>
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-settings.h"
 
 
@@ -206,7 +207,7 @@ void		pitivi_settings_free_list_all (GList *list)
 */
 void		pitivi_settings_aff_info_factory (GstElementFactory *factory)
 {
-  g_print ("%s\t%s\t%s\n", 
+  PITIVI_DEBUG ("%s\t%s\t%s\n", 
 	   gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)),
 	   gst_element_factory_get_longname (factory), 
 	   gst_element_factory_get_klass (factory)
@@ -222,7 +223,7 @@ void		pitivi_settings_aff_info_factory (GstElementFactory *factory)
 void		pitivi_settings_aff_coder (GList *list)
 {
   for (; list; list = g_list_next (list)) {
-    g_print ("    %s\n", (gchar *) list->data);
+    PITIVI_DEBUG ("    %s\n", (gchar *) list->data);
   }
   return ;
 }
@@ -233,10 +234,10 @@ void		pitivi_settings_aff_coder (GList *list)
 */
 void		pitivi_settings_aff_mime_type (PitiviSettingsMimeType *mime_type)
 {
-  g_print ("%s\n", gst_caps_to_string (mime_type->flux));
-  g_print ("  Encoder:\n");
+  PITIVI_DEBUG ("%s\n", gst_caps_to_string (mime_type->flux));
+  PITIVI_DEBUG ("  Encoder:\n");
   pitivi_settings_aff_coder (mime_type->encoder);
-  g_print ("  Decoder:\n");
+  PITIVI_DEBUG ("  Decoder:\n");
   pitivi_settings_aff_coder (mime_type->decoder);
   return ;
 }
@@ -327,7 +328,7 @@ pitivi_settings_get_flux_coder_list (GList *list, GstCaps *flux, gboolean LIST)
     } else if (LIST == ENC_LIST) {
       return (tmp->encoder);
     } else {
-      g_print ("Don't know this list\n");
+      PITIVI_DEBUG ("Don't know this list\n");
     }
   }
   return (NULL);
@@ -362,7 +363,7 @@ pitivi_settings_ajout_factory_element (PitiviSettingsMimeType *tmp,
     if (!my_list_find(element, tmp->decoder))
       tmp->decoder = g_list_append (tmp->decoder, (gpointer) element);
   } else {
-    g_print ("ERROR in (ajout_factory_element) : MY_PAD \n");
+    PITIVI_DEBUG ("ERROR in (ajout_factory_element) : MY_PAD \n");
   }
 
   return (tmp);
@@ -451,12 +452,12 @@ pitivi_settings_aff_elm_io (PitiviSettingsIoElement *elm)
 {
   gint cpt;
 
-  g_print ("------------------------------------------\n");
-  g_print ("Element's name:\t%s \n", gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm->factory)));
+  PITIVI_DEBUG ("------------------------------------------\n");
+  PITIVI_DEBUG ("Element's name:\t%s \n", gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm->factory)));
   for (cpt = 0; cpt < elm->n_param; cpt++) {
-    g_print ("* * * *\n");
-    g_print ("name:%s\n", elm->params[cpt].name);
-    g_print ("value:%s\n", g_strdup_value_contents (&(elm->params[cpt].value)));
+    PITIVI_DEBUG ("* * * *\n");
+    PITIVI_DEBUG ("name:%s\n", elm->params[cpt].name);
+    PITIVI_DEBUG ("value:%s\n", g_strdup_value_contents (&(elm->params[cpt].value)));
   }
   return ;
 }
@@ -510,14 +511,14 @@ pitivi_settings_modify_settings_struct_info (PitiviSettings *self, PitiviSetting
     PitiviSettingsIoElement *IoElm = (PitiviSettingsIoElement *) list->data;
     
     if (!strcmp(name, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(IoElm->factory)))) {
-      g_print ("%p:%p\n", list->data, io);
+      PITIVI_DEBUG ("%p:%p\n", list->data, io);
       list->data = io;
 
       return ;
     }
   }
   
-  g_print ("Not an %s element's name:%s\n", klass, name);
+  PITIVI_DEBUG ("Not an %s element's name:%s\n", klass, name);
 
   return ;
 }
@@ -553,7 +554,7 @@ pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, GstElementFac
     }
   }
   
-  g_print ("Not an %s element's name:%s\n", klass, name);
+  PITIVI_DEBUG ("Not an %s element's name:%s\n", klass, name);
   return (0);
 }
 
@@ -713,19 +714,19 @@ pitivi_settings_scan_registry(PitiviSettings *self)
   }
   
   /*
-    g_print ("######## AUDIO-IN\n");
+    PITIVI_DEBUG ("######## AUDIO-IN\n");
     pitivi_settings_aff_all_list_elm (self->elm_audio_in);
-    g_print ("######## AUDIO-OUT\n");
+    PITIVI_DEBUG ("######## AUDIO-OUT\n");
     pitivi_settings_aff_all_list_elm (self->elm_audio_out);
-    g_print ("######## VIDEO-IN\n");
+    PITIVI_DEBUG ("######## VIDEO-IN\n");
     pitivi_settings_aff_all_list_elm (self->elm_video_in);
-    g_print ("######## VIDEO-OUT\n");
+    PITIVI_DEBUG ("######## VIDEO-OUT\n");
     pitivi_settings_aff_all_list_elm (self->elm_video_out);
-    g_print ("CONTAINERS-------------------------\n");
+    PITIVI_DEBUG ("CONTAINERS-------------------------\n");
     pitivi_settings_aff_all_list (self->container); 
-    g_print ("CODECS-----------------------------\n");
+    PITIVI_DEBUG ("CODECS-----------------------------\n");
     pitivi_settings_aff_all_list (self->codec); 
-    g_print ("PARSERS----------------------------\n");
+    PITIVI_DEBUG ("PARSERS----------------------------\n");
     pitivi_settings_aff_all_list (self->parser); 
   */
 
@@ -858,7 +859,7 @@ pitivi_settings_xml_epure_project_settings(GSList *list, xmlNodePtr parent)
   for ( res = list; res; res = res->next ) 
     {
       cat_tmp = (PitiviCategorieSettings *) res->data;
-/*       g_print("CATEGORIE NAME : %s.\n", cat_tmp->name); */
+/*       PITIVI_DEBUG("CATEGORIE NAME : %s.\n", cat_tmp->name); */
       if (cat_tmp) {
 	cat = xmlNewChild (parent, NULL, "categoriesettings", NULL );
 	cat_set = xmlNewChild (cat, NULL, "name", (char *) cat_tmp->name );

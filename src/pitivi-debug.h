@@ -23,9 +23,31 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <glib/gprintf.h>
+#ifndef __PITIVI_DEBUG_H__
+#define __PITIVI_DEBUG_H__
+
+#include <glib.h>
 #include <gst/gst.h>
-#include "pitivi.h"
+
+G_BEGIN_DECLS 
+
+GST_DEBUG_CATEGORY_EXTERN (pitivi_debug_cat);
+
+#ifdef G_HAVE_ISO_VARARGS
+#define PITIVI_ERROR(...)       GST_CAT_ERROR (pitivi_debug_cat, __VA_ARGS__)
+#define PITIVI_WARNING(...)     GST_CAT_WARNING (pitivi_debug_cat, __VA_ARGS__)
+#define PITIVI_INFO(...)        GST_CAT_INFO (pitivi_debug_cat,  __VA_ARGS__)
+#define PITIVI_DEBUG(...)       GST_CAT_DEBUG (pitivi_debug_cat, __VA_ARGS__)
+#define PITIVI_LOG(...)         GST_CAT_LOG (pitivi_debug_cat, __VA_ARGS__)
+#elif defined(G_HAVE_GNUC_VARARGS)
+#define PITIVI_ERROR(args...)   GST_CAT_ERROR (pitivi_debug_cat, ##args)
+#define PITIVI_WARNING(args...) GST_CAT_WARNING (pitivi_debug_cat, ##args)
+#define PITIVI_INFO(args...)    GST_CAT_INFO (pitivi_debug_cat, ##args)
+#define PITIVI_DEBUG(args...)   GST_CAT_DEBUG (pitivi_debug_cat, ##args)
+#define PITIVI_LOG(args...)     GST_CAT_LOG (pitivi_debug_cat, ##args)
+#endif
+
+void pitivi_debug_init (void);
 
 char *
 pitivi_element_debug(GstElement *elt);
@@ -35,3 +57,7 @@ pitivi_printf_element(GstElement *elt);
 
 void
 print_element_schedulers(GstElement *element);
+
+G_END_DECLS
+
+#endif

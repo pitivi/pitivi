@@ -27,6 +27,7 @@
 #include <gst/gst.h>
 #include <gnl/gnl.h>
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-menu.h"
 
@@ -40,7 +41,7 @@ main (int argc, char **argv)
   gst_init (&argc, &argv);
   gnl_init (&argc, &argv);
  
-
+  pitivi_debug_init();
   mainapp = pitivi_mainapp_new ();
 
 

@@ -69,6 +69,8 @@ struct _PitiviGlobalBin
 
   GstElement	*muxer;
 
+  gboolean	eos;
+
   /* private */
   PitiviGlobalBinPrivate *private;
 };

@@ -46,11 +46,8 @@ TODO TODO TODO TODO TODO TODO
 
 */
 
-
-
-
-
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-gstelementsettings.h"
 #include "pitivi-settingswindow.h"
 
@@ -470,10 +467,10 @@ pitivi_gstelementsettings_value_conf_default (PitiviGstElementSettings *self,
   GtkWidget *tmp;
   
   if (G_IS_PARAM_SPEC_ENUM (param)) {    
-    //g_print ("ENUM_TYPE:%d\n", G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (&value)));
+    //PITIVI_DEBUG ("ENUM_TYPE:%d\n", G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (&value)));
     tmp = pitivi_gstelementsettings_aff_enum (self, name, value, param);    
   } else if (G_IS_PARAM_SPEC_FLAGS (param)) {
-    //g_print ("FLAGS_TYPE:%d\n", G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (&value)));
+    //PITIVI_DEBUG ("FLAGS_TYPE:%d\n", G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (&value)));
     tmp = pitivi_gstelementsettings_aff_flags (name, value, param);    
   } else {
     tmp = gtk_label_new("Default Case for Value");
@@ -657,9 +654,9 @@ pitivi_gstelementsettings_get_settings_combobox (GtkWidget *widget, PitiviGstEle
   g_object_get_property (G_OBJECT (self->private->element), prop_name, &value);
   g_value_set_enum (&value, tmp_list[row_sel]);
 
-  //g_print ("COMBO_BOX_SEL[%d]:%d\n", row_sel, tmp_list[row_sel]);
-  //g_print ("PROP_NAME=[%s]\n", prop_name);
-  //g_print ("NUM:%d\n", num);
+  //PITIVI_DEBUG ("COMBO_BOX_SEL[%d]:%d\n", row_sel, tmp_list[row_sel]);
+  //PITIVI_DEBUG ("PROP_NAME=[%s]\n", prop_name);
+  //PITIVI_DEBUG ("NUM:%d\n", num);
 
   pitivi_gstelementsettings_modify_prop (self, prop_name, value);
   return ;
@@ -686,46 +683,46 @@ pitivi_gstelementsettings_get_settings_entry (GtkWidget *widget, PitiviGstElemen
     } else if (!g_ascii_strcasecmp(type, "UINT")) {
       g_value_init(&value, G_TYPE_UINT);
       if (!g_value_transform (&tmp, &value))
-	g_print ("COULD NOT TRANSFORM TYPE\n");
+	PITIVI_DEBUG ("COULD NOT TRANSFORM TYPE\n");
 
     } else if (!g_ascii_strcasecmp(type, "UINT64")) {
       g_value_init(&value, G_TYPE_UINT64);
       if (!g_value_transform (&tmp, &value))
-	g_print ("COULD NOT TRANSFORM TYPE\n");
+	PITIVI_DEBUG ("COULD NOT TRANSFORM TYPE\n");
 
     } else if (!g_ascii_strcasecmp(type, "INT64")) {
       g_value_init(&value, G_TYPE_INT64);
       if (!g_value_transform (&tmp, &value))
-	g_print ("COULD NOT TRANSFORM TYPE\n");
+	PITIVI_DEBUG ("COULD NOT TRANSFORM TYPE\n");
 
     } else if (!g_ascii_strcasecmp(type, "ULONG")) {
       g_value_init(&value, G_TYPE_ULONG);
       if (!g_value_transform (&tmp, &value))
-	g_print ("COULD NOT TRANSFORM TYPE\n");
+	PITIVI_DEBUG ("COULD NOT TRANSFORM TYPE\n");
 
     } else if (!g_ascii_strcasecmp(type, "LONG")) {
       g_value_init(&value, G_TYPE_LONG);
       if (!g_value_transform (&tmp, &value))
-	g_print ("COULD NOT TRANSFORM TYPE\n");
+	PITIVI_DEBUG ("COULD NOT TRANSFORM TYPE\n");
 
     } else if (!g_ascii_strcasecmp(type, "FLOAT")) {
       g_value_init(&value, G_TYPE_FLOAT);
       if (!g_value_transform (&tmp, &value))
-	g_print ("COULD NOT TRANSFORM TYPE\n");
+	PITIVI_DEBUG ("COULD NOT TRANSFORM TYPE\n");
 
     } else if (!g_ascii_strcasecmp(type, "DOUBLE")) {
       gst_value_init_and_copy (&value, &tmp);
 
     }
 
-    //g_print ("spin type : %s\t %g \n", i, gtk_spin_button_get_value (GTK_SPIN_BUTTON (widget)));
+    //PITIVI_DEBUG ("spin type : %s\t %g \n", i, gtk_spin_button_get_value (GTK_SPIN_BUTTON (widget)));
 
   } else {
     g_value_init(&value, G_TYPE_STRING);
     g_value_set_string (&value, gtk_entry_get_text (GTK_ENTRY (widget)));  
 
-    //g_print ("ENTRY:%s\n", gtk_entry_get_text (GTK_ENTRY (widget)));
-    //g_print ("PROP_NAME=[%s]\n", g_object_get_data (G_OBJECT (widget), "name"));
+    //PITIVI_DEBUG ("ENTRY:%s\n", gtk_entry_get_text (GTK_ENTRY (widget)));
+    //PITIVI_DEBUG ("PROP_NAME=[%s]\n", g_object_get_data (G_OBJECT (widget), "name"));
 
   }
   
@@ -743,8 +740,8 @@ pitivi_gstelementsettings_get_settings_box (GtkWidget *widget, PitiviGstElementS
 
   g_value_init(&value, G_TYPE_BOOLEAN);
   
-  //g_print ("BUTTON:[TRUE|FALSE]\n");
-  //g_print ("PROP_NAME=[%s]\n", g_object_get_data (G_OBJECT (widget), "name"));
+  //PITIVI_DEBUG ("BUTTON:[TRUE|FALSE]\n");
+  //PITIVI_DEBUG ("PROP_NAME=[%s]\n", g_object_get_data (G_OBJECT (widget), "name"));
 
   plist = GTK_BOX (widget)->children;
   for (i = 0; plist; plist = g_list_next (plist), i++) { 
@@ -753,10 +750,10 @@ pitivi_gstelementsettings_get_settings_box (GtkWidget *widget, PitiviGstElementS
     if (GTK_IS_BUTTON (child->widget)) {	    
       if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (child->widget))) {
 	if (i == 0) {
-	  //g_print ("Button:TRUE\n");
+	  //PITIVI_DEBUG ("Button:TRUE\n");
 	  g_value_set_boolean (&value, TRUE);
 	} else {
-	  //g_print ("Button:FALSE\n");
+	  //PITIVI_DEBUG ("Button:FALSE\n");
 	  g_value_set_boolean (&value, FALSE);
 	}
       }
@@ -785,15 +782,15 @@ pitivi_gstelementsettings_get_settings_table (GtkWidget *widget, PitiviGstElemen
     
     if (GTK_IS_BUTTON (tmp2->widget)) {
       if (!GTK_TOGGLE_BUTTON (tmp2->widget)) {
-	g_print ("NOT TOGGLE BOUTTON \n");
+	PITIVI_DEBUG ("NOT TOGGLE BOUTTON \n");
       } else {
 	
 	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (tmp2->widget))) {
 	  nb += GPOINTER_TO_INT (g_object_get_data (G_OBJECT (tmp2->widget), "value"));
 	  
-	  //g_print ("FLAG:%d\n", (gint) g_object_get_data (G_OBJECT (tmp2->widget), "value"));
+	  //PITIVI_DEBUG ("FLAG:%d\n", (gint) g_object_get_data (G_OBJECT (tmp2->widget), "value"));
 	  /* 	} else { */
-	  /* 	  g_print ("FLAG:NULL\n"); */
+	  /* 	  PITIVI_DEBUG ("FLAG:NULL\n"); */
 	  
 	}
 	
@@ -808,11 +805,11 @@ pitivi_gstelementsettings_get_settings_table (GtkWidget *widget, PitiviGstElemen
   g_object_get_property (G_OBJECT (self->private->element), prop_name, &value); 
   g_value_set_enum (&value, nb);
   
-  g_print ("<<<<<<<<<<<TABLE>>>>>>>>>>>\n");
-  g_print ("PROP_NAME=[%s]\n", prop_name);
-  g_print ("result flags : %d\n", nb);
-  g_print ("NUM:%d\n", num);
-  g_print ("<<<<<<<<<<</TABLE>>>>>>>>>>\n");
+  PITIVI_DEBUG ("<<<<<<<<<<<TABLE>>>>>>>>>>>\n");
+  PITIVI_DEBUG ("PROP_NAME=[%s]\n", prop_name);
+  PITIVI_DEBUG ("result flags : %d\n", nb);
+  PITIVI_DEBUG ("NUM:%d\n", num);
+  PITIVI_DEBUG ("<<<<<<<<<<</TABLE>>>>>>>>>>\n");
   
   pitivi_gstelementsettings_modify_prop (self, prop_name, value);
 

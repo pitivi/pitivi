@@ -118,7 +118,7 @@ gint64	do_query(GstElement *elem, GstQueryType type)
   format = GST_FORMAT_TIME;
   if (!gst_element_query(elem, type, &format, &value))
     {
-      g_printf("Couldn't perform requested query\n");
+      PITIVI_WARNING("Couldn't perform requested query");
       return -1;
     }
 
@@ -137,15 +137,17 @@ void	video_play(GtkWidget *widget, gpointer data)
     gst_x_overlay_set_xwindow_id
       ( GST_X_OVERLAY ( self->private->sink ),
 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
+    if (!gst_element_set_state(project->pipeline, GST_STATE_READY))
+      PITIVI_WARNING("Couldn't set the project pipeline to READY before playing...");
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
-      g_warning("Couldn't set the project pipeline to PLAYING!");
+      PITIVI_WARNING("Couldn't set the project pipeline to PLAYING!");
     else {
       g_idle_add(idle_func_video, self);
     }
   } else {
     self->private->play_status = PAUSE;
     if (!gst_element_set_state(project->pipeline, GST_STATE_PAUSED))
-      g_warning("Couldn't set the project pipeline to PAUSED!");
+      PITIVI_WARNING("Couldn't set the project pipeline to PAUSED!");
   }
 
   gtk_signal_emit_by_name (GTK_OBJECT (self->private->video_area), "expose_event", &ev, &retval);
@@ -157,7 +159,7 @@ void	video_stop(GtkWidget *widget, gpointer data)
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
-  g_print ("[CallBack]:video_stop\n");
+  PITIVI_DEBUG ("[CallBack]:video_stop\n");
   gst_element_set_state(project->pipeline, GST_STATE_READY);
   self->private->play_status = STOP;
 
@@ -172,7 +174,7 @@ void	video_backward(GtkWidget *widget, gpointer data)
 
   gdouble	time;
 
-  g_print ("[CallBack]:video_backward\n");
+  PITIVI_DEBUG ("[CallBack]:video_backward\n");
 
   time = gtk_range_get_value(GTK_RANGE (self->private->timeline));
   if (time >= (self->private->timeline_min + self->private->timeline_step))
@@ -189,7 +191,7 @@ void	video_forward(GtkWidget *widget, gpointer data)
 
   gdouble	time;
 
-  g_print ("[CallBack]:video_forward\n");
+  PITIVI_DEBUG ("[CallBack]:video_forward\n");
 
   time = gtk_range_get_value(GTK_RANGE (self->private->timeline));
   if (time <= (self->private->timeline_max - self->private->timeline_step))
@@ -222,7 +224,7 @@ static gint pitivi_viewerwindow_configure_event( GtkWidget         *widget,
 static gint pitivi_viewerwindow_expose_event( GtkWidget      *widget,
 					      GdkEventExpose *event )
 {
-  //  g_printf("exposing\n");
+  //  PITIVI_DEBUGf("exposing\n");
   gdk_draw_drawable (widget->window,
 		     widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
 		     pixmap,
@@ -249,7 +251,7 @@ gboolean
 updated_time (gpointer data) {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
 
-  /*g_printf ("updated time %lld:%lld:%lld\n", GST_M_S_M(self->private->new_time));*/
+  /*PITIVI_DEBUGf ("updated time %lld:%lld:%lld\n", GST_M_S_M(self->private->new_time));*/
   gtk_range_set_value(GTK_RANGE (self->private->timeline) , self->private->new_time);
   pitivi_timelinewindow_update_time (pitivi_mainapp_get_timelinewin (((PitiviWindows *) self)->mainapp),
 				     self->private->new_time);
@@ -265,18 +267,20 @@ output_probe (GstProbe *probe, GstData **data, gpointer udata)
   if (GST_IS_BUFFER(*data)) {
     self->private->new_time = GST_BUFFER_TIMESTAMP(*data);
     g_idle_add (updated_time, self);
-  } else if (GST_IS_EVENT(*data) && (GST_EVENT_TYPE(*data) == GST_EVENT_EOS)) {
-/*     /\*  */
-/*        This is really a crude hack. We have to drop the EOS Event and stop iterating manually, */
-/*        otherwise the app segfaults on a gst_object_unref of that EOS event :( */
-/*     *\/ */
-/*     gst_element_set_state (project->pipeline, GST_STATE_READY); */
-    self->private->play_status = STOP;
-    self->private->new_time = 0;
-    g_idle_add (updated_time, self);
-    /*     return FALSE; */
   }
   return TRUE;
+}
+
+void
+end_of_video (GstElement *xvimagesink, PitiviViewerWindow *self)
+{
+/*   PitiviProject	*project = ((PitiviProjectWindows *) self)->project; */
+
+  PITIVI_WARNING ("end of video!!!");
+/*   gst_element_set_state (project->pipeline, GST_STATE_READY); */
+  self->private->play_status = STOP;
+  self->private->new_time = 0;
+  g_idle_add (updated_time, self);  
 }
 
 void
@@ -342,11 +346,13 @@ create_stream (gpointer data)
 
   self->private->sink = gst_element_factory_make ("xvimagesink", "video_display");
   g_assert (self->private->sink != NULL);
+  g_signal_connect (G_OBJECT (project->pipeline), "eos", G_CALLBACK (end_of_video), self);
   self->private->probe = gst_probe_new(FALSE, output_probe, self);
-  gst_pad_add_probe (gnl_timeline_get_pad_for_group (project->timeline, project->videogroup),
+  gst_pad_add_probe (gst_element_get_pad (self->private->sink, "sink"),
 		     self->private->probe);
 
-  timeoverlay = gst_element_factory_make ("timeoverlay", "timeoverlay");
+/*   timeoverlay = gst_element_factory_make ("timeoverlay", "timeoverlay"); */
+  timeoverlay = NULL;
   self->private->fulloutputbin = gst_bin_new("videobin");
 
   if (timeoverlay) {

@@ -24,6 +24,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-effectswindow.h"
 #include "pitivi-dragdrop.h"
 #include "pitivi-effects_cat.h"
@@ -205,7 +206,7 @@ effectstree_on_row_activated (GtkTreeView        *treeview,
   self = (PitiviEffectsWindow *) gtk_widget_get_toplevel (GTK_WIDGET (treeview));
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
   if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-    g_warning("No elements selected!");
+    PITIVI_WARNING("No elements selected!");
     return;
   }
   
@@ -361,7 +362,7 @@ pitivi_effectswindow_drag_begin (GtkWidget		*widget,
 
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
   if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-    g_warning("No elements selected!");
+    PITIVI_WARNING("No elements selected!");
     return;
   }
   gtk_tree_model_get (model, &iter, PITIVI_POINTER_COLUMN, &se, -1);

@@ -31,6 +31,7 @@
 #include <gst/xoverlay/xoverlay.h>
 
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-viewerwindow.h"
 #include "pitivi-lplayerwindow.h"
 #include "pitivi-controller.h"
@@ -96,11 +97,11 @@ gboolean	pitivi_lplayer_idle_func (gpointer data)
     {
       value1 = do_query(elem, GST_QUERY_POSITION);
       
-      //    g_printf("**idle** : pos:%lld\n", (signed long long int) value1);
+      //    PITIVI_DEBUG("**idle** : pos:%lld\n", (signed long long int) value1);
 
     }
 
-/*   g_print("IDLE FUNCTION END %lld, %lld\n",  */
+/*   PITIVI_DEBUG("IDLE FUNCTION END %lld, %lld\n",  */
 /* 	  (signed long long int) self->private->timeline_min,  */
 /* 	  (signed long long int) self->private->timeline_max); */
 
@@ -122,7 +123,7 @@ gboolean	do_lplayer_seek(GstElement *elem, gint64 value)
   /* res = gst_element_send_event (GST_ELEMENT (elem), event); */
   if (!(res = gst_element_send_event(elem, event)))
     {
-      g_warning ("seek on element %s failed",
+      PITIVI_WARNING ("seek on element %s failed",
 		 gst_element_get_name(elem));
       return FALSE;
     }
@@ -134,13 +135,13 @@ void pitivi_lplayer_play_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
 {
   if (GTK_TOGGLE_BUTTON (self->private->playpause)->active)
     {
-      g_print("FCT__________pitivi_lplayer_play_video:_PLAY\n");
+      PITIVI_DEBUG("FCT__________pitivi_lplayer_play_video:_PLAY\n");
       gst_element_set_state (self->private->pipe, GST_STATE_PLAYING);
       g_idle_add(pitivi_lplayer_idle_func, self);
     }
   else
     {
-      g_print("FCT__________pitivi_lplayer_play_video:_STOP\n");
+      PITIVI_DEBUG("FCT__________pitivi_lplayer_play_video:_STOP\n");
        gst_element_set_state (self->private->pipe, GST_STATE_PAUSED);
     }
 }
@@ -158,11 +159,11 @@ void pitivi_lplayer_stop_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
   
   if (GTK_TOGGLE_BUTTON (self->private->playpause)->active)
     {
-      g_print("PLAY_VIDEO_________from_stop\n");   
+      PITIVI_DEBUG("PLAY_VIDEO_________from_stop\n");   
       gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->private->playpause), FALSE);
     }
   else
-    g_print("STOP_VIDEO_________from_stop\n");
+    PITIVI_DEBUG("STOP_VIDEO_________from_stop\n");
 
   gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);
 
@@ -198,7 +199,7 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
  
   GtkWidget	*button_image;
 
-  g_print ("FILE NAME:%s\n", self->filename);
+  PITIVI_DEBUG ("FILE NAME:%s\n", self->filename);
 
   // main Vbox
   self->private->main_vbox = gtk_vbox_new (FALSE, FALSE);
@@ -333,7 +334,7 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
 
   if (!gst_element_set_state(self->private->pipe, GST_STATE_PLAYING)) {
     gtk_label_set_text (GTK_LABEL(self->private->player_msg), "Unable to load everything");
-    g_print ("############################# BAD STATE ########################\n");
+    PITIVI_DEBUG ("############################# BAD STATE ########################\n");
     // exit (-1);
   }
 
@@ -378,7 +379,7 @@ pitivi_lplayerwindow_constructor (GType type,
 				   construct_properties);
 
   /* do stuff. */
-  g_printf("lplayer creation !\n");
+  PITIVI_DEBUG("lplayer creation !");
   PitiviLPlayerWindow *self = (PitiviLPlayerWindow *) obj;
 
   pitivi_lplayerwindow_create_gui (self);
@@ -460,7 +461,7 @@ pitivi_lplayerwindow_finalize (GObject *object)
 
   g_idle_remove_by_data (self);
   gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);
-  g_print ("SEG FAULT HERE (pitivi-lplayer.c l.464)");
+  PITIVI_DEBUG ("SEG FAULT HERE");
   gst_object_unref (GST_OBJECT(self->private->pipe));
   g_free (self->private);
   G_OBJECT_CLASS (parent_class)->finalize (object);

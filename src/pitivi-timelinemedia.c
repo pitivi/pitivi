@@ -26,6 +26,7 @@
 #include <gnl/gnloperation.h>
 #include <gnl/gnlsource.h>
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-effectswindowproperties.h"
 #include "pitivi-timelinemedia.h"
 #include "pitivi-menu.h"
@@ -583,7 +584,7 @@ pitivi_timelinemedia_constructor (GType type,
       if ( this->track->track_type == PITIVI_EFFECTS_TRACK ||  this->track->track_type == PITIVI_TRANSITION_TRACK )
 	{
 	  if (!(bin = pitivi_sourcefile_get_effect_bin(this->sourceitem->srcfile))) {
-	    g_warning ("Coudn't get Sourcefile effect bin");
+	    PITIVI_WARNING ("Coudn't get Sourcefile effect bin");
 	    return NULL;
 	  }
 	  this->sourceitem->gnlobject = (GnlObject *)gnl_operation_new (name, bin);
@@ -847,37 +848,31 @@ pitivi_timelinemedia_button_press_event (GtkWidget      *widget,
 
   PitiviTimelineMedia *this = PITIVI_TIMELINEMEDIA (widget);
   cursor = pitivi_getcursor_id (widget);
-  if (cursor->type == PITIVI_CURSOR_SELECT)
+  if ((cursor->type == PITIVI_CURSOR_SELECT) && (event->button == 1))
     {
-      if (event->button == 1)
+      if (!this->selected)
 	{
-	  if (!this->selected)
-	    {
-	      GtkWidget *w = gtk_widget_get_toplevel (widget);
-	      g_signal_emit_by_name (w, "deselect", NULL);
-	      this->selected = TRUE;
-	      if ( this->linked )
-		((PitiviTimelineMedia *) this->linked)->selected = TRUE;
-	    }
-	  else
-	    {
-	      this->selected = FALSE;
-	      if ( this->linked )
-		((PitiviTimelineMedia *) this->linked)->selected = FALSE;
-	    }
-	  gtk_widget_grab_focus ( widget );
-	  draw_media_expose (GTK_WIDGET (this));
+	  GtkWidget *w = gtk_widget_get_toplevel (widget);
+	  g_signal_emit_by_name (w, "deselect", NULL);
+	  this->selected = TRUE;
 	  if ( this->linked )
-	    draw_media_expose ( GTK_WIDGET (this->linked) );
+	    ((PitiviTimelineMedia *) this->linked)->selected = TRUE;
 	}
       else
 	{
-	  if (this->selected)
-	    {
-	      this->private->menu = GTK_WIDGET (pitivi_create_menupopup (widget, TimeItemPopup, iNbTimeItemPopup));
-	      gtk_menu_popup(GTK_MENU (this->private->menu), NULL, NULL, NULL, NULL, event->button, event->time);
-	    }
+	  this->selected = FALSE;
+	  if ( this->linked )
+	    ((PitiviTimelineMedia *) this->linked)->selected = FALSE;
 	}
+      gtk_widget_grab_focus ( widget );
+      draw_media_expose (GTK_WIDGET (this));
+      if ( this->linked )
+	draw_media_expose ( GTK_WIDGET (this->linked) );
+    }
+  else if (event->button == 3)
+    {
+      this->private->menu = GTK_WIDGET (pitivi_create_menupopup (widget, TimeItemPopup, iNbTimeItemPopup));
+      gtk_menu_popup(GTK_MENU (this->private->menu), NULL, NULL, NULL, this, event->button, event->time);
     }
   gint x = event->x;
   if ( (x >= widget->allocation.width / 2 ) )
@@ -899,7 +894,7 @@ pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
       cursor->type == PITIVI_CURSOR_ZOOM_INC ||
       cursor->type == PITIVI_CURSOR_ZOOM_DEC)
     return FALSE;
-  if (cursor->type == PITIVI_CURSOR_CUT)
+  if ((cursor->type == PITIVI_CURSOR_CUT) && (event->button == 1))
     {
       container = ((PitiviTimelineCellRenderer * )gtk_widget_get_parent (GTK_WIDGET (widget)));
       g_signal_emit_by_name ( container, "cut-source", x, widget );    
@@ -1041,25 +1036,23 @@ pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *this, gpointer data)
 {
   GtkWidget *track;
   
-  if (this->selected)
+  if ( this->linked )
     {
-      if ( this->linked )
-	{
-	  gtk_container_remove (GTK_CONTAINER ( this->track->linked_track ), GTK_WIDGET (this->linked) );
-	  
-	  gst_object_unref (GST_OBJECT (PITIVI_TIMELINEMEDIA (this->linked)->sourceitem->gnlobject));
-	  pitivi_layout_remove_from_composition (PITIVI_TIMELINECELLRENDERER (this->track->linked_track),
-						 PITIVI_TIMELINEMEDIA (this->linked));
-	  pitivi_calculate_priorities ( this->track->linked_track );
-	}
-      track = &(*GTK_WIDGET (this->track));
-      gtk_container_remove (GTK_CONTAINER ( track ), GTK_WIDGET (this) );
-      pitivi_layout_remove_from_composition (PITIVI_TIMELINECELLRENDERER (this->track),
-					     this);
-      gst_object_unref (GST_OBJECT (this->sourceitem->gnlobject));
-      pitivi_calculate_priorities ( track );
+      gtk_container_remove (GTK_CONTAINER ( this->track->linked_track ), GTK_WIDGET (this->linked) );
+      
+      gst_object_unref (GST_OBJECT (PITIVI_TIMELINEMEDIA (this->linked)->sourceitem->gnlobject));
+      pitivi_layout_remove_from_composition (PITIVI_TIMELINECELLRENDERER (this->track->linked_track),
+					     PITIVI_TIMELINEMEDIA (this->linked));
+      pitivi_calculate_priorities ( this->track->linked_track );
     }
+  track = &(*GTK_WIDGET (this->track));
+  gtk_container_remove (GTK_CONTAINER ( track ), GTK_WIDGET (this) );
+  pitivi_layout_remove_from_composition (PITIVI_TIMELINECELLRENDERER (this->track),
+					 this);
+  gst_object_unref (GST_OBJECT (this->sourceitem->gnlobject));
+  pitivi_calculate_priorities ( track );
 }
+
 
 static void
 pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)

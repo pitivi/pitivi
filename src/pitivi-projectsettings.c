@@ -151,9 +151,6 @@ pitivi_projectsettings_new_with_name(gchar *name, gchar *desc)
   projectsettings->description = g_strdup(desc);
   projectsettings->media_settings = NULL;
 
-/*   g_print("New Setting : \n"); */
-/*   pitivi_projectsettings_print(projectsettings); */
-
   return projectsettings;
 }
 

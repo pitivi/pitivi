@@ -23,6 +23,7 @@
 
 #include <glib/gprintf.h>
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-controller.h"
 #include "pitivi-windows.h"
 
@@ -138,7 +139,7 @@ pitivi_controller_callb_play (GtkWidget *widget, gpointer user_data)
   PitiviController *self = (PitiviController *) user_data;
   if ( self->private->viewerwin )
     {
-      g_printf ("play %p ... \n", self->private->viewerwin);
+      PITIVI_DEBUG ("play %p ... ", self->private->viewerwin);
       gtk_widget_show_all ( self->private->viewerwin );
       g_signal_emit_by_name ( self->private->viewerwin, "play" );
     }

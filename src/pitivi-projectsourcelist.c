@@ -24,6 +24,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-projectsourcelist.h"
 
 struct _PitiviSourceBin
@@ -147,7 +148,7 @@ pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self,
   GSList		*childlist;
   gint			row;
 
-  g_printf("== projectsourcelist showfile ==\n");
+  PITIVI_DEBUG("== projectsourcelist showfile ==\n");
 
   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
   if (sourcebin == NULL)
@@ -158,21 +159,21 @@ pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self,
 
   while (sourcelist != NULL)
     {
-      g_printf("filename ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->filename);
-      g_printf("mediatype ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->mediatype);
-      g_printf("info video ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->infovideo);
-      g_printf("info audio ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->infoaudio);
-      g_printf("length ==> %lld\n", ((signed long long int) ((PitiviSourceFile*)sourcelist->data)->length));
+      PITIVI_DEBUG("filename ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->filename);
+      PITIVI_DEBUG("mediatype ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->mediatype);
+      PITIVI_DEBUG("info video ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->infovideo);
+      PITIVI_DEBUG("info audio ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->infoaudio);
+      PITIVI_DEBUG("length ==> %lld\n", ((signed long long int) ((PitiviSourceFile*)sourcelist->data)->length));
 
       sourcelist = sourcelist->next;
     }
   childlist = sourcebin->child;
   while (childlist != NULL)
     {
-      g_printf("folder ==> %s\n", ((PitiviSourceBin*)childlist->data)->bin_name);
+      PITIVI_DEBUG("folder ==> %s\n", ((PitiviSourceBin*)childlist->data)->bin_name);
       childlist = childlist->next;
     }
-  g_printf("== end of projectsourcelist showfile ==\n");
+  PITIVI_DEBUG("== end of projectsourcelist showfile ==\n");
 }
 
 gpointer
@@ -239,7 +240,7 @@ pitivi_projectsourcelist_remove_folder_from_bin(PitiviProjectSourceList *self,
 
   data = pitivi_projectsourcelist_get_folder_info(self, treepath, folder_pos);
 
-  g_printf("== removing %s from child list ==\n", ((PitiviSourceBin*)data)->bin_name);
+  PITIVI_INFO("removing %s from child list", ((PitiviSourceBin*)data)->bin_name);
 
   childlist = g_slist_remove(childlist, data);
 
@@ -266,7 +267,7 @@ pitivi_projectsourcelist_remove_file_from_bin(PitiviProjectSourceList *self,
 
   sf = (PitiviSourceFile*)data;
 
-  g_printf("== removing %s from source list ==\n", ((PitiviSourceFile*)data)->filename);
+  PITIVI_DEBUG("removing %s from source list", ((PitiviSourceFile*)data)->filename);
   
   sourcebin->source = g_slist_remove(sourcebin->source, data);
 }
@@ -284,7 +285,7 @@ pitivi_projectsourcelist_remove_bin(PitiviProjectSourceList *self,
 
   data = get_pitivisourcebin(self, treepath, &list, &bin, &row);
 
-  g_printf("removing %s from bin_tree\n", ((PitiviSourceBin*)data)->bin_name);
+  PITIVI_DEBUG("removing %s from bin_tree", ((PitiviSourceBin*)data)->bin_name);
 
   if (bin == NULL)
     list = self->private->bin_tree;
@@ -369,7 +370,7 @@ pitivi_projectsourcelist_set_file_property_by_name(PitiviProjectSourceList *self
   if (!sourcefile)
     return;
   
-/*   g_printf("filename in projectsourcelist ==> %s\n", sourcefile->filename); */
+/*   PITIVI_DEBUG("filename in projectsourcelist ==> %s\n", sourcefile->filename); */
   sourcefile->mediatype = g_strdup(mediatype);
   sourcefile->infovideo = g_strdup(infovideo);
   sourcefile->infoaudio = g_strdup(infoaudio);
@@ -433,12 +434,11 @@ pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
   gint			row;
 
   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
-  g_printf ("----------------------------treepath:%s----------------------------------------------\n", treepath);
   sourcefile = (PitiviSourceFile*)pitivi_projectsourcelist_get_file_info(self,
 									 treepath,
 									 file_pos);
   if (!sourcefile)
-    g_printf ("Problem getting the sourcefile !!!!!!\n");
+    PITIVI_WARNING ("Problem getting the sourcefile !!!!!!");
   return sourcefile;
 }
 

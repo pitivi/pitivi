@@ -25,6 +25,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-effectswindowproperties.h"
 #include "pitivi-settings.h"
 
@@ -72,7 +73,7 @@ pitivi_effects_ok (GtkWidget *widget, GObject *obj)
   //GList *list_prop;
   //PitiviEffectsWindowProperties *self = (PitiviEffectsWindowProperties *) obj;
 
-  g_print ("PitiviEffectsWindowProperties  OK\n");
+  PITIVI_DEBUG ("PitiviEffectsWindowProperties  OK");
 
   /* TODO : The effect GstElement is self->private->effect !!! */
 
@@ -94,7 +95,7 @@ pitivi_effects_ok (GtkWidget *widget, GObject *obj)
 void 
 pitivi_effects_apply (GtkWidget *widget, GObject *obj)
 {
-  g_print ("PitiviEffectsWindowProperties  APPLY\n");
+  PITIVI_DEBUG ("PitiviEffectsWindowProperties  APPLY");
   /* TODO : The effect GstElement is self->private->effect !!! */
 
 }
@@ -105,7 +106,7 @@ pitivi_effects_cancel (GtkWidget *widget, GObject *obj)
 {
   //PitiviEffectsWindowProperties *self = (PitiviEffectsWindowProperties *) obj;
 
-  g_print ("PitiviEffectsWindowProperties  CANCEL\n");
+  PITIVI_DEBUG ("PitiviEffectsWindowProperties  CANCEL");
   /* TODO : The effect GstElement is self->private->effect !!! */
 
 

@@ -23,6 +23,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "pitivi-debug.h"
 #include "pitivi-globalbin.h"
 
 /*
@@ -93,9 +94,13 @@ struct _PitiviGlobalBinPrivate
 
   GstElement	*vsinkthread;
   GstElement	*videoqueue;
+  gboolean	vsinkeos;
+  gulong		vsinkeossignal;
 
   GstElement	*asinkthread;
   GstElement	*audioqueue;
+  gboolean	asinkeos;
+  gulong		asinkeossignal;
 
   GstElement	*vencbin;
   GstElement	*vencthread;
@@ -110,6 +115,8 @@ struct _PitiviGlobalBinPrivate
   GstElement	*muxthread;
   GstElement	*vencoutqueue, *aencoutqueue;
   GstElement	*filesink;
+  gboolean	filesinkeos;
+  gulong		filesinkeossignal;
 };
 
 #define ADD_WEAK_POINTER(object) \
@@ -126,52 +133,83 @@ struct _PitiviGlobalBinPrivate
  * Insert "added-value" functions here
  */
 
+static void
+sink_eos_cb	(GstElement *element, PitiviGlobalBin *gbin)
+{
+
+  PITIVI_WARNING ("Sink EOS");
+
+  if (element == gbin->videoout)
+    gbin->private->vsinkeos = TRUE;
+  else if (element == gbin->audioout)
+    gbin->private->asinkeos = TRUE;
+  else if (element == gbin->private->filesink)
+    gbin->private->filesinkeos = TRUE;
+
+  if (((gbin->render && gbin->private->filesinkeos) || !gbin->render)
+      && ((gbin->preview && gbin->videoout && gbin->private->vsinkeos) || !(gbin->preview && gbin->videoout))
+      && ((gbin->preview && gbin->audioout && gbin->private->asinkeos) || !(gbin->preview && gbin->audioout))) {
+    gbin->eos = TRUE;
+    gst_element_set_eos (GST_ELEMENT (gbin));
+    /*     if (!gst_element_set_state (GST_ELEMENT (gbin), GST_STATE_READY)) */
+    /*       PITIVI_WARNING ("ACHTUNG, Can't set the timelinebin to READY !!!"); */
+    /*     else */
+    /*       PITIVI_WARNING ("TimelineBin was put to READY"); */
+  }
+}
+
 void
 pitivi_globalbin_set_video_output (PitiviGlobalBin *gbin, GstElement *videoout)
 {
-/*   g_warning ("set_video_output"); */
+/*   PITIVI_WARNING ("set_video_output"); */
   if (GST_STATE(GST_ELEMENT(gbin)) > GST_STATE_READY)
     return;
   if (gbin->videoout) {
     /* unlink and remove existing videoout */
     REMOVE_WEAK_POINTER (gbin->videoout);
     gst_element_unlink (gbin->private->videoqueue, gbin->videoout);
+    g_signal_handler_disconnect (gbin->videoout, gbin->private->vsinkeossignal);
     gst_bin_remove (GST_BIN (gbin->private->vsinkthread),
 		    gbin->videoout);
   }
   gbin->videoout = videoout;
   ADD_WEAK_POINTER (gbin->videoout);
+  gbin->private->vsinkeossignal = 
+    g_signal_connect (G_OBJECT (gbin->videoout), "eos", G_CALLBACK (sink_eos_cb), gbin);
   gst_bin_add (GST_BIN(gbin->private->vsinkthread),
 	       gbin->videoout);
   if (!(gst_element_link (gbin->private->videoqueue, gbin->videoout)))
-    g_warning ("Couldn't link videoqueue to videoout\n");
+    PITIVI_WARNING ("Couldn't link videoqueue to videoout\n");
 }
 
 void
 pitivi_globalbin_set_audio_output (PitiviGlobalBin *gbin, GstElement *audioout)
 {
-/*   g_warning ("set_audio_output"); */
+/*   PITIVI_WARNING ("set_audio_output"); */
   if (GST_STATE(GST_ELEMENT(gbin)) > GST_STATE_READY)
     return;
   if (gbin->audioout) {
     /* unlink and remove existing audioout */
     REMOVE_WEAK_POINTER (gbin->audioout);
     gst_element_unlink (gbin->private->audioqueue, gbin->audioout);
+    g_signal_handler_disconnect (gbin->audioout, gbin->private->asinkeossignal);
     gst_bin_remove (GST_BIN (gbin->private->asinkthread),
 		    gbin->audioout);
   }
   gbin->audioout = audioout;
   ADD_WEAK_POINTER (gbin->audioout);
+  gbin->private->asinkeossignal = 
+    g_signal_connect (G_OBJECT (gbin->audioout), "eos", G_CALLBACK (sink_eos_cb), gbin);
   gst_bin_add (GST_BIN(gbin->private->asinkthread),
 	       gbin->audioout);
   if (!(gst_element_link (gbin->private->audioqueue, gbin->audioout)))
-    g_warning ("Couldn't link audioqueue to audioout\n");
+    PITIVI_WARNING ("Couldn't link audioqueue to audioout\n");
 }
 
 void
 pitivi_globalbin_set_video_encoder (PitiviGlobalBin *gbin, GstElement *vencoder)
 {
-/*   g_warning ("Set Video Encoder"); */
+/*   PITIVI_WARNING ("Set Video Encoder"); */
   if (GST_STATE(GST_ELEMENT(gbin)) > GST_STATE_READY)
     return;
   if (gbin->vencoder) {
@@ -192,13 +230,13 @@ pitivi_globalbin_set_video_encoder (PitiviGlobalBin *gbin, GstElement *vencoder)
 			       gbin->vencoder,
 			       gbin->private->vencoutqueue,
 			       NULL)))
-    g_warning ("Couldn't link video encoder and queues\n");
+    PITIVI_WARNING ("Couldn't link video encoder and queues\n");
 }
 
 void
 pitivi_globalbin_set_audio_encoder (PitiviGlobalBin *gbin, GstElement *aencoder)
 {
-/*   g_warning ("Set Audio Encoder"); */
+/*   PITIVI_WARNING ("Set Audio Encoder"); */
   if (GST_STATE(GST_ELEMENT(gbin)) > GST_STATE_READY)
     return;
   if (gbin->aencoder) {
@@ -221,13 +259,13 @@ pitivi_globalbin_set_audio_encoder (PitiviGlobalBin *gbin, GstElement *aencoder)
 			       gbin->aencoder,
 			       gbin->private->aencoutqueue,
 			       NULL)))
-    g_warning ("Couldn't link audio encoder and queues\n");
+    PITIVI_WARNING ("Couldn't link audio encoder and queues\n");
 }
 
 void
 pitivi_globalbin_set_muxer (PitiviGlobalBin *gbin, GstElement *muxer)
 {
-/*   g_warning ("Set Muxer"); */
+/*   PITIVI_WARNING ("Set Muxer"); */
   if (GST_STATE(GST_ELEMENT(gbin)) > GST_STATE_READY)
     return;
   if (gbin->muxer) {
@@ -244,7 +282,7 @@ pitivi_globalbin_set_muxer (PitiviGlobalBin *gbin, GstElement *muxer)
 void
 pitivi_globalbin_set_encoded_file (PitiviGlobalBin *gbin, const gchar *filename)
 {
-/*   g_warning ("Set Encoded file"); */
+/*   PITIVI_WARNING ("Set Encoded file"); */
   if (GST_STATE(GST_ELEMENT(gbin)) > GST_STATE_READY)
     return;
   if (gbin->encodedfile)
@@ -253,6 +291,8 @@ pitivi_globalbin_set_encoded_file (PitiviGlobalBin *gbin, const gchar *filename)
 
   if (!gbin->private->filesink) {
     gbin->private->filesink = gst_element_factory_make ("filesink", "encodedfilesink");
+    gbin->private->filesinkeossignal = 
+      g_signal_connect (G_OBJECT (gbin->private->filesink), "eos", G_CALLBACK (sink_eos_cb), gbin);
     gst_bin_add (GST_BIN (gbin->private->muxthread), gbin->private->filesink);
   }
 
@@ -261,16 +301,20 @@ pitivi_globalbin_set_encoded_file (PitiviGlobalBin *gbin, const gchar *filename)
 		NULL);
 }
 
-/* static void */
-/* threads_state_change (GstElement *element, GstElementState pstate, GstElementState state, PitiviGlobalBin *gbin) */
-/* { */
-/*   g_warning ("threads_state_change %d %d for %s\n", pstate, state, */
-/* 	     (element == gbin->private->vsinkthread) ? "vsinkthread" : */
-/* 	     (element == gbin->private->asinkthread) ? "asinkthread" : */
-/* 	     (element == gbin->private->vencthread) ? "vencthread" : */
-/* 	     (element == gbin->private->aencthread) ? "aencthread" : */
-/* 	     (element == gbin->private->muxthread) ? "muxthread" : "unknown"); */
-/* } */
+static void
+threads_state_change (GstElement *element, GstElementState pstate, GstElementState state, PitiviGlobalBin *gbin)
+{
+  PITIVI_WARNING ("threads_state_change %s => %s for %s", 
+		  gst_element_state_get_name(pstate),
+		  gst_element_state_get_name(state),
+		  (element == gbin->private->vsinkthread) ? "vsinkthread" :
+		  (element == gbin->private->asinkthread) ? "asinkthread" :
+		  (element == gbin->private->vencthread) ? "vencthread" :
+		  (element == gbin->private->aencthread) ? "aencthread" :
+		  (element == gbin->private->muxthread) ? "muxthread" :
+		  (element == gbin->vtee) ? "vtee" :
+		  (element == gbin->atee) ? "atee" : "unknown");
+}
 
 /*
   _setup()
@@ -285,9 +329,13 @@ pitivi_globalbin_setup (PitiviGlobalBin *gbin)
 {
   PitiviGlobalBinClass	*gbin_class = GLOBALBIN_CLASS (gbin);
 
-/*   g_warning ("pitivi_globalbin_setup"); */
+  gbin->private->vsinkeos = FALSE;
+  gbin->private->asinkeos = FALSE;
+  gbin->private->filesinkeos = FALSE;
+  gbin->eos = FALSE;
+/*   PITIVI_WARNING ("pitivi_globalbin_setup"); */
   if (!(gbin_class->connect_source)) {
-    g_warning ("No connect_source() implemented");
+    PITIVI_WARNING ("No connect_source() implemented");
     return FALSE;
   }
   /* Connect the source to the tees */
@@ -306,40 +354,40 @@ pitivi_globalbin_setup (PitiviGlobalBin *gbin)
     } else
       GST_FLAG_SET (gbin->private->asinkthread, GST_ELEMENT_LOCKED_STATE);
   } else { /* Don't want preview or no output elements */
-/*     g_warning ("locking vsinkthread and asinkthread"); */
+/*     PITIVI_WARNING ("locking vsinkthread and asinkthread"); */
     GST_FLAG_SET (gbin->private->vsinkthread, GST_ELEMENT_LOCKED_STATE);
     GST_FLAG_SET (gbin->private->asinkthread, GST_ELEMENT_LOCKED_STATE);
   }
   
   if (gbin->render && (gbin->vencoder || gbin->aencoder) && gbin->muxer && gbin->private->filesink) {
-/*     g_warning ("Unlocking muxthread"); */
+/*     PITIVI_WARNING ("Unlocking muxthread"); */
     GST_FLAG_UNSET (gbin->private->muxthread, GST_ELEMENT_LOCKED_STATE);
     if (gbin->vencoder) {
-/*       g_warning ("unlocking vencbin"); */
+/*       PITIVI_WARNING ("unlocking vencbin"); */
       GST_FLAG_UNSET (gbin->private->vencbin, GST_ELEMENT_LOCKED_STATE);
       if (!(gst_element_link (gbin->vtee, gbin->private->vencinqueue)))
 	return FALSE;
       if (!(gst_element_link (gbin->private->vencoutqueue, gbin->muxer)))
 	return FALSE;
     } else {
-/*       g_warning ("Locking vencbin"); */
+/*       PITIVI_WARNING ("Locking vencbin"); */
       GST_FLAG_SET (gbin->private->vencbin, GST_ELEMENT_LOCKED_STATE);
     }
     if (gbin->aencoder) {
-/*       g_warning ("unlocking aencbin"); */
+/*       PITIVI_WARNING ("unlocking aencbin"); */
       GST_FLAG_UNSET (gbin->private->aencbin, GST_ELEMENT_LOCKED_STATE);
       if (!(gst_element_link (gbin->atee, gbin->private->aencinqueue)))
 	return FALSE;
       if (!(gst_element_link (gbin->private->aencoutqueue, gbin->muxer)))
 	return FALSE;
     } else {
-/*       g_warning ("Locking aencbin"); */
+/*       PITIVI_WARNING ("Locking aencbin"); */
       GST_FLAG_SET (gbin->private->aencbin, GST_ELEMENT_LOCKED_STATE);
     }
     if (!(gst_element_link (gbin->muxer, gbin->private->filesink)))
       return FALSE;
   } else {
-/*     g_warning ("Locking encoding thread"); */
+/*     PITIVI_WARNING ("Locking encoding thread"); */
     GST_FLAG_SET (gbin->private->muxthread, GST_ELEMENT_LOCKED_STATE);
   }
   return TRUE;
@@ -358,7 +406,7 @@ pitivi_globalbin_reset (PitiviGlobalBin *gbin)
 {
   PitiviGlobalBinClass	*gbin_class = GLOBALBIN_CLASS (gbin);
 
-/*   g_warning ("pitivi_globalbin_reset"); */
+  PITIVI_WARNING ("pitivi_globalbin_reset");
   /* disconnect source, handled by derivate classes */
   if (!(gbin_class->disconnect_source))
     return FALSE;
@@ -371,7 +419,7 @@ pitivi_globalbin_reset (PitiviGlobalBin *gbin)
     if (gbin->audioout)
       gst_element_unlink (gbin->atee, gbin->private->audioqueue);
   } else {
-/*     g_warning ("Unlocking output threads"); */
+/*     PITIVI_WARNING ("Unlocking output threads"); */
     GST_FLAG_UNSET (gbin->private->vsinkthread, GST_ELEMENT_LOCKED_STATE);
     GST_FLAG_UNSET (gbin->private->asinkthread, GST_ELEMENT_LOCKED_STATE);
   }
@@ -387,20 +435,24 @@ pitivi_globalbin_reset (PitiviGlobalBin *gbin)
     }
     gst_element_unlink (gbin->muxer, gbin->private->filesink);
   } else {
-/*     g_warning ("Unlocking encoding threads/bins"); */
+/*     PITIVI_WARNING ("Unlocking encoding threads/bins"); */
     GST_FLAG_UNSET (gbin->private->vencbin, GST_ELEMENT_LOCKED_STATE);
     GST_FLAG_UNSET (gbin->private->aencbin, GST_ELEMENT_LOCKED_STATE);
     GST_FLAG_UNSET (gbin->private->muxthread, GST_ELEMENT_LOCKED_STATE);
   }
-/*   g_warning ("pitivi_globalbin_reseted"); */
+/*   PITIVI_WARNING ("pitivi_globalbin_reseted"); */
+  gbin->eos = FALSE;
   return TRUE;
 }
 
 static GstElementStateReturn
 pitivi_globalbin_change_state (GstElement *element)
 {
-/*   g_warning ("pitivi_globalbin_change_state"); */
-
+  PitiviGlobalBin	*gbin = PITIVI_GLOBALBIN (element);
+  GstElementStateReturn	res = GST_STATE_SUCCESS;
+  
+  PITIVI_WARNING ("pitivi_globalbin_change_state");
+  
   switch (GST_STATE_TRANSITION (element)) {
   case GST_STATE_READY_TO_PAUSED:
     if (!(pitivi_globalbin_setup (PITIVI_GLOBALBIN(element))))
@@ -414,11 +466,19 @@ pitivi_globalbin_change_state (GstElement *element)
     break;
   }
 
-/*   g_warning ("pitivi_globalbin_change_state END"); */
+  PITIVI_WARNING ("pitivi_globalbin_change_state END");
   if (GST_ELEMENT_CLASS (parent_class)->change_state)
-    return GST_ELEMENT_CLASS (parent_class)->change_state (element);
-
-  return GST_STATE_SUCCESS;
+    res = GST_ELEMENT_CLASS (parent_class)->change_state (element);
+  
+  if ( (GST_STATE_TRANSITION (element) == GST_STATE_PLAYING_TO_PAUSED)
+       && ((gbin->render && gbin->private->filesinkeos) || !gbin->render)
+       && ((gbin->preview && gbin->videoout && gbin->private->vsinkeos) || !(gbin->preview && gbin->videoout))
+       && ((gbin->preview && gbin->audioout && gbin->private->asinkeos) || !(gbin->preview && gbin->audioout))) {
+    PITIVI_WARNING ("Global EOS, setting to READY");
+    gbin->eos = TRUE;
+    gst_element_set_eos (GST_ELEMENT (gbin));
+  }
+  return res;
 }
 
 /* PitiviGlobalBin * */
@@ -463,24 +523,26 @@ pitivi_globalbin_instance_init (GTypeInstance * instance, gpointer g_class)
   g_assert (self->vtee != NULL);
   self->atee = gst_element_factory_make ("tee", "atee");
   g_assert (self->atee != NULL);
+  g_signal_connect (G_OBJECT(self->vtee),
+		    "state-change", G_CALLBACK(threads_state_change), self);
+  g_signal_connect (G_OBJECT(self->atee),
+		    "state-change", G_CALLBACK(threads_state_change), self);
 
   /* Audio/Video visualisation threads */
 
   self->private->vsinkthread = gst_thread_new ("vsinkthread");
   self->private->asinkthread = gst_thread_new ("asinkthread");
-/*   g_signal_connect (G_OBJECT(self->private->vsinkthread), */
-/* 		    "state-change", G_CALLBACK(threads_state_change), self); */
-/*   g_signal_connect (G_OBJECT(self->private->asinkthread), */
-/* 		    "state-change", G_CALLBACK(threads_state_change), self); */
+  g_signal_connect (G_OBJECT(self->private->vsinkthread),
+		    "state-change", G_CALLBACK(threads_state_change), self);
+  g_signal_connect (G_OBJECT(self->private->asinkthread),
+		    "state-change", G_CALLBACK(threads_state_change), self);
 
   self->private->videoqueue = gst_element_factory_make ("queue", "videoqueue");
   self->private->audioqueue = gst_element_factory_make ("queue", "audioqueue");
 
   g_object_set (G_OBJECT(self->private->videoqueue),
-		"max-size-time", 10 * GST_SECOND,
 		"max-size-bytes", 300000000 ,NULL);
   g_object_set (G_OBJECT(self->private->audioqueue),
-		"max-size-time", 10 * GST_SECOND,
 		"max-size-bytes", 300000000, NULL);
 
   gst_bin_add (GST_BIN (self->private->vsinkthread), self->private->videoqueue);
@@ -493,12 +555,12 @@ pitivi_globalbin_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->vencthread = gst_thread_new ("vencthread");
   self->private->aencthread = gst_thread_new ("aencthread");
   self->private->muxthread = gst_thread_new ("muxthread");
-/*   g_signal_connect (G_OBJECT(self->private->vencthread), */
-/* 		    "state-change", G_CALLBACK(threads_state_change), self); */
-/*   g_signal_connect (G_OBJECT(self->private->aencthread), */
-/* 		    "state-change", G_CALLBACK(threads_state_change), self); */
-/*   g_signal_connect (G_OBJECT(self->private->muxthread), */
-/* 		    "state-change", G_CALLBACK(threads_state_change), self); */
+  g_signal_connect (G_OBJECT(self->private->vencthread),
+		    "state-change", G_CALLBACK(threads_state_change), self);
+  g_signal_connect (G_OBJECT(self->private->aencthread),
+		    "state-change", G_CALLBACK(threads_state_change), self);
+  g_signal_connect (G_OBJECT(self->private->muxthread),
+		    "state-change", G_CALLBACK(threads_state_change), self);
 
   self->private->vencbin = gst_bin_new ("vencbin");
   self->private->aencbin = gst_bin_new ("aencbin");

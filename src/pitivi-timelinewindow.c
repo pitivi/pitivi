@@ -25,6 +25,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-windows.h"
 #include "pitivi-timelinewindow.h"
 #include "pitivi-menu.h"
@@ -1061,7 +1062,7 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
   gtk_widget_destroy ( dialog );
   
   if (!filename) {
-    g_warning("No file selected to open...\n");
+    PITIVI_WARNING("No file selected to open...");
     return;
   }
   

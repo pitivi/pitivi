@@ -23,6 +23,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-sourcefile.h"
 #include "pitivi-effectswindow.h"
 #include "pitivi-timelinewindow.h"
@@ -133,10 +134,10 @@ pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
       pitivi_layout_move(GTK_LAYOUT(self), GTK_WIDGET(child->data), 
 			 convert_time_pix(self, start) ,0);
       if ((start != GNL_OBJECT(source)->start) || (stop != GNL_OBJECT(source)->stop))
-	g_warning ("%s was at %03lld:%02lld:%03lld -> %03lld:%02lld:%03lld  and is now at %03lld:%02lld:%03lld -> %03lld:%02lld:%03lld",
-		   gst_element_get_name(GST_ELEMENT(source)),
-		   GST_M_S_M(start), GST_M_S_M(stop),
-		   GST_M_S_M(GNL_OBJECT(source)->start), GST_M_S_M(GNL_OBJECT(source)->stop));
+	PITIVI_WARNING ("%s was at %03lld:%02lld:%03lld -> %03lld:%02lld:%03lld  and is now at %03lld:%02lld:%03lld -> %03lld:%02lld:%03lld",
+			gst_element_get_name(GST_ELEMENT(source)),
+			GST_M_S_M(start), GST_M_S_M(stop),
+			GST_M_S_M(GNL_OBJECT(source)->start), GST_M_S_M(GNL_OBJECT(source)->stop));
     }
   }
 }

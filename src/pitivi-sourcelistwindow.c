@@ -785,7 +785,7 @@ drag_begin_cb (GtkWidget          *widget,
   /* find treepath */
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
   if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-    g_warning("No elements selected!");
+    PITIVI_WARNING("No elements selected!");
     return;
   }
   self->private->dndtreepath = g_strdup(gtk_tree_model_get_string_from_iter(model, &iter));
@@ -793,7 +793,7 @@ drag_begin_cb (GtkWidget          *widget,
   /* find pos in listview */
   selection = gtk_tree_view_get_selection(listview);
   if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-    g_warning("No elements selected!");
+    PITIVI_WARNING("No elements selected!");
     return;
   }
  

@@ -23,6 +23,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-settingswindow.h"
 #include "pitivi-settings.h"
@@ -96,9 +97,9 @@ pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSett
   PitiviSettingsIoElement	*io;
 
   elm_info = NULL;
-  g_print ("######################################################\n");
-  g_print ("ACCEPT\n");
-  //g_print ("SAVE %s [%s]\n", prop->elm, prop->class);
+  PITIVI_DEBUG ("######################################################\n");
+  PITIVI_DEBUG ("ACCEPT\n");
+  //PITIVI_DEBUG ("SAVE %s [%s]\n", prop->elm, prop->class);
 
   io = pitivi_gstelementsettings_get_settings_elem (prop);
   pitivi_settings_aff_elm_io (io);
@@ -142,13 +143,13 @@ pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSett
   /*
     for (; list; list = g_list_next (list)) {
     PitiviGstElementSettingsProp *prop = (PitiviGstElementSettingsProp *) list->data;
-    g_print ("------------------------\n");
-    g_print ("name:%s\n", prop->name);
-    g_print ("value:%s\n", g_strdup_value_contents (&(prop->value)));
+    PITIVI_DEBUG ("------------------------\n");
+    PITIVI_DEBUG ("name:%s\n", prop->name);
+    PITIVI_DEBUG ("value:%s\n", g_strdup_value_contents (&(prop->value)));
     }
   */
 
-  g_print ("######################################################\n");
+  PITIVI_DEBUG ("######################################################\n");
 
   return ;
 }
@@ -201,7 +202,7 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
     pitivi_settingswindow_accept_reponse (Properties, self);
     break;
     /*   default: */
-    /*     g_print ("CANCEL\n"); */
+    /*     PITIVI_DEBUG ("CANCEL\n"); */
     /*     break; */
   }
 
@@ -217,7 +218,7 @@ pitivi_settingswindow_cb_destroy (GtkWidget *widget, gpointer data)
   /*   PitiviSettingsWindow *self = (PitiviSettingsWindow *) data; */
   
   /* TODO : do we need to do something when we destroy this window ?? */
-  //g_print ("SETTINGS DESTROY\n");  
+  //PITIVI_DEBUG ("SETTINGS DESTROY\n");  
   return ;
 }
 
@@ -271,7 +272,7 @@ pitivi_settingswindow_save_settings (GList *elm, GtkWidget *widget)
       
       num = gtk_combo_box_get_active (GTK_COMBO_BOX (tmp->widget));
       if (num) {
-	g_print ("Value Change\n");
+	PITIVI_DEBUG ("Value Change\n");
 	/*
 	  GList *new_list;
 	  GList *old_list;
@@ -305,7 +306,7 @@ pitivi_settingswindow_cb_ok (GtkWidget *widget, gpointer data)
 				       self->private->TabParser);
   pitivi_settingswindow_save_settings (self->private->settings->codec, 
 				       self->private->TabCodec);
-  g_print ("SETTINGS OK\n");
+  PITIVI_DEBUG ("SETTINGS OK\n");
   gtk_widget_destroy (GTK_WIDGET (self));
   return ;
 }
@@ -315,7 +316,7 @@ pitivi_settingswindow_cb_cancel (GtkWidget *widget, gpointer data)
 {
   PitiviSettingsWindow *self = (PitiviSettingsWindow *) data;
 
-  g_print ("SETTINGS CANCEL\n");
+  PITIVI_DEBUG ("SETTINGS CANCEL\n");
   gtk_widget_destroy (GTK_WIDGET (self));
   return ;
 }

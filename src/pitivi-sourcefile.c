@@ -219,7 +219,7 @@ pitivi_sourcefile_store_pad (PitiviSourceFile *sf, GstPad *pad)
     return 0;
   if (type == IS_AUDIO) {
     if (sf->private->audiopad) {
-/*       g_warning ("More than one audiopad in %s", sf->filename); */
+      PITIVI_WARNING ("More than one audiopad in %s", sf->filename);
       return 0;
     }
     sf->private->audiopad = pad;
@@ -227,7 +227,7 @@ pitivi_sourcefile_store_pad (PitiviSourceFile *sf, GstPad *pad)
   }
   if (type == IS_VIDEO) {
     if (sf->private->videopad) {
-/*       g_warning ("More than one videopad in %s", sf->filename); */
+      PITIVI_WARNING ("More than one videopad in %s", sf->filename);
       return 0;
     }
     sf->private->videopad = pad;
@@ -262,12 +262,12 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
     filename = g_strdup_printf ("%s-%020lld.png",
 				sf->private->vthumb_path_root,
 				(signed long long int) GST_BUFFER_TIMESTAMP(buf));
-/*     g_printf ("Recording video thumbnail to file %s\n", filename); */
+    PITIVI_DEBUG ("Recording video thumbnail to file %s", filename);
     fd = open ((const char *) filename,
 	       O_CREAT | O_RDWR | O_TRUNC,
 	       S_IRUSR | S_IWUSR);
     if (fd == -1)
-      g_error ("couldn't open file %s !!", filename);
+      PITIVI_ERROR ("couldn't open file %s !!", filename);
     
     write (fd, GST_BUFFER_DATA(buf), GST_BUFFER_SIZE(buf));
     
@@ -286,7 +286,7 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
     if (sf->private->vlastcaptured < sf->length) {
       if (!(gst_element_seek (element, GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH,
 			      sf->private->vlastcaptured)))
-	g_warning ("Error seeking to %lld\n", (signed long long int) sf->private->vlastcaptured);
+	PITIVI_WARNING ("Error seeking to %lld", (signed long long int) sf->private->vlastcaptured);
     }
   while (gtk_events_pending())
     gtk_main_iteration();
@@ -300,9 +300,9 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer 
   char	*tmp;
   int	type;
 
-/*   g_printf ("new_decoded_pad, pad %s:%s caps=%s\n", */
-/* 	    GST_DEBUG_PAD_NAME (pad), */
-/* 	    gst_caps_to_string (gst_pad_get_caps(pad))); */
+  PITIVI_DEBUG ("new_decoded_pad, pad %s:%s caps=%s",
+		GST_DEBUG_PAD_NAME (pad),
+		gst_caps_to_string (gst_pad_get_caps(pad)));
   if (!(type = pitivi_sourcefile_store_pad (sf, pad)))
     return;
   /* Stick a fakesink to the pad */
@@ -320,7 +320,7 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer 
     {
 /*       g_signal_connect (sink, "handoff", G_CALLBACK (audio_handoff_cb), sf); */
       if (!(gst_element_link(element, sink)))
-	g_warning ("Couldn't link fakesink...\n");
+	PITIVI_WARNING ("Couldn't link fakesink...");
       sf->private->audioout = sink;
     } 
   else 
@@ -470,7 +470,7 @@ pitivi_sourcefile_get_thumb_at (PitiviSourceFile *sf, gint nb)
     sf->private->vthumb[nb] = g_new0(PitiviThumbTab, 1);
     sf->private->vthumb[nb]->time = sf->private->vcache[nb]->time;
     if (!(sf->private->vthumb[nb]->pixbuf = gdk_pixbuf_new_from_file(sf->private->vcache[nb]->filename, NULL)))
-      g_warning ("Error getting file %s", sf->private->vcache[nb]->filename);
+      PITIVI_WARNING ("Error getting file %s", sf->private->vcache[nb]->filename);
   }
   return sf->private->vthumb[nb]->pixbuf;
 }
@@ -505,7 +505,7 @@ pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop)
 /* 	g_printf ("filename:%s\n", sf->private->vcache[i]->filename); */
 	if (sf->private->vcache[i]->filename)
 	  if (!(sf->private->vthumb[i]->pixbuf = gdk_pixbuf_new_from_file(sf->private->vcache[i]->filename, NULL)))
-	    g_warning ("Error getting file %s", sf->private->vcache[i]->filename);
+	    PITIVI_WARNING ("Error getting file %s", sf->private->vcache[i]->filename);
       }
       if (!res) /* Setting first one */
 	res = &(sf->private->vthumb[i]);
