@@ -26,6 +26,8 @@
 #include "pitivi.h"
 #include "pitivi-ruler.h"
 #include "pitivi-units.h"
+#include "pitivi-drawing.h"
+#include "pitivi-dragdrop.h"
 
 #define RULER_HEIGHT          14
 #define MINIMUM_INCR          5
@@ -47,6 +49,8 @@ struct _PitiviRulerPrivate
 {
   PitiviConvert	 unit;
   guint		 videorate;
+  guint		 idx;
+  GdkGC		 *gc_play;
 };
 
 
@@ -104,6 +108,17 @@ pitivi_ruler_set_data_metric (GtkRuler *ruler,
     gtk_widget_queue_draw (GTK_WIDGET (ruler));
 }
 
+gint
+pitivi_ruler_get_pixel_per_unit (PitiviRuler *pitivi_ruler)
+{
+  gint result;
+  
+  result = pitivi_ruler_metrics[pitivi_ruler->private->idx].pixels_per_unit;
+  if ( pitivi_ruler->private->idx <= PITIVI_RFRAMES16x && pitivi_ruler->private->idx >= PITIVI_RFRAMES )
+    result *= pitivi_ruler->private->videorate;
+  return ( result );
+}
+
 void
 pitivi_ruler_set_zoom_metric (GtkRuler *ruler, guint unit, guint zoom)
 {
@@ -131,6 +146,7 @@ pitivi_ruler_set_zoom_metric (GtkRuler *ruler, guint unit, guint zoom)
     {
       if ((int)pitivi_ruler_metrics[count].pixels_per_unit == (int)zoom)
 	{
+	  PITIVI_RULER(ruler)->private->idx = count;
 	  pitivi_ruler_set_metric (ruler, (count));
 	  break;
 	}
@@ -201,16 +217,65 @@ pitivi_ruler_get_property (GObject * object,
     }
 }
 
+
+static void
+pitivi_ruler_moving (PitiviRuler *pitivi_ruler, gint *gpos)
+{  
+  GtkRuler *ruler = (GtkRuler *) pitivi_ruler;
+  gint bs_width, bs_height, slide_width;
+  gint i, height, x, y;
+ 
+  gint pos = *gpos;
+  height = GTK_WIDGET(pitivi_ruler)->allocation.height - GTK_WIDGET(pitivi_ruler)->style->ythickness * 2;
+  bs_width = height / 2;
+  bs_width |= 1;
+  bs_height = bs_width / 2 + 1;
+  y = (height + bs_height) / 2 + GTK_WIDGET(pitivi_ruler)->style->ythickness;
+  slide_width = bs_height; 
+  x = PITIVI_RULER (ruler)->timeline_x - slide_width;
+  if (ruler->backing_store && ruler->non_gr_exp_gc)
+    {
+      gdk_draw_drawable (ruler->widget.window,
+			 ruler->non_gr_exp_gc,
+			 ruler->backing_store,
+			 x, 0,
+			 x, 0,
+			 bs_width, height);
+    }
+  
+  PITIVI_RULER (ruler)->timeline_x=pos*pitivi_ruler_get_pixel_per_unit (pitivi_ruler);
+  x = PITIVI_RULER (ruler)->timeline_x - slide_width;
+  if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(ruler)))
+    {
+      for (i = 0; i < bs_height; i++)
+	{
+	  gdk_draw_line (GTK_WIDGET(pitivi_ruler)->window, 
+			 pitivi_ruler->private->gc_play,
+			 x + i, y + i,
+			 x + bs_width - 1 - i, y + i);
+	  if (i)
+	    gdk_draw_line (GTK_WIDGET(pitivi_ruler)->window,
+			   pitivi_ruler->private->gc_play,
+			   x + i + 2, 0,
+			   x + i + 2, y);
+	}
+    }
+  pitivi_ruler_draw_pos (GTK_RULER (pitivi_ruler));
+}
+
+
 static void
 pitivi_ruler_class_init (PitiviRulerClass *klass)
 {
   GObjectClass   *cellobj_class = G_OBJECT_CLASS (klass);
   GtkWidgetClass *widget_class;
   GtkRulerClass  *ruler_class;
+  PitiviRulerClass *pitivi_class;
 
   widget_class = (GtkWidgetClass*) klass;
   ruler_class = (GtkRulerClass*) klass;
-
+  pitivi_class = (PitiviRulerClass*) klass;
+  
   widget_class->motion_notify_event = pitivi_ruler_motion_notify;
 
   ruler_class->draw_ticks = pitivi_ruler_draw_ticks;
@@ -226,6 +291,15 @@ pitivi_ruler_class_init (PitiviRulerClass *klass)
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_VIDEORATE,
 				   g_param_spec_int ("ruler-videorate", "ruler-videorate", "ruler-videorate",
 						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE));
+  g_signal_new ("moving-play",
+		G_TYPE_FROM_CLASS (pitivi_class),
+		G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+		G_STRUCT_OFFSET (PitiviRulerClass, moving),
+		NULL, 
+		NULL,                
+		g_cclosure_marshal_VOID__POINTER,
+		G_TYPE_NONE, 1, G_TYPE_POINTER);
+  pitivi_class->moving = pitivi_ruler_moving;
 }
 
 static void
@@ -235,8 +309,10 @@ pitivi_ruler_init (PitiviRuler *ruler)
 
   ruler->private = g_new0 (PitiviRulerPrivate, 1);
   ruler->private->unit = PITIVI_SECONDS;
+  ruler->timeline_x = 0;
   widget->requisition.width = widget->style->xthickness * 2 + 1;
   widget->requisition.height = widget->style->ythickness * 2 + RULER_HEIGHT;
+  ruler->private->gc_play = pitivi_drawing_GdkGCcolor_new (255, 0, 0);
 }
 
 
@@ -482,7 +558,6 @@ pitivi_ruler_draw_ticks (GtkRuler *ruler)
   g_object_unref (layout);
 }
 
-
 static void
 pitivi_ruler_draw_pos (GtkRuler *ruler)
 {
@@ -514,15 +589,16 @@ pitivi_ruler_draw_pos (GtkRuler *ruler)
 	{
 	  /*  If a backing store exists, restore the ruler  */
 	  if (ruler->backing_store && ruler->non_gr_exp_gc)
+	    {
 	    gdk_draw_drawable (ruler->widget.window,
 			       ruler->non_gr_exp_gc,
 			       ruler->backing_store,
 			       ruler->xsrc, ruler->ysrc,
 			       ruler->xsrc, ruler->ysrc,
 			       bs_width, bs_height);
-
+	    }
 	  increment = (gdouble) width / (ruler->upper - ruler->lower);
-
+	  
 	  x = ROUND ((ruler->position - ruler->lower) * increment) + (xthickness - bs_width) / 2 - 1;
 	  y = (height + bs_height) / 2 + ythickness;
 	  

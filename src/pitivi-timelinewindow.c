@@ -93,6 +93,8 @@ struct _PitiviTimelineWindowPrivate
   /* WinSettings */
   
   PitiviSettingsWindow	*WinSettings;
+
+  gint64		current;
 };
 
 
@@ -1320,9 +1322,22 @@ void
 pitivi_timelinewindow_update_time (PitiviTimelineWindow *self, gint64 ntime)
 {
   gchar	*tmp;
+  gint64 step;
 
   tmp = g_strdup_printf("%lld:%02lld:%03lld", GST_M_S_M(ntime));
   gtk_label_set_text (GTK_LABEL (self->private->timer),tmp);
+  step = ((gint64) ntime/GST_SECOND);
+  if (!step)
+    {
+      self->private->current = 0;
+      g_signal_emit_by_name (self->hruler, "moving-play", &step, NULL);
+    }
+  if (step > self->private->current)
+    {
+      g_printf ("time:%lld %lld\n", step, self->private->current);
+      self->private->current = step;
+      g_signal_emit_by_name (self->hruler, "moving-play", &step, NULL);
+    }
 }
 
 /*

@@ -100,12 +100,14 @@ typedef struct _PitiviRulerPrivate PitiviRulerPrivate;
 struct _PitiviRuler
 {
   GtkRuler ruler;
+  guint	   timeline_x;
   PitiviRulerPrivate *private;
 };
 
 struct _PitiviRulerClass
 {
   GtkRulerClass parent_class;
+  void (* moving) (PitiviRuler *ruler, gint *gstep);
 };
 
 
