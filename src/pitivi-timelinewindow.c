@@ -468,24 +468,12 @@ create_timeline_toolbar (PitiviTimelineWindow *self)
   self->private->toolcontainer = GTK_WIDGET(hbox);
 }
 
-
-/* static void */
-/* check_track (GtkWidget *widget, PitiviTimelineCellRenderer *cells) */
-/* { */
-/*   gboolean activate; */
-/*   GList	*childlist; */
-/*   GList *childwidget; */
-  
-/*   activate = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)); */
-/*   childwidget = gtk_container_get_children (GTK_CONTAINER (cells)); */
-/*   for (childlist = childwidget; childlist; childlist = childlist->next ) */
-/*     { */
-/*       if (activate) */
-/* 	gtk_widget_hide (GTK_WIDGET (childlist->data)); */
-/*       else */
-/* 	gtk_widget_show (GTK_WIDGET (childlist->data)); */
-/*     } */
-/* } */
+static void
+seek_on_ruler (PitiviRuler *ruler, gint64 seekvalue, PitiviTimelineWindow *self)
+{
+  PITIVI_DEBUG ("seeking to %lld:%lld:%lld",
+		GST_M_S_M (seekvalue));
+}
 
 static void
 create_ruler (PitiviTimelineWindow *self)
@@ -497,6 +485,7 @@ create_ruler (PitiviTimelineWindow *self)
   g_signal_connect_swapped (G_OBJECT (self->private->main_vbox), "motion_notify_event",
 			    G_CALLBACK (EVENT_METHOD (self->hruler, motion_notify_event)),
 			    G_OBJECT (self->hruler));
+  g_signal_connect (G_OBJECT (self->hruler), "seek", G_CALLBACK (seek_on_ruler), self);
 }
 
 static void

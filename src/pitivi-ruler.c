@@ -24,10 +24,12 @@
 
 #include <gst/gst.h>
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-ruler.h"
 #include "pitivi-units.h"
 #include "pitivi-drawing.h"
 #include "pitivi-dragdrop.h"
+#include "pitivi-timelinecellrenderer.h"
 
 #define RULER_HEIGHT          14
 #define MINIMUM_INCR          5
@@ -41,14 +43,18 @@ static void pitivi_ruler_class_init    (PitiviRulerClass *klass);
 static void pitivi_ruler_init          (PitiviRuler      *hruler);
 static gint pitivi_ruler_motion_notify (GtkWidget      *widget,
 					GdkEventMotion *event);
+static gboolean pitivi_ruler_button_press (GtkWidget	*widget,
+					   GdkEventButton *event);
 static void pitivi_ruler_draw_ticks    (GtkRuler       *ruler);
 static void pitivi_ruler_draw_pos      (GtkRuler       *ruler);
 
+static guint seek_signal_id = 0;
 
 struct _PitiviRulerPrivate
 {
   PitiviConvert	 unit;
   gdouble	 videorate;
+  guint		zoomlevel;
   guint		 idx;
   GdkGC		 *gc_play;
   guint		 timeline_x;
@@ -129,6 +135,7 @@ pitivi_ruler_set_zoom_metric (GtkRuler *ruler, guint unit, guint zoom)
   int end = 0;
   
   PITIVI_RULER(ruler)->private->unit = unit;
+  PITIVI_RULER(ruler)->private->zoomlevel= zoom;
   if ( unit == PITIVI_SECONDS )
     {
       start = PITIVI_RSECONDS;
@@ -270,6 +277,18 @@ pitivi_ruler_moving (PitiviRuler *pitivi_ruler, gint64 *gpos)
   PITIVI_RULER (ruler)->time_pix = *gpos;
 }
 
+static void
+pitivi_ruler_seek (PitiviRuler *ruler, gint64 value)
+{
+  /*   PITIVI_DEBUG ("ruler : %p , position : %lld", */
+  /* 		ruler, position); */
+  /*   g_signal_emit (PITIVI_RULER(ruler), */
+  /* 		 seek_signal_id, */
+  /* 		 0, */
+  /* 		 position); */
+  /*   g_signal_emit_by_name (ruler, "seek", position); */
+  PITIVI_DEBUG ("finito");
+}
 
 static gint
 gtk_ruler_expose (GtkWidget      *widget,
@@ -311,6 +330,7 @@ pitivi_ruler_class_init (PitiviRulerClass *klass)
   pitivi_class = (PitiviRulerClass*) klass;
   
   widget_class->motion_notify_event = pitivi_ruler_motion_notify;
+  widget_class->button_press_event = pitivi_ruler_button_press;
 
   ruler_class->draw_ticks = pitivi_ruler_draw_ticks;
   ruler_class->draw_pos = pitivi_ruler_draw_pos;
@@ -334,7 +354,18 @@ pitivi_ruler_class_init (PitiviRulerClass *klass)
 		NULL,                
 		g_cclosure_marshal_VOID__POINTER,
 		G_TYPE_NONE, 1, G_TYPE_INT64);
+
+  seek_signal_id = g_signal_new ("seek",
+				 G_TYPE_FROM_CLASS (pitivi_class),
+				 G_SIGNAL_RUN_FIRST | G_SIGNAL_NO_RECURSE,
+				 G_STRUCT_OFFSET (PitiviRulerClass, seek),
+				 NULL,
+				 NULL,
+				 g_cclosure_marshal_VOID__POINTER,
+				 G_TYPE_NONE, 1, G_TYPE_INT64);
+  
   pitivi_class->moving = pitivi_ruler_moving;
+  pitivi_class->seek = pitivi_ruler_seek;
 }
 
 static void
@@ -344,10 +375,12 @@ pitivi_ruler_init (PitiviRuler *ruler)
 
   ruler->private = g_new0 (PitiviRulerPrivate, 1);
   ruler->private->unit = PITIVI_SECONDS;
+  ruler->private->zoomlevel = 1;
   ruler->private->timeline_x = 0;
   widget->requisition.width = widget->style->xthickness * 2 + 1;
   widget->requisition.height = widget->style->ythickness * 2 + RULER_HEIGHT;
   ruler->private->gc_play = pitivi_drawing_GdkGCcolor_new (255, 0, 0);
+  gtk_widget_add_events (widget, GDK_BUTTON_PRESS_MASK);
 }
 
 
@@ -363,6 +396,32 @@ pitivi_ruler_new (gint unit)
   g_assert (ruler != NULL);
   return ruler;
 }
+
+static gboolean pitivi_ruler_button_press (GtkWidget	*widget,
+					   GdkEventButton *event)
+{
+  PitiviRuler	*ruler = PITIVI_RULER (widget);
+
+  PITIVI_DEBUG ("button press on widget %p", ruler);
+  /* gdouble position = event->x */
+  if (event->button == 1) {
+    gint64	pos;
+
+    pos = convert_sub_pix_time ((guint) event->x,
+				(guint) ruler->private->unit,
+				ruler->private->zoomlevel,
+				ruler->private->videorate
+				);
+    PITIVI_DEBUG ("Seeking to %lld:%lld:%lld",
+		  GST_M_S_M (pos));
+    g_signal_emit (G_OBJECT(ruler),
+		   seek_signal_id,
+		   0,
+		   pos);
+  }
+  return TRUE; /* don't forward event */
+}
+
 
 static gint
 pitivi_ruler_motion_notify (GtkWidget      *widget,

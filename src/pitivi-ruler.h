@@ -41,11 +41,11 @@ extern "C" {
 
 
 #define PITIVI_TYPE_RULER	      (pitivi_ruler_get_type ())
-#define PITIVI_RULER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_TYPE_RULER, PitiviRuler))
-#define PITIVI_RULER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), GTK_TYPE_RULER, PitiviRulerClass))
-#define PITIVI_IS_RULER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_TYPE_RULER))
-#define PITIVI_IS_RULER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), GTK_TYPE_RULER))
-#define PITIVI_RULER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), GTK_TYPE_RULER, PitiviRulerClass))
+#define PITIVI_RULER(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), PITIVI_TYPE_RULER, PitiviRuler))
+#define PITIVI_RULER_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), PITIVI_TYPE_RULER, PitiviRulerClass))
+#define PITIVI_IS_RULER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PITIVI_TYPE_RULER))
+#define PITIVI_IS_RULER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_TYPE_RULER))
+#define PITIVI_RULER_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_TYPE_RULER, PitiviRulerClass))
 
 typedef enum
 {
@@ -99,15 +99,20 @@ typedef struct _PitiviRulerPrivate PitiviRulerPrivate;
 
 struct _PitiviRuler
 {
-  GtkRuler  ruler;
-  gint64	    time_pix;
+  GtkRuler	ruler;
+
+  gint64        time_pix;
   PitiviRulerPrivate *private;
 };
 
 struct _PitiviRulerClass
 {
   GtkRulerClass parent_class;
+
+  guint	seek_signal_id;
+
   void (* moving) (PitiviRuler *ruler, gint64 *gstep);
+  void (* seek) (PitiviRuler *ruler, gint64 value);
 };
 
 
