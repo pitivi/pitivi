@@ -90,11 +90,32 @@ PitiviSourceBin	*get_pitivisourcebin(PitiviProjectSourceList *self, gchar *treep
 }
 
 PitiviSourceBin*
+pitivi_projectsourcelist_get_child_by_name(PitiviSourceBin *bin, gchar *name)
+{
+  PitiviSourceBin	*child;
+  GSList		*childlist;
+
+  childlist = bin->child;
+  while (childlist)
+    {
+      child = (PitiviSourceBin*)(childlist->data);
+      if (!strcmp(child->bin_name, name))
+	return child;
+      child = pitivi_projectsourcelist_get_child_by_name(child, name);
+      if (child)
+	return child;
+      childlist->next;
+    }
+  return NULL;
+}
+
+PitiviSourceBin*
 pitivi_projectsourcelist_get_bin_by_name(PitiviProjectSourceList *self,
 					 gchar *name)
 {
-  PitiviSourceBin *bin;
-  GSList	*bin_list;
+  PitiviSourceBin	*bin;
+  GSList		*bin_list;
+
 
   bin_list = self->private->bin_tree;
 
@@ -103,8 +124,12 @@ pitivi_projectsourcelist_get_bin_by_name(PitiviProjectSourceList *self,
       bin = (PitiviSourceBin*)(bin_list->data);
       if (!strcmp(bin->bin_name, name))
 	return bin;
+      bin = pitivi_projectsourcelist_get_child_by_name(bin, name);
+      if (bin)
+	return bin;
       bin_list = bin_list->next;
     }
+
   return NULL;
 }
 
@@ -332,6 +357,7 @@ pitivi_projectsourcelist_add_folder_to_bin(PitiviProjectSourceList *self,
 
 void
 pitivi_projectsourcelist_set_file_property_by_name(PitiviProjectSourceList *self,
+						   gchar *parent_name,
 						   gchar *filename,
 						   gchar *mediatype,
 						   gchar *infovideo,
@@ -339,7 +365,22 @@ pitivi_projectsourcelist_set_file_property_by_name(PitiviProjectSourceList *self
 						   gint64 length,
 						   GstElement *pipeline)
 {
+  PitiviSourceBin	*bin;
+  PitiviSourceFile	*sourcefile;
 
+  bin = pitivi_projectsourcelist_get_bin_by_name(self, parent_name);
+
+  sourcefile = pitivi_projectsourcelist_get_sourcefile_by_name(bin, filename);
+
+  if (!sourcefile)
+    return;
+  
+  g_printf("filename in projectsourcelist ==> %s\n", sourcefile->filename);
+  sourcefile->mediatype = g_strdup(mediatype);
+  sourcefile->infovideo = g_strdup(infovideo);
+  sourcefile->infoaudio = g_strdup(infoaudio);
+  sourcefile->length = length;
+  sourcefile->pipeline = pipeline;
 }
 
 gboolean
@@ -368,6 +409,24 @@ pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self,
   sourcebin->source = g_slist_append(sourcebin->source, sourcefile);
   
   return TRUE;
+}
+
+PitiviSourceFile*
+pitivi_projectsourcelist_get_sourcefile_by_name(PitiviSourceBin *bin, 
+						gchar *filename)
+{
+  PitiviSourceFile	*sourcefile;
+  GSList		*sourcelist;
+
+  sourcelist = bin->source;
+  while (sourcelist)
+    {
+      sourcefile = (PitiviSourceFile*)(sourcelist->data);
+      if (!strcmp(sourcefile->filename, filename))
+	return sourcefile;
+      sourcelist = sourcelist->next;
+    }
+  return NULL;
 }
 
 PitiviSourceFile*	

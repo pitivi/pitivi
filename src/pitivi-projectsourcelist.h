@@ -110,6 +110,9 @@ PitiviSourceFile *
 pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
 					gchar *treepath, gint file_pos);
 
+PitiviSourceFile*
+pitivi_projectsourcelist_get_sourcefile_by_name(PitiviSourceBin *bin, 
+						gchar *filename);
 gboolean
 pitivi_projectsourcelist_test_bin_tree(PitiviProjectSourceList *self);
 
@@ -119,6 +122,7 @@ GSList	*pitivi_projectsourcelist_get_file_list(PitiviProjectSourceList *self,
 						gchar *parent_name);
 void
 pitivi_projectsourcelist_set_file_property_by_name(PitiviProjectSourceList *self,
+						   gchar *parent_name,
 						   gchar *filename,
 						   gchar *mediatype,
 						   gchar *infovideo,

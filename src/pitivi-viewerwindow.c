@@ -353,9 +353,9 @@ create_stream (gpointer data)
 /*   if (!gst_element_link (self->private->bin_src, self->private->sink))  */
 /*     printf ("could not link elem\n"); */
 
-  pitivi_project_blank_source(project);
-  gst_element_set_state (project->pipeline, GST_STATE_PLAYING);
-  self->private->play_status = PLAY;
+/*   pitivi_project_blank_source(project); */
+/*   gst_element_set_state (project->pipeline, GST_STATE_PLAYING); */
+/*   self->private->play_status = PLAY; */
   return ;
 }
 
