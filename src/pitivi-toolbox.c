@@ -68,7 +68,8 @@ cursor_change_select(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
   GdkPixmap	 *mask;
   GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
   GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */  
-  PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
+  PitiviTimelineWindow	*timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
+  GtkWidget		*main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
 
   if (!timelinewin)
     return;
@@ -80,7 +81,7 @@ cursor_change_select(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
      self->pitivi_cursor->type = PITIVI_CURSOR_SELECT;
      gdk_pixmap_unref (pixmap);
      gdk_pixmap_unref (mask);
-     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(timelinewin)->window), self->pitivi_cursor->cursor);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(main_vbox_right )->window), self->pitivi_cursor->cursor);
      gdk_cursor_unref (self->pitivi_cursor->cursor);
     }
 }
@@ -94,6 +95,7 @@ cursor_change_cut(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
   GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
   
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
+  GtkWidget		*main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
   
   if (!timelinewin)
     return;
@@ -105,7 +107,7 @@ cursor_change_cut(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
      self->pitivi_cursor->type = PITIVI_CURSOR_CUT;
      gdk_pixmap_unref (pixmap);
      gdk_pixmap_unref (mask);
-     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(timelinewin)->window), self->pitivi_cursor->cursor);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor->cursor);
      gdk_cursor_unref (self->pitivi_cursor->cursor);
     }
 }
@@ -118,6 +120,7 @@ cursor_change_hand(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
   GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
   GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
+  GtkWidget		*main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
 
   if (!timelinewin)
     return;
@@ -129,7 +132,7 @@ cursor_change_hand(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
      self->pitivi_cursor->type = PITIVI_CURSOR_HAND;
      gdk_pixmap_unref (pixmap);
      gdk_pixmap_unref (mask);
-     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(timelinewin)->window), self->pitivi_cursor->cursor);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor->cursor);
      gdk_cursor_unref (self->pitivi_cursor->cursor);
     }
 }
@@ -142,6 +145,7 @@ cursor_change_zoom (GtkRadioToolButton *radiobutton, PitiviToolbox *self)
   GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
   GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
+  GtkWidget		*main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
 
   if (!timelinewin)
     return;
@@ -153,7 +157,7 @@ cursor_change_zoom (GtkRadioToolButton *radiobutton, PitiviToolbox *self)
      self->pitivi_cursor->type = PITIVI_CURSOR_ZOOM;
      gdk_pixmap_unref (pixmap);
      gdk_pixmap_unref (mask);
-     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(timelinewin)->window), self->pitivi_cursor->cursor);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor->cursor);
      gdk_cursor_unref (self->pitivi_cursor->cursor);
    }
 }
@@ -282,6 +286,7 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   gdk_pixmap_unref (pixmap);
   gdk_pixmap_unref (mask);
   gdk_cursor_unref (self->pitivi_cursor->cursor);
+
 }
 
 static void

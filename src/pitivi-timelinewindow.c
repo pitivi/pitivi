@@ -102,6 +102,10 @@ static  guint signals[LAST_SIGNAL];
  * Insert "added-value" functions here
  */
 
+GtkWidget *
+pitivi_timelinewindow_get_main_vbox_right(PitiviTimelineWindow *self) {
+  return self->private->main_vbox_right;
+}
 
 PitiviTimelineWindow *
 pitivi_timelinewindow_new (PitiviMainApp *mainapp, PitiviProject *project)
@@ -373,6 +377,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
 				  GTK_POLICY_ALWAYS, GTK_POLICY_NEVER);
   gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (pHScrollbarRight),
 					 GTK_WIDGET (self->private->main_vbox_right));
+  
   gtk_paned_pack2 (GTK_PANED(self->private->hpaned), pHScrollbarRight, FALSE, FALSE);
   
   /* Main Window : StatusBar */
