@@ -67,6 +67,7 @@ struct _PitiviLPlayerWindowPrivate
   GtkWidget	*playpause;
   GtkWidget	*forward;
   GtkWidget	*stop;
+  GtkWidget	*player_msg;
   // timeline
   GtkWidget	*timeline;
   gint64	timeline_min;
@@ -95,14 +96,13 @@ gboolean	pitivi_lplayer_idle_func (gpointer data)
     {
       value1 = do_query(elem, GST_QUERY_POSITION);
       
-      g_printf("**idle** : pos:%lld\n", (signed long long int) value1);
+      //    g_printf("**idle** : pos:%lld\n", (signed long long int) value1);
 
     }
-/* } */
 
-  g_print("IDLE FUNCTION END %lld, %lld\n", 
-	  (signed long long int) self->private->timeline_min, 
-	  (signed long long int) self->private->timeline_max);
+/*   g_print("IDLE FUNCTION END %lld, %lld\n",  */
+/* 	  (signed long long int) self->private->timeline_min,  */
+/* 	  (signed long long int) self->private->timeline_max); */
 
   return TRUE;
 }
@@ -233,13 +233,13 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
   gtk_container_set_border_width (GTK_CONTAINER (self->private->toolbar), 0);
 
   button_image = gtk_image_new_from_file ("../pixmaps/backward.xpm");
-  self->private->backward = gtk_toolbar_append_item( GTK_TOOLBAR (self->private->toolbar),
-						     NULL,
-						     "My item tooltip",
-						     "private item text",
-						     button_image,
-						     GTK_SIGNAL_FUNC (pitivi_lplayer_play_stream),
-						     self);
+ /*  self->private->backward = gtk_toolbar_append_item( GTK_TOOLBAR (self->private->toolbar), */
+/* 						     NULL, */
+/* 						     "My item tooltip", */
+/* 						     "private item text", */
+/* 						     button_image, */
+/* 						     GTK_SIGNAL_FUNC (pitivi_lplayer_play_stream), */
+/* 						     self); */
   
   button_image = gtk_image_new_from_file ("../pixmaps/play.xpm");
   self->private->playpause = gtk_toolbar_append_element (GTK_TOOLBAR (self->private->toolbar),
@@ -252,14 +252,14 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 							 GTK_SIGNAL_FUNC (pitivi_lplayer_play_stream),
 							 self);
   
-  button_image = gtk_image_new_from_file ("../pixmaps/forward.xpm");
-  self->private->forward  = gtk_toolbar_append_item( GTK_TOOLBAR (self->private->toolbar),
-						     NULL,
-						     "My item tooltip",
-						     "private item text",
-						     button_image,
-						     GTK_SIGNAL_FUNC (pitivi_lplayer_play_stream),
-						     self);
+ /*  button_image = gtk_image_new_from_file ("../pixmaps/forward.xpm"); */
+/*   self->private->forward  = gtk_toolbar_append_item( GTK_TOOLBAR (self->private->toolbar), */
+/* 						     NULL, */
+/* 						     "My item tooltip", */
+/* 						     "private item text", */
+/* 						     button_image, */
+/* 						     GTK_SIGNAL_FUNC (pitivi_lplayer_play_stream), */
+/* 						     self); */
   
   button_image = gtk_image_new_from_file ("../pixmaps/stop.xpm");
   self->private->stop  = gtk_toolbar_append_item( GTK_TOOLBAR (self->private->toolbar),
@@ -277,14 +277,14 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 
 
 
-  self->private->timeline = gtk_hscale_new_with_range(self->private->timeline_min, 
-						      self->private->timeline_max, 
-						      self->private->timeline_step);
-  gtk_scale_set_draw_value (GTK_SCALE (self->private->timeline), FALSE);
-  gtk_box_pack_start (GTK_BOX (self->private->hbox), 
-		      self->private->timeline, TRUE, TRUE, 0);
+/*   self->private->timeline = gtk_hscale_new_with_range(self->private->timeline_min,  */
+/* 						      self->private->timeline_max,  */
+/* 						      self->private->timeline_step); */
+/*   gtk_scale_set_draw_value (GTK_SCALE (self->private->timeline), FALSE); */
+/*   gtk_box_pack_start (GTK_BOX (self->private->hbox),  */
+/* 		      self->private->timeline, TRUE, TRUE, 0); */
   
-  gtk_widget_show (self->private->timeline);
+/*   gtk_widget_show (self->private->timeline); */
   
   
   /*   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-press-event",  */
@@ -293,6 +293,13 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
   /* 		      GTK_SIGNAL_FUNC (seek_stream), self); */
   /*   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "value-changed",  */
   /* 		      GTK_SIGNAL_FUNC (move_timeline), self); */
+
+
+  // Message Audio / Video
+  self->private->player_msg = gtk_label_new("");
+  gtk_box_pack_start (GTK_BOX (self->private->hbox),
+		     self->private->player_msg, TRUE, TRUE, 0);
+  
 
   gtk_widget_show_all (GTK_WIDGET (self));
 
@@ -325,8 +332,9 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
       GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
 
   if (!gst_element_set_state(self->private->pipe, GST_STATE_PLAYING)) {
+    gtk_label_set_text (GTK_LABEL(self->private->player_msg), "Unable to load everything");
     g_print ("############################# BAD STATE ########################\n");
-    exit (-1);
+    // exit (-1);
   }
 
 
@@ -451,12 +459,12 @@ pitivi_lplayerwindow_finalize (GObject *object)
    */
 
   g_idle_remove_by_data (self);
-
   gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);
+  g_print ("SEG FAULT HERE (pitivi-lplayer.c l.464)");
   gst_object_unref (GST_OBJECT(self->private->pipe));
-
   g_free (self->private);
   G_OBJECT_CLASS (parent_class)->finalize (object);
+
 }
 
 static void
