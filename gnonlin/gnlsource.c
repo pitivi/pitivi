@@ -463,6 +463,7 @@ clear_queues (GnlSource *source)
 {
   GSList *walk = source->links;
 
+  GST_INFO("clear_queues %p", walk);
   while (walk) {
     SourcePadPrivate *private = (SourcePadPrivate *) walk->data;
 
@@ -816,7 +817,8 @@ gnl_source_change_state (GstElement *element)
   GstElementStateReturn	res = GST_STATE_SUCCESS;
 
   if (!GNL_OBJECT(source)->active)
-    g_printf("\nTrying to change state but Source is not active!!! \n");
+    g_warning("Trying to change state but Source %s is not active ! This might be normal...",
+	     gst_element_get_name(element));
   if (GNL_OBJECT(source)->active)
     switch (GST_STATE_TRANSITION (source)) {
     case GST_STATE_NULL_TO_READY:

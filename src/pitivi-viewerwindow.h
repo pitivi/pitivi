@@ -73,6 +73,7 @@ struct _PitiviViewerWindowClass
   void (* backward)  (PitiviViewerWindow *cell);
   void (* forward)   (PitiviViewerWindow *cell);
   void (* pause)     (PitiviViewerWindow *cell);
+  void (* stop)     (PitiviViewerWindow *cell);
 };
 
 /* used by PITIVI_VIEWERWINDOW_TYPE */

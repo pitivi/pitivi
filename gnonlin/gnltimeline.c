@@ -520,19 +520,8 @@ gnl_timeline_prepare (GnlObject *object, GstEvent *event)
     
   while (walk && res) {
     GnlGroup *group = GNL_GROUP (walk->data);
-/*     GstEvent *event; */
-/*     GstSeekType seek_type; */
     GstPad *srcpad;
     
-    /* seek_type = GST_FORMAT_TIME | */
-/*                 GST_SEEK_METHOD_SET | */
-/*                 GST_SEEK_FLAG_FLUSH | */
-/*                 GST_SEEK_FLAG_ACCURATE; */
-		
-/*     event = gst_event_new_segment_seek (seek_type, 0, G_MAXINT64); */
-
-    //gst_element_set_state (GST_ELEMENT (group), GST_STATE_PAUSED);
-
     res &= gst_element_send_event (GST_ELEMENT (group), event);
 
     srcpad = gst_element_get_pad (GST_ELEMENT (group), "src");
@@ -540,7 +529,14 @@ gnl_timeline_prepare (GnlObject *object, GstEvent *event)
       TimerGroupLink *link;
 
       link = gnl_timeline_get_link_for_group (timeline, group);
-      gst_pad_link (srcpad, link->sinkpad);
+
+      /* If there is already something linked, unlink it ! Pad'pitie ! */
+      if (GST_PAD_IS_LINKED(link->sinkpad))
+	gst_pad_unlink (GST_PAD_PEER(link->sinkpad), link->sinkpad);
+      
+      if (!gst_pad_link (srcpad, link->sinkpad))
+	g_warning("Couldn't link group [%s] to the Timeline Timer !!",
+		  gst_element_get_name (GST_ELEMENT (group)));
     }
     else {
       g_warning ("group %s does not have a 'src' pad", 

@@ -272,7 +272,8 @@ pitivi_project_set_video_output(PitiviProject *project, GstElement *output)
   project->private->videoout = output;
   gst_bin_add (GST_BIN(project->private->vsinkthread),
 	       project->private->videoout);
-  gst_element_link(project->private->videoqueue, output);
+  if (!gst_element_link(project->private->videoqueue, output))
+    g_warning ("couldn't link the video output of the timeline to the video sink !!!");
   // link timeline-queue
   gst_pad_link (gnl_timeline_get_pad_for_group (project->timeline, project->videogroup),
 		gst_element_get_pad (project->private->videoqueue, "sink"));

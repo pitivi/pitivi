@@ -60,13 +60,10 @@ struct _PitiviViewerWindowPrivate
 
   /* instance private members */
 
-  gchar		*location;
   gint		play_status;
   
-  GstElement	*pipe;
-  GstElement	*bin_src;
   GstElement	*sink;
-  GstElement	*spider;
+  GstElement	*fulloutputbin;
   
   GtkWidget	*main_vbox;
   GtkWidget	*toolbar; 
@@ -583,6 +580,7 @@ create_stream (gpointer data)
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
   GstElement	*audiosink;
+  GstElement	*timeoverlay;
 
 //  audiosink = gst_element_factory_make("alsasink", "audio-out");
   
@@ -590,7 +588,20 @@ create_stream (gpointer data)
 
   self->private->sink = gst_element_factory_make ("xvimagesink", "video_display");
   g_assert (self->private->sink != NULL);
-  pitivi_project_set_video_output(project, self->private->sink);
+
+  timeoverlay = gst_element_factory_make ("timeoverlay", "timeoverlay");
+  self->private->fulloutputbin = gst_bin_new("videobin");
+  gst_bin_add_many (GST_BIN (self->private->fulloutputbin),
+		    timeoverlay,
+		    self->private->sink,
+		    NULL);
+  gst_element_link (timeoverlay, self->private->sink);
+  
+  gst_element_add_ghost_pad (self->private->fulloutputbin,
+			     gst_element_get_pad(timeoverlay, "sink"),
+			     "sink");
+
+  pitivi_project_set_video_output(project, self->private->fulloutputbin);
 
   self->private->play_status = STOP;
 
@@ -689,13 +700,10 @@ pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
   
   /* initialize all public and private members to reasonable default values. */ 
   
-  self->private->location = "";
   self->private->play_status = STOP;
 
-  self->private->pipe = NULL;
-  self->private->bin_src = NULL;
   self->private->sink = NULL;
-  self->private->spider = NULL;
+  self->private->fulloutputbin = NULL;
 
   self->private->main_vbox = NULL;
   self->private->toolbar = NULL;
@@ -814,6 +822,12 @@ pitivi_viewver_callb_pause (PitiviViewerWindow *self)
 }
 
 static void
+pitivi_viewer_callb_stop (PitiviViewerWindow *self)
+{
+  video_stop (GTK_WIDGET(self), self);
+}
+
+static void
 pitivi_viewerwindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
@@ -864,11 +878,21 @@ pitivi_viewerwindow_class_init (gpointer g_class, gpointer g_class_data)
 						g_cclosure_marshal_VOID__VOID,
 						G_TYPE_NONE, 0);
   
+  viewersignals[STOP_SIGNAL] = g_signal_new ("stop",
+						G_TYPE_FROM_CLASS (g_class),
+						G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+						G_STRUCT_OFFSET (PitiviViewerWindowClass, stop),
+						NULL, 
+						NULL,                
+						g_cclosure_marshal_VOID__VOID,
+						G_TYPE_NONE, 0);
+  
   
   klass->play  =  pitivi_viewver_callb_play;
   klass->backward =  pitivi_viewver_callb_backward; 
   klass->forward  =  pitivi_viewver_callb_forward;
   klass->pause  =  pitivi_viewver_callb_pause;
+  klass->stop = pitivi_viewer_callb_stop;
 }
 
 GType
