@@ -62,7 +62,8 @@ enum {
 
 static GtkTargetEntry TargetEntries[] =
 {
-  { "pitivi/sourceeffect", GTK_TARGET_SAME_APP, DND_TARGET_EFFECTSWIN }
+  { "pitivi/timeline/sourceeffect", GTK_TARGET_SAME_APP, DND_TARGET_EFFECTSWIN },
+  { "pitivi/media/sourceeffect", GTK_TARGET_SAME_APP, DND_TARGET_EFFECTSWIN }
 };
 
 static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
@@ -314,8 +315,8 @@ pitivi_effectswindow_drag_data_get (GtkWidget          *widget,
     gtk_selection_data_set (selection_data, 
 			    selection_data->target, 
 			    8, 
-			    (void *) self->private->dndse,
-			    sizeof (PitiviSourceFile));
+			    (void *) &self->private->dndse,
+			    sizeof (PitiviSourceFile *));
 }
 
 static void

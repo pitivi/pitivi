@@ -26,16 +26,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/* Recuperation des caps */
-/*   pad_sink = gst_element_get_pad(element, "sink"); */
-/*   media_setting->caps = gst_pad_get_caps(pad_sink); */
-/*   g_print("Caps Sink:\n%s.\n", gst_caps_to_string (media_setting->caps)); */
-/*   pad_src = gst_element_get_pad(element, "src"); */
-/*   media_setting->caps = gst_pad_get_caps(pad_src); */
-/*   g_print("Caps Src:\n%s.\n", gst_caps_to_string (media_setting->caps)); */
-/*   media_setting->caps = gst_caps_new_simple ("my_caps", "audio/wav",  */
-/* 					     NULL); */
-
 #include <unistd.h>
 #include <gst/gst.h>
 #include "pitivi.h"
@@ -429,6 +419,7 @@ pitivi_mainapp_constructor (GType type,
   /* Creation des settings globaux */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.4, "Loading Global Settings");
+
   
   settingsfile = g_strdup_printf("%s/.pitivi", g_get_home_dir());
   if ( g_file_test(settingsfile, G_FILE_TEST_EXISTS) )
@@ -443,7 +434,8 @@ pitivi_mainapp_constructor (GType type,
 				      0.8, "Loading Signals");
   g_signal_connect(G_OBJECT(self->private->timelinewin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
-  
+  /* Launching RC Styles */
+  gtk_rc_parse( "../ui/styles.rc" );
   /* finish */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
   				      1.0, "Loading Finished");

@@ -60,7 +60,12 @@ enum {
 
 static const GtkRulerMetric pitivi_ruler_metrics[] =
   {
-    {"NanoSeconds", "ns",     100.0, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }}, 
+    {"NanoSeconds", "ns",          1.0,   { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
+    {"NanoSeconds 2x",  "ns2x",    2.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 16, 32, 64, 128 }},
+    {"NanoSeconds 4x",  "ns4x",    4.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 8, 16, 32, 64 }},
+    {"NanoSeconds 8x",  "ns8x",    8.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 4, 8, 16, 32 }},
+    {"NanoSeconds 16x", "ns16x",  16.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 2, 4, 8, 16  }},
+    /* If in the future we want represent Seconds with different subdivision compared to nanoseconds */
     {"Seconds",     "s",      1.0,   { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
     {"Seconds 2x",  "s2x",    2.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 16, 32, 64, 128 }},
     {"Seconds 4x",  "s4x",    4.0,   { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 8, 16, 32, 64 }},
@@ -116,6 +121,11 @@ pitivi_ruler_set_zoom_metric (GtkRuler *ruler, guint unit, guint zoom)
     {
       start = PITIVI_RFRAMES;
       end  = PITIVI_RFRAMES16x;
+    }
+  else  if ( unit == PITIVI_NANOSECONDS )
+    {
+      start = PITIVI_RNANOSECONDS;
+      end  = PITIVI_RNANOSECONDS16x;
     }
   for (count = start; count <= end; count++)
     {
@@ -312,6 +322,7 @@ pitivi_draw_label  (GtkRuler *ruler, int cur)
   PitiviRuler *self = ( PitiviRuler *) ruler;
   gchar unit_str[1024];
   gchar *label;
+  gint64 nanoseconds;
   gint64 frames;
 
   label = unit_str;
@@ -321,10 +332,11 @@ pitivi_draw_label  (GtkRuler *ruler, int cur)
       label = format_seconds (cur);
       break;
     case PITIVI_NANOSECONDS:
-      g_snprintf (unit_str, sizeof (unit_str), "%d" , ( int ) cur);
+      nanoseconds = ((cur * GST_SECOND) / PITIVI_RULER (ruler)->private->videorate);
+      g_snprintf (unit_str, sizeof (unit_str), "%lld" , ( gint64 ) nanoseconds);
       break;
     case PITIVI_FRAMES:
-      frames = (cur * GST_SECOND / PITIVI_RULER (ruler)->private->videorate);
+      frames = cur * PITIVI_RULER (ruler)->private->videorate;
       g_snprintf (unit_str, sizeof (unit_str), "%lld" , ( gint64 ) frames);
       break;
     default:

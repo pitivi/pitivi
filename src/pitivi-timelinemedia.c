@@ -29,6 +29,7 @@
 #include "pitivi-timelinemedia.h"
 #include "pitivi-menu.h"
 #include "pitivi-cursor.h"
+#include "pitivi-effectswindow.h"
 #include "pitivi-dragdrop.h"
 #include "pitivi-sourceitem.h"
 #include "pitivi-stockicons.h"
@@ -44,6 +45,8 @@ static	GtkWidgetClass	*parent_class = NULL;
  **********************************************************
 */
 
+/* drawing */
+
 void
 draw_media (GtkWidget *widget);
 void 
@@ -52,6 +55,11 @@ void
 draw_selection (GtkWidget *widget, int width, char **dash);
 void
 draw_slide (GtkWidget *widget, int start, int end);
+
+/* Timeline Media Callback  */
+
+void
+pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *this, gpointer data);
 
 // Properties Enumaration
 
@@ -71,10 +79,10 @@ typedef enum {
 
 enum
   {
-    MEDIA_DRAG_BEGIN_SIGNAL,
     MEDIA_DRAG_GET_SIGNAL,
-    MEDIA_DRAG_END_SIGNAL,
-    MEDIA_DRAG_DELETE_SIGNAL,
+    MEDIA_DRAG_MOTION_SIGNAL,
+    MEDIA_DRAG_LEAVE_SIGNAL,
+    MEDIA_DRAG_RECEIVED_SIGNAL,
     MEDIA_DESELECT_SIGNAL,
     MEDIA_SELECT_SIGNAL,
     MEDIA_DISSOCIATE_SIGNAL,
@@ -95,7 +103,8 @@ static guint	      media_signals[LAST_SIGNAL] = {0};
 
 static GtkTargetEntry TargetSameEntry[] =
   {
-    { "pitivi/sourcetimeline", 0, DND_TARGET_TIMELINEWIN },
+    { "pitivi/media/sourceeffect", GTK_TARGET_SAME_APP,  DND_TARGET_EFFECTSWIN },
+    { "pitivi/sourcetimeline", GTK_TARGET_SAME_APP, DND_TARGET_TIMELINEWIN }
   };
 
 static gint iNbTargetSameEntry = G_N_ELEMENTS (TargetSameEntry);
@@ -337,6 +346,120 @@ pitivi_timelinemedia_get_track (PitiviTimelineMedia *media)
   return GTK_WIDGET (media->private->cell);
 }
 
+void
+show_video_media (GtkWidget *widget)
+{
+  PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
+  
+  if (GTK_IS_WIDGET ( widget ) )
+    {
+      if ( this->sourceitem->srcfile->thumbs_video )
+	{
+	  gdk_draw_pixbuf( this->private->pixmapcache, NULL, 
+			   this->sourceitem->srcfile->thumbs_video, 0, 0, 1, 1, 
+			   -1, 
+			   -1, 
+			   GDK_RGB_DITHER_MAX, 0, 0);
+	}
+    }
+}
+
+void
+draw_media_expose (GtkWidget *widget)
+{
+  GdkRectangle rect;
+
+  draw_media ( widget );
+  /* Send Expose Event */
+  rect.x = 0;
+  rect.y = 0;
+  rect.width  = widget->allocation.width;
+  rect.height = widget->allocation.height;
+  gdk_window_invalidate_rect (widget->window, &rect, FALSE);
+  /* End Sending Expose Event */
+}
+
+void
+show_effects_media (GtkWidget *widget)
+{
+  PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
+  int count, pix_width, width = 0;
+  
+  if (GTK_IS_WIDGET ( widget ))
+    {
+      width = widget->allocation.width;
+      if (width <= 1)
+	width = this->private->width;
+      if ( this->sourceitem->srcfile->thumbs_effect )
+	{
+	  pix_width = gdk_pixbuf_get_width (this->sourceitem->srcfile->thumbs_effect);
+	  for (count = 0; count < width; count+= pix_width )
+	    gdk_draw_pixbuf( this->private->pixmapcache, NULL, GDK_PIXBUF 
+			     (  this->sourceitem->srcfile->thumbs_effect  ), 0, 0, count, 0, -1, -1,
+			     GDK_RGB_DITHER_MAX, 0, 0);
+	}
+    }
+}
+
+void
+show_audio_media (GtkWidget *widget)
+{
+  PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
+
+  if ( this->sourceitem->srcfile->thumbs_audio  )
+    gdk_draw_pixbuf( this->private->pixmapcache, NULL, GDK_PIXBUF 
+		     ( this->sourceitem->srcfile->thumbs_audio ), 0, 0, 1, 1, 
+		     -1, 
+		     -1, 
+		     GDK_RGB_DITHER_MAX, 0, 0);
+  else
+    { 
+      gdk_draw_line ( this->private->pixmapcache,
+		     widget->style->black_gc,
+		     0,  GTK_WIDGET (this->track)->allocation.height/2, 
+		     widget->allocation.width, GTK_WIDGET (this->track)->allocation.height/2);
+    }
+}
+
+void
+draw_media (GtkWidget *widget)
+{
+  PitiviTimelineMedia *this = (PitiviTimelineMedia *)widget;
+  
+  if (GDK_IS_PIXMAP ( this->private->pixmapcache ))
+    {
+      gdk_draw_rectangle ( this->private->pixmapcache, 
+			   widget->style->white_gc,
+			   TRUE, 0, 0,
+			   -1, -1);
+      switch (((PitiviTimelineCellRenderer *)this->track)->track_type)
+	{
+	case PITIVI_AUDIO_TRACK:
+	  show_audio_media (widget);
+	  break;
+	case PITIVI_VIDEO_TRACK:
+	  show_video_media (widget);
+	  break;
+	case PITIVI_EFFECTS_TRACK:
+	case PITIVI_TRANSITION_TRACK:
+	  show_effects_media (widget);
+	  break;
+	default:
+	  break;
+	}
+        
+      if (this->selected)
+	{
+	  GdkColor selection = {0, 65355, 0};
+	  draw_selection_dash (widget, this->private->pixmapcache, &selection, 2);
+	}        
+      gdk_draw_rectangle ( this->private->pixmapcache, 
+			   widget->style->black_gc,
+			   FALSE, 0, 0,
+			   widget->allocation.width-1,  widget->allocation.height-1);
+    }
+}
+
 static gint
 pitivi_timelinemedia_expose (GtkWidget      *widget,
 			     GdkEventExpose *event)
@@ -344,13 +467,15 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
   PitiviTimelineMedia  *this = PITIVI_TIMELINEMEDIA (widget);
   
   gdk_draw_drawable (GDK_WINDOW (widget->window),
-			 widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
+			 widget->style->bg_gc[GTK_WIDGET_STATE (widget)],
 			 this->private->pixmapcache,
 			 event->area.x, event->area.y,
 			 event->area.x, event->area.y,
 			 event->area.width, event->area.height);
   return FALSE;
 }
+
+
 
 static GObject *
 pitivi_timelinemedia_constructor (GType type,
@@ -376,18 +501,13 @@ pitivi_timelinemedia_constructor (GType type,
 
   this->sourceitem = g_new0 (PitiviSourceItem, 1);
   this->sourceitem->srcfile = this->private->sf;
-/*   this->sourceitem->srcfile = g_new0 (PitiviSourceFile, 1); */
-/*   memcpy (this->sourceitem->srcfile, this->private->sf, sizeof (*this->private->sf));  */
   this->sourceitem->id = this->track->nb_added[0];
   
   if (this->track->track_type == PITIVI_AUDIO_TRACK)
     this->sourceitem->isaudio = TRUE;
 
   if ( this->sourceitem->srcfile )
-    {
-      /* pitivi_printf_element(this->sourceitem->srcfile->pipeline ); */
-      /* Construct Id : filename + '_' + mediatype  + '_' + id */
-      
+    {    
       name = g_strdup_printf ("%s_%s_%lld", this->sourceitem->srcfile->filename, 
 			      this->sourceitem->srcfile->mediatype, (signed long long int) (this->sourceitem->id));
       if ( this->track->track_type == PITIVI_EFFECTS_TRACK ||  this->track->track_type == PITIVI_TRANSITION_TRACK )
@@ -396,6 +516,8 @@ pitivi_timelinemedia_constructor (GType type,
 	    g_warning ("Coudn't get Sourcefile effect bin");
 	    return NULL;
 	  }
+	  if ( this->track->track_type == PITIVI_TRANSITION_TRACK ) /* please let the prority set here. Thank you */
+	    pitivi_timelinemedia_set_priority (this, 1);
 	  this->sourceitem->gnlobject = (GnlObject *)gnl_operation_new (name, bin);
 	}
       else if ( this->track->track_type == PITIVI_VIDEO_TRACK )
@@ -411,7 +533,7 @@ pitivi_timelinemedia_constructor (GType type,
 	  this->sourceitem->gnlobject = (GnlObject *) gnl_source_new (name, bin);
 	}
     }
-    
+  this->original_width = this->private->width;
   gtk_widget_set_size_request (GTK_WIDGET (this), this->private->width, GTK_WIDGET (this->track)->allocation.height);
   gtk_drawing_area_size (GTK_DRAWING_AREA (this), this->private->width, GTK_WIDGET (this->track)->allocation.height);
   /* Setting Tooltip */
@@ -434,55 +556,33 @@ pitivi_timelinemedia_drag_get  (GtkWidget          *widget,
 			  sizeof (*widget));
 }
 
-
 static void
-pitivi_timelinemedia_drag_delete  (GtkWidget          *widget,
-				   GdkDragContext     *context,
-				   gpointer	      dragging)
+pitivi_timelinemedia_drag_data_received (GObject *widget,
+                                         GdkDragContext *dc,
+                                         int x,
+                                         int y,
+                                         GtkSelectionData *selection,
+                                         guint info,
+                                         guint time,
+                                         gpointer data)
 {
-}
-
-static void
-pitivi_timelinemedia_drag_begin (GtkWidget          *widget,
-				 GdkDragContext     *context,
-				 gpointer	    user_data)
-{ 
+  PitiviSourceFile **sf;
+  GtkWidget *source;
+  
+  source = gtk_drag_get_source_widget(dc);
+  sf = (PitiviSourceFile **) selection->data;
+  if (PITIVI_IS_EFFECTSWINDOW (gtk_widget_get_toplevel (source)))
+      pitivi_timelinemedia_callb_associate_effect (PITIVI_TIMELINEMEDIA (widget), *sf);
 }
 
 static void
 connect_drag_and_drop (GtkWidget *widget)
 {
-  media_signals[MEDIA_DRAG_BEGIN_SIGNAL] = g_signal_connect (widget, "drag_begin",
-							     G_CALLBACK (pitivi_timelinemedia_drag_begin), NULL);
-  media_signals[MEDIA_DRAG_GET_SIGNAL] = g_signal_connect (widget, "drag_data_get",	      
+  media_signals[MEDIA_DRAG_GET_SIGNAL] = g_signal_connect (G_OBJECT (widget), "drag_data_get",	      
 							   G_CALLBACK (pitivi_timelinemedia_drag_get), NULL);
-  media_signals[MEDIA_DRAG_DELETE_SIGNAL] = g_signal_connect (widget, "drag_data_delete",
-							      G_CALLBACK (pitivi_timelinemedia_drag_delete), NULL);  
+  media_signals[MEDIA_DRAG_RECEIVED_SIGNAL] = g_signal_connect (G_OBJECT (widget), "drag_data_received",\
+								G_CALLBACK ( pitivi_timelinemedia_drag_data_received ), NULL);
 }
-
-
-void
-show_effects_media (GtkWidget *widget)
-{
-  PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
-  int count, pix_width, width = 0;
-  
-  if (GTK_IS_WIDGET ( widget ))
-    {
-      width = widget->allocation.width;
-      if (width <= 1)
-	width = this->private->width;
-      if ( this->sourceitem->srcfile->thumbs_effect )
-	{
-	  pix_width = gdk_pixbuf_get_width (this->sourceitem->srcfile->thumbs_effect);
-	  for (count = 0; count < width; count+= pix_width )
-	    gdk_draw_pixbuf( this->private->pixmapcache, NULL, GDK_PIXBUF 
-			     (  this->sourceitem->srcfile->thumbs_effect  ), 0, 0, count, 0, -1, -1,
-			     GDK_RGB_DITHER_MAX, 0, 0);
-	}
-    }
-}
-
 
 static void
 pitivi_timelinemedia_size_request  (GtkWidget *widget,
@@ -528,6 +628,13 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
 			TargetSameEntry, 
 			iNbTargetSameEntry, 
 			GDK_ACTION_COPY|GDK_ACTION_MOVE);
+  
+  gtk_drag_dest_set  (GTK_WIDGET (this), 
+		      GTK_DEST_DEFAULT_DROP|
+		      GTK_DEST_DEFAULT_HIGHLIGHT, 
+		      TargetSameEntry,
+		      iNbTargetSameEntry,
+		      GDK_ACTION_COPY|GDK_ACTION_MOVE);
   
   pixbuf = gtk_widget_render_icon(GTK_WIDGET (this), PITIVI_STOCK_HAND, GTK_ICON_SIZE_DND, NULL);
   gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (this), pixbuf);
@@ -618,100 +725,6 @@ pitivi_timelinemedia_get_property (GObject * object,
     }
 }
 
-void
-show_audio_media (GtkWidget *widget)
-{
-  PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
-
-  if ( this->sourceitem->srcfile->thumbs_audio  )
-    gdk_draw_pixbuf( this->private->pixmapcache, NULL, GDK_PIXBUF 
-		     ( this->sourceitem->srcfile->thumbs_audio ), 0, 0, 1, 1, 
-		     -1, 
-		     -1, 
-		     GDK_RGB_DITHER_MAX, 0, 0);
-  else
-    { 
-      gdk_draw_line ( this->private->pixmapcache,
-		     widget->style->black_gc,
-		     0,  GTK_WIDGET (this->track)->allocation.height/2, 
-		     widget->allocation.width, GTK_WIDGET (this->track)->allocation.height/2);
-    }
-}
-
-void
-show_video_media (GtkWidget *widget)
-{
-  PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
-  
-  if (GTK_IS_WIDGET ( widget ) )
-    {
-      if ( this->sourceitem->srcfile->thumbs_video )
-	{
-	  gdk_draw_pixbuf( this->private->pixmapcache, NULL, 
-			   this->sourceitem->srcfile->thumbs_video, 0, 0, 1, 1, 
-			   -1, 
-			   -1, 
-			   GDK_RGB_DITHER_MAX, 0, 0);
-	}
-    }
-}
-
-void
-draw_media_expose (GtkWidget *widget)
-{
-  GdkRectangle rect;
-
-  draw_media ( widget );
-  /* Send Expose Event */
-  rect.x = 0;
-  rect.y = 0;
-  rect.width  = widget->allocation.width;
-  rect.height = widget->allocation.height;
-  gdk_window_invalidate_rect (widget->window, &rect, FALSE);
-  /* End Sending Expose Event */
-}
-
-void
-draw_media (GtkWidget *widget)
-{
-  PitiviTimelineMedia *this = (PitiviTimelineMedia *)widget;
-  
-  if (GDK_IS_PIXMAP ( this->private->pixmapcache ))
-    {
-      gdk_draw_rectangle ( this->private->pixmapcache, 
-			   widget->style->white_gc,
-			   TRUE, 0, 0,
-			   -1, -1);
-      
-      gdk_draw_rectangle ( this->private->pixmapcache, 
-			   widget->style->black_gc,
-			   FALSE, 0, 0,
-			   widget->allocation.width-1,  widget->allocation.height-1);
-      
-      switch (((PitiviTimelineCellRenderer *)this->track)->track_type)
-	{
-	case PITIVI_AUDIO_TRACK:
-	  show_audio_media (widget);
-	  break;
-	case PITIVI_VIDEO_TRACK:
-	  show_video_media (widget);
-	  break;
-	case PITIVI_EFFECTS_TRACK:
-	case PITIVI_TRANSITION_TRACK:
-	  show_effects_media (widget);
-	  break;
-	default:
-	  break;
-	}
-        
-      if (this->selected)
-	{
-	  GdkColor selection = {0, 65355, 0};
-	  draw_selection_dash (widget, this->private->pixmapcache, &selection, 2);
-	}
-    }
-}
-
 static
 gint pitivi_timelinemedia_motion_notify_event (GtkWidget        *widget,
 					       GdkEventMotion   *event)
@@ -793,7 +806,9 @@ pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
   gint x = event->x;
 
   PitiviCursor *cursor = pitivi_getcursor_id (widget);
-  if (cursor->type == PITIVI_CURSOR_ZOOM)
+  if (cursor->type == PITIVI_CURSOR_ZOOM || 
+      cursor->type == PITIVI_CURSOR_ZOOM_INC ||
+      cursor->type == PITIVI_CURSOR_ZOOM_DEC)
     return FALSE;
   if (cursor->type == PITIVI_CURSOR_CUT)
     {
@@ -830,9 +845,6 @@ pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data)
 
   gchar *properties=NULL;
   
-
-  g_print("%s\n", this->sourceitem->srcfile->mediatype);
-
   if (!strcmp (this->sourceitem->srcfile->mediatype, "video/audio")) 
     { 
       properties = g_strdup_printf("Properties:\n\nSource:%s\n\nType:%s\n\nInfos Video:%s\n\n Infos Audio:%s\n",
@@ -840,33 +852,28 @@ pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data)
 				   this->sourceitem->srcfile->mediatype,
 				   this->sourceitem->srcfile->infovideo,
 				   this->sourceitem->srcfile->infoaudio);
-      
     }
   else if (!strcmp (this->sourceitem->srcfile->mediatype, "video")) 
     { 
       properties = g_strdup_printf("Properties:\n\nSource:%s\n\nType:%s\n\nInfos Video:%s\n",
 				   this->sourceitem->srcfile->filename,
 				   this->sourceitem->srcfile->mediatype,
-				   this->sourceitem->srcfile->infovideo);
-      
+				   this->sourceitem->srcfile->infovideo); 
     }
-  else if (!strcmp (this->sourceitem->srcfile->mediatype, "audio")) 
+  else if (!strcmp (this->sourceitem->srcfile->mediatype, "audio"))
     { 
       properties = g_strdup_printf("Properties:\n\nSource:%s\n\nType:%s\n\nInfos Audio:%s\n",
 				   this->sourceitem->srcfile->filename,
 				   this->sourceitem->srcfile->mediatype,
 				   this->sourceitem->srcfile->infoaudio);
-      
     }
-  
   else
-    {
-      properties = g_strdup_printf("Properties:\nType:Unknow\n");
-    }
-  
-  g_print ("%s\n",  properties);
-     
-  props_dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_NONE, properties, NULL);
+    properties = g_strdup_printf("Properties:\nType:Unknow\n");
+  props_dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, 
+					 GTK_MESSAGE_INFO, 
+					 GTK_BUTTONS_NONE, 
+					 properties, 
+					 NULL);
   gtk_widget_show(props_dialog);
 }
 
@@ -882,9 +889,9 @@ pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *this, gpointer
   int offset_currenteffect = 0;
   
   
-  se->length = this->sourceitem->srcfile->length;
   if ( this->track->effects_track)
     {
+      se->length = this->sourceitem->srcfile->length;
       if ((strstr (se->mediatype, "audio") && this->track->track_type == PITIVI_AUDIO_TRACK)
 	  ||
 	  (strstr (se->mediatype, "video") && this->track->track_type == PITIVI_VIDEO_TRACK))

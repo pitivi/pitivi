@@ -67,6 +67,7 @@ struct _PitiviTimelineMedia
   GtkWidget        *linked;
  
   GList		   *effectschilds;  /* effects on media */
+  guint		   original_width;
   gboolean	   selected;
   gboolean	   copied;
   gboolean	   cutted;

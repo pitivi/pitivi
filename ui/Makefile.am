@@ -10,7 +10,8 @@
 
 uidir = $(datadir)/ui
 ui_DATA = main_menubar.xml\
-	 pitivi-timeline.xml
+	 pitivi-timeline.xml\
+	 styles.rc
 
 EXTRA_DIST = $(ui_DATA)
 

@@ -115,7 +115,9 @@ load_cursor(GdkWindow *win,
       hot_x = CST_X_HOT + 4;
       hot_y = CST_Y_HOT + 4;
       break;
-    case  PITIVI_CURSOR_ZOOM:
+    case PITIVI_CURSOR_ZOOM:
+    case PITIVI_CURSOR_ZOOM_INC:
+    case PITIVI_CURSOR_ZOOM_DEC:
       pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, width, height);
       hot_x = CST_X_HOT + 1;
@@ -124,8 +126,8 @@ load_cursor(GdkWindow *win,
     case  PITIVI_CURSOR_RESIZE:
       pixmap = gdk_bitmap_create_from_data (NULL, resize_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, resize_mask_bits, width, height);
-      hot_x = CST_X_HOT + (width / 2);
-      hot_y = CST_Y_HOT + (height / 2);
+      hot_x = 0;
+      hot_y = height/2;
       break;
     case PITIVI_CURSOR_NOALLOW:
       pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);

@@ -1197,7 +1197,8 @@ pitivi_timelinewindow_deactivate ( PitiviTimelineWindow *self )
 
   /* Loading X Cursor */
   
-  load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), self->toolbox->pitivi_cursor, PITIVI_CURSOR_NOALLOW);
+  load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), self->toolbox->pitivi_cursor, 
+	       PITIVI_CURSOR_NOALLOW);
 
   /* Deactivate Windows Menu */
   gtk_action_group_set_sensitive (self->actions_group[EA_WINDOWMENU_FILE], FALSE);
