@@ -25,9 +25,6 @@
 #ifndef PITIVI_TYPES_H
 #define PITIVI_TYPES_H
 
-typedef struct _PitiviCheckBox PitiviCheckBox;
-typedef struct _PitiviCheckBoxClass PitiviCheckBoxClass;
-
 typedef struct _PitiviController PitiviController;
 typedef struct _PitiviControllerClass PitiviControllerClass;
 

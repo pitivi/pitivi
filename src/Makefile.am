@@ -34,7 +34,6 @@ pitivi_SOURCES		= \
 	pitivi-timelinecellrenderer.c\
 	pitivi-timelinemedia.c\
 	pitivi-sourcelistwindow.c \
-	pitivi-checkbox.c\
 	pitivi-projectsourcelist.c \
 	pitivi-newprojectwindow.c  \
 	pitivi-viewerwindow.c \
@@ -76,7 +75,6 @@ noinst_HEADERS = \
 	pitivi-timelinecellrenderer.h\
 	pitivi-timelinemedia.h\
 	pitivi-sourcelistwindow.h \
-	pitivi-checkbox.h\
 	pitivi-projectsourcelist.h \
 	pitivi-newprojectwindow.h  \
 	pitivi-viewerwindow.h \
