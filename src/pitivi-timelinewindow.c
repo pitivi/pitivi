@@ -407,7 +407,10 @@ create_tracks_links (GtkWidget **wcells)
 		if ( gtab_tracks[j].track_type != PITIVI_EFFECTS_TRACK )
 		  cells[i]->linked_track = GTK_WIDGET ( cells[j] );
 		else /* Effects */
-		  cells[i]->effects_track = GTK_WIDGET ( cells[j] );
+		  {
+		    cells[i]->effects_track = GTK_WIDGET ( cells[j] );
+		    PITIVI_TIMELINECELLRENDERER (cells[i]->effects_track)->linked_track = GTK_WIDGET ( cells[i] );
+		  }
 	      }
 	  }
     }

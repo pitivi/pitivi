@@ -183,7 +183,7 @@ pitivi_timelinemedia_update_tooltip (PitiviTimelineMedia *this)
   GnlObject		*obj = this->sourceitem->gnlobject;
 
   /* Make the string */
-  str = g_strdup_printf("%s\nposition : %4lld:%3lld->%4lld:%3lld\nMedia : %4lld:%3lld->%4lld:%3lld\nPriority : %d",
+  str = g_strdup_printf("%s\nposition : %4lld:%3lld->%4lld:%3lld\nMedia : %4lld:%3lld->%4lld:%3lld\nPriority : %d\n",
 			gst_element_get_name(GST_ELEMENT (obj)),
 			obj->start / GST_SECOND, (obj->start % GST_SECOND) / GST_MSECOND,
 			obj->stop / GST_SECOND, (obj->stop % GST_SECOND) / GST_MSECOND,
@@ -239,7 +239,12 @@ pitivi_timelinemedia_set_media_start_stop (PitiviTimelineMedia *media, gint64 st
 void
 pitivi_timelinemedia_set_priority (PitiviTimelineMedia *media, gint priority)
 {
+  g_printf ("####################Priority : %d--TRACK : %d--TYPE : %d#####################\n", 
+	    priority,
+	    media->track->track_nb, 
+	    media->track->track_type);
   gnl_object_set_priority (media->sourceitem->gnlobject, priority);
+  pitivi_timelinemedia_update_tooltip (media);
 }
 
 GtkWidget *
@@ -744,6 +749,8 @@ pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *this, gpointer
 	    {
 	      effect = pitivi_timelinemedia_new ( se, GTK_WIDGET (this)->allocation.width, 
 						  PITIVI_TIMELINECELLRENDERER (this->track->effects_track) );
+	      this->effectschilds = g_list_append (this->effectschilds, effect);
+	      this->effectschilds = g_list_sort (this->effectschilds, compare_littlechild);
 	      pitivi_timelinemedia_set_start_stop(effect,
 						  GNL_OBJECT(this->sourceitem->gnlobject)->start,
 						  GNL_OBJECT(this->sourceitem->gnlobject)->stop);
@@ -754,9 +761,6 @@ pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *this, gpointer
 				 GTK_WIDGET (effect), 
 				 GTK_WIDGET (this)->allocation.x, 
 				 0);
-	      this->effectschilds = g_list_append (this->effectschilds, effect);
-	      this->effectschilds = g_list_sort (this->effectschilds, compare_littlechild);
-	      calculate_priorities ( this->track );
 	      gtk_widget_show (GTK_WIDGET (effect));		
 	    }
 	  /* ----------------------------------------------------------- */

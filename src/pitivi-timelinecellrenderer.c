@@ -266,7 +266,9 @@ calculate_priorities ( GtkWidget *widget )
   int	priority = 2;
   int   x, width = 0;
   gboolean found = FALSE;
-  
+
+  if (self->track_type == PITIVI_EFFECTS_TRACK)
+    self = self->linked_track;
   containerlist = gtk_container_get_children (GTK_CONTAINER (gtk_widget_get_parent(GTK_WIDGET (self))));
   for (; containerlist; containerlist = containerlist->next)
     if (self->track_type == PITIVI_TIMELINECELLRENDERER (containerlist->data)->track_type)
@@ -279,6 +281,7 @@ calculate_priorities ( GtkWidget *widget )
 	else
 	  layoutlist->next = gtk_container_get_children (GTK_CONTAINER (containerlist->data));
       }
+  
   if ( layoutlist )
     {
       layoutlist = g_list_first (layoutlist);
