@@ -43,7 +43,7 @@
 #define PITIVI_TIMELINECELLRENDERER_TYPE (pitivi_timelinecellrenderer_get_type ())
 #define PITIVI_TIMELINECELLRENDERER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), PITIVI_TIMELINECELLRENDERER_TYPE, PitiviTimelineCellRenderer))
 #define PITIVI_TIMELINECELLRENDERER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), PITIVI_TIMELINECELLRENDERER_TYPE, PitiviTimelineCellRendererClass))
-#define PITIVI_IS_TIMELINECELLRENDERER(obj) (G_TYPE_CHECK_TYPE ((obj), PITIVI_TIMELINECELLRENDERER_TYPE))
+#define PITIVI_IS_TIMELINECELLRENDERER(obj) (GTK_CHECK_TYPE ((obj), PITIVI_TIMELINECELLRENDERER_TYPE))
 #define PITIVI_IS_TIMELINECELLRENDERER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_TIMELINECELLRENDERER_TYPE))
 #define PITIVI_TIMELINECELLRENDERER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_TIMELINECELLRENDERER_TYPE, PitiviTimelineCellRendererClass))
 
@@ -53,7 +53,7 @@ typedef struct _PitiviTimelineCellRendererPrivate PitiviTimelineCellRendererPriv
 
 struct _PitiviTimelineCellRenderer
 {
-  GtkCellRenderer parent;
+  GtkWidget parent;
   
   /* private */
   PitiviTimelineCellRendererPrivate *private;
@@ -61,7 +61,7 @@ struct _PitiviTimelineCellRenderer
 
 struct _PitiviTimelineCellRendererClass
 {
-  GtkCellRendererClass parent;
+  GtkWidgetClass parent;
   /* class members */
 };
 
@@ -72,6 +72,6 @@ GType pitivi_timelinecellrenderer_get_type (void);
  * Method definitions.
  */
 
-GtkCellRenderer	*pitivi_timelinecellrenderer_new(void);
+GtkWidget	*pitivi_timelinecellrenderer_new(void);
 
 #endif

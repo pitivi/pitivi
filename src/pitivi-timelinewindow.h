@@ -30,6 +30,7 @@
  * Potentially, include other headers on which this header depends.
  */
 
+#include <gtk/gtk.h>
 #include "pitivi.h"
 #include "pitivi-projectwindows.h"
 
@@ -80,6 +81,6 @@ GType pitivi_timelinewindow_get_type (void);
  * Method definitions.
  */
 
-PitiviTimelineWindow	*pitivi_timelinewindow_new(PitiviMainApp *mainapp, PitiviProject *project);
+PitiviTimelineWindow	*pitivi_timelinewindow_new (PitiviMainApp *mainapp, PitiviProject *project);
 
 #endif

@@ -26,7 +26,7 @@
 #include "pitivi.h"
 #include "pitivi-timelinecellrenderer.h"
 
-static GtkCellRendererClass *parent_class = NULL;
+static GtkWidgetClass *parent_class = NULL;
 
 enum {
   PITIVI_TML_LAYER_AUDIO,
@@ -58,14 +58,14 @@ struct _PitiviTimelineCellRendererPrivate
  * Insert "added-value" functions here
  */
 
-GtkCellRenderer *
-pitivi_timelinecellrenderer_new(void)
+GtkWidget *
+pitivi_timelinecellrenderer_new (void)
 {
   PitiviTimelineCellRenderer	*timelinecellrenderer;
 
-  timelinecellrenderer = (PitiviTimelineCellRenderer *) g_object_new(PITIVI_TIMELINECELLRENDERER_TYPE, NULL);
+  timelinecellrenderer = (PitiviTimelineCellRenderer *) g_object_new (PITIVI_TIMELINECELLRENDERER_TYPE, NULL);
   g_assert(timelinecellrenderer != NULL);
-  return ((GtkCellRenderer *) timelinecellrenderer);
+  return GTK_WIDGET ( timelinecellrenderer );
 }
 
 static GObject *
@@ -90,97 +90,6 @@ pitivi_timelinecellrenderer_constructor (GType type,
 
 }
 
-
-static void
-pitivi_timelinecellrenderer_get_size (GtkCellRenderer *cell,
-				      GtkWidget       *widget,
-				      GdkRectangle    *cell_area,
-				      gint            *x_offset,
-				      gint            *y_offset,
-				      gint            *width,
-				      gint            *height)
-{
-  gint calc_width;
-  gint calc_height;
-
-  PitiviTimelineCellRenderer	*treecell = PITIVI_TIMELINECELLRENDERER (cell);
-  
-  if (treecell->private->cell_type == PITIVI_TML_LAYER_AUDIO)
-    {
-      calc_width  = (gint) cell->xpad * 2 + FIXED_WIDTH;
-      calc_height = (gint) cell->ypad * 2 + FIXED_HEIGHT;
-    }
-  else
-    {
-      calc_width  = (gint) cell->xpad * 2 + FIXED_WIDTH / 2;
-      calc_height = (gint) cell->ypad * 2 + FIXED_HEIGHT / 2;
-    }
-
-  if (width)
-    *width = calc_width;
-
-  if (height)
-    *height = calc_height;
-
-  if (cell_area)
-    {
-      if (x_offset)
-	{
-	  *x_offset = cell->xalign * (cell_area->width - calc_width);
-	  *x_offset = MAX (*x_offset, 0);
-	}
-    
-      if (y_offset)
-	{
-	  *y_offset = cell->yalign * (cell_area->height - calc_height);
-	  *y_offset = MAX (*y_offset, 0);
-	}
-    }
-}
-
-static void
-pitivi_timelinecellrenderer_render (GtkCellRenderer *cell,
-				    GdkWindow       *window,
-				    GtkWidget       *widget,
-				    GdkRectangle    *background_area,
-				    GdkRectangle    *cell_area,
-				    GdkRectangle    *expose_area,
-				    guint            flags)
-     
-{
-  PitiviTimelineCellRenderer	*treecell = PITIVI_TIMELINECELLRENDERER (cell);
-  gint				width, height;
-  gint				x_offset, y_offset;
-  gdouble			colors[3];
-  GtkStateType			state;
-  GtkShadowType			shadow;
-
-  pitivi_timelinecellrenderer_get_size (cell, widget, cell_area,
-					&x_offset, &y_offset,
-					&width, &height);
-  
-    if (GTK_WIDGET_HAS_FOCUS (widget))
-      state = GTK_STATE_ACTIVE;
-    else
-      state = GTK_STATE_NORMAL;
-    
-    if (treecell->private->cell_type == PITIVI_TML_LAYER_AUDIO)
-      shadow = GTK_SHADOW_ETCHED_OUT;
-    else
-      shadow = GTK_SHADOW_NONE;
-    
-    gtk_paint_box (widget->style, window,
-		       state, shadow,
-		       NULL, widget, "layer",
-		       cell_area->x,
-		       cell_area->y,
-		       widget->allocation.width,
-		   height);
-    
-    if (treecell->private->cell_type == PITIVI_TML_LAYER_AUDIO)
-      gtk_draw_hline (widget->style, (GdkWindow *)window, state,  cell_area->x, widget->allocation.width, cell_area->y + height/2);
-}
-
 static void
 pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_class)
 {
@@ -196,9 +105,6 @@ pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_
    * delay initialization completion until the property is set. 
    */
   
-  GTK_CELL_RENDERER(self)->mode = GTK_CELL_RENDERER_MODE_INERT;
-  GTK_CELL_RENDERER(self)->xpad = 0;
-  GTK_CELL_RENDERER(self)->ypad = 0;
   self->private->width  = FIXED_WIDTH;
   self->private->height = FIXED_HEIGHT;
 }
@@ -285,43 +191,135 @@ pitivi_timelinecellrenderer_get_property (GObject * object,
 }
 
 static void
+pitivi_timelinecellrenderer_realize (GtkWidget *widget)
+{
+  PitiviTimelineCellRenderer *cell;
+  GdkWindowAttr attributes;
+  gint attributes_mask;
+
+  g_return_if_fail (widget != NULL);
+  g_return_if_fail (PITIVI_IS_TIMELINECELLRENDERER (widget));
+
+  GTK_WIDGET_SET_FLAGS (widget, GTK_REALIZED);
+  cell = PITIVI_TIMELINECELLRENDERER (widget);
+
+  attributes.x = widget->allocation.x;
+  attributes.y = widget->allocation.y;
+  attributes.width = widget->allocation.width;
+  attributes.height = widget->allocation.height;
+  attributes.wclass = GDK_INPUT_OUTPUT;
+  attributes.window_type = GDK_WINDOW_CHILD;
+  attributes.event_mask = gtk_widget_get_events (widget) | 
+    GDK_EXPOSURE_MASK | GDK_BUTTON_PRESS_MASK | 
+    GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK |
+    GDK_POINTER_MOTION_HINT_MASK;
+  attributes.visual = gtk_widget_get_visual (widget);
+  attributes.colormap = gtk_widget_get_colormap (widget);
+
+  attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
+  widget->window = gdk_window_new (widget->parent->window, &attributes, attributes_mask);
+
+  widget->style = gtk_style_attach (widget->style, widget->window);
+
+  gdk_window_set_user_data (widget->window, widget);
+  gtk_style_set_background (widget->style, widget->window, GTK_STATE_ACTIVE);
+}
+
+static void 
+pitivi_timelinecellrenderer_size_request (GtkWidget      *widget,
+					  GtkRequisition *requisition)
+{
+  requisition->width = FIXED_WIDTH;
+  requisition->height = FIXED_HEIGHT;
+}
+
+
+static void
+pitivi_timelinecellrenderer_size_allocate (GtkWidget     *widget,
+					   GtkAllocation *allocation)
+{
+   PitiviTimelineCellRenderer *cell;
+
+  g_return_if_fail (widget != NULL);
+  g_return_if_fail (PITIVI_IS_TIMELINECELLRENDERER (widget));
+  g_return_if_fail (allocation != NULL);
+
+  widget->allocation = *allocation;
+  cell = PITIVI_TIMELINECELLRENDERER (widget);
+
+  if (GTK_WIDGET_REALIZED (widget))
+    {
+      gdk_window_move_resize (widget->window,
+			      allocation->x, allocation->y,
+			      allocation->width, allocation->height);
+
+    }
+}
+
+
+static gint
+pitivi_timelinecellrenderer_expose (GtkWidget      *widget,
+				    GdkEventExpose *event)
+{
+  PitiviTimelineCellRenderer	*cell = PITIVI_TIMELINECELLRENDERER (widget);
+  gint				width, height;
+  gint				x_offset, y_offset;
+  gdouble			colors[3];
+  GtkStateType			state;
+  GtkShadowType			shadow;
+  
+    if (GTK_WIDGET_HAS_FOCUS (widget))
+      state = GTK_STATE_ACTIVE;
+    else
+      state = GTK_STATE_NORMAL;
+    
+    shadow = GTK_SHADOW_NONE;
+    gtk_paint_box (widget->style, widget->window,
+		   state, shadow,
+		   NULL, widget, "layer",
+		   0,
+		   0,
+		   widget->allocation.width,
+		   height);
+    
+    gtk_draw_hline (widget->style, (GdkWindow *)widget->window, state,  0, widget->allocation.width, FIXED_HEIGHT/2);
+    return FALSE;
+}
+
+
+static void
 pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviTimelineCellRendererClass *klass = PITIVI_TIMELINECELLRENDERER_CLASS (g_class);
-  GtkCellRendererClass *cell_class   = GTK_CELL_RENDERER_CLASS(klass);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (g_class);
   
-  parent_class = g_type_class_peek_parent (klass);
+  //parent_class = g_type_class_peek_parent (klass);
+  
+  //gobject_class->destroy = pitivi_timelinecellrenderer_destroy;
   gobject_class->constructor = pitivi_timelinecellrenderer_constructor;
   gobject_class->dispose = pitivi_timelinecellrenderer_dispose;
   gobject_class->finalize = pitivi_timelinecellrenderer_finalize;
   gobject_class->set_property = pitivi_timelinecellrenderer_set_property;
   gobject_class->get_property = pitivi_timelinecellrenderer_get_property;
+
+  widget_class->realize = pitivi_timelinecellrenderer_realize;
+  widget_class->expose_event = pitivi_timelinecellrenderer_expose;
+  widget_class->size_request = pitivi_timelinecellrenderer_size_request;
+  widget_class->size_allocate = pitivi_timelinecellrenderer_size_allocate;
   
   /* Install the properties in the class here ! */
-  g_object_class_install_property
-    (gobject_class,
-     PITIVI_TML_LAYER_PROPERTY,
-     g_param_spec_string ("layer",
-			  "Layer",
-			  "Layer",
-			  NULL,
-			  (G_PARAM_READABLE|G_PARAM_WRITABLE)));
   
-  g_object_class_install_property (G_OBJECT_CLASS(klass),  PITIVI_TML_HEIGHT_PROPERTY,
+  g_object_class_install_property (G_OBJECT_CLASS (gobject_class),  PITIVI_TML_HEIGHT_PROPERTY,
 				   g_param_spec_int("height","height","height",
 						    G_MININT,G_MAXINT,0,G_PARAM_READWRITE));
   
-  g_object_class_install_property (G_OBJECT_CLASS(klass), PITIVI_TML_WIDTH_PROPERTY,
+  g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PITIVI_TML_WIDTH_PROPERTY,
 				   g_param_spec_int("width","width","width",
 						    G_MININT,G_MAXINT,0,G_PARAM_READWRITE));
   
-  g_object_class_install_property (G_OBJECT_CLASS(klass), PITIVI_TML_TYPE_LAYER_PROPERTY,
+  g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PITIVI_TML_TYPE_LAYER_PROPERTY,
 				   g_param_spec_int ("type","type","type",
 						     G_MININT, G_MAXINT, 0,G_PARAM_READWRITE));
-  
-  cell_class->get_size = pitivi_timelinecellrenderer_get_size;
-  cell_class->render   = pitivi_timelinecellrenderer_render;
 }
 
 GType
@@ -342,7 +340,7 @@ pitivi_timelinecellrenderer_get_type (void)
 	0,			/* n_preallocs */
 	pitivi_timelinecellrenderer_instance_init	/* instance_init */
       };
-      type = g_type_register_static (GTK_TYPE_CELL_RENDERER,
+      type = g_type_register_static (GTK_TYPE_WIDGET,
 				     "PitiviTimelineCellRendererType", &info, 0);
     }
 
