@@ -338,6 +338,9 @@ pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_
 
   self->private = g_new0(PitiviTimelineCellRendererPrivate, 1);
   
+  // Motion notify Event
+  gtk_widget_set_events (GTK_WIDGET (self), GDK_POINTER_MOTION_MASK | gtk_widget_get_events (GTK_WIDGET (self)));
+  
   /* initialize all public and private members to reasonable default values. */ 
   
   self->private->dispose_has_run = FALSE;
@@ -545,7 +548,7 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   widget_class->configure_event = pitivi_timelinecellrenderer_configure_event;
   widget_class->button_press_event = pitivi_timelinecellrenderer_button_press_event;
   widget_class->button_release_event = pitivi_timelinecellrenderer_button_release_event;
-
+  
   /* Container Properties */
   
   container_class->remove = pitivi_timelinecellrenderer_remove; 

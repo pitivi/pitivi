@@ -346,11 +346,12 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
       
       // Right View
       
-      Rseparators = gtk_hseparator_new ();
-      gtk_widget_set_usize (cell, FIXED_WIDTH, FIXED_HEIGHT);
-      g_signal_connect_swapped (G_OBJECT (cell), "motion_notify_event",
+      g_signal_connect_swapped (G_OBJECT (GTK_LAYOUT (cell)), "motion_notify_event",
 				G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
 				G_OBJECT (self->private->hruler));
+      
+      Rseparators = gtk_hseparator_new ();
+      gtk_widget_set_usize (cell, FIXED_WIDTH, FIXED_HEIGHT);
       gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), cell, FALSE, FALSE, 0);
       gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), Rseparators, FALSE, FALSE, 0);
       gtk_widget_set_usize (Rseparators, -1, 5);
