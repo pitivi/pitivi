@@ -1,5 +1,5 @@
 /* XPM */
-static char * backward_xpm[] = {
+static char * blank_xpm[] = {
 "12 12 2 1",
 " 	c None",
 ".	c #FFFFFF",
