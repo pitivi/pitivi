@@ -471,11 +471,12 @@ show_video_media (GtkWidget *widget)
   PitiviThumbTab	**thumb_tab;
   gint64		start, stop;
   gint			height, width_total;
+  gint			nbthumb;
 
-  width_total = GTK_WIDGET (this->track)->allocation.width;
-  height = GTK_WIDGET (this->track)->allocation.height;
+  width_total = GTK_WIDGET (this)->allocation.width;
+  height = GTK_WIDGET (this)->allocation.height;
   pitivi_timelinemedia_get_media_start_stop (this, &start, &stop);
-  thumb_tab = pitivi_sourcefile_get_vthumb (this->sourceitem->srcfile, start, stop);
+  thumb_tab = pitivi_sourcefile_get_vthumb (this->sourceitem->srcfile, start, stop, &nbthumb);
 
   PITIVI_DEBUG ("MEDIA[%lld->%lld]", start, stop);
   PITIVI_DEBUG ("AREA_SIZE: (%dx%d)", width_total, height);
@@ -489,9 +490,14 @@ show_video_media (GtkWidget *widget)
 
     PITIVI_DEBUG ("THUMB WIDTH: %d / OLD : %d", thumb_width, gdk_pixbuf_get_width (thumb_tab[0]->pixbuf));
 
-    for (cpt = 0, X = 0; thumb_tab[cpt] && ((width_total - X) > 0); cpt++) {
+    for (cpt = 0, X = 0; (cpt < nbthumb) && ((width_total - X) > 0); cpt++) {
       guint x;
 
+      PITIVI_DEBUG ("this->track:%p, cpt:%d , adress(thumb_tab[cpt]):%p",
+		    this->track, cpt,
+		    &(thumb_tab[cpt]->time));
+      PITIVI_DEBUG ("thumb_tab[%d]->time = %lld  start:%lld",
+		    cpt, thumb_tab[cpt]->time, start);
       x = convert_time_pix (this->track, 
 			    thumb_tab[cpt]->time - start);
 

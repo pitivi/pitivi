@@ -255,10 +255,11 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
     establish_length (sf);
   }
 
-  PITIVI_DEBUG("video_handoff %lld:%02lld:%03lld",
-	       GST_M_S_M(GST_BUFFER_TIMESTAMP(buf)));
-  if ((GST_CLOCK_TIME_IS_VALID(GST_BUFFER_TIMESTAMP(buf))) 
-      && (GST_BUFFER_TIMESTAMP(buf) >= sf->private->vlastcaptured) &&
+  PITIVI_DEBUG("video_handoff %lld:%02lld:%03lld, vlastcaptured %lld:%02lld:%03lld",
+	       GST_M_S_M(GST_BUFFER_TIMESTAMP(buf)),
+	       GST_M_S_M(sf->private->vlastcaptured));
+  //      && (GST_BUFFER_TIMESTAMP(buf) >= sf->private->vlastcaptured) &&
+  if ((GST_CLOCK_TIME_IS_VALID(GST_BUFFER_TIMESTAMP(buf))) &&
       (GST_BUFFER_TIMESTAMP(buf) >= 0)) {
     gchar	*filename;
     int		fd;
@@ -286,11 +287,14 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
     sf->private->cacheidx++;
   }
   /* If audio caps is not fixed, carry on normally */
-  if (sf->private->audiopad && (gst_caps_is_fixed(gst_pad_get_caps(sf->private->audiopad)))) {
+  if (sf->private->videopad && (gst_caps_is_fixed(gst_pad_get_caps(sf->private->videopad)))) {
     if (sf->private->vlastcaptured < sf->length) {
       if (!(gst_element_seek (element, GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH,
 			      sf->private->vlastcaptured)))
 	PITIVI_WARNING ("Error seeking to %lld", (signed long long int) sf->private->vlastcaptured);
+      else
+	PITIVI_DEBUG ("Seeked to %lld",
+		      (signed long long int) sf->private->vlastcaptured);
     } else
       gst_element_set_eos (GST_ELEMENT (gst_element_get_parent (element)));
   }
@@ -498,11 +502,14 @@ pitivi_sourcefile_get_thumb_at (PitiviSourceFile *sf, gint nb)
  */
 
 PitiviThumbTab **
-pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop)
+pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop, gint *count)
 {
   int	i = 0;
+  int	nb = 0;
   PitiviThumbTab	**res = NULL;
 
+  PITIVI_DEBUG ("start:%lld, stop:%lld",
+		start, stop);
   sf->nbthumbs = sf->private->cacheidx;
   if (stop > sf->length)
     stop = sf->length;
@@ -519,10 +526,13 @@ pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop)
       }
       if (!res) /* Setting first one */
 	res = &(sf->private->vthumb[i]);
+      nb++;
     } else if (sf->private->vcache[i]->time >= stop)
       break; /* went too far */
     i++;
   }
+  PITIVI_DEBUG ("Returning Table of %d thumbnails...", nb);
+  *count = nb;
   return res;
 }
 
@@ -632,6 +642,7 @@ pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp)
 {
   PitiviSourceFile	*sourcefile;
   gchar			**tab;
+  gint			nbthumb;
 
   sourcefile = (PitiviSourceFile *) g_object_new(PITIVI_SOURCEFILE_TYPE,
 						 "filename",
@@ -653,7 +664,7 @@ pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp)
   }
 
   sourcefile->pipeline = pitivi_sourcefile_bin_new (sourcefile, IS_AUDIO_VIDEO, sourcefile->private->mainapp);
-  sourcefile->thumbs = pitivi_sourcefile_get_vthumb (sourcefile, 0LL, sourcefile->length);
+  sourcefile->thumbs = pitivi_sourcefile_get_vthumb (sourcefile, 0LL, sourcefile->length, &nbthumb);
   return sourcefile;
 }
 
