@@ -1,0 +1,119 @@
+launch gst-inspect gui
+http://gstreamer.freedesktop.org/data/doc/gstreamer/head/gstreamer/html/GstRegistry.html
+Quelques recommandations avant de se lancer dans le code sans 
+réfléchir : 
+ 
+- respecter la norme de programmation comme suit : 
+ 
+- un objet ou widget gtk a un fichier et a un header : 
+  example : je fais une menubar donc 
+       fichier source C : 
+           - gpi_menubar.c 
+       fichier header .h 
+           - gpi_menubar.h 
+   Le nommage de fichier respecte la contrainte suivante : gpi_"nom de  
+la widget".extension 
+Pkoi gpi : pour g (gstreamer, gtk, glib, gnome) et pi pour pitivi. 
+Le respect de ce système de nommage permet de différencier nos 
+fonctions  
+de gstreamer et autres. 
+ 
+- Dans le fichier source C : 
+   Contraintes à respecter : 
+       - entête à epita regarder les sources gip_gui (c'est assez  
+explicite). 
+       - ne pas oublier les defines conditionnelles c++ 
+         dans lequel on insère du code source. 
+         ex : ouverture -> #ifdef __cplusplus 
+                   extern "C" { 
+                   #endif /* __cplusplus */   
+                                          Code Source ...... 
+                                      #ifdef __cplusplus 
+                           } 
+                   #endif /* __cplusplus */ 
+ 
+       - nommage des fonctions : 
+            gpi_"nom_de_la_fonction" () 
+            Le nom de la fonction doit etre en anglais et le plus  
+explicite possible. 
+            example : je fais une menubar, créer une menubar : 
+            GtkWidget * gpi_menubar_new (); 
+                - Dans les fichier headers .h 
+                    Contraintes à respecter : 
+                  s'inspirer du code sources de gtkDial, et des sources  
+sur le cvs. 
+       recommendations : 
+       - Décalaration : 
+               #ifndef __GPI_MENBAR_H__ 
+               # define __GPI_MENBAR_H__ 
+                                          Déclaration des types , defines 
+                                                                         
+#endif /* __GPI_MENBAR_H__ */ 
+       - NE PAS OUBLIER d'implémenter dans le .h les defines de CAST 
+des  
+WIDGETS 
+         examples : #define GPI_MENUBAR_TYPE 
+gpi_menubar_get_type() 
+                #define .... 
+                #define .... 
+ 
+         Les structures et les types 
+                            Deux choses importantes en ce qui concnerne  
+les types et les strcutures : 
+                              décalaration d'une strcuture : 
+                                struct _GPIMenubar 
+               { 
+                 GtkWidget *widget; 
+                 .... 
+               }; 
+                                                      typedef struct  
+_GpiMenubar GpiMenubar; 
+                              Header des fonctions .... . 
+ 
+           le gobject est une simulation de l'objet donc 
+           les méthodes et les propriétés sont dissociées : 
+                        Ainsi il faudra déclarer une structure ou vous  
+aurez à stocker 
+           vos objets style par example : 
+                                  partie déclaration des objets /  
+propriétés. 
+ 
+               struct _GpiMenubar 
+               { 
+                  GtkContainer parent; 
+                  GtkWidget *window; 
+                  GtkUIManager ui_manager; 
+                  GtkWidget *menu; 
+               }; 
+                                  partie déclaration des méthodes. 
+               Cette partie ne contient que des pointers sur fonctions 
+               à part le parentClass                        
+               struct _GpiMenuBarClass 
+               { 
+                 GtkContainerClass parent_class; 
+                 void (*show)(); 
+                 ..... 
+               } 
+ 
+               Ainsi de suite. 
+ 
+       Point important la dérivation et l'heritage. 
+       Pour l'instant la dérivation va plutot se faire sur la widget  
+GtkContainer. 
+       Ce qui veut en gros dire qu'a chaque fois que vous créez une  
+widget vous 
+       devez mettre dans la première ligne de la structure de la  
+propriété l'objet hérité. 
+       et dans la classe également. 
+ 
+       example : 
+                          struct _GpiMenubar 
+               { 
+                 ----->GtkContainer parent; 
+                 ... 
+               } 
+                                                     struct _GpiMenubar 
+               { 
+                 ----->GtkContainerClass parent; 
+                 ... 
+               } 

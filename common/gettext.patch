@@ -1,0 +1,11 @@
+--- po/Makefile.in.in.orig	2004-01-09 16:35:54.000000000 +0100
++++ po/Makefile.in.in	2004-01-09 16:36:43.000000000 +0100
+@@ -11,6 +11,9 @@
+ PACKAGE = @PACKAGE@
+ VERSION = @VERSION@
+ 
++# thomas: add GETTEXT_PACKAGE substitution as used in Makevars
++GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
++
+ SHELL = /bin/sh
+ @SET_MAKE@

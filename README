@@ -1,0 +1,6 @@
+Pitivi is a  opensource nonlinear multimedia editor for GStreamer.
+
+This Simple first GUI demonstrates :
+- a simple minimum interface
+- Playing samples of multimedia sources 
+- Managing MDI

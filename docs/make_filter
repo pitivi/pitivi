@@ -1,0 +1,38 @@
+#!/bin/sh
+
+Template=$1;
+srcfile=$2;
+
+if test x"$1" = x ; then
+	echo "$0 Objectname [templatetype]\n";
+	echo "  creates pitivi-objectname.{c,h} , a clean base GObject class,\n";
+	exit 1;
+fi
+
+if test x"$2" = x ; then
+	srccfile="pitivi-classtemplate.c"
+	srchfile="pitivi-classtemplate.h"
+else
+    srccfile=$2.c
+    srchfile=$2.h
+fi
+
+TEMPLATE=`echo $Template | tr a-z A-Z`
+template=`echo $Template | tr A-Z a-z`
+
+sed \
+    -e "s/Template/$Template/g" \
+    -e "s/TEMPLATE/$TEMPLATE/g" \
+    -e "s/temp_late/$template/g" \
+    -e "s/template/$template/g" \
+    $srccfile > pitivi-$template.c.tmp && mv pitivi-$template.c.tmp pitivi-$template.c
+
+sed \
+    -e "s/Template/$Template/g" \
+    -e "s/TEMPLATE/$TEMPLATE/g" \
+    -e "s/temp_late/$template/g" \
+    -e "s/template/$template/g" \
+    $srchfile > pitivi-$template.h.tmp && mv pitivi-$template.h.tmp pitivi-$template.h
+
+
+
