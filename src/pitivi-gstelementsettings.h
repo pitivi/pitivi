@@ -54,8 +54,8 @@ struct _PitiviGstElementSettings
   GtkVBox parent;
 
   /* instance public members */
-  gchar *elm;
-
+  gchar		*elm;
+  GtkWidget	*Table;
 
   /* private */
   PitiviGstElementSettingsPrivate *private;
