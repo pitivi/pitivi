@@ -76,4 +76,9 @@ GType pitivi_sourcelistwindow_get_type (void);
 PitiviSourceListWindow*
 pitivi_sourcelistwindow_new(PitiviMainApp *mainapp, PitiviProject *project);
 
+/*internal functions*/
+GstElement     	*parser_fct(PitiviSourceListWindow *self, GstElement *src,
+			    GstElement **element, GList *parserlist, gchar *filename);
+gboolean	decoder_fct(PitiviSourceListWindow *self, GstElement *src, 
+			    GstElement **element, GList *decoderlist, gchar *filename);
 #endif

@@ -37,9 +37,6 @@
 #include "pitivi-dragdrop.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-viewerwindow.h"
-#include "../pixmaps/bg.xpm"
-#include "pitivi-toolboxwindow.h"
-#include "pitivi-toolbox.h"
 
 static PitiviProjectWindowsClass *parent_class = NULL;
 
@@ -89,10 +86,8 @@ struct _PitiviSourceListWindowPrivate
   guint		newfolder_signal_id;
 
   /* drag'n'drop variables */
-  gchar		 *dndtreepath;
-  gint		 dndfilepos;
-  /* Main App */
-  PitiviMainApp  *mainapp;
+  gchar		*dndtreepath;
+  gint		dndfilepos;
 };
 
 /*
@@ -119,6 +114,7 @@ void		on_row_activated (GtkTreeView        *treeview,
 				  gpointer            userdata);
 PitiviSourceFile *
 pitivi_sourcelistwindow_get_file(PitiviSourceListWindow *self);
+void	test_video_length(PitiviSourceListWindow *self, GstElement *lastelm);
 
 enum
   {
@@ -584,7 +580,7 @@ void	have_type_handler(GstElement *typefind, guint probability,
 
 void	eof(GstElement *src)
 {
-  //g_printf("== have eos ==\n");
+  g_printf("== have eos ==\n");
 }
 
 void	new_pad_created(GstElement *parse, GstPad *pad, gpointer data)
@@ -608,17 +604,203 @@ pitivi_sourcelistwindow_get_pad_list(GstElement *elm)
 
 }
 
-void	test_video_length(PitiviSourceListWindow *self, GstElement *lastelm);
+GstElement	*add_decoder_for_demux(PitiviSourceListWindow *self,
+			      GList *decoderlist, 
+			      GstElement *parser,  
+			      GstElement *thread, 
+			      gint nb_thread, GstPad *pad,
+			      GstElement **element)
+{
+  GstElement	*decoder;
+  GstElement	*queue;
+  gchar		*name;
+  gboolean	flag;
+
+  flag = FALSE;
+  if (!thread)
+    {
+      flag = TRUE;
+      name = g_strdup_printf("thread%d", nb_thread);
+      
+      /* create a thread for the decoder pipeline */
+      thread = gst_thread_new(name);
+      g_assert(thread != NULL);
+      
+      g_free(name);
+    }
+  g_printf("adding decoder [%s] after demux\n", decoderlist->data);
+  
+  /* choose the first decoder */
+  name = g_strdup_printf("decoder%d", nb_thread);
+  decoder = gst_element_factory_make((gchar*)decoderlist->data, name);
+  
+  g_assert(decoder != NULL);
+  g_free(name);
+  
+  self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(decoder, "src")));
+  self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(decoder, "src"));
+  g_printf("mediatype for decoder ==> [%s]\n", self->private->mediatype);
+  //pitivi_sourcelistwindow_get_pad_list(decoder);
+  if (flag)
+    {
+      /* create a queue for link the pipeline with the thread */  
+      name = g_strdup_printf("queue%d", nb_thread);
+      queue = gst_element_factory_make("queue", name);
+      g_assert(queue != NULL);
+      g_free(name);
+      
+      /* add the elements to the thread */
+      gst_bin_add_many(GST_BIN(thread), queue, decoder, NULL);
+      gst_element_add_ghost_pad(thread, gst_element_get_pad(queue, "sink"), "sink");
+      
+      /* link the elements */
+      gst_element_link(queue, decoder);
+      
+      /* add the thread to the main pipeline */
+      gst_bin_add(GST_BIN(self->private->pipeline), thread);
+      
+      /* link the pad to the sink pad of the thread */
+      gst_pad_link(pad, gst_element_get_pad(thread, "sink"));
+    }
+  else /* we already have a thread */
+    {
+      /* add decoder to the thread */
+      gst_bin_add(GST_BIN(thread), decoder);	       
+      /* link parser with the decoder */
+      gst_element_link(parser, decoder);
+    }
+  
+  *element = decoder;
+  return thread;
+  
+}
+
+GstElement	*add_parser_for_demux(PitiviSourceListWindow *self, 
+			     GList *parserlist, GstElement *thread,
+			     gint nb_thread, GstPad *pad,
+			     GstElement **element, 
+			     GstElement * decoder)
+{
+  GstElement	*parser;
+  GstElement	*queue;
+  GstCaps	*caps;
+  gchar		*name;
+  gboolean	flag;
+
+
+  flag = FALSE;
+  if (!thread)
+    {
+      flag = TRUE;
+      name = g_strdup_printf("thread%d", nb_thread);
+      
+      /* create a thread to add the parser in the pipeline */
+      thread = gst_thread_new(name);
+      g_assert(thread != NULL);
+      
+      g_free(name);
+    }
+  g_printf("adding parser [%s] after demux ==> %s\n", (gchar*)parserlist->data);
+
+  /* create the parser */
+  name = g_strdup_printf("parser_%d", nb_thread);
+  parser = gst_element_factory_make((gchar*)parserlist->data, name);
+  g_free(name);
+  g_assert(parser != NULL);
+  
+  /* set media property and caps */
+  self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(parser, "src")));
+  self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(parser, "src"));
+  g_printf("mediatype for parser ==> [%s]\n", self->private->mediatype);
+
+  //pitivi_sourcelistwindow_get_pad_list(parser);
+  
+  caps = self->private->mediacaps;
+  
+  if (flag)
+    {
+      /* create a queue for link the pipeline with the thread */    
+      name = g_strdup_printf("queue%d", nb_thread);
+      queue = gst_element_factory_make("queue", name);
+      g_assert(queue != NULL);
+      g_free(name);
+      
+      /* add the elements to the thread */
+      gst_bin_add_many(GST_BIN(thread), queue, parser, NULL);
+      /* add ghost pad to the thread */
+      gst_element_add_ghost_pad(thread, gst_element_get_pad(queue, "sink"), "sink");
+      /* link the elements */
+      gst_element_link(queue, parser);
+      /* add the thread to the main pipeline */
+      gst_bin_add(GST_BIN(self->private->pipeline), thread);
+      /* link the pad to the sink pad of the thread */
+      gst_pad_link(pad, gst_element_get_pad(thread, "sink"));
+    }
+  else /* we already have a thread */
+    {
+      /* add parser to it */
+      gst_bin_add(GST_BIN(thread), parser);
+      /* link the decoder with the parser */
+      gst_element_link(decoder, parser);
+    }
+  *element = parser;
+  return thread;
+}
+
+void	create_thread_ghost_pad(PitiviSourceListWindow *self, GstElement *lastelement, gchar *caps_str)
+{
+
+  if (lastelement)
+    {
+      GstPad	*temppad;
+      
+      if (strstr(caps_str, "video")) /* video*/
+	{
+	  GstElement	*sink;
+	  temppad = gst_element_add_ghost_pad(self->private->pipeline, gst_element_get_pad(lastelement, "src"),
+					      "vsrc");
+	  g_assert(temppad != NULL);
+	  g_printf("adding ghost pad for video\n");
+	  test_video_length(self, lastelement);
+	}
+      else /* audio */
+	{
+	  temppad = gst_element_add_ghost_pad(self->private->pipeline, gst_element_get_pad(lastelement, "src"),
+					      "asrc");
+	  g_assert(temppad != NULL);
+	  g_printf("adding ghost pad for audio\n");
+	}
+    }
+}
+
+void	create_raw_ghost_pad(PitiviSourceListWindow *self, GstPad *pad, gchar *caps_str)
+{
+  GstPad	*temppad;
+	  
+  if (strstr(caps_str, "video")) /* video*/
+    {
+      temppad = gst_element_add_ghost_pad(self->private->pipeline, pad,
+					  "vsrc");
+      g_assert(temppad != NULL);
+      g_printf("linking raw pad to vsrc\n");
+    }
+  else
+    {
+      temppad = gst_element_add_ghost_pad(self->private->pipeline, pad,
+					  "asrc");
+      g_assert(temppad != NULL);
+      g_printf("linking raw pad to asrc\n");
+    }
+}
 
 GstElement*	
-pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filename)
+finalize_pipeline_for_demuxer(PitiviSourceListWindow *self, gchar *filename)
 {
   PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
-  GstElement	*demuxer;
   GstElement	*thread;
-  GstElement	*queue;
   GstElement	*decoder;
   GstElement	*parser;
+//GstElement	*queue;
   GstElement	*lastelement;
   GstPad	*pad;
   GstCaps	*caps;
@@ -626,191 +808,45 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
   GSList	*padlist;
   GList		*parserlist;
   gchar		*caps_str;
-  gchar		*name;
   static gint	thread_number = 0;
-  gboolean	flag;
-
-  g_printf("pitivi_sourcelistwindow_add_decoder start\n");
-  gst_element_set_state(GST_ELEMENT(self->private->pipeline), GST_STATE_PLAYING);
+  
+  gst_element_set_state(GST_ELEMENT(self->private->pipeline), GST_STATE_PAUSED);
   padlist = self->private->padlist;
   while (padlist)
     {
       g_printf("iterate from padlist\n");
       thread = NULL;
-      flag = FALSE;
       pad = (GstPad*)padlist->data;
-
       caps = gst_pad_get_caps(pad);
-  
       caps_str = gst_caps_to_string(caps);
-      
       self->private->mediatype = caps_str;
-      
       thread = decoder = parser = lastelement = NULL;
       g_printf("caps to search for %s\n", gst_caps_to_string(caps));
+
       while (pitivi_sourcelistwindow_check_for_base_type(self->private->mediatype))
 	{
-	  g_printf("caps ==> %s\n", gst_caps_to_string(caps));
 	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )), caps, DEC_LIST);
-	  
-	  flag = FALSE;
 	  if (decoderlist)
 	    {
-	      if (!thread)
-		{
-		  flag = TRUE;
-		  name = g_strdup_printf("thread%d", thread_number);
-		  
-		  /* create a thread for the decoder pipeline */
-		  thread = gst_thread_new(name);
-		  g_assert(thread != NULL);
-		   
-		  g_free(name);
-		}
-	      g_printf("adding decoder [%s] after demux\n", decoderlist->data);
-
-	      /* choose the first decoder */
-	      name = g_strdup_printf("decoder%d", thread_number);
-	      decoder = gst_element_factory_make((gchar*)decoderlist->data, name);
-
-	      g_assert(decoder != NULL);
-	      g_free(name);
-	      
-	      
-	      self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(decoder, "src")));
-	      self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(decoder, "src"));
-	       
-	      /* g_printf("ouput caps ==> %s\n", self->private->mediatype); */
-	      pitivi_sourcelistwindow_get_pad_list(decoder);
-	      if (flag)
-		{
-		  /* create a queue for link the pipeline with the thread */
-		  
-		  name = g_strdup_printf("queue%d", thread_number);
-		  queue = gst_element_factory_make("queue", name);
-		  g_assert(queue != NULL);
-		  g_free(name);
-		  
-		  /* add the elements to the thread */
-		  gst_bin_add_many(GST_BIN(thread), queue, decoder, NULL);
-		  // gst_element_add_ghost_pad(thread, gst_element_get_pad(queue, "sink"), "sink");
-		  /* link the elements */
-		  gst_element_link(queue, decoder);
-		  
-		  /* add the thread to the main pipeline */
-		  gst_bin_add(GST_BIN(self->private->pipeline), thread);
-		  
-		  /* link the pad to the sink pad of the thread */
-		  gst_pad_link(pad, gst_element_get_pad(queue, "sink"));
-		  
-		}
-	      else
-		{
-		  gst_bin_add(GST_BIN(thread), decoder);	       
-		  
-		  /* link the elements */
-		  gst_element_link(parser, decoder);
-		}
-	      
-	      lastelement = decoder;
+	      thread = add_decoder_for_demux(self, decoderlist, parser,
+					     thread, thread_number, 
+					     pad, &lastelement);					      
 	    }
 	  else
 	    {
 	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(pitivi_mainapp_settings( mainapp )), caps, DEC_LIST);
-	      
-	      flag = FALSE;
-	      
 	      if (parserlist)
 		{
-		
-		  if (!thread)
-		    {
-		      flag = TRUE;
-		      name = g_strdup_printf("thread%d", thread_number);
-		  
-		      /* create a thread for the decoder pipeline */
-		      thread = gst_thread_new(name);
-		      g_assert(thread != NULL);
-		  
-		      g_free(name);
-		    }
-		 
-
-		  g_printf("adding parser [%s] after demux ==> %s\n", (gchar*)parserlist->data);
-		  name = g_strdup_printf("parser_%s", filename);
-		  parser = gst_element_factory_make((gchar*)parserlist->data, name);
-		  g_free(name);
-		  g_assert(parser != NULL);
-		  
-		  self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(parser, "src")));
-		  self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(parser, "src"));
-/* 		  g_printf("ouput caps ==> %s\n", self->private->mediatype); */
-		  pitivi_sourcelistwindow_get_pad_list(parser);
-		  //g_printf("parser media type ==> %s\n", self->private->mediatype);
-		  caps = self->private->mediacaps;
-
-		  if (flag)
-		    {
-		      /* create a queue for link the pipeline with the thread */
-		      
-		      name = g_strdup_printf("queue%d", thread_number);
-		      queue = gst_element_factory_make("queue", name);
-		      g_assert(queue != NULL);
-		      g_free(name);
-		      
-		      /* add the elements to the thread */
-		      gst_bin_add_many(GST_BIN(thread), queue, parser, NULL);
-		      /*
-		      gst_element_add_ghost_pad(thread, gst_element_get_pad(queue,
-									"sink"),
-						"sink");
-		      */
-		      /* link the elements */
-		      gst_element_link(queue, parser);
-		  
-		      /* add the thread to the main pipeline */
-		      gst_bin_add(GST_BIN(self->private->pipeline), thread);
-		  
-		      /* link the pad to the sink pad of the thread */
-		      gst_pad_link(pad, gst_element_get_pad(queue, "sink"));
-		      
-		    }
-		  else
-		    {
-		      gst_bin_add(GST_BIN(thread), parser);
-		      		      
-		      gst_element_link(decoder, parser);
-
-		    }
-		  lastelement = parser;
-		  
+		  thread = add_parser_for_demux(self, parserlist, thread,
+						thread_number, pad, &lastelement, decoder); 
 		} 
 	    }
 	}
       //g_printf("setting to READY state\n");
       pitivi_sourcelistwindow_set_media_property(self, caps_str);
 
-      if (lastelement)
-	{
-	  GstPad	*temppad;
-	 
-	  if (strstr(caps_str, "video")) /* video*/
-	    {
-	      GstElement	*sink;
-	      temppad = gst_element_add_ghost_pad(self->private->pipeline, gst_element_get_pad(lastelement, "src"),
-				    "vsrc");
-	      g_assert(temppad != NULL);
-	      g_printf("adding ghost pad for video\n");
-	      test_video_length(self, lastelement);
-	    }
-	  else /* audio */
-	    {
-	      temppad = gst_element_add_ghost_pad(self->private->pipeline, gst_element_get_pad(lastelement, "src"),
-						  "asrc");
-	      g_assert(temppad != NULL);
-	      g_printf("adding ghost pad for audio\n");
-	    }
-	}
+      create_thread_ghost_pad(self, lastelement, caps_str);
+
       if (thread)
 	{
 	  gst_element_set_state(GST_ELEMENT(thread), GST_STATE_READY);
@@ -818,22 +854,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	}
       else /* we have a raw data pad */
 	{
-	  GstPad	*temppad;
-	  
-	  if (strstr(caps_str, "video")) /* video*/
-	    {
-	      temppad = gst_element_add_ghost_pad(self->private->pipeline, pad,
-						  "vsrc");
-	      g_assert(temppad != NULL);
-	      g_printf("linking raw pad to vsrc\n");
-	    }
-	  else
-	    {
-	      temppad = gst_element_add_ghost_pad(self->private->pipeline, pad,
-						  "asrc");
-	      g_assert(temppad != NULL);
-	      g_printf("linking raw pad to asrc\n");
-	    }
+	  create_raw_ghost_pad(self, pad, caps_str);
 	}
       
       padlist = padlist->next;
@@ -874,36 +895,149 @@ void	test_video_length(PitiviSourceListWindow *self, GstElement *lastelm)
   gst_element_set_state(self->private->mainpipeline, GST_STATE_PAUSED);
 }
 
-gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
+
+gboolean	demuxer_fct(PitiviSourceListWindow * self, GstElement *src,
+			    GList *demuxlist, gchar *filename,
+			    GstElement *parser)
 {
-  GList *elements;
-  GstElementFactory *factory;
-  GList	*plugins;
+  GstElement	*demux;
+  gchar		*tmpname;
+  gint		i;
+
+  /* choose the first demuxer */
+  g_printf("adding demuxer [%s]\n", demuxlist->data);
+  tmpname = g_strdup_printf("demux_%s", filename);
+  demux = gst_element_factory_make((gchar*)demuxlist->data, tmpname);
+  g_free(tmpname);
+  g_assert(demux != NULL);
+	  
+  /* add the demuxer to the main pipeline */
+  gst_bin_add(GST_BIN(self->private->pipeline), demux);
+	  
+  g_signal_connect(G_OBJECT(demux), "new_pad",
+		   G_CALLBACK(new_pad_created), self);
+	  
+  /* link element */
+  if (parser)
+    gst_element_link(parser, demux);
+  else
+    gst_element_link(src, demux);
+  
+  /* we need to run this part only for a demuxer */
+
+  gst_element_set_state(GST_ELEMENT(self->private->mainpipeline), GST_STATE_PLAYING);
+  
+  for (i = 0; i < 50; i++)
+    {
+      gst_bin_iterate(GST_BIN(self->private->mainpipeline));
+      //g_printf("iterate pipeline\n");
+    }
+	  
+  finalize_pipeline_for_demuxer(self, filename);
+	  
+
+  gst_element_set_state(GST_ELEMENT(self->private->mainpipeline), 
+			GST_STATE_PAUSED);
+	  
+  /* we have already set all ghost pad here */
+  return TRUE;
+}
+
+GstElement     	*parser_fct(PitiviSourceListWindow *self, GstElement *src,
+			GstElement **element, GList *parserlist, gchar *filename)
+{
+  GstElement	*parser;
+  GstElement	*lastelement;
+  gchar		*tmpname;
+
+  lastelement = *element;
+  g_printf("adding parser [%s] for this caps ==> %s\n", 
+	   parserlist->data, gst_caps_to_string(self->private->mediacaps));
+  tmpname = g_strdup_printf("parser_%s", filename);
+  parser = gst_element_factory_make((gchar*)parserlist->data, tmpname);
+  g_free(tmpname);
+  g_assert(parser != NULL);
+
+  /*add the parser to the main pipeline */
+  gst_bin_add(GST_BIN(self->private->pipeline), parser);
+
+  gst_element_link(src, parser);
+		  
+  self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(parser, "src")));
+  self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(parser, "src"));
+  pitivi_sourcelistwindow_set_media_property(self, self->private->mainmediatype);
+  lastelement = parser;
+  return parser;
+}
+
+gboolean	decoder_fct(PitiviSourceListWindow *self, GstElement *src, 
+			      GstElement **element, GList *decoderlist, gchar *filename)
+{
+  GstElement	*decoder;
+  gchar		*tmpname;
   GstEvent	*event;
   GstFormat	format;
   gint64	value;
-  GstElement	*src;
-  GstElement	*demux;
-  GstElement	*decoder;
-  GstElement	*parser;
-  GstElement	*thread;
   GstElement	*lastelement;
-
-  GList		*demuxlist;
-  GList		*decoderlist;
-  GList		*parserlist;
-  GstCaps	*caps;
-  GstCaps	*caps_sav;
-  gchar		*tmpname;
-  guint16	id;
-  gint		i;
   gboolean	element_found;
-  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
-  
+  lastelement = *element;
 
-  /* Init some variables */
-  demux = decoder = parser = lastelement = NULL;
-  self->private->padlist = NULL;
+  element_found = 0;
+  /* choose the first decoder */
+  g_printf("adding a decoder [%s] for this caps ==> %s\n", 
+	    decoderlist->data, gst_caps_to_string(self->private->mediacaps));
+  tmpname = g_strdup_printf("decoder_%s", filename);
+  decoder = gst_element_factory_make((gchar*)decoderlist->data, tmpname);
+  g_free(tmpname);
+  g_assert(decoder != NULL);
+	      
+  /*add the decoder to the main pipeline */
+  gst_bin_add(GST_BIN(self->private->pipeline), decoder);
+	      
+  gst_element_link(src, decoder);
+	  
+  self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(decoder, "src")));
+  self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(decoder, "src"));
+	      
+  pitivi_sourcelistwindow_set_media_property(self, self->private->mainmediatype);
+
+  format = GST_FORMAT_TIME;
+  gst_element_query(decoder, GST_FORMAT_TIME, &format, &value);
+  g_printf("format ==> %d\ntime ==> %lld\n", format, (value / GST_SECOND) / 60);
+  element_found = TRUE;
+  lastelement = decoder;
+
+  return element_found;
+}
+
+void	create_ghost_pad(PitiviSourceListWindow *self, GstElement *lastelement)
+{
+    GstPad *temppad;
+
+    if (strstr(self->private->mediatype, "video"))
+      {
+	temppad = gst_element_add_ghost_pad(self->private->pipeline, 
+					    gst_element_get_pad(lastelement, "src"),
+					    "vsrc");
+	g_assert(temppad != NULL);
+	
+	g_printf("adding ghost pad video in the bin pipeline\n");
+      }
+    else /* audio */
+      {
+	temppad = gst_element_add_ghost_pad(self->private->pipeline, 
+					    gst_element_get_pad(lastelement, "src"),
+					    "asrc");
+	g_assert(temppad != NULL);
+	
+	g_printf("adding ghost pad audio in the bin pipeline\n");
+      }
+}
+
+GstElement	*init_pipeline(PitiviSourceListWindow *self, gchar *filename)
+{
+  GstElement	*src;
+  gchar		*tmpname;
 
   /* create a pipeline */
   tmpname = g_strdup_printf("pipeline_%s", filename);
@@ -911,158 +1045,26 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   g_free(tmpname);
   g_assert(self->private->mainpipeline != NULL);
 
+  /* create a bin */
   tmpname = g_strdup_printf("bin_%s", filename);
   self->private->pipeline = gst_bin_new(tmpname);
   g_free(tmpname);
-
   gst_bin_add(GST_BIN(self->private->mainpipeline), self->private->pipeline);
+  
   /* create a file reader */
   tmpname = g_strdup_printf("src_%s", filename);
   src = gst_element_factory_make("filesrc", tmpname);
   g_free(tmpname);
-  
   g_object_set(G_OBJECT(src), "location", filename, NULL);
-
   /* add the file reader to the pipeline */
   gst_bin_add(GST_BIN(self->private->pipeline), src);
-
   g_signal_connect(G_OBJECT(src), "eos",
 		   G_CALLBACK(eof), NULL);
+  return src;
+}
 
-  element_found = FALSE;
-  /* loop until we found a base type */
-  while (pitivi_sourcelistwindow_check_for_base_type(self->private->mediatype) && !element_found)
-    {
-      /* test if it's a container */
-      demuxlist = pitivi_settings_get_flux_container_list (G_OBJECT(pitivi_mainapp_settings( mainapp )),
-							   self->private->mediacaps, DEC_LIST);
-      /* create a demuxer if it's a container */
-      if (demuxlist)
-	{
-	  /* choose the first demuxer */
-	  g_printf("adding demuxer [%s]\n", demuxlist->data);
-	  tmpname = g_strdup_printf("demux_%s", filename);
-	  demux = gst_element_factory_make((gchar*)demuxlist->data, tmpname);
-	  g_free(tmpname);
-	  g_assert(demux != NULL);
-	  
-	  /* add the demuxer to the main pipeline */
-	  gst_bin_add(GST_BIN(self->private->pipeline), demux);
-	  
-	  g_signal_connect(G_OBJECT(demux), "new_pad",
-			   G_CALLBACK(new_pad_created), self);
-	  
-	  /* link element */
-	  if (parser)
-	    gst_element_link(parser, demux);
-	  else
-	    gst_element_link(src, demux);
-	  element_found = TRUE;
-
-	  /* we need to run this part only for a demuxer */
-
-	  gst_element_set_state(GST_ELEMENT(self->private->mainpipeline), GST_STATE_PLAYING);
-  
-	  for (i = 0; i < 50; i++)
-	    {
-	      gst_bin_iterate(GST_BIN(self->private->mainpipeline));
-	      //g_printf("iterate pipeline\n");
-	    }
-	  
-	  pitivi_sourcelistwindow_add_decoder(self, filename);
-	  
-
-	  gst_element_set_state(GST_ELEMENT(self->private->mainpipeline), 
- 				GST_STATE_PAUSED);
-	  
-	  /* we have already set all ghost pad here */
-	  lastelement = NULL;
-	}
-      else /* search for a decoder */
-	{
-	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )),
-							     self->private->mediacaps, DEC_LIST);
-	  if (decoderlist)
-	    {
-	      /* choose the first decoder */
-	      g_printf("adding a decoder [%s] for this caps ==> %s\n", 
-		       decoderlist->data,
-		       gst_caps_to_string(self->private->mediacaps));
-	      tmpname = g_strdup_printf("decoder_%s", filename);
-	      decoder = gst_element_factory_make((gchar*)decoderlist->data, tmpname);
-	      g_free(tmpname);
-	      g_assert(decoder != NULL);
-	      
-/* 	      add the decoder to the main pipeline */
-	      gst_bin_add(GST_BIN(self->private->pipeline), decoder);
-	      
-	      gst_element_link(src, decoder);
-	  
-	      self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(decoder, "src")));
-	      self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(decoder, "src"));
-	      
-	      pitivi_sourcelistwindow_set_media_property(self, self->private->mainmediatype);
-
-	      format = GST_FORMAT_TIME;
-	      gst_element_query(decoder, GST_FORMAT_TIME, &format, &value);
-	      g_printf("format ==> %d\ntime ==> %lld\n", format, (value / GST_SECOND) / 60);
-	      element_found = TRUE;
-	      lastelement = decoder;
-	    }
-	  else /* search for parser */
-	    {
-	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(pitivi_mainapp_settings( mainapp )), self->private->mediacaps, DEC_LIST);
-	      
-	      if (parserlist)
-		{
-		  g_printf("adding parser [%s] for this caps ==> %s\n", 
-			   parserlist->data, 
-			   gst_caps_to_string(self->private->mediacaps));
-		  tmpname = g_strdup_printf("parser_%s", filename);
-		  parser = gst_element_factory_make((gchar*)parserlist->data, tmpname);
-		  g_free(tmpname);
-		  g_assert(parser != NULL);
-
-/* 		  add the parser to the main pipeline */
-		  gst_bin_add(GST_BIN(self->private->pipeline), parser);
-
-		  gst_element_link(src, parser);
-		  
-		  self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(parser, "src")));
-		  self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(parser, "src"));
-		  
-		  pitivi_sourcelistwindow_set_media_property(self, self->private->mainmediatype);
-		  lastelement = parser;
-		}
-	      else
-		g_printf("no parser found\n");
-	    }
-	} 
-  
-    }
-  if (lastelement)
-    {
-      GstPad *temppad;
-
-      if (strstr(self->private->mediatype, "video"))
-	{
-	  temppad = gst_element_add_ghost_pad(self->private->pipeline, 
-					      gst_element_get_pad(lastelement, "src"),
-					      "vsrc");
-	  g_assert(temppad != NULL);
-
-	  g_printf("adding ghost pad video in the main pipeline\n");
-	}
-      else /* audio */
-	{
-	  temppad = gst_element_add_ghost_pad(self->private->pipeline, 
-					      gst_element_get_pad(lastelement, "src"),
-					      "asrc");
-	  g_assert(temppad != NULL);
-
-	  g_printf("adding ghost pad audio in the main pipeline\n");
-	}
-    }
+void	finalize_pipeline(PitiviSourceListWindow *self, GstElement *src)
+{
   /* adding fakesink */
   if (self->private->haveaudio && src)
     test_audio_length(self, src);
@@ -1072,6 +1074,74 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   gst_object_ref(GST_OBJECT(self->private->pipeline));
   gst_bin_remove(GST_BIN(self->private->mainpipeline), self->private->pipeline);
   gst_object_unref( (GstObject *) self->private->mainpipeline);
+}
+
+gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
+{
+  GList *elements;
+  GstElement	*src;
+  GstElement	*parser;
+  GstElement	*lastelement;
+
+  /*list des different media de decompression*/
+  GList		*demuxlist;
+  GList		*decoderlist;
+  GList		*parserlist;
+  gboolean	element_found;
+  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
+  
+
+  /* Init some variables */
+  parser = lastelement = NULL;
+  self->private->padlist = NULL;
+  element_found = FALSE;
+  
+  // init global
+  src = init_pipeline(self, filename);
+
+  /* loop until we found the base type */
+  while (pitivi_sourcelistwindow_check_for_base_type(self->private->mediatype) && !element_found)
+    {
+      /* test if it's a container */
+      demuxlist = pitivi_settings_get_flux_container_list (G_OBJECT(pitivi_mainapp_settings( mainapp )),
+							   self->private->mediacaps, DEC_LIST);
+      /* create a demuxer if it's a container */
+      if (demuxlist)
+	{
+	  element_found = demuxer_fct(self, src, demuxlist, filename, parser);
+	  
+	}
+      else /* search for a decoder */
+	{
+	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )), 
+							     self->private->mediacaps, DEC_LIST);
+	  if (decoderlist)
+	    {
+	      element_found = decoder_fct(self, src, &lastelement, decoderlist, filename);  
+	      
+	    }
+	  else /* search for parser */
+	    {
+	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(pitivi_mainapp_settings( mainapp )), 
+								self->private->mediacaps, DEC_LIST);
+	      
+	      if (parserlist)
+		{
+		  parser = parser_fct(self, src, &lastelement, parserlist, filename);
+
+		  element_found = 0;
+		}
+	      else
+		g_printf("no parser found\n");
+	    }
+	} 
+  
+    }
+  if (lastelement)
+    {
+      create_ghost_pad(self, lastelement);
+    }
+  finalize_pipeline(self, src);
 }
 
 void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
@@ -1135,13 +1205,10 @@ void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
   build_pipeline_by_mime(self, filename);
 
   /* restore main mime type */
-  /* g_printf("mediatype ==> %p\n", self->private->mediatype); */
   g_free(self->private->mediatype);
   self->private->mediatype = NULL;
 
-/*   g_printf("havevideo ==> %d\n", self->private->havevideo); */
-/*   g_printf("haveaudio ==> %d\n", self->private->haveaudio); */
-
+  
   if (self->private->havevideo && !self->private->haveaudio)
     self->private->mediatype = g_strdup("video");
   if (self->private->haveaudio && self->private->havevideo)
@@ -1317,8 +1384,6 @@ void	new_folder(GtkWidget *widget, gpointer data)
   /* restore original treepath */
   g_free(self->private->treepath);
   self->private->treepath = save;
-
-  
 }
 
 gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
@@ -1355,12 +1420,11 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
   sprintf(sTexte, "Ligne %d\0", i);
   sprintf(sExempleTexte, "exemple %d\0", i);
   
- /*  if (self->private->havevideo && self->private->haveaudio) */
-/*     pixbufa = gtk_widget_render_icon(self->private->listview,  */
-/* 				     PITIVI_STOCK_EFFECT_SOUNDTV, */
-/* 				     GTK_ICON_SIZE_MENU, NULL); */
-/*   else */ 
-  if (self->private->havevideo)
+   if (self->private->havevideo && self->private->haveaudio) 
+     pixbufa = gtk_widget_render_icon(self->private->listview,  
+ 				     PITIVI_STOCK_EFFECT_SOUNDTV, 
+ 				     GTK_ICON_SIZE_MENU, NULL); 
+   else if (self->private->havevideo)
     pixbufa = gtk_widget_render_icon(self->private->listview, 
 				     PITIVI_STOCK_EFFECT_TV,
 				     GTK_ICON_SIZE_MENU, NULL);
@@ -1597,14 +1661,6 @@ drag_data_delete_cb (GtkWidget          *widget,
 
 }
 
-
-
-PitiviMainApp  *
-pitivi_sourcelistwindow_get_mainApp (PitiviSourceListWindow	*source)
-{
-  return ( source->private->mainapp );
-}
-
 GtkWidget	*create_listview(PitiviSourceListWindow *self,
 				 GtkWidget *pWindow)
 {
@@ -1613,13 +1669,17 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
   GtkWidget		*pScrollbar;
   GtkTreeViewColumn	*pColumn;
   GtkCellRenderer      	*pCellRenderer;
-  GdkColormap		*colormap;
-  GdkPixmap		*pixmap;
-  GdkBitmap		mask;
 
   /* Creation de la vue */
-  
   pListView = gtk_tree_view_new();
+  //g_printf("enable drag n drop\n");
+  /* enable drag and drop for listview */
+  /*  gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(pListView),  */
+  /* 					 GDK_BUTTON1_MASK, */
+  /* 					 TargetEntries, iNbTargetEntries,  */
+  /*
+ 					 GDK_ACTION_COPY); */
+  
   gtk_drag_source_set(pListView, 
 		      GDK_BUTTON1_MASK,
 		      TargetEntries, iNbTargetEntries, 
@@ -1633,21 +1693,13 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 		    G_CALLBACK (drag_begin_cb), self);
   g_signal_connect (pListView, "drag_data_delete",
 		    G_CALLBACK (drag_data_delete_cb), self);
-
-  /* Customizing Drag 'n Drop image on cursor better for customization 
-   * Later user Transparency. 
-   */
-
-  colormap = gtk_widget_get_colormap (pListView);
-  pixmap = gdk_pixmap_colormap_create_from_xpm_d (pListView->window, 
-						  colormap, 
-						  NULL,  
-						  NULL,
-						  backward_xpm);
-  gtk_drag_source_set_icon (pListView, colormap, pixmap, NULL);
   
+  //g_printf("end of enable drag N drop\n");
+
+  gtk_drag_source_set_icon_stock(pListView, PITIVI_STOCK_EFFECT_SOUND);
+
   self->private->listview = pListView;
-  
+
   /* Creation du menu popup */
   self->private->listmenu = create_menupopup(self, ListPopup, iNbListPopup);
 
@@ -1827,6 +1879,49 @@ gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
   return TRUE;
 }
 
+gboolean	select_folder_from_listview(PitiviSourceListWindow *self,
+				    gint folder_select)
+{
+  char	*folder;
+  GtkTreeIter	iter;
+  GtkTreePath	*path;
+  GtkTreeSelection	*selection;
+
+  g_printf("you select a bin\n");
+  /* we need to select the corresponding bin in the treeview */
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
+  
+  folder = g_strdup_printf(":%d", folder_select);
+  strcat(self->private->treepath, folder);
+  g_free(folder);
+  
+  g_printf("with the following path [%s]\n", self->private->treepath);
+  path = gtk_tree_path_new_from_string(self->private->treepath);
+  /* path = gtk_tree_path_new_from_string("1"); */
+  if (!path)
+    {
+      g_printf("path is not valid\n");
+      return FALSE;
+    }
+  gtk_tree_model_get_iter(GTK_TREE_MODEL(self->private->treestore),
+			  &iter, path);
+  gtk_tree_view_expand_to_path(GTK_TREE_VIEW(self->private->treeview), 
+			       path);
+  gtk_tree_selection_select_iter(selection, &iter);
+  
+  if (gtk_tree_selection_iter_is_selected(selection, &iter))
+    {
+      g_printf("the item is currently selected\n");
+      return TRUE;
+    }
+  else
+    {
+      g_printf("the item is not selected\n");
+      return FALSE;
+    }
+  
+}
+
 void	on_row_activated (GtkTreeView        *listview,
 			  GtkTreePath        *path,
 			  GtkTreeViewColumn  *col,
@@ -1845,7 +1940,7 @@ void	on_row_activated (GtkTreeView        *listview,
   gchar			*sMediaType;
   PitiviSourceFile	*sf;
   gboolean		flag;
-  GtkTreeSelection	*selection;
+ 
 
   g_printf("you double click me\n");
 
@@ -1859,39 +1954,14 @@ void	on_row_activated (GtkTreeView        *listview,
     {
       if (!strcmp(sMediaType, "Bin"))
 	{
-	  char	*folder;
-	  GtkTreePath	*path;
-
-	  g_printf("you select a bin\n");
-	  /* we need to select the corresponding bin in the treeview */
-	  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
-	  
-	  folder = g_strdup_printf(":%d", folder_select);
-	  strcat(self->private->treepath, folder);
-	  g_printf("with the following path [%s]\n", self->private->treepath);
-	  path = gtk_tree_path_new_from_string(self->private->treepath);
-	  /* path = gtk_tree_path_new_from_string("1"); */
-	  if (!path)
-	    g_printf("path is not valid\n");
-	  gtk_tree_model_get_iter(GTK_TREE_MODEL(self->private->treestore),
-				  &iter, path);
-	  gtk_tree_view_expand_to_path(GTK_TREE_VIEW(self->private->treeview), 
-				       path);
-	  gtk_tree_selection_select_iter(selection, &iter);
-	  
-	  if (gtk_tree_selection_iter_is_selected(selection, &iter))
-	    g_printf("the item is currently selected\n");
-	  else
-	    g_printf("the item is not selected\n");
-	  
+	  select_folder_from_listview(self, folder_select);
 	}
-	  
       return;
     }
-  
   g_printf("get [%s]\n", sf->filename);
   viewerwin = (PitiviViewerWindow*)pitivi_mainapp_get_viewerwin(window->mainapp);
   pitivi_viewerwindow_set_source(viewerwin, sf);
+
 }
 
 gboolean	my_popup_handler(gpointer data, GdkEvent *event,
@@ -2072,6 +2142,8 @@ gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
   guint		selected_list_row;
   gint		depth;
 
+
+  g_printf("Select item\n");
   listpath = gtk_tree_path_new_from_string(self->private->listpath);
   
   selected_list_row = get_selected_row(self->private->listpath, &depth);
@@ -2082,6 +2154,7 @@ gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
       return FALSE;
     }
   
+  g_printf("After select\n");
   gtk_tree_path_free(listpath);
   
   gtk_tree_model_get(GTK_TREE_MODEL(*liststore), iter, TEXT_LISTCOLUMN3, &(*sMediaType), -1);
@@ -2093,6 +2166,7 @@ gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
   
   i = 0;
 
+  g_printf("End select\n");
   while (i++ < selected_list_row)
     {
       gtk_tree_model_get(GTK_TREE_MODEL(*liststore), &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
@@ -2102,6 +2176,10 @@ gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
 	(*item_select)++;
       gtk_tree_model_iter_next(GTK_TREE_MODEL(*liststore), &iternext);
     }
+  /* we need to set treepath too */
+  /* self->private->treepath = g_strdup_printf("%s:%d", self->private->treepath, *folder_select);
+     g_printf("folder select ==> [%d] \n", *folder_select);*/
+  g_printf("treepath ==> [%s]\n", self->private->treepath);
 
   return TRUE;
 }
@@ -2119,14 +2197,22 @@ void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
 		   &folder_select))
     return;
 
-  gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
 
+  g_printf("remove item from bin\n");
   if (strcmp(sMediaType, "Bin"))
-    pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
+    {
+      g_printf("removing item only\n");
+      gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
+      pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
 						  self->private->treepath,
 						  item_select);
+    }
   else /* need to remove folder */
-    ;
+    {
+      /* we need to set treepath too */
+      self->private->treepath = g_strdup_printf("%s:%d", self->private->treepath, folder_select);
+      OnRemoveBin(self, 0, NULL);
+    }
 }
 
 void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget)
@@ -2372,7 +2458,7 @@ pitivi_sourcelistwindow_new(PitiviMainApp *mainapp, PitiviProject *project)
 							     NULL);
  
   //g_printf("show class ==> %p\n", ((PitiviWindows*)sourcelistwindow));
-  sourcelistwindow->private->mainapp = mainapp;
+
   g_assert(sourcelistwindow != NULL);
   return sourcelistwindow;
 }

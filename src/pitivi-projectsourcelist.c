@@ -252,25 +252,30 @@ pitivi_projectsourcelist_remove_file_from_bin(PitiviProjectSourceList *self,
 {
   PitiviSourceBin	*sourcebin;
   PitiviSourceBin	*bin;
+  PitiviSourceFile	*sf;
   GSList		*sourcelist;
   GSList		*list;
   gpointer		data;
   gint			row;
-
+  
   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
   sourcelist = sourcebin->source;
 
   data = pitivi_projectsourcelist_get_file_info(self, treepath, file_pos);
 
-  g_printf("== removing %s from source list ==\n", ((PitiviSourceFile*)data)->filename);
+  sf = (PitiviSourceFile*)data;
 
+  g_printf("== removing %s from source list ==\n", ((PitiviSourceFile*)data)->filename);
+  
+  
   sourcelist = g_slist_remove(sourcelist, data);
   
   /* handle case the first item is removed */
   sourcebin->source = sourcelist;
 
-  g_object_unref(((PitiviSourceFile*)data)->pipeline);
-  g_free((PitiviSourceFile*)data);
+  gst_element_set_state(GST_ELEMENT(sf->pipeline), GST_STATE_NULL);
+  g_object_unref(sf->pipeline);   
+  g_free(sf);
 }
 
 
