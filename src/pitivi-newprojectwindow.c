@@ -52,6 +52,14 @@ gchar	*freq_tab[] = {
   0
 };
 
+typedef struct	_PitiviConfProperties
+{
+  gchar		*pname;
+  GValue	value;
+  GtkWidget	*pwidget;
+}		PitiviConfProperties;
+
+
 struct _PitiviNewProjectWindowPrivate
 {
   /* instance private members */
@@ -95,6 +103,12 @@ struct _PitiviNewProjectWindowPrivate
   GtkWidget		*cat_text;
 
   /* Properties */
+  PitiviCodecConfWindow	*audio_codecwindow;
+  PitiviCodecConfWindow	*video_codecwindow;
+  GList			*video_codecconflist;
+  GList			*audio_codecconflist;
+  GList			*video_confboxlist;
+  GList			*audio_confboxlist;
 
   /* Buttons */
   GtkWidget		*cat_but_add;
@@ -123,26 +137,45 @@ GtkWidget		*pitivi_make_video_frame	( PitiviNewProjectWindow	*self );
 GtkWidget		*pitivi_make_audio_frame	( PitiviNewProjectWindow	*self );
 GtkWidget		*pitivi_make_name_frame		( PitiviNewProjectWindow	*self );
 GtkWidget		*pitivi_make_cat_frame		( PitiviNewProjectWindow	*self );
-GtkWidget		*pitivi_value_conf_boolean	( GValue			value );
-GtkWidget		*pitivi_value_conf_uint		( GValue			value, 
+GtkWidget		*pitivi_value_conf_boolean	( const gchar			*name, 
+							  GValue			value );
+GtkWidget		*pitivi_value_conf_uint		( const gchar			*name,
+							  GValue			value, 
 							  GParamSpec			*param );
-GtkWidget		*pitivi_value_conf_int		( GValue			value,
+GtkWidget		*pitivi_value_conf_int		( const gchar			*name,
+							  GValue			value,
 							  GParamSpec			*param );
-GtkWidget		*pitivi_value_conf_uint64	( GValue			value,
+GtkWidget		*pitivi_value_conf_uint64	( const gchar			*name,
+							  GValue			value,
 							  GParamSpec			*param );
-GtkWidget		*pitivi_value_conf_int64	( GValue			value,
+GtkWidget		*pitivi_value_conf_int64	( const gchar			*name,
+							  GValue			value,
 							  GParamSpec			*param );
-GtkWidget	*pitivi_value_conf_ulong	( GValue			value,
-						  GParamSpec			*param );
-GtkWidget	*pitivi_value_conf_long		( GValue			value,
-						  GParamSpec			*param );
-GtkWidget	*pitivi_value_conf_float	( GValue			value,
-						  GParamSpec			*param );
-GtkWidget	*pitivi_value_conf_double	( GValue			value,
-						  GParamSpec			*param );
-GtkWidget	*pitivi_conf_value_string	( GValue			 value );
-GtkWidget	*pitivi_value_conf_default	( GValue			 value, 
-						  GParamSpec			*param );
+GtkWidget		*pitivi_value_conf_ulong	( const gchar			*name,
+							  GValue			value,
+							  GParamSpec			*param );
+GtkWidget		*pitivi_value_conf_long		( const gchar			*name,
+							  GValue			value,
+							  GParamSpec			*param );
+GtkWidget		*pitivi_value_conf_float	( const gchar			*name,
+							  GValue			value,
+							  GParamSpec			*param );
+GtkWidget		*pitivi_value_conf_double	( const gchar			*name,
+							  GValue			value,
+							  GParamSpec			*param );
+GtkWidget		*pitivi_conf_value_string	( const gchar			*name,
+							  GValue			 value );
+GtkWidget		*pitivi_value_conf_default	( const gchar			*name,
+							  GValue			 value, 
+							  GParamSpec			*param );
+PitiviConfProperties	*pitivi_confprop_new		( gchar				*name,
+							  GValue			 value );
+PitiviConfProperties	*pitivi_setprop_new		( gchar				*name,
+							  GValue			 value, 
+							  GtkWidget			*pwidget );
+void			pitivi_conf_int_update		( PitiviConfProperties		*confprop );
+void			pitivi_conf_float_update	( PitiviConfProperties		*confprop );
+void			pitivi_conf_boolean_update	( PitiviConfProperties		*confprop);
 
 
 gchar		*pitivi_newprojectwindow_getstr(gint i);
@@ -173,8 +206,13 @@ void			pitivi_del_category		(GtkButton *button,
 GSList			*pitivi_mainapp_project_settings( PitiviMainApp *self );
 gboolean		categorie_button_callback	( GtkWidget *cat_button_clicked, 
 							  GdkEventButton *event, 
+							  gpointer user_data );
+void			pitivi_del_settings		( GtkButton *button, 
 							  gpointer user_data);
-void			pitivi_del_settings		( GtkButton *button, gpointer user_data);
+void			pitivi_valide_video_codec_conf	( GtkButton *button, 
+							  gpointer user_data );
+void			pitivi_valide_audio_codec_conf	( GtkButton *button, 
+							  gpointer user_data );
 
 /*
  * Insert "added-value" functions here
@@ -299,6 +337,32 @@ pitivi_newprojectwindow_add_mainapp_category (PitiviNewProjectWindow *self)
   pitivi_mainapp_add_newcategory( self->private->mainapp, gtk_entry_get_text ( GTK_ENTRY (self->private->cat_text) ) );
 }
 
+/* element de la liste de proprietes */
+PitiviConfProperties *
+pitivi_confprop_new(gchar *name, GValue value)
+{
+  PitiviConfProperties	*confprop;
+
+  confprop = g_new0(PitiviConfProperties, 1);
+  confprop->pname = name;
+  confprop->value = value;
+
+  return(confprop);
+}
+
+PitiviConfProperties *
+pitivi_setprop_new(gchar *name, GValue value, GtkWidget *pwidget)
+{
+  PitiviConfProperties	*confprop;
+
+  confprop = g_new0(PitiviConfProperties, 1);
+  confprop->pname = name;
+  confprop->value = value;
+  confprop->pwidget = pwidget;
+
+  return(confprop);
+}
+
 /*	Get the inputs, create a new PitiviProjectSettings and add it into the PitiviMainApp struct */
 void
 pitivi_newprojectwindow_add_mainapp_setting (PitiviNewProjectWindow *self)
@@ -321,13 +385,8 @@ pitivi_newprojectwindow_add_mainapp_setting (PitiviNewProjectWindow *self)
   caps_audio = pitivi_projectsettings_acaps_create ( atoi ( freq_tab[ gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_freq)) ]),
 						     gtk_spin_button_get_value_as_int ( GTK_SPIN_BUTTON( self->private->audio_combo_ech)) );
   list_media_settings = NULL;
-  list_media_settings = g_slist_append(
-				       list_media_settings,
-				       (gpointer) pitivi_projectsettings_media_new( 
-										   self->private->video_tabname[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->video_combo_codec) )], 
-										   caps_video
-										   ) 
-				       );
+  list_media_settings = g_slist_append(list_media_settings, 
+				       (gpointer) pitivi_projectsettings_media_new(self->private->video_tabname[gtk_combo_box_get_active(GTK_COMBO_BOX(self->private->video_combo_codec) )], caps_video));
   
   list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new( self->private->audio_tabname[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_codec) )], caps_audio) );
   
@@ -1035,23 +1094,23 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
 GtkWidget*
 pitivi_make_audio_frame(PitiviNewProjectWindow *self)
 {
-  GtkWidget		*audio_frame;
-  GtkWidget		*audio_table;
-  GtkWidget		*audio_label_codec;
-  GtkWidget		*audio_label_freq;
-  GtkWidget		*audio_label_ech;
-  GtkWidget		*audio_conf_but;
-  GtkWidget		*acodec_hbox;
-  GtkWidget		*arate_hbox;
-  GtkWidget		*achannels_hbox;
-  GstElementFactory	*factory;
-  GstElement		*element;
-  const gchar		*klass;
-  const gchar		*name;
-  const gchar		*short_name; 
-  int			i;
-  int			j;
-  int			nb_audiocodec;
+  GtkWidget			*audio_frame;
+  GtkWidget			*audio_table;
+  GtkWidget			*audio_label_codec;
+  GtkWidget			*audio_label_freq;
+  GtkWidget			*audio_label_ech;
+  GtkWidget			*audio_conf_but;
+  GtkWidget			*acodec_hbox;
+  GtkWidget			*arate_hbox;
+  GtkWidget			*achannels_hbox;
+  GstElementFactory		*factory;
+  GstElement			*element;
+  const gchar			*klass;
+  const gchar			*name;
+  const gchar			*short_name; 
+  int				i;
+  int				j;
+  int				nb_audiocodec;
 
   /* Creation de la frame "audio" et du tableau principal */
   audio_frame = gtk_frame_new("Audio"); 
@@ -1115,6 +1174,11 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
       self->private->audio_codec_list = self->private->audio_codec_list->next;
     }
 
+/*   while(self->private->audio_codecconflist) */
+/*     { */
+/*       g_print("OK : %s\n", self->private->audio_codecconflist->data); */
+/*       self->private->audio_codecconflist->next; */
+/*     } */
   gtk_combo_box_set_active(GTK_COMBO_BOX (self->private->audio_combo_codec), 0); /*  Choix par defaut */
   gtk_box_pack_start(GTK_BOX (acodec_hbox), self->private->audio_combo_codec, TRUE, TRUE, 0);
 
@@ -1173,7 +1237,8 @@ void
 create_codec_conf_video(GtkButton *button, gpointer user_data)
 {
   PitiviNewProjectWindow	*self;
-  PitiviCodecConfWindow		*video_codecwindow;
+ /*  PitiviCodecConfWindow		*video_codecwindow; */
+  PitiviConfProperties		*confprop;
   GstElementFactory		*factory;
   const gchar			*intern_name;
   GParamSpec			**property_specs;
@@ -1197,21 +1262,22 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
   GtkWidget			*button_reset;
   GtkWidget			*button_cancel;
   GtkWidget			*button_hbox;
+  GList				*video_confprop_list;
   gboolean			readable;
+  gchar				name;
   gint				num_properties;
   gint				active_combo;
   gint				nb;
   gint				i;
 
-
   self = (PitiviNewProjectWindow *) user_data;
 
   /* nouvelle fenetre */
-  video_codecwindow = g_new0(PitiviCodecConfWindow, 1);
-  video_codecwindow = pitivi_codecconfwindow_new();
-  gtk_window_set_position(GTK_WINDOW (video_codecwindow), GTK_WIN_POS_CENTER);
-  gtk_window_set_modal(GTK_WINDOW(video_codecwindow), TRUE);
-  /*   gtk_widget_set_usize(GTK_WIDGET(video_codecwindow), 150, 150); */
+  self->private->video_codecwindow = g_new0(PitiviCodecConfWindow, 1);
+  self->private->video_codecwindow = pitivi_codecconfwindow_new();
+  gtk_window_set_position(GTK_WINDOW (self->private->video_codecwindow), GTK_WIN_POS_CENTER);
+  gtk_window_set_modal(GTK_WINDOW(self->private->video_codecwindow), TRUE);
+  /*   gtk_widget_set_usize(GTK_WIDGET(self->private->video_codecwindow), 150, 150); */
 
   /* choix selectionne */
   active_combo = gtk_combo_box_get_active(GTK_COMBO_BOX(self->private->video_combo_codec));
@@ -1249,6 +1315,10 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
   intern_name = "Video Codec Configure";
   element = gst_element_factory_create(factory, intern_name);  
   property_specs = g_object_class_list_properties(G_OBJECT_GET_CLASS (element), &num_properties);
+ 
+  /* Liste des proprietes */
+  self->private->video_codecconflist = g_new0(GList, 1);
+  self->private->video_codecconflist = NULL;
   
   if (num_properties < 2)
     {
@@ -1278,84 +1348,98 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
 	  gtk_misc_set_alignment(GTK_MISC (prop_name), 0.0f, 0.0f);
 	  gtk_box_pack_start(GTK_BOX (prop_value_hbox), prop_name, TRUE, TRUE, 0);
 
+	  self->private->video_codecconflist = g_list_append(self->private->video_codecconflist, 
+					      (gpointer)pitivi_confprop_new(g_strdup(g_param_spec_get_nick (param)), value));
+
 	  /* parsage de "value" */
 	  switch (G_VALUE_TYPE (&value))
 	    {
 	    case G_TYPE_STRING:
 	      {
-		if (readable) 
+		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox), 
-				     pitivi_conf_value_string(value), TRUE, TRUE, 0);
+				     pitivi_conf_value_string(g_strdup(g_param_spec_get_nick (param)), value),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_BOOLEAN:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox), 
-				     pitivi_value_conf_boolean(value), TRUE, TRUE, 0);
+				     pitivi_value_conf_boolean(g_strdup(g_param_spec_get_nick (param)), value),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_UINT:
 	      {
 		if (readable)
-		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_uint(value, param), TRUE, TRUE, 0);
+		  gtk_box_pack_start(GTK_BOX (prop_value_hbox), 
+				     pitivi_value_conf_uint(g_strdup(g_param_spec_get_nick (param)), value, param), 
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_INT:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_int(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_int(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_UINT64:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_uint64(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_uint64(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_INT64:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_int64(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_int64(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_ULONG:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_ulong(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_ulong(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_LONG:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_long(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_long(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	      
 	    case G_TYPE_FLOAT:
 	      {
-		break;
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_float(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_float(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
+		break;
 	      }
 	    case G_TYPE_DOUBLE:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_double(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_double(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    default:
 	      {
 		gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				   pitivi_value_conf_default(value, param), TRUE, TRUE, 0);
+				   pitivi_value_conf_default(g_strdup(g_param_spec_get_nick (param)), value, param),
+				   TRUE, TRUE, 0);
 		break;
 	      }
 	    }
@@ -1377,13 +1461,17 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
 	  /* italic */
 	  gtk_label_set_attributes(GTK_LABEL(prop_desc), desc);
 
+
+	  confprop = pitivi_setprop_new(g_strdup(g_param_spec_get_nick (param)), value, prop_value_hbox);
+	  confprop = (gpointer) confprop;
+	  g_object_set_data(G_OBJECT(prop_value_hbox), "prop", confprop);
+
 	  /* link to vbox of properties */
 	  gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), prop_value_hbox, TRUE, TRUE, 0);
 	  gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), prop_desc, TRUE, TRUE, 0);
 	  gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), separator, TRUE, TRUE, 10);
 	}
     }
-
   scroll = gtk_scrolled_window_new(NULL, NULL);
   gtk_widget_set_usize (scroll, 600, 250);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
@@ -1405,20 +1493,26 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
   gtk_box_pack_start (GTK_BOX (button_hbox), button_cancel, FALSE, TRUE, 3);
   gtk_container_set_border_width (GTK_CONTAINER (button_hbox), 5);
   gtk_container_add(GTK_CONTAINER(videoconf_vbox), button_hbox);
+  
+  /* liste des hbox */
+  self->private->video_confboxlist = gtk_container_get_children(GTK_CONTAINER(videoconfprop_vbox));
 
   /* Signaux */
   g_signal_connect( G_OBJECT(button_cancel), "clicked",
-		    G_CALLBACK(pitivi_newprojectwindow_close_window), (gpointer) (GTK_WIDGET(video_codecwindow)) );
+		    G_CALLBACK(pitivi_newprojectwindow_close_window), (gpointer) (GTK_WIDGET(self->private->video_codecwindow)) );
+  g_signal_connect( G_OBJECT(button_ok), "clicked",
+		    G_CALLBACK(pitivi_valide_video_codec_conf), (gpointer) self );
   /* on link les contenus a la window mere */
-  gtk_container_add (GTK_CONTAINER (video_codecwindow), videoconf_vbox);
-  gtk_widget_show_all (GTK_WIDGET (video_codecwindow)); 
+  gtk_container_add (GTK_CONTAINER (self->private->video_codecwindow), videoconf_vbox);
+  gtk_widget_show_all (GTK_WIDGET (self->private->video_codecwindow)); 
 }
 
 void
 create_codec_conf_audio(GtkButton *button, gpointer user_data)
 {
   PitiviNewProjectWindow	*self;
-  PitiviCodecConfWindow		*audio_codecwindow;
+ /*  PitiviCodecConfWindow		*audio_codecwindow; */
+  PitiviConfProperties		*confprop;
   GstElementFactory		*factory;
   const gchar			*intern_name;
   GParamSpec			**property_specs;
@@ -1442,21 +1536,22 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
   GtkWidget			*button_reset;
   GtkWidget			*button_cancel;
   GtkWidget			*button_hbox;
+  GList				*audio_confprop_list;
   gboolean			readable;
+  gchar				name;
   gint				num_properties;
   gint				active_combo;
   gint				nb;
   gint				i;
 
-
   self = (PitiviNewProjectWindow *) user_data;
 
   /* nouvelle fenetre */
-  audio_codecwindow = g_new0(PitiviCodecConfWindow, 1);
-  audio_codecwindow = pitivi_codecconfwindow_new();
-  gtk_window_set_position(GTK_WINDOW (audio_codecwindow), GTK_WIN_POS_CENTER);
-  gtk_window_set_modal(GTK_WINDOW(audio_codecwindow), TRUE);
-  /*   gtk_widget_set_usize(GTK_WIDGET(audio_codecwindow), 150, 150); */
+  self->private->audio_codecwindow = g_new0(PitiviCodecConfWindow, 1);
+  self->private->audio_codecwindow = pitivi_codecconfwindow_new();
+  gtk_window_set_position(GTK_WINDOW (self->private->audio_codecwindow), GTK_WIN_POS_CENTER);
+  gtk_window_set_modal(GTK_WINDOW(self->private->audio_codecwindow), TRUE);
+  /*   gtk_widget_set_usize(GTK_WIDGET(self->private->audio_codecwindow), 150, 150); */
 
   /* choix selectionne */
   active_combo = gtk_combo_box_get_active(GTK_COMBO_BOX(self->private->audio_combo_codec));
@@ -1494,6 +1589,10 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
   intern_name = "Audio Codec Configure";
   element = gst_element_factory_create(factory, intern_name);  
   property_specs = g_object_class_list_properties(G_OBJECT_GET_CLASS (element), &num_properties);
+ 
+  /* Liste des proprietes */
+  self->private->audio_codecconflist = g_new0(GList, 1);
+  self->private->audio_codecconflist = NULL;
   
   if (num_properties < 2)
     {
@@ -1523,83 +1622,98 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
 	  gtk_misc_set_alignment(GTK_MISC (prop_name), 0.0f, 0.0f);
 	  gtk_box_pack_start(GTK_BOX (prop_value_hbox), prop_name, TRUE, TRUE, 0);
 
+	  self->private->audio_codecconflist = g_list_append(self->private->audio_codecconflist, 
+					      (gpointer)pitivi_confprop_new(g_strdup(g_param_spec_get_nick (param)), value));
+
 	  /* parsage de "value" */
 	  switch (G_VALUE_TYPE (&value))
 	    {
 	    case G_TYPE_STRING:
 	      {
-		if (readable) 
+		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox), 
-				     pitivi_conf_value_string(value), TRUE, TRUE, 0);
+				     pitivi_conf_value_string(g_strdup(g_param_spec_get_nick (param)), value),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_BOOLEAN:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox), 
-				     pitivi_value_conf_boolean(value), TRUE, TRUE, 0);
+				     pitivi_value_conf_boolean(g_strdup(g_param_spec_get_nick (param)), value),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_UINT:
 	      {
 		if (readable)
-		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_uint(value, param), TRUE, TRUE, 0);
+		  gtk_box_pack_start(GTK_BOX (prop_value_hbox), 
+				     pitivi_value_conf_uint(g_strdup(g_param_spec_get_nick (param)), value, param), 
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_INT:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_int(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_int(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_UINT64:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_uint64(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_uint64(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_INT64:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_int64(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_int64(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_ULONG:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_ulong(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_ulong(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    case G_TYPE_LONG:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_long(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_long(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
+	      
 	    case G_TYPE_FLOAT:
 	      {
-		break;
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_float(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_float(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
+		break;
 	      }
 	    case G_TYPE_DOUBLE:
 	      {
 		if (readable)
 		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				     pitivi_value_conf_double(value, param), TRUE, TRUE, 0);
+				     pitivi_value_conf_double(g_strdup(g_param_spec_get_nick (param)), value, param),
+				     TRUE, TRUE, 0);
 		break;
 	      }
 	    default:
 	      {
 		gtk_box_pack_start(GTK_BOX (prop_value_hbox),
-				   pitivi_value_conf_default(value, param), TRUE, TRUE, 0);
+				   pitivi_value_conf_default(g_strdup(g_param_spec_get_nick (param)), value, param),
+				   TRUE, TRUE, 0);
 		break;
 	      }
 	    }
@@ -1621,23 +1735,17 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
 	  /* italic */
 	  gtk_label_set_attributes(GTK_LABEL(prop_desc), desc);
 
+
+	  confprop = pitivi_setprop_new(g_strdup(g_param_spec_get_nick (param)), value, prop_value_hbox);
+	  confprop = (gpointer) confprop;
+	  g_object_set_data(G_OBJECT(prop_value_hbox), "prop", confprop);
+
 	  /* link to vbox of properties */
 	  gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), prop_value_hbox, TRUE, TRUE, 0);
 	  gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), prop_desc, TRUE, TRUE, 0);
 	  gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), separator, TRUE, TRUE, 10);
 	}
-/*       GtkWidget *prop_name = gtk_label_new(g_strdup(g_param_spec_get_nick (param))); */
-/*       GtkWidget	*prop_desc = gtk_label_new(g_strdup(g_param_spec_get_blurb (param))); */
-
-
-/*       g_print("Nick numero %d : %s\n",i , g_param_spec_get_nick (param)); */
-/*       g_print("Description : %s\n", g_param_spec_get_blurb (param)); */
-
-
-/*       gtk_box_pack_start (GTK_BOX (audioconf_vbox), prop_name, TRUE, TRUE, 0); */
-/*       gtk_box_pack_start (GTK_BOX (audioconf_vbox), prop_desc, TRUE, TRUE, 0); */
     }
-
   scroll = gtk_scrolled_window_new(NULL, NULL);
   gtk_widget_set_usize (scroll, 600, 250);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
@@ -1648,8 +1756,8 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
   
   gtk_container_add(GTK_CONTAINER(audioconf_frame2), scroll);
   gtk_container_add(GTK_CONTAINER(audioconf_vbox), audioconf_frame2);
-    
-  /* boutons "OK" et "Reset" */ 
+  
+  /* boutons "OK" et "Reset" */
   button_ok = gtk_button_new_with_label("Ok");
   button_reset = gtk_button_new_with_label("Reset");
   button_cancel = gtk_button_new_with_label("Cancel");
@@ -1659,50 +1767,50 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
   gtk_box_pack_start (GTK_BOX (button_hbox), button_cancel, FALSE, TRUE, 3);
   gtk_container_set_border_width (GTK_CONTAINER (button_hbox), 5);
   gtk_container_add(GTK_CONTAINER(audioconf_vbox), button_hbox);
+  
+  /* liste des hbox */
+  self->private->audio_confboxlist = gtk_container_get_children(GTK_CONTAINER(audioconfprop_vbox));
 
   /* Signaux */
   g_signal_connect( G_OBJECT(button_cancel), "clicked",
-		    G_CALLBACK(pitivi_newprojectwindow_close_window), (gpointer) (GTK_WIDGET(audio_codecwindow)) );
+		    G_CALLBACK(pitivi_newprojectwindow_close_window), (gpointer) (GTK_WIDGET(self->private->audio_codecwindow)) );
+  g_signal_connect( G_OBJECT(button_ok), "clicked",
+		    G_CALLBACK(pitivi_valide_audio_codec_conf), (gpointer) self );
   
   /* on link les contenus a la window mere */
-  gtk_container_add (GTK_CONTAINER (audio_codecwindow), audioconf_vbox);
-  gtk_widget_show_all (GTK_WIDGET (audio_codecwindow)); 
+  gtk_container_add (GTK_CONTAINER (self->private->audio_codecwindow), audioconf_vbox);
+  gtk_widget_show_all (GTK_WIDGET (self->private->audio_codecwindow)); 
 }
-
-
 
 /* 
  * Fonctions d'affichage des proprietes des codecs
  */
 
 GtkWidget *
-pitivi_conf_value_string(GValue value)
+pitivi_conf_value_string(const gchar *name, GValue value)
 {
-  const gchar	*string_val;
-  GtkWidget	*prop_value_hbox;
-  GtkWidget	*prop_value_label;
+  const gchar		*string_val;
+  GtkWidget		*prop_value_label;
 
   string_val = g_value_get_string (&value);
-  prop_value_hbox = gtk_hbox_new(0, FALSE);
 
   if (string_val == NULL)
     prop_value_label = gtk_label_new("Default String Value"); 
   else
     prop_value_label = gtk_label_new(g_value_get_string(&value));
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), prop_value_label, FALSE, FALSE, 0);
-  return (prop_value_hbox);
+  return (prop_value_label);
 }
 
 GtkWidget *
-pitivi_value_conf_boolean(GValue value)
+pitivi_value_conf_boolean(const gchar *name, GValue value)
 {
-  GtkWidget	*radio_button_group;
-  GSList	*radio_button_list;
-  GtkWidget	*radio_button_true;
-  GtkWidget	*radio_button_false;
-  GtkWidget	*prop_value_hbox;
+  GtkWidget		*radio_button_group;
+  GSList		*radio_button_list;
+  GtkWidget		*radio_button_true;
+  GtkWidget		*radio_button_false;
+  GtkWidget		*button_hbox;
 		    
-  prop_value_hbox = gtk_hbox_new(0, FALSE);
+  button_hbox = gtk_hbox_new(0, FALSE);
 		    
   /* Liste des boutons */
   radio_button_true = gtk_radio_button_new_with_label(NULL, "True");
@@ -1714,14 +1822,14 @@ pitivi_value_conf_boolean(GValue value)
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio_button_true), TRUE);
   else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio_button_false), TRUE);
-    
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), radio_button_true, TRUE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), radio_button_false, TRUE, TRUE, 0);
-  return (prop_value_hbox);
+
+  gtk_box_pack_start(GTK_BOX (button_hbox), radio_button_true, TRUE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX (button_hbox), radio_button_false, TRUE, TRUE, 0);
+  return (button_hbox);
 }
 
 GtkWidget *
-pitivi_value_conf_uint(GValue value, GParamSpec	*param)
+pitivi_value_conf_uint(const gchar *name, GValue value, GParamSpec	*param)
 {
   GParamSpecUInt	*puint;
   GtkWidget		*spin_button;
@@ -1737,7 +1845,7 @@ pitivi_value_conf_uint(GValue value, GParamSpec	*param)
 }
 
 GtkWidget *
-pitivi_value_conf_int(GValue value, GParamSpec	*param)
+pitivi_value_conf_int(const gchar *name, GValue value, GParamSpec	*param)
 {
   GParamSpecInt		*pint;  
   GtkWidget		*spin_button;
@@ -1753,7 +1861,7 @@ pitivi_value_conf_int(GValue value, GParamSpec	*param)
 }
 
 GtkWidget *
-pitivi_value_conf_uint64(GValue value, GParamSpec *param)
+pitivi_value_conf_uint64(const gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecUInt64	*puint64;
   GtkWidget		*spin_button;
@@ -1769,7 +1877,7 @@ pitivi_value_conf_uint64(GValue value, GParamSpec *param)
 }
 
 GtkWidget *
-pitivi_value_conf_int64(GValue value, GParamSpec *param)
+pitivi_value_conf_int64(const gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecInt64	*pint64;
   GtkWidget		*spin_button;
@@ -1785,7 +1893,7 @@ pitivi_value_conf_int64(GValue value, GParamSpec *param)
 }
 
 GtkWidget *
-pitivi_value_conf_ulong(GValue value, GParamSpec *param)
+pitivi_value_conf_ulong(const gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecULong	*pulong;
   GtkWidget		*spin_button;
@@ -1801,7 +1909,7 @@ pitivi_value_conf_ulong(GValue value, GParamSpec *param)
 }
 
 GtkWidget *
-pitivi_value_conf_long(GValue value, GParamSpec *param)
+pitivi_value_conf_long(const gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecLong	*plong;
   GtkWidget		*spin_button;
@@ -1817,7 +1925,7 @@ pitivi_value_conf_long(GValue value, GParamSpec *param)
 }
 
 GtkWidget *
-pitivi_value_conf_float(GValue value, GParamSpec *param)
+pitivi_value_conf_float(const gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecFloat	*pfloat;
   GtkWidget		*spin_button;
@@ -1833,7 +1941,7 @@ pitivi_value_conf_float(GValue value, GParamSpec *param)
 }
 
 GtkWidget *
-pitivi_value_conf_double(GValue value, GParamSpec *param)
+pitivi_value_conf_double(const gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecDouble	*pdouble;
   GtkWidget		*spin_button;
@@ -1849,7 +1957,7 @@ pitivi_value_conf_double(GValue value, GParamSpec *param)
 }
 
 GtkWidget *
-pitivi_value_conf_default(GValue value, GParamSpec *param)
+pitivi_value_conf_default(const gchar *name, GValue value, GParamSpec *param)
 {
   GtkWidget	*prop_value_hbox;
   GtkWidget	*prop_value_label;
@@ -1880,6 +1988,249 @@ pitivi_value_conf_default(GValue value, GParamSpec *param)
     prop_value_label = gtk_label_new("Default Case for Value");
   gtk_box_pack_start(GTK_BOX (prop_value_hbox), prop_value_combobox, TRUE, TRUE, 0);
   return (prop_value_hbox);
+}
+
+void 
+pitivi_valide_video_codec_conf(GtkButton *button, gpointer user_data)
+{
+  PitiviNewProjectWindow	*self;
+  PitiviConfProperties		*confprop;
+  gint				i;
+  gint				spin;
+  GtkWidget			*pwidget;
+  GList				*plist;
+  GList				*pwidget_hbox_list;
+  GList				*pwidget_value_list;
+
+  self = (PitiviNewProjectWindow *) user_data;
+  confprop = (gpointer) g_new0(PitiviConfProperties, 1);
+  plist = self->private->video_confboxlist;
+
+  i = 0;
+  while (plist)
+    {
+      i++;
+      pwidget = GTK_WIDGET(plist->data);
+      if (g_object_get_data(G_OBJECT(pwidget), "prop"))
+	{
+	  confprop = g_object_get_data(G_OBJECT(pwidget), "prop");
+	  g_print("%d name : %s\n", i, confprop->pname);
+
+	  switch (G_VALUE_TYPE (&confprop->value))
+	    {
+	    case G_TYPE_STRING:
+	      {
+		g_print("String\n");
+		break;
+	      }
+	    case G_TYPE_BOOLEAN:
+	      {
+		pitivi_conf_boolean_update(confprop);
+		break;
+	      }
+	    case G_TYPE_UINT:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_INT:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_UINT64:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_INT64:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_ULONG:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_LONG:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_FLOAT:
+	      {
+		pitivi_conf_float_update(confprop);
+		break;
+	      }
+	    case G_TYPE_DOUBLE:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    default:
+	      {
+		g_print("Default\n");
+		break;
+	      }
+	    }
+	}
+      else
+	g_print("%d No properties\n", i);
+      plist = plist->next;
+      plist = plist->next;
+      plist = plist->next;
+    }
+  g_print("nombre de propriete : %d\n", i);
+  gtk_widget_destroy((gpointer) self->private->video_codecwindow);
+}
+
+void 
+pitivi_valide_audio_codec_conf(GtkButton *button, gpointer user_data)
+{
+  PitiviNewProjectWindow	*self;
+  PitiviConfProperties		*confprop;
+  gint				i;
+  gint				spin;
+  GtkWidget			*pwidget;
+  GList				*plist;
+  GList				*pwidget_hbox_list;
+  GList				*pwidget_value_list;
+
+  self = (PitiviNewProjectWindow *) user_data;
+  confprop = (gpointer) g_new0(PitiviConfProperties, 1);
+  plist = self->private->audio_confboxlist;
+
+  i = 0;
+  while (plist)
+    {
+      i++;
+      pwidget = GTK_WIDGET(plist->data);
+      if (g_object_get_data(G_OBJECT(pwidget), "prop"))
+	{
+	  confprop = g_object_get_data(G_OBJECT(pwidget), "prop");
+	  g_print("%d name : %s\n", i, confprop->pname);
+
+	  switch (G_VALUE_TYPE (&confprop->value))
+	    {
+	    case G_TYPE_STRING:
+	      {
+		g_print("String\n");
+		break;
+	      }
+	    case G_TYPE_BOOLEAN:
+	      {
+		pitivi_conf_boolean_update(confprop);
+		break;
+	      }
+	    case G_TYPE_UINT:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_INT:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_UINT64:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_INT64:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_ULONG:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_LONG:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    case G_TYPE_FLOAT:
+	      {
+		pitivi_conf_float_update(confprop);
+		break;
+	      }
+	    case G_TYPE_DOUBLE:
+	      {
+		pitivi_conf_int_update(confprop);
+		break;
+	      }
+	    default:
+	      {
+		g_print("Default\n");
+		break;
+	      }
+	    }
+	}
+      else
+	g_print("%d No properties\n", i);
+      plist = plist->next;
+      plist = plist->next;
+      plist = plist->next;
+    }
+  g_print("nombre de propriete : %d\n", i);
+  gtk_widget_destroy((gpointer) self->private->audio_codecwindow);
+}
+
+void
+pitivi_conf_int_update(PitiviConfProperties *confprop)
+{
+  GList		*pwidget_hbox_list;
+  GList		*pwidget_value_list;
+  gint		spin;
+
+  pwidget_hbox_list = gtk_container_get_children(GTK_CONTAINER(confprop->pwidget));
+  pwidget_hbox_list = pwidget_hbox_list->next;
+
+  pwidget_value_list = gtk_container_get_children(GTK_CONTAINER(pwidget_hbox_list->data));
+
+  spin = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(pwidget_value_list->data));
+  pwidget_value_list = pwidget_value_list->next;
+  g_print("Int / Uint / Int64 / UInt 64 / Long / ULong : %d\n\n", spin);
+}
+
+void
+pitivi_conf_float_update(PitiviConfProperties *confprop)
+{
+  GList		*pwidget_hbox_list;
+  GList		*pwidget_value_list;
+  gint		spin;
+
+  pwidget_hbox_list = gtk_container_get_children(GTK_CONTAINER(confprop->pwidget));
+  pwidget_hbox_list = pwidget_hbox_list->next;
+
+  pwidget_value_list = gtk_container_get_children(GTK_CONTAINER(pwidget_hbox_list->data));
+
+  spin = gtk_spin_button_get_value_as_float(GTK_SPIN_BUTTON(pwidget_value_list->data));
+  g_print("Float : %d\n\n", spin);
+}
+
+void
+pitivi_conf_boolean_update(PitiviConfProperties *confprop)
+{
+  GList		*pwidget_hbox_list;
+  GList		*pwidget_value_list;
+  gboolean	bool;
+
+  pwidget_hbox_list = gtk_container_get_children(GTK_CONTAINER(confprop->pwidget));
+  pwidget_hbox_list = pwidget_hbox_list->next;
+
+  pwidget_value_list = gtk_container_get_children(GTK_CONTAINER(pwidget_hbox_list->data));
+
+  /* On ne teste que le premier bouton (c est le true) */
+  bool = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(pwidget_value_list->data));
+  if (bool)
+    g_print("Le bouton True est actif\n\n");
+  else
+    g_print("Le bouton False est actif\n\n");
 }
 
 /* 
