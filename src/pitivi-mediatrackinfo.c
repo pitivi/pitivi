@@ -183,7 +183,7 @@ pitivi_mediatrackinfo_constructor (GType type,
   if (ch > 0)
     mh = ch;
   gtk_widget_set_usize (GTK_WIDGET (self), MEDIA_TRACK_DEFAULT_WIDTH, mh);
-  gtk_box_pack_start (GTK_BOX(self), hbox, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX(self), hbox, TRUE, FALSE, 2);
   return object;
 }
 

@@ -101,6 +101,7 @@ struct _PitiviSourceListWindowPrivate
  * forward definitions
  */
 
+void		OnTimelineFirstInsert (gpointer data, gint action, GtkWidget *widget);
 void		OnNewBin(gpointer data, gint action, GtkWidget *widget);
 void		OnImportFile(gpointer data, gint action, GtkWidget *widget);
 void		OnImportFolder(gpointer data, gint action, GtkWidget *widget);
@@ -202,6 +203,7 @@ static GtkItemFactoryEntry	ItemPopup[] = {
   {"/Properties", NULL, NULL, 0, "<Item>", NULL},
   {"/Set Clip Name Alias", NULL, NULL, 0, "<Item>", NULL},
   {"/Sep2", NULL, NULL, 0, "<Separator>"},
+  {"/Insert in TimeLine", NULL, OnTimelineFirstInsert, 1, "<Item>", NULL},
   {"/Insert at Edit Line", NULL, OnNewBin, 1, "<Item>", NULL},
   {"/Overlay at Edit Line", NULL, NULL, 0, "<Item>", NULL},
   {"/Sep3", NULL, NULL, 0, "<Separator>"},
@@ -2201,7 +2203,13 @@ gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
  *********************************************************
 */
 
-void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
+void
+OnTimelineFirstInsert (gpointer data, gint action, GtkWidget *widget)
+{
+  
+}
+
+void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
   PitiviSourceFile *sf;
@@ -2531,8 +2539,8 @@ snapped (PitiviSourceListWindow *self, gchar *data)
       for (i =  0; i <  c - '0'; i++) gtk_tree_model_iter_next (model, &iter);
       gtk_tree_model_get (model, &iter, POINTER_LISTCOLUMN8, &sf, -1);
       sf->thumbs_video = pixbuf;
-      icon = gdk_pixbuf_scale_simple (pixbuf, 50, 
-				      50,
+      icon = gdk_pixbuf_scale_simple (pixbuf, 45,
+				      25,
 				      GDK_INTERP_NEAREST);
       sf->thumbs_video = icon;
       gtk_list_store_set(GTK_LIST_STORE (model), &iter,

@@ -302,6 +302,20 @@ create_unitscale_combobox(PitiviTimelineWindow *self, GtkWidget *parentbox)
 }
 
 void
+create_toolbox (PitiviTimelineWindow *self, GtkWidget *container)
+{
+  PitiviMainApp	*mainapp;
+  GtkWidget	*sep;
+
+  mainapp = ((PitiviWindows *) self)->mainapp;
+  self->toolbox = pitivi_toolbox_new (mainapp);
+  gtk_toolbar_set_icon_size (GTK_TOOLBAR (self->toolbox), GTK_ICON_SIZE_MENU );
+  sep = gtk_hseparator_new ();
+  gtk_box_pack_start (GTK_BOX (container), GTK_WIDGET (self->toolbox), FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (container), sep, FALSE, FALSE, 0);
+}
+
+void
 create_timeline_toolbar (PitiviTimelineWindow *self)
 {
   PitiviMainApp	*mainapp;
@@ -310,12 +324,16 @@ create_timeline_toolbar (PitiviTimelineWindow *self)
 
   hbox = gtk_hbox_new (FALSE, 0);
   
+  /* Docking Toolbox */
+  
+  create_toolbox (self, GTK_WIDGET (hbox));
+  
   /* Separator */
   
   sep = gtk_vseparator_new ();
   gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET(sep),
 		      FALSE, FALSE, 0);
-
+  
   /* Play Controller */
   
   self->private->controller = pitivi_controller_new ();
@@ -357,20 +375,6 @@ check_track (GtkWidget *widget, PitiviTimelineCellRenderer *cells)
 }
 
 void
-create_toolbox (PitiviTimelineWindow *self, GtkWidget *container)
-{
-  PitiviMainApp	*mainapp;
-  GtkWidget	*sep;
-
-  mainapp = ((PitiviWindows *) self)->mainapp;
-  self->toolbox = pitivi_toolbox_new (mainapp);
-  gtk_toolbar_set_icon_size (GTK_TOOLBAR (self->toolbox), GTK_ICON_SIZE_MENU );
-  sep = gtk_hseparator_new ();
-  gtk_box_pack_start (GTK_BOX (container), GTK_WIDGET (self->toolbox), FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (container), sep, FALSE, FALSE, 0);
-}
-
-void
 create_ruler (PitiviTimelineWindow *self)
 {
   self->private->hruler = pitivi_ruler_new (self->unit);
@@ -407,6 +411,23 @@ create_tracks_links (GtkWidget **wcells)
     }
 }
 
+void
+create_timelabel (PitiviTimelineWindow *self, GtkWidget *container)
+{
+  GtkWidget *hbox;
+  GtkWidget *timelabel;
+  GtkWidget *label;
+  
+  hbox = gtk_hbox_new (FALSE, 0); 
+  label =  gtk_label_new ("Current Time :");
+  pitivi_widget_changefont (label, "helvetica 9");
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 4);
+  timelabel = gtk_label_new ("--:--:--");
+  pitivi_widget_changefont (timelabel, "helvetica 9");
+  gtk_box_pack_start (GTK_BOX (hbox), timelabel, FALSE, TRUE, 4);
+  gtk_box_pack_start (GTK_BOX (container), hbox, FALSE, TRUE, 4);  
+}
+
 void	
 create_tracks (PitiviTimelineWindow *self)
 {
@@ -416,12 +437,12 @@ create_tracks (PitiviTimelineWindow *self)
   GtkWidget *vbox_right, *vbox_left;
   int count = 0;
 
+  
   self->private->hpaned = gtk_hpaned_new();
   vbox_left = gtk_vbox_new (FALSE, 0); 
 
-  /* Docking Toolbox */
-
-  create_toolbox (self, vbox_left);
+  create_timelabel (self, vbox_left);
+  
   gtk_paned_set_position(GTK_PANED(self->private->hpaned), (80));
   vbox_right = gtk_vbox_new (FALSE, 0);
   

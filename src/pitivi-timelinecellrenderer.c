@@ -824,9 +824,9 @@ create_media_video_audio_track (PitiviTimelineCellRenderer *cell, PitiviSourceFi
   /* Creating widgets */
   
   media[0] = pitivi_timelinemedia_new (sf, cell);  
-  gtk_widget_set_size_request (GTK_WIDGET (media[0]), convert_time_pix(cell, length), FIXED_HEIGHT);
-  media[1] = pitivi_timelinemedia_new (sf, cell);
-  gtk_widget_set_size_request (GTK_WIDGET (media[1]), convert_time_pix(cell, length), FIXED_HEIGHT);
+  gtk_widget_set_size_request (GTK_WIDGET (media[0]), convert_time_pix(cell, length), GTK_WIDGET (cell)->allocation.height);
+  media[1] = pitivi_timelinemedia_new (sf, cell->linked_track);
+  gtk_widget_set_size_request (GTK_WIDGET (media[1]), convert_time_pix(cell, length), GTK_WIDGET (cell)->allocation.height);
   
   /* Putting on first Layout */
   
@@ -853,7 +853,6 @@ create_media_track (PitiviTimelineCellRenderer *self,
   PitiviTimelineMedia *media;
   guint64 length = sf->length;
   
-  g_printf("create_media_track\n");
   if (!length)
     length = DEFAULT_MEDIA_SIZE;
   media = pitivi_timelinemedia_new (sf, self);
@@ -873,8 +872,7 @@ create_effect_on_track (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf, 
 {
   PitiviTimelineMedia *media;
   PitiviLayerType	type_track_cmp;
-
-  g_printf("create_effect_on_track\n");
+  
   type_track_cmp = check_media_type (sf);
   if (self->track_type == type_track_cmp)
     {
@@ -896,7 +894,6 @@ dispose_medias (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf, int x)
 	create_media_video_audio_track (self, sf, x);
       else
 	{
-	  g_printf ("type:%d\n", self->track_type);
 	  if (self->track_type == type_track_cmp)
 	    create_media_track (self, sf, x, FALSE);
 	  else if (self->track_type != type_track_cmp)
