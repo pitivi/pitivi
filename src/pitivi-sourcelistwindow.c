@@ -38,7 +38,7 @@ struct _PitiviSourceListWindowPrivate
   GtkWidget	*selectfile;
   GtkWidget	*treeview;
   GtkWidget	*listview;
-  GtkListStore	*liststore;
+  GSList	*liststore;
   GtkTreeStore	*treestore;
   gchar		*treepath;
   gchar		*filepath;
@@ -69,7 +69,7 @@ enum
 
 enum
   {
-    TEXT_LISTCOLUMN1,
+    BMP_LISTCOLUMN1,
     TEXT_LISTCOLUMN2,
     TEXT_LISTCOLUMN3,
     TEXT_LISTCOLUMN4,
@@ -150,60 +150,49 @@ int	get_num_of_selected_row(gchar *treepath, gint *depth)
   return (atoi(tmp2));
 }
 
-void	remove_all_row_from_listview(PitiviSourceListWindow *self)
+void	add_liststore_for_bin(PitiviSourceListWindow *self, 
+			      GtkListStore *liststore)
 {
-  gtk_list_store_clear(self->private->liststore);
+  self->private->liststore = g_slist_append(self->private->liststore, liststore);
+}
+
+GtkListStore	*get_liststore_for_bin(PitiviSourceListWindow *self,
+				       guint bin_pos)
+{
+  GSList	*list;
+
+  list = self->private->liststore;
+
+  while (bin_pos--)
+    {
+      list = list->next;
+    }
+  return (GtkListStore*)list->data;
 }
 
 void	show_file_in_current_bin(PitiviSourceListWindow *self)
 {
-  GtkTreeIter	iter;
-  gchar	*name;
-  gchar	*sTexte;
-  gchar	*sExempleTexte;
-  gchar	*info;
+  GtkListStore	*liststore;
   gint	selected_row;
-  gint	index;
   gint	depth;
 
   selected_row = get_num_of_selected_row(self->private->treepath, &depth);
+  g_printf("== show file in current bin %d ==\n", selected_row);
 
-  index = 0;
-  while ((info = pitivi_projectsourcelist_get_file_info(self->private->prjsrclist, 
-					 selected_row, index)) != NULL)
-    {
-    /*   g_printf("%s\n", info); */
-      sTexte = g_malloc(12);
-      sExempleTexte = g_malloc(12);
+  liststore = get_liststore_for_bin(self, selected_row);
 
-      sprintf(sTexte, "Ligne %d\0", index);
-      sprintf(sExempleTexte, "exemple %d\0", index);
-  
-      /* Creation de la nouvelle ligne */
-      gtk_list_store_append(self->private->liststore, &iter);
-      
-      name = strrchr(info, '/');
-      name++;
+  g_printf("== set model for current bin ==\n");
 
-      /* Mise a jour des donnees */
-      gtk_list_store_set(self->private->liststore,
-			 &iter, TEXT_LISTCOLUMN1, sTexte,
-			 TEXT_LISTCOLUMN2, name,
-			 TEXT_LISTCOLUMN3, sExempleTexte,
-			 TEXT_LISTCOLUMN4, sExempleTexte,
-			 TEXT_LISTCOLUMN5, sExempleTexte,
-			 TEXT_LISTCOLUMN6, sExempleTexte,
-			 TEXT_LISTCOLUMN7, sExempleTexte,
-			 -1);
-      index++;
-    }
-  
+  gtk_tree_view_set_model(GTK_TREE_VIEW(self->private->listview), 
+			  GTK_TREE_MODEL(liststore));
 }
 
 void	new_file(GtkWidget *widget, gpointer data)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
   GtkTreeIter	pIter;
+  GtkListStore	*liststore;
+  GdkPixbuf	*pixbufa;
   gchar		*sTexte;
   gchar		*name;
   gchar		*sExempleTexte;
@@ -230,15 +219,19 @@ void	new_file(GtkWidget *widget, gpointer data)
   sprintf(sTexte, "Ligne %d\0", i);
   sprintf(sExempleTexte, "exemple %d\0", i);
   
+  pixbufa = gtk_widget_render_icon(self->private->listview, GTK_STOCK_NEW,
+				   GTK_ICON_SIZE_MENU, NULL);
+
   /* Creation de la nouvelle ligne */
-  gtk_list_store_append(self->private->liststore, &pIter);
+  liststore = get_liststore_for_bin(self, row_selected);
+  gtk_list_store_append(liststore, &pIter);
   
   name = strrchr(self->private->filepath, '/');
   name++;
 
   /* Mise a jour des donnees */
-  gtk_list_store_set(self->private->liststore,
-		     &pIter, TEXT_LISTCOLUMN1, sTexte,
+  gtk_list_store_set(liststore,
+		     &pIter, BMP_LISTCOLUMN1, pixbufa,
 		     TEXT_LISTCOLUMN2, name,
 		     TEXT_LISTCOLUMN3, sExempleTexte,
 		     TEXT_LISTCOLUMN4, sExempleTexte,
@@ -247,6 +240,11 @@ void	new_file(GtkWidget *widget, gpointer data)
 		     TEXT_LISTCOLUMN7, sExempleTexte,
 		     -1);
   i++;
+  
+  g_free(sTexte);
+  g_free(sExempleTexte);
+
+  g_object_unref(pixbufa);
 /*   pitivi_projectsourcelist_showfile(self->private->prjsrclist, row_selected); */
 }
 
@@ -255,8 +253,9 @@ void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
   GtkTreeSelection *selection;
   GdkPixbuf	*pixbufa;
   GtkTreeIter	iter;
+  GtkListStore	*liststore;
 
-  g_printf("insert new chutier\n");
+  g_printf("insert new bin\n");
   g_printf("== %s ==\n", bin_name);
 
   pitivi_projectsourcelist_new_bin(self->private->prjsrclist, bin_name);
@@ -271,6 +270,17 @@ void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
   /* Creation de la nouvelle ligne */
   gtk_tree_store_set(self->private->treestore, &iter, BMP_COLUMN, pixbufa,
 		     TEXT_TREECOLUMN, bin_name, -1);
+
+  /* creation du model pour le nouveau bin */
+  liststore = gtk_list_store_new(N_LISTCOLOUMN, GDK_TYPE_PIXBUF,
+				 G_TYPE_STRING, G_TYPE_STRING,
+				 G_TYPE_STRING, G_TYPE_STRING,
+				 G_TYPE_STRING, G_TYPE_STRING);
+  
+  gtk_tree_view_set_model(GTK_TREE_VIEW(self->private->listview),
+			  GTK_TREE_MODEL(liststore));
+
+  add_liststore_for_bin(self, liststore);
 
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
   gtk_tree_selection_select_iter(selection, &iter);
@@ -308,18 +318,11 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
   GtkWidget		*menupopup;
   GtkWidget		*pListView;
   GtkWidget		*pScrollbar;
-  GtkListStore		*pListStore;
   GtkTreeViewColumn	*pColumn;
   GtkCellRenderer      	*pCellRenderer;
 
-  /* Creation du modele */
-  self->private->liststore = gtk_list_store_new(N_LISTCOLOUMN, G_TYPE_STRING, G_TYPE_STRING, 
-				  G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, 
-				  G_TYPE_STRING, G_TYPE_STRING);
-
   /* Creation de la vue */
-  pListView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(self->private->liststore));
-
+  pListView = gtk_tree_view_new();
   self->private->listview = pListView;
 
   /* Creation du menu popup */
@@ -330,9 +333,9 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 			   GTK_OBJECT(menupopup));
 
   /* Creation de la premiere colonne */
-  pCellRenderer = gtk_cell_renderer_text_new();
+  pCellRenderer = gtk_cell_renderer_pixbuf_new();
   pColumn = gtk_tree_view_column_new_with_attributes("Elements", pCellRenderer,
-						     "text", TEXT_LISTCOLUMN1, 
+						     "pixbuf", BMP_LISTCOLUMN1,
 						     NULL);
   
   /* Ajout de la colonne a la vue */
@@ -340,7 +343,6 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 
   /* Creation de la deuxieme colonne */
   pCellRenderer = gtk_cell_renderer_text_new();
-/*   pCellRenderer = gtk_cell_renderer_toggle_new(); */
   pColumn = gtk_tree_view_column_new_with_attributes("Nom", pCellRenderer,
 						     "text", TEXT_LISTCOLUMN2,
 						     NULL);
@@ -490,7 +492,7 @@ gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
        else
 	 {
 	   g_printf("cleanning %s\n", name);
-	   remove_all_row_from_listview(self);
+	   /* remove_all_row_from_listview(self); */
 	 }
       
     }
@@ -516,6 +518,7 @@ static gint	my_popup_handler(GtkWidget *widget, GdkEvent *event)
       event_button = (GdkEventButton *)event;
       if (event_button->button == 3)
 	{ 
+	  
 	  gtk_menu_popup(pMenu, NULL, NULL, NULL, NULL,
 			 event_button->button, event_button->time);
 	  return TRUE;
@@ -733,8 +736,14 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
 
   self->private->hpaned = create_projectview(self);
  
+  self->private->liststore = NULL;
+
+  /* add a bin to validate model of  list view */
+  new_bin(self, g_strdup("bin 1"));
+  nbrchutier++;
+
   gtk_window_set_default_size(GTK_WINDOW(self), 600, 200);
-   
+
   gtk_container_add(GTK_CONTAINER(self), self->private->hpaned);
 }
 
