@@ -229,4 +229,3 @@ draw_gdk_text_centered (GdkDrawable *drawable, GdkFont *font, GdkGC *gc,
 		 x+width/2-text_width/2, y+height/2+text_height/2,
 		 text, text_length);
 }
-

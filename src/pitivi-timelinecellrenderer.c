@@ -53,6 +53,7 @@ struct _PitiviTimelineCellRendererPrivate
   
   /* Slide */
   guint		       slide_width;
+  gboolean	       slide_both;
 };
 
 /*
@@ -309,51 +310,6 @@ check_media_type (PitiviSourceFile *sf)
   return (PITIVI_NO_TRACK);
 }
 
-static void
-pitivi_timelinecellrenderer_drag_data_received (GObject *object,
-						GdkDragContext *dc,
-						int x,
-						int y,
-						GtkSelectionData *selection,
-						guint info,
-						guint time,
-						gpointer data)
-{
-  PitiviCursor *cursor;
-  GtkWidget    *source;
-  PitiviTimelineCellRenderer *self;
-
-  self = PITIVI_TIMELINECELLRENDERER (object);
-  self->private->current_selection = selection;
-  if (!selection->data) {
-    gtk_drag_finish (dc, FALSE, FALSE, time);
-    return;
-  }
-  
-  cursor = pitivi_getcursor_id (GTK_WIDGET(self));
-  self->private->current_selection = selection;
-  source = gtk_drag_get_source_widget(dc);
-  switch (info) 
-    {
-    case DND_TARGET_SOURCEFILEWIN:
-      pitivi_timelinecellrenderer_drag_on_source_file (self, self->private->current_selection, x, y);
-      gtk_drag_finish (dc, TRUE, TRUE, time);
-      break;
-    case DND_TARGET_TIMELINEWIN:
-      if (cursor->type == PITIVI_CURSOR_SELECT || cursor->type == PITIVI_CURSOR_HAND)
-	{  
-	  pitivi_timelinecellrenderer_drag_on_track (self, source, self->private->current_selection, x, y);
-	  gtk_drag_finish (dc, TRUE, TRUE, time);
-	}
-      break;
-    case DND_TARGET_EFFECTSWIN:
-      gtk_drag_finish (dc, TRUE, TRUE, time);
-      break;
-    default:
-      break;
-    }
-}
-
 PitiviCursor *
 pitivi_getcursor_id (GtkWidget *widget)
 {
@@ -434,58 +390,6 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 }
 
 static void
-pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_class)
-{
-  GdkPixmap *pixmap;
-  
-  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) instance;
-
-  self->private = g_new0(PitiviTimelineCellRendererPrivate, 1);
-  
-  /* Motion notify Event Button Press release for selection */
-
-  gtk_widget_set_events (GTK_WIDGET (self),
-			 GDK_BUTTON_RELEASE_MASK |
-			 GDK_POINTER_MOTION_MASK | 
-			 gtk_widget_get_events (GTK_WIDGET (self)));
-  
-  /* initialize all public and private members to reasonable default values. */
-  
-  self->private->dispose_has_run = FALSE;
-  
-  /* Initializations */
-    
-  self->private->width  = FIXED_WIDTH;
-  self->private->height = FIXED_HEIGHT;
-  self->private->selected = FALSE;
-  self->children = NULL;
-  self->track_nb = 0;
-  self->motion_area = g_new0 (GdkRectangle, 1);
-  self->private->slide_width = DEFAULT_MEDIA_SIZE;
-  
-  /* Set background Color Desactivation of default pixmap is possible */
-  
-  pixmap = pitivi_drawing_getpixmap (GTK_WIDGET(self), bg_xpm);
-  pitivi_drawing_set_pixmap_bg (GTK_WIDGET(self), pixmap);
-  
-  /* Drag and drop signal connection */
-  
-  gtk_drag_dest_set  (GTK_WIDGET (self), GTK_DEST_DEFAULT_ALL, 
-		      TargetEntries,
-		      iNbTargetEntries,
-		      GDK_ACTION_COPY|GDK_ACTION_MOVE);
-  
-  g_signal_connect (G_OBJECT (self), "drag_leave",\
-		    G_CALLBACK ( pitivi_timelinecellrenderer_drag_leave ), NULL);
-  g_signal_connect (G_OBJECT (self), "drag_data_received",\
-		    G_CALLBACK ( pitivi_timelinecellrenderer_drag_data_received ), NULL);
-  g_signal_connect (G_OBJECT (self), "drag_motion",
-		    G_CALLBACK ( pitivi_timelinecellrenderer_drag_motion ), NULL);
-  g_signal_connect (G_OBJECT (self), "button_release_event",
-		    G_CALLBACK ( pitivi_timelinecellrenderer_button_release_event ), NULL);
-}
-
-static void
 pitivi_timelinecellrenderer_dispose (GObject *object)
 {
   PitiviTimelineCellRenderer	*self = PITIVI_TIMELINECELLRENDERER(object);
@@ -556,50 +460,27 @@ pitivi_timelinecellrenderer_get_property (GObject * object,
  * drag							      *
  **************************************************************/
 
-void 
-pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self, 
-					   GtkWidget *source,
-					   GtkSelectionData *selection,
-					   int x,
-					   int y)
+guint
+convert_time_pix (gint64 timelength, PitiviConvert type)
 {
-  PitiviTimelineCellRenderer *parent;
-  PitiviTimelineMedia	     *dragged;
+  gint64 len = timelength;
   
-  dragged = (PitiviTimelineMedia *) source;
-  parent  = (PitiviTimelineCellRenderer *)gtk_widget_get_parent(GTK_WIDGET (dragged));
-  
-  /* Moving widget on same track */
-  
-  if (parent && self->track_type == parent->track_type)
+  switch (type)
     {
-      if ( dragged->linked ) { /* Two widgets */
-	if (parent == self)
-	  {
-	    move_child_on_layout (GTK_WIDGET (self), GTK_WIDGET (source), x);
-	    move_child_on_layout (GTK_WIDGET (self->linked_track), dragged->linked, x);
-	  }
-	else
-	  {
-	    gtk_container_remove (GTK_CONTAINER (parent), GTK_WIDGET (source));
-	    add_to_layout (GTK_WIDGET (self),  source, x, 0);
-	    
-	    /* linked widget */
-	    
-	    GtkWidget *linked_ref = gtk_widget_ref (dragged->linked);
-	    gtk_container_remove (GTK_CONTAINER (parent->linked_track), dragged->linked);
-	    add_to_layout (GTK_WIDGET (self->linked_track), linked_ref, x, 0);
-	    gtk_widget_unref (linked_ref);
-	  }
-	pitivi_send_expose_event (self->linked_track);
-      }
-      else /* Single Widget */
-	{
-	  GTK_CONTAINER_CLASS (parent_class)->remove (GTK_CONTAINER (parent), GTK_WIDGET (dragged));
-	  add_to_layout  (GTK_WIDGET (self),  GTK_WIDGET (dragged), x, 0);
-	}
+    case PITIVI_NANOSECONDS:
+      len = timelength;
+      break;
+    case PITIVI_SECONDS:
+      len = (timelength / GST_SECOND);
+      break;
+    case PITIVI_FRAMES:
+      break;
+    default:
+      break;
     }
+  return len;
 }
+
 
 void
 create_media_video_audio_track (PitiviTimelineCellRenderer *cell, PitiviSourceFile *sf, int x)
@@ -653,9 +534,12 @@ create_media_track (PitiviTimelineCellRenderer *self,
 }
 
 void
-create_effect_on_track (PitiviTimelineCellRenderer *self)
+create_effect_on_track (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf, int x)
 {
+  PitiviTimelineMedia *media;
   
+  media = pitivi_timelinemedia_new (sf);
+  add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (media), x, 0);
 }
 
 void
@@ -668,20 +552,129 @@ pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *sel
   PitiviLayerType	type_track_cmp;
 
   sf = (PitiviSourceFile *) selection->data;
-  type_track_cmp = check_media_type (sf);
-  if (type_track_cmp == PITIVI_VIDEO_AUDIO_TRACK)
-    create_media_video_audio_track (self, sf, x);
-  else if (type_track_cmp == PITIVI_EFFECTS_TRACK || type_track_cmp == PITIVI_TRANSITION_TRACK)
-    create_effect_on_track (self);
-  else
+  if (self->track_type != PITIVI_EFFECTS_TRACK && self->track_type != PITIVI_TRANSITION_TRACK)
     {
-      if (self->track_type == type_track_cmp)
-	create_media_track (self, sf, x, FALSE);
-      else if (self->track_type != type_track_cmp)
-	create_media_track (self, sf, x, TRUE);
+      type_track_cmp = check_media_type (sf);
+      if (type_track_cmp == PITIVI_VIDEO_AUDIO_TRACK)
+	create_media_video_audio_track (self, sf, x);
+      else
+	{
+	  if (self->track_type == type_track_cmp)
+	    create_media_track (self, sf, x, FALSE);
+	  else if (self->track_type != type_track_cmp)
+	    create_media_track (self, sf, x, TRUE);
+	}
     }
 }
 
+
+
+static void
+pitivi_timelinecellrenderer_drag_on_effects (PitiviTimelineCellRenderer *self,
+					     GtkSelectionData *selection,
+					     int x,
+					     int y)
+{
+  PitiviSourceFile  *sf = NULL;
+  
+  sf = (PitiviSourceFile *) selection->data;
+  if (sf)
+    if (self->track_type == PITIVI_EFFECTS_TRACK && self->track_type == PITIVI_TRANSITION_TRACK)
+      create_effect_on_track (self, sf, x);
+}
+
+static void 
+pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self, 
+					   GtkWidget *source,
+					   GtkSelectionData *selection,
+					   int x,
+					   int y)
+{
+  PitiviTimelineCellRenderer *parent;
+  PitiviTimelineMedia	     *dragged;
+  
+  dragged = (PitiviTimelineMedia *) source;
+  parent  = (PitiviTimelineCellRenderer *)gtk_widget_get_parent(GTK_WIDGET (dragged));
+  
+  /* Moving widget on same track */
+  
+  if (parent && self->track_type == parent->track_type)
+    {
+      if ( dragged->linked ) { /* Two widgets */
+	if (parent == self)
+	  {
+	    move_child_on_layout (GTK_WIDGET (self), GTK_WIDGET (source), x);
+	    move_child_on_layout (GTK_WIDGET (self->linked_track), dragged->linked, x);
+	  }
+	else
+	  {
+	    gtk_container_remove (GTK_CONTAINER (parent), GTK_WIDGET (source));
+	    add_to_layout (GTK_WIDGET (self),  source, x, 0);
+	    
+	    /* linked widget */
+	    
+	    GtkWidget *linked_ref = gtk_widget_ref (dragged->linked);
+	    gtk_container_remove (GTK_CONTAINER (parent->linked_track), dragged->linked);
+	    add_to_layout (GTK_WIDGET (self->linked_track), linked_ref, x, 0);
+	    gtk_widget_unref (linked_ref);
+	  }
+	pitivi_send_expose_event (self->linked_track);
+      }
+      else /* Single Widget */
+	{
+	  GTK_CONTAINER_CLASS (parent_class)->remove (GTK_CONTAINER (parent), GTK_WIDGET (dragged));
+	  add_to_layout  (GTK_WIDGET (self),  GTK_WIDGET (dragged), x, 0);
+	}
+    }
+}
+
+
+
+static void
+pitivi_timelinecellrenderer_drag_data_received (GObject *object,
+						GdkDragContext *dc,
+						int x,
+						int y,
+						GtkSelectionData *selection,
+						guint info,
+						guint time,
+						gpointer data)
+{
+  PitiviCursor *cursor;
+  GtkWidget    *source;
+  PitiviTimelineCellRenderer *self;
+
+  self = PITIVI_TIMELINECELLRENDERER (object);
+  self->private->current_selection = selection;
+  if (!selection->data) {
+    gtk_drag_finish (dc, FALSE, FALSE, time);
+    return;
+  }
+  
+  cursor = pitivi_getcursor_id (GTK_WIDGET(self));
+  self->private->current_selection = selection;
+  source = gtk_drag_get_source_widget(dc);
+  switch (info) 
+    {
+    case DND_TARGET_SOURCEFILEWIN:
+      pitivi_timelinecellrenderer_drag_on_source_file (self, self->private->current_selection, x, y);
+      gtk_drag_finish (dc, TRUE, TRUE, time);
+      break;
+    case DND_TARGET_TIMELINEWIN:
+      if (cursor->type == PITIVI_CURSOR_SELECT || cursor->type == PITIVI_CURSOR_HAND)
+	{  
+	  pitivi_timelinecellrenderer_drag_on_track (self, source, self->private->current_selection, x, y);
+	  gtk_drag_finish (dc, TRUE, TRUE, time);
+	}
+      break;
+    case DND_TARGET_EFFECTSWIN:
+      pitivi_timelinecellrenderer_drag_on_effects (self, self->private->current_selection, x, y);
+      gtk_drag_finish (dc, TRUE, TRUE, time);
+      break;
+    default:
+      break;
+    }
+}
 
 guint 
 slide_media_get_widget_size (PitiviTimelineMedia  *source)
@@ -693,7 +686,7 @@ slide_media_get_widget_size (PitiviTimelineMedia  *source)
   return width;
 }
 
-void
+static void
 pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
 					 GdkDragContext     *dc,
 					 gint                x,
@@ -715,13 +708,15 @@ pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
 	width = self->private->slide_width;
       gdk_window_clear (GTK_LAYOUT (widget)->bin_window);
       pitivi_draw_slide (widget, x, width);
-      if (self->linked_track && source && source->linked)
+      if ((self->linked_track && source && source->linked) || (self->linked_track && self->private->slide_both))
       	{
 	  gdk_window_clear  (GTK_LAYOUT (self->linked_track)->bin_window);
 	  pitivi_draw_slide (GTK_WIDGET (self->linked_track), x, width);
       	}
     }
 }
+
+
 
 
 /**************************************************************
@@ -852,13 +847,81 @@ pitivi_timelinecellrenderer_callb_delete_sf (GtkWidget *widget, gpointer data)
 }
 
 void
-pitivi_timelinecellrenderer_callb_drag_source_begin (PitiviTimelineCellRenderer *self, gpointer data)
+pitivi_timelinecellrenderer_callb_drag_source_begin (PitiviTimelineCellRenderer *self, 
+						     gpointer data)
 {
-  gint64 *len = data;
+  struct _Pslide
+  {
+    gint64 length;
+    gchar  *path;
+  } *slide;
+  gint64 len;
+ 
+  slide = (struct _Pslide *) data;
+  len = slide->length;
+  if (len > 0)
+    self->private->slide_width = convert_time_pix (len, PITIVI_SECONDS);
+  self->private->slide_both = TRUE;
+}
+
+/*
+ **********************************************************
+ * Instance Init  			                  *
+ *							  *
+ **********************************************************
+*/
+
+static void
+pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_class)
+{
+  GdkPixmap *pixmap;
   
-  *len = (*len / GST_SECOND);
-  if (*len > 0)
-    self->private->slide_width = *len;
+  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) instance;
+
+  self->private = g_new0(PitiviTimelineCellRendererPrivate, 1);
+  
+  /* Motion notify Event Button Press release for selection */
+
+  gtk_widget_set_events (GTK_WIDGET (self),
+			 GDK_BUTTON_RELEASE_MASK |
+			 GDK_POINTER_MOTION_MASK | 
+			 gtk_widget_get_events (GTK_WIDGET (self)));
+  
+  /* initialize all public and private members to reasonable default values. */
+  
+  self->private->dispose_has_run = FALSE;
+  
+  /* Initializations */
+    
+  self->private->width  = FIXED_WIDTH;
+  self->private->height = FIXED_HEIGHT;
+  self->private->selected = FALSE;
+  self->children = NULL;
+  self->track_nb = 0;
+  self->motion_area = g_new0 (GdkRectangle, 1);
+  self->private->slide_width = DEFAULT_MEDIA_SIZE;
+  self->private->slide_both  = FALSE;
+  
+  /* Set background Color Desactivation of default pixmap is possible */
+  
+  pixmap = pitivi_drawing_getpixmap (GTK_WIDGET(self), bg_xpm);
+  pitivi_drawing_set_pixmap_bg (GTK_WIDGET(self), pixmap);
+  
+  /* Drag and drop signal connection */
+  
+  gtk_drag_dest_set  (GTK_WIDGET (self), GTK_DEST_DEFAULT_ALL, 
+		      TargetEntries,
+		      iNbTargetEntries,
+		      GDK_ACTION_COPY|GDK_ACTION_MOVE);
+  
+  g_signal_connect (G_OBJECT (self), "drag_leave",\
+		    G_CALLBACK ( pitivi_timelinecellrenderer_drag_leave ), NULL);
+  g_signal_connect (G_OBJECT (self), "drag_data_received",\
+		    G_CALLBACK ( pitivi_timelinecellrenderer_drag_data_received ), NULL);
+  g_signal_connect (G_OBJECT (self), "drag_motion",
+		    G_CALLBACK ( pitivi_timelinecellrenderer_drag_motion ), NULL);
+  g_signal_connect (G_OBJECT (self), "button_release_event",
+		    G_CALLBACK ( pitivi_timelinecellrenderer_button_release_event ), NULL);
 }
 
 

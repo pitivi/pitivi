@@ -95,6 +95,20 @@ struct _PitiviTimelineCellRendererClass
   void (*drag_source_begin) (PitiviTimelineCellRenderer *cell, gpointer data);
 };
 
+/* Conversion */
+
+typedef enum {
+  
+  PITIVI_SECONDS = 1,
+  PITIVI_NANOSECONDS,
+  PITIVI_FRAMES
+} PitiviConvert;
+
+
+guint
+convert_time_pix (gint64 length, PitiviConvert type);
+
+
 /* used by PITIVI_TIMELINECELLRENDERER_TYPE */
 GType pitivi_timelinecellrenderer_get_type (void);
 
@@ -119,12 +133,5 @@ void		pitivi_timelinecellrenderer_activate (PitiviTimelineCellRenderer *self);
 void		pitivi_timelinecellrenderer_deactivate (PitiviTimelineCellRenderer *self);
 void		pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
 void		pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self );
-
-
-/* Drag and drop */
-
-void		pitivi_timelinecellrenderer_drag_motion (GtkWidget *widget, GdkDragContext *drag_context, gint x, gint y, guint time);
-void		pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *self, GtkSelectionData *selection, int x, int y);
-void		pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self, GtkWidget *source, GtkSelectionData *selection, int x, int y);
 
 #endif
