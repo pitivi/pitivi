@@ -23,27 +23,36 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <gtk/gtk.h>
-#include "pitivi.h"
-#include "pitivi-menu.h"
-#include "pitivi-stockicons.h"
 #include "pitivi-timelinewindow.h"
 
-static  GtkWindowClass *parent_class = NULL;
 static	GdkPixbuf *window_icon = NULL;
+static  GtkWindowClass *parent_class = NULL;
+
+typedef struct _PitiviTreeView
+{
+  GtkWidget     *window;
+  GtkWidget     *label;
+  GtkWidget     *treeview;
+  GtkTreeStore	*model;
+  GtkTreeIter	treeiter;
+  GdkPixbuf	*pixbuf;
+  GtkWidget     *scroll;
+  guint		order;
+
+} PitiviTreeView;
 
 struct _PitiviTimelineWindowPrivate
 {
-  /* instance private members */
+  /* Instance private members */
+  
   gboolean	dispose_has_run;
-  GtkWidget	*main_vbox;
-  GtkWidget	*menu_dock;
   PitiviMenu	*ui_menus;
-  GtkWidget	*hscrollbar;
-  GtkWidget	*hruler;
-  GtkWidget	*vruler;
-  GtkWidget	*forms;
-  GList		*popups;
+  GtkWidget	*menu_dock;
+  GtkWidget	*main_vbox;
+  
+  GtkWidget	 *hpaned;
+  PitiviTreeView *treelayersview;
+  PitiviTreeView *listlayersview;
   
   /* StatusBar */
 
@@ -51,12 +60,10 @@ struct _PitiviTimelineWindowPrivate
   GtkWidget	*statusbar_properties;
   GtkWidget	*statusbar_frame;
   GtkWidget	*statusbar_message;
-    
-  GNode	        *subs;
+  
   GdkWindow     *event_window;
   GdkCursor     *cursor;
-  guint	        gpi_type;
-  GList*        operations;  
+  GList         *operations;  
 };
 
 /*
@@ -77,6 +84,10 @@ enum {
 	DND_TYPE_TEXT
 };
 
+enum {
+    PITIVI_TEXT_COLUMN,
+    PITIVI_NB_COLUMN,
+};
 
 static GtkTargetEntry drop_types[] = {
 	{ "text/uri-list", 0, DND_TYPE_TEXT }
@@ -88,7 +99,7 @@ static  guint signals[LAST_SIGNAL];
 
 
 
-
+PitiviTreeView		*pitivi_timelinewindow_create_listview (void);
 
 
 
@@ -139,7 +150,6 @@ pitivi_callb_drag_data_received (GObject *object,
 				continue;
 			}
 			
-			/* action to do */
 			g_free (filename);
 		}
 
@@ -151,32 +161,15 @@ pitivi_callb_drag_data_received (GObject *object,
 	}
 }
 
-
 PitiviTimelineWindow *
 pitivi_timelinewindow_new(void)
 {
-  PitiviTimelineWindow	*timelinewindow;
+  PitiviTimelineWindow		*timelinewindow;
   PitiviTimelineWindowPrivate	*priv;
-  GtkWidget			*sw;
   
   timelinewindow = (PitiviTimelineWindow *) g_object_new(PITIVI_TIMELINEWINDOW_TYPE, NULL);
   g_assert(timelinewindow != NULL);
   priv = timelinewindow->private;
-  
-  /* Main Window : Setting default Size */
-  
-  gtk_window_set_title (GTK_WINDOW (timelinewindow), PITIVI_TIMELINE_DF_TITLE);
-  gtk_window_set_default_size (GTK_WINDOW (timelinewindow), PITIVI_TIMELINE_DF_WIN_WIDTH\
-			       , PITIVI_TIMELINE_DF_WIN_HEIGHT); 
-  if (window_icon == NULL) {
-    char *filename;
-    
-    filename = g_strdup(PITIVI_TIMELINE_LOGO);
-    window_icon = gdk_pixbuf_new_from_file (filename, NULL);
-    g_free (filename);
-  }
-  
-  gtk_window_set_icon (GTK_WINDOW (timelinewindow), window_icon);
   
   /* Main Window : Drag And Drop */
   
@@ -184,58 +177,6 @@ pitivi_timelinewindow_new(void)
 		     drop_types, num_drop_types, GDK_ACTION_COPY);
   g_signal_connect (G_OBJECT (timelinewindow), "drag_data_received",
 	 	    G_CALLBACK (pitivi_callb_drag_data_received), NULL);
-  /* Timeline */
-  
-  priv->forms = gtk_table_new (3, 2, FALSE);
-  gtk_box_pack_start (GTK_BOX (priv->main_vbox), priv->forms, TRUE, TRUE, 0);
-  
-  priv->vruler = gtk_vruler_new ();
-  gtk_ruler_set_metric (GTK_RULER (priv->vruler), GTK_PIXELS);
-  gtk_ruler_set_range (GTK_RULER (priv->vruler), 0, 3, 0, 3);
-  gtk_ruler_draw_pos (GTK_RULER (priv->vruler));
-  gtk_table_attach (GTK_TABLE (priv->forms), priv->vruler,
-		    0, 1, 1, 2,
-		    GTK_FILL,
-		    GTK_FILL | GTK_EXPAND,
-		    0, 0);
-  
-  priv->hruler = gtk_hruler_new ();
-  gtk_ruler_set_metric (GTK_RULER (priv->hruler), GTK_PIXELS);
-  gtk_ruler_set_range (GTK_RULER (priv->hruler), 0, 3, 0, 3);
-  gtk_ruler_draw_pos (GTK_RULER (priv->hruler));
-  gtk_table_attach (GTK_TABLE (priv->forms), priv->hruler,
-		    1, 2, 0, 1,
-		    GTK_FILL | GTK_EXPAND,
-		    GTK_FILL,
-		    0, 0);
-   
-  /* Main Window : Scrollbar */
-  
-  priv->hscrollbar = gtk_hscrollbar_new (NULL);
-  sw = gtk_scrolled_window_new (GTK_RANGE (priv->hscrollbar)->adjustment, NULL);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
-				  GTK_POLICY_NEVER,
-				  GTK_POLICY_NEVER);
-  
-  gtk_widget_set_scroll_adjustments (GTK_WIDGET (priv->hruler),
-				     GTK_RANGE (priv->hscrollbar)->adjustment,
-				     GTK_RANGE (GTK_SCROLLED_WINDOW (sw)->vscrollbar)->adjustment);
-  
-  /* Main Window : StatusBar */
-  
-  priv->dock_statusbar = gtk_hbox_new (FALSE, 0);
-  gtk_box_pack_end (GTK_BOX (priv->main_vbox), priv->dock_statusbar, FALSE, FALSE, 0);
-    
-  priv->statusbar_properties = gtk_statusbar_new ();
-  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (priv->statusbar_properties), FALSE);
-  gtk_box_pack_start (GTK_BOX (priv->dock_statusbar), priv->statusbar_properties, TRUE, TRUE, 0);
-  priv->statusbar_frame = gtk_statusbar_new ();
-  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (priv->statusbar_frame), FALSE);
-  gtk_box_pack_start (GTK_BOX (priv->dock_statusbar), priv->statusbar_frame, TRUE, TRUE, 0);  
-  priv->statusbar_message = gtk_statusbar_new ();
-  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (priv->statusbar_message), FALSE);
-  gtk_box_pack_start (GTK_BOX (priv->dock_statusbar), priv->statusbar_message, TRUE, TRUE, 0);
-  
   return timelinewindow;
 }
 
@@ -247,6 +188,7 @@ pitivi_timelinewindow_constructor (GType type,
   GObject *obj;
   {
     /* Invoke parent constructor. */
+    
     PitiviTimelineWindowClass *klass;
     GObjectClass *parent_class;
     klass = PITIVI_TIMELINEWINDOW_CLASS (g_type_class_peek (PITIVI_TIMELINEWINDOW_TYPE));
@@ -309,24 +251,71 @@ static GtkActionEntry recent_entry[]= {
 };
 
 
+void
+pitivi_timelinewindow_init_default_values (PitiviTimelineWindow *self)
+{
+  GtkTreeIter child;
+  GtkTreeIter parent[2];
+  int	      count;
+
+  for (count = 0; count < 4; count++)
+    {    
+      
+
+      if (!count)
+	{
+	  gtk_tree_store_append( self->private->treelayersview->model, &parent[0], NULL);
+	  gtk_tree_store_set( self->private->treelayersview->model, &parent[0], PITIVI_TEXT_COLUMN, "Video", -1);
+	  gtk_tree_store_append( self->private->treelayersview->model, &parent[1], NULL);
+	  gtk_tree_store_set( self->private->treelayersview->model, &parent[1], PITIVI_TEXT_COLUMN, "Audio", -1);
+	}
+      else
+	{
+	  gtk_tree_store_append( self->private->treelayersview->model, &child, &parent[0]);
+	  gtk_tree_store_set( self->private->treelayersview->model, &child, PITIVI_TEXT_COLUMN, "layer", -1);
+	  gtk_tree_store_append( self->private->treelayersview->model, &child, &parent[1]);
+	  gtk_tree_store_set( self->private->treelayersview->model, &child, PITIVI_TEXT_COLUMN, "layer", -1);
+	}
+    }
+}
+
 static void
 pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
-  int	count;
-  PitiviMenu *menumgr;
-  PitiviTimelineWindow *self = (PitiviTimelineWindow *) instance;
+  PitiviMenu	*menumgr;
+  GtkCellRenderer *pCellRenderer;
+  GtkTreeViewColumn *pColumn;
+  GtkWidget	*sw;
+  GtkWidget	*hpaned;
+  int		count;
   
+  PitiviTimelineWindow *self = (PitiviTimelineWindow *) instance;
   self->private = g_new0(PitiviTimelineWindowPrivate, 1);
   
   /* initialize all public and private members to reasonable default values. */ 
   
   self->private->dispose_has_run = FALSE;
-    
+  
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    * statusbar_set_frames (self->private->statusbar_frame, self, (guint64) 0);
    */  
- 
+  
+  /* Main Window : Setting default Size */
+  
+  gtk_window_set_title (GTK_WINDOW (self), PITIVI_TIMELINE_DF_TITLE);
+  gtk_window_set_default_size (GTK_WINDOW (self), PITIVI_TIMELINE_DF_WIN_WIDTH\
+			       , PITIVI_TIMELINE_DF_WIN_HEIGHT); 
+  if (window_icon == NULL) {
+    char *filename;
+    
+    filename = g_strdup(PITIVI_TIMELINE_LOGO);
+    window_icon = gdk_pixbuf_new_from_file (filename, NULL);
+    g_free (filename);
+  }
+  
+  gtk_window_set_icon (GTK_WINDOW (self), window_icon);
+  
   self->private->main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (self->private->main_vbox);
   
@@ -354,7 +343,78 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_box_pack_start (GTK_BOX (self->private->menu_dock), menumgr->public->menu,
 		      FALSE, TRUE, 0);
   self->private->operations = g_list_alloc ();
+
+  /* Timeline Right Left View */
+  
+  hpaned = gtk_hpaned_new();
+  gtk_paned_set_position(GTK_PANED (hpaned), 200);
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), hpaned, TRUE, TRUE, 0);
+  
+  self->private->treelayersview = g_new0 (PitiviTreeView, 1);
+  self->private->treelayersview->model = gtk_tree_store_new (PITIVI_NB_COLUMN, G_TYPE_STRING);
+  self->private->treelayersview->treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (self->private->treelayersview->model));
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (self->private->treelayersview->treeview), FALSE);
+  self->private->treelayersview->scroll = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(self->private->treelayersview->scroll),
+				 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+
+  gtk_container_add (GTK_CONTAINER (self->private->treelayersview->scroll), self->private->treelayersview->treeview);
+  
+  pCellRenderer = gtk_cell_renderer_text_new();
+  pColumn = gtk_tree_view_column_new_with_attributes("text",
+						     pCellRenderer,
+						     "text",
+						     PITIVI_TEXT_COLUMN,
+						     NULL);
+    
+  gtk_tree_view_append_column(GTK_TREE_VIEW( self->private->treelayersview->treeview), pColumn);
+    
+  /* Right View */
+  
+  self->private->listlayersview = g_new0 (PitiviTreeView, 1);
+  self->private->listlayersview->model = gtk_tree_store_new (PITIVI_NB_COLUMN, G_TYPE_STRING);
+  self->private->listlayersview->treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (self->private->listlayersview->model));
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (self->private->listlayersview->treeview), FALSE);
+  self->private->listlayersview->scroll = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(self->private->listlayersview->scroll),
+				 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_add (GTK_CONTAINER (self->private->listlayersview->scroll), self->private->listlayersview->treeview);
+  
+  pCellRenderer = gtk_cell_renderer_text_new();
+  pColumn = gtk_tree_view_column_new_with_attributes("text",
+						     pCellRenderer,
+						     "text",
+						     PITIVI_TEXT_COLUMN,
+						     NULL);
+  
+  gtk_tree_view_append_column(GTK_TREE_VIEW( self->private->listlayersview->treeview), pColumn);
+    
+  /* Main Window : StatusBar */
+  
+  self->private->dock_statusbar = gtk_hbox_new (FALSE, 0);
+  gtk_box_pack_end (GTK_BOX (self->private->main_vbox), self->private->dock_statusbar, FALSE, FALSE, 0);
+  
+  self->private->statusbar_properties = gtk_statusbar_new ();
+  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (self->private->statusbar_properties), FALSE);
+  gtk_box_pack_start (GTK_BOX (self->private->dock_statusbar), self->private->statusbar_properties, TRUE, TRUE, 0);
+  
+  self->private->statusbar_frame = gtk_statusbar_new ();
+  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (self->private->statusbar_frame), FALSE);
+  gtk_box_pack_start (GTK_BOX (self->private->dock_statusbar), self->private->statusbar_frame, TRUE, TRUE, 0);  
+  
+  self->private->statusbar_message = gtk_statusbar_new ();
+  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (self->private->statusbar_message), TRUE);
+  gtk_box_pack_start (GTK_BOX (self->private->dock_statusbar), self->private->statusbar_message, TRUE, TRUE, 0);
+ 
+  /* final packing */
+  
+  gtk_paned_pack1(GTK_PANED (hpaned),  self->private->treelayersview->scroll, TRUE, FALSE);
+  gtk_paned_pack2(GTK_PANED (hpaned),  self->private->listlayersview->scroll, TRUE, FALSE);
+
+  /* Init default values */
+  pitivi_timelinewindow_init_default_values (self);
 }
+
 
 static void
 pitivi_timelinewindow_dispose (GObject *object)

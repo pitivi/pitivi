@@ -30,6 +30,11 @@
  * Potentially, include other headers on which this header depends.
  */
 
+#include <gtk/gtk.h>
+#include "pitivi.h"
+#include "pitivi-menu.h"
+#include "pitivi-stockicons.h"
+
 /*
  * Type macros.
  */
@@ -53,7 +58,6 @@
 typedef struct _PitiviTimelineWindow PitiviTimelineWindow;
 typedef struct _PitiviTimelineWindowClass PitiviTimelineWindowClass;
 typedef struct _PitiviTimelineWindowPrivate PitiviTimelineWindowPrivate;
-
 
 struct _PitiviTimelineWindow
 {
