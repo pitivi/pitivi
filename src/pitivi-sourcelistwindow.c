@@ -82,13 +82,15 @@ struct _PitiviSourceListWindowPrivate
 
   gchar		*filepath;
   gchar		*folderpath;
+  
   /* Signals variable */
   guint		newfile_signal_id;
   guint		newfolder_signal_id;
 
   /* drag'n'drop variables */
-  gchar		*dndtreepath;
-  gint		dndfilepos;
+  PitiviSourceFile *sf;
+  gchar		   *dndtreepath;
+  gint		   dndfilepos;
 };
 
 /*
@@ -1586,6 +1588,7 @@ drag_begin_cb (GtkWidget          *widget,
   gint			i;
   gchar			*tmpMediaType;
 
+  
   /* find treepath */
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
   if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1622,6 +1625,7 @@ drag_begin_cb (GtkWidget          *widget,
     }
   g_printf("real filepos is ==> %d\n", item_select);
   self->private->dndfilepos = item_select;
+  //  g_signal_emit (self->private->timelinewin, "drag-source-begin", (gpointer) self->private->length);
 }
 
 static void
@@ -1648,7 +1652,7 @@ drag_data_get_cb (GtkWidget          *widget,
 {
   PitiviSourceListWindow *self = PITIVI_SOURCELISTWINDOW(editor);
   PitiviSourceFile	 *sf;
-  gchar			 *tmp;
+  gchar			*tmp;
 
   sf = pitivi_projectsourcelist_get_sourcefile(PITIVI_PROJECTWINDOWS(self)->project->sources,
 					       self->private->dndtreepath,

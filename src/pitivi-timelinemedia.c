@@ -99,6 +99,7 @@ pitivi_timelinemedia_new (PitiviSourceFile *sf)
 						       type,
 						       NULL);
   timelinemedia->sourceitem->srcfile = sf;
+  timelinemedia->sourceitem->gnlsource = gnl_source_new (sf->filename, sf->pipeline);
   g_assert(timelinemedia != NULL);
   return timelinemedia;
 }
@@ -120,8 +121,6 @@ pitivi_timelinemedia_constructor (GType type,
   
   self = (PitiviTimelineMedia *) object;
   self->sourceitem = g_new0 (PitiviSourceItem, 1);
-  /* to change */
-  self->sourceitem->gnlsource = g_new0 (GnlSource, 1);
   return object;
 }
 

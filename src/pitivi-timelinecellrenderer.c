@@ -216,6 +216,26 @@ GtkWidget **layout_intersection_widget (GtkWidget *self, GtkWidget *widget, gint
   return p;
 }
 
+void move_media (GtkWidget *cell, GtkWidget *widget, guint x, guint way)
+{
+  GtkWidget **intersec;
+  GtkWidget *first;
+  int       xbegin;
+
+  intersec = layout_intersection_widget (cell, widget, x);
+  first = intersec[way];
+  if (first && GTK_IS_WIDGET (first) && first->allocation.x != x)
+    {
+      if (!way)
+	xbegin = first->allocation.x - ((first->allocation.x+first->allocation.width) - x);
+      if (way)
+	xbegin = x + first->allocation.width;
+      gtk_layout_move (GTK_LAYOUT (cell), first, xbegin, 0);
+      move_media (cell, first, xbegin, way);
+    }
+  return;
+}
+
 void
 move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
 {
@@ -235,26 +255,6 @@ move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
       move_media (self, widget, x, 1);
     }
   gtk_layout_move (GTK_LAYOUT (self), widget, x, 0);
-}
-
-void move_media (GtkWidget *cell, GtkWidget *widget, guint x, guint way)
-{
-  GtkWidget **intersec;
-  GtkWidget *first;
-  int       xbegin;
-
-  intersec = layout_intersection_widget (cell, widget, x);
-  first = intersec[way];
-  if (first && GTK_IS_WIDGET (first) && first->allocation.x != x)
-    {
-      if (!way)
-	xbegin = first->allocation.x - ((first->allocation.x+first->allocation.width) - x);
-      if (way)
-	xbegin = x + first->allocation.width;
-      gtk_layout_move (GTK_LAYOUT (cell), first, xbegin, 0);
-      move_media (cell, first, xbegin, way);
-    }
-  return;
 }
 
 int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
@@ -686,7 +686,7 @@ slide_media_get_widget_size (PitiviTimelineMedia  *source)
 {
   guint width = DEFAULT_MEDIA_SIZE;
 
-  if (GTK_IS_LAYOUT (source))
+  if (PITIVI_IS_TIMELINEMEDIA (source))
     width = GTK_WIDGET (source)->allocation.width;
   return width;
 }
@@ -912,11 +912,20 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
 		 g_cclosure_marshal_VOID__VOID,
 		 G_TYPE_NONE, 0);
    
+   g_signal_new ("drag-source-begin",
+		 G_TYPE_FROM_CLASS (g_class),
+		 G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+		 G_STRUCT_OFFSET (PitiviTimelineCellRendererClass, drag_source_begin),
+		 NULL,
+		 NULL,       
+		 g_cclosure_marshal_VOID__VOID,
+		 G_TYPE_NONE, 0);
+   
    cell_class->activate = pitivi_timelinecellrenderer_callb_activate;
    cell_class->deactivate = pitivi_timelinecellrenderer_callb_deactivate;
    cell_class->select = pitivi_timelinecellrenderer_callb_select;
    cell_class->deselect = pitivi_timelinecellrenderer_callb_deselect;
-   cell_class->delete =  pitivi_timelinecellrenderer_callb_delete_sf;
+   //cell_class->delete =  pitivi_timelinecellrenderer_callb_delete_sf;
 }
 
 GType

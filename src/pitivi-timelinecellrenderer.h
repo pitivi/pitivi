@@ -87,11 +87,12 @@ struct _PitiviTimelineCellRendererClass
 
   /* class members */
   
-  void (* activate)   (PitiviTimelineCellRenderer *cell);
-  void (* deactivate) (PitiviTimelineCellRenderer *cell);
-  void (* select)     (PitiviTimelineCellRenderer *cell);
-  void (* deselect)   (PitiviTimelineCellRenderer *cell);
-  void (* delete)     (PitiviTimelineCellRenderer *timew, gpointer data);
+  void (*drag_source_begin) (PitiviTimelineCellRenderer *cell);
+  void (* activate)	    (PitiviTimelineCellRenderer *cell);
+  void (* deactivate)	    (PitiviTimelineCellRenderer *cell);
+  void (* select)	    (PitiviTimelineCellRenderer *cell);
+  void (* deselect)	    (PitiviTimelineCellRenderer *cell);
+  void (* delete)	    (PitiviTimelineCellRenderer *timew, gpointer data);
 };
 
 /* used by PITIVI_TIMELINECELLRENDERER_TYPE */

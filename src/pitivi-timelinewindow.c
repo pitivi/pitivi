@@ -123,7 +123,7 @@ enum {
   ACTIVATE_SIGNAL = 0,
   DEACTIVATE_SIGNAL,
   DESELECT_SIGNAL,
-  LENGHT_MEDIA_SIGNAL,
+  DRAG_SOURCE_BEGIN_SIGNAL,
   LAST_SIGNAL
 };
 
@@ -613,6 +613,15 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 					   NULL,       
 					   g_cclosure_marshal_VOID__VOID,
 					   G_TYPE_NONE, 0);
+  
+  signals[DRAG_SOURCE_BEGIN_SIGNAL] = g_signal_new ("drag-source-begin",
+						    G_TYPE_FROM_CLASS (g_class),
+						    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+						    G_STRUCT_OFFSET (PitiviTimelineWindowClass, drag_source_begin),
+						    NULL,
+						    NULL,       
+						    g_cclosure_marshal_VOID__VOID,
+						    G_TYPE_NONE, 0);
   
   klass->activate = pitivi_timelinewindow_activate;
   klass->deactivate = pitivi_timelinewindow_deactivate;
