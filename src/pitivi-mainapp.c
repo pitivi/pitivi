@@ -253,14 +253,14 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_effects), self);
     }
   
-/***   if (self->private->viewerwin == NULL) ***/
-/***     { ***/
-/***       self->private->viewerwin = pitivi_viewerwindow_new(self, project); ***/
-/***       gtk_widget_show_all (GTK_WIDGET (self->private->viewerwin) ); ***/
-/***       gtk_window_move (GTK_WINDOW (self->private->viewerwin), 720, 100); ***/
-/***       gtk_signal_connect (GTK_OBJECT (self->private->viewerwin), "destroy"\ ***/
-/*** 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_viewer), self); ***/
-/***     } ***/
+  if (self->private->viewerwin == NULL)
+    {
+      self->private->viewerwin = pitivi_viewerwindow_new(self, project);
+      gtk_widget_show_all (GTK_WIDGET (self->private->viewerwin) );
+      gtk_window_move (GTK_WINDOW (self->private->viewerwin), 720, 100);
+      gtk_signal_connect (GTK_OBJECT (self->private->viewerwin), "destroy"\
+			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_viewer), self);
+    }
   gtk_window_move (GTK_WINDOW (self->private->tbxwin), 20, 450);
 }
 
