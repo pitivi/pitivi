@@ -48,8 +48,6 @@ pitivi_callb_menufile_new ( GtkAction *action, gpointer data )
   /* New Project window */
   win_new_project = pitivi_newprojectwindow_new();
   gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
-  win_timeline = pitivi_timelinewindow_new();
-  gtk_widget_show_all ( GTK_WIDGET (win_timeline) );
 }
 
 static void
