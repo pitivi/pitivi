@@ -78,16 +78,6 @@ void			pitivi_mainapp_del_settings		( PitiviMainApp *self, gint *position );
  * Insert "added-value" functions here
  */
 
-/* PitiviSettings * */
-/* pitivi_mainapp_get_win_new_project(PitiviMainApp *self) { */
-/*   return self->private->win_new_project; */
-/* } */
-
-/* PitiviSettings * */
-/* pitivi_mainapp_settings(PitiviMainApp *self) { */
-/*   return self->private->global_settings; */
-/* } */
-
 PitiviTimelineWindow *
 pitivi_mainapp_get_timelinewin(PitiviMainApp *self) {
   return (PitiviTimelineWindow *) self->private->timelinewin;
@@ -146,6 +136,14 @@ pitivi_mainapp_callb_timelinewin (GtkWindow *win, gpointer data)
   self->private->timelinewin = NULL;
 }
 
+/**
+ * pitivi_mainapp_activate_effectswindow: Active the Effects Window
+ * @PitiviMainApp: The object containing all references of the application
+ * @gboolean: A flag to control if the Effect Window is shown or not
+ *
+ * Returns: void
+ */
+
 void
 pitivi_mainapp_activate_effectswindow (PitiviMainApp *self, gboolean activate)
 {
@@ -193,6 +191,14 @@ pitivi_mainapp_create_timelinewin (PitiviMainApp *self, PitiviProject *project)
   }
 }
 
+/**
+ * pitivi_mainapp_create_wintools: Set and show all the windows
+ * @PitiviMainApp: The object containing all references of the application
+ * @PitiviProject: The object containing all references of the current project
+ *
+ * Returns: void
+ */
+
 void
 pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 {
@@ -205,9 +211,9 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 
   width = gdk_screen_width ();
   height = gdk_screen_height ();
-  
+
+  /* The project is killed if a new one is created */  
   if (self->project) {
-    //Popup
     exit(0);
   }
   self->project = project;
@@ -250,14 +256,13 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
   }
 }
 
-
-/*
-  pitivi_mainapp_add_project
-
-  Adds a PitiviProject to the list of projects handled by the application
-
-  Returns TRUE if it was added properly
-*/
+/**
+ * pitivi_mainapp_add_project: Adds a PitiviProject to the list of projects handled by the application
+ * @PitiviMainApp: The object containing all references of the application
+ * @PitiviProject: The object containing all references of the current project
+ *
+ * Returns: A boolean TRUE if it was added properly
+ */
 
 gboolean
 pitivi_mainapp_add_project(PitiviMainApp *self, PitiviProject *project)
@@ -268,6 +273,13 @@ pitivi_mainapp_add_project(PitiviMainApp *self, PitiviProject *project)
   self->projects = g_list_append(self->projects, project);
   return TRUE;
 }
+
+/**
+ * pitivi_mainapp_new: Create a new instance for a new Object 
+ * @void:
+ * 
+ * Returns: A PitiviMainApp pointer on the new main_app
+ */
 
 PitiviMainApp *
 pitivi_mainapp_new (void)

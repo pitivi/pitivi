@@ -1,6 +1,7 @@
 /* 
  * PiTiVi
  * Copyright (C) <2004> Guillaume Casanova <casano_g@epita.fr>
+ *			Stephan Bloch <bloch_s@epitech.net> 
  *                      
  *
  * This software has been written in EPITECH <http://www.epitech.net>

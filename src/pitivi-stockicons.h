@@ -2,6 +2,7 @@
  * PiTiVi
  * Copyright (C) <2004> Edward G. Hervey <hervey_e@epita.fr>
  *                      Guillaume Casanova <casano_g@epita.fr>
+ *			Stephan Bloch <bloch_s@epitech.net> 
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -

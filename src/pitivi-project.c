@@ -21,6 +21,7 @@
  * License along with this program; if not, write to the
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
+
  */
 
 #include "pitivi.h"
@@ -55,6 +56,14 @@ struct _PitiviProjectPrivate
  * Insert "added-value" functions here
  */
 
+
+/**
+ * pitivi_project_new: Create an object for the new project
+ * @PitiviProjectSettings: The object containing the project's settings 
+ *
+ * Returns: The PitiviProject
+ */
+
 PitiviProject *
 pitivi_project_new (PitiviProjectSettings *settings)
 {
@@ -70,13 +79,12 @@ pitivi_project_new (PitiviProjectSettings *settings)
   return project;
 }
 
-/*
-  pitivi_project_new_from_file
-
-  loads a PitiviProject from the given file filename
-
-  Returns the loaded PitiviProject, or NULL if there's a problem
-*/
+/**
+ * pitivi_project_from_file: Loads a PitiviProject from the given file filename
+ * @const gchar: The filename of the file to be loaded  
+ *
+ * Returns: The loaded PitiviProject, or NULL if there's a problem
+ */
 
 PitiviProject *
 pitivi_project_new_from_file (const gchar *filename)
@@ -120,6 +128,14 @@ pitivi_project_new_from_file (const gchar *filename)
   return project;
 }
 
+/**
+ * pitivi_project_restore_thyself: Restore the other properties of the PitiviProject
+ * @PitiviProject: A PitiviProject
+ * @xmlNodePtr: A pointer on the xml file associated with the PitiviProject
+ *
+ * Returns: Void
+ */
+
 void
 pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self)
 {
@@ -139,18 +155,14 @@ pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self)
       project->sources = sourcelist;
     }
   }
-  /*
-    TODO
-
-    restore the other properties of the PitiviProject
-  */
 }
 
-/*
-  pitivi_project_save_thyself
-
-  Returns a pointer to the XMLDocument filled with the contents of the PitiviProject
-*/
+/**
+ * pitivi_project_save_thyself: Save the current project in a XMLDocument format
+ * @PitiviProject: A PitiviProject
+ *
+ * Returns: Returns a pointer xmlDocPtr to the XMLDocument filled with the contents of the PitiviProject
+ */
 
 xmlDocPtr
 pitivi_project_save_thyself(PitiviProject *project)
@@ -175,13 +187,13 @@ pitivi_project_save_thyself(PitiviProject *project)
   return doc;  
 }
 
-/*
-  pitivi_project_save_to_file
-
-  Saves the given project to the file filename
-
-  Returns TRUE if the file was saved properly, FALSE otherwise
-*/
+/**
+ * pitivi_project_save_to_file: Saves the given project to the file filename
+ * @PitiviProject: A PitiviProject
+ * @const gchar: The filename of the file to save 
+ *
+ * Returns: Returns TRUE if the file was saved properly, FALSE otherwise
+ */
 
 gboolean
 pitivi_project_save_to_file(PitiviProject *project, const gchar *filename)
@@ -237,13 +249,14 @@ pitivi_project_save_to_file(PitiviProject *project, const gchar *filename)
   return TRUE;
 }
 
-
-/*
-  pitivi_project_set_*_output
-
-  Sets/Replaces the video/audio output for the pipeline
-  ONLY TO BE USED TO CHANGE THE OUTPUT SINKS ! ! !
-*/
+/**
+ * pitivi_project_set_video_output: Sets/Replaces the video output for the pipeline\n
+ * ONLY TO BE USED TO CHANGE THE VIDEO OUTPUT SINKS ! ! !
+ * @PitiviProject: A PitiviProject
+ * @GstElement: A Gstreamer element 
+ *
+ * Returns: Void
+ */
 
 void
 pitivi_project_set_video_output(PitiviProject *project, GstElement *output) 
@@ -278,6 +291,15 @@ pitivi_project_set_video_output(PitiviProject *project, GstElement *output)
   gst_pad_link (gnl_timeline_get_pad_for_group (project->timeline, project->videogroup),
 		gst_element_get_pad (project->private->videoqueue, "sink"));
 }
+
+/**
+ * pitivi_project_set_video_output: Sets/Replaces the audio output for the pipeline\n
+ * ONLY TO BE USED TO CHANGE THE AUDIO OUTPUT SINKS ! ! !
+ * @PitiviProject: A PitiviProject
+ * @GstElement: A Gstreamer element 
+ *
+ * Returns: Void
+ */
 
 void
 pitivi_project_set_audio_output(PitiviProject *project, GstElement *output) 

@@ -80,14 +80,7 @@ GType		pitivi_mainapp_get_type (void);
  */
 
 PitiviMainApp		*pitivi_mainapp_new			(void);
-GSList			*pitivi_mainapp_project_settings	( PitiviMainApp *self );
-PitiviSettings		*pitivi_mainapp_settings		( PitiviMainApp *self );
 void			pitivi_mainapp_activate_effectswindow	( PitiviMainApp *self, gboolean activate);
 void			pitivi_mainapp_create_wintools		( PitiviMainApp *self, PitiviProject *project);
 gboolean		pitivi_mainapp_add_project		( PitiviMainApp *self, PitiviProject *project);
-/* ======= */
-
-/* PitiviCategorieSettings	*pitivi_mainapp_get_selected_category	( PitiviMainApp *self, gint *position ); */
-
-
 #endif

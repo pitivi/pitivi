@@ -24,35 +24,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-/*
-  - Delete Categorie : 
-	o Pour chaque setting de la liste de categorie, supprimer :
-		\ Properties
-		\ Caps
-		\ List de media
-		\ Le Setting
-
-
-
-  - Modify Setting : 
-	o Supprimer le setting modifie et ce kil contient
-		\ Properties
-		\ Caps
-		\ List de media
-		\ Le Setting
-	o Creer et inserer le nouveau setting dans la categorie selectionnee
-	o Prendre en compte les properties
-
-
-
-  - Delete Setting : Effacer tout ce ke le setting contient :
-	o Properties
-	o Caps
-	o List de media
-	o Le Setting
-
-*/
-
 #include <gtk/gtk.h>
 #include <gst/gst.h>
 #include "pitivi-newprojectwindow.h"
@@ -62,11 +33,6 @@
 #include "pitivi-settings.h"
 
 static PitiviWindowsClass	*parent_class = NULL;
-
-/* enum { */
-/*   PROP_0, */
-/*   PROP_MAINAPP */
-/* }; */
 
 enum
   {
@@ -108,10 +74,7 @@ struct _PitiviNewProjectWindowPrivate
   gboolean		dispose_has_run;
   GtkWidget		*hbox;
 
-  /* PitiviMainApp object */
-/*   PitiviMainApp		*mainapp; */
-
-  /* Arbre des reglages */
+  /* Tree settings */
   GtkTreeStore		*tree;
   GtkWidget		*show_tree;
   GtkTreeIter		pIter;
@@ -128,7 +91,7 @@ struct _PitiviNewProjectWindowPrivate
   GtkWidget		*name_text_settings;
   GtkWidget		*name_scroll;
   
-  /* Codecs Videos */
+  /* Video codecs */
   GtkWidget		*video_combo_codec;
   GtkWidget		*size_width;
   GtkWidget		*size_height;
@@ -136,7 +99,7 @@ struct _PitiviNewProjectWindowPrivate
   GList			*video_listname;
   gchar			**video_tabname;
 
-  /* Codecs Audio */
+  /* Audio codecs */
   GtkWidget		*audio_combo_codec;
   GtkWidget		*audio_combo_freq;
   GtkWidget		*audio_combo_ech;
@@ -167,7 +130,7 @@ struct _PitiviNewProjectWindowPrivate
 
   GtkWidget		*button_new;
 
-  /* Position de la selection */
+  /* Selected position */
   gint			*position;
 };
 
@@ -253,7 +216,6 @@ pitivi_npw_add_category(GtkButton *button, gpointer user_data)
     }
 }
 
-/* Delete the category selected when cat_delete button is clicked */
 void
 pitivi_del_category(GtkButton *button, gpointer user_data)
 {
