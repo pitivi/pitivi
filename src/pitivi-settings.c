@@ -798,6 +798,50 @@ pitivi_settings_get_xml_project_settings(xmlNodePtr self)
 }
 
 void
+restore_g_param_tab (GParameter **ptab, gint n_param, xmlNodePtr self)
+{
+  /* TODO : fill it up !*/
+/*   xmlNodePtr	child; */
+/*   int		i; */
+
+/*   for (i = 0, child = self->XmlChildrenNode; child && (i < n_param); i++, child = child->next) { */
+    
+/*   } */
+}
+
+PitiviSettingsIoElement *
+pitivi_settings_restore_io(xmlNodePtr self)
+{
+  PitiviSettingsIoElement	*res;
+  xmlNodePtr	child;
+
+  res = g_new0(PitiviSettingsIoElement, 1);
+  for (child = self->xmlChildrenNode; child; child = child->next) {
+    if (!g_ascii_strcasecmp(child->name, "factory_name")) {
+      res->factory = gst_element_factory_find(xmlNodeGetContent(child));
+    } else if (!g_ascii_strcasecmp(child->name, "n_param")) {
+      res->n_param = atoi(xmlNodeGetContent(child));
+      res->params = g_new0(GParameter, res->n_param + 1);
+    } else if (!g_ascii_strcasecmp(child->name, "params")) {
+      restore_g_param_tab(&res->params, res->n_param, child);
+    }
+  }
+  return res;
+}
+
+GList *
+pitivi_settings_restore_io_list(xmlNodePtr self)
+{
+  GList	*res;
+  xmlNodePtr	child;
+
+  for (res = NULL, child = self->xmlChildrenNode; child; child = child->next)
+    if (!g_ascii_strcasecmp(child->name, "inout_elm"))
+      g_list_append(res, pitivi_settings_restore_io(child));
+  return res;
+}
+
+void
 pitivi_settings_restore_thyself(PitiviSettings *settings, xmlNodePtr self)
 {
   xmlNodePtr	child;
@@ -812,6 +856,14 @@ pitivi_settings_restore_thyself(PitiviSettings *settings, xmlNodePtr self)
       settings->parser = pitivi_settings_get_xml_list(child);
     } else if (!strcmp(child->name, "project_settings")) {
       settings->project_settings = pitivi_settings_get_xml_project_settings(child);
+ /*    } else if (!g_ascii_strcasecmp(child->name, "audio_in")) { */
+/*       settings->elm_audio_in = pitivi_settings_restore_io_list(child); */
+/*     } else if (!g_ascii_strcasecmp(child->name, "audio_out")) { */
+/*       settings->elm_audio_in = pitivi_settings_restore_io_list(child); */
+/*     } else if (!g_ascii_strcasecmp(child->name, "video_in")) { */
+/*       settings->elm_audio_in = pitivi_settings_restore_io_list(child); */
+/*     } else if (!g_ascii_strcasecmp(child->name, "video_out")) { */
+/*       settings->elm_audio_in = pitivi_settings_restore_io_list(child); */
     }
   }
 }

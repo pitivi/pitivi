@@ -1,3 +1,109 @@
+2004-12-19 16:28  bilboed
+
+	* pitivi.desktop: Better with contents...
+
+2004-12-19 16:19  bilboed
+
+	* AUTHORS, conf/Makefile.am, src/Makefile.am, src/pitivi-mainapp.c,
+	  src/pitivi-settings.c, src/pitivi-sourcefilebin.c,
+	  src/pitivi-sourcelistwindow.c: deactivated LightPlayer for
+	  release, re-activated videorate, Updated AUTHORS, Improved
+	  global/local configuration file loading
+
+2004-12-19 01:16  bilboed
+
+	* gnl/gnltimeline.c, src/main.c, src/pitivi-controller.c,
+	  src/pitivi-debug.c, src/pitivi-debug.h,
+	  src/pitivi-effectswindow.c, src/pitivi-effectswindowproperties.c,
+	  src/pitivi-globalbin.c, src/pitivi-globalbin.h,
+	  src/pitivi-gstelementsettings.c, src/pitivi-lplayerwindow.c,
+	  src/pitivi-mainapp.c, src/pitivi-newprojectwindow.c,
+	  src/pitivi-project.c, src/pitivi-projectsettings.c,
+	  src/pitivi-projectsourcelist.c, src/pitivi-settings.c,
+	  src/pitivi-settingswindow.c, src/pitivi-sourcefile.c,
+	  src/pitivi-sourcefilebin.c, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-timelinebin.c,
+	  src/pitivi-timelinecellrenderer-zooming.c,
+	  src/pitivi-timelinemedia.c, src/pitivi-timelinewindow.c,
+	  src/pitivi-viewerwindow.c: Added gst-debug functionnalities,
+	  Corrected EOS problems in PitiviGlobalBin and PitiviTimelineBin,
+	  Removed videorate element pending validation in gst-plugins,
+	  allowed popup handling on timelinemedia with any tool and without
+	  having to select
+
+2004-12-18 23:24  nemoglobine
+
+	* src/pitivi-settings.c: SAVE IO SETTINGS
+
+2004-12-18 22:53  cracoucas42
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c: [no
+	  log message]
+
+2004-12-18 18:30  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settings.c, pitivi-settings.h, pitivi-settingswindow.c:
+	  gstelementsettings OPERATIONNEL
+
+2004-12-18 17:43  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-newprojectwindow.c,
+	  pitivi-projectsourcelist.c, pitivi-timelinewindow.c: please wait
+	  dialog
+
+2004-12-18 17:27  cracoucas42
+
+	* src/pitivi-sourcelistwindow.c: ajout de boutons dans la source
+	  List
+
+2004-12-18 16:31  casaxno
+
+	* src/: pitivi-progressbar.c, pitivi-sourcelistwindow.c: cancel
+	  operation
+
+2004-12-17 18:35  nemoglobine
+
+	* src/pitivi-gstelementsettings.c: any changes
+
+2004-12-17 18:23  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-projectsourcelist.c,
+	  pitivi-timelinewindow.c: Lors d un chargement dun projet et que
+	  les sources ont ete deplace, une fenetre propose de reactualiser
+	  les l emplacement des sources...
+
+2004-12-17 17:28  nemoglobine
+
+	* src/: pitivi-effectswindowproperties.c,
+	  pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-newprojectwindow.c, pitivi-settingswindow.c: any changes
+
+2004-12-17 15:50  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-settings.h,
+	  pitivi-settingswindow.c: any changes
+
+2004-12-16 17:44  bilboed
+
+	* gnl/gnl.h, gnl/gnlsource.c, gnl/gnltimeline.c,
+	  pixmaps/Makefile.am, pixmaps/pitivi-viewer-record.png,
+	  src/Makefile.am, src/pitivi-controller.c,
+	  src/pitivi-controller.h, src/pitivi-effectswindow.h,
+	  src/pitivi-encodewindow.c, src/pitivi-encodewindow.h,
+	  src/pitivi-globalbin.c, src/pitivi-globalbin.h,
+	  src/pitivi-project.c, src/pitivi-project.h,
+	  src/pitivi-sourcefile.c, src/pitivi-sourcefilebin.c,
+	  src/pitivi-stockicons.c, src/pitivi-stockicons.h,
+	  src/pitivi-timelinebin.c, src/pitivi-timelinebin.h,
+	  src/pitivi-timelinewindow.c, src/pitivi-types.h,
+	  src/pitivi-viewerwindow.c: Added/Updated classes for recording,
+	  Corrected XWindowID for viewer, corrections in gnl.h
+
+2004-12-16 17:09  bilboed
+
+	* ChangeLog: Update changelog with cvs2cl
+
 2004-12-16 15:22  bilboed
 
 	* src/pitivi-effectswindowproperties.c: whoops, forgot to correct
