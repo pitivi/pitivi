@@ -36,6 +36,12 @@ gboolean   can_finish = FALSE;
 GtkWidget  *myreceiver = NULL;
 gchar      *myoutput = NULL;
 
+typedef struct _infothumb
+{
+  GstElement *pipeline;
+  gchar      *myoutput;
+};
+
 void end_of_snap (GstElement *sink, GstElement *pipeline)
 {
   finished = TRUE;
@@ -46,15 +52,15 @@ void end_of_snap (GstElement *sink, GstElement *pipeline)
 /* timeout after a given amount of time */
 gboolean timeout (GstPipeline *gen)
 {
-	/* setting the state NULL will make iterate return false */
-	gst_element_set_state (GST_ELEMENT (gen), GST_STATE_NULL);
-	return FALSE;
+  /* setting the state NULL will make iterate return false */
+  gst_element_set_state (GST_ELEMENT (gen), GST_STATE_NULL);
+  return FALSE;
 }
 
 gboolean iterator (GstPipeline *gen)
 {
-	/* setting the state NULL will make iterate return false */
-	return gst_bin_iterate (GST_BIN (gen));
+  /* setting the state NULL will make iterate return false */
+  return gst_bin_iterate (GST_BIN (gen));
 }
 
 
@@ -70,9 +76,10 @@ gst_thumbnail_pngenc_get (const char *media, const char *thumbnail, GtkWidget *r
   gboolean res;
   GError *error = NULL;
   int i;
-
-  pipeline = gst_parse_launch ("gnomevfssrc name=gnomevfssrc ! spider ! "
-			       "colorspace ! pngenc name=snapshot width=80 height=80",
+  
+  pipeline = gst_parse_launch ("gnomevfssrc name=gnomevfssrc ! spider ! " 
+			       "videoscale ! ffcolorspace ! video/x-raw-rgb,width=48,height=48 !"
+			       "pngenc name=snapshot",
 			       &error);
   
   if (!GST_IS_PIPELINE (pipeline))
@@ -156,7 +163,7 @@ generate_thumb (char *filename, GtkWidget *widget, int i)
 }
 
 gchar *
-generate_thumb_snap_on_frame (char *filename, GtkWidget *widget, gint64 pframe)
+generate_thumb_snap_on_frame (char *filename, GtkWidget *widget, gint pframe)
 {
   GstElement *pngenc = NULL;
   gchar	     *tmp = NULL;
@@ -170,7 +177,7 @@ generate_thumb_snap_on_frame (char *filename, GtkWidget *widget, gint64 pframe)
 	  frame = pframe;
 	  myreceiver = widget;
 	  myoutput = g_malloc (strlen (filename) + DIR_LENGTH);
-	  g_sprintf (myoutput, "/tmp/%s", tmp);
+	  g_sprintf (myoutput, "/tmp/%s%d", tmp, pframe);
 	  if ( gst_thumbnail_pngenc_get (filename, myoutput, widget) > 0)
 	      return myoutput;
 	}

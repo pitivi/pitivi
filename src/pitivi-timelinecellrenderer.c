@@ -141,30 +141,6 @@ static GtkTargetEntry TargetEntries[] =
 
 static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
 
-
-/*
- **********************************************************
- * Popup  					          *
- *							  *
- **********************************************************
-*/
-
-/* headers */
-
-void	pitivi_timelinecellrenderer_callb_cancel (PitiviTimelineCellRenderer *self, gpointer data);
-void	pitivi_timelinecellrenderer_callb_paste  (PitiviTimelineCellRenderer *self, gpointer data);
-
-static GtkItemFactoryEntry  LayoutItemPopup[] = {
-  {"/Cancel", NULL, pitivi_timelinecellrenderer_callb_cancel, 1, "<Item>", NULL},
-  {"/Sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Paste", NULL, pitivi_timelinecellrenderer_callb_paste, 0, "<Item>", NULL},
-  {"/Paste All", NULL, pitivi_timelinecellrenderer_callb_paste, 0, "<Item>", NULL},
-  {"/Sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Properties", NULL, NULL, 0, "<Item>", NULL},
-};
-
-static gint	iNbLayoutItemPopup = sizeof(LayoutItemPopup)/sizeof(LayoutItemPopup[0]);
-
 /*
  * Insert "added-value" functions here
  */
@@ -382,6 +358,7 @@ pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
   
   widget->allocation.x = x;
   widget->allocation.y = y;
+  g_printf ("----###############@@@@@@@@@@###########------\n");
   gtk_layout_put ( layout, widget, x, y );
   calculate_priorities (GTK_WIDGET (layout) );
   if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout)
@@ -404,6 +381,7 @@ pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
     // Add to the composition
     //  Find what kind of media it is (audio/video) PITIVI_VIDEO/AUDIO_TRACK (layout->track_type)
     //  gnl_composition_add_object() to the correct group
+    g_printf ("----@@@@@@@@@@------\n");
   }   
 }
 
@@ -501,6 +479,13 @@ move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
     }
   else
     pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
+}
+
+void
+link_widgets ( PitiviTimelineMedia *media1, PitiviTimelineMedia *media2)
+{
+  media1->linked = GTK_WIDGET ( media2 );
+  media2->linked = GTK_WIDGET ( media1 );
 }
 
 int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
@@ -675,11 +660,6 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 	      pitivi_send_expose_event (widget);
 	    }
 	}
-      else if ( event->button == 3 )
-	{
-	  GtkWidget *menu = GTK_WIDGET (create_menupopup (widget, LayoutItemPopup, iNbLayoutItemPopup));
-	  gtk_menu_popup(GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, event->time);
-	}
     }
   return FALSE;
 }
@@ -795,12 +775,12 @@ convert_time_pix (PitiviTimelineCellRenderer *self, gint64 timelength)
 */
 
 gint64
-convert_pix_time (PitiviTimelineCellRenderer *self, guint pos)
+convert_sub_pix_time (PitiviTimelineCellRenderer *self, guint unit, guint pos)
 {
   gint64 res;
   PitiviProject	*proj = PITIVI_WINDOWS(self->private->timewin)->mainapp->project;
 
-  switch (self->private->timewin->unit) {
+  switch ( unit ) {
   case PITIVI_SECONDS:
     res = (pos / self->private->timewin->zoom) * GST_SECOND;
     break;
@@ -815,6 +795,12 @@ convert_pix_time (PitiviTimelineCellRenderer *self, guint pos)
   }
   g_printf("convert pix time pix:%d time:%lld [%llds]\n", pos, res, res/GST_SECOND);
   return res;
+}
+
+gint64
+convert_pix_time (PitiviTimelineCellRenderer *self, guint pos)
+{
+  convert_sub_pix_time (self, self->private->timewin->unit, pos);
 }
 
 void
@@ -838,10 +824,10 @@ create_media_video_audio_track (PitiviTimelineCellRenderer *cell, PitiviSourceFi
   
   add_to_layout ( GTK_WIDGET (cell), GTK_WIDGET (media[0]), x, 0);
   add_to_layout ( GTK_WIDGET (cell->linked_track), GTK_WIDGET (media[1]), x, 0);
+  
   /* Linking widgets */
   
-  media[1]->linked = GTK_WIDGET (media[0]);
-  media[0]->linked = GTK_WIDGET (media[1]);
+  link_widgets (media[0], media[1]);
   gtk_widget_show (GTK_WIDGET (media[0]));
   gtk_widget_show (GTK_WIDGET (media[1]));
 
@@ -1254,38 +1240,43 @@ pitivi_timelinecellrenderer_callb_dbk_source (PitiviTimelineCellRenderer *self, 
 }
 
 static void
+pitivi_media_set_size (PitiviTimelineMedia *media,  guint width, guint height)
+{
+  gtk_widget_set_size_request (GTK_WIDGET (media), width, height );
+}
+
+static void
 pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *container, guint x, gpointer data)
 {
   PitiviTimelineMedia *media[2], *link;
   GtkWidget *widget;
+  gint64 frame;
   guint	 pos =  0;
   
   if (GTK_IS_WIDGET (data))
     {
       widget = data;
-      pos = widget->allocation.x+x+2;
-      widget->allocation.width = widget->allocation.width - (x+2);
+      pos = widget->allocation.x+x;
+      widget->allocation.width = widget->allocation.width - x;
       media[0] = pitivi_timelinemedia_new ( PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile, container );
+      pitivi_media_set_size ( media[0], widget->allocation.width, GTK_WIDGET (container)->allocation.height);
       pitivi_layout_put (GTK_LAYOUT (container),  GTK_WIDGET ( media[0] ), pos, 0);
-      gtk_widget_set_size_request (  GTK_WIDGET (  media[0] ), widget->allocation.width, GTK_WIDGET (container)->allocation.height );
+      pitivi_media_set_size ( PITIVI_TIMELINEMEDIA (widget), x, GTK_WIDGET (container)->allocation.height);
       gtk_widget_show ( GTK_WIDGET ( media[0] ) );
-      gtk_widget_set_size_request (widget, x+2, GTK_WIDGET (container)->allocation.height );
       if ( PITIVI_TIMELINEMEDIA (widget)->linked )
 	{
 	  link = PITIVI_TIMELINEMEDIA (PITIVI_TIMELINEMEDIA (widget)->linked);
 	  GTK_WIDGET ( link )->allocation.width = widget->allocation.width;
 	  media[1] = pitivi_timelinemedia_new ( link->sourceitem->srcfile, container->linked_track );
+	  pitivi_media_set_size ( media[1], widget->allocation.width, GTK_WIDGET (container)->allocation.height);
 	  pitivi_layout_put (GTK_LAYOUT ( container->linked_track ), GTK_WIDGET ( media[1] ), pos, 0);
-	  gtk_widget_set_size_request ( GTK_WIDGET ( media[1] ), widget->allocation.width, 
-					GTK_WIDGET ( container->linked_track )->allocation.height);
+	  pitivi_media_set_size ( PITIVI_TIMELINEMEDIA (widget)->linked, x, GTK_WIDGET (container)->allocation.height);
+	  link_widgets (media[0], media[1]);
 	  gtk_widget_show (GTK_WIDGET ( media[1] ));
-	  gtk_widget_set_size_request (GTK_WIDGET ( PITIVI_TIMELINEMEDIA (widget)->linked), x+2, 
-				       GTK_WIDGET ( container->linked_track )->allocation.height );
-	  media[1]->linked = GTK_WIDGET ( media[0] );
-	  media[0]->linked = GTK_WIDGET ( media[1] );
 	}
       else
 	calculate_priorities ( GTK_WIDGET (container) );
+      generate_thumb_snap_on_frame (PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile->filename, media[0], 200);
     }
 }
 
@@ -1360,46 +1351,6 @@ pitivi_timelinecellrenderer_callb_drag_source_end (PitiviTimelineCellRenderer *s
  *							  *
  **********************************************************
 */
-
-void	
-pitivi_timelinecellrenderer_callb_cancel (PitiviTimelineCellRenderer *self, gpointer data)
-{
-  PitiviTimelineMedia *media;
-
-  media = PITIVI_TIMELINEMEDIA (self->private->timewin->copy);
-  if ( media )
-    {
-      media->cutted = FALSE;
-      gtk_widget_show (GTK_WIDGET (media) );
-      if (media->linked)
-	gtk_widget_show ( media->linked );
-      g_signal_emit_by_name (GTK_WIDGET (self->private->timewin), "deselect", NULL);
-    }
-}
-
-void	
-pitivi_timelinecellrenderer_callb_paste (PitiviTimelineCellRenderer *self, gpointer data)
-{
-  PitiviTimelineMedia *media;
-  GdkSelection *selection;
-
-  if (self->private->selected)
-    {
-      media = PITIVI_TIMELINEMEDIA (self->private->timewin->copy);
-      if ( media )
-	{
-	  dispose_medias (self, media->sourceitem->srcfile, self->private->selection.x);
-	  if ( media->cutted )
-	    {
-	      if ( media->linked )
-		gtk_container_remove (GTK_CONTAINER (self->linked_track), media->linked);
-	      gtk_container_remove (GTK_CONTAINER (self), GTK_WIDGET (media));
-	    }
-	  g_signal_emit_by_name (GTK_WIDGET (self->private->timewin), "deselect", NULL);
-	  calculate_priorities ( GTK_WIDGET (self) );
-	}
-    }
-}
 
 static void
 pitivi_timelinecellrenderer_key_delete (PitiviTimelineCellRenderer* self) 

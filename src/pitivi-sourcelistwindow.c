@@ -2528,11 +2528,9 @@ snapped (PitiviSourceListWindow *self, gchar *data)
       icon = gdk_pixbuf_scale_simple (pixbuf, 45,
 				      25,
 				      GDK_INTERP_NEAREST);
-      sf->thumbs_video = icon;
       gtk_list_store_set(GTK_LIST_STORE (model), &iter,
 			 BMP_LISTCOLUMN1, icon,
 			 -1);
-      g_object_unref (pixbuf);
     }
 }
 

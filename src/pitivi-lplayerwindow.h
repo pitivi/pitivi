@@ -41,6 +41,9 @@
 #define PITIVI_IS_LPLAYERWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_LPLAYERWINDOW_TYPE))
 #define PITIVI_LPLAYERWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_LPLAYERWINDOW_TYPE, PitiviLPlayerWindowClass))
 
+#define PITIVI_DEFAULT_VIEWER_AREA_WIDTH 600
+#define PITIVI_DEFAULT_VIEWER_AREA_HEIGHT 400
+
 typedef struct _PitiviLPlayerWindow PitiviLPlayerWindow;
 typedef struct _PitiviLPlayerWindowClass PitiviLPlayerWindowClass;
 typedef struct _PitiviLPlayerWindowPrivate PitiviLPlayerWindowPrivate;

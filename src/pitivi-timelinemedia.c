@@ -174,7 +174,6 @@ show_video_media (GtkWidget *widget, GdkEventExpose *event)
 {
   PitiviTimelineMedia	*self = PITIVI_TIMELINEMEDIA (widget);
   GdkPixbuf		*src_pix = self->sourceitem->srcfile->thumbs_video;
-  GdkPixbuf		*scale_pix;
   
   gdk_draw_rectangle ( GDK_WINDOW (widget->window), 
 		       widget->style->black_gc, TRUE, 1, 1,
@@ -182,11 +181,9 @@ show_video_media (GtkWidget *widget, GdkEventExpose *event)
 		       widget->allocation.height - 2);
   if ( src_pix )
     {
-      scale_pix = gdk_pixbuf_scale_simple (src_pix, widget->allocation.width - 2, 
-					   GTK_WIDGET (self->track)->allocation.height -2,
-					   GDK_INTERP_NEAREST);  
       gdk_draw_pixbuf( widget->window, NULL, GDK_PIXBUF 
-		       (scale_pix), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_MAX, 0, 0);
+		       (src_pix), 0, 0, 0, 2, -1, widget->allocation.height - 4, 
+		       GDK_RGB_DITHER_MAX, 0, 0);
     }
 }
 
@@ -705,7 +702,9 @@ pitivi_timelinemedia_callb_key_release_event (GtkWidget *widget,
 static void
 pitivi_timelinemedia_callb_snapped_effect (PitiviTimelineMedia *media, gpointer data)
 {
-  
+  g_object_unref (media->sourceitem->srcfile->thumbs_video);
+  media->sourceitem->srcfile->thumbs_video = gdk_pixbuf_new_from_file (data, NULL);
+  pitivi_send_expose_event (media);
 }
 
 static void

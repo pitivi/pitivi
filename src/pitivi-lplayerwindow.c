@@ -76,10 +76,12 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
   // main Vbox
   self->private->main_vbox = gtk_vbox_new (FALSE, FALSE);
   gtk_container_add (GTK_CONTAINER (self), self->private->main_vbox);
-
-
+  
   // Create Video Display (Drawing Area)
+  
   self->private->video_area = gtk_drawing_area_new ();
+  gtk_drawing_area_size (GTK_DRAWING_AREA (self->private->video_area), PITIVI_DEFAULT_VIEWER_AREA_WIDTH, 
+			 PITIVI_DEFAULT_VIEWER_AREA_HEIGHT);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), 
 		      self->private->video_area, TRUE, TRUE, 0);
 
