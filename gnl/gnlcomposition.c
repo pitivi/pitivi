@@ -573,7 +573,7 @@ gnl_composition_schedule_entries(GnlComposition *comp, GstClockTime start,
 				 GstClockTime stop, gint minprio, GstPad **pad)
 {
   gboolean res = TRUE;
-  GnlObject	*obj, *tmp;
+  GnlObject	*obj, *tmp = NULL;
   GList		*list;
   GnlCompositionEntry	*compentry;
 
