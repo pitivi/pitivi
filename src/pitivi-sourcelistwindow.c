@@ -1585,10 +1585,11 @@ drag_begin_cb (GtkWidget          *widget,
   gint			selected_list_row;
   gint			item_select;
   gint			folder_select;
+  gint64		length[1];
   gint			i;
   gchar			*tmpMediaType;
 
-  
+
   /* find treepath */
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
   if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1625,7 +1626,9 @@ drag_begin_cb (GtkWidget          *widget,
     }
   g_printf("real filepos is ==> %d\n", item_select);
   self->private->dndfilepos = item_select;
-  //  g_signal_emit (self->private->timelinewin, "drag-source-begin", (gpointer) self->private->length);
+  /* Will Change later  */
+  length[0] = self->private->length;
+  g_signal_emit_by_name (self->private->timelinewin, "drag-source-begin", length);
 }
 
 static void
@@ -1648,7 +1651,7 @@ drag_data_get_cb (GtkWidget          *widget,
 		  GtkSelectionData   *selection_data,
 		  guint               info,
 		  guint32             time,
-		  gpointer editor)
+		  gpointer	      editor)
 {
   PitiviSourceListWindow *self = PITIVI_SOURCELISTWINDOW(editor);
   PitiviSourceFile	 *sf;
@@ -2214,10 +2217,7 @@ void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
   if (strcmp(sMediaType, "Bin"))
     {
       g_printf("removing item only\n");
-      //sf = pitivi_projectsourcelist_get_sourcefile (PITIVI_PROJECTWINDOWS(self)->project->sources,
-      //				       self->private->dndtreepath,
-      //					    self->private->dndfilepos);
-      //g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", sf);
+      g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", self->private->sf);
       pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
 						    self->private->treepath,
 						    item_select);

@@ -79,11 +79,11 @@ struct _PitiviTimelineWindowClass
  
   /* class members */
   
-  void (*drag_source_begin) (PitiviTimelineWindow *cell);
   void (* activate)   (PitiviTimelineWindow *timew);
   void (* deactivate) (PitiviTimelineWindow  *timew);
   void (* deselect)   (PitiviTimelineWindow  *timew);
   void (* delete)     (PitiviTimelineWindow  *timew, gpointer data);
+  void (*drag_source_begin) (PitiviTimelineWindow *timew, gpointer data);
 };
 
 /* used by PITIVI_TIMELINEWINDOW_TYPE */

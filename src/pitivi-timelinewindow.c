@@ -123,6 +123,7 @@ enum {
   ACTIVATE_SIGNAL = 0,
   DEACTIVATE_SIGNAL,
   DESELECT_SIGNAL,
+  DELETE_SIGNAL,
   DRAG_SOURCE_BEGIN_SIGNAL,
   LAST_SIGNAL
 };
@@ -535,30 +536,35 @@ pitivi_timelinewindow_get_property (GObject * object,
     }
 }
 
-static void
-pitivi_timelinewindow_deselect (PitiviTimelineWindow *self)
+void
+send_signal_to_childs (PitiviTimelineWindow *self, const gchar *signame, gpointer data)
 {
   GtkWidget	*container;
-  GList		*childlist;
+  GList		*childlist; 
   
   childlist = gtk_container_get_children (GTK_CONTAINER (self->private->main_vbox_right));
   for (; childlist; childlist = childlist->next)
     if (GTK_IS_LAYOUT (childlist->data))
-      g_signal_emit_by_name (childlist->data, "deselect");
-  g_list_free ( childlist );
+      g_signal_emit_by_name (GTK_OBJECT (childlist->data), signame, data);
+  g_list_free ( childlist );   
+}
+
+static void
+pitivi_timelinewindow_deselect (PitiviTimelineWindow *self)
+{
+  send_signal_to_childs (self, "deselect", NULL);
 }
 
 void
 pitivi_timelinewindow_delete_sf (PitiviTimelineWindow *self, gpointer data)
 {
-  GtkWidget	*container;
-  GList		*childlist;
-  
-  childlist = gtk_container_get_children (GTK_CONTAINER (self->private->main_vbox_right));
-  for (; childlist; childlist = childlist->next)
-    if (GTK_IS_LAYOUT (childlist->data))
-      g_signal_emit_by_name (childlist->data, "delete-source", data);
-  g_list_free ( childlist );
+  send_signal_to_childs (self, "delete-source", data);
+}
+
+void
+pitivi_timelinewindow_drag_source_begin (PitiviTimelineWindow *self, gpointer data)
+{
+  send_signal_to_childs (self, "drag-source-begin", data);
 }
 
 static void
@@ -605,14 +611,14 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 					   g_cclosure_marshal_VOID__VOID,
 					   G_TYPE_NONE, 0);
   
-  signals[DESELECT_SIGNAL] = g_signal_new ("delete-source",
-					   G_TYPE_FROM_CLASS (g_class),
-					   G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-					   G_STRUCT_OFFSET (PitiviTimelineWindowClass, delete),
-					   NULL,
-					   NULL,       
-					   g_cclosure_marshal_VOID__VOID,
-					   G_TYPE_NONE, 0);
+  signals[DELETE_SIGNAL] = g_signal_new ("delete-source",
+					 G_TYPE_FROM_CLASS (g_class),
+					 G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+					 G_STRUCT_OFFSET (PitiviTimelineWindowClass, delete),
+					 NULL,
+					 NULL,       
+					 g_cclosure_marshal_VOID__POINTER,
+					 G_TYPE_NONE, 1, G_TYPE_POINTER);
   
   signals[DRAG_SOURCE_BEGIN_SIGNAL] = g_signal_new ("drag-source-begin",
 						    G_TYPE_FROM_CLASS (g_class),
@@ -620,13 +626,14 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 						    G_STRUCT_OFFSET (PitiviTimelineWindowClass, drag_source_begin),
 						    NULL,
 						    NULL,       
-						    g_cclosure_marshal_VOID__VOID,
-						    G_TYPE_NONE, 0);
+						    g_cclosure_marshal_VOID__POINTER,
+						    G_TYPE_NONE, 1, G_TYPE_POINTER);
   
   klass->activate = pitivi_timelinewindow_activate;
   klass->deactivate = pitivi_timelinewindow_deactivate;
   klass->deselect = pitivi_timelinewindow_deselect;
   klass->delete = pitivi_timelinewindow_delete_sf;
+  klass->drag_source_begin = pitivi_timelinewindow_drag_source_begin;
 }
 
 GType
