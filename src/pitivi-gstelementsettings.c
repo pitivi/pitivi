@@ -197,17 +197,14 @@ pitivi_gstelementsettings_value_conf_uint (const gchar *name, GValue value, GPar
 {
   GParamSpecUInt	*puint;
   GtkWidget		*spin_button;
-  GtkWidget		*prop_value_hbox;
 
   puint = G_PARAM_SPEC_UINT (param);
-  prop_value_hbox = gtk_hbox_new(FALSE, 0);
   spin_button = gtk_spin_button_new_with_range(puint->minimum, puint->maximum, 1);
 
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_uint (&value));
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
 
-  return (prop_value_hbox);
+  return (spin_button);
 }
 
 GtkWidget *
@@ -215,15 +212,14 @@ pitivi_gstelementsettings_value_conf_int (const gchar *name, GValue value, GPara
 {
   GParamSpecInt		*pint;  
   GtkWidget		*spin_button;
-  GtkWidget		*prop_value_hbox;
 
   pint = G_PARAM_SPEC_INT (param);
-  prop_value_hbox = gtk_hbox_new(0, FALSE);
   spin_button = gtk_spin_button_new_with_range(pint->minimum, pint->maximum, 1);
+
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_int (&value));
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
-  return (prop_value_hbox);
+
+  return (spin_button);
 }
 
 GtkWidget *
@@ -231,15 +227,14 @@ pitivi_gstelementsettings_value_conf_uint64 (const gchar *name, GValue value, GP
 {
   GParamSpecUInt64	*puint64;
   GtkWidget		*spin_button;
-  GtkWidget		*prop_value_hbox;
 
   puint64 = G_PARAM_SPEC_UINT64 (param);
-  prop_value_hbox = gtk_hbox_new(0, FALSE);
   spin_button = gtk_spin_button_new_with_range(puint64->minimum, puint64->maximum, 1);
+
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_uint64 (&value));
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
-  return (prop_value_hbox);
+
+  return (spin_button);
 }
 
 GtkWidget *
@@ -247,15 +242,14 @@ pitivi_gstelementsettings_value_conf_int64 (const gchar *name, GValue value, GPa
 {
   GParamSpecInt64	*pint64;
   GtkWidget		*spin_button;
-  GtkWidget		*prop_value_hbox;
 
   pint64 = G_PARAM_SPEC_INT64 (param);
-  prop_value_hbox = gtk_hbox_new(0, FALSE);
   spin_button = gtk_spin_button_new_with_range(pint64->minimum, pint64->maximum, 1);
+
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_int64 (&value));
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
-  return (prop_value_hbox);
+
+  return (spin_button);
 }
 
 GtkWidget *
@@ -263,15 +257,14 @@ pitivi_gstelementsettings_value_conf_ulong (const gchar *name, GValue value, GPa
 {
   GParamSpecULong	*pulong;
   GtkWidget		*spin_button;
-  GtkWidget		*prop_value_hbox;
 
   pulong = G_PARAM_SPEC_ULONG (param);
-  prop_value_hbox = gtk_hbox_new(0, FALSE);
   spin_button = gtk_spin_button_new_with_range(pulong->minimum, pulong->maximum, 1);
+
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_ulong (&value));
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
-  return (prop_value_hbox);
+
+  return (spin_button);
 }
 
 GtkWidget *
@@ -279,15 +272,14 @@ pitivi_gstelementsettings_value_conf_long (const gchar *name, GValue value, GPar
 {
   GParamSpecLong	*plong;
   GtkWidget		*spin_button;
-  GtkWidget		*prop_value_hbox;
 
   plong = G_PARAM_SPEC_LONG (param);
-  prop_value_hbox = gtk_hbox_new(0, FALSE);
   spin_button = gtk_spin_button_new_with_range(plong->minimum, plong->maximum, 1);
+
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_long (&value));
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
-  return (prop_value_hbox);
+
+  return (spin_button);
 }
 
 GtkWidget *
@@ -295,15 +287,14 @@ pitivi_gstelementsettings_value_conf_float (const gchar *name, GValue value, GPa
 {
   GParamSpecFloat	*pfloat;
   GtkWidget		*spin_button;
-  GtkWidget		*prop_value_hbox;
 
   pfloat = G_PARAM_SPEC_FLOAT (param);
-  prop_value_hbox = gtk_hbox_new(0, FALSE);
   spin_button = gtk_spin_button_new_with_range(pfloat->minimum, pfloat->maximum, 1);
+
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_float (&value));
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
-  return (prop_value_hbox);
+
+  return (spin_button);
 }
 
 GtkWidget *
@@ -311,15 +302,14 @@ pitivi_gstelementsettings_value_conf_double (const gchar *name, GValue value, GP
 {
   GParamSpecDouble	*pdouble;
   GtkWidget		*spin_button;
-  GtkWidget		*prop_value_hbox;
 
   pdouble = G_PARAM_SPEC_DOUBLE (param);
-  prop_value_hbox = gtk_hbox_new(0, FALSE);
   spin_button = gtk_spin_button_new_with_range(pdouble->minimum, pdouble->maximum, 1);
+
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_double (&value));
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
-  return (prop_value_hbox);
+
+  return (spin_button);
 }
 
 GtkWidget *
@@ -332,7 +322,6 @@ pitivi_gstelementsettings_value_conf_default (const gchar *name, GValue value, G
     gint		*enum_values;
     gchar		*label;
 
-    GtkWidget	*prop_value_hbox;
     GtkWidget	*prop_value_label;
     GtkWidget	*prop_value_combobox;
     
@@ -340,30 +329,25 @@ pitivi_gstelementsettings_value_conf_default (const gchar *name, GValue value, G
     GList		*test_list;
     
     prop_value_combobox = gtk_combo_box_new_text();
-    prop_value_hbox = gtk_hbox_new(0, FALSE);
     combobox_list = NULL;
 
     GEnumClass *class = G_ENUM_CLASS (g_type_class_ref (param->value_type));
     enum_values = g_new0 (gint, class->n_values);
     
-    for (i=0; i < class->n_values; i++)
-      {
-	GEnumValue *evalue = &class->values[i];
-	
-	enum_values[i] = evalue->value;
-	label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
-	gtk_combo_box_insert_text (GTK_COMBO_BOX (prop_value_combobox), i, label);
-	combobox_list = g_list_append (combobox_list, &(evalue->value));
-      }
+    for (i=0; i < class->n_values; i++) {
+      GEnumValue *evalue = &class->values[i];
+      
+      enum_values[i] = evalue->value;
+      label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
+      gtk_combo_box_insert_text (GTK_COMBO_BOX (prop_value_combobox), i, label);
+      combobox_list = g_list_append (combobox_list, &(evalue->value));
+    }
 
     gtk_combo_box_set_active (GTK_COMBO_BOX (prop_value_combobox), g_value_get_enum(&value));
 
-    gtk_box_pack_start (GTK_BOX (prop_value_hbox), prop_value_combobox, TRUE, TRUE, 0);
+    g_object_set_data (G_OBJECT(prop_value_combobox), "list", combobox_list);
     
-    combobox_list = (gpointer) combobox_list;
-    g_object_set_data (G_OBJECT(prop_value_hbox), "combo", combobox_list);
-    
-    return (prop_value_hbox);
+    return (prop_value_combobox);
     
   } else if (G_IS_PARAM_SPEC_FLAGS (param)) {
     
@@ -388,7 +372,7 @@ pitivi_gstelementsettings_value_conf_default (const gchar *name, GValue value, G
       
       check = gtk_check_button_new ();
       g_object_set_data (G_OBJECT (check), "value", &(values[j].value));
-      //g_print ("VALUE:%d\n", values[j].value);
+      g_print ("VALUE:%d\n", values[j].value);
       pitivi_gstelementsettings_table_widget_add (Tab, check, j, 1);
       
       label = gtk_label_new (values[j].value_nick);
@@ -505,7 +489,6 @@ pitivi_gstelementsettings_add_new_frame_prop (PitiviGstElementSettings *self,
     gtk_box_pack_start (GTK_BOX (self->private->frame_prop), self->Table, FALSE, FALSE, BORDER);
     
     for (cpt = 1; cpt < num_prop; cpt++) {
-      //pitivi_gstelementsettings_table_new_label_add (self, prop[cpt]->name, (cpt - 1), 0);
       pitivi_gstelementsettings_table_new_label_add 
 	(self, pitivi_gstelementsettings_string_bold 
 	 ((gchar *) g_param_spec_get_nick (prop[cpt])),
@@ -595,7 +578,10 @@ pitivi_gstelementsettings_instance_init (GTypeInstance * instance, gpointer g_cl
   /* initialize all public and private members to reasonable default values. */ 
   
   self->private->dispose_has_run = FALSE;
-  
+
+  self->Table = NULL;
+  self->elm = NULL;
+
   /* Do only initialisation here */
   /* The construction of the object should be done in the Constructor
      So that properties set at instanciation can be set */

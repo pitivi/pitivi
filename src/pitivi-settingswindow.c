@@ -65,71 +65,6 @@ struct _PitiviSettingsWindowPrivate
  *
  */
 
-/*
-  gchar *
-  pitivi_settingswindow_get_row_list (GList *List, gint row)
-  {
-  gint cpt;
-  
-  for (cpt = 0; List; List = g_list_next (List), cpt++) {
-  if (cpt == row) {
-  return (g_strdup ((gchar *) List->data));
-    }
-    }
-    return (NULL);
-    }
-    
-    gchar *
-    pitivi_settingswindow_combobox_get_active (GtkWidget *widget)
-    {
-    gchar *elm;
-    
-    elm = pitivi_settingswindow_get_row_list 
-    (g_object_get_data (G_OBJECT (widget), "list"), 
-    gtk_combo_box_get_active (GTK_COMBO_BOX (widget)));
-    return (elm);
-    }
-
-
-    void
-    pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
-    {
-    GtkWidget *ComboBox = (GtkWidget *) data;
-    GtkWidget *Dialog;
-    gchar *elm;
-    gint result;
-    PitiviGstElementSettings *Properties;
-    
-    elm = pitivi_settingswindow_combobox_get_active (ComboBox);
-    g_print ("Button Click:%s\n", elm);
-    Dialog = gtk_dialog_new ();
-    
-    Properties = pitivi_gstelementsettings_new (elm);
-    gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
-    GTK_WIDGET (Properties));
-    gtk_dialog_add_buttons (GTK_DIALOG (Dialog),
-    GTK_STOCK_OK,
-    GTK_RESPONSE_ACCEPT,
-    GTK_STOCK_CANCEL,
-    GTK_RESPONSE_REJECT,
-    NULL);
-    gtk_widget_show_all (GTK_WIDGET (Dialog));
-    
-    result  = gtk_dialog_run (GTK_DIALOG (Dialog));
-    switch (result)
-    {
-    case GTK_RESPONSE_ACCEPT:
-    g_print ("ACCEPT\n");
-    break;
-    default:
-    g_print ("CANCEL\n");
-    break;
-    }
-    gtk_widget_destroy (Dialog);  
-    return ;
-    }
-*/
-
 GstElementFactory *
 pitivi_settingswindow_get_row_list (GList *List, gint row)
 {
@@ -155,6 +90,89 @@ pitivi_settingswindow_combobox_get_active (GtkWidget *widget)
 }
 
 void
+pitivi_settingswindow_get_settings_elem (PitiviGstElementSettings *Properties)
+{
+  if (Properties->Table) {
+    GList *list;
+
+    list = GTK_TABLE (Properties->Table)->children;
+    for (; list; list = g_list_next (list)) {
+      GtkTableChild *tmp = (GtkTableChild *) list->data;
+      
+      if (GTK_IS_COMBO_BOX (tmp->widget)) {
+
+	GList	*tmp_list;
+	gint	num;      
+	num = gtk_combo_box_get_active (GTK_COMBO_BOX (tmp->widget));
+	
+	tmp_list = g_object_get_data (G_OBJECT (tmp->widget), "list");
+	tmp_list = g_list_nth (tmp_list, num);
+	g_print ("combo_sel[%d]:%d\n", num, tmp_list->data);
+
+      } else if (GTK_IS_ENTRY (tmp->widget)) {
+
+	g_print ("Entry:%s\n", gtk_entry_get_text (GTK_ENTRY (tmp->widget)));
+
+      } else if (GTK_IS_BOX (tmp->widget)) {
+	GList *plist;
+	gint i;
+
+	g_print ("BOX:[TRUE|FALSE]\n");
+
+	plist = GTK_BOX (tmp->widget)->children;
+	for (i = 0; plist; plist = g_list_next (plist), i++) { 
+	  GtkBoxChild *child = (GtkBoxChild *) plist->data; 
+	  
+	  if (GTK_IS_BUTTON (child->widget)) {
+	    
+	    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (child->widget))) {
+	      if (i == 0) {
+		g_print ("Button TRUE\n");
+	      } else {
+		g_print ("Button FALSE\n");
+	      }
+
+	    }
+
+	  }
+
+	}
+
+      } else if (GTK_IS_TABLE (tmp->widget)) {
+	GList *table_box;
+
+	g_print ("TABLE:\n");
+
+	table_box = GTK_TABLE (tmp->widget)->children;
+	for (; table_box; table_box = g_list_next (table_box)) {
+	  GtkTableChild *tmp2 = (GtkTableChild *) table_box->data;
+	  
+	  if (GTK_IS_BUTTON (tmp2->widget)) {
+	    if (!GTK_TOGGLE_BUTTON (tmp2->widget)) {
+	      g_print ("NOT TOGGLE BOUTTON \n");
+	    }
+
+	    if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (tmp2->widget))) {
+	      g_print ("FLAG:%d\n", g_object_get_data (G_OBJECT (tmp->widget), "value"));
+	    } else {
+	      g_print ("FLAG:NULL\n");
+	    }
+
+	  }
+	  
+	}
+
+      }
+      
+      
+    }
+  }
+  //////////////////////////////////////////////////////////////////////////////
+
+  return ;
+}
+
+void
 pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 {
   GtkWidget *ComboBox = (GtkWidget *) data;
@@ -164,22 +182,30 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
   PitiviGstElementSettings *Properties;
 
   elm = pitivi_settingswindow_combobox_get_active (ComboBox);
-  g_print ("Button Click:%s\n", gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
+
+  g_print ("Button Click:%s\n", 
+	   gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
+
   Dialog = gtk_dialog_new ();
 
-  gtk_window_set_title (GTK_WINDOW (Dialog), gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
-  //g_object_set_property (G_OBJECT (Dialog), "allow-grow", FALSE);
+  gtk_window_set_title (GTK_WINDOW (Dialog), 
+			gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
+
   gtk_window_set_resizable (GTK_WINDOW (Dialog), FALSE);
 
-  Properties = pitivi_gstelementsettings_new ((gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
+  Properties = pitivi_gstelementsettings_new 
+    ((gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
+
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
 		     GTK_WIDGET (Properties));
+
   gtk_dialog_add_buttons (GTK_DIALOG (Dialog),
 			  GTK_STOCK_OK,
 			  GTK_RESPONSE_ACCEPT,
 			  GTK_STOCK_CANCEL,
 			  GTK_RESPONSE_REJECT,
 			  NULL);
+
   gtk_widget_show_all (GTK_WIDGET (Dialog));
 
   result  = gtk_dialog_run (GTK_DIALOG (Dialog));
@@ -187,6 +213,8 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
     {
       case GTK_RESPONSE_ACCEPT:
          g_print ("ACCEPT\n");
+	 g_print ("SAVE %s\n", Properties->elm);
+	 pitivi_settingswindow_get_settings_elem (Properties);
          break;
       default:
          g_print ("CANCEL\n");
@@ -486,48 +514,6 @@ pitivi_settingswindow_create_table (GtkWidget *frame, GList *List)
 
   return (Table);
 }
-
-/*
-  GList *
-  pitivi_settingswindow_create_list_InOut (GList *element, gchar *path)
-  {
-  GList			*tmp;
-  GstElementFactory	*factory;
-  
-  for (tmp = NULL; element; element = g_list_next (element)) {
-  factory = (GstElementFactory *) element->data;
-  if (!strcmp (path, gst_element_factory_get_klass (factory))) {
-  //tmp = g_list_append (tmp, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)));
-  tmp = g_list_append (tmp, 
-  g_strdup_printf ("%s [%s]", 
-  (gchar *) gst_element_factory_get_longname (factory),
-  (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory))
-  )
-  );
-  }
-  }
-  
-  return (tmp);
-  }
-
-  void
-  pitivi_settingswindow_create_row_table_InOut (GList *element, GtkWidget *table, 
-  gchar *io, gchar *type, gint row)
-  {
-  GList *elm;
-  GtkWidget *ComboBox;
-  
-  pitivi_settingswindow_ajout_label (table, row, 0, g_strdup_printf ("%s%s:\t", type, io));
-  
-  elm = pitivi_settingswindow_create_list_InOut (element, g_strdup_printf ("%s/%s", io, type));
-  ComboBox = pitivi_settingswindow_ajout_combobox (table, row, 1, elm);
-  
-  pitivi_settingswindow_ajout_button (table, row, 2, GTK_STOCK_PREFERENCES, ComboBox);
-  
-  return ;
-  }
-  
-*/
 
 GtkWidget *
 pitivi_settingswindow_ajout_inout_combobox (GtkWidget *Table, gint row, gint col, GList *List, gchar *path)
