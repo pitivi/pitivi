@@ -66,6 +66,8 @@ gst_event_get_name (GstEvent *event)
   return "REALLY UNKNOWN EVENT";
 }
 
+/* /!\ REMOVE THIS FUNCTION ONCE IT'S IN GSTREAMER CORE !!!! */
+
  /**
  * gst_pad_set_active_recursive:
  * @pad: the #GstPad to activate or deactivate.
@@ -83,8 +85,9 @@ gst_pad_set_active_recursive (GstPad * pad, gboolean active)
   g_return_if_fail (GST_IS_PAD (pad));
   g_return_if_fail (GST_PAD_IS_SRC (pad));
   
-  PITIVI_DEBUG("Recursively %s pad %s:%s", active ? "activating" : "deactivating",
-	       GST_DEBUG_PAD_NAME (pad));
+  PITIVI_DEBUG("Recursively %s pad %s:%s (%s:%s)", active ? "activating" : "deactivating",
+	       GST_DEBUG_PAD_NAME (pad),
+	       GST_DEBUG_PAD_NAME (GST_PAD_REALIZE (pad)));
   
   gst_pad_set_active (pad, active);
   /* If we have more than one sourcepad, then the other pads should
@@ -92,6 +95,8 @@ gst_pad_set_active_recursive (GstPad * pad, gboolean active)
    * activation if any one pad is active and recurse deactivation
    * if no single pad is active? */
   parent = gst_pad_get_parent (pad);
+  PITIVI_DEBUG ("parent of pad is %s",
+		gst_element_get_name (parent));
   if (!parent || parent->numsrcpads > 1)
     return;
   
@@ -258,32 +263,66 @@ bin_add_videobin (bindata *data)
   }
 }
 
+static gboolean
+mute_stream (GstProbe *probe, GstData **data, gpointer pdata)
+{
+/*   mutingstr	*mut = (mutingstr *) pdata; */
+  GstPad	*pad = GST_PAD (pdata);
+
+  PITIVI_DEBUG("probe called on pad %s:%s",
+	       GST_DEBUG_PAD_NAME (pad));
+  
+  if (GST_IS_BUFFER (*data)) {
+    PITIVI_DEBUG("got a buffer");
+    gst_pad_set_active_recursive ((GstPad *) GST_PAD_REALIZE (pad), FALSE);
+    gst_pad_remove_probe ((GstPad *) GST_PAD_REALIZE (pad), probe);
+/*     gst_probe_destroy (probe); */
+/*     g_free (mut); */
+  } else
+    PITIVI_DEBUG("got an event %s",
+		 gst_event_get_name (GST_EVENT(*data)));
+  
+  return FALSE;
+}
+
 static void
 bin_new_pad_fake_output (GstPad *pad, bindata *data, int padtype)
 {
-/*   GstElement	*sink; */
-/*   char		*tmp; */
+  GstElement	*sink;
+  char		*tmp;
+/*   mutingstr	*mut; */
+  GstProbe	*probe;
 
-  gst_pad_set_active_recursive (pad, FALSE);
+  if (((padtype == IS_AUDIO) && (!data->audiofakesink))
+      || ((padtype == IS_VIDEO) && (!data->videofakesink))) {
+    tmp = g_strdup_printf("fakesink%d", data->lastsinkid++);
+    sink = gst_element_factory_make ("fakesink", tmp);
+    g_free(tmp);
+    gst_bin_add(GST_BIN (data->bin), sink);
+    if (padtype == IS_AUDIO)
+      data->audiofakesink = sink;
+    else
+      data->videofakesink = sink;
+  } else
+    if (padtype == IS_AUDIO)
+      sink = data->audiofakesink;
+    else
+      sink = data->videofakesink;
 
-/*   if (((padtype == IS_AUDIO) && (!data->audiofakesink)) */
-/*       || ((padtype == IS_VIDEO) && (!data->videofakesink))) { */
-/*     tmp = g_strdup_printf("fakesink%d", data->lastsinkid++); */
-/*     sink = gst_element_factory_make ("fakesink", tmp); */
-/*     g_free(tmp); */
-/*     gst_bin_add(GST_BIN (data->bin), sink); */
-/*     if (padtype == IS_AUDIO) */
-/*       data->audiofakesink = sink; */
-/*     else */
-/*       data->videofakesink = sink; */
-/*   } else */
-/*     if (padtype == IS_AUDIO) */
-/*       sink = data->audiofakesink; */
-/*     else */
-/*       sink = data->videofakesink; */
+  if (!(gst_pad_link(pad, gst_element_get_pad(sink, "sink"))))
+    PITIVI_WARNING("Error linking decodebin pad to fakesink !!!");
 
-/*   if (!(gst_pad_link(pad, gst_element_get_pad(sink, "sink")))) */
-/*     PITIVI_WARNING("Error linking decodebin pad to fakesink !!!"); */
+  /* Stick a muting probe on that pad */
+
+  PITIVI_DEBUG ("Putting a probe on pad %s:%s",
+		GST_DEBUG_PAD_NAME(pad));
+/*   mut = g_new0(mutingstr, 1); */
+/*   mut->pad = pad; */
+/*   mut->probe = gst_probe_new(FALSE, mute_stream, mut); */
+  probe = gst_probe_new (FALSE, mute_stream, pad);
+  gst_pad_add_probe ((GstPad *) GST_PAD_REALIZE(pad), probe);
+
+
 }
 
 static void

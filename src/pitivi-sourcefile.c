@@ -251,8 +251,9 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
   if (!sf->length) {
     establish_length (sf);
   }
-/*   g_printf("video_handoff %lld:%02lld:%03lld\n", */
-/* 	   GST_M_S_M(GST_BUFFER_TIMESTAMP(buf))); */
+
+  PITIVI_DEBUG("video_handoff %lld:%02lld:%03lld",
+	       GST_M_S_M(GST_BUFFER_TIMESTAMP(buf)));
   if ((GST_CLOCK_TIME_IS_VALID(GST_BUFFER_TIMESTAMP(buf))) 
       && (GST_BUFFER_TIMESTAMP(buf) >= sf->private->vlastcaptured) &&
       (GST_BUFFER_TIMESTAMP(buf) >= 0)) {
@@ -282,12 +283,14 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
     sf->private->cacheidx++;
   }
   /* If audio caps is not fixed, carry on normally */
-  if (sf->private->audiopad && (gst_caps_is_fixed(gst_pad_get_caps(sf->private->audiopad))))
+  if (sf->private->audiopad && (gst_caps_is_fixed(gst_pad_get_caps(sf->private->audiopad)))) {
     if (sf->private->vlastcaptured < sf->length) {
       if (!(gst_element_seek (element, GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH,
 			      sf->private->vlastcaptured)))
 	PITIVI_WARNING ("Error seeking to %lld", (signed long long int) sf->private->vlastcaptured);
-    }
+    } else
+      gst_element_set_eos (GST_ELEMENT (gst_element_get_parent (element)));
+  }
   while (gtk_events_pending())
     gtk_main_iteration();
 }
