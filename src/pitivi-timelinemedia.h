@@ -32,6 +32,7 @@
 
 #include <gtk/gtk.h>
 #include "pitivi-projectwindows.h"
+#include "pitivi-sourceitem.h"
 
 /*
  * Type macros.
@@ -60,9 +61,14 @@ struct _PitiviTimelineMedia
   GtkWidget parent;
 
   /* instance public members */
+  
   PitiviSourceFile *sf;
-  gboolean selected;
+  PitiviSourceItem *sourceitem;
+  GtkWidget        *linked;
+  gboolean	   selected;
+  
   /* private */
+  
   PitiviTimelineMediaPrivate *private;
 };
 

@@ -76,6 +76,6 @@ GType pitivi_mediatrackinfo_get_type (void);
  * Method definitions.
  */
 
-PitiviMediaTrackInfo	*pitivi_mediatrackinfo_new (PitiviTimelineCellRenderer *cell, gchar *label);
+GtkWidget	*pitivi_mediatrackinfo_new (PitiviTimelineCellRenderer *cell, gchar *label);
 
 #endif

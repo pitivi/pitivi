@@ -34,6 +34,7 @@
 #include "../pixmaps/bg_audio.xpm"
 #include "../pixmaps/bg_video.xpm"
 #include "../pixmaps/bg_effects.xpm"
+#include "../pixmaps/bg_trans.xpm"
 
 void
 pitivi_drawing_set_pixmap_bg (GtkWidget *widget, GdkPixmap *pixmap);

@@ -28,6 +28,7 @@
 #include "pitivi-timelinecellrenderer.h"
 #include "pitivi-cursor.h"
 #include "pitivi-dragdrop.h"
+#include "pitivi-sourceitem.h"
 
 static	GtkWidgetClass	*parent_class;
 

@@ -37,7 +37,7 @@
  * Type macros.
  */
 
-#define PITIVI_DEFAULT_FONT_DESC  "Sans 12"
+#define PITIVI_DEFAULT_FONT_DESC  "helvetica 9"
 #define PITIVI_DEFAULT_MEDIA_NAME "Media"
 
 #define MEDIA_TRACK_DEFAULT_WIDTH 120

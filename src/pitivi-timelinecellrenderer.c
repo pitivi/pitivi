@@ -74,11 +74,12 @@ typedef enum {
   PROP_TRACK_NB_PROPERTY,  
 } PitiviLayerProperty;
 
-static guint track_sizes[3][3] =
+static guint track_sizes[4][4] =
   {
-    {PITIVI_VIDEO_TRACK,   7200, 50},
-    {PITIVI_EFFECTS_TRACK, 7200, 25},
-    {PITIVI_AUDIO_TRACK,   7200, 50},
+    {PITIVI_VIDEO_TRACK,      7200, 50},
+    {PITIVI_EFFECTS_TRACK,    7200, 25},
+    {PITIVI_TRANSITION_TRACK, 7200, 25},
+    {PITIVI_AUDIO_TRACK,      7200, 50},
   };
 
 /*
@@ -428,13 +429,13 @@ PitiviCursor *
 pitivi_getcursor_id (GtkWidget *widget)
 {
   PitiviCursor          *cursor;
-  PitiviTimelineWindow	*parent;
+  GtkWidget		*parent;
   PitiviToolbox		*toolbox;
   
   cursor = NULL;
   parent = gtk_widget_get_toplevel (GTK_WIDGET (widget));
   if ( GTK_IS_WINDOW (parent) )
-    cursor = parent->toolbox->pitivi_cursor;
+    cursor = ((PitiviTimelineWindow *)parent)->toolbox->pitivi_cursor;
   return cursor;
 }
 
@@ -772,6 +773,9 @@ pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self )
       break;
     case PITIVI_VIDEO_TRACK:
       pixtab =  bg_video_xpm;
+      break;
+    case PITIVI_TRANSITION_TRACK:
+      pixtab =  bg_trans_xpm;
       break;
     case PITIVI_EFFECTS_TRACK:
       pixtab =  bg_effects_xpm;
