@@ -104,7 +104,7 @@ GType pitivi_effectswindow_get_type (void);
  * Method definitions.
  */
 
-PitiviEffectsWindow	*pitivi_effectswindow_new(void);
+PitiviEffectsWindow	*pitivi_effectswindow_new(PitiviMainApp *mainapp);
 
 void pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, PitiviEffectsTypeEnum eneffects);
 

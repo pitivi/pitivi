@@ -63,11 +63,12 @@ enum {
  */
 
 PitiviEffectsWindow *
-pitivi_effectswindow_new(void)
+pitivi_effectswindow_new(PitiviMainApp *mainapp)
 {
   PitiviEffectsWindow	*effectswindow;
 
-  effectswindow = (PitiviEffectsWindow *) g_object_new(PITIVI_EFFECTSWINDOW_TYPE, NULL);
+  effectswindow = (PitiviEffectsWindow *) g_object_new(PITIVI_EFFECTSWINDOW_TYPE, 
+						       "mainapp", mainapp, NULL);
   g_assert(effectswindow != NULL);  
   return effectswindow;
 }

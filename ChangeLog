@@ -1,4 +1,7 @@
+
 2004-06-25    <bilboed@localhost>
+
+	* src/pitivi-effectswindow.c (pitivi_effectswindow_new): modified to take PitiviMainApp as parameter
 
 	* src/pitivi-mainapp.h (struct _PitiviMainApp): moved the windows to PitiviMainAppPrivate
 

@@ -237,7 +237,7 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self)
   
   if (self->private->effectswin == NULL)
     {
-      self->private->effectswin = pitivi_effectswindow_new();
+      self->private->effectswin = pitivi_effectswindow_new(self);
       gtk_widget_show_all (GTK_WIDGET (self->private->effectswin) );
       gtk_window_move (GTK_WINDOW (self->private->effectswin), 720, 450);
       gtk_signal_connect (GTK_OBJECT (self->private->effectswin), "destroy"\
