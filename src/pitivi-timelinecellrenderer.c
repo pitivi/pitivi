@@ -657,7 +657,7 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
   cursor = pitivi_getcursor_id (widget);
   if (cursor->type == PITIVI_CURSOR_SELECT && event->state != 0)
     {
-      if (event->button == 1)
+      if ( event->button == 1 )
 	{
 	  selected = self->private->selected;
 	  g_signal_emit_by_name (GTK_WIDGET (self->private->timewin), "deselect", NULL);
@@ -669,6 +669,10 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 	      memcpy (&self->private->selection, &selection, sizeof (GdkRectangle));
 	      pitivi_send_expose_event (widget);
 	    }
+	}
+      else if ( event->button == 3 )
+	{
+	  
 	}
     }
   return FALSE;

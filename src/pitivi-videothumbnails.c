@@ -146,7 +146,7 @@ generate_thumb (char *filename, GtkWidget *widget, int i)
 	{
 	  myreceiver = widget;
 	  myoutput = g_malloc (strlen (filename) + DIR_LENGTH);
-	  g_sprintf (myoutput, "./pixmaps/%s%c%d", tmp, '\0', i);
+	  g_sprintf (myoutput, "/tmp/%s%c%d", tmp, '\0', i);
 	  if ( gst_thumbnail_pngenc_get (filename, myoutput, widget) > 0)
 	      return myoutput;
 	}
