@@ -493,14 +493,14 @@ pitivi_fill_hbox(PitiviNewProjectWindow *self)
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), GTK_POLICY_AUTOMATIC,
 				 GTK_POLICY_AUTOMATIC);
 
-  lefthbox = gtk_vbox_new (FALSE, 5);
+  lefthbox = gtk_vbox_new (FALSE, 1);
   
   gtk_container_add(GTK_CONTAINER(scroll), self->private->show_tree);
   notebook = pitivi_notebook_new(self);
 
   catframe = pitivi_make_cat_frame (self);
-  gtk_box_pack_start (GTK_BOX (lefthbox), scroll, TRUE, TRUE, 5);
-  gtk_box_pack_start (GTK_BOX (lefthbox), catframe, FALSE, FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (lefthbox), scroll, TRUE, TRUE, 1);
+  gtk_box_pack_start (GTK_BOX (lefthbox), catframe, FALSE, FALSE, 1);
 
   gtk_box_pack_start (GTK_BOX (self->private->hbox), lefthbox, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (self->private->hbox), notebook, TRUE, TRUE, 0);
