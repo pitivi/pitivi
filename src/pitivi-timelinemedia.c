@@ -927,9 +927,10 @@ pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data)
 {
   GtkWidget *props_dialog; // gtk_message_dialog_new
   PitiviEffectsWindowProperties *propertieswindow;
-
   gchar *properties=NULL;
   
+  PITIVI_DEBUG ("Properties for a %s", this->sourceitem->srcfile->mediatype);
+
   if (strstr (this->sourceitem->srcfile->mediatype, "effect") || strstr (this->sourceitem->srcfile->mediatype, "transition"))
     {
       propertieswindow = pitivi_effectswindowproperties_new ( this->sourceitem );
@@ -938,7 +939,7 @@ pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data)
       return;
     }
 
-  if (!strcmp (this->sourceitem->srcfile->mediatype, "video/audio")) 
+  if (!g_ascii_strcasecmp (this->sourceitem->srcfile->mediatype, "video/audio")) 
     { 
       properties = g_strdup_printf("Properties:\n\nSource:%s\n\nType:%s\n\nInfos Video:%s\n\n Infos Audio:%s\n",
 				   this->sourceitem->srcfile->filename,
@@ -946,14 +947,14 @@ pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data)
 				   this->sourceitem->srcfile->infovideo,
 				   this->sourceitem->srcfile->infoaudio);
     }
-  else if (!strcmp (this->sourceitem->srcfile->mediatype, "video")) 
+  else if (!g_ascii_strcasecmp (this->sourceitem->srcfile->mediatype, "video")) 
     { 
       properties = g_strdup_printf("Properties:\n\nSource:%s\n\nType:%s\n\nInfos Video:%s\n",
 				   this->sourceitem->srcfile->filename,
 				   this->sourceitem->srcfile->mediatype,
 				   this->sourceitem->srcfile->infovideo); 
     }
-  else if (!strcmp (this->sourceitem->srcfile->mediatype, "audio"))
+  else if (!g_ascii_strcasecmp (this->sourceitem->srcfile->mediatype, "audio"))
     { 
       properties = g_strdup_printf("Properties:\n\nSource:%s\n\nType:%s\n\nInfos Audio:%s\n",
 				   this->sourceitem->srcfile->filename,
@@ -963,12 +964,14 @@ pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data)
   else
     properties = g_strdup_printf("Properties:\nType:Unknow\n");
 
-  props_dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, 
+  props_dialog = gtk_message_dialog_new (NULL,
+					 GTK_DIALOG_DESTROY_WITH_PARENT, 
 					 GTK_MESSAGE_INFO, 
-					 GTK_BUTTONS_NONE, 
-					 properties, 
-					 NULL);
-  gtk_widget_show(props_dialog);
+					 GTK_BUTTONS_OK, 
+					 properties);
+
+  gtk_dialog_run (GTK_DIALOG (props_dialog));
+  gtk_widget_destroy (props_dialog);
 
 }
 
