@@ -317,17 +317,17 @@ pitivi_effectstree_insert_effect (PitiviEffectsWindow *win,
  **************************************************************/
 
 static void
-slide_effects_info (PitiviEffectsWindow *self, gint64 length, gchar *path)
+slide_effects_info (PitiviEffectsWindow *self, PitiviSourceFile *se)
 {
-  struct _Pslide
-  {
-    gint64 length;
-    gchar  *path;
-  } slide;
+/*   struct _Pslide */
+/*   { */
+/*     gint64 length; */
+/*     gchar  *path; */
+/*   } slide; */
   
-  slide.length = length;
-  slide.path = path;
-  g_signal_emit_by_name (self->private->timelinewin, "drag-source-begin", &slide);
+/*   slide.length = length; */
+/*   slide.path = path; */
+  g_signal_emit_by_name (self->private->timelinewin, "drag-source-begin", se);
 }
 
 
@@ -368,7 +368,7 @@ pitivi_effectswindow_drag_begin (GtkWidget		*widget,
   gtk_tree_model_get (model, &iter, PITIVI_POINTER_COLUMN, &se, -1);
   self->private->dndse = se;
   size = ((gint64)50000000000LL);
-  slide_effects_info ( self, size, "transition" );
+  slide_effects_info ( self, se );
 }
 
 /**************************************************************

@@ -425,8 +425,8 @@ create_stream (gpointer data)
   GstElement	*audiosink;
   GstElement	*timeoverlay;
 
-  audiosink = gst_element_factory_make("fakesink", "audio-out");
-  g_object_set (G_OBJECT (audiosink), "silent", FALSE, NULL);
+  audiosink = gst_element_factory_make("alsasink", "audio-out");
+/*   g_object_set (G_OBJECT (audiosink), "silent", FALSE, NULL); */
   self->private->audiosink = audiosink;
   
   pitivi_project_set_audio_output(project, audiosink);

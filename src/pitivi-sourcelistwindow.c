@@ -760,17 +760,19 @@ static void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
 */
 
 static void
-slide_info (PitiviSourceListWindow *self, gint64 length, gchar *path)
+slide_info (PitiviSourceListWindow *self, PitiviSourceFile *sf)
 {
-  struct _Pslide
-  {
-    gint64 length;
-    gchar  *path;
-  } slide;
+/*   struct _Pslide */
+/*   { */
+/*     gint64 length; */
+/*     gchar  *path; */
+/*     PitiviSourceFile *sf; */
+/*   } slide; */
 
-  slide.length = length;
-  slide.path = path;
-  g_signal_emit_by_name (self->private->timelinewin, "drag-source-begin", &slide);
+/*   slide.length = length; */
+/*   slide.path = path; */
+/*   slide.sf = sf; */
+  g_signal_emit_by_name (self->private->timelinewin, "drag-source-begin", sf);
 }
 
 static void
@@ -790,7 +792,8 @@ drag_begin_cb (GtkWidget          *widget,
   gint			i;
   PitiviSourceFile	*sf;
   gchar			*tmpMediaType;
-  
+
+  PITIVI_DEBUG ("begin");
   /* find treepath */
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
   if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -823,11 +826,14 @@ drag_begin_cb (GtkWidget          *widget,
 	item_select++;
       gtk_tree_model_iter_next(model, &iternext);
     }
+  PITIVI_DEBUG ("sf:%p", sf);
+  if (sf)
+    PITIVI_DEBUG ("sf->length : %lld", sf->length);
   self->private->dndfilepos = item_select;  
   if (sf && sf->length)
     {
       self->private->dndsf = sf;
-      slide_info (self, sf->length, tmpMediaType);
+      slide_info (self, sf);
     }
 }
 

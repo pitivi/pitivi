@@ -393,11 +393,16 @@ gnl_timeline_timer_loop (GstElement *element)
 	 _ forward the Buffer/Event
       */
 
-      if (GST_IS_BUFFER (buf)) {
-	to_schedule->time = GST_BUFFER_TIMESTAMP (buf) + GST_BUFFER_DURATION (buf);
+      if (!GST_IS_EVENT (buf)) {
+	if (GST_BUFFER_DURATION (buf) == GST_CLOCK_TIME_NONE )
+	  to_schedule->time = GST_BUFFER_TIMESTAMP (buf);
+	else
+	  to_schedule->time = GST_BUFFER_TIMESTAMP (buf) + GST_BUFFER_DURATION (buf);
       } else if (GST_IS_EVENT (buf) && (GST_EVENT_TYPE (GST_EVENT (buf)) == GST_EVENT_DISCONTINUOUS)) {
 	if (!gst_event_discont_get_value (GST_EVENT(buf), GST_FORMAT_TIME, &(to_schedule->time)))
 	  GST_WARNING ("Couldn't get time value for discont event !!");
+	else
+	  GST_DEBUG ("Got value from discont event, now %lld", to_schedule->time);
       }
       if (to_schedule->time < G_MAXINT64) {
         gst_pad_push (to_schedule->srcpad, (GstData *) buf);

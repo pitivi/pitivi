@@ -484,7 +484,7 @@ pitivi_sourcefile_bin_new (PitiviSourceFile *self, int type, PitiviMainApp *main
   GError	*error = NULL;
   bindata	*data;
 
-
+  PITIVI_DEBUG ("New with type %d", type);
   tmp = g_strdup_printf ("( filesrc name=src location=\"%s\" ! decodebin name=dbin )",
 			 self->filename);
   pipeline = gst_parse_launch (tmp, &error);
@@ -511,6 +511,7 @@ pitivi_sourcefile_bin_new (PitiviSourceFile *self, int type, PitiviMainApp *main
 
   gst_element_set_state (pipeline, GST_STATE_READY);
 
+  PITIVI_DEBUG ("returning sourcefilebin");
   return pipeline;
 }
 

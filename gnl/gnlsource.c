@@ -609,7 +609,7 @@ source_chainfunction (GstPad *pad, GstData *buf)
   SourcePadPrivate *private;
   GnlSource *source;
   GnlObject *object;
-  GstClockTimeDiff intime;
+  GstClockTimeDiff intime, dur;
   GstBuffer	*buffer = GST_BUFFER(buf);
 
   GST_INFO("chaining : data time %lld:%02lld:%03lld",
@@ -626,11 +626,15 @@ source_chainfunction (GstPad *pad, GstData *buf)
     GST_INFO("Chaining a buffer");
   if (GST_IS_BUFFER (buffer) && !source->queueing) {
     intime = GST_BUFFER_TIMESTAMP (buffer);
+    dur = GST_BUFFER_DURATION (buffer);
+    if (dur == GST_CLOCK_TIME_NONE)
+      dur = 0LL;
 
-    if ((intime < object->media_start) && (GST_BUFFER_DURATION (buffer) + intime < object->media_start)) {
-	GST_INFO ("buffer doesn't start/end before source start, unreffing buffer");
-        gst_buffer_unref (buffer);
-        return;
+    if ((intime < object->media_start) 
+	&& (dur + intime < object->media_start)) {
+      GST_INFO ("buffer doesn't start/end before source start, unreffing buffer");
+      gst_buffer_unref (buffer);
+      return;
     }
     if (intime > object->media_stop) {
       gst_buffer_unref (buffer);

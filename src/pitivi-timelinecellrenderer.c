@@ -23,6 +23,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-sourcefile.h"
 #include "pitivi-effectswindow.h"
 #include "pitivi-timelinewindow.h"
@@ -57,6 +58,7 @@ struct _PitiviTimelineCellRendererPrivate
 
   guint		       slide_width;
   gboolean	       slide_both;
+  PitiviSourceFile	*dndsf;
 
   /* Backgrounds */
   
@@ -327,7 +329,7 @@ pitivi_getcursor_id (GtkWidget *widget)
   cursor = NULL;
   parent = gtk_widget_get_toplevel (GTK_WIDGET (widget));
   if ( GTK_IS_WINDOW (parent) )
-    cursor = ((PitiviTimelineWindow *)parent)->toolbox->pitivi_cursor;
+    cursor = PITIVI_TIMELINEWINDOW(parent)->toolbox->pitivi_cursor;
   return cursor;
 }
 
@@ -388,7 +390,7 @@ static gint
 pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 						  GdkEventButton *event)
 {
-  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
+  PitiviTimelineCellRenderer *self = PITIVI_TIMELINECELLRENDERER (widget);
   GdkRectangle		selection;
   PitiviCursor		*cursor;
   gboolean		selected;
@@ -452,7 +454,7 @@ pitivi_timelinecellrenderer_set_property (GObject * object,
 					  guint property_id,
 					  const GValue * value, GParamSpec * pspec)
 {
-  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) object;
+  PitiviTimelineCellRenderer *self = PITIVI_TIMELINECELLRENDERER (object);
 
   switch (property_id)
     {
@@ -476,7 +478,7 @@ pitivi_timelinecellrenderer_get_property (GObject * object,
 					  guint property_id,
 					  GValue * value, GParamSpec * pspec)
 {
-  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) object;
+  PitiviTimelineCellRenderer *self = PITIVI_TIMELINECELLRENDERER (object);
 
   switch (property_id)
     {
@@ -517,6 +519,7 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
   GtkWidget    *source;
   PitiviTimelineCellRenderer *self;
 
+  PITIVI_DEBUG ("drag data received");
   self = PITIVI_TIMELINECELLRENDERER (object);
   if (!selection->data) {
     gtk_drag_finish (dc, FALSE, FALSE, time);
@@ -530,6 +533,7 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
       switch (info) 
 	{
 	case DND_TARGET_SOURCEFILEWIN:
+	  PITIVI_DEBUG ("drag data received from sourcefile...");
 	  pitivi_timelinecellrenderer_drag_on_source_file (self, selection, x, y);
 	  gtk_drag_finish (dc, TRUE, TRUE, time);
 	  break;
@@ -567,7 +571,7 @@ pitivi_timelinecellrenderer_drag_drop (GtkWidget *widget,
 				       gpointer data)
      
 {
-  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
+  PitiviTimelineCellRenderer *self = PITIVI_TIMELINECELLRENDERER (widget);
   PitiviCursor *cursor;
   GtkWidget *source;
   
@@ -583,7 +587,7 @@ pitivi_timelinecellrenderer_drag_leave (GtkWidget          *widget,
 					GdkDragContext     *context,
 					gpointer	    user_data)
 {
-  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
+  PitiviTimelineCellRenderer *self = PITIVI_TIMELINECELLRENDERER (widget);
   if (self->linked_track)
     {
       gdk_window_clear (GTK_LAYOUT (self->linked_track)->bin_window);
@@ -598,7 +602,8 @@ create_media_video_audio_track (PitiviTimelineCellRenderer *cell, PitiviSourceFi
   PitiviTimelineMedia *media[2];
   guint64 length = sf->length;
   int width = 0;
-  
+
+  PITIVI_DEBUG ("audio/video track....");
   if (!length)
     length = DEFAULT_MEDIA_SIZE;
   
@@ -636,6 +641,7 @@ create_media_track (PitiviTimelineCellRenderer *self,
   guint64 length = sf->length;
   int  width = 0;
 
+  PITIVI_DEBUG ("create media_track");
   if (!length)
     length = DEFAULT_MEDIA_SIZE;
   
@@ -673,6 +679,7 @@ dispose_medias (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf, int x)
 {
   PitiviLayerType	type_track_cmp;
 
+  PITIVI_DEBUG ("x : %d", x);
   if (self->track_type != PITIVI_EFFECTS_TRACK && self->track_type != PITIVI_TRANSITION_TRACK)
     {
       type_track_cmp = pitivi_check_media_type (sf);
@@ -694,13 +701,13 @@ pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *sel
 						 int x, 
 						 int y)
 {
-  PitiviSourceFile	**sf;
+/*   PitiviSourceFile	**sf; */
   
   x -= self->private->slide_width/2;
   if ( x < 0)
     x = 0;
-  sf = (PitiviSourceFile **) selection->data;
-  dispose_medias (self, (PitiviSourceFile *) *sf, x);
+/*   sf = (PitiviSourceFile **) selection->data; */
+  dispose_medias (self, self->private->dndsf, x);
 }
 
 void
@@ -729,8 +736,8 @@ pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self,
   PitiviTimelineCellRenderer *parent;
   PitiviTimelineMedia	     *dragged;
   
-  dragged = (PitiviTimelineMedia *) source;
-  parent  = (PitiviTimelineCellRenderer *)gtk_widget_get_parent(GTK_WIDGET (dragged));
+  dragged = PITIVI_TIMELINEMEDIA (source);
+  parent  = PITIVI_TIMELINECELLRENDERER (gtk_widget_get_parent(GTK_WIDGET (dragged)));
   
   /* Moving widget on same track */
   
@@ -1126,19 +1133,24 @@ static void
 pitivi_timelinecellrenderer_callb_drag_source_begin (PitiviTimelineCellRenderer *self, 
 						     gpointer data)
 {
-  struct _Pslide
-  {
-    gint64 length;
-    gchar  *path;
-  } *slide;
-  gint64 len;
+/*   struct _Pslide */
+/*   { */
+/*     gint64 length; */
+/*     gchar  *path; */
+/*     PitiviSourceFile	*sf; */
+/*   } *slide; */
+/*   gint64 len; */
+  PitiviSourceFile *sf;
   PitiviLayerType type;
  
-  slide = (struct _Pslide *) data;
-  len = slide->length;
-  if (len > 0)
-    self->private->slide_width = convert_time_pix (self, len);
-  type = pitivi_check_media_type_str (slide->path);
+  PITIVI_DEBUG ("begin...");
+  sf = PITIVI_SOURCEFILE (data);
+  self->private->dndsf = sf;
+/*   slide = (struct _Pslide *) data; */
+/*   len = slide->length; */
+  if (sf->length)
+    self->private->slide_width = convert_time_pix (self, sf->length);
+  type = pitivi_check_media_type (sf);
   if (type == PITIVI_VIDEO_AUDIO_TRACK)
     self->private->slide_both = TRUE;
 }
@@ -1149,6 +1161,7 @@ pitivi_timelinecellrenderer_callb_drag_source_end (PitiviTimelineCellRenderer *s
 {
   self->private->slide_both = FALSE;
   self->private->slide_width = 0;
+  self->private->dndsf = NULL;
 }
 
 
@@ -1162,18 +1175,40 @@ slide_media_get_widget_size (PitiviTimelineMedia  *source)
   return width;
 }
 
+/* returns TRUE if we're in a compatible track */
+
 static gboolean
-check_before_draw_slide (PitiviTimelineCellRenderer *self, GtkWidget *source)
+check_before_draw_slide (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf)
 {
-  if (self->track_type != PITIVI_EFFECTS_TRACK)
-    {
-      if (PITIVI_IS_EFFECTSWINDOW (gtk_widget_get_toplevel(source)) 
-	  && self->track_type != PITIVI_TRANSITION_TRACK)
-	return FALSE;
-    }
-  if (self->track_type == PITIVI_EFFECTS_TRACK)
+  gboolean	res = FALSE;
+  gint	type;
+
+  type = pitivi_check_media_type (sf);
+  if ((type == PITIVI_VIDEO_AUDIO_TRACK)
+      && ((self->track_type == PITIVI_VIDEO_TRACK) || (self->track_type == PITIVI_AUDIO_TRACK)))
+    res = TRUE;
+  else if (type == self->track_type)
+    res = TRUE;
+  return res;
+/*   if (self->track_type != PITIVI_EFFECTS_TRACK) */
+/*     { */
+/*       if (PITIVI_IS_EFFECTSWINDOW (gtk_widget_get_toplevel(source))  */
+/* 	  && self->track_type != PITIVI_TRANSITION_TRACK) */
+/* 	return FALSE; */
+/*     } */
+/*   if (self->track_type == PITIVI_EFFECTS_TRACK) */
+/*     return FALSE; */
+/*   return TRUE; */
+}
+
+static gboolean
+use_linked_track (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf) 
+{
+  if (!self->linked_track)
     return FALSE;
-  return TRUE;
+  if (pitivi_check_media_type (sf) == PITIVI_VIDEO_AUDIO_TRACK)
+    return TRUE;
+  return FALSE;
 }
 
 static void
@@ -1185,47 +1220,90 @@ pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
 { 
   PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
   PitiviTimelineMedia  *source = NULL;
+  GtkWidget	*srcwidget;
   PitiviCursor *cursor;
+  PitiviSourceFile	*sf;
   guint width;
   guint decrement = 0;
   
+  /* ERROR !!!!! We need to properly know IF we can/must draw here ! */
+
+  /* If source is timelinemedia, we're moving an existing */
+  /* Else we're importing from outside (sourcelist, effectwindow) */
+
+  PITIVI_DEBUG ("Drag motion");
   cursor = pitivi_getcursor_id (widget);
-  source = (PitiviTimelineMedia  *)gtk_drag_get_source_widget(dc);
-  if (cursor->type == PITIVI_CURSOR_RESIZE)
-    {
-      if (PITIVI_IS_TIMELINEMEDIA (source))
-	{
-	  decrement = GTK_RULER(self->private->timewin->hruler)->metric->pixels_per_unit;
-	  if (self->private->timewin->unit == PITIVI_FRAMES)
-	    decrement *= 10;
-	  pitivi_timelinecellrenderer_resizing_media (source, self, decrement, x);
-	  return;
-	}
+  srcwidget = gtk_drag_get_source_widget (dc);
+  if (PITIVI_IS_TIMELINEMEDIA (srcwidget))
+    source = PITIVI_TIMELINEMEDIA (gtk_drag_get_source_widget(dc));
+
+  switch (cursor->type) {
+  case PITIVI_CURSOR_RESIZE:
+    if (source) {
+      decrement = GTK_RULER(self->private->timewin->hruler)->metric->pixels_per_unit;
+      if (self->private->timewin->unit == PITIVI_FRAMES)
+	decrement *= 10;
+      pitivi_timelinecellrenderer_resizing_media (source, self, decrement, x);
     }
-  else
-    {
-      if (cursor->type == PITIVI_CURSOR_SELECT || cursor->type == PITIVI_CURSOR_HAND)
-	{
-	  if (source && dc && PITIVI_IS_TIMELINEMEDIA (source))
-	    width = slide_media_get_widget_size (source);
-	  else
-	    width = self->private->slide_width;
-	  /* Decaling drag and drop to the middle of the source */
-	  x -= width/2;
-	  /* -------- */
-	  gdk_window_clear (GTK_LAYOUT (widget)->bin_window);
-	  if (check_before_draw_slide (self, GTK_WIDGET (source)))
-	    {
-	      pitivi_draw_slide (widget, x, width);
-	      if ((self->linked_track && source && source->linked) || 
-		  (self->linked_track && self->private->slide_both))
-		{
-		  gdk_window_clear  (GTK_LAYOUT (self->linked_track)->bin_window);
-		  pitivi_draw_slide (GTK_WIDGET (self->linked_track), x, width);
-		}
-	    }
-	}
+    break;
+  case PITIVI_CURSOR_SELECT:
+  case PITIVI_CURSOR_HAND:
+    width = (source) ? slide_media_get_widget_size (source) : self->private->slide_width;
+    x -= width/2;
+    gdk_window_clear (GTK_LAYOUT (widget)->bin_window);
+    sf = (source) ? source->sourceitem->srcfile : self->private->dndsf;
+    if (check_before_draw_slide (self, sf)) {
+      pitivi_draw_slide (widget, x, width);
+      /* do we need to draw the slide on the linked track ? */
+      if (use_linked_track (self, sf)) {
+	gdk_window_clear  (GTK_LAYOUT (self->linked_track)->bin_window);
+	pitivi_draw_slide (GTK_WIDGET (self->linked_track), x, width);
+      }
     }
+    break;
+  default:
+    break;
+  }
+  
+
+
+/*   if (cursor->type == PITIVI_CURSOR_RESIZE) */
+/*     { */
+/*       if (PITIVI_IS_TIMELINEMEDIA (source)) */
+/* 	{ */
+/* 	  decrement = GTK_RULER(self->private->timewin->hruler)->metric->pixels_per_unit; */
+/* 	  if (self->private->timewin->unit == PITIVI_FRAMES) */
+/* 	    decrement *= 10; */
+/* 	  pitivi_timelinecellrenderer_resizing_media (source, self, decrement, x); */
+/* 	  return; */
+/* 	} */
+/*     } */
+/*   else */
+/*     { */
+/*       if (cursor->type == PITIVI_CURSOR_SELECT || cursor->type == PITIVI_CURSOR_HAND) */
+/* 	{ */
+/* 	  if (source && dc && PITIVI_IS_TIMELINEMEDIA (source)) */
+/* 	    width = slide_media_get_widget_size (source); */
+/* 	  else */
+/* 	    width = self->private->slide_width; */
+/* 	  /\* Decaling drag and drop to the middle of the source *\/ */
+/* 	  x -= width/2; */
+/* 	  /\* -------- *\/ */
+/* 	  gdk_window_clear (GTK_LAYOUT (widget)->bin_window); */
+/* 	  if (check_before_draw_slide (self, GTK_WIDGET (source))) */
+/* 	    { */
+/* 	      pitivi_draw_slide (widget, x, width); */
+/* 	      if ((self->linked_track && source && source->linked) || */
+/* 		  (self->linked_track && self->private->slide_both)) */
+/* 		{ */
+/* 		  PITIVI_DEBUG ("source : %p, source->linked : %d, self->private->slide_both : %d", */
+/* 				source, source->linked, self->private->slide_both); */
+/* 		  gdk_window_clear  (GTK_LAYOUT (self->linked_track)->bin_window); */
+/* 		  pitivi_draw_slide (GTK_WIDGET (self->linked_track), x, width); */
+/* 		} */
+/* 	    } */
+/* 	} */
+/*     } */
 }
 
 

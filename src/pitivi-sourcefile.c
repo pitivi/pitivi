@@ -236,11 +236,14 @@ pitivi_sourcefile_store_pad (PitiviSourceFile *sf, GstPad *pad)
   return 0;
 }
 
-/* void */
-/* audio_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer udata) */
-/* { */
-/*   g_printf ("audio_handoff_cb\n"); */
-/* } */
+void
+audio_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer udata)
+{
+  PitiviSourceFile	*sf = PITIVI_SOURCEFILE (udata);
+  g_printf ("audio_handoff_cb\n");
+  if (!sf->length)
+    establish_length (sf);
+}
 
 static void
 video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer udata)
@@ -321,7 +324,7 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer 
 
   if (type == IS_AUDIO) 
     {
-/*       g_signal_connect (sink, "handoff", G_CALLBACK (audio_handoff_cb), sf); */
+      g_signal_connect (sink, "handoff", G_CALLBACK (audio_handoff_cb), sf);
       if (!(gst_element_link(element, sink)))
 	PITIVI_WARNING ("Couldn't link fakesink...");
       sf->private->audioout = sink;
@@ -442,6 +445,7 @@ pitivi_sourcefile_type_find (PitiviSourceFile *this)
       this->mediatype = g_strdup("video");
   else if (this->haveaudio)
     this->mediatype = g_strdup("audio");
+  PITIVI_DEBUG ("Sourcefile is type : %s", this->mediatype);
 }
 
 static void
