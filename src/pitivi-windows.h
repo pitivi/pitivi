@@ -50,7 +50,6 @@ typedef struct _PitiviWindowsPrivate PitiviWindowsPrivate;
 struct _PitiviWindows
 {
   GtkWindow parent;
-
   /* instance public members */
   PitiviMainApp		*mainapp;
 

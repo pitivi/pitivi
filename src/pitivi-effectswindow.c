@@ -746,11 +746,10 @@ pitivi_effectswindow_set_property (GObject * object,
 
 static void
 pitivi_effectswindow_get_property (GObject * object,
-			      guint property_id,
-			      GValue * value, GParamSpec * pspec)
+				   guint property_id,
+				   GValue * value, GParamSpec * pspec)
 {
-/*   PitiviEffectsWindow *self = (PitiviEffectsWindow *) object; */
-
+  /*   PitiviEffectsWindow *self = (PitiviEffectsWindow *) object; */
   switch (property_id)
     {
     default:

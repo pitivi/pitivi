@@ -680,7 +680,6 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
   
     
   i = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(liststore), NULL) - 1;
-  
   pitivi_projectsourcelist_add_file_to_bin(((PitiviProjectWindows*)self)->project->sources, 
 					   self->private->treepath,
 					   sf->filename,
@@ -755,9 +754,7 @@ void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
 {
 
   pitivi_projectsourcelist_new_bin(((PitiviProjectWindows*)self)->project->sources, bin_name);
- 
   pitivi_sourcelistwindow_set_bin(self, bin_name);
-
 }
 
 /*
@@ -876,8 +873,6 @@ drag_data_get_cb (GtkWidget          *widget,
 	  if ( !self->private->dndsf )
 	    return ;
 	}
-      g_printf("PitiviSourceListWindow , drag_data_get_cb, sf = %p\n",
-	       self->private->dndsf);
       sf = self->private->dndsf;
       gtk_selection_data_set (selection_data, 
 			      selection_data->target, 

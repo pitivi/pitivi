@@ -198,10 +198,7 @@ pitivi_mainapp_activate_sourcelistwindow (PitiviMainApp *self, gboolean activate
     if (!activate)
       gtk_widget_hide (GTK_WIDGET (self->private->srclistwin));
     else
-      {
-	gtk_widget_show_all (GTK_WIDGET (self->private->srclistwin));
-	gtk_window_move (GTK_WINDOW (self->private->srclistwin), 0, 0);
-      }
+      gtk_widget_show_all (GTK_WIDGET (self->private->srclistwin));
     }
   else
     if (activate) {

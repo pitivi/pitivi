@@ -226,7 +226,6 @@ pitivi_ruler_class_init (PitiviRulerClass *klass)
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_VIDEORATE,
 				   g_param_spec_int ("ruler-videorate", "ruler-videorate", "ruler-videorate",
 						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE));
-  
 }
 
 static void
@@ -526,14 +525,16 @@ pitivi_ruler_draw_pos (GtkRuler *ruler)
 
 	  x = ROUND ((ruler->position - ruler->lower) * increment) + (xthickness - bs_width) / 2 - 1;
 	  y = (height + bs_height) / 2 + ythickness;
-
-	  for (i = 0; i < bs_height; i++)
+	  
+	  if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(ruler)))
 	    {
-	      gdk_draw_line (widget->window, gc,
-			     x + i, y + i,
-			     x + bs_width - 1 - i, y + i);
+	      for (i = 0; i < bs_height; i++)
+		{
+		  gdk_draw_line (widget->window, gc,
+				 x + i, y + i,
+				 x + bs_width - 1 - i, y + i);
+		}
 	    }
-
 	  ruler->xsrc = x;
 	  ruler->ysrc = y;
 	}

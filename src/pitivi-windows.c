@@ -49,16 +49,6 @@ struct _PitiviWindowsPrivate
 
 /* We cannot create PitiviWindows, it's just an interface */
 
-/* PitiviWindows * */
-/* pitivi_windows_new(void) */
-/* { */
-/*   PitiviWindows	*windows; */
-
-/*   windows = (PitiviWindows *) g_object_new(PITIVI_WINDOWS_TYPE, NULL); */
-/*   g_assert(windows != NULL); */
-/*   return windows; */
-/* } */
-
 static GObject *
 pitivi_windows_constructor (GType type,
 			     guint n_construct_properties,

@@ -79,7 +79,7 @@ struct _PitiviTimelineWindowPrivate
   
   GdkWindow     *event_window;
   GdkCursor     *cursor;
-  GList         *operations; 
+  GList         *operations;
   
   /* Toolbox */
   

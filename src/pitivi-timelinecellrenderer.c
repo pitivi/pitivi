@@ -1194,6 +1194,34 @@ slide_media_get_widget_size (PitiviTimelineMedia  *source)
   return width;
 }
 
+static void
+resizing_media (PitiviTimelineMedia *source, PitiviTimelineCellRenderer *self, guint x)
+{
+  guint decrement = 0;
+  
+  decrement = GTK_RULER(self->private->timewin->hruler)->metric->pixels_per_unit;
+  if (self->private->timewin->unit == PITIVI_FRAMES)
+    decrement *= 10;
+  if (x < GTK_WIDGET (source)->allocation.width + GTK_WIDGET (source)->allocation.x - (decrement))
+    {
+      /* Don"t touch please. */
+      if (GTK_WIDGET (source)->allocation.width-decrement >= 1)
+	gtk_widget_set_size_request (GTK_WIDGET (source),
+				     GTK_WIDGET (source)->allocation.width-decrement,
+				     GTK_WIDGET (source)->allocation.height);
+    }
+  else if (x > GTK_WIDGET (source)->allocation.width + GTK_WIDGET (source)->allocation.x)
+    {
+      if (source->original_width > GTK_WIDGET (source)->allocation.width)
+	{
+	  gtk_widget_set_size_request (GTK_WIDGET (source),
+				       GTK_WIDGET (source)->allocation.width+decrement,
+				       GTK_WIDGET (source)->allocation.height);
+	}
+    }
+}
+
+
 gboolean
 check_before_draw_slide (PitiviTimelineCellRenderer *self, GtkWidget *source)
 {
@@ -1206,32 +1234,6 @@ check_before_draw_slide (PitiviTimelineCellRenderer *self, GtkWidget *source)
   if (self->track_type == PITIVI_EFFECTS_TRACK)
     return FALSE;
   return TRUE;
-}
-
-static void
-resizing_media (PitiviTimelineMedia *source, PitiviTimelineCellRenderer *self, guint x)
-{
-  guint decrement = 0;
-  
-  decrement = GTK_RULER(self->private->timewin->hruler)->metric->pixels_per_unit;
-  if (self->private->timewin->unit == PITIVI_FRAMES)
-    decrement = 20;
-  if (x < GTK_WIDGET (source)->allocation.width + GTK_WIDGET (source)->allocation.x - (decrement))
-    {
-      /* Don"t touch please. */
-      gtk_widget_set_size_request (GTK_WIDGET (source),
-				   GTK_WIDGET (source)->allocation.width-decrement,
-				   GTK_WIDGET (source)->allocation.height);
-    }
-  else if (x > GTK_WIDGET (source)->allocation.width + GTK_WIDGET (source)->allocation.x)
-    {
-      if (source->original_width > GTK_WIDGET (source)->allocation.width)
-	{
-	  gtk_widget_set_size_request(GTK_WIDGET (source),
-				      GTK_WIDGET (source)->allocation.width+decrement,
-				      GTK_WIDGET (source)->allocation.height);
-	}
-    }
 }
 
 static void
@@ -1589,7 +1591,6 @@ pitivi_timelinecellrenderer_callb_delete_sf (PitiviTimelineCellRenderer *self, g
   g_list_free (child);
   pitivi_calculate_priorities ( GTK_WIDGET (self) );
 }
-
 
 void
 pitivi_timelinecellrenderer_callb_drag_source_begin (PitiviTimelineCellRenderer *self, 

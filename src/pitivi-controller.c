@@ -134,9 +134,9 @@ static void
 pitivi_controller_callb_play (GtkWidget *widget, gpointer user_data)
 {
   PitiviController *self = (PitiviController *) user_data;
-  g_printf ("coucou %p ... \n", self->private->viewerwin);
   if ( self->private->viewerwin )
     {
+      g_printf ("play %p ... \n", self->private->viewerwin);
       gtk_widget_show_all ( self->private->viewerwin );
       g_signal_emit_by_name ( self->private->viewerwin, "play" );
     }
@@ -162,8 +162,9 @@ static void
 pitivi_controller_callb_backward (GtkWidget *widget, gpointer user_data)
 {
   PitiviController *self = (PitiviController *) user_data;
- if ( self->private->viewerwin )
-   g_signal_emit_by_name (self->private->viewerwin, "backward");
+  g_printf ("backward %p ... \n", self->private->viewerwin);
+  if ( self->private->viewerwin )
+    g_signal_emit_by_name (self->private->viewerwin, "backward");
 }
 
 
@@ -176,7 +177,7 @@ pitivi_controller_callb_stop (GtkWidget *widget, gpointer user_data)
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_ffrev[0]), TRUE);
   if (!gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_playing[0])))
     gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_playing[0]), TRUE);
-   if ( self->private->viewerwin )
+   if ( self->private->viewerwin && gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_playing[2])))
      g_signal_emit_by_name (self->private->viewerwin, "stop");
 }
 
@@ -253,10 +254,10 @@ pitivi_controller_instance_init (GTypeInstance * instance, gpointer g_class)
   g_signal_connect (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_PLAY]\
 		    , "clicked", G_CALLBACK(pitivi_controller_callb_play), self);
 
-  g_signal_connect (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_FORWARD]\
+  g_signal_connect (self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_FORWARD]\
 		    , "clicked", G_CALLBACK(pitivi_controller_callb_forward), self);
  
-  g_signal_connect (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_BACKWARD]\
+  g_signal_connect (self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_BACKWARD]\
 		    , "clicked", G_CALLBACK(pitivi_controller_callb_backward), self);
 }
 
