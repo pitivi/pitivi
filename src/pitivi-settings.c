@@ -482,12 +482,15 @@ pitivi_settings_aff_all_list_elm (GList *list)
   for (; list; list = g_list_next (list)) {
     PitiviSettingsIoElement *elm = (PitiviSettingsIoElement *) list->data;
 
+    g_print ("------------------------------------------\n");
     g_print ("Element's name:\t%s \n", gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm->factory)));
     pitivi_settings_aff_all_list_prop (elm->prop_list);
   }
 
   return ;
 }
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 PitiviSettingsProp *
 pitivi_settings_prop_new (gchar *name, GValue value)
@@ -498,9 +501,6 @@ pitivi_settings_prop_new (gchar *name, GValue value)
   prop->name = g_strdup (name);
   prop->value = value;
 
-  g_print ("name:\t%s \n", prop->name);
-  g_print ("value:\t%s\n", g_strdup_value_contents (&(prop->value)));
-
   return (prop);
 }
 
@@ -508,8 +508,6 @@ PitiviSettingsProp *
 pitivi_settings_ajout_prop (GParamSpec *spec, GstElement *elm)
 {
   GValue value = { 0, };
-
-  //g_print ("::::%s\n", (gchar *) g_param_spec_get_nick (spec));
 
   g_value_init (&(value), spec->value_type);
   g_object_get_property (G_OBJECT (elm), spec->name, &(value));
@@ -544,8 +542,7 @@ PitiviSettingsIoElement *
 pitivi_settings_ajout_io_element (GstElementFactory *factory)
 {
   PitiviSettingsIoElement *io_elm;
-  g_print ("------------------------------------------\n");
-  g_print ("Element's name:\t%s \n", gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)));
+
   io_elm = g_new (PitiviSettingsIoElement, 1);
   io_elm->factory = factory;
   io_elm->prop_list = pitivi_settings_get_prop_elm (factory);
@@ -618,12 +615,13 @@ pitivi_settings_scan_registry(PitiviSettings *self)
       pitivi_settings_aff_all_list_elm (self->elm_video_in);
       g_print ("VIDEO-OUT----------------------------\n");
       pitivi_settings_aff_all_list_elm (self->elm_video_out);
+      g_print ("CONTAINERS-------------------------\n");
+      pitivi_settings_aff_all_list (self->container); 
+      g_print ("CODECS-----------------------------\n");
+      pitivi_settings_aff_all_list (self->codec); 
+      g_print ("PARSERS----------------------------\n");
+      pitivi_settings_aff_all_list (self->parser); 
   */
-
-  /*   pitivi_settings_aff_all_list (self->container); */
-  /*   pitivi_settings_aff_all_list (self->codec); */
-  /*   pitivi_settings_aff_all_list (self->parser); */
-  
 
   return ;
 }
