@@ -25,6 +25,7 @@
 
 #include "pitivi.h"
 #include "pitivi-viewercontroller.h"
+#include "pitivi-viewerwindow.h"
 
 enum {
   PITIVI_VIEWER_BUTTON_REWARD = 1,
@@ -50,6 +51,7 @@ struct _PitiviViewerControllerPrivate
   GtkWidget	        *time;
   
   PitiviViewerVolume	*mixer;
+  PitiviViewerWindow	*viewer;
   GtkWidget	        *volume;
   GtkWidget             **state_vol;
   GtkObject	        *seeker_adjust;
@@ -69,11 +71,12 @@ struct _PitiviViewerControllerPrivate
  */
 
 PitiviViewerController *
-pitivi_viewercontroller_new(void)
+pitivi_viewercontroller_new (PitiviViewerWindow *viewer)
 {
   PitiviViewerController	*viewercontroller;
 
   viewercontroller = (PitiviViewerController *) g_object_new(PITIVI_VIEWERCONTROLLER_TYPE, NULL);
+  viewercontroller->private->viewer = viewer;
   g_assert(viewercontroller != NULL);
   return viewercontroller;
 }

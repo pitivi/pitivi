@@ -34,6 +34,7 @@
 #include "pitivi-stockicons.h"
 #include "pitivi-viewervolume.h"
 
+
 /*
  * Type macros.
  */
@@ -72,6 +73,6 @@ GType pitivi_viewercontroller_get_type (void);
  * Method definitions.
  */
 
-PitiviViewerController	*pitivi_viewercontroller_new(void);
+PitiviViewerController	*pitivi_viewercontroller_new ( );
 
 #endif

@@ -37,7 +37,6 @@
 #include <gdk/gdkx.h>
 #include "pitivi-stockicons.h"
 #include "pitivi-viewercontroller.h"
-#include "pitivi-viewerplayer.h"
 
 /*
  * Type macros.
@@ -56,13 +55,26 @@ typedef struct _PitiviViewerWindow PitiviViewerWindow;
 typedef struct _PitiviViewerWindowClass PitiviViewerWindowClass;
 typedef struct _PitiviViewerWindowPrivate PitiviViewerWindowPrivate;
 
+
+enum PITIVI_GST_ELEMENT
+  {
+    PIPELINE_ELEMENT = 0,
+    SRC_ELEMENT,
+    SINK_ELEMENT,
+    ALL_ELEMENT
+  };
+
 struct _PitiviViewerWindow
 {
   GtkWindow parent;
 
   /* instance public members */
-
+  
+  GstElement	*elm[ALL_ELEMENT];
+  GtkWidget	*video_area;
+  
   /* private */
+  
   PitiviViewerWindowPrivate *private;
 };
 
