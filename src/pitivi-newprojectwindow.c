@@ -24,6 +24,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*
+    - Changement des presets en fonction du reglage selectionne
+*/
 
 #include	<gst/gst.h>
 #include	"pitivi-codecconfwindow.h"
@@ -320,7 +323,6 @@ pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer u
   return FALSE;
 }
 
-
 /* 
  * Personal Fonctions
  */
@@ -386,10 +388,11 @@ pitivi_newprojectwindow_add_mainapp_setting (PitiviNewProjectWindow *self)
   caps_audio = pitivi_projectsettings_acaps_create ( atoi ( freq_tab[ gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_freq)) ]),
 						     gtk_spin_button_get_value_as_int ( GTK_SPIN_BUTTON( self->private->audio_combo_ech)) );
   list_media_settings = NULL;
-  list_media_settings = g_slist_append(list_media_settings, 
-				       (gpointer) pitivi_projectsettings_media_new(self->private->video_tabname[gtk_combo_box_get_active(GTK_COMBO_BOX(self->private->video_combo_codec) )], caps_video));
+
+  list_media_settings = g_slist_append( list_media_settings, (gpointer) pitivi_projectsettings_media_new( self->private->video_tabname[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->video_combo_codec) )], caps_video, gtk_combo_box_get_active (GTK_COMBO_BOX(self->private->video_combo_codec) ) ) );
+
   
-  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new( self->private->audio_tabname[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_codec) )], caps_audio) );
+  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new( self->private->audio_tabname[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_codec) )], caps_audio, gtk_combo_box_get_active (GTK_COMBO_BOX(self->private->audio_combo_codec) ) ) );
   
   new_setting = pitivi_projectsettings_new_with_name( (gchar *) gtk_entry_get_text(GTK_ENTRY(self->private->name_text)),
 						      gtk_text_buffer_get_text( GTK_TEXT_BUFFER(self->private->desc_text_buffer),
@@ -524,17 +527,20 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   GValue			*val;
   
   categorie = pitivi_mainapp_get_selected_category( self->private->mainapp, self->private->position );
-  
-  g_print( "SELECTED CATEGORY NAME : %s.\n", categorie->name );
+  g_print( "\nSELECTED CATEGORY NAME : %s.\n", categorie->name );
   
   reglage = (PitiviProjectSettings *) g_slist_nth_data(categorie->list_settings, self->private->position[1] );
   g_print( "NAME SETTING : \n%s.\nDESCRIPTION SETTING :\n%s.\nLIST MEDIA : \n", reglage->name, reglage->description);
 
   vmedia = (PitiviMediaSettings *) g_slist_nth_data(reglage->media_settings, 0);
   amedia = (PitiviMediaSettings *) g_slist_nth_data(reglage->media_settings, 1);
+  g_print( "V INDEX : %d.\n", vmedia->combo_box_codec_index );
+  g_print( "A INDEX : %d.\n", amedia->combo_box_codec_index );
 
+  /* Put the name into the GtkEntry */
   gtk_entry_set_text(GTK_ENTRY(self->private->name_text), reglage->name);
 
+  /* Put the description */
   gtk_text_buffer_set_text(self->private->preset_text_buffer, reglage->description, strlen(reglage->description));
 
   gtk_text_buffer_get_start_iter (self->private->desc_text_buffer, &self->private->start_description_iter );
@@ -542,32 +548,40 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   gtk_text_buffer_delete ( self->private->desc_text_buffer,
 			   &self->private->start_description_iter,
 			   &self->private->end_description_iter );
-  gtk_text_buffer_set_text ( self->private->desc_text_buffer,
-			     reglage->description,
-			     strlen (reglage->description) );
+  gtk_text_buffer_set_text ( self->private->desc_text_buffer, reglage->description, strlen (reglage->description) );
 
-  g_print("caps video = %s\n", gst_caps_to_string (vmedia->caps) );
-  
+  /* Put the Video entries */
   structure = gst_caps_get_structure (vmedia->caps, 0);
-/*   sstr = gst_structure_get_string (structure, "width"); */
   val = (GValue *) gst_structure_get_value ( structure, "width");
-  gtk_entry_set_text( GTK_ENTRY (self->private->size_width) ,
-		      pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
-  
-  val = (GValue *) gst_structure_get_value (structure, "height");
-  gtk_entry_set_text( GTK_ENTRY (self->private->size_height ),
-		      pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
-		     
-  val = (GValue *) gst_structure_get_value (structure, "framerate"); 
-  gtk_entry_set_text(GTK_ENTRY (self->private->fps_text ), 
-		     pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
+  gtk_entry_set_text( GTK_ENTRY (self->private->size_width) , pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
 
-  g_print("caps audio = %s\n", gst_caps_to_string (amedia->caps) );
+  val = (GValue *) gst_structure_get_value (structure, "height");
+  gtk_entry_set_text( GTK_ENTRY (self->private->size_height ), pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
+
+  val = (GValue *) gst_structure_get_value (structure, "framerate"); 
+  gtk_entry_set_text(GTK_ENTRY (self->private->fps_text ), pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
+  
+  gtk_combo_box_set_active ( GTK_COMBO_BOX (self->private->video_combo_codec), vmedia->combo_box_codec_index );
+
+
+  /* Put the Audio entries */
 
   structure = gst_caps_get_structure (amedia->caps, 0);
   val = (GValue *) gst_structure_get_value ( structure, "channels");
+  gtk_combo_box_set_active ( GTK_COMBO_BOX (self->private->audio_combo_codec), amedia->combo_box_codec_index );
   gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->audio_combo_ech),
 			     g_value_get_int (val));
+/* ======= */
+/*   gtk_entry_set_text(GTK_ENTRY (self->private->fps_text ),  */
+/* 		     pitivi_newprojectwindow_getstr( g_value_get_int (val) )); */
+
+/*   g_print("caps audio = %s\n", gst_caps_to_string (amedia->caps) ); */
+
+/*   structure = gst_caps_get_structure (amedia->caps, 0); */
+/*   val = (GValue *) gst_structure_get_value ( structure, "channels"); */
+/*   gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->audio_combo_ech), */
+/* 			     g_value_get_int (val)); */
+/* >>>>>>> 1.37 */
 }
 
 gchar *

@@ -35,10 +35,9 @@ struct _PitiviProjectSettingsPrivate
 /*
  * forward definitions
  */
-PitiviMediaSettings	*pitivi_projectsettings_media_new		( gchar	*codec_factory_name, GstCaps *caps );
-GSList			*pitivi_projectsettings_list_make		( );
-GstCaps			*pitivi_projectsettings_default_vcaps_create	( );
-GstCaps			*pitivi_projectsettings_default_acaps_create	( );
+PitiviMediaSettings	*pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps, int index );
+GstCaps			*pitivi_projectsettings_default_vcaps_create( );
+GstCaps			*pitivi_projectsettings_default_acaps_create( );
 
 /*
  * Insert "added-value" functions here
@@ -96,7 +95,7 @@ pitivi_projectsettings_categorie_new(gchar *name, GSList *list_settings)
   Creation d'un PitiviMediaSetting
 */
 PitiviMediaSettings *
-pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps )
+pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps, gint index )
 {
   PitiviMediaSettings	*media_setting;
   PitiviSettingsValue	*setting_value;
@@ -110,6 +109,7 @@ pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps )
   media_setting = g_new0(PitiviMediaSettings, 1);
   media_setting->codec_settings = g_new0(GSList, 1);
 
+  media_setting->combo_box_codec_index = index;
   media_setting->codec_factory_name = g_strdup(codec_factory_name);
 
   /* Recuperation des proprietes*/
@@ -166,8 +166,8 @@ pitivi_projectsettings_list_make()
 
 /***************/ 
 /* Categorie 1 */
-  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("mpegaudio", default_vcaps ) );
-  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("vorbisenc", default_acaps ) );
+  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("epitivovenc", default_vcaps, 0) );
+  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("epitivoaenc", default_acaps, 0) );
   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", "Description Standard 32kHz", list_media_settings ) );
   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 48kHz", "Description Standard 48kHz", list_media_settings ) );
   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 32kHz", "Description Widescreen 32kHz", list_media_settings ) );
@@ -178,8 +178,8 @@ pitivi_projectsettings_list_make()
 /* Categorie 2 */
   list_reglage = NULL;
   list_media_settings = NULL;
-  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("mpegaudio", default_vcaps ) );
-  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("vorbisenc", default_acaps ) );
+  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("epitivovenc", default_vcaps, 0 ) );
+  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("epitivoaenc", default_acaps, 0 ) );
   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", "Description Standard 32kHz", list_media_settings) );
   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 48kHz", "Description Standard 48kHz", list_media_settings) );
   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 32kHz", "Description Widescreen 32kHz", list_media_settings) );
@@ -191,8 +191,8 @@ pitivi_projectsettings_list_make()
   list_reglage = NULL;
   list_media_settings = NULL;
 
-  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("mpegaudio", default_vcaps ) );
-  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("vorbisenc", default_acaps ) );
+  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("epitivovenc", default_vcaps, 0 ) );
+  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("epitivoaenc", default_acaps, 0 ) );
   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Multimedia Video", "Description Multimedia Video", list_media_settings) );
   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Quicktime for Web", "Description Quicktime for Web", list_media_settings) );
   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Petit test", "Description Petit test", list_media_settings) );
