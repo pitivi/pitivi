@@ -1105,8 +1105,8 @@ void	on_row_activated (GtkTreeView        *listview,
 			  gpointer            userdata)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)userdata;
-  PitiviSourceFile *sf = NULL;
-  PitiviLPlayerWindow *lplayerwin;
+/*   PitiviSourceFile *sf = NULL; */
+/*   PitiviLPlayerWindow *lplayerwin; */
   GtkListStore	*liststore;
   GtkTreeIter	iter;
   gint	item_select;
@@ -1123,9 +1123,10 @@ void	on_row_activated (GtkTreeView        *listview,
 	  return;
 	}
     }
-  OnSelectItem(self, &iter, &liststore, (void **) &sf, POINTER_LISTCOLUMN7, &item_select, &folder_select);
-  if (sf && sf->filename)
-    lplayerwin = pitivi_lplayerwindow_new (sf->filename);
+  /* de-activacted for beta release */
+/*   OnSelectItem(self, &iter, &liststore, (void **) &sf, POINTER_LISTCOLUMN7, &item_select, &folder_select); */
+/*   if (sf && sf->filename) */
+/*     lplayerwin = pitivi_lplayerwindow_new (sf->filename); */
 }
 
 gboolean	my_popup_handler(gpointer data, GdkEvent *event,

@@ -10,7 +10,8 @@
 
 INCLUDES		= -I$(top_srcdir)/src/include\
 			-I$(top_srcdir)/gnl/\
-			-DDATADIR=\""$(datadir)"\"
+			-DDATADIR=\""$(datadir)"\" \
+			-DCONFDIR=\""$(sysconfdir)/@PACKAGE@"\"
 
 bin_PROGRAMS		= pitivi
 

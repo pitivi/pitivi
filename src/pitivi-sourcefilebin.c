@@ -119,13 +119,13 @@ bin_make_new_videobin (gchar *name, GstCaps *caps)
 {
   GstElement	*bin;
   GstElement	*vscale, *cspace, *identity;
-/*   GstElement	*vrate; */
+  GstElement	*vrate;
 /*   GstProbe	*probe, *probe4; */
 
   /* dbin ! videorate ! videoscale ! ffmpegcolorspace ! videocaps ! identity ! */
 
   bin = gst_bin_new (name);
-/*   vrate = gst_element_factory_make ("videorate", NULL); */
+  vrate = gst_element_factory_make ("videorate", NULL);
   vscale = gst_element_factory_make ("videoscale", NULL);
   cspace = gst_element_factory_make ("ffmpegcolorspace", NULL);
   /* TODO : Think about moving from identity to queue */
@@ -149,15 +149,15 @@ bin_make_new_videobin (gchar *name, GstCaps *caps)
 /*   gst_pad_add_probe (gst_element_get_pad(identity, "src"), probe4); */
   
   gst_bin_add_many (GST_BIN (bin),
-		    vscale, cspace, identity,
+		    vrate, vscale, cspace, identity,
 		    NULL);
-  if (!(gst_element_link_many (vscale, cspace, NULL)))
+  if (!(gst_element_link_many (vrate, vscale, cspace, NULL)))
     PITIVI_WARNING("Error linking vrate, vscale and cspace");
   if (!(gst_element_link_filtered(cspace, identity, caps)))
     PITIVI_WARNING ("Couldn't link filtered colorspace->identity with caps %s",
 	       gst_caps_to_string(caps));
   gst_element_add_ghost_pad (bin, gst_element_get_pad (identity, "src"), "src");
-  gst_element_add_ghost_pad (bin, gst_element_get_pad (vscale, "sink"), "sink");
+  gst_element_add_ghost_pad (bin, gst_element_get_pad (vrate, "sink"), "sink");
 
   return bin;
 }

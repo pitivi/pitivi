@@ -443,11 +443,23 @@ pitivi_mainapp_constructor (GType type,
 
   
   settingsfile = g_strdup_printf("%s/.pitivi", g_get_home_dir());
-  if ( g_file_test(settingsfile, G_FILE_TEST_EXISTS) )
-    self->global_settings = pitivi_settings_load_from_file(settingsfile);
-  else
+  if (( g_file_test(settingsfile, G_FILE_TEST_EXISTS) 
+	&& (self->global_settings = pitivi_settings_load_from_file(settingsfile))))
+    g_free(settingsfile);
+  else {
+    PITIVI_WARNING ("Couldn't find valid local conf file %s", settingsfile);
+    g_free(settingsfile);
+    settingsfile = g_strdup_printf("%s/pitivi", CONFDIR);
     self->global_settings = pitivi_settings_new();
-  g_free(settingsfile);
+    if ( g_file_test(settingsfile, G_FILE_TEST_EXISTS) &&
+	 (self->global_settings = pitivi_settings_load_from_file(settingsfile)))
+      g_free(settingsfile);
+    else {
+      PITIVI_WARNING ("Couldnt find valid global conf file %s", settingsfile);
+      self->global_settings = pitivi_settings_new();
+      g_free(settingsfile);
+    }
+  }
   
   pitivi_mainapp_create_timelinewin (self, NULL);
   /* Connection des Signaux */

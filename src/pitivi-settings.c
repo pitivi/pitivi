@@ -963,6 +963,8 @@ pitivi_settings_load_from_file(const gchar *filename)
   xmlNsPtr	ns;
   PitiviSettings	*settings = NULL;
 
+  PITIVI_INFO ("Loading PitiviSettings from %s", filename);
+
   if (filename == NULL)
     return NULL;
 

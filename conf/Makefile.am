@@ -8,7 +8,7 @@
 ##
 
 
-confdir = $(DESTDIR)/$(sysconfdir)/@PACKAGE@/
+confdir = $(sysconfdir)/@PACKAGE@/
 conf_DATA = pitivi
 
 EXTRA_DIST = $(conf_DATA)
