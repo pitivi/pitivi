@@ -98,7 +98,8 @@ if test "x$HAVE_GST" = "xno"; then
   PKG_CHECK_MODULES(GST, \
     gstreamer-$GST_MAJORMINOR >= $GST_REQUIRED \
     gstreamer-interfaces-$GST_MAJORMINOR >= $GST_REQUIRED \
-    gstreamer-control-$GST_MAJORMINOR >= $GST_REQUIRED,
+    gstreamer-control-$GST_MAJORMINOR >= $GST_REQUIRED \
+    gstreamer-gconf-$GST_MAJORMINOR >= $GST_REQUIRED,
     HAVE_GST=yes,HAVE_GST=no)
 fi
                                                                                 
@@ -121,7 +122,7 @@ if test "x$HAVE_GST_LIBS" = "xno"; then
 fi
 
 dnl check for GTK
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4.0 gdk-2.0 >= 2.4.0,,exit)
+PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4.0 gconf-2.0 gdk-2.0 >= 2.4.0,,exit)
 AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 
