@@ -175,11 +175,12 @@ PitiviConfProperties	*pitivi_setprop_new		( gchar				*name,
 							  GtkWidget			*pwidget );
 void			pitivi_conf_int_update		( PitiviConfProperties		*confprop );
 void			pitivi_conf_float_update	( PitiviConfProperties		*confprop );
-void			pitivi_conf_boolean_update	( PitiviConfProperties		*confprop);
+void			pitivi_conf_boolean_update	( PitiviConfProperties		*confprop );
+void			pitivi_conf_default_update	( PitiviConfProperties		*confprop );
 
-
-gchar		*pitivi_newprojectwindow_getstr(gint i);
-void		pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_name);
+gchar			*pitivi_newprojectwindow_getstr	( gint				i );
+void			pitivi_newprojectwindow_put_info( PitiviNewProjectWindow	*self, 
+							  gchar				*setting_name );
 
 /* Signals Definitions */
 void			pitivi_newprojectwindow_close_window( GtkButton			*button, 
@@ -1965,9 +1966,11 @@ pitivi_value_conf_default(const gchar *name, GValue value, GParamSpec *param)
   gint		i;
   gint		*enum_values;
   gchar		*label;
+  GList		*combobox_list;
  
   prop_value_combobox = gtk_combo_box_new_text();
   prop_value_hbox = gtk_hbox_new(0, FALSE);
+  combobox_list = g_new0(GList, 1);
 
   if (G_IS_PARAM_SPEC_ENUM (param))
     {    
@@ -1981,12 +1984,16 @@ pitivi_value_conf_default(const gchar *name, GValue value, GParamSpec *param)
 	  enum_values[i] = evalue->value;
 	  label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
 	  gtk_combo_box_insert_text(GTK_COMBO_BOX (prop_value_combobox), i, label);
+	  combobox_list = g_list_append(combobox_list, (gpointer)evalue->value_nick);
 	}
       gtk_combo_box_set_active (GTK_COMBO_BOX (prop_value_combobox), g_value_get_enum(&value));
     }
   else
     prop_value_label = gtk_label_new("Default Case for Value");
   gtk_box_pack_start(GTK_BOX (prop_value_hbox), prop_value_combobox, TRUE, TRUE, 0);
+
+  /* On attache ;la liste de la combobox */
+  g_object_set_data(G_OBJECT(prop_value_hbox), "combo", combobox_list);
   return (prop_value_hbox);
 }
 
@@ -2070,7 +2077,7 @@ pitivi_valide_video_codec_conf(GtkButton *button, gpointer user_data)
 	      }
 	    default:
 	      {
-		g_print("Default\n");
+		pitivi_conf_default_update(confprop);
 		break;
 	      }
 	    }
@@ -2078,8 +2085,11 @@ pitivi_valide_video_codec_conf(GtkButton *button, gpointer user_data)
       else
 	g_print("%d No properties\n", i);
       plist = plist->next;
-      plist = plist->next;
-      plist = plist->next;
+      if (g_object_get_data(G_OBJECT(pwidget), "prop"))
+	{
+	  plist = plist->next;
+	  plist = plist->next;
+	}
     }
   g_print("nombre de propriete : %d\n", i);
   gtk_widget_destroy((gpointer) self->private->video_codecwindow);
@@ -2137,7 +2147,8 @@ pitivi_valide_audio_codec_conf(GtkButton *button, gpointer user_data)
 	      {
 		pitivi_conf_int_update(confprop);
 		break;
-	      }
+	      } 
+
 	    case G_TYPE_INT64:
 	      {
 		pitivi_conf_int_update(confprop);
@@ -2165,7 +2176,7 @@ pitivi_valide_audio_codec_conf(GtkButton *button, gpointer user_data)
 	      }
 	    default:
 	      {
-		g_print("Default\n");
+		pitivi_conf_default_update(confprop);
 		break;
 	      }
 	    }
@@ -2173,8 +2184,11 @@ pitivi_valide_audio_codec_conf(GtkButton *button, gpointer user_data)
       else
 	g_print("%d No properties\n", i);
       plist = plist->next;
-      plist = plist->next;
-      plist = plist->next;
+      if (g_object_get_data(G_OBJECT(pwidget), "prop"))
+	{
+	  plist = plist->next;
+	  plist = plist->next;
+	}
     }
   g_print("nombre de propriete : %d\n", i);
   gtk_widget_destroy((gpointer) self->private->audio_codecwindow);
@@ -2231,6 +2245,28 @@ pitivi_conf_boolean_update(PitiviConfProperties *confprop)
     g_print("Le bouton True est actif\n\n");
   else
     g_print("Le bouton False est actif\n\n");
+}
+
+void
+pitivi_conf_default_update(PitiviConfProperties *confprop)
+{
+  GList		*pwidget_hbox_list;
+  GList		*pwidget_value_list;
+  GList		*combo_list;
+
+  pwidget_hbox_list = gtk_container_get_children(GTK_CONTAINER(confprop->pwidget));
+  pwidget_hbox_list = pwidget_hbox_list->next;
+
+  pwidget_value_list = gtk_container_get_children(GTK_CONTAINER(pwidget_hbox_list->data));
+
+  /* On va chercher la liste de la combobox */
+  combo_list = g_object_get_data(G_OBJECT(pwidget_value_list->data), "combo");
+  while (combo_list)
+    {
+      g_print("OK %s\n", combo_list->data);
+      combo_list = combo_list->next;
+    }
+  g_print("\n");
 }
 
 /* 
