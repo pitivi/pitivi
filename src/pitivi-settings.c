@@ -466,21 +466,26 @@ pitivi_settings_get_flux_parser_list (GObject *object, GstCaps *flux, gboolean L
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void 
-pitivi_settings_aff_all_list_elm (GList *list)
+void
+pitivi_settings_aff_elm_io (PitiviSettingsIoElement *elm)
 {
   gint cpt;
 
-  for (; list; list = g_list_next (list)) {
-    PitiviSettingsIoElement *elm = (PitiviSettingsIoElement *) list->data;
+  g_print ("------------------------------------------\n");
+  g_print ("Element's name:\t%s \n", gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm->factory)));
+  for (cpt = 0; cpt < elm->n_param; cpt++) {
+    g_print ("* * * *\n");
+    g_print ("name:%s\n", elm->params[cpt].name);
+    g_print ("value:%s\n", g_strdup_value_contents (&(elm->params[cpt].value)));
+  }
+  return ;
+}
 
-    g_print ("------------------------------------------\n");
-    g_print ("Element's name:\t%s \n", gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm->factory)));
-    for (cpt = 0; cpt < elm->n_param; cpt++) {
-      g_print ("* * * *\n");
-      g_print ("name:%s\n", elm->params[cpt].name);
-      g_print ("value:%s\n", g_strdup_value_contents (&(elm->params[cpt].value)));
-    }
+void 
+pitivi_settings_aff_all_list_elm (GList *list)
+{
+  for (; list; list = g_list_next (list)) {
+    pitivi_settings_aff_elm_io (list->data);
   }
   return ;
 }
@@ -501,14 +506,14 @@ pitivi_settings_free_all_params (GParameter *parameters, gint n_param)
 }
 
 PitiviSettingsIoElement	*
-pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, gchar *ElmName)
+pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, gchar *ElmName, gchar *klass)
 {
-  GstElementFactory		*factory;
-  gchar				*klass;
+  //GstElementFactory		*factory;
+  //gchar				*klass;
   GList				*list;
 
-  factory = gst_element_factory_find (ElmName);
-  klass = (gchar *) gst_element_factory_get_klass (factory);
+  //factory = gst_element_factory_find (ElmName);
+  //klass = (gchar *) gst_element_factory_get_klass (factory);
 
   list = NULL;
   if (!strcmp (klass, "Sink/Video")) {
@@ -524,11 +529,21 @@ pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, gchar *ElmNam
   for (; list; list = g_list_next (list)) {
     PitiviSettingsIoElement *IoElm = (PitiviSettingsIoElement *) list->data;
     
-    if (!strcmp(ElmName, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(IoElm->factory))))
+    if (!strcmp(ElmName, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(IoElm->factory)))) {
+      pitivi_settings_aff_elm_io (IoElm);
       return (IoElm);
+    }
   }
   
+  g_print ("Not an %s element's name:%s\n", klass, ElmName);
   return (0);
+}
+
+void
+pitivi_settings_io_replace_params (PitiviSettings *self)
+{
+
+  return ;
 }
 
 PitiviSettingsIoElement *
@@ -568,6 +583,10 @@ pitivi_settings_new_io_element (GstElementFactory *factory)
 
     }
   }
+
+  // FREE
+  g_free (elm);
+  g_free (info_prop);
 
   return (io_elm);
 }

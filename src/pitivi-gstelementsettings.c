@@ -993,7 +993,7 @@ pitivi_gstelementsettings_set_property (GObject * object,
     case PROP_GST:
       if ((self->private->element = g_value_get_pointer (value))) {
 	self->private->factory = gst_element_get_factory (self->private->element);
-	self->elm = g_strdup (gst_element_get_name (self->private->element));
+	self->elm = g_strdup ((gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(self->private->factory)));
       }
       break;
     case PROP_OPT:

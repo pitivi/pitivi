@@ -126,12 +126,14 @@ void				pitivi_settings_del_setting ( PitiviSettings *self, gint *position );
 
 
 PitiviSettings			*pitivi_settings_new(void);
+
 GList				*pitivi_settings_get_flux_codec_list (GObject	*object, GstCaps *flux, gboolean LIST);
 GList				*pitivi_settings_get_flux_container_list (GObject *object, GstCaps *flux, gboolean LIST);
 GList				*pitivi_settings_get_flux_parser_list (GObject	*object, GstCaps *flux, gboolean LIST);
+
 PitiviSettings			*pitivi_settings_load_from_file(const gchar	*filename);
 gboolean			pitivi_settings_save_to_file(PitiviSettings	*settings, const gchar	*filename);
 
-PitiviSettingsIoElement		*pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, gchar *ElmName);
+PitiviSettingsIoElement		*pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, gchar *ElmName, gchar *klass);
 
 #endif

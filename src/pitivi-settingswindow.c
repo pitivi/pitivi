@@ -92,16 +92,18 @@ pitivi_settingswindow_combobox_get_active (GtkWidget *widget)
 void 
 pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSettingsWindow *self)
 {
+  PitiviSettingsIoElement	*elm_info;
+  
+  elm_info = NULL;
   g_print ("######################################################\n");
   g_print ("ACCEPT\n");
   g_print ("SAVE %s [%s]\n", prop->elm, prop->class);
 
+  elm_info = pitivi_settings_get_io_settings_struct_info (self->private->settings, prop->elm, prop->class);
+
   /*
     GList				*pt;
     //GList				*list;
-    PitiviSettingsIoElement	*elm_info;
-    
-    elm_info = NULL;
     
     if (!strcmp (prop->class, "Sink/Video")) {
     elm_info = pitivi_settings_get_io_settings_struct_info
