@@ -192,6 +192,12 @@ pitivi_drawing_selection_area (GtkWidget *widget, GdkRectangle *area, int width,
 		       area->x, area->y,
 		       area->width, 
 		       area->height);
+  if (GTK_IS_LAYOUT (widget))
+    gtk_paint_hline (widget->style,
+		     window, 
+		     GTK_STATE_NORMAL,
+		     NULL, widget, "middle-line",
+		     0, widget->allocation.width, widget->allocation.height/2);
 }
 
 void 

@@ -40,6 +40,7 @@ static GdkPixmap	    *pixmap = NULL;
 struct _PitiviTimelineCellRendererPrivate
 {
   /* instance private members */
+  
   gboolean	       dispose_has_run;
   
   PitiviTimelineWindow *timewin;
@@ -57,7 +58,11 @@ struct _PitiviTimelineCellRendererPrivate
   /* Backgrounds */
   
   GdkPixmap	       **bgs;
+
+  /* Selection */
+  GdkRectangle	       selection;
 };
+
 
 /*
  * forward definitions
@@ -195,6 +200,8 @@ pitivi_timelinecellrenderer_expose (GtkWidget      *widget,
 		       NULL, widget, "middle-line",
 		       0, widget->allocation.width, widget->allocation.height/2);
     }
+  if ( self->private->selected )
+    pitivi_drawing_selection_area (widget, &self->private->selection, 0, NULL);
   if (event->window != layout->bin_window)
     return FALSE;
   return FALSE;
@@ -419,45 +426,41 @@ pitivi_timelinecellrenderer_drag_leave (GtkWidget          *widget,
     }
 }
 
-gboolean check_intersect_child (GtkWidget *widget)
-{
-  GList	*childlist;
-  GtkWidget *child;
-  GdkModifierType mods;
-  int x, y;
-
-  childlist = gtk_container_get_children (GTK_CONTAINER (widget));
-  gdk_window_get_pointer (widget->window, &x, &y, &mods);
-  for (; childlist; childlist = childlist->next)
-    {
-      child = childlist->data;
-      if (x >= child->allocation.x && x <= child->allocation.x +  child->allocation.width)
-	return TRUE;
-    }
-  g_list_free ( childlist );
-  return FALSE;
-}
-
 void
-check_intersect_layout (GtkWidget *widget, guint x)
+get_selection_layout (GtkWidget *widget, GdkRectangle *selection, guint x)
 {
   GList	*childlist = NULL;
-  GList	*childlist_container = NULL;
+  GList *before = NULL;
+  GtkWidget *media[2];
   
-  GtkWidget *media;
-  guint x_rec_left = 0;
-  guint x2_left = 0;
-
-  childlist_container = gtk_container_get_children (GTK_CONTAINER (widget));
-  childlist = g_list_sort ( childlist_container, compare_littlechild);
-  for (; childlist; childlist = childlist->next)
+  selection->x = 0;
+  selection->y = 0;
+  selection->height = widget->allocation.height;
+  childlist = gtk_container_get_children (GTK_CONTAINER (widget));
+  childlist = g_list_sort ( childlist, compare_littlechild );
+  for (before = childlist; childlist; childlist = childlist->next)
     {
-      media = GTK_WIDGET (childlist->data);
-      x2_left = media->allocation.x + media->allocation.width;
-      if (x_rec_left < x2_left && x2_left < x)
-	x_rec_left = x2_left;
-     }
-  childlist = g_list_sort ( childlist_container , compare_bigchild);
+      media[0] = childlist->data;
+      if ( x > media[0]->allocation.x + media[0]->allocation.width && childlist->next == NULL)
+	{
+	  selection->x = media[0]->allocation.x + media[0]->allocation.width;
+	  selection->width = widget->allocation.width;
+	  break;
+	}
+      else if ( childlist->prev == NULL && x < media[0]->allocation.x )
+	{
+	  selection->width = media[0]->allocation.x;
+	  break;
+	}
+      else if ( media[0]->allocation.x + media[0]->allocation.width < x 
+		&&  childlist->next 
+		&& GTK_WIDGET ( childlist->next->data)->allocation.x > x)
+	{
+	  selection->x = media[0]->allocation.x + media[0]->allocation.width;
+	  selection->width = GTK_WIDGET ( childlist->next->data)->allocation.x - selection->x;
+	  break;
+	}
+    }
   g_list_free ( childlist );
 }
 
@@ -466,17 +469,25 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 						  GdkEventButton *event)
 {
   PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
+  GdkRectangle		selection;
   PitiviCursor		*cursor;
+  gboolean		selected;
   
+
   cursor = pitivi_getcursor_id (widget);
   if (cursor->type == PITIVI_CURSOR_SELECT && event->state != 0)
     {
       if (event->button == 1)
 	{
-	  if (!check_intersect_child (widget))
+	  selected = self->private->selected;
+	  g_signal_emit_by_name (GTK_WIDGET (self->private->timewin), "deselect", NULL);
+	  get_selection_layout  (widget, &selection, event->x);
+	  if (!selected ||  (self->private->selection.x != selection.x && 
+			     self->private->selection.width != selection.width))
 	    {
-	      g_signal_emit_by_name (GTK_WIDGET (self->private->timewin), "deselect", NULL);
-	      check_intersect_layout (widget, event->x);
+	      self->private->selected = TRUE;
+	      memcpy (&self->private->selection, &selection, sizeof (GdkRectangle));
+	      pitivi_send_expose_event (widget);
 	    }
 	}
     }
@@ -994,6 +1005,12 @@ void
 pitivi_timelinecellrenderer_callb_deselect (PitiviTimelineCellRenderer *self)
 {
   self->private->selected = FALSE;
+  gdk_window_clear (GTK_LAYOUT (self)->bin_window);
+  gtk_paint_hline (GTK_WIDGET(self)->style,
+		   GTK_LAYOUT(self)->bin_window, 
+		   GTK_STATE_NORMAL,
+		   NULL, GTK_WIDGET(self), "middle-line",
+		   0, GTK_WIDGET(self)->allocation.width, GTK_WIDGET(self)->allocation.height/2);
   send_signal_to_childs_direct (GTK_WIDGET (self), "deselect", NULL);
 }
 
@@ -1220,6 +1237,7 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
 		G_STRUCT_OFFSET (PitiviTimelineCellRendererClass, select),
 		NULL, 
 		NULL,                
+
 		g_cclosure_marshal_VOID__VOID,
 		G_TYPE_NONE, 0);
   
