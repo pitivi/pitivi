@@ -381,6 +381,7 @@ pitivi_mainapp_add_project(PitiviMainApp *self, PitiviProject *project)
   if (project == NULL)
     return FALSE;
 
+  PITIVI_DEBUG ("Adding PitiviProject %p to list of projects", project);
   self->projects = g_list_append(self->projects, project);
   return TRUE;
 }
@@ -398,6 +399,7 @@ pitivi_mainapp_new (void)
 {
   PitiviMainApp *mainapp;
   
+  PITIVI_DEBUG("Creating new PitiviMainApp");
   mainapp = (PitiviMainApp *) g_object_new (PITIVI_MAINAPP_TYPE, NULL);
   g_assert (mainapp != NULL);
 

@@ -670,6 +670,7 @@ pitivi_settings_scan_registry(PitiviSettings *self)
   GList			*sv;
   GstElementFactory	*factory;
 
+  PITIVI_DEBUG("Scanning GStreamer registry");
   self->element = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
   sv = self->element;
   while (sv) {
@@ -1074,6 +1075,8 @@ pitivi_settings_save_to_file(PitiviSettings *settings, const gchar *filename)
   gboolean			ret;
   FILE				*out;
 
+  PITIVI_DEBUG("Saving PitiviSettings %p to file %s",
+	       settings, filename);
   cur = pitivi_settings_save_thyself (settings);
   if (!cur)
     return FALSE;
