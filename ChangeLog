@@ -1,3 +1,11 @@
+2004-05-28    <ez3kiel@localhost>
+
+	* src/pitivi-projectsettings.c (pitivi_projectsettings_list_make): Creation de la liste de PitiviProjectSettings par default insere dans la PitiviMainApp
+
+	* src/pitivi-newprojectwindow.c (pitivi_newprojectwindow_add_setting): Ajoute un nouveau setting dans la liste des reglages de la fenetre NewProjectWindow et un nouveau PitiviProjectSettings dans la PitiviMainApp
+
+	* src/pitivi-mainapp.c (pitivi_mainapp_add_newsetting):  Ajoute un nouveau PitiviProjectSettings dans la liste existante
+
 2004-06-05    <nemo@localhost>
 
 	* src/pitivi-pitivisettings.c (all) : creation des settings globaux de l application

@@ -169,6 +169,7 @@ pitivi_projectsettings_list_make()
 
 /***************/ 
 /* Categorie 1 */
+
   list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("epitivovenc", default_vcaps, 0) );
   list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("epitivoaenc", default_acaps, 0) );
   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", "Description Standard 32kHz", list_media_settings ) );
