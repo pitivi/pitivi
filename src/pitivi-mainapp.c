@@ -276,9 +276,7 @@ pitivi_mainapp_create_timelinewin (PitiviMainApp *self, PitiviProject *project)
   gint height;
   gint tmp_w;
   gint tmp_h;
-/*   gint tmp1_w; */
-/*   gint tmp1_h; */
-
+  
   width = gdk_screen_width ();
   height = gdk_screen_height ();
     
@@ -288,7 +286,7 @@ pitivi_mainapp_create_timelinewin (PitiviMainApp *self, PitiviProject *project)
       gtk_widget_show_all (GTK_WIDGET (self->private->timelinewin));
       gtk_window_get_size (GTK_WINDOW (self->private->timelinewin), &tmp_w, &tmp_h);
       gtk_window_move (GTK_WINDOW (self->private->timelinewin), 0, (height - (tmp_h + BORDER + BOTTOM)));
-      gtk_window_resize (GTK_WINDOW (self->private->timelinewin), (width - (2 * BORDER)), (tmp_h));
+      gtk_window_resize (GTK_WINDOW (self->private->timelinewin), (width - 250 -  (2 * BORDER)), (tmp_h));
       gtk_signal_connect (GTK_OBJECT (self->private->timelinewin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_timelinewin), self);
     }

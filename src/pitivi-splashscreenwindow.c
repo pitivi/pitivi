@@ -117,6 +117,8 @@ pitivi_splashscreenwindow_constructor (GType type,
 {
   PitiviSplashScreenWindow *self;
   GObject *obj;
+  gint x;
+  gint y;
 
   /* Invoke parent constructor. */
   obj = G_OBJECT_CLASS (parent_class)->constructor (type, n_construct_properties,
@@ -127,7 +129,9 @@ pitivi_splashscreenwindow_constructor (GType type,
 
   gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
   //gtk_window_set_default_size (GTK_WINDOW(self), 200, 200);
-  gtk_window_set_position (GTK_WINDOW(self), GTK_WIN_POS_CENTER_ALWAYS);
+  x = (gdk_screen_width () / 2);
+  y = (gdk_screen_height () / 3);
+  gtk_window_move (GTK_WINDOW (self), x,  y);
   //gtk_window_set_resizable (GTK_WINDOW (self), FALSE);
   //gtk_window_set_keep_above (GTK_WINDOW (self), FALSE);
 
@@ -156,9 +160,7 @@ pitivi_splashscreenwindow_constructor (GType type,
   gtk_widget_show (self->private->bar);
 
   gtk_widget_show (GTK_WIDGET (self));
-
   g_timeout_add (2000, progress_timeout, self);
-
   return obj;
 }
 
