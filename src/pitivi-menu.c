@@ -99,10 +99,28 @@ pitivi_menu_constructor (GType type,
   return obj;
 }
 
-void
-pitivi_get_uimanager()
+GtkWidget	*create_menupopup(GtkWidget *self, 
+				  GtkItemFactoryEntry *pMenuItem, 
+				  gint iNbMenuItem)
 {
+  GtkWidget		*pMenu;
+  GtkItemFactory	*pItemFactory;
+  GtkAccelGroup		*pAccel;
+
+  pAccel = gtk_accel_group_new();
+
+  /* Creation du menu */
+  pItemFactory = gtk_item_factory_new(GTK_TYPE_MENU, "<menu>", NULL);
   
+  /* Recuperation des elements du menu */
+  gtk_item_factory_create_items(pItemFactory, iNbMenuItem, pMenuItem, self);
+
+  /* Recuperation du widget pour l'affichage du menu */
+  pMenu = gtk_item_factory_get_widget(pItemFactory, "<menu>");
+
+  gtk_widget_show_all(pMenu);
+
+  return pMenu;
 }
 
 static void

@@ -37,6 +37,7 @@
 #include "pitivi-dragdrop.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-viewerwindow.h"
+#include "pitivi-menu.h"
 
 static PitiviProjectWindowsClass *parent_class = NULL;
 
@@ -1450,6 +1451,7 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 						PITIVI_PROJECTWINDOWS(self)->project->sources,
 						self->private->treepath,
 						i);
+  g_printf ("%d\n", sf->pipeline);
   sExempleTexte = g_malloc(12);
   sprintf(sExempleTexte, "exemple %d\0", i);
   gtk_list_store_set(liststore,
@@ -1525,30 +1527,6 @@ void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
  
   pitivi_sourcelistwindow_set_bin(self, bin_name);
 
-}
-
-GtkWidget	*create_menupopup(PitiviSourceListWindow *self, 
-				  GtkItemFactoryEntry *pMenuItem, 
-				  gint iNbMenuItem)
-{
-  GtkWidget		*pMenu;
-  GtkItemFactory	*pItemFactory;
-  GtkAccelGroup		*pAccel;
-
-  pAccel = gtk_accel_group_new();
-
-  /* Creation du menu */
-  pItemFactory = gtk_item_factory_new(GTK_TYPE_MENU, "<menu>", NULL);
-  
-  /* Recuperation des elements du menu */
-  gtk_item_factory_create_items(pItemFactory, iNbMenuItem, pMenuItem, self);
-
-  /* Recuperation du widget pour l'affichage du menu */
-  pMenu = gtk_item_factory_get_widget(pItemFactory, "<menu>");
-
-  gtk_widget_show_all(pMenu);
-
-  return pMenu;
 }
 
 /*
@@ -1711,7 +1689,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
   self->private->listview = pListView;
 
   /* Creation du menu popup */
-  self->private->listmenu = create_menupopup(self, ListPopup, iNbListPopup);
+  self->private->listmenu = create_menupopup(GTK_WIDGET (self), ListPopup, iNbListPopup);
 
   g_signal_connect_swapped(G_OBJECT(pListView), "button_press_event",
 			   G_CALLBACK(my_popup_handler), 
@@ -1822,7 +1800,7 @@ GtkWidget	*create_treeview(PitiviSourceListWindow *self,
   self->private->treeview = pTreeView;
 
   /* Creation du menu popup */
-  self->private->treemenu = create_menupopup(self, TreePopup, iNbTreePopup);
+  self->private->treemenu = create_menupopup (GTK_WIDGET (self), TreePopup, iNbTreePopup);
 
   //g_printf("connect signal treeview 0x%x\n", pTreeView);
 
@@ -2015,12 +1993,12 @@ gboolean	my_popup_handler(gpointer data, GdkEvent *event,
 		      
 		      /* create menu for popup */
 		 
-		      pMenu = GTK_MENU(create_menupopup(self, ItemPopup, 
-							iNbItemPopup));
+		      pMenu = GTK_MENU(create_menupopup (GTK_WIDGET (self), ItemPopup, 
+							 iNbItemPopup));
 		    }
 		  else
-		    pMenu = GTK_MENU(create_menupopup(self, BinPopup,
-						      iNbBinPopup));
+		    pMenu = GTK_MENU(create_menupopup (GTK_WIDGET (self), BinPopup,
+						       iNbBinPopup));
 		}
 	      else
 		{

@@ -135,7 +135,6 @@ enum {
 
 static  guint signals[LAST_SIGNAL];
 
-
 /*
  **********************************************************
  * MenuItems  					          *
@@ -170,7 +169,6 @@ static GtkActionEntry recent_entry[]= {
 static GtkToggleActionEntry windows_entries[] ={
   { "EffectWindows", NULL, "E_ffects", "<control>F", "Toggle the effects window", G_CALLBACK (pitivi_callb_menufile_effectswindow_toggle), FALSE},
 };
-
 
 /*
  * Insert "added-value" functions here
@@ -633,14 +631,7 @@ pitivi_timelinewindow_get_property (GObject * object,
 void
 send_signal_to_childs (PitiviTimelineWindow *self, const gchar *signame, gpointer data)
 {
-  GtkWidget	*container;
-  GList		*childlist; 
-  
-  childlist = gtk_container_get_children (GTK_CONTAINER (self->private->main_vbox_right));
-  for (; childlist; childlist = childlist->next)
-    if (GTK_IS_LAYOUT (childlist->data))
-      g_signal_emit_by_name (GTK_OBJECT (childlist->data), signame, data);
-  g_list_free ( childlist );   
+  send_signal_to_childs_direct (self->private->main_vbox_right, signame, data);
 }
 
 static void

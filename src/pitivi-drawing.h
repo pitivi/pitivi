@@ -90,4 +90,7 @@ pitivi_drawing_GdkGCcolor_new ( guint8 red,
 void
 pitivi_send_expose_event (GtkWidget * widget);
 
+void
+send_signal_to_childs_direct (GtkWidget *container, const gchar *signame, gpointer data);
+
 #endif /* PITIVI_DRAWING_H */

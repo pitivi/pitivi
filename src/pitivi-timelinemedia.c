@@ -80,18 +80,42 @@ static GtkTargetEntry TargetSameEntry[] =
 static gint iNbTargetSameEntry = G_N_ELEMENTS (TargetSameEntry);
 
 
+/*
+ **********************************************************
+ * Popup  					          *
+ *							  *
+ **********************************************************
+*/
+
+static GtkItemFactoryEntry  TimeItemPopup[] = {
+  {"/Dissociate", NULL, pitivi_timelinemedia_callb_dissociate, 0, "<Item>", NULL},
+  {"/Delete", NULL, pitivi_timelinemedia_callb_destroy, 1, "<Item>", NULL},
+  {"/Sep1", NULL, NULL, 0, "<Separator>"},
+  {"/Copy", NULL, NULL, 0, "<Item>", NULL},
+  {"/Paste", NULL, NULL, 0, "<Item>", NULL},
+  {"/Sep1", NULL, NULL, 0, "<Separator>"},
+  {"/Properties", NULL, NULL, 0, "<Item>", NULL},
+};
+
+static gint	iNbTimeItemPopup = sizeof(TimeItemPopup)/sizeof(TimeItemPopup[0]);
+
+
 struct _PitiviTimelineMediaPrivate
 {
   /* instance private members */
   
   PitiviCursorType cursor_type;
   PitiviSourceFile *sf;
-  GdkGC **gcs;
-
-  gboolean	   dispose_has_run;
-  int		   media_type;
+  GdkGC		   **gcs;
+  
+  /* Popup */
+  GtkWidget	   *menu;
+  
+  /* Media */
+  int 		   media_type;
   guint64	   original_width;
   guint64	   original_height;
+  gboolean	   dispose_has_run;
 };
 
 /*
@@ -451,22 +475,32 @@ pitivi_timelinemedia_button_press_event (GtkWidget      *widget,
 					 GdkEventButton *event)
 {
   PitiviTimelineMedia *self = PITIVI_TIMELINEMEDIA (widget);
-  if (!self->selected)
+  if (event->button == 1)
     {
-      self->selected = TRUE;
+      if (!self->selected)
+	{
+	  GtkWidget *w = gtk_widget_get_toplevel (widget);
+	  g_signal_emit_by_name (w, "deselect", NULL);
+	  self->selected = TRUE;
+	  if ( self->linked )
+	    ((PitiviTimelineMedia *) self->linked)->selected = TRUE;
+	}
+      else
+	{
+	  self->selected = FALSE;
+	  if ( self->linked )
+	    ((PitiviTimelineMedia *) self->linked)->selected = FALSE;
+	}
+      gtk_widget_grab_focus ( widget );
+      pitivi_send_expose_event (self);
       if ( self->linked )
-	((PitiviTimelineMedia *) self->linked)->selected = TRUE;
+	pitivi_send_expose_event (self->linked);
     }
   else
     {
-      self->selected = FALSE;
-      if ( self->linked )
-	((PitiviTimelineMedia *) self->linked)->selected = FALSE;
+      self->private->menu = GTK_WIDGET (create_menupopup (widget, TimeItemPopup, iNbTimeItemPopup));
+      gtk_menu_popup(GTK_MENU (self->private->menu), NULL, NULL, NULL, NULL, event->button, event->time);
     }
-  gtk_widget_grab_focus ( widget );
-  pitivi_send_expose_event (self);
-  if ( self->linked )
-    pitivi_send_expose_event (self->linked);
   return FALSE;
 }
 
@@ -511,20 +545,35 @@ pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
 void
 pitivi_timelinemedia_callb_select (PitiviTimelineMedia *self)
 {
-  
 }
 
 void
 pitivi_timelinemedia_callb_deselect (PitiviTimelineMedia *self)
 {
-  
+  self->selected = FALSE;
+  pitivi_send_expose_event (self);
 }
 
-static void
+void
 pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *self, gpointer data)
 {
   if (PITIVI_IS_TIMELINEMEDIA (self) && self->linked)
-    self->linked = NULL;
+    if (self->selected)
+      {
+	PITIVI_TIMELINEMEDIA (self->linked)->selected = FALSE;
+	pitivi_send_expose_event (self->linked);
+	PITIVI_TIMELINEMEDIA (self->linked)->linked = NULL;
+	self->linked = NULL;
+      }
+}
+
+void
+pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *self, gpointer data)
+{
+  if (self->selected)
+    gtk_widget_destroy (GTK_WIDGET (self));
+  if (self->linked)
+    gtk_widget_destroy (self->linked);
 }
 
 static gboolean
@@ -532,11 +581,7 @@ pitivi_timelinemedia_callb_key_release_event (GtkWidget *widget,
 					      GdkEventKey *event)
 {
   PitiviTimelineMedia *self = PITIVI_TIMELINEMEDIA (widget);
-  
-  if (self->selected)
-    gtk_widget_destroy (widget);
-  if (self->linked)
-    gtk_widget_destroy (self->linked);
+  pitivi_timelinemedia_callb_destroy (self, event);
   return TRUE;
 }
 

@@ -705,6 +705,10 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
     default:
       break;
     }
+  self->private->slide_width = 0;
+  self->private->slide_both  = FALSE;
+  PITIVI_TIMELINECELLRENDERER (self->linked_track)->private->slide_width = 0;
+  PITIVI_TIMELINECELLRENDERER (self->linked_track)->private->slide_both  = FALSE;
 }
 
 guint 
@@ -856,17 +860,8 @@ pitivi_timelinecellrenderer_callb_select (PitiviTimelineCellRenderer *self)
 void
 pitivi_timelinecellrenderer_callb_deselect (PitiviTimelineCellRenderer *self)
 {
-  PitiviTimelineCellRenderer *childcells;
-
-  childcells = PITIVI_TIMELINECELLRENDERER (self);
-  if (childcells->private->selected)
-    {
-      childcells->private->selected = FALSE;
-      gdk_window_clear_area_e (GTK_LAYOUT (childcells)->bin_window,\
-			       0, 0, 
-			       GTK_WIDGET (childcells)->allocation.width, 
-			       GTK_WIDGET (childcells)->allocation.height);
-    }
+  self->private->selected = FALSE;
+  send_signal_to_childs_direct (GTK_WIDGET (self), "deselect", NULL);
 }
 
 
@@ -881,21 +876,6 @@ pitivi_timelinecellrenderer_callb_dbk_source (PitiviTimelineCellRenderer *self, 
 static void
 pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *self, guint x, gpointer data)
 {
-}
-
-// Checking On all Tracks if there is a selection, delsection begin
-
-void 
-pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected)
-{
-  PitiviTimelineCellRenderer *childcells;
-  GtkWidget	*container;
-  GList	*childlist;
-
-  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
-  container = gtk_widget_get_toplevel (GTK_WIDGET (self));
-  if (GTK_IS_WINDOW (container))
-    g_signal_emit_by_name (container, "deselect");
 }
 
 void

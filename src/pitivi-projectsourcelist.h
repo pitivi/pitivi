@@ -31,6 +31,8 @@
  * Potentially, include other headers on which this header depends.
  */
 #include <gst/gst.h>
+#include <gtk/gtk.h>
+
 /*
  * Type macros.
  */
@@ -55,8 +57,9 @@ struct _PitiviSourceFile
   gchar *infovideo;
   gchar *infoaudio;
   gint64 length;
+  GdkPixbuf  *thumbs_audio;
+  GdkPixbuf  *thumbs_video;
   GstElement *pipeline;
-  GList *thumbs;
 };
 
 struct _PitiviProjectSourceList

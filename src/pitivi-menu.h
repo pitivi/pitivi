@@ -100,5 +100,7 @@ PitiviMenu	*pitivi_menu_new(GtkWidget *window, gchar *fname);
 void		pitivi_menu_set_filename (PitiviMenu *menubar, const gchar *filename);
 void		pitivi_toolbar_set_icon_mode (GtkWidget *toolbar, guint *styles);
 void		pitivi_menu_configure (PitiviMenu *self);
-
+GtkWidget	*create_menupopup (GtkWidget *self, 
+				   GtkItemFactoryEntry *pMenuItem, 
+				   gint iNbMenuItem);
 #endif

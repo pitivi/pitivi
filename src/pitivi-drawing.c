@@ -229,3 +229,15 @@ draw_gdk_text_centered (GdkDrawable *drawable, GdkFont *font, GdkGC *gc,
 		 x+width/2-text_width/2, y+height/2+text_height/2,
 		 text, text_length);
 }
+
+void
+send_signal_to_childs_direct (GtkWidget *container, const gchar *signame, gpointer data)
+{
+  GList	*childlist;
+  
+  childlist = gtk_container_get_children (GTK_CONTAINER (container));
+   for (; childlist; childlist = childlist->next)
+     if (GTK_IS_LAYOUT (childlist->data) || (GTK_IS_LAYOUT (container)))
+       g_signal_emit_by_name (GTK_OBJECT (childlist->data), signame, data);
+   g_list_free ( childlist );   
+}
