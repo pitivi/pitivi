@@ -322,6 +322,12 @@ source_link (GstPad *pad, const GstCaps *caps)
   return gst_pad_try_set_caps (otherpad, caps);
 }
 
+void
+source_unlink (GstPad *pad)
+{
+  GST_INFO("unlinking !!!");
+}
+
 /*
   source_probe
 
@@ -350,7 +356,7 @@ source_probe (GstProbe *probe, GstData **data, gpointer udata)
     GST_INFO("buffer is older than seek_stop, sending EOS on GnlSourceElement");
     /* The data is after the end of seek , set the source element to EOS */
     gst_element_set_eos(source->element);
-    GNL_OBJECT(source)->active = FALSE;
+    gnl_object_set_active(GNL_OBJECT(source), FALSE);
     return FALSE; /* We don't want this data to carry on */
   }
   
@@ -622,6 +628,11 @@ source_chainfunction (GstPad *pad, GstData *buf)
   source = GNL_SOURCE (gst_pad_get_parent (pad));
   object = GNL_OBJECT (source);
 
+  if (GST_IS_EVENT(buffer))
+    GST_INFO("Chaining an event : %d",
+	     GST_EVENT_TYPE(buffer));
+  else
+    GST_INFO("Chaining a buffer");
   if (GST_IS_BUFFER (buffer) && !source->queueing) {
     intime = GST_BUFFER_TIMESTAMP (buffer);
 
@@ -688,7 +699,7 @@ source_getfunction (GstPad *pad)
       
       /* if DATA is EOS, forward it*/ 
       if (GST_IS_EVENT (buffer)) {
-	GST_INFO("Event Buffer");
+	GST_INFO("Event Buffer type : %d", GST_EVENT_TYPE(buffer));
         if (GST_EVENT_TYPE (buffer) == GST_EVENT_EOS) {
           GST_INFO ("%s: EOS at %lld %lld %lld %lld / now:%lld", 
 		    gst_element_get_name (GST_ELEMENT (source)), 
@@ -757,7 +768,7 @@ source_getfunction (GstPad *pad)
   }
   GST_INFO("END");
   if (GST_IS_EVENT(buffer) && (GST_EVENT_TYPE (buffer) == GST_EVENT_EOS))
-    object->active = FALSE;
+    gnl_object_set_active(object, FALSE);
   return (GstData *) buffer;
 }
 
@@ -804,6 +815,8 @@ gnl_source_change_state (GstElement *element)
   GnlSource *source = GNL_SOURCE (element);
   GstElementStateReturn	res = GST_STATE_SUCCESS;
 
+  if (!GNL_OBJECT(source)->active)
+    g_printf("\nTrying to change state but Source is not active!!! \n");
   if (GNL_OBJECT(source)->active)
     switch (GST_STATE_TRANSITION (source)) {
     case GST_STATE_NULL_TO_READY:

@@ -64,6 +64,7 @@ struct _GnlCompositionEntry
   gulong	starthandler;
   gulong	stophandler;
   gulong	priorityhandler;
+  gulong	activehandler;
 };
 
 #define GNL_COMP_ENTRY(entry)		((GnlCompositionEntry *)entry)
@@ -136,6 +137,7 @@ gnl_composition_init (GnlComposition *comp)
   GNL_OBJECT(comp)->start = 0;
   GNL_OBJECT(comp)->stop = G_MAXINT64;
   comp->next_stop = 0;
+  comp->active_objects = NULL;
 }
 
 static void
@@ -153,6 +155,7 @@ gnl_composition_dispose (GObject *object)
     objects = g_list_next (objects);
   }
   g_list_free (comp->objects);
+  g_list_free (comp->active_objects);
 
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
@@ -331,6 +334,20 @@ child_start_stop_changed (GnlObject *object, GParamSpec *arg, gpointer udata)
 }
 
 void
+child_active_changed (GnlObject *object, GParamSpec *arg, gpointer udata)
+{
+  GnlComposition *comp = GNL_COMPOSITION (udata);
+
+  GST_INFO("%s : State of child %s has changed",
+	   gst_element_get_name(GST_ELEMENT (comp)),
+	   gst_element_get_name(GST_ELEMENT (object)));
+  if (object->active)
+    comp->active_objects = g_list_append (comp->active_objects, object);
+  else
+    comp->active_objects = g_list_remove(comp->active_objects, object);
+}
+
+void
 gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
 {
   GnlCompositionEntry *entry;
@@ -363,6 +380,7 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
   entry->priorityhandler = g_signal_connect(object, "notify::priority", G_CALLBACK (child_priority_changed), comp);
   entry->starthandler = g_signal_connect(object, "notify::start", G_CALLBACK (child_start_stop_changed), comp);
   entry->stophandler = g_signal_connect(object, "notify::stop", G_CALLBACK (child_start_stop_changed), comp);
+  entry->activehandler = g_signal_connect(object, "notify::active", G_CALLBACK (child_active_changed), comp);
   
   comp->objects = g_list_insert_sorted (comp->objects, entry, _entry_compare_func);
   
@@ -398,11 +416,13 @@ gnl_composition_remove_object (GnlComposition *comp, GnlObject *object)
   g_signal_handler_disconnect (entry->object, entry->priorityhandler);
   g_signal_handler_disconnect (entry->object, entry->starthandler);
   g_signal_handler_disconnect (entry->object, entry->stophandler);
+  g_signal_handler_disconnect (entry->object, entry->activehandler);
 
+  comp->active_objects = g_list_remove (comp->active_objects, object);
   comp->objects = g_list_delete_link (comp->objects, lentry);
 
   g_free (GNL_OBJECT (lentry->data)->comp_private);
-  gst_object_unref (GST_OBJECT (lentry->data));
+  g_object_unref (G_OBJECT (lentry->data));
   composition_update_start_stop (comp);
 }
 
@@ -426,6 +446,9 @@ gnl_composition_schedule_object (GnlComposition *comp, GnlObject *object,
 	   gst_element_get_name(GST_ELEMENT(object)),
 	   start, stop, GST_ELEMENT_SCHED(object), GST_IS_SCHEDULER(GST_ELEMENT_SCHED(object)));
 
+  /* Activate object */
+  gnl_object_set_active(object, TRUE);
+
   if (gst_element_get_parent (GST_ELEMENT (object)) == NULL) { 
 
     GST_INFO("Object has no parent, adding it to %s[Sched:%p]",
@@ -443,8 +466,6 @@ gnl_composition_schedule_object (GnlComposition *comp, GnlObject *object,
 						      start,
 						      stop)
 			  );
-  /* Activate object */
-  object->active = TRUE;
   *pad = gst_element_get_pad (GST_ELEMENT (object), "src");
   
   GST_INFO("end of gnl_composition_schedule_object");
@@ -490,13 +511,21 @@ gnl_composition_schedule_operation (GnlComposition *comp, GnlOperation *oper,
     gst_pad_link (newpad, sinkpad);
   }
 
-  /* Activate Operation */
-  GNL_OBJECT(oper)->active = TRUE;
-
   GST_INFO("Finished");
   return TRUE;
 }
 
+void
+gnl_composition_deactivate_childs (GnlComposition *comp)
+{
+  GList	*tmp, *next;
+
+  for (next = NULL, tmp = comp->active_objects; tmp; tmp = next) {
+    next = tmp->next;
+    gst_element_set_state(GST_ELEMENT (tmp->data), GST_STATE_READY );
+    gnl_object_set_active(GNL_OBJECT (tmp->data), FALSE);
+  }
+}
 
 /*
   gnl_composition_schedule_entries NEW_VERSION
@@ -530,6 +559,9 @@ gnl_composition_schedule_entries(GnlComposition *comp, GstClockTime start,
     return FALSE;
 
   obj = compentry->object;
+
+  /* De-activate active objects */
+  gnl_composition_deactivate_childs (comp);
 
   /* 
      Find the following object

@@ -149,7 +149,7 @@ gboolean	do_seek(GstElement *elem, gint64 value)
   GstPad	*pad;
   gboolean	res;
 
-  pad = gst_element_get_pad(elem, "src");
+  //  pad = gst_element_get_pad(elem, "src");
   event = gst_event_new_seek (
 			      GST_FORMAT_TIME |	    /* seek on nanoseconds */
 			      GST_SEEK_METHOD_SET | /* set the absolute position */
@@ -157,9 +157,10 @@ gboolean	do_seek(GstElement *elem, gint64 value)
 			      value);	    /* the seek offset in bytes */
   
   /* res = gst_element_send_event (GST_ELEMENT (elem), event); */
-  if (!(res = gst_pad_send_event(pad, event)))
+  if (!(res = gst_element_send_event(elem, event)))
     {
-      g_warning ("seek failed");
+      g_warning ("seek on element %s failed",
+		 gst_element_get_name(elem));
       return FALSE;
     }
   return TRUE;
@@ -233,7 +234,7 @@ void	video_stop(GtkWidget *widget, gpointer data)
   self->private->play_status = STOP;
 
   /* rewind the movie */
-  do_seek(elem, 0);
+  do_seek(GST_ELEMENT (project->timeline), 0LL);
   
   /* query total size */
   value  = do_query(GST_ELEMENT (project->timeline), GST_QUERY_TOTAL);
@@ -305,17 +306,17 @@ gboolean	seek_stream(GtkWidget *widget,
   g_printf("you release me\n");
   
   /* query total size */
-  value1  = do_query(GST_ELEMENT (project->timeline), GST_QUERY_TOTAL);
+  //value1  = do_query(GST_ELEMENT (project->timeline), GST_QUERY_TOTAL);
   
   pourcent = gtk_range_get_value(GTK_RANGE (widget));
 
-  value2 = (gint64)((pourcent * value1) / 500);
+  //value2 = (gint64)((pourcent * value1) / 500);
   
-  g_printf("total length : %lld, seeking to %lld\n",
-	   value1, value2);
+  g_printf("seeking to %lld\n",
+	   pourcent);
 
   /* rewind the movie */
-  if (do_seek(elem, value2))
+  if (do_seek(GST_ELEMENT (project->timeline), pourcent))
     g_printf("performing  seek\n");
   
   if (self->private->play_status != PLAY) {
@@ -439,6 +440,20 @@ void	pitivi_viewerwindow_set_source(PitiviViewerWindow *self,
 }
 
 void
+viewerwindow_start_stop_changed (GnlTimeline *timeline, GParamSpec *arg, gpointer udata)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) udata;
+
+  g_printf("updating range start/stop\n");
+  self->private->timeline_min = GNL_OBJECT(timeline)->start;
+  self->private->timeline_max = GNL_OBJECT(timeline)->stop;
+
+  gtk_range_set_range (GTK_RANGE(self->private->timeline), 
+		       self->private->timeline_min,
+		       self->private->timeline_max);
+}
+
+void
 create_gui (gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
@@ -544,7 +559,6 @@ create_gui (gpointer data)
   gtk_scale_set_draw_value (GTK_SCALE (self->private->timeline), FALSE);
   gtk_widget_show (self->private->timeline);
 
-
   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-press-event", 
 		      GTK_SIGNAL_FUNC (pause_stream), self);
   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-release-event", 
@@ -576,6 +590,12 @@ create_stream (gpointer data)
   pitivi_project_set_video_output(project, self->private->sink);
 
   self->private->play_status = STOP;
+
+  g_signal_connect (project->timeline, "notify::start",
+		    G_CALLBACK(viewerwindow_start_stop_changed), self);
+  g_signal_connect (project->timeline, "notify::stop",
+		    G_CALLBACK(viewerwindow_start_stop_changed), self);
+
   return ;
 }
 
@@ -602,13 +622,12 @@ gboolean	idle_func_video (gpointer data)
     if (elem) /* we have a true source */
       {
 	value1 = do_query(elem, GST_QUERY_POSITION);
-	value2 = do_query(elem, GST_QUERY_TOTAL);
-	pourcent = (value1 * 100) / value2;
+	//value2 = do_query(elem, GST_QUERY_TOTAL);
+	//pourcent = (value1 * 100) / value2;
 	
-	pourcent *= 5;
-	g_printf("**idle** : pos:%lld, total:%lld, pourcent:%e\n",
-		 value2, value1, pourcent);
-	gtk_range_set_value(GTK_RANGE (self->private->timeline) , pourcent);
+	//pourcent *= 5;
+	g_printf("**idle** : pos:%lld\n", value1);
+	gtk_range_set_value(GTK_RANGE (self->private->timeline) , value1);
       }
   }
   return TRUE;

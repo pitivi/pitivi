@@ -182,7 +182,7 @@ gnl_object_init (GnlObject *object)
   object->media_stop = GST_CLOCK_TIME_NONE;
   object->current_time = 0;
   object->priority = 0;
-  object->active = TRUE;
+  object->active = FALSE;
   object->rate_control = GNL_OBJECT_FIX_MEDIA_STOP;
 }
 
@@ -569,16 +569,20 @@ gnl_object_send_event (GstElement *element, GstEvent *event)
   gboolean res = FALSE;
 	    
   switch (GST_EVENT_TYPE (event)) {
-    case GST_EVENT_SEEK_SEGMENT:
-    {
-      res = gnl_object_do_seek (object, 
-		          	GST_EVENT_SEEK_TYPE (event),
-                          	GST_EVENT_SEEK_OFFSET (event),
-                          	GST_EVENT_SEEK_ENDOFFSET (event));
-      break;
-    }
-    default:
-      break;
+  case GST_EVENT_SEEK_SEGMENT:
+    res = gnl_object_do_seek (object, 
+			      GST_EVENT_SEEK_TYPE (event),
+			      GST_EVENT_SEEK_OFFSET (event),
+			      GST_EVENT_SEEK_ENDOFFSET (event));
+    break;
+  case GST_EVENT_SEEK:
+    res = gnl_object_do_seek (object,
+			      GST_EVENT_SEEK_TYPE (event),
+			      GST_EVENT_SEEK_OFFSET (event),
+			      G_MAXINT64);
+    break;
+  default:
+    break;
   }
   gst_event_unref (event);
 	      

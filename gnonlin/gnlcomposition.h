@@ -61,6 +61,7 @@ struct _GnlComposition {
   GList			*objects;	// the list of GnlObjects contained in the composition
 
   GstClockTime	 	 next_stop;	// when to stop next
+  GList			*active_objects;// the list of GnlObjects that are active in the composition
 };
 
 struct _GnlCompositionClass {
