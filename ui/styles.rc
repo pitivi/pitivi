@@ -1,5 +1,4 @@
 
-
 # pixmap_path "<dir 1>:<dir 2>:<dir 3>:..."
 #
 pixmap_path "/usr/include/X11R6/pixmaps:/home/imain/pixmaps"
@@ -47,10 +46,28 @@ style "window"
 
 style "scale"
 {
+  #Sets the foreground color (font color) to red when in the "NORMAL"
+  #state.
+  
+  fg[NORMAL] = { 1.0, 0, 0 }
+  
+  #Sets the background pixmap of this widget to that of its parent.
+  bg_pixmap[NORMAL] = "<parent>"
 }
 
 style "button"
 {
+  # This shows all the possible states for a button.  The only one that
+  # doesn't apply is the SELECTED state.
+  
+  fg[PRELIGHT] = { 0, 1.0, 1.0 }
+  bg[PRELIGHT] = { 0, 0, 1.0 }
+  bg[ACTIVE] = { 1.0, 0, 0 }
+  fg[ACTIVE] = { 0, 1.0, 0 }
+  bg[NORMAL] = { 1.0, 1.0, 0 }
+  fg[NORMAL] = { .99, 0, .99 }
+  bg[INSENSITIVE] = { 1.0, 1.0, 1.0 }
+  fg[INSENSITIVE] = { 1.0, 0, 1.0 }
 }
 
 # In this example, we inherit the attributes of the "button" style and then
@@ -60,23 +77,46 @@ style "button"
 style "main_button" = "button"
 {
   font = "-adobe-helvetica-medium-r-normal--*-100-*-*-*-*-*-*"
+  bg[PRELIGHT] = { 0.75, 0, 0 }
 }
+
+style  "PitiviTreeViewStyle" {	
+
+	font = "-adobe-courier-bold-r-normal--18-*"
+	GtkTreeView::horizXontal_separator = 1
+	GtkTreeView::expander_size = 14
+	
+	#text[SELECTED] = {1.0, 0.0, 0.0}
+	base[SELECTED] = {0.25, 0.25, 0.90}
+	
+	fg[ACTIVE] = {0.0, 1.0, 0.0}
+	bg[ACTIVE] = {0.8, 0.8, 0.8}
+	bg[NORMAL] = { 0.8, 0.8, 0.8 }
+}	
+
 
 style "toggle_button" = "button"
 {
-}
-
-style "text"
-{
-  fg[NORMAL] = { 1.0, 1.0, 1.0 }
+  fg[NORMAL] = { 1.0, 0, 0 }
+  fg[ACTIVE] = { 1.0, 0, 0 }
+  
+  # This sets the background pixmap of the toggle_button to that of its
+  # parent widget (as defined in the application).
+  bg_pixmap[NORMAL] = "<parent>"
 }
 
 style "ruler"
 {
-  font = "-adobe-helvetica-medium-r-normal--*-80-*-*-*-*-*-*"
+  font = "-adobe-helvetica-bold-o-normal-*-8-*-75-*-*-60-iso8859-1"
 }
 
-# pixmap_path "~/.pixmaps"
+style "label"
+{
+  font = "-adobe-courier-bold-r-normal--18-*"
+}
+
+
+pixmap_path "~/.pixmaps"
 
 # These set the widget types to use the styles defined above.
 # The widget types are listed in the class hierarchy, but could probably be
@@ -86,12 +126,6 @@ widget_class "GtkWindow" style "window"
 widget_class "GtkDialog" style "window"
 widget_class "GtkFileSelection" style "window"
 widget_class "*Gtk*Scale" style "scale"
-widget_class "*GtkCheckButton*" style "toggle_button"
-widget_class "*GtkRadioButton*" style "toggle_button"
-widget_class "*GtkButton*" style "button"
-widget_class "*Ruler" style "ruler"
-widget_class "*GtkText" style "text"
-
-# This sets all the buttons that are children of the "main window" to
-# the main_button style.  These must be documented to be taken advantage of.
-widget "main window.*GtkButton*" style "main_button"
+widget_class "*Ruler*"    style "ruler"
+widget_class "*Label*" style "label"
+widget_class "*GtkTreeView*" style "PitiviTreeViewStyle"
