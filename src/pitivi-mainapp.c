@@ -274,6 +274,8 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
       gtk_signal_connect (GTK_OBJECT (self->private->viewerwin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_viewer), self);
     }
+  if (self->private->effectswin == NULL)
+    pitivi_mainapp_activate_effectswindow(self, TRUE);
   gtk_window_move (GTK_WINDOW (self->private->tbxwin), 20, 450);
 }
 
