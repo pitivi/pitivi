@@ -1,6 +1,6 @@
 /* 
  * PiTiVi
- * Copyright (C) <2004> DELETTREZ Marc <delett_m@epita.fr>
+ * Copyright (C) <2004> Delettrez Marc <delett_m@epita.fr>
  * 
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -32,7 +32,8 @@ struct _PitiviSplashScreenWindowPrivate
 {
   /* instance private members */
   gboolean	dispose_has_run;
-  
+  gboolean	time_out;
+
   GtkWidget	*main_vbox;
   GtkWidget	*img;
   GtkWidget	*label;
@@ -43,6 +44,19 @@ struct _PitiviSplashScreenWindowPrivate
  * forward definitions
  */
 
+static gboolean progress_timeout( gpointer data )
+{
+  PitiviSplashScreenWindow *self = (PitiviSplashScreenWindow *) data;
+  gdouble	new_val;
+
+  new_val = gtk_progress_bar_get_fraction (GTK_PROGRESS_BAR (self->private->bar));
+  self->private->time_out = TRUE;
+  if (new_val == 1.0) {
+    //g_print ("coucou_3\n");
+    gtk_widget_destroy (GTK_WIDGET (self));
+  }
+  return FALSE;
+} 
 
 /*
  * methodes definitions
@@ -61,10 +75,17 @@ pitivi_splashscreenwindow_set_fraction (PitiviSplashScreenWindow *self, gdouble 
 {
   gchar		*text;
 
-  text = g_strdup_printf("%g %%", per*100);
-  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (self->private->bar), text);
-  gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self->private->bar), per);
-  g_free (text);
+  if ((per  != 1.0)  || (!self->private->time_out)) {
+    //g_print ("coucou_1\n");
+    text = g_strdup_printf("%g %%", per*100);
+    gtk_progress_bar_set_text (GTK_PROGRESS_BAR (self->private->bar), text);
+    //gtk_progress_set_percentage (GTK_PROGRESS (self->private->bar), per);
+    gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self->private->bar), per);
+    g_free (text);
+  } else {
+    //g_print ("coucou_2\n");
+    gtk_widget_destroy (GTK_WIDGET (self));
+  }
   return ;
 }
 
@@ -105,7 +126,7 @@ pitivi_splashscreenwindow_constructor (GType type,
   self = (PitiviSplashScreenWindow *) obj;
 
   gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
-  gtk_window_set_default_size (GTK_WINDOW(self), 200, 200);
+  //gtk_window_set_default_size (GTK_WINDOW(self), 200, 200);
   gtk_window_set_position (GTK_WINDOW(self), GTK_WIN_POS_CENTER_ALWAYS);
   //gtk_window_set_resizable (GTK_WINDOW (self), FALSE);
   //gtk_window_set_keep_above (GTK_WINDOW (self), FALSE);
@@ -128,12 +149,15 @@ pitivi_splashscreenwindow_constructor (GType type,
   // Bar loading
   self->private->bar = gtk_progress_bar_new ();
   gtk_progress_bar_set_orientation (GTK_PROGRESS_BAR (self->private->bar), GTK_PROGRESS_LEFT_TO_RIGHT);
-  gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self->private->bar), 0.0);
-  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (self->private->bar), "0 %");
+  pitivi_splashscreenwindow_set_fraction (self, 0.0);
+  //gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self->private->bar), 0.0);
+  //gtk_progress_bar_set_text (GTK_PROGRESS_BAR (self->private->bar), "0 %");
   gtk_container_add (GTK_CONTAINER (self->private->main_vbox), self->private->bar);
   gtk_widget_show (self->private->bar);
 
   gtk_widget_show (GTK_WIDGET (self));
+
+  g_timeout_add (5000, progress_timeout, self);
 
   return obj;
 }
@@ -148,7 +172,9 @@ pitivi_splashscreenwindow_instance_init (GTypeInstance * instance, gpointer g_cl
   /* initialize all public and private members to reasonable default values. */ 
   
   self->private->dispose_has_run = FALSE;
-  
+
+  self->private->time_out = FALSE;
+
   /* Do only initialisation here */
   /* The construction of the object should be done in the Constructor
      So that properties set at instanciation can be set */

@@ -5,6 +5,7 @@
  *                      Carbon Julien <carbon_j@epita.fr>
  *                      Dubart Loic <dubart_l@epita.fr>
  *			Guillaume Casanova <casano_g@epita.fr>
+ *			Delettrez Marc <delett_m@epita.fr>
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -53,6 +54,7 @@
 #include "pitivi-effectswindow.h"
 #include "pitivi-projectsettings.h"
 #include "pitivi-settings.h"
+#include "pitivi-splashscreenwindow.h"
 
 
 struct _PitiviMainAppPrivate
@@ -68,6 +70,7 @@ struct _PitiviMainAppPrivate
   PitiviTimelineWindow		*timelinewin;
   PitiviViewerWindow		*viewerwin;
   PitiviEffectsWindow		*effectswin;  
+  PitiviSplashScreenWindow	*splash_screen;
 };
 
 
@@ -318,12 +321,21 @@ pitivi_mainapp_constructor (GType type,
   /* do stuff. */
 
   self = (PitiviMainApp *) obj;
+  /* Lancement du splash screen */
+  self->private->splash_screen = pitivi_splashscreenwindow_new();
+  usleep (5);
   /* Enregistrement des Icones */
+  pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
+				      0.0, "Loading Register Stockicons");
   pitivi_stockicons_register ();
   /* Creation de la liste des settings par default */
+  pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
+				      0.2, "Loading Default Settings");
   self->private->project_settings_list = pitivi_projectsettings_list_make();
 
   /* Creation des settings globaux */
+  pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
+				      0.4, "Loading Global Settings");
   settingsfile = g_strdup_printf("%s/.pitivi", g_get_home_dir());
   if (g_file_test(settingsfile, G_FILE_TEST_EXISTS))
     self->private->global_settings = pitivi_settings_load_from_file(settingsfile);
@@ -332,12 +344,19 @@ pitivi_mainapp_constructor (GType type,
   g_free(settingsfile);
 
   /* Creation de la toolboxwindow */
+  pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
+				      0.6, "Loading Toolbox");
   self->private->tbxwin = pitivi_toolboxwindow_new(self);
   /* Connection des Signaux */
+  pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
+				      0.8, "Loading Signals");
   g_signal_connect(G_OBJECT(self->private->tbxwin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
   gtk_widget_show_all (GTK_WIDGET (self->private->tbxwin));
-
+  /* finish */
+  pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
+  				      1.0, "Loading Finished");
+  
   return obj;
 }
 

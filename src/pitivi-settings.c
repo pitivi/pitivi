@@ -1,7 +1,7 @@
 /* 
  * PiTiVi
  * Copyright (C) <2004> Edward G. Hervey <hervey_e@epita.fr>
- *                      Guillaume Casanova <casano_g@epita.fr>
+ *			Delettrez Marc <delett_m@epita.fr>
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -390,9 +390,10 @@ pitivi_settings_scan_registry(PitiviSettings *self)
     }
     sv = sv->next;
   }
-  pitivi_settings_aff_all_list (self->container);
-  pitivi_settings_aff_all_list (self->codec);
-  pitivi_settings_aff_all_list (self->parser);
+
+  //pitivi_settings_aff_all_list (self->container);
+  //pitivi_settings_aff_all_list (self->codec);
+  //pitivi_settings_aff_all_list (self->parser);
 }
 
 GList *
