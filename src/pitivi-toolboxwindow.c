@@ -80,10 +80,28 @@ pitivi_callb_toolbox_exit ( GtkAction *action, PitiviToolboxWindow *self )
 void
 pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *self )
 {    
-  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
+  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
+  PitiviProject	*project;
+  GtkWidget	*dialog;
+  char		*filename = NULL;
+  
+  /* Get the filename */
+  dialog = gtk_file_chooser_dialog_new("Open a PiTiVi project",
+				       GTK_WINDOW (self), GTK_FILE_CHOOSER_ACTION_OPEN,
+				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				       NULL);
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+  gtk_widget_destroy ( dialog );
 
+  project = pitivi_project_new_from_file(filename);
+
+  g_free (filename);
   /* Il faut remplacer cette fonction par une vrai ouverture de fichier */
-  pitivi_mainapp_create_wintools( mainapp , NULL );
+  if ((project != NULL) && (pitivi_mainapp_add_project( mainapp, project )))
+    pitivi_mainapp_create_wintools( mainapp , project );
+
 }
 
 static GtkActionEntry toolbox_menu_entries[] = {

@@ -53,6 +53,28 @@ pitivi_project_new (PitiviProjectSettings *settings)
   return project;
 }
 
+PitiviProject *
+pitivi_project_new_from_file (const gchar *filename)
+{
+  PitiviProject *project;
+
+  if (filename == NULL)
+    return NULL;
+
+  /* 
+     TODO
+
+     * Open the file
+     * Restore the XML-formatted PitiviSettings contained in the file
+     * Restore the XML-formatted PitiviSourceList contained in the file
+  */
+
+  project = pitivi_project_new(NULL);
+
+  return project;
+}
+
+
 static GObject *
 pitivi_project_constructor (GType type,
 			    guint n_construct_properties,

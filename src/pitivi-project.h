@@ -74,5 +74,6 @@ GType pitivi_project_get_type (void);
  */
 
 PitiviProject *pitivi_project_new (PitiviProjectSettings *settings);
+PitiviProject *pitivi_project_new_from_file (const gchar *filename);
 
 #endif

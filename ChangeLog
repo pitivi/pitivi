@@ -1,5 +1,9 @@
 2004-06-26    <bilboed@localhost>
 
+	* src/pitivi-project.c (pitivi_project_new_from_file): New function to create a PitiviProject from a file
+
+	* src/pitivi-toolboxwindow.c (pitivi_callb_toolbox_fileopen_project): Added File chooser for opening a file
+
 	* src/pitivi-settingswindow.c: 
 	* src/pitivi-settingswindow.h: Created PitiviSettingsWindow, a PitiviWindows
 
