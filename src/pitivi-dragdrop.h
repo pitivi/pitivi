@@ -35,4 +35,13 @@ enum
     DND_TARGET_URI = 4,
   };
 
+typedef	struct	_PitiviSourceEffect
+{
+  gint64	length;		
+  gchar		*name;
+  gchar		*desc;
+  GstElement	*element;
+  GdkPixbuf	*pixbuf;
+}		PitiviSourceEffect;
+
 #endif /* PITIVI_DRAGDROP_H */
