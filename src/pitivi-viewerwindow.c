@@ -1,7 +1,7 @@
 /* 
  * PiTiVi
- * Copyright (C) <2004> Edward G. Hervey <hervey_e@epita.fr>
- *                      Guillaume Casanova <casano_g@epita.fr>
+ * Copyright (C) <2004> Delettrez Marc <delett_m@epita.fr>
+ *                    	Pralat Raphael <pralat_r@epita.fr>  
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -64,6 +64,11 @@ struct _PitiviViewerWindowPrivate
   GtkWidget	*button_backward;
   GtkWidget	*button_forward;
   GtkWidget	*video_area;
+  GtkWidget	*timeline;
+
+  gdouble	timeline_min;
+  gdouble	timeline_max;
+  gdouble	timeline_step;
 
 };
 
@@ -101,7 +106,16 @@ void	video_backward(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
 
+  gdouble	time;
+
   g_print ("[CallBack]:video_backward\n");
+
+  time = gtk_range_get_value(GTK_RANGE (self->private->timeline));
+  if (time >= (self->private->timeline_min + self->private->timeline_step))
+    time -= self->private->timeline_step;
+  else
+    time = self->private->timeline_min;
+  gtk_range_set_value(GTK_RANGE (self->private->timeline) , time);
   return ;
 }
 
@@ -109,7 +123,24 @@ void	video_forward(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
 
+  gdouble	time;
+
   g_print ("[CallBack]:video_forward\n");
+
+  time = gtk_range_get_value(GTK_RANGE (self->private->timeline));
+  if (time <= (self->private->timeline_max - self->private->timeline_step))
+    time += self->private->timeline_step;
+  else
+    time = self->private->timeline_max;
+  gtk_range_set_value(GTK_RANGE (self->private->timeline) , time);
+  return ;
+}
+
+void	move_timeline(GtkWidget *widget, gpointer data)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+
+  g_print ("[CallBack]:move_timeline:%g\n", gtk_range_get_value(GTK_RANGE (widget)));
   return ;
 }
 
@@ -238,7 +269,17 @@ create_gui (gpointer data)
   gtk_box_pack_start (GTK_BOX (self->private->toolbar),
 		      self->private->button_stop, FALSE, TRUE, 0);
 
-  
+  // Timeline
+  self->private->timeline = gtk_hscale_new_with_range(self->private->timeline_min, 
+						      self->private->timeline_max, 
+						      self->private->timeline_step);
+  gtk_scale_set_draw_value (GTK_SCALE (self->private->timeline), FALSE);
+  gtk_signal_connect (GTK_OBJECT (self->private->timeline), "value-changed", 
+		      GTK_SIGNAL_FUNC (move_timeline), self);
+  gtk_box_pack_start (GTK_BOX (self->private->toolbar), 
+		      self->private->timeline, TRUE, TRUE, 0);
+ 
+ 
   return;
 }
 
@@ -333,6 +374,26 @@ pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
   /* initialize all public and private members to reasonable default values. */ 
   
   self->private->location = "";
+  self->private->play_status = STOP;
+
+  self->private->pipe = NULL;
+  self->private->bin_src = NULL;
+  self->private->sink = NULL;
+  self->private->spider = NULL;
+
+  self->private->main_vbox = NULL;
+  self->private->toolbar = NULL;
+  self->private->button_play = NULL;
+  self->private->button_stop = NULL;
+  self->private->button_backward = NULL;
+  self->private->button_forward = NULL;
+  self->private->video_area = NULL;
+  self->private->timeline = NULL;
+
+  self->private->timeline_min = 0;
+  self->private->timeline_max = 500;
+  self->private->timeline_step = 1;
+
   create_gui (self);
   create_stream (self);
   g_idle_add (idle_func_video, self);
