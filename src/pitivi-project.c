@@ -110,12 +110,18 @@ pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self)
 {
   xmlNodePtr	child;
   PitiviProjectSettings	*settings;
+  PitiviProjectSourceList *sourcelist;
 
   for (child = self->xmlChildrenNode; child; child = child->next) {
     if (!strcmp(child->name, "projectsettings")) {
       settings = (PitiviProjectSettings *) g_object_new (PITIVI_PROJECTSETTINGS_TYPE, NULL);
       pitivi_projectsettings_restore_thyself(settings, child);
       project->settings = settings;
+    }
+    if (!strcmp(child->name, "projectsourcelist")) {
+      sourcelist = (PitiviProjectSourceList *) g_object_new( PITIVI_PROJECTSOURCELIST_TYPE, NULL);
+      pitivi_projectsourcelist_restore_thyself(sourcelist, child);
+      project->sources = sourcelist;
     }
   }
   /*
@@ -216,12 +222,6 @@ pitivi_project_save_to_file(PitiviProject *project, const gchar *filename)
   return TRUE;
 }
 
-void
-pitivi_project_set_sources(PitiviProject *project, PitiviProjectSourceList *sources)
-{
-  project->sources = sources;
-
-}
 static GObject *
 pitivi_project_constructor (GType type,
 			    guint n_construct_properties,

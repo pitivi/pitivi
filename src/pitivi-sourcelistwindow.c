@@ -56,6 +56,7 @@ struct _PitiviSourceListWindowPrivate
   GtkWidget	*treemenu;
   GSList	*liststore;
   GtkTreeStore	*treestore;
+  guint		nbrchutier;
   /* GST variable */
   GstElement	*pipeline;
   GstCaps	*mediacaps;
@@ -66,7 +67,7 @@ struct _PitiviSourceListWindowPrivate
   gchar		*mediatype;
   gchar		*infovideo;
   gchar		*infoaudio;
-  gchar		*length;
+  gint64       	length;
 
   gboolean	havevideo;
   gboolean	haveaudio;
@@ -133,8 +134,6 @@ enum
 
 
 static guint pitivi_sourcelistwindow_signal[LAST_SIGNAL] = { 0 };
-
-static guint nbrchutier = 1;
 
 static gint projectview_signals[LAST_SIGNAL] = {0};
 
@@ -1025,7 +1024,7 @@ void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
 
   self->private->infovideo = "";
   self->private->infoaudio = "";
-  self->private->length = "";
+  self->private->length = 0;
   self->private->havevideo = FALSE;
   self->private->haveaudio = FALSE;
 
@@ -1190,10 +1189,8 @@ void	new_folder(GtkWidget *widget, gpointer data)
 
   g_object_unref(pixbufa);
 }
-
-void	new_file(GtkWidget *widget, gpointer data)
+void	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 {
-  PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
   GtkTreeIter	pIter;
   GtkListStore	*liststore;
   GdkPixbuf	*pixbufa;
@@ -1218,18 +1215,6 @@ void	new_file(GtkWidget *widget, gpointer data)
       g_free(self->private->filepath);
       return;
     }
-  /* call pitivi_projectsourcelist_add_file_to_bin */
-  add = pitivi_projectsourcelist_add_file_to_bin(((PitiviProjectWindows*)self)->project->sources, 
-						 self->private->treepath,
-						 self->private->filepath,
-						 self->private->mediatype,
-						 self->private->infovideo,
-						 self->private->infoaudio,
-						 0 /* self->private->length */,
-						 self->private->pipeline);
- 
-  if (add == FALSE)
-    return;
 
   sTexte = g_malloc(12);
   sExempleTexte = g_malloc(12);
@@ -1241,7 +1226,8 @@ void	new_file(GtkWidget *widget, gpointer data)
 /*     pixbufa = gtk_widget_render_icon(self->private->listview,  */
 /* 				     PITIVI_STOCK_EFFECT_SOUNDTV, */
 /* 				     GTK_ICON_SIZE_MENU, NULL); */
-/*   else */ if (self->private->havevideo)
+/*   else */ 
+  if (self->private->havevideo)
     pixbufa = gtk_widget_render_icon(self->private->listview, 
 				     PITIVI_STOCK_EFFECT_TV,
 				     GTK_ICON_SIZE_MENU, NULL);
@@ -1262,31 +1248,53 @@ void	new_file(GtkWidget *widget, gpointer data)
 		     &pIter, BMP_LISTCOLUMN1, pixbufa,
 		     TEXT_LISTCOLUMN2, name,
 		     TEXT_LISTCOLUMN3, self->private->mediatype,
-		     TEXT_LISTCOLUMN4, self->private->length,
+		     TEXT_LISTCOLUMN4, g_strdup_printf("%lld", self->private->length),
 		     TEXT_LISTCOLUMN5, self->private->infovideo,
 		     TEXT_LISTCOLUMN6, self->private->infoaudio,
 		     TEXT_LISTCOLUMN7, sExempleTexte,
 		     -1);
   i++;
   
-  g_free(self->private->mediatype);
+
   g_free(sTexte);
   g_free(sExempleTexte);
 
   g_object_unref(pixbufa);
+
+}
+void	new_file(GtkWidget *widget, gpointer data)
+{
+  PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
+
+  pitivi_sourcelistwindow_set_file(self);
+
  /*  pitivi_projectsourcelist_showfile(self->private->prjsrclist, selected_row); */
+  /* call pitivi_projectsourcelist_add_file_to_bin */
+  pitivi_projectsourcelist_add_file_to_bin(((PitiviProjectWindows*)self)->project->sources, 
+						 self->private->treepath,
+						 self->private->filepath,
+						 self->private->mediatype,
+						 self->private->infovideo,
+						 self->private->infoaudio,
+						 0 /* self->private->length */,
+						 self->private->pipeline);
+  
+  g_free(self->private->mediatype);
+  g_free(self->private->infovideo);
+  g_free(self->private->infoaudio);
+
 }
 
-void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
+void
+pitivi_sourcelistwindow_set_bin(PitiviSourceListWindow *self, gchar *bin_name)
 {
   GtkTreeSelection *selection;
   GdkPixbuf	*pixbufa;
   GtkTreeIter	iter;
   GtkListStore	*liststore;
 
-  pitivi_projectsourcelist_new_bin(((PitiviProjectWindows*)self)->project->sources, bin_name);
- 
-  pixbufa = gtk_widget_render_icon(self->private->treeview, GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU, NULL);
+  pixbufa = gtk_widget_render_icon(self->private->treeview, GTK_STOCK_OPEN, 
+				   GTK_ICON_SIZE_MENU, NULL);
   /* Insertion des elements */
   
   gtk_tree_store_append(self->private->treestore, &iter, NULL);
@@ -1304,14 +1312,28 @@ void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
   gtk_tree_view_set_model(GTK_TREE_VIEW(self->private->listview),
 			  GTK_TREE_MODEL(liststore));
  
+  
+
   strcpy(self->private->treepath, "0");
 
   add_liststore_for_bin(self, liststore);
 
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
+  
   gtk_tree_selection_select_iter(selection, &iter);
   
   g_object_unref(pixbufa);  
+
+  
+}
+
+void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
+{
+
+  pitivi_projectsourcelist_new_bin(((PitiviProjectWindows*)self)->project->sources, bin_name);
+ 
+  pitivi_sourcelistwindow_set_bin(self, bin_name);
+
 }
 
 GtkWidget	*create_menupopup(PitiviSourceListWindow *self, 
@@ -1633,7 +1655,7 @@ void	OnNewBin(gpointer data, gint action, GtkWidget *widget)
 
   stexte = g_malloc(12);
 
-  sprintf(stexte, "Bin %d", nbrchutier);
+  sprintf(stexte, "Bin %d", self->private->nbrchutier);
   gtk_entry_set_text(GTK_ENTRY(entry), stexte);
 
   gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, FALSE, 0);
@@ -1647,7 +1669,7 @@ void	OnNewBin(gpointer data, gint action, GtkWidget *widget)
     case GTK_RESPONSE_OK:
       sname = g_strdup(gtk_entry_get_text(GTK_ENTRY(entry)));
       new_bin(self, sname);
-      nbrchutier++;
+      self->private->nbrchutier++;
       break;
     case GTK_RESPONSE_CANCEL:
     case GTK_RESPONSE_NONE:
@@ -1936,6 +1958,38 @@ GtkWidget	*create_projectview(PitiviSourceListWindow *self)
   return pHpaned;
 }
 
+void	pitivi_sourcelistwindow_load_project(PitiviSourceListWindow *self)
+{
+  GSList	*bin_list;
+  GSList	*file_list;
+
+  bin_list = pitivi_projectsourcelist_get_bin_list(((PitiviProjectWindows*)self)->project->sources);
+
+
+  while (bin_list)
+    {
+      g_printf("============\n");
+      g_printf("%s\n", bin_list->data);
+      pitivi_sourcelistwindow_set_bin(self, bin_list->data);
+
+      file_list = pitivi_projectsourcelist_get_file_list(((PitiviProjectWindows*)self)->project->sources, bin_list->data);
+      
+      while (file_list)
+	{
+	  g_printf("%s\n", file_list->data);
+	  self->private->filepath = file_list->data;
+	  pitivi_sourcelistwindow_set_file(self);
+
+	  pitivi_projectsourcelist_set_file_property_by_name(((PitiviProjectWindows*)self)->project->sources, self->private->filepath, self->private->mediatype, self->private->infovideo, self->private->infoaudio, self->private->length, self->private->pipeline);
+	    file_list = file_list->next;
+	}
+      
+/*       pitivi_sourcelistwindow_recurse_into_folder(self, bin_list->data); */
+
+      bin_list = bin_list->next;
+      g_printf("============\n");
+    }
+}
 
 PitiviSourceListWindow *
 pitivi_sourcelistwindow_new(PitiviMainApp *mainapp, PitiviProject *project)
@@ -1960,6 +2014,7 @@ pitivi_sourcelistwindow_constructor (GType type,
 			     guint n_construct_properties,
 			     GObjectConstructParam * construct_properties)
 {
+  PitiviProject	*project;
   GObject *obj;
   {
     /* Invoke parent constructor. */
@@ -1968,8 +2023,18 @@ pitivi_sourcelistwindow_constructor (GType type,
   }
 
   /* do stuff. */
-  new_bin((PitiviSourceListWindow*)obj, g_strdup("bin 1"));
-  nbrchutier++;
+  project = ((PitiviProjectWindows *) obj)->project;
+  
+  if (pitivi_projectsourcelist_test_bin_tree(project->sources))
+    {
+      g_printf("we have loading a project\n");
+      pitivi_sourcelistwindow_load_project((PitiviSourceListWindow*)obj);
+    }
+  else
+    {
+      new_bin((PitiviSourceListWindow*)obj, g_strdup("bin 1"));
+      ((PitiviSourceListWindow*)obj)->private->nbrchutier++;
+    }
   return obj;
 }
 
@@ -2000,6 +2065,8 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   gtk_window_set_default_size(GTK_WINDOW(self), 600, 200);
 
   gtk_container_add(GTK_CONTAINER(self), self->private->hpaned);
+  
+  self->private->nbrchutier = 1;
 }
 
 static void

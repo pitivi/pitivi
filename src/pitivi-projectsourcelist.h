@@ -89,7 +89,7 @@ pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self,
 					 gchar *mediatype, gchar *infovideo,
 					 gchar *infoaudio, gint64 length,
 					 GstElement *pipeline);
-void 
+PitiviSourceBin* 
 pitivi_projectsourcelist_new_bin(PitiviProjectSourceList *self, 
 				 gchar *bin_name);
 gpointer 
@@ -109,6 +109,22 @@ pitivi_projectsourcelist_add_folder_to_bin(PitiviProjectSourceList *self,
 PitiviSourceFile *
 pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
 					gchar *treepath, gint file_pos);
+
+gboolean
+pitivi_projectsourcelist_test_bin_tree(PitiviProjectSourceList *self);
+
+GSList	*pitivi_projectsourcelist_get_bin_list(PitiviProjectSourceList *self);
+
+GSList	*pitivi_projectsourcelist_get_file_list(PitiviProjectSourceList *self,
+						gchar *parent_name);
+void
+pitivi_projectsourcelist_set_file_property_by_name(PitiviProjectSourceList *self,
+						   gchar *filename,
+						   gchar *mediatype,
+						   gchar *infovideo,
+						   gchar *infoaudio,
+						   gint64 length,
+						   GstElement *pipeline);
 
 /* only for debug */
 void	pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self, 

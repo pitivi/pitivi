@@ -79,7 +79,7 @@ PitiviSourceBin	*get_pitivisourcebin(PitiviProjectSourceList *self, gchar *treep
 	}
       *tmp++;
     }
-
+  
   *row = atoi(tmp2);
 
   for (i = 0; i < *row; i++)
@@ -87,6 +87,25 @@ PitiviSourceBin	*get_pitivisourcebin(PitiviProjectSourceList *self, gchar *treep
   g_free(save);
 
   return (*list)->data;
+}
+
+PitiviSourceBin*
+pitivi_projectsourcelist_get_bin_by_name(PitiviProjectSourceList *self,
+					 gchar *name)
+{
+  PitiviSourceBin *bin;
+  GSList	*bin_list;
+
+  bin_list = self->private->bin_tree;
+
+  while (bin_list)
+    {
+      bin = (PitiviSourceBin*)(bin_list->data);
+      if (!strcmp(bin->bin_name, name))
+	return bin;
+      bin_list = bin_list->next;
+    }
+  return NULL;
 }
 
 void
@@ -105,7 +124,10 @@ pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self,
   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
   if (sourcebin == NULL)
     return;
+    
   sourcelist = sourcebin->source;
+
+
   while (sourcelist != NULL)
     {
       g_printf("filename ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->filename);
@@ -272,7 +294,7 @@ pitivi_projectsourcelist_set_bin_name(PitiviProjectSourceList *self,
   sourcebin->bin_name = g_strdup(bin_name);
 }
 
-void
+PitiviSourceBin*
 pitivi_projectsourcelist_new_bin(PitiviProjectSourceList *self,
 				 gchar *bin_name)
 {
@@ -283,6 +305,8 @@ pitivi_projectsourcelist_new_bin(PitiviProjectSourceList *self,
   sourcebin->source = NULL;
   sourcebin->child = NULL;
   self->private->bin_tree = g_slist_append(self->private->bin_tree, sourcebin);
+
+  return sourcebin;
 }
 
 void
@@ -304,6 +328,18 @@ pitivi_projectsourcelist_add_folder_to_bin(PitiviProjectSourceList *self,
   child->child = NULL;
   
   sourcebin->child = g_slist_append(sourcebin->child, child);
+}
+
+void
+pitivi_projectsourcelist_set_file_property_by_name(PitiviProjectSourceList *self,
+						   gchar *filename,
+						   gchar *mediatype,
+						   gchar *infovideo,
+						   gchar *infoaudio,
+						   gint64 length,
+						   GstElement *pipeline)
+{
+
 }
 
 gboolean
@@ -354,10 +390,113 @@ pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
 }
 
 
-void
-pitivi_projectsourcelist_restore_thyself(PitiviProjectSourceList *SourceList, xmlNodePtr self)
+void	
+pitivi_projectsourcelist_add_source_from_xml(PitiviSourceBin *sourcebin,
+					     gchar *filename)
 {
+  PitiviSourceFile	*sourcefile;
+  
+  sourcefile = g_new0(PitiviSourceFile, 1);
 
+  sourcefile->filename = g_strdup(filename);
+  sourcefile->mediatype = "";
+  sourcefile->infovideo = "";
+  sourcefile->infoaudio = "";
+  sourcefile->length = 0;
+  sourcefile->pipeline = NULL;
+  
+  sourcebin->source = g_slist_append(sourcebin->source, sourcefile);
+  
+}
+
+
+PitiviSourceBin*
+pitivi_projectsourcelist_add_folder_from_xml(PitiviSourceBin *sourcebin,
+					      gchar *foldername)
+{
+  PitiviSourceBin	*child;
+
+  child = g_new0(PitiviSourceBin, 1);
+  child->bin_name = g_strdup(foldername);
+  child->source = NULL;
+  child->child = NULL;
+  
+  sourcebin->child = g_slist_append(sourcebin->child, child);
+
+  return child;
+}
+
+void
+pitivi_projectsourcelist_restore_in_recurse_folder(PitiviSourceBin *bin, xmlNodePtr self)
+{
+  xmlNodePtr	children;
+  PitiviSourceBin	*folder;
+
+  g_printf("xmlNodeName ==> %s\n", self->name);
+
+  if (!strcmp("file", self->name))
+    {
+      for (children = self->xmlChildrenNode; children; children = children->next)
+	{
+	  if (!strcmp("filename", children->name))
+	    pitivi_projectsourcelist_add_source_from_xml(bin, xmlNodeGetContent(children));
+	}
+    }
+  if (!strcmp("folder", self->name))
+    {
+      for (children = self->xmlChildrenNode; children; children = children->next)
+	{
+	  if (!strcmp("foldername", children->name))
+	    folder = pitivi_projectsourcelist_add_folder_from_xml(bin, xmlNodeGetContent(children));
+	  pitivi_projectsourcelist_restore_in_recurse_folder(folder, children);
+	}
+    }
+}
+
+void
+pitivi_projectsourcelist_restore_thyself(PitiviProjectSourceList *tofill, xmlNodePtr self)
+{
+  xmlNodePtr	children, little;
+  PitiviSourceBin	*bin;
+
+  for (children = self->xmlChildrenNode; children; children = children->next) 
+    {
+      if (!strcmp("bin", children->name))
+	for (little = children->xmlChildrenNode; little; little = little->next)
+	  {
+	    if (!strcmp("name", little->name))
+	      bin = pitivi_projectsourcelist_new_bin(tofill, xmlNodeGetContent(little));
+	    pitivi_projectsourcelist_restore_in_recurse_folder(bin, little);
+	  }
+    }
+/*   pitivi_projectsourcelist_showfile(tofill, "0"); */
+}
+
+
+void	pitivi_projectsourcelist_recurse_into_folder(PitiviSourceBin *sourcebin,
+						     xmlNodePtr binptr)
+{
+  xmlNodePtr	 msetptr, childptr;
+  GSList		*folderlist;
+  GSList		*sourcelist;
+  PitiviSourceFile	*sourcefile;
+  PitiviSourceBin	*childbin;
+
+  /* list of source */
+  for (sourcelist = sourcebin->source; sourcelist; sourcelist = sourcelist->next)
+    {
+      msetptr = xmlNewChild(binptr, NULL, "file", NULL);
+      sourcefile = (PitiviSourceFile*)sourcelist->data;
+      xmlNewChild (msetptr, NULL, "filename", sourcefile->filename);
+    }
+  /* list of folder */
+  for (folderlist = sourcebin->child; folderlist; folderlist = folderlist->next)
+    {
+      childbin = (PitiviSourceBin*)folderlist->data;
+      msetptr = xmlNewChild(binptr, NULL, "folder", NULL);
+      xmlNewChild (msetptr, NULL, "foldername", childbin->bin_name);
+      pitivi_projectsourcelist_recurse_into_folder(childbin, msetptr);
+    }
 }
 
 /*
@@ -369,7 +508,7 @@ pitivi_projectsourcelist_restore_thyself(PitiviProjectSourceList *SourceList, xm
 xmlNodePtr
 pitivi_projectsourcelist_save_thyself(PitiviProjectSourceList *self, xmlNodePtr parent)
 {
-  xmlNodePtr	selfptr, msetptr, binptr;
+  xmlNodePtr	selfptr, msetptr, binptr, childptr;
   GSList	*sourcelist;
   GSList	*binlist;
   GSList	*folderlist;
@@ -380,31 +519,70 @@ pitivi_projectsourcelist_save_thyself(PitiviProjectSourceList *self, xmlNodePtr 
 
   selfptr = xmlNewChild (parent, NULL, "projectsourcelist", NULL);
 
-  for (binlist = self->private->bin_tree; sourcelist; binlist = binlist->next) 
+  for (binlist = self->private->bin_tree; binlist; binlist = binlist->next) 
     {
       sourcebin = (PitiviSourceBin*) binlist->data;
 
       binptr = xmlNewChild (selfptr, NULL, "bin", NULL);
       xmlNewChild (binptr, NULL, "name", sourcebin->bin_name);
       
-      
-      /* list of source */
-      for (sourcelist = sourcebin->source; sourcelist; sourcelist = sourcelist->next)
-	{
-	  msetptr = xmlNewChild(binptr, NULL, "file", NULL);
-	  sourcefile = (PitiviSourceFile*)sourcelist->data;
-	  xmlNewChild (msetptr, NULL, "filename", sourcefile->filename);
-	}
-      for (folderlist = sourcebin->child; folderlist; folderlist = folderlist->next)
-	{
-	  msetptr = xmlNewChild(binptr, NULL, "folder", NULL);
-	  childbin = (PitiviSourceBin*)folderlist->data;
-	  xmlNewChild (msetptr, NULL, "foldername", childbin->bin_name);
-	}
+      pitivi_projectsourcelist_recurse_into_folder(sourcebin, binptr); 
     }
 
 
   return parent;
+}
+
+GSList	*pitivi_projectsourcelist_get_file_list(PitiviProjectSourceList *self,
+						gchar *parent_name)
+{
+  PitiviSourceBin *sourcebin;
+  PitiviSourceFile *sourcefile;
+  GSList	*sourcelist;
+  GSList	*list;
+
+  list = NULL;
+
+  sourcebin = pitivi_projectsourcelist_get_bin_by_name(self, parent_name);
+  
+  if (!sourcebin)
+    return list;
+
+  sourcelist = sourcebin->source;
+
+  while (sourcelist)
+    {
+      sourcefile = (PitiviSourceFile*)(sourcelist->data);
+      list = g_slist_append(list, sourcefile->filename);
+      sourcelist = sourcelist->next;
+    }
+  return list;
+}
+
+GSList	*pitivi_projectsourcelist_get_bin_list(PitiviProjectSourceList *self)
+{
+  PitiviSourceBin *sourcebin;
+  GSList	*bin_tree;
+  GSList	*list;
+  
+  list = NULL;
+  bin_tree = self->private->bin_tree;
+  while (bin_tree)
+    {
+      sourcebin = (PitiviSourceBin*)(bin_tree->data);
+      list = g_slist_append(list, sourcebin->bin_name);
+      bin_tree = bin_tree->next;
+    }
+
+  return list;
+}
+
+gboolean
+pitivi_projectsourcelist_test_bin_tree(PitiviProjectSourceList *self)
+{
+  if (self->private->bin_tree)
+    return TRUE;
+  return FALSE;
 }
 
 PitiviProjectSourceList *
