@@ -10,6 +10,9 @@ SUBDIRS			= gnl src pixmaps docs ui conf
 
 EXTRA_DIST = \
 	pitivi.spec \
+	depcomp \
+	ChangeLog \
+	autogen.sh \
 	NEWS \
 	NORME \
 	README \

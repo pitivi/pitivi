@@ -20,7 +20,7 @@ libgnl_la_SOURCES =		\
 
 BUILT_SOURCES = gnlmarshal.h gnlmarshal.c
 
-#libgnlincludedir = $(includedir)/gnl
+libgnlincludedir = $(includedir)/gnl
 
 built_headers =			\
 	gnlmarshal.h
@@ -33,11 +33,12 @@ gnl_headers =			\
 	gnloperation.h		\
 	gnlsource.h		\
 	gnltimeline.h		\
-	gnlversion.h
+	gnlversion.h		\
+	gnltypes.h
 
-#libgnlinclude_HEADERS =	$(gnl_headers) $(built_headers)
+libgnlinclude_HEADERS =	$(gnl_headers) $(built_headers)
 
-noinst_HEADERS = 	
+#oinst_HEADERS = 	
 
 gnlmarshal.h: gnlmarshal.list
 	glib-genmarshal --header --prefix=gnl_marshal $^ > gnlmarshal.h.tmp
@@ -58,6 +59,6 @@ distclean-local:
 	rm -f $(top_builddir)/gnl/gnlmarshal.c $(top_builddir)/gnl/gnlmarshal.h 
 
 
-AM_CFLAGS = -O3 -Wall -Werror $(GLIB2_CFLAGS) $(GST_CFLAGS)
-AM_LIBS = -O3 -Wall -Werror $(GLIB2_LIBS) $(GST_LIBS)
+AM_CFLAGS = -O3 -Wall -Werror $(GLIB2_CFLAGS) $(GST_CFLAGS) $(GNL_CFLAGS)
+AM_LIBS = -O3 -Wall -Werror $(GLIB2_LIBS) $(GST_LIBS) $(GNL_LIBS)
 libgnl_la_LDFLAGS =

@@ -1,5 +1,5 @@
 #include <stdlib.h>
-#include "gnl.h"
+#include <gnl/gnl.h>
 
 #define MAX_PATH_SPLIT	16
 

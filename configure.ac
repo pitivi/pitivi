@@ -122,7 +122,7 @@ dnl check for gnonlin
 dnl PKG_CHECK_MODULES(GNL, gnonlin, ,exit)
 dnl AC_SUBST(GNL_LIBS)
 dnl AC_SUBST(GNL_CFLAGS)
-GNL_CFLAGS="-I\$(top_srcdir)/gnl"
+GNL_CFLAGS="-I\$(top_srcdir)"
 GNL_LIBS="\$(top_builddir)/gnl/libgnl.la"
 AC_SUBST(GNL_CFLAGS)
 AC_SUBST(GNL_LIBS)
