@@ -230,7 +230,6 @@ pitivi_timelinemedia_set_media_start_stop (PitiviTimelineMedia *media, gint64 st
 void
 pitivi_timelinemedia_set_priority (PitiviTimelineMedia *media, gint priority)
 {
-  g_printf("pitivi_timelinemedia priority:%d\n", priority);
   gnl_object_set_priority (media->sourceitem->gnlobject, priority);
 }
 
@@ -642,15 +641,20 @@ pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *self, gpointer
   PitiviTimelineMedia *effect;
   
   se->length = self->sourceitem->srcfile->length;
-  if ( self->track->effects_track )
+  if ( self->track->effects_track)
     {
-      effect = pitivi_timelinemedia_new ( se, PITIVI_TIMELINECELLRENDERER (self->track->effects_track) );
-      gtk_widget_set_size_request (GTK_WIDGET (effect),  GTK_WIDGET (self)->allocation.width, self->track->effects_track->allocation.height);
-      pitivi_layout_put (GTK_LAYOUT (self->track->effects_track), GTK_WIDGET (effect), GTK_WIDGET (self)->allocation.x, 0);
-      gtk_widget_show (GTK_WIDGET (effect));
-      calculate_priorities ( self->track );
-      if ( self->track->linked_track )
-	calculate_priorities ( self->track->linked_track );
+      if ((strstr (se->mediatype, "audio") && self->track->track_type == PITIVI_AUDIO_TRACK)
+	  ||
+	  (strstr (se->mediatype, "video") && self->track->track_type == PITIVI_VIDEO_TRACK))
+	{
+	  effect = pitivi_timelinemedia_new ( se, PITIVI_TIMELINECELLRENDERER (self->track->effects_track) );
+	  gtk_widget_set_size_request (GTK_WIDGET (effect),  GTK_WIDGET (self)->allocation.width, self->track->effects_track->allocation.height);
+	  pitivi_layout_put (GTK_LAYOUT (self->track->effects_track), GTK_WIDGET (effect), GTK_WIDGET (self)->allocation.x, 0);
+	  gtk_widget_show (GTK_WIDGET (effect));
+	  calculate_priorities ( self->track );
+	  if ( self->track->linked_track )
+	    calculate_priorities ( self->track->linked_track );
+	}
     }
 }
 

@@ -399,7 +399,7 @@ pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
 /*       gnl_composition_add_object(GNL_COMPOSITION(project->videogroup), */
 /* 				 PITIVI_TIMELINEMEDIA(widget)->sourceitem->gnlobject);       */
 /*     } */
-    pitivi_printf_element( PITIVI_TIMELINEMEDIA(widget)->sourceitem->srcfile->pipeline );
+    // pitivi_printf_element( PITIVI_TIMELINEMEDIA(widget)->sourceitem->srcfile->pipeline );
  
     // Add to the composition
     //  Find what kind of media it is (audio/video) PITIVI_VIDEO/AUDIO_TRACK (layout->track_type)
@@ -504,6 +504,7 @@ int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
   GtkWidget **intersec;
   int	    xbegin;
   
+  g_printf ("coucou\n");
   cell = PITIVI_TIMELINECELLRENDERER (self);
   intersec = layout_intersection_widget (self, widget, x);
   if (!intersec[0] && !intersec[1])
@@ -532,7 +533,7 @@ int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
 PitiviLayerType
 check_media_type_str (gchar *media)
 {
-  if (!g_strcasecmp  (media, "effect"))
+  if (strstr  (media, "effect"))
     return (PITIVI_EFFECTS_TRACK);
   if (!g_strcasecmp  (media, "transition"))
     return (PITIVI_TRANSITION_TRACK);
@@ -672,7 +673,8 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 	}
       else if ( event->button == 3 )
 	{
-	  
+	  //self->private->menu = GTK_WIDGET (create_menupopup (widget, TimeItemPopup, iNbTimeItemPopup));
+	  //gtk_menu_popup(GTK_MENU (self->private->menu), NULL, NULL, NULL, NULL, event->button, event->time);
 	}
     }
   return FALSE;
@@ -1217,7 +1219,7 @@ pitivi_timelinecellrenderer_callb_dbk_source (PitiviTimelineCellRenderer *self, 
 {
   PitiviTimelineMedia *media;
 
-  dispose_medias (self, data, 1);
+  dispose_medias (self, data, 0);
 }
 
 static void

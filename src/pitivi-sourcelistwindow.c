@@ -1955,7 +1955,6 @@ void	on_row_activated (GtkTreeView        *listview,
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)userdata;
   PitiviWindows *window = (PitiviWindows*)self;
-  //PitiviViewerWindow	*viewerwin;
   PitiviLPlayerWindow *lplayerwin;
   GtkListStore	*liststore;
   GtkTreeIter	iter;
@@ -1985,6 +1984,7 @@ void	on_row_activated (GtkTreeView        *listview,
 	}
       return;
     }
+  //g_signal_emit_by_name (self->private->timelinewin, "double-click-source", sf);
   lplayerwin = pitivi_lplayerwindow_new (sf->filename);
 }
 

@@ -468,7 +468,7 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
 					       &video_iter[1],
 					       &tree_effect->treeiter,
 					       effectname + 6,
-					       "effect", 
+					       "video/effect", 
 					       PITIVI_STOCK_EFFECT_TV, 
 					       fx_video->data);
 	    }
@@ -479,7 +479,7 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
 					       child,
 					       &tree_effect->treeiter,
 					       effectname,
-					       "effect", 
+					       "video/effect", 
 					       PITIVI_STOCK_EFFECT_TV, 
 					       fx_video->data);
 	    } 
@@ -515,7 +515,7 @@ insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect,
 					   child, 
 					   &tree_effect->treeiter,
 					   effectname,
-					   "effect", 
+					   "audio/effect", 
 					   PITIVI_STOCK_EFFECT_SOUND, 
 					   fx_audio->data);
 	}

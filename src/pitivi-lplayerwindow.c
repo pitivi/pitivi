@@ -291,15 +291,6 @@ pitivi_lplayerwindow_class_init (gpointer g_class, gpointer g_class_data)
   gobject_class->set_property = pitivi_lplayerwindow_set_property;
   gobject_class->get_property = pitivi_lplayerwindow_get_property;
 
-  /* Install the properties in the class here ! */
-  /*   pspec = g_param_spec_string ("maman-name", */
-  /*                                "Maman construct prop", */
-  /*                                "Set maman's name", */
-  /*                                "no-name-set" /\* default value *\/, */
-  /*                                G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE); */
-  /*   g_object_class_install_property (gobject_class, */
-  /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
-  /*                                    pspec); */
   g_object_class_install_property (gobject_class,  
 				   PROP_FILENAME,   
 				   g_param_spec_string ("filename", 
