@@ -487,12 +487,16 @@ pitivi_gstelementsettings_aff_enum (PitiviGstElementSettings *self,
       GEnumValue *evalue = &class->values[i];
       
       enum_values[i] = evalue->value;
-      label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
+      //label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
+      label = g_strdup_printf ("%s", evalue->value_nick);
       gtk_combo_box_insert_text (GTK_COMBO_BOX (widget), i, label);
+      if (evalue->value == g_value_get_enum(&value)) {
+	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), i);
+      }
     }
     
     ////////////////////////////////// transformer le numero en ligne !!!!!!!!!!!!!!!!!!!!!!!!
-    gtk_combo_box_set_active (GTK_COMBO_BOX (widget), g_value_get_enum(&value));
+    //gtk_combo_box_set_active (GTK_COMBO_BOX (widget), g_value_get_enum(&value));
     
     
     if (param->flags & G_PARAM_WRITABLE) {
