@@ -636,7 +636,7 @@ pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
   /* use gstreamer to check the file type */
   
   if ( self->private->filepath ) {
-    if (!(sf = pitivi_sourcefile_new (self->private->filepath, ((PitiviWindows *) self)->mainapp)))
+    if (!(sf = pitivi_sourcefile_new (self->private->filepath, ((PitiviProjectWindows *) self)->project)))
       return NULL;
   }
   else

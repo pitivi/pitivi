@@ -29,7 +29,7 @@
 #include "pitivi-types.h"
 #include "pitivi-sourcefile.h"
 
-GstElement	*pitivi_sourcefile_bin_new (PitiviSourceFile *self, int type, PitiviMainApp *mainapp);
+GstElement	*pitivi_sourcefile_bin_new (PitiviSourceFile *self, int type, PitiviProject *project);
 GstElement	*pitivi_sourcefile_bin_new_effect (PitiviSourceFile *self, GstElementFactory *factory);
 
 #endif

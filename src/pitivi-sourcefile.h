@@ -55,7 +55,7 @@ struct  _bindata {
   GstElement	*audiofakesink;
   gboolean	audioready;
   gboolean	videoready;
-  PitiviMainApp	*mainapp;
+  PitiviProject	*project;
   gint		lastsinkid;
 };
 
@@ -124,13 +124,13 @@ GType pitivi_sourcefile_get_type (void);
  * Method definitions.
  */
 
-PitiviSourceFile	*pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp);
+PitiviSourceFile	*pitivi_sourcefile_new (gchar *filename, PitiviProject *project);
 PitiviSourceFile	*pitivi_sourcefile_new_effect (gchar *name, GstElementFactory *factory,
 						       GdkPixbuf *pixbuf, gchar *mediatype,
-						       PitiviMainApp *mainapp);
+						       PitiviProject *project);
 PitiviSourceFile	*pitivi_sourcefile_new_transition (gchar *name, GstElementFactory *factory,
 							   GdkPixbuf *pixbuf, gchar *mediatype,
-							   gint transitionid, PitiviMainApp *mainapp);
+							   gint transitionid, PitiviProject *project);
 
 GstElement		*pitivi_sourcefile_get_bin (PitiviSourceFile *sf);
 GstElement		*pitivi_sourcefile_get_audio_bin (PitiviSourceFile *sf);

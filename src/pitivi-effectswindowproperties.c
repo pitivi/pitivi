@@ -99,7 +99,7 @@ pitivi_effects_ok (GtkWidget *widget, GObject *obj)
   pitivi_set_effectproperties(self->private->io, self->private->effect);
 
   PITIVI_DEBUG ("Pitivi_ok_destroy  OK");
-  gtk_object_destroy(GTK_OBJECT(obj));
+  g_object_unref(G_OBJECT(obj));
 }
 
 static void 
@@ -181,7 +181,7 @@ pitivi_effectswindowproperties_constructor (GType type,
   button_ok = gtk_button_new_from_stock(GTK_STOCK_OK);
   gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (button_ok), TRUE, FALSE, 5);
   gtk_signal_connect (GTK_OBJECT (button_ok), "released",
-  		      GTK_SIGNAL_FUNC (pitivi_effects_ok), obj); 
+  		      GTK_SIGNAL_FUNC (pitivi_effects_ok), self); 
 
   button_apply = gtk_button_new_from_stock(GTK_STOCK_APPLY);
   gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (button_apply), TRUE, FALSE, 5);

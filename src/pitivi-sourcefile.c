@@ -31,7 +31,6 @@
 #include "pitivi-sourcefile.h"
 #include "pitivi-sourcefilebin.h"
 #include "pitivi-settings.h"
-#include "pitivi-mainapp.h"
 #include "pitivi-debug.h"
 
 static  GObjectClass *parent_class;
@@ -84,7 +83,7 @@ struct _PitiviSourceFilePrivate
 
   gint		lastsinkid;
 
-  PitiviMainApp *mainapp;
+  PitiviProject	*project;
 };
 
 
@@ -99,7 +98,7 @@ struct _PitiviSourceFilePrivate
 enum
   {
     PROP_FILENAME = 1,
-    PROP_MAINAPP,
+    PROP_PROJECT,
   };
 
 static int
@@ -552,7 +551,7 @@ pitivi_sourcefile_get_bin (PitiviSourceFile *sf)
 
   if (sf->haveeffect)
     return NULL;
-  res = pitivi_sourcefile_bin_new (sf, IS_AUDIO_VIDEO, sf->private->mainapp);
+  res = pitivi_sourcefile_bin_new (sf, IS_AUDIO_VIDEO, sf->private->project);
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
   sf->private->bins = g_slist_append(sf->private->bins, res);
   sf->nbbins++;
@@ -573,7 +572,7 @@ pitivi_sourcefile_get_audio_bin (PitiviSourceFile *sf)
 
   if (!sf->haveaudio)
     return NULL;
-  res = pitivi_sourcefile_bin_new (sf, IS_AUDIO, sf->private->mainapp);
+  res = pitivi_sourcefile_bin_new (sf, IS_AUDIO, sf->private->project);
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
   sf->private->bins = g_slist_append(sf->private->bins, res);
   sf->nbbins++;
@@ -594,7 +593,7 @@ pitivi_sourcefile_get_video_bin (PitiviSourceFile *sf)
 
   if (!sf->havevideo)
     return NULL;
-  res = pitivi_sourcefile_bin_new (sf, IS_VIDEO, sf->private->mainapp);
+  res = pitivi_sourcefile_bin_new (sf, IS_VIDEO, sf->private->project);
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
   sf->private->bins = g_slist_append(sf->private->bins, res);
   sf->nbbins++;
@@ -634,13 +633,13 @@ pitivi_sourcefile_get_effect_bin (PitiviSourceFile *sf)
 /**
  * pitivi_sourcefile_new:
  * @filename: The file to use
- * @mainapp: The #PitiviMainApp
+ * @project: The #PitiviProject
  *
  * Returns: A newly-allocated #PitiviSourceFile
  */
 
 PitiviSourceFile *
-pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp)
+pitivi_sourcefile_new (gchar *filename, PitiviProject *project)
 {
   PitiviSourceFile	*sourcefile;
   gchar			**tab;
@@ -649,8 +648,8 @@ pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp)
   sourcefile = (PitiviSourceFile *) g_object_new(PITIVI_SOURCEFILE_TYPE,
 						 "filename",
 						 filename,
-						 "mainapp",
-						 mainapp,
+						 "project",
+						 project,
 						 NULL);
   g_assert(sourcefile != NULL);
 
@@ -665,7 +664,7 @@ pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp)
     return NULL;
   }
 
-  sourcefile->pipeline = pitivi_sourcefile_bin_new (sourcefile, IS_AUDIO_VIDEO, sourcefile->private->mainapp);
+  sourcefile->pipeline = pitivi_sourcefile_bin_new (sourcefile, IS_AUDIO_VIDEO, sourcefile->private->project);
   sourcefile->thumbs = pitivi_sourcefile_get_vthumb (sourcefile, 0LL, sourcefile->length, &nbthumb);
   return sourcefile;
 }
@@ -677,19 +676,19 @@ pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp)
  * @pixbuf: The #GdkPixbuf used for this effect
  * mediatyp: The media type (transition or effect)
  * transitionid: The SMPTE id of the transition
- * @mainapp: The #PitiviMainApp
+ * @project: The #PitiviProject
  *
  * Returns: A newly-allocated #PitiviSourceFile
  */
 
 PitiviSourceFile *
 pitivi_sourcefile_new_transition (gchar *name, GstElementFactory *factory, GdkPixbuf *pixbuf,
-				  gchar *mediatype, gint transitionid, PitiviMainApp *mainapp)
+				  gchar *mediatype, gint transitionid, PitiviProject *project)
 {
   PitiviSourceFile	*sf;
 
   sf = (PitiviSourceFile *) g_object_new(PITIVI_SOURCEFILE_TYPE,
-					 "mainapp", mainapp,
+					 "project", project,
 					 NULL);
   g_assert (sf != NULL);
   sf->filename = g_strdup (name);
@@ -711,19 +710,19 @@ pitivi_sourcefile_new_transition (gchar *name, GstElementFactory *factory, GdkPi
  * @factory: The #GstElementFactory for the effect,
  * @pixbuf: The #GdkPixbuf used for this effect
  * mediatyp: The media type (transition or effect)
- * @mainapp: The #PitiviMainApp
+ * @project: The #PitiviProject
  *
  * Returns: A newly-allocated #PitiviSourceFile
  */
 
 PitiviSourceFile *
 pitivi_sourcefile_new_effect (gchar *name, GstElementFactory *factory, GdkPixbuf *pixbuf,
-			      gchar *mediatype, PitiviMainApp *mainapp)
+			      gchar *mediatype, PitiviProject *project)
 {
   PitiviSourceFile	*sf;
 
   sf = (PitiviSourceFile *) g_object_new(PITIVI_SOURCEFILE_TYPE,
-					 "mainapp", mainapp,
+					 "project", project,
 					 NULL);
   g_assert (sf != NULL);
   /* TODO : Prepare the SourceFile for effects */
@@ -836,8 +835,8 @@ pitivi_sourcefile_set_property (GObject * object,
     case PROP_FILENAME:
       this->filename = g_value_get_pointer (value);
       break;
-    case PROP_MAINAPP:
-      this->private->mainapp = g_value_get_pointer (value);
+    case PROP_PROJECT:
+      this->private->project = g_value_get_pointer (value);
       break;
     default:
       g_assert (FALSE);
@@ -857,8 +856,8 @@ pitivi_sourcefile_get_property (GObject * object,
     case PROP_FILENAME:
       g_value_set_pointer (value, this->filename);
       break;
-    case PROP_MAINAPP:
-      g_value_set_pointer (value, this->private->mainapp);
+    case PROP_PROJECT:
+      g_value_set_pointer (value, this->private->project);
       break;
     default:
       g_assert (FALSE);
@@ -885,8 +884,8 @@ pitivi_sourcefile_class_init (gpointer g_class, gpointer g_class_data)
 				   g_param_spec_pointer ("filename","filename","filename",
 							 G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
   
-  g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_MAINAPP,
-				   g_param_spec_pointer ("mainapp","mainapp","mainapp",
+  g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_PROJECT,
+				   g_param_spec_pointer ("project","Project","PitiviProject",
 							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT));
 }
 

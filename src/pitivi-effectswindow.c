@@ -276,7 +276,7 @@ pitivi_effectstree_insert_transition (PitiviEffectsWindow *win,
   pixbuf = gtk_widget_render_icon  (tree_effect->window, icon, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
   se = pitivi_sourcefile_new_transition ((gchar *) name, GST_ELEMENT_FACTORY (data), 
 					 pixbuf, (gchar *) desc, transitionid,
-					 PITIVI_WINDOWS(win)->mainapp);
+					 PITIVI_WINDOWS(win)->mainapp->project);
   gtk_tree_store_append (tree_effect->model, child, parent);
   gtk_tree_store_set(tree_effect->model, child,
 		     PITIVI_ICON_COLUMN, pixbuf,
@@ -301,7 +301,7 @@ pitivi_effectstree_insert_effect (PitiviEffectsWindow *win,
   
   pixbuf = gtk_widget_render_icon  (tree_effect->window, icon, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
   se = pitivi_sourcefile_new_effect ((gchar *) name, GST_ELEMENT_FACTORY (data), 
-				     pixbuf, (gchar *) desc, PITIVI_WINDOWS(win)->mainapp);
+				     pixbuf, (gchar *) desc, PITIVI_WINDOWS(win)->mainapp->project);
   gtk_tree_store_append (tree_effect->model, child, parent);
   gtk_tree_store_set(tree_effect->model, child,
 		     PITIVI_ICON_COLUMN, pixbuf,

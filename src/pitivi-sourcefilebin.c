@@ -229,7 +229,7 @@ bin_add_audiobin (bindata *data)
 
   if (data->audiobin)
     return;
-  lst = g_slist_next(data->mainapp->project->settings->media_settings);
+  lst = g_slist_next(data->project->settings->media_settings);
   ms = lst->data;
   tmp = g_strdup_printf ("audiobin_%s", data->sf->filename);
   data->audiobin = bin_make_new_audiobin (tmp, ms->caps);
@@ -254,7 +254,7 @@ bin_add_videobin (bindata *data)
     gchar	*tmp;
     PitiviMediaSettings	*ms;
     
-    ms = data->mainapp->project->settings->media_settings->data;
+    ms = data->project->settings->media_settings->data;
     tmp = g_strdup_printf ("videobin_%s", data->sf->filename);
     data->videobin = bin_make_new_videobin (tmp, ms->caps);
     g_free (tmp);
@@ -480,7 +480,7 @@ bin_add_outputbins (bindata *data)
 
 
 GstElement *
-pitivi_sourcefile_bin_new (PitiviSourceFile *self, int type, PitiviMainApp *mainapp)
+pitivi_sourcefile_bin_new (PitiviSourceFile *self, int type, PitiviProject *project)
 {
   GstElement	*pipeline, *decode;
   gchar		*tmp;
@@ -503,7 +503,7 @@ pitivi_sourcefile_bin_new (PitiviSourceFile *self, int type, PitiviMainApp *main
   data->bin = pipeline;
   data->sf = self;
   data->bintype = type;
-  data->mainapp = mainapp;
+  data->project = project;
   decode = gst_bin_get_by_name (GST_BIN (pipeline), "dbin");
 /*   g_signal_connect (pipeline, "state-change", G_CALLBACK (decodebin_change_state), data); */
 /*   g_signal_connect (decode, "eos", G_CALLBACK (decodebin_eos), data); */
