@@ -922,6 +922,8 @@ pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *this, gpointer
 				 GTK_WIDGET (effect), 
 				 GTK_WIDGET (this)->allocation.x, 
 				 0);
+	      pitivi_layout_add_to_composition (PITIVI_TIMELINECELLRENDERER (this->track->effects_track),
+						effect);
 	      gtk_widget_show (GTK_WIDGET (effect));		
 	    }
 	  /* ----------------------------------------------------------- */
@@ -943,16 +945,22 @@ pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *this, gpointer data)
 {
   GtkWidget *track;
   
+  g_printf("destroy media\n");
   if (this->selected)
     {
       if ( this->linked )
 	{
 	  gtk_container_remove (GTK_CONTAINER ( this->track->linked_track ), this->linked );
+	  
 	  gst_object_unref (GST_OBJECT (PITIVI_TIMELINEMEDIA (this->linked)->sourceitem->gnlobject));
+	  pitivi_layout_remove_from_composition (PITIVI_TIMELINECELLRENDERER (this->track->linked_track),
+						 PITIVI_TIMELINEMEDIA (this->linked));
 	  pitivi_calculate_priorities ( this->track->linked_track );
 	}
       track = &(*GTK_WIDGET (this->track));
       gtk_container_remove (GTK_CONTAINER ( track ), GTK_WIDGET (this) );
+      pitivi_layout_remove_from_composition (PITIVI_TIMELINECELLRENDERER (this->track),
+					     this);
       gst_object_unref (GST_OBJECT (this->sourceitem->gnlobject));
       pitivi_calculate_priorities ( track );
     }

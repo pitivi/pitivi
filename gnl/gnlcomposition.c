@@ -549,9 +549,10 @@ gnl_composition_schedule_object (GnlComposition *comp, GnlObject *object,
 static gboolean
 gnl_composition_schedule_operation (GnlComposition *comp, GnlOperation *oper, 
 				    GstClockTime start, GstClockTime stop,
-				    gint minprio, GstPad **pad)
+				    GstPad **pad)
 {
   const GList *pads;
+  gint	minprio = GNL_OBJECT(oper)->priority;
 
   GST_INFO("Composition[%s]  Operation[%s] Start[%lld] Stop[%lld]",
 	   gst_element_get_name(GST_ELEMENT(comp)),
@@ -573,6 +574,9 @@ gnl_composition_schedule_operation (GnlComposition *comp, GnlOperation *oper,
     minprio += 1;
     gnl_composition_schedule_entries (comp, start, stop, minprio, &newpad);
 
+    GST_INFO ("Linking source pad %s:%s to operation pad %s:%s",
+	      GST_DEBUG_PAD_NAME (newpad),
+	      GST_DEBUG_PAD_NAME (sinkpad));
     gst_pad_link (newpad, sinkpad);
   }
 
@@ -682,7 +686,7 @@ gnl_composition_schedule_entries(GnlComposition *comp, GstClockTime start,
   
   if (GNL_IS_OPERATION(obj))
     res = gnl_composition_schedule_operation(comp, GNL_OPERATION(obj), 
-					     start, stop, minprio, pad);
+					     start, stop, pad);
   else
     res = gnl_composition_schedule_object(comp, obj, start, stop, pad);
  

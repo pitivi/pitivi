@@ -325,7 +325,7 @@ gnl_source_set_element (GnlSource *source, GstElement *element)
     gst_object_unref (GST_OBJECT (source->element));
   }
 
-  gst_object_ref (GST_OBJECT (element));
+  //  gst_object_ref (GST_OBJECT (element));
 
   source->element = element;
   source->linked_pads = 0;

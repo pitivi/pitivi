@@ -45,6 +45,7 @@ struct _GnlOperation {
 
   guint			num_sinks;
   GstElement		*queue;
+  GstElement		*element;
 };
 
 struct _GnlOperationClass {

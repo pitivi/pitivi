@@ -134,5 +134,7 @@ GtkWidget *	pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimeline
 void		pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self );
 void		pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y);
 void		pitivi_calculate_priorities ( GtkWidget *widget );
+void		pitivi_layout_add_to_composition (PitiviTimelineCellRenderer *self, PitiviTimelineMedia *media);
+void		pitivi_layout_remove_from_composition (PitiviTimelineCellRenderer *self, PitiviTimelineMedia *media);
 
 #endif

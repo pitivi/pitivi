@@ -350,6 +350,14 @@ pitivi_calculate_priorities ( GtkWidget *widget )
   g_list_free (sublist);
 }
 
+/**
+ * pitivi_layout_add_to_composition:
+ * @self: The #PitiviTimelineCellRenderer where we wish to add
+ * @media: The #PitiviTimelineMedia to add
+ *
+ * Adds a #PitiviTimelineMedia to the underlying #GnlComposition
+ */
+
 void
 pitivi_layout_add_to_composition(PitiviTimelineCellRenderer *self, PitiviTimelineMedia *media)
 {
@@ -364,27 +372,27 @@ pitivi_layout_add_to_composition(PitiviTimelineCellRenderer *self, PitiviTimelin
 				media->sourceitem->gnlobject);
 }
 
+/**
+ * pitivi_layout_remove_from_composition:
+ * @self: The #PitiviTimelineCellRenderer from which we want to remove
+ * @media: The #PitiviTimelineMedia to remove
+ *
+ * Removes a #PitiviTimelineMedia from the underlying #GnlComposition
+ */
+
 void
 pitivi_layout_remove_from_composition(PitiviTimelineCellRenderer *self, PitiviTimelineMedia *media)
 {
   PitiviProject       *project = PITIVI_WINDOWS (self->private->timewin)->mainapp->project;
   
   if ((self->track_type == PITIVI_VIDEO_TRACK) || (self->track_type == PITIVI_TRANSITION_TRACK)
-      || (self->track_type == PITIVI_EFFECTS_TRACK))  /* Add to VideoGroup */
+      || (self->track_type == PITIVI_EFFECTS_TRACK))   /* Add to VideoGroup */
     gnl_composition_remove_object (GNL_COMPOSITION(project->videogroup),
 				media->sourceitem->gnlobject);
   else if ((self->track_type == PITIVI_AUDIO_TRACK))  /* Add to AudioGroup */
     gnl_composition_remove_object (GNL_COMPOSITION(project->audiogroup),
 				media->sourceitem->gnlobject);  
 }
-
-/*
-  pitivi_layout_put
-
-  Adds the given widget to the layout at the given x/y position
-  Updates the position of the attached GnlSource
-*/
-
 
 /**
  * pitivi_layout_put:
@@ -393,7 +401,8 @@ pitivi_layout_remove_from_composition(PitiviTimelineCellRenderer *self, PitiviTi
  * @gint: the widget position in X 
  * @gint: the widget position in Y 
  * 
- * Put a widget into a layout
+ * Adds the given widget to the layout at the given x/y position.
+ * Updates the position of the attached GnlSource.
  *
  */
 

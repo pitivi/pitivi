@@ -71,25 +71,29 @@ gnl_operation_set_element (GnlOperation *operation, GstElement *element)
 {
   const GList *walk;
 
+  operation->element = element;
+
+  gst_bin_add (GST_BIN (operation), element);
+
   walk = gst_element_get_pad_list (element);
   while (walk) {
     GstPad *pad = GST_PAD (walk->data);
 
     if (GST_PAD_IS_SRC(pad)) {
       operation->queue = gst_element_factory_make("queue", "operation-queue");
+      gst_bin_add(GST_BIN (operation), operation->queue);
       gst_element_link(element, operation->queue);
       gst_element_add_ghost_pad (GST_ELEMENT (operation),
                                  gst_element_get_pad (operation->queue, "src"),
                                  gst_object_get_name (GST_OBJECT(pad)));
-      gst_bin_add(GST_BIN (operation), operation->queue);
-    } else
+    } else {
       gst_element_add_ghost_pad (GST_ELEMENT (operation),
 				 pad, gst_object_get_name (GST_OBJECT (pad)));
-
+      operation->num_sinks++;
+    }
     walk = g_list_next (walk);
   }
 
-  gst_bin_add (GST_BIN (operation), element);
 }
 
 /**
