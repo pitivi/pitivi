@@ -148,10 +148,13 @@ static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
  * Insert "added-value" functions here
  */
 
-void move_media (GtkWidget *cell, GtkWidget *widget, guint x, gboolean move);
+
 GtkWidget **layout_intersection_widget (GtkWidget *self, GtkWidget *widget, gint x, gboolean move);
+void	    move_media (GtkWidget *cell, GtkWidget *widget, guint x, gboolean move);
 gboolean    pitivi_add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y);
 void	    link_widgets ( PitiviTimelineMedia *media1, PitiviTimelineMedia *media2);
+
+
 
 /**
  * pitivi_timelinecellrenderer_new:
@@ -1910,39 +1913,24 @@ pitivi_add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
 {
   GtkWidget **intersec = layout_intersection_widget (self, widget, x, FALSE);
   PitiviTimelineMedia *right =  PITIVI_TIMELINEMEDIA (intersec[0]);
-  PitiviTimelineMedia *left = PITIVI_TIMELINEMEDIA (intersec[1]); 
-  PitiviTimelineMedia *new_media = (PitiviTimelineMedia *) widget;
+  PitiviTimelineMedia *left = PITIVI_TIMELINEMEDIA (intersec[1]);
   int xbegin = 0;
   
   if (!right && !left)
-    {
-      new_media->next = NULL;
-      new_media->previous = NULL;
-      pitivi_layout_put (GTK_LAYOUT (self), widget, x, 0);
-    }
+    pitivi_layout_put (GTK_LAYOUT (self), widget, x, 0);
   else if (!left) /* Case intersection right */
     {
-      new_media->previous = right;
-      new_media->next = NULL;
-      right->next = new_media;
       move_media (self, widget, x, FALSE);
       xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
       pitivi_layout_put (GTK_LAYOUT (self), widget, xbegin, y);
     }
   else if (!right) /* Case intersection left */
     {
-      new_media->previous = NULL;
-      new_media->next = left;
-      left->previous = new_media;
       move_media (self, GTK_WIDGET (left), x, FALSE);
       pitivi_layout_put (GTK_LAYOUT (self), widget, x, 0);
     }
   else if (right && left) /* Case intersection on left and right */
     { 
-      left->previous = new_media;
-      new_media->next = left;
-      new_media->previous = right;
-      PITIVI_TIMELINEMEDIA (intersec[0])->next = new_media;
       xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
       pitivi_layout_put (GTK_LAYOUT (self), widget, xbegin, 0);
       move_media (self, intersec[1], xbegin, FALSE);

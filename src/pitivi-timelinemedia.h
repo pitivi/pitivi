@@ -77,10 +77,6 @@ struct _PitiviTimelineMedia
   /* private */
   
   PitiviTimelineMediaPrivate *private;
-  
-  /* Experimental previous / next media */
-  PitiviTimelineMedia *previous;
-  PitiviTimelineMedia *next;
 };
 
 struct _PitiviTimelineMediaClass
