@@ -238,7 +238,7 @@ pitivi_settingswindow_ajout_button (GtkWidget *Table, gint row, gint col,
 }
 
 void
-pitivi_settingswindow_ajout_label (GtkWidget *Table, gint row, gint col, gchar *lname, gchar *tips)
+pitivi_settingswindow_ajout_label (GtkWidget *Table, gint row, gint col, gchar *lname)
 {
   GtkWidget	*Label;
   
@@ -247,16 +247,6 @@ pitivi_settingswindow_ajout_label (GtkWidget *Table, gint row, gint col, gchar *
   gtk_misc_set_alignment (GTK_MISC (Label), 0.0, 0.5);
   pitivi_settingswindow_table_widget_add (Table, Label, row, col);
   gtk_widget_show (Label);
-
-  if (tips) {
-    /*
-      gtk_tooltips_set_tip (GTK_TOOLTIPS (Ttips), 
-      GTK_WIDGET (Label), 
-      tips, 
-      NULL);
-    */
-    g_print ("tips:%s\n", tips);
-  }
 
   return ;
 }
@@ -287,16 +277,13 @@ pitivi_settingswindow_create_row_header (GtkWidget *Table)
 {
   pitivi_settingswindow_ajout_label (Table, 0, 0, 
 				     g_locale_to_utf8 
-				     ("<b>Flux</b>", -1, NULL, NULL, NULL),
-				     NULL);
+				     ("<b>Flux</b>", -1, NULL, NULL, NULL));
   pitivi_settingswindow_ajout_label (Table, 0, 1, 
 				     g_locale_to_utf8 
-				     ("<b>Decoder</b>", -1, NULL, NULL, NULL),
-				     NULL);
+				     ("<b>Decoder</b>", -1, NULL, NULL, NULL));
   pitivi_settingswindow_ajout_label (Table, 0, 2, 
 				     g_locale_to_utf8 
-				     ("<b>Encoder</b>", -1, NULL, NULL, NULL),
-				     NULL);
+				     ("<b>Encoder</b>", -1, NULL, NULL, NULL));
 
   return ;
 }
@@ -311,10 +298,10 @@ pitivi_settingswindow_ajout_coder (GtkWidget *Box, gint row, gint col, GList *Li
     if (length != 1) {
       pitivi_settingswindow_ajout_combobox (Box, row, col, List);
     } else {
-      pitivi_settingswindow_ajout_label (Box, row, col, List->data, NULL);
+      pitivi_settingswindow_ajout_label (Box, row, col, List->data);
     }
   } else {
-    pitivi_settingswindow_ajout_label (Box, row, col, "Vide", NULL);
+    pitivi_settingswindow_ajout_label (Box, row, col, "Vide");
   }  
   return ;
 }
@@ -332,11 +319,34 @@ pitivi_settingswindow_format_flux (GstCaps *flux)
 }
 
 void
+pitivi_settingswindow_ajout_label_tips (GtkWidget *Table, gint row, gint col, gchar *lname, gchar *tips)
+{
+  GtkWidget	*Label;
+  GtkWidget	*EventBox;
+  GtkTooltips	*Ttips;
+
+  Ttips = gtk_tooltips_new ();
+
+  EventBox = gtk_event_box_new ();
+  pitivi_settingswindow_table_widget_add (Table, EventBox, row, col);
+  gtk_widget_show (EventBox);
+
+  gtk_tooltips_set_tip (Ttips, EventBox, tips, NULL);
+
+  Label = gtk_label_new (NULL);
+  gtk_label_set_markup(GTK_LABEL (Label), lname);
+  gtk_misc_set_alignment (GTK_MISC (Label), 0.0, 0.5);
+  gtk_container_add (GTK_CONTAINER (EventBox), Label);
+  gtk_widget_show (Label);
+
+  return ;
+}
+
+void
 pitivi_settingswindow_aff_row (GtkWidget *Table, PitiviSettingsMimeType *mime, gint row)
 {
-  pitivi_settingswindow_ajout_label (Table, row, 0, 
-				     pitivi_settingswindow_format_flux (mime->flux), 
-				     gst_caps_to_string (mime->flux));
+  pitivi_settingswindow_ajout_label_tips (Table, row, 0, pitivi_settingswindow_format_flux (mime->flux), 
+					  gst_caps_to_string (mime->flux));
   pitivi_settingswindow_ajout_coder (Table, row, 1, mime->decoder);
   pitivi_settingswindow_ajout_coder (Table, row, 2, mime->encoder);
 
@@ -398,7 +408,7 @@ pitivi_settingswindow_create_row_table_InOut (GList *element, GtkWidget *table,
   GList *elm;
   GtkWidget *ComboBox;
 
-  pitivi_settingswindow_ajout_label (table, row, 0, g_strdup_printf ("%s%s:\t", type, io), NULL);
+  pitivi_settingswindow_ajout_label (table, row, 0, g_strdup_printf ("%s%s:\t", type, io));
   
   elm = pitivi_settingswindow_create_list_InOut (element, g_strdup_printf ("%s/%s", io, type));
   ComboBox = pitivi_settingswindow_ajout_combobox (table, row, 1, elm);
