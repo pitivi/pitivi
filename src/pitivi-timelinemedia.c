@@ -886,6 +886,9 @@ pitivi_timelinemedia_button_press_event (GtkWidget      *widget,
     }
   else if (event->button == 3)
     {
+      this->selected = TRUE;
+      gtk_widget_grab_focus ( widget );
+      draw_media_expose (GTK_WIDGET (this));
       if (this->linked)
 	gtk_menu_popup(GTK_MENU (this->private->menu1), NULL, NULL, NULL, this, event->button, event->time);
       else
