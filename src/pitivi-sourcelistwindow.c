@@ -105,6 +105,7 @@ gboolean	my_popup_handler(gpointer data, GdkEvent *event, gpointer userdata);
 gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
 				GtkTreePath *path, gboolean path_current, 
 				gpointer user_data);
+
 enum
   {
     BMP_COLUMN,
@@ -1030,7 +1031,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   /* need to do this */
   gst_object_ref(GST_OBJECT(self->private->pipeline));
   gst_bin_remove(GST_BIN(self->private->mainpipeline), self->private->pipeline);
-  gst_object_unref(self->private->mainpipeline);
+  gst_object_unref( (GstObject *) self->private->mainpipeline);
 }
 
 void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)

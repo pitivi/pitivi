@@ -86,11 +86,11 @@ struct _PitiviViewerWindowPrivate
 
 GstElement	*get_file_source(GstElement *pipeline)
 {
-  GList	*pipelist;
+  GList		*pipelist;
   GstElement	*elem;
   
 
-  pipelist = gst_bin_get_list(GST_BIN(pipeline)); 
+  pipelist = (GList *) gst_bin_get_list(GST_BIN(pipeline)); 
   elem = NULL;
 
  
@@ -104,7 +104,7 @@ GstElement	*get_file_source(GstElement *pipeline)
   
   if (GST_IS_BIN(elem))
     {
-      pipelist = gst_bin_get_list(GST_BIN(elem));
+      pipelist = (GList *) gst_bin_get_list(GST_BIN(elem));
       while (pipelist)
 	{
 	  elem = (GstElement*)pipelist->data;
@@ -489,11 +489,18 @@ create_stream (gpointer data)
 /* 		    self->private->sink, */
 /* 		    NULL); */
 
-/*   if (!gst_element_link (self->private->bin_src, self->private->sink))  */
+/* <<<<<<< pitivi-viewerwindow.c */
+/*   if (!gst_element_link (self->private->bin_src, self->private->sink)) */
 /*     printf ("could not link elem\n"); */
+  
+/*   gst_element_set_state (self->private->pipe, GST_STATE_PLAYING); */
+/* ======= */
+  if (!gst_element_link (self->private->bin_src, self->private->sink))
+    printf ("could not link elem\n");
 
   pitivi_project_blank_source(project);
   gst_element_set_state (project->pipeline, GST_STATE_PLAYING);
+/* >>>>>>> 1.24 */
   self->private->play_status = PLAY;
   return ;
 }

@@ -54,8 +54,8 @@ typedef struct _PitiviSettingsValue PitiviSettingsValue;
 
 struct _PitiviCategorieSettings
 {
-  gchar		*name;
-  GSList	*list_settings;
+  gchar				*name;
+  GSList			*list_settings;
 };
 
 struct _PitiviProjectSettings
@@ -74,26 +74,26 @@ struct _PitiviProjectSettings
 struct _PitiviMediaSettings
 {
   /* Index of the selected codec into the combo box */
-  gint		combo_box_codec_index;
-
-  /* Index of the selected rate in the combo box */
-  gint		combo_box_rate_index;
+  gint				combo_box_codec_index;
   
-  gchar		*codec_factory_name;
-  GSList	*codec_settings;
-  GstCaps	*caps;
+  /* Index of the selected rate in the combo box */
+  gint				combo_box_rate_index;
+  
+  gchar				*codec_factory_name;
+  GList				*codec_properties;
+  GstCaps			*caps;
 };
 
 // Property
 struct _PitiviSettingsValue
 {
-  gchar		*name;
-  GValue	value;
+  gchar				*name;
+  GValue			value;
 };
 
 struct _PitiviProjectSettingsClass
 {
-  GObjectClass parent;
+  GObjectClass			parent;
   /* class members */
 };
 
@@ -105,15 +105,14 @@ GType			pitivi_projectsettings_get_type (void);
  * Method definitions.
  */
 PitiviProjectSettings	*pitivi_projectsettings_new (void);
+PitiviMediaSettings	*pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps/* , GList *property */, gint index );
+void			pitivi_projectsettings_print(PitiviProjectSettings *self);
 
-PitiviMediaSettings	*pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps, gint index );
-
-PitiviProjectSettings	*pitivi_projectsettings_new_with_name(gchar *name, gchar *desc, GSList *list);
-PitiviCategorieSettings	*pitivi_projectsettings_categorie_new(gchar *name, GSList *list_settings );
+PitiviProjectSettings	*pitivi_projectsettings_new_with_name(gchar *name, gchar *desc/* , GSList *list */);
+PitiviCategorieSettings	*pitivi_projectsettings_categorie_new(gchar *name/* , GSList *list_settings */ );
 GSList			*pitivi_projectsettings_list_make( );
 GstCaps			*pitivi_projectsettings_vcaps_create ( int width, int height, int framerate );
 GstCaps			*pitivi_projectsettings_acaps_create ( int rate, int channel );
-
 xmlNodePtr		pitivi_projectsettings_save_thyself(PitiviProjectSettings *self, xmlNodePtr parent);
 void			pitivi_projectsettings_restore_thyself(PitiviProjectSettings *tofill, xmlNodePtr self);
 PitiviProjectSettings	*pitivi_projectsettings_copy(PitiviProjectSettings *self);

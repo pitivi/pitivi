@@ -23,16 +23,22 @@
  * Boston, MA 02111-1307, USA.
  */
 
-
-
 /*
- * A FAIRE : Dans dispose() g_free de la liste des elements 
+ * A FAIRE : 
+ ********
+ ********
+ *	Dans dispose() g_free de la liste des elements 
+ ********
+ ********
+ *	PITIVI_SETTINGS_DEL_CATEGORY :
+ *		o Supprime tous les settings associes
+ ********
+ ********
  */
-
-
 
 #include "pitivi.h"
 #include "pitivi-settings.h"
+
 
 static     GObjectClass *parent_class;
 
@@ -46,21 +52,143 @@ struct _PitiviSettingsPrivate
 /*
  * forward definitions
  */
-
-
-
-
-
-
-
-
+/* Category */
+void				pitivi_settings_add_category( PitiviSettings *self, const gchar *cat_name);
+void				pitivi_settings_del_category( PitiviSettings *self, gint *position );
+/* Setting */
+void				pitivi_settings_add_setting ( PitiviSettings *self, PitiviProjectSettings *new_setting, gint *position );
+void				pitivi_settings_mod_setting ( PitiviSettings *self, PitiviProjectSettings *new_setting, gint *position );
+void				pitivi_settings_del_setting ( PitiviSettings *self, gint *position );
 /*
  * Insert "added-value" functions here
  */
 
 
+/* 
+   Add 'new_category' into the project_category when the Add_category button is clicked in the PitiviNewProjectWindow
+*/
+void
+pitivi_settings_add_category ( PitiviSettings *self, const gchar *cat_name)
+{
+  PitiviCategorieSettings	*new_category;
+  GSList			*list;
+  
+  new_category = pitivi_projectsettings_categorie_new( (gchar *) cat_name );
+  self->project_settings = g_slist_append( self->project_settings, (gpointer) new_category );
+}
 
-void		pitivi_settings_free_mime_type (PitiviSettingsMimeType *mime_type)
+/* Delete 'category' from the project_settings when the Del_category button is clicked in the PitiviNewProjectWindow */
+void
+pitivi_settings_del_category ( PitiviSettings *self, gint *position )
+{
+  PitiviCategorieSettings	*category;
+  PitiviProjectSettings		*set2del;
+  GSList			*list;
+  GSList			*list_set;
+  gint				i;
+  
+  list = self->project_settings;
+  for (i = 0; i < position[0] && list; i++)
+    list = list->next;
+  if (list) {
+    category = (PitiviCategorieSettings *) list->data;
+    for (list_set = category->list_settings; list_set; list_set = list_set->next) {
+      set2del = (PitiviProjectSettings *) list_set->data;
+      g_slist_free(set2del->media_settings);
+    }
+    g_slist_free( category->list_settings );
+    self->project_settings = g_slist_remove( self->project_settings, (gconstpointer) category );
+  }
+}
+
+
+/* Add 'reglage' into the selected category when the Add_setting button is clicked in the PitiviNewProjectWindow */
+void
+pitivi_settings_add_setting ( PitiviSettings *self, PitiviProjectSettings *new_setting, gint *position)
+{
+  GSList			*cat_list;
+  PitiviCategorieSettings	*cat;
+  PitiviProjectSettings		*reglage;
+  int				i;
+  
+  cat_list = self->project_settings;
+  for (i = 0; i < position[0] && i < g_slist_length(cat_list); i++)
+    cat_list = cat_list->next;
+  cat = (PitiviCategorieSettings *) cat_list->data;
+  cat->list_settings = g_slist_append( cat->list_settings, (gpointer) new_setting );
+  
+/*   g_print("\n\n\nDans settings_add_setting : \n"); */
+/*   pitivi_projectsettings_print(new_setting); */
+}
+
+/* Modify 'reglage' into the selected category when the Mod_setting button is clicked in the PitiviNewProjectWindow */
+void
+pitivi_settings_mod_setting ( PitiviSettings *self, PitiviProjectSettings *new_setting, gint *position )
+{
+  GSList			*cat_list;
+  GSList			*set_list;
+  PitiviProjectSettings		*set2modify;
+  PitiviCategorieSettings	*cat;
+  gint				i;
+
+  cat_list = self->project_settings;
+  for (i = 0; i < position[0] && cat_list; i++)
+    cat_list = cat_list->next;
+  cat = (PitiviCategorieSettings *) cat_list->data;
+
+  set_list = cat->list_settings;
+  for (i = 0; i < position[1] && set_list; i++)
+    set_list = set_list->next;
+  set2modify = (PitiviProjectSettings *) set_list->data;
+  g_slist_free(set2modify->media_settings);
+
+  cat->list_settings = g_slist_remove(cat->list_settings, (gconstpointer) set2modify);
+  cat->list_settings = g_slist_insert(cat->list_settings, (gpointer) new_setting, position[1]);
+}
+
+
+/* Delete 'reglage' into the selected category when
+   the Del_setting button is clicked in the PitiviNewProjectWindow */
+void
+pitivi_settings_del_setting ( PitiviSettings *self, gint *position )
+{
+  PitiviCategorieSettings	*category;
+  PitiviProjectSettings		*del_setting;
+  
+  category = (PitiviCategorieSettings *) g_slist_nth_data( self->project_settings, position[0] );
+  del_setting = (PitiviProjectSettings *) g_slist_nth_data( category->list_settings , position[1]);
+  category->list_settings = g_slist_remove( category->list_settings, (gconstpointer) del_setting );
+}
+
+
+/* Return The category selected in the GtkTreeStore */
+PitiviCategorieSettings *
+pitivi_settings_get_selected_category( PitiviSettings *self, gint *position )
+{
+  PitiviCategorieSettings	*selected_category;
+
+  selected_category = (PitiviCategorieSettings *)
+    g_slist_nth_data(self->project_settings, position[0] );
+  return (selected_category);
+}
+
+/* Return The category selected in the GtkTreeStore */
+PitiviProjectSettings *
+pitivi_settings_get_selected_setting( PitiviSettings *self, gint *position )
+{
+  PitiviCategorieSettings	*selected_category;
+  PitiviProjectSettings		*selected_setting;
+
+  selected_category = (PitiviCategorieSettings *)
+    g_slist_nth_data(self->project_settings, position[0] );
+  selected_setting = (PitiviProjectSettings *)
+    g_slist_nth_data(selected_category->list_settings, position[1] );
+  return (selected_setting);
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+void
+pitivi_settings_free_mime_type (PitiviSettingsMimeType *mime_type)
 {
   g_free (mime_type->flux);
   g_list_free (mime_type->encoder);
@@ -145,7 +273,7 @@ void		pitivi_settings_aff_all_list (GList *list)
 /* 
    initialise une nouvelle structure 
    pour un nouveau flux
-0*/
+*/
 PitiviSettingsMimeType *
 pitivi_settings_init_mime_type (GstCaps *flux)
 {
@@ -170,7 +298,7 @@ pitivi_settings_search_flux (GList *list, GstCaps *flux)
   
   for (; list; list = g_list_next (list)) {
     tmp = (PitiviSettingsMimeType *) list->data;
-    if (gst_caps_is_equal (tmp->flux, flux)) {
+    if ( gst_caps_is_equal (tmp->flux, flux ) ) {
       return (tmp);
     }
   }
@@ -227,6 +355,7 @@ my_list_find(gchar *txt, GList *list)
   }
   return FALSE;
 }
+
 /* 
    ajoute un l element factory name
    dans la list (encoder|decoder) 
@@ -235,7 +364,7 @@ my_list_find(gchar *txt, GList *list)
 */
 PitiviSettingsMimeType *
 pitivi_settings_ajout_factory_element (PitiviSettingsMimeType *tmp, 
-		       gchar *element, gboolean MY_PAD)
+				       gchar *element, gboolean MY_PAD)
 {
 
   if (MY_PAD == GST_PAD_SRC) {
@@ -325,7 +454,7 @@ GList *
 pitivi_settings_get_flux_codec_list (GObject *object, GstCaps *flux, gboolean LIST)
 {
   PitiviSettings *self = (PitiviSettings *) object;
-
+  
   return (pitivi_settings_get_flux_coder_list (self->codec, flux, LIST));
 }
 
@@ -422,6 +551,76 @@ pitivi_settings_get_xml_list(xmlNodePtr self)
   return res;
 }
 
+GSList *
+pitivi_settings_get_xml_project_settings(xmlNodePtr self)
+{
+  PitiviCategorieSettings	*cat_tmp;
+  PitiviProjectSettings		*ps_tmp;
+  PitiviMediaSettings		*m_tmp;
+  GSList			*res;
+  xmlNodePtr			child, children, children2, children3;
+  
+  for (res = NULL, child = self->xmlChildrenNode; child; child = child->next) {
+    if (!strcmp(child->name, "categoriesettings")) {
+      /*########### CATEGORIESETTINGS ############*/
+      for (children = child->xmlChildrenNode; children; children = children->next)
+	/* res = NULL, child = self->xmlChildrenNode; child; child = child->next) */ {
+	
+	if (!strcmp(children->name, "name")) {
+	  cat_tmp = g_new0(PitiviCategorieSettings, 1);
+	  cat_tmp->list_settings = NULL;
+	  cat_tmp->name = g_strdup(xmlNodeGetContent(children));
+	  g_print("Categorie Name = %s\n", cat_tmp->name);
+	  
+	  /*########### PROJECTSETTINGS ###########*/
+	  for ( ; children->next; children = children->next ) {
+	    if (!strcmp(children->next->name, "list_settings")) {
+	      g_print("IL PASSE dans les settings\n");
+	      ps_tmp = g_new0(PitiviProjectSettings, 1);
+	      ps_tmp->media_settings = NULL;
+	      
+	      for (children2 = children->next->xmlChildrenNode; children2; children2 = children2->next) {
+		if ( !strcmp(children2->name, "name") ) {
+		  ps_tmp->name = g_strdup(xmlNodeGetContent(children2));
+		  g_print("ProjectSetting Name = %s\n", ps_tmp->name);
+		} else if ( !strcmp(children2->name, "description") ) {
+		  ps_tmp->description = g_strdup(xmlNodeGetContent(children2));
+		  g_print("ProjectSetting Description = %s\n", ps_tmp->description);
+		} 
+
+		/*########### MEDIASETTINGS ###########*/
+		else if ( !strcmp(children2->name, "media_settings") ) {
+		  g_print("IL PASSE dans les medias\n");
+		  m_tmp = g_new0(PitiviMediaSettings, 1);
+		  for (children3 = children2->xmlChildrenNode; children3; children3 = children3->next) {
+		    if ( !strcmp(children3->name, "codec_factory_name") ) {
+		      m_tmp->codec_factory_name = g_strdup(xmlNodeGetContent(children3));
+		      g_print("MediaSetting Codec_Factory_Name = %s\n", m_tmp->codec_factory_name);
+		    } else if ( !strcmp(children3->name, "caps") ) {
+		      m_tmp->caps = gst_caps_from_string( xmlNodeGetContent( children3 ) );
+		      g_print("MediaSetting Caps = %s\n", gst_caps_to_string(m_tmp->caps) );
+		    }
+		  }
+		  ps_tmp->media_settings = g_slist_append(ps_tmp->media_settings, m_tmp);
+		}
+		/*########### END MEDIASETTINGS ###########*/
+
+
+	      }
+	      cat_tmp->list_settings = g_slist_append(cat_tmp->list_settings, ps_tmp);
+	    /*########### END PROJECTSETTINGS ###########*/
+	    }
+	  }
+	  res = g_slist_append(res, cat_tmp);
+	}
+	g_print("IL PASSE 3\n");
+      }
+    }
+  }
+  /*   exit (0); */
+  return res;
+}
+
 void
 pitivi_settings_restore_thyself(PitiviSettings *settings, xmlNodePtr self)
 {
@@ -435,22 +634,23 @@ pitivi_settings_restore_thyself(PitiviSettings *settings, xmlNodePtr self)
       settings->codec = pitivi_settings_get_xml_list(child);
     } else if (!strcmp(child->name, "parser")) {
       settings->parser = pitivi_settings_get_xml_list(child);
+    } else if (!strcmp(child->name, "project_settings")) {
+      settings->project_settings = pitivi_settings_get_xml_project_settings(child);
     }
   }
 }
 
 /*
   pitivi_settings_xml_epure_list
-
   Returns a xml formatted list with only the first elements of multiple lists
 */
-
 void
 pitivi_settings_xml_epure_list(GList *list, xmlNodePtr parent)
 {
-  GList	*res = NULL;
-  xmlNodePtr	mime;
+  GList				*res = NULL;
+  xmlNodePtr			mime;
   PitiviSettingsMimeType	*tmp, *toadd;
+
 
   for (; list; list = list->next) {
     tmp = (PitiviSettingsMimeType *) list->data;
@@ -469,22 +669,70 @@ pitivi_settings_xml_epure_list(GList *list, xmlNodePtr parent)
   }
 }
 
+/*
+  pitivi_settings_xml_epure_project_list
+  Returns a xml formatted list of the ProjectSettings set by the user
+*/
+void
+pitivi_settings_xml_epure_project_settings(GSList *list, xmlNodePtr parent)
+{
+  GSList			*res, *list_tmp, *list_tmp2;
+  xmlNodePtr			cat, cat_set, mime, mime2;
+  PitiviCategorieSettings	*cat_tmp;
+  PitiviProjectSettings		*ps_tmp;
+  PitiviMediaSettings		*m_tmp;
+
+  for ( res = list; res; res = res->next ) 
+    {
+      cat_tmp = (PitiviCategorieSettings *) res->data;
+      g_print("CATEGORIE NAME : %s.\n", cat_tmp->name);
+      if (cat_tmp) {
+	cat = xmlNewChild (parent, NULL, "categoriesettings", NULL );
+	cat_set = xmlNewChild (cat, NULL, "name", (char *) cat_tmp->name );
+
+	for ( list_tmp = cat_tmp->list_settings; list_tmp; list_tmp = list_tmp->next) {
+	  ps_tmp = (PitiviProjectSettings *) list_tmp->data;
+	  if ( ps_tmp )
+	    {
+	      g_print("\nSauvegrade des project settings\n");
+	      pitivi_projectsettings_print(ps_tmp);
+	      mime = xmlNewChild(cat, NULL, "list_settings", NULL);
+	      xmlNewChild (mime, NULL, "name", (char *) ps_tmp->name );
+	      xmlNewChild (mime, NULL, "description", (char *) ps_tmp->description );
+
+	      for ( list_tmp2 = ps_tmp->media_settings; list_tmp2; list_tmp2 = list_tmp2->next) {
+		m_tmp = (PitiviMediaSettings *) list_tmp2->data;
+		if ( m_tmp )
+		  {
+		    g_print("\nSauvegrade des medias\n");
+		    mime2 = xmlNewChild(mime, NULL, "media_settings", NULL);
+		    xmlNewChild (mime2, NULL, "codec_factory_name", (char *) m_tmp->codec_factory_name );
+		    xmlNewChild (mime2, NULL, "caps", gst_caps_to_string(m_tmp->caps) );
+		  }
+	      }
+	    }
+	}
+      }
+    }
+}
+
 xmlDocPtr
 pitivi_settings_save_thyself(PitiviSettings *settings)
 {
-  xmlDocPtr doc;
-  xmlNodePtr projectnode;
-  xmlNodePtr container, codecs, parser;
-  xmlNsPtr ns;
+  xmlDocPtr	doc;
+  xmlNodePtr	projectnode;
+  xmlNodePtr	container, codecs, parser, project_settings;
+  xmlNsPtr	ns;
+
 
   doc = xmlNewDoc ("1.0");
-
+  
   doc->xmlRootNode = xmlNewDocNode (doc, NULL, "pitivi", NULL);
-
+  
   ns = xmlNewNs (doc->xmlRootNode, "http://pitivi.org/pitivi-core/0.1/", "pitivi");
-
+  
   projectnode = xmlNewChild (doc->xmlRootNode, ns, "settings", NULL);
-
+  
   container = xmlNewChild (projectnode, ns, "container", NULL);
   pitivi_settings_xml_epure_list (settings->container, container);
 
@@ -494,14 +742,15 @@ pitivi_settings_save_thyself(PitiviSettings *settings)
   parser = xmlNewChild (projectnode, ns, "parser", NULL);
   pitivi_settings_xml_epure_list (settings->parser, parser);
   
-  return doc;    
+  project_settings = xmlNewChild (projectnode, ns, "project_settings", NULL);
+  pitivi_settings_xml_epure_project_settings (settings->project_settings, project_settings);
+  
+  return doc;
 }
 
 /*
   pitivi_settings_load_from_file
-
   Creates a PitiviSettings from the settings contained in filename
-
   Returns the created PitiviSettings or NULL if there was a problem
 */
 
@@ -533,13 +782,12 @@ pitivi_settings_load_from_file(const gchar *filename)
     return NULL;
 
   /* Actually extract the contents */
-
   for (field = cur->xmlChildrenNode; field; field = field->next)
     if (!strcmp (field->name, "settings") && (field->ns == ns)) {
       /* found the PitiviSettings */
       settings = (PitiviSettings *) g_object_new (PITIVI_SETTINGS_TYPE, NULL);
       pitivi_settings_restore_thyself(settings, field);
-      continue;
+      continue ;
     }
   
   //pitivi_settings_aff_all_list (settings->container);
@@ -563,13 +811,13 @@ pitivi_settings_load_from_file(const gchar *filename)
 gboolean
 pitivi_settings_save_to_file(PitiviSettings *settings, const gchar *filename)
 {
-  xmlDocPtr		cur;
-  xmlOutputBufferPtr	buf;
-  const char		*encoding;
-  xmlCharEncodingHandlerPtr handler = NULL;
-  int			indent;
-  gboolean		ret;
-  FILE			*out;
+  xmlDocPtr			cur;
+  xmlOutputBufferPtr		buf;
+  const char			*encoding;
+  xmlCharEncodingHandlerPtr 	handler = NULL;
+  int				indent;
+  gboolean			ret;
+  FILE				*out;
 
   cur = pitivi_settings_save_thyself (settings);
   if (!cur)
@@ -623,6 +871,7 @@ pitivi_settings_new(void)
 
   settings = (PitiviSettings *) g_object_new(PITIVI_SETTINGS_TYPE, NULL);
   pitivi_settings_scan_registry(settings);
+  
   g_assert(settings != NULL);
   return settings;
 }
@@ -661,6 +910,7 @@ pitivi_settings_instance_init (GTypeInstance * instance, gpointer g_class)
   self->container = NULL;
   self->parser = NULL;
   self->element = NULL;
+  self->project_settings = NULL;
 
 }
 

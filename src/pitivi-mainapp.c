@@ -37,12 +37,6 @@
 /*   media_setting->caps = gst_caps_new_simple ("my_caps", "audio/wav",  */
 /* 					     NULL); */
 
-/* 
-   - Affichage des champs des Settings lorsqu'on clique sur un reglage de la liste
-   - Modifier un reglage
-   - Supprimer un reglage de la liste de PitiviProjectSettings
-*/
-
 #include <gst/gst.h>
 #include "pitivi.h"
 #include "pitivi-mainapp.h"
@@ -64,7 +58,6 @@ struct _PitiviMainAppPrivate
 {
   /* instance private members */
   gboolean			dispose_has_run;
-  GSList			*project_settings_list;
   PitiviToolboxWindow		*tbxwin;
   PitiviNewProjectWindow	*win_new_project;
   PitiviSettings		*global_settings;
@@ -111,98 +104,12 @@ pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
   PitiviMainApp *mainapp = PITIVI_WINDOWS(pWidget)->mainapp;
   gchar	*conf;
 
-
   conf = g_strdup_printf("%s/.pitivi", g_get_home_dir());
   /* Save settings before exiting */
   if (pitivi_settings_save_to_file(mainapp->private->global_settings, conf) == FALSE)
     g_printf("Error saving configuration file");
   g_free(conf);
   gtk_main_quit();
-}
-
-/* 
-   Add 'new_category' into the project_category_list when 
-   the Add_category is clicked in the PitiviNewProjectWindow
-*/
-void
-pitivi_mainapp_add_newcategory (PitiviMainApp *self, 
-				const gchar *cat_name)
-{
-  PitiviCategorieSettings	*new_category;
-  
-  new_category = pitivi_projectsettings_categorie_new( (gchar *) cat_name, NULL );
-  self->private->project_settings_list = 
-    g_slist_append( self->private->project_settings_list, (gpointer) new_category );
-}
-
-/* 
-   Add 'new_setting' into the project_settings_list when 
-   the Add_button is clicked in the PitiviNewProjectWindow
-*/
-void
-pitivi_mainapp_add_settings ( PitiviMainApp *self, 
-			      PitiviProjectSettings *new_setting,
-			      gint *position )
-{
-  PitiviCategorieSettings	*category;
-  PitiviProjectSettings		*reglage;
-  
-  category = (PitiviCategorieSettings *) g_slist_nth_data(self->private->project_settings_list, position[0] );
-  category->list_settings = g_slist_append( category->list_settings, (gpointer) new_setting );
-}
-
-
-void
-pitivi_mainapp_modif_settings( PitiviMainApp *self, 
-			       PitiviProjectSettings *new_setting, 
-			       gint *position )
-{
-  PitiviCategorieSettings	*category;
-  PitiviProjectSettings		*mod_setting;
-  
-  category = (PitiviCategorieSettings *) g_slist_nth_data(self->private->project_settings_list, position[0] );
-  mod_setting = (PitiviProjectSettings *) g_slist_nth_data( category->list_settings , position[1] );
-  
-  category->list_settings = g_slist_remove( category->list_settings, (gconstpointer) mod_setting);
-  category->list_settings = g_slist_insert( category->list_settings, (gpointer) new_setting, position[1] );
-}
-
-
-void
-pitivi_mainapp_del_settings( PitiviMainApp *self, gint *position )
-{
-  PitiviCategorieSettings	*category;
-  PitiviProjectSettings		*del_setting;
-
-  category = (PitiviCategorieSettings *) g_slist_nth_data(self->private->project_settings_list, position[0] );
-  del_setting = (PitiviProjectSettings *) g_slist_nth_data( category->list_settings , position[1] );
-  category->list_settings = g_slist_remove( category->list_settings, (gconstpointer) del_setting);
-}
-
-
-
-
-/*
-    Return The category selected in the GtkTreeStore
-*/
-PitiviCategorieSettings *
-pitivi_mainapp_get_selected_category( PitiviMainApp *self, gint *position )
-{
-  PitiviCategorieSettings	*selected_category;
-
-  selected_category = (PitiviCategorieSettings *) 
-    g_slist_nth_data(self->private->project_settings_list, position[0] );
-  
-  return (selected_category);
-}
-
-/* 
-   Return the GSList of PitiviCategorySettings
-*/
-GSList *
-pitivi_mainapp_project_settings(PitiviMainApp *self)
-{
-  return ( self->private->project_settings_list );
 }
 
 void
@@ -360,25 +267,25 @@ pitivi_mainapp_constructor (GType type,
   }
 
   /* do stuff. */
-
   self = (PitiviMainApp *) obj;
+
   /* Lancement du splash screen */
   self->private->splash_screen = pitivi_splashscreenwindow_new();
   usleep (5);
+
   /* Enregistrement des Icones */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.0, "Loading Register Stockicons");
   pitivi_stockicons_register ();
-  /* Creation de la liste des settings par default */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.2, "Loading Default Settings");
-  self->private->project_settings_list = pitivi_projectsettings_list_make();
+/*   self->private->project_settings = pitivi_projectsettings_list_make(); */
 
   /* Creation des settings globaux */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.4, "Loading Global Settings");
   settingsfile = g_strdup_printf("%s/.pitivi", g_get_home_dir());
-  if (g_file_test(settingsfile, G_FILE_TEST_EXISTS))
+  if ( g_file_test(settingsfile, G_FILE_TEST_EXISTS) )
     self->private->global_settings = pitivi_settings_load_from_file(settingsfile);
   else
     self->private->global_settings = pitivi_settings_new();
@@ -388,6 +295,7 @@ pitivi_mainapp_constructor (GType type,
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.6, "Loading Toolbox");
   self->private->tbxwin = pitivi_toolboxwindow_new(self);
+
   /* Connection des Signaux */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.8, "Loading Signals");

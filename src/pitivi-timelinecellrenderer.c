@@ -63,6 +63,7 @@ struct _PitiviTimelineCellRendererPrivate
 /*
  * forward definitions
  */
+void				pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
 
 // Properties Enumaration
 

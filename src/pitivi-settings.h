@@ -33,6 +33,7 @@
 #include <string.h>
 
 
+#include "pitivi-projectsettings.h"
 
 /*
  * Type macros.
@@ -70,12 +71,13 @@ struct _PitiviSettings
   GObject parent;
 
   /* instance public members */
-
   GList		*container;
   GList		*codec;
   GList		*parser;
   GList		*element;
-  
+
+  GSList	*project_settings;
+
   /* private */
   PitiviSettingsPrivate *private;
 };
@@ -87,25 +89,19 @@ struct _PitiviSettingsClass
 };
 
 /* used by PITIVI_SETTINGS_TYPE */
-GType pitivi_settings_get_type (void);
+GType		pitivi_settings_get_type (void);
 
 /*
  * Method definitions.
  */
+PitiviCategorieSettings		*pitivi_settings_get_selected_category	( PitiviSettings *self, gint *position );
+PitiviProjectSettings		*pitivi_settings_get_selected_setting	( PitiviSettings *self, gint *position );
 
-PitiviSettings	*pitivi_settings_new(void);
-
-GList			*pitivi_settings_get_flux_codec_list (GObject *object, 
-							      GstCaps *flux, 
-							      gboolean LIST);
-GList			*pitivi_settings_get_flux_container_list (GObject *object, 
-								  GstCaps *flux, 
-								  gboolean LIST);
-GList			*pitivi_settings_get_flux_parser_list (GObject *object, 
-								  GstCaps *flux, 
-								  gboolean LIST);
-PitiviSettings		*pitivi_settings_load_from_file(const gchar	*filename);
-gboolean		pitivi_settings_save_to_file(PitiviSettings	*settings,
-						      const gchar	*filename);
+PitiviSettings			*pitivi_settings_new(void);
+GList				*pitivi_settings_get_flux_codec_list (GObject	*object, GstCaps *flux, gboolean LIST);
+GList				*pitivi_settings_get_flux_container_list (GObject *object, GstCaps *flux, gboolean LIST);
+GList				*pitivi_settings_get_flux_parser_list (GObject	*object, GstCaps *flux, gboolean LIST);
+PitiviSettings			*pitivi_settings_load_from_file(const gchar	*filename);
+gboolean			pitivi_settings_save_to_file(PitiviSettings	*settings, const gchar	*filename);
 
 #endif

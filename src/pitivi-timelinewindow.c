@@ -104,6 +104,8 @@ static  guint signals[LAST_SIGNAL];
 
 GtkWidget *
 pitivi_timelinewindow_get_main_vbox_right(PitiviTimelineWindow *self) {
+  if (!self)
+    return NULL;
   return self->private->main_vbox_right;
 }
 
