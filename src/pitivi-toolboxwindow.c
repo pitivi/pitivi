@@ -26,16 +26,6 @@
 
 #include "pitivi.h"
 #include "pitivi-toolboxwindow.h"
-#include "pitivi-menu.h"
-#include "pitivi-stockicons.h"
-#include "pitivi-toolbox.h"
-#include "pitivi-timelinewindow.h"
-#include "pitivi-sourcelistwindow.h"
-#include "pitivi-effectswindow.h"
-#include "pitivi-projectsettings.h"
-#include "pitivi-newprojectwindow.h"
-#include "pitivi-viewerwindow.h"
-
 
 static GtkWindowClass	*parent_class = NULL;
 
@@ -89,23 +79,33 @@ pitivi_callb_toolbox_exit ( GtkAction *action, PitiviToolboxWindow *self )
 
 void
 pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *self )
-{
-  PitiviTimelineWindow *timelinewin;
-  PitiviSourceListWindow *srclistwin;
-  PitiviEffectsWindow *effectswin;
-  PitiviViewerWindow *viewerwin;
-    
+{    
   /* Source List Window */
-  timelinewin = pitivi_timelinewindow_new();
-  gtk_widget_show_all (GTK_WIDGET (timelinewin) ); 
-  /* Source List Window */
-  srclistwin = pitivi_sourcelistwindow_new();
-  gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
-  /* Effects Window */
-  effectswin = pitivi_effectswindow_new();
-  gtk_widget_show_all (GTK_WIDGET (effectswin) );
   
-  viewerwin = pitivi_viewerwindow_new();
+  if (self->timelinewin == NULL)
+    {
+      self->timelinewin = pitivi_timelinewindow_new();
+      gtk_widget_show_all (GTK_WIDGET (self->timelinewin) ); 
+    }
+
+  /* Source List Window */
+  
+  if (self->srclistwin == NULL)
+    {
+      self->srclistwin = pitivi_sourcelistwindow_new();
+      gtk_widget_show_all (GTK_WIDGET (self->srclistwin) );
+    }
+  
+  /* Effects Window */
+  
+  if (self->viewerwin == NULL)
+    {
+      self->effectswin = pitivi_effectswindow_new();
+      gtk_widget_show_all (GTK_WIDGET (self->effectswin) );
+    }
+  
+  if (self->viewerwin == NULL)
+    self->viewerwin = pitivi_viewerwindow_new();
 }
 
 static GtkActionEntry toolbox_menu_entries[] = {

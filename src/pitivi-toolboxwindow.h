@@ -33,6 +33,15 @@
  */
 #include <gtk/gtk.h>
 #include "pitivi-mainapp.h"
+#include "pitivi-menu.h"
+#include "pitivi-stockicons.h"
+#include "pitivi-toolbox.h"
+#include "pitivi-timelinewindow.h"
+#include "pitivi-sourcelistwindow.h"
+#include "pitivi-effectswindow.h"
+#include "pitivi-projectsettings.h"
+#include "pitivi-newprojectwindow.h"
+#include "pitivi-viewerwindow.h"
 
 /*
  * Type macros.
@@ -56,8 +65,14 @@ struct _PitiviToolboxWindow
   GtkWindow parent;
 
   /* instance public members */
-
+  
+  PitiviTimelineWindow	 *timelinewin;
+  PitiviSourceListWindow *srclistwin;
+  PitiviEffectsWindow	 *effectswin;
+  PitiviViewerWindow	 *viewerwin;
+  
   /* private */
+  
   PitiviToolboxWindowPrivate *private;
 };
 
