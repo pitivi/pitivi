@@ -19,6 +19,7 @@ pitivi_SOURCES		= \
 	pitivi-toolbox.c \
 	pitivi-effectswindow.c\
 	pitivi-timelinewindow.c\
+	pitivi-timelinecellrenderer.c\
 	pitivi-toolboxwindow.c	\
 	pitivi-sourcelistwindow.c \
 	pitivi-projectsourcelist.c \

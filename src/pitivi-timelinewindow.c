@@ -30,16 +30,19 @@ static  GtkWindowClass *parent_class = NULL;
 
 typedef struct _PitiviTreeView
 {
-  GtkWidget     *window;
-  GtkWidget     *label;
-  GtkWidget     *treeview;
-  GtkTreeStore	*model;
-  GtkTreeIter	treeiter;
-  GdkPixbuf	*pixbuf;
-  GtkWidget     *scroll;
-  guint		order;
+  GtkWidget	    *window;
+  GtkWidget	    *label;
+  GtkWidget	    *view;
+  GtkTreeStore	    *model;
+  GtkTreeIter	    treeiter;
+  GdkPixbuf	    *pixbuf;
+  GtkWidget	    *scroll;
+  GtkCellRenderer   *cellrenderer;
+  GList		    *columns;
+  guint		    order;
 
 } PitiviTreeView;
+
 
 struct _PitiviTimelineWindowPrivate
 {
@@ -51,8 +54,7 @@ struct _PitiviTimelineWindowPrivate
   GtkWidget	*main_vbox;
   
   GtkWidget	 *hpaned;
-  PitiviTreeView *treelayersview;
-  PitiviTreeView *listlayersview;
+  PitiviTreeView *treelayers;
   
   /* StatusBar */
 
@@ -65,6 +67,7 @@ struct _PitiviTimelineWindowPrivate
   GdkCursor     *cursor;
   GList         *operations;  
 };
+
 
 /*
  * forward definitions
@@ -85,22 +88,19 @@ enum {
 };
 
 enum {
-    PITIVI_TEXT_COLUMN,
+    PITIVI_CAT_LAYER_COLUMN = 0,
+    PITIVI_LAYER_COLUMN,
     PITIVI_NB_COLUMN,
 };
 
 static GtkTargetEntry drop_types[] = {
 	{ "text/uri-list", 0, DND_TYPE_TEXT }
 };
+
 static  int num_drop_types = sizeof (drop_types) / sizeof (drop_types[0]);
 
 static  GtkActionGroup *actions_group[EA_LAST_ACTION];
 static  guint signals[LAST_SIGNAL];
-
-
-
-PitiviTreeView		*pitivi_timelinewindow_create_listview (void);
-
 
 
 /*
@@ -111,11 +111,11 @@ PitiviTreeView		*pitivi_timelinewindow_create_listview (void);
 static void
 statusbar_set_frames (GtkWidget *statusbar,
 		      PitiviTimelineWindow *window,
-		      guint64 frames)
+		      gchar *msg)
 {
   gchar *display;
 
-  display = g_strdup_printf ("%llu", frames);
+  display = g_strdup_printf ("%s", msg);
   gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
   gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, display);
   g_free (display);
@@ -162,7 +162,7 @@ pitivi_callb_drag_data_received (GObject *object,
 }
 
 PitiviTimelineWindow *
-pitivi_timelinewindow_new(void)
+pitivi_timelinewindow_new (void)
 {
   PitiviTimelineWindow		*timelinewindow;
   PitiviTimelineWindowPrivate	*priv;
@@ -177,6 +177,7 @@ pitivi_timelinewindow_new(void)
 		     drop_types, num_drop_types, GDK_ACTION_COPY);
   g_signal_connect (G_OBJECT (timelinewindow), "drag_data_received",
 	 	    G_CALLBACK (pitivi_callb_drag_data_received), NULL);
+  
   return timelinewindow;
 }
 
@@ -250,44 +251,117 @@ static GtkActionEntry recent_entry[]= {
   { "FileRecent", GTK_STOCK_OPEN, "_Open Recent File", "<control>R", "Open a recent file",  G_CALLBACK (pitivi_callb_menufile_open) },
 };
 
+void
+pitivi_timeline_exp (GtkTreeView *treeview, GtkTreeIter *parent, GtkTreePath *treepath, gpointer user_data)
+{
+  
+}
+
+void
+pitivi_timeline_col (GtkTreeView *treeview, GtkTreeIter *TreeIter, GtkTreePath *arg2, gpointer user_data)
+{
+  
+}
 
 void
 pitivi_timelinewindow_init_default_values (PitiviTimelineWindow *self)
 {
   GtkTreeIter child;
   GtkTreeIter parent[2];
+  gchar	      *display;
   int	      count;
 
   for (count = 0; count < 4; count++)
-    {    
-      
-
+    {
       if (!count)
 	{
-	  gtk_tree_store_append( self->private->treelayersview->model, &parent[0], NULL);
-	  gtk_tree_store_set( self->private->treelayersview->model, &parent[0], PITIVI_TEXT_COLUMN, "Video", -1);
-	  gtk_tree_store_append( self->private->treelayersview->model, &parent[1], NULL);
-	  gtk_tree_store_set( self->private->treelayersview->model, &parent[1], PITIVI_TEXT_COLUMN, "Audio", -1);
+	  gtk_tree_store_append( self->private->treelayers->model, &parent[0], NULL);
+	  gtk_tree_store_set( self->private->treelayers->model, &parent[0], PITIVI_CAT_LAYER_COLUMN, "Video", -1);
+	  gtk_tree_store_append( self->private->treelayers->model, &child, NULL);
+	  gtk_tree_store_set( self->private->treelayers->model, &child, PITIVI_CAT_LAYER_COLUMN, \
+			      NULL, PITIVI_LAYER_COLUMN, 1, -1);  
+	  gtk_tree_store_append( self->private->treelayers->model, &parent[1], NULL);
+	  gtk_tree_store_set( self->private->treelayers->model, &parent[1], PITIVI_CAT_LAYER_COLUMN, "Audio", -1);
 	}
       else
 	{
-	  gtk_tree_store_append( self->private->treelayersview->model, &child, &parent[0]);
-	  gtk_tree_store_set( self->private->treelayersview->model, &child, PITIVI_TEXT_COLUMN, "layer", -1);
-	  gtk_tree_store_append( self->private->treelayersview->model, &child, &parent[1]);
-	  gtk_tree_store_set( self->private->treelayersview->model, &child, PITIVI_TEXT_COLUMN, "layer", -1);
+	  display = g_strdup_printf ("Piste %d", count);
+	  gtk_tree_store_append( self->private->treelayers->model, &child, &parent[0]);
+	  gtk_tree_store_set( self->private->treelayers->model, &child, PITIVI_CAT_LAYER_COLUMN, display, -1);
+	  gtk_tree_store_append( self->private->treelayers->model, &child, &parent[1]);
+	  gtk_tree_store_set( self->private->treelayers->model, &child, PITIVI_CAT_LAYER_COLUMN, display, -1);
 	}
     }
 }
 
+void
+pitivi_create_treelayers (PitiviTimelineWindow *self)
+{
+  GtkCellRenderer	*pCellRenderer;
+  GtkTreeViewColumn	*pColumn;
+  GtkTreeStore		*store;
+  
+
+  /* Timeline View Left View */
+  
+  self->private->treelayers = g_new0 (PitiviTreeView, 1);
+  self->private->treelayers->model = gtk_tree_store_new (2, G_TYPE_STRING, G_TYPE_INT);
+  self->private->treelayers->view = gtk_tree_view_new_with_model (GTK_TREE_MODEL (self->private->treelayers->model));
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (self->private->treelayers->view), TRUE);
+  gtk_tree_view_columns_autosize (GTK_TREE_VIEW (self->private->treelayers->view));
+  self->private->treelayers->scroll = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(self->private->treelayers->scroll),
+				 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  
+  gtk_container_add (GTK_CONTAINER (self->private->treelayers->scroll), self->private->treelayers->view);
+  pCellRenderer = gtk_cell_renderer_text_new ();
+  pColumn = gtk_tree_view_column_new_with_attributes ("Sources",
+						      pCellRenderer,
+						      "text",
+						      PITIVI_CAT_LAYER_COLUMN,
+						      NULL);
+  gtk_tree_view_append_column (GTK_TREE_VIEW( self->private->treelayers->view), pColumn);
+  gtk_tree_view_column_set_resizable (pColumn, TRUE);
+  g_list_append (self->private->treelayers->columns, pColumn);
+  
+   /* Timeline View Right View */
+ 
+  pCellRenderer = pitivi_timelinecellrenderer_new ();
+  pColumn = gtk_tree_view_column_new_with_attributes ("Layers",
+						      pCellRenderer,
+						      "type",
+						      PITIVI_LAYER_COLUMN,
+						      NULL);
+  
+  gtk_tree_view_append_column (GTK_TREE_VIEW( self->private->treelayers->view ), pColumn);
+  gtk_tree_view_column_set_sizing (GTK_TREE_VIEW_COLUMN (pColumn), GTK_TREE_VIEW_COLUMN_AUTOSIZE);
+  
+  /* Constructing Ruler */
+  
+  GtkWidget *vbox = gtk_vbox_new (TRUE, 0);
+  gtk_widget_set_usize (vbox, 550, 20);
+  gtk_tree_view_column_set_widget ( pColumn, vbox);
+  GtkWidget *hruler = gtk_hruler_new ();
+  gtk_ruler_set_metric (GTK_RULER (hruler), GTK_PIXELS);
+  gtk_ruler_set_range (GTK_RULER (hruler), 0, 3600*2, 0, 3600*24);
+  gtk_ruler_draw_ticks (GTK_RULER (hruler));
+  gtk_box_pack_start (GTK_BOX (vbox), hruler, TRUE, TRUE, 0);
+  gtk_widget_show_all (vbox);
+  g_list_append (self->private->treelayers->columns, pColumn);
+    
+  g_signal_connect ( self->private->treelayers->view, "row-expanded", G_CALLBACK(pitivi_timeline_exp),\
+		    (gpointer) self);
+  g_signal_connect ( self->private->treelayers->view, "row-collapsed", G_CALLBACK(pitivi_timeline_col),\
+		    (gpointer) self);
+}
+
+
 static void
 pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
-  PitiviMenu	*menumgr;
-  GtkCellRenderer *pCellRenderer;
-  GtkTreeViewColumn *pColumn;
-  GtkWidget	*sw;
-  GtkWidget	*hpaned;
-  int		count;
+  PitiviMenu		*menumgr;
+  GtkWidget		*sw;
+  int			count;
   
   PitiviTimelineWindow *self = (PitiviTimelineWindow *) instance;
   self->private = g_new0(PitiviTimelineWindowPrivate, 1);
@@ -336,59 +410,21 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_action_group_add_actions (actions_group[EA_DEFAULT_FILE], file_entries\
 				, G_N_ELEMENTS (recent_entry), self);
   menumgr = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TIMELINE_FILE);
+  
   for (count = 0; count < EA_LAST_ACTION; count++)
     if (actions_group[count])
       gtk_ui_manager_insert_action_group (menumgr->public->ui, actions_group[count], 0);
+  
   PITIVI_MENU_GET_CLASS(menumgr)->public->configure (menumgr);
   gtk_box_pack_start (GTK_BOX (self->private->menu_dock), menumgr->public->menu,
 		      FALSE, TRUE, 0);
   self->private->operations = g_list_alloc ();
 
-  /* Timeline Right Left View */
+  /* Timeline View */
   
-  hpaned = gtk_hpaned_new();
-  gtk_paned_set_position(GTK_PANED (hpaned), 200);
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), hpaned, TRUE, TRUE, 0);
+  pitivi_create_treelayers (self);
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->treelayers->scroll, TRUE, TRUE, 0);
   
-  self->private->treelayersview = g_new0 (PitiviTreeView, 1);
-  self->private->treelayersview->model = gtk_tree_store_new (PITIVI_NB_COLUMN, G_TYPE_STRING);
-  self->private->treelayersview->treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (self->private->treelayersview->model));
-  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (self->private->treelayersview->treeview), FALSE);
-  self->private->treelayersview->scroll = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(self->private->treelayersview->scroll),
-				 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
-  gtk_container_add (GTK_CONTAINER (self->private->treelayersview->scroll), self->private->treelayersview->treeview);
-  
-  pCellRenderer = gtk_cell_renderer_text_new();
-  pColumn = gtk_tree_view_column_new_with_attributes("text",
-						     pCellRenderer,
-						     "text",
-						     PITIVI_TEXT_COLUMN,
-						     NULL);
-    
-  gtk_tree_view_append_column(GTK_TREE_VIEW( self->private->treelayersview->treeview), pColumn);
-    
-  /* Right View */
-  
-  self->private->listlayersview = g_new0 (PitiviTreeView, 1);
-  self->private->listlayersview->model = gtk_tree_store_new (PITIVI_NB_COLUMN, G_TYPE_STRING);
-  self->private->listlayersview->treeview = gtk_tree_view_new_with_model (GTK_TREE_MODEL (self->private->listlayersview->model));
-  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (self->private->listlayersview->treeview), FALSE);
-  self->private->listlayersview->scroll = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(self->private->listlayersview->scroll),
-				 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_container_add (GTK_CONTAINER (self->private->listlayersview->scroll), self->private->listlayersview->treeview);
-  
-  pCellRenderer = gtk_cell_renderer_text_new();
-  pColumn = gtk_tree_view_column_new_with_attributes("text",
-						     pCellRenderer,
-						     "text",
-						     PITIVI_TEXT_COLUMN,
-						     NULL);
-  
-  gtk_tree_view_append_column(GTK_TREE_VIEW( self->private->listlayersview->treeview), pColumn);
-    
   /* Main Window : StatusBar */
   
   self->private->dock_statusbar = gtk_hbox_new (FALSE, 0);
@@ -406,12 +442,8 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (self->private->statusbar_message), TRUE);
   gtk_box_pack_start (GTK_BOX (self->private->dock_statusbar), self->private->statusbar_message, TRUE, TRUE, 0);
  
-  /* final packing */
-  
-  gtk_paned_pack1(GTK_PANED (hpaned),  self->private->treelayersview->scroll, TRUE, FALSE);
-  gtk_paned_pack2(GTK_PANED (hpaned),  self->private->listlayersview->scroll, TRUE, FALSE);
-
   /* Init default values */
+  
   pitivi_timelinewindow_init_default_values (self);
 }
 

@@ -34,6 +34,7 @@
 #include "pitivi.h"
 #include "pitivi-menu.h"
 #include "pitivi-stockicons.h"
+#include "pitivi-timelinecellrenderer.h"
 
 /*
  * Type macros.
