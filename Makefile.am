@@ -7,8 +7,7 @@
 ##
 
 # AUTOMAKE_OPTIONS	= foreign
-SUBDIRS			= gnl src pixmaps docs
-# will come later : pixmaps libs docs
+SUBDIRS			= gnl src pixmaps docs ui
 
 EXTRA_DIST = \
 	NEWS \
@@ -17,6 +16,8 @@ EXTRA_DIST = \
 	AUTHORS
 
 AUTOMAKE_OPTIONS = dist-bzip2
+
+MMdir = $(datadir)/applications
 
 release: dist
 	make @PACKAGE@-@VERSION@.tar.gz.md5

@@ -11,7 +11,7 @@
 # *************************************************************
 
 
-pixmapdir = $(datadir)/pixmaps
+pixmapdir = $(pkgdatadir)/pixmaps
 
 pixmap_DATA = backward.xpm\
 bg_audio.xpm\

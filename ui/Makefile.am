@@ -8,10 +8,10 @@
 ##
 
 
-uidir = $(datadir)/ui
+uidir = $(pkgdatadir)/ui
 ui_DATA = main_menubar.xml\
-	 pitivi-timeline.xml\
-	 styles.rc
+	  pitivi-timeline.xml\
+	  pitivi-toolbox.xml
 
 EXTRA_DIST = $(ui_DATA)
 
