@@ -505,6 +505,43 @@ pitivi_settings_free_all_params (GParameter *parameters, gint n_param)
   return ;
 }
 
+void
+pitivi_settings_modify_settings_struct_info (PitiviSettings *self, PitiviSettingsIoElement *io)
+{
+  gchar				*name;
+  gchar				*klass;
+  GList				*list;
+
+  name = (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(io->factory));
+  klass = (gchar *) gst_element_factory_get_klass (io->factory);
+
+  list = NULL;
+  if (!strcmp (klass, "Sink/Video")) {
+    list = self->elm_video_out;
+  } else if (!strcmp (klass, "Sink/Audio")) {
+    list = self->elm_audio_out;
+  } else if (!strcmp (klass, "Source/Video")) {
+    list = self->elm_video_in;
+  } else if (!strcmp (klass, "Source/Audio")) {
+    list = self->elm_audio_in;
+  }
+
+  for (; list; list = g_list_next (list)) {
+    PitiviSettingsIoElement *IoElm = (PitiviSettingsIoElement *) list->data;
+    
+    if (!strcmp(name, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(IoElm->factory)))) {
+      g_print ("%p:%p\n", list->data, io);
+      list->data = io;
+
+      return ;
+    }
+  }
+  
+  g_print ("Not an %s element's name:%s\n", klass, name);
+
+  return ;
+}
+
 PitiviSettingsIoElement	*
 pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, GstElementFactory *factory)
 {

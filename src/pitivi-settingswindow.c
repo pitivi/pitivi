@@ -93,13 +93,18 @@ void
 pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSettingsWindow *self)
 {
   PitiviSettingsIoElement	*elm_info;
-  
+  PitiviSettingsIoElement	*io;
+
   elm_info = NULL;
   g_print ("######################################################\n");
   g_print ("ACCEPT\n");
   //g_print ("SAVE %s [%s]\n", prop->elm, prop->class);
 
-  elm_info = pitivi_settings_get_io_settings_struct_info (self->private->settings, prop->io->factory);
+  io = pitivi_gstelementsettings_get_settings_elem (prop);
+  pitivi_settings_aff_elm_io (io);
+  pitivi_settings_modify_settings_struct_info (self->private->settings, io);
+  //elm_info = pitivi_settings_get_io_settings_struct_info (self->private->settings, prop->io->factory);
+  //pitivi_settings_aff_elm_io (elm_info);
 
   /*
     GList				*pt;
@@ -148,30 +153,6 @@ pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSett
   return ;
 }
 
-GstElement *
-pitivi_settingswindow_make_element (PitiviSettings *self, GstElementFactory *factory)
-{
-  GList		*prop_list;
-  GstElement	*elm;
-
-  elm = gst_element_factory_create (factory, "elm_tmp");
-
-  prop_list = NULL;
-
-  /*
-    prop_list = pitivi_settings_get_io_prop_list 
-    (self, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)));
-    
-    for (; prop_list; prop_list = g_list_next (prop_list)) {
-    PitiviSettingsProp *prop = (PitiviSettingsProp *) prop_list->data;
-    
-    g_object_set_property (G_OBJECT (elm), prop->name, &(prop->value));
-    }
-  */
-
-  return (elm);
-}
-
 void
 pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 {
@@ -198,9 +179,9 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 
   ////////////////////////////
   ////////// creer l element en fonction des settings deja present
-  ////////////////////////////
   elm_info = pitivi_settings_get_io_settings_struct_info (self->private->settings, gst_element_factory_find (elm_name));
   Properties = pitivi_gstelementsettings_new (elm_info, 0); 
+  ////////////////////////////
 
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
 		     GTK_WIDGET (Properties));

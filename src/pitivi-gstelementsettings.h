@@ -67,12 +67,6 @@ struct _PitiviGstElementSettingsClass
   /* class members */
 };
 
-struct _PitiviGstElementSettingsProp
-{
-  gchar		*name;
-  GValue	value;
-};
-
 /* used by PITIVI_GSTELEMENTSETTINGS_TYPE */
 GType pitivi_gstelementsettings_get_type (void);
 
@@ -82,7 +76,6 @@ GType pitivi_gstelementsettings_get_type (void);
 
 PitiviGstElementSettings	*pitivi_gstelementsettings_new (PitiviSettingsIoElement *io, gint opt);
 
-GList				*pitivi_gstelementsettings_get_list (PitiviGstElementSettings *self);
-GstElement			*pitivi_gstelementsettings_get_element (PitiviGstElementSettings *self);
+PitiviSettingsIoElement		*pitivi_gstelementsettings_get_settings_elem (PitiviGstElementSettings *Properties);
 
 #endif

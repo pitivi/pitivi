@@ -41,7 +41,7 @@ TODO TODO TODO TODO TODO TODO
 
 2) SAVE return LIST with method
 
-3)
+3) refresh code
 
 
 */
@@ -448,7 +448,8 @@ pitivi_gstelementsettings_aff_flags (gchar *name, GValue value, GParamSpec *para
     label = gtk_label_new (values[j].value_nick);
     pitivi_gstelementsettings_table_widget_add (Tab, label, j, 2);
     
-    if (values[j].value & flags_value) {
+    //if (values[j].value & flags_value) {
+    if (values[j].value && flags_value) {
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), TRUE);
     } else {
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), FALSE);
@@ -493,52 +494,51 @@ pitivi_gstelementsettings_table_new_param_add (PitiviGstElementSettings *self,
   GValue value = { 0, };
 
   g_value_init (&value, prop->value_type);
-  g_object_get_property (G_OBJECT (self->private->element), prop->name, &value);
 
   switch (G_VALUE_TYPE (&value)) {
   case G_TYPE_STRING: {
     tmp = pitivi_gstelementsettings_conf_value_string 
-      (g_strdup(g_param_spec_get_name (prop)), value);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value);
     break;
   } case G_TYPE_BOOLEAN: {
     tmp = pitivi_gstelementsettings_value_conf_boolean 
-      (g_strdup(g_param_spec_get_name (prop)), value);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value);
     break;
   } case G_TYPE_UINT: {
     tmp = pitivi_gstelementsettings_value_conf_uint 
-      (g_strdup(g_param_spec_get_name (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value, prop);
     break;
   } case G_TYPE_INT: {
     tmp = pitivi_gstelementsettings_value_conf_int 
-      (g_strdup(g_param_spec_get_name (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value, prop);
     break;
   } case G_TYPE_UINT64: {
     tmp = pitivi_gstelementsettings_value_conf_uint64 
-      (g_strdup(g_param_spec_get_name (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value, prop);
     break;
   } case G_TYPE_INT64: {
     tmp = pitivi_gstelementsettings_value_conf_int64 
-      (g_strdup(g_param_spec_get_name (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value, prop);
     break;
   } case G_TYPE_ULONG: {
     tmp = pitivi_gstelementsettings_value_conf_ulong 
-      (g_strdup(g_param_spec_get_name (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value, prop);
     break;
   } case G_TYPE_LONG: {
     tmp = pitivi_gstelementsettings_value_conf_long 
-      (g_strdup(g_param_spec_get_name (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value, prop);
     break;
   } case G_TYPE_FLOAT: {
     tmp = pitivi_gstelementsettings_value_conf_float 
-      (g_strdup(g_param_spec_get_name (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value, prop);
     break;
   } case G_TYPE_DOUBLE: {
     tmp = pitivi_gstelementsettings_value_conf_double 
-      (g_strdup(g_param_spec_get_name (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value, prop);
     break;
   } default: {
     tmp = pitivi_gstelementsettings_value_conf_default 
-      (self, g_strdup (g_param_spec_get_name (prop)), value, prop);
+      (self, g_strdup (g_param_spec_get_name (prop)), self->io->params[row].value, prop);
     break;
   }
   }
@@ -612,21 +612,6 @@ pitivi_gstelementsettings_create_gui (PitiviGstElementSettings *self)
 
 // ############################ SAVE ##################################### 
 
-PitiviGstElementSettingsProp *
-pitivi_gstelementsettings_prop_new (gchar *name, GValue	value)
-{
-  PitiviGstElementSettingsProp *tmp;
-  
-  tmp = g_new (PitiviGstElementSettingsProp, 1);
-  if (!name) {
-    tmp->name = NULL;
-  } else {
-    tmp->name = g_strdup (name);
-  }  
-  tmp->value = value;  
-  return (tmp);
-}
-
 gint
 pitivi_gstelementsettings_get_prop_num (PitiviGstElementSettings *self, gchar *prop_name)
 {
@@ -640,26 +625,21 @@ pitivi_gstelementsettings_get_prop_num (PitiviGstElementSettings *self, gchar *p
   return (-1);
 }
 
-GValue
-pitivi_gstelementsettings_get_value (PitiviGstElementSettings *self, gchar *prop_name)
+void
+pitivi_gstelementsettings_modify_prop (PitiviGstElementSettings *self, gchar *name, GValue value)
 {
-  gint num;
-  GValue tmp = { 0 };
-  //GValue *value;
+  gint	cpt;
 
-  num = pitivi_gstelementsettings_get_prop_num (self, prop_name);
-  //g_print ("NUM:%d\n", num);
-
-  g_value_init (&tmp, self->private->prop[num]->value_type);
-
-  g_object_get_property (G_OBJECT (self->private->element), prop_name, &tmp);
-
-  //g_print ("VALUE TYPE ::>%d\n", (int) G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (&tmp)));
-
-  return (tmp);
+  for (cpt = 0; cpt < self->io->n_param; cpt++) {
+    if (!strcmp (name, (self->io->params)[cpt].name)) {
+      g_value_reset (&((self->io->params)[cpt].value));
+      (self->io->params)[cpt].value = value;
+    }
+  }
+  return ;
 }
 
-PitiviGstElementSettingsProp *
+void
 pitivi_gstelementsettings_get_settings_combobox (GtkWidget *widget, PitiviGstElementSettings *self)
 {
   gchar  *prop_name;
@@ -672,20 +652,20 @@ pitivi_gstelementsettings_get_settings_combobox (GtkWidget *widget, PitiviGstEle
   tmp_list = g_object_get_data (G_OBJECT (widget), "tab");
   prop_name = g_object_get_data (G_OBJECT (widget), "name");
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   num = pitivi_gstelementsettings_get_prop_num (self, prop_name);
   g_value_init (&value, self->private->prop[num]->value_type);
   g_object_get_property (G_OBJECT (self->private->element), prop_name, &value);
   g_value_set_enum (&value, tmp_list[row_sel]);
 
-  g_print ("COMBO_BOX_SEL[%d]:%d\n", row_sel, tmp_list[row_sel]);
-  g_print ("PROP_NAME=[%s]\n", prop_name);
-  g_print ("NUM:%d\n", num);
+  //g_print ("COMBO_BOX_SEL[%d]:%d\n", row_sel, tmp_list[row_sel]);
+  //g_print ("PROP_NAME=[%s]\n", prop_name);
+  //g_print ("NUM:%d\n", num);
 
-  return (pitivi_gstelementsettings_prop_new (prop_name, value));
+  pitivi_gstelementsettings_modify_prop (self, prop_name, value);
+  return ;
 }
 
-PitiviGstElementSettingsProp *
+void
 pitivi_gstelementsettings_get_settings_entry (GtkWidget *widget, PitiviGstElementSettings *self)
 {
   gchar		*type;
@@ -749,10 +729,12 @@ pitivi_gstelementsettings_get_settings_entry (GtkWidget *widget, PitiviGstElemen
 
   }
   
-  return (pitivi_gstelementsettings_prop_new (g_object_get_data (G_OBJECT (widget), "name"), value));
+  pitivi_gstelementsettings_modify_prop (self, g_object_get_data (G_OBJECT (widget), "name"), value);
+
+  return ;
 }
 
-PitiviGstElementSettingsProp *
+void
 pitivi_gstelementsettings_get_settings_box (GtkWidget *widget, PitiviGstElementSettings *self)
 {
   GList *plist;
@@ -781,10 +763,12 @@ pitivi_gstelementsettings_get_settings_box (GtkWidget *widget, PitiviGstElementS
     }
   }
 
-  return (pitivi_gstelementsettings_prop_new (g_object_get_data (G_OBJECT (widget), "name"), value));
+  pitivi_gstelementsettings_modify_prop (self, g_object_get_data (G_OBJECT (widget), "name"), value);
+
+  return ;
 }
 
-PitiviGstElementSettingsProp *
+void
 pitivi_gstelementsettings_get_settings_table (GtkWidget *widget, PitiviGstElementSettings *self)
 {
   GValue value = { 0 };
@@ -824,21 +808,20 @@ pitivi_gstelementsettings_get_settings_table (GtkWidget *widget, PitiviGstElemen
   g_object_get_property (G_OBJECT (self->private->element), prop_name, &value); 
   g_value_set_enum (&value, nb);
   
-  g_print ("TABLE\n");
+  g_print ("<<<<<<<<<<<TABLE>>>>>>>>>>>\n");
   g_print ("PROP_NAME=[%s]\n", prop_name);
   g_print ("result flags : %d\n", nb);
   g_print ("NUM:%d\n", num);
+  g_print ("<<<<<<<<<<</TABLE>>>>>>>>>>\n");
   
-  return (pitivi_gstelementsettings_prop_new (prop_name, value));
+  pitivi_gstelementsettings_modify_prop (self, prop_name, value);
+
+  return ;
 }
 
-GList *
+PitiviSettingsIoElement *
 pitivi_gstelementsettings_get_settings_elem (PitiviGstElementSettings *Properties)
 {
-  GList *prop_list;
-
-  prop_list = NULL;
-
   if (Properties->Table) {
     GList *list;
 
@@ -847,59 +830,22 @@ pitivi_gstelementsettings_get_settings_elem (PitiviGstElementSettings *Propertie
       GtkTableChild *tmp = (GtkTableChild *) list->data;
       
       if (GTK_IS_COMBO_BOX (tmp->widget)) {
-	prop_list = g_list_append (prop_list, 
-				   pitivi_gstelementsettings_get_settings_combobox 
-				   (tmp->widget, Properties));
+	pitivi_gstelementsettings_get_settings_combobox (tmp->widget, Properties);
 
       } else if (GTK_IS_ENTRY (tmp->widget)) {
-	prop_list = g_list_append (prop_list,
-				   pitivi_gstelementsettings_get_settings_entry 
-				   (tmp->widget, Properties));
+	pitivi_gstelementsettings_get_settings_entry (tmp->widget, Properties);
 
       } else if (GTK_IS_BOX (tmp->widget)) {
-	prop_list = g_list_append (prop_list,
-				   pitivi_gstelementsettings_get_settings_box 
-				   (tmp->widget, Properties));
+	pitivi_gstelementsettings_get_settings_box (tmp->widget, Properties);
 
       } else if (GTK_IS_TABLE (tmp->widget)) {
-	prop_list = g_list_append (prop_list,
-				   pitivi_gstelementsettings_get_settings_table 
-				   (tmp->widget, Properties));
+	pitivi_gstelementsettings_get_settings_table (tmp->widget, Properties);
 
       }      
       
     }
   }
-  return (prop_list);
-}
-
-GList *
-pitivi_gstelementsettings_get_list (PitiviGstElementSettings *self)
-{
-  GList *list;
-
-  list = pitivi_gstelementsettings_get_settings_elem (self);
-
-  return (list);
-}
-
-GstElement *
-pitivi_gstelementsettings_get_element (PitiviGstElementSettings *self)
-{
-  GList *list;
-
-  list = pitivi_gstelementsettings_get_settings_elem (self);
-
-  for (; list; list = g_list_next (list)) {
-    PitiviGstElementSettingsProp *prop = 
-      (PitiviGstElementSettingsProp *) list->data;
-
-    g_object_set_property (G_OBJECT (self->private->element),
-			   prop->name,
-			   &(prop->value));
-  }
-  
-  return (self->private->element);
+  return (Properties->io);
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */

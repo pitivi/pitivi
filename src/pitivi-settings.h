@@ -135,8 +135,11 @@ PitiviSettings			*pitivi_settings_load_from_file(const gchar	*filename);
 gboolean			pitivi_settings_save_to_file(PitiviSettings	*settings, const gchar	*filename);
 
 PitiviSettingsIoElement		*pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, GstElementFactory *factory);
+void				pitivi_settings_modify_settings_struct_info (PitiviSettings *self, PitiviSettingsIoElement *io);
+
 PitiviSettingsIoElement		*pitivi_settings_new_io_element_with_element (GstElement *elm);
 PitiviSettingsIoElement		*pitivi_settings_new_io_element_with_factory (GstElementFactory *factory);
 
+void				pitivi_settings_aff_elm_io (PitiviSettingsIoElement *elm);
 
 #endif
