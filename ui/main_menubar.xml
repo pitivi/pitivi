@@ -1,10 +1,10 @@
 <ui>
   <menubar name="MainMenu">
-      <menu action="FileBoxMenu">
-            <menuitem name="FileBoxNew" action="FileBoxNew"/>
-            <menuitem name="FileBoxOpen"  action="FileBoxOpen"/>
-            <menuitem name="FileBoxRecent" action="FileBoxRecent" />
-            <menuitem name="FileBoxExit"  action="FileBoxExit"/>
+      <menu action="FileMenu">
+            <menuitem name="FileNew" action="FileNew"/>
+            <menuitem name="FileOpen"  action="FileOpen"/>
+            <menuitem name="FileRecent" action="FileRecent" />
+            <menuitem name="FileExit"  action="FileExit"/>
             <separator/>
        </menu>      
        <menu action="HelpMenu">
