@@ -48,6 +48,7 @@
 #include "pitivi-sourcelistwindow.h"
 #include "pitivi-newprojectwindow.h"
 #include "pitivi-projectsettings.h"
+#include "pitivi-settings.h"
 
 
 struct _PitiviMainAppPrivate
@@ -58,6 +59,7 @@ struct _PitiviMainAppPrivate
   PitiviToolboxWindow		*tbxwin;
   PitiviSourceListWindow	*srclistwin;
   PitiviNewProjectWindow	*win_new_project;
+  PitiviSettings		*global_settings;
 };
 
 
@@ -175,6 +177,8 @@ pitivi_mainapp_constructor (GType type,
   self->private->project_settings_list = pitivi_projectsettings_list_make();
   /* Creation de la toolboxwindow */
   self->private->tbxwin = pitivi_toolboxwindow_new(self);
+  /* Creation des settings globaux */
+  self->private->global_settings = pitivi_settings_new();
   /* Connection des Signaux */
   g_signal_connect(G_OBJECT(self->private->tbxwin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
