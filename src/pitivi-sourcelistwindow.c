@@ -275,13 +275,9 @@ void	add_liststore_for_bin(PitiviSourceListWindow *self,
   gint		i;
 
   tmp = g_strdup(self->private->treepath);
-
   save = tmp2 = tmp;
-
   list = self->private->liststore;
-
   pitiviliststore = NULL;
-  
   while (*tmp != 0)
     {
       if (*tmp == ':')
@@ -312,7 +308,6 @@ void	add_liststore_for_bin(PitiviSourceListWindow *self,
       if (pitiviliststore->child == NULL)
 	pitiviliststore->child = list;
     }
-  g_free(save);
 }
 
 GtkListStore	*get_liststore_for_bin(PitiviSourceListWindow *self,
@@ -327,13 +322,9 @@ GtkListStore	*get_liststore_for_bin(PitiviSourceListWindow *self,
   gint		i;
 
   list = self->private->liststore;
-  
   tmp = g_strdup(self->private->treepath);
-  
   save = tmp2 = tmp;
-
   pitiviliststore = NULL;
-  
   while (*tmp != 0)
     {
       if (*tmp == ':')
@@ -349,17 +340,16 @@ GtkListStore	*get_liststore_for_bin(PitiviSourceListWindow *self,
 	}
       *tmp++;
     }
-
   row = atoi(tmp2);
-
-  for (i = 0; i < row; i++)
+  g_printf ("listore : %d %s\n", row, self->private->treepath);
+  for (i = 0; list && i < row; i++)
     list = list->next;
-  
-  pitiviliststore = (PitiviListStore*)list->data;
-
-  g_free(save);
-
-  return pitiviliststore->liststore;
+  if (list)
+    {
+      pitiviliststore = (PitiviListStore*)list->data;
+      return pitiviliststore->liststore;
+    }
+  return NULL;
 }
 
 gpointer	get_data_for_bin(PitiviSourceListWindow *self)
@@ -1390,7 +1380,8 @@ remove_source (PitiviSourceListWindow *self, GtkListStore *liststore, gint *item
 
 void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
 {
-  PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
+  PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;  
+  GtkWidget	*dialog;
   GtkListStore	*liststore;
   GtkTreeIter	iter;
   gchar		*sMediaType;
@@ -1399,42 +1390,41 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
   gint		dialog_return;
 
   if (!OnSelectItem(self, &iter, &liststore, (void **) &sMediaType, TEXT_LISTCOLUMN3, &item_select, 
-		   &folder_select))
+		    &folder_select))
     return;
   
-  if (!OnSelectItem(self, &iter, &liststore, (void **) &self->private->dndsf, POINTER_LISTCOLUMN7, &item_select, 
-		   &folder_select))
-    return;
-
-  /* If the PitiviSourceFile is used , dialogbox "Can't delete" */
-  if (self->private->dndsf->nbbins) {
-    GtkWidget	*dialog;
-
-    dialog = gtk_message_dialog_new (GTK_WINDOW (self),
-				     GTK_DIALOG_DESTROY_WITH_PARENT,
-				     GTK_MESSAGE_WARNING,
-				     GTK_BUTTONS_YES_NO,
-				     "This source is used %d times in the project\nAre you sure you want to delete it ?\n",
-				     self->private->dndsf->nbbins);
-    dialog_return = gtk_dialog_run (GTK_DIALOG (dialog));
-    switch (dialog_return)
-      {
-      case GTK_RESPONSE_YES:
+  dialog = gtk_message_dialog_new (GTK_WINDOW (self),
+				   GTK_DIALOG_DESTROY_WITH_PARENT,
+				   GTK_MESSAGE_WARNING,
+				   GTK_BUTTONS_YES_NO,
+				   "This source is used several times in the project\nAre you sure you want to delete it ?\n");
+  
+  dialog_return = gtk_dialog_run (GTK_DIALOG (dialog));
+  switch (dialog_return)
+    {
+    case GTK_RESPONSE_YES:
 	if ( strcmp(sMediaType, "Bin") )
-	  remove_source (self, liststore, &item_select, &iter);
+	  {
+	    if (!OnSelectItem(self, &iter, &liststore, (void **) &self->private->dndsf, POINTER_LISTCOLUMN7, &item_select, 
+			      &folder_select))
+	      return;
+	    if (self->private->dndsf && self->private->dndsf->nbbins)
+	      remove_source (self, liststore, &item_select, &iter);
+	  }
 	else
 	  {
 	    /* we need to set treepath too */
-	    self->private->treepath = g_strdup_printf("%s:%d", self->private->treepath, folder_select);
+	    self->private->treepath = g_strdup_printf("%s:%d", 
+						      self->private->treepath, 
+						      folder_select);
 	    OnRemoveBin(self, 0, NULL);
 	  }
 	break;
-      default:
-	break;
-      }
-    gtk_widget_destroy (dialog);
-    return;
-  }
+    default:
+      break;
+    }
+  gtk_widget_destroy (dialog);
+  return;
 }
 
 void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget)
@@ -1493,7 +1483,7 @@ void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget)
       sTreepath = self->private->treepath;
       self->private->treepath = gtk_tree_path_to_string(treepath);
 
-      liststore = get_liststore_for_bin(self, 0);
+      liststore = get_liststore_for_bin (self, 0);
       gtk_tree_model_get_iter_first(GTK_TREE_MODEL(liststore), &listiter);
 
       i = folder_select = 0;

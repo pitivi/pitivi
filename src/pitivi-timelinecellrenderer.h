@@ -163,5 +163,6 @@ void	  pitivi_calculate_priorities ( GtkWidget *widget );
 gint	  compare_littlechild (gconstpointer a, gconstpointer b);
 gint	  compare_bigchild (gconstpointer a, gconstpointer b);
 void	  pitivi_layout_move (GtkLayout *layout, GtkWidget *widget, gint x, gint y);
+void	  pitivi_media_set_size (GtkWidget *widget, guint width);
 
 #endif

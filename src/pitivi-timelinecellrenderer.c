@@ -179,22 +179,6 @@ pitivi_timelinecellrenderer_new (guint track_nb, PitiviLayerType track_type, Pit
 }
 
 void
-pitivi_media_set_size (GtkWidget *widget, guint width)
-{
-  gint real_width;
-
-  gtk_widget_set_size_request (widget, width, widget->allocation.height);
-  if (PITIVI_IS_TIMELINEMEDIA (widget))
-    {      
-      PitiviTimelineMedia *media = PITIVI_TIMELINEMEDIA (widget);
-
-      real_width = convert_time_pix (media->track, media->sourceitem->srcfile->length);
-      media->original_width = real_width;
-    }
-}
-
-
-void
 set_tracksize ( PitiviTimelineCellRenderer *self )
 {
   int count;
@@ -1127,6 +1111,7 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
       pitivi_media_set_size (GTK_WIDGET (media_source), x); // retaillage de l'ancien media
       pitivi_layout_add_to_composition (container, media[0]);
       gtk_widget_show ( GTK_WIDGET ( media[0] ) );
+      assign_next_prev ( media_source->track );
       if ( media_source->linked )
 	{
 	  link = media_source->linked;
@@ -1141,6 +1126,7 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	  pitivi_layout_add_to_composition (PITIVI_TIMELINECELLRENDERER (container->linked_track),
 					    media[1]);
 	  gtk_widget_show (GTK_WIDGET ( media[1] ));
+	  assign_next_prev ( media_source->linked->track );
 	}
       else
 	pitivi_calculate_priorities ( GTK_WIDGET (container) );

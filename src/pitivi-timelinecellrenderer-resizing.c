@@ -140,3 +140,18 @@ void pitivi_timelinecellrenderer_resize (PitiviTimelineCellRenderer *self, Pitiv
       pitivi_timelinecellrenderer_gnonlin_resize (PITIVI_TIMELINEMEDIA ( effects->data ), new_stop, media->resz);
     }
 }
+
+void
+pitivi_media_set_size (GtkWidget *widget, guint width)
+{
+  gint real_width;
+
+  gtk_widget_set_size_request (widget, width, widget->allocation.height);
+  if (PITIVI_IS_TIMELINEMEDIA (widget))
+    {      
+      PitiviTimelineMedia *media = PITIVI_TIMELINEMEDIA (widget);
+
+      real_width = convert_time_pix (media->track, media->sourceitem->srcfile->length);
+      media->original_width = real_width;
+    }
+}
