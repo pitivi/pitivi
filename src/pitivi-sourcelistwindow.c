@@ -2666,13 +2666,15 @@ pitivi_sourcelistwindow_class_init (gpointer g_class, gpointer g_class_data)
 								      NULL  /* param_types */);
   
   pitivi_sourcelistwindow_signal[SNAPPED_SIGNAL] = g_signal_new ("snapped",
-						   G_TYPE_FROM_CLASS (g_class),
-						   G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-						   NULL,
-						   NULL,
-						   NULL,       
-						   g_cclosure_marshal_VOID__POINTER,
-						   G_TYPE_NONE, 1, G_TYPE_POINTER);
+								 G_TYPE_FROM_CLASS (g_class),
+								 G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+								 G_STRUCT_OFFSET (PitiviSourceListWindowClass, snapped),
+								 NULL,
+								 NULL,       
+								 g_cclosure_marshal_VOID__POINTER,
+								 G_TYPE_NONE, 
+								 1, 
+								 G_TYPE_POINTER);
 }
 
 GType

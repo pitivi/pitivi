@@ -60,6 +60,7 @@ enum
     MEDIA_DESELECT_SIGNAL,
     MEDIA_SELECT_SIGNAL,
     MEDIA_DISSOCIATE_SIGNAL,
+    MEDIA_ASSOCIATE_EFEFCT_SIGNAL,
     LAST_SIGNAL
   };
 
@@ -728,14 +729,14 @@ pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
 							 g_cclosure_marshal_VOID__POINTER,
 							 G_TYPE_NONE, 1, G_TYPE_POINTER);
   
-  g_signal_new ("associate-effect-to-media",
-		G_TYPE_FROM_CLASS (g_class),
-		G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-		G_STRUCT_OFFSET (PitiviTimelineMediaClass, associate_effect),
-		NULL, 
-		NULL,                
-		g_cclosure_marshal_VOID__POINTER,
-		G_TYPE_NONE, 1, G_TYPE_POINTER);
+  media_signals[MEDIA_ASSOCIATE_EFEFCT_SIGNAL] = g_signal_new ("associate-effect-to-media",
+							       G_TYPE_FROM_CLASS (g_class),
+							       G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+							       G_STRUCT_OFFSET (PitiviTimelineMediaClass, associate_effect),
+							       NULL, 
+							       NULL,                
+							       g_cclosure_marshal_VOID__POINTER,
+							       G_TYPE_NONE, 1, G_TYPE_POINTER);
   
   media_class->deselect = pitivi_timelinemedia_callb_deselect;
   media_class->dissociate = pitivi_timelinemedia_callb_dissociate;

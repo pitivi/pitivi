@@ -834,7 +834,7 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
     g_signal_new ("associate-effect-to-media",
 		  G_TYPE_FROM_CLASS (g_class),
 		  G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-		  NULL,
+		  G_STRUCT_OFFSET (PitiviTimelineWindowClass, associate_effect),
 		  NULL, 
 		  NULL,                
 		  g_cclosure_marshal_VOID__POINTER,

@@ -1197,14 +1197,14 @@ pitivi_timelinecellrenderer_rendering ( PitiviTimelineCellRenderer *cell )
 GtkWidget *
 pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimelineCellRenderer *cell )
 {
+  GtkWidget *media;
   GList	*childlist;
-  PitiviTimelineMedia *media;
   
   childlist = gtk_container_get_children (GTK_CONTAINER (cell));
   for (childlist = g_list_first ( childlist ); childlist; childlist = childlist->prev)
     {
-      media = childlist->data;
-      if ( media->selected )
+      media = GTK_WIDGET (childlist->data);
+      if ( PITIVI_TIMELINEMEDIA (media)->selected )
 	return (media); 
     }
   return NULL;
@@ -1376,7 +1376,7 @@ pitivi_timelinecellrenderer_callb_paste (PitiviTimelineCellRenderer *self, gpoin
 	    {
 	      if ( media->linked )
 		gtk_container_remove (GTK_CONTAINER (self->linked_track), media->linked);
-	      gtk_container_remove (GTK_CONTAINER (self), media);
+	      gtk_container_remove (GTK_CONTAINER (self), GTK_WIDGET (media));
 	    }
 	  g_signal_emit_by_name (GTK_WIDGET (self->private->timewin), "deselect", NULL);
 	  calculate_priorities ( GTK_WIDGET (self) );

@@ -99,16 +99,17 @@ struct _PitiviTimelineWindowClass
  
   /* class members */
   
-  void (* activate)   (PitiviTimelineWindow *timew);
-  void (* deactivate) (PitiviTimelineWindow  *timew);
-  void (* deselect)   (PitiviTimelineWindow  *timew);
-  void (* copy)       (PitiviTimelineWindow  *timew, gpointer data);
-  void (* delete)     (PitiviTimelineWindow  *timew, gpointer data);
-  void (* dbk_source)        (PitiviTimelineWindow *timew, gpointer data);
-  void (* drag_source_begin) (PitiviTimelineWindow *timew, gpointer data);
-  void (* drag_source_end)   (PitiviTimelineWindow *timew, gpointer data);
-  void (* selected_source)   (PitiviTimelineWindow *timew, gpointer data);
-  void (* zoom_changed)      (PitiviTimelineWindow  *timew);
+  void (* activate)     (PitiviTimelineWindow *timew);
+  void (* deactivate)   (PitiviTimelineWindow  *timew);
+  void (* deselect)     (PitiviTimelineWindow  *timew);
+  void (* zoom_changed) (PitiviTimelineWindow  *timew);
+  void (* copy)         (PitiviTimelineWindow  *timew, gpointer data);
+  void (* delete)       (PitiviTimelineWindow  *timew, gpointer data);
+  void (* dbk_source)         (PitiviTimelineWindow *timew, gpointer data);
+  void (* drag_source_begin)  (PitiviTimelineWindow *timew, gpointer data);
+  void (* drag_source_end)    (PitiviTimelineWindow *timew, gpointer data);
+  void (* selected_source)    (PitiviTimelineWindow *timew, gpointer data);
+  void (* associate_effect)   (PitiviTimelineWindow *timew, gpointer data);
 };
 
 /* used by PITIVI_TIMELINEWINDOW_TYPE */

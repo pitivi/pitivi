@@ -65,6 +65,7 @@ struct _PitiviSourceListWindowClass
 {
   PitiviProjectWindowsClass parent;
   /* class members */
+  void (* snapped) (PitiviSourceListWindow *self, gpointer date);
 };
 
 /* used by PITIVI_SOURCELISTWINDOW_TYPE */
