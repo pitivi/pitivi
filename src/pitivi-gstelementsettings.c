@@ -46,6 +46,8 @@ struct _PitiviGstElementSettingsPrivate
   gint			num_prop;
   GParamSpec		**prop;
 
+  gint			option;
+
   //GtkWidget *hprop;
   
 };
@@ -53,7 +55,8 @@ struct _PitiviGstElementSettingsPrivate
 enum {
   PROP_0,
   PROP_ELM,
-  PROP_GST
+  PROP_GST,
+  PROP_OPT
 };
 
 /*
@@ -345,33 +348,45 @@ pitivi_gstelementsettings_value_conf_double (gchar *name, GValue value, GParamSp
 }
 
 GtkWidget *
-pitivi_gstelementsettings_aff_enum (gchar *name, GValue value, GParamSpec *param)
+pitivi_gstelementsettings_aff_enum (PitiviGstElementSettings *self,
+				    gchar *name, GValue value, GParamSpec *param)
 {
   gint			i;
   gint			*enum_values;
   gchar			*label;
-  GtkWidget		*prop_value_combobox;
-  
-  prop_value_combobox = gtk_combo_box_new_text();
+  GtkWidget		*widget;
   
   GEnumClass *class = G_ENUM_CLASS (g_type_class_ref (param->value_type));
   enum_values = g_new0 (gint, class->n_values);
-  
-  for (i=0; i < class->n_values; i++) {
-    GEnumValue *evalue = &class->values[i];
     
-    enum_values[i] = evalue->value;
-    label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
-    gtk_combo_box_insert_text (GTK_COMBO_BOX (prop_value_combobox), i, label);
+  if (self->private->option) {
+
+    GEnumValue *evalue = &class->values[g_value_get_enum(&value)];
+    label = g_strdup_printf ("%s", evalue->value_nick);
+    widget = gtk_label_new (label);
+
+  } else {
+
+    widget = gtk_combo_box_new_text();
+    
+    for (i=0; i < class->n_values; i++) {
+      GEnumValue *evalue = &class->values[i];
+      
+      enum_values[i] = evalue->value;
+      label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
+      gtk_combo_box_insert_text (GTK_COMBO_BOX (widget), i, label);
+    }
+    
+    gtk_combo_box_set_active (GTK_COMBO_BOX (widget), g_value_get_enum(&value));
+    
+    g_object_set_data (G_OBJECT(widget), "tab", enum_values);
   }
+
+  g_object_set_data (G_OBJECT(widget), "name", name);
   
-  gtk_combo_box_set_active (GTK_COMBO_BOX (prop_value_combobox), g_value_get_enum(&value));
+  //g_object_set_data (G_OBJECT(widget), "type", &value);
   
-  g_object_set_data (G_OBJECT(prop_value_combobox), "tab", enum_values);
-  g_object_set_data (G_OBJECT(prop_value_combobox), "name", name);
-  //g_object_set_data (G_OBJECT(prop_value_combobox), "type", &value);
-  
-  return (prop_value_combobox);
+  return (widget);
 }
 
 GtkWidget *
@@ -418,13 +433,14 @@ pitivi_gstelementsettings_aff_flags (gchar *name, GValue value, GParamSpec *para
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_default (gchar *name, GValue value, GParamSpec *param)
+pitivi_gstelementsettings_value_conf_default (PitiviGstElementSettings *self,
+					      gchar *name, GValue value, GParamSpec *param)
 {
   GtkWidget *tmp;
   
   if (G_IS_PARAM_SPEC_ENUM (param)) {    
     //g_print ("ENUM_TYPE:%d\n", G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (&value)));
-    tmp = pitivi_gstelementsettings_aff_enum (name, value, param);    
+    tmp = pitivi_gstelementsettings_aff_enum (self, name, value, param);    
   } else if (G_IS_PARAM_SPEC_FLAGS (param)) {
     //g_print ("FLAGS_TYPE:%d\n", G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (&value)));
     tmp = pitivi_gstelementsettings_aff_flags (name, value, param);    
@@ -492,7 +508,7 @@ pitivi_gstelementsettings_table_new_param_add (PitiviGstElementSettings *self,
     break;
   } default: {
     tmp = pitivi_gstelementsettings_value_conf_default 
-      (g_strdup (g_param_spec_get_name (prop)), value, prop);
+      (self, g_strdup (g_param_spec_get_name (prop)), value, prop);
     break;
   }
   }
@@ -856,11 +872,12 @@ pitivi_gstelementsettings_get_element (PitiviGstElementSettings *self)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 PitiviGstElementSettings *
-pitivi_gstelementsettings_new_with_name (gchar *elm)
+pitivi_gstelementsettings_new_with_name (gchar *elm, gint opt)
 {
   PitiviGstElementSettings	*gstelementsettings;
 
   gstelementsettings = (PitiviGstElementSettings *) g_object_new(PITIVI_GSTELEMENTSETTINGS_TYPE,
+								 "option", opt,
 								 "elm", elm,
 								 "gst-pointer", NULL,
 								 NULL);
@@ -869,11 +886,12 @@ pitivi_gstelementsettings_new_with_name (gchar *elm)
 }
 
 PitiviGstElementSettings *
-pitivi_gstelementsettings_new_with_elm (GstElement *element)
+pitivi_gstelementsettings_new_with_elm (GstElement *element, gint opt)
 {
   PitiviGstElementSettings	*gstelementsettings;
 
   gstelementsettings = (PitiviGstElementSettings *) g_object_new(PITIVI_GSTELEMENTSETTINGS_TYPE,
+								 "option", opt,
 								 "elm", NULL,
 								 "gst-pointer", element,
 								 NULL);
@@ -914,6 +932,7 @@ pitivi_gstelementsettings_instance_init (GTypeInstance * instance, gpointer g_cl
   self->elm = NULL;
   self->class = NULL;
 
+  self->private->option = 0;
   self->private->factory = NULL;
   self->private->element = NULL;
 
@@ -977,6 +996,9 @@ pitivi_gstelementsettings_set_property (GObject * object,
 	self->elm = g_strdup (gst_element_get_name (self->private->element));
       }
       break;
+    case PROP_OPT:
+      self->private->option = g_value_get_int (value);
+      break;
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -998,6 +1020,9 @@ pitivi_gstelementsettings_get_property (GObject * object,
       break;
     case PROP_GST:
       g_value_set_pointer (value, self->private->element);
+      break;
+    case PROP_OPT:
+      g_value_set_int (value, self->private->option);
       break;
     default:
       /* We don't have any other property... */
@@ -1038,6 +1063,15 @@ pitivi_gstelementsettings_class_init (gpointer g_class, gpointer g_class_data)
 							 "gst-pointer",
 							 "GstElement's pointer",
 							 G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE)
+				   );
+
+  g_object_class_install_property (gobject_class,
+				   PROP_OPT,
+				   g_param_spec_int ("option",
+						     "option",
+						     "GstElement's option",
+						     0, 10, 0,
+						     G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE)
 				   );
 
 

@@ -109,7 +109,7 @@ pitivi_effectswindowproperties_constructor (GType type,
   
   main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add  (GTK_CONTAINER (self), main_vbox);
-  widget_element = pitivi_gstelementsettings_new_with_elm (GNL_OPERATION(self->private->item->gnlobject)->element);
+  widget_element = pitivi_gstelementsettings_new_with_elm (GNL_OPERATION(self->private->item->gnlobject)->element, 1);
   gtk_box_pack_start (GTK_BOX (main_vbox), GTK_WIDGET (widget_element), FALSE, FALSE, 0);
   
   /* OK Cancel Buttons*/

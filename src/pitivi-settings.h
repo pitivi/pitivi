@@ -137,4 +137,7 @@ GList				*pitivi_settings_get_flux_parser_list (GObject	*object, GstCaps *flux, 
 PitiviSettings			*pitivi_settings_load_from_file(const gchar	*filename);
 gboolean			pitivi_settings_save_to_file(PitiviSettings	*settings, const gchar	*filename);
 
+GList				*pitivi_settings_get_io_prop_list (PitiviSettings *self, gchar *elm_name);
+PitiviSettingsIoElement		*pitivi_settings_get_io_settings_struct_info (GList *list, gchar *name);
+
 #endif

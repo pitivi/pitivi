@@ -493,6 +493,47 @@ pitivi_settings_aff_all_list_elm (GList *list)
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+PitiviSettingsIoElement	*
+pitivi_settings_get_io_settings_struct_info (GList *list, gchar *name)
+{
+  for (; list; list = g_list_next (list)) {
+    PitiviSettingsIoElement *IoElm = (PitiviSettingsIoElement *) list->data;
+
+    if (!strcmp(name, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(IoElm->factory))))
+      return (IoElm);
+  }
+
+  return (0);
+}
+
+GList *
+pitivi_settings_get_io_prop_list (PitiviSettings *self, gchar *elm_name)
+{
+  GstElementFactory		*factory;
+  gchar				*klass;
+  PitiviSettingsIoElement	*elm_info;
+
+  factory = gst_element_factory_find (elm_name);
+  klass = (gchar *) gst_element_factory_get_klass (factory);
+  elm_info = NULL;
+
+  if (!strcmp (klass, "Sink/Video")) {
+    elm_info = pitivi_settings_get_io_settings_struct_info
+      (self->elm_video_out, elm_name);
+  } else if (!strcmp (klass, "Sink/Audio")) {
+    elm_info = pitivi_settings_get_io_settings_struct_info
+      (self->elm_audio_out, elm_name);
+  } else if (!strcmp (klass, "Source/Video")) {
+    elm_info = pitivi_settings_get_io_settings_struct_info
+      (self->elm_video_in, elm_name);
+  } else if (!strcmp (klass, "Source/Audio")) {
+    elm_info = pitivi_settings_get_io_settings_struct_info
+      (self->elm_audio_in, elm_name);
+  }
+ 
+  return (elm_info->prop_list);
+}
+
 PitiviSettingsProp *
 pitivi_settings_prop_new (gchar *name, GValue value)
 {

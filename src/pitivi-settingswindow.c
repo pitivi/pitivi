@@ -89,19 +89,6 @@ pitivi_settingswindow_combobox_get_active (GtkWidget *widget)
   return (elm);
 }
 
-PitiviSettingsIoElement	*
-pitivi_settingswindow_get_settings_struct_info (GList *list, gchar *name)
-{
-  for (; list; list = g_list_next (list)) {
-    PitiviSettingsIoElement *IoElm = (PitiviSettingsIoElement *) list->data;
-
-    if (!strcmp(name, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(IoElm->factory))))
-      return (IoElm);
-  }
-
-  return (0);
-}
-
 void 
 pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSettingsWindow *self)
 {
@@ -116,16 +103,16 @@ pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSett
   elm_info = NULL;
 
   if (!strcmp (prop->class, "Sink/Video")) {
-    elm_info = pitivi_settingswindow_get_settings_struct_info
+    elm_info = pitivi_settings_get_io_settings_struct_info
       (self->private->settings->elm_video_out, prop->elm);
   } else if (!strcmp (prop->class, "Sink/Audio")) {
-    elm_info = pitivi_settingswindow_get_settings_struct_info
+    elm_info = pitivi_settings_get_io_settings_struct_info
       (self->private->settings->elm_audio_out, prop->elm);
   } else if (!strcmp (prop->class, "Source/Video")) {
-    elm_info = pitivi_settingswindow_get_settings_struct_info
+    elm_info = pitivi_settings_get_io_settings_struct_info
       (self->private->settings->elm_video_in, prop->elm);
   } else if (!strcmp (prop->class, "Source/Audio")) {
-    elm_info = pitivi_settingswindow_get_settings_struct_info
+    elm_info = pitivi_settings_get_io_settings_struct_info
       (self->private->settings->elm_audio_in, prop->elm);
   }
   
@@ -157,36 +144,58 @@ pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSett
   return ;
 }
 
+GstElement *
+pitivi_settingswindow_make_element (PitiviSettings *self, GstElementFactory *factory)
+{
+  GList		*prop_list;
+  GstElement	*elm;
+
+  elm = gst_element_factory_create (factory, "elm_tmp");
+
+  prop_list = pitivi_settings_get_io_prop_list 
+    (self, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)));
+  
+  for (; prop_list; prop_list = g_list_next (prop_list)) {
+    PitiviSettingsProp *prop = (PitiviSettingsProp *) prop_list->data;
+    
+    g_object_set_property (G_OBJECT (elm), prop->name, &(prop->value));
+  }
+
+  return (elm);
+}
+
 void
 pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 {
-  PitiviSettingsWindow *self;
-  GtkWidget *ComboBox = (GtkWidget *) data;
-  GtkWidget *Dialog;
-  GstElementFactory *elm;
-  gint result;
+  GstElement		*my_elm;
+  PitiviSettingsWindow	*self;
+  GtkWidget		*ComboBox = (GtkWidget *) data;
+  GtkWidget		*Dialog;
+  GstElementFactory	*elm;
+  gint			result;
+  gchar			*elm_name;
   PitiviGstElementSettings *Properties;
 
   self = (PitiviSettingsWindow *) g_object_get_data (G_OBJECT (ComboBox), "self");
 
   elm = pitivi_settingswindow_combobox_get_active (ComboBox);
 
-  /* g_print ("Button Click:%s\n",  */
-  /* 	   gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm))); */
-
   Dialog = gtk_dialog_new ();
 
-  gtk_window_set_title (GTK_WINDOW (Dialog), 
-			gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
+  elm_name = g_strdup ((gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
+
+  gtk_window_set_title (GTK_WINDOW (Dialog), elm_name);
 
   gtk_window_set_resizable (GTK_WINDOW (Dialog), FALSE);
 
   ////////////////////////////
   ////////// creer l element en fonction des settings deja present
   ////////////////////////////
+  
+  my_elm = pitivi_settingswindow_make_element (self->private->settings, elm);
 
-  Properties = pitivi_gstelementsettings_new_with_name 
-    ((gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
+  //Properties = pitivi_gstelementsettings_new_with_name (elm_name); 
+  Properties = pitivi_gstelementsettings_new_with_elm (my_elm, 0); 
 
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
 		     GTK_WIDGET (Properties));
@@ -210,7 +219,9 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
     /*     break; */
   }
 
-  gtk_widget_destroy (Dialog);  
+  g_free (elm_name);
+  gtk_widget_destroy (Dialog);
+
   return ;
 }
 
