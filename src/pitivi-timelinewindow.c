@@ -375,7 +375,7 @@ pitivi_timelinewindow_dispose (GObject *object)
    * the most simple solution is to unref all members on which you own a 
    * reference. 
    */
-
+  G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
@@ -389,7 +389,7 @@ pitivi_timelinewindow_finalize (GObject *object)
    */
 
   g_free (self->private);
-   G_OBJECT_CLASS (parent_class)->finalize (object);
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
@@ -440,6 +440,8 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   PitiviTimelineWindowClass *klass = PITIVI_TIMELINEWINDOW_CLASS (g_class);
 
+  parent_class = g_type_class_peek_parent (g_class);
+    
   gobject_class->constructor = pitivi_timelinewindow_constructor;
   gobject_class->dispose = pitivi_timelinewindow_dispose;
   gobject_class->finalize = pitivi_timelinewindow_finalize;

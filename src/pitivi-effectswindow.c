@@ -154,6 +154,7 @@ pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
   autretree->treeview = gtk_tree_view_new ();
   autretree->scroll = gtk_scrolled_window_new (NULL, NULL);
   pitivi_insert_newtabtree(self, autretree);
+  gtk_widget_show (GTK_WIDGET(self));
 }
 
 static void
@@ -174,7 +175,8 @@ pitivi_effectswindow_dispose (GObject *object)
    * the most simple solution is to unref all members on which you own a 
    * reference. 
    */
-
+ 
+  G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
@@ -238,7 +240,9 @@ pitivi_effectswindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   PitiviEffectsWindowClass *klass = PITIVI_EFFECTSWINDOW_CLASS (g_class);
-
+  
+  parent_class = g_type_class_peek_parent (g_class);
+  
   gobject_class->constructor = pitivi_effectswindow_constructor;
   gobject_class->dispose = pitivi_effectswindow_dispose;
   gobject_class->finalize = pitivi_effectswindow_finalize;
@@ -280,6 +284,5 @@ pitivi_effectswindow_get_type (void)
       type = g_type_register_static (GTK_TYPE_WINDOW,
 				     "PitiviEffectsWindowType", &info, 0);
     }
-
   return type;
 }

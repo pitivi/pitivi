@@ -26,10 +26,6 @@
 #include "pitivi.h"
 #include "pitivi-menu.h"
 #include "pitivi-menu-actions.h"
-#include "pitivi-stockicons.h"
-#include "pitivi-timelinewindow.h"
-#include "pitivi-newprojectwindow.h"
-#include "pitivi-sourcelistwindow.h"
 
 static GtkActionGroup *actions_group[EA_LAST_ACTION];
 
