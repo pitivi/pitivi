@@ -268,21 +268,27 @@ pitivi_project_set_source_element(PitiviProject *project, GstElement *source)
     project->private->source = NULL;
   } else if (project->private->vblankconn) {
     /* disconnect and remove blankvideo conn */
+    g_printf("removing vblank\n");
     gst_element_unlink(project->private->videoblank, project->private->videoqueue);
     gst_bin_remove(GST_BIN(project->pipeline), project->private->videoblank);
     project->private->vblankconn = FALSE;
   }
 
   /* add source to pipeline, connect vsrc to vsinkthread and asrc to asinkthread*/
+  g_printf("adding source to pipeline\n");
   gst_bin_add(GST_BIN(project->pipeline), source);
   project->private->source = source;
 
   if (gst_element_get_pad(source, "vsrc")) {
-    if (!project->private->vst)
+    if (!project->private->vst) {
+      g_printf("Adding video sink thread\n");
       gst_bin_add(GST_BIN(project->pipeline), project->private->vsinkthread);
+    }
+    g_printf("linking source to video sink thread\n");
     project->private->vst = TRUE;
     gst_element_link_pads(source, "vsrc", project->private->videoqueue, "sink");
   } else if (project->private->vst) {
+    g_printf("Removing video sink thread\n");
     gst_bin_remove(GST_BIN(project->pipeline), project->private->vsinkthread);
     project->private->vst = FALSE;
   }
@@ -389,7 +395,9 @@ pitivi_project_constructor (GType type,
   */
 
   project->private->vsinkthread = gst_thread_new("vsinkthread");
+  gst_object_ref(GST_OBJECT(project->private->vsinkthread));
   project->private->asinkthread = gst_thread_new("asinkthread");
+  gst_object_ref(GST_OBJECT(project->private->asinkthread));
 
   project->private->timelinepipe = gst_pipeline_new("timeline-pipe");
   project->private->audiogroup = gnl_group_new("audiogroup");
@@ -443,7 +451,9 @@ pitivi_project_instance_init (GTypeInstance * instance, gpointer g_class)
   self->timeline = gnl_timeline_new("project-timeline");
 
   self->private->videoblank = gst_element_factory_make("videotestsrc", "videoblank");
+  gst_object_ref(GST_OBJECT(self->private->videoblank));
   //self->private->audioblank = gst_element_factory_make("silence", "audioblank");
+  //gst_object_ref(GST_OBJECT(self->private->audioblank));
 
   self->private->vst = FALSE;
   self->private->ast = FALSE;

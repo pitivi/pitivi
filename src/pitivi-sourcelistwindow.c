@@ -630,7 +630,8 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
   static gint	thread_number = 0;
   gboolean	flag;
 
-  gst_element_set_state(GST_ELEMENT(self->private->pipeline), GST_STATE_PAUSED);
+  g_printf("pitivi_sourcelistwindow_add_decoder start\n");
+  gst_element_set_state(GST_ELEMENT(self->private->pipeline), GST_STATE_PLAYING);
   padlist = self->private->padlist;
   while (padlist)
     {
@@ -692,7 +693,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		  
 		  /* add the elements to the thread */
 		  gst_bin_add_many(GST_BIN(thread), queue, decoder, NULL);
-		  gst_element_add_ghost_pad(thread, gst_element_get_pad(queue, "sink"), "sink");
+		  // gst_element_add_ghost_pad(thread, gst_element_get_pad(queue, "sink"), "sink");
 		  /* link the elements */
 		  gst_element_link(queue, decoder);
 		  
@@ -700,7 +701,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		  gst_bin_add(GST_BIN(self->private->pipeline), thread);
 		  
 		  /* link the pad to the sink pad of the thread */
-		  gst_pad_link(pad, gst_element_get_pad(thread, "sink"));
+		  gst_pad_link(pad, gst_element_get_pad(queue, "sink"));
 		  
 		}
 	      else
@@ -759,11 +760,11 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		      
 		      /* add the elements to the thread */
 		      gst_bin_add_many(GST_BIN(thread), queue, parser, NULL);
-		      
+		      /*
 		      gst_element_add_ghost_pad(thread, gst_element_get_pad(queue,
 									"sink"),
 						"sink");
-		      
+		      */
 		      /* link the elements */
 		      gst_element_link(queue, parser);
 		  
@@ -771,7 +772,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		      gst_bin_add(GST_BIN(self->private->pipeline), thread);
 		  
 		      /* link the pad to the sink pad of the thread */
-		      gst_pad_link(pad, gst_element_get_pad(thread, "sink"));
+		      gst_pad_link(pad, gst_element_get_pad(queue, "sink"));
 		      
 		    }
 		  else

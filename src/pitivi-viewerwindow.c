@@ -174,19 +174,21 @@ void	video_play(GtkWidget *widget, gpointer data)
   gboolean retval;
 
   if (self->private->play_status == PLAY) {
-    gtk_signal_emit_by_name (GTK_OBJECT (self->private->video_area), "expose_event", &ev, &retval);
     g_print ("[CallBack]:video_pause\n");
     self->private->play_status = PAUSE;
     gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
   } else if (self->private->play_status == PAUSE) {
     g_print ("[CallBack]:video_play\n");
     self->private->play_status = PLAY;
-    gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
+    if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
+      g_warning("Couldn't set the project pipeline to PLAYING!");
   } else if (self->private->play_status == STOP) {
     g_print ("[CallBack]:video_play\n");
     self->private->play_status = PLAY;
     gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
   }
+  gtk_signal_emit_by_name (GTK_OBJECT (self->private->video_area), "expose_event", &ev, &retval);
+
   return ;
 }
 
@@ -570,6 +572,51 @@ create_stream (gpointer data)
   return ;
 }
 
+char *
+pitivi_element_debug(GstElement *elt) {
+  return g_strdup_printf("[%s [%s]]", 
+			 gst_element_get_name(elt),
+			 gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(gst_element_get_factory(elt))));
+}
+
+void
+pitivi_printf_element(GstElement *elt) {
+  GstScheduler	*msched;
+  const GList		*pads, *childs;
+  GstPad	*pad;
+  GstElement	*child;
+
+  /* Global info about element */
+  g_printf("##Element : %s State:%d\n", pitivi_element_debug(elt),
+	   gst_element_get_state(elt));
+
+  /* Element Scheduler and state */
+  msched = GST_ELEMENT_SCHED(elt);
+  g_printf("\tScheduler %p State:%d\n", msched, GST_SCHEDULER_STATE(msched));
+
+  /* State of Pads (Active/Linked) */
+  for (pads = gst_element_get_pad_list(elt); pads ; pads = pads->next) {
+    pad = GST_PAD(pads->data);
+    if (GST_PAD_PEER(pad))
+      g_printf("\tPad: %s Active:%d Linked to %s\n",
+	       gst_pad_get_name(pad), GST_PAD_IS_ACTIVE(pad),
+	       GST_DEBUG_PAD_NAME(GST_PAD_PEER(pad)));
+    else
+      g_printf("\tPad: %s Active:%d NOT linked\n",
+	       gst_pad_get_name(pad), GST_PAD_IS_ACTIVE(pad));
+  }
+
+  /* If container, recursive call on children */
+  if (GST_IS_BIN(elt)) {
+    for (childs = gst_bin_get_list(GST_BIN(elt)); childs; childs = childs->next) {
+      child = GST_ELEMENT(childs->data);
+      g_printf("//CHILD\\\\\n");
+      pitivi_printf_element(child);
+      g_printf("\\\\CHILD//\n");
+    }
+  }
+}
+
 void
 print_element_schedulers(GstElement *element) {
   GList *sched;
@@ -602,7 +649,9 @@ gboolean	idle_func_video (gpointer data)
   gdouble	pourcent;
 
   if ( gst_element_get_state (project->pipeline) == GST_STATE_PLAYING ) {
-    /*     print_element_schedulers(project->pipeline); */
+/*     g_printf("\n"); */
+/*     pitivi_printf_element(project->pipeline); */
+/*     g_printf("\n"); */
     gst_x_overlay_set_xwindow_id
       ( GST_X_OVERLAY ( self->private->sink ),
 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
