@@ -1,0 +1,817 @@
+/* GStreamer
+ * Copyright (C) 2001 Wim Taymans <wim.taymans@chello.be>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+#define GST_INFO_ENABLED
+
+#include "config.h"
+#include "gnlcomposition.h"
+#include "gnloperation.h"
+
+static GstElementDetails gnl_composition_details = GST_ELEMENT_DETAILS ( "GNL Composition",
+		      "Filter/Editor",
+		      "Combines GNL objects",
+		      "Wim Taymans <wim.taymans@chello.be>"
+		      );
+
+static void		gnl_composition_base_init		(gpointer g_class);
+static void 		gnl_composition_class_init 		(GnlCompositionClass *klass);
+static void 		gnl_composition_init 			(GnlComposition *comp);
+static void 		gnl_composition_dispose 		(GObject *object);
+
+static GstElementStateReturn
+			gnl_composition_change_state 		(GstElement *element);
+	
+static GnlObjectClass *parent_class = NULL;
+
+void			gnl_composition_show	 		(GnlComposition *comp);
+
+#define CLASS(comp)  GNL_COMPOSITION_CLASS (G_OBJECT_GET_CLASS (comp))
+
+static gboolean         gnl_composition_query                	(GstElement *element, GstQueryType type,
+		                                                 GstFormat *format, gint64 *value);
+
+static gboolean 	gnl_composition_covers_func		(GnlObject *object, 
+								 GstClockTime start, GstClockTime stop,
+							 	 GnlCoverType type);
+static gboolean 	gnl_composition_prepare			(GnlObject *object, GstEvent *event);
+static GstClockTime 	gnl_composition_nearest_cover_func 	(GnlComposition *comp, GstClockTime start, 
+								 GnlDirection direction);
+
+static gboolean 	gnl_composition_schedule_entries 	(GnlComposition *comp, GstClockTime start,
+								 GstClockTime stop, gint minprio, GstPad **pad);
+
+struct _GnlCompositionEntry
+{
+  GnlObject *object;
+};
+
+#define GNL_COMP_ENTRY(entry)		((GnlCompositionEntry *)entry)
+#define GNL_COMP_ENTRY_OBJECT(entry)	(GNL_OBJECT (GNL_COMP_ENTRY (entry)->object))
+
+GType
+gnl_composition_get_type (void)
+{
+  static GType composition_type = 0;
+
+  if (!composition_type) {
+    static const GTypeInfo composition_info = {
+      sizeof (GnlCompositionClass),
+      (GBaseInitFunc) gnl_composition_base_init,
+      NULL,
+      (GClassInitFunc) gnl_composition_class_init,
+      NULL,
+      NULL,
+      sizeof (GnlComposition),
+      32,
+      (GInstanceInitFunc) gnl_composition_init,
+    };
+    composition_type = g_type_register_static (GNL_TYPE_OBJECT, "GnlComposition", &composition_info, 0);
+  }
+  return composition_type;
+}
+
+static void
+gnl_composition_base_init (gpointer g_class)
+{
+  GstElementClass *gstclass = GST_ELEMENT_CLASS (g_class);
+
+  gst_element_class_set_details (gstclass, &gnl_composition_details);
+}
+
+static void
+gnl_composition_class_init (GnlCompositionClass *klass)
+{
+  GObjectClass *gobject_class;
+  GstElementClass *gstelement_class;
+  GstBinClass *gstbin_class;
+  GnlObjectClass *gnlobject_class;
+
+  gobject_class    = (GObjectClass*)klass;
+  gstelement_class = (GstElementClass*)klass;
+  gstbin_class     = (GstBinClass*)klass;
+  gnlobject_class  = (GnlObjectClass*)klass;
+
+  parent_class = g_type_class_ref (GNL_TYPE_OBJECT);
+
+  gobject_class->dispose 	 = gnl_composition_dispose;
+
+  gstelement_class->change_state = gnl_composition_change_state;
+  gstelement_class->query	 = gnl_composition_query;
+
+  gstbin_class->add_element      = (void (*) (GstBin *, GstElement *))gnl_composition_add_object;
+  gstbin_class->remove_element   = (void (*) (GstBin *, GstElement *))gnl_composition_remove_object;
+
+  gnlobject_class->prepare       = gnl_composition_prepare;
+  gnlobject_class->covers	 = gnl_composition_covers_func;
+
+  klass->nearest_cover	 	 = gnl_composition_nearest_cover_func;
+}
+
+
+static void
+gnl_composition_init (GnlComposition *comp)
+{
+  comp->objects = NULL;
+  GNL_OBJECT(comp)->start = 0;
+  GNL_OBJECT(comp)->stop = G_MAXINT64;
+  comp->next_stop = 0;
+}
+
+static void
+gnl_composition_dispose (GObject *object)
+{
+  GnlComposition *comp = GNL_COMPOSITION (object);
+  GList *objects = comp->objects;
+
+  while (objects) {
+    GnlCompositionEntry *entry = (GnlCompositionEntry *) (objects->data);
+
+    g_object_unref (entry->object);
+    g_free (entry);
+
+    objects = g_list_next (objects);
+  }
+  g_list_free (comp->objects);
+
+  G_OBJECT_CLASS (parent_class)->dispose (object);
+}
+
+/*
+  gnl_composition_find_entry_priority
+
+  Returns the GnlCompositionEntry located AT/AFTER/START time , AND that has
+    a priority of at least minpriority.
+
+*/
+
+static GnlCompositionEntry *
+gnl_composition_find_entry_priority (GnlComposition *comp, GstClockTime time,
+				     GnlFindMethod method, gint minpriority) {
+  GList	*objects = comp->objects;
+  GnlCompositionEntry	*tmp = NULL;
+
+  GST_INFO ("Composition[%s], time[%lld], Method[%d], minpriority[%d]",
+	    gst_element_get_name(GST_ELEMENT(comp)),
+	    time, method, minpriority);
+
+  /*
+    Take into account the fact that we now have to search for the lowest priority
+  */
+
+  if (method == GNL_FIND_AT) {
+    while (objects) {
+      GnlCompositionEntry *entry = (GnlCompositionEntry *) (objects->data);
+      GstClockTime start, stop;
+      
+      if (entry->object->priority >= minpriority) {
+	gnl_object_get_start_stop (entry->object, &start, &stop);
+	/*	GST_INFO("Comparing %s [%lld]->[%lld]",
+		 gst_element_get_name(GST_ELEMENT(entry->object)),
+		 start, stop);*/
+
+	if ((start <= time && start + (stop - start) > time)
+	    && (!tmp || (tmp && tmp->object->priority > entry->object->priority))) {
+	  tmp = entry;
+	  /*	  GST_INFO("found tmp[%s]", gst_element_get_name(GST_ELEMENT(tmp->object)));*/
+	}
+      }
+      objects = g_list_next(objects);
+    }
+    return tmp;
+  } else
+    while (objects) {
+      GnlCompositionEntry *entry = (GnlCompositionEntry *) (objects->data);
+      GstClockTime start, stop;
+      
+      gnl_object_get_start_stop (entry->object, &start, &stop);
+      
+      if (entry->object->priority >= minpriority)
+	switch (method) {
+	case GNL_FIND_AFTER:
+	  if (start >= time)
+	    return entry;
+	  break;
+	case GNL_FIND_START:
+	  if (start == time)
+	    return entry;
+	  break;
+	default:
+	  g_warning ("%s: unkown find method", gst_element_get_name (GST_ELEMENT (comp)));
+	  break;
+	}
+      objects = g_list_next(objects);
+    }
+  return NULL;
+}
+
+/*
+  gnl_composition_find_entry
+
+  Find the GnlCompositionEntry located AT/AFTER/START
+
+*/
+
+static GnlCompositionEntry*
+gnl_composition_find_entry (GnlComposition *comp, GstClockTime time, GnlFindMethod method)
+{
+/*   GList *objects = comp->objects; */
+
+  GST_INFO ("Composition[%s], time[%lld], Method[%d]",
+	    gst_element_get_name(GST_ELEMENT(comp)),
+	    time, method);
+
+  return gnl_composition_find_entry_priority(comp, time, method, 1);
+
+/*   while (objects) { */
+/*     GnlCompositionEntry *entry = (GnlCompositionEntry *) (objects->data); */
+/*     GstClockTime start, stop; */
+
+/*     gnl_object_get_start_stop (entry->object, &start, &stop); */
+
+/*     switch (method) { */
+/*       case GNL_FIND_AT: */
+/*         if ((start <= time) */
+/* 	    && */
+/* 	    (start + (stop - start) > time)) */
+/* 	{ */
+/*           return entry; */
+/* 	} */
+/* 	break; */
+/*       case GNL_FIND_AFTER: */
+/*         if (start >= time) */
+/*           return entry; */
+/* 	break; */
+/*       case GNL_FIND_START: */
+/*         if (start == time) */
+/*           return entry; */
+/* 	break; */
+/*       default: */
+/* 	g_warning ("%s: unkown find method", gst_element_get_name (GST_ELEMENT (comp))); */
+/* 	break; */
+/*     } */
+/*     objects = g_list_next (objects); */
+/*   } */
+
+/*   return NULL; */
+}
+
+GnlObject*
+gnl_composition_find_object (GnlComposition *comp, GstClockTime time, GnlFindMethod method)
+{
+  GnlCompositionEntry *entry;
+
+  GST_INFO ("Composition[%s], time[%lld], Method[%d]",
+	    gst_element_get_name(GST_ELEMENT(comp)),
+	    time, method);
+
+  entry = gnl_composition_find_entry (comp, time, method);
+  if (entry) {
+    return entry->object;
+  }
+
+  return NULL;
+}
+
+
+/*
+  GnlCompositionEntry comparision function
+
+  Allows to sort by priority and THEN by time
+
+  MODIFIED : sort by time and then by priority
+*/
+
+static gint 
+_entry_compare_func (gconstpointer a, gconstpointer b)
+{
+  GnlObject *object1, *object2;
+  GstClockTime start1, start2;
+  gint res;
+  long long int lres;
+
+  object1 = ((GnlCompositionEntry *) a)->object;
+  object2 = ((GnlCompositionEntry *) b)->object;
+
+  start1 = object1->start;
+  start2 = object2->start;
+
+  lres = start1 - start2;
+
+  if (lres < 0)
+    res = -1;
+  else {
+    if (lres > 0)
+      res = 1;
+    else
+      res = gnl_object_get_priority (object1) -
+	gnl_object_get_priority (object2); 
+  }
+
+  return res;
+}
+
+GnlComposition*
+gnl_composition_new (const gchar *name)
+{
+  GnlComposition *comp;
+
+  GST_INFO ("name[%s]", name);
+
+  g_return_val_if_fail (name != NULL, NULL);
+
+  comp = g_object_new (GNL_TYPE_COMPOSITION, NULL);
+  gst_object_set_name (GST_OBJECT (comp), name);
+
+  return comp;
+}
+
+void
+gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
+{
+  GnlCompositionEntry *entry;
+
+  GST_INFO("Composition[%s] Object[%s]",
+	   gst_element_get_name(GST_ELEMENT (comp)),
+	   gst_element_get_name(GST_ELEMENT (object)));
+
+  g_return_if_fail (GNL_IS_COMPOSITION (comp));
+
+  if (!GNL_IS_OBJECT(object)) {
+    GST_INFO("object is not GnlObject... calling GstBin->add_element()");
+    GST_BIN_CLASS(parent_class)->add_element(GST_BIN(comp), GST_ELEMENT(object));
+    return ;
+  }
+
+  entry = g_malloc (sizeof (GnlCompositionEntry));
+
+  gst_object_ref (GST_OBJECT (object));
+  gst_object_sink (GST_OBJECT (object));
+  entry->object = object;
+
+  object->comp_private = entry;
+
+  if (gst_element_get_pad (GST_ELEMENT (object), "src") == NULL 
+      && GNL_IS_SOURCE (object)) {
+    gnl_source_get_pad_for_stream (GNL_SOURCE (object), "src");
+  }
+  
+  comp->objects = g_list_insert_sorted (comp->objects, entry, _entry_compare_func);
+}
+
+static gint
+find_function (GnlObject *object, GnlObject *to_find) 
+{
+  if (object == to_find)
+    return 0;
+
+  return 1;
+}
+
+void
+gnl_composition_remove_object (GnlComposition *comp, GnlObject *object)
+{
+  GList *lentry;
+
+  GST_INFO("Composition[%s] Object[%s]",
+	   gst_element_get_name(GST_ELEMENT (comp)),
+	   gst_element_get_name(GST_ELEMENT (object)));
+
+  g_return_if_fail (GNL_IS_COMPOSITION (comp));
+  g_return_if_fail (GNL_IS_OBJECT (object));
+
+  lentry = g_list_find_custom (comp->objects, object, (GCompareFunc) find_function);
+  g_return_if_fail (lentry);
+
+  comp->objects = g_list_delete_link (comp->objects, lentry);
+
+  g_free (GNL_OBJECT (lentry->data)->comp_private);
+  gst_object_unref (GST_OBJECT (lentry->data));
+}
+
+/*
+  gnl_composition_schedule_object
+
+  Schedules the give object from start to stop and sets the output pad to *pad.
+
+  Returns : TRUE if the object was properly scheduled, FALSE otherwise
+*/
+
+static gboolean
+gnl_composition_schedule_object (GnlComposition *comp, GnlObject *object,
+				 GstClockTime start, GstClockTime stop,
+				 GstPad **pad)
+{
+
+  GST_INFO("Comp[%s]/sched=%p  Object[%s] Start [%lld] Stop[%lld] sched(object)=%p IS_SCHED:%d",
+	   gst_element_get_name(GST_ELEMENT(comp)),
+	   GST_ELEMENT_SCHED(GST_ELEMENT(comp)),
+	   gst_element_get_name(GST_ELEMENT(object)),
+	   start, stop, GST_ELEMENT_SCHED(object), GST_IS_SCHEDULER(GST_ELEMENT_SCHED(object)));
+
+  if (gst_element_get_parent (GST_ELEMENT (object)) == NULL) { 
+
+    GST_INFO("Object has no parent, adding it to %s[Sched:%p]",
+	     gst_element_get_name(GST_ELEMENT(comp)), GST_ELEMENT_SCHED(GST_ELEMENT(comp)));
+
+    GST_BIN_CLASS (parent_class)->add_element (GST_BIN (comp), GST_ELEMENT (object));
+  }
+
+  gst_element_send_event (GST_ELEMENT (object),
+			  gst_event_new_segment_seek (
+						      GST_FORMAT_TIME |
+						      GST_SEEK_METHOD_SET |
+						      GST_SEEK_FLAG_FLUSH |
+						      GST_SEEK_FLAG_ACCURATE,
+						      start,
+						      stop)
+			  );
+  
+  *pad = gst_element_get_pad (GST_ELEMENT (object), "src");
+  
+  GST_INFO("end of gnl_composition_schedule_object");
+
+  return TRUE;
+}
+
+/*
+  gnl_composition_schedule_object
+
+  Schedules the given operation from start to stop and sets *pad to the output pad
+
+  Returns : TRUE if the operation was properly scheduled, FALSE otherwise
+*/
+
+static gboolean
+gnl_composition_schedule_operation (GnlComposition *comp, GnlOperation *oper, 
+				    GstClockTime start, GstClockTime stop,
+				    gint minprio, GstPad **pad)
+{
+  const GList *pads;
+
+  GST_INFO("Composition[%s]  Operation[%s] Start[%lld] Stop[%lld]",
+	   gst_element_get_name(GST_ELEMENT(comp)),
+	   gst_element_get_name(GST_ELEMENT(oper)),
+	   start, stop);
+
+  gnl_composition_schedule_object (comp, GNL_OBJECT (oper), start, stop, pad);
+
+  pads = gst_element_get_pad_list (GST_ELEMENT (oper));
+  while (pads) {
+    GstPad *newpad = NULL;
+    GstPad *sinkpad = GST_PAD (pads->data);
+
+    pads = g_list_next (pads);
+
+    if (GST_PAD_IS_SRC (sinkpad))
+      continue;
+
+    minprio += 1;
+    gnl_composition_schedule_entries (comp, start, stop, minprio, &newpad);
+
+    gst_pad_link (newpad, sinkpad);
+  }
+
+  GST_INFO("Finished");
+  return TRUE;
+}
+
+
+/*
+  gnl_composition_schedule_entries NEW_VERSION
+
+  comp : the composition whose entries to schedule
+  start, stop : the start and stop time of what to schedule
+  minprio : the minimum priority to schedule
+  *pad : the output pad
+
+  Returns TRUE if the entries are scheduled and the pad is set
+  Only schedules the next entry. If no entries left, reset comp->next_stop
+*/
+
+static gboolean
+gnl_composition_schedule_entries(GnlComposition *comp, GstClockTime start, 
+				 GstClockTime stop, gint minprio, GstPad **pad)
+{
+  gboolean res = TRUE;
+  GnlObject	*obj, *tmp;
+  GList		*list;
+  GnlCompositionEntry	*compentry;
+
+  GST_INFO("%s [%lld]->[%lld]  minprio[%d]",
+	   gst_element_get_name(GST_ELEMENT(comp)),
+	   start, stop, minprio);
+  
+  /* Find the object to schedule with a suitable priority */
+  compentry = gnl_composition_find_entry_priority(comp, start, GNL_FIND_AT, minprio);
+
+  if (!compentry)
+    return FALSE;
+
+  obj = compentry->object;
+
+  /* 
+     Find the following object
+     
+     Doesn't handle the GnlOperation correctly 
+     The trick is to use the mininum priority to find the next stop for
+       GnlOperation's input(s).
+  */
+
+  for ( list = comp->objects; list; list = g_list_next(list)) {
+    tmp = (GnlObject *) ((GnlCompositionEntry *) list->data)->object;
+
+    if (tmp == obj)
+      continue;
+    
+    if (tmp->priority >= minprio) { /* Don't take objects less important than minprio*/
+
+      if (tmp->start >= obj->stop) { /* There is a gap before the next object */
+	GST_INFO("Gap before next object");
+	break;
+      }
+
+      /* fact : tmp->start < obj->stop */
+
+      if (((tmp->priority < obj->priority) && (tmp->stop > start))
+	  ||
+	  ((tmp->priority > obj->priority) && (tmp->stop >= obj->stop))) {
+	/* There isn't any gap */
+	GST_INFO("Obj-Tmp : %d || No gap, it's ok", 
+		 obj->priority - tmp->priority);
+	break;
+      }
+
+    }
+  }
+
+  if (list) {
+
+    GST_INFO("next[%s] [%lld]->[%lld]",
+	     gst_element_get_name(GST_ELEMENT(tmp)),
+	     tmp->start, tmp->stop);
+    if (tmp->priority > obj->priority)
+      stop = obj->stop;
+    else
+      stop = MIN(tmp->start, stop);
+  } else {
+    stop = MIN(obj->stop, stop);
+  }
+
+  comp->next_stop = MIN(comp->next_stop, stop);
+
+  GST_INFO("next_stop [%lld]", comp->next_stop);
+  
+  if (GNL_IS_OPERATION(obj))
+    res = gnl_composition_schedule_operation(comp, GNL_OPERATION(obj), 
+					     start, stop, minprio, pad);
+  else
+    res = gnl_composition_schedule_object(comp, obj, start, stop, pad);
+ 
+  return res;
+}
+
+static gboolean
+probe_fired (GstProbe *probe, GstData **data, gpointer user_data)
+{
+  GnlComposition *comp = GNL_COMPOSITION (user_data);
+  gboolean res = TRUE;
+
+  if (GST_IS_BUFFER (*data)) {
+    GNL_OBJECT (comp)->current_time = GST_BUFFER_TIMESTAMP (*data);
+  }
+  else {
+    GNL_OBJECT (comp)->current_time = comp->next_stop;
+  }
+
+  GST_INFO("current_time[%lld]", GNL_OBJECT (comp)->current_time);
+
+  return res;
+}
+
+static gboolean
+gnl_composition_prepare (GnlObject *object, GstEvent *event)
+{
+  GnlComposition *comp = GNL_COMPOSITION (object);
+  gboolean res;
+  GstPad *pad = NULL;
+  GstPad *ghost;
+  GstClockTime	start_pos, stop_pos;
+  GstProbe *probe;
+
+  GST_INFO("Object[%s] Event[%lld]->[%lld]",
+	   gst_element_get_name(GST_ELEMENT(object)),
+	   GST_EVENT_SEEK_OFFSET(event),
+	   GST_EVENT_SEEK_ENDOFFSET(event));
+
+  start_pos = GST_EVENT_SEEK_OFFSET (event);
+  stop_pos  = GST_EVENT_SEEK_ENDOFFSET (event);
+  comp->next_stop  = stop_pos;
+  
+  ghost = gst_element_get_pad (GST_ELEMENT (comp), "src");
+  if (ghost) {
+    
+    GST_INFO("Existing ghost pad and probe, removing");
+    /* Remove the GstProbe attached to this pad before deleting it */
+    probe = gst_pad_get_element_private(ghost);
+    gst_pad_remove_probe(GST_PAD (GST_PAD_REALIZE (ghost)), probe);
+    gst_element_remove_pad (GST_ELEMENT (comp), ghost);
+  } else
+    GST_INFO("No existing ghost pad and probe");
+
+  /* Scbedule the entries from start_pos */
+
+  res = gnl_composition_schedule_entries (comp, start_pos,
+					  stop_pos, 1, &pad);
+
+  if (pad) {
+
+    GST_INFO("Have a pad, adding a Probe and Ghost Pad");
+    
+    probe = gst_probe_new (FALSE, probe_fired, comp);
+    
+    ghost = gst_element_add_ghost_pad (GST_ELEMENT (comp), pad, "src");
+    
+    gst_pad_add_probe (GST_PAD (GST_PAD_REALIZE (ghost)), probe);
+    
+    gst_pad_set_element_private(ghost, (gpointer) probe);
+  }
+  else {
+    GST_INFO("Haven't got a pad :(");
+    res = FALSE;
+  }
+
+  GST_INFO ( "%s: configured", 
+	    gst_element_get_name (GST_ELEMENT (comp)));
+
+  return res;
+}
+
+static gboolean
+gnl_composition_covers_func (GnlObject *object, GstClockTime start, 
+		       GstClockTime stop, GnlCoverType type)
+{
+  GnlComposition *comp = GNL_COMPOSITION (object);
+
+  GST_INFO("Object:%s , START[%lld]/STOP[%lld], TYPE:%d",
+	   gst_element_get_name(GST_ELEMENT(comp)),
+	   start, stop, type);
+  
+  switch (type) {
+  case GNL_COVER_ALL:
+    g_warning ("comp covers all, implement me");
+    break;
+  case GNL_COVER_SOME:
+    g_warning ("comp covers some, implement me");
+    break;
+  case GNL_COVER_START:
+    if (gnl_composition_find_entry (comp, start, GNL_FIND_AT)) {
+      GST_INFO("TRUE");
+      return TRUE;
+    };
+    break;
+  case GNL_COVER_STOP:
+    if (gnl_composition_find_entry (comp, stop, GNL_FIND_AT)) {
+      GST_INFO("TRUE");
+      return TRUE;
+    };
+    break;
+  default:
+    break;
+  }
+  
+  GST_INFO("FALSE");
+  return FALSE;
+}
+
+static GstClockTime
+gnl_composition_nearest_cover_func (GnlComposition *comp, GstClockTime time, GnlDirection direction)
+{
+  GList			*objects = comp->objects;
+  GstClockTime		last;
+
+  GST_INFO("Object:%s , Time[%lld], Direction:%d",
+	   gst_element_get_name(GST_ELEMENT(comp)),
+	   time, direction);
+
+  
+  
+  while (objects) {
+    GnlCompositionEntry *entry = (GnlCompositionEntry *) (objects->data);
+    GstClockTime start;
+
+    gnl_object_get_start_stop (entry->object, &start, NULL);
+
+    GST_INFO("Object[%s] Start[%lld]",
+	     gst_element_get_name(GST_ELEMENT(entry->object)),
+	     start);
+    
+    if (start >= time) {
+      if (direction == GNL_DIRECTION_FORWARD)
+        return start;
+      else
+        return last;
+    }
+    last = start;
+    
+    objects = g_list_next (objects);
+  }
+  
+  
+  return GST_CLOCK_TIME_NONE;
+}
+
+GstClockTime
+gnl_composition_nearest_cover (GnlComposition *comp, GstClockTime start, GnlDirection direction)
+{
+  g_return_val_if_fail (GNL_IS_COMPOSITION (comp), FALSE);
+
+  GST_INFO("Object:%s , Time[%lld], Direction:%d",
+	   gst_element_get_name(GST_ELEMENT(comp)),
+	   start, direction);
+
+  if (CLASS (comp)->nearest_cover)
+    return CLASS (comp)->nearest_cover (comp, start, direction);
+
+  return GST_CLOCK_TIME_NONE;
+}
+
+static gboolean
+gnl_composition_query (GstElement *element, GstQueryType type,
+		       GstFormat *format, gint64 *value)
+{
+  gboolean res = TRUE;
+
+  GST_INFO("Object:%s , Type[%d], Format[%d]",
+	   gst_element_get_name(element),
+	   type, *format);
+
+
+
+  if (*format != GST_FORMAT_TIME)
+    return res;
+
+  switch (type) {
+    default:
+      res = GST_ELEMENT_CLASS (parent_class)->query (element, type, format, value);
+      break;
+  }
+  return res;
+}
+
+static GstElementStateReturn
+gnl_composition_change_state (GstElement *element)
+{
+  GnlComposition *comp = GNL_COMPOSITION (element);
+  gint transition = GST_STATE_TRANSITION (comp);
+  GstElementStateReturn	res;
+
+  switch (transition) {
+    case GST_STATE_NULL_TO_READY:
+      GNL_OBJECT(comp)->start = gnl_composition_nearest_cover (comp, 0, GNL_DIRECTION_FORWARD);
+      if (GNL_OBJECT(comp)->start == GST_CLOCK_TIME_NONE)
+	GNL_OBJECT(comp)->start = 0;
+      GNL_OBJECT(comp)->stop = gnl_composition_nearest_cover (comp, G_MAXINT64, GNL_DIRECTION_BACKWARD);
+      if (GNL_OBJECT(comp)->stop == GST_CLOCK_TIME_NONE)
+	GNL_OBJECT(comp)->stop = G_MAXINT64;
+      GST_INFO("Start_pos:%lld, Stop_pos:%lld", 
+	       GNL_OBJECT(comp)->start, 
+	       GNL_OBJECT(comp)->stop);
+      break;
+    case GST_STATE_READY_TO_PAUSED:
+      GST_INFO ( "%s: 1 ready->paused", gst_element_get_name (GST_ELEMENT (comp)));
+      break;
+    case GST_STATE_PAUSED_TO_PLAYING:
+      GST_INFO ( "%s: 1 paused->playing", gst_element_get_name (GST_ELEMENT (comp)));
+      break;
+    case GST_STATE_PLAYING_TO_PAUSED:
+      GST_INFO ( "%s: 1 playing->paused", gst_element_get_name (GST_ELEMENT (comp)));
+      break;
+    case GST_STATE_PAUSED_TO_READY:
+      break;
+    default:
+      break;
+  }
+
+  res = GST_ELEMENT_CLASS (parent_class)->change_state (element);
+  GST_INFO("%s : change_state returns %d",
+	   gst_element_get_name(element),
+	   res);
+  return res;
+}
+

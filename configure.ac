@@ -119,9 +119,14 @@ AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 
 dnl check for gnonlin
-PKG_CHECK_MODULES(GNL, gnonlin, ,exit)
-AC_SUBST(GNL_LIBS)
+dnl PKG_CHECK_MODULES(GNL, gnonlin, ,exit)
+dnl AC_SUBST(GNL_LIBS)
+dnl AC_SUBST(GNL_CFLAGS)
+GNL_CFLAGS="-I\$(top_srcdir)/gnonlin"
+GNL_LIBS="\$(top_builddir)/gnonlin/libgnl.la"
 AC_SUBST(GNL_CFLAGS)
+AC_SUBST(GNL_LIBS)
+
 
 dnl i18n stuff and gettext stuff
 dnl AC_PROG_INTLTOOL([0.21])
@@ -136,4 +141,5 @@ AC_OUTPUT(Makefile
          src/Makefile
 	 pixmaps/Makefile
 	 ui/Makefile
+	 gnonlin/Makefile
 	 )
