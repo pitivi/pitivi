@@ -307,15 +307,17 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
   self->private->video_sink = gst_element_factory_make("ximagesink", "video_sink");
   g_assert (self->private->video_sink != NULL);
   
-  self->private->audio_sink = gst_element_factory_make("alsasink", "audio_sink");
-  g_assert (self->private->audio_sink != NULL);
+  // Sound desactivated 1/2
+  // self->private->audio_sink = gst_element_factory_make("alsasink", "audio_sink");
+  // g_assert (self->private->audio_sink != NULL);
 
 
 
   g_object_set (G_OBJECT (self->private->pipe), "uri", gst_uri_construct("file", self->filename), NULL);	   
   
   g_object_set (G_OBJECT (self->private->pipe), "video-sink", self->private->video_sink, NULL);	
-  g_object_set (G_OBJECT (self->private->pipe), "audio-sink", self->private->audio_sink, NULL);	
+  // Sound desactivated 2/2
+  //  g_object_set (G_OBJECT (self->private->pipe), "audio-sink", self->private->audio_sink, NULL);	
 
   gst_x_overlay_set_xwindow_id
     ( GST_X_OVERLAY ( self->private->video_sink ),
