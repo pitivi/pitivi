@@ -92,7 +92,7 @@ pitivi_projectsettings_get_videosize (PitiviProjectSettings *ps, gint *width, gi
       return FALSE;
 
   if (height)
-    if (!(gst_structure_get_int(gst_caps_get_structure(ms->caps, 0), "height", width)))
+    if (!(gst_structure_get_int(gst_caps_get_structure(ms->caps, 0), "height", height)))
       return FALSE;
   return TRUE;
 }
@@ -108,6 +108,22 @@ pitivi_projectsettings_get_videorate(PitiviProjectSettings *ps)
   if (gst_structure_get_double(gst_caps_get_structure(ms->caps, 0), "framerate", &res))
     return res;
   return 0;
+}
+
+int
+pitivi_projectsettings_get_audiochann(PitiviProjectSettings *ps)
+{
+  int	res;
+  GSList	*tmp;
+  PitiviMediaSettings	*ms;
+  
+  tmp = g_slist_nth(ps->media_settings, 1);
+  ms = tmp->data;
+
+  if (gst_structure_get_int(gst_caps_get_structure(ms->caps, 0), "channels", &res))
+    return res;
+  return 0;
+  
 }
 
 int

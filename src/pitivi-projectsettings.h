@@ -113,6 +113,7 @@ GstCaps			*pitivi_projectsettings_acaps_create ( int rate, int channel, int dept
 gdouble			pitivi_projectsettings_get_videorate(PitiviProjectSettings *ps);
 int			pitivi_projectsettings_get_audiorate(PitiviProjectSettings *ps);
 int			pitivi_projectsettings_get_audiodepth(PitiviProjectSettings *ps);
+int			pitivi_projectsettings_get_audiochann(PitiviProjectSettings *ps);
 gboolean		pitivi_projectsettings_get_videosize (PitiviProjectSettings *ps, 
 							      gint * width, gint * height);
 

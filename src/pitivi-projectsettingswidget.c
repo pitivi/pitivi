@@ -23,6 +23,17 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*
+  TODO
+
+  * Implement GUI => PitiviProjectSettings ( _get_copy() )
+  DONE * Implement PitiviProjectSettings => GUI ( update_gui() )
+  * Implement Audio/Video/Container codecs control (Configure Button)
+  DONE * (de)Activate Custom controls depending on combobox selection
+  * Implement codecs settings <=> PitiviGstElementSettings
+  * Make the graphical layout less ugly
+*/
+
 #include "pitivi.h"
 #include "pitivi-debug.h"
 #include "pitivi-mainapp.h"
@@ -50,6 +61,10 @@ static	VideoSize videosizetab[] = {
   {NULL,		0,	0}
 };
 
+/* DON'T FORGET TO UPDATE THE _CUSTOM !! */
+
+#define	IDX_VIDEO_SIZE_CUSTOM 2
+
 typedef struct {
   gchar	*label;
   gfloat	rate;
@@ -61,6 +76,8 @@ static	charfloat videoratetab[] = {
   {"Custom",	0.0f},
   {NULL,	0}
 };
+
+#define	IDX_VIDEO_RATE_CUSTOM 2
 
 typedef struct{
   gchar	*label;
@@ -81,12 +98,16 @@ static	charuint audioratetab[] = {
   {NULL,		0}
 };
 
+#define	IDX_AUDIO_RATE_CUSTOM 9
+
 static	charuint audiochanntab[] = {
   {"Mono (1)",		1},
   {"Stereo (2)",	2},
   {"Custom",		0},
   {NULL,		0}
 };
+
+#define	IDX_AUDIO_CHANN_CUSTOM 2
 
 static	charuint audiodepthtab[] = {
   {"8 bits",		8},
@@ -107,7 +128,9 @@ static     GObjectClass *parent_class;
     _set_settings : Sets the active PitiviProjectSettings
     _blank : Sets the widget to default value and a NULL settings
     _get_copy : Returns a copy of the PitiviProjectSettings selected
-    _get_modified : Returns the PitiviProjectSettings modified
+  Eventually :
+    _get_modified : Returns the PitiviProjectSettings modified 
+     But could really be done by the parent handler (window,...)
 
 */
 
@@ -144,6 +167,8 @@ struct _PitiviProjectSettingsWidgetPrivate
   GtkWidget	*audiodepthcbox;
 
   GtkWidget	*audiochanncbox;
+  GtkWidget	*audiochannhbox;
+  GtkWidget	*audiochannentry;
 
   GtkWidget	*audioratecbox;
   GtkWidget	*audioratehbox;
@@ -211,18 +236,75 @@ pitivi_projectsettingswidget_get_copy (PitiviProjectSettingsWidget *self)
   return res;
 }
 
-PitiviProjectSettings *
-pitivi_projectsettingswidget_get_modified (PitiviProjectSettingsWidget *self)
+/* PitiviProjectSettings * */
+/* pitivi_projectsettingswidget_get_modified (PitiviProjectSettingsWidget *self) */
+/* { */
+/*   PitiviProjectSettings *res = NULL; */
+/*   /\* */
+/*     Modify the values of self->settings according to the values in the widget */
+/*     and return it. If there's no self->settings, return NULL. */
+/*   *\/ */
+/*   if (!self->settings) */
+/*     return NULL; */
+/*   return res; */
+/* } */
+
+static void
+video_rate_cbox_changed (GtkComboBox *cbox, PitiviProjectSettingsWidget *self)
 {
-  PitiviProjectSettings *res = NULL;
-  /*
-    Modify the values of self->settings according to the values in the widget
-    and return it. If there's no self->settings, return NULL.
-  */
-  if (!self->settings)
-    return NULL;
-  return res;
+  int	i;
+
+  i = gtk_combo_box_get_active (cbox);
+  gtk_widget_set_sensitive (self->private->videoratehbox,
+			    (i == IDX_VIDEO_RATE_CUSTOM) ? TRUE : FALSE);
+  if (i != IDX_VIDEO_RATE_CUSTOM)
+    gtk_entry_set_text (GTK_ENTRY (self->private->videorateentry), 
+			g_strdup_printf("%f", videoratetab[i].rate));
 }
+
+static void
+audio_rate_cbox_changed (GtkComboBox *cbox, PitiviProjectSettingsWidget *self)
+{
+  int	i;
+
+  i = gtk_combo_box_get_active (cbox);
+  gtk_widget_set_sensitive (self->private->audioratehbox,
+			    (i == IDX_AUDIO_RATE_CUSTOM) ? TRUE : FALSE);
+  if (i != IDX_AUDIO_RATE_CUSTOM)
+    gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->audiorateentry), 
+			       audioratetab[i].depth);
+}
+
+static void
+audio_chann_cbox_changed (GtkComboBox *cbox, PitiviProjectSettingsWidget *self)
+{
+  int	i;
+
+  i = gtk_combo_box_get_active (cbox);
+  gtk_widget_set_sensitive (self->private->audiochannhbox,
+			    (i == IDX_AUDIO_CHANN_CUSTOM) ? TRUE : FALSE);
+  if (i != IDX_AUDIO_CHANN_CUSTOM)
+    gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->audiochannentry),
+			       audiochanntab[i].depth);
+}
+
+static void
+video_size_cbox_changed (GtkComboBox *cbox, PitiviProjectSettingsWidget *self)
+{
+  int	i;
+
+  i = gtk_combo_box_get_active (cbox);
+  gtk_widget_set_sensitive (self->private->videosizehbox,
+			    (i == IDX_VIDEO_SIZE_CUSTOM) ? TRUE : FALSE);
+  if (i != IDX_VIDEO_SIZE_CUSTOM) {
+    gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->videowidthentry),
+			       videosizetab[i].width);
+    gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->videoheightentry),
+			       videosizetab[i].height);
+  }
+}
+
+/* activate_combobox_entry : ONLY for codec combobox */
 
 static void
 activate_combobox_entry (GtkWidget *combobox, GList *list, gchar *tofind)
@@ -249,9 +331,75 @@ update_video_width_height (PitiviProjectSettingsWidget *self, gint width, gint h
       break;
   if (!videosizetab[i].label) {
     /* Custom, set text */
+    gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->videowidthentry), width);
+    gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->videoheightentry), height);
     i--;
   };
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->videosizecbox), i);
+  video_size_cbox_changed(GTK_COMBO_BOX (self->private->videosizecbox), self);
+}
+
+static void
+update_video_framerate (PitiviProjectSettingsWidget *self, gfloat rate)
+{
+  gint	i;
+
+  for (i = 0; videoratetab[i].label; i++)
+    if (videoratetab[i].rate == rate)
+      break;
+  if (!videoratetab[i].label) {
+    gtk_entry_set_text (GTK_ENTRY (self->private->videorateentry), 
+			g_strdup_printf("%f", rate));
+    i--;
+  }
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->videoratecbox), i);
+  video_rate_cbox_changed (GTK_COMBO_BOX (self->private->videoratecbox), self);
+}
+
+static void
+update_audio_depth (PitiviProjectSettingsWidget *self, gint depth)
+{
+  gint	i;
+
+  PITIVI_DEBUG("depth : %d", depth);
+  for (i = 0; audiodepthtab[i].label; i++)
+    if (audiodepthtab[i].depth == depth)
+      break;
+  if (!audiodepthtab[i].label)
+    i = -1;
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->audiodepthcbox), i);
+}
+
+static void
+update_audio_rate (PitiviProjectSettingsWidget *self, gint rate)
+{
+  gint	i;
+
+  for (i = 0; audioratetab[i].label; i++)
+    if (audioratetab[i].depth == rate)
+      break;
+  if (!audioratetab[i].label) {
+    i--;
+    gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->audiorateentry), rate);
+  }
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->audioratecbox), i);
+  audio_rate_cbox_changed (GTK_COMBO_BOX (self->private->audioratecbox), self);
+}
+
+static void
+update_audio_chann (PitiviProjectSettingsWidget *self, gint rate)
+{
+  gint	i;
+
+  for (i = 0; audiochanntab[i].label; i++)
+    if (audiochanntab[i].depth == rate)
+      break;
+  if (!audiochanntab[i].label) {
+    i--;
+    gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->audiochannentry), rate);
+  }
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->audiochanncbox), i);
+  audio_rate_cbox_changed (GTK_COMBO_BOX (self->private->audiochanncbox), self);
 }
 
 static void
@@ -268,6 +416,7 @@ pitivi_projectsettingswidget_update_gui (PitiviProjectSettingsWidget *self)
   gtk_text_buffer_set_text (self->private->descentry,
 			    self->settings->description, -1);
 
+
   /* Set video properties */
   mset = (PitiviMediaSettings *) self->settings->media_settings->data;
   activate_combobox_entry (self->private->videocodeccbox, self->private->venc_list,
@@ -277,13 +426,18 @@ pitivi_projectsettingswidget_update_gui (PitiviProjectSettingsWidget *self)
     PITIVI_WARNING ("Couldn't get videosize from PitiviProjectSettings !");
   else
     update_video_width_height (self, width, height);
-  
+  update_video_framerate (self, pitivi_projectsettings_get_videorate (self->settings));
+
 
   /* Set audio properties */
   mset = (PitiviMediaSettings *) self->settings->media_settings->next->data;
   activate_combobox_entry (self->private->audiocodeccbox, self->private->aenc_list,
 			   mset->codec_factory_name);
   /* TODO : Set audio codec properties */
+  update_audio_depth (self, pitivi_projectsettings_get_audiodepth(self->settings));
+  update_audio_chann (self, pitivi_projectsettings_get_audiochann(self->settings));
+  update_audio_rate (self, pitivi_projectsettings_get_audiorate (self->settings));
+  
 
   /* Set container properties */
   activate_combobox_entry (self->private->containercbox, self->private->container_list,
@@ -424,7 +578,7 @@ pitivi_psw_make_audioframe (PitiviProjectSettingsWidget *self)
   GtkWidget	*frame;
   GtkWidget	*table;
   GtkWidget	*codeclabel, *depthlabel, *channlabel, *ratelabel;
-  GtkWidget	*hzlabel;
+  GtkWidget	*hzlabel, *nblabel;
 
   frame = gtk_frame_new ("Audio settings");
   table = gtk_table_new (4, 4, FALSE);
@@ -463,8 +617,22 @@ pitivi_psw_make_audioframe (PitiviProjectSettingsWidget *self)
 		    0, 1, 2, 3, FALSE, FALSE, 5, 5);
 
   self->private->audiochanncbox = make_new_audiochann_cbox();
+  g_signal_connect (G_OBJECT(self->private->audiochanncbox),
+		    "changed", G_CALLBACK (audio_chann_cbox_changed), self);
   gtk_table_attach (GTK_TABLE (table), self->private->audiochanncbox,
 		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL , FALSE, 5, 5);
+
+  self->private->audiochannhbox = gtk_hbox_new (FALSE, 5);
+  self->private->audiochannentry = gtk_spin_button_new_with_range (1, G_MAXINT, 1);
+  nblabel = gtk_label_new ("Channels");
+  gtk_box_pack_start (GTK_BOX (self->private->audiochannhbox),
+		      self->private->audiochannentry, FALSE, FALSE, 5);
+  gtk_widget_set_sensitive (self->private->audiochannhbox, FALSE);
+  gtk_box_pack_start (GTK_BOX (self->private->audiochannhbox),
+		      nblabel, FALSE, FALSE, 5);
+  gtk_table_attach (GTK_TABLE (table), self->private->audiochannhbox,
+		    2, 4, 2, 3, FALSE, FALSE, 5, 5);
+
 
   /* Rate */
   ratelabel = gtk_label_new ("Rate :");
@@ -474,14 +642,17 @@ pitivi_psw_make_audioframe (PitiviProjectSettingsWidget *self)
 		    0, 1, 3, 4, FALSE, FALSE, 5, 5);
 
   self->private->audioratecbox = make_new_audiorate_cbox();
+  g_signal_connect (G_OBJECT(self->private->audioratecbox),
+		    "changed", G_CALLBACK (audio_rate_cbox_changed), self);
   gtk_table_attach (GTK_TABLE (table), self->private->audioratecbox,
 		    1, 2, 3, 4, GTK_EXPAND | GTK_FILL , FALSE, 5, 5);
 
-  self->private->audioratehbox = gtk_hbox_new (FALSE, 0);
-  self->private->audiorateentry = gtk_spin_button_new_with_range (1, G_MAXINT, 44100);
+  self->private->audioratehbox = gtk_hbox_new (FALSE, 5);
+  self->private->audiorateentry = gtk_spin_button_new_with_range (25, G_MAXINT, 25);
   gtk_box_pack_start (GTK_BOX (self->private->audioratehbox), self->private->audiorateentry, TRUE, TRUE, 0);
   hzlabel = gtk_label_new ("Hz");
   gtk_box_pack_start (GTK_BOX (self->private->audioratehbox), hzlabel, FALSE, FALSE, 0);
+  gtk_widget_set_sensitive (self->private->audioratehbox, FALSE);
   gtk_table_attach (GTK_TABLE (table), self->private->audioratehbox,
 		    2, 4, 3, 4, FALSE, FALSE, 5, 5);
 
@@ -523,18 +694,20 @@ pitivi_psw_make_videoframe (PitiviProjectSettingsWidget *self)
 		    0, 1, 1, 2, FALSE, FALSE, 5, 5);
 
   self->private->videosizecbox = make_new_videosize_cbox();
+  g_signal_connect (G_OBJECT(self->private->videosizecbox),
+		    "changed", G_CALLBACK (video_size_cbox_changed), self);
   gtk_table_attach (GTK_TABLE (table), self->private->videosizecbox,
 		    1, 2, 1, 2, GTK_EXPAND | GTK_FILL , FALSE, 5, 5);
 
-  self->private->videosizehbox = gtk_hbox_new (FALSE, 5);
-  self->private->videowidthentry = gtk_entry_new();
+  self->private->videosizehbox = gtk_hbox_new (FALSE, 2);
+  self->private->videowidthentry = gtk_spin_button_new_with_range(16, G_MAXINT, 16);
   xlabel = gtk_label_new("x");
-  self->private->videoheightentry = gtk_entry_new();
+  self->private->videoheightentry = gtk_spin_button_new_with_range(16, G_MAXINT, 16);
   pixellabel = gtk_label_new("pixels");
-  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), self->private->videowidthentry, FALSE, FALSE, 5);
-  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), xlabel, FALSE, FALSE, 5);
-  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), self->private->videoheightentry, FALSE, FALSE, 5);
-  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), pixellabel, FALSE, FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), self->private->videowidthentry, FALSE, FALSE, 2);
+  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), xlabel, FALSE, FALSE, 2);
+  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), self->private->videoheightentry, FALSE, FALSE, 2);
+  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), pixellabel, FALSE, FALSE, 2);
   gtk_widget_set_sensitive (self->private->videosizehbox, FALSE);
   gtk_table_attach (GTK_TABLE (table), self->private->videosizehbox,
 		    2, 4, 1, 2, FALSE, FALSE, 5, 5);
@@ -547,14 +720,16 @@ pitivi_psw_make_videoframe (PitiviProjectSettingsWidget *self)
 		    0, 1, 2, 3, FALSE, FALSE, 5, 5);
 
   self->private->videoratecbox = make_new_videorate_cbox();
+  g_signal_connect (G_OBJECT(self->private->videoratecbox),
+		    "changed", G_CALLBACK (video_rate_cbox_changed), self);
   gtk_table_attach (GTK_TABLE (table), self->private->videoratecbox,
 		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
 
-  self->private->videoratehbox = gtk_hbox_new (FALSE, 5);
+  self->private->videoratehbox = gtk_hbox_new (FALSE, 2);
   self->private->videorateentry = gtk_entry_new();
   fpslabel = gtk_label_new ("fps");
-  gtk_box_pack_start (GTK_BOX (self->private->videoratehbox), self->private->videorateentry, FALSE, FALSE, 5);
-  gtk_box_pack_start (GTK_BOX (self->private->videoratehbox), fpslabel, FALSE, FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->videoratehbox), self->private->videorateentry, FALSE, FALSE, 2);
+  gtk_box_pack_start (GTK_BOX (self->private->videoratehbox), fpslabel, FALSE, FALSE, 2);
   gtk_widget_set_sensitive (self->private->videoratehbox, FALSE);
   gtk_table_attach (GTK_TABLE (table), self->private->videoratehbox,
 		    2, 4, 2, 3, FALSE, FALSE, 5, 5);
