@@ -345,6 +345,10 @@ int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
 PitiviLayerType
 check_media_type_str (gchar *media)
 {
+  if (!g_strcasecmp  (media, "effect"))
+    return (PITIVI_EFFECTS_TRACK);
+  if (!g_strcasecmp  (media, "transition"))
+    return (PITIVI_TRANSITION_TRACK);
   if (!g_strcasecmp  (media, "video")) 
     return (PITIVI_VIDEO_TRACK);
   else if (!g_strcasecmp (media, "audio"))
@@ -713,8 +717,10 @@ pitivi_timelinecellrenderer_drag_on_effects (PitiviTimelineCellRenderer *self,
   
   sf = (PitiviSourceFile *) selection->data;
   if (sf)
-    if (self->track_type == PITIVI_EFFECTS_TRACK && self->track_type == PITIVI_TRANSITION_TRACK)
-      create_effect_on_track (self, sf, x);
+    {
+      if (self->track_type == PITIVI_EFFECTS_TRACK || self->track_type == PITIVI_TRANSITION_TRACK)
+	create_effect_on_track (self, sf, x);
+    }
 }
 
 static void 
@@ -808,13 +814,7 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
     default:
       break;
     }
-  self->private->slide_width = 0;
-  self->private->slide_both  = FALSE;
-  if (self->linked_track)
-    {
-      PITIVI_TIMELINECELLRENDERER (self->linked_track)->private->slide_width = 0;
-      PITIVI_TIMELINECELLRENDERER (self->linked_track)->private->slide_both  = FALSE;
-    }
+  g_signal_emit_by_name (self->private->timewin, "drag-source-end", NULL);
 }
 
 guint 
@@ -1067,6 +1067,14 @@ pitivi_timelinecellrenderer_callb_drag_source_begin (PitiviTimelineCellRenderer 
     self->private->slide_both = TRUE;
 }
 
+void
+pitivi_timelinecellrenderer_callb_drag_source_end (PitiviTimelineCellRenderer *self, 
+						   gpointer data)
+{
+  self->private->slide_both = FALSE;
+  self->private->slide_width = 0;
+}
+
 /*
  **********************************************************
  * Instance Init  			                  *
@@ -1242,6 +1250,15 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
 		 NULL,       
 		 g_cclosure_marshal_VOID__POINTER,
 		 G_TYPE_NONE, 1, G_TYPE_POINTER);
+  
+   g_signal_new ("drag-source-end",
+		 G_TYPE_FROM_CLASS (g_class),
+		 G_SIGNAL_RUN_FIRST,
+		 G_STRUCT_OFFSET (PitiviTimelineCellRendererClass, drag_source_end),
+		 NULL,
+		 NULL,       
+		 g_cclosure_marshal_VOID__POINTER,
+		 G_TYPE_NONE, 1, G_TYPE_POINTER);
 
    g_signal_new ("double-click-source",
 		 G_TYPE_FROM_CLASS (g_class),
@@ -1275,6 +1292,7 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
    cell_class->select = pitivi_timelinecellrenderer_callb_select;
    cell_class->deselect = pitivi_timelinecellrenderer_callb_deselect;
    cell_class->drag_source_begin = pitivi_timelinecellrenderer_callb_drag_source_begin;
+   cell_class->drag_source_end = pitivi_timelinecellrenderer_callb_drag_source_end;
    cell_class->delete = pitivi_timelinecellrenderer_callb_delete_sf;
    cell_class->dbk_source = pitivi_timelinecellrenderer_callb_dbk_source;
    cell_class->cut_source = pitivi_timelinecellrenderer_callb_cut_source;

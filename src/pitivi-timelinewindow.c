@@ -128,6 +128,7 @@ enum {
   DESELECT_SIGNAL,
   DELETE_SIGNAL,
   DRAG_SOURCE_BEGIN_SIGNAL,
+  DRAG_SOURCE_END_SIGNAL,
   DBK_SOURCE_SIGNAL,
   ZOOM_CHANGED_SIGNAL,
   LAST_SIGNAL
@@ -680,6 +681,12 @@ pitivi_timelinewindow_drag_source_begin (PitiviTimelineWindow *self, gpointer da
 }
 
 static void
+pitivi_timelinewindow_drag_source_end (PitiviTimelineWindow *self, gpointer data)
+{
+  send_signal_to_childs (self, "drag-source-end", data);
+}
+
+static void
 pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
@@ -742,6 +749,15 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 						    g_cclosure_marshal_VOID__POINTER,
 						    G_TYPE_NONE, 1, G_TYPE_POINTER);
   
+  signals[DRAG_SOURCE_END_SIGNAL] = g_signal_new ("drag-source-end",
+						    G_TYPE_FROM_CLASS (g_class),
+						    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+						    G_STRUCT_OFFSET (PitiviTimelineWindowClass, drag_source_end),
+						    NULL,
+						    NULL,       
+						    g_cclosure_marshal_VOID__POINTER,
+						    G_TYPE_NONE, 1, G_TYPE_POINTER);
+  
   signals[DBK_SOURCE_SIGNAL] = g_signal_new ("double-click-source",
 					     G_TYPE_FROM_CLASS (g_class),
 					     G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
@@ -765,6 +781,7 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
   klass->deselect = pitivi_timelinewindow_deselect;
   klass->delete = pitivi_timelinewindow_delete_sf;
   klass->drag_source_begin = pitivi_timelinewindow_drag_source_begin;
+  klass->drag_source_end = pitivi_timelinewindow_drag_source_end;
   klass->dbk_source = pitivi_timelinewindow_dblclick;
   klass->zoom_changed = pitivi_timelinewindow_zoom_changed;
 }

@@ -99,6 +99,7 @@ struct _PitiviTimelineWindowClass
   void (* deselect)   (PitiviTimelineWindow  *timew);
   void (* delete)     (PitiviTimelineWindow  *timew, gpointer data);
   void (*drag_source_begin) (PitiviTimelineWindow *timew, gpointer data);
+  void (*drag_source_end) (PitiviTimelineWindow *timew, gpointer data);
   void (*dbk_source) (PitiviTimelineWindow *timew, gpointer data);
   void (*zoom_changed) (PitiviTimelineWindow  *timew);
 };

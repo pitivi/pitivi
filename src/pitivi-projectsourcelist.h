@@ -62,6 +62,10 @@ struct _PitiviSourceFile
   GstElement *pipeline;		// audio/video pipeline
   GstElement *pipeline_video;	// video only pipeline
   GstElement *pipeline_audio;	// audio only pipeline
+  
+  /* Effects */
+  GstElement *effect;
+  GdkPixbuf  *thumbs_effect;
 };
 
 struct _PitiviProjectSourceList

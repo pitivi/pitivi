@@ -132,7 +132,7 @@
 #define PITIVI_SMPTE_262	"smpte262"
 #define PITIVI_SMPTE_263	"smpte263"
 #define PITIVI_SMPTE_264	"smpte264"
-
+#define PITIVI_SMPTE_FAILED	"smpte-failed"
 
 void		pitivi_stockicons_register (void);
 

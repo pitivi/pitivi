@@ -45,6 +45,8 @@ struct _PitiviEffectsWindowPrivate
   guint			notebook_id;
   GtkWidget		*notebook;
   PitiviEffectsTree	*trees[PITIVI_EFFECT_NBCAT_TYPE];
+  PitiviSourceFile	*dndse;
+  GtkWidget		*timelinewin;
 };
 
 /*
@@ -139,6 +141,7 @@ pitivi_effectswindow_constructor (GType type,
       pitivi_effectswindow_insert_newtab (GTK_NOTEBOOK (self->private->notebook), self->private->trees[count]);
       gtk_tree_view_expand_all (GTK_TREE_VIEW (self->private->trees[count]->treeview));
     }
+  self->private->timelinewin = (GtkWidget *) pitivi_mainapp_get_timelinewin (((PitiviWindows *)self)->mainapp);
   return obj;
 }
 
@@ -221,18 +224,19 @@ pitivi_effectstree_insert_child (PitiviEffectsTree *tree_effect,
   tree_effect->pixbuf = pixbuf;
 }
 
-PitiviSourceEffect *
+PitiviSourceFile *
 pitivi_create_smpte (const gchar *name,
-		     const gchar *desc,
+		     const gchar *mediatype,
 		     GstElement *elm,
 		     GdkPixbuf *pixbuf)
 {
-  PitiviSourceEffect *se;
+  PitiviSourceFile *se;
 
-  se = g_new0 (PitiviSourceEffect, 1);
-  se->pixbuf = pixbuf;
-  se->name = g_strdup (name);
-  se->desc = g_strdup (desc);
+  se = g_new0 (PitiviSourceFile, 1);
+  se->filename = g_strdup (name);
+  se->thumbs_effect = pixbuf;
+  se->mediatype = g_strdup (mediatype);
+  se->length = 0; /*((gint64)332671091277);*/
   return se;
 }
 
@@ -246,10 +250,12 @@ pitivi_effectstree_insert_smpte (PitiviEffectsTree *tree_effect,
 				 gpointer data)
 {
   GdkPixbuf *pixbuf;
-  PitiviSourceEffect *se;
+  GdkPixbuf *thumb;
+  PitiviSourceFile *se;
 
   pixbuf = gtk_widget_render_icon(tree_effect->window, icon, GTK_ICON_SIZE_MENU, NULL);
-  se = pitivi_create_smpte (name, desc, (GstElement *)data, pixbuf);
+  thumb = gtk_widget_render_icon(tree_effect->window, icon, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
+  se = pitivi_create_smpte (name, desc, (GstElement *)data, thumb);
   gtk_tree_store_append (tree_effect->model, child, parent);
   gtk_tree_store_set(tree_effect->model, child,
 		     PITIVI_ICON_COLUMN, pixbuf,
@@ -329,6 +335,20 @@ pitivi_effectstree_cursor_move (GtkTreeView *treeview,
  * drag							      *
  **************************************************************/
 
+void
+slide_effects_info (PitiviEffectsWindow *self, gint64 length, gchar *path)
+{
+  struct _Pslide
+  {
+    gint64 length;
+    gchar  *path;
+  } slide;
+  
+  slide.length = length;
+  slide.path = path;
+  g_signal_emit_by_name (self->private->timelinewin, "drag-source-begin", &slide);
+}
+
 
 static void
 pitivi_effectswindow_drag_data_get (GtkWidget          *widget,
@@ -338,17 +358,19 @@ pitivi_effectswindow_drag_data_get (GtkWidget          *widget,
 				    guint32             time,
 				    gpointer user_data)
 {
-  gtk_selection_data_set (selection_data, 
-			  selection_data->target, 
-			  8, 
-			  "effects", 
-			  strlen ("effects"));
+  PitiviEffectsWindow *self = (PitiviEffectsWindow *) gtk_widget_get_toplevel (widget);
+  if (self && self->private->dndse)
+    gtk_selection_data_set (selection_data, 
+			    selection_data->target, 
+			    8, 
+			    (void *) self->private->dndse,
+			    sizeof (PitiviSourceFile));
 }
 
 static void
 pitivi_effectswindow_drag_end (GtkWidget          *widget,
 			       GdkDragContext     *context,
-			       gpointer		user_data)
+			       gpointer		  user_data)
 {
 }
 
@@ -364,6 +386,23 @@ pitivi_effectswindow_drag_begin (GtkWidget		*widget,
 				 GdkDragContext		*context,
 				 gpointer		user_data)
 {
+  PitiviEffectsWindow *self = (PitiviEffectsWindow *) gtk_widget_get_toplevel (widget);
+  PitiviSourceFile    *se;
+  GtkTreeSelection    *selection;
+  GtkTreeModel	      *model;
+  GtkTreeIter	      iter;
+  gchar		      *name;
+  gint64	      size;
+
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
+  if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+    g_warning("No elements selected!");
+    return;
+  }
+  gtk_tree_model_get (model, &iter, PITIVI_POINTER_COLUMN, &se, -1);
+  self->private->dndse = se;
+  //  size = ((gint64)332671091277);
+  slide_effects_info ( self, size, "transition" );
 }
 
 /**************************************************************
@@ -552,7 +591,7 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
 					       child, 
 					       &Trans_iter[nb_tcat],
 					       tab_category[nb].name,
-					       tab_category[nb].description,
+					       "transition",
 					       tab_category[nb].image,
 					       NULL);
 	    }
@@ -562,16 +601,16 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
 }
 
 void
-pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, 
+pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 			    PitiviEffectsTypeEnum eneffects,  
-			    PitiviSettings *self)
+			    PitiviSettings *setting)
 {
-  int				count;  
+  GtkWidget			*self;
   GtkCellRenderer		*pCellRenderer;
   GtkTreeViewColumn		*pColumn;
   GdkPixbuf			*pixbuf;
   const GList			*elements;
-  int				i;
+  int				count, i =  0;
   
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (tree_effect->treeview), FALSE);
   tree_effect->model = gtk_tree_store_new ( PITIVI_NB_COLUMN,
@@ -588,14 +627,13 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
       GtkTreeIter child;
 
     case PITIVI_EFFECT_VIDEO_TYPE:
-      insert_video_effects_on_tree (tree_effect, &child, self->video_effects);
+      insert_video_effects_on_tree (tree_effect, &child, setting->video_effects);
       break;
-
     case PITIVI_EFFECT_AUDIO_TYPE:
-      insert_audio_effects_on_tree (tree_effect, &child, self->audio_effects);
+      insert_audio_effects_on_tree (tree_effect, &child, setting->audio_effects);
       break;
     case PITIVI_EFFECT_TRANSITION_TYPE:
-      insert_transition_effects_on_tree (tree_effect, &child, self->transition_effects);
+      insert_transition_effects_on_tree (tree_effect, &child, setting->transition_effects);
       break;
     }
 
@@ -637,12 +675,13 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 		      TargetEntries, iNbTargetEntries, 
 		      GDK_ACTION_COPY);
 
+  self = gtk_widget_get_toplevel (tree_effect->treeview);
   g_signal_connect (tree_effect->treeview, "drag_data_get",	      
-		    G_CALLBACK (pitivi_effectswindow_drag_data_get), tree_effect);
+		    G_CALLBACK (pitivi_effectswindow_drag_data_get), self);
   g_signal_connect (tree_effect->treeview, "drag_end",	      
-		    G_CALLBACK (pitivi_effectswindow_drag_end), tree_effect);
+		    G_CALLBACK (pitivi_effectswindow_drag_end), self);
   g_signal_connect (tree_effect->treeview, "drag_begin",	      
-		    G_CALLBACK (pitivi_effectswindow_drag_begin), tree_effect);
+		    G_CALLBACK (pitivi_effectswindow_drag_begin), self);
 }
 
 static void

@@ -29,6 +29,7 @@
 #include "pitivi-cursor.h"
 #include "pitivi-dragdrop.h"
 #include "pitivi-sourceitem.h"
+#include "pitivi-stockicons.h"
 
 static	GtkWidgetClass	*parent_class = NULL;
 
@@ -195,11 +196,15 @@ show_transition_media (GtkWidget *widget, GdkEventExpose *event)
 {
   
   PitiviTimelineMedia	*self = PITIVI_TIMELINEMEDIA (widget);
-
-  gdk_draw_rectangle ( GDK_WINDOW (widget->window), 
-		       widget->style->white_gc, TRUE, 1, 1,
-		       widget->allocation.width - 2, 
-		       widget->allocation.height - 2);
+  GdkPixbuf		*src_pix;
+  GdkPixbuf		*scale_pix;
+  
+  src_pix = self->sourceitem->srcfile->thumbs_effect;
+  if (!src_pix)
+    src_pix = gtk_widget_render_icon(widget->window, PITIVI_SMPTE_FAILED, GTK_ICON_SIZE_BUTTON, NULL);;
+  scale_pix = gdk_pixbuf_scale_simple (src_pix, widget->allocation.width, GTK_WIDGET (self->private->cell)->allocation.height, GDK_INTERP_NEAREST);
+  gdk_draw_pixbuf( widget->window, NULL, GDK_PIXBUF 
+		   (scale_pix), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_MAX, 0, 0);
 }
 
 void
@@ -242,8 +247,6 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
   gdk_draw_rectangle (widget->window, widget->style->white_gc,
 		      TRUE, 0, 0,
 		      widget->allocation.width-2, -1);
-  if (self->selected)
-      draw_selection_dash (widget, &selection, 2);
   switch (((PitiviTimelineCellRenderer *)container)->track_type)
     {
     case PITIVI_AUDIO_TRACK:
@@ -256,6 +259,8 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
       show_transition_media (widget, event);
       break;
     }
+  if (self->selected)
+    draw_selection_dash (widget, &selection, 2);
   return FALSE;
 }
 
@@ -279,12 +284,15 @@ pitivi_timelinemedia_constructor (GType type,
   self->sourceitem->id = self->private->cell->nb_added[0];
   if (self->private->cell->track_type == PITIVI_AUDIO_TRACK)
     self->sourceitem->isaudio = TRUE;
-  
-  /* Construct Id : filename + '_' + media type  + '_' + id */
-  name = g_malloc (strlen (self->sourceitem->srcfile->filename) + strlen (self->sourceitem->srcfile->mediatype) + 10);
-  sprintf (name, "%s_%s_%lld", self->sourceitem->srcfile->filename, self->sourceitem->srcfile->mediatype, self->sourceitem->id);
-  self->sourceitem->gnlsource = gnl_source_new (name, self->sourceitem->srcfile->pipeline);
-  gnl_object_set_media_start_stop (GNL_OBJECT(self->sourceitem->gnlsource), 0, self->sourceitem->srcfile->length);
+
+  if (self->private->cell->track_type != PITIVI_TRANSITION_TRACK)
+    {
+      /* Construct Id : filename + '_' + media type  + '_' + id */
+      name = g_malloc (strlen (self->sourceitem->srcfile->filename) + strlen (self->sourceitem->srcfile->mediatype) + 10);
+      sprintf (name, "%s_%s_%lld", self->sourceitem->srcfile->filename, self->sourceitem->srcfile->mediatype, self->sourceitem->id);
+      self->sourceitem->gnlsource = gnl_source_new (name, self->sourceitem->srcfile->pipeline);
+      gnl_object_set_media_start_stop (GNL_OBJECT(self->sourceitem->gnlsource), 0, self->sourceitem->srcfile->length);
+    }
   return object;
 }
 

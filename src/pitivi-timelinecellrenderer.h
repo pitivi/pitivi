@@ -100,6 +100,7 @@ struct _PitiviTimelineCellRendererClass
   void (* key_delete)	     (PitiviTimelineCellRenderer *cell);
   void (* delete)	     (PitiviTimelineCellRenderer *cell, gpointer data);
   void (* drag_source_begin) (PitiviTimelineCellRenderer *cell, gpointer data);
+  void (* drag_source_end)   (PitiviTimelineCellRenderer *cell, gpointer data);
   void (* dbk_source)	     (PitiviTimelineCellRenderer *cell, gpointer data);
   void (* cut_source)	     (PitiviTimelineCellRenderer *cell, guint x, gpointer data);
   void (* zoom_changed)	     (PitiviTimelineCellRenderer *cell);
