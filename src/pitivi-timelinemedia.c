@@ -516,9 +516,9 @@ pitivi_timelinemedia_constructor (GType type,
 	    g_warning ("Coudn't get Sourcefile effect bin");
 	    return NULL;
 	  }
+	  this->sourceitem->gnlobject = (GnlObject *)gnl_operation_new (name, bin);
 	  if ( this->track->track_type == PITIVI_TRANSITION_TRACK ) /* please let the prority set here. Thank you */
 	    pitivi_timelinemedia_set_priority (this, 1);
-	  this->sourceitem->gnlobject = (GnlObject *)gnl_operation_new (name, bin);
 	}
       else if ( this->track->track_type == PITIVI_VIDEO_TRACK )
 	{

@@ -1205,6 +1205,8 @@ resizing_media (PitiviTimelineMedia *source, PitiviTimelineCellRenderer *self, g
   guint decrement = 0;
   
   decrement = GTK_RULER(self->private->timewin->hruler)->metric->pixels_per_unit;
+  if (self->private->timewin->unit == PITIVI_FRAMES)
+    decrement = 20;
   if (x < GTK_WIDGET (source)->allocation.width + GTK_WIDGET (source)->allocation.x - (decrement))
     {
       /* Don"t touch please. */
