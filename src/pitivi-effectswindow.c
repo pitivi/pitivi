@@ -664,6 +664,9 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 		      TargetEntries, iNbTargetEntries, 
 		      GDK_ACTION_COPY);
 
+  pixbuf = gtk_widget_render_icon (GTK_WIDGET (tree_effect->treeview), PITIVI_STOCK_HAND, GTK_ICON_SIZE_DND, NULL);
+  gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (tree_effect->treeview), pixbuf);
+
   self = gtk_widget_get_toplevel (tree_effect->treeview);
   
   g_signal_connect (tree_effect->treeview, "drag_data_get",	      
