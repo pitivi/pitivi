@@ -566,7 +566,7 @@ pitivi_timelinewindow_drag_source_begin (PitiviTimelineWindow *self, gpointer da
 {
   gint64 *len = data;
 
-  send_signal_to_childs (self, "drag-source-begin", "toto");
+  send_signal_to_childs (self, "drag-source-begin", data);
 }
 
 static void

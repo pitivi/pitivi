@@ -1451,8 +1451,13 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
   
   name = strrchr(self->private->filepath, '/');
   name++;
-
+    
+  self->private->sf = pitivi_projectsourcelist_get_sourcefile(PITIVI_PROJECTWINDOWS(self)->project->sources,
+							      "0",
+							      0);
+  
   /* Mise a jour des donnees */
+  
   gtk_list_store_set(liststore,
 		     &pIter, BMP_LISTCOLUMN1, pixbufa,
 		     TEXT_LISTCOLUMN2, name,
@@ -1514,18 +1519,17 @@ pitivi_sourcelistwindow_set_bin(PitiviSourceListWindow *self, gchar *bin_name)
   gtk_tree_store_set(self->private->treestore, &iter, BMP_COLUMN, pixbufa,
 		     TEXT_TREECOLUMN, bin_name, -1);
 
-  /* creation du model pour le nouveau bin */
+  /* Creation du model pour le nouveau bin */
   liststore = gtk_list_store_new(N_LISTCOLOUMN, GDK_TYPE_PIXBUF,
 				 G_TYPE_STRING, G_TYPE_STRING,
 				 G_TYPE_STRING, G_TYPE_STRING,
-				 G_TYPE_STRING, G_TYPE_STRING
-				,G_TYPE_POINTER);
+				 G_TYPE_STRING, G_TYPE_STRING,
+				 G_TYPE_POINTER);
   
   gtk_tree_view_set_model(GTK_TREE_VIEW(self->private->listview),
 			  GTK_TREE_MODEL(liststore));
  
   
-
   strcpy(self->private->treepath, "0");
   add_liststore_for_bin(self, liststore);
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
@@ -1622,7 +1626,6 @@ drag_begin_cb (GtkWidget          *widget,
  
   self->private->dndfilepos = atoi(gtk_tree_model_get_string_from_iter(model, &iter));
 
-  g_printf("filepos ==> %d\n", self->private->dndfilepos);
   gtk_tree_model_get_iter_first(model, &iternext);
   selected_list_row = self->private->dndfilepos;
   item_select = 0;
@@ -1664,16 +1667,40 @@ drag_data_get_cb (GtkWidget          *widget,
 		  guint32             time,
 		  gpointer	      editor)
 {
+  GtkTreeView		*listview = (GtkTreeView *) widget;
+  GtkTreeSelection	*selection;
   PitiviSourceListWindow *self = PITIVI_SOURCELISTWINDOW(editor);
+  GtkTreeIter		 iter;
+  GtkTreeIter		 iternext;
+  GtkTreeModel		 *model;
   PitiviSourceFile	 *sf;
-  gchar			*tmp;
+  gchar			 *tmp;
+  
 
-  sf = pitivi_projectsourcelist_get_sourcefile(PITIVI_PROJECTWINDOWS(self)->project->sources,
-					       self->private->dndtreepath,
-					       self->private->dndfilepos);
+  
+  if ( GTK_IS_TREE_VIEW (listview))
+    {
+      /* find pos in listview */
+      selection = gtk_tree_view_get_selection(listview);
+      if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+	g_warning("No elements selected!");
+	return;
+      }
+      
+      gtk_tree_model_get_iter_first(model, &iternext);
+      gtk_tree_model_get (model, &iternext, POINTER_LISTCOLUMN8, &sf, -1);
+      
+      sf = pitivi_projectsourcelist_get_sourcefile(PITIVI_PROJECTWINDOWS(self)->project->sources,
+						   "0",
+						   0);
+      
+      // g_printf ("@@@@----%s---@@@@@\n", sf->filename);      
+      return;
+    }
+  //sf = NULL;
   if (!sf)
     return ;
-  g_printf("sending pipeline ==> %p\n", sf->pipeline);
+  
   /* convert the pointer to it's character represenation in long long int */
   gtk_selection_data_set (selection_data, 
 			  selection_data->target, 
