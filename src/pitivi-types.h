@@ -61,6 +61,9 @@ typedef struct _PitiviProjectSettingsClass PitiviProjectSettingsClass;
 typedef struct _PitiviProjectSettingsWindow PitiviProjectSettingsWindow;
 typedef struct _PitiviProjectSettingsWindowClass PitiviProjectSettingsWindowClass;
 
+typedef struct _PitiviProjectSettingsWidget PitiviProjectSettingsWidget;
+typedef struct _PitiviProjectSettingsWidgetClass PitiviProjectSettingsWidgetClass;
+
 typedef struct _PitiviProjectSourceList PitiviProjectSourceList;
 typedef struct _PitiviProjectSourceListClass PitiviProjectSourceListClass;
 

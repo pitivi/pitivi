@@ -45,6 +45,7 @@ pitivi_SOURCES		= \
 	pitivi-menu.c \
 	pitivi-settings.c \
 	pitivi-settingswindow.c \
+	pitivi-projectsettingswidget.c \
 	pitivi-splashscreenwindow.c \
 	pitivi-gstelementsettings.c \
 	pitivi-drawing.c \
@@ -81,6 +82,7 @@ noinst_HEADERS = \
 	pitivi-viewerwindow.h \
 	pitivi-projectsettings.h \
 	pitivi-projectsettingswindow.h \
+	pitivi-projectsettingswidget.h \
 	pitivi-stockicons.h \
 	pitivi-menu-actions.h \
 	pitivi-menu.h \

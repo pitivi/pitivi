@@ -6,6 +6,8 @@
             <menuitem name="FileSave" action="FileSave"/>
             <menuitem name="FileSaveAs" action="FileSaveAs"/>
             <separator/>
+            <menuitem name="FileProjectSettings" action="FileProjectSettings"/>
+            <separator/>
             <menuitem name="FileSettings" action="FileSettings"/>
             <separator/>
             <menuitem name="FileExit"  action="FileExit"/>

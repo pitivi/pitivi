@@ -38,6 +38,7 @@
 #include "pitivi-mediatrackinfo.h"
 #include "pitivi-menu-actions.h"
 #include "pitivi-encodewindow.h"
+#include "pitivi-projectsettingswindow.h"
 
 #include "../pixmaps/bg.xpm"
 #include "../pixmaps/bg_audio.xpm"
@@ -177,6 +178,9 @@ void
 pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self );
 
 void
+pitivi_callb_menufile_project_settings ( GtkAction *action, PitiviTimelineWindow *self );
+
+void
 pitivi_callb_menufile_effectswindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
 
 void
@@ -201,11 +205,12 @@ pitivi_callb_controller_record (PitiviController *controller, PitiviTimelineWind
 static GtkActionEntry file_entries[] = {
   { "FileMenu",     NULL, "_File" },
   { "WindowsMenu",  NULL, "_Windows" },
-  { "FileNew",      PITIVI_STOCK_NEW_PROJECT, "Ne_w", "<control>N", "New File", G_CALLBACK (pitivi_callb_menufile_new) },
-  { "FileOpen",     GTK_STOCK_OPEN, "_Open", "<control>O", "Open a file",  G_CALLBACK (pitivi_callb_menufile_open) },
-  { "FileSave",     GTK_STOCK_SAVE, "_Save", "<control>S", "Save a file", G_CALLBACK (pitivi_callb_menufile_save) },
-  { "FileSaveAs",   GTK_STOCK_SAVE_AS, "Save _As", "<control><alt>S", "Save a file", G_CALLBACK (pitivi_callb_menufile_saveas) },
-  { "FileSettings", PITIVI_STOCK_TOOLS, "_Settings", "<control><alt>P", "Settings",  G_CALLBACK (pitivi_callb_menufile_settings) },
+  { "FileNew",      PITIVI_STOCK_NEW_PROJECT, "Ne_w Project", "<control>N", "New project", G_CALLBACK (pitivi_callb_menufile_new) },
+  { "FileOpen",     GTK_STOCK_OPEN, "_Open Project", "<control>O", "Open a project",  G_CALLBACK (pitivi_callb_menufile_open) },
+  { "FileSave",     GTK_STOCK_SAVE, "_Save Project", "<control>S", "Save a project", G_CALLBACK (pitivi_callb_menufile_save) },
+  { "FileSaveAs",   GTK_STOCK_SAVE_AS, "Save Project _As", "<control><alt>S", "Save a project", G_CALLBACK (pitivi_callb_menufile_saveas) },
+  { "FileSettings", GTK_STOCK_PREFERENCES, "_Preferences", "<control><alt>P", "Program preferences",  G_CALLBACK (pitivi_callb_menufile_settings) },
+  { "FileProjectSettings", PITIVI_STOCK_TOOLS, "_Project Settings", "", "Project settings",  G_CALLBACK (pitivi_callb_menufile_project_settings) },
   { "FileExit",     GTK_STOCK_QUIT, "_Exit", "<control>Q", "Exit Application", G_CALLBACK (pitivi_callb_menufile_exit) },
 };
 
@@ -1115,6 +1120,17 @@ pitivi_callb_menufile_viewerwindow_toggle ( GtkAction *action, PitiviTimelineWin
 }
 
 void
+pitivi_callb_menufile_project_settings (GtkAction *action, PitiviTimelineWindow *self)
+{
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
+  PitiviProjectSettingsWindow	*window;
+
+  if ((window = pitivi_projectsettingswindow_new(mainapp, project)))
+    gtk_widget_show_all (GTK_WIDGET (window));
+}
+
+void
 pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self )
 {
   PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
@@ -1315,6 +1331,7 @@ pitivi_timelinewindow_deactivate ( PitiviTimelineWindow *self )
   gtk_action_group_set_sensitive (self->actions_group[EA_WINDOWMENU_FILE], FALSE);
   pitivi_timelinewindow_file_set_action (self, "FileSave", FALSE);
   pitivi_timelinewindow_file_set_action (self, "FileSaveAs", FALSE);
+  pitivi_timelinewindow_file_set_action (self, "FileProjectSettings", FALSE);
 }
 
 void
@@ -1368,6 +1385,7 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   gtk_action_group_set_sensitive (self->actions_group[EA_WINDOWMENU_FILE], TRUE);
   pitivi_timelinewindow_file_set_action (self, "FileSave", TRUE);
   pitivi_timelinewindow_file_set_action (self, "FileSaveAs", TRUE);
+  pitivi_timelinewindow_file_set_action (self, "FileProjectSettings", TRUE);
 
   /* Activate childs */
 

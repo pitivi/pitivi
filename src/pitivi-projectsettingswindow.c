@@ -25,6 +25,7 @@
 
 #include "pitivi.h"
 #include "pitivi-projectsettingswindow.h"
+#include "pitivi-projectsettingswidget.h"
 
 static     PitiviProjectWindowsClass *parent_class;
 
@@ -33,6 +34,8 @@ struct _PitiviProjectSettingsWindowPrivate
 {
   /* instance private members */
   gboolean	dispose_has_run;
+
+  PitiviProjectSettingsWidget	*widget;
 };
 
 /*
@@ -42,6 +45,47 @@ struct _PitiviProjectSettingsWindowPrivate
 /*
  * Insert "added-value" functions here
  */
+
+void
+apply_clicked (GtkButton *button, PitiviProjectSettingsWindow *self)
+{
+
+}
+
+void
+cancel_clicked (GtkButton *button, PitiviProjectSettingsWindow *self)
+{
+
+}
+
+void
+ok_clicked (GtkButton *button, PitiviProjectSettingsWindow *self)
+{
+
+}
+
+GtkWidget *
+pitivi_projectsettingswindow_make_buttons_box (PitiviProjectSettingsWindow *self)
+{
+  GtkWidget	*applyb, *cancelb, *okb;
+  GtkWidget	*hbox;
+
+  hbox = gtk_hbox_new (FALSE, 5);
+
+  applyb = gtk_button_new_from_stock (GTK_STOCK_APPLY);
+  cancelb = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
+  okb = gtk_button_new_from_stock (GTK_STOCK_OK);
+
+  gtk_box_pack_start (GTK_BOX(hbox), applyb, TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX(hbox), cancelb, TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX(hbox), okb, TRUE, TRUE, 5);
+
+  g_signal_connect (G_OBJECT(applyb), "clicked", G_CALLBACK (apply_clicked), self);
+  g_signal_connect (G_OBJECT(cancelb), "clicked", G_CALLBACK (cancel_clicked), self);
+  g_signal_connect (G_OBJECT(okb), "clicked", G_CALLBACK (ok_clicked), self);
+
+  return hbox;
+}
 
 PitiviProjectSettingsWindow *
 pitivi_projectsettingswindow_new(PitiviMainApp *mainapp, PitiviProject *project)
@@ -61,12 +105,34 @@ pitivi_projectsettingswindow_constructor (GType type,
 			     guint n_construct_properties,
 			     GObjectConstructParam * construct_properties)
 {
+  PitiviProjectSettingsWindow	*self;
+  GtkWidget	*vbox;
+  GtkWidget	*hruler;
+  GtkWidget	*bbox;
   GObject *obj;
   /* Invoke parent constructor. */
   obj = G_OBJECT_CLASS (parent_class)->constructor (type, n_construct_properties,
 						    construct_properties);
 
   /* do stuff. */
+  self = PITIVI_PROJECTSETTINGSWINDOW (obj);
+  /*
+    Graphical creation
+  */
+  gtk_window_set_title (GTK_WINDOW(self), "Project Settings");
+  vbox = gtk_vbox_new(FALSE, 5);
+
+  self->private->widget = pitivi_projectsettingswidget_new(PITIVI_WINDOWS(self)->mainapp);
+  gtk_box_pack_start (GTK_BOX(vbox), GTK_WIDGET (self->private->widget),
+		      TRUE, TRUE, 5);
+
+  hruler = gtk_hruler_new();
+  gtk_box_pack_start(GTK_BOX(vbox), hruler, FALSE, FALSE, 0);
+
+  bbox = pitivi_projectsettingswindow_make_buttons_box(self);
+  gtk_box_pack_start (GTK_BOX(vbox), bbox, FALSE, FALSE, 5);
+
+  gtk_container_add (GTK_CONTAINER(self), vbox);
 
   return obj;
 }
