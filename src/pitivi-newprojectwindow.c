@@ -167,7 +167,7 @@ gchar			*pitivi_settingswindow_get_row_list ( GList	*List, gint	row );
  */
 
 #define DESC_TEXT	"Description:\nInsert a description of the setting"
-#define NEWPROJECTWINDOW_HELP_TEXT "Select a preset from the tree on the right.\nGo to the \"Settings\" tab to create/modify/remove presets.\nOnce you've selected the adequate preset, press New to create a new project with those presets"
+#define NEWPROJECTWINDOW_HELP_TEXT "Select a preset from the tree on the right.\nGo to the \"Settings\" tab to create/modify/remove presets.\nOnce you've selected the adequate preset, press New to create a new project with those presets\n"
 
 /* 
  * Signals

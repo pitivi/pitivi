@@ -58,6 +58,22 @@ struct _PitiviMainAppPrivate
 };
 
 
+
+static gchar *plugin_tab[] =
+  {	
+    "ffmpegcolorspace",
+    "audioconvert",
+    "playbin",
+    "ximagesink",
+    "alsasink",
+    "videoscale",
+    "pngenc",
+    "audioscale",
+    "videorate",
+    "xvimagesink",
+    "pitivi_plugin_tab_end"
+  };
+
 /*
  * forward definitions
  */
@@ -406,6 +422,44 @@ pitivi_mainapp_new (void)
   return mainapp;
 }
 
+static void
+pitivi_pluginNotFound_widget(gchar *pluginNotFound)
+{
+  GtkWidget	*dialog;
+  pluginNotFound = g_strconcat("Les Plugins suivants sont requis pour le fonctionnement de l application : \n", pluginNotFound, NULL);
+  dialog = gtk_message_dialog_new (NULL,
+				   GTK_DIALOG_DESTROY_WITH_PARENT,
+				   GTK_MESSAGE_ERROR,
+				   GTK_BUTTONS_CLOSE,
+				   pluginNotFound);
+  gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+  exit(1);
+}
+
+static void
+pitivi_plugin_verify(gchar **plugin_tab, 
+		     GList *elmt_fact_list)
+{
+  gint	i;
+  gchar	*pluginNotFound;
+
+  i = 0;
+  pluginNotFound = "";
+  while(plugin_tab[i] != "pitivi_plugin_tab_end")
+    {
+
+      if (gst_element_factory_find (plugin_tab[i]) == NULL)
+	pluginNotFound = g_strconcat(pluginNotFound, "\n", plugin_tab[i], NULL);
+      i++;
+    }
+
+  if(pluginNotFound != "")
+    pitivi_pluginNotFound_widget(pluginNotFound);
+
+}
+
+
 static GObject *
 pitivi_mainapp_constructor (GType type,
 			    guint n_construct_properties,
@@ -463,6 +517,8 @@ pitivi_mainapp_constructor (GType type,
     }
   }
   
+  pitivi_plugin_verify(plugin_tab, self->global_settings->element);
+
   pitivi_mainapp_create_timelinewin (self, NULL);
   /* Connection des Signaux */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
