@@ -40,6 +40,8 @@ struct _PitiviToolboxWindowPrivate
  * forward definitions
  */
 
+/* commentaire */
+
 /*
  * Insert "added-value" functions here
  */
