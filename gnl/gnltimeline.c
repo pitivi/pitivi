@@ -59,6 +59,9 @@ static GstElementClass *timer_parent_class = NULL;
 static void 		gnl_timeline_timer_class_init 		(GnlTimelineTimerClass *klass);
 static void 		gnl_timeline_timer_init 		(GnlTimelineTimer *timer);
 
+static void		gnl_timeline_timer_dispose		(GObject *object);
+static void		gnl_timeline_timer_finalize		(GObject *object);
+
 static void 		gnl_timeline_timer_loop 		(GstElement *timer);
 
 GType
@@ -92,9 +95,48 @@ gnl_timeline_timer_class_init (GnlTimelineTimerClass *klass)
   gobject_class = 	(GObjectClass*)klass;
   gstelement_class = 	(GstElementClass*)klass;
 
+  gobject_class->dispose = gnl_timeline_timer_dispose;
+  gobject_class->finalize = gnl_timeline_timer_finalize;
+  
   timer_parent_class = g_type_class_ref (GST_TYPE_ELEMENT);
 }
 
+static void
+gnl_timeline_timer_dispose (GObject *object)
+{
+  GnlTimelineTimer	*timer = GNL_TIMELINE_TIMER (object);
+  GList			*walk = timer->links;
+  TimerGroupLink	*link;
+
+  GST_INFO("dispose");
+  while (walk) {
+    link = (TimerGroupLink *) walk->data;
+
+    gst_object_unref (GST_OBJECT (link->srcpad));
+    gst_object_unref (GST_OBJECT (link->sinkpad));
+
+    walk = g_list_next (walk);
+  }
+  G_OBJECT_CLASS (timer_parent_class)->dispose (object);
+}
+
+static void
+gnl_timeline_timer_finalize (GObject *object)
+{
+  GnlTimelineTimer	*timer = GNL_TIMELINE_TIMER (object);
+  GList			*walk = timer->links;
+  TimerGroupLink	*link;
+
+  GST_INFO ("finalize");
+  while (walk) {
+    link = (TimerGroupLink *) walk->data;
+    g_free (link);
+    walk = g_list_next (walk);
+  }
+  g_list_free (timer->links);
+
+  G_OBJECT_CLASS (timer_parent_class)->finalize (object);
+}
 
 static void
 gnl_timeline_timer_init (GnlTimelineTimer *timer)
@@ -337,6 +379,9 @@ gnl_timeline_timer_loop (GstElement *element)
 static void 		gnl_timeline_class_init 	(GnlTimelineClass *klass);
 static void 		gnl_timeline_init 		(GnlTimeline *timeline);
 
+static void		gnl_timeline_dispose		(GObject *object);
+static void		gnl_timeline_finalize		(GObject *object);
+
 static gboolean 	gnl_timeline_prepare 		(GnlObject *object, GstEvent *event);
 static GstElementStateReturn
 			gnl_timeline_change_state 	(GstElement *element);
@@ -382,18 +427,61 @@ gnl_timeline_class_init (GnlTimelineClass *klass)
 
   parent_class = g_type_class_ref (GNL_TYPE_COMPOSITION);
 
+  gobject_class->dispose = gnl_timeline_dispose;
+  gobject_class->finalize = gnl_timeline_finalize;
+
   gstelement_class->change_state	= gnl_timeline_change_state;
   gstelement_class->query		= gnl_timeline_query;
 
   gnlobject_class->prepare              = gnl_timeline_prepare;
 }
 
+static void
+gnl_timeline_dispose (GObject *object)
+{
+  GnlTimeline *timeline = GNL_TIMELINE (object);
+  GList	*groups = timeline->groups;
+  GnlGroup	*group;
+
+  GST_INFO ("dispose");
+  while (groups) {
+    gchar	*pipename;
+    GstElement	*pipe;
+    
+    group = groups->data;
+    pipename = g_strdup_printf ("%s_pipeline",
+				gst_object_get_name (GST_OBJECT(group)));
+    pipe = gst_bin_get_by_name (GST_BIN (timeline),
+				pipename);
+    g_free (pipename);
+
+    gst_bin_remove (GST_BIN (pipe), GST_ELEMENT (group));
+    gst_bin_remove (GST_BIN (timeline), pipe);
+
+    groups = g_list_next (groups);
+  }
+  gst_bin_remove (GST_BIN (timeline),
+		  GST_ELEMENT (timeline->timer));
+  gst_object_unref (GST_OBJECT (timeline->timer));
+
+  G_OBJECT_CLASS (parent_class)->dispose (object);
+}
+
+static void
+gnl_timeline_finalize (GObject *object)
+{
+  GnlTimeline	*timeline = GNL_TIMELINE (object);
+
+  GST_INFO ("finalize");
+  g_list_free (timeline->groups);
+
+  G_OBJECT_CLASS (parent_class)->finalize (object);
+}
 
 static void
 gnl_timeline_init (GnlTimeline *timeline)
 {
   timeline->groups = NULL;
-  
 }
 
 /**
@@ -417,7 +505,7 @@ gnl_timeline_new (const gchar *name)
 
   timeline->timer = g_object_new (GNL_TYPE_TIMELINE_TIMER, NULL);
   gst_object_set_name (GST_OBJECT (timeline->timer), g_strdup_printf ("%s_timer", name));
-
+  gst_object_ref (GST_OBJECT (timeline->timer));
   gst_bin_add (GST_BIN (timeline), GST_ELEMENT (timeline->timer));
 
   return timeline;

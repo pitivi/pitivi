@@ -69,7 +69,7 @@ InfoBox button_info [] = {
   {PITIVI_STOCK_HAND, "hand", cursor_change_hand},
   {PITIVI_STOCK_ZOOM, "zoom", cursor_change_zoom},
   {PITIVI_STOCK_RESIZE, "resize", cursor_change_resize},
-  {0, 0}
+  {0, 0, NULL}
 };
 
 
@@ -310,7 +310,7 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
    */
     
   tooltips = gtk_tooltips_new();
-  for (count = 0; count < (sizeof (button_info)/sizeof(InfoBox)); count++)
+  for (count = 0; button_info[count].image; count++)
     {
       self->private->button[count] =
 	GTK_WIDGET (gtk_radio_tool_button_new_from_stock
@@ -322,7 +322,6 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
       g_signal_connect (G_OBJECT (self->private->button[count]), "toggled",
 			G_CALLBACK (button_info[count].callback), self);
     }
-  
   gtk_toolbar_set_orientation (tbar, GTK_ORIENTATION_HORIZONTAL);
   gtk_toolbar_set_show_arrow (tbar, FALSE);
   gtk_toolbar_set_style (tbar, GTK_TOOLBAR_ICONS);

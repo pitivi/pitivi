@@ -31,6 +31,7 @@ GstElementDetails gnl_source_details = GST_ELEMENT_DETAILS
 );
 
 struct _GnlSourcePrivate {
+  gboolean	dispose_has_run;
   gint64	seek_start;
   gint64	seek_stop;
 };
@@ -50,6 +51,7 @@ static void		gnl_source_base_init		(gpointer g_class);
 static void 		gnl_source_class_init 		(GnlSourceClass *klass);
 static void 		gnl_source_init 		(GnlSource *source);
 static void 		gnl_source_dispose 		(GObject *object);
+static void 		gnl_source_finalize 		(GObject *object);
 
 static void		gnl_source_set_property 	(GObject *object, guint prop_id,
 							 const GValue *value, GParamSpec *pspec);
@@ -144,6 +146,7 @@ gnl_source_class_init (GnlSourceClass *klass)
   gobject_class->set_property = GST_DEBUG_FUNCPTR (gnl_source_set_property);
   gobject_class->get_property = GST_DEBUG_FUNCPTR (gnl_source_get_property);
   gobject_class->dispose      = GST_DEBUG_FUNCPTR (gnl_source_dispose);
+  gobject_class->finalize     = GST_DEBUG_FUNCPTR (gnl_source_finalize);
 
   g_object_class_install_property (G_OBJECT_CLASS (klass), ARG_ELEMENT,
     g_param_spec_object ("element", "Element", "The element to manage",
@@ -187,10 +190,49 @@ static void
 gnl_source_dispose (GObject *object)
 {
   GnlSource *source = GNL_SOURCE (object);
+  GSList	*pads = source->links;
+  SourcePadPrivate	*priv;
+
+  if (source->private->dispose_has_run)
+    return;
+
+  GST_INFO("dispose");
+  source->private->dispose_has_run = TRUE;
+
+  
+  while (pads) {
+    priv = (SourcePadPrivate *) pads->data;
+
+    g_slist_free (priv->queue);
+    gst_pad_remove_probe(GST_PAD (priv->srcpad), 
+			 priv->probe);
+/*     gst_object_unref (GST_OBJECT (priv->srcpad)); */
+/*     gst_object_unref (GST_OBJECT (priv->sinkpad)); */
+
+    pads = g_slist_next (pads);
+  }
+
+  if (source->element) {
+    gst_bin_remove (GST_BIN (source->bin), source->element);
+    gst_object_unref (GST_OBJECT (source->element));
+  }
 
   gst_object_unref (GST_OBJECT (source->bin));
   
   G_OBJECT_CLASS (parent_class)->dispose (object);
+  GST_INFO("dispose END");
+}
+
+static void
+gnl_source_finalize (GObject *object)
+{
+  GnlSource *source = GNL_SOURCE (object);
+
+  GST_INFO("finalize");
+  g_free (source->private);
+  g_slist_free (source->links);
+  
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 /** 
@@ -417,8 +459,8 @@ gnl_source_get_pad_for_stream (GnlSource *source, const gchar *padname)
   source->total_pads++;
 
   /* Adding probe to private->srcpad */
-/*   private->probe = gst_probe_new (FALSE, source_probe, source); */
-/*   gst_pad_add_probe (private->srcpad, private->probe); */
+  private->probe = gst_probe_new (FALSE, source_probe, source);
+  gst_pad_add_probe (private->srcpad, private->probe);
 
   if (pad) {
     GST_INFO("%s linked straight away with %s",

@@ -66,7 +66,7 @@ gnl_object_rate_control_get_type (void)
 static void		gnl_object_base_init		(gpointer g_class);
 static void 		gnl_object_class_init 		(GnlObjectClass *klass);
 static void 		gnl_object_init 		(GnlObject *object);
-static void 		gnl_object_dispose 		(GObject *object);
+/* static void 		gnl_object_dispose 		(GObject *object); */
 
 static void		gnl_object_set_property 	(GObject *object, guint prop_id,
 							 const GValue *value, GParamSpec *pspec);
@@ -142,7 +142,7 @@ gnl_object_class_init (GnlObjectClass *klass)
 
   gobject_class->set_property = GST_DEBUG_FUNCPTR (gnl_object_set_property);
   gobject_class->get_property = GST_DEBUG_FUNCPTR (gnl_object_get_property);
-  gobject_class->dispose      = GST_DEBUG_FUNCPTR (gnl_object_dispose);
+/*   gobject_class->dispose      = GST_DEBUG_FUNCPTR (gnl_object_dispose); */
 
   g_object_class_install_property (G_OBJECT_CLASS (klass), ARG_START,
     g_param_spec_uint64 ("start", "Start", "The start position relative to the parent",
@@ -186,11 +186,12 @@ gnl_object_init (GnlObject *object)
   object->rate_control = GNL_OBJECT_FIX_MEDIA_STOP;
 }
 
-static void
-gnl_object_dispose (GObject *object)
-{
-  G_OBJECT_CLASS (parent_class)->dispose (object);
-}
+/* static void */
+/* gnl_object_dispose (GObject *object) */
+/* { */
+/*   GST_INFO("disposed"); */
+/*   G_OBJECT_CLASS (parent_class)->dispose (object); */
+/* } */
 
 /** 
  * gnl_object_set_start_stop:

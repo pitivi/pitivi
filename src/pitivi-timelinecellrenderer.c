@@ -346,7 +346,6 @@ pitivi_layout_add_to_composition(PitiviTimelineCellRenderer *self, PitiviTimelin
 {
   PitiviProject       *project = PITIVI_WINDOWS (self->private->timewin)->mainapp->project;
   
-  g_printf("pitivi_layout_add_to_composition\n");
   if ((self->track_type == PITIVI_VIDEO_TRACK) || (self->track_type == PITIVI_TRANSITION_TRACK)
       || (self->track_type == PITIVI_EFFECTS_TRACK))  /* Add to VideoGroup */
     gnl_composition_add_object (GNL_COMPOSITION(project->videogroup),
@@ -361,7 +360,6 @@ pitivi_layout_remove_from_composition(PitiviTimelineCellRenderer *self, PitiviTi
 {
   PitiviProject       *project = PITIVI_WINDOWS (self->private->timewin)->mainapp->project;
   
-  g_printf("pitivi_layout_remove_from_composition\n");
   if ((self->track_type == PITIVI_VIDEO_TRACK) || (self->track_type == PITIVI_TRANSITION_TRACK)
       || (self->track_type == PITIVI_EFFECTS_TRACK))  /* Add to VideoGroup */
     gnl_composition_remove_object (GNL_COMPOSITION(project->videogroup),

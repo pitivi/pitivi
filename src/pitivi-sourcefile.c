@@ -454,6 +454,7 @@ bin_was_freed(gpointer udata, GObject *object)
 {
   PitiviSourceFile	*self = PITIVI_SOURCEFILE(udata);
 
+  g_printf("!!BIN WAS FREED !!\n");
   self->private->bins = g_slist_remove(self->private->bins, object);
   self->nbbins--;
 }

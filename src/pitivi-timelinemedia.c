@@ -939,10 +939,12 @@ pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *this, gpointer data)
       if ( this->linked )
 	{
 	  gtk_container_remove (GTK_CONTAINER ( this->track->linked_track ), this->linked );
+	  gst_object_unref (GST_OBJECT (PITIVI_TIMELINEMEDIA (this->linked)->sourceitem->gnlobject));
 	  pitivi_calculate_priorities ( this->track->linked_track );
 	}
       track = &(*GTK_WIDGET (this->track));
       gtk_container_remove (GTK_CONTAINER ( track ), GTK_WIDGET (this) );
+      gst_object_unref (GST_OBJECT (this->sourceitem->gnlobject));
       pitivi_calculate_priorities ( track );
     }
 }

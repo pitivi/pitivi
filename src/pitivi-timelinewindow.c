@@ -538,12 +538,12 @@ create_tracks (PitiviTimelineWindow *self)
 			    GTK_EXPAND | GTK_FILL,
 			    GTK_EXPAND | GTK_FILL,
 			    0, SEPARATOR_WIDTH);
+	  g_signal_connect_swapped (G_OBJECT (GTK_LAYOUT (cell[count])), "motion_notify_event",
+				    G_CALLBACK (EVENT_METHOD (self->hruler, motion_notify_event)),
+				    G_OBJECT (self->hruler));
 	}
     }
   create_tracks_links (cell);
-  g_signal_connect_swapped (G_OBJECT (GTK_LAYOUT (cell)), "motion_notify_event",
-			    G_CALLBACK (EVENT_METHOD (self->hruler, motion_notify_event)),
-			    G_OBJECT (self->hruler));
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->hpaned, FALSE, FALSE, 0);
   
   // Left Scrollbar

@@ -32,6 +32,7 @@ static void		gnl_composition_base_init		(gpointer g_class);
 static void 		gnl_composition_class_init 		(GnlCompositionClass *klass);
 static void 		gnl_composition_init 			(GnlComposition *comp);
 static void 		gnl_composition_dispose 		(GObject *object);
+static void 		gnl_composition_finalize 		(GObject *object);
 
 static GstElementStateReturn
 			gnl_composition_change_state 		(GstElement *element);
@@ -115,6 +116,7 @@ gnl_composition_class_init (GnlCompositionClass *klass)
   parent_class = g_type_class_ref (GNL_TYPE_OBJECT);
 
   gobject_class->dispose 	 = gnl_composition_dispose;
+  gobject_class->finalize 	 = gnl_composition_finalize;
 
   gstelement_class->change_state = gnl_composition_change_state;
   gstelement_class->query	 = gnl_composition_query;
@@ -144,19 +146,45 @@ gnl_composition_dispose (GObject *object)
 {
   GnlComposition *comp = GNL_COMPOSITION (object);
   GList *objects = comp->objects;
+  GnlCompositionEntry *entry = NULL;
 
+  GST_INFO("dispose");
   while (objects) {
-    GnlCompositionEntry *entry = (GnlCompositionEntry *) (objects->data);
-
+    entry = (GnlCompositionEntry *) (objects->data);
+    g_signal_handler_disconnect (entry->object,
+				 entry->starthandler);
+    g_signal_handler_disconnect (entry->object,
+				 entry->stophandler);
+    g_signal_handler_disconnect (entry->object,
+				 entry->priorityhandler);
+    g_signal_handler_disconnect (entry->object,
+				 entry->activehandler);
     g_object_unref (entry->object);
-    g_free (entry);
 
     objects = g_list_next (objects);
   }
+
+  G_OBJECT_CLASS (parent_class)->dispose (object);
+}
+
+static void
+gnl_composition_finalize (GObject *object)
+{
+  GnlComposition *comp = GNL_COMPOSITION (object);
+  GList *objects = comp->objects;
+  GnlCompositionEntry *entry = NULL;
+
+  GST_INFO("finalize");
+  while (objects) {
+    entry = (GnlCompositionEntry *) (objects->data);
+    g_free (entry);
+    objects = g_list_next (objects);
+  }
+
   g_list_free (comp->objects);
   g_list_free (comp->active_objects);
 
-  G_OBJECT_CLASS (parent_class)->dispose (object);
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 /*
@@ -375,9 +403,10 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
 {
   GnlCompositionEntry *entry;
 
-  GST_INFO("Composition[%s] Object[%s]",
+  GST_INFO("Composition[%s] Object[%s](Ref:%d)",
 	   gst_element_get_name(GST_ELEMENT (comp)),
-	   gst_element_get_name(GST_ELEMENT (object)));
+	   gst_element_get_name(GST_ELEMENT (object)),
+	   G_OBJECT (object)->ref_count);
 
   g_return_if_fail (GNL_IS_COMPOSITION (comp));
 
@@ -386,7 +415,9 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
     GST_BIN_CLASS(parent_class)->add_element(GST_BIN(comp), GST_ELEMENT(object));
     return ;
   }
-
+  
+  gst_object_ref(GST_OBJECT(object));
+  
   entry = g_malloc (sizeof (GnlCompositionEntry));
 
   gst_object_ref (GST_OBJECT (object));
@@ -411,9 +442,11 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
 }
 
 static gint
-find_function (GnlObject *object, GnlObject *to_find) 
+find_function (GnlCompositionEntry *entry, GnlObject *to_find) 
 {
-  if (object == to_find)
+  GST_INFO("comparing object:%p to_find:%p",
+	   entry->object, to_find);
+  if (entry->object == to_find)
     return 0;
 
   return 1;
@@ -431,9 +464,10 @@ gnl_composition_remove_object (GnlComposition *comp, GnlObject *object)
   GList *lentry;
   GnlCompositionEntry	*entry;
 
-  GST_INFO("Composition[%s] Object[%s]",
+  GST_INFO("Composition[%s] Object[%s](Ref:%d)",
 	   gst_element_get_name(GST_ELEMENT (comp)),
-	   gst_element_get_name(GST_ELEMENT (object)));
+	   gst_element_get_name(GST_ELEMENT (object)),
+	   G_OBJECT(object)->ref_count);
 
   g_return_if_fail (GNL_IS_COMPOSITION (comp));
   g_return_if_fail (GNL_IS_OBJECT (object));
@@ -450,8 +484,10 @@ gnl_composition_remove_object (GnlComposition *comp, GnlObject *object)
   comp->active_objects = g_list_remove (comp->active_objects, object);
   comp->objects = g_list_delete_link (comp->objects, lentry);
 
-  g_free (GNL_OBJECT (lentry->data)->comp_private);
-  g_object_unref (G_OBJECT (lentry->data));
+/*   if (GNL_OBJECT (lentry->data)->comp_private) */
+/*     g_free (GNL_OBJECT (lentry->data)->comp_private); */
+  g_free (lentry->data);
+  gst_object_unref(GST_OBJECT(object));
   composition_update_start_stop (comp);
 }
 
