@@ -23,10 +23,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <gtk/gtk.h>
-#include <gst/gst.h>
 #include "pitivi.h"
-#include "pitivi-stockicons.h"
 #include "pitivi-effectswindow.h"
 
 static GtkWindowClass *parent_class = NULL;

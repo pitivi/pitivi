@@ -30,6 +30,10 @@
  * Potentially, include other headers on which this header depends.
  */
 
+#include <gtk/gtk.h>
+#include <gst/gst.h>
+#include "pitivi-stockicons.h"
+
 /*
  * Type macros.
  */
