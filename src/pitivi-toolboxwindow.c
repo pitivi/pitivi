@@ -43,6 +43,10 @@ struct _PitiviToolboxWindowPrivate
 /* commentaire */
 
 /*
+ * commentaire bilbo
+ */
+
+/*
  * Insert "added-value" functions here
  */
 
