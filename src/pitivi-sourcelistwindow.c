@@ -29,6 +29,12 @@
 
 static GtkWindowClass *parent_class = NULL;
 
+struct _PitiviListStore
+{
+  GtkListStore	*liststore;
+  GSList	*child;
+};
+
 struct _PitiviSourceListWindowPrivate
 {
   /* instance private members */
@@ -190,47 +196,200 @@ int	get_selected_row(gchar *path, gint *depth)
 	}
       tmp++;
     }
- /*  g_printf("tmp2 ==> %s\n", tmp2); */
+/*   g_printf("tmp2 ==> %s\n", tmp2); */
+/*   g_printf("path ==> %s\n", path); */
   return (atoi(tmp2));
 }
 
 void	add_liststore_for_bin(PitiviSourceListWindow *self, 
 			      GtkListStore *liststore)
 {
-  self->private->liststore = g_slist_append(self->private->liststore, liststore);
+  PitiviListStore *pitiviliststore;
+  PitiviListStore *new;
+  GSList	*list;
+  gchar		*tmp;
+  gchar		*tmp2;
+  gchar		*save;
+  guint		row;
+  gint		i;
+
+  tmp = g_strdup(self->private->treepath);
+
+  save = tmp2 = tmp;
+
+  list = self->private->liststore;
+
+  pitiviliststore = NULL;
+  
+  while (*tmp != 0)
+    {
+      if (*tmp == ':')
+	{
+	  *tmp = 0;
+	  row = atoi(tmp2);
+	  for (i = 0; i < row; i++)
+	    list = list->next;
+	  pitiviliststore = (PitiviListStore*)list->data;
+	  list = pitiviliststore->child;
+	  *tmp++;
+	  tmp2 = tmp;
+	}
+      *tmp++;
+    }
+
+  new = g_new0(PitiviListStore, 1);
+  new->liststore = liststore;
+  new->child = NULL;
+  list = g_slist_append(list, new);
+
+  /* need to link the first element to the list */
+  if (self->private->liststore == NULL)
+    self->private->liststore = list;
+
+  if (pitiviliststore != NULL)
+    {
+      if (pitiviliststore->child == NULL)
+	pitiviliststore->child = list;
+    }
+  g_free(save);
 }
 
 GtkListStore	*get_liststore_for_bin(PitiviSourceListWindow *self,
 				       guint bin_pos)
 {
+  PitiviListStore *pitiviliststore;
   GSList	*list;
+  gchar		*tmp;
+  gchar		*tmp2;
+  gchar		*save;
+  guint		row;
+  gint		i;
+
+  list = self->private->liststore;
+  
+  tmp = g_strdup(self->private->treepath);
+  
+  save = tmp2 = tmp;
+
+  pitiviliststore = NULL;
+  
+  while (*tmp != 0)
+    {
+      if (*tmp == ':')
+	{
+	  *tmp = 0;
+	  row = atoi(tmp2);
+	  for (i = 0; i < row; i++)
+	    list = list->next;
+	  pitiviliststore = (PitiviListStore*)list->data;
+	  list = pitiviliststore->child;
+	  *tmp++;
+	  tmp2 = tmp;
+	}
+      *tmp++;
+    }
+
+  row = atoi(tmp2);
+
+  for (i = 0; i < row; i++)
+    list = list->next;
+  
+  pitiviliststore = (PitiviListStore*)list->data;
+
+  g_free(save);
+
+  return pitiviliststore->liststore;
+}
+
+gpointer	get_data_for_bin(PitiviSourceListWindow *self)
+{
+  PitiviListStore *pitiviliststore;
+  GSList	*list;
+  gpointer	data;
+  gchar		*tmp;
+  gchar		*tmp2;
+  gchar		*save;
+  guint		row;
+  gint		i;
 
   list = self->private->liststore;
 
-  while (bin_pos--)
+  tmp = g_strdup(self->private->treepath);
+  
+  save = tmp2 = tmp;
+
+  while (*tmp != 0)
     {
-      list = list->next;
+      if (*tmp == ':')
+	{
+	  *tmp = 0;
+	  row = atoi(tmp2);
+	  for (i = 0; i < row; i++)
+	    list = list->next;
+	  pitiviliststore = (PitiviListStore*)list->data;
+	  list = pitiviliststore->child;
+	  *tmp++;
+	  tmp2 = tmp;
+	}
+      *tmp++;
     }
-  return (GtkListStore*)list->data;
+
+  row = atoi(tmp2);
+  for (i = 0; i < row; i++)
+    list = list->next;
+  
+  g_free(save);
+
+  return list->data;
 }
 
 void	remove_liststore_for_bin(PitiviSourceListWindow *self,
 				 guint bin_pos)
 {
+  PitiviListStore *pitiviliststore;
   GSList	*list;
-  GtkListStore	*liststore;
   gpointer	data;
+  gchar		*tmp;
+  gchar		*tmp2;
+  gchar		*save;
+  guint		row;
+  gint		i;
 
-  liststore = get_liststore_for_bin(self, bin_pos);
-
+  data = get_data_for_bin(self);
+  
   list = self->private->liststore;
 
-  list = g_slist_remove(list, (gpointer)liststore);
+  tmp = g_strdup(self->private->treepath);
+  
+  save = tmp2 = tmp;
+
+  pitiviliststore = NULL;
+
+  while (*tmp != 0)
+    {
+      if (*tmp == ':')
+	{
+	  *tmp = 0;
+	  row = atoi(tmp2);
+	  for (i = 0; i < row; i++)
+	    list = list->next;
+	  pitiviliststore = (PitiviListStore*)list->data;
+	  list = pitiviliststore->child;
+	  *tmp++;
+	  tmp2 = tmp;
+	}
+      *tmp++;
+    }
+
+  list = g_slist_remove(list, data);
 
   /* handle the case the first element is removed */
-  self->private->liststore = list;
+  if (pitiviliststore == NULL)
+    self->private->liststore = list;
+  else
+    pitiviliststore->child = list;
 
-  g_object_unref(liststore);
+  g_free(save);
 }
 
 void	show_file_in_current_bin(PitiviSourceListWindow *self)
@@ -246,12 +405,13 @@ void	show_file_in_current_bin(PitiviSourceListWindow *self)
   gtk_tree_view_set_model(GTK_TREE_VIEW(self->private->listview), 
 			  GTK_TREE_MODEL(liststore));
 
-  pitivi_projectsourcelist_showfile(self->private->prjsrclist, selected_row);
+ /*  pitivi_projectsourcelist_showfile(self->private->prjsrclist, self->private->treepath); */
 }
 
 void	new_folder(GtkWidget *widget, gpointer data)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
+  GtkTreeSelection *selection;
   GtkTreeIter	iter;
   GtkTreeIter	iter2;
   GtkListStore	*liststore;
@@ -261,13 +421,7 @@ void	new_folder(GtkWidget *widget, gpointer data)
   guint		selected_row;
   guint		depth;
 
-  g_printf("== new folder ==\n");
-  g_printf("folder ==> %s\n", self->private->folderpath);
-
   selected_row = get_selected_row(self->private->treepath, &depth);
-/*   pitivi_projectsourcelist_add_folder_to_bin(self->private->prjsrclist, */
-/* 					     selected_row, depth, */
-/* 					     self->private->folderpath); */
 
   sMediaType = g_malloc(12);
     
@@ -276,8 +430,8 @@ void	new_folder(GtkWidget *widget, gpointer data)
   pixbufa = gtk_widget_render_icon(self->private->listview, GTK_STOCK_OPEN,
 				   GTK_ICON_SIZE_MENU, NULL);
 
-  /* Creation de la nouvelle ligne */
-  liststore = get_liststore_for_bin(self, selected_row);
+  /* Creation de la nouvelle ligne dans la listview */
+  liststore = get_liststore_for_bin(self, 0);
   gtk_list_store_append(liststore, &iter);
 
   name = strrchr(self->private->folderpath, '/');
@@ -299,12 +453,30 @@ void	new_folder(GtkWidget *widget, gpointer data)
   gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->private->treestore),
 				      &iter, self->private->treepath);
 
-  /* Creation de la nouvelle ligne enfant */
+  /* Creation de la nouvelle ligne enfant dans la treeview */
   gtk_tree_store_append(self->private->treestore, &iter2, &iter);
   
   /* Mise a jour des donnees */
   gtk_tree_store_set(self->private->treestore, &iter2, BMP_COLUMN,
 		     pixbufa, TEXT_TREECOLUMN, name, -1);
+
+  /* a fake path for add folder at the right place */
+  strcat(self->private->treepath, ":0");
+  
+  liststore = gtk_list_store_new(N_LISTCOLOUMN, GDK_TYPE_PIXBUF,
+				 G_TYPE_STRING, G_TYPE_STRING,
+				 G_TYPE_STRING, G_TYPE_STRING,
+				 G_TYPE_STRING, G_TYPE_STRING);
+  
+  add_liststore_for_bin(self, liststore);
+
+  self->private->treepath[strlen(self->private->treepath) - 2] = 0;
+
+  pitivi_projectsourcelist_add_folder_to_bin(self->private->prjsrclist, 
+					     self->private->treepath, name);
+
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
+  gtk_tree_selection_select_iter(selection, &iter);
 
   g_object_unref(pixbufa);
 }
@@ -326,10 +498,10 @@ void	new_file(GtkWidget *widget, gpointer data)
   selected_row = 0;
   if (self->private->treepath != NULL)
     selected_row = get_selected_row(self->private->treepath, &depth);
-  
-  /* call pitivi_projectsourcelist_add_chutier_file */
+
+  /* call pitivi_projectsourcelist_add_file_to_bin */
   add = pitivi_projectsourcelist_add_file_to_bin(self->private->prjsrclist, 
-						 selected_row,
+						 self->private->treepath,
 						 self->private->filepath);
  
   if (add == FALSE)
@@ -367,7 +539,7 @@ void	new_file(GtkWidget *widget, gpointer data)
   g_free(sExempleTexte);
 
   g_object_unref(pixbufa);
-  pitivi_projectsourcelist_showfile(self->private->prjsrclist, selected_row);
+ /*  pitivi_projectsourcelist_showfile(self->private->prjsrclist, selected_row); */
 }
 
 void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
@@ -378,9 +550,7 @@ void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
   GtkListStore	*liststore;
 
   pitivi_projectsourcelist_new_bin(self->private->prjsrclist, bin_name);
-  /* Chargement des images */
-  /* pixbufa = gdk_pixbuf_new_from_stock("./info.xpm", NULL); */
-
+ 
   pixbufa = gtk_widget_render_icon(self->private->treeview, GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU, NULL);
   /* Insertion des elements */
   
@@ -398,12 +568,14 @@ void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
   
   gtk_tree_view_set_model(GTK_TREE_VIEW(self->private->listview),
 			  GTK_TREE_MODEL(liststore));
+ 
+  strcpy(self->private->treepath, "0");
 
   add_liststore_for_bin(self, liststore);
 
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
   gtk_tree_selection_select_iter(selection, &iter);
-
+  
   g_object_unref(pixbufa);  
 }
 
@@ -609,11 +781,11 @@ gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
 	  show_file_in_current_bin(self);
 	  g_free(name);
 	}
-       else
-	 {
-	   g_printf("cleanning %s\n", name);
-	   /* remove_all_row_from_listview(self); */
-	 }
+/*        else */
+/* 	 { */
+/* 	   g_printf("cleanning %s\n", name); */
+/* 	   /\* remove_all_row_from_listview(self); *\/ */
+/* 	 } */
       
     }
   return TRUE;
@@ -788,8 +960,6 @@ void	OnImportFolder(gpointer data, gint action, GtkWidget *widget)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
 
-  printf("== Import Folder ==\n");
-
   self->private->selectfolder = gtk_file_selection_new("Import Folder");
 
   gtk_window_set_modal(GTK_WINDOW(self->private->selectfolder), TRUE);
@@ -810,23 +980,49 @@ void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
   GtkListStore	*liststore;
   GtkTreeIter	iter;
+  GtkTreeIter	iternext;
   GtkTreePath	*listpath;
+  gchar		*sMediaType;
+  gchar		*tmpMediaType;
+  gint		item_select;
+  gint		folder_select;
+  gint		i;
   gint	selected_tree_row;
   guint	selected_list_row;
   gint	depth;
 
   listpath = gtk_tree_path_new_from_string(self->private->listpath);
-  selected_tree_row = get_selected_row(self->private->treepath, &depth);
+  
   selected_list_row = get_selected_row(self->private->listpath, &depth);
   liststore = get_liststore_for_bin(self, selected_tree_row);
   if (!gtk_tree_model_get_iter(GTK_TREE_MODEL(liststore), &iter, listpath))
     return;
 
+  gtk_tree_model_get(GTK_TREE_MODEL(liststore), &iter, TEXT_LISTCOLUMN3, &sMediaType, -1);
+
+  gtk_tree_model_get_iter_first(GTK_TREE_MODEL(liststore), &iternext);
+
+  item_select = folder_select = 0;
+  
+  i = 0;
+
+  while (i++ < selected_list_row)
+    {
+      gtk_tree_model_get(GTK_TREE_MODEL(liststore), &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
+      if (!strcmp(tmpMediaType, "Bin"))
+	folder_select++;
+      else
+	item_select++;
+      gtk_tree_model_iter_next(GTK_TREE_MODEL(liststore), &iternext);
+    }
+
   gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
 
-  pitivi_projectsourcelist_remove_file_from_bin(self->private->prjsrclist, 
-						selected_tree_row,
-						selected_list_row);
+  if (strcmp(sMediaType, "Bin"))
+    pitivi_projectsourcelist_remove_file_from_bin(self->private->prjsrclist, 
+						  self->private->treepath,
+						  item_select);
+
   gtk_tree_path_free(listpath);
 }
 
@@ -834,44 +1030,96 @@ void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
   GtkTreeModel	*model;
+  GtkListStore	*liststore;
+  GtkTreeIter	parent;
   GtkTreeIter	iter;
   GtkTreeIter	iternext;
+  GtkTreeIter	listiter;
   GtkTreePath	*treepath;
   GtkTreeSelection *selection;
+  gchar		*sTreepath;
+  gchar		*sMediaType;
   gint		selected_tree_row;
   gint		depth;
+  gint		i;
+  gint		folder_select;
 
   model = gtk_tree_view_get_model(GTK_TREE_VIEW(self->private->treeview));
   
   /* couldn't remove when he has only one */
   if (gtk_tree_model_iter_n_children(model, NULL) == 1)
     {
-      g_printf("we have only one bin\n");
-      return;
+      gtk_tree_model_get_iter_first(model, &iter);
+      if (gtk_tree_model_iter_n_children(model, &iter) == 0)
+	{
+	  g_printf("we have only one bin\n");
+	  return;
+	}
     }
   
   treepath = gtk_tree_path_new_from_string(self->private->treepath);
-  selected_tree_row = get_selected_row(self->private->treepath, &depth);
     
   if (!gtk_tree_model_get_iter(model, &iter, treepath))
-    return;
+    {
+      gtk_tree_path_free(treepath);
+      return;
+    }
+
+  gtk_tree_path_free(treepath);
 
   iternext = iter;
   if (!gtk_tree_model_iter_next(model, &iternext))
     gtk_tree_model_get_iter_first(model, &iternext);
+  
+  /* need to remove this child from listview */
+  if (gtk_tree_model_iter_parent(model, &parent, &iter))
+    {
+      selected_tree_row = get_selected_row(self->private->treepath, &depth);
+     
+      treepath = gtk_tree_model_get_path(model, &parent);
+
+      /* save treepath */
+      sTreepath = self->private->treepath;
+      self->private->treepath = gtk_tree_path_to_string(treepath);
+
+      liststore = get_liststore_for_bin(self, 0);
+      gtk_tree_model_get_iter_first(GTK_TREE_MODEL(liststore), &listiter);
+
+      i = folder_select = 0;
+      
+      selected_tree_row++;
+      while (folder_select < selected_tree_row)
+	{
+	  gtk_tree_model_get(GTK_TREE_MODEL(liststore), &listiter, TEXT_LISTCOLUMN3, &sMediaType, -1);
+
+	  if (!strcmp(sMediaType, "Bin"))
+	    folder_select++;
+	  if (folder_select == selected_tree_row)
+	    break;
+	  i++;
+	  gtk_tree_model_iter_next(GTK_TREE_MODEL(liststore), &listiter);
+	}
+      
+      gtk_list_store_remove(GTK_LIST_STORE(liststore), &listiter);
+
+      /* restore treepath */
+      g_free(self->private->treepath);
+      self->private->treepath = sTreepath;
+
+      gtk_tree_path_free(treepath);
+    }
 
   gtk_tree_store_remove(GTK_TREE_STORE(model), &iter);
   remove_liststore_for_bin(self, selected_tree_row);
+  
   pitivi_projectsourcelist_remove_bin(self->private->prjsrclist, 
-				      selected_tree_row);
+				      self->private->treepath);
 
   /* need to select another bin */
   
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
   gtk_tree_selection_select_iter(selection, &iternext);
 
-  gtk_tree_path_free(treepath);
-  
 }
 
 void	OnImportProject(void)
@@ -993,6 +1241,8 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   self->private->liststore = NULL;
 
   /* add a bin to validate model of  list view */
+  /* for the first bin we need to set treepath manually */
+  self->private->treepath = g_strdup("0");
   new_bin(self, g_strdup("bin 1"));
   nbrchutier++;
 

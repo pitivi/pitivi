@@ -48,29 +48,61 @@ struct _PitiviProjectSourceListPrivate
  * Insert "added-value" functions here
  */
 
-PitiviSourceBin	*get_pitivisourcebin(PitiviProjectSourceList *self, guint bin_pos)
+PitiviSourceBin	*get_pitivisourcebin(PitiviProjectSourceList *self, gchar *treepath,
+				     GSList **list, PitiviSourceBin **bin, gint *row)
 {
-  GSList		*bin_tree;
+  gchar			*tmp;
+  gchar			*tmp2;
+  gchar			*save;
+  gint			i;
 
-  bin_tree = self->private->bin_tree;
-  while (bin_pos--)
-    bin_tree = bin_tree->next;
-  if (bin_tree)
-    return (PitiviSourceBin*)bin_tree->data;
-  else
-    return NULL;
+  tmp = g_strdup(treepath);
+  
+  save = tmp2 = tmp;
+
+  *list = self->private->bin_tree;
+
+  *bin = NULL;
+
+  while (*tmp != 0)
+    {
+      if (*tmp == ':')
+	{
+	  *tmp = 0;
+	  *row = atoi(tmp2);
+	  for (i = 0; i < *row; i++)
+	    *list = (*list)->next;
+	  *bin = (*list)->data;
+	  *list = (*bin)->child;
+	  *tmp++;
+	  tmp2 = tmp;
+	}
+      *tmp++;
+    }
+
+  *row = atoi(tmp2);
+
+  for (i = 0; i < *row; i++)
+    *list = (*list)->next;
+  g_free(save);
+
+  return (*list)->data;
 }
 
 void
 pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self,
-				  guint bin_pos)
+				  gchar *treepath)
 {
   PitiviSourceBin	*sourcebin;
+  PitiviSourceBin	*bin;
+  GSList		*list;
   GSList		*sourcelist;
   GSList		*childlist;
-  
+  gint			row;
+
   g_printf("== projectsourcelist showfile ==\n");
-  sourcebin = get_pitivisourcebin(self, bin_pos);
+
+  sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
   if (sourcebin == NULL)
     return;
   sourcelist = sourcebin->source;
@@ -82,20 +114,47 @@ pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self,
   childlist = sourcebin->child;
   while (childlist != NULL)
     {
-      g_printf("folder ==> %s\n", sourcelist->data);
+      g_printf("folder ==> %s\n", ((PitiviSourceBin*)childlist->data)->bin_name);
       childlist = childlist->next;
     }
   g_printf("== end of projectsourcelist showfile ==\n");
 }
 
 gpointer
-pitivi_projectsourcelist_get_file_info(PitiviProjectSourceList *self,
-				       guint bin_pos, guint next_file)
+pitivi_projectsourcelist_get_folder_info(PitiviProjectSourceList *self,
+				       gchar *treepath, guint folder_pos)
 {
   PitiviSourceBin	*sourcebin;
-  GSList		*sourcelist;
+  PitiviSourceBin	*bin;
+  GSList		*childlist;
+  GSList		*list;
+  gint			row;
 
-  sourcebin = get_pitivisourcebin(self, bin_pos);
+  sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
+  childlist = sourcebin->child;
+  if (!childlist)
+    return NULL;
+
+  while (folder_pos--)
+    {
+      childlist = childlist->next;
+      if (!childlist)
+	return NULL;
+    }
+  return childlist->data; 
+}
+
+gpointer
+pitivi_projectsourcelist_get_file_info(PitiviProjectSourceList *self,
+				       gchar *treepath, guint next_file)
+{
+  PitiviSourceBin	*sourcebin;
+  PitiviSourceBin	*bin;
+  GSList		*sourcelist;
+  GSList		*list;
+  gint			row;
+
+  sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
   sourcelist = sourcebin->source;
   if (!sourcelist)
     return NULL;
@@ -109,38 +168,45 @@ pitivi_projectsourcelist_get_file_info(PitiviProjectSourceList *self,
   return sourcelist->data; 
 }
 
-gboolean
-pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self, 
-					 guint bin_pos, 
-					 gchar *source)
+void
+pitivi_projectsourcelist_remove_folder_from_bin(PitiviProjectSourceList *self,
+						gchar *treepath, guint folder_pos)
 {
   PitiviSourceBin	*sourcebin;
+  PitiviSourceBin	*bin;
+  GSList		*childlist;
+  GSList		*list;
+  gpointer		data;
+  gint			row;
 
-  sourcebin = get_pitivisourcebin(self, bin_pos);
-  if (sourcebin)
-    {
-      sourcebin->source = g_slist_append(sourcebin->source, source);
-      return TRUE;
-    }
-  else
-    {
-      g_printf("Unable to add file no bin found\n");
-      return FALSE;
-    }
+  sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
+  childlist = sourcebin->child;
+
+  data = pitivi_projectsourcelist_get_folder_info(self, treepath, folder_pos);
+
+  g_printf("== removing %s from child list ==\n", ((PitiviSourceBin*)data)->bin_name);
+
+  childlist = g_slist_remove(childlist, data);
+
+  /* handle case the first folder is removed */
+  sourcebin->child = childlist;
 }
 
 void
 pitivi_projectsourcelist_remove_file_from_bin(PitiviProjectSourceList *self,
-					      guint bin_pos, guint file_pos)
+					      gchar *treepath, guint file_pos)
 {
   PitiviSourceBin	*sourcebin;
+  PitiviSourceBin	*bin;
   GSList		*sourcelist;
+  GSList		*list;
   gpointer		data;
+  gint			row;
 
-  sourcebin = get_pitivisourcebin(self, bin_pos);
+  sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
   sourcelist = sourcebin->source;
 
-  data = pitivi_projectsourcelist_get_file_info(self, bin_pos, file_pos);
+  data = pitivi_projectsourcelist_get_file_info(self, treepath, file_pos);
 
   g_printf("== removing %s from source list ==\n", data);
 
@@ -150,33 +216,49 @@ pitivi_projectsourcelist_remove_file_from_bin(PitiviProjectSourceList *self,
   sourcebin->source = sourcelist;
 }
 
+
 void
 pitivi_projectsourcelist_remove_bin(PitiviProjectSourceList *self,
-				    guint bin_pos)
+				    gchar *treepath)
 {
+  PitiviSourceBin *bin;
   GSList	*list;
   gpointer	data;
+  gchar		*tmp;
+  gchar		*tmp2;
+  gchar		*save;
+  gint		row;
+  gint		i;
 
-  data = get_pitivisourcebin(self, bin_pos);
+
+  data = get_pitivisourcebin(self, treepath, &list, &bin, &row);
 
   g_printf("removing %s from bin_tree\n", ((PitiviSourceBin*)data)->bin_name);
 
-  list = self->private->bin_tree;
+  if (bin == NULL)
+    list = self->private->bin_tree;
+  else
+    list = bin->child;
 
   list = g_slist_remove(list, data);
-
+  
   /* handle case the first item is removed */
-  self->private->bin_tree = list;
+
+  if (bin == NULL)
+    self->private->bin_tree = list;
+  else
+    bin->child = list;
 }
 
 void
 pitivi_projectsourcelist_set_bin_name(PitiviProjectSourceList *self,
-				      guint bin_pos,
+				      gchar *treepath,
 				      gchar *bin_name)
 {
   PitiviSourceBin	*sourcebin;
+  gint			row;
 
-  sourcebin = get_pitivisourcebin(self, bin_pos);
+  sourcebin = get_pitivisourcebin(self, treepath, NULL, NULL, &row);
   sourcebin->bin_name = g_strdup(bin_name);
 }
 
@@ -193,23 +275,42 @@ pitivi_projectsourcelist_new_bin(PitiviProjectSourceList *self,
   self->private->bin_tree = g_slist_append(self->private->bin_tree, sourcebin);
 }
 
-/* pas au point */
 void
 pitivi_projectsourcelist_add_folder_to_bin(PitiviProjectSourceList *self, 
-					   guint bin_pos,
-					   guint depth,
+					   gchar *treepath,
 					   gchar *folder_name)
 {
   PitiviSourceBin	*sourcebin;
-  PitiviSourceBin	child;
+  PitiviSourceBin	*child;
+  PitiviSourceBin	*bin_tree;
+  GSList		*bin;
+  gint			row;
 
-  sourcebin = get_pitivisourcebin(self, bin_pos);
+  sourcebin = get_pitivisourcebin(self, treepath, &bin, &bin_tree, &row);
 
-  child.bin_name = g_strdup(folder_name);
-  child.source = NULL;
-  child.child = NULL;
+  child = g_new0(PitiviSourceBin, 1);
+  child->bin_name = g_strdup(folder_name);
+  child->source = NULL;
+  child->child = NULL;
   
-  sourcebin->child = g_slist_append(sourcebin->child, &child);
+  sourcebin->child = g_slist_append(sourcebin->child, child);
+}
+
+gboolean
+pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self, 
+					 gchar *treepath, 
+					 gchar *source)
+{
+  PitiviSourceBin	*sourcebin;
+  PitiviSourceBin	*bin;
+  GSList		*list;
+  gint			row;
+
+  sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
+  
+  sourcebin->source = g_slist_append(sourcebin->source, source);
+  
+  return TRUE;
 }
 					  
 PitiviProjectSourceList *

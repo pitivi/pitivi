@@ -74,26 +74,25 @@ GType pitivi_projectsourcelist_get_type (void);
 PitiviProjectSourceList	*pitivi_projectsourcelist_new(void);
 gboolean 
 pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self, 
-					 guint bin_pos, gchar *source);
+					 gchar *treepath, gchar *source);
 void 
 pitivi_projectsourcelist_new_bin(PitiviProjectSourceList *self, 
 				 gchar *bin_name);
 gpointer 
 pitivi_projectsourcelist_get_file_info(PitiviProjectSourceList *self, 
-				       guint bin_pos, guint next_file);
+				       gchar *treepath, guint next_file);
 void 
 pitivi_projectsourcelist_remove_file_from_bin(PitiviProjectSourceList *self,
-					      guint bin_pos, guint file_pos);
+					      gchar *treepath, guint file_pos);
 void
 pitivi_projectsourcelist_remove_bin(PitiviProjectSourceList *self,
-				    guint bin_pos);
+				    gchar *treepath);
 void
 pitivi_projectsourcelist_add_folder_to_bin(PitiviProjectSourceList *self, 
-					   guint bin_pos,
-					   guint depth,
+					   gchar *treepath,
 					   gchar *folder_name);
 /* only for debug */
 void	pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self, 
-					  guint bin_pos);
+					  gchar *treepath);
 
 #endif
