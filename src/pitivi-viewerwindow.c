@@ -729,6 +729,7 @@ static void
 pitivi_viewer_callb_stop (PitiviViewerWindow *self)
 {
   video_stop (GTK_WIDGET(self), self);
+  pitivi_timelinewindow_stop (pitivi_mainapp_get_timelinewin (((PitiviWindows *) self)->mainapp));
 }
 
 static gboolean

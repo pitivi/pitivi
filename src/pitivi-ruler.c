@@ -302,6 +302,15 @@ pitivi_ruler_class_init (PitiviRulerClass *klass)
   pitivi_class->moving = pitivi_ruler_moving;
 }
 
+static gboolean pitivi_ruler_refresh ( gpointer data )
+{
+  PitiviRuler *self = (PitiviRuler *) data;
+  if (!self->timeline_x)
+    pitivi_ruler_moving (self, &self->timeline_x);
+  g_timeout_add (1000, pitivi_ruler_refresh, self);
+  return FALSE;
+}
+
 static void
 pitivi_ruler_init (PitiviRuler *ruler)
 {
@@ -313,6 +322,7 @@ pitivi_ruler_init (PitiviRuler *ruler)
   widget->requisition.width = widget->style->xthickness * 2 + 1;
   widget->requisition.height = widget->style->ythickness * 2 + RULER_HEIGHT;
   ruler->private->gc_play = pitivi_drawing_GdkGCcolor_new (255, 0, 0);
+  g_timeout_add (1000, pitivi_ruler_refresh, ruler);
 }
 
 
