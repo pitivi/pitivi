@@ -88,47 +88,47 @@ GtkTreeStore	*pitivi_tree_create()
 
 /* pere 1*/
   gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "case 1", -1);
+  gtk_tree_store_set(tree, &pIter, 0, "category 1", -1);
 
 /* fils 1*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "subcase 1", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1);
 
 /* pere 2*/
   gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "case 2", -1);
+  gtk_tree_store_set(tree, &pIter, 0, "category 2", -1);
 
 /* fils 2*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "subcase 1", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1);
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "subcase 2", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1);
 
 /* pere 3*/
   gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "case 3", -1);
+  gtk_tree_store_set(tree, &pIter, 0, "category 3", -1);
 
 /* fils 3*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "subcase 1", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1);
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "subcase 2", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1);
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "subcase 3", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "setting 3", -1);
 
 /* pere 4*/
   gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "case 4", -1);
+  gtk_tree_store_set(tree, &pIter, 0, "category 4", -1);
 
 /* fils 4*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "subcase 1", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1);
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "subcase 2", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1);
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "subcase 3", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "setting 3", -1);
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "subcasevvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv 4", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "setting 4", -1);
 
   return (tree);
 }
@@ -189,7 +189,7 @@ pitivi_make_presets_hbox(GtkWidget *window, GtkWidget *presets_hbox)
   presets_hbox = gtk_hbox_new (FALSE, 0);
   
   /* Ajout d'une nouvelle frame dans la box presets_hbox globale */
-  presets_frame = gtk_frame_new("Reglages");
+  presets_frame = gtk_frame_new("Current setting");
   gtk_box_pack_start (GTK_BOX (presets_hbox), presets_frame, TRUE, TRUE, 0);
   
   /* Creation et Insertion du tableau dans la frame de reglages */
@@ -226,7 +226,7 @@ pitivi_create_presets_table(GtkWidget *window)
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text_presets), FALSE);
   gtk_text_view_set_right_margin  (GTK_TEXT_VIEW(text_presets), 3);
   gtk_text_view_set_left_margin  (GTK_TEXT_VIEW(text_presets), 3);
-  
+ 
 /* Creation de la table */
   table = gtk_table_new(2, 2, FALSE);
 /* Insertion des cases du Tableau */
@@ -261,19 +261,24 @@ pitivi_create_presets_table(GtkWidget *window)
   return (table);
 }
 
-
 GtkWidget*
 pitivi_make_settings_table(GtkWidget *settings_table)
 {
-  GtkWidget	*button_hbox;
-  GtkWidget	*name_label;
-  GtkWidget	*name_text;
-  GtkWidget	*video_frame;
-  GtkWidget	*audio_frame;
-  GtkWidget	*button_add;
-  GtkWidget	*button_mod;
-  GtkWidget	*button_del;
-  GtkWidget	*desc_label;
+  GtkWidget		*button_hbox;
+  GtkWidget		*cat_frame;
+  GtkWidget		*cat_text;
+  GtkWidget		*cat_table;
+  GtkWidget		*cat_but_add;
+  GtkWidget		*cat_but_del;
+  GtkWidget		*cat_but_box;
+  GtkWidget		*name_label;
+  GtkWidget		*name_text;
+  GtkWidget		*video_frame;
+  GtkWidget		*audio_frame;
+  GtkWidget		*button_add;
+  GtkWidget		*button_mod;
+  GtkWidget		*button_del;
+  GtkWidget		*desc_label;
   GtkTextTagTable	*name_tag_table;
   gchar			*name_settings;
   GtkTextBuffer		*name_text_buffer;
@@ -281,13 +286,12 @@ pitivi_make_settings_table(GtkWidget *settings_table)
   GtkWidget		*name_text_settings;
   GtkWidget		*name_scroll;
 
-  settings_table = gtk_table_new (5, 2, FALSE);
+  settings_table = gtk_table_new (6, 2, FALSE);
 
   /* Ligne 1 */
   name_label = gtk_label_new("Nom :");
   gtk_table_attach (GTK_TABLE(settings_table), name_label,
 		    0, 1, 0, 1, FALSE, FALSE, 30, 5);
-
 
   name_text = gtk_entry_new();
   gtk_table_attach (GTK_TABLE(settings_table), name_text, 
@@ -346,6 +350,22 @@ pitivi_make_settings_table(GtkWidget *settings_table)
   gtk_table_attach(GTK_TABLE(settings_table), button_hbox, 
 		   0, 2, 4, 5, GTK_EXPAND | GTK_FILL, FALSE, 140, 0);
   
+/* Ligne 6 */
+  cat_frame = gtk_frame_new("Category");
+  cat_table = gtk_table_new(2, 1, TRUE);
+  cat_but_box =  gtk_hbox_new(TRUE, 10);
+
+  cat_text = gtk_entry_new();
+  gtk_table_attach (GTK_TABLE(cat_table), cat_text, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 20, 5);
+  cat_but_add = gtk_button_new_with_label("Add");
+  gtk_box_pack_start(GTK_BOX(cat_but_box), cat_but_add, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 10);
+  cat_but_del = gtk_button_new_with_label("Delete");
+  gtk_box_pack_start(GTK_BOX(cat_but_box), cat_but_del, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 10);
+  gtk_table_attach (GTK_TABLE(cat_table), cat_but_box, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 10, 5);
+
+  gtk_container_add(GTK_CONTAINER(cat_frame), cat_table);
+  gtk_table_attach(GTK_TABLE(settings_table), cat_frame, 0, 2, 5, 6, GTK_EXPAND | GTK_FILL, FALSE, 0, 0);
+
   return (settings_table);
 }
 
@@ -512,16 +532,16 @@ pitivi_make_audio_frame()
 		    1, 2, 1, 2, GTK_EXPAND | GTK_FILL, FALSE, 140, 10);
 
  /* Troisieme label "echantillonage" */
-  audio_label_ech = gtk_label_new("Echantillonage : ");
+  audio_label_ech = gtk_label_new("Canaux : ");
   gtk_table_attach (GTK_TABLE(audio_table), audio_label_ech, 
 		    0, 1, 2, 3, FALSE, FALSE, 20, 10);
   
-/*   Champ texte "echantillonage" */
+/*   Champ texte "canaux" */
   audio_combo_ech = gtk_combo_box_new_text();
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 0, "8 bits");
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 1, "16 bits");
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 2, "24 bits");
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 3, "32 bits");
+  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 0, "mono");
+  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 1, "stereo");
+  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 2, "5.1");
+  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 3, "7.1");
   gtk_combo_box_set_active(GTK_COMBO_BOX (audio_combo_ech), 0); /*  Choix par defaut */
   gtk_table_attach (GTK_TABLE(audio_table), audio_combo_ech, 
 		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 140, 10);
@@ -581,7 +601,7 @@ pitivi_newprojectwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   
   /*   Creation de la fenetre de reglages d'un nouveau projet */
 /*   self = gtk_window_new (GTK_WINDOW_TOPLEVEL); */
-  gtk_window_set_default_size(GTK_WINDOW (self), 750, 520);
+  gtk_window_set_default_size(GTK_WINDOW (self), 760, 570);
   gtk_window_set_title (GTK_WINDOW (self), "New Project");
   gtk_window_set_position (GTK_WINDOW (self), GTK_WIN_POS_CENTER);
   gtk_window_set_modal (GTK_WINDOW(self), TRUE);

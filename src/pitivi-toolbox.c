@@ -56,13 +56,14 @@ struct _PitiviToolboxPrivate
  * CALLBACKS
  */
 
-void	cursor_change_select(GtkRadioButton *radiobutton, gpointer window)
+void
+cursor_change_select(GtkRadioToolButton *radiobutton, gpointer window)
 {
   GdkPixmap	*pixmap;
   GdkPixmap	 *mask;
   GdkCursor	*cursor;
-  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Gris */
-  GdkColor bg = { 0, 65535, 65535, 65535 }; /* Blanc */
+  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
  
  if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
@@ -77,13 +78,14 @@ void	cursor_change_select(GtkRadioButton *radiobutton, gpointer window)
     }
 }
 
-void	cursor_change_cut(GtkRadioButton *radiobutton, gpointer window)
+void
+cursor_change_cut(GtkRadioToolButton *radiobutton, gpointer window)
 {
   GdkPixmap	*pixmap;
   GdkPixmap	 *mask;
   GdkCursor	*cursor;
-  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Gris */
-  GdkColor bg = { 0, 65535, 65535, 65535 }; /* Blanc */
+  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
  
  if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
@@ -98,13 +100,14 @@ void	cursor_change_cut(GtkRadioButton *radiobutton, gpointer window)
     }
 }
 
-void	cursor_change_hand(GtkRadioButton *radiobutton, gpointer window)
+void
+cursor_change_hand(GtkRadioToolButton *radiobutton, gpointer window)
 {
   GdkPixmap	*pixmap;
   GdkPixmap	 *mask;
   GdkCursor	*cursor;
-  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Gris */
-  GdkColor bg = { 0, 65535, 65535, 65535 }; /* Blanc */
+  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
  
  if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
@@ -119,13 +122,14 @@ void	cursor_change_hand(GtkRadioButton *radiobutton, gpointer window)
     }
 }
 
-void	cursor_change_zoom(GtkRadioButton *radiobutton, gpointer window)
+void
+cursor_change_zoom(GtkRadioToolButton *radiobutton, gpointer window)
 {
   GdkPixmap	*pixmap;
   GdkPixmap	 *mask;
   GdkCursor	*cursor;
-  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Gris */
-  GdkColor bg = { 0, 65535, 65535, 65535 }; /* Blanc */
+  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
 
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
    {
@@ -229,6 +233,8 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   g_signal_connect(G_OBJECT(self->private->button[3]), "toggled",
 		   G_CALLBACK(cursor_change_zoom), (gpointer)self) ;
 
+
+
   gtk_toolbar_set_orientation (tbar, GTK_ORIENTATION_VERTICAL);
   gtk_toolbar_set_show_arrow (tbar, FALSE);
   gtk_toolbar_set_style (tbar, GTK_TOOLBAR_ICONS);
@@ -236,7 +242,6 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[1]), 1);
   gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[2]), 2);
   gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[3]), 3);
-
 }
 
 static void
