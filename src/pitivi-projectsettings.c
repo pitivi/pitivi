@@ -35,7 +35,7 @@ struct _PitiviProjectSettingsPrivate
 /*
  * forward definitions
  */
-PitiviMediaSettings	*pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps, int index );
+
 GstCaps			*pitivi_projectsettings_default_vcaps_create( );
 GstCaps			*pitivi_projectsettings_default_acaps_create( );
 
