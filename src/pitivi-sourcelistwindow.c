@@ -59,6 +59,7 @@ struct _PitiviSourceListWindowPrivate
   GtkTreeStore	*treestore;
   guint		nbrchutier;
   /* GST variable */
+  GstElement	*mainpipeline;
   GstElement	*pipeline;
   GstCaps	*mediacaps;
   GSList       	*padlist;
@@ -586,6 +587,12 @@ void	new_pad_created(GstElement *parse, GstPad *pad, gpointer data)
   self->private->padlist = g_slist_append(self->private->padlist, pad);  
 }
 
+void
+pitivi_sourcelistwindow_get_pad_list(GstElement *elm)
+{
+
+}
+
 gboolean	
 pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filename)
 {
@@ -621,19 +628,16 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
       
       self->private->mediatype = caps_str;
       
-      g_printf("caps ==> %s\n", caps_str);
       thread = decoder = parser = lastelement = NULL;
-
       
       while (pitivi_sourcelistwindow_check_for_base_type(self->private->mediatype))
 	{
-	  
+	  g_printf("caps ==> %s\n", gst_caps_to_string(caps));
 	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )), caps, DEC_LIST);
 	  
 	  flag = FALSE;
 	  if (decoderlist)
 	    {
-
 	      if (!thread)
 		{
 		  flag = TRUE;
@@ -656,7 +660,8 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	      self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(decoder, "src")));
 	      self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(decoder, "src"));
 	       
-	      
+	      /* g_printf("ouput caps ==> %s\n", self->private->mediatype); */
+	      pitivi_sourcelistwindow_get_pad_list(decoder);
 	      if (flag)
 		{
 		  /* create a queue for link the pipeline with the thread */
@@ -697,6 +702,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	      
 	      if (parserlist)
 		{
+		
 		  if (!thread)
 		    {
 		      flag = TRUE;
@@ -718,7 +724,8 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		  
 		  self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(parser, "src")));
 		  self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(parser, "src"));
-		  
+/* 		  g_printf("ouput caps ==> %s\n", self->private->mediatype); */
+		  pitivi_sourcelistwindow_get_pad_list(parser);
 		  //g_printf("parser media type ==> %s\n", self->private->mediatype);
 		  caps = self->private->mediacaps;
 
@@ -769,9 +776,14 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	 
 	  if (strstr(caps_str, "video")) /* video*/
 	    {
+	      GstElement	*sink;
 	      temppad = gst_element_add_ghost_pad(self->private->pipeline, gst_element_get_pad(lastelement, "src"),
 				    "vsrc");
 	      g_assert(temppad != NULL);
+	 /*      sink = gst_element_factory_make("xvimagesink", "mysink"); */
+/* 	      g_assert(sink != NULL); */
+/* 	      gst_bin_add(GST_BIN(thread), sink); */
+/* 	      gst_element_link(lastelement, sink); */
 	      g_printf("adding ghost pad for video\n");
 	    }
 	  else /* audio */
@@ -815,6 +827,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   gint		i;
   gboolean	element_found;
   PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
+  
 
   /* Init some variables */
   demux = decoder = parser = lastelement = NULL;
@@ -822,9 +835,15 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 
   /* create a pipeline */
   tmpname = g_strdup_printf("pipeline_%s", filename);
-  self->private->pipeline = gst_pipeline_new(tmpname);
+  self->private->mainpipeline = gst_pipeline_new(tmpname);
+  g_free(tmpname);
+  g_assert(self->private->mainpipeline != NULL);
+
+  tmpname = g_strdup_printf("bin_%s", filename);
+  self->private->pipeline = gst_bin_new(tmpname);
   g_free(tmpname);
 
+  gst_bin_add(GST_BIN(self->private->mainpipeline), self->private->pipeline);
   /* create a file reader */
   tmpname = g_strdup_printf("src_%s", filename);
   src = gst_element_factory_make("filesrc", tmpname);
@@ -850,7 +869,6 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
       if (demuxlist)
 	{
 	  /* choose the first demuxer */
-	  
 	  tmpname = g_strdup_printf("demux_%s", filename);
 	  demux = gst_element_factory_make((gchar*)demuxlist->data, tmpname);
 	  g_free(tmpname);
@@ -871,18 +889,18 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 
 	  /* we need to run this part only for a demuxer */
 
-	  gst_element_set_state(GST_ELEMENT(self->private->pipeline), GST_STATE_PLAYING);
+	  gst_element_set_state(GST_ELEMENT(self->private->mainpipeline), GST_STATE_PLAYING);
   
 	  for (i = 0; i < 50; i++)
 	    {
-	      gst_bin_iterate(GST_BIN(self->private->pipeline));
+	      gst_bin_iterate(GST_BIN(self->private->mainpipeline));
 	      //g_printf("iterate pipeline\n");
 	    }
 	  
 	  pitivi_sourcelistwindow_add_decoder(self, filename);
 	  
-	  gst_element_set_state(GST_ELEMENT(self->private->pipeline), 
- 				GST_STATE_READY);
+	  gst_element_set_state(GST_ELEMENT(self->private->mainpipeline), 
+ 				GST_STATE_PAUSED);
 	  
 	  /* we have already set all ghost pad here */
 	  lastelement = NULL;
@@ -894,7 +912,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	  if (decoderlist)
 	    {
 	      /* choose the first decoder */
-	    	      
+	      g_printf("adding a decoder for this caps ==> %s\n", gst_caps_to_string(self->private->mediacaps));
 	      tmpname = g_strdup_printf("decoder_%s", filename);
 	      decoder = gst_element_factory_make((gchar*)decoderlist->data, tmpname);
 	      g_free(tmpname);
@@ -922,6 +940,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	      
 	      if (parserlist)
 		{
+		  g_printf("adding a parser for this caps ==> %s\n", gst_caps_to_string(self->private->mediacaps));
 		  tmpname = g_strdup_printf("parser_%s", filename);
 		  parser = gst_element_factory_make((gchar*)parserlist->data, tmpname);
 		  g_free(tmpname);
@@ -967,6 +986,9 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	  g_printf("adding ghost pad audio in the main pipeline\n");
 	}
     }
+  /* need to do this */
+  gst_object_ref(GST_OBJECT(self->private->pipeline));
+  gst_bin_remove(GST_BIN(self->private->mainpipeline), self->private->pipeline);
 }
 
 void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
@@ -1449,6 +1471,7 @@ drag_data_get_cb (GtkWidget          *widget,
 					       self->private->dndfilepos);
   if (!sf)
     return ;
+  g_printf("sending pipeline ==> %p\n", sf->pipeline);
   /* convert the pointer to it's character represenation in long long int */
   gtk_selection_data_set (selection_data, selection_data->target, 8, (void *)sf , sizeof (PitiviSourceFile));
 }

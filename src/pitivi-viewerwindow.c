@@ -87,6 +87,7 @@ struct _PitiviViewerWindowPrivate
 void	video_play(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
   if (self->private->play_status == PLAY) {
     g_print ("[CallBack]:video_pause\n");
@@ -97,6 +98,7 @@ void	video_play(GtkWidget *widget, gpointer data)
   } else if (self->private->play_status == STOP) {
     g_print ("[CallBack]:video_play\n");
     self->private->play_status = PLAY;
+    gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
   }
   return ;
 }
@@ -194,6 +196,7 @@ static gint pitivi_viewerwindow_configure_event( GtkWidget         *widget,
 static gint pitivi_viewerwindow_expose_event( GtkWidget      *widget,
 					      GdkEventExpose *event )
 {
+  g_printf("exposing\n");
   gdk_draw_drawable (widget->window,
 		     widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
 		     pixmap,
@@ -209,19 +212,29 @@ pitivi_viewerwindow_drag_data_received (GtkWidget *widget, GdkDragContext *drag_
 					guint info, guint time, gpointer user_data)
 {
   PitiviSourceFile	*sf;
+  PitiviViewerWindow *self = (PitiviViewerWindow *) user_data;
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+  guint		*id;
 
   g_printf("drag-data-received viewer\n");
   sf = (void *) data->data;
   g_printf("Received file [%s] in viewer\n",
 	   sf->filename);
+  g_printf("pipeline ==> %p\n", sf->pipeline);
+
+  self->private->play_status = STOP;
+  pitivi_project_set_source_element(project, sf->pipeline);
 }
 
 static gboolean
 pitivi_viewerwindow_drag_drop (GtkWidget *widget, GdkDragContext *dc,
 			       gint x, gint y, guint time, gpointer user_data)
 {
+
   g_printf("drag-drop viewer\n");
   gtk_drag_finish (dc, TRUE, FALSE, time);
+
+
   return TRUE;
 }
 
@@ -359,12 +372,35 @@ create_stream (gpointer data)
   return ;
 }
 
+void
+print_element_schedulers(GstElement *element) {
+  GList *sched;
+  GstScheduler  *son;
+  GstScheduler  *msch;
+
+  msch = gst_element_get_scheduler(element);
+  g_printf("Schedulers in Element[%s](ElementState:%d)(SchedulerState:%d):\n",
+           gst_element_get_name(element), gst_element_get_state(element),
+	   msch->state);
+  for (sched = gst_element_get_scheduler(element)->schedulers; sched;
+       sched = sched->next) {
+    son = (GstScheduler *) sched->data;
+    
+    g_printf("\tScheduler[%s]:%p State=%d\n",
+             gst_element_get_name(son->parent), son, son->state);
+    g_printf("/-------\\\n");
+    print_element_schedulers(son->parent);
+    g_printf("\\-------/\n");
+  }
+}
+
 gboolean	idle_func_video (gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
   
   if ( gst_element_get_state (project->pipeline) == GST_STATE_PLAYING ) {
+/*     print_element_schedulers(project->pipeline); */
     gst_x_overlay_set_xwindow_id
       ( GST_X_OVERLAY ( self->private->sink ),
 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );

@@ -257,8 +257,12 @@ gboolean
 pitivi_project_set_source_element(PitiviProject *project, GstElement *source)
 {
   
+  g_printf("setting source element\n");
+  gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
+
   /* Remove previous source */
   if (project->private->source) {
+/*     gst_element_unlink(project->private->source, project->private->videoqueue); */
     gst_bin_remove(GST_BIN(project->pipeline), project->private->source);
     project->private->source = NULL;
   } else if (project->private->vblankconn) {
@@ -282,15 +286,17 @@ pitivi_project_set_source_element(PitiviProject *project, GstElement *source)
     project->private->vst = FALSE;
   }
 
-  if (gst_element_get_pad(source, "asrc")) {
-    if (!project->private->ast)
-      gst_bin_add(GST_BIN(project->pipeline), project->private->asinkthread);
-    project->private->ast = TRUE;
-    gst_element_link_pads(source, "asrc", project->private->audioqueue, "sink");
-  } else if (project->private->ast) {
-    gst_bin_remove(GST_BIN(project->pipeline), project->private->asinkthread);
-    project->private->ast = FALSE;
-  }
+  /* if (gst_element_get_pad(source, "asrc")) { */
+/*     if (!project->private->ast) */
+/*       gst_bin_add(GST_BIN(project->pipeline), project->private->asinkthread); */
+/*     project->private->ast = TRUE; */
+/*     gst_element_link_pads(source, "asrc", project->private->audioqueue, "sink"); */
+/*   } else if (project->private->ast) { */
+/*     gst_bin_remove(GST_BIN(project->pipeline), project->private->asinkthread); */
+/*     project->private->ast = FALSE; */
+/*   } */
+
+ /*  gst_element_set_state(project->pipeline, GST_STATE_PLAYING); */
 
   return TRUE;
 }
