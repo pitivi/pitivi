@@ -183,6 +183,8 @@ pitivi_toolbox_constructor (GType type,
 static void
 pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
 {
+  GtkTooltips	*tooltips;
+
   PitiviToolbox *self = (PitiviToolbox *) instance;
   GtkToolbar *tbar = GTK_TOOLBAR (instance);
 
@@ -218,6 +220,13 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->button[3] =
     GTK_WIDGET (gtk_radio_tool_button_new_from_stock
 		(self->private->group_button, PITIVI_STOCK_ZOOM));
+
+  tooltips = gtk_tooltips_new();
+  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[0]), tooltips, "pointeur", NULL);
+  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[1]), tooltips, "rasoir", NULL);
+  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[2]), tooltips, "main", NULL);
+  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[3]), tooltips, "zoom", NULL);
+
 
   /*
    * We'll have to modify these functions so that they set the cursor
