@@ -496,61 +496,6 @@ create_gui (gpointer data)
   gtk_widget_show (self->private->toolbar);
 
   // Buttons for Toolbar
-
-  /*
-  // Button Backward
-  image = get_image (self, backward_xpm);
-  self->private->button_backward = gtk_button_new ();
-  gtk_container_add (GTK_CONTAINER (self->private->button_backward), image);
-  //gtk_widget_set_size_request (GTK_WIDGET (self->private->button_backward), 30, 17);
-  gtk_signal_connect (GTK_OBJECT (self->private->button_backward), "pressed", 
-                      GTK_SIGNAL_FUNC (video_backward), self);
-  gtk_box_pack_start (GTK_BOX (self->private->toolbar), 
-		      self->private->button_backward, FALSE, TRUE, 0);
-  gtk_widget_show (image);
-  gtk_widget_show (self->private->button_backward);
-
-  // Button Play
-  self->private->image_play = get_image (self, play_xpm);
-  self->private->image_pause = get_image (self, pause_xpm);
-  self->private->button_play = gtk_button_new ();
-  gtk_container_add (GTK_CONTAINER (self->private->button_play), 
-		     self->private->image_play);
-  //gtk_container_add (GTK_CONTAINER (self->private->button_play), 
-  //self->private->image_pause);
-  gtk_signal_connect (GTK_OBJECT (self->private->button_play), "clicked", 
-                      GTK_SIGNAL_FUNC (video_play), self);
-  gtk_box_pack_start (GTK_BOX (self->private->toolbar), self->private->button_play, FALSE, TRUE, 0);
-  //gtk_widget_set_size_request (self->private->button_play, 60, 17);
-  gtk_widget_show (self->private->image_pause);
-  gtk_widget_show (self->private->image_play);
-  gtk_widget_show (self->private->button_play);
- 
-  // Button Forward
-  image = get_image (self, forward_xpm);
-  self->private->button_forward = gtk_button_new ();
-  gtk_container_add (GTK_CONTAINER (self->private->button_forward), image);
-  gtk_widget_set_size_request (GTK_WIDGET (self->private->button_forward), 30, 17);
-  gtk_signal_connect (GTK_OBJECT (self->private->button_forward), "pressed", 
-                      GTK_SIGNAL_FUNC (video_forward), self);
-  gtk_box_pack_start (GTK_BOX (self->private->toolbar),
-		      self->private->button_forward, FALSE, TRUE, 0);
-  gtk_widget_show (image);
-  gtk_widget_show (self->private->button_forward);
-
-  // Button Stop
-  image = get_image (self, stop_xpm);
-  self->private->button_stop = gtk_button_new ();
-  gtk_container_add (GTK_CONTAINER (self->private->button_stop), image);
-  //gtk_widget_set_size_request (GTK_WIDGET (self->private->button_stop), 30, 17);
-  gtk_signal_connect (GTK_OBJECT (self->private->button_stop), "clicked", 
-                      GTK_SIGNAL_FUNC (video_stop), self);
-  gtk_box_pack_start (GTK_BOX (self->private->toolbar),
-		      self->private->button_stop, FALSE, TRUE, 0);
-  gtk_widget_show (image);
-  gtk_widget_show (self->private->button_stop);
-  */
-
   
   // Timeline
   self->private->timeline = gtk_hscale_new_with_range(self->private->timeline_min, 

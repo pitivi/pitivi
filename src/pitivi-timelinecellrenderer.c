@@ -1428,6 +1428,14 @@ pitivi_timelinecellrenderer_key_delete (PitiviTimelineCellRenderer* self)
     {
       media = &(*((PitiviTimelineMedia *)child->data));
       if ( media->selected ) {
+	if (media->effectschilds)
+	  while ( media->effectschilds )
+	    {
+	      if ( media->effectschilds->data )
+		gtk_container_remove ( GTK_CONTAINER (PITIVI_TIMELINEMEDIA (media->effectschilds->data)->track), 
+				       GTK_WIDGET (media->effectschilds->data));
+	      media->effectschilds = media->effectschilds->next;
+	    }
 	gtk_container_remove ( GTK_CONTAINER (self), GTK_WIDGET (media));
 	pitivi_layout_remove_from_composition (self, media);
       }

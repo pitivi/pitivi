@@ -27,6 +27,7 @@
 #include "pitivi-effectswindow.h"
 #include "pitivi-dragdrop.h"
 #include "pitivi-effects_cat.h"
+#include "pitivi-sourcefile.h"
 
 static GtkWindowClass *parent_class = NULL;
 

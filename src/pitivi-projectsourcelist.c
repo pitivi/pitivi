@@ -27,7 +27,7 @@
 #include "pitivi-projectsourcelist.h"
 
 struct _PitiviSourceBin
-{
+  {
   gchar			*bin_name;
   GSList	       	*source;
   GSList		*child;
@@ -446,6 +446,7 @@ pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
   gint			row;
 
   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
+  g_printf ("----------------------------treepath:%s----------------------------------------------\n", treepath);
   sourcefile = (PitiviSourceFile*)pitivi_projectsourcelist_get_file_info(self,
 									 treepath,
 									 file_pos);

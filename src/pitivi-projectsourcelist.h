@@ -32,6 +32,7 @@
  */
 #include <gst/gst.h>
 #include <gtk/gtk.h>
+#include "pitivi-sourcefile.h"
 
 /*
  * Type macros.
@@ -48,8 +49,10 @@ typedef struct _PitiviProjectSourceList PitiviProjectSourceList;
 typedef struct _PitiviProjectSourceListClass PitiviProjectSourceListClass;
 typedef struct _PitiviProjectSourceListPrivate PitiviProjectSourceListPrivate;
 typedef struct _PitiviSourceBin PitiviSourceBin;
-typedef struct _PitiviSourceFile PitiviSourceFile;
 
+/*
+
+typedef struct _PitiviSourceFile PitiviSourceFile;
 struct _PitiviSourceFile
 {
   gchar	*filename;
@@ -64,6 +67,7 @@ struct _PitiviSourceFile
   GstElement *pipeline_video;	// video only pipeline
   GstElement *pipeline_audio;	// audio only pipeline
 };
+*/
 
 struct _PitiviProjectSourceList
 {

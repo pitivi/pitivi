@@ -286,6 +286,7 @@ pitivi_timelinemedia_constructor (GType type,
   /* Source Item  */
 
   this->sourceitem = g_new0 (PitiviSourceItem, 1);
+  this->sourceitem->srcfile = g_object_ref (this->private->sf);
   this->sourceitem->srcfile = g_new0 (PitiviSourceFile, 1);
   memcpy (this->sourceitem->srcfile, this->private->sf, sizeof (*this->private->sf)); 
   this->sourceitem->id = this->track->nb_added[0];
@@ -492,7 +493,7 @@ show_audio_media (GtkWidget *widget)
 
   if ( this->sourceitem->srcfile->thumbs_audio  )
     gdk_draw_pixbuf( this->private->pixmapcache, NULL, GDK_PIXBUF 
-		     ( this->sourceitem->srcfile->thumbs_audio ), 0, 0, 0, 0, 
+		     ( this->sourceitem->srcfile->thumbs_audio ), 0, 0, 1, 1, 
 		     -1, 
 		     -1, 
 		     GDK_RGB_DITHER_MAX, 0, 0);
@@ -515,7 +516,7 @@ show_video_media (GtkWidget *widget)
       if ( this->sourceitem->srcfile->thumbs_video )
 	{
 	  gdk_draw_pixbuf( this->private->pixmapcache, NULL, 
-			   this->sourceitem->srcfile->thumbs_video, 0, 0, 0, 0, 
+			   this->sourceitem->srcfile->thumbs_video, 0, 0, 1, 1, 
 			   -1, 
 			   -1, 
 			   GDK_RGB_DITHER_MAX, 0, 0);
@@ -818,19 +819,19 @@ pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
   
   g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_MEDIA_TYPE,
 				   g_param_spec_int ("media_type","media_type","media_type",
-						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE|G_PARAM_CONSTRUCT )); 
+						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE | G_PARAM_CONSTRUCT )); 
   
   g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_MEDIA_WIDTH,
 				   g_param_spec_int ("width","width","width",
-						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE|G_PARAM_CONSTRUCT )); 
+						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE | G_PARAM_CONSTRUCT )); 
 
   g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_SOURCEFILE,
 				   g_param_spec_pointer ("source_file","source_file","source_file",
-							 G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
+							 G_PARAM_READWRITE | G_PARAM_CONSTRUCT));
   
   g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_TRACK,
 				   g_param_spec_pointer ("track","track","track",
-							 G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+							 G_PARAM_READWRITE | G_PARAM_CONSTRUCT ));
   
   media_signals[MEDIA_DESELECT_SIGNAL] =  g_signal_new ("deselect",
 							G_TYPE_FROM_CLASS (g_class),
