@@ -197,7 +197,7 @@ pitivi_gstelementsettings_value_conf_boolean (gchar *name, GValue value)
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_uint (gchar *name, GValue value, GParamSpec	*param)
+pitivi_gstelementsettings_value_conf_uint (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecUInt	*puint;
   GtkWidget		*spin_button;
