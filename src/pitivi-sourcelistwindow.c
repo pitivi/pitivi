@@ -26,6 +26,8 @@
 #include "pitivi.h"
 #include "pitivi-sourcelistwindow.h"
 
+static GtkWindowClass *parent_class = NULL;
+
 struct _PitiviSourceListWindowPrivate
 {
   /* instance private members */
@@ -402,8 +404,8 @@ static gint	my_popup_handler(GtkWidget *widget, GdkEvent *event)
 void	retrieve_path(GtkWidget *bouton, gpointer data)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
-
-  self->private->path = gtk_file_selection_get_filename(GTK_FILE_SELECTION(self->private->selectfile));
+  
+  self->private->path = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(self->private->selectfile)));
 
   g_printf("path ==> %s\n", self->private->path);
 
@@ -546,7 +548,7 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
  
   gtk_window_set_default_size(GTK_WINDOW(self), 600, 200);
    
-  gtk_container_add(GTK_WINDOW(self), self->private->hpaned);
+  gtk_container_add(GTK_CONTAINER(self), self->private->hpaned);
 }
 
 static void
@@ -568,6 +570,7 @@ pitivi_sourcelistwindow_dispose (GObject *object)
    * reference. 
    */
 
+  G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
@@ -581,6 +584,7 @@ pitivi_sourcelistwindow_finalize (GObject *object)
    */
 
   g_free (self->private);
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
@@ -631,7 +635,7 @@ pitivi_sourcelistwindow_class_init (gpointer g_class, gpointer g_class_data)
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   PitiviSourceListWindowClass *klass = PITIVI_SOURCELISTWINDOW_CLASS (g_class);
 
-  g_printf("pitivi_main_class_init()\n");
+  parent_class = g_type_class_peek_parent (g_class);
 
   gobject_class->constructor = pitivi_sourcelistwindow_constructor;
   gobject_class->dispose = pitivi_sourcelistwindow_dispose;
