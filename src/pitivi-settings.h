@@ -132,7 +132,7 @@ void				pitivi_settings_modify_settings_struct_info (PitiviSettings *self, Pitiv
 
 PitiviSettingsIoElement		*pitivi_settings_new_io_element_with_element (GstElement *elm);
 PitiviSettingsIoElement		*pitivi_settings_new_io_element_with_factory (GstElementFactory *factory);
-
+PitiviSettingsIoElement		*pitivi_settings_new_io_element_with_io (PitiviSettingsIoElement *io);
 void				pitivi_settings_aff_elm_io (PitiviSettingsIoElement *elm);
 
 #endif

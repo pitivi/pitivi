@@ -953,7 +953,7 @@ pitivi_gstelementsettings_set_property (GObject * object,
   switch (property_id)
     {
     case PROP_IO:
-      self->io = g_value_get_pointer (value);
+      self->io = pitivi_settings_new_io_element_with_io (g_value_get_pointer (value));
       break;
     case PROP_OPT:
       self->private->option = g_value_get_int (value);
