@@ -1,3 +1,7 @@
+2004-06-05    <nemo@localhost>
+
+	* src/pitivi-pitivisettings.c (all) : creation des settings globaux de l application
+
 2004-05-23    <bilboed@bilboed.eptv>
 
 	* src/pitivi-menu.c (pitivi_menu_instance_init): No need to g_strdup the second parameter to gtk_ui_manager_get_widget(), PITIVI_MAIN_MENUBAR_XML is already a const gchar* .
