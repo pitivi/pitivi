@@ -465,6 +465,8 @@ setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
   GtkTextIter			piter2;
   PitiviNewProjectWindow	*self;
   gint				*position;
+  PitiviCategorieSettings	*categorie;
+  PitiviProjectSettings		*reglage;
 
   self = (PitiviNewProjectWindow *) user_data;
 
@@ -479,13 +481,12 @@ setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
       if (!value && !(gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2)))
 	{
 	  gtk_tree_model_get_iter(model, &self->private->pIter, path);
+
 	  gtk_text_buffer_set_text(self->private->preset_text_buffer, setting_name, strlen(setting_name));
 	  gtk_entry_set_text(GTK_ENTRY(self->private->cat_text), setting_name);
 	}
       else if (!value && (gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2)))
 	{
-	  gtk_text_buffer_set_text(self->private->preset_text_buffer, setting_name, strlen(setting_name));
-	  
 	  pitivi_newprojectwindow_put_info( self, setting_name );
 
 	  gtk_tree_model_iter_parent (model, &self->private->pIter, &self->private->pIter2);
@@ -517,6 +518,7 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   PitiviCategorieSettings	*categorie;
   GSList			*selected_setting;
   PitiviProjectSettings		*reglage;
+  GtkObject			*spin_adjustment;
 
   GstStructure			*structure;
   GValue			*val;
@@ -532,6 +534,8 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   amedia = (PitiviMediaSettings *) g_slist_nth_data(reglage->media_settings, 1);
 
   gtk_entry_set_text(GTK_ENTRY(self->private->name_text), reglage->name);
+
+  gtk_text_buffer_set_text(self->private->preset_text_buffer, reglage->description, strlen(reglage->description));
 
   gtk_text_buffer_get_start_iter (self->private->desc_text_buffer, &self->private->start_description_iter );
   gtk_text_buffer_get_end_iter (self->private->desc_text_buffer, &self->private->end_description_iter );
@@ -557,6 +561,13 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   val = (GValue *) gst_structure_get_value (structure, "framerate"); 
   gtk_entry_set_text(GTK_ENTRY (self->private->fps_text ), 
 		     pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
+
+  g_print("caps audio = %s\n", gst_caps_to_string (amedia->caps) );
+
+  structure = gst_caps_get_structure (amedia->caps, 0);
+  val = (GValue *) gst_structure_get_value ( structure, "channels");
+  gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->audio_combo_ech),
+			     g_value_get_int (val));
 }
 
 gchar *
@@ -1095,23 +1106,24 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
 GtkWidget*
 pitivi_make_audio_frame(PitiviNewProjectWindow *self)
 {
-  GtkWidget			*audio_frame;
-  GtkWidget			*audio_table;
-  GtkWidget			*audio_label_codec;
-  GtkWidget			*audio_label_freq;
-  GtkWidget			*audio_label_ech;
-  GtkWidget			*audio_conf_but;
-  GtkWidget			*acodec_hbox;
-  GtkWidget			*arate_hbox;
-  GtkWidget			*achannels_hbox;
-  GstElementFactory		*factory;
-  GstElement			*element;
-  const gchar			*klass;
-  const gchar			*name;
-  const gchar			*short_name; 
-  int				i;
-  int				j;
-  int				nb_audiocodec;
+  GtkWidget		*audio_frame;
+  GtkWidget		*audio_table;
+  GtkWidget		*audio_label_codec;
+  GtkWidget		*audio_label_freq;
+  GtkWidget		*audio_label_ech;
+  GtkWidget		*audio_conf_but;
+  GtkWidget		*acodec_hbox;
+  GtkWidget		*arate_hbox;
+  GtkWidget		*achannels_hbox;
+  GstElementFactory	*factory;
+  GstElement		*element;
+  GtkObject		*spin_adjustment;
+  const gchar		*klass;
+  const gchar		*name;
+  const gchar		*short_name; 
+  int			i;
+  int			j;
+  int			nb_audiocodec;
 
   /* Creation de la frame "audio" et du tableau principal */
   audio_frame = gtk_frame_new("Audio"); 
@@ -1732,7 +1744,7 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
 	  gtk_label_set_line_wrap(GTK_LABEL(prop_desc), TRUE);
 	  gtk_misc_set_alignment(GTK_MISC (prop_desc), 0.0f, 0.0f);
 	  gtk_misc_set_padding(GTK_MISC (prop_desc), 5, 0);
-
+	  
 	  /* italic */
 	  gtk_label_set_attributes(GTK_LABEL(prop_desc), desc);
 
