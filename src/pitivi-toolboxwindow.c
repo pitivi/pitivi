@@ -80,32 +80,7 @@ pitivi_callb_toolbox_exit ( GtkAction *action, PitiviToolboxWindow *self )
 void
 pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *self )
 {    
-  /* Source List Window */
-  
-  if (self->timelinewin == NULL)
-    {
-      self->timelinewin = pitivi_timelinewindow_new();
-      gtk_widget_show_all (GTK_WIDGET (self->timelinewin) ); 
-    }
-
-  /* Source List Window */
-  
-  if (self->srclistwin == NULL)
-    {
-      self->srclistwin = pitivi_sourcelistwindow_new();
-      gtk_widget_show_all (GTK_WIDGET (self->srclistwin) );
-    }
-  
-  /* Effects Window */
-  
-  if (self->viewerwin == NULL)
-    {
-      self->effectswin = pitivi_effectswindow_new();
-      gtk_widget_show_all (GTK_WIDGET (self->effectswin) );
-    }
-  
-  if (self->viewerwin == NULL)
-    self->viewerwin = pitivi_viewerwindow_new();
+  pitivi_mainapp_create_wintools(self->private->mainapp);
 }
 
 static GtkActionEntry toolbox_menu_entries[] = {

@@ -34,6 +34,10 @@
  */
 
 #include	"pitivi-projectsettings.h"
+#include	"pitivi-sourcelistwindow.h"
+#include	"pitivi-timelinewindow.h"
+#include	"pitivi-viewerwindow.h"
+#include	"pitivi-effectswindow.h"
 
 /*
  * Type macros.
@@ -55,6 +59,10 @@ struct _PitiviMainApp
   GObject parent;
 
   /* instance public members */
+  PitiviSourceListWindow	*srclistwin;
+  PitiviTimelineWindow		*timelinewin;
+  PitiviViewerWindow		*viewerwin;
+  PitiviEffectsWindow		*effectswin;
   /* private */
   PitiviMainAppPrivate *private;
 };
@@ -75,5 +83,6 @@ GType		pitivi_mainapp_get_type (void);
 PitiviCategorieSettings	*pitivi_mainapp_get_selected_category	( PitiviMainApp *self, gint *position );
 PitiviMainApp		*pitivi_mainapp_new (void);
 GSList			*pitivi_mainapp_project_settings( PitiviMainApp *self );
+void			pitivi_mainapp_create_wintools(PitiviMainApp *self);
 
 #endif

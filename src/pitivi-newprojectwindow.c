@@ -696,25 +696,10 @@ pitivi_make_presets_hbox(PitiviNewProjectWindow *self)
 
 
 void
-pitivi_create_new_project ( GtkAction *action, PitiviToolboxWindow *self )
+pitivi_create_new_project ( GtkAction *action, PitiviNewProjectWindow *self )
 {
-  PitiviTimelineWindow *timelinewin;
-  PitiviSourceListWindow *srclistwin;
-  PitiviEffectsWindow *effectswin;
-  PitiviViewerWindow *viewerwin;
- 
-  /* Timeline List Window */
-  timelinewin = pitivi_timelinewindow_new();
-  gtk_widget_show_all (GTK_WIDGET (timelinewin) ); 
-  /* Source List Window */
-  srclistwin = pitivi_sourcelistwindow_new();
-  gtk_widget_show_all (GTK_WIDGET (srclistwin) );
-  /* Effects Window */
-  effectswin = pitivi_effectswindow_new();
-  gtk_widget_show_all (GTK_WIDGET (effectswin) );
-  gtk_widget_destroy (GTK_WIDGET(self));
-
-  viewerwin = pitivi_viewerwindow_new();
+  pitivi_mainapp_create_wintools (self->private->mainapp);
+  gtk_widget_destroy (GTK_WIDGET (self));
 }
 
 

@@ -45,7 +45,6 @@
 #include "pitivi.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-toolboxwindow.h"
-#include "pitivi-sourcelistwindow.h"
 #include "pitivi-newprojectwindow.h"
 #include "pitivi-projectsettings.h"
 #include "pitivi-settings.h"
@@ -57,7 +56,6 @@ struct _PitiviMainAppPrivate
   gboolean			dispose_has_run;
   GSList			*project_settings_list;
   PitiviToolboxWindow		*tbxwin;
-  PitiviSourceListWindow	*srclistwin;
   PitiviNewProjectWindow	*win_new_project;
   PitiviSettings		*global_settings;
 };
@@ -134,10 +132,36 @@ pitivi_mainapp_project_settings(PitiviMainApp *self)
   return ( self->private->project_settings_list );
 }
 
+void
+pitivi_mainapp_create_wintools(PitiviMainApp *self)
+{
+  /* Source List Window */
+  
+  if (self->timelinewin == NULL)
+    {
+      self->timelinewin = pitivi_timelinewindow_new();
+      gtk_widget_show_all (GTK_WIDGET (self->timelinewin) ); 
+    }
 
-
-
-
+  /* Source List Window */
+  
+  if (self->srclistwin == NULL)
+    {
+      self->srclistwin = pitivi_sourcelistwindow_new();
+      gtk_widget_show_all (GTK_WIDGET (self->srclistwin) );
+    }
+  
+  /* Effects Window */
+  
+  if (self->viewerwin == NULL)
+    {
+      self->effectswin = pitivi_effectswindow_new();
+      gtk_widget_show_all (GTK_WIDGET (self->effectswin) );
+    }
+  
+  if (self->viewerwin == NULL)
+    self->viewerwin = pitivi_viewerwindow_new();
+}
 
 
 PitiviMainApp *
