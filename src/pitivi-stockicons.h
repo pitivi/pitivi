@@ -34,18 +34,30 @@
 #include	<gtk/gtk.h>
 #include	<gdk/gdk.h>
 
-#define PITIVI_STOCK_CUT "pitivi-cut"
-#define PITIVI_STOCK_HAND "pitivi-hand"
-#define PITIVI_STOCK_POINTER "pitivi-pointer"
-#define PITIVI_STOCK_ZOOM "pitivi-zoom"
-#define PITIVI_STOCK_NEW_PROJECT "pitivi-new-sample"
-#define PITIVI_STOCK_SELECTION_GROW "pitivi-selection-grow"
-#define PITIVI_STOCK_SELECT_ALL "pitivi-select-all"
-#define PITIVI_STOCK_SELECT_NONE "pitivi-select-none"
-#define PITIVI_STOCK_EFFECT_SOUND "pitivi-effects-sound"
-#define PITIVI_STOCK_EFFECT_TV "pitivi-effects-tv"
-#define PITIVI_STOCK_EFFECT_CAT "pitivi-effects-category"
-#define PITIVI_STOCK_EFFECT_CAT_OPEN "pitivi-effects-category-open"
+#define PITIVI_STOCK_CUT		  "pitivi-cut"
+#define PITIVI_STOCK_HAND		  "pitivi-hand"
+#define PITIVI_STOCK_POINTER		  "pitivi-pointer"
+#define PITIVI_STOCK_ZOOM		  "pitivi-zoom"
+#define PITIVI_STOCK_NEW_PROJECT	  "pitivi-new-sample"
+#define PITIVI_STOCK_SELECTION_GROW	  "pitivi-selection-grow"
+#define PITIVI_STOCK_SELECT_ALL		  "pitivi-select-all"
+#define PITIVI_STOCK_SELECT_NONE	  "pitivi-select-none"
+
+#define PITIVI_STOCK_EFFECT_SOUND	  "pitivi-effects-sound"
+#define PITIVI_STOCK_EFFECT_TV		  "pitivi-effects-tv"
+#define PITIVI_STOCK_EFFECT_CAT		  "pitivi-effects-category"
+#define PITIVI_STOCK_EFFECT_CAT_OPEN	  "pitivi-effects-category-open"
+
+#define PITIVI_STOCK_VIEWER_PLAY	  "pitivi-viewer-play"
+#define PITIVI_STOCK_VIEWER_PAUSE	  "pitivi-viewer-pause"
+#define PITIVI_STOCK_VIEWER_STOP	  "pitivi-viewer-stop"
+#define PITIVI_STOCK_VIEWER_NEXT	  "pitivi-viewer-next"
+#define PITIVI_STOCK_VIEWER_PREVIOUS	  "pitivi-viewer-previous"
+#define PITIVI_STOCK_VIEWER_VOLUME        "pitivi-viewer-volume"
+#define PITIVI_STOCK_VIEWER_VOLUMEMAX     "pitivi-viewer-volume-max"
+#define PITIVI_STOCK_VIEWER_VOLUMEMINIMUM "pitivi-viewer-volume-min"
+#define PITIVI_STOCK_VIEWER_VOLUMEMEDIUM  "pitivi-viewer-volume-medium"
+#define PITIVI_STOCK_VIEWER_VOLUMEZERO    "pitivi-viewer-volume-zero"
 
 void		pitivi_stockicons_register (void);
 
