@@ -10,6 +10,11 @@ Modifications :
 -- On ne réalise des classes QUE pour les éléments évidents.
    Ex: Une menubar ne nécessite pas de classe spécifique !
 
+Template de fichiers pitivi
+---------------------------
+
+  Il y a des templates de fichiers dans docs/ (pitivi-template.c et pitivi-template.h)
+
 
 Template de classe GObject
 ---------------------------
