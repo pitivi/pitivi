@@ -252,17 +252,26 @@ pitivi_projectsettings_list_make()
 xmlNodePtr	
 pitivi_projectsettings_save_thyself(PitiviProjectSettings *self, xmlNodePtr parent)
 {
-  xmlNodePtr	selfptr;
+  xmlNodePtr	selfptr, msetptr;
+  GSList	*mset;
+  PitiviMediaSettings	*cat1;
 
   selfptr = xmlNewChild (parent, NULL, "projectsettings", NULL);
+
   xmlNewChild (selfptr, NULL, "name", self->name);
   xmlNewChild (selfptr, NULL, "description", self->description);
+  
+  for (mset = self->media_settings; mset; mset = mset->next) {
+    cat1 = (PitiviMediaSettings *) mset->data;
 
-  /*
-    TODO
+    msetptr = xmlNewChild(selfptr, NULL, "media_settings", NULL);
 
-    save the rest of the settings
-  */
+    /* TODO : save the codec_settings */
+    
+    xmlNewChild(msetptr, NULL, "codec_factory_name", cat1->codec_factory_name);
+
+    gst_caps_save_thyself(cat1->caps, msetptr);
+  }
 
   return parent;
 }
