@@ -151,11 +151,11 @@ static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
 
 /* headers */
 
-
-void	pitivi_timelinecellrenderer_callb_paste (PitiviTimelineCellRenderer *self, gpointer data);
+void	pitivi_timelinecellrenderer_callb_cancel (PitiviTimelineCellRenderer *self, gpointer data);
+void	pitivi_timelinecellrenderer_callb_paste  (PitiviTimelineCellRenderer *self, gpointer data);
 
 static GtkItemFactoryEntry  LayoutItemPopup[] = {
-  {"/Cancel", NULL, NULL, 1, "<Item>", NULL},
+  {"/Cancel", NULL, pitivi_timelinecellrenderer_callb_cancel, 1, "<Item>", NULL},
   {"/Sep1", NULL, NULL, 0, "<Separator>"},
   {"/Paste", NULL, pitivi_timelinecellrenderer_callb_paste, 0, "<Item>", NULL},
   {"/Paste All", NULL, pitivi_timelinecellrenderer_callb_paste, 0, "<Item>", NULL},
@@ -673,8 +673,8 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 	}
       else if ( event->button == 3 )
 	{
-	  //self->private->menu = GTK_WIDGET (create_menupopup (widget, TimeItemPopup, iNbTimeItemPopup));
-	  //gtk_menu_popup(GTK_MENU (self->private->menu), NULL, NULL, NULL, NULL, event->button, event->time);
+	  GtkWidget *menu = GTK_WIDGET (create_menupopup (widget, LayoutItemPopup, iNbLayoutItemPopup));
+	  gtk_menu_popup(GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, event->time);
 	}
     }
   return FALSE;
@@ -1194,6 +1194,22 @@ pitivi_timelinecellrenderer_rendering ( PitiviTimelineCellRenderer *cell )
   calculate_priorities ( GTK_WIDGET (cell) );
 }
 
+GtkWidget *
+pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimelineCellRenderer *cell )
+{
+  GList	*childlist;
+  PitiviTimelineMedia *media;
+  
+  childlist = gtk_container_get_children (GTK_CONTAINER (cell));
+  for (childlist = g_list_first ( childlist ); childlist; childlist = childlist->prev)
+    {
+      media = childlist->data;
+      if ( media->selected )
+	return (media); 
+    }
+  return NULL;
+}
+
 void
 pitivi_timelinecellrenderer_callb_select (PitiviTimelineCellRenderer *self)
 {
@@ -1329,9 +1345,43 @@ pitivi_timelinecellrenderer_callb_drag_source_end (PitiviTimelineCellRenderer *s
 */
 
 void	
+pitivi_timelinecellrenderer_callb_cancel (PitiviTimelineCellRenderer *self, gpointer data)
+{
+  PitiviTimelineMedia *media;
+
+  media = PITIVI_TIMELINEMEDIA (self->private->timewin->copy);
+  if ( media )
+    {
+      media->cutted = FALSE;
+      gtk_widget_show (GTK_WIDGET (media) );
+      if (media->linked)
+	gtk_widget_show ( media->linked );
+      g_signal_emit_by_name (GTK_WIDGET (self->private->timewin), "deselect", NULL);
+    }
+}
+
+void	
 pitivi_timelinecellrenderer_callb_paste (PitiviTimelineCellRenderer *self, gpointer data)
 {
-  g_printf ("pasting\n");
+  PitiviTimelineMedia *media;
+  GdkSelection *selection;
+
+  if (self->private->selected)
+    {
+      media = PITIVI_TIMELINEMEDIA (self->private->timewin->copy);
+      if ( media )
+	{
+	  dispose_medias (self, media->sourceitem->srcfile, self->private->selection.x);
+	  if ( media->cutted )
+	    {
+	      if ( media->linked )
+		gtk_container_remove (GTK_CONTAINER (self->linked_track), media->linked);
+	      gtk_container_remove (GTK_CONTAINER (self), media);
+	    }
+	  g_signal_emit_by_name (GTK_WIDGET (self->private->timewin), "deselect", NULL);
+	  calculate_priorities ( GTK_WIDGET (self) );
+	}
+    }
 }
 
 static void

@@ -208,7 +208,8 @@ effectstree_on_row_activated (GtkTreeView        *treeview,
   gtk_tree_model_get (GTK_TREE_MODEL (model), &child, PITIVI_POINTER_COLUMN, &info, -1);
   if ( data && info )
     {
-      g_signal_emit_by_name (self->private->selected_media, "associate-effect-to-media", info);
+      g_signal_emit_by_name (GTK_OBJECT (pitivi_mainapp_get_timelinewin(((PitiviWindows *)self)->mainapp)), 
+			     "associate-effect-to-media", info);
       self->private->selected_media = NULL;
    }
 }
@@ -482,13 +483,20 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
   G_CONST_RETURN gchar	*name;
   gchar			*icon_fx;
 
-  pitivi_effectstree_insert_node (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, NULL);
+  pitivi_effectstree_insert_node (tree_effect, 
+				  &tree_effect->treeiter,  
+				  NULL,  
+				  "Simple Effects",  
+				  PITIVI_STOCK_EFFECT_CAT, 
+				  NULL);
+  
   /* On recupere la liste des effets video via la structure self */
   while (settingslist)
     {
       fx_video = g_list_append (fx_video, settingslist->data);
       settingslist = settingslist->next;
     }
+  
   /* On creer deux sous categories */
   pitivi_effectstree_insert_node (tree_effect, &video_iter[0], NULL,
 				   "Tv Effects", PITIVI_STOCK_EFFECT_CAT, NULL);
@@ -555,7 +563,11 @@ insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect,
   G_CONST_RETURN gchar	*name;
   gchar			*icon_fx;
 
-  pitivi_effectstree_insert_node (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, NULL);
+  pitivi_effectstree_insert_node (tree_effect, 
+				  &tree_effect->treeiter,  
+				  NULL,  
+				  "Simple Effects",  
+				  PITIVI_STOCK_EFFECT_CAT, NULL);
   while ( settingslist )
     {
       fx_audio = g_list_append (fx_audio,  settingslist->data);
@@ -636,7 +648,12 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
 	}
     }
   
-  pitivi_effectstree_insert_node (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, "");
+  pitivi_effectstree_insert_node (tree_effect, 
+				  &tree_effect->treeiter,  
+				  NULL,  
+				  "Simple Effects",  
+				  PITIVI_STOCK_EFFECT_CAT, 
+				  "");
 }
 
 void

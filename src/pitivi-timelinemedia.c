@@ -526,6 +526,9 @@ static
 gint pitivi_timelinemedia_motion_notify_event (GtkWidget        *widget,
 					       GdkEventMotion   *event)
 {
+  int x;
+  
+  x = event->x;
   // recalculer le x du event
   event->x += widget->allocation.x;
   return FALSE;
@@ -541,19 +544,6 @@ pitivi_timelinemedia_configure_event (GtkWidget *widget, GdkEventConfigure *even
   cursor = pitivi_getcursor_id (widget);
   self->private->cursor_type = cursor->type;
   return FALSE;
-}
-
-
-void
-select_source_and_transmit (PitiviTimelineMedia *self)
-{
-  GtkWidget *mediawindow;
-
-  if ( self->track->track_type != PITIVI_EFFECTS_TRACK )
-    {
-      mediawindow = gtk_widget_get_toplevel (GTK_WIDGET (self));
-      g_signal_emit_by_name (mediawindow, "selected-source", self);
-    }
 }
 
 static gint
@@ -575,7 +565,6 @@ pitivi_timelinemedia_button_press_event (GtkWidget      *widget,
 	      self->selected = TRUE;
 	      if ( self->linked )
 		((PitiviTimelineMedia *) self->linked)->selected = TRUE;
-	      select_source_and_transmit ( self );
 	    }
 	  else
 	    {
@@ -788,9 +777,19 @@ pitivi_timelinemedia_get_type (void)
 
 void	pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *self, gpointer data)
 {
-  //gtk_widget_set_sensitive (GTK_WIDGET(self), FALSE);
-  //if (self->linked)
-  //gtk_widget_set_sensitive (self->linked, FALSE);
+  if (!self->cutted)
+    {
+      self->cutted = TRUE;
+      
+      gtk_widget_hide (GTK_WIDGET(self));
+      if (self->linked)
+	gtk_widget_hide (self->linked);
+  
+      GtkWidget *w = gtk_widget_get_toplevel (GTK_WIDGET(self));
+      g_signal_emit_by_name (w, "copy-source", self);
+    }
+  else
+    self->cutted = FALSE;
 }
 
 void	pitivi_timelinemedia_callb_copied (PitiviTimelineMedia *self, gpointer data)

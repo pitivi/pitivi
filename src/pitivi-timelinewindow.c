@@ -831,6 +831,15 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 					       g_cclosure_marshal_VOID__VOID,
 					       G_TYPE_NONE, 0);
 
+    g_signal_new ("associate-effect-to-media",
+		  G_TYPE_FROM_CLASS (g_class),
+		  G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+		  NULL,
+		  NULL, 
+		  NULL,                
+		  g_cclosure_marshal_VOID__POINTER,
+		  G_TYPE_NONE, 1, G_TYPE_POINTER);
+    
   klass->activate = pitivi_timelinewindow_activate;
   klass->deactivate = pitivi_timelinewindow_deactivate;
   klass->deselect = pitivi_timelinewindow_deselect;
@@ -1033,6 +1042,30 @@ pitivi_timelinewindow_deactivate ( PitiviTimelineWindow *self )
 }
 
 void
+pitivi_timelinewindow_associate_effect (GtkWidget *widget, gpointer data)
+{
+  PitiviTimelineWindow *self = (PitiviTimelineWindow *) widget;
+  PitiviTimelineCellRenderer *cell;
+  GtkWidget	*media;
+  guint		type;
+  GtkWidget	*container;
+  GList		*childlist;
+  
+  childlist = gtk_container_get_children (GTK_CONTAINER (self->private->layout_container));
+  for (childlist = g_list_last ( childlist ); childlist; childlist = childlist->prev)
+    if (GTK_IS_LAYOUT (childlist->data))
+      {
+	cell = childlist->data;
+	if ((media = pitivi_timelinecellrenderer_media_selected_ontrack (cell)))
+	  {
+	    g_signal_emit_by_name (media, "associate-effect-to-media", data);
+	    break;
+	  }
+      }
+  g_list_free ( childlist );
+}
+
+void
 pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
 { 
   GList *childlist; 
@@ -1040,6 +1073,7 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   /* Viewer control  */
   self->private->viewer = ((GtkWidget *)pitivi_mainapp_get_viewerwin ( ((PitiviWindows *)self)->mainapp ));
   connect2viewer (self->private->controller, self->private->viewer);
+
   /* Loading Select Cursor */
   
   load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), self->toolbox->pitivi_cursor, PITIVI_CURSOR_SELECT);
@@ -1054,6 +1088,8 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
     }
   gtk_widget_set_sensitive (GTK_WIDGET(self->private->toolcontainer), TRUE);
   gtk_widget_set_sensitive (GTK_WIDGET(self->private->hpaned), TRUE);
+  
+  g_signal_connect (self, "associate-effect-to-media", G_CALLBACK (pitivi_timelinewindow_associate_effect), NULL);
 }
 
 void

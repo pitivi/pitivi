@@ -71,6 +71,7 @@ struct _PitiviTimelineMedia
   GList		   *effectschilds;  /* effects on media */
   gboolean	   selected;
   gboolean	   copied;
+  gboolean	   cutted;
   
   /* private */
   
