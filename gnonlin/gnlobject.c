@@ -281,12 +281,13 @@ gnl_object_set_media_start_stop (GnlObject *object, GstClockTime start, GstClock
     object->media_stop = stop;
 
   if (startm || stopm) {
-    gnl_object_do_seek (object,
-			GST_FORMAT_TIME |
-			GST_SEEK_METHOD_SET |
-			GST_SEEK_FLAG_FLUSH |
-			GST_SEEK_FLAG_ACCURATE, 
-			0, stop - start);
+    if (startm && stopm)
+      gnl_object_do_seek (object,
+			  GST_FORMAT_TIME |
+			  GST_SEEK_METHOD_SET |
+			  GST_SEEK_FLAG_FLUSH |
+			  GST_SEEK_FLAG_ACCURATE, 
+			  object->start, object->start + (stop - start));
     
     g_object_freeze_notify (G_OBJECT (object));
     if (startm)

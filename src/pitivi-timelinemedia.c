@@ -129,6 +129,7 @@ struct _PitiviTimelineMediaPrivate
   /* Popup */
   
   GtkWidget	   *menu;
+  GtkTooltips	   *tooltips;
   
   /* Media */
 
@@ -206,10 +207,36 @@ show_effects_media (GtkWidget *widget, GdkEventExpose *event)
 }
 
 void
+pitivi_timelinemedia_update_tooltip(PitiviTimelineMedia *self)
+{
+  GtkTooltipsData*	data;
+  char			*str;
+  GnlObject		*obj = self->sourceitem->gnlobject;
+
+  /* Make the string */
+  str = g_strdup_printf("%s\nposition : %4lld:%3lld->%4lld:%3lld\nMedia : %4lld:%3lld->%4lld:%3lld",
+			gst_element_get_name(GST_ELEMENT (obj)),
+			obj->start / GST_SECOND, (obj->start % GST_SECOND) / GST_MSECOND,
+			obj->stop / GST_SECOND, (obj->stop % GST_SECOND) / GST_MSECOND,
+			obj->media_start / GST_SECOND, (obj->media_start % GST_SECOND) / GST_MSECOND,
+			obj->media_stop / GST_SECOND, (obj->media_stop % GST_SECOND) / GST_MSECOND);
+  gtk_tooltips_set_tip (self->private->tooltips, GTK_WIDGET(self),
+			str, NULL);
+  g_free(str);
+}
+
+void
+pitivi_timelinemedia_get_start_stop (PitiviTimelineMedia *media, gint64 *start, gint64 *stop)
+{
+  gnl_object_get_start_stop(media->sourceitem->gnlobject, start, stop);
+}
+
+void
 pitivi_timelinemedia_set_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
 {
   g_printf("pitivi_timelinemedia start:%lld stop:%lld\n", start, stop);
   gnl_object_set_start_stop (media->sourceitem->gnlobject, start, stop);
+  pitivi_timelinemedia_update_tooltip(media);
 }
 
 void
@@ -217,16 +244,26 @@ pitivi_timelinemedia_put (PitiviTimelineMedia *media, gint64 start)
 {
   gint64 mstart, mstop;
 
+  // check the size of the widget !!!
   gnl_object_get_media_start_stop (media->sourceitem->gnlobject, &mstart, &mstop);
-  g_printf("pitivi_timelinemedia put start:%lld stop:%lld\n", start, start + mstop - mstart);
+  g_printf("pitivi_timelinemedia_put start:%lld stop:%lld\n", start, start + mstop - mstart);
   gnl_object_set_start_stop (media->sourceitem->gnlobject, start, start + mstop - mstart);
+  pitivi_timelinemedia_update_tooltip(media);
 }
+
+void
+pitivi_timelinemedia_get_media_start_stop (PitiviTimelineMedia *media, gint64 *start, gint64 *stop)
+{
+  gnl_object_get_media_start_stop (media->sourceitem->gnlobject, start, stop);
+}
+
 
 void
 pitivi_timelinemedia_set_media_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
 {
   g_printf("pitivi_timelinemedia mediastart:%lld mediastop:%lld\n", start, stop);
   gnl_object_set_media_start_stop (media->sourceitem->gnlobject, start, stop);
+  pitivi_timelinemedia_update_tooltip(media);
 }
 
 void
@@ -288,6 +325,8 @@ pitivi_timelinemedia_constructor (GType type,
   self->sourceitem->srcfile = g_new0 (PitiviSourceFile, 1);
   memcpy (self->sourceitem->srcfile, self->private->sf, sizeof (*self->private->sf));
  
+  self->private->tooltips = gtk_tooltips_new();
+
   self->sourceitem->id = self->track->nb_added[0];
   if (self->track->track_type == PITIVI_AUDIO_TRACK)
     self->sourceitem->isaudio = TRUE;
@@ -308,9 +347,10 @@ pitivi_timelinemedia_constructor (GType type,
       else
 	{
 	  self->sourceitem->gnlobject = (GnlObject *)gnl_source_new (name, self->sourceitem->srcfile->pipeline);
-	  gnl_object_set_media_start_stop (GNL_OBJECT(self->sourceitem->gnlobject), 0, self->sourceitem->srcfile->length);
+	  //gnl_object_set_media_start_stop (GNL_OBJECT(self->sourceitem->gnlobject), 0, self->sourceitem->srcfile->length);
 	}
     }
+  pitivi_timelinemedia_update_tooltip(self);
   return object;
 }
 
@@ -516,6 +556,8 @@ pitivi_timelinemedia_realize (GtkWidget *widget)
   attributes.event_mask |= gtk_widget_get_events (widget);
   attributes.event_mask |= GDK_EXPOSURE_MASK;
   attributes.event_mask |= GDK_POINTER_MOTION_MASK;
+  attributes.event_mask |= GDK_ENTER_NOTIFY_MASK;
+  attributes.event_mask |= GDK_LEAVE_NOTIFY_MASK;
   
   attributes.visual = gtk_widget_get_visual (widget);
   attributes.colormap = gtk_widget_get_colormap (widget);
