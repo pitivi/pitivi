@@ -1894,7 +1894,7 @@ gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
 }
 
 gboolean	select_folder_from_listview(PitiviSourceListWindow *self,
-				    gint folder_select)
+					    gint folder_select)
 {
   char	*folder;
   GtkTreeIter	iter;
@@ -1972,10 +1972,10 @@ void	on_row_activated (GtkTreeView        *listview,
 	}
       return;
     }
-  g_printf("get [%s]\n", sf->filename);
-  viewerwin = (PitiviViewerWindow*)pitivi_mainapp_get_viewerwin(window->mainapp);
-  pitivi_viewerwindow_set_source(viewerwin, sf);
-
+  g_signal_emit_by_name (self->private->timelinewin, "double-click-source", sf);
+  //g_printf("get [%s]\n", sf->filename);
+  //viewerwin = (PitiviViewerWindow*)pitivi_mainapp_get_viewerwin(window->mainapp);
+  //pitivi_viewerwindow_set_source(viewerwin, sf);
 }
 
 gboolean	my_popup_handler(gpointer data, GdkEvent *event,
@@ -2216,16 +2216,16 @@ void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
     {
       g_printf("removing item only %s\n", self->private->dndsf->filename);
       g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", self->private->dndsf);
-      //pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
-      //					    self->private->treepath,
-      //					    item_select);
-      //gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
+      pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
+      					    self->private->treepath,
+      					    item_select);
+      gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
     }
   else /* need to remove folder */
     {
       /* we need to set treepath too */
-      //self->private->treepath = g_strdup_printf("%s:%d", self->private->treepath, folder_select);
-      //OnRemoveBin(self, 0, NULL);
+      self->private->treepath = g_strdup_printf("%s:%d", self->private->treepath, folder_select);
+      OnRemoveBin(self, 0, NULL);
     }
 }
 

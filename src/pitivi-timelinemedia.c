@@ -43,9 +43,12 @@ typedef enum {
   PROP_SOURCEFILE
 } PitiviMediaProperty;
 
-
-
-// Source drag 'n drop on a widget
+/*
+ **********************************************************
+ * Signals  					          *
+ *							  *
+ **********************************************************
+*/
 
 enum
   {
@@ -53,10 +56,21 @@ enum
     MEDIA_DRAG_GET_SIGNAL,
     MEDIA_DRAG_END_SIGNAL,
     MEDIA_DRAG_DELETE_SIGNAL,
+    MEDIA_DESELECT_SIGNAL,
+    MEDIA_SELECT_SIGNAL,
+    MEDIA_DISSOCIATE_SIGNAL,
     LAST_SIGNAL
   };
 
 static guint	      media_signals[LAST_SIGNAL] = {0};
+
+
+/*
+ **********************************************************
+ * Source drag 'n drop on a widge		          *
+ *							  *
+ **********************************************************
+*/
 
 static GtkTargetEntry TargetSameEntry[] =
   {
@@ -102,11 +116,6 @@ pitivi_timelinemedia_new (PitiviSourceFile *sf)
 						       "media_type",
 						       type,
 						       NULL);
-  g_assert(timelinemedia != NULL);
-  timelinemedia->sourceitem = g_new0 (PitiviSourceItem, 1);
-  timelinemedia->sourceitem->srcfile = sf;
-  timelinemedia->sourceitem->srcfile->filename = g_strdup ( sf->filename );
-  timelinemedia->sourceitem->gnlsource = gnl_source_new ( timelinemedia->sourceitem->srcfile->filename,  timelinemedia->private->sf->pipeline );
   return timelinemedia;
 }
 
@@ -120,6 +129,11 @@ pitivi_timelinemedia_constructor (GType type,
   
   object = (* G_OBJECT_CLASS (parent_class)->constructor) 
     (type, n_construct_properties, construct_properties);
+  self = (PitiviTimelineMedia *) object;
+  self->sourceitem = g_new0 (PitiviSourceItem, 1);
+  self->sourceitem->srcfile = g_new0 (PitiviSourceFile, 1);
+  memcpy (self->sourceitem->srcfile, self->private->sf, sizeof (*self->private->sf));
+  self->sourceitem->gnlsource =  gnl_source_new (self->sourceitem->srcfile->filename, self->sourceitem->srcfile->pipeline);
   return object;
 }
 
@@ -203,9 +217,10 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
   PitiviTimelineMedia *self = (PitiviTimelineMedia *) instance;
 
   self->private = g_new0(PitiviTimelineMediaPrivate, 1);
+  
   /* initialize all public and private members to reasonable default values. */ 
   
-  self->private->dispose_has_run = FALSE;
+  //self->private->dispose_has_run = FALSE;
   
   /* Do only initialisation here */
   /* The construction of the object should be done in the Constructor
@@ -241,7 +256,7 @@ pitivi_timelinemedia_set_property (GObject * object,
       self->private->media_type = g_value_get_int (value);
       break; 
     case PROP_SOURCEFILE:
-      self->private->sf = g_value_get_pointer (value);
+      self->private->sf =  g_value_get_pointer (value);
       break;
     default:
       g_assert (FALSE);
@@ -396,7 +411,6 @@ pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
 					   GdkEventButton *event)
 { 
   gtk_widget_grab_focus ( widget );
-  g_printf ("-----timecellmedia-click----------\n");
   return FALSE;
 }
 
@@ -410,6 +424,13 @@ void
 pitivi_timelinemedia_callb_deselect (PitiviTimelineMedia *self)
 {
   
+}
+
+static void
+pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *self, gpointer data)
+{
+  if (PITIVI_IS_TIMELINEMEDIA (self) && self->linked)
+    self->linked = NULL;
 }
 
 static void
@@ -443,29 +464,39 @@ pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
  
   g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_SOURCEFILE,
 				   g_param_spec_pointer ("source_file","source_file","source_file",
-							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+							 G_PARAM_READWRITE|G_PARAM_CONSTRUCT));
   
 
-  g_signal_new ("select",
-		G_TYPE_FROM_CLASS (g_class),
-		G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-		G_STRUCT_OFFSET (PitiviTimelineMediaClass, select),
-		NULL, 
-		NULL,                
-		g_cclosure_marshal_VOID__VOID,
-		G_TYPE_NONE, 0);
+  media_signals[MEDIA_SELECT_SIGNAL] = g_signal_new ("select",
+						     G_TYPE_FROM_CLASS (g_class),
+						     G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+						     G_STRUCT_OFFSET (PitiviTimelineMediaClass, select),
+						     NULL, 
+						     NULL,                
+						     g_cclosure_marshal_VOID__VOID,
+						     G_TYPE_NONE, 0);
   
-  g_signal_new ("deselect",
-		G_TYPE_FROM_CLASS (g_class),
-		G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-		G_STRUCT_OFFSET (PitiviTimelineMediaClass, deselect),
-		NULL, 
-		NULL,                
-		g_cclosure_marshal_VOID__VOID,
-		G_TYPE_NONE, 0);
+  media_signals[MEDIA_DESELECT_SIGNAL] =  g_signal_new ("deselect",
+							G_TYPE_FROM_CLASS (g_class),
+							G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+							G_STRUCT_OFFSET (PitiviTimelineMediaClass, deselect),
+							NULL, 
+							NULL,                
+							g_cclosure_marshal_VOID__VOID,
+							G_TYPE_NONE, 0);
+  
+  media_signals[MEDIA_DISSOCIATE_SIGNAL] = g_signal_new ("dissociate",
+							 G_TYPE_FROM_CLASS (g_class),
+							 G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+							 G_STRUCT_OFFSET (PitiviTimelineMediaClass, dissociate),
+							 NULL, 
+							 NULL,                
+							 g_cclosure_marshal_VOID__POINTER,
+							 G_TYPE_NONE, 1, G_TYPE_POINTER);
   
   media_class->select = pitivi_timelinemedia_callb_select;
   media_class->deselect = pitivi_timelinemedia_callb_deselect;
+  media_class->dissociate = pitivi_timelinemedia_callb_dissociate;
 }
 
 GType

@@ -95,6 +95,7 @@ struct _PitiviTimelineCellRendererClass
   void (* deselect)	    (PitiviTimelineCellRenderer *cell);
   void (* delete)	    (PitiviTimelineCellRenderer *cell, gpointer data);
   void (*drag_source_begin) (PitiviTimelineCellRenderer *cell, gpointer data);
+  void (*dbk_source)	    (PitiviTimelineCellRenderer *cell, gpointer data);
 };
 
 

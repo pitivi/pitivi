@@ -77,7 +77,8 @@ struct _PitiviTimelineMediaClass
   GtkWidgetClass parent;
   /* class members */
   void (* select)   (PitiviTimelineMedia *cell);
-  void (* deselect)   (PitiviTimelineMedia *cell);
+  void (* deselect) (PitiviTimelineMedia *cell);
+  void (* dissociate) (PitiviTimelineMedia *self, gpointer data);
 };
 
 /* used by PITIVI_TIMELINEMEDIA_TYPE */

@@ -127,6 +127,7 @@ enum {
   DESELECT_SIGNAL,
   DELETE_SIGNAL,
   DRAG_SOURCE_BEGIN_SIGNAL,
+  DBK_SOURCE_SIGNAL,
   LAST_SIGNAL
 };
 
@@ -608,6 +609,13 @@ pitivi_timelinewindow_get_property (GObject * object,
     }
 }
 
+/*
+ **********************************************************
+ * Callbacks Events / Signals				  *
+ * From SourceListWindow / EffectsWindow	          *
+ **********************************************************
+*/
+
 void
 send_signal_to_childs (PitiviTimelineWindow *self, const gchar *signame, gpointer data)
 {
@@ -627,17 +635,40 @@ pitivi_timelinewindow_deselect (PitiviTimelineWindow *self)
   send_signal_to_childs (self, "deselect", NULL);
 }
 
-void
+static void
+pitivi_timelinewindow_dblclick (PitiviTimelineWindow *self, gpointer data)
+{
+  PitiviTimelineCellRenderer *cell;
+  guint		type;
+  GtkWidget	*container;
+  GList		*childlist;
+  
+  childlist = gtk_container_get_children (GTK_CONTAINER (self->private->main_vbox_right));
+  for (; childlist; childlist = childlist->next)
+    if (GTK_IS_LAYOUT (childlist->data))
+      {
+	cell = childlist->data;
+	type = check_media_type (data);
+	if ( (cell->track_type == type) || 
+	     ((cell->track_type == PITIVI_VIDEO_TRACK ||  cell->track_type == PITIVI_AUDIO_TRACK) 
+	      && type == PITIVI_VIDEO_AUDIO_TRACK))
+	  {
+	    g_signal_emit_by_name (GTK_OBJECT (childlist->data), "double-click-source", data);
+	    break;
+	  }
+      }
+  g_list_free ( childlist );
+}
+
+static void
 pitivi_timelinewindow_delete_sf (PitiviTimelineWindow *self, gpointer data)
 {
   send_signal_to_childs (self, "delete-source", data);
 }
 
-void
+static void
 pitivi_timelinewindow_drag_source_begin (PitiviTimelineWindow *self, gpointer data)
 {
-  gint64 *len = data;
-
   send_signal_to_childs (self, "drag-source-begin", data);
 }
 
@@ -703,11 +734,21 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 						    g_cclosure_marshal_VOID__POINTER,
 						    G_TYPE_NONE, 1, G_TYPE_POINTER);
   
+  signals[DBK_SOURCE_SIGNAL] = g_signal_new ("double-click-source",
+					     G_TYPE_FROM_CLASS (g_class),
+					     G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+					     G_STRUCT_OFFSET (PitiviTimelineWindowClass, dbk_source),
+					     NULL,
+					     NULL,       
+					     g_cclosure_marshal_VOID__POINTER,
+					     G_TYPE_NONE, 1, G_TYPE_POINTER);
+  
   klass->activate = pitivi_timelinewindow_activate;
   klass->deactivate = pitivi_timelinewindow_deactivate;
   klass->deselect = pitivi_timelinewindow_deselect;
   klass->delete = pitivi_timelinewindow_delete_sf;
   klass->drag_source_begin = pitivi_timelinewindow_drag_source_begin;
+  klass->dbk_source = pitivi_timelinewindow_dblclick;
 }
 
 GType
