@@ -11,7 +11,9 @@
             <menuitem name="FileExit"  action="FileExit"/>
        </menu>
        <menu action="WindowsMenu">
-            <menuitem name="EffectsWindow" action="EffectWindows"/>
+            <menuitem name="EffectsWindow"    action="EffectWindows"/>
+            <menuitem name="SourceListWindow" action="SourceListWindows"/>
+            <menuitem name="ViewerWindow"     action="ViewerWindows"/>
        </menu>
        <menu action="HelpMenu">
             <menuitem name="HelpIndex"  action="HelpIndex"/>

@@ -37,6 +37,9 @@
 static	GdkPixbuf *window_icon = NULL;
 static  PitiviWindowsClass *parent_class = NULL;
 
+enum {  
+  PROP_VIEWER_WINDOW = 1,
+};
 
 /*
  **********************************************************
@@ -628,6 +631,9 @@ pitivi_timelinewindow_set_property (GObject * object,
 
   switch (property_id)
     {
+    case PROP_VIEWER_WINDOW:
+      self->private->viewer = g_value_get_pointer (value);
+      break;
     default:
       g_assert (FALSE);
       break;
@@ -745,7 +751,10 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 
   gobject_class->set_property = pitivi_timelinewindow_set_property;
   gobject_class->get_property = pitivi_timelinewindow_get_property;
-  
+
+  g_object_class_install_property (G_OBJECT_CLASS (g_class), PROP_VIEWER_WINDOW,
+				   g_param_spec_pointer ("viewer-window", "viewer-window", "viewer-window",
+							 G_PARAM_WRITABLE));
   /* Signals */
   
   signals[ACTIVATE_SIGNAL] = g_signal_new ("activate",
@@ -1140,7 +1149,7 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   
   /* Viewer control  */
   
-  self->private->viewer = ((GtkWidget *)pitivi_mainapp_get_viewerwin ( ((PitiviWindows *)self)->mainapp ));
+  g_object_set (self, "viewer-window", ((GtkWidget *)pitivi_mainapp_get_viewerwin ( ((PitiviWindows *)self)->mainapp )), NULL);
   connect2viewer (self->private->controller, self->private->viewer);
 
   /* Loading Select Cursor */
