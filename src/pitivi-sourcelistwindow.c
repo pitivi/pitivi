@@ -1847,6 +1847,7 @@ void	on_row_activated (GtkTreeView        *listview,
 	  g_printf("you select a bin\n");
 	  /* we need to select the corresponding bin in the treeview */
 	  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
+	  
 	  folder = g_strdup_printf(":%d", folder_select);
 	  strcat(self->private->treepath, folder);
 	  g_printf("with the following path [%s]\n", self->private->treepath);
@@ -1856,9 +1857,10 @@ void	on_row_activated (GtkTreeView        *listview,
 	    g_printf("path is not valid\n");
 	  gtk_tree_model_get_iter(GTK_TREE_MODEL(self->private->treestore),
 				  &iter, path);
+	  gtk_tree_view_expand_to_path(GTK_TREE_VIEW(self->private->treeview), 
+				       path);
 	  gtk_tree_selection_select_iter(selection, &iter);
-	  gtk_signal_emit_by_name (GTK_OBJECT (self->private->treeview), "row-expanded", &iter, &path, NULL, NULL);
-
+	  
 	  if (gtk_tree_selection_iter_is_selected(selection, &iter))
 	    g_printf("the item is currently selected\n");
 	  else
