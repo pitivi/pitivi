@@ -23,15 +23,16 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "pitivi.h"
-#include "pitivi-viewerwindow.h"
-
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <gst/gst.h>
 #include <gdk/gdkx.h>
 #include <gst/xoverlay/xoverlay.h>
 #include <gst/play/play.h>
+
+#include "pitivi.h"
+#include "pitivi-viewerwindow.h"
+#include "pitivi-dragdrop.h"
 
 static     PitiviProjectWindowsClass *parent_class;
 static	   GdkPixmap *pixmap = NULL;
@@ -195,7 +196,20 @@ static gint pitivi_viewerwindow_expose_event( GtkWidget      *widget,
   return FALSE;
 }
 
+static void
+pitivi_viewerwindow_drag_data_received (GtkWidget *widget, GdkDragContext *drag_context,
+					gint x, gint y, GtkSelectionData *data,
+					guint info, guint time, gpointer user_data)
+{
+  gtk_drag_finish (drag_context, TRUE, FALSE, time);
+}
 
+static gboolean
+pitivi_viewerwindow_drag_drop (GtkWidget *widget, GdkDragContext *dc,
+			       gint x, gint y, guint time, gpointer user_data)
+{
+  return TRUE;
+}
 
 void
 create_gui (gpointer data)
@@ -215,6 +229,17 @@ create_gui (gpointer data)
 		    G_CALLBACK (pitivi_viewerwindow_expose_event), NULL);
   g_signal_connect (G_OBJECT (self->private->video_area), "configure_event",
 		    G_CALLBACK (pitivi_viewerwindow_configure_event), NULL);
+
+  gtk_drag_dest_set(GTK_WIDGET(self), 
+		    GTK_DEST_DEFAULT_DROP | GTK_DEST_DEFAULT_HIGHLIGHT,
+		    TargetEntries, iNbTargetEntries,
+		    GDK_ACTION_COPY);
+
+  g_signal_connect (G_OBJECT(self->private->video_area), "drag_data_received",
+		    G_CALLBACK (pitivi_viewerwindow_drag_data_received), self);
+  g_signal_connect (G_OBJECT(self->private->video_area), "drag_drop",
+		    G_CALLBACK (pitivi_viewerwindow_drag_drop), self);
+
 
   gtk_widget_set_events (self->private->video_area, GDK_EXPOSURE_MASK
 			 | GDK_LEAVE_NOTIFY_MASK

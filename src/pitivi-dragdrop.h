@@ -34,8 +34,7 @@ enum
 
 static GtkTargetEntry TargetEntries[] =
   {
-    { "text/plain",    0, DND_TARGET_STRING },
-    { "text/uri-list", 0, DND_TARGET_URL },
+    { "pitivi/sourcefile", GTK_TARGET_SAME_APP, 0 },
   };
 
 static gint iNbTargetEntries = sizeof(TargetEntries)/sizeof(TargetEntries[0]);

@@ -82,6 +82,9 @@ struct _PitiviSourceListWindowPrivate
   guint		newfile_signal_id;
   guint		newfolder_signal_id;
 
+  /* drag'n'drop variables */
+  gchar		*dndtreepath;
+  gint		dndfilepos;
 };
 
 /*
@@ -1296,16 +1299,50 @@ GtkWidget	*create_menupopup(PitiviSourceListWindow *self,
 
 static void
 drag_begin_cb (GtkWidget          *widget,
-	       GdkDragContext     *context)
+	       GdkDragContext     *context,
+	       gpointer		user_data)
 {
-  g_printf ("drag begin \n");
+  PitiviSourceListWindow	*self = (PitiviSourceListWindow *) user_data;
+  GtkTreeView		*listview = (GtkTreeView *) widget;
+  GtkTreeModel		*model;
+  GtkTreeSelection	*selection;
+  GtkTreeIter		iter;
+
+  g_printf ("drag begin start\n");
+
+  /* find treepath */
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
+  if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+    g_warning("No elements selected!");
+    return;
+  }
+  self->private->dndtreepath = g_strdup(gtk_tree_model_get_string_from_iter(model, &iter));
+
+  /* find pos in listview */
+  selection = gtk_tree_view_get_selection(listview);
+  if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+    g_warning("No elements selected!");
+    return;
+  }
+  self->private->dndfilepos = atoi(gtk_tree_model_get_string_from_iter(model, &iter));
+
+  g_printf("iter is :%s / pos / %d\n", self->private->dndtreepath, self->private->dndfilepos);
+  g_printf ("drag begin end\n");
 }
 
 static void
 drag_end_cb (GtkWidget          *widget,
-	     GdkDragContext     *context)
+	     GdkDragContext     *context,
+	     gpointer		user_data)
 {
+  PitiviSourceListWindow	*self = PITIVI_SOURCELISTWINDOW(user_data);
+  
   g_printf ("drag end \n");
+  if (self->private->dndtreepath) {
+    g_free(self->private->dndtreepath);
+    self->private->dndtreepath = NULL;
+    self->private->dndfilepos = 0;
+  }
 }
 
 static void
@@ -1316,7 +1353,19 @@ drag_data_get_cb (GtkWidget          *widget,
 		  guint32             time,
 		  gpointer editor)
 {
-  gtk_selection_data_set (selection_data, selection_data->target, 8, "toto", strlen ("toto"));
+  PitiviSourceListWindow	*self = PITIVI_SOURCELISTWINDOW(editor);
+  PitiviSourceFile	*sf;
+  gchar			*tmp;
+
+  sf = pitivi_projectsourcelist_get_sourcefile(PITIVI_PROJECTWINDOWS(self)->project->sources,
+					       self->private->dndtreepath,
+					       self->private->dndfilepos);
+  if (!sf)
+    return ;
+  /* convert the pointer to it's character represenation in long long int */
+  tmp = g_strdup_printf("%lld",*sf);
+  g_printf("File:%s\n", tmp);
+  gtk_selection_data_set (selection_data, selection_data->target, 8, tmp, strlen (tmp));
   g_printf ("drag get\n");
 }
 
@@ -1354,6 +1403,10 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
   
   g_signal_connect (pListView, "drag_data_get",	      
 		    G_CALLBACK (drag_data_get_cb), self);
+  g_signal_connect (pListView, "drag_end",	      
+		    G_CALLBACK (drag_end_cb), self);
+  g_signal_connect (pListView, "drag_begin",	      
+		    G_CALLBACK (drag_begin_cb), self);
   g_signal_connect (pListView, "drag_data_delete",
 		    G_CALLBACK (drag_data_delete_cb), self);
   
