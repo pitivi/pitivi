@@ -87,6 +87,7 @@ struct _PitiviViewerWindowPrivate
   GstProbe	*probe;
 
   gboolean	button_released;
+  gboolean	button_pressed;
 };
 
 /*
@@ -152,6 +153,8 @@ video_play(GtkWidget *widget, gpointer data)
     if (!gst_element_set_state(project->pipeline, GST_STATE_PAUSED))
       PITIVI_WARNING("Couldn't set the project pipeline to PAUSED!");
   }
+  self->private->button_pressed = FALSE;
+  self->private->button_released = FALSE;
 
   gtk_signal_emit_by_name (GTK_OBJECT (self->private->video_area), "expose_event", &ev, &retval);
   return ;
@@ -260,9 +263,11 @@ updated_time (gpointer data) {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
 
   /*PITIVI_DEBUGf ("updated time %lld:%lld:%lld\n", GST_M_S_M(self->private->new_time));*/
-  gtk_range_set_value(GTK_RANGE (self->private->timeline) , self->private->new_time);
-  pitivi_timelinewindow_update_time (pitivi_mainapp_get_timelinewin (((PitiviWindows *) self)->mainapp),
-				     self->private->new_time);
+  if (!self->private->button_pressed) {
+    gtk_range_set_value(GTK_RANGE (self->private->timeline) , self->private->new_time);
+    pitivi_timelinewindow_update_time (pitivi_mainapp_get_timelinewin (((PitiviWindows *) self)->mainapp),
+				       self->private->new_time);
+  }
   return FALSE;
 }
 
@@ -301,6 +306,15 @@ timeline_button_released (GtkWidget *widget, GdkEventButton *event,
 }
 
 static gboolean
+timeline_button_pressed (GtkWidget *widget, GdkEventButton *event,
+			  PitiviViewerWindow *self)
+{
+  PITIVI_DEBUG ("Button pressed on timeline....");
+  self->private->button_pressed = TRUE;
+  return FALSE;
+}
+
+static gboolean
 move_timeline (GtkRange *range, GtkScrollType scroll, 
 	       gdouble value, PitiviViewerWindow *self)
 {
@@ -329,6 +343,7 @@ move_timeline (GtkRange *range, GtkScrollType scroll,
 	gst_element_set_state (GST_ELEMENT(project->bin), GST_STATE_PLAYING);
     }
     self->private->button_released = FALSE;
+    self->private->button_pressed = FALSE;
   }
   return FALSE;
 }
@@ -375,6 +390,8 @@ create_gui (gpointer data)
   		      GTK_SIGNAL_FUNC (move_timeline), self);
   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-release-event",
 		      GTK_SIGNAL_FUNC (timeline_button_released), self);
+  gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-press-event",
+		      GTK_SIGNAL_FUNC (timeline_button_pressed), self);
   gtk_box_pack_start (GTK_BOX (self->private->toolbar), 
 		      self->private->timeline, TRUE, TRUE, 0);
   

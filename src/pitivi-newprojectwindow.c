@@ -167,6 +167,7 @@ gchar			*pitivi_settingswindow_get_row_list ( GList	*List, gint	row );
  */
 
 #define DESC_TEXT	"Description:\nInsert a description of the setting"
+#define NEWPROJECTWINDOW_HELP_TEXT "Select a preset from the tree on the right.\nGo to the \"Settings\" tab to create/modify/remove presets.\nOnce you've selected the adequate preset, press New to create a new project with those presets"
 
 /* 
  * Signals
@@ -632,10 +633,12 @@ pitivi_make_presets_hbox(PitiviNewProjectWindow *self)
   gtk_container_add(GTK_CONTAINER(presets_frame), table);
   
   help_frame = gtk_frame_new("Help");
-  help_label = gtk_label_new("Help text....................je vais le faire ....");
+  help_label = gtk_label_new(NEWPROJECTWINDOW_HELP_TEXT);
+  gtk_misc_set_padding (GTK_MISC (help_label), 5, 5);
+  gtk_label_set_line_wrap (GTK_LABEL (help_label), TRUE);
   gtk_container_add(GTK_CONTAINER(help_frame), help_label);
 
-  gtk_box_pack_start (GTK_BOX (presets_vbox), help_frame, FALSE, FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (presets_vbox), help_frame, FALSE , FALSE , 5);
 
   hbox_button = gtk_hbox_new(FALSE, 0);
   self->private->button_new = gtk_button_new_from_stock(GTK_STOCK_NEW);
