@@ -193,6 +193,8 @@ pitivi_toolboxwindow_constructor (GType type,
 		     GTK_WIDGET (self->private->toolbox), FALSE, FALSE, 0);
   gtk_container_add (GTK_CONTAINER (self), self->private->vbox);
 
+  gtk_window_set_resizable (GTK_WINDOW (self), FALSE);
+
   return (object);
 }
 
