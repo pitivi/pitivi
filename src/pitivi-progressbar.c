@@ -115,7 +115,7 @@ pitivi_progressbar_constructor (GType type,
   PitiviProgressBar *self = (PitiviProgressBar *) obj;
   
   /* window properties */
-  gtk_window_set_title (GTK_WINDOW(self), "Chargement");
+  gtk_window_set_title (GTK_WINDOW(self), "Loading");
   gtk_window_set_type_hint (GTK_WINDOW(self), GDK_WINDOW_TYPE_HINT_DIALOG);
   gtk_window_set_position (GTK_WINDOW (self), GTK_WIN_POS_CENTER);
   gtk_window_set_modal (GTK_WINDOW(self), TRUE);
@@ -125,7 +125,7 @@ pitivi_progressbar_constructor (GType type,
   main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_set_border_width (GTK_CONTAINER (main_vbox), 10);
   self->bar   = gtk_progress_bar_new ();
-  self->label = gtk_label_new ("Patientez ... Chargement des medias");
+  self->label = gtk_label_new ("Please wait ... Loading medias");
   self->infos = gtk_label_new ("");
   
   self->private->table = gtk_table_new (2, 5, FALSE);
