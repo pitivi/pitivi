@@ -93,4 +93,7 @@ pitivi_send_expose_event (GtkWidget * widget);
 void
 send_signal_to_childs_direct (GtkWidget *container, const gchar *signame, gpointer data);
 
+gint 
+compare_child (gconstpointer a, gconstpointer b);
+
 #endif /* PITIVI_DRAWING_H */

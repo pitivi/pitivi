@@ -377,7 +377,44 @@ pitivi_timelinecellrenderer_drag_leave (GtkWidget          *widget,
     }
 }
 
+gboolean check_intersect_child (GtkWidget *widget)
+{
+  GList	*childlist;
+  GtkWidget *child;
+  GdkModifierType mods;
+  int x, y;
 
+  childlist = gtk_container_get_children (GTK_CONTAINER (widget));
+  gdk_window_get_pointer (widget->window, &x, &y, &mods);
+  for (; childlist; childlist = childlist->next)
+    {
+      child = childlist->data;
+      if (x >= child->allocation.x && x <= child->allocation.x +  child->allocation.width)
+	return TRUE;
+    }
+  g_list_free ( childlist );
+  return FALSE;
+}
+
+void
+check_intersect_layout (GtkWidget *widget, guint x)
+{
+  GList	*childlist;
+  GtkWidget *media;
+  guint x_rec_left = 0;
+  guint x2_left = 0;
+
+  childlist = gtk_container_get_children (GTK_CONTAINER (widget));
+  childlist = g_list_sort ( childlist , compare_child);
+   for (; childlist; childlist = childlist->next)
+     {
+       media = GTK_WIDGET (childlist->data);
+       x2_left = media->allocation.x + media->allocation.width;
+       if (x_rec_left < x2_left && x2_left < x)
+	 x_rec_left = x2_left;
+     }
+  g_list_free ( childlist );
+}
 
 static gint
 pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
@@ -389,13 +426,13 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
   cursor = pitivi_getcursor_id (widget);
   if (cursor->type == PITIVI_CURSOR_SELECT && event->state != 0)
     {
-      if (event->button == PITIVI_MOUSE_LEFT_CLICK)
+      if (event->button == 1)
 	{
-	 g_printf ("-----timecellrenderer-click----------\n");
-       }
-      else if (event->button == PITIVI_MOUSE_LEFT_CLICK)
-	{
-	  g_printf ("----------------\n");
+	  if (!check_intersect_child (widget))
+	    {
+	      g_signal_emit_by_name (GTK_WIDGET (self->private->timewin), "deselect", NULL);
+	      check_intersect_layout (widget, event->x);
+	    }
 	}
     }
   return FALSE;
