@@ -23,56 +23,55 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef PITIVI_PROJECT_H
-#define PITIVI_PROJECT_H
+#ifndef PITIVI_WINDOWS_H
+#define PITIVI_WINDOWS_H
 
 /*
  * Potentially, include other headers on which this header depends.
  */
 
-#include "pitivi-projectsettings.h"
-#include "pitivi-projectsourcelist.h"
+#include <gtk/gtk.h>
+#include "pitivi-mainapp.h"
 
 /*
  * Type macros.
  */
 
-#define PITIVI_PROJECT_TYPE (pitivi_project_get_type ())
-#define PITIVI_PROJECT(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), PITIVI_PROJECT_TYPE, PitiviProject))
-#define PITIVI_PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), PITIVI_PROJECT_TYPE, PitiviProjectClass))
-#define PITIVI_IS_PROJECT(obj) (G_TYPE_CHECK_TYPE ((obj), PITIVI_PROJECT_TYPE))
-#define PITIVI_IS_PROJECT_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_PROJECT_TYPE))
-#define PITIVI_PROJECT_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_PROJECT_TYPE, PitiviProjectClass))
+#define PITIVI_WINDOWS_TYPE (pitivi_windows_get_type ())
+#define PITIVI_WINDOWS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), PITIVI_WINDOWS_TYPE, PitiviWindows))
+#define PITIVI_WINDOWS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), PITIVI_WINDOWS_TYPE, PitiviWindowsClass))
+#define PITIVI_IS_WINDOWS(obj) (G_TYPE_CHECK_TYPE ((obj), PITIVI_WINDOWS_TYPE))
+#define PITIVI_IS_WINDOWS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_WINDOWS_TYPE))
+#define PITIVI_WINDOWS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_WINDOWS_TYPE, PitiviWindowsClass))
 
-typedef struct _PitiviProject PitiviProject;
-typedef struct _PitiviProjectClass PitiviProjectClass;
-typedef struct _PitiviProjectPrivate PitiviProjectPrivate;
+typedef struct _PitiviWindows PitiviWindows;
+typedef struct _PitiviWindowsClass PitiviWindowsClass;
+typedef struct _PitiviWindowsPrivate PitiviWindowsPrivate;
 
-struct _PitiviProject
+struct _PitiviWindows
 {
-  GObject parent;
+  GtkWindow parent;
 
   /* instance public members */
-  PitiviProjectSettings		*settings;
-  PitiviProjectSourceList	*sources;
+  PitiviMainApp		*mainapp;
 
   /* private */
-  PitiviProjectPrivate *private;
+  PitiviWindowsPrivate *private;
 };
 
-struct _PitiviProjectClass
+struct _PitiviWindowsClass
 {
-  GObjectClass parent;
+  GtkWindowClass parent;
   /* class members */
 };
 
-/* used by PITIVI_PROJECT_TYPE */
-GType pitivi_project_get_type (void);
+/* used by PITIVI_WINDOWS_TYPE */
+GType pitivi_windows_get_type (void);
 
 /*
  * Method definitions.
  */
 
-PitiviProject *pitivi_project_new (void);
+/* PitiviWindows	*pitivi_windows_new(void); */
 
 #endif

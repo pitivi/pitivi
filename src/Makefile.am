@@ -15,6 +15,8 @@ bin_PROGRAMS		= pitivi
 
 pitivi_SOURCES		= \
 	pitivi-mainapp.c \
+	pitivi-windows.c \
+	pitivi-projectwindows.c \
 	pitivi-project.c \
 	pitivi-toolbox.c \
 	pitivi-effectswindow.c\
