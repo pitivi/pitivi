@@ -25,6 +25,7 @@
 
 #include <gtk/gtk.h>
 #include <gst/gst.h>
+#include <gnl/gnl.h>
 #include "pitivi.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-menu.h"
