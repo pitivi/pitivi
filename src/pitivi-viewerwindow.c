@@ -52,6 +52,7 @@ static GtkTargetEntry TargetEntries[] =
 
 static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
 
+
 struct _PitiviViewerWindowPrivate
 {
   gboolean	dispose_has_run;
@@ -83,6 +84,25 @@ struct _PitiviViewerWindowPrivate
   gdouble	timeline_step;
 
 };
+
+/*
+ **********************************************************
+ * Signals						  *
+ *							  *
+ **********************************************************
+*/
+
+enum {
+  PLAY_SIGNAL,
+  PAUSE_SIGNAL,
+  STOP_SIGNAL,
+  BACKWARD_SIGNAL,
+  FORWARD_SIGNAL,
+  LAST_SIGNAL
+};
+
+static  guint viewersignals[LAST_SIGNAL] = {0};
+
 
 /*
  * forward definitions
@@ -736,12 +756,6 @@ pitivi_viewerwindow_set_property (GObject * object,
 
   switch (property_id)
     {
-      /*   case PITIVI_VIEWERWINDOW_PROPERTY: { */
-      /*     g_free (self->private->name); */
-      /*     self->private->name = g_value_dup_string (value); */
-      /*     g_print ("maman: %s\n",self->private->name); */
-      /*   } */
-      /*     break; */
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -758,15 +772,36 @@ pitivi_viewerwindow_get_property (GObject * object,
 
   switch (property_id)
     {
-      /*  case PITIVI_VIEWERWINDOW_PROPERTY: { */
-      /*     g_value_set_string (value, self->private->name); */
-      /*   } */
-      /*     break; */
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
       break;
     }
+}
+
+static void
+pitivi_viewver_callb_play (PitiviViewerWindow *self)
+{
+  video_play (GTK_WIDGET (self), self);
+}
+
+static void
+pitivi_viewver_callb_backward (PitiviViewerWindow *self)
+{
+  video_backward (GTK_WIDGET (self), self);
+}
+
+static void
+pitivi_viewver_callb_forward (PitiviViewerWindow *self)
+{
+  video_forward (GTK_WIDGET (self), self);
+}
+
+static void
+pitivi_viewver_callb_pause (PitiviViewerWindow *self)
+{
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+  gst_element_set_state (project->pipeline, GST_STATE_PAUSED);
 }
 
 static void
@@ -783,18 +818,48 @@ pitivi_viewerwindow_class_init (gpointer g_class, gpointer g_class_data)
 
   gobject_class->set_property = pitivi_viewerwindow_set_property;
   gobject_class->get_property = pitivi_viewerwindow_get_property;
-
-  /* Install the properties in the class here ! */
-  /*   pspec = g_param_spec_string ("maman-name", */
-  /*                                "Maman construct prop", */
-  /*                                "Set maman's name", */
-  /*                                "no-name-set" /\* default value *\/, */
-  /*                                G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE); */
-  /*   g_object_class_install_property (gobject_class, */
-  /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
-  /*                                    pspec); */
-
-
+  
+  viewersignals[PLAY_SIGNAL] = g_signal_new ("play",
+					     G_TYPE_FROM_CLASS (g_class),
+					     G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+					     G_STRUCT_OFFSET (PitiviViewerWindowClass, play),
+					     NULL, 
+					     NULL,                
+					     g_cclosure_marshal_VOID__VOID,
+					     G_TYPE_NONE, 0);
+  
+  viewersignals[PAUSE_SIGNAL] = g_signal_new ("pause",
+					      G_TYPE_FROM_CLASS (g_class),
+					      G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+					      G_STRUCT_OFFSET (PitiviViewerWindowClass, pause),
+					      NULL, 
+					      NULL,                
+					      g_cclosure_marshal_VOID__VOID,
+					      G_TYPE_NONE, 0);
+  
+  viewersignals[BACKWARD_SIGNAL] = g_signal_new ("backward",
+						 G_TYPE_FROM_CLASS (g_class),
+						 G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+						 G_STRUCT_OFFSET (PitiviViewerWindowClass, backward),
+						 NULL, 
+						 NULL,                
+						 g_cclosure_marshal_VOID__VOID,
+						 G_TYPE_NONE, 0);
+   
+  viewersignals[FORWARD_SIGNAL] = g_signal_new ("forward",
+						G_TYPE_FROM_CLASS (g_class),
+						G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+						G_STRUCT_OFFSET (PitiviViewerWindowClass, forward),
+						NULL, 
+						NULL,                
+						g_cclosure_marshal_VOID__VOID,
+						G_TYPE_NONE, 0);
+  
+  
+  klass->play  =  pitivi_viewver_callb_play;
+  klass->backward =  pitivi_viewver_callb_backward; 
+  klass->forward  =  pitivi_viewver_callb_forward;
+  klass->pause  =  pitivi_viewver_callb_pause;
 }
 
 GType

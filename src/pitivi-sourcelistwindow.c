@@ -148,6 +148,7 @@ enum
   {
     FILEIMPORT_SIGNAL,
     FOLDERIMPORT_SIGNAL,
+    SNAPPED_SIGNAL,
     LAST_SIGNAL
   };
 
@@ -1405,13 +1406,19 @@ void	extract_audio_video_pipelines(PitiviSourceFile *sf)
 
 }
 
+void
+thumbnail (GtkListStore	*liststore)
+{
+  
+}
+
 gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 {
   GtkTreeIter	pIter;
   PitiviSourceFile *sf;
   GtkListStore	*liststore;
-  GdkPixbuf	*pixbufa;
-  gchar		*name;
+  GdkPixbuf	*pixbufa = NULL;
+  gchar		*name, *output = NULL;
   gchar		*sExempleTexte;
   gint		selected_row;
   gint		depth;
@@ -1452,7 +1459,9 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
   name = strrchr(self->private->filepath, '/');
   name++;
   
+    
   i = gtk_tree_model_iter_n_children(GTK_TREE_MODEL(liststore), NULL) - 1;
+  /* generating video thumb */
   pitivi_projectsourcelist_add_file_to_bin(((PitiviProjectWindows*)self)->project->sources, 
 					   self->private->treepath,
 					   self->private->filepath,
@@ -1466,6 +1475,7 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 						PITIVI_PROJECTWINDOWS(self)->project->sources,
 						self->private->treepath,
 						i);
+  
   if (sf->infoaudio)
     if (sf->infovideo) {
       extract_audio_video_pipelines(sf);
@@ -1478,6 +1488,7 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
   g_printf ("%d\n", sf->pipeline);
   sExempleTexte = g_malloc(12);
   sprintf(sExempleTexte, "exemple %d\0", i);
+  
   gtk_list_store_set(liststore,
 		     &pIter, 
 		     BMP_LISTCOLUMN1, pixbufa,
@@ -1488,7 +1499,8 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 		     TEXT_LISTCOLUMN6, self->private->infoaudio,
 		     TEXT_LISTCOLUMN7, sExempleTexte,
 		     POINTER_LISTCOLUMN8, (gchar *)sf, -1);
-  
+   
+  generate_thumb ( self->private->filepath, self , i);
   g_free(sExempleTexte);
   g_object_unref(pixbufa);
   return TRUE;
@@ -1971,10 +1983,6 @@ void	on_row_activated (GtkTreeView        *listview,
 	}
       return;
     }
-  //g_signal_emit_by_name (self->private->timelinewin, "double-click-source", sf);
-  //g_printf("get [%s]\n", sf->filename);
-  //viewerwin = (PitiviViewerWindow*)pitivi_mainapp_get_viewerwin(window->mainapp);
-  //pitivi_viewerwindow_set_source(viewerwin, sf);
   lplayerwin = pitivi_lplayerwindow_new (sf->filename);
 }
 
@@ -2499,8 +2507,39 @@ pitivi_sourcelistwindow_constructor (GType type,
       ((PitiviSourceListWindow*)obj)->private->nbrchutier++;
     }
   /* timeline access */
-  sourcelistwindow->private->timelinewin = (GtkWidget *) pitivi_mainapp_get_timelinewin (((PitiviWindows *)sourcelistwindow)->mainapp);
+  sourcelistwindow->private->timelinewin = (GtkWidget *) pitivi_mainapp_get_timelinewin 
+    (((PitiviWindows *)sourcelistwindow)->mainapp);
   return obj;
+}
+
+static void
+snapped (PitiviSourceListWindow *self, gchar *data)
+{  
+  PitiviSourceFile  *sf;
+  GdkPixbuf *pixbuf, *icon;
+  GtkTreeModel *model;
+  GtkTreeIter  iter;
+  int	       i = 0;
+  char	       c = '0';
+
+  pixbuf = gdk_pixbuf_new_from_file (data, NULL);
+  if ( pixbuf )
+    {
+      c = *(data + strlen (data) + 1);
+      model = gtk_tree_view_get_model (GTK_TREE_VIEW (self->private->listview));
+      gtk_tree_model_get_iter_first (model, &iter);
+      for (i =  0; i <  c - '0'; i++) gtk_tree_model_iter_next (model, &iter);
+      gtk_tree_model_get (model, &iter, POINTER_LISTCOLUMN8, &sf, -1);
+      sf->thumbs_video = pixbuf;
+      icon = gdk_pixbuf_scale_simple (pixbuf, 50, 
+				      50,
+				      GDK_INTERP_NEAREST);
+      sf->thumbs_video = icon;
+      gtk_list_store_set(GTK_LIST_STORE (model), &iter,
+			 BMP_LISTCOLUMN1, icon,
+			 -1);
+      g_object_unref (pixbuf);
+    }
 }
 
 static void
@@ -2522,6 +2561,10 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   gtk_container_add(GTK_CONTAINER(self), self->private->hpaned);
   self->private->nbrchutier = 1;
   
+  g_signal_connect (G_OBJECT (self), "snapped",
+		    (GCallback)snapped,
+		    NULL
+);
 }
 
 static void
@@ -2614,7 +2657,14 @@ pitivi_sourcelistwindow_class_init (gpointer g_class, gpointer g_class_data)
 								      0     /* n_params */,
 								      NULL  /* param_types */);
   
-
+  pitivi_sourcelistwindow_signal[SNAPPED_SIGNAL] = g_signal_new ("snapped",
+						   G_TYPE_FROM_CLASS (g_class),
+						   G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+						   NULL,
+						   NULL,
+						   NULL,       
+						   g_cclosure_marshal_VOID__POINTER,
+						   G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 
 GType

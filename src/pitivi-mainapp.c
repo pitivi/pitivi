@@ -51,7 +51,7 @@
 
 #define BORDER 10
 #define BOTTOM2 42
-#define BOTTOM 45
+#define BOTTOM 75
 
 struct _PitiviMainAppPrivate
 {
@@ -169,6 +169,33 @@ pitivi_mainapp_activate_effectswindow (PitiviMainApp *self, gboolean activate)
 }
 
 void
+pitivi_mainapp_create_timelinewin (PitiviMainApp *self, PitiviProject *project)
+{
+  gint width;
+  gint height;
+  gint tmp_w;
+  gint tmp_h;
+  gint tmp1_w;
+  gint tmp1_h;
+
+  width = gdk_screen_width ();
+  height = gdk_screen_height ();
+    
+  if (!GTK_IS_WIDGET (self->private->timelinewin))
+    {
+      self->private->timelinewin = pitivi_timelinewindow_new(self);
+      gtk_widget_show_all (GTK_WIDGET (self->private->timelinewin));
+      gtk_window_get_size (GTK_WINDOW (self->private->timelinewin), &tmp_w, &tmp_h);
+      gtk_window_move (GTK_WINDOW (self->private->timelinewin), 0, (height - (tmp_h + BORDER + BOTTOM)));
+      gtk_window_resize (GTK_WINDOW (self->private->timelinewin), (width - (tmp1_w + (2 * BORDER))), (tmp_h));
+      gtk_signal_connect (GTK_OBJECT (self->private->timelinewin), "destroy"\
+			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_timelinewin), self);
+    }
+  else
+    g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "activate");
+}
+
+void
 pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 {
   gint width;
@@ -208,6 +235,9 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_viewer), self);
     }
 
+  /* Timeline Window */
+  pitivi_mainapp_create_timelinewin (self, project);
+  
   /* Effect Window */
 
   if (self->private->effectswin == NULL) {
@@ -219,22 +249,8 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 		     (height - (420 + BORDER + BOTTOM))
 		     );
   }
-
-  /* Timeline Window */
-  
-  if (!GTK_IS_WIDGET (self->private->timelinewin))
-    {
-      self->private->timelinewin = pitivi_timelinewindow_new(self);
-      gtk_widget_show_all (GTK_WIDGET (self->private->timelinewin));
-      gtk_window_get_size (GTK_WINDOW (self->private->timelinewin), &tmp_w, &tmp_h);
-      gtk_window_move (GTK_WINDOW (self->private->timelinewin), 0, (height - (tmp_h + BORDER + BOTTOM)));
-      gtk_window_resize (GTK_WINDOW (self->private->timelinewin), (width - (tmp1_w + (2 * BORDER))), (tmp_h));
-      gtk_signal_connect (GTK_OBJECT (self->private->timelinewin), "destroy"\
-			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_timelinewin), self);
-    }
-  else
-    g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "activate");
 }
+
 
 /*
   pitivi_mainapp_add_project
@@ -273,57 +289,57 @@ pitivi_mainapp_constructor (GType type,
   PitiviMainApp	*self;
   gchar		*settingsfile;
   GObject	*obj;
-  {
-    /* Invoke parent constructor. */
-    PitiviMainAppClass *klass;
-    GObjectClass *parent_class;
-    klass = PITIVI_MAINAPP_CLASS (g_type_class_peek (PITIVI_MAINAPP_TYPE));
-    parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
-    obj = parent_class->constructor (type, n_construct_properties,
-				     construct_properties);
-  }
+  gint		width;
+  gint		height;
+  gint		tmp_w;
+  gint		tmp_h;
+  gint		tmp1_w;
+  gint		tmp1_h;
 
+  width = gdk_screen_width ();
+  height = gdk_screen_height ();
+
+  /* Invoke parent constructor. */
+  PitiviMainAppClass *klass;
+  GObjectClass *parent_class;
+  klass = PITIVI_MAINAPP_CLASS (g_type_class_peek (PITIVI_MAINAPP_TYPE));
+  parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
+  obj = parent_class->constructor (type, n_construct_properties,
+				   construct_properties);
+  
   /* do stuff. */
   self = (PitiviMainApp *) obj;
 
   /* Lancement du splash screen */
   self->private->splash_screen = pitivi_splashscreenwindow_new();
   usleep (10);
-
   /* Enregistrement des Icones */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.0, "Loading Register Stockicons");
   pitivi_stockicons_register ();
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.2, "Loading Default Settings");
-  /*   self->private->project_settings = pitivi_projectsettings_list_make(); */
-
   /* Creation des settings globaux */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.4, "Loading Global Settings");
+  
   settingsfile = g_strdup_printf("%s/.pitivi", g_get_home_dir());
   if ( g_file_test(settingsfile, G_FILE_TEST_EXISTS) )
     self->global_settings = pitivi_settings_load_from_file(settingsfile);
   else
     self->global_settings = pitivi_settings_new();
   g_free(settingsfile);
-
-  /* Creation de la toolboxwindow */
-  pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
-				      0.6, "Loading Toolbox");
   
-  self->private->timelinewin = pitivi_timelinewindow_new (self);
-  
+  pitivi_mainapp_create_timelinewin (self, NULL);
   /* Connection des Signaux */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.8, "Loading Signals");
   g_signal_connect(G_OBJECT(self->private->timelinewin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
-  gtk_widget_show_all (GTK_WIDGET (self->private->timelinewin));
+  
   /* finish */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
   				      1.0, "Loading Finished");
-  
   return obj;
 }
 

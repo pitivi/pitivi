@@ -36,6 +36,7 @@
 #include "pitivi-projectwindows.h"
 #include "pitivi-toolbox.h"
 #include "pitivi-units.h"
+#include "pitivi-ruler.h"
 
 /*
  * Type macros.
@@ -58,7 +59,10 @@
 
 #define LEFT_PANED_SIZE 80
 
-#define SEPARATOR_WIDTH 3
+#define SEPARATOR_WIDTH  3
+
+#define TOTAL_SECOND_TIME  7200
+#define PIXEL_PER_SECOND      1
 
 typedef struct _PitiviTimelineWindow PitiviTimelineWindow;
 typedef struct _PitiviTimelineWindowClass PitiviTimelineWindowClass;
@@ -71,21 +75,20 @@ struct _PitiviTimelineWindow
   /* instance public members */
   
   PitiviToolbox	       *toolbox;
-  GtkWidget	       *hruler;
   GtkWidget	       *current_time;
   int			unit;		// scale unit for the ruler
   int			zoom;		// zoom level
   GtkAdjustment		*hscrollbar;	// Adjustment for the horizontal scrollbar
   
   /* nb_added */
-  
   gint64		nb_added[1];
 
   /* Backgrounds fro tracks */
-  
   GdkPixmap		*bgs[5];
-  GdkGC			*gcs[4];
   
+  /* copy */
+  GtkWidget		*copy;
+
   /* private */
   PitiviTimelineWindowPrivate *private;
 };
@@ -99,12 +102,13 @@ struct _PitiviTimelineWindowClass
   void (* activate)   (PitiviTimelineWindow *timew);
   void (* deactivate) (PitiviTimelineWindow  *timew);
   void (* deselect)   (PitiviTimelineWindow  *timew);
+  void (* copy)       (PitiviTimelineWindow  *timew, gpointer data);
   void (* delete)     (PitiviTimelineWindow  *timew, gpointer data);
-  void (*drag_source_begin) (PitiviTimelineWindow *timew, gpointer data);
-  void (*drag_source_end) (PitiviTimelineWindow *timew, gpointer data);
-  void (*dbk_source)    (PitiviTimelineWindow *timew, gpointer data);
-  void (*selected_source) (PitiviTimelineWindow *timew, gpointer data);
-  void (*zoom_changed)  (PitiviTimelineWindow  *timew);
+  void (* dbk_source)        (PitiviTimelineWindow *timew, gpointer data);
+  void (* drag_source_begin) (PitiviTimelineWindow *timew, gpointer data);
+  void (* drag_source_end)   (PitiviTimelineWindow *timew, gpointer data);
+  void (* selected_source)   (PitiviTimelineWindow *timew, gpointer data);
+  void (* zoom_changed)      (PitiviTimelineWindow  *timew);
 };
 
 /* used by PITIVI_TIMELINEWINDOW_TYPE */

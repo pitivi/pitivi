@@ -105,6 +105,7 @@ struct _PitiviTimelineCellRendererClass
   void (* dbk_source)	     (PitiviTimelineCellRenderer *cell, gpointer data);
   void (* cut_source)	     (PitiviTimelineCellRenderer *cell, guint x, gpointer data);
   void (* zoom_changed)	     (PitiviTimelineCellRenderer *cell);
+  void (* rendering)	     (PitiviTimelineCellRenderer *cell);
 };
 
 

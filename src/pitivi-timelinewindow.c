@@ -1,7 +1,7 @@
 /* 
  * PiTiVi
- * Copyright (C) <2004> Edward G. Hervey <hervey_e@epita.fr>
- *                      Guillaume Casanova <casano_g@epita.fr>
+ * Copyright (C) <2004> Guillaume Casanova <casano_g@epita.fr>
+ *                      
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -23,11 +23,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "pitivi-windows.h"
 #include "pitivi-timelinewindow.h"
 #include "pitivi-menu.h"
 #include "pitivi-stockicons.h"
 #include "pitivi-timelinecellrenderer.h"
-#include "pitivi-toolboxwindow.h"
 #include "pitivi-newprojectwindow.h"
 #include "pitivi-settingswindow.h"
 #include "pitivi-controller.h"
@@ -72,6 +72,7 @@ struct _PitiviTimelineWindowPrivate
   /* Toolbox */
   
   PitiviMainApp		*mainapp;
+  GtkWidget		*viewer;
   GtkWidget		*toolcontainer;
   PitiviController	*controller;
   GtkComboBox		*unitcombobox;
@@ -125,6 +126,7 @@ enum {
   ACTIVATE_SIGNAL = 0,
   DEACTIVATE_SIGNAL,
   DESELECT_SIGNAL,
+  COPY_SIGNAL,
   DELETE_SIGNAL,
   DRAG_SOURCE_BEGIN_SIGNAL,
   DRAG_SOURCE_END_SIGNAL,
@@ -313,20 +315,26 @@ create_timeline_toolbar (PitiviTimelineWindow *self)
   sep = gtk_vseparator_new ();
   gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET(sep),
 		      FALSE, FALSE, 0);
-  
+
   /* Play Controller */
   
   self->private->controller = pitivi_controller_new ();
   gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET(self->private->controller),
 		      FALSE, TRUE, 0);
-
+    
+  /* Separator */
+  
+  sep = gtk_vseparator_new ();
+  gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET(sep),
+		      FALSE, FALSE, 0);
+  
   /* Unit/Scale Selector */
 
   create_unitscale_combobox(self, hbox);
   
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET(hbox),
 		      FALSE, TRUE, 0);
-
+  
   self->private->toolcontainer = GTK_WIDGET(hbox);
 }
 
@@ -356,7 +364,7 @@ create_toolbox (PitiviTimelineWindow *self, GtkWidget *container)
 
   mainapp = ((PitiviWindows *) self)->mainapp;
   self->toolbox = pitivi_toolbox_new (mainapp);
-  gtk_toolbar_set_icon_size (GTK_TOOLBAR (self->toolbox), GTK_ICON_SIZE_SMALL_TOOLBAR);
+  gtk_toolbar_set_icon_size (GTK_TOOLBAR (self->toolbox), GTK_ICON_SIZE_MENU );
   sep = gtk_hseparator_new ();
   gtk_box_pack_start (GTK_BOX (container), GTK_WIDGET (self->toolbox), FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (container), sep, FALSE, FALSE, 0);
@@ -365,12 +373,10 @@ create_toolbox (PitiviTimelineWindow *self, GtkWidget *container)
 void
 create_ruler (PitiviTimelineWindow *self)
 {
-  //self->private->hruler = pitivi_ruler_new ();
-  self->private->hruler = gtk_hruler_new ();
-  self->hruler = self->private->hruler;
-  gtk_ruler_set_metric (GTK_RULER (self->private->hruler), GTK_PIXELS);
-  gtk_ruler_set_range (GTK_RULER (self->private->hruler), 0, 7200, 0, 120);
-  gtk_widget_set_size_request (self->hruler, 7200, 30);
+  self->private->hruler = pitivi_ruler_new (self->unit);
+  pitivi_ruler_set_metric (GTK_RULER (self->private->hruler), PITIVI_RSECONDS);
+  gtk_ruler_set_range (GTK_RULER (self->private->hruler), 0, TOTAL_SECOND_TIME, 0, TOTAL_SECOND_TIME);
+  gtk_widget_set_size_request (self->private->hruler, TOTAL_SECOND_TIME * PIXEL_PER_SECOND, 25);
   g_signal_connect_swapped (G_OBJECT (self->private->main_vbox), "motion_notify_event",
 			    G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
 			    G_OBJECT (self->private->hruler));
@@ -654,16 +660,18 @@ pitivi_timelinewindow_dblclick (PitiviTimelineWindow *self, gpointer data)
   GList		*childlist;
   
   childlist = gtk_container_get_children (GTK_CONTAINER (self->private->layout_container));
-  for (; childlist; childlist = childlist->next)
+  for (childlist = g_list_last ( childlist ); childlist; childlist = childlist->prev)
     if (GTK_IS_LAYOUT (childlist->data))
       {
 	cell = childlist->data;
 	type = check_media_type (data);
-	if ( (cell->track_type == type) || 
-	     ((cell->track_type == PITIVI_VIDEO_TRACK ||  cell->track_type == PITIVI_AUDIO_TRACK) 
+	if ((cell->track_type == type) || 
+	     ((cell->track_type == PITIVI_VIDEO_TRACK) 
 	      && type == PITIVI_VIDEO_AUDIO_TRACK))
 	  {
-	    g_signal_emit_by_name (GTK_OBJECT (childlist->data), "double-click-source", data);
+	    g_signal_emit_by_name (GTK_OBJECT (childlist->data), 
+				   "double-click-source", 
+				   data);
 	    break;
 	  }
       }
@@ -686,6 +694,12 @@ static void
 pitivi_timelinewindow_drag_source_end (PitiviTimelineWindow *self, gpointer data)
 {
   send_signal_to_childs (self, "drag-source-end", data);
+}
+
+static void
+pitivi_timelinewindow_copy (PitiviTimelineWindow *self, gpointer data)
+{
+  self->copy = GTK_WIDGET (data);
 }
 
 static void
@@ -742,6 +756,15 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 						g_cclosure_marshal_VOID__POINTER,
 						G_TYPE_NONE, 1, G_TYPE_POINTER);
   
+  signals[COPY_SIGNAL] = g_signal_new ("copy-source",
+				       G_TYPE_FROM_CLASS (g_class),
+				       G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+				       G_STRUCT_OFFSET (PitiviTimelineWindowClass, copy),
+				       NULL,
+				       NULL,       
+				       g_cclosure_marshal_VOID__POINTER,
+				       G_TYPE_NONE, 1, G_TYPE_POINTER);
+  
   signals[DELETE_SIGNAL] = g_signal_new ("delete-source",
 					 G_TYPE_FROM_CLASS (g_class),
 					 G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
@@ -796,6 +819,7 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
   klass->dbk_source = pitivi_timelinewindow_dblclick;
   klass->selected_source = pitivi_timelinewindow_selected_source;
   klass->zoom_changed = pitivi_timelinewindow_zoom_changed;
+  klass->copy = pitivi_timelinewindow_copy;
 }
 
 GType
@@ -992,10 +1016,13 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
 { 
   GList *childlist; 
   
+  /* Viewer control  */
+  self->private->viewer = ((GtkWidget *)pitivi_mainapp_get_viewerwin ( ((PitiviWindows *)self)->mainapp ));
+  connect2viewer (self->private->controller, self->private->viewer);
   /* Loading Select Cursor */
   
   load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), self->toolbox->pitivi_cursor, PITIVI_CURSOR_SELECT);
- 
+  
   /* Activate childs */
 
   GList *childwidget = gtk_container_get_children (GTK_CONTAINER (self->private->layout_container));
@@ -1050,16 +1077,16 @@ pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow *self, GdkEventKey* 
   switch(event->keyval) 
     {
     case GDK_Return:
-      g_printf ("Rendering\n");
+      send_signal_to_childs (self, "rendering", NULL);
       break;
     case GDK_Delete:
       send_signal_to_childs (self, "key-delete-source", NULL);
       break;
-    case GDK_Escape:
-      g_printf ("Escape\n");
-      break;
     case GDK_Pause:
-      g_printf ("Pause\n");
+      g_signal_emit_by_name (self->private->controller, "pause", self);
+      break;
+    case GDK_Escape:
+      exit ( 0 );
       break;
     }
 }

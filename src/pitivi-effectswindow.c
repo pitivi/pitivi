@@ -1,7 +1,7 @@
 /* 
  * PiTiVi
- * Copyright (C) <2004> Edward G. Hervey <hervey_e@epita.fr>
- *                      Guillaume Casanova <casano_g@epita.fr>
+ * Copyright (C) <2004> Guillaume Casanova <casano_g@epita.fr>
+ *                      
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -207,7 +207,10 @@ effectstree_on_row_activated (GtkTreeView        *treeview,
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (treeview));
   gtk_tree_model_get (GTK_TREE_MODEL (model), &child, PITIVI_POINTER_COLUMN, &info, -1);
   if ( data && info )
-    g_signal_emit_by_name (self->private->selected_media, "associate-effect-to-media", info);
+    {
+      g_signal_emit_by_name (self->private->selected_media, "associate-effect-to-media", info);
+      self->private->selected_media = NULL;
+   }
 }
 
 void

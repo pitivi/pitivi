@@ -60,7 +60,7 @@ typedef struct _PitiviEffectsTree PitiviEffectsTree;
 #define PITIVI_AUDIO_EFFECT_LABEL	  "Audio"
 #define PITIVI_TRANSITION_EFFECT_LABEL	  "Transition"
 
-#define PITIVI_EFFECTS_WIN_SIZEX	  200
+#define PITIVI_EFFECTS_WIN_SIZEX	  250
 #define PITIVI_EFFECTS_WIN_SIZEY	  250
 
 typedef enum {

@@ -67,7 +67,12 @@ struct _PitiviViewerWindow
 struct _PitiviViewerWindowClass
 {
   PitiviProjectWindowsClass parent;
+  
   /* class members */
+  void (* play)	     (PitiviViewerWindow *cell);
+  void (* backward)  (PitiviViewerWindow *cell);
+  void (* forward)   (PitiviViewerWindow *cell);
+  void (* pause)     (PitiviViewerWindow *cell);
 };
 
 /* used by PITIVI_VIEWERWINDOW_TYPE */

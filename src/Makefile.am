@@ -39,11 +39,12 @@ pitivi_SOURCES		= \
 	pitivi-settingswindow.c \
 	pitivi-splashscreenwindow.c \
 	pitivi-gstelementsettings.c \
+	pitivi-videothumbnails.c \
 	pitivi-drawing.c \
-	pitivi-ruler.c \
 	pitivi-mediatrackinfo.c \
 	pitivi-controller.c \
 	pitivi-debug.c \
+	pitivi-ruler.c \
 	pitivi-lplayerwindow.c \
 	main.c
 
