@@ -70,6 +70,12 @@ GType pitivi_projectsettingswidget_get_type (void);
  * Method definitions.
  */
 
+void	pitivi_projectsettingswidget_set_settings (PitiviProjectSettingsWidget *self,
+						   PitiviProjectSettings *settings);
+void	pitivi_projectsettingswidget_set_blank (PitiviProjectSettingsWidget *self);
+PitiviProjectSettings	*pitivi_projectsettingswidget_get_copy (PitiviProjectSettingsWidget *self);
+PitiviProjectSettings	*pitivi_projectsettingswidget_get_modified (PitiviProjectSettingsWidget *self);
+
 PitiviProjectSettingsWidget	*pitivi_projectsettingswidget_new(PitiviMainApp *mainapp);
 
 #endif

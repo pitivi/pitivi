@@ -24,6 +24,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-debug.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-projectsettings.h"
 #include "pitivi-projectsettingswidget.h"
@@ -32,7 +33,8 @@
 
 enum {
   PROP_0,
-  PROP_MAINAPP
+  PROP_MAINAPP,
+  PROP_SETTINGS
 };
 
 typedef struct {
@@ -120,8 +122,6 @@ struct _PitiviProjectSettingsWidgetPrivate
   GtkWidget	*vbox;
 
   GtkSizeGroup	*sizegroupleft;
-  GtkSizeGroup	*sizegroupmiddle;
-  GtkSizeGroup	*sizegroupright;
 
   GtkWidget	*nameentry;
   GtkTextBuffer	*descentry;
@@ -149,14 +149,23 @@ struct _PitiviProjectSettingsWidgetPrivate
   GtkWidget	*audioratehbox;
   GtkWidget	*audiorateentry;
 
+  GtkWidget	*containercbox;
   GtkWidget	*containerconfbutton;
 
+  GList		*venc_list;
+  GList		*aenc_list;
   GList		*container_list;
 };
 
 /*
  * forward definitions
  */
+
+static void
+pitivi_projectsettingswidget_update_gui (PitiviProjectSettingsWidget *self);
+
+static void
+pitivi_projectsettingswidget_reset_gui (PitiviProjectSettingsWidget *self);
 
 /*
  * Insert "added-value" functions here
@@ -172,11 +181,13 @@ void
 pitivi_projectsettingswidget_set_settings (PitiviProjectSettingsWidget *self,
 					   PitiviProjectSettings *settings)
 {
+  PITIVI_DEBUG ("Settings : %p", settings);
   if (self->settings)
     g_object_unref (G_OBJECT (self->settings));
-  g_object_ref (G_OBJECT (self->settings));
+  g_object_ref (G_OBJECT (settings));
   self->settings = settings;
   /* TODO : Update GUI according to new settings */
+  pitivi_projectsettingswidget_update_gui (self);
 }
 
 void
@@ -185,6 +196,8 @@ pitivi_projectsettingswidget_blank (PitiviProjectSettingsWidget *self)
   if (self->settings)
     g_object_unref (G_OBJECT (self->settings));
   self->settings = NULL;
+  /* TODO : Update GUI according to new settings */
+  pitivi_projectsettingswidget_reset_gui (self);
 }
 
 PitiviProjectSettings *
@@ -206,8 +219,61 @@ pitivi_projectsettingswidget_get_modified (PitiviProjectSettingsWidget *self)
     Modify the values of self->settings according to the values in the widget
     and return it. If there's no self->settings, return NULL.
   */
+  if (!self->settings)
+    return NULL;
   return res;
 }
+
+static void
+activate_combobox_entry (GtkWidget *combobox, GList *list, gchar *tofind)
+{
+  int	i;
+  GList	*elm;
+
+  for (i = 0, elm = list; elm; elm = g_list_next (elm), i++) {
+    if (!(g_ascii_strcasecmp ((gchar *) elm->data, tofind)))
+      break;
+  }
+  gtk_combo_box_set_active (GTK_COMBO_BOX (combobox), i);
+}
+
+static void
+pitivi_projectsettingswidget_update_gui (PitiviProjectSettingsWidget *self)
+{
+  PitiviMediaSettings	*mset;
+
+  if (!self->settings)
+    return;
+  /* Set name and description */
+  gtk_entry_set_text (GTK_ENTRY (self->private->nameentry),
+		      self->settings->name);
+  gtk_text_buffer_set_text (self->private->descentry,
+			    self->settings->description, -1);
+
+  /* Set video properties */
+  mset = (PitiviMediaSettings *) self->settings->media_settings->data;
+  activate_combobox_entry (self->private->videocodeccbox, self->private->venc_list,
+			   mset->codec_factory_name);
+
+  /* Set audio properties */
+  mset = (PitiviMediaSettings *) self->settings->media_settings->next->data;
+  activate_combobox_entry (self->private->audiocodeccbox, self->private->aenc_list,
+			   mset->codec_factory_name);
+
+  /* Set container properties */
+  activate_combobox_entry (self->private->containercbox, self->private->container_list,
+			   self->settings->container_factory_name);
+}
+
+static void
+pitivi_projectsettingswidget_reset_gui (PitiviProjectSettingsWidget *self)
+{
+  
+}
+
+/*****
+      GUI CREATION
+*****/
 
 static GtkWidget *
 make_new_videosize_cbox (void)
@@ -269,6 +335,32 @@ make_new_audiodepth_cbox (void)
   return cbox;
 }
 
+static GtkWidget *
+make_new_codec_cbox (gchar *klass, GList **plist)
+{
+  GtkWidget	*cbox;
+  GList		*codecs;
+  GList		*mylist = NULL;
+  gchar		*msg, *msg2;
+
+  cbox = gtk_combo_box_new_text ();
+  for (codecs = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
+       codecs; codecs = g_list_next (codecs)) {
+    if (!(g_ascii_strcasecmp (klass, gst_element_factory_get_klass (GST_ELEMENT_FACTORY (codecs->data))))) {
+      GstPluginFeature *feat = GST_PLUGIN_FEATURE (codecs->data);
+      
+      msg = g_strdup_printf ("%s (%s)", gst_element_factory_get_longname (GST_ELEMENT_FACTORY (feat)),
+			     gst_plugin_feature_get_name (feat));
+      msg2 = g_strdup (gst_plugin_feature_get_name (feat));
+      gtk_combo_box_append_text (GTK_COMBO_BOX (cbox), msg);
+      mylist = g_list_append (mylist, msg2);
+    }
+  }
+  gtk_combo_box_set_active (GTK_COMBO_BOX (cbox), 0);
+  *plist = mylist;
+  return cbox;
+}
+
 static GtkWidget*
 make_new_container_cbox (PitiviProjectSettingsWidget *self)
 {
@@ -318,13 +410,11 @@ pitivi_psw_make_audioframe (PitiviProjectSettingsWidget *self)
   gtk_table_attach (GTK_TABLE (table), codeclabel,
 		    0, 1, 0, 1, FALSE, FALSE, 5, 5);
 
-  self->private->audiocodeccbox = gtk_combo_box_new_text ();
+  self->private->audiocodeccbox = make_new_codec_cbox ("Codec/Encoder/Audio", &(self->private->aenc_list));
   gtk_table_attach (GTK_TABLE (table), self->private->audiocodeccbox,
 		    1, 3, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
 
   self->private->audioconfbutton = gtk_button_new_with_label ("Configure");
-  gtk_size_group_add_widget (self->private->sizegroupright,
-			     self->private->audioconfbutton);
   gtk_table_attach (GTK_TABLE (table), self->private->audioconfbutton,
 		    3, 4, 0, 1, FALSE, FALSE, 5, 5);
   
@@ -336,10 +426,8 @@ pitivi_psw_make_audioframe (PitiviProjectSettingsWidget *self)
 		    0, 1, 1, 2, FALSE, FALSE, 5, 5);
 
   self->private->audiodepthcbox = make_new_audiodepth_cbox();
-/*   gtk_size_group_add_widget (self->private->sizegroupmiddle,  */
-/* 			     self->private->audiodepthcbox); */
   gtk_table_attach (GTK_TABLE (table), self->private->audiodepthcbox,
-		    1, 2, 1, 2, GTK_EXPAND | GTK_FILL , FALSE, 5, 5);
+		    1, 3, 1, 2, GTK_EXPAND | GTK_FILL , FALSE, 5, 5);
 
   /* Channels */
   channlabel = gtk_label_new ("Channels :");
@@ -349,8 +437,6 @@ pitivi_psw_make_audioframe (PitiviProjectSettingsWidget *self)
 		    0, 1, 2, 3, FALSE, FALSE, 5, 5);
 
   self->private->audiochanncbox = make_new_audiochann_cbox();
-/*   gtk_size_group_add_widget (self->private->sizegroupmiddle,  */
-/* 			     self->private->audiochanncbox); */
   gtk_table_attach (GTK_TABLE (table), self->private->audiochanncbox,
 		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL , FALSE, 5, 5);
 
@@ -362,16 +448,14 @@ pitivi_psw_make_audioframe (PitiviProjectSettingsWidget *self)
 		    0, 1, 3, 4, FALSE, FALSE, 5, 5);
 
   self->private->audioratecbox = make_new_audiorate_cbox();
-/*   gtk_size_group_add_widget (self->private->sizegroupmiddle,  */
-/* 			     self->private->audioratecbox); */
   gtk_table_attach (GTK_TABLE (table), self->private->audioratecbox,
 		    1, 2, 3, 4, GTK_EXPAND | GTK_FILL , FALSE, 5, 5);
 
-  self->private->audioratehbox = gtk_hbox_new (FALSE, 5);
+  self->private->audioratehbox = gtk_hbox_new (FALSE, 0);
   self->private->audiorateentry = gtk_spin_button_new_with_range (1, G_MAXINT, 44100);
-  gtk_box_pack_start (GTK_BOX (self->private->audioratehbox), self->private->audiorateentry, TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->audioratehbox), self->private->audiorateentry, TRUE, TRUE, 0);
   hzlabel = gtk_label_new ("Hz");
-  gtk_box_pack_start (GTK_BOX (self->private->audioratehbox), hzlabel, FALSE, FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->audioratehbox), hzlabel, FALSE, FALSE, 0);
   gtk_table_attach (GTK_TABLE (table), self->private->audioratehbox,
 		    2, 4, 3, 4, FALSE, FALSE, 5, 5);
 
@@ -388,7 +472,7 @@ pitivi_psw_make_videoframe (PitiviProjectSettingsWidget *self)
   GtkWidget	*xlabel, *pixellabel, *fpslabel;
 
   frame = gtk_frame_new ("Video settings");
-  table = gtk_table_new (3, 3, FALSE);
+  table = gtk_table_new (3, 4, FALSE);
 
   /* Codec */
   codeclabel = gtk_label_new ("Codec :");
@@ -397,13 +481,11 @@ pitivi_psw_make_videoframe (PitiviProjectSettingsWidget *self)
   gtk_table_attach (GTK_TABLE (table), codeclabel,
 		    0, 1, 0, 1, FALSE, FALSE, 5, 5);
 
-  self->private->videocodeccbox = gtk_combo_box_new_text ();
+  self->private->videocodeccbox = make_new_codec_cbox ("Codec/Encoder/Video", &(self->private->venc_list));
   gtk_table_attach (GTK_TABLE (table), self->private->videocodeccbox,
 		    1, 3, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
 
   self->private->videoconfbutton = gtk_button_new_with_label ("Configure");
-  gtk_size_group_add_widget (self->private->sizegroupright,
-			     self->private->videoconfbutton);
   gtk_table_attach (GTK_TABLE (table), self->private->videoconfbutton,
 		    3, 4, 0, 1, FALSE, FALSE, 5, 5);
   
@@ -415,8 +497,6 @@ pitivi_psw_make_videoframe (PitiviProjectSettingsWidget *self)
 		    0, 1, 1, 2, FALSE, FALSE, 5, 5);
 
   self->private->videosizecbox = make_new_videosize_cbox();
-/*   gtk_size_group_add_widget (self->private->sizegroupmiddle,  */
-/* 			     self->private->videosizecbox); */
   gtk_table_attach (GTK_TABLE (table), self->private->videosizecbox,
 		    1, 2, 1, 2, GTK_EXPAND | GTK_FILL , FALSE, 5, 5);
 
@@ -441,8 +521,6 @@ pitivi_psw_make_videoframe (PitiviProjectSettingsWidget *self)
 		    0, 1, 2, 3, FALSE, FALSE, 5, 5);
 
   self->private->videoratecbox = make_new_videorate_cbox();
-/*   gtk_size_group_add_widget (self->private->sizegroupmiddle,  */
-/* 			     self->private->videoratecbox); */
   gtk_table_attach (GTK_TABLE (table), self->private->videoratecbox,
 		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
 
@@ -465,7 +543,6 @@ pitivi_psw_make_containerframe (PitiviProjectSettingsWidget *self)
   GtkWidget	*frame;
   GtkWidget	*cbox;
   GtkWidget	*codeclabel;
-  GtkWidget	*containercbox;
 
   frame = gtk_frame_new ("Container");
   cbox = gtk_table_new (3, 1, FALSE);
@@ -476,13 +553,11 @@ pitivi_psw_make_containerframe (PitiviProjectSettingsWidget *self)
   gtk_table_attach (GTK_TABLE (cbox), codeclabel,
 		    0, 1, 0, 1, FALSE, FALSE, 5, 5);
 
-  containercbox = make_new_container_cbox (self);
-  gtk_table_attach (GTK_TABLE (cbox), containercbox,
+  self->private->containercbox = make_new_container_cbox (self);
+  gtk_table_attach (GTK_TABLE (cbox), self->private->containercbox,
 		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
   
   self->private->containerconfbutton = gtk_button_new_with_label ("Configure");
-  gtk_size_group_add_widget (self->private->sizegroupright, 
-			     self->private->containerconfbutton);
   gtk_table_attach (GTK_TABLE (cbox), self->private->containerconfbutton,
 		    2, 3, 0, 1, FALSE, FALSE, 5, 5);
 
@@ -500,8 +575,6 @@ pitivi_psw_make_gui(PitiviProjectSettingsWidget *self)
 
   self->private->vbox = gtk_table_new (2, 5, FALSE);
   self->private->sizegroupleft = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-  self->private->sizegroupmiddle = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-  self->private->sizegroupright = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 
   /* Name */
   namelabel = gtk_label_new ("Name :");
@@ -535,6 +608,7 @@ pitivi_psw_make_gui(PitiviProjectSettingsWidget *self)
   gtk_table_attach (GTK_TABLE(self->private->vbox), descscroll,
 		    1, 2, 1, 2, GTK_EXPAND | GTK_FILL , GTK_EXPAND | GTK_FILL, 5, 5);
 
+  /* Video/Audio/Container frames */
   videoframe = pitivi_psw_make_videoframe(self);
   gtk_table_attach (GTK_TABLE(self->private->vbox), videoframe,
 		    0, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
@@ -645,6 +719,9 @@ pitivi_projectsettingswidget_set_property (GObject * object,
     case PROP_MAINAPP:
       self->private->mainapp = g_value_get_pointer (value);
       break;
+    case PROP_SETTINGS:
+      pitivi_projectsettingswidget_set_settings (self, PITIVI_PROJECTSETTINGS (g_value_get_pointer (value)));
+      break;
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -663,6 +740,9 @@ pitivi_projectsettingswidget_get_property (GObject * object,
     {
     case PROP_MAINAPP:
       g_value_set_pointer (value, self->private->mainapp);
+      break;
+    case PROP_SETTINGS:
+      g_value_set_pointer (value, self->settings);
       break;
     default:
       /* We don't have any other property... */
@@ -686,14 +766,16 @@ pitivi_projectsettingswidget_class_init (gpointer g_class, gpointer g_class_data
   gobject_class->set_property = pitivi_projectsettingswidget_set_property;
   gobject_class->get_property = pitivi_projectsettingswidget_get_property;
 
-  g_object_class_install_property (gobject_class,
-                                   PROP_MAINAPP,
-                                   g_param_spec_pointer ("mainapp",
-							 "mainapp",
-							 "Pointer on the PitiviMainApp instance",
-							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY) );
+  g_object_class_install_property (gobject_class, PROP_MAINAPP,
+      g_param_spec_pointer ("mainapp", "Mainapp",
+			    "Pointer on the PitiviMainApp instance",
+			    G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY) );
 
-
+  g_object_class_install_property (gobject_class, PROP_SETTINGS,
+      g_param_spec_pointer ("settings", "Project Settings", 
+			    "Pointer on a PitiviProjectSettings instance",
+			    G_PARAM_READWRITE));
+				   
 }
 
 GType
