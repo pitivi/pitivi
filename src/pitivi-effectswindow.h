@@ -53,15 +53,18 @@
 typedef struct _PitiviEffectsWindowPrivate PitiviEffectsWindowPrivate;
 typedef struct _PitiviEffectsTree PitiviEffectsTree;
 
-#define PITIVI_EFFECTS_DF_TITLE		  "Effects"
+#define PITIVI_EFFECTS_WIN_SIZEX	250
+#define PITIVI_EFFECTS_WIN_SIZEY	250
+
+#define PITIVI_EFFECTS_DF_TITLE		"Effects"
+#define PITIVI_EFFECTS_LOGO		"../pixmaps/pitivi-logo2.png"
+#define PITIVI_EFFECTS_DF_WIN_WIDTH	PITIVI_EFFECTS_WIN_SIZEX
+#define PITIVI_EFFECTS_DF_WIN_HEIGHT	PITIVI_EFFECTS_WIN_SIZEY
 
 #define PITIVI_EFFECTS_WINDOW_NB_COL	  1
 #define PITIVI_VIDEO_EFFECT_LABEL	  "Video"
 #define PITIVI_AUDIO_EFFECT_LABEL	  "Audio"
 #define PITIVI_TRANSITION_EFFECT_LABEL	  "Transition"
-
-#define PITIVI_EFFECTS_WIN_SIZEX	  250
-#define PITIVI_EFFECTS_WIN_SIZEY	  250
 
 typedef enum {
 

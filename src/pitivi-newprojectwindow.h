@@ -46,6 +46,11 @@
 #define PITIVI_IS_NEWPROJECTWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_NEWPROJECTWINDOW_TYPE))
 #define PITIVI_NEWPROJECTWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_NEWPROJECTWINDOW_TYPE, PitiviNewProjectWindowClass))
 
+#define PITIVI_NEWPROJECT_DF_TITLE		"New Project"
+#define PITIVI_NEWPROJECT_LOGO			"../pixmaps/pitivi-logo2.png"
+#define PITIVI_NEWPROJECT_DF_WIN_WIDTH		600
+#define PITIVI_NEWPROJECT_DF_WIN_HEIGHT		600
+
 typedef struct _PitiviNewProjectWindowPrivate PitiviNewProjectWindowPrivate;
 
 struct _PitiviNewProjectWindow

@@ -42,8 +42,9 @@
 /* #include "../pixmaps/forward.xpm" */
 /* #include "../pixmaps/backward.xpm" */
 
-static     PitiviProjectWindowsClass *parent_class;
-static	   GdkPixmap *pixmap = NULL;
+static		GdkPixbuf *window_icon = NULL;
+static		PitiviProjectWindowsClass *parent_class;
+static		GdkPixmap *pixmap = NULL;
 
 gboolean	idle_func_video (gpointer data);
 
@@ -546,8 +547,18 @@ pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
   
   self->private->dispose_has_run = FALSE;
 
-  gtk_window_set_default_size(GTK_WINDOW(self), 300, 200);
-  
+  gtk_window_set_default_size(GTK_WINDOW(self), PITIVI_VIEWER_DF_WIN_WIDTH, PITIVI_VIEWER_DF_WIN_HEIGHT);
+  gtk_window_set_title (GTK_WINDOW (self), PITIVI_VIEWER_DF_TITLE); 
+  if (window_icon == NULL) 
+    {
+      char *filename;
+      
+      filename = g_strdup(PITIVI_VIEWER_LOGO);
+      window_icon = gdk_pixbuf_new_from_file (filename, NULL);
+      g_free (filename);
+    }
+  gtk_window_set_icon (GTK_WINDOW (self), window_icon);
+
   /* initialize all public and private members to reasonable default values. */ 
   
   self->private->play_status = STOP;
@@ -567,8 +578,6 @@ pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->timeline_min = 0;
   self->private->timeline_max = 500;
   self->private->timeline_step = 1;
-  
-  gtk_window_set_title (GTK_WINDOW (self), PITIVI_VIEWER_DF_TITLE);
 }
 
 static void

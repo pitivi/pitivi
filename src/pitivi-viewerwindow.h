@@ -44,7 +44,10 @@
 #define PITIVI_IS_VIEWERWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_VIEWERWINDOW_TYPE))
 #define PITIVI_VIEWERWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_VIEWERWINDOW_TYPE, PitiviViewerWindowClass))
 
-#define PITIVI_VIEWER_DF_TITLE "Viewer"
+#define PITIVI_VIEWER_DF_TITLE		"Viewer"
+#define PITIVI_VIEWER_LOGO		"../pixmaps/pitivi-logo2.png"
+#define PITIVI_VIEWER_DF_WIN_WIDTH	300
+#define PITIVI_VIEWER_DF_WIN_HEIGHT	200
 
 typedef struct _PitiviViewerWindowPrivate PitiviViewerWindowPrivate;
 

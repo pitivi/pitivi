@@ -50,6 +50,9 @@ typedef struct _PitiviListStore PitiviListStore;
 typedef struct _PitiviListElm PitiviListElm;
 
 #define PITIVI_SOURCELIST_DF_TITLE "SourceList"
+#define PITIVI_SOURCELIST_LOGO		"../pixmaps/pitivi-logo2.png"
+#define PITIVI_SOURCELIST_DF_WIN_WIDTH	600
+#define PITIVI_SOURCELIST_DF_WIN_HEIGHT	200
 
 struct _PitiviSourceListWindow
 {

@@ -31,6 +31,7 @@
 #include "pitivi-projectsettings.h"
 #include "pitivi-settings.h"
 
+static GdkPixbuf		*window_icon = NULL;
 static PitiviWindowsClass	*parent_class = NULL;
 
 enum
@@ -1549,8 +1550,6 @@ pitivi_newprojectwindow_constructor (GType type,
   /* do stuff. */
   /*   Creation de la fenetre de reglages d'un nouveau projet */
   self = (PitiviNewProjectWindow *) object;
-  
-  gtk_window_set_title (GTK_WINDOW (self), "New Project");
   gtk_window_set_position (GTK_WINDOW (self), GTK_WIN_POS_CENTER);
   gtk_window_set_modal (GTK_WINDOW(self), TRUE);
   
@@ -1576,7 +1575,18 @@ pitivi_newprojectwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   /* initialize all public and private members to reasonable default values. */ 
   
   self->private->dispose_has_run = FALSE;
-  
+  gtk_window_set_default_size(GTK_WINDOW(self), PITIVI_NEWPROJECT_DF_WIN_WIDTH, PITIVI_NEWPROJECT_DF_WIN_HEIGHT);
+  gtk_window_set_title (GTK_WINDOW (self), PITIVI_NEWPROJECT_DF_TITLE); 
+  if (window_icon == NULL) 
+    {
+      char *filename;
+      
+      filename = g_strdup(PITIVI_NEWPROJECT_LOGO);
+      window_icon = gdk_pixbuf_new_from_file (filename, NULL);
+      g_free (filename);
+    }
+  gtk_window_set_icon (GTK_WINDOW (self), window_icon);
+
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
@@ -1670,34 +1680,12 @@ static void
 pitivi_newprojectwindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-/*   PitiviNewProjectWindowClass *klass = PITIVI_NEWPROJECTWINDOW_CLASS (g_class); */
-
   parent_class = g_type_class_peek_parent (g_class);
-  
   gobject_class->constructor = pitivi_newprojectwindow_constructor;
-
   gobject_class->dispose = pitivi_newprojectwindow_dispose;
   gobject_class->finalize = pitivi_newprojectwindow_finalize;
-
   gobject_class->set_property = pitivi_newprojectwindow_set_property;
   gobject_class->get_property = pitivi_newprojectwindow_get_property;
-
-  /* Install the properties in the class here ! */
-  /*   pspec = g_param_spec_string ("maman-name", */
-  /*                                "Maman construct prop", */
-  /*                                "Set maman's name", */
-  /*                                "no-name-set" /\* default value *\/, */
-  /*                                G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE); */
-  /*   g_object_class_install_property (gobject_class, */
-  /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
-  /*                                    pspec); */
-
-/*   g_object_class_install_property (gobject_class, */
-/*                                    PROP_MAINAPP, */
-/*                                    g_param_spec_pointer ("mainapp", */
-/* 							 "mainapp", */
-/* 							 "Pointer on the PitiviMainApp instance", */
-/* 							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY) ); */
 }
 
 GType	

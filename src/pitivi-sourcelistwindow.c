@@ -43,6 +43,7 @@
 #include "pitivi-thumbs.h"
 #include "pitivi-lplayerwindow.h"
 
+static	GdkPixbuf *window_icon = NULL;
 static PitiviProjectWindowsClass *parent_class = NULL;
 
 struct _PitiviListStore
@@ -1751,7 +1752,20 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   self->private->liststore = NULL;
   self->private->treepath = g_strdup("0");
   gtk_window_set_title (GTK_WINDOW (self), PITIVI_SOURCELIST_DF_TITLE);
-  gtk_window_set_default_size(GTK_WINDOW(self), 600, 200);
+
+  gtk_window_set_default_size (GTK_WINDOW (self), PITIVI_SOURCELIST_DF_WIN_WIDTH, PITIVI_SOURCELIST_DF_WIN_HEIGHT); 
+  
+  if (window_icon == NULL) 
+    {
+      char *filename;
+      
+      filename = g_strdup(PITIVI_SOURCELIST_LOGO);
+      window_icon = gdk_pixbuf_new_from_file (filename, NULL);
+      g_free (filename);
+    }
+  gtk_window_set_icon (GTK_WINDOW (self), window_icon);
+
+  gtk_window_set_default_size(GTK_WINDOW(self), PITIVI_SOURCELIST_DF_WIN_WIDTH, PITIVI_SOURCELIST_DF_WIN_HEIGHT);
   gtk_container_add(GTK_CONTAINER(self), self->private->hpaned);
   self->private->nbrchutier = 1;
   
