@@ -41,12 +41,6 @@ static PitiviTimelineMedia  *current_media;
 // default Dashes
 static char gdefault_dash [2] = {5, 4};
 
-typedef enum
-{
-  PITIVI_VIDEO_TRACK,
-  PITIVI_AUDIO_TRACK,
-} PitiviLayerType;
-
 typedef enum {
   PITIVI_TML_LAYER_PROPERTY = 1,
   PITIVI_TML_TYPE_LAYER_PROPERTY,
@@ -72,8 +66,8 @@ struct _PitiviTimelineCellRendererPrivate
 static GtkTargetEntry TargetEntries[] =
   {
     { "pitivi/sourcefile", GTK_TARGET_SAME_APP, DND_TARGET_SOURCEFILEWIN },
-    { "pitivi/sourcefile", GTK_TARGET_SAME_APP, DND_TARGET_TIMELINEWIN },
     { "pitivi/sourceeffect", GTK_TARGET_SAME_APP, DND_TARGET_EFFECTSWIN },
+    { "pitivi/sourcetimeline", GTK_TARGET_SAME_APP, DND_TARGET_TIMELINEWIN },
     { "STRING", GTK_TARGET_SAME_APP, DND_TARGET_STRING },
     { "text/plain", GTK_TARGET_SAME_APP, DND_TARGET_URI },
   };
@@ -83,7 +77,7 @@ static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
 
 static GtkTargetEntry TargetSameEntry[] =
   {
-    { "pitivi/sourcefile", 0, DND_TARGET_TIMELINEWIN },
+    { "pitivi/sourcetimeline", 0, DND_TARGET_TIMELINEWIN },
   };
 
 static gint iNbTargetSameEntry = G_N_ELEMENTS (TargetSameEntry);
@@ -93,11 +87,11 @@ static gint iNbTargetSameEntry = G_N_ELEMENTS (TargetSameEntry);
  */
 
 GtkWidget *
-pitivi_timelinecellrenderer_new (PitiviTimelineWindow *timewin)
+pitivi_timelinecellrenderer_new (PitiviLayerType layertype)
 {
   PitiviTimelineCellRenderer	*timelinecellrenderer;
 
-  timelinecellrenderer = (PitiviTimelineCellRenderer *) g_object_new (PITIVI_TIMELINECELLRENDERER_TYPE, NULL);
+  timelinecellrenderer = (PitiviTimelineCellRenderer *) g_object_new (PITIVI_TIMELINECELLRENDERER_TYPE, "type", layertype, NULL);
   g_assert(timelinecellrenderer != NULL);
   return GTK_WIDGET ( timelinecellrenderer );
 }
@@ -231,7 +225,7 @@ int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
   cell->children = gtk_container_get_children (GTK_CONTAINER (self));
   
   gtk_drag_source_set  (GTK_WIDGET (widget), 
-			GDK_BUTTON1_MASK | GDK_BUTTON3_MASK, 
+			GDK_BUTTON1_MASK, 
 			TargetSameEntry, 
 			iNbTargetSameEntry, 
 			GDK_ACTION_COPY);
@@ -255,22 +249,22 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
 {
   PitiviTimelineCellRenderer *self = PITIVI_TIMELINECELLRENDERER(object);
   
-  g_printf ("drag receiving  ---%s---%d-- \n", selection->data, info);
-  
+  self->private->current_selection = selection;
   if (!selection->data) {
     gtk_drag_finish (context, FALSE, FALSE, time);
     return;
   }
-  
-  self->private->current_selection = selection;
+  g_printf ("size :%d\n", g_list_length (self->children));
   switch (info) {
   case DND_TARGET_SOURCEFILEWIN:
-    if (strncmp ("move", selection->data, 4))
-      g_printf (" moving \n");
     current_media = pitivi_timelinemedia_new ();
     gtk_widget_set_size_request (GTK_WIDGET (current_media),  60, 50);
     gtk_widget_show (GTK_WIDGET (current_media));
     add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (current_media), x, y);
+    break;
+  case DND_TARGET_TIMELINEWIN:
+    g_printf ("Timeline Moving  ---%s---%d-- \n", selection->data, info);
+    pitivi_timelinecellrenderer_remove (self, current_media);
     break;
   case DND_TARGET_EFFECTSWIN:
     g_printf ("Window Effects dropping %s\n", selection->data);
@@ -307,7 +301,7 @@ pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
 					 guint               time)
 { 
   PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
-  
+    
   if (self->motion_area->height == 0)
   {
       self->motion_area->width  = 60;
@@ -375,9 +369,9 @@ pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_
   // Set background Color
   
   DefaultLayoutStyle = gtk_style_copy (GTK_WIDGET(self)->style);
-  color.red = 0xc490;
-  color.blue = 0xc2ce;
-  color.green = 0xcc40;
+  color.red = 0xc000;
+  color.blue = 0xcfff;
+  color.green = 0xc000;
   DefaultLayoutStyle->bg[GTK_STATE_NORMAL] = color;
   gtk_widget_set_style (GTK_WIDGET (self), DefaultLayoutStyle);
 }
@@ -520,8 +514,12 @@ pitivi_timelinecellrenderer_remove (GtkContainer *container,
   
   list = g_list_find(cell->children, child);
   if (list) {
-    //gtk_widget_hide (child);
-    GTK_CONTAINER_CLASS(parent_class)->remove(container, child);
+    GTK_CONTAINER_CLASS(parent_class)->remove (container, child);
+    if (cell->children != NULL)
+      {
+	g_list_free (cell->children);
+	cell->children = NULL;
+      }
     cell->children =  gtk_container_get_children (GTK_CONTAINER (container));
   }
 }

@@ -226,6 +226,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   GtkWidget		*Lseparators;
   GtkWidget		*Rseparators;
   GtkWidget		*sw;
+  GtkWidget		*cell;
   int			count;
   
   PitiviTimelineWindow *self = (PitiviTimelineWindow *) instance;
@@ -329,9 +330,15 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
       gtk_box_pack_start (GTK_BOX (hbox[count]), check2, FALSE, FALSE, 0);
       
       if (count < (PITIVI_MAX_PISTE/2))
-	gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new ("Video"), FALSE, FALSE, 0);
+	{
+	  cell = pitivi_timelinecellrenderer_new (PITIVI_VIDEO_TRACK);
+	  gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new ("Video"), FALSE, FALSE, 0);
+	}
       else
-	gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new ("Audio"), FALSE, FALSE, 0);
+	{
+	  cell = pitivi_timelinecellrenderer_new (PITIVI_AUDIO_TRACK);
+	  gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new ("Audio"), FALSE, FALSE, 0);
+	}
       Lseparators = gtk_hseparator_new ();
       gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), hbox[count], FALSE, FALSE, 0);
       gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), Lseparators, FALSE, FALSE, 0);
@@ -340,7 +347,6 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
       // Right View
       
       Rseparators = gtk_hseparator_new ();
-      GtkWidget *cell = pitivi_timelinecellrenderer_new ();
       gtk_widget_set_usize (cell, FIXED_WIDTH, FIXED_HEIGHT);
       g_signal_connect_swapped (G_OBJECT (cell), "motion_notify_event",
 				G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),

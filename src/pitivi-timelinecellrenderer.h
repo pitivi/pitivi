@@ -56,14 +56,20 @@ typedef struct _PitiviTimelineCellRendererClass PitiviTimelineCellRendererClass;
 typedef struct _PitiviTimelineCellRendererPrivate PitiviTimelineCellRendererPrivate;
 typedef struct _PitiviTimelineMediaChild PitiviTimelineMediaChild;
 
+typedef enum
+{
+  PITIVI_VIDEO_TRACK,
+  PITIVI_AUDIO_TRACK,
+} PitiviLayerType;
+
 struct _PitiviTimelineCellRenderer
 {
   GtkLayout parent;
   
   /* public members */
-  guint		track_type;
-  GList		*children;
-  GdkRectangle	*motion_area;
+  PitiviLayerType	track_type;
+  GList			*children;
+  GdkRectangle		*motion_area;
   
   /* private */
   PitiviTimelineCellRendererPrivate	*private;
