@@ -36,6 +36,10 @@ struct _PitiviGstElementSettingsPrivate
 
 };
 
+enum {
+  PROP_0,
+  PROP_ELM
+};
 
 
 /*
@@ -72,9 +76,9 @@ pitivi_gstelementsettings_new(gchar *elm)
   PitiviGstElementSettings	*gstelementsettings;
 
   gstelementsettings = (PitiviGstElementSettings *) g_object_new(PITIVI_GSTELEMENTSETTINGS_TYPE,
+								 "elm", elm,
 								 NULL);
   g_assert(gstelementsettings != NULL);
-  gstelementsettings->elm = g_strdup (elm);
   return gstelementsettings;
 }
 
@@ -158,12 +162,9 @@ pitivi_gstelementsettings_set_property (GObject * object,
 
   switch (property_id)
     {
-      /*   case PITIVI_GSTELEMENTSETTINGS_PROPERTY: { */
-      /*     g_free (self->private->name); */
-      /*     self->private->name = g_value_dup_string (value); */
-      /*     g_print ("maman: %s\n",self->private->name); */
-      /*   } */
-      /*     break; */
+    case PROP_ELM:
+      self->elm = g_value_dup_string (value);
+      break;
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -180,10 +181,9 @@ pitivi_gstelementsettings_get_property (GObject * object,
 
   switch (property_id)
     {
-      /*  case PITIVI_GSTELEMENTSETTINGS_PROPERTY: { */
-      /*     g_value_set_string (value, self->private->name); */
-      /*   } */
-      /*     break; */
+    case PROP_ELM:
+      g_value_set_string (value, self->elm);
+      break;
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -207,14 +207,15 @@ pitivi_gstelementsettings_class_init (gpointer g_class, gpointer g_class_data)
   gobject_class->get_property = pitivi_gstelementsettings_get_property;
 
   /* Install the properties in the class here ! */
-  /*   pspec = g_param_spec_string ("maman-name", */
-  /*                                "Maman construct prop", */
-  /*                                "Set maman's name", */
-  /*                                "no-name-set" /\* default value *\/, */
-  /*                                G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE); */
-  /*   g_object_class_install_property (gobject_class, */
-  /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
-  /*                                    pspec); */
+
+  g_object_class_install_property (gobject_class,
+				   PROP_ELM,
+				   g_param_spec_string ("elm",
+							"elm",
+							"GstElement's name",
+							NULL, 
+							G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE)
+				   );
 
 
 }

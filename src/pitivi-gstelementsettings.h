@@ -51,7 +51,7 @@ typedef struct _PitiviGstElementSettingsPrivate PitiviGstElementSettingsPrivate;
 
 struct _PitiviGstElementSettings
 {
-  GtkWidget parent;
+  GtkVBox parent;
 
   /* instance public members */
   gchar *elm;
@@ -63,7 +63,7 @@ struct _PitiviGstElementSettings
 
 struct _PitiviGstElementSettingsClass
 {
-  GtkWidgetClass parent;
+  GtkVBoxClass parent;
   /* class members */
 };
 

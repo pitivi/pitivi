@@ -26,6 +26,7 @@
 #include "pitivi.h"
 #include "pitivi-settingswindow.h"
 #include "pitivi-settings.h"
+#include "pitivi-gstelementsettings.h"
 
 #define	X_SPACE_TAB	5
 #define Y_SPACE_TAB	5
@@ -94,16 +95,17 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 {
   GtkWidget *ComboBox = (GtkWidget *) data;
   GtkWidget *Dialog;
-  GtkWidget *Label;
   gchar *elm;
   gint result;
+  PitiviGstElementSettings *Properties;
 
   elm = pitivi_settingswindow_combobox_get_active (ComboBox);
   g_print ("Button Click:%s\n", elm);
   Dialog = gtk_dialog_new ();
-  Label = gtk_label_new (elm);
+
+  Properties = pitivi_gstelementsettings_new (elm);
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
-		     Label);
+		     GTK_WIDGET (Properties));
   gtk_dialog_add_buttons (GTK_DIALOG (Dialog),
 			  GTK_STOCK_OK,
 			  GTK_RESPONSE_ACCEPT,
