@@ -162,11 +162,12 @@ pitivi_ruler_get_property (GObject * object,
     }
 }
 
+
 static void
 pitivi_ruler_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviRulerClass *klass = PITIVI_RULER_CLASS (g_class);
+  PitiviRulerClass *ruler_class = PITIVI_RULER_CLASS (g_class);
 
   parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (g_class));
 
@@ -176,18 +177,6 @@ pitivi_ruler_class_init (gpointer g_class, gpointer g_class_data)
 
   gobject_class->set_property = pitivi_ruler_set_property;
   gobject_class->get_property = pitivi_ruler_get_property;
-
-  /* Install the properties in the class here ! */
-  /*   pspec = g_param_spec_string ("maman-name", */
-  /*                                "Maman construct prop", */
-  /*                                "Set maman's name", */
-  /*                                "no-name-set" /\* default value *\/, */
-  /*                                G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE); */
-  /*   g_object_class_install_property (gobject_class, */
-  /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
-  /*                                    pspec); */
-
-
 }
 
 GType
@@ -208,7 +197,7 @@ pitivi_ruler_get_type (void)
 	0,			/* n_preallocs */
 	pitivi_ruler_instance_init	/* instance_init */
       };
-      type = g_type_register_static (G_TYPE_OBJECT,
+      type = g_type_register_static (GTK_TYPE_HRULER,
 				     "PitiviRulerType", &info, 0);
     }
 

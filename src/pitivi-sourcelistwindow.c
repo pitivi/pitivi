@@ -57,6 +57,7 @@ struct _PitiviSourceListWindowPrivate
   GtkWidget	*listview;
   GtkWidget	*listmenu;
   GtkWidget	*treemenu;
+  GtkWidget	*timelinewin;
   GSList	*liststore;
   GtkTreeStore	*treestore;
   guint		nbrchutier;
@@ -1482,7 +1483,7 @@ void	new_file(GtkWidget *widget, gpointer data)
 						 self->private->mediatype,
 						 self->private->infovideo,
 						 self->private->infoaudio,
-						 0 /* self->private->length */,
+						 self->private->length,
 						 self->private->pipeline);
   
   g_free(self->private->mediatype);
@@ -1645,9 +1646,9 @@ drag_data_get_cb (GtkWidget          *widget,
 		  guint32             time,
 		  gpointer editor)
 {
-  PitiviSourceListWindow	*self = PITIVI_SOURCELISTWINDOW(editor);
-  PitiviSourceFile	*sf;
-  gchar			*tmp;
+  PitiviSourceListWindow *self = PITIVI_SOURCELISTWINDOW(editor);
+  PitiviSourceFile	 *sf;
+  gchar			 *tmp;
 
   sf = pitivi_projectsourcelist_get_sourcefile(PITIVI_PROJECTWINDOWS(self)->project->sources,
 					       self->private->dndtreepath,
@@ -2193,6 +2194,7 @@ gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
 void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
+  PitiviSourceFile *sf;
   GtkListStore	*liststore;
   GtkTreeIter	iter;
   gchar		*sMediaType;
@@ -2208,10 +2210,14 @@ void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
   if (strcmp(sMediaType, "Bin"))
     {
       g_printf("removing item only\n");
-      gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
+      //sf = pitivi_projectsourcelist_get_sourcefile (PITIVI_PROJECTWINDOWS(self)->project->sources,
+      //				       self->private->dndtreepath,
+      //					    self->private->dndfilepos);
+      //g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", sf);
       pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
-						  self->private->treepath,
-						  item_select);
+						    self->private->treepath,
+						    item_select);
+      gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
     }
   else /* need to remove folder */
     {
@@ -2464,7 +2470,8 @@ pitivi_sourcelistwindow_new(PitiviMainApp *mainapp, PitiviProject *project)
 							     NULL);
  
   //g_printf("show class ==> %p\n", ((PitiviWindows*)sourcelistwindow));
-
+  /* timeline access */
+  sourcelistwindow->private->timelinewin = (GtkWidget *) pitivi_mainapp_get_timelinewin (((PitiviWindows *)sourcelistwindow)->mainapp);
   g_assert(sourcelistwindow != NULL);
   return sourcelistwindow;
 }

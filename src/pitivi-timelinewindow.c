@@ -545,6 +545,20 @@ pitivi_timelinewindow_deselect (PitiviTimelineWindow *self)
   for (; childlist; childlist = childlist->next)
     if (GTK_IS_LAYOUT (childlist->data))
       g_signal_emit_by_name (childlist->data, "deselect");
+  g_list_free ( childlist );
+}
+
+void
+pitivi_timelinewindow_delete_sf (PitiviTimelineWindow *self, gpointer data)
+{
+  GtkWidget	*container;
+  GList		*childlist;
+  
+  childlist = gtk_container_get_children (GTK_CONTAINER (self->private->main_vbox_right));
+  for (; childlist; childlist = childlist->next)
+    if (GTK_IS_LAYOUT (childlist->data))
+      g_signal_emit_by_name (childlist->data, "delete-source", data);
+  g_list_free ( childlist );
 }
 
 static void
@@ -591,9 +605,19 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 					   g_cclosure_marshal_VOID__VOID,
 					   G_TYPE_NONE, 0);
   
+  signals[DESELECT_SIGNAL] = g_signal_new ("delete-source",
+					   G_TYPE_FROM_CLASS (g_class),
+					   G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+					   G_STRUCT_OFFSET (PitiviTimelineWindowClass, delete),
+					   NULL,
+					   NULL,       
+					   g_cclosure_marshal_VOID__VOID,
+					   G_TYPE_NONE, 0);
+  
   klass->activate = pitivi_timelinewindow_activate;
   klass->deactivate = pitivi_timelinewindow_deactivate;
   klass->deselect = pitivi_timelinewindow_deselect;
+  klass->delete = pitivi_timelinewindow_delete_sf;
 }
 
 GType

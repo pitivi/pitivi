@@ -91,6 +91,7 @@ struct _PitiviTimelineCellRendererClass
   void (* deactivate) (PitiviTimelineCellRenderer *cell);
   void (* select)     (PitiviTimelineCellRenderer *cell);
   void (* deselect)   (PitiviTimelineCellRenderer *cell);
+  void (* delete)     (PitiviTimelineCellRenderer *timew, gpointer data);
 };
 
 /* used by PITIVI_TIMELINECELLRENDERER_TYPE */
