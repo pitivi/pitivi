@@ -610,6 +610,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
   padlist = self->private->padlist;
   while (padlist)
     {
+      g_printf("iterate from padlist\n");
       thread = NULL;
       flag = FALSE;
       pad = (GstPad*)padlist->data;
@@ -620,8 +621,10 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
       
       self->private->mediatype = caps_str;
       
+      g_printf("caps ==> %s\n", caps_str);
       thread = decoder = parser = lastelement = NULL;
 
+      
       while (pitivi_sourcelistwindow_check_for_base_type(self->private->mediatype))
 	{
 	  
@@ -645,7 +648,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	      /* choose the first decoder */
 	      name = g_strdup_printf("decoder%d", thread_number);
 	      decoder = gst_element_factory_make((gchar*)decoderlist->data, name);
-	      
+
 	      g_assert(decoder != NULL);
 	      g_free(name);
 	      
@@ -763,7 +766,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
       if (lastelement)
 	{
 	  GstPad	*temppad;
-
+	 
 	  if (strstr(caps_str, "video")) /* video*/
 	    {
 	      temppad = gst_element_add_ghost_pad(self->private->pipeline, gst_element_get_pad(lastelement, "src"),
@@ -779,7 +782,8 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	      g_printf("adding ghost pad for audio\n");
 	    }
 	}
-      gst_element_set_state(GST_ELEMENT(thread), GST_STATE_READY);
+      if (thread)
+	gst_element_set_state(GST_ELEMENT(thread), GST_STATE_READY);
       
       thread_number++;
       padlist = padlist->next;
@@ -1014,8 +1018,8 @@ void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
   if (self->private->mediatype == NULL)
     return;
 
-  self->private->infovideo = "";
-  self->private->infoaudio = "";
+  self->private->infovideo = NULL;
+  self->private->infoaudio = NULL;
   self->private->length = 0;
   self->private->havevideo = FALSE;
   self->private->haveaudio = FALSE;
@@ -1099,22 +1103,18 @@ void	retrieve_file_from_folder(PitiviSourceListWindow *self)
   closedir(dir);
 }
 
-void	new_folder(GtkWidget *widget, gpointer data)
+gchar*
+pitivi_sourcelistwindow_set_folder(PitiviSourceListWindow *self, 
+				   GtkTreeIter *itertest)
 {
-  PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
   GtkTreeSelection *selection;
-  GtkTreePath	*treepath;
-  GtkTreeIter	iter;
-  GtkTreeIter	iter2;
   GtkListStore	*liststore;
   GdkPixbuf	*pixbufa;
-  gchar		*save;
-  gchar		*name;
+  GtkTreeIter	iter;
+  GtkTreeIter	iter2;
+  GtkTreeIter	*ret_iter;
   gchar		*sMediaType;
-  guint		selected_row;
-  guint		depth;
-
-  selected_row = get_selected_row(self->private->treepath, &depth);
+  gchar		*name;
 
   sMediaType = g_malloc(12);
     
@@ -1128,7 +1128,10 @@ void	new_folder(GtkWidget *widget, gpointer data)
   gtk_list_store_append(liststore, &iter);
 
   name = strrchr(self->private->folderpath, '/');
-  name++;
+  if (name)
+    name++;
+  else
+    name = self->private->folderpath;
 
   /* Mise a jour des donnees */
   gtk_list_store_set(liststore,
@@ -1146,13 +1149,15 @@ void	new_folder(GtkWidget *widget, gpointer data)
   gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(self->private->treestore),
 				      &iter, self->private->treepath);
 
+  
   /* Creation de la nouvelle ligne enfant dans la treeview */
-  gtk_tree_store_append(self->private->treestore, &iter2, &iter);
+  gtk_tree_store_append(self->private->treestore, itertest/* &iter2 */, &iter);
+  
   
   /* Mise a jour des donnees */
-  gtk_tree_store_set(self->private->treestore, &iter2, BMP_COLUMN,
+  gtk_tree_store_set(self->private->treestore, itertest/* &iter2 */, BMP_COLUMN,
 		     pixbufa, TEXT_TREECOLUMN, name, -1);
-
+  
   /* a fake path for add folder at the right place */
   strcat(self->private->treepath, ":0");
   
@@ -1165,6 +1170,30 @@ void	new_folder(GtkWidget *widget, gpointer data)
   add_liststore_for_bin(self, liststore);
 
   self->private->treepath[strlen(self->private->treepath) - 2] = 0;
+
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
+  gtk_tree_selection_select_iter(selection, &iter);
+  
+  g_object_unref(pixbufa);
+
+  return name;
+}
+
+void	new_folder(GtkWidget *widget, gpointer data)
+{
+  PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
+  GtkTreePath	*treepath;
+  GtkTreeIter	iter2;
+  gchar		*save;
+  gchar		*name;
+  guint		selected_row;
+  guint		depth;
+
+  g_printf("adding a new folder\n");
+
+  selected_row = get_selected_row(self->private->treepath, &depth);
+
+  name = pitivi_sourcelistwindow_set_folder(self, &iter2);
 
   pitivi_projectsourcelist_add_folder_to_bin(((PitiviProjectWindows*)self)->project->sources,
 					     self->private->treepath, name);
@@ -1184,10 +1213,7 @@ void	new_folder(GtkWidget *widget, gpointer data)
   g_free(self->private->treepath);
   self->private->treepath = save;
 
-  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
-  gtk_tree_selection_select_iter(selection, &iter);
-
-  g_object_unref(pixbufa);
+  
 }
 
 void	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
@@ -2047,6 +2073,11 @@ pitivi_sourcelistwindow_recurse_into_folder(PitiviSourceListWindow *self,
 					    gchar *parent_name)
 {
   GSList	*file_list;
+  GSList	*folder_list;
+  GtkTreePath	*treepath;
+  GtkTreeIter	iter;
+  gchar		*name;
+  gchar		*save;
 
   file_list = pitivi_projectsourcelist_get_file_list(((PitiviProjectWindows*)self)->project->sources, parent_name);
       
@@ -2058,6 +2089,31 @@ pitivi_sourcelistwindow_recurse_into_folder(PitiviSourceListWindow *self,
       
       pitivi_projectsourcelist_set_file_property_by_name(((PitiviProjectWindows*)self)->project->sources, parent_name, self->private->filepath, self->private->mediatype, self->private->infovideo, self->private->infoaudio, self->private->length, self->private->pipeline);
       file_list = file_list->next;
+    }
+
+  folder_list = pitivi_projectsourcelist_get_folder_list(((PitiviProjectWindows*)self)->project->sources, parent_name);
+  
+  while (folder_list)
+    {
+      g_printf("folder ==> %s\n", folder_list->data);
+      self->private->folderpath = folder_list->data;
+      name = pitivi_sourcelistwindow_set_folder(self, &iter);
+      /* need to select the good treepath */
+      /* retrieve GtkTreepath for current folder */
+      treepath = gtk_tree_model_get_path(GTK_TREE_MODEL(self->private->treestore),
+				     &iter);
+
+      /*set to current treepath */
+      save = self->private->treepath;
+      self->private->treepath = gtk_tree_path_to_string(treepath);
+      
+      pitivi_sourcelistwindow_recurse_into_folder(self, folder_list->data);
+
+        /* restore original treepath */
+      g_free(self->private->treepath);
+      self->private->treepath = save;
+  
+      folder_list = folder_list->next;
     }
 
 }

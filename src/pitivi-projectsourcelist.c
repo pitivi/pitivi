@@ -618,6 +618,29 @@ GSList	*pitivi_projectsourcelist_get_file_list(PitiviProjectSourceList *self,
   return list;
 }
 
+GSList*
+pitivi_projectsourcelist_get_folder_list(PitiviProjectSourceList *self,
+					 gchar *parent_name)
+{
+  PitiviSourceBin	*sourcebin;
+  PitiviSourceBin	*childbin;
+  GSList		*childlist;
+  GSList		*list;
+
+  list = NULL;
+  sourcebin = pitivi_projectsourcelist_get_bin_by_name(self, parent_name);
+
+  childlist = sourcebin->child;
+
+  while (childlist)
+    {
+      childbin = (PitiviSourceBin*)(childlist->data);
+      list = g_slist_append(list, childbin->bin_name);
+      childlist = childlist->next;
+    }
+  return list;
+}
+
 GSList	*pitivi_projectsourcelist_get_bin_list(PitiviProjectSourceList *self)
 {
   PitiviSourceBin *sourcebin;
