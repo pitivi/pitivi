@@ -77,7 +77,7 @@ gst_event_get_name (GstEvent *event)
  * pads upstream until it finds an element with multiple source pads.
  */
 static void
-gst_pad_set_active_recursive (GstPad * pad, gboolean active)
+my_gst_pad_set_active_recursive (GstPad * pad, gboolean active)
 {
   GstElement *parent;
   const GList *int_links;
@@ -111,7 +111,7 @@ gst_pad_set_active_recursive (GstPad * pad, gboolean active)
     
     gst_pad_set_active (sinkpad, active);
     if (peer)
-      gst_pad_set_active_recursive (peer, active);
+      my_gst_pad_set_active_recursive (peer, active);
   }
 }
 
@@ -274,7 +274,7 @@ mute_stream (GstProbe *probe, GstData **data, gpointer pdata)
   
   if (GST_IS_BUFFER (*data)) {
     PITIVI_DEBUG("got a buffer");
-    gst_pad_set_active_recursive ((GstPad *) GST_PAD_REALIZE (pad), FALSE);
+    my_gst_pad_set_active_recursive ((GstPad *) GST_PAD_REALIZE (pad), FALSE);
     gst_pad_remove_probe ((GstPad *) GST_PAD_REALIZE (pad), probe);
 /*     gst_probe_destroy (probe); */
 /*     g_free (mut); */
