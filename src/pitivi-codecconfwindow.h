@@ -47,7 +47,7 @@ typedef struct _PitiviCodecConfWindowClass PitiviCodecConfWindowClass;
 typedef struct _PitiviCodecConfWindowPrivate PitiviCodecConfWindowPrivate;
 
 struct _PitiviCodecConfWindow
-{
+{ 
   GtkWindow parent;
 
   /* instance public members */

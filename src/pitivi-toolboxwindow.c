@@ -57,7 +57,7 @@ pitivi_callb_toolbox_filenew_project ( GtkAction *action, PitiviToolboxWindow *s
   PitiviNewProjectWindow *win_new_project;
     
   /* New Project window */
-  win_new_project = pitivi_newprojectwindow_new(self->private->mainapp);
+  win_new_project = pitivi_newprojectwindow_new( self->private->mainapp );
   gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
 }
 

@@ -362,8 +362,8 @@ pitivi_settings_instance_init (GTypeInstance * instance, gpointer g_class)
     sv = sv->next;
   }
 
-  pitivi_settings_aff_all_list (self->codec);
-  pitivi_settings_aff_all_list (self->container);
+/*   pitivi_settings_aff_all_list (self->codec); */
+/*   pitivi_settings_aff_all_list (self->container); */
 
 }
 

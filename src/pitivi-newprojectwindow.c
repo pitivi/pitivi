@@ -25,7 +25,31 @@
  */
 
 /*
-    - Changement des presets en fonction du reglage selectionne
+
+  - Delete Setting : Effacer tout ce ke le setting contient :
+	o Properties
+	o Caps
+	o List de media
+	o Le Setting
+
+
+  - Delete Categorie : 
+	o Pour chaque setting de la liste de categorie
+		\ Properties
+		\ Caps
+		\ List de media
+		\ Le Setting
+	o Supprimer la categorie selectionnee
+	
+
+  - Modify : 
+	o Supprimer le setting modifie et ce kil contient
+		\ Properties
+		\ Caps
+		\ List de media
+		\ Le Setting
+	o Creer et inserer le nouveau setting dans la categorie selectionnee
+
 */
 
 #include	<gst/gst.h>
@@ -127,8 +151,8 @@ struct _PitiviNewProjectWindowPrivate
 /*
  * forward definitions
  */
-void			pitivi_newprojectwindow_add_mainapp_category (PitiviNewProjectWindow	*self) ;
-void			pitivi_newprojectwindow_add_mainapp_setting( PitiviNewProjectWindow	*self );
+void			pitivi_newprojectwindow_add_mainapp_setting( PitiviNewProjectWindow *self );
+GSList			*pitivi_newprojectwindow_get_list_media(PitiviNewProjectWindow	*self );
 void			pitivi_fill_hbox		( PitiviNewProjectWindow	*self );
 void			 pitivi_tree_create		( PitiviNewProjectWindow	*self );
 GtkWidget		*pitivi_tree_show		( PitiviNewProjectWindow	*self );
@@ -190,33 +214,32 @@ void			pitivi_newprojectwindow_close_window( GtkButton			*button,
 							      gpointer			user_data );
 void			pitivi_newprojectwindow_add_setting( GtkButton			*button, 
 							     gpointer			user_data );
-void			create_codec_conf_video		( GtkButton *button, 
-							  gpointer user_data );
-void			create_codec_conf_audio		( GtkButton *button, 
-							  gpointer user_data );
-gboolean		setting_is_selected		( GtkTreeView *tree_view, 
-							  GtkTreeModel *model, 
-							  GtkTreePath *path, 
-							  gboolean value, 
-							  gpointer user_data );
-gboolean		pitivi_del_desc			( GtkWidget *name_text_settings, 
-							  GdkEventButton *event,
-							  gpointer user_data );
-void			pitivi_add_category		(GtkButton *button, 
-							 gpointer user_data);
-void			pitivi_del_category		(GtkButton *button, 
-							 gpointer user_data);
-
-GSList			*pitivi_mainapp_project_settings( PitiviMainApp *self );
-gboolean		categorie_button_callback	( GtkWidget *cat_button_clicked, 
-							  GdkEventButton *event, 
-							  gpointer user_data );
-void			pitivi_del_settings		( GtkButton *button, 
-							  gpointer user_data);
-void			pitivi_valide_video_codec_conf	( GtkButton *button, 
-							  gpointer user_data );
-void			pitivi_valide_audio_codec_conf	( GtkButton *button, 
-							  gpointer user_data );
+void			create_codec_conf_video		( GtkButton			*button, 
+							  gpointer			user_data );
+void			create_codec_conf_audio		( GtkButton 			*button, 
+							  gpointer 			user_data );
+gboolean		setting_is_selected		( GtkTreeView 			*tree_view, 
+							  GtkTreeModel 			*model, 
+							  GtkTreePath 			*path, 
+							  gboolean 			value, 
+							  gpointer 			user_data );
+gboolean		pitivi_del_desc			( GtkWidget 			*name_text_settings, 
+							  GdkEventButton 		*event,
+							  gpointer 			user_data );
+void			pitivi_add_category		( GtkButton 			*button, 
+							  gpointer 			user_data);
+void			pitivi_del_category		( GtkButton  			*button, 
+							  gpointer 			user_data);
+GSList			*pitivi_mainapp_project_settings( PitiviMainApp 		*self );
+gboolean		categorie_button_callback	( GtkWidget 			*cat_button_clicked, 
+							  GdkEventButton 		*event, 
+							  gpointer 			user_data );
+void			pitivi_del_settings		( GtkButton 			*button, 
+							  gpointer 			user_data);
+void			pitivi_valide_video_codec_conf	( GtkButton 			*button, 
+							  gpointer 			user_data );
+void			pitivi_valide_audio_codec_conf	( GtkButton 			*button, 
+							  gpointer 			user_data );
 
 /*
  * Insert "added-value" functions here
@@ -262,8 +285,9 @@ pitivi_add_category(GtkButton *button, gpointer user_data)
 
   if ( strlen(gtk_entry_get_text(GTK_ENTRY(self->private->cat_text))) )
     { 
-      pitivi_newprojectwindow_add_mainapp_category ( self );
-      
+      pitivi_mainapp_add_newcategory( self->private->mainapp, 
+				      gtk_entry_get_text ( GTK_ENTRY (self->private->cat_text) ) );
+
       gtk_tree_store_append(self->private->tree,
 			    &self->private->pIter2,
 			    NULL);
@@ -272,13 +296,50 @@ pitivi_add_category(GtkButton *button, gpointer user_data)
     }
 }
 
+
+void
+pitivi_modif_settings(GtkButton *button, gpointer user_data)
+{
+  PitiviNewProjectWindow	*self;
+   PitiviProjectSettings		*new_setting;
+  GSList			*list_media;
+
+  self = (PitiviNewProjectWindow *) user_data;
+  
+  g_print("Entree Modif setting\n");
+  if (gtk_tree_store_iter_is_valid (self->private->tree, &self->private->pIter2) &&
+      gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2))
+    {
+      gtk_text_buffer_get_start_iter(self->private->desc_text_buffer, 
+				     &self->private->start_description_iter);
+      gtk_text_buffer_get_end_iter(self->private->desc_text_buffer, 
+				   &self->private->end_description_iter);
+      
+      /* Creation du nouveau setting En recuperant les valeurs des champs */
+      list_media = pitivi_newprojectwindow_get_list_media(self);
+      
+      new_setting = pitivi_projectsettings_new_with_name( (gchar *) gtk_entry_get_text(GTK_ENTRY(self->private->name_text)),
+							  gtk_text_buffer_get_text( GTK_TEXT_BUFFER(self->private->desc_text_buffer),
+										    &self->private->start_description_iter,
+										    &self->private->end_description_iter, 
+										    FALSE ), 
+							  list_media );
+      
+      pitivi_mainapp_modif_settings( self->private->mainapp, new_setting, self->private->position );
+      
+      gtk_tree_store_set(self->private->tree, &self->private->pIter2,
+			 0, gtk_entry_get_text(GTK_ENTRY(self->private->name_text)), -1);
+    }
+}
+
+
 void
 pitivi_del_category(GtkButton *button, gpointer user_data)
 {
   PitiviNewProjectWindow	*self;
 
   self = (PitiviNewProjectWindow *) user_data;
-
+  
   if (gtk_tree_store_iter_is_valid (self->private->tree, &self->private->pIter) && 
       (!gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter)))
     gtk_tree_store_remove (self->private->tree, &self->private->pIter);
@@ -290,10 +351,13 @@ pitivi_del_settings(GtkButton *button, gpointer user_data)
   PitiviNewProjectWindow	*self;
 
   self = (PitiviNewProjectWindow *) user_data;
-
-  if (gtk_tree_store_iter_is_valid (self->private->tree, &self->private->pIter) &&
-      gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter))
-    gtk_tree_store_remove (self->private->tree, &self->private->pIter);
+  
+  if (gtk_tree_store_iter_is_valid (self->private->tree, &self->private->pIter2) &&
+      gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2))
+    {
+      pitivi_mainapp_del_settings( self->private->mainapp, self->private->position );
+      gtk_tree_store_remove (self->private->tree, &self->private->pIter2);
+    }
 }
 
 gboolean
@@ -303,10 +367,12 @@ pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer u
   gchar				*desc_text;
   
   self = (PitiviNewProjectWindow *) user_data;
-
-  gtk_text_buffer_get_start_iter(self->private->desc_text_buffer, &self->private->start_description_iter);
-  gtk_text_buffer_get_end_iter(self->private->desc_text_buffer, &self->private->end_description_iter);
-
+  
+  gtk_text_buffer_get_start_iter(self->private->desc_text_buffer, 
+				 &self->private->start_description_iter);
+  gtk_text_buffer_get_end_iter(self->private->desc_text_buffer, 
+			       &self->private->end_description_iter);
+  
   if (event->type == GDK_BUTTON_PRESS && event->button == 1)
     {
       desc_text = gtk_text_buffer_get_text (self->private->desc_text_buffer,
@@ -326,19 +392,6 @@ pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer u
 /* 
  * Personal Fonctions
  */
-/*	Get the inputs, create a new PitiviProjectSettings and add it into the PitiviMainApp struct */
-void
-pitivi_newprojectwindow_add_mainapp_category (PitiviNewProjectWindow *self)
-{
-/*   PitiviProjectSettings	*new_setting; */
-/*   GSList			*list_media_settings; */
-/*   GstCaps			*caps_video; */
-/*   GstCaps			*caps_audio; */
-
-  
-  /* Insertion du nouveau setting dans la PitiviMainApp */
-  pitivi_mainapp_add_newcategory( self->private->mainapp, gtk_entry_get_text ( GTK_ENTRY (self->private->cat_text) ) );
-}
 
 /* element de la liste de proprietes */
 PitiviConfProperties *
@@ -366,46 +419,61 @@ pitivi_setprop_new(gchar *name, GValue value, GtkWidget *pwidget)
   return(confprop);
 }
 
-/*	Get the inputs, create a new PitiviProjectSettings and add it into the PitiviMainApp struct */
+
+/*	
+  Get the inputs, create a new PitiviProjectSettings and add it into the 
+  PitiviMainApp struct
+*/
 void
 pitivi_newprojectwindow_add_mainapp_setting (PitiviNewProjectWindow *self)
 {
   PitiviProjectSettings		*new_setting;
-  GSList			*list_media_settings;
-  GstCaps			*caps_video;
-  GstCaps			*caps_audio;
+  GSList			*list_media;
 
   gtk_text_buffer_get_start_iter(self->private->desc_text_buffer, 
 				 &self->private->start_description_iter);
   gtk_text_buffer_get_end_iter(self->private->desc_text_buffer, 
 			       &self->private->end_description_iter);
   
-  /* Creation du nouveau setting */
-  caps_video = pitivi_projectsettings_vcaps_create ( atoi ( gtk_entry_get_text(GTK_ENTRY(self->private->size_width))),
-						     atoi ( gtk_entry_get_text(GTK_ENTRY(self->private->size_height))),
-						     atoi ( gtk_entry_get_text(GTK_ENTRY(self->private->fps_text))) );
-  
-  caps_audio = pitivi_projectsettings_acaps_create ( atoi ( freq_tab[ gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_freq)) ]),
-						     gtk_spin_button_get_value_as_int ( GTK_SPIN_BUTTON( self->private->audio_combo_ech)) );
-  list_media_settings = NULL;
-
-  list_media_settings = g_slist_append( list_media_settings, (gpointer) pitivi_projectsettings_media_new( self->private->video_tabname[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->video_combo_codec) )], caps_video, gtk_combo_box_get_active (GTK_COMBO_BOX(self->private->video_combo_codec) ) ) );
-
-  
-  list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new( self->private->audio_tabname[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_codec) )], caps_audio, gtk_combo_box_get_active (GTK_COMBO_BOX(self->private->audio_combo_codec) ) ) );
+  /* Creation du nouveau setting En recuperant les valeurs des champs */
+  list_media = pitivi_newprojectwindow_get_list_media(self);
   
   new_setting = pitivi_projectsettings_new_with_name( (gchar *) gtk_entry_get_text(GTK_ENTRY(self->private->name_text)),
 						      gtk_text_buffer_get_text( GTK_TEXT_BUFFER(self->private->desc_text_buffer),
 										&self->private->start_description_iter,
 										&self->private->end_description_iter, 
 										FALSE ), 
-						      list_media_settings );
+						      list_media );
   
   /* Insertion du nouveau setting dans la PitiviMainApp */
-  pitivi_mainapp_add_newsetting(self->private->mainapp, 
+  pitivi_mainapp_add_settings(self->private->mainapp, 
 				new_setting, 
 				self->private->position );
 }
+
+
+GSList *
+pitivi_newprojectwindow_get_list_media(PitiviNewProjectWindow *self)
+{
+  GSList	*list_media;
+  GstCaps	*caps_video;
+  GstCaps	*caps_audio;
+
+  caps_video = pitivi_projectsettings_vcaps_create ( atoi ( gtk_entry_get_text(GTK_ENTRY(self->private->size_width))),
+						     atoi ( gtk_entry_get_text(GTK_ENTRY(self->private->size_height))),
+						     atoi ( gtk_entry_get_text(GTK_ENTRY(self->private->fps_text))) );
+  
+  caps_audio = pitivi_projectsettings_acaps_create ( atoi ( freq_tab[ gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_freq)) ]),
+						     gtk_spin_button_get_value_as_int ( GTK_SPIN_BUTTON( self->private->audio_combo_ech)) );
+  
+  list_media = NULL;
+  list_media = g_slist_append( list_media, (gpointer) pitivi_projectsettings_media_new( self->private->video_tabname[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->video_combo_codec) )], caps_video, gtk_combo_box_get_active (GTK_COMBO_BOX(self->private->video_combo_codec) ) ) );
+  
+  list_media = g_slist_append(list_media, (gpointer) pitivi_projectsettings_media_new( self->private->audio_tabname[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_codec) )], caps_audio, gtk_combo_box_get_active (GTK_COMBO_BOX(self->private->audio_combo_codec) ) ) );
+  
+  return (list_media);
+}
+
 
 
 void
@@ -522,7 +590,6 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   GSList			*selected_setting;
   PitiviProjectSettings		*reglage;
   GtkObject			*spin_adjustment;
-
   GstStructure			*structure;
   GValue			*val;
   
@@ -542,7 +609,6 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
 
   /* Put the description */
   gtk_text_buffer_set_text(self->private->preset_text_buffer, reglage->description, strlen(reglage->description));
-
   gtk_text_buffer_get_start_iter (self->private->desc_text_buffer, &self->private->start_description_iter );
   gtk_text_buffer_get_end_iter (self->private->desc_text_buffer, &self->private->end_description_iter );
   gtk_text_buffer_delete ( self->private->desc_text_buffer,
@@ -551,37 +617,25 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   gtk_text_buffer_set_text ( self->private->desc_text_buffer, reglage->description, strlen (reglage->description) );
 
   /* Put the Video entries */
-  structure = gst_caps_get_structure (vmedia->caps, 0);
-  val = (GValue *) gst_structure_get_value ( structure, "width");
-  gtk_entry_set_text( GTK_ENTRY (self->private->size_width) , pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
-
-  val = (GValue *) gst_structure_get_value (structure, "height");
-  gtk_entry_set_text( GTK_ENTRY (self->private->size_height ), pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
-
-  val = (GValue *) gst_structure_get_value (structure, "framerate"); 
-  gtk_entry_set_text(GTK_ENTRY (self->private->fps_text ), pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
-  
-  gtk_combo_box_set_active ( GTK_COMBO_BOX (self->private->video_combo_codec), vmedia->combo_box_codec_index );
-
-
+  if ( (structure = gst_caps_get_structure (vmedia->caps, 0) ) )
+    {
+      val = (GValue *) gst_structure_get_value ( structure, "width");
+      gtk_entry_set_text( GTK_ENTRY (self->private->size_width) , pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
+      val = (GValue *) gst_structure_get_value (structure, "height");
+      gtk_entry_set_text( GTK_ENTRY (self->private->size_height ), pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
+      val = (GValue *) gst_structure_get_value (structure, "framerate"); 
+      gtk_entry_set_text(GTK_ENTRY (self->private->fps_text ), pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
+      
+      gtk_combo_box_set_active ( GTK_COMBO_BOX (self->private->video_combo_codec), vmedia->combo_box_codec_index );
+    }
   /* Put the Audio entries */
-
-  structure = gst_caps_get_structure (amedia->caps, 0);
-  val = (GValue *) gst_structure_get_value ( structure, "channels");
-  gtk_combo_box_set_active ( GTK_COMBO_BOX (self->private->audio_combo_codec), amedia->combo_box_codec_index );
-  gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->audio_combo_ech),
-			     g_value_get_int (val));
-/* ======= */
-/*   gtk_entry_set_text(GTK_ENTRY (self->private->fps_text ),  */
-/* 		     pitivi_newprojectwindow_getstr( g_value_get_int (val) )); */
-
-/*   g_print("caps audio = %s\n", gst_caps_to_string (amedia->caps) ); */
-
-/*   structure = gst_caps_get_structure (amedia->caps, 0); */
-/*   val = (GValue *) gst_structure_get_value ( structure, "channels"); */
-/*   gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->audio_combo_ech), */
-/* 			     g_value_get_int (val)); */
-/* >>>>>>> 1.37 */
+  if ( (structure = gst_caps_get_structure (amedia->caps, 0)) )
+    {
+      val = (GValue *) gst_structure_get_value ( structure, "channels");
+      gtk_combo_box_set_active ( GTK_COMBO_BOX (self->private->audio_combo_codec), amedia->combo_box_codec_index );
+      gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->audio_combo_ech),
+				 g_value_get_int (val));
+    }
 }
 
 gchar *
@@ -820,6 +874,9 @@ pitivi_make_settings_table(PitiviNewProjectWindow *self)
   g_signal_connect( G_OBJECT(self->private->button_add), "clicked",
 		    G_CALLBACK(pitivi_newprojectwindow_add_setting), (gpointer) (GTK_WIDGET(self)) );
   
+  g_signal_connect( G_OBJECT(self->private->button_mod), "clicked",
+		    G_CALLBACK(pitivi_modif_settings), (gpointer) (GTK_WIDGET(self)) );
+
   g_signal_connect( G_OBJECT(self->private->button_del), "clicked",
 		    G_CALLBACK(pitivi_del_settings), (gpointer) (GTK_WIDGET(self)) );
 
@@ -2285,7 +2342,7 @@ pitivi_conf_default_update(PitiviConfProperties *confprop)
  */
 
 PitiviNewProjectWindow *
-pitivi_newprojectwindow_new(PitiviMainApp *mainapp)
+pitivi_newprojectwindow_new( PitiviMainApp *mainapp )
 {
   PitiviNewProjectWindow	*newprojectwindow;
   

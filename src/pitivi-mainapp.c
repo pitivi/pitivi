@@ -65,9 +65,10 @@ struct _PitiviMainAppPrivate
 /*
  * forward definitions
  */
-void			pitivi_mainapp_destroy			(GtkWidget *pWidget, gpointer pData);
+void			pitivi_mainapp_destroy			( GtkWidget *pWidget, gpointer pData );
 void			pitivi_mainapp_add_newcategory		( PitiviMainApp *self, const gchar *cat_name);
-void			pitivi_mainapp_add_newsetting		( PitiviMainApp *self, PitiviProjectSettings *new_setting, gint *position );
+void			pitivi_mainapp_add_settings		( PitiviMainApp *self, PitiviProjectSettings *new_setting, gint *position );
+void			pitivi_mainapp_del_settings		( PitiviMainApp *self, gint *position );
 
 /*
  * Insert "added-value" functions here
@@ -104,9 +105,9 @@ pitivi_mainapp_add_newcategory (PitiviMainApp *self,
    the Add_button is clicked in the PitiviNewProjectWindow
 */
 void
-pitivi_mainapp_add_newsetting( PitiviMainApp *self, 
-			       PitiviProjectSettings *new_setting,
-			       gint *position )
+pitivi_mainapp_add_settings ( PitiviMainApp *self, 
+			      PitiviProjectSettings *new_setting,
+			      gint *position )
 {
   PitiviCategorieSettings	*category;
   PitiviProjectSettings		*reglage;
@@ -114,6 +115,37 @@ pitivi_mainapp_add_newsetting( PitiviMainApp *self,
   category = (PitiviCategorieSettings *) g_slist_nth_data(self->private->project_settings_list, position[0] );
   category->list_settings = g_slist_append( category->list_settings, (gpointer) new_setting );
 }
+
+
+void
+pitivi_mainapp_modif_settings( PitiviMainApp *self, 
+			       PitiviProjectSettings *new_setting, 
+			       gint *position )
+{
+  PitiviCategorieSettings	*category;
+  PitiviProjectSettings		*mod_setting;
+  
+  category = (PitiviCategorieSettings *) g_slist_nth_data(self->private->project_settings_list, position[0] );
+  mod_setting = (PitiviProjectSettings *) g_slist_nth_data( category->list_settings , position[1] );
+  
+  category->list_settings = g_slist_remove( category->list_settings, (gconstpointer) mod_setting);
+  category->list_settings = g_slist_insert( category->list_settings, (gpointer) new_setting, position[1] );
+}
+
+
+void
+pitivi_mainapp_del_settings( PitiviMainApp *self, gint *position )
+{
+  PitiviCategorieSettings	*category;
+  PitiviProjectSettings		*del_setting;
+
+  category = (PitiviCategorieSettings *) g_slist_nth_data(self->private->project_settings_list, position[0] );
+  del_setting = (PitiviProjectSettings *) g_slist_nth_data( category->list_settings , position[1] );
+  category->list_settings = g_slist_remove( category->list_settings, (gconstpointer) del_setting);
+}
+
+
+
 
 /*
     Return The category selected in the GtkTreeStore
@@ -124,8 +156,8 @@ pitivi_mainapp_get_selected_category( PitiviMainApp *self, gint *position )
   PitiviCategorieSettings	*selected_category;
 
   selected_category = (PitiviCategorieSettings *) 
-    g_slist_nth_data(self->private->project_settings_list, 
-		     position[0]);
+    g_slist_nth_data(self->private->project_settings_list, position[0] );
+  
   return (selected_category);
 }
 
