@@ -417,7 +417,7 @@ pitivi_projectsettings_restore_thyself(PitiviProjectSettings *tofill, xmlNodePtr
   }
 }
 
-GList *
+static GList *
 pitivi_settingsvalue_list_copy (GList *orig)
 {
   GList	*res = NULL;

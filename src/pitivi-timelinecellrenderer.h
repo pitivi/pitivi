@@ -135,7 +135,6 @@ void		pitivi_timelinecellrenderer_deactivate (PitiviTimelineCellRenderer *self);
 void		pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self);
 GtkWidget *	pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimelineCellRenderer *cell );
 void		pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self );
-void		pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y);
 void		pitivi_calculate_priorities ( GtkWidget *widget );
 void		pitivi_layout_add_to_composition (PitiviTimelineCellRenderer *self, PitiviTimelineMedia *media);
 void		pitivi_layout_remove_from_composition (PitiviTimelineCellRenderer *self, PitiviTimelineMedia *media);
@@ -163,6 +162,7 @@ void	  pitivi_calculate_priorities ( GtkWidget *widget );
 gint	  compare_littlechild (gconstpointer a, gconstpointer b);
 gint	  compare_bigchild (gconstpointer a, gconstpointer b);
 void	  pitivi_layout_move (GtkLayout *layout, GtkWidget *widget, gint x, gint y);
+void	  pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y);
 void	  pitivi_media_set_size (GtkWidget *widget, guint width);
 
 /* Zooming */

@@ -85,7 +85,7 @@ pitivi_set_effectproperties(PitiviSettingsIoElement *io, GstElement *effect)
     }
 }
 
-void 
+static void 
 pitivi_effects_ok (GtkWidget *widget, GObject *obj)
 {
   PitiviEffectsWindowProperties *self;
@@ -102,7 +102,7 @@ pitivi_effects_ok (GtkWidget *widget, GObject *obj)
   gtk_object_destroy(GTK_OBJECT(obj));
 }
 
-void 
+static void 
 pitivi_effects_apply (GtkWidget *widget, GObject *obj)
 {
   PitiviEffectsWindowProperties *self;
@@ -117,7 +117,7 @@ pitivi_effects_apply (GtkWidget *widget, GObject *obj)
 }
 
 
-void 
+static void 
 pitivi_effects_cancel (GtkWidget *widget, GObject *obj)
 {
   PitiviEffectsWindowProperties *self;

@@ -329,7 +329,7 @@ pitivi_gtk_default_draw_check (
     }
 }
 
-void
+static void
 pitivi_gtk_check_button_get_props (GtkCheckButton *check_button,
 			     gint           *indicator_size,
 			     gint           *indicator_spacing)

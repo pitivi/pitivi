@@ -95,14 +95,14 @@ enum {
  * Insert "added-value" functions here
  */
 
-gchar *
+static gchar *
 pitivi_gstelementsettings_string_bold (gchar *text)
 {
   return (g_locale_to_utf8 (g_strdup_printf ("<b>%s</b>", text),
 			    -1, NULL, NULL, NULL));
 }
 
-void
+static void
 pitivi_gstelementsettings_add_new_label (gpointer data, 
 					 gchar *text)
 {
@@ -114,17 +114,17 @@ pitivi_gstelementsettings_add_new_label (gpointer data,
   return ;
 }
 
-void
-pitivi_gstelementsettings_add_new_separator (gpointer data)
-{
-  GtkWidget *Sep;
+/* static void */
+/* pitivi_gstelementsettings_add_new_separator (gpointer data) */
+/* { */
+/*   GtkWidget *Sep; */
   
-  Sep = gtk_hseparator_new ();
-  gtk_box_pack_start (GTK_BOX (data), Sep, FALSE, FALSE, BORDER);
-  return ;
-}
+/*   Sep = gtk_hseparator_new (); */
+/*   gtk_box_pack_start (GTK_BOX (data), Sep, FALSE, FALSE, BORDER); */
+/*   return ; */
+/* } */
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_add_new_frame (gpointer data,
 					 gchar *text)
 {
@@ -138,7 +138,7 @@ pitivi_gstelementsettings_add_new_frame (gpointer data,
   return (VBox);
 }
 
-void
+static void
 pitivi_gstelementsettings_add_new_frame_info (PitiviGstElementSettings *self) 
 {
     self->private->frame_info = pitivi_gstelementsettings_add_new_frame (self, "Info:");
@@ -157,7 +157,7 @@ pitivi_gstelementsettings_add_new_frame_info (PitiviGstElementSettings *self)
     return ;
 }
 
-void
+static void
 pitivi_gstelementsettings_table_widget_add (GtkWidget *Table, GtkWidget *widget, gint row, gint col)
 {
   gtk_table_attach(GTK_TABLE(Table), widget,
@@ -167,7 +167,7 @@ pitivi_gstelementsettings_table_widget_add (GtkWidget *Table, GtkWidget *widget,
   return ;
 }
 
-void
+static void
 pitivi_gstelementsettings_table_new_label_add (PitiviGstElementSettings *self,
 						gchar *text, gint row, gint col)
 {
@@ -183,7 +183,7 @@ pitivi_gstelementsettings_table_new_label_add (PitiviGstElementSettings *self,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_conf_value_string (gchar *name, GValue value)
 {
   const gchar		*string_val;
@@ -203,7 +203,7 @@ pitivi_gstelementsettings_conf_value_string (gchar *name, GValue value)
   return (text_entry);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_value_conf_boolean (gchar *name, GValue value)
 {
   GSList		*radio_list;
@@ -230,7 +230,7 @@ pitivi_gstelementsettings_value_conf_boolean (gchar *name, GValue value)
   return (button_hbox);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_value_conf_uint (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecUInt	*puint;
@@ -248,7 +248,7 @@ pitivi_gstelementsettings_value_conf_uint (gchar *name, GValue value, GParamSpec
   return (spin_button);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_value_conf_int (gchar *name, GValue value, GParamSpec	*param)
 {
   GParamSpecInt		*pint;  
@@ -266,7 +266,7 @@ pitivi_gstelementsettings_value_conf_int (gchar *name, GValue value, GParamSpec	
   return (spin_button);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_value_conf_uint64 (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecUInt64	*puint64;
@@ -284,7 +284,7 @@ pitivi_gstelementsettings_value_conf_uint64 (gchar *name, GValue value, GParamSp
   return (spin_button);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_value_conf_int64 (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecInt64	*pint64;
@@ -302,7 +302,7 @@ pitivi_gstelementsettings_value_conf_int64 (gchar *name, GValue value, GParamSpe
   return (spin_button);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_value_conf_ulong (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecULong	*pulong;
@@ -320,7 +320,7 @@ pitivi_gstelementsettings_value_conf_ulong (gchar *name, GValue value, GParamSpe
   return (spin_button);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_value_conf_long (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecLong	*plong;
@@ -338,7 +338,7 @@ pitivi_gstelementsettings_value_conf_long (gchar *name, GValue value, GParamSpec
   return (spin_button);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_value_conf_float (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecFloat	*pfloat;
@@ -356,7 +356,7 @@ pitivi_gstelementsettings_value_conf_float (gchar *name, GValue value, GParamSpe
   return (spin_button);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_value_conf_double (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecDouble	*pdouble;
@@ -374,7 +374,7 @@ pitivi_gstelementsettings_value_conf_double (gchar *name, GValue value, GParamSp
   return (spin_button);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_aff_enum (PitiviGstElementSettings *self,
 				    gchar *name, GValue value, GParamSpec *param)
 {
@@ -416,7 +416,7 @@ pitivi_gstelementsettings_aff_enum (PitiviGstElementSettings *self,
   return (widget);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_aff_flags (gchar *name, GValue value, GParamSpec *param)
 {
   GtkWidget		*Tab;
@@ -460,7 +460,7 @@ pitivi_gstelementsettings_aff_flags (gchar *name, GValue value, GParamSpec *para
   return (Tab);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_gstelementsettings_value_conf_default (PitiviGstElementSettings *self,
 					      gchar *name, GValue value, GParamSpec *param)
 {
@@ -483,7 +483,7 @@ pitivi_gstelementsettings_value_conf_default (PitiviGstElementSettings *self,
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
-void
+static void
 pitivi_gstelementsettings_table_new_param_add (PitiviGstElementSettings *self,
 					       GParamSpec *prop, gint row, gint col)
 {
@@ -545,7 +545,7 @@ pitivi_gstelementsettings_table_new_param_add (PitiviGstElementSettings *self,
   return ;
 }
 
-GParamSpec *
+static GParamSpec *
 pitivi_gstelementsettings_get_info_prop (PitiviGstElementSettings *self, gchar *name)
 {
   gint cpt;
@@ -559,7 +559,7 @@ pitivi_gstelementsettings_get_info_prop (PitiviGstElementSettings *self, gchar *
   return (NULL);
 }
 
-void
+static void
 pitivi_gstelementsettings_add_new_frame_prop (PitiviGstElementSettings *self)
 {
   gint cpt;
@@ -590,7 +590,7 @@ pitivi_gstelementsettings_add_new_frame_prop (PitiviGstElementSettings *self)
   return ;
 }
 
-void
+static void
 pitivi_gstelementsettings_create_gui (PitiviGstElementSettings *self)
 {
   self->private->element = gst_element_factory_create(self->io->factory, "test");
@@ -609,7 +609,7 @@ pitivi_gstelementsettings_create_gui (PitiviGstElementSettings *self)
 
 // ############################ SAVE ##################################### 
 
-gint
+static gint
 pitivi_gstelementsettings_get_prop_num (PitiviGstElementSettings *self, gchar *prop_name)
 {
   gint cpt;
@@ -622,7 +622,7 @@ pitivi_gstelementsettings_get_prop_num (PitiviGstElementSettings *self, gchar *p
   return (-1);
 }
 
-void
+static void
 pitivi_gstelementsettings_modify_prop (PitiviGstElementSettings *self, gchar *name, GValue value)
 {
   gint	cpt;
@@ -636,7 +636,7 @@ pitivi_gstelementsettings_modify_prop (PitiviGstElementSettings *self, gchar *na
   return ;
 }
 
-void
+static void
 pitivi_gstelementsettings_get_settings_combobox (GtkWidget *widget, PitiviGstElementSettings *self)
 {
   gchar  *prop_name;
@@ -662,7 +662,7 @@ pitivi_gstelementsettings_get_settings_combobox (GtkWidget *widget, PitiviGstEle
   return ;
 }
 
-void
+static void
 pitivi_gstelementsettings_get_settings_entry (GtkWidget *widget, PitiviGstElementSettings *self)
 {
   gchar		*type;
@@ -731,7 +731,7 @@ pitivi_gstelementsettings_get_settings_entry (GtkWidget *widget, PitiviGstElemen
   return ;
 }
 
-void
+static void
 pitivi_gstelementsettings_get_settings_box (GtkWidget *widget, PitiviGstElementSettings *self)
 {
   GList *plist;
@@ -765,7 +765,7 @@ pitivi_gstelementsettings_get_settings_box (GtkWidget *widget, PitiviGstElementS
   return ;
 }
 
-void
+static void
 pitivi_gstelementsettings_get_settings_table (GtkWidget *widget, PitiviGstElementSettings *self)
 {
   GValue value = { 0 };

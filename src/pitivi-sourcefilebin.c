@@ -25,7 +25,7 @@
 #include "pitivi-debug.h"
 #include "pitivi-sourcefilebin.h"
 
-gchar *
+static gchar *
 gst_event_get_name (GstEvent *event)
 {
   switch (GST_EVENT_TYPE (event)) {

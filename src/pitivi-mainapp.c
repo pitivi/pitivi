@@ -126,14 +126,14 @@ pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
   gtk_main_quit();
 }
 
-void
+static void
 pitivi_mainapp_callb_sourcelist (GtkWindow *win, gpointer data)
 {
   PitiviMainApp *self = data;
   self->private->srclistwin = NULL;
 }
 
-void
+static void
 pitivi_mainapp_callb_effects (GtkWindow *win, gpointer data)
 {
   PitiviMainApp *self = data;
@@ -141,14 +141,14 @@ pitivi_mainapp_callb_effects (GtkWindow *win, gpointer data)
   self->private->effectswin = NULL;
 }
 
-void
+static void
 pitivi_mainapp_callb_viewer (GtkWindow *win, gpointer data)
 {
   PitiviMainApp *self = data;
   self->private->viewerwin = NULL;
 }
 
-void
+static void
 pitivi_mainapp_callb_timelinewin (GtkWindow *win, gpointer data)
 {
   PitiviMainApp *self = data;
@@ -269,7 +269,7 @@ pitivi_mainapp_activate_viewerwindow (PitiviMainApp *self, gboolean activate)
     }
 }
 
-void
+static void
 pitivi_mainapp_create_timelinewin (PitiviMainApp *self, PitiviProject *project)
 {
   gint width;

@@ -206,7 +206,7 @@ pitivi_globalbin_set_audio_output (PitiviGlobalBin *gbin, GstElement *audioout)
     PITIVI_WARNING ("Couldn't link audioqueue to audioout\n");
 }
 
-void
+static void
 pitivi_globalbin_set_video_encoder (PitiviGlobalBin *gbin, GstElement *vencoder)
 {
 /*   PITIVI_WARNING ("Set Video Encoder"); */
@@ -233,7 +233,7 @@ pitivi_globalbin_set_video_encoder (PitiviGlobalBin *gbin, GstElement *vencoder)
     PITIVI_WARNING ("Couldn't link video encoder and queues\n");
 }
 
-void
+static void
 pitivi_globalbin_set_audio_encoder (PitiviGlobalBin *gbin, GstElement *aencoder)
 {
 /*   PITIVI_WARNING ("Set Audio Encoder"); */
@@ -262,7 +262,7 @@ pitivi_globalbin_set_audio_encoder (PitiviGlobalBin *gbin, GstElement *aencoder)
     PITIVI_WARNING ("Couldn't link audio encoder and queues\n");
 }
 
-void
+static void
 pitivi_globalbin_set_muxer (PitiviGlobalBin *gbin, GstElement *muxer)
 {
 /*   PITIVI_WARNING ("Set Muxer"); */

@@ -50,7 +50,7 @@ pitivi_element_debug(GstElement *elt) {
 }
 
 
-void
+static void
 pitivi_printf_element_nb(GstElement *elt, int dep) {
   GstScheduler	*msched;
   const GList		*pads, *childs, *pads2;

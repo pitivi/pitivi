@@ -98,19 +98,19 @@ pitivi_ruler_set_metric (GtkRuler *ruler,
     gtk_widget_queue_draw (GTK_WIDGET (ruler));
 }
 
-void
-pitivi_ruler_set_data_metric (GtkRuler *ruler,
-			      GtkRulerMetric *metric)
-{
-  g_return_if_fail (GTK_IS_RULER (ruler));
+/* static void */
+/* pitivi_ruler_set_data_metric (GtkRuler *ruler, */
+/* 			      GtkRulerMetric *metric) */
+/* { */
+/*   g_return_if_fail (GTK_IS_RULER (ruler)); */
 
-  ruler->metric = metric;
+/*   ruler->metric = metric; */
 
-  if (GTK_WIDGET_DRAWABLE (ruler))
-    gtk_widget_queue_draw (GTK_WIDGET (ruler));
-}
+/*   if (GTK_WIDGET_DRAWABLE (ruler)) */
+/*     gtk_widget_queue_draw (GTK_WIDGET (ruler)); */
+/* } */
 
-gint
+static gint
 pitivi_ruler_get_pixel_per_unit (PitiviRuler *pitivi_ruler)
 {
   gint result;
@@ -391,7 +391,7 @@ pitivi_ruler_motion_notify (GtkWidget      *widget,
   return FALSE;
 }
 
-gchar *
+static gchar *
 under_ten (int nb)
 {
   gchar *snb;
@@ -404,7 +404,7 @@ under_ten (int nb)
   return snb;
 }
 
-gchar *
+static gchar *
 format_seconds (int secs)
 {
   gchar *time[3], *str;

@@ -171,7 +171,7 @@ pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_window_set_default_size (GTK_WINDOW (self), PITIVI_EFFECTS_DF_WIN_WIDTH, PITIVI_EFFECTS_DF_WIN_HEIGHT); 
 }
 
-void
+static void
 pitivi_effects_action_on_colexp (GtkTreeView *treeview, 
 				 GtkTreeIter *TreeIter, 
 				 gchar *icon, 
@@ -191,7 +191,7 @@ pitivi_effects_action_on_colexp (GtkTreeView *treeview,
 		     -1);
 }
 
-void
+static void
 effectstree_on_row_activated (GtkTreeView        *treeview,
 			      GtkTreePath        *path,
 			      GtkTreeViewColumn  *col,
@@ -218,7 +218,7 @@ effectstree_on_row_activated (GtkTreeView        *treeview,
     }
 }
 
-void
+static void
 effectstree_on_row_collapsed (GtkTreeView *treeview, 
 			      GtkTreeIter *TreeIter, 
 			      GtkTreePath *arg2, 
@@ -228,7 +228,7 @@ effectstree_on_row_collapsed (GtkTreeView *treeview,
 }
 
 
-void
+static void
 effectstree_on_row_expanded (GtkTreeView *treeview,
 			     GtkTreeIter *TreeIter,
 			     GtkTreePath *arg2, 
@@ -239,7 +239,7 @@ effectstree_on_row_expanded (GtkTreeView *treeview,
 
 /* Insertion on Node */
 
-void
+static void
 pitivi_effectstree_insert_node (PitiviEffectsTree *tree_effect,
 				 GtkTreeIter *child,
 				 GtkTreeIter *parent,
@@ -259,7 +259,7 @@ pitivi_effectstree_insert_node (PitiviEffectsTree *tree_effect,
   tree_effect->pixbuf = pixbuf;
 }
 
-void
+static void
 pitivi_effectstree_insert_transition (PitiviEffectsWindow *win,
 				      PitiviEffectsTree *tree_effect,
 				      GtkTreeIter *child,
@@ -286,7 +286,7 @@ pitivi_effectstree_insert_transition (PitiviEffectsWindow *win,
 }
 
 
-void
+static void
 pitivi_effectstree_insert_effect (PitiviEffectsWindow *win,
 				  PitiviEffectsTree *tree_effect,
 				  GtkTreeIter *child,
@@ -316,7 +316,7 @@ pitivi_effectstree_insert_effect (PitiviEffectsWindow *win,
  * drag							      *
  **************************************************************/
 
-void
+static void
 slide_effects_info (PitiviEffectsWindow *self, gint64 length, gchar *path)
 {
   struct _Pslide
@@ -425,7 +425,7 @@ gchar	*get_icon_fx(G_CONST_RETURN gchar *name, gint type)
   return (icon_fx);
 }
 
-void
+static void
 insert_video_effects_on_tree (PitiviEffectsWindow *win,
 			      PitiviEffectsTree *tree_effect, 
 			      GtkTreeIter *child, 
@@ -511,7 +511,7 @@ insert_video_effects_on_tree (PitiviEffectsWindow *win,
     }
 }
 
-void
+static void
 insert_audio_effects_on_tree (PitiviEffectsWindow *win,
 			      PitiviEffectsTree *tree_effect, 
 			      GtkTreeIter *child, 
@@ -556,7 +556,7 @@ insert_audio_effects_on_tree (PitiviEffectsWindow *win,
     }
 }
 
-void
+static void
 insert_transition_effects_on_tree (PitiviEffectsWindow *win,
 				   PitiviEffectsTree *tree_effect, 
 				   GtkTreeIter *child, 

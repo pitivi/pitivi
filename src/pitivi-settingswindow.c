@@ -79,7 +79,7 @@ pitivi_settingswindow_get_row_list (GList *List, gint row)
   return (NULL);
 }
 
-GstElementFactory *
+static GstElementFactory *
 pitivi_settingswindow_combobox_get_active (GtkWidget *widget)
 {
   GstElementFactory *elm;
@@ -90,7 +90,7 @@ pitivi_settingswindow_combobox_get_active (GtkWidget *widget)
   return (elm);
 }
 
-void 
+static void 
 pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSettingsWindow *self)
 {
   PitiviSettingsIoElement	*elm_info;
@@ -154,7 +154,7 @@ pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSett
   return ;
 }
 
-void
+static void
 pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 {
   PitiviSettingsWindow	*self;
@@ -212,7 +212,7 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
   return ;
 }
 
-void
+static void
 pitivi_settingswindow_cb_destroy (GtkWidget *widget, gpointer data)
 {
   /*   PitiviSettingsWindow *self = (PitiviSettingsWindow *) data; */
@@ -222,43 +222,43 @@ pitivi_settingswindow_cb_destroy (GtkWidget *widget, gpointer data)
   return ;
 }
 
-GList *
-pitivi_settings_new_list (GList *old, gint num)
-{
-  gint	cpt;
-  GList *list;
+/* static GList * */
+/* pitivi_settings_new_list (GList *old, gint num) */
+/* { */
+/*   gint	cpt; */
+/*   GList *list; */
 
-  list = NULL;
-  list = g_list_append (list , 
-			pitivi_settingswindow_get_row_list (old, num));
-  for (cpt = 0; old; old = g_list_next (old), cpt++) {
-    if (cpt != num) {
-      list = g_list_append (list , old->data);
-    }
-  }
-  return (list);
-}
+/*   list = NULL; */
+/*   list = g_list_append (list ,  */
+/* 			pitivi_settingswindow_get_row_list (old, num)); */
+/*   for (cpt = 0; old; old = g_list_next (old), cpt++) { */
+/*     if (cpt != num) { */
+/*       list = g_list_append (list , old->data); */
+/*     } */
+/*   } */
+/*   return (list); */
+/* } */
 
-GList *
-pitivi_settings_get_pointer (GList *elm, gint row, gint col)
-{
-  gint cpt;
+/* static GList * */
+/* pitivi_settings_get_pointer (GList *elm, gint row, gint col) */
+/* { */
+/*   gint cpt; */
 
-  for (cpt = 1; elm; elm = g_list_next (elm), cpt++) {
-    if (row == cpt) {
-      PitiviSettingsMimeType *tmp = (PitiviSettingsMimeType *) elm->data;
+/*   for (cpt = 1; elm; elm = g_list_next (elm), cpt++) { */
+/*     if (row == cpt) { */
+/*       PitiviSettingsMimeType *tmp = (PitiviSettingsMimeType *) elm->data; */
 
-      if (col == 1) {
-	return (tmp->decoder);
-      } else if (col == 2) {
-	return (tmp->encoder);
-      }      
-    }
-  }
-  return (NULL);
-}
+/*       if (col == 1) { */
+/* 	return (tmp->decoder); */
+/*       } else if (col == 2) { */
+/* 	return (tmp->encoder); */
+/*       }       */
+/*     } */
+/*   } */
+/*   return (NULL); */
+/* } */
 
-void
+static void
 pitivi_settingswindow_save_settings (GList *elm, GtkWidget *widget)
 {
   GList *list;
@@ -295,7 +295,7 @@ pitivi_settingswindow_save_settings (GList *elm, GtkWidget *widget)
   return ;
 }
 
-void 
+static void 
 pitivi_settingswindow_cb_ok (GtkWidget *widget, gpointer data)
 {
   PitiviSettingsWindow *self = (PitiviSettingsWindow *) data;
@@ -311,7 +311,7 @@ pitivi_settingswindow_cb_ok (GtkWidget *widget, gpointer data)
   return ;
 }
 
-void 
+static void 
 pitivi_settingswindow_cb_cancel (GtkWidget *widget, gpointer data)
 {
   PitiviSettingsWindow *self = (PitiviSettingsWindow *) data;
@@ -337,7 +337,7 @@ pitivi_settingswindow_table_widget_add (GtkWidget *Table, GtkWidget *widget, gin
   return ;
 }
 
-void
+static void
 pitivi_settingswindow_ajout_button (GtkWidget *Table, gint row, gint col, 
 				    gchar *stock_id, gpointer pt)
 {
@@ -353,7 +353,7 @@ pitivi_settingswindow_ajout_button (GtkWidget *Table, gint row, gint col,
   return ;
 }
 
-void
+static void
 pitivi_settingswindow_ajout_label (GtkWidget *Table, gint row, gint col, gchar *lname)
 {
   GtkWidget	*Label;
@@ -367,7 +367,7 @@ pitivi_settingswindow_ajout_label (GtkWidget *Table, gint row, gint col, gchar *
   return ;
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_settingswindow_ajout_combobox (GtkWidget *Table, gint row, gint col, GList *List)
 {
   GtkWidget	*combobox;
@@ -388,7 +388,7 @@ pitivi_settingswindow_ajout_combobox (GtkWidget *Table, gint row, gint col, GLis
   return (combobox);
 }
 
-void
+static void
 pitivi_settingswindow_create_row_header (GtkWidget *Table)
 {
   pitivi_settingswindow_ajout_label (Table, 0, 0, 
@@ -404,7 +404,7 @@ pitivi_settingswindow_create_row_header (GtkWidget *Table)
   return ;
 }
 
-void
+static void
 pitivi_settingswindow_ajout_coder (GtkWidget *Box, gint row, gint col, GList *List)
 {
   if (List) {
@@ -425,7 +425,7 @@ pitivi_settingswindow_ajout_coder (GtkWidget *Box, gint row, gint col, GList *Li
   return ;
 }
 
-gchar *
+static gchar *
 pitivi_settingswindow_format_flux (GstCaps *flux)
 {
   gchar *str;
@@ -436,7 +436,7 @@ pitivi_settingswindow_format_flux (GstCaps *flux)
   return (tmp[0]);
 }
 
-void
+static void
 pitivi_settingswindow_ajout_label_tips (GtkWidget *Table, gint row, gint col, gchar *lname, gchar *tips)
 {
   GtkWidget	*Label;
@@ -460,7 +460,7 @@ pitivi_settingswindow_ajout_label_tips (GtkWidget *Table, gint row, gint col, gc
   return ;
 }
 
-void
+static void
 pitivi_settingswindow_aff_row (GtkWidget *Table, PitiviSettingsMimeType *mime, gint row)
 {
   pitivi_settingswindow_ajout_label_tips (Table, row, 0, pitivi_settingswindow_format_flux (mime->flux), 
@@ -471,7 +471,7 @@ pitivi_settingswindow_aff_row (GtkWidget *Table, PitiviSettingsMimeType *mime, g
   return ;
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_settingswindow_create_table (GtkWidget *frame, GList *List)
 {
   gint		cpt;
@@ -503,7 +503,7 @@ pitivi_settingswindow_create_table (GtkWidget *frame, GList *List)
   return (Table);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_settingswindow_ajout_inout_combobox (GtkWidget *Table, gint row, gint col, GList *List, gchar *path)
 {
   GtkWidget	*combobox;
@@ -531,7 +531,7 @@ pitivi_settingswindow_ajout_inout_combobox (GtkWidget *Table, gint row, gint col
   return (combobox);
 }
 
-void
+static void
 pitivi_settingswindow_create_row_table_InOut (PitiviSettingsWindow *self,
 					      GList *element, GtkWidget *table, 
 					      gchar *io, gchar *type, gint row)
@@ -546,7 +546,7 @@ pitivi_settingswindow_create_row_table_InOut (PitiviSettingsWindow *self,
   return ;
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_settingswindow_create_frame_InOut (PitiviSettingsWindow *self, 
 					  GList *element, GtkWidget *table, gchar *io)
 {
@@ -571,7 +571,7 @@ pitivi_settingswindow_create_frame_InOut (PitiviSettingsWindow *self,
   return (Tab);
 }
 
-void
+static void
 pitivi_settingswindow_create_table_InOut (PitiviSettingsWindow *self, GList *element, GtkWidget *frame)
 {
   GtkWidget *Table;
@@ -586,7 +586,7 @@ pitivi_settingswindow_create_table_InOut (PitiviSettingsWindow *self, GList *ele
   return ;
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_settingswindow_create_frame (GtkWidget *widget, gchar *title, gchar *lname)
 {
   GtkWidget	*frame;
@@ -601,7 +601,7 @@ pitivi_settingswindow_create_frame (GtkWidget *widget, gchar *title, gchar *lnam
   return (frame);
 }
 
-void
+static void
 pitivi_settingswindow_create_all_frames (PitiviSettingsWindow *self)
 {
   PitiviMainApp		*mainapp = ((PitiviWindows *) self)->mainapp;
@@ -627,7 +627,7 @@ pitivi_settingswindow_create_all_frames (PitiviSettingsWindow *self)
   return ;
 }
 
-void
+static void
 pitivi_settingswindow_create_gui (PitiviSettingsWindow *self)
 {
   // main container box

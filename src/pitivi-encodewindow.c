@@ -33,7 +33,7 @@ typedef struct _EncodePrivate {
   GtkWidget	*preview;
 }		EncodePrivate;
 
-gboolean
+static gboolean
 window_deleted (GtkWidget *win, GdkEvent *event, EncodePrivate *priv)
 {
   /* Stop and free */
@@ -45,7 +45,7 @@ window_deleted (GtkWidget *win, GdkEvent *event, EncodePrivate *priv)
   return FALSE;
 }
 
-void
+static void
 file_select (GtkWidget *button, EncodePrivate *priv)
 {
   GtkWidget	*dialog;
@@ -64,7 +64,7 @@ file_select (GtkWidget *button, EncodePrivate *priv)
   gtk_widget_destroy (dialog);
 }
 
-void
+static void
 cb_preview (GtkWidget *button, EncodePrivate *priv)
 {
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
@@ -74,7 +74,7 @@ cb_preview (GtkWidget *button, EncodePrivate *priv)
   }
 }
 
-void
+static void
 cb_record (GtkWidget *button, EncodePrivate *priv)
 {
   if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button))) {
@@ -85,20 +85,20 @@ cb_record (GtkWidget *button, EncodePrivate *priv)
   }
 }
   
-void
+static void
 cb_stop (GtkWidget *button, EncodePrivate *priv)
 {
   gst_element_set_state (priv->project->pipeline, GST_STATE_READY);
 }
 
-void
+static void
 cb_exit (GtkWidget *button, EncodePrivate *priv)
 {
   gtk_widget_destroy (GTK_WIDGET (priv->window));
   window_deleted (button, NULL, priv);
 }
 
-GtkWidget *
+static GtkWidget *
 make_file_box (GtkWindow *win, EncodePrivate *priv)
 {
   GtkWidget	*fbox;
@@ -123,7 +123,7 @@ make_file_box (GtkWindow *win, EncodePrivate *priv)
   return fbox;
 }
 
-GtkWidget *
+static GtkWidget *
 make_buttons_box (GtkWindow *win, EncodePrivate *priv)
 {
   GtkWidget	*bhbox;
@@ -151,7 +151,7 @@ make_buttons_box (GtkWindow *win, EncodePrivate *priv)
   return bhbox;
 }
 
-void
+static void
 pitivi_encodewindow_make_gui (GtkWindow *win)
 {
   GtkWidget	*main_vbox;

@@ -150,49 +150,49 @@ struct _PitiviNewProjectWindowPrivate
  * forward definitions
  */
 
-void			pitivi_fill_hbox		( PitiviNewProjectWindow	*self );
-void			 pitivi_tree_create		( PitiviNewProjectWindow	*self );
-GtkWidget		*pitivi_tree_show		( PitiviNewProjectWindow	*self );
-GtkWidget		*pitivi_notebook_new		( PitiviNewProjectWindow	*self );
-GtkWidget		*pitivi_make_presets_hbox	( PitiviNewProjectWindow	*self );
-GtkWidget		*pitivi_create_presets_table	( PitiviNewProjectWindow	*self );
-GtkWidget		*pitivi_make_settings_table	( PitiviNewProjectWindow	*self );
-GtkWidget		*pitivi_make_video_frame	( PitiviNewProjectWindow	*self );
-GtkWidget		*pitivi_make_audio_frame	( PitiviNewProjectWindow	*self );
-GtkWidget		*pitivi_make_container_frame	( PitiviNewProjectWindow	*self );
-GtkWidget		*pitivi_make_name_frame		( PitiviNewProjectWindow	*self );
-GtkWidget		*pitivi_make_cat_frame		( PitiviNewProjectWindow	*self );
-PitiviConfProperties	*pitivi_setprop_new		( gchar				*name, GValue	value, GtkWidget	*pwidget );
-gchar			*pitivi_newprojectwindow_getstr	( gint				i );
-void			pitivi_newprojectwindow_put_info( PitiviNewProjectWindow	*self, gchar		*setting_name );
-gchar			*pitivi_combobox_get_active	( GtkWidget			*combobox, gchar	*listname );
-gchar			*get_selected_container		( PitiviNewProjectWindow	*self );
-int			pitivi_get_nb_codec		( gchar	*klass_choice );
-PitiviCombobox		*pitivi_make_codec_combobox	( gchar	*klass_choice );
+static void			pitivi_fill_hbox		( PitiviNewProjectWindow	*self );
+static void			 pitivi_tree_create		( PitiviNewProjectWindow	*self );
+static GtkWidget		*pitivi_tree_show		( PitiviNewProjectWindow	*self );
+static GtkWidget		*pitivi_notebook_new		( PitiviNewProjectWindow	*self );
+static GtkWidget		*pitivi_make_presets_hbox	( PitiviNewProjectWindow	*self );
+static GtkWidget		*pitivi_create_presets_table	( PitiviNewProjectWindow	*self );
+static GtkWidget		*pitivi_make_settings_table	( PitiviNewProjectWindow	*self );
+static GtkWidget		*pitivi_make_video_frame	( PitiviNewProjectWindow	*self );
+static GtkWidget		*pitivi_make_audio_frame	( PitiviNewProjectWindow	*self );
+static GtkWidget		*pitivi_make_container_frame	( PitiviNewProjectWindow	*self );
+static GtkWidget		*pitivi_make_name_frame		( PitiviNewProjectWindow	*self );
+static GtkWidget		*pitivi_make_cat_frame		( PitiviNewProjectWindow	*self );
+/* static PitiviConfProperties	*pitivi_setprop_new		( gchar				*name, GValue	value, GtkWidget	*pwidget ); */
+static gchar			*pitivi_newprojectwindow_getstr	( gint				i );
+static void			pitivi_newprojectwindow_put_info( PitiviNewProjectWindow	*self, gchar		*setting_name );
+static gchar			*pitivi_combobox_get_active	( GtkWidget			*combobox, gchar	*listname );
+static gchar			*get_selected_container		( PitiviNewProjectWindow	*self );
+static int			pitivi_get_nb_codec		( gchar	*klass_choice );
+static PitiviCombobox		*pitivi_make_codec_combobox	( gchar	*klass_choice );
 
 /* 
  *  Signals Definitions 
 */
 
 // Category and Settings Signals
-void			pitivi_npw_close_window		( GtkButton			*button, gpointer	user_data );
-void			pitivi_npw_add_category		( GtkButton 			*button, gpointer	user_data);
-void			pitivi_npw_add_setting		( GtkButton			*button, gpointer	user_data );
-void			pitivi_npw_add_projectsettings	( PitiviNewProjectWindow	*self );
-void			pitivi_npw_mod_setting		( GtkButton 			*button, gpointer 	user_data);
-PitiviMediaSettings	*pitivi_npw_get_a_media		( PitiviNewProjectWindow	*self );
-PitiviMediaSettings	*pitivi_npw_get_v_media		( PitiviNewProjectWindow	*self );
-void			pitivi_npw_del_setting		( GtkButton 			*button, gpointer 	user_data);
-gboolean		pitivi_del_desc			( GtkWidget 			*name_text_settings, GdkEventButton 	*event, gpointer user_data );
+static void			pitivi_npw_close_window		( GtkButton			*button, gpointer	user_data );
+static void			pitivi_npw_add_category		( GtkButton 			*button, gpointer	user_data);
+static void			pitivi_npw_add_setting		( GtkButton			*button, gpointer	user_data );
+static void			pitivi_npw_add_projectsettings	( PitiviNewProjectWindow	*self );
+static void			pitivi_npw_mod_setting		( GtkButton 			*button, gpointer 	user_data);
+static PitiviMediaSettings	*pitivi_npw_get_a_media		( PitiviNewProjectWindow	*self );
+static PitiviMediaSettings	*pitivi_npw_get_v_media		( PitiviNewProjectWindow	*self );
+static void			pitivi_npw_del_setting		( GtkButton 			*button, gpointer 	user_data);
+static gboolean		pitivi_del_desc			( GtkWidget 			*name_text_settings, GdkEventButton 	*event, gpointer user_data );
 
-void			create_codec_conf_video		( GtkWidget			*widget, gpointer		user_data );
-void			create_codec_conf_audio		( GtkWidget 			*widget, gpointer		user_data );
-gboolean		setting_is_selected		( GtkTreeView 			*tree_view, GtkTreeModel	*model, GtkTreePath 	*path, gboolean 	value, gpointer 	user_data );
+static void			create_codec_conf_video		( GtkWidget			*widget, gpointer		user_data );
+static void			create_codec_conf_audio		( GtkWidget 			*widget, gpointer		user_data );
+static gboolean		setting_is_selected		( GtkTreeView 			*tree_view, GtkTreeModel	*model, GtkTreePath 	*path, gboolean 	value, gpointer 	user_data );
 
-void			pitivi_del_category		( GtkButton  			*button, gpointer 		user_data );
-gboolean		categorie_button_callback	( GtkWidget 			*cat_button_clicked, 
-							  GdkEventButton 		*event, 
-							  gpointer 			user_data );
+static void			pitivi_del_category		( GtkButton  			*button, gpointer 		user_data );
+/* static gboolean		categorie_button_callback	( GtkWidget 			*cat_button_clicked,  */
+/* 							  GdkEventButton 		*event,  */
+/* 							  gpointer 			user_data ); */
 gchar			*pitivi_settingswindow_get_row_list ( GList	*List, gint	row );
 
 /*
@@ -205,7 +205,7 @@ gchar			*pitivi_settingswindow_get_row_list ( GList	*List, gint	row );
  * Signals
  */
 
-void 
+static void 
 pitivi_npw_close_window(GtkButton *button, gpointer user_data)
 {
   gtk_widget_destroy(user_data);
@@ -213,7 +213,7 @@ pitivi_npw_close_window(GtkButton *button, gpointer user_data)
 
 /* *** CATEGORIES *** */
 /* Add the new category when cat_add button is clicked */
-void
+static void
 pitivi_npw_add_category(GtkButton *button, gpointer user_data)
 {
   PitiviNewProjectWindow	*self = (PitiviNewProjectWindow *) user_data;
@@ -229,7 +229,7 @@ pitivi_npw_add_category(GtkButton *button, gpointer user_data)
     }
 }
 
-void
+static void
 pitivi_del_category(GtkButton *button, gpointer user_data)
 {
   PitiviNewProjectWindow	*self = (PitiviNewProjectWindow *) user_data;
@@ -248,7 +248,7 @@ pitivi_del_category(GtkButton *button, gpointer user_data)
 
 /* *** SETTINGS *** */
 
-void
+static void
 pitivi_npw_put_properties(PitiviMediaSettings *media, GList *properties)
 {
   PitiviSettingsValue	*tmp;
@@ -266,7 +266,7 @@ pitivi_npw_put_properties(PitiviMediaSettings *media, GList *properties)
   }
 }
 
-PitiviMediaSettings *
+static PitiviMediaSettings *
 pitivi_npw_get_a_media(PitiviNewProjectWindow *self)
 {
   PitiviMediaSettings	*media;
@@ -290,7 +290,7 @@ pitivi_npw_get_a_media(PitiviNewProjectWindow *self)
   return (media);
 }
 
-PitiviMediaSettings *
+static PitiviMediaSettings *
 pitivi_npw_get_v_media(PitiviNewProjectWindow *self)
 {
   PitiviMediaSettings	*media;
@@ -312,7 +312,7 @@ pitivi_npw_get_v_media(PitiviNewProjectWindow *self)
   return (media);
 }
 
-void
+static void
 pitivi_npw_add_projectsettings (PitiviNewProjectWindow *self)
 {
   PitiviMainApp			*mainapp = ((PitiviWindows *) self)->mainapp;
@@ -341,7 +341,7 @@ pitivi_npw_add_projectsettings (PitiviNewProjectWindow *self)
 }
 
 /* Add the new setting when button_add is clicked */
-void
+static void
 pitivi_npw_add_setting (GtkButton *button, gpointer user_data)
 {
   PitiviNewProjectWindow	*self = (PitiviNewProjectWindow *) user_data;
@@ -362,7 +362,7 @@ pitivi_npw_add_setting (GtkButton *button, gpointer user_data)
 }
 
 /* Modify the setting selected when button_mod is clicked */
-void
+static void
 pitivi_npw_mod_setting(GtkButton *button, gpointer user_data)
 {
   PitiviNewProjectWindow	*self = (PitiviNewProjectWindow *) user_data;
@@ -398,7 +398,7 @@ pitivi_npw_mod_setting(GtkButton *button, gpointer user_data)
 }
 
 /* Delete the setting selected when button_del is clicked */
-void
+static void
 pitivi_npw_del_setting(GtkButton *button, gpointer user_data)
 {
   PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) user_data;
@@ -413,7 +413,7 @@ pitivi_npw_del_setting(GtkButton *button, gpointer user_data)
 }
 
 /* Delete the description when focus is set into the field */
-gboolean
+static gboolean
 pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer user_data)
 {
   PitiviNewProjectWindow	*self;
@@ -463,20 +463,20 @@ pitivi_npw_select_first_setting(PitiviNewProjectWindow *self)
 }
 
 /* element de la liste de proprietes */
-PitiviConfProperties *
-pitivi_setprop_new(gchar *name, GValue value, GtkWidget *pwidget)
-{
-  PitiviConfProperties	*confprop;
+/* static PitiviConfProperties * */
+/* pitivi_setprop_new(gchar *name, GValue value, GtkWidget *pwidget) */
+/* { */
+/*   PitiviConfProperties	*confprop; */
 
-  confprop = g_new0(PitiviConfProperties, 1);
-  confprop->pname = name;
-  confprop->value = value;
-  confprop->pwidget = pwidget;
+/*   confprop = g_new0(PitiviConfProperties, 1); */
+/*   confprop->pname = name; */
+/*   confprop->value = value; */
+/*   confprop->pwidget = pwidget; */
 
-  return(confprop);
-}
+/*   return(confprop); */
+/* } */
 
-void
+static void
 pitivi_fill_hbox(PitiviNewProjectWindow *self)
 {
   GtkWidget	*notebook;
@@ -506,7 +506,7 @@ pitivi_fill_hbox(PitiviNewProjectWindow *self)
   gtk_box_pack_start (GTK_BOX (self->private->hbox), notebook, TRUE, TRUE, 0);
 }
 
-void
+static void
 pitivi_tree_create(PitiviNewProjectWindow *self)
 {
   PitiviSettings		*gl_settings;
@@ -536,7 +536,7 @@ pitivi_tree_create(PitiviNewProjectWindow *self)
     }
 }
 
-gboolean
+static gboolean
 setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model, 
 		    GtkTreePath *path, gboolean value, gpointer user_data)
 {
@@ -586,7 +586,7 @@ setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
   return TRUE;
 }
 
-gchar	*
+static gchar	*
 pitivi_npw_get_properties(GList *properties)
 {
   PitiviSettingsValue	*setting_value;
@@ -609,7 +609,7 @@ pitivi_npw_get_properties(GList *properties)
   return (vprop);
 }
 
-void
+static void
 pitivi_npw_put_entire_description(PitiviNewProjectWindow *self, PitiviProjectSettings *reglage)
 {
   PitiviMediaSettings	*vmedia;
@@ -682,7 +682,7 @@ pitivi_npw_put_entire_description(PitiviNewProjectWindow *self, PitiviProjectSet
   g_free(vmedia_desc);
 }
 
-gint
+static gint
 get_index_from_inttab (gint *tabint, gint value)
 {
   gint	i;
@@ -693,7 +693,7 @@ get_index_from_inttab (gint *tabint, gint value)
   return (-1);
 }
 
-gint
+static gint
 pitivi_npw_get_index_from_tabname ( PitiviNewProjectWindow *self, gchar **tabname, gchar *codec_factory_name )
 {
   gint		i;
@@ -704,14 +704,14 @@ pitivi_npw_get_index_from_tabname ( PitiviNewProjectWindow *self, gchar **tabnam
   return ( -1 );
 }
 
-gchar *
+static gchar *
 get_selected_container (PitiviNewProjectWindow *self)
 {
   return g_list_nth_data (self->private->container_list, 
 			  gtk_combo_box_get_active (GTK_COMBO_BOX (self->private->container_cbox)));
 }
 
-void
+static void
 pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_name)
 {
   PitiviMediaSettings		*vmedia;
@@ -795,7 +795,7 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   }
 }
 
-gchar *
+static gchar *
 pitivi_newprojectwindow_getstr(gint i)
 {
   gchar  *str;
@@ -827,7 +827,7 @@ pitivi_newprojectwindow_getstr(gint i)
   return (str);
 }
 
-GtkWidget *
+static GtkWidget *
 pitivi_tree_show(PitiviNewProjectWindow *self)
 {
   GtkWidget		*show_tree;
@@ -857,7 +857,7 @@ pitivi_tree_show(PitiviNewProjectWindow *self)
   return (show_tree);
 }
 
-GtkWidget*
+static GtkWidget*
 pitivi_notebook_new(PitiviNewProjectWindow *self)
 {
   GtkWidget	*notebook;
@@ -886,7 +886,7 @@ pitivi_notebook_new(PitiviNewProjectWindow *self)
   return (notebook);
 }
 
-GtkWidget*
+static GtkWidget*
 pitivi_make_presets_hbox(PitiviNewProjectWindow *self)
 {
   GtkWidget	*presets_hbox;
@@ -906,7 +906,7 @@ pitivi_make_presets_hbox(PitiviNewProjectWindow *self)
   return (presets_hbox);
 }
 
-void
+static void
 pitivi_create_new_project ( GtkAction *action, PitiviNewProjectWindow *self )
 {
   PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
@@ -930,7 +930,7 @@ pitivi_create_new_project ( GtkAction *action, PitiviNewProjectWindow *self )
   gtk_widget_destroy (GTK_WIDGET (self));
 }
 
-GtkWidget*
+static GtkWidget*
 pitivi_create_presets_table(PitiviNewProjectWindow *self)
 {
   GtkWidget		*name_scroll;
@@ -993,7 +993,7 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
   return (table);
 }
 
-GtkWidget*
+static GtkWidget*
 pitivi_make_settings_table(PitiviNewProjectWindow *self)
 {
   GtkWidget		*settings_table;
@@ -1056,7 +1056,7 @@ pitivi_make_settings_table(PitiviNewProjectWindow *self)
   return (settings_table);
 }
 
-GtkWidget*
+static GtkWidget*
 pitivi_make_name_frame(PitiviNewProjectWindow *self)
 {
   GtkWidget		*name_frame;
@@ -1116,7 +1116,7 @@ pitivi_make_name_frame(PitiviNewProjectWindow *self)
   return (name_frame);  
 }
 
-GtkWidget*
+static GtkWidget*
 pitivi_make_cat_frame(PitiviNewProjectWindow *self)
 {
 
@@ -1156,7 +1156,7 @@ pitivi_make_cat_frame(PitiviNewProjectWindow *self)
   return (cat_frame);
 }
 
-int
+static int
 pitivi_get_nb_codec(gchar *klass_choice)
 {
   int			i;
@@ -1185,7 +1185,7 @@ pitivi_get_nb_codec(gchar *klass_choice)
   return(nb_codec);
 }
 
-PitiviCombobox*
+static PitiviCombobox*
 pitivi_make_codec_combobox(gchar *klass_choice)
 {
   int			i;
@@ -1239,7 +1239,7 @@ pitivi_make_codec_combobox(gchar *klass_choice)
   return(codec_combobox);
 }
 
-GtkWidget*
+static GtkWidget*
 make_new_container_cbox (PitiviNewProjectWindow *self)
 {
   PitiviMainApp	*mainapp = PITIVI_WINDOWS(self)->mainapp;
@@ -1268,7 +1268,7 @@ make_new_container_cbox (PitiviNewProjectWindow *self)
   return cbox;
 }
 
-GtkWidget*
+static GtkWidget*
 pitivi_make_container_frame (PitiviNewProjectWindow *self)
 {
   GtkWidget	*cframe;
@@ -1290,7 +1290,7 @@ pitivi_make_container_frame (PitiviNewProjectWindow *self)
   return cframe;
 }
 
-GtkWidget*
+static GtkWidget*
 pitivi_make_video_frame(PitiviNewProjectWindow *self)
 {
   GtkWidget		*video_table;
@@ -1422,7 +1422,7 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
   return (video_frame);
 }
  
-GtkWidget*
+static GtkWidget*
 pitivi_make_audio_frame(PitiviNewProjectWindow *self)
 {
   GtkWidget		*audio_frame;
@@ -1545,7 +1545,7 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
   return (audio_frame);   
 }
 
-gchar *
+static gchar *
 pitivi_combobox_get_active (GtkWidget *widget, gchar *listname)
 {
   gchar *elm;
@@ -1556,7 +1556,7 @@ pitivi_combobox_get_active (GtkWidget *widget, gchar *listname)
   return (elm);
 }
 
-void
+static void
 create_codec_conf_video(GtkWidget *widget, gpointer data)
 {
   PitiviNewProjectWindow	*self;
@@ -1599,7 +1599,7 @@ create_codec_conf_video(GtkWidget *widget, gpointer data)
   return ;
 }
 
-void
+static void
 create_codec_conf_audio(GtkWidget *widget, gpointer data)
 {
   PitiviNewProjectWindow	*self;

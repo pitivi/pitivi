@@ -97,7 +97,7 @@ pitivi_progressbar_set_fraction (PitiviProgressBar *self, gdouble val)
   return ;
 }
 
-gboolean pitivi_cancel_progessing (GtkWidget  *widget)
+static gboolean pitivi_cancel_progessing (GtkWidget  *widget)
 {
   PitiviProgressBar	*self = PITIVI_PROGRESSBAR(widget);
   

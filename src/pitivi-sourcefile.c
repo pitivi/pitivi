@@ -102,7 +102,7 @@ enum
     PROP_MAINAPP,
   };
 
-int
+static int
 g_tablen (gchar **tab)
 {
   int	i;
@@ -132,7 +132,7 @@ get_pad_type (GstPad *pad)
   Returns a nicely formatted version of the caps (for audio or video)
 */
 
-char *
+static char *
 pretty_caps_to_string (GstCaps *caps)
 {
   GstStructure	*struc;
@@ -162,7 +162,7 @@ pretty_caps_to_string (GstCaps *caps)
   return g_strdup("Unknown");
 }
 
-void
+static void
 record_pad_info (PitiviSourceFile *self, int type, GstPad *pad)
 {
   char	**info;
@@ -189,7 +189,7 @@ record_pad_info (PitiviSourceFile *self, int type, GstPad *pad)
   }
 }
 
-void
+static void
 establish_length (PitiviSourceFile *self)
 {
   guint64	lena = 0, lenv = 0;
@@ -209,7 +209,7 @@ establish_length (PitiviSourceFile *self)
   self->length = MAX(lena, lenv);
 }
 
-int
+static int
 pitivi_sourcefile_store_pad (PitiviSourceFile *sf, GstPad *pad)
 {
   gint		type;
@@ -242,7 +242,7 @@ pitivi_sourcefile_store_pad (PitiviSourceFile *sf, GstPad *pad)
 /*   g_printf ("audio_handoff_cb\n"); */
 /* } */
 
-void
+static void
 video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer udata)
 {
   PitiviSourceFile	*sf = (PitiviSourceFile *) udata;
@@ -295,7 +295,7 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
     gtk_main_iteration();
 }
 
-void
+static void
 new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udata)
 {
   PitiviSourceFile	*sf = PITIVI_SOURCEFILE (udata);
@@ -363,7 +363,7 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer 
   Creates the ->pipeline with the corresponding filesrc, outputs, etc...
 */
 
-void
+static void
 pitivi_sourcefile_get_info (PitiviSourceFile *self)
 {
   char	*tmp;
@@ -424,7 +424,7 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
   self->pipeline = NULL;
 }
 
-void
+static void
 pitivi_sourcefile_type_find (PitiviSourceFile *this)
 {
   /* Discover file properties (audio props, video props, length) */
@@ -439,7 +439,7 @@ pitivi_sourcefile_type_find (PitiviSourceFile *this)
     this->mediatype = g_strdup("audio");
 }
 
-void
+static void
 bin_was_freed(gpointer udata, GObject *object)
 {
   PitiviSourceFile	*self = PITIVI_SOURCEFILE(udata);

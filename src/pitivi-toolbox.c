@@ -49,11 +49,11 @@ struct _PitiviToolboxPrivate
  * Insert "added-value" functions here
  */
 
-void cursor_change_select  (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
-void cursor_change_cut     (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
-void cursor_change_hand    (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
-void cursor_change_zoom    (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
-void cursor_change_resize  (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
+static void cursor_change_select  (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
+static void cursor_change_cut     (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
+static void cursor_change_hand    (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
+static void cursor_change_zoom    (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
+static void cursor_change_resize  (GtkRadioToolButton *radiobutton, PitiviToolbox *self);
 
 typedef struct _InfoBox
 {
@@ -63,7 +63,7 @@ typedef struct _InfoBox
 }	       InfoBox;
 
 
-InfoBox button_info [] = {
+static InfoBox button_info [] = {
   {PITIVI_STOCK_POINTER, "pointer", cursor_change_select},
   {PITIVI_STOCK_CUT, "cut", cursor_change_cut},
   {PITIVI_STOCK_HAND, "hand", cursor_change_hand},
@@ -155,7 +155,7 @@ load_cursor(GdkWindow *win,
     gdk_window_set_cursor(GDK_WINDOW (win), pitivi_cursor->cursor);
 }
 
-void
+static void
 cursor_change_select(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   PitiviTimelineWindow	*timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
@@ -171,7 +171,7 @@ cursor_change_select(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
     }
 }
 
-void
+static void
 cursor_change_cut(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
@@ -187,7 +187,7 @@ cursor_change_cut(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
     }
 }
 
-void
+static void
 cursor_change_hand(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
@@ -203,7 +203,7 @@ cursor_change_hand(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
     }
 }
 
-void
+static void
 cursor_change_zoom (GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
@@ -219,7 +219,7 @@ cursor_change_zoom (GtkRadioToolButton *radiobutton, PitiviToolbox *self)
    }
 }
 
-void
+static void
 cursor_change_resize (GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);

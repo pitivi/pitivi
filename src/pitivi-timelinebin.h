@@ -76,6 +76,6 @@ PitiviTimelineBin	*pitivi_timelinebin_new(GnlTimeline	*timeline,
 						GnlGroup	*videogroup,
 						PitiviProjectSettings *psettings);
 
-void			pitivi_timelinebin_set_output_file(PitiviTimelineBin *bin, gchar *filename);
+/* void			pitivi_timelinebin_set_output_file(PitiviTimelineBin *bin, gchar *filename); */
 
 #endif

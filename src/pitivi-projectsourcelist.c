@@ -49,12 +49,12 @@ typedef struct _PitiviRestore
 /*
  * forward definitions
  */
-void			restore_moved_sourcefile(GtkWidget *button, PitiviRestore *restore);
+static void			restore_moved_sourcefile(GtkWidget *button, PitiviRestore *restore);
 /*
  * Insert "added-value" functions here
  */
 
-PitiviSourceBin	*get_pitivisourcebin(PitiviProjectSourceList *self, gchar *treepath,
+static PitiviSourceBin	*get_pitivisourcebin(PitiviProjectSourceList *self, gchar *treepath,
 				     GSList **list, PitiviSourceBin **bin, gint *row)
 {
   gchar			*tmp;
@@ -93,7 +93,7 @@ PitiviSourceBin	*get_pitivisourcebin(PitiviProjectSourceList *self, gchar *treep
   return (*list)->data;
 }
 
-PitiviSourceBin*
+static PitiviSourceBin*
 pitivi_projectsourcelist_get_child_by_name(PitiviSourceBin *bin, gchar *name)
 {
   PitiviSourceBin	*child;
@@ -113,7 +113,7 @@ pitivi_projectsourcelist_get_child_by_name(PitiviSourceBin *bin, gchar *name)
   return NULL;
 }
 
-PitiviSourceBin*
+static PitiviSourceBin*
 pitivi_projectsourcelist_get_bin_by_name(PitiviProjectSourceList *self,
 					 gchar *name)
 {
@@ -176,29 +176,29 @@ pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self,
   PITIVI_DEBUG("== end of projectsourcelist showfile ==\n");
 }
 
-gpointer
-pitivi_projectsourcelist_get_folder_info(PitiviProjectSourceList *self,
-				       gchar *treepath, guint folder_pos)
-{
-  PitiviSourceBin	*sourcebin;
-  PitiviSourceBin	*bin;
-  GSList		*childlist;
-  GSList		*list;
-  gint			row;
+/* static gpointer */
+/* pitivi_projectsourcelist_get_folder_info(PitiviProjectSourceList *self, */
+/* 				       gchar *treepath, guint folder_pos) */
+/* { */
+/*   PitiviSourceBin	*sourcebin; */
+/*   PitiviSourceBin	*bin; */
+/*   GSList		*childlist; */
+/*   GSList		*list; */
+/*   gint			row; */
 
-  sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
-  childlist = sourcebin->child;
-  if (!childlist)
-    return NULL;
+/*   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row); */
+/*   childlist = sourcebin->child; */
+/*   if (!childlist) */
+/*     return NULL; */
 
-  while (folder_pos--)
-    {
-      childlist = childlist->next;
-      if (!childlist)
-	return NULL;
-    }
-  return childlist->data; 
-}
+/*   while (folder_pos--) */
+/*     { */
+/*       childlist = childlist->next; */
+/*       if (!childlist) */
+/* 	return NULL; */
+/*     } */
+/*   return childlist->data;  */
+/* } */
 
 gpointer
 pitivi_projectsourcelist_get_file_info(PitiviProjectSourceList *self,
@@ -224,31 +224,31 @@ pitivi_projectsourcelist_get_file_info(PitiviProjectSourceList *self,
   return sourcelist->data; 
 }
 
-void
-pitivi_projectsourcelist_remove_folder_from_bin(PitiviProjectSourceList *self,
-						gchar *treepath, guint folder_pos)
-{
-  PitiviSourceBin	*sourcebin;
-  PitiviSourceBin	*bin;
-  GSList		*childlist;
-  GSList		*list;
-  gpointer		data;
-  gint			row;
+/* static void */
+/* pitivi_projectsourcelist_remove_folder_from_bin(PitiviProjectSourceList *self, */
+/* 						gchar *treepath, guint folder_pos) */
+/* { */
+/*   PitiviSourceBin	*sourcebin; */
+/*   PitiviSourceBin	*bin; */
+/*   GSList		*childlist; */
+/*   GSList		*list; */
+/*   gpointer		data; */
+/*   gint			row; */
 
-  sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
-  childlist = sourcebin->child;
+/*   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row); */
+/*   childlist = sourcebin->child; */
 
-  data = pitivi_projectsourcelist_get_folder_info(self, treepath, folder_pos);
+/*   data = pitivi_projectsourcelist_get_folder_info(self, treepath, folder_pos); */
 
-  PITIVI_INFO("removing %s from child list", ((PitiviSourceBin*)data)->bin_name);
+/*   PITIVI_INFO("removing %s from child list", ((PitiviSourceBin*)data)->bin_name); */
 
-  childlist = g_slist_remove(childlist, data);
+/*   childlist = g_slist_remove(childlist, data); */
 
-  /* handle case the first folder is removed */
-  sourcebin->child = childlist;
+/*   /\* handle case the first folder is removed *\/ */
+/*   sourcebin->child = childlist; */
 
-  g_free((PitiviSourceBin*)data);
-}
+/*   g_free((PitiviSourceBin*)data); */
+/* } */
 
 void
 pitivi_projectsourcelist_remove_file_from_bin(PitiviProjectSourceList *self,
@@ -302,17 +302,17 @@ pitivi_projectsourcelist_remove_bin(PitiviProjectSourceList *self,
     bin->child = list;
 }
 
-void
-pitivi_projectsourcelist_set_bin_name(PitiviProjectSourceList *self,
-				      gchar *treepath,
-				      gchar *bin_name)
-{
-  PitiviSourceBin	*sourcebin;
-  gint			row;
+/* static void */
+/* pitivi_projectsourcelist_set_bin_name(PitiviProjectSourceList *self, */
+/* 				      gchar *treepath, */
+/* 				      gchar *bin_name) */
+/* { */
+/*   PitiviSourceBin	*sourcebin; */
+/*   gint			row; */
 
-  sourcebin = get_pitivisourcebin(self, treepath, NULL, NULL, &row);
-  sourcebin->bin_name = g_strdup(bin_name);
-}
+/*   sourcebin = get_pitivisourcebin(self, treepath, NULL, NULL, &row); */
+/*   sourcebin->bin_name = g_strdup(bin_name); */
+/* } */
 
 PitiviSourceBin*
 pitivi_projectsourcelist_new_bin(PitiviProjectSourceList *self,
@@ -442,7 +442,7 @@ pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
   return sourcefile;
 }
 
-void
+static void
 restore_moved_sourcefile(GtkWidget *button, PitiviRestore *restore)
 {
   GtkWidget	*dialog;
@@ -487,7 +487,7 @@ restore_moved_sourcefile(GtkWidget *button, PitiviRestore *restore)
   }
 }
 
-void	
+static void	
 pitivi_projectsourcelist_add_source_from_xml(PitiviSourceBin *sourcebin,
 					     G_CONST_RETURN gchar *filename)
 {
@@ -575,7 +575,7 @@ pitivi_projectsourcelist_add_source_from_xml(PitiviSourceBin *sourcebin,
 }
 
 
-PitiviSourceBin*
+static PitiviSourceBin*
 pitivi_projectsourcelist_add_folder_from_xml(PitiviSourceBin *sourcebin,
 					      gchar *foldername)
 {
@@ -591,7 +591,7 @@ pitivi_projectsourcelist_add_folder_from_xml(PitiviSourceBin *sourcebin,
   return child;
 }
 
-void
+static void
 pitivi_projectsourcelist_restore_in_recurse_folder(PitiviSourceBin *bin, xmlNodePtr self)
 {
   xmlNodePtr	children;
@@ -638,8 +638,9 @@ pitivi_projectsourcelist_restore_thyself(PitiviProjectSourceList *tofill, xmlNod
 }
 
 
-void	pitivi_projectsourcelist_recurse_into_folder(PitiviSourceBin *sourcebin,
-						     xmlNodePtr binptr)
+static void
+pitivi_projectsourcelist_recurse_into_folder(PitiviSourceBin *sourcebin,
+					     xmlNodePtr binptr)
 {
   xmlNodePtr	 msetptr;
   GSList		*folderlist;

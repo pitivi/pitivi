@@ -48,14 +48,10 @@ static	GtkWidgetClass	*parent_class = NULL;
 
 /* drawing */
 
-void
-draw_media (GtkWidget *widget);
-void 
-draw_media_expose (GtkWidget *widget);
-void
-draw_selection (GtkWidget *widget, int width, char **dash);
-void
-draw_slide (GtkWidget *widget, int start, int end);
+static void	draw_media (GtkWidget *widget);
+static void	draw_media_expose (GtkWidget *widget);
+/* static void	draw_selection (GtkWidget *widget, int width, char **dash); */
+/* static void	draw_slide (GtkWidget *widget, int start, int end); */
 
 /* Timeline Media Callback  */
 
@@ -117,10 +113,10 @@ static gint iNbTargetDragEntry = G_N_ELEMENTS (TargetDragEntry);
 
 /* headers */
 
-void	pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *this, gpointer data);
-void	pitivi_timelinemedia_callb_copied (PitiviTimelineMedia *this, gpointer data);
-void	pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *this, gpointer data);
-void	pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data);
+static void	pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *this, gpointer data);
+static void	pitivi_timelinemedia_callb_copied (PitiviTimelineMedia *this, gpointer data);
+static void	pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *this, gpointer data);
+static void	pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data);
 
 
 static GtkItemFactoryEntry  TimeItemPopup[] = {
@@ -203,7 +199,7 @@ pitivi_timelinemedia_new ( PitiviSourceFile *sf, int width, PitiviTimelineCellRe
   return this;
 }
 
-void
+static void
 pitivi_timelinemedia_update_tooltip (PitiviTimelineMedia *this)
 {
   char			*str;
@@ -342,7 +338,7 @@ pitivi_timelinemedia_get_track (PitiviTimelineMedia *media)
 }
 
 
-void
+static void
 draw_video_thumbs (PitiviTimelineMedia	*this, GdkPixbuf **pixs, int nb, int width)
 {
   GdkPixbuf*  scale;
@@ -374,7 +370,7 @@ draw_video_thumbs (PitiviTimelineMedia	*this, GdkPixbuf **pixs, int nb, int widt
     }
 }
 
-void
+static void
 show_video_media (GtkWidget *widget)
 {
   PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
@@ -435,7 +431,7 @@ show_video_media (GtkWidget *widget)
     }
 }
 
-void
+static void
 draw_media_expose (GtkWidget *widget)
 {
   GdkRectangle rect;
@@ -450,7 +446,7 @@ draw_media_expose (GtkWidget *widget)
   /* End Sending Expose Event */
 }
 
-void
+static void
 show_effects_media (GtkWidget *widget)
 {
   PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
@@ -472,7 +468,7 @@ show_effects_media (GtkWidget *widget)
     }
 }
 
-void
+static void
 show_audio_media (GtkWidget *widget)
 {
   PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
@@ -492,7 +488,7 @@ show_audio_media (GtkWidget *widget)
     }
 }
 
-void
+static void
 draw_media (GtkWidget *widget)
 {
   PitiviTimelineMedia *this = (PitiviTimelineMedia *)widget;
@@ -902,14 +898,14 @@ pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
   return TRUE;
 }
 
-void
+static void
 pitivi_timelinemedia_callb_deselect (PitiviTimelineMedia *this)
 {
   this->selected = FALSE;
   draw_media_expose (GTK_WIDGET (this));
 }
 
-void
+static void
 pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *this, gpointer data)
 {
   if (PITIVI_IS_TIMELINEMEDIA (this) && this->linked)
@@ -922,7 +918,7 @@ pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *this, gpointer data)
       }
 }
 
-void
+static void
 pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data)
 {
   GtkWidget *props_dialog; // gtk_message_dialog_new
@@ -1168,7 +1164,7 @@ pitivi_timelinemedia_get_type (void)
  *
  */
 
-void
+static void
 pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *this, gpointer data)
 {
   if (!this->cutted)
@@ -1187,7 +1183,8 @@ pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *this, gpointer data)
     this->cutted = FALSE;
 }
 
-void	pitivi_timelinemedia_callb_copied (PitiviTimelineMedia *this, gpointer data)
+static void
+pitivi_timelinemedia_callb_copied (PitiviTimelineMedia *this, gpointer data)
 {
   if (!this->copied)
     {

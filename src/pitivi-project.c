@@ -310,7 +310,7 @@ pitivi_project_set_file_to_encode (PitiviProject *project, gchar *filename)
   pitivi_globalbin_set_encoded_file (PITIVI_GLOBALBIN (project->bin), (const gchar *) filename);
 }
 
-void
+static void
 bin_state_change (GstElement *element, GstElementState pstate, GstElementState state, PitiviProject *project)
 {
   PitiviGlobalBin	*gbin = PITIVI_GLOBALBIN (element);

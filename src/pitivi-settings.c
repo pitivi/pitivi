@@ -176,7 +176,7 @@ pitivi_settings_get_selected_setting( PitiviSettings *self, gint *position )
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-void
+static void
 pitivi_settings_free_mime_type (PitiviSettingsMimeType *mime_type)
 {
   g_free (mime_type->flux);
@@ -187,7 +187,8 @@ pitivi_settings_free_mime_type (PitiviSettingsMimeType *mime_type)
 }
 
 
-void		pitivi_settings_free_list_all (GList *list)
+static void
+pitivi_settings_free_list_all (GList *list)
 {
   GList		*tmp;
 
@@ -205,55 +206,59 @@ void		pitivi_settings_free_list_all (GList *list)
 /* 
    affiche les infos d un element
 */
-void		pitivi_settings_aff_info_factory (GstElementFactory *factory)
-{
-  PITIVI_DEBUG ("%s\t%s\t%s\n", 
-	   gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)),
-	   gst_element_factory_get_longname (factory), 
-	   gst_element_factory_get_klass (factory)
-	   );
-  return ;
-}
+/* static void */
+/* pitivi_settings_aff_info_factory (GstElementFactory *factory) */
+/* { */
+/*   PITIVI_DEBUG ("%s\t%s\t%s\n",  */
+/* 	   gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), */
+/* 	   gst_element_factory_get_longname (factory),  */
+/* 	   gst_element_factory_get_klass (factory) */
+/* 	   ); */
+/*   return ; */
+/* } */
 
 
 /* 
    affiche la list des coder 
    (Encoder|Decoder)
 */
-void		pitivi_settings_aff_coder (GList *list)
-{
-  for (; list; list = g_list_next (list)) {
-    PITIVI_DEBUG ("    %s\n", (gchar *) list->data);
-  }
-  return ;
-}
+/* static void */
+/* pitivi_settings_aff_coder (GList *list) */
+/* { */
+/*   for (; list; list = g_list_next (list)) { */
+/*     PITIVI_DEBUG ("    %s\n", (gchar *) list->data); */
+/*   } */
+/*   return ; */
+/* } */
 
 
 /* 
    affiche la structure d un flux
 */
-void		pitivi_settings_aff_mime_type (PitiviSettingsMimeType *mime_type)
-{
-  PITIVI_DEBUG ("%s\n", gst_caps_to_string (mime_type->flux));
-  PITIVI_DEBUG ("  Encoder:\n");
-  pitivi_settings_aff_coder (mime_type->encoder);
-  PITIVI_DEBUG ("  Decoder:\n");
-  pitivi_settings_aff_coder (mime_type->decoder);
-  return ;
-}
+/* static void */
+/* pitivi_settings_aff_mime_type (PitiviSettingsMimeType *mime_type) */
+/* { */
+/*   PITIVI_DEBUG ("%s\n", gst_caps_to_string (mime_type->flux)); */
+/*   PITIVI_DEBUG ("  Encoder:\n"); */
+/*   pitivi_settings_aff_coder (mime_type->encoder); */
+/*   PITIVI_DEBUG ("  Decoder:\n"); */
+/*   pitivi_settings_aff_coder (mime_type->decoder); */
+/*   return ; */
+/* } */
 
 
 /* 
    affiche le contenu de la list 
    (Container|Codec)
 */
-void		pitivi_settings_aff_all_list (GList *list)
-{
-  for (; list; list = g_list_next (list)) {
-    pitivi_settings_aff_mime_type ((PitiviSettingsMimeType *) list->data);
-  }  
-  return ;
-}
+/* static void */
+/* pitivi_settings_aff_all_list (GList *list) */
+/* { */
+/*   for (; list; list = g_list_next (list)) { */
+/*     pitivi_settings_aff_mime_type ((PitiviSettingsMimeType *) list->data); */
+/*   }   */
+/*   return ; */
+/* } */
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
@@ -263,7 +268,7 @@ void		pitivi_settings_aff_all_list (GList *list)
    initialise une nouvelle structure 
    pour un nouveau flux
 */
-PitiviSettingsMimeType *
+static PitiviSettingsMimeType *
 pitivi_settings_init_mime_type (GstCaps *flux)
 {
   PitiviSettingsMimeType *new;
@@ -280,7 +285,7 @@ pitivi_settings_init_mime_type (GstCaps *flux)
    retourne la structure assigne au flux
    si elle existe sinon retourne NULL
 */
-PitiviSettingsMimeType *
+static PitiviSettingsMimeType *
 pitivi_settings_search_flux (GList *list, GstCaps *flux)
 {
   PitiviSettingsMimeType *tmp;
@@ -294,7 +299,7 @@ pitivi_settings_search_flux (GList *list, GstCaps *flux)
   return (NULL);
 }
 
-PitiviSettingsMimeType *
+static PitiviSettingsMimeType *
 pitivi_settings_search_compatible_flux (GList *list, GstCaps *flux)
 {
   PitiviSettingsMimeType *tmp;
@@ -334,7 +339,7 @@ pitivi_settings_get_flux_coder_list (GList *list, GstCaps *flux, gboolean LIST)
   return (NULL);
 }
 
-gboolean
+static gboolean
 my_list_find(gchar *txt, GList *list)
 {
   while (list) {
@@ -351,7 +356,7 @@ my_list_find(gchar *txt, GList *list)
    assignee au flux tmp->flux
    suivant son pad  (src|sink) 
 */
-PitiviSettingsMimeType *
+static PitiviSettingsMimeType *
 pitivi_settings_ajout_factory_element (PitiviSettingsMimeType *tmp, 
 				       gchar *element, gboolean MY_PAD)
 {
@@ -377,7 +382,7 @@ pitivi_settings_ajout_factory_element (PitiviSettingsMimeType *tmp,
    sinon cree la struct du flux et lui assigne l element
    
 */
-GList *
+static GList *
 pitivi_settings_ajout_element (GList *list, GstElementFactory *factory, gboolean MY_PAD)
 {
   GstPadTemplate *padtemplate;
@@ -462,29 +467,29 @@ pitivi_settings_aff_elm_io (PitiviSettingsIoElement *elm)
   return ;
 }
 
-void 
-pitivi_settings_aff_all_list_elm (GList *list)
-{
-  for (; list; list = g_list_next (list)) {
-    pitivi_settings_aff_elm_io (list->data);
-  }
-  return ;
-}
+/* static void  */
+/* pitivi_settings_aff_all_list_elm (GList *list) */
+/* { */
+/*   for (; list; list = g_list_next (list)) { */
+/*     pitivi_settings_aff_elm_io (list->data); */
+/*   } */
+/*   return ; */
+/* } */
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-void 
-pitivi_settings_free_all_params (GParameter *parameters, gint n_param) 
-{
-  gint i;
+/* static void  */
+/* pitivi_settings_free_all_params (GParameter *parameters, gint n_param)  */
+/* { */
+/*   gint i; */
 
-  for (i = 0; i < n_param; i++) {
-    g_free ((char *)parameters[i].name);
-    g_value_unset (&(parameters[i].value));
-  }
-  g_free (parameters);
-  return ;
-}
+/*   for (i = 0; i < n_param; i++) { */
+/*     g_free ((char *)parameters[i].name); */
+/*     g_value_unset (&(parameters[i].value)); */
+/*   } */
+/*   g_free (parameters); */
+/*   return ; */
+/* } */
 
 void
 pitivi_settings_modify_settings_struct_info (PitiviSettings *self, PitiviSettingsIoElement *io)
@@ -558,7 +563,7 @@ pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, GstElementFac
   return (0);
 }
 
-PitiviSettingsIoElement *
+static PitiviSettingsIoElement *
 pitivi_settings_new_io_element ()
 {
   PitiviSettingsIoElement *io_elm;
@@ -678,7 +683,7 @@ pitivi_settings_new_io_element_with_factory (GstElementFactory *factory)
   return (io_elm);
 }
 
-GList *
+static GList *
 pitivi_settings_new_io_element_checked (GList *list, GstElementFactory *factory)
 {
   
@@ -696,7 +701,7 @@ pitivi_settings_new_io_element_checked (GList *list, GstElementFactory *factory)
   (De)Coder, (De)Muxer and Parser
 */
 
-void
+static void
 pitivi_settings_scan_registry(PitiviSettings *self)
 {
   GList			*sv;
@@ -777,7 +782,7 @@ pitivi_settings_scan_registry(PitiviSettings *self)
 
 /* ################################# */
 
-GList *
+static GList *
 pitivi_settings_get_xml_list(xmlNodePtr self)
 {
   PitiviSettingsMimeType	*tmp;
@@ -803,7 +808,7 @@ pitivi_settings_get_xml_list(xmlNodePtr self)
   return res;
 }
 
-GSList *
+static GSList *
 pitivi_settings_get_xml_project_settings(xmlNodePtr self)
 {
   PitiviCategorieSettings	*cat_tmp;
@@ -830,9 +835,9 @@ pitivi_settings_get_xml_project_settings(xmlNodePtr self)
   return res;
 }
 
-void
-restore_g_param_tab (GParameter **ptab, gint n_param, xmlNodePtr self)
-{
+/* static void */
+/* restore_g_param_tab (GParameter **ptab, gint n_param, xmlNodePtr self) */
+/* { */
   /* TODO : fill it up !*/
 /*   xmlNodePtr	child; */
 /*   int		i; */
@@ -840,41 +845,41 @@ restore_g_param_tab (GParameter **ptab, gint n_param, xmlNodePtr self)
 /*   for (i = 0, child = self->XmlChildrenNode; child && (i < n_param); i++, child = child->next) { */
     
 /*   } */
-}
+/* } */
 
-PitiviSettingsIoElement *
-pitivi_settings_restore_io(xmlNodePtr self)
-{
-  PitiviSettingsIoElement	*res;
-  xmlNodePtr	child;
+/* static PitiviSettingsIoElement * */
+/* pitivi_settings_restore_io(xmlNodePtr self) */
+/* { */
+/*   PitiviSettingsIoElement	*res; */
+/*   xmlNodePtr	child; */
 
-  res = g_new0(PitiviSettingsIoElement, 1);
-  for (child = self->xmlChildrenNode; child; child = child->next) {
-    if (!g_ascii_strcasecmp(child->name, "factory_name")) {
-      res->factory = gst_element_factory_find(xmlNodeGetContent(child));
-    } else if (!g_ascii_strcasecmp(child->name, "n_param")) {
-      res->n_param = atoi(xmlNodeGetContent(child));
-      res->params = g_new0(GParameter, res->n_param + 1);
-    } else if (!g_ascii_strcasecmp(child->name, "params")) {
-      restore_g_param_tab(&res->params, res->n_param, child);
-    }
-  }
-  return res;
-}
+/*   res = g_new0(PitiviSettingsIoElement, 1); */
+/*   for (child = self->xmlChildrenNode; child; child = child->next) { */
+/*     if (!g_ascii_strcasecmp(child->name, "factory_name")) { */
+/*       res->factory = gst_element_factory_find(xmlNodeGetContent(child)); */
+/*     } else if (!g_ascii_strcasecmp(child->name, "n_param")) { */
+/*       res->n_param = atoi(xmlNodeGetContent(child)); */
+/*       res->params = g_new0(GParameter, res->n_param + 1); */
+/*     } else if (!g_ascii_strcasecmp(child->name, "params")) { */
+/*       restore_g_param_tab(&res->params, res->n_param, child); */
+/*     } */
+/*   } */
+/*   return res; */
+/* } */
 
-GList *
-pitivi_settings_restore_io_list(xmlNodePtr self)
-{
-  GList	*res;
-  xmlNodePtr	child;
+/* static GList * */
+/* pitivi_settings_restore_io_list(xmlNodePtr self) */
+/* { */
+/*   GList	*res; */
+/*   xmlNodePtr	child; */
 
-  for (res = NULL, child = self->xmlChildrenNode; child; child = child->next)
-    if (!g_ascii_strcasecmp(child->name, "inout_elm"))
-      g_list_append(res, pitivi_settings_restore_io(child));
-  return res;
-}
+/*   for (res = NULL, child = self->xmlChildrenNode; child; child = child->next) */
+/*     if (!g_ascii_strcasecmp(child->name, "inout_elm")) */
+/*       g_list_append(res, pitivi_settings_restore_io(child)); */
+/*   return res; */
+/* } */
 
-void
+static void
 pitivi_settings_restore_thyself(PitiviSettings *settings, xmlNodePtr self)
 {
   xmlNodePtr	child;
@@ -905,7 +910,7 @@ pitivi_settings_restore_thyself(PitiviSettings *settings, xmlNodePtr self)
   pitivi_settings_xml_epure_list
   Returns a xml formatted list with only the first elements of multiple lists
 */
-void
+static void
 pitivi_settings_xml_epure_list(GList *list, xmlNodePtr parent)
 {
   xmlNodePtr			mime;
@@ -933,7 +938,7 @@ pitivi_settings_xml_epure_list(GList *list, xmlNodePtr parent)
   pitivi_settings_xml_epure_project_list
   Returns a xml formatted list of the ProjectSettings set by the user
 */
-void
+static void
 pitivi_settings_xml_epure_project_settings(GSList *list, xmlNodePtr parent)
 {
   GSList			*res, *list_tmp;
@@ -959,7 +964,7 @@ pitivi_settings_xml_epure_project_settings(GSList *list, xmlNodePtr parent)
     }
 }
 
-void
+static void
 pitivi_settings_xml_epure_io (GList *list, xmlNodePtr parent)
 {
 
@@ -989,7 +994,7 @@ pitivi_settings_xml_epure_io (GList *list, xmlNodePtr parent)
   return ;
 }
 
-xmlDocPtr
+static xmlDocPtr
 pitivi_settings_save_thyself(PitiviSettings *settings)
 {
   xmlDocPtr	doc;

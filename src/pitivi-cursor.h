@@ -61,7 +61,7 @@ struct _PitiviCursor
   int		       hot_y;
 };
 
-/* Cursor Functions */
+/* Cursor Functions (function in pitivi-toolbox.c) */
 void	      load_cursor (GdkWindow *win, 
 				PitiviCursor *pitivi_cursor, 
 				PitiviCursorType PiCursorType);

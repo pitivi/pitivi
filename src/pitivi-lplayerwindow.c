@@ -86,7 +86,7 @@ struct _PitiviLPlayerWindowPrivate
 // continuer sur la timeline
 
 
-gboolean	pitivi_lplayer_idle_func (gpointer data)
+static gboolean	pitivi_lplayer_idle_func (gpointer data)
 {
   PitiviLPlayerWindow *self = (PitiviLPlayerWindow *) data;
   GstElement *elem;
@@ -108,7 +108,7 @@ gboolean	pitivi_lplayer_idle_func (gpointer data)
   return TRUE;
 }
 
-gboolean	do_lplayer_seek(GstElement *elem, gint64 value)
+static gboolean	do_lplayer_seek(GstElement *elem, gint64 value)
 {
   GstEvent	*event;
   gboolean	res;
@@ -131,7 +131,7 @@ gboolean	do_lplayer_seek(GstElement *elem, gint64 value)
 }
 
 
-void pitivi_lplayer_play_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
+static void pitivi_lplayer_play_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
 {
   if (GTK_TOGGLE_BUTTON (self->private->playpause)->active)
     {
@@ -146,13 +146,13 @@ void pitivi_lplayer_play_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
     }
 }
 
-void pitivi_lplayer_pause_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
-{
-  gst_element_set_state (self->private->pipe, GST_STATE_PAUSED);
-}
+/* static void pitivi_lplayer_pause_stream (GtkWidget *widget, PitiviLPlayerWindow *self) */
+/* { */
+/*   gst_element_set_state (self->private->pipe, GST_STATE_PAUSED); */
+/* } */
 
 
-void pitivi_lplayer_stop_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
+static void pitivi_lplayer_stop_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
 {
   //  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
   gint64	value;
@@ -183,17 +183,17 @@ void pitivi_lplayer_stop_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
 
 }
 
-void pitivi_lplayer_backward_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
-{
+/* static void pitivi_lplayer_backward_stream (GtkWidget *widget, PitiviLPlayerWindow *self) */
+/* { */
 
-}
+/* } */
 
-void pitivi_lplayer_forward_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
-{
+/* static void pitivi_lplayer_forward_stream (GtkWidget *widget, PitiviLPlayerWindow *self) */
+/* { */
 
-}
+/* } */
 
-void
+static void
 pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 {
  
@@ -307,7 +307,7 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
   return ;
 }
 
-void
+static void
 pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
 {
   self->private->pipe = gst_element_factory_make("playbin", "spider");

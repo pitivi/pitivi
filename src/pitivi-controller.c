@@ -114,24 +114,24 @@ pitivi_controller_constructor (GType type,
   return obj;
 }
 
-gboolean
-pitivi_controller_seek_started_handler (GtkWidget       *widget,
-					GdkEventButton   *event,
-					gpointer         user_data)
-{
+/* static gboolean */
+/* pitivi_controller_seek_started_handler (GtkWidget       *widget, */
+/* 					GdkEventButton   *event, */
+/* 					gpointer         user_data) */
+/* { */
 
-  return FALSE;
-}
+/*   return FALSE; */
+/* } */
 
 
-gboolean
-pitivi_controller_seek_changed_handler (GtkWidget       *widget,
-					GdkEventButton  *event,
-					gpointer         user_data)
-{
+/* static gboolean */
+/* pitivi_controller_seek_changed_handler (GtkWidget       *widget, */
+/* 					GdkEventButton  *event, */
+/* 					gpointer         user_data) */
+/* { */
   
-  return FALSE;
-}
+/*   return FALSE; */
+/* } */
 
 static void
 pitivi_controller_callb_play (GtkWidget *widget, gpointer user_data)

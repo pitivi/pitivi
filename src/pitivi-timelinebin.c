@@ -57,11 +57,11 @@ struct _PitiviTimelineBinPrivate
  * Insert "added-value" functions here
  */
 
-void
-pitivi_timelinebin_output_file(PitiviTimelineBin *bin, gchar *filename)
-{
-  g_object_set (G_OBJECT(bin), "encodedfile", filename, NULL);
-}
+/* static void */
+/* pitivi_timelinebin_output_file(PitiviTimelineBin *bin, gchar *filename) */
+/* { */
+/*   g_object_set (G_OBJECT(bin), "encodedfile", filename, NULL); */
+/* } */
 
 PitiviTimelineBin *
 pitivi_timelinebin_new(GnlTimeline	*timeline,

@@ -156,43 +156,43 @@ static  guint signals[LAST_SIGNAL];
 /* Callbacks */
 /* ********* */
 
-gboolean
+static gboolean
 pitivi_callb_window_close (GtkWidget *win, GdkEvent *event, PitiviTimelineWindow *self);
 
-void
+static void
 pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self );
 
-void
+static void
 pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self );
 
-void
+static void
 pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self );
 
-void
+static void
 pitivi_callb_menufile_saveas ( GtkAction *action, PitiviTimelineWindow *self);
 
-void
+static void
 pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self );
 
-void
+static void
 pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self );
 
-void
+static void
 pitivi_callb_menufile_project_settings ( GtkAction *action, PitiviTimelineWindow *self );
 
-void
+static void
 pitivi_callb_menufile_effectswindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
 
-void
+static void
 pitivi_callb_menufile_sourcelistwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
 
-void
+static void
 pitivi_callb_menufile_viewerwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
 
-gboolean
+static gboolean
 pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow * widget, GdkEventKey* event, gpointer data);
 
-void
+static void
 pitivi_callb_controller_record (PitiviController *controller, PitiviTimelineWindow *self);
 
 /*
@@ -253,7 +253,7 @@ pitivi_timelinewindow_new (PitiviMainApp *mainapp)
 }
 
 
-void   
+static void   
 create_timeline_menu (PitiviTimelineWindow *self)
 {
   PitiviMenu	*menumgr;
@@ -299,7 +299,7 @@ create_timeline_menu (PitiviTimelineWindow *self)
 }
 
 
-GtkAction *
+static GtkAction *
 pitivi_timelinewindow_get_action_by_idx_name (PitiviTimelineWindow *self, int idx, gchar *name)
 {
   GtkAction *action = gtk_action_group_get_action  (self->actions_group[idx], name);
@@ -307,7 +307,7 @@ pitivi_timelinewindow_get_action_by_idx_name (PitiviTimelineWindow *self, int id
 }
 
 
-void
+static void
 pitivi_timelinewindow_file_set_action (PitiviTimelineWindow *self, gchar *name, gboolean status)
 {
   GtkAction *action = pitivi_timelinewindow_get_action_by_idx_name (self, (int)EA_DEFAULT_FILE, name );
@@ -316,7 +316,6 @@ pitivi_timelinewindow_file_set_action (PitiviTimelineWindow *self, gchar *name, 
 
 }
 
-
 void
 pitivi_timelinewindow_windows_set_action (PitiviTimelineWindow *self, gchar *name, gboolean status)
 {
@@ -324,18 +323,18 @@ pitivi_timelinewindow_windows_set_action (PitiviTimelineWindow *self, gchar *nam
   gtk_toggle_action_set_active (((GtkToggleAction *)action), status);
 }
 
-gboolean
-pitivi_timelinewindow_windows_get_action (PitiviTimelineWindow *self, gchar *name)
-{
-  gboolean status;
+/* static gboolean */
+/* pitivi_timelinewindow_windows_get_action (PitiviTimelineWindow *self, gchar *name) */
+/* { */
+/*   gboolean status; */
 
-  GtkAction *action = pitivi_timelinewindow_get_action_by_idx_name (self, (int)EA_WINDOWMENU_FILE, name );
-  status = gtk_toggle_action_get_active ((GtkToggleAction *)action);
-  return status;
-}
+/*   GtkAction *action = pitivi_timelinewindow_get_action_by_idx_name (self, (int)EA_WINDOWMENU_FILE, name ); */
+/*   status = gtk_toggle_action_get_active ((GtkToggleAction *)action); */
+/*   return status; */
+/* } */
 
 
-void
+static void
 unit_combobox_cb(GtkWidget *cbox, gpointer data)
 {
   int	*tab;
@@ -351,7 +350,7 @@ unit_combobox_cb(GtkWidget *cbox, gpointer data)
   }
 }
 
-void
+static void
 scale_combobox_cb(GtkWidget *cbox, gpointer data)
 {
   int	*tab;
@@ -367,7 +366,7 @@ scale_combobox_cb(GtkWidget *cbox, gpointer data)
   }
 }
 
-void
+static void
 create_unitscale_combobox(PitiviTimelineWindow *self, GtkWidget *parentbox)
 {
   static int	unittab[2] = {PITIVI_SECONDS, PITIVI_FRAMES};
@@ -413,7 +412,7 @@ create_unitscale_combobox(PitiviTimelineWindow *self, GtkWidget *parentbox)
  **********************************************************
 */
 
-void
+static void
 create_toolbox (PitiviTimelineWindow *self, GtkWidget *container)
 {
   PitiviMainApp	*mainapp;
@@ -427,7 +426,7 @@ create_toolbox (PitiviTimelineWindow *self, GtkWidget *container)
   gtk_box_pack_start (GTK_BOX (container), sep, FALSE, FALSE, 0);
 }
 
-void
+static void
 create_timeline_toolbar (PitiviTimelineWindow *self)
 {
   GtkWidget	*sep;
@@ -470,25 +469,25 @@ create_timeline_toolbar (PitiviTimelineWindow *self)
 }
 
 
-void
-check_track (GtkWidget *widget, PitiviTimelineCellRenderer *cells)
-{
-  gboolean activate;
-  GList	*childlist;
-  GList *childwidget;
+/* static void */
+/* check_track (GtkWidget *widget, PitiviTimelineCellRenderer *cells) */
+/* { */
+/*   gboolean activate; */
+/*   GList	*childlist; */
+/*   GList *childwidget; */
   
-  activate = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-  childwidget = gtk_container_get_children (GTK_CONTAINER (cells));
-  for (childlist = childwidget; childlist; childlist = childlist->next )
-    {
-      if (activate)
-	gtk_widget_hide (GTK_WIDGET (childlist->data));
-      else
-	gtk_widget_show (GTK_WIDGET (childlist->data));
-    }
-}
+/*   activate = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)); */
+/*   childwidget = gtk_container_get_children (GTK_CONTAINER (cells)); */
+/*   for (childlist = childwidget; childlist; childlist = childlist->next ) */
+/*     { */
+/*       if (activate) */
+/* 	gtk_widget_hide (GTK_WIDGET (childlist->data)); */
+/*       else */
+/* 	gtk_widget_show (GTK_WIDGET (childlist->data)); */
+/*     } */
+/* } */
 
-void
+static void
 create_ruler (PitiviTimelineWindow *self)
 {  
   self->hruler = pitivi_ruler_new (self->unit);
@@ -500,7 +499,7 @@ create_ruler (PitiviTimelineWindow *self)
 			    G_OBJECT (self->hruler));
 }
 
-void
+static void
 create_tracks_links (GtkWidget **wcells)
 {
   PitiviTimelineCellRenderer **cells;
@@ -528,7 +527,7 @@ create_tracks_links (GtkWidget **wcells)
     }
 }
 
-void
+static void
 create_timelabel (PitiviTimelineWindow *self, GtkWidget *container)
 {
   GtkWidget *hbox;
@@ -544,7 +543,7 @@ create_timelabel (PitiviTimelineWindow *self, GtkWidget *container)
   gtk_box_pack_start (GTK_BOX (container), hbox, FALSE, TRUE, 4);  
 }
 
-void	
+static void	
 create_tracks (PitiviTimelineWindow *self)
 {
   int len = (sizeof (gtab_tracks)/sizeof(PitiviDefaultTracks));
@@ -766,7 +765,7 @@ pitivi_timelinewindow_get_property (GObject * object,
  **********************************************************
 */
 
-void
+static void
 send_signal_to_childs (PitiviTimelineWindow *self, const gchar *signame, gpointer data)
 {
   send_signal_to_childs_direct ( self->private->layout_container , signame, data);
@@ -1005,7 +1004,7 @@ pitivi_timelinewindow_get_type (void)
  
 /* Menu File */
 
-void
+static void
 pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self )
 {
   PitiviNewProjectWindow	*win_new_project;
@@ -1047,7 +1046,7 @@ pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self )
     }
 }
 
-void
+static void
 pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
 {
   PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
@@ -1092,7 +1091,7 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
   g_free (filename);
 }
 
-void
+static void
 pitivi_callb_menufile_sourcelistwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self)
 {
   PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
@@ -1101,7 +1100,7 @@ pitivi_callb_menufile_sourcelistwindow_toggle ( GtkAction *action, PitiviTimelin
 					   gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
 }
 
-void
+static void
 pitivi_callb_menufile_effectswindow_toggle ( GtkAction *action, PitiviTimelineWindow *self)
 {
   PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
@@ -1110,7 +1109,7 @@ pitivi_callb_menufile_effectswindow_toggle ( GtkAction *action, PitiviTimelineWi
 					gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
 }
 
-void
+static void
 pitivi_callb_menufile_viewerwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self)
 {
   PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
@@ -1119,7 +1118,7 @@ pitivi_callb_menufile_viewerwindow_toggle ( GtkAction *action, PitiviTimelineWin
 				       gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
 }
 
-void
+static void
 pitivi_callb_menufile_project_settings (GtkAction *action, PitiviTimelineWindow *self)
 {
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
@@ -1130,7 +1129,7 @@ pitivi_callb_menufile_project_settings (GtkAction *action, PitiviTimelineWindow 
     gtk_widget_show_all (GTK_WIDGET (window));
 }
 
-void
+static void
 pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self )
 {
   PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
@@ -1143,7 +1142,7 @@ pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self )
   return ;
 }
 
-void
+static void
 pitivi_callb_menufile_saveas ( GtkAction *action, PitiviTimelineWindow *self)
 {
   GtkWidget			*dialog_box;
@@ -1182,7 +1181,7 @@ pitivi_callb_menufile_saveas ( GtkAction *action, PitiviTimelineWindow *self)
     }
 }
 
-void
+static void
 pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self )
 {
   GtkWidget			*dialog_box;
@@ -1207,7 +1206,7 @@ pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self )
     }
 }
 
-void 
+static void 
 pitivi_quit_application (PitiviTimelineWindow *self)
 {
   GtkWidget *dialog;
@@ -1223,20 +1222,20 @@ pitivi_quit_application (PitiviTimelineWindow *self)
   gtk_widget_destroy (dialog);
 }
 
-gboolean
+static gboolean
 pitivi_callb_window_close (GtkWidget *win, GdkEvent *event, PitiviTimelineWindow *self)
 {
   pitivi_quit_application  ( self );
   return TRUE;
 }
 
-void
+static void
 pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self )
 {
   pitivi_quit_application  ( self );
 }
 
-void
+static void
 pitivi_callb_controller_record (PitiviController *controller, PitiviTimelineWindow *self)
 {
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
@@ -1334,7 +1333,7 @@ pitivi_timelinewindow_deactivate ( PitiviTimelineWindow *self )
   pitivi_timelinewindow_file_set_action (self, "FileProjectSettings", FALSE);
 }
 
-void
+static void
 pitivi_timelinewindow_associate_effect (GtkWidget *widget, gpointer data)
 {
   PitiviTimelineWindow *self = (PitiviTimelineWindow *) widget;
@@ -1488,7 +1487,7 @@ pitivi_timelinewindow_update_time (PitiviTimelineWindow *self, gint64 ntime)
  **********************************************************
 */
 
-gboolean
+static gboolean
 pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow *self, GdkEventKey* event, gpointer data) 
 {
   switch(event->keyval) 

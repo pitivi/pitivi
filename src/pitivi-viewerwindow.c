@@ -39,8 +39,8 @@
 static		PitiviProjectWindowsClass *parent_class;
 static		GdkPixmap *pixmap = NULL;
 
-gboolean	idle_func_video (gpointer data);
-gboolean	updated_time (gpointer data);
+static gboolean	idle_func_video (gpointer data);
+static gboolean	updated_time (gpointer data);
 
 enum {
   PLAY,
@@ -125,7 +125,8 @@ gint64	do_query(GstElement *elem, GstQueryType type)
   return value;
 }
 
-void	video_play(GtkWidget *widget, gpointer data)
+static void
+video_play(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
@@ -154,7 +155,8 @@ void	video_play(GtkWidget *widget, gpointer data)
   return ;
 }
 
-void	video_stop(GtkWidget *widget, gpointer data)
+static void
+video_stop(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
@@ -168,7 +170,8 @@ void	video_stop(GtkWidget *widget, gpointer data)
   return ;
 }
 
-void	video_backward(GtkWidget *widget, gpointer data)
+static void
+video_backward(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
 
@@ -185,7 +188,8 @@ void	video_backward(GtkWidget *widget, gpointer data)
   return ;
 }
 
-void	video_forward(GtkWidget *widget, gpointer data)
+static void
+video_forward(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
 
@@ -202,8 +206,9 @@ void	video_forward(GtkWidget *widget, gpointer data)
   return ;
 }
 
-static gint pitivi_viewerwindow_configure_event( GtkWidget         *widget,
-						 GdkEventConfigure *event )
+static gint 
+pitivi_viewerwindow_configure_event( GtkWidget         *widget,
+				     GdkEventConfigure *event )
 {
   if (pixmap)
     g_object_unref (pixmap);
@@ -221,8 +226,9 @@ static gint pitivi_viewerwindow_configure_event( GtkWidget         *widget,
   return TRUE;
 }
 
-static gint pitivi_viewerwindow_expose_event( GtkWidget      *widget,
-					      GdkEventExpose *event )
+static gint 
+pitivi_viewerwindow_expose_event( GtkWidget      *widget,
+				  GdkEventExpose *event )
 {
   //  PITIVI_DEBUGf("exposing\n");
   gdk_draw_drawable (widget->window,
@@ -234,7 +240,7 @@ static gint pitivi_viewerwindow_expose_event( GtkWidget      *widget,
   return FALSE;
 }
 
-void
+static void
 viewerwindow_start_stop_changed (GnlTimeline *timeline, GParamSpec *arg, gpointer udata)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) udata;
@@ -247,7 +253,7 @@ viewerwindow_start_stop_changed (GnlTimeline *timeline, GParamSpec *arg, gpointe
 		       self->private->timeline_max);
 }
 
-gboolean
+static gboolean
 updated_time (gpointer data) {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
 
@@ -258,7 +264,7 @@ updated_time (gpointer data) {
   return FALSE;
 }
 
-gboolean
+static gboolean
 output_probe (GstProbe *probe, GstData **data, gpointer udata)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) udata;
@@ -271,7 +277,7 @@ output_probe (GstProbe *probe, GstData **data, gpointer udata)
   return TRUE;
 }
 
-void
+static void
 end_of_video (GstElement *xvimagesink, PitiviViewerWindow *self)
 {
 /*   PitiviProject	*project = ((PitiviProjectWindows *) self)->project; */
@@ -283,7 +289,7 @@ end_of_video (GstElement *xvimagesink, PitiviViewerWindow *self)
   g_idle_add (updated_time, self);  
 }
 
-void
+static void
 create_gui (gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
@@ -331,7 +337,7 @@ create_gui (gpointer data)
   return;
 }
 
-void
+static void
 create_stream (gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
@@ -385,7 +391,8 @@ create_stream (gpointer data)
   return ;
 }
 
-gboolean	idle_func_video (gpointer data)
+static gboolean	
+idle_func_video (gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
