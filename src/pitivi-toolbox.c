@@ -25,6 +25,7 @@
 
 #include "pitivi.h"
 #include "pitivi-toolbox.h"
+#include "pitivi-stockicons.h"
 
 struct _PitiviToolboxPrivate
 {
@@ -194,25 +195,25 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
 
   self->private->button[0] =
     GTK_WIDGET (gtk_radio_tool_button_new_from_stock
-		(NULL, GTK_STOCK_COLOR_PICKER));
+		(NULL, PITIVI_STOCK_POINTER));
   self->private->group_button =
     gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON
 				     (self->private->button[0]));
   self->private->button[1] =
     GTK_WIDGET (gtk_radio_tool_button_new_from_stock
-		(self->private->group_button, GTK_STOCK_CUT));
+		(self->private->group_button, PITIVI_STOCK_CUT));
   self->private->group_button =
     gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON
 				     (self->private->button[0]));
   self->private->button[2] =
     GTK_WIDGET (gtk_radio_tool_button_new_from_stock
-		(self->private->group_button, GTK_STOCK_INDEX));
+		(self->private->group_button, PITIVI_STOCK_HAND));
   self->private->group_button =
     gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON
 				     (self->private->button[0]));
   self->private->button[3] =
     GTK_WIDGET (gtk_radio_tool_button_new_from_stock
-		(self->private->group_button, GTK_STOCK_ZOOM_IN));
+		(self->private->group_button, PITIVI_STOCK_ZOOM));
 
   /*
    * We'll have to modify these functions so that they set the cursor

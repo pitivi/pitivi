@@ -390,7 +390,7 @@ pitivi_make_video_frame()
       
       if (!strncmp (klass, "Codec/Video/Encoder", 19))
 	{
-	  gtk_combo_box_insert_text (GTK_COMBO_BOX (video_combo_codec), i, g_strdup (GST_PLUGIN_FEATURE (factory)->name));
+	  gtk_combo_box_insert_text (GTK_COMBO_BOX (video_combo_codec), i, name/* g_strdup (GST_PLUGIN_FEATURE (factory)->longname) */);
 	}
       else
 	{
@@ -483,7 +483,7 @@ pitivi_make_audio_frame()
       
       if (!strncmp (klass, "Codec/Audio/Encoder", 19))
 	{
-	  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_codec), i, g_strdup (GST_PLUGIN_FEATURE (factory)->name));
+	  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_codec), i, name /* g_strdup (GST_PLUGIN_FEATURE (factory)->name) */);
 	}
       else
 	{
