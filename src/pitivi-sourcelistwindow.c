@@ -37,6 +37,9 @@
 #include "pitivi-dragdrop.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-viewerwindow.h"
+#include "../pixmaps/bg.xpm"
+#include "pitivi-toolboxwindow.h"
+#include "pitivi-toolbox.h"
 
 static PitiviProjectWindowsClass *parent_class = NULL;
 
@@ -86,8 +89,10 @@ struct _PitiviSourceListWindowPrivate
   guint		newfolder_signal_id;
 
   /* drag'n'drop variables */
-  gchar		*dndtreepath;
-  gint		dndfilepos;
+  gchar		 *dndtreepath;
+  gint		 dndfilepos;
+  /* Main App */
+  PitiviMainApp  *mainapp;
 };
 
 /*
@@ -1591,6 +1596,14 @@ drag_data_delete_cb (GtkWidget          *widget,
 
 }
 
+
+
+PitiviMainApp  *
+pitivi_sourcelistwindow_get_mainApp (PitiviSourceListWindow	*source)
+{
+  return ( source->private->mainapp );
+}
+
 GtkWidget	*create_listview(PitiviSourceListWindow *self,
 				 GtkWidget *pWindow)
 {
@@ -1599,17 +1612,13 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
   GtkWidget		*pScrollbar;
   GtkTreeViewColumn	*pColumn;
   GtkCellRenderer      	*pCellRenderer;
+  GdkColormap		*colormap;
+  GdkPixmap		*pixmap;
+  GdkBitmap		mask;
 
   /* Creation de la vue */
-  pListView = gtk_tree_view_new();
-  //g_printf("enable drag n drop\n");
-  /* enable drag and drop for listview */
-  /*  gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(pListView),  */
-  /* 					 GDK_BUTTON1_MASK, */
-  /* 					 TargetEntries, iNbTargetEntries,  */
-  /*
- 					 GDK_ACTION_COPY); */
   
+  pListView = gtk_tree_view_new();
   gtk_drag_source_set(pListView, 
 		      GDK_BUTTON1_MASK,
 		      TargetEntries, iNbTargetEntries, 
@@ -1623,13 +1632,20 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 		    G_CALLBACK (drag_begin_cb), self);
   g_signal_connect (pListView, "drag_data_delete",
 		    G_CALLBACK (drag_data_delete_cb), self);
-  
-  //g_printf("end of enable drag N drop\n");
 
-  gtk_drag_source_set_icon_stock(pListView, PITIVI_STOCK_EFFECT_SOUND);
+  /* Customizing Drag 'n Drop image on cursor better for customization 
+   * Later user Transparency. 
+   */
 
+  colormap = gtk_widget_get_colormap (pListView);
+  pixmap = gdk_pixmap_colormap_create_from_xpm_d (pListView->window, 
+						  colormap, 
+						  NULL,  
+						  NULL,
+						  backward_xpm);
+  gtk_drag_source_set_icon (pListView, colormap, pixmap, NULL);
   self->private->listview = pListView;
-
+  
   /* Creation du menu popup */
   self->private->listmenu = create_menupopup(self, ListPopup, iNbListPopup);
 
@@ -2354,7 +2370,7 @@ pitivi_sourcelistwindow_new(PitiviMainApp *mainapp, PitiviProject *project)
 							     NULL);
  
   //g_printf("show class ==> %p\n", ((PitiviWindows*)sourcelistwindow));
-
+  sourcelistwindow->private->mainapp = mainapp;
   g_assert(sourcelistwindow != NULL);
   return sourcelistwindow;
 }
