@@ -26,6 +26,8 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 #include <gst/gst.h>
+#include <gdk/gdkx.h>
+#include <gst/xoverlay/xoverlay.h>
 
 #include "pitivi.h"
 #include "pitivi-lplayerwindow.h"
@@ -48,7 +50,9 @@ struct _PitiviLPlayerWindowPrivate
   GstElement	*colorspace;
   GstElement	*video_sink;
 
-
+  GtkWidget	*main_vbox;
+  GtkWidget	*video_area;
+ 
 
 };
 
@@ -63,6 +67,18 @@ void
 pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 {
   g_print ("FILE NAME:%s\n", self->filename);
+
+  // main Vbox
+  self->private->main_vbox = gtk_vbox_new (FALSE, FALSE);
+  gtk_container_add (GTK_CONTAINER (self), self->private->main_vbox);
+
+
+  // Create Video Display (Drawing Area)
+  self->private->video_area = gtk_drawing_area_new ();
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), 
+		      self->private->video_area, TRUE, TRUE, 0);
+
+  gtk_widget_show_all (GTK_WIDGET (self));
 
   return ;
 }
@@ -100,6 +116,10 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
     g_print ("Not Link\n");
   if (!gst_element_link (self->private->colorspace, self->private->video_sink))
     g_print ("Not Link\n");
+
+  gst_x_overlay_set_xwindow_id
+    ( GST_X_OVERLAY ( self->private->video_sink ),
+	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
 
   if (!gst_element_set_state(self->private->pipe, GST_STATE_PLAYING)) {
     g_print ("############################# BAD STATE ########################33\n");
