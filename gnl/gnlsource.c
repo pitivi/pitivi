@@ -178,6 +178,7 @@ gnl_source_init (GnlSource *source)
   GST_FLAG_SET (source, GST_ELEMENT_EVENT_AWARE);
 
   source->bin = gst_pipeline_new ("pipeline");
+  gst_bin_add(GST_BIN(source), GST_ELEMENT(source->bin));
   source->element = 0;
   source->linked_pads = 0;
   source->total_pads = 0;
@@ -216,8 +217,8 @@ gnl_source_dispose (GObject *object)
     gst_bin_remove (GST_BIN (source->bin), source->element);
     gst_object_unref (GST_OBJECT (source->element));
   }
-
-  gst_object_unref (GST_OBJECT (source->bin));
+  gst_bin_remove(GST_BIN(source), GST_ELEMENT(source->bin));
+/*   gst_object_unref (GST_OBJECT (source->bin)); */
   
   G_OBJECT_CLASS (parent_class)->dispose (object);
   GST_INFO("dispose END");
@@ -324,7 +325,7 @@ gnl_source_set_element (GnlSource *source, GstElement *element)
     gst_bin_remove (GST_BIN (source->bin), source->element);
     gst_object_unref (GST_OBJECT (source->element));
   }
-
+  
   //  gst_object_ref (GST_OBJECT (element));
 
   source->element = element;
@@ -508,9 +509,12 @@ clear_queues (GnlSource *source)
   GST_INFO("clear_queues %p", walk);
   while (walk) {
     SourcePadPrivate *private = (SourcePadPrivate *) walk->data;
-
-    g_slist_free (private->queue);
-    private->queue = NULL;
+    
+    if (private->queue) {
+      g_slist_free (private->queue);
+      private->queue = NULL;
+    } else
+      GST_INFO("queue already empty !");
     
     walk = g_slist_next (walk);
   }
@@ -665,7 +669,8 @@ source_chainfunction (GstPad *pad, GstData *buf)
   GstClockTimeDiff intime;
   GstBuffer	*buffer = GST_BUFFER(buf);
 
-  GST_INFO("chaining");
+  GST_INFO("chaining : data time %lld:%02lld:%03lld",
+	   GST_M_S_M(GST_BUFFER_TIMESTAMP(buffer)));
 
   private = gst_pad_get_element_private (pad);
   source = GNL_SOURCE (gst_pad_get_parent (pad));
@@ -726,7 +731,7 @@ source_getfunction (GstPad *pad)
     /* No data in private queue, EOS */
     while (!private->queue) {
       if (!gst_bin_iterate (GST_BIN (source->bin))) {
-	GST_INFO("Nothing more coming from %s",
+	GST_INFO("Iterate returned FALSE, Nothing more coming from %s",
 		 gst_element_get_name(GST_ELEMENT(source->bin)));
         buffer = GST_BUFFER (gst_event_new (GST_EVENT_EOS));
 	found = TRUE;
@@ -828,8 +833,9 @@ gnl_source_prepare (GnlObject *object, GstEvent *event)
 	   gst_element_get_state (GST_ELEMENT(object)));
 
   source->pending_seek = event;
-
+  
   if (gst_element_get_state (GST_ELEMENT (object)) >= GST_STATE_READY) {
+    clear_queues (source);
     res = source_send_seek (source, source->pending_seek);
   }
   
@@ -857,43 +863,44 @@ gnl_source_change_state (GstElement *element)
 {
   GnlSource *source = GNL_SOURCE (element);
   GstElementStateReturn	res = GST_STATE_SUCCESS;
+  GstElementStateReturn	res2 = GST_STATE_SUCCESS;
 
-  if (!GNL_OBJECT(source)->active)
-    GST_WARNING("Trying to change state but Source %s is not active ! This might be normal...",
-		gst_element_get_name(element));
-  if (GNL_OBJECT(source)->active)
-    switch (GST_STATE_TRANSITION (source)) {
-    case GST_STATE_NULL_TO_READY:
-      break;
-    case GST_STATE_READY_TO_PAUSED:
-      if (!source_queue_media (source))
-	res = GST_STATE_FAILURE;
-      break;
-    case GST_STATE_PAUSED_TO_PLAYING:
-      if (!gst_element_set_state (source->bin, GST_STATE_PLAYING))
-	res = GST_STATE_FAILURE;
-      break;
-    case GST_STATE_PLAYING_TO_PAUSED:
-      if (!gst_element_set_state (source->bin, GST_STATE_PAUSED))
-	res = GST_STATE_FAILURE;
-      break;
-    case GST_STATE_PAUSED_TO_READY:
-      break;
-    case GST_STATE_READY_TO_NULL:
-      break;
-    default:
-      break;
-    }
+  switch (GST_STATE_TRANSITION (source)) {
+  case GST_STATE_NULL_TO_READY:
+    break;
+  case GST_STATE_READY_TO_PAUSED:
+    if (!source_queue_media (source))
+      res = GST_STATE_FAILURE;
+    break;
+  case GST_STATE_PAUSED_TO_PLAYING:
+    if (!GNL_OBJECT(source)->active)
+      GST_WARNING("Trying to change state but Source %s is not active ! This might be normal...",
+		  gst_element_get_name(element));
+    else if (!gst_element_set_state (source->bin, GST_STATE_PLAYING))
+      res = GST_STATE_FAILURE;
+    break;
+  case GST_STATE_PLAYING_TO_PAUSED:
+    if (!gst_element_set_state (source->bin, GST_STATE_PAUSED))
+      res = GST_STATE_FAILURE;
+    break;
+  case GST_STATE_PAUSED_TO_READY:
+    break;
+  case GST_STATE_READY_TO_NULL:
+    break;
+  default:
+    break;
+  }
   
-  if (res == GST_STATE_SUCCESS)
-    res = GST_ELEMENT_CLASS (parent_class)->change_state (element);
-  else
+  res2 = GST_ELEMENT_CLASS (parent_class)->change_state (element);
+  if ((res != GST_STATE_SUCCESS) || (res2 != GST_STATE_SUCCESS)) {
     GST_WARNING("%s : something went wrong",
 		gst_element_get_name(element));
-  GST_INFO("%s : change_state returns %d",
+    return GST_STATE_FAILURE;
+  }
+  GST_INFO("%s : change_state returns %d!%d",
 	   gst_element_get_name(element),
-	   res);
-  return res;
+	   res, res2);
+  return res2;
 }
 
 static void

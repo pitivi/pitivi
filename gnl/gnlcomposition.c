@@ -403,42 +403,41 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
 {
   GnlCompositionEntry *entry;
 
-  GST_INFO("Composition[%s] Object[%s](Ref:%d)",
+  GST_INFO("Composition[%s] Object[%s] Parent:%s",
 	   gst_element_get_name(GST_ELEMENT (comp)),
 	   gst_element_get_name(GST_ELEMENT (object)),
-	   G_OBJECT (object)->ref_count);
+	   (gst_element_get_parent(GST_ELEMENT(object)) ?
+	    gst_element_get_name(gst_element_get_parent(GST_ELEMENT(object))):
+	    "None"));
 
   g_return_if_fail (GNL_IS_COMPOSITION (comp));
 
-  if (!GNL_IS_OBJECT(object)) {
-    GST_INFO("object is not GnlObject... calling GstBin->add_element()");
-    GST_BIN_CLASS(parent_class)->add_element(GST_BIN(comp), GST_ELEMENT(object));
-    return ;
+  if (GNL_IS_OBJECT(object)) {
+    gst_object_ref(GST_OBJECT(object));
+  
+    entry = g_malloc (sizeof (GnlCompositionEntry));
+
+    gst_object_ref (GST_OBJECT (object));
+    gst_object_sink (GST_OBJECT (object));
+    entry->object = object;
+
+    object->comp_private = entry;
+
+    if (gst_element_get_pad (GST_ELEMENT (object), "src") == NULL 
+	&& GNL_IS_SOURCE (object)) {
+      gnl_source_get_pad_for_stream (GNL_SOURCE (object), "src");
+    }
+  
+    entry->priorityhandler = g_signal_connect(object, "notify::priority", G_CALLBACK (child_priority_changed), comp);
+    entry->starthandler = g_signal_connect(object, "notify::start", G_CALLBACK (child_start_stop_changed), comp);
+    entry->stophandler = g_signal_connect(object, "notify::stop", G_CALLBACK (child_start_stop_changed), comp);
+    entry->activehandler = g_signal_connect(object, "notify::active", G_CALLBACK (child_active_changed), comp);
+  
+    comp->objects = g_list_insert_sorted (comp->objects, entry, _entry_compare_func);
+  
+    composition_update_start_stop (comp);
   }
-  
-  gst_object_ref(GST_OBJECT(object));
-  
-  entry = g_malloc (sizeof (GnlCompositionEntry));
-
-  gst_object_ref (GST_OBJECT (object));
-  gst_object_sink (GST_OBJECT (object));
-  entry->object = object;
-
-  object->comp_private = entry;
-
-  if (gst_element_get_pad (GST_ELEMENT (object), "src") == NULL 
-      && GNL_IS_SOURCE (object)) {
-    gnl_source_get_pad_for_stream (GNL_SOURCE (object), "src");
-  }
-  
-  entry->priorityhandler = g_signal_connect(object, "notify::priority", G_CALLBACK (child_priority_changed), comp);
-  entry->starthandler = g_signal_connect(object, "notify::start", G_CALLBACK (child_start_stop_changed), comp);
-  entry->stophandler = g_signal_connect(object, "notify::stop", G_CALLBACK (child_start_stop_changed), comp);
-  entry->activehandler = g_signal_connect(object, "notify::active", G_CALLBACK (child_active_changed), comp);
-  
-  comp->objects = g_list_insert_sorted (comp->objects, entry, _entry_compare_func);
-  
-  composition_update_start_stop (comp);
+  GST_BIN_CLASS(parent_class)->add_element(GST_BIN(comp), GST_ELEMENT(object)); 
 }
 
 static gint
@@ -589,9 +588,10 @@ gnl_composition_deactivate_childs (GnlComposition *comp)
 {
   GList	*tmp, *next;
 
+  GST_INFO("deactivate childs %p", comp->active_objects);
   for (next = NULL, tmp = comp->active_objects; tmp; tmp = next) {
     next = tmp->next;
-    gst_element_set_state(GST_ELEMENT (tmp->data), GST_STATE_READY );
+    gst_element_set_state(GST_ELEMENT (tmp->data), GST_STATE_PAUSED );
     gnl_object_set_active(GNL_OBJECT (tmp->data), FALSE);
   }
 }

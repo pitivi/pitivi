@@ -432,6 +432,8 @@ pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
   sourcefile = (PitiviSourceFile*)pitivi_projectsourcelist_get_file_info(self,
 									 treepath,
 									 file_pos);
+  if (!sourcefile)
+    g_printf ("Problem getting the sourcefile !!!!!!\n");
   return sourcefile;
 }
 

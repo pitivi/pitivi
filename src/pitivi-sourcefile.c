@@ -163,7 +163,7 @@ bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udat
   type = get_pad_type (pad);
   if (!type)
     return;
-  g_printf("Adding pad type[%d]->[%d] : %s:%s\n", type, data->bintype, GST_DEBUG_PAD_NAME(pad));
+/*   g_printf("Adding pad type[%d]->[%d] : %s:%s\n", type, data->bintype, GST_DEBUG_PAD_NAME(pad)); */
   /* Connect (adapters and) ghost pads */
   if (type == IS_AUDIO) {
     if (data->bintype != IS_VIDEO) {
@@ -179,7 +179,7 @@ bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udat
       g_free(tmp);
       gst_bin_add(GST_BIN (data->bin), sink);
       if (!(gst_pad_link(pad, gst_element_get_pad(sink, "sink"))))
-	g_printf("Error linking decodebin pad to fakesink !!!");
+	g_warning("Error linking decodebin pad to fakesink !!!");
     }
     data->audioready = TRUE;
   } else if (type == IS_VIDEO) {
@@ -196,7 +196,7 @@ bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udat
       g_free(tmp);
       gst_bin_add(GST_BIN (data->bin), sink);
       if (!(gst_pad_link(pad, gst_element_get_pad(sink, "sink"))))
-	g_printf("Error linking decodebin pad to fakesink !!!");
+	g_warning("Error linking decodebin pad to fakesink !!!");
     }
     data->videoready = TRUE;
   }
@@ -247,11 +247,9 @@ create_new_bin (PitiviSourceFile *self, int type)
 
   if (!gst_element_seek (decode, GST_FORMAT_BYTES | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH, 0))
     g_printf("ERROR SEEKING BACK TO 0!!!!\n");
-  pitivi_printf_element(pipeline);
   gst_element_set_state (container, GST_STATE_PAUSED);
   gst_object_ref(GST_OBJECT(pipeline));
   gst_bin_remove (GST_BIN (container), pipeline);
-  g_printf("Created the pipeline %p\n", container);
   return pipeline;
 }
 
@@ -372,14 +370,16 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
   if (!sf->length) {
     establish_length (sf);
   }
-  if (GST_BUFFER_TIMESTAMP(buf) >= sf->private->vlastcaptured) {
+  if ((GST_CLOCK_TIME_IS_VALID(GST_BUFFER_TIMESTAMP(buf))) 
+      && (GST_BUFFER_TIMESTAMP(buf) >= sf->private->vlastcaptured) &&
+      (GST_BUFFER_TIMESTAMP(buf) >= 0)) {
     gchar	*filename;
     int		fd;
     /* Use vthumb path root */
     filename = g_strdup_printf ("%s-%020lld.png",
 				sf->private->vthumb_path_root,
 				(signed long long int) GST_BUFFER_TIMESTAMP(buf));
-    g_printf ("Recording video thumbnail to file %s\n", filename);
+/*     g_printf ("Recording video thumbnail to file %s\n", filename); */
     fd = open ((const char *) filename,
 	       O_CREAT | O_RDWR | O_TRUNC,
 	       S_IRUSR | S_IWUSR);
@@ -398,11 +398,13 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
     sf->private->vcache[sf->private->cacheidx]->time = GST_BUFFER_TIMESTAMP(buf);
     sf->private->cacheidx++;
   }
-  if (sf->private->vlastcaptured < sf->length) {
-    if (!(gst_element_seek (element, GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH,
-			    sf->private->vlastcaptured)))
-      g_printf ("Error seeking to %lld\n", (signed long long int) sf->private->vlastcaptured);
-  }
+  /* If audio caps is not fixed, carry on normally */
+  if (sf->private->audiopad && (gst_caps_is_fixed(gst_pad_get_caps(sf->private->audiopad))))
+    if (sf->private->vlastcaptured < sf->length) {
+      if (!(gst_element_seek (element, GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH,
+			      sf->private->vlastcaptured)))
+	g_printf ("Error seeking to %lld\n", (signed long long int) sf->private->vlastcaptured);
+    }
 }
 
 void
@@ -418,7 +420,6 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer 
   /* Stick a fakesink to the pad */
   /* TODO : Should stick the correct converters/cache sink */
 
-  
   tmp = g_strdup_printf("fakesink%d", sf->private->lastsinkid++);
   sink = gst_element_factory_make ("fakesink", tmp);
   g_object_set (sink, "signal-handoffs", TRUE, NULL);
@@ -525,8 +526,6 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
     record_pad_info(self, IS_AUDIO, self->private->audiopad);
   }
 
-/*   establish_length(self); */
-
   /* Remove fakesinks */
   if (self->private->audioout) {
     gst_element_unlink(self->private->decode, self->private->audioout);
@@ -627,7 +626,6 @@ pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop)
       if (!sf->private->vthumb[i]) {
 	sf->private->vthumb[i] = g_new0(PitiviThumbTab, 1);
 	sf->private->vthumb[i]->time = sf->private->vcache[i]->time;
-	g_printf ("%d %s\n", i, sf->private->vcache[i]->filename);
 	if (sf->private->vcache[i]->filename)
 	  if (!(sf->private->vthumb[i]->pixbuf = gdk_pixbuf_new_from_file(sf->private->vcache[i]->filename, NULL)))
 	    g_warning ("Error getting file %s", sf->private->vcache[i]->filename);
@@ -653,11 +651,9 @@ pitivi_sourcefile_get_bin (PitiviSourceFile *sf)
 {
   GstElement	*res;
 
-  g_printf ("get_bin\n");
   if (sf->haveeffect)
     return NULL;
   res = create_new_bin (sf, IS_AUDIO_VIDEO);
-  /* TODO : Reference the bin */
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
   sf->private->bins = g_slist_append(sf->private->bins, res);
   sf->nbbins++;
@@ -676,11 +672,9 @@ pitivi_sourcefile_get_audio_bin (PitiviSourceFile *sf)
 {
   GstElement	*res;
 
-  g_printf ("get_audio_bin\n");
   if (!sf->haveaudio)
     return NULL;
   res = create_new_bin (sf, IS_AUDIO);
-  /* TODO : Reference the bin */
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
   sf->private->bins = g_slist_append(sf->private->bins, res);
   sf->nbbins++;
@@ -699,11 +693,9 @@ pitivi_sourcefile_get_video_bin (PitiviSourceFile *sf)
 {
   GstElement	*res;
 
-  g_printf ("get_video_bin\n");
   if (!sf->havevideo)
     return NULL;
   res = create_new_bin (sf, IS_VIDEO);
-  /* TODO : Reference the bin */
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
   sf->private->bins = g_slist_append(sf->private->bins, res);
   sf->nbbins++;
@@ -723,7 +715,6 @@ pitivi_sourcefile_get_effect_bin (PitiviSourceFile *sf)
   GstElement	*res;
   gchar		*tmp;
 
-  g_printf ("get_effect_bin\n");
   if (!sf->haveeffect)
     return NULL;
   tmp = g_strdup_printf ("%s-%d", sf->filename, sf->private->lastsinkid++);
@@ -764,7 +755,6 @@ pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp)
   pitivi_sourcefile_type_find (sourcefile);
 
   sourcefile->pipeline = create_new_bin (sourcefile, IS_AUDIO_VIDEO);
-  g_printf("Created new PitiviSourceFile %p\n", sourcefile);
   sourcefile->thumbs = pitivi_sourcefile_get_vthumb (sourcefile, 0LL, sourcefile->length);
   return sourcefile;
 }
@@ -856,7 +846,6 @@ pitivi_sourcefile_finalize (GObject *object)
 {
   PitiviSourceFile	*this = PITIVI_SOURCEFILE(object);
 
-  g_printf("pitivi_sourcefile_finalize\n");
   if (this->private->bins)
     g_slist_free(this->private->bins);
   g_free (this->private);

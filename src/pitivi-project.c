@@ -369,7 +369,6 @@ pitivi_project_constructor (GType type,
 
   project = (PitiviProject *) obj;
 
-  g_printf("project constructor \n");
   /*
     create container for timeline,
     Create audio&video groups and add them to the timeline
@@ -406,7 +405,6 @@ pitivi_project_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviProject *self = (PitiviProject *) instance;
 
-  g_printf("project instance init\n");
   self->private = g_new0 (PitiviProjectPrivate, 1);
 
   /* initialize all public and private members to reasonable default values. */

@@ -424,7 +424,7 @@ gnl_object_set_active (GnlObject *object, gboolean active)
   g_return_if_fail (object != NULL);
   g_return_if_fail (GNL_IS_OBJECT (object));
   
-  GST_INFO("Active[%d]", active);
+  GST_INFO("Active[%d] %s", active, gst_element_get_name(GST_ELEMENT(object)));
 
   if (object->active != active) {
     object->active = active;

@@ -47,6 +47,7 @@ static		PitiviProjectWindowsClass *parent_class;
 static		GdkPixmap *pixmap = NULL;
 
 gboolean	idle_func_video (gpointer data);
+gboolean	updated_time (gpointer data);
 
 enum {
   PLAY,
@@ -187,7 +188,6 @@ void	video_play(GtkWidget *widget, gpointer data)
     }
   } else if (self->private->play_status == STOP) {
     g_print ("[CallBack]:video_play\n");
-    pitivi_printf_element(project->pipeline);
     self->private->play_status = PLAY;
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
       g_warning("Couldn't set the project pipeline to PLAYING");
@@ -207,7 +207,7 @@ void	video_stop(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  gint64	value;
+/*   gint64	value; */
 
   g_print ("[CallBack]:video_stop\n");
   //gst_element_set_state(project->pipeline, GST_STATE_NULL);
@@ -218,10 +218,11 @@ void	video_stop(GtkWidget *widget, gpointer data)
   do_seek(GST_ELEMENT (project->timeline), 0LL);
   
   /* query total size */
-  value  = do_query(GST_ELEMENT (project->timeline), GST_QUERY_TOTAL);
+  /* value  = do_query(GST_ELEMENT (project->timeline), GST_QUERY_TOTAL); */
 
   /* reset the viewer timeline */
-  gtk_range_set_value(GTK_RANGE (self->private->timeline) , 0);
+  self->private->new_time = 0;
+  updated_time (self);
   return ;
 }
 
@@ -370,7 +371,6 @@ viewerwindow_start_stop_changed (GnlTimeline *timeline, GParamSpec *arg, gpointe
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) udata;
 
-  g_printf("updating range start/stop\n");
   self->private->timeline_min = GNL_OBJECT(timeline)->start;
   self->private->timeline_max = GNL_OBJECT(timeline)->stop;
 
@@ -407,6 +407,8 @@ output_probe (GstProbe *probe, GstData **data, gpointer udata)
     */
     gst_element_set_state (project->pipeline, GST_STATE_PAUSED);
     self->private->play_status = STOP;
+    self->private->new_time = 0;
+    g_idle_add (updated_time, self);    
     return FALSE;
   }
   return TRUE;

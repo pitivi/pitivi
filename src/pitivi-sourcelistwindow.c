@@ -1076,7 +1076,7 @@ gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
 	  self->private->treepath = gtk_tree_path_to_string(treepath);
 	  
 	  /* show all file in current bin */
-	  show_file_in_current_bin(self);
+/* 	  show_file_in_current_bin(self); */
 	  g_free(name);
 	}
     }

@@ -36,6 +36,7 @@
  ********
  */
 
+#include <glib/gprintf.h>
 #include "pitivi.h"
 #include "pitivi-settings.h"
 

@@ -428,7 +428,6 @@ pitivi_mainapp_constructor (GType type,
   
   /* do stuff. */
   self = (PitiviMainApp *) obj;
-
   /* Lancement du splash screen */
   self->private->splash_screen = pitivi_splashscreenwindow_new();
   usleep (10);

@@ -248,16 +248,17 @@ gnl_timeline_timer_loop (GstElement *element)
     TimerGroupLink* link = (TimerGroupLink *) walk->data;
     GstPad *sinkpad = link->sinkpad;
 
-    GST_INFO("WALK group[%s] time[%lld]",
+    GST_INFO("WALK group[%s] time[%lld] Trying pad %s:%s",
 	     gst_element_get_name(GST_ELEMENT(link->group)),
-	     link->time);
+	     link->time,
+	     GST_DEBUG_PAD_NAME(sinkpad));
 
-    if (GST_PAD_IS_USABLE (sinkpad)) {
+ /*    if (GST_PAD_IS_USABLE (sinkpad)) { */
       if (link->time <= current) {
         to_schedule = link;
         current = link->time;
       }
-    }
+/*     } */
 
     walk = g_list_next (walk);
   }
@@ -303,9 +304,9 @@ gnl_timeline_timer_loop (GstElement *element)
 
         gst_pad_unlink (to_schedule->sinkpad, GST_PAD_PEER (to_schedule->sinkpad));
 
-        GST_INFO ("reactivating group %s, seek to time %lld %lld",
-		 gst_element_get_name (GST_ELEMENT (group)),
-	         time, G_MAXINT64);
+        GST_INFO ("reactivating group %s, seek to time %lld:%02lld:%03lld",
+		  gst_element_get_name (GST_ELEMENT (group)),
+		  GST_M_S_M(time));
 
 	gst_element_send_event (GST_ELEMENT (group),
 	                          gst_event_new_segment_seek (

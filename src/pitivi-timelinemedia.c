@@ -190,7 +190,6 @@ pitivi_timelinemedia_new ( PitiviSourceFile *sf, int width, PitiviTimelineCellRe
   PitiviTimelineMedia	*this;
   PitiviLayerType	type;
  
-  g_printf("PitiviTimelineMedia new, sf = %p\n", sf);
   type = PITIVI_NO_TRACK;
   if (sf)
     type = pitivi_check_media_type (sf);
@@ -386,9 +385,11 @@ void
 show_video_media (GtkWidget *widget)
 {
   PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
-  GdkPixbuf *pixs[this->sourceitem->srcfile->nbthumbs+1];
+  /*   GdkPixbuf *pixs[this->sourceitem->srcfile->nbthumbs+1];  Magnifique, splendide, renversant ...*/
   int pix_width, width, i,j, nb_img = 0;
-  
+  GdkPixbuf	**pixs;
+
+  pixs = g_new0(GdkPixbuf *, this->sourceitem->srcfile->nbthumbs + 1);
   if (GTK_IS_WIDGET ( widget ) )
     {
       if (this->private->thumbs && this->private->thumbs[0])
@@ -406,12 +407,13 @@ show_video_media (GtkWidget *widget)
 	      if ( nb_img < this->sourceitem->srcfile->nbthumbs)
 		{
 		  j = 0;
-		  for (i=0; i<this->sourceitem->srcfile->nbthumbs && j < nb_img; i++)
+		  for (i=0; this->sourceitem->srcfile->thumbs[i] && (i<this->sourceitem->srcfile->nbthumbs) && (j < nb_img); i++)
 		    {
 		      pixs[j] = this->private->thumbs[i]->pixbuf;
 		      j++;
 		    }
-		  pixs[nb_img] = this->private->thumbs[this->sourceitem->srcfile->nbthumbs-1]->pixbuf;
+		  if (this->private->thumbs[this->sourceitem->srcfile->nbthumbs-1])
+		    pixs[nb_img] = this->private->thumbs[this->sourceitem->srcfile->nbthumbs-1]->pixbuf;
 		  draw_video_thumbs (this, pixs, nb_img,  widget->allocation.width / nb_img);
 		}
 	      else
@@ -420,7 +422,9 @@ show_video_media (GtkWidget *widget)
 		    width = widget->allocation.width / this->sourceitem->srcfile->nbthumbs;
 		  else
 		    width = widget->allocation.width;
-		  for (i=0; i<this->sourceitem->srcfile->nbthumbs; i++) pixs[i] = this->private->thumbs[i]->pixbuf;
+		  for (i=0; i<this->sourceitem->srcfile->nbthumbs; i++)
+		    if (this->private->thumbs[i])
+		      pixs[i] = this->private->thumbs[i]->pixbuf;
 		  draw_video_thumbs (this, pixs, this->sourceitem->srcfile->nbthumbs, width);
 		}
 	    }
@@ -603,7 +607,6 @@ pitivi_timelinemedia_constructor (GType type,
   gtk_drawing_area_size (GTK_DRAWING_AREA (this), this->private->width, GTK_WIDGET (this->track)->allocation.height);
   /* Setting Tooltip */
   pitivi_timelinemedia_update_tooltip (this);
-  g_printf("pitivi_timelinemedia_constructor END\n");
   return object;
 }
 
@@ -1033,7 +1036,6 @@ pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *this, gpointer data)
 {
   GtkWidget *track;
   
-  g_printf("destroy media\n");
   if (this->selected)
     {
       if ( this->linked )
