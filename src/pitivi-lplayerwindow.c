@@ -45,6 +45,7 @@ struct _PitiviLPlayerWindowPrivate
   GstElement	*pipe;
   GstElement	*filesrc;
   GstElement	*spider;
+  GstElement	*colorspace;
   GstElement	*video_sink;
 
 
@@ -66,26 +67,6 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
   return ;
 }
 
-gboolean	
-pitivi_lplayer_idle_func_video (gpointer data)
-{
-  PitiviLPlayerWindow *self = (PitiviLPlayerWindow *) data;
-
-  g_print ("BOUCLE1\n");
-  if (self->private->pipe) {
-    if (gst_element_get_state (self->private->pipe) == GST_STATE_PLAYING ) {
-
-      gst_bin_iterate (GST_BIN (self->private->pipe));
-      
-      g_print ("Iterate\n");
-      
-    }  
-
-  }
-
-  return TRUE;
-}
-
 void
 pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
 {
@@ -99,7 +80,10 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
 
   self->private->spider = gst_element_factory_make("spider", "spider");
   g_assert (self->private->spider != NULL);
-    
+ 
+  self->private->colorspace = gst_element_factory_make("colorspace", "colorspace");
+  g_assert (self->private->colorspace != NULL);
+   
   self->private->video_sink = gst_element_factory_make("xvimagesink", "video_sink");
   g_assert (self->private->video_sink != NULL);
     
@@ -107,6 +91,7 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
 		    self->private->filesrc,
 		    self->private->spider,
 		    self->private->video_sink,
+		    self->private->colorspace,
 		    NULL);
 		    
   if (!gst_element_link (self->private->filesrc, self->private->spider))
@@ -118,10 +103,6 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
     g_print ("############################# BAD STATE ########################33\n");
     exit (-1);
   }
-
-  g_idle_add (pitivi_lplayer_idle_func_video, self);
-
-  //gst_bin_iterate (GST_BIN (self->private->pipe));
 
   return ;
 }
