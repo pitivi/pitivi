@@ -754,10 +754,19 @@ void
 pitivi_create_new_project ( GtkAction *action, PitiviNewProjectWindow *self )
 {
   PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
-  PitiviProject	*project;
+  PitiviProject			*project;
+  PitiviProjectSettings		*settings;
+  PitiviCategorieSettings	*categorie;
 
-  /* Il faut passer une COPIE du PitiviProjectSettings selectionne ici */
-  project = pitivi_project_new( NULL );
+  categorie = pitivi_mainapp_get_selected_category( mainapp, self->private->position );
+  if (categorie == NULL)
+    return ;
+
+  /* On recupere une copie du PitiviProjectSettings selectionne */
+  settings = pitivi_projectsettings_copy ((PitiviProjectSettings *) g_slist_nth_data(categorie->list_settings, self->private->position[1]));
+
+  /* Creation d'un nouveau projet avec ces settings */
+  project = pitivi_project_new( settings );
 
   /* 
      Si on arrive a ajouter correctement le projet a mainapp alors on affiche les bonnes fenetres 

@@ -122,7 +122,7 @@ if test "x$HAVE_GST_LIBS" = "xno"; then
 fi
 
 dnl check for GTK
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4.0 gconf-2.0 gdk-2.0 >= 2.4.0,,exit)
+PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4.0 gconf-2.0 gdk-2.0 >= 2.4.0 libxml-2.0, ,exit)
 AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 

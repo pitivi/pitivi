@@ -114,4 +114,9 @@ GSList			*pitivi_projectsettings_list_make( );
 GstCaps			*pitivi_projectsettings_vcaps_create ( int width, int height, int framerate );
 GstCaps			*pitivi_projectsettings_acaps_create ( int rate, int channel );
 
+xmlNodePtr	pitivi_projectsettings_save_thyself(PitiviProjectSettings *self, xmlNodePtr parent);
+void		pitivi_projectsettings_restore_thyself(PitiviProjectSettings *tofill, xmlNodePtr self);
+PitiviProjectSettings *pitivi_projectsettings_copy(PitiviProjectSettings *self);
+
+
 #endif

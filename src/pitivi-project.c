@@ -53,9 +53,20 @@ pitivi_project_new (PitiviProjectSettings *settings)
   return project;
 }
 
+/*
+  pitivi_project_new_from_file
+
+  loads a PitiviProject from the given file filename
+
+  Returns the loaded PitiviProject, or NULL if there's a problem
+*/
+
 PitiviProject *
 pitivi_project_new_from_file (const gchar *filename)
 {
+  xmlDocPtr doc;
+  xmlNodePtr field, cur, child;
+  xmlNsPtr ns;
   PitiviProject *project;
 
   if (filename == NULL)
@@ -68,10 +79,146 @@ pitivi_project_new_from_file (const gchar *filename)
      * Restore the XML-formatted PitiviSettings contained in the file
      * Restore the XML-formatted PitiviSourceList contained in the file
   */
+#if 1
+  doc = xmlParseFile (filename);
 
+  if (!doc)
+    return NULL;
+
+  cur = xmlDocGetRootElement (doc);
+  if (cur == NULL)
+    return NULL;
+
+  ns = xmlSearchNsByHref (doc, cur, "http://pitivi.org/pitivi-core/0.1/");
+  if (ns == NULL)
+    return NULL;
+
+  if (strcmp (cur->name, "pitivi"))
+    return NULL;
+
+  /* Actually extract the contents */
+
+  for (field = cur->xmlChildrenNode; field; field = field->next)
+    if (!strcmp (field->name, "project") && (field->ns == ns)) {
+      /* found the PitiviProject */
+      project = (PitiviProject *) g_object_new (PITIVI_PROJECT_TYPE, NULL);
+      pitivi_project_restore_thyself(project, field);
+    }
+  
+#else
   project = pitivi_project_new(NULL);
-
+#endif
+  project->filename = g_strdup(filename);
+  
   return project;
+}
+
+void
+pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self)
+{
+  xmlNodePtr	child;
+  PitiviProjectSettings	*settings;
+
+  for (child = self->xmlChildrenNode; child; child = child->next) {
+    if (!strcmp(child->name, "projectsettings")) {
+      settings = (PitiviProjectSettings *) g_object_new (PITIVI_PROJECTSETTINGS_TYPE, NULL);
+      pitivi_projectsettings_restore_thyself(settings, child);
+      project->settings = settings;
+    }
+  }
+  /*
+    TODO
+
+    restore the other properties of the PitiviProject
+  */
+}
+
+/*
+  pitivi_project_save_thyself
+
+  Returns a pointer to the XMLDocument filled with the contents of the PitiviProject
+*/
+
+xmlDocPtr
+pitivi_project_save_thyself(PitiviProject *project)
+{
+  xmlDocPtr doc;
+  xmlNodePtr projectnode;
+  xmlNsPtr ns;
+
+  doc = xmlNewDoc ("1.0");
+
+  doc->xmlRootNode = xmlNewDocNode (doc, NULL, "pitivi", NULL);
+
+  ns = xmlNewNs (doc->xmlRootNode, "http://pitivi.org/pitivi-core/0.1/", "pitivi");
+
+  projectnode = xmlNewChild (doc->xmlRootNode, ns, "project", NULL);
+
+  pitivi_projectsettings_save_thyself ( project->settings , projectnode);
+
+  return doc;  
+}
+
+/*
+  pitivi_project_save_to_file
+
+  Saves the given project to the file filename
+
+  Returns TRUE if the file was saved properly, FALSE otherwise
+*/
+
+gboolean
+pitivi_project_save_to_file(PitiviProject *project, const gchar *filename)
+{
+  xmlDocPtr		cur;
+  xmlOutputBufferPtr	buf;
+  const char		*encoding;
+  xmlCharEncodingHandlerPtr handler = NULL;
+  int			indent;
+  gboolean		ret;
+  FILE			*out;
+
+  /* open the file */
+  out = fopen(filename, "w+");
+  if (out == NULL)
+    return FALSE;
+
+  cur = pitivi_project_save_thyself (project);
+  if (!cur)
+    return FALSE;
+
+  encoding = (const char *) cur->encoding;
+
+  if (encoding != NULL) {
+    xmlCharEncoding enc;
+
+    enc = xmlParseCharEncoding (encoding);
+
+    if (cur->charset != XML_CHAR_ENCODING_UTF8) {
+      xmlGenericError (xmlGenericErrorContext,
+		       "xmlDocDump: document not in UTF8\n");
+      return FALSE;
+    }
+    if (enc != XML_CHAR_ENCODING_UTF8) {
+      handler = xmlFindCharEncodingHandler (encoding);
+      if (handler == NULL) {
+        xmlFree ((char *) cur->encoding);
+        cur->encoding = NULL;
+      }
+    }
+  }
+
+  buf = xmlOutputBufferCreateFile (out, handler);
+
+  indent = xmlIndentTreeOutput;
+  xmlIndentTreeOutput = 1;
+  ret = xmlSaveFormatFileTo (buf, cur, NULL, 1);
+  xmlIndentTreeOutput = indent;
+
+  /* close the file */
+  fclose(out);
+
+  return TRUE;
 }
 
 
@@ -113,6 +260,7 @@ pitivi_project_instance_init (GTypeInstance * instance, gpointer g_class)
 
   self->settings = NULL;
   self->sources = NULL;
+  self->filename = NULL;
 }
 
 static void

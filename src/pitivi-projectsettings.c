@@ -241,9 +241,81 @@ pitivi_projectsettings_list_make()
   return (list_categories);
 }
 
+/*
+  pitivi_projectsettings_save_thyself
 
+  Enregistre les proprietes de self dans une structure XML fils de parent
 
+  Renvoie la structure pere
+*/
 
+xmlNodePtr	
+pitivi_projectsettings_save_thyself(PitiviProjectSettings *self, xmlNodePtr parent)
+{
+  xmlNodePtr	selfptr;
+
+  selfptr = xmlNewChild (parent, NULL, "projectsettings", NULL);
+  xmlNewChild (selfptr, NULL, "name", self->name);
+  xmlNewChild (selfptr, NULL, "description", self->description);
+
+  /*
+    TODO
+
+    save the rest of the settings
+  */
+
+  return parent;
+}
+
+/*
+  pitivi_projectsettings_restore_thyself
+
+  Remplis l'objet tofill avec les donnes contenus dans self
+*/
+
+void
+pitivi_projectsettings_restore_thyself(PitiviProjectSettings *tofill, xmlNodePtr self)
+{
+  xmlNodePtr children;
+
+  for (children = self->xmlChildrenNode; children; children = children->next) {
+    if (!strcmp("name", children->name)) {
+      tofill->name = xmlNodeGetContent(children);
+    } else if (!strcmp("description", xmlNodeGetContent(children))) {
+      tofill->description = xmlNodeGetContent(children);
+    }
+    /*
+      TODO
+
+      Restore the rest of the settings
+    */
+  }
+}
+
+/*
+  pitivi_projectsettings_copy
+
+  Makes a copy of the given PitiviProjectSettings
+
+  Returns the copy
+*/
+
+PitiviProjectSettings *
+pitivi_projectsettings_copy(PitiviProjectSettings *self)
+{
+  PitiviProjectSettings	*res;
+  GSList		*mset;
+
+  res = pitivi_projectsettings_new();
+  res->name = g_strdup(self->name);
+  res->description = g_strdup(self->description);
+  /*
+    TODO
+
+    copy the other properties
+  */
+  return res;
+}
 
 PitiviProjectSettings *
 pitivi_projectsettings_new(void)

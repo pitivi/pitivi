@@ -1,6 +1,15 @@
 2004-06-26    <bilboed@localhost>
 
+	* src/pitivi-projectsettings.c (pitivi_projectsettings_copy): function to make copies of PitiviProjectSettings
+
+	* src/pitivi-timelinewindow.c: Activated 'Save' and 'SaveAs' menuitems
+
+	* src/pitivi-project.h (struct _PitiviProject): added filename property
+
+	* configure.ac: Added check for libxml-2.0
+
 	* src/pitivi-project.c (pitivi_project_new_from_file): New function to create a PitiviProject from a file
+	(pitivi_project_save_to_file): Function to save a project to file
 
 	* src/pitivi-toolboxwindow.c (pitivi_callb_toolbox_fileopen_project): Added File chooser for opening a file
 

@@ -2,6 +2,8 @@
   <menubar name="MainMenu">
       <menu action="FileMenu">
        <menuitem name="FileOpen" action="FileOpen"/>
+       <menuitem name="FileSave" action="FileSave"/>
+       <menuitem name="FileSaveAs" action="FileSaveAs"/>
        <menuitem name="FileExit" action="FileExit"/>
       </menu>  
   </menubar>
