@@ -146,8 +146,6 @@ video_play(GtkWidget *widget, gpointer data)
       PITIVI_WARNING("Couldn't set the project pipeline to READY before playing...");
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING)) {
       PITIVI_WARNING("Couldn't set the project pipeline to PLAYING!");
-/*     } else { */
-/*       g_idle_add(idle_func_video, self); */
     }
   } else {
     self->private->play_status = PAUSE;
@@ -236,7 +234,6 @@ static gint
 pitivi_viewerwindow_expose_event( GtkWidget      *widget,
 				  GdkEventExpose *event )
 {
-  //  PITIVI_DEBUGf("exposing\n");
   gdk_draw_drawable (widget->window,
 		     widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
 		     pixmap,
@@ -263,7 +260,6 @@ static gboolean
 updated_time (gpointer data) {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
 
-  /*PITIVI_DEBUGf ("updated time %lld:%lld:%lld\n", GST_M_S_M(self->private->new_time));*/
   if (!self->private->button_pressed) {
     gtk_range_set_value(GTK_RANGE (self->private->timeline) , self->private->new_time);
     pitivi_timelinewindow_update_time (pitivi_mainapp_get_timelinewin (((PitiviWindows *) self)->mainapp),
@@ -272,15 +268,6 @@ updated_time (gpointer data) {
   return FALSE;
 }
 
-static GstClockTime
-get_my_time ()
-{
-  GTimeVal timeval;
-
-  g_get_current_time (&timeval);
-
-  return GST_TIMEVAL_TO_TIME (timeval);
-}
 
 static gboolean
 output_probe (GstProbe *probe, GstData **data, gpointer udata)
@@ -290,11 +277,6 @@ output_probe (GstProbe *probe, GstData **data, gpointer udata)
 
   if (GST_IS_BUFFER(*data)) {
     self->private->new_time = GST_BUFFER_TIMESTAMP(*data);
-    PITIVI_DEBUG ("buffer State of Audiosink : %d, State of VideoSink : %d, timestamp : %lld:%lld:%lld. NOW : %lld:%lld:%lld",
-		  gst_element_get_state (self->private->audiosink),
-		  gst_element_get_state (self->private->sink),
-		  GST_M_S_M (self->private->new_time),
-		  GST_M_S_M (get_my_time()));
     g_idle_add (updated_time, self);
   }
   return TRUE;
@@ -306,7 +288,6 @@ end_of_video (GstElement *xvimagesink, PitiviViewerWindow *self)
 /*   PitiviProject	*project = ((PitiviProjectWindows *) self)->project; */
 
   PITIVI_WARNING ("end of video!!!");
-/*   gst_element_set_state (project->pipeline, GST_STATE_READY); */
   self->private->play_status = STOP;
   self->private->new_time = 0;
   g_idle_add (updated_time, self);  
@@ -337,7 +318,6 @@ move_timeline (GtkRange *range, GtkScrollType scroll,
   if (self->private->button_released) {
     gint64	pos = (gint64) value;
     PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-    GstElementState	state;
 
     if (pos < self->private->timeline_min)
       pos = self->private->timeline_min;
@@ -346,18 +326,8 @@ move_timeline (GtkRange *range, GtkScrollType scroll,
     PITIVI_DEBUG ("Timeline bar moved to %lld:%lld:%lld",
 		  GST_M_S_M(pos));
     
-    state = gst_element_get_state (GST_ELEMENT (project->bin));
-    if (state >= GST_STATE_PAUSED) {
-      if (state == GST_STATE_PLAYING)
-	gst_element_set_state (GST_ELEMENT(project->bin), GST_STATE_PAUSED);
-      /* Seek on the gnltimeline ! */
-      if (!gst_element_seek (GST_ELEMENT (project->timeline),
-			     GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH,
-			     pos))
-	PITIVI_WARNING ("Couldn't seek on the timeline !!");
-      if (state == GST_STATE_PLAYING)
-	gst_element_set_state (GST_ELEMENT(project->bin), GST_STATE_PLAYING);
-    }
+    pitivi_project_seek (project, pos);
+
     self->private->button_released = FALSE;
     self->private->button_pressed = FALSE;
   }
@@ -423,10 +393,8 @@ create_stream (gpointer data)
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
   GstElement	*audiosink;
-  GstElement	*timeoverlay;
 
   audiosink = gst_element_factory_make("alsasink", "audio-out");
-/*   g_object_set (G_OBJECT (audiosink), "silent", FALSE, NULL); */
   self->private->audiosink = audiosink;
   
   pitivi_project_set_audio_output(project, audiosink);
@@ -438,29 +406,7 @@ create_stream (gpointer data)
   gst_pad_add_probe (gst_element_get_pad (self->private->sink, "sink"),
 		     self->private->probe);
 
-/*   timeoverlay = gst_element_factory_make ("timeoverlay", "timeoverlay"); */
-  timeoverlay = NULL;
-  self->private->fulloutputbin = gst_bin_new("videobin");
-
-  if (timeoverlay) {
-    gst_bin_add_many (GST_BIN (self->private->fulloutputbin),
-		      timeoverlay,
-		      self->private->sink,
-		      NULL);
-    gst_element_link (timeoverlay, self->private->sink);
-    
-    gst_element_add_ghost_pad (self->private->fulloutputbin,
-			       gst_element_get_pad(timeoverlay, "sink"),
-			       "sink");
-  } else {
-    gst_bin_add (GST_BIN (self->private->fulloutputbin),
-		 self->private->sink);
-    gst_element_add_ghost_pad (self->private->fulloutputbin,
-			       gst_element_get_pad(self->private->sink, "sink"),
-			       "sink");
-  }
-  /* Add a GstProbe to the output */
-  pitivi_project_set_video_output(project, self->private->fulloutputbin);
+  pitivi_project_set_video_output(project, self->private->sink);
 
   self->private->play_status = STOP;
 
@@ -471,25 +417,6 @@ create_stream (gpointer data)
 
   return ;
 }
-
-/* static gboolean	 */
-/* idle_func_video (gpointer data) */
-/* { */
-/*   PitiviViewerWindow *self = (PitiviViewerWindow *) data; */
-/*   PitiviProject	*project = ((PitiviProjectWindows *) self)->project; */
-  
-/*   // remove the idle_func if we're not playing ! */
-/*   if (gst_element_get_state (GST_ELEMENT(project->timeline)) != GST_STATE_PLAYING) { */
-/*     if (self->private->play_status == STOP) */
-/*       video_stop (GTK_WIDGET (self), self); */
-/*     return FALSE; */
-/*   } */
-  
-/* /\*   if ( gst_element_get_state (GST_ELEMENT (project->pipeline)) == GST_STATE_PLAYING ) { *\/ */
-/* /\*     gst_bin_iterate (GST_BIN (project->pipeline)); *\/ */
-/* /\*   } *\/ */
-/*   return TRUE; */
-/* } */
 
 /*
  * Insert "added-value" functions here
@@ -520,8 +447,6 @@ pitivi_viewerwindow_constructor (GType type,
 
   create_gui (obj);
   create_stream (obj);
-  // only add idle function when playing
-  //  g_idle_add (idle_func_video, obj);
 
   return obj;
 }

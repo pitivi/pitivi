@@ -487,17 +487,25 @@ pitivi_mainapp_constructor (GType type,
   self = (PitiviMainApp *) obj;
   /* Lancement du splash screen */
   self->private->splash_screen = pitivi_splashscreenwindow_new();
+  while (gtk_events_pending())
+    gtk_main_iteration();
   usleep (10);
   /* Enregistrement des Icones */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.0, "Loading Register Stockicons");
+  while (gtk_events_pending())
+    gtk_main_iteration();
   pitivi_stockicons_register ();
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.2, "Loading Default Settings");
+  while (gtk_events_pending())
+    gtk_main_iteration();
   /* Creation des settings globaux */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.4, "Loading Global Settings");
 
+  while (gtk_events_pending())
+    gtk_main_iteration();
   
   settingsfile = g_strdup_printf("%s/.pitivi", g_get_home_dir());
   if (( g_file_test(settingsfile, G_FILE_TEST_EXISTS) 
@@ -521,11 +529,15 @@ pitivi_mainapp_constructor (GType type,
 
   pitivi_mainapp_create_timelinewin (self, NULL);
   /* Connection des Signaux */
+  while (gtk_events_pending())
+    gtk_main_iteration();
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.8, "Loading Signals");
   g_signal_connect(G_OBJECT(self->private->timelinewin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
   /* finish */
+  while (gtk_events_pending())
+    gtk_main_iteration();
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
   				      1.0, "Loading Finished");
   return obj;

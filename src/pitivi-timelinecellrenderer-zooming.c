@@ -94,7 +94,7 @@ convert_sub_pix_time (guint pos,
     break;
   case PITIVI_FRAMES:
     res = (pos * GST_SECOND)
-      / ((gint64) (videorate * zoom));
+      / (((gint64) videorate * zoom));
     break;
   case PITIVI_NANOSECONDS:
   default:

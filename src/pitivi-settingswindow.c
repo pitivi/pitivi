@@ -524,7 +524,7 @@ pitivi_settingswindow_create_frame_InOut (PitiviSettingsWindow *self,
   gtk_container_set_border_width (GTK_CONTAINER (Frame), BORDER);
   gtk_box_pack_start (GTK_BOX (table), 
 		     Frame,
-		     FALSE, FALSE, 0);
+		     TRUE, TRUE, 0);
   gtk_widget_show (Frame);
 
   Tab = gtk_table_new (2, 3, FALSE);
@@ -598,7 +598,7 @@ static void
 pitivi_settingswindow_create_gui (PitiviSettingsWindow *self)
 {
   // main container box
-  self->private->MainBox = gtk_vbox_new (FALSE, 2);
+  self->private->MainBox = gtk_vbox_new (FALSE, 5);
   gtk_container_add (GTK_CONTAINER (self), self->private->MainBox);
   gtk_widget_show (self->private->MainBox);
 
@@ -606,7 +606,7 @@ pitivi_settingswindow_create_gui (PitiviSettingsWindow *self)
   self->private->Tab = gtk_notebook_new ();
   gtk_box_pack_start (GTK_BOX (self->private->MainBox), 
 		     self->private->Tab,
-		     TRUE, TRUE, 0);
+		     TRUE, TRUE, 5);
   gtk_widget_show (self->private->Tab);
 
   // frame of notebook
@@ -616,27 +616,35 @@ pitivi_settingswindow_create_gui (PitiviSettingsWindow *self)
   self->private->ButtonBox = gtk_hbutton_box_new ();
   gtk_box_pack_start (GTK_BOX (self->private->MainBox), 
 		     self->private->ButtonBox,
-		     FALSE, FALSE, 0);
+		     FALSE, FALSE, 5);
   gtk_button_box_set_layout (GTK_BUTTON_BOX (self->private->ButtonBox), GTK_BUTTONBOX_END);
+  gtk_box_set_spacing (GTK_BOX (self->private->ButtonBox), 5);
   gtk_widget_show (self->private->ButtonBox);
 
   // button CANCEL
   self->private->ButtonCancel = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
-  gtk_container_add (GTK_CONTAINER (self->private->ButtonBox), 
-		     self->private->ButtonCancel);
+  gtk_box_pack_start (GTK_BOX (self->private->ButtonBox),
+		      self->private->ButtonCancel,
+		      FALSE, FALSE, 5);
+/*   gtk_container_add (GTK_CONTAINER (self->private->ButtonBox),  */
+/* 		     self->private->ButtonCancel); */
   g_signal_connect (G_OBJECT (self->private->ButtonCancel), "clicked",
 		    G_CALLBACK (pitivi_settingswindow_cb_cancel), self);
   gtk_widget_show (self->private->ButtonCancel);
 
   // button OK
   self->private->ButtonOk = gtk_button_new_from_stock (GTK_STOCK_OK);
-  gtk_container_add (GTK_CONTAINER (self->private->ButtonBox), 
-		     self->private->ButtonOk);
+  gtk_box_pack_start (GTK_BOX (self->private->ButtonBox),
+		      self->private->ButtonOk,
+		      FALSE, FALSE, 5);
+/*   gtk_container_add (GTK_CONTAINER (self->private->ButtonBox),  */
+/* 		     self->private->ButtonOk); */
   g_signal_connect (G_OBJECT (self->private->ButtonOk), "clicked",
 		    G_CALLBACK (pitivi_settingswindow_cb_ok), self);
   gtk_widget_show (self->private->ButtonOk);
 
-  gtk_widget_set_size_request (GTK_WIDGET (self), 600, 400);
+/*   gtk_widget_set_size_request (GTK_WIDGET (self), 600, 400); */
+  gtk_container_set_border_width (GTK_CONTAINER (self), 5);
   g_signal_connect (G_OBJECT (self), "destroy",
 		    G_CALLBACK (pitivi_settingswindow_cb_destroy), self);
   gtk_widget_show (GTK_WIDGET (self));

@@ -382,11 +382,7 @@ setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
       gtk_tree_model_get(model, &self->private->pIter2, TEXT_COLUMN, &setting_name, -1);
       if (!value && !(gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2)))
 	{
-	  gtk_widget_set_sensitive(self->private->button_new, FALSE);
-	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->win_settings), FALSE);
-	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->button_add), FALSE);
-	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->button_mod), FALSE);
-	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->button_del), FALSE);
+	  pitivi_projectsettingswidget_blank (self->private->win_settings);
 
 	  gtk_tree_model_get_iter(model, &self->private->pIter, path);
 	  gtk_text_buffer_set_text(self->private->preset_text_buffer, setting_name, strlen(setting_name));
@@ -505,10 +501,6 @@ pitivi_npw_put_entire_description(PitiviNewProjectWindow *self, PitiviProjectSet
 
   gtk_text_buffer_insert ( self->private->preset_text_buffer, &self->private->start_preset_iter,
 			   amedia_desc, strlen (amedia_desc) );
-  
-  g_free(setting_desc);
-  g_free(amedia_desc);
-  g_free(vmedia_desc);
 }
 
 static void

@@ -24,6 +24,8 @@
 
  */
 
+#include <gnl/gnlsource.h>
+#include <gnl/gnlcomposition.h>
 #include "pitivi.h"
 #include "pitivi-debug.h"
 #include "pitivi-project.h"
@@ -101,6 +103,38 @@ pitivi_project_new_from_file (const gchar *filename)
   }
 
   return project;
+}
+
+gboolean
+pitivi_project_seek (PitiviProject *project, GstClockTime seekvalue)
+{
+  GstElementState	pstate;
+  gboolean		res = TRUE;
+  
+  if (GST_CLOCK_TIME_IS_VALID (seekvalue)) {
+    
+    /* PAUSE timeline bin if necessary */
+    PITIVI_INFO ("Pausing elements");
+    pstate = gst_element_get_state (GST_ELEMENT (project->bin));
+    if (pstate == GST_STATE_PLAYING)
+      gst_element_set_state (GST_ELEMENT (project->bin), GST_STATE_PAUSED);
+    
+    PITIVI_INFO ("Seeking to %" GST_TIME_FORMAT " in project thread",
+		 GST_TIME_ARGS (seekvalue));
+    res = gst_element_send_event (GST_ELEMENT (project->bin), 
+				  gst_event_new_seek(GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH , 
+						     seekvalue));
+    PITIVI_INFO ("Seek finished");
+    if (!gst_element_set_state (GST_ELEMENT (project->bin), GST_STATE_PLAYING))
+      PITIVI_WARNING ("Couldn't set bin to playing !!!");
+    
+    /* UN-PAUSE timeline bin if necessary */
+    PITIVI_INFO ("Un-pausing elements");
+    if (pstate == GST_STATE_PLAYING)
+      gst_element_set_state (GST_ELEMENT (project->bin), pstate);
+    
+  }
+  return res;
 }
 
 static PitiviProject *
@@ -325,6 +359,8 @@ pitivi_project_constructor (GType type,
 			    GObjectConstructParam * construct_properties)
 {
   PitiviProject	*project;
+  GnlSource	*ablanksource, *vblanksource;
+  GstElement	*ablank, *vblank;
   GObject *obj;
   {
     /* Invoke parent constructor. */
@@ -338,12 +374,8 @@ pitivi_project_constructor (GType type,
 
   project = (PitiviProject *) obj;
 
-/*   project->pipeline = gst_pipeline_new("timeline-pipe"); */
-
   project->pipeline = project->private->thread = gst_thread_new("project-thread");
-/*   gst_bin_add (GST_BIN (project->pipeline), project->private->thread); */
-  gst_element_set_state(project->pipeline, GST_STATE_READY);
-  
+
   project->audiogroup = gnl_group_new("audiogroup");
   project->videogroup = gnl_group_new("videogroup");
   
@@ -351,6 +383,17 @@ pitivi_project_constructor (GType type,
   
   gnl_timeline_add_group(project->timeline, project->audiogroup);
   gnl_timeline_add_group(project->timeline, project->videogroup);
+
+  /* Adding blank audio/video elements */
+  vblank = gst_element_factory_make ("videotestsrc", "vblank");
+  g_object_set (G_OBJECT (vblank), "pattern", 2, 
+		"sync", FALSE, NULL);
+  vblanksource = gnl_source_new ("vblanksource", vblank);
+  gnl_composition_set_default_source (GNL_COMPOSITION (project->videogroup), vblanksource);
+
+  ablank = gst_element_factory_make ("silence", "silence");
+  ablanksource = gnl_source_new ("ablanksource", ablank);
+  gnl_composition_set_default_source (GNL_COMPOSITION (project->audiogroup), ablanksource);
   
   if (project->filename) {
     if (!(pitivi_project_internal_restore_file (project))) {
@@ -366,9 +409,11 @@ pitivi_project_constructor (GType type,
   /* add timeline and sink threads to timeline pipe */
   if (project->bin) {
     g_signal_connect (G_OBJECT (project->bin), "state_change", G_CALLBACK (bin_state_change), project);
+/*     g_signal_connect (G_OBJECT (project->pipeline), "iterate", G_CALLBACK (bin_iterate), project); */
     gst_bin_add_many (GST_BIN(project->private->thread),
 		      GST_ELEMENT(project->bin),
 		      NULL);
+    gst_element_set_state(project->pipeline, GST_STATE_READY);
   }
   return obj;
 }

@@ -123,9 +123,11 @@ my_gst_pad_set_active_recursive (GstPad * pad, gboolean active)
 /* 	      GST_DEBUG_PAD_NAME(GST_PAD(pad)), */
 /* 	      gst_event_get_name(GST_EVENT(*data))); */
 /*   else */
-/*     g_printf ("Pad %s:%s got buffer %03lld:%02lld:%03lld\n", */
+/*     g_printf ("Pad %s:%s got buffer %03lld:%02lld:%03lld, duration %lld:%lld:%lld, Size : %d\n", */
 /* 	      GST_DEBUG_PAD_NAME(GST_PAD(pad)), */
-/* 	      GST_M_S_M(GST_BUFFER_TIMESTAMP(*data))); */
+/* 	      GST_M_S_M(GST_BUFFER_TIMESTAMP(*data)), */
+/* 	      GST_M_S_M (GST_BUFFER_DURATION (*data)), */
+/* 	      GST_BUFFER_SIZE (*data)); */
 /*   return TRUE; */
 /* } */
 
@@ -141,11 +143,18 @@ bin_make_new_audiobin (gchar *name, GstCaps *caps)
 {
   GstElement	*bin;
   GstElement	*arate, *aconv, *ident;
+/*   GstProbe	*probe1, *probe2; */
 
   bin = gst_bin_new (name);
   arate = gst_element_factory_make ("audioscale", NULL);
   aconv = gst_element_factory_make ("audioconvert", NULL);
   ident = gst_element_factory_make ("identity", NULL);
+
+/*   probe1 = gst_probe_new (FALSE, testprobe, gst_element_get_pad (aconv, "sink")); */
+/*   gst_pad_add_probe (gst_element_get_pad (aconv, "sink"), probe1); */
+
+/*   probe2 = gst_probe_new (FALSE, testprobe, gst_element_get_pad (arate, "src")); */
+/*   gst_pad_add_probe (gst_element_get_pad (arate, "src"), probe2); */
 
   gst_bin_add_many (GST_BIN(bin),
 		    arate, aconv, ident, NULL);
@@ -266,7 +275,6 @@ bin_add_videobin (bindata *data)
 static gboolean
 mute_stream (GstProbe *probe, GstData **data, gpointer pdata)
 {
-/*   mutingstr	*mut = (mutingstr *) pdata; */
   GstPad	*pad = GST_PAD (pdata);
 
   PITIVI_DEBUG("probe called on pad %s:%s",
@@ -276,8 +284,6 @@ mute_stream (GstProbe *probe, GstData **data, gpointer pdata)
     PITIVI_DEBUG("got a buffer");
     my_gst_pad_set_active_recursive ((GstPad *) GST_PAD_REALIZE (pad), FALSE);
     gst_pad_remove_probe ((GstPad *) GST_PAD_REALIZE (pad), probe);
-/*     gst_probe_destroy (probe); */
-/*     g_free (mut); */
   } else
     PITIVI_DEBUG("got an event %s",
 		 gst_event_get_name (GST_EVENT(*data)));
@@ -290,7 +296,6 @@ bin_new_pad_fake_output (GstPad *pad, bindata *data, int padtype)
 {
   GstElement	*sink;
   char		*tmp;
-/*   mutingstr	*mut; */
   GstProbe	*probe;
 
   if (((padtype == IS_AUDIO) && (!data->audiofakesink))
@@ -316,9 +321,6 @@ bin_new_pad_fake_output (GstPad *pad, bindata *data, int padtype)
 
   PITIVI_DEBUG ("Putting a probe on pad %s:%s",
 		GST_DEBUG_PAD_NAME(pad));
-/*   mut = g_new0(mutingstr, 1); */
-/*   mut->pad = pad; */
-/*   mut->probe = gst_probe_new(FALSE, mute_stream, mut); */
   probe = gst_probe_new (FALSE, mute_stream, pad);
   gst_pad_add_probe ((GstPad *) GST_PAD_REALIZE(pad), probe);
 

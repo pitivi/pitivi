@@ -240,9 +240,12 @@ void
 audio_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer udata)
 {
   PitiviSourceFile	*sf = PITIVI_SOURCEFILE (udata);
-  g_printf ("audio_handoff_cb\n");
+
   if (!sf->length)
     establish_length (sf);
+  if (!sf->private->videopad)
+    gst_element_set_eos (element);
+  /* If there's just audio, set pipeline to EOS */
 }
 
 static void
@@ -258,7 +261,6 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
   PITIVI_DEBUG("video_handoff %lld:%02lld:%03lld, vlastcaptured %lld:%02lld:%03lld",
 	       GST_M_S_M(GST_BUFFER_TIMESTAMP(buf)),
 	       GST_M_S_M(sf->private->vlastcaptured));
-  //      && (GST_BUFFER_TIMESTAMP(buf) >= sf->private->vlastcaptured) &&
   if ((GST_CLOCK_TIME_IS_VALID(GST_BUFFER_TIMESTAMP(buf))) &&
       (GST_BUFFER_TIMESTAMP(buf) >= 0)) {
     gchar	*filename;

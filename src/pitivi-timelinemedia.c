@@ -1173,11 +1173,11 @@ pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *this, gpointer data)
 					     PITIVI_TIMELINEMEDIA (this->linked));
       pitivi_calculate_priorities ( this->track->linked_track );
     }
-  track = &(*GTK_WIDGET (this->track));
+  track = GTK_WIDGET (this->track);
   gtk_container_remove (GTK_CONTAINER ( track ), GTK_WIDGET (this) );
+  gst_object_unref (GST_OBJECT (this->sourceitem->gnlobject));
   pitivi_layout_remove_from_composition (PITIVI_TIMELINECELLRENDERER (this->track),
 					 this);
-  gst_object_unref (GST_OBJECT (this->sourceitem->gnlobject));
   pitivi_calculate_priorities ( track );
 }
 

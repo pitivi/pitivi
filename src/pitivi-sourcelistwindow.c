@@ -509,6 +509,8 @@ retrieve_file_from_folder(PitiviSourceListWindow *self)
       while (gtk_events_pending())
 	gtk_main_iteration();
       pitivi_sourcelistwindow_set_file( self );
+      while (gtk_events_pending())
+	gtk_main_iteration();
       i++;
     }
   pitivi_progressbar_set_fraction (self->private->bar, 1.0);
@@ -688,7 +690,9 @@ pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 		     BMP_LISTCOLUMN1,  pixbufa,
 		     TEXT_LISTCOLUMN2, name,
 		     TEXT_LISTCOLUMN3, sf->mediatype,
-		     TEXT_LISTCOLUMN4, g_strdup_printf("%llds", (signed long long int) (sf->length / GST_SECOND)),
+		     TEXT_LISTCOLUMN4, g_strdup_printf("%dm%02ds",
+						       (int) (sf->length / (GST_SECOND * 60)),
+						       (int) (sf->length % (GST_SECOND * 60) / GST_SECOND)),
 		     TEXT_LISTCOLUMN5, sf->infovideo,
 		     TEXT_LISTCOLUMN6, sf->infoaudio,
 		     POINTER_LISTCOLUMN7, (gpointer)sf, -1);

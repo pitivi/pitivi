@@ -280,14 +280,7 @@ pitivi_ruler_moving (PitiviRuler *pitivi_ruler, gint64 *gpos)
 static void
 pitivi_ruler_seek (PitiviRuler *ruler, gint64 value)
 {
-  /*   PITIVI_DEBUG ("ruler : %p , position : %lld", */
-  /* 		ruler, position); */
-  /*   g_signal_emit (PITIVI_RULER(ruler), */
-  /* 		 seek_signal_id, */
-  /* 		 0, */
-  /* 		 position); */
-  /*   g_signal_emit_by_name (ruler, "seek", position); */
-  PITIVI_DEBUG ("finito");
+  return ;
 }
 
 static gint
@@ -402,8 +395,6 @@ static gboolean pitivi_ruler_button_press (GtkWidget	*widget,
 {
   PitiviRuler	*ruler = PITIVI_RULER (widget);
 
-  PITIVI_DEBUG ("button press on widget %p", ruler);
-  /* gdouble position = event->x */
   if (event->button == 1) {
     gint64	pos;
 
@@ -412,8 +403,6 @@ static gboolean pitivi_ruler_button_press (GtkWidget	*widget,
 				ruler->private->zoomlevel,
 				ruler->private->videorate
 				);
-    PITIVI_DEBUG ("Seeking to %lld:%lld:%lld",
-		  GST_M_S_M (pos));
     g_signal_emit (G_OBJECT(ruler),
 		   seek_signal_id,
 		   0,

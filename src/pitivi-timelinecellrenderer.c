@@ -811,13 +811,13 @@ convert_time_pix (PitiviTimelineCellRenderer *self, gint64 timelength)
       len = timelength * self->private->timewin->zoom;
       break;
     case PITIVI_SECONDS:
-      len = (timelength / GST_SECOND) * self->private->timewin->zoom;
+      len = timelength * self->private->timewin->zoom / GST_SECOND;
       break;
     case PITIVI_FRAMES:
-      ratio = ( pitivi_projectsettings_get_videorate(proj->settings)
+      ratio = (pitivi_projectsettings_get_videorate(proj->settings)
 		* self->private->timewin->zoom );
 	
-      len = (timelength / GST_SECOND) * ratio;
+      len = timelength * ratio / GST_SECOND;
       break;
     default:
       break;
@@ -839,6 +839,27 @@ convert_pix_time (PitiviTimelineCellRenderer *self, guint pos)
 			       self->private->timewin->zoom,
 			       videorate
 			       );
+}
+
+guint
+magnetize_position (PitiviTimelineCellRenderer *self, guint pos)
+{
+  gdouble videorate;
+  gint64	tim;
+  guint		res;
+
+  videorate = pitivi_projectsettings_get_videorate (PITIVI_WINDOWS(self->private->timewin)->mainapp->project->settings);
+  tim = convert_pix_time (self, pos);
+  PITIVI_DEBUG ("pos : %d converts to time : %" GST_TIME_FORMAT,
+		pos, GST_TIME_ARGS (tim));
+  PITIVI_DEBUG ("1/videorate = %" GST_TIME_FORMAT " tim mod 1/videorate = %" GST_TIME_FORMAT,
+		GST_TIME_ARGS (GST_SECOND / (gint64) videorate), 
+		GST_TIME_ARGS (tim % (GST_SECOND / (gint64) videorate)));
+  tim -= tim % ((gint64) (GST_SECOND / videorate));
+  res = convert_time_pix (self, tim);
+  PITIVI_DEBUG ("pos : %d ==> res : %d",
+		pos, res );
+  return res;
 }
 
 /**************************************************************
@@ -1249,6 +1270,7 @@ pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
   case PITIVI_CURSOR_SELECT:
   case PITIVI_CURSOR_HAND:
     width = (source) ? slide_media_get_widget_size (source) : self->private->slide_width;
+    x = magnetize_position (self, x);
     x -= width/2;
     gdk_window_clear (GTK_LAYOUT (widget)->bin_window);
     sf = (source) ? source->sourceitem->srcfile : self->private->dndsf;

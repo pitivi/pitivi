@@ -473,6 +473,10 @@ seek_on_ruler (PitiviRuler *ruler, gint64 seekvalue, PitiviTimelineWindow *self)
 {
   PITIVI_DEBUG ("seeking to %lld:%lld:%lld",
 		GST_M_S_M (seekvalue));
+  if (pitivi_project_seek (PITIVI_PROJECTWINDOWS (self)->project, seekvalue))
+    PITIVI_DEBUG ("Was able to transmit seek to thread");
+  else
+    PITIVI_WARNING ("Thread was busy, maybe already seeking, seek value didn't get through");
 }
 
 static void

@@ -835,51 +835,68 @@ pitivi_settings_get_xml_project_settings(xmlNodePtr self)
   return res;
 }
 
-/* static void */
-/* restore_g_param_tab (GParameter **ptab, gint n_param, xmlNodePtr self) */
-/* { */
+void
+restore_g_param_tab (GParameter **ptab, gint n_param, xmlNodePtr self)
+{
   /* TODO : fill it up !*/
-/*   xmlNodePtr	child; */
-/*   int		i; */
+  GParameter	*tab;
+  xmlNodePtr	child;
+  int		i;
 
-/*   for (i = 0, child = self->XmlChildrenNode; child && (i < n_param); i++, child = child->next) { */
-    
-/*   } */
-/* } */
+  tab = *ptab;
+  for (i = 0, child = self->xmlChildrenNode; child && (i < n_param); i++, child = child->next) { 
+    PITIVI_DEBUG ("restore param:%s", child->name);
+    if (!i) { 
+      tab = g_new (GParameter, i + 1); 
+    } else { 
+      tab = g_renew (GParameter, tab, i + 1); 
+    } 
+    if (!g_ascii_strcasecmp(child->name, "param_name")) { 
+      tab[i].name = g_strdup (xmlNodeGetContent(child)); 
+    } else if (!g_ascii_strcasecmp(child->name, "param_value")) { 
+      if (gst_value_deserialize (&(tab[i].value), xmlNodeGetContent(child))) {
+	PITIVI_WARNING ("gst_value_deserialize ERROR %s", tab[i].name);
+      } 
+    } 
+  } 
+  return ;
+}
 
-/* static PitiviSettingsIoElement * */
-/* pitivi_settings_restore_io(xmlNodePtr self) */
-/* { */
-/*   PitiviSettingsIoElement	*res; */
-/*   xmlNodePtr	child; */
+PitiviSettingsIoElement *
+pitivi_settings_restore_io(xmlNodePtr self)
+{
+  PitiviSettingsIoElement	*res;
+  xmlNodePtr	child;
 
-/*   res = g_new0(PitiviSettingsIoElement, 1); */
-/*   for (child = self->xmlChildrenNode; child; child = child->next) { */
-/*     if (!g_ascii_strcasecmp(child->name, "factory_name")) { */
-/*       res->factory = gst_element_factory_find(xmlNodeGetContent(child)); */
-/*     } else if (!g_ascii_strcasecmp(child->name, "n_param")) { */
-/*       res->n_param = atoi(xmlNodeGetContent(child)); */
-/*       res->params = g_new0(GParameter, res->n_param + 1); */
-/*     } else if (!g_ascii_strcasecmp(child->name, "params")) { */
-/*       restore_g_param_tab(&res->params, res->n_param, child); */
-/*     } */
-/*   } */
-/*   return res; */
-/* } */
+  res = g_new0(PitiviSettingsIoElement, 1);
+  for (child = self->xmlChildrenNode; child; child = child->next) {
+    PITIVI_DEBUG ("restore IO:%s", child->name);
+    if (!g_ascii_strcasecmp(child->name, "factory_name")) {
+      res->factory = gst_element_factory_find(xmlNodeGetContent(child));
+    } else if (!g_ascii_strcasecmp(child->name, "n_param")) {
+      res->n_param = atoi(xmlNodeGetContent(child));
+      res->params = g_new0(GParameter, res->n_param + 1);
+    } else if (!g_ascii_strcasecmp(child->name, "params")) {
+      restore_g_param_tab(&res->params, res->n_param, child);
+    } else
+      PITIVI_DEBUG ("Unknown xml child ???");
+  }
+  return res;
+}
 
-/* static GList * */
-/* pitivi_settings_restore_io_list(xmlNodePtr self) */
-/* { */
-/*   GList	*res; */
-/*   xmlNodePtr	child; */
+GList *
+pitivi_settings_restore_io_list(xmlNodePtr self)
+{
+  GList	*res;
+  xmlNodePtr	child;
 
-/*   for (res = NULL, child = self->xmlChildrenNode; child; child = child->next) */
-/*     if (!g_ascii_strcasecmp(child->name, "inout_elm")) */
-/*       g_list_append(res, pitivi_settings_restore_io(child)); */
-/*   return res; */
-/* } */
+  for (res = NULL, child = self->xmlChildrenNode; child; child = child->next)
+    if (!g_ascii_strcasecmp(child->name, "inout_elm"))
+      g_list_append(res, pitivi_settings_restore_io(child));
+  return res;
+}
 
-static void
+void
 pitivi_settings_restore_thyself(PitiviSettings *settings, xmlNodePtr self)
 {
   xmlNodePtr	child;
@@ -894,14 +911,14 @@ pitivi_settings_restore_thyself(PitiviSettings *settings, xmlNodePtr self)
       settings->parser = pitivi_settings_get_xml_list(child);
     } else if (!strcmp(child->name, "project_settings")) {
       settings->project_settings = pitivi_settings_get_xml_project_settings(child);
- /*    } else if (!g_ascii_strcasecmp(child->name, "audio_in")) { */
-/*       settings->elm_audio_in = pitivi_settings_restore_io_list(child); */
-/*     } else if (!g_ascii_strcasecmp(child->name, "audio_out")) { */
-/*       settings->elm_audio_in = pitivi_settings_restore_io_list(child); */
-/*     } else if (!g_ascii_strcasecmp(child->name, "video_in")) { */
-/*       settings->elm_audio_in = pitivi_settings_restore_io_list(child); */
-/*     } else if (!g_ascii_strcasecmp(child->name, "video_out")) { */
-/*       settings->elm_audio_in = pitivi_settings_restore_io_list(child); */
+    } else if (!g_ascii_strcasecmp(child->name, "audio_in")) {
+      settings->elm_audio_in = pitivi_settings_restore_io_list(child);
+    } else if (!g_ascii_strcasecmp(child->name, "audio_out")) {
+      settings->elm_audio_in = pitivi_settings_restore_io_list(child);
+    } else if (!g_ascii_strcasecmp(child->name, "video_in")) {
+      settings->elm_audio_in = pitivi_settings_restore_io_list(child);
+    } else if (!g_ascii_strcasecmp(child->name, "video_out")) {
+      settings->elm_audio_in = pitivi_settings_restore_io_list(child);
     }
   }
 }
@@ -967,12 +984,12 @@ pitivi_settings_xml_epure_project_settings(GSList *list, xmlNodePtr parent)
 static void
 pitivi_settings_xml_epure_io (GList *list, xmlNodePtr parent)
 {
-
   for (; list; list = g_list_next (list)) {
     PitiviSettingsIoElement *io = (PitiviSettingsIoElement *) list->data;
     xmlNodePtr	inout_elm, params;
     gint	i;
 
+    PITIVI_DEBUG ("GST_PLUGIN:%s", (char *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(io->factory)));
     inout_elm = xmlNewChild (parent, NULL, "inout_elm", NULL);
 
     xmlNewChild (inout_elm, NULL, "factory_name", (char *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(io->factory)));
@@ -984,9 +1001,17 @@ pitivi_settings_xml_epure_io (GList *list, xmlNodePtr parent)
     for (i = 0; i < io->n_param; i++) {
       xmlNodePtr param;
 
+      PITIVI_DEBUG ("name : %s , type : %s , pointer : %p",
+		    io->params[i].name,
+		    G_VALUE_TYPE_NAME (&(io->params[i].value)),
+		    &(io->params[i].value));
+      if (G_VALUE_HOLDS_STRING (&(io->params[i].value)))
+	PITIVI_DEBUG ("String value : %p <%s>", 
+		      g_value_get_string(&(io->params[i].value)),
+		      g_value_get_string(&(io->params[i].value)));
       param = xmlNewChild (params, NULL, "param", NULL);
       xmlNewChild (param, NULL, "param_name", (char *) io->params[i].name);
-      xmlNewChild (param, NULL, "param_value", (char *) g_strdup_value_contents (&(io->params[i].value)));
+      xmlNewChild (param, NULL, "param_value", (char *) gst_value_serialize (&(io->params[i].value)));
     }
 
   }
@@ -1158,15 +1183,10 @@ pitivi_settings_save_to_file(PitiviSettings *settings, const gchar *filename)
 }
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 PitiviSettings *

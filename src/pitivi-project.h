@@ -90,6 +90,8 @@ gboolean	pitivi_project_save_to_file(PitiviProject *project, const gchar *filena
 void		pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self);
 xmlDocPtr	pitivi_project_save_thyself(PitiviProject *project);
 
+gboolean	pitivi_project_seek (PitiviProject *project, GstClockTime seekvalue);
+
 void		pitivi_project_set_video_output(PitiviProject *project, GstElement *output);
 void		pitivi_project_set_audio_output(PitiviProject *project, GstElement *output);
 void		pitivi_project_set_file_to_encode(PitiviProject *project, gchar *filename);

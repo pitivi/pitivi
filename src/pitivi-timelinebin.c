@@ -53,6 +53,8 @@ struct _PitiviTimelineBinPrivate
  * forward definitions
  */
 
+static gboolean	pitivi_timelinebin_send_event (GstElement *element, GstEvent *event);
+
 /*
  * Insert "added-value" functions here
  */
@@ -160,10 +162,11 @@ pitivi_timelinebin_connect_source (PitiviGlobalBin *gbin)
   PitiviMediaSettings *ms;
 
   /* connect timeline's output to the tees */
-  if (!gst_element_set_state(GST_ELEMENT (self->timeline), GST_STATE_PAUSED)) {
-    PITIVI_WARNING ("wasn't able to set the timeline to PAUSED");
-    return FALSE;
-  }
+/*   if (!gst_element_set_state(GST_ELEMENT (self->timeline), GST_STATE_PAUSED)) { */
+/*     PITIVI_WARNING ("wasn't able to set the timeline to PAUSED"); */
+/*     return FALSE; */
+/*   } */
+  PITIVI_INFO ("Connecting video pad to video tee");
   tmp = self->private->psettings->media_settings;
   ms = tmp->data;
   if (gbin->videoout)
@@ -171,6 +174,7 @@ pitivi_timelinebin_connect_source (PitiviGlobalBin *gbin)
 				gst_element_get_pad (gbin->vtee, "sink"),
 				ms->caps)))
       return FALSE;
+  PITIVI_INFO ("Connecting audio pad to audio tee");
   tmp = g_slist_next (tmp);
   ms = tmp->data;
   if (gbin->audioout)
@@ -255,6 +259,20 @@ pitivi_timelinebin_setup_encoding (PitiviTimelineBin *self)
 /*     } */
 /*   return TRUE; */
 /* } */
+
+static gboolean
+pitivi_timelinebin_send_event (GstElement *element, GstEvent *event)
+{
+  PitiviTimelineBin *bin = PITIVI_TIMELINEBIN (element);
+/*   gboolean	res = TRUE; */
+  PITIVI_DEBUG("Sending event...");
+  return gst_element_send_event (GST_ELEMENT (bin->timeline), event);
+/*   switch GST_EVENT_TYPE (event) { */
+/*   case GST_EVENT_SEEK: */
+/*     res = gst_element_send_event (GST_ELEMENT (element->timeline, event)); */
+/*     break; */
+/*   } */
+}
 
 static GstElementStateReturn
 pitivi_timelinebin_change_state (GstElement *element)
@@ -350,6 +368,7 @@ pitivi_timelinebin_class_init (gpointer g_class, gpointer g_class_data)
   gobject_class->get_property = pitivi_timelinebin_get_property;
 
   gstelement_class->change_state = pitivi_timelinebin_change_state;
+  gstelement_class->send_event = pitivi_timelinebin_send_event;
 
   gbin_class->connect_source = pitivi_timelinebin_connect_source;
   gbin_class->disconnect_source = pitivi_timelinebin_disconnect_source;

@@ -467,9 +467,14 @@ pitivi_globalbin_change_state (GstElement *element)
   }
 
   PITIVI_WARNING ("pitivi_globalbin_change_state END");
+
   if (GST_ELEMENT_CLASS (parent_class)->change_state)
     res = GST_ELEMENT_CLASS (parent_class)->change_state (element);
-  
+  PITIVI_INFO ("Returned from parent_class->change_state");
+  if (!res)
+    return GST_STATE_FAILURE;
+
+  PITIVI_INFO ("Now checking if we're in GST_STATE_PLAYING_TO_PAUSED");
   if ( (GST_STATE_TRANSITION (element) == GST_STATE_PLAYING_TO_PAUSED)
        && ((gbin->render && gbin->private->filesinkeos) || !gbin->render)
        && ((gbin->preview && gbin->videoout && gbin->private->vsinkeos) || !(gbin->preview && gbin->videoout))
@@ -530,15 +535,6 @@ pitivi_globalbin_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->videoqueue = gst_element_factory_make ("queue", "videoqueue");
   self->private->audioqueue = gst_element_factory_make ("queue", "audioqueue");
 
-/*   g_object_set (G_OBJECT(self->private->videoqueue), */
-/* 		"max-size-bytes", 300000000 , */
-/* 		"max-size-time", 10 * GST_SECOND, */
-/* 		NULL); */
-/*   g_object_set (G_OBJECT(self->private->audioqueue), */
-/* 		"max-size-bytes", 300000000,  */
-/* 		"max-size-time", 10 * GST_SECOND, */
-/* 		NULL); */
-
   gst_bin_add (GST_BIN (self->private->vsinkthread), self->private->videoqueue);
   gst_bin_add (GST_BIN (self->private->asinkthread), self->private->audioqueue);
 
@@ -575,6 +571,16 @@ pitivi_globalbin_instance_init (GTypeInstance * instance, gpointer g_class)
 
   self->private->vencoutqueue = gst_element_factory_make ("queue", "vencoutqueue");
   self->private->aencoutqueue = gst_element_factory_make ("queue", "aencoutqueue");
+
+/*   g_object_set (G_OBJECT (self->private->vencoutqueue), */
+/* 		"max-size-bytes", 300000000, */
+/* 		"max-size-time", 10 * GST_SECOND, */
+/* 		NULL); */
+
+/*   g_object_set (G_OBJECT (self->private->aencoutqueue), */
+/* 		"max-size-bytes", 300000000, */
+/* 		"max-size-time", 10 * GST_SECOND, */
+/* 		NULL); */
 
   gst_bin_add_many (GST_BIN (self->private->vencbin),
 		    self->private->vencthread,
