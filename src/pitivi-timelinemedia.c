@@ -23,8 +23,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <gnl/gnloperation.h>
+#include <gnl/gnlsource.h>
 #include "pitivi.h"
 #include "pitivi-timelinemedia.h"
+#include "pitivi-menu.h"
 #include "pitivi-cursor.h"
 #include "pitivi-dragdrop.h"
 #include "pitivi-sourceitem.h"
@@ -179,7 +182,6 @@ pitivi_timelinemedia_new ( PitiviSourceFile *sf, int width, PitiviTimelineCellRe
 void
 pitivi_timelinemedia_update_tooltip (PitiviTimelineMedia *this)
 {
-  GtkTooltipsData*	data;
   char			*str;
   GnlObject		*obj = this->sourceitem->gnlobject;
 
@@ -255,7 +257,6 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
 			     GdkEventExpose *event)
 {
   PitiviTimelineMedia  *this = PITIVI_TIMELINEMEDIA (widget);
-  GtkStyle *style;
   
   gdk_draw_drawable (GDK_WINDOW (widget->window),
 			 widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
@@ -414,8 +415,6 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   GdkPixbuf *pixbuf;
   PitiviTimelineMedia *this = (PitiviTimelineMedia *) instance;
-  PitiviTimelineCellRenderer *container;
-  PitiviCursor  *cursor;
   
   gtk_widget_set_events (GTK_WIDGET (this), 
 			 GDK_EXPOSURE_MASK
@@ -523,7 +522,7 @@ pitivi_timelinemedia_get_property (GObject * object,
 				   guint property_id,
 				   GValue * value, GParamSpec * pspec)
 {
-  PitiviTimelineMedia *this = (PitiviTimelineMedia *) object;
+/*   PitiviTimelineMedia *this = (PitiviTimelineMedia *) object; */
 
   switch (property_id)
     {
@@ -616,6 +615,8 @@ draw_media (GtkWidget *widget)
 	case PITIVI_TRANSITION_TRACK:
 	  show_effects_media (widget);
 	  break;
+	default:
+	  break;
 	}
         
       if (this->selected)
@@ -624,13 +625,6 @@ draw_media (GtkWidget *widget)
 	  draw_selection_dash (widget, this->private->pixmapcache, &selection, 2);
 	}
     }
-}
-
-
-static void
-pitivi_timelinemedia_leave_notify_event (GtkWidget        *widget,
-					 GdkEventMotion   *event)
-{
 }
 
 static
@@ -710,7 +704,6 @@ static gint
 pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
 					   GdkEventButton *event)
 { 
-  PitiviTimelineMedia *this = PITIVI_TIMELINEMEDIA (widget);
   PitiviTimelineCellRenderer *container;
   gint x = event->x;
 
@@ -808,15 +801,6 @@ pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *this, gpointer data)
       gtk_container_remove (GTK_CONTAINER ( track ), GTK_WIDGET (this) );
       calculate_priorities ( track );
     }
-}
-
-static gboolean
-pitivi_timelinemedia_callb_key_release_event (GtkWidget *widget,
-					      GdkEventKey *event)
-{
-  PitiviTimelineMedia *this = PITIVI_TIMELINEMEDIA (widget);
-  pitivi_timelinemedia_callb_destroy (this, event);
-  return TRUE;
 }
 
 static void

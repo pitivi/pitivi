@@ -21,6 +21,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <glib/gprintf.h>
 #include "pitivi.h"
 #include "pitivi-controller.h"
 #include "pitivi-windows.h"
@@ -83,7 +84,6 @@ PitiviController *
 pitivi_controller_new (void)
 {
   PitiviController	*controller;
-  GtkWidget		*winparent;
   
   controller = (PitiviController *) g_object_new(PITIVI_CONTROLLER_TYPE, NULL);
   g_assert(controller != NULL);
@@ -134,7 +134,7 @@ static void
 pitivi_controller_callb_play (GtkWidget *widget, gpointer user_data)
 {
   PitiviController *self = (PitiviController *) user_data;
-  g_printf ("coucou %d ... \n", self->private->viewerwin);
+  g_printf ("coucou %p ... \n", self->private->viewerwin);
   if ( self->private->viewerwin )
     {
       gtk_widget_show_all ( self->private->viewerwin );
@@ -184,8 +184,6 @@ static void
 pitivi_controller_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviController *self = (PitiviController *) instance;
-  GtkWidget  *separators[3];
-  int	     count;
 
   self->private = g_new0(PitiviControllerPrivate, 1);
   
@@ -325,7 +323,7 @@ pitivi_controller_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-  PitiviController *self = (PitiviController *) object;
+/*   PitiviController *self = (PitiviController *) object; */
 
   switch (property_id)
     {

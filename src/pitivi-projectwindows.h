@@ -26,10 +26,12 @@
 #ifndef PITIVI_PROJECTWINDOWS_H
 #define PITIVI_PROJECTWINDOWS_H
 
+
 /*
  * Potentially, include other headers on which this header depends.
  */
 
+#include "pitivi-types.h"
 #include "pitivi-windows.h"
 #include "pitivi-project.h"
 
@@ -44,8 +46,6 @@
 #define PITIVI_IS_PROJECTWINDOWS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_PROJECTWINDOWS_TYPE))
 #define PITIVI_PROJECTWINDOWS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_PROJECTWINDOWS_TYPE, PitiviProjectWindowsClass))
 
-typedef struct _PitiviProjectWindows PitiviProjectWindows;
-typedef struct _PitiviProjectWindowsClass PitiviProjectWindowsClass;
 typedef struct _PitiviProjectWindowsPrivate PitiviProjectWindowsPrivate;
 
 struct _PitiviProjectWindows

@@ -36,6 +36,7 @@
 /*   media_setting->caps = gst_caps_new_simple ("my_caps", "audio/wav",  */
 /* 					     NULL); */
 
+#include <unistd.h>
 #include <gst/gst.h>
 #include "pitivi.h"
 #include "pitivi-mainapp.h"
@@ -230,8 +231,8 @@ pitivi_mainapp_create_timelinewin (PitiviMainApp *self, PitiviProject *project)
   gint height;
   gint tmp_w;
   gint tmp_h;
-  gint tmp1_w;
-  gint tmp1_h;
+/*   gint tmp1_w; */
+/*   gint tmp1_h; */
 
   width = gdk_screen_width ();
   height = gdk_screen_height ();
@@ -242,7 +243,7 @@ pitivi_mainapp_create_timelinewin (PitiviMainApp *self, PitiviProject *project)
       gtk_widget_show_all (GTK_WIDGET (self->private->timelinewin));
       gtk_window_get_size (GTK_WINDOW (self->private->timelinewin), &tmp_w, &tmp_h);
       gtk_window_move (GTK_WINDOW (self->private->timelinewin), 0, (height - (tmp_h + BORDER + BOTTOM)));
-      gtk_window_resize (GTK_WINDOW (self->private->timelinewin), (width - (tmp1_w + (2 * BORDER))), (tmp_h));
+      gtk_window_resize (GTK_WINDOW (self->private->timelinewin), (width - (2 * BORDER)), (tmp_h));
       gtk_signal_connect (GTK_OBJECT (self->private->timelinewin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_timelinewin), self);
     }
@@ -368,10 +369,6 @@ pitivi_mainapp_constructor (GType type,
   GObject	*obj;
   gint		width;
   gint		height;
-  gint		tmp_w;
-  gint		tmp_h;
-  gint		tmp1_w;
-  gint		tmp1_h;
 
   width = gdk_screen_width ();
   height = gdk_screen_height ();
@@ -424,7 +421,6 @@ static void
 pitivi_mainapp_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviMainApp			*self = (PitiviMainApp *) instance;
-  PitiviSourceListWindow	*sourcelist;
 
   self->private = g_new0 (PitiviMainAppPrivate, 1);
 
@@ -479,7 +475,6 @@ pitivi_mainapp_set_property (GObject * object,
 			     guint property_id,
 			     const GValue * value, GParamSpec * pspec)
 {
-  PitiviMainApp *self = (PitiviMainApp *) object;
 
   switch (property_id)
     {
@@ -501,7 +496,6 @@ pitivi_mainapp_get_property (GObject * object,
 			     guint property_id,
 			     GValue * value, GParamSpec * pspec)
 {
-  PitiviMainApp *self = (PitiviMainApp *) object;
 
   switch (property_id)
     {
@@ -520,7 +514,7 @@ static void
 pitivi_mainapp_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviMainAppClass *klass = PITIVI_MAINAPP_CLASS (g_class);
+/*   PitiviMainAppClass *klass = PITIVI_MAINAPP_CLASS (g_class); */
 
   gobject_class->constructor = pitivi_mainapp_constructor;
   gobject_class->dispose = pitivi_mainapp_dispose;

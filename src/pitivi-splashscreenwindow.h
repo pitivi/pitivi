@@ -31,6 +31,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "pitivi-types.h"
 
 /*
  * Type macros.
@@ -43,8 +44,6 @@
 #define PITIVI_IS_SPLASHSCREENWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_SPLASHSCREENWINDOW_TYPE))
 #define PITIVI_SPLASHSCREENWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_SPLASHSCREENWINDOW_TYPE, PitiviSplashScreenWindowClass))
 
-typedef struct _PitiviSplashScreenWindow PitiviSplashScreenWindow;
-typedef struct _PitiviSplashScreenWindowClass PitiviSplashScreenWindowClass;
 typedef struct _PitiviSplashScreenWindowPrivate PitiviSplashScreenWindowPrivate;
 
 struct _PitiviSplashScreenWindow

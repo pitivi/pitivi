@@ -31,7 +31,7 @@
 
 #include <gst/gst.h>
 #include <gtk/gtk.h>
-
+#include "pitivi-types.h"
 
 /*
  * Type macros.
@@ -44,8 +44,6 @@
 #define PITIVI_IS_GSTELEMENTSETTINGS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_GSTELEMENTSETTINGS_TYPE))
 #define PITIVI_GSTELEMENTSETTINGS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_GSTELEMENTSETTINGS_TYPE, PitiviGstElementSettingsClass))
 
-typedef struct _PitiviGstElementSettings PitiviGstElementSettings;
-typedef struct _PitiviGstElementSettingsClass PitiviGstElementSettingsClass;
 typedef struct _PitiviGstElementSettingsPrivate PitiviGstElementSettingsPrivate;
 typedef struct _PitiviGstElementSettingsProp PitiviGstElementSettingsProp;
 

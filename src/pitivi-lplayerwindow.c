@@ -24,12 +24,14 @@
  */
 
 #include <glib.h>
+#include <glib/gprintf.h>
 #include <gtk/gtk.h>
 #include <gst/gst.h>
 #include <gdk/gdkx.h>
 #include <gst/xoverlay/xoverlay.h>
 
 #include "pitivi.h"
+#include "pitivi-viewerwindow.h"
 #include "pitivi-lplayerwindow.h"
 #include "pitivi-controller.h"
 
@@ -86,8 +88,7 @@ gboolean	pitivi_lplayer_idle_func (gpointer data)
 {
   PitiviLPlayerWindow *self = (PitiviLPlayerWindow *) data;
   GstElement *elem;
-  gint64	value1, value2;
-  gdouble	pourcent;
+  gint64	value1;
 
   elem = GST_ELEMENT (self->private->pipe);
   if (elem) // we have a true source
@@ -100,7 +101,7 @@ gboolean	pitivi_lplayer_idle_func (gpointer data)
 /* } */
 
   g_print("MA QUESTION: %d\n",sizeof(gdouble) );
-  g_print("IDLE FUCKTION END %lld, %lld\n", self->private->timeline_min, self->private->timeline_max);
+  g_print("IDLE FUNCTION END %lld, %lld\n", self->private->timeline_min, self->private->timeline_max);
 
   return TRUE;
 }
@@ -108,7 +109,6 @@ gboolean	pitivi_lplayer_idle_func (gpointer data)
 gboolean	do_lplayer_seek(GstElement *elem, gint64 value)
 {
   GstEvent	*event;
-  GstPad	*pad;
   gboolean	res;
 
   //  pad = gst_element_get_pad(elem, "src");
@@ -153,8 +153,6 @@ void pitivi_lplayer_pause_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
 void pitivi_lplayer_stop_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
 {
   //  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  gboolean res;
-  GstElement *elem;
   gint64	value;
   
   if (GTK_TOGGLE_BUTTON (self->private->playpause)->active)
@@ -303,8 +301,6 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 void
 pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
 {
-   GstElement	*colorspace;
-
   self->private->pipe = gst_element_factory_make("playbin", "spider");
   g_assert (self->private->pipe != NULL);
   
@@ -502,7 +498,7 @@ static void
 pitivi_lplayerwindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviLPlayerWindowClass *klass = PITIVI_LPLAYERWINDOW_CLASS (g_class);
+/*   PitiviLPlayerWindowClass *klass = PITIVI_LPLAYERWINDOW_CLASS (g_class); */
 
   parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (g_class));
 

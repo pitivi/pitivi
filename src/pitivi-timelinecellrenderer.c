@@ -32,11 +32,14 @@
 #include "pitivi-drawing.h"
 #include "pitivi-thumbs.h"
 
+#include "../pixmaps/bg.xpm"
+
+
 // Parent Class
 static GtkLayoutClass	    *parent_class = NULL;
 
 // Caching Operation  
-static GdkPixmap	    *pixmap = NULL;
+/* static GdkPixmap	    *pixmap = NULL; */
 
 struct _PitiviTimelineCellRendererPrivate
 {
@@ -588,7 +591,6 @@ pitivi_getcursor_id (GtkWidget *widget)
 {
   PitiviCursor          *cursor;
   GtkWidget		*parent;
-  PitiviToolbox		*toolbox;
   
   cursor = NULL;
   parent = gtk_widget_get_toplevel (GTK_WIDGET (widget));
@@ -744,7 +746,7 @@ pitivi_timelinecellrenderer_get_property (GObject * object,
 					  guint property_id,
 					  GValue * value, GParamSpec * pspec)
 {
-  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) object;
+/*   PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) object; */
 
   switch (property_id)
     {
@@ -793,7 +795,7 @@ convert_time_pix (PitiviTimelineCellRenderer *self, gint64 timelength)
     default:
       break;
     }
-  g_printf("convert time pix  time:%lld pix:%d\n", timelength, len);
+  g_printf("convert time pix  time:%lld pix:%lld\n", timelength, len);
   return len;
 }
 
@@ -835,11 +837,11 @@ convert_pix_time (PitiviTimelineCellRenderer *self, guint pos)
   guint videorate = 0;
   
   videorate = pitivi_projectsettings_get_videorate (proj->settings);
-  convert_sub_pix_time (pos,
-			self->private->timewin->unit,
-			self->private->timewin->zoom,
-			videorate
-			);
+  return convert_sub_pix_time (pos,
+			       self->private->timewin->unit,
+			       self->private->timewin->zoom,
+			       videorate
+			       );
 }
 
 void
@@ -944,13 +946,12 @@ pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *sel
 						 int y)
 {
   PitiviSourceFile	**sf;
-  PitiviLayerType	type_track_cmp;
   
   x -= self->private->slide_width/2;
   if ( x < 0)
     x = 0;
   sf = (PitiviSourceFile **) selection->data;
-  dispose_medias (self, *sf, x);
+  dispose_medias (self, (PitiviSourceFile *) *sf, x);
 }
 
 
@@ -968,7 +969,7 @@ pitivi_timelinecellrenderer_drag_on_effects (PitiviTimelineCellRenderer *self,
     {
       if ((self->track_type == PITIVI_EFFECTS_TRACK || 
 	   self->track_type == PITIVI_TRANSITION_TRACK))
-	create_effect_on_track (self, sf, x);
+	create_effect_on_track (self, (PitiviSourceFile *) *sf, x);
     }
 }
 
@@ -1033,8 +1034,6 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
   GtkWidget    *source;
   PitiviTimelineCellRenderer *self;
 
-  g_printf("TimelineCellRenderer Drag_data_received, sf = %p\n", 
-	   *(selection->data));
   self = PITIVI_TIMELINECELLRENDERER (object);
   self->private->current_selection = selection;
   if (!selection->data) {
@@ -1143,7 +1142,6 @@ pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
   GList	*child;
   GnlObject	*source;
   gint64	start,mstart,mstop;
-  guint	height;
 
   // redraw all childs at the good position and at the good width
   for (child = gtk_container_get_children(GTK_CONTAINER(self)); child; child = child->next) {
@@ -1218,7 +1216,8 @@ pitivi_timelinecellrenderer_scroll_event (GtkWidget *widget, GdkEventScroll *eve
       gtk_adjustment_set_value (self->private->timewin->hscrollbar, value);
     }
   }
-  pitivi_ruler_set_zoom_metric (self->private->timewin->hruler, self->private->timewin->unit, self->private->timewin->zoom);
+  pitivi_ruler_set_zoom_metric (GTK_RULER (self->private->timewin->hruler),
+				self->private->timewin->unit, self->private->timewin->zoom);
   return FALSE;
 }
 
@@ -1281,15 +1280,7 @@ pitivi_timelinecellrenderer_callb_deselect (PitiviTimelineCellRenderer *self)
 static void
 pitivi_timelinecellrenderer_callb_dbk_source (PitiviTimelineCellRenderer *self, gpointer data)
 {
-  PitiviTimelineMedia *media;
-
   dispose_medias (self, data, 0);
-}
-
-static void
-pitivi_media_set_size (PitiviTimelineMedia *media,  guint width, guint height)
-{
-  gtk_widget_set_size_request (GTK_WIDGET (media), width, height );
 }
 
 static void
@@ -1298,7 +1289,6 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
   PitiviTimelineMedia *media[2], *link;
 /*   PitiviSourceFile	*sf; */
   GtkWidget *widget;
-  gint64 frame;
   gint64 start1, start2, stop1, stop2, mstart1, mstart2, mstop1, mstop2;
   guint	 pos =  0;
   
@@ -1334,7 +1324,7 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
       //      pitivi_timelinemedia_set_start_stop(media[0], start2, stop2);
 
       pitivi_layout_put (GTK_LAYOUT (container),  GTK_WIDGET ( media[0] ), pos, 0); // placement du nouveau media
-      pitivi_media_set_size ( PITIVI_TIMELINEMEDIA (widget), x, GTK_WIDGET (container)->allocation.height); // retaillage de l'ancien media
+      gtk_widget_set_size_request ( widget, x, GTK_WIDGET (container)->allocation.height); // retaillage de l'ancien media
       pitivi_layout_add_to_composition (container, media[0]);
       gtk_widget_show ( GTK_WIDGET ( media[0] ) );
       if ( PITIVI_TIMELINEMEDIA (widget)->linked )
@@ -1343,7 +1333,7 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	  GTK_WIDGET ( link )->allocation.width = widget->allocation.width;
 	  media[1] = pitivi_timelinemedia_new (PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile,
 					       widget->allocation.width, container->linked_track );
-	  pitivi_media_set_size ( PITIVI_TIMELINEMEDIA (widget)->linked, x, GTK_WIDGET (container)->allocation.height);
+	  gtk_widget_set_size_request ( PITIVI_TIMELINEMEDIA (widget)->linked, x, GTK_WIDGET (container)->allocation.height);
 	  link_widgets (media[0], media[1]);
 	  g_printf("Setting values for existing media\n");
 	  pitivi_timelinemedia_set_media_start_stop(PITIVI_TIMELINEMEDIA(link), mstart1, mstop1);
@@ -1523,7 +1513,7 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   PitiviTimelineCellRendererClass *cell_class = PITIVI_TIMELINECELLRENDERER_CLASS (g_class);
  
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (g_class);
-  GtkContainerClass *container_class = (GtkContainerClass*) (g_class);
+/*   GtkContainerClass *container_class = (GtkContainerClass*) (g_class); */
   
   parent_class = gtk_type_class (GTK_TYPE_LAYOUT);
   cellobj_class->constructor = pitivi_timelinecellrenderer_constructor;

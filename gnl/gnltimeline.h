@@ -24,6 +24,7 @@
 #define __GNL_TIMELINE_H__
 
 #include <gnl/gnl.h>
+#include <gnl/gnltypes.h>
 #include <gnl/gnlcomposition.h>
 #include <gnl/gnlgroup.h>
 
@@ -40,8 +41,6 @@ G_BEGIN_DECLS
 #define GNL_IS_TIMELINE_CLASS(obj) \
   (G_TYPE_CHECK_CLASS_TYPE((klass),GNL_TYPE_TIMELINE))
 
-typedef struct _GnlTimeline GnlTimeline;
-typedef struct _GnlTimelineClass GnlTimelineClass;
 typedef struct _GnlTimelineTimer GnlTimelineTimer;
 
 struct _GnlTimeline {

@@ -170,7 +170,7 @@ static void
 pitivi_windows_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviWindowsClass *klass = PITIVI_WINDOWS_CLASS (g_class);
+/*   PitiviWindowsClass *klass = PITIVI_WINDOWS_CLASS (g_class); */
 
   parent_class = g_type_class_peek_parent (g_class);
 

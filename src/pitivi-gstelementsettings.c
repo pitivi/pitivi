@@ -24,6 +24,7 @@
 
 #include "pitivi.h"
 #include "pitivi-gstelementsettings.h"
+#include "pitivi-settingswindow.h"
 
 static     GObjectClass *parent_class;
 
@@ -349,7 +350,6 @@ pitivi_gstelementsettings_aff_enum (gchar *name, GValue value, GParamSpec *param
   gint			i;
   gint			*enum_values;
   gchar			*label;
-  GtkWidget		*prop_value_label;
   GtkWidget		*prop_value_combobox;
   
   prop_value_combobox = gtk_combo_box_new_text();
@@ -359,7 +359,6 @@ pitivi_gstelementsettings_aff_enum (gchar *name, GValue value, GParamSpec *param
   
   for (i=0; i < class->n_values; i++) {
     GEnumValue *evalue = &class->values[i];
-    gint tmp;
     
     enum_values[i] = evalue->value;
     label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
@@ -383,7 +382,6 @@ pitivi_gstelementsettings_aff_flags (gchar *name, GValue value, GParamSpec *para
   guint			j;
   gint			flags_value;
   gint			nb_value;
-  GString		*flags = NULL;
   
   values = G_FLAGS_CLASS (g_type_class_ref (param->value_type))->values;
   nb_value = G_FLAGS_CLASS (g_type_class_ref (param->value_type))->n_values;
@@ -579,7 +577,7 @@ pitivi_gstelementsettings_get_prop_num (PitiviGstElementSettings *self, gchar *p
   gint cpt;
 
   for (cpt = 1; cpt < self->private->num_prop ; cpt++) {
-    if (!strcmp (self->private->prop[cpt]->name, prop_name)) {
+    if (!g_ascii_strcasecmp (self->private->prop[cpt]->name, prop_name)) {
       return (cpt);
     }
   }
@@ -600,7 +598,7 @@ pitivi_gstelementsettings_get_value (PitiviGstElementSettings *self, gchar *prop
 
   g_object_get_property (G_OBJECT (self->private->element), prop_name, &tmp);
 
-  g_print ("VALUE TYPE ::>%d\n", G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (&tmp)));
+  g_print ("VALUE TYPE ::>%d\n", (int) G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (&tmp)));
 
   return (tmp);
 }
@@ -645,41 +643,41 @@ pitivi_gstelementsettings_get_settings_entry (GtkWidget *widget, PitiviGstElemen
     g_value_init (&tmp, G_TYPE_DOUBLE);
     g_value_set_double (&tmp, gtk_spin_button_get_value (GTK_SPIN_BUTTON (widget)));
 
-    if (!strcmp(type, "INT")) {
+    if (!g_ascii_strcasecmp(type, "INT")) {
       g_value_init(&value, G_TYPE_INT);
       g_value_set_int (&value, gtk_spin_button_get_value_as_int (GTK_SPIN_BUTTON (widget)));
 
-    } else if (!strcmp(type, "UINT")) {
+    } else if (!g_ascii_strcasecmp(type, "UINT")) {
       g_value_init(&value, G_TYPE_UINT);
       if (!g_value_transform (&tmp, &value))
 	g_print ("COULD NOT TRANSFORM TYPE\n");
 
-    } else if (!strcmp(type, "UINT64")) {
+    } else if (!g_ascii_strcasecmp(type, "UINT64")) {
       g_value_init(&value, G_TYPE_UINT64);
       if (!g_value_transform (&tmp, &value))
 	g_print ("COULD NOT TRANSFORM TYPE\n");
 
-    } else if (!strcmp(type, "INT64")) {
+    } else if (!g_ascii_strcasecmp(type, "INT64")) {
       g_value_init(&value, G_TYPE_INT64);
       if (!g_value_transform (&tmp, &value))
 	g_print ("COULD NOT TRANSFORM TYPE\n");
 
-    } else if (!strcmp(type, "ULONG")) {
+    } else if (!g_ascii_strcasecmp(type, "ULONG")) {
       g_value_init(&value, G_TYPE_ULONG);
       if (!g_value_transform (&tmp, &value))
 	g_print ("COULD NOT TRANSFORM TYPE\n");
 
-    } else if (!strcmp(type, "LONG")) {
+    } else if (!g_ascii_strcasecmp(type, "LONG")) {
       g_value_init(&value, G_TYPE_LONG);
       if (!g_value_transform (&tmp, &value))
 	g_print ("COULD NOT TRANSFORM TYPE\n");
 
-    } else if (!strcmp(type, "FLOAT")) {
+    } else if (!g_ascii_strcasecmp(type, "FLOAT")) {
       g_value_init(&value, G_TYPE_FLOAT);
       if (!g_value_transform (&tmp, &value))
 	g_print ("COULD NOT TRANSFORM TYPE\n");
 
-    } else if (!strcmp(type, "DOUBLE")) {
+    } else if (!g_ascii_strcasecmp(type, "DOUBLE")) {
       gst_value_init_and_copy (&value, &tmp);
 
     }
@@ -977,7 +975,7 @@ pitivi_gstelementsettings_set_property (GObject * object,
       break;
     case PROP_GST:
       g_print ("COUCOU:PROP_GST\n");
-      if (self->private->element = g_value_get_pointer (value)) {
+      if ((self->private->element = g_value_get_pointer (value))) {
 	self->private->factory = gst_element_get_factory (self->private->element);
 	self->elm = g_strdup (gst_element_get_name (self->private->element));
       }
@@ -1015,7 +1013,7 @@ static void
 pitivi_gstelementsettings_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviGstElementSettingsClass *klass = PITIVI_GSTELEMENTSETTINGS_CLASS (g_class);
+/*   PitiviGstElementSettingsClass *klass = PITIVI_GSTELEMENTSETTINGS_CLASS (g_class); */
 
   parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (g_class));
 

@@ -31,8 +31,7 @@
 
 static GtkWindowClass *parent_class = NULL;
 
-gchar* labels[PITIVI_EFFECT_NBCAT_TYPE+1]={
-  
+gchar* labels[PITIVI_EFFECT_NBCAT_TYPE + 1] = {
   PITIVI_TRANSITION_EFFECT_LABEL,
   PITIVI_VIDEO_EFFECT_LABEL,
   PITIVI_AUDIO_EFFECT_LABEL,
@@ -81,7 +80,7 @@ enum
     LAST_SIGNAL
   };
 
-static guint	      effects_signals[LAST_SIGNAL] = {0};
+/* static guint	      effects_signals[LAST_SIGNAL] = {0}; */
 
 /*
  * Insert "added-value" functions here
@@ -169,6 +168,7 @@ pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_window_set_title (GTK_WINDOW (self), PITIVI_EFFECTS_DF_TITLE);
 }
 
+void
 pitivi_effects_action_on_colexp (GtkTreeView *treeview, 
 				 GtkTreeIter *TreeIter, 
 				 gchar *icon, 
@@ -328,7 +328,6 @@ pitivi_effectswindow_drag_begin (GtkWidget		*widget,
   GtkTreeSelection    *selection;
   GtkTreeModel	      *model;
   GtkTreeIter	      iter;
-  gchar		      *name;
   gint64	      size;
 
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
@@ -350,7 +349,7 @@ pitivi_effectswindow_drag_begin (GtkWidget		*widget,
 
 gchar	*get_icon_fx(G_CONST_RETURN gchar *name, gint type)
 {
-  gchar	*icon_fx;
+  gchar	*icon_fx = NULL;
   gint	id_tab;
 
   switch(type)
@@ -599,8 +598,6 @@ pitivi_effectstree_set_gst (PitiviEffectsWindow *win,
   GtkCellRenderer		*pCellRenderer;
   GtkTreeViewColumn		*pColumn;
   GdkPixbuf			*pixbuf;
-  const GList			*elements;
-  int				count, i =  0;
   
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (tree_effect->treeview), FALSE);
   tree_effect->model = gtk_tree_store_new ( PITIVI_NB_COLUMN,
@@ -625,6 +622,8 @@ pitivi_effectstree_set_gst (PitiviEffectsWindow *win,
       break;
     case PITIVI_EFFECT_TRANSITION_TYPE:
       insert_transition_effects_on_tree (win, tree_effect, &child, setting->transition_effects);
+      break;
+    case PITIVI_EFFECT_NBCAT_TYPE:
       break;
     }
   
@@ -721,7 +720,7 @@ pitivi_effectswindow_set_property (GObject * object,
 			      guint property_id,
 			      const GValue * value, GParamSpec * pspec)
 {
-  PitiviEffectsWindow *self = (PitiviEffectsWindow *) object;
+/*   PitiviEffectsWindow *self = (PitiviEffectsWindow *) object; */
 
   switch (property_id)
     {
@@ -736,7 +735,7 @@ pitivi_effectswindow_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-  PitiviEffectsWindow *self = (PitiviEffectsWindow *) object;
+/*   PitiviEffectsWindow *self = (PitiviEffectsWindow *) object; */
 
   switch (property_id)
     {
@@ -762,7 +761,7 @@ pitivi_effectswindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (g_class);
-  PitiviEffectsWindowClass *klass = PITIVI_EFFECTSWINDOW_CLASS (g_class);
+/*   PitiviEffectsWindowClass *klass = PITIVI_EFFECTSWINDOW_CLASS (g_class); */
   
   parent_class = g_type_class_peek_parent (g_class);
   

@@ -221,7 +221,7 @@ pitivi_splashscreenwindow_set_property (GObject * object,
 			      guint property_id,
 			      const GValue * value, GParamSpec * pspec)
 {
-  PitiviSplashScreenWindow *self = (PitiviSplashScreenWindow *) object;
+/*   PitiviSplashScreenWindow *self = (PitiviSplashScreenWindow *) object; */
 
   switch (property_id)
     {
@@ -243,7 +243,7 @@ pitivi_splashscreenwindow_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-  PitiviSplashScreenWindow *self = (PitiviSplashScreenWindow *) object;
+/*   PitiviSplashScreenWindow *self = (PitiviSplashScreenWindow *) object; */
 
   switch (property_id)
     {
@@ -262,7 +262,7 @@ static void
 pitivi_splashscreenwindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviSplashScreenWindowClass *klass = PITIVI_SPLASHSCREENWINDOW_CLASS (g_class);
+/*   PitiviSplashScreenWindowClass *klass = PITIVI_SPLASHSCREENWINDOW_CLASS (g_class); */
 
   parent_class = g_type_class_peek_parent (g_class);
 

@@ -30,6 +30,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "pitivi-types.h"
 #include "pitivi-stockicons.h"
 
 /*
@@ -43,8 +44,6 @@
 #define PITIVI_IS_CONTROLLER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_CONTROLLER_TYPE))
 #define PITIVI_CONTROLLER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_CONTROLLER_TYPE, PitiviControllerClass))
 
-typedef struct _PitiviController PitiviController;
-typedef struct _PitiviControllerClass PitiviControllerClass;
 typedef struct _PitiviControllerPrivate PitiviControllerPrivate;
 
 struct _PitiviController

@@ -24,6 +24,7 @@
 #define __GNL_SOURCE_H__
 
 #include <gnl/gnl.h>
+#include <gnl/gnltypes.h>
 #include <gnl/gnlobject.h>
 
 G_BEGIN_DECLS
@@ -42,8 +43,6 @@ G_BEGIN_DECLS
 extern GstElementDetails gnl_source_details;
 gboolean gnl_source_factory_init (GstElementFactory *factory);
 
-typedef struct _GnlSource GnlSource;
-typedef struct _GnlSourceClass GnlSourceClass;
 typedef struct _GnlSourcePrivate GnlSourcePrivate;
 
 struct _GnlSource {

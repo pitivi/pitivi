@@ -31,6 +31,7 @@
  */
 
 #include  <gtk/gtk.h>
+#include  "pitivi-types.h"
 
 /*
  * Type macros.
@@ -49,8 +50,6 @@
 #define PITIVI_MAIN_MENUBAR_XML      "/MainMenu"
 #define PITIVI_MAIN_TOOLBAR_XML      "/DefaultToolbar"
 
-typedef struct _PitiviMenu PitiviMenu;
-typedef struct _PitiviMenuClass PitiviMenuClass;
 typedef struct _PitiviMenuPrivate PitiviMenuPrivate;
 typedef struct _PitiviMenuPublic PitiviMenuPublic;
 typedef struct _PitiviMenuClassPublic PitiviMenuClassPublic; 

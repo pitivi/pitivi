@@ -28,7 +28,6 @@ pitivi_SOURCES		= \
 	pitivi-checkbox.c\
 	pitivi-projectsourcelist.c \
 	pitivi-newprojectwindow.c  \
-	pitivi-codecconfwindow.c  \
 	pitivi-viewerwindow.c \
 	pitivi-projectsettings.c \
 	pitivi-projectsettingswindow.c \
@@ -51,8 +50,8 @@ pitivi_SOURCES		= \
 # our CFLAGS and LDFLAGS used for compiling and linking
 # make sure you prefix these with the name of your binary
 
-pitivi_CFLAGS  = $(GTK_CFLAGS) $(GLIB2_CFLAGS) $(GST_CFLAGS) $(GNL_CFLAGS)
-pitivi_LDFLAGS = $(GTK_LIBS) $(GLIB2_LIBS) $(GST_LIBS) $(GNL_LIBS)
+pitivi_CFLAGS  = -Wall -Werror -O3 -fno-strict-aliasing $(GTK_CFLAGS) $(GLIB2_CFLAGS) $(GST_CFLAGS) $(GNL_CFLAGS)
+pitivi_LDFLAGS = -Wall -Werror -O3 $(GTK_LIBS) $(GLIB2_LIBS) $(GST_LIBS) $(GNL_LIBS)
 
 LEX_OUTPUT_ROOT	= lex.$*
 YFLAGS		= -d -p request_lex

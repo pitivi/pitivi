@@ -27,6 +27,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <glib/gprintf.h>
 #include "pitivi.h"
 #include "pitivi-projectsettings.h"
 
@@ -112,12 +113,6 @@ PitiviProjectSettings *
 pitivi_projectsettings_new_with_name(gchar *name, gchar *desc)
 {
   PitiviProjectSettings	*projectsettings;
-  GSList		*list;
-  GList			*list_prop;
-  PitiviMediaSettings	*media_temp;
-  PitiviMediaSettings	*media_new;
-  PitiviSettingsValue	*prop_temp;
-  PitiviSettingsValue	*prop_new;
 
   projectsettings = g_new0(PitiviProjectSettings, 1);
   projectsettings->name = g_strdup(name);
@@ -137,9 +132,6 @@ PitiviCategorieSettings *
 pitivi_projectsettings_categorie_new(gchar *name)
 {
   PitiviCategorieSettings	*categorie;
-  PitiviProjectSettings		*setting_temp;
-  GSList			*list;
-  int				j;
   
   categorie = g_new0(PitiviCategorieSettings, 1);
   categorie->name = g_strdup(name);
@@ -153,14 +145,6 @@ PitiviMediaSettings *
 pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps, gint index )
 {
   PitiviMediaSettings	*media_new;
-  PitiviSettingsValue	*setting_value;
-  GstElementFactory	*factory;
-  GstElement		*element;
-  GParamSpec		**property_specs;
-  gboolean		readable;
-  GList			*list;
-  gint			num_properties;
-  gint			i;
 
   media_new = g_new0(PitiviMediaSettings, 1);
   media_new->codec_factory_name = g_strdup(codec_factory_name);
@@ -263,11 +247,11 @@ pitivi_ps_mediasettings_restore_thyself(PitiviMediaSettings *tofill, xmlNodePtr 
   xmlNodePtr	children;
   
   for (children = self->xmlChildrenNode; children; children = children->next) {
-    if (!strcmp("caps", children->name))
+    if (!g_ascii_strcasecmp("caps", children->name))
       tofill->caps = gst_caps_from_string(xmlNodeGetContent(children));
-    else if (!strcmp("codec_factory_name", children->name))
+    else if (!g_ascii_strcasecmp("codec_factory_name", children->name))
       tofill->codec_factory_name = xmlNodeGetContent(children);
-    else if (!strcmp("codec_properties", children->name)) {
+    else if (!g_ascii_strcasecmp("codec_properties", children->name)) {
       g_warning("TODO : restore codec_properties from XML");
       /*
 	TODO Finish codec_properties restoration from XML
@@ -287,11 +271,11 @@ pitivi_projectsettings_restore_thyself(PitiviProjectSettings *tofill, xmlNodePtr
   PitiviMediaSettings	*mset;
 
   for (children = self->xmlChildrenNode; children; children = children->next) {
-    if (!strcmp("name", children->name)) {
+    if (!g_ascii_strcasecmp("name", children->name)) {
       tofill->name = xmlNodeGetContent(children);
-    } else if (!strcmp("description", children->name)) {
+    } else if (!g_ascii_strcasecmp("description", children->name)) {
       tofill->description = xmlNodeGetContent(children);
-    } else if (!strcmp("media_settings", children->name)) {
+    } else if (!g_ascii_strcasecmp("media_settings", children->name)) {
       mset = g_new0(PitiviMediaSettings, 1);
       pitivi_ps_mediasettings_restore_thyself(mset, children);
       tofill->media_settings = g_slist_append(tofill->media_settings, mset);
@@ -438,7 +422,7 @@ pitivi_projectsettings_set_property (GObject * object,
 			      guint property_id,
 			      const GValue * value, GParamSpec * pspec)
 {
-  PitiviProjectSettings *self = (PitiviProjectSettings *) object;
+/*   PitiviProjectSettings *self = (PitiviProjectSettings *) object; */
 
   switch (property_id)
     {
@@ -460,7 +444,7 @@ pitivi_projectsettings_get_property (GObject * object,
 				     guint property_id,
 				     GValue * value, GParamSpec * pspec)
 {
-  PitiviProjectSettings *self = (PitiviProjectSettings *) object;
+/*   PitiviProjectSettings *self = (PitiviProjectSettings *) object; */
 
   switch (property_id)
     {
@@ -479,7 +463,7 @@ static void
 pitivi_projectsettings_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviProjectSettingsClass *klass = PITIVI_PROJECTSETTINGS_CLASS (g_class);
+/*   PitiviProjectSettingsClass *klass = PITIVI_PROJECTSETTINGS_CLASS (g_class); */
 
   gobject_class->constructor = pitivi_projectsettings_constructor;
   gobject_class->dispose = pitivi_projectsettings_dispose;

@@ -90,9 +90,9 @@ PitiviProject *
 pitivi_project_new_from_file (const gchar *filename)
 {
   xmlDocPtr doc;
-  xmlNodePtr field, cur, child;
+  xmlNodePtr field, cur;
   xmlNsPtr ns;
-  PitiviProject *project;
+  PitiviProject *project = NULL;
 
   if (filename == NULL)
     return NULL;
@@ -391,8 +391,6 @@ static void
 pitivi_project_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviProject *self = (PitiviProject *) instance;
-  GstElement	*aq, *vq;
-  GstPad	*apad, *vpad;
 
   g_printf("project instance init\n");
   self->private = g_new0 (PitiviProjectPrivate, 1);
@@ -455,7 +453,7 @@ pitivi_project_set_property (GObject * object,
 			     guint property_id,
 			     const GValue * value, GParamSpec * pspec)
 {
-  PitiviProject *self = (PitiviProject *) object;
+/*   PitiviProject *self = (PitiviProject *) object; */
 
   switch (property_id)
     {
@@ -477,7 +475,7 @@ pitivi_project_get_property (GObject * object,
 			     guint property_id,
 			     GValue * value, GParamSpec * pspec)
 {
-  PitiviProject *self = (PitiviProject *) object;
+/*   PitiviProject *self = (PitiviProject *) object; */
 
   switch (property_id)
     {
@@ -496,7 +494,7 @@ static void
 pitivi_project_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviProjectClass *klass = PITIVI_PROJECT_CLASS (g_class);
+/*   PitiviProjectClass *klass = PITIVI_PROJECT_CLASS (g_class); */
 
   gobject_class->constructor = pitivi_project_constructor;
   gobject_class->dispose = pitivi_project_dispose;

@@ -32,6 +32,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-types.h"
 #include "pitivi-windows.h"
 
 /*
@@ -45,8 +46,6 @@
 #define PITIVI_IS_NEWPROJECTWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_NEWPROJECTWINDOW_TYPE))
 #define PITIVI_NEWPROJECTWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_NEWPROJECTWINDOW_TYPE, PitiviNewProjectWindowClass))
 
-typedef struct _PitiviNewProjectWindow PitiviNewProjectWindow;
-typedef struct _PitiviNewProjectWindowClass PitiviNewProjectWindowClass;
 typedef struct _PitiviNewProjectWindowPrivate PitiviNewProjectWindowPrivate;
 
 struct _PitiviNewProjectWindow
@@ -73,5 +72,5 @@ GType			pitivi_newprojectwindow_get_type (void);
  */
 
 PitiviNewProjectWindow	*pitivi_newprojectwindow_new(PitiviMainApp *mainapp);
-
+void			pitivi_npw_select_first_setting(PitiviNewProjectWindow *self);
 #endif

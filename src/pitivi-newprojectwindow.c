@@ -27,7 +27,6 @@
 #include <gtk/gtk.h>
 #include <gst/gst.h>
 #include "pitivi-newprojectwindow.h"
-#include "pitivi-codecconfwindow.h"
 #include "pitivi-viewerwindow.h"
 #include "pitivi-projectsettings.h"
 #include "pitivi-settings.h"
@@ -110,8 +109,8 @@ struct _PitiviNewProjectWindowPrivate
   GtkWidget		*cat_text;
 
   /* Properties */
-  PitiviCodecConfWindow	*audio_codecwindow;
-  PitiviCodecConfWindow	*video_codecwindow;
+/*   PitiviCodecConfWindow	*audio_codecwindow; */
+/*   PitiviCodecConfWindow	*video_codecwindow; */
   GList			*video_codecconflist;
   GList			*audio_codecconflist;
   GList			*video_confboxlist;
@@ -204,7 +203,6 @@ pitivi_npw_add_category(GtkButton *button, gpointer user_data)
 {
   PitiviNewProjectWindow	*self = (PitiviNewProjectWindow *) user_data;
   PitiviMainApp			*mainapp = ((PitiviWindows *) self)->mainapp;
-  PitiviSettings		*global_settings;
 
   if ( strlen(gtk_entry_get_text(GTK_ENTRY(self->private->cat_text))) )
     {
@@ -219,10 +217,9 @@ pitivi_npw_add_category(GtkButton *button, gpointer user_data)
 void
 pitivi_del_category(GtkButton *button, gpointer user_data)
 {
-  PitiviNewProjectWindow	*self;
+  PitiviNewProjectWindow	*self = (PitiviNewProjectWindow *) user_data;
   PitiviMainApp			*mainapp = ((PitiviWindows *) self)->mainapp;
 
-  self = (PitiviNewProjectWindow *) user_data;
   if (gtk_tree_store_iter_is_valid (self->private->tree, &self->private->pIter) && 
       (!gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter)))
     {
@@ -281,7 +278,6 @@ pitivi_npw_get_a_media(PitiviNewProjectWindow *self)
 PitiviMediaSettings *
 pitivi_npw_get_v_media(PitiviNewProjectWindow *self)
 {
-  GList			*list;
   PitiviMediaSettings	*media;
   GstCaps		*caps_video;
   gint			index;
@@ -332,11 +328,10 @@ pitivi_npw_add_projectsettings (PitiviNewProjectWindow *self)
 void
 pitivi_npw_add_setting (GtkButton *button, gpointer user_data)
 {
-  PitiviNewProjectWindow	*self;
+  PitiviNewProjectWindow	*self = (PitiviNewProjectWindow *) user_data;
   PitiviMainApp			*mainapp = (PitiviMainApp *) ((PitiviWindows *) self)->mainapp;
   PitiviSettings		*global_settings;
   
-  self = (PitiviNewProjectWindow *) user_data;
   if ( strlen(gtk_entry_get_text( GTK_ENTRY(self->private->name_text))) )
     {
       global_settings = mainapp->global_settings;
@@ -518,8 +513,6 @@ setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
   GtkTextIter			piter2;
   PitiviNewProjectWindow	*self;
   gint				*position;
-  PitiviCategorieSettings	*categorie;
-  PitiviProjectSettings		*reglage;
 
   self = (PitiviNewProjectWindow *) user_data;
   if (gtk_tree_model_get_iter(model, &self->private->pIter2, path))
@@ -673,13 +666,10 @@ pitivi_npw_get_index_from_tabname ( PitiviNewProjectWindow *self, gchar **tabnam
 void
 pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_name)
 {
-  GstCaps			*caps;
   PitiviMediaSettings		*vmedia;
   PitiviMediaSettings		*amedia;
   PitiviCategorieSettings	*categorie;
-  GSList			*selected_setting;
   PitiviProjectSettings		*reglage;
-  GtkObject			*spin_adjustment;
   GstStructure			*structure;
   GValue			*val;
   PitiviMainApp			*mainapp = ((PitiviWindows *) self)->mainapp;
@@ -705,7 +695,7 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   gtk_text_buffer_set_text ( self->private->desc_text_buffer, reglage->description, strlen (reglage->description) );
 
 /*   Put the Video entries */
-  if (caps != NULL && (structure = gst_caps_get_structure (vmedia->caps, 0)))
+  if ((structure = gst_caps_get_structure (vmedia->caps, 0)))
     {
       val = (GValue *) gst_structure_get_value ( structure, "width");
       gtk_entry_set_text( GTK_ENTRY (self->private->size_width) , pitivi_newprojectwindow_getstr( g_value_get_int (val) ));
@@ -720,7 +710,7 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
     }
 
 /*   Put the Audio entries */
-  if (caps != NULL && (structure = gst_caps_get_structure (amedia->caps, 0)))
+  if ((structure = gst_caps_get_structure (amedia->caps, 0)))
     {
       val = (GValue *) gst_structure_get_value ( structure, "channels");
       gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->audio_combo_ech), g_value_get_int (val));
@@ -880,7 +870,6 @@ GtkWidget*
 pitivi_create_presets_table(PitiviNewProjectWindow *self)
 {
   GtkWidget		*name_scroll;
-  GtkTextIter		iter;
   GtkTextTagTable	*tag_table;
   gchar			*presets;
   GtkWidget		*button_cancel;
@@ -946,13 +935,7 @@ pitivi_make_settings_table(PitiviNewProjectWindow *self)
 {
   GtkWidget		*settings_table;
   GtkWidget		*button_hbox;
-  GtkWidget		*name_label;
-  GtkWidget		*desc_label;
-  GtkTextTagTable	*name_tag_table;
-  gchar			*name_settings;
   GtkWidget		*cat_frame;
-  GtkWidget		*cat_table;
-  GtkWidget		*cat_but_box;
   GtkWidget		*video_frame;
   GtkWidget		*audio_frame;
   GtkWidget		*name_frame;
@@ -1017,12 +1000,10 @@ pitivi_make_name_frame(PitiviNewProjectWindow *self)
   GtkWidget		*name_frame;
   GtkWidget		*name_table;
   GtkTextTagTable	*name_tag_table;
-  GtkTextIter		name_iter;
   GtkWidget		*name_text_settings;
   GtkWidget		*name_scroll;
   GtkWidget		*name_label;
   GtkWidget		*desc_label;
-  GdkEventButton	mouse_clic;
 
   name_frame = gtk_frame_new("General");
   name_table =  gtk_table_new(2, 2, FALSE);
@@ -1338,7 +1319,6 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
   GtkWidget		*acodec_hbox;
   GtkWidget		*arate_hbox;
   GtkWidget		*achannels_hbox;
-  GtkObject		*spin_adjustment;
   PitiviCombobox	*audio_combobox;
   int			i;
 
@@ -1574,10 +1554,6 @@ pitivi_newprojectwindow_instance_init (GTypeInstance * instance, gpointer g_clas
 {
   PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) instance;
 
-  GSList			*list;
-  PitiviCategorieSettings	*categorie;
-  PitiviProjectSettings		*setting;
-  
   self->private = g_new0(PitiviNewProjectWindowPrivate, 1);
   
   /* initialize all public and private members to reasonable default values. */ 
@@ -1629,7 +1605,7 @@ static void
 pitivi_newprojectwindow_set_property (GObject * object, guint property_id,
 				      const GValue * value, GParamSpec * pspec)
 {
-  PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) object;
+/*   PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) object; */
 
   switch (property_id)
     {
@@ -1654,7 +1630,7 @@ static void
 pitivi_newprojectwindow_get_property (GObject * object, guint property_id,
 				      GValue * value, GParamSpec * pspec)
 {
-  PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) object;
+/*   PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) object; */
 
   switch (property_id)
     {
@@ -1677,7 +1653,7 @@ static void
 pitivi_newprojectwindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviNewProjectWindowClass *klass = PITIVI_NEWPROJECTWINDOW_CLASS (g_class);
+/*   PitiviNewProjectWindowClass *klass = PITIVI_NEWPROJECTWINDOW_CLASS (g_class); */
 
   parent_class = g_type_class_peek_parent (g_class);
   

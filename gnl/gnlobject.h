@@ -25,6 +25,7 @@
 
 #include <gst/gst.h>
 #include <gnl/gnl.h>
+#include <gnl/gnltypes.h>
 
 G_BEGIN_DECLS
 
@@ -61,9 +62,6 @@ typedef enum
   GNL_DIRECTION_FORWARD,
   GNL_DIRECTION_BACKWARD,
 } GnlDirection;
-
-typedef struct _GnlObject GnlObject;
-typedef struct _GnlObjectClass GnlObjectClass;
 
 struct _GnlObject {
   GstBin 		 parent;

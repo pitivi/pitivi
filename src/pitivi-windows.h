@@ -26,14 +26,13 @@
 #ifndef PITIVI_WINDOWS_H
 #define PITIVI_WINDOWS_H
 
-typedef struct _PitiviWindows PitiviWindows;
 
 /*
  * Potentially, include other headers on which this header depends.
  */
 
 #include <gtk/gtk.h>
-#include "pitivi-mainapp.h"
+#include "pitivi-types.h"
 
 /*
  * Type macros.
@@ -46,7 +45,6 @@ typedef struct _PitiviWindows PitiviWindows;
 #define PITIVI_IS_WINDOWS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_WINDOWS_TYPE))
 #define PITIVI_WINDOWS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_WINDOWS_TYPE, PitiviWindowsClass))
 
-typedef struct _PitiviWindowsClass PitiviWindowsClass;
 typedef struct _PitiviWindowsPrivate PitiviWindowsPrivate;
 
 struct _PitiviWindows

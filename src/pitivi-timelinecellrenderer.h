@@ -31,6 +31,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "pitivi-types.h"
 #include "pitivi-timelinewindow.h"
 #include "pitivi-cursor.h"
 #include "pitivi-trackenum.h"
@@ -63,8 +64,6 @@
 #define PITIVI_IS_TIMELINECELLRENDERER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_TIMELINECELLRENDERER_TYPE))
 #define PITIVI_TIMELINECELLRENDERER_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_TIMELINECELLRENDERER_TYPE, PitiviTimelineCellRendererClass))
 
-typedef struct _PitiviTimelineCellRenderer PitiviTimelineCellRenderer;
-typedef struct _PitiviTimelineCellRendererClass PitiviTimelineCellRendererClass;
 typedef struct _PitiviTimelineCellRendererPrivate PitiviTimelineCellRendererPrivate;
 typedef struct _PitiviTimelineMediaChild PitiviTimelineMediaChild;
 
@@ -131,7 +130,7 @@ PitiviCursor    *pitivi_getcursor_id (GtkWidget *widget);
 
 int		add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y);
 
-
+PitiviLayerType	check_media_type (PitiviSourceFile *sf);
 /* Deactivation of signals */
 
 void		pitivi_timelinecellrenderer_activate (PitiviTimelineCellRenderer *self);
@@ -140,5 +139,7 @@ void		pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gbool
 void		pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self);
 GtkWidget *	pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimelineCellRenderer *cell );
 void		pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self );
+void		pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y);
+void		calculate_priorities ( GtkWidget *widget );
 
 #endif

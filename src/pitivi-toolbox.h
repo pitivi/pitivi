@@ -33,6 +33,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "pitivi-types.h"
 #include "pitivi-windows.h"
 #include "pitivi-cursor.h"
 
@@ -49,8 +50,6 @@
 
 #define PITIVI_MENU_TOOLBOX_FILENAME "../ui/pitivi-toolbox.xml"
 
-typedef struct _PitiviToolbox PitiviToolbox;
-typedef struct _PitiviToolboxClass PitiviToolboxClass;
 typedef struct _PitiviToolboxPrivate PitiviToolboxPrivate;
 
 struct _PitiviToolbox

@@ -32,7 +32,7 @@
 #include <gst/gst.h>
 #include <string.h>
 
-
+#include "pitivi-types.h"
 #include "pitivi-projectsettings.h"
 
 /*
@@ -46,8 +46,6 @@
 #define PITIVI_IS_SETTINGS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_SETTINGS_TYPE))
 #define PITIVI_SETTINGS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_SETTINGS_TYPE, PitiviSettingsClass))
 
-typedef struct _PitiviSettings PitiviSettings;
-typedef struct _PitiviSettingsClass PitiviSettingsClass;
 typedef struct _PitiviSettingsPrivate PitiviSettingsPrivate;
 
 typedef struct _PitiviSettingsMimeType PitiviSettingsMimeType;
@@ -99,6 +97,15 @@ GType		pitivi_settings_get_type (void);
  */
 PitiviCategorieSettings		*pitivi_settings_get_selected_category	( PitiviSettings *self, gint *position );
 PitiviProjectSettings		*pitivi_settings_get_selected_setting	( PitiviSettings *self, gint *position );
+/* Category */
+void				pitivi_settings_add_category( PitiviSettings *self, const gchar *cat_name);
+void				pitivi_settings_del_category( PitiviSettings *self, gint *position );
+/* Setting */
+void				pitivi_settings_add_setting ( PitiviSettings *self, PitiviProjectSettings *new_setting, gint *position );
+void				pitivi_settings_mod_setting ( PitiviSettings *self, PitiviProjectSettings *new_setting, gint *position );
+void				pitivi_settings_del_setting ( PitiviSettings *self, gint *position );
+
+
 
 PitiviSettings			*pitivi_settings_new(void);
 GList				*pitivi_settings_get_flux_codec_list (GObject	*object, GstCaps *flux, gboolean LIST);

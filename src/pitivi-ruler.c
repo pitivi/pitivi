@@ -102,7 +102,9 @@ pitivi_ruler_set_data_metric (GtkRuler *ruler,
 void
 pitivi_ruler_set_zoom_metric (GtkRuler *ruler, guint unit, guint zoom)
 {
-  int count, start, end = 0;
+  int count = 0;
+  int start = 0;
+  int end = 0;
   
   PITIVI_RULER(ruler)->private->unit = unit;
   if ( unit == PITIVI_SECONDS )
@@ -178,7 +180,7 @@ pitivi_ruler_get_property (GObject * object,
 			   guint property_id,
 			   GValue * value, GParamSpec * pspec)
 {
-  PitiviRuler *self = (PitiviRuler *) object;
+/*   PitiviRuler *self = (PitiviRuler *) object; */
   switch (property_id)
     {
     case PROP_UNIT:

@@ -29,13 +29,9 @@
 /*
  * Potentially, include other headers on which this header depends.
  */
-#include "pitivi-projectwindows.h"
 
-#include "../pixmaps/stop.xpm"
-#include "../pixmaps/play.xpm"
-#include "../pixmaps/pause.xpm"
-#include "../pixmaps/forward.xpm"
-#include "../pixmaps/backward.xpm"
+#include "pitivi-types.h"
+#include "pitivi-projectwindows.h"
 
 /*
  * Type macros.
@@ -50,8 +46,6 @@
 
 #define PITIVI_VIEWER_DF_TITLE "Viewer"
 
-typedef struct _PitiviViewerWindow PitiviViewerWindow;
-typedef struct _PitiviViewerWindowClass PitiviViewerWindowClass;
 typedef struct _PitiviViewerWindowPrivate PitiviViewerWindowPrivate;
 
 struct _PitiviViewerWindow
@@ -86,5 +80,6 @@ GType pitivi_viewerwindow_get_type (void);
 PitiviViewerWindow	*pitivi_viewerwindow_new();
 void	pitivi_viewerwindow_set_source(PitiviViewerWindow *self,
 				       PitiviSourceFile *sf);
+gint64	do_query(GstElement *elem, GstQueryType type);
 
 #endif

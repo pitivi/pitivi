@@ -56,7 +56,7 @@ pitivi_printf_element_nb(GstElement *elt, int dep) {
   for (pads = gst_element_get_pad_list(elt); pads ; pads = pads->next) {
     pad = GST_PAD(pads->data);
     if (GST_PAD_PEER(pad))
-      g_printf("%s\tPad: %s Active:%d Linked to %s\n", tp,
+      g_printf("%s\tPad: %s Active:%d Linked to %s:%s\n", tp,
 	       gst_pad_get_name(pad), GST_PAD_IS_ACTIVE(pad),
 	       GST_DEBUG_PAD_NAME(GST_PAD_PEER(pad)));
     else
@@ -65,7 +65,7 @@ pitivi_printf_element_nb(GstElement *elt, int dep) {
     for (pads2 = gst_pad_get_ghost_pad_list(pad); pads2; pads2 = pads2->next) {
       gpad = GST_PAD(pads2->data);
       if (GST_PAD_PEER(gpad))
-	g_printf("%s\t GhostPad %s linked to %s\n", tp, gst_pad_get_name(gpad),
+	g_printf("%s\t GhostPad %s linked to %s:%s\n", tp, gst_pad_get_name(gpad),
 		 GST_DEBUG_PAD_NAME(GST_PAD_PEER(gpad)));
       else
 	g_printf("%s\t GhostPad %s NOT linked\n", tp, gst_pad_get_name(gpad));

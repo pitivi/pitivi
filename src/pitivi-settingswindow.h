@@ -25,12 +25,12 @@
 #ifndef PITIVI_SETTINGSWINDOW_H
 #define PITIVI_SETTINGSWINDOW_H
 
-typedef struct _PitiviSettingsWindow PitiviSettingsWindow;
 
 /*
  * Potentially, include other headers on which this header depends.
  */
 
+#include "pitivi-types.h"
 #include "pitivi-windows.h"
 
 /*
@@ -44,7 +44,6 @@ typedef struct _PitiviSettingsWindow PitiviSettingsWindow;
 #define PITIVI_IS_SETTINGSWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_SETTINGSWINDOW_TYPE))
 #define PITIVI_SETTINGSWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_SETTINGSWINDOW_TYPE, PitiviSettingsWindowClass))
 
-typedef struct _PitiviSettingsWindowClass PitiviSettingsWindowClass;
 typedef struct _PitiviSettingsWindowPrivate PitiviSettingsWindowPrivate;
 
 struct _PitiviSettingsWindow
@@ -71,5 +70,6 @@ GType pitivi_settingswindow_get_type (void);
  */
 
 PitiviSettingsWindow	*pitivi_settingswindow_new(PitiviMainApp *mainapp);
-
+void			pitivi_settingswindow_table_widget_add (GtkWidget *Table,
+								GtkWidget *widget, gint row, gint col);
 #endif

@@ -31,6 +31,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "pitivi-types.h"
 #include "pitivi-timelinecellrenderer.h"
 
 /*
@@ -49,8 +50,6 @@
 #define PITIVI_IS_MEDIATRACKINFO_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_MEDIATRACKINFO_TYPE))
 #define PITIVI_MEDIATRACKINFO_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_MEDIATRACKINFO_TYPE, PitiviMediaTrackInfoClass))
 
-typedef struct _PitiviMediaTrackInfo PitiviMediaTrackInfo;
-typedef struct _PitiviMediaTrackInfoClass PitiviMediaTrackInfoClass;
 typedef struct _PitiviMediaTrackInfoPrivate PitiviMediaTrackInfoPrivate;
 
 struct _PitiviMediaTrackInfo

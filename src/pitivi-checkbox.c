@@ -155,7 +155,7 @@ pitivi_checkbox_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-  PitiviCheckBox *self = (PitiviCheckBox *) object;
+/*   PitiviCheckBox *self = (PitiviCheckBox *) object; */
 
   switch (property_id)
     {
@@ -250,7 +250,7 @@ pitivi_gtk_default_draw_check (
 			gint           width,
 			gint           height)
 {
-  if (detail && strcmp (detail, "cellcheck") == 0)
+  if (detail && g_ascii_strcasecmp (detail, "cellcheck") == 0)
     {
       gdk_draw_rectangle (window,
 			  widget->style->base_gc[state_type],
@@ -286,7 +286,7 @@ pitivi_gtk_default_draw_check (
       x -= (1 + INDICATOR_PART_SIZE - width) / 2;
       y -= (1 + INDICATOR_PART_SIZE - height) / 2;
 
-      if (strcmp (detail, "check") == 0)
+      if (g_ascii_strcasecmp (detail, "check") == 0)
 	{
 	  text_gc = style->fg_gc[state_type];
 	  base_gc = style->bg_gc[state_type];
@@ -438,7 +438,7 @@ static void
 pitivi_checkbox_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviCheckBoxClass *klass = PITIVI_CHECKBOX_CLASS (g_class);
+/*   PitiviCheckBoxClass *klass = PITIVI_CHECKBOX_CLASS (g_class); */
   GtkCheckButtonClass *checkboxclass = g_class;
 
   parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (g_class));

@@ -23,8 +23,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "pitivi.h"
+#include <glib/gprintf.h>
 #include <gst/gst.h>
+#include "pitivi.h"
 
 char *
 pitivi_element_debug(GstElement *elt);

@@ -776,7 +776,6 @@ static GstClockTime
 gnl_composition_nearest_cover_func (GnlComposition *comp, GstClockTime time, GnlDirection direction)
 {
   GList			*objects = comp->objects;
-  GstClockTime		last;
   
   GST_INFO("Object:%s , Time[%lld], Direction:%d",
 	   gst_element_get_name(GST_ELEMENT(comp)),
@@ -817,11 +816,12 @@ gnl_composition_nearest_cover_func (GnlComposition *comp, GstClockTime time, Gnl
       GST_INFO("no endobject");
   } else {
     GnlCompositionEntry *entry;
+    GstClockTime	last = G_MAXINT64;
     while (objects) {
       entry = (GnlCompositionEntry *) (objects->data);
       GstClockTime start;
       
-      gnl_object_get_start_stop (entry->object, &start, NULL);
+      start = entry->object->start;
       
       GST_INFO("Object[%s] Start[%lld]",
 	       gst_element_get_name(GST_ELEMENT(entry->object)),

@@ -27,6 +27,7 @@
 
 #include <gst/gst.h>
 #include <gnl/gnl.h>
+#include <gnl/gnltypes.h>
 #include <gnl/gnlobject.h>
 
 G_BEGIN_DECLS
@@ -43,9 +44,6 @@ G_BEGIN_DECLS
   (G_TYPE_CHECK_CLASS_TYPE((klass),GNL_TYPE_COMPOSITION))
 
 extern GstElementDetails gnl_composition_details;
-
-typedef struct _GnlComposition GnlComposition;
-typedef struct _GnlCompositionClass GnlCompositionClass;
 
 typedef struct _GnlCompositionEntry GnlCompositionEntry;
 

@@ -102,7 +102,7 @@ pitivi_projectsourcelist_get_child_by_name(PitiviSourceBin *bin, gchar *name)
       child = pitivi_projectsourcelist_get_child_by_name(child, name);
       if (child)
 	return child;
-      childlist->next;
+      childlist = childlist->next;
     }
   return NULL;
 }
@@ -274,11 +274,7 @@ pitivi_projectsourcelist_remove_bin(PitiviProjectSourceList *self,
   PitiviSourceBin *bin;
   GSList	*list;
   gpointer	data;
-  gchar		*tmp;
-  gchar		*tmp2;
-  gchar		*save;
   gint		row;
-  gint		i;
 
 
   data = get_pitivisourcebin(self, treepath, &list, &bin, &row);
@@ -483,11 +479,9 @@ void
 pitivi_projectsourcelist_restore_in_recurse_folder(PitiviSourceBin *bin, xmlNodePtr self)
 {
   xmlNodePtr	children;
-  PitiviSourceBin	*folder;
+  PitiviSourceBin	*folder = NULL;
 
-  g_printf("xmlNodeName ==> %s\n", self->name);
-
-  if (!strcmp("file", self->name))
+  if (!g_ascii_strcasecmp("file", self->name))
     {
       for (children = self->xmlChildrenNode; children; children = children->next)
 	{
@@ -495,7 +489,7 @@ pitivi_projectsourcelist_restore_in_recurse_folder(PitiviSourceBin *bin, xmlNode
 	    pitivi_projectsourcelist_add_source_from_xml(bin, xmlNodeGetContent(children));
 	}
     }
-  if (!strcmp("folder", self->name))
+  if (!g_ascii_strcasecmp("folder", self->name))
     {
       for (children = self->xmlChildrenNode; children; children = children->next)
 	{
@@ -510,7 +504,7 @@ void
 pitivi_projectsourcelist_restore_thyself(PitiviProjectSourceList *tofill, xmlNodePtr self)
 {
   xmlNodePtr	children, little;
-  PitiviSourceBin	*bin;
+  PitiviSourceBin	*bin = NULL;
 
   for (children = self->xmlChildrenNode; children; children = children->next) 
     {
@@ -529,7 +523,7 @@ pitivi_projectsourcelist_restore_thyself(PitiviProjectSourceList *tofill, xmlNod
 void	pitivi_projectsourcelist_recurse_into_folder(PitiviSourceBin *sourcebin,
 						     xmlNodePtr binptr)
 {
-  xmlNodePtr	 msetptr, childptr;
+  xmlNodePtr	 msetptr;
   GSList		*folderlist;
   GSList		*sourcelist;
   PitiviSourceFile	*sourcefile;
@@ -561,13 +555,9 @@ void	pitivi_projectsourcelist_recurse_into_folder(PitiviSourceBin *sourcebin,
 xmlNodePtr
 pitivi_projectsourcelist_save_thyself(PitiviProjectSourceList *self, xmlNodePtr parent)
 {
-  xmlNodePtr	selfptr, msetptr, binptr, childptr;
-  GSList	*sourcelist;
+  xmlNodePtr	selfptr,binptr;
   GSList	*binlist;
-  GSList	*folderlist;
   PitiviSourceBin	*sourcebin;
-  PitiviSourceBin	*childbin;
-  PitiviSourceFile	*sourcefile;
   
 
   selfptr = xmlNewChild (parent, NULL, "projectsourcelist", NULL);
@@ -748,7 +738,7 @@ pitivi_projectsourcelist_set_property (GObject * object,
 			      guint property_id,
 			      const GValue * value, GParamSpec * pspec)
 {
-  PitiviProjectSourceList *self = (PitiviProjectSourceList *) object;
+/*   PitiviProjectSourceList *self = (PitiviProjectSourceList *) object; */
 
   switch (property_id)
     {
@@ -770,7 +760,7 @@ pitivi_projectsourcelist_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-  PitiviProjectSourceList *self = (PitiviProjectSourceList *) object;
+/*   PitiviProjectSourceList *self = (PitiviProjectSourceList *) object; */
 
   switch (property_id)
     {
@@ -789,7 +779,7 @@ static void
 pitivi_projectsourcelist_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviProjectSourceListClass *klass = PITIVI_PROJECTSOURCELIST_CLASS (g_class);
+/*   PitiviProjectSourceListClass *klass = PITIVI_PROJECTSOURCELIST_CLASS (g_class); */
 
   gobject_class->constructor = pitivi_projectsourcelist_constructor;
   gobject_class->dispose = pitivi_projectsourcelist_dispose;

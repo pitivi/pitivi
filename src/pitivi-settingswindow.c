@@ -23,6 +23,7 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-mainapp.h"
 #include "pitivi-settingswindow.h"
 #include "pitivi-settings.h"
 #include "pitivi-gstelementsettings.h"
@@ -55,7 +56,7 @@ struct _PitiviSettingsWindowPrivate
   GtkWidget	*ButtonCancel;
   
   GtkTooltips	*Ttips;
-  PitiviSettings *Settings;
+  PitiviSettings *settings;
 };
 
 /*
@@ -164,8 +165,9 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 void
 pitivi_settingswindow_cb_destroy (GtkWidget *widget, gpointer data)
 {
-  PitiviSettingsWindow *self = (PitiviSettingsWindow *) data;
+/*   PitiviSettingsWindow *self = (PitiviSettingsWindow *) data; */
   
+  /* TODO : do we need to do something when we destroy this window ?? */
   g_print ("SETTINGS DESTROY\n");  
   return ;
 }
@@ -248,11 +250,11 @@ pitivi_settingswindow_cb_ok (GtkWidget *widget, gpointer data)
 {
   PitiviSettingsWindow *self = (PitiviSettingsWindow *) data;
 
-  pitivi_settingswindow_save_settings (self->private->Settings->container, 
+  pitivi_settingswindow_save_settings (self->private->settings->container, 
 				       self->private->TabContainer);
-  pitivi_settingswindow_save_settings (self->private->Settings->parser, 
+  pitivi_settingswindow_save_settings (self->private->settings->parser, 
 				       self->private->TabParser);
-  pitivi_settingswindow_save_settings (self->private->Settings->codec, 
+  pitivi_settingswindow_save_settings (self->private->settings->codec, 
 				       self->private->TabCodec);
   g_print ("SETTINGS OK\n");
   gtk_widget_destroy (GTK_WIDGET (self));
@@ -376,7 +378,6 @@ pitivi_settingswindow_ajout_coder (GtkWidget *Box, gint row, gint col, GList *Li
 gchar *
 pitivi_settingswindow_format_flux (GstCaps *flux)
 {
-  gint	i;
   gchar *str;
   gchar **tmp;
 
@@ -484,7 +485,6 @@ void
 pitivi_settingswindow_create_row_table_InOut (GList *element, GtkWidget *table, 
 					      gchar *io, gchar *type, gint row)
 {
-  GList *elm;
   GtkWidget *ComboBox;
 
   pitivi_settingswindow_ajout_label (table, row, 0, g_strdup_printf ("%s%s:\t", type, io));
@@ -553,23 +553,23 @@ pitivi_settingswindow_create_all_frames (PitiviSettingsWindow *self)
 {
   PitiviMainApp		*mainapp = ((PitiviWindows *) self)->mainapp;
 
-  self->private->Settings = mainapp->global_settings;
+  self->private->settings = PITIVI_SETTINGS (mainapp->global_settings);
 
   pitivi_settingswindow_create_table_InOut 
-    (self, self->private->Settings->element, 
+    (self, self->private->settings->element, 
      pitivi_settingswindow_create_frame (self->private->Tab, "In/Out", "In/Out List"));
 
   self->private->TabCodec = pitivi_settingswindow_create_table 
     (pitivi_settingswindow_create_frame (self->private->Tab, "Codecs", "Codecs List"),
-     self->private->Settings->codec);
+     self->private->settings->codec);
 
   self->private->TabContainer = pitivi_settingswindow_create_table 
     (pitivi_settingswindow_create_frame (self->private->Tab, "Containers", "Containers List"),
-     self->private->Settings->container);
+     self->private->settings->container);
 
   self->private->TabParser = pitivi_settingswindow_create_table 
     (pitivi_settingswindow_create_frame (self->private->Tab, "Parsers", "Parsers List"), 
-     self->private->Settings->parser);
+     self->private->settings->parser);
 
   return ;
 }
@@ -687,7 +687,7 @@ pitivi_settingswindow_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->ButtonOk = NULL;
   self->private->ButtonCancel = NULL;
 
-  self->private->Settings = NULL;
+  self->private->settings = NULL;
 
   self->private->Ttips = gtk_tooltips_new ();
   gtk_tooltips_enable(self->private->Ttips);
@@ -738,7 +738,7 @@ pitivi_settingswindow_set_property (GObject * object,
 			      guint property_id,
 			      const GValue * value, GParamSpec * pspec)
 {
-  PitiviSettingsWindow *self = (PitiviSettingsWindow *) object;
+/*   PitiviSettingsWindow *self = (PitiviSettingsWindow *) object; */
 
   switch (property_id)
     {
@@ -760,7 +760,7 @@ pitivi_settingswindow_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-  PitiviSettingsWindow *self = (PitiviSettingsWindow *) object;
+/*   PitiviSettingsWindow *self = (PitiviSettingsWindow *) object; */
 
   switch (property_id)
     {
@@ -779,7 +779,7 @@ static void
 pitivi_settingswindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviSettingsWindowClass *klass = PITIVI_SETTINGSWINDOW_CLASS (g_class);
+/*   PitiviSettingsWindowClass *klass = PITIVI_SETTINGSWINDOW_CLASS (g_class); */
 
   parent_class = g_type_class_peek_parent (g_class);
 

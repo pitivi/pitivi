@@ -27,7 +27,6 @@
 #ifndef PITIVI_PROJECTSOURCELIST_H
 #define PITIVI_PROJECTSOURCELIST_H
 
-typedef struct _PitiviProjectSourceList PitiviProjectSourceList;
 
 /*
  * Potentially, include other headers on which this header depends.
@@ -35,6 +34,7 @@ typedef struct _PitiviProjectSourceList PitiviProjectSourceList;
 
 #include <gst/gst.h>
 #include <gtk/gtk.h>
+#include "pitivi-types.h"
 #include "pitivi-sourcefile.h"
 
 /*
@@ -48,28 +48,8 @@ typedef struct _PitiviProjectSourceList PitiviProjectSourceList;
 #define PITIVI_IS_PROJECTSOURCELIST_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_PROJECTSOURCELIST_TYPE))
 #define PITIVI_PROJECTSOURCELIST_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_PROJECTSOURCELIST_TYPE, PitiviProjectSourceListClass))
 
-typedef struct _PitiviProjectSourceListClass PitiviProjectSourceListClass;
 typedef struct _PitiviProjectSourceListPrivate PitiviProjectSourceListPrivate;
 typedef struct _PitiviSourceBin PitiviSourceBin;
-
-/*
-
-typedef struct _PitiviSourceFile PitiviSourceFile;
-struct _PitiviSourceFile
-{
-  gchar	*filename;
-  gchar *mediatype;
-  gchar *infovideo;
-  gchar *infoaudio;
-  gint64 length;
-  GdkPixbuf  *thumbs_audio;
-  GdkPixbuf  *thumbs_video;
-  GdkPixbuf  *thumbs_effect;
-  GstElement *pipeline;		// audio/video and effect pipeline
-  GstElement *pipeline_video;	// video only pipeline
-  GstElement *pipeline_audio;	// audio only pipeline
-};
-*/
 
 struct _PitiviProjectSourceList
 {
@@ -148,6 +128,12 @@ pitivi_projectsourcelist_set_file_property_by_name(PitiviProjectSourceList *self
 						   gchar *infoaudio,
 						   gint64 length,
 						   GstElement *pipeline);
+
+void
+pitivi_projectsourcelist_restore_thyself(PitiviProjectSourceList *tofill, xmlNodePtr self);
+
+xmlNodePtr
+pitivi_projectsourcelist_save_thyself(PitiviProjectSourceList *self, xmlNodePtr parent);
 
 /* only for debug */
 void	pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self, 

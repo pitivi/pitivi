@@ -26,12 +26,12 @@
 #ifndef PITIVI_SOURCELISTWINDOW_H
 #define PITIVI_SOURCELISTWINDOW_H
 
-typedef struct _PitiviSourceListWindow PitiviSourceListWindow;
 
 /*
  * Potentially, include other headers on which this header depends.
  */
 
+#include "pitivi-types.h"
 #include "pitivi-projectwindows.h"
 
 /*
@@ -45,7 +45,6 @@ typedef struct _PitiviSourceListWindow PitiviSourceListWindow;
 #define PITIVI_IS_SOURCELISTWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_SOURCELISTWINDOW_TYPE))
 #define PITIVI_SOURCELISTWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_SOURCELISTWINDOW_TYPE, PitiviSourceListWindowClass))
 
-typedef struct _PitiviSourceListWindowClass PitiviSourceListWindowClass;
 typedef struct _PitiviSourceListWindowPrivate PitiviSourceListWindowPrivate;
 typedef struct _PitiviListStore PitiviListStore;
 typedef struct _PitiviListElm PitiviListElm;

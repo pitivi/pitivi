@@ -23,6 +23,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <glib/gprintf.h>
+#include <string.h>
 #include "pitivi.h"
 #include "pitivi-thumbs.h"
 
@@ -87,7 +89,7 @@ pitivi_thumbs_constructor (GType type,
   obj = parent_class->constructor (type, n_construct_properties,
 				   construct_properties);
   
-  PitiviThumbs	*thumbs = (PitiviThumbs	*) obj;
+/*   PitiviThumbs	*thumbs = (PitiviThumbs	*) obj; */
   return obj;
 }
 
@@ -159,7 +161,7 @@ pitivi_thumbs_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-  PitiviThumbs *this = (PitiviThumbs *) object;
+/*   PitiviThumbs *this = (PitiviThumbs *) object; */
 
   switch (property_id)
     {
@@ -197,9 +199,6 @@ pitivi_thumbnail_pngenc_get (PitiviThumbs *this)
   GstElement *snapshot;
   GstElement *sink;
   GstElement *spider;
-  GstPad *pad;
-  GstEvent *event;
-  gboolean res;
   GError *error = NULL;
   int i;
   
@@ -286,7 +285,7 @@ pitivi_thumbs_generate (PitiviThumbs *this)
       if ( tmp )
 	{
 	  this->output = g_malloc (strlen (this->private->filename) + DIR_LENGTH);
-	  g_sprintf (this->output, "/tmp/%s%c%d", tmp, '\0', this->info);
+	  g_sprintf (this->output, "/tmp/%s%c%lld", tmp, '\0', this->info);
 	  if ( pitivi_thumbnail_pngenc_get (this) > 0)
 	      return this->output;
 	}

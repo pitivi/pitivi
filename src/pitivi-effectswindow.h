@@ -27,7 +27,6 @@
 #ifndef PITIVI_EFFECTSWINDOW_H
 #define PITIVI_EFFECTSWINDOW_H
 
-typedef struct _PitiviEffectsWindow PitiviEffectsWindow;
 
 /*
  * Potentially, include other headers on which this header depends.
@@ -35,6 +34,7 @@ typedef struct _PitiviEffectsWindow PitiviEffectsWindow;
 
 #include <gtk/gtk.h>
 #include <gst/gst.h>
+#include "pitivi-types.h"
 #include "pitivi-windows.h"
 #include "pitivi-stockicons.h"
 #include "pitivi-timelinemedia.h"
@@ -50,7 +50,6 @@ typedef struct _PitiviEffectsWindow PitiviEffectsWindow;
 #define PITIVI_IS_EFFECTSWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_EFFECTSWINDOW_TYPE))
 #define PITIVI_EFFECTSWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_EFFECTSWINDOW_TYPE, PitiviEffectsWindowClass))
 
-typedef struct _PitiviEffectsWindowClass PitiviEffectsWindowClass;
 typedef struct _PitiviEffectsWindowPrivate PitiviEffectsWindowPrivate;
 typedef struct _PitiviEffectsTree PitiviEffectsTree;
 
@@ -70,7 +69,6 @@ typedef enum {
   PITIVI_EFFECT_VIDEO_TYPE,
   PITIVI_EFFECT_AUDIO_TYPE,
   PITIVI_EFFECT_NBCAT_TYPE
-  
 } PitiviEffectsTypeEnum;
 
 struct _PitiviEffectsTree

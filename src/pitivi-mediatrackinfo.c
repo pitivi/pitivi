@@ -190,8 +190,8 @@ static void
 pitivi_mediatrackinfo_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviMediaTrackInfoClass *klass = PITIVI_MEDIATRACKINFO_CLASS (g_class);
-  GtkContainerClass *container_class = (GtkContainerClass*) (g_class);
+/*   PitiviMediaTrackInfoClass *klass = PITIVI_MEDIATRACKINFO_CLASS (g_class); */
+/*   GtkContainerClass *container_class = (GtkContainerClass*) (g_class); */
 
   parent_class = g_type_class_peek_parent (g_class);
   gobject_class->constructor =  pitivi_mediatrackinfo_constructor; 

@@ -58,7 +58,7 @@ distclean-local:
 	rm -f $(top_builddir)/gnl/gnlmarshal.c $(top_builddir)/gnl/gnlmarshal.h 
 
 
-CFLAGS = $(GLIB2_CFLAGS) $(GST_CFLAGS)
-LIBS = $(GLIB2_LIBS) $(GST_LIBS)
+AM_CFLAGS = -O3 -Wall -Werror $(GLIB2_CFLAGS) $(GST_CFLAGS)
+AM_LIBS = -O3 -Wall -Werror $(GLIB2_LIBS) $(GST_LIBS)
 libgnl_la_LDFLAGS =
 

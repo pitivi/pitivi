@@ -31,6 +31,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "pitivi-types.h"
 #include "pitivi-projectwindows.h"
 #include "pitivi-timelinecellrenderer.h"
 #include "pitivi-sourceitem.h"
@@ -53,8 +54,6 @@
 #define PITIVI_IS_TIMELINEMEDIA_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_TIMELINEMEDIA_TYPE))
 #define PITIVI_TIMELINEMEDIA_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_TIMELINEMEDIA_TYPE, PitiviTimelineMediaClass))
 
-typedef struct _PitiviTimelineMedia PitiviTimelineMedia;
-typedef struct _PitiviTimelineMediaClass PitiviTimelineMediaClass;
 typedef struct _PitiviTimelineMediaPrivate PitiviTimelineMediaPrivate;
 
 struct _PitiviTimelineMedia

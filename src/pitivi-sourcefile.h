@@ -26,14 +26,14 @@
 #ifndef PITIVI_SOURCEFILE_H
 #define PITIVI_SOURCEFILE_H
 
-typedef struct _PitiviSourceFile PitiviSourceFile;
 
 /*
  * Potentially, include other headers on which this header depends.
  */
 #include <gst/gst.h>
 #include <gtk/gtk.h>
-#include <pitivi-mainapp.h>
+#include "pitivi-types.h"
+#include "pitivi-mainapp.h"
 
 
 /*
@@ -47,7 +47,6 @@ typedef struct _PitiviSourceFile PitiviSourceFile;
 #define PITIVI_IS_SOURCEFILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_SOURCEFILE_TYPE))
 #define PITIVI_SOURCEFILE_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_SOURCEFILE_TYPE, PitiviSourceFileClass))
 
-typedef struct _PitiviSourceFileClass PitiviSourceFileClass;
 typedef struct _PitiviSourceFilePrivate PitiviSourceFilePrivate;
 
 struct _PitiviSourceFile

@@ -33,6 +33,14 @@
 #include "pitivi-settingswindow.h"
 #include "pitivi-controller.h"
 #include "pitivi-drawing.h"
+#include "pitivi-mediatrackinfo.h"
+
+#include "../pixmaps/bg.xpm"
+#include "../pixmaps/bg_audio.xpm"
+#include "../pixmaps/bg_video.xpm"
+#include "../pixmaps/bg_effects.xpm"
+#include "../pixmaps/bg_trans.xpm"
+
 
 static	GdkPixbuf *window_icon = NULL;
 static  PitiviWindowsClass *parent_class = NULL;
@@ -179,7 +187,6 @@ PitiviTimelineWindow *
 pitivi_timelinewindow_new (PitiviMainApp *mainapp)
 {
   PitiviTimelineWindow		*timelinewindow;
-  PitiviTimelineWindowPrivate	*priv;
   
   timelinewindow = (PitiviTimelineWindow *) g_object_new(PITIVI_TIMELINEWINDOW_TYPE, 
 							 "mainapp", mainapp,
@@ -248,7 +255,7 @@ unit_combobox_cb(GtkWidget *cbox, gpointer data)
   value = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
   if (tw->unit != value) {
     tw->unit = value;
-    pitivi_ruler_set_zoom_metric (tw->hruler, tw->unit, tw->zoom);
+    pitivi_ruler_set_zoom_metric (GTK_RULER (tw->hruler), tw->unit, tw->zoom);
     g_signal_emit_by_name (GTK_OBJECT (tw), "zoom-changed");
   }
 }
@@ -264,7 +271,7 @@ scale_combobox_cb(GtkWidget *cbox, gpointer data)
   value = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
   if (tw->zoom != value) {
     tw->zoom = value;
-    pitivi_ruler_set_zoom_metric (tw->hruler, tw->unit, tw->zoom);
+    pitivi_ruler_set_zoom_metric (GTK_RULER (tw->hruler), tw->unit, tw->zoom);
     g_signal_emit_by_name (GTK_OBJECT (tw), "zoom-changed");
   }
 }
@@ -325,7 +332,6 @@ create_toolbox (PitiviTimelineWindow *self, GtkWidget *container)
 void
 create_timeline_toolbar (PitiviTimelineWindow *self)
 {
-  PitiviMainApp	*mainapp;
   GtkWidget	*sep;
   GtkWidget	*hbox;
 
@@ -425,7 +431,6 @@ void
 create_timelabel (PitiviTimelineWindow *self, GtkWidget *container)
 {
   GtkWidget *hbox;
-  GtkWidget *timelabel;
   GtkWidget *label;
   
   hbox = gtk_hbox_new (FALSE, 0); 
@@ -433,7 +438,7 @@ create_timelabel (PitiviTimelineWindow *self, GtkWidget *container)
   pitivi_widget_changefont (label, "helvetica 9");
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 4);
   self->private->timer = gtk_label_new ("--:--:--");
-  pitivi_widget_changefont (timelabel, "helvetica 10");
+  pitivi_widget_changefont (self->private->timer, "helvetica 10");
   gtk_box_pack_start (GTK_BOX (hbox), self->private->timer, FALSE, TRUE, 4);
   gtk_box_pack_start (GTK_BOX (container), hbox, FALSE, TRUE, 4);  
 }
@@ -645,7 +650,7 @@ pitivi_timelinewindow_get_property (GObject * object,
 				    guint property_id,
 				    GValue * value, GParamSpec * pspec)
 {
-  PitiviTimelineWindow *self = (PitiviTimelineWindow *) object;
+/*   PitiviTimelineWindow *self = (PitiviTimelineWindow *) object; */
 
   switch (property_id)
     {
@@ -690,7 +695,6 @@ pitivi_timelinewindow_dblclick (PitiviTimelineWindow *self, gpointer data)
 {
   PitiviTimelineCellRenderer *cell;
   guint		type;
-  GtkWidget	*container;
   GList		*childlist;
   
   childlist = gtk_container_get_children (GTK_CONTAINER (self->private->layout_container));
@@ -740,7 +744,7 @@ static void
 pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  GtkWidgetClass *gtkwidget_class = GTK_WIDGET_CLASS (g_class);
+/*   GtkWidgetClass *gtkwidget_class = GTK_WIDGET_CLASS (g_class); */
   PitiviTimelineWindowClass *klass = PITIVI_TIMELINEWINDOW_CLASS (g_class);
 
   parent_class = g_type_class_peek_parent (g_class);
@@ -1064,7 +1068,7 @@ void
 pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self )
 {
   //gtk_widget_destroy (GTK_WIDGET(self));
-  pitivi_mainapp_destroy(self, NULL);
+  pitivi_mainapp_destroy(GTK_WIDGET (self), NULL);
 }
 
 
@@ -1096,7 +1100,6 @@ gboolean
 pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *event, gpointer data) 
 {
   PitiviTimelineWindow *self;
-  PitiviCursor *cursor;
 
   self = (PitiviTimelineWindow *) widget;
   gtk_paned_set_position (GTK_PANED(self->private->hpaned), (LEFT_PANED_SIZE));
@@ -1124,8 +1127,6 @@ pitivi_timelinewindow_associate_effect (GtkWidget *widget, gpointer data)
   PitiviTimelineWindow *self = (PitiviTimelineWindow *) widget;
   PitiviTimelineCellRenderer *cell;
   GtkWidget	*media;
-  guint		type;
-  GtkWidget	*container;
   GList		*childlist;
   
   childlist = gtk_container_get_children (GTK_CONTAINER (self->private->layout_container));
@@ -1234,4 +1235,5 @@ pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow *self, GdkEventKey* 
       exit ( 0 );
       break;
     }
+  return TRUE;
 }

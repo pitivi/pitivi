@@ -29,12 +29,12 @@
 #ifndef PITIVI_MAINAPP_H
 #define PITIVI_MAINAPP_H
 
-typedef struct _PitiviMainApp PitiviMainApp;
 
 /*
  * Potentially, include other headers on which this header depends.
  */
 
+#include	"pitivi-types.h"
 #include	"pitivi-project.h"
 #include	"pitivi-projectsettings.h"
 #include	"pitivi-settings.h"
@@ -50,7 +50,6 @@ typedef struct _PitiviMainApp PitiviMainApp;
 #define PITIVI_IS_MAINAPP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_MAINAPP_TYPE))
 #define PITIVI_MAINAPP_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_MAINAPP_TYPE, PitiviMainAppClass))
 
-typedef struct _PitiviMainAppClass PitiviMainAppClass;
 typedef struct _PitiviMainAppPrivate PitiviMainAppPrivate;
 
 struct _PitiviMainApp
@@ -84,4 +83,10 @@ void			pitivi_mainapp_activate_effectswindow	( PitiviMainApp *self, gboolean act
 void			pitivi_mainapp_activate_sourcelistwindow (PitiviMainApp *self, gboolean activate);
 void			pitivi_mainapp_create_wintools		( PitiviMainApp *self, PitiviProject *project);
 gboolean		pitivi_mainapp_add_project		( PitiviMainApp *self, PitiviProject *project);
+PitiviTimelineWindow *	pitivi_mainapp_get_timelinewin(PitiviMainApp *self);
+PitiviViewerWindow *	pitivi_mainapp_get_viewerwin(PitiviMainApp *self);
+PitiviEffectsWindow *	pitivi_mainapp_get_effectswin(PitiviMainApp *self);
+void			pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData);
+void			pitivi_mainapp_activate_viewerwindow (PitiviMainApp *self, gboolean activate);
+
 #endif

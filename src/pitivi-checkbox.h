@@ -30,6 +30,8 @@
  * Potentially, include other headers on which this header depends.
  */
 
+#include "pitivi-types.h"
+
 G_BEGIN_DECLS
 
 /*
@@ -43,8 +45,6 @@ G_BEGIN_DECLS
 #define PITIVI_IS_CHECKBOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_CHECKBOX_TYPE))
 #define PITIVI_CHECKBOX_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_CHECKBOX_TYPE, PitiviCheckBoxClass))
 
-typedef struct _PitiviCheckBox PitiviCheckBox;
-typedef struct _PitiviCheckBoxClass PitiviCheckBoxClass;
 typedef struct _PitiviCheckBoxPrivate PitiviCheckBoxPrivate;
 
 struct _PitiviCheckBox

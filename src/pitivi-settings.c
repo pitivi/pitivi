@@ -52,13 +52,6 @@ struct _PitiviSettingsPrivate
 /*
  * forward definitions
  */
-/* Category */
-void				pitivi_settings_add_category( PitiviSettings *self, const gchar *cat_name);
-void				pitivi_settings_del_category( PitiviSettings *self, gint *position );
-/* Setting */
-void				pitivi_settings_add_setting ( PitiviSettings *self, PitiviProjectSettings *new_setting, gint *position );
-void				pitivi_settings_mod_setting ( PitiviSettings *self, PitiviProjectSettings *new_setting, gint *position );
-void				pitivi_settings_del_setting ( PitiviSettings *self, gint *position );
 /*
  * Insert "added-value" functions here
  */
@@ -71,7 +64,6 @@ void
 pitivi_settings_add_category ( PitiviSettings *self, const gchar *cat_name)
 {
   PitiviCategorieSettings	*new_category;
-  GSList			*list;
   
   new_category = pitivi_projectsettings_categorie_new( (gchar *) cat_name );
   self->project_settings = g_slist_append( self->project_settings, (gpointer) new_category );
@@ -107,7 +99,6 @@ pitivi_settings_add_setting ( PitiviSettings *self, PitiviProjectSettings *new_s
 {
   GSList			*cat_list;
   PitiviCategorieSettings	*cat;
-  PitiviProjectSettings		*reglage;
   int				i;
   
   cat_list = self->project_settings;
@@ -486,7 +477,6 @@ pitivi_settings_scan_registry(PitiviSettings *self)
 {
   GList			*sv;
   GstElementFactory	*factory;
-  int			i;
 
   self->element = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
   sv = self->element;
@@ -644,9 +634,8 @@ pitivi_settings_restore_thyself(PitiviSettings *settings, xmlNodePtr self)
 void
 pitivi_settings_xml_epure_list(GList *list, xmlNodePtr parent)
 {
-  GList				*res = NULL;
   xmlNodePtr			mime;
-  PitiviSettingsMimeType	*tmp, *toadd;
+  PitiviSettingsMimeType	*tmp;
 
 
   for (; list; list = list->next) {
@@ -755,7 +744,7 @@ PitiviSettings *
 pitivi_settings_load_from_file(const gchar *filename)
 {
   xmlDocPtr	doc;
-  xmlNodePtr	field, cur, child;
+  xmlNodePtr	field, cur;
   xmlNsPtr	ns;
   PitiviSettings	*settings = NULL;
 
@@ -959,7 +948,7 @@ pitivi_settings_set_property (GObject * object,
 			      guint property_id,
 			      const GValue * value, GParamSpec * pspec)
 {
-  PitiviSettings *self = (PitiviSettings *) object;
+/*   PitiviSettings *self = (PitiviSettings *) object; */
 
   switch (property_id)
     {
@@ -981,7 +970,7 @@ pitivi_settings_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-  PitiviSettings *self = (PitiviSettings *) object;
+/*   PitiviSettings *self = (PitiviSettings *) object; */
 
   switch (property_id)
     {
@@ -1000,7 +989,7 @@ static void
 pitivi_settings_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviSettingsClass *klass = PITIVI_SETTINGS_CLASS (g_class);
+/*   PitiviSettingsClass *klass = PITIVI_SETTINGS_CLASS (g_class); */
 
   parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (g_class));
 

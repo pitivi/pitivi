@@ -35,4 +35,7 @@
 GtkAction *
 pitivi_groupaction_find_action (GtkActionGroup *actions, gchar *name);
 
+GtkActionGroup **
+pitivi_menubar_configure (GtkUIManager *ui_manager, gpointer data);
+
 #endif

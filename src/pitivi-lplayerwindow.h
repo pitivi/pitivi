@@ -30,6 +30,8 @@
  * Potentially, include other headers on which this header depends.
  */
 
+#include	"pitivi-types.h"
+
 /*
  * Type macros.
  */
@@ -44,8 +46,6 @@
 #define PITIVI_DEFAULT_VIEWER_AREA_WIDTH 600
 #define PITIVI_DEFAULT_VIEWER_AREA_HEIGHT 400
 
-typedef struct _PitiviLPlayerWindow PitiviLPlayerWindow;
-typedef struct _PitiviLPlayerWindowClass PitiviLPlayerWindowClass;
 typedef struct _PitiviLPlayerWindowPrivate PitiviLPlayerWindowPrivate;
 
 struct _PitiviLPlayerWindow

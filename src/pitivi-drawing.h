@@ -29,12 +29,7 @@
 
 /* Pixmap used by drawing */
 
-#include "../pixmaps/blank.xpm"
-#include "../pixmaps/bg.xpm"
-#include "../pixmaps/bg_audio.xpm"
-#include "../pixmaps/bg_video.xpm"
-#include "../pixmaps/bg_effects.xpm"
-#include "../pixmaps/bg_trans.xpm"
+/* #include "../pixmaps/blank.xpm" */
 
 void
 pitivi_drawing_set_pixmap_bg (GtkWidget *widget, GdkPixmap *pixmap);
@@ -98,5 +93,14 @@ compare_littlechild (gconstpointer a, gconstpointer b);
 
 gint 
 compare_bigchild (gconstpointer a, gconstpointer b);
+
+void
+pitivi_widget_changefont (GtkWidget *widget, const char *fontname);
+
+void 
+pitivi_drawing_selection_area (GtkWidget *widget, GdkRectangle *area, int width, char **dash);
+
+void
+draw_selection_dash (GtkWidget *widget, gpointer window, GdkColor *color, int width);
 
 #endif /* PITIVI_DRAWING_H */

@@ -1,5 +1,7 @@
-/* Gnonlin
- * Copyright (C) <2001> Wim Taymans <wim.taymans@chello.be>
+/* GStreamer
+ * Copyright (C) 2001 Wim Taymans <wim.taymans@chello.be>
+ *
+ * gnlcomposition.h: Header for base GnlComposition
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -17,24 +19,25 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GNL_H__
-#define __GNL_H__
+#ifndef __GNL_TYPES_H__
+#define __GNL_TYPES_H__
 
-#include <glib.h>
-#include <gst/gst.h>
-#include <gst/gsttypes.h>
+typedef struct _GnlComposition GnlComposition;
+typedef struct _GnlCompositionClass GnlCompositionClass;
 
-G_BEGIN_DECLS
+typedef struct _GnlGroup GnlGroup;
+typedef struct _GnlGroupClass GnlGroupClass;
 
-#define GST_CAT_DEFAULT gnonlin
-GST_DEBUG_CATEGORY_EXTERN(GST_CAT_DEFAULT);
+typedef struct _GnlObject GnlObject;
+typedef struct _GnlObjectClass GnlObjectClass;
 
-/* initialize GNL */
-void gnl_init(int *argc,char **argv[]);
+typedef struct _GnlOperation GnlOperation;
+typedef struct _GnlOperationClass GnlOperationClass;
 
-void gnl_main		(void);
-void gnl_main_quit	(void);
+typedef struct _GnlSource GnlSource;
+typedef struct _GnlSourceClass GnlSourceClass;
 
-G_END_DECLS
+typedef struct _GnlTimeline GnlTimeline;
+typedef struct _GnlTimelineClass GnlTimelineClass;
 
-#endif /* __GST_H__ */
+#endif

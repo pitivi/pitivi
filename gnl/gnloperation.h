@@ -24,6 +24,7 @@
 #define __GNL_OPERATION_H__
 
 #include <gnl/gnl.h>
+#include <gnl/gnltypes.h>
 #include <gnl/gnlobject.h>
 
 G_BEGIN_DECLS
@@ -38,9 +39,6 @@ G_BEGIN_DECLS
   (G_TYPE_CHECK_INSTANCE_TYPE((obj),GNL_TYPE_OPERATION))
 #define GNL_IS_OPERATION_CLASS(obj) \
   (G_TYPE_CHECK_CLASS_TYPE((klass),GNL_TYPE_OPERATION))
-
-typedef struct _GnlOperation GnlOperation;
-typedef struct _GnlOperationClass GnlOperationClass;
 
 struct _GnlOperation {
   GnlObject 		parent;

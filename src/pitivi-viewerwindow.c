@@ -32,8 +32,15 @@
 
 #include "pitivi.h"
 #include "pitivi-viewerwindow.h"
+#include "pitivi-timelinewindow.h"
 #include "pitivi-dragdrop.h"
 #include "pitivi-debug.h"
+
+/* #include "../pixmaps/stop.xpm" */
+/* #include "../pixmaps/play.xpm" */
+/* #include "../pixmaps/pause.xpm" */
+/* #include "../pixmaps/forward.xpm" */
+/* #include "../pixmaps/backward.xpm" */
 
 static     PitiviProjectWindowsClass *parent_class;
 static	   GdkPixmap *pixmap = NULL;
@@ -46,12 +53,12 @@ enum {
   STOP
 };
 
-static GtkTargetEntry TargetEntries[] =
-{
-  { "pitivi/sourcefile", GTK_TARGET_SAME_APP, DND_TARGET_SOURCEFILEWIN }
-};
+/* static GtkTargetEntry TargetEntries[] = */
+/* { */
+/*   { "pitivi/sourcefile", GTK_TARGET_SAME_APP, DND_TARGET_SOURCEFILEWIN } */
+/* }; */
 
-static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
+/* static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries); */
 
 
 struct _PitiviViewerWindowPrivate
@@ -109,7 +116,6 @@ static  guint viewersignals[LAST_SIGNAL] = {0};
 gboolean	do_seek(GstElement *elem, gint64 value)
 {
   GstEvent	*event;
-  GstPad	*pad;
   gboolean	res;
 
   //  pad = gst_element_get_pad(elem, "src");
@@ -188,8 +194,6 @@ void	video_stop(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  gboolean res;
-  GstElement *elem;
   gint64	value;
 
   g_print ("[CallBack]:video_stop\n");
@@ -249,7 +253,6 @@ gboolean	pause_stream(GtkWidget *widget,
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
-  g_printf("you press me\n");
   gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
 
   return FALSE;
@@ -261,14 +264,8 @@ gboolean	seek_stream(GtkWidget *widget,
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  gboolean	res;
-  GstElement	*elem;
-  gint64	value1;
-  gint64	value2;
   gdouble	pourcent;
 
-  g_printf("you release me\n");
-  
   /* query total size */
   //value1  = do_query(GST_ELEMENT (project->timeline), GST_QUERY_TOTAL);
   
@@ -276,7 +273,7 @@ gboolean	seek_stream(GtkWidget *widget,
 
   //value2 = (gint64)((pourcent * value1) / 500);
   
-  g_printf("seeking to %lld\n",
+  g_printf("seeking to %g\n",
 	   pourcent);
 
   /* rewind the movie */
@@ -290,12 +287,13 @@ gboolean	seek_stream(GtkWidget *widget,
   }
   return FALSE;
 }
+
 void	move_timeline(GtkWidget *widget, gpointer data)
 {
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+/*   PitiviViewerWindow *self = (PitiviViewerWindow *) data; */
 
   g_print ("[CallBack]:move_timeline:%g\n", gtk_range_get_value(GTK_RANGE (widget)));
-
+  /* TODO actually seek in the timeline !!! */
   return ;
 }
 
@@ -369,7 +367,6 @@ void
 create_gui (gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-  GtkWidget	*image;
 
   // main Vbox
   self->private->main_vbox = gtk_vbox_new (FALSE, FALSE);
@@ -429,7 +426,7 @@ create_stream (gpointer data)
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
-  GstElement	*audiosink;
+/*   GstElement	*audiosink; */
   GstElement	*timeoverlay;
 
 //  audiosink = gst_element_factory_make("alsasink", "audio-out");
@@ -477,8 +474,7 @@ gboolean	idle_func_video (gpointer data)
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
   
   GstElement *elem;
-  gint64	value1, value2;
-  gdouble	pourcent;
+  gint64	value1;
 
   // remove the idle_func if we're not playing !
   if (self->private->play_status != PLAY)
@@ -623,7 +619,7 @@ pitivi_viewerwindow_set_property (GObject * object,
 			      guint property_id,
 			      const GValue * value, GParamSpec * pspec)
 {
-  PitiviViewerWindow *self = (PitiviViewerWindow *) object;
+/*   PitiviViewerWindow *self = (PitiviViewerWindow *) object; */
 
   switch (property_id)
     {
@@ -639,7 +635,7 @@ pitivi_viewerwindow_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-  PitiviViewerWindow *self = (PitiviViewerWindow *) object;
+/*   PitiviViewerWindow *self = (PitiviViewerWindow *) object; */
 
   switch (property_id)
     {

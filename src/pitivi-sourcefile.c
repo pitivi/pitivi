@@ -30,11 +30,11 @@
 
 static  GObjectClass *parent_class;
 
-static enum {
+enum {
   IS_AUDIO = 1,
   IS_VIDEO,
   IS_AUDIO_VIDEO
-} outputtype;
+};
 
 struct _PitiviSourceFilePrivate
 {
@@ -177,7 +177,7 @@ bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udat
 GstElement *
 create_new_bin (PitiviSourceFile *self, int type)
 {
-  GstElement	*container, *pipeline, *decode, *src;
+  GstElement	*container, *pipeline, *decode;
   gchar		*tmp;
   GError	*error = NULL;
   gint		i;
@@ -266,6 +266,8 @@ record_pad_info (PitiviSourceFile *self, int type, GstPad *pad)
     info = &self->infovideo;
   else if (type == IS_AUDIO)
     info = &self->infoaudio;
+  else
+    return;
   *info = pretty_caps_to_string(gst_pad_get_caps(pad));
 
   if (!(struc = gst_caps_get_structure(gst_pad_get_caps(pad), 0)))
@@ -286,7 +288,6 @@ establish_length (PitiviSourceFile *self)
 {
   guint64	lena = 0, lenv = 0;
   GstFormat	format = GST_FORMAT_TIME;
-  GstElement	*elt;
   
   if (self->haveaudio)
     if (!(gst_pad_query(GST_PAD (GST_PAD_REALIZE (self->private->audiopad)),
@@ -303,8 +304,6 @@ establish_length (PitiviSourceFile *self)
 int
 pitivi_sourcefile_store_pad (PitiviSourceFile *sf, GstPad *pad)
 {
-  GstCaps	*caps;
-  GstStructure	*struc;
   gint		type;
   
   type = get_pad_type (pad);
@@ -544,7 +543,7 @@ pitivi_sourcefile_get_effect_bin (PitiviSourceFile *sf)
   g_printf ("get_effect_bin\n");
   if (!sf->haveeffect)
     return NULL;
-  tmp = g_strdup_printf ("%s-%s", sf->filename, sf->private->lastsinkid++);
+  tmp = g_strdup_printf ("%s-%d", sf->filename, sf->private->lastsinkid++);
   res = gst_element_factory_create (sf->private->factory, tmp);
   g_free (tmp);
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
@@ -718,7 +717,7 @@ pitivi_sourcefile_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-  PitiviSourceFile *this = (PitiviSourceFile *) object;
+/*   PitiviSourceFile *this = (PitiviSourceFile *) object; */
 
   switch (property_id)
     {
@@ -732,7 +731,7 @@ static void
 pitivi_sourcefile_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  PitiviSourceFileClass *sourcefile_class = PITIVI_SOURCEFILE_CLASS (g_class);
+/*   PitiviSourceFileClass *sourcefile_class = PITIVI_SOURCEFILE_CLASS (g_class); */
 
   parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (g_class));
 

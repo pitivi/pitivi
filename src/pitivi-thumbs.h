@@ -32,7 +32,7 @@
 
 #include <gtk/gtk.h>
 #include <gst/gst.h>
-
+#include "pitivi-types.h"
 
 /*
  * Type macros.
@@ -50,8 +50,6 @@
 #define FRAME	   10
 #define TIMEOUT	   5000
 
-typedef struct _PitiviThumbs PitiviThumbs;
-typedef struct _PitiviThumbsClass PitiviThumbsClass;
 typedef struct _PitiviThumbsPrivate PitiviThumbsPrivate;
 
 struct _PitiviThumbs

@@ -32,6 +32,7 @@
 
 #include <glib.h>
 #include <gst/gst.h>
+#include "pitivi-types.h"
 
 /*
  * Type macros.
@@ -44,8 +45,6 @@
 #define PITIVI_IS_PROJECTSETTINGS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_PROJECTSETTINGS_TYPE))
 #define PITIVI_PROJECTSETTINGS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_PROJECTSETTINGS_TYPE, PitiviProjectSettingsClass))
 
-typedef struct _PitiviProjectSettings PitiviProjectSettings;
-typedef struct _PitiviProjectSettingsClass PitiviProjectSettingsClass;
 typedef struct _PitiviProjectSettingsPrivate PitiviProjectSettingsPrivate;
 
 typedef struct _PitiviMediaSettings PitiviMediaSettings;

@@ -33,7 +33,7 @@
 #include <math.h>
 #include <glib/gprintf.h>
 #include <string.h>
-
+#include "pitivi-types.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -91,8 +91,6 @@ typedef enum
   };
 
   
-typedef struct _PitiviRuler       PitiviRuler;
-typedef struct _PitiviRulerClass  PitiviRulerClass;
 typedef struct _PitiviRulerPrivate PitiviRulerPrivate;
 
 struct _PitiviRuler
@@ -109,7 +107,8 @@ struct _PitiviRulerClass
 
 GType      pitivi_ruler_get_type (void) G_GNUC_CONST;
 GtkWidget* pitivi_ruler_new      (gint unit);
-
+void	   pitivi_ruler_set_zoom_metric (GtkRuler *ruler, guint unit, guint zoom);
+void       pitivi_ruler_set_metric (GtkRuler *ruler, PitiviMetricType metric);
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

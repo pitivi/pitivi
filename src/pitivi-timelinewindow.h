@@ -27,6 +27,7 @@
 #ifndef PITIVI_TIMELINEWINDOW_H
 #define PITIVI_TIMELINEWINDOW_H
 
+
 /*
  * Potentially, include other headers on which this header depends.
  */
@@ -34,6 +35,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include "pitivi.h"
+#include "pitivi-types.h"
 #include "pitivi-projectwindows.h"
 #include "pitivi-toolbox.h"
 #include "pitivi-units.h"
@@ -65,8 +67,6 @@
 #define TOTAL_SECOND_TIME  7200
 #define PIXEL_PER_SECOND      1
 
-typedef struct _PitiviTimelineWindow PitiviTimelineWindow;
-typedef struct _PitiviTimelineWindowClass PitiviTimelineWindowClass;
 typedef struct _PitiviTimelineWindowPrivate PitiviTimelineWindowPrivate;
 
 enum {
@@ -135,7 +135,9 @@ GType pitivi_timelinewindow_get_type (void);
 PitiviTimelineWindow	*pitivi_timelinewindow_new (PitiviMainApp *mainapp);
 PitiviMainApp		*pitivi_timelinewindow_get_mainApp (PitiviTimelineWindow	*timelinewindow);
 GtkWidget		*pitivi_timelinewindow_get_right_view (PitiviTimelineWindow *self);
-
+GtkWidget		*pitivi_timelinewindow_get_container (PitiviTimelineWindow *self);
+void			pitivi_timelinewindow_windows_set_action (PitiviTimelineWindow *self, gchar *name,
+								  gboolean status);
 
 /* ********* */
 /* Callbacks */
