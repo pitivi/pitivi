@@ -1688,14 +1688,14 @@ drag_data_get_cb (GtkWidget          *widget,
       }
       
       gtk_tree_model_get_iter_first(model, &iternext);
-      gtk_tree_model_get (model, &iternext, POINTER_LISTCOLUMN8, &sf, -1);
+      // gtk_tree_model_get (model, &iternext, POINTER_LISTCOLUMN8, &sf, -1);
       
       sf = pitivi_projectsourcelist_get_sourcefile(PITIVI_PROJECTWINDOWS(self)->project->sources,
-						   "0",
-						   0);
+						   self->private->dndtreepath,
+						   self->private->dndfilepos);
       
       // g_printf ("@@@@----%s---@@@@@\n", sf->filename);      
-      return;
+      //return;
     }
   //sf = NULL;
   if (!sf)
