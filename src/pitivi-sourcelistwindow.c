@@ -692,7 +692,7 @@ void	new_file(GtkWidget *widget, gpointer data)
   gchar *name;
 
   self->private->bar = pitivi_progressbar_new ();
-  name = strrchr(self->private->filepath, '/'); name++;
+  name = g_path_get_basename(self->private->filepath);
   pitivi_progressbar_set_info (self->private->bar, name);
   while (gtk_events_pending())
     gtk_main_iteration();
