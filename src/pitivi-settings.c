@@ -325,6 +325,15 @@ pitivi_settings_get_flux_container_list (GObject *object, GstCaps *flux, gboolea
   return (pitivi_settings_get_flux_coder_list (self->container, flux, LIST));
 }
 
+
+GList *
+pitivi_settings_get_flux_parser_list (GObject *object, GstCaps *flux, gboolean LIST)
+{
+  PitiviSettings *self = (PitiviSettings *) object;
+
+  return (pitivi_settings_get_flux_coder_list (self->parser, flux, LIST));
+}
+
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 PitiviSettings *
