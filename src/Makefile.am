@@ -22,6 +22,7 @@ pitivi_SOURCES		= \
 	pitivi-timelinecellrenderer.c\
 	pitivi-toolboxwindow.c	\
 	pitivi-sourcelistwindow.c \
+	pitivi-checkbox.c\
 	pitivi-projectsourcelist.c \
 	pitivi-newprojectwindow.c  \
 	pitivi-codecconfwindow.c  \
