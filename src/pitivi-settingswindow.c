@@ -99,15 +99,14 @@ pitivi_settingswindow_get_settings_elem (PitiviGstElementSettings *Properties)
     for (; list; list = g_list_next (list)) {
       GtkTableChild *tmp = (GtkTableChild *) list->data;
       
-      // A FINIR
       if (GTK_IS_COMBO_BOX (tmp->widget)) {
-	GList	*tmp_list;
+	gint	*tmp_list;
 	gint	num;      
 	num = gtk_combo_box_get_active (GTK_COMBO_BOX (tmp->widget));
 	
-	tmp_list = g_object_get_data (G_OBJECT (tmp->widget), "list");
-	tmp_list = g_list_nth (tmp_list, num);
-	g_print ("COMBO_BOX_SEL[%d]:%d\n", num, tmp_list->data);
+	tmp_list = g_object_get_data (G_OBJECT (tmp->widget), "tab");
+	g_print ("COMBO_BOX_SEL[%d]:%d\n", num, tmp_list[num]);
+
 	g_print ("PROP_NAME=[%s]\n", 
 		 g_object_get_data (G_OBJECT (tmp->widget), "name"));
 
@@ -151,9 +150,12 @@ pitivi_settingswindow_get_settings_elem (PitiviGstElementSettings *Properties)
 	      g_print ("NOT TOGGLE BOUTTON \n");
 	    } else {
 
+	      //////////////////////////////////////////////////////////////////////////////
+	      
 	      // A FINIR
 	      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (tmp2->widget))) {
-		g_print ("FLAG:%d\n", g_object_get_data (G_OBJECT (tmp->widget), "value"));
+		g_print ("FLAG:%d\n", 
+			 (gint) g_object_get_data (G_OBJECT (tmp2->widget), "value"));
 	      } else {
 		g_print ("FLAG:NULL\n");
 	      }
@@ -166,8 +168,6 @@ pitivi_settingswindow_get_settings_elem (PitiviGstElementSettings *Properties)
       
     }
   }
-  //////////////////////////////////////////////////////////////////////////////
-
   return ;
 }
 

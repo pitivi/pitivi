@@ -150,7 +150,7 @@ pitivi_gstelementsettings_table_new_label_add (PitiviGstElementSettings *self,
 ///////////////////////////////////////////////////////////////////////////////////////
 
 GtkWidget *
-pitivi_gstelementsettings_conf_value_string (const gchar *name, GValue value)
+pitivi_gstelementsettings_conf_value_string (gchar *name, GValue value)
 {
   const gchar		*string_val;
   GtkWidget		*text_entry;
@@ -170,7 +170,7 @@ pitivi_gstelementsettings_conf_value_string (const gchar *name, GValue value)
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_boolean (const gchar *name, GValue value)
+pitivi_gstelementsettings_value_conf_boolean (gchar *name, GValue value)
 {
   GSList		*radio_list;
   GtkWidget		*radio_true;
@@ -197,7 +197,7 @@ pitivi_gstelementsettings_value_conf_boolean (const gchar *name, GValue value)
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_uint (const gchar *name, GValue value, GParamSpec	*param)
+pitivi_gstelementsettings_value_conf_uint (gchar *name, GValue value, GParamSpec	*param)
 {
   GParamSpecUInt	*puint;
   GtkWidget		*spin_button;
@@ -214,7 +214,7 @@ pitivi_gstelementsettings_value_conf_uint (const gchar *name, GValue value, GPar
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_int (const gchar *name, GValue value, GParamSpec	*param)
+pitivi_gstelementsettings_value_conf_int (gchar *name, GValue value, GParamSpec	*param)
 {
   GParamSpecInt		*pint;  
   GtkWidget		*spin_button;
@@ -231,7 +231,7 @@ pitivi_gstelementsettings_value_conf_int (const gchar *name, GValue value, GPara
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_uint64 (const gchar *name, GValue value, GParamSpec *param)
+pitivi_gstelementsettings_value_conf_uint64 (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecUInt64	*puint64;
   GtkWidget		*spin_button;
@@ -248,7 +248,7 @@ pitivi_gstelementsettings_value_conf_uint64 (const gchar *name, GValue value, GP
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_int64 (const gchar *name, GValue value, GParamSpec *param)
+pitivi_gstelementsettings_value_conf_int64 (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecInt64	*pint64;
   GtkWidget		*spin_button;
@@ -265,7 +265,7 @@ pitivi_gstelementsettings_value_conf_int64 (const gchar *name, GValue value, GPa
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_ulong (const gchar *name, GValue value, GParamSpec *param)
+pitivi_gstelementsettings_value_conf_ulong (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecULong	*pulong;
   GtkWidget		*spin_button;
@@ -282,7 +282,7 @@ pitivi_gstelementsettings_value_conf_ulong (const gchar *name, GValue value, GPa
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_long (const gchar *name, GValue value, GParamSpec *param)
+pitivi_gstelementsettings_value_conf_long (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecLong	*plong;
   GtkWidget		*spin_button;
@@ -299,7 +299,7 @@ pitivi_gstelementsettings_value_conf_long (const gchar *name, GValue value, GPar
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_float (const gchar *name, GValue value, GParamSpec *param)
+pitivi_gstelementsettings_value_conf_float (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecFloat	*pfloat;
   GtkWidget		*spin_button;
@@ -316,7 +316,7 @@ pitivi_gstelementsettings_value_conf_float (const gchar *name, GValue value, GPa
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_double (const gchar *name, GValue value, GParamSpec *param)
+pitivi_gstelementsettings_value_conf_double (gchar *name, GValue value, GParamSpec *param)
 {
   GParamSpecDouble	*pdouble;
   GtkWidget		*spin_button;
@@ -333,7 +333,7 @@ pitivi_gstelementsettings_value_conf_double (const gchar *name, GValue value, GP
 }
 
 GtkWidget *
-pitivi_gstelementsettings_value_conf_default (const gchar *name, GValue value, GParamSpec *param)
+pitivi_gstelementsettings_value_conf_default (gchar *name, GValue value, GParamSpec *param)
 {
 
   if (G_IS_PARAM_SPEC_ENUM (param)) {    
@@ -341,44 +341,39 @@ pitivi_gstelementsettings_value_conf_default (const gchar *name, GValue value, G
     gint		i;
     gint		*enum_values;
     gchar		*label;
-
-    GtkWidget	*prop_value_label;
-    GtkWidget	*prop_value_combobox;
-    
-    GList		*combobox_list;
-    GList		*test_list;
+    GtkWidget		*prop_value_label;
+    GtkWidget		*prop_value_combobox;
     
     prop_value_combobox = gtk_combo_box_new_text();
-    combobox_list = NULL;
 
     GEnumClass *class = G_ENUM_CLASS (g_type_class_ref (param->value_type));
     enum_values = g_new0 (gint, class->n_values);
     
     for (i=0; i < class->n_values; i++) {
       GEnumValue *evalue = &class->values[i];
+      gint tmp;
       
       enum_values[i] = evalue->value;
       label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
       gtk_combo_box_insert_text (GTK_COMBO_BOX (prop_value_combobox), i, label);
-      combobox_list = g_list_append (combobox_list, &(evalue->value));
     }
 
     gtk_combo_box_set_active (GTK_COMBO_BOX (prop_value_combobox), g_value_get_enum(&value));
 
-    g_object_set_data (G_OBJECT(prop_value_combobox), "list", combobox_list);
+    g_object_set_data (G_OBJECT(prop_value_combobox), "tab", enum_values);
     g_object_set_data (G_OBJECT(prop_value_combobox), "name", name);
     
     return (prop_value_combobox);
     
   } else if (G_IS_PARAM_SPEC_FLAGS (param)) {
     
-    GtkWidget	*Tab;
-    GFlagsValue *values;
-    guint	j;
-    gint	flags_value;
-    gint	nb_value;
-    GString	*flags = NULL;
-    
+    GtkWidget		*Tab;
+    GFlagsValue		*values;
+    guint		j;
+    gint		flags_value;
+    gint		nb_value;
+    GString		*flags = NULL;
+      
     values = G_FLAGS_CLASS (g_type_class_ref (param->value_type))->values;
     nb_value = G_FLAGS_CLASS (g_type_class_ref (param->value_type))->n_values;
     flags_value = g_value_get_flags (&value);
@@ -387,12 +382,14 @@ pitivi_gstelementsettings_value_conf_default (const gchar *name, GValue value, G
     Tab = gtk_table_new (nb_value, 2, FALSE);
 
     for (j = 0; j < nb_value; j++) {
+      GtkWidget*	check;
+      GtkWidget*	label;
+      gint		tmp;
 
-      GtkWidget*  check;
-      GtkWidget*  label;
-      
       check = gtk_check_button_new ();
-      g_object_set_data (G_OBJECT (check), "value", &(values[j].value));
+
+      tmp = values[j].value;
+      g_object_set_data (G_OBJECT (check), "value", GINT_TO_POINTER (tmp));
       g_print ("VALUE:%d\n", values[j].value);
       pitivi_gstelementsettings_table_widget_add (Tab, check, j, 1);
       
