@@ -85,6 +85,31 @@ pitivi_mediasettings_to_settingsioelement (PitiviMediaSettings *ms)
   return io;
 }
 
+PitiviSettingsIoElement *
+pitivi_containersettings_to_settingsioelement (PitiviProjectSettings *ps)
+{
+  PitiviSettingsIoElement *io;
+  PitiviSettingsValue	*val;
+  GList	*tmp;
+  gint	i;
+
+  io = g_new0 (PitiviSettingsIoElement, 1);
+  io->factory = gst_element_factory_find (ps->container_factory_name);
+  for (tmp = ps->container_properties; tmp; tmp = g_list_next (tmp))
+    io->n_param++;
+  io->params = g_new0(GParameter, io->n_param);
+  for (tmp = ps->container_properties, i = 0; tmp; tmp = g_list_next (tmp), i++) {
+    GValue	value = { 0, };
+    val = (PitiviSettingsValue *) tmp->data;
+    io->params[i].name = g_strdup (val->name);
+    g_value_init (&value, 
+		  G_VALUE_TYPE (&(val->value)));
+    g_value_copy (&value, &(io->params[i].value));
+    io->params[i].value = value;
+  }
+  return io;
+}
+
 /* Creation des GstCaps Audio et Video */
 GstCaps *
 pitivi_projectsettings_vcaps_create (int width, int height, int framerate)

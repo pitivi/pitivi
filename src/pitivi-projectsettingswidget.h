@@ -76,6 +76,9 @@ void	pitivi_projectsettingswidget_set_blank (PitiviProjectSettingsWidget *self);
 PitiviProjectSettings	*pitivi_projectsettingswidget_get_copy (PitiviProjectSettingsWidget *self);
 /* PitiviProjectSettings	*pitivi_projectsettingswidget_get_modified (PitiviProjectSettingsWidget *self); */
 
-PitiviProjectSettingsWidget	*pitivi_projectsettingswidget_new(PitiviMainApp *mainapp);
+PitiviProjectSettingsWidget *
+pitivi_projectsettingswidget_new(PitiviMainApp *mainapp);
+PitiviProjectSettingsWidget *
+pitivi_projectsettingswidget_new_with_settings(PitiviMainApp *mainapp, PitiviProjectSettings *settings);
 
 #endif

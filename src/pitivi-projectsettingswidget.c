@@ -39,6 +39,7 @@
 #include "pitivi-mainapp.h"
 #include "pitivi-projectsettings.h"
 #include "pitivi-projectsettingswidget.h"
+#include "pitivi-gstelementsettings.h"
 #include "pitivi-settings.h"
 #include "pitivi-windows.h"
 
@@ -193,7 +194,17 @@ static void
 pitivi_projectsettingswidget_update_gui (PitiviProjectSettingsWidget *self);
 
 static void
+pitivi_projectsettingswidget_update_props (PitiviProjectSettingsWidget *self);
+
+static void
 pitivi_projectsettingswidget_reset_gui (PitiviProjectSettingsWidget *self);
+
+static void
+pitivi_projectsettingswidget_reset_props (PitiviProjectSettingsWidget *self);
+
+
+static const gchar *
+get_cbox_selected_item_name (GtkComboBox *cbox, GList *plist);
 
 /*
  * Insert "added-value" functions here
@@ -214,7 +225,7 @@ pitivi_projectsettingswidget_set_settings (PitiviProjectSettingsWidget *self,
     g_object_unref (G_OBJECT (self->settings));
   g_object_ref (G_OBJECT (settings));
   self->settings = settings;
-  /* TODO : Update GUI according to new settings */
+  pitivi_projectsettingswidget_update_props (self);
   pitivi_projectsettingswidget_update_gui (self);
 }
 
@@ -224,7 +235,7 @@ pitivi_projectsettingswidget_blank (PitiviProjectSettingsWidget *self)
   if (self->settings)
     g_object_unref (G_OBJECT (self->settings));
   self->settings = NULL;
-  /* TODO : Update GUI according to new settings */
+  pitivi_projectsettingswidget_reset_props (self);
   pitivi_projectsettingswidget_reset_gui (self);
 }
 
@@ -305,6 +316,67 @@ video_size_cbox_changed (GtkComboBox *cbox, PitiviProjectSettingsWidget *self)
     gtk_spin_button_set_value (GTK_SPIN_BUTTON (self->private->videoheightentry),
 			       videosizetab[i].height);
   }
+}
+
+static void
+video_conf_clicked (GtkButton *button, PitiviProjectSettingsWidget *self)
+{
+  GtkWidget	*dialog;
+  GtkWidget	*widget;
+  PitiviSettingsIoElement	*io;
+  const gchar		*selectedfactory;
+
+  PITIVI_DEBUG ("clicked...");
+  dialog = gtk_dialog_new_with_buttons ("Configure Video Codec properties",
+					NULL,
+					GTK_DIALOG_MODAL,
+					GTK_STOCK_OK,
+					GTK_RESPONSE_ACCEPT,
+					GTK_STOCK_CANCEL,
+					GTK_RESPONSE_CANCEL,
+					NULL);
+
+  selectedfactory = get_cbox_selected_item_name(GTK_COMBO_BOX (self->private->videocodeccbox), 
+						self->private->venc_list);
+  PITIVI_DEBUG ("got selectedfactory");
+  if ((!self->private->videocodecprops)
+      || ( g_ascii_strcasecmp (selectedfactory,
+			       gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(self->private->videocodecprops->factory))) )) {
+    PITIVI_DEBUG ("no existing IO or not same as selected codec");
+    io = pitivi_settings_new_io_element_with_factory (gst_element_factory_find (selectedfactory));
+  } else {
+    PITIVI_DEBUG ("taking existing IO");
+    io = self->private->videocodecprops;
+  }
+  widget = GTK_WIDGET (pitivi_gstelementsettings_new (io, 0));
+
+  gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox),
+		     widget);
+  PITIVI_DEBUG ("Added widget to dialog box's vbox");
+
+  gtk_widget_show_all (dialog);
+  switch (gtk_dialog_run (GTK_DIALOG (dialog))) {
+  case GTK_RESPONSE_ACCEPT:
+    PITIVI_DEBUG ("OK");
+    break;
+  case GTK_RESPONSE_CANCEL:
+  default:
+    PITIVI_DEBUG ("Cancel...");
+    break;
+  }
+  gtk_widget_destroy (dialog);
+}
+
+static void
+audio_conf_clicked (GtkButton *button, PitiviProjectSettingsWidget *self)
+{
+  
+}
+
+static void
+container_conf_clicked (GtkButton *button, PitiviProjectSettingsWidget *self)
+{
+  
 }
 
 /* activate_combobox_entry : ONLY for codec combobox */
@@ -449,10 +521,62 @@ pitivi_projectsettingswidget_update_gui (PitiviProjectSettingsWidget *self)
 }
 
 static void
+pitivi_projectsettingswidget_update_props (PitiviProjectSettingsWidget *self)
+{
+  PitiviMediaSettings	*mset;
+
+  pitivi_projectsettingswidget_reset_props (self);
+  mset = (PitiviMediaSettings *) self->settings->media_settings->data;
+  self->private->videocodecprops = pitivi_mediasettings_to_settingsioelement (mset);
+
+  mset = (PitiviMediaSettings *) self->settings->media_settings->next->data;
+  self->private->audiocodecprops = pitivi_mediasettings_to_settingsioelement (mset);
+
+  self->private->containercodecprops = pitivi_containersettings_to_settingsioelement (self->settings);
+}
+
+static void
 pitivi_projectsettingswidget_reset_gui (PitiviProjectSettingsWidget *self)
 {
-  
+  /* Set every widget to their default value */
 }
+
+static void
+pitivi_projectsettingswidget_reset_props (PitiviProjectSettingsWidget *self)
+{
+  if (self->private->videocodecprops) {
+    g_free (self->private->videocodecprops);
+    self->private->videocodecprops = NULL;
+  }
+  if (self->private->audiocodecprops) {
+    g_free (self->private->audiocodecprops);
+    self->private->audiocodecprops = NULL;
+  }
+  if (self->private->containercodecprops) {
+    g_free (self->private->containercodecprops);
+    self->private->containercodecprops = NULL;
+  }
+}
+
+
+
+/*****
+      VALUE RECUPERATION
+*****/
+
+static const gchar *
+get_cbox_selected_item_name (GtkComboBox *cbox, GList *plist)
+{
+  int	i,j;
+  GList	*tmp;
+
+  if ((i = gtk_combo_box_get_active (cbox)) == -1)
+    return NULL;
+  for (tmp = plist, j = 0; j < i; j++)
+    tmp = g_list_next (tmp);
+  return ((gchar *) tmp->data);
+}
+
 
 /*****
       GUI CREATION
@@ -600,6 +724,9 @@ pitivi_psw_make_audioframe (PitiviProjectSettingsWidget *self)
   self->private->audioconfbutton = gtk_button_new_with_label ("Configure");
   gtk_table_attach (GTK_TABLE (table), self->private->audioconfbutton,
 		    3, 4, 0, 1, FALSE, FALSE, 5, 5);
+  g_signal_connect (G_OBJECT (self->private->audioconfbutton),
+		    "clicked", G_CALLBACK (audio_conf_clicked),
+		    self);
   
   /* Depth */
   depthlabel = gtk_label_new ("Depth :");
@@ -688,6 +815,9 @@ pitivi_psw_make_videoframe (PitiviProjectSettingsWidget *self)
   self->private->videoconfbutton = gtk_button_new_with_label ("Configure");
   gtk_table_attach (GTK_TABLE (table), self->private->videoconfbutton,
 		    3, 4, 0, 1, FALSE, FALSE, 5, 5);
+  g_signal_connect (G_OBJECT (self->private->videoconfbutton),
+		    "clicked", G_CALLBACK (video_conf_clicked),
+		    self);
   
   /* Size */
   sizelabel = gtk_label_new ("Size :");
@@ -764,6 +894,9 @@ pitivi_psw_make_containerframe (PitiviProjectSettingsWidget *self)
   self->private->containerconfbutton = gtk_button_new_with_label ("Configure");
   gtk_table_attach (GTK_TABLE (cbox), self->private->containerconfbutton,
 		    2, 3, 0, 1, FALSE, FALSE, 5, 5);
+  g_signal_connect (G_OBJECT (self->private->containerconfbutton),
+		    "clicked", G_CALLBACK (container_conf_clicked),
+		    self);
 
   gtk_container_add (GTK_CONTAINER (frame), cbox);
   return frame;
@@ -837,6 +970,19 @@ pitivi_projectsettingswidget_new(PitiviMainApp *mainapp)
 								       "mainapp", mainapp,
 								       NULL);
   g_assert(projectsettingswidget != NULL);
+  return projectsettingswidget;
+}
+
+PitiviProjectSettingsWidget *
+pitivi_projectsettingswidget_new_with_settings (PitiviMainApp *mainapp, PitiviProjectSettings *settings)
+{
+  PitiviProjectSettingsWidget	*projectsettingswidget;
+
+  projectsettingswidget = (PitiviProjectSettingsWidget *) g_object_new(PITIVI_PROJECTSETTINGSWIDGET_TYPE,
+								       "mainapp", mainapp,
+								       NULL);
+  g_assert(projectsettingswidget != NULL);
+  pitivi_projectsettingswidget_set_settings (projectsettingswidget, settings);
   return projectsettingswidget;
 }
 

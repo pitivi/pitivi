@@ -122,8 +122,8 @@ pitivi_projectsettingswindow_constructor (GType type,
   gtk_window_set_title (GTK_WINDOW(self), "Project Settings");
   vbox = gtk_vbox_new(FALSE, 5);
 
-  self->private->widget = pitivi_projectsettingswidget_new(PITIVI_WINDOWS(self)->mainapp);
-  pitivi_projectsettingswidget_set_settings (self->private->widget, PITIVI_PROJECTWINDOWS(self)->project->settings);
+  self->private->widget = pitivi_projectsettingswidget_new_with_settings(PITIVI_WINDOWS(self)->mainapp,
+									 PITIVI_PROJECTWINDOWS(self)->project->settings);
   gtk_box_pack_start (GTK_BOX(vbox), GTK_WIDGET (self->private->widget),
 		      TRUE, TRUE, 5);
 

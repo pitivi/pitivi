@@ -116,6 +116,7 @@ gboolean		pitivi_projectsettings_get_videosize (PitiviProjectSettings *ps,
 
 GList			*pitivi_settingsvalue_from_settingsioelement (PitiviSettingsIoElement *io);
 PitiviSettingsIoElement	*pitivi_mediasettings_to_settingsioelement (PitiviMediaSettings *ms);
+PitiviSettingsIoElement	*pitivi_containersettings_to_settingsioelement (PitiviProjectSettings *ps);
 
 xmlNodePtr		pitivi_projectsettings_save_thyself(PitiviProjectSettings *self, xmlNodePtr parent);
 void			pitivi_projectsettings_restore_thyself(PitiviProjectSettings *tofill, xmlNodePtr self);
