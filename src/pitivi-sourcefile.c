@@ -168,7 +168,7 @@ bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udat
   padtype = get_pad_type (pad);
   if (!padtype)
     return;
-/*   g_printf("Adding pad type[%d]->[%d] : %s:%s\n", type, data->bintype, GST_DEBUG_PAD_NAME(pad)); */
+/*   g_printf("Adding pad type[%d]->[%d] : %s:%s\n", padtype, data->bintype, GST_DEBUG_PAD_NAME(pad)); */
   /* Connect (adapters and) ghost pads */
   if (padtype == IS_AUDIO) {
     if (data->bintype != IS_VIDEO) {
@@ -420,6 +420,9 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer 
   char	*tmp;
   int	type;
 
+/*   g_printf ("new_decoded_pad, pad %s:%s caps=%s\n", */
+/* 	    GST_DEBUG_PAD_NAME (pad), */
+/* 	    gst_caps_to_string (gst_pad_get_caps(pad))); */
   if (!(type = pitivi_sourcefile_store_pad (sf, pad)))
     return;
   /* Stick a fakesink to the pad */
@@ -453,8 +456,8 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer 
 			sf->private->videoscale,
 			sf->private->pngenc,
 			NULL);
-      gst_element_link_many (element, sf->private->videoscale, sf->private->colorspace, NULL);
-      gst_element_link_filtered (sf->private->colorspace, sf->private->pngenc,
+      gst_element_link_many (element, sf->private->colorspace , sf->private->videoscale, NULL);
+      gst_element_link_filtered (sf->private->videoscale, sf->private->pngenc,
 				 gst_caps_from_string ("video/x-raw-rgb,width=48,height=48"));
       gst_element_link (sf->private->pngenc, sink);
 
@@ -465,11 +468,11 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer 
   g_free(tmp);  
 }
 
-void
-unknown_type_cb (GstElement * element, GstCaps *caps, gpointer udata)
-{
-  g_printf("Unknown pad : %s\n", gst_caps_to_string(caps));
-}
+/* void */
+/* unknown_type_cb (GstElement * element, GstCaps *caps, gpointer udata) */
+/* { */
+/*   g_printf("Unknown pad : %s\n", gst_caps_to_string(caps)); */
+/* } */
 
 /*
   _get_info
@@ -483,7 +486,8 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
   char	*tmp;
   GError	*error = NULL;
   gint	i;
-  gulong	ndhandler, unhandler;
+  gulong	ndhandler;
+/*   gulong	uhandler; */
 
   tmp = g_strdup_printf ("filesrc name=src location=\"%s\" ! decodebin name=dbin",
 			 self->filename);
@@ -494,7 +498,7 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
 
   self->private->decode = gst_bin_get_by_name (GST_BIN(self->pipeline), "dbin");
   ndhandler = g_signal_connect(self->private->decode, "new-decoded-pad", G_CALLBACK (new_decoded_pad_cb), self);
-  unhandler = g_signal_connect(self->private->decode, "unknown-type", G_CALLBACK (unknown_type_cb), self);
+/*   unhandler = g_signal_connect(self->private->decode, "unknown-type", G_CALLBACK (unknown_type_cb), self); */
 
   if (!(gst_element_set_state (self->pipeline, GST_STATE_PLAYING))) return;
   
@@ -502,8 +506,9 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
     if (!(gst_bin_iterate(GST_BIN(self->pipeline))))
       break;
   }
+
   g_signal_handler_disconnect (self->private->decode, ndhandler);
-  g_signal_handler_disconnect (self->private->decode, unhandler);
+/*   g_signal_handler_disconnect (self->private->decode, unhandler); */
   if (self->private->videopad && gst_caps_is_fixed(gst_pad_get_caps(self->private->videopad))) {
     self->havevideo = TRUE;
     record_pad_info(self, IS_VIDEO, self->private->videopad);
@@ -529,7 +534,6 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
     self->private->videoout = NULL;
   }
 
-/*   cache_audio_video (self); */
   self->private->vthumb = g_new0(PitiviThumbTab *, self->private->cacheidx);
   
   gst_element_set_state (self->pipeline, GST_STATE_READY);
@@ -550,9 +554,8 @@ pitivi_sourcefile_type_find (PitiviSourceFile *this)
       this->mediatype = g_strdup("video/audio");
     else
       this->mediatype = g_strdup("video");
-  else
-    if (this->haveaudio)
-      this->mediatype = g_strdup("audio");
+  else if (this->haveaudio)
+    this->mediatype = g_strdup("audio");
 }
 
 void
@@ -749,6 +752,11 @@ pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp)
   g_strfreev(tab);
 
   pitivi_sourcefile_type_find (sourcefile);
+  
+  if ((!sourcefile->haveaudio) && (!sourcefile->havevideo)) {
+    g_object_unref (sourcefile);
+    return NULL;
+  }
 
   sourcefile->pipeline = create_new_bin (sourcefile, IS_AUDIO_VIDEO);
   sourcefile->thumbs = pitivi_sourcefile_get_vthumb (sourcefile, 0LL, sourcefile->length);

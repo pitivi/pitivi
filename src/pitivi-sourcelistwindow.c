@@ -464,7 +464,7 @@ void	show_file_in_current_bin(PitiviSourceListWindow *self)
   gtk_tree_view_set_model(GTK_TREE_VIEW(self->private->listview), 
 			  GTK_TREE_MODEL(liststore));
 
-  pitivi_projectsourcelist_showfile(((PitiviProjectWindows*)self)->project->sources, self->private->treepath);
+  /* pitivi_projectsourcelist_showfile(((PitiviProjectWindows*)self)->project->sources, self->private->treepath); */
 }
 
 char	*my_strcat(char *dst, char *src)
@@ -601,8 +601,6 @@ void	new_folder(GtkWidget *widget, gpointer data)
   guint		selected_row;
   guint		depth;
 
-  g_printf("adding a new folder\n");
-
   selected_row = get_selected_row(self->private->treepath, &depth);
 
   name = pitivi_sourcelistwindow_set_folder(self, &iter2);
@@ -643,8 +641,10 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
    
   /* use gstreamer to check the file type */
   
-  if ( self->private->filepath )
-    sf = pitivi_sourcefile_new (self->private->filepath, ((PitiviWindows *) self)->mainapp);
+  if ( self->private->filepath ) {
+    if (!(sf = pitivi_sourcefile_new (self->private->filepath, ((PitiviWindows *) self)->mainapp)))
+      return NULL;
+  }
   else
     return NULL;
   
@@ -1072,7 +1072,7 @@ gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
 	  self->private->treepath = gtk_tree_path_to_string(treepath);
 	  
 	  /* show all file in current bin */
-/* 	  show_file_in_current_bin(self); */
+ 	  show_file_in_current_bin(self);
 	  g_free(name);
 	}
     }
@@ -1127,7 +1127,7 @@ void	on_row_activated (GtkTreeView        *listview,
 			  gpointer            userdata)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)userdata;
-  PitiviSourceFile *sf;
+  PitiviSourceFile *sf = NULL;
   PitiviLPlayerWindow *lplayerwin;
   GtkListStore	*liststore;
   GtkTreeIter	iter;
@@ -1394,7 +1394,6 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
     return;
   }
 
-  g_printf("remove item from bin\n");
   if (strcmp(sMediaType, "Bin"))
     {
       if ( self->private->dndsf )
@@ -1685,7 +1684,6 @@ pitivi_sourcelistwindow_constructor (GType type,
   sourcelistwindow = (PitiviSourceListWindow *) obj;
   if (pitivi_projectsourcelist_test_bin_tree(project->sources))
     {
-      g_printf("we have loading a project\n");
       pitivi_sourcelistwindow_load_project((PitiviSourceListWindow*)obj);
     }
   else
