@@ -42,52 +42,101 @@ struct _PitiviToolboxPrivate
  * Insert "added-value" functions here
  */
 
+#define mask_width 32
+#define mask_height 32
+#define mask_x_hot 8
+#define mask_y_hot 8
+#define width 32
+#define height 32
+#define x_hot 8
+#define y_hot 8
+
 /*
  * CALLBACKS
  */
 
-void
-cursor_change_select (GtkRadioButton * radiobutton, gpointer window)
+void	cursor_change_select(GtkRadioButton *radiobutton, gpointer window)
 {
-  GdkCursor *cursor;
-
-  if (gtk_toggle_tool_button_get_active
-      (GTK_TOGGLE_TOOL_BUTTON (radiobutton)))
+  GdkPixmap	*pixmap;
+  GdkPixmap	 *mask;
+  GdkCursor	*cursor;
+  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Gris */
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* Blanc */
+ 
+ if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
-      cursor = gdk_cursor_new (GDK_TOP_LEFT_ARROW);
-      gdk_window_set_cursor (GDK_WINDOW (GTK_WIDGET (window)->window),
-			     cursor);
-      gdk_cursor_unref (cursor);
-    }
-}
-void
-cursor_change_cut (GtkRadioButton * radiobutton, gpointer window)
-{
-  GdkCursor *cursor;
+     pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, width, height);
+     mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, mask_width, mask_height);
+     cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg, mask_x_hot, mask_y_hot);
 
-  if (gtk_toggle_tool_button_get_active
-      (GTK_TOGGLE_TOOL_BUTTON (radiobutton)))
-    {
-      cursor = gdk_cursor_new (GDK_BOGOSITY);
-      gdk_window_set_cursor (GDK_WINDOW (GTK_WIDGET (window)->window),
-			     cursor);
-      gdk_cursor_unref (cursor);
+     gdk_pixmap_unref (pixmap);
+     gdk_pixmap_unref (mask);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(window)->window), cursor);
+     gdk_cursor_unref(cursor);
     }
 }
 
-void
-cursor_change_hand (GtkRadioButton * radiobutton, gpointer window)
+void	cursor_change_cut(GtkRadioButton *radiobutton, gpointer window)
 {
-  GdkCursor *cursor;
-
-  if (gtk_toggle_tool_button_get_active
-      (GTK_TOGGLE_TOOL_BUTTON (radiobutton)))
+  GdkPixmap	*pixmap;
+  GdkPixmap	 *mask;
+  GdkCursor	*cursor;
+  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Gris */
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* Blanc */
+ 
+ if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
-      cursor = gdk_cursor_new (GDK_HAND2);
-      gdk_window_set_cursor (GDK_WINDOW (GTK_WIDGET (window)->window),
-			     cursor);
-      gdk_cursor_unref (cursor);
+     pixmap = gdk_bitmap_create_from_data (NULL, cut_bits, width, height);
+     mask = gdk_bitmap_create_from_data (NULL, cut_mask_bits, mask_width, mask_height);
+     cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg, mask_x_hot, mask_y_hot);
+
+     gdk_pixmap_unref (pixmap);
+     gdk_pixmap_unref (mask);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(window)->window), cursor);
+     gdk_cursor_unref(cursor);
     }
+}
+
+void	cursor_change_hand(GtkRadioButton *radiobutton, gpointer window)
+{
+  GdkPixmap	*pixmap;
+  GdkPixmap	 *mask;
+  GdkCursor	*cursor;
+  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Gris */
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* Blanc */
+ 
+ if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
+    {
+     pixmap = gdk_bitmap_create_from_data (NULL, hand_1_bits, width, height);
+     mask = gdk_bitmap_create_from_data (NULL, hand_1_mask_bits, mask_width, mask_height);
+     cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg, mask_x_hot, mask_y_hot);
+
+     gdk_pixmap_unref (pixmap);
+     gdk_pixmap_unref (mask);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(window)->window), cursor);
+     gdk_cursor_unref(cursor);
+    }
+}
+
+void	cursor_change_zoom(GtkRadioButton *radiobutton, gpointer window)
+{
+  GdkPixmap	*pixmap;
+  GdkPixmap	 *mask;
+  GdkCursor	*cursor;
+  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Gris */
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* Blanc */
+
+  if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
+   {
+     pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
+     mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, mask_width, mask_height);
+     cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg, mask_x_hot, mask_y_hot);
+
+     gdk_pixmap_unref (pixmap);
+     gdk_pixmap_unref (mask);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(window)->window), cursor);
+     gdk_cursor_unref(cursor);
+   }
 }
 
 
@@ -176,8 +225,8 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
 		    G_CALLBACK (cursor_change_cut), (gpointer) self);
   g_signal_connect (G_OBJECT (self->private->button[2]), "toggled",
 		    G_CALLBACK (cursor_change_hand), (gpointer) self);
-/*   g_signal_connect(G_OBJECT(self->private->button[3]), "toggled", */
-/* 		   G_CALLBACK(cursor_change_zoom), (gpointer)self) ; */
+  g_signal_connect(G_OBJECT(self->private->button[3]), "toggled",
+		   G_CALLBACK(cursor_change_zoom), (gpointer)self) ;
 
   gtk_toolbar_set_orientation (tbar, GTK_ORIENTATION_VERTICAL);
   gtk_toolbar_set_show_arrow (tbar, FALSE);
