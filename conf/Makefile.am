@@ -8,7 +8,7 @@
 ##
 
 
-confdir = /etc/pitivi/
+confdir = $(DESTDIR)/$(sysconfdir)/@PACKAGE@/
 conf_DATA = pitivi
 
 EXTRA_DIST = $(conf_DATA)
