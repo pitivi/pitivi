@@ -238,9 +238,27 @@ activate_combobox_entry (GtkWidget *combobox, GList *list, gchar *tofind)
 }
 
 static void
+update_video_width_height (PitiviProjectSettingsWidget *self, gint width, gint height)
+{
+  gint	i;
+
+  PITIVI_DEBUG ("width:%d, height:%d", width, height);
+  /* Look trough the tabs if we have an existing preset */
+  for (i = 0; videosizetab[i].label; i++)
+    if ((videosizetab[i].width == width) && (videosizetab[i].height == height))
+      break;
+  if (!videosizetab[i].label) {
+    /* Custom, set text */
+    i--;
+  };
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->videosizecbox), i);
+}
+
+static void
 pitivi_projectsettingswidget_update_gui (PitiviProjectSettingsWidget *self)
 {
   PitiviMediaSettings	*mset;
+  gint	width, height;
 
   if (!self->settings)
     return;
@@ -254,15 +272,23 @@ pitivi_projectsettingswidget_update_gui (PitiviProjectSettingsWidget *self)
   mset = (PitiviMediaSettings *) self->settings->media_settings->data;
   activate_combobox_entry (self->private->videocodeccbox, self->private->venc_list,
 			   mset->codec_factory_name);
+  /* TODO : Set video codec properties */
+  if (!pitivi_projectsettings_get_videosize (self->settings, &width, &height))
+    PITIVI_WARNING ("Couldn't get videosize from PitiviProjectSettings !");
+  else
+    update_video_width_height (self, width, height);
+  
 
   /* Set audio properties */
   mset = (PitiviMediaSettings *) self->settings->media_settings->next->data;
   activate_combobox_entry (self->private->audiocodeccbox, self->private->aenc_list,
 			   mset->codec_factory_name);
+  /* TODO : Set audio codec properties */
 
   /* Set container properties */
   activate_combobox_entry (self->private->containercbox, self->private->container_list,
 			   self->settings->container_factory_name);
+  /* TODO : Set container codec properties */
 }
 
 static void
