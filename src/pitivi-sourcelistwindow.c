@@ -213,7 +213,7 @@ static gchar	*BaseMediaType[] =
   {
     "video/x-raw-rgb", 
     "video/x-raw-yuv", 
-    "auido/x-raw-float",
+    "audio/x-raw-float",
     "audio/x-raw-int",
     0
   };
@@ -697,6 +697,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	      g_free(name);
 	      
 	      self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(decoder, "src")));
+	      self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(decoder, "src"));
 	       
 	      g_printf("decoder source media type ==> %s\n", self->private->mediatype);
 	      pitivi_sourcelistwindow_set_media_property(self, caps_str);
@@ -894,7 +895,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	  /*   while (gst_bin_iterate(GST_BIN(self->private->pipeline))) */
 	  /*     g_printf("iterate pipeline\n"); */
 	  
-	  for (i = 0; i < 8; i++)
+	  for (i = 0; i < 50; i++)
 	    {
 	      gst_bin_iterate(GST_BIN(self->private->pipeline));
 	      g_printf("iterate pipeline\n");
@@ -1224,7 +1225,7 @@ void	new_file(GtkWidget *widget, gpointer data)
 						 self->private->mediatype,
 						 self->private->infovideo,
 						 self->private->infoaudio,
-						 self->private->length,
+						 0 /* self->private->length */,
 						 self->private->pipeline);
  
   if (add == FALSE)
@@ -1672,14 +1673,12 @@ void	OnImportFile(gpointer data, gint action, GtkWidget *widget)
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
     {
       self->private->filepath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+      g_signal_emit(self, pitivi_sourcelistwindow_signal[FILEIMPORT_SIGNAL],
+		    0 /* details */, 
+		    NULL);
     }
 
   gtk_widget_destroy(dialog);
-
-  g_signal_emit(self, pitivi_sourcelistwindow_signal[FILEIMPORT_SIGNAL],
-		0 /* details */, 
-		NULL);
-    
 }
 
 void	OnImportFolder(gpointer data, gint action, GtkWidget *widget)
@@ -1698,13 +1697,14 @@ GtkWidget	*dialog;
   if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT)
     {
       self->private->folderpath = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+      g_signal_emit(self, pitivi_sourcelistwindow_signal[FOLDERIMPORT_SIGNAL],
+		    0 /* details */, 
+		    NULL);   
     }
 
   gtk_widget_destroy(dialog);
 
-  g_signal_emit(self, pitivi_sourcelistwindow_signal[FOLDERIMPORT_SIGNAL],
-		0 /* details */, 
-		NULL);   
+
 }
 
 gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,

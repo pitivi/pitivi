@@ -310,7 +310,7 @@ gboolean
 pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self, 
 					 gchar *treepath, gchar *filename,
 					 gchar *mediatype, gchar *infovideo,
-					 gchar *infoaudio, gchar *length,
+					 gchar *infoaudio, gint64 length,
 					 GstElement *pipeline)
 {
   PitiviSourceBin	*sourcebin;
@@ -366,13 +366,13 @@ pitivi_projectsourcelist_restore_thyself(PitiviProjectSourceList *SourceList, xm
   Returns a pointer to the XMLDocument filled with the contents of the PitiviProject
 */
 
-xmlDocPtr
+xmlNodePtr
 pitivi_projectsourcelist_save_thyself(PitiviProjectSourceList *self, xmlNodePtr parent)
 {
   xmlNodePtr	selfptr, msetptr;
   GSList	*sourcelist;
   GSList	*binlist;
-
+  GSList	*folderlist;
   PitiviSourceBin	*sourcebin;
   PitiviSourceBin	*childbin;
   PitiviSourceFile	*sourcefile;
@@ -383,19 +383,27 @@ pitivi_projectsourcelist_save_thyself(PitiviProjectSourceList *self, xmlNodePtr 
   for (binlist = self->private->bin_tree; sourcelist; binlist = binlist->next) 
     {
       sourcebin = (PitiviSourceBin*) binlist->data;
-      msetptr = xmlNewChild (selfptr, NULL, "name", sourcebin->bin_name);
+      xmlNewChild (selfptr, NULL, "name", sourcebin->bin_name);
+      
       
       /* list of source */
       for (sourcelist = sourcebin->source; sourcelist; sourcelist = sourcelist->next)
 	{
+	  msetptr = xmlNewChild(selfptr, NULL, "file", NULL);
 	  sourcefile = (PitiviSourceFile*)sourcelist->data;
-	  xmlNewChild (msetptr, NULL, "name", sourcefile->filename);
+	  xmlNewChild (msetptr, NULL, "filename", sourcefile->filename);
 	  xmlNewChild (msetptr, NULL, "mediatype", sourcefile->mediatype);
 	  xmlNewChild (msetptr, NULL, "infovideo", sourcefile->infovideo);
 	  xmlNewChild (msetptr, NULL, "infoaudio", sourcefile->infoaudio);
-	  xmlNewChild (msetptr, NULL, "length", atoi(sourcefile->length));
+	  xmlNewChild (msetptr, NULL, "length", l64a(sourcefile->length));
+	  /* gst_xml_write(sourcefile->pipeline); */
 	}
-      
+      for (folderlist = sourcebin->child; folderlist; folderlist = folderlist->next)
+	{
+	  msetptr = xmlNewChild(selfptr, NULL, "folder", NULL);
+	  childbin = (PitiviSourceBin*)folderlist->data;
+	  xmlNewChild (msetptr, NULL, "foldername", childbin->bin_name);
+	}
     }
 
 

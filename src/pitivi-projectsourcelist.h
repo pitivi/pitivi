@@ -54,7 +54,7 @@ struct _PitiviSourceFile
   gchar *mediatype;
   gchar *infovideo;
   gchar *infoaudio;
-  gchar *length;
+  gint64 length;
   GstElement *pipeline;
 };
 
@@ -87,7 +87,7 @@ gboolean
 pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self, 
 					 gchar *treepath, gchar *filename,
 					 gchar *mediatype, gchar *infovideo,
-					 gchar *infoaudio, gchar *length,
+					 gchar *infoaudio, gint64 length,
 					 GstElement *pipeline);
 void 
 pitivi_projectsourcelist_new_bin(PitiviProjectSourceList *self, 

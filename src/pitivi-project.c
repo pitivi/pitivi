@@ -149,7 +149,7 @@ pitivi_project_save_thyself(PitiviProject *project)
   if (project->settings)
     pitivi_projectsettings_save_thyself ( project->settings , projectnode);
 
-/*   pitivi_projectsourcelist_save_thyself(project->sources, projectnode); */
+  pitivi_projectsourcelist_save_thyself(project->sources, projectnode);
 
   return doc;  
 }
