@@ -20,7 +20,7 @@ AM_MAINTAINER_MODE
 
 dnl Fill in your package name and version here
 
-AS_VERSION(pitivi, PITIVI_VERSION, 0, 1, 1, 0, GST_CVS="no", GST_CVS="yes")
+AS_VERSION(pitivi, PITIVI_VERSION, 0, 1, 1, 1, GST_CVS="no", GST_CVS="yes")
 
 dnl AUTOMAKE initialisation
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
