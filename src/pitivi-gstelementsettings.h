@@ -70,7 +70,7 @@ struct _PitiviGstElementSettingsClass
 struct _PitiviGstElementSettingsProp
 {
   gchar		*name;
-  GValue	value;
+  GValue	*value;
 };
 
 /* used by PITIVI_GSTELEMENTSETTINGS_TYPE */

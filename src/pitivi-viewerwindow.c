@@ -500,6 +500,7 @@ create_gui (gpointer data)
 
   // Buttons for Toolbar
 
+  /*
   // Button Backward
   image = get_image (self, backward_xpm);
   self->private->button_backward = gtk_button_new ();
@@ -551,7 +552,9 @@ create_gui (gpointer data)
 		      self->private->button_stop, FALSE, TRUE, 0);
   gtk_widget_show (image);
   gtk_widget_show (self->private->button_stop);
+  */
 
+  
   // Timeline
   self->private->timeline = gtk_hscale_new_with_range(self->private->timeline_min, 
 						      self->private->timeline_max, 
