@@ -985,6 +985,8 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
 	  nb = num_properties - 1;
 	  GParamSpec *param = property_specs[i];
 	  GtkWidget *videoconfprop_table = gtk_table_new(2, nb, FALSE);
+	  GtkWidget *videoconf_hbox1 = gtk_hbox_new(0, FALSE);
+	  GtkWidget *videoconf_hbox2 = gtk_hbox_new(0, FALSE);
 
 	  readable = FALSE;
       
@@ -994,14 +996,89 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
 	      g_object_get_property (G_OBJECT (element), param->name, &value);
 	      readable = TRUE;
 	    }
+
 	  GtkWidget *prop_name = gtk_label_new(g_strdup(g_param_spec_get_nick (param)));
 	  GtkWidget *prop_desc = gtk_label_new(g_strdup(g_param_spec_get_blurb (param)));
+	  GtkWidget *prop_value;
+	  GtkWidget *prop_value_tmp;
 
-	  gtk_table_attach (GTK_TABLE(videoconfprop_table), prop_name,
-			    0, 1, nb, (nb+1), GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
-	  gtk_table_attach (GTK_TABLE(videoconfprop_table), prop_desc,
+	  /* parsage de "value" */
+	  switch (G_VALUE_TYPE (&value)) 
+	    {
+	    case G_TYPE_STRING:
+	      string_val = g_value_get_string (&value);
+	      if (readable) 
+		{
+		  if (string_val == NULL)
+		    {
+		      prop_value_tmp = gtk_label_new("Default Value");
+		      prop_value = gtk_hbox_new(0, FALSE);
+		      gtk_box_pack_start(GTK_BOX (prop_value), prop_value_tmp, FALSE, TRUE, 0);
+		    }
+		  else
+		    {
+		      GtkWidget *prop_value_tmp = gtk_label_new(g_value_get_string(&value));
+		      prop_value = gtk_hbox_new(0, FALSE);
+		      gtk_box_pack_start(GTK_BOX (prop_value), prop_value_tmp, FALSE, TRUE, 0);
+		    }
+		}
+	      break;
+	    case G_TYPE_BOOLEAN:
+	      if (readable)
+		    {
+		      GtkWidget	*radio_button_group;
+		      GSList	*radio_button_list;
+		      GtkWidget	*radio_button_true;
+		      GtkWidget *radio_button_false;
+		      
+		      prop_value = gtk_hbox_new(0, FALSE);
+		      
+		      /* Liste des boutons */
+      		      radio_button_true = gtk_radio_button_new_with_label(NULL, "True");
+		      radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button_true));
+		      radio_button_false = gtk_radio_button_new_with_label(radio_button_list, "False");
+		      
+		      /* On teste les proprietes a activer */
+		      if (g_value_get_boolean (&value))
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio_button_true), TRUE);
+		      else
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio_button_false), TRUE);
+		      
+		      gtk_box_pack_start(GTK_BOX (prop_value), radio_button_true, FALSE, TRUE, 0);
+		      gtk_box_pack_start(GTK_BOX (prop_value), radio_button_false, FALSE, TRUE, 0);
+		    }
+	      break;
+	    default:
+	      prop_value_tmp = gtk_label_new("Default Case for Value");
+	      prop_value = gtk_hbox_new(0, FALSE);
+	      gtk_box_pack_start(GTK_BOX (prop_value), prop_value_tmp, FALSE, TRUE, 0);
+	      break;
+	    }
+
+	  /* Attributs text  a revoir */
+	  /* 	  PangoAttrList *desc = pango_attr_list_new(); */
+	  /* 	  PangoAttribute *desc_attr = pango_attr_style_new(PANGO_STYLE_ITALIC); */
+	  /* 	  pango_attr_list_insert(desc, desc_attr); */
+	  
+	  /* Name */
+	  gtk_table_attach(GTK_TABLE(videoconfprop_table), prop_name,
+			    0, 1, nb, (nb+1), FALSE, TRUE, 0, 0);
+	  /* value */
+	  gtk_box_pack_start(GTK_BOX (videoconf_hbox2), prop_value, FALSE, TRUE, 0);
+	  gtk_table_attach(GTK_TABLE(videoconfprop_table), videoconf_hbox2,
 			    1, 2, nb, (nb+1), GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
-  
+	  /* description */
+	  gtk_label_set_line_wrap(GTK_LABEL(prop_desc), TRUE);
+	  gtk_misc_set_alignment(GTK_MISC (prop_desc), 0.0f, 0.0f);
+	  gtk_misc_set_padding(GTK_MISC (prop_desc), 5, 0);
+
+/* 	  gtk_label_set_attributes(GTK_LABEL(prop_desc), desc); */
+
+	  gtk_box_pack_start(GTK_BOX (videoconf_hbox1), prop_desc, TRUE, TRUE, 0);
+	  gtk_table_attach(GTK_TABLE(videoconfprop_table), videoconf_hbox1,
+			    0, 2, (nb+1), (nb+2), GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+	  /* link to vbox of properties */
+	  gtk_container_set_border_width (GTK_CONTAINER (videoconfprop_table), 5);
 	  gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), videoconfprop_table, TRUE, TRUE, 0);
 	}
     }
@@ -1097,6 +1174,8 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
 	  nb = num_properties - 1;
 	  GParamSpec *param = property_specs[i];
 	  GtkWidget *audioconfprop_table = gtk_table_new(2, nb, FALSE);
+	  GtkWidget *audioconf_hbox1 = gtk_hbox_new(0, FALSE);
+	  GtkWidget *audioconf_hbox2 = gtk_hbox_new(0, FALSE);
 
 	  readable = FALSE;
       
@@ -1109,12 +1188,86 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
 
 	  GtkWidget *prop_name = gtk_label_new(g_strdup(g_param_spec_get_nick (param)));
 	  GtkWidget *prop_desc = gtk_label_new(g_strdup(g_param_spec_get_blurb (param)));
-	      
-	  gtk_table_attach (GTK_TABLE(audioconfprop_table), prop_name,
-			    0, 1, nb, (nb+1), GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
-	  gtk_table_attach (GTK_TABLE(audioconfprop_table), prop_desc,
+	  GtkWidget *prop_value;
+	  GtkWidget *prop_value_tmp;
+
+	  /* parsage de "value" */
+	  switch (G_VALUE_TYPE (&value)) 
+	    {
+	    case G_TYPE_STRING:
+	      string_val = g_value_get_string (&value);
+	      if (readable) 
+		{
+		  if (string_val == NULL)
+		    {
+		      prop_value_tmp = gtk_label_new("Default Value");
+		      prop_value = gtk_hbox_new(0, FALSE);
+		      gtk_box_pack_start(GTK_BOX (prop_value), prop_value_tmp, FALSE, TRUE, 0);
+		    }
+		  else
+		    {
+		      GtkWidget *prop_value_tmp = gtk_label_new(g_value_get_string(&value));
+		      prop_value = gtk_hbox_new(0, FALSE);
+		      gtk_box_pack_start(GTK_BOX (prop_value), prop_value_tmp, FALSE, TRUE, 0);
+		    }
+		}
+	      break;
+	    case G_TYPE_BOOLEAN:
+	      if (readable)
+		    {
+		      GtkWidget	*radio_button_group;
+		      GSList	*radio_button_list;
+		      GtkWidget	*radio_button_true;
+		      GtkWidget *radio_button_false;
+		      
+		      prop_value = gtk_hbox_new(0, FALSE);
+		      
+		      /* Liste des boutons */
+      		      radio_button_true = gtk_radio_button_new_with_label(NULL, "True");
+		      radio_button_list = gtk_radio_button_get_group(GTK_RADIO_BUTTON(radio_button_true));
+		      radio_button_false = gtk_radio_button_new_with_label(radio_button_list, "False");
+		      
+		      /* On teste les proprietes a activer */
+		      if (g_value_get_boolean (&value))
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio_button_true), TRUE);
+		      else
+			gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio_button_false), TRUE);
+		      
+		      gtk_box_pack_start(GTK_BOX (prop_value), radio_button_true, FALSE, TRUE, 0);
+		      gtk_box_pack_start(GTK_BOX (prop_value), radio_button_false, FALSE, TRUE, 0);
+		    }
+	      break;
+	    default:
+	      prop_value_tmp = gtk_label_new("Default Case for Value");
+	      prop_value = gtk_hbox_new(0, FALSE);
+	      gtk_box_pack_start(GTK_BOX (prop_value), prop_value_tmp, FALSE, TRUE, 0);
+	      break;
+	    }
+
+	  /* Attributs text  a revoir */
+	  /* 	  PangoAttrList *desc = pango_attr_list_new(); */
+	  /* 	  PangoAttribute *desc_attr = pango_attr_style_new(PANGO_STYLE_ITALIC); */
+	  /* 	  pango_attr_list_insert(desc, desc_attr); */
+	  
+	  /* Name */
+	  gtk_table_attach(GTK_TABLE(audioconfprop_table), prop_name,
+			    0, 1, nb, (nb+1), FALSE, TRUE, 0, 0);
+	  /* value */
+	  gtk_box_pack_start(GTK_BOX (audioconf_hbox2), prop_value, TRUE, TRUE, 0);
+	  gtk_table_attach(GTK_TABLE(audioconfprop_table), audioconf_hbox2,
 			    1, 2, nb, (nb+1), GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
-  
+	  /* description */
+	  gtk_label_set_line_wrap(GTK_LABEL(prop_desc), TRUE);
+	  gtk_misc_set_alignment(GTK_MISC (prop_desc), 0.0f, 0.0f);
+	  gtk_misc_set_padding(GTK_MISC (prop_desc), 5, 0);
+
+/* 	  gtk_label_set_attributes(GTK_LABEL(prop_desc), desc); */
+
+	  gtk_box_pack_start(GTK_BOX (audioconf_hbox1), prop_desc, TRUE, TRUE, 0);
+	  gtk_table_attach(GTK_TABLE(audioconfprop_table), audioconf_hbox1,
+			    0, 2, (nb+1), (nb+2), GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+	  /* link to vbox of properties */
+	  gtk_container_set_border_width (GTK_CONTAINER (audioconfprop_table), 5);
 	  gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), audioconfprop_table, TRUE, TRUE, 0);
 	}
     }
