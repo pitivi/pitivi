@@ -481,16 +481,6 @@ pitivi_globalbin_change_state (GstElement *element)
   return res;
 }
 
-/* PitiviGlobalBin * */
-/* pitivi_globalbin_new(void) */
-/* { */
-/*   PitiviGlobalBin	*globalbin; */
-
-/*   globalbin = (PitiviGlobalBin *) g_object_new(PITIVI_GLOBALBIN_TYPE, NULL); */
-/*   g_assert(globalbin != NULL); */
-/*   return globalbin; */
-/* } */
-
 static GObject *
 pitivi_globalbin_constructor (GType type,
 			     guint n_construct_properties,
