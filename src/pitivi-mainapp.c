@@ -278,7 +278,7 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
     exit(0);
   }
   self->project = project;
-   
+  
   /* Viewer Window */
 
   if (self->private->viewerwin == NULL)
@@ -289,6 +289,9 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
       gtk_signal_connect (GTK_OBJECT (self->private->viewerwin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_viewer), self);
     }
+  
+  /* Timeline Window */
+  pitivi_mainapp_create_timelinewin (self, project);
   
   /* Effect Window */
 
@@ -301,10 +304,7 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 		     (height - (420 + BORDER + BOTTOM))
 		     );
   }
-
-  /* Timeline Window */
-  pitivi_mainapp_create_timelinewin (self, project);
-   
+  
   /* Source List Window */
 
   if (self->private->srclistwin == NULL)
