@@ -69,6 +69,7 @@ gnl_operation_class_init (GnlOperationClass *klass)
 static void
 gnl_operation_init (GnlOperation *operation)
 {
+/*   GST_FLAG_SET (GST_ELEMENT (operation), GST_ELEMENT_DECOUPLED); */
   operation->num_sinks = 0;
 }
 
@@ -91,13 +92,13 @@ gnl_operation_set_element (GnlOperation *operation, GstElement *element)
 	GST_WARNING ("More than one srcpad in %s", gst_element_get_name(GST_ELEMENT (operation)));
       else
 	foundsrc = TRUE;
-      operation->queue = gst_element_factory_make("queue", "operation-queue");
-      gst_bin_add(GST_BIN (operation), operation->queue);
-      if (!gst_element_link(element, operation->queue))
-	GST_WARNING ("Couldn't link %s and operation-queue",
-		     gst_element_get_name(element));
+/*       operation->queue = gst_element_factory_make("queue", "operation-queue"); */
+/*       gst_bin_add(GST_BIN (operation), operation->queue); */
+/*       if (!gst_pad_link(pad, gst_element_get_pad (operation->queue, "sink"))) */
+/* 	GST_WARNING ("Couldn't link %s:%s and operation-queue:sink", */
+/* 		     GST_DEBUG_PAD_NAME (pad)); */
       if (!gst_element_add_ghost_pad (GST_ELEMENT (operation),
-				      gst_element_get_pad (operation->queue, "src"),
+				      gst_element_get_pad (element, "src"),
 				      GST_PAD_NAME(pad)))
 	GST_WARNING ("Couldn't add ghost pad src from pad %s:%s !",
 		     GST_DEBUG_PAD_NAME (pad));

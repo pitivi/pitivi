@@ -410,9 +410,11 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
 {
   GnlCompositionEntry *entry;
 
-  GST_INFO("Composition[%s] Object[%s] Parent:%s Ref:%d",
+  GST_INFO("Composition[%s](Sched:%p) Object[%s](Sched:%p) Parent:%s Ref:%d",
 	   gst_element_get_name(GST_ELEMENT (comp)),
+	   GST_ELEMENT_SCHED (GST_ELEMENT (comp)),
 	   gst_element_get_name(GST_ELEMENT (object)),
+	   GST_ELEMENT_SCHED (GST_ELEMENT (object)),
 	   (gst_element_get_parent(GST_ELEMENT(object)) ?
 	    gst_element_get_name(gst_element_get_parent(GST_ELEMENT(object))):
 	    "None"),
@@ -446,6 +448,10 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
     composition_update_start_stop (comp);
   }
   GST_BIN_CLASS(parent_class)->add_element(GST_BIN(comp), GST_ELEMENT(object)); 
+  GST_INFO ("Added Object %s(Sched:%p) to Group (Sched:%p)",
+	    gst_element_get_name (GST_ELEMENT (object)),
+	    GST_ELEMENT_SCHED (GST_ELEMENT (object)),
+	    GST_ELEMENT_SCHED (GST_ELEMENT (comp)));
 }
 
 static gint
@@ -583,11 +589,18 @@ gnl_composition_schedule_operation (GnlComposition *comp, GnlOperation *oper,
     GST_INFO ("Linking source pad %s:%s to operation pad %s:%s",
 	      GST_DEBUG_PAD_NAME (newpad),
 	      GST_DEBUG_PAD_NAME (sinkpad));
-    if (!gst_pad_link (newpad, sinkpad))
+    if (GST_PAD_PEER(newpad)) {
+      GST_WARNING ("newpad %s:%s is still connected to %s:%s. Unlinking them !!",
+		   GST_DEBUG_PAD_NAME(newpad),
+		   GST_DEBUG_PAD_NAME(GST_PAD_PEER (newpad)));
+      gst_pad_unlink (newpad, GST_PAD_PEER (newpad));
+    }
+    if (!gst_pad_link (newpad, sinkpad)) {
       GST_WARNING ("Couldn't link source pad to operation pad");
-    else
-      GST_INFO ("pads were linked with caps:%s",
-		gst_caps_to_string(gst_pad_get_caps(sinkpad)));
+      return FALSE;
+    }
+    GST_INFO ("pads were linked with caps:%s",
+	      gst_caps_to_string(gst_pad_get_caps(sinkpad)));
   }
 
   GST_INFO("Finished");
@@ -739,7 +752,7 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
   GstClockTime	start_pos, stop_pos;
   GstProbe *probe;
 
-  GST_INFO("Object[%s] Event[%lld]->[%lld]",
+  GST_INFO("BEGIN Object[%s] Event[%lld]->[%lld]",
 	   gst_element_get_name(GST_ELEMENT(object)),
 	   GST_EVENT_SEEK_OFFSET(event),
 	   GST_EVENT_SEEK_ENDOFFSET(event));
@@ -759,7 +772,8 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
   } else
     GST_INFO("No existing ghost pad and probe");
 
-  comp->to_remove = g_list_copy (comp->active_objects);
+  gnl_composition_deactivate_childs (comp->active_objects);
+  comp->active_objects = NULL;
   
   /* Scbedule the entries from start_pos */
 
@@ -783,12 +797,8 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
     res = FALSE;
   }
 
-  /* de-activate objects that we're really not using */
-  gnl_composition_deactivate_childs (comp->to_remove);
-  comp->to_remove = NULL;
-
-  GST_INFO ( "%s: configured", 
-	    gst_element_get_name (GST_ELEMENT (comp)));
+  GST_INFO ( "END %s: configured", 
+	     gst_element_get_name (GST_ELEMENT (comp)));
 
   return res;
 }

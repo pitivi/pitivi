@@ -253,12 +253,12 @@ gnl_timeline_timer_loop (GstElement *element)
 	     link->time,
 	     GST_DEBUG_PAD_NAME(sinkpad));
 
- /*    if (GST_PAD_IS_USABLE (sinkpad)) { */
+    if (GST_PAD_IS_USABLE (sinkpad)) {
       if (link->time <= current) {
         to_schedule = link;
         current = link->time;
       }
-/*     } */
+    }
 
     walk = g_list_next (walk);
   }
@@ -556,9 +556,11 @@ gnl_timeline_add_group (GnlTimeline *timeline, GnlGroup *group)
   const gchar *groupname;
   gchar *pipename;
   
-  GST_INFO("timeline[%s], group[%s]",
+  GST_INFO("timeline[%s](Sched:%p), group[%s](Sched:%p)",
 	   gst_element_get_name(GST_ELEMENT(timeline)),
-	   gst_element_get_name(GST_ELEMENT(group)));
+	   GST_ELEMENT_SCHED (GST_ELEMENT (timeline)),
+	   gst_element_get_name(GST_ELEMENT(group)),
+	   GST_ELEMENT_SCHED (GST_ELEMENT (group)));
 
   timeline->groups = g_list_prepend (timeline->groups, group);
 
@@ -566,7 +568,7 @@ gnl_timeline_add_group (GnlTimeline *timeline, GnlGroup *group)
 
   groupname = gst_object_get_name (GST_OBJECT (group));
   pipename = g_strdup_printf ("%s_pipeline", groupname);
-  pipeline = gst_pipeline_new (pipename);
+  pipeline = gst_bin_new (pipename);
   g_free (pipename);
 
   g_signal_connect (group, "notify::start", G_CALLBACK (group_start_stop_changed), timeline);
@@ -575,6 +577,10 @@ gnl_timeline_add_group (GnlTimeline *timeline, GnlGroup *group)
   gst_bin_add (GST_BIN (pipeline), GST_ELEMENT (group));
   gst_bin_add (GST_BIN (timeline), GST_ELEMENT (pipeline));
   
+  GST_INFO ("Group(Sched:%p) added to timeline(Sched:%p)",
+	    GST_ELEMENT_SCHED (GST_ELEMENT (group)),
+	    GST_ELEMENT_SCHED (GST_ELEMENT (timeline)));
+
   timeline_update_start_stop (timeline);
 }
 
@@ -647,6 +653,12 @@ gnl_timeline_prepare (GnlObject *object, GstEvent *event)
       if (GST_PAD_IS_LINKED(link->sinkpad))
 	gst_pad_unlink (GST_PAD_PEER(link->sinkpad), link->sinkpad);
       
+      GST_INFO ("About to link group %s(sched:%p) to TimelineTimer(sched:%p). TimelineSched:%p",
+		gst_element_get_name (GST_ELEMENT(group)),
+		GST_ELEMENT_SCHED(GST_ELEMENT (group)),
+		GST_ELEMENT_SCHED (GST_ELEMENT (timeline->timer)),
+		GST_ELEMENT_SCHED (GST_ELEMENT (timeline)));
+
       if (!gst_pad_link (srcpad, link->sinkpad))
 	GST_WARNING ("Couldn't link group [%s] to the Timeline Timer !!",
 		     gst_element_get_name (GST_ELEMENT (group)));
