@@ -220,7 +220,6 @@ pitivi_settings_get_flux_coder_list (GList *list, GstCaps *flux, gboolean LIST)
 gboolean
 my_list_find(gchar *txt, GList *list)
 {
-  g_printf("txt:%s list:%p\n", txt, list);
   while (list) {
     if ((list->data) && (!strcmp(txt, (gchar *) list->data)))
       return TRUE;

@@ -43,6 +43,7 @@ TODO
  - Reutiliser le contenu du deuxieme onglet de PitiviNewProjectWindow
 
 * PitiviProjectSettings
+ - Finir le chargement XML (pitivi_projectsettings_restore_thyself)
  - Ajouter un format container (GstCaps)
 
 * PitiviNewProjectWindow
