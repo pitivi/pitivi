@@ -45,7 +45,7 @@
 // Move on graphic source
 
 #define DEFAULT_WIDTH_DASHES 4
-#define DEFAULT_MEDIA_SIZE 100
+#define DEFAULT_MEDIA_SIZE 200
 #define MY_MAX 100000000
 
 
@@ -74,6 +74,8 @@ typedef enum
 {
   PITIVI_VIDEO_TRACK,
   PITIVI_AUDIO_TRACK,
+  PITIVI_VIDEO_AUDIO_TRACK,
+  PITIVI_NO_TRACK = -1,
 } PitiviLayerType;
 
 struct _PitiviTimelineCellRenderer
@@ -107,5 +109,6 @@ GtkWidget	*pitivi_timelinecellrenderer_new ();
 void		pitivi_timelinecellrenderer_remove (GtkContainer *container, GtkWidget *child);
 void		pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
 PitiviCursor    *pitivi_getcursor_id (GtkWidget *widget);
+int		add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y);
 
 #endif

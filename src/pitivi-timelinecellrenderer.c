@@ -37,9 +37,6 @@ static GtkLayoutClass	    *parent_class = NULL;
 // Caching Operation  
 static GdkPixmap	    *pixmap = NULL;
 
-// Testing Widget
-static PitiviTimelineMedia  *current_media;
-
 // default Dashes
 static char gdefault_dash [2] = {5, 4};
 
@@ -51,6 +48,7 @@ struct _PitiviTimelineCellRendererPrivate
   gboolean	       dispose_has_run;
   
   PitiviTimelineWindow *timewin;
+  PitiviTimelineMedia  *draggedWidget;
   GtkSelectionData     *current_selection;
   gboolean	       selected;
   GdkRectangle	       selected_area;
@@ -63,8 +61,8 @@ struct _PitiviTimelineCellRendererPrivate
 /*
  * forward definitions
  */
-void				pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
-
+void  pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
+ 
 // Properties Enumaration
 
 typedef enum {
@@ -103,6 +101,8 @@ pitivi_timelinecellrenderer_new (guint track_nb, PitiviLayerType layertype)
 								      "type", 
 								      layertype, 
 								      NULL);
+  timelinecellrenderer->track_nb = track_nb;
+  timelinecellrenderer->track_type = layertype;
   g_assert(timelinecellrenderer != NULL);
   return GTK_WIDGET ( timelinecellrenderer );
 }
@@ -216,12 +216,11 @@ pitivi_timelinecellrenderer_expose (GtkWidget      *widget,
   return FALSE;
 }
 
-static
+
 int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
 {
   GtkRequisition req;
-  PitiviTimelineCellRenderer *cell;
-  
+  PitiviTimelineCellRenderer *cell;  
   cell = PITIVI_TIMELINECELLRENDERER (self);
   gtk_widget_size_request (widget, &req);
   gtk_layout_put (GTK_LAYOUT (self), widget, x, 0);
@@ -238,6 +237,145 @@ int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
   return TRUE;
 }
 
+PitiviLayerType
+check_media_type (PitiviSourceFile *sf)
+{
+  gchar *media;
+  
+  media = g_strdup (sf->mediatype);
+  if (!g_strcasecmp  (sf->mediatype, "video"))
+    return (PITIVI_VIDEO_TRACK);
+  else if (!g_strcasecmp (sf->mediatype, "audio"))
+    return (PITIVI_AUDIO_TRACK);
+  else
+    return (PITIVI_VIDEO_AUDIO_TRACK);
+  return (PITIVI_NO_TRACK);
+}
+
+
+static void 
+pitivi_timelinecellrenderer_drag_on_same_widget (PitiviTimelineCellRenderer *self, 
+						 GtkSelectionData *selection, 
+						 int x,
+						 int y)
+{
+  PitiviTimelineMedia  *current_media;
+  PitiviTimelineMedia  *draggedWidget;
+  PitiviCursor	       *cursor;
+  PitiviLayerType      dragged_type_track;
+  GtkWidget	       *current_wmed;
+  GtkContainer	       *container;
+  
+  draggedWidget = (PitiviTimelineMedia *) selection->data;
+  current_media = pitivi_timelinemedia_new (draggedWidget->sf);
+  current_wmed = GTK_WIDGET (current_media);
+  current_wmed->allocation.width = GTK_WIDGET (draggedWidget)->allocation.width;
+  
+  gtk_widget_set_size_request (current_wmed, 
+			       GTK_WIDGET (draggedWidget)->allocation.width, 
+			       FIXED_HEIGHT);
+  
+  dragged_type_track = check_media_type (draggedWidget->sf);
+  if (dragged_type_track == self->track_type  || dragged_type_track == PITIVI_VIDEO_AUDIO_TRACK)
+  {
+    add_to_layout ( GTK_WIDGET (self), 
+		    current_wmed, 
+		    x,
+		    y);
+    
+    self->motion_area->x =  GTK_WIDGET (draggedWidget)->allocation.width;
+    self->motion_area->width =  GTK_WIDGET (draggedWidget)->allocation.width;
+    self->motion_area->height =  GTK_WIDGET (draggedWidget)->allocation.height;
+    gtk_widget_show (current_wmed);
+  }
+}
+
+static PitiviTimelineCellRenderer*
+get_track_by_id (PitiviTimelineCellRenderer *actual, PitiviLayerType type_track_cmp)
+{
+  PitiviTimelineCellRenderer *childcells;
+  GtkWidget	*container;
+  GList	*childlist;
+  
+  container = gtk_widget_get_parent (GTK_WIDGET (actual));
+  GList *childLayouts = gtk_container_get_children (GTK_CONTAINER (container));
+  for (childlist = childLayouts; childlist; childlist = childlist->next )
+    {
+      if (GTK_IS_LAYOUT (childlist->data))
+	{
+	  g_printf ("track :%d--%d\n", actual->track_nb, PITIVI_TIMELINECELLRENDERER (childlist->data)->track_nb);
+	  if (actual->track_nb ==  PITIVI_TIMELINECELLRENDERER (childlist->data)->track_nb 
+	      &&  PITIVI_TIMELINECELLRENDERER (childlist->data)->track_type == type_track_cmp)
+	    {
+	      g_printf ("mqtches track :%d--%d\n", actual->track_nb, PITIVI_TIMELINECELLRENDERER (childlist->data)->track_nb);
+	      return ( PITIVI_TIMELINECELLRENDERER (childlist->data));
+	    }
+	}
+    }
+  return NULL;
+}
+
+static void
+pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *self, GtkSelectionData *selection, int x, int y)
+{
+  PitiviTimelineCellRenderer *layout;
+  PitiviTimelineMedia	*current_media;
+  PitiviTimelineMedia	*current_media_second;
+  PitiviSourceFile	*sf;
+  PitiviLayerType	type_track_cmp;
+  guint64		length;
+
+  length = DEFAULT_MEDIA_SIZE;
+  sf = (PitiviSourceFile *) selection->data;
+  if ( sf->length <= 0 )
+    length = DEFAULT_MEDIA_SIZE;
+  else
+    sf->length = DEFAULT_MEDIA_SIZE;
+  
+  type_track_cmp = check_media_type (sf);
+  if (type_track_cmp == self->track_type 
+      || (type_track_cmp == PITIVI_VIDEO_AUDIO_TRACK && self->track_type == PITIVI_VIDEO_TRACK))
+    {
+      current_media = pitivi_timelinemedia_new (sf);
+      gtk_widget_set_size_request (GTK_WIDGET (current_media), length, FIXED_HEIGHT);
+      gtk_widget_show (GTK_WIDGET (current_media));
+      add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (current_media), x, y);
+      if (type_track_cmp == PITIVI_VIDEO_AUDIO_TRACK)
+	{
+	  current_media_second = pitivi_timelinemedia_new (sf);
+	  gtk_widget_set_size_request (GTK_WIDGET (current_media_second), length, FIXED_HEIGHT);
+	  gtk_widget_show (GTK_WIDGET (current_media_second));
+	  if (self->track_type == PITIVI_VIDEO_TRACK)
+	    {
+	      layout = get_track_by_id (self, PITIVI_AUDIO_TRACK);
+	      add_to_layout ( GTK_WIDGET (layout), GTK_WIDGET (current_media_second), x, y);
+	    }
+	  else
+	    {
+	      layout = get_track_by_id (self, PITIVI_VIDEO_TRACK);
+	      add_to_layout ( GTK_WIDGET (layout), GTK_WIDGET (current_media_second), x, y);
+	    }
+	}
+    }
+  else
+    {
+      current_media = pitivi_timelinemedia_new (sf);
+      gtk_widget_set_size_request (GTK_WIDGET (current_media), length, FIXED_HEIGHT);
+      gtk_widget_show (GTK_WIDGET (current_media));
+      if (type_track_cmp == PITIVI_AUDIO_TRACK)
+	{
+	  layout = get_track_by_id (self, PITIVI_VIDEO_TRACK);
+	  add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (current_media), x, y);
+	}
+      else if (type_track_cmp == PITIVI_VIDEO_TRACK)
+	{ 
+	  layout = get_track_by_id (self, PITIVI_AUDIO_TRACK);
+	  add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (current_media), x, y);
+	}
+    }
+}
+
+
 static void
 pitivi_timelinecellrenderer_drag_data_received (GObject *object,
 						GdkDragContext *context,
@@ -248,11 +386,8 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
 						guint time,
 						gpointer data)
 {
-  PitiviTimelineCellRenderer *self = PITIVI_TIMELINECELLRENDERER (object);
-  PitiviTimelineMedia *draggedWidget;
-  PitiviSourceFile *sf;
   PitiviCursor *cursor;
-  guint64 length = DEFAULT_MEDIA_SIZE;
+  PitiviTimelineCellRenderer *self = PITIVI_TIMELINECELLRENDERER (object);
 
   self->private->current_selection = selection;
   if (!selection->data) {
@@ -260,34 +395,18 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
     return;
   }
   
+  cursor = pitivi_getcursor_id (self);
   self->private->current_selection = selection;
   switch (info) 
     {
     case DND_TARGET_SOURCEFILEWIN:
-      sf = (PitiviSourceFile *) self->private->current_selection->data;
-      if ( sf->length <= 0 )
-	length = DEFAULT_MEDIA_SIZE;
-      else
-	sf->length = DEFAULT_MEDIA_SIZE;
-      current_media = pitivi_timelinemedia_new (sf);
-      gtk_widget_set_size_request (GTK_WIDGET (current_media), length, FIXED_HEIGHT);
-      gtk_widget_show (GTK_WIDGET (current_media));
-      add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (current_media), x, y);
+      pitivi_timelinecellrenderer_drag_on_source_file (self, self->private->current_selection, x, y);
       gtk_drag_finish (context, TRUE, TRUE, time);
       break;
     case DND_TARGET_TIMELINEWIN:
-      cursor = pitivi_getcursor_id (self);
       if (cursor->type == PITIVI_CURSOR_SELECT || cursor->type == PITIVI_CURSOR_HAND)
 	{
-	  draggedWidget = (PitiviTimelineMedia *) selection->data;
-	  current_media = pitivi_timelinemedia_new (draggedWidget->sf);
-	  GTK_WIDGET (current_media)->allocation.width = GTK_WIDGET (draggedWidget)->allocation.width;
-	  gtk_widget_set_size_request (GTK_WIDGET (current_media), GTK_WIDGET (draggedWidget)->allocation.width, FIXED_HEIGHT);
-	  add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (current_media), x, y);
-	  self->motion_area->x =  GTK_WIDGET (draggedWidget)->allocation.width;
-	  self->motion_area->width =  GTK_WIDGET (draggedWidget)->allocation.width;
-	  self->motion_area->height =  GTK_WIDGET (draggedWidget)->allocation.height;
-	  gtk_widget_show (GTK_WIDGET (current_media));
+	  pitivi_timelinecellrenderer_drag_on_same_widget (self, self->private->current_selection, x, y);
 	  gtk_drag_finish (context, TRUE, TRUE, time);
 	}
       break;
@@ -471,9 +590,10 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 		   {
 		     // Case Selection on Widget Child On Layout
 		     // Later manage on same widget
-		    
+		     
 		     x1_selection = widgetchild->allocation.x;
 		     x2_selection = widgetchild->allocation.x+widgetchild->allocation.width;
+		     PITIVI_TIMELINEMEDIA (widgetchild)->selected = TRUE;
 		     break;
 		   }
 	       }
@@ -515,7 +635,8 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
        }
       else if (event->button == PITIVI_MOUSE_LEFT_CLICK)
 	{
-	  g_printf ("coucou\n");
+	  // Managing MOUSE LEFT CLICK
+	  g_printf ("----------------\n");
 	}
     }
   return FALSE;
@@ -658,26 +779,6 @@ pitivi_timelinecellrenderer_get_property (GObject * object,
     }
 }
 
-static gint
-pitivi_timelinecellrenderer_configure_event (GtkWidget *widget, GdkEventConfigure *event)
-{
-  if (pixmap)
-    gdk_pixmap_unref(pixmap);
-  
-  pixmap = gdk_pixmap_new (widget->window,
-			   widget->allocation.width,
-			   widget->allocation.height,
-			   -1);
-  
-}
-
-static gint
-pitivi_timelinecellrenderer_button_press_event (GtkWidget      *widget,
-						GdkEventButton *event)
-{
-  return FALSE;
-}
-
 void
 pitivi_timelinecellrenderer_remove (GtkContainer *container, GtkWidget *child)
 {
@@ -695,19 +796,6 @@ pitivi_timelinecellrenderer_remove (GtkContainer *container, GtkWidget *child)
     cell->children =  gtk_container_get_children (GTK_CONTAINER (container));
   }
 }
-static void
-pitivi_timelinecellrenderer_motion_notify_event (GtkWidget        *widget,
-						 GdkEventMotion   *event)
-{
-   gint x, y, mask;
-   GdkModifierType mods;
-   
-   x = event->x;
-   if (event->state >= 256)
-     {
-       //g_printf ("x:%d -w:%d- raise%d\n", x, widget->allocation.width, widget->allocation.width+(widget->allocation.width-x));
-     }
-}
 
 static void
 pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
@@ -718,7 +806,6 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   GtkContainerClass *container_class = (GtkContainerClass*) (g_class);
   
   parent_class = gtk_type_class (GTK_TYPE_LAYOUT);
-    
   gobject_class->constructor = pitivi_timelinecellrenderer_constructor;
   gobject_class->dispose = pitivi_timelinecellrenderer_dispose;
   gobject_class->finalize = pitivi_timelinecellrenderer_finalize;
@@ -728,10 +815,7 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   /* Widget properties */
   
   widget_class->expose_event = pitivi_timelinecellrenderer_expose;
-  widget_class->configure_event = pitivi_timelinecellrenderer_configure_event;
-  widget_class->button_press_event = pitivi_timelinecellrenderer_button_press_event;
   widget_class->button_release_event = pitivi_timelinecellrenderer_button_release_event;
-  widget_class->motion_notify_event = pitivi_timelinecellrenderer_motion_notify_event;
   
   /* Container Properties */
   

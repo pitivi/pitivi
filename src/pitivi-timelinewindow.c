@@ -240,6 +240,23 @@ pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *eve
 }
 
 static void
+check_track (GtkWidget *widget, PitiviTimelineCellRenderer *cells)
+{
+  gboolean activate;
+  GList	*childlist;
+  
+  activate = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
+  GList *childwidget = gtk_container_get_children (GTK_CONTAINER (cells));
+  for (childlist = childwidget; childlist; childlist = childlist->next )
+    {
+      if (activate)
+	gtk_widget_hide (GTK_WIDGET (childlist->data));
+      else
+	gtk_widget_show (GTK_WIDGET (childlist->data));
+    }
+}
+
+static void
 pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviMenu		*menumgr;
@@ -248,7 +265,8 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   GtkWidget		*Rseparators;
   GtkWidget		*sw;
   GtkWidget		*cell;
-  int			pv, pa, count = 0;
+  gchar			label[200];
+  int			pv, pa, count;
   
   PitiviTimelineWindow *self = (PitiviTimelineWindow *) instance;
   self->private = g_new0(PitiviTimelineWindowPrivate, 1);
@@ -297,7 +315,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
 				, G_N_ELEMENTS (recent_entry), self);
   menumgr = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TIMELINE_FILE);
   
-  for (count = 0; count < EA_LAST_ACTION; count++)
+  for (pa = 0, pv = 0, count = 0; count < EA_LAST_ACTION; count++)
     if (actions_group[count])
       gtk_ui_manager_insert_action_group (menumgr->public->ui, actions_group[count], 0);
   
@@ -353,13 +371,17 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
       if (count < (PITIVI_MAX_PISTE/2))
 	{
 	  cell = pitivi_timelinecellrenderer_new (pv, PITIVI_VIDEO_TRACK);
-	  gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new ("Video"), FALSE, FALSE, 0);
+	  g_sprintf (&label, "Video %d", pv);
+	  gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new (label), FALSE, FALSE, 0);
+	  g_signal_connect(G_OBJECT (check), "clicked", G_CALLBACK (check_track), cell);
 	  pv++;
 	}
       else
 	{
 	  cell = pitivi_timelinecellrenderer_new (pa, PITIVI_AUDIO_TRACK);
-	  gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new ("Audio"), FALSE, FALSE, 0);
+	  g_sprintf (&label, "Audio %d", pa);
+	  gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new (label), FALSE, FALSE, 0);
+	  g_signal_connect(G_OBJECT (check), "clicked", G_CALLBACK (check_track), cell);
 	  pa++;
 	}
       Lseparators = gtk_hseparator_new ();

@@ -41,7 +41,7 @@
 #define DEFAULT_WIDTH   7200
 #define DEFAULT_HEIGHT  50
 
-#define REDUCE_CURSOR_AREA_SIZE	8
+#define REDUCE_CURSOR_AREA_SIZE	6
 
 
 #define PITIVI_TIMELINEMEDIA_TYPE (pitivi_timelinemedia_get_type ())
