@@ -1200,8 +1200,7 @@ pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimelineCellRenderer
   GtkWidget *media;
   GList	*childlist;
   
-  childlist = gtk_container_get_children (GTK_CONTAINER (cell));
-  for (childlist = g_list_first ( childlist ); childlist; childlist = childlist->prev)
+  for (childlist = gtk_container_get_children (GTK_CONTAINER (cell)); childlist; childlist = childlist->next)
     {
       media = GTK_WIDGET (childlist->data);
       if ( PITIVI_TIMELINEMEDIA (media)->selected )
