@@ -93,12 +93,6 @@ enum {
     PITIVI_NB_COLUMN,
 };
 
-static GtkTargetEntry drop_types[] = {
-	{ "text/uri-list", 0, DND_TYPE_TEXT }
-};
-
-static  int num_drop_types = sizeof (drop_types) / sizeof (drop_types[0]);
-
 static  GtkActionGroup *actions_group[EA_LAST_ACTION];
 static  guint signals[LAST_SIGNAL];
 
@@ -121,46 +115,6 @@ statusbar_set_frames (GtkWidget *statusbar,
   g_free (display);
 }
 
-static void
-pitivi_callb_drag_data_received (GObject *object,
-		    GdkDragContext *context,
-		    int x,
-		    int y,
-		    GtkSelectionData *selection,
-		    guint info,
-		    guint time,
-		    gpointer data)
-{
-	PitiviTimelineWindow *window;
-	char *tmp, *filename, **filenames;
-	int i;
-
-	window = PITIVI_TIMELINEWINDOW (object);
-
-	switch (info) {
-	case DND_TYPE_TEXT:
-		tmp = g_strndup (selection->data, selection->length);
-		filenames = g_strsplit (tmp, "\n", 0);
-		g_free (tmp);
-
-		for (i = 0; filenames[i] != NULL; i++) {
-			filename = g_strstrip (filenames[i]);
-
-			if (filename[0] == 0) {
-				continue;
-			}
-			
-			g_free (filename);
-		}
-
-		g_free (filenames);
-		break;
-
-	default:
-		break;
-	}
-}
-
 PitiviTimelineWindow *
 pitivi_timelinewindow_new (void)
 {
@@ -169,15 +123,6 @@ pitivi_timelinewindow_new (void)
   
   timelinewindow = (PitiviTimelineWindow *) g_object_new(PITIVI_TIMELINEWINDOW_TYPE, NULL);
   g_assert(timelinewindow != NULL);
-  priv = timelinewindow->private;
-  
-  /* Main Window : Drag And Drop */
-  
-  gtk_drag_dest_set (GTK_WIDGET (timelinewindow), GTK_DEST_DEFAULT_ALL,
-		     drop_types, num_drop_types, GDK_ACTION_COPY);
-  g_signal_connect (G_OBJECT (timelinewindow), "drag_data_received",
-	 	    G_CALLBACK (pitivi_callb_drag_data_received), NULL);
-  
   return timelinewindow;
 }
 
