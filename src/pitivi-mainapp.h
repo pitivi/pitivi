@@ -87,4 +87,5 @@ gboolean		pitivi_mainapp_add_project		( PitiviMainApp *self, PitiviProject *proj
 
 /* PitiviCategorieSettings	*pitivi_mainapp_get_selected_category	( PitiviMainApp *self, gint *position ); */
 
+
 #endif

@@ -262,7 +262,8 @@ pitivi_project_set_source_element(PitiviProject *project, GstElement *source)
 
   /* Remove previous source */
   if (project->private->source) {
-/*     gst_element_unlink(project->private->source, project->private->videoqueue); */
+    gst_element_unlink_pads(project->private->source, "vsrc",
+			    project->private->videoqueue, "sink");
     gst_bin_remove(GST_BIN(project->pipeline), project->private->source);
     project->private->source = NULL;
   } else if (project->private->vblankconn) {

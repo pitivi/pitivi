@@ -98,6 +98,11 @@ pitivi_mainapp_get_timelinewin(PitiviMainApp *self) {
   return self->private->timelinewin;
 }
 
+PitiviViewerWindow *
+pitivi_mainapp_get_viewerwin(PitiviMainApp *self) {
+  return self->private->viewerwin;
+}
+
 void
 pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
 {

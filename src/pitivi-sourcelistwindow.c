@@ -35,6 +35,8 @@
 #include "pitivi-settings.h"
 #include "pitivi-stockicons.h"
 #include "pitivi-dragdrop.h"
+#include "pitivi-mainapp.h"
+#include "pitivi-viewerwindow.h"
 
 static PitiviProjectWindowsClass *parent_class = NULL;
 
@@ -105,6 +107,11 @@ gboolean	my_popup_handler(gpointer data, GdkEvent *event, gpointer userdata);
 gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
 				GtkTreePath *path, gboolean path_current, 
 				gpointer user_data);
+
+void		on_row_activated (GtkTreeView        *treeview,
+				  GtkTreePath        *path,
+				  GtkTreeViewColumn  *col,
+				  gpointer            userdata);
 
 enum
   {
@@ -1465,6 +1472,12 @@ drag_begin_cb (GtkWidget          *widget,
   GtkTreeModel		*model;
   GtkTreeSelection	*selection;
   GtkTreeIter		iter;
+  GtkTreeIter		iternext;
+  gint			selected_list_row;
+  gint			item_select;
+  gint			folder_select;
+  gint			i;
+  gchar			*tmpMediaType;
 
   /* find treepath */
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
@@ -1480,7 +1493,28 @@ drag_begin_cb (GtkWidget          *widget,
     g_warning("No elements selected!");
     return;
   }
+ 
   self->private->dndfilepos = atoi(gtk_tree_model_get_string_from_iter(model, &iter));
+
+  g_printf("filepos ==> %d\n", self->private->dndfilepos);
+  gtk_tree_model_get_iter_first(model, &iternext);
+  selected_list_row = self->private->dndfilepos;
+  item_select = 0;
+  folder_select = 0;
+  
+  i = 0;
+  
+  while (i++ < selected_list_row)
+    {
+      gtk_tree_model_get(model, &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
+      if (!strcmp(tmpMediaType, "Bin"))
+	folder_select++;
+      else
+	item_select++;
+      gtk_tree_model_iter_next(model, &iternext);
+    }
+  g_printf("real filepos is ==> %d\n", item_select);
+  self->private->dndfilepos = item_select;
 }
 
 static void
@@ -1572,6 +1606,10 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
   g_signal_connect_swapped(G_OBJECT(pListView), "button_press_event",
 			   G_CALLBACK(my_popup_handler), 
 			   GTK_OBJECT(self));
+  g_signal_connect(G_OBJECT(pListView), "row-activated", 
+		   (GCallback) on_row_activated, GTK_OBJECT(self));
+
+
 
   /* Creation de la premiere colonne */
   pCellRenderer = gtk_cell_renderer_pixbuf_new();
@@ -1739,6 +1777,69 @@ gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
       
     }
   return TRUE;
+}
+
+void	on_row_activated (GtkTreeView        *listview,
+			  GtkTreePath        *path,
+			  GtkTreeViewColumn  *col,
+			  gpointer            userdata)
+{
+  PitiviSourceListWindow *self = (PitiviSourceListWindow*)userdata;
+  PitiviWindows *window = (PitiviWindows*)self;
+  PitiviViewerWindow	*viewerwin;
+  GtkListStore	*liststore;
+  GtkTreeIter	iter;
+  GtkTreeIter		iternext;
+  gint			selected_list_row;
+  gint			item_select;
+  gint			folder_select;
+  gint			i;
+  gchar			*tmpMediaType;
+  PitiviSourceFile	*sf;
+  gboolean		flag;
+
+  g_printf("you double click me\n");
+
+  g_printf("with the following value ==> [%s]\n", gtk_tree_path_to_string(path));
+
+  flag = FALSE;
+  liststore = get_liststore_for_bin(self, 0);
+  g_printf("filepos ==> %s\n", gtk_tree_path_to_string(path));
+  gtk_tree_model_get_iter_first(GTK_TREE_MODEL(liststore), &iternext);
+  selected_list_row = atoi(gtk_tree_path_to_string(path));
+  item_select = 0;
+  folder_select = 0;
+  
+  i = 0;
+
+  while (i++ < selected_list_row)
+    {
+      gtk_tree_model_get(GTK_TREE_MODEL(liststore), &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
+      if (!strcmp(tmpMediaType, "Bin"))
+	{
+	  folder_select++;
+	  flag = TRUE;
+	}
+      else
+	{
+	  item_select++;
+	  flag = FALSE;
+	}
+      gtk_tree_model_iter_next(GTK_TREE_MODEL(liststore), &iternext);
+    }
+  if (flag) /* the selected  element it's a bin */
+    {
+      g_printf("you select a bin\n");
+      return;
+    }
+  g_printf("real filepos is ==> %d\n", item_select);
+
+  sf = pitivi_projectsourcelist_get_sourcefile(PITIVI_PROJECTWINDOWS(self)->project->sources,
+					       self->private->treepath,
+					       item_select);
+
+  viewerwin = (PitiviViewerWindow*)pitivi_mainapp_get_viewerwin(window->mainapp);
+  pitivi_viewerwindow_set_source(viewerwin, sf);
 }
 
 gboolean	my_popup_handler(gpointer data, GdkEvent *event,

@@ -76,5 +76,7 @@ GType pitivi_viewerwindow_get_type (void);
  */
 
 PitiviViewerWindow	*pitivi_viewerwindow_new();
+void	pitivi_viewerwindow_set_source(PitiviViewerWindow *self, 
+				       PitiviSourceFile *sf);
 
 #endif

@@ -239,6 +239,19 @@ void	video_forward(GtkWidget *widget, gpointer data)
   return ;
 }
 
+gboolean	pause_stream(GtkWidget *widget,
+			    GdkEventButton *event,
+			    gpointer data)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+
+  g_printf("you press me\n");
+  gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
+
+  return FALSE;
+}
+
 gboolean	seek_stream(GtkWidget *widget,
 			    GdkEventButton *event,
 			    gpointer data)
@@ -265,6 +278,7 @@ gboolean	seek_stream(GtkWidget *widget,
   if (do_seek(elem, value2))
     g_printf("performing  seek\n");
   
+  gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
   return FALSE;
 }
 void	move_timeline(GtkWidget *widget, gpointer data)
@@ -335,17 +349,14 @@ pitivi_viewerwindow_drag_data_received (GtkWidget *widget, GdkDragContext *drag_
 {
   PitiviSourceFile	*sf;
   PitiviViewerWindow *self = (PitiviViewerWindow *) user_data;
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  guint		*id;
-
+  
   g_printf("drag-data-received viewer\n");
   sf = (void *) data->data;
   g_printf("Received file [%s] in viewer\n",
 	   sf->filename);
   g_printf("pipeline ==> %p\n", sf->pipeline);
 
-  self->private->play_status = STOP;
-  pitivi_project_set_source_element(project, sf->pipeline);
+  pitivi_viewerwindow_set_source(self, sf);
 }
 
 static gboolean
@@ -358,6 +369,28 @@ pitivi_viewerwindow_drag_drop (GtkWidget *widget, GdkDragContext *dc,
 
 
   return TRUE;
+}
+
+void	pitivi_viewerwindow_set_source(PitiviViewerWindow *self, 
+				       PitiviSourceFile *sf)
+{
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+  GstElement	*elem;
+  GList		*binlist;
+
+  elem = NULL;
+  self->private->play_status = STOP;
+  binlist = (GList *) gst_bin_get_list(GST_BIN(sf->pipeline));
+  while (binlist)
+    {
+      elem = (GstElement*)binlist->data;
+      if (strstr(gst_element_get_name(elem), "src_"))
+	break;
+      binlist = binlist->next;
+    }
+  
+  do_seek(elem, 0);
+  pitivi_project_set_source_element(project, sf->pipeline);
 }
 
 void
@@ -449,6 +482,8 @@ create_gui (gpointer data)
   gtk_scale_set_draw_value (GTK_SCALE (self->private->timeline), FALSE);
 
 
+  gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-press-event", 
+		      GTK_SIGNAL_FUNC (pause_stream), self);
   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-release-event", 
 		      GTK_SIGNAL_FUNC (seek_stream), self);
   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "value-changed", 
