@@ -104,15 +104,12 @@ load_cursor (GdkWindow *win, PitiviCursor *pitivi_cursor, PitiviCursorType PiCur
 void
 cursor_change_select(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
-  GdkPixmap	*pixmap;
-  GdkPixmap	 *mask;
-  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
-  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */  
   PitiviTimelineWindow	*timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
-  GtkWidget		*main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
+  GtkWidget		*main_vbox_right;
 
   if (!timelinewin)
     return;
+  main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
       load_cursor (GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor, PITIVI_CURSOR_SELECT);
@@ -123,75 +120,47 @@ cursor_change_select(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 void
 cursor_change_cut(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
-  GdkPixmap	*pixmap;
-  GdkPixmap	 *mask;
-  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
-  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
-  
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
-  GtkWidget		*main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
+  GtkWidget		*main_vbox_right;
   
   if (!timelinewin)
     return;
+  main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
-     pixmap = gdk_bitmap_create_from_data (NULL, cut_bits, width, height);
-     mask = gdk_bitmap_create_from_data (NULL, cut_mask_bits, mask_width, mask_height);
-     self->pitivi_cursor->cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg, mask_x_hot, mask_y_hot);
-     self->pitivi_cursor->type = PITIVI_CURSOR_CUT;
-     gdk_pixmap_unref (pixmap);
-     gdk_pixmap_unref (mask);
-     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor->cursor);
-     gdk_cursor_unref (self->pitivi_cursor->cursor);
+      load_cursor (GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor, PITIVI_CURSOR_CUT);
+      gdk_cursor_unref (self->pitivi_cursor->cursor);
     }
 }
 
 void
 cursor_change_hand(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
-  GdkPixmap	*pixmap;
-  GdkPixmap	*mask;
-  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
-  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
-  GtkWidget		*main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
+  GtkWidget		*main_vbox_right;
 
   if (!timelinewin)
     return;
- if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
+  main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
+  if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
-     pixmap = gdk_bitmap_create_from_data (NULL, hand_1_bits, width, height);
-     mask = gdk_bitmap_create_from_data (NULL, hand_1_mask_bits, mask_width, mask_height);
-     self->pitivi_cursor->cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg, mask_x_hot, mask_y_hot);
-     self->pitivi_cursor->type = PITIVI_CURSOR_HAND;
-     gdk_pixmap_unref (pixmap);
-     gdk_pixmap_unref (mask);
-     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor->cursor);
-     gdk_cursor_unref (self->pitivi_cursor->cursor);
+      load_cursor (GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor, PITIVI_CURSOR_HAND);
+      gdk_cursor_unref (self->pitivi_cursor->cursor);
     }
 }
 
 void
 cursor_change_zoom (GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
-  GdkPixmap	*pixmap;
-  GdkPixmap	*mask;
-  GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
-  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
-  GtkWidget		*main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
+  GtkWidget		*main_vbox_right;
 
   if (!timelinewin)
     return;
+  main_vbox_right = (GtkWidget *) pitivi_timelinewindow_get_main_vbox_right(timelinewin);
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
    {
-     pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
-     mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, mask_width, mask_height);
-     self->pitivi_cursor->cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg, mask_x_hot, mask_y_hot);
-     self->pitivi_cursor->type = PITIVI_CURSOR_ZOOM;
-     gdk_pixmap_unref (pixmap);
-     gdk_pixmap_unref (mask);
-     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor->cursor);
+     load_cursor (GDK_WINDOW(GTK_WIDGET(main_vbox_right)->window), self->pitivi_cursor, PITIVI_CURSOR_ZOOM);
      gdk_cursor_unref (self->pitivi_cursor->cursor);
    }
 }
