@@ -81,7 +81,7 @@ pitivi_projectsettings_acaps_create (int rate, int channels)
 
 /**************/
 PitiviProjectSettings *
-pitivi_projectsettings_new_with_name(gchar *name, gchar *desc/* , GSList *list_media_settings */)
+pitivi_projectsettings_new_with_name(gchar *name, gchar *desc)
 {
   PitiviProjectSettings	*projectsettings;
   GSList		*list;
@@ -96,31 +96,7 @@ pitivi_projectsettings_new_with_name(gchar *name, gchar *desc/* , GSList *list_m
   projectsettings->description = g_strdup(desc);
   projectsettings->media_settings = NULL;
 
-/*   for (list = list_media_settings; list; list = list->next) { */
-/*     media_temp = (PitiviMediaSettings *) list->data; */
-/*     media_new = g_new0(PitiviMediaSettings, 1); */
-    
-/*     media_new->codec_factory_name = g_strdup(media_temp->codec_factory_name); */
-/*     media_new->codec_properties = NULL; */
-    
-/*     g_print("MEDIA NAME : %s.\n", media_new->codec_factory_name); */
-
-
-/*     for (list_prop = media_temp->codec_properties; list_prop; list_prop = list_prop->next) { */
-/*       prop_temp = (PitiviSettingsValue *) list_prop->data; */
-/*       prop_new = g_new0(PitiviSettingsValue, 1); */
-      
-/*       prop_new->name = g_strdup(prop_temp->name); */
-/*       g_value_init(&(prop_new->value), G_VALUE_TYPE(&(prop_temp->value))); */
-/*       g_value_copy(&(prop_temp->value), &(prop_new->value)); */
-      
-/*       g_print("PROP NAME : %s.\nVALUE : \n\n", media_new->codec_factory_name); */
-/*       media_new->codec_properties = g_list_append(media_new->codec_properties, prop_new); */
-/*     } */
-/*     media_new->caps = gst_caps_copy(media_temp->caps); */
-/*     projectsettings->media_settings = g_slist_append( projectsettings->media_settings, (gpointer) media_new ); */
-/*   } */
-
+  g_print("New Setting : \n");
   pitivi_projectsettings_print(projectsettings);
 
   return projectsettings;
@@ -130,7 +106,7 @@ pitivi_projectsettings_new_with_name(gchar *name, gchar *desc/* , GSList *list_m
    Creation d'un PitiviCategorieSettings 
 */
 PitiviCategorieSettings *
-pitivi_projectsettings_categorie_new(gchar *name/* , GSList *list_settings */)
+pitivi_projectsettings_categorie_new(gchar *name)
 {
   PitiviCategorieSettings	*categorie;
   PitiviProjectSettings		*setting_temp;
@@ -158,122 +134,21 @@ pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps, gint
   gint			num_properties;
   gint			i;
 
-  g_print("MEDIA NEW, Index :%d\n", index);
   media_new = g_new0(PitiviMediaSettings, 1);
   media_new->codec_factory_name = g_strdup(codec_factory_name);
-  media_new->combo_box_codec_index = index;
+/*   media_new->combo_box_codec_index = index; */
   media_new->codec_properties = NULL;
 
   media_new->caps = g_new0(GstCaps, 1);
   media_new->caps = gst_caps_copy(caps);
 
-  /* Recuperation des proprietes*/
-/*   factory = gst_element_factory_find( codec_factory_name ); */
-/*   if (factory) */
-/*     { */
-/*       g_print("IF num 1\n"); */
-/*       element = gst_element_factory_create(factory, media_new->codec_factory_name); */
-/*       if (element) */
-/* 	{ */
-/* 	  g_print("IF num 2\n"); */
-/* 	  property_specs = g_object_class_list_properties(G_OBJECT_GET_CLASS (element), &num_properties); */
-/* 	  for (i = 0; i < num_properties; i++) */
-/* 	    { */
-/* 	      GParamSpec *param = property_specs[i]; */
-	      
-/* 	      readable = FALSE; */
-/* 	      setting_value = g_new0( PitiviSettingsValue, 1); */
-/* 	      g_value_init (&setting_value->value, param->value_type); */
-	      
-/* 	      if (param->flags & G_PARAM_READABLE) */
-/* 		{ */
-/* 		  g_object_get_property (G_OBJECT (element), param->name, &setting_value->value); */
-/* 		  readable = TRUE; */
-/* 		} */
-/* 	      setting_value->name = g_strdup (g_param_spec_get_nick (param)); */
-	  
-	  
-/*       for ( list = property; property; property = property->next ) */
-/* 	{ */
-/* 	  media_new->codec_properties = g_list_append(media_new->codec_properties, (gpointer) property); */
-/* 	  g_print("Propertie Name : %s\n", ((PitiviSettingsValue *) media_new->codec_properties)->name ); */
-/* 	} */
-/*     } */
-	  
-	  /* Creation du caps par default pour le reglage */
-
-/* 	} */
-/*     } */
   return (media_new);
 }
 
-/* Creation de la liste des Reglages par default */
-/* GSList * */
-/* pitivi_projectsettings_list_make() */
-/* { */
-/*   GSList			*list_categories; */
-/*   GSList			*list_reglage; */
-/*   GSList			*list_media_settings; */
-/*   PitiviMediaSettings		*media_setting; */
-/*   GstCaps			*default_vcaps; */
-/*   GstCaps			*default_acaps; */
-  
-/* Initialisation des caps par default */
-/*   default_vcaps = pitivi_projectsettings_vcaps_create(720, 576, 25); */
-/*   default_acaps = pitivi_projectsettings_acaps_create(48000, 1); */
-
-/* /\* Initialisation du debut des liste *\/ */
-/*   list_media_settings = NULL; */
-/*   list_reglage = NULL; */
-/*   list_categories = NULL; */
-
-/* /\* Categorie 1 *\/ */
-/*   list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("rtjpegenc", default_vcaps, 0) ); */
-/*   list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("vorbisenc", default_acaps, 0) ); */
-/*   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", */
-/* 											      "Description Standard 32kHz", */
-/* 											      list_media_settings ) ); */
-/*   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 48kHz", */
-/* 											      "Description Standard 48kHz", */
-/* 											      list_media_settings ) ); */
-/*   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 32kHz", */
-/* 											      "Description Widescreen 32kHz", */
-/* 											      list_media_settings ) ); */
-/*   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 48kHz", */
-/* 											      "Description Widescreen 48kHz", */
-/* 											      list_media_settings ) ); */
-/*   list_categories = g_slist_append(list_categories, (gpointer) pitivi_projectsettings_categorie_new("DV - NTSC", list_reglage) ); */
-  
-/* /\* /*   list_categories = g_slist_append(list_categories, (gpointer) pitivi_projectsettings_categorie_new("DV - PAL", list_reglage) ); */
-  
-/* /\* Categorie 3 *\/ */
-/*   list_media_settings = NULL; */
-/*   list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("rtjpegenc", default_vcaps, 0 ) ); */
-/*   list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_projectsettings_media_new("vorbisenc", default_acaps, 0 ) ); */
-  
-/*   list_reglage = NULL; */
-/*   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Multimedia Video", */
-/* 											      "Description Multimedia Video", */
-/* 											      list_media_settings) ); */
-/*   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Quicktime for Web", */
-/* 											      "Description Quicktime for Web", */
-/* 											      list_media_settings) ); */
-/*   list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Petit test", */
-/* 											      "Description Petit test", */
-/* 											      list_media_settings) ); */
-/*   list_categories = g_slist_append(list_categories, (gpointer) pitivi_projectsettings_categorie_new("Custom Settings", list_reglage) ); */
-  
-/* /\* Categorie 4 *\/ */
-/*   list_reglage = NULL; */
-/*   list_categories = g_slist_append(list_categories, (gpointer) pitivi_projectsettings_categorie_new("Personnal Settings", list_reglage) ); */
-  
-/*   return (list_categories); */
-/* } */
 
 /*
   pitivi_projectsettings_print
 */
-
 void
 pitivi_projectsettings_print(PitiviProjectSettings *self)
 {
@@ -289,8 +164,8 @@ pitivi_projectsettings_print(PitiviProjectSettings *self)
   for (t1 = self->media_settings; t1; t1 = t1->next) {
     mset = (PitiviMediaSettings *) t1->data;
     if (mset) {
-      g_printf(" Media Settings Index[%d] Factory[%s] Caps[%s]\n", 
-	       mset->combo_box_codec_index, 
+      g_printf(" Media Settings Factory[%s] Caps[%s]\n", 
+	       /* mset->combo_box_codec_index,  */
 	       mset->codec_factory_name, 
 	       gst_caps_to_string(mset->caps));
       

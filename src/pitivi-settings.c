@@ -101,7 +101,6 @@ pitivi_settings_del_category ( PitiviSettings *self, gint *position )
   }
 }
 
-
 /* Add 'reglage' into the selected category when the Add_setting button is clicked in the PitiviNewProjectWindow */
 void
 pitivi_settings_add_setting ( PitiviSettings *self, PitiviProjectSettings *new_setting, gint *position)
@@ -116,9 +115,6 @@ pitivi_settings_add_setting ( PitiviSettings *self, PitiviProjectSettings *new_s
     cat_list = cat_list->next;
   cat = (PitiviCategorieSettings *) cat_list->data;
   cat->list_settings = g_slist_append( cat->list_settings, (gpointer) new_setting );
-  
-/*   g_print("\n\n\nDans settings_add_setting : \n"); */
-/*   pitivi_projectsettings_print(new_setting); */
 }
 
 /* Modify 'reglage' into the selected category when the Mod_setting button is clicked in the PitiviNewProjectWindow */
@@ -563,48 +559,44 @@ pitivi_settings_get_xml_project_settings(xmlNodePtr self)
   for (res = NULL, child = self->xmlChildrenNode; child; child = child->next) {
     if (!strcmp(child->name, "categoriesettings")) {
       /*########### CATEGORIESETTINGS ############*/
-      for (children = child->xmlChildrenNode; children; children = children->next)
-	/* res = NULL, child = self->xmlChildrenNode; child; child = child->next) */ {
-	
+      for (children = child->xmlChildrenNode; children; children = children->next) {
 	if (!strcmp(children->name, "name")) {
 	  cat_tmp = g_new0(PitiviCategorieSettings, 1);
 	  cat_tmp->list_settings = NULL;
 	  cat_tmp->name = g_strdup(xmlNodeGetContent(children));
-	  g_print("Categorie Name = %s\n", cat_tmp->name);
+/* 	  g_print("Categorie Name = %s\n", cat_tmp->name); */
 	  
 	  /*########### PROJECTSETTINGS ###########*/
 	  for ( ; children->next; children = children->next ) {
 	    if (!strcmp(children->next->name, "list_settings")) {
-	      g_print("IL PASSE dans les settings\n");
 	      ps_tmp = g_new0(PitiviProjectSettings, 1);
 	      ps_tmp->media_settings = NULL;
 	      
 	      for (children2 = children->next->xmlChildrenNode; children2; children2 = children2->next) {
 		if ( !strcmp(children2->name, "name") ) {
 		  ps_tmp->name = g_strdup(xmlNodeGetContent(children2));
-		  g_print("ProjectSetting Name = %s\n", ps_tmp->name);
+/* 		  g_print("ProjectSetting Name = %s\n", ps_tmp->name); */
 		} else if ( !strcmp(children2->name, "description") ) {
 		  ps_tmp->description = g_strdup(xmlNodeGetContent(children2));
-		  g_print("ProjectSetting Description = %s\n", ps_tmp->description);
+/* 		  g_print("ProjectSetting Description = %s\n", ps_tmp->description); */
 		} 
 
 		/*########### MEDIASETTINGS ###########*/
 		else if ( !strcmp(children2->name, "media_settings") ) {
-		  g_print("IL PASSE dans les medias\n");
+/* 		  g_print("IL PASSE dans les medias\n"); */
 		  m_tmp = g_new0(PitiviMediaSettings, 1);
 		  for (children3 = children2->xmlChildrenNode; children3; children3 = children3->next) {
 		    if ( !strcmp(children3->name, "codec_factory_name") ) {
 		      m_tmp->codec_factory_name = g_strdup(xmlNodeGetContent(children3));
-		      g_print("MediaSetting Codec_Factory_Name = %s\n", m_tmp->codec_factory_name);
+/* 		      g_print("MediaSetting Codec_Factory_Name = %s\n", m_tmp->codec_factory_name); */
 		    } else if ( !strcmp(children3->name, "caps") ) {
 		      m_tmp->caps = gst_caps_from_string( xmlNodeGetContent( children3 ) );
-		      g_print("MediaSetting Caps = %s\n", gst_caps_to_string(m_tmp->caps) );
+/* 		      g_print("MediaSetting Caps = %s\n", gst_caps_to_string(m_tmp->caps) ); */
 		    }
 		  }
 		  ps_tmp->media_settings = g_slist_append(ps_tmp->media_settings, m_tmp);
 		}
 		/*########### END MEDIASETTINGS ###########*/
-
 
 	      }
 	      cat_tmp->list_settings = g_slist_append(cat_tmp->list_settings, ps_tmp);
@@ -613,11 +605,10 @@ pitivi_settings_get_xml_project_settings(xmlNodePtr self)
 	  }
 	  res = g_slist_append(res, cat_tmp);
 	}
-	g_print("IL PASSE 3\n");
+/* 	g_print("IL PASSE 3\n"); */
       }
     }
   }
-  /*   exit (0); */
   return res;
 }
 
@@ -685,7 +676,7 @@ pitivi_settings_xml_epure_project_settings(GSList *list, xmlNodePtr parent)
   for ( res = list; res; res = res->next ) 
     {
       cat_tmp = (PitiviCategorieSettings *) res->data;
-      g_print("CATEGORIE NAME : %s.\n", cat_tmp->name);
+/*       g_print("CATEGORIE NAME : %s.\n", cat_tmp->name); */
       if (cat_tmp) {
 	cat = xmlNewChild (parent, NULL, "categoriesettings", NULL );
 	cat_set = xmlNewChild (cat, NULL, "name", (char *) cat_tmp->name );
@@ -694,8 +685,8 @@ pitivi_settings_xml_epure_project_settings(GSList *list, xmlNodePtr parent)
 	  ps_tmp = (PitiviProjectSettings *) list_tmp->data;
 	  if ( ps_tmp )
 	    {
-	      g_print("\nSauvegrade des project settings\n");
-	      pitivi_projectsettings_print(ps_tmp);
+/* 	      g_print("\nSauvegrade des project settings\n"); */
+/* 	      pitivi_projectsettings_print(ps_tmp); */
 	      mime = xmlNewChild(cat, NULL, "list_settings", NULL);
 	      xmlNewChild (mime, NULL, "name", (char *) ps_tmp->name );
 	      xmlNewChild (mime, NULL, "description", (char *) ps_tmp->description );
@@ -704,7 +695,7 @@ pitivi_settings_xml_epure_project_settings(GSList *list, xmlNodePtr parent)
 		m_tmp = (PitiviMediaSettings *) list_tmp2->data;
 		if ( m_tmp )
 		  {
-		    g_print("\nSauvegrade des medias\n");
+/* 		    g_print("\nSauvegrade des medias\n"); */
 		    mime2 = xmlNewChild(mime, NULL, "media_settings", NULL);
 		    xmlNewChild (mime2, NULL, "codec_factory_name", (char *) m_tmp->codec_factory_name );
 		    xmlNewChild (mime2, NULL, "caps", gst_caps_to_string(m_tmp->caps) );

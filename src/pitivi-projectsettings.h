@@ -72,13 +72,7 @@ struct _PitiviProjectSettings
 };
 
 struct _PitiviMediaSettings
-{
-  /* Index of the selected codec into the combo box */
-  gint				combo_box_codec_index;
-  
-  /* Index of the selected rate in the combo box */
-  gint				combo_box_rate_index;
-  
+{  
   gchar				*codec_factory_name;
   GList				*codec_properties;
   GstCaps			*caps;
