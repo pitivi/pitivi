@@ -124,7 +124,8 @@ GtkWidget	*pitivi_value_conf_default	( GValue			 value,
 						  GParamSpec			*param );
 /* Signals Definitions */
 void			pitivi_close_window(GtkButton *button, gpointer user_data);
-void			pitivi_add_settings(GtkButton *button, gpointer user_data);
+void			pitivi_add_category(GtkButton *button, gpointer user_data);
+void			pitivi_del_category(GtkButton *button, gpointer user_data);
 void			create_codec_conf_video(GtkButton *button, gpointer user_data);
 void			create_codec_conf_audio(GtkButton *button, gpointer user_data);
 gboolean		setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model, 
@@ -132,6 +133,9 @@ gboolean		setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
 gboolean		pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event,
 					gpointer user_data);
 GSList			*pitivi_mainapp_project_settings	( PitiviMainApp *self );
+gboolean		categorie_button_callback(GtkWidget *cat_button_clicked, GdkEventButton *event, gpointer user_data);
+void			pitivi_del_settings(GtkButton *button, gpointer user_data);
+
 
 /*
  * Insert "added-value" functions here
@@ -149,23 +153,44 @@ pitivi_close_window(GtkButton *button, gpointer user_data)
 }
 
 void
-pitivi_add_settings(GtkButton *button, gpointer user_data)
+pitivi_add_category(GtkButton *button, gpointer user_data)
 {
   PitiviNewProjectWindow	*self;
 
   self = (PitiviNewProjectWindow *) user_data;
 
-  gtk_text_buffer_get_start_iter(self->private->name_text_buffer, &self->private->start_description_iter);
-  gtk_text_buffer_get_end_iter(self->private->name_text_buffer, &self->private->end_description_iter);
-  
-  if ( strlen(gtk_entry_get_text(GTK_ENTRY(self->private->name_text))) )
+  if ( strlen(gtk_entry_get_text(GTK_ENTRY(self->private->cat_text))) )
     {
       gtk_tree_store_append(self->private->tree, 
-			    &self->private->pIter2, 
-			    &self->private->pIter);
+			    &self->private->pIter2,
+			    NULL);
       gtk_tree_store_set(self->private->tree, &self->private->pIter2, 
-			 0, gtk_entry_get_text(GTK_ENTRY(self->private->name_text)), -1);
+			 0, gtk_entry_get_text(GTK_ENTRY(self->private->cat_text)), -1);
     }
+}
+
+void
+pitivi_del_category(GtkButton *button, gpointer user_data)
+{
+  PitiviNewProjectWindow	*self;
+
+  self = (PitiviNewProjectWindow *) user_data;
+
+  if (gtk_tree_store_iter_is_valid (self->private->tree, &self->private->pIter) && 
+      (!gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter)))
+    gtk_tree_store_remove (self->private->tree, &self->private->pIter);
+}
+
+void
+pitivi_del_settings(GtkButton *button, gpointer user_data)
+{
+  PitiviNewProjectWindow	*self;
+
+  self = (PitiviNewProjectWindow *) user_data;
+
+  if (gtk_tree_store_iter_is_valid (self->private->tree, &self->private->pIter) &&
+      gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter))
+    gtk_tree_store_remove (self->private->tree, &self->private->pIter);
 }
 
 gboolean
@@ -254,23 +279,28 @@ setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
 		    GtkTreePath *path, gboolean value, gpointer user_data)
 {
   gchar				*setting_name;
-  GtkTreeIter			iter;
+  GtkTreeIter			parent_iter;
+  gchar				*parent_name;
   GtkTextIter			piter1;
   GtkTextIter			piter2;
   PitiviNewProjectWindow	*self;
 
   self = (PitiviNewProjectWindow *) user_data;
 
-  if (gtk_tree_model_get_iter(model, &iter, path))
+  if (gtk_tree_model_get_iter(model, &self->private->pIter, path))
     {
-
-      gtk_tree_model_get(model, &iter, TEXT_COLUMN, &setting_name, -1);
-      if (!value && !(gtk_tree_store_iter_depth(self->private->tree, &iter)))
+      gtk_tree_model_get(model, &self->private->pIter, TEXT_COLUMN, &setting_name, -1);
+      if (!value && !(gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter)))
 	{
-	  /* printf("%i\n", &iter); */
-	  gtk_text_buffer_set_text(self->private->preset_text_buffer,
-				   setting_name, strlen(setting_name));
-	  gtk_entry_set_text(GTK_ENTRY(self->private->cat_text), setting_name);
+	  gtk_text_buffer_set_text(self->private->preset_text_buffer, setting_name, strlen(setting_name));
+	  gtk_entry_set_text(GTK_ENTRY(self->private->cat_text),  setting_name);
+	}
+      else if (!value && (gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter)))
+	{
+	  gtk_text_buffer_set_text(self->private->preset_text_buffer, setting_name, strlen(setting_name));
+	  gtk_tree_model_iter_parent (model, &parent_iter, &self->private->pIter);
+	  gtk_tree_model_get(model, &parent_iter, TEXT_COLUMN, &parent_name, -1);
+	  gtk_entry_set_text(GTK_ENTRY(self->private->cat_text),  parent_name);
 	  /* 	  printf("select setting : \" %s \"\n", setting_name); */
 	}
       else
@@ -504,8 +534,8 @@ pitivi_make_settings_table(PitiviNewProjectWindow *self)
 		     FALSE, GTK_EXPAND | GTK_FILL, 0);
   
   /* Buttons Settings Signals */
-  g_signal_connect( G_OBJECT(self->private->button_add), "clicked",
-		    G_CALLBACK(pitivi_add_settings), (gpointer) (GTK_WIDGET(self)) );
+  g_signal_connect( G_OBJECT(self->private->button_del), "clicked",
+		    G_CALLBACK(pitivi_del_settings), (gpointer) (GTK_WIDGET(self)) );
 
   gtk_table_attach(GTK_TABLE(settings_table), button_hbox, 
 		   0, 2, 3, 4, FALSE, FALSE, 0, 3);
@@ -589,19 +619,28 @@ pitivi_make_cat_frame(PitiviNewProjectWindow *self)
   GtkWidget		*cat_table;
   GtkWidget		*cat_but_hbox;
 
-  cat_frame= gtk_frame_new("Category");
+  cat_frame = gtk_frame_new("Category");
 
   cat_table = gtk_table_new(2, 1, FALSE);
   self->private->cat_text = gtk_entry_new();
   gtk_table_attach (GTK_TABLE(cat_table), self->private->cat_text, 
 		    0, 1, 0, 1, FALSE, FALSE, 5, 5);
+
   cat_but_hbox = gtk_hbox_new(TRUE, 10);
   self->private->cat_but_add = gtk_button_new_with_label("Add");
   gtk_box_pack_start(GTK_BOX(cat_but_hbox), self->private->cat_but_add, 
 		     FALSE, GTK_EXPAND | GTK_FILL, 5);
+
+  g_signal_connect( G_OBJECT(self->private->cat_but_add), "clicked",
+		    G_CALLBACK(pitivi_add_category), (gpointer) (GTK_WIDGET(self)) );
+  
   self->private->cat_but_del = gtk_button_new_with_label("Delete");
   gtk_box_pack_start(GTK_BOX(cat_but_hbox), self->private->cat_but_del, 
 		     FALSE, GTK_EXPAND | GTK_FILL, 5);
+
+  g_signal_connect( G_OBJECT(self->private->cat_but_del), "clicked",
+		    G_CALLBACK(pitivi_del_category), (gpointer) (GTK_WIDGET(self)) );
+
   gtk_table_attach (GTK_TABLE(cat_table), cat_but_hbox,
 		    1, 2, 0, 1,FALSE, FALSE, 5, 5);
   gtk_container_add(GTK_CONTAINER(cat_frame), cat_table);
@@ -609,7 +648,6 @@ pitivi_make_cat_frame(PitiviNewProjectWindow *self)
 
   return (cat_frame);
 }
-
 
 GtkWidget*
 pitivi_make_video_frame(PitiviNewProjectWindow *self)
