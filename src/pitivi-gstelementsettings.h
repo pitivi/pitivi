@@ -53,6 +53,7 @@ struct _PitiviGstElementSettings
 
   /* instance public members */
   gchar		*elm;
+  gchar		*class;
   GtkWidget	*Table;
 
   /* private */

@@ -410,7 +410,6 @@ pitivi_gstelementsettings_aff_flags (gchar *name, GValue value, GParamSpec *para
     }
     
   }
-  
 
   g_object_set_data (G_OBJECT(Tab), "name", name);
   //g_object_set_data (G_OBJECT(Tab), "type", &value);
@@ -542,6 +541,8 @@ pitivi_gstelementsettings_create_gui (PitiviGstElementSettings *self)
     self->private->element = gst_element_factory_create(self->private->factory, "test");
   }
 
+  self->class = g_strdup ((gchar *) gst_element_factory_get_klass (self->private->factory));
+
   self->private->prop = g_object_class_list_properties(G_OBJECT_GET_CLASS (self->private->element), 
 						       &(self->private->num_prop));
 
@@ -592,13 +593,13 @@ pitivi_gstelementsettings_get_value (PitiviGstElementSettings *self, gchar *prop
   //GValue *value;
 
   num = pitivi_gstelementsettings_get_prop_num (self, prop_name);
-  g_print ("NUM:%d\n", num);
+  //g_print ("NUM:%d\n", num);
 
   g_value_init (&tmp, self->private->prop[num]->value_type);
 
   g_object_get_property (G_OBJECT (self->private->element), prop_name, &tmp);
 
-  g_print ("VALUE TYPE ::>%d\n", (int) G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (&tmp)));
+  //g_print ("VALUE TYPE ::>%d\n", (int) G_TYPE_FUNDAMENTAL (G_VALUE_TYPE (&tmp)));
 
   return (tmp);
 }
@@ -887,11 +888,9 @@ pitivi_gstelementsettings_constructor (GType type,
 {
   GObject *obj;
   /* Invoke parent constructor. */
-  g_print ("CHOUCHOU:%d\n", n_construct_properties);
   obj =  G_OBJECT_CLASS (parent_class)->constructor (type, n_construct_properties,
 						     construct_properties);
 
-  g_print ("CHOUCHOU\n");
   /* do stuff. */
   PitiviGstElementSettings *self = (PitiviGstElementSettings *) obj;
 
@@ -913,6 +912,7 @@ pitivi_gstelementsettings_instance_init (GTypeInstance * instance, gpointer g_cl
 
   self->Table = NULL;
   self->elm = NULL;
+  self->class = NULL;
 
   self->private->factory = NULL;
   self->private->element = NULL;
@@ -966,15 +966,12 @@ pitivi_gstelementsettings_set_property (GObject * object,
 {
   PitiviGstElementSettings *self = (PitiviGstElementSettings *) object;
 
-  g_print ("PROP_ID:%d\n", property_id);
   switch (property_id)
     {
     case PROP_ELM:
-      g_print ("COUCOU:PROP_ELM\n");
       self->elm = g_value_dup_string (value);
       break;
     case PROP_GST:
-      g_print ("COUCOU:PROP_GST\n");
       if ((self->private->element = g_value_get_pointer (value))) {
 	self->private->factory = gst_element_get_factory (self->private->element);
 	self->elm = g_strdup (gst_element_get_name (self->private->element));

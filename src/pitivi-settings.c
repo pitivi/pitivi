@@ -497,7 +497,7 @@ pitivi_settings_prop_new (gchar *name, GValue value)
 {
   PitiviSettingsProp *prop;
 
-  prop = g_new (PitiviSettingsProp, 1); 
+  prop = g_new (PitiviSettingsProp, 1);
   prop->name = g_strdup (name);
   prop->value = value;
 

@@ -89,23 +89,68 @@ pitivi_settingswindow_combobox_get_active (GtkWidget *widget)
   return (elm);
 }
 
-void 
-pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *self)
+PitiviSettingsIoElement	*
+pitivi_settingswindow_get_settings_struct_info (GList *list, gchar *name)
 {
-  GList *list;
-    
+  for (; list; list = g_list_next (list)) {
+    PitiviSettingsIoElement *IoElm = (PitiviSettingsIoElement *) list->data;
+
+    if (!strcmp(name, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(IoElm->factory))))
+      return (IoElm);
+  }
+
+  return (0);
+}
+
+void 
+pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSettingsWindow *self)
+{
+  GList				*pt;
+  //GList				*list;
+  PitiviSettingsIoElement	*elm_info;
+
   g_print ("######################################################\n");
   g_print ("ACCEPT\n");
-  g_print ("SAVE %s\n", self->elm);
+  g_print ("SAVE %s [%s]\n", prop->elm, prop->class);
 
-  list = pitivi_gstelementsettings_get_list (self);
+  elm_info = NULL;
 
-  for (; list; list = g_list_next (list)) {
+  if (!strcmp (prop->class, "Sink/Video")) {
+    elm_info = pitivi_settingswindow_get_settings_struct_info
+      (self->private->settings->elm_video_out, prop->elm);
+  } else if (!strcmp (prop->class, "Sink/Audio")) {
+    elm_info = pitivi_settingswindow_get_settings_struct_info
+      (self->private->settings->elm_audio_out, prop->elm);
+  } else if (!strcmp (prop->class, "Source/Video")) {
+    elm_info = pitivi_settingswindow_get_settings_struct_info
+      (self->private->settings->elm_video_in, prop->elm);
+  } else if (!strcmp (prop->class, "Source/Audio")) {
+    elm_info = pitivi_settingswindow_get_settings_struct_info
+      (self->private->settings->elm_audio_in, prop->elm);
+  }
+  
+  if (elm_info) {
+    pt = elm_info->prop_list;
+    for (; pt; pt = g_list_next (pt)) {
+      PitiviSettingsProp *prop2 = (PitiviSettingsProp *) pt->data;
+      
+      g_free (prop2->name);
+      g_free (pt->data);
+    }
+    
+    g_list_free (elm_info->prop_list);
+    
+    elm_info->prop_list = pitivi_gstelementsettings_get_list (prop);
+  }
+  
+  /*
+    for (; list; list = g_list_next (list)) {
     PitiviGstElementSettingsProp *prop = (PitiviGstElementSettingsProp *) list->data;
     g_print ("------------------------\n");
     g_print ("name:%s\n", prop->name);
     g_print ("value:%s\n", g_strdup_value_contents (&(prop->value)));
-  }
+    }
+  */
 
   g_print ("######################################################\n");
 
@@ -115,16 +160,19 @@ pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *self)
 void
 pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 {
+  PitiviSettingsWindow *self;
   GtkWidget *ComboBox = (GtkWidget *) data;
   GtkWidget *Dialog;
   GstElementFactory *elm;
   gint result;
   PitiviGstElementSettings *Properties;
 
+  self = (PitiviSettingsWindow *) g_object_get_data (G_OBJECT (ComboBox), "self");
+
   elm = pitivi_settingswindow_combobox_get_active (ComboBox);
 
-  g_print ("Button Click:%s\n", 
-	   gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
+  /* g_print ("Button Click:%s\n",  */
+  /* 	   gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm))); */
 
   Dialog = gtk_dialog_new ();
 
@@ -151,11 +199,11 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
   result  = gtk_dialog_run (GTK_DIALOG (Dialog));
   switch (result) {
   case GTK_RESPONSE_ACCEPT:
-    pitivi_settingswindow_accept_reponse (Properties);
+    pitivi_settingswindow_accept_reponse (Properties, self);
     break;
-  default:
-    g_print ("CANCEL\n");
-    break;
+    /*   default: */
+    /*     g_print ("CANCEL\n"); */
+    /*     break; */
   }
 
   gtk_widget_destroy (Dialog);  
@@ -165,10 +213,10 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 void
 pitivi_settingswindow_cb_destroy (GtkWidget *widget, gpointer data)
 {
-/*   PitiviSettingsWindow *self = (PitiviSettingsWindow *) data; */
+  /*   PitiviSettingsWindow *self = (PitiviSettingsWindow *) data; */
   
   /* TODO : do we need to do something when we destroy this window ?? */
-  g_print ("SETTINGS DESTROY\n");  
+  //g_print ("SETTINGS DESTROY\n");  
   return ;
 }
 
@@ -482,7 +530,8 @@ pitivi_settingswindow_ajout_inout_combobox (GtkWidget *Table, gint row, gint col
 }
 
 void
-pitivi_settingswindow_create_row_table_InOut (GList *element, GtkWidget *table, 
+pitivi_settingswindow_create_row_table_InOut (PitiviSettingsWindow *self,
+					      GList *element, GtkWidget *table, 
 					      gchar *io, gchar *type, gint row)
 {
   GtkWidget *ComboBox;
@@ -490,12 +539,14 @@ pitivi_settingswindow_create_row_table_InOut (GList *element, GtkWidget *table,
   pitivi_settingswindow_ajout_label (table, row, 0, g_strdup_printf ("%s%s:\t", type, io));
   ComboBox = pitivi_settingswindow_ajout_inout_combobox (table, row, 1, element, g_strdup_printf ("%s/%s", io, type));
   pitivi_settingswindow_ajout_button (table, row, 2, GTK_STOCK_PREFERENCES, ComboBox);
- 
+  g_object_set_data (G_OBJECT (ComboBox), "self", self);
+
   return ;
 }
 
 GtkWidget *
-pitivi_settingswindow_create_frame_InOut (GList *element, GtkWidget *table, gchar *io)
+pitivi_settingswindow_create_frame_InOut (PitiviSettingsWindow *self, 
+					  GList *element, GtkWidget *table, gchar *io)
 {
   GtkWidget *Tab;
   GtkWidget *Frame;
@@ -512,8 +563,8 @@ pitivi_settingswindow_create_frame_InOut (GList *element, GtkWidget *table, gcha
   gtk_container_add (GTK_CONTAINER (Frame), Tab);
   gtk_widget_show (Tab);
 
-  pitivi_settingswindow_create_row_table_InOut (element, Tab, io, "Video", 0);
-  pitivi_settingswindow_create_row_table_InOut (element, Tab, io, "Audio", 1);
+  pitivi_settingswindow_create_row_table_InOut (self, element, Tab, io, "Video", 0);
+  pitivi_settingswindow_create_row_table_InOut (self, element, Tab, io, "Audio", 1);
 
   return (Tab);
 }
@@ -527,8 +578,8 @@ pitivi_settingswindow_create_table_InOut (PitiviSettingsWindow *self, GList *ele
   gtk_container_add(GTK_CONTAINER (frame), Table);
   gtk_widget_show (Table);
 
-  self->private->TabIn = pitivi_settingswindow_create_frame_InOut (element, Table, "Source");
-  self->private->TabOut = pitivi_settingswindow_create_frame_InOut (element, Table, "Sink");
+  self->private->TabIn = pitivi_settingswindow_create_frame_InOut (self, element, Table, "Source");
+  self->private->TabOut = pitivi_settingswindow_create_frame_InOut (self, element, Table, "Sink");
 
   return ;
 }
