@@ -217,7 +217,7 @@ GtkWidget **layout_intersection_widget (GtkWidget *self, GtkWidget *widget, gint
 }
 
 void
-move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
+move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
 {
   GtkWidget **intersec;
   GtkRequisition req;
@@ -225,28 +225,36 @@ move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
 
   gtk_widget_size_request (widget, &req);
   intersec = layout_intersection_widget (self, widget, x);
-  if (intersec[1] && intersec[0])
+  if (!intersec[1])
+    move_media (self, widget, x, 1);
+  else if (!intersec[0])
+    move_media (self, widget, x, 0);
+  else if (intersec[1] && intersec[0])
     {
-      GtkWidget *first = intersec[0];
-      GtkWidget *second = intersec[1];
-      xbegin = first->allocation.x - ((first->allocation.x+first->allocation.width) - x);
-      gtk_layout_move (GTK_LAYOUT (self), first, xbegin, 0);
-      xbegin = x+req.width;
-      gtk_layout_move (GTK_LAYOUT (self), second, xbegin, 0);
-      gtk_layout_move (GTK_LAYOUT (self), widget, x, y);
+      move_media (self, widget, x, 0);
+      move_media (self, widget, x, 1);
     }
-  else
-    gtk_layout_move (GTK_LAYOUT (self), widget, x, y);
+  gtk_layout_move (GTK_LAYOUT (self), widget, x, 0);
 }
 
-void
-decale_childs_from_x_on_layout (GtkWidget *self, int xbegin)
+void move_media (GtkWidget *cell, GtkWidget *widget, guint x, guint way)
 {
-  GList *children;
+  GtkWidget **intersec;
+  GtkWidget *first;
+  int       xbegin;
 
-  for (children = gtk_container_get_children (GTK_CONTAINER (self)); children; children = children->next)
-    gtk_layout_move (GTK_LAYOUT (self), GTK_WIDGET(children->data), GTK_WIDGET(children->data)->allocation.x + xbegin, 0);
-  g_list_free (children);
+  intersec = layout_intersection_widget (cell, widget, x);
+  first = intersec[way];
+  if (first && GTK_IS_WIDGET (first) && first->allocation.x != x)
+    {
+      if (!way)
+	xbegin = first->allocation.x - ((first->allocation.x+first->allocation.width) - x);
+      if (way)
+	xbegin = x + first->allocation.width;
+      gtk_layout_move (GTK_LAYOUT (cell), first, xbegin, 0);
+      move_media (cell, first, xbegin, way);
+    }
+  return;
 }
 
 int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
@@ -261,28 +269,23 @@ int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
   intersec = layout_intersection_widget (self, widget, x);
   if (!intersec[0] && !intersec[1])
     gtk_layout_put (GTK_LAYOUT (self), widget, x, 0);
-  else if (!intersec[1])
+  else if (!intersec[1]) /* right */
     {
+      move_media (self, widget, x, 1);
       xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
-      gtk_layout_put (GTK_LAYOUT (self), widget, intersec[0]->allocation.x+intersec[0]->allocation.width, y);
+      gtk_layout_put (GTK_LAYOUT (self), widget, xbegin, y);
     }
-  else if (!intersec[0])
+  else if (!intersec[0]) /* left */
     {
+      move_media (self, widget, x, 0);
       xbegin = x - ((x + req.width) - intersec[1]->allocation.x);
-      g_printf ("%d\n", xbegin);
-      if (xbegin < 0)
-	decale_childs_from_x_on_layout (self, -xbegin);
-      gtk_layout_put (GTK_LAYOUT (self), widget, 0, y);
+      gtk_layout_put (GTK_LAYOUT (self), widget, xbegin, 0);
     }
-  else if (intersec[1] && intersec[0]) /* second may cause probs */
+  else if (intersec[1] && intersec[0])
     { 
-      GtkWidget *first = intersec[0];
-      GtkWidget *second = intersec[1];
-      xbegin = first->allocation.x - ((first->allocation.x+first->allocation.width) - x);
-      gtk_layout_move (GTK_LAYOUT (self), first, xbegin, 0);
-      xbegin = x+req.width;
-      gtk_layout_move (GTK_LAYOUT (self), second, xbegin, 0);
-      gtk_layout_put (GTK_LAYOUT (self), widget, x, y);
+      move_media (self, widget, x, 0);
+      move_media (self, widget, x, 1);
+      gtk_layout_put (GTK_LAYOUT (self), widget, x, 0);
     }
  return TRUE;
 }
@@ -571,8 +574,8 @@ pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self,
       if ( dragged->linked ) { /* Two widgets */
 	if (parent == self)
 	  {
-	    move_child_on_layout (GTK_WIDGET (self), GTK_WIDGET (source), x, 0);
-	    move_child_on_layout (GTK_WIDGET (self->linked_track), dragged->linked, x, 0);
+	    move_child_on_layout (GTK_WIDGET (self), GTK_WIDGET (source), x);
+	    move_child_on_layout (GTK_WIDGET (self->linked_track), dragged->linked, x);
 	  }
 	else
 	  {
