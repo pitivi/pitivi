@@ -30,6 +30,8 @@
 #include "pitivi-viewerwindow.h"
 #include "pitivi-projectsettings.h"
 #include "pitivi-settings.h"
+#include "pitivi-settingswindow.h"
+#include "pitivi-gstelementsettings.h"
 
 static GdkPixbuf		*window_icon = NULL;
 static PitiviWindowsClass	*parent_class = NULL;
@@ -923,7 +925,6 @@ pitivi_create_new_project ( GtkAction *action, PitiviNewProjectWindow *self )
   gtk_widget_destroy (GTK_WIDGET (self));
 }
 
-
 GtkWidget*
 pitivi_create_presets_table(PitiviNewProjectWindow *self)
 {
@@ -983,7 +984,6 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
   g_signal_connect( G_OBJECT(button_cancel), "clicked",
 		    G_CALLBACK(pitivi_npw_close_window), 
 		    (gpointer) (GTK_WIDGET(self)) );
-  
 /*   Retourne la table creee */
   return (table);
 }
@@ -1558,19 +1558,20 @@ pitivi_combobox_get_active (GtkWidget *widget, gchar *listname)
 void
 create_codec_conf_video(GtkWidget *widget, gpointer data)
 {
-PitiviNewProjectWindow	*self;
-  GtkWidget *Dialog;
-  GtkWidget *Label;
-  gchar *elm;
-  gint result;
+  PitiviNewProjectWindow	*self;
+  GtkWidget			*Dialog;
+  gchar				*elm;
+  gint				result;
+  PitiviGstElementSettings	*prop;
 
   self = (PitiviNewProjectWindow *) data;
-  elm = pitivi_combobox_get_active (self->private->video_combo_codec, 
-						   "video_listname");
   Dialog = gtk_dialog_new ();
-  Label = gtk_label_new (elm);
+  elm = pitivi_combobox_get_active (self->private->video_combo_codec,
+						   "video_listname");
+  prop = pitivi_gstelementsettings_new_with_name (elm, 0);
+
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
-		     Label);
+		     GTK_WIDGET(prop));
   gtk_dialog_add_buttons (GTK_DIALOG(Dialog),
 			  GTK_STOCK_OK,
 			  GTK_RESPONSE_ACCEPT,
@@ -1597,20 +1598,20 @@ void
 create_codec_conf_audio(GtkWidget *widget, gpointer data)
 {
 /*   GtkWidget *ComboBox = (GtkWidget *) data; */
-PitiviNewProjectWindow	*self;
-  GtkWidget *Dialog;
-  GtkWidget *Label;
-  gchar *elm;
-  gint result;
+  PitiviNewProjectWindow	*self;
+  GtkWidget		*Dialog;
+  gchar			*elm;
+  gint			result;
+  PitiviGstElementSettings *prop;
 
   self = (PitiviNewProjectWindow *) data;
-/*   elm = gtk_combo_box_get_active (GTK_COMBO_BOX (self->private->audio_combo_codec)); */
-  elm = pitivi_combobox_get_active (self->private->audio_combo_codec, 
-						   "audio_listname");
   Dialog = gtk_dialog_new ();
-  Label = gtk_label_new (elm);
+  elm = pitivi_combobox_get_active (self->private->audio_combo_codec,
+						   "audio_listname");
+  prop = pitivi_gstelementsettings_new_with_name (elm, 0);
+
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
-		     Label);
+		     GTK_WIDGET(prop));
   gtk_dialog_add_buttons (GTK_DIALOG(Dialog),
 			  GTK_STOCK_OK,
 			  GTK_RESPONSE_ACCEPT,
@@ -1629,7 +1630,7 @@ PitiviNewProjectWindow	*self;
          g_print ("CANCEL\n");
          break;
     }
-  gtk_widget_destroy (Dialog);  
+  gtk_widget_destroy (Dialog);
   return ;
 }
 

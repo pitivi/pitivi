@@ -64,7 +64,7 @@ pitivi_callb_menuhelp_about ( GtkAction *action, gpointer data)
   info_frame = gtk_frame_new("Info");
 
   /* Labels */
-  pitivi_label = gtk_label_new("Pitivi is a non-linear\nMultimedia Editor.\nIt is an Open-Source project.\nGNU GPL license.");
+  pitivi_label = gtk_label_new("Pitivi is a non-linear\nMultimedia Editor.\nIt is an Open-Source project.\nGNU GPL license.\nVersion : "PITIVI_VERSION);
   team_label = gtk_label_new("- HERVEY Edward\n- CASANOVA Guillaume\n- DELETTREZ Marc\n- PRALAT Raphael\n- BLOCH Stephan");
   info_label = gtk_label_new("Visit our website :\n http://www.pitivi.org");
   filelogo = pitivi_file ("pitivi-logo-small.png");

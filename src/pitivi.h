@@ -30,6 +30,7 @@
 #include <glib.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>
+#include "config.h"
 
 #include "pitivi-file-utils.h"
 

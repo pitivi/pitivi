@@ -1426,9 +1426,6 @@ pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow *self, GdkEventKey* 
     case GDK_Pause:
       g_signal_emit_by_name (self->private->controller, "pause", self);
       break;
-    case GDK_Escape:
-      pitivi_mainapp_destroy(GTK_WIDGET (self), NULL);
-      break;
     case GDK_n://new
       if (event->state & GDK_CONTROL_MASK)
 	pitivi_callb_menufile_new(GTK_ACTION(data), self);
