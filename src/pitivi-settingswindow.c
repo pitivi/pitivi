@@ -92,44 +92,46 @@ pitivi_settingswindow_combobox_get_active (GtkWidget *widget)
 void 
 pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSettingsWindow *self)
 {
-  GList				*pt;
-  //GList				*list;
-  PitiviSettingsIoElement	*elm_info;
-
   g_print ("######################################################\n");
   g_print ("ACCEPT\n");
   g_print ("SAVE %s [%s]\n", prop->elm, prop->class);
 
-  elm_info = NULL;
-
-  if (!strcmp (prop->class, "Sink/Video")) {
+  /*
+    GList				*pt;
+    //GList				*list;
+    PitiviSettingsIoElement	*elm_info;
+    
+    elm_info = NULL;
+    
+    if (!strcmp (prop->class, "Sink/Video")) {
     elm_info = pitivi_settings_get_io_settings_struct_info
-      (self->private->settings->elm_video_out, prop->elm);
-  } else if (!strcmp (prop->class, "Sink/Audio")) {
+    (self->private->settings->elm_video_out, prop->elm);
+    } else if (!strcmp (prop->class, "Sink/Audio")) {
     elm_info = pitivi_settings_get_io_settings_struct_info
-      (self->private->settings->elm_audio_out, prop->elm);
-  } else if (!strcmp (prop->class, "Source/Video")) {
+    (self->private->settings->elm_audio_out, prop->elm);
+    } else if (!strcmp (prop->class, "Source/Video")) {
     elm_info = pitivi_settings_get_io_settings_struct_info
-      (self->private->settings->elm_video_in, prop->elm);
-  } else if (!strcmp (prop->class, "Source/Audio")) {
+    (self->private->settings->elm_video_in, prop->elm);
+    } else if (!strcmp (prop->class, "Source/Audio")) {
     elm_info = pitivi_settings_get_io_settings_struct_info
-      (self->private->settings->elm_audio_in, prop->elm);
-  }
-  
-  if (elm_info) {
+    (self->private->settings->elm_audio_in, prop->elm);
+    }
+    
+    if (elm_info) {
     pt = elm_info->prop_list;
     for (; pt; pt = g_list_next (pt)) {
-      PitiviSettingsProp *prop2 = (PitiviSettingsProp *) pt->data;
-      
-      g_free (prop2->name);
-      g_free (pt->data);
+    PitiviSettingsProp *prop2 = (PitiviSettingsProp *) pt->data;
+    
+    g_free (prop2->name);
+    g_free (pt->data);
     }
     
     g_list_free (elm_info->prop_list);
     
     elm_info->prop_list = pitivi_gstelementsettings_get_list (prop);
-  }
-  
+    }
+  */
+
   /*
     for (; list; list = g_list_next (list)) {
     PitiviGstElementSettingsProp *prop = (PitiviGstElementSettingsProp *) list->data;
@@ -152,14 +154,18 @@ pitivi_settingswindow_make_element (PitiviSettings *self, GstElementFactory *fac
 
   elm = gst_element_factory_create (factory, "elm_tmp");
 
-  prop_list = pitivi_settings_get_io_prop_list 
+  prop_list = NULL;
+
+  /*
+    prop_list = pitivi_settings_get_io_prop_list 
     (self, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)));
-  
-  for (; prop_list; prop_list = g_list_next (prop_list)) {
+    
+    for (; prop_list; prop_list = g_list_next (prop_list)) {
     PitiviSettingsProp *prop = (PitiviSettingsProp *) prop_list->data;
     
     g_object_set_property (G_OBJECT (elm), prop->name, &(prop->value));
-  }
+    }
+  */
 
   return (elm);
 }

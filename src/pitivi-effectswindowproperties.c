@@ -38,6 +38,9 @@ struct _PitiviEffectsWindowPropertiesPrivate
   PitiviSourceItem *item;
   /* instance private members */
   gboolean	dispose_has_run;
+
+  PitiviGstElementSettings *widget_element;
+
 };
 
 /*
@@ -64,8 +67,23 @@ pitivi_effectswindowproperties_new (PitiviSourceItem *effect)
 void 
 pitivi_effects_ok (GtkWidget *widget, GObject *obj)
 {
+  //GList *list_prop;
+  //PitiviEffectsWindowProperties *self = (PitiviEffectsWindowProperties *) obj;
+
   g_print ("PitiviEffectsWindowProperties  OK\n");
- 
+
+  //GNL_OPERATION(self->private->item->gnlobject)->element = pitivi_gstelementsettings_get_element (self->private->widget_element);
+
+  /*
+    list_prop = pitivi_gstelementsettings_get_list (self->private->widget_element);
+    
+    for (; list_prop; list_prop = g_list_next (list_prop)) {
+    PitiviSettingsProp *prop = (PitiviSettingsProp *) list_prop->data;
+    
+    g_object_set_property (G_OBJECT (self->private->widget_element), prop->name, &(prop->value));
+    }
+  */
+
   gtk_object_destroy(GTK_OBJECT(obj));
 }
 
@@ -80,6 +98,8 @@ pitivi_effects_apply (GtkWidget *widget, GObject *obj)
 void 
 pitivi_effects_cancel (GtkWidget *widget, GObject *obj)
 {
+  //PitiviEffectsWindowProperties *self = (PitiviEffectsWindowProperties *) obj;
+
   g_print ("PitiviEffectsWindowProperties  CANCEL\n");
 
   gtk_object_destroy(GTK_OBJECT(obj));
