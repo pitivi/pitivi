@@ -434,8 +434,6 @@ pitivi_gstelementsettings_table_new_param_add (PitiviGstElementSettings *self,
   g_value_init (&value, prop->value_type);
   g_object_get_property (G_OBJECT (self->private->element), prop->name, &value);
 
-  //g_print ("Prop Nick:%s\n", g_param_spec_get_nick (prop));
-
   switch (G_VALUE_TYPE (&value)) {
   case G_TYPE_STRING: {
     tmp = pitivi_gstelementsettings_conf_value_string 
@@ -543,18 +541,191 @@ pitivi_gstelementsettings_create_gui (PitiviGstElementSettings *self)
 }
 
 
-/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+// ############################ SAVE ##################################### G_VALUE_TYPE(value)
+
+PitiviGstElementSettingsProp *
+pitivi_gstelementsettings_prop_new (gchar *name, GValue	*value)
+{
+  PitiviGstElementSettingsProp *tmp;
+  GValue v_tmp = {0};
+
+  tmp = g_new (PitiviGstElementSettingsProp, 1);
+
+  tmp->name = g_strdup (name);
+  
+  tmp->value = v_tmp;
+
+  g_value_init (&(tmp->value), G_VALUE_TYPE (value));
+  g_value_copy (value, &(tmp->value));
+  
+  return (tmp);
+}
+
+void
+pitivi_gstelementsettings_get_settings_combobox (GtkWidget *widget)
+{
+  gint	*tmp_list;
+  gint	num;      
+
+  num = gtk_combo_box_get_active (GTK_COMBO_BOX (widget));
+  
+  tmp_list = g_object_get_data (G_OBJECT (widget), "tab");
+
+  g_print ("COMBO_BOX_SEL[%d]:%d\n", num, tmp_list[num]);
+  
+  g_print ("PROP_NAME=[%s]\n", 
+	   g_object_get_data (G_OBJECT (widget), "name"));
+
+  return ;
+}
+
+PitiviGstElementSettingsProp *
+pitivi_gstelementsettings_get_settings_entry (GtkWidget *widget)
+{
+  GValue value = { 0 };
+
+  g_value_init(&value, G_TYPE_STRING);
+  
+  //g_print ("ENTRY:%s\n", gtk_entry_get_text (GTK_ENTRY (widget)));
+  //g_print ("PROP_NAME=[%s]\n", g_object_get_data (G_OBJECT (widget), "name"));
+
+  g_value_set_string (&value, gtk_entry_get_text (GTK_ENTRY (widget)));  
+
+  return (pitivi_gstelementsettings_prop_new (g_object_get_data (G_OBJECT (widget), "name"), &value));
+}
+
+PitiviGstElementSettingsProp *
+pitivi_gstelementsettings_get_settings_box (GtkWidget *widget)
+{
+  GList *plist;
+  gint i;
+  GValue value = { 0 };
+
+  g_value_init(&value, G_TYPE_BOOLEAN);
+  
+  //g_print ("BUTTON:[TRUE|FALSE]\n");
+  //g_print ("PROP_NAME=[%s]\n", g_object_get_data (G_OBJECT (widget), "name"));
+
+  plist = GTK_BOX (widget)->children;
+  for (i = 0; plist; plist = g_list_next (plist), i++) { 
+    GtkBoxChild *child = (GtkBoxChild *) plist->data; 
+    
+    if (GTK_IS_BUTTON (child->widget)) {	    
+      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (child->widget))) {
+	if (i == 0) {
+	  //g_print ("Button:TRUE\n");
+	  g_value_set_boolean (&value, TRUE);
+	} else {
+	  //g_print ("Button:FALSE\n");
+	  g_value_set_boolean (&value, FALSE);
+	}
+      }
+    }
+  }
+
+  return (pitivi_gstelementsettings_prop_new (g_object_get_data (G_OBJECT (widget), "name"), &value));
+}
+
+void
+pitivi_gstelementsettings_get_settings_table (GtkWidget *widget)
+{
+  GList *table_box;	
+  
+  g_print ("TABLE\n");
+  g_print ("PROP_NAME=[%s]\n", g_object_get_data (G_OBJECT (widget), "name"));
+  
+  table_box = GTK_TABLE (widget)->children;
+  for (; table_box; table_box = g_list_next (table_box)) {
+    GtkTableChild *tmp2 = (GtkTableChild *) table_box->data;
+    
+    if (GTK_IS_BUTTON (tmp2->widget)) {
+      if (!GTK_TOGGLE_BUTTON (tmp2->widget)) {
+	g_print ("NOT TOGGLE BOUTTON \n");
+      } else {
+	
+	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (tmp2->widget))) {
+	  g_print ("FLAG:%d\n", 
+		   (gint) g_object_get_data (G_OBJECT (tmp2->widget), "value"));
+	} else {
+	  g_print ("FLAG:NULL\n");
+	}
+	
+      }	    
+    }	  
+  }
+	  
+  return ;
+}
+
+GList *
+pitivi_gstelementsettings_get_settings_elem (PitiviGstElementSettings *Properties)
+{
+  GList *prop_list;
+
+  prop_list = NULL;
+
+  if (Properties->Table) {
+    GList *list;
+
+    list = GTK_TABLE (Properties->Table)->children;
+    for (; list; list = g_list_next (list)) {
+      GtkTableChild *tmp = (GtkTableChild *) list->data;
+      
+      if (GTK_IS_COMBO_BOX (tmp->widget)) {
+	pitivi_gstelementsettings_get_settings_combobox (tmp->widget);
+
+      } else if (GTK_IS_ENTRY (tmp->widget)) {
+	pitivi_gstelementsettings_get_settings_entry (tmp->widget);
+
+      } else if (GTK_IS_BOX (tmp->widget)) {
+	pitivi_gstelementsettings_get_settings_box (tmp->widget);
+
+      } else if (GTK_IS_TABLE (tmp->widget)) {
+	pitivi_gstelementsettings_get_settings_table (tmp->widget);
+
+      }      
+      
+    }
+  }
+  return (prop_list);
+}
+
+GList *
+pitivi_gstelementsettings_get_list (PitiviGstElementSettings *self)
+{
+  GList *list;
+
+  list = pitivi_gstelementsettings_get_settings_elem (self);
+
+  return (list);
+}
+
+GstElement *
+pitivi_gstelementsettings_get_element (PitiviGstElementSettings *self)
+{
+  GList *list;
+
+  list = pitivi_gstelementsettings_get_settings_elem (self);
+
+  for (; list; list = g_list_next (list)) {
+    PitiviGstElementSettingsProp *prop = 
+      (PitiviGstElementSettingsProp *) list->data;
+    /*
+    g_object_set_property (G_OBJECT (self),
+			   prop->name,
+			   prop->value);
+    */
+  }
+  
+  return (self->private->element);
+}
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 PitiviGstElementSettings *

@@ -1,7 +1,6 @@
 /* 
  * PiTiVi
- * Copyright (C) <2004> Edward G. Hervey <hervey_e@epita.fr>
- *                      Guillaume Casanova <casano_g@epita.fr>
+ * Copyright (C) <2004> DELETTREZ Marc <delett_m@epita.fr>
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -48,6 +47,7 @@
 typedef struct _PitiviGstElementSettings PitiviGstElementSettings;
 typedef struct _PitiviGstElementSettingsClass PitiviGstElementSettingsClass;
 typedef struct _PitiviGstElementSettingsPrivate PitiviGstElementSettingsPrivate;
+typedef struct _PitiviGstElementSettingsProp PitiviGstElementSettingsProp;
 
 struct _PitiviGstElementSettings
 {
@@ -67,6 +67,12 @@ struct _PitiviGstElementSettingsClass
   /* class members */
 };
 
+struct _PitiviGstElementSettingsProp
+{
+  gchar		*name;
+  GValue	value;
+};
+
 /* used by PITIVI_GSTELEMENTSETTINGS_TYPE */
 GType pitivi_gstelementsettings_get_type (void);
 
@@ -75,5 +81,7 @@ GType pitivi_gstelementsettings_get_type (void);
  */
 
 PitiviGstElementSettings	*pitivi_gstelementsettings_new(gchar *elm);
+GList				*pitivi_gstelementsettings_get_list (PitiviGstElementSettings *self);
+GstElement			*pitivi_gstelementsettings_get_element (PitiviGstElementSettings *self);
 
 #endif
