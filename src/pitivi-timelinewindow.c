@@ -1081,7 +1081,7 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
   gtk_widget_show ( dialog );
   if ((project != NULL) && (pitivi_mainapp_add_project( mainapp, project )))
     pitivi_mainapp_create_wintools( mainapp , project );
-  if (GTK_IS_DIALOG (dialog))
+  if (dialog != NULL && GTK_IS_DIALOG (dialog))
     gtk_widget_destroy ( dialog );
   g_free (filename);
 }

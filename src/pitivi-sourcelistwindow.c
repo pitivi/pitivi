@@ -1413,7 +1413,7 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
 					      folder_select);
 	    g_free ( self->private->treepath );
 	    self->private->treepath = treepath; 
-	    OnRemoveBin(self, 1, widget);
+	    OnRemoveBin (self, 1, widget);
 	    self->private->treepath  = save;
 	  }
 	break;
@@ -1424,9 +1424,61 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
   return;
 }
 
+
+void
+remove_sourcefile (PitiviSourceListWindow *self,
+		   PitiviSourceFile *sf,
+		   gint *item_select,
+		   GtkListStore *liststore, 
+		   GtkTreeIter *iter)
+{
+  if ( sf && sf->nbbins )
+    g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", sf);
+  pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
+						self->private->treepath,
+						*item_select);
+  gtk_list_store_remove(GTK_LIST_STORE(liststore), iter);
+  g_object_unref( sf );
+}
+
+
 void		OnRemoveUnused (gpointer data, gint action, GtkWidget *widget)
 {
+  PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
+  gchar		    *MediaType;
+  PitiviSourceFile  *sf;
+  GtkTreeModel	*model;
+  GtkListStore	*liststore;
+  GtkTreeIter	listiter;
+  GtkTreeIter	iter;
+  gint		i, nb;
   
+  model = gtk_tree_view_get_model(GTK_TREE_VIEW(self->private->treeview));
+  
+  if (gtk_tree_model_iter_n_children(model, NULL) == 1)
+    {
+      gtk_tree_model_get_iter_first (model, &iter);
+      if (gtk_tree_model_iter_n_children(model, &iter) == 0)
+	return;
+    }
+  
+  liststore = get_liststore_for_bin (self, 0);
+  gtk_tree_model_get_iter_first (GTK_TREE_MODEL(liststore), &listiter);
+  for ( nb = gtk_tree_model_iter_n_children (GTK_TREE_MODEL(liststore) , NULL), i = 0; liststore && i < nb;)
+    {
+      gtk_tree_model_get (GTK_TREE_MODEL(liststore), &listiter, TEXT_LISTCOLUMN3, &MediaType, -1);
+      gtk_tree_model_get (GTK_TREE_MODEL(liststore), &listiter, POINTER_LISTCOLUMN7, &sf, -1);
+      if (strcmp(MediaType, "Bin") && !sf->nbbins)
+	{
+	  remove_sourcefile (self, sf, &i, liststore, &listiter);
+	  nb = gtk_tree_model_iter_n_children (GTK_TREE_MODEL(liststore) , NULL);
+	}
+      else
+	{
+	  gtk_tree_model_iter_next(GTK_TREE_MODEL(liststore), &listiter);
+	  i++;
+	}
+    }
 }
 
 void		OnRemoveBin (gpointer data, gint action, GtkWidget *widget)
@@ -1616,6 +1668,7 @@ GtkWidget	*create_projectview(PitiviSourceListWindow *self)
   
   return pHpaned;
 }
+
 void	
 pitivi_sourcelistwindow_recurse_into_folder(PitiviSourceListWindow *self, 
 					    gchar *parent_name)
@@ -1633,6 +1686,7 @@ pitivi_sourcelistwindow_recurse_into_folder(PitiviSourceListWindow *self,
     {
       self->private->filepath = file_list->data;
       if ((sf = pitivi_sourcelistwindow_set_file(self)))
+	g_printf ("filename :%s\n", sf->filename);
 	pitivi_projectsourcelist_set_file_property_by_name(((PitiviProjectWindows*)self)->project->sources, 
 							   parent_name, 
 							   sf->filename, 
@@ -1673,11 +1727,11 @@ void	pitivi_sourcelistwindow_load_project(PitiviSourceListWindow *self)
   GSList	*bin_list;
 
 
-  bin_list = pitivi_projectsourcelist_get_bin_list(((PitiviProjectWindows*)self)->project->sources);
+  bin_list = pitivi_projectsourcelist_get_bin_list (((PitiviProjectWindows*)self)->project->sources);
   while (bin_list)
     {
       pitivi_sourcelistwindow_set_bin(self, bin_list->data);
-      pitivi_sourcelistwindow_recurse_into_folder(self, bin_list->data);
+      pitivi_sourcelistwindow_recurse_into_folder (self, bin_list->data);
       bin_list = bin_list->next;
     }
 }
