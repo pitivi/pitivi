@@ -26,28 +26,48 @@
 #include "pitivi.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-toolboxwindow.h"
-
+#include "pitivi-newprojectwindow.h"
 
 struct _PitiviMainAppPrivate
 {
   /* instance private members */
   gboolean dispose_has_run;
   PitiviToolboxWindow *tbxwin;
+  PitiviNewProjectWindow *win_new_project;
 };
 
 /*
  * forward definitions
  */
 
+gboolean	pitivi_destroy_newproject(GtkWidget *widget, GdkEvent *event, gpointer window);
+
 /*
  * Insert "added-value" functions here
  */
+
+gboolean	
+pitivi_destroy_newproject(GtkWidget *widget, GdkEvent *myevent, gpointer window)
+{
+/*   GdkEvent *event; */
+  
+/*   event = gdk_event_new (GDK_DELETE); */
+   
+/*   event->any.window = g_object_ref (widget->window); */
+/*   event->any.send_event = TRUE; */
+   
+/*   gtk_main_do_event (event); */
+/*   gdk_event_free (event); */
+  gtk_widget_destroy( widget );
+  printf("toto\n");
+  return FALSE;
+}
+
 void	
 pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
 {
   gtk_main_quit();
 }
-
 
 PitiviMainApp *
 pitivi_mainapp_new (void)
@@ -98,6 +118,14 @@ pitivi_mainapp_instance_init (GTypeInstance * instance, gpointer g_class)
   g_signal_connect(G_OBJECT(self->private->tbxwin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
   gtk_widget_show_all (GTK_WIDGET (self->private->tbxwin));
+  
+  /* New Project window */
+  self->private->win_new_project = pitivi_newprojectwindow_new();
+  
+/*   g_signal_connect(G_OBJECT(self->private->win_new_project), "delete_event", */
+/* 		   G_CALLBACK(pitivi_destroy_newproject), NULL ); */
+  
+  gtk_widget_show_all ( GTK_WIDGET (self->private->win_new_project) );
 }
 
 static void
@@ -130,7 +158,7 @@ pitivi_mainapp_finalize (GObject * object)
    * Here, complete object destruction. 
    * You might not need to do much... 
    */
-
+  
   g_free (self->private);
 }
 
@@ -211,13 +239,13 @@ pitivi_mainapp_get_type (void)
     {
       static const GTypeInfo info = {
 	sizeof (PitiviMainAppClass),
-	NULL,			/* base_init */
-	NULL,			/* base_finalize */
+	NULL,				/* base_init */
+	NULL,				/* base_finalize */
 	pitivi_mainapp_class_init,	/* class_init */
-	NULL,			/* class_finalize */
-	NULL,			/* class_data */
+	NULL,				/* class_finalize */
+	NULL,				/* class_data */
 	sizeof (PitiviMainApp),
-	0,			/* n_preallocs */
+	0,				/* n_preallocs */
 	pitivi_mainapp_instance_init	/* instance_init */
       };
       type = g_type_register_static (G_TYPE_OBJECT,
