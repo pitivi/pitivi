@@ -26,6 +26,7 @@
 #include <gtk/gtk.h>
 #include "pitivi-toolbox.h"
 #include "pitivi-toolboxwindow.h"
+#include "pitivi-menu.h"
 #include "pitivi.h"
 
 static GtkWindowClass *parent_class = NULL;
@@ -61,22 +62,26 @@ static void
 pitivi_toolboxwindow_instance_init (GTypeInstance * instance,
 				    gpointer g_class)
 {
+  PitiviMenu *menubar;
   PitiviToolboxWindow *self = (PitiviToolboxWindow *) instance;
-
+  
   self->private = g_new0 (PitiviToolboxWindowPrivate, 1);
-
+  
   /* initialize all public and private members to reasonable default values. */
-
+  
   self->private->dispose_has_run = FALSE;
-
+  
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
-
+  
   self->private->toolbox = pitivi_toolbox_new ();
   self->private->vbox = gtk_vbox_new (FALSE, 0);
+  menubar = pitivi_menu_new (GTK_WIDGET (self), PITIVI_DEF_MENUBAR_FILENAME);
   gtk_box_pack_start (GTK_BOX (self->private->vbox),
-		      GTK_WIDGET (self->private->toolbox), FALSE, FALSE, 0);
+		      GTK_WIDGET (menubar->public->menu), FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->vbox),
+		     GTK_WIDGET (self->private->toolbox), FALSE, FALSE, 0);
   gtk_container_add (GTK_CONTAINER (self), self->private->vbox);
 }
 

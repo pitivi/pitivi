@@ -27,17 +27,20 @@
 #include <gst/gst.h>
 #include "pitivi.h"
 #include "pitivi-mainapp.h"
+#include "pitivi-menu.h"
 
 int
 main (int argc, char **argv)
 {
   PitiviMainApp *mainapp;
-
+ 
+ 
   gtk_init (&argc, &argv);
   gst_init (&argc, &argv);
-
+ 
   /* We create a PitiviMainApp */
   mainapp = pitivi_mainapp_new ();
+  
 
   /* And we start the fun */
   gtk_main ();

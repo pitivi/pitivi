@@ -89,7 +89,7 @@ pitivi_mainapp_instance_init (GTypeInstance * instance, gpointer g_class)
   PitiviMainApp *self = (PitiviMainApp *) instance;
 
   self->private = g_new0 (PitiviMainAppPrivate, 1);
-
+  
   /* initialize all public and private members to reasonable default values. */
 
   self->private->dispose_has_run = FALSE;
@@ -97,18 +97,11 @@ pitivi_mainapp_instance_init (GTypeInstance * instance, gpointer g_class)
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
+  pitivi_stock_icons_register ();
   self->private->tbxwin = pitivi_toolboxwindow_new ();
   g_signal_connect(G_OBJECT(self->private->tbxwin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
   gtk_widget_show_all (GTK_WIDGET (self->private->tbxwin));
-
-  /* Source List Window */
-  self->private->srclistwin = pitivi_sourcelistwindow_new();
-  gtk_widget_show_all(GTK_WIDGET(self->private->srclistwin));
-  
-  /* New Project window */
-  self->private->win_new_project = pitivi_newprojectwindow_new();
-  gtk_widget_show_all ( GTK_WIDGET (self->private->win_new_project) );
 }
 
 static void

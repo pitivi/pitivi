@@ -19,7 +19,10 @@ pitivi_SOURCES		= \
 	pitivi-toolbox.c \
 	pitivi-toolboxwindow.c	\
 	pitivi-sourcelistwindow.c \
-	pitivi-newprojectwindow.c	\
+	pitivi-newprojectwindow.c  \
+	pitivi-stock-icons.c \
+	pitivi-menu-actions.c \
+	pitivi-menu.c \
 	main.c
 
 # our CFLAGS and LDFLAGS used for compiling and linking
