@@ -31,11 +31,6 @@
  */
 #include "pitivi-projectwindows.h"
 
-#include "../pixmaps/stop.xpm"
-#include "../pixmaps/play.xpm"
-#include "../pixmaps/pause.xpm"
-#include "../pixmaps/forward.xpm"
-#include "../pixmaps/backward.xpm"
 
 /*
  * Type macros.
@@ -78,7 +73,5 @@ GType pitivi_viewerwindow_get_type (void);
  */
 
 PitiviViewerWindow	*pitivi_viewerwindow_new();
-void	pitivi_viewerwindow_set_source(PitiviViewerWindow *self, 
-				       PitiviSourceFile *sf);
 
 #endif

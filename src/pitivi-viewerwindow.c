@@ -36,14 +36,8 @@
 #include "pitivi-debug.h"
 
 static     PitiviProjectWindowsClass *parent_class;
+
 static	   GdkPixmap *pixmap = NULL;
-
-
-enum {
-  PLAY,
-  PAUSE,
-  STOP
-};
 
 static GtkTargetEntry TargetEntries[] =
 {
@@ -51,6 +45,12 @@ static GtkTargetEntry TargetEntries[] =
 };
 
 static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
+
+enum {
+  PLAY,
+  PAUSE,
+  STOP
+};
 
 struct _PitiviViewerWindowPrivate
 {
@@ -67,20 +67,7 @@ struct _PitiviViewerWindowPrivate
   GstElement	*spider;
   
   GtkWidget	*main_vbox;
-  GtkWidget	*toolbar; 
-  GtkWidget	*button_play;
-  GtkWidget	*image_play;
-  GtkWidget	*image_pause;
-
-  GtkWidget	*button_stop;
-  GtkWidget	*button_backward;
-  GtkWidget	*button_forward;
   GtkWidget	*video_area;
-  GtkWidget	*timeline;
-
-  gdouble	timeline_min;
-  gdouble	timeline_max;
-  gdouble	timeline_step;
 
 };
 
@@ -88,242 +75,18 @@ struct _PitiviViewerWindowPrivate
  * forward definitions
  */
 
-GstElement	*get_file_source(GstElement *pipeline)
-{
-  GList		*pipelist;
-  GstElement	*elem;
-  
 
-  pipelist = (GList *) gst_bin_get_list(GST_BIN(pipeline)); 
-  elem = NULL;
+// #####################################################################
+// ############################### TODO ################################
+// #####################################################################
 
- 
-  while (pipelist)
-    {
-      elem = (GstElement*)pipelist->data;
-      if (strstr(gst_element_get_name(elem), "bin_"))
-	break;
-      pipelist = pipelist->next;
-    }
-  
-  if (GST_IS_BIN(elem))
-    {
-      pipelist = (GList *) gst_bin_get_list(GST_BIN(elem));
-      while (pipelist)
-	{
-	  elem = (GstElement*)pipelist->data;
-	  if (strstr(gst_element_get_name(elem), "src_"))
-	    break;
-	  pipelist = pipelist->next;
-	}
-    }
-  else
-    return NULL;
-  return elem;
-}
+// functions PLAY(POS) PAUSE AVANCE(STEP) RECULE(STEP)
+// geometry 4:3 16:9 ....
+// double click = mazimize / unmaximize
+// mettre a jour le graph
+// relier aux controls de la timeline
+// FREE ALL VAR AT THE END
 
-gboolean	do_seek(GstElement *elem, gint64 value)
-{
-  GstEvent	*event;
-  GstPad	*pad;
-  gboolean	res;
-
-  pad = gst_element_get_pad(elem, "src");
-  event = gst_event_new_seek (
-			      GST_FORMAT_TIME |	    /* seek on nanoseconds */
-			      GST_SEEK_METHOD_SET | /* set the absolute position */
-			      GST_SEEK_FLAG_FLUSH,  /* flush any pending data */
-			      value);	    /* the seek offset in bytes */
-  
-  /* res = gst_element_send_event (GST_ELEMENT (elem), event); */
-  if (!(res = gst_pad_send_event(pad, event)))
-    {
-      g_warning ("seek failed");
-      return FALSE;
-    }
-  return TRUE;
-}
-
-gint64	do_query(GstElement *elem, GstQueryType type)
-{
-  GstFormat	format;
-  gint64	value;
-
-  format = GST_FORMAT_TIME;
-  if (!gst_element_query(elem, type, &format, &value))
-    {
-      g_printf("Couldn't perform requested query\n");
-      return -1;
-    }
-
-  return value;
-}
-
-void
-acitve_widget (GtkWidget *bin, GtkWidget *w1, GtkWidget *w2)
-{
-  gtk_container_remove (GTK_CONTAINER (bin), w2);
-  gtk_container_add (GTK_CONTAINER (bin), w1);
-  return ;
-}
-
-void	video_play(GtkWidget *widget, gpointer data)
-{
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  GdkEventExpose ev;
-  gboolean retval;
-
-  if (self->private->play_status == PLAY) {
-    g_print ("[CallBack]:video_pause\n");
-    self->private->play_status = PAUSE;
-    gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
-  } else if (self->private->play_status == PAUSE) {
-    g_print ("[CallBack]:video_play\n");
-    self->private->play_status = PLAY;
-    if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
-      g_warning("Couldn't set the project pipeline to PLAYING!");
-  } else if (self->private->play_status == STOP) {
-    g_print ("[CallBack]:video_play\n");
-    self->private->play_status = PLAY;
-    gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
-  }
-  gtk_signal_emit_by_name (GTK_OBJECT (self->private->video_area), "expose_event", &ev, &retval);
-
-  pitivi_printf_element(project->pipeline);
-  return ;
-}
-
-void	video_stop(GtkWidget *widget, gpointer data)
-{
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  gboolean res;
-  GstElement *elem;
-  gint64	value;
-
-  g_print ("[CallBack]:video_stop\n");
-  //gst_element_set_state(project->pipeline, GST_STATE_NULL);
-  gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
-  self->private->play_status = STOP;
-
-  elem = get_file_source(project->pipeline);
-
-  /* rewind the movie */
-  do_seek(elem, 0);
-  
-  /* query total size */
-  value  = do_query(elem, GST_QUERY_TOTAL);
-
-  /* reset the viewer timeline */
-  gtk_range_set_value(GTK_RANGE (self->private->timeline) , 0);
-  return ;
-}
-
-void	video_backward(GtkWidget *widget, gpointer data)
-{
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-
-  gdouble	time;
-
-  g_print ("[CallBack]:video_backward\n");
-
-  time = gtk_range_get_value(GTK_RANGE (self->private->timeline));
-  if (time >= (self->private->timeline_min + self->private->timeline_step))
-    time -= self->private->timeline_step;
-  else
-    time = self->private->timeline_min;
-  gtk_range_set_value(GTK_RANGE (self->private->timeline) , time);
-  return ;
-}
-
-void	video_forward(GtkWidget *widget, gpointer data)
-{
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-
-  gdouble	time;
-
-  g_print ("[CallBack]:video_forward\n");
-
-  time = gtk_range_get_value(GTK_RANGE (self->private->timeline));
-  if (time <= (self->private->timeline_max - self->private->timeline_step))
-    time += self->private->timeline_step;
-  else
-    time = self->private->timeline_max;
-  gtk_range_set_value(GTK_RANGE (self->private->timeline) , time);
-  return ;
-}
-
-gboolean	pause_stream(GtkWidget *widget,
-			    GdkEventButton *event,
-			    gpointer data)
-{
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-
-  g_printf("you press me\n");
-  gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
-
-  return FALSE;
-}
-
-gboolean	seek_stream(GtkWidget *widget,
-			    GdkEventButton *event,
-			    gpointer data)
-{
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  gboolean	res;
-  GstElement	*elem;
-  gint64	value1;
-  gint64	value2;
-  gdouble	pourcent;
-
-  g_printf("you release me\n");
-  elem = get_file_source(project->pipeline);
-
-  
-  /* query total size */
-  value1  = do_query(elem, GST_QUERY_TOTAL);
-  
-  pourcent = gtk_range_get_value(GTK_RANGE (widget));
-
-  value2 = (gint64)((pourcent * value1) / 500);
-  /* rewind the movie */
-  if (do_seek(elem, value2))
-    g_printf("performing  seek\n");
-  
-  gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
-  return FALSE;
-}
-void	move_timeline(GtkWidget *widget, gpointer data)
-{
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-
-  g_print ("[CallBack]:move_timeline:%g\n", gtk_range_get_value(GTK_RANGE (widget)));
-
-  return ;
-}
-
-GtkWidget *
-get_image (gpointer data, char **im_name)
-{
-  GtkWidget	* win;
-  GdkColormap	*colormap;
-  GdkBitmap	*mask;
-  GdkPixmap	*pixmap;
-  GtkWidget	*pixmapw;
-
-  win = (GtkWidget *) data;
-  colormap = gtk_widget_get_colormap (win);
-  pixmap = gdk_pixmap_colormap_create_from_xpm_d (win->window, 
-						  colormap, 
-						  &mask, 
-						  NULL,
-						  im_name);
-  pixmapw = gtk_image_new_from_pixmap (pixmap, mask);
-  return pixmapw;
-}  
 
 static gint pitivi_viewerwindow_configure_event( GtkWidget         *widget,
 						 GdkEventConfigure *event )
@@ -357,175 +120,35 @@ static gint pitivi_viewerwindow_expose_event( GtkWidget      *widget,
   return FALSE;
 }
 
-static void
-pitivi_viewerwindow_drag_data_received (GtkWidget *widget, GdkDragContext *drag_context,
-					gint x, gint y, GtkSelectionData *data,
-					guint info, guint time, gpointer user_data)
-{
-  PitiviSourceFile	*sf;
-  PitiviViewerWindow *self = (PitiviViewerWindow *) user_data;
-  
-  g_printf("drag-data-received viewer\n");
-  sf = (void *) data->data;
-  g_printf("Received file [%s] in viewer\n",
-	   sf->filename);
-  g_printf("pipeline ==> %p\n", sf->pipeline);
-
-  pitivi_viewerwindow_set_source(self, sf);
-}
-
-static gboolean
-pitivi_viewerwindow_drag_drop (GtkWidget *widget, GdkDragContext *dc,
-			       gint x, gint y, guint time, gpointer user_data)
-{
-
-  g_printf("drag-drop viewer\n");
-  gtk_drag_finish (dc, TRUE, FALSE, time);
-
-
-  return TRUE;
-}
-
-void	pitivi_viewerwindow_set_source(PitiviViewerWindow *self, 
-				       PitiviSourceFile *sf)
-{
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  GstElement	*elem;
-  GList		*binlist;
-
-  elem = NULL;
-  self->private->play_status = STOP;
-  binlist = (GList *) gst_bin_get_list(GST_BIN(sf->pipeline));
-  while (binlist)
-    {
-      elem = (GstElement*)binlist->data;
-      if (strstr(gst_element_get_name(elem), "src_"))
-	break;
-      binlist = binlist->next;
-    }
-  //self->private->timeline sf->length
-  // gtk_range_set_range (self->private);
-  do_seek(elem, 0);
-  // pitivi_project_set_source_element(project, sf->pipeline);
-}
-
 void
 create_gui (gpointer data)
 {
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-  GtkWidget	*image;
+  PitiviViewerWindow	*self = (PitiviViewerWindow *) data;
 
   // main Vbox
   self->private->main_vbox = gtk_vbox_new (FALSE, FALSE);
   gtk_container_add (GTK_CONTAINER (self), self->private->main_vbox);
-  gtk_widget_show (self->private->main_vbox);
 
   // Create Video Display (Drawing Area)
   self->private->video_area = gtk_drawing_area_new ();
-  gtk_widget_show (self->private->video_area);
 
   /* Signals used to handle backing pixmap */
-
   g_signal_connect (G_OBJECT (self->private->video_area), "expose_event",
 		    G_CALLBACK (pitivi_viewerwindow_expose_event), NULL);
   g_signal_connect (G_OBJECT (self->private->video_area), "configure_event",
 		    G_CALLBACK (pitivi_viewerwindow_configure_event), NULL);
-
   gtk_widget_set_events (self->private->video_area, GDK_EXPOSURE_MASK
 			 | GDK_LEAVE_NOTIFY_MASK
 			 | GDK_BUTTON_PRESS_MASK
 			 | GDK_POINTER_MOTION_MASK
 			 | GDK_POINTER_MOTION_HINT_MASK);
 
-  gtk_drag_dest_set(GTK_WIDGET(self->private->video_area), 
-		    GTK_DEST_DEFAULT_ALL,
-		    TargetEntries, iNbTargetEntries,
-		    GDK_ACTION_COPY);
-
-  g_signal_connect (G_OBJECT(self->private->video_area), "drag_data_received",
-		    G_CALLBACK (pitivi_viewerwindow_drag_data_received), self);
-  g_signal_connect (G_OBJECT(self->private->video_area), "drag_drop",
-		    G_CALLBACK (pitivi_viewerwindow_drag_drop), self);
-
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->video_area, TRUE, TRUE, 0);
+  //gtk_box_pack_start (GTK_BOX (self->private->main_vbox), 
+  //	      self->private->video_area, TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (self->private->main_vbox), 
+		     self->private->video_area);
   
-  // Create hbox for toolbar
-  self->private->toolbar = gtk_hbox_new (FALSE, FALSE);
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->toolbar, FALSE, TRUE, 0);
-  gtk_widget_show (self->private->toolbar);
-
-  // Buttons for Toolbar
-
-  // Button Backward
-  image = get_image (self, backward_xpm);
-  self->private->button_backward = gtk_button_new ();
-  gtk_container_add (GTK_CONTAINER (self->private->button_backward), image);
-  //gtk_widget_set_size_request (GTK_WIDGET (self->private->button_backward), 30, 17);
-  gtk_signal_connect (GTK_OBJECT (self->private->button_backward), "pressed", 
-                      GTK_SIGNAL_FUNC (video_backward), self);
-  gtk_box_pack_start (GTK_BOX (self->private->toolbar), 
-		      self->private->button_backward, FALSE, TRUE, 0);
-  gtk_widget_show (image);
-  gtk_widget_show (self->private->button_backward);
-
-  // Button Play
-  self->private->image_play = get_image (self, play_xpm);
-  self->private->image_pause = get_image (self, pause_xpm);
-  self->private->button_play = gtk_button_new ();
-  gtk_container_add (GTK_CONTAINER (self->private->button_play), 
-		     self->private->image_play);
-  //gtk_container_add (GTK_CONTAINER (self->private->button_play), 
-  //self->private->image_pause);
-  gtk_signal_connect (GTK_OBJECT (self->private->button_play), "clicked", 
-                      GTK_SIGNAL_FUNC (video_play), self);
-  gtk_box_pack_start (GTK_BOX (self->private->toolbar), self->private->button_play, FALSE, TRUE, 0);
-  //gtk_widget_set_size_request (self->private->button_play, 60, 17);
-  gtk_widget_show (self->private->image_pause);
-  gtk_widget_show (self->private->image_play);
-  gtk_widget_show (self->private->button_play);
- 
-  // Button Forward
-  image = get_image (self, forward_xpm);
-  self->private->button_forward = gtk_button_new ();
-  gtk_container_add (GTK_CONTAINER (self->private->button_forward), image);
-  gtk_widget_set_size_request (GTK_WIDGET (self->private->button_forward), 30, 17);
-  gtk_signal_connect (GTK_OBJECT (self->private->button_forward), "pressed", 
-                      GTK_SIGNAL_FUNC (video_forward), self);
-  gtk_box_pack_start (GTK_BOX (self->private->toolbar),
-		      self->private->button_forward, FALSE, TRUE, 0);
-  gtk_widget_show (image);
-  gtk_widget_show (self->private->button_forward);
-
-  // Button Stop
-  image = get_image (self, stop_xpm);
-  self->private->button_stop = gtk_button_new ();
-  gtk_container_add (GTK_CONTAINER (self->private->button_stop), image);
-  //gtk_widget_set_size_request (GTK_WIDGET (self->private->button_stop), 30, 17);
-  gtk_signal_connect (GTK_OBJECT (self->private->button_stop), "clicked", 
-                      GTK_SIGNAL_FUNC (video_stop), self);
-  gtk_box_pack_start (GTK_BOX (self->private->toolbar),
-		      self->private->button_stop, FALSE, TRUE, 0);
-  gtk_widget_show (image);
-  gtk_widget_show (self->private->button_stop);
-
-  // Timeline
-  self->private->timeline = gtk_hscale_new_with_range(self->private->timeline_min, 
-						      self->private->timeline_max, 
-						      self->private->timeline_step);
-  gtk_scale_set_draw_value (GTK_SCALE (self->private->timeline), FALSE);
-  gtk_widget_show (self->private->timeline);
-
-
-  gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-press-event", 
-		      GTK_SIGNAL_FUNC (pause_stream), self);
-  gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-release-event", 
-		      GTK_SIGNAL_FUNC (seek_stream), self);
-  gtk_signal_connect (GTK_OBJECT (self->private->timeline), "value-changed", 
-		      GTK_SIGNAL_FUNC (move_timeline), self);
-  gtk_box_pack_start (GTK_BOX (self->private->toolbar), 
-		      self->private->timeline, TRUE, TRUE, 0);
-  
-  gtk_widget_show (GTK_WIDGET (self));
+  gtk_widget_show_all (GTK_WIDGET (self));
 
   return;
 }
@@ -548,7 +171,7 @@ create_stream (gpointer data)
   
 //  pitivi_project_set_audio_output(project, audiosink);
 
-  self->private->sink = gst_element_factory_make ("xvimagesink", "video_display");
+  self->private->sink = gst_element_factory_make ("ximagesink", "video_display");
   g_assert (self->private->sink != NULL);
   pitivi_project_set_video_output(project, self->private->sink);
 
@@ -592,24 +215,28 @@ gboolean	idle_func_video (gpointer data)
       ( GST_X_OVERLAY ( self->private->sink ),
 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
     gst_bin_iterate (GST_BIN (project->pipeline));
-    elem = get_file_source(project->pipeline);
     
-    if (elem) /* we have a true source */
+    /*
+      elem = get_file_source(project->pipeline);
+      if (elem) 
       {
-	value1 = do_query(elem, GST_QUERY_POSITION);
-	value2 = do_query(elem, GST_QUERY_TOTAL);
-	pourcent = (value1 * 100) / value2;
-	
-	pourcent *= 5;
-
-	gtk_range_set_value(GTK_RANGE (self->private->timeline) , pourcent);
+      value1 = do_query(elem, GST_QUERY_POSITION);
+      value2 = do_query(elem, GST_QUERY_TOTAL);
+      pourcent = (value1 * 100) / value2;
+      
+      pourcent *= 5;
+      
+      gtk_range_set_value(GTK_RANGE (self->private->timeline) , pourcent);
       }
+    */
   }
   return TRUE;
 }
 
 /*
- * Insert "added-value" functions here
+ * ################################################################################## 
+ * ################### Insert "added-value" functions here ##########################
+ * ################################################################################## 
  */
 
 PitiviViewerWindow *
@@ -669,17 +296,7 @@ pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->spider = NULL;
 
   self->private->main_vbox = NULL;
-  self->private->toolbar = NULL;
-  self->private->button_play = NULL;
-  self->private->button_stop = NULL;
-  self->private->button_backward = NULL;
-  self->private->button_forward = NULL;
   self->private->video_area = NULL;
-  self->private->timeline = NULL;
-
-  self->private->timeline_min = 0;
-  self->private->timeline_max = 500;
-  self->private->timeline_step = 1;
   
   gtk_window_set_title (GTK_WINDOW (self), PITIVI_VIEWER_DF_TITLE);
 }
