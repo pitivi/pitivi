@@ -266,18 +266,20 @@ pitivi_settings_ajout_element (GList *list, GstElementFactory *factory, gboolean
 	tmp_caps = (GstCaps *) padtemplate->caps;
 	PitiviSettingsMimeType *tmp_mime;
 	
-	if ((tmp_mime = pitivi_settings_search_flux (list, tmp_caps))) {
-	  tmp_mime = pitivi_settings_ajout_factory_element (tmp_mime, 
-							    (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
-							    MY_PAD);
-	  
-	} else {
-	  tmp_mime = pitivi_settings_init_mime_type (tmp_caps);
-	  tmp_mime = pitivi_settings_ajout_factory_element (tmp_mime, 
-							    (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
-							    MY_PAD);
-	  list = g_list_append (list, (gpointer) tmp_mime);
-	  
+	if (!gst_caps_is_any (tmp_caps)) {
+	  if ((tmp_mime = pitivi_settings_search_flux (list, tmp_caps))) {
+	    tmp_mime = pitivi_settings_ajout_factory_element (tmp_mime, 
+							      (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
+							      MY_PAD);
+	    
+	  } else {
+	    tmp_mime = pitivi_settings_init_mime_type (tmp_caps);
+	    tmp_mime = pitivi_settings_ajout_factory_element (tmp_mime, 
+							      (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
+							      MY_PAD);
+	    list = g_list_append (list, (gpointer) tmp_mime);
+	    
+	  }
 	}
 	/*
 	  for (j = 0; j < padtemplate->caps->structs->len; j++) {
