@@ -219,19 +219,19 @@ gnl_composition_find_entry_priority (GnlComposition *comp, GstClockTime time,
       
       if (entry->object->priority >= minpriority) {
 	gnl_object_get_start_stop (entry->object, &start, &stop);
-	GST_INFO("Comparing %s [%lld:%02lld:%03lld]->[%lld:%02lld:%03lld] priority:%d",
-		 gst_element_get_name(GST_ELEMENT(entry->object)),
-		 GST_M_S_M(start), GST_M_S_M(stop),
-		 gnl_object_get_priority(entry->object));
 
 	if ((start <= time && start + (stop - start) > time)
 	    && (!tmp || (tmp && tmp->object->priority > entry->object->priority))) {
 	  tmp = entry;
-	  /*	  GST_INFO("found tmp[%s]", gst_element_get_name(GST_ELEMENT(tmp->object)));*/
 	}
       }
       objects = g_list_next(objects);
     }
+    GST_INFO ("Returning [%s] [%" GST_TIME_FORMAT "]->[%" GST_TIME_FORMAT "] priority:%d",
+	      gst_element_get_name (GST_ELEMENT (tmp->object)),
+	      GST_TIME_ARGS (tmp->object->start),
+	      GST_TIME_ARGS (tmp->object->stop),
+	      tmp->object->priority);
     return tmp;
   } else
     while (objects) {
@@ -385,20 +385,55 @@ child_active_changed (GnlObject *object, GParamSpec *arg, gpointer udata)
 {
   GnlComposition *comp = GNL_COMPOSITION (udata);
 
-  GST_INFO("%s : State of child %s has changed",
+  GST_INFO("%s [State:%d]: State of child %s has changed to %s",
 	   gst_element_get_name(GST_ELEMENT (comp)),
-	   gst_element_get_name(GST_ELEMENT (object)));
+	   gst_element_get_state (GST_ELEMENT (comp)),
+	   gst_element_get_name(GST_ELEMENT (object)),
+	   (object->active) ? "active" : "NOT active");
   if (object->active) {
     GST_FLAG_UNSET (GST_ELEMENT (object), GST_ELEMENT_LOCKED_STATE);
-    gst_element_set_state (GST_ELEMENT (object), GST_STATE_PAUSED);
     comp->active_objects = g_list_append (comp->active_objects, object);
     comp->to_remove = g_list_remove (comp->to_remove, object);
   } else {
-    gst_element_set_state (GST_ELEMENT (object), GST_STATE_READY);
     GST_FLAG_SET (GST_ELEMENT (object), GST_ELEMENT_LOCKED_STATE);
     comp->active_objects = g_list_remove(comp->active_objects, object);
   }
 }
+
+/**
+ * gnl_composition_set_default_source
+ * @comp: The #GnlComposition
+ * @source: The #GnlSource we want to set as default source for this composition
+ *
+ */
+
+void
+gnl_composition_set_default_source (GnlComposition *comp,
+				    GnlSource *source)
+{
+  GnlCompositionEntry	*entry;
+
+  gnl_object_set_priority (GNL_OBJECT (source), G_MAXINT);
+  gnl_object_set_start_stop (GNL_OBJECT (source), 0LL, GST_CLOCK_TIME_NONE - 1);
+
+  entry = g_new0(GnlCompositionEntry, 1);
+  gst_object_ref (GST_OBJECT (source));
+  gst_object_sink (GST_OBJECT (source));
+  entry->object = GNL_OBJECT (source);
+
+  GNL_OBJECT(source)->comp_private = entry;
+  if (gst_element_get_pad (GST_ELEMENT (source), "src") == NULL) {
+    gnl_source_get_pad_for_stream (source, "src");
+  }
+  entry->activehandler = g_signal_connect(GNL_OBJECT (source), "notify::active", G_CALLBACK (child_active_changed), comp);
+  comp->objects = g_list_insert_sorted (comp->objects, entry, _entry_compare_func);
+
+  GST_FLAG_SET (GST_ELEMENT (source), GST_ELEMENT_LOCKED_STATE);
+  
+  GST_BIN_CLASS (parent_class)->add_element (GST_BIN (comp), GST_ELEMENT (source));
+  GST_INFO ("Added default source to composition");
+}
+
 
 /**
  * gnl_composition_add_object:
@@ -424,9 +459,7 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
   g_return_if_fail (GNL_IS_COMPOSITION (comp));
 
   if (GNL_IS_OBJECT(object)) {
-/*     gst_object_ref(GST_OBJECT(object)); */
-  
-    entry = g_malloc (sizeof (GnlCompositionEntry));
+    entry = g_new0(GnlCompositionEntry , 1);
 
     gst_object_ref (GST_OBJECT (object));
     gst_object_sink (GST_OBJECT (object));
@@ -445,7 +478,9 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
     entry->activehandler = g_signal_connect(object, "notify::active", G_CALLBACK (child_active_changed), comp);
   
     comp->objects = g_list_insert_sorted (comp->objects, entry, _entry_compare_func);
-  
+
+/*     GST_FLAG_SET (GST_ELEMENT (object), GST_ELEMENT_LOCKED_STATE); */
+
     composition_update_start_stop (comp);
   }
   GST_BIN_CLASS(parent_class)->add_element(GST_BIN(comp), GST_ELEMENT(object)); 
@@ -498,10 +533,10 @@ gnl_composition_remove_object (GnlComposition *comp, GnlObject *object)
   comp->active_objects = g_list_remove (comp->active_objects, object);
   comp->objects = g_list_delete_link (comp->objects, lentry);
 
-  g_free (lentry->data);
+  GST_BIN_CLASS (parent_class)->remove_element(GST_BIN (comp), GST_ELEMENT (object));
+
   composition_update_start_stop (comp);
 
-  GST_BIN_CLASS (parent_class)->remove_element(GST_BIN (comp), GST_ELEMENT (object));
 }
 
 /*
@@ -524,6 +559,10 @@ gnl_composition_schedule_object (GnlComposition *comp, GnlObject *object,
 	   gst_element_get_name(GST_ELEMENT(object)),
 	   start, stop, GST_ELEMENT_SCHED(object), GST_IS_SCHEDULER(GST_ELEMENT_SCHED(object)));
 
+  g_assert (start < stop);
+
+  if (!pad)
+    return TRUE;
   /* Activate object */
   gnl_object_set_active(object, TRUE);
 
@@ -579,13 +618,21 @@ gnl_composition_schedule_operation (GnlComposition *comp, GnlOperation *oper,
     GstPad *newpad = NULL;
     GstPad *sinkpad = GST_PAD (pads->data);
 
+/*     GST_INFO ("Trying pad %s:%s Real[%s:%s]", */
+/* 	      GST_DEBUG_PAD_NAME(sinkpad), */
+/* 	      GST_DEBUG_PAD_NAME(GST_REAL_PAD (sinkpad))); */
     pads = g_list_next (pads);
 
     if (GST_PAD_IS_SRC (sinkpad))
       continue;
 
     minprio += 1;
-    gnl_composition_schedule_entries (comp, start, stop, minprio, &newpad);
+    if (!pad) {
+      gnl_composition_schedule_entries (comp, start, stop, minprio, NULL);
+      continue;
+    }
+    if (!gnl_composition_schedule_entries (comp, start, stop, minprio, &newpad))
+      return FALSE;
 
     GST_INFO ("Linking source pad %s:%s to operation pad %s:%s",
 	      GST_DEBUG_PAD_NAME (newpad),
@@ -597,7 +644,9 @@ gnl_composition_schedule_operation (GnlComposition *comp, GnlOperation *oper,
       gst_pad_unlink (newpad, GST_PAD_PEER (newpad));
     }
     if (!gst_pad_link (newpad, sinkpad)) {
-      GST_WARNING ("Couldn't link source pad to operation pad");
+      GST_WARNING ("Couldn't link source pad %s:%s to operation pad %s:%s",
+		   GST_DEBUG_PAD_NAME (newpad),
+		   GST_DEBUG_PAD_NAME (sinkpad));
       return FALSE;
     }
     GST_INFO ("pads were linked with caps:%s",
@@ -620,8 +669,42 @@ gnl_composition_deactivate_childs (GList	*childs)
   GST_INFO("deactivate childs %p", childs);
   for (next = NULL, tmp = childs; tmp; tmp = next) {
     next = g_list_next (tmp);
-    gst_element_set_state(GST_ELEMENT (tmp->data), GST_STATE_READY );
+/*     gst_element_set_state(GST_ELEMENT (tmp->data), GST_STATE_READY ); */
     gnl_object_set_active(GNL_OBJECT (tmp->data), FALSE);
+  }
+}
+
+void
+gnl_composition_activate_entries (GList	*entries)
+{
+  GList	*tmp;
+
+  for (tmp = entries; tmp ; tmp = g_list_next(tmp)) {
+    GnlCompositionEntry	*entry = (GnlCompositionEntry *) tmp->data;
+    gnl_object_set_active (GNL_OBJECT (entry->object), TRUE);
+  }
+}
+
+void
+gnl_composition_deactivate_entries (GList	*entries)
+{
+  GList	*tmp;
+
+  for (tmp = entries; tmp ; tmp = g_list_next(tmp)) {
+    GnlCompositionEntry	*entry = (GnlCompositionEntry *) tmp->data;
+    gnl_object_set_active (GNL_OBJECT (entry->object), FALSE);
+  }
+}
+
+void
+gnl_composition_activate_childs (GList *childs)
+{
+  GList	*tmp, *next;
+
+  GST_INFO ("Activating childs");
+  for (next = NULL, tmp = childs; tmp ; tmp = next) {
+    next = g_list_next (tmp);
+    gnl_object_set_active (GNL_OBJECT (tmp->data), TRUE);
   }
 }
 
@@ -650,7 +733,7 @@ gnl_composition_schedule_entries(GnlComposition *comp, GstClockTime start,
   GST_INFO("%s [%lld]->[%lld]  minprio[%d]",
 	   gst_element_get_name(GST_ELEMENT(comp)),
 	   start, stop, minprio);
-  
+  g_assert (start < stop);
   /* Find the object to schedule with a suitable priority */
   compentry = gnl_composition_find_entry_priority(comp, start, GNL_FIND_AT, minprio);
 
@@ -721,9 +804,9 @@ gnl_composition_schedule_entries(GnlComposition *comp, GstClockTime start,
   
   if (GNL_IS_OPERATION(obj))
     res = gnl_composition_schedule_operation(comp, GNL_OPERATION(obj), 
-					     start, stop, pad);
+					     start, comp->next_stop, pad);
   else
-    res = gnl_composition_schedule_object(comp, obj, start, stop, pad);
+    res = gnl_composition_schedule_object(comp, obj, start, comp->next_stop, pad);
  
   return res;
 }
@@ -749,7 +832,8 @@ probe_fired (GstProbe *probe, GstData **data, gpointer user_data)
       if (!gst_event_discont_get_value (GST_EVENT(*data), GST_FORMAT_TIME, &(GNL_OBJECT(comp)->current_time)))
 	GST_WARNING ("Got discont, but couldn't get GST_TIME value...");
   }
-  GST_INFO("%s current_time [%lld] -> [%3lldH:%3lldm:%3llds:%3lld]", 
+  GST_INFO("[Probe:%p] %s current_time [%lld] -> [%3lldH:%3lldm:%3llds:%3lld]", 
+	   probe,
 	   gst_element_get_name(GST_ELEMENT(comp)),
 	   GNL_OBJECT (comp)->current_time,
 	   GNL_OBJECT (comp)->current_time / (3600 * GST_SECOND),
@@ -775,30 +859,54 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
 	   GST_EVENT_SEEK_OFFSET(event),
 	   GST_EVENT_SEEK_ENDOFFSET(event));
 
+  if (gst_element_get_state (GST_ELEMENT (comp)) != GST_STATE_PAUSED) {
+    GST_WARNING ("%s: Prepare while not in PAUSED",
+		 gst_element_get_name (GST_ELEMENT (comp)));
+    return FALSE;
+  }
   start_pos = GST_EVENT_SEEK_OFFSET (event);
   stop_pos  = GST_EVENT_SEEK_ENDOFFSET (event);
   comp->next_stop  = stop_pos;
   
   ghost = gst_element_get_pad (GST_ELEMENT (comp), "src");
   if (ghost) {    
-    GST_INFO("Existing ghost pad and probe, NOT removing");
+    GST_INFO("Existing ghost pad and probe, removing");
     /* Remove the GstProbe attached to this pad before deleting it */
     probe = gst_pad_get_element_private(ghost);
-    gst_pad_remove_probe(GST_PAD (GST_PAD_REALIZE (ghost)), probe);
+    gst_pad_remove_probe(GST_PAD (ghost), probe);
+    gst_probe_destroy (probe);
     gst_element_remove_pad (GST_ELEMENT (comp), ghost);
+    if (gst_element_get_pad (GST_ELEMENT (comp), "src"))
+      g_error ("We removed the ghost pad from the composition and it's still there !!!!");
   }
 
   gnl_composition_deactivate_childs (comp->active_objects);
   comp->active_objects = NULL;
 
-  /* Scbedule the entries from start_pos */
+  /* Do a first run to establish what the real stop_pos is */
+  GST_INFO ("Doing first run(s) to establish what the real stop time is");
+  gnl_composition_schedule_entries (comp, start_pos, stop_pos, 0, NULL);
+  while (stop_pos != comp->next_stop) {
+    stop_pos = comp->next_stop;
+    gnl_composition_schedule_entries (comp, start_pos, stop_pos, 0, NULL);
+  }
 
+  /* Scbedule the entries from start_pos */
+  
+  GST_INFO ("%s : Got the real time, now REALLY scheduling",
+	    gst_element_get_name (GST_ELEMENT (comp)));
   res = gnl_composition_schedule_entries (comp, start_pos,
-					  stop_pos, 0, &pad);
+					  comp->next_stop, 0, &pad);
+  GST_INFO ("%s : Finished really scheduling",
+	    gst_element_get_name (GST_ELEMENT (comp)));
+  if (!res)
+    GST_ERROR ("Something went awfully wrong while preparing %s",
+	       gst_element_get_name (GST_ELEMENT (comp)));
 
   if (pad) {
 
-    GST_INFO("Have a pad");
+    GST_INFO("%s : Have a pad",
+	     gst_element_get_name(GST_ELEMENT(object)));
 
     if (GST_PAD_IS_LINKED(pad)) {
       GST_WARNING ("pad %s:%s returned by scheduling is connected to %s:%s",
@@ -813,12 +921,16 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
     ghost = gst_element_add_ghost_pad (GST_ELEMENT (comp), 
 				       pad,
 				       "src");
-    if (!ghost)
-      GST_WARNING ("Wasn't able to create ghost src pad for composition %s",
-		   gst_element_get_name (GST_ELEMENT (comp)));
-    gst_pad_set_element_private(ghost, (gpointer) probe);
-    gst_pad_add_probe (GST_PAD (GST_PAD_REALIZE (ghost)), probe);
-    GST_INFO ("Ghost src pad and probe created");
+    if (!ghost) {
+      GST_WARNING ("Wasn't able to create ghost src pad for composition %s, there is already [%s:%s]",
+		   gst_element_get_name (GST_ELEMENT (comp)),
+		   GST_DEBUG_PAD_NAME (gst_element_get_pad (GST_ELEMENT (comp), "src")));
+/*       res = FALSE; */
+    } else {
+      gst_pad_set_element_private(ghost, (gpointer) probe);
+      gst_pad_add_probe (GST_PAD (ghost), probe);
+      GST_INFO ("Ghost src pad and probe created");
+    }
   }
   else {
     GST_WARNING("Haven't got a pad :(");
@@ -886,10 +998,11 @@ gnl_composition_nearest_cover_func (GnlComposition *comp, GstClockTime time, Gnl
        Look for the last object whose stop is < time
        return the stop time for that object
     */
-    
     for (objects = g_list_last(comp->objects); objects; objects = objects->prev) {
       entry = (GnlCompositionEntry *) (objects->data);
-      
+
+      if (entry->object->priority == G_MAXINT)
+	continue ;
       if (endobject) {
 	if (entry->object->stop < endobject->start)
 	  break;
@@ -914,9 +1027,14 @@ gnl_composition_nearest_cover_func (GnlComposition *comp, GstClockTime time, Gnl
   } else {
     GnlCompositionEntry *entry;
     GstClockTime	last = G_MAXINT64;
+    GST_INFO ("starting");
     while (objects) {
       entry = (GnlCompositionEntry *) (objects->data);
-      
+
+      if (entry->object->priority == G_MAXINT) {
+	objects = g_list_next (objects);
+	continue ;
+      }
       start = entry->object->start;
       
       GST_INFO("Object[%s] Start[%lld]",
@@ -1003,36 +1121,54 @@ gnl_composition_change_state (GstElement *element)
 {
   GnlComposition *comp = GNL_COMPOSITION (element);
   gint transition = GST_STATE_TRANSITION (comp);
-  GstElementStateReturn	res;
+  GstElementStateReturn	res = GST_STATE_SUCCESS;
 
+/*   if (GST_FLAG_IS_SET (element, GST_BIN_STATE_LOCKED)) { */
+/*     GST_WARNING ("Recursive call on %s", */
+/* 		 gst_element_get_name (element)); */
+/*     return GST_STATE_SUCCESS; */
+/*   } else */
+/*     GST_INFO ("Non-recursive call on %s", */
+/* 	      gst_element_get_name (element)); */
+
+  if (transition != GST_STATE_PAUSED_TO_READY)
+    res = GST_ELEMENT_CLASS (parent_class)->change_state (element);
+  
   switch (transition) {
   case GST_STATE_NULL_TO_READY:
     //composition_update_start_stop(comp);
     break;
   case GST_STATE_READY_TO_PAUSED:
     GST_INFO ( "%s: 1 ready->paused", gst_element_get_name (GST_ELEMENT (comp)));
+    gnl_composition_deactivate_entries (comp->objects);
     break;
   case GST_STATE_PAUSED_TO_PLAYING:
     GST_INFO ( "%s: 1 paused->playing", gst_element_get_name (GST_ELEMENT (comp)));
     break;
   case GST_STATE_PLAYING_TO_PAUSED:
     GST_INFO ( "%s: 1 playing->paused", gst_element_get_name (GST_ELEMENT (comp)));
+    gnl_composition_deactivate_childs (comp->active_objects);
+    comp->active_objects = NULL;
     break;
   case GST_STATE_PAUSED_TO_READY:
-    gnl_composition_deactivate_childs (comp->active_objects);
+    gnl_composition_activate_entries (comp->objects);
+/*     gnl_composition_deactivate_childs (comp->active_objects); */
     /* De-activate ghost pad */
     if (gst_element_get_pad (element, "src")) {
       gst_pad_remove_probe (GST_PAD_REALIZE (gst_element_get_pad (element, "src")),
 			    (GstProbe *) gst_pad_get_element_private (gst_element_get_pad (element, "src")));
       gst_element_remove_pad (element, gst_element_get_pad (element, "src"));
     }
-    comp->active_objects = NULL;
+/*     comp->active_objects = NULL; */
     break;
   default:
     break;
   }
   
-  res = GST_ELEMENT_CLASS (parent_class)->change_state (element);
+  GST_INFO ("Calling parent change_state method");
+  
+  if (transition == GST_STATE_PAUSED_TO_READY)
+    res = GST_ELEMENT_CLASS (parent_class)->change_state (element);
   GST_INFO("%s : change_state returns %d",
 	   gst_element_get_name(element),
 	   res);

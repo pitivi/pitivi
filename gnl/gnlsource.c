@@ -34,6 +34,7 @@ struct _GnlSourcePrivate {
   gboolean	dispose_has_run;
   gint64	seek_start;	/* Beginning of seek in media_time */
   gint64	seek_stop;	/* End of seek in media_time */
+  gboolean	queued;
 };
 
 enum {
@@ -365,9 +366,9 @@ source_link (GstPad *pad, const GstCaps *caps)
   else if (!g_ascii_strncasecmp (type, "video/x-raw", 11))
     private->type = TYPE_VIDEO;
   else private->type = TYPE_OTHER;
-  GST_INFO ("->type : %d, audiowidth : %d, channs : %d, rate : %d",
-	    private->type, private->audiowidth,
-	    private->nbchanns, private->rate);
+/*   GST_INFO ("->type : %d, audiowidth : %d, channs : %d, rate : %d", */
+/* 	    private->type, private->audiowidth, */
+/* 	    private->nbchanns, private->rate); */
   
   otherpad = (GST_PAD_IS_SRC (pad)? private->sinkpad : private->srcpad);
 
@@ -498,25 +499,6 @@ clear_queues (GnlSource *source)
   }
 }
 
-static gboolean
-source_is_media_queued (GnlSource *source)
-{
-  const GList *pads = gst_element_get_pad_list (GST_ELEMENT (source));
-
-  while (pads) {
-    GstPad *pad = GST_PAD (pads->data);
-    SourcePadPrivate *private = gst_pad_get_element_private (pad);
-
-    if (!private->queue) {
-      GST_WARNING("Pad %s hasn't any queue...",
-	       gst_pad_get_name(pad));
-      return FALSE;
-    }
-    pads = g_list_next (pads);
-  }
-  GST_INFO("Everything went ok");
-  return TRUE;
-}
 
 static gboolean
 source_send_seek (GnlSource *source, GstEvent *event)
@@ -570,11 +552,7 @@ source_send_seek (GnlSource *source, GstEvent *event)
 
     pads = g_list_next (pads);
   }
-  if (!gst_element_send_event (source->element, event)) {
-    GST_WARNING ("%s: could not seek",
-		 gst_element_get_name (GST_ELEMENT (source)));
-  } else
-    res = TRUE;
+
   if (wasinplay)
     gst_element_set_state(source->bin, GST_STATE_PLAYING);
 
@@ -583,62 +561,65 @@ source_send_seek (GnlSource *source, GstEvent *event)
   return res;
 }
 
-static void
-activate_internal_sinkpads (SourcePadPrivate *private, GnlSource *source)
+static gboolean
+queueing_probe (GstProbe *probe, GstData **data, gpointer user_data)
 {
-  gst_pad_set_active (private->sinkpad, TRUE);
-}
+  GnlSource	*source = GNL_SOURCE (user_data);
+  if (GST_IS_BUFFER (*data))
+    source->private->queued = TRUE;
 
-static void
-deactivate_internal_sinkpads (SourcePadPrivate *private, GnlSource *source)
-{
-  gst_pad_set_active (private->sinkpad, FALSE);
+  return TRUE;
 }
 
 static gboolean
 source_queue_media (GnlSource *source)
 {
-  gboolean filled;
+  gboolean filled = TRUE;
+  GstElement		*prerollpipeline;
+  GstProbe		*probe;
 
-  GST_INFO("%s switching to PLAYING for media buffering", gst_element_get_name(GST_ELEMENT(source)));
+  if ((source->queueing) || (source->private->queued))
+    return TRUE;
+  GST_INFO ("prerolling/queueing in seperate pipeline");
 
-  if (!gst_element_set_state (source->bin, GST_STATE_PLAYING)) {
-    GST_WARNING("END : couldn't change bin to PLAYING");
-    return FALSE;
-  }
-  g_slist_foreach (source->links, 
-		   (GFunc) activate_internal_sinkpads,
-		   source);
+  /* moving source->Bin to pre-roll pipeline */
+  prerollpipeline = gst_pipeline_new ("preroll-pipeline");
 
-  source_send_seek (source, source->pending_seek);
-  gst_event_unref (source->pending_seek);
-  source->pending_seek = NULL;
-  
+  gst_object_ref (GST_OBJECT (source->element));
+  gst_bin_remove (GST_BIN (source->bin), GST_ELEMENT (source->element));
+  gst_bin_add (GST_BIN(prerollpipeline), GST_ELEMENT (source->element));
+
+  probe = gst_probe_new (FALSE, queueing_probe, source);
+  gst_pad_add_probe (gst_element_get_pad (source->element, "src"),
+		     probe);
+
   source->queueing = TRUE;
 
-  filled = FALSE;
-  
   GST_INFO("about to iterate");
-  while (!filled) {
-    if (!gst_bin_iterate (GST_BIN (source->bin))) {
+  gst_element_set_state (GST_ELEMENT (prerollpipeline), GST_STATE_PLAYING);
+  while (!source->private->queued) {
+    if (!gst_bin_iterate (GST_BIN (prerollpipeline))) {
       break;
     }
-    filled = source_is_media_queued (source);
+    GST_INFO ("Merry go round...");
+/*     filled = source_is_media_queued (source); */
   }
+  gst_element_set_state (GST_ELEMENT (prerollpipeline), GST_STATE_PAUSED);
   GST_INFO("Finished iterating");
 
   source->queueing = FALSE;
 
-  g_slist_foreach (source->links, 
-		   (GFunc) deactivate_internal_sinkpads,
-		   source);
+  source->private->queued = TRUE;
 
-  GST_INFO("going back to PAUSED state after media buffering");
-  if (!gst_element_set_state (source->bin, GST_STATE_PAUSED)) {
-    GST_ERROR("error : couldn't put bin back to PAUSED");
-    filled = FALSE;
-  }
+  gst_object_ref (GST_OBJECT (source->element));
+  gst_pad_remove_probe (gst_element_get_pad (source->element, "src"),
+			probe);
+  gst_probe_destroy (probe);
 
+  gst_bin_remove (GST_BIN (prerollpipeline), GST_ELEMENT (source->element));
+  gst_bin_add (GST_BIN (source->bin), GST_ELEMENT (source->element));
+
+  
   GST_INFO("END : source media is queued [%d]",
 	   filled);
   return filled;
@@ -695,10 +676,11 @@ source_chainfunction (GstPad *pad, GstData *buf)
   GnlSource *source;
   GnlObject *object;
   GstClockTimeDiff intime, dur;
+  GstClockTime	mstart, mstop;
   GstBuffer	*buffer = GST_BUFFER(buf);
 
-  GST_INFO("chaining : data time %lld:%02lld:%03lld",
-	   GST_M_S_M(GST_BUFFER_TIMESTAMP(buffer)));
+/*   GST_INFO("chaining : data time %lld:%02lld:%03lld", */
+/* 	   GST_M_S_M(GST_BUFFER_TIMESTAMP(buffer))); */
 
   private = gst_pad_get_element_private (pad);
   source = GNL_SOURCE (gst_pad_get_parent (pad));
@@ -716,22 +698,24 @@ source_chainfunction (GstPad *pad, GstData *buf)
     dur = GST_BUFFER_DURATION (buffer);
     if (dur == GST_CLOCK_TIME_NONE)
       dur = 0LL;
+    mstart = (object->media_start == GST_CLOCK_TIME_NONE) ? object->start : object->media_start;
+    mstop = (object->media_stop == GST_CLOCK_TIME_NONE) ? object->stop : object->media_stop;
 
-    if (dur + intime < object->media_start) {
+    if (dur + intime < mstart) {
       GST_INFO ("buffer doesn't start/end before source start, unreffing buffer");
       gst_buffer_unref (buffer);
       return;
     }
-    if (intime >= object->media_stop) {
+    if (intime >= mstop) {
       GST_INFO ("buffer is after stop, creating EOS");
       gst_buffer_unref (buffer);
       buffer = GST_BUFFER (gst_event_new (GST_EVENT_EOS));
-    } else if ((intime < object->media_start) && ((intime + dur) > object->media_start)) {
+    } else if ((intime < mstart) && ((intime + dur) > mstart)) {
       GST_INFO ("buffer starts before media_start, but ends after media_start");
-      buffer = crop_incoming_buffer (pad, buffer, object->media_start, intime + dur);
-    } else if ((intime < object->media_stop) && ((intime + dur) > object->media_stop)) {
+      buffer = crop_incoming_buffer (pad, buffer, mstart, intime + dur);
+    } else if ((intime < mstop) && ((intime + dur) > mstop)) {
       GST_INFO ("buffer starts before media_stop, but ends after media_stop");
-      buffer = crop_incoming_buffer (pad, buffer, intime, object->media_stop);
+      buffer = crop_incoming_buffer (pad, buffer, intime, mstop);
     }
   }
   
@@ -753,7 +737,10 @@ source_getfunction (GstPad *pad)
   object = GNL_OBJECT (source);
 
   if (!GST_PAD_IS_ACTIVE (pad)) {
-    GST_INFO("pad not active, creating EOS");
+    GST_INFO("%s[State:%d] : pad [%s:%s] not active, creating EOS",
+	     gst_element_get_name (GST_ELEMENT (source)),
+	     gst_element_get_state (GST_ELEMENT (source)),
+	     GST_DEBUG_PAD_NAME (GST_PAD_REALIZE (pad)));
     found = TRUE;
     buffer = GST_BUFFER (gst_event_new (GST_EVENT_EOS));
   }
@@ -923,8 +910,14 @@ gnl_source_change_state (GstElement *element)
   GnlSource *source = GNL_SOURCE (element);
   GstElementStateReturn	res = GST_STATE_SUCCESS;
   GstElementStateReturn	res2 = GST_STATE_SUCCESS;
+  gint	transition = GST_STATE_TRANSITION (source);
 
-  switch (GST_STATE_TRANSITION (source)) {
+  GST_DEBUG ("Calling parent change_state");
+  res2 = GST_ELEMENT_CLASS (parent_class)->change_state (element);
+  if (!res2)
+    return GST_STATE_FAILURE;
+  GST_DEBUG ("doing our own stuff %d", transition);
+  switch (transition) {
   case GST_STATE_NULL_TO_READY:
     break;
   case GST_STATE_READY_TO_PAUSED:
@@ -937,8 +930,8 @@ gnl_source_change_state (GstElement *element)
     if (!GNL_OBJECT(source)->active)
       GST_WARNING("Trying to change state but Source %s is not active ! This might be normal...",
 		  gst_element_get_name(element));
-    else if (!gst_element_set_state (source->bin, GST_STATE_PLAYING))
-      res = GST_STATE_FAILURE;
+/*     else if (!gst_element_set_state (source->bin, GST_STATE_PLAYING)) */
+/*       res = GST_STATE_FAILURE; */
     break;
   case GST_STATE_PLAYING_TO_PAUSED:
     /* done by GstBin->change_state */
@@ -946,14 +939,16 @@ gnl_source_change_state (GstElement *element)
     /*       res = GST_STATE_FAILURE; */
     break;
   case GST_STATE_PAUSED_TO_READY:
+    source->private->queued = FALSE;
+    source->queueing = FALSE;
     break;
   case GST_STATE_READY_TO_NULL:
     break;
   default:
+    GST_INFO ("TRANSITION NOT HANDLED ???");
     break;
   }
   
-  res2 = GST_ELEMENT_CLASS (parent_class)->change_state (element);
   if ((res != GST_STATE_SUCCESS) || (res2 != GST_STATE_SUCCESS)) {
     GST_WARNING("%s : something went wrong",
 		gst_element_get_name(element));

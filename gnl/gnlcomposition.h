@@ -78,6 +78,8 @@ void			gnl_composition_add_object 	(GnlComposition *comp,
 							 GnlObject *object); 
 void			gnl_composition_remove_object 	(GnlComposition *comp, 
 							 GnlObject *object); 
+void			gnl_composition_set_default_source (GnlComposition *comp,
+							    GnlSource *source);
 
 GnlObject*		gnl_composition_find_object	(GnlComposition *comp, 
 							 GstClockTime time, GnlFindMethod method);

@@ -317,6 +317,11 @@ gnl_timeline_timer_loop (GstElement *element)
 
     GST_INFO("to_schedule[%s]", gst_element_get_name(GST_ELEMENT(to_schedule->group)));
 
+    if (!GST_PAD_IS_ACTIVE (to_schedule->srcpad)) {
+      GST_INFO ("to_schedule->srcpad is not active, returning...");
+      return;
+    }
+
     timer->current = to_schedule;
     GST_INFO("Pulling a buffer");
     buf = (GstBuffer *) gst_pad_pull (sinkpad);
@@ -347,8 +352,8 @@ gnl_timeline_timer_loop (GstElement *element)
 		 gst_element_get_name (GST_ELEMENT (group)),
 	         time);
 
-      if (gnl_object_covers (GNL_OBJECT (group), time, G_MAXINT64, GNL_COVER_START)) {
-
+/*       if (gnl_object_covers (GNL_OBJECT (group), time, G_MAXINT64, GNL_COVER_START)) { */
+      if (time < GNL_OBJECT (group)->stop) {
 	/* if there is something else at the given position */
 	if (GST_PAD_IS_LINKED(to_schedule->sinkpad))
 	  gst_pad_unlink (to_schedule->sinkpad, GST_PAD_PEER (to_schedule->sinkpad));
@@ -356,6 +361,7 @@ gnl_timeline_timer_loop (GstElement *element)
         GST_INFO ("reactivating group %s, seek to time %lld:%02lld:%03lld",
 		  gst_element_get_name (GST_ELEMENT (group)),
 		  GST_M_S_M(time));
+	gst_element_set_state (GST_ELEMENT (group), GST_STATE_PAUSED);
 
 	gst_element_send_event (GST_ELEMENT (group),
 	                          gst_event_new_segment_seek (
@@ -364,7 +370,7 @@ gnl_timeline_timer_loop (GstElement *element)
 	                            GST_SEEK_FLAG_FLUSH |
 	                            GST_SEEK_FLAG_ACCURATE,
 	                            time,  G_MAXINT64));
-
+	gst_element_set_state (GST_ELEMENT (group), GST_STATE_PLAYING);
         srcpad = gst_element_get_pad (GST_ELEMENT (group), "src");
 	if (srcpad) {
 	  GST_INFO("linking %s:%s to %s:%s",
@@ -677,8 +683,11 @@ gnl_timeline_get_pad_for_group (GnlTimeline *timeline, GnlGroup *group)
 
 
   link = gnl_timeline_get_link_for_group (timeline, group);
-  if (link)
+  if (link) {
+    GST_INFO ("Found pad, returning %s:%s",
+	      GST_DEBUG_PAD_NAME (link->srcpad));
     return link->srcpad;
+  }
 
   return NULL;
 }
@@ -695,10 +704,17 @@ gnl_timeline_prepare (GnlObject *object, GstEvent *event)
 	   GST_EVENT_SEEK_OFFSET(event),
 	   GST_EVENT_SEEK_ENDOFFSET(event));
     
+  if (gst_element_get_state (GST_ELEMENT (object)) != GST_STATE_PAUSED) {
+    GST_WARNING ("%s: Prepare while not in PAUSED",
+		 gst_element_get_name (GST_ELEMENT (object)));
+    return FALSE;
+  }
+
   while (walk && res) {
     GnlGroup *group = GNL_GROUP (walk->data);
     GstPad *srcpad;
     
+    gst_event_ref (event);
     res &= gst_element_send_event (GST_ELEMENT (group), event);
 
     srcpad = gst_element_get_pad (GST_ELEMENT (group), "src");
@@ -728,6 +744,9 @@ gnl_timeline_prepare (GnlObject *object, GstEvent *event)
 
     walk = g_list_next (walk);
   }
+  
+  gnl_timeline_timer_reset (timeline->timer);
+
   GST_INFO("END");
   return res;
 }
@@ -752,9 +771,12 @@ static GstElementStateReturn
 gnl_timeline_change_state (GstElement *element)
 {
   GstElementStateReturn	res = GST_STATE_SUCCESS;
-  GstElementStateReturn	res2;
+  GstElementStateReturn	res2 = GST_STATE_SUCCESS;
   GnlTimeline *timeline = GNL_TIMELINE (element);
   gint transition = GST_STATE_TRANSITION (element);
+
+  if (transition == GST_STATE_READY_TO_PAUSED)
+    res2 = GST_ELEMENT_CLASS (parent_class)->change_state (element);
 
   switch (transition) {
   case GST_STATE_NULL_TO_READY:
@@ -778,8 +800,22 @@ gnl_timeline_change_state (GstElement *element)
       break;
     }
   case GST_STATE_PAUSED_TO_PLAYING:
-    GST_INFO ("%s: 1 paused->playing", gst_element_get_name (element));
-    break;
+    {
+      GstEvent *event;
+      GstSeekType seek_type;
+
+      seek_type = GST_FORMAT_TIME |
+	GST_SEEK_METHOD_SET |
+	GST_SEEK_FLAG_FLUSH |
+	GST_SEEK_FLAG_ACCURATE;
+
+      GST_INFO ("%s: 1 paused->playing", gst_element_get_name (element));
+
+      event = gst_event_new_segment_seek (seek_type, 0, G_MAXINT64);
+      if (!gnl_timeline_prepare (GNL_OBJECT (timeline), event))
+	res = GST_STATE_FAILURE;
+      break;
+    }
   case GST_STATE_PLAYING_TO_PAUSED:
     GST_INFO ("%s: 1 playing->paused", gst_element_get_name (element));
     break;
@@ -788,7 +824,10 @@ gnl_timeline_change_state (GstElement *element)
   default:
     break;
   }
-  res2 = GST_ELEMENT_CLASS (parent_class)->change_state (element);
+  GST_INFO ("Calling parent change_state function");
+  if (transition != GST_STATE_READY_TO_PAUSED)
+    res2 = GST_ELEMENT_CLASS (parent_class)->change_state (element);
+  GST_INFO ("Really finished");
   return ((res2 && res) ? res2 : GST_STATE_FAILURE);
 }
 

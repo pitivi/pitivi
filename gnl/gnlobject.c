@@ -212,7 +212,10 @@ gnl_object_to_media_time (GnlObject *object, GstClockTime otime, GstClockTime *m
 	     GST_M_S_M(otime));
   if ((otime < object->start) || (otime >= object->stop))
     return FALSE;
-  *mtime = otime + object->media_start - object->start;
+  if (object->media_start != GST_CLOCK_TIME_NONE)
+    *mtime = otime + object->media_start - object->start;
+  else
+    *mtime = otime;
   GST_DEBUG ("Returning MediaTime : %lld:%lld:%lld",
 	     GST_M_S_M(*mtime));
   return TRUE;
@@ -235,9 +238,14 @@ gnl_media_to_object_time (GnlObject *object, GstClockTime mtime, GstClockTime *o
 {
   GST_DEBUG ("MediaTime : %lld:%lld:%lld",
 	     GST_M_S_M(mtime));
-  if ((mtime < object->media_start) || (mtime >= object->media_stop))
+  if ((object->media_start != GST_CLOCK_TIME_NONE) 
+      && (object->media_stop != GST_CLOCK_TIME_NONE) 
+      && ((mtime < object->media_start) || (mtime >= object->media_stop)))
     return FALSE;
-  *otime = mtime + object->start - object->media_start;
+  if (GST_CLOCK_TIME_NONE != object->media_start)
+    *otime = mtime + object->start - object->media_start;
+  else
+    *otime = mtime;
   GST_DEBUG ("Returning ObjectTime : %lld:%lld:%lld",
 	     GST_M_S_M(*otime));
   return TRUE;
@@ -332,13 +340,13 @@ gnl_object_set_media_start_stop (GnlObject *object, GstClockTime start, GstClock
     object->media_stop = stop;
 
   if (startm || stopm) {
-    if (startm && stopm)
-      gnl_object_do_seek (object,
-			  GST_FORMAT_TIME |
-			  GST_SEEK_METHOD_SET |
-			  GST_SEEK_FLAG_FLUSH |
-			  GST_SEEK_FLAG_ACCURATE, 
-			  object->start, object->start + (stop - start));
+/*     if (startm && stopm) */
+/*       gnl_object_do_seek (object, */
+/* 			  GST_FORMAT_TIME | */
+/* 			  GST_SEEK_METHOD_SET | */
+/* 			  GST_SEEK_FLAG_FLUSH | */
+/* 			  GST_SEEK_FLAG_ACCURATE,  */
+/* 			  object->start, object->start + (stop - start)); */
     
     g_object_freeze_notify (G_OBJECT (object));
     if (startm)
@@ -603,7 +611,6 @@ gnl_object_do_seek (GnlObject *object, GstSeekType type, GstClockTime start, Gst
 
     ratio = (gdouble) (object->media_stop - object->media_start) / (object->stop - object->start);
     seek_start = object->media_start + (start - object->start) * ratio;
-
     seek_stop = object->media_start + (stop - object->start) * ratio;
   }
 
@@ -633,7 +640,10 @@ gnl_object_send_event (GstElement *element, GstEvent *event)
 {
   GnlObject *object = GNL_OBJECT (element);
   gboolean res = FALSE;
-	    
+
+  GST_DEBUG ("Got Event %d for element %s",
+	     GST_EVENT_TYPE (event),
+	     gst_element_get_name (element));
   switch (GST_EVENT_TYPE (event)) {
   case GST_EVENT_SEEK_SEGMENT:
     res = gnl_object_do_seek (object, 
