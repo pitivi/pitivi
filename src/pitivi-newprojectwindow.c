@@ -381,6 +381,10 @@ setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
       if (!value && !(gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2)))
 	{
 	  gtk_widget_set_sensitive(self->private->button_new, FALSE);
+	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->win_settings), FALSE);
+	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->button_add), FALSE);
+	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->button_mod), FALSE);
+	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->button_del), FALSE);
 
 	  gtk_tree_model_get_iter(model, &self->private->pIter, path);
 	  gtk_text_buffer_set_text(self->private->preset_text_buffer, setting_name, strlen(setting_name));
@@ -389,6 +393,10 @@ setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
       else if (!value && (gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2)))
 	{
 	  gtk_widget_set_sensitive(self->private->button_new, TRUE);
+	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->win_settings), TRUE);
+	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->button_add), TRUE);
+	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->button_mod), TRUE);
+	  gtk_widget_set_sensitive(GTK_WIDGET(self->private->button_del), TRUE);
 
 	  pitivi_newprojectwindow_put_info( self, setting_name );
 	  gtk_tree_model_iter_parent (model, &self->private->pIter, &self->private->pIter2);
