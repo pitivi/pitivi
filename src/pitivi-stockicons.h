@@ -42,7 +42,6 @@
 #define PITIVI_STOCK_RESIZE		  "pitivi-resize"
 #define PITIVI_STOCK_NEW_PROJECT	  "pitivi-newproject"
 #define PITIVI_STOCK_TOOLS		  "pitivi-tools"
-#define PITIVI_STOCK_INFO		  "pitivi-info"
 #define PITIVI_STOCK_SELECTION_GROW	  "pitivi-selection-grow"
 #define PITIVI_STOCK_SELECT_ALL		  "pitivi-select-all"
 #define PITIVI_STOCK_SELECT_NONE	  "pitivi-select-none"
@@ -96,7 +95,7 @@
 #define PITIVI_ENVELOPE_VOLUME_EFFECT	"pitivi_envelope_volume_effect"
 #define PITIVI_VOLUME_EFFECT		"pitivi_volume_effect"
 #define PITIVI_AUDIO_RATE_EFFECT	"pitivi_audio_rate_effect"
-#define PITIVI_LOGO_ICON		"pitivi-logo3"
+#define PITIVI_LOGO_ICON		"pitivi"
 
 #define PITIVI_SMPTE_1		"smpte1"
 #define PITIVI_SMPTE_2		"smpte2" 

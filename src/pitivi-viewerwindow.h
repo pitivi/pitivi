@@ -45,7 +45,7 @@
 #define PITIVI_VIEWERWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_VIEWERWINDOW_TYPE, PitiviViewerWindowClass))
 
 #define PITIVI_VIEWER_DF_TITLE		"Viewer"
-#define PITIVI_VIEWER_LOGO		"pitivi-logo3.png"
+#define PITIVI_VIEWER_LOGO		"pitivi.png"
 #define PITIVI_VIEWER_DF_WIN_WIDTH	300
 #define PITIVI_VIEWER_DF_WIN_HEIGHT	200
 

@@ -538,8 +538,9 @@ pitivi_mainapp_constructor (GType type,
   /* finish */
   while (gtk_events_pending())
     gtk_main_iteration();
-  pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
+  pitivi_splashscreenwindow_set_both (self->private->splash_screen,
   				      1.0, "Loading Finished");
+/*   gtk_widget_destroy (GTK_WIDGET(self->private->splash_screen)); */
   return obj;
 }
 

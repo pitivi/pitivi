@@ -284,6 +284,7 @@ mute_stream (GstProbe *probe, GstData **data, gpointer pdata)
     PITIVI_DEBUG("got a buffer");
     my_gst_pad_set_active_recursive ((GstPad *) GST_PAD_REALIZE (pad), FALSE);
     gst_pad_remove_probe ((GstPad *) GST_PAD_REALIZE (pad), probe);
+    gst_probe_destroy (probe);
   } else
     PITIVI_DEBUG("got an event %s",
 		 gst_event_get_name (GST_EVENT(*data)));
