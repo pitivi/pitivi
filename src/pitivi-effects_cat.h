@@ -34,6 +34,36 @@ typedef struct _PitiviTransProp
   gint		smpte_num;
 }		PitiviTransProp;
 
+typedef struct	_PitiviVAEffect
+{
+  gchar		*name;
+  gchar		*image;
+}		PitiviVAEffect;
+
+/*
+ **********************************************************
+ * VIDEO / AUDIO EFFECTS				  *
+ *							  *
+ **********************************************************
+*/
+
+static PitiviVAEffect video_effect_tab[] =
+  {	
+    {"alphacolor", PITIVI_ALPHA_COLOR_EFFECT},
+    {"alpha", PITIVI_ALPHA_EFFECT},
+    {"videobalance", PITIVI_BALANCE_EFFECT},
+    {"videobox", PITIVI_BOX_EFFECT},
+    {"videocrop", PITIVI_CROP_EFFECT},
+    {"deinterlace", PITIVI_DEINTERLACE_EFFECT},
+    {"videoflip", PITIVI_FLIPPER_EFFECT},
+    {"videodrop", PITIVI_FRAME_EFFECT},
+    {"gamma", PITIVI_GAMMA_EFFECT},
+    {"median", PITIVI_MEDIAN_EFFECT},
+    {"videorate", PITIVI_RATE_EFFECT},
+    {"videoscale", PITIVI_SCALER_EFFECT},
+    {"smooth", PITIVI_SMOOTH_EFFECT}
+  };
+
 /*
  **********************************************************
  * SMTPE						  *

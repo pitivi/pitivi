@@ -421,18 +421,66 @@ pitivi_effectswindow_drag_begin (GtkWidget		*widget,
  *							      *
  **************************************************************/
 
+gchar	*get_icon_fx(G_CONST_RETURN gchar *name, gint type)
+{
+  gchar	*icon_fx;
+  gint	id_tab;
+
+  switch(type)
+    {
+    case 1:
+      {
+	id_tab = 0;
+	while (video_effect_tab[id_tab].name)
+	  {
+	    if (!strcmp(video_effect_tab[id_tab].name, name))
+	      {
+		icon_fx = video_effect_tab[id_tab].image;
+		return (icon_fx);
+	      }
+	    else
+	      {
+		icon_fx = PITIVI_STOCK_EFFECT_TV;
+	      }
+	    id_tab++;
+	  }
+      }
+      break;
+    case 2:
+      {
+/* 	id_tab = 0; */
+/* 	while (audio_effect_tab[id_tab].name) */
+/* 	  { */
+/* 	    if (!strcmp(audio_effect_tab[id_tab].name, name)) */
+/* 	      { */
+/* 		icon_fx = audio_effect_tab[id_tab].image; */
+/* 		return (icon_fx); */
+/* 	      } */
+/* 	    else */
+/* 	      { */
+/* 		icon_fx = PITIVI_STOCK_EFFECT_SOUND; */
+/* 	      } */
+/* 	    id_tab++; */
+/* 	  } */
+	icon_fx = PITIVI_STOCK_EFFECT_SOUND;
+      }
+      break;
+    }
+  return (icon_fx);
+}
 
 void
 insert_video_effects_on_tree (PitiviEffectsTree *tree_effect, 
 			      GtkTreeIter *child, 
 			      GList *settingslist)
 {
-  const gchar	*klass;
-  const gchar	*effectname;
-  const gchar	*desc;
-  GtkTreeIter	video_iter[2];
-  GList *fx_video = NULL;
-  
+  const gchar		*klass;
+  const gchar		*effectname;
+  const gchar		*desc;
+  GtkTreeIter		video_iter[2];
+  GList			*fx_video = NULL;
+  G_CONST_RETURN gchar	*name;
+  gchar			*icon_fx;
 
   pitivi_effectstree_insert_node (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, NULL);
   /* On recupere la liste des effets video via la structure self */
@@ -449,6 +497,7 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
   /* On insere les elements video dans le tree pour le menu des effets */
   while (fx_video)
     {
+      name = gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(fx_video->data));
       klass = gst_element_factory_get_klass (fx_video->data);
       effectname = gst_element_factory_get_longname (fx_video->data);
       desc = gst_element_factory_get_description (fx_video->data);
@@ -459,28 +508,34 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
 	  if ((idx = strstr (effectname, "TV")))
 	    {
 	      *idx = '\0';
-	      pitivi_effectstree_insert_node (tree_effect, child, &video_iter[0],
-					       effectname, PITIVI_STOCK_EFFECT_TV, NULL);
+	      icon_fx = get_icon_fx(name, 1);
+	      pitivi_effectstree_insert_node (tree_effect,
+					      child,
+					      &video_iter[0],
+					       effectname,
+					      icon_fx,
+					      NULL);
 	    }
 	  else if ((idx = strstr (effectname, "ideo")))
 	    {
+	      icon_fx = get_icon_fx(name, 1);
 	      pitivi_effectstree_insert_effect (tree_effect, 
 					       &video_iter[1],
 					       &tree_effect->treeiter,
 					       effectname + 6,
 					       "video/effect", 
-					       PITIVI_STOCK_EFFECT_TV, 
+					       icon_fx, 
 					       fx_video->data);
 	    }
 	  else
 	    {
-	      
+	      icon_fx = get_icon_fx(name, 1);
 	      pitivi_effectstree_insert_effect (tree_effect, 
 					       child,
 					       &tree_effect->treeiter,
 					       effectname,
 					       "video/effect", 
-					       PITIVI_STOCK_EFFECT_TV, 
+					       icon_fx, 
 					       fx_video->data);
 	    } 
 	}
@@ -493,10 +548,12 @@ insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect,
 			      GtkTreeIter *child, 
 			      GList *settingslist)
 {
-  const gchar	*klass;
-  const gchar	*effectname;
-  const gchar	*desc;
-  GList *fx_audio = NULL;
+  const gchar		*klass;
+  const gchar		*effectname;
+  const gchar		*desc;
+  GList			*fx_audio = NULL;
+  G_CONST_RETURN gchar	*name;
+  gchar			*icon_fx;
 
   pitivi_effectstree_insert_node (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, NULL);
   while ( settingslist )
@@ -506,17 +563,20 @@ insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect,
     }
   while ( fx_audio )
     {
+      name = gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(fx_audio->data));
       klass = gst_element_factory_get_klass (fx_audio->data);
       effectname = gst_element_factory_get_longname (fx_audio->data);
       desc = gst_element_factory_get_description (fx_audio->data);
+      //g_printf ("description audio :%s ---> %s\n\n", effectname, desc);
       if (!strncmp (klass, "Filter/Effect/Audio", 19))
 	{
+	  icon_fx = get_icon_fx(name, 2);
 	  pitivi_effectstree_insert_effect (tree_effect, 
 					   child, 
 					   &tree_effect->treeiter,
 					   effectname,
 					   "audio/effect", 
-					   PITIVI_STOCK_EFFECT_SOUND, 
+					   icon_fx, 
 					   fx_audio->data);
 	}
       fx_audio = fx_audio->next;
@@ -528,12 +588,12 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
 				   GtkTreeIter *child, 
 				   GList *settingslist)
 {
-  const gchar	*klass;
-  const gchar	*effectname;
-  const gchar	*desc;
-  gint		nb, nb_tcat;
-  GList *fx_transition = NULL;
-  GtkTreeIter Trans_iter[18];
+  const gchar			*klass;
+  const gchar			*effectname;
+  const gchar			*desc;
+  gint				nb, nb_tcat;
+  GList				*fx_transition = NULL;
+  GtkTreeIter			Trans_iter[18];
 
   /* On recupere la liste des effets de transition via la structure self */
 
