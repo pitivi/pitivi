@@ -60,6 +60,7 @@ struct _PitiviSourceFile
   GdkPixbuf  *thumbs_audio;
   GdkPixbuf  *thumbs_video;
   GstElement *pipeline;
+  GstElement *pipeline_audio;
 };
 
 struct _PitiviProjectSourceList
