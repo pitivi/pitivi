@@ -367,7 +367,7 @@ pitivi_viewerwindow_constructor (GType type,
 
   create_gui (obj);
   create_stream (obj);
-  g_idle_add (idle_func_video, obj);  
+  g_idle_add (idle_func_video, obj);
 
   return obj;
 }
