@@ -243,8 +243,8 @@ bin_new_pad_audio_output (GstPad *pad, bindata *data)
 {
   /* TODO : Add the audio adapters */
   /* TODO : Make it in such a way that it re-uses existing data->audiobin */
-  g_printf ("New Pad Audio Output for pad %s:%s\n",
-	    GST_DEBUG_PAD_NAME (pad));
+/*   g_printf ("New Pad Audio Output for pad %s:%s\n", */
+/* 	    GST_DEBUG_PAD_NAME (pad)); */
   if (!(gst_pad_link (pad, gst_element_get_pad (data->audiobin, "sink"))))
     g_warning ("Couldn't link pad %s:%s to audiobin sink",
 	       GST_DEBUG_PAD_NAME (pad));
@@ -257,8 +257,8 @@ bin_new_pad_audio_output (GstPad *pad, bindata *data)
 void
 bin_new_pad_video_output (GstPad *pad, bindata *data)
 {  
-  g_printf ("New Pad Video Output for pad %s:%s\n",
-	    GST_DEBUG_PAD_NAME (pad));
+/*   g_printf ("New Pad Video Output for pad %s:%s\n", */
+/* 	    GST_DEBUG_PAD_NAME (pad)); */
   if (!(gst_pad_link (pad, gst_element_get_pad (data->videobin, "sink"))))
     g_warning ("Couldn't link pad %s:%s to videobin sink",
 	       GST_DEBUG_PAD_NAME (pad));
@@ -275,7 +275,7 @@ bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udat
   padtype = get_pad_type (pad);
   if (!padtype)
     return;
-  g_printf("Adding pad type[%d]->[%d] : %s:%s\n", padtype, data->bintype, GST_DEBUG_PAD_NAME(pad));
+/*   g_printf("Adding pad type[%d]->[%d] : %s:%s\n", padtype, data->bintype, GST_DEBUG_PAD_NAME(pad)); */
 
   /* Connect (adapters and) ghost pads */
   if (padtype == IS_AUDIO) {
@@ -364,29 +364,29 @@ bin_preroll (GstElement *container, bindata *data)
   }
 }
 
-void
-decodebin_change_state (GstElement *element, GstElementState pstate, GstElementState state, bindata *data)
-{
-  g_warning ("Bin for file %s went from state %d to state %d",
-	     data->sf->filename, pstate, state);
-  if ((pstate == GST_STATE_READY) && (state == GST_STATE_PAUSED))
-    bin_preroll(element, data);
-  /* pre-roll data on READY->PAUSED */
-}
+/* void */
+/* decodebin_change_state (GstElement *element, GstElementState pstate, GstElementState state, bindata *data) */
+/* { */
+/*   g_warning ("Bin for file %s went from state %d to state %d", */
+/* 	     data->sf->filename, pstate, state); */
+/*   if ((pstate == GST_STATE_READY) && (state == GST_STATE_PAUSED)) */
+/*     bin_preroll(element, data); */
+/*   /\* pre-roll data on READY->PAUSED *\/ */
+/* } */
 
-void
-decodebin_eos (GstElement *element, bindata *data)
-{
-  g_warning ("decodebin for file %s went EOS !",
-	     data->sf->filename);
-}
+/* void */
+/* decodebin_eos (GstElement *element, bindata *data) */
+/* { */
+/*   g_warning ("decodebin for file %s went EOS !", */
+/* 	     data->sf->filename); */
+/* } */
 
-void
-decodebin_pad_removed (GstElement *element, GstPad *pad, bindata *data)
-{
-  g_warning ("pad %s:%s was removed !",
-	     GST_DEBUG_PAD_NAME(pad));
-}
+/* void */
+/* decodebin_pad_removed (GstElement *element, GstPad *pad, bindata *data) */
+/* { */
+/*   g_warning ("pad %s:%s was removed !", */
+/* 	     GST_DEBUG_PAD_NAME(pad)); */
+/* } */
 
 
 GstElement *
@@ -415,9 +415,9 @@ pitivi_sourcefile_bin_new (PitiviSourceFile *self, int type, PitiviMainApp *main
   data->bintype = type;
   data->mainapp = mainapp;
   decode = gst_bin_get_by_name (GST_BIN (pipeline), "dbin");
-  g_signal_connect (pipeline, "state-change", G_CALLBACK (decodebin_change_state), data);
-  g_signal_connect (decode, "eos", G_CALLBACK (decodebin_eos), data);
-  g_signal_connect (decode, "pad-removed", G_CALLBACK (decodebin_pad_removed), data);
+/*   g_signal_connect (pipeline, "state-change", G_CALLBACK (decodebin_change_state), data); */
+/*   g_signal_connect (decode, "eos", G_CALLBACK (decodebin_eos), data); */
+/*   g_signal_connect (decode, "pad-removed", G_CALLBACK (decodebin_pad_removed), data); */
   g_signal_connect (decode, "new-decoded-pad", G_CALLBACK (bin_new_pad_cb), data);
 
   bin_add_outputbins (data);

@@ -58,6 +58,7 @@
 #define PITIVI_STOCK_VIEWER_STOP	  "pitivi-viewer-stop"
 #define PITIVI_STOCK_VIEWER_NEXT	  "pitivi-viewer-next"
 #define PITIVI_STOCK_VIEWER_PREVIOUS	  "pitivi-viewer-previous"
+#define PITIVI_STOCK_VIEWER_RECORD	  "pitivi-viewer-record"
 #define PITIVI_STOCK_VIEWER_VOLUME        "pitivi-viewer-volume"
 #define PITIVI_STOCK_VIEWER_VOLUMEMAX     "pitivi-viewer-volume-max"
 #define PITIVI_STOCK_VIEWER_VOLUMEMINIMUM "pitivi-viewer-volume-min"

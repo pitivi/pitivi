@@ -23,6 +23,7 @@
 #include <glib.h>
 #include <gst/gst.h>
 #include <gst/gsttypes.h>
+#include "gnltypes.h"
 
 G_BEGIN_DECLS
 

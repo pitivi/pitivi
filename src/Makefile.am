@@ -52,6 +52,9 @@ pitivi_SOURCES		= \
 	pitivi-debug.c \
 	pitivi-ruler.c \
 	pitivi-lplayerwindow.c \
+	pitivi-globalbin.c \
+	pitivi-timelinebin.c \
+	pitivi-encodewindow.c \
 	main.c
 
 noinst_HEADERS = \
@@ -97,7 +100,10 @@ noinst_HEADERS = \
 	pitivi-effects_cat.h\
 	pitivi-trackenum.h\
 	pitivi-types.h\
-	pitivi-units.h
+	pitivi-units.h \
+	pitivi-globalbin.h \
+	pitivi-timelinebin.h \
+	pitivi-encodewindow.h
 
 # our CFLAGS and LDFLAGS used for compiling and linking
 # make sure you prefix these with the name of your binary

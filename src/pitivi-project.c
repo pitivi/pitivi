@@ -32,20 +32,14 @@ struct _PitiviProjectPrivate
   /* instance private members */
   gboolean dispose_has_run;
 
-  GstElement	*videoout;
-  GstElement	*audioout;
-  GstElement	*videoqueue;
-  GstElement	*audioqueue;
+  GnlTimeline	*timeline;
+  GstElement	*thread;
+};
 
-  GstElement	*videoblank;
-  GstElement	*audioblank;
-  gboolean	vblankconn;
-  gboolean	ablankconn;
-
-  GstElement	*vsinkthread;
-  GstElement	*asinkthread;
-  gboolean	vst, ast;	// TRUE if the *sinkthread is in the pipeline
-  GstElement	*source;
+enum {
+  ARG_0,
+  ARG_PROJECTSETTINGS,
+  ARG_FILENAME
 };
 
 /*
@@ -71,12 +65,10 @@ pitivi_project_new (PitiviProjectSettings *settings)
 {
   PitiviProject *project;
 
-  project = (PitiviProject *) g_object_new (PITIVI_PROJECT_TYPE, NULL);
+  project = (PitiviProject *) g_object_new (PITIVI_PROJECT_TYPE, 
+					    "projectsettings", settings,
+					    NULL);
   g_assert (project != NULL);
-
-  project->settings = settings;
-
-  project->sources = pitivi_projectsourcelist_new();
 
   return project;
 }
@@ -93,15 +85,31 @@ pitivi_project_new (PitiviProjectSettings *settings)
 PitiviProject *
 pitivi_project_new_from_file (const gchar *filename)
 {
-  xmlDocPtr doc;
-  xmlNodePtr field, cur;
-  xmlNsPtr ns;
   PitiviProject *project = NULL;
 
   if (filename == NULL)
     return NULL;
 
-  doc = xmlParseFile (filename);
+  project = (PitiviProject *) g_object_new (PITIVI_PROJECT_TYPE,
+					    "filename", filename,
+					    NULL);
+  g_assert (project != NULL);
+  if (!project->bin) {
+    g_object_unref (G_OBJECT (project));
+    return NULL;
+  }
+
+  return project;
+}
+
+static PitiviProject *
+pitivi_project_internal_restore_file (PitiviProject *project)
+{
+  xmlDocPtr doc;
+  xmlNodePtr field, cur;
+  xmlNsPtr ns;
+
+  doc = xmlParseFile (project->filename);
 
   if (!doc)
     return NULL;
@@ -122,13 +130,10 @@ pitivi_project_new_from_file (const gchar *filename)
   for (field = cur->xmlChildrenNode; field; field = field->next)
     if (!strcmp (field->name, "project") && (field->ns == ns)) {
       /* found the PitiviProject */
-      project = (PitiviProject *) g_object_new (PITIVI_PROJECT_TYPE, NULL);
+/*       project = (PitiviProject *) g_object_new (PITIVI_PROJECT_TYPE, NULL); */
       pitivi_project_restore_thyself(project, field);
       continue;
     }
-  
-  project->filename = g_strdup(filename);
-  
   return project;
 }
 
@@ -147,18 +152,22 @@ pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self)
 {
   xmlNodePtr	child;
   PitiviProjectSettings	*settings;
-  PitiviProjectSourceList *sourcelist;
+/*   PitiviProjectSourceList *sourcelist; */
 
   for (child = self->xmlChildrenNode; child; child = child->next) {
     if (!strcmp(child->name, "projectsettings")) {
       settings = (PitiviProjectSettings *) g_object_new (PITIVI_PROJECTSETTINGS_TYPE, NULL);
       pitivi_projectsettings_restore_thyself(settings, child);
       project->settings = settings;
+      project->bin = pitivi_timelinebin_new (project->timeline,
+					     project->audiogroup,
+					     project->videogroup,
+					     project->settings);
     }
     if (!strcmp(child->name, "projectsourcelist")) {
-      sourcelist = (PitiviProjectSourceList *) g_object_new( PITIVI_PROJECTSOURCELIST_TYPE, NULL);
-      pitivi_projectsourcelist_restore_thyself(sourcelist, child);
-      project->sources = sourcelist;
+/*       sourcelist = (PitiviProjectSourceList *) g_object_new( PITIVI_PROJECTSOURCELIST_TYPE, NULL); */
+      pitivi_projectsourcelist_restore_thyself(project->sources, child);
+/*       project->sources = sourcelist; */
     }
   }
 }
@@ -273,35 +282,7 @@ pitivi_project_save_to_file(PitiviProject *project, const gchar *filename)
 void
 pitivi_project_set_video_output(PitiviProject *project, GstElement *output) 
 {
-  /* link queue-output, add both to thread , link to timeline*/
-
-
-  // if there was a video output, remove it first
-  if (project->private->videoout) {
-    // unlink and remove queue-output
-    gst_element_unlink (project->private->videoqueue, project->private->videoout);
-    gst_bin_remove_many (GST_BIN (project->private->vsinkthread), 
-			 project->private->videoout,
-			 project->private->videoqueue,
-			 NULL);
-    // unlink timeline-queue
-    gst_pad_unlink (gnl_timeline_get_pad_for_group (project->timeline, project->videogroup),
-			     gst_element_get_pad (project->private->videoqueue, "sink"));
-  } else {
-    // create and add queue
-    project->private->videoqueue = gst_element_factory_make("queue", "videoqueue");
-    gst_bin_add (GST_BIN (project->private->vsinkthread),
-		 project->private->videoqueue);
-  }
-  // add output, link it to queue
-  project->private->videoout = output;
-  gst_bin_add (GST_BIN(project->private->vsinkthread),
-	       project->private->videoout);
-  if (!gst_element_link(project->private->videoqueue, output))
-    g_warning ("couldn't link the video output of the timeline to the video sink !!!");
-  // link timeline-queue
-  gst_pad_link (gnl_timeline_get_pad_for_group (project->timeline, project->videogroup),
-		gst_element_get_pad (project->private->videoqueue, "sink"));
+  pitivi_globalbin_set_video_output (PITIVI_GLOBALBIN(project->bin), output);
 }
 
 /**
@@ -318,36 +299,14 @@ pitivi_project_set_video_output(PitiviProject *project, GstElement *output)
 void
 pitivi_project_set_audio_output(PitiviProject *project, GstElement *output) 
 {
-  /* link queue-output, add both to thread link to timeline*/
+  pitivi_globalbin_set_audio_output (PITIVI_GLOBALBIN (project->bin), output);
+}
 
-  // if there was a audio output, remove it first
-  if (project->private->audioout) {
-    // unlink and remove queue-output
-    gst_element_unlink (project->private->audioqueue, project->private->audioout);
-    gst_bin_remove_many (GST_BIN (project->private->asinkthread), 
-			 project->private->audioout,
-			 project->private->audioqueue,
-			 NULL);
-    // unlink timeline-queue
-    gst_pad_unlink (gnl_timeline_get_pad_for_group (project->timeline, project->audiogroup),
-		    gst_element_get_pad (project->private->audioqueue, "sink"));
-    
-  } else {
-    // create and add queue
-    project->private->audioqueue = gst_element_factory_make("queue", "audioqueue");
-    gst_bin_add (GST_BIN (project->private->asinkthread),
-		 project->private->audioqueue);
-  }
-  // add output, link it to queue
-  project->private->audioout = output;
-  gst_bin_add (GST_BIN(project->private->asinkthread),
-	       project->private->audioout);
-  gst_element_link(project->private->audioqueue, output);
-  // link timeline-queue
-  g_printf("linking audiogroup to audioqueue\n");
-  gst_pad_link (gnl_timeline_get_pad_for_group (project->timeline, project->audiogroup),
-		gst_element_get_pad (project->private->audioqueue, "sink"));
 
+void
+pitivi_project_set_file_to_encode (PitiviProject *project, gchar *filename)
+{
+  pitivi_globalbin_set_encoded_file (PITIVI_GLOBALBIN (project->bin), (const gchar *) filename);
 }
 
 static GObject *
@@ -369,34 +328,36 @@ pitivi_project_constructor (GType type,
 
   project = (PitiviProject *) obj;
 
-  /*
-    create container for timeline,
-    Create audio&video groups and add them to the timeline
-  */
-
-  project->private->vsinkthread = gst_thread_new("vsinkthread");
-  gst_object_ref(GST_OBJECT(project->private->vsinkthread));
-  //  project->private->asinkthread = gst_thread_new("asinkthread");
-  // gst_object_ref(GST_OBJECT(project->private->asinkthread));
-
   project->pipeline = gst_pipeline_new("timeline-pipe");
+
+  project->private->thread = gst_thread_new("project-thread");
+  gst_bin_add (GST_BIN (project->pipeline), project->private->thread);
   gst_element_set_state(project->pipeline, GST_STATE_READY);
   
   project->audiogroup = gnl_group_new("audiogroup");
   project->videogroup = gnl_group_new("videogroup");
-
+  
   project->timeline = gnl_timeline_new("project-timeline");
-
-  /* add timeline and sink threads to timeline pipe */
-  gst_bin_add_many (GST_BIN(project->pipeline),
-		    GST_ELEMENT(project->timeline),
-		    project->private->vsinkthread,
-		    // project->private->asinkthread,
-		    NULL);
-
-  //gnl_timeline_add_group(project->timeline, project->audiogroup);
+  
+  gnl_timeline_add_group(project->timeline, project->audiogroup);
   gnl_timeline_add_group(project->timeline, project->videogroup);
-
+  
+  if (project->filename) {
+    if (!(pitivi_project_internal_restore_file (project))) {
+      g_warning ("Error restoring from file !!!");
+      project->bin = NULL;
+    }
+  } else
+    project->bin = pitivi_timelinebin_new (project->timeline,
+					   project->audiogroup,
+					   project->videogroup,
+					   project->settings);
+  
+  /* add timeline and sink threads to timeline pipe */
+  if (project->bin)
+    gst_bin_add_many (GST_BIN(project->private->thread),
+		      GST_ELEMENT(project->bin),
+		      NULL);
   return obj;
 }
 
@@ -414,17 +375,50 @@ pitivi_project_instance_init (GTypeInstance * instance, gpointer g_class)
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
-
-  self->settings = NULL;
-  self->sources = NULL; 
-  self->filename = NULL;
-  self->pipeline = NULL;
-  self->timeline = NULL;
-
-  self->private->vst = FALSE;
-  self->private->ast = FALSE;
-
+  self->sources = pitivi_projectsourcelist_new();
 }
+
+static void
+pitivi_project_set_property (GObject *object, guint property_id,
+			     const GValue *value, GParamSpec *pspec)
+{
+  PitiviProject *self = PITIVI_PROJECT (object);
+
+  switch (property_id) {
+  case ARG_PROJECTSETTINGS:
+    self->settings = g_value_get_pointer (value);
+    break;
+  case ARG_FILENAME:
+    if (self->filename)
+      g_free(self->filename);
+    self->filename = g_strdup(g_value_get_string(value));
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    break;
+  }
+}
+
+
+static void
+pitivi_project_get_property (GObject *object, guint property_id,
+			     GValue *value, GParamSpec *pspec)
+{
+  PitiviProject *self = PITIVI_PROJECT (object);
+
+  switch (property_id) {
+  case ARG_PROJECTSETTINGS:
+    g_value_set_pointer (value, self->settings);
+    break;
+  case ARG_FILENAME:
+    g_value_set_string (value, self->filename);
+    break;
+  default:
+    G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+    break;
+  }
+}
+
 
 static void
 pitivi_project_dispose (GObject * object)
@@ -468,6 +462,18 @@ pitivi_project_class_init (gpointer g_class, gpointer g_class_data)
   gobject_class->constructor = pitivi_project_constructor;
   gobject_class->dispose = pitivi_project_dispose;
   gobject_class->finalize = pitivi_project_finalize;
+
+  gobject_class->set_property = pitivi_project_set_property;
+  gobject_class->get_property = pitivi_project_get_property;  
+
+  g_object_class_install_property (gobject_class, ARG_PROJECTSETTINGS,
+    g_param_spec_pointer("projectsettings", "Project Settings", "The project's settings",
+			 G_PARAM_READWRITE | G_PARAM_CONSTRUCT ));
+  
+  g_object_class_install_property (gobject_class, ARG_FILENAME,
+    g_param_spec_string("filename", "Filename", "The file to save/load the project",
+			 NULL, G_PARAM_READWRITE | G_PARAM_CONSTRUCT ));
+  
 }
 
 GType

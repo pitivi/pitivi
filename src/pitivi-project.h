@@ -36,6 +36,7 @@
 #include "pitivi-types.h"
 #include "pitivi-projectsettings.h"
 #include "pitivi-projectsourcelist.h"
+#include "pitivi-timelinebin.h"
 
 /*
  * Type macros.
@@ -60,6 +61,7 @@ struct _PitiviProject
   gchar				*filename;
 
   GstElement			*pipeline;
+  PitiviTimelineBin		*bin;
   GnlTimeline			*timeline;
   GnlGroup			*audiogroup;
   GnlGroup			*videogroup;
@@ -82,14 +84,14 @@ GType pitivi_project_get_type (void);
  */
 
 PitiviProject	*pitivi_project_new (PitiviProjectSettings *settings);
+
 PitiviProject	*pitivi_project_new_from_file (const gchar *filename);
 gboolean	pitivi_project_save_to_file(PitiviProject *project, const gchar *filename);
 void		pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self);
 xmlDocPtr	pitivi_project_save_thyself(PitiviProject *project);
-void		pitivi_project_set_sources(PitiviProject *project, PitiviProjectSourceList *sources);
-gboolean	pitivi_project_set_source_element(PitiviProject *project, GstElement *source);
-void		pitivi_project_blank_source(PitiviProject *project);
+
 void		pitivi_project_set_video_output(PitiviProject *project, GstElement *output);
 void		pitivi_project_set_audio_output(PitiviProject *project, GstElement *output);
+void		pitivi_project_set_file_to_encode(PitiviProject *project, gchar *filename);
 
 #endif

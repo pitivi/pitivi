@@ -61,6 +61,7 @@ struct _PitiviControllerClass
   GtkHBoxClass parent;
   /* class members */
   void (* pause) (PitiviController *cell, gpointer data);
+  void (* record) (PitiviController *cell);
 };
 
 /* used by PITIVI_CONTROLLER_TYPE */

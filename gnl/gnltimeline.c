@@ -356,7 +356,7 @@ gnl_timeline_timer_loop (GstElement *element)
       */
 
       if (GST_IS_BUFFER (buf)) {
-	to_schedule->time = GST_BUFFER_TIMESTAMP (buf);
+	to_schedule->time = GST_BUFFER_TIMESTAMP (buf) + GST_BUFFER_DURATION (buf);
       }
       if (to_schedule->time < G_MAXINT64) {
         gst_pad_push (to_schedule->srcpad, (GstData *) buf);
@@ -366,23 +366,21 @@ gnl_timeline_timer_loop (GstElement *element)
     }
   }
   else {
-/*     GList *walk = timer->links; */
-
     /* If no usable group EOS all the groups */
     /* ERRATA : in fact we EOS the GnlTimeline */
 
     GST_INFO("Nothing more to schedule");
 
-/*     while (walk) { */
-/*       TimerGroupLink* link = (TimerGroupLink *) walk->data; */
+    for (walk = timer->links; walk; walk = g_list_next(walk)) {
+      TimerGroupLink* link = (TimerGroupLink *) walk->data;
       
-/*       gst_pad_push (link->srcpad, GST_DATA (gst_event_new (GST_EVENT_EOS))); */
+      GST_INFO ("pushing EOS on pad %s:%s", GST_DEBUG_PAD_NAME (link->srcpad));
+      gst_pad_push (link->srcpad, GST_DATA (gst_event_new (GST_EVENT_EOS)));
       
-/*       walk = g_list_next (walk); */
-/*     } */
-/*     gst_element_set_eos(element); */
+    }
+    /*     gst_element_set_eos(element); */
     gst_element_set_eos (GST_ELEMENT(gst_element_get_parent(element)));
-
+    
   }
   GST_INFO("End of Loop Parent[%s]",
 	   gst_element_get_name(gst_element_get_parent(element)));

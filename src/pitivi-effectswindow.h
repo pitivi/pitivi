@@ -35,7 +35,6 @@
 #include <gtk/gtk.h>
 #include <gst/gst.h>
 #include "pitivi-types.h"
-#include "pitivi-windows.h"
 #include "pitivi-stockicons.h"
 #include "pitivi-timelinemedia.h"
 

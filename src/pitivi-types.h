@@ -90,6 +90,9 @@ typedef struct _PitiviSplashScreenWindowClass PitiviSplashScreenWindowClass;
 typedef struct _PitiviThumbs PitiviThumbs;
 typedef struct _PitiviThumbsClass PitiviThumbsClass;
 
+typedef struct _PitiviTimelineBin PitiviTimelineBin;
+typedef struct _PitiviTimelineBinClass PitiviTimelineBinClass;
+
 typedef struct _PitiviTimelineCellRenderer PitiviTimelineCellRenderer;
 typedef struct _PitiviTimelineCellRendererClass PitiviTimelineCellRendererClass;
 

@@ -34,6 +34,7 @@ enum {
 enum {
   PITIVI_CONTROLLER_BUTTON_PLAY = 1,
   PITIVI_CONTROLLER_BUTTON_STOP,
+  PITIVI_CONTROLLER_BUTTON_RECORD,
 };
 
 struct _PitiviControllerPrivate
@@ -69,6 +70,7 @@ enum {
 
 enum {
   PAUSE_SIGNAL = 0,
+  RECORD_SIGNAL,
   LAST_SIGNAL
 };
 
@@ -162,11 +164,15 @@ static void
 pitivi_controller_callb_backward (GtkWidget *widget, gpointer user_data)
 {
   PitiviController *self = (PitiviController *) user_data;
-  g_printf ("backward %p ... \n", self->private->viewerwin);
   if ( self->private->viewerwin )
     g_signal_emit_by_name (self->private->viewerwin, "backward");
 }
 
+static void
+pitivi_controller_callb_record (GtkWidget *widget, PitiviController *self)
+{
+  g_signal_emit (G_OBJECT (self), controllersignals[RECORD_SIGNAL], 0);
+} 
 
 static void
 pitivi_controller_callb_stop (GtkWidget *widget, gpointer user_data)
@@ -217,6 +223,7 @@ pitivi_controller_instance_init (GTypeInstance * instance, gpointer g_class)
   
   self->private->b_playing[PITIVI_CONTROLLER_BUTTON_PLAY] = gtk_tool_button_new_from_stock (PITIVI_STOCK_VIEWER_PLAY);
   self->private->b_playing[PITIVI_CONTROLLER_BUTTON_STOP] = gtk_tool_button_new_from_stock (PITIVI_STOCK_VIEWER_STOP);
+  self->private->b_playing[PITIVI_CONTROLLER_BUTTON_RECORD] = gtk_tool_button_new_from_stock (PITIVI_STOCK_VIEWER_RECORD);
   
   /* Toolbar Insertion */
   
@@ -228,6 +235,8 @@ pitivi_controller_instance_init (GTypeInstance * instance, gpointer g_class)
 		      , GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_FORWARD]), -1);  
   gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
 		      , GTK_TOOL_ITEM (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_STOP]), -1);
+  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
+		      , GTK_TOOL_ITEM (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_RECORD]), -1);
   
   gtk_toolbar_set_orientation (GTK_TOOLBAR(self->private->toolbar), GTK_ORIENTATION_HORIZONTAL);
   gtk_toolbar_set_show_arrow (GTK_TOOLBAR(self->private->toolbar), FALSE);
@@ -244,6 +253,9 @@ pitivi_controller_instance_init (GTypeInstance * instance, gpointer g_class)
   
   g_signal_connect (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_PLAY]\
 		    , "clicked", G_CALLBACK(pitivi_controller_callb_play), self);
+
+  g_signal_connect (self->private->b_playing[PITIVI_CONTROLLER_BUTTON_RECORD]\
+		    , "clicked", G_CALLBACK(pitivi_controller_callb_record), self);
 
   g_signal_connect (self->private->b_ffrev[PITIVI_CONTROLLER_BUTTON_FORWARD]\
 		    , "clicked", G_CALLBACK(pitivi_controller_callb_forward), self);
@@ -351,8 +363,19 @@ pitivi_controller_class_init (gpointer g_class, gpointer g_class_data)
 						  NULL,       
 						  g_cclosure_marshal_VOID__POINTER,
 						  G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+  controllersignals[RECORD_SIGNAL] =
+    g_signal_new("record",
+		 G_TYPE_FROM_CLASS (g_class),
+		 G_SIGNAL_RUN_FIRST,
+		 G_STRUCT_OFFSET (PitiviControllerClass, record),
+		 NULL,
+		 NULL,
+		 g_cclosure_marshal_VOID__VOID,
+		 G_TYPE_NONE, 0);
   
   klass->pause = pitivi_controller_callb_pause;
+
   g_object_class_install_property (G_OBJECT_CLASS (g_class), PROP_VIEWERWINDOW,
 				   g_param_spec_pointer ("viewerwin","viewerwin","viewerwin",
 							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));

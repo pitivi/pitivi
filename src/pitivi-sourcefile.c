@@ -418,8 +418,6 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
   
   gst_element_set_state (self->pipeline, GST_STATE_NULL);
 
-  g_printf ("pipeline ref:%d\n",
-	    G_OBJECT(self->pipeline)->ref_count);
   gst_object_unref (GST_OBJECT (self->pipeline));
   self->private->decode = NULL;
   self->pipeline = NULL;

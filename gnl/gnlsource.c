@@ -512,13 +512,14 @@ source_send_seek (GnlSource *source, GstEvent *event)
 
     gst_event_ref (event);
 
-    GST_INFO ("%s: seeking to %lld", 
+    GST_INFO ("%s: seeking to %lld on pad %s:%s", 
 	      gst_element_get_name (GST_ELEMENT (source)), 
-	      source->private->seek_start);
+	      source->private->seek_start,
+	      GST_DEBUG_PAD_NAME (pad));
     
     if (!gst_pad_send_event (pad, event)) {
-      g_warning ("%s: could not seek", 
-		 gst_element_get_name (GST_ELEMENT (source)));
+      GST_WARNING ("%s: could not seek", 
+		   gst_element_get_name (GST_ELEMENT (source)));
     }
 
     pads = g_list_next (pads);

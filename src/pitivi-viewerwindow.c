@@ -110,40 +110,6 @@ static  guint viewersignals[LAST_SIGNAL] = {0};
  * forward definitions
  */
 
-gboolean	do_seek(GstElement *elem, gint64 value)
-{
-  GstEvent	*event;
-  GstElementState	prev;
-
-  //  pad = gst_element_get_pad(elem, "src");
-/*   g_printf ("do_seek %s -> %lld:%02lld:%03lld\n", */
-/* 	    gst_element_get_name (elem), */
-/* 	    GST_M_S_M (value)); */
-/*   pitivi_printf_element (elem); */
-  event = gst_event_new_seek (
-			      GST_FORMAT_TIME |	    /* seek on nanoseconds */
-			      GST_SEEK_METHOD_SET | /* set the absolute position */
-			      GST_SEEK_FLAG_FLUSH,  /* flush any pending data */
-			      value);	    /* the seek offset in bytes */
-
-  
-  prev = gst_element_get_state (elem);
-  if (prev != GST_STATE_PAUSED)
-    gst_element_set_state (elem, GST_STATE_PAUSED);
-  /* res = gst_element_send_event (GST_ELEMENT (elem), event); */
-  if (!(gst_element_send_event(elem, event)))
-    {
-      g_warning ("seek on element %s failed",
-		 gst_element_get_name(elem));
-      if (prev != GST_STATE_PAUSED)
-	gst_element_set_state (elem, prev);
-      return FALSE;
-    }
-  if (prev != GST_STATE_PAUSED)
-    gst_element_set_state (elem, prev);
-  return TRUE;
-}
-
 gint64	do_query(GstElement *elem, GstQueryType type)
 {
   GstFormat	format;
@@ -159,14 +125,6 @@ gint64	do_query(GstElement *elem, GstQueryType type)
   return value;
 }
 
-void
-acitve_widget (GtkWidget *bin, GtkWidget *w1, GtkWidget *w2)
-{
-  gtk_container_remove (GTK_CONTAINER (bin), w2);
-  gtk_container_add (GTK_CONTAINER (bin), w1);
-  return ;
-}
-
 void	video_play(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
@@ -174,34 +132,22 @@ void	video_play(GtkWidget *widget, gpointer data)
   GdkEventExpose ev;
   gboolean retval;
 
-  if (self->private->play_status == PLAY) {
-    g_print ("[CallBack]:video_pause PLAY STATUS\n");
-    self->private->play_status = PAUSE;
-    gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
-  } else if (self->private->play_status == PAUSE) {
-    g_print ("[CallBack]:video_play PAUSE STATUS\n");
+  if (self->private->play_status != PLAY) {
     self->private->play_status = PLAY;
+    gst_x_overlay_set_xwindow_id
+      ( GST_X_OVERLAY ( self->private->sink ),
+	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
       g_warning("Couldn't set the project pipeline to PLAYING!");
     else {
-      gst_x_overlay_set_xwindow_id
-	( GST_X_OVERLAY ( self->private->sink ),
-	  GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
       g_idle_add(idle_func_video, self);
     }
-  } else if (self->private->play_status == STOP) {
-    g_print ("[CallBack]:video_play STOP STATUS\n");
-    self->private->play_status = PLAY;
-/*     do_seek (GST_ELEMENT (project->timeline), 0); */
-    if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
-      g_warning("Couldn't set the project pipeline to PLAYING");
-    else {
-      gst_x_overlay_set_xwindow_id
-	( GST_X_OVERLAY ( self->private->sink ),
-	  GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
-      g_idle_add(idle_func_video, self);
-    }
+  } else {
+    self->private->play_status = PAUSE;
+    if (!gst_element_set_state(project->pipeline, GST_STATE_PAUSED))
+      g_warning("Couldn't set the project pipeline to PAUSED!");
   }
+
   gtk_signal_emit_by_name (GTK_OBJECT (self->private->video_area), "expose_event", &ev, &retval);
   return ;
 }
@@ -210,20 +156,11 @@ void	video_stop(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-/*   gint64	value; */
 
   g_print ("[CallBack]:video_stop\n");
-  //gst_element_set_state(project->pipeline, GST_STATE_NULL);
   gst_element_set_state(project->pipeline, GST_STATE_READY);
   self->private->play_status = STOP;
 
-  /* rewind the movie */
-/*   do_seek(GST_ELEMENT (project->timeline), 0LL); */
-  
-  /* query total size */
-  /* value  = do_query(GST_ELEMENT (project->timeline), GST_QUERY_TOTAL); */
-
-  /* reset the viewer timeline */
   self->private->new_time = 0;
   updated_time (self);
   return ;
@@ -262,47 +199,6 @@ void	video_forward(GtkWidget *widget, gpointer data)
   gtk_range_set_value(GTK_RANGE (self->private->timeline) , time);
   return ;
 }
-
-gboolean	pause_stream(GtkWidget *widget,
-			    GdkEventButton *event,
-			    gpointer data)
-{
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-
-  gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
-
-  return FALSE;
-}
-
-/* void	move_timeline(GtkWidget *widget, gpointer data) */
-/* { */
-/* /\*   PitiviViewerWindow *self = (PitiviViewerWindow *) data; *\/ */
-
-/*   g_print ("[CallBack]:move_timeline:%g\n", gtk_range_get_value(GTK_RANGE (widget))); */
-/*   /\* TODO actually seek in the timeline !!! *\/ */
-/*   return ; */
-/* } */
-
-GtkWidget *
-get_image (gpointer data, char **im_name)
-{
-  GtkWidget	* win;
-  GdkColormap	*colormap;
-  GdkBitmap	*mask;
-  GdkPixmap	*pixmap;
-  GtkWidget	*pixmapw;
-
-  win = (GtkWidget *) data;
-  colormap = gtk_widget_get_colormap (win);
-  pixmap = gdk_pixmap_colormap_create_from_xpm_d (win->window, 
-						  colormap, 
-						  &mask, 
-						  NULL,
-						  im_name);
-  pixmapw = gtk_image_new_from_pixmap (pixmap, mask);
-  return pixmapw;
-}  
 
 static gint pitivi_viewerwindow_configure_event( GtkWidget         *widget,
 						 GdkEventConfigure *event )
@@ -437,12 +333,12 @@ create_stream (gpointer data)
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
-/*   GstElement	*audiosink; */
+  GstElement	*audiosink;
   GstElement	*timeoverlay;
 
-//  audiosink = gst_element_factory_make("alsasink", "audio-out");
+  audiosink = gst_element_factory_make("alsasink", "audio-out");
   
-//  pitivi_project_set_audio_output(project, audiosink);
+  pitivi_project_set_audio_output(project, audiosink);
 
   self->private->sink = gst_element_factory_make ("xvimagesink", "video_display");
   g_assert (self->private->sink != NULL);
@@ -490,11 +386,12 @@ gboolean	idle_func_video (gpointer data)
   
   // remove the idle_func if we're not playing !
   if (gst_element_get_state (GST_ELEMENT(project->timeline)) != GST_STATE_PLAYING) {
-    video_stop (GTK_WIDGET (self), self);
+    if (self->private->play_status == STOP)
+      video_stop (GTK_WIDGET (self), self);
     return FALSE;
   }
   
-  if ( gst_element_get_state (GST_ELEMENT (project->timeline)) == GST_STATE_PLAYING ) {
+  if ( gst_element_get_state (GST_ELEMENT (project->pipeline)) == GST_STATE_PLAYING ) {
     gst_bin_iterate (GST_BIN (project->pipeline));
   }
   return TRUE;
@@ -509,7 +406,6 @@ pitivi_viewerwindow_new(PitiviMainApp *mainapp, PitiviProject *project)
 {
   PitiviViewerWindow	*viewerwindow;
 
-  //g_print ("coucou:new\n");
   viewerwindow = (PitiviViewerWindow *) g_object_new(PITIVI_VIEWERWINDOW_TYPE, 
 						     "mainapp", mainapp,
 						     "project", project, NULL);
@@ -522,8 +418,6 @@ pitivi_viewerwindow_constructor (GType type,
 				 guint n_construct_properties,
 				 GObjectConstructParam * construct_properties)
 {
-  //g_print ("coucou:constructor\n");
-
   GObject *obj;
   {
     obj = G_OBJECT_CLASS (parent_class)->constructor (type, n_construct_properties,
@@ -636,17 +530,9 @@ pitivi_viewver_callb_forward (PitiviViewerWindow *self)
 }
 
 static void
-pitivi_viewver_callb_pause (PitiviViewerWindow *self)
-{
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
-  gst_element_set_state (project->pipeline, GST_STATE_PAUSED);
-}
-
-static void
 pitivi_viewer_callb_stop (PitiviViewerWindow *self)
 {
   video_stop (GTK_WIDGET(self), self);
-/*   pitivi_timelinewindow_stop (pitivi_mainapp_get_timelinewin (((PitiviWindows *) self)->mainapp)); */
 }
 
 static gboolean
@@ -724,7 +610,7 @@ pitivi_viewerwindow_class_init (gpointer g_class, gpointer g_class_data )
   klass->play  =  pitivi_viewver_callb_play;
   klass->backward =  pitivi_viewver_callb_backward; 
   klass->forward  =  pitivi_viewver_callb_forward;
-  klass->pause  =  pitivi_viewver_callb_pause;
+  klass->pause  =  pitivi_viewver_callb_play;
   klass->stop = pitivi_viewer_callb_stop;
 }
 

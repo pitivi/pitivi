@@ -85,6 +85,7 @@ pitivi-viewer-next.png\
 pitivi-viewer-pause.png\
 pitivi-viewer-play.png\
 pitivi-viewer-previous.png\
+pitivi-viewer-record.png\
 pitivi-viewer-stop.png\
 pitivi-viewer-volume-max.png\
 pitivi-viewer-volume-medium.png\
