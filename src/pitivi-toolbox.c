@@ -265,7 +265,8 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
 
 
 
-  gtk_toolbar_set_orientation (tbar, GTK_ORIENTATION_VERTICAL);
+  //gtk_toolbar_set_orientation (tbar, GTK_ORIENTATION_VERTICAL);
+  gtk_toolbar_set_orientation (tbar, GTK_ORIENTATION_HORIZONTAL);
   gtk_toolbar_set_show_arrow (tbar, FALSE);
   gtk_toolbar_set_style (tbar, GTK_TOOLBAR_ICONS);
   gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[0]), 0);
