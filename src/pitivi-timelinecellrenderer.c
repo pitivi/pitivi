@@ -153,6 +153,7 @@ pitivi_timelinecellrenderer_render (GtkCellRenderer *cell,
   gint				x_offset, y_offset;
   gdouble			colors[3];
   GtkStateType			state;
+  GtkShadowType			shadow;
 
   pitivi_timelinecellrenderer_get_size (cell, widget, cell_area,
 					&x_offset, &y_offset,
@@ -162,28 +163,22 @@ pitivi_timelinecellrenderer_render (GtkCellRenderer *cell,
       state = GTK_STATE_ACTIVE;
     else
       state = GTK_STATE_NORMAL;
-
+    
     if (treecell->private->cell_type == PITIVI_TML_LAYER_AUDIO)
-      {
-	gtk_paint_box (widget->style, window,
-		       state, GTK_SHADOW_IN,
+      shadow = GTK_SHADOW_ETCHED_OUT;
+    else
+      shadow = GTK_SHADOW_NONE;
+    
+    gtk_paint_box (widget->style, window,
+		       state, shadow,
 		       NULL, widget, "layer",
 		       cell_area->x,
 		       cell_area->y,
 		       widget->allocation.width,
-		       height);
-	gtk_draw_hline (widget->style, (GdkWindow *)window, state,  cell_area->x, widget->allocation.width, cell_area->y + height/2);
-      }
-    else
-      {
-	gtk_paint_box (widget->style, window,
-		       state, GTK_SHADOW_NONE,
-		       NULL, widget, "layer",
-		       0,
-		       cell_area->y,
-		       widget->allocation.width,
-		       height);
-      }
+		   height);
+    
+    if (treecell->private->cell_type == PITIVI_TML_LAYER_AUDIO)
+      gtk_draw_hline (widget->style, (GdkWindow *)window, state,  cell_area->x, widget->allocation.width, cell_area->y + height/2);
 }
 
 static void
