@@ -31,15 +31,10 @@
  * Potentially, include other headers on which this header depends.
  */
 
-#include <gst/gst.h>
 #include <gtk/gtk.h>
 
 #include "pitivi.h"
-#include "pitivi-effectswindow.h"
-#include "pitivi-toolboxwindow.h"
-#include "pitivi-timelinewindow.h"
-#include "pitivi-sourcelistwindow.h"
-#include "pitivi-mainapp.h"
+#include "pitivi-windows.h"
 
 /*
  * Type macros.
@@ -58,7 +53,7 @@ typedef struct _PitiviNewProjectWindowPrivate PitiviNewProjectWindowPrivate;
 
 struct _PitiviNewProjectWindow
 {
-  GtkWindow parent;
+  PitiviWindows parent;
   
   /* instance public members */
 
@@ -68,7 +63,7 @@ struct _PitiviNewProjectWindow
 
 struct _PitiviNewProjectWindowClass
 {
-  GtkWindowClass parent;
+  PitiviWindowsClass parent;
   /* class members */
 };
 

@@ -1,3 +1,16 @@
+2004-06-25    <bilboed@localhost>
+
+	* src/pitivi-toolboxwindow.c: 
+	* src/pitivi-toolboxwindow.h: 
+	* src/pitivi-newprojectwindow.c: 
+	* src/pitivi-newprojectwindow.h: 
+	* src/pitivi-windows.c:
+	* src/pitivi-windows.h:
+	* src/pitivi-projectwindows.c:
+	* src/pitivi-projectwindows.h: Added PitiviWindows and PitiviProjectWindows classes
+	Converted PitiviToolboxWindow and PitiviNewProjectWindow to be derivate of PitiviWindows
+
+	
 2004-05-28    <ez3kiel@localhost>
 
 	* src/pitivi-projectsettings.c (pitivi_projectsettings_list_make): Creation de la liste de PitiviProjectSettings par default insere dans la PitiviMainApp

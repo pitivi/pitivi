@@ -26,13 +26,13 @@
 
 #include "pitivi.h"
 #include "pitivi-toolboxwindow.h"
+#include "pitivi-menu.h"
+#include "pitivi-stockicons.h"
+#include "pitivi-toolbox.h"
+#include "pitivi-projectsettings.h"
+#include "pitivi-newprojectwindow.h"
 
-static GtkWindowClass	*parent_class = NULL;
-
-enum {
-  PROP_0,
-  PROP_MAINAPP
-};
+static PitiviWindowsClass	*parent_class = NULL;
 
 struct _PitiviToolboxWindowPrivate
 {
@@ -40,7 +40,6 @@ struct _PitiviToolboxWindowPrivate
   gboolean		dispose_has_run;
   GtkWidget		*vbox;
   PitiviToolbox		*toolbox;
-  PitiviMainApp		*mainapp;
 };
 
 /*
@@ -55,9 +54,10 @@ void
 pitivi_callb_toolbox_filenew_project ( GtkAction *action, PitiviToolboxWindow *self )
 {
   PitiviNewProjectWindow *win_new_project;
+  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
     
   /* New Project window */
-  win_new_project = pitivi_newprojectwindow_new( self->private->mainapp );
+  win_new_project = pitivi_newprojectwindow_new( mainapp );
   gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
 }
 
@@ -80,7 +80,9 @@ pitivi_callb_toolbox_exit ( GtkAction *action, PitiviToolboxWindow *self )
 void
 pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *self )
 {    
-  pitivi_mainapp_create_wintools(self->private->mainapp);
+  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
+
+  pitivi_mainapp_create_wintools( mainapp );
 }
 
 static GtkActionEntry toolbox_menu_entries[] = {
@@ -212,15 +214,6 @@ pitivi_toolboxwindow_set_property (GObject * object,
 
   switch (property_id)
     {
-      /*   case PITIVI_TOOLBOXWINDOW_PROPERTY: { */
-      /*     g_free (self->private->name); */
-      /*     self->private->name = g_value_dup_string (value); */
-      /*     g_print ("maman: %s\n",self->private->name); */
-      /*   } */
-      /*     break; */
-    case PROP_MAINAPP:
-      self->private->mainapp = g_value_get_pointer (value);
-      break;
 
     default:
       /* We don't have any other property... */
@@ -238,13 +231,6 @@ pitivi_toolboxwindow_get_property (GObject * object,
 
   switch (property_id)
     {
-      /*  case PITIVI_TOOLBOXWINDOW_PROPERTY: { */
-      /*     g_value_set_string (value, self->private->name); */
-      /*   } */
-      /*     break; */
-    case PROP_MAINAPP:
-      g_value_set_pointer (value, self->private->mainapp);
-      break;
       
     default:
       /* We don't have any other property... */
@@ -270,22 +256,6 @@ pitivi_toolboxwindow_class_init (gpointer g_class, gpointer g_class_data)
   gobject_class->set_property = pitivi_toolboxwindow_set_property;
   gobject_class->get_property = pitivi_toolboxwindow_get_property;
 
-  /* Install the properties in the class here ! */
-  /*   pspec = g_param_spec_string ("maman-name", */
-  /*                                "Maman construct prop", */
-  /*                                "Set maman's name", */
-  /*                                "no-name-set" /\* default value *\/, */
-  /*                                G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE); */
-  /*   g_object_class_install_property (gobject_class, */
-  /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
-  /*                                    pspec); */
-
-  g_object_class_install_property (gobject_class,
-                                   PROP_MAINAPP,
-                                   g_param_spec_pointer ("mainapp",
-							 "mainapp",
-							 "Pointer on the PitiviMainApp instance",
-							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY) );
 }
 
 GType
@@ -306,7 +276,7 @@ pitivi_toolboxwindow_get_type (void)
 	0,			/* n_preallocs */
 	pitivi_toolboxwindow_instance_init	/* instance_init */
       };
-      type = g_type_register_static (GTK_TYPE_WINDOW,
+      type = g_type_register_static (PITIVI_WINDOWS_TYPE,
 				     "PitiviToolboxWindowType", &info, 0);
     }
 

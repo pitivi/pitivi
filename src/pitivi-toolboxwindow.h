@@ -28,20 +28,14 @@
 #ifndef PITIVI_TOOLBOXWINDOW_H
 #define PITIVI_TOOLBOXWINDOW_H
 
+typedef struct _PitiviToolboxWindow PitiviToolboxWindow;
+
 /*
  * Potentially, include other headers on which this header depends.
  */
+
 #include <gtk/gtk.h>
-#include "pitivi-mainapp.h"
-#include "pitivi-menu.h"
-#include "pitivi-stockicons.h"
-#include "pitivi-toolbox.h"
-#include "pitivi-timelinewindow.h"
-#include "pitivi-sourcelistwindow.h"
-#include "pitivi-effectswindow.h"
-#include "pitivi-projectsettings.h"
-#include "pitivi-newprojectwindow.h"
-#include "pitivi-viewerwindow.h"
+#include "pitivi-windows.h"
 
 /*
  * Type macros.
@@ -56,20 +50,14 @@
 
 #define PITIVI_TOOLBOXWINDOW_DF_TITLE "Pitivi Project"
 
-typedef struct _PitiviToolboxWindow PitiviToolboxWindow;
 typedef struct _PitiviToolboxWindowClass PitiviToolboxWindowClass;
 typedef struct _PitiviToolboxWindowPrivate PitiviToolboxWindowPrivate;
 
 struct _PitiviToolboxWindow
 {
-  GtkWindow parent;
+  PitiviWindows parent;
 
   /* instance public members */
-  
-  PitiviTimelineWindow	 *timelinewin;
-  PitiviSourceListWindow *srclistwin;
-  PitiviEffectsWindow	 *effectswin;
-  PitiviViewerWindow	 *viewerwin;
   
   /* private */
   
@@ -78,7 +66,7 @@ struct _PitiviToolboxWindow
 
 struct _PitiviToolboxWindowClass
 {
-  GtkWindowClass parent;
+  PitiviWindowsClass parent;
   /* class members */
 };
 

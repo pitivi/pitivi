@@ -52,19 +52,19 @@
 
 */
 
-#include	<gst/gst.h>
-#include	"pitivi-codecconfwindow.h"
-#include	"pitivi-newprojectwindow.h"
-#include	"pitivi-viewerwindow.h"
-#include	"pitivi-projectsettings.h"
-#include	"pitivi-mainapp.h"
+#include <gtk/gtk.h>
+#include <gst/gst.h>
+#include "pitivi-newprojectwindow.h"
+#include "pitivi-codecconfwindow.h"
+#include "pitivi-viewerwindow.h"
+#include "pitivi-projectsettings.h"
 
-static GtkWindowClass	*parent_class = NULL;
+static PitiviWindowsClass	*parent_class = NULL;
 
-enum {
-  PROP_0,
-  PROP_MAINAPP
-};
+/* enum { */
+/*   PROP_0, */
+/*   PROP_MAINAPP */
+/* }; */
 
 enum
   {
@@ -99,7 +99,7 @@ struct _PitiviNewProjectWindowPrivate
   GtkWidget		*hbox;
 
   /* PitiviMainApp object */
-  PitiviMainApp		*mainapp;
+/*   PitiviMainApp		*mainapp; */
 
   /* Arbre des reglages */
   GtkTreeStore		*tree;
@@ -289,13 +289,12 @@ pitivi_newprojectwindow_add_setting (GtkButton *button, gpointer user_data)
 void
 pitivi_add_category(GtkButton *button, gpointer user_data)
 {
-  PitiviNewProjectWindow	*self;
-
-  self = (PitiviNewProjectWindow *) user_data;
+  PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) user_data;
+  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
 
   if ( strlen(gtk_entry_get_text(GTK_ENTRY(self->private->cat_text))) )
     { 
-      pitivi_mainapp_add_newcategory( self->private->mainapp, 
+      pitivi_mainapp_add_newcategory( mainapp, 
 				      gtk_entry_get_text ( GTK_ENTRY (self->private->cat_text) ) );
 
       gtk_tree_store_append(self->private->tree,
@@ -310,12 +309,11 @@ pitivi_add_category(GtkButton *button, gpointer user_data)
 void
 pitivi_modif_settings(GtkButton *button, gpointer user_data)
 {
-  PitiviNewProjectWindow	*self;
-   PitiviProjectSettings		*new_setting;
+  PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) user_data;
+  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
+  PitiviProjectSettings		*new_setting;
   GSList			*list_media;
 
-  self = (PitiviNewProjectWindow *) user_data;
-  
   g_print("Entree Modif setting\n");
   if (gtk_tree_store_iter_is_valid (self->private->tree, &self->private->pIter2) &&
       gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2))
@@ -335,7 +333,7 @@ pitivi_modif_settings(GtkButton *button, gpointer user_data)
 										    FALSE ), 
 							  list_media );
       
-      pitivi_mainapp_modif_settings( self->private->mainapp, new_setting, self->private->position );
+      pitivi_mainapp_modif_settings( mainapp, new_setting, self->private->position );
       
       gtk_tree_store_set(self->private->tree, &self->private->pIter2,
 			 0, gtk_entry_get_text(GTK_ENTRY(self->private->name_text)), -1);
@@ -358,14 +356,13 @@ pitivi_del_category(GtkButton *button, gpointer user_data)
 void
 pitivi_del_settings(GtkButton *button, gpointer user_data)
 {
-  PitiviNewProjectWindow	*self;
-
-  self = (PitiviNewProjectWindow *) user_data;
+  PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) user_data;
+  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
   
   if (gtk_tree_store_iter_is_valid (self->private->tree, &self->private->pIter2) &&
       gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2))
     {
-      pitivi_mainapp_del_settings( self->private->mainapp, self->private->position );
+      pitivi_mainapp_del_settings( mainapp, self->private->position );
       gtk_tree_store_remove (self->private->tree, &self->private->pIter2);
     }
 }
@@ -427,6 +424,7 @@ pitivi_newprojectwindow_add_mainapp_setting (PitiviNewProjectWindow *self)
 {
   PitiviProjectSettings		*new_setting;
   GSList			*list_media;
+  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
 
   gtk_text_buffer_get_start_iter(self->private->desc_text_buffer, 
 				 &self->private->start_description_iter);
@@ -444,7 +442,7 @@ pitivi_newprojectwindow_add_mainapp_setting (PitiviNewProjectWindow *self)
 						      list_media );
   
   /* Insertion du nouveau setting dans la PitiviMainApp */
-  pitivi_mainapp_add_settings(self->private->mainapp, 
+  pitivi_mainapp_add_settings( mainapp, 
 				new_setting, 
 				self->private->position );
 }
@@ -505,12 +503,13 @@ pitivi_tree_create(PitiviNewProjectWindow *self)
   PitiviProjectSettings		*setting;
   int				i;
   int				j;
+  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
   
   /* Nouvel arbre */
   self->private->tree = gtk_tree_store_new(1, G_TYPE_STRING);
   
   /* Liste des PitiviCategorieSettings et des PitiviProjectSettings */
-  list = pitivi_mainapp_project_settings( self->private->mainapp );
+  list = pitivi_mainapp_project_settings( mainapp );
 
   for (i = 0; (categorie = (PitiviCategorieSettings *) g_slist_nth_data (list, i) ) ; i++)
     {
@@ -590,8 +589,9 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   GtkObject			*spin_adjustment;
   GstStructure			*structure;
   GValue			*val;
+  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
   
-  categorie = pitivi_mainapp_get_selected_category( self->private->mainapp, self->private->position );
+  categorie = pitivi_mainapp_get_selected_category( mainapp, self->private->position );
   g_print( "\nSELECTED CATEGORY NAME : %s.\n", categorie->name );
   
   reglage = (PitiviProjectSettings *) g_slist_nth_data(categorie->list_settings, self->private->position[1] );
@@ -753,7 +753,9 @@ pitivi_make_presets_hbox(PitiviNewProjectWindow *self)
 void
 pitivi_create_new_project ( GtkAction *action, PitiviNewProjectWindow *self )
 {
-  pitivi_mainapp_create_wintools (self->private->mainapp);
+  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
+
+  pitivi_mainapp_create_wintools (mainapp);
   gtk_widget_destroy (GTK_WIDGET (self));
 }
 
@@ -2577,9 +2579,9 @@ pitivi_newprojectwindow_set_property (GObject * object, guint property_id,
       /*     g_print ("maman: %s\n",self->private->name); */
       /*   } */
       /*     break; */
-    case PROP_MAINAPP:
-      self->private->mainapp = g_value_get_pointer (value);
-      break;
+/*     case PROP_MAINAPP: */
+/*       self->private->mainapp = g_value_get_pointer (value); */
+/*       break; */
 
     default:
       /* We don't have any other property... */
@@ -2600,9 +2602,9 @@ pitivi_newprojectwindow_get_property (GObject * object, guint property_id,
       /*     g_value_set_string (value, self->private->name); */
       /*   } */
       /*     break; */
-    case PROP_MAINAPP:
-      g_value_set_pointer (value, self->private->mainapp);
-      break;
+/*     case PROP_MAINAPP: */
+/*       g_value_set_pointer (value, self->private->mainapp); */
+/*       break; */
       
     default:
       /* We don't have any other property... */
@@ -2637,12 +2639,12 @@ pitivi_newprojectwindow_class_init (gpointer g_class, gpointer g_class_data)
   /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
   /*                                    pspec); */
 
-  g_object_class_install_property (gobject_class,
-                                   PROP_MAINAPP,
-                                   g_param_spec_pointer ("mainapp",
-							 "mainapp",
-							 "Pointer on the PitiviMainApp instance",
-							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY) );
+/*   g_object_class_install_property (gobject_class, */
+/*                                    PROP_MAINAPP, */
+/*                                    g_param_spec_pointer ("mainapp", */
+/* 							 "mainapp", */
+/* 							 "Pointer on the PitiviMainApp instance", */
+/* 							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY) ); */
 }
 
 GType	
@@ -2663,7 +2665,7 @@ pitivi_newprojectwindow_get_type (void)
 	0,					/* n_preallocs */
 	pitivi_newprojectwindow_instance_init	/* instance_init */
       };
-      type = g_type_register_static (GTK_TYPE_WINDOW,
+      type = g_type_register_static (PITIVI_WINDOWS_TYPE,
 				     "PitiviNewProjectWindowType", &info, 0);
     }
 
