@@ -106,6 +106,7 @@ struct _PitiviSourceFile
   gboolean    haveaudio;
   gboolean    havevideo;
   gboolean    haveeffect;
+  gboolean    istransition;
 
   PitiviSourceFilePrivate *private;
 };

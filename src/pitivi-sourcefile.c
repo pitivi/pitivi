@@ -676,6 +676,7 @@ pitivi_sourcefile_new_transition (gchar *name, GstElementFactory *factory, GdkPi
   sf->thumbs_effect = pixbuf;
   sf->length = DEFAULT_EFFECT_LENGTH;
   sf->haveeffect = TRUE;
+  sf->istransition = TRUE;
   sf->private->transitionid = transitionid;
 
   return sf;
