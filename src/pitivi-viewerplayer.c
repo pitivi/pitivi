@@ -378,7 +378,7 @@ pitivi_viewerplayer_expose (GtkWidget * widget, GdkEventExpose * event)
 	height_ratio = width_ratio;
       } else
 	width_ratio = height_ratio = 1.0;
-
+      
       logo_x = (alloc_width / 2) - (width * width_ratio / 2);
       logo_y = (alloc_height / 2) - (height * height_ratio / 2);
       
@@ -404,9 +404,12 @@ pitivi_viewerplayer_expose (GtkWidget * widget, GdkEventExpose * event)
 				    GDK_RGB_DITHER_NORMAL, pixels,
 				    rowstride, event->area.x, event->area.y);
       
-      g_printf ("width:%d %d %d height:%d %d %d rowstride : %d pixels : %d\n", width\
+      g_printf ("width:%d %d %d height:%d %d %d rowstride : %d pixels : %d\n area.x:%d area.y:%d area.w:%d area.h:%d\n", width\
 		, widget->allocation.width, logo_x, widget->allocation.height,
-		height, logo_y, rowstride, pixels[1]);
+		height, logo_y, rowstride, pixels[1],
+		event->area.x, event->area.y,
+		event->area.width, event->area.height);
+      
       g_object_unref (frame);
     } else {
       gdk_draw_rectangle (widget->window, widget->style->black_gc, TRUE,
@@ -422,23 +425,34 @@ static void
 pitivi_viewerplayer_allocate (GtkWidget * widget, GtkAllocation * allocation)
 {
   PitiviViewerPlayer *self;
-  
+  gint width, height = 1;
+
   widget->allocation = *allocation;
   
   self = PITIVI_VIEWERPLAYER (widget);
 
   if (GTK_WIDGET_REALIZED (widget)) {
     gdk_window_move_resize (widget->window,
-			    allocation->x, allocation->y, allocation->width, allocation->height);
+			    allocation->x, allocation->y, 
+			    allocation->width, 
+			    allocation->height);
+    
     if (GDK_IS_WINDOW (self->private->event_window))
       gdk_window_move_resize (self->private->event_window,
-			      0, 0, allocation->width, allocation->height);
-    if (GDK_IS_WINDOW (self->private->video_window)) {
+			      0, 
+			      0, 
+			      allocation->width, 
+			      allocation->height);
+    
+    self->private->video_window_width = width;
+    self->private->video_window_height = height;
+    
+    if (GDK_IS_WINDOW (self->private->video_window)) {  
       gdk_window_move_resize (self->private->video_window,
-			      0, 0, allocation->width, allocation->height);
+			      allocation->width, allocation->height, \
+			      allocation->width, allocation->height);
     }
   }
-  g_printf ("pitivi_viewerplayer_allocate : allocate ....\n");
 }
 
 static void

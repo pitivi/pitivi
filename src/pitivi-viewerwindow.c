@@ -33,7 +33,7 @@ struct _PitiviViewerWindowPrivate
   /* instance private members */
   gboolean			dispose_has_run;
   GtkWidget			*main_vbox;
-  GtkWidget			*playerview;
+  GtkWidget		        *playerview;
   PitiviViewerController	*media_controller;
   GdkPixbuf			*logo;
   GtkWidget			*mixer;
