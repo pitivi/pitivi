@@ -190,7 +190,7 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   GtkToolbar *tbar = GTK_TOOLBAR (instance);
 
   self->private = g_new0 (PitiviToolboxPrivate, 1);
-  self->private->group_button = g_new0 (GSList, 1);
+  self->private->group_button = NULL;
 
   /* initialize all public and private members to reasonable default values. */
 

@@ -118,7 +118,7 @@ pitivi_menu_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->dispose_has_run = FALSE;
   self->private->ui_manager = gtk_ui_manager_new ();
   self->public->ui = self->private->ui_manager;
-  self->public->menu = gtk_ui_manager_get_widget (self->private->ui_manager, g_strdup (PITIVI_MAIN_MENUBAR_XML));
+  self->public->menu = gtk_ui_manager_get_widget (self->private->ui_manager, PITIVI_MAIN_MENUBAR_XML);
   gtk_ui_manager_set_add_tearoffs (self->private->ui_manager, TRUE);
   self->private->action_group = gtk_ui_manager_get_action_groups (self->private->ui_manager);
   self->private->accel_group = gtk_ui_manager_get_accel_group (self->private->ui_manager);

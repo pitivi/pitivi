@@ -1,3 +1,13 @@
+2004-05-23    <bilboed@bilboed.eptv>
+
+	* src/pitivi-menu.c (pitivi_menu_instance_init): No need to g_strdup the second parameter to gtk_ui_manager_get_widget(), PITIVI_MAIN_MENUBAR_XML is already a const gchar* .
+
+	* src/pitivi-toolbox.c (pitivi_toolbox_instance_init): Remove malloc, replace by NULL (self->private->group_button)
+
+	* src/pitivi-mainapp.c (pitivi_create_new_categorie): Do not malloc a value which is meant to be filled (categorie->list_settings memory leak) !
+
+	* src/pitivi-newprojectwindow.c (pitivi_make_video_frame): It works better when you malloc a table... with a non-null size :) (self->private->video_tabname).
+
 2037-03-15    <loic@localhost>
 
 	* src/pitivi-newprojectwindow.c : Implementation de la justification des labels dans l'onglet settings

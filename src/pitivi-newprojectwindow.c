@@ -648,7 +648,7 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
       self->private->video_codec_list = self->private->video_codec_list->next;
     }
   /* liste des noms des codecs */
-  self->private->video_tabname = g_malloc(sizeof(gchar **));  
+  self->private->video_tabname = g_malloc(sizeof(gchar **) * nb_videocodec);  
   j = 0;
   /* vcodec_hbox */
   vcodec_hbox = gtk_hbox_new(FALSE, 5);

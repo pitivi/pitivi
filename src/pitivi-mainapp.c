@@ -80,7 +80,7 @@ pitivi_create_new_categorie(gchar *name, GSList *list_settings)
   PitiviProjectSettings		*setting;
   
   categorie = g_new0(PitiviCategorieSettings, 1);
-  categorie->list_settings = g_new0(GSList, 1);
+  categorie->list_settings = NULL;
 
   categorie->name = g_strdup(name);
   categorie->list_settings = list_settings;
