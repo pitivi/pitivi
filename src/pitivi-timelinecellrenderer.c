@@ -1034,6 +1034,7 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 					       GTK_WIDGET (media_source)->allocation.width, container->linked_track );
 	  pitivi_media_set_size ( GTK_WIDGET (media_source->linked), x);
 	  link_widgets (media[0], media[1]);
+	  pitivi_timelinemedia_set_start_stop (link, start1, stop1);
 	  pitivi_timelinemedia_set_media_start_stop(link, mstart1, mstop1);
 	  pitivi_timelinemedia_set_media_start_stop(media[1], mstart2, mstop2);
 	  pitivi_layout_put (GTK_LAYOUT ( container->linked_track ), GTK_WIDGET ( media[1] ), pos, 0);
