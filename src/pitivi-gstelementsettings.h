@@ -48,6 +48,9 @@
 typedef struct _PitiviGstElementSettingsPrivate PitiviGstElementSettingsPrivate;
 typedef struct _PitiviGstElementSettingsProp PitiviGstElementSettingsProp;
 
+#define PREF_WIDTH 400
+#define PREF_HEIGHT 400
+
 struct _PitiviGstElementSettings
 {
   GtkVBox parent;

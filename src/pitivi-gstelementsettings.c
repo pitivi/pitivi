@@ -125,6 +125,21 @@ pitivi_gstelementsettings_add_new_label (gpointer data,
 /* } */
 
 static GtkWidget *
+pitivi_gstelementsettings_add_new_frame_expand (gpointer data,
+					 gchar *text)
+{
+  GtkWidget *Frame;
+  GtkWidget *VBox;
+
+  Frame = gtk_frame_new(text);
+  gtk_box_pack_start (GTK_BOX (data), Frame, TRUE, TRUE, BORDER);
+  VBox = gtk_vbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (Frame), VBox);
+
+  return (VBox);
+}
+
+static GtkWidget *
 pitivi_gstelementsettings_add_new_frame (gpointer data,
 					 gchar *text)
 {
@@ -169,13 +184,23 @@ pitivi_gstelementsettings_table_widget_add (GtkWidget *Table, GtkWidget *widget,
 
 static void
 pitivi_gstelementsettings_table_new_label_add (PitiviGstElementSettings *self,
-						gchar *text, gint row, gint col)
+						gchar *text, gint row, gint col, gchar *tips)
 {
-  GtkWidget *Label;
+  GtkWidget	*Label;
+  GtkWidget	*EventBox;
+  GtkTooltips	*Ttips;
+
+  Ttips = gtk_tooltips_new ();
+  EventBox = gtk_event_box_new ();
+  gtk_tooltips_set_tip (Ttips, EventBox, tips, NULL);
   
   Label = gtk_label_new (NULL);
   gtk_label_set_markup (GTK_LABEL (Label), text);
-  pitivi_settingswindow_table_widget_add (self->Table, Label, row, col);  
+  gtk_misc_set_alignment (GTK_MISC (Label), 0.0, 0.5);
+  
+  gtk_container_add (GTK_CONTAINER (EventBox), Label);
+  pitivi_settingswindow_table_widget_add (self->Table, EventBox, row, col);  
+
   return ;
 }
 
@@ -184,7 +209,7 @@ pitivi_gstelementsettings_table_new_label_add (PitiviGstElementSettings *self,
 ///////////////////////////////////////////////////////////////////////////////////////
 
 static GtkWidget *
-pitivi_gstelementsettings_conf_value_string (gchar *name, GValue value)
+pitivi_gstelementsettings_conf_value_string (gchar *name, GValue value, GParamSpec *param)
 {
   const gchar		*string_val;
   GtkWidget		*text_entry;
@@ -200,11 +225,17 @@ pitivi_gstelementsettings_conf_value_string (gchar *name, GValue value)
 
   g_object_set_data (G_OBJECT(text_entry), "name", name);
 
+  if (param->flags & G_PARAM_WRITABLE) {
+    gtk_widget_set_sensitive (text_entry, TRUE);
+  } else {
+    gtk_widget_set_sensitive (text_entry, FALSE);
+  }
+
   return (text_entry);
 }
 
 static GtkWidget *
-pitivi_gstelementsettings_value_conf_boolean (gchar *name, GValue value)
+pitivi_gstelementsettings_value_conf_boolean (gchar *name, GValue value, GParamSpec *param)
 {
   GSList		*radio_list;
   GtkWidget		*radio_true;
@@ -227,6 +258,14 @@ pitivi_gstelementsettings_value_conf_boolean (gchar *name, GValue value)
 
   g_object_set_data (G_OBJECT(button_hbox), "name", name);
 
+  if (param->flags & G_PARAM_WRITABLE) {
+    gtk_widget_set_sensitive (radio_true, TRUE);
+    gtk_widget_set_sensitive (radio_false, TRUE);
+  } else {
+    gtk_widget_set_sensitive (radio_true, FALSE);
+    gtk_widget_set_sensitive (radio_false, FALSE);
+  }
+
   return (button_hbox);
 }
 
@@ -244,6 +283,12 @@ pitivi_gstelementsettings_value_conf_uint (gchar *name, GValue value, GParamSpec
 
   g_object_set_data (G_OBJECT(spin_button), "name", name);
   g_object_set_data (G_OBJECT(spin_button), "type", "UINT");
+
+  if (param->flags & G_PARAM_WRITABLE) {
+    gtk_widget_set_sensitive (spin_button, TRUE);
+  } else {
+    gtk_widget_set_sensitive (spin_button, FALSE);
+  }
 
   return (spin_button);
 }
@@ -263,6 +308,12 @@ pitivi_gstelementsettings_value_conf_int (gchar *name, GValue value, GParamSpec	
   g_object_set_data (G_OBJECT(spin_button), "name", name);
   g_object_set_data (G_OBJECT(spin_button), "type", "INT");
 
+  if (param->flags & G_PARAM_WRITABLE) {
+    gtk_widget_set_sensitive (spin_button, TRUE);
+  } else {
+    gtk_widget_set_sensitive (spin_button, FALSE);
+  }
+
   return (spin_button);
 }
 
@@ -280,6 +331,12 @@ pitivi_gstelementsettings_value_conf_uint64 (gchar *name, GValue value, GParamSp
 
   g_object_set_data (G_OBJECT(spin_button), "name", name);
   g_object_set_data (G_OBJECT(spin_button), "type", "UINT64");
+
+  if (param->flags & G_PARAM_WRITABLE) {
+    gtk_widget_set_sensitive (spin_button, TRUE);
+  } else {
+    gtk_widget_set_sensitive (spin_button, FALSE);
+  }
 
   return (spin_button);
 }
@@ -299,6 +356,12 @@ pitivi_gstelementsettings_value_conf_int64 (gchar *name, GValue value, GParamSpe
   g_object_set_data (G_OBJECT(spin_button), "name", name);
   g_object_set_data (G_OBJECT(spin_button), "type", "INT64");
 
+  if (param->flags & G_PARAM_WRITABLE) {
+    gtk_widget_set_sensitive (spin_button, TRUE);
+  } else {
+    gtk_widget_set_sensitive (spin_button, FALSE);
+  }
+
   return (spin_button);
 }
 
@@ -316,6 +379,12 @@ pitivi_gstelementsettings_value_conf_ulong (gchar *name, GValue value, GParamSpe
 
   g_object_set_data (G_OBJECT(spin_button), "name", name);
   g_object_set_data (G_OBJECT(spin_button), "type", "ULONG");
+
+  if (param->flags & G_PARAM_WRITABLE) {
+    gtk_widget_set_sensitive (spin_button, TRUE);
+  } else {
+    gtk_widget_set_sensitive (spin_button, FALSE);
+  }
 
   return (spin_button);
 }
@@ -335,6 +404,12 @@ pitivi_gstelementsettings_value_conf_long (gchar *name, GValue value, GParamSpec
   g_object_set_data (G_OBJECT(spin_button), "name", name);
   g_object_set_data (G_OBJECT(spin_button), "type", "LONG");
 
+  if (param->flags & G_PARAM_WRITABLE) {
+    gtk_widget_set_sensitive (spin_button, TRUE);
+  } else {
+    gtk_widget_set_sensitive (spin_button, FALSE);
+  }
+
   return (spin_button);
 }
 
@@ -353,6 +428,12 @@ pitivi_gstelementsettings_value_conf_float (gchar *name, GValue value, GParamSpe
   g_object_set_data (G_OBJECT(spin_button), "name", name);
   g_object_set_data (G_OBJECT(spin_button), "type", "FLOAT");
 
+  if (param->flags & G_PARAM_WRITABLE) {
+    gtk_widget_set_sensitive (spin_button, TRUE);
+  } else {
+    gtk_widget_set_sensitive (spin_button, FALSE);
+  }
+
   return (spin_button);
 }
 
@@ -370,6 +451,12 @@ pitivi_gstelementsettings_value_conf_double (gchar *name, GValue value, GParamSp
 
   g_object_set_data (G_OBJECT(spin_button), "name", name);
   g_object_set_data (G_OBJECT(spin_button), "type", "DOUBLE");
+
+  if (param->flags & G_PARAM_WRITABLE) {
+    gtk_widget_set_sensitive (spin_button, TRUE);
+  } else {
+    gtk_widget_set_sensitive (spin_button, FALSE);
+  }
 
   return (spin_button);
 }
@@ -404,8 +491,18 @@ pitivi_gstelementsettings_aff_enum (PitiviGstElementSettings *self,
       gtk_combo_box_insert_text (GTK_COMBO_BOX (widget), i, label);
     }
     
+    ////////////////////////////////// transformer le numero en ligne !!!!!!!!!!!!!!!!!!!!!!!!
     gtk_combo_box_set_active (GTK_COMBO_BOX (widget), g_value_get_enum(&value));
     
+    
+    if (param->flags & G_PARAM_WRITABLE) {
+      gtk_widget_set_sensitive (widget, TRUE);
+    } else {
+      gtk_widget_set_sensitive (widget, FALSE);
+    }
+
+
+
     g_object_set_data (G_OBJECT(widget), "tab", enum_values);
   }
 
@@ -452,6 +549,12 @@ pitivi_gstelementsettings_aff_flags (gchar *name, GValue value, GParamSpec *para
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), FALSE);
     }
     
+    if (param->flags & G_PARAM_WRITABLE) {
+      gtk_widget_set_sensitive (check, TRUE);
+    } else {
+      gtk_widget_set_sensitive (check, FALSE);
+    }
+
   }
 
   g_object_set_data (G_OBJECT(Tab), "name", name);
@@ -495,11 +598,11 @@ pitivi_gstelementsettings_table_new_param_add (PitiviGstElementSettings *self,
   switch (G_VALUE_TYPE (&value)) {
   case G_TYPE_STRING: {
     tmp = pitivi_gstelementsettings_conf_value_string 
-      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value, prop);
     break;
   } case G_TYPE_BOOLEAN: {
     tmp = pitivi_gstelementsettings_value_conf_boolean 
-      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value);
+      (g_strdup(g_param_spec_get_name (prop)), self->io->params[row].value, prop);
     break;
   } case G_TYPE_UINT: {
     tmp = pitivi_gstelementsettings_value_conf_uint 
@@ -563,8 +666,9 @@ static void
 pitivi_gstelementsettings_add_new_frame_prop (PitiviGstElementSettings *self)
 {
   gint cpt;
+  GtkWidget	*ScrollBar;
 
-  self->private->frame_prop = pitivi_gstelementsettings_add_new_frame (self, "Properties:");
+  self->private->frame_prop = pitivi_gstelementsettings_add_new_frame_expand (self, "Properties:");
 
   if (self->io->n_param < 1) {
     GtkWidget *Label;
@@ -574,16 +678,26 @@ pitivi_gstelementsettings_add_new_frame_prop (PitiviGstElementSettings *self)
 			Label, FALSE, FALSE, BORDER);
   } else {
     self->Table = gtk_table_new ((self->io->n_param), 2, FALSE);
-    gtk_box_pack_start (GTK_BOX (self->private->frame_prop), self->Table, FALSE, FALSE, BORDER);
-    
+    gtk_container_set_border_width (GTK_CONTAINER (self->Table), BORDER);
+    ScrollBar = gtk_scrolled_window_new (NULL, NULL);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (ScrollBar),
+				    GTK_POLICY_NEVER,
+				    GTK_POLICY_AUTOMATIC);
+    gtk_widget_set_size_request (ScrollBar, -1, 100);
+
+    gtk_container_add (GTK_CONTAINER (self->private->frame_prop), ScrollBar);
+    gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (ScrollBar), self->Table);
+   
     for (cpt = 0; cpt < self->io->n_param; cpt++) {
+      GParamSpec *pspec;
+
+      pspec = pitivi_gstelementsettings_get_info_prop (self, (gchar *) (self->io->params[cpt]).name);
 
       pitivi_gstelementsettings_table_new_label_add (self, pitivi_gstelementsettings_string_bold 
-						     ((gchar *) (self->io->params[cpt]).name), cpt, 0);
+						     ((gchar *) g_param_spec_get_name (pspec)), 
+						     cpt, 0, (gchar *) g_param_spec_get_blurb (pspec));
 
-      pitivi_gstelementsettings_table_new_param_add (self, 
-						     pitivi_gstelementsettings_get_info_prop (self, (gchar *) (self->io->params[cpt]).name),
-						     cpt, 1);
+      pitivi_gstelementsettings_table_new_param_add (self, pspec, cpt, 1);
 
     }
   }

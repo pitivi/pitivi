@@ -108,39 +108,6 @@ pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSett
   //pitivi_settings_aff_elm_io (elm_info);
 
   /*
-    GList				*pt;
-    //GList				*list;
-    
-    if (!strcmp (prop->class, "Sink/Video")) {
-    elm_info = pitivi_settings_get_io_settings_struct_info
-    (self->private->settings->elm_video_out, prop->elm);
-    } else if (!strcmp (prop->class, "Sink/Audio")) {
-    elm_info = pitivi_settings_get_io_settings_struct_info
-    (self->private->settings->elm_audio_out, prop->elm);
-    } else if (!strcmp (prop->class, "Source/Video")) {
-    elm_info = pitivi_settings_get_io_settings_struct_info
-    (self->private->settings->elm_video_in, prop->elm);
-    } else if (!strcmp (prop->class, "Source/Audio")) {
-    elm_info = pitivi_settings_get_io_settings_struct_info
-    (self->private->settings->elm_audio_in, prop->elm);
-    }
-    
-    if (elm_info) {
-    pt = elm_info->prop_list;
-    for (; pt; pt = g_list_next (pt)) {
-    PitiviSettingsProp *prop2 = (PitiviSettingsProp *) pt->data;
-    
-    g_free (prop2->name);
-    g_free (pt->data);
-    }
-    
-    g_list_free (elm_info->prop_list);
-    
-    elm_info->prop_list = pitivi_gstelementsettings_get_list (prop);
-    }
-  */
-
-  /*
     for (; list; list = g_list_next (list)) {
     PitiviGstElementSettingsProp *prop = (PitiviGstElementSettingsProp *) list->data;
     PITIVI_DEBUG ("------------------------\n");
@@ -176,7 +143,7 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 
   gtk_window_set_title (GTK_WINDOW (Dialog), elm_name);
 
-  gtk_window_set_resizable (GTK_WINDOW (Dialog), FALSE);
+  //gtk_window_set_resizable (GTK_WINDOW (Dialog), FALSE);
 
   ////////////////////////////
   ////////// creer l element en fonction des settings deja present
