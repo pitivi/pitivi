@@ -82,6 +82,9 @@ pitivi_effectswindowproperties_constructor (GType type,
   
   /* do stuff. */
   
+  gtk_window_set_position (GTK_WINDOW (self), GTK_WIN_POS_CENTER);
+  gtk_window_set_modal (GTK_WINDOW(self), TRUE);
+  
   main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add  (GTK_CONTAINER (self), main_vbox);
   widget_element = pitivi_gstelementsettings_new_with_elm (GNL_OPERATION(self->private->item->gnlobject)->element);
