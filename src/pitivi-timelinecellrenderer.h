@@ -56,9 +56,12 @@ struct _PitiviTimelineCellRenderer
 {
   GtkLayout parent;
   
+  /* public members */
+  guint	cell_type;
+  GList	*children;
+  
   /* private */
-  PitiviTimelineCellRendererPrivate *private;
-  GList				    *children;
+  PitiviTimelineCellRendererPrivate	*private;
 };
 
 struct _PitiviTimelineCellRendererClass

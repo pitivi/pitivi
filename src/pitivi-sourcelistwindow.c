@@ -34,6 +34,7 @@
 #include "pitivi-projectsourcelist.h"
 #include "pitivi-settings.h"
 #include "pitivi-stockicons.h"
+#include "pitivi-dragdrop.h"
 
 static PitiviProjectWindowsClass *parent_class = NULL;
 
@@ -126,13 +127,6 @@ enum
     LAST_SIGNAL
   };
 
-enum
-  {
-    TARGET_STRING,
-    TARGET_URL
-  };
-
-
 static guint pitivi_sourcelistwindow_signal[LAST_SIGNAL] = { 0 };
 
 static gint projectview_signals[LAST_SIGNAL] = {0};
@@ -217,14 +211,6 @@ static gchar	*BaseMediaType[] =
     0
   };
 
-static GtkTargetEntry TargetEntries[] =
-  {
-    { "STRING",	       0, TARGET_STRING },
-    { "text/plain",    0, TARGET_STRING },
-    { "text/uri-list", 0, TARGET_URL },
-  };
-
-static gint	iNbTargetEntries = sizeof(TargetEntries)/sizeof(TargetEntries[0]);
 /*
  * insert "added-value" functions here
  */
@@ -1308,6 +1294,40 @@ GtkWidget	*create_menupopup(PitiviSourceListWindow *self,
   return pMenu;
 }
 
+static void
+drag_begin_cb (GtkWidget          *widget,
+	       GdkDragContext     *context)
+{
+  g_printf ("drag begin \n");
+}
+
+static void
+drag_end_cb (GtkWidget          *widget,
+	     GdkDragContext     *context)
+{
+  g_printf ("drag end \n");
+}
+
+static void
+drag_data_get_cb (GtkWidget          *widget,
+		  GdkDragContext     *context,
+		  GtkSelectionData   *selection_data,
+		  guint               info,
+		  guint32             time,
+		  gpointer editor)
+{
+  gtk_selection_data_set (selection_data, selection_data->target, 8, "toto", strlen ("toto"));
+  g_printf ("drag get\n");
+}
+
+static void
+drag_data_delete_cb (GtkWidget          *widget,
+		     GdkDragContext     *context,
+		     gpointer editor)
+{
+  g_printf ("drag delete\n");
+}
+
 GtkWidget	*create_listview(PitiviSourceListWindow *self,
 				 GtkWidget *pWindow)
 {
@@ -1319,17 +1339,23 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 
   /* Creation de la vue */
   pListView = gtk_tree_view_new();
-
   //g_printf("enable drag n drop\n");
   /* enable drag and drop for listview */
- /*  gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(pListView),  */
-/* 					 GDK_BUTTON1_MASK, */
-/* 					 TargetEntries, iNbTargetEntries,  */
-/* 					 GDK_ACTION_COPY); */
+  /*  gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(pListView),  */
+  /* 					 GDK_BUTTON1_MASK, */
+  /* 					 TargetEntries, iNbTargetEntries,  */
+  /*
+ 					 GDK_ACTION_COPY); */
+  
   gtk_drag_source_set(pListView, 
 		      GDK_BUTTON1_MASK,
 		      TargetEntries, iNbTargetEntries, 
 		      GDK_ACTION_COPY);
+  
+  g_signal_connect (pListView, "drag_data_get",	      
+		    G_CALLBACK (drag_data_get_cb), self);
+  g_signal_connect (pListView, "drag_data_delete",
+		    G_CALLBACK (drag_data_delete_cb), self);
   
   //g_printf("end of enable drag N drop\n");
 

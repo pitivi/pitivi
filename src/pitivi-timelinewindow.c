@@ -37,6 +37,8 @@ static  PitiviWindowsClass *parent_class = NULL;
 #define XSIZE  6000
 #define YSIZE  400
 
+#define PITIVI_MAX_PISTE 6
+
 typedef struct _PitiviMediaInfo
 {
   GtkWidget	 *hbox;
@@ -61,9 +63,7 @@ struct _PitiviTimelineWindowPrivate
   /* StatusBar */
   
   GtkWidget	*dock_statusbar;
-  GtkWidget	*statusbar_properties;
-  GtkWidget	*statusbar_frame;
-  GtkWidget	*statusbar_message;
+  GtkWidget	*statusbar_progressbar;
   
   GdkWindow     *event_window;
   GdkCursor     *cursor;
@@ -102,24 +102,6 @@ static  guint signals[LAST_SIGNAL];
 /*
  * Insert "added-value" functions here
  */
-
-GtkWidget *
-pitivi_timelinewindow_get_right_view (PitiviTimelineWindow *self) {
-  return (self->private->main_vbox_right);
-}
-
-static void
-statusbar_set_frames (GtkWidget *statusbar,
-		      PitiviTimelineWindow *window,
-		      gchar *msg)
-{
-  gchar *display;
-
-  display = g_strdup_printf ("%s", msg);
-  gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
-  gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, display);
-  g_free (display);
-}
 
 
 PitiviTimelineWindow *
@@ -245,9 +227,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   GtkWidget		*Rseparators;
   GtkWidget		*sw;
   int			count;
-  int			max;
- 
-  max = 6;
+  
   PitiviTimelineWindow *self = (PitiviTimelineWindow *) instance;
   self->private = g_new0(PitiviTimelineWindowPrivate, 1);
   
@@ -335,7 +315,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), hruler, FALSE, FALSE, 0);     
   
-  for (count = 0; count < max; count++)
+  for (count = 0; count < PITIVI_MAX_PISTE; count++)
     {
       // Left View
       
@@ -347,7 +327,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
       GtkWidget *check2 =  (GtkWidget *) pitivi_checkbox_new ( CHECK_ANCHOR );
       gtk_box_pack_start (GTK_BOX (hbox[count]), check2, FALSE, FALSE, 0);
       
-      if (count < (max/2))
+      if (count < (PITIVI_MAX_PISTE/2))
 	gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new ("Video"), FALSE, FALSE, 0);
       else
 	gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new ("Audio"), FALSE, FALSE, 0);
@@ -387,18 +367,10 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->dock_statusbar = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_end (GTK_BOX (self->private->main_vbox), self->private->dock_statusbar, FALSE, FALSE, 0);
   
-  self->private->statusbar_properties = gtk_statusbar_new ();
-  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (self->private->statusbar_properties), FALSE);
-  gtk_box_pack_start (GTK_BOX (self->private->dock_statusbar), self->private->statusbar_properties, TRUE, TRUE, 0);
+  self->private->statusbar_progressbar = gtk_statusbar_new ();
+  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (self->private->statusbar_progressbar), TRUE);
+  gtk_box_pack_start (GTK_BOX (self->private->dock_statusbar), self->private->statusbar_progressbar, TRUE, TRUE, 0);
   
-  self->private->statusbar_frame = gtk_statusbar_new ();
-  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (self->private->statusbar_frame), FALSE);
-  gtk_box_pack_start (GTK_BOX (self->private->dock_statusbar), self->private->statusbar_frame, TRUE, TRUE, 0);  
-  
-  self->private->statusbar_message = gtk_statusbar_new ();
-  gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (self->private->statusbar_message), TRUE);
-  gtk_box_pack_start (GTK_BOX (self->private->dock_statusbar), self->private->statusbar_message, TRUE, TRUE, 0);
-
   /* Configure Event */
   gtk_signal_connect (GTK_OBJECT (self), "configure_event"\
 		      , GTK_SIGNAL_FUNC ( pitivi_timelinewindow_configure_event ), self->private->hpaned);
