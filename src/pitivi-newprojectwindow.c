@@ -481,20 +481,28 @@ pitivi_fill_hbox(PitiviNewProjectWindow *self)
 {
   GtkWidget	*notebook;
   GtkWidget	*scroll;
+  GtkWidget	*lefthbox;
+  GtkWidget	*catframe;
 
   pitivi_tree_create(self);
   self->private->show_tree = pitivi_tree_show( self );
 
-  
 /* Ajout du scrolling pour la selection */
   scroll = gtk_scrolled_window_new(NULL, NULL);
   gtk_widget_set_usize (scroll, 150, -1);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), GTK_POLICY_AUTOMATIC,
 				 GTK_POLICY_AUTOMATIC);
+
+  lefthbox = gtk_vbox_new (FALSE, 5);
   
   gtk_container_add(GTK_CONTAINER(scroll), self->private->show_tree);
   notebook = pitivi_notebook_new(self);
-  gtk_box_pack_start (GTK_BOX (self->private->hbox), scroll, FALSE, FALSE, 0);
+
+  catframe = pitivi_make_cat_frame (self);
+  gtk_box_pack_start (GTK_BOX (lefthbox), scroll, TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (lefthbox), catframe, FALSE, FALSE, 5);
+
+  gtk_box_pack_start (GTK_BOX (self->private->hbox), lefthbox, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (self->private->hbox), notebook, TRUE, TRUE, 0);
 }
 
@@ -990,7 +998,6 @@ pitivi_make_settings_table(PitiviNewProjectWindow *self)
 {
   GtkWidget		*settings_table;
   GtkWidget		*button_hbox;
-  GtkWidget		*cat_frame;
   GtkWidget		*video_frame;
   GtkWidget		*audio_frame;
   GtkWidget		*name_frame;
@@ -1045,11 +1052,6 @@ pitivi_make_settings_table(PitiviNewProjectWindow *self)
 
   gtk_table_attach( GTK_TABLE(settings_table), button_hbox, 
 		    0, 2, 4, 5, FALSE, FALSE, 0, 3);
-  
-  /* Ligne 5 */
-  cat_frame = pitivi_make_cat_frame(self);
-  gtk_table_attach ( GTK_TABLE(settings_table), cat_frame, 0, 2, 5, 6, 
-		     GTK_EXPAND | GTK_FILL, FALSE, 0, 0);
   
   return (settings_table);
 }
@@ -1124,10 +1126,11 @@ pitivi_make_cat_frame(PitiviNewProjectWindow *self)
 
   cat_frame = gtk_frame_new("Category");
 
-  cat_table = gtk_table_new(2, 1, FALSE);
+  cat_table = gtk_vbox_new (FALSE, 5);
   self->private->cat_text = gtk_entry_new();
-  gtk_table_attach (GTK_TABLE(cat_table), self->private->cat_text, 
-		    0, 1, 0, 1, FALSE, FALSE, 5, 5);
+  gtk_box_pack_start (GTK_BOX (cat_table),
+		      self->private->cat_text,
+		      TRUE, TRUE, 5);
 
   cat_but_hbox = gtk_hbox_new(TRUE, 10);
   self->private->cat_but_add = gtk_button_new_with_label("Add");
@@ -1144,8 +1147,9 @@ pitivi_make_cat_frame(PitiviNewProjectWindow *self)
   g_signal_connect( G_OBJECT(self->private->cat_but_del), "clicked",
 		    G_CALLBACK(pitivi_del_category), (gpointer) (GTK_WIDGET(self)) );
 
-  gtk_table_attach (GTK_TABLE(cat_table), cat_but_hbox,
-		    1, 2, 0, 1,FALSE, FALSE, 5, 5);
+  gtk_box_pack_start (GTK_BOX (cat_table),
+		      cat_but_hbox,
+		      TRUE, TRUE, 5);
   gtk_container_add(GTK_CONTAINER(cat_frame), cat_table);
   gtk_container_set_border_width (GTK_CONTAINER (cat_frame), 5);
 
