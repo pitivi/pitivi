@@ -166,18 +166,19 @@ pitivi_mainapp_callb_timelinewin (GtkWindow *win, gpointer data)
 void
 pitivi_mainapp_activate_effectswindow (PitiviMainApp *self, gboolean activate)
 {
-  gint x;
-  gint y;
-
-  gtk_window_get_position(GTK_WINDOW (self->private->effectswin), &x, &y);
-
   if (self->private->effectswin)
     {
+      gtk_window_get_position(GTK_WINDOW (self->private->effectswin), 
+			      &self->private->effectswin->x, 
+			      &self->private->effectswin->y);
+
       if (!activate)
 	  gtk_widget_hide (GTK_WIDGET (self->private->effectswin));
       else
 	{
-	  gtk_window_move(GTK_WINDOW (self->private->effectswin), x, y);
+	  gtk_window_move(GTK_WINDOW (self->private->effectswin), 
+			  self->private->effectswin->x, 
+			  self->private->effectswin->y);
 	  gtk_widget_show (GTK_WIDGET (self->private->effectswin));
 	}
     }
@@ -203,18 +204,19 @@ pitivi_mainapp_activate_effectswindow (PitiviMainApp *self, gboolean activate)
 void
 pitivi_mainapp_activate_sourcelistwindow (PitiviMainApp *self, gboolean activate)
 {
-  gint x;
-  gint y;
-
-  gtk_window_get_position(GTK_WINDOW (self->private->srclistwin), &x, &y);
-
   if (self->private->srclistwin)
     {
+      gtk_window_get_position(GTK_WINDOW (self->private->srclistwin), 
+			      &self->private->srclistwin->x, 
+			      &self->private->srclistwin->y);
+
       if (!activate)
 	gtk_widget_hide (GTK_WIDGET (self->private->srclistwin));
       else
 	{
-	  gtk_window_move(GTK_WINDOW (self->private->srclistwin), x, y);
+	  gtk_window_move(GTK_WINDOW (self->private->srclistwin), 
+			  self->private->srclistwin->x, 
+			  self->private->srclistwin->y);
 	  gtk_widget_show_all (GTK_WIDGET (self->private->srclistwin));
 	}
     }
@@ -240,18 +242,18 @@ pitivi_mainapp_activate_sourcelistwindow (PitiviMainApp *self, gboolean activate
 void
 pitivi_mainapp_activate_viewerwindow (PitiviMainApp *self, gboolean activate)
 {
-  gint x;
-  gint y;
-
-  gtk_window_get_position(GTK_WINDOW (self->private->viewerwin), &x, &y);
-
   if (self->private->viewerwin)
     {
+      gtk_window_get_position(GTK_WINDOW (self->private->viewerwin), 
+			      &self->private->viewerwin->x, 
+			      &self->private->viewerwin->y);
       if (!activate)
 	gtk_widget_hide (GTK_WIDGET (self->private->viewerwin));
       else
 	{
-	  gtk_window_move(GTK_WINDOW (self->private->viewerwin), x, y);
+	  gtk_window_move(GTK_WINDOW (self->private->viewerwin), 
+			  self->private->viewerwin->x, 
+			  self->private->viewerwin->y);
 	  gtk_widget_show (GTK_WIDGET (self->private->viewerwin));
 	}
     }

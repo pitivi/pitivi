@@ -92,6 +92,10 @@ struct _PitiviEffectsWindow
 
   /* instance public members */
 
+  /* Position X/Y of the window */
+  gint		x;
+  gint		y;
+
   /* private */
 
   PitiviEffectsWindowPrivate *private;

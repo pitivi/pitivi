@@ -60,6 +60,10 @@ struct _PitiviSourceListWindow
 
   /* instance public members */
 
+  /* Position X/Y of the window */
+  gint		x;
+  gint		y;
+
   /* private */
   PitiviSourceListWindowPrivate *private;
 };

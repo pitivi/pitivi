@@ -94,8 +94,8 @@ struct _PitiviSourceListWindowPrivate
   /* drag'n'drop variables */
   
   PitiviSourceFile *dndsf;
-  gchar		   *dndtreepath;
-  gint		    dndfilepos;
+  gchar		*dndtreepath;
+  gint		dndfilepos;
 };
 
 /*

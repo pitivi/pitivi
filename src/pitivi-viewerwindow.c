@@ -88,7 +88,6 @@ struct _PitiviViewerWindowPrivate
   gdouble	timeline_min;
   gdouble	timeline_max;
   gdouble	timeline_step;
-
 };
 
 /*
