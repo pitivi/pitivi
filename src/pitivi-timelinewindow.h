@@ -71,7 +71,8 @@ struct _PitiviTimelineWindow
   GtkWidget	       *current_time;
   int			unit;	// scale unit for the ruler
   int			zoom;	// zoom level
-  
+  GtkAdjustment		*hscrollbar;	// Adjustment for the horizontal scrollbar
+
   /* private */
   PitiviTimelineWindowPrivate *private;
 };

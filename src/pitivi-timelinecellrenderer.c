@@ -798,6 +798,37 @@ pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self )
 }
 
 /*
+** Scroll event
+*/
+
+static gboolean
+pitivi_timelinecellrenderer_scroll_event (GtkWidget *widget, GdkEventScroll *event)
+{
+  PitiviTimelineCellRenderer	*self = PITIVI_TIMELINECELLRENDERER (widget);
+  gdouble	value, lower, upper, increment;
+
+  g_object_get(G_OBJECT(self->private->timewin->hscrollbar),
+	       "lower", &lower,
+	       "upper", &upper,
+	       "step-increment", &increment,
+	       "value", &value,
+	       NULL);
+  if (event->direction == GDK_SCROLL_UP) {
+    value  = value - increment;
+    if (value < lower)
+      value = lower;
+    gtk_adjustment_set_value (self->private->timewin->hscrollbar, value);
+  } else if (event->direction == GDK_SCROLL_DOWN) {
+    value = value + increment;
+    if (value > upper)
+      value = upper;
+    gtk_adjustment_set_value (self->private->timewin->hscrollbar, value);
+  }
+  return TRUE;
+}
+
+
+/*
  **********************************************************
  * Selection	  			                  *
  *							  *
@@ -999,6 +1030,7 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   /* Widget properties */
   
   widget_class->expose_event = pitivi_timelinecellrenderer_expose;
+  widget_class->scroll_event = pitivi_timelinecellrenderer_scroll_event;
   
   /* Container Properties */
 

@@ -469,6 +469,7 @@ create_tracks (PitiviTimelineWindow *self)
 				  GTK_POLICY_ALWAYS, GTK_POLICY_NEVER);
   gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (pHScrollbarRight),
 					 GTK_WIDGET (self->private->main_vbox_right));
+  self->hscrollbar = gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(pHScrollbarRight));
   gtk_paned_pack2 (GTK_PANED(self->private->hpaned), pHScrollbarRight, FALSE, FALSE);
   
   // Configure Event
@@ -674,6 +675,7 @@ static void
 pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
+  GtkWidgetClass *gtkwidget_class = GTK_WIDGET_CLASS (g_class);
   PitiviTimelineWindowClass *klass = PITIVI_TIMELINEWINDOW_CLASS (g_class);
 
   parent_class = g_type_class_peek_parent (g_class);
