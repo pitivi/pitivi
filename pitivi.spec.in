@@ -1,0 +1,83 @@
+Summary:	Pitivi non-linear video editor
+Name:		pitivi
+Version:	@VERSION@
+Release:	@PITIVI_VERSION_RELEASE@
+
+Source:		http://download.sf.net/pitivi/%{name}-%{version}.tar.gz
+Packager:	casano_g@epita.fr
+License:	GPL
+Group:		NLE
+URL:		http://www.pitivi.org/
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+Requires(pre): /sbin/ldconfig
+Requires(post): /sbin/ldconfig
+
+BuildRequires:  gtk2-devel >= @GTK2_REQ@
+BuildRequires:  gstreamer-devel => @GST_REQUIRED@
+BuildRequires:  gstreamer-plugins-devel => @GST_REQUIRED@
+BuildRequires:	pkgconfig
+BuildRequires:	gtk-doc
+
+Requires:	gtk2 >= @GTK2_REQ@
+Requires:	gstreamer >= @GST_REQUIRED@
+
+%description
+Pitivi is a Non Linear Video Editor using the popular GStreamer media framework
+to manipulate a large set of multimedia sources.
+
+At this level of development it can be compared to a classic video editing program.
+
+%package devel
+Summary: 	Development files for GNonLin.
+Group: 		Development/Libraries
+
+Requires:	gstreamer-devel >= @GST_REQUIRED@
+Requires:	gstreamer-plugins-devel >= @GST_REQUIRED@
+
+%description devel
+Development files and libraries for GNonLin, the non-linear editing
+library at the core of Pitivi.
+
+%prep
+%setup -q
+
+%build
+%configure
+
+make %{?_smp_mflags}
+
+%install
+rm -rf $RPM_BUILD_ROOT
+
+%makeinstall
+
+# Clean out files that should not be part of the rpm.
+rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%files
+%defattr(-, root, root, -)
+%doc AUTHORS ChangeLog COPYING NEWS README
+%{_bindir}/pitivi
+%{_datadir}/pitivi
+%{_sysconfdir}/pitivi
+%{_libdir}/libgnl.so.*
+%{_datadir}/applications/pitivi.desktop
+%{_datadir}/pixmaps/pitivi
+
+%files devel
+%defattr(-, root, root, -)
+%{_includedir}/gnl
+%{_libdir}/libgnl.a
+%{_datadir}/gtk-doc/html/gnonlin
+
+%changelog
+* Wed Jan 12 2005 bilboed <bilboed at bilboed dot com>
+- Misc corrections
+- Imported changes from Thomas Vander Stichele <thomas at apestaart dot org>
+
+* Thu Dec  2 2004 root <root@pas-r06p01.pas.epita.fr> - 
+- Initial build.

@@ -10,6 +10,7 @@ SUBDIRS			= gnl src pixmaps docs ui conf
 
 EXTRA_DIST = \
 	pitivi.spec \
+	pitivi.spec.in \
 	pitivi.desktop \
 	depcomp \
 	ChangeLog \

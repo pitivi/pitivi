@@ -82,7 +82,8 @@ fi
 dnl Now we're ready to ask for gstreamer libs and cflags
 dnl And we can also ask for the right version of gstreamer
 HAVE_GST=no
-GST_REQUIRED=0.8.6
+GST_REQUIRED=0.8.7
+AC_SUBST(GST_REQUIRED)
 
 dnl fail back to 0.8
 if test "x$HAVE_GST" = "xno"; then
@@ -114,7 +115,10 @@ if test "x$HAVE_GST_LIBS" = "xno"; then
 fi
 
 dnl check for GTK
-PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4.0 gconf-2.0 gdk-2.0 >= 2.4.0 libxml-2.0, ,exit)
+GTK2_REQ="2.4"
+AC_SUBST(GTK2_REQ)
+
+PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK2_REQ gconf-2.0 gdk-2.0 >= $GTK2_REQ libxml-2.0, ,exit)
 AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 
@@ -138,7 +142,8 @@ dnl ALL_LINGUAS="nl no"
 dnl AM_GLIB_GNU_GETTEXT
 
 dnl Outputs
-AC_OUTPUT(Makefile 
+AC_OUTPUT(Makefile
+	pitivi.spec
          src/Makefile
 	 pixmaps/Makefile
 	 ui/Makefile
