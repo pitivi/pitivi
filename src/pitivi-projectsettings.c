@@ -119,59 +119,65 @@ pitivi_projectsettings_categorie_new(gchar *name, GSList *list_settings)
 }
 
 
-/* Creation d'un PitiviMediaSetting */
+/*
+  Creation d'un PitiviMediaSetting
+*/
 PitiviMediaSettings *
 pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps, gint index )
 {
-  PitiviMediaSettings	*new_media;
+  PitiviMediaSettings	*media_setting;
+  PitiviSettingsValue	*setting_value;
   GstElementFactory	*factory;
   GstElement		*element;
   GParamSpec		**property_specs;
+  gboolean		readable;
   gint			num_properties;
   gint			i;
-  gboolean		readable;
-  PitiviSettingsValue	*setting_value;
 
-  new_media = g_new0(PitiviMediaSettings, 1);
-  new_media->codec_factory_name = g_strdup(codec_factory_name);
-  new_media->combo_box_codec_index = index;
-  new_media->codec_settings = NULL;
+  media_setting = g_new0(PitiviMediaSettings, 1);
+  media_setting->codec_settings = g_new0(GSList, 1);
   
+  media_setting->combo_box_codec_index = index;
+  media_setting->codec_factory_name = g_strdup(codec_factory_name);
+
   /* Recuperation des proprietes*/
-  factory = gst_element_factory_find( new_media->codec_factory_name );
-  element = gst_element_factory_create(factory, new_media->codec_factory_name);
-  
-  if (element)
+  factory = gst_element_factory_find( codec_factory_name );
+  if (factory)
     {
-      property_specs = g_object_class_list_properties(G_OBJECT_GET_CLASS (element), &num_properties);
-      for (i = 0; i < num_properties; i++)
+      element = gst_element_factory_create(factory, media_setting->codec_factory_name);
+      if (element)
 	{
-	  GParamSpec *param = property_specs[i];
-	  
-	  readable = FALSE;
-	  setting_value = g_new0( PitiviSettingsValue, 1);
-	  g_value_init (&setting_value->value, param->value_type);
-	  if (param->flags & G_PARAM_READABLE)
+	  property_specs = g_object_class_list_properties(G_OBJECT_GET_CLASS (element), &num_properties);
+	  for (i = 0; i < num_properties; i++)
 	    {
-	      g_object_get_property (G_OBJECT (element), param->name, &setting_value->value);
-	      readable = TRUE;
+	      GParamSpec *param = property_specs[i];
+	  
+	      readable = FALSE;
+	      setting_value = g_new0( PitiviSettingsValue, 1);
+	      g_value_init (&setting_value->value, param->value_type);
+	  
+	      if (param->flags & G_PARAM_READABLE)
+		{
+		  g_object_get_property (G_OBJECT (element), param->name, &setting_value->value);
+		  readable = TRUE;
+		}
+	      setting_value->name = g_strdup (g_param_spec_get_nick (param));
+	      media_setting->codec_settings = g_slist_append(media_setting->codec_settings, setting_value);
 	    }
-	  setting_value->name = g_strdup (g_param_spec_get_nick (param));
-	  new_media->codec_settings = g_slist_append(new_media->codec_settings, setting_value);
-	}
-
-      /* Creation du caps par default pour le reglage */
-      if ( caps != NULL )
-	{
-	  new_media->caps = g_new0(GstCaps, 1);
-	  new_media->caps = gst_caps_copy_1(caps);
+      
+	  /* Creation du caps par default pour le reglage */
+	  if ( caps != NULL )
+	    {
+	      media_setting->caps = g_new0(GstCaps, 1);
+	      media_setting->caps = gst_caps_copy(caps);
+	    }
 	}
     }
-  return (new_media);
+  return (media_setting);
 }
 
-
 /* Creation de la liste des Reglages par default */
+
 GSList *
 pitivi_projectsettings_list_make()
 {

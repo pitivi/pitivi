@@ -253,17 +253,24 @@ pitivi_settings_ajout_element (GList *list, GstElementFactory *factory, gboolean
 	  PitiviSettingsMimeType *tmp;
 	  
 	  /* CHERCHE SI LE TYPE EST DEJA DEFINI */
-	  if ((tmp = pitivi_settings_search_flux (list, gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j))))) {
-	    tmp = pitivi_settings_ajout_factory_element (tmp, 
-					 (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
-					 MY_PAD);
-	  } else {
-	    /* SINON L AJOUTE */
-	    tmp = pitivi_settings_init_mime_type (gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j)));
-	    tmp = pitivi_settings_ajout_factory_element (tmp, 
-					 (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
-					 MY_PAD);
-	    list = g_list_append (list, (gpointer) tmp);
+	  if ((tmp = pitivi_settings_search_flux (list, gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j)))) &&
+	      (padtemplate->caps != NULL))
+	    {
+	      tmp = pitivi_settings_ajout_factory_element (tmp, 
+							   (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
+							   MY_PAD);
+	    } 
+	  else 
+	    {
+	      /* SINON L AJOUTE */
+	      if (padtemplate->caps != NULL)
+		{
+		  tmp = pitivi_settings_init_mime_type (gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j)));
+		  tmp = pitivi_settings_ajout_factory_element (tmp, 
+							       (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
+							       MY_PAD);
+		  list = g_list_append (list, (gpointer) tmp);
+		}
 	  }
 	}
       }      
