@@ -84,7 +84,7 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
   self->private->colorspace = gst_element_factory_make("colorspace", "colorspace");
   g_assert (self->private->colorspace != NULL);
    
-  self->private->video_sink = gst_element_factory_make("xvimagesink", "video_sink");
+  self->private->video_sink = gst_element_factory_make("ximagesink", "video_sink");
   g_assert (self->private->video_sink != NULL);
     
   gst_bin_add_many (GST_BIN (self->private->pipe),
@@ -96,7 +96,9 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
 		    
   if (!gst_element_link (self->private->filesrc, self->private->spider))
     g_print ("Not Link\n");
-  if (!gst_element_link (self->private->spider, self->private->video_sink))
+  if (!gst_element_link (self->private->spider, self->private->colorspace))
+    g_print ("Not Link\n");
+  if (!gst_element_link (self->private->colorspace, self->private->video_sink))
     g_print ("Not Link\n");
 
   if (!gst_element_set_state(self->private->pipe, GST_STATE_PLAYING)) {
