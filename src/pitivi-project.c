@@ -45,6 +45,10 @@ struct _PitiviProjectPrivate
   GstElement	*asinkthread;
   gboolean	vst, ast;	// TRUE if the *sinkthread is in the pipeline
   GstElement	*source;
+
+  GstElement	*timelinepipe;
+  GnlGroup	*audiogroup;
+  GnlGroup	*videogroup;
 };
 
 /*
@@ -357,18 +361,12 @@ pitivi_project_set_audio_output(PitiviProject *project, GstElement *output)
 		   NULL);
 }
 
-void
-pitivi_project_set_sources(PitiviProject *project, PitiviProjectSourceList *sources)
-{
-  project->sources = sources;
-
-}
-
 static GObject *
 pitivi_project_constructor (GType type,
 			    guint n_construct_properties,
 			    GObjectConstructParam * construct_properties)
 {
+  PitiviProject	*project;
   GObject *obj;
   {
     /* Invoke parent constructor. */
@@ -380,7 +378,33 @@ pitivi_project_constructor (GType type,
 				     construct_properties);
   }
 
-  /* do stuff. */
+  project = (PitiviProject *) obj;
+  
+  /*
+    create container for timeline,
+    Create audio&video groups and add them to the timeline
+  */
+  project->private->timelinepipe = gst_pipeline_new("timeline-pipe");
+  project->private->audiogroup = gnl_group_new("audiogroup");
+  project->private->videogroup = gnl_group_new("videogroup");
+
+  gnl_timeline_add_group(project->timeline, project->private->audiogroup);
+  gnl_timeline_add_group(project->timeline, project->private->videogroup);
+
+  /* add timeline to timeline pipe */
+  gst_bin_add(GST_BIN(project->private->timelinepipe),
+	      GST_ELEMENT(project->timeline));
+
+  /* create timeline pipe's ghost pads for insertion in project's pipeline */
+  gst_element_add_ghost_pad(project->private->timelinepipe,
+			    gnl_timeline_get_pad_for_group(project->timeline, 
+							   project->private->audiogroup),
+			    "asrc");
+
+  gst_element_add_ghost_pad(project->private->timelinepipe,
+			    gnl_timeline_get_pad_for_group(project->timeline,
+							   project->private->videogroup),
+			    "vsrc");
 
   return obj;
 }
