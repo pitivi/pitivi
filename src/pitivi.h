@@ -27,6 +27,7 @@
 #define PITIVI_H
 
 #include <glib-object.h>
+#include <glib/gconvert.h>
 #include <glib.h>
 #include <libxml/parser.h>
 #include <libxml/tree.h>

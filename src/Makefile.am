@@ -27,9 +27,10 @@ pitivi_SOURCES		= \
 	pitivi-sourcefile.c\
 	pitivi-sourcefilebin.c\
 	pitivi-timelinewindow.c\
-	pitivi-timelinecellrenderer.c\
+	pitivi-timelinecellrenderer-zooming.c\
 	pitivi-timelinecellrenderer-resizing.c\
 	pitivi-timelinecellrenderer-moving.c\
+	pitivi-timelinecellrenderer.c\
 	pitivi-timelinemedia.c\
 	pitivi-sourcelistwindow.c \
 	pitivi-checkbox.c\
@@ -55,48 +56,48 @@ pitivi_SOURCES		= \
 
 noinst_HEADERS = \
 	pitivi-mainapp.h \
-  	pitivi-windows.h \
- 	pitivi-projectwindows.h \
-  	pitivi-project.h \
-  	pitivi-toolbox.h \
-  	pitivi-effectswindow.h\
-  	pitivi-progressbar.h \
-  	pitivi-file-utils.h\
-  	pitivi-effectswindowproperties.h\
-  	pitivi-sourcefile.h\
+	pitivi-windows.h \
+	pitivi-projectwindows.h \
+	pitivi-project.h \
+	pitivi-toolbox.h \
+	pitivi-effectswindow.h\
+	pitivi-progressbar.h \
+	pitivi-file-utils.h\
+	pitivi-effectswindowproperties.h\
+	pitivi-sourcefile.h\
 	pitivi-sourceitem.h\
-  	pitivi-sourcefilebin.h\
-  	pitivi-timelinewindow.h\
-  	pitivi-timelinecellrenderer.h\
-  	pitivi-timelinemedia.h\
-  	pitivi-sourcelistwindow.h \
-  	pitivi-checkbox.h\
-  	pitivi-projectsourcelist.h \
-  	pitivi-newprojectwindow.h  \
-  	pitivi-viewerwindow.h \
-  	pitivi-projectsettings.h \
-  	pitivi-projectsettingswindow.h \
-  	pitivi-stockicons.h \
-  	pitivi-menu-actions.h \
-  	pitivi-menu.h \
-  	pitivi-settings.h \
-  	pitivi-settingswindow.h \
-  	pitivi-splashscreenwindow.h \
-  	pitivi-gstelementsettings.h \
-  	pitivi-drawing.h \
-  	pitivi-mediatrackinfo.h \
-  	pitivi-controller.h \
-  	pitivi-debug.h \
-  	pitivi-ruler.h \
-  	pitivi-lplayerwindow.h \
-  	pitivi.h\
-  	pitivi-cursor.h\
-  	pitivi-cursorbits.h\
-  	pitivi-dragdrop.h\
-  	pitivi-effects_cat.h\
-  	pitivi-trackenum.h\
-  	pitivi-types.h\
-  	pitivi-units.h
+	pitivi-sourcefilebin.h\
+	pitivi-timelinewindow.h\
+	pitivi-timelinecellrenderer.h\
+	pitivi-timelinemedia.h\
+	pitivi-sourcelistwindow.h \
+	pitivi-checkbox.h\
+	pitivi-projectsourcelist.h \
+	pitivi-newprojectwindow.h  \
+	pitivi-viewerwindow.h \
+	pitivi-projectsettings.h \
+	pitivi-projectsettingswindow.h \
+	pitivi-stockicons.h \
+	pitivi-menu-actions.h \
+	pitivi-menu.h \
+	pitivi-settings.h \
+	pitivi-settingswindow.h \
+	pitivi-splashscreenwindow.h \
+	pitivi-gstelementsettings.h \
+	pitivi-drawing.h \
+	pitivi-mediatrackinfo.h \
+	pitivi-controller.h \
+	pitivi-debug.h \
+	pitivi-ruler.h \
+	pitivi-lplayerwindow.h \
+	pitivi.h\
+	pitivi-cursor.h\
+	pitivi-cursorbits.h\
+	pitivi-dragdrop.h\
+	pitivi-effects_cat.h\
+	pitivi-trackenum.h\
+	pitivi-types.h\
+	pitivi-units.h
 
 # our CFLAGS and LDFLAGS used for compiling and linking
 # make sure you prefix these with the name of your binary

@@ -70,8 +70,13 @@ static gboolean progress_timeout( gpointer data )
 void
 pitivi_progressbar_set_info (PitiviProgressBar *self, gchar *label)
 {
+  gchar *utf8;
+
   if (GTK_IS_WIDGET (self))
-    gtk_label_set_text (GTK_LABEL (self->infos), label);
+    {
+      utf8 = g_locale_to_utf8 (label, -1, NULL, NULL, NULL);
+      gtk_label_set_text (GTK_LABEL (self->infos), utf8);
+    }
   return ;
 }
 

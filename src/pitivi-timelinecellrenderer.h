@@ -165,4 +165,51 @@ gint	  compare_bigchild (gconstpointer a, gconstpointer b);
 void	  pitivi_layout_move (GtkLayout *layout, GtkWidget *widget, gint x, gint y);
 void	  pitivi_media_set_size (GtkWidget *widget, guint width);
 
+/* Zooming */
+
+void	 pitivi_timelinecellrenderer_button_zooming_x (PitiviTimelineWindow *timewin, PitiviTimelineCellRenderer *self, PitiviCursor *cursor);
+void	 pitivi_timelinecellrenderer_button_zooming_unit (PitiviTimelineWindow *timewin, PitiviTimelineCellRenderer *self, PitiviCursor *cursor);
+void	 pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self);
+gint64	 convert_sub_pix_time (guint pos,
+			       guint unit,
+			       guint zoom,
+			       gdouble videorate);
+
+/* Dragging */
+
+gboolean pitivi_timelinecellrenderer_drag_drop (GtkWidget *widget, 
+						GdkDragContext *dc, 
+						gint x, 
+						gint y, 
+						guint time,
+						gpointer data);
+
+void pitivi_timelinecellrenderer_drag_data_received (GObject *object,
+						     GdkDragContext *dc,
+						     int x,
+						     int y,
+						     GtkSelectionData *selection,
+						     guint info,
+						     guint time,
+						     gpointer data);
+
+void pitivi_timelinecellrenderer_drag_leave (GtkWidget          *widget,
+					     GdkDragContext     *context,
+					     gpointer	    user_data);
+
+void pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *self, 
+						      GtkSelectionData *selection, 
+						      int x, 
+						      int y);
+void pitivi_timelinecellrenderer_drag_on_transition (PitiviTimelineCellRenderer *self,
+						     GtkSelectionData *selection,
+						     int x,
+						     int y);
+void pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self, 
+						GtkWidget *source,
+						int x,
+						int y);
+
+void pitivi_timelinecellrenderer_drag_effects (PitiviTimelineCellRenderer *self, gpointer data, gint x, gint y);
+
 #endif
