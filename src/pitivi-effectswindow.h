@@ -44,10 +44,18 @@
 typedef struct _PitiviEffectsWindow PitiviEffectsWindow;
 typedef struct _PitiviEffectsWindowClass PitiviEffectsWindowClass;
 typedef struct _PitiviEffectsWindowPrivate PitiviEffectsWindowPrivate;
+typedef struct _PitiviTreeModel PitiviTreeModel;
+
+struct _PitiviTreeModel
+{
+  GtkWidget *label;
+  GtkWidget *treeview;
+  GtkWidget *scroll;
+};
 
 struct _PitiviEffectsWindow
 {
-  GObject parent;
+  GtkWindow parent;
 
   /* instance public members */
 
@@ -57,7 +65,7 @@ struct _PitiviEffectsWindow
 
 struct _PitiviEffectsWindowClass
 {
-  GObjectClass parent;
+  GtkWindowClass parent;
   /* class members */
 };
 

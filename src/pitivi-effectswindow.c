@@ -32,6 +32,7 @@ enum {
   TABTREE_LAST_SIGNAL
 };
 
+
 enum {
   NOTEBOOK_LABELS = 1,
   NOTEBOOK_NEW_LABEL,
@@ -40,21 +41,21 @@ enum {
   LAST_ENUM_TABTREE,
 };
 
-
 struct _PitiviEffectsWindowPrivate
 {
   /* instance private members */
-  gboolean	dispose_has_run;
-  guint		notebook_id;
-  GtkWidget	*notebook;
-  GList		*compounds;
+  gboolean	  dispose_has_run;
+  guint		  notebook_id;
+  GtkWidget	  *notebook;
+  PitiviTreeModel *first;
+  GList		  *compounds;
 };
 
 /*
  * forward definitions
  */
 
-static GtkContainer *parent_class = NULL;
+static GtkWindow *parent_class = NULL;
 static guint tabtreeview_signals[TABTREE_LAST_SIGNAL] = { 0 };
 
 
@@ -68,8 +69,7 @@ pitivi_effectswindow_new(void)
   PitiviEffectsWindow	*effectswindow;
 
   effectswindow = (PitiviEffectsWindow *) g_object_new(PITIVI_EFFECTSWINDOW_TYPE, NULL);
-  g_assert(effectswindow != NULL);
-  
+  g_assert(effectswindow != NULL);  
   return effectswindow;
 }
 
@@ -90,15 +90,36 @@ pitivi_effectswindow_constructor (GType type,
   }
 
   /* do stuff. */
-
+  
   return obj;
+}
+
+static void
+pitivi_insert_newtabtree(PitiviEffectsWindow *self, PitiviTreeModel *tree)
+{
+  PitiviEffectsWindowPrivate *priv;
+  GtkWidget *vbox_tree;
+
+  g_return_if_fail (self);
+  g_return_if_fail (tree);
+  
+  priv = self->private;
+  vbox_tree = gtk_vbox_new (FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox_tree), GTK_WIDGET(tree->treeview),
+		      TRUE, TRUE, 0);
+  gtk_notebook_append_page( GTK_NOTEBOOK (priv->notebook),
+			    vbox_tree,
+			    tree->label);
+  gtk_label_set_justify (GTK_LABEL ( tree->label ), GTK_JUSTIFY_LEFT);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(tree->scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 }
 
 static void
 pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
+  int  count;
+  GtkWidget *main_vbox;
   PitiviEffectsWindow *self = (PitiviEffectsWindow *) instance;
-
   self->private = g_new0(PitiviEffectsWindowPrivate, 1);
   
   /* initialize all public and private members to reasonable default values. */ 
@@ -108,7 +129,31 @@ pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
+  gtk_window_set_default_size(GTK_WINDOW (self), 150, 100);
+  self->private->notebook = gtk_notebook_new ();
+  gtk_notebook_set_tab_pos (GTK_NOTEBOOK (self->private->notebook), GTK_POS_TOP);
+  main_vbox = gtk_vbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (self), main_vbox);
+  gtk_box_pack_start (GTK_BOX (main_vbox), GTK_WIDGET(self->private->notebook),
+		      TRUE, TRUE, 0);
   
+  PitiviTreeModel *videotree = g_new0(PitiviTreeModel, 1);
+  videotree->label = gtk_label_new ("Video");
+  videotree->treeview = gtk_tree_view_new ();
+  videotree->scroll = gtk_scrolled_window_new (NULL, NULL);
+  pitivi_insert_newtabtree(self, videotree);
+  
+  PitiviTreeModel *audiotree = g_new0(PitiviTreeModel, 1);
+  audiotree->label = gtk_label_new ("Audio");
+  audiotree->treeview = gtk_tree_view_new ();
+  audiotree->scroll = gtk_scrolled_window_new (NULL, NULL);
+  pitivi_insert_newtabtree(self, audiotree);
+
+  PitiviTreeModel *autretree = g_new0(PitiviTreeModel, 1);
+  autretree->label = gtk_label_new ("Autre");  
+  autretree->treeview = gtk_tree_view_new ();
+  autretree->scroll = gtk_scrolled_window_new (NULL, NULL);
+  pitivi_insert_newtabtree(self, autretree);
 }
 
 static void
@@ -231,7 +276,7 @@ pitivi_effectswindow_get_type (void)
 	0,			/* n_preallocs */
 	pitivi_effectswindow_instance_init	/* instance_init */
       };
-      type = g_type_register_static (G_TYPE_OBJECT,
+      type = g_type_register_static (GTK_TYPE_WINDOW,
 				     "PitiviEffectsWindowType", &info, 0);
     }
 

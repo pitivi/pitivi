@@ -28,11 +28,11 @@
 #include "pitivi-menu.h"
 #include "pitivi-stockicons.h"
 #include "pitivi-toolbox.h"
-#include "pitivi-effectswindow.h"
 #include "pitivi-timelinewindow.h"
 #include "pitivi-toolboxwindow.h"
 #include "pitivi-sourcelistwindow.h"
 #include "pitivi-newprojectwindow.h"
+#include "pitivi-effectswindow.h"
 
 static GtkWindowClass *parent_class = NULL;
 
@@ -94,6 +94,7 @@ pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *
 {
   PitiviTimelineWindow *timelinewin;
   PitiviSourceListWindow *srclistwin;
+  PitiviEffectsWindow *effectswin;
     
   /* Source List Window */
   timelinewin = pitivi_timelinewindow_new();
@@ -101,6 +102,9 @@ pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *
   /* Source List Window */
   srclistwin = pitivi_sourcelistwindow_new();
   gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
+  /* Effects Window */
+  effectswin = pitivi_effectswindow_new();
+  gtk_widget_show_all (GTK_WIDGET (effectswin) );
 }
 
 

@@ -30,7 +30,7 @@
 
 static GtkWindowClass	*parent_class = NULL;
 
-
+ 
 struct _PitiviNewProjectWindowPrivate
 {
   /* instance private members */
@@ -268,13 +268,17 @@ pitivi_create_new_project ( GtkAction *action, PitiviToolboxWindow *self )
 {
   PitiviTimelineWindow *timelinewin;
   PitiviSourceListWindow *srclistwin;
-
-  /* Source List Window */
+  PitiviEffectsWindow *effectswin;
+  
+  /* Timeline List Window */
   timelinewin = pitivi_timelinewindow_new();
   gtk_widget_show_all (GTK_WIDGET (timelinewin) ); 
   /* Source List Window */
   srclistwin = pitivi_sourcelistwindow_new();
-  gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
+  gtk_widget_show_all (GTK_WIDGET (srclistwin) );
+  /* Effects Window */
+  effectswin = pitivi_effectswindow_new();
+  gtk_widget_show_all (GTK_WIDGET (effectswin) );
   gtk_widget_destroy (GTK_WIDGET(self));
 }
 

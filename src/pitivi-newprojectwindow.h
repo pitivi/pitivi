@@ -30,6 +30,7 @@
  * Potentially, include other headers on which this header depends.
  */
 #include <gtk/gtk.h>
+#include "pitivi-effectswindow.h"
 #include "pitivi-toolboxwindow.h"
 #include "pitivi-timelinewindow.h"
 #include "pitivi-sourcelistwindow.h"
