@@ -78,7 +78,7 @@ struct _PitiviSettingsValue
 struct _PitiviMediaSettings
 {
   gchar		*codec_factory_name;
-  GSList	*codec_props;
+  GSList	*codec_settings;
   GstCaps	*caps;
 };
 
