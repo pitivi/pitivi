@@ -87,6 +87,7 @@ static void
 pitivi_mainapp_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviMainApp *self = (PitiviMainApp *) instance;
+  PitiviSourceListWindow *sourcelist;
 
   self->private = g_new0 (PitiviMainAppPrivate, 1);
   
@@ -102,6 +103,7 @@ pitivi_mainapp_instance_init (GTypeInstance * instance, gpointer g_class)
   g_signal_connect(G_OBJECT(self->private->tbxwin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
   gtk_widget_show_all (GTK_WIDGET (self->private->tbxwin));
+
 }
 
 static void

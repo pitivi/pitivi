@@ -20,6 +20,7 @@ pitivi_SOURCES		= \
 	pitivi-timelinewindow.c\
 	pitivi-toolboxwindow.c	\
 	pitivi-sourcelistwindow.c \
+	pitivi-projectsourcelist.c \
 	pitivi-newprojectwindow.c  \
 	pitivi-viewerwindow.c \
 	pitivi-projectsettings.c \
