@@ -293,6 +293,18 @@ int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
 }
 
 PitiviLayerType
+check_media_type_str (gchar *media)
+{
+  if (!g_strcasecmp  (media, "video"))
+    return (PITIVI_VIDEO_TRACK);
+  else if (!g_strcasecmp (media, "audio"))
+    return (PITIVI_AUDIO_TRACK);
+  else if (!g_strcasecmp (media, "video/audio") || !g_strcasecmp (media, "audio/video"))
+    return (PITIVI_VIDEO_AUDIO_TRACK);
+  return (PITIVI_NO_TRACK);
+}
+
+PitiviLayerType
 check_media_type (PitiviSourceFile *sf)
 {
   gchar *media;
@@ -300,12 +312,7 @@ check_media_type (PitiviSourceFile *sf)
   if (sf)
     {
       media = g_strdup (sf->mediatype);
-      if (!g_strcasecmp  (sf->mediatype, "video"))
-	return (PITIVI_VIDEO_TRACK);
-      else if (!g_strcasecmp (sf->mediatype, "audio"))
-	return (PITIVI_AUDIO_TRACK);
-      else
-	return (PITIVI_VIDEO_AUDIO_TRACK);
+      return check_media_type_str (media);
     }
   return (PITIVI_NO_TRACK);
 }
@@ -856,12 +863,15 @@ pitivi_timelinecellrenderer_callb_drag_source_begin (PitiviTimelineCellRenderer 
     gchar  *path;
   } *slide;
   gint64 len;
+  PitiviLayerType type;
  
   slide = (struct _Pslide *) data;
   len = slide->length;
   if (len > 0)
     self->private->slide_width = convert_time_pix (len, PITIVI_SECONDS);
-  self->private->slide_both = TRUE;
+  type = check_media_type_str (slide->path);
+  if (type == PITIVI_VIDEO_AUDIO_TRACK)
+    self->private->slide_both = TRUE;
 }
 
 /*

@@ -1611,7 +1611,8 @@ drag_begin_cb (GtkWidget          *widget,
     return;
   }
   self->private->dndtreepath = g_strdup(gtk_tree_model_get_string_from_iter(model, &iter));
-
+  g_printf ("%s\n", self->private->dndtreepath);
+  
   /* find pos in listview */
   selection = gtk_tree_view_get_selection(listview);
   if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1627,21 +1628,18 @@ drag_begin_cb (GtkWidget          *widget,
   item_select = 0;
   folder_select = 0;
   
-  i = 0;
-  
-  while (i++ < selected_list_row)
+  gtk_tree_model_get(model, &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
+  for (i = 0; i++ < selected_list_row;)
     {
       gtk_tree_model_get(model, &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
-      g_printf("media type ==> %s", tmpMediaType);
       if (!strcmp(tmpMediaType, "Bin"))
 	folder_select++;
       else
 	item_select++;
       gtk_tree_model_iter_next(model, &iternext);
     }
-  //g_printf("real filepos is ==> %d\n", item_select);
   self->private->dndfilepos = item_select;
-  slide_info (self, self->private->length, self->private->dndtreepath);
+  slide_info (self, self->private->length, tmpMediaType);
 }
 
 static void
