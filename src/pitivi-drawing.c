@@ -243,7 +243,7 @@ send_signal_to_childs_direct (GtkWidget *container, const gchar *signame, gpoint
 }
 
 gint 
-compare_child (gconstpointer a, gconstpointer b)
+compare_littlechild (gconstpointer a, gconstpointer b)
 {
   GtkWidget *wa, *wb;
   
@@ -254,5 +254,20 @@ compare_child (gconstpointer a, gconstpointer b)
     return 1;
   else if (wa->allocation.x < wb->allocation.x)
     return -1;
+  return 0;
+}
+
+gint 
+compare_bigchild (gconstpointer a, gconstpointer b)
+{
+  GtkWidget *wa, *wb;
+  
+  wa = GTK_WIDGET (a);
+  wb = GTK_WIDGET (b);
+  
+  if (wa->allocation.x > wb->allocation.x)
+    return -1;
+  else if (wa->allocation.x < wb->allocation.x)
+    return 1;
   return 0;
 }

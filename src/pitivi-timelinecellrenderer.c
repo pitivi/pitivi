@@ -441,20 +441,23 @@ gboolean check_intersect_child (GtkWidget *widget)
 void
 check_intersect_layout (GtkWidget *widget, guint x)
 {
-  GList	*childlist;
+  GList	*childlist = NULL;
+  GList	*childlist_container = NULL;
+  
   GtkWidget *media;
   guint x_rec_left = 0;
   guint x2_left = 0;
 
-  childlist = gtk_container_get_children (GTK_CONTAINER (widget));
-  childlist = g_list_sort ( childlist , compare_child);
-   for (; childlist; childlist = childlist->next)
-     {
-       media = GTK_WIDGET (childlist->data);
-       x2_left = media->allocation.x + media->allocation.width;
-       if (x_rec_left < x2_left && x2_left < x)
-	 x_rec_left = x2_left;
+  childlist_container = gtk_container_get_children (GTK_CONTAINER (widget));
+  childlist = g_list_sort ( childlist_container, compare_littlechild);
+  for (; childlist; childlist = childlist->next)
+    {
+      media = GTK_WIDGET (childlist->data);
+      x2_left = media->allocation.x + media->allocation.width;
+      if (x_rec_left < x2_left && x2_left < x)
+	x_rec_left = x2_left;
      }
+  childlist = g_list_sort ( childlist_container , compare_bigchild);
   g_list_free ( childlist );
 }
 
