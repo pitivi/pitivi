@@ -1543,7 +1543,8 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	  pitivi_timelinemedia_set_media_start_stop(media[1], mstart2, mstop2);
 	  //pitivi_timelinemedia_set_start_stop(media[1], start2, stop2);
 	  pitivi_layout_put (GTK_LAYOUT ( container->linked_track ), GTK_WIDGET ( media[1] ), pos, 0);
-	  pitivi_layout_add_to_composition (container, PITIVI_TIMELINEMEDIA (media[1]));
+	  pitivi_layout_add_to_composition (PITIVI_TIMELINECELLRENDERER (container->linked_track),
+					    PITIVI_TIMELINEMEDIA (media[1]));
 	  gtk_widget_show (GTK_WIDGET ( media[1] ));
 	}
       else

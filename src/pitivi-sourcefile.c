@@ -247,7 +247,7 @@ create_new_bin (PitiviSourceFile *self, int type)
 
   if (!gst_element_seek (decode, GST_FORMAT_BYTES | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH, 0))
     g_printf("ERROR SEEKING BACK TO 0!!!!\n");
-  /*pitivi_printf_element(pipeline);*/
+  pitivi_printf_element(pipeline);
   gst_element_set_state (container, GST_STATE_PAUSED);
   gst_object_ref(GST_OBJECT(pipeline));
   gst_bin_remove (GST_BIN (container), pipeline);

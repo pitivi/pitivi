@@ -750,7 +750,7 @@ pitivi_gstelementsettings_get_settings_table (GtkWidget *widget, PitiviGstElemen
       } else {
 	
 	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (tmp2->widget))) {
-	  nb += (gint) g_object_get_data (G_OBJECT (tmp2->widget), "value");
+	  nb += GPOINTER_TO_INT (g_object_get_data (G_OBJECT (tmp2->widget), "value"));
 	  
 	  //g_print ("FLAG:%d\n", (gint) g_object_get_data (G_OBJECT (tmp2->widget), "value"));
 	  /* 	} else { */

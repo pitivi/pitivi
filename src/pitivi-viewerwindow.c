@@ -88,6 +88,8 @@ struct _PitiviViewerWindowPrivate
   gdouble	timeline_min;
   gdouble	timeline_max;
   gdouble	timeline_step;
+
+  GstProbe	*probe;
 };
 
 /*
@@ -174,16 +176,24 @@ void	video_play(GtkWidget *widget, gpointer data)
     self->private->play_status = PLAY;
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
       g_warning("Couldn't set the project pipeline to PLAYING!");
-    else
+    else {
+      gst_x_overlay_set_xwindow_id
+	( GST_X_OVERLAY ( self->private->sink ),
+	  GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
       g_idle_add(idle_func_video, self);
+    }
   } else if (self->private->play_status == STOP) {
     g_print ("[CallBack]:video_play\n");
     pitivi_printf_element(project->pipeline);
     self->private->play_status = PLAY;
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
       g_warning("Couldn't set the project pipeline to PLAYING");
-    else
+    else {
+      gst_x_overlay_set_xwindow_id
+	( GST_X_OVERLAY ( self->private->sink ),
+	  GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
       g_idle_add(idle_func_video, self);
+    }
   }
   gtk_signal_emit_by_name (GTK_OBJECT (self->private->video_area), "expose_event", &ev, &retval);
 
@@ -284,6 +294,9 @@ gboolean	seek_stream(GtkWidget *widget,
     self->private->play_status = PLAY;
     g_idle_add(idle_func_video, self);
     gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
+    gst_x_overlay_set_xwindow_id
+	( GST_X_OVERLAY ( self->private->sink ),
+	  GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
   }
   return FALSE;
 }
@@ -363,6 +376,21 @@ viewerwindow_start_stop_changed (GnlTimeline *timeline, GParamSpec *arg, gpointe
 		       self->private->timeline_max);
 }
 
+gboolean
+output_probe (GstProbe *probe, GstData **data, gpointer udata)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) udata;
+
+  if (GST_IS_BUFFER(*data)) {
+    g_printf ("output probe %lld:%lld:%lld\n", GST_M_S_M(GST_BUFFER_TIMESTAMP(*data)));
+    gtk_range_set_value(GTK_RANGE (self->private->timeline) , GST_BUFFER_TIMESTAMP(*data));
+  } else if (GST_IS_EVENT(*data) && (GST_EVENT_TYPE(*data) == GST_EVENT_EOS)) {
+    g_printf ("Got EOS\n");
+    self->private->play_status = STOP;
+  }
+  return TRUE;
+}
+
 void
 create_gui (gpointer data)
 {
@@ -435,20 +463,23 @@ create_stream (gpointer data)
 
   self->private->sink = gst_element_factory_make ("xvimagesink", "video_display");
   g_assert (self->private->sink != NULL);
+  self->private->probe = gst_probe_new(FALSE, output_probe, self);
+  gst_pad_add_probe (gst_element_get_pad (self->private->sink, "sink"),
+		     self->private->probe);
 
   timeoverlay = gst_element_factory_make ("timeoverlay", "timeoverlay");
   self->private->fulloutputbin = gst_bin_new("videobin");
 
   if (timeoverlay) {
-  gst_bin_add_many (GST_BIN (self->private->fulloutputbin),
-		    timeoverlay,
-		    self->private->sink,
-		    NULL);
-  gst_element_link (timeoverlay, self->private->sink);
-  
-  gst_element_add_ghost_pad (self->private->fulloutputbin,
-			     gst_element_get_pad(timeoverlay, "sink"),
-			     "sink");
+    gst_bin_add_many (GST_BIN (self->private->fulloutputbin),
+		      timeoverlay,
+		      self->private->sink,
+		      NULL);
+    gst_element_link (timeoverlay, self->private->sink);
+    
+    gst_element_add_ghost_pad (self->private->fulloutputbin,
+			       gst_element_get_pad(timeoverlay, "sink"),
+			       "sink");
   } else {
     gst_bin_add (GST_BIN (self->private->fulloutputbin),
 		 self->private->sink);
@@ -456,6 +487,7 @@ create_stream (gpointer data)
 			       gst_element_get_pad(self->private->sink, "sink"),
 			       "sink");
   }
+  /* Add a GstProbe to the output */
   pitivi_project_set_video_output(project, self->private->fulloutputbin);
 
   self->private->play_status = STOP;
@@ -473,26 +505,20 @@ gboolean	idle_func_video (gpointer data)
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
   
-  GstElement *elem;
-  gint64	value1;
+/*   GstElement *elem; */
+/*   gint64	value1; */
 
   // remove the idle_func if we're not playing !
-  if (self->private->play_status != PLAY)
+  if (self->private->play_status == STOP) {
+    g_printf ("viewer idle FALSE\n");
     return FALSE;
+  }
   
   if ( gst_element_get_state (project->pipeline) == GST_STATE_PLAYING ) {
-    gst_x_overlay_set_xwindow_id
-      ( GST_X_OVERLAY ( self->private->sink ),
-	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
+/*     gst_x_overlay_set_xwindow_id */
+/*       ( GST_X_OVERLAY ( self->private->sink ), */
+/* 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) ); */
     gst_bin_iterate (GST_BIN (project->pipeline));
-    elem = GST_ELEMENT (project->timeline);
-    
-    if (elem) /* we have a true source */
-      {
-	value1 = do_query(elem, GST_QUERY_POSITION);
-	g_printf("**idle** : pos:%lld\n", (signed long long int) value1);
-	gtk_range_set_value(GTK_RANGE (self->private->timeline) , value1);
-      }
   }
   return TRUE;
 }
