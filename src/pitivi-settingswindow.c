@@ -93,8 +93,36 @@ void
 pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 {
   GtkWidget *ComboBox = (GtkWidget *) data;
+  GtkWidget *Dialog;
+  GtkWidget *Label;
+  gchar *elm;
+  gint result;
 
-  g_print ("Button Click:%s\n", pitivi_settingswindow_combobox_get_active (ComboBox));  
+  elm = pitivi_settingswindow_combobox_get_active (ComboBox);
+  g_print ("Button Click:%s\n", elm);
+  Dialog = gtk_dialog_new ();
+  Label = gtk_label_new (elm);
+  gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
+		     Label);
+  gtk_dialog_add_buttons (GTK_DIALOG (Dialog),
+			  GTK_STOCK_OK,
+			  GTK_RESPONSE_ACCEPT,
+			  GTK_STOCK_CANCEL,
+			  GTK_RESPONSE_REJECT,
+			  NULL);
+  gtk_widget_show_all (GTK_WIDGET (Dialog));
+
+  result  = gtk_dialog_run (GTK_DIALOG (Dialog));
+  switch (result)
+    {
+      case GTK_RESPONSE_ACCEPT:
+         g_print ("ACCEPT\n");
+         break;
+      default:
+         g_print ("CANCEL\n");
+         break;
+    }
+  gtk_widget_destroy (Dialog);  
   return ;
 }
 
@@ -231,7 +259,7 @@ pitivi_settingswindow_ajout_button (GtkWidget *Table, gint row, gint col,
   Button = gtk_button_new_from_stock (stock_id);
   g_signal_connect (G_OBJECT (Button), "clicked",
 		    G_CALLBACK (pitivi_settingswindow_cb_button), pt);
-  g_object_set (G_OBJECT (Button), "sensitive", FALSE, NULL);
+  //g_object_set (G_OBJECT (Button), "sensitive", FALSE, NULL);
   pitivi_settingswindow_table_widget_add (Table, Button, row, col);
   gtk_widget_show (Button);
 

@@ -38,6 +38,7 @@ pitivi_SOURCES		= \
 	pitivi-settings.c \
 	pitivi-settingswindow.c \
 	pitivi-splashscreenwindow.c \
+	pitivi-gstelementsettings.c \
 	main.c
 
 # our CFLAGS and LDFLAGS used for compiling and linking
