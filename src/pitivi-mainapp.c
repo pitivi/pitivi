@@ -97,7 +97,7 @@ pitivi_mainapp_get_toolboxwindow(PitiviMainApp *self) {
 
 PitiviTimelineWindow *
 pitivi_mainapp_get_timelinewin(PitiviMainApp *self) {
-  return self->private->timelinewin;
+  return (PitiviWindows *) self->private->timelinewin;
 }
 
 PitiviViewerWindow *
@@ -183,7 +183,7 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
   self->project = project;
 
   /* Source List Window */
-  
+
   if (self->private->srclistwin == NULL)
     {
       self->private->srclistwin = pitivi_sourcelistwindow_new(self, project);
@@ -229,6 +229,8 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
       gtk_signal_connect (GTK_OBJECT (self->private->timelinewin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_timelinewin), self);
     }
+  else
+    g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "activate");
 
   gtk_window_get_size (GTK_WINDOW (self->private->tbxwin), &tmp1_w, &tmp1_h);
   gtk_window_move (GTK_WINDOW (self->private->tbxwin), 0, (height - (tmp1_h + (4 * BORDER) + tmp_h + BOTTOM2)));

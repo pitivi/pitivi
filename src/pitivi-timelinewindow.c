@@ -434,7 +434,6 @@ create_tracks (PitiviTimelineWindow *self)
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), self->private->hruler, FALSE, FALSE, 0);     
 
   // Creating Tracks
-  
   for (count = 0; count < len; count++)
     {
       if (gtab_tracks[count].track_type != -1)
@@ -454,7 +453,6 @@ create_tracks (PitiviTimelineWindow *self)
 	  create_separator (self->private->main_vbox_left, -1, 5);
 	}
     }
-  
   create_tracks_links (cell);
   g_signal_connect_swapped (G_OBJECT (GTK_LAYOUT (cell)), "motion_notify_event",
 			    G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
@@ -463,7 +461,6 @@ create_tracks (PitiviTimelineWindow *self)
   
   // Left Scrollbar
   gtk_paned_pack1 (GTK_PANED(self->private->hpaned), self->private->main_vbox_left, FALSE, FALSE);
-
   // Right HScrollbar
   GtkWidget * pHScrollbarRight = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (pHScrollbarRight),
@@ -504,16 +501,12 @@ pitivi_timelinewindow_constructor (GType type,
 
   self->unit = PITIVI_SECONDS;
   self->zoom = 1;
-
   /* Timeline Menu */
   create_timeline_menu (self);
-  
   /* Timeline Toolbox */
   create_timeline_toolbar (self);
-  
   /* Create Tracks */
   create_tracks (self);
-
   /* Desactivation */
   pitivi_timelinewindow_deactivate (self);
   return object;
@@ -831,7 +824,6 @@ pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self )
   gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
   
   pitivi_npw_select_first_setting(win_new_project);
-  g_signal_emit_by_name (GTK_OBJECT (self), "activate");
 }
 
 void
