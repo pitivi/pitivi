@@ -55,16 +55,6 @@ typedef struct _PitiviTimelineWindowClass PitiviTimelineWindowClass;
 typedef struct _PitiviTimelineWindowPrivate PitiviTimelineWindowPrivate;
 
 
-
-typedef enum _PosDisplay {
-	AS_FRAMES = 1,
-	AS_TIME_LONG,
-	AS_SECONDS,
-	AS_TIME_FRAMES,
-	LAST_PD
-
-}PosDisplay;
-
 struct _PitiviTimelineWindow
 {
   GtkWindow parent;

@@ -26,7 +26,11 @@
 #include <gtk/gtk.h>
 #include "pitivi.h"
 #include "pitivi-menu.h"
+#include "pitivi-stockicons.h"
 #include "pitivi-timelinewindow.h"
+
+static  GtkWindowClass *parent_class = NULL;
+static	GdkPixbuf *window_icon = NULL;
 
 struct _PitiviTimelineWindowPrivate
 {
@@ -51,15 +55,19 @@ struct _PitiviTimelineWindowPrivate
   GNode	        *subs;
   GdkWindow     *event_window;
   GdkCursor     *cursor;
-  PosDisplay	pos_display;
   guint	        gpi_type;
-  GList*        operations;
-  
+  GList*        operations;  
 };
 
 /*
  * forward definitions
  */
+
+enum {
+  EA_DEFAULT_FILE,
+  EA_RECENT_FILE,
+  EA_LAST_ACTION
+};
 
 enum {
 	LAST_SIGNAL
@@ -73,12 +81,15 @@ enum {
 static GtkTargetEntry drop_types[] = {
 	{ "text/uri-list", 0, DND_TYPE_TEXT }
 };
-
-
-GtkWindowClass *parent_class = NULL;
-static	GdkPixbuf *window_icon = NULL;
-static  guint signals[LAST_SIGNAL];
 static  int num_drop_types = sizeof (drop_types) / sizeof (drop_types[0]);
+
+static  GtkActionGroup *actions_group[EA_LAST_ACTION];
+static  guint signals[LAST_SIGNAL];
+
+
+
+
+
 
 
 /*
@@ -91,29 +102,12 @@ statusbar_set_frames (GtkWidget *statusbar,
 		      PitiviTimelineWindow *window,
 		      guint64 frames)
 {
-	guint64 ms;
-	char *display = NULL;
+  gchar *display;
 
-	switch (window->private->pos_display) {
-	case AS_FRAMES:
-	  display = g_strdup_printf ("%llu", frames);
-	  break;
-	case AS_TIME_LONG:
-	  // ms = pitivi_timeconv_frames_to_ms (frames, PITIVI_DF_RATE);
-	  // display = pitivi_timeconv_ms_to_time_string ((int)ms);
-	  display = g_strdup_printf ("%15c%s", ' ', display);
-	  break;
-	case AS_SECONDS:
-	  // ms = pitivi_timeconv_frames_to_ms (frames, PITIVI_DF_RATE);
-	  display = g_strdup_printf ("%llu", ms / 1000);
-	  break;
-	default:
-	  return;
-	}
-	
-	gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
-	gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, display);
-	g_free (display);
+  display = g_strdup_printf ("%llu", frames);
+  gtk_statusbar_pop (GTK_STATUSBAR (statusbar), 0);
+  gtk_statusbar_push (GTK_STATUSBAR (statusbar), 0, display);
+  g_free (display);
 }
 
 static void
@@ -236,8 +230,6 @@ pitivi_timelinewindow_new(void)
   gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (priv->statusbar_properties), FALSE);
   gtk_box_pack_start (GTK_BOX (priv->dock_statusbar), priv->statusbar_properties, TRUE, TRUE, 0);
   priv->statusbar_frame = gtk_statusbar_new ();
-  priv->pos_display = AS_TIME_LONG;
-  statusbar_set_frames (priv->statusbar_frame, timelinewindow, (guint64) 0);
   gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (priv->statusbar_frame), FALSE);
   gtk_box_pack_start (GTK_BOX (priv->dock_statusbar), priv->statusbar_frame, TRUE, TRUE, 0);  
   priv->statusbar_message = gtk_statusbar_new ();
@@ -268,9 +260,59 @@ pitivi_timelinewindow_constructor (GType type,
   return obj;
 }
 
+
+ 
+static void
+pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self )
+{
+  gtk_widget_destroy (GTK_WIDGET(self));
+}
+
+
+static void
+pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self )
+{  
+  
+}
+
+static void
+pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
+{
+
+}
+
+static void
+pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self )
+{
+  
+}
+
+
+static void
+pitivi_callb_menufile_saveas ( GtkAction *action, PitiviTimelineWindow *self)
+{
+  
+}
+
+
+static GtkActionEntry file_entries[] = {
+  { "FileMenu", NULL, "_File" },
+  { "FileNew", PITIVI_STOCK_NEW_PROJECT, "Ne_w", "<control>N", "New File", G_CALLBACK (pitivi_callb_menufile_new) },
+  { "FileOpen", GTK_STOCK_OPEN, "_Open", "<control>O", "Open a file",  G_CALLBACK (pitivi_callb_menufile_open) },
+  { "FileSave", GTK_STOCK_SAVE, "_Save", "<control>S", "Save a file", G_CALLBACK (pitivi_callb_menufile_save) },
+  { "FileSaveAs", GTK_STOCK_SAVE_AS, "Save _As", "<control>A", "Save a file", G_CALLBACK (pitivi_callb_menufile_saveas) },
+  { "FileExit", GTK_STOCK_QUIT, "_Close", "<control>Q", "Close Project", G_CALLBACK (pitivi_callb_menufile_exit) },
+};
+
+static GtkActionEntry recent_entry[]= {
+  { "FileRecent", GTK_STOCK_OPEN, "_Open Recent File", "<control>R", "Open a recent file",  G_CALLBACK (pitivi_callb_menufile_open) },
+};
+
+
 static void
 pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
+  int	count;
   PitiviMenu *ui;
   PitiviTimelineWindow *self = (PitiviTimelineWindow *) instance;
   
@@ -282,20 +324,36 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
     
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
+   * statusbar_set_frames (self->private->statusbar_frame, self, (guint64) 0);
    */  
-    
+ 
   self->private->main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (self->private->main_vbox);
+  
+  /* Putting Menu to timeline */
+  
   gtk_container_add (GTK_CONTAINER (self), self->private->main_vbox);
   self->private->menu_dock = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (self->private->menu_dock);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->menu_dock,
 		      FALSE, TRUE, 0);
+  
+  /* Managing actions groups */
+  
+  actions_group[EA_DEFAULT_FILE] = gtk_action_group_new ("MenuFile");
+  gtk_action_group_add_actions (actions_group[EA_DEFAULT_FILE], file_entries\
+				, G_N_ELEMENTS (file_entries), self);
+  actions_group[EA_RECENT_FILE] = gtk_action_group_new ("MenuFileRecent");
+  gtk_action_group_add_actions (actions_group[EA_DEFAULT_FILE], file_entries\
+				, G_N_ELEMENTS (recent_entry), self);
   ui = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TIMELINE_FILE);
+  for (count = 0; count < EA_LAST_ACTION; count++)
+    if (actions_group[count])
+      gtk_ui_manager_insert_action_group (ui->public->ui, actions_group[count], 0);
   pitivi_set_menu (ui);
-  gtk_widget_show (ui->public->menu);
   gtk_box_pack_start (GTK_BOX (self->private->menu_dock), ui->public->menu,
 		      FALSE, TRUE, 0);
+  
   self->private->operations = g_list_alloc ();
 }
 
@@ -331,6 +389,7 @@ pitivi_timelinewindow_finalize (GObject *object)
    */
 
   g_free (self->private);
+   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void

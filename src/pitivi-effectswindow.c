@@ -27,19 +27,7 @@
 #include "pitivi.h"
 #include "pitivi-effectswindow.h"
 
-enum {
-  TABTREE_ACTIVATE_SIGNAL = 1,
-  TABTREE_LAST_SIGNAL
-};
-
-
-enum {
-  NOTEBOOK_LABELS = 1,
-  NOTEBOOK_NEW_LABEL,
-  NOTEBOOK_NEW_STYLE,
-  TREE_NEW_VALUES,
-  LAST_ENUM_TABTREE,
-};
+static GtkWindowClass *parent_class = NULL;
 
 struct _PitiviEffectsWindowPrivate
 {
@@ -55,8 +43,20 @@ struct _PitiviEffectsWindowPrivate
  * forward definitions
  */
 
-static GtkWindow *parent_class = NULL;
+enum {
+  TABTREE_ACTIVATE_SIGNAL = 1,
+  TABTREE_LAST_SIGNAL
+};
+
 static guint tabtreeview_signals[TABTREE_LAST_SIGNAL] = { 0 };
+
+
+enum {
+  NOTEBOOK_LABELS = 1,
+  NOTEBOOK_NEW_LABEL,
+  NOTEBOOK_NEW_STYLE,
+  LAST_ENUM_TABTREE,
+};
 
 
 /*
@@ -188,6 +188,7 @@ pitivi_effectswindow_finalize (GObject *object)
    */
 
   g_free (self->private);
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
