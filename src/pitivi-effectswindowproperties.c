@@ -88,10 +88,10 @@ pitivi_set_effectproperties(PitiviSettingsIoElement *io, GstElement *effect)
 void 
 pitivi_effects_ok (GtkWidget *widget, GObject *obj)
 {
+  PitiviEffectsWindowProperties *self;
+
   PITIVI_DEBUG ("PitiviEffectsWindowProperties  OK");
   /* TODO : The effect GstElement is self->private->effect !!! */
-
-  PitiviEffectsWindowProperties *self;
 
   self = PITIVI_EFFECTSWINDOWPROPERTIES (obj);
   /* On reutilise la variable pour une economie de mem */
@@ -105,11 +105,11 @@ pitivi_effects_ok (GtkWidget *widget, GObject *obj)
 void 
 pitivi_effects_apply (GtkWidget *widget, GObject *obj)
 {
-  PITIVI_DEBUG ("PitiviEffectsWindowProperties  APPLY");
-  /* TODO : The effect GstElement is self->private->effect !!! */
-
   PitiviEffectsWindowProperties *self;
   PitiviSettingsIoElement	*new_io;
+
+  PITIVI_DEBUG ("PitiviEffectsWindowProperties  APPLY");
+  /* TODO : The effect GstElement is self->private->effect !!! */
 
   self = PITIVI_EFFECTSWINDOWPROPERTIES (obj);
   new_io = pitivi_gstelementsettings_get_settings_elem (self->private->widget_element);
@@ -120,10 +120,10 @@ pitivi_effects_apply (GtkWidget *widget, GObject *obj)
 void 
 pitivi_effects_cancel (GtkWidget *widget, GObject *obj)
 {
+  PitiviEffectsWindowProperties *self;
+
   PITIVI_DEBUG ("PitiviEffectsWindowProperties  CANCEL");
   /* TODO : The effect GstElement is self->private->effect !!! */
-
-  PitiviEffectsWindowProperties *self;
 
   self = PITIVI_EFFECTSWINDOWPROPERTIES (obj);
   pitivi_set_effectproperties(self->private->io, self->private->effect);
