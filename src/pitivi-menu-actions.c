@@ -27,6 +27,7 @@
 #include "pitivi-menu.h"
 #include "pitivi-menu-actions.h"
 #include "pitivi-stockicons.h"
+#include "pitivi-timelinewindow.h"
 #include "pitivi-newprojectwindow.h"
 #include "pitivi-sourcelistwindow.h"
 
@@ -35,28 +36,30 @@ static GtkActionGroup *actions_group[EA_LAST_ACTION];
 static void
 default_action (GtkAction *action, gpointer data )
 {
-  
+  gtk_main_quit ();
 }
 
 static void
 pitivi_callb_menufile_new ( GtkAction *action, gpointer data )
 {  
   PitiviNewProjectWindow *win_new_project;
-  PitiviSourceListWindow *srclistwin;
+  PitiviTimelineWindow *win_timeline;
 
   /* New Project window */
   win_new_project = pitivi_newprojectwindow_new();
   gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
-  
-  /* Source List Window */
-  srclistwin = pitivi_sourcelistwindow_new();
-  gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
-
+  win_timeline = pitivi_timelinewindow_new();
+  gtk_widget_show_all ( GTK_WIDGET (win_timeline) );
 }
 
 static void
 pitivi_callb_menufile_open ( GtkAction *action, gpointer data )
 {
+  PitiviSourceListWindow *srclistwin;
+  
+  /* Source List Window */
+  srclistwin = pitivi_sourcelistwindow_new();
+  gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
 }
 
 static void
