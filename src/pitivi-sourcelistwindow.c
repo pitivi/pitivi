@@ -1591,6 +1591,7 @@ GtkWidget	*create_projectview(PitiviSourceListWindow *self)
   gtk_toolbar_set_orientation (GTK_TOOLBAR(button_bar), GTK_ORIENTATION_HORIZONTAL);
   gtk_toolbar_set_show_arrow (GTK_TOOLBAR(button_bar), FALSE);
   gtk_toolbar_set_style (GTK_TOOLBAR(button_bar), GTK_TOOLBAR_ICONS);
+  gtk_toolbar_set_icon_size (GTK_TOOLBAR (button_bar), GTK_ICON_SIZE_MENU );
 
   pHpaned = gtk_hpaned_new();
   tree_vbox = gtk_vbox_new(FALSE, 0);
