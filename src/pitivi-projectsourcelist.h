@@ -23,13 +23,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
+
 #ifndef PITIVI_PROJECTSOURCELIST_H
 #define PITIVI_PROJECTSOURCELIST_H
 
 /*
  * Potentially, include other headers on which this header depends.
  */
-
+#include <gst/gst.h>
 /*
  * Type macros.
  */
@@ -45,7 +46,17 @@ typedef struct _PitiviProjectSourceList PitiviProjectSourceList;
 typedef struct _PitiviProjectSourceListClass PitiviProjectSourceListClass;
 typedef struct _PitiviProjectSourceListPrivate PitiviProjectSourceListPrivate;
 typedef struct _PitiviSourceBin PitiviSourceBin;
+typedef struct _PitiviSourceFile PitiviSourceFile;
 
+struct _PitiviSourceFile
+{
+  gchar	*filename;
+  gchar *mediatype;
+  gchar *infovideo;
+  gchar *infoaudio;
+  gchar *length;
+  GstElement *pipeline;
+};
 
 struct _PitiviProjectSourceList
 {
@@ -74,7 +85,10 @@ GType pitivi_projectsourcelist_get_type (void);
 PitiviProjectSourceList	*pitivi_projectsourcelist_new(void);
 gboolean 
 pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self, 
-					 gchar *treepath, gchar *source);
+					 gchar *treepath, gchar *filename,
+					 gchar *mediatype, gchar *infovideo,
+					 gchar *infoaudio, gchar *length,
+					 GstElement *pipeline);
 void 
 pitivi_projectsourcelist_new_bin(PitiviProjectSourceList *self, 
 				 gchar *bin_name);

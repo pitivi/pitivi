@@ -108,7 +108,12 @@ pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self,
   sourcelist = sourcebin->source;
   while (sourcelist != NULL)
     {
-      g_printf("file ==> %s\n", sourcelist->data);
+      g_printf("filename ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->filename);
+      g_printf("mediatype ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->mediatype);
+      g_printf("info video ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->infovideo);
+      g_printf("info audio ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->infoaudio);
+      g_printf("length ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->length);
+
       sourcelist = sourcelist->next;
     }
   childlist = sourcebin->child;
@@ -190,6 +195,8 @@ pitivi_projectsourcelist_remove_folder_from_bin(PitiviProjectSourceList *self,
 
   /* handle case the first folder is removed */
   sourcebin->child = childlist;
+
+  g_free((PitiviSourceBin*)data);
 }
 
 void
@@ -208,12 +215,15 @@ pitivi_projectsourcelist_remove_file_from_bin(PitiviProjectSourceList *self,
 
   data = pitivi_projectsourcelist_get_file_info(self, treepath, file_pos);
 
-  g_printf("== removing %s from source list ==\n", data);
+  g_printf("== removing %s from source list ==\n", ((PitiviSourceFile*)data)->filename);
 
   sourcelist = g_slist_remove(sourcelist, data);
-
+  
   /* handle case the first item is removed */
   sourcebin->source = sourcelist;
+
+  g_object_unref(((PitiviSourceFile*)data)->pipeline);
+  g_free((PitiviSourceFile*)data);
 }
 
 
@@ -298,17 +308,28 @@ pitivi_projectsourcelist_add_folder_to_bin(PitiviProjectSourceList *self,
 
 gboolean
 pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self, 
-					 gchar *treepath, 
-					 gchar *source)
+					 gchar *treepath, gchar *filename,
+					 gchar *mediatype, gchar *infovideo,
+					 gchar *infoaudio, gchar *length,
+					 GstElement *pipeline)
 {
   PitiviSourceBin	*sourcebin;
   PitiviSourceBin	*bin;
   GSList		*list;
+  PitiviSourceFile	*sourcefile;
   gint			row;
 
   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
-  
-  sourcebin->source = g_slist_append(sourcebin->source, source);
+  sourcefile = g_new0(PitiviSourceFile, 1);
+
+  sourcefile->filename = g_strdup(filename);
+  sourcefile->mediatype = g_strdup(mediatype);
+  sourcefile->infovideo = g_strdup(infovideo);
+  sourcefile->infoaudio = g_strdup(infoaudio);
+  sourcefile->length = g_strdup(length);
+  sourcefile->pipeline = pipeline;
+
+  sourcebin->source = g_slist_append(sourcebin->source, sourcefile);
   
   return TRUE;
 }

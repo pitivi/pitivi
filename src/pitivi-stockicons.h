@@ -45,6 +45,7 @@
 
 #define PITIVI_STOCK_EFFECT_SOUND	  "pitivi-effects-sound"
 #define PITIVI_STOCK_EFFECT_TV		  "pitivi-effects-tv"
+#define PITIVI_STOCK_EFFECT_SOUNDTV	  "pitivi-effects-soundtv"
 #define PITIVI_STOCK_EFFECT_CAT		  "pitivi-effects-category"
 #define PITIVI_STOCK_EFFECT_CAT_OPEN	  "pitivi-effects-category-open"
 
