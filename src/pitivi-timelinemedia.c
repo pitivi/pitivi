@@ -59,9 +59,6 @@ draw_slide (GtkWidget *widget, int start, int end);
 
 /* Timeline Media Callback  */
 
-void
-pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *this, gpointer data);
-
 // Properties Enumaration
 
 typedef enum {
@@ -102,15 +99,6 @@ static guint	      media_signals[LAST_SIGNAL] = {0};
  *							  *
  **********************************************************
 */
-
-
-static GtkTargetEntry TargetMediaDropEntry[] =
-  {
-    { "pitivi/sourcetimeline", GTK_TARGET_SAME_APP, DND_TARGET_TIMELINEWIN },
-    { "pitivi/media/sourceeffect", GTK_TARGET_SAME_APP,  DND_TARGET_EFFECTSWIN },
-  };
-  
-static gint iNbTargetMediaDropEntry = G_N_ELEMENTS (TargetMediaDropEntry);
 
 
 static GtkTargetEntry TargetDragEntry[] =
@@ -394,7 +382,6 @@ void
 show_video_media (GtkWidget *widget)
 {
   PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA (widget);
-  /*   GdkPixbuf *pixs[this->sourceitem->srcfile->nbthumbs+1];  Magnifique, splendide, renversant ...*/
   int pix_width, width, i,j, nb_img = 0;
   GdkPixbuf	**pixs;
 
@@ -649,37 +636,7 @@ pitivi_timelinemedia_drag_data_received (GObject *widget,
   source = gtk_drag_get_source_widget(dc);
   sf = (PitiviSourceFile **) selection->data;
   if (PITIVI_IS_EFFECTSWINDOW (gtk_widget_get_toplevel (source)))
-      pitivi_timelinemedia_callb_associate_effect (PITIVI_TIMELINEMEDIA (widget), *sf);
-}
-
-static gboolean
-pitivi_timelinemedia_drag_drop (GtkWidget *widget, 
-				GdkDragContext *dc, 
-				gint x, 
-				gint y, 
-				guint time,
-				gpointer data)
-     
-{
-  GtkWidget *source = gtk_drag_get_source_widget(dc);
- 
-  if (PITIVI_IS_TIMELINEMEDIA (source))
-    {
-      PitiviTimelineMedia *this = (PitiviTimelineMedia *) widget;
-      PitiviCursor *cursor;
-      int width, m_x, m_y = 0;
-      
-      cursor = pitivi_getcursor_id (widget);
-      if (cursor->type == PITIVI_CURSOR_SELECT ||
-	  cursor->type == PITIVI_CURSOR_HAND)
-	{
-	  GdkModifierType mask = GDK_BUTTON1_MASK;
-	  gdk_window_get_pointer (GDK_WINDOW (GTK_WIDGET (this->track)->window), &m_x, &m_y, &mask);
-	  width = widget->allocation.width/2;
-	  pitivi_timelinecellrenderer_drag_on_track (this->track, widget, m_x - width, 0);
-	}
-    }
-  return TRUE;
+      pitivi_timelinemedia_associate_effect (PITIVI_TIMELINEMEDIA (widget), *sf);
 }
 
 static void
@@ -689,8 +646,6 @@ connect_drag_and_drop (GtkWidget *widget)
 							   G_CALLBACK (pitivi_timelinemedia_drag_get), NULL);
   media_signals[MEDIA_DRAG_RECEIVED_SIGNAL] = g_signal_connect (G_OBJECT (widget), "drag_data_received",\
 								G_CALLBACK ( pitivi_timelinemedia_drag_data_received ), NULL);
-  media_signals[MEDIA_DRAG_DROP_SIGNAL] = g_signal_connect (G_OBJECT (widget), "drag_drop",\
-							    G_CALLBACK ( pitivi_timelinemedia_drag_drop ), NULL);
 }
 
 static void
@@ -738,12 +693,6 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
 			iNbTargetDragEntry, 
 			GDK_ACTION_COPY|GDK_ACTION_MOVE);
   
-  gtk_drag_dest_set  (GTK_WIDGET (this), 
-		      GTK_DEST_DEFAULT_DROP,
-		      TargetMediaDropEntry,
-		      iNbTargetMediaDropEntry,
-		      GDK_ACTION_COPY);
- 
   pixbuf = gtk_widget_render_icon(GTK_WIDGET (this), PITIVI_STOCK_HAND, GTK_ICON_SIZE_DND, NULL);
   gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (this), pixbuf);
   connect_drag_and_drop (GTK_WIDGET (this));
@@ -916,7 +865,6 @@ pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
   PitiviTimelineCellRenderer *container;
   gint x = event->x;
   
-  g_printf ("button..\n");
   PitiviCursor *cursor = pitivi_getcursor_id (widget);
   if (cursor->type == PITIVI_CURSOR_ZOOM || 
       cursor->type == PITIVI_CURSOR_ZOOM_INC ||
@@ -1000,7 +948,7 @@ pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data)
 
 
 void
-pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *this, gpointer data)
+pitivi_timelinemedia_associate_effect (PitiviTimelineMedia *this, gpointer data)
 {
   PitiviSourceFile *se =  (PitiviSourceFile *)data;
   PitiviTimelineMedia *neareffect, *effect;
@@ -1170,7 +1118,7 @@ pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
  
   media_class->deselect = pitivi_timelinemedia_callb_deselect;
   media_class->dissociate = pitivi_timelinemedia_callb_dissociate;
-  media_class->associate_effect = pitivi_timelinemedia_callb_associate_effect;
+  media_class->associate_effect = pitivi_timelinemedia_associate_effect;
   media_class->snapped_effect = pitivi_timelinemedia_callb_snapped_effect;
 }
 

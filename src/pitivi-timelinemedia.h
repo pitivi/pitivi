@@ -126,4 +126,8 @@ pitivi_timelinemedia_get_track (PitiviTimelineMedia *media);
 */
 void
 pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *sel, gpointer dataf);
+
+void
+pitivi_timelinemedia_associate_effect (PitiviTimelineMedia *this, gpointer data);
+
 #endif

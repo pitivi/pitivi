@@ -969,10 +969,10 @@ pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *sel
 
 
 static void
-pitivi_timelinecellrenderer_drag_on_effects (PitiviTimelineCellRenderer *self,
-					     GtkSelectionData *selection,
-					     int x,
-					     int y)
+pitivi_timelinecellrenderer_drag_on_transition (PitiviTimelineCellRenderer *self,
+						GtkSelectionData *selection,
+						int x,
+						int y)
 {
   PitiviSourceFile  **sf = NULL;
   
@@ -1029,6 +1029,23 @@ pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self,
     }
 }
 
+static void
+pitivi_timelinecellrenderer_drag_effects (PitiviTimelineCellRenderer *self, gpointer data, gint x, gint y)
+{
+  GList	*child;
+  GtkWidget *apply_on;
+  
+  for (child = gtk_container_get_children(GTK_CONTAINER(self)); child; child = child->next) {
+    apply_on = child->data;
+    if (x >= apply_on->allocation.x && x <= apply_on->allocation.x + apply_on->allocation.width)
+      {
+	PitiviSourceFile **sf = (PitiviSourceFile **) data;
+	pitivi_timelinemedia_associate_effect (PITIVI_TIMELINEMEDIA (apply_on), *sf);
+	break;
+      }
+  }
+  g_list_free (child);
+}
 
 
 static void
@@ -1075,9 +1092,11 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
 	      x -= self->private->slide_width/2;
 	      if ( x < 0)
 		x = 0;
-	      pitivi_timelinecellrenderer_drag_on_effects (self, self->private->current_selection, x, y);
+	      pitivi_timelinecellrenderer_drag_on_transition (self, self->private->current_selection, x, y);
 	      gtk_drag_finish (dc, TRUE, TRUE, time);
 	    }
+	  else if (self->track_type != PITIVI_EFFECTS_TRACK)
+	    pitivi_timelinecellrenderer_drag_effects (self, selection->data, x, y);
 	  break;
 	default:
 	  break;
@@ -1546,6 +1565,18 @@ pitivi_timelinecellrenderer_key_delete (PitiviTimelineCellRenderer* self)
   g_list_free (child);
 }
 
+static gboolean
+pitivi_timelinecellrenderer_drag_drop (GtkWidget *widget, 
+				       GdkDragContext *dc, 
+				       gint x, 
+				       gint y, 
+				       guint time,
+				       gpointer data)
+     
+{
+  return FALSE;
+}
+
 static void
 pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_class)
 {
@@ -1587,7 +1618,8 @@ pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_
 		      TargetEntries,
 		      iNbTargetEntries,
 		      GDK_ACTION_COPY|GDK_ACTION_MOVE);
-  
+  g_signal_connect (G_OBJECT (self), "drag_drop",\
+		    G_CALLBACK ( pitivi_timelinecellrenderer_drag_drop ), NULL);
   g_signal_connect (G_OBJECT (self), "drag_leave",\
 		    G_CALLBACK ( pitivi_timelinecellrenderer_drag_leave ), NULL);
   g_signal_connect (G_OBJECT (self), "drag_data_received",\

@@ -626,6 +626,7 @@ pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop)
       if (!sf->private->vthumb[i]) {
 	sf->private->vthumb[i] = g_new0(PitiviThumbTab, 1);
 	sf->private->vthumb[i]->time = sf->private->vcache[i]->time;
+	g_printf ("filename:%s\n", sf->private->vcache[i]->filename);
 	if (sf->private->vcache[i]->filename)
 	  if (!(sf->private->vthumb[i]->pixbuf = gdk_pixbuf_new_from_file(sf->private->vcache[i]->filename, NULL)))
 	    g_warning ("Error getting file %s", sf->private->vcache[i]->filename);
