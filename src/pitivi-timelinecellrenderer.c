@@ -809,8 +809,11 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
     }
   self->private->slide_width = 0;
   self->private->slide_both  = FALSE;
-  PITIVI_TIMELINECELLRENDERER (self->linked_track)->private->slide_width = 0;
-  PITIVI_TIMELINECELLRENDERER (self->linked_track)->private->slide_both  = FALSE;
+  if (self->linked_track)
+    {
+      PITIVI_TIMELINECELLRENDERER (self->linked_track)->private->slide_width = 0;
+      PITIVI_TIMELINECELLRENDERER (self->linked_track)->private->slide_both  = FALSE;
+    }
 }
 
 guint 
