@@ -55,6 +55,7 @@ pitivi_viewerwindow_new(void)
 static void
 pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
+  GtkWidget *main_vbox;
   PitiviViewerWindow *self = (PitiviViewerWindow *) instance;
 
   self->private = g_new0(PitiviViewerWindowPrivate, 1);
