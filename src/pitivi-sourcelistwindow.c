@@ -687,9 +687,7 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
 					   sf->infovideo,
 					   sf->infoaudio,
 					   sf->length,
-					   sf->pipeline,
-					   sf->pipeline_video,
-					   sf->pipeline_audio);
+					   sf->pipeline);
   
   gtk_list_store_set(liststore,
 		     &pIter, 

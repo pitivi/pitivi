@@ -49,6 +49,11 @@
 
 typedef struct _PitiviSourceFilePrivate PitiviSourceFilePrivate;
 
+typedef struct {
+  GdkPixbuf	*pixbuf;
+  gint64	time;
+}	PitiviThumbTab;
+
 struct _PitiviSourceFile
 {
   GObject parent;
@@ -68,9 +73,11 @@ struct _PitiviSourceFile
   GdkPixbuf  *thumbs_video;
   GdkPixbuf  *thumbs_effect;
   GstElement *pipeline;
-  GstElement *pipeline_video;
-  GstElement *pipeline_audio;
   
+  /* caching intervals */
+  gint64      vthumb_interval;
+  gint64      athumb_interval;
+
   gboolean    haveaudio;
   gboolean    havevideo;
   gboolean    haveeffect;
@@ -101,4 +108,6 @@ GstElement		*pitivi_sourcefile_get_audio_bin (PitiviSourceFile *sf);
 GstElement		*pitivi_sourcefile_get_video_bin (PitiviSourceFile *sf);
 GstElement		*pitivi_sourcefile_get_effect_bin (PitiviSourceFile *sf);
 
+GdkPixbuf		*pitivi_sourcefile_get_first_thumb (PitiviSourceFile *sf);
+PitiviThumbTab		**pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop);
 #endif
