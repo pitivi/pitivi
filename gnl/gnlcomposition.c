@@ -386,10 +386,13 @@ child_active_changed (GnlObject *object, GParamSpec *arg, gpointer udata)
   GST_INFO("%s : State of child %s has changed",
 	   gst_element_get_name(GST_ELEMENT (comp)),
 	   gst_element_get_name(GST_ELEMENT (object)));
-  if (object->active)
+  if (object->active) {
+    GST_FLAG_UNSET (GST_ELEMENT (object), GST_ELEMENT_LOCKED_STATE);
     comp->active_objects = g_list_append (comp->active_objects, object);
-  else
+  } else {
+    GST_FLAG_SET (GST_ELEMENT (object), GST_ELEMENT_LOCKED_STATE);
     comp->active_objects = g_list_remove(comp->active_objects, object);
+  }
 }
 
 /**
@@ -595,7 +598,7 @@ gnl_composition_deactivate_childs (GnlComposition *comp)
   GST_INFO("deactivate childs %p", comp->active_objects);
   for (next = NULL, tmp = comp->active_objects; tmp; tmp = next) {
     next = tmp->next;
-    gst_element_set_state(GST_ELEMENT (tmp->data), GST_STATE_PAUSED );
+    gst_element_set_state(GST_ELEMENT (tmp->data), GST_STATE_READY );
     gnl_object_set_active(GNL_OBJECT (tmp->data), FALSE);
   }
 }
@@ -967,6 +970,7 @@ gnl_composition_change_state (GstElement *element)
     GST_INFO ( "%s: 1 playing->paused", gst_element_get_name (GST_ELEMENT (comp)));
     break;
   case GST_STATE_PAUSED_TO_READY:
+    gnl_composition_deactivate_childs (comp);
     break;
   default:
     break;

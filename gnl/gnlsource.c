@@ -177,7 +177,7 @@ gnl_source_init (GnlSource *source)
   GST_FLAG_SET (source, GST_ELEMENT_DECOUPLED);
   GST_FLAG_SET (source, GST_ELEMENT_EVENT_AWARE);
 
-  source->bin = gst_pipeline_new ("pipeline");
+  source->bin = gst_pipeline_new ("gnlpipeline");
   gst_bin_add(GST_BIN(source), GST_ELEMENT(source->bin));
   source->element = 0;
   source->linked_pads = 0;
@@ -313,6 +313,8 @@ gnl_source_get_element (GnlSource *source)
 void
 gnl_source_set_element (GnlSource *source, GstElement *element)
 {
+  gchar	*tmp;
+
   g_return_if_fail (GNL_IS_SOURCE (source));
   g_return_if_fail (GST_IS_ELEMENT (element));
 
@@ -335,6 +337,10 @@ gnl_source_set_element (GnlSource *source, GstElement *element)
   source->pending_seek = NULL;
   source->private->seek_start = GST_CLOCK_TIME_NONE;
   source->private->seek_stop = GST_CLOCK_TIME_NONE;
+
+  tmp = g_strdup_printf ("gnlsource_pipeline_%s", gst_element_get_name(element));
+  gst_element_set_name (source->bin, tmp);
+  g_free (tmp);
 
   gst_bin_add (GST_BIN (source->bin), source->element);
 }
@@ -654,12 +660,13 @@ source_chainfunction (GstPad *pad, GstData *buf)
 		      &format, &value);
 
       if (value + intime < object->media_start) {
+	GST_INFO ("buffer doesn't start/end before source start, unreffing buffer");
         gst_buffer_unref (buffer);
         return;
       }
     }
     if (intime > object->media_stop) {
-      gst_pad_set_active (pad, FALSE);
+      /* gst_pad_set_active (pad, FALSE); */
       gst_buffer_unref (buffer);
       buffer = GST_BUFFER (gst_event_new (GST_EVENT_EOS));
     }
