@@ -177,7 +177,6 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
       color.blue = 0x6060;
       color.green = 0xcccc;
     }
-  /*     style->bg[GTK_STATE_NORMAL] = color; */
   
   gtk_style_set_background (style, widget->window, GTK_STATE_NORMAL);
   gc = gdk_gc_new (widget->window);
@@ -185,11 +184,6 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
   gdk_draw_rectangle (widget->window, gc,
 		      TRUE, 0, 0,
 		      widget->allocation.width-2, -1);
-
-/*   gtk_paint_box (widget->style, widget->window, */
-/* 		 GTK_STATE_NORMAL, GTK_SHADOW_IN, */
-/* 		 &event->area, widget, "mediadefault", */
-/* 		 0, 0, widget->allocation.width-2, -1); */
   
   if (self->sf->filename)
     {

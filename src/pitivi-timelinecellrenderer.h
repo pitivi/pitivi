@@ -45,7 +45,7 @@
 // Move on graphic source
 
 #define DEFAULT_WIDTH_DASHES 4
-#define DEFAULT_MEDIA_SIZE 200
+#define DEFAULT_MEDIA_SIZE 100
 #define MY_MAX 100000000
 
 
@@ -72,9 +72,9 @@ typedef struct _PitiviTimelineMediaChild PitiviTimelineMediaChild;
 
 typedef enum
 {
-  PITIVI_VIDEO_TRACK,
-  PITIVI_AUDIO_TRACK,
-  PITIVI_VIDEO_AUDIO_TRACK,
+  PITIVI_VIDEO_TRACK = 1,
+  PITIVI_AUDIO_TRACK = 2,
+  PITIVI_VIDEO_AUDIO_TRACK = 3,
   PITIVI_NO_TRACK = -1,
 } PitiviLayerType;
 

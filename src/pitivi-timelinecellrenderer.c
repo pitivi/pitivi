@@ -277,17 +277,17 @@ pitivi_timelinecellrenderer_drag_on_same_widget (PitiviTimelineCellRenderer *sel
   
   dragged_type_track = check_media_type (draggedWidget->sf);
   if (dragged_type_track == self->track_type  || dragged_type_track == PITIVI_VIDEO_AUDIO_TRACK)
-  {
-    add_to_layout ( GTK_WIDGET (self), 
-		    current_wmed, 
-		    x,
-		    y);
-    
-    self->motion_area->x =  GTK_WIDGET (draggedWidget)->allocation.width;
-    self->motion_area->width =  GTK_WIDGET (draggedWidget)->allocation.width;
-    self->motion_area->height =  GTK_WIDGET (draggedWidget)->allocation.height;
-    gtk_widget_show (current_wmed);
-  }
+    {
+      add_to_layout ( GTK_WIDGET (self), 
+		      current_wmed, 
+		      x,
+		      y);
+      
+      self->motion_area->x =  GTK_WIDGET (draggedWidget)->allocation.width;
+      self->motion_area->width =  GTK_WIDGET (draggedWidget)->allocation.width;
+      self->motion_area->height =  GTK_WIDGET (draggedWidget)->allocation.height;
+      gtk_widget_show (current_wmed);
+    }
 }
 
 static PitiviTimelineCellRenderer*
@@ -303,11 +303,9 @@ get_track_by_id (PitiviTimelineCellRenderer *actual, PitiviLayerType type_track_
     {
       if (GTK_IS_LAYOUT (childlist->data))
 	{
-	  g_printf ("track :%d--%d\n", actual->track_nb, PITIVI_TIMELINECELLRENDERER (childlist->data)->track_nb);
 	  if (actual->track_nb ==  PITIVI_TIMELINECELLRENDERER (childlist->data)->track_nb 
 	      &&  PITIVI_TIMELINECELLRENDERER (childlist->data)->track_type == type_track_cmp)
 	    {
-	      g_printf ("mqtches track :%d--%d\n", actual->track_nb, PITIVI_TIMELINECELLRENDERER (childlist->data)->track_nb);
 	      return ( PITIVI_TIMELINECELLRENDERER (childlist->data));
 	    }
 	}
@@ -333,8 +331,7 @@ pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *sel
     sf->length = DEFAULT_MEDIA_SIZE;
   
   type_track_cmp = check_media_type (sf);
-  if (type_track_cmp == self->track_type 
-      || (type_track_cmp == PITIVI_VIDEO_AUDIO_TRACK && self->track_type == PITIVI_VIDEO_TRACK))
+  if (type_track_cmp == self->track_type || (type_track_cmp == PITIVI_VIDEO_AUDIO_TRACK))
     {
       current_media = pitivi_timelinemedia_new (sf);
       gtk_widget_set_size_request (GTK_WIDGET (current_media), length, FIXED_HEIGHT);
@@ -359,18 +356,21 @@ pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *sel
     }
   else
     {
-      current_media = pitivi_timelinemedia_new (sf);
-      gtk_widget_set_size_request (GTK_WIDGET (current_media), length, FIXED_HEIGHT);
-      gtk_widget_show (GTK_WIDGET (current_media));
-      if (type_track_cmp == PITIVI_AUDIO_TRACK)
+      if (self->track_type == PITIVI_VIDEO_TRACK &&  type_track_cmp == PITIVI_AUDIO_TRACK )
 	{
-	  layout = get_track_by_id (self, PITIVI_VIDEO_TRACK);
-	  add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (current_media), x, y);
-	}
-      else if (type_track_cmp == PITIVI_VIDEO_TRACK)
-	{ 
+	  current_media = pitivi_timelinemedia_new (sf);
+	  gtk_widget_set_size_request (GTK_WIDGET (current_media), length, FIXED_HEIGHT);
+	  gtk_widget_show (GTK_WIDGET (current_media));
 	  layout = get_track_by_id (self, PITIVI_AUDIO_TRACK);
-	  add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (current_media), x, y);
+	  add_to_layout ( GTK_WIDGET (layout), GTK_WIDGET (current_media), x, y);
+	}
+      else if (self->track_type == PITIVI_AUDIO_TRACK && type_track_cmp == PITIVI_VIDEO_TRACK )
+	{ 
+	  current_media = pitivi_timelinemedia_new (sf);
+	  gtk_widget_set_size_request (GTK_WIDGET (current_media), length, FIXED_HEIGHT);
+	  gtk_widget_show (GTK_WIDGET (current_media));
+	  layout = get_track_by_id (self, PITIVI_VIDEO_TRACK);
+	  add_to_layout ( GTK_WIDGET (layout), GTK_WIDGET (current_media), x, y);
 	}
     }
 }
