@@ -454,8 +454,6 @@ pitivi_mainapp_constructor (GType type,
 				      0.8, "Loading Signals");
   g_signal_connect(G_OBJECT(self->private->timelinewin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
-  /* Launching RC Styles */
-  gtk_rc_parse( "../ui/styles.rc" );
   /* finish */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
   				      1.0, "Loading Finished");
