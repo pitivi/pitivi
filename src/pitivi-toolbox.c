@@ -108,6 +108,10 @@ load_cursor_size (GdkWindow *win,
       pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, width, height);
       break;
+    case  PITIVI_CURSOR_RESIZE:
+      pixmap = gdk_bitmap_create_from_data (NULL, resize_bits, width, height);
+      mask = gdk_bitmap_create_from_data (NULL, resize_mask_bits, width, height);
+      break;
     case PITIVI_CURSOR_NOALLOW:
       pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, width, height);

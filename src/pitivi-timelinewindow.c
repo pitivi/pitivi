@@ -896,7 +896,8 @@ pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self )
 {
   PitiviNewProjectWindow	*win_new_project;
   PitiviMainApp			*mainapp = ((PitiviWindows *) self)->mainapp;
-  GtkWidget			*dialog_box;			
+  GtkWidget			*dialog_box;
+  GtkWidget			*dialog_tmp;			
   gint				dialog_return;
 
   if (mainapp->project)
@@ -910,10 +911,18 @@ pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self )
       switch (dialog_return)
 	{
 	case GTK_RESPONSE_YES:
-	  /* New Project window */
-	  win_new_project = pitivi_newprojectwindow_new( mainapp );
-	  gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
-	  pitivi_npw_select_first_setting(win_new_project);
+	  dialog_tmp = gtk_message_dialog_new (GTK_WINDOW(self),
+				  GTK_DIALOG_DESTROY_WITH_PARENT,
+				  GTK_MESSAGE_WARNING,
+				  GTK_BUTTONS_OK,
+				  "Function under development, sorry...");
+	  if (gtk_dialog_run (GTK_DIALOG (dialog_tmp)) == GTK_RESPONSE_OK)
+	    gtk_widget_destroy (dialog_tmp);
+
+	  /*  /\* New Project window *\/ */
+	  /* 	  win_new_project = pitivi_newprojectwindow_new( mainapp ); */
+	  /* 	  gtk_widget_show_all ( GTK_WIDGET (win_new_project) ); */
+	  /* 	  pitivi_npw_select_first_setting(win_new_project); */
 	  break;
 	default:
 	  break;
