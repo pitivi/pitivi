@@ -419,8 +419,6 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
 
   self->private->vthumb = g_new0(PitiviThumbTab *, self->private->cacheidx);
   
-  gst_element_set_state (self->pipeline, GST_STATE_NULL);
-
   gst_object_unref (GST_OBJECT (self->pipeline));
   self->private->decode = NULL;
   self->pipeline = NULL;
