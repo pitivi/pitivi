@@ -1078,37 +1078,65 @@ pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self )
 void
 pitivi_callb_menufile_saveas ( GtkAction *action, PitiviTimelineWindow *self)
 {
+  GtkWidget			*dialog_box;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
   GtkWidget	*dialog;
   char		*filename = NULL;
   
-  /* Get the filename */
-  dialog = gtk_file_chooser_dialog_new("Choose PiTiVi project file",
-				       GTK_WINDOW (self), GTK_FILE_CHOOSER_ACTION_SAVE,
-				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				       GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
-				       NULL);
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+  if (!project)
+    {
+      dialog_box = gtk_message_dialog_new (GTK_WINDOW(self),
+					   GTK_DIALOG_DESTROY_WITH_PARENT,
+					   GTK_MESSAGE_WARNING,
+					   GTK_BUTTONS_OK,
+					   "You have to create a new project before saving ...");
+      if (gtk_dialog_run (GTK_DIALOG (dialog_box)) == GTK_RESPONSE_OK)
+	gtk_widget_destroy (dialog_box);
+    }
+  else
+    {
+      /* Get the filename */
+      dialog = gtk_file_chooser_dialog_new("Choose PiTiVi project file",
+					   GTK_WINDOW (self), GTK_FILE_CHOOSER_ACTION_SAVE,
+					   GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					   GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+					   NULL);
+      if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+	filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 
-  gtk_widget_destroy ( dialog );
+      gtk_widget_destroy ( dialog );
 
-  if (filename != NULL) {
-    project->filename = g_strdup(filename);
-    pitivi_project_save_to_file(project, project->filename);
-    g_free(filename);
-  }  
+      if (filename != NULL) {
+	project->filename = g_strdup(filename);
+	pitivi_project_save_to_file(project, project->filename);
+	g_free(filename);
+      }
+    }
 }
 
 void
 pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self )
 {
+  GtkWidget			*dialog_box;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
-  if (project->filename == NULL)
-    pitivi_callb_menufile_saveas(action, self);
+  if (!project)
+    {
+      dialog_box = gtk_message_dialog_new (GTK_WINDOW(self),
+					   GTK_DIALOG_DESTROY_WITH_PARENT,
+					   GTK_MESSAGE_WARNING,
+					   GTK_BUTTONS_OK,
+					   "You have to create a new project before saving ...");
+      if (gtk_dialog_run (GTK_DIALOG (dialog_box)) == GTK_RESPONSE_OK)
+	gtk_widget_destroy (dialog_box);
+    }
   else
-    pitivi_project_save_to_file(project, project->filename);  
+    {
+      if (project->filename == NULL)
+	pitivi_callb_menufile_saveas(action, self);
+      else
+	pitivi_project_save_to_file(project, project->filename);
+    }
 }
 
 void
@@ -1249,7 +1277,7 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   int videorate = pitivi_projectsettings_get_videorate(proj->settings);
   g_object_set (self->hruler, "ruler-videorate", videorate, NULL);
   
-  /* Deactivate Windows Menu */
+  /* Activate Windows Menu */
   gtk_action_group_set_sensitive (self->actions_group[EA_WINDOWMENU_FILE], TRUE);
 
   /* Activate childs */
