@@ -745,6 +745,7 @@ pitivi_settingswindow_instance_init (GTypeInstance * instance, gpointer g_class)
 
   self->private->Ttips = gtk_tooltips_new ();
   gtk_tooltips_enable(self->private->Ttips);
+  gtk_window_set_title (GTK_WINDOW(self), "Preferences");
 }
 
 static void
