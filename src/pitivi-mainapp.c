@@ -92,6 +92,11 @@ pitivi_mainapp_settings(PitiviMainApp *self) {
   return self->private->global_settings;
 }
 
+PitiviToolboxWindow *
+pitivi_mainapp_get_toolboxwindow(PitiviMainApp *self) {
+  return self->private->tbxwin;
+}
+
 PitiviTimelineWindow *
 pitivi_mainapp_get_timelinewin(PitiviMainApp *self) {
   return self->private->timelinewin;

@@ -50,6 +50,12 @@ struct _PitiviToolboxWindowPrivate
  * Insert "added-value" functions here
  */
 
+PitiviToolbox *
+pitivi_toolboxwindow_get_toolbox(PitiviToolboxWindow *self) {
+  return self->private->toolbox;
+}
+
+
 void
 pitivi_callb_toolbox_filenew_project ( GtkAction *action, PitiviToolboxWindow *self )
 {
