@@ -268,7 +268,7 @@ calculate_priorities ( GtkWidget *widget )
   gboolean found = FALSE;
 
   if (self->track_type == PITIVI_EFFECTS_TRACK)
-    self = self->linked_track;
+    self = PITIVI_TIMELINECELLRENDERER (self->linked_track);
   containerlist = gtk_container_get_children (GTK_CONTAINER (gtk_widget_get_parent(GTK_WIDGET (self))));
   for (; containerlist; containerlist = containerlist->next)
     if (self->track_type == PITIVI_TIMELINECELLRENDERER (containerlist->data)->track_type)
@@ -289,7 +289,7 @@ calculate_priorities ( GtkWidget *widget )
       for (; layoutlist; layoutlist = layoutlist->next)
 	{
 	  media = layoutlist->data;
-	  if ( media->track->effects_track )
+	  if ( media->track->effects_track)
 	    {
 	      found = FALSE;
 	      sublist = gtk_container_get_children (GTK_CONTAINER (media->track->effects_track));
@@ -307,7 +307,7 @@ calculate_priorities ( GtkWidget *widget )
 	      if ( found )
 		priority++;
 	    }
-	  if ( media )
+	  if ( media && media->track->track_type != PITIVI_TRANSITION_TRACK)
 	    {
 	      pitivi_timelinemedia_set_priority ( media, priority);
 	      priority++;
