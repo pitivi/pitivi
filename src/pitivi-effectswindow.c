@@ -29,7 +29,6 @@
 #include "pitivi-effects_cat.h"
 #include "pitivi-sourcefile.h"
 
-static	GdkPixbuf *window_icon = NULL;
 static	GtkWindowClass *parent_class = NULL;
 
 gchar* labels[PITIVI_EFFECT_NBCAT_TYPE + 1] = {
@@ -168,18 +167,7 @@ pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private = g_new0(PitiviEffectsWindowPrivate, 1);
   self->private->dispose_has_run = FALSE;
   gtk_window_set_title (GTK_WINDOW (self), PITIVI_EFFECTS_DF_TITLE);
-
   gtk_window_set_default_size (GTK_WINDOW (self), PITIVI_EFFECTS_DF_WIN_WIDTH, PITIVI_EFFECTS_DF_WIN_HEIGHT); 
-  
-  if (window_icon == NULL) 
-    {
-      char *filename;
-      
-      filename = g_strdup(pitivi_file (PITIVI_EFFECTS_LOGO));
-      window_icon = gdk_pixbuf_new_from_file (filename, NULL);
-      g_free (filename);
-    }
-  gtk_window_set_icon (GTK_WINDOW (self), window_icon);
 }
 
 void

@@ -36,13 +36,6 @@
 #include "pitivi-dragdrop.h"
 #include "pitivi-debug.h"
 
-/* #include "../pixmaps/stop.xpm" */
-/* #include "../pixmaps/play.xpm" */
-/* #include "../pixmaps/pause.xpm" */
-/* #include "../pixmaps/forward.xpm" */
-/* #include "../pixmaps/backward.xpm" */
-
-static		GdkPixbuf *window_icon = NULL;
 static		PitiviProjectWindowsClass *parent_class;
 static		GdkPixmap *pixmap = NULL;
 
@@ -558,16 +551,7 @@ pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
 
   gtk_window_set_default_size(GTK_WINDOW(self), PITIVI_VIEWER_DF_WIN_WIDTH, PITIVI_VIEWER_DF_WIN_HEIGHT);
   gtk_window_set_title (GTK_WINDOW (self), PITIVI_VIEWER_DF_TITLE); 
-  if (window_icon == NULL) 
-    {
-      char *filename;
-      
-      filename = g_strdup(pitivi_file (PITIVI_VIEWER_LOGO));
-      window_icon = gdk_pixbuf_new_from_file (filename, NULL);
-      g_free (filename);
-    }
-  gtk_window_set_icon (GTK_WINDOW (self), window_icon);
-
+  
   /* initialize all public and private members to reasonable default values. */ 
   
   self->private->play_status = STOP;

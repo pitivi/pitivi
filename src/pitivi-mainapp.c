@@ -360,9 +360,9 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_sourcelist), self);
     }
   
+  gtk_window_set_transient_for (GTK_WINDOW (self->private->viewerwin),  GTK_WINDOW (self->private->timelinewin));
   gtk_window_set_transient_for (GTK_WINDOW (self->private->srclistwin), GTK_WINDOW (self->private->timelinewin));
   gtk_window_set_transient_for (GTK_WINDOW (self->private->effectswin), GTK_WINDOW (self->private->timelinewin));
-  gtk_window_set_transient_for (GTK_WINDOW (self->private->viewerwin),  GTK_WINDOW (self->private->timelinewin));
 }
 
 /**

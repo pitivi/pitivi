@@ -25,6 +25,7 @@
 
 #include "pitivi.h"
 #include "pitivi-windows.h"
+#include "pitivi-stockicons.h"
 
 static     GtkWindowClass *parent_class = NULL;
 
@@ -37,6 +38,7 @@ struct _PitiviWindowsPrivate
 {
   /* instance private members */
   gboolean	dispose_has_run;
+  GdkPixbuf	*window_icon;
 };
 
 /*
@@ -78,6 +80,12 @@ pitivi_windows_instance_init (GTypeInstance * instance, gpointer g_class)
   /* Do only initialisation here */
   /* The construction of the object should be done in the Constructor
      So that properties set at instanciation can be set */
+
+  if (self->private->window_icon == NULL) {
+    self->private->window_icon = gtk_widget_render_icon (GTK_WIDGET(self), PITIVI_LOGO_ICON, 
+							 GTK_ICON_SIZE_MENU, NULL);
+  }
+  gtk_window_set_icon (GTK_WINDOW (self), self->private->window_icon);
 }
 
 static void

@@ -95,7 +95,7 @@
 #define PITIVI_ENVELOPE_VOLUME_EFFECT	"pitivi_envelope_volume_effect"
 #define PITIVI_VOLUME_EFFECT		"pitivi_volume_effect"
 #define PITIVI_AUDIO_RATE_EFFECT	"pitivi_audio_rate_effect"
-
+#define PITIVI_LOGO_ICON		"pitivi-logo3"
 
 #define PITIVI_SMPTE_1		"smpte1"
 #define PITIVI_SMPTE_2		"smpte2" 

@@ -43,7 +43,6 @@
 #include "pitivi-lplayerwindow.h"
 #include "pitivi-progressbar.h"
 
-static	GdkPixbuf *window_icon = NULL;
 static PitiviProjectWindowsClass *parent_class = NULL;
 
 struct _PitiviListStore
@@ -1695,17 +1694,6 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   gtk_window_set_title (GTK_WINDOW (self), PITIVI_SOURCELIST_DF_TITLE);
 
   gtk_window_set_default_size (GTK_WINDOW (self), PITIVI_SOURCELIST_DF_WIN_WIDTH, PITIVI_SOURCELIST_DF_WIN_HEIGHT); 
-  
-  if (window_icon == NULL) 
-    {
-      char *filename;
-      
-      filename = g_strdup(pitivi_file (PITIVI_SOURCELIST_LOGO));
-      window_icon = gdk_pixbuf_new_from_file (filename, NULL);
-      g_free (filename);
-    }
-  gtk_window_set_icon (GTK_WINDOW (self), window_icon);
-
   gtk_window_set_default_size(GTK_WINDOW(self), PITIVI_SOURCELIST_DF_WIN_WIDTH, PITIVI_SOURCELIST_DF_WIN_HEIGHT);
   gtk_container_add(GTK_CONTAINER(self), self->private->hpaned);
   self->private->nbrchutier = 1;
