@@ -1,3 +1,246 @@
+2005-01-20 12:22  bilboed
+
+	* src/pitivi-globalbin.c: PitiviGlobalBin : disabling EOS, let
+	  gstreamer do it normally...
+
+2005-01-17 15:54  bilboed
+
+	* src/pitivi-newprojectwindow.c: NewProjectWindow: applied patch
+	  for NULL-terminated vector from Alexander Boström (oddityfds)
+
+2005-01-17 15:51  bilboed
+
+	* src/: pitivi-checkbox.c, pitivi-controller.c, pitivi-cursor.h,
+	  pitivi-debug.c, pitivi-effectswindow.c,
+	  pitivi-effectswindowproperties.c, pitivi-encodewindow.c,
+	  pitivi-globalbin.c, pitivi-gstelementsettings.c,
+	  pitivi-lplayerwindow.c, pitivi-mainapp.c,
+	  pitivi-newprojectwindow.c, pitivi-progressbar.c,
+	  pitivi-project.c, pitivi-projectsettings.c,
+	  pitivi-projectsourcelist.c, pitivi-ruler.c, pitivi-settings.c,
+	  pitivi-settingswindow.c, pitivi-sourcefile.c,
+	  pitivi-sourcefilebin.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinebin.c, pitivi-timelinebin.h,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-toolbox.c, pitivi-viewerwindow.c: src/: Applied static
+	  flag to needed functions and commented functions that aren't used
+
+2005-01-17 12:18  bilboed
+
+	* src/pitivi-timelinemedia.c: PitiviTimelineMedia : properties
+	  dialog box didn't show and hanged application, fixed
+
+2005-01-14 15:54  bilboed
+
+	* gnl/: gnlcomposition.c, gnlobject.c, gnlsource.c: GnlSource :
+	  corrected out-of-limits buffer dropage/EOS, faster chainfunction;
+	  GnlObject : commented object<=>media time conversion functions
+
+2005-01-14 15:47  bilboed
+
+	* src/pitivi-globalbin.c: Increase audio/video queues size in
+	  PitiviGlobalBin
+
+2005-01-14 15:47  bilboed
+
+	* src/pitivi-timelinecellrenderer.c: Forgot to adjust stop time for
+	  linked element in cut
+
+2005-01-14 00:03  bilboed
+
+	* src/pitivi-effectswindowproperties.c: applyed patch for
+	  gcc-2.95.4 from kwm
+
+2005-01-13 18:24  bilboed
+
+	* configure.ac: bumping up to v0.1.1.3
+
+2005-01-13 18:07  bilboed
+
+	* src/pitivi-newprojectwindow.c: NewProjectWindow : better category
+	  frame adjustment
+
+2005-01-13 17:59  bilboed
+
+	* src/pitivi-newprojectwindow.c: PitiviNewProjectWindow : Moved
+	  Category frame under left-side category tree
+
+2005-01-13 17:30  bilboed
+
+	* src/pitivi-sourcefile.c: PitiviSourceFile : got rid of a useless
+	  gst_element_set_state()
+
+2005-01-13 17:14  bilboed
+
+	* docs/gnl/gnonlin-sections.txt, docs/gnl/tmpl/gnlobject.sgml,
+	  gnl/gnlcomposition.c, gnl/gnlobject.c, gnl/gnlobject.h,
+	  gnl/gnlsource.c: GnlObject: added media<=>object time conversion
+	  functions; GnlSource: discards discont events that are before
+	  seek_start
+
+2005-01-12 18:13  bilboed
+
+	* configure.ac: pumping up to v0.1.1.2
+
+2005-01-12 18:09  bilboed
+
+	* src/pitivi-sourcefilebin.c: protecting
+	  gst_pad_set_active_recursive until gst>0.8.8 comes out
+
+2005-01-12 18:00  bilboed
+
+	* Makefile.am, configure.ac, pitivi.spec, pitivi.spec.in: better
+	  pitivi.spec
+
+2005-01-12 16:49  bilboed
+
+	* src/pitivi-debug.c: debug category name is now PITIVI (capital
+	  letters according to gst documentation)
+
+2005-01-12 16:48  bilboed
+
+	* gnl/: gnlcomposition.c, gnlsource.c, gnltimeline.c:
+	  GST_EVENT_DISCONTINUOUS is now handled; GnlTimelineTimer now
+	  resets in GST_STATE_PAUSED_TO_READY
+
+2005-01-11 18:08  bilboed
+
+	* src/: pitivi-sourcefile.c, pitivi-sourcefilebin.c:
+	  PitiviSourceFile : faster thumbnailing; PitiviSourceFileBin:
+	  correct de-activation of non-used decoders/pads
+
+2005-01-11 01:01  bilboed
+
+	* src/pitivi-sourcefile.c: use ffmpegcolorspace instead of
+	  ffcolorspace, since the second is not available if gst-ffmpeg is
+	  not installed
+
+2005-01-10 19:01  bilboed
+
+	* src/: pitivi-projectsettingswidget.c,
+	  pitivi-projectsettingswindow.c, pitivi-sourcefilebin.c:
+	  ProjectSettingsWidget : cleanup; ProjectSettingsWindow : really
+	  apply changes; PitiviSourceFileBin : static flags, cleanup,
+	  included gst_pad_set_active_recursive(), doesn't use fakesinks
+	  anymore
+
+2005-01-09 22:55  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settings.c,
+	  pitivi-settings.h: integration de la copy de la struct io
+
+2005-01-07 18:17  bilboed
+
+	* src/: pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h, pitivi-projectsettingswidget.c,
+	  pitivi-projectsettingswidget.h, pitivi-projectsettingswindow.c:
+	  PitiviProjectSettingsWidget can now import/export project
+	  settings
+
+2005-01-07 16:12  bilboed
+
+	* src/pitivi-sourcelistwindow.c: Safer way to get the basename of a
+	  filepath
+
+2005-01-06 19:04  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-projectsettingswidget.c, pitivi-projectsettingswidget.h,
+	  pitivi-projectsettingswindow.c: Added conversion functions for
+	  PitiviSettingsIoElement, Added codec configuration window in
+	  PitiviProjectSettingsWidget
+
+2005-01-06 17:41  cracoucas42
+
+	* src/pitivi-effectswindowproperties.c: Application des preferences
+	  des effets...
+
+2005-01-06 14:17  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-projectsettingswidget.c, pitivi-settings.h,
+	  pitivi-types.h: Added PitiviSettingsIoElement <=>
+	  PitiviSettingsValue conversion fonctions
+
+2005-01-05 17:29  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-projectsettingswidget.c, pitivi-projectsettingswidget.h:
+	  ProjectSettingsWidget : Finished loading and improved GUI
+
+2005-01-04 17:08  bilboed
+
+	* src/pitivi-projectsettingswidget.c: Added video width/height
+	  handling
+
+2005-01-04 16:50  bilboed
+
+	* src/: pitivi-projectsettingswidget.c,
+	  pitivi-projectsettingswidget.h, pitivi-projectsettingswindow.c:
+	  improvements on PitiviProjectSettingsWidget
+
+2005-01-04 15:21  bilboed
+
+	* src/Makefile.am, src/pitivi-projectsettingswidget.c,
+	  src/pitivi-projectsettingswidget.h,
+	  src/pitivi-projectsettingswindow.c, src/pitivi-timelinewindow.c,
+	  src/pitivi-types.h, ui/pitivi-timeline.xml: Added
+	  PitiviSettingsWidget, inserted in interface. Corrected menu items
+	  titles
+
+2005-01-01 16:40  bilboed
+
+	* src/pitivi-settingswindow.c: Real title for preferences window
+
+2004-12-29 13:15  bilboed
+
+	* src/pitivi-file-utils.c: Look for development files first
+
+2004-12-28 16:09  bilboed
+
+	* src/: pitivi-mainapp.c, pitivi-settings.c: more PITIVI_DEBUG
+	  functions
+
+2004-12-28 16:08  bilboed
+
+	* gnl/gnlcomposition.c: Composition _prepare() doesn't segfault if
+	  empty
+
+2004-12-21 19:13  bilboed
+
+	* src/pitivi-mainapp.c: removed extra pitivi_settings_new(), was a
+	  memory leak
+
+2004-12-21 18:46  bilboed
+
+	* gnl/gnlcomposition.c, src/pitivi-effectswindowproperties.c,
+	  src/pitivi-gstelementsettings.c, src/pitivi-lplayerwindow.c,
+	  src/pitivi-mainapp.c, src/pitivi-menu.c,
+	  src/pitivi-progressbar.c, src/pitivi-settings.c,
+	  src/pitivi-settingswindow.c, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinemedia.c,
+	  src/pitivi-timelinewindow.c: Applyed kwm patches for gcc-2.95.4
+	  compatibilty
+
+2004-12-21 18:45  bilboed
+
+	* configure.ac: Bumping version to 0.1.1.1 after release
+
+2004-12-20 04:07  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinewindow.c: remove
+	  unused clip
+
+2004-12-19 19:13  casaxno
+
+	* src/pitivi-timelinewindow.c: confirmation on exit
+
+2004-12-19 17:30  bilboed
+
+	* ChangeLog, NEWS, TODO, src/pitivi-settings.c: cleanup for release
+	  0.1.1
+
 2004-12-19 16:28  bilboed
 
 	* pitivi.desktop: Better with contents...
