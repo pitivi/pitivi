@@ -25,6 +25,7 @@
 
 #include "pitivi.h"
 #include "pitivi-newprojectwindow.h"
+#include	<gst/gst.h>
 
 static GtkWindowClass *parent_class = NULL;
 
@@ -351,17 +352,22 @@ pitivi_make_settings_table(GtkWidget *settings_table)
 GtkWidget*
 pitivi_make_video_frame()
 {
-  GtkWidget	*video_table;
-  GtkWidget	*video_label_codec;
-  GtkWidget	*video_label_size;
-  GtkWidget	*video_label_fps;
-  GtkWidget	*video_combo_codec;
-  GtkWidget	*size_hbox;
-  GtkWidget	*size_width;
-  GtkWidget	*size_label_x;
-  GtkWidget	*size_height;
-  GtkWidget	*fps_text;
-  GtkWidget	*video_frame;
+  GtkWidget		*video_table;
+  GtkWidget		*video_label_codec;
+  GtkWidget		*video_label_size;
+  GtkWidget		*video_label_fps;
+  GtkWidget		*video_combo_codec;
+  GtkWidget		*size_hbox;
+  GtkWidget		*size_width;
+  GtkWidget		*size_label_x;
+  GtkWidget		*size_height;
+  GtkWidget		*fps_text;
+  GtkWidget		*video_frame;
+  const GList		*elements;
+  GstElementFactory	*factory;
+  const gchar		*klass;
+  const gchar		*name;
+  int	i;
 
 /* Creation de la frame "video" et du tableau principal */
   video_frame = gtk_frame_new("Video");
@@ -374,8 +380,25 @@ pitivi_make_video_frame()
   
 /*   Champ texte "codecs" */
   video_combo_codec = gtk_combo_box_new_text();
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (video_combo_codec), 0, "XviD");
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (video_combo_codec), 1, "MPEG-4");
+
+  elements = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
+  for (i = 0; elements != NULL; i++)
+    {
+      factory = (GstElementFactory *) elements->data;
+      klass = gst_element_factory_get_klass (factory);
+      name = gst_element_factory_get_longname (factory);
+      
+      if (!strncmp (klass, "Codec/Video/Encoder", 19))
+	{
+	  gtk_combo_box_insert_text (GTK_COMBO_BOX (video_combo_codec), i, g_strdup (GST_PLUGIN_FEATURE (factory)->name));
+	}
+      else
+	{
+	  goto next;
+	}
+    next:
+      elements = elements->next;
+    }
 
 /* Active le premier choix*/
   gtk_combo_box_set_active (GTK_COMBO_BOX (video_combo_codec), 0);
@@ -433,6 +456,12 @@ pitivi_make_audio_frame()
   GtkWidget	*audio_label_ech;
   GtkWidget	*audio_combo_ech;
 
+  const GList *elements;
+  GstElementFactory *factory;
+  const gchar *klass;
+  const gchar *name;
+  int	i;
+
 /* Creation de la frame "audio" et du tableau principal */
   audio_frame = gtk_frame_new("Audio"); 
   audio_table = gtk_table_new(3, 2, FALSE);
@@ -444,9 +473,26 @@ pitivi_make_audio_frame()
   
 /*   Champ texte "codecs" */
   audio_combo_codec = gtk_combo_box_new_text();
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_codec), 0, "MPEG-layer 3");
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_codec), 1, "MIDI");
-  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_codec), 2, "PCM");
+
+  elements = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
+  for (i = 0; elements != NULL; i++)
+    {
+      factory = (GstElementFactory *) elements->data;
+      klass = gst_element_factory_get_klass (factory);
+      name = gst_element_factory_get_longname (factory);
+      
+      if (!strncmp (klass, "Codec/Audio/Encoder", 19))
+	{
+	  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_codec), i, g_strdup (GST_PLUGIN_FEATURE (factory)->name));
+	}
+      else
+	{
+	  goto next;
+	}
+    next:
+      elements = elements->next;
+    }
+
   gtk_combo_box_set_active(GTK_COMBO_BOX (audio_combo_codec), 0); /*  Choix par defaut */
   gtk_table_attach (GTK_TABLE(audio_table), audio_combo_codec, 
 		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 140, 10);
