@@ -720,6 +720,8 @@ pitivi_timelinewindow_get_property (GObject * object,
 
   switch (property_id)
     {
+    case PROP_VIEWER_WINDOW:
+      break;
     default:
       g_assert (FALSE);
       break;

@@ -143,11 +143,15 @@ pitivi_effectswindowproperties_set_property (GObject * object,
 
 static void
 pitivi_effectswindowproperties_get_property (GObject * object,
-			      guint property_id,
-			      GValue * value, GParamSpec * pspec)
+					     guint property_id,
+					     GValue * value, GParamSpec * pspec)
 {
+  PitiviEffectsWindowProperties	*self = PITIVI_EFFECTSWINDOWPROPERTIES(object);
   switch (property_id)
     {
+    case PROP_ITEM_PROPERTY:
+       g_value_set_pointer (value, self->private->item);
+      break;
     default:
       g_assert (FALSE);
       break;
@@ -158,8 +162,7 @@ static void
 pitivi_effectswindowproperties_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  /* PitiviEffectsWindowPropertiesClass *klass = PITIVI_EFFECTSWINDOWPROPERTIES_CLASS (g_class); */
-
+  
   parent_class = g_type_class_peek_parent (g_class);
   gobject_class->constructor = pitivi_effectswindowproperties_constructor;
   gobject_class->dispose = pitivi_effectswindowproperties_dispose;

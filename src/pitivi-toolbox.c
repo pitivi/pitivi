@@ -360,38 +360,6 @@ pitivi_toolbox_finalize (GObject * object)
 }
 
 static void
-pitivi_toolbox_set_property (GObject * object,
-			     guint property_id,
-			     const GValue * value, GParamSpec * pspec)
-{
-/*   PitiviToolbox *self = (PitiviToolbox *) object; */
-
-  switch (property_id)
-    {
-    default:
-      /* We don't have any other property... */
-      g_assert (FALSE);
-      break;
-    }
-}
-
-static void
-pitivi_toolbox_get_property (GObject * object,
-			     guint property_id,
-			     GValue * value, GParamSpec * pspec)
-{
-/*   PitiviToolbox *self = (PitiviToolbox *) object; */
-
-  switch (property_id)
-    {
-    default:
-      /* We don't have any other property... */
-      g_assert (FALSE);
-      break;
-    }
-}
-
-static void
 pitivi_toolbox_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
@@ -400,9 +368,6 @@ pitivi_toolbox_class_init (gpointer g_class, gpointer g_class_data)
   gobject_class->constructor = pitivi_toolbox_constructor;
   gobject_class->dispose = pitivi_toolbox_dispose;
   gobject_class->finalize = pitivi_toolbox_finalize;
-
-  gobject_class->set_property = pitivi_toolbox_set_property;
-  gobject_class->get_property = pitivi_toolbox_get_property;
 }
 
 GType

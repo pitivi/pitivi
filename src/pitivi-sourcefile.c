@@ -500,7 +500,7 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer 
     } 
   else 
     {
-      sf->private->colorspace = gst_element_factory_make ("colorspace", "cspace");
+      sf->private->colorspace = gst_element_factory_make ("ffcolorspace", "cspace");
       sf->private->videoscale = gst_element_factory_make ("videoscale", "vscale");
       sf->private->pngenc = gst_element_factory_make ("pngenc", "pngenc");
       g_object_set (sf->private->pngenc, "snapshot", FALSE, NULL);
@@ -984,13 +984,19 @@ pitivi_sourcefile_set_property (GObject * object,
 
 static void
 pitivi_sourcefile_get_property (GObject * object,
-			      guint property_id,
-			      GValue * value, GParamSpec * pspec)
+				guint property_id,
+				GValue * value, GParamSpec * pspec)
 {
-/*   PitiviSourceFile *this = (PitiviSourceFile *) object; */
-
+  PitiviSourceFile *this = (PitiviSourceFile *) object;
+  
   switch (property_id)
     {
+    case PROP_FILENAME:
+      g_value_set_pointer (value, this->filename);
+      break;
+    case PROP_MAINAPP:
+      g_value_set_pointer (value, this->private->mainapp);
+      break;
     default:
       g_assert (FALSE);
       break;

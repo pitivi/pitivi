@@ -1750,54 +1750,6 @@ pitivi_newprojectwindow_finalize (GObject *object)
 }
 
 static void
-pitivi_newprojectwindow_set_property (GObject * object, guint property_id,
-				      const GValue * value, GParamSpec * pspec)
-{
-/*   PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) object; */
-
-  switch (property_id)
-    {
-      /*   case PITIVI_NEWPROJECTWINDOW_PROPERTY: { */
-      /*     g_free (self->private->name); */
-      /*     self->private->name = g_value_dup_string (value); */
-      /*     g_print ("maman: %s\n",self->private->name); */
-      /*   } */
-      /*     break; */
-/*     case PROP_MAINAPP: */
-/*       self->private->mainapp = g_value_get_pointer (value); */
-/*       break; */
-
-    default:
-      /* We don't have any other property... */
-      g_assert (FALSE);
-      break;
-    }
-}
-
-static void
-pitivi_newprojectwindow_get_property (GObject * object, guint property_id,
-				      GValue * value, GParamSpec * pspec)
-{
-/*   PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) object; */
-
-  switch (property_id)
-    {
-      /*  case PITIVI_NEWPROJECTWINDOW_PROPERTY: { */
-      /*     g_value_set_string (value, self->private->name); */
-      /*   } */
-      /*     break; */
-/*     case PROP_MAINAPP: */
-/*       g_value_set_pointer (value, self->private->mainapp); */
-/*       break; */
-      
-    default:
-      /* We don't have any other property... */
-      g_assert (FALSE);
-      break;
-    }
-}
-
-static void
 pitivi_newprojectwindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
@@ -1805,8 +1757,6 @@ pitivi_newprojectwindow_class_init (gpointer g_class, gpointer g_class_data)
   gobject_class->constructor = pitivi_newprojectwindow_constructor;
   gobject_class->dispose = pitivi_newprojectwindow_dispose;
   gobject_class->finalize = pitivi_newprojectwindow_finalize;
-  gobject_class->set_property = pitivi_newprojectwindow_set_property;
-  gobject_class->get_property = pitivi_newprojectwindow_get_property;
 }
 
 GType	

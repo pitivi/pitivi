@@ -315,10 +315,13 @@ pitivi_controller_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-/*   PitiviController *self = (PitiviController *) object; */
-
-  switch (property_id)
-    {
+  PitiviController *self = (PitiviController *) object;
+  
+   switch (property_id)
+     {
+     case PROP_VIEWERWINDOW:
+       g_value_set_pointer (value, self->private->viewerwin);
+      break;
     default:
       g_assert (FALSE);
       break;

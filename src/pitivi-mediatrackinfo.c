@@ -138,6 +138,9 @@ pitivi_mediatrackinfo_get_property (GObject * object,
     case PROP_TRACK:
       g_value_set_pointer (value, self->private->cell);
       break;
+    case PROP_LABEL:
+      g_value_set_string (value, self->private->trackname);
+      break;
     default:
       g_assert (FALSE);
       break;

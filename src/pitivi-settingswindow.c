@@ -746,10 +746,6 @@ pitivi_settingswindow_instance_init (GTypeInstance * instance, gpointer g_class)
 
   self->private->Ttips = gtk_tooltips_new ();
   gtk_tooltips_enable(self->private->Ttips);
-  
-  /* Do only initialisation here */
-  /* The construction of the object should be done in the Constructor
-     So that properties set at instanciation can be set */
 }
 
 static void
@@ -763,14 +759,6 @@ pitivi_settingswindow_dispose (GObject *object)
   
   /* Make sure dispose does not run twice. */
   self->private->dispose_has_run = TRUE;	
-
-  /* 
-   * In dispose, you are supposed to free all types referenced from this 
-   * object which might themselves hold a reference to self. Generally, 
-   * the most simple solution is to unref all members on which you own a 
-   * reference. 
-   */
-
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
@@ -779,72 +767,19 @@ pitivi_settingswindow_finalize (GObject *object)
 {
   PitiviSettingsWindow	*self = PITIVI_SETTINGSWINDOW(object);
 
-  /* 
-   * Here, complete object destruction. 
-   * You might not need to do much... 
-   */
-
   g_free (self->private);
   G_OBJECT_CLASS (parent_class)->finalize (object);
-}
-
-static void
-pitivi_settingswindow_set_property (GObject * object,
-			      guint property_id,
-			      const GValue * value, GParamSpec * pspec)
-{
-/*   PitiviSettingsWindow *self = (PitiviSettingsWindow *) object; */
-
-  switch (property_id)
-    {
-      /*   case PITIVI_SETTINGSWINDOW_PROPERTY: { */
-      /*     g_free (self->private->name); */
-      /*     self->private->name = g_value_dup_string (value); */
-      /*     g_print ("maman: %s\n",self->private->name); */
-      /*   } */
-      /*     break; */
-    default:
-      /* We don't have any other property... */
-      g_assert (FALSE);
-      break;
-    }
-}
-
-static void
-pitivi_settingswindow_get_property (GObject * object,
-			      guint property_id,
-			      GValue * value, GParamSpec * pspec)
-{
-/*   PitiviSettingsWindow *self = (PitiviSettingsWindow *) object; */
-
-  switch (property_id)
-    {
-      /*  case PITIVI_SETTINGSWINDOW_PROPERTY: { */
-      /*     g_value_set_string (value, self->private->name); */
-      /*   } */
-      /*     break; */
-    default:
-      /* We don't have any other property... */
-      g_assert (FALSE);
-      break;
-    }
 }
 
 static void
 pitivi_settingswindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-/*   PitiviSettingsWindowClass *klass = PITIVI_SETTINGSWINDOW_CLASS (g_class); */
-
   parent_class = g_type_class_peek_parent (g_class);
 
   gobject_class->constructor = pitivi_settingswindow_constructor;
   gobject_class->dispose = pitivi_settingswindow_dispose;
   gobject_class->finalize = pitivi_settingswindow_finalize;
-
-  gobject_class->set_property = pitivi_settingswindow_set_property;
-  gobject_class->get_property = pitivi_settingswindow_get_property;
-
 }
 
 GType

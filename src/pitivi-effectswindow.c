@@ -757,35 +757,6 @@ pitivi_effectswindow_finalize (GObject *object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
-static void
-pitivi_effectswindow_set_property (GObject * object,
-			      guint property_id,
-			      const GValue * value, GParamSpec * pspec)
-{
-/*   PitiviEffectsWindow *self = (PitiviEffectsWindow *) object; */
-
-  switch (property_id)
-    {
-    default:
-      g_assert (FALSE);
-      break;
-    }
-}
-
-static void
-pitivi_effectswindow_get_property (GObject * object,
-				   guint property_id,
-				   GValue * value, GParamSpec * pspec)
-{
-  /*   PitiviEffectsWindow *self = (PitiviEffectsWindow *) object; */
-  switch (property_id)
-    {
-    default:
-      g_assert (FALSE);
-      break;
-    }
-}
-
 static gboolean
 pitivi_effectswindow_delete_event ( GtkWidget  *widget,
 				    GdkEventAny *event )
@@ -802,17 +773,12 @@ pitivi_effectswindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (g_class);
-/*   PitiviEffectsWindowClass *klass = PITIVI_EFFECTSWINDOW_CLASS (g_class); */
   
   parent_class = g_type_class_peek_parent (g_class);
   
   gobject_class->constructor = pitivi_effectswindow_constructor;
   gobject_class->dispose = pitivi_effectswindow_dispose;
   gobject_class->finalize = pitivi_effectswindow_finalize;
-
-  gobject_class->set_property = pitivi_effectswindow_set_property;
-  gobject_class->get_property = pitivi_effectswindow_get_property;
-
   widget_class->delete_event = pitivi_effectswindow_delete_event;
 }
 

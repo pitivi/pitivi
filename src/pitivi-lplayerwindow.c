@@ -470,7 +470,6 @@ pitivi_lplayerwindow_set_property (GObject * object,
     {
     case PROP_FILENAME:
       self->filename = g_value_dup_string (value);
-      //g_value_set_string (value, self->filename); 
       break;
     default:
       g_assert (FALSE);
@@ -488,7 +487,6 @@ pitivi_lplayerwindow_get_property (GObject * object,
   switch (property_id)
     {
     case PROP_FILENAME:
-      //self->filename = g_value_dup_string (value);
       g_value_set_string (value, self->filename); 
       break; 
     default:

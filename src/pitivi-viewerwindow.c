@@ -633,38 +633,6 @@ pitivi_viewerwindow_finalize (GObject *object)
 }
 
 static void
-pitivi_viewerwindow_set_property (GObject * object,
-			      guint property_id,
-			      const GValue * value, GParamSpec * pspec)
-{
-/*   PitiviViewerWindow *self = (PitiviViewerWindow *) object; */
-
-  switch (property_id)
-    {
-    default:
-      /* We don't have any other property... */
-      g_assert (FALSE);
-      break;
-    }
-}
-
-static void
-pitivi_viewerwindow_get_property (GObject * object,
-			      guint property_id,
-			      GValue * value, GParamSpec * pspec)
-{
-/*   PitiviViewerWindow *self = (PitiviViewerWindow *) object; */
-
-  switch (property_id)
-    {
-    default:
-      /* We don't have any other property... */
-      g_assert (FALSE);
-      break;
-    }
-}
-
-static void
 pitivi_viewver_callb_play (PitiviViewerWindow *self)
 {
   gtk_widget_show (GTK_WIDGET (self));
@@ -722,9 +690,6 @@ pitivi_viewerwindow_class_init (gpointer g_class, gpointer g_class_data )
   gobject_class->constructor = pitivi_viewerwindow_constructor;
   gobject_class->dispose = pitivi_viewerwindow_dispose;
   gobject_class->finalize = pitivi_viewerwindow_finalize;
-
-  gobject_class->set_property = pitivi_viewerwindow_set_property;
-  gobject_class->get_property = pitivi_viewerwindow_get_property;
   
   viewersignals[PLAY_SIGNAL] = g_signal_new ("play",
 					     G_TYPE_FROM_CLASS (g_class),

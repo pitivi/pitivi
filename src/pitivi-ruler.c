@@ -208,11 +208,15 @@ pitivi_ruler_get_property (GObject * object,
 			   guint property_id,
 			   GValue * value, GParamSpec * pspec)
 {
-/*   PitiviRuler *self = (PitiviRuler *) object; */
+  PitiviRuler *self = (PitiviRuler *) object;
   switch (property_id)
     {
     case PROP_UNIT:
+      g_value_set_int (value, self->private->unit);
       break;
+    case PROP_VIDEORATE:
+      g_value_set_double (value, self->private->videorate);
+      break;  
     default:
       g_assert (FALSE);
       break;

@@ -838,8 +838,6 @@ pitivi_timelinecellrenderer_set_property (GObject * object,
 
   switch (property_id)
     {
-    case PROP_LAYER_PROPERTY:
-      break;
     case PROP_TYPE_LAYER_PROPERTY:
       self->track_type = g_value_get_int (value);
       break;
@@ -860,15 +858,18 @@ pitivi_timelinecellrenderer_get_property (GObject * object,
 					  guint property_id,
 					  GValue * value, GParamSpec * pspec)
 {
-/*   PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) object; */
+  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) object;
 
   switch (property_id)
     {
-    case PROP_LAYER_PROPERTY:
-      break;
     case PROP_TYPE_LAYER_PROPERTY:
+      g_value_set_int (value, self->track_type);
       break;
     case PROP_TRACK_NB_PROPERTY:
+      g_value_set_int (value, self->track_nb);
+      break;
+    case PROP_TIMELINEWINDOW:
+      g_value_set_pointer (value, self->private->timewin);
       break;
     default:
       g_assert (FALSE);

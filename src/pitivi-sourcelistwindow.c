@@ -517,9 +517,9 @@ void	retrieve_file_from_folder(PitiviSourceListWindow *self)
     }
   closedir(dir);
   self->private->bar = pitivi_progressbar_new ();
-  nb = g_list_length (self->private->folder_list);
   while (gtk_events_pending())
     gtk_main_iteration();
+  nb = g_list_length (self->private->folder_list);
   for (list = self->private->folder_list; i < nb; list = list->next)
     {
       self->private->filepath = (gchar *)list->data;

@@ -126,9 +126,7 @@ pitivi_projectwindows_set_property (GObject * object,
     case PROP_PROJECT:
       self->project = g_value_get_pointer(value);
       break;
-
     default:
-      /* We don't have any other property... */
       g_assert (FALSE);
       break;
     }
@@ -146,9 +144,7 @@ pitivi_projectwindows_get_property (GObject * object,
     case PROP_PROJECT:
       g_value_set_pointer (value, self->project);
       break;
-
     default:
-      /* We don't have any other property... */
       g_assert (FALSE);
       break;
     }
@@ -158,8 +154,6 @@ static void
 pitivi_projectwindows_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-/*   PitiviProjectWindowsClass *klass = PITIVI_PROJECTWINDOWS_CLASS (g_class); */
-
   parent_class = g_type_class_peek_parent (g_class);
 
   gobject_class->constructor = pitivi_projectwindows_constructor;

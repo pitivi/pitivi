@@ -136,15 +136,14 @@ pitivi_checkbox_set_property (GObject * object,
 
   switch (property_id)
     {
-      case PITIVI_CHECKBOX_PROPERTY:
-	g_free (self->private->name);
-	self->private->name = g_value_dup_string (value);
-	break;
-      case PITIVI_CHECKBOX_INDICATOR:
-	self->private->type = g_value_get_int (value);
-	break;
+    case PITIVI_CHECKBOX_PROPERTY:
+      g_free (self->private->name);
+      self->private->name = g_value_dup_string (value);
+      break;
+    case PITIVI_CHECKBOX_INDICATOR:
+      self->private->type = g_value_get_int (value);
+      break;
     default:
-      /* We don't have any other property... */
       g_assert (FALSE);
       break;
     }
@@ -155,16 +154,17 @@ pitivi_checkbox_get_property (GObject * object,
 			      guint property_id,
 			      GValue * value, GParamSpec * pspec)
 {
-/*   PitiviCheckBox *self = (PitiviCheckBox *) object; */
+   PitiviCheckBox *self = (PitiviCheckBox *) object;
 
   switch (property_id)
     {
-      /*  case PITIVI_CHECKBOX_PROPERTY: { */
-      /*     g_value_set_string (value, self->private->name); */
-      /*   } */
-      /*     break; */
+    case PITIVI_CHECKBOX_PROPERTY:
+      g_value_set_string (value, self->private->name);
+      break;
+    case PITIVI_CHECKBOX_INDICATOR:
+      g_value_set_int (value, self->private->type);
+      break;
     default:
-      /* We don't have any other property... */
       g_assert (FALSE);
       break;
     }
@@ -438,7 +438,6 @@ static void
 pitivi_checkbox_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-/*   PitiviCheckBoxClass *klass = PITIVI_CHECKBOX_CLASS (g_class); */
   GtkCheckButtonClass *checkboxclass = g_class;
 
   parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (g_class));

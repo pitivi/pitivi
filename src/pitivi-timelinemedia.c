@@ -699,34 +699,6 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
 
 
 static void
-pitivi_timelinemedia_set_property (GObject * object,
-				   guint property_id,
-				   const GValue * value, GParamSpec * pspec)
-{
-  PitiviTimelineMedia *this = (PitiviTimelineMedia *) object;
-
-  switch (property_id)
-    {
-    case PROP_MEDIA_TYPE:
-      this->private->media_type = g_value_get_int (value);
-      break; 
-    case PROP_MEDIA_WIDTH:
-      this->private->width = g_value_get_int (value);
-      break; 
-    case PROP_SOURCEFILE:
-      this->private->sf = g_value_get_pointer (value);
-      break;
-    case PROP_TRACK:
-      this->track = g_value_get_pointer (value);
-      break;
-    default:
-      g_assert (FALSE);
-      break;
-    }
-
-}
-
-static void
 pitivi_timelinemedia_dispose (GObject *object)
 {
   PitiviTimelineMedia	*this = PITIVI_TIMELINEMEDIA(object);
@@ -762,17 +734,57 @@ pitivi_timelinemedia_finalize (GObject *object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
+
+static void
+pitivi_timelinemedia_set_property (GObject * object,
+				   guint property_id,
+				   const GValue * value, GParamSpec * pspec)
+{
+  PitiviTimelineMedia *this = (PitiviTimelineMedia *) object;
+
+  switch (property_id)
+    {
+    case PROP_MEDIA_TYPE:
+      this->private->media_type = g_value_get_int (value);
+      break; 
+    case PROP_MEDIA_WIDTH:
+      this->private->width = g_value_get_int (value);
+      break; 
+    case PROP_SOURCEFILE:
+      this->private->sf = g_value_get_pointer (value);
+      break;
+    case PROP_TRACK:
+      this->track = g_value_get_pointer (value);
+      break;
+    default:
+      g_assert (FALSE);
+      break;
+    }
+
+}
+
 static void
 pitivi_timelinemedia_get_property (GObject * object,
 				   guint property_id,
 				   GValue * value, GParamSpec * pspec)
 {
-/*   PitiviTimelineMedia *this = (PitiviTimelineMedia *) object; */
+  PitiviTimelineMedia *this = (PitiviTimelineMedia *) object;
 
   switch (property_id)
     {
+    case PROP_MEDIA_TYPE:
+      g_value_set_int (value, this->private->media_type);
+      break; 
+    case PROP_MEDIA_WIDTH:
+      g_value_set_int (value, this->private->width);
+      break; 
+    case PROP_SOURCEFILE:
+      g_value_set_pointer (value , this->private->sf);
+      break;
+    case PROP_TRACK:
+      g_value_set_pointer (value, this->track);
+      break;
     default:
-      /* We don't have any other property... */
       g_assert (FALSE);
       break;
     }

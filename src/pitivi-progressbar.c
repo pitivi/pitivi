@@ -53,6 +53,8 @@ static gboolean progress_timeout( gpointer data )
   PitiviProgressBar *self = (PitiviProgressBar *) data;
   gdouble	new_val;
   
+  while (gtk_events_pending())
+    gtk_main_iteration();
   new_val = gtk_progress_bar_get_fraction (GTK_PROGRESS_BAR (self->bar));
   if (new_val == 1.0) {
     gtk_widget_destroy (GTK_WIDGET (self));
@@ -180,46 +182,14 @@ pitivi_progressbar_finalize (GObject *object)
 }
 
 static void
-pitivi_progressbar_set_property (GObject * object,
-			      guint property_id,
-			      const GValue * value, GParamSpec * pspec)
-{
-  switch (property_id)
-    {
-    default:
-      /* We don't have any other property... */
-      g_assert (FALSE);
-      break;
-    }
-}
-
-static void
-pitivi_progressbar_get_property (GObject * object,
-			      guint property_id,
-			      GValue * value, GParamSpec * pspec)
-{
-  switch (property_id)
-    {
-    default:
-      /* We don't have any other property... */
-      g_assert (FALSE);
-      break;
-    }
-}
-
-static void
 pitivi_progressbar_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-  /* PitiviProgressBarClass *klass = PITIVI_PROGRESSBAR_CLASS (g_class); */
   
   parent_class = g_type_class_peek_parent (g_class);
   gobject_class->constructor = pitivi_progressbar_constructor;
   gobject_class->dispose = pitivi_progressbar_dispose;
   gobject_class->finalize = pitivi_progressbar_finalize;
-
-  gobject_class->set_property = pitivi_progressbar_set_property;
-  gobject_class->get_property = pitivi_progressbar_get_property;
 }
 
 GType

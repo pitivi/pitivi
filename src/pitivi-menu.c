@@ -212,27 +212,6 @@ pitivi_set_menu_window (PitiviMenu *menu, GtkWidget *widget)
 }
 
 
-static void
-pitivi_menu_set_property (GObject * object,
-			      guint property_id,
-			      const GValue * value, GParamSpec * pspec)
-{
-  PitiviMenu *self = (PitiviMenu *) object;
-
-  switch (property_id)
-    {
-    case PITIVI_FILE_MENU_PROPERTY:
-      pitivi_menu_set_filename (self, g_value_get_string (value));
-      break;
-    case PITIVI_WINDOW_PROPERTY:
-      pitivi_set_menu_window (self, g_value_get_object (value));
-      break;
-    default:
-      g_assert (FALSE);
-      break;
-    }
-}
-
 /**
  * pitivi_menu_configure:
  * @GtkWidget: the widget containing the menu 
@@ -285,6 +264,29 @@ pitivi_menu_set_filename (PitiviMenu *self, const gchar *filename)
       if (!priv->filename)
 	g_free (priv->filename);
       priv->filename = g_strdup(filename);
+    }
+}
+
+
+
+static void
+pitivi_menu_set_property (GObject * object,
+			      guint property_id,
+			      const GValue * value, GParamSpec * pspec)
+{
+  PitiviMenu *self = (PitiviMenu *) object;
+
+  switch (property_id)
+    {
+    case PITIVI_FILE_MENU_PROPERTY:
+      pitivi_menu_set_filename (self, g_value_get_string (value));
+      break;
+    case PITIVI_WINDOW_PROPERTY:
+      pitivi_set_menu_window (self, g_value_get_object (value));
+      break;
+    default:
+      g_assert (FALSE);
+      break;
     }
 }
 
