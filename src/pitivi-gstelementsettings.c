@@ -40,7 +40,6 @@ struct _PitiviGstElementSettingsPrivate
   GtkWidget		*frame_info;
   GtkWidget		*frame_prop;
 
-  GstElementFactory	*factory;
   GstElement		*element;
 
   gint			num_prop;
@@ -54,8 +53,7 @@ struct _PitiviGstElementSettingsPrivate
 
 enum {
   PROP_0,
-  PROP_ELM,
-  PROP_GST,
+  PROP_IO,
   PROP_OPT
 };
 
@@ -122,11 +120,15 @@ pitivi_gstelementsettings_add_new_frame_info (PitiviGstElementSettings *self)
     pitivi_gstelementsettings_add_new_label (self->private->frame_info, 
 					     pitivi_gstelementsettings_string_bold ("Name:"));
     pitivi_gstelementsettings_add_new_label (self->private->frame_info, 
-					     (gchar *) gst_element_factory_get_longname (self->private->factory));
+					     (gchar *) gst_element_factory_get_longname (self->io->factory));
+    pitivi_gstelementsettings_add_new_label (self->private->frame_info, 
+					     pitivi_gstelementsettings_string_bold ("Class:"));
+    pitivi_gstelementsettings_add_new_label (self->private->frame_info, 
+					     (gchar *) gst_element_factory_get_klass (self->io->factory));
     pitivi_gstelementsettings_add_new_label (self->private->frame_info, 
 					     pitivi_gstelementsettings_string_bold ("Description:"));
     pitivi_gstelementsettings_add_new_label (self->private->frame_info, 
-					     (gchar *) gst_element_factory_get_description (self->private->factory));
+					     (gchar *) gst_element_factory_get_description (self->io->factory));
     return ;
 }
 
@@ -552,17 +554,12 @@ pitivi_gstelementsettings_add_new_frame_prop (PitiviGstElementSettings *self)
 void
 pitivi_gstelementsettings_create_gui (PitiviGstElementSettings *self)
 {
-  if (!self->private->factory) {
-    self->private->factory = gst_element_factory_find(self->elm);
-    self->private->element = gst_element_factory_create(self->private->factory, "test");
-  }
-
-  self->class = g_strdup ((gchar *) gst_element_factory_get_klass (self->private->factory));
+  self->private->element = gst_element_factory_create(self->io->factory, "test");
 
   self->private->prop = g_object_class_list_properties(G_OBJECT_GET_CLASS (self->private->element), 
 						       &(self->private->num_prop));
 
-  pitivi_gstelementsettings_add_new_frame_info (self);    
+  pitivi_gstelementsettings_add_new_frame_info (self);
   pitivi_gstelementsettings_add_new_frame_prop (self);
 
   gtk_widget_show_all (GTK_WIDGET (self));  
@@ -872,28 +869,13 @@ pitivi_gstelementsettings_get_element (PitiviGstElementSettings *self)
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 PitiviGstElementSettings *
-pitivi_gstelementsettings_new_with_name (gchar *elm, gint opt)
+pitivi_gstelementsettings_new (PitiviSettingsIoElement *io, gint opt)
 {
   PitiviGstElementSettings	*gstelementsettings;
 
   gstelementsettings = (PitiviGstElementSettings *) g_object_new(PITIVI_GSTELEMENTSETTINGS_TYPE,
 								 "option", opt,
-								 "elm", elm,
-								 "gst-pointer", NULL,
-								 NULL);
-  g_assert (gstelementsettings != NULL);
-  return gstelementsettings;
-}
-
-PitiviGstElementSettings *
-pitivi_gstelementsettings_new_with_elm (GstElement *element, gint opt)
-{
-  PitiviGstElementSettings	*gstelementsettings;
-
-  gstelementsettings = (PitiviGstElementSettings *) g_object_new(PITIVI_GSTELEMENTSETTINGS_TYPE,
-								 "option", opt,
-								 "elm", NULL,
-								 "gst-pointer", element,
+								 "io", io,
 								 NULL);
   g_assert (gstelementsettings != NULL);
   return gstelementsettings;
@@ -929,12 +911,9 @@ pitivi_gstelementsettings_instance_init (GTypeInstance * instance, gpointer g_cl
   self->private->dispose_has_run = FALSE;
 
   self->Table = NULL;
-  self->elm = NULL;
-  self->class = NULL;
+  self->io = NULL;
 
   self->private->option = 0;
-  self->private->factory = NULL;
-  self->private->element = NULL;
 
   /* Do only initialisation here */
   /* The construction of the object should be done in the Constructor
@@ -974,7 +953,7 @@ pitivi_gstelementsettings_finalize (GObject *object)
    */
 
   g_free (self->private);
-  g_free (self->elm);
+
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
@@ -987,14 +966,8 @@ pitivi_gstelementsettings_set_property (GObject * object,
 
   switch (property_id)
     {
-    case PROP_ELM:
-      self->elm = g_value_dup_string (value);
-      break;
-    case PROP_GST:
-      if ((self->private->element = g_value_get_pointer (value))) {
-	self->private->factory = gst_element_get_factory (self->private->element);
-	self->elm = g_strdup ((gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(self->private->factory)));
-      }
+    case PROP_IO:
+      self->io = g_value_get_pointer (value);
       break;
     case PROP_OPT:
       self->private->option = g_value_get_int (value);
@@ -1015,11 +988,8 @@ pitivi_gstelementsettings_get_property (GObject * object,
 
   switch (property_id)
     {
-    case PROP_ELM:
-      g_value_set_string (value, self->elm);
-      break;
-    case PROP_GST:
-      g_value_set_pointer (value, self->private->element);
+    case PROP_IO:
+      g_value_set_pointer (value, self->io);
       break;
     case PROP_OPT:
       g_value_set_int (value, self->private->option);
@@ -1049,19 +1019,10 @@ pitivi_gstelementsettings_class_init (gpointer g_class, gpointer g_class_data)
   /* Install the properties in the class here ! */
 
   g_object_class_install_property (gobject_class,
-				   PROP_ELM,
-				   g_param_spec_string ("elm",
-							"elm",
-							"GstElement's name",
-							NULL, 
-							G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE)
-				   );
-
-  g_object_class_install_property (gobject_class,
-				   PROP_GST,
-				   g_param_spec_pointer ("gst-pointer",
-							 "gst-pointer",
-							 "GstElement's pointer",
+				   PROP_IO,
+				   g_param_spec_pointer ("io",
+							 "io",
+							 "Gst Element's stuct info",
 							 G_PARAM_CONSTRUCT_ONLY | G_PARAM_WRITABLE)
 				   );
 

@@ -26,6 +26,7 @@
 
 #include "pitivi.h"
 #include "pitivi-effectswindowproperties.h"
+#include "pitivi-settings.h"
 
 static	GtkWindowClass *parent_class = NULL;
 
@@ -39,6 +40,7 @@ struct _PitiviEffectsWindowPropertiesPrivate
   /* instance private members */
   gboolean	dispose_has_run;
 
+  PitiviSettingsIoElement *io;
   PitiviGstElementSettings *widget_element;
   GstElement	*effect;
 };
@@ -144,7 +146,8 @@ pitivi_effectswindowproperties_constructor (GType type,
   main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add  (GTK_CONTAINER (self), main_vbox);
   self->private->effect = g_object_get_data (G_OBJECT (GNL_OPERATION (self->private->item->gnlobject)->element), "effect");
-  widget_element = pitivi_gstelementsettings_new_with_elm (self->private->effect, 1);
+  self->private->io = pitivi_settings_new_io_element_with_element (self->private->effect);
+  widget_element = pitivi_gstelementsettings_new (self->private->io, 1);
   gtk_box_pack_start (GTK_BOX (main_vbox), GTK_WIDGET (widget_element), FALSE, FALSE, 0);
   
   /* OK Cancel Buttons*/

@@ -32,6 +32,7 @@
 #include <gst/gst.h>
 #include <gtk/gtk.h>
 #include "pitivi-types.h"
+#include "pitivi-settings.h"
 
 /*
  * Type macros.
@@ -52,8 +53,8 @@ struct _PitiviGstElementSettings
   GtkVBox parent;
 
   /* instance public members */
-  gchar		*elm;
-  gchar		*class;
+  PitiviSettingsIoElement *io;
+
   GtkWidget	*Table;
 
   /* private */
@@ -79,8 +80,8 @@ GType pitivi_gstelementsettings_get_type (void);
  * Method definitions.
  */
 
-PitiviGstElementSettings	*pitivi_gstelementsettings_new_with_name (gchar *elm, gint opt);
-PitiviGstElementSettings	*pitivi_gstelementsettings_new_with_elm (GstElement *element, gint opt);
+PitiviGstElementSettings	*pitivi_gstelementsettings_new (PitiviSettingsIoElement *io, gint opt);
+
 GList				*pitivi_gstelementsettings_get_list (PitiviGstElementSettings *self);
 GstElement			*pitivi_gstelementsettings_get_element (PitiviGstElementSettings *self);
 

@@ -97,9 +97,9 @@ pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSett
   elm_info = NULL;
   g_print ("######################################################\n");
   g_print ("ACCEPT\n");
-  g_print ("SAVE %s [%s]\n", prop->elm, prop->class);
+  //g_print ("SAVE %s [%s]\n", prop->elm, prop->class);
 
-  elm_info = pitivi_settings_get_io_settings_struct_info (self->private->settings, gst_element_factory_find (prop->elm));
+  elm_info = pitivi_settings_get_io_settings_struct_info (self->private->settings, prop->io->factory);
 
   /*
     GList				*pt;
@@ -175,7 +175,6 @@ pitivi_settingswindow_make_element (PitiviSettings *self, GstElementFactory *fac
 void
 pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 {
-  GstElement		*my_elm;
   PitiviSettingsWindow	*self;
   GtkWidget		*ComboBox = (GtkWidget *) data;
   GtkWidget		*Dialog;
@@ -183,6 +182,7 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
   gint			result;
   gchar			*elm_name;
   PitiviGstElementSettings *Properties;
+  PitiviSettingsIoElement	*elm_info;
 
   self = (PitiviSettingsWindow *) g_object_get_data (G_OBJECT (ComboBox), "self");
 
@@ -199,11 +199,8 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
   ////////////////////////////
   ////////// creer l element en fonction des settings deja present
   ////////////////////////////
-  
-  my_elm = pitivi_settingswindow_make_element (self->private->settings, elm);
-
-  //Properties = pitivi_gstelementsettings_new_with_name (elm_name); 
-  Properties = pitivi_gstelementsettings_new_with_elm (my_elm, 0); 
+  elm_info = pitivi_settings_get_io_settings_struct_info (self->private->settings, gst_element_factory_find (elm_name));
+  Properties = pitivi_gstelementsettings_new (elm_info, 0); 
 
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
 		     GTK_WIDGET (Properties));

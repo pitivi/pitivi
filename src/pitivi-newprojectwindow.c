@@ -1563,12 +1563,16 @@ create_codec_conf_video(GtkWidget *widget, gpointer data)
   gchar				*elm;
   gint				result;
   PitiviGstElementSettings	*prop;
+  PitiviSettingsIoElement	*io;
+  GstElementFactory		*factory;
 
   self = (PitiviNewProjectWindow *) data;
   Dialog = gtk_dialog_new ();
   elm = pitivi_combobox_get_active (self->private->video_combo_codec,
 						   "video_listname");
-  prop = pitivi_gstelementsettings_new_with_name (elm, 0);
+  factory = gst_element_factory_find (elm);
+  io = pitivi_settings_new_io_element_with_factory (factory);
+  prop = pitivi_gstelementsettings_new (io, 0);
 
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
 		     GTK_WIDGET(prop));
@@ -1603,12 +1607,16 @@ create_codec_conf_audio(GtkWidget *widget, gpointer data)
   gchar			*elm;
   gint			result;
   PitiviGstElementSettings *prop;
+  PitiviSettingsIoElement	*io;
+  GstElementFactory		*factory;
 
   self = (PitiviNewProjectWindow *) data;
   Dialog = gtk_dialog_new ();
   elm = pitivi_combobox_get_active (self->private->audio_combo_codec,
 						   "audio_listname");
-  prop = pitivi_gstelementsettings_new_with_name (elm, 0);
+  factory = gst_element_factory_find (elm);
+  io = pitivi_settings_new_io_element_with_factory (factory);
+  prop = pitivi_gstelementsettings_new (io, 0);
 
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
 		     GTK_WIDGET(prop));
