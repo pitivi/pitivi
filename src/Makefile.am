@@ -17,11 +17,13 @@ pitivi_SOURCES		= \
 	pitivi-mainapp.c \
 	pitivi-project.c \
 	pitivi-toolbox.c \
-	pitivi-convert-time.c\
 	pitivi-timelinewindow.c\
+	pitivi-convert-time.c \
 	pitivi-toolboxwindow.c	\
 	pitivi-sourcelistwindow.c \
 	pitivi-newprojectwindow.c  \
+	pitivi-viewerwindow.c \
+	pitivi-projectsettings.c \
 	pitivi-stockicons.c \
 	pitivi-menu-actions.c \
 	pitivi-menu.c \
