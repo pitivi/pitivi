@@ -190,5 +190,4 @@ pitivi_stockicons_register (void)
       }
   }
   g_object_unref (G_OBJECT (factory));
-  gtk_rc_parse ("../ui/style.rc");
 }

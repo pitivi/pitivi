@@ -288,7 +288,9 @@ pitivi_controller_finalize (GObject *object)
    * Here, complete object destruction. 
    * You might not need to do much... 
    */
-
+  
+  g_slist_free (self->private->group_playing);
+  g_slist_free (self->private->group_ffrev);
   g_free (self->private);
 }
 

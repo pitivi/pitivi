@@ -714,6 +714,7 @@ static void
 pitivi_projectsourcelist_finalize (GObject *object)
 {
   PitiviProjectSourceList	*self = PITIVI_PROJECTSOURCELIST(object);
+  g_slist_free ( self->private->bin_tree );
   g_free (self->private);
 }
 

@@ -343,11 +343,14 @@ static void
 pitivi_toolbox_dispose (GObject * object)
 {
   PitiviToolbox *self = PITIVI_TOOLBOX (object);
-
+  int count = 0;
+  
   /* If dispose did already run, return. */
   if (self->private->dispose_has_run)
     return;
 
+  for (count = 0; button_info[count].image; count++)
+    g_object_unref (self->private->button[count]);
   /* Make sure dispose does not run twice. */
   self->private->dispose_has_run = TRUE;
 }
@@ -356,6 +359,8 @@ static void
 pitivi_toolbox_finalize (GObject * object)
 {
   PitiviToolbox *self = PITIVI_TOOLBOX (object);
+  
+  g_slist_free (self->private->group_button);
   g_free (self->private);
 }
 
@@ -363,8 +368,7 @@ static void
 pitivi_toolbox_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-/*   PitiviToolboxClass *klass = PITIVI_TOOLBOX_CLASS (g_class); */
-
+  
   gobject_class->constructor = pitivi_toolbox_constructor;
   gobject_class->dispose = pitivi_toolbox_dispose;
   gobject_class->finalize = pitivi_toolbox_finalize;

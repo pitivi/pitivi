@@ -199,7 +199,7 @@ pitivi_menu_finalize (GObject *object)
    * Here, complete object destruction. 
    * You might not need to do much... 
    */
-
+  g_list_free (self->private->action_group);
   g_free (self->private);
 }
 
