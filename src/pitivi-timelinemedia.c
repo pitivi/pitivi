@@ -154,12 +154,18 @@ pitivi_timelinemedia_drag_get  (GtkWidget          *widget,
 				gpointer	    dragging)
 {
   PitiviCursor *cursor;
-
+  PitiviTimelineCellRenderer *cell;
+ 
   cursor = pitivi_getcursor_id (widget);
   if (cursor->type == PITIVI_CURSOR_SELECT || cursor->type == PITIVI_CURSOR_HAND)
     gtk_selection_data_set (selection_data, selection_data->target, 
 			    8, (void *) widget, 
 			    sizeof (PitiviTimelineMedia));
+  
+  cell = (PitiviTimelineCellRenderer *) gtk_widget_get_parent (widget);
+  cell->motion_area->x = widget->allocation.width;
+  cell->motion_area->width = widget->allocation.width;
+  
 }
 
 
@@ -178,11 +184,15 @@ static void
 pitivi_timelinemedia_drag_begin (GtkWidget          *widget,
 				 GdkDragContext     *context,
 				 gpointer	    user_data)
-{
-  PitiviCursor		*cursor;
+{ 
+  PitiviCursor *cursor;
   PitiviTimelineCellRenderer *cell;
+  GdkEventExpose ev;
+  gboolean retval;
   
   cell = (PitiviTimelineCellRenderer *) gtk_widget_get_parent (widget);
+  cell->motion_area->x = widget->allocation.width;
+  cell->motion_area->width = widget->allocation.width;
   pitivi_timelinecellrenderer_deselection_ontracks (GTK_WIDGET (cell), TRUE);
 }
 
@@ -337,6 +347,7 @@ pitivi_timelinemedia_realize (GtkWidget *widget)
     GDK_ENTER_NOTIFY_MASK |
     GDK_LEAVE_NOTIFY_MASK |
     GDK_BUTTON_PRESS_MASK |
+    GDK_VISIBILITY_NOTIFY_MASK |
     GDK_BUTTON_RELEASE_MASK |
     GDK_POINTER_MOTION_MASK |
     GDK_POINTER_MOTION_HINT_MASK;
@@ -353,34 +364,16 @@ pitivi_timelinemedia_realize (GtkWidget *widget)
   gtk_style_set_background (widget->style, widget->window, GTK_STATE_ACTIVE);
 }
 
-static
-gint pitivi_timelinemedia_button_press_event (GtkWidget        *widget,
-					      GdkEventButton   *event)
-{
-  PitiviTimelineMedia *self = PITIVI_TIMELINEMEDIA (widget);
-  PitiviCursor *cursor;
-  
-  cursor = pitivi_getcursor_id (widget);
-  if ( cursor->type == PITIVI_CURSOR_RESIZE )
-    {
-      gtk_widget_set_size_request (widget, widget->allocation.width-10, widget->allocation.height);
-    }
-}
-
-static
-gint pitivi_timelinemedia_button_release_event (GtkWidget        *widget,
-						GdkEventButton   *event)
-{ 
- 
-}
-
 static void
 pitivi_timelinemedia_leave_notify_event (GtkWidget        *widget,
 					 GdkEventMotion   *event)
 {
   PitiviCursor *cursor;
   PitiviTimelineMedia *self;
-  
+  GdkModifierType mods;
+  gint x, y, mask;
+
+  x = event->x;
   self = PITIVI_TIMELINEMEDIA (widget);
   cursor = pitivi_getcursor_id (widget);
   load_cursor (widget->window, cursor, self->private->cursor_type);
@@ -399,7 +392,8 @@ gint pitivi_timelinemedia_motion_notify_event (GtkWidget        *widget,
   PitiviTimelineMedia *self;
   GdkModifierType mods;
   gint x, y, mask;
-  
+  gint x_size_reduce;
+
   g_return_val_if_fail (widget != NULL, FALSE);
   g_return_val_if_fail (event != NULL, FALSE);
   self = PITIVI_TIMELINEMEDIA (widget);
@@ -410,8 +404,9 @@ gint pitivi_timelinemedia_motion_notify_event (GtkWidget        *widget,
   if (event->is_hint || (event->window != widget->window))
     {
       cursor = pitivi_getcursor_id (widget);
-      if ((event->x <= 5) || ((event->x <= widget->allocation.width) 
-			      && event->x >= (widget->allocation.width - 5)))
+      if ((event->x <= REDUCE_CURSOR_AREA_SIZE) 
+	  || ((event->x <= widget->allocation.width) 
+	      && event->x >= (widget->allocation.width - REDUCE_CURSOR_AREA_SIZE)))
 	{
 	  if (cursor->type !=  PITIVI_CURSOR_RESIZE)
 	    {
@@ -419,7 +414,24 @@ gint pitivi_timelinemedia_motion_notify_event (GtkWidget        *widget,
 	      load_cursor (widget->window, cursor, PITIVI_CURSOR_RESIZE);
 	      gtk_drag_source_unset (widget);
 	    }
-	  g_printf ("Event notify : %d\n", event->type); 
+	  x_size_reduce = widget->allocation.width-(widget->allocation.width-event->x);
+	  if (event->state >= 256)
+	    {
+	      if (((event->x <= widget->allocation.width) 
+		   && event->x >= (widget->allocation.width - REDUCE_CURSOR_AREA_SIZE)))
+		{
+		  if (x_size_reduce > 0)
+		    {
+		      gtk_widget_set_size_request (widget, 
+						   x_size_reduce,
+						   widget->allocation.height);
+		    }
+		}
+	      if (event->x <= REDUCE_CURSOR_AREA_SIZE)
+		 {
+		   
+		 }
+	    }
 	}
       else
 	{
@@ -450,6 +462,21 @@ pitivi_timelinemedia_configure_event (GtkWidget *widget, GdkEventConfigure *even
   return FALSE;
 }
 
+
+static gint
+pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
+					   GdkEventButton *event)
+{ 
+  PitiviCursor *cursor;
+  
+  cursor = pitivi_getcursor_id (widget);
+  if (cursor->type == PITIVI_CURSOR_CUT)
+    {
+      g_printf ("coucou\n");
+    }
+  return FALSE;
+}
+
 static void
 pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
 {
@@ -471,10 +498,9 @@ pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
   widget_class->size_allocate = pitivi_timelinemedia_size_allocate; 
   widget_class->realize = pitivi_timelinemedia_realize;
   widget_class->motion_notify_event = pitivi_timelinemedia_motion_notify_event;
-  //  widget_class->button_release_event = pitivi_timelinemedia_button_release_event;
-  //widget_class->button_press_event = pitivi_timelinemedia_button_press_event;
   widget_class->configure_event = pitivi_timelinemedia_configure_event;
   widget_class->leave_notify_event = pitivi_timelinemedia_leave_notify_event;
+  widget_class->button_release_event = pitivi_timelinemedia_button_release_event;
 }
 
 GType

@@ -30,15 +30,19 @@
  * Potentially, include other headers on which this header depends.
  */
 
-#define DEFAULT_WIDTH   7200
-#define DEFAULT_HEIGHT  50
-
 #include <gtk/gtk.h>
 #include "pitivi-projectwindows.h"
 
 /*
  * Type macros.
  */
+
+
+#define DEFAULT_WIDTH   7200
+#define DEFAULT_HEIGHT  50
+
+#define REDUCE_CURSOR_AREA_SIZE	8
+
 
 #define PITIVI_TIMELINEMEDIA_TYPE (pitivi_timelinemedia_get_type ())
 #define PITIVI_TIMELINEMEDIA(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), PITIVI_TIMELINEMEDIA_TYPE, PitiviTimelineMedia))

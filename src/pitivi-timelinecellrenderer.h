@@ -43,14 +43,19 @@
 #define FIXED_HEIGHT  50
 
 // Move on graphic source
+
 #define DEFAULT_WIDTH_DASHES 4
+#define DEFAULT_MEDIA_SIZE 100
 #define MY_MAX 100000000
+
 
 //Mouse Clicks
 
-#define PITIVI_MOUSE_RIGHT_CLICK  1
+#define PITIVI_MOUSE_LEFT_CLICK   1
 #define PITIVI_MOUSE_CENTER_CLICK 2
-#define PITIVI_MOUSE_LEFT_CLICK   3
+#define PITIVI_MOUSE_RIGHT_CLICK  3
+
+
 
 
 #define PITIVI_TIMELINECELLRENDERER_TYPE (pitivi_timelinecellrenderer_get_type ())

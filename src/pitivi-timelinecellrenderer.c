@@ -252,7 +252,7 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
   PitiviTimelineMedia *draggedWidget;
   PitiviSourceFile *sf;
   PitiviCursor *cursor;
-  guint64 length = 60;
+  guint64 length = DEFAULT_MEDIA_SIZE;
 
   self->private->current_selection = selection;
   if (!selection->data) {
@@ -265,14 +265,15 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
     {
     case DND_TARGET_SOURCEFILEWIN:
       sf = (PitiviSourceFile *) self->private->current_selection->data;
-      if ( sf->length < 0 )
-	length = 60;
+      if ( sf->length <= 0 )
+	length = DEFAULT_MEDIA_SIZE;
       else
-	sf->length;
+	sf->length = DEFAULT_MEDIA_SIZE;
       current_media = pitivi_timelinemedia_new (sf);
-      gtk_widget_set_size_request (GTK_WIDGET (current_media), length, 50);
+      gtk_widget_set_size_request (GTK_WIDGET (current_media), length, FIXED_HEIGHT);
       gtk_widget_show (GTK_WIDGET (current_media));
       add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (current_media), x, y);
+      gtk_drag_finish (context, TRUE, TRUE, time);
       break;
     case DND_TARGET_TIMELINEWIN:
       cursor = pitivi_getcursor_id (self);
@@ -280,8 +281,12 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
 	{
 	  draggedWidget = (PitiviTimelineMedia *) selection->data;
 	  current_media = pitivi_timelinemedia_new (draggedWidget->sf);
-	  gtk_widget_set_size_request (GTK_WIDGET (current_media), length, 50);
+	  GTK_WIDGET (current_media)->allocation.width = GTK_WIDGET (draggedWidget)->allocation.width;
+	  gtk_widget_set_size_request (GTK_WIDGET (current_media), GTK_WIDGET (draggedWidget)->allocation.width, FIXED_HEIGHT);
 	  add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (current_media), x, y);
+	  self->motion_area->x =  GTK_WIDGET (draggedWidget)->allocation.width;
+	  self->motion_area->width =  GTK_WIDGET (draggedWidget)->allocation.width;
+	  self->motion_area->height =  GTK_WIDGET (draggedWidget)->allocation.height;
 	  gtk_widget_show (GTK_WIDGET (current_media));
 	  gtk_drag_finish (context, TRUE, TRUE, time);
 	}
@@ -313,32 +318,35 @@ pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
 { 
   PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
   PitiviCursor *cursor;
-  
+  guint mask = 0;
+
   cursor = pitivi_getcursor_id (widget);
   if (cursor->type == PITIVI_CURSOR_SELECT || cursor->type == PITIVI_CURSOR_HAND)
     {
       if (self->motion_area->height == 0)
 	{
-	  self->motion_area->width  = 60;
+	  self->motion_area->width  = DEFAULT_MEDIA_SIZE;
 	  self->motion_area->height = FIXED_HEIGHT;
-	  self->motion_area->x      = 60;
+	  self->motion_area->x      = DEFAULT_MEDIA_SIZE;
 	  self->motion_area->y      = 0;
 	}
-
+      
+      if ( self->motion_area->width < DEFAULT_MEDIA_SIZE)
+	mask = self->motion_area->width;
       // Expose on left
       gdk_window_clear_area_e (GTK_LAYOUT (widget)->bin_window,
 			       x-self->motion_area->x,
 			       self->motion_area->y,
-			       self->motion_area->width,
+			       self->motion_area->width+mask,
 			       self->motion_area->height);
   
       // Expose on right
       gdk_window_clear_area_e (GTK_LAYOUT (widget)->bin_window,
 			       x+self->motion_area->x,
 			       self->motion_area->y,
-			       self->motion_area->width,
+			       self->motion_area->width+mask,
 			       self->motion_area->height);
-  
+      
       draw_slide (widget, x, self->motion_area->width);
     }
 }
@@ -421,89 +429,95 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 
     
   cursor = pitivi_getcursor_id (widget);
-  if (cursor->type == PITIVI_CURSOR_SELECT && event->state != 0) 
-    if (event->button == PITIVI_MOUSE_RIGHT_CLICK)
-      {
-	// Clearing old Selection
+  if (cursor->type == PITIVI_CURSOR_SELECT && event->state != 0)
+    {
+      if (event->button == PITIVI_MOUSE_LEFT_CLICK)
+       {
+	 // Clearing old Selection
+	  
+	 pitivi_timelinecellrenderer_deselection_ontracks (widget, FALSE);
+	 old_state = self->private->selected;
+	 self->private->selected = FALSE;
+	 self->private->selected = old_state;
+	 gdk_window_clear_area_e (GTK_LAYOUT (widget)->bin_window, 
+				  0, 
+				  0, 
+				  widget->allocation.width, 
+				  widget->allocation.height);
+	 self->private->selected_area.y = 0;
+	 self->private->selected_area.height = widget->allocation.height;
       
-	pitivi_timelinecellrenderer_deselection_ontracks (widget, FALSE);
-	old_state = self->private->selected;
-	self->private->selected = FALSE;
-	self->private->selected = old_state;
-	gdk_window_clear_area_e (GTK_LAYOUT (widget)->bin_window, 
-				 0, 
-				 0, 
-				 widget->allocation.width, 
-				 widget->allocation.height);
-	self->private->selected_area.y = 0;
-	self->private->selected_area.height = widget->allocation.height;
-      
-	// Looking For Childs on Container
+	 // Looking For Childs on Container
      
-	if (self->children && g_list_length (self->children) > 0)
-	  {
-	    for (childlist = self->children; childlist; childlist = childlist->next)
-	      {
-		widgetchild = GTK_WIDGET (childlist->data);
-		if (event->window != widgetchild->window)
-		  {
-		    if (!(event->x >= widgetchild->allocation.x 
-			  && event->x <=  widgetchild->allocation.x+widgetchild->allocation.width))
-		      { 
-			if (x1_selection < widgetchild->allocation.x + widgetchild->allocation.width) 
-			  if (event->x > widgetchild->allocation.x  + widgetchild->allocation.width)
-			    x1_selection = widgetchild->allocation.x + widgetchild->allocation.width;
-			if (event->x < widgetchild->allocation.x)
-			  if (x2_selection > widgetchild->allocation.x)
-			    x2_selection = widgetchild->allocation.x;
-		      }
-		  }
-		else
-		  {
-		    // Case Selection on Widget Child On Layout
-		    // Later manage on same widget
+	 if (self->children && g_list_length (self->children) > 0)
+	   {
+	     for (childlist = self->children; childlist; childlist = childlist->next)
+	       {
+		 widgetchild = GTK_WIDGET (childlist->data);
+		 if (event->window != widgetchild->window)
+		   {
+		     if (!(event->x >= widgetchild->allocation.x 
+			   && event->x <=  widgetchild->allocation.x+widgetchild->allocation.width))
+		       { 
+			 if (x1_selection < widgetchild->allocation.x + widgetchild->allocation.width) 
+			   if (event->x > widgetchild->allocation.x  + widgetchild->allocation.width)
+			     x1_selection = widgetchild->allocation.x + widgetchild->allocation.width;
+			 if (event->x < widgetchild->allocation.x)
+			   if (x2_selection > widgetchild->allocation.x)
+			     x2_selection = widgetchild->allocation.x;
+		       }
+		   }
+		 else
+		   {
+		     // Case Selection on Widget Child On Layout
+		     // Later manage on same widget
 		    
-		    x1_selection = widgetchild->allocation.x;
-		    x2_selection = widgetchild->allocation.x+widgetchild->allocation.width;
-		    break;
-		  }
-	      }
-	  }
-	else
-	  {
-	    if (!self->private->selected)
-	      self->private->selected = TRUE;
-	    else
-	      self->private->selected = FALSE;
-	    self->private->selected_area.x = 0;
-	    self->private->selected_area.width = widget->allocation.width;
-	    draw_selection (widget, 0, 0);
-	    return FALSE;
-	  }
-  
-	if (x2_selection == MY_MAX)
-	  x2_selection = -1;
+		     x1_selection = widgetchild->allocation.x;
+		     x2_selection = widgetchild->allocation.x+widgetchild->allocation.width;
+		     break;
+		   }
+	       }
+	   }
+	 else
+	   {
+	     if (!self->private->selected)
+	       self->private->selected = TRUE;
+	     else
+	       self->private->selected = FALSE;
+	     self->private->selected_area.x = 0;
+	     self->private->selected_area.width = widget->allocation.width;
+	     draw_selection (widget, 0, 0);
+	     return FALSE;
+	   }
+	 
+	 if (x2_selection == MY_MAX)
+	   x2_selection = -1;
       
-	// Case Selection On Same Last Area
+	 // Case Selection On Same Last Area
 
-	if (self->private->selected_area.x == x1_selection 
-	    && self->private->selected_area.width == x2_selection - x1_selection)
-	  {
-	    if (!self->private->selected)
-	      self->private->selected = TRUE;
-	    else
-	      self->private->selected = FALSE;
-	  }
-	else // Case On other Area
-	  self->private->selected = TRUE;
+	 if (self->private->selected_area.x == x1_selection 
+	     && self->private->selected_area.width == x2_selection - x1_selection)
+	   {
+	     if (!self->private->selected)
+	       self->private->selected = TRUE;
+	     else
+	       self->private->selected = FALSE;
+	   }
+	 else // Case On other Area
+	   self->private->selected = TRUE;
       
-	self->private->selected_area.x = x1_selection;
-	if (x1_selection > 0 && x2_selection)
-	  self->private->selected_area.width = x2_selection - x1_selection;
-	else
-	  self->private->selected_area.width = x2_selection;
-	draw_selection_area (widget, &self->private->selected_area, 0, NULL);
-      }
+	 self->private->selected_area.x = x1_selection;
+	 if (x1_selection > 0 && x2_selection)
+	   self->private->selected_area.width = x2_selection - x1_selection;
+	 else
+	   self->private->selected_area.width = x2_selection;
+	 draw_selection_area (widget, &self->private->selected_area, 0, NULL);
+       }
+      else if (event->button == PITIVI_MOUSE_LEFT_CLICK)
+	{
+	  g_printf ("coucou\n");
+	}
+    }
   return FALSE;
 }
 
@@ -681,6 +695,19 @@ pitivi_timelinecellrenderer_remove (GtkContainer *container, GtkWidget *child)
     cell->children =  gtk_container_get_children (GTK_CONTAINER (container));
   }
 }
+static void
+pitivi_timelinecellrenderer_motion_notify_event (GtkWidget        *widget,
+						 GdkEventMotion   *event)
+{
+   gint x, y, mask;
+   GdkModifierType mods;
+   
+   x = event->x;
+   if (event->state >= 256)
+     {
+       //g_printf ("x:%d -w:%d- raise%d\n", x, widget->allocation.width, widget->allocation.width+(widget->allocation.width-x));
+     }
+}
 
 static void
 pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
@@ -704,6 +731,7 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   widget_class->configure_event = pitivi_timelinecellrenderer_configure_event;
   widget_class->button_press_event = pitivi_timelinecellrenderer_button_press_event;
   widget_class->button_release_event = pitivi_timelinecellrenderer_button_release_event;
+  widget_class->motion_notify_event = pitivi_timelinecellrenderer_motion_notify_event;
   
   /* Container Properties */
   
