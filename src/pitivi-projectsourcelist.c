@@ -63,7 +63,6 @@ PitiviSourceBin	*get_pitivisourcebin(PitiviProjectSourceList *self, gchar *treep
   *list = self->private->bin_tree;
   
   *bin = NULL;
-  g_printf ("path :%s %d %d\n", tmp,  g_slist_length ( self->private->bin_tree ), *row);
   while (*tmp != 0)
     {
       if (*tmp == ':')
@@ -73,7 +72,6 @@ PitiviSourceBin	*get_pitivisourcebin(PitiviProjectSourceList *self, gchar *treep
 	  for (i = 0; i < *row; i++)
 	    *list = (*list)->next;
 	  *bin = (*list)->data;
-	  g_printf ("bin %d\n", *bin);
 	  *list = (*bin)->child;
 	  *tmp++;
 	  tmp2 = tmp;
@@ -86,8 +84,6 @@ PitiviSourceBin	*get_pitivisourcebin(PitiviProjectSourceList *self, gchar *treep
   for (i = 0; i < *row; i++)
     *list = (*list)->next;
   g_free(save);
-
-  g_printf ("################# %d ###########\n",  (*list)->data);
   return (*list)->data;
 }
 
@@ -210,7 +206,6 @@ pitivi_projectsourcelist_get_file_info(PitiviProjectSourceList *self,
 
   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
   sourcelist = sourcebin->source;
-  g_printf ("@@@%p@@%p@@\n",  sourcebin, sourcebin->source);
   if (!sourcelist)
     return NULL;
 
@@ -392,11 +387,11 @@ pitivi_projectsourcelist_set_file_property_by_name(PitiviProjectSourceList *self
 }
 
 gboolean
-pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self, 
-					 gchar *treepath, gchar *filename,
-					 gchar *mediatype, gchar *infovideo,
-					 gchar *infoaudio, gint64 length,
-					 GstElement *pipeline)
+pitivi_projectsourcelist_add_file_to_bin (PitiviProjectSourceList *self, 
+					  gchar *treepath, gchar *filename,
+					  gchar *mediatype, gchar *infovideo,
+					  gchar *infoaudio, gint64 length,
+					  GstElement *pipeline)
 {
   PitiviSourceBin	*sourcebin;
   PitiviSourceBin	*bin;
@@ -451,7 +446,6 @@ pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
   sourcefile = (PitiviSourceFile*)pitivi_projectsourcelist_get_file_info(self,
 									 treepath,
 									 file_pos);
-  g_printf ("--------------pos:%d---treepath:%s--list:%d---bin:%d--row:%d----self:%d-------sourcefiile:%d--sourcebin:%d-------\n", file_pos, treepath, list, bin, row, self, sourcefile, sourcebin);
   return sourcefile;
 }
 

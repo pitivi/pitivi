@@ -88,9 +88,9 @@ struct _PitiviSourceListWindowPrivate
   guint		newfolder_signal_id;
 
   /* drag'n'drop variables */
-  PitiviSourceFile *sf;
+  PitiviSourceFile *dndsf;
   gchar		   *dndtreepath;
-  gint		   dndfilepos;
+  gint		    dndfilepos;
 };
 
 /*
@@ -597,9 +597,7 @@ void	new_pad_created(GstElement *parse, GstPad *pad, gpointer data)
   gchar	*tmp;
 
   //g_printf("a new pad %s was created\n", gst_pad_get_name(pad));
-
   //g_printf("caps is ==> %s\n", gst_caps_to_string(gst_pad_get_caps(pad)));
-
   self->private->padlist = g_slist_append(self->private->padlist, pad);  
 }
 
@@ -1180,12 +1178,8 @@ void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
   g_object_set(source, "location", filename, NULL);
   gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
 
-  g_printf("preparing to iterate pipeline\n");
-
   while (self->private->mediatype == NULL)
     gst_bin_iterate(GST_BIN(pipeline));
-
-  g_printf("finish iteration on pipeline\n");
 
   gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_NULL);
 
@@ -1325,8 +1319,7 @@ pitivi_sourcelistwindow_set_folder(PitiviSourceListWindow *self,
 		     TEXT_LISTCOLUMN5, "",
 		     TEXT_LISTCOLUMN6, "",
 		     TEXT_LISTCOLUMN7, "",
-		     POINTER_LISTCOLUMN8, NULL,
-		     -1);
+		     POINTER_LISTCOLUMN8, "", -1);
     
   g_free(sMediaType);
 
@@ -1414,11 +1407,11 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
   selected_row = 0;
   if (self->private->treepath != NULL)
     selected_row = get_selected_row(self->private->treepath, &depth);
-
+   
   /* use gstreamer to check the file type */
   self->private->mediatype = NULL;
   pitivi_sourcelistwindow_type_find(self);
-
+  
   if (self->private->mediatype == NULL)
     {
       /* do not add file to sourcelist */
@@ -1431,7 +1424,7 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 
   sprintf(sTexte, "Ligne %d\0", i);
   sprintf(sExempleTexte, "exemple %d\0", i);
-  
+
    if (self->private->havevideo && self->private->haveaudio) 
      pixbufa = gtk_widget_render_icon(self->private->listview,  
  				     PITIVI_STOCK_EFFECT_SOUNDTV, 
@@ -1445,29 +1438,38 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 				     PITIVI_STOCK_EFFECT_SOUND,
 				     GTK_ICON_SIZE_MENU, NULL);
 
-  /* Creation de la nouvelle ligne */
-  liststore = get_liststore_for_bin(self, selected_row);
-  gtk_list_store_append(liststore, &pIter);
+   /* Creation de la nouvelle ligne */
+   liststore = get_liststore_for_bin(self, selected_row);
+   gtk_list_store_append(liststore, &pIter);
+   
+   name = strrchr(self->private->filepath, '/');
+   name++;
   
-  name = strrchr(self->private->filepath, '/');
-  name++;
-    
-  self->private->sf = pitivi_projectsourcelist_get_sourcefile(PITIVI_PROJECTWINDOWS(self)->project->sources,
-							      "0",
-							      0);
   
-  /* Mise a jour des donnees */
+  pitivi_projectsourcelist_add_file_to_bin(((PitiviProjectWindows*)self)->project->sources, 
+					   self->private->treepath,
+					   self->private->filepath,
+					   self->private->mediatype,
+					   self->private->infovideo,
+					   self->private->infoaudio,
+					   self->private->length,
+					   self->private->pipeline);
   
+  self->private->dndsf = pitivi_projectsourcelist_get_sourcefile (
+								  PITIVI_PROJECTWINDOWS(self)->project->sources,
+								  self->private->treepath,
+								  i);
   gtk_list_store_set(liststore,
-		     &pIter, BMP_LISTCOLUMN1, pixbufa,
+		     &pIter, 
+		     BMP_LISTCOLUMN1, pixbufa,
 		     TEXT_LISTCOLUMN2, name,
 		     TEXT_LISTCOLUMN3, self->private->mediatype,
 		     TEXT_LISTCOLUMN4, g_strdup_printf("%ds", self->private->length / GST_SECOND),
 		     TEXT_LISTCOLUMN5, self->private->infovideo,
 		     TEXT_LISTCOLUMN6, self->private->infoaudio,
 		     TEXT_LISTCOLUMN7, sExempleTexte,
-		     POINTER_LISTCOLUMN8, self->private->sf,
-		     -1);
+		     POINTER_LISTCOLUMN8, (gchar *)self->private->dndsf, -1);
+  
   i++;
   g_free(sTexte);
   g_free(sExempleTexte);
@@ -1477,28 +1479,16 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 
 void	new_file(GtkWidget *widget, gpointer data)
 {
+  PitiviSourceFile *sf;
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
-
+  
   if (!pitivi_sourcelistwindow_set_file(self))
     return;
-
- /*  pitivi_projectsourcelist_showfile(self->private->prjsrclist, selected_row); */
-  /* call pitivi_projectsourcelist_add_file_to_bin */
-  pitivi_projectsourcelist_add_file_to_bin(((PitiviProjectWindows*)self)->project->sources, 
-						 self->private->treepath,
-						 self->private->filepath,
-						 self->private->mediatype,
-						 self->private->infovideo,
-						 self->private->infoaudio,
-						 self->private->length,
-						 self->private->pipeline);
-  
   g_free(self->private->mediatype);
   if (self->private->infovideo)
     g_free(self->private->infovideo);
   if (self->private->infoaudio)
     g_free(self->private->infoaudio);
-
 }
 
 void
@@ -1632,6 +1622,7 @@ drag_begin_cb (GtkWidget          *widget,
   folder_select = 0;
   
   gtk_tree_model_get(model, &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
+  gtk_tree_model_get (model, &iternext, POINTER_LISTCOLUMN8, &self->private->dndsf);
   for (i = 0; i++ < selected_list_row;)
     {
       gtk_tree_model_get(model, &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
@@ -1667,46 +1658,27 @@ drag_data_get_cb (GtkWidget          *widget,
 		  guint32             time,
 		  gpointer	      editor)
 {
-  GtkTreeView		*listview = (GtkTreeView *) widget;
-  GtkTreeSelection	*selection;
   PitiviSourceListWindow *self = PITIVI_SOURCELISTWINDOW(editor);
-  GtkTreeIter		 iter;
-  GtkTreeIter		 iternext;
-  GtkTreeModel		 *model;
   PitiviSourceFile	 *sf;
-  gchar			 *tmp;
   
-
-  
-  if ( GTK_IS_TREE_VIEW (listview))
+  if ( GTK_IS_TREE_VIEW (widget))
     {
-      /* find pos in listview */
-      selection = gtk_tree_view_get_selection(listview);
-      if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-	g_warning("No elements selected!");
-	return;
-      }
-      
-      gtk_tree_model_get_iter_first(model, &iternext);
-      // gtk_tree_model_get (model, &iternext, POINTER_LISTCOLUMN8, &sf, -1);
-      
-      sf = pitivi_projectsourcelist_get_sourcefile(PITIVI_PROJECTWINDOWS(self)->project->sources,
-						   self->private->dndtreepath,
-						   self->private->dndfilepos);
-      
-      // g_printf ("@@@@----%s---@@@@@\n", sf->filename);      
-      //return;
+      if ( !self->private->dndsf )
+	{
+	  //self->private->dndsf = pitivi_projectsourcelist_get_sourcefile(
+	  //							 PITIVI_PROJECTWINDOWS(self)->project->sources,
+	  //							 self->private->dndtreepath,
+	  //							 self->private->dndfilepos
+	  //							 );
+	  if ( !self->private->dndsf )
+	    return ;
+	}
+      gtk_selection_data_set (selection_data, 
+			      selection_data->target, 
+			      8, 
+			      (void *) self->private->dndsf, 
+			      sizeof (PitiviSourceFile));
     }
-  //sf = NULL;
-  if (!sf)
-    return ;
-  
-  /* convert the pointer to it's character represenation in long long int */
-  gtk_selection_data_set (selection_data, 
-			  selection_data->target, 
-			  8, 
-			  (void *)sf , 
-			  sizeof (PitiviSourceFile));
 }
 
 /*
@@ -2241,7 +2213,7 @@ void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
   if (strcmp(sMediaType, "Bin"))
     {
       g_printf("removing item only\n");
-      g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", self->private->sf);
+      g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", self->private->dndsf);
       pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
 						    self->private->treepath,
 						    item_select);
