@@ -248,9 +248,9 @@ move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
   gtk_widget_size_request (widget, &req);
   intersec = layout_intersection_widget (self, widget, x);
   if (!intersec[1])
-    move_media (self, widget, x, 1);
-  else if (!intersec[0])
     move_media (self, widget, x, 0);
+  else if (!intersec[0])
+    move_media (self, widget, x, 1);
   else if (intersec[1] && intersec[0])
     {
       move_media (self, widget, x, 0);
