@@ -55,21 +55,6 @@ style "scale"
   bg_pixmap[NORMAL] = "<parent>"
 }
 
-style "button"
-{
-  # This shows all the possible states for a button.  The only one that
-  # doesn't apply is the SELECTED state.
-  
-  fg[PRELIGHT] = { 0, 1.0, 1.0 }
-  bg[PRELIGHT] = { 0, 0, 1.0 }
-  bg[ACTIVE] = { 1.0, 0, 0 }
-  fg[ACTIVE] = { 0, 1.0, 0 }
-  bg[NORMAL] = { 1.0, 1.0, 0 }
-  fg[NORMAL] = { .99, 0, .99 }
-  bg[INSENSITIVE] = { 1.0, 1.0, 1.0 }
-  fg[INSENSITIVE] = { 1.0, 0, 1.0 }
-}
-
 # In this example, we inherit the attributes of the "button" style and then
 # override the font and background color when prelit to create a new
 # "main_button" style.
@@ -93,17 +78,6 @@ style  "PitiviTreeViewStyle" {
 	bg[ACTIVE] = {0.8, 0.8, 0.8}
 	bg[NORMAL] = { 0.8, 0.8, 0.8 }
 }	
-
-
-style "toggle_button" = "button"
-{
-  fg[NORMAL] = { 1.0, 0, 0 }
-  fg[ACTIVE] = { 1.0, 0, 0 }
-  
-  # This sets the background pixmap of the toggle_button to that of its
-  # parent widget (as defined in the application).
-  bg_pixmap[NORMAL] = "<parent>"
-}
 
 style "ruler"
 {
