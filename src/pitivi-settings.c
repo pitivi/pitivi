@@ -200,7 +200,7 @@ pitivi_settings_get_flux_coder_list (GList *list, gchar *flux, gboolean LIST)
       g_print ("Don't know this list\n");
     }
   }
-  return (-1);
+  return (NULL);
 }
 
 
