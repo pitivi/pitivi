@@ -361,7 +361,7 @@ pitivi_ruler_class_init (PitiviRulerClass *klass)
 				 G_STRUCT_OFFSET (PitiviRulerClass, seek),
 				 NULL,
 				 NULL,
-				 g_cclosure_marshal_VOID__POINTER,
+				 gst_marshal_VOID__INT64,
 				 G_TYPE_NONE, 1, G_TYPE_INT64);
   
   pitivi_class->moving = pitivi_ruler_moving;
