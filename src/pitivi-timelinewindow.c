@@ -1309,6 +1309,22 @@ pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self)
       g_signal_emit_by_name (GTK_OBJECT (tmp->data), "zoom-changed");
 }
 
+/**
+ * pitivi_timelinewindow_update_time:
+ * @self: The #PitiviTimelineWindow
+ * @ntime: The new time
+ *
+ */
+
+void
+pitivi_timelinewindow_update_time (PitiviTimelineWindow *self, gint64 ntime)
+{
+  gchar	*tmp;
+
+  tmp = g_strdup_printf("%lld:%02lld:%03lld", GST_M_S_M(ntime));
+  gtk_label_set_text (GTK_LABEL (self->private->timer),tmp);
+}
+
 /*
  **********************************************************
  * Key events						  *

@@ -153,4 +153,7 @@ pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self);
 gboolean
 pitivi_timelinewindow_configure_event (GtkWidget *widget);
 
+void
+pitivi_timelinewindow_update_time (PitiviTimelineWindow *self, gint64 ntime);
+
 #endif

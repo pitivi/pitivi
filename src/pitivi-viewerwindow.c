@@ -89,6 +89,7 @@ struct _PitiviViewerWindowPrivate
   gdouble	timeline_max;
   gdouble	timeline_step;
 
+  gint64	new_time;
   GstProbe	*probe;
 };
 
@@ -301,14 +302,14 @@ gboolean	seek_stream(GtkWidget *widget,
   return FALSE;
 }
 
-void	move_timeline(GtkWidget *widget, gpointer data)
-{
-/*   PitiviViewerWindow *self = (PitiviViewerWindow *) data; */
+/* void	move_timeline(GtkWidget *widget, gpointer data) */
+/* { */
+/* /\*   PitiviViewerWindow *self = (PitiviViewerWindow *) data; *\/ */
 
-  g_print ("[CallBack]:move_timeline:%g\n", gtk_range_get_value(GTK_RANGE (widget)));
-  /* TODO actually seek in the timeline !!! */
-  return ;
-}
+/*   g_print ("[CallBack]:move_timeline:%g\n", gtk_range_get_value(GTK_RANGE (widget))); */
+/*   /\* TODO actually seek in the timeline !!! *\/ */
+/*   return ; */
+/* } */
 
 GtkWidget *
 get_image (gpointer data, char **im_name)
@@ -377,14 +378,25 @@ viewerwindow_start_stop_changed (GnlTimeline *timeline, GParamSpec *arg, gpointe
 }
 
 gboolean
+updated_time (gpointer data) {
+  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+
+  /*g_printf ("updated time %lld:%lld:%lld\n", GST_M_S_M(self->private->new_time));*/
+  gtk_range_set_value(GTK_RANGE (self->private->timeline) , self->private->new_time);
+  pitivi_timelinewindow_update_time (pitivi_mainapp_get_timelinewin (((PitiviWindows *) self)->mainapp),
+				     self->private->new_time);
+  return FALSE;
+}
+
+gboolean
 output_probe (GstProbe *probe, GstData **data, gpointer udata)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) udata;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
   if (GST_IS_BUFFER(*data)) {
-    g_printf ("output probe %lld:%lld:%lld\n", GST_M_S_M(GST_BUFFER_TIMESTAMP(*data)));
-    gtk_range_set_value(GTK_RANGE (self->private->timeline) , GST_BUFFER_TIMESTAMP(*data));
+    self->private->new_time = GST_BUFFER_TIMESTAMP(*data);
+    g_idle_add (updated_time, self);
   } else if (GST_IS_EVENT(*data) && (GST_EVENT_TYPE(*data) == GST_EVENT_EOS)) {
     g_printf ("Got EOS, dropping it\n");
     /* 
@@ -445,8 +457,8 @@ create_gui (gpointer data)
 		      GTK_SIGNAL_FUNC (pause_stream), self);
   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-release-event", 
 		      GTK_SIGNAL_FUNC (seek_stream), self);
-  gtk_signal_connect (GTK_OBJECT (self->private->timeline), "value-changed", 
-		      GTK_SIGNAL_FUNC (move_timeline), self);
+/*   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "value-changed",  */
+/* 		      GTK_SIGNAL_FUNC (move_timeline), self); */
   gtk_box_pack_start (GTK_BOX (self->private->toolbar), 
 		      self->private->timeline, TRUE, TRUE, 0);
   
