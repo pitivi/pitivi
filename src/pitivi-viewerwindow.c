@@ -28,40 +28,15 @@
 
 static GtkWindowClass *parent_class = NULL;
 
-typedef enum {
-  PITIVI_VIEWER_BUTTON_PLAY,
-  PITIVI_VIEWER_BUTTON_PAUSE,
-  PITIVI_VIEWER_BUTTON_STOP,
-  PITIVI_VIEWER_BUTTON_NEXT,
-  PITIVI_VIEWER_BUTTON_PREVIOUS,
-  PITIVI_VIEWER_ALL_BUTTONS
-} PitiviEnumViewerActions;
-
-typedef struct _ViewerButtons
-{
-  PitiviEnumViewerActions viewer_enum;
-  gchar			  *stock_icon;
-  GtkIconSize		  stock_size;
-} ViewerButtons;
-
-ViewerButtons stockbuttons[PITIVI_VIEWER_ALL_BUTTONS]=
-  {
-    { PITIVI_VIEWER_BUTTON_PLAY,     PITIVI_STOCK_VIEWER_PLAY, GTK_ICON_SIZE_BUTTON},
-    { PITIVI_VIEWER_BUTTON_PAUSE,    PITIVI_STOCK_VIEWER_PAUSE, GTK_ICON_SIZE_BUTTON},
-    { PITIVI_VIEWER_BUTTON_STOP,     PITIVI_STOCK_VIEWER_STOP, GTK_ICON_SIZE_BUTTON},
-    { PITIVI_VIEWER_BUTTON_NEXT,     PITIVI_STOCK_VIEWER_NEXT, GTK_ICON_SIZE_BUTTON},
-    { PITIVI_VIEWER_BUTTON_PREVIOUS, PITIVI_STOCK_VIEWER_PREVIOUS, GTK_ICON_SIZE_BUTTON},
-    { 0, 0},
-  }
-
 struct _PitiviViewerWindowPrivate
 {
   /* instance private members */
   gboolean	dispose_has_run;
   GtkWidget	*main_vbox;
   GtkTable	*media_control;
-  GtkWidget	*buttons[PITIVI_VIEWER_ALL_BUTTONS];
-  GtkVBox	*mplay;
+  GtkWidget	*buttons[4];
+  GtkWidget	*seeker;
+  GtkVBox	*play_view;
 };
 
 /*
@@ -75,7 +50,7 @@ struct _PitiviViewerWindowPrivate
 PitiviViewerWindow *
 pitivi_viewerwindow_new(void)
 {
-  PitiviViewerWindow	*viewerwindow;
+  PitiviViewerWindow *viewerwindow;
 
   viewerwindow = (PitiviViewerWindow *) g_object_new(PITIVI_VIEWERWINDOW_TYPE, NULL);
   g_assert(viewerwindow != NULL);
@@ -98,17 +73,6 @@ pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
-  
-  self->private->main_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add(GTK_CONTAINER(self), GTK_WIDGET(self->private->main_vbox));
-  self->private->media_control = gtk_table_new(1, 6, TRUE);
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->media_control, FALSE, FALSE, 0); 
-  for (count = 0; count < PITIVI_VIEWER_ALL_BUTTONS ;count++)
-    {
-      buttons[count] = gtk_button_new_from_stock (stockbuttons[count].stock_icon\
-						  , stockbuttons[count].stock_size);
-      gtk_button_set_relief (GTK_BUTTON (buttons[count]), GTK_RELIEF_NONE);
-    }
 }
 
 static void
