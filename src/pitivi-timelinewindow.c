@@ -60,6 +60,7 @@ struct _PitiviTimelineWindowPrivate
   PitiviMenu	*ui_menus;
   GtkWidget	*menu_dock;
   GtkWidget	*main_vbox;
+  GtkWidget	*timer;
   GtkWidget	*layout_container;
   GtkWidget	*info_container;
   GtkWidget	*hruler;
@@ -77,7 +78,6 @@ struct _PitiviTimelineWindowPrivate
   PitiviController	*controller;
   GtkComboBox		*unitcombobox;
   GtkComboBox		*scalecombobox;
-  GtkWidget		*timer;
 
   /* WinSettings */
   
@@ -244,6 +244,7 @@ unit_combobox_cb(GtkWidget *cbox, gpointer data)
   value = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
   if (tw->unit != value) {
     tw->unit = value;
+    pitivi_ruler_set_zoom_metric (tw->private->hruler, tw->unit, tw->zoom);
     g_signal_emit_by_name (GTK_OBJECT (tw), "zoom-changed");
   }
 }
@@ -259,7 +260,8 @@ scale_combobox_cb(GtkWidget *cbox, gpointer data)
   value = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
   if (tw->zoom != value) {
     tw->zoom = value;
-    g_signal_emit_by_name (GTK_OBJECT (tw), "zoom-changed"); 
+    pitivi_ruler_set_zoom_metric (tw->private->hruler, tw->unit, tw->zoom);
+    g_signal_emit_by_name (GTK_OBJECT (tw), "zoom-changed");
   }
 }
 
@@ -377,7 +379,7 @@ check_track (GtkWidget *widget, PitiviTimelineCellRenderer *cells)
 
 void
 create_ruler (PitiviTimelineWindow *self)
-{
+{  
   self->private->hruler = pitivi_ruler_new (self->unit);
   pitivi_ruler_set_metric (GTK_RULER (self->private->hruler), PITIVI_RSECONDS);
   gtk_ruler_set_range (GTK_RULER (self->private->hruler), 0, TOTAL_SECOND_TIME, 0, TOTAL_SECOND_TIME);
@@ -420,11 +422,11 @@ create_timelabel (PitiviTimelineWindow *self, GtkWidget *container)
   GtkWidget *label;
   
   hbox = gtk_hbox_new (FALSE, 0); 
-  label =  gtk_label_new ("Current Time :");
+  label =  gtk_label_new ("Time :");
   pitivi_widget_changefont (label, "helvetica 9");
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 4);
   self->private->timer = gtk_label_new ("--:--:--");
-  pitivi_widget_changefont (timelabel, "helvetica 9");
+  pitivi_widget_changefont (timelabel, "helvetica 10");
   gtk_box_pack_start (GTK_BOX (hbox), self->private->timer, FALSE, TRUE, 4);
   gtk_box_pack_start (GTK_BOX (container), hbox, FALSE, TRUE, 4);  
 }
@@ -1071,12 +1073,18 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   GList *childlist; 
   
   /* Viewer control  */
+  
   self->private->viewer = ((GtkWidget *)pitivi_mainapp_get_viewerwin ( ((PitiviWindows *)self)->mainapp ));
   connect2viewer (self->private->controller, self->private->viewer);
 
   /* Loading Select Cursor */
   
   load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), self->toolbox->pitivi_cursor, PITIVI_CURSOR_SELECT);
+  
+  /* Activating ruler */
+  PitiviProject	*proj = PITIVI_WINDOWS(self)->mainapp->project;
+  int videorate = pitivi_projectsettings_get_videorate(proj->settings);
+  g_object_set (self->private->hruler, "ruler-videorate", videorate, NULL);
   
   /* Activate childs */
 

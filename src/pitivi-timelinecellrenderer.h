@@ -141,5 +141,4 @@ void		pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self
 GtkWidget *	pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimelineCellRenderer *cell );
 void		pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self );
 
-
 #endif

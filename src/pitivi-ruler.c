@@ -46,29 +46,29 @@ static void pitivi_ruler_draw_pos      (GtkRuler       *ruler);
 struct _PitiviRulerPrivate
 {
   PitiviConvert	 unit;
+  guint		 videorate;
 };
 
 
 enum {  
   PROP_UNIT = 1,
+  PROP_VIDEORATE,
   PROP_LAST
 };
 
 /* Subdivisions */
 
 static const GtkRulerMetric pitivi_ruler_metrics[] =
-{
-  {"Seconds", "s",  1.0,  { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
-  {"Seconds 2x", "s2x",  2.0,  { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
-  {"Seconds 4x", "s4x",  4.0,  { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
-  {"Seconds 8x", "s8x",  8.0,  { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
-  {"Seconds 8x", "s18x",  16.0,  { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
-  {"NanoSeconds", "ns", 1.0, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
-  {"Frames", "Fm", 1.0, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
-  {"Pixels",  "Pi", 1.0, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
-  {"Inches",  "In", 72.0, { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 2, 4, 8, 16 }},
-  {"Centimeters", "Cn", 28.35, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
-};
+  {
+    {"NanoSeconds", "ns", 1.0, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }}, 
+    {"Seconds", "s",  1.0,  { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
+    {"Seconds 2x", "s2x",  2.0,  { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 5, 10, 50, 100 }},
+    {"Seconds 4x", "s4x",  4.0,  { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 5, 10, 50, 100 }},
+    {"Seconds 8x", "s8x",  8.0,  { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 5, 10, 50, 100 }},
+    {"Seconds 16x", "s16x",  16.0,  { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512 }, { 1, 5, 10, 50, 100 }},
+    {"Frames", "Fm", 1.0, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
+    {"Pixels",  "Pi", 1.0, { 1, 2, 5, 10, 25, 50, 100, 250, 500, 1000 }, { 1, 5, 10, 50, 100 }},
+  };
 
 void
 pitivi_ruler_set_metric (GtkRuler *ruler,
@@ -81,6 +81,40 @@ pitivi_ruler_set_metric (GtkRuler *ruler,
   if (GTK_WIDGET_DRAWABLE (ruler))
     gtk_widget_queue_draw (GTK_WIDGET (ruler));
 }
+
+void
+pitivi_ruler_set_data_metric (GtkRuler *ruler,
+			      GtkRulerMetric *metric)
+{
+  g_return_if_fail (GTK_IS_RULER (ruler));
+
+  ruler->metric = metric;
+
+  if (GTK_WIDGET_DRAWABLE (ruler))
+    gtk_widget_queue_draw (GTK_WIDGET (ruler));
+}
+
+void
+pitivi_ruler_set_zoom_metric (GtkRuler *ruler, guint unit, guint zoom)
+{
+  int count = 0;
+  
+  PITIVI_RULER(ruler)->private->unit = unit;
+  if ( unit == PITIVI_SECONDS )
+    {
+      for (count = PITIVI_RSECONDS; count <= PITIVI_RSECONDS16x; count++)
+	{
+	  if ((int)pitivi_ruler_metrics[count].pixels_per_unit == (int)zoom)
+	    {
+	      pitivi_ruler_set_metric (ruler, (count));
+	      break;
+	    }
+	}
+    }
+  else if ( unit == PITIVI_FRAMES )
+    pitivi_ruler_set_metric (ruler, (PITIVI_RFRAMES));
+}
+
 
 GType
 pitivi_ruler_get_type (void)
@@ -119,6 +153,9 @@ pitivi_ruler_set_property (GObject * object,
     {
     case PROP_UNIT:
       self->private->unit = g_value_get_int (value); 
+      break;
+    case PROP_VIDEORATE:
+      self->private->videorate = g_value_get_int (value); 
       break;
     default:
       g_assert (FALSE);
@@ -162,7 +199,12 @@ pitivi_ruler_class_init (PitiviRulerClass *klass)
   
   g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_UNIT,
 				   g_param_spec_int ("ruler-unit","ruler-unit","ruler-unit",
-						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
+						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE));
+ 
+  g_object_class_install_property (G_OBJECT_CLASS (klass), PROP_VIDEORATE,
+				   g_param_spec_int ("ruler-videorate", "ruler-videorate", "ruler-videorate",
+						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE));
+  
 }
 
 static void
@@ -258,10 +300,10 @@ pitivi_draw_label  (GtkRuler *ruler, int cur)
   PitiviRuler *self = ( PitiviRuler *) ruler;
   gchar unit_str[1024];
   gchar *label;
-  int  op, seconds[3];
+  guint frames;
 
   label = unit_str;
-  switch  (self->private->unit)
+  switch  ( self->private->unit )
     {
     case PITIVI_SECONDS:
       label = format_seconds (cur);
@@ -270,7 +312,8 @@ pitivi_draw_label  (GtkRuler *ruler, int cur)
       g_snprintf (unit_str, sizeof (unit_str), "%d" , ( int ) cur);
       break;
     case PITIVI_FRAMES:
-      g_snprintf (unit_str, sizeof (unit_str), "%d" , ( int ) cur);
+      frames = (cur * GST_SECOND / PITIVI_RULER (ruler)->private->videorate);
+      g_snprintf (unit_str, sizeof (unit_str), "%d" , ( int ) frames);
       break;
     default:
       g_snprintf (unit_str, sizeof (unit_str), "%d" , ( int ) cur);

@@ -393,7 +393,6 @@ gchar	*get_icon_fx(G_CONST_RETURN gchar *name, gint type)
 	id_tab = 0;
 	while (audio_effect_tab[id_tab].name)
 	  {
-	    g_print("audio tab name : %s et name : %s\n", audio_effect_tab[id_tab].name, name);	    
 	    if (!strcmp(audio_effect_tab[id_tab].name, name))
 	      {
 		icon_fx = audio_effect_tab[id_tab].image;

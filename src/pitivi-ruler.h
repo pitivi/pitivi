@@ -49,12 +49,12 @@ extern "C" {
 
 typedef enum
 {
+  PITIVI_RNANOSECONDS = 0,
   PITIVI_RSECONDS,
   PITIVI_RSECONDS2x,
   PITIVI_RSECONDS4x,
   PITIVI_RSECONDS8x,
   PITIVI_RSECONDS16x,
-  PITIVI_RNANOSECONDS,
   PITIVI_RFRAMES,
   PITIVI_RPIXELS,
   PITIVI_RINCHES,
@@ -107,8 +107,7 @@ struct _PitiviRulerClass
 
 
 GType      pitivi_ruler_get_type (void) G_GNUC_CONST;
-GtkWidget* pitivi_ruler_new      (gint x);
-
+GtkWidget* pitivi_ruler_new      (gint unit);
 
 #ifdef __cplusplus
 }

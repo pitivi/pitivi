@@ -224,11 +224,10 @@ pitivi_drawing_selection (GtkWidget *widget, int width, char **dash)
 }
 
 void
-draw_selection_dash (GtkWidget *widget, GdkColor *color, int width)
+draw_selection_dash (GtkWidget *widget, gpointer window, GdkColor *color, int width)
 {
   char dash [2] = {1, 1};
   GdkGC *style = gdk_gc_new ( widget->window );
-  GdkWindow *window;
   
   GdkColormap *cmap = gdk_colormap_get_system ();
   gdk_gc_copy (style, widget->style->black_gc);
@@ -236,7 +235,7 @@ draw_selection_dash (GtkWidget *widget, GdkColor *color, int width)
   gdk_gc_set_foreground (style, color);
   gdk_gc_set_dashes ( style, 0, (gint8*)dash, sizeof (dash) / 2); 
   gdk_gc_set_line_attributes ( style, width, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-  gdk_draw_rectangle ( GDK_WINDOW (widget->window), style, FALSE, 0, 1, widget->allocation.width-3, widget->allocation.height-3);
+  gdk_draw_rectangle ( window, style, FALSE, 0, 1, widget->allocation.width-3, widget->allocation.height-3);
   gdk_gc_unref (style);
 }
 

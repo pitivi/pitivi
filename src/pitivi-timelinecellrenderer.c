@@ -201,9 +201,9 @@ pitivi_timelinecellrenderer_constructor (GType type,
   /* Set Size Layer */
   set_tracksize (self);
   
-  /* Gcs && Bgs */
-  
+  /* Bg */
   self->private->bgs = self->private->timewin->bgs;
+  
   self->nb_added = self->private->timewin->nb_added;
   return object;
 }
@@ -434,6 +434,21 @@ GtkWidget **layout_intersection_widget (GtkWidget *self, GtkWidget *widget, gint
   return p;
 }
 
+void move_attached_effects (GtkWidget *widget, int x)
+{
+  PitiviTimelineMedia *media = (PitiviTimelineMedia *) widget;
+  GList	*childs = media->effectschilds;
+  int width = 0;
+
+  while (childs)
+    {
+      pitivi_layout_move (GTK_LAYOUT (PITIVI_TIMELINEMEDIA (childs->data)->track), 
+			  GTK_WIDGET (childs->data), x+width, 0);
+      width += GTK_WIDGET (childs->data)->allocation.width;
+      childs = childs->next;
+    }
+}
+
 void move_media (GtkWidget *cell, GtkWidget *widget, guint x)
 {
   GtkWidget **intersec;
@@ -470,16 +485,22 @@ move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
   else if (!intersec[0] && intersec[1])
     {
       move_media (self, intersec[1], x);
+      move_attached_effects (intersec[1], x);
       pitivi_layout_move (GTK_LAYOUT (self), widget, x, 0);
+      move_attached_effects (widget, x);
     }
   else if (intersec[1] && intersec[0])
     {
       xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
       pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
       move_media (self, widget, xbegin);
+      move_attached_effects (widget, x);
     }
   else
-    pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
+    {
+      pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
+      move_attached_effects (widget, xbegin);
+    }
 }
 
 void
@@ -776,18 +797,20 @@ convert_time_pix (PitiviTimelineCellRenderer *self, gint64 timelength)
 */
 
 gint64
-convert_sub_pix_time (PitiviTimelineCellRenderer *self, guint unit, guint pos)
+convert_sub_pix_time (guint pos,
+		      guint unit,
+		      guint zoom,
+		      guint videorate)
 {
   gint64 res;
-  PitiviProject	*proj = PITIVI_WINDOWS(self->private->timewin)->mainapp->project;
 
   switch ( unit ) {
   case PITIVI_SECONDS:
-    res = (pos / self->private->timewin->zoom) * GST_SECOND;
+    res = (pos / zoom) * GST_SECOND;
     break;
   case PITIVI_FRAMES:
-    res = (pos * GST_SECOND) 
-      / (pitivi_projectsettings_get_videorate(proj->settings) * self->private->timewin->zoom);
+    res = (pos * GST_SECOND)
+      / (videorate * zoom);
     break;
   case PITIVI_NANOSECONDS:
   default:
@@ -801,7 +824,15 @@ convert_sub_pix_time (PitiviTimelineCellRenderer *self, guint unit, guint pos)
 gint64
 convert_pix_time (PitiviTimelineCellRenderer *self, guint pos)
 {
-  convert_sub_pix_time (self, self->private->timewin->unit, pos);
+  PitiviProject	*proj = PITIVI_WINDOWS(self->private->timewin)->mainapp->project;
+  guint videorate = 0;
+  
+  videorate = pitivi_projectsettings_get_videorate (proj->settings);
+  convert_sub_pix_time (pos,
+			self->private->timewin->unit,
+			self->private->timewin->zoom,
+			videorate
+			);
 }
 
 void
@@ -809,6 +840,7 @@ create_media_video_audio_track (PitiviTimelineCellRenderer *cell, PitiviSourceFi
 {
   PitiviTimelineMedia *media[2];
   guint64 length = sf->length;
+  int width = 0;
   
   g_printf("create_media_video_audio_track\n");
   if (!length)
@@ -816,12 +848,11 @@ create_media_video_audio_track (PitiviTimelineCellRenderer *cell, PitiviSourceFi
   
   /* Creating widgets */
   
-  media[0] = pitivi_timelinemedia_new (sf, cell);  
+  width = convert_time_pix (cell, length);
+  media[0] = pitivi_timelinemedia_new (sf, width, cell);  
   pitivi_timelinemedia_set_media_start_stop(media[0], 0, length);
-  gtk_widget_set_size_request (GTK_WIDGET (media[0]), convert_time_pix(cell, length), GTK_WIDGET (cell)->allocation.height);
-  media[1] = pitivi_timelinemedia_new (sf, cell->linked_track);
+  media[1] = pitivi_timelinemedia_new (sf, width, cell->linked_track);
   pitivi_timelinemedia_set_media_start_stop(media[1], 0, length);
-  gtk_widget_set_size_request (GTK_WIDGET (media[1]), convert_time_pix(cell, length), GTK_WIDGET (cell)->allocation.height);
   
   /* Putting on first Layout */
   
@@ -847,11 +878,13 @@ create_media_track (PitiviTimelineCellRenderer *self,
 {
   PitiviTimelineMedia *media;
   guint64 length = sf->length;
-  
+  int  width = 0;
+
   if (!length)
     length = DEFAULT_MEDIA_SIZE;
-  media = pitivi_timelinemedia_new (sf, self);
-  gtk_widget_set_size_request (GTK_WIDGET (media), convert_time_pix(self, length), FIXED_HEIGHT);
+  
+  width = convert_time_pix(self, length);
+  media = pitivi_timelinemedia_new (sf, width, self);
   gtk_widget_show (GTK_WIDGET (media));
   if (invert) {
     add_to_layout ( GTK_WIDGET (self->linked_track), GTK_WIDGET (media), x, 0);
@@ -871,7 +904,7 @@ create_effect_on_track (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf, 
   type_track_cmp = check_media_type (sf);
   if (self->track_type == type_track_cmp)
     {
-      media = pitivi_timelinemedia_new (sf, self);
+      media = pitivi_timelinemedia_new (sf, 0, self);
       add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (media), x, 0);
       pitivi_layout_add_to_composition (self, media);
     }
@@ -1061,7 +1094,7 @@ pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
       	width = slide_media_get_widget_size (source);
       else
 	width = self->private->slide_width;
-      /* Dcaling drag and drop to the middle of the source */
+      /* Decaling drag and drop to the middle of the source */
       x -= width/2;
       /* -------- */
       gdk_window_clear (GTK_LAYOUT (widget)->bin_window);
@@ -1091,7 +1124,6 @@ pitivi_timelinecellrenderer_activate (PitiviTimelineCellRenderer *self)
 void
 pitivi_timelinecellrenderer_deactivate (PitiviTimelineCellRenderer *self)
 {
-  
   g_signal_emit_by_name (GTK_OBJECT (self), "deactivate");
 }
 
@@ -1113,7 +1145,7 @@ pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
       // resize the child
       gtk_widget_set_size_request(GTK_WIDGET (child->data),
 				  convert_time_pix(self, mstop-mstart),
-				  FIXED_HEIGHT);
+				  GTK_WIDGET (self)->allocation.height);
       // move it to the good position
       pitivi_layout_move(GTK_LAYOUT(self), GTK_WIDGET(child->data), 
 			 convert_time_pix(self, start) ,0);
@@ -1270,9 +1302,8 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	       stop1,
 	       start1, stop1, mstart1, mstop1,
 	       start2, stop2, mstart2, mstop2);
-      widget->allocation.width = widget->allocation.width - x; // calcul ???    
-      media[0] = pitivi_timelinemedia_new ( PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile, container );
-      pitivi_media_set_size ( media[0], widget->allocation.width, GTK_WIDGET (container)->allocation.height); // redimensionnement du nouveau media
+      widget->allocation.width = widget->allocation.width - x; // calcul : "bah c'est simple il faut juste se servir de sa tete" 
+      media[0] = pitivi_timelinemedia_new ( PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile, widget->allocation.width, container );
       g_printf("Setting values for existing media\n");
       // donner un nouveau stop/media_stop a l'ancien media
       pitivi_timelinemedia_set_start_stop(PITIVI_TIMELINEMEDIA(widget), start1, stop1);
@@ -1290,8 +1321,7 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	{
 	  link = PITIVI_TIMELINEMEDIA (PITIVI_TIMELINEMEDIA (widget)->linked);
 	  GTK_WIDGET ( link )->allocation.width = widget->allocation.width;
-	  media[1] = pitivi_timelinemedia_new ( link->sourceitem->srcfile, container->linked_track );
-	  pitivi_media_set_size ( media[1], widget->allocation.width, GTK_WIDGET (container)->allocation.height);
+	  media[1] = pitivi_timelinemedia_new ( link->sourceitem->srcfile, widget->allocation.width, container->linked_track );
 	  pitivi_media_set_size ( PITIVI_TIMELINEMEDIA (widget)->linked, x, GTK_WIDGET (container)->allocation.height);
 	  link_widgets (media[0], media[1]);
 	  g_printf("Setting values for existing media\n");
