@@ -86,9 +86,15 @@ void			pitivi_mainapp_del_settings		( PitiviMainApp *self, gint *position );
  * Insert "added-value" functions here
  */
 
+
 PitiviSettings *
 pitivi_mainapp_settings(PitiviMainApp *self) {
   return self->private->global_settings;
+}
+
+PitiviTimelineWindow *
+pitivi_mainapp_get_timelinewin(PitiviMainApp *self) {
+  return self->private->timelinewin;
 }
 
 void
@@ -97,7 +103,7 @@ pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
   PitiviMainApp *mainapp = PITIVI_WINDOWS(pWidget)->mainapp;
   gchar	*conf;
 
-  
+
   conf = g_strdup_printf("%s/.pitivi", g_get_home_dir());
   /* Save settings before exiting */
   if (pitivi_settings_save_to_file(mainapp->private->global_settings, conf) == FALSE)

@@ -27,13 +27,17 @@
 #include "pitivi.h"
 #include "pitivi-toolbox.h"
 #include "pitivi-stockicons.h"
+#include "pitivi-timelinewindow.h"
+
+static PitiviWindowsClass	*parent_class = NULL;
 
 struct _PitiviToolboxPrivate
 {
   /* instance private members */
-  gboolean dispose_has_run;
-  GtkWidget *button[4];
-  GSList *group_button;
+  gboolean	dispose_has_run;
+  GtkWidget	*button[4];
+  GSList	*group_button;
+  PitiviMainApp	*mainapp;
 };
 
 /*
@@ -58,15 +62,16 @@ struct _PitiviToolboxPrivate
  */
 
 void
-cursor_change_select(GtkRadioToolButton *radiobutton, gpointer window)
+cursor_change_select(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   GdkPixmap	*pixmap;
   GdkPixmap	 *mask;
   GdkCursor	*cursor;
   GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
-  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
- 
- if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */  
+  PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
+
+  if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
      pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, width, height);
      mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, mask_width, mask_height);
@@ -74,19 +79,20 @@ cursor_change_select(GtkRadioToolButton *radiobutton, gpointer window)
 
      gdk_pixmap_unref (pixmap);
      gdk_pixmap_unref (mask);
-     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(window)->window), cursor);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(timelinewin)->window), cursor);
      gdk_cursor_unref(cursor);
     }
 }
 
 void
-cursor_change_cut(GtkRadioToolButton *radiobutton, gpointer window)
+cursor_change_cut(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   GdkPixmap	*pixmap;
   GdkPixmap	 *mask;
   GdkCursor	*cursor;
   GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
   GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
+  PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
  
  if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
@@ -96,20 +102,21 @@ cursor_change_cut(GtkRadioToolButton *radiobutton, gpointer window)
 
      gdk_pixmap_unref (pixmap);
      gdk_pixmap_unref (mask);
-     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(window)->window), cursor);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(timelinewin)->window), cursor);
      gdk_cursor_unref(cursor);
     }
 }
 
 void
-cursor_change_hand(GtkRadioToolButton *radiobutton, gpointer window)
+cursor_change_hand(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   GdkPixmap	*pixmap;
   GdkPixmap	 *mask;
   GdkCursor	*cursor;
   GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
   GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
- 
+  PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
+
  if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
      pixmap = gdk_bitmap_create_from_data (NULL, hand_1_bits, width, height);
@@ -118,19 +125,20 @@ cursor_change_hand(GtkRadioToolButton *radiobutton, gpointer window)
 
      gdk_pixmap_unref (pixmap);
      gdk_pixmap_unref (mask);
-     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(window)->window), cursor);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(timelinewin)->window), cursor);
      gdk_cursor_unref(cursor);
     }
 }
 
 void
-cursor_change_zoom(GtkRadioToolButton *radiobutton, gpointer window)
+cursor_change_zoom(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
 {
   GdkPixmap	*pixmap;
   GdkPixmap	 *mask;
   GdkCursor	*cursor;
   GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
   GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
+  PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
 
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
    {
@@ -140,7 +148,7 @@ cursor_change_zoom(GtkRadioToolButton *radiobutton, gpointer window)
 
      gdk_pixmap_unref (pixmap);
      gdk_pixmap_unref (mask);
-     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(window)->window), cursor);
+     gdk_window_set_cursor(GDK_WINDOW(GTK_WIDGET(timelinewin)->window), cursor);
      gdk_cursor_unref(cursor);
    }
 }
@@ -151,12 +159,13 @@ cursor_change_zoom(GtkRadioToolButton *radiobutton, gpointer window)
  */
 
 PitiviToolbox *
-pitivi_toolbox_new (void)
+pitivi_toolbox_new (PitiviMainApp *mainapp)
 {
   PitiviToolbox *toolbox;
 
   toolbox = (PitiviToolbox *) g_object_new (PITIVI_TOOLBOX_TYPE, NULL);
   g_assert (toolbox != NULL);
+  toolbox->private->mainapp = mainapp;
   return toolbox;
 }
 
@@ -235,13 +244,13 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
    */
 
   g_signal_connect (G_OBJECT (self->private->button[0]), "toggled",
-		    G_CALLBACK (cursor_change_select), (gpointer) self);
+		    G_CALLBACK (cursor_change_select), self);
   g_signal_connect (G_OBJECT (self->private->button[1]), "toggled",
-		    G_CALLBACK (cursor_change_cut), (gpointer) self);
+		    G_CALLBACK (cursor_change_cut), self);
   g_signal_connect (G_OBJECT (self->private->button[2]), "toggled",
-		    G_CALLBACK (cursor_change_hand), (gpointer) self);
+		    G_CALLBACK (cursor_change_hand), self);
   g_signal_connect(G_OBJECT(self->private->button[3]), "toggled",
-		   G_CALLBACK(cursor_change_zoom), (gpointer)self) ;
+		   G_CALLBACK(cursor_change_zoom), self) ;
 
 
 

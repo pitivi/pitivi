@@ -152,14 +152,16 @@ pitivi_toolboxwindow_constructor (GType type,
   PitiviToolboxWindow		*self;
   PitiviMenu			*menumgr;
   GtkWidget			*menu;
+  PitiviMainApp			*mainapp;
 
   object = (* G_OBJECT_CLASS (parent_class)->constructor) 
     (type, n_construct_properties, construct_properties);
 
 /* Construction de la PitiviToolBoxWindow */
   self = (PitiviToolboxWindow *) object;
-  
-  self->private->toolbox = pitivi_toolbox_new ();
+  mainapp = ((PitiviWindows *) self)->mainapp;
+
+  self->private->toolbox = pitivi_toolbox_new (mainapp);
   self->private->vbox = gtk_vbox_new (FALSE, 0);
   gtk_window_set_title (GTK_WINDOW (self), PITIVI_TOOLBOXWINDOW_DF_TITLE);
   

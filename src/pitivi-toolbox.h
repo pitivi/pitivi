@@ -33,6 +33,7 @@
  */
 
 #include <gtk/gtk.h>
+#include "pitivi-windows.h"
 
 /*
  * Type macros.
@@ -74,7 +75,7 @@ GType pitivi_toolbox_get_type (void);
  * Method definitions.
  */
 
-PitiviToolbox *pitivi_toolbox_new (void);
+PitiviToolbox *pitivi_toolbox_new (PitiviMainApp *mainapp);
 
 /*
  * Cursor's definitions.
