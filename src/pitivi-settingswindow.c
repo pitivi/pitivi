@@ -157,12 +157,14 @@ pitivi_settingswindow_save_settings (GList *elm, GtkWidget *widget)
       
       num = gtk_combo_box_get_active (GTK_COMBO_BOX (tmp->widget));
       if (num) {
-	GList *new_list;
-	GList *old_list;
- 	
-	old_list = g_object_get_data (G_OBJECT (tmp->widget), "list");
-	new_list = pitivi_settings_new_list (old_list, num);
+	g_print ("Value Change\n");
 	/*
+	  GList *new_list;
+	  GList *old_list;
+	  
+	  old_list = g_object_get_data (G_OBJECT (tmp->widget), "list");
+	  new_list = pitivi_settings_new_list (old_list, num);
+
 	  pitivi_settings_replace_list (pitivi_settings_get_pointer 
 	  (elm, 
 	  (gint) g_object_get_data 
@@ -183,14 +185,12 @@ pitivi_settingswindow_cb_ok (GtkWidget *widget, gpointer data)
 {
   PitiviSettingsWindow *self = (PitiviSettingsWindow *) data;
 
-  /*
   pitivi_settingswindow_save_settings (self->private->Settings->container, 
 				       self->private->TabContainer);
   pitivi_settingswindow_save_settings (self->private->Settings->parser, 
 				       self->private->TabParser);
   pitivi_settingswindow_save_settings (self->private->Settings->codec, 
 				       self->private->TabCodec);
-  */
   g_print ("SETTINGS OK\n");
   gtk_widget_destroy (GTK_WIDGET (self));
   return ;
