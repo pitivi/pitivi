@@ -482,6 +482,7 @@ source_send_seek (GnlSource *source, GstEvent *event)
 {
   const GList *pads;
   gboolean	wasinplay = FALSE;
+  gboolean	res = FALSE;
 
   /* ghost all pads */
   pads = gst_element_get_pad_list (source->element);
@@ -508,10 +509,12 @@ source_send_seek (GnlSource *source, GstEvent *event)
   if (!(gst_element_set_state(source->bin, GST_STATE_PAUSED)))
     GST_WARNING("couldn't set GnlSource's bin to PAUSED !!!");
   while (pads) {  
-    GstPad *pad = GST_PAD (pads->data);
-
+    GstPad *pad = GST_PAD (GST_PAD_REALIZE (pads->data));
+    
+    GST_INFO ("Trying to seek on pad %s:%s",
+	      GST_DEBUG_PAD_NAME (pad));
     gst_event_ref (event);
-
+    
     GST_INFO ("%s: seeking to %lld on pad %s:%s", 
 	      gst_element_get_name (GST_ELEMENT (source)), 
 	      source->private->seek_start,
@@ -520,7 +523,9 @@ source_send_seek (GnlSource *source, GstEvent *event)
     if (!gst_pad_send_event (pad, event)) {
       GST_WARNING ("%s: could not seek", 
 		   gst_element_get_name (GST_ELEMENT (source)));
-    }
+      res &= FALSE;
+    } else
+      res = TRUE;
 
     pads = g_list_next (pads);
   }
@@ -529,7 +534,7 @@ source_send_seek (GnlSource *source, GstEvent *event)
 
   clear_queues (source);
 
-  return TRUE;
+  return res;
 }
 
 static void
@@ -699,10 +704,15 @@ source_getfunction (GstPad *pad)
 	  
 	  if (!gst_event_discont_get_value (GST_EVENT (buffer), GST_FORMAT_TIME, &dvalue))
 	    GST_WARNING ("couldn't get TIME value from discont event !");
-	  gst_data_unref (GST_DATA(buffer));
-	  dvalue = dvalue - object->media_start + object->start;
-	  object->current_time = dvalue;
-	  buffer = GST_BUFFER (gst_event_new_discontinuous (FALSE, GST_FORMAT_TIME, dvalue, NULL));
+	  else {
+	    gst_data_unref (GST_DATA(buffer));
+	    if (dvalue >= source->private->seek_start && (gnl_media_to_object_time (object, dvalue, &dvalue))) {
+	      object->current_time = dvalue;
+	      buffer = GST_BUFFER (gst_event_new_discontinuous (FALSE, GST_FORMAT_TIME, dvalue, NULL));
+	      found = TRUE;
+	    } else
+	      GST_WARNING ("value from discont event is outside limits, discarding event");
+	  }
 	}
       }
       else {
@@ -717,19 +727,29 @@ source_getfunction (GstPad *pad)
 	  GST_INFO("Data is after seek_stop, creating EOS");
 	  gst_data_unref(GST_DATA(buffer));
 	  buffer = GST_BUFFER (gst_event_new (GST_EVENT_EOS));
+	  found = TRUE;
+	} else if ( (intime < source->private->seek_start) 
+		    || (!gnl_media_to_object_time (object, intime, &outtime))) {
+	  GST_WARNING ("buffer time is out of media/seek limits ! Dropping buffer");
+	  gst_data_unref (GST_DATA(buffer));
+	} else {
+/* 	  outtime = intime - object->media_start + object->start; */
+	
+	  object->current_time = outtime;
+	  
+	  GST_INFO ("%s: got %lld:%lld:%lld corrected to %lld:%lld:%lld (Source[%lld:%lld:%lld -> %lld:%lld:%lld] media[%lld:%lld:%lld -> %lld:%lld:%lld])", 
+		    gst_element_get_name (GST_ELEMENT (source)), 
+		    GST_M_S_M(intime),
+		    GST_M_S_M(outtime),
+		    GST_M_S_M(object->start),
+		    GST_M_S_M(object->stop),
+		    GST_M_S_M(object->media_start),
+		    GST_M_S_M(object->media_stop));
+	  
+	  GST_BUFFER_TIMESTAMP (buffer) = outtime;
+	  
+	  found = TRUE;
 	}
-	outtime = intime - object->media_start + object->start;
-	
-	object->current_time = outtime;
-	
-	GST_INFO ("%s: got %lld:%lld:%lld corrected to %lld:%lld:%lld", 
-		  gst_element_get_name (GST_ELEMENT (source)), 
-		  GST_M_S_M(intime),
-		  GST_M_S_M(outtime));
-	
-	GST_BUFFER_TIMESTAMP (buffer) = outtime;
-	
-        found = TRUE;
       }
       /* flush last element in queue */
       private->queue = g_slist_remove (private->queue, buffer);

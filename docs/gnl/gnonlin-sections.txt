@@ -61,6 +61,8 @@ gnl_object_is_active
 gnl_object_set_active
 gnl_object_covers
 gnl_object_nearest_change
+gnl_object_to_media_time
+gnl_media_to_object_time
 <SUBSECTION Standard>
 GnlObjectClass
 GNL_OBJECT

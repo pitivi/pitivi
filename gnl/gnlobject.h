@@ -109,6 +109,10 @@ gboolean 		gnl_object_covers 		(GnlObject *object, GstClockTime start,
 		                  			 GstClockTime stop, GnlCoverType type);
 GstClockTime    	gnl_object_nearest_change 	(GnlObject *object, GstClockTime time, 
 							 GnlDirection direction);
+gboolean		gnl_object_to_media_time	(GnlObject *object, GstClockTime objecttime,
+							 GstClockTime *mediatime);
+gboolean		gnl_media_to_object_time	(GnlObject *object, GstClockTime mediatime,
+							 GstClockTime *objecttime);
 
 
 G_END_DECLS

@@ -193,6 +193,48 @@ gnl_object_init (GnlObject *object)
 /*   G_OBJECT_CLASS (parent_class)->dispose (object); */
 /* } */
 
+/**
+ * gnl_object_to_media_time:
+ * @object:
+ * @objecttime: The #GstClockTime we want to convert
+ * @mediatime: A pointer on a #GstClockTime to fill
+ *
+ * Converts a #GstClockTime from the object (container) context to the media context
+ *
+ * Returns: TRUE if @objecttime was within the limits of the @object start/stop time,
+ * FALSE otherwise
+ */
+
+gboolean
+gnl_object_to_media_time (GnlObject *object, GstClockTime otime, GstClockTime *mtime)
+{
+  if ((otime < object->start) || (otime >= object->stop))
+    return FALSE;
+  *mtime = otime + object->media_start - object->start;
+  return TRUE;
+}
+
+/**
+ * gnl_media_to_object_time:
+ * @object:
+ * @mediatime: The #GstClockTime we want to convert
+ * @objecttime: A pointer on a #GstClockTime to fill
+ *
+ * Converts a #GstClockTime from the media context to the object (container) context
+ *
+ * Returns: TRUE if @objecttime was within the limits of the @object media start/stop time,
+ * FALSE otherwise
+ */
+
+gboolean
+gnl_media_to_object_time (GnlObject *object, GstClockTime mtime, GstClockTime *otime)
+{
+  if ((mtime < object->media_start) || (mtime >= object->media_stop))
+    return FALSE;
+  *otime = mtime + object->start - object->media_start;
+  return TRUE;
+}
+
 /** 
  * gnl_object_set_start_stop:
  * @object: The object element to modify

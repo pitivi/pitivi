@@ -199,3 +199,25 @@ GnlObject
 @Returns: 
 
 
+<!-- ##### FUNCTION gnl_object_to_media_time ##### -->
+<para>
+
+</para>
+
+@object: 
+@objecttime: 
+@mediatime: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gnl_media_to_object_time ##### -->
+<para>
+
+</para>
+
+@object: 
+@mediatime: 
+@objecttime: 
+@Returns: 
+
+

@@ -724,7 +724,7 @@ probe_fired (GstProbe *probe, GstData **data, gpointer user_data)
 {
   GnlComposition *comp = GNL_COMPOSITION (user_data);
   gboolean res = TRUE;
-
+  
   if (GST_IS_BUFFER (*data)) {
     GST_INFO ("Got a buffer, updating current_time");
     GNL_OBJECT (comp)->current_time = GST_BUFFER_TIMESTAMP (*data);
