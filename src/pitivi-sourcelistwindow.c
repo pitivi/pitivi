@@ -95,7 +95,6 @@ struct _PitiviSourceListWindowPrivate
 
   /* Progress bar */
   
-  GList *folder_list;
   PitiviProgressBar  *bar;
 };
 
@@ -500,7 +499,7 @@ void	retrieve_file_from_folder(PitiviSourceListWindow *self)
   gchar	*folderpath;
   gchar	*fullpathname;
   gchar *name;
-  GList *list;
+  GList *list = NULL;
   gint nb, i = 0;
   
   dir = opendir(self->private->folderpath);
@@ -511,7 +510,7 @@ void	retrieve_file_from_folder(PitiviSourceListWindow *self)
       fullpathname = my_strcat(folderpath, entry->d_name);
       stat(fullpathname, &stat_buf);
       if (stat_buf.st_mode & S_IFREG)
-	self->private->folder_list = g_list_append (self->private->folder_list, fullpathname);
+	list = g_list_append (list, fullpathname);
       else
 	g_free(fullpathname);
     }
@@ -519,13 +518,14 @@ void	retrieve_file_from_folder(PitiviSourceListWindow *self)
   self->private->bar = pitivi_progressbar_new ();
   while (gtk_events_pending())
     gtk_main_iteration();
-  nb = g_list_length (self->private->folder_list);
-  for (list = self->private->folder_list; i < nb; list = list->next)
+  for (nb = g_list_length (list); i < nb; list = list->next)
     {
       self->private->filepath = (gchar *)list->data;
       name = strrchr(self->private->filepath, '/'); name++;
       pitivi_progressbar_set_info (self->private->bar, name);
       pitivi_progressbar_set_fraction (self->private->bar, (gdouble)i/nb);
+      while (gtk_events_pending())
+	gtk_main_iteration();
       new_file(NULL, self);
       while (gtk_events_pending())
 	gtk_main_iteration();
@@ -533,6 +533,7 @@ void	retrieve_file_from_folder(PitiviSourceListWindow *self)
     }
   pitivi_progressbar_set_fraction (self->private->bar, 1.0);
   pitivi_progressbar_set_info (self->private->bar, self->private->filepath);
+  g_list_free (list);
 }
 
 gchar*
@@ -1419,7 +1420,14 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
     switch (dialog_return)
       {
       case GTK_RESPONSE_YES:
-	remove_source (self, liststore, &item_select, &iter);
+	if ( strcmp(sMediaType, "Bin") )
+	  remove_source (self, liststore, &item_select, &iter);
+	else
+	  {
+	    /* we need to set treepath too */
+	    self->private->treepath = g_strdup_printf("%s:%d", self->private->treepath, folder_select);
+	    OnRemoveBin(self, 0, NULL);
+	  }
 	break;
       default:
 	break;
@@ -1427,15 +1435,6 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
     gtk_widget_destroy (dialog);
     return;
   }
-
-  if (strcmp(sMediaType, "Bin"))
-    remove_source (self, liststore, &item_select, &iter);
-  else /* need to remove folder */
-    {
-      /* we need to set treepath too */
-      self->private->treepath = g_strdup_printf("%s:%d", self->private->treepath, folder_select);
-      OnRemoveBin(self, 0, NULL);
-    }
 }
 
 void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget)
