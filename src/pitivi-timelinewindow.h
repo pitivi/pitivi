@@ -63,7 +63,6 @@ struct _PitiviTimelineWindow
   PitiviProjectWindows parent;
 
   /* instance public members */
-
   /* private */
   PitiviTimelineWindowPrivate *private;
 };
@@ -82,5 +81,6 @@ GType pitivi_timelinewindow_get_type (void);
  */
 
 PitiviTimelineWindow	*pitivi_timelinewindow_new (PitiviMainApp *mainapp, PitiviProject *project);
+GtkWidget		*pitivi_timelinewindow_get_right_view (PitiviTimelineWindow *self);
 
 #endif

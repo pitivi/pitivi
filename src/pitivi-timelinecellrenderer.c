@@ -31,15 +31,6 @@ static GdkPixmap *pixmap = NULL;
 static gint g_x, g_y;
 static GtkWidget *button;
 
-typedef struct _GtkLayoutChild   GtkLayoutChild;
-
-struct _GtkLayoutChild {
-  GtkWidget *widget;
-  gint x;
-  gint y;
-};
-
-
 enum
   {
     TARGET_STRING,

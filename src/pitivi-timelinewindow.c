@@ -59,7 +59,7 @@ struct _PitiviTimelineWindowPrivate
   GtkWidget	*hpaned;
   
   /* StatusBar */
-
+  
   GtkWidget	*dock_statusbar;
   GtkWidget	*statusbar_properties;
   GtkWidget	*statusbar_frame;
@@ -103,6 +103,10 @@ static  guint signals[LAST_SIGNAL];
  * Insert "added-value" functions here
  */
 
+GtkWidget *
+pitivi_timelinewindow_get_right_view (PitiviTimelineWindow *self) {
+  return (self->private->main_vbox_right);
+}
 
 static void
 statusbar_set_frames (GtkWidget *statusbar,
@@ -232,8 +236,6 @@ pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *eve
   return FALSE;
 }
 
-
-
 static void
 pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
@@ -272,7 +274,6 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   }
   
   gtk_window_set_icon (GTK_WINDOW (self), window_icon);
-  
   self->private->main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (self->private->main_vbox);
   gtk_container_add  (GTK_CONTAINER (self), self->private->main_vbox);
