@@ -82,7 +82,7 @@ fi
 dnl Now we're ready to ask for gstreamer libs and cflags
 dnl And we can also ask for the right version of gstreamer
 HAVE_GST=no
-GST_REQUIRED=0.8.2
+GST_REQUIRED=0.8.6
 
 dnl fail back to 0.8
 if test "x$HAVE_GST" = "xno"; then
