@@ -36,6 +36,7 @@
 #include "pitivi-sourceitem.h"
 #include "pitivi-stockicons.h"
 #include "pitivi-drawing.h"
+#include "pitivi-timelinecellrenderer.h"
 
 static	GtkWidgetClass	*parent_class = NULL;
 
@@ -129,6 +130,16 @@ static GtkItemFactoryEntry  TimeItemPopup[] = {
   {"/Properties", NULL,  pitivi_timelinemedia_callb_properties, 0, "<Item>", NULL},
 };
 
+static GtkItemFactoryEntry  TimeItemPopup2[] = {
+  {"/Associate", NULL, pitivi_timelinemedia_callb_dissociate, 0, "<Item>", NULL},
+  {"/Delete", NULL, pitivi_timelinemedia_callb_destroy, 1, "<Item>", NULL},
+  {"/Sep1", NULL, NULL, 0, "<Separator>"},
+  {"/Copy", NULL, pitivi_timelinemedia_callb_copied, 0, "<Item>", NULL},
+  {"/Cut", NULL, pitivi_timelinemedia_callb_cut, 0, "<Item>", NULL},
+  {"/Sep1", NULL, NULL, 0, "<Separator>"},
+  {"/Properties", NULL,  pitivi_timelinemedia_callb_properties, 0, "<Item>", NULL},
+};
+
 static gint	iNbTimeItemPopup = sizeof(TimeItemPopup)/sizeof(TimeItemPopup[0]);
 
 
@@ -149,7 +160,8 @@ struct _PitiviTimelineMediaPrivate
   GdkGC		   **gcs;
   
   /* Popup */
-  GtkWidget	   *menu;
+  GtkWidget	   *menu1;
+  GtkWidget	   *menu2;
   GtkTooltips	   *tooltips;
   
   /* Media */
@@ -553,17 +565,24 @@ pitivi_timelinemedia_constructor (GType type,
   PitiviTimelineMedia *this;
   gchar		*name;
   GstElement	*bin;
-  
+  GtkWidget	*widget;  
+
   /* Constructor  */
   object = (* G_OBJECT_CLASS (parent_class)->constructor) 
     (type, n_construct_properties, construct_properties);
   
   this = (PitiviTimelineMedia *) object;
-  
+  widget = GTK_WIDGET(object);
+
   /* Tooltip  */
   
   this->private->tooltips = gtk_tooltips_new();
+
+  /* Menus */
   
+  this->private->menu1 = GTK_WIDGET (pitivi_create_menupopup (widget, TimeItemPopup, iNbTimeItemPopup));
+  this->private->menu2 = GTK_WIDGET (pitivi_create_menupopup (widget, TimeItemPopup2, iNbTimeItemPopup));
+
   /* Source Item  */
 
   this->sourceitem = g_new0 (PitiviSourceItem, 1);
@@ -867,8 +886,10 @@ pitivi_timelinemedia_button_press_event (GtkWidget      *widget,
     }
   else if (event->button == 3)
     {
-      this->private->menu = GTK_WIDGET (pitivi_create_menupopup (widget, TimeItemPopup, iNbTimeItemPopup));
-      gtk_menu_popup(GTK_MENU (this->private->menu), NULL, NULL, NULL, this, event->button, event->time);
+      if (this->linked)
+	gtk_menu_popup(GTK_MENU (this->private->menu1), NULL, NULL, NULL, this, event->button, event->time);
+      else
+	gtk_menu_popup(GTK_MENU (this->private->menu2), NULL, NULL, NULL, this, event->button, event->time);
     }
   x = event->x;
   if ( (x >= widget->allocation.width / 2 ) )
@@ -908,14 +929,44 @@ pitivi_timelinemedia_callb_deselect (PitiviTimelineMedia *this)
 static void
 pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *this, gpointer data)
 {
+  gint64	start = 0;
+  gint64	stop = 0;
+  gint64	mediastart = 0;
+  gint64	mediastop = 0;
+
   if (PITIVI_IS_TIMELINEMEDIA (this) && this->linked)
-    if (this->selected)
-      {
-	PITIVI_TIMELINEMEDIA (this->linked)->selected = FALSE;
-	pitivi_send_expose_event (GTK_WIDGET (this->linked));
-	PITIVI_TIMELINEMEDIA (this->linked)->linked = NULL;
-	this->linked = NULL;
-      }
+    { 
+      if (this->selected)
+	{
+	  PITIVI_TIMELINEMEDIA (this->linked)->selected = FALSE;
+	  pitivi_send_expose_event (GTK_WIDGET (this->linked));
+	  PITIVI_TIMELINEMEDIA (this->linked)->linked = NULL;
+	  this->linked = NULL;
+	}
+    }
+  else if (PITIVI_IS_TIMELINEMEDIA (this) && this->tmp_linked)
+    {
+      if (this->selected)
+	{
+	  this->linked = this->tmp_linked;
+	  PITIVI_TIMELINEMEDIA (this->tmp_linked)->linked = this;
+	  PITIVI_TIMELINEMEDIA (this)->selected = FALSE;
+
+	  pitivi_timelinemedia_get_start_stop (this, &start, &stop);
+	  pitivi_timelinemedia_set_start_stop (this->linked, start, stop);
+
+	  pitivi_timelinemedia_get_media_start_stop (this, &mediastart, &mediastop);
+	  pitivi_timelinemedia_set_media_start_stop (this->linked, mediastart, mediastop);
+
+
+	  move_child_on_layout (GTK_WIDGET(this->linked->track),
+				GTK_WIDGET(this->linked),
+				GTK_WIDGET(this)->allocation.x);
+
+
+	  pitivi_send_expose_event (GTK_WIDGET (this->linked));
+	}
+    }
 }
 
 static void

@@ -74,6 +74,8 @@ struct _PitiviTimelineMedia
   PitiviSourceItem *sourceitem;
   /* Linked Widget in case of audio/video media */
   PitiviTimelineMedia  *linked;
+  /* Keep the original linked media */
+  PitiviTimelineMedia  *tmp_linked;
   /* Effects child */
   GList		       *effectschilds;
   /* Selection Status */

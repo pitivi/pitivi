@@ -150,8 +150,11 @@ pitivi_layout_move (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
 void
 link_widgets ( PitiviTimelineMedia *media1, PitiviTimelineMedia *media2)
 {
-  media1->linked = media2;
-  media2->linked = media1;
+  media1->tmp_linked = media1->linked = media2;
+  g_object_add_weak_pointer(G_OBJECT(media2), (gpointer *)&(media1->tmp_linked));
+
+  media2->tmp_linked = media2->linked = media1;
+  g_object_add_weak_pointer(G_OBJECT(media1), (gpointer *)&(media2->tmp_linked));
 }
 
 void move_attached_effects (GtkWidget *widget, int x)
