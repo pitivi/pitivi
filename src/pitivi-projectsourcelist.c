@@ -210,6 +210,7 @@ pitivi_projectsourcelist_get_file_info(PitiviProjectSourceList *self,
   GSList		*list;
   gint			row;
 
+  PITIVI_DEBUG ("path : %s, next_file : %d", treepath, next_file);
   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
   sourcelist = sourcebin->source;
   if (!sourcelist)
@@ -434,9 +435,9 @@ pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
   gint			row;
 
   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
-  sourcefile = (PitiviSourceFile*)pitivi_projectsourcelist_get_file_info(self,
-									 treepath,
-									 file_pos);
+  sourcefile = (PitiviSourceFile*) pitivi_projectsourcelist_get_file_info(self,
+									  treepath,
+									  file_pos);
   if (!sourcefile)
     PITIVI_WARNING ("Problem getting the sourcefile !!!!!!");
   return sourcefile;

@@ -338,10 +338,10 @@ pitivi_project_constructor (GType type,
 
   project = (PitiviProject *) obj;
 
-  project->pipeline = gst_pipeline_new("timeline-pipe");
+/*   project->pipeline = gst_pipeline_new("timeline-pipe"); */
 
-  project->private->thread = gst_thread_new("project-thread");
-  gst_bin_add (GST_BIN (project->pipeline), project->private->thread);
+  project->pipeline = project->private->thread = gst_thread_new("project-thread");
+/*   gst_bin_add (GST_BIN (project->pipeline), project->private->thread); */
   gst_element_set_state(project->pipeline, GST_STATE_READY);
   
   project->audiogroup = gnl_group_new("audiogroup");

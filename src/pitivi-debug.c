@@ -61,12 +61,12 @@ pitivi_printf_element_nb(GstElement *elt, int dep) {
 
   tp = g_strnfill((gsize) dep + 1, '.');
   /* Global info about element */
-  g_printf("%sElement : %s State:%d\n", tp, pitivi_element_debug(elt),
+  PITIVI_DEBUG("%sElement : %s State:%d\n", tp, pitivi_element_debug(elt),
 	   gst_element_get_state (elt));
 
   /* Element Scheduler and state */
   msched = GST_ELEMENT_SCHED(elt);
-  g_printf("%s\tScheduler %p State:%d\n", tp, msched, (msched ? GST_SCHEDULER_STATE(msched) : 0));
+  PITIVI_DEBUG("%s\tScheduler %p State:%d\n", tp, msched, (msched ? GST_SCHEDULER_STATE(msched) : 0));
 
   /* State of Pads (Active/Linked) */
   for (pads = gst_element_get_pad_list(elt); pads ; pads = pads->next) {
@@ -76,32 +76,32 @@ pitivi_printf_element_nb(GstElement *elt, int dep) {
     else
       pd = "";
     if (GST_PAD_PEER(pad))
-      g_printf("%s\t%sPad: %s Active:%d Linked to %s:%s\n", tp, pd,
+      PITIVI_DEBUG("%s\t%sPad: %s Active:%d Linked to %s:%s\n", tp, pd,
 	       gst_pad_get_name(pad), GST_PAD_IS_ACTIVE(pad),
 	       GST_DEBUG_PAD_NAME(GST_PAD_PEER(pad)));
     else
-      g_printf("%s\t%sPad: %s Active:%d NOT linked\n", tp, pd,
+      PITIVI_DEBUG("%s\t%sPad: %s Active:%d NOT linked\n", tp, pd,
 	       gst_pad_get_name(pad), GST_PAD_IS_ACTIVE(pad));
     for (pads2 = gst_pad_get_ghost_pad_list(pad); pads2; pads2 = pads2->next) {
       gpad = GST_PAD(pads2->data);
       if (GST_PAD_PEER(gpad))
-	g_printf("%s\t GhostPad %s:%s linked to %s:%s\n", tp,
+	PITIVI_DEBUG("%s\t GhostPad %s:%s linked to %s:%s\n", tp,
 		 GST_DEBUG_PAD_NAME(gpad),
 		 GST_DEBUG_PAD_NAME(GST_PAD_PEER(gpad)));
       else
-	g_printf("%s\t GhostPad %s:%s NOT linked\n", tp, 
+	PITIVI_DEBUG("%s\t GhostPad %s:%s NOT linked\n", tp, 
 		 GST_DEBUG_PAD_NAME(gpad));
     }
   }
 
   /* If container, recursive call on children */
   if (GST_IS_BIN(elt)) {
-    g_printf("%s/ CHILDS \\\n", tp);
+    PITIVI_DEBUG("%s/ CHILDS \\\n", tp);
     for (childs = gst_bin_get_list(GST_BIN(elt)); childs; childs = childs->next) {
       child = GST_ELEMENT(childs->data);
       pitivi_printf_element_nb(child, dep+1);
     }
-    g_printf("%s\\       /\n", tp);
+    PITIVI_DEBUG("%s\\       /\n", tp);
   }
   g_free(tp);
 }
@@ -118,17 +118,17 @@ print_element_schedulers(GstElement *element) {
   GstScheduler  *msch;
 
   msch = gst_element_get_scheduler(element);
-  g_printf("Schedulers in Element[%s](ElementState:%d)(SchedulerState:%d):\n",
+  PITIVI_DEBUG("Schedulers in Element[%s](ElementState:%d)(SchedulerState:%d):\n",
            gst_element_get_name(element), gst_element_get_state(element),
 	   msch->state);
   for (sched = gst_element_get_scheduler(element)->schedulers; sched;
        sched = sched->next) {
     son = (GstScheduler *) sched->data;
     
-    g_printf("\tScheduler[%s]:%p State=%d\n",
+    PITIVI_DEBUG("\tScheduler[%s]:%p State=%d\n",
              gst_element_get_name(son->parent), son, son->state);
-    g_printf("/-------\\\n");
+    PITIVI_DEBUG("/-------\\\n");
     print_element_schedulers(son->parent);
-    g_printf("\\-------/\n");
+    PITIVI_DEBUG("\\-------/\n");
   }
 }

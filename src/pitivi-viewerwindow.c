@@ -39,7 +39,7 @@
 static		PitiviProjectWindowsClass *parent_class;
 static		GdkPixmap *pixmap = NULL;
 
-static gboolean	idle_func_video (gpointer data);
+/* static gboolean	idle_func_video (gpointer data); */
 static gboolean	updated_time (gpointer data);
 
 enum {
@@ -65,6 +65,7 @@ struct _PitiviViewerWindowPrivate
   gint		play_status;
   
   GstElement	*sink;
+  GstElement	*audiosink;
   GstElement	*fulloutputbin;
   
   GtkWidget	*main_vbox;
@@ -143,10 +144,10 @@ video_play(GtkWidget *widget, gpointer data)
 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
     if (!gst_element_set_state(project->pipeline, GST_STATE_READY))
       PITIVI_WARNING("Couldn't set the project pipeline to READY before playing...");
-    if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
+    if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING)) {
       PITIVI_WARNING("Couldn't set the project pipeline to PLAYING!");
-    else {
-      g_idle_add(idle_func_video, self);
+/*     } else { */
+/*       g_idle_add(idle_func_video, self); */
     }
   } else {
     self->private->play_status = PAUSE;
@@ -271,6 +272,16 @@ updated_time (gpointer data) {
   return FALSE;
 }
 
+static GstClockTime
+get_my_time ()
+{
+  GTimeVal timeval;
+
+  g_get_current_time (&timeval);
+
+  return GST_TIMEVAL_TO_TIME (timeval);
+}
+
 static gboolean
 output_probe (GstProbe *probe, GstData **data, gpointer udata)
 {
@@ -279,6 +290,11 @@ output_probe (GstProbe *probe, GstData **data, gpointer udata)
 
   if (GST_IS_BUFFER(*data)) {
     self->private->new_time = GST_BUFFER_TIMESTAMP(*data);
+    PITIVI_DEBUG ("buffer State of Audiosink : %d, State of VideoSink : %d, timestamp : %lld:%lld:%lld. NOW : %lld:%lld:%lld",
+		  gst_element_get_state (self->private->audiosink),
+		  gst_element_get_state (self->private->sink),
+		  GST_M_S_M (self->private->new_time),
+		  GST_M_S_M (get_my_time()));
     g_idle_add (updated_time, self);
   }
   return TRUE;
@@ -409,7 +425,9 @@ create_stream (gpointer data)
   GstElement	*audiosink;
   GstElement	*timeoverlay;
 
-  audiosink = gst_element_factory_make("alsasink", "audio-out");
+  audiosink = gst_element_factory_make("fakesink", "audio-out");
+  g_object_set (G_OBJECT (audiosink), "silent", FALSE, NULL);
+  self->private->audiosink = audiosink;
   
   pitivi_project_set_audio_output(project, audiosink);
 
@@ -454,24 +472,24 @@ create_stream (gpointer data)
   return ;
 }
 
-static gboolean	
-idle_func_video (gpointer data)
-{
-  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+/* static gboolean	 */
+/* idle_func_video (gpointer data) */
+/* { */
+/*   PitiviViewerWindow *self = (PitiviViewerWindow *) data; */
+/*   PitiviProject	*project = ((PitiviProjectWindows *) self)->project; */
   
-  // remove the idle_func if we're not playing !
-  if (gst_element_get_state (GST_ELEMENT(project->timeline)) != GST_STATE_PLAYING) {
-    if (self->private->play_status == STOP)
-      video_stop (GTK_WIDGET (self), self);
-    return FALSE;
-  }
+/*   // remove the idle_func if we're not playing ! */
+/*   if (gst_element_get_state (GST_ELEMENT(project->timeline)) != GST_STATE_PLAYING) { */
+/*     if (self->private->play_status == STOP) */
+/*       video_stop (GTK_WIDGET (self), self); */
+/*     return FALSE; */
+/*   } */
   
-  if ( gst_element_get_state (GST_ELEMENT (project->pipeline)) == GST_STATE_PLAYING ) {
-    gst_bin_iterate (GST_BIN (project->pipeline));
-  }
-  return TRUE;
-}
+/* /\*   if ( gst_element_get_state (GST_ELEMENT (project->pipeline)) == GST_STATE_PLAYING ) { *\/ */
+/* /\*     gst_bin_iterate (GST_BIN (project->pipeline)); *\/ */
+/* /\*   } *\/ */
+/*   return TRUE; */
+/* } */
 
 /*
  * Insert "added-value" functions here

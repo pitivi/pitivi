@@ -480,19 +480,19 @@ source_is_media_queued (GnlSource *source)
 static gboolean
 source_send_seek (GnlSource *source, GstEvent *event)
 {
-  const GList *pads;
+/*   const GList *pads; */
   gboolean	wasinplay = FALSE;
   gboolean	res = FALSE;
 
   /* ghost all pads */
-  pads = gst_element_get_pad_list (source->element);
+/*   pads = gst_element_get_pad_list (source->element); */
 
   if (!event)
     return FALSE;
 
-  if (!pads)
-    GST_WARNING("%s has no pads...",
-	     gst_element_get_name (GST_ELEMENT (source->element)));
+/*   if (!pads) */
+/*     GST_WARNING("%s has no pads...", */
+/* 	     gst_element_get_name (GST_ELEMENT (source->element))); */
 
   source->private->seek_start = GST_EVENT_SEEK_OFFSET (event);
   source->private->seek_stop = GST_EVENT_SEEK_ENDOFFSET (event);
@@ -508,27 +508,32 @@ source_send_seek (GnlSource *source, GstEvent *event)
     wasinplay = TRUE;
   if (!(gst_element_set_state(source->bin, GST_STATE_PAUSED)))
     GST_WARNING("couldn't set GnlSource's bin to PAUSED !!!");
-  while (pads) {  
-    GstPad *pad = GST_PAD (GST_PAD_REALIZE (pads->data));
+/*   while (pads) {   */
+/*     GstPad *pad = GST_PAD (GST_PAD_REALIZE (pads->data)); */
     
-    GST_INFO ("Trying to seek on pad %s:%s",
-	      GST_DEBUG_PAD_NAME (pad));
-    gst_event_ref (event);
+/*     GST_INFO ("Trying to seek on pad %s:%s", */
+/* 	      GST_DEBUG_PAD_NAME (pad)); */
+/*     gst_event_ref (event); */
     
-    GST_INFO ("%s: seeking to %lld on pad %s:%s", 
-	      gst_element_get_name (GST_ELEMENT (source)), 
-	      source->private->seek_start,
-	      GST_DEBUG_PAD_NAME (pad));
+/*     GST_INFO ("%s: seeking to %lld on pad %s:%s",  */
+/* 	      gst_element_get_name (GST_ELEMENT (source)),  */
+/* 	      source->private->seek_start, */
+/* 	      GST_DEBUG_PAD_NAME (pad)); */
     
-    if (!gst_pad_send_event (pad, event)) {
-      GST_WARNING ("%s: could not seek", 
-		   gst_element_get_name (GST_ELEMENT (source)));
-      res &= FALSE;
-    } else
-      res = TRUE;
+/*     if (!gst_pad_send_event (pad, event)) { */
+/*       GST_WARNING ("%s: could not seek",  */
+/* 		   gst_element_get_name (GST_ELEMENT (source))); */
+/*       res &= FALSE; */
+/*     } else */
+/*       res = TRUE; */
 
-    pads = g_list_next (pads);
-  }
+/*     pads = g_list_next (pads); */
+/*   } */
+  if (!gst_element_send_event (source->element, event)) {
+    GST_WARNING ("%s: could not seek",
+		 gst_element_get_name (GST_ELEMENT (source)));
+  } else
+    res = TRUE;
   if (wasinplay)
     gst_element_set_state(source->bin, GST_STATE_PLAYING);
 
