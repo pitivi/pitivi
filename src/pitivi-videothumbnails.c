@@ -35,7 +35,7 @@ gboolean   can_finish = FALSE;
 GtkWidget  *myreceiver = NULL;
 gchar      *myoutput = NULL;
 
-void end_of_snap (GstElement *pipeline)
+void end_of_snap (GstElement *sink, GstElement *pipeline)
 {
   finished = TRUE;
   gst_element_set_state (pipeline, GST_STATE_NULL);

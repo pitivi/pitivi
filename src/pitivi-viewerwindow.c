@@ -38,6 +38,7 @@
 static     PitiviProjectWindowsClass *parent_class;
 static	   GdkPixmap *pixmap = NULL;
 
+gboolean	idle_func_video (gpointer data);
 
 enum {
   PLAY,
@@ -60,7 +61,7 @@ struct _PitiviViewerWindowPrivate
   /* instance private members */
 
   gchar		*location;
-  gboolean	play_status;
+  gint		play_status;
   
   GstElement	*pipe;
   GstElement	*bin_src;
@@ -203,14 +204,18 @@ void	video_play(GtkWidget *widget, gpointer data)
     self->private->play_status = PLAY;
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
       g_warning("Couldn't set the project pipeline to PLAYING!");
+    else
+      g_idle_add(idle_func_video, self);
   } else if (self->private->play_status == STOP) {
     g_print ("[CallBack]:video_play\n");
     self->private->play_status = PLAY;
-    gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
+    if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
+      g_warning("Couldn't set the project pipeline to PLAYING");
+    else
+      g_idle_add(idle_func_video, self);
   }
   gtk_signal_emit_by_name (GTK_OBJECT (self->private->video_area), "expose_event", &ev, &retval);
 
-  pitivi_printf_element(project->pipeline);
   return ;
 }
 
@@ -227,13 +232,11 @@ void	video_stop(GtkWidget *widget, gpointer data)
   gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
   self->private->play_status = STOP;
 
-  elem = get_file_source(project->pipeline);
-
   /* rewind the movie */
   do_seek(elem, 0);
   
   /* query total size */
-  value  = do_query(elem, GST_QUERY_TOTAL);
+  value  = do_query(GST_ELEMENT (project->timeline), GST_QUERY_TOTAL);
 
   /* reset the viewer timeline */
   gtk_range_set_value(GTK_RANGE (self->private->timeline) , 0);
@@ -300,20 +303,26 @@ gboolean	seek_stream(GtkWidget *widget,
   gdouble	pourcent;
 
   g_printf("you release me\n");
-  elem = get_file_source(project->pipeline);
-
   
   /* query total size */
-  value1  = do_query(elem, GST_QUERY_TOTAL);
+  value1  = do_query(GST_ELEMENT (project->timeline), GST_QUERY_TOTAL);
   
   pourcent = gtk_range_get_value(GTK_RANGE (widget));
 
   value2 = (gint64)((pourcent * value1) / 500);
+  
+  g_printf("total length : %lld, seeking to %lld\n",
+	   value1, value2);
+
   /* rewind the movie */
   if (do_seek(elem, value2))
     g_printf("performing  seek\n");
   
-  gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
+  if (self->private->play_status != PLAY) {
+    self->private->play_status = PLAY;
+    g_idle_add(idle_func_video, self);
+    gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
+  }
   return FALSE;
 }
 void	move_timeline(GtkWidget *widget, gpointer data)
@@ -558,12 +567,6 @@ create_stream (gpointer data)
 
   GstElement	*audiosink;
 
-/*   self->private->pipe = gst_thread_new ("pipeline"); */
-/*   g_assert (self->private->pipe != NULL); */
-
-/*   self->private->bin_src = gst_element_factory_make ("videotestsrc", "video_source"); */
-/*   g_assert (self->private->bin_src != NULL); */
-
 //  audiosink = gst_element_factory_make("alsasink", "audio-out");
   
 //  pitivi_project_set_audio_output(project, audiosink);
@@ -572,25 +575,6 @@ create_stream (gpointer data)
   g_assert (self->private->sink != NULL);
   pitivi_project_set_video_output(project, self->private->sink);
 
-				  
-
-/*   gst_bin_add_many (GST_BIN (self->private->pipe), */
-/* 		    self->private->bin_src, */
-/* 		    self->private->sink, */
-/* 		    NULL); */
-
-/* <<<<<<< pitivi-viewerwindow.c */
-/*   if (!gst_element_link (self->private->bin_src, self->private->sink)) */
-/*     printf ("could not link elem\n"); */
-  
-/*   gst_element_set_state (self->private->pipe, GST_STATE_PLAYING); */
-/* ======= */
-/*   if (!gst_element_link (self->private->bin_src, self->private->sink)) */
-/*     printf ("could not link elem\n"); */
-
-  //  pitivi_project_blank_source(project);
-  // gst_element_set_state (project->pipeline, GST_STATE_PLAYING);
-/* >>>>>>> 1.24 */
   self->private->play_status = STOP;
   return ;
 }
@@ -604,15 +588,16 @@ gboolean	idle_func_video (gpointer data)
   gint64	value1, value2;
   gdouble	pourcent;
 
+  // remove the idle_func if we're not playing !
+  if (self->private->play_status != PLAY)
+    return FALSE;
+  
   if ( gst_element_get_state (project->pipeline) == GST_STATE_PLAYING ) {
-/*     g_printf("\n"); */
-/*     pitivi_printf_element(project->pipeline); */
-/*     g_printf("\n"); */
     gst_x_overlay_set_xwindow_id
       ( GST_X_OVERLAY ( self->private->sink ),
 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
     gst_bin_iterate (GST_BIN (project->pipeline));
-    elem = get_file_source(project->pipeline);
+    elem = GST_ELEMENT (project->timeline);
     
     if (elem) /* we have a true source */
       {
@@ -621,7 +606,8 @@ gboolean	idle_func_video (gpointer data)
 	pourcent = (value1 * 100) / value2;
 	
 	pourcent *= 5;
-
+	g_printf("**idle** : pos:%lld, total:%lld, pourcent:%e\n",
+		 value2, value1, pourcent);
 	gtk_range_set_value(GTK_RANGE (self->private->timeline) , pourcent);
       }
   }
@@ -660,7 +646,8 @@ pitivi_viewerwindow_constructor (GType type,
 
   create_gui (obj);
   create_stream (obj);
-  g_idle_add (idle_func_video, obj);
+  // only add idle function when playing
+  //  g_idle_add (idle_func_video, obj);
 
   return obj;
 }
