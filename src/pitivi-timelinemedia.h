@@ -39,7 +39,7 @@
  */
 
 
-#define DEFAULT_WIDTH   7200
+#define DEFAULT_WIDTH   50
 #define DEFAULT_HEIGHT  50
 
 #define REDUCE_CURSOR_AREA_SIZE	6
@@ -61,9 +61,10 @@ struct _PitiviTimelineMedia
   GtkWidget parent;
 
   /* instance public members */
-  PitiviSourceFile *sf;
+  
   PitiviSourceItem *sourceitem;
   GtkWidget        *linked;
+  GtkWidget	   *track;
   gboolean	   selected;
   
   /* private */
@@ -75,6 +76,8 @@ struct _PitiviTimelineMediaClass
 {
   GtkWidgetClass parent;
   /* class members */
+  void (* select)   (PitiviTimelineMedia *cell);
+  void (* deselect)   (PitiviTimelineMedia *cell);
 };
 
 /* used by PITIVI_TIMELINEMEDIA_TYPE */

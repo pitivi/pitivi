@@ -287,7 +287,7 @@ create_toolbox (PitiviTimelineWindow *self)
   self->toolbox = pitivi_toolbox_new (mainapp);
   gtk_toolbar_set_icon_size (GTK_TOOLBAR (self->toolbox), GTK_ICON_SIZE_SMALL_TOOLBAR);
   sep = gtk_hseparator_new ();
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), self->toolbox, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), GTK_WIDGET (self->toolbox), FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), sep, FALSE, FALSE, 0);
 }
 
@@ -324,19 +324,21 @@ create_separator_color (GtkWidget *box, gchar *colorname, int width, int height)
 }
 
 void
-create_tracks_links (PitiviTimelineCellRenderer **cell)
+create_tracks_links (GtkWidget **wcells)
 {
+  PitiviTimelineCellRenderer **cells;
   int   len;
   int	i, j;
-
+  
+  cells = (PitiviTimelineCellRenderer **)wcells;
   len = (sizeof (gtab_tracks)/sizeof(PitiviDefaultTracks));
   for (i = 0; i < len; i++)
     {
       for (j = 0; j < len; j++)
 	if (gtab_tracks[i].track_nb == gtab_tracks[j].track_linked)
 	  if (gtab_tracks[i].track_type != PITIVI_EFFECTS_TRACK)
-	    if (cell[i])
-	      cell[i]->linked_track = cell[j];
+	    if (cells[i])
+	      cells[i]->linked_track = GTK_WIDGET (cells[j]);
     }
 }
 
@@ -370,7 +372,7 @@ create_tracks (PitiviTimelineWindow *self)
 	  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), cell[count], FALSE, FALSE, 0);
 	  create_separator_color (self->private->main_vbox_right, "black", -1, 5);
 	  
-	  nfo = pitivi_mediatrackinfo_new (cell[count], gtab_tracks[count].track_name);
+	  nfo = pitivi_mediatrackinfo_new (((PitiviTimelineCellRenderer *)cell[count]), gtab_tracks[count].track_name);
 	  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left),  nfo, FALSE, FALSE, 0);
 	  create_separator (self->private->main_vbox_left, -1, 5);
 	}

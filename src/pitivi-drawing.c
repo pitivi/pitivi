@@ -28,6 +28,15 @@
 static char gdefault_dash [2] = {5, 4};
 
 void
+pitivi_send_expose_event (GtkWidget * widget)
+{
+  GdkEventExpose ev;
+  gboolean retval;
+  
+  gtk_signal_emit_by_name (GTK_OBJECT (widget), "expose_event", &ev, &retval);
+}
+
+void
 pitivi_drawing_set_pixmap_bg (GtkWidget *widget, GdkPixmap *pixmap)
 {
   GtkStyle  *style;

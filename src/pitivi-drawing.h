@@ -87,5 +87,7 @@ GdkGC *
 pitivi_drawing_GdkGCcolor_new ( guint8 red, 
 			       guint8 green, 
 			       guint8 blue);
+void
+pitivi_send_expose_event (GtkWidget * widget);
 
 #endif /* PITIVI_DRAWING_H */
