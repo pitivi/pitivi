@@ -28,15 +28,31 @@
 
 static GtkWindowClass *parent_class = NULL;
 
-enum {
+typedef enum {
   PITIVI_VIEWER_BUTTON_PLAY,
   PITIVI_VIEWER_BUTTON_PAUSE,
   PITIVI_VIEWER_BUTTON_STOP,
   PITIVI_VIEWER_BUTTON_NEXT,
   PITIVI_VIEWER_BUTTON_PREVIOUS,
   PITIVI_VIEWER_ALL_BUTTONS
-};
+} PitiviEnumViewerActions;
 
+typedef struct _ViewerButtons
+{
+  PitiviEnumViewerActions viewer_enum;
+  gchar			  *stock_icon;
+  GtkIconSize		  stock_size;
+} ViewerButtons;
+
+ViewerButtons stockbuttons[PITIVI_VIEWER_ALL_BUTTONS]=
+  {
+    { PITIVI_VIEWER_BUTTON_PLAY,     PITIVI_STOCK_VIEWER_PLAY, GTK_ICON_SIZE_BUTTON},
+    { PITIVI_VIEWER_BUTTON_PAUSE,    PITIVI_STOCK_VIEWER_PAUSE, GTK_ICON_SIZE_BUTTON},
+    { PITIVI_VIEWER_BUTTON_STOP,     PITIVI_STOCK_VIEWER_STOP, GTK_ICON_SIZE_BUTTON},
+    { PITIVI_VIEWER_BUTTON_NEXT,     PITIVI_STOCK_VIEWER_NEXT, GTK_ICON_SIZE_BUTTON},
+    { PITIVI_VIEWER_BUTTON_PREVIOUS, PITIVI_STOCK_VIEWER_PREVIOUS, GTK_ICON_SIZE_BUTTON},
+    { 0, 0},
+  }
 
 struct _PitiviViewerWindowPrivate
 {
@@ -44,8 +60,8 @@ struct _PitiviViewerWindowPrivate
   gboolean	dispose_has_run;
   GtkWidget	*main_vbox;
   GtkTable	*media_control;
-  GtkWidget	*buttons[];
-  GstMediaPlay  *mplay;
+  GtkWidget	*buttons[PITIVI_VIEWER_ALL_BUTTONS];
+  GtkVBox	*mplay;
 };
 
 /*
@@ -89,7 +105,8 @@ pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->media_control, FALSE, FALSE, 0); 
   for (count = 0; count < PITIVI_VIEWER_ALL_BUTTONS ;count++)
     {
-      buttons[count] = gtk_button_new_from_stock ("gtk-no", GTK_ICON_SIZE_BUTTON);
+      buttons[count] = gtk_button_new_from_stock (stockbuttons[count].stock_icon\
+						  , stockbuttons[count].stock_size);
       gtk_button_set_relief (GTK_BUTTON (buttons[count]), GTK_RELIEF_NONE);
     }
 }
