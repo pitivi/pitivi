@@ -287,42 +287,52 @@ void
 create_stream (gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
-  self->private->pipe = gst_pipeline_new ("pipeline");
-  g_assert (self->private->pipe != NULL);
+  GstElement	*audiosink;
 
-  self->private->bin_src = gst_element_factory_make ("videotestsrc", "video_source");
-  g_assert (self->private->bin_src != NULL);
+/*   self->private->pipe = gst_thread_new ("pipeline"); */
+/*   g_assert (self->private->pipe != NULL); */
+
+/*   self->private->bin_src = gst_element_factory_make ("videotestsrc", "video_source"); */
+/*   g_assert (self->private->bin_src != NULL); */
+
+  audiosink = gst_element_factory_make("alsasink", "audio-out");
+  
+  pitivi_project_set_audio_output(project, audiosink);
 
   self->private->sink = gst_element_factory_make ("xvimagesink", "video_display");
   g_assert (self->private->sink != NULL);
+  pitivi_project_set_video_output(project, self->private->sink);
 
-  gst_bin_add_many (GST_BIN (self->private->pipe),
-		    self->private->bin_src,
-		    self->private->sink,
-		    NULL);
+				  
 
-  if (!gst_element_link (self->private->bin_src, self->private->sink)) 
-    printf ("could not link elem\n");
+/*   gst_bin_add_many (GST_BIN (self->private->pipe), */
+/* 		    self->private->bin_src, */
+/* 		    self->private->sink, */
+/* 		    NULL); */
 
-  
-  gst_element_set_state (self->private->pipe, GST_STATE_PLAYING);
+/*   if (!gst_element_link (self->private->bin_src, self->private->sink))  */
+/*     printf ("could not link elem\n"); */
+
+  pitivi_project_blank_source(project);
+  gst_element_set_state (project->pipeline, GST_STATE_PLAYING);
   self->private->play_status = PLAY;
-
   return ;
 }
 
 gboolean	idle_func_video (gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
-
-  if ( gst_element_get_state (self->private->pipe) == GST_STATE_PLAYING ) {
-    gst_x_overlay_set_xwindow_id 
-      ( GST_X_OVERLAY ( self->private->sink ), 
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+  
+  if ( gst_element_get_state (project->pipeline) == GST_STATE_PLAYING ) {
+    gst_x_overlay_set_xwindow_id
+      ( GST_X_OVERLAY ( self->private->sink ),
 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
-    gst_bin_iterate (GST_BIN (self->private->pipe));
+    //gst_bin_iterate (GST_BIN (project->pipeline));
   }
-  return TRUE;
+  return FALSE;
 }
 
 /*
@@ -354,6 +364,10 @@ pitivi_viewerwindow_constructor (GType type,
     obj = G_OBJECT_CLASS (parent_class)->constructor (type, n_construct_properties,
 						      construct_properties);
   }
+
+  create_gui (obj);
+  create_stream (obj);
+  g_idle_add (idle_func_video, obj);  
 
   return obj;
 }
@@ -394,9 +408,6 @@ pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->timeline_max = 500;
   self->private->timeline_step = 1;
 
-  create_gui (self);
-  create_stream (self);
-  g_idle_add (idle_func_video, self);
 }
 
 static void

@@ -30,6 +30,8 @@
  * Potentially, include other headers on which this header depends.
  */
 
+#include <gst/gst.h>
+#include <gnl/gnltimeline.h>
 #include "pitivi-projectsettings.h"
 #include "pitivi-projectsourcelist.h"
 
@@ -57,6 +59,9 @@ struct _PitiviProject
   PitiviProjectSourceList	*sources;
   gchar				*filename;
 
+  GstElement			*pipeline;
+  GnlTimeline			*timeline;
+  
   /* private */
   PitiviProjectPrivate *private;
 };
@@ -79,7 +84,10 @@ PitiviProject	*pitivi_project_new_from_file (const gchar *filename);
 gboolean	pitivi_project_save_to_file(PitiviProject *project, const gchar *filename);
 void		pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self);
 xmlDocPtr	pitivi_project_save_thyself(PitiviProject *project);
-
-
+void		pitivi_project_set_sources(PitiviProject *project, PitiviProjectSourceList *sources);
+gboolean	pitivi_project_set_source_element(PitiviProject *project, GstElement *source);
+void		pitivi_project_blank_source(PitiviProject *project);
+void		pitivi_project_set_video_output(PitiviProject *project, GstElement *output);
+void		pitivi_project_set_audio_output(PitiviProject *project, GstElement *output);
 
 #endif

@@ -118,6 +118,11 @@ PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.4.0 gconf-2.0 gdk-2.0 >= 2.4.0 libxml-2.0, 
 AC_SUBST(GTK_LIBS)
 AC_SUBST(GTK_CFLAGS)
 
+dnl check for gnonlin
+PKG_CHECK_MODULES(GNL, gnonlin, ,exit)
+AC_SUBST(GNL_LIBS)
+AC_SUBST(GNL_CFLAGS)
+
 dnl i18n stuff and gettext stuff
 dnl AC_PROG_INTLTOOL([0.21])
 dnl GETTEXT_PACKAGE=gst-player

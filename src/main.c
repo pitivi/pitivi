@@ -37,6 +37,7 @@ main (int argc, char **argv)
  
   gtk_init (&argc, &argv);
   gst_init (&argc, &argv);
+  gnl_init (&argc, &argv);
  
 
   mainapp = pitivi_mainapp_new ();

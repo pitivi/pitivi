@@ -30,6 +30,21 @@ struct _PitiviProjectPrivate
 {
   /* instance private members */
   gboolean dispose_has_run;
+
+  GstElement	*videoout;
+  GstElement	*audioout;
+  GstElement	*videoqueue;
+  GstElement	*audioqueue;
+
+  GstElement	*videoblank;
+  GstElement	*audioblank;
+  gboolean	vblankconn;
+  gboolean	ablankconn;
+
+  GstElement	*vsinkthread;
+  GstElement	*asinkthread;
+  gboolean	vst, ast;	// TRUE if the *sinkthread is in the pipeline
+  GstElement	*source;
 };
 
 /*
@@ -222,6 +237,133 @@ pitivi_project_save_to_file(PitiviProject *project, const gchar *filename)
   return TRUE;
 }
 
+
+/*
+  pitivi_project_set_source_element
+
+  Sets a GstElement as the source of the project's pipeline
+  The element's pad must be named accordingly:
+  "vsrc" for the video source
+  "asrc" for the audio source
+
+  Returns TRUE if the source was correctly added
+*/
+
+gboolean
+pitivi_project_set_source_element(PitiviProject *project, GstElement *source)
+{
+  
+  /* Remove previous source */
+  if (project->private->source) {
+    gst_bin_remove(GST_BIN(project->pipeline), project->private->source);
+    project->private->source = NULL;
+  } else if (project->private->vblankconn) {
+    /* disconnect and remove blankvideo conn */
+    gst_element_unlink(project->private->videoblank, project->private->videoqueue);
+    gst_bin_remove(GST_BIN(project->pipeline), project->private->videoblank);
+    project->private->vblankconn = FALSE;
+  }
+
+  /* add source to pipeline, connect vsrc to vsinkthread and asrc to asinkthread*/
+  gst_bin_add(GST_BIN(project->pipeline), source);
+  project->private->source = source;
+
+  if (gst_element_get_pad(source, "vsrc")) {
+    if (!project->private->vst)
+      gst_bin_add(GST_BIN(project->pipeline), project->private->vsinkthread);
+    project->private->vst = TRUE;
+    gst_element_link_pads(source, "vsrc", project->private->videoqueue, "sink");
+  } else if (project->private->vst) {
+    gst_bin_remove(GST_BIN(project->pipeline), project->private->vsinkthread);
+    project->private->vst = FALSE;
+  }
+
+  if (gst_element_get_pad(source, "asrc")) {
+    if (!project->private->ast)
+      gst_bin_add(GST_BIN(project->pipeline), project->private->asinkthread);
+    project->private->ast = TRUE;
+    gst_element_link_pads(source, "asrc", project->private->audioqueue, "sink");
+  } else if (project->private->ast) {
+    gst_bin_remove(GST_BIN(project->pipeline), project->private->asinkthread);
+    project->private->ast = FALSE;
+  }
+
+  return TRUE;
+}
+
+/*
+  pitivi_project_blank_source
+
+  If there's a source, removes it and Sets the blank sources 
+  for the project's pipeline
+*/
+
+void
+pitivi_project_blank_source(PitiviProject *project)
+{
+  
+  /* take off the source */
+  if (project->private->source) {
+    g_printf("removing source\n");
+    gst_bin_remove(GST_BIN(project->pipeline), project->private->source);
+    project->private->source = NULL;
+  }
+  if (!project->private->vst) {
+    g_printf("adding vsinkthread to pipeline\n");
+    gst_bin_add(GST_BIN(project->pipeline),
+		project->private->vsinkthread);
+    project->private->vst = TRUE;
+  }
+  if (project->private->ast) {
+    g_printf("removing asinkthread to pipeline\n");
+    gst_bin_remove(GST_BIN(project->pipeline),
+		   project->private->asinkthread);
+    project->private->ast = FALSE;
+  }
+  if (!project->private->vblankconn) {
+    g_printf("adding videoblank to pipeline and connecting it to vsinkthread\n");
+    gst_bin_add(GST_BIN(project->pipeline),
+		project->private->videoblank);
+    gst_element_link(project->private->videoblank, project->private->videoqueue);
+    project->private->vblankconn = TRUE;
+  }
+}
+
+void
+pitivi_project_set_video_output(PitiviProject *project, GstElement *output) 
+{
+  /* link queue-output, add both to thread */
+
+  project->private->videoqueue = gst_element_factory_make("queue", "queue");
+  project->private->videoout = output;
+  gst_element_link(project->private->videoqueue, output);
+  gst_bin_add_many(GST_BIN(project->private->vsinkthread),
+		   project->private->videoqueue,
+		   project->private->videoout,
+		   NULL);
+}
+
+void
+pitivi_project_set_audio_output(PitiviProject *project, GstElement *output) 
+{
+  /* link queue-output, add both to thread */
+
+  project->private->audioqueue = gst_element_factory_make("queue", "queue");
+  project->private->audioout = output;
+  gst_element_link(project->private->audioqueue, output);
+  gst_bin_add_many(GST_BIN(project->private->asinkthread), 
+		   project->private->audioqueue,
+		   project->private->audioout,
+		   NULL);
+}
+
+void
+pitivi_project_set_sources(PitiviProject *project, PitiviProjectSourceList *sources)
+{
+  project->sources = sources;
+
+}
+
 static GObject *
 pitivi_project_constructor (GType type,
 			    guint n_construct_properties,
@@ -247,6 +389,8 @@ static void
 pitivi_project_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviProject *self = (PitiviProject *) instance;
+  GstElement	*aq, *vq;
+  GstPad	*apad, *vpad;
 
   self->private = g_new0 (PitiviProjectPrivate, 1);
 
@@ -261,6 +405,21 @@ pitivi_project_instance_init (GTypeInstance * instance, gpointer g_class)
   self->settings = NULL;
   self->sources = NULL; 
   self->filename = NULL;
+
+  self->pipeline = gst_thread_new("project-pipeline");
+  gst_element_set_state(self->pipeline, GST_STATE_READY);
+
+  self->timeline = gnl_timeline_new("project-timeline");
+
+  self->private->videoblank = gst_element_factory_make("videotestsrc", "videoblank");
+  //self->private->audioblank = gst_element_factory_make("silence", "audioblank");
+
+  self->private->vsinkthread = gst_thread_new("vsinkthread");
+  self->private->asinkthread = gst_thread_new("asinkthread");
+
+  self->private->vst = FALSE;
+  self->private->ast = FALSE;
+
 }
 
 static void

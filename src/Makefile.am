@@ -42,8 +42,8 @@ pitivi_SOURCES		= \
 # our CFLAGS and LDFLAGS used for compiling and linking
 # make sure you prefix these with the name of your binary
 
-pitivi_CFLAGS  = $(GTK_CFLAGS) $(GLIB2_CFLAGS) $(GST_CFLAGS)
-pitivi_LDFLAGS = $(GTK_LIBS) $(GLIB2_LIBS) $(GST_LIBS)
+pitivi_CFLAGS  = $(GTK_CFLAGS) $(GLIB2_CFLAGS) $(GST_CFLAGS) $(GNL_CFLAGS)
+pitivi_LDFLAGS = $(GTK_LIBS) $(GLIB2_LIBS) $(GST_LIBS) $(GNL_LIBS)
 
 LEX_OUTPUT_ROOT	= lex.$*
 YFLAGS		= -d -p request_lex

@@ -1,3 +1,14 @@
+2004-07-03    <bilboed@localhost>
+
+	* src/pitivi-project.c (pitivi_project_set_source_element) 
+	(pitivi_project_blank_source, pitivi_project_set_video_output) 
+	(pitivi_project_set_audio_output):
+	Functions to properly modify the project's pipeline
+
+2004-07-02    <bilboed@localhost>
+
+	* src/pitivi-project.h (struct _PitiviProject): Added pipeline and timeline property
+
 2004-07-01    <bilboed@localhost>
 
 	* configure.ac: Updated minimum gstreamer version to 0.8.2
