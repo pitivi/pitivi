@@ -210,9 +210,9 @@ static GtkActionEntry recent_entry[]= {
 };
 
 static GtkToggleActionEntry windows_entries[] ={
-  { "EffectWindows", PITIVI_STOCK_TOOLS, "E_ffects", "<control><alt>E", "Toggle the effects window", G_CALLBACK (pitivi_callb_menufile_effectswindow_toggle), TRUE},
-  { "SourceListWindows",PITIVI_STOCK_TOOLS, "S_ourceList", "<control><alt>L", "Toggle the source list window", G_CALLBACK (pitivi_callb_menufile_sourcelistwindow_toggle), TRUE},
-  { "ViewerWindows", PITIVI_STOCK_TOOLS, "V_iewer", "<control><alt>V", "Toggle the viewer window", G_CALLBACK (pitivi_callb_menufile_viewerwindow_toggle), TRUE},
+  { "EffectWindows", PITIVI_STOCK_TOOLS, "E_ffects", "<Ctrl><Alt>E", "Toggle the effects window", G_CALLBACK (pitivi_callb_menufile_effectswindow_toggle), TRUE},
+  { "SourceListWindows",PITIVI_STOCK_TOOLS, "S_ourceList", "<Ctrl><Alt>F", "Toggle the source list window", G_CALLBACK (pitivi_callb_menufile_sourcelistwindow_toggle), TRUE},
+  { "ViewerWindows", PITIVI_STOCK_TOOLS, "V_iewer", "<Ctrl><alt>V", "Toggle the viewer window", G_CALLBACK (pitivi_callb_menufile_viewerwindow_toggle), TRUE},
 };
 
 
@@ -275,18 +275,20 @@ create_timeline_menu (PitiviTimelineWindow *self)
   if (filemenu)
     {
       menumgr = pitivi_menu_new (GTK_WIDGET (self), filemenu);
+      gtk_window_add_accel_group (GTK_WINDOW (self), menumgr->accel_group);
       for (pa = 0, pv = 0, count = 0; count < EA_LAST_ACTION; count++)
 	if (self->actions_group[count])
-	  gtk_ui_manager_insert_action_group (menumgr->public->ui, self->actions_group[count], 0);
+	  gtk_ui_manager_insert_action_group (menumgr->ui, self->actions_group[count], 0);
   
-      PITIVI_MENU_GET_CLASS(menumgr)->public->configure (menumgr);
+      PITIVI_MENU_GET_CLASS(menumgr)->configure (menumgr);
     
       // Menu Docking
   
-      gtk_box_pack_start (GTK_BOX (self->private->menu_dock), menumgr->public->menu,
+      gtk_box_pack_start (GTK_BOX (self->private->menu_dock), menumgr->menu,
 			  FALSE, TRUE, 0);
     }
 }
+
 
 GtkAction *
 pitivi_timelinewindow_get_action_by_idx_name (PitiviTimelineWindow *self, int idx, gchar *name)
@@ -294,13 +296,17 @@ pitivi_timelinewindow_get_action_by_idx_name (PitiviTimelineWindow *self, int id
   GtkAction *action = gtk_action_group_get_action  (self->actions_group[idx], name);
   return action; 
 }
+
+
 void
 pitivi_timelinewindow_file_set_action (PitiviTimelineWindow *self, gchar *name, gboolean status)
 {
   GtkAction *action = pitivi_timelinewindow_get_action_by_idx_name (self, (int)EA_DEFAULT_FILE, name );
   g_object_set(G_OBJECT(action),
 	       "sensitive", status, NULL);
+
 }
+
 
 void
 pitivi_timelinewindow_windows_set_action (PitiviTimelineWindow *self, gchar *name, gboolean status)
@@ -308,6 +314,17 @@ pitivi_timelinewindow_windows_set_action (PitiviTimelineWindow *self, gchar *nam
   GtkAction *action = pitivi_timelinewindow_get_action_by_idx_name (self, (int)EA_WINDOWMENU_FILE, name );
   gtk_toggle_action_set_active (((GtkToggleAction *)action), status);
 }
+
+gboolean
+pitivi_timelinewindow_windows_get_action (PitiviTimelineWindow *self, gchar *name)
+{
+  gboolean status;
+
+  GtkAction *action = pitivi_timelinewindow_get_action_by_idx_name (self, (int)EA_WINDOWMENU_FILE, name );
+  status = gtk_toggle_action_get_active ((GtkToggleAction *)action);
+  return status;
+}
+
 
 void
 unit_combobox_cb(GtkWidget *cbox, gpointer data)
@@ -660,7 +677,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   /* Key events */
   g_signal_connect (GTK_WIDGET (self), "key_release_event",
 		    G_CALLBACK (pitivi_timelinewindow_callb_key_press), NULL);
-
+  
   self->nb_added[0] = 0;
 }
 
@@ -818,9 +835,9 @@ static void
 pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
-/*   GtkWidgetClass *gtkwidget_class = GTK_WIDGET_CLASS (g_class); */
+  /*   GtkWidgetClass *gtkwidget_class = GTK_WIDGET_CLASS (g_class); */
   PitiviTimelineWindowClass *klass = PITIVI_TIMELINEWINDOW_CLASS (g_class);
-
+  
   parent_class = g_type_class_peek_parent (g_class);
     
   gobject_class->constructor = pitivi_timelinewindow_constructor;
@@ -934,16 +951,16 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 		  g_cclosure_marshal_VOID__POINTER,
 		  G_TYPE_NONE, 1, G_TYPE_POINTER);
     
-  klass->activate = pitivi_timelinewindow_activate;
-  klass->deactivate = pitivi_timelinewindow_deactivate;
-  klass->deselect = pitivi_timelinewindow_deselect;
-  klass->delete = pitivi_timelinewindow_delete_sf;
-  klass->drag_source_begin = pitivi_timelinewindow_drag_source_begin;
-  klass->drag_source_end = pitivi_timelinewindow_drag_source_end;
-  klass->dbk_source = pitivi_timelinewindow_dblclick;
-  klass->selected_source = pitivi_timelinewindow_selected_source;
-  klass->zoom_changed = pitivi_timelinewindow_zoom_changed;
-  klass->copy = pitivi_timelinewindow_copy;
+    klass->activate = pitivi_timelinewindow_activate;
+    klass->deactivate = pitivi_timelinewindow_deactivate;
+    klass->deselect = pitivi_timelinewindow_deselect;
+    klass->delete = pitivi_timelinewindow_delete_sf;
+    klass->drag_source_begin = pitivi_timelinewindow_drag_source_begin;
+    klass->drag_source_end = pitivi_timelinewindow_drag_source_end;
+    klass->dbk_source = pitivi_timelinewindow_dblclick;
+    klass->selected_source = pitivi_timelinewindow_selected_source;
+    klass->zoom_changed = pitivi_timelinewindow_zoom_changed;
+    klass->copy = pitivi_timelinewindow_copy;
 }
 
 GType
@@ -1425,69 +1442,6 @@ pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow *self, GdkEventKey* 
       break;
     case GDK_Pause:
       g_signal_emit_by_name (self->private->controller, "pause", self);
-      break;
-    case GDK_n://new
-      if (event->state & GDK_CONTROL_MASK)
-	pitivi_callb_menufile_new(GTK_ACTION(data), self);
-      break;
-    case GDK_o://open
-      if (event->state & GDK_CONTROL_MASK)
-	pitivi_callb_menufile_open(GTK_ACTION(data), self);
-      break;
-    case GDK_s://save
-      if (event->state & GDK_CONTROL_MASK)
-	{
-	  if (event->state & GDK_MOD1_MASK)
-	    pitivi_callb_menufile_saveas(GTK_ACTION(data), self);
-	  else
-	    pitivi_callb_menufile_save(GTK_ACTION(data), self);
-	}
-      break;
-    case GDK_p://pref
-       if (event->state & GDK_CONTROL_MASK)
-	 if (event->state & GDK_MOD1_MASK)
-	   pitivi_callb_menufile_settings(GTK_ACTION(data), self);
-       break;
-    case GDK_q://quit
-      if (event->state & GDK_CONTROL_MASK)
-	pitivi_callb_menufile_exit (GTK_ACTION(data), self );
-      break;
-    case GDK_e://effect
-      if (event->state & GDK_CONTROL_MASK)
-	if (event->state & GDK_MOD1_MASK)
-	  g_print("key pressed : Ctrl-Alt-e\n");
-	  //pitivi_callb_menufile_effectswindow_toggle(GTK_ACTION(data), self);
-      break;
-    case GDK_l://srclist
-      if (event->state & GDK_CONTROL_MASK)
-	if (event->state & GDK_MOD1_MASK)
-	  g_print("key pressed : Ctrl-Alt-l\n");
-	  //pitivi_callb_menufile_sourcelistwindow_toggle(GTK_ACTION(data), self);
-      break;
-    case GDK_v://viewer
-      if (event->state & GDK_CONTROL_MASK)
-	if (event->state & GDK_MOD1_MASK)
-	  g_print("key pressed : Ctrl-Alt-v\n");
-	  //pitivi_callb_menufile_viewerwindow_toggle(GTK_ACTION(data), self);
-      break;
-    case GDK_i://index
-      if (event->state & GDK_CONTROL_MASK)
-	if (event->state & GDK_MOD1_MASK)
-	  g_print("key pressed : Ctrl-Alt-i\n");
-      break;
-    case GDK_f://find
-      if (event->state & GDK_CONTROL_MASK)
-	g_print("key pressed : Ctrl-f\n");
-      break;
-    case GDK_c://content
-      if (event->state & GDK_CONTROL_MASK)
-	if (event->state & GDK_MOD1_MASK)
-	  g_print("key pressed : Ctrl-Alt-c\n\n");
-      break;
-    case GDK_a://about
-      if (event->state & GDK_CONTROL_MASK)
-	if (event->state & GDK_MOD1_MASK)
-	  pitivi_callb_menuhelp_about(GTK_ACTION(data), NULL);
       break;
     }
   return TRUE;

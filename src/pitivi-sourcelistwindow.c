@@ -648,8 +648,10 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
 					   sf->infoaudio,
 					   sf->length,
 					   sf->pipeline);
+  
+  name = g_locale_to_utf8 (name, -1, NULL, NULL, NULL);
   gtk_list_store_set(liststore,
-		     &pIter, 
+		     &pIter,
 		     BMP_LISTCOLUMN1,  pixbufa,
 		     TEXT_LISTCOLUMN2, name,
 		     TEXT_LISTCOLUMN3, sf->mediatype,

@@ -127,9 +127,7 @@ pitivi_splashscreenwindow_constructor (GType type,
 
   /* do stuff. */
   self = (PitiviSplashScreenWindow *) obj;
-
-  gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
-  //gtk_window_set_default_size (GTK_WINDOW(self), 200, 200);
+  gtk_window_set_type_hint (GTK_WINDOW (self), GDK_WINDOW_TYPE_HINT_SPLASHSCREEN);
   x = (gdk_screen_width () / 2);
   y = (gdk_screen_height () / 3);
   gtk_window_move (GTK_WINDOW (self), x,  y);

@@ -54,38 +54,24 @@ typedef struct _PitiviMenuPrivate PitiviMenuPrivate;
 typedef struct _PitiviMenuPublic PitiviMenuPublic;
 typedef struct _PitiviMenuClassPublic PitiviMenuClassPublic; 
 
-struct _PitiviMenuPublic
-{
-  GtkWidget *menu;
-  GtkUIManager *ui;
-};
-
 struct _PitiviMenu
 {
   GtkWidget parent;
   
   /* instance public members */
-  PitiviMenuPublic *public;
+  GtkWidget	   *menu;
+  GtkUIManager	   *ui;
+  GtkAccelGroup    *accel_group;
   
   /* private */
   PitiviMenuPrivate *private;
 };
 
-
-struct _PitiviMenuClassPublic
-{
-  void (*configure) (PitiviMenu *self);
-};
-
-
 struct _PitiviMenuClass
 {
   GtkWidgetClass parent;
   /* class members */
-
-  /* public */
-  PitiviMenuClassPublic *public;
-  /* private */
+  void (*configure) (PitiviMenu *self);
 };
 
 /* used by PITIVI_MENU_TYPE */
