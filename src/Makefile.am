@@ -29,9 +29,6 @@ pitivi_SOURCES		= \
 	pitivi-newprojectwindow.c  \
 	pitivi-codecconfwindow.c  \
 	pitivi-viewerwindow.c \
-	pitivi-viewerplayer.c \
-	pitivi-viewercontroller.c \
-	pitivi-viewervolume.c \
 	pitivi-projectsettings.c \
 	pitivi-projectsettingswindow.c \
 	pitivi-stockicons.c \

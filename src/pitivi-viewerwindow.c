@@ -25,123 +25,270 @@
 
 #include "pitivi.h"
 #include "pitivi-viewerwindow.h"
+
+#include <glib.h>
+#include <gtk/gtk.h>
+#include <gst/gst.h>
+#include <gdk/gdkx.h>
 #include <gst/xoverlay/xoverlay.h>
 #include <gst/play/play.h>
-#include <gdk/gdkx.h>
-#include "pitivi-stockicons.h"
-#include "pitivi-viewercontroller.h"
 
-static GtkWindowClass *parent_class = NULL;
+static     PitiviProjectWindowsClass *parent_class;
+
+enum {
+  PLAY,
+  PAUSE,
+  STOP
+};
 
 struct _PitiviViewerWindowPrivate
 {
-  /* instance private members */
-  gboolean			dispose_has_run;
-  GtkWidget			*main_vbox;
-  PitiviViewerController	*media_controller;
-  GdkPixbuf			*logo;
-  GtkWidget			*mixer;
-  GtkWidget			*statusbar;
-};
+  gboolean	dispose_has_run;
 
+  /* instance private members */
+
+  gchar		*location;
+  gboolean	play_status;
+  
+  GstElement	*pipe;
+  GstElement	*bin_src;
+  GstElement	*sink;
+  GstElement	*spider;
+  
+  GtkWidget	*main_vbox;
+  GtkWidget	*toolbar; 
+  GtkWidget	*button_play;
+  GtkWidget	*button_stop;
+  GtkWidget	*button_backward;
+  GtkWidget	*button_forward;
+  GtkWidget	*video_area;
+
+};
 
 /*
  * forward definitions
  */
+
+void	video_play(GtkWidget *widget, gpointer data)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+
+  if (self->private->play_status == PLAY) {
+    g_print ("[CallBack]:video_pause\n");
+    self->private->play_status = PAUSE;
+  } else if (self->private->play_status == PAUSE) {
+    g_print ("[CallBack]:video_play\n");
+    self->private->play_status = PLAY;
+  } else if (self->private->play_status == STOP) {
+    g_print ("[CallBack]:video_play\n");
+    self->private->play_status = PLAY;
+  }
+  return ;
+}
+
+void	video_stop(GtkWidget *widget, gpointer data)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+
+  g_print ("[CallBack]:video_stop\n");
+  self->private->play_status = STOP;
+  return ;
+}
+
+void	video_backward(GtkWidget *widget, gpointer data)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+
+  g_print ("[CallBack]:video_backward\n");
+  return ;
+}
+
+void	video_forward(GtkWidget *widget, gpointer data)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+
+  g_print ("[CallBack]:video_forward\n");
+  return ;
+}
+
+GtkWidget *
+get_image (gpointer data, char **im_name)
+{
+  GtkWidget	* win;
+  GdkColormap	*colormap;
+  GdkBitmap	*mask;
+  GdkPixmap	*pixmap;
+  GtkWidget	*pixmapw;
+
+  win = (GtkWidget *) data;
+  colormap = gtk_widget_get_colormap (win);
+  pixmap = gdk_pixmap_colormap_create_from_xpm_d (win->window, 
+						  colormap, 
+						  &mask, 
+						  NULL,
+						  im_name);
+  pixmapw = gtk_image_new_from_pixmap (pixmap, mask);
+
+  return pixmapw;
+}  
+
+void
+create_gui (gpointer data)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+  GtkWidget	*image;
+
+  // main Vbox
+  self->private->main_vbox = gtk_vbox_new (FALSE, FALSE);
+  gtk_container_add (GTK_CONTAINER (self), self->private->main_vbox);
+
+  // Create Video Display (Drawing Area)
+  self->private->video_area = gtk_drawing_area_new ();
+  //gtk_widget_set_size_request (self->private->video_area, 320, 240);
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->video_area, TRUE, TRUE, 0);
+
+  // Create hbox for toolbar
+  self->private->toolbar = gtk_hbox_new (FALSE, FALSE);
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->toolbar, FALSE, TRUE, 0);
+  
+  // Buttons for Toolbar
+
+  // Button Backward
+  image = get_image (self, backward_xpm);
+  self->private->button_backward = gtk_button_new ();
+  gtk_container_add (GTK_CONTAINER (self->private->button_backward), image);
+  gtk_widget_set_size_request (GTK_WIDGET (self->private->button_backward), 30, 17);
+  gtk_signal_connect (GTK_OBJECT (self->private->button_backward), "pressed", 
+                      GTK_SIGNAL_FUNC (video_backward), self);
+  gtk_box_pack_start (GTK_BOX (self->private->toolbar), 
+		      self->private->button_backward, FALSE, FALSE, 0);
+
+  // Button Play
+  image = get_image (self, play_xpm);
+  self->private->button_play = gtk_button_new ();
+  gtk_container_add (GTK_CONTAINER (self->private->button_play), image);
+  gtk_signal_connect (GTK_OBJECT (self->private->button_play), "clicked", 
+                      GTK_SIGNAL_FUNC (video_play), self);
+  gtk_box_pack_start (GTK_BOX (self->private->toolbar), self->private->button_play, FALSE, FALSE, 0);
+  gtk_widget_set_size_request (self->private->button_play, 60, 17);
+ 
+  // Button Forward
+  image = get_image (self, forward_xpm);
+  self->private->button_forward = gtk_button_new ();
+  gtk_container_add (GTK_CONTAINER (self->private->button_forward), image);
+  gtk_widget_set_size_request (GTK_WIDGET (self->private->button_forward), 30, 17);
+  gtk_signal_connect (GTK_OBJECT (self->private->button_forward), "pressed", 
+                      GTK_SIGNAL_FUNC (video_forward), self);
+  gtk_box_pack_start (GTK_BOX (self->private->toolbar),
+		      self->private->button_forward, FALSE, TRUE, 0);
+
+  // Button Stop
+  image = get_image (self, stop_xpm);
+  self->private->button_stop = gtk_button_new ();
+  gtk_container_add (GTK_CONTAINER (self->private->button_stop), image);
+  gtk_widget_set_size_request (GTK_WIDGET (self->private->button_stop), 30, 17);
+  gtk_signal_connect (GTK_OBJECT (self->private->button_stop), "clicked", 
+                      GTK_SIGNAL_FUNC (video_stop), self);
+  gtk_box_pack_start (GTK_BOX (self->private->toolbar),
+		      self->private->button_stop, FALSE, TRUE, 0);
+ 
+  return;
+}
+
+void
+create_stream (gpointer data)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+
+  self->private->pipe = gst_pipeline_new ("pipeline");
+  g_assert (self->private->pipe != NULL);
+
+  self->private->bin_src = gst_element_factory_make ("videotestsrc", "video_source");
+  g_assert (self->private->bin_src != NULL);
+
+  self->private->sink = gst_element_factory_make ("xvimagesink", "video_display");
+  g_assert (self->private->sink != NULL);
+
+  gst_bin_add_many (GST_BIN (self->private->pipe),
+		    self->private->bin_src,
+		    self->private->sink,
+		    NULL);
+
+  if (!gst_element_link (self->private->bin_src, self->private->sink)) 
+    printf ("could not link elem\n");
+
+  
+  gst_element_set_state (self->private->pipe, GST_STATE_PLAYING);
+  self->private->play_status = PLAY;
+
+  return ;
+}
+
+gboolean	idle_func_video (gpointer data)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+
+  if ( gst_element_get_state (self->private->pipe) == GST_STATE_PLAYING ) {
+    gst_x_overlay_set_xwindow_id 
+      ( GST_X_OVERLAY ( self->private->sink ), 
+	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
+    gst_bin_iterate (GST_BIN (self->private->pipe));
+  }
+  return TRUE;
+}
 
 /*
  * Insert "added-value" functions here
  */
 
 PitiviViewerWindow *
-pitivi_viewerwindow_new(PitiviMainApp *mainapp)
+pitivi_viewerwindow_new(PitiviMainApp *mainapp, PitiviProject *project)
 {
-  PitiviViewerWindow *viewerwindow;
+  PitiviViewerWindow	*viewerwindow;
 
-  viewerwindow = (PitiviViewerWindow *) g_object_new(PITIVI_VIEWERWINDOW_TYPE,
+  //g_print ("coucou:new\n");
+  viewerwindow = (PitiviViewerWindow *) g_object_new(PITIVI_VIEWERWINDOW_TYPE, 
 						     "mainapp", mainapp,
-						     NULL);
+						     "project", project, NULL);
   g_assert(viewerwindow != NULL);
   return viewerwindow;
 }
 
-
-gboolean	idle_func (gpointer data)
+static GObject *
+pitivi_viewerwindow_constructor (GType type,
+				 guint n_construct_properties,
+				 GObjectConstructParam * construct_properties)
 {
-  
-  PitiviViewerWindow *x = (PitiviViewerWindow *) data;
+  //g_print ("coucou:constructor\n");
 
-  if ( x->elm[PIPELINE_ELEMENT] )
-    if ( gst_element_get_state (x->elm[0]) == GST_STATE_PLAYING )
-      {
-	gst_x_overlay_set_xwindow_id ( GST_X_OVERLAY ( x->elm[SINK_ELEMENT] ), 
-				       GDK_WINDOW_XWINDOW ( x->video_area->window ) );
-	gst_bin_iterate (GST_BIN (x->elm[PIPELINE_ELEMENT]));
-      }
-  
-  return TRUE;
+  GObject *obj;
+  {
+    obj = G_OBJECT_CLASS (parent_class)->constructor (type, n_construct_properties,
+						      construct_properties);
+  }
+
+  return obj;
 }
-
-
-void		meof (GstElement *elm)
-{
-  gst_element_set_state ( GST_ELEMENT (elm), GST_STATE_NULL );
-  g_print ("have eof, quitting\n");
-  g_object_unref (G_OBJECT (elm));
-  elm = 0;
-}
-
-
-gboolean  launching_gst_video (PitiviViewerWindow *self )
-{
-
-  self->elm[PIPELINE_ELEMENT]=gst_pipeline_new("pipeline");
-  g_return_val_if_fail ( self->elm[PIPELINE_ELEMENT] != NULL, -1);
-  
-  self->elm[SRC_ELEMENT] = gst_element_factory_make("videotestsrc", "src");
-  g_return_val_if_fail ( self->elm[SRC_ELEMENT] != NULL, -1);
-
-  self->elm[SINK_ELEMENT] = gst_element_factory_make("xvimagesink", "sink");
-  g_return_val_if_fail ( self->elm[SINK_ELEMENT] != NULL, -1);
-  
-  gst_bin_add_many (GST_BIN (self->elm[PIPELINE_ELEMENT])\
-		    , self->elm[1], self->elm[SINK_ELEMENT]\
-		    , NULL);
-  g_signal_connect (G_OBJECT (self->elm[SRC_ELEMENT]), "eos",
-		    G_CALLBACK (meof), self->elm[PIPELINE_ELEMENT]);
-  gst_element_link (self->elm[SRC_ELEMENT], self->elm[SINK_ELEMENT]);
-  gst_element_set_state ( GST_ELEMENT (self->elm[PIPELINE_ELEMENT])\
-			  , GST_STATE_PLAYING );
-  g_idle_add ( idle_func, self );
-  
-  return (TRUE);
-}
-
 
 static void
 pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) instance;
-  GtkWidget  *separator;
-  int	     count;
-    
+
   self->private = g_new0(PitiviViewerWindowPrivate, 1);
-  gtk_window_set_resizable (GTK_WINDOW (self), FALSE);
+  
+  /* initialize all public and private members to reasonable default values. */ 
+  
   self->private->dispose_has_run = FALSE;
-  gtk_widget_show (GTK_WIDGET (self));
- 
-  // Create Video Display (Drawing Area)
+
+  gtk_window_set_default_size(GTK_WINDOW(self), 300, 200);
   
-  self->video_area = gtk_drawing_area_new ();
-  gtk_widget_set_events (self->video_area, GDK_BUTTON_PRESS_MASK);
-  gtk_widget_set_size_request (self->video_area, 400, 300);
-  gtk_widget_show (GTK_WIDGET (self->video_area));
-  gtk_container_add (GTK_CONTAINER(self), GTK_WIDGET (self->video_area));
+  /* initialize all public and private members to reasonable default values. */ 
   
-  PitiviViewerController *controller = pitivi_viewercontroller_new (self);
-  self->private->media_controller = controller;
-  gtk_window_move (GTK_WINDOW (self->private->media_controller), 250, 350);
-  launching_gst_video ( self );
+  self->private->location = "";
+  create_gui (self);
+  create_stream (self);
+  g_idle_add (idle_func_video, self);
 }
 
 static void
@@ -155,6 +302,11 @@ pitivi_viewerwindow_dispose (GObject *object)
   
   /* Make sure dispose does not run twice. */
   self->private->dispose_has_run = TRUE;
+
+	
+  g_idle_remove_by_data (self);
+
+
   /* 
    * In dispose, you are supposed to free all types referenced from this 
    * object which might themselves hold a reference to self. Generally, 
@@ -229,6 +381,7 @@ pitivi_viewerwindow_class_init (gpointer g_class, gpointer g_class_data)
 
   parent_class = g_type_class_peek_parent (g_class);
 
+  gobject_class->constructor = pitivi_viewerwindow_constructor;
   gobject_class->dispose = pitivi_viewerwindow_dispose;
   gobject_class->finalize = pitivi_viewerwindow_finalize;
 
@@ -266,7 +419,7 @@ pitivi_viewerwindow_get_type (void)
 	0,			/* n_preallocs */
 	pitivi_viewerwindow_instance_init	/* instance_init */
       };
-      type = g_type_register_static (PITIVI_WINDOWS_TYPE,
+      type = g_type_register_static (PITIVI_PROJECTWINDOWS_TYPE,
 				     "PitiviViewerWindowType", &info, 0);
     }
 

@@ -29,10 +29,13 @@
 /*
  * Potentially, include other headers on which this header depends.
  */
-
-#include <gst/gst.h>
-#include <gtk/gtk.h>
 #include "pitivi-projectwindows.h"
+
+#include "../pixmaps/stop.xpm"
+#include "../pixmaps/play.xpm"
+#include "../pixmaps/pause.xpm"
+#include "../pixmaps/forward.xpm"
+#include "../pixmaps/backward.xpm"
 
 /*
  * Type macros.
@@ -45,38 +48,23 @@
 #define PITIVI_IS_VIEWERWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_VIEWERWINDOW_TYPE))
 #define PITIVI_VIEWERWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_VIEWERWINDOW_TYPE, PitiviViewerWindowClass))
 
-#define PITIVI_APP_LOGO_PATH "/root/pitivi/pixmaps/pitivi-logo.png"
-
 typedef struct _PitiviViewerWindow PitiviViewerWindow;
 typedef struct _PitiviViewerWindowClass PitiviViewerWindowClass;
 typedef struct _PitiviViewerWindowPrivate PitiviViewerWindowPrivate;
 
-
-enum PITIVI_GST_ELEMENT
-  {
-    PIPELINE_ELEMENT = 0,
-    SRC_ELEMENT,
-    SINK_ELEMENT,
-    ALL_ELEMENT
-  };
-
 struct _PitiviViewerWindow
 {
-  PitiviWindows parent;
+  PitiviProjectWindows parent;
 
   /* instance public members */
-  
-  GstElement	*elm[ALL_ELEMENT];
-  GtkWidget	*video_area;
-  
+
   /* private */
-  
   PitiviViewerWindowPrivate *private;
 };
 
 struct _PitiviViewerWindowClass
 {
-  PitiviWindowsClass parent;
+  PitiviProjectWindowsClass parent;
   /* class members */
 };
 
@@ -87,6 +75,6 @@ GType pitivi_viewerwindow_get_type (void);
  * Method definitions.
  */
 
-PitiviViewerWindow	*pitivi_viewerwindow_new(PitiviMainApp *mainapp);
+PitiviViewerWindow	*pitivi_viewerwindow_new();
 
 #endif
