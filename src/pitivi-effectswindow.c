@@ -145,20 +145,13 @@ pitivi_effectswindow_constructor (GType type,
   return obj;
 }
 
+
 static void
 pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviEffectsWindow *self = (PitiviEffectsWindow *) instance;
   self->private = g_new0(PitiviEffectsWindowPrivate, 1);
-
-  /* initialize all public and private members to reasonable default values. */ 
-  
   self->private->dispose_has_run = FALSE;
-  
-  /* If you need specific consruction properties to complete initialization, 
-   * delay initialization completion until the property is set. 
-   */
- 
 }
 
 void
@@ -202,8 +195,10 @@ pitivi_effectstree_exp (GtkTreeView *treeview,
   pitivi_effects_action_on_colexp (treeview, TreeIter, PITIVI_STOCK_EFFECT_CAT_OPEN, data);
 }
 
+/* Insertion on Node */
+
 void
-pitivi_effectstree_insert_child (PitiviEffectsTree *tree_effect,
+pitivi_effectstree_insert_node (PitiviEffectsTree *tree_effect,
 				 GtkTreeIter *child,
 				 GtkTreeIter *parent,
 				 const gchar *name,
@@ -225,10 +220,10 @@ pitivi_effectstree_insert_child (PitiviEffectsTree *tree_effect,
 }
 
 PitiviSourceFile *
-pitivi_create_smpte (const gchar *name,
-		     const gchar *mediatype,
-		     GstElement *elm,
-		     GdkPixbuf *pixbuf)
+pitivi_create_effect_sourcefile (const gchar *name,
+				 const gchar *mediatype,
+				 GstElement *elm,
+				 GdkPixbuf *pixbuf)
 {
   PitiviSourceFile *se;
 
@@ -236,18 +231,19 @@ pitivi_create_smpte (const gchar *name,
   se->filename = g_strdup (name);
   se->thumbs_effect = pixbuf;
   se->mediatype = g_strdup (mediatype);
-  se->length = 0; /*((gint64)332671091277);*/
+  se->pipeline = elm;
+  se->length = 0LL;
   return se;
 }
 
 void
-pitivi_effectstree_insert_smpte (PitiviEffectsTree *tree_effect,
-				 GtkTreeIter *child,
-				 GtkTreeIter *parent,
-				 const gchar *name,
-				 const gchar *desc,
-				 gchar *icon,
-				 gpointer data)
+pitivi_effectstree_insert_effect (PitiviEffectsTree *tree_effect,
+				  GtkTreeIter *child,
+				  GtkTreeIter *parent,
+				  const gchar *name,
+				  const gchar *desc,
+				  gchar *icon,
+				  gpointer data)
 {
   GdkPixbuf *pixbuf;
   GdkPixbuf *thumb;
@@ -255,7 +251,7 @@ pitivi_effectstree_insert_smpte (PitiviEffectsTree *tree_effect,
 
   pixbuf = gtk_widget_render_icon(tree_effect->window, icon, GTK_ICON_SIZE_MENU, NULL);
   thumb = gtk_widget_render_icon(tree_effect->window, icon, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
-  se = pitivi_create_smpte (name, desc, (GstElement *)data, thumb);
+  se = pitivi_create_effect_sourcefile (name, desc, (GstElement *)data, thumb);
   gtk_tree_store_append (tree_effect->model, child, parent);
   gtk_tree_store_set(tree_effect->model, child,
 		     PITIVI_ICON_COLUMN, pixbuf,
@@ -319,15 +315,6 @@ pitivi_effectstree_selected_color (GtkTreeView *treeview, gpointer user_data)
     }
 }
 
-void
-pitivi_effectstree_cursor_move (GtkTreeView *treeview,
-				GtkMovementStep arg1, 
-				gint arg2, 
-				gpointer user_data)
-{
-  
-}
-
 
 /**************************************************************
  * Callbacks Signal Drag and Drop          		      *
@@ -368,20 +355,6 @@ pitivi_effectswindow_drag_data_get (GtkWidget          *widget,
 }
 
 static void
-pitivi_effectswindow_drag_end (GtkWidget          *widget,
-			       GdkDragContext     *context,
-			       gpointer		  user_data)
-{
-}
-
-static void
-pitivi_effectswindow_drag_data_delete (GtkWidget          *widget,
-				       GdkDragContext     *context,
-				       gpointer editor)
-{
-}
-
-static void
 pitivi_effectswindow_drag_begin (GtkWidget		*widget,
 				 GdkDragContext		*context,
 				 gpointer		user_data)
@@ -406,7 +379,7 @@ pitivi_effectswindow_drag_begin (GtkWidget		*widget,
 }
 
 /**************************************************************
- * Effects						      *
+ * Effects Insertion					      *
  *							      *
  *							      *
  **************************************************************/
@@ -424,7 +397,7 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
   GList *fx_video = NULL;
   
 
-  pitivi_effectstree_insert_child (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, NULL);
+  pitivi_effectstree_insert_node (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, NULL);
   /* On recupere la liste des effets video via la structure self */
   while (settingslist)
     {
@@ -432,9 +405,9 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
       settingslist = settingslist->next;
     }
   /* On creer deux sous categories */
-  pitivi_effectstree_insert_child (tree_effect, &video_iter[0], NULL,
+  pitivi_effectstree_insert_node (tree_effect, &video_iter[0], NULL,
 				   "Tv Effects", PITIVI_STOCK_EFFECT_CAT, NULL);
-  pitivi_effectstree_insert_child (tree_effect, &video_iter[1], NULL,
+  pitivi_effectstree_insert_node (tree_effect, &video_iter[1], NULL,
 				   "Video Effects", PITIVI_STOCK_EFFECT_CAT, NULL);
   /* On insere les elements video dans le tree pour le menu des effets */
   while (fx_video)
@@ -442,7 +415,6 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
       klass = gst_element_factory_get_klass (fx_video->data);
       effectname = gst_element_factory_get_longname (fx_video->data);
       desc = gst_element_factory_get_description (fx_video->data);
-      g_printf ("video :%s %s\n", effectname, desc);
       if (!strncmp (klass, "Filter/Effect/Video", 19))
 	{
 	  gchar *idx;
@@ -450,12 +422,12 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
 	  if ((idx = strstr (effectname, "TV")))
 	    {
 	      *idx = '\0';
-	      pitivi_effectstree_insert_child (tree_effect, child, &video_iter[0],
+	      pitivi_effectstree_insert_node (tree_effect, child, &video_iter[0],
 					       effectname, PITIVI_STOCK_EFFECT_TV, NULL);
 	    }
 	  else if ((idx = strstr (effectname, "ideo")))
 	    {
-	      pitivi_effectstree_insert_smpte (tree_effect, 
+	      pitivi_effectstree_insert_effect (tree_effect, 
 					       &video_iter[1],
 					       &tree_effect->treeiter,
 					       effectname + 6,
@@ -466,7 +438,7 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
 	  else
 	    {
 	      
-	      pitivi_effectstree_insert_smpte (tree_effect, 
+	      pitivi_effectstree_insert_effect (tree_effect, 
 					       child,
 					       &tree_effect->treeiter,
 					       effectname,
@@ -489,7 +461,7 @@ insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect,
   const gchar	*desc;
   GList *fx_audio = NULL;
 
-  pitivi_effectstree_insert_child (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, NULL);
+  pitivi_effectstree_insert_node (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, NULL);
   while ( settingslist )
     {
       fx_audio = g_list_append (fx_audio,  settingslist->data);
@@ -502,7 +474,7 @@ insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect,
       desc = gst_element_factory_get_description (fx_audio->data);
       if (!strncmp (klass, "Filter/Effect/Audio", 19))
 	{
-	  pitivi_effectstree_insert_smpte (tree_effect, 
+	  pitivi_effectstree_insert_effect (tree_effect, 
 					   child, 
 					   &tree_effect->treeiter,
 					   effectname,
@@ -527,6 +499,7 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
   GtkTreeIter Trans_iter[18];
 
   /* On recupere la liste des effets de transition via la structure self */
+
   while (settingslist)
     {
       fx_transition = g_list_append(fx_transition, settingslist->data);
@@ -539,24 +512,23 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
       effectname = gst_element_factory_get_longname (  fx_transition->data );
       desc = gst_element_factory_get_description (  fx_transition->data );
       if (strstr (effectname, "SMPTE"))
-	{
-	  g_printf ("transition :%s %s\n", effectname, desc);
-	  break;
-	}
+	break;
       fx_transition = fx_transition->next;
     }
 
   /* On creer 18 sous categories */
+  
   for (nb_tcat = 0; nb_tcat < PITIVI_LAST_WIPE; nb_tcat++)
     {
-      pitivi_effectstree_insert_child (tree_effect, &Trans_iter[nb_tcat], NULL,
+      pitivi_effectstree_insert_node (tree_effect, &Trans_iter[nb_tcat], NULL,
 				       transition_cat[nb_tcat], PITIVI_STOCK_EFFECT_CAT, NULL);
       for (nb = 0; nb < (sizeof (tab_category) / sizeof (PitiviTransProp)); nb++)
 	{
 	  /* On test les elements du tableau et on les insere dans les differentes categories */
+	  
 	  if (nb_tcat == tab_category[nb].id_categorie && tab_category[nb].name)
 	    {
-	      pitivi_effectstree_insert_smpte (tree_effect, 
+	      pitivi_effectstree_insert_effect (tree_effect, 
 					       child, 
 					       &Trans_iter[nb_tcat],
 					       tab_category[nb].name,
@@ -566,7 +538,8 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
 	    }
 	}
     }
-  pitivi_effectstree_insert_child (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, "toto");
+  
+  pitivi_effectstree_insert_node (tree_effect, &tree_effect->treeiter,  NULL,  "Simple Effects",  PITIVI_STOCK_EFFECT_CAT, "");
 }
 
 void
@@ -591,6 +564,7 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 					    -1);
   
   /* On check le type d'effet a inserer (video/audio/transition) */
+
   switch (eneffects)
     {
       GtkTreeIter child;
@@ -633,8 +607,6 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 		    (gpointer) tree_effect);
   g_signal_connect (tree_effect->treeview, "row-collapsed", G_CALLBACK(pitivi_effectstree_col),\
 		    (gpointer) tree_effect);
-  g_signal_connect (tree_effect->treeview, "move-cursor", G_CALLBACK(pitivi_effectstree_cursor_move),\
-		    (gpointer) tree_effect);
   gtk_tree_view_append_column(GTK_TREE_VIEW (tree_effect->treeview), pColumn);
   
   // Drag 'n Drop Activation
@@ -647,11 +619,16 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
   self = gtk_widget_get_toplevel (tree_effect->treeview);
   g_signal_connect (tree_effect->treeview, "drag_data_get",	      
 		    G_CALLBACK (pitivi_effectswindow_drag_data_get), self);
-  g_signal_connect (tree_effect->treeview, "drag_end",	      
-		    G_CALLBACK (pitivi_effectswindow_drag_end), self);
   g_signal_connect (tree_effect->treeview, "drag_begin",	      
 		    G_CALLBACK (pitivi_effectswindow_drag_begin), self);
 }
+
+/**************************************************************
+ * Window Effects Initialization			      *
+ * and Construction					      *
+ *							      *
+ **************************************************************/
+
 
 static void
 pitivi_effectswindow_dispose (GObject *object)
@@ -698,14 +675,7 @@ pitivi_effectswindow_set_property (GObject * object,
 
   switch (property_id)
     {
-      /*   case PITIVI_EFFECTSWINDOW_PROPERTY: { */
-      /*     g_free (self->private->name); */
-      /*     self->private->name = g_value_dup_string (value); */
-      /*     g_print ("maman: %s\n",self->private->name); */
-      /*   } */
-      /*     break; */
     default:
-      /* We don't have any other property... */
       g_assert (FALSE);
       break;
     }
@@ -720,12 +690,7 @@ pitivi_effectswindow_get_property (GObject * object,
 
   switch (property_id)
     {
-      /*  case PITIVI_EFFECTSWINDOW_PROPERTY: { */
-      /*     g_value_set_string (value, self->private->name); */
-      /*   } */
-      /*     break; */
     default:
-      /* We don't have any other property... */
       g_assert (FALSE);
       break;
     }
@@ -745,18 +710,6 @@ pitivi_effectswindow_class_init (gpointer g_class, gpointer g_class_data)
 
   gobject_class->set_property = pitivi_effectswindow_set_property;
   gobject_class->get_property = pitivi_effectswindow_get_property;
-
-  /* Install the properties in the class here ! */
-  /*   pspec = g_param_spec_string ("maman-name", */
-  /*                                "Maman construct prop", */
-  /*                                "Set maman's name", */
-  /*                                "no-name-set" /\* default value *\/, */
-  /*                                G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE); */
-  /*   g_object_class_install_property (gobject_class, */
-  /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
-  /*                                    pspec); */
-
-
 }
 
 GType

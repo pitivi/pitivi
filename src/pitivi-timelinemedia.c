@@ -93,7 +93,8 @@ static GtkItemFactoryEntry  TimeItemPopup[] = {
   {"/Dissociate", NULL, pitivi_timelinemedia_callb_dissociate, 0, "<Item>", NULL},
   {"/Delete", NULL, pitivi_timelinemedia_callb_destroy, 1, "<Item>", NULL},
   {"/Sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Copy", NULL, NULL, 0, "<Item>", NULL},
+  {"/Copy", NULL, pitivi_timelinemedia_callb_copied, 0, "<Item>", NULL},
+  {"/Cut", NULL, pitivi_timelinemedia_callb_cut, 0, "<Item>", NULL},
   {"/Paste", NULL, NULL, 0, "<Item>", NULL},
   {"/Sep1", NULL, NULL, 0, "<Separator>"},
   {"/Properties", NULL, NULL, 0, "<Item>", NULL},
@@ -286,9 +287,9 @@ pitivi_timelinemedia_constructor (GType type,
   if (self->private->cell->track_type == PITIVI_AUDIO_TRACK)
     self->sourceitem->isaudio = TRUE;
 
-  if (self->private->cell->track_type != PITIVI_TRANSITION_TRACK)
+  if ( self->sourceitem->srcfile->pipeline )
     {
-      /* Construct Id : filename + '_' + media type  + '_' + id */
+      /* Construct Id : filename + '_' + mediatype  + '_' + id */
       name = g_malloc (strlen (self->sourceitem->srcfile->filename) + strlen (self->sourceitem->srcfile->mediatype) + 10);
       sprintf (name, "%s_%s_%lld", self->sourceitem->srcfile->filename, self->sourceitem->srcfile->mediatype, self->sourceitem->id);
       self->sourceitem->gnlsource = gnl_source_new (name, self->sourceitem->srcfile->pipeline);
@@ -344,7 +345,8 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
      So that properties set at instanciation can be set */
   
   self->selected = FALSE;
-    
+  self->copied = FALSE;
+  
   gtk_drag_source_set  (GTK_WIDGET (self),
 			GDK_BUTTON1_MASK|GDK_BUTTON3_MASK,
 			TargetSameEntry, 
@@ -509,7 +511,6 @@ static
 gint pitivi_timelinemedia_motion_notify_event (GtkWidget        *widget,
 					       GdkEventMotion   *event)
 {
-
   // recalculer le x du event
   event->x += widget->allocation.x;
   return FALSE;
@@ -744,3 +745,35 @@ pitivi_timelinemedia_get_type (void)
 
   return type;
 }
+
+
+/*
+ **********************************************************
+ * Callbacks Menu				          *
+ *							  *
+ **********************************************************
+*/
+
+void	pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *self, gpointer data)
+{
+  gtk_widget_set_sensitive (GTK_WIDGET(self), FALSE);
+  if (self->linked)
+    gtk_widget_set_sensitive (self->linked, FALSE);
+}
+
+
+void	pitivi_timelinemedia_callb_copied (PitiviTimelineMedia *self, gpointer data)
+{
+  if (!self->copied)
+    {
+      self->copied = TRUE;
+      
+      /* copy media */
+      
+      GtkWidget *w = gtk_widget_get_toplevel (GTK_WIDGET(self));
+      g_signal_emit_by_name (w, "copy", self);
+    }
+  else
+    self->copied = FALSE;
+}
+

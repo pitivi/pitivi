@@ -109,6 +109,7 @@ PitiviEffectsWindow	*pitivi_effectswindow_new(PitiviMainApp *mainapp);
 void pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, 
 				 PitiviEffectsTypeEnum eneffects,  
 				 PitiviSettings *self);
-GList *get_transition_effects_list(GstElementFactory *factory);
+
 GList *fill_smpte_transition_list(GList* fx_transition);
+
 #endif

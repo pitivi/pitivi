@@ -116,8 +116,8 @@ void		on_row_activated (GtkTreeView        *treeview,
 				  GtkTreePath        *path,
 				  GtkTreeViewColumn  *col,
 				  gpointer            userdata);
-PitiviSourceFile *
-pitivi_sourcelistwindow_get_file(PitiviSourceListWindow *self);
+
+PitiviSourceFile *pitivi_sourcelistwindow_get_file(PitiviSourceListWindow *self);
 void	test_video_length(PitiviSourceListWindow *self, GstElement *lastelm);
 void	test_audio_length(PitiviSourceListWindow *self, GstElement *lastelm);
 

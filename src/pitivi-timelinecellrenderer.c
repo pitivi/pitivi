@@ -431,7 +431,7 @@ get_selection_layout (GtkWidget *widget, GdkRectangle *selection, guint x)
 {
   GList	*childlist = NULL;
   GList *before = NULL;
-  GtkWidget *media[2];
+  GtkWidget *media;
   
   selection->x = 0;
   selection->y = 0;
@@ -440,23 +440,23 @@ get_selection_layout (GtkWidget *widget, GdkRectangle *selection, guint x)
   childlist = g_list_sort ( childlist, compare_littlechild );
   for (before = childlist; childlist; childlist = childlist->next)
     {
-      media[0] = childlist->data;
-      if ( x > media[0]->allocation.x + media[0]->allocation.width && childlist->next == NULL)
+      media = childlist->data;
+      if ( x > media->allocation.x + media->allocation.width && childlist->next == NULL)
 	{
-	  selection->x = media[0]->allocation.x + media[0]->allocation.width;
+	  selection->x = media->allocation.x + media->allocation.width;
 	  selection->width = widget->allocation.width;
 	  break;
 	}
-      else if ( childlist->prev == NULL && x < media[0]->allocation.x )
+      else if ( childlist->prev == NULL && x < media->allocation.x )
 	{
-	  selection->width = media[0]->allocation.x;
+	  selection->width = media->allocation.x;
 	  break;
 	}
-      else if ( media[0]->allocation.x + media[0]->allocation.width < x 
-		&&  childlist->next 
+      else if ( media->allocation.x + media->allocation.width < x 
+		&& childlist->next 
 		&& GTK_WIDGET ( childlist->next->data)->allocation.x > x)
 	{
-	  selection->x = media[0]->allocation.x + media[0]->allocation.width;
+	  selection->x = media->allocation.x + media->allocation.width;
 	  selection->width = GTK_WIDGET ( childlist->next->data)->allocation.x - selection->x;
 	  break;
 	}
