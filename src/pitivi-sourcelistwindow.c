@@ -161,12 +161,12 @@ static GtkItemFactoryEntry	TreePopup[] = {
   {"/New bin...", NULL, OnNewBin, 1, "<Item>", NULL},
   {"/Import", NULL, NULL, 0, "<Branch>", NULL},
   {"/Import/File", NULL, OnImportFile, 1, "<Item>", NULL},
-  {"/Import/Folder", NULL, OnImportFolder, 1, "<Item>", NULL},
-  {"/Import/Project", NULL, OnImportProject, 0, "<Item>", NULL},
-  {"/Sep1", NULL, NULL, 0, "<Separator>"}, 
-  {"/Find...", NULL, OnFind, 0, "<Item>", NULL},
-  {"/Sep2", NULL, NULL, 0, "<Separator>"},
-  {"/Project Window Options...", NULL, OnOptionProject, 0, "<Item>", NULL}
+  {"/Import/Folder", NULL, OnImportFolder, 1, "<Item>", NULL}
+/*   {"/Import/Project", NULL, OnImportProject, 0, "<Item>", NULL}, */
+/*   {"/Sep1", NULL, NULL, 0, "<Separator>"},  */
+/*   {"/Find...", NULL, OnFind, 0, "<Item>", NULL}, */
+/*   {"/Sep2", NULL, NULL, 0, "<Separator>"}, */
+/*   {"/Project Window Options...", NULL, OnOptionProject, 0, "<Item>", NULL} */
 };
 
 static gint	iNbTreePopup = sizeof(TreePopup)/sizeof(TreePopup[0]);
@@ -174,23 +174,23 @@ static gint	iNbTreePopup = sizeof(TreePopup)/sizeof(TreePopup[0]);
 static GtkItemFactoryEntry	ListPopup[] = {
   {"/New", NULL, NULL, 0, "<Branch>", NULL},
   {"/New/Bin...", NULL, OnNewBin, 1, "<Item>", NULL},
-  {"/New/Storyboard", NULL, NULL, 0, "<Item>", NULL},
-  {"/New/Sep1", NULL, NULL, 0, "<Separator>"},
-  {"/New/Title", NULL, NULL, 0, "<Item>", NULL},
-  {"/New/Sep2", NULL, NULL, 0, "<Separator>"},
-  {"/New/Offline file", NULL, NULL, 0, "<Item>", NULL},
+/*   {"/New/Storyboard", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/New/Sep1", NULL, NULL, 0, "<Separator>"}, */
+/*   {"/New/Title", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/New/Sep2", NULL, NULL, 0, "<Separator>"}, */
+/*   {"/New/Offline file", NULL, NULL, 0, "<Item>", NULL}, */
   {"/Import", NULL, NULL, 0, "<Branch>", NULL},
   {"/Import/File", NULL, OnImportFile, 1, "<Item>", NULL},
   {"/Import/Folder", NULL, OnImportFolder, 1, "<Item>", NULL},
-  {"/Import/Project", NULL, NULL, 0, "<Item>", NULL},
+/*   {"/Import/Project", NULL, NULL, 0, "<Item>", NULL}, */
   {"/Sep3", NULL, NULL, 0, "<Separator>"},
-  {"/Remove Unused Clips", NULL, NULL, 0, "<Item>", NULL},
-  {"/Replace Clips...", NULL, NULL, 0, "<Item>", NULL},
-  {"/Sep4", NULL, NULL, 0, "<Separator>"},
-  {"/Automate to Timeline", NULL, NULL, 0, "<Item>", NULL},
-  {"/Find...", NULL, NULL, 0, "<Item>", NULL},
-  {"/Sep5", NULL, NULL, 0, "<Separator>"},
-  {"/Project Window Options...", NULL, NULL, 0, "<Item>", NULL}
+  {"/Remove Unused Clips", NULL, NULL, 0, "<Item>", NULL}
+/*   {"/Replace Clips...", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/Sep4", NULL, NULL, 0, "<Separator>"}, */
+/*   {"/Automate to Timeline", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/Find...", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/Sep5", NULL, NULL, 0, "<Separator>"}, */
+/*   {"/Project Window Options...", NULL, NULL, 0, "<Item>", NULL} */
 };
 
 static gint	iNbListPopup = sizeof(ListPopup)/sizeof(ListPopup[0]);
@@ -200,20 +200,20 @@ static GtkItemFactoryEntry	ItemPopup[] = {
   {"/Copy", NULL, NULL, 0, "<Item>", NULL},
   {"/Clear", NULL, OnRemoveItem, 1, "<Item>", NULL},
   {"/Sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Properties", NULL, NULL, 0, "<Item>", NULL},
-  {"/Set Clip Name Alias", NULL, NULL, 0, "<Item>", NULL},
-  {"/Sep2", NULL, NULL, 0, "<Separator>"},
-  {"/Insert in TimeLine", NULL, OnTimelineFirstInsert, 1, "<Item>", NULL},
-  {"/Insert at Edit Line", NULL, OnNewBin, 1, "<Item>", NULL},
-  {"/Overlay at Edit Line", NULL, NULL, 0, "<Item>", NULL},
-  {"/Sep3", NULL, NULL, 0, "<Separator>"},
-  {"/Duration...", NULL, NULL, 0, "<Item>", NULL},
-  {"/Speed...", NULL, NULL, 0, "<Item>", NULL},
-  {"/Sep4", NULL, NULL, 0, "<Separator>"},
-  {"/Open in Clip Window", NULL, NULL, 0, "<Item>", NULL},
-  {"/Duplicate Clip...", NULL, NULL, 0, "<Item>", NULL},
-  {"/Sep5", NULL, NULL, 0, "<Separator>"},
-  {"/Project Windows Options...", NULL, NULL, 0, "<Item>"}
+  {"/Properties", NULL, NULL, 0, "<Item>", NULL}
+/*   {"/Set Clip Name Alias", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/Sep2", NULL, NULL, 0, "<Separator>"}, */
+/*   {"/Insert in TimeLine", NULL, OnTimelineFirstInsert, 1, "<Item>", NULL}, */
+/*   {"/Insert at Edit Line", NULL, OnNewBin, 1, "<Item>", NULL}, */
+/*   {"/Overlay at Edit Line", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/Sep3", NULL, NULL, 0, "<Separator>"}, */
+/*   {"/Duration...", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/Speed...", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/Sep4", NULL, NULL, 0, "<Separator>"}, */
+/*   {"/Open in Clip Window", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/Duplicate Clip...", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/Sep5", NULL, NULL, 0, "<Separator>"}, */
+/*   {"/Project Windows Options...", NULL, NULL, 0, "<Item>"} */
 };
 
 static gint	iNbItemPopup = sizeof(ItemPopup)/sizeof(ItemPopup[0]);
@@ -221,9 +221,9 @@ static gint	iNbItemPopup = sizeof(ItemPopup)/sizeof(ItemPopup[0]);
 static GtkItemFactoryEntry	BinPopup[] = {
   {"/New", NULL, NULL, 0, "<Branch>", NULL},
   {"/New/Bin...", NULL, OnNewBin, 1, "<Item>", NULL},
-  {"/New/Storyboard", NULL, NULL, 0, "<Item>", NULL},
-  {"/New/Sep1", NULL, NULL, 0, "<Separator>"},
-  {"/New/Title", NULL, NULL, 0, "<Item>", NULL},
+/*   {"/New/Storyboard", NULL, NULL, 0, "<Item>", NULL}, */
+/*   {"/New/Sep1", NULL, NULL, 0, "<Separator>"}, */
+/*   {"/New/Title", NULL, NULL, 0, "<Item>", NULL}, */
   {"/Remove", NULL, OnRemoveBin, 1, "<Item>", NULL}
 };
 

@@ -119,8 +119,8 @@ pitivi_projectsettings_new_with_name(gchar *name, gchar *desc)
   projectsettings->description = g_strdup(desc);
   projectsettings->media_settings = NULL;
 
-  g_print("New Setting : \n");
-  pitivi_projectsettings_print(projectsettings);
+/*   g_print("New Setting : \n"); */
+/*   pitivi_projectsettings_print(projectsettings); */
 
   return projectsettings;
 }
@@ -300,7 +300,7 @@ pitivi_projectsettings_copy(PitiviProjectSettings *self)
   if (self == NULL)
     return NULL;
 
-  pitivi_projectsettings_print(self);
+/*   pitivi_projectsettings_print(self); */
 
   res = pitivi_projectsettings_new();
   res->name = g_strdup(self->name);
@@ -329,7 +329,7 @@ pitivi_projectsettings_copy(PitiviProjectSettings *self)
     res->media_settings = g_slist_append(res->media_settings, cat2);
   }
 
-  pitivi_projectsettings_print(res);
+/*   pitivi_projectsettings_print(res); */
 
   return res;
 }
