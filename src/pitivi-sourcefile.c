@@ -79,6 +79,9 @@ struct _PitiviSourceFilePrivate
   /* index of last frame captured */
   gint		cacheidx;
 
+  /* transition */
+  gint		transitionid;
+
   /* time of next frame/buf to cache */
   gint64	vlastcaptured;
   gint64	alastcaptured;
@@ -709,6 +712,8 @@ pitivi_sourcefile_get_effect_bin (PitiviSourceFile *sf)
   tmp = g_strdup_printf ("%s-%d", sf->filename, sf->private->lastsinkid++);
   res = gst_element_factory_create (sf->private->factory, tmp);
   g_free (tmp);
+  if (sf->private->transitionid)
+    g_object_set (G_OBJECT (res), "type", sf->private->transitionid, NULL);
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
   sf->private->bins = g_slist_append(sf->private->bins, res);
   sf->nbbins++;
@@ -749,9 +754,45 @@ pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp)
 }
 
 /**
- * pitivi_sourcefile_new_effect:
+ * pitivi_sourcefile_new_transition:
+ * @name: The name of the transition
+ * @factory: The #GstElementFactory for the effect,
+ * @pixbuf: The #GdkPixbuf used for this effect
+ * mediatyp: The media type (transition or effect)
+ * transitionid: The SMPTE id of the transition
+ * @mainapp: The #PitiviMainApp
+ *
+ * Returns: A newly-allocated #PitiviSourceFile
+ */
+
+PitiviSourceFile *
+pitivi_sourcefile_new_transition (gchar *name, GstElementFactory *factory, GdkPixbuf *pixbuf,
+				  gchar *mediatype, gint transitionid, PitiviMainApp *mainapp)
+{
+  PitiviSourceFile	*sf;
+
+  sf = (PitiviSourceFile *) g_object_new(PITIVI_SOURCEFILE_TYPE,
+					 "mainapp", mainapp,
+					 NULL);
+  g_assert (sf != NULL);
+  sf->filename = g_strdup (name);
+  sf->pipeline = NULL;
+  sf->private->factory = factory;
+  sf->mediatype = g_strdup (mediatype);
+  sf->thumbs_effect = pixbuf;
+  sf->length = 500000LL;
+  sf->haveeffect = TRUE;
+  sf->private->transitionid = transitionid;
+
+  return sf;
+}
+
+/**
+ * Pitivi_sourcefile_new_effect:
  * @name: The name of the effect
- * @pipeline: The effect's #GstElement
+ * @factory: The #GstElementFactory for the effect,
+ * @pixbuf: The #GdkPixbuf used for this effect
+ * mediatyp: The media type (transition or effect)
  * @mainapp: The #PitiviMainApp
  *
  * Returns: A newly-allocated #PitiviSourceFile
@@ -766,6 +807,10 @@ pitivi_sourcefile_new_effect (gchar *name, GstElementFactory *factory, GdkPixbuf
   sf = (PitiviSourceFile *) g_object_new(PITIVI_SOURCEFILE_TYPE,
 					 "mainapp", mainapp,
 					 NULL);
+  g_printf ("new_effect %s[MediaType:%s] %s\n",
+	    name,
+	    mediatype,
+	    gst_element_factory_get_longname(factory));
   g_assert (sf != NULL);
   /* TODO : Prepare the SourceFile for effects */
   sf->filename = g_strdup (name);

@@ -271,6 +271,33 @@ pitivi_effectstree_insert_node (PitiviEffectsTree *tree_effect,
 }
 
 void
+pitivi_effectstree_insert_transition (PitiviEffectsWindow *win,
+				      PitiviEffectsTree *tree_effect,
+				      GtkTreeIter *child,
+				      GtkTreeIter *parent,
+				      const gchar *name,
+				      const gchar *desc,
+				      gchar *icon,
+				      gint transitionid,
+				      gpointer data)
+{
+  GdkPixbuf *pixbuf;
+  PitiviSourceFile *se;
+  
+  pixbuf = gtk_widget_render_icon  (tree_effect->window, icon, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
+  se = pitivi_sourcefile_new_transition ((gchar *) name, GST_ELEMENT_FACTORY (data), 
+					 pixbuf, (gchar *) desc, transitionid,
+					 PITIVI_WINDOWS(win)->mainapp);
+  gtk_tree_store_append (tree_effect->model, child, parent);
+  gtk_tree_store_set(tree_effect->model, child,
+		     PITIVI_ICON_COLUMN, pixbuf,
+		     PITIVI_TEXT_COLUMN, name,
+		     PITIVI_POINTER_COLUMN, se,
+		     -1);
+}
+
+
+void
 pitivi_effectstree_insert_effect (PitiviEffectsWindow *win,
 				  PitiviEffectsTree *tree_effect,
 				  GtkTreeIter *child,
@@ -583,14 +610,15 @@ insert_transition_effects_on_tree (PitiviEffectsWindow *win,
 	  
 	  if (nb_tcat == tab_category[nb].id_categorie && tab_category[nb].name)
 	    {
-	      pitivi_effectstree_insert_effect (win,
-					       tree_effect, 
-					       child, 
-					       &Trans_iter[nb_tcat],
-					       tab_category[nb].name,
-					       "transition",
-					       tab_category[nb].image,
-					       fx_transition->data);
+	      pitivi_effectstree_insert_transition (win,
+						    tree_effect, 
+						    child, 
+						    &Trans_iter[nb_tcat],
+						    tab_category[nb].name,
+						    "transition",
+						    tab_category[nb].image,
+						    tab_category[nb].smpte_num,
+						    fx_transition->data);
 	    }
 	}
     }

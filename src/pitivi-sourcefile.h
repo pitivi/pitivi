@@ -104,6 +104,9 @@ PitiviSourceFile	*pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp
 PitiviSourceFile	*pitivi_sourcefile_new_effect (gchar *name, GstElementFactory *factory,
 						       GdkPixbuf *pixbuf, gchar *mediatype,
 						       PitiviMainApp *mainapp);
+PitiviSourceFile	*pitivi_sourcefile_new_transition (gchar *name, GstElementFactory *factory,
+							   GdkPixbuf *pixbuf, gchar *mediatype,
+							   gint transitionid, PitiviMainApp *mainapp);
 
 GstElement		*pitivi_sourcefile_get_bin (PitiviSourceFile *sf);
 GstElement		*pitivi_sourcefile_get_audio_bin (PitiviSourceFile *sf);
