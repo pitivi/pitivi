@@ -1,3 +1,7 @@
+2004-07-01    <bilboed@localhost>
+
+	* configure.ac: Updated minimum gstreamer version to 0.8.2
+
 2004-06-29    <bilboed@localhost>
 
 	* src/pitivi-mainapp.c (pitivi_mainapp_activate_effectswindow): function to (de)activate the PitiviEffectsWindow

@@ -168,18 +168,40 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
 }
 
 static void
-pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self )
-{
-  
-}
-
-
-static void
 pitivi_callb_menufile_saveas ( GtkAction *action, PitiviTimelineWindow *self)
 {
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+  GtkWidget	*dialog;
+  char		*filename = NULL;
   
+  /* Get the filename */
+  dialog = gtk_file_chooser_dialog_new("Choose PiTiVi project file",
+				       GTK_WINDOW (self), GTK_FILE_CHOOSER_ACTION_SAVE,
+				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				       GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+				       NULL);
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+
+  gtk_widget_destroy ( dialog );
+
+  if (filename != NULL) {
+    project->filename = g_strdup(filename);
+    pitivi_project_save_to_file(project, project->filename);
+    g_free(filename);
+  }  
 }
 
+static void
+pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self )
+{
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+
+  if (project->filename == NULL)
+    pitivi_callb_menufile_saveas(action, self);
+  else
+    pitivi_project_save_to_file(project, project->filename);  
+}
 
 static GtkActionEntry file_entries[] = {
   { "FileMenu", NULL, "_File" },

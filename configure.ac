@@ -82,16 +82,8 @@ fi
 dnl Now we're ready to ask for gstreamer libs and cflags
 dnl And we can also ask for the right version of gstreamer
 HAVE_GST=no
-GST_REQUIRED=0.8.0
+GST_REQUIRED=0.8.2
 
-dnl start with 0.7
-GST_MAJORMINOR=0.7
-PKG_CHECK_MODULES(GST, \
-  gstreamer-$GST_MAJORMINOR >= $GST_REQUIRED \
-  gstreamer-interfaces-$GST_MAJORMINOR >= $GST_REQUIRED \
-  gstreamer-control-$GST_MAJORMINOR >= $GST_REQUIRED,
-  HAVE_GST=yes,HAVE_GST=no)
-                                                                                
 dnl fail back to 0.8
 if test "x$HAVE_GST" = "xno"; then
   GST_MAJORMINOR=0.8
