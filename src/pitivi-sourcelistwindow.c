@@ -39,7 +39,7 @@
 #include "pitivi-viewerwindow.h"
 #include "pitivi-menu.h"
 #include "pitivi-debug.h"
-
+#include "pitivi-thumbs.h"
 #include "pitivi-lplayerwindow.h"
 
 static PitiviProjectWindowsClass *parent_class = NULL;
@@ -1942,8 +1942,9 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 		     TEXT_LISTCOLUMN6, self->private->infoaudio,
 		     TEXT_LISTCOLUMN7, sExempleTexte,
 		     POINTER_LISTCOLUMN8, (gchar *)sf, -1);
-   
-  generate_thumb ( self->private->filepath, self , i);
+  
+  PitiviThumbs* thumb = pitivi_thumbs_new (self->private->filepath, G_OBJECT (self) , i);
+  PITIVI_THUMBS_GET_CLASS (thumb)->generate_thumb (thumb);
   g_free(sExempleTexte);
   g_object_unref(pixbufa);
   return TRUE;
@@ -2948,22 +2949,20 @@ pitivi_sourcelistwindow_constructor (GType type,
 }
 
 static void
-snapped (PitiviSourceListWindow *self, gchar *data)
+snapped (PitiviSourceListWindow *self, PitiviThumbs *data)
 {  
   PitiviSourceFile  *sf;
   GdkPixbuf *pixbuf, *icon;
   GtkTreeModel *model;
   GtkTreeIter  iter;
   int	       i = 0;
-  char	       c = '0';
 
-  pixbuf = gdk_pixbuf_new_from_file (data, NULL);
+  pixbuf = gdk_pixbuf_new_from_file (data->output, NULL);
   if ( pixbuf )
     {
-      c = *(data + strlen (data) + 1);
       model = gtk_tree_view_get_model (GTK_TREE_VIEW (self->private->listview));
       gtk_tree_model_get_iter_first (model, &iter);
-      for (i =  0; i <  c - '0'; i++) gtk_tree_model_iter_next (model, &iter);
+      for (i =  0; i <  data->info; i++) gtk_tree_model_iter_next (model, &iter);
       gtk_tree_model_get (model, &iter, POINTER_LISTCOLUMN8, &sf, -1);
       sf->thumbs_video = pixbuf;
       icon = gdk_pixbuf_scale_simple (pixbuf, 45,
@@ -2972,6 +2971,8 @@ snapped (PitiviSourceListWindow *self, gchar *data)
       gtk_list_store_set(GTK_LIST_STORE (model), &iter,
 			 BMP_LISTCOLUMN1, icon,
 			 -1);
+      
+      G_OBJECT_GET_CLASS ((gpointer) data)->finalize ((gpointer)data);
     }
 }
 
@@ -2997,7 +2998,7 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   g_signal_connect (G_OBJECT (self), "snapped",
 		    (GCallback)snapped,
 		    NULL
-);
+		    );
 }
 
 static void

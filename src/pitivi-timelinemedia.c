@@ -30,6 +30,7 @@
 #include "pitivi-sourceitem.h"
 #include "pitivi-stockicons.h"
 #include "pitivi-drawing.h"
+#include "pitivi-thumbs.h"
 
 static	GtkWidgetClass	*parent_class = NULL;
 
@@ -787,9 +788,10 @@ pitivi_timelinemedia_callb_snapped_effect (PitiviTimelineMedia *media, gpointer 
 {
   /* FIXME Deference pointer */
   g_object_unref (media->sourceitem->srcfile->thumbs_video);
-  media->sourceitem->srcfile->thumbs_video = gdk_pixbuf_new_from_file (data, NULL);
+  media->sourceitem->srcfile->thumbs_video = gdk_pixbuf_new_from_file (PITIVI_THUMBS(data)->output, NULL);
   draw_media_expose (GTK_WIDGET (media));
   g_object_ref (media->sourceitem->srcfile->thumbs_video);
+  G_OBJECT_GET_CLASS ((gpointer)data)->finalize ((gpointer)data);
 }
 
 static void

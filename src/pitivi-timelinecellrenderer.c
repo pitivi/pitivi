@@ -30,6 +30,7 @@
 #include "pitivi-toolboxwindow.h"
 #include "pitivi-toolbox.h"
 #include "pitivi-drawing.h"
+#include "pitivi-thumbs.h"
 
 // Parent Class
 static GtkLayoutClass	    *parent_class = NULL;
@@ -1336,7 +1337,12 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	}
       else
 	calculate_priorities ( GTK_WIDGET (container) );
-      generate_thumb_snap_on_frame (PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile->filename, media[0], 200);
+      PitiviThumbs* thumb = pitivi_thumbs_new (PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile->filename, 
+					       G_OBJECT (media[0]),
+					       0);
+      /* To do calculate frame thumb */
+      g_object_set (thumb, "frame", 200, NULL);
+      PITIVI_THUMBS_GET_CLASS (thumb)->generate_thumb (thumb);
     }
 }
 
