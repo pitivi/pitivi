@@ -571,9 +571,11 @@ void
 pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *self, gpointer data)
 {
   if (self->selected)
-    gtk_widget_destroy (GTK_WIDGET (self));
-  if (self->linked)
-    gtk_widget_destroy (self->linked);
+    {
+      if (self->linked)
+	gtk_widget_destroy (self->linked);
+      gtk_widget_destroy (GTK_WIDGET (self));
+    }
 }
 
 static gboolean
