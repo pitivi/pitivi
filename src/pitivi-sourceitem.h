@@ -27,6 +27,7 @@
 
 #include <gst/gst.h>
 #include <gnl/gnltimeline.h>
+#include "pitivi-sourcefile.h"
 
 typedef struct _PitiviSourceItem PitiviSourceItem;
 
