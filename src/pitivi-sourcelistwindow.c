@@ -115,6 +115,7 @@ void		on_row_activated (GtkTreeView        *treeview,
 PitiviSourceFile *
 pitivi_sourcelistwindow_get_file(PitiviSourceListWindow *self);
 void	test_video_length(PitiviSourceListWindow *self, GstElement *lastelm);
+void	test_audio_length(PitiviSourceListWindow *self, GstElement *lastelm);
 
 enum
   {
@@ -769,6 +770,7 @@ void	create_thread_ghost_pad(PitiviSourceListWindow *self, GstElement *lasteleme
 					      "asrc");
 	  g_assert(temppad != NULL);
 	  g_printf("adding ghost pad for audio\n");
+	  test_audio_length(self, lastelement);
 	}
     }
 }
@@ -871,13 +873,14 @@ void	test_audio_length(PitiviSourceListWindow *self, GstElement *lastelm)
   gint64	value;
 
   gst_element_set_state(self->private->mainpipeline, GST_STATE_PLAYING);
-  format = GST_FORMAT_DEFAULT;
-  if (gst_element_query(lastelm, GST_QUERY_TOTAL, &format, &value))
+  format = GST_FORMAT_TIME;
+  if (gst_element_query(lastelm, GST_QUERY_TOTAL, &format, &value)) {
     g_printf("format ==> %d\ntime ==> %lld\n", format, value);
+    if (!self->private->length)
+      self->private->length = value;
+  }
   else
     g_printf("Couldn't perform requested query\n");
-
-  gst_element_set_state(self->private->mainpipeline, GST_STATE_PAUSED);
 }
 
 void	test_video_length(PitiviSourceListWindow *self, GstElement *lastelm)
@@ -886,9 +889,12 @@ void	test_video_length(PitiviSourceListWindow *self, GstElement *lastelm)
   gint64	value;
 
   gst_element_set_state(self->private->mainpipeline, GST_STATE_PLAYING);
-  format = GST_FORMAT_BYTES;
-  if (gst_element_query(lastelm, GST_QUERY_TOTAL, &format, &value))
+  format = GST_FORMAT_TIME;
+  if (gst_element_query(lastelm, GST_QUERY_TOTAL, &format, &value)) {
     g_printf("format ==> %d\ntime ==> %lld\n", format, value);
+    if (!self->private->length)
+      self->private->length = value;
+  }
   else
     g_printf("Couldn't perform requested query\n");
 
@@ -1445,7 +1451,7 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 		     &pIter, BMP_LISTCOLUMN1, pixbufa,
 		     TEXT_LISTCOLUMN2, name,
 		     TEXT_LISTCOLUMN3, self->private->mediatype,
-		     TEXT_LISTCOLUMN4, g_strdup_printf("%lld", self->private->length),
+		     TEXT_LISTCOLUMN4, g_strdup_printf("%ds", self->private->length / GST_SECOND),
 		     TEXT_LISTCOLUMN5, self->private->infovideo,
 		     TEXT_LISTCOLUMN6, self->private->infoaudio,
 		     TEXT_LISTCOLUMN7, sExempleTexte,
