@@ -14,6 +14,8 @@
 pixmapdir = $(datadir)/pixmaps/pitivi/
 
 pixmap_DATA = backward.xpm\
+pitivi.png\
+pitivi.xpm\
 bg_audio.xpm\
 bg_effects.xpm\
 bg_trans.xpm\
@@ -22,7 +24,6 @@ bg.xpm\
 blank.xpm\
 forward.xpm\
 pause.xpm\
-logo-pitivi.png\
 pitivi-logo-splash.png\
 pitivi-48.png\
 pitivi_adjust_effect.png\
@@ -53,9 +54,6 @@ pitivi_frame_effect.png\
 pitivi_gamma_effect.png\
 pitivi-hand.png\
 pitivi_IIr_effect.png\
-pitivi-info.png\
-pitivi-logo3.png\
-pitivi-logo.png\
 pitivi-logo-small.png\
 pitivi-logo-splash.png\
 pitivi_LPWS_effect.png\
