@@ -824,7 +824,7 @@ pitivi_settings_get_xml_project_settings(xmlNodePtr self)
 	if (!g_ascii_strcasecmp(children->name, "name")) {
 	  cat_tmp->name = g_strdup(xmlNodeGetContent(children));
 	} else if (!g_ascii_strcasecmp(children->name, "projectsettings")){
-	  ps_tmp = g_new0(PitiviProjectSettings, 1);
+	  ps_tmp = pitivi_projectsettings_new();
 	  pitivi_projectsettings_restore_thyself (ps_tmp, children);
 	  cat_tmp->list_settings = g_slist_append(cat_tmp->list_settings, ps_tmp); 
 	  

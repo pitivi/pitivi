@@ -27,6 +27,7 @@
 #include <gtk/gtk.h>
 #include <gst/gst.h>
 #include "pitivi-newprojectwindow.h"
+#include "pitivi-debug.h"
 #include "pitivi-viewerwindow.h"
 #include "pitivi-projectsettings.h"
 #include "pitivi-settings.h"
@@ -515,13 +516,12 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   PitiviCategorieSettings	*categorie;
   PitiviProjectSettings		*reglage;
   PitiviMainApp			*mainapp = ((PitiviWindows *) self)->mainapp;
+
   categorie = pitivi_settings_get_selected_category( mainapp->global_settings, self->private->position );
   reglage = (PitiviProjectSettings *) g_slist_nth_data(categorie->list_settings, self->private->position[1] );
-  g_printf("Selection des categories... 63\n");
 
   pitivi_projectsettingswidget_set_settings (self->private->win_settings, reglage);
 
-  g_printf("Selection des categories... 64\n");
   pitivi_npw_put_entire_description(self, reglage);
 }
 
@@ -696,7 +696,7 @@ pitivi_make_settings_table(PitiviNewProjectWindow *self)
   settings_table = gtk_table_new (5, 2, FALSE);  
   self->private->win_settings = pitivi_projectsettingswidget_new(PITIVI_WINDOWS(self)->mainapp);
   gtk_table_attach (GTK_TABLE(settings_table), GTK_WIDGET(self->private->win_settings),
-		    0, 2, 3, 4, GTK_EXPAND | GTK_FILL, FALSE , 0, 0);
+		    0, 2, 3, 4, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL , 0, 0);
 
 /*   Ligne 4 */
   button_hbox = gtk_hbox_new(TRUE, 10);
