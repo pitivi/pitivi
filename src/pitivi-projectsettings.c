@@ -69,9 +69,36 @@ pitivi_projectsettings_acaps_create (int rate, int channel)
 			     "audio/x-raw-int",
 			     "rate",  G_TYPE_INT, rate,
 			     "channels", G_TYPE_INT, channel,
-			     NULL
-			     );
+			     NULL );
   return (caps);
+}
+
+/*
+  
+*/
+PitiviProjectSettings *
+pitivi_projectsettings_new_with_name(gchar *name, gchar *desc, 
+				     GSList *list_media_settings)
+{
+  PitiviProjectSettings	*projectsettings;
+  PitiviMediaSettings	*media_temp;
+  int			j;
+
+  /* Creation du PitiviProjectSetting */
+  projectsettings = pitivi_projectsettings_new();
+
+  projectsettings->media_settings = NULL;
+  
+  /* Remplit les champs name, description */
+  projectsettings->name = g_strdup(name);
+  projectsettings->description = g_strdup(desc);
+
+  /* Remplit la liste des Categorie envoyee en parametre */
+  projectsettings->media_settings = NULL;
+  for (j = 0; (media_temp = (PitiviMediaSettings *) g_slist_nth_data(list_media_settings, j) ); j++)
+    projectsettings->media_settings = g_slist_append( projectsettings->media_settings, 
+						      (gpointer) media_temp );
+  return projectsettings;
 }
 
 /*
@@ -81,13 +108,17 @@ PitiviCategorieSettings *
 pitivi_projectsettings_categorie_new(gchar *name, GSList *list_settings)
 {
   PitiviCategorieSettings	*categorie;
-  PitiviProjectSettings		*setting;
+  PitiviProjectSettings		*setting_temp;
+  int				j;
   
   categorie = g_new0(PitiviCategorieSettings, 1);
-  categorie->list_settings = NULL;
-  
   categorie->name = g_strdup(name);
-  categorie->list_settings = list_settings;
+  
+  categorie->list_settings = NULL;
+
+  for (j = 0; (setting_temp = (PitiviProjectSettings *) g_slist_nth_data(list_settings, j) ); j++)
+    categorie->list_settings = g_slist_append( categorie->list_settings, (gpointer) setting_temp );
+      
   return (categorie);
 }
 
@@ -108,7 +139,7 @@ pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps, gint
 
   media_setting = g_new0(PitiviMediaSettings, 1);
   media_setting->codec_settings = g_new0(GSList, 1);
-
+  
   media_setting->combo_box_codec_index = index;
   media_setting->codec_factory_name = g_strdup(codec_factory_name);
 
@@ -222,31 +253,6 @@ pitivi_projectsettings_new(void)
   projectsettings = (PitiviProjectSettings *) 
     g_object_new(PITIVI_PROJECTSETTINGS_TYPE, NULL);
   g_assert(projectsettings != NULL);
-  return projectsettings;
-}
-
-
-PitiviProjectSettings *
-pitivi_projectsettings_new_with_name(gchar *name, gchar *desc, 
-				     GSList *list_media_settings)
-{
-  PitiviProjectSettings	*projectsettings;
-  PitiviMediaSettings	*media_temp;
-  int			j;
-
-  /* Creation du PitiviProjectSetting */
-  projectsettings = pitivi_projectsettings_new();
-
-  /* Remplit les champs name, description */
-  projectsettings->name = g_strdup(name);
-  projectsettings->description = g_strdup(desc);
-
-  /* Remplit la liste des Categorie envoyee en parametre */
-  projectsettings->media_settings = NULL;
-  for (j = 0; (media_temp = (PitiviMediaSettings *) g_slist_nth_data(list_media_settings, j) ); j++)
-    projectsettings->media_settings = g_slist_append( projectsettings->media_settings, 
-						      (gpointer) media_temp );
-
   return projectsettings;
 }
 
