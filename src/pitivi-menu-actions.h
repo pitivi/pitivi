@@ -29,7 +29,7 @@
 
  enum {
     EA_MENU_HELP,
-    EA_LAST_ACTION,
+    EA_LAST_ACT,
   };
 
 GtkAction *
@@ -37,5 +37,8 @@ pitivi_groupaction_find_action (GtkActionGroup *actions, gchar *name);
 
 GtkActionGroup **
 pitivi_menubar_configure (GtkUIManager *ui_manager, gpointer data);
+
+void
+pitivi_callb_menuhelp_about ( GtkAction *action, gpointer data);
 
 #endif

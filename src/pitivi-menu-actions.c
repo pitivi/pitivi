@@ -28,7 +28,7 @@
 #include "pitivi-stockicons.h"
 #include "pitivi-menu-actions.h"
 
-static GtkActionGroup *actions_group[EA_LAST_ACTION];
+static GtkActionGroup *actions_group[EA_LAST_ACT];
 
 static void
 pitivi_callb_menuhelp_search ( GtkAction *action, gpointer data )
@@ -36,8 +36,8 @@ pitivi_callb_menuhelp_search ( GtkAction *action, gpointer data )
 
 }
 
-static void
-pitivi_callb_menuhelp_about ( GtkAction *action, gpointer data )
+void
+pitivi_callb_menuhelp_about ( GtkAction *action, gpointer data)
 {
   GtkWidget			*about_window;
   GtkWidget			*about_vbox;
@@ -51,7 +51,7 @@ pitivi_callb_menuhelp_about ( GtkAction *action, gpointer data )
 
   about_vbox = gtk_vbox_new(FALSE, 10);
   about_hbox = gtk_hbox_new(FALSE, 10);
-  about_window = gtk_dialog_new_with_buttons ("Message",
+  about_window = gtk_dialog_new_with_buttons ("PiTiVi About...",
 					      NULL,
 					      GTK_DIALOG_DESTROY_WITH_PARENT,
 					      GTK_STOCK_OK,
@@ -116,12 +116,18 @@ static GtkActionEntry default_entries_help[] = {
 GtkActionGroup **
 pitivi_menubar_configure (GtkUIManager *ui_manager, gpointer data)
 {
-  int	count;
-  
+  int		count;
+  GList		*help_list;
+
   actions_group[EA_MENU_HELP] = gtk_action_group_new ("MenuHelp");
   gtk_action_group_add_actions (actions_group[EA_MENU_HELP], default_entries_help, G_N_ELEMENTS (default_entries_help), data);
-  
-  for (count = 0; count < EA_LAST_ACTION; count++)
+
+  help_list = gtk_action_group_list_actions(actions_group[EA_MENU_HELP]);
+  while (help_list)
+    {
+      help_list = help_list->next;
+    }
+  for (count = 0; count < EA_LAST_ACT; count++)
     if (actions_group[count])
        gtk_ui_manager_insert_action_group (ui_manager, actions_group[count], 0);
   return ( actions_group );

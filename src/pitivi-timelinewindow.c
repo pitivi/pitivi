@@ -34,6 +34,7 @@
 #include "pitivi-controller.h"
 #include "pitivi-drawing.h"
 #include "pitivi-mediatrackinfo.h"
+#include "pitivi-menu-actions.h"
 
 #include "../pixmaps/bg.xpm"
 #include "../pixmaps/bg_audio.xpm"
@@ -158,9 +159,6 @@ void
 pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self );
 
 void
-pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self );
-
-void
 pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self );
 
 void
@@ -201,8 +199,8 @@ static GtkActionEntry file_entries[] = {
   { "FileNew",      PITIVI_STOCK_NEW_PROJECT, "Ne_w", "<control>N", "New File", G_CALLBACK (pitivi_callb_menufile_new) },
   { "FileOpen",     GTK_STOCK_OPEN, "_Open", "<control>O", "Open a file",  G_CALLBACK (pitivi_callb_menufile_open) },
   { "FileSave",     GTK_STOCK_SAVE, "_Save", "<control>S", "Save a file", G_CALLBACK (pitivi_callb_menufile_save) },
-  { "FileSaveAs",   GTK_STOCK_SAVE_AS, "Save _As", "<control>A", "Save a file", G_CALLBACK (pitivi_callb_menufile_saveas) },
-  { "FileSettings", PITIVI_STOCK_TOOLS, "_Settings", "<control>S", "Settings",  G_CALLBACK (pitivi_callb_menufile_settings) },
+  { "FileSaveAs",   GTK_STOCK_SAVE_AS, "Save _As", "<control><alt>S", "Save a file", G_CALLBACK (pitivi_callb_menufile_saveas) },
+  { "FileSettings", PITIVI_STOCK_TOOLS, "_Settings", "<control><alt>P", "Preferences",  G_CALLBACK (pitivi_callb_menufile_settings) },
   { "FileExit",     GTK_STOCK_QUIT, "_Close", "<control>Q", "Close Project", G_CALLBACK (pitivi_callb_menufile_exit) },
 };
 
@@ -211,9 +209,9 @@ static GtkActionEntry recent_entry[]= {
 };
 
 static GtkToggleActionEntry windows_entries[] ={
-  { "EffectWindows", PITIVI_STOCK_TOOLS, "E_ffects", "<control>F", "Toggle the effects window", G_CALLBACK (pitivi_callb_menufile_effectswindow_toggle), TRUE},
-  { "SourceListWindows",PITIVI_STOCK_TOOLS, "S_ourceList", "<control>L", "Toggle the source list window", G_CALLBACK (pitivi_callb_menufile_sourcelistwindow_toggle), TRUE},
-  { "ViewerWindows", PITIVI_STOCK_TOOLS, "V_iewer", "<control>V", "Toggle the viewer window", G_CALLBACK (pitivi_callb_menufile_viewerwindow_toggle), TRUE},
+  { "EffectWindows", PITIVI_STOCK_TOOLS, "E_ffects", "<control><alt>E", "Toggle the effects window", G_CALLBACK (pitivi_callb_menufile_effectswindow_toggle), TRUE},
+  { "SourceListWindows",PITIVI_STOCK_TOOLS, "S_ourceList", "<control><alt>L", "Toggle the source list window", G_CALLBACK (pitivi_callb_menufile_sourcelistwindow_toggle), TRUE},
+  { "ViewerWindows", PITIVI_STOCK_TOOLS, "V_iewer", "<control><alt>V", "Toggle the viewer window", G_CALLBACK (pitivi_callb_menufile_viewerwindow_toggle), TRUE},
 };
 
 
@@ -1395,7 +1393,70 @@ pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow *self, GdkEventKey* 
       g_signal_emit_by_name (self->private->controller, "pause", self);
       break;
     case GDK_Escape:
-      exit ( 0 );
+      pitivi_mainapp_destroy(GTK_WIDGET (self), NULL);
+      break;
+    case GDK_n://new
+      if (event->state & GDK_CONTROL_MASK)
+	pitivi_callb_menufile_new(GTK_ACTION(data), self);
+      break;
+    case GDK_o://open
+      if (event->state & GDK_CONTROL_MASK)
+	pitivi_callb_menufile_open(GTK_ACTION(data), self);
+      break;
+    case GDK_s://save
+      if (event->state & GDK_CONTROL_MASK)
+	{
+	  if (event->state & GDK_MOD1_MASK)
+	    pitivi_callb_menufile_saveas(GTK_ACTION(data), self);
+	  else
+	    pitivi_callb_menufile_save(GTK_ACTION(data), self);
+	}
+      break;
+    case GDK_p://pref
+       if (event->state & GDK_CONTROL_MASK)
+	 if (event->state & GDK_MOD1_MASK)
+	   pitivi_callb_menufile_settings(GTK_ACTION(data), self);
+       break;
+    case GDK_q://quit
+      if (event->state & GDK_CONTROL_MASK)
+	pitivi_callb_menufile_exit (GTK_ACTION(data), self );
+      break;
+    case GDK_e://effect
+      if (event->state & GDK_CONTROL_MASK)
+	if (event->state & GDK_MOD1_MASK)
+	  g_print("key pressed : Ctrl-Alt-e\n");
+	  //pitivi_callb_menufile_effectswindow_toggle(GTK_ACTION(data), self);
+      break;
+    case GDK_l://srclist
+      if (event->state & GDK_CONTROL_MASK)
+	if (event->state & GDK_MOD1_MASK)
+	  g_print("key pressed : Ctrl-Alt-l\n");
+	  //pitivi_callb_menufile_sourcelistwindow_toggle(GTK_ACTION(data), self);
+      break;
+    case GDK_v://viewer
+      if (event->state & GDK_CONTROL_MASK)
+	if (event->state & GDK_MOD1_MASK)
+	  g_print("key pressed : Ctrl-Alt-v\n");
+	  //pitivi_callb_menufile_viewerwindow_toggle(GTK_ACTION(data), self);
+      break;
+    case GDK_i://index
+      if (event->state & GDK_CONTROL_MASK)
+	if (event->state & GDK_MOD1_MASK)
+	  g_print("key pressed : Ctrl-Alt-i\n");
+      break;
+    case GDK_f://find
+      if (event->state & GDK_CONTROL_MASK)
+	g_print("key pressed : Ctrl-f\n");
+      break;
+    case GDK_c://content
+      if (event->state & GDK_CONTROL_MASK)
+	if (event->state & GDK_MOD1_MASK)
+	  g_print("key pressed : Ctrl-Alt-c\n\n");
+      break;
+    case GDK_a://about
+      if (event->state & GDK_CONTROL_MASK)
+	if (event->state & GDK_MOD1_MASK)
+	  pitivi_callb_menuhelp_about(GTK_ACTION(data), NULL);
       break;
     }
   return TRUE;
