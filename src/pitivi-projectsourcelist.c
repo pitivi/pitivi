@@ -40,10 +40,15 @@ struct _PitiviProjectSourceListPrivate
   GSList		*bin_tree;
 };
 
+typedef struct _PitiviRestore
+{
+  gchar			*filename;
+  GtkWidget		*entry;
+}	PitiviRestore;
 /*
  * forward definitions
  */
-
+void			restore_moved_sourcefile(GtkWidget *button, PitiviRestore *restore);
 /*
  * Insert "added-value" functions here
  */
@@ -364,7 +369,7 @@ pitivi_projectsourcelist_set_file_property_by_name(PitiviProjectSourceList *self
   if (!sourcefile)
     return;
   
-  g_printf("filename in projectsourcelist ==> %s\n", sourcefile->filename);
+/*   g_printf("filename in projectsourcelist ==> %s\n", sourcefile->filename); */
   sourcefile->mediatype = g_strdup(mediatype);
   sourcefile->infovideo = g_strdup(infovideo);
   sourcefile->infoaudio = g_strdup(infoaudio);
@@ -437,23 +442,110 @@ pitivi_projectsourcelist_get_sourcefile(PitiviProjectSourceList *self,
   return sourcefile;
 }
 
+void
+restore_moved_sourcefile(GtkWidget *button, PitiviRestore *restore)
+{
+  GtkWidget	*dialog;
+  gchar		*filename;
+
+  dialog = gtk_file_chooser_dialog_new ("Restore your source file(s)",
+					NULL, GTK_FILE_CHOOSER_ACTION_SAVE,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+					NULL);
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+    filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));    
+    gtk_entry_set_text (GTK_ENTRY (restore->entry), filename);
+  }
+  gtk_widget_destroy (dialog);
+}
 
 void	
 pitivi_projectsourcelist_add_source_from_xml(PitiviSourceBin *sourcebin,
-					     gchar *filename)
+					     G_CONST_RETURN gchar *filename)
 {
   PitiviSourceFile	*sourcefile;
-  
-  sourcefile = g_new0(PitiviSourceFile, 1);
+  PitiviRestore		*restore;
+  GtkWidget		*Dialog;
+  GtkWidget		*dial_cancel;  
+  GtkWidget		*dial_warning_text;
+  GtkWidget		*dial_new_url;
+  GtkWidget		*select_but;
+  GtkWidget		*select_hbox;
+  GtkWidget		*filename_to_restore;
+  const gchar		*name;
+  G_CONST_RETURN gchar	*select_filename;
+  gint			result;
 
-  sourcefile->filename = g_strdup(filename);
-  sourcefile->mediatype = "";
-  sourcefile->infovideo = "";
-  sourcefile->infoaudio = "";
-  sourcefile->length = 0;
-  sourcefile->pipeline = NULL;
-  
-  sourcebin->source = g_slist_append(sourcebin->source, sourcefile);
+  dial_cancel = gtk_message_dialog_new (NULL,
+					GTK_DIALOG_DESTROY_WITH_PARENT,
+					GTK_MESSAGE_WARNING,
+					GTK_BUTTONS_CLOSE,
+					"You don't have restore all you source files.\nMaybe you should have some troubles.\n");
+ 
+  sourcefile = g_new0(PitiviSourceFile, 1);
+  restore = g_new0(PitiviRestore, 1);
+  restore->entry = gtk_entry_new();
+  if (g_file_test(filename, G_FILE_TEST_EXISTS))
+    {
+      sourcefile->filename = g_strdup(filename);
+      sourcefile->mediatype = "";
+      sourcefile->infovideo = "";
+      sourcefile->infoaudio = "";
+      sourcefile->length = 0;
+      sourcefile->pipeline = NULL;
+      sourcebin->source = g_slist_append(sourcebin->source, sourcefile);
+    }
+  else
+    {
+      Dialog = gtk_dialog_new ();
+      name = g_strdup(filename);
+      filename_to_restore =  gtk_label_new(name);
+      dial_warning_text = gtk_label_new("The source file(s) have moved since the last time\nPlease enter a new url...\nPlease restore this file : ");
+      dial_new_url = restore->entry;
+      select_but = gtk_toggle_button_new_with_label ("Select");
+      g_signal_connect (G_OBJECT (select_but), "toggled",
+			G_CALLBACK (restore_moved_sourcefile), restore);
+      select_hbox = gtk_hbox_new(FALSE, 0);
+
+      gtk_box_pack_start(GTK_BOX(select_hbox), GTK_WIDGET(dial_new_url), TRUE, TRUE, 5);
+      gtk_box_pack_start(GTK_BOX(select_hbox), GTK_WIDGET(select_but), TRUE, TRUE, 20);
+
+      select_but = gtk_toggle_button_new_with_label ("Select");
+      g_signal_connect (G_OBJECT (select_but), "toggled",
+			G_CALLBACK (restore_moved_sourcefile), restore);
+      gtk_window_set_title (GTK_WINDOW (Dialog), "Warning !!!");
+
+      gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
+			 GTK_WIDGET(dial_warning_text));
+      gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
+			 GTK_WIDGET(filename_to_restore));
+      gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
+			 GTK_WIDGET(select_hbox));
+      gtk_dialog_add_buttons (GTK_DIALOG(Dialog),
+			      GTK_STOCK_OK,
+			      GTK_RESPONSE_ACCEPT,
+			      GTK_STOCK_CANCEL,
+			      GTK_RESPONSE_REJECT,
+			      NULL);
+      gtk_widget_show_all (GTK_WIDGET (Dialog));
+      result  = gtk_dialog_run (GTK_DIALOG (Dialog));
+
+      select_filename = gtk_entry_get_text(GTK_ENTRY(restore->entry));
+
+      switch (result)
+	{
+	case GTK_RESPONSE_ACCEPT:
+	  /* g_print ("ACCEPT\nLe nouveau fichier est : %s\n", select_filename); */
+	  pitivi_projectsourcelist_add_source_from_xml(sourcebin, select_filename);
+	  break;
+	default:
+	  gtk_dialog_run (GTK_DIALOG (dial_cancel));
+	  gtk_widget_destroy (dial_cancel);
+	  break;
+	}
+      gtk_widget_destroy (Dialog);
+    }
 }
 
 

@@ -204,8 +204,8 @@ static GtkActionEntry file_entries[] = {
   { "FileOpen",     GTK_STOCK_OPEN, "_Open", "<control>O", "Open a file",  G_CALLBACK (pitivi_callb_menufile_open) },
   { "FileSave",     GTK_STOCK_SAVE, "_Save", "<control>S", "Save a file", G_CALLBACK (pitivi_callb_menufile_save) },
   { "FileSaveAs",   GTK_STOCK_SAVE_AS, "Save _As", "<control><alt>S", "Save a file", G_CALLBACK (pitivi_callb_menufile_saveas) },
-  { "FileSettings", PITIVI_STOCK_TOOLS, "_Settings", "<control><alt>P", "Preferences",  G_CALLBACK (pitivi_callb_menufile_settings) },
-  { "FileExit",     GTK_STOCK_QUIT, "_Close", "<control>Q", "Close Project", G_CALLBACK (pitivi_callb_menufile_exit) },
+  { "FileSettings", PITIVI_STOCK_TOOLS, "_Settings", "<control><alt>P", "Settings",  G_CALLBACK (pitivi_callb_menufile_settings) },
+  { "FileExit",     GTK_STOCK_QUIT, "_Exit", "<control>Q", "Exit Application", G_CALLBACK (pitivi_callb_menufile_exit) },
 };
 
 static GtkActionEntry recent_entry[]= {
@@ -1069,7 +1069,7 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
     g_warning("No file selected to open...\n");
     return;
   }
-  
+
   project = pitivi_project_new_from_file(filename);
   g_free (filename);
   if (!project)

@@ -126,10 +126,6 @@ struct _PitiviNewProjectWindowPrivate
   GtkWidget		*cat_text;
 
   /* Properties */
-/*   PitiviCodecConfWindow	*audio_codecwindow; */
-/*   PitiviCodecConfWindow	*video_codecwindow; */
-  GList			*video_codecconflist;
-  GList			*audio_codecconflist;
   GList			*video_confboxlist;
   GList			*audio_confboxlist;
  
@@ -1601,7 +1597,6 @@ create_codec_conf_video(GtkWidget *widget, gpointer data)
 void
 create_codec_conf_audio(GtkWidget *widget, gpointer data)
 {
-/*   GtkWidget *ComboBox = (GtkWidget *) data; */
   PitiviNewProjectWindow	*self;
   GtkWidget		*Dialog;
   gchar			*elm;
@@ -1618,6 +1613,8 @@ create_codec_conf_audio(GtkWidget *widget, gpointer data)
   io = pitivi_settings_new_io_element_with_factory (factory);
   prop = pitivi_gstelementsettings_new (io, 0);
 
+  gtk_window_set_title (GTK_WINDOW (Dialog), elm);
+
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
 		     GTK_WIDGET(prop));
   gtk_dialog_add_buttons (GTK_DIALOG(Dialog),
@@ -1627,8 +1624,8 @@ create_codec_conf_audio(GtkWidget *widget, gpointer data)
 			  GTK_RESPONSE_REJECT,
 			  NULL);
   gtk_widget_show_all (GTK_WIDGET (Dialog));
+  result  = gtk_dialog_run (GTK_DIALOG (Dialog));
 
- result  = gtk_dialog_run (GTK_DIALOG (Dialog));
   switch (result)
     {
       case GTK_RESPONSE_ACCEPT:
