@@ -221,11 +221,11 @@ void	video_stop(GtkWidget *widget, gpointer data)
 
   g_print ("[CallBack]:video_stop\n");
   //gst_element_set_state(project->pipeline, GST_STATE_NULL);
-  gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
+  gst_element_set_state(project->pipeline, GST_STATE_READY);
   self->private->play_status = STOP;
 
   /* rewind the movie */
-  do_seek(GST_ELEMENT (project->timeline), 0LL);
+/*   do_seek(GST_ELEMENT (project->timeline), 0LL); */
   
   /* query total size */
   /* value  = do_query(GST_ELEMENT (project->timeline), GST_QUERY_TOTAL); */

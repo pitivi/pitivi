@@ -1278,6 +1278,7 @@ pitivi_make_container_frame (PitiviNewProjectWindow *self)
   cbox = gtk_hbox_new(FALSE, 5);
 
   clabel = gtk_label_new("Container : ");
+  gtk_misc_set_padding (GTK_MISC (clabel), 5, 0);
   self->private->container_cbox = make_new_container_cbox (self);
 
   gtk_box_pack_start (GTK_BOX (cbox), clabel, FALSE, TRUE, 5);

@@ -251,6 +251,8 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
   if (!sf->length) {
     establish_length (sf);
   }
+/*   g_printf("video_handoff %lld:%02lld:%03lld\n", */
+/* 	   GST_M_S_M(GST_BUFFER_TIMESTAMP(buf))); */
   if ((GST_CLOCK_TIME_IS_VALID(GST_BUFFER_TIMESTAMP(buf))) 
       && (GST_BUFFER_TIMESTAMP(buf) >= sf->private->vlastcaptured) &&
       (GST_BUFFER_TIMESTAMP(buf) >= 0)) {
@@ -414,8 +416,10 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
 
   self->private->vthumb = g_new0(PitiviThumbTab *, self->private->cacheidx);
   
-  gst_element_set_state (self->pipeline, GST_STATE_READY);
+  gst_element_set_state (self->pipeline, GST_STATE_NULL);
 
+  g_printf ("pipeline ref:%d\n",
+	    G_OBJECT(self->pipeline)->ref_count);
   gst_object_unref (GST_OBJECT (self->pipeline));
   self->private->decode = NULL;
   self->pipeline = NULL;
