@@ -231,6 +231,7 @@ pitivi_settingswindow_ajout_button (GtkWidget *Table, gint row, gint col,
   Button = gtk_button_new_from_stock (stock_id);
   g_signal_connect (G_OBJECT (Button), "clicked",
 		    G_CALLBACK (pitivi_settingswindow_cb_button), pt);
+  g_object_set (G_OBJECT (Button), "sensitive", FALSE, NULL);
   pitivi_settingswindow_table_widget_add (Table, Button, row, col);
   gtk_widget_show (Button);
 
@@ -301,7 +302,10 @@ pitivi_settingswindow_ajout_coder (GtkWidget *Box, gint row, gint col, GList *Li
       pitivi_settingswindow_ajout_label (Box, row, col, List->data);
     }
   } else {
-    pitivi_settingswindow_ajout_label (Box, row, col, "Vide");
+    pitivi_settingswindow_ajout_label (Box, row, col, 
+				       g_locale_to_utf8 ("<span foreground=\"#FF0000\" style=\"oblique\">Empty</span>", 
+							 -1, NULL, NULL, NULL)
+				       );
   }  
   return ;
 }
