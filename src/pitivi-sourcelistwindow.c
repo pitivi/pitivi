@@ -125,6 +125,7 @@ gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
 			     GtkListStore **liststore, void **sMediaType, 
 			     guint type, gint *item_select, gint *folder_select);
 PitiviSourceFile *pitivi_sourcelistwindow_get_file(PitiviSourceListWindow *self);
+PitiviSourceFile *pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self);
 
 enum
   {
@@ -465,6 +466,8 @@ void	retrieve_file_from_folder(PitiviSourceListWindow *self)
     }
   closedir(dir);
   self->private->bar = pitivi_progressbar_new ();
+  while (gtk_events_pending())
+    gtk_main_iteration();
   for (nb = g_list_length (list); i < nb; list = list->next)
     {
       self->private->filepath = (gchar *)list->data;
@@ -475,7 +478,7 @@ void	retrieve_file_from_folder(PitiviSourceListWindow *self)
       pitivi_progressbar_set_fraction (self->private->bar, (gdouble)i/nb);
       while (gtk_events_pending())
 	gtk_main_iteration();
-      new_file(NULL, self);
+      pitivi_sourcelistwindow_set_file( self );
       i++;
     }
   pitivi_progressbar_set_fraction (self->private->bar, 1.0);
@@ -664,9 +667,16 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
 void	new_file(GtkWidget *widget, gpointer data)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
-  
-  if (!pitivi_sourcelistwindow_set_file(self))
+  gchar *name;
+
+  self->private->bar = pitivi_progressbar_new ();
+  name = strrchr(self->private->filepath, '/'); name++;
+  pitivi_progressbar_set_info (self->private->bar, name);
+  while (gtk_events_pending())
+    gtk_main_iteration();
+  if (!pitivi_sourcelistwindow_set_file( self ))
     return;
+  pitivi_progressbar_set_fraction (self->private->bar, 1.0);
 }
 
 void

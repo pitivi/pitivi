@@ -31,6 +31,7 @@ static	   GtkWindowClass *parent_class = NULL;
 
 struct _PitiviProgressBarPrivate
 {
+  GtkWidget	*button_cancel;
   GtkWidget     *table;
   GtkWidget	*img;
   /* instance private members */
@@ -96,6 +97,29 @@ pitivi_progressbar_set_fraction (PitiviProgressBar *self, gdouble val)
   return ;
 }
 
+gboolean pitivi_cancel_progessing (GtkWidget  *widget)
+{
+  PitiviProgressBar	*self = PITIVI_PROGRESSBAR(widget);
+  
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
+  self->close = TRUE;
+  return TRUE;
+}
+
+
+static gboolean
+pitivi_progressbar_delete_event ( GtkWidget  *widget,
+				  GdkEventAny *event )
+{
+  return (pitivi_cancel_progessing ( widget ));
+}
+
+static void
+pitivi_progressbar_button_cancel (GtkWidget  *button, GtkWidget  *widget)
+{
+  pitivi_cancel_progessing ( widget );
+}
+
 
 PitiviProgressBar *
 pitivi_progressbar_new ( void )
@@ -150,6 +174,9 @@ pitivi_progressbar_constructor (GType type,
 		    GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL,
 		    0, 5);
   gtk_box_pack_start (GTK_BOX (main_vbox), GTK_WIDGET (self->private->table), FALSE, FALSE, 0);
+  self->private->button_cancel = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+  g_signal_connect (G_OBJECT (self->private->button_cancel), "clicked", G_CALLBACK (pitivi_progressbar_button_cancel), self);
+  gtk_box_pack_start (GTK_BOX (main_vbox), GTK_WIDGET (self->private->button_cancel), FALSE, FALSE, 0);
   gtk_container_add  (GTK_CONTAINER (self), main_vbox);
   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self->bar), 0.01);
   gtk_widget_show_all (GTK_WIDGET (self));
@@ -190,17 +217,6 @@ pitivi_progressbar_finalize (GObject *object)
   
   g_free (self->private);
   G_OBJECT_CLASS (parent_class)->finalize (object);
-}
-
-static gboolean
-pitivi_progressbar_delete_event ( GtkWidget  *widget,
-				  GdkEventAny *event )
-{
-  PitiviProgressBar	*self = PITIVI_PROGRESSBAR(widget);
-  
-  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
-  self->close = TRUE;
-  return TRUE;
 }
 
 static void
