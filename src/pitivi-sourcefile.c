@@ -286,6 +286,8 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
 			      sf->private->vlastcaptured)))
 	g_warning ("Error seeking to %lld\n", (signed long long int) sf->private->vlastcaptured);
     }
+  while (gtk_events_pending())
+    gtk_main_iteration();
 }
 
 void

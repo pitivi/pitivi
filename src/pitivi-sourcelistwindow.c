@@ -257,8 +257,6 @@ gint	get_selected_row(gchar *path, gint *depth)
 	}
       tmp++;
     }
-/*   g_printf("tmp2 ==> %s\n", tmp2); */
-/*   g_printf("path ==> %s\n", path); */
   return (atoi(tmp2));
 }
 
@@ -298,7 +296,6 @@ void	add_liststore_for_bin(PitiviSourceListWindow *self,
   new->liststore = liststore;
   new->child = NULL;
   list = g_slist_append(list, new);
-
   /* need to link the first element to the list */
   if (self->private->liststore == NULL)
     self->private->liststore = list;
@@ -341,15 +338,10 @@ GtkListStore	*get_liststore_for_bin(PitiviSourceListWindow *self,
       *tmp++;
     }
   row = atoi(tmp2);
-  g_printf ("listore : %d %s\n", row, self->private->treepath);
   for (i = 0; list && i < row; i++)
     list = list->next;
-  if (list)
-    {
-      pitiviliststore = (PitiviListStore*)list->data;
-      return pitiviliststore->liststore;
-    }
-  return NULL;
+  pitiviliststore = (PitiviListStore*)list->data;
+  return pitiviliststore->liststore;
 }
 
 gpointer	get_data_for_bin(PitiviSourceListWindow *self)
@@ -387,9 +379,7 @@ gpointer	get_data_for_bin(PitiviSourceListWindow *self)
   row = atoi(tmp2);
   for (i = 0; i < row; i++)
     list = list->next;
-  
   g_free(save);
-
   return list->data;
 }
 
@@ -506,19 +496,17 @@ void	retrieve_file_from_folder(PitiviSourceListWindow *self)
     }
   closedir(dir);
   self->private->bar = pitivi_progressbar_new ();
-  while (gtk_events_pending())
-    gtk_main_iteration();
   for (nb = g_list_length (list); i < nb; list = list->next)
     {
       self->private->filepath = (gchar *)list->data;
       name = strrchr(self->private->filepath, '/'); name++;
+      if (!self->private->bar ||  !GTK_IS_WIDGET (self->private->bar) || self->private->bar->close)
+	break;
       pitivi_progressbar_set_info (self->private->bar, name);
       pitivi_progressbar_set_fraction (self->private->bar, (gdouble)i/nb);
       while (gtk_events_pending())
 	gtk_main_iteration();
       new_file(NULL, self);
-      while (gtk_events_pending())
-	gtk_main_iteration();
       i++;
     }
   pitivi_progressbar_set_fraction (self->private->bar, 1.0);
@@ -1014,9 +1002,7 @@ GtkWidget	*create_treeview(PitiviSourceListWindow *self)
 
   /* Creation du menu popup */
   self->private->treemenu = pitivi_create_menupopup (GTK_WIDGET (self), TreePopup, iNbTreePopup);
-
-  //g_printf("connect signal treeview 0x%x\n", pTreeView);
-
+  
   g_signal_connect_swapped(G_OBJECT(pTreeView), "button_press_event",
 			   G_CALLBACK(my_popup_handler), GTK_OBJECT(self));
 
@@ -1086,8 +1072,7 @@ gboolean	select_folder_from_listview(PitiviSourceListWindow *self,
   GtkTreeIter	iter;
   GtkTreePath	*path;
   GtkTreeSelection	*selection;
-
-  g_printf("you select a bin\n");
+  
   /* we need to select the corresponding bin in the treeview */
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
   
@@ -1095,30 +1080,19 @@ gboolean	select_folder_from_listview(PitiviSourceListWindow *self,
   strcat(self->private->treepath, folder);
   g_free(folder);
   
-  g_printf("with the following path [%s]\n", self->private->treepath);
   path = gtk_tree_path_new_from_string(self->private->treepath);
   /* path = gtk_tree_path_new_from_string("1"); */
   if (!path)
-    {
-      g_printf("path is not valid\n");
-      return FALSE;
-    }
+    return FALSE;
   gtk_tree_model_get_iter(GTK_TREE_MODEL(self->private->treestore),
 			  &iter, path);
   gtk_tree_view_expand_to_path(GTK_TREE_VIEW(self->private->treeview), 
 			       path);
   gtk_tree_selection_select_iter(selection, &iter);  
   if (gtk_tree_selection_iter_is_selected(selection, &iter))
-    {
-      g_printf("the item is currently selected\n");
-      return TRUE;
-    }
+    return TRUE;
   else
-    {
-      g_printf("the item is not selected\n");
-      return FALSE;
-    }
-  
+    return FALSE;
 }
 
 void	on_row_activated (GtkTreeView        *listview,
@@ -1384,6 +1358,8 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
   GtkWidget	*dialog;
   GtkListStore	*liststore;
   GtkTreeIter	iter;
+  gchar		*save;
+  gchar		*msg;
   gchar		*sMediaType;
   gint		item_select;
   gint		folder_select;
@@ -1392,12 +1368,16 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
   if (!OnSelectItem(self, &iter, &liststore, (void **) &sMediaType, TEXT_LISTCOLUMN3, &item_select, 
 		    &folder_select))
     return;
+  if ( strcmp(sMediaType, "Bin") )
+    msg = g_strdup ("This source is used several times in the project\nAre you sure you want to delete it ?\n");
+  else
+    msg = g_strdup ("Are you sure you want to delete a container bin ?\n");
   
   dialog = gtk_message_dialog_new (GTK_WINDOW (self),
 				   GTK_DIALOG_DESTROY_WITH_PARENT,
 				   GTK_MESSAGE_WARNING,
 				   GTK_BUTTONS_YES_NO,
-				   "This source is used several times in the project\nAre you sure you want to delete it ?\n");
+				   msg);
   
   dialog_return = gtk_dialog_run (GTK_DIALOG (dialog));
   switch (dialog_return)
@@ -1414,10 +1394,14 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
 	else
 	  {
 	    /* we need to set treepath too */
-	    self->private->treepath = g_strdup_printf("%s:%d", 
-						      self->private->treepath, 
-						      folder_select);
-	    OnRemoveBin(self, 0, NULL);
+	    save = g_strdup (self->private->treepath);
+	    gchar *treepath = g_strdup_printf("%s:%d", 
+					      self->private->treepath, 
+					      folder_select);
+	    g_free ( self->private->treepath );
+	    self->private->treepath = treepath; 
+	    OnRemoveBin(self, 1, widget);
+	    self->private->treepath  = save;
 	  }
 	break;
     default:
@@ -1459,7 +1443,6 @@ void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget)
     }
   
   treepath = gtk_tree_path_new_from_string(self->private->treepath);
-    
   if (!gtk_tree_model_get_iter(model, &iter, treepath))
     {
       gtk_tree_path_free(treepath);
@@ -1489,7 +1472,7 @@ void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget)
       i = folder_select = 0;
       
       selected_tree_row++;
-      while (folder_select < selected_tree_row)
+      while (liststore && folder_select < selected_tree_row)
 	{
 	  gtk_tree_model_get(GTK_TREE_MODEL(liststore), &listiter, TEXT_LISTCOLUMN3, &sMediaType, -1);
 

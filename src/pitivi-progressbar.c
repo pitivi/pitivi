@@ -36,8 +36,6 @@ struct _PitiviProgressBarPrivate
   /* instance private members */
   gboolean	activity_mode;
   gboolean	dispose_has_run;
-  /* timer */
-  int timer;
 };
 
 /*
@@ -51,16 +49,20 @@ struct _PitiviProgressBarPrivate
 static gboolean progress_timeout( gpointer data )
 {
   PitiviProgressBar *self = (PitiviProgressBar *) data;
-  gdouble	new_val;
+  gdouble new_val;
   
-  while (gtk_events_pending())
-    gtk_main_iteration();
-  new_val = gtk_progress_bar_get_fraction (GTK_PROGRESS_BAR (self->bar));
-  if (new_val == 1.0) {
-    gtk_widget_destroy (GTK_WIDGET (self));
-  }
-  else
-    g_timeout_add (3000, progress_timeout, self);
+  g_return_val_if_fail (GTK_IS_WIDGET (self), FALSE);
+  if (GTK_IS_PROGRESS_BAR (self->bar))
+    {
+      new_val = gtk_progress_bar_get_fraction (GTK_PROGRESS_BAR (self->bar));
+      if ( new_val == 1.0 ) {
+	gtk_widget_destroy (GTK_WIDGET (self));
+	return FALSE;
+      }
+      while ( gtk_events_pending() )
+	gtk_main_iteration();
+      return TRUE;
+    }
   return FALSE;
 } 
 
@@ -68,7 +70,8 @@ static gboolean progress_timeout( gpointer data )
 void
 pitivi_progressbar_set_info (PitiviProgressBar *self, gchar *label)
 {
-  gtk_label_set_text (GTK_LABEL (self->infos), label);
+  if (GTK_IS_WIDGET (self))
+    gtk_label_set_text (GTK_LABEL (self->infos), label);
   return ;
 }
 
@@ -78,21 +81,24 @@ pitivi_progressbar_set_fraction (PitiviProgressBar *self, gdouble val)
   gchar	    *percent;
   gint	    res;
  
-  gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self->bar), (gdouble)val);
-  res = val*100;
-  g_printf ("percent:%d\n", res);
-  percent = g_strdup_printf("%d %%", (int)res);
-  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (self->bar), percent);
+  if (GTK_IS_WIDGET (self))
+    {
+      gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self->bar), (gdouble)val);
+      res = val*100;
+      percent = g_strdup_printf("%d %%", (int)res);
+      gtk_progress_bar_set_text (GTK_PROGRESS_BAR (self->bar), percent);
+    }
   return ;
 }
 
 
 PitiviProgressBar *
-pitivi_progressbar_new(void)
+pitivi_progressbar_new ( void )
 {
   PitiviProgressBar	*progressbar;
   
-  progressbar = (PitiviProgressBar *) g_object_new(PITIVI_PROGRESSBAR_TYPE, NULL);
+  progressbar = (PitiviProgressBar *) g_object_new(PITIVI_PROGRESSBAR_TYPE,
+						   NULL);
   g_assert(progressbar != NULL);
   return progressbar;
 }
@@ -181,15 +187,28 @@ pitivi_progressbar_finalize (GObject *object)
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
+static gboolean
+pitivi_progressbar_delete_event ( GtkWidget  *widget,
+				  GdkEventAny *event )
+{
+  PitiviProgressBar	*self = PITIVI_PROGRESSBAR(widget);
+  
+  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
+  self->close = TRUE;
+  return TRUE;
+}
+
 static void
 pitivi_progressbar_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
+  GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (g_class);
   
   parent_class = g_type_class_peek_parent (g_class);
   gobject_class->constructor = pitivi_progressbar_constructor;
   gobject_class->dispose = pitivi_progressbar_dispose;
   gobject_class->finalize = pitivi_progressbar_finalize;
+  widget_class->delete_event = pitivi_progressbar_delete_event;
 }
 
 GType

@@ -58,7 +58,10 @@ struct _PitiviProgressBar
   GtkWidget	*infos;
   GtkWidget	*label;
   GtkWidget	*bar;
-
+  
+  /* close boolean */
+  gboolean	close;
+  
   /* private */
   PitiviProgressBarPrivate *private;
 };
