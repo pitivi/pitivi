@@ -161,11 +161,13 @@ gnl_composition_dispose (GObject *object)
 }
 
 /*
-  gnl_composition_find_entry_priority
-
-  Returns the GnlCompositionEntry located AT/AFTER/START time , AND that has
-    a priority of at least minpriority.
-
+ * gnl_composition_find_entry_priority:
+ * @comp: The composition in which we're looking for an entry
+ * @time: The time to start the search
+ * @method: the #GnlFindMethod to use
+ * @minpriority: The minimum priority to use
+ *
+ * Returns: The #GnlCompositionEntry found, or NULL if nothing was found
 */
 
 static GnlCompositionEntry *
@@ -247,6 +249,15 @@ gnl_composition_find_entry (GnlComposition *comp, GstClockTime time, GnlFindMeth
   return gnl_composition_find_entry_priority(comp, time, method, 1);
 }
 
+/**
+ * gnl_composition_find_object:
+ * @comp: The #GnlComposition to look into
+ * @time: The time to start looking at
+ * @method: The #GnlFindMethod used to look to the object
+ *
+ * Returns: The #GnlObject found , or NULL if none
+ */
+
 GnlObject*
 gnl_composition_find_object (GnlComposition *comp, GstClockTime time, GnlFindMethod method)
 {
@@ -301,6 +312,13 @@ _entry_compare_func (gconstpointer a, gconstpointer b)
   return res;
 }
 
+/**
+ * gnl_composition_new:
+ * @name: the name of the composition
+ *
+ * Returns: an initialized #GnlComposition
+ */
+
 GnlComposition*
 gnl_composition_new (const gchar *name)
 {
@@ -346,6 +364,12 @@ child_active_changed (GnlObject *object, GParamSpec *arg, gpointer udata)
   else
     comp->active_objects = g_list_remove(comp->active_objects, object);
 }
+
+/**
+ * gnl_composition_add_object:
+ * @comp: The #GnlComposition to add an object to
+ * @object: The #GnlObject to add to the composition
+ */
 
 void
 gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
@@ -395,6 +419,12 @@ find_function (GnlObject *object, GnlObject *to_find)
 
   return 1;
 }
+
+/**
+ * gnl_composition_remove_object:
+ * @comp: The #GnlComposition to remove an object from
+ * @object: The #GnlObject to remove from the composition
+ */
 
 void
 gnl_composition_remove_object (GnlComposition *comp, GnlObject *object)

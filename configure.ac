@@ -127,6 +127,7 @@ GNL_LIBS="\$(top_builddir)/gnl/libgnl.la"
 AC_SUBST(GNL_CFLAGS)
 AC_SUBST(GNL_LIBS)
 
+GST_DOC()
 
 dnl i18n stuff and gettext stuff
 dnl AC_PROG_INTLTOOL([0.21])
@@ -142,4 +143,6 @@ AC_OUTPUT(Makefile
 	 pixmaps/Makefile
 	 ui/Makefile
 	 gnl/Makefile
+	 docs/Makefile
+	 docs/gnl/Makefile
 	 )

@@ -1,0 +1,40 @@
+<!-- ##### SECTION Title ##### -->
+GnlGroup
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GnlGroup ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gnl_group_new ##### -->
+<para>
+
+</para>
+
+@name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gnl_group_append_layer ##### -->
+<para>
+
+</para>
+
+@group: 
+@layer: 
+
+

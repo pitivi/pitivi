@@ -58,10 +58,10 @@ typedef enum
 struct _GnlComposition {
   GnlObject		 parent;
 
-  GList			*objects;	// the list of GnlObjects contained in the composition
+  GList			*objects;
 
-  GstClockTime	 	 next_stop;	// when to stop next
-  GList			*active_objects;// the list of GnlObjects that are active in the composition
+  GstClockTime	 	 next_stop;
+  GList			*active_objects;
 };
 
 struct _GnlCompositionClass {

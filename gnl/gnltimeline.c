@@ -396,6 +396,13 @@ gnl_timeline_init (GnlTimeline *timeline)
   
 }
 
+/**
+ * gnl_timeline_new:
+ * @name: The name of the instance
+ *
+ * Returns: a newly allocated #GnlTimeline, or NULL if the creation failed
+ */
+
 GnlTimeline*
 gnl_timeline_new (const gchar *name)
 {
@@ -444,6 +451,12 @@ group_start_stop_changed (GnlGroup *group, GParamSpec *arg, gpointer udata)
   timeline_update_start_stop(GNL_TIMELINE(udata));
 }
 
+/**
+ * gnl_timeline_add_group:
+ * @timeline: The #GnlTimeline to add a group to
+ * @group: The #GnlGroup to add to the timeline
+ */
+
 void
 gnl_timeline_add_group (GnlTimeline *timeline, GnlGroup *group)
 {
@@ -488,6 +501,14 @@ gnl_timeline_get_link_for_group (GnlTimeline *timeline, GnlGroup *group)
   }
   return NULL;
 }
+
+/**
+ * gnl_timeline_get_pad_for_group:
+ * @timeline: The #GnlTimeline
+ * @group: The #GnlGroup we want a #GstPad to
+ *
+ * Returns: The corresponding #GstPad, or NULL if the group couldn't be found
+ */
 
 GstPad*
 gnl_timeline_get_pad_for_group (GnlTimeline *timeline, GnlGroup *group)

@@ -1,0 +1,74 @@
+<!-- ##### SECTION Title ##### -->
+GnlSource
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GnlSource ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### SIGNAL GnlSource::get-pad-for-stream ##### -->
+<para>
+
+</para>
+
+@gnlsource: the object which received the signal.
+@arg1: 
+@Returns: 
+
+<!-- ##### ARG GnlSource:element ##### -->
+<para>
+
+</para>
+
+<!-- ##### FUNCTION gnl_source_new ##### -->
+<para>
+
+</para>
+
+@name: 
+@element: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gnl_source_set_element ##### -->
+<para>
+
+</para>
+
+@source: 
+@element: 
+
+
+<!-- ##### FUNCTION gnl_source_get_element ##### -->
+<para>
+
+</para>
+
+@source: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gnl_source_get_pad_for_stream ##### -->
+<para>
+
+</para>
+
+@source: 
+@padname: 
+@Returns: 
+
+

@@ -92,6 +92,14 @@ gnl_operation_set_element (GnlOperation *operation, GstElement *element)
   gst_bin_add (GST_BIN (operation), element);
 }
 
+/**
+ * gnl_operation_new:
+ * @name: the name of the #GnlOperation to create
+ * @element: the #GstElement which is to be the provider
+ *
+ * Returns: a newly allocated #GnlOperation, or NULL if the creation failed
+ */
+
 GnlOperation*
 gnl_operation_new (const gchar *name, GstElement *element)
 {
@@ -106,6 +114,13 @@ gnl_operation_new (const gchar *name, GstElement *element)
 
   return operation;
 }
+
+/**
+ * gnl_operation_get_num_sinks:
+ * @operation: A #GnlOperation
+ *
+ * Returns: The number of sink pads
+ */
 
 guint
 gnl_operation_get_num_sinks (GnlOperation *operation)

@@ -1,0 +1,69 @@
+<!-- ##### SECTION Title ##### -->
+GnlComposition
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GnlComposition ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ENUM GnlFindMethod ##### -->
+<para>
+
+</para>
+
+@GNL_FIND_AT: 
+@GNL_FIND_AFTER: 
+@GNL_FIND_START: 
+
+<!-- ##### FUNCTION gnl_composition_new ##### -->
+<para>
+
+</para>
+
+@name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gnl_composition_add_object ##### -->
+<para>
+
+</para>
+
+@comp: 
+@object: 
+
+
+<!-- ##### FUNCTION gnl_composition_remove_object ##### -->
+<para>
+
+</para>
+
+@comp: 
+@object: 
+
+
+<!-- ##### FUNCTION gnl_composition_find_object ##### -->
+<para>
+
+</para>
+
+@comp: 
+@time: 
+@method: 
+@Returns: 
+
+

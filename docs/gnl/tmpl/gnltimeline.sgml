@@ -1,0 +1,56 @@
+<!-- ##### SECTION Title ##### -->
+GnlTimeline
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GnlTimeline ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### STRUCT GnlTimelineTimer ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gnl_timeline_new ##### -->
+<para>
+
+</para>
+
+@name: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gnl_timeline_add_group ##### -->
+<para>
+
+</para>
+
+@timeline: 
+@group: 
+
+
+<!-- ##### FUNCTION gnl_timeline_get_pad_for_group ##### -->
+<para>
+
+</para>
+
+@timeline: 
+@group: 
+@Returns: 
+
+

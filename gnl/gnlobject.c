@@ -488,11 +488,6 @@ gnl_object_covers_func (GnlObject *object, GstClockTime start,
   default:
     break;
   }
-
-/*   if (start >= object->start && stop < object->stop) { */
-/*     GST_INFO("TRUE"); */
-/*     return TRUE; */
-/*   } */
   
   GST_INFO("FALSE");
   return FALSE;

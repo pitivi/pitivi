@@ -1,0 +1,41 @@
+<!-- ##### SECTION Title ##### -->
+GnlOperation
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### STRUCT GnlOperation ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION gnl_operation_new ##### -->
+<para>
+
+</para>
+
+@name: 
+@element: 
+@Returns: 
+
+
+<!-- ##### FUNCTION gnl_operation_get_num_sinks ##### -->
+<para>
+
+</para>
+
+@operation: 
+@Returns: 
+
+
