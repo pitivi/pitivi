@@ -8,8 +8,8 @@
 ##
 
 
-#AUTOMAKE_OPTIONS	= foreign
 INCLUDES		= -I$(top_srcdir)/src/include\
+			-I$(top_srcdir)/gnl/\
 			-DDATADIR=\""$(datadir)"\"
 
 bin_PROGRAMS		= pitivi

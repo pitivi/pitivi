@@ -143,6 +143,7 @@ AC_OUTPUT(Makefile
 	 pixmaps/Makefile
 	 ui/Makefile
 	 gnl/Makefile
+	 conf/Makefile
 	 docs/Makefile
 	 docs/gnl/Makefile
 	 )
