@@ -122,8 +122,8 @@ dnl check for gnonlin
 dnl PKG_CHECK_MODULES(GNL, gnonlin, ,exit)
 dnl AC_SUBST(GNL_LIBS)
 dnl AC_SUBST(GNL_CFLAGS)
-GNL_CFLAGS="-I\$(top_srcdir)/gnonlin"
-GNL_LIBS="\$(top_builddir)/gnonlin/libgnl.la"
+GNL_CFLAGS="-I\$(top_srcdir)/gnl"
+GNL_LIBS="\$(top_builddir)/gnl/libgnl.la"
 AC_SUBST(GNL_CFLAGS)
 AC_SUBST(GNL_LIBS)
 
@@ -141,5 +141,5 @@ AC_OUTPUT(Makefile
          src/Makefile
 	 pixmaps/Makefile
 	 ui/Makefile
-	 gnonlin/Makefile
+	 gnl/Makefile
 	 )

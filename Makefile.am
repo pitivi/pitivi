@@ -7,7 +7,7 @@
 ##
 
 # AUTOMAKE_OPTIONS	= foreign
-SUBDIRS			= gnonlin src pixmaps
+SUBDIRS			= gnl src pixmaps
 # will come later : pixmaps libs docs
 
 EXTRA_DIST = \
