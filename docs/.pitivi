@@ -5,7 +5,7 @@
       <pitivi:categoriesettings>
         <pitivi:name>DV-PAL</pitivi:name>
         <pitivi:projectsettings>
-          <pitivi:name>DV/OGG/AVI</pitivi:name>
+          <pitivi:name>DV/VORBIS/AVI</pitivi:name>
           <pitivi:description>Description:
 Insert a description of the setting</pitivi:description>
           <pitivi:container_factory>avimux</pitivi:container_factory>
