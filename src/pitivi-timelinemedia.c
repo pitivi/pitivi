@@ -103,13 +103,22 @@ static guint	      media_signals[LAST_SIGNAL] = {0};
  **********************************************************
 */
 
-static GtkTargetEntry TargetSameEntry[] =
+
+static GtkTargetEntry TargetMediaDropEntry[] =
   {
+    { "pitivi/sourcetimeline", GTK_TARGET_SAME_APP, DND_TARGET_TIMELINEWIN },
     { "pitivi/media/sourceeffect", GTK_TARGET_SAME_APP,  DND_TARGET_EFFECTSWIN },
+  };
+  
+static gint iNbTargetMediaDropEntry = G_N_ELEMENTS (TargetMediaDropEntry);
+
+
+static GtkTargetEntry TargetDragEntry[] =
+  {
     { "pitivi/sourcetimeline", GTK_TARGET_SAME_APP, DND_TARGET_TIMELINEWIN }
   };
 
-static gint iNbTargetSameEntry = G_N_ELEMENTS (TargetSameEntry);
+static gint iNbTargetDragEntry = G_N_ELEMENTS (TargetDragEntry);
 
 
 /*
@@ -652,8 +661,25 @@ pitivi_timelinemedia_drag_drop (GtkWidget *widget,
 				gpointer data)
      
 {
-  g_printf ("dropping media ..\n");
-  return FALSE;
+  GtkWidget *source = gtk_drag_get_source_widget(dc);
+ 
+  if (PITIVI_IS_TIMELINEMEDIA (source))
+    {
+      PitiviTimelineMedia *this = (PitiviTimelineMedia *) widget;
+      PitiviCursor *cursor;
+      int width, m_x, m_y = 0;
+      
+      cursor = pitivi_getcursor_id (widget);
+      if (cursor->type == PITIVI_CURSOR_SELECT ||
+	  cursor->type == PITIVI_CURSOR_HAND)
+	{
+	  GdkModifierType mask = GDK_BUTTON1_MASK;
+	  gdk_window_get_pointer (GDK_WINDOW (GTK_WIDGET (this->track)->window), &m_x, &m_y, &mask);
+	  width = widget->allocation.width/2;
+	  pitivi_timelinecellrenderer_drag_on_track (this->track, widget, m_x - width, 0);
+	}
+    }
+  return TRUE;
 }
 
 static void
@@ -707,18 +733,17 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
   this->copied = FALSE;
   
   gtk_drag_source_set  (GTK_WIDGET (this),
-			GDK_BUTTON1_MASK|GDK_BUTTON3_MASK,
-			TargetSameEntry, 
-			iNbTargetSameEntry, 
+			GDK_BUTTON1_MASK,
+			TargetDragEntry, 
+			iNbTargetDragEntry, 
 			GDK_ACTION_COPY|GDK_ACTION_MOVE);
   
   gtk_drag_dest_set  (GTK_WIDGET (this), 
-		      GTK_DEST_DEFAULT_DROP|
-		      GTK_DEST_DEFAULT_HIGHLIGHT, 
-		      TargetSameEntry,
-		      iNbTargetSameEntry,
-		      GDK_ACTION_COPY|GDK_ACTION_MOVE);
-  
+		      GTK_DEST_DEFAULT_DROP,
+		      TargetMediaDropEntry,
+		      iNbTargetMediaDropEntry,
+		      GDK_ACTION_COPY);
+ 
   pixbuf = gtk_widget_render_icon(GTK_WIDGET (this), PITIVI_STOCK_HAND, GTK_ICON_SIZE_DND, NULL);
   gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (this), pixbuf);
   connect_drag_and_drop (GTK_WIDGET (this));
@@ -890,7 +915,8 @@ pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
 { 
   PitiviTimelineCellRenderer *container;
   gint x = event->x;
-
+  
+  g_printf ("button..\n");
   PitiviCursor *cursor = pitivi_getcursor_id (widget);
   if (cursor->type == PITIVI_CURSOR_ZOOM || 
       cursor->type == PITIVI_CURSOR_ZOOM_INC ||

@@ -172,11 +172,11 @@ void	video_play(GtkWidget *widget, gpointer data)
   gboolean retval;
 
   if (self->private->play_status == PLAY) {
-    g_print ("[CallBack]:video_pause\n");
+    g_print ("[CallBack]:video_pause PLAY STATUS\n");
     self->private->play_status = PAUSE;
     gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
   } else if (self->private->play_status == PAUSE) {
-    g_print ("[CallBack]:video_play\n");
+    g_print ("[CallBack]:video_play PAUSE STATUS\n");
     self->private->play_status = PLAY;
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
       g_warning("Couldn't set the project pipeline to PLAYING!");
@@ -187,7 +187,7 @@ void	video_play(GtkWidget *widget, gpointer data)
       g_idle_add(idle_func_video, self);
     }
   } else if (self->private->play_status == STOP) {
-    g_print ("[CallBack]:video_play\n");
+    g_print ("[CallBack]:video_play STOP STATUS\n");
     self->private->play_status = PLAY;
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
       g_warning("Couldn't set the project pipeline to PLAYING");
@@ -199,7 +199,6 @@ void	video_play(GtkWidget *widget, gpointer data)
     }
   }
   gtk_signal_emit_by_name (GTK_OBJECT (self->private->video_area), "expose_event", &ev, &retval);
-
   return ;
 }
 
@@ -434,13 +433,8 @@ create_gui (gpointer data)
 		    G_CALLBACK (pitivi_viewerwindow_expose_event), NULL);
   g_signal_connect (G_OBJECT (self->private->video_area), "configure_event",
 		    G_CALLBACK (pitivi_viewerwindow_configure_event), NULL);
-
-  gtk_widget_set_events (self->private->video_area, GDK_EXPOSURE_MASK
-			 | GDK_LEAVE_NOTIFY_MASK
-			 | GDK_BUTTON_PRESS_MASK
-			 | GDK_POINTER_MOTION_MASK
-			 | GDK_POINTER_MOTION_HINT_MASK);
-
+  
+  gtk_widget_set_events (self->private->video_area, GDK_EXPOSURE_MASK);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->video_area, TRUE, TRUE, 0);
   
   // Create hbox for toolbar
@@ -457,12 +451,8 @@ create_gui (gpointer data)
   gtk_scale_set_draw_value (GTK_SCALE (self->private->timeline), FALSE);
   gtk_widget_show (self->private->timeline);
 
-  gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-press-event", 
-		      GTK_SIGNAL_FUNC (pause_stream), self);
-  gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-release-event", 
-		      GTK_SIGNAL_FUNC (seek_stream), self);
-/*   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "value-changed",  */
-/* 		      GTK_SIGNAL_FUNC (move_timeline), self); */
+  /*   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "value-changed",  */
+  /* 		      GTK_SIGNAL_FUNC (move_timeline), self); */
   gtk_box_pack_start (GTK_BOX (self->private->toolbar), 
 		      self->private->timeline, TRUE, TRUE, 0);
   

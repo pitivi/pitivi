@@ -66,6 +66,7 @@ struct _PitiviTimelineMedia
   PitiviTimelineCellRenderer *track;
   PitiviSourceItem *sourceitem;
   GtkWidget        *linked;
+  
  
   GList		   *effectschilds;  /* effects on media */
   guint		   original_width;
@@ -76,6 +77,10 @@ struct _PitiviTimelineMedia
   /* private */
   
   PitiviTimelineMediaPrivate *private;
+  
+  /* Experimental previous / next media */
+  PitiviTimelineMedia *previous;
+  PitiviTimelineMedia *next;
 };
 
 struct _PitiviTimelineMediaClass

@@ -149,6 +149,11 @@ static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
  * Insert "added-value" functions here
  */
 
+void move_media (GtkWidget *cell, GtkWidget *widget, guint x, gboolean move);
+GtkWidget **layout_intersection_widget (GtkWidget *self, GtkWidget *widget, gint x, gboolean move);
+gboolean    pitivi_add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y);
+void	    link_widgets ( PitiviTimelineMedia *media1, PitiviTimelineMedia *media2);
+
 /**
  * pitivi_timelinecellrenderer_new:
  * @guint: number of track
@@ -458,35 +463,6 @@ pitivi_layout_move (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
   }
 }
 
-GtkWidget **layout_intersection_widget (GtkWidget *self, GtkWidget *widget, gint x)
-{
-  GList	*child;
-  GtkRequisition req;
-  GtkWidget **p;
-  GtkWidget *matches[2];
-  int xchild, widthchild = 0;
-  
-  matches[0] = 0;
-  matches[1] = 0;
-  p = matches;
-
-  gtk_widget_size_request (widget, &req);
-  child = gtk_container_get_children (GTK_CONTAINER (self));
-  for (child = g_list_sort (child, compare_littlechild); 
-       child; 
-       child = child->next )
-    {
-      xchild = GTK_WIDGET(child->data)->allocation.x;
-      widthchild = GTK_WIDGET(child->data)->allocation.width;
-      if (xchild <= x && x <= xchild + widthchild)
-	matches[0] = GTK_WIDGET (child->data);
-      else if (xchild <= x + req.width && x + req.width <= xchild + widthchild)
-	matches[1] = GTK_WIDGET (child->data);
-    }
-  g_list_free (child);
-  return p;
-}
-
 void move_attached_effects (GtkWidget *widget, int x)
 {
   PitiviTimelineMedia *media = (PitiviTimelineMedia *) widget;
@@ -502,31 +478,13 @@ void move_attached_effects (GtkWidget *widget, int x)
     }
 }
 
-void move_media (GtkWidget *cell, GtkWidget *widget, guint x)
-{
-  GtkWidget **intersec;
-  GtkWidget *first;
-  int       xbegin;
-
-  intersec = layout_intersection_widget (cell, widget, x);
-  first = intersec[1];
-  if (first && GTK_IS_WIDGET (first) && first->allocation.x != x)
-    {
-      xbegin = x + first->allocation.width;
-      pitivi_layout_move (GTK_LAYOUT (cell), first, xbegin, 0);
-      move_attached_effects (first, xbegin);
-      move_media (cell, first, xbegin);
-    }
-  return;
-}
-
 void
 move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
 {
   GtkWidget **intersec;
   int xbegin = x;
   
-  intersec = layout_intersection_widget (self, widget, x);
+  intersec = layout_intersection_widget (self, widget, x, TRUE);
   if (!intersec[1] && intersec[0])
     {
       if ( x >=  intersec[0]->allocation.x &&
@@ -539,16 +497,14 @@ move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
     }
   else if (!intersec[0] && intersec[1])
     {
-      move_media (self, intersec[1], x);
-      move_attached_effects (intersec[1], x);
+      move_media (self, widget, x, TRUE);
       pitivi_layout_move (GTK_LAYOUT (self), widget, x, 0);
-      move_attached_effects (widget, x);
     }
   else if (intersec[1] && intersec[0])
     {
       xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
       pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
-      move_media (self, widget, xbegin);
+      move_media (self, widget, xbegin, TRUE);
       move_attached_effects (widget, x);
     }
   else
@@ -557,57 +513,6 @@ move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
       move_attached_effects (widget, xbegin);
     }
 }
-
-void
-link_widgets ( PitiviTimelineMedia *media1, PitiviTimelineMedia *media2)
-{
-  media1->linked = GTK_WIDGET ( media2 );
-  media2->linked = GTK_WIDGET ( media1 );
-}
-
-/**
- * pitivi_add_to_layout:
- * @GtkWidget: the parent widget
- * @GtkWidget: the child widget
- * @gint: the position in x
- * @gint: the position in y
- *
- * Add a widget to the layer
- *
- * Returns: A flag setted to TRUE
- */
-
-gboolean
-pitivi_add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
-{
-  PitiviTimelineCellRenderer *cell;
-  GtkWidget **intersec;
-  int	    xbegin;
-  
-  cell = PITIVI_TIMELINECELLRENDERER (self);
-  intersec = layout_intersection_widget (self, widget, x);
-  if (!intersec[0] && !intersec[1])
-    pitivi_layout_put (GTK_LAYOUT (self), widget, x, 0);
-  else if (!intersec[1]) /* right */
-    {
-      move_media (self, widget, x);
-      xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
-      pitivi_layout_put (GTK_LAYOUT (self), widget, xbegin, y);
-    }
-  else if (!intersec[0]) /* left */
-    {
-      move_media (self, intersec[1], x);
-      pitivi_layout_put (GTK_LAYOUT (self), widget, x, 0);
-    }
-  else if (intersec[1] && intersec[0])
-    { 
-      xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
-      pitivi_layout_put (GTK_LAYOUT (self), widget, xbegin, 0);
-      move_media (self, intersec[1], xbegin);
-    }
-  return TRUE;
-}
-
 
 PitiviLayerType
 pitivi_check_media_type_str (gchar *media)
@@ -1080,10 +985,9 @@ pitivi_timelinecellrenderer_drag_on_effects (PitiviTimelineCellRenderer *self,
     }
 }
 
-static void 
+void 
 pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self, 
 					   GtkWidget *source,
-					   GtkSelectionData *selection,
 					   int x,
 					   int y)
 {
@@ -1162,7 +1066,7 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
 	  x -= source->allocation.width/2;
 	  if ( x < 0)
 	    x = 0;
-	  pitivi_timelinecellrenderer_drag_on_track (self, source, self->private->current_selection, x, y);
+	  pitivi_timelinecellrenderer_drag_on_track (self, source, x, y);
 	  gtk_drag_finish (dc, TRUE, TRUE, time);
 	  break;
 	case DND_TARGET_EFFECTSWIN:
@@ -1877,4 +1781,122 @@ pitivi_timelinecellrenderer_get_type (void)
 				     "PitiviTimelineCellRendererType", &info, 0);
     }
   return type;
+}
+
+
+/*
+ **********************************************************
+ * Adding Widget  			                  *
+ *							  *
+ **********************************************************
+*/
+
+void
+link_widgets ( PitiviTimelineMedia *media1, PitiviTimelineMedia *media2)
+{
+  media1->linked = GTK_WIDGET ( media2 );
+  media2->linked = GTK_WIDGET ( media1 );
+}
+
+void move_media (GtkWidget *cell, GtkWidget *widget, guint x, gboolean move)
+{
+  GtkWidget **intersec;
+  GtkWidget *first;
+  int       xbegin;
+
+  intersec = layout_intersection_widget (cell, widget, x, move);
+  first = intersec[1];
+  if (first && GTK_IS_WIDGET (first) && first->allocation.x != x)
+    {
+      xbegin = x + first->allocation.width;
+      pitivi_layout_move (GTK_LAYOUT (cell), first, xbegin, 0);
+      move_attached_effects (first, xbegin);
+      move_media (cell, first, xbegin, move);
+    }
+  return;
+}
+
+GtkWidget **layout_intersection_widget (GtkWidget *self, GtkWidget *widget, gint x, gboolean move)
+{
+  GList	*child;
+  GtkRequisition req;
+  GtkWidget **matches;
+  int xchild, widthchild = 0;
+  
+  matches =  g_new0(GtkWidget *, (int) 2);
+  gtk_widget_size_request (widget, &req);
+  child = gtk_container_get_children (GTK_CONTAINER (self));
+  for (child = g_list_sort (child, compare_littlechild); 
+       child; 
+       child = child->next )
+    {
+      xchild = GTK_WIDGET(child->data)->allocation.x;
+      if (move && xchild == widget->allocation.x)
+	continue;
+      widthchild = GTK_WIDGET(child->data)->allocation.width;
+      if (xchild <= x && x <= xchild + widthchild)
+	matches[0] = GTK_WIDGET (child->data);
+      else if (xchild <= x + req.width && x + req.width <= xchild + widthchild)
+	matches[1] = GTK_WIDGET (child->data);
+    }
+  g_list_free (child);
+  return matches;
+}
+
+/**
+ * pitivi_add_to_layout:
+ * @GtkWidget: the parent widget
+ * @GtkWidget: the child widget
+ * @gint: the position in x
+ * @gint: the position in y
+ *
+ * Add a widget to the layer
+ *
+ * Returns: A flag setted to TRUE
+ */
+
+gboolean
+pitivi_add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
+{
+  GtkWidget **intersec = layout_intersection_widget (self, widget, x, FALSE);
+  PitiviTimelineMedia *right =  PITIVI_TIMELINEMEDIA (intersec[0]);
+  PitiviTimelineMedia *left = PITIVI_TIMELINEMEDIA (intersec[1]); 
+  PitiviTimelineMedia *new_media = (PitiviTimelineMedia *) widget;
+  int xbegin = 0;
+  
+  if (!right && !left)
+    {
+      new_media->next = NULL;
+      new_media->previous = NULL;
+      pitivi_layout_put (GTK_LAYOUT (self), widget, x, 0);
+    }
+  else if (!left) /* Case intersection right */
+    {
+      new_media->previous = right;
+      new_media->next = NULL;
+      right->next = new_media;
+      move_media (self, widget, x, FALSE);
+      xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
+      pitivi_layout_put (GTK_LAYOUT (self), widget, xbegin, y);
+    }
+  else if (!right) /* Case intersection left */
+    {
+      new_media->previous = NULL;
+      new_media->next = left;
+      left->previous = new_media;
+      move_media (self, GTK_WIDGET (left), x, FALSE);
+      pitivi_layout_put (GTK_LAYOUT (self), widget, x, 0);
+    }
+  else if (right && left) /* Case intersection on left and right */
+    { 
+      left->previous = new_media;
+      new_media->next = left;
+      new_media->previous = right;
+      PITIVI_TIMELINEMEDIA (intersec[0])->next = new_media;
+      xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
+      pitivi_layout_put (GTK_LAYOUT (self), widget, xbegin, 0);
+      move_media (self, intersec[1], xbegin, FALSE);
+    }
+  g_free ( intersec );
+  return TRUE;
 }
