@@ -147,49 +147,59 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
   GtkStyle		*style;
   GdkColor		color;
   guint			len;
+  char			**tab;
+  int			i;
+  GdkGC			*gc;
 
   PitiviTimelineMedia	*self = PITIVI_TIMELINEMEDIA (widget);
    
-  context = pango_context_new ();
+  context = (PangoContext *) pango_context_new ();
   context = gtk_widget_create_pango_context (widget);  
   layout = pango_layout_new (context);
   style = gtk_style_copy (widget->style);
   
-  /*
-
-    if (self->private->media_type == PITIVI_VIDEO_TRACK)
-    {
-    color.red = 0xbaba;
-    color.blue = 0x0000;
-    color.green = 0x0000;
-    }
-    else if (self->private->media_type == PITIVI_AUDIO_TRACK)
-    {
-    color.red = 0x0000;
-    color.blue = 0xcacc;
-    color.green = 0x0000;
-    }
-    else if (self->private->media_type == PITIVI_VIDEO_AUDIO_TRACK)
-    {
-    color.red = 0x0000;
-    color.blue = 0x0000;
-    color.green = 0xaaac;
-    }
-    style->bg[GTK_STATE_NORMAL] = color;
-    gtk_style_set_background (style, widget->window, GTK_STATE_NORMAL);
-  */
   
-  gtk_paint_box (widget->style, widget->window,
-		 GTK_STATE_NORMAL, GTK_SHADOW_IN,
-		 &event->area, widget, "mediadefault",
-		 0, 0, widget->allocation.width-2, -1);
+  if (self->private->media_type == PITIVI_VIDEO_TRACK)
+    {
+      color.red = 0xffff;
+      color.blue = 0x8080;
+      color.green = 0xdede;
+    }
+  else if (self->private->media_type == PITIVI_AUDIO_TRACK)
+    {
+      color.red = 0x8080;
+      color.blue = 0xffff;
+      color.green = 0xaaaa;
+    }
+  else if (self->private->media_type == PITIVI_VIDEO_AUDIO_TRACK)
+    {
+      color.red = 0x6060;
+      color.blue = 0x6060;
+      color.green = 0xcccc;
+    }
+  /*     style->bg[GTK_STATE_NORMAL] = color; */
+  
+  gtk_style_set_background (style, widget->window, GTK_STATE_NORMAL);
+  gc = gdk_gc_new (widget->window);
+  gdk_gc_set_rgb_fg_color (gc, &color);
+  gdk_draw_rectangle (widget->window, gc,
+		      TRUE, 0, 0,
+		      widget->allocation.width-2, -1);
+
+/*   gtk_paint_box (widget->style, widget->window, */
+/* 		 GTK_STATE_NORMAL, GTK_SHADOW_IN, */
+/* 		 &event->area, widget, "mediadefault", */
+/* 		 0, 0, widget->allocation.width-2, -1); */
   
   if (self->sf->filename)
     {
-      len = strlen (self->sf->filename);
+      tab = g_strsplit (self->sf->filename, "/", 20);
+      for (i = 0; tab[i] != NULL; i++);
+      i--;
+      len = strlen (tab[i]);
       if ( len > widget->allocation.width )
 	;
-      pango_layout_set_text (layout, self->sf->filename, strlen (self->sf->filename));
+      pango_layout_set_text (layout, tab[i], strlen (tab[i]));
       gtk_paint_layout (widget->style, widget->window,
 			GTK_STATE_NORMAL, FALSE,
 			&event->area, widget, "mediadefault",
