@@ -107,7 +107,7 @@ pitivi_fill_hbox(PitiviNewProjectWindow *self)
   GtkWidget	*show_tree;
   GtkWidget	*notebook;
   GtkWidget	*scroll;
-  
+
   tree = pitivi_tree_create();
   show_tree = pitivi_tree_show(tree);
   
@@ -119,7 +119,7 @@ pitivi_fill_hbox(PitiviNewProjectWindow *self)
   
   notebook = pitivi_notebook_new(self);
   
-  gtk_box_pack_start (GTK_BOX (self->private->hbox ), scroll, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->hbox), scroll, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (self->private->hbox), notebook, TRUE, TRUE, 0);
 }
 
@@ -206,7 +206,7 @@ pitivi_tree_show(GtkTreeStore *tree)
   /* Creation de la premiere colonne */
   cell = gtk_cell_renderer_text_new();
   column = gtk_tree_view_column_new_with_attributes("Selection", cell, "text", 0, NULL);
-  
+  gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   /* Ajout de la colonne à la vue */
   gtk_tree_view_append_column(GTK_TREE_VIEW(show_tree), column);
   
@@ -302,7 +302,7 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
 /* Creation du buffer text */
   text_buffer = gtk_text_buffer_new(tag_table);
 /* Creation du champs Text */
-  presets = "Description:\nFenetre de description des reglages";
+  presets = "Setting's descriptions";
   gtk_text_buffer_get_end_iter(text_buffer, &iter);
   gtk_text_buffer_set_text (text_buffer, presets, strlen(presets));
 /* gtk_text_buffer_insert_interactive(text_buffer, &iter, presets, strlen(presets), FALSE); */
@@ -425,9 +425,9 @@ pitivi_make_name_frame(PitiviNewProjectWindow *self)
   GtkWidget		*name_label;
   GtkWidget		*desc_label;
 
-  name_frame = gtk_frame_new("Setting");
+  name_frame = gtk_frame_new("General");
   name_table =  gtk_table_new(2, 2, FALSE);
-  name_label = gtk_label_new("Nom :");
+  name_label = gtk_label_new("Name :");
   gtk_table_attach (GTK_TABLE(name_table), name_label,
 		    0, 1, 0, 1, FALSE, FALSE, 5, 5);
 
@@ -445,7 +445,7 @@ pitivi_make_name_frame(PitiviNewProjectWindow *self)
   /* Creation du buffer text */
   self->private->name_text_buffer = gtk_text_buffer_new(name_tag_table);
   /* Creation du champs Text */
-  name_settings = "Description:\nInserez une description de votre reglage";
+  name_settings = "Description:\nInsert a description of the setting";
     
   gtk_text_buffer_get_start_iter(self->private->name_text_buffer, &self->private->start_description_iter);
   gtk_text_buffer_get_end_iter(self->private->name_text_buffer, &self->private->end_description_iter);
@@ -505,6 +505,8 @@ pitivi_make_video_frame()
   GtkWidget		*video_label_fps;
   GtkWidget		*video_combo_codec;
   GtkWidget		*size_hbox;
+  GtkWidget		*vcodec_hbox;
+  GtkWidget		*vrate_hbox;
   GtkWidget		*size_width;
   GtkWidget		*size_label_x;
   GtkWidget		*size_height;
@@ -516,11 +518,16 @@ pitivi_make_video_frame()
   const gchar		*name;
   int			i;
   GtkWidget		*video_conf_but;
+  GtkWidget		*rate_unit;
+
 
 /* Creation de la frame "video" et du tableau principal */
   video_frame = gtk_frame_new("Video");
-  video_table = gtk_table_new(3, 3, FALSE);
+  video_table = gtk_table_new(2, 2, FALSE);
   
+/* vcodec_hbox */
+  vcodec_hbox = gtk_hbox_new(FALSE, 5);
+
 /* Premier label "codecs" */
   video_label_codec = gtk_label_new("Codecs : ");
   gtk_table_attach (GTK_TABLE(video_table), video_label_codec, 
@@ -540,10 +547,6 @@ pitivi_make_video_frame()
 	{
 	  gtk_combo_box_insert_text (GTK_COMBO_BOX (video_combo_codec), i, name/* g_strdup (GST_PLUGIN_FEATURE (factory)->longname) */);
 	}
-      else if (!strncmp (klass, "Codec/Video/Encoder", 19))
-	{
-	  gtk_combo_box_insert_text (GTK_COMBO_BOX (video_combo_codec), i, name/* g_strdup (GST_PLUGIN_FEATURE (factory)->longname) */);
-	}
       else
 	{
 	  goto next;
@@ -554,20 +557,22 @@ pitivi_make_video_frame()
 
 /* Active le premier choix*/
   gtk_combo_box_set_active (GTK_COMBO_BOX (video_combo_codec), 0);
-  gtk_table_attach (GTK_TABLE(video_table), video_combo_codec,
-		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
+  gtk_box_pack_start(GTK_BOX (vcodec_hbox), video_combo_codec, TRUE, TRUE, 0);
 
 /* Bouton de configuration des codecs */
   video_conf_but = gtk_button_new_with_label("Configure");
-  gtk_table_attach (GTK_TABLE(video_table), video_conf_but, 
-		    2, 3, 0, 1, FALSE, FALSE, 5, 5);
+  gtk_box_pack_start(GTK_BOX (vcodec_hbox), video_conf_but, FALSE, FALSE, 0);
+  gtk_table_attach (GTK_TABLE(video_table), vcodec_hbox,
+		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
+
+/* size hbox */
+  size_hbox = gtk_hbox_new(FALSE, 5);
 
 /* Deuxieme label "size" */
   video_label_size = gtk_label_new("Size : ");
   gtk_table_attach (GTK_TABLE(video_table), video_label_size, 
 		    0, 1, 1, 2, FALSE, FALSE, 5, 5);
   
-  size_hbox = gtk_hbox_new(FALSE, 5);
 /* champ texte "width" */
   size_width = gtk_entry_new();
   gtk_entry_set_width_chars (GTK_ENTRY(size_width), 5);
@@ -586,19 +591,28 @@ pitivi_make_video_frame()
   
   gtk_table_attach(GTK_TABLE(video_table), size_hbox, 
 		   1, 3, 1, 2, FALSE, FALSE, 5, 5);
-   
+
+ 
+/* rate hbox */
+  vrate_hbox = gtk_hbox_new(FALSE, 5);
+
 /*   Troisieme label "Fps" */
-  video_label_fps = gtk_label_new("Fps : ");
+  video_label_fps = gtk_label_new("Rate : ");
   gtk_table_attach (GTK_TABLE(video_table), video_label_fps, 
 		    0, 1, 2, 3, FALSE, FALSE, 5, 5);
   
 /*   champ texte "Fps" */
   fps_text = gtk_entry_new();
   gtk_entry_set_text(GTK_ENTRY(fps_text), "25");
-  gtk_entry_set_width_chars (GTK_ENTRY(fps_text), 14);
-  gtk_table_attach (GTK_TABLE(video_table), fps_text, 
-		    1, 3, 2, 3, FALSE, FALSE, 5, 5);
-  
+  gtk_entry_set_width_chars (GTK_ENTRY(fps_text), 10);
+  gtk_box_pack_start(GTK_BOX (vrate_hbox), fps_text, FALSE, FALSE, 0);
+  rate_unit = gtk_label_new("fps");
+  gtk_box_pack_start(GTK_BOX (vrate_hbox), rate_unit, FALSE, FALSE, 0);
+
+  gtk_table_attach (GTK_TABLE(video_table), vrate_hbox, 
+		    1, 2, 2, 3, TRUE, FALSE, 5, 5); 
+
+
 /*   Ajoute le tableau principale ds la frame "video" */
   gtk_container_add(GTK_CONTAINER(video_frame), video_table);
   gtk_container_set_border_width (GTK_CONTAINER (video_frame), 5);
@@ -618,6 +632,9 @@ pitivi_make_audio_frame()
   GtkWidget	*audio_label_ech;
   GtkWidget	*audio_combo_ech;
   GtkWidget	*audio_conf_but;
+  GtkWidget	*acodec_hbox;
+  GtkWidget	*arate_hbox;
+  GtkWidget	*achannels_hbox;
 
   const GList *elements;
   GstElementFactory *factory;
@@ -627,13 +644,16 @@ pitivi_make_audio_frame()
 
 /* Creation de la frame "audio" et du tableau principal */
   audio_frame = gtk_frame_new("Audio"); 
-  audio_table = gtk_table_new(3, 3, FALSE);
+  audio_table = gtk_table_new(2, 2, FALSE);
   
 /* Premier label "codecs" */
   audio_label_codec = gtk_label_new("Codecs : ");
   gtk_table_attach (GTK_TABLE(audio_table), audio_label_codec, 
 		    0, 1, 0, 1, FALSE, FALSE, 5, 5);
-  
+ 
+/* acodec_hbox */
+  acodec_hbox = gtk_hbox_new(FALSE, 5);
+
 /*   Champ texte "codecs" */
   audio_combo_codec = gtk_combo_box_new_text();
 
@@ -648,10 +668,6 @@ pitivi_make_audio_frame()
 	{
 	  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_codec), i, name /* g_strdup (GST_PLUGIN_FEATURE (factory)->name) */);
 	}
-      else if (!strncmp (klass, "Codec/Audio/Encoder", 19))
-	{
-	  gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_codec), i, name /* g_strdup (GST_PLUGIN_FEATURE (factory)->name) */);
-	}
       else
 	{
 	  goto next;
@@ -661,18 +677,21 @@ pitivi_make_audio_frame()
     }
 
   gtk_combo_box_set_active(GTK_COMBO_BOX (audio_combo_codec), 0); /*  Choix par defaut */
-  gtk_table_attach (GTK_TABLE(audio_table), audio_combo_codec, 
-		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
-
-/* Deuxieme label "frequence" */
-  audio_label_freq = gtk_label_new("Frequence : ");
-  gtk_table_attach (GTK_TABLE(audio_table), audio_label_freq, 
-		    0, 1, 1, 2, FALSE, FALSE, 5, 5);
+  gtk_box_pack_start(GTK_BOX (acodec_hbox), audio_combo_codec, TRUE, TRUE, 0);
 
 /* Bouton de configuration des codecs */
   audio_conf_but = gtk_button_new_with_label("Configure");
-  gtk_table_attach (GTK_TABLE(audio_table), audio_conf_but, 
-		    2, 3, 0, 1, FALSE, FALSE, 5, 5);
+  gtk_box_pack_start(GTK_BOX (acodec_hbox), audio_conf_but, FALSE, FALSE, 0);
+  gtk_table_attach (GTK_TABLE(audio_table), acodec_hbox, 
+		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
+
+/* Deuxieme label "frequence" */
+  audio_label_freq = gtk_label_new("Rate : ");
+  gtk_table_attach (GTK_TABLE(audio_table), audio_label_freq, 
+		    0, 1, 1, 2, FALSE, FALSE, 5, 5);
+
+/* arate_hbox */
+  arate_hbox = gtk_hbox_new(FALSE, 5);
 
 /*   Champ texte "frequence" */
   audio_combo_freq = gtk_combo_box_new_text();
@@ -680,19 +699,23 @@ pitivi_make_audio_frame()
   gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_freq), 1, "24000 Hz");
   gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_freq), 2, "12000 Hz");
   gtk_combo_box_set_active(GTK_COMBO_BOX (audio_combo_freq), 0); /*  Choix par defaut */
-  gtk_table_attach (GTK_TABLE(audio_table), audio_combo_freq, 
-		    1, 3, 1, 2, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
+  gtk_box_pack_start(GTK_BOX (arate_hbox), audio_combo_freq, TRUE, TRUE, 0);
+  gtk_table_attach (GTK_TABLE(audio_table), arate_hbox, 
+		    1, 2, 1, 2, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
 
  /* Troisieme label "echantillonage" */
-  audio_label_ech = gtk_label_new("Canaux : ");
+  audio_label_ech = gtk_label_new("Channels : ");
   gtk_table_attach (GTK_TABLE(audio_table), audio_label_ech, 
 		    0, 1, 2, 3, FALSE, FALSE, 5, 5);
+
+/* achannels_hbox */
+  achannels_hbox = gtk_hbox_new(FALSE, 5);
   
 /*   Champ texte "canaux" */
   audio_combo_ech = gtk_spin_button_new_with_range(1, 8, 1);
-
-  gtk_table_attach (GTK_TABLE(audio_table), audio_combo_ech, 
-		    1, 3, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
+  gtk_box_pack_start(GTK_BOX (achannels_hbox), audio_combo_ech, TRUE, TRUE, 0);
+  gtk_table_attach (GTK_TABLE(audio_table), achannels_hbox, 
+		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
 
   gtk_container_add(GTK_CONTAINER(audio_frame), audio_table);
   gtk_container_set_border_width (GTK_CONTAINER (audio_frame), 5);
