@@ -59,8 +59,9 @@ struct _PitiviSourceFile
   gint64 length;
   GdkPixbuf  *thumbs_audio;
   GdkPixbuf  *thumbs_video;
-  GstElement *pipeline;
-  GstElement *pipeline_audio;
+  GstElement *pipeline;		// audio/video pipeline
+  GstElement *pipeline_video;	// video only pipeline
+  GstElement *pipeline_audio;	// audio only pipeline
 };
 
 struct _PitiviProjectSourceList
