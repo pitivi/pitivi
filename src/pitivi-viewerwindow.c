@@ -84,6 +84,77 @@ struct _PitiviViewerWindowPrivate
  * forward definitions
  */
 
+GstElement	*get_file_source(GstElement *pipeline)
+{
+  GList	*pipelist;
+  GstElement	*elem;
+  
+
+  pipelist = gst_bin_get_list(GST_BIN(pipeline)); 
+  elem = NULL;
+
+ 
+  while (pipelist)
+    {
+      elem = (GstElement*)pipelist->data;
+      if (strstr(gst_element_get_name(elem), "bin_"))
+	break;
+      pipelist = pipelist->next;
+    }
+  
+  if (GST_IS_BIN(elem))
+    {
+      pipelist = gst_bin_get_list(GST_BIN(elem));
+      while (pipelist)
+	{
+	  elem = (GstElement*)pipelist->data;
+	  if (strstr(gst_element_get_name(elem), "src_"))
+	    break;
+	  pipelist = pipelist->next;
+	}
+    }
+  else
+    return NULL;
+  return elem;
+}
+
+gboolean	do_seek(GstElement *elem, gint64 value)
+{
+  GstEvent	*event;
+  GstPad	*pad;
+  gboolean	res;
+
+  pad = gst_element_get_pad(elem, "src");
+  event = gst_event_new_seek (
+			      GST_FORMAT_BYTES |	    /* seek on bytes */
+			      GST_SEEK_METHOD_SET | /* set the absolute position */
+			      GST_SEEK_FLAG_FLUSH,  /* flush any pending data */
+			      value);	    /* the seek offset in bytes */
+  
+  /* res = gst_element_send_event (GST_ELEMENT (elem), event); */
+  if (!(res = gst_pad_send_event(pad, event)))
+    {
+      g_warning ("seek failed");
+      return FALSE;
+    }
+  return TRUE;
+}
+
+gint64	do_query(GstElement *elem, GstQueryType type)
+{
+  GstFormat	format;
+  gint64	value;
+
+  format = GST_FORMAT_BYTES;
+  if (!gst_element_query(elem, type, &format, &value))
+    {
+      g_printf("Couldn't perform requested query\n");
+      return -1;
+    }
+
+  return value;
+}
+
 void	video_play(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
@@ -112,11 +183,25 @@ void	video_stop(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+  gboolean res;
+  GstElement *elem;
+  gint64	value;
 
   g_print ("[CallBack]:video_stop\n");
   //gst_element_set_state(project->pipeline, GST_STATE_NULL);
-  gst_element_set_state(project->pipeline, GST_STATE_READY);
+  gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
   self->private->play_status = STOP;
+
+  elem = get_file_source(project->pipeline);
+
+  /* rewind the movie */
+  do_seek(elem, 0);
+  
+  /* query total size */
+  value  = do_query(elem, GST_QUERY_TOTAL);
+
+  /* reset the viewer timeline */
+  gtk_range_set_value(GTK_RANGE (self->private->timeline) , 0);
   return ;
 }
 
@@ -154,11 +239,40 @@ void	video_forward(GtkWidget *widget, gpointer data)
   return ;
 }
 
+gboolean	seek_stream(GtkWidget *widget,
+			    GdkEventButton *event,
+			    gpointer data)
+{
+  PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+  gboolean	res;
+  GstElement	*elem;
+  gint64	value1;
+  gint64	value2;
+  gdouble	pourcent;
+
+  g_printf("you release me\n");
+  elem = get_file_source(project->pipeline);
+
+  
+  /* query total size */
+  value1  = do_query(elem, GST_QUERY_TOTAL);
+  
+  pourcent = gtk_range_get_value(GTK_RANGE (widget));
+
+  value2 = (gint64)((pourcent * value1) / 500);
+  /* rewind the movie */
+  if (do_seek(elem, value2))
+    g_printf("performing  seek\n");
+  
+  return FALSE;
+}
 void	move_timeline(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
 
   g_print ("[CallBack]:move_timeline:%g\n", gtk_range_get_value(GTK_RANGE (widget)));
+
   return ;
 }
 
@@ -333,6 +447,10 @@ create_gui (gpointer data)
 						      self->private->timeline_max, 
 						      self->private->timeline_step);
   gtk_scale_set_draw_value (GTK_SCALE (self->private->timeline), FALSE);
+
+
+  gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-release-event", 
+		      GTK_SIGNAL_FUNC (seek_stream), self);
   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "value-changed", 
 		      GTK_SIGNAL_FUNC (move_timeline), self);
   gtk_box_pack_start (GTK_BOX (self->private->toolbar), 
@@ -407,12 +525,28 @@ gboolean	idle_func_video (gpointer data)
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
   
+  GstElement *elem;
+  gint64	value1, value2;
+  gdouble	pourcent;
+
   if ( gst_element_get_state (project->pipeline) == GST_STATE_PLAYING ) {
 /*     print_element_schedulers(project->pipeline); */
     gst_x_overlay_set_xwindow_id
       ( GST_X_OVERLAY ( self->private->sink ),
 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
     gst_bin_iterate (GST_BIN (project->pipeline));
+    elem = get_file_source(project->pipeline);
+    
+    if (elem) /* we have a true source */
+      {
+	value1 = do_query(elem, GST_QUERY_POSITION);
+	value2 = do_query(elem, GST_QUERY_TOTAL);
+	pourcent = (value1 * 100) / value2;
+	
+	pourcent *= 5;
+
+	gtk_range_set_value(GTK_RANGE (self->private->timeline) , pourcent);
+      }
   }
   return TRUE;
 }

@@ -593,7 +593,9 @@ pitivi_sourcelistwindow_get_pad_list(GstElement *elm)
 
 }
 
-gboolean	
+void	test_video_length(PitiviSourceListWindow *self, GstElement *lastelm);
+
+GstElement*	
 pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filename)
 {
   PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
@@ -780,11 +782,8 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	      temppad = gst_element_add_ghost_pad(self->private->pipeline, gst_element_get_pad(lastelement, "src"),
 				    "vsrc");
 	      g_assert(temppad != NULL);
-	 /*      sink = gst_element_factory_make("xvimagesink", "mysink"); */
-/* 	      g_assert(sink != NULL); */
-/* 	      gst_bin_add(GST_BIN(thread), sink); */
-/* 	      gst_element_link(lastelement, sink); */
 	      g_printf("adding ghost pad for video\n");
+	      test_video_length(self, lastelement);
 	    }
 	  else /* audio */
 	    {
@@ -802,7 +801,40 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
     }
  
   gst_element_set_state(GST_ELEMENT(self->private->pipeline), GST_STATE_PAUSED);
+  return lastelement;
 }
+
+void	test_audio_length(PitiviSourceListWindow *self, GstElement *lastelm)
+{
+  GstElement	*fakesink;
+  GstFormat	format;
+  gint64	value;
+
+  gst_element_set_state(self->private->mainpipeline, GST_STATE_PLAYING);
+  format = GST_FORMAT_DEFAULT;
+  if (gst_element_query(lastelm, GST_QUERY_TOTAL, &format, &value))
+    g_printf("format ==> %d\ntime ==> %lld\n", format, value);
+  else
+    g_printf("Couldn't perform requested query\n");
+
+  gst_element_set_state(self->private->mainpipeline, GST_STATE_PAUSED);
+}
+
+void	test_video_length(PitiviSourceListWindow *self, GstElement *lastelm)
+{
+  GstFormat	format;
+  gint64	value;
+
+  gst_element_set_state(self->private->mainpipeline, GST_STATE_PLAYING);
+  format = GST_FORMAT_BYTES;
+  if (gst_element_query(lastelm, GST_QUERY_TOTAL, &format, &value))
+    g_printf("format ==> %d\ntime ==> %lld\n", format, value);
+  else
+    g_printf("Couldn't perform requested query\n");
+
+  gst_element_set_state(self->private->mainpipeline, GST_STATE_PAUSED);
+}
+
 gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 {
   GList *elements;
@@ -817,6 +849,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   GstElement	*parser;
   GstElement	*thread;
   GstElement	*lastelement;
+
   GList		*demuxlist;
   GList		*decoderlist;
   GList		*parserlist;
@@ -862,7 +895,6 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   while (pitivi_sourcelistwindow_check_for_base_type(self->private->mediatype) && !element_found)
     {
       /* test if it's a container */
-  
       demuxlist = pitivi_settings_get_flux_container_list (G_OBJECT(pitivi_mainapp_settings( mainapp )),
 							   self->private->mediacaps, DEC_LIST);
       /* create a demuxer if it's a container */
@@ -900,6 +932,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	  
 	  pitivi_sourcelistwindow_add_decoder(self, filename);
 	  
+
 	  gst_element_set_state(GST_ELEMENT(self->private->mainpipeline), 
  				GST_STATE_PAUSED);
 	  
@@ -913,7 +946,9 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	  if (decoderlist)
 	    {
 	      /* choose the first decoder */
-	      g_printf("adding a decoder for this caps ==> %s\n", gst_caps_to_string(self->private->mediacaps));
+	      g_printf("adding a decoder [%s] for this caps ==> %s\n", 
+		       decoderlist->data,
+		       gst_caps_to_string(self->private->mediacaps));
 	      tmpname = g_strdup_printf("decoder_%s", filename);
 	      decoder = gst_element_factory_make((gchar*)decoderlist->data, tmpname);
 	      g_free(tmpname);
@@ -987,9 +1022,15 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	  g_printf("adding ghost pad audio in the main pipeline\n");
 	}
     }
+  /* adding fakesink */
+  if (self->private->haveaudio && src)
+    test_audio_length(self, src);
+  else if (self->private->havevideo)
+    test_video_length(self, src);
   /* need to do this */
   gst_object_ref(GST_OBJECT(self->private->pipeline));
   gst_bin_remove(GST_BIN(self->private->mainpipeline), self->private->pipeline);
+  gst_object_unref(self->private->mainpipeline);
 }
 
 void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
