@@ -1,8 +1,8 @@
 /* XPM */
-static char * bg_effects_xpm[] = {
+static char * bg_trans_xpm[] = {
 "16 30 3 1",
 " 	c None",
-".	c #e6fde8",
+".	c #c5e0b8",
 "+	c #438228",
 "................",
 "................",
