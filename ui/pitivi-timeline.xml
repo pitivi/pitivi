@@ -1,0 +1,119 @@
+<ui>
+  <menubar name="MainMenu">
+      <menu action="FileMenu">
+            <menuitem name="FileNew" action="FileNew"/>
+            <menu action="FileNewProject">
+              <menuitem name="FileProjectTitle" action="FileProjectTitle"/>
+              <menuitem name="FileProjectStory" action="FileProjectStory"/>
+              <menuitem name="FileProjectBin" action="FileProjectBin"/>
+              <separator name="SepFileProject"/>
+              <menuitem name="FileProjectUC" action="FileProjectUC"/>
+              <menuitem name="FileProjectBVideo" action="FileProjectBVideo"/>
+              <menuitem name="FileProjectMatCol" action="FileProjectMatCol"/>
+             </menu>
+       <menuitem name="FileOpen"  action="FileOpen"/>
+       <menu name="FileRecent" action="FileRecent">
+       </menu>
+              <separator name="SepSaving"/>
+
+              <menuitem name="FileSave"  action="FileSave"/>
+              <menuitem name="FileSaveAs" action="FileSaveAs"/>
+              <menuitem name="FileSaveCopy"  action="FileSaveCopy"/>
+
+              <separator name="SepImport"/>
+
+              <menu name="FileImport" action="FileImport">
+              <menuitem name="FileImportFile" action="FileImportFile"/>
+              <menuitem name="FileImportFolder" action="FileImportFolder"/>
+              <menuitem name="FileImportProject" action="FileImportProject"/>
+
+              <separator name="SepProperties" />
+
+             </menu>
+             <menu name="FileExportClip" action="FileExportClip">
+              <menuitem name="FileCapture" action="FileCapture"/>
+
+              <separator name="SepExport" />
+
+             </menu>
+             <menu name="FileExportTimeline" action="FileExportTimeline">
+             </menu>
+              <menuitem name="FileExit" action="FileExit"/>
+           </menu>
+           <menu action="EditMenu">
+
+             <placeholder name="EditPlaceHolder" />
+
+             <menuitem name="EditUndo" action="EditUndo"/>
+             <menuitem name="EditRedo" action="EditRedo"/>
+             <menuitem name="EditCut" action="EditCut"/>
+             <menuitem name="EditPaste" action="EditPaste"/>
+             <menuitem name="EditCopy" action="EditCopy"/>
+             <menuitem name="EditClear" action="EditClear"/>
+
+             <separator name="SepEdit1" />
+
+             <menuitem name="EditSelect" action="EditSelect"/>
+             <menuitem name="EditSelectAll" action="EditSelectAll"/>
+             <menuitem name="EditDeselectAll" action="EditDeSelectAll"/>
+             <separator name="SepEdit2" />
+
+             <menuitem name="EditFind" action="EditFind"/>
+             <menuitem name="EditPrefs" action="EditPrefs"/>
+
+             <separator name="SepEdit3" />
+              
+             <menuitem name="EditPrefs" action="EditPrefs"/>
+             <menuitem name="EditSelect" action="EditSelect"/>
+
+           </menu>
+             <menu action="ClipMenu">
+               <placeholder>
+               <separator/>
+                <menuitem name="FileNew"  action="FileNew"/>
+               <separator/>
+               </placeholder>
+             </menu>
+             <menu action="TimelineMenu">
+               <menuitem name="TimeLinePreview" action="TimeLinePreview"/>
+               <menuitem name="TimeLineRenderWork" action="TimeLineRenderWork"/>
+               <menuitem name="TimeLineRenderAudio" action="TimeLineRenderAudio"/>
+               <separator/>
+               <menuitem name="TimeLineZoomIn" action="TimeLineZoomIn"/>
+               <menuitem name="TimeLineZoomOut" action="TimeLineZoomOut"/>
+               <placeholder>
+                <separator/>
+                <menuitem name="TimeLineAddAudioTrack" action="TimeLineAddAudioTrack"/>
+                <menuitem name="TimeLineAddVideoTrack" action="TimeLineAddVideoTrack"/>
+                <menuitem name="TimeLineAddOptionTrack" action="TimeLineAddOptionTrack"/>
+               <separator/>
+               </placeholder>
+             </menu>
+             <menu action="HelpMenu">
+               <menuitem name="HelpIndex"  action="HelpIndex"/>
+               <menuitem name="HelpSearch"  action="HelpSearch"/>
+               <menuitem name="HelpContents" action="HelpContents"/>
+               <menuitem name="HelpAbout"  action="HelpAbout"/>
+               <separator/>
+             </menu>
+  
+  </menubar>
+
+  <toolbar name="DefaultToolbar">
+   <toolitem name="ToolItemFileNew" action="FileOpen"/>
+   <toolitem name="ToolItemFileSave" action="FileSave"/>
+   <toolitem name="ToolItemFileSaveAs" action="FileSaveAs"/>
+   <separator/>
+   <toolitem name="ToolItemEditUndo" action="EditUndo"/>
+   <toolitem name="ToolItemEditRedo" action="EditRedo"/>
+   <separator/>
+  </toolbar>
+   
+  <popup name="ViewPopup" action="FakeToplevel">
+        <menuitem name="EditCut" action="EditCut"/>
+        <menuitem name="EditCopy" action="EditCopy"/>
+        <menuitem name="EditPaste" action="EditPaste"/>
+  </popup>
+
+</ui>
+
