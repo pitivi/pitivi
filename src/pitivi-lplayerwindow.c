@@ -325,7 +325,7 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
       GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
 
   if (!gst_element_set_state(self->private->pipe, GST_STATE_PLAYING)) {
-    g_print ("############################# BAD STATE ########################33\n");
+    g_print ("############################# BAD STATE ########################\n");
     exit (-1);
   }
 

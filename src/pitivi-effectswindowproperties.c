@@ -2,6 +2,7 @@
  * PiTiVi
  * Copyright (C) <2004> Edward G. Hervey <hervey_e@epita.fr>
  *                      Guillaume Casanova <casano_g@epita.fr>
+ *                      Raphael Pralat <pralat_r@epita.fr>
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -60,6 +61,25 @@ pitivi_effectswindowproperties_new (PitiviSourceItem *effect)
   return effectswindowproperties;
 }
 
+void 
+pitivi_effects_ok (GtkWidget *widget, GObject *obj)
+{
+  g_print ("PitiviEffectsWindowProperties  OK\n");
+ 
+  gtk_object_destroy(GTK_OBJECT(obj));
+}
+
+void 
+pitivi_effects_cancel (GtkWidget *widget, GObject *obj)
+{
+  g_print ("PitiviEffectsWindowProperties  CANCEL\n");
+
+  gtk_object_destroy(GTK_OBJECT(obj));
+}
+
+
+
+
 static GObject *
 pitivi_effectswindowproperties_constructor (GType type,
 					    guint n_construct_properties,
@@ -70,8 +90,10 @@ pitivi_effectswindowproperties_constructor (GType type,
   GObject *obj;
   GtkWidget *main_vbox;
   GObjectClass *parent_class;
-  
-  
+  GtkWidget *hbox;
+  GtkWidget *button_ok;
+  GtkWidget *button_cancel;
+
   /* Invoke parent constructor. */
   
   klass = PITIVI_EFFECTSWINDOWPROPERTIES_CLASS (g_type_class_peek (PITIVI_EFFECTSWINDOWPROPERTIES_TYPE));
@@ -89,6 +111,23 @@ pitivi_effectswindowproperties_constructor (GType type,
   gtk_container_add  (GTK_CONTAINER (self), main_vbox);
   widget_element = pitivi_gstelementsettings_new_with_elm (GNL_OPERATION(self->private->item->gnlobject)->element);
   gtk_box_pack_start (GTK_BOX (main_vbox), GTK_WIDGET (widget_element), FALSE, FALSE, 0);
+  
+  /* OK Cancel Buttons*/
+  hbox = gtk_hbox_new (FALSE, FALSE);
+  gtk_box_pack_start (GTK_BOX (main_vbox), GTK_WIDGET (hbox), FALSE, FALSE, 0);
+
+  button_ok = gtk_button_new_from_stock(GTK_STOCK_OK);
+  gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (button_ok), TRUE, FALSE, 5);
+  gtk_signal_connect (GTK_OBJECT (button_ok), "released",
+  		      GTK_SIGNAL_FUNC (pitivi_effects_ok), obj); 
+
+  button_cancel = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+  gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (button_cancel), TRUE, FALSE, 5);
+  gtk_signal_connect (GTK_OBJECT (button_cancel), "released",
+  		      GTK_SIGNAL_FUNC (pitivi_effects_cancel), obj); 
+
+  gtk_window_set_modal(GTK_WINDOW(self), FALSE);
+
   return obj;
 }
 

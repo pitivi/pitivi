@@ -914,17 +914,19 @@ pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *this, gpointer data)
 void
 pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data)
 {
-  GtkWidget *props_dialog;
+  GtkWidget *props_dialog; // gtk_message_dialog_new
   PitiviEffectsWindowProperties *propertieswindow;
 
   gchar *properties=NULL;
   
-  if (strstr (this->sourceitem->srcfile->mediatype, "effect"))
+  if (strstr (this->sourceitem->srcfile->mediatype, "effect") || strstr (this->sourceitem->srcfile->mediatype, "transition"))
     {
       propertieswindow = pitivi_effectswindowproperties_new ( this->sourceitem );
+     
       gtk_widget_show_all (GTK_WIDGET (propertieswindow));
       return;
     }
+
   if (!strcmp (this->sourceitem->srcfile->mediatype, "video/audio")) 
     { 
       properties = g_strdup_printf("Properties:\n\nSource:%s\n\nType:%s\n\nInfos Video:%s\n\n Infos Audio:%s\n",
@@ -949,15 +951,15 @@ pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data)
     }
   else
     properties = g_strdup_printf("Properties:\nType:Unknow\n");
+
   props_dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, 
 					 GTK_MESSAGE_INFO, 
 					 GTK_BUTTONS_NONE, 
 					 properties, 
 					 NULL);
   gtk_widget_show(props_dialog);
+
 }
-
-
 
 
 void
