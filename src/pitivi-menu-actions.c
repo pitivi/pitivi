@@ -26,7 +26,7 @@
 #include "pitivi.h"
 #include "pitivi-menu.h"
 #include "pitivi-menu-actions.h"
-#include "pitivi-stock-icons.h"
+#include "pitivi-stockicons.h"
 #include "pitivi-sourcelistwindow.h"
 
 static GtkActionGroup *actions_group[EA_LAST_ACTION];

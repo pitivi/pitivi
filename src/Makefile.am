@@ -20,7 +20,7 @@ pitivi_SOURCES		= \
 	pitivi-toolboxwindow.c	\
 	pitivi-sourcelistwindow.c \
 	pitivi-newprojectwindow.c  \
-	pitivi-stock-icons.c \
+	pitivi-stockicons.c \
 	pitivi-menu-actions.c \
 	pitivi-menu.c \
 	main.c
