@@ -113,10 +113,15 @@ GtkWidget	*pitivi_make_cat_frame		( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_value_conf_boolean	( GValue			value );
 GtkWidget	*pitivi_value_conf_uint		( GValue			value, 
 						  GParamSpec			*param );
+GtkWidget	*pitivi_value_conf_int		( GValue			value,
+						  GParamSpec			*param );
+GtkWidget	*pitivi_value_conf_uint64	( GValue			value,
+						  GParamSpec			*param );
+GtkWidget	*pitivi_value_conf_int64	( GValue			value,
+						  GParamSpec			*param );
 GtkWidget	*pitivi_conf_value_string	( GValue			 value );
 GtkWidget	*pitivi_value_conf_default	( GValue			 value, 
 						  GParamSpec			*param );
-
 /* Signals Definitions */
 void			pitivi_close_window(GtkButton *button, gpointer user_data);
 void			pitivi_add_settings(GtkButton *button, gpointer user_data);
@@ -244,8 +249,9 @@ pitivi_tree_create(PitiviNewProjectWindow *self)
     }
 }
 
-gboolean			setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model, 
-						    GtkTreePath *path, gboolean value, gpointer user_data)
+gboolean
+setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model, 
+		    GtkTreePath *path, gboolean value, gpointer user_data)
 {
   gchar				*setting_name;
   GtkTreeIter			iter;
@@ -262,8 +268,8 @@ gboolean			setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
       if (!value && !(gtk_tree_store_iter_depth(self->private->tree, &iter)))
 	{
 	  /* printf("%i\n", &iter); */
-	  gtk_text_buffer_set_text(self->private->preset_text_buffer, setting_name, strlen(setting_name));
-
+	  gtk_text_buffer_set_text(self->private->preset_text_buffer,
+				   setting_name, strlen(setting_name));
 	  gtk_entry_set_text(GTK_ENTRY(self->private->cat_text), setting_name);
 	  /* 	  printf("select setting : \" %s \"\n", setting_name); */
 	}
@@ -939,6 +945,7 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
   GtkWidget			*prop_value_hbox;
   GtkWidget			*separator;
   GtkWidget			*videoconfprop_table;
+  GtkWidget			*scroll;
   gboolean			readable;
   gint				num_properties;
   gint				active_combo;
@@ -958,7 +965,7 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
   /* choix selectionne */
   active_combo = gtk_combo_box_get_active(GTK_COMBO_BOX(self->private->video_combo_codec));
 
-  /* vbox contenant l;es dux frames */
+  /* vbox contenant les deux frames */
   videoconf_vbox = gtk_vbox_new(FALSE, 0);
 
   /* Nouvelles frames */
@@ -978,7 +985,7 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
   video_label_desc_conf = gtk_label_new(gst_element_factory_get_description (factory));
 
   /*   On link les widgets de la premiere frame  */
-  gtk_box_pack_start (GTK_BOX (videoconfdesc_vbox), video_label_desc_conf, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (videoconfdesc_vbox), video_label_desc_conf, FALSE, FALSE, 0);
   gtk_container_add(GTK_CONTAINER(videoconf_frame1), videoconfdesc_vbox);
   gtk_container_add(GTK_CONTAINER(videoconf_vbox), videoconf_frame1);
 
@@ -996,7 +1003,7 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
       /*       separator = gtk_hseparator_new(); */
       prop_name = gtk_label_new("No property...");
       /*       gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), separator, TRUE, TRUE, 0); */
-      gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), prop_name, TRUE, TRUE, 0);
+      gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), prop_name, FALSE, FALSE, 0);
     }
   else
     {
@@ -1014,8 +1021,9 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
 	      g_object_get_property (G_OBJECT (element), param->name, &value);
 	      readable = TRUE;
 	    }
-	  prop_value_hbox = gtk_hbox_new(FALSE, 0);
+	  prop_value_hbox = gtk_hbox_new(TRUE, 0);
 	  prop_name = gtk_label_new(g_strdup(g_param_spec_get_nick (param)));
+	  gtk_misc_set_alignment(GTK_MISC (prop_name), 0.0f, 0.0f);
 	  gtk_box_pack_start(GTK_BOX (prop_value_hbox), prop_name, TRUE, TRUE, 0);
 
 	  /* parsage de "value" */
@@ -1122,7 +1130,10 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
 		break;
 	      }
 	    }
-	
+
+	  /* Separateur */
+	  separator = gtk_hseparator_new();
+
 	  /* Attributs text  a revoir */
 	  PangoAttrList *desc = pango_attr_list_new();
 	  PangoAttribute *desc_attr = pango_attr_style_new(PANGO_STYLE_ITALIC);
@@ -1140,15 +1151,26 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
 	  /* link to vbox of properties */
 	  gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), prop_value_hbox, TRUE, TRUE, 0);
 	  gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), prop_desc, TRUE, TRUE, 0);
+	  gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), separator, TRUE, TRUE, 10);
 	}
     }
-  gtk_container_add(GTK_CONTAINER(videoconf_frame2), videoconfprop_vbox);
+
+  scroll = gtk_scrolled_window_new(NULL, NULL);
+  gtk_widget_set_usize (scroll, 600, 250);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
+				 GTK_POLICY_AUTOMATIC,
+				 GTK_POLICY_AUTOMATIC);
+  gtk_container_set_border_width (GTK_CONTAINER (scroll), 5);
+  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scroll), GTK_WIDGET(videoconfprop_vbox));
+  
+  gtk_container_add(GTK_CONTAINER(videoconf_frame2), scroll);
   gtk_container_add(GTK_CONTAINER(videoconf_vbox), videoconf_frame2);
   
   /* on link les contenus a la window mere */
   gtk_container_add (GTK_CONTAINER (video_codecwindow), videoconf_vbox);
   gtk_widget_show_all (GTK_WIDGET (video_codecwindow)); 
 }
+
 
 void
 create_codec_conf_audio(GtkButton *button, gpointer user_data)
@@ -1173,6 +1195,7 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
   GtkWidget			*prop_value_hbox;
   GtkWidget			*separator;
   GtkWidget			*audioconfprop_table;
+  GtkWidget			*scroll;
   gboolean			readable;
   gint				num_properties;
   gint				active_combo;
@@ -1192,7 +1215,7 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
   /* choix selectionne */
   active_combo = gtk_combo_box_get_active(GTK_COMBO_BOX(self->private->audio_combo_codec));
 
-  /* vbox contenant l;es dux frames */
+  /* vbox contenant les deux frames */
   audioconf_vbox = gtk_vbox_new(FALSE, 0);
 
   /* Nouvelles frames */
@@ -1200,6 +1223,7 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
   
   /* frame 1 */
   audioconf_frame1 = gtk_frame_new(gst_element_factory_get_longname (factory));
+  gtk_widget_queue_resize(GTK_WIDGET(audioconf_frame1));
   gtk_container_set_border_width (GTK_CONTAINER (audioconf_frame1), 5);
 
   /* frame 2 */
@@ -1211,8 +1235,8 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
   gtk_container_set_border_width (GTK_CONTAINER (audioconfdesc_vbox), 20);
   audio_label_desc_conf = gtk_label_new(gst_element_factory_get_description (factory));
 
-  /*   On link les widgets de la premiere frame  */
-  gtk_box_pack_start (GTK_BOX (audioconfdesc_vbox), audio_label_desc_conf, TRUE, TRUE, 0);
+  /* On link les widgets de la premiere frame dans audioconf_vbox */
+  gtk_box_pack_start (GTK_BOX (audioconfdesc_vbox), audio_label_desc_conf, FALSE, FALSE, 0);
   gtk_container_add(GTK_CONTAINER(audioconf_frame1), audioconfdesc_vbox);
   gtk_container_add(GTK_CONTAINER(audioconf_vbox), audioconf_frame1);
 
@@ -1230,7 +1254,7 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
       /*       separator = gtk_hseparator_new(); */
       prop_name = gtk_label_new("No property...");
       /*       gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), separator, TRUE, TRUE, 0); */
-      gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), prop_name, TRUE, TRUE, 0);
+      gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), prop_name, FALSE, FALSE, 0);
     }
   else
     {
@@ -1248,8 +1272,9 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
 	      g_object_get_property (G_OBJECT (element), param->name, &value);
 	      readable = TRUE;
 	    }
-	  prop_value_hbox = gtk_hbox_new(FALSE, 0);
+	  prop_value_hbox = gtk_hbox_new(TRUE, 0);
 	  prop_name = gtk_label_new(g_strdup(g_param_spec_get_nick (param)));
+	  gtk_misc_set_alignment(GTK_MISC (prop_name), 0.0f, 0.0f);
 	  gtk_box_pack_start(GTK_BOX (prop_value_hbox), prop_name, TRUE, TRUE, 0);
 
 	  /* parsage de "value" */
@@ -1276,38 +1301,27 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
 				     pitivi_value_conf_uint(value, param), TRUE, TRUE, 0);
 		break;
 	      }
-/* 	    case G_TYPE_INT: */
-/* 	      { */
-/* 		GParamSpecInt *pint = G_PARAM_SPEC_INT (param); */
-
-/* 		g_print ("%-23.23s Integer. ", ""); */
-/* 		if (readable) */
-/* 		  g_print ("Range: %d - %d (Default %d)", */
-/* 			   pint->minimum, pint->maximum, g_value_get_int (&value)); */
-/* 		break; */
-/* 	      } */
-/* 	    case G_TYPE_UINT64: */
-/* 	      { */
-/* 		GParamSpecUInt64 *puint64 = G_PARAM_SPEC_UINT64 (param); */
-
-/* 		g_print ("%-23.23s Unsigned Integer64. ", ""); */
-/* 		if (readable) */
-/* 		  g_print ("Range: %" G_GUINT64_FORMAT " - %" */
-/* 			   G_GUINT64_FORMAT " (Default %" G_GUINT64_FORMAT ")", */
-/* 			   puint64->minimum, puint64->maximum, g_value_get_uint64 (&value)); */
-/* 		break; */
-/* 	      } */
-/* 	    case G_TYPE_INT64: */
-/* 	      { */
-/* 		GParamSpecInt64 *pint64 = G_PARAM_SPEC_INT64 (param); */
-
-/* 		g_print ("%-23.23s Integer64. ", ""); */
-/* 		if (readable) */
-/* 		  g_print ("Range: %" G_GINT64_FORMAT " - %" G_GINT64_FORMAT */
-/* 			   " (Default %" G_GINT64_FORMAT ")", pint64->minimum, */
-/* 			   pint64->maximum, g_value_get_int64 (&value)); */
-/* 		break; */
-/* 	      } */
+	    case G_TYPE_INT:
+	      {
+		if (readable)
+		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
+				     pitivi_value_conf_int(value, param), TRUE, TRUE, 0);
+		break;
+	      }
+	    case G_TYPE_UINT64:
+	      {
+		if (readable)
+		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
+				     pitivi_value_conf_uint64(value, param), TRUE, TRUE, 0);
+		break;
+	      }
+	    case G_TYPE_INT64:
+	      {
+		if (readable)
+		  gtk_box_pack_start(GTK_BOX (prop_value_hbox),
+				     pitivi_value_conf_int64(value, param), TRUE, TRUE, 0);
+		break;
+	      }
 /* 	    case G_TYPE_ULONG: */
 /* 	      { */
 /* 		GParamSpecULong *pulong = G_PARAM_SPEC_ULONG (param); */
@@ -1356,7 +1370,10 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
 		break;
 	      }
 	    }
-	
+
+	  /* Separateur */
+	  separator = gtk_hseparator_new();
+
 	  /* Attributs text  a revoir */
 	  PangoAttrList *desc = pango_attr_list_new();
 	  PangoAttribute *desc_attr = pango_attr_style_new(PANGO_STYLE_ITALIC);
@@ -1374,9 +1391,19 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
 	  /* link to vbox of properties */
 	  gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), prop_value_hbox, TRUE, TRUE, 0);
 	  gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), prop_desc, TRUE, TRUE, 0);
+	  gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), separator, TRUE, TRUE, 10);
 	}
     }
-  gtk_container_add(GTK_CONTAINER(audioconf_frame2), audioconfprop_vbox);
+
+  scroll = gtk_scrolled_window_new(NULL, NULL);
+  gtk_widget_set_usize (scroll, 600, 250);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll),
+				 GTK_POLICY_AUTOMATIC,
+				 GTK_POLICY_AUTOMATIC);
+  gtk_container_set_border_width (GTK_CONTAINER (scroll), 5);
+  gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(scroll), GTK_WIDGET(audioconfprop_vbox));
+  
+  gtk_container_add(GTK_CONTAINER(audioconf_frame2), scroll);
   gtk_container_add(GTK_CONTAINER(audioconf_vbox), audioconf_frame2);
   
   /* on link les contenus a la window mere */
@@ -1428,8 +1455,8 @@ pitivi_value_conf_boolean(GValue value)
   else
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio_button_false), TRUE);
 
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), radio_button_true, FALSE, FALSE, 0);
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), radio_button_false, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX (prop_value_hbox), radio_button_true, TRUE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX (prop_value_hbox), radio_button_false, TRUE, TRUE, 0);
   return (prop_value_hbox);
 }
 
@@ -1445,7 +1472,55 @@ pitivi_value_conf_uint(GValue value, GParamSpec	*param)
   spin_button = gtk_spin_button_new_with_range(puint->minimum, puint->maximum, 1);
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_uint (&value));
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, FALSE, FALSE, 0);
+  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
+  return (prop_value_hbox);
+}
+
+GtkWidget *
+pitivi_value_conf_int(GValue value, GParamSpec	*param)
+{
+  GParamSpecInt		*pint;  
+  GtkWidget		*spin_button;
+  GtkWidget		*prop_value_hbox;
+
+  pint = G_PARAM_SPEC_INT (param);
+  prop_value_hbox = gtk_hbox_new(0, FALSE);
+  spin_button = gtk_spin_button_new_with_range(pint->minimum, pint->maximum, 1);
+  /* valeur par defaut */
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_int (&value));
+  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
+  return (prop_value_hbox);
+}
+
+GtkWidget *
+pitivi_value_conf_uint64(GValue value, GParamSpec *param)
+{
+  GParamSpecUInt64	*puint64;
+  GtkWidget		*spin_button;
+  GtkWidget		*prop_value_hbox;
+
+  puint64 = G_PARAM_SPEC_UINT64 (param);
+  prop_value_hbox = gtk_hbox_new(0, FALSE);
+  spin_button = gtk_spin_button_new_with_range(puint64->minimum, puint64->maximum, 1);
+  /* valeur par defaut */
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_uint64 (&value));
+  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
+  return (prop_value_hbox);
+}
+
+GtkWidget *
+pitivi_value_conf_int64(GValue value, GParamSpec *param)
+{
+  GParamSpecInt64	*pint64;
+  GtkWidget		*spin_button;
+  GtkWidget		*prop_value_hbox;
+
+  pint64 = G_PARAM_SPEC_INT64 (param);
+  prop_value_hbox = gtk_hbox_new(0, FALSE);
+  spin_button = gtk_spin_button_new_with_range(pint64->minimum, pint64->maximum, 1);
+  /* valeur par defaut */
+  gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_int64 (&value));
+  gtk_box_pack_start(GTK_BOX (prop_value_hbox), spin_button, TRUE, TRUE, 0);
   return (prop_value_hbox);
 }
 
@@ -1479,7 +1554,7 @@ pitivi_value_conf_default(GValue value, GParamSpec *param)
     }
   else
     prop_value_label = gtk_label_new("Default Case for Value");
-  gtk_box_pack_start(GTK_BOX (prop_value_hbox), prop_value_combobox, FALSE, TRUE, 0);
+  gtk_box_pack_start(GTK_BOX (prop_value_hbox), prop_value_combobox, TRUE, TRUE, 0);
   return (prop_value_hbox);
 }
 
