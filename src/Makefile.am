@@ -33,10 +33,12 @@ pitivi_SOURCES		= \
 	pitivi-viewercontroller.c \
 	pitivi-viewervolume.c \
 	pitivi-projectsettings.c \
+	pitivi-projectsettingswindow.c \
 	pitivi-stockicons.c \
 	pitivi-menu-actions.c \
 	pitivi-menu.c \
 	pitivi-settings.c \
+	pitivi-settingswindow.c \
 	main.c
 
 # our CFLAGS and LDFLAGS used for compiling and linking

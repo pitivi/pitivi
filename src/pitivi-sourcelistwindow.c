@@ -35,7 +35,7 @@
 #include "pitivi-settings.h"
 #include "pitivi-stockicons.h"
 
-static GtkWindowClass *parent_class = NULL;
+static PitiviProjectWindowsClass *parent_class = NULL;
 
 struct _PitiviListStore
 {
@@ -1812,12 +1812,8 @@ pitivi_sourcelistwindow_constructor (GType type,
   GObject *obj;
   {
     /* Invoke parent constructor. */
-    PitiviSourceListWindowClass *klass;
-    GObjectClass *parent_class;
-    klass = PITIVI_SOURCELISTWINDOW_CLASS (g_type_class_peek (PITIVI_SOURCELISTWINDOW_TYPE));
-    parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
-    obj = parent_class->constructor (type, n_construct_properties,
-				     construct_properties);
+    obj = G_OBJECT_CLASS (parent_class)->constructor (type, n_construct_properties,
+						      construct_properties);
   }
 
   /* do stuff. */
