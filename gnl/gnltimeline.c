@@ -803,22 +803,21 @@ gnl_timeline_change_state (GstElement *element)
       break;
     }
   case GST_STATE_PAUSED_TO_PLAYING:
-    {
-      GstEvent *event;
-      GstSeekType seek_type;
+/*     { */
+/*       GstEvent *event; */
+/*       GstSeekType seek_type; */
 
-      seek_type = GST_FORMAT_TIME |
-	GST_SEEK_METHOD_SET |
-	GST_SEEK_FLAG_FLUSH |
-	GST_SEEK_FLAG_ACCURATE;
+/*       seek_type = GST_FORMAT_TIME | */
+/* 	GST_SEEK_METHOD_SET | */
+/* 	GST_SEEK_FLAG_FLUSH | */
+/* 	GST_SEEK_FLAG_ACCURATE; */
 
-      GST_INFO ("%s: 1 paused->playing", gst_element_get_name (element));
+    GST_INFO ("%s: 1 paused->playing", gst_element_get_name (element));
 
-      event = gst_event_new_segment_seek (seek_type, 0, G_MAXINT64);
-      if (!gnl_timeline_prepare (GNL_OBJECT (timeline), event))
-	res = GST_STATE_FAILURE;
-      break;
-    }
+/*       event = gst_event_new_segment_seek (seek_type, 0, G_MAXINT64); */
+/*       if (!gnl_timeline_prepare (GNL_OBJECT (timeline), event)) */
+/* 	res = GST_STATE_FAILURE; */
+    break;
   case GST_STATE_PLAYING_TO_PAUSED:
     GST_INFO ("%s: 1 playing->paused", gst_element_get_name (element));
     break;
