@@ -376,7 +376,6 @@ pitivi_gstelementsettings_aff_flags (gchar *name, GValue value, GParamSpec *para
   values = G_FLAGS_CLASS (g_type_class_ref (param->value_type))->values;
   nb_value = G_FLAGS_CLASS (g_type_class_ref (param->value_type))->n_values;
   flags_value = g_value_get_flags (&value);
-  g_print ("FLAG_VALUE:%s\nNB_VALUE:%d\n", flags_value, nb_value);
   
   Tab = gtk_table_new (nb_value, 2, FALSE);
   
@@ -389,14 +388,10 @@ pitivi_gstelementsettings_aff_flags (gchar *name, GValue value, GParamSpec *para
     
     tmp = values[j].value;
     g_object_set_data (G_OBJECT (check), "value", GINT_TO_POINTER (tmp));
-    g_print ("VALUE:%d\n", values[j].value);
     pitivi_gstelementsettings_table_widget_add (Tab, check, j, 1);
     
     label = gtk_label_new (values[j].value_nick);
     pitivi_gstelementsettings_table_widget_add (Tab, label, j, 2);
-    
-    //g_print ("%s(%d):%s\n",
-    //     values[j].value_name, values[j].value, values[j].value_nick);
     
     if (values[j].value & flags_value) {
       gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (check), TRUE);
@@ -532,17 +527,17 @@ pitivi_gstelementsettings_create_gui (PitiviGstElementSettings *self)
   GParamSpec			**prop;
 
   self->private->factory = gst_element_factory_find(self->elm);
+
   if (self->private->factory) {
-    pitivi_gstelementsettings_add_new_frame_info (self);
-    
+    pitivi_gstelementsettings_add_new_frame_info (self);    
     self->private->element = gst_element_factory_create(self->private->factory, "test");
     prop = g_object_class_list_properties(G_OBJECT_GET_CLASS (self->private->element), &num_prop);
-    g_print ("Num Properties:%d\n", num_prop);
-    
     pitivi_gstelementsettings_add_new_frame_prop (self, prop, num_prop);
+
   } else {
     pitivi_gstelementsettings_add_new_label (self, "Not A Factory Element!!\n");
   }
+
   gtk_widget_show_all (GTK_WIDGET (self));  
   return ;
 }

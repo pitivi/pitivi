@@ -150,9 +150,6 @@ pitivi_settingswindow_get_settings_elem (PitiviGstElementSettings *Properties)
 	      g_print ("NOT TOGGLE BOUTTON \n");
 	    } else {
 
-	      //////////////////////////////////////////////////////////////////////////////
-	      
-	      // A FINIR
 	      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (tmp2->widget))) {
 		g_print ("FLAG:%d\n", 
 			 (gint) g_object_get_data (G_OBJECT (tmp2->widget), "value"));
@@ -208,17 +205,19 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
   gtk_widget_show_all (GTK_WIDGET (Dialog));
 
   result  = gtk_dialog_run (GTK_DIALOG (Dialog));
-  switch (result)
-    {
-      case GTK_RESPONSE_ACCEPT:
-         g_print ("ACCEPT\n");
-	 g_print ("SAVE %s\n", Properties->elm);
-	 pitivi_settingswindow_get_settings_elem (Properties);
-         break;
-      default:
-         g_print ("CANCEL\n");
-         break;
-    }
+  switch (result) {
+  case GTK_RESPONSE_ACCEPT:
+    g_print ("######################################################\n");
+    g_print ("ACCEPT\n");
+    g_print ("SAVE %s\n", Properties->elm);
+    pitivi_settingswindow_get_settings_elem (Properties);
+    g_print ("######################################################\n");
+    break;
+  default:
+    g_print ("CANCEL\n");
+    break;
+  }
+
   gtk_widget_destroy (Dialog);  
   return ;
 }
