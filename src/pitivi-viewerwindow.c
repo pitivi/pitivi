@@ -28,17 +28,28 @@
 
 static GtkWindowClass *parent_class = NULL;
 
+enum PITIVI_GST_ELEMENT
+  {
+    PIPELINE_ELEMENT = 0,
+    SRC_ELEMENT,
+    SINK_ELEMENT,
+    ALL_ELEMENT
+  };
+
 struct _PitiviViewerWindowPrivate
 {
   /* instance private members */
   gboolean			dispose_has_run;
   GtkWidget			*main_vbox;
-  GtkWidget		        *playerview;
+  PitiviViewerPlayer		*playerview;
+  GstElement			*elm[ALL_ELEMENT];
+  GtkWidget			*video_area;
   PitiviViewerController	*media_controller;
   GdkPixbuf			*logo;
   GtkWidget			*mixer;
   GtkWidget			*statusbar;
 };
+
 
 /*
  * forward definitions
@@ -58,50 +69,83 @@ pitivi_viewerwindow_new(void)
   return viewerwindow;
 }
 
+
+gboolean	idle_func (gpointer data)
+{
+  
+  PitiviViewerWindowPrivate *x = (PitiviViewerWindowPrivate *) data;
+
+  if ( x->elm[PIPELINE_ELEMENT] )
+    if ( gst_element_get_state (x->elm[0]) == GST_STATE_PLAYING )
+      {
+	gst_x_overlay_set_xwindow_id ( GST_X_OVERLAY ( x->elm[SINK_ELEMENT] ), 
+				       GDK_WINDOW_XWINDOW ( x->video_area->window ) );
+	gst_bin_iterate (GST_BIN (x->elm[PIPELINE_ELEMENT]));
+      }
+  
+  return TRUE;
+}
+
+
+void		meof (GstElement *elm)
+{
+  gst_element_set_state ( GST_ELEMENT (elm), GST_STATE_NULL );
+  g_print ("have eof, quitting\n");
+  g_object_unref (G_OBJECT (elm));
+  elm = 0;
+}
+
+
+gboolean  launching_gst_video (PitiviViewerWindow *self )
+{
+
+  self->private->elm[PIPELINE_ELEMENT]=gst_pipeline_new("pipeline");
+  g_return_val_if_fail ( self->private->elm[PIPELINE_ELEMENT] != NULL, -1);
+  
+  self->private->elm[SRC_ELEMENT]=gst_element_factory_make("videotestsrc", "src");
+  g_return_val_if_fail ( self->private->elm[SRC_ELEMENT] != NULL, -1);
+
+  self->private->elm[SINK_ELEMENT]=gst_element_factory_make("xvimagesink", "sink");
+  g_return_val_if_fail ( self->private->elm[SINK_ELEMENT] != NULL, -1);
+  
+  gst_bin_add_many (GST_BIN (self->private->elm[PIPELINE_ELEMENT])\
+		    , self->private->elm[1], self->private->elm[SINK_ELEMENT]\
+		    , NULL);
+  g_signal_connect (G_OBJECT (self->private->elm[SRC_ELEMENT]), "eos",
+		    G_CALLBACK (meof), self->private->elm[PIPELINE_ELEMENT]);
+  gst_element_link (self->private->elm[SRC_ELEMENT], self->private->elm[2]);
+  gst_element_set_state ( GST_ELEMENT (self->private->elm[PIPELINE_ELEMENT])\
+			  , GST_STATE_PLAYING );
+  g_idle_add ( idle_func, self->private );
+  
+  return (TRUE);
+}
+
+
 static void
 pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) instance;
   GtkWidget  *separator;
   int	     count;
-  
+    
   self->private = g_new0(PitiviViewerWindowPrivate, 1);
-  
-  /* initialize all public and private members to reasonable default values. */ 
-  
-  self->private->dispose_has_run = FALSE;
   gtk_window_set_resizable (GTK_WINDOW (self), FALSE);
+  self->private->dispose_has_run = FALSE;
+  gtk_widget_show (GTK_WIDGET (self));
+ 
+  // Create Video Display (Drawing Area)
   
-  /* If you need specific consruction properties to complete initialization, 
-   * delay initialization completion until the property is set. 
-   */
-  
-  self->private->main_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_widget_set_usize (self->private->main_vbox, 400, 300);
-  gtk_container_add(GTK_CONTAINER(self), GTK_WIDGET(self->private->main_vbox));
-
-  self->private->playerview = pitivi_viewerplayer_new();
-  g_return_if_fail (self->private->playerview != NULL);
-
-  self->private->logo = gdk_pixbuf_new_from_file (PITIVI_APP_LOGO_PATH, NULL);
-  pitivi_viewerplayer_set_minimum_size (PITIVI_VIEWERPLAYER (self->private->playerview), 300, 300);
-  pitivi_viewerplayer_set_logo (PITIVI_VIEWERPLAYER (self->private->playerview), self->private->logo);
-  pitivi_viewerplayer_choose_mode_start (PITIVI_VIEWERPLAYER (self->private->playerview));
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET(self->private->playerview), TRUE, TRUE, 0);
-  
-  separator = gtk_hseparator_new ();
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET(separator), FALSE, FALSE, 0);
-  
-  gtk_widget_show_all (GTK_WIDGET(self));
+  self->private->video_area = gtk_drawing_area_new ();
+  gtk_widget_set_events (self->private->video_area, GDK_BUTTON_PRESS_MASK);
+  gtk_widget_set_size_request (self->private->video_area, 400, 300);
+  gtk_widget_show (GTK_WIDGET (self->private->video_area));
+  gtk_container_add (GTK_CONTAINER(self), GTK_WIDGET (self->private->video_area));
   
   PitiviViewerController *controller = pitivi_viewercontroller_new();
   self->private->media_controller = controller;
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET(controller), FALSE, FALSE, 0);
-  
-  self->private->statusbar = gtk_statusbar_new ();
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET(self->private->statusbar), FALSE, FALSE, 0);
-  gtk_widget_show (self->private->statusbar);
-  
+  gtk_window_move (GTK_WINDOW (self->private->media_controller), 250, 350);
+  launching_gst_video ( self );
 }
 
 static void

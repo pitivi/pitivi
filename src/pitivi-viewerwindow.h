@@ -30,7 +30,11 @@
  * Potentially, include other headers on which this header depends.
  */
 
+#include <gst/xoverlay/xoverlay.h>
+#include <gst/play/play.h>
+#include <gst/gst.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkx.h>
 #include "pitivi-stockicons.h"
 #include "pitivi-viewercontroller.h"
 #include "pitivi-viewerplayer.h"

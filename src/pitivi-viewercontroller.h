@@ -51,7 +51,7 @@ typedef struct _PitiviViewerControllerPrivate PitiviViewerControllerPrivate;
 
 struct _PitiviViewerController
 {
-  GtkHBox parent;
+  GtkWindow parent;
 
   /* instance public members */
 
@@ -61,7 +61,7 @@ struct _PitiviViewerController
 
 struct _PitiviViewerControllerClass
 {
-  GtkHBoxClass parent;
+  GtkWindowClass parent;
   /* class members */
 };
 

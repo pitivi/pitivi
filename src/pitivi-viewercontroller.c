@@ -43,7 +43,9 @@ struct _PitiviViewerControllerPrivate
   gboolean	        dispose_has_run;
   
   GtkWidget	        *toolbar;
-  
+
+  GtkWidget	        *main_vbox;
+  GtkWidget	        *hbox;
   GtkWidget	        *seeker_scale;
   GtkWidget	        *time;
   
@@ -144,6 +146,11 @@ pitivi_viewercontroller_instance_init (GTypeInstance * instance, gpointer g_clas
    * delay initialization completion until the property is set. 
    */
   
+  self->private->main_vbox = gtk_vbox_new (FALSE, 0);
+  self->private->hbox = gtk_hbox_new (FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET ( self->private->hbox ), FALSE, FALSE, 0);
+  gtk_container_add (GTK_CONTAINER(self), GTK_WIDGET (self->private->main_vbox));
+  
   /* Gestion des bouttons de controle */
   
   self->private->toolbar = gtk_toolbar_new();   
@@ -201,7 +208,7 @@ pitivi_viewercontroller_instance_init (GTypeInstance * instance, gpointer g_clas
   gtk_toolbar_set_style (GTK_TOOLBAR(self->private->toolbar), GTK_TOOLBAR_ICONS);
   gtk_toolbar_set_icon_size (GTK_TOOLBAR (self->private->toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR);
 
-  gtk_box_pack_start (GTK_BOX (self), self->private->toolbar, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->hbox), self->private->toolbar, TRUE, TRUE, 0);
   
   /* Creation du seeker */
   
@@ -218,16 +225,16 @@ pitivi_viewercontroller_instance_init (GTypeInstance * instance, gpointer g_clas
   gtk_misc_set_alignment (GTK_MISC (self->private->time), 1, 0.5);  
     
   separators[0] = gtk_vseparator_new ();
-  gtk_box_pack_start (GTK_BOX (self), separators[0], TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->hbox), separators[0], TRUE, TRUE, 5);
         
-  gtk_box_pack_start (GTK_BOX (self), self->private->time, TRUE, TRUE, 0);
-  gtk_box_pack_start (GTK_BOX (self), GTK_WIDGET(self->private->seeker_scale), TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->hbox), self->private->time, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->hbox), GTK_WIDGET(self->private->seeker_scale), TRUE, TRUE, 5);
   
   separators[1] = gtk_vseparator_new ();
-  gtk_box_pack_start (GTK_BOX (self), separators[1], TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->hbox), separators[1], TRUE, TRUE, 5);
   
   self->private->volume = gtk_toggle_button_new ();
-  gtk_box_pack_start (GTK_BOX (self), self->private->volume, TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->hbox), self->private->volume, TRUE, TRUE, 5);
   
   GtkWidget *hbox_volume = gtk_hbox_new (FALSE, 0);
   
@@ -258,6 +265,10 @@ pitivi_viewercontroller_instance_init (GTypeInstance * instance, gpointer g_clas
   g_signal_connect ((gpointer) self->private->volume, "toggled",
 		    G_CALLBACK (pitivi_viewervolume_cb_button_clicked),
 		    self->private->mixer);
+  
+  GtkWidget *statusbar = gtk_statusbar_new ();
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET(statusbar), FALSE, FALSE, 0);
+  gtk_widget_show (statusbar);
 }
 
 static void
@@ -380,7 +391,7 @@ pitivi_viewercontroller_get_type (void)
 	0,			/* n_preallocs */
 	pitivi_viewercontroller_instance_init	/* instance_init */
       };
-      type = g_type_register_static (GTK_TYPE_HBOX,
+      type = g_type_register_static (GTK_TYPE_WINDOW,
 				     "PitiviViewerControllerType", &info, 0);
     }
 
