@@ -304,8 +304,8 @@ gnl_timeline_timer_loop (GstElement *element)
       if (gnl_object_covers (GNL_OBJECT (group), time, G_MAXINT64, GNL_COVER_START)) {
 
 	/* if there is something else at the given position */
-
-        gst_pad_unlink (to_schedule->sinkpad, GST_PAD_PEER (to_schedule->sinkpad));
+	if (GST_PAD_IS_LINKED(to_schedule->sinkpad))
+	  gst_pad_unlink (to_schedule->sinkpad, GST_PAD_PEER (to_schedule->sinkpad));
 
         GST_INFO ("reactivating group %s, seek to time %lld:%02lld:%03lld",
 		  gst_element_get_name (GST_ELEMENT (group)),
@@ -324,7 +324,10 @@ gnl_timeline_timer_loop (GstElement *element)
 	  GST_INFO("linking %s to sinkpad[%s]",
 		   gst_pad_get_name(srcpad),
 		   gst_pad_get_name(to_schedule->sinkpad));
-          gst_pad_link (srcpad, to_schedule->sinkpad);
+          if (!(gst_pad_link (srcpad, to_schedule->sinkpad)))
+	    GST_WARNING ("Couldn't link %s:%s to %s:%s !!",
+			 GST_DEBUG_PAD_NAME(srcpad),
+			 GST_DEBUG_PAD_NAME(to_schedule->sinkpad));
           gst_element_set_state (GST_ELEMENT (group), GST_STATE_PLAYING);
 	} else  {
 	  GST_WARNING ("group %s has no pad", 

@@ -780,6 +780,13 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
   res = gnl_composition_schedule_entries (comp, start_pos,
 					  stop_pos, 1, &pad);
 
+  if (GST_PAD_IS_LINKED(pad)) {
+    GST_WARNING ("pad %s:%s returned by scheduling is connected to %s:%s",
+		 GST_DEBUG_PAD_NAME(pad),
+		 GST_DEBUG_PAD_NAME(GST_PAD_PEER(pad)));
+    gst_pad_unlink (pad, GST_PAD_PEER(pad));
+  }
+
   if (pad) {
 
     GST_INFO("Have a pad, adding a Probe and Ghost Pad");
