@@ -245,7 +245,7 @@ pitivi_npw_add_category(GtkButton *button, gpointer user_data)
 
   if ( strlen(gtk_entry_get_text(GTK_ENTRY(self->private->cat_text))) )
     {
-      pitivi_settings_add_category( pitivi_mainapp_settings(mainapp), 
+      pitivi_settings_add_category( mainapp->global_settings, 
 				    gtk_entry_get_text ( GTK_ENTRY (self->private->cat_text) ) );
       gtk_tree_store_append(self->private->tree, &self->private->pIter2, NULL);
       gtk_tree_store_set(self->private->tree, &self->private->pIter2, 0, 
@@ -267,7 +267,7 @@ pitivi_del_category(GtkButton *button, gpointer user_data)
       // AJOUTER ICI LE CODE POUR :
       //	- LA SUPPRESSION DES SETTINGS
       //	- LA SUPPRESSION DE LA CATEGORIE
-      pitivi_settings_del_category( pitivi_mainapp_settings(mainapp), self->private->position );
+      pitivi_settings_del_category( mainapp->global_settings, self->private->position );
       gtk_tree_store_remove (self->private->tree, &self->private->pIter);
     }
 }
@@ -363,7 +363,7 @@ pitivi_npw_add_projectsettings (PitiviNewProjectWindow *self)
   new_setting->media_settings = g_slist_append(new_setting->media_settings, (gpointer) v_media);
   new_setting->media_settings = g_slist_append(new_setting->media_settings, (gpointer) a_media);
   
-  pitivi_settings_add_setting ( pitivi_mainapp_settings(mainapp), new_setting, self->private->position );
+  pitivi_settings_add_setting ( mainapp->global_settings, new_setting, self->private->position );
 }
 
 /* Add the new setting when button_add is clicked */
@@ -377,7 +377,7 @@ pitivi_npw_add_setting (GtkButton *button, gpointer user_data)
   self = (PitiviNewProjectWindow *) user_data;
   if ( strlen(gtk_entry_get_text( GTK_ENTRY(self->private->name_text))) )
     {
-      global_settings = pitivi_mainapp_settings(mainapp);
+      global_settings = mainapp->global_settings;
       if (global_settings->project_settings)
 	{
 	  pitivi_npw_add_projectsettings ( self );
@@ -416,7 +416,7 @@ pitivi_npw_mod_setting(GtkButton *button, gpointer user_data)
       new_setting->media_settings = NULL;
       new_setting->media_settings = g_slist_append(new_setting->media_settings, (gpointer) v_media);
       new_setting->media_settings = g_slist_append(new_setting->media_settings, (gpointer) a_media);
-      pitivi_settings_mod_setting( pitivi_mainapp_settings(mainapp), new_setting, self->private->position );
+      pitivi_settings_mod_setting( mainapp->global_settings, new_setting, self->private->position );
 
       gtk_tree_store_set(self->private->tree, &self->private->pIter2, 0, 
 			 gtk_entry_get_text(GTK_ENTRY(self->private->name_text)), -1);
@@ -433,7 +433,7 @@ pitivi_npw_del_setting(GtkButton *button, gpointer user_data)
   if (gtk_tree_store_iter_is_valid (self->private->tree, &self->private->pIter2) &&
       gtk_tree_store_iter_depth(self->private->tree, &self->private->pIter2))
     {
-      pitivi_settings_del_setting( pitivi_mainapp_settings(mainapp), self->private->position );
+      pitivi_settings_del_setting( mainapp->global_settings, self->private->position );
       gtk_tree_store_remove (self->private->tree, &self->private->pIter2);
     }
 }
@@ -531,7 +531,7 @@ pitivi_tree_create(PitiviNewProjectWindow *self)
   self->private->tree = gtk_tree_store_new(1, G_TYPE_STRING);
   
 /*   Liste des PitiviCategorieSettings et des PitiviProjectSettings */
-  gl_settings = pitivi_mainapp_settings(mainapp);
+  gl_settings = mainapp->global_settings;
   list = gl_settings->project_settings;
   
   for (i = 0; (categorie = (PitiviCategorieSettings *) g_slist_nth_data (list, i) ) ; i++)
@@ -723,7 +723,7 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   PitiviMainApp			*mainapp = ((PitiviWindows *) self)->mainapp;
   gint				index;
 
-  categorie = pitivi_settings_get_selected_category( pitivi_mainapp_settings(mainapp), self->private->position );
+  categorie = pitivi_settings_get_selected_category( mainapp->global_settings, self->private->position );
   reglage = (PitiviProjectSettings *) g_slist_nth_data(categorie->list_settings, self->private->position[1] );
   vmedia = (PitiviMediaSettings *) g_slist_nth_data(reglage->media_settings, 0);
   amedia = (PitiviMediaSettings *) g_slist_nth_data(reglage->media_settings, 1);
@@ -893,7 +893,7 @@ pitivi_create_new_project ( GtkAction *action, PitiviNewProjectWindow *self )
   PitiviProjectSettings		*settings;
   PitiviCategorieSettings	*categorie;
   
-  categorie = pitivi_settings_get_selected_category( pitivi_mainapp_settings(mainapp), self->private->position );
+  categorie = pitivi_settings_get_selected_category( mainapp->global_settings, self->private->position );
   if (categorie == NULL)
     return ;
 

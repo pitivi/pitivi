@@ -292,7 +292,7 @@ create_unitscale_combobox(PitiviTimelineWindow *self, GtkWidget *parentbox)
 		     FALSE, TRUE, 2);
 }
 
-void	
+void
 create_timeline_toolbar (PitiviTimelineWindow *self)
 {
   PitiviMainApp	*mainapp;
@@ -731,7 +731,6 @@ pitivi_timelinewindow_get_type (void)
       type = g_type_register_static (PITIVI_PROJECTWINDOWS_TYPE,
 				     "PitiviTimelineWindowType", &info, 0);
     }
-
   return type;
 }
 

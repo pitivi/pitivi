@@ -829,7 +829,7 @@ finalize_pipeline_for_demuxer(PitiviSourceListWindow *self, gchar *filename)
 
       while (pitivi_sourcelistwindow_check_for_base_type(self->private->mediatype))
 	{
-	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )), caps, DEC_LIST);
+	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(mainapp->global_settings ), caps, DEC_LIST);
 	  if (decoderlist)
 	    {
 	      thread = add_decoder_for_demux(self, decoderlist, parser,
@@ -838,7 +838,7 @@ finalize_pipeline_for_demuxer(PitiviSourceListWindow *self, gchar *filename)
 	    }
 	  else
 	    {
-	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(pitivi_mainapp_settings( mainapp )), caps, DEC_LIST);
+	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(mainapp->global_settings), caps, DEC_LIST);
 	      if (parserlist)
 		{
 		  thread = add_parser_for_demux(self, parserlist, thread,
@@ -1111,7 +1111,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   while (pitivi_sourcelistwindow_check_for_base_type(self->private->mediatype) && !element_found)
     {
       /* test if it's a container */
-      demuxlist = pitivi_settings_get_flux_container_list (G_OBJECT(pitivi_mainapp_settings( mainapp )),
+      demuxlist = pitivi_settings_get_flux_container_list (G_OBJECT(mainapp->global_settings),
 							   self->private->mediacaps, DEC_LIST);
       /* create a demuxer if it's a container */
       if (demuxlist)
@@ -1121,7 +1121,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	}
       else /* search for a decoder */
 	{
-	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )), 
+	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(mainapp->global_settings), 
 							     self->private->mediacaps, DEC_LIST);
 	  if (decoderlist)
 	    {
@@ -1130,7 +1130,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	    }
 	  else /* search for parser */
 	    {
-	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(pitivi_mainapp_settings( mainapp )), 
+	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(mainapp->global_settings), 
 								self->private->mediacaps, DEC_LIST);
 	      
 	      if (parserlist)

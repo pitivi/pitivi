@@ -75,6 +75,9 @@ struct _PitiviSettings
   GList		*codec;
   GList		*parser;
   GList		*element;
+  GList		*video_effects;
+  GList		*audio_effects;
+  GList		*transition_effects;
 
   GSList	*project_settings;
 

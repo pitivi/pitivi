@@ -61,10 +61,10 @@ typedef struct _PitiviEffectsTree PitiviEffectsTree;
 #define PITIVI_EFFECTS_WIN_SIZEY	  250
 
 typedef enum {
-  
-  PITIVI_EFFECT_VIDEO_TYPE = 1,
+
+  PITIVI_EFFECT_TRANSITION_TYPE = 1,  
+  PITIVI_EFFECT_VIDEO_TYPE,
   PITIVI_EFFECT_AUDIO_TYPE,
-  PITIVI_EFFECT_TRANSITION_TYPE,
   PITIVI_EFFECT_NBCAT_TYPE
   
 } PitiviEffectsTypeEnum;
@@ -106,6 +106,8 @@ GType pitivi_effectswindow_get_type (void);
 
 PitiviEffectsWindow	*pitivi_effectswindow_new(PitiviMainApp *mainapp);
 
-void pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, PitiviEffectsTypeEnum eneffects);
-
+void pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, 
+				 PitiviEffectsTypeEnum eneffects,  
+				 PitiviSettings *self);
+GList *get_transition_effects_list(GstElementFactory *factory);
 #endif

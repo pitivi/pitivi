@@ -517,7 +517,7 @@ pitivi_settingswindow_create_all_frames (PitiviSettingsWindow *self)
 {
   PitiviMainApp		*mainapp = ((PitiviWindows *) self)->mainapp;
 
-  self->private->Settings = pitivi_mainapp_settings (mainapp);
+  self->private->Settings = mainapp->global_settings;
 
   pitivi_settingswindow_create_table_InOut 
     (self, self->private->Settings->element, 

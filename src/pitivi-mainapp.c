@@ -59,7 +59,6 @@ struct _PitiviMainAppPrivate
   gboolean			dispose_has_run;
   PitiviToolboxWindow		*tbxwin;
   PitiviNewProjectWindow	*win_new_project;
-  PitiviSettings		*global_settings;
 
   PitiviSourceListWindow	*srclistwin;
   PitiviTimelineWindow		*timelinewin;
@@ -86,10 +85,10 @@ void			pitivi_mainapp_del_settings		( PitiviMainApp *self, gint *position );
 /*   return self->private->win_new_project; */
 /* } */
 
-PitiviSettings *
-pitivi_mainapp_settings(PitiviMainApp *self) {
-  return self->private->global_settings;
-}
+/* PitiviSettings * */
+/* pitivi_mainapp_settings(PitiviMainApp *self) { */
+/*   return self->private->global_settings; */
+/* } */
 
 PitiviToolboxWindow *
 pitivi_mainapp_get_toolboxwindow(PitiviMainApp *self) {
@@ -114,7 +113,7 @@ pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
 
   conf = g_strdup_printf("%s/.pitivi", g_get_home_dir());
   /* Save settings before exiting */
-  if (pitivi_settings_save_to_file(mainapp->private->global_settings, conf) == FALSE)
+  if (pitivi_settings_save_to_file(mainapp->global_settings, conf) == FALSE)
     g_printf("Error saving configuration file");
   g_free(conf);
   gtk_main_quit();
@@ -300,9 +299,9 @@ pitivi_mainapp_constructor (GType type,
 				      0.4, "Loading Global Settings");
   settingsfile = g_strdup_printf("%s/.pitivi", g_get_home_dir());
   if ( g_file_test(settingsfile, G_FILE_TEST_EXISTS) )
-    self->private->global_settings = pitivi_settings_load_from_file(settingsfile);
+    self->global_settings = pitivi_settings_load_from_file(settingsfile);
   else
-    self->private->global_settings = pitivi_settings_new();
+    self->global_settings = pitivi_settings_new();
   g_free(settingsfile);
 
   /* Creation de la toolboxwindow */

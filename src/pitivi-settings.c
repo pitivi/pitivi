@@ -7,7 +7,7 @@
  * EPITECH is a computer science school in Paris - FRANCE -
  * under the direction of Flavien Astraud and Jerome Landrieu.
  *
- * This program is free software; you can redistribute it and/or
+ * This program is free software; you can redistribute it and/or2
  * modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation; either
  * version 2 of the License, or (at your option) any later version.
@@ -486,6 +486,7 @@ pitivi_settings_scan_registry(PitiviSettings *self)
 {
   GList			*sv;
   GstElementFactory	*factory;
+  int			i;
 
   self->element = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
   sv = self->element;
@@ -512,13 +513,18 @@ pitivi_settings_scan_registry(PitiviSettings *self)
 	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Parser/Video", 18)
 	       ) {
       self->parser = pitivi_settings_ajout_element (self->parser, factory, GST_PAD_SINK);      
-    }
+    } 
+    else if (!strncmp (gst_element_factory_get_klass (factory), "Filter/Effect/Video", 19))
+      self->video_effects = g_list_append (self->video_effects, factory);
+    else if (!strncmp (gst_element_factory_get_klass (factory), "Filter/Effect/Audio", 19))
+      self->audio_effects = g_list_append (self->audio_effects, factory);
+    else if (!strncmp (gst_element_factory_get_klass (factory), "Filter/Editor/Video", 19))
+      self->transition_effects = g_list_append (self->transition_effects, factory);
     sv = sv->next;
   }
-
-  //pitivi_settings_aff_all_list (self->container);
-  //pitivi_settings_aff_all_list (self->codec);
-  //pitivi_settings_aff_all_list (self->parser);
+/*   pitivi_settings_aff_all_list (self->container); */
+/*   pitivi_settings_aff_all_list (self->codec); */
+/*   pitivi_settings_aff_all_list (self->parser); */
 }
 
 GList *

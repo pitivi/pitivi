@@ -61,8 +61,9 @@ struct _PitiviMainApp
   GList	*projects;	/* List of PitiviProject loaded */
   PitiviProject	*project;
 
+  PitiviSettings	*global_settings;
   /* private */
-  PitiviMainAppPrivate *private;
+  PitiviMainAppPrivate	*private;
 };
 
 struct _PitiviMainAppClass

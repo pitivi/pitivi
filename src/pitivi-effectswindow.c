@@ -31,9 +31,9 @@ static GtkWindowClass *parent_class = NULL;
 
 gchar* labels[PITIVI_EFFECT_NBCAT_TYPE+1]={
   
+  PITIVI_TRANSITION_EFFECT_LABEL,
   PITIVI_VIDEO_EFFECT_LABEL,
   PITIVI_AUDIO_EFFECT_LABEL,
-  PITIVI_TRANSITION_EFFECT_LABEL,
   0
 };
 
@@ -82,27 +82,6 @@ pitivi_effectswindow_new(PitiviMainApp *mainapp)
   return effectswindow;
 }
 
-static GObject *
-pitivi_effectswindow_constructor (GType type,
-			     guint n_construct_properties,
-			     GObjectConstructParam * construct_properties)
-{
-  GObject *obj;
-  {
-    /* Invoke parent constructor. */
-    PitiviEffectsWindowClass *klass;
-    GObjectClass *parent_class;
-    klass = PITIVI_EFFECTSWINDOW_CLASS (g_type_class_peek (PITIVI_EFFECTSWINDOW_TYPE));
-    parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
-    obj = parent_class->constructor (type, n_construct_properties,
-				     construct_properties);
-  }
-
-  /* do stuff. */
-  
-  return obj;
-}
-
 static void
 pitivi_effectswindow_insert_newtab (GtkNotebook *notebook, PitiviEffectsTree *tree)
 {
@@ -117,22 +96,27 @@ pitivi_effectswindow_insert_newtab (GtkNotebook *notebook, PitiviEffectsTree *tr
 				 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 }
 
-static void
-pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
+static GObject *
+pitivi_effectswindow_constructor (GType type,
+			     guint n_construct_properties,
+			     GObjectConstructParam * construct_properties)
 {
+  GObject *obj;
   int  count;
   GtkWidget *main_vbox;
 
-  PitiviEffectsWindow *self = (PitiviEffectsWindow *) instance;
-  self->private = g_new0(PitiviEffectsWindowPrivate, 1);
-  
-  /* initialize all public and private members to reasonable default values. */ 
-  
-  self->private->dispose_has_run = FALSE;
-  
-  /* If you need specific consruction properties to complete initialization, 
-   * delay initialization completion until the property is set. 
-   */
+    /* Invoke parent constructor. */
+  PitiviEffectsWindowClass *klass;
+  PitiviEffectsWindow	   *self;
+
+  GObjectClass *parent_class;
+  klass = PITIVI_EFFECTSWINDOW_CLASS (g_type_class_peek (PITIVI_EFFECTSWINDOW_TYPE));
+  parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
+  obj = parent_class->constructor (type, n_construct_properties,
+				   construct_properties);
+  self = (PitiviEffectsWindow *) obj;
+
+  /* do stuff. */
   
   main_vbox = gtk_vbox_new (FALSE, 0);
   self->private->notebook = gtk_notebook_new ();
@@ -150,10 +134,30 @@ pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
       self->private->trees[count]->treeview = gtk_tree_view_new ();
       self->private->trees[count]->scroll = gtk_scrolled_window_new (NULL, NULL);
       self->private->trees[count]->order = count;
-      pitivi_effectstree_set_gst (self->private->trees[count], count+1);
+      pitivi_effectstree_set_gst (self->private->trees[count], 
+				  count+1, 
+				  ((PitiviWindows *)self)->mainapp->global_settings);
       pitivi_effectswindow_insert_newtab (GTK_NOTEBOOK (self->private->notebook), self->private->trees[count]);
       gtk_tree_view_expand_all (GTK_TREE_VIEW (self->private->trees[count]->treeview));
     }
+
+  return obj;
+}
+
+static void
+pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
+{
+  PitiviEffectsWindow *self = (PitiviEffectsWindow *) instance;
+  self->private = g_new0(PitiviEffectsWindowPrivate, 1);
+
+  /* initialize all public and private members to reasonable default values. */ 
+  
+  self->private->dispose_has_run = FALSE;
+  
+  /* If you need specific consruction properties to complete initialization, 
+   * delay initialization completion until the property is set. 
+   */
+ 
 }
 
 void
@@ -309,26 +313,90 @@ pitivi_effectswindow_drag_data_delete (GtkWidget          *widget,
 }
 
 static void
-pitivi_effectswindow_drag_begin (GtkWidget          *widget,
-				 GdkDragContext     *context,
+pitivi_effectswindow_drag_begin (GtkWidget		*widget,
+				 GdkDragContext		*context,
 				 gpointer		user_data)
 {
 }
 
-void
-pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, PitiviEffectsTypeEnum eneffects)
+
+GList	*
+get_transition_effects_list(GstElementFactory		*factory)
 {
-  int			count;  
-  GtkCellRenderer	*pCellRenderer;
-  GtkTreeViewColumn     *pColumn;
-  GdkPixbuf		*pixbuf;
-  const GList		*elements;
-  const gchar		*effectname;
-  const gchar		*desc;
-  const gchar		*klass;
-  GstElementFactory	*factory;
-  GtkTreeIter		Tv_iter;
-  GtkTreeIter		Video_iter;
+  GstElementFactory		*trans_fact;
+  const gchar			*intern_name;
+  GParamSpec			**property_specs;
+  GParamSpec			*param;
+  GstElement			*element;
+  gboolean			readable;
+  GList				*fx_prop_list;
+  gint				num_properties;
+  gint				nb;
+  gint				*enum_values;
+  gint				i;
+
+  trans_fact = factory;
+  intern_name = "transition";
+  fx_prop_list = NULL;
+  if (trans_fact)
+    {
+      element = gst_element_factory_create(trans_fact, intern_name);  
+      property_specs = g_object_class_list_properties(G_OBJECT_GET_CLASS (element), &num_properties);
+      GValue value = { 0, };
+      param = property_specs[1];
+      readable = FALSE;
+      
+      g_value_init (&value, param->value_type);
+      if (param->flags & G_PARAM_READABLE)
+	{
+	  g_object_get_property (G_OBJECT (element), param->name, &value);
+	  readable = TRUE;
+	}
+      if (readable)
+	{		      
+	  if (G_IS_PARAM_SPEC_ENUM (param))
+	    {    
+	      GEnumClass *class = G_ENUM_CLASS (g_type_class_ref (param->value_type));
+	      enum_values = g_new0 (gint, class->n_values);
+	       
+	      for (i=0; i < class->n_values; i++)
+		{
+		  GEnumValue *evalue = &class->values[i];		  
+		  enum_values[i] = evalue->value;
+		  fx_prop_list = g_list_append(fx_prop_list, evalue);
+		}
+	    }
+	}
+    }
+  return(fx_prop_list);
+}
+
+void
+pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, 
+			    PitiviEffectsTypeEnum eneffects,  
+			    PitiviSettings *self)
+{
+  int				count;  
+  GtkCellRenderer		*pCellRenderer;
+  GtkTreeViewColumn		*pColumn;
+  GdkPixbuf			*pixbuf;
+  const GList			*elements;
+  GList				*fx_video;
+  GList				*fx_audio;
+  GList				*fx_transition;
+  GList				*fx_transition_prop;
+  const gchar			*effectname;
+  const gchar			*desc;
+  const gchar			*klass;
+  GtkTreeIter			Tv_iter;
+  GtkTreeIter			Video_iter;
+  int				i;
+  GEnumValue			*trans_fact_data;
+
+  fx_video = NULL;
+  fx_audio = NULL;
+  fx_transition = NULL;
+  fx_transition_prop = NULL;
 
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (tree_effect->treeview), FALSE);
   tree_effect->model = gtk_tree_store_new ( PITIVI_NB_COLUMN,
@@ -342,33 +410,35 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, PitiviEffectsTypeEnu
 				NULL,
 				"Simple Effects",
 				PITIVI_STOCK_EFFECT_CAT);
+  /* On check le type d'effet a inserer (video/audio/transition) */
   switch (eneffects)
     {
-    case PITIVI_EFFECT_VIDEO_TYPE:
-      pitivi_effectstree_insert_child (tree_effect, 
-				    &Tv_iter,
-				    NULL,
-				    "Tv Effects",
-				    PITIVI_STOCK_EFFECT_CAT);
-      pitivi_effectstree_insert_child (tree_effect, 
-				     &Video_iter,
-				     NULL,
-				     "Video Effects",
-				     PITIVI_STOCK_EFFECT_CAT);
-      break;
-    }
-  elements = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);    
-  for (count = 0; elements != 0; count++)
-    {
       GtkTreeIter child;
-      
-      factory = (GstElementFactory *) elements->data;
-      klass = gst_element_factory_get_klass (factory);
-      effectname = gst_element_factory_get_longname (factory);
-      desc = gst_element_factory_get_description (factory);
-      switch (eneffects)
+
+    case PITIVI_EFFECT_VIDEO_TYPE:
+      /* On recupere la liste des effets video via la structure self */
+      while (self->video_effects)
 	{
-	case PITIVI_EFFECT_VIDEO_TYPE:
+	  fx_video = g_list_append(fx_video, self->video_effects->data);
+	  self->video_effects = self->video_effects->next;
+	}
+      /* On creer deux sous categories */
+      pitivi_effectstree_insert_child (tree_effect, 
+				       &Tv_iter,
+				       NULL,
+				       "Tv Effects",
+				       PITIVI_STOCK_EFFECT_CAT);
+      pitivi_effectstree_insert_child (tree_effect, 
+				       &Video_iter,
+				       NULL,
+				       "Video Effects",
+				       PITIVI_STOCK_EFFECT_CAT);
+      /* On insere les elements video dans le tree pour le menu des effets */
+      while (fx_video)
+	{
+	  klass = gst_element_factory_get_klass (fx_video->data);
+	  effectname = gst_element_factory_get_longname (fx_video->data);
+	  desc = gst_element_factory_get_description (fx_video->data);
 	  if (!strncmp (klass, "Filter/Effect/Video", 19))
 	    {
 	      gchar *idx;
@@ -377,31 +447,46 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, PitiviEffectsTypeEnu
 		{
 		  *idx = '\0';
 		  pitivi_effectstree_insert_child (tree_effect,
-						&child,
-						&Tv_iter,
-						effectname,
-						PITIVI_STOCK_EFFECT_TV);
+						   &child,
+						   &Tv_iter,
+						   effectname,
+						   PITIVI_STOCK_EFFECT_TV);
 		  
 		}
 	      else if ((idx = strstr (effectname, "ideo")))
 		{
 		  pitivi_effectstree_insert_child (tree_effect,
-						&child,
-						&Video_iter,
-						effectname + 6,
-						PITIVI_STOCK_EFFECT_TV);
+						   &child,
+						   &Video_iter,
+						   effectname + 6,
+						   PITIVI_STOCK_EFFECT_TV);
 		}
 	      else
 		{
 		  pitivi_effectstree_insert_child (tree_effect, 
-						&child,
-						&tree_effect->treeiter,
-						effectname,
-						PITIVI_STOCK_EFFECT_TV);
-		}
+						   &child,
+						   &tree_effect->treeiter,
+						   effectname,
+						   PITIVI_STOCK_EFFECT_TV);
+		} 
 	    }
-	  break;
-	case PITIVI_EFFECT_AUDIO_TYPE:
+	  fx_video = fx_video->next;
+	}
+      break;
+
+    case PITIVI_EFFECT_AUDIO_TYPE:
+      /* On recupere la liste des effets audio via la structure self */
+      while (self->audio_effects)
+	{
+	  fx_audio = g_list_append(fx_audio, self->audio_effects->data);
+	  self->audio_effects = self->audio_effects->next;
+	}
+      /* On insere les elements audio dans le tree pour le menu des effets */
+      while (fx_audio)
+	{
+	  klass = gst_element_factory_get_klass (fx_audio->data);
+	  effectname = gst_element_factory_get_longname (fx_audio->data);
+	  desc = gst_element_factory_get_description (fx_audio->data);
 	  if (!strncmp (klass, "Filter/Effect/Audio", 19))
 	    {
 	      pitivi_effectstree_insert_child (tree_effect,
@@ -410,19 +495,46 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, PitiviEffectsTypeEnu
 					       effectname,
 					       PITIVI_STOCK_EFFECT_SOUND);
 	    }
-	  break;
-	case PITIVI_EFFECT_TRANSITION_TYPE:
-	  if (strstr (klass, "smpte"))
-	    pitivi_effectstree_insert_child (tree_effect,
-					     &child,
-					     &tree_effect->treeiter,
-					     effectname,
-					     PITIVI_STOCK_EFFECT_TV);
-	  break;
+	  fx_audio = fx_audio->next;
+	}	 
+      break;
+
+    case PITIVI_EFFECT_TRANSITION_TYPE:
+      /* On recupere la liste des effets de transition via la structure self */
+      while (self->transition_effects)
+	{
+	  fx_transition = g_list_append(fx_transition, self->transition_effects->data);
+	  self->transition_effects = self->transition_effects->next;
 	}
-      elements = elements->next;
+      /* On insere les elements de transition dans le tree pour le menu des effets */
+      while (fx_transition)
+	{
+	  klass = gst_element_factory_get_klass (fx_transition->data);
+	  effectname = gst_element_factory_get_longname (fx_transition->data);
+	  if (strstr (effectname, "SMPTE"))
+	    {
+	      /* g_print("Transition : %s\n", effectname); */
+	      fx_transition_prop = get_transition_effects_list(fx_transition->data);
+	      while (fx_transition_prop)
+		{
+		  trans_fact_data = fx_transition_prop->data;
+		  //g_print("transition : %s (%i)\n\n", trans_fact_data->value_nick, trans_fact_data->value);
+
+		  pitivi_effectstree_insert_child (tree_effect,
+						   &child,
+						   &tree_effect->treeiter,
+						   trans_fact_data->value_nick,
+						   PITIVI_STOCK_EFFECT_TV);
+
+		  fx_transition_prop = fx_transition_prop->next;
+		}
+	    }
+	  fx_transition = fx_transition->next;
+	}
+
+      break;
     }
-  
+
   gtk_tree_view_set_model(GTK_TREE_VIEW(tree_effect->treeview), GTK_TREE_MODEL(tree_effect->model));
   pCellRenderer = gtk_cell_renderer_pixbuf_new();
   pColumn = gtk_tree_view_column_new_with_attributes("",
