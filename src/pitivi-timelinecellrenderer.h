@@ -79,6 +79,10 @@ struct _PitiviTimelineCellRenderer
   GtkWidget		*linked_track;
   GdkGC		        **gcs;
   
+  /* nb elemnts added no use for */  
+  gint64	        *nb_added;
+
+
   /* private */
   PitiviTimelineCellRendererPrivate	*private;
 };

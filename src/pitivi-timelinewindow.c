@@ -74,8 +74,8 @@ struct _PitiviTimelineWindowPrivate
   PitiviMainApp		*mainapp;
   GtkWidget		*toolcontainer;
   PitiviController	*controller;
-  GtkComboBox	*unitcombobox;
-  GtkComboBox	*scalecombobox;
+  GtkComboBox		*unitcombobox;
+  GtkComboBox		*scalecombobox;
   
   /* WinSettings */
   
@@ -554,6 +554,8 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   /* Key events */
   g_signal_connect (GTK_WIDGET (self), "key_release_event",
 		    G_CALLBACK (pitivi_timelinewindow_callb_key_press), NULL);
+
+  self->nb_added[0] = 0;
 }
 
 static void

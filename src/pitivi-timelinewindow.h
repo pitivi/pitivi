@@ -75,6 +75,10 @@ struct _PitiviTimelineWindow
   int			zoom;		// zoom level
   GtkAdjustment		*hscrollbar;	// Adjustment for the horizontal scrollbar
   
+  /* nb_added */
+  
+  gint64		nb_added[1];
+
   /* Backgrounds fro tracks */
   
   GdkPixmap		*bgs[5];

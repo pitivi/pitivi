@@ -34,7 +34,7 @@ struct _PitiviSourceBin
 };
 
 struct _PitiviProjectSourceListPrivate
-{
+{                                   
   /* instance private members */
   gboolean		dispose_has_run;
   GSList		*bin_tree;
@@ -401,16 +401,15 @@ pitivi_projectsourcelist_add_file_to_bin (PitiviProjectSourceList *self,
 
   sourcebin = get_pitivisourcebin(self, treepath, &list, &bin, &row);
   sourcefile = g_new0(PitiviSourceFile, 1);
-
+  
   sourcefile->filename = g_strdup(filename);
   sourcefile->mediatype = g_strdup(mediatype);
   sourcefile->infovideo = g_strdup(infovideo);
   sourcefile->infoaudio = g_strdup(infoaudio);
   sourcefile->length = length;
   sourcefile->pipeline = pipeline;
-
-  sourcebin->source = g_slist_append(sourcebin->source, sourcefile);
   
+  sourcebin->source = g_slist_append(sourcebin->source, sourcefile);
   return TRUE;
 }
 
@@ -466,7 +465,6 @@ pitivi_projectsourcelist_add_source_from_xml(PitiviSourceBin *sourcebin,
   sourcefile->pipeline = NULL;
   
   sourcebin->source = g_slist_append(sourcebin->source, sourcefile);
-  
 }
 
 

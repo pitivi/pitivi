@@ -41,6 +41,7 @@ typedef enum
 
 struct _PitiviSourceItem
 {
+  gint64	        id;
   PitiviPiste		piste;
   gboolean		isaudio;
   PitiviSourceFile	*srcfile;

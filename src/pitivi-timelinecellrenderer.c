@@ -170,6 +170,7 @@ pitivi_timelinecellrenderer_constructor (GType type,
   
   self->private->bgs = self->private->timewin->bgs;
   self->gcs = self->private->timewin->gcs;
+  self->nb_added = self->private->timewin->nb_added;
   return object;
 }
 
@@ -300,14 +301,14 @@ int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
       gtk_layout_put (GTK_LAYOUT (self), widget, xbegin, 0);
       move_media (self, intersec[1], xbegin);
     }
- return TRUE;
+  return TRUE;
 }
 
 
 PitiviLayerType
 check_media_type_str (gchar *media)
 {
-  if (!g_strcasecmp  (media, "video"))
+  if (!g_strcasecmp  (media, "video")) 
     return (PITIVI_VIDEO_TRACK);
   else if (!g_strcasecmp (media, "audio"))
     return (PITIVI_AUDIO_TRACK);
@@ -554,9 +555,9 @@ create_media_video_audio_track (PitiviTimelineCellRenderer *cell, PitiviSourceFi
   
   /* Creating widgets */
   
-  media[0] = pitivi_timelinemedia_new (sf);  
+  media[0] = pitivi_timelinemedia_new (sf, cell);  
   gtk_widget_set_size_request (GTK_WIDGET (media[0]), convert_time_pix(cell, length), FIXED_HEIGHT);
-  media[1] = pitivi_timelinemedia_new (sf);
+  media[1] = pitivi_timelinemedia_new (sf, cell);
   gtk_widget_set_size_request (GTK_WIDGET (media[1]), convert_time_pix(cell, length), FIXED_HEIGHT);
   
   /* Putting on first Layout */
@@ -583,7 +584,7 @@ create_media_track (PitiviTimelineCellRenderer *self,
   
   if (!length)
     length = DEFAULT_MEDIA_SIZE;
-  media = pitivi_timelinemedia_new (sf);
+  media = pitivi_timelinemedia_new (sf, self);
   gtk_widget_set_size_request (GTK_WIDGET (media), convert_time_pix(self, length), FIXED_HEIGHT);
   gtk_widget_show (GTK_WIDGET (media));
   if (invert)
@@ -597,7 +598,7 @@ create_effect_on_track (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf, 
 {
   PitiviTimelineMedia *media;
   
-  media = pitivi_timelinemedia_new (sf);
+  media = pitivi_timelinemedia_new (sf, self);
   add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (media), x, 0);
 }
 
