@@ -391,7 +391,9 @@ pitivi_projectsourcelist_add_file_to_bin (PitiviProjectSourceList *self,
 					  gchar *treepath, gchar *filename,
 					  gchar *mediatype, gchar *infovideo,
 					  gchar *infoaudio, gint64 length,
-					  GstElement *pipeline)
+					  GstElement *pipeline, 
+					  GstElement *video_pipeline,
+					  GstElement *audio_pipeline)
 {
   PitiviSourceBin	*sourcebin;
   PitiviSourceBin	*bin;
@@ -408,7 +410,9 @@ pitivi_projectsourcelist_add_file_to_bin (PitiviProjectSourceList *self,
   sourcefile->infoaudio = g_strdup(infoaudio);
   sourcefile->length = length;
   sourcefile->pipeline = pipeline;
-  
+  sourcefile->pipeline_video = video_pipeline;
+  sourcefile->pipeline_audio = audio_pipeline;
+
   sourcebin->source = g_slist_append(sourcebin->source, sourcefile);
   return TRUE;
 }

@@ -95,7 +95,9 @@ pitivi_projectsourcelist_add_file_to_bin(PitiviProjectSourceList *self,
 					 gchar *treepath, gchar *filename,
 					 gchar *mediatype, gchar *infovideo,
 					 gchar *infoaudio, gint64 length,
-					 GstElement *pipeline);
+					 GstElement *pipeline,
+					 GstElement *video_pipeline,
+					 GstElement *audio_pipeline);
 PitiviSourceBin* 
 pitivi_projectsourcelist_new_bin(PitiviProjectSourceList *self, 
 				 gchar *bin_name);
