@@ -63,9 +63,9 @@ struct _PitiviSourceFile
   GdkPixbuf  *thumbs_audio;
   GdkPixbuf  *thumbs_video;
   GdkPixbuf  *thumbs_effect;
-  GstElement *pipeline;		// audio/video and effect pipeline
-  GstElement *pipeline_video;	// video only pipeline
-  GstElement *pipeline_audio;	// audio only pipeline
+  GstElement *pipeline;
+  GstElement *pipeline_video;
+  GstElement *pipeline_audio;
   
   /* private */
   

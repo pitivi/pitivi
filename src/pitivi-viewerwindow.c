@@ -206,6 +206,7 @@ void	video_play(GtkWidget *widget, gpointer data)
       g_idle_add(idle_func_video, self);
   } else if (self->private->play_status == STOP) {
     g_print ("[CallBack]:video_play\n");
+    pitivi_printf_element(project->pipeline);
     self->private->play_status = PLAY;
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
       g_warning("Couldn't set the project pipeline to PLAYING");
@@ -536,6 +537,8 @@ create_stream (gpointer data)
 
   timeoverlay = gst_element_factory_make ("timeoverlay", "timeoverlay");
   self->private->fulloutputbin = gst_bin_new("videobin");
+
+  if (timeoverlay) {
   gst_bin_add_many (GST_BIN (self->private->fulloutputbin),
 		    timeoverlay,
 		    self->private->sink,
@@ -545,7 +548,13 @@ create_stream (gpointer data)
   gst_element_add_ghost_pad (self->private->fulloutputbin,
 			     gst_element_get_pad(timeoverlay, "sink"),
 			     "sink");
-
+  } else {
+    gst_bin_add (GST_BIN (self->private->fulloutputbin),
+		 self->private->sink);
+    gst_element_add_ghost_pad (self->private->fulloutputbin,
+			       gst_element_get_pad(self->private->sink, "sink"),
+			       "sink");
+  }
   pitivi_project_set_video_output(project, self->private->fulloutputbin);
 
   self->private->play_status = STOP;
@@ -581,10 +590,6 @@ gboolean	idle_func_video (gpointer data)
     if (elem) /* we have a true source */
       {
 	value1 = do_query(elem, GST_QUERY_POSITION);
-	//value2 = do_query(elem, GST_QUERY_TOTAL);
-	//pourcent = (value1 * 100) / value2;
-	
-	//pourcent *= 5;
 	g_printf("**idle** : pos:%lld\n", value1);
 	gtk_range_set_value(GTK_RANGE (self->private->timeline) , value1);
       }

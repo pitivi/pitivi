@@ -127,6 +127,7 @@ pitivi_mainapp_callb_sourcelist (GtkWindow *win, gpointer data)
 void
 pitivi_mainapp_callb_effects (GtkWindow *win, gpointer data)
 {
+  g_printf("removed the effects window...\n");
   PitiviMainApp *self = data;
   self->private->effectswin = NULL;
 }
@@ -148,17 +149,19 @@ pitivi_mainapp_callb_timelinewin (GtkWindow *win, gpointer data)
 void
 pitivi_mainapp_activate_effectswindow (PitiviMainApp *self, gboolean activate)
 {
-  if (activate && (self->private->effectswin == NULL)) {
+  if (self->private->effectswin)
+    if (!activate)
+      gtk_widget_hide (GTK_WIDGET (self->private->effectswin));
+    else
+      gtk_widget_show (GTK_WIDGET (self->private->effectswin));
+  else
+    if (activate) {
       self->private->effectswin = pitivi_effectswindow_new(self);
       gtk_widget_show_all (GTK_WIDGET (self->private->effectswin) );
       gtk_window_move (GTK_WINDOW (self->private->effectswin), 720, 450);
       gtk_signal_connect (GTK_OBJECT (self->private->effectswin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_effects), self);
-  } else if (!activate && self->private->effectswin){
-    gtk_widget_hide (GTK_WIDGET (self->private->effectswin));
-  }
-  else
-    gtk_widget_show (GTK_WIDGET (self->private->effectswin));
+    }
 }
 
 void

@@ -80,6 +80,11 @@ void pitivi_lplayer_play_video (GtkWidget *widget, PitiviLPlayerWindow *self)
     {
       g_print("FCT__________pitivi_lplayer_play_video:_PLAY\n");
       gst_element_set_state (self->private->pipe, GST_STATE_PLAYING);
+      g_printf("XWindow ID settings\n");
+      gst_x_overlay_set_xwindow_id
+	( GST_X_OVERLAY ( self->private->video_sink ),
+	  GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
+      g_printf("XWindow ID settings END END\n");
     }
   else
     {
@@ -134,7 +139,7 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
   gtk_toolbar_set_style (GTK_TOOLBAR (self->private->toolbar), GTK_TOOLBAR_BOTH);
   gtk_container_set_border_width (GTK_CONTAINER (self->private->toolbar), 0);
   //  gtk_toolbar_set_space_size (GTK_TOOLBAR (toolbar), 5);
-  gtk_container_add (GTK_CONTAINER (self->private->main_vbox), self->private->toolbar);
+  //gtk_container_add (GTK_CONTAINER (self->private->main_vbox), self->private->toolbar);
 
   button_image = gtk_image_new_from_file ("../pixmaps/backward.xpm");
   self->private->backward = gtk_toolbar_append_item( GTK_TOOLBAR (self->private->toolbar),
@@ -209,6 +214,8 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
 		    self->private->colorspace,
 		    NULL);
 		    
+/*   gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);  */
+
   if (!gst_element_link (self->private->filesrc, self->private->spider))
     g_print ("Not Link\n");
   if (!gst_element_link (self->private->spider, self->private->colorspace))
@@ -216,16 +223,13 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
   if (!gst_element_link (self->private->colorspace, self->private->video_sink))
     g_print ("Not Link\n");
 
-  gst_x_overlay_set_xwindow_id
-    ( GST_X_OVERLAY ( self->private->video_sink ),
-	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
 
-  if (!gst_element_set_state(self->private->pipe, GST_STATE_PLAYING)) {
-    g_print ("############################# BAD STATE ########################33\n");
-    exit (-1);
-  }
+/*   if (!gst_element_set_state(self->private->pipe, GST_STATE_PLAYING)) { */
+/*     g_print ("############################# BAD STATE ########################33\n"); */
+/*     exit (-1); */
+/*   } */
   
-  gst_element_set_state(self->private->pipe, GST_STATE_PAUSED); 
+/*   gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);  */
 
   return ;
 }

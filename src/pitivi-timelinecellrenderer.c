@@ -360,15 +360,16 @@ pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
   
   widget->allocation.x = x;
   widget->allocation.y = y;
-  g_printf ("pitivi_layout_put x:%d y:%d\n", x, y);
+  g_printf ("pitivi_layout_put x:%d y:%d TrackType:%d\n", x, y, PITIVI_TIMELINECELLRENDERER (layout)->track_type);
   gtk_layout_put ( layout, widget, x, y );
   calculate_priorities (GTK_WIDGET (layout) );
-  if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout)
-      && ((PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_AUDIO_TRACK)
-	  || (PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_VIDEO_TRACK))){
+/*   if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout) */
+/*       && ((PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_AUDIO_TRACK) */
+/* 	  || (PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_VIDEO_TRACK))){ */
+  if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout))
     pitivi_timelinemedia_put (PITIVI_TIMELINEMEDIA(widget), 
 			      convert_pix_time(PITIVI_TIMELINECELLRENDERER(layout), x));
-    // TODO : Check if widget isn't already on this layout (!move)
+  // TODO : Check if widget isn't already on this layout (!move)
     // set the priority
 /*     pitivi_timelinemedia_set_priority(PITIVI_TIMELINEMEDIA(widget), 1); */
 /*     if (PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_AUDIO_TRACK) { */
@@ -383,7 +384,6 @@ pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
     // Add to the composition
     //  Find what kind of media it is (audio/video) PITIVI_VIDEO/AUDIO_TRACK (layout->track_type)
     //  gnl_composition_add_object() to the correct group
-  }   
 }
 
 /*
@@ -1141,7 +1141,7 @@ pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
       // get the child time position, it's length
       source = PITIVI_TIMELINEMEDIA(child->data)->sourceitem->gnlobject;
       start = GNL_OBJECT(source)->start;
-      gnl_object_get_media_start_stop(GNL_OBJECT(source), &mstart, &mstop);
+      gnl_object_get_start_stop(GNL_OBJECT(source), &mstart, &mstop);
       // resize the child
       gtk_widget_set_size_request(GTK_WIDGET (child->data),
 				  convert_time_pix(self, mstop-mstart),
@@ -1285,6 +1285,7 @@ static void
 pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *container, guint x, gpointer data)
 {
   PitiviTimelineMedia *media[2], *link;
+  PitiviSourceFile	*sf;
   GtkWidget *widget;
   gint64 frame;
   gint64 start1, start2, stop1, stop2, mstart1, mstart2, mstop1, mstop2;
@@ -1303,8 +1304,13 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	       stop1,
 	       start1, stop1, mstart1, mstop1,
 	       start2, stop2, mstart2, mstop2);
-      widget->allocation.width = widget->allocation.width - x; // calcul : "bah c'est simple il faut juste se servir de sa tete" 
-      media[0] = pitivi_timelinemedia_new ( PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile, widget->allocation.width, container );
+      widget->allocation.width = widget->allocation.width - x; // calcul
+
+      // TODO / PABO : Creation d'un nouveau PitiviSourceFile pour le placer dans le nouveau PitiviTimelineMedia
+      
+      sf = pitivi_sourcefile_new(PITIVI_TIMELINEMEDIA(widget)->sourceitem->srcfile->filename,
+				 PITIVI_WINDOWS(container->private->timewin)->mainapp);
+      media[0] = pitivi_timelinemedia_new ( sf, widget->allocation.width, container );
       g_printf("Setting values for existing media\n");
       // donner un nouveau stop/media_stop a l'ancien media
       pitivi_timelinemedia_set_start_stop(PITIVI_TIMELINEMEDIA(widget), start1, stop1);
@@ -1322,7 +1328,7 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	{
 	  link = PITIVI_TIMELINEMEDIA (PITIVI_TIMELINEMEDIA (widget)->linked);
 	  GTK_WIDGET ( link )->allocation.width = widget->allocation.width;
-	  media[1] = pitivi_timelinemedia_new ( link->sourceitem->srcfile, widget->allocation.width, container->linked_track );
+	  media[1] = pitivi_timelinemedia_new ( sf, widget->allocation.width, container->linked_track );
 	  pitivi_media_set_size ( PITIVI_TIMELINEMEDIA (widget)->linked, x, GTK_WIDGET (container)->allocation.height);
 	  link_widgets (media[0], media[1]);
 	  g_printf("Setting values for existing media\n");

@@ -183,12 +183,13 @@ pitivi_timelinemedia_update_tooltip (PitiviTimelineMedia *this)
   GnlObject		*obj = this->sourceitem->gnlobject;
 
   /* Make the string */
-  str = g_strdup_printf("%s\nposition : %4lld:%3lld->%4lld:%3lld\nMedia : %4lld:%3lld->%4lld:%3lld",
+  str = g_strdup_printf("%s\nposition : %4lld:%3lld->%4lld:%3lld\nMedia : %4lld:%3lld->%4lld:%3lld\nPriority : %d",
 			gst_element_get_name(GST_ELEMENT (obj)),
 			obj->start / GST_SECOND, (obj->start % GST_SECOND) / GST_MSECOND,
 			obj->stop / GST_SECOND, (obj->stop % GST_SECOND) / GST_MSECOND,
 			obj->media_start / GST_SECOND, (obj->media_start % GST_SECOND) / GST_MSECOND,
-			obj->media_stop / GST_SECOND, (obj->media_stop % GST_SECOND) / GST_MSECOND);
+			obj->media_stop / GST_SECOND, (obj->media_stop % GST_SECOND) / GST_MSECOND,
+			obj->priority);
   gtk_tooltips_set_tip (this->private->tooltips, GTK_WIDGET(this),
 			str, NULL);
   g_free(str);
@@ -743,6 +744,12 @@ pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *this, gpointer
 	    {
 	      effect = pitivi_timelinemedia_new ( se, GTK_WIDGET (this)->allocation.width, 
 						  PITIVI_TIMELINECELLRENDERER (this->track->effects_track) );
+	      pitivi_timelinemedia_set_start_stop(effect,
+						  GNL_OBJECT(this->sourceitem->gnlobject)->start,
+						  GNL_OBJECT(this->sourceitem->gnlobject)->stop);
+	      pitivi_timelinemedia_set_media_start_stop(effect,
+							GNL_OBJECT(this->sourceitem->gnlobject)->start,
+							GNL_OBJECT(this->sourceitem->gnlobject)->stop);
 	      pitivi_layout_put (GTK_LAYOUT (this->track->effects_track), 
 				 GTK_WIDGET (effect), 
 				 GTK_WIDGET (this)->allocation.x, 

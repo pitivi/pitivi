@@ -30,6 +30,8 @@
  * Potentially, include other headers on which this header depends.
  */
 
+G_BEGIN_DECLS
+
 /*
  * Type macros.
  */
@@ -166,5 +168,7 @@ GType pitivi_checkbox_get_type (void);
 
 
 PitiviCheckBox	*pitivi_checkbox_new (guint type);
+
+G_END_DECLS
 
 #endif

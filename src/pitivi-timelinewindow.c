@@ -910,6 +910,7 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
   char		*filename = NULL;
   
   /* Get the filename */
+  g_printf("menufile_open\n");
   dialog = gtk_file_chooser_dialog_new("Open a PiTiVi project",
 				       GTK_WINDOW (self), GTK_FILE_CHOOSER_ACTION_OPEN,
 				       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -917,8 +918,14 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
 				       NULL);
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-  gtk_widget_destroy ( dialog );
 
+  gtk_widget_destroy ( dialog );
+  
+  if (!filename) {
+    g_printf("No file selected to open...\n");
+    return;
+  }
+  
   project = pitivi_project_new_from_file(filename);
 
   g_free (filename);
