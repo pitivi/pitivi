@@ -27,6 +27,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <unistd.h>
+#include <gtk/gtk.h>
 #include <gst/gst.h>
 #include "pitivi.h"
 #include "pitivi-sourcelistwindow.h"
@@ -78,7 +79,6 @@ struct _PitiviSourceListWindowPrivate
   guint		newfile_signal_id;
   guint		newfolder_signal_id;
 
-  PitiviMainApp	*mainapp;
 };
 
 /*
@@ -613,6 +613,7 @@ void	new_pad_created(GstElement *parse, GstPad *pad, gpointer data)
   gchar		*caps_str;
   gchar		*name;
   gint		i;
+  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
 
   PitiviSettings	*settings;
 
@@ -628,7 +629,7 @@ void	new_pad_created(GstElement *parse, GstPad *pad, gpointer data)
   
   g_printf("pad mine type ==> %s\n", caps_str);
 
-  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings(self->private->mainapp)), caps, DEC_LIST);
+  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )), caps, DEC_LIST);
 
   if (decoderlist)
     {
@@ -710,7 +711,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   guint16	id;
   gint		i;
   gboolean	element_found;
-  
+  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
 
   g_printf("== build pipeline by mime ==\n");
 
@@ -748,7 +749,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
     {
       /* test if it's a container */
   
-      demuxlist = pitivi_settings_get_flux_container_list (G_OBJECT(pitivi_mainapp_settings(self->private->mainapp)),
+      demuxlist = pitivi_settings_get_flux_container_list (G_OBJECT(pitivi_mainapp_settings( mainapp )),
 						       self->private->mediacaps, DEC_LIST);
       /* create a demuxer if it's a container */
       if (demuxlist)
@@ -796,7 +797,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	{
 	  g_printf("no demuxer found\n");
 	  
-	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings(self->private->mainapp)),
+	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )),
 							     self->private->mediacaps, DEC_LIST);
 	  if (decoderlist)
 	    {
@@ -829,7 +830,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	    {
 	      g_printf("no decoder found\n");
 
-	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(pitivi_mainapp_settings(self->private->mainapp)), self->private->mediacaps, DEC_LIST);
+	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(pitivi_mainapp_settings( mainapp )), self->private->mediacaps, DEC_LIST);
 	      
 	      if (parserlist)
 		{
@@ -1791,13 +1792,15 @@ GtkWidget	*create_projectview(PitiviSourceListWindow *self)
 }
 
 PitiviSourceListWindow *
-pitivi_sourcelistwindow_new(PitiviMainApp *mainapp)
+pitivi_sourcelistwindow_new(PitiviMainApp *mainapp, PitiviProject *project)
 {
   PitiviSourceListWindow	*sourcelistwindow;
 
-  sourcelistwindow = (PitiviSourceListWindow *) g_object_new(PITIVI_SOURCELISTWINDOW_TYPE, NULL);
+  sourcelistwindow = (PitiviSourceListWindow *) g_object_new(PITIVI_SOURCELISTWINDOW_TYPE,
+							     "mainapp", mainapp,
+							     "project", project,
+							     NULL);
   g_assert(sourcelistwindow != NULL);
-  sourcelistwindow->private->mainapp = mainapp;
   return sourcelistwindow;
 }
 
@@ -2000,7 +2003,7 @@ pitivi_sourcelistwindow_get_type (void)
 	0,			/* n_preallocs */
 	pitivi_sourcelistwindow_instance_init	/* instance_init */
       };
-      type = g_type_register_static (GTK_TYPE_WINDOW,
+      type = g_type_register_static (PITIVI_WINDOWS_TYPE,
 				     "PitiviSourceListWindowType", &info, 0);
     }
 

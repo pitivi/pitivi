@@ -35,6 +35,7 @@ typedef struct _PitiviMainApp PitiviMainApp;
  * Potentially, include other headers on which this header depends.
  */
 
+#include	"pitivi-project.h"
 #include	"pitivi-projectsettings.h"
 #include	"pitivi-settings.h"
 
@@ -57,6 +58,7 @@ struct _PitiviMainApp
   GObject parent;
 
   /* instance public members */
+  GList	*projects;	/* List of PitiviProject loaded */
 
   /* private */
   PitiviMainAppPrivate *private;
@@ -79,6 +81,7 @@ PitiviCategorieSettings	*pitivi_mainapp_get_selected_category	( PitiviMainApp *s
 PitiviMainApp		*pitivi_mainapp_new (void);
 GSList			*pitivi_mainapp_project_settings( PitiviMainApp *self );
 PitiviSettings		*pitivi_mainapp_settings(PitiviMainApp *self);
-void			pitivi_mainapp_create_wintools(PitiviMainApp *self);
+void			pitivi_mainapp_create_wintools(PitiviMainApp *self, PitiviProject *project);
+gboolean		pitivi_mainapp_add_project(PitiviMainApp *self, PitiviProject *project);
 
 #endif

@@ -1,3 +1,10 @@
+2004-06-26    <bilboed@rider.bilboed.homelinux.org>
+
+	* src/pitivi-sourcelistwindow.c: 
+	* src/pitivi-sourcelistwindow.h: Converted PitiviSourceListWindow to derivate of PitiviProjectWindows
+
+	* src/pitivi-timelinewindow.c: 
+	* src/pitivi-timelinewindow.h: Converted PitiviTimelineWindow to derivate of PitiviProjectWindows
 
 2004-06-25    <bilboed@localhost>
 

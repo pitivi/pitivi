@@ -41,12 +41,15 @@ struct _PitiviProjectPrivate
  */
 
 PitiviProject *
-pitivi_project_new (void)
+pitivi_project_new (PitiviProjectSettings *settings)
 {
   PitiviProject *project;
 
   project = (PitiviProject *) g_object_new (PITIVI_PROJECT_TYPE, NULL);
   g_assert (project != NULL);
+
+  project->settings = settings;
+
   return project;
 }
 
@@ -86,6 +89,8 @@ pitivi_project_instance_init (GTypeInstance * instance, gpointer g_class)
    * delay initialization completion until the property is set. 
    */
 
+  self->settings = NULL;
+  self->sources = NULL;
 }
 
 static void

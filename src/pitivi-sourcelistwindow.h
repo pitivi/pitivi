@@ -31,9 +31,8 @@ typedef struct _PitiviSourceListWindow PitiviSourceListWindow;
 /*
  * Potentially, include other headers on which this header depends.
  */
-#include <gtk/gtk.h>
-#include "pitivi-mainapp.h"
 
+#include "pitivi-projectwindows.h"
 
 /*
  * Type macros.
@@ -52,7 +51,7 @@ typedef struct _PitiviListStore PitiviListStore;
 
 struct _PitiviSourceListWindow
 {
-  GtkWindow parent;
+  PitiviProjectWindows parent;
 
   /* instance public members */
 
@@ -62,7 +61,7 @@ struct _PitiviSourceListWindow
 
 struct _PitiviSourceListWindowClass
 {
-  GtkWindowClass parent;
+  PitiviProjectWindowsClass parent;
   /* class members */
 };
 
@@ -74,6 +73,6 @@ GType pitivi_sourcelistwindow_get_type (void);
  */
 
 PitiviSourceListWindow*
-pitivi_sourcelistwindow_new(PitiviMainApp *mainapp);
+pitivi_sourcelistwindow_new(PitiviMainApp *mainapp, PitiviProject *project);
 
 #endif

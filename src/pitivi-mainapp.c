@@ -208,14 +208,14 @@ pitivi_mainapp_callb_timelinewin (GtkWindow *win, gpointer data)
 }
 
 void
-pitivi_mainapp_create_wintools (PitiviMainApp *self)
+pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 {
   
   /* Source List Window */
   
   if (!GTK_IS_WIDGET (self->private->timelinewin))
     {
-      self->private->timelinewin = pitivi_timelinewindow_new();
+      self->private->timelinewin = pitivi_timelinewindow_new(self, project);
       gtk_widget_show_all (GTK_WIDGET (self->private->timelinewin) );
       gtk_window_move (GTK_WINDOW (self->private->timelinewin), 110, 450);
       gtk_signal_connect (GTK_OBJECT (self->private->timelinewin), "destroy"\
@@ -226,7 +226,7 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self)
   
   if (self->private->srclistwin == NULL)
     {
-      self->private->srclistwin = pitivi_sourcelistwindow_new(self);
+      self->private->srclistwin = pitivi_sourcelistwindow_new(self, project);
       gtk_widget_show_all (GTK_WIDGET (self->private->srclistwin) );
       gtk_window_move (GTK_WINDOW (self->private->srclistwin), 110, 100);
       gtk_signal_connect (GTK_OBJECT (self->private->srclistwin), "destroy"\
@@ -254,6 +254,23 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self)
   gtk_window_move (GTK_WINDOW (self->private->tbxwin), 20, 450);
 }
 
+/*
+  pitivi_mainapp_add_project
+
+  Adds a PitiviProject to the list of projects handled by the application
+
+  Returns TRUE if it was added properly
+*/
+
+gboolean
+pitivi_mainapp_add_project(PitiviMainApp *self, PitiviProject *project)
+{
+  if (project == NULL)
+    return FALSE;
+
+  self->projects = g_list_append(self->projects, project);
+  return TRUE;
+}
 
 PitiviMainApp *
 pitivi_mainapp_new (void)
@@ -317,6 +334,7 @@ pitivi_mainapp_instance_init (GTypeInstance * instance, gpointer g_class)
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
+  self->projects = NULL;
 }
 
 static void

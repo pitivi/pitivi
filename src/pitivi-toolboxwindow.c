@@ -82,7 +82,8 @@ pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *
 {    
   PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
 
-  pitivi_mainapp_create_wintools( mainapp );
+  /* Il faut remplacer cette fonction par une vrai ouverture de fichier */
+  pitivi_mainapp_create_wintools( mainapp , NULL );
 }
 
 static GtkActionEntry toolbox_menu_entries[] = {

@@ -30,11 +30,8 @@
  * Potentially, include other headers on which this header depends.
  */
 
-#include <gtk/gtk.h>
 #include "pitivi.h"
-#include "pitivi-menu.h"
-#include "pitivi-stockicons.h"
-#include "pitivi-timelinecellrenderer.h"
+#include "pitivi-projectwindows.h"
 
 /*
  * Type macros.
@@ -62,7 +59,7 @@ typedef struct _PitiviTimelineWindowPrivate PitiviTimelineWindowPrivate;
 
 struct _PitiviTimelineWindow
 {
-  GtkWindow parent;
+  PitiviProjectWindows parent;
 
   /* instance public members */
 
@@ -72,7 +69,7 @@ struct _PitiviTimelineWindow
 
 struct _PitiviTimelineWindowClass
 {
-  GtkWindowClass parent;
+  PitiviProjectWindowsClass parent;
   /* class members */
 };
 
@@ -83,6 +80,6 @@ GType pitivi_timelinewindow_get_type (void);
  * Method definitions.
  */
 
-PitiviTimelineWindow	*pitivi_timelinewindow_new(void);
+PitiviTimelineWindow	*pitivi_timelinewindow_new(PitiviMainApp *mainapp, PitiviProject *project);
 
 #endif

@@ -73,6 +73,6 @@ GType pitivi_project_get_type (void);
  * Method definitions.
  */
 
-PitiviProject *pitivi_project_new (void);
+PitiviProject *pitivi_project_new (PitiviProjectSettings *settings);
 
 #endif

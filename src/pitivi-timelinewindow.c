@@ -23,10 +23,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <gtk/gtk.h>
 #include "pitivi-timelinewindow.h"
+#include "pitivi-menu.h"
+#include "pitivi-stockicons.h"
+#include "pitivi-timelinecellrenderer.h"
 
 static	GdkPixbuf *window_icon = NULL;
-static  GtkWindowClass *parent_class = NULL;
+static  PitiviWindowsClass *parent_class = NULL;
 
 typedef struct _PitiviTreeView
 {
@@ -116,12 +120,14 @@ statusbar_set_frames (GtkWidget *statusbar,
 }
 
 PitiviTimelineWindow *
-pitivi_timelinewindow_new (void)
+pitivi_timelinewindow_new (PitiviMainApp *mainapp, PitiviProject *project)
 {
   PitiviTimelineWindow		*timelinewindow;
   PitiviTimelineWindowPrivate	*priv;
   
-  timelinewindow = (PitiviTimelineWindow *) g_object_new(PITIVI_TIMELINEWINDOW_TYPE, NULL);
+  timelinewindow = (PitiviTimelineWindow *) g_object_new(PITIVI_TIMELINEWINDOW_TYPE, 
+							 "mainapp", mainapp,
+							 "project", project, NULL);
   g_assert(timelinewindow != NULL);
   return timelinewindow;
 }
@@ -516,7 +522,7 @@ pitivi_timelinewindow_get_type (void)
 	0,			/* n_preallocs */
 	pitivi_timelinewindow_instance_init	/* instance_init */
       };
-      type = g_type_register_static (GTK_TYPE_WINDOW,
+      type = g_type_register_static (PITIVI_WINDOWS_TYPE,
 				     "PitiviTimelineWindowType", &info, 0);
     }
 
