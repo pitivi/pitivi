@@ -1,7 +1,7 @@
 /* 
  * PiTiVi
  * Copyright (C) <2004> Guillaume Casanova <casano_g@epita.fr>
- *                      
+ *                      Raphael Pralat <pralat_r@epita.fr>
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -108,6 +108,8 @@ static gint iNbTargetSameEntry = G_N_ELEMENTS (TargetSameEntry);
 void	pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *this, gpointer data);
 void	pitivi_timelinemedia_callb_copied (PitiviTimelineMedia *this, gpointer data);
 void	pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *this, gpointer data);
+void	pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data);
+
 
 static GtkItemFactoryEntry  TimeItemPopup[] = {
   {"/Dissociate", NULL, pitivi_timelinemedia_callb_dissociate, 0, "<Item>", NULL},
@@ -116,7 +118,7 @@ static GtkItemFactoryEntry  TimeItemPopup[] = {
   {"/Copy", NULL, pitivi_timelinemedia_callb_copied, 0, "<Item>", NULL},
   {"/Cut", NULL, pitivi_timelinemedia_callb_cut, 0, "<Item>", NULL},
   {"/Sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Properties", NULL, NULL, 0, "<Item>", NULL},
+  {"/Properties", NULL,  pitivi_timelinemedia_callb_properties, 0, "<Item>", NULL},
 };
 
 static gint	iNbTimeItemPopup = sizeof(TimeItemPopup)/sizeof(TimeItemPopup[0]);
@@ -738,6 +740,56 @@ pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *this, gpointer data)
 	this->linked = NULL;
       }
 }
+
+void
+pitivi_timelinemedia_callb_properties (PitiviTimelineMedia *this, gpointer data)
+{
+  GtkWidget *props_dialog;
+
+  gchar *properties=NULL;
+  
+
+  g_print("%s\n", this->sourceitem->srcfile->mediatype);
+
+  if (!strcmp (this->sourceitem->srcfile->mediatype, "video/audio")) 
+    { 
+      properties = g_strdup_printf("Properties:\n\nSource:%s\n\nType:%s\n\nInfos Video:%s\n\n Infos Audio:%s\n",
+				   this->sourceitem->srcfile->filename,
+				   this->sourceitem->srcfile->mediatype,
+				   this->sourceitem->srcfile->infovideo,
+				   this->sourceitem->srcfile->infoaudio);
+      
+    }
+  else if (!strcmp (this->sourceitem->srcfile->mediatype, "video")) 
+    { 
+      properties = g_strdup_printf("Properties:\n\nSource:%s\n\nType:%s\n\nInfos Video:%s\n",
+				   this->sourceitem->srcfile->filename,
+				   this->sourceitem->srcfile->mediatype,
+				   this->sourceitem->srcfile->infovideo);
+      
+    }
+  else if (!strcmp (this->sourceitem->srcfile->mediatype, "audio")) 
+    { 
+      properties = g_strdup_printf("Properties:\n\nSource:%s\n\nType:%s\n\nInfos Audio:%s\n",
+				   this->sourceitem->srcfile->filename,
+				   this->sourceitem->srcfile->mediatype,
+				   this->sourceitem->srcfile->infoaudio);
+      
+    }
+  
+  else
+    {
+      properties = g_strdup_printf("Properties:\nType:Unknow\n");
+    }
+  
+  g_print ("%s\n",  properties);
+     
+  props_dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_NONE, properties, NULL);
+  gtk_widget_show(props_dialog);
+}
+
+
+
 
 void
 pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *this, gpointer data)
