@@ -204,8 +204,8 @@ gnl_source_dispose (GObject *object)
     priv = (SourcePadPrivate *) pads->data;
 
     g_slist_free (priv->queue);
-    gst_pad_remove_probe(GST_PAD (priv->srcpad), 
-			 priv->probe);
+/*     gst_pad_remove_probe(GST_PAD (priv->srcpad),  */
+/* 			 priv->probe); */
 /*     gst_object_unref (GST_OBJECT (priv->srcpad)); */
 /*     gst_object_unref (GST_OBJECT (priv->sinkpad)); */
 
@@ -377,33 +377,33 @@ source_unlink (GstPad *pad)
   If it is, it sets the source's element to EOS and discards the data
 */
 
-gboolean
-source_probe (GstProbe *probe, GstData **data, gpointer udata)
-{
-  GnlSource *source = GNL_SOURCE(udata);
+/* gboolean */
+/* source_probe (GstProbe *probe, GstData **data, gpointer udata) */
+/* { */
+/*   GnlSource *source = GNL_SOURCE(udata); */
   
-  GST_INFO("source probe %s --> %lld  object[%lld]->[%lld]  media[%lld]->[%lld] seek[%lld]->[%lld]",
-	   gst_element_get_name(GST_ELEMENT(source)),
-	   (long long int) GST_BUFFER_TIMESTAMP(*data),
-	   GNL_OBJECT(source)->start,
-	   GNL_OBJECT(source)->stop,
-	   GNL_OBJECT(source)->media_start,
-	   GNL_OBJECT(source)->media_stop,
-	   source->private->seek_start,
-	   source->private->seek_stop);
+/*   GST_INFO("source probe %s --> %lld:%lld:%lld  object[%lld:%lld:%lld]->[%lld:%lld:%lld]  media[%lld:%lld:%lld]->[%lld:%lld:%lld] seek[%lld:%lld:%lld]->[%lld:%lld:%lld]", */
+/* 	   gst_element_get_name(GST_ELEMENT(source)), */
+/* 	   GST_M_S_M(GST_BUFFER_TIMESTAMP(*data)), */
+/* 	   GST_M_S_M(GNL_OBJECT(source)->start), */
+/* 	   GST_M_S_M(GNL_OBJECT(source)->stop), */
+/* 	   GST_M_S_M(GNL_OBJECT(source)->media_start), */
+/* 	   GST_M_S_M(GNL_OBJECT(source)->media_stop), */
+/* 	   GST_M_S_M(source->private->seek_start), */
+/* 	   GST_M_S_M(source->private->seek_stop)); */
 
-  if (GST_IS_BUFFER (*data) 
-      && GST_CLOCK_TIME_IS_VALID(source->private->seek_stop)
-      && (GST_BUFFER_TIMESTAMP(*data) >= source->private->seek_stop)) {
-    GST_INFO("buffer is older than seek_stop, sending EOS on GnlSourceElement");
-    /* The data is after the end of seek , set the source element to EOS */
-    gst_element_set_eos(source->element);
-    gnl_object_set_active(GNL_OBJECT(source), FALSE);
-    return FALSE; /* We don't want this data to carry on */
-  }
+/*   if (GST_IS_BUFFER (*data)  */
+/*       && GST_CLOCK_TIME_IS_VALID(source->private->seek_stop) */
+/*       && (GST_BUFFER_TIMESTAMP(*data) >= source->private->seek_stop)) { */
+/*     GST_INFO("buffer is older than seek_stop, sending EOS on GnlSourceElement"); */
+/*     /\* The data is after the end of seek , set the source element to EOS *\/ */
+/*     gst_element_set_eos(source->element); */
+/*     gnl_object_set_active(GNL_OBJECT(source), FALSE); */
+/*     return FALSE; /\* We don't want this data to carry on *\/ */
+/*   } */
   
-  return TRUE;
-}
+/*   return TRUE; */
+/* } */
 
 /** 
  * gnl_source_get_pad_for_stream:
@@ -459,8 +459,8 @@ gnl_source_get_pad_for_stream (GnlSource *source, const gchar *padname)
   source->total_pads++;
 
   /* Adding probe to private->srcpad */
-  private->probe = gst_probe_new (FALSE, source_probe, source);
-  gst_pad_add_probe (private->srcpad, private->probe);
+/*   private->probe = gst_probe_new (FALSE, source_probe, source); */
+/*   gst_pad_add_probe (private->srcpad, private->probe); */
 
   if (pad) {
     GST_INFO("%s linked straight away with %s",
@@ -775,10 +775,10 @@ source_getfunction (GstPad *pad)
 	
 	object->current_time = outtime;
 	
-	GST_INFO ("%s: get %lld corrected to %lld", 
+	GST_INFO ("%s: got %lld:%lld:%lld corrected to %lld:%lld:%lld", 
 		  gst_element_get_name (GST_ELEMENT (source)), 
-		  intime, 
-		  outtime);
+		  GST_M_S_M(intime),
+		  GST_M_S_M(outtime));
 	
 	GST_BUFFER_TIMESTAMP (buffer) = outtime;
 	

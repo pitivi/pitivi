@@ -130,6 +130,7 @@ gnl_init
 gnl_main
 gnl_main_quit
 GST_CAT_DEFAULT
+GST_M_S_M
 </SECTION>
 
 <SECTION>

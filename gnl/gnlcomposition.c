@@ -203,9 +203,9 @@ gnl_composition_find_entry_priority (GnlComposition *comp, GstClockTime time,
   GList	*objects = comp->objects;
   GnlCompositionEntry	*tmp = NULL;
 
-  GST_INFO ("Composition[%s], time[%lld], Method[%d], minpriority[%d]",
+  GST_INFO ("Composition[%s], time[%lld:%lld:%lld], Method[%d], minpriority[%d]",
 	    gst_element_get_name(GST_ELEMENT(comp)),
-	    time, method, minpriority);
+	    GST_M_S_M(time), method, minpriority);
 
   /*
     Take into account the fact that we now have to search for the lowest priority
@@ -218,9 +218,9 @@ gnl_composition_find_entry_priority (GnlComposition *comp, GstClockTime time,
       
       if (entry->object->priority >= minpriority) {
 	gnl_object_get_start_stop (entry->object, &start, &stop);
-	/*	GST_INFO("Comparing %s [%lld]->[%lld]",
+	GST_INFO("Comparing %s [%lld]->[%lld]",
 		 gst_element_get_name(GST_ELEMENT(entry->object)),
-		 start, stop);*/
+		 start, stop);
 
 	if ((start <= time && start + (stop - start) > time)
 	    && (!tmp || (tmp && tmp->object->priority > entry->object->priority))) {

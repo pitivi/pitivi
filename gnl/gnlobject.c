@@ -514,46 +514,65 @@ static gboolean
 gnl_object_do_seek (GnlObject *object, GstSeekType type, GstClockTime start, GstClockTime stop)
 {
   GstClockTime seek_start, seek_stop;
-  GstSeekType seek_type;
+  gdouble ratio;
+/*   GstSeekType seek_type; */
   gboolean res = FALSE;
   GstEvent *event;
 
   if (!CLASS (object)->prepare)
     return res;
 
-  GST_INFO("%s media_[%lld]->[%lld] time[%lld]->[%lld] seek[%lld]->[%lld]",
+  GST_INFO("%s media_[%lld:%lld:%lld]->[%lld:%lld:%lld] time[%lld:%lld:%lld]->[%lld:%lld:%lld] seek[%lld:%lld:%lld]->[%lld:%lld:%lld]",
 	   gst_element_get_name (GST_ELEMENT (object)),
-	   object->media_start, object->media_stop,
-	   object->start, object->stop,
-	   start, stop );
+	   GST_M_S_M(object->media_start), GST_M_S_M(object->media_stop),
+	   GST_M_S_M(object->start), GST_M_S_M(object->stop),
+	   GST_M_S_M(start), GST_M_S_M(stop) );
 
+  /* Verify that the seek can apply to the object */
+  if ((start >= object->stop) || (stop < object->start)) {
+    GST_WARNING ("Seek is outside object limits, returning TRUE anyways");
+    return TRUE;
+  }
   /* Limit the seeks to the object's limit (stop/start) */
   if (start < object->start)
-    seek_start = object->start;
-  else
-    seek_start = start - object->start;
-  seek_stop = stop - object->start;
+    start = object->start;
+  if (stop >= object->stop)
+    stop = object->stop;
 
-  GST_INFO ("%s: corrected seek to %lld %lld",
+  GST_INFO ("%s: adjusted seek to %lld:%lld:%lld -> %lld:%lld:%lld",
 	    gst_element_get_name (GST_ELEMENT (object)),
-	    seek_start,
-	    seek_stop);
-
-  if (object->media_start != GST_CLOCK_TIME_NONE) {
-    seek_start = MAX (object->media_start + seek_start, object->media_start);
-    seek_stop  = MIN (object->media_start + seek_stop, object->media_stop);
-  }
-  if ((object->media_stop != GST_CLOCK_TIME_NONE)
-      && (seek_stop == object->media_stop)) {
-    seek_type = type & ~GST_SEEK_FLAG_SEGMENT_LOOP;
-  }
-  else {
-    seek_type = type;
-  }
+	    GST_M_S_M(start),
+	    GST_M_S_M(stop));
   
-  GST_INFO("Changed to [%lld]->[%lld]", seek_start, seek_stop);
+  if ((object->media_start == GST_CLOCK_TIME_NONE) || (object->media_stop == GST_CLOCK_TIME_NONE)) {
+    /* If object hasn't set media start/stop, forward the adjusted seek */
+    seek_start = start;
+    seek_stop = stop;
+  } else {
+    /* Correct the seek start/stop depending on the media start/stop value */
 
-  event = gst_event_new_segment_seek (seek_type, seek_start, seek_stop);
+    ratio = (gdouble) (object->media_stop - object->media_start) / (object->stop - object->start);
+    seek_start = object->media_start + (start - object->start) * ratio;
+
+    seek_stop = object->media_start + (stop - object->start) * ratio;
+  }
+
+/*   if (object->media_start != GST_CLOCK_TIME_NONE) { */
+/*     seek_start = MAX (object->media_start + seek_start, object->media_start); */
+/*     seek_stop  = MIN (object->media_start + seek_stop, object->media_stop); */
+/*   } */
+/*   if ((object->media_stop != GST_CLOCK_TIME_NONE) */
+/*       && (seek_stop == object->media_stop)) { */
+/*     seek_type = type & ~GST_SEEK_FLAG_SEGMENT_LOOP; */
+/*   } */
+/*   else { */
+/*     seek_type = type; */
+/*   } */
+  
+  GST_INFO("Changed to [%lldm%llds%lld] -> [%lldm%llds%lld]", 
+	   GST_M_S_M (seek_start), GST_M_S_M (seek_stop));
+
+  event = gst_event_new_segment_seek (type, seek_start, seek_stop);
   res = CLASS (object)->prepare (object, event);
 
   return res;
