@@ -564,7 +564,9 @@ pitivi_timelinewindow_delete_sf (PitiviTimelineWindow *self, gpointer data)
 void
 pitivi_timelinewindow_drag_source_begin (PitiviTimelineWindow *self, gpointer data)
 {
-  send_signal_to_childs (self, "drag-source-begin", data);
+  gint64 *len = data;
+
+  send_signal_to_childs (self, "drag-source-begin", "toto");
 }
 
 static void

@@ -1011,12 +1011,12 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
 		 G_STRUCT_OFFSET (PitiviTimelineCellRendererClass, delete),
 		 NULL,
 		 NULL,       
-		 g_cclosure_marshal_VOID__VOID,
-		 G_TYPE_NONE, 0);
+		 g_cclosure_marshal_VOID__POINTER,
+		 G_TYPE_NONE, 1, G_TYPE_POINTER);
    
    g_signal_new ("drag-source-begin",
 		 G_TYPE_FROM_CLASS (g_class),
-		 G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+		 G_SIGNAL_RUN_FIRST,
 		 G_STRUCT_OFFSET (PitiviTimelineCellRendererClass, drag_source_begin),
 		 NULL,
 		 NULL,       
