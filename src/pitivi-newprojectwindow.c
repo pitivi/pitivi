@@ -1206,7 +1206,7 @@ pitivi_make_codec_combobox(gchar *klass_choice)
   codec_combobox = g_new0(PitiviCombobox, 1);
   codec_combobox->combobox = gtk_combo_box_new_text();
   codec_combobox->listname = NULL;
-  codec_combobox->tabname = g_malloc(sizeof(gchar **) * nb_codec);
+  codec_combobox->tabname = g_malloc(sizeof(gchar **) * nb_codec + 1);
 
   /* on recupere la liste des plugins et on selectionne 
      les plugins correspondant aux codecs */
@@ -1236,6 +1236,7 @@ pitivi_make_codec_combobox(gchar *klass_choice)
     next:
       codec_list = codec_list->next;
     }
+  codec_combobox->tabname[j] = NULL;
   return(codec_combobox);
 }
 
