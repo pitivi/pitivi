@@ -480,9 +480,11 @@ pitivi_gstelementsettings_aff_enum (PitiviGstElementSettings *self,
     widget = gtk_label_new (label);
 
   } else {
+    gint num_sel;
 
-    widget = gtk_combo_box_new_text();
-    
+    widget = gtk_combo_box_new_text ();
+    num_sel = g_value_get_enum (&value);
+
     for (i=0; i < class->n_values; i++) {
       GEnumValue *evalue = &class->values[i];
       
@@ -490,22 +492,16 @@ pitivi_gstelementsettings_aff_enum (PitiviGstElementSettings *self,
       //label = g_strdup_printf ("%s (%d)", evalue->value_nick, evalue->value);
       label = g_strdup_printf ("%s", evalue->value_nick);
       gtk_combo_box_insert_text (GTK_COMBO_BOX (widget), i, label);
-      if (evalue->value == g_value_get_enum(&value)) {
+      if (evalue->value == num_sel) {
 	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), i);
       }
     }
-    
-    ////////////////////////////////// transformer le numero en ligne !!!!!!!!!!!!!!!!!!!!!!!!
-    //gtk_combo_box_set_active (GTK_COMBO_BOX (widget), g_value_get_enum(&value));
-    
     
     if (param->flags & G_PARAM_WRITABLE) {
       gtk_widget_set_sensitive (widget, TRUE);
     } else {
       gtk_widget_set_sensitive (widget, FALSE);
     }
-
-
 
     g_object_set_data (G_OBJECT(widget), "tab", enum_values);
   }
