@@ -45,8 +45,6 @@ pitivi_temp_late_new(void)
 {
   PitiviTemplate	*template;
 
-  g_printf("pitivi_temp_late_new()\n");
-
   template = (PitiviTemplate *) g_object_new(PITIVI_TEMPLATE_TYPE, NULL);
   g_assert(template != NULL);
   return template;
@@ -57,8 +55,6 @@ pitivi_temp_late_constructor (GType type,
 			     guint n_construct_properties,
 			     GObjectConstructParam * construct_properties)
 {
-  g_printf("pitivi_temp_late_constructor()\n");
-
   GObject *obj;
   {
     /* Invoke parent constructor. */
@@ -80,8 +76,6 @@ pitivi_temp_late_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviTemplate *self = (PitiviTemplate *) instance;
 
-  g_printf("pitivi_temp_late_instance_init()\n");
-  
   self->private = g_new0(PitiviTemplatePrivate, 1);
   
   /* initialize all public and private members to reasonable default values. */ 
@@ -176,8 +170,6 @@ pitivi_temp_late_class_init (gpointer g_class, gpointer g_class_data)
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   PitiviTemplateClass *klass = PITIVI_TEMPLATE_CLASS (g_class);
 
-  g_printf("pitivi_main_class_init()\n");
-
   gobject_class->constructor = pitivi_temp_late_constructor;
   gobject_class->dispose = pitivi_temp_late_dispose;
   gobject_class->finalize = pitivi_temp_late_finalize;
@@ -202,8 +194,6 @@ GType
 pitivi_temp_late_get_type (void)
 {
   static GType type = 0;
- 
-  g_printf("pitivi_main_get_type()\n");
  
   if (type == 0)
     {

@@ -588,8 +588,8 @@ pitivi_newprojectwindow_finalize (GObject *object)
    * You might not need to do much... 
    */
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
   g_free (self->private);
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
@@ -639,8 +639,6 @@ pitivi_newprojectwindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   PitiviNewProjectWindowClass *klass = PITIVI_NEWPROJECTWINDOW_CLASS (g_class);
-
-  g_printf("pitivi_main_class_init()\n");
 
   parent_class = g_type_class_peek_parent (g_class);
   

@@ -28,6 +28,8 @@
 #include "pitivi-toolboxwindow.h"
 #include "pitivi.h"
 
+static GtkWindowClass *parent_class = NULL;
+
 struct _PitiviToolboxWindowPrivate
 {
   /* instance private members */
@@ -40,12 +42,6 @@ struct _PitiviToolboxWindowPrivate
  * forward definitions
  */
 
-/* commentaire */
-
-/*
- * commentaire bilbo
- */
-
 /*
  * Insert "added-value" functions here
  */
@@ -54,8 +50,6 @@ PitiviToolboxWindow *
 pitivi_toolboxwindow_new (void)
 {
   PitiviToolboxWindow *toolboxwindow;
-
-  g_printf ("pitivi_toolboxwindow_new()\n");
 
   toolboxwindow =
     (PitiviToolboxWindow *) g_object_new (PITIVI_TOOLBOXWINDOW_TYPE, NULL);
@@ -68,8 +62,6 @@ pitivi_toolboxwindow_instance_init (GTypeInstance * instance,
 				    gpointer g_class)
 {
   PitiviToolboxWindow *self = (PitiviToolboxWindow *) instance;
-
-  g_printf ("pitivi_toolboxwindow_instance_init()\n");
 
   self->private = g_new0 (PitiviToolboxWindowPrivate, 1);
 
@@ -107,6 +99,7 @@ pitivi_toolboxwindow_dispose (GObject * object)
    * reference. 
    */
 
+  G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
@@ -120,6 +113,7 @@ pitivi_toolboxwindow_finalize (GObject * object)
    */
 
   g_free (self->private);
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
@@ -170,8 +164,8 @@ pitivi_toolboxwindow_class_init (gpointer g_class, gpointer g_class_data)
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   PitiviToolboxWindowClass *klass = PITIVI_TOOLBOXWINDOW_CLASS (g_class);
 
-  g_printf ("pitivi_main_class_init()\n");
-
+  parent_class = g_type_class_peek_parent (g_class);
+  
   gobject_class->dispose = pitivi_toolboxwindow_dispose;
   gobject_class->finalize = pitivi_toolboxwindow_finalize;
 
@@ -195,8 +189,6 @@ GType
 pitivi_toolboxwindow_get_type (void)
 {
   static GType type = 0;
-
-  g_printf ("pitivi_toolboxwindow_get_type()\n");
 
   if (type == 0)
     {
