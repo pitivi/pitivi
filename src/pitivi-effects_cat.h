@@ -61,7 +61,29 @@ static PitiviVAEffect video_effect_tab[] =
     {"median", PITIVI_MEDIAN_EFFECT},
     {"videorate", PITIVI_RATE_EFFECT},
     {"videoscale", PITIVI_SCALER_EFFECT},
-    {"smooth", PITIVI_SMOOTH_EFFECT}
+    {"smooth", PITIVI_SMOOTH_EFFECT},
+    {"quarkTV", PITIVI_QUARKTV_EFFECT}, 
+    {"revTV", PITIVI_REVTV_EFFECT},
+    {"vertigoTV", PITIVI_VERTIGOTV_EFFECT},
+    {"shagadelicTV", PITIVI_SHAGADELICTV_EFFECT},
+    {"warpTV", PITIVI_WARPTV_EFFECT},
+    {"diceTV", PITIVI_DICETV_EFFECT},
+    {"agingTV", PITIVI_AGINGTV_EFFECT},
+    {"edgeTV", PITIVI_EDGETV_EFFECT}
+  };
+
+static PitiviVAEffect audio_effect_tab[] = 
+  {
+    {"festival", PITIVI_SYNTHETISER_EFFECT},
+    {"bpwsinc", PITIVI_BPWS_EFFECT},
+    {"lpwsinc", PITIVI_LPWS_EFFECT},
+    {"iir", PITIVI_IIR_EFFECT},
+    {"passthrough", PITIVI_PASS_EFFECT},
+    {"speed", PITIVI_SPEED_EFFECT},
+    {"stereo", PITIVI_STEREO_EFFECT},
+    {"volenv", PITIVI_ENVELOPE_VOLUME_EFFECT},
+    {"volume", PITIVI_VOLUME_EFFECT},
+    {"audiorate", PITIVI_AUDIO_RATE_EFFECT}
   };
 
 /*

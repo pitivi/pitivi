@@ -1,7 +1,7 @@
 /* 
  * PiTiVi
  * Copyright (C) <2004> Guillaume Casanova <casano_g@epita.fr>
- *                      
+ * Copyright (C) <2004> Stephan Bloch <bloch_s@epitech.net>                     
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -390,21 +390,21 @@ gchar	*get_icon_fx(G_CONST_RETURN gchar *name, gint type)
       break;
     case 2:
       {
-/* 	id_tab = 0; */
-/* 	while (audio_effect_tab[id_tab].name) */
-/* 	  { */
-/* 	    if (!strcmp(audio_effect_tab[id_tab].name, name)) */
-/* 	      { */
-/* 		icon_fx = audio_effect_tab[id_tab].image; */
-/* 		return (icon_fx); */
-/* 	      } */
-/* 	    else */
-/* 	      { */
-/* 		icon_fx = PITIVI_STOCK_EFFECT_SOUND; */
-/* 	      } */
-/* 	    id_tab++; */
-/* 	  } */
-	icon_fx = PITIVI_STOCK_EFFECT_SOUND;
+	id_tab = 0;
+	while (audio_effect_tab[id_tab].name)
+	  {
+	    g_print("audio tab name : %s et name : %s\n", audio_effect_tab[id_tab].name, name);	    
+	    if (!strcmp(audio_effect_tab[id_tab].name, name))
+	      {
+		icon_fx = audio_effect_tab[id_tab].image;
+		return (icon_fx);
+	      }
+	    else
+	      {
+		icon_fx = PITIVI_STOCK_EFFECT_SOUND;
+	      }
+	    id_tab++;
+	  }
       }
       break;
     }
@@ -453,25 +453,26 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
       if (!strncmp (klass, "Filter/Effect/Video", 19))
 	{
 	  gchar *idx;
-	      
+
 	  if ((idx = strstr (effectname, "TV")))
 	    {
 	      *idx = '\0';
 	      icon_fx = get_icon_fx(name, 1);
-	      pitivi_effectstree_insert_node (tree_effect,
-					      child,
-					      &video_iter[0],
+	      pitivi_effectstree_insert_effect (tree_effect, 
+					       child,
+					       &video_iter[0],
 					       effectname,
-					      icon_fx,
-					      NULL);
+					       "video/effect", 
+					       icon_fx, 
+					       fx_video->data);
 	    }
 	  else if ((idx = strstr (effectname, "ideo")))
 	    {
 	      icon_fx = get_icon_fx(name, 1);
 	      pitivi_effectstree_insert_effect (tree_effect, 
+					       child,
 					       &video_iter[1],
-					       &tree_effect->treeiter,
-					       effectname + 6,
+					       effectname,
 					       "video/effect", 
 					       icon_fx, 
 					       fx_video->data);
@@ -520,7 +521,6 @@ insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect,
       klass = gst_element_factory_get_klass (fx_audio->data);
       effectname = gst_element_factory_get_longname (fx_audio->data);
       desc = gst_element_factory_get_description (fx_audio->data);
-      //g_printf ("description audio :%s ---> %s\n\n", effectname, desc);
       if (!strncmp (klass, "Filter/Effect/Audio", 19))
 	{
 	  icon_fx = get_icon_fx(name, 2);
@@ -588,7 +588,6 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
 	    }
 	}
     }
-  
   pitivi_effectstree_insert_node (tree_effect, 
 				  &tree_effect->treeiter,  
 				  NULL,  
