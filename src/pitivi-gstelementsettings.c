@@ -872,12 +872,13 @@ pitivi_gstelementsettings_constructor (GType type,
 			     GObjectConstructParam * construct_properties)
 {
   GObject *obj;
+  PitiviGstElementSettings *self;
   /* Invoke parent constructor. */
   obj =  G_OBJECT_CLASS (parent_class)->constructor (type, n_construct_properties,
 						     construct_properties);
 
   /* do stuff. */
-  PitiviGstElementSettings *self = (PitiviGstElementSettings *) obj;
+  self = (PitiviGstElementSettings *) obj;
 
   pitivi_gstelementsettings_create_gui (self);
 

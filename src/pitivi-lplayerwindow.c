@@ -374,13 +374,15 @@ pitivi_lplayerwindow_constructor (GType type,
 {
   GstElement *elem;
   GObject *obj;
+  PitiviLPlayerWindow *self;
+
   /* Invoke parent constructor. */
   obj = parent_class->constructor (type, n_construct_properties,
 				   construct_properties);
 
   /* do stuff. */
   PITIVI_DEBUG("lplayer creation !");
-  PitiviLPlayerWindow *self = (PitiviLPlayerWindow *) obj;
+  self = (PitiviLPlayerWindow *) obj;
 
   pitivi_lplayerwindow_create_gui (self);
 

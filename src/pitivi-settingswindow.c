@@ -701,12 +701,13 @@ pitivi_settingswindow_constructor (GType type,
 			     GObjectConstructParam * construct_properties)
 {
   GObject *obj;
+  PitiviSettingsWindow	*self;
   /* Invoke parent constructor. */
   obj = G_OBJECT_CLASS (parent_class)->constructor (type, n_construct_properties,
 						    construct_properties);
 
   /* do stuff. */
-  PitiviSettingsWindow	*self = (PitiviSettingsWindow *) obj;
+  self = (PitiviSettingsWindow *) obj;
 
   pitivi_settingswindow_create_gui (self);
 

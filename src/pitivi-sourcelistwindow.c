@@ -1406,9 +1406,10 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
 	  }
 	else
 	  {
+	    gchar *treepath;
 	    /* we need to set treepath too */
 	    save = g_strdup (self->private->treepath);
-	    gchar *treepath = g_strdup_printf("%s:%d", 
+	    treepath = g_strdup_printf("%s:%d", 
 					      self->private->treepath, 
 					      folder_select);
 	    g_free ( self->private->treepath );

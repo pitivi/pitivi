@@ -215,9 +215,10 @@ void
 pitivi_menu_configure (PitiviMenu *self)
 {
   GError *error;
+  PitiviMenuPrivate *priv;
   
   error = NULL;
-  PitiviMenuPrivate *priv = self->private;
+  priv = self->private;
   if (priv->merge_id)
     gtk_ui_manager_remove_ui(priv->ui_manager, priv->merge_id);
   pitivi_menubar_configure (priv->ui_manager, priv);
