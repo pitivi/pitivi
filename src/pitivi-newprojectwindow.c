@@ -492,8 +492,6 @@ pitivi_newprojectwindow_new(void)
 {
   PitiviNewProjectWindow	*newprojectwindow;
   
-  g_printf("pitivi_newprojectwindow_new()\n");
-
   newprojectwindow = (PitiviNewProjectWindow *) g_object_new(PITIVI_NEWPROJECTWINDOW_TYPE, NULL);
   g_assert(newprojectwindow != NULL);
   return newprojectwindow;
@@ -504,8 +502,6 @@ pitivi_newprojectwindow_constructor (GType type,
 			     guint n_construct_properties,
 			     GObjectConstructParam * construct_properties)
 {
-  g_printf("pitivi_newprojectwindow_constructor()\n");
-  
   GObject *obj;
   {
     /* Invoke parent constructor. */
@@ -527,8 +523,6 @@ pitivi_newprojectwindow_instance_init (GTypeInstance * instance, gpointer g_clas
 {
   PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) instance;
 
-  g_printf("pitivi_newprojectwindow_instance_init()\n");
-  
   self->private = g_new0(PitiviNewProjectWindowPrivate, 1);
   
   /* initialize all public and private members to reasonable default values. */ 
@@ -665,8 +659,6 @@ GType
 pitivi_newprojectwindow_get_type (void)
 {
   static GType type = 0;
- 
-  g_printf("pitivi_main_get_type()\n");
  
   if (type == 0)
     {

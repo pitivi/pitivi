@@ -100,8 +100,6 @@ pitivi_toolbox_new (void)
 {
   PitiviToolbox *toolbox;
 
-  g_printf ("pitivi_toolbox_new()\n");
-
   toolbox = (PitiviToolbox *) g_object_new (PITIVI_TOOLBOX_TYPE, NULL);
   g_assert (toolbox != NULL);
   return toolbox;
@@ -112,8 +110,6 @@ pitivi_toolbox_constructor (GType type,
 			    guint n_construct_properties,
 			    GObjectConstructParam * construct_properties)
 {
-  g_printf ("pitivi_toolbox_constructor()\n");
-
   GObject *obj;
   {
     /* Invoke parent constructor. */
@@ -135,8 +131,6 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviToolbox *self = (PitiviToolbox *) instance;
   GtkToolbar *tbar = GTK_TOOLBAR (instance);
-
-  g_printf ("pitivi_toolbox_instance_init()\n");
 
   self->private = g_new0 (PitiviToolboxPrivate, 1);
   self->private->group_button = g_new0 (GSList, 1);
@@ -277,8 +271,6 @@ pitivi_toolbox_class_init (gpointer g_class, gpointer g_class_data)
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   PitiviToolboxClass *klass = PITIVI_TOOLBOX_CLASS (g_class);
 
-  g_printf ("pitivi_main_class_init()\n");
-
   gobject_class->constructor = pitivi_toolbox_constructor;
   gobject_class->dispose = pitivi_toolbox_dispose;
   gobject_class->finalize = pitivi_toolbox_finalize;
@@ -303,8 +295,6 @@ GType
 pitivi_toolbox_get_type (void)
 {
   static GType type = 0;
-
-  g_printf ("pitivi_main_get_type()\n");
 
   if (type == 0)
     {

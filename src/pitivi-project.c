@@ -45,8 +45,6 @@ pitivi_project_new (void)
 {
   PitiviProject *project;
 
-  g_printf ("pitivi_project_new()\n");
-
   project = (PitiviProject *) g_object_new (PITIVI_PROJECT_TYPE, NULL);
   g_assert (project != NULL);
   return project;
@@ -57,8 +55,6 @@ pitivi_project_constructor (GType type,
 			    guint n_construct_properties,
 			    GObjectConstructParam * construct_properties)
 {
-  g_printf ("pitivi_project_constructor()\n");
-
   GObject *obj;
   {
     /* Invoke parent constructor. */
@@ -79,8 +75,6 @@ static void
 pitivi_project_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviProject *self = (PitiviProject *) instance;
-
-  g_printf ("pitivi_project_instance_init()\n");
 
   self->private = g_new0 (PitiviProjectPrivate, 1);
 
@@ -176,8 +170,6 @@ pitivi_project_class_init (gpointer g_class, gpointer g_class_data)
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   PitiviProjectClass *klass = PITIVI_PROJECT_CLASS (g_class);
 
-  g_printf ("pitivi_main_class_init()\n");
-
   gobject_class->constructor = pitivi_project_constructor;
   gobject_class->dispose = pitivi_project_dispose;
   gobject_class->finalize = pitivi_project_finalize;
@@ -202,8 +194,6 @@ GType
 pitivi_project_get_type (void)
 {
   static GType type = 0;
-
-  g_printf ("pitivi_main_get_type()\n");
 
   if (type == 0)
     {
