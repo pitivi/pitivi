@@ -129,6 +129,16 @@ pitivi_timelinecellrenderer_expose (GtkWidget      *widget,
 }
 
 
+void add_to_layout (GtkWidget *layout, GtkWidget *widget, gint x, gint y)
+{
+  GtkRequisition req;
+  
+  gtk_widget_size_request (widget, &req);
+  gtk_layout_put (GTK_LAYOUT (layout), widget, x, 0);
+  x += req.width;
+  gtk_layout_set_size (GTK_LAYOUT (layout), x, 0);
+}
+
 static void
 pitivi_timelinecellrenderer_drag_data_received (GObject *object,
 						GdkDragContext *context,
@@ -159,16 +169,6 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
   gtk_widget_show (button);
   add_to_layout ( GTK_WIDGET (self), button, x, y);
   g_printf ("drop ... %s ...\n", self->private->current_selection->data);
-}
-
-void add_to_layout (GtkWidget *layout, GtkWidget *widget, gint x, gint y)
-{
-  GtkRequisition req;
-  
-  gtk_widget_size_request (widget, &req);
-  gtk_layout_put (GTK_LAYOUT (layout), widget, x, 0);
-  x += req.width;
-  gtk_layout_set_size (GTK_LAYOUT (layout), x, 0);
 }
 
 static void 
