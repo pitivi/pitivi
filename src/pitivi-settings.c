@@ -506,14 +506,14 @@ pitivi_settings_free_all_params (GParameter *parameters, gint n_param)
 }
 
 PitiviSettingsIoElement	*
-pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, gchar *ElmName, gchar *klass)
+pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, GstElementFactory *factory)
 {
-  //GstElementFactory		*factory;
-  //gchar				*klass;
+  gchar				*name;
+  gchar				*klass;
   GList				*list;
 
-  //factory = gst_element_factory_find (ElmName);
-  //klass = (gchar *) gst_element_factory_get_klass (factory);
+  name = (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory));
+  klass = (gchar *) gst_element_factory_get_klass (factory);
 
   list = NULL;
   if (!strcmp (klass, "Sink/Video")) {
@@ -529,13 +529,14 @@ pitivi_settings_get_io_settings_struct_info (PitiviSettings *self, gchar *ElmNam
   for (; list; list = g_list_next (list)) {
     PitiviSettingsIoElement *IoElm = (PitiviSettingsIoElement *) list->data;
     
-    if (!strcmp(ElmName, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(IoElm->factory)))) {
+    if (!strcmp(name,
+		(gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(IoElm->factory)))) {
       pitivi_settings_aff_elm_io (IoElm);
       return (IoElm);
     }
   }
   
-  g_print ("Not an %s element's name:%s\n", klass, ElmName);
+  g_print ("Not an %s element's name:%s\n", klass, name);
   return (0);
 }
 
@@ -547,7 +548,56 @@ pitivi_settings_io_replace_params (PitiviSettings *self)
 }
 
 PitiviSettingsIoElement *
-pitivi_settings_new_io_element (GstElementFactory *factory)
+pitivi_settings_new_io_element ()
+{
+  PitiviSettingsIoElement *io_elm;
+
+  io_elm = g_new (PitiviSettingsIoElement, 1);
+  io_elm->factory = NULL;
+  io_elm->params = NULL;
+  io_elm->n_param = 0;
+  
+  return (io_elm);
+}
+
+PitiviSettingsIoElement *
+pitivi_settings_new_io_element_with_element (GstElement *elm)
+{
+  PitiviSettingsIoElement *io_elm;
+  GParamSpec	**info_prop;
+  gint		n;
+  gint		cpt;
+
+  io_elm = pitivi_settings_new_io_element ();
+  io_elm->factory = gst_element_get_factory (elm);
+
+  info_prop = g_object_class_list_properties(G_OBJECT_GET_CLASS (elm), &n);
+
+  for (cpt = 1; cpt < n; cpt++) {
+    if ((info_prop[cpt])->flags & G_PARAM_READABLE) {
+      GValue value = { 0, };
+      
+      io_elm->n_param++;
+      if (io_elm->params == NULL) {
+	io_elm->params = g_new (GParameter, 1);
+      } else {
+	io_elm->params = g_renew (GParameter, io_elm->params, io_elm->n_param);
+
+      }
+
+      g_value_init (&(value), G_PARAM_SPEC_VALUE_TYPE (info_prop[cpt]));
+      g_object_get_property (G_OBJECT (elm), (info_prop[cpt])->name, &(value));
+
+      io_elm->params[io_elm->n_param - 1].name = strdup ((info_prop[cpt])->name);
+      io_elm->params[io_elm->n_param - 1].value = value;
+
+    }
+  }
+  return (io_elm);
+}
+
+PitiviSettingsIoElement *
+pitivi_settings_new_io_element_with_factory (GstElementFactory *factory)
 {
   PitiviSettingsIoElement *io_elm;
   GstElement	*elm;
@@ -555,10 +605,8 @@ pitivi_settings_new_io_element (GstElementFactory *factory)
   gint		cpt;
   gint		n;
 
-  io_elm = g_new (PitiviSettingsIoElement, 1);
+  io_elm = pitivi_settings_new_io_element ();
   io_elm->factory = factory;
-  io_elm->params = NULL;
-  io_elm->n_param = 0;
 
   elm = gst_element_factory_create (factory, "test");
   info_prop = g_object_class_list_properties(G_OBJECT_GET_CLASS (elm), &n);
@@ -630,13 +678,13 @@ pitivi_settings_scan_registry(PitiviSettings *self)
 	       ) {
       self->parser = pitivi_settings_ajout_element (self->parser, factory, GST_PAD_SINK);      
     } else if (!strncmp (gst_element_factory_get_klass (factory), "Sink/Video", 10)) {
-      self->elm_video_out = g_list_append (self->elm_video_out, pitivi_settings_new_io_element (factory));
+      self->elm_video_out = g_list_append (self->elm_video_out, pitivi_settings_new_io_element_with_factory (factory));
     } else if (!strncmp (gst_element_factory_get_klass (factory), "Sink/Audio", 10)) {
-      self->elm_audio_out = g_list_append (self->elm_audio_out, pitivi_settings_new_io_element (factory));
+      self->elm_audio_out = g_list_append (self->elm_audio_out, pitivi_settings_new_io_element_with_factory (factory));
     } else if (!strncmp (gst_element_factory_get_klass (factory), "Source/Video", 12)) {
-      self->elm_video_in = g_list_append (self->elm_video_in, pitivi_settings_new_io_element (factory));
+      self->elm_video_in = g_list_append (self->elm_video_in, pitivi_settings_new_io_element_with_factory (factory));
     } else if (!strncmp (gst_element_factory_get_klass (factory), "Source/Audio", 12)) {
-      self->elm_audio_in = g_list_append (self->elm_audio_in, pitivi_settings_new_io_element (factory));
+      self->elm_audio_in = g_list_append (self->elm_audio_in, pitivi_settings_new_io_element_with_factory (factory));
     } else if (!strncmp (gst_element_factory_get_klass (factory), "Filter/Effect/Video", 19)) {
       self->video_effects = g_list_append (self->video_effects, factory);
     } else if (!strncmp (gst_element_factory_get_klass (factory), "Filter/Effect/Audio", 19)) {

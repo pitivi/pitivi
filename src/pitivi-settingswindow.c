@@ -99,7 +99,7 @@ pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *prop, PitiviSett
   g_print ("ACCEPT\n");
   g_print ("SAVE %s [%s]\n", prop->elm, prop->class);
 
-  elm_info = pitivi_settings_get_io_settings_struct_info (self->private->settings, prop->elm, prop->class);
+  elm_info = pitivi_settings_get_io_settings_struct_info (self->private->settings, gst_element_factory_find (prop->elm));
 
   /*
     GList				*pt;
