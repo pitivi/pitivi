@@ -133,6 +133,11 @@ timer_link (GstPad *pad, const GstCaps *caps)
   link = gst_pad_get_element_private (pad);
 	        
   otherpad = (GST_PAD_IS_SRC (pad)? link->sinkpad : link->srcpad);
+
+  GST_INFO("trying to link pad %s to otherpad %s with caps %s", 
+	   gst_pad_get_name(pad),
+	   gst_pad_get_name(otherpad),
+	   gst_caps_to_string(caps));
 		  
   return gst_pad_try_set_caps (otherpad, caps);
 }

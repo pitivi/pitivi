@@ -210,7 +210,7 @@ show_effects_media (GtkWidget *widget, GdkEventExpose *event)
 void
 pitivi_timelinemedia_set_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
 {
-  gnl_object_set_start_stop (GNL_OBJECT(media->sourceitem->gnlobject), start, stop);
+  gnl_object_set_start_stop (media->sourceitem->gnlobject, start, stop);
 }
 
 void
@@ -218,20 +218,26 @@ pitivi_timelinemedia_put (PitiviTimelineMedia *media, gint64 start)
 {
   gint64 mstart, mstop;
 
-  gnl_object_get_media_start_stop (GNL_OBJECT(media->sourceitem->gnlobject), &mstart, &mstop);
-  gnl_object_set_start_stop (GNL_OBJECT(media->sourceitem->gnlobject), start, start + mstop - mstart);
+  gnl_object_get_media_start_stop (media->sourceitem->gnlobject, &mstart, &mstop);
+  gnl_object_set_start_stop (media->sourceitem->gnlobject, start, start + mstop - mstart);
 }
 
 void
 pitivi_timelinemedia_set_media_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
 {
-  gnl_object_set_media_start_stop (GNL_OBJECT(media->sourceitem->gnlobject), start, stop);
+  gnl_object_set_media_start_stop (media->sourceitem->gnlobject, start, stop);
 }
 
 void
 pitivi_timelinemedia_set_priority (PitiviTimelineMedia *media, gint priority)
 {
-  gnl_object_set_priority (GNL_OBJECT(media->sourceitem->gnlobject), priority);
+  gnl_object_set_priority (media->sourceitem->gnlobject, priority);
+}
+
+GtkWidget *
+pitivi_timelinemedia_get_track (PitiviTimelineMedia *media)
+{
+  return GTK_WIDGET (media->private->cell);
 }
 
 static gint
@@ -288,6 +294,7 @@ pitivi_timelinemedia_constructor (GType type,
 
   if ( self->sourceitem->srcfile->pipeline )
     {
+      pitivi_printf_element(self->sourceitem->srcfile->pipeline );
       /* Construct Id : filename + '_' + mediatype  + '_' + id */
       name = g_malloc (strlen (self->sourceitem->srcfile->filename) + strlen (self->sourceitem->srcfile->mediatype) + 10);
       sprintf (name, "%s_%s_%lld", self->sourceitem->srcfile->filename, self->sourceitem->srcfile->mediatype, self->sourceitem->id);

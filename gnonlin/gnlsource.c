@@ -305,6 +305,7 @@ source_link (GstPad *pad, const GstCaps *caps)
   GstPad *otherpad;
   SourcePadPrivate *private;
 
+  GST_INFO("linking");
   private = gst_pad_get_element_private (pad);
   
   otherpad = (GST_PAD_IS_SRC (pad)? private->sinkpad : private->srcpad);
@@ -366,8 +367,9 @@ gnl_source_get_pad_for_stream (GnlSource *source, const gchar *padname)
   source->total_pads++;
 
   if (pad) {
-    GST_INFO("%s linked straight away with",
-	     gst_element_get_name(GST_ELEMENT(source)));
+    GST_INFO("%s linked straight away with %s",
+	     gst_element_get_name(GST_ELEMENT(source)),
+	     gst_pad_get_name(sinkpad));
     gst_pad_link (pad, sinkpad);
     source->linked_pads++;
   }

@@ -599,7 +599,12 @@ probe_fired (GstProbe *probe, GstData **data, gpointer user_data)
     GNL_OBJECT (comp)->current_time = comp->next_stop;
   }
 
-  GST_INFO("current_time[%lld]", GNL_OBJECT (comp)->current_time);
+  GST_INFO("current_time [%lld] -> [%lldH:%lldm:%llds:%lld]", 
+	   GNL_OBJECT (comp)->current_time,
+	   GNL_OBJECT (comp)->current_time / (3600 * GST_SECOND),
+	   GNL_OBJECT (comp)->current_time / (60 * GST_SECOND),
+	   GNL_OBJECT (comp)->current_time / GST_SECOND,
+	   GNL_OBJECT (comp)->current_time / GST_MSECOND);
 
   return res;
 }

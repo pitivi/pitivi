@@ -107,7 +107,8 @@ void
 pitivi_timelinemedia_set_priority (PitiviTimelineMedia *media, gint priority);
 void
 pitivi_timelinemedia_put (PitiviTimelineMedia *media, gint64 start);
-
+GtkWidget *
+pitivi_timelinemedia_get_track (PitiviTimelineMedia *media);
 
 /*
  **********************************************************

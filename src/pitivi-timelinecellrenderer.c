@@ -283,13 +283,32 @@ calculate_priorities ( GtkWidget *widget )
 void
 pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
 {
+  PitiviProject       *project = PITIVI_WINDOWS (PITIVI_TIMELINECELLRENDERER(layout)->private->timewin)->mainapp->project;
+  
   widget->allocation.x = x;
   widget->allocation.y = y;
   gtk_layout_put ( layout, widget, x, y );
   calculate_priorities (GTK_WIDGET (layout) );
-  if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout)) {
+  if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout)
+      && ((PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_AUDIO_TRACK)
+	  || (PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_VIDEO_TRACK))){
     pitivi_timelinemedia_put (PITIVI_TIMELINEMEDIA(widget), 
 			      convert_pix_time(PITIVI_TIMELINECELLRENDERER(layout), x));
+    // TODO : Check if widget isn't already on this layout (!move)
+    // set the priority
+    pitivi_timelinemedia_set_priority(PITIVI_TIMELINEMEDIA(widget), 1);
+    if (PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_AUDIO_TRACK) {
+      gnl_composition_add_object(GNL_COMPOSITION(project->audiogroup),
+				 PITIVI_TIMELINEMEDIA(widget)->sourceitem->gnlobject);
+    } else if (PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_VIDEO_TRACK) {
+      gnl_composition_add_object(GNL_COMPOSITION(project->videogroup),
+				 PITIVI_TIMELINEMEDIA(widget)->sourceitem->gnlobject);      
+    }
+    pitivi_printf_element( PITIVI_TIMELINEMEDIA(widget)->sourceitem->srcfile->pipeline );
+
+    // Add to the composition
+    //  Find what kind of media it is (audio/video) PITIVI_VIDEO/AUDIO_TRACK (layout->track_type)
+    //  gnl_composition_add_object() to the correct group
   }
 }
 
@@ -969,7 +988,7 @@ void
 pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
 {
   GList	*child;
-  GnlSource	*source;
+  GnlObject	*source;
   gint64	start,mstart,mstop;
   guint	height;
 
@@ -977,7 +996,7 @@ pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
   for (child = gtk_container_get_children(GTK_CONTAINER(self)); child; child = child->next) {
     if (PITIVI_IS_TIMELINEMEDIA(child->data)) {
       // get the child time position, it's length
-      source = ((GnlSource *)PITIVI_TIMELINEMEDIA(child->data)->sourceitem->gnlobject);
+      source = PITIVI_TIMELINEMEDIA(child->data)->sourceitem->gnlobject;
       start = GNL_OBJECT(source)->start;
       gnl_object_get_media_start_stop(GNL_OBJECT(source), &mstart, &mstop);
       // resize the child

@@ -33,6 +33,7 @@
 #include "pitivi.h"
 #include "pitivi-viewerwindow.h"
 #include "pitivi-dragdrop.h"
+#include "pitivi-debug.h"
 
 static     PitiviProjectWindowsClass *parent_class;
 static	   GdkPixmap *pixmap = NULL;
@@ -189,6 +190,7 @@ void	video_play(GtkWidget *widget, gpointer data)
   }
   gtk_signal_emit_by_name (GTK_OBJECT (self->private->video_area), "expose_event", &ev, &retval);
 
+  pitivi_printf_element(project->pipeline);
   return ;
 }
 
@@ -404,7 +406,7 @@ void	pitivi_viewerwindow_set_source(PitiviViewerWindow *self,
   //self->private->timeline sf->length
   // gtk_range_set_range (self->private);
   do_seek(elem, 0);
-  pitivi_project_set_source_element(project, sf->pipeline);
+  // pitivi_project_set_source_element(project, sf->pipeline);
 }
 
 void
@@ -542,9 +544,9 @@ create_stream (gpointer data)
 /*   self->private->bin_src = gst_element_factory_make ("videotestsrc", "video_source"); */
 /*   g_assert (self->private->bin_src != NULL); */
 
-  audiosink = gst_element_factory_make("alsasink", "audio-out");
+//  audiosink = gst_element_factory_make("alsasink", "audio-out");
   
-  pitivi_project_set_audio_output(project, audiosink);
+//  pitivi_project_set_audio_output(project, audiosink);
 
   self->private->sink = gst_element_factory_make ("xvimagesink", "video_display");
   g_assert (self->private->sink != NULL);
@@ -563,81 +565,14 @@ create_stream (gpointer data)
   
 /*   gst_element_set_state (self->private->pipe, GST_STATE_PLAYING); */
 /* ======= */
-  if (!gst_element_link (self->private->bin_src, self->private->sink))
-    printf ("could not link elem\n");
+/*   if (!gst_element_link (self->private->bin_src, self->private->sink)) */
+/*     printf ("could not link elem\n"); */
 
-  pitivi_project_blank_source(project);
-  gst_element_set_state (project->pipeline, GST_STATE_PLAYING);
+  //  pitivi_project_blank_source(project);
+  // gst_element_set_state (project->pipeline, GST_STATE_PLAYING);
 /* >>>>>>> 1.24 */
-  self->private->play_status = PLAY;
+  self->private->play_status = STOP;
   return ;
-}
-
-char *
-pitivi_element_debug(GstElement *elt) {
-  return g_strdup_printf("[%s [%s]]", 
-			 gst_element_get_name(elt),
-			 gst_plugin_feature_get_name(GST_PLUGIN_FEATURE(gst_element_get_factory(elt))));
-}
-
-void
-pitivi_printf_element(GstElement *elt) {
-  GstScheduler	*msched;
-  const GList		*pads, *childs;
-  GstPad	*pad;
-  GstElement	*child;
-
-  /* Global info about element */
-  g_printf("##Element : %s State:%d\n", pitivi_element_debug(elt),
-	   gst_element_get_state(elt));
-
-  /* Element Scheduler and state */
-  msched = GST_ELEMENT_SCHED(elt);
-  g_printf("\tScheduler %p State:%d\n", msched, GST_SCHEDULER_STATE(msched));
-
-  /* State of Pads (Active/Linked) */
-  for (pads = gst_element_get_pad_list(elt); pads ; pads = pads->next) {
-    pad = GST_PAD(pads->data);
-    if (GST_PAD_PEER(pad))
-      g_printf("\tPad: %s Active:%d Linked to %s\n",
-	       gst_pad_get_name(pad), GST_PAD_IS_ACTIVE(pad),
-	       GST_DEBUG_PAD_NAME(GST_PAD_PEER(pad)));
-    else
-      g_printf("\tPad: %s Active:%d NOT linked\n",
-	       gst_pad_get_name(pad), GST_PAD_IS_ACTIVE(pad));
-  }
-
-  /* If container, recursive call on children */
-  if (GST_IS_BIN(elt)) {
-    for (childs = gst_bin_get_list(GST_BIN(elt)); childs; childs = childs->next) {
-      child = GST_ELEMENT(childs->data);
-      g_printf("//CHILD\\\\\n");
-      pitivi_printf_element(child);
-      g_printf("\\\\CHILD//\n");
-    }
-  }
-}
-
-void
-print_element_schedulers(GstElement *element) {
-  GList *sched;
-  GstScheduler  *son;
-  GstScheduler  *msch;
-
-  msch = gst_element_get_scheduler(element);
-  g_printf("Schedulers in Element[%s](ElementState:%d)(SchedulerState:%d):\n",
-           gst_element_get_name(element), gst_element_get_state(element),
-	   msch->state);
-  for (sched = gst_element_get_scheduler(element)->schedulers; sched;
-       sched = sched->next) {
-    son = (GstScheduler *) sched->data;
-    
-    g_printf("\tScheduler[%s]:%p State=%d\n",
-             gst_element_get_name(son->parent), son, son->state);
-    g_printf("/-------\\\n");
-    print_element_schedulers(son->parent);
-    g_printf("\\-------/\n");
-  }
 }
 
 gboolean	idle_func_video (gpointer data)

@@ -38,6 +38,7 @@
 #include "pitivi-mainapp.h"
 #include "pitivi-viewerwindow.h"
 #include "pitivi-menu.h"
+#include "pitivi-debug.h"
 
 static PitiviProjectWindowsClass *parent_class = NULL;
 
@@ -677,11 +678,12 @@ GstElement	*add_decoder_for_demux(PitiviSourceListWindow *self,
   return thread;
   
 }
-	*add_parser_for_demux(PitiviSourceListWindow *self, 
-			     GList *parserlist, GstElement *thread,
-			     gint nb_thread, GstPad *pad,
-			     GstElement **element, 
-			     GstElement * decoder)
+
+GstElement *add_parser_for_demux(PitiviSourceListWindow *self, 
+				 GList *parserlist, GstElement *thread,
+				 gint nb_thread, GstPad *pad,
+				 GstElement **element, 
+				 GstElement * decoder)
 {
   GstElement	*parser;
   GstElement	*queue;
