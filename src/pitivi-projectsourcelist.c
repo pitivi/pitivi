@@ -88,6 +88,8 @@ pitivi_projectsourcelist_get_file_info(PitiviProjectSourceList *self,
 
   sourcebin = get_pitivisourcebin(self, bin_pos);
   sourcelist = sourcebin->source;
+  if (!sourcelist)
+    return NULL;
 
   while (next_file--)
     {

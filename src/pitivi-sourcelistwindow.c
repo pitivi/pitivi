@@ -36,9 +36,12 @@ struct _PitiviSourceListWindowPrivate
   PitiviProjectSourceList	*prjsrclist;
   GtkWidget	*hpaned;
   GtkWidget	*selectfile;
+  GtkWidget	*treeview;
+  GtkWidget	*listview;
   GtkListStore	*liststore;
   GtkTreeStore	*treestore;
-  gchar		*path;
+  gchar		*treepath;
+  gchar		*filepath;
   guint		newfile_signal_id;
 };
 
@@ -48,13 +51,15 @@ struct _PitiviSourceListWindowPrivate
 
 void		OnNewBin(gpointer data, gint action, GtkWidget *widget);
 void		OnImportFile(gpointer data, gint action, GtkWidget *widget);
-void		OnImportFolder(void);
+void		OnImportFolder(gpointer data, gint action, GtkWidget *widget);
 void		OnImportProject(void);
 void		OnFind(void);
 void		OnOptionProject(void);
 
 static gint	my_popup_handler(GtkWidget *widget, GdkEvent *event);
-
+gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
+				GtkTreePath *path, gboolean path_current, 
+				gpointer user_data);
 enum
   {
     BMP_COLUMN,
@@ -85,13 +90,13 @@ static guint nbrchutier = 1;
 static gint projectview_signals[LAST_SIGNAL] = {0};
 
 static GtkItemFactoryEntry	TreePopup[] = {
-  {"/Nouveau chutier...", NULL, OnNewBin, 1, "<Item>", NULL},
-  {"/Importer", NULL, NULL, 0, "<Branch>", NULL},
-  {"/Importer/Ficher", NULL, OnImportFile, 1, "<Item>", NULL},
-  {"/Importer/Dossier", NULL, OnImportFolder, 0, "<Item>", NULL},
-  {"/Importer/Projet", NULL, OnImportProject, 0, "<Item>", NULL},
+  {"/New bin...", NULL, OnNewBin, 1, "<Item>", NULL},
+  {"/Import", NULL, NULL, 0, "<Branch>", NULL},
+  {"/Import/File", NULL, OnImportFile, 1, "<Item>", NULL},
+  {"/Import/Folder", NULL, OnImportFolder, 1, "<Item>", NULL},
+  {"/Import/Project", NULL, OnImportProject, 0, "<Item>", NULL},
   {"/Sep1", NULL, NULL, 0, "<Separator>"}, 
-  {"/Rechercher...", NULL, OnFind, 0, "<Item>", NULL},
+  {"/Find...", NULL, OnFind, 0, "<Item>", NULL},
   {"/Sep2", NULL, NULL, 0, "<Separator>"},
   {"/Options de la fenetre Projet...", NULL, OnOptionProject, 0, "<Item>", NULL}
 };
@@ -99,17 +104,17 @@ static GtkItemFactoryEntry	TreePopup[] = {
 static gint	iNbTreePopup = sizeof(TreePopup)/sizeof(TreePopup[0]);
 
 static GtkItemFactoryEntry	ListPopup[] = {
-  {"/Nouveau", NULL, NULL, 0, "<Branch>", NULL},
-  {"/Nouveau/Chutier...", NULL, OnNewBin, 1, "<Item>", NULL},
-  {"/Nouveau/Storyboard", NULL, NULL, 0, "<Item>", NULL},
-  {"/Nouveau/Sep1", NULL, NULL, 0, "<Separator>"},
-  {"/Nouveau/Titre", NULL, NULL, 0, "<Item>", NULL},
-  {"/Nouveau/Sep2", NULL, NULL, 0, "<Separator>"},
-  {"/Nouveau/Fichier off-line", NULL, NULL, 0, "<Item>", NULL},
-  {"/Importer", NULL, NULL, 0, "<Branch>", NULL},
-  {"/Importer/Ficher", NULL, OnImportFile, 1, "<Item>", NULL},
-  {"/Importer/Dossier", NULL, NULL, 0, "<Item>", NULL},
-  {"/Importer/Projet", NULL, NULL, 0, "<Item>", NULL},
+  {"/New", NULL, NULL, 0, "<Branch>", NULL},
+  {"/New/Bin...", NULL, OnNewBin, 1, "<Item>", NULL},
+  {"/New/Storyboard", NULL, NULL, 0, "<Item>", NULL},
+  {"/New/Sep1", NULL, NULL, 0, "<Separator>"},
+  {"/New/Title", NULL, NULL, 0, "<Item>", NULL},
+  {"/New/Sep2", NULL, NULL, 0, "<Separator>"},
+  {"/New/Fichier off-line", NULL, NULL, 0, "<Item>", NULL},
+  {"/Import", NULL, NULL, 0, "<Branch>", NULL},
+  {"/Import/File", NULL, OnImportFile, 1, "<Item>", NULL},
+  {"/Import/Folder", NULL, OnImportFolder, 1, "<Item>", NULL},
+  {"/Import/Project", NULL, NULL, 0, "<Item>", NULL},
   {"/Sep3", NULL, NULL, 0, "<Separator>"},
   {"/Rechercher...", NULL, NULL, 0, "<Item>", NULL},
   {"/Sep4", NULL, NULL, 0, "<Separator>"},
@@ -123,6 +128,78 @@ static gint	iNbListPopup = sizeof(ListPopup)/sizeof(ListPopup[0]);
  * Insert "added-value" functions here
  */
 
+int	get_num_of_selected_row(gchar *treepath, gint *depth)
+{
+  gchar	*tmp;
+  gchar *tmp2;
+ 
+ *depth = 0;
+  tmp = tmp2 = treepath;
+ 
+  while (*tmp != 0)
+    {
+      if (*tmp == ':')
+	{
+	  tmp2 = tmp;
+	  tmp2++;
+	  *depth++;
+	}
+      tmp++;
+    }
+ /*  g_printf("tmp2 ==> %s\n", tmp2); */
+  return (atoi(tmp2));
+}
+
+void	remove_all_row_from_listview(PitiviSourceListWindow *self)
+{
+  gtk_list_store_clear(self->private->liststore);
+}
+
+void	show_file_in_current_bin(PitiviSourceListWindow *self)
+{
+  GtkTreeIter	iter;
+  gchar	*name;
+  gchar	*sTexte;
+  gchar	*sExempleTexte;
+  gchar	*info;
+  gint	selected_row;
+  gint	index;
+  gint	depth;
+
+  selected_row = get_num_of_selected_row(self->private->treepath, &depth);
+
+  index = 0;
+  while ((info = pitivi_projectsourcelist_get_file_info(self->private->prjsrclist, 
+					 selected_row, index)) != NULL)
+    {
+    /*   g_printf("%s\n", info); */
+      sTexte = g_malloc(12);
+      sExempleTexte = g_malloc(12);
+
+      sprintf(sTexte, "Ligne %d\0", index);
+      sprintf(sExempleTexte, "exemple %d\0", index);
+  
+      /* Creation de la nouvelle ligne */
+      gtk_list_store_append(self->private->liststore, &iter);
+      
+      name = strrchr(info, '/');
+      name++;
+
+      /* Mise a jour des donnees */
+      gtk_list_store_set(self->private->liststore,
+			 &iter, TEXT_LISTCOLUMN1, sTexte,
+			 TEXT_LISTCOLUMN2, name,
+			 TEXT_LISTCOLUMN3, sExempleTexte,
+			 TEXT_LISTCOLUMN4, sExempleTexte,
+			 TEXT_LISTCOLUMN5, sExempleTexte,
+			 TEXT_LISTCOLUMN6, sExempleTexte,
+			 TEXT_LISTCOLUMN7, sExempleTexte,
+			 -1);
+      index++;
+    }
+  
+}
+
 void	new_file(GtkWidget *widget, gpointer data)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
@@ -131,14 +208,19 @@ void	new_file(GtkWidget *widget, gpointer data)
   gchar		*name;
   gchar		*sExempleTexte;
   gboolean	add;
+  gint		row_selected;
+  gint		depth;
   static int	i = 0;
 
-  g_printf("insert new file\n");
-
-  /* call pitivi_projectsourcelist_add_chutier_file */
-  add = pitivi_projectsourcelist_add_file_to_bin(self->private->prjsrclist, 0,
-					   self->private->path);
+  row_selected = 0;
+  if (self->private->treepath != NULL)
+    row_selected = get_num_of_selected_row(self->private->treepath, &depth);
   
+  /* call pitivi_projectsourcelist_add_chutier_file */
+  add = pitivi_projectsourcelist_add_file_to_bin(self->private->prjsrclist, 
+						 row_selected,
+						 self->private->filepath);
+ 
   if (add == FALSE)
     return;
 
@@ -151,7 +233,7 @@ void	new_file(GtkWidget *widget, gpointer data)
   /* Creation de la nouvelle ligne */
   gtk_list_store_append(self->private->liststore, &pIter);
   
-  name = strrchr(self->private->path, '/');
+  name = strrchr(self->private->filepath, '/');
   name++;
 
   /* Mise a jour des donnees */
@@ -165,40 +247,34 @@ void	new_file(GtkWidget *widget, gpointer data)
 		     TEXT_LISTCOLUMN7, sExempleTexte,
 		     -1);
   i++;
-  pitivi_projectsourcelist_showfile(self->private->prjsrclist, 0);
+/*   pitivi_projectsourcelist_showfile(self->private->prjsrclist, row_selected); */
 }
 
 void	new_bin(PitiviSourceListWindow *self, gchar *bin_name)
 {
+  GtkTreeSelection *selection;
   GdkPixbuf	*pixbufa;
-  GtkTreeIter	pIter;
+  GtkTreeIter	iter;
 
   g_printf("insert new chutier\n");
   g_printf("== %s ==\n", bin_name);
 
   pitivi_projectsourcelist_new_bin(self->private->prjsrclist, bin_name);
   /* Chargement des images */
-  pixbufa = gdk_pixbuf_new_from_file("./info.xpm", NULL);
+  /* pixbufa = gdk_pixbuf_new_from_stock("./info.xpm", NULL); */
 
+  pixbufa = gtk_widget_render_icon(self->private->treeview, GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU, NULL);
   /* Insertion des elements */
   
-  gtk_tree_store_append(self->private->treestore, &pIter, NULL);
+  gtk_tree_store_append(self->private->treestore, &iter, NULL);
       
   /* Creation de la nouvelle ligne */
-  gtk_tree_store_set(self->private->treestore, &pIter, BMP_COLUMN, pixbufa,
+  gtk_tree_store_set(self->private->treestore, &iter, BMP_COLUMN, pixbufa,
 		     TEXT_TREECOLUMN, bin_name, -1);
 
-/*       for (j = 0; j < 2; ++j) */
-/* 	{ */
-/* 	  sprintf(sTexte, "Repertoire %d", j); */
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
+  gtk_tree_selection_select_iter(selection, &iter);
 
-/* 	  /\* Creation de la nouvelle ligne enfant *\/ */
-/* 	  gtk_tree_store_append(pTreeStore, &pIter2, &pIter); */
-	  
-/* 	  /\* Mise a jour des donnees *\/ */
-/* 	  gtk_tree_store_set(pTreeStore, &pIter2, BMP_COLUMN, */
-/* 			     pPixBufB, TEXT_TREECOLUMN, sTexte, -1); */
-/* 	} */
   g_object_unref(pixbufa);  
 }
 
@@ -243,6 +319,8 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 
   /* Creation de la vue */
   pListView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(self->private->liststore));
+
+  self->private->listview = pListView;
 
   /* Creation du menu popup */
   menupopup = create_menupopup(self, ListPopup, iNbListPopup);
@@ -335,6 +413,7 @@ GtkWidget	*create_treeview(PitiviSourceListWindow *self,
   GtkWidget		*menupopup;
   GtkTreeViewColumn	*pColumn;
   GtkCellRenderer	*pCellRenderer;
+  GtkTreeSelection	*selection;
 
   /* Creation du modele */
   self->private->treestore = gtk_tree_store_new(N_TREECOLUMN, GDK_TYPE_PIXBUF, 
@@ -342,13 +421,20 @@ GtkWidget	*create_treeview(PitiviSourceListWindow *self,
 
   /* Creation de la vue */
   pTreeView = gtk_tree_view_new_with_model(GTK_TREE_MODEL(self->private->treestore));
- 
+
+  self->private->treeview = pTreeView;
+
   /* Creation du menu popup */
   menupopup = create_menupopup(self, TreePopup, iNbTreePopup);
 
   g_signal_connect_swapped(G_OBJECT(pTreeView), "button_press_event",
 			   G_CALLBACK(my_popup_handler), GTK_OBJECT(menupopup));
 
+  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
+
+  gtk_tree_selection_set_select_function(selection, (GtkTreeSelectionFunc)on_row_selected, self, NULL);
+
+  
   /* Creation de la premiere colonne */
   pCellRenderer = gtk_cell_renderer_pixbuf_new();
   pColumn = gtk_tree_view_column_new_with_attributes("Images", pCellRenderer,
@@ -374,6 +460,41 @@ GtkWidget	*create_treeview(PitiviSourceListWindow *self,
   gtk_container_add(GTK_CONTAINER(pScrollbar), pTreeView);
 
   return pScrollbar;
+}
+
+gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
+				GtkTreePath *treepath, gboolean path_current, 
+				gpointer user_data)
+{
+  PitiviSourceListWindow *self = (PitiviSourceListWindow*)user_data;
+  GtkTreeIter	iter;
+
+  if (gtk_tree_model_get_iter(model, &iter, treepath))
+    {
+      gchar	*name;
+      
+      gtk_tree_model_get(model, &iter, TEXT_TREECOLUMN, &name, -1);
+      
+      if (!path_current)
+	{
+	  if (self->private->treepath != NULL)
+	    g_free(self->private->treepath);
+	  
+	  self->private->treepath = gtk_tree_path_to_string(treepath);
+	  g_printf("%s is selected\n", name);
+	  
+	  /* show all file in current bin */
+	  show_file_in_current_bin(self);
+	  g_free(name);
+	}
+       else
+	 {
+	   g_printf("cleanning %s\n", name);
+	   remove_all_row_from_listview(self);
+	 }
+      
+    }
+  return TRUE;
 }
 
 static gint	my_popup_handler(GtkWidget *widget, GdkEvent *event)
@@ -409,9 +530,9 @@ void	retrieve_path(GtkWidget *bouton, gpointer data)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
   
-  self->private->path = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(self->private->selectfile)));
+  self->private->filepath = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(self->private->selectfile)));
 
-  g_printf("path ==> %s\n", self->private->path);
+/*   g_printf("path ==> %s\n", self->private->filepath); */
 
   g_signal_emit(self, self->private->newfile_signal_id,
                        0 /* details */, 
@@ -481,6 +602,8 @@ void	OnImportFile(gpointer data, gint action, GtkWidget *widget)
 
   gtk_window_set_modal(GTK_WINDOW(self->private->selectfile), TRUE);
 
+  gtk_file_selection_complete(GTK_FILE_SELECTION(self->private->selectfile), "*.c");
+
   g_signal_connect(GTK_FILE_SELECTION(self->private->selectfile)->ok_button, 
 		   "clicked",
 		   G_CALLBACK(retrieve_path), self);
@@ -492,9 +615,22 @@ void	OnImportFile(gpointer data, gint action, GtkWidget *widget)
   gtk_widget_show(self->private->selectfile);  
 }
 
-void	OnImportFolder(void)
+void	OnImportFolder(gpointer data, gint action, GtkWidget *widget)
 {
+  PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
+
   printf("== Import Folder ==\n");
+/*       for (j = 0; j < 2; ++j) */
+/* 	{ */
+/* 	  sprintf(sTexte, "Repertoire %d", j); */
+
+/* 	  /\* Creation de la nouvelle ligne enfant *\/ */
+/* 	  gtk_tree_store_append(pTreeStore, &pIter2, &pIter); */
+	  
+/* 	  /\* Mise a jour des donnees *\/ */
+/* 	  gtk_tree_store_set(pTreeStore, &pIter2, BMP_COLUMN, */
+/* 			     pPixBufB, TEXT_TREECOLUMN, sTexte, -1); */
+/* 	} */
 }
 
 void	OnImportProject(void)
