@@ -768,6 +768,13 @@ pitivi_timelinecellrenderer_deactivate (PitiviTimelineCellRenderer *self)
 }
 
 void
+pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
+{
+  // redraw all childs at the good position and at the good width
+  g_printf("zoom-changed to %d for track %d\n", self->private->timewin->zoom, self->track_nb);
+}
+
+void
 pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self )
 {  
   char **pixtab = NULL;
@@ -805,26 +812,38 @@ static gboolean
 pitivi_timelinecellrenderer_scroll_event (GtkWidget *widget, GdkEventScroll *event)
 {
   PitiviTimelineCellRenderer	*self = PITIVI_TIMELINECELLRENDERER (widget);
-  gdouble	value, lower, upper, increment;
 
-  g_object_get(G_OBJECT(self->private->timewin->hscrollbar),
-	       "lower", &lower,
-	       "upper", &upper,
-	       "step-increment", &increment,
-	       "value", &value,
-	       NULL);
-  if (event->direction == GDK_SCROLL_UP) {
-    value  = value - increment;
-    if (value < lower)
-      value = lower;
-    gtk_adjustment_set_value (self->private->timewin->hscrollbar, value);
-  } else if (event->direction == GDK_SCROLL_DOWN) {
-    value = value + increment;
-    if (value > upper)
-      value = upper;
-    gtk_adjustment_set_value (self->private->timewin->hscrollbar, value);
+  if (event->state & GDK_SHIFT_MASK) { // ZOOM
+    
+    if ((event->direction == GDK_SCROLL_UP) && (self->private->timewin->zoom < 16)) { // ZOOM IN
+      self->private->timewin->zoom *= 2;
+      pitivi_timelinewindow_zoom_changed (self->private->timewin);
+    } else if ((event->direction == GDK_SCROLL_DOWN) && (self->private->timewin->zoom > 1)) { // ZOOM OUT
+      self->private->timewin->zoom /= 2;
+      pitivi_timelinewindow_zoom_changed (self->private->timewin);
+    }
+  } else { // MOVE
+    gdouble	value, lower, upper, increment;
+    
+    g_object_get(G_OBJECT(self->private->timewin->hscrollbar),
+		 "lower", &lower,
+		 "upper", &upper,
+		 "step-increment", &increment,
+		 "value", &value,
+		 NULL);
+    if (event->direction == GDK_SCROLL_UP) { // MOVE LEFT
+      value  = value - increment;
+      if (value < lower)
+	value = lower;
+      gtk_adjustment_set_value (self->private->timewin->hscrollbar, value);
+    } else if (event->direction == GDK_SCROLL_DOWN) { // MOVE RIGHT
+      value = value + increment;
+      if (value > upper)
+	value = upper;
+      gtk_adjustment_set_value (self->private->timewin->hscrollbar, value);
+    }
   }
-  return TRUE;
+  return FALSE;
 }
 
 
@@ -1113,6 +1132,15 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
 		 g_cclosure_marshal_VOID__POINTER,
 		 G_TYPE_NONE, 1, G_TYPE_POINTER);
    
+   g_signal_new ("zoom-changed",
+		 G_TYPE_FROM_CLASS (g_class),
+		 G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+		 G_STRUCT_OFFSET (PitiviTimelineCellRendererClass, zoom_changed),
+		 NULL, 
+		 NULL,                
+		 g_cclosure_marshal_VOID__VOID,
+		 G_TYPE_NONE, 0);
+
    cell_class->activate = pitivi_timelinecellrenderer_callb_activate;
    cell_class->deactivate = pitivi_timelinecellrenderer_callb_deactivate;
    cell_class->select = pitivi_timelinecellrenderer_callb_select;
@@ -1120,6 +1148,7 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
    cell_class->drag_source_begin = pitivi_timelinecellrenderer_callb_drag_source_begin;
    cell_class->delete = pitivi_timelinecellrenderer_callb_delete_sf;
    cell_class->dbk_source = pitivi_timelinecellrenderer_callb_dbk_source;
+   cell_class->zoom_changed = pitivi_timelinecellrenderer_zoom_changed;
 }
 
 GType

@@ -89,6 +89,7 @@ struct _PitiviTimelineWindowClass
   void (* delete)     (PitiviTimelineWindow  *timew, gpointer data);
   void (*drag_source_begin) (PitiviTimelineWindow *timew, gpointer data);
   void (*dbk_source) (PitiviTimelineWindow *timew, gpointer data);
+  void (*zoom_changed) (PitiviTimelineWindow  *timew);
 };
 
 /* used by PITIVI_TIMELINEWINDOW_TYPE */
@@ -140,6 +141,9 @@ pitivi_timelinewindow_deactivate (PitiviTimelineWindow *self);
 
 void
 pitivi_timelinewindow_activate (PitiviTimelineWindow *self);
+
+void
+pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self);
 
 gboolean
 pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *event, gpointer data);

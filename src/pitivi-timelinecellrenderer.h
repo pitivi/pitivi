@@ -96,6 +96,7 @@ struct _PitiviTimelineCellRendererClass
   void (* delete)	    (PitiviTimelineCellRenderer *cell, gpointer data);
   void (*drag_source_begin) (PitiviTimelineCellRenderer *cell, gpointer data);
   void (*dbk_source)	    (PitiviTimelineCellRenderer *cell, gpointer data);
+  void (* zoom_changed)	    (PitiviTimelineCellRenderer *cell);
 };
 
 
@@ -126,6 +127,7 @@ int		add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y);
 void		pitivi_timelinecellrenderer_activate (PitiviTimelineCellRenderer *self);
 void		pitivi_timelinecellrenderer_deactivate (PitiviTimelineCellRenderer *self);
 void		pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
+void		pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self);
 void		pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self );
 
 #endif

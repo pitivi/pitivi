@@ -128,6 +128,7 @@ enum {
   DELETE_SIGNAL,
   DRAG_SOURCE_BEGIN_SIGNAL,
   DBK_SOURCE_SIGNAL,
+  ZOOM_CHANGED_SIGNAL,
   LAST_SIGNAL
 };
 
@@ -234,22 +235,30 @@ void
 unit_combobox_cb(GtkWidget *cbox, gpointer data)
 {
   int	*tab;
+  int	value;
   PitiviTimelineWindow	*tw = data;
   
   tab = gtk_object_get_data(GTK_OBJECT(cbox), "list");
-  tw->unit = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
-  // TODO : update the graphical interface
+  value = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
+  if (tw->unit != value) {
+    tw->unit = value;
+    g_signal_emit_by_name (GTK_OBJECT (tw), "zoom-changed");
+  }
 }
 
 void
 scale_combobox_cb(GtkWidget *cbox, gpointer data)
 {
   int	*tab;
+  int	value;
   PitiviTimelineWindow	*tw = data;
 
   tab = gtk_object_get_data(GTK_OBJECT(cbox), "list");
-  tw->zoom = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
-  // TODO : update the graphical interface
+  value = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
+  if (tw->zoom != value) {
+    tw->zoom = value;
+    g_signal_emit_by_name (GTK_OBJECT (tw), "zoom-changed"); 
+  }
 }
 
 void
@@ -743,12 +752,22 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 					     g_cclosure_marshal_VOID__POINTER,
 					     G_TYPE_NONE, 1, G_TYPE_POINTER);
   
+  signals[ZOOM_CHANGED_SIGNAL] = g_signal_new ("zoom-changed",
+					       G_TYPE_FROM_CLASS (g_class),
+					       G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+					       G_STRUCT_OFFSET (PitiviTimelineWindowClass, zoom_changed),
+					       NULL, 
+					       NULL,                
+					       g_cclosure_marshal_VOID__VOID,
+					       G_TYPE_NONE, 0);
+
   klass->activate = pitivi_timelinewindow_activate;
   klass->deactivate = pitivi_timelinewindow_deactivate;
   klass->deselect = pitivi_timelinewindow_deselect;
   klass->delete = pitivi_timelinewindow_delete_sf;
   klass->drag_source_begin = pitivi_timelinewindow_drag_source_begin;
   klass->dbk_source = pitivi_timelinewindow_dblclick;
+  klass->zoom_changed = pitivi_timelinewindow_zoom_changed;
 }
 
 GType
@@ -958,4 +977,33 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
       g_signal_emit_by_name (GTK_OBJECT (childlist->data), "activate");
   gtk_widget_set_sensitive (GTK_WIDGET(self->private->toolcontainer), TRUE);
   gtk_widget_set_sensitive (GTK_WIDGET(self->private->hpaned), TRUE);
+}
+
+void
+pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self)
+{
+  GList	*list, *tmp;
+
+  // update zoom combobox
+  switch (self->zoom) {
+  case 1:
+    gtk_combo_box_set_active(self->private->scalecombobox, 0);
+    break;
+  case 2:
+    gtk_combo_box_set_active(self->private->scalecombobox, 1);
+    break;
+  case 4:
+    gtk_combo_box_set_active(self->private->scalecombobox, 2);
+    break;
+  case 8:
+    gtk_combo_box_set_active(self->private->scalecombobox, 3);
+    break;
+  case 16:
+    gtk_combo_box_set_active(self->private->scalecombobox, 4);
+    break;
+  }
+  list = gtk_container_get_children (GTK_CONTAINER (self->private->main_vbox_right));
+  for (tmp = list; tmp; tmp = tmp->next)
+    if (GTK_IS_LAYOUT (tmp->data))
+      g_signal_emit_by_name (GTK_OBJECT (tmp->data), "zoom-changed");
 }
