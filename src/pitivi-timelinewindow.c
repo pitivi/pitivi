@@ -34,9 +34,6 @@ static  PitiviWindowsClass *parent_class = NULL;
 
 #define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS(i)->x
 
-#define XSIZE  6000
-#define YSIZE  400
-
 #define PITIVI_MAX_PISTE 6
 
 typedef struct _PitiviMediaInfo
@@ -57,7 +54,7 @@ struct _PitiviTimelineWindowPrivate
   GtkWidget	*main_vbox;
   GtkWidget	*main_vbox_left;
   GtkWidget	*main_vbox_right;
-  
+  GtkWidget	*hruler;
   GtkWidget	*hpaned;
   
   /* StatusBar */
@@ -67,7 +64,9 @@ struct _PitiviTimelineWindowPrivate
   
   GdkWindow     *event_window;
   GdkCursor     *cursor;
-  GList         *operations;  
+  GList         *operations; 
+  
+  PitiviMainApp	*mainapp;
 };
 
 
@@ -113,6 +112,7 @@ pitivi_timelinewindow_new (PitiviMainApp *mainapp, PitiviProject *project)
   timelinewindow = (PitiviTimelineWindow *) g_object_new(PITIVI_TIMELINEWINDOW_TYPE, 
 							 "mainapp", mainapp,
 							 "project", project, NULL);
+  timelinewindow->private->mainapp = mainapp;
   g_assert(timelinewindow != NULL);
   return timelinewindow;
 }
@@ -214,7 +214,7 @@ pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *eve
 {
   PitiviTimelineWindow *self =  (PitiviTimelineWindow *) widget;
 
-  gtk_paned_set_position (GTK_PANED(self->private->hpaned), (80));
+  gtk_paned_set_position (GTK_PANED(self->private->hpaned), (LEFT_PANED_SIZE));
   return FALSE;
 }
 
@@ -293,9 +293,9 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   
   self->private->hpaned = gtk_hpaned_new();
   self->private->main_vbox_left = gtk_vbox_new (FALSE, 0);
-  GtkWidget *time = gtk_label_new ("00:00:00");
+  self->current_time = gtk_label_new ("00:00:00");
   GtkWidget *Tseparators = gtk_hseparator_new ();  
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), time, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), self->current_time, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), Tseparators, FALSE, FALSE, 0);
     
   //Right View
@@ -303,17 +303,18 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_paned_set_position(GTK_PANED(self->private->hpaned), (80));
   self->private->main_vbox_right = gtk_vbox_new (FALSE, 0);
   
-  GtkWidget *hruler = gtk_hruler_new ();
-  gtk_ruler_set_metric (GTK_RULER (hruler), GTK_PIXELS);
-  gtk_ruler_set_range (GTK_RULER (hruler), 0, 15, 0, 20);
+  self->private->hruler = gtk_hruler_new ();
+  self->hruler = self->private->hruler;
+  gtk_ruler_set_metric (GTK_RULER (self->private->hruler), GTK_PIXELS);
+  gtk_ruler_set_range (GTK_RULER (self->private->hruler), 0, 15, 0, 20);
   
-  g_signal_connect_swapped (G_OBJECT (self->private->main_vbox_right), "motion_notify_event",
-			    G_CALLBACK (EVENT_METHOD (hruler, motion_notify_event)),
-			    G_OBJECT (hruler));
+  g_signal_connect_swapped (G_OBJECT (self->private->main_vbox), "motion_notify_event",
+			    G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
+			    G_OBJECT (self->private->hruler));
   
   // Docking Ruler
   
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), hruler, FALSE, FALSE, 0);     
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), self->private->hruler, FALSE, FALSE, 0);     
   
   for (count = 0; count < PITIVI_MAX_PISTE; count++)
     {
@@ -334,14 +335,19 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
       Lseparators = gtk_hseparator_new ();
       gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), hbox[count], FALSE, FALSE, 0);
       gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), Lseparators, FALSE, FALSE, 0);
+      gtk_widget_set_usize (Lseparators, -1, 5);
       
       // Right View
       
       Rseparators = gtk_hseparator_new ();
       GtkWidget *cell = pitivi_timelinecellrenderer_new ();
-      gtk_widget_set_usize (cell, XSIZE, 50);
+      gtk_widget_set_usize (cell, FIXED_WIDTH, FIXED_HEIGHT);
+      g_signal_connect_swapped (G_OBJECT (cell), "motion_notify_event",
+				G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
+				G_OBJECT (self->private->hruler));
       gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), cell, FALSE, FALSE, 0);
       gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), Rseparators, FALSE, FALSE, 0);
+      gtk_widget_set_usize (Rseparators, -1, 5);
     }
   
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->hpaned, FALSE, FALSE, 0);
@@ -354,13 +360,13 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
 					 GTK_WIDGET (self->private->main_vbox_left));
   gtk_paned_pack1 (GTK_PANED(self->private->hpaned), pScrollbarLeft, FALSE, FALSE);
 
-  // Right Scrollbar
-  GtkWidget * pScrollbarRight = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (pScrollbarRight),
+  // Right HScrollbar
+  GtkWidget * pHScrollbarRight = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (pHScrollbarRight),
 				  GTK_POLICY_ALWAYS, GTK_POLICY_NEVER);
-  gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (pScrollbarRight),
+  gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (pHScrollbarRight),
 					 GTK_WIDGET (self->private->main_vbox_right));
-  gtk_paned_pack2 (GTK_PANED(self->private->hpaned), pScrollbarRight, FALSE, FALSE);
+  gtk_paned_pack2 (GTK_PANED(self->private->hpaned), pHScrollbarRight, FALSE, FALSE);
   
   /* Main Window : StatusBar */
   

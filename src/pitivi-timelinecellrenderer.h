@@ -36,9 +36,10 @@
  * Type macros.
  */
 
+#define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS(i)->x
+
 #define FIXED_WIDTH   6000
 #define FIXED_HEIGHT  50
-
 
 #define PITIVI_TIMELINECELLRENDERER_TYPE (pitivi_timelinecellrenderer_get_type ())
 #define PITIVI_TIMELINECELLRENDERER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), PITIVI_TIMELINECELLRENDERER_TYPE, PitiviTimelineCellRenderer))
@@ -57,8 +58,9 @@ struct _PitiviTimelineCellRenderer
   GtkLayout parent;
   
   /* public members */
-  guint	cell_type;
-  GList	*children;
+  guint		track_type;
+  GList		*children;
+  GdkRectangle	*motion_area;
   
   /* private */
   PitiviTimelineCellRendererPrivate	*private;
@@ -77,6 +79,6 @@ GType pitivi_timelinecellrenderer_get_type (void);
  * Method definitions.
  */
 
-GtkWidget	*pitivi_timelinecellrenderer_new(void);
+GtkWidget	*pitivi_timelinecellrenderer_new ();
 
 #endif

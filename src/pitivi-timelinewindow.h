@@ -49,10 +49,11 @@
 #define PITIVI_TIMELINE_DF_TITLE "TimeLine Project"
 #define PITIVI_TIMELINE_LOGO "../pixmaps/pitivi-logo48.png"
 #define PITIVI_MENU_TIMELINE_FILE "../ui/pitivi-timeline.xml"
-#define PITIVI_DF_RATE 60
+
 #define PITIVI_TIMELINE_DF_WIN_WIDTH 600
 #define PITIVI_TIMELINE_DF_WIN_HEIGHT 300
 
+#define LEFT_PANED_SIZE 80
 
 typedef struct _PitiviTimelineWindow PitiviTimelineWindow;
 typedef struct _PitiviTimelineWindowClass PitiviTimelineWindowClass;
@@ -63,6 +64,8 @@ struct _PitiviTimelineWindow
   PitiviProjectWindows parent;
 
   /* instance public members */
+  GtkWidget *hruler;
+  GtkWidget *current_time;
   /* private */
   PitiviTimelineWindowPrivate *private;
 };
