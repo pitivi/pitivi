@@ -23,14 +23,31 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef PITIVI_H
-#define PITIVI_H
+#include "pitivi.h"
 
-#include <glib-object.h>
-#include <glib.h>
-#include <libxml/parser.h>
-#include <libxml/tree.h>
+char *
+pitivi_file (const char *filename)
+{
+  char *fullname;
+  int i;
 
-#include "pitivi-file-utils.h"
+  static char *paths[] = {
+    DATADIR "/",
+    DATADIR "/pixmaps/",
+    DATADIR "/pitivi/",
+    DATADIR "/pitivi/pixmaps/",
+    DATADIR "/pitivi/ui/"
+  };
 
-#endif
+  for (i = 0; i < (int) G_N_ELEMENTS (paths); i++) {
+    fullname = g_strconcat (paths[i], filename, NULL);
+    if (g_file_test (fullname, G_FILE_TEST_EXISTS) == TRUE) {
+      return fullname;
+    }
+
+    g_free (fullname);
+  }
+
+  g_warning ("Failed to find %s", filename);
+  return NULL;
+}

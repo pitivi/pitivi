@@ -11,7 +11,7 @@
 # *************************************************************
 
 
-pixmapdir = $(pkgdatadir)/pixmaps
+pixmapdir = $(datadir)/pitivi/pixmaps
 
 pixmap_DATA = backward.xpm\
 bg_audio.xpm\
@@ -23,6 +23,7 @@ blank.xpm\
 forward.xpm\
 pause.xpm\
 logo-pitivi.png\
+pitivi-logo-splash.png\
 pitivi-48.png\
 pitivi_adjust_effect.png\
 pitivi_agingTV_effect.png\
@@ -92,7 +93,9 @@ pitivi-viewer-volume.png\
 pitivi-viewer-volume-zero.png\
 pitivi_volume_effect.png\
 pitivi_warpTV_effect.png\
+pitivi-newproject.png\
 pitivi-zoom.png\
+pitivi-tools.png\
 play.xpm\
 smpte101.png\
 smpte102.png\

@@ -61,4 +61,3 @@ distclean-local:
 AM_CFLAGS = -O3 -Wall -Werror $(GLIB2_CFLAGS) $(GST_CFLAGS)
 AM_LIBS = -O3 -Wall -Werror $(GLIB2_LIBS) $(GST_LIBS)
 libgnl_la_LDFLAGS =
-

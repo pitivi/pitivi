@@ -171,20 +171,21 @@ pitivi_stockicons_register (void)
     GdkPixbuf *pixbuf;
     char *filename, *fullname;
 		
-    filename = g_strconcat ("../pixmaps/", items[i], ".png", NULL);
-    fullname = g_strdup (filename);
+    filename = g_strconcat (items[i], ".png", NULL);
+    fullname = g_strdup (pitivi_file (filename));
     g_free (filename);
-		
-    pixbuf = gdk_pixbuf_new_from_file (fullname, NULL);
-    g_free (fullname);
-    
-    if (pixbuf != NULL)
+    if ( fullname )
       {
-	icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
-	gtk_icon_factory_add (factory, items[i], icon_set);
-	gtk_icon_set_unref (icon_set);
+	pixbuf = gdk_pixbuf_new_from_file (fullname, NULL);
+	g_free (fullname);    
+	if (pixbuf != NULL)
+	  {
+	    icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+	    gtk_icon_factory_add (factory, items[i], icon_set);
+	    gtk_icon_set_unref (icon_set);
 	
-	g_object_unref (G_OBJECT (pixbuf));
+	    g_object_unref (G_OBJECT (pixbuf));
+	  }
       }
   }
   g_object_unref (G_OBJECT (factory));

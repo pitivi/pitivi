@@ -9,7 +9,8 @@
 
 
 #AUTOMAKE_OPTIONS	= foreign
-#INCLUDES		= -I$(top_srcdir)/src/include
+INCLUDES		= -I$(top_srcdir)/src/include\
+			-DDATADIR=\""$(datadir)"\"
 
 bin_PROGRAMS		= pitivi
 
@@ -21,6 +22,7 @@ pitivi_SOURCES		= \
 	pitivi-toolbox.c \
 	pitivi-effectswindow.c\
 	pitivi-progressbar.c \
+	pitivi-file-utils.c\
 	pitivi-effectswindowproperties.c\
 	pitivi-sourcefile.c\
 	pitivi-sourcefilebin.c\

@@ -10,6 +10,7 @@
 SUBDIRS			= gnl src pixmaps docs ui
 
 EXTRA_DIST = \
+	pitivi.spec \
 	NEWS \
 	NORME \
 	README \

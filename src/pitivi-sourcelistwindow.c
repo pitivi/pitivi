@@ -1723,7 +1723,7 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
     {
       char *filename;
       
-      filename = g_strdup(PITIVI_SOURCELIST_LOGO);
+      filename = g_strdup(pitivi_file (PITIVI_SOURCELIST_LOGO));
       window_icon = gdk_pixbuf_new_from_file (filename, NULL);
       g_free (filename);
     }

@@ -48,6 +48,7 @@ pitivi_callb_menuhelp_about ( GtkAction *action, gpointer data)
   GtkWidget			*team_label;
   GtkWidget			*info_label;
   GtkWidget			*logo;
+  gchar				*filelogo;
 
   about_vbox = gtk_vbox_new(FALSE, 10);
   about_hbox = gtk_hbox_new(FALSE, 10);
@@ -66,7 +67,8 @@ pitivi_callb_menuhelp_about ( GtkAction *action, gpointer data)
   pitivi_label = gtk_label_new("Pitivi is a non-linear\nMultimedia Editor.\nIt is an Open-Source project.\nGNU GPL license.");
   team_label = gtk_label_new("- HERVEY Edward\n- CASANOVA Guillaume\n- DELETTREZ Marc\n- PRALAT Raphael\n- BLOCH Stephan");
   info_label = gtk_label_new("Visit our website :\n http://www.pitivi.org");
-  logo = gtk_image_new_from_file("../pixmaps/pitivi-logo-small.png");
+  filelogo = pitivi_file ("pitivi-logo-small.png");
+  logo = gtk_image_new_from_file(filelogo);
 
   /* alignement */
   gtk_misc_set_alignment (GTK_MISC (team_label), 0.0f, 0.0f);

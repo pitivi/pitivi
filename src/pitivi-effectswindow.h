@@ -57,7 +57,7 @@ typedef struct _PitiviEffectsTree PitiviEffectsTree;
 #define PITIVI_EFFECTS_WIN_SIZEY	250
 
 #define PITIVI_EFFECTS_DF_TITLE		"Effects"
-#define PITIVI_EFFECTS_LOGO		"../pixmaps/pitivi-logo3.png"
+#define PITIVI_EFFECTS_LOGO		"pitivi-logo3.png"
 #define PITIVI_EFFECTS_DF_WIN_WIDTH	PITIVI_EFFECTS_WIN_SIZEX
 #define PITIVI_EFFECTS_DF_WIN_HEIGHT	PITIVI_EFFECTS_WIN_SIZEY
 

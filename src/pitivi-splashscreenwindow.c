@@ -116,6 +116,7 @@ pitivi_splashscreenwindow_constructor (GType type,
 			     GObjectConstructParam * construct_properties)
 {
   PitiviSplashScreenWindow *self;
+  gchar *filelogo;
   GObject *obj;
   gint x;
   gint y;
@@ -141,7 +142,8 @@ pitivi_splashscreenwindow_constructor (GType type,
   gtk_widget_show (self->private->main_vbox);
 
   // Img
-  self->private->img = gtk_image_new_from_file ("../pixmaps/pitivi-logo-splash.png");
+  filelogo = pitivi_file ("pitivi-logo-splash.png");
+  self->private->img = gtk_image_new_from_file (filelogo);
   gtk_container_add (GTK_CONTAINER (self->private->main_vbox), self->private->img);
   gtk_widget_show (self->private->img);
 

@@ -23,14 +23,3 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef PITIVI_H
-#define PITIVI_H
-
-#include <glib-object.h>
-#include <glib.h>
-#include <libxml/parser.h>
-#include <libxml/tree.h>
-
-#include "pitivi-file-utils.h"
-
-#endif

@@ -16,7 +16,6 @@
             <menuitem name="ViewerWindow"     action="ViewerWindows"/>
        </menu>
        <menu action="HelpMenu">
-            <menuitem name="HelpContents" action="HelpContents"/>
             <menuitem name="HelpAbout"  action="HelpAbout"/>
             <separator/>
        </menu>

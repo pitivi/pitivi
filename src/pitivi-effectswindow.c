@@ -175,7 +175,7 @@ pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
     {
       char *filename;
       
-      filename = g_strdup(PITIVI_EFFECTS_LOGO);
+      filename = g_strdup(pitivi_file (PITIVI_EFFECTS_LOGO));
       window_icon = gdk_pixbuf_new_from_file (filename, NULL);
       g_free (filename);
     }

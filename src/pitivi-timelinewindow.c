@@ -24,6 +24,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include "pitivi.h"
 #include "pitivi-windows.h"
 #include "pitivi-timelinewindow.h"
 #include "pitivi-menu.h"
@@ -247,6 +248,7 @@ void
 create_timeline_menu (PitiviTimelineWindow *self)
 {
   PitiviMenu	*menumgr;
+  gchar		*filemenu;
   int		count,pa,pv;
   
   /* Putting Menu to timeline */
@@ -269,17 +271,21 @@ create_timeline_menu (PitiviTimelineWindow *self)
   
   gtk_action_group_set_sensitive (self->actions_group[EA_WINDOWMENU_FILE], FALSE);
 
-  menumgr = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TIMELINE_FILE);
-  for (pa = 0, pv = 0, count = 0; count < EA_LAST_ACTION; count++)
-    if (self->actions_group[count])
-      gtk_ui_manager_insert_action_group (menumgr->public->ui, self->actions_group[count], 0);
+  filemenu = pitivi_file (PITIVI_MENU_TIMELINE_FILE);
+  if (filemenu)
+    {
+      menumgr = pitivi_menu_new (GTK_WIDGET (self), filemenu);
+      for (pa = 0, pv = 0, count = 0; count < EA_LAST_ACTION; count++)
+	if (self->actions_group[count])
+	  gtk_ui_manager_insert_action_group (menumgr->public->ui, self->actions_group[count], 0);
   
-  PITIVI_MENU_GET_CLASS(menumgr)->public->configure (menumgr);
+      PITIVI_MENU_GET_CLASS(menumgr)->public->configure (menumgr);
     
-  // Menu Docking
+      // Menu Docking
   
-  gtk_box_pack_start (GTK_BOX (self->private->menu_dock), menumgr->public->menu,
-		      FALSE, TRUE, 0);
+      gtk_box_pack_start (GTK_BOX (self->private->menu_dock), menumgr->public->menu,
+			  FALSE, TRUE, 0);
+    }
 }
 
 GtkAction *
@@ -636,7 +642,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   if (window_icon == NULL) {
     char *filename;
     
-    filename = g_strdup(PITIVI_TIMELINE_LOGO);
+    filename = g_strdup (pitivi_file (PITIVI_TIMELINE_LOGO));
     window_icon = gdk_pixbuf_new_from_file (filename, NULL);
     g_free (filename);
   }
