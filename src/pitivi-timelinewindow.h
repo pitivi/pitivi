@@ -34,6 +34,7 @@
 #include "pitivi.h"
 #include "pitivi-projectwindows.h"
 #include "pitivi-toolbox.h"
+#include "pitivi-units.h"
 
 /*
  * Type macros.
@@ -68,6 +69,8 @@ struct _PitiviTimelineWindow
   PitiviToolbox	       *toolbox;
   GtkWidget	       *hruler;
   GtkWidget	       *current_time;
+  int			unit;	// scale unit for the ruler
+  int			zoom;	// zoom level
   
   /* private */
   PitiviTimelineWindowPrivate *private;

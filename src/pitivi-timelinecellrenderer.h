@@ -31,8 +31,10 @@
  */
 
 #include <gtk/gtk.h>
+#include "pitivi-timelinewindow.h"
 #include "pitivi-cursor.h"
 #include "pitivi-trackenum.h"
+#include "pitivi-units.h"
 
 /*
  * Type macros.
@@ -95,18 +97,9 @@ struct _PitiviTimelineCellRendererClass
   void (*drag_source_begin) (PitiviTimelineCellRenderer *cell, gpointer data);
 };
 
-/* Conversion */
-
-typedef enum {
-  
-  PITIVI_SECONDS = 1,
-  PITIVI_NANOSECONDS,
-  PITIVI_FRAMES
-} PitiviConvert;
-
 
 guint
-convert_time_pix (gint64 length, PitiviConvert type);
+convert_time_pix (PitiviTimelineCellRenderer *self, gint64 timelength);
 
 
 /* used by PITIVI_TIMELINECELLRENDERER_TYPE */
@@ -116,7 +109,7 @@ GType pitivi_timelinecellrenderer_get_type (void);
  * Method definitions.
  */
 
-GtkWidget	*pitivi_timelinecellrenderer_new ();
+GtkWidget	*pitivi_timelinecellrenderer_new (guint track_nb, PitiviLayerType track_type, PitiviTimelineWindow *tw);
 
 void		pitivi_timelinecellrenderer_remove (GtkContainer *container, GtkWidget *child);
 

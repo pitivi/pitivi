@@ -175,6 +175,12 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
   width = gdk_screen_width ();
   height = gdk_screen_height ();
   
+  if (self->project) {
+    g_printf("YA DEJA UN PROJET EN COURS !!\n");
+    exit(0);
+  }
+  self->project = project;
+
   /* Source List Window */
   
   if (self->private->srclistwin == NULL)

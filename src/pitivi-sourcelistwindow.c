@@ -703,7 +703,7 @@ GstElement	*add_parser_for_demux(PitiviSourceListWindow *self,
       
       g_free(name);
     }
-  g_printf("adding parser [%s] after demux ==> %s\n", (gchar*)parserlist->data);
+  g_printf("adding parser [###ERROR HERE###] after demux ==> %s\n", (gchar*)parserlist->data);
 
   /* create the parser */
   name = g_strdup_printf("parser_%d", nb_thread);
@@ -1605,7 +1605,6 @@ drag_begin_cb (GtkWidget          *widget,
     return;
   }
   self->private->dndtreepath = g_strdup(gtk_tree_model_get_string_from_iter(model, &iter));
-  g_printf ("%s\n", self->private->dndtreepath);
   
   /* find pos in listview */
   selection = gtk_tree_view_get_selection(listview);

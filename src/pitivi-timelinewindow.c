@@ -73,6 +73,8 @@ struct _PitiviTimelineWindowPrivate
   PitiviMainApp		*mainapp;
   GtkWidget		*toolcontainer;
   PitiviController	*controller;
+  GtkComboBox	*unitcombobox;
+  GtkComboBox	*scalecombobox;
   
   /* WinSettings */
   
@@ -227,6 +229,69 @@ create_timeline_menu (PitiviTimelineWindow *self)
   
 }
 
+void
+unit_combobox_cb(GtkWidget *cbox, gpointer data)
+{
+  int	*tab;
+  PitiviTimelineWindow	*tw = data;
+  
+  tab = gtk_object_get_data(GTK_OBJECT(cbox), "list");
+  tw->unit = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
+  // TODO : update the graphical interface
+}
+
+void
+scale_combobox_cb(GtkWidget *cbox, gpointer data)
+{
+  int	*tab;
+  PitiviTimelineWindow	*tw = data;
+
+  tab = gtk_object_get_data(GTK_OBJECT(cbox), "list");
+  tw->zoom = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
+  // TODO : update the graphical interface
+}
+
+void
+create_unitscale_combobox(PitiviTimelineWindow *self, GtkWidget *parentbox)
+{
+  static int	unittab[2] = {PITIVI_SECONDS, PITIVI_FRAMES};
+  static int	scaletab[5] = {1, 2, 4, 8, 16};
+
+  self->private->unitcombobox = (GtkComboBox *) gtk_combo_box_new_text();
+
+  gtk_combo_box_append_text(self->private->unitcombobox, UNITS_SECOND_TEXT);
+  gtk_combo_box_append_text(self->private->unitcombobox, UNITS_FRAME_TEXT);
+
+  gtk_object_set_data(GTK_OBJECT(self->private->unitcombobox),
+		      "list", &unittab);
+  g_object_connect(G_OBJECT(self->private->unitcombobox), "signal::changed", 
+		   unit_combobox_cb, self);
+  gtk_combo_box_set_active(self->private->unitcombobox, 0);
+
+  self->private->scalecombobox = (GtkComboBox *) gtk_combo_box_new_text();
+
+  gtk_combo_box_append_text(self->private->scalecombobox, ZOOM_LEVEL_1);
+  gtk_combo_box_append_text(self->private->scalecombobox, ZOOM_LEVEL_2);
+  gtk_combo_box_append_text(self->private->scalecombobox, ZOOM_LEVEL_4);
+  gtk_combo_box_append_text(self->private->scalecombobox, ZOOM_LEVEL_8);
+  gtk_combo_box_append_text(self->private->scalecombobox, ZOOM_LEVEL_16);
+
+  gtk_object_set_data(GTK_OBJECT(self->private->scalecombobox),
+		      "list", &scaletab);
+  g_object_connect(G_OBJECT(self->private->scalecombobox), "signal::changed", 
+		   scale_combobox_cb, self);
+  gtk_combo_box_set_active(self->private->scalecombobox, 0);
+
+  gtk_box_pack_start(GTK_BOX(parentbox), gtk_label_new("Unit:"),
+		     FALSE, TRUE, 2);
+  gtk_box_pack_start(GTK_BOX (parentbox), GTK_WIDGET(self->private->unitcombobox),
+		     FALSE, TRUE, 2);
+  gtk_box_pack_start(GTK_BOX(parentbox), gtk_label_new("Zoom:"),
+		     FALSE, TRUE, 2);
+  gtk_box_pack_start(GTK_BOX (parentbox), GTK_WIDGET(self->private->scalecombobox),
+		     FALSE, TRUE, 2);
+}
+
 void	
 create_timeline_toolbar (PitiviTimelineWindow *self)
 {
@@ -254,6 +319,10 @@ create_timeline_toolbar (PitiviTimelineWindow *self)
   self->private->controller = pitivi_controller_new ();
   gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET(self->private->controller),
 		      FALSE, TRUE, 0);
+
+  /* Unit/Scale Selector */
+
+  create_unitscale_combobox(self, hbox);
   
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET(hbox),
 		      FALSE, TRUE, 0);
@@ -370,7 +439,7 @@ create_tracks (PitiviTimelineWindow *self)
     {
       if (gtab_tracks[count].track_type != -1)
 	{
-	  cell[count] = pitivi_timelinecellrenderer_new (gtab_tracks[count].track_nb, gtab_tracks[count].track_type);
+	  cell[count] = pitivi_timelinecellrenderer_new (gtab_tracks[count].track_nb, gtab_tracks[count].track_type, self);
 	  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), cell[count], FALSE, FALSE, 0);
 	  create_separator_color (self->private->main_vbox_right, "black", -1, 5);
 	  
@@ -431,6 +500,9 @@ pitivi_timelinewindow_constructor (GType type,
   self->private->main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (self->private->main_vbox);
   gtk_container_add  (GTK_CONTAINER (self), self->private->main_vbox);
+
+  self->unit = PITIVI_SECONDS;
+  self->zoom = 1;
 
   /* Timeline Menu */
   create_timeline_menu (self);
@@ -776,7 +848,8 @@ pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self )
 void
 pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self )
 {
-  gtk_widget_destroy (GTK_WIDGET(self));
+  //gtk_widget_destroy (GTK_WIDGET(self));
+  pitivi_mainapp_destroy(self, NULL);
 }
 
 

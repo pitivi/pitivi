@@ -59,6 +59,7 @@ struct _PitiviMainApp
 
   /* instance public members */
   GList	*projects;	/* List of PitiviProject loaded */
+  PitiviProject	*project;
 
   /* private */
   PitiviMainAppPrivate *private;

@@ -69,11 +69,11 @@ struct _PitiviTimelineCellRendererPrivate
 
 // Properties Enumaration
 
-typedef enum {
-  
+typedef enum {  
   PROP_LAYER_PROPERTY = 1,
   PROP_TYPE_LAYER_PROPERTY,
-  PROP_TRACK_NB_PROPERTY,  
+  PROP_TRACK_NB_PROPERTY,
+  PROP_TIMELINEWINDOW
 } PitiviLayerProperty;
 
 static guint track_sizes[4][4] =
@@ -109,7 +109,7 @@ static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
  */
 
 GtkWidget *
-pitivi_timelinecellrenderer_new (guint track_nb, PitiviLayerType track_type)
+pitivi_timelinecellrenderer_new (guint track_nb, PitiviLayerType track_type, PitiviTimelineWindow *tw)
 {
   PitiviTimelineCellRenderer	*timelinecellrenderer;
   
@@ -118,7 +118,9 @@ pitivi_timelinecellrenderer_new (guint track_nb, PitiviLayerType track_type)
 		  "track_nb", 
 		  track_nb, 
 		  "track_type", 
-		  track_type, 
+		  track_type,
+		  "timelinewindow",
+		  tw,
 		  NULL);  
   g_assert(timelinecellrenderer != NULL);
   return GTK_WIDGET ( timelinecellrenderer );
@@ -134,7 +136,7 @@ set_tracksize ( PitiviTimelineCellRenderer *self )
     if (self->track_type == track_sizes[count][0])
       {
 	gtk_widget_set_size_request(GTK_WIDGET(self), 
-				    track_sizes[count][1], 
+				    convert_time_pix(self, track_sizes[count][1]),
 				    track_sizes[count][2]);
 	break;
       }
@@ -433,6 +435,9 @@ pitivi_timelinecellrenderer_set_property (GObject * object,
     case PROP_TRACK_NB_PROPERTY:
       self->track_nb = g_value_get_int (value);
       break;
+    case PROP_TIMELINEWINDOW:
+      self->private->timewin = g_value_get_pointer (value);
+      break;
     default:
       g_assert (FALSE);
       break;
@@ -467,20 +472,29 @@ pitivi_timelinecellrenderer_get_property (GObject * object,
  * drag							      *
  **************************************************************/
 
+/*
+  convert_time_pix
+  Returns the pixel size depending on the unit of the ruler, and the zoom level
+*/
+
 guint
-convert_time_pix (gint64 timelength, PitiviConvert type)
+convert_time_pix (PitiviTimelineCellRenderer *self, gint64 timelength)
 {
   gint64 len = timelength;
+  PitiviProject	*proj = PITIVI_WINDOWS(self->private->timewin)->mainapp->project;
   
-  switch (type)
+  switch (self->private->timewin->unit)
     {
     case PITIVI_NANOSECONDS:
-      len = timelength;
+      len = timelength * self->private->timewin->zoom;
       break;
     case PITIVI_SECONDS:
-      len = (timelength / GST_SECOND);
+      len = (timelength / GST_SECOND) * self->private->timewin->zoom;
       break;
     case PITIVI_FRAMES:
+      len = (timelength / GST_SECOND) 
+	* pitivi_projectsettings_get_videorate(proj->settings)
+	* self->private->timewin->zoom;
       break;
     default:
       break;
@@ -493,18 +507,17 @@ void
 create_media_video_audio_track (PitiviTimelineCellRenderer *cell, PitiviSourceFile *sf, int x)
 {
   PitiviTimelineMedia *media[2];
-  guint64 length = 0;
+  guint64 length = sf->length;
   
-  length = (sf->length / GST_SECOND);
   if (!length)
     length = DEFAULT_MEDIA_SIZE;
   
   /* Creating widgets */
   
   media[0] = pitivi_timelinemedia_new (sf);  
-  gtk_widget_set_size_request (GTK_WIDGET (media[0]), length, FIXED_HEIGHT);
+  gtk_widget_set_size_request (GTK_WIDGET (media[0]), convert_time_pix(cell, length), FIXED_HEIGHT);
   media[1] = pitivi_timelinemedia_new (sf);
-  gtk_widget_set_size_request (GTK_WIDGET (media[1]), length, FIXED_HEIGHT);
+  gtk_widget_set_size_request (GTK_WIDGET (media[1]), convert_time_pix(cell, length), FIXED_HEIGHT);
   
   /* Putting on first Layout */
   
@@ -526,13 +539,12 @@ create_media_track (PitiviTimelineCellRenderer *self,
 		    gboolean invert)
 {
   PitiviTimelineMedia *media;
-  guint64 length = 0;
+  guint64 length = sf->length;
   
-  length = sf->length;
   if (!length)
     length = DEFAULT_MEDIA_SIZE;
   media = pitivi_timelinemedia_new (sf);
-  gtk_widget_set_size_request (GTK_WIDGET (media), length, FIXED_HEIGHT);
+  gtk_widget_set_size_request (GTK_WIDGET (media), convert_time_pix(self, length), FIXED_HEIGHT);
   gtk_widget_show (GTK_WIDGET (media));
   if (invert)
     add_to_layout ( GTK_WIDGET (self->linked_track), GTK_WIDGET (media), x, 0);
@@ -868,7 +880,7 @@ pitivi_timelinecellrenderer_callb_drag_source_begin (PitiviTimelineCellRenderer 
   slide = (struct _Pslide *) data;
   len = slide->length;
   if (len > 0)
-    self->private->slide_width = convert_time_pix (len, PITIVI_SECONDS);
+    self->private->slide_width = convert_time_pix (self, len);
   type = check_media_type_str (slide->path);
   if (type == PITIVI_VIDEO_AUDIO_TRACK)
     self->private->slide_both = TRUE;
@@ -963,7 +975,11 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
 				   g_param_spec_int ("track_type","track_type","track_type",
 						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
   
-  g_object_class_install_property (G_OBJECT_CLASS (cellobj_class), PROP_TYPE_LAYER_PROPERTY,
+  g_object_class_install_property (G_OBJECT_CLASS (cellobj_class), PROP_TIMELINEWINDOW,
+				   g_param_spec_pointer ("timelinewindow","timelinewindow","timelinewindow",
+							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+  
+  g_object_class_install_property (G_OBJECT_CLASS (cellobj_class), PROP_TRACK_NB_PROPERTY,
 				   g_param_spec_int ("track_nb","track_nb","track_nb",
 						     G_MININT, G_MAXINT, 0, G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 

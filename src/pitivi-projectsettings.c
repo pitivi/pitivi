@@ -79,6 +79,34 @@ pitivi_projectsettings_acaps_create (int rate, int channels)
 }
 
 
+int
+pitivi_projectsettings_get_videorate(PitiviProjectSettings *ps)
+{
+  int	res;
+  PitiviMediaSettings	*ms;
+  
+  ms = ps->media_settings->data;
+
+  if (gst_structure_get_int(gst_caps_get_structure(ms->caps, 0), "framerate", &res))
+    return res;
+  return 0;
+}
+
+int
+pitivi_projectsettings_get_audiorate(PitiviProjectSettings *ps)
+{
+  int	res;
+  GSList	*tmp;
+  PitiviMediaSettings	*ms;
+  
+  tmp = g_slist_nth(ps->media_settings, 1);
+  ms = tmp->data;
+
+  if (gst_structure_get_int(gst_caps_get_structure(ms->caps, 0), "rate", &res))
+    return res;
+  return 0;
+}
+
 /**************/
 PitiviProjectSettings *
 pitivi_projectsettings_new_with_name(gchar *name, gchar *desc)

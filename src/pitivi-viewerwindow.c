@@ -345,7 +345,7 @@ static gint pitivi_viewerwindow_configure_event( GtkWidget         *widget,
 static gint pitivi_viewerwindow_expose_event( GtkWidget      *widget,
 					      GdkEventExpose *event )
 {
-  g_printf("exposing\n");
+  //  g_printf("exposing\n");
   gdk_draw_drawable (widget->window,
 		     widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
 		     pixmap,
