@@ -1,141 +1,3006 @@
-2004-07-05    <bilboed@bilboed.eptv>
+2004-12-16 15:22  bilboed
 
-	* src/pitivi-sourcelistwindow.c: Added real drag-and-drop functions, now sends the PitiviSourceFile*
+	* src/pitivi-effectswindowproperties.c: whoops, forgot to correct
+	  something
 
-2004-07-03    <bilboed@localhost>
+2004-12-16 15:15  bilboed
 
-	* src/pitivi-project.c (pitivi_project_set_source_element) 
-	(pitivi_project_blank_source, pitivi_project_set_video_output) 
-	(pitivi_project_set_audio_output):
-	Functions to properly modify the project's pipeline
+	* src/: pitivi-effectswindowproperties.c, pitivi-sourcefilebin.c:
+	  PitiviEffectsSettingsWindow now has correct effect GstElement,
+	  corrections in PitiviSourceFileBins
 
-2004-07-02    <bilboed@localhost>
+2004-12-15 09:41  nemoglobine
 
-	* src/pitivi-project.h (struct _PitiviProject): Added pipeline and timeline property
+	* src/: pitivi-gstelementsettings.c, pitivi-settings.c,
+	  pitivi-settings.h, pitivi-settingswindow.c: any changes
 
-2004-07-01    <bilboed@localhost>
+2004-12-11 22:06  casaxno
 
-	* configure.ac: Updated minimum gstreamer version to 0.8.2
+	* src/: pitivi-sourcelistwindow.c, pitivi-windows.c: free
 
-2004-06-29    <bilboed@localhost>
+2004-12-11 21:56  casaxno
 
-	* src/pitivi-mainapp.c (pitivi_mainapp_activate_effectswindow): function to (de)activate the PitiviEffectsWindow
+	* src/: pitivi-controller.c, pitivi-menu.c, pitivi-progressbar.c,
+	  pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c,
+	  pitivi-stockicons.c, pitivi-timelinewindow.c, pitivi-toolbox.c,
+	  pitivi-windows.c: free
 
-	* ui/pitivi-toolbox.xml:
-	* src/pitivi-toolboxwindow.c (pitivi_toolboxwindow_cb_effectswindow_toggle): 
-	Added Windows Menu to PitiviToolboxWindow with callback
+2004-12-11 21:07  casaxno
 
-	* src/pitivi-projectsettings.c (pitivi_projectsettings_media_new): removed bad codec_settings list initialisation
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-mainapp.c, pitivi-sourcelistwindow.c,
+	  pitivi-sourcelistwindow.h, pitivi-stockicons.c,
+	  pitivi-stockicons.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-viewerwindow.c, pitivi-windows.c:
+	  centralize icons
 
-2004-06-28    <bilboed@localhost>
+2004-12-10 00:37  casaxno
 
-	* src/pitivi-settings.c (pitivi_settings_ajout_factory_element): modification to support priority elements (after loading from file)
+	* src/pitivi-timelinewindow.c, ui/pitivi-timeline.xml: shortcuts
 
-	* src/pitivi-projectsettings.c (pitivi_projectsettings_copy): protection against NULL copying
+2004-12-10 00:34  casaxno
 
-	* src/pitivi-settings.c (pitivi_settings_scan_registry): function to scan the GstRegistry for containers/codecs/parsers and fill the PitiviSettings
-	(pitivi_settings_load_from_file, pitivi_settings_save_to_file): Functions to load/save PitiviSettings from/to file
+	* src/pitivi-sourcelistwindow.h: pixmap sourcelist
 
-2004-06-26    <bilboed@localhost>
+2004-12-10 00:31  casaxno
 
-	* src/pitivi-projectsettings.c (pitivi_projectsettings_copy): function to make copies of PitiviProjectSettings
+	* src/: pitivi-menu.c, pitivi-menu.h, pitivi-sourcelistwindow.c,
+	  pitivi-splashscreenwindow.c, pitivi-timelinewindow.c: shortcuts
 
-	* src/pitivi-timelinewindow.c: Activated 'Save' and 'SaveAs' menuitems
+2004-12-09 21:09  casaxno
 
-	* src/pitivi-project.h (struct _PitiviProject): added filename property
+	* src/: Makefile.am, pitivi-progressbar.c,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer-zooming.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi.h: utf8
 
-	* configure.ac: Added check for libxml-2.0
+2004-12-09 21:09  raph_tv
 
-	* src/pitivi-project.c (pitivi_project_new_from_file): New function to create a PitiviProject from a file
-	(pitivi_project_save_to_file): Function to save a project to file
+	* src/pitivi-lplayerwindow.c: plus d'arret avec alsa, un message
 
-	* src/pitivi-toolboxwindow.c (pitivi_callb_toolbox_fileopen_project): Added File chooser for opening a file
+2004-12-09 20:58  nemoglobine
 
-	* src/pitivi-settingswindow.c: 
-	* src/pitivi-settingswindow.h: Created PitiviSettingsWindow, a PitiviWindows
+	* src/: pitivi-effectswindowproperties.c, pitivi-settings.c,
+	  pitivi-settings.h, pitivi-settingswindow.c: new struct for Prop
 
-	* src/pitivi-projectsettingswindow.c: 
-	* src/pitivi-projectsettingswindow.h: Created PitiviProjectSettingsWindow, a PitiviProjectWindows
-	
+2004-12-09 16:18  cracoucas42
 
-2004-06-26    <bilboed@rider.bilboed.homelinux.org>
+	* src/: pitivi-menu-actions.c, pitivi-newprojectwindow.c,
+	  pitivi-timelinewindow.c, pitivi.h: Ajout de l'affichage de la box
+	  de conf des codecs lors de la creation d un nouveau projet
 
-	* src/pitivi-timelinewindow.c (pitivi_timelinewindow_get_type):
-	* src/pitivi-sourcelistwindow.c (pitivi_sourcelistwindow_get_type): set the father class to PITIVI_PROJECTWINDOWS_TYPE
-		
-	* src/pitivi-viewercontroller.c: 
-	* src/pitivi-viewercontroller.h: Converted PitiviViewerController to derivate of PitiviWindows
+2004-12-08 19:02  bilboed
+
+	* gnl/: gnlcomposition.c, gnlsource.c, gnltimeline.c: better debug,
+	  faster source handling
+
+2004-12-07 14:19  bilboed
+
+	* pitivi.desktop: converted pitivi.desktop from ISO-8859-1 to UTF-8
+
+2004-12-07 11:47  bilboed
+
+	* gnl/: gnlcomposition.c, gnltimeline.c: proper unlinking of pads
+	  before re-using them
+
+2004-12-06 20:59  bilboed
+
+	* src/: pitivi-sourcefile.c, pitivi-sourcefilebin.c,
+	  pitivi-sourcefilebin.h: and we now have RGB effects
+
+2004-12-06 18:24  bilboed
+
+	* src/: pitivi-project.c, pitivi-viewerwindow.c: Better naming of
+	  output audio/video queue, simpler handling of global pipeline
+
+2004-12-06 18:23  bilboed
+
+	* conf/Makefile.am: Correct directory for configuration file
+
+2004-12-06 18:18  bilboed
+
+	* gnl/: gnlcomposition.c, gnlmarshal.c, gnloperation.c,
+	  gnltimeline.c: corrections for operations (don't use the friggin'
+	  threads\!)
+
+2004-12-06 14:39  bilboed
+
+	* src/pitivi-file-utils.c: Correct paths for pixmaps
+
+2004-12-06 14:03  bilboed
+
+	* pitivi.desktop: accents en francais
+
+2004-12-06 13:57  bilboed
+
+	* pitivi.desktop: emplacement de l'icone
+
+2004-12-06 11:09  bilboed
+
+	* pitivi.desktop: works better with the file :)
+
+2004-12-05 21:49  casaxno
+
+	* conf/: .pitivi, Makefile.am, pitivi: desktop gnome
+
+2004-12-05 21:35  casaxno
+
+	* Makefile.am, pixmaps/Makefile.am, src/pitivi-file-utils.c,
+	  conf/Makefile.am: icon desktop
+
+2004-12-03 07:52  casaxno
+
+	* src/: Makefile.am, pitivi-newprojectwindow.c,
+	  pitivi-newprojectwindow.h: make install
+
+2004-12-03 00:57  bilboed
+
+	* gnl/Makefile.am: removed GNL_LIBS from linking command... doesn't
+	  exist yet :)
+
+2004-12-03 00:53  bilboed
+
+	* Makefile.am, configure.ac, gnl/Makefile.am, gnl/gnl.c: modified
+	  file in order have installable configure.ac/Makefile.am
+
+2004-12-03 00:17  bilboed
+
+	* docs/.pitivi: .pitivi moved to conf/.pitivi
+
+2004-12-03 00:13  casaxno
+
+	* Makefile.am, conf/.pitivi, conf/Makefile.am: .pitivi
+
+2004-12-03 00:07  casaxno
+
+	* Makefile.am, configure.ac, src/Makefile.am: makefile
+
+2004-12-02 23:25  casaxno
+
+	* src/: pitivi-file-utils.c~, pitivi-file-utils.h~: delete
+
+2004-12-02 23:04  casaxno
+
+	* src/Makefile.am, src/pitivi-effectswindow.c,
+	  src/pitivi-effectswindow.h, src/pitivi-file-utils.c,
+	  src/pitivi-file-utils.c~, src/pitivi-file-utils.h,
+	  src/pitivi-file-utils.h~, src/pitivi-menu-actions.c,
+	  src/pitivi-sourcelistwindow.c, src/pitivi-splashscreenwindow.c,
+	  src/pitivi-stockicons.c, src/pitivi-timelinewindow.c,
+	  src/pitivi-timelinewindow.h, src/pitivi-viewerwindow.c,
+	  src/pitivi-viewerwindow.h, src/pitivi.h, Makefile.am,
+	  gnl/Makefile.am, pixmaps/Makefile.am,
+	  pixmaps/pitivi-newproject.png, pixmaps/pitivi-tools.png,
+	  ui/Makefile.am, ui/pitivi-timeline.xml: makefile
+
+2004-12-02 20:50  bilboed
+
+	* src/: pitivi-newprojectwindow.c, pitivi-sourcefile.c,
+	  pitivi-viewerwindow.c: puts the timeline at GST_STATE_READY when
+	  stopping it, instead of GST_STATE_PAUSED
+
+2004-12-02 18:43  bilboed
+
+	* gnl/: gnlcomposition.c, gnlcomposition.h, gnlsource.c: don't make
+	  elements we'll still be using do PAUSED->READY->PAUSED
+
+2004-12-02 17:49  bilboed
+
+	* src/pitivi-sourcelistwindow.c: removes a source not used without
+	  asking user
+
+2004-12-02 13:28  raph_tv
+
+	* src/pitivi-effectswindowproperties.c: juste apply en plus
+
+2004-12-02 12:41  casaxno
+
+	* pitivi.spec: spec
+
+2004-12-02 07:10  casaxno
+
+	* src/: pitivi-progressbar.c, pitivi-progressbar.h,
+	  pitivi-sourcefile.c, pitivi-sourcelistwindow.c: sourcelistwindow
+
+2004-12-01 16:07  casaxno
+
+	* src/: pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer-resizing.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi.h: resize
+
+2004-12-01 00:04  casaxno
+
+	* Makefile.am, pixmaps/Makefile.am, ui/Makefile.am: Makefile
+
+2004-11-30 23:34  casaxno
+
+	* pixmaps/Makefile.am: Makefile
+
+2004-11-30 22:56  casaxno
+
+	* src/: pitivi-progressbar.c, pitivi-sourcelistwindow.c: -
+
+2004-11-30 19:18  bilboed
+
+	* src/: pitivi-sourcefile.c, pitivi-sourcefilebin.c: removing debug
+	  messages
+
+2004-11-30 19:09  bilboed
+
+	* gnl/: gnlcomposition.c, gnlsource.c: Better handling of
+	  add/remove objects in GnlComposition
+
+2004-11-30 16:33  nemoglobine
+
+	* src/: pitivi-effectswindowproperties.c,
+	  pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settings.c, pitivi-settings.h, pitivi-settingswindow.c:
+	  properties update aff type not in combobox
+
+2004-11-30 16:26  bilboed
+
+	* src/: Makefile.am, pitivi-sourcefile.c, pitivi-sourcefile.h,
+	  pitivi-sourcefilebin.c, pitivi-sourcefilebin.h, pitivi-types.h,
+	  pitivi-viewerwindow.c: Better PitiviSourceFile bins handling,
+	  less memory, less cpu usage
+
+2004-11-30 16:24  bilboed
+
+	* configure.ac: Updated required gstreamer version to 0.8.6 (in
+	  order to have pngenc patch)
+
+2004-11-30 16:22  bilboed
+
+	* gnl/: gnlcomposition.c, gnlsource.c: Set non-active objects in a
+	  composition to GST_STATE_READY
+
+2004-11-30 16:03  casaxno
+
+	* src/: Makefile.am, pitivi-drawing.c, pitivi-drawing.h,
+	  pitivi-progressbar.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer-moving.c,
+	  pitivi-timelinecellrenderer-resizing.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h: resizing
+
+2004-11-29 19:17  raph_tv
+
+	* src/: pitivi-effectswindowproperties.c, pitivi-lplayerwindow.c,
+	  pitivi-timelinemedia.c: options setting/trans OK CANCEL
+
+2004-11-29 02:29  bilboed
+
+	* src/pitivi-progressbar.c: text in english
+
+2004-11-28 14:25  bilboed
+
+	* src/pitivi-mainapp.c, ui/styles.rc: Removed the styles
+
+2004-11-28 13:42  casaxno
+
+	* ui/styles.rc: style
+
+2004-11-28 13:38  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c: track mistake
+
+2004-11-28 13:30  bilboed
+
+	* docs/.pitivi: OGG is not VORBIS
+
+2004-11-28 13:27  bilboed
+
+	* src/pitivi-menu-actions.c: License is GNU GPL
+
+2004-11-28 12:36  bilboed
+
+	* src/: pitivi-progressbar.c~, pitivi-progressbar.h~: remove backup
+	  files
+
+2004-11-28 11:58  casaxno
+
+	* src/: pitivi-checkbox.c, pitivi-controller.c,
+	  pitivi-effectswindow.c, pitivi-effectswindowproperties.c,
+	  pitivi-lplayerwindow.c, pitivi-mainapp.c,
+	  pitivi-mediatrackinfo.c, pitivi-menu.c,
+	  pitivi-newprojectwindow.c, pitivi-progressbar.c,
+	  pitivi-project.c, pitivi-projectsettings.c,
+	  pitivi-projectsettingswindow.c, pitivi-projectsourcelist.c,
+	  pitivi-projectwindows.c, pitivi-ruler.c, pitivi-settings.c,
+	  pitivi-settingswindow.c, pitivi-sourcefile.c,
+	  pitivi-sourcelistwindow.c, pitivi-splashscreenwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c, pitivi-toolbox.c, pitivi-viewerwindow.c:
+	  get-set
+
+2004-11-28 10:28  casaxno
+
+	* src/: Makefile.am, pitivi-progressbar.c, pitivi-progressbar.c~,
+	  pitivi-progressbar.h, pitivi-progressbar.h~,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c: progress bar
+
+2004-11-27 18:55  bilboed
+
+	* docs/.pitivi, src/pitivi-newprojectwindow.c,
+	  src/pitivi-projectsettings.c, src/pitivi-projectsettings.h,
+	  src/pitivi-ruler.c, src/pitivi-sourcefile.c,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinemedia.c,
+	  src/pitivi-timelinewindow.c: video framerate in caps is a double,
+	  did the modifications to the related code. Use new .pitivi
+
+2004-11-27 10:43  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinewindow.c, pitivi-units.h: resizing part two
+
+2004-11-27 04:11  casaxno
+
+	* ui/styles.rc: style
+
+2004-11-26 18:09  bilboed
+
+	* gnl/: gnlcomposition.c, gnloperation.c, gnlsource.c: gnonlin
+	  cleanup, added change_state to GnlOperation
+
+2004-11-26 16:16  bilboed
+
+	* gnl/gnlcomposition.c, gnl/gnltimeline.c, src/pitivi-debug.c,
+	  src/pitivi-menu-actions.c, src/pitivi-sourcefile.c,
+	  src/pitivi-timelinewindow.c, src/pitivi-timelinewindow.h,
+	  src/pitivi-viewerwindow.c: improved gnonlin state-change
+	  handling, Spellcheking (About), More PitiviSourceFile hacks
+
+2004-11-26 12:54  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.h:
+	  cells
+
+2004-11-26 12:27  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinewindow.c: resize light version
+
+2004-11-26 11:09  bilboed
+
+	* src/: pitivi-sourcefile.c, pitivi-sourcelistwindow.c: Corrections
+	  for handling non-supported files
+
+2004-11-26 05:36  casaxno
+
+	* ui/pitivi-timeline.xml: menu unused
+
+2004-11-25 19:11  cracoucas42
+
+	* src/: pitivi-menu-actions.c, pitivi-menu-actions.h,
+	  pitivi-timelinewindow.c: Ajout de raccourcis claviers pour le
+	  menu file et help
+
+2004-11-25 19:05  bilboed
+
+	* src/: pitivi-sourcefile.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c: Effects/transitions have a real gnonlin
+	  time now
+
+2004-11-25 17:46  bilboed
+
+	* src/: pitivi-effectswindow.c, pitivi-sourcefile.c,
+	  pitivi-sourcefile.h: Gestion des transitions dans les
+	  PitiviSourceFile
+
+2004-11-25 16:29  bilboed
+
+	* docs/.pitivi, src/pitivi-newprojectwindow.c,
+	  src/pitivi-projectsettings.c, src/pitivi-projectsettings.h,
+	  src/pitivi-settings.c, src/pitivi-sourcefile.c: Added container
+	  and audio depth preferences to PitiviProjectSettings. Updated
+	  NewProjectWindow, ProjectSettings and PitiviSettings accordingly.
+	  Load/Save file/preferences now works
+
+2004-11-25 16:19  casaxno
+
+	* src/: pitivi-thumbs.c, pitivi-thumbs.h: thumbs.c .h removed
+
+2004-11-25 15:44  casaxno
+
+	* src/: Makefile.am, pitivi-sourcefile.c, pitivi-sourcefile.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c: thumbs sourcelist
+
+2004-11-25 15:30  cracoucas42
+
+	* pixmaps/pitivi-logo-small.png, pixmaps/pitivi-logo-splash.png,
+	  src/pitivi-cursorbits.h, src/pitivi-menu-actions.c,
+	  src/pitivi-newprojectwindow.c, src/pitivi-splashscreenwindow.c:
+	  Ajout de la fenetre About dans le menu Help...
+
+2004-11-25 14:44  casaxno
+
+	* src/: pitivi-sourcefile.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h: resolving bug on
+	  moving widget
+
+2004-11-25 12:39  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-settingswindow.c: REPLACE BUGS
+
+2004-11-25 11:17  cracoucas42
+
+	* src/pitivi-timelinewindow.c: Plus de segfault si on sauve un
+	  project qui n est pas cree...
+
+2004-11-25 10:37  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-viewerwindow.c: moving widget bug
+	  resolved
+
+2004-11-25 00:11  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-sourcelistwindow.c:
+	  removed unused menu items in PitiviSourceListWindow
+
+2004-11-24 23:14  bilboed
+
+	* gnl/gnlcomposition.c, gnl/gnlobject.c, gnl/gnlsource.c,
+	  gnl/gnltimeline.c, src/pitivi-mainapp.c, src/pitivi-project.c,
+	  src/pitivi-projectsourcelist.c, src/pitivi-settings.c,
+	  src/pitivi-sourcefile.c, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinemedia.c,
+	  src/pitivi-viewerwindow.c: corrected : gnonlin buffering, state
+	  change and scheduling problems, Thumbnails generation/handling
+	  with large files, better audio/video detection, g_printf cleanup
+
+2004-11-24 15:47  bilboed
+
+	* gnl/gnl.h, src/pitivi-lplayerwindow.c, src/pitivi-ruler.c,
+	  src/pitivi-sourcefile.c: correction pour athlon64
+
+2004-11-24 09:34  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-sourcefile.c, pitivi-sourcefile.h,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c: first
+	  version multiple thumnails please wait for cut ... thanks
+
+2004-11-24 04:49  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-splashscreenwindow.c: position and
+	  size
+
+2004-11-24 03:37  casaxno
+
+	* src/: pitivi-ruler.c, pitivi-ruler.h, pitivi-timelinewindow.c,
+	  pitivi-viewerwindow.c: ruler last
+
+2004-11-24 01:19  casaxno
+
+	* src/: pitivi-ruler.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-viewerwindow.c: ruler first
+
+2004-11-23 23:08  casaxno
+
+	* src/: pitivi-ruler.c, pitivi-ruler.h, pitivi-timelinewindow.c:
+	  indicator
+
+2004-11-23 16:00  bilboed
+
+	* src/: pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-viewerwindow.c: Update time in timelinewindow
+
+2004-11-23 15:25  bilboed
+
+	* src/pitivi-viewerwindow.c: avoid EOS in global pipeline,
+	  otherwise it segfaults
+
+2004-11-22 19:14  bilboed
+
+	* docs/gnl/gnonlin-sections.txt, docs/gnl/tmpl/gnl.sgml, gnl/gnl.h,
+	  gnl/gnlcomposition.c, gnl/gnlobject.c, gnl/gnlsource.c: Corrected
+	  gnl_object_do_seek, added GST_M_S_M() debug function
+
+2004-11-22 19:13  bilboed
+
+	* src/: pitivi-debug.c, pitivi-gstelementsettings.c,
+	  pitivi-sourcefile.c, pitivi-timelinecellrenderer.c,
+	  pitivi-viewerwindow.c: misc bug corrections in PitiviSourceFile
+	  and PitiviTimelineMedia. Moved idle to probe in
+	  PitiviViewerWindow
+
+2004-11-22 15:29  cracoucas42
+
+	* src/: pitivi-effectswindow.h, pitivi-mainapp.c,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h,
+	  pitivi-viewerwindow.c, pitivi-viewerwindow.h: Correction sur le
+	  replacement des fenetres apres avoir ete cache...
+
+2004-11-22 11:50  cracoucas42
+
+	* pixmaps/pitivi-logo3.png: [no log message]
+
+2004-11-22 11:38  cracoucas42
+
+	* src/pitivi-mainapp.c: sourceListWindow, viewerWindow,
+	  effectWindow conservent leurs places apres un hide / show
+
+2004-11-20 19:13  bilboed
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcefile.c, pitivi-sourcefile.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinemedia.c: Multiple video
+	  thumbnails handling in PitiviSourceFile + little fixes
+
+2004-11-20 18:41  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settings.c, pitivi-settingswindow.c: UPDATE GST SETTINGS
+
+2004-11-20 16:58  casaxno
+
+	* src/: pitivi-effectswindowproperties.c, pitivi-timelinemedia.c:
+	  effects settings window
+
+2004-11-20 16:23  casaxno
+
+	* src/: Makefile.am, pitivi-effectswindowproperties.c,
+	  pitivi-effectswindowproperties.h, pitivi-sourceitem.h,
+	  pitivi-timelinemedia.c: effects settings
+
+2004-11-20 11:41  cracoucas42
+
+	* src/: pitivi-effectswindow.h, pitivi-newprojectwindow.h,
+	  pitivi-sourcelistwindow.h, pitivi-timelinewindow.h,
+	  pitivi-viewerwindow.h: Nouveau logo sur la barre des fenetres...
+	  a paufiner...
+
+2004-11-20 08:48  casaxno
+
+	* src/pitivi-controller.c: ###########
+
+2004-11-20 08:32  casaxno
+
+	* src/: pitivi-controller.c, pitivi-effectswindow.c,
+	  pitivi-mainapp.c, pitivi-ruler.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c, pitivi-windows.c, pitivi-windows.h:
+	  controller
+
+2004-11-20 05:08  casaxno
+
+	* ui/styles.rc: styles
+
+2004-11-19 20:26  raph_tv
+
+	* src/pitivi-lplayerwindow.c: moins son sur lplayer
+
+2004-11-19 19:44  nemoglobine
+
+	* src/pitivi-settings.c: UPDATE GST SETTINGS
+
+2004-11-19 19:42  bilboed
+
+	* gnl/gnlcomposition.c, gnl/gnloperation.c, gnl/gnloperation.h,
+	  gnl/gnlsource.c, gnl/gnltimeline.c,
+	  src/pitivi-timelinecellrenderer.c,
+	  src/pitivi-timelinecellrenderer.h, src/pitivi-timelinemedia.c,
+	  ui/styles.rc: liberation correct des bins du PitiviSourceFile
+
+2004-11-19 17:17  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-settings.h: UPDATE GST SETTINGS
+
+2004-11-19 16:59  cracoucas42
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-newprojectwindow.c, pitivi-newprojectwindow.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h,
+	  pitivi-timelinewindow.h, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h: Ajout de l'icone pitivi dans les fenetres
+	  de l'application
+
+2004-11-19 15:57  casaxno
+
+	* ui/styles.rc: style.rc
+
+2004-11-19 12:53  casaxno
+
+	* src/: pitivi-timelinemedia.c, pitivi-timelinemedia.h: ###########
+
+2004-11-19 09:50  casaxno
+
+	* src/pitivi-timelinemedia.c: ##############
+
+2004-11-19 09:47  casaxno
+
+	* src/pitivi-timelinecellrenderer.c: ##############
+
+2004-11-19 09:38  casaxno
+
+	* src/pitivi-cursor.h, src/pitivi-effectswindow.c,
+	  src/pitivi-effectswindow.h, src/pitivi-mainapp.c,
+	  src/pitivi-ruler.c, src/pitivi-ruler.h,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinemedia.c,
+	  src/pitivi-timelinemedia.h, src/pitivi-timelinewindow.c,
+	  src/pitivi-toolbox.c, ui/Makefile.am: resizing first version
+
+2004-11-18 18:44  bilboed
+
+	* gnl/gnlcomposition.c, gnl/gnlobject.c, gnl/gnlsource.c,
+	  gnl/gnltimeline.c, src/pitivi-sourcefile.c,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinemedia.c,
+	  src/pitivi-timelinewindow.c, src/pitivi-toolbox.c:
+	  warning/critical cleanup, gnonlin dispose/finalize checked
+
+2004-11-18 18:22  cracoucas42
+
+	* src/: pitivi-menu.c, pitivi-menu.h, pitivi-newprojectwindow.c,
+	  pitivi-project.c, pitivi-projectwindows.c,
+	  pitivi-projectwindows.h, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c, pitivi-toolbox.c: Ajout de commentaires
+	  dans les fichiers toolbox.c, sourcelistwindow.c, sourcefile.c,
+	  new_projectwindow.c, projectwindow.c, timelinecellrenderer.c,
+	  timelinemedia.c et menu.c
+
+2004-11-18 17:54  raph_tv
+
+	* src/pitivi-timelinemedia.c: Properties VIDEO/AUDIO or VIDEO or
+	  AUDIO for media
+
+2004-11-18 15:20  cracoucas42
+
+	* src/: pitivi-cursor.h, pitivi-mainapp.c,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-toolbox.c: Ajout de commentaires dans les fichiers
+	  mainapp.c et timelinewindow.c, ajustement de la position des
+	  icones
+
+2004-11-18 14:44  bilboed
+
+	* src/main.c: ajout de gnl/gnl.h
+
+2004-11-18 11:13  bilboed
+
+	* gnl/gnlcomposition.c: correction bug
+	  gnl_composition_schedule_entrie
+
+2004-11-17 02:35  bilboed
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c,
+	  pitivi-thumbs.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-viewerwindow.c: correction gint64
+	  -> signed long long int pour portabilite athlon64
+
+2004-11-17 02:06  bilboed
+
+	* configure.ac, gnl/Makefile.am, gnl/gnl.h, gnl/gnlcomposition.c,
+	  gnl/gnlcomposition.h, gnl/gnlgroup.h, gnl/gnlobject.c,
+	  gnl/gnlobject.h, gnl/gnloperation.h, gnl/gnlsource.h,
+	  gnl/gnltimeline.h, gnl/gnltypes.h, src/Makefile.am,
+	  src/pitivi-checkbox.c, src/pitivi-checkbox.h,
+	  src/pitivi-codecconfwindow.c, src/pitivi-codecconfwindow.h,
+	  src/pitivi-controller.c, src/pitivi-controller.h,
+	  src/pitivi-cursor.h, src/pitivi-cursorbits.h, src/pitivi-debug.c,
+	  src/pitivi-debug.h, src/pitivi-drawing.h,
+	  src/pitivi-effectswindow.c, src/pitivi-effectswindow.h,
+	  src/pitivi-gstelementsettings.c, src/pitivi-gstelementsettings.h,
+	  src/pitivi-lplayerwindow.c, src/pitivi-lplayerwindow.h,
+	  src/pitivi-mainapp.c, src/pitivi-mainapp.h,
+	  src/pitivi-mediatrackinfo.c, src/pitivi-mediatrackinfo.h,
+	  src/pitivi-menu-actions.h, src/pitivi-menu.h,
+	  src/pitivi-newprojectwindow.c, src/pitivi-newprojectwindow.h,
+	  src/pitivi-project.c, src/pitivi-project.h,
+	  src/pitivi-projectsettings.c, src/pitivi-projectsettings.h,
+	  src/pitivi-projectsettingswindow.c,
+	  src/pitivi-projectsettingswindow.h,
+	  src/pitivi-projectsourcelist.c, src/pitivi-projectsourcelist.h,
+	  src/pitivi-projectwindows.c, src/pitivi-projectwindows.h,
+	  src/pitivi-ruler.c, src/pitivi-ruler.h, src/pitivi-settings.c,
+	  src/pitivi-settings.h, src/pitivi-settingswindow.c,
+	  src/pitivi-settingswindow.h, src/pitivi-sourcefile.c,
+	  src/pitivi-sourcefile.h, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-sourcelistwindow.h, src/pitivi-splashscreenwindow.c,
+	  src/pitivi-splashscreenwindow.h, src/pitivi-thumbs.c,
+	  src/pitivi-thumbs.h, src/pitivi-timelinecellrenderer.c,
+	  src/pitivi-timelinecellrenderer.h, src/pitivi-timelinemedia.c,
+	  src/pitivi-timelinemedia.h, src/pitivi-timelinewindow.c,
+	  src/pitivi-timelinewindow.h, src/pitivi-toolbox.c,
+	  src/pitivi-toolbox.h, src/pitivi-types.h,
+	  src/pitivi-viewerwindow.c, src/pitivi-viewerwindow.h,
+	  src/pitivi-windows.c, src/pitivi-windows.h: Ajout -Wall -Werror ,
+	  correction des bugs/oublis/idioties associes
+
+2004-11-16 16:40  casaxno
+
+	* src/pitivi-mainapp.c: bugs
+
+2004-11-16 16:35  casaxno
+
+	* src/: pitivi-controller.c, pitivi-mainapp.c,
+	  pitivi-timelinewindow.c: bugs
+
+2004-11-16 16:07  casaxno
+
+	* src/pitivi-mainapp.c: little bug
+
+2004-11-16 15:58  casaxno
+
+	* gnl/gnlmarshal.c, src/pitivi-mainapp.c,
+	  src/pitivi-timelinewindow.c, ui/pitivi-timeline.xml:
+	  little bug
+
+2004-11-16 15:10  casaxno
+
+	* src/: pitivi-controller.c, pitivi-effectswindow.c,
+	  pitivi-mainapp.c, pitivi-mainapp.h, pitivi-menu-actions.c,
+	  pitivi-menu-actions.h, pitivi-ruler.c, pitivi-ruler.h,
+	  pitivi-sourcefile.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-viewerwindow.c: minimize
+
+2004-11-15 22:56  bilboed
+
+	* configure.ac, docs/Makefile.am, docs/gnl/gnonlin-sections.txt,
+	  docs/gnl/tmpl/gnl.sgml, gnl/gnl.c, gnl/gnl.h,
+	  gnl/gnlcomposition.c, gnl/gnlcomposition.h, gnl/gnlgroup.h,
+	  gnl/gnlobject.c, gnl/gnlobject.h, gnl/gnloperation.h,
+	  gnl/gnlsource.c, gnl/gnlsource.h, gnl/gnltimeline.c,
+	  gnl/gnltimeline.h, src/pitivi-debug.c,
+	  src/pitivi-effectswindow.c, src/pitivi-effectswindow.h,
+	  src/pitivi-project.h, src/pitivi-projectsourcelist.c,
+	  src/pitivi-projectsourcelist.h, src/pitivi-sourcefile.c,
+	  src/pitivi-sourcefile.h, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-thumbs.c, src/pitivi-timelinecellrenderer.c,
+	  src/pitivi-timelinemedia.c, src/pitivi-viewerwindow.c: Conversion
+	  PitiviSourceFile a decodebin, modifications des autres classes,
+	  correction dnd
+
+2004-11-15 22:27  raph_tv
+
+	* src/pitivi-lplayerwindow.c: lplay
+
+2004-11-13 17:22  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settingswindow.c: UPDATE GST SETTINGS
+
+2004-11-12 14:04  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-timelinecellrenderer.c:
+	  addiotionals features not necessary needed TO IMPLEMENT and to
+	  TEST THE EFFECTS with gnonlin
+
+2004-11-12 13:44  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-timelinecellrenderer.c:
+	  effetcs
+
+2004-11-12 11:50  cracoucas42
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-mainapp.c, pitivi-mainapp.h, pitivi-newprojectwindow.c,
+	  pitivi-project.c, pitivi-stockicons.c, pitivi-stockicons.h,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h: Ajout de
+	  commentaires dans les fichiers mainapp.c et project.c
+
+2004-11-12 10:42  cracoucas42
+
+	* src/: pitivi-cursor.h, pitivi-timelinewindow.c, pitivi-toolbox.c:
+	  Ajout du pointer de resize de la timeline lorsqu on clique sur le
+	  resize de la menu bar, ajout popup lors de la creation de projets
+	  successifs (a finir)
+
+2004-11-11 21:03  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c: priority works until to find better
+	  solution
+
+2004-11-11 19:04  cracoucas42
+
+	* pixmaps/pitivi-ddl_resize.png, pixmaps/pitivi-ddr_resize.png,
+	  pixmaps/pitivi-dtl_resize.png, pixmaps/pitivi-dtr_resize.png,
+	  pixmaps/pitivi-info.png, pixmaps/pitivi-resize.png,
+	  pixmaps/pitivi-stock-h-resize.png,
+	  pixmaps/pitivi-stock-v-resize.png, src/pitivi-effectswindow.c,
+	  src/pitivi-mainapp.c, src/pitivi-menu-actions.c,
+	  src/pitivi-newprojectwindow.c, src/pitivi-stockicons.c,
+	  src/pitivi-stockicons.h, src/pitivi-timelinewindow.c,
+	  src/pitivi-toolbox.c: Ajout d'icones et popup de nouveau projet
+
+2004-11-11 18:00  nemoglobine
+
+	* src/pitivi-settingswindow.c: UPDATE GST SETTINGS
+
+2004-11-11 17:47  bilboed
+
+	* src/: pitivi-checkbox.h, pitivi-lplayerwindow.c,
+	  pitivi-mainapp.c, pitivi-mainapp.h, pitivi-project.h,
+	  pitivi-sourcefile.h, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-viewerwindow.c: corrections
+	  player,viewer,cut,gnonlin
+
+2004-11-11 17:36  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settingswindow.c: UPDATE GST SETTINGS
+
+2004-11-11 15:19  bilboed
+
+	* docs/Makefile.am: oubli Makefile
+
+2004-11-11 14:31  raph_tv
+
+	* src/pitivi-lplayerwindow.c: UPDATE LIGHT PLAYER
+
+2004-11-10 18:38  bilboed
+
+	* docs/gnl/Makefile.in: removed useless Makefile.in
+
+2004-11-10 18:30  bilboed
+
+	* Makefile.am, configure.ac, docs/gnl/Makefile.am,
+	  docs/gnl/Makefile.in, docs/gnl/gnonlin-docs.sgml,
+	  docs/gnl/gnonlin-sections.txt, docs/gnl/gnonlin.types,
+	  docs/gnl/tmpl/gnl.sgml, docs/gnl/tmpl/gnlcomposition.sgml,
+	  docs/gnl/tmpl/gnlgroup.sgml, docs/gnl/tmpl/gnlmarshal.sgml,
+	  docs/gnl/tmpl/gnlobject.sgml, docs/gnl/tmpl/gnloperation.sgml,
+	  docs/gnl/tmpl/gnlsource.sgml, docs/gnl/tmpl/gnltimeline.sgml,
+	  docs/gnl/tmpl/gnlversion.sgml, docs/gnl/tmpl/gnonlin-unused.sgml,
+	  gnl/gnlcomposition.c, gnl/gnlcomposition.h, gnl/gnlobject.c,
+	  gnl/gnloperation.c, gnl/gnltimeline.c: Added gnonlin gtk-doc
+	  documentation
+
+2004-11-09 21:28  bilboed
+
+	* gnl/gnlmarshal.list: piti oubli
+
+2004-11-09 16:29  bilboed
+
+	* src/pitivi-sourcelistwindow.c: get rid of useless functions
+
+2004-11-09 16:20  bilboed
+
+	* docs/.pitivi: adding pitivi test file
+
+2004-11-09 16:09  bilboed
+
+	* Makefile.am, configure.ac, gnl/Makefile.am, gnl/gnl.c, gnl/gnl.h,
+	  gnl/gnlcomposition.c, gnl/gnlcomposition.h, gnl/gnlelements.c,
+	  gnl/gnlgroup.c, gnl/gnlgroup.h, gnl/gnlmarshal.c,
+	  gnl/gnlmarshal.h, gnl/gnlobject.c, gnl/gnlobject.h,
+	  gnl/gnloperation.c, gnl/gnloperation.h, gnl/gnlsource.c,
+	  gnl/gnlsource.h, gnl/gnltimeline.c, gnl/gnltimeline.h,
+	  gnl/gnlversion.h: deplacement gnonlin->gnl
+
+2004-11-09 04:21  casaxno
+
+	* src/pitivi-effectswindow.c:
+	  hand drag
+
+2004-11-09 04:11  casaxno
+
+	* src/: Makefile.am, pitivi-effectswindow.c,
+	  pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-viewerwindow.c,
+	  pitivi-sourcefile.c, pitivi-sourcefile.h, pitivi-thumbs.c~,
+	  pitivi-thumbs.h~:
+	  PitiviSourceFile Object
+
+2004-11-06 21:52  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-timelinecellrenderer.c:
+	  deleting pitivi-toolboxwindow.c
+
+2004-11-06 21:48  casaxno
+
+	* src/: Makefile.am, pitivi-toolboxwindow.c,
+	  pitivi-toolboxwindow.h:
+	  deleting pitivi-toolboxwindow
+
+2004-11-06 21:43  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  version
+
+2004-11-06 21:23  casaxno
+
+	* src/Makefile.am:
+	  add pitivi-thumbs.c to Makefile
+
+2004-11-06 21:19  casaxno
+
+	* src/: Makefile.am, pitivi-ruler.c, pitivi-sourcelistwindow.c,
+	  pitivi-thumbs.c, pitivi-thumbs.c~, pitivi-thumbs.h,
+	  pitivi-thumbs.h~, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-videothumbnails.c:
+	  thumbnail
+
+2004-11-06 18:39  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-effectswindow.c, pitivi-ruler.c,
+	  pitivi-ruler.h, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c:
+	  pixmap caching
+
+2004-11-04 17:25  cracoucas42
+
+	* pixmaps/pitivi_BPWS_effect.png, pixmaps/pitivi_IIr_effect.png,
+	  pixmaps/pitivi_LPWS_effect.png, pixmaps/pitivi_RevTV_effect.png,
+	  pixmaps/pitivi_adjust_effect.png,
+	  pixmaps/pitivi_agingTV_effect.png,
+	  pixmaps/pitivi_audio_rate_effect.png,
+	  pixmaps/pitivi_diceTV_effect.png,
+	  pixmaps/pitivi_edgeTV_effect.png,
+	  pixmaps/pitivi_envelope_volume_effect.png,
+	  pixmaps/pitivi_pass_effect.png,
+	  pixmaps/pitivi_quarkTV_effect.png,
+	  pixmaps/pitivi_quark_effect.png,
+	  pixmaps/pitivi_shagadelicTV_effect.png,
+	  pixmaps/pitivi_speed_effect.png,
+	  pixmaps/pitivi_stereo_effect.png,
+	  pixmaps/pitivi_synthetiser_effect.png,
+	  pixmaps/pitivi_vertigoTV_effect.png,
+	  pixmaps/pitivi_volume_effect.png,
+	  pixmaps/pitivi_warpTV_effect.png, src/pitivi-effects_cat.h,
+	  src/pitivi-effectswindow.c, src/pitivi-stockicons.c,
+	  src/pitivi-stockicons.h: Ajout des icones pour les effets audios
+
+2004-11-02 19:20  bilboed
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h: graphical cut synchronised with gnonlin
+
+2004-11-01 18:00  bilboed
+
+	* src/: pitivi-project.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h: seek fonctionne un peu mieux...
+
+2004-11-01 16:43  bilboed
+
+	* src/pitivi-mainapp.c: I hate weird macros...
+
+2004-11-01 07:03  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-viewerwindow.c: UPDATE SETTINGS
+
+2004-10-31 14:01  bilboed
+
+	* src/pitivi-mainapp.c: timelinewindow->project est maintenant mis
+
+2004-10-31 12:11  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h: create a
+	  separete audio and video pipeline
+
+2004-10-31 04:22  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settingswindow.c, pitivi-settingswindow.h: UPDATE SETTINGS
+
+2004-10-30 20:21  bilboed
+
+	* src/pitivi-viewerwindow.c: more work on gnonlin
+
+2004-10-30 17:44  casaxno
+
+	* src/pitivi-timelinemedia.c: cut bug
+
+2004-10-30 16:53  casaxno
+
+	* src/: pitivi-lplayerwindow.c, pitivi-lplayerwindow.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-videothumbnails.c: [no log
+	  message]
+
+2004-10-30 14:06  casaxno
+
+	* src/: pitivi-controller.c, pitivi-effectswindow.c,
+	  pitivi-effectswindow.h, pitivi-mediatrackinfo.c, pitivi-ruler.c,
+	  pitivi-ruler.h, pitivi-sourcelistwindow.c, pitivi-stockicons.c,
+	  pitivi-stockicons.h, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c, pitivi-toolbox.c,
+	  pitivi-videothumbnails.c: [no log message]
+
+2004-10-29 19:36  bilboed
+
+	* src/: pitivi-videothumbnails.c, pitivi-viewerwindow.c:
+	  viewerwindow slider synchronised with timeline
+
+2004-10-29 16:16  bilboed
+
+	* pixmaps/bg.xpm: correction du bg.xpm
+
+2004-10-29 12:21  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  cell renderer
+
+2004-10-29 12:14  casaxno
+
+	* pixmaps/smpte-failed.png, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-sourcelistwindow.h, src/pitivi-timelinecellrenderer.c,
+	  src/pitivi-timelinemedia.c, src/pitivi-timelinewindow.c,
+	  src/pitivi-timelinewindow.h:
+	  smpte failed
+
+2004-10-29 11:54  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c:
+	  mods on effects
+
+2004-10-29 11:40  cracoucas42
+
+	* pixmaps/pitivi_alpha_color_effect.png,
+	  pixmaps/pitivi_alpha_effect.png,
+	  pixmaps/pitivi_balance_effect.png, pixmaps/pitivi_box_effect.png,
+	  pixmaps/pitivi_crop_effect.png,
+	  pixmaps/pitivi_deinterlace_effect.png,
+	  pixmaps/pitivi_flipper_effect.png,
+	  pixmaps/pitivi_frame_effect.png, pixmaps/pitivi_gamma_effect.png,
+	  pixmaps/pitivi_median_effect.png, pixmaps/pitivi_rate_effect.png,
+	  pixmaps/pitivi_scaler_effect.png,
+	  pixmaps/pitivi_smooth_effect.png, src/pitivi-effects_cat.h,
+	  src/pitivi-effectswindow.c, src/pitivi-effectswindow.h,
+	  src/pitivi-stockicons.c, src/pitivi-stockicons.h: Ajout des
+	  icones pour quelques effets de videos
+
+2004-10-29 03:57  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-lplayerwindow.c,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c:
+	  effects
+
+2004-10-29 01:38  casaxno
+
+	* src/: pitivi-mediatrackinfo.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c:
+	  modifications
+
+2004-10-29 00:27  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-videothumbnails.c:
+	  Updating thumbs
+
+2004-10-29 00:17  casaxno
+
+	* src/: Makefile.am, pitivi-controller.c, pitivi-controller.h,
+	  pitivi-drawing.c, pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-mainapp.c, pitivi-mediatrackinfo.c, pitivi-menu-actions.c,
+	  pitivi-project.c, pitivi-ruler.c, pitivi-ruler.h,
+	  pitivi-sourcelistwindow.c, pitivi-stockicons.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-trackenum.h,
+	  pitivi-videothumbnails.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h:
+	  last modifications
+
+2004-10-28 18:28  bilboed
+
+	* src/: pitivi-lplayerwindow.c, pitivi-sourcelistwindow.c:
+	  GnlComposition correct start/stop
+
+2004-10-28 13:15  nemoglobine
+
+	* src/pitivi-lplayerwindow.c: UPDATE PLAYER
+
+2004-10-28 13:02  nemoglobine
+
+	* src/pitivi-lplayerwindow.c: UPDATE PLAYER
+
+2004-10-28 12:49  nemoglobine
+
+	* src/: pitivi-lplayerwindow.c, pitivi-lplayerwindow.h: UPDATE
+	  PLAYER
+
+2004-10-28 12:46  nemoglobine
+
+	* src/: pitivi-lplayerwindow.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h: UPDATE PLAYER
+
+2004-10-28 07:30  nemoglobine
+
+	* src/: Makefile.am, pitivi-lplayerwindow.c,
+	  pitivi-lplayerwindow.h, pitivi-sourcelistwindow.c,
+	  pitivi-viewerwindow.c: UPDATE LIGHTPLAYER
+
+2004-10-28 04:12  nemoglobine
+
+	* src/: pitivi-viewerwindow.c, pitivi-viewerwindow.h: UPDATE
+	  VIEWERWINDOW
+
+2004-10-27 08:05  nemoglobine
+
+	* src/pitivi-gstelementsettings.c: UPDATE4 GSTELEMENTSETTINGS
+
+2004-10-27 07:50  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settingswindow.c:
+	  UPDATE3 GSTELEMENTSETTINGS
+
+2004-10-27 07:45  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settingswindow.c:
+	  UPDATE2 GSTELEMENTSETTINGS
+
+2004-10-27 07:36  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settingswindow.c:
+	  UPDATE GSTELEMENTSETTINGS
+
+2004-10-27 05:24  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settingswindow.c: NEW
+	  IMPLEMENTATION DE GSTELEMENTSETTINGS
+
+2004-10-27 04:51  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settingswindow.c: NEW
+	  IMPLEMENTATION DE GSTELEMENTSETTINGS
+
+2004-10-26 18:20  bilboed
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-viewerwindow.c: correction
+	  gnl_composition_add/remove_object()
+
+2004-10-25 18:11  bilboed
+
+	* src/: pitivi-debug.c, pitivi-project.c,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-viewerwindow.c: liaison gnonlin-viewer fonctionnelle
+
+2004-10-25 17:28  bilboed
+
+	* src/: Makefile.am, pitivi-debug.c, pitivi-debug.h: Ajout de
+	  PitiviDebug
+
+2004-10-25 13:32  casaxno
+
+	* src/: pitivi-dragdrop.h, pitivi-effectswindow.c,
+	  pitivi-effectswindow.h, pitivi-mainapp.c,
+	  pitivi-mediatrackinfo.c, pitivi-projectsourcelist.h,
+	  pitivi-ruler.c, pitivi-ruler.h, pitivi-sourceitem.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h,
+	  pitivi-stockicons.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-toolbox.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h:
+	  priority
+
+2004-10-23 17:31  bilboed
+
+	* src/: pitivi-mainapp.h, pitivi-project.h,
+	  pitivi-sourcelistwindow.c: ajout champ
+
+2004-10-23 10:35  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h:
+	  media
+
+2004-10-23 07:25  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-timelinecellrenderer.c:
+	  selection
+
+2004-10-23 03:47  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settingswindow.c: NEW IMPLEMENTATION DE GSTELEMENTSETTINGS
+
+2004-10-22 15:22  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-drawing.h,
+	  pitivi-timelinecellrenderer.c: selection
+
+2004-10-22 14:49  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-mainapp.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c: [no log
+	  message]
+
+2004-10-22 14:03  bilboed
+
+	* src/: pitivi-mainapp.c, pitivi-timelinewindow.c: timeline
+	  activated only after selecting a project
+
+2004-10-22 10:21  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-projectsourcelist.h,
+	  pitivi-stockicons.c, pitivi-stockicons.h,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  drag effects
+
+2004-10-22 04:01  casaxno
+
+	* src/pitivi-effectswindow.c:
+	  simplify code
+
+2004-10-22 02:09  casaxno
+
+	* src/pitivi-effects_cat.h:
+	  split
+
+2004-10-22 02:08  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h:
+	  addind effects
+
+2004-10-21 20:00  bilboed
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c:
+	  update de la position du ruler dans les PitiviMedia
+
+2004-10-21 18:28  casaxno
+
+	* src/pitivi-timelinecellrenderer.c: [no log message]
+
+2004-10-21 18:12  cracoucas42
+
+	* src/: pitivi-effectswindow.c, pitivi-stockicons.c,
+	  pitivi-stockicons.h: Ajout des icones pour les effets de
+	  transitions
+
+2004-10-21 18:02  bilboed
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h: Zoom fonctionnel
+
+2004-10-21 16:59  cracoucas42
+
+	* src/pitivi-effectswindow.c: Upload des PNG des effets
+
+2004-10-21 16:54  cracoucas42
+
+	* configure.ac, src/pitivi-dragdrop.h, src/pitivi-effectswindow.c,
+	  pixmaps/smpte1.png, pixmaps/smpte101.png, pixmaps/smpte102.png,
+	  pixmaps/smpte103.png, pixmaps/smpte104.png, pixmaps/smpte105.png,
+	  pixmaps/smpte106.png, pixmaps/smpte107.png, pixmaps/smpte108.png,
+	  pixmaps/smpte109.png, pixmaps/smpte110.png, pixmaps/smpte111.png,
+	  pixmaps/smpte112.png, pixmaps/smpte113.png, pixmaps/smpte114.png,
+	  pixmaps/smpte119.png, pixmaps/smpte120.png, pixmaps/smpte121.png,
+	  pixmaps/smpte122.png, pixmaps/smpte123.png, pixmaps/smpte124.png,
+	  pixmaps/smpte125.png, pixmaps/smpte127.png, pixmaps/smpte128.png,
+	  pixmaps/smpte129.png, pixmaps/smpte130.png, pixmaps/smpte131.png,
+	  pixmaps/smpte2.png, pixmaps/smpte201.png, pixmaps/smpte202.png,
+	  pixmaps/smpte203.png, pixmaps/smpte204.png, pixmaps/smpte205.png,
+	  pixmaps/smpte206.png, pixmaps/smpte207.png, pixmaps/smpte21.png,
+	  pixmaps/smpte211.png, pixmaps/smpte212.png, pixmaps/smpte213.png,
+	  pixmaps/smpte214.png, pixmaps/smpte22.png, pixmaps/smpte221.png,
+	  pixmaps/smpte222.png, pixmaps/smpte223.png, pixmaps/smpte224.png,
+	  pixmaps/smpte225.png, pixmaps/smpte226.png, pixmaps/smpte227.png,
+	  pixmaps/smpte228.png, pixmaps/smpte23.png, pixmaps/smpte231.png,
+	  pixmaps/smpte232.png, pixmaps/smpte233.png, pixmaps/smpte234.png,
+	  pixmaps/smpte235.png, pixmaps/smpte236.png, pixmaps/smpte24.png,
+	  pixmaps/smpte241.png, pixmaps/smpte242.png, pixmaps/smpte243.png,
+	  pixmaps/smpte244.png, pixmaps/smpte245.png, pixmaps/smpte246.png,
+	  pixmaps/smpte25.png, pixmaps/smpte251.png, pixmaps/smpte252.png,
+	  pixmaps/smpte253.png, pixmaps/smpte254.png, pixmaps/smpte26.png,
+	  pixmaps/smpte261.png, pixmaps/smpte262.png, pixmaps/smpte263.png,
+	  pixmaps/smpte264.png, pixmaps/smpte3.png, pixmaps/smpte301.png,
+	  pixmaps/smpte302.png, pixmaps/smpte303.png, pixmaps/smpte304.png,
+	  pixmaps/smpte305.png, pixmaps/smpte306.png, pixmaps/smpte310.png,
+	  pixmaps/smpte311.png, pixmaps/smpte312.png, pixmaps/smpte313.png,
+	  pixmaps/smpte314.png, pixmaps/smpte315.png, pixmaps/smpte316.png,
+	  pixmaps/smpte317.png, pixmaps/smpte320.png, pixmaps/smpte321.png,
+	  pixmaps/smpte322.png, pixmaps/smpte323.png, pixmaps/smpte324.png,
+	  pixmaps/smpte325.png, pixmaps/smpte326.png, pixmaps/smpte327.png,
+	  pixmaps/smpte328.png, pixmaps/smpte329.png, pixmaps/smpte340.png,
+	  pixmaps/smpte341.png, pixmaps/smpte342.png, pixmaps/smpte343.png,
+	  pixmaps/smpte344.png, pixmaps/smpte345.png, pixmaps/smpte350.png,
+	  pixmaps/smpte351.png, pixmaps/smpte352.png, pixmaps/smpte353.png,
+	  pixmaps/smpte4.png, pixmaps/smpte41.png, pixmaps/smpte42.png,
+	  pixmaps/smpte43.png, pixmaps/smpte44.png, pixmaps/smpte45.png,
+	  pixmaps/smpte46.png, pixmaps/smpte47.png, pixmaps/smpte48.png,
+	  pixmaps/smpte5.png, pixmaps/smpte6.png, pixmaps/smpte61.png,
+	  pixmaps/smpte62.png, pixmaps/smpte63.png, pixmaps/smpte64.png,
+	  pixmaps/smpte65.png, pixmaps/smpte66.png, pixmaps/smpte67.png,
+	  pixmaps/smpte68.png, pixmaps/smpte7.png, pixmaps/smpte71.png,
+	  pixmaps/smpte72.png, pixmaps/smpte73.png, pixmaps/smpte74.png,
+	  pixmaps/smpte8.png: Upload des PNG des effets
+
+2004-10-21 16:13  cracoucas42
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h: Remplissage
+	  de la fenetre des effets
+
+2004-10-21 15:12  bilboed
+
+	* src/pitivi-projectsourcelist.h: rajoute pipeline audio et video
+	  seul dans sourcefile
+
+2004-10-21 14:54  bilboed
+
+	* src/pitivi-projectsourcelist.h: rajoute pipeline audio dans
+	  sourcefile
+
+2004-10-21 13:52  casaxno
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourceitem.h,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  unique id gnlsource element
+
+2004-10-21 11:39  casaxno
+
+	* src/pitivi-timelinemedia.c:
+	  removing widget
+
+2004-10-21 10:12  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-drawing.h,
+	  pitivi-timelinecellrenderer.c:
+	  cell
+
+2004-10-21 04:02  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-drawing.h, pitivi-menu.c,
+	  pitivi-menu.h, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c:
+	  pitivi
+
+2004-10-20 23:41  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-mainapp.c,
+	  pitivi-projectsourcelist.h, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-trackenum.h:
+	  bugs
+
+2004-10-18 19:08  bilboed
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h: Ajout callbacks zoom
+
+2004-10-18 17:17  bilboed
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h: Deplacement/scroll avec la souris
+
+2004-10-18 12:41  bilboed
+
+	* src/pitivi-timelinewindow.c: correction signaux
+
+2004-10-17 05:09  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  cells mods
+
+2004-10-16 20:46  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c:
+	  zzz-
+
+2004-10-16 19:24  casaxno
+
+	* src/pitivi-sourcelistwindow.c:
+	  sourcelist
+
+2004-10-16 18:33  cracoucas42
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-mainapp.c, pitivi-mainapp.h, pitivi-newprojectwindow.c,
+	  pitivi-settings.c, pitivi-settings.h, pitivi-settingswindow.c,
+	  pitivi-sourcelistwindow.c, pitivi-timelinewindow.c: Passage des
+	  effets depuis la self, et ajout des effets de transitions dans la
+	  effectwindow
+
+2004-10-16 17:24  bilboed
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-units.h, pitivi-viewerwindow.c:
+	  ajout zoom, corrections bugs project et mainapp
+
+2004-10-16 17:18  casaxno
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c:
+	  updates-
+
+2004-10-16 15:21  casaxno
+
+	* src/pitivi-sourcelistwindow.c:
+	  mnods
+
+2004-10-16 15:14  casaxno
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinewindow.c: [no log message]
+
+2004-10-16 12:03  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c:
+	  merging
+
+2004-10-15 13:31  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  xxx
+
+2004-10-15 05:24  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c:
+	  slide
+
+2004-10-15 04:06  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h:
+	  pitivi
+
+2004-10-14 20:17  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  modifications on slide
+
+2004-10-14 16:59  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  -Wall problem
+
+2004-10-14 16:33  bilboed
+
+	* Makefile.am, configure.ac, pixmaps/bg_effects.xpm~,
+	  src/pitivi-controller.c~, src/pitivi-controller.h~,
+	  src/pitivi-mediatrackinfo.c~, src/pitivi-mediatrackinfo.h~: added
+	  gnonlin as static library
+
+2004-10-14 15:48  casaxno
+
+	* src/: pitivi-ruler.c, pitivi-ruler.h, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h:
+	  modifications
+
+2004-10-14 14:55  bilboed
+
+	* src/pitivi-sourcelistwindow.c: added time in PitiviSourceFile(s)
+
+2004-10-14 14:08  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-timelinecellrenderer.c:
+	  move_medio est au bon endroit
+
+2004-10-14 10:55  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  recursivity
+
+2004-10-14 04:30  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c:
+	  cell renderer
+
+2004-10-13 15:00  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h:
+	  medias
+
+2004-10-13 04:03  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-drawing.h,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c:
+	  modifications on timeline
+
+2004-10-11 12:07  casaxno
+
+	* src/: pitivi-sourceitem.h, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c:
+	  mods
+
+2004-10-10 20:36  casaxno
+
+	* pixmaps/: bg_audio.xpm, bg_effects.xpm, bg_trans.xpm,
+	  bg_video.xpm:
+	  new pixmaps
+
+2004-10-10 20:33  casaxno
+
+	* src/: pitivi-drawing.h, pitivi-mediatrackinfo.h,
+	  pitivi-mediatrackinfo.h~, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c, pitivi-trackenum.h:
+	  modifications
+
+2004-10-10 14:50  casaxno
+
+	* ui/pitivi-timeline.xml:
+	  ui modifications
+
+2004-10-10 14:49  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-toolbox.c:
+	  modifications on single timeline window
+
+2004-10-10 02:19  casaxno
+
+	* pixmaps/: bg.xpm, bg_audio.xpm, bg_effects.xpm, bg_effects.xpm~,
+	  bg_video.xpm:
+	  adding xpm
+
+2004-10-10 02:18  casaxno
+
+	* src/: pitivi-controller.c, pitivi-controller.c~,
+	  pitivi-controller.h, pitivi-controller.h~,
+	  pitivi-mediatrackinfo.c, pitivi-mediatrackinfo.c~,
+	  pitivi-mediatrackinfo.h, pitivi-mediatrackinfo.h~,
+	  pitivi-ruler.c, pitivi-ruler.h, pitivi-trackenum.h:
+	  adding new files.
+
+2004-10-10 02:15  casaxno
+
+	* src/: Makefile.am, pitivi-cursor.h, pitivi-drawing.c,
+	  pitivi-drawing.h, pitivi-mainapp.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  main modification simple project system.
+
+2004-10-07 18:13  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: ok
+
+2004-10-07 17:16  cracoucas42
+
+	* src/: pitivi-gstelementsettings.c, pitivi-newprojectwindow.c:
+	  Modification des fonctions create frame, simplification, creation
+	  d une fonction generique pour creer les comboboxs des codecs,
+	  plus listage des noms
+
+2004-10-01 16:01  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c,
+	  pitivi-sourcelistwindow.h: toto z la
+
+2004-10-01 11:49  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-settingswindow.c:
+	  Alegement du codedans le fichier, retret des fonctions inutiles
+	  quiseront remplacees par les methodes des objets
+
+2004-09-30 20:03  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settingswindow.c: IMPLEMENTATION DE GSTELEMENTSETTINGS
+
+2004-09-30 19:14  casaxno
+
+	* src/: pitivi-project.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c:
+	  warnings
+
+2004-09-30 18:57  casaxno
+
+	* src/: Makefile.am, pitivi-cursor.h, pitivi-project.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c,
+	  pitivi-toolbox.c, pitivi-toolbox.h:
+	  new modification
+
+2004-09-30 18:19  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-drawing.h:
+	  drawing functions
+
+2004-09-30 18:16  casaxno
+
+	* src/: pitivi-sourceitem.h, pitivi-sourcelistwindow.c:
+	  modyfing
+
+2004-09-30 18:12  nemoglobine
+
+	* src/: Makefile.am, pitivi-settingswindow.c,
+	  pitivi-gstelementsettings.c, pitivi-gstelementsettings.h:
+	  DeLaBalle_de_bombE
+
+2004-09-30 17:41  bilboed
+
+	* src/: pitivi-project.c, pitivi-sourcelistwindow.c,
+	  pitivi-viewerwindow.c: upload version soutenance
+
+2004-09-27 14:15  casaxno
+
+	* pixmaps/blank.xpm:
+	  blank xpxpm:w
+
+2004-09-27 02:28  casaxno
+
+	* pixmaps/: bg.xpm, blank.xpm:
+	  new pixmap
+
+2004-09-27 02:20  casaxno
+
+	* src/pitivi-sourcelistwindow.c:
+	  Changing context
+
+2004-07-09 19:24  loic2
+
+	* src/pitivi-toolbox.c: solve a little bug
+
+2004-07-09 19:13  loic2
+
+	* src/pitivi-toolbox.c: tooltips in english
+
+2004-07-09 18:59  hheidy
+
+	* src/pitivi-sourcelistwindow.c: correction d'un bug du doubleclick
+
+2004-07-09 18:43  hheidy
+
+	* src/pitivi-sourcelistwindow.c: gestion du doubleclick
+
+2004-07-09 18:10  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c:
+	  timeline
+
+2004-07-09 15:26  guize
+
+	* src/: pitivi-mainapp.c, pitivi-newprojectwindow.c,
+	  pitivi-toolboxwindow.c: Selection du premier reglage de la
+	  fenetre NewProject et desactivation du bouton Nouveau Projet
+	  lorsqu'une categorie est selectionnee
+
+2004-07-09 14:06  nemoglobine
+
+	* src/: pitivi-mainapp.c, pitivi-viewerwindow.c: viewer widget show
+
+2004-07-09 12:47  loic2
+
+	* src/pitivi-timelinemedia.c: add color and filename to rectangle -
+	  my brain is back
+
+2004-07-09 12:38  nemoglobine
+
+	* src/pitivi-settingswindow.c: settings affichage
+
+2004-07-09 12:21  nemoglobine
+
+	* src/pitivi-settingswindow.c: settings affichage
+
+2004-07-09 11:29  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c:
+	  managing cut
+
+2004-07-09 10:53  bilboed
+
+	* src/pitivi-timelinemedia.c: Mustn't forget to get somebody a
+	  brain...
+
+2004-07-09 00:14  loic2
+
+	* src/pitivi-timelinemedia.c: ajout nom source ds rectangle
+	  timeline
+
+2004-07-08 21:55  casaxno
+
+	* src/pitivi-timelinemedia.c:
+	  timeline
+
+2004-07-08 21:18  casaxno
+
+	* src/: pitivi-newprojectwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h:
+	  timeline
+
+2004-07-08 19:52  hheidy
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h, pitivi-project.c,
+	  pitivi-sourcelistwindow.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h: on peut maintenant jouer plusieurs video
+	  et jouer une video en cliquant 2 fois dessus
+
+2004-07-08 12:20  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-toolbox.c, pitivi-toolbox.h:
+	  ???
+
+2004-07-08 04:01  guize
+
+	* src/: pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h, pitivi-settings.c: D Bugs en moins sur
+	  la NewProjectWindow
+
+2004-07-08 03:54  guize
+
+	* docs/.pitivi: Fichier .pitivi avec les reglages minimalistes
+
+2004-07-07 23:22  guize
+
+	* TODO, src/pitivi-mainapp.c, src/pitivi-mainapp.h,
+	  src/pitivi-newprojectwindow.c, src/pitivi-projectsettings.c,
+	  src/pitivi-projectsettings.h, src/pitivi-settings.c,
+	  src/pitivi-settings.h, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinewindow.c,
+	  src/pitivi-viewerwindow.c: sauvegarde des ProjectsSettings dans
+	  le fichier xml
+
+2004-07-07 22:51  nemoglobine
+
+	* src/: pitivi-effectswindow.c, pitivi-newprojectwindow.c: tree
+	  view expand
+
+2004-07-07 21:52  nemoglobine
+
+	* ui/pitivi-toolbox.xml: champ settings dans le menu
+
+2004-07-07 21:25  hheidy
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-viewerwindow.c: gestion
+	  des query et des seek
+
+2004-07-07 21:14  nemoglobine
+
+	* src/pitivi-settingswindow.c: debut save global settings
+
+2004-07-07 20:35  casaxno
+
+	* src/: pitivi-cursor.h, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-toolbox.c, pitivi-toolbox.h: header cursor file
+
+2004-07-07 20:29  nemoglobine
+
+	* src/pitivi-settingswindow.c: add tooltips to settings window
+
+2004-07-07 19:31  loic2
+
+	* src/pitivi-toolbox.c: resolution seg fault
+
+2004-07-07 18:55  nemoglobine
+
+	* src/: pitivi-mainapp.c, pitivi-settingswindow.c,
+	  pitivi-toolboxwindow.c: add menu settings window
+
+2004-07-07 17:00  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  selections
+
+2004-07-07 10:08  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  cell renderer
+
+2004-07-07 10:04  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  cellrenderer agqin
+
+2004-07-07 08:10  casaxno
+
+	* src/: pitivi-mainapp.h, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-toolbox.c, pitivi-toolbox.h, pitivi-toolboxwindow.c,
+	  pitivi-toolboxwindow.h:
+	  MAin modifications for timeline
+
+2004-07-06 23:39  nemoglobine
+
+	* src/pitivi-viewerwindow.c: remove expose player bug
+
+2004-07-06 23:24  nemoglobine
+
+	* src/pitivi-viewerwindow.c: play/pause on viewer
+
+2004-07-06 23:00  nemoglobine
+
+	* src/: pitivi-mainapp.c, pitivi-toolboxwindow.c: set unresizable
+	  toolbox
+
+2004-07-06 22:23  loic2
+
+	* src/: pitivi-timelinewindow.c, pitivi-toolbox.c: Modif curseur
+
+2004-07-06 22:12  hheidy
+
+	* src/: pitivi-project.c, pitivi-sourcelistwindow.c,
+	  pitivi-viewerwindow.c: changement du pipeline en bin pour le
+	  viewer
+
+2004-07-06 22:09  nemoglobine
+
+	* src/: pitivi-mainapp.c, pitivi-toolbox.c: alignement des fenetres
+
+2004-07-06 19:06  loic2
+
+	* src/pitivi-toolbox.c: initialisation du curseur
+
+2004-07-06 18:18  loic2
+
+	* src/: pitivi-mainapp.c, pitivi-toolboxwindow.c: acces aux
+	  curseurs depuis la timeline
+
+2004-07-06 15:31  bilboed
+
+	* src/pitivi-mainapp.c: effectswindow loads on new project
+
+2004-07-05 20:25  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c: ajout de la recursion pour le
+	  chargement de projet
+
+2004-07-05 17:20  hheidy
+
+	* src/pitivi-viewerwindow.c: nop
+
+2004-07-05 17:19  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-viewerwindow.c: ajout des ghost
+	  pad
+
+2004-07-05 16:43  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c:
+	  cell renderer connected swap
+
+2004-07-05 16:08  bilboed
+
+	* src/pitivi-toolbox.c: remove segfault when clicking on toolbox
+	  and no timelinewindow present
+
+2004-07-05 15:37  bilboed
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-viewerwindow.c:
+	  SourceListWindow now exports (PitiviSourceFile *) for drag and
+	  drop, and ViewerWindow receives it
+
+2004-07-05 15:33  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h:
+	  cell renderer again
+
+2004-07-05 15:18  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c:
+	  media timeline
+
+2004-07-05 15:02  bilboed
+
+	* pixmaps/logo-pitivi.png: cleaner splashscreen logo
+
+2004-07-05 14:04  casaxno
+
+	* src/: pitivi-dragdrop.h, pitivi-effectswindow.c,
+	  pitivi-timelinecellrenderer.c:
+	  Differecing windows on drag and drop
+
+2004-07-05 09:42  casaxno
+
+	* src/: Makefile.am, pitivi-dragdrop.h, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-viewerwindow.c:
+	  timeline modifications
+
+2004-07-05 02:25  bilboed
+
+	* ChangeLog, src/pitivi-dragdrop.h, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-viewerwindow.c: Drag and Drop now sends pointer to the
+	  selected PitiviSourceFile
+
+2004-07-04 13:53  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  timeline new modifications
+
+2004-07-03 23:16  casaxno
+
+	* src/pitivi-dragdrop.h:
+	  oki
+
+2004-07-03 23:04  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  ok
+
+2004-07-03 23:02  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c:
+	  Managing drag 'n drop first version
+
+2004-07-03 21:49  hheidy
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-viewerwindow.c:
+	  suppression de certains bug
+
+2004-07-03 19:42  bilboed
+
+	* src/: pitivi-project.c, pitivi-viewerwindow.c: Changed project
+	  pipeline from GstThread to GstPipeline
+
+2004-07-03 19:06  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-toolbox.c, pitivi-toolbox.h:
+	  Cursor management
+
+2004-07-03 17:26  bilboed
+
+	* src/pitivi-project.c: added audio and video GnlGroups to Timeline
+
+2004-07-03 15:36  loic2
+
+	* src/: pitivi-toolbox.c, pitivi-toolboxwindow.c, pitivi-mainapp.c,
+	  pitivi-toolbox.h: Ajout curseurs
+
+2004-07-03 14:24  bilboed
+
+	* ChangeLog, configure.ac, src/Makefile.am, src/main.c,
+	  src/pitivi-project.c, src/pitivi-project.h,
+	  src/pitivi-viewerwindow.c: added link to gnonlin and project
+	  timeline/pipeline
+
+2004-07-03 13:37  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  resolv cellrenderer
+
+2004-07-02 22:52  casaxno
+
+	* src/: main.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinewindow.c:
+	  layout method for widget
+
+2004-07-02 21:52  hheidy
+
+	* src/: pitivi-project.c, pitivi-project.h,
+	  pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c: ajout de la serialisation et de la
+	  deserialisation
+
+2004-07-02 14:27  nemoglobine
+
+	* pixmaps/logo-pitivi.png: logo-pitivi
+
+2004-07-02 14:13  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-splashscreenwindow.c: reglages
+
+2004-07-02 13:19  nemoglobine
+
+	* src/: pitivi-mainapp.c, pitivi-settings.c,
+	  pitivi-splashscreenwindow.c, pitivi-viewerwindow.c: ajout splash
+	  screen
+
+2004-07-02 11:06  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  dropping cell
+
+2004-07-02 10:50  nemoglobine
+
+	* src/: pitivi-viewerwindow.c, pitivi-viewerwindow.h:
+	  ajout-timeline in viewer
+
+2004-07-02 10:45  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  dragging begin
+
+2004-07-02 10:01  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c,
+	  pitivi-viewerwindow.c:
+	  timeline modifications
+
+2004-07-01 14:10  bilboed
+
+	* ChangeLog, configure.ac, src/pitivi-projectsettings.c,
+	  src/pitivi-timelinewindow.c: deleted save menus/dialog back in
+
+2004-07-01 10:16  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  new timeline defintion
+
+2004-06-30 13:42  nemoglobine
+
+	* src/: Makefile.am, pitivi-splashscreenwindow.c,
+	  pitivi-splashscreenwindow.h: ajout splash screen
+
+2004-06-30 13:31  nemoglobine
+
+	* pixmaps/logo-pitivi.png: ajout du logo
+
+2004-06-29 19:19  hheidy
+
+	* src/pitivi-projectsourcelist.c: xml ajout
+
+2004-06-29 19:08  hheidy
+
+	* src/: pitivi-project.c, pitivi-projectsourcelist.c,
+	  pitivi-projectsourcelist.h, pitivi-sourcelistwindow.c: ajout de
+	  pitivi_projectsourcelist_restore...
+
+2004-06-29 19:01  bilboed
+
+	* src/pitivi-mainapp.c: added verification on effectswindow destroy
+
+2004-06-29 18:10  bilboed
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-mainapp.h,
+	  src/pitivi-toolboxwindow.c, ui/pitivi-toolbox.xml: Added toggling
+	  windows menu in Toolbox
+
+2004-06-29 17:56  hheidy
+
+	* src/pitivi-mainapp.c: activation de la viewerwindow
+
+2004-06-29 17:55  hheidy
+
+	* src/: pitivi-mainapp.c, pitivi-project.c, pitivi-project.h,
+	  pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h: reglage de
+	  bug du pipeline gstreamer
+
+2004-06-29 16:55  bilboed
+
+	* ChangeLog, TODO, src/pitivi-projectsettings.c,
+	  src/pitivi-settings.c: Corrected PitiviProjectSettings bug
+
+2004-06-28 21:00  bilboed
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-project.c,
+	  src/pitivi-projectsettings.c, src/pitivi-settings.c,
+	  src/pitivi-settings.h, src/pitivi-toolboxwindow.c: PitiviSettings
+	  file save/load OK
+
+2004-06-28 19:16  nemoglobine
+
+	* src/: pitivi-viewercontroller.c, pitivi-viewercontroller.h,
+	  pitivi-viewerplayer.c, pitivi-viewerplayer.h,
+	  pitivi-viewervolume.c, pitivi-viewervolume.h: remove other elem
+	  viewer
+
+2004-06-28 19:08  nemoglobine
+
+	* pixmaps/: backward.xpm, forward.xpm, pause.xpm, play.xpm,
+	  stop.xpm, volume.xpm: add xpms
+
+2004-06-28 18:34  nemoglobine
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h: Change Player
+
+2004-06-28 15:11  bilboed
+
+	* TODO: added the TODO
+
+2004-06-28 14:11  bilboed
+
+	* src/pitivi-projectsettings.c: added a few PitiviProjectSettings
+	  saves
+
+2004-06-26 18:31  bilboed
+
+	* src/: pitivi-project.h, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h: finished pitivi_projectsettings_copy
+
+2004-06-26 18:06  bilboed
+
+	* ChangeLog, configure.ac, src/pitivi-newprojectwindow.c,
+	  src/pitivi-project.c, src/pitivi-project.h,
+	  src/pitivi-projectsettings.c, src/pitivi-projectsettings.h,
+	  src/pitivi-timelinewindow.c, src/pitivi.h,
+	  ui/pitivi-timeline.xml: Project Save/Load functionnal
+
+2004-06-26 13:53  bilboed
+
+	* ChangeLog, src/pitivi-project.c, src/pitivi-project.h,
+	  src/pitivi-toolboxwindow.c: File Chooser to open Project files
+
+2004-06-26 13:02  bilboed
+
+	* ChangeLog, src/Makefile.am, src/pitivi-projectsettingswindow.c,
+	  src/pitivi-projectsettingswindow.h, src/pitivi-settingswindow.c,
+	  src/pitivi-settingswindow.h, src/pitivi-sourcelistwindow.c: Added
+	  PitiviSettingsWindow and PitiviProjectSettingsWindow
+
+2004-06-26 00:33  bilboed
+
+	* ChangeLog, src/pitivi-projectwindows.c,
+	  src/pitivi-sourcelistwindow.c, src/pitivi-timelinewindow.c: set
+	  PitiviTimelineWindow and PitiviSourceListWindow father class to
+	  PITIVI_PROJECTWINDOWS_TYPE
+
+2004-06-26 00:07  bilboed
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-viewercontroller.c,
+	  src/pitivi-viewercontroller.h, src/pitivi-viewerwindow.c,
+	  src/pitivi-viewerwindow.h: Changed PitiviViewerWindow and
+	  PitiviViewerController to derivates of PitiviWindows
+
+2004-06-25 23:47  bilboed
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-mainapp.h,
+	  src/pitivi-newprojectwindow.c, src/pitivi-project.c,
+	  src/pitivi-project.h, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-sourcelistwindow.h, src/pitivi-timelinewindow.c,
+	  src/pitivi-timelinewindow.h, src/pitivi-toolboxwindow.c: Changed
+	  PitiviTimelineWindow and PitiviSourceListWindow to derivates of
+	  PitiviProjectWindows
+
+2004-06-25 22:58  bilboed
+
+	* ChangeLog, src/pitivi-effectswindow.c,
+	  src/pitivi-effectswindow.h, src/pitivi-mainapp.c: forgot to
+	  update pitivi_effectswindow_new()
+
+2004-06-25 21:49  bilboed
+
+	* ChangeLog, src/pitivi-effectswindow.c,
+	  src/pitivi-effectswindow.h, src/pitivi-mainapp.c,
+	  src/pitivi-mainapp.h, src/pitivi-newprojectwindow.h,
+	  src/pitivi-sourcelistwindow.c, src/pitivi-windows.h: Updated
+	  PitiviEffectsWindow to derivate of PitiviWindows
+
+2004-06-25 20:53  bilboed
+
+	* ChangeLog, src/pitivi-newprojectwindow.c,
+	  src/pitivi-newprojectwindow.h, src/pitivi-toolboxwindow.c,
+	  src/pitivi-toolboxwindow.h: Updated PitiviToolboxWindow and
+	  PitiviNewProjectWindow to be derivate of PitiviWindows
+
+2004-06-25 20:28  bilboed
+
+	* docs/pitivi-classes: adding new documenation on classes
+
+2004-06-25 18:37  hheidy
+
+	* pixmaps/pitivi-effects-soundtv.png: ajout d un png
+
+2004-06-25 18:35  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-stockicons.c,
+	  pitivi-stockicons.h: ajout d une structure a
+	  pitivi-projectsourcelist
+
+2004-06-25 16:13  bilboed
+
+	* src/: Makefile.am, pitivi-project.h, pitivi-projectwindows.c,
+	  pitivi-projectwindows.h, pitivi-windows.c, pitivi-windows.h:
+	  Adding PitiviWindows and PitiviProjectWindows classes
+
+2004-06-22 19:40  hheidy
+
+	* src/pitivi-sourcelistwindow.c: integration des parseur au graphe
+	  il y a encore qque bug
+
+2004-06-22 14:19  nemoglobine
+
+	* src/pitivi-settings.c: remove elements with gstcaps_is_any
+
+2004-06-22 12:47  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-settings.h: ajout de la methode
+	  pour recup les parsers
+
+2004-06-22 01:53  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-projectsettings.h:
+	  definition of _media_new now in the header
+
+2004-06-21 19:55  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-settings.h: ajout des parsers
+	  dans settings
+
+2004-06-20 10:58  casaxno
+
+	* src/: Makefile.am, pitivi-checkbox.c, pitivi-checkbox.h:
+	  putting pitivi checkbox
+
+2004-06-19 18:06  hheidy
+
+	* src/pitivi-sourcelistwindow.c: modification du pipeline de la
+	  source
+
+2004-06-18 19:48  hheidy
+
+	* src/: pitivi-settings.c, pitivi-settings.h,
+	  pitivi-sourcelistwindow.c: correction des bugs sur les GstCaps
+
+2004-06-18 11:07  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-settings.c: Liste des proprietes terminees, sont dans la
+	  structure self
+
+2004-06-17 19:22  guize
+
+	* src/: pitivi-codecconfwindow.h, pitivi-mainapp.c,
+	  pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-settings.c, pitivi-toolboxwindow.c: Ajout - modif - delete
+	  de reglages dans le fenetre newprojectwindow
+
+2004-06-17 10:35  guize
+
+	* src/pitivi-projectsettings.c: correction liste des categories
+
+2004-06-16 04:32  casaxno
+
+	* src/pitivi-mainapp.c:
+	  ?????
+
+2004-06-16 04:15  casaxno
+
+	* src/pitivi-mainapp.c:
+	  little modification
+
+2004-06-15 16:09  bilboed
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h: added
+	  MainApp to SourceListWindow
+
+2004-06-15 13:32  casaxno
+
+	* src/: pitivi-viewercontroller.c, pitivi-viewercontroller.h,
+	  pitivi-viewerwindow.c, pitivi-viewerwindow.h:
+	  more modifications
+
+2004-06-15 13:12  casaxno
+
+	* src/: pitivi-viewercontroller.c, pitivi-viewercontroller.h,
+	  pitivi-viewerwindow.c, pitivi-viewerwindow.h:
+	  begin to launch gstreamer. Make other mofication after.
+
+2004-06-15 11:36  casaxno
+
+	* src/pitivi-mainapp.c:
+	  moving elements in GUI.
+
+2004-06-15 10:49  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-newprojectwindow.c, pitivi-toolboxwindow.c:
+	  launch windows only on one time.
+
+2004-06-15 08:47  casaxno
+
+	* src/: pitivi-toolboxwindow.c, pitivi-toolboxwindow.h:
+	  loading only once differents windows
+
+2004-06-14 16:04  guize
+
+	* AUTHORS, ChangeLog, src/pitivi-projectsettings.c: Mise au point
+	  settings
+
+2004-06-12 21:41  casaxno
+
+	* src/pitivi-viewerplayer.c:
+	  putting off expose print.
+
+2004-06-12 21:40  casaxno
+
+	* src/pitivi-projectsettings.c:
+	  miss testing on unknown codec as epitivo. For example casaxno
+	  doesn't have epitivo codec
+
+2004-06-12 16:45  nemoglobine
+
+	* src/pitivi-mainapp.c: ajout des settings dans main app
+
+2004-06-12 15:37  guize
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h: interaction reglages et les champs,
+	  dans la fenetre newprojectwindow
+
+2004-06-12 15:07  hheidy
+
+	* src/pitivi-sourcelistwindow.c: remove a bad function
+
+2004-06-11 23:02  nemoglobine
+
+	* src/: pitivi-settings.c~, pitivi-settings.h~: [no log message]
+
+2004-06-11 22:58  nemoglobine
+
+	* src/pitivi-settings.c: [no log message]
+
+2004-06-11 22:45  nemoglobine
+
+	* src/: Makefile.am, pitivi-settings.c, pitivi-settings.c~,
+	  pitivi-settings.h, pitivi-settings.h~: vrai ajout de
+	  pitivisettings
+
+2004-06-11 22:20  bilboed
+
+	* src/: pitivi-pitivisettings.c, pitivi-pitivisettings.c~,
+	  pitivi-pitivisettings.h, pitivi-pitivisettings.h~: getting rid of
+	  mistake
+
+2004-06-11 21:59  nemoglobine
+
+	* src/: pitivi-pitivisettings.c, pitivi-pitivisettings.c~,
+	  pitivi-pitivisettings.h, pitivi-pitivisettings.h~: ajout de
+	  pitivisettings
+
+2004-06-11 18:02  hheidy
+
+	* src/pitivi-sourcelistwindow.c: ajout de typefinding
+
+2004-06-11 15:13  loic2
+
+	* src/pitivi-newprojectwindow.c: Modif setting_is_selected et
+	  put_info
+
+2004-06-07 14:56  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Enlevement du segfault a la
+	  fermeture de la fenetre de configuration d un codec sans
+	  proprietes
+
+2004-06-07 11:38  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Affichage des modifications des
+	  proprietes d un codec faites par un user....
+
+2004-06-05 18:02  guize
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h: interaction Liste des reglages et la
+	  fenetre newprojectwindow
+
+2004-06-05 17:41  nemoglobine
+
+	* ChangeLog, src/Makefile.am: ajout de pitivisettings
+
+2004-06-03 18:11  guize
+
+	* src/: main.c, pitivi-codecconfwindow.c, pitivi-mainapp.c,
+	  pitivi-mainapp.h, pitivi-newprojectwindow.c,
+	  pitivi-newprojectwindow.h, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h, pitivi-sourcelistwindow.h: mise a jour
+	  structure mainapp
+
+2004-06-03 17:57  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Ajout de boutons dans la fenetre
+	  de configuration des codecs ...
+
+2004-05-31 18:25  loic2
+
+	* src/pitivi-newprojectwindow.c: reglage du conflit
+
+2004-05-31 18:22  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Update de la fenetre de
+	  configuration des codecs
+
+2004-05-31 15:02  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Update de la fenetre des propriete
+	  des codecs
+
+2004-05-23 20:37  bilboed
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-menu.c,
+	  src/pitivi-newprojectwindow.c, src/pitivi-toolbox.c: little
+	  memory cleanup
+
+2004-05-20 01:27  casaxno
+
+	* src/pitivi-timelinewindow.c:
+	  timeline
+
+2004-05-19 18:22  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h: gestion des
+	  fils de l'arbre
+
+2004-05-19 11:05  casaxno
+
+	* src/: pitivi-newprojectwindow.c, pitivi-toolboxwindow.c:
+	  loading viewer
+
+2004-05-18 20:23  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Recuperation des valeurs et
+	  affichage correct en fonction du type des valeurs
+
+2004-05-18 18:32  casaxno
+
+	* configure.ac:
+	  Adding gstreamer-gconf-0.8 support
+
+2004-05-18 09:05  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  cell renderer change
+
+2004-05-18 08:20  casaxno
+
+	* src/: Makefile.am, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  new timeline definition
+
+2004-05-17 12:07  cracoucas42
+
+	* AUTHORS, src/pitivi-codecconfwindow.c, src/pitivi-mainapp.c,
+	  src/pitivi-mainapp.h, src/pitivi-newprojectwindow.c,
+	  src/pitivi-newprojectwindow.h, src/pitivi-toolbox.c,
+	  src/pitivi-toolbox.h, src/pitivi-toolboxwindow.c,
+	  src/pitivi-toolboxwindow.h: Mise en page de la fenetre de conf
+	  des codecs video / audio
+
+2004-05-15 22:11  casaxno
+
+	* src/: pitivi-timelinewindow.c, pitivi-timelinewindow.h:
+	  timeline other new implementation
+
+2004-05-15 15:10  loic2
+
+	* ChangeLog, src/pitivi-newprojectwindow.c: Justification des
+	  labels ds la fenetre NewProject
+
+2004-05-15 15:01  guize
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-newprojectwindow.c,
+	  src/pitivi-newprojectwindow.h, src/pitivi-projectsettings.h,
+	  src/pitivi-projectsourcelist.c: creation des ListProjectSettings
+	  depuis le mainapp
+
+2004-05-15 12:40  cracoucas42
+
+	* src/: Makefile.am, pitivi-codecconfwindow.c,
+	  pitivi-codecconfwindow.h, pitivi-newprojectwindow.c: Mise en
+	  place des fenetre de configuration de codecs
+
+2004-05-15 01:56  guize
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-newprojectwindow.c, pitivi-newprojectwindow.h,
+	  pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-toolboxwindow.c, pitivi-toolboxwindow.h: passage de
+	  mainapp a la fenetre newpeoject
+
+2004-05-14 18:51  casaxno
+
+	* src/: pitivi-toolboxwindow.c, pitivi-viewerplayer.c,
+	  pitivi-viewerwindow.c:
+	  no log needed
+
+2004-05-14 15:27  loic2
+
+	* src/pitivi-toolbox.c: Ajout tooltips a la toolbox
+
+2004-05-14 15:24  bilboed
+
+	* docs/pitivi-classtemplate.c: parent_class and constructor
+	  corrections
+
+2004-05-14 13:42  casaxno
+
+	* src/: pitivi-viewercontroller.c, pitivi-viewercontroller.h,
+	  pitivi-viewervolume.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h:
+	  modifying headers
+
+2004-05-14 04:29  casaxno
+
+	* src/pitivi-viewercontroller.c:
+	  ok
+
+2004-05-14 00:00  casaxno
+
+	* src/: pitivi-viewercontroller.c~, pitivi-viewervolume.c~,
+	  pitivi-viewervolume.h~:
+	  no log needed for this operation
+
+2004-05-13 23:58  casaxno
+
+	* src/: pitivi-viewerplayer.c~, pitivi-viewerplayer.h~:
+	  Deleting worng added files
+
+2004-05-13 23:53  casaxno
+
+	* src/: pitivi-viewercontroller.c, pitivi-viewercontroller.c~,
+	  pitivi-viewercontroller.h, pitivi-viewerplayer.c,
+	  pitivi-viewerplayer.c~, pitivi-viewerplayer.h,
+	  pitivi-viewerplayer.h~:
+	  Adding controller files
+
+2004-05-13 23:43  casaxno
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-menu.c,
+	  pitivi-toolboxwindow.c, pitivi-viewervolume.c,
+	  pitivi-viewervolume.c~, pitivi-viewervolume.h,
+	  pitivi-viewervolume.h~, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h:
+	  Adding volume files for viewer
+
+2004-05-13 19:00  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c: gestion de la suppression
+
+2004-05-13 18:01  casaxno
+
+	* pixmaps/: pitivi-viewer-next.png, pitivi-viewer-pause.png,
+	  pitivi-viewer-play.png, pitivi-viewer-previous.png,
+	  pitivi-viewer-stop.png:
+	  actions bouttons on player
+
+2004-05-13 17:55  casaxno
+
+	* pixmaps/pitivi-logo.png:
+	  Pitivi logo
+
+2004-05-13 17:54  casaxno
+
+	* src/: pitivi-stockicons.c, pitivi-stockicons.h:
+	  Modifying stock icons
+
+2004-05-13 17:51  casaxno
+
+	* pixmaps/: pitivi-logo.png, pitivi-viewer-volume-max.png,
+	  pitivi-viewer-volume-medium.png, pitivi-viewer-volume-min.png,
+	  pitivi-viewer-volume-zero.png, pitivi-viewer-volume.png:
+	  Adding new image files for viewer
+
+2004-05-11 19:28  hheidy
+
+	* src/pitivi-sourcelistwindow.c: mise a jour de sourcelistwindows
+
+2004-05-11 14:30  casaxno
 
 	* src/pitivi-viewerwindow.c:
-	* src/pitivi-viewerwindow.h: Converted PitiviViewerWindow to derivate of PitiviWindows
+	  error
 
-	* src/pitivi-sourcelistwindow.c: 
-	* src/pitivi-sourcelistwindow.h: Converted PitiviSourceListWindow to derivate of PitiviProjectWindows
+2004-05-11 14:25  casaxno
 
-	* src/pitivi-timelinewindow.c: 
-	* src/pitivi-timelinewindow.h: Converted PitiviTimelineWindow to derivate of PitiviProjectWindows
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h:
+	  trying again de modify effects window files last chance
 
-2004-06-25    <bilboed@localhost>
+2004-05-11 13:24  casaxno
 
-	* src/pitivi-effectswindow.c (pitivi_effectswindow_new): modified to take PitiviMainApp as parameter
+	* src/pitivi-viewerwindow.c:
+	  effects files not modified there is a big problem
 
-	* src/pitivi-mainapp.h (struct _PitiviMainApp): moved the windows to PitiviMainAppPrivate
+2004-05-11 12:54  casaxno
 
-	* src/pitivi-effectswindow.c: 
-	* src/pitivi-effectswindow.h: Converted PitiviEffectsWindow to derivate of PitiviWindows
+	* src/pitivi-viewerwindow.c:
+	  modifying files effects window
 
-	* src/pitivi-toolboxwindow.c: 
-	* src/pitivi-toolboxwindow.h: 
-	* src/pitivi-newprojectwindow.c: 
-	* src/pitivi-newprojectwindow.h: 
-	* src/pitivi-windows.c:
-	* src/pitivi-windows.h:
-	* src/pitivi-projectwindows.c:
-	* src/pitivi-projectwindows.h: Added PitiviWindows and PitiviProjectWindows classes
-	Converted PitiviToolboxWindow and PitiviNewProjectWindow to be derivate of PitiviWindows
+2004-05-11 10:06  casaxno
 
-	
-2004-05-28    <ez3kiel@localhost>
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-viewerwindow.c:
+	  just little modification on effects functions
 
-	* src/pitivi-projectsettings.c (pitivi_projectsettings_list_make): Creation de la liste de PitiviProjectSettings par default insere dans la PitiviMainApp
+2004-05-10 21:10  cracoucas42
 
-	* src/pitivi-newprojectwindow.c (pitivi_newprojectwindow_add_setting): Ajoute un nouveau setting dans la liste des reglages de la fenetre NewProjectWindow et un nouveau PitiviProjectSettings dans la PitiviMainApp
+	* src/pitivi-newprojectwindow.c: marge de 5 dans le cadre ou s
+	  affiche les descriptions des settings
 
-	* src/pitivi-mainapp.c (pitivi_mainapp_add_newsetting):  Ajoute un nouveau PitiviProjectSettings dans la liste existante
+2004-05-10 19:45  cracoucas42
 
-2004-06-05    <nemo@localhost>
+	* src/pitivi-newprojectwindow.c: [no log message]
 
-	* src/pitivi-pitivisettings.c (all) : creation des settings globaux de l application
+2004-05-10 19:43  cracoucas42
 
-2004-05-23    <bilboed@bilboed.eptv>
+	* ChangeLog, src/pitivi-newprojectwindow.c:  Affichage de la
+	  description correspondant a la categorie ou sous-categorie
+	  selectionnee dans l arbre des pre-reglages
 
-	* src/pitivi-menu.c (pitivi_menu_instance_init): No need to g_strdup the second parameter to gtk_ui_manager_get_widget(), PITIVI_MAIN_MENUBAR_XML is already a const gchar* .
+2004-05-10 18:57  bilboed
 
-	* src/pitivi-toolbox.c (pitivi_toolbox_instance_init): Remove malloc, replace by NULL (self->private->group_button)
+	* ChangeLog: adding ChangeLog
 
-	* src/pitivi-mainapp.c (pitivi_create_new_categorie): Do not malloc a value which is meant to be filled (categorie->list_settings memory leak) !
+2004-05-10 18:45  hheidy
 
-	* src/pitivi-newprojectwindow.c (pitivi_make_video_frame): It works better when you malloc a table... with a non-null size :) (self->private->video_tabname).
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c:
+	  modify sourcelistwindow and projectsourcelist
 
-2037-03-15    <loic@localhost>
+2004-05-10 17:38  loic2
 
-	* src/pitivi-newprojectwindow.c : Implementation de la justification des labels dans l'onglet settings
+	* src/pitivi-newprojectwindow.c: effacement du champ description qd
+	  on clique dedans
 
-2004-05-15    <ez3kiel@localhost>
+2004-05-10 17:23  casaxno
 
-	* src/pitivi-newprojectwindow.c (pitivi_newprojectwindow_new): Passage du parametre PitiviMainApp a la PitiviNewprojectWindow
+	* pixmaps/pitivi-effects-category-open.png,
+	  pixmaps/pitivi-effects-category.png,
+	  pixmaps/pitivi-effects-sound.png, pixmaps/pitivi-effects-tv.png,
+	  src/pitivi-effectswindow.c, src/pitivi-effectswindow.h,
+	  src/pitivi-menu.c, src/pitivi-menu.h, src/pitivi-stockicons.c,
+	  src/pitivi-stockicons.h, src/pitivi-timelinewindow.c,
+	  src/pitivi-toolboxwindow.c: [no log message]
 
-	* src/pitivi-toolboxwindow.c (pitivi_toolboxwindow_new): Passage du parametre PitiviMainApp a la PitiviToolboxWindow
+2004-05-10 15:28  cracoucas42
 
-	* src/pitivi-mainapp.c (pitivi_projectsettings_list_make): creation de la liste des PitiviProjectSettings dans le fichier mainapp
+	* src/pitivi-newprojectwindow.c: reformattage de la fenetre
+	  new_projectwindow
 
-2004-05-10    <cracoucas42@localhost>
+2004-05-10 12:32  bilboed
 
-	* src/pitivi-newprojectwindow.c: Affichage de la description correspondant a la categorie ou sous-categorie selectionnee dans l arbre des pre-reglages
-	
+	* src/pitivi-projectsettings.h: changed codec_props to
+	  codec_settings
 
-2004-05-10    <bilboed@localhost>
+2004-05-09 13:16  casaxno
 
-	* ChangeLog: creation
-	
+	* src/: pitivi-effectswindow.c, pitivi-menu-actions.c,
+	  pitivi-timelinewindow.c:
+	  Closing windows
+
+2004-05-09 00:10  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-menu-actions.c,
+	  pitivi-menu-actions.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  modifying actions
+
+2004-05-08 20:16  casaxno
+
+	* src/: Makefile.am, pitivi-effectswindow.c,
+	  pitivi-effectswindow.h, pitivi-newprojectwindow.c,
+	  pitivi-newprojectwindow.h, pitivi-toolboxwindow.c:
+	  New modifications on effects window
+
+2004-05-08 18:50  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: fenetre new project se ferme lors
+	  de la creation d'un pojet
+
+2004-05-08 18:15  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-newprojectwindow.h,
+	  pitivi-toolboxwindow.c, pitivi-toolboxwindow.h: le bouton new
+	  ouvre la sourceliste et la timeline
+
+2004-05-08 18:09  hheidy
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-projectsourcelist.c,
+	  pitivi-projectsourcelist.h, pitivi-sourcelistwindow.c: ajout des
+	  fichiers de projectsourcelist
+
+2004-05-08 18:03  casaxno
+
+	* src/pitivi-timelinewindow.c:
+	  modyfing files timeline
+
+2004-05-08 18:00  casaxno
+
+	* src/: Makefile.am, pitivi-convert-time.c, pitivi-convert-time.h,
+	  pitivi-timelinewindow.c, pitivi-toolboxwindow.c:
+	  removing convert pitivi files
+
+2004-05-08 17:50  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-viewerwindow.c, pitivi-viewerwindow.h: really added the
+	  files viewerwindow and projectsettings
+
+2004-05-08 17:48  bilboed
+
+	* Makefile.am, src/Makefile.am: added PitiviProjectSettings and
+	  PitiviViewerWindow
+
+2004-05-08 17:21  loic2
+
+	* src/pitivi-newprojectwindow.c: ajout des codecs supplementaires
+	  de gstreamer ds les combo box
+
+2004-05-08 17:00  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Mise en forme de la fenetre
+	  settings plus ajout des boutons configure
+
+2004-05-08 16:21  loic2
+
+	* src/pitivi-newprojectwindow.c: modif champ canaux ds new project
+	  window
+
+2004-05-08 14:11  casaxno
+
+	* src/: Makefile.am, pitivi-convert-time.c, pitivi-convert-time.h,
+	  pitivi-timelinewindow.c, pitivi-toolboxwindow.c,
+	  pitivi-toolboxwindow.h:
+	  Addding Time convert file
+
+2004-05-08 13:37  guize
+
+	* src/pitivi-newprojectwindow.c: finitions graphiques de la fenetre
+	  new project
+
+2004-05-08 13:35  casaxno
+
+	* ui/: main_menubar.xml, pitivi-timeline.xml, pitivi-toolbox.xml:
+	  Adding Toolbox ui configuration files
+
+2004-05-08 13:30  casaxno
+
+	* src/: Makefile.am, pitivi-menu-actions.c, pitivi-menu.c,
+	  pitivi-menu.h, pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-toolbox.h, pitivi-toolboxwindow.c:
+	  some important modifications
+
+2004-05-08 12:45  casaxno
+
+	* src/pitivi-effectswindow.c:
+	  effects windows
+
+2004-05-08 12:42  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h:
+	  effects window files
+
+2004-05-07 21:12  guize
+
+	* src/pitivi-newprojectwindow.c: ajout des basics settings
+
+2004-05-07 21:00  guize
+
+	* src/pitivi-newprojectwindow.c: ajout des basics settings
+
+2004-05-07 20:33  bilboed
+
+	* configure.ac: get rid of all useless comments
+
+2004-05-07 20:30  casaxno
+
+	* pixmaps/pitivi-select-none.png, src/Makefile.am,
+	  src/pitivi-menu-actions.c:
+	  Add xpm file
+
+2004-05-07 15:31  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-toolbox.c: Ajout de
+	  boutons dans le aNew Project
+
+2004-05-07 15:26  loic2
+
+	* src/: pitivi-newprojectwindow.c, pitivi-toolbox.c: ajout icones
+
+2004-05-07 15:04  casaxno
+
+	* pixmaps/pitivi-selection-shrink.png:
+	  new pixmaps
+
+2004-05-07 15:00  casaxno
+
+	* ui/: Makefile.am, pitivi-timeline.xml:
+	  XML timeline file
+
+2004-05-07 14:38  casaxno
+
+	* src/: Makefile.am, pitivi-menu-actions.c,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h:
+	  Adding timeline window files
+
+2004-05-07 10:57  casaxno
+
+	* ui/main_menubar.xml:
+	  menu.xml
+
+2004-05-07 10:54  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-menu-actions.c: [no log message]
+
+2004-05-07 10:52  casaxno
+
+	* pixmaps/: pitivi-cut.png, pitivi-hand.png, pitivi-pointer.png,
+	  pitivi-zoom.png:
+	  Addind new Pimaxps Files
+
+2004-05-07 10:34  casaxno
+
+	* src/: pitivi-stockicons.c, pitivi-stockicons.h:
+	  no more object for this files
+
+2004-05-07 10:31  casaxno
+
+	* pixmaps/Makefile.am:
+	  Adding new pixmap File
+
+2004-05-07 10:27  casaxno
+
+	* pixmaps/pitivi-48.png, pixmaps/pitivi-logo.png,
+	  pixmaps/pitivi-new-sample.png, pixmaps/pitivi-select-all.png,
+	  pixmaps/pitivi-selection-grow.png, src/pitivi-menu-actions.c,
+	  ui/main_menubar.xml:
+	  adding pixmaps
+
+2004-05-06 18:38  casaxno
+
+	* ui/Makefile.am:
+	  Qdd Makefile
+
+2004-05-06 18:18  casaxno
+
+	* src/: Makefile.am, pitivi-menu-actions.c, pitivi-stockicons.h:
+	  adding new icons on Sotck-icons.h -
+
+2004-05-06 17:24  casaxno
+
+	* configure.ac, src/pitivi-menu-actions.h, src/pitivi-menu.h:
+	  Headers Files for menu files and Makefile for xml files
+
+2004-05-06 17:14  guize
+
+	* src/: pitivi-stockicons.c, pitivi-stockicons.h: ajout des
+	  fichiers stockicons.c .h
+
+2004-05-06 17:13  casaxno
+
+	* src/: Makefile.am, main.c, pitivi-mainapp.c,
+	  pitivi-menu-actions.c, pitivi-menu.c, pitivi-toolboxwindow.c:
+	  add new file menu for all windows
+
+2004-05-06 15:37  cracoucas42
+
+	* src/: pitivi-toolbox.c, pitivi-toolbox.h: New cursors were
+	  integrated into the toolbox
+
+2004-05-04 18:03  loic2
+
+	* src/pitivi-newprojectwindow.c: ajout liste codecs dans la fenetre
+	  new project
+
+2004-05-03 17:33  bilboed
+
+	* src/: pitivi-mainapp.c, pitivi-sourcelistwindow.c: getting rid of
+	  warnings
+
+2004-05-03 16:50  hheidy
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-sourcelistwindow.c,
+	  pitivi-sourcelistwindow.h: ajout du fichier de creation de la
+	  source list window
+
+2004-05-03 14:38  bilboed
+
+	* src/: pitivi-newprojectwindow.c, pitivi-project.c,
+	  pitivi-toolbox.c: remove the useless printf(s)
+
+2004-05-01 20:43  bilboed
+
+	* docs/pitivi-classtemplate.c, src/pitivi-mainapp.c,
+	  src/pitivi-newprojectwindow.c, src/pitivi-toolboxwindow.c: clean
+	  up
+
+2004-05-01 20:03  guize
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-newprojectwindow.c,
+	  pitivi-newprojectwindow.h: Ajout PitiviNewProjectWindow
+
+2004-05-01 15:48  bilboed
+
+	* src/pitivi-toolboxwindow.c: rajout deuxieme commentaire de test
+
+2004-05-01 15:42  loic2
+
+	* src/pitivi-toolboxwindow.c: ajout commentaire
+
+2004-05-01 15:07  bilboed
+
+	* docs/CLASSES: [no log message]
+
+2004-05-01 14:40  bilboed
+
+	* docs/: pitivi-template.c, pitivi-template.h: Added normal
+	  templates
+
+2004-05-01 12:48  bilboed
+
+	* AUTHORS, COPYING, INSTALL, Makefile.am, NEWS, NORME, README,
+	  autogen.sh, configure.ac, common/ChangeLog, common/Makefile.am,
+	  common/as-libtool.mak, common/gettext.patch, common/glib-gen.mak,
+	  common/gst-autogen.sh, common/m4/.cvsignore,
+	  common/m4/Makefile.am, common/m4/README,
+	  common/m4/as-ac-expand.m4, common/m4/as-auto-alt.m4,
+	  common/m4/as-compiler-flag.m4, common/m4/as-compiler.m4,
+	  common/m4/as-docbook.m4, common/m4/as-libtool.m4,
+	  common/m4/as-python.m4, common/m4/as-scrub-include.m4,
+	  common/m4/as-version.m4, common/m4/ax_create_stdint_h.m4,
+	  common/m4/glib-gettext.m4, common/m4/gst-arch.m4,
+	  common/m4/gst-debuginfo.m4, common/m4/gst-doc.m4,
+	  common/m4/gst-feature.m4, common/m4/gst-function.m4,
+	  common/m4/gst-glib2.m4, common/m4/gst-gstreamer.m4,
+	  common/m4/gst-libxml2.m4, common/m4/gst-makecontext.m4,
+	  common/m4/gst-mcsc.m4, common/m4/pkg.m4, docs/CLASSES,
+	  docs/make_filter, docs/pitivi-classtemplate.c,
+	  docs/pitivi-classtemplate.h, src/Makefile.am, src/main.c,
+	  src/pitivi-mainapp.c, src/pitivi-mainapp.h, src/pitivi-project.c,
+	  src/pitivi-project.h, src/pitivi-toolbox.c, src/pitivi-toolbox.h,
+	  src/pitivi-toolboxwindow.c, src/pitivi-toolboxwindow.h,
+	  src/pitivi.h: Initial revision
+
+2004-05-01 12:48  bilboed
+
+	* AUTHORS, COPYING, INSTALL, Makefile.am, NEWS, NORME, README,
+	  autogen.sh, configure.ac, common/ChangeLog, common/Makefile.am,
+	  common/as-libtool.mak, common/gettext.patch, common/glib-gen.mak,
+	  common/gst-autogen.sh, common/m4/.cvsignore,
+	  common/m4/Makefile.am, common/m4/README,
+	  common/m4/as-ac-expand.m4, common/m4/as-auto-alt.m4,
+	  common/m4/as-compiler-flag.m4, common/m4/as-compiler.m4,
+	  common/m4/as-docbook.m4, common/m4/as-libtool.m4,
+	  common/m4/as-python.m4, common/m4/as-scrub-include.m4,
+	  common/m4/as-version.m4, common/m4/ax_create_stdint_h.m4,
+	  common/m4/glib-gettext.m4, common/m4/gst-arch.m4,
+	  common/m4/gst-debuginfo.m4, common/m4/gst-doc.m4,
+	  common/m4/gst-feature.m4, common/m4/gst-function.m4,
+	  common/m4/gst-glib2.m4, common/m4/gst-gstreamer.m4,
+	  common/m4/gst-libxml2.m4, common/m4/gst-makecontext.m4,
+	  common/m4/gst-mcsc.m4, common/m4/pkg.m4, docs/CLASSES,
+	  docs/make_filter, docs/pitivi-classtemplate.c,
+	  docs/pitivi-classtemplate.h, src/Makefile.am, src/main.c,
+	  src/pitivi-mainapp.c, src/pitivi-mainapp.h, src/pitivi-project.c,
+	  src/pitivi-project.h, src/pitivi-toolbox.c, src/pitivi-toolbox.h,
+	  src/pitivi-toolboxwindow.c, src/pitivi-toolboxwindow.h,
+	  src/pitivi.h: initial import
 
