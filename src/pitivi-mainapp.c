@@ -26,6 +26,7 @@
 #include "pitivi.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-toolboxwindow.h"
+#include "pitivi-sourcelistwindow.h"
 #include "pitivi-newprojectwindow.h"
 
 struct _PitiviMainAppPrivate
@@ -33,6 +34,7 @@ struct _PitiviMainAppPrivate
   /* instance private members */
   gboolean dispose_has_run;
   PitiviToolboxWindow *tbxwin;
+  PitiviSourceListWindow *srclistwin;
   PitiviNewProjectWindow *win_new_project;
 };
 
@@ -99,6 +101,12 @@ pitivi_mainapp_instance_init (GTypeInstance * instance, gpointer g_class)
   g_signal_connect(G_OBJECT(self->private->tbxwin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
   gtk_widget_show_all (GTK_WIDGET (self->private->tbxwin));
+
+  /* Source List Window */
+/*   self->private->srclistwin = pitivi_sourcelistwindow_new(); */
+/*   g_signal_connect(G_OBJECT(self->private->srclistwin), "destroy", */
+/* 		   G_CALLBACK(gtk_main_quit), NULL); */
+/*   gtk_widget_show_all(GTK_WIDGET(self->private->srclistwin)); */
   
   /* New Project window */
   self->private->win_new_project = pitivi_newprojectwindow_new();
