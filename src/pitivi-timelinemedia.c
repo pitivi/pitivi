@@ -395,7 +395,8 @@ static gint
 pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
 					   GdkEventButton *event)
 { 
-  g_printf ("---------timelinemedia-click------\n");
+  gtk_widget_grab_focus ( widget );
+  g_printf ("-----timecellmedia-click----------\n");
   return FALSE;
 }
 
@@ -434,7 +435,7 @@ pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
   widget_class->motion_notify_event = pitivi_timelinemedia_motion_notify_event;
   widget_class->configure_event = pitivi_timelinemedia_configure_event;
   widget_class->button_release_event = pitivi_timelinemedia_button_release_event;  
-
+  
 
   g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_MEDIA_TYPE,
 				   g_param_spec_int ("media_type","media_type","media_type",

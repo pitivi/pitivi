@@ -299,7 +299,7 @@ create_ruler (PitiviTimelineWindow *self)
   self->hruler = self->private->hruler;
   gtk_ruler_set_metric (GTK_RULER (self->private->hruler), GTK_PIXELS);
   gtk_ruler_set_range (GTK_RULER (self->private->hruler), 0, 7200, 0, 120);
-  gtk_widget_set_usize (self->hruler, 7200, 30);
+  gtk_widget_set_size_request (self->hruler, 7200, 30);
   g_signal_connect_swapped (G_OBJECT (self->private->main_vbox), "motion_notify_event",
 			    G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
 			    G_OBJECT (self->private->hruler));
@@ -320,7 +320,7 @@ create_separator_color (GtkWidget *box, gchar *colorname, int width, int height)
       gdk_color_parse((gchar*)colorname, &color);
       gtk_widget_modify_bg (sep, GTK_STATE_NORMAL, &color);
     }
-  gtk_widget_set_usize ( sep, width, height );
+  gtk_widget_set_size_request ( sep, width, height );
   gtk_box_pack_start (GTK_BOX (box), sep, FALSE, FALSE, 0);
 }
 
