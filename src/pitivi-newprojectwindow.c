@@ -334,7 +334,7 @@ pitivi_make_presets_hbox(PitiviNewProjectWindow *self)
   
   /* Ajout d'une nouvelle frame dans la box presets_hbox globale */
   presets_frame = gtk_frame_new("Current setting");
-  gtk_box_pack_start (GTK_BOX (presets_hbox), presets_frame, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (presets_hbox), presets_frame, TRUE, TRUE, 5);
   
   /* Creation et Insertion du tableau dans la frame de reglages */
   table = pitivi_create_presets_table(self);
@@ -388,8 +388,8 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
 /* gtk_text_buffer_insert_interactive(text_buffer, &iter, presets, strlen(presets), FALSE); */
   text_presets = gtk_text_view_new_with_buffer (self->private->preset_text_buffer);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text_presets), FALSE);
-  gtk_text_view_set_right_margin  (GTK_TEXT_VIEW(text_presets), 3);
-  gtk_text_view_set_left_margin  (GTK_TEXT_VIEW(text_presets), 3);
+  gtk_text_view_set_right_margin  (GTK_TEXT_VIEW(text_presets), 5);
+  gtk_text_view_set_left_margin  (GTK_TEXT_VIEW(text_presets), 5);
  
 /* Creation de la table */
   table = gtk_table_new(2, 2, FALSE);
@@ -399,7 +399,7 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
 		    text_presets,
 		    0,2,0,1,
 		    GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL,
-		    1, 1);
+		    5, 5);
 
 /* Bouton Nouveau projet */
   button_new = gtk_button_new_from_stock(GTK_STOCK_NEW);
@@ -602,7 +602,9 @@ pitivi_make_video_frame()
   int			i;
   GtkWidget		*video_conf_but;
   GtkWidget		*rate_unit;
-
+  GtkWidget		*resol_unit;
+  GtkWidget		*blank1;
+  GtkWidget		*blank2;
 
 /* Creation de la frame "video" et du tableau principal */
   video_frame = gtk_frame_new("Video");
@@ -671,9 +673,18 @@ pitivi_make_video_frame()
   gtk_entry_set_width_chars (GTK_ENTRY(size_height), 5);
   gtk_entry_set_text(GTK_ENTRY(size_height), "576");
   gtk_box_pack_start(GTK_BOX (size_hbox), size_height, FALSE, FALSE, 0);
+
+/* pixel */
+  resol_unit = gtk_label_new("pixel");
+  gtk_box_pack_start(GTK_BOX (size_hbox), resol_unit, FALSE, FALSE, 0);
+
+
+/* blank1 */
+  blank1 =  gtk_label_new("");
+  gtk_box_pack_start(GTK_BOX (size_hbox), blank1, TRUE, TRUE, 0);
   
   gtk_table_attach(GTK_TABLE(video_table), size_hbox, 
-		   1, 3, 1, 2, FALSE, FALSE, 5, 5);
+		   1, 3, 1, 2, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
 
  
 /* rate hbox */
@@ -687,13 +698,17 @@ pitivi_make_video_frame()
 /*   champ texte "Fps" */
   fps_text = gtk_entry_new();
   gtk_entry_set_text(GTK_ENTRY(fps_text), "25");
-  gtk_entry_set_width_chars (GTK_ENTRY(fps_text), 10);
+  gtk_entry_set_width_chars (GTK_ENTRY(fps_text), 14);
   gtk_box_pack_start(GTK_BOX (vrate_hbox), fps_text, FALSE, FALSE, 0);
   rate_unit = gtk_label_new("fps");
   gtk_box_pack_start(GTK_BOX (vrate_hbox), rate_unit, FALSE, FALSE, 0);
 
+/* blank2 */
+  blank2 =  gtk_label_new("");
+  gtk_box_pack_start(GTK_BOX (vrate_hbox), blank2, TRUE, TRUE, 0);
+
   gtk_table_attach (GTK_TABLE(video_table), vrate_hbox, 
-		    1, 2, 2, 3, TRUE, FALSE, 5, 5); 
+		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 5, 5); 
 
 
 /*   Ajoute le tableau principale ds la frame "video" */
@@ -856,15 +871,12 @@ pitivi_newprojectwindow_instance_init (GTypeInstance * instance, gpointer g_clas
    */
   
   /*   Creation de la fenetre de reglages d'un nouveau projet */
-/*   self = gtk_window_new (GTK_WINDOW_TOPLEVEL); */
-/*   gtk_window_set_default_size(GTK_WINDOW (self), 760, 570); */
   gtk_window_set_title (GTK_WINDOW (self), "New Project");
   gtk_window_set_position (GTK_WINDOW (self), GTK_WIN_POS_CENTER);
   gtk_window_set_modal (GTK_WINDOW(self), TRUE);
   
 /* Creation de hBox et Insertion dans la window du projet */
   self->private->hbox = gtk_hbox_new (FALSE, 0);
-/*   gtk_widget_set_usize (self->private->hbox, 750, 520); */
 /* Creation des elements de la fenetre NewProject */
   pitivi_fill_hbox(self);
   gtk_container_add (GTK_CONTAINER (self), self->private->hbox);
