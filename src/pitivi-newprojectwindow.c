@@ -262,6 +262,22 @@ pitivi_make_presets_hbox(PitiviNewProjectWindow *self)
   return (presets_hbox);
 }
 
+
+void
+pitivi_create_new_project ( GtkAction *action, PitiviToolboxWindow *self )
+{
+  PitiviTimelineWindow *timelinewin;
+  PitiviSourceListWindow *srclistwin;
+
+  /* Source List Window */
+  timelinewin = pitivi_timelinewindow_new();
+  gtk_widget_show_all (GTK_WIDGET (timelinewin) ); 
+  /* Source List Window */
+  srclistwin = pitivi_sourcelistwindow_new();
+  gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
+}
+
+
 GtkWidget*
 pitivi_create_presets_table(PitiviNewProjectWindow *self)
 {
@@ -308,6 +324,8 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
 		    GTK_EXPAND, FALSE,
 		    1, 1);
   
+  g_signal_connect(button_new, "clicked", G_CALLBACK(pitivi_create_new_project), NULL);
+
   /* Bouton Annuler projet */
   button_cancel = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
   gtk_table_attach( GTK_TABLE(table),
@@ -675,8 +693,6 @@ pitivi_make_audio_frame()
   gtk_container_set_border_width (GTK_CONTAINER (audio_frame), 5);
   return (audio_frame);   
 }
-
-
 
 /* 
  * Object PitiviNewProject initialisation 

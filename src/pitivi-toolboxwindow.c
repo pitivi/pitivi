@@ -63,23 +63,14 @@ pitivi_toolboxwindow_new (void)
   return toolboxwindow;
 }
 
-
-static void
+void
 pitivi_callb_toolbox_filenew_project ( GtkAction *action, PitiviToolboxWindow *self )
 {  
   PitiviNewProjectWindow *win_new_project;
-  PitiviSourceListWindow *srclistwin;
-  PitiviEffectsWindow *effectswin;
- 
+
   /* New Project window */
   win_new_project = pitivi_newprojectwindow_new();
   gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
-  /* Source List Window */
-  srclistwin = pitivi_sourcelistwindow_new();
-  gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
-  /* Source List Window */
-  effectswin = pitivi_effectswindow_new();
-  gtk_widget_show_all (GTK_WIDGET (effectswin) ); 
 }
 
 void
@@ -98,14 +89,18 @@ pitivi_callb_toolbox_exit ( GtkAction *action, PitiviToolboxWindow *self )
   gtk_main_quit ();
 }
 
-static void
+void
 pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *self )
 {
   PitiviTimelineWindow *timelinewin;
+  PitiviSourceListWindow *srclistwin;
     
   /* Source List Window */
   timelinewin = pitivi_timelinewindow_new();
   gtk_widget_show_all (GTK_WIDGET (timelinewin) ); 
+  /* Source List Window */
+  srclistwin = pitivi_sourcelistwindow_new();
+  gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
 }
 
 

@@ -72,6 +72,6 @@ GType pitivi_toolboxwindow_get_type (void);
  * Method definitions.
  */
 
-PitiviToolboxWindow *pitivi_toolboxwindow_new (void);
-
+PitiviToolboxWindow	*pitivi_toolboxwindow_new (void);
+void			pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *self );
 #endif
