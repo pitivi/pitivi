@@ -122,6 +122,7 @@ enum {
 enum {
   ACTIVATE_SIGNAL = 0,
   DEACTIVATE_SIGNAL,
+  DESELECT_SIGNAL,
   LENGHT_MEDIA_SIGNAL,
   LAST_SIGNAL
 };
@@ -372,7 +373,7 @@ create_tracks (PitiviTimelineWindow *self)
 	  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), cell[count], FALSE, FALSE, 0);
 	  create_separator_color (self->private->main_vbox_right, "black", -1, 5);
 	  
-	  nfo = pitivi_mediatrackinfo_new (((PitiviTimelineCellRenderer *)cell[count]), gtab_tracks[count].track_name);
+	  nfo = (GtkWidget *) pitivi_mediatrackinfo_new (((PitiviTimelineCellRenderer *)cell[count]), gtab_tracks[count].track_name);
 	  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left),  nfo, FALSE, FALSE, 0);
 	  create_separator (self->private->main_vbox_left, -1, 5);
 	}
@@ -535,6 +536,18 @@ pitivi_timelinewindow_get_property (GObject * object,
 }
 
 static void
+pitivi_timelinewindow_deselect (PitiviTimelineWindow *self)
+{
+  GtkWidget	*container;
+  GList		*childlist;
+  
+  childlist = gtk_container_get_children (GTK_CONTAINER (self->private->main_vbox_right));
+  for (; childlist; childlist = childlist->next)
+    if (GTK_IS_LAYOUT (childlist->data))
+      g_signal_emit_by_name (childlist->data, "deselect");
+}
+
+static void
 pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
@@ -569,8 +582,18 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 					     g_cclosure_marshal_VOID__VOID,
 					     G_TYPE_NONE, 0);
   
+  signals[DESELECT_SIGNAL] = g_signal_new ("deselect",
+					   G_TYPE_FROM_CLASS (g_class),
+					   G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+					   G_STRUCT_OFFSET (PitiviTimelineWindowClass, deselect),
+					   NULL, 
+					   NULL,                
+					   g_cclosure_marshal_VOID__VOID,
+					   G_TYPE_NONE, 0);
+  
   klass->activate = pitivi_timelinewindow_activate;
   klass->deactivate = pitivi_timelinewindow_deactivate;
+  klass->deselect = pitivi_timelinewindow_deselect;
 }
 
 GType

@@ -657,7 +657,17 @@ pitivi_timelinecellrenderer_callb_select (PitiviTimelineCellRenderer *self)
 void
 pitivi_timelinecellrenderer_callb_deselect (PitiviTimelineCellRenderer *self)
 {
-  
+  PitiviTimelineCellRenderer *childcells;
+
+  childcells = PITIVI_TIMELINECELLRENDERER (self);
+  if (childcells->private->selected)
+    {
+      childcells->private->selected = FALSE;
+      gdk_window_clear_area_e (GTK_LAYOUT (childcells)->bin_window,\
+			       0, 0, 
+			       GTK_WIDGET (childcells)->allocation.width, 
+			       GTK_WIDGET (childcells)->allocation.height);
+    }
 }
 
 
@@ -671,30 +681,9 @@ pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean se
   GList	*childlist;
 
   PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
-  container = gtk_widget_get_parent (GTK_WIDGET (self));
-  if (GTK_IS_VBOX (container))
-    {
-      container = gtk_widget_get_parent (GTK_WIDGET (self));
-      GList *childLayouts = gtk_container_get_children (GTK_CONTAINER (container));
-      for (childlist = childLayouts; childlist; childlist = childlist->next )
-	{
-	  if (GTK_IS_LAYOUT (childlist->data))
-	    {
-	      childcells = PITIVI_TIMELINECELLRENDERER (childlist->data);
-	      if (childcells->private->selected)
-		{
-		  if (GTK_WIDGET (childcells) != widget)
-		    childcells->private->selected = FALSE;
-		  else if (self_deselected == TRUE)
-		    childcells->private->selected = FALSE;
-		  gdk_window_clear_area_e (GTK_LAYOUT (childcells)->bin_window,\
-					   0, 0, 
-					   GTK_WIDGET (childcells)->allocation.width, 
-					   GTK_WIDGET (childcells)->allocation.height);
-		}
-	    }
-	}
-    }
+  container = gtk_widget_get_toplevel (GTK_WIDGET (self));
+  if (GTK_IS_WINDOW (container))
+    g_signal_emit_by_name (container, "deselect");
 }
 
 
@@ -716,92 +705,13 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
   x = event->x;
   y = event->y;
 
-    
   cursor = pitivi_getcursor_id (widget);
   if (cursor->type == PITIVI_CURSOR_SELECT && event->state != 0)
     {
       if (event->button == PITIVI_MOUSE_LEFT_CLICK)
        {
 	 // Clearing old Selection
-	  
-	 pitivi_timelinecellrenderer_deselection_ontracks (widget, FALSE);
-	 old_state = self->private->selected;
-	 self->private->selected = FALSE;
-	 self->private->selected = old_state;
-	 gdk_window_clear_area_e (GTK_LAYOUT (widget)->bin_window, 
-				  0, 
-				  0, 
-				  widget->allocation.width, 
-				  widget->allocation.height);
-	 self->private->selected_area.y = 0;
-	 self->private->selected_area.height = widget->allocation.height;
-      
-	 // Looking For Childs on Container
-     
-	 if (self->children && g_list_length (self->children) > 0)
-	   {
-	     for (childlist = self->children; childlist; childlist = childlist->next)
-	       {
-		 widgetchild = GTK_WIDGET (childlist->data);
-		 if (event->window != widgetchild->window)
-		   {
-		     if (!(event->x >= widgetchild->allocation.x 
-			   && event->x <=  widgetchild->allocation.x+widgetchild->allocation.width))
-		       { 
-			 if (x1_selection < widgetchild->allocation.x + widgetchild->allocation.width) 
-			   if (event->x > widgetchild->allocation.x  + widgetchild->allocation.width)
-			     x1_selection = widgetchild->allocation.x + widgetchild->allocation.width;
-			 if (event->x < widgetchild->allocation.x)
-			   if (x2_selection > widgetchild->allocation.x)
-			     x2_selection = widgetchild->allocation.x;
-		       }
-		   }
-		 else
-		   {
-		     // Case Selection on Widget Child On Layout
-		     // Later manage on same widget
-		     
-		     x1_selection = widgetchild->allocation.x;
-		     x2_selection = widgetchild->allocation.x+widgetchild->allocation.width;
-		     PITIVI_TIMELINEMEDIA (widgetchild)->selected = TRUE;
-		     break;
-		   }
-	       }
-	   }
-	 else
-	   {
-	     if (!self->private->selected)
-	       self->private->selected = TRUE;
-	     else
-	       self->private->selected = FALSE;
-	     self->private->selected_area.x = 0;
-	     self->private->selected_area.width = widget->allocation.width;
-	     pitivi_drawing_selection (widget, 0, 0);
-	     return FALSE;
-	   }
-	 
-	 if (x2_selection == MY_MAX)
-	   x2_selection = -1;
-      
-	 // Case Selection On Same Last Area
-
-	 if (self->private->selected_area.x == x1_selection 
-	     && self->private->selected_area.width == x2_selection - x1_selection)
-	   {
-	     if (!self->private->selected)
-	       self->private->selected = TRUE;
-	     else
-	       self->private->selected = FALSE;
-	   }
-	 else // Case On other Area
-	   self->private->selected = TRUE;
-      
-	 self->private->selected_area.x = x1_selection;
-	 if (x1_selection > 0 && x2_selection)
-	   self->private->selected_area.width = x2_selection - x1_selection;
-	 else
-	   self->private->selected_area.width = x2_selection;
-	 pitivi_drawing_selection_area (widget, &self->private->selected_area, 0, NULL);
+	 g_printf ("-----timecellrenderer-click----------\n");
        }
       else if (event->button == PITIVI_MOUSE_LEFT_CLICK)
 	{

@@ -351,16 +351,12 @@ pitivi_timelinemedia_realize (GtkWidget *widget)
     GDK_ENTER_NOTIFY_MASK |
     GDK_LEAVE_NOTIFY_MASK |
     GDK_BUTTON_PRESS_MASK |
-    GDK_VISIBILITY_NOTIFY_MASK |
-    GDK_BUTTON_RELEASE_MASK |
-    GDK_POINTER_MOTION_MASK |
-    GDK_POINTER_MOTION_HINT_MASK;
+    GDK_BUTTON_RELEASE_MASK;
   
   attributes.visual = gtk_widget_get_visual (widget);
   attributes.colormap = gtk_widget_get_colormap (widget);
 
   attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
-  
   widget->window = gdk_window_new (widget->parent->window, &attributes, attributes_mask); 
   gdk_window_set_user_data (widget->window, widget);  
   widget->style = gtk_style_attach (widget->style, widget->window);
@@ -399,31 +395,7 @@ static gint
 pitivi_timelinemedia_button_release_event (GtkWidget      *widget,
 					   GdkEventButton *event)
 { 
-  PitiviTimelineMedia	*media;
-  PitiviCursor		*cursor;
-  GdkModifierType	mods;
-  GtkWidget		*container;
-  gint			x, y, mask;
-
-  PitiviTimelineMedia *self = PITIVI_TIMELINEMEDIA (widget);
-  cursor = pitivi_getcursor_id (widget);
-  if (event->button == PITIVI_MOUSE_RIGHT_CLICK)
-    {
-      if (self->selected)
-	{
-	  
-	}
-    }
-  if (cursor->type == PITIVI_CURSOR_CUT)
-    {
-      gtk_widget_set_size_request (GTK_WIDGET (widget), event->x-2, FIXED_HEIGHT);
-      container = gtk_widget_get_parent (GTK_WIDGET (widget));
-      media = pitivi_timelinemedia_new (self->sourceitem->srcfile);
-      x = event->x;
-      gtk_widget_set_size_request (GTK_WIDGET (media), widget->allocation.width-x, FIXED_HEIGHT);
-      add_to_layout ( GTK_WIDGET (container), GTK_WIDGET (media), x+widget->allocation.x, 0);
-      gtk_widget_show (GTK_WIDGET (media));
-    }
+  g_printf ("---------timelinemedia-click------\n");
   return FALSE;
 }
 
