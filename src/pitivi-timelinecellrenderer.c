@@ -29,6 +29,21 @@
 static GtkWidgetClass *parent_class = NULL;
 static GdkPixmap *pixmap = NULL;
 
+enum
+  {
+    TARGET_STRING,
+    TARGET_URL
+  };
+
+static GtkTargetEntry TargetEntries[] =
+  {
+    { "STRING",	       0, TARGET_STRING },
+    { "text/plain",    0, TARGET_STRING },
+    { "text/uri-list", 0, TARGET_URL },
+  };
+
+static gint	iNbTargetEntries = sizeof(TargetEntries)/sizeof(TargetEntries[0]);
+
 enum {
   PITIVI_TML_LAYER_AUDIO,
   PITIVI_TML_TO_MODIFY,
@@ -96,6 +111,13 @@ pitivi_timelinecellrenderer_constructor (GType type,
 }
 
 static void
+pitivi_timelinewindow_drag_data_received (GtkWidget *widget, GdkDragContext *dc, gint x, gint y, GtkSelectionData *selection_data, guint info, guint time, gpointer data)
+{
+  g_printf ("---------------data received-------------- \n");
+  gtk_drag_finish(dc, FALSE, FALSE, time);
+}
+
+static void
 pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) instance;
@@ -113,6 +135,12 @@ pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_
   self->private->width  = FIXED_WIDTH;
   self->private->height = FIXED_HEIGHT;
   self->private->selected = FALSE;
+  
+  gtk_drag_dest_set ( GTK_WIDGET (self), GTK_DEST_DEFAULT_ALL, TargetEntries, iNbTargetEntries, GDK_ACTION_COPY);
+  gtk_signal_connect (GTK_OBJECT (self), "drag_data_received"\
+		      , GTK_SIGNAL_FUNC ( pitivi_timelinewindow_drag_data_received )\
+		      , NULL);
+  
 }
 
 static void
@@ -334,6 +362,13 @@ pitivi_timelinecellrenderer_configure_event (GtkWidget *widget, GdkEventConfigur
 }
 
 static gint
+pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
+						  GdkEventButton *event)
+{
+  return FALSE;
+}
+
+static gint
 pitivi_timelinecellrenderer_button_press_event (GtkWidget      *widget,
 						GdkEventButton *event)
 {
@@ -354,6 +389,27 @@ pitivi_timelinecellrenderer_button_press_event (GtkWidget      *widget,
       cell->private->selected = FALSE;
       gtk_signal_emit_by_name (GTK_OBJECT (widget), "expose_event", &ev, &retval);
     }
+  return FALSE;
+}
+
+static gint
+pitivi_timelinecellrenderer_motion_notify_event (GtkWidget      *widget,
+						 GdkEventMotion *event)
+{
+  PitiviTimelineCellRenderer *cell;
+  GdkModifierType mods;
+  gint x, y, mask;
+  
+  g_printf ("motion notify event \n");
+  g_return_val_if_fail (widget != NULL, FALSE);
+  g_return_val_if_fail (event != NULL, FALSE);
+  cell = PITIVI_TIMELINECELLRENDERER (widget);
+  
+  x = event->x;
+  y = event->y;
+  if (event->is_hint || (event->window != widget->window))
+    gdk_window_get_pointer (widget->window, &x, &y, &mods);
+  
   return FALSE;
 }
 
@@ -378,6 +434,8 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   widget_class->size_allocate = pitivi_timelinecellrenderer_size_allocate;
   widget_class->configure_event = pitivi_timelinecellrenderer_configure_event;
   widget_class->button_press_event = pitivi_timelinecellrenderer_button_press_event;
+  widget_class->button_release_event = pitivi_timelinecellrenderer_button_release_event;
+  //widget_class->motion_notify_event = pitivi_timelinecellrenderer_motion_notify_event;
   
   /* Install the properties in the class here ! */
   
