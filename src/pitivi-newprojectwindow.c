@@ -907,6 +907,8 @@ pitivi_create_new_project ( GtkAction *action, PitiviNewProjectWindow *self )
   PitiviProjectSettings		*settings;
   PitiviCategorieSettings	*categorie;
   
+  while (gtk_events_pending())
+    gtk_main_iteration();
   categorie = pitivi_settings_get_selected_category( mainapp->global_settings, self->private->position );
   if (categorie == NULL)
     return ;

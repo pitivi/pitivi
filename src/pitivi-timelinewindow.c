@@ -154,7 +154,7 @@ static  guint signals[LAST_SIGNAL];
 /* Callbacks */
 /* ********* */
 
-void
+gboolean
 pitivi_callb_window_close (GtkWidget *win, GdkEvent *event, PitiviTimelineWindow *self);
 
 void
@@ -1025,11 +1025,6 @@ pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self )
 				  "Function under development, sorry...");
 	  if (gtk_dialog_run (GTK_DIALOG (dialog_tmp)) == GTK_RESPONSE_OK)
 	    gtk_widget_destroy (dialog_tmp);
-
-	  /*  /\* New Project window *\/ */
-	  /* 	  win_new_project = pitivi_newprojectwindow_new( mainapp ); */
-	  /* 	  gtk_widget_show_all ( GTK_WIDGET (win_new_project) ); */
-	  /* 	  pitivi_npw_select_first_setting(win_new_project); */
 	  break;
 	default:
 	  break;
@@ -1051,6 +1046,7 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
   PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
   PitiviProject	*project;
   GtkWidget	*dialog;
+  GtkWidget	*label;
   char		*filename = NULL;
   
   /* Get the filename */
@@ -1062,14 +1058,23 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
 				       NULL);
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-
   gtk_widget_destroy ( dialog );
   
   if (!filename) {
     g_warning("No file selected to open...\n");
     return;
   }
-
+  
+  dialog = gtk_dialog_new (  );
+  gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+  gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
+  gtk_widget_set_size_request (dialog, 200, 50); 
+  label = gtk_label_new ("\nPlease Wait loading Project ... \n");
+  gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox),
+		     label);
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->menu_dock,
+		      FALSE, TRUE, 0);
+  gtk_widget_show_all ( dialog );
   project = pitivi_project_new_from_file(filename);
   g_free (filename);
   if (!project)
@@ -1078,6 +1083,7 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
   /* Il faut remplacer cette fonction par une vrai ouverture de fichier */
   if ((project != NULL) && (pitivi_mainapp_add_project( mainapp, project )))
     pitivi_mainapp_create_wintools( mainapp , project );
+    gtk_widget_destroy ( dialog );
 }
 
 void
@@ -1185,10 +1191,13 @@ pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self )
     }
 }
 
-void
+gboolean
 pitivi_callb_window_close (GtkWidget *win, GdkEvent *event, PitiviTimelineWindow *self)
 {
+  // g_printf ("before ...\n");
   pitivi_mainapp_destroy (GTK_WIDGET(self), NULL);
+  //g_printf ("after ...\n");
+  return TRUE;
 }
 
 void

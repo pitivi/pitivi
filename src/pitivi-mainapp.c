@@ -116,7 +116,7 @@ pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
 {
   PitiviMainApp *mainapp = PITIVI_WINDOWS(pWidget)->mainapp;
   gchar	*conf;
-
+  
   conf = g_strdup_printf("%s/.pitivi", g_get_home_dir());
   /* Save settings before exiting */
   if (pitivi_settings_save_to_file(mainapp->global_settings, conf) == FALSE)

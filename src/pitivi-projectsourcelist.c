@@ -604,6 +604,8 @@ pitivi_projectsourcelist_restore_thyself(PitiviProjectSourceList *tofill, xmlNod
 	    if (!strcmp("name", little->name))
 	      bin = pitivi_projectsourcelist_new_bin(tofill, xmlNodeGetContent(little));
 	    pitivi_projectsourcelist_restore_in_recurse_folder(bin, little);
+	    while (gtk_events_pending())
+	      gtk_main_iteration();
 	  }
     }
 /*   pitivi_projectsourcelist_showfile(tofill, "0"); */
