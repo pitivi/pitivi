@@ -383,12 +383,14 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
   ndhandler = g_signal_connect(self->private->decode, "new-decoded-pad", G_CALLBACK (new_decoded_pad_cb), self);
 /*   unhandler = g_signal_connect(self->private->decode, "unknown-type", G_CALLBACK (unknown_type_cb), self); */
 
+  PITIVI_DEBUG ("Starting iteration");
   if (!(gst_element_set_state (self->pipeline, GST_STATE_PLAYING))) return;
   
   for (i = 1000; i--; ) {
     if (!(gst_bin_iterate(GST_BIN(self->pipeline))))
       break;
   }
+  PITIVI_DEBUG ("Finished iteration");
 
   g_signal_handler_disconnect (self->private->decode, ndhandler);
 /*   g_signal_handler_disconnect (self->private->decode, unhandler); */
@@ -401,6 +403,7 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
     record_pad_info(self, IS_AUDIO, self->private->audiopad);
   }
 
+  PITIVI_DEBUG ("Finished recording pad info, cleaning up temp pipeline");
   /* remove elements from bin */
   if (self->private->audioout) {
     gst_element_unlink(self->private->decode, self->private->audioout);
@@ -416,10 +419,12 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
 			 self->private->pngenc, NULL);
     self->private->videoout = NULL;
   }
-
+  PITIVI_DEBUG ("Cleaned temp pipeline");
   self->private->vthumb = g_new0(PitiviThumbTab *, self->private->cacheidx);
   
+  PITIVI_DEBUG ("Unreffing pipeline");
   gst_object_unref (GST_OBJECT (self->pipeline));
+  PITIVI_DEBUG ("Unreffed pipeline");
   self->private->decode = NULL;
   self->pipeline = NULL;
 }
@@ -595,11 +600,12 @@ pitivi_sourcefile_get_effect_bin (PitiviSourceFile *sf)
 
   if (!sf->haveeffect)
     return NULL;
-  if (sf->private->transitionid) {
+  if (sf->istransition) {
     tmp = g_strdup_printf ("%s-%d", sf->filename, sf->private->lastsinkid++);
     res = gst_element_factory_create (sf->private->factory, tmp);
     g_free (tmp);
     g_object_set (G_OBJECT (res), "type", sf->private->transitionid, NULL);
+    g_object_set_data (G_OBJECT (res), "effect", res);
   } else {
     res = pitivi_sourcefile_bin_new_effect (sf, sf->private->factory);
   }
