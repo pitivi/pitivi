@@ -62,6 +62,9 @@ static void 		gnl_timeline_timer_init 		(GnlTimelineTimer *timer);
 static void		gnl_timeline_timer_dispose		(GObject *object);
 static void		gnl_timeline_timer_finalize		(GObject *object);
 
+static GstElementStateReturn
+gnl_timeline_timer_change_state (GstElement *element);
+
 static void 		gnl_timeline_timer_loop 		(GstElement *timer);
 
 GType
@@ -97,6 +100,8 @@ gnl_timeline_timer_class_init (GnlTimelineTimerClass *klass)
 
   gobject_class->dispose = gnl_timeline_timer_dispose;
   gobject_class->finalize = gnl_timeline_timer_finalize;
+
+  gstelement_class->change_state = gnl_timeline_timer_change_state;
   
   timer_parent_class = g_type_class_ref (GST_TYPE_ELEMENT);
 }
@@ -145,6 +150,38 @@ gnl_timeline_timer_init (GnlTimelineTimer *timer)
   timer->current= NULL;
   gst_element_set_loop_function (GST_ELEMENT (timer), gnl_timeline_timer_loop);
 }
+
+static void
+gnl_timeline_timer_reset (GnlTimelineTimer *timer)
+{
+  GList	*walk = timer->links;
+
+  while (walk) {
+    TimerGroupLink *link = (TimerGroupLink *) walk->data;
+
+    link->time = 0LL;
+    
+    walk = g_list_next (walk);
+  }
+}
+
+static GstElementStateReturn
+gnl_timeline_timer_change_state (GstElement *element)
+{
+  GnlTimelineTimer *timer = GNL_TIMELINE_TIMER (element);
+  gint transition = GST_STATE_TRANSITION (element);
+
+  switch (transition) {
+  case GST_STATE_PAUSED_TO_READY:
+    GST_INFO ("%s: 1 null->ready", gst_element_get_name (element));
+    gnl_timeline_timer_reset (timer);
+    break;
+  default:
+    break;
+  }
+  return GST_ELEMENT_CLASS (timer_parent_class)->change_state (element);
+}
+
 
 /*
  * TimelineTimer GstPad getcaps function
@@ -344,9 +381,10 @@ gnl_timeline_timer_loop (GstElement *element)
 	}
       } else {
 	/* If there isn't anything else in that group (real EOS) */
-	GST_INFO("Nothing else in that group, sending real EOS");
+	GST_INFO("Nothing else in that group, sending real EOS and setting timegrouplink time to 0");
         gst_pad_set_active (sinkpad, FALSE);
         gst_pad_push (to_schedule->srcpad, (GstData *) buf);
+	to_schedule->time = 0LL;
       }
     } else {
       /* 
@@ -357,10 +395,14 @@ gnl_timeline_timer_loop (GstElement *element)
 
       if (GST_IS_BUFFER (buf)) {
 	to_schedule->time = GST_BUFFER_TIMESTAMP (buf) + GST_BUFFER_DURATION (buf);
+      } else if (GST_IS_EVENT (buf) && (GST_EVENT_TYPE (GST_EVENT (buf)) == GST_EVENT_DISCONTINUOUS)) {
+	if (!gst_event_discont_get_value (GST_EVENT(buf), GST_FORMAT_TIME, &(to_schedule->time)))
+	  GST_WARNING ("Couldn't get time value for discont event !!");
       }
       if (to_schedule->time < G_MAXINT64) {
         gst_pad_push (to_schedule->srcpad, (GstData *) buf);
       } else {
+	GST_WARNING ("Not forwarding buffer/event because to_schedule->time >= G_MAXINT64");
         gst_data_unref (GST_DATA (buf));
       }
     }

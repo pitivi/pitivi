@@ -694,7 +694,16 @@ source_getfunction (GstPad *pad)
           object->current_time++;
 	  gst_pad_set_active (pad, FALSE);
 	  found = TRUE;
-        }
+        } else if (GST_EVENT_TYPE (buffer) == GST_EVENT_DISCONTINUOUS) {
+	  gint64	dvalue = 0LL;
+	  
+	  if (!gst_event_discont_get_value (GST_EVENT (buffer), GST_FORMAT_TIME, &dvalue))
+	    GST_WARNING ("couldn't get TIME value from discont event !");
+	  gst_data_unref (GST_DATA(buffer));
+	  dvalue = dvalue - object->media_start + object->start;
+	  object->current_time = dvalue;
+	  buffer = GST_BUFFER (gst_event_new_discontinuous (FALSE, GST_FORMAT_TIME, dvalue, NULL));
+	}
       }
       else {
 	/* If data is buffer */
