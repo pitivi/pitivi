@@ -1398,12 +1398,6 @@ pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimelineCellRenderer
 }
 
 void
-pitivi_timelinecellrenderer_callb_select (PitiviTimelineCellRenderer *self)
-{
-  
-}
-
-void
 pitivi_timelinecellrenderer_callb_deselect (PitiviTimelineCellRenderer *self)
 {
   self->private->selected = FALSE;
@@ -1884,16 +1878,7 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
 						   NULL,                
 						   g_cclosure_marshal_VOID__VOID,
 						   G_TYPE_NONE, 0);
- 
-  layoutsignals[SELECT_SIGNAL] = g_signal_new ("select",
-					       G_TYPE_FROM_CLASS (g_class),
-					       G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-					       G_STRUCT_OFFSET (PitiviTimelineCellRendererClass, select),
-					       NULL, 
-					       NULL,                
-					       g_cclosure_marshal_VOID__VOID,
-					       G_TYPE_NONE, 0);
-  
+   
   layoutsignals[DESELECT_SIGNAL] = g_signal_new ("deselect",
 						 G_TYPE_FROM_CLASS (g_class),
 						 G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
@@ -1977,7 +1962,6 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   
   cell_class->activate = pitivi_timelinecellrenderer_callb_activate;
   cell_class->deactivate = pitivi_timelinecellrenderer_callb_deactivate;
-  cell_class->select = pitivi_timelinecellrenderer_callb_select;
   cell_class->deselect = pitivi_timelinecellrenderer_callb_deselect;
   cell_class->drag_source_begin = pitivi_timelinecellrenderer_callb_drag_source_begin;
   cell_class->drag_source_end = pitivi_timelinecellrenderer_callb_drag_source_end;

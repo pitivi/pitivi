@@ -41,7 +41,7 @@
 #include "pitivi-menu.h"
 #include "pitivi-debug.h"
 #include "pitivi-lplayerwindow.h"
-/*#include "pitivi-progressbar.h"*/
+#include "pitivi-progressbar.h"
 
 static	GdkPixbuf *window_icon = NULL;
 static PitiviProjectWindowsClass *parent_class = NULL;
@@ -95,7 +95,8 @@ struct _PitiviSourceListWindowPrivate
 
   /* Progress bar */
   
-  /*  PitiviProgressBar *bar; */
+  GList *folder_list;
+  PitiviProgressBar  *bar;
 };
 
 /*
@@ -490,6 +491,7 @@ char	*my_strcat(char *dst, char *src)
   *tmp_res = 0;
   return res;
 }
+
 void	retrieve_file_from_folder(PitiviSourceListWindow *self)
 {
   DIR	*dir;
@@ -497,28 +499,40 @@ void	retrieve_file_from_folder(PitiviSourceListWindow *self)
   struct stat	stat_buf;
   gchar	*folderpath;
   gchar	*fullpathname;
+  gchar *name;
+  GList *list;
+  gint nb, i = 0;
   
   dir = opendir(self->private->folderpath);
-
   folderpath = g_strdup(self->private->folderpath); 
   strcat(folderpath, "/");
-  
   while ((entry = readdir(dir)))
     {
-      
       fullpathname = my_strcat(folderpath, entry->d_name);
       stat(fullpathname, &stat_buf);
       if (stat_buf.st_mode & S_IFREG)
-	{
-	  self->private->filepath = fullpathname;
-	  g_printf("retrieve ==> %s\n", fullpathname);
-	  new_file(NULL, self);
-	}
+	self->private->folder_list = g_list_append (self->private->folder_list, fullpathname);
       else
 	g_free(fullpathname);
     }
-
   closedir(dir);
+  self->private->bar = pitivi_progressbar_new ();
+  nb = g_list_length (self->private->folder_list);
+  while (gtk_events_pending())
+    gtk_main_iteration();
+  for (list = self->private->folder_list; i < nb; list = list->next)
+    {
+      self->private->filepath = (gchar *)list->data;
+      name = strrchr(self->private->filepath, '/'); name++;
+      pitivi_progressbar_set_info (self->private->bar, name);
+      pitivi_progressbar_set_fraction (self->private->bar, (gdouble)i/nb);
+      new_file(NULL, self);
+      while (gtk_events_pending())
+	gtk_main_iteration();
+      i++;
+    }
+  pitivi_progressbar_set_fraction (self->private->bar, 1.0);
+  pitivi_progressbar_set_info (self->private->bar, self->private->filepath);
 }
 
 gchar*
@@ -533,9 +547,7 @@ pitivi_sourcelistwindow_set_folder(PitiviSourceListWindow *self,
   gchar		*name;
 
   sMediaType = g_malloc(12);
-    
   sprintf(sMediaType, "Bin");
-  
   pixbufa = gtk_widget_render_icon(self->private->listview, GTK_STOCK_OPEN,
 				   GTK_ICON_SIZE_MENU, NULL);
 
@@ -588,7 +600,6 @@ pitivi_sourcelistwindow_set_folder(PitiviSourceListWindow *self,
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
   gtk_tree_selection_select_iter(selection, &iter);  
   g_object_unref(pixbufa);
-
   return name;
 }
 
@@ -603,7 +614,6 @@ void	new_folder(GtkWidget *widget, gpointer data)
   guint		depth;
 
   selected_row = get_selected_row(self->private->treepath, &depth);
-
   name = pitivi_sourcelistwindow_set_folder(self, &iter2);
   pitivi_projectsourcelist_add_folder_to_bin(((PitiviProjectWindows*)self)->project->sources,
 					     self->private->treepath, name);
@@ -656,7 +666,6 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
       return NULL;
     }
   
-  /*  pitivi_progressbar_set_infos (self->private->bar, sf->filename); */
   pixbufa = pitivi_sourcefile_get_first_thumb (sf);
   if (!pixbufa)
     {
@@ -908,10 +917,10 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self)
   g_signal_connect (pListView, "drag_begin",	      
 		    G_CALLBACK (drag_begin_cb), self);
   
-  pixbuf = gtk_widget_render_icon(pListView, PITIVI_STOCK_HAND, GTK_ICON_SIZE_DND, NULL);
+  pixbuf = gtk_widget_render_icon(pListView, PITIVI_STOCK_HAND, GTK_ICON_SIZE_SMALL_TOOLBAR, NULL);
   gtk_drag_source_set_icon_pixbuf (pListView, pixbuf);
   self->private->listview = pListView;
-
+  
   /* Creation du menu popup */
   self->private->listmenu = pitivi_create_menupopup(GTK_WIDGET (self), ListPopup, iNbListPopup);
 
@@ -1048,7 +1057,6 @@ GtkWidget	*create_treeview(PitiviSourceListWindow *self)
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(pScrollbar),
 				 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(pScrollbar), pTreeView);
-
   return pScrollbar;
 }
 
@@ -1138,14 +1146,17 @@ void	on_row_activated (GtkTreeView        *listview,
   
   /* set the lispath */
   self->private->listpath = gtk_tree_path_to_string(path);
-  OnSelectItem(self, &iter, &liststore, (void **) &sf, POINTER_LISTCOLUMN7, &item_select, &folder_select);
-  if (!sf && OnSelectItem(self, &iter, &liststore, (void **) &sMediaType, TEXT_LISTCOLUMN3, &item_select, &folder_select))
+  if (OnSelectItem(self, &iter, &liststore, (void **) &sMediaType, TEXT_LISTCOLUMN3, &item_select, &folder_select))
     {
       if (!strcmp(sMediaType, "Bin"))
-	select_folder_from_listview(self, folder_select);
-      return;
+	{
+	  select_folder_from_listview(self, folder_select);
+	  return;
+	}
     }
-  lplayerwin = pitivi_lplayerwindow_new (sf->filename);
+  OnSelectItem(self, &iter, &liststore, (void **) &sf, POINTER_LISTCOLUMN7, &item_select, &folder_select);
+  if (sf && sf->filename)
+    lplayerwin = pitivi_lplayerwindow_new (sf->filename);
 }
 
 gboolean	my_popup_handler(gpointer data, GdkEvent *event,
@@ -1291,9 +1302,11 @@ void	import_from_gtkchooser (PitiviSourceListWindow *self, gchar *labelchooser, 
     }
   gtk_widget_destroy(dialog);
   if (accept)
-    g_signal_emit(self, pitivi_sourcelistwindow_signal[signal],
-		  0 /* details */, 
-		  NULL);
+    {
+      g_signal_emit(self, pitivi_sourcelistwindow_signal[signal],
+		    0 /* details */, 
+		    NULL);
+    }
 }
 
 void	OnImportFile(gpointer data, gint action, GtkWidget *widget)
@@ -1580,9 +1593,8 @@ pitivi_sourcelistwindow_recurse_into_folder(PitiviSourceListWindow *self,
   GtkTreeIter	   iter;
   gchar		   *name;
   gchar		   *save;
-
+  
   file_list = pitivi_projectsourcelist_get_file_list(((PitiviProjectWindows*)self)->project->sources, parent_name);
-      
   while (file_list)
     {
       self->private->filepath = file_list->data;
@@ -1595,11 +1607,11 @@ pitivi_sourcelistwindow_recurse_into_folder(PitiviSourceListWindow *self,
 							   sf->infoaudio, 
 							   sf->length,
 							   sf->pipeline);
+    
       file_list = file_list->next;
     }
-
-  folder_list = pitivi_projectsourcelist_get_folder_list(((PitiviProjectWindows*)self)->project->sources, parent_name);
   
+  folder_list = pitivi_projectsourcelist_get_folder_list(((PitiviProjectWindows*)self)->project->sources, parent_name);
   while (folder_list)
     {
       self->private->folderpath = folder_list->data;
@@ -1729,7 +1741,6 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   gtk_container_add(GTK_CONTAINER(self), self->private->hpaned);
   self->private->nbrchutier = 1;
   /* Progress bar */
-  /*  self->private->bar = pitivi_progressbar_new (); */
 }
 
 static void
@@ -1753,36 +1764,6 @@ pitivi_sourcelistwindow_finalize (GObject *object)
 
   g_free (self->private);
   G_OBJECT_CLASS (parent_class)->finalize (object);
-}
-
-static void
-pitivi_sourcelistwindow_set_property (GObject * object,
-			      guint property_id,
-			      const GValue * value, GParamSpec * pspec)
-{
-/*   PitiviSourceListWindow *self = (PitiviSourceListWindow *) object; */
-
-  switch (property_id)
-    {
-    default:
-      g_assert (FALSE);
-      break;
-    }
-}
-
-static void
-pitivi_sourcelistwindow_get_property (GObject * object,
-			      guint property_id,
-			      GValue * value, GParamSpec * pspec)
-{
-/*   PitiviSourceListWindow *self = (PitiviSourceListWindow *) object; */
-
-  switch (property_id)
-    {
-    default:
-      g_assert (FALSE);
-      break;
-    }
 }
 
 static gboolean
@@ -1810,9 +1791,6 @@ pitivi_sourcelistwindow_class_init (gpointer g_class, gpointer g_class_data)
   gobject_class->dispose = pitivi_sourcelistwindow_dispose;
   gobject_class->finalize = pitivi_sourcelistwindow_finalize;
   
-  gobject_class->set_property = pitivi_sourcelistwindow_set_property;
-  gobject_class->get_property = pitivi_sourcelistwindow_get_property;
-
   widget_class->delete_event = pitivi_sourcelistwindow_delete_event;
   pitivi_sourcelistwindow_signal[FILEIMPORT_SIGNAL] = g_signal_newv("newfile",
 								    G_TYPE_FROM_CLASS (g_class),
