@@ -1343,7 +1343,7 @@ OnTimelineFirstInsert (gpointer data, gint action, GtkWidget *widget)
 void
 remove_source (PitiviSourceListWindow *self, GtkListStore *liststore, gint *item_select, GtkTreeIter *iter)
 {
-  if ( self->private->dndsf )
+  if ( self->private->dndsf && self->private->dndsf->nbbins )
     g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", self->private->dndsf);
   pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
 						self->private->treepath,
@@ -1355,6 +1355,7 @@ remove_source (PitiviSourceListWindow *self, GtkListStore *liststore, gint *item
 void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;  
+  PitiviSourceFile	*sf;
   GtkWidget	*dialog;
   GtkListStore	*liststore;
   GtkTreeIter	iter;
@@ -1368,6 +1369,13 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
   if (!OnSelectItem(self, &iter, &liststore, (void **) &sMediaType, TEXT_LISTCOLUMN3, &item_select, 
 		    &folder_select))
     return;
+  if (!OnSelectItem(self, &iter, &liststore, (void **) &sf, POINTER_LISTCOLUMN7, &item_select, 
+		    &folder_select))
+    return;
+  if (!sf->nbbins) {
+    remove_source (self, liststore, &item_select, &iter);
+    return;
+  }
   if ( strcmp(sMediaType, "Bin") )
     msg = g_strdup ("This source is used several times in the project\nAre you sure you want to delete it ?\n");
   else
@@ -1388,7 +1396,7 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
 	    if (!OnSelectItem(self, &iter, &liststore, (void **) &self->private->dndsf, POINTER_LISTCOLUMN7, &item_select, 
 			      &folder_select))
 	      return;
-	    if (self->private->dndsf && self->private->dndsf->nbbins)
+	    if (self->private->dndsf)
 	      remove_source (self, liststore, &item_select, &iter);
 	  }
 	else
