@@ -35,7 +35,6 @@ pitivi_file (const char *filename)
     DATADIR "/",
     DATADIR "/pixmaps/",
     DATADIR "/pixmaps/pitivi/",
-    DATADIR "/pitivi/pixmaps/",
     DATADIR "/pitivi/ui/",
     DATADIR "/ui/pitivi",
     DATADIR "/ui/",
