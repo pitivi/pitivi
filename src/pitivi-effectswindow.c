@@ -268,7 +268,7 @@ pitivi_create_effect_sourcefile (const gchar *name,
   se->thumbs_effect = pixbuf;
   se->mediatype = g_strdup (mediatype);
   se->pipeline = elm;
-  se->length = 0LL;
+  se->length = 5000000000LL;
   return se;
 }
 

@@ -464,6 +464,7 @@ void move_media (GtkWidget *cell, GtkWidget *widget, guint x)
     {
       xbegin = x + first->allocation.width;
       pitivi_layout_move (GTK_LAYOUT (cell), first, xbegin, 0);
+      move_attached_effects (first, xbegin);
       move_media (cell, first, xbegin);
     }
   return;
@@ -484,6 +485,7 @@ move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
       else
 	xbegin = x;
       pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
+      move_attached_effects (widget, xbegin);
     }
   else if (!intersec[0] && intersec[1])
     {
@@ -907,7 +909,7 @@ create_effect_on_track (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf, 
   type_track_cmp = check_media_type (sf);
   if (self->track_type == type_track_cmp)
     {
-      media = pitivi_timelinemedia_new (sf, 0, self);
+      media = pitivi_timelinemedia_new (sf, self->private->slide_width, self);
       add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (media), x, 0);
       pitivi_layout_add_to_composition (self, media);
     }
