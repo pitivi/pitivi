@@ -70,6 +70,14 @@ pitivi_effects_ok (GtkWidget *widget, GObject *obj)
 }
 
 void 
+pitivi_effects_apply (GtkWidget *widget, GObject *obj)
+{
+  g_print ("PitiviEffectsWindowProperties  APPLY\n");
+ 
+}
+
+
+void 
 pitivi_effects_cancel (GtkWidget *widget, GObject *obj)
 {
   g_print ("PitiviEffectsWindowProperties  CANCEL\n");
@@ -92,6 +100,7 @@ pitivi_effectswindowproperties_constructor (GType type,
   GObjectClass *parent_class;
   GtkWidget *hbox;
   GtkWidget *button_ok;
+  GtkWidget *button_apply;
   GtkWidget *button_cancel;
 
   /* Invoke parent constructor. */
@@ -120,6 +129,11 @@ pitivi_effectswindowproperties_constructor (GType type,
   gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (button_ok), TRUE, FALSE, 5);
   gtk_signal_connect (GTK_OBJECT (button_ok), "released",
   		      GTK_SIGNAL_FUNC (pitivi_effects_ok), obj); 
+
+  button_apply = gtk_button_new_from_stock(GTK_STOCK_APPLY);
+  gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (button_apply), TRUE, FALSE, 5);
+  gtk_signal_connect (GTK_OBJECT (button_apply), "released",
+  		      GTK_SIGNAL_FUNC (pitivi_effects_apply), obj); 
 
   button_cancel = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
   gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET (button_cancel), TRUE, FALSE, 5);
