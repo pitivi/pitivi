@@ -25,7 +25,7 @@
 #include "pitivi-debug.h"
 #include "pitivi-sourcefilebin.h"
 
-static gchar *
+gchar *
 gst_event_get_name (GstEvent *event)
 {
   switch (GST_EVENT_TYPE (event)) {
@@ -66,28 +66,72 @@ gst_event_get_name (GstEvent *event)
   return "REALLY UNKNOWN EVENT";
 }
 
-gboolean
-testprobe (GstProbe *probe, GstData **data, gpointer pad)
+ /**
+ * gst_pad_set_active_recursive:
+ * @pad: the #GstPad to activate or deactivate.
+ * @active: TRUE to activate the pad.
+ *
+ * Activates or deactivates the given pad and all internally linked
+ * pads upstream until it finds an element with multiple source pads.
+ */
+static void
+gst_pad_set_active_recursive (GstPad * pad, gboolean active)
 {
-  if (GST_IS_EVENT(*data))
-    g_printf ("Pad %s:%s got an event %s\n",
-	      GST_DEBUG_PAD_NAME(GST_PAD(pad)),
-	      gst_event_get_name(GST_EVENT(*data)));
-  else
-    g_printf ("Pad %s:%s got buffer %03lld:%02lld:%03lld\n",
-	      GST_DEBUG_PAD_NAME(GST_PAD(pad)),
-	      GST_M_S_M(GST_BUFFER_TIMESTAMP(*data)));
-  return TRUE;
+  GstElement *parent;
+  const GList *int_links;
+  
+  g_return_if_fail (GST_IS_PAD (pad));
+  g_return_if_fail (GST_PAD_IS_SRC (pad));
+  
+  PITIVI_DEBUG("Recursively %s pad %s:%s", active ? "activating" : "deactivating",
+	       GST_DEBUG_PAD_NAME (pad));
+  
+  gst_pad_set_active (pad, active);
+  /* If we have more than one sourcepad, then the other pads should
+   * possibly be kept active. FIXME: maybe we should recurse
+   * activation if any one pad is active and recurse deactivation
+   * if no single pad is active? */
+  parent = gst_pad_get_parent (pad);
+  if (!parent || parent->numsrcpads > 1)
+    return;
+  
+  for (int_links = gst_pad_get_internal_links (pad);
+       int_links; int_links = g_list_next (int_links)) {
+    GstPad *sinkpad = GST_PAD (int_links->data);
+    GstPad *peer = GST_PAD_PEER (sinkpad);
+    
+    PITIVI_DEBUG("Recursing %s on pad %s:%s",
+		 active ? "activation" : "deactivation",
+		 GST_DEBUG_PAD_NAME (sinkpad));
+    
+    gst_pad_set_active (sinkpad, active);
+    if (peer)
+      gst_pad_set_active_recursive (peer, active);
+  }
 }
 
-void
+/* static gboolean */
+/* testprobe (GstProbe *probe, GstData **data, gpointer pad) */
+/* { */
+/*   if (GST_IS_EVENT(*data)) */
+/*     g_printf ("Pad %s:%s got an event %s\n", */
+/* 	      GST_DEBUG_PAD_NAME(GST_PAD(pad)), */
+/* 	      gst_event_get_name(GST_EVENT(*data))); */
+/*   else */
+/*     g_printf ("Pad %s:%s got buffer %03lld:%02lld:%03lld\n", */
+/* 	      GST_DEBUG_PAD_NAME(GST_PAD(pad)), */
+/* 	      GST_M_S_M(GST_BUFFER_TIMESTAMP(*data))); */
+/*   return TRUE; */
+/* } */
+
+static void
 bin_notify (GObject *object, GParamSpec *param, gpointer data)
 {
   g_printf ("Property %s changed in bin\n",
 	    param->name);
 }
 
-GstElement *
+static GstElement *
 bin_make_new_audiobin (gchar *name, GstCaps *caps)
 {
   GstElement	*bin;
@@ -114,7 +158,7 @@ bin_make_new_audiobin (gchar *name, GstCaps *caps)
   return bin;
 }
 
-GstElement *
+static GstElement *
 bin_make_new_videobin (gchar *name, GstCaps *caps)
 {
   GstElement	*bin;
@@ -162,7 +206,7 @@ bin_make_new_videobin (gchar *name, GstCaps *caps)
   return bin;
 }
 
-void
+static void
 bin_add_audiobin (bindata *data)
 {
   gchar	*tmp;
@@ -189,7 +233,7 @@ bin_add_audiobin (bindata *data)
   }
 }
 
-void
+static void
 bin_add_videobin (bindata *data)
 {
   if (!data->videobin) {
@@ -214,33 +258,35 @@ bin_add_videobin (bindata *data)
   }
 }
 
-void
+static void
 bin_new_pad_fake_output (GstPad *pad, bindata *data, int padtype)
 {
-  GstElement	*sink;
-  char		*tmp;
+/*   GstElement	*sink; */
+/*   char		*tmp; */
 
-  if (((padtype == IS_AUDIO) && (!data->audiofakesink))
-      || ((padtype == IS_VIDEO) && (!data->videofakesink))) {
-    tmp = g_strdup_printf("fakesink%d", data->lastsinkid++);
-    sink = gst_element_factory_make ("fakesink", tmp);
-    g_free(tmp);
-    gst_bin_add(GST_BIN (data->bin), sink);
-    if (padtype == IS_AUDIO)
-      data->audiofakesink = sink;
-    else
-      data->videofakesink = sink;
-  } else
-    if (padtype == IS_AUDIO)
-      sink = data->audiofakesink;
-    else
-      sink = data->videofakesink;
+  gst_pad_set_active_recursive (pad, FALSE);
 
-  if (!(gst_pad_link(pad, gst_element_get_pad(sink, "sink"))))
-    PITIVI_WARNING("Error linking decodebin pad to fakesink !!!");
+/*   if (((padtype == IS_AUDIO) && (!data->audiofakesink)) */
+/*       || ((padtype == IS_VIDEO) && (!data->videofakesink))) { */
+/*     tmp = g_strdup_printf("fakesink%d", data->lastsinkid++); */
+/*     sink = gst_element_factory_make ("fakesink", tmp); */
+/*     g_free(tmp); */
+/*     gst_bin_add(GST_BIN (data->bin), sink); */
+/*     if (padtype == IS_AUDIO) */
+/*       data->audiofakesink = sink; */
+/*     else */
+/*       data->videofakesink = sink; */
+/*   } else */
+/*     if (padtype == IS_AUDIO) */
+/*       sink = data->audiofakesink; */
+/*     else */
+/*       sink = data->videofakesink; */
+
+/*   if (!(gst_pad_link(pad, gst_element_get_pad(sink, "sink")))) */
+/*     PITIVI_WARNING("Error linking decodebin pad to fakesink !!!"); */
 }
 
-void
+static void
 bin_new_pad_audio_output (GstPad *pad, bindata *data)
 {
   /* TODO : Add the audio adapters */
@@ -256,7 +302,7 @@ bin_new_pad_audio_output (GstPad *pad, bindata *data)
 /*     gst_element_add_ghost_pad (data->bin, pad, "src"); */
 }
 
-void
+static void
 bin_new_pad_video_output (GstPad *pad, bindata *data)
 {  
   PITIVI_DEBUG ("New Pad Video Output for pad %s:%s",
@@ -268,7 +314,7 @@ bin_new_pad_video_output (GstPad *pad, bindata *data)
 
 /* bin_new_pad_cb , callback used by outgoing bins when there's a new pad */
 
-void
+static void
 bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udata)
 {
   gint	padtype;
@@ -306,7 +352,7 @@ bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udat
     data->ready = TRUE;
 }
 
-void
+static void
 bin_add_outputbins (bindata *data)
 {
   /* Add audio outputbin */
@@ -318,53 +364,53 @@ bin_add_outputbins (bindata *data)
     bin_add_audiobin (data);
 }
 
-void
-bin_preroll (GstElement *container, bindata *data)
-{
-  gint	i = 1000;
-  GstElement	*father;
-  GstElement	*pipeline;
-  GstElementState	pstate = GST_STATE_READY;
-  gboolean	hadfather = FALSE;
+/* static void */
+/* bin_preroll (GstElement *container, bindata *data) */
+/* { */
+/*   gint	i = 1000; */
+/*   GstElement	*father; */
+/*   GstElement	*pipeline; */
+/*   GstElementState	pstate = GST_STATE_READY; */
+/*   gboolean	hadfather = FALSE; */
 
-  pipeline = gst_pipeline_new(NULL);
-  pstate = gst_element_get_state (data->bin);
-/*   PITIVI_DEBUG ("Element was in state %s", gst_element_state_get_name(pstate)); */
-  if ((father = (GstElement *) gst_object_get_parent (GST_OBJECT(data->bin)))) {
-    /* remove it from father */
-    hadfather = TRUE;
-    gst_object_ref (GST_OBJECT(data->bin));
-    gst_bin_remove (GST_BIN (father), data->bin);
-  }
+/*   pipeline = gst_pipeline_new(NULL); */
+/*   pstate = gst_element_get_state (data->bin); */
+/* /\*   PITIVI_DEBUG ("Element was in state %s", gst_element_state_get_name(pstate)); *\/ */
+/*   if ((father = (GstElement *) gst_object_get_parent (GST_OBJECT(data->bin)))) { */
+/*     /\* remove it from father *\/ */
+/*     hadfather = TRUE; */
+/*     gst_object_ref (GST_OBJECT(data->bin)); */
+/*     gst_bin_remove (GST_BIN (father), data->bin); */
+/*   } */
 
-  gst_bin_add (GST_BIN (pipeline), data->bin);
+/*   gst_bin_add (GST_BIN (pipeline), data->bin); */
 
-  data->ready = data->audioready = data->videoready = FALSE;
+/*   data->ready = data->audioready = data->videoready = FALSE; */
   
-  if (!(gst_element_set_state (pipeline, GST_STATE_PLAYING)))
-    PITIVI_WARNING ("couldn't set bin to PLAYING during pre_roll");
+/*   if (!(gst_element_set_state (pipeline, GST_STATE_PLAYING))) */
+/*     PITIVI_WARNING ("couldn't set bin to PLAYING during pre_roll"); */
   
-  while (i--) {
-    if (!(gst_bin_iterate(GST_BIN(pipeline))))
-      break;
-    if (data->ready)
-      break;
-  }  
+/*   while (i--) { */
+/*     if (!(gst_bin_iterate(GST_BIN(pipeline)))) */
+/*       break; */
+/*     if (data->ready) */
+/*       break; */
+/*   }   */
 
-  if (!(gst_element_set_state (pipeline, pstate)))
-    PITIVI_WARNING ("couldn't set bin to PLAYING during pre_roll");
+/*   if (!(gst_element_set_state (pipeline, pstate))) */
+/*     PITIVI_WARNING ("couldn't set bin to PLAYING during pre_roll"); */
   
-  gst_object_ref (GST_OBJECT(data->bin));
-  gst_bin_remove (GST_BIN (pipeline), data->bin);
+/*   gst_object_ref (GST_OBJECT(data->bin)); */
+/*   gst_bin_remove (GST_BIN (pipeline), data->bin); */
   
-/*   PITIVI_DEBUG ("Element after pre-roll is in state %s\n", */
-/* 	    gst_element_state_get_name (gst_element_get_state (data->bin))); */
-  gst_element_set_state (data->bin, pstate);
-  if (hadfather) {
-    gst_bin_add (GST_BIN(father), data->bin);
-/*     gst_object_unref (GST_OBJECT(data->bin)); */
-  }
-}
+/* /\*   PITIVI_DEBUG ("Element after pre-roll is in state %s\n", *\/ */
+/* /\* 	    gst_element_state_get_name (gst_element_get_state (data->bin))); *\/ */
+/*   gst_element_set_state (data->bin, pstate); */
+/*   if (hadfather) { */
+/*     gst_bin_add (GST_BIN(father), data->bin); */
+/* /\*     gst_object_unref (GST_OBJECT(data->bin)); *\/ */
+/*   } */
+/* } */
 
 /* void */
 /* decodebin_change_state (GstElement *element, GstElementState pstate, GstElementState state, bindata *data) */
@@ -429,7 +475,7 @@ pitivi_sourcefile_bin_new (PitiviSourceFile *self, int type, PitiviMainApp *main
   return pipeline;
 }
 
-gboolean
+static gboolean
 pad_is_video_yuv(GstPad *pad)
 {
   GstCaps	*caps;

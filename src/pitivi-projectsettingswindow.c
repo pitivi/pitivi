@@ -46,45 +46,45 @@ struct _PitiviProjectSettingsWindowPrivate
  * Insert "added-value" functions here
  */
 
-static void
-apply_clicked (GtkButton *button, PitiviProjectSettingsWindow *self)
-{
-  PitiviProjectSettings	*res;
+/* static void */
+/* apply_clicked (GtkButton *button, PitiviProjectSettingsWindow *self) */
+/* { */
+/*   PitiviProjectSettings	*res; */
 
-  res = pitivi_projectsettingswidget_get_copy (self->private->widget);
-/*   pitivi_projectsettings_print (res); */
-  g_object_unref (G_OBJECT (res));
-}
+/*   res = pitivi_projectsettingswidget_get_copy (self->private->widget); */
+/*   g_object_unref (G_OBJECT (res)); */
+/* } */
 
 static void
 cancel_clicked (GtkButton *button, PitiviProjectSettingsWindow *self)
 {
-
+  gtk_widget_destroy (GTK_WIDGET (self));
 }
 
 static void
 ok_clicked (GtkButton *button, PitiviProjectSettingsWindow *self)
 {
-
+  PITIVI_PROJECTWINDOWS(self)->project->settings = pitivi_projectsettingswidget_get_copy (self->private->widget);
+  gtk_widget_destroy (GTK_WIDGET (self));
 }
 
 static GtkWidget *
 pitivi_projectsettingswindow_make_buttons_box (PitiviProjectSettingsWindow *self)
 {
-  GtkWidget	*applyb, *cancelb, *okb;
+  GtkWidget	*cancelb, *okb;
   GtkWidget	*hbox;
 
   hbox = gtk_hbox_new (FALSE, 5);
 
-  applyb = gtk_button_new_from_stock (GTK_STOCK_APPLY);
+/*   applyb = gtk_button_new_from_stock (GTK_STOCK_APPLY); */
   cancelb = gtk_button_new_from_stock (GTK_STOCK_CANCEL);
   okb = gtk_button_new_from_stock (GTK_STOCK_OK);
 
-  gtk_box_pack_start (GTK_BOX(hbox), applyb, TRUE, TRUE, 5);
+/*   gtk_box_pack_start (GTK_BOX(hbox), applyb, TRUE, TRUE, 5); */
   gtk_box_pack_start (GTK_BOX(hbox), cancelb, TRUE, TRUE, 5);
   gtk_box_pack_start (GTK_BOX(hbox), okb, TRUE, TRUE, 5);
 
-  g_signal_connect (G_OBJECT(applyb), "clicked", G_CALLBACK (apply_clicked), self);
+/*   g_signal_connect (G_OBJECT(applyb), "clicked", G_CALLBACK (apply_clicked), self); */
   g_signal_connect (G_OBJECT(cancelb), "clicked", G_CALLBACK (cancel_clicked), self);
   g_signal_connect (G_OBJECT(okb), "clicked", G_CALLBACK (ok_clicked), self);
 

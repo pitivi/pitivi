@@ -375,6 +375,7 @@ video_conf_clicked (GtkButton *button, PitiviProjectSettingsWidget *self)
     PITIVI_DEBUG ("taking existing IO");
     io = self->private->videocodecprops;
   }
+  PITIVI_DEBUG ("sending IO %p , GParameter %p", io, io->params);
   widget = GTK_WIDGET (pitivi_gstelementsettings_new (io, 0));
 
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(dialog)->vbox),
@@ -387,6 +388,8 @@ video_conf_clicked (GtkButton *button, PitiviProjectSettingsWidget *self)
     PITIVI_DEBUG ("OK");
     self->private->videocodecprops =
       pitivi_gstelementsettings_get_settings_elem (PITIVI_GSTELEMENTSETTINGS (widget));
+    PITIVI_DEBUG ("received IO %p , GParameter %p", self->private->videocodecprops, 
+		  self->private->videocodecprops->params);
     break;
   case GTK_RESPONSE_CANCEL:
   default:
@@ -839,6 +842,7 @@ pitivi_psw_make_audioframe (PitiviProjectSettingsWidget *self)
   GtkWidget	*table;
   GtkWidget	*codeclabel, *depthlabel, *channlabel, *ratelabel;
   GtkWidget	*hzlabel, *nblabel;
+  GtkSizeGroup	*sg;
 
   frame = gtk_frame_new ("Audio settings");
   table = gtk_table_new (4, 4, FALSE);
@@ -885,16 +889,19 @@ pitivi_psw_make_audioframe (PitiviProjectSettingsWidget *self)
   gtk_table_attach (GTK_TABLE (table), self->private->audiochanncbox,
 		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL , FALSE, 5, 5);
 
+  sg = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+
   self->private->audiochannhbox = gtk_hbox_new (FALSE, 5);
   self->private->audiochannentry = gtk_spin_button_new_with_range (1, G_MAXINT, 1);
   nblabel = gtk_label_new ("Channels");
   gtk_box_pack_start (GTK_BOX (self->private->audiochannhbox),
 		      self->private->audiochannentry, FALSE, FALSE, 5);
   gtk_widget_set_sensitive (self->private->audiochannhbox, FALSE);
+  gtk_size_group_add_widget (sg, nblabel);
   gtk_box_pack_start (GTK_BOX (self->private->audiochannhbox),
 		      nblabel, FALSE, FALSE, 5);
   gtk_table_attach (GTK_TABLE (table), self->private->audiochannhbox,
-		    2, 4, 2, 3, FALSE, FALSE, 5, 5);
+		    2, 3, 2, 3, FALSE, FALSE, 5, 5);
 
 
   /* Rate */
@@ -912,12 +919,14 @@ pitivi_psw_make_audioframe (PitiviProjectSettingsWidget *self)
 
   self->private->audioratehbox = gtk_hbox_new (FALSE, 5);
   self->private->audiorateentry = gtk_spin_button_new_with_range (25, G_MAXINT, 25);
-  gtk_box_pack_start (GTK_BOX (self->private->audioratehbox), self->private->audiorateentry, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->audioratehbox), 
+		      self->private->audiorateentry, FALSE, FALSE, 5);
   hzlabel = gtk_label_new ("Hz");
-  gtk_box_pack_start (GTK_BOX (self->private->audioratehbox), hzlabel, FALSE, FALSE, 0);
+  gtk_size_group_add_widget (sg, hzlabel);
+  gtk_box_pack_start (GTK_BOX (self->private->audioratehbox), hzlabel, FALSE, FALSE, 5);
   gtk_widget_set_sensitive (self->private->audioratehbox, FALSE);
   gtk_table_attach (GTK_TABLE (table), self->private->audioratehbox,
-		    2, 4, 3, 4, FALSE, FALSE, 5, 5);
+		    2, 3, 3, 4, FALSE, FALSE, 5, 5);
 
   gtk_container_add (GTK_CONTAINER (frame), table);
   return frame;
@@ -930,6 +939,7 @@ pitivi_psw_make_videoframe (PitiviProjectSettingsWidget *self)
   GtkWidget	*table;
   GtkWidget	*codeclabel, *sizelabel, *ratelabel;
   GtkWidget	*xlabel, *pixellabel, *fpslabel;
+  GtkSizeGroup	*sg;
 
   frame = gtk_frame_new ("Video settings");
   table = gtk_table_new (3, 4, FALSE);
@@ -965,18 +975,21 @@ pitivi_psw_make_videoframe (PitiviProjectSettingsWidget *self)
   gtk_table_attach (GTK_TABLE (table), self->private->videosizecbox,
 		    1, 2, 1, 2, GTK_EXPAND | GTK_FILL , FALSE, 5, 5);
 
-  self->private->videosizehbox = gtk_hbox_new (FALSE, 2);
+  sg = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+
+  self->private->videosizehbox = gtk_hbox_new (FALSE, 5);
   self->private->videowidthentry = gtk_spin_button_new_with_range(16, G_MAXINT, 16);
   xlabel = gtk_label_new("x");
   self->private->videoheightentry = gtk_spin_button_new_with_range(16, G_MAXINT, 16);
   pixellabel = gtk_label_new("pixels");
-  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), self->private->videowidthentry, FALSE, FALSE, 2);
-  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), xlabel, FALSE, FALSE, 2);
-  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), self->private->videoheightentry, FALSE, FALSE, 2);
-  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), pixellabel, FALSE, FALSE, 2);
+  gtk_size_group_add_widget (sg, pixellabel);
+  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), self->private->videowidthentry, TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), xlabel, FALSE, FALSE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), self->private->videoheightentry, TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->videosizehbox), pixellabel, FALSE, FALSE, 5);
   gtk_widget_set_sensitive (self->private->videosizehbox, FALSE);
   gtk_table_attach (GTK_TABLE (table), self->private->videosizehbox,
-		    2, 4, 1, 2, FALSE, FALSE, 5, 5);
+		    2, 3, 1, 2, FALSE, FALSE, 5, 5);
 
   /* Frame Rate */
   ratelabel = gtk_label_new ("Framerate :");
@@ -991,14 +1004,15 @@ pitivi_psw_make_videoframe (PitiviProjectSettingsWidget *self)
   gtk_table_attach (GTK_TABLE (table), self->private->videoratecbox,
 		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
 
-  self->private->videoratehbox = gtk_hbox_new (FALSE, 2);
+  self->private->videoratehbox = gtk_hbox_new (FALSE, 5);
   self->private->videorateentry = gtk_entry_new();
   fpslabel = gtk_label_new ("fps");
-  gtk_box_pack_start (GTK_BOX (self->private->videoratehbox), self->private->videorateentry, FALSE, FALSE, 2);
-  gtk_box_pack_start (GTK_BOX (self->private->videoratehbox), fpslabel, FALSE, FALSE, 2);
+  gtk_size_group_add_widget (sg, fpslabel);
+  gtk_box_pack_start (GTK_BOX (self->private->videoratehbox), self->private->videorateentry, TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (self->private->videoratehbox), fpslabel, FALSE, FALSE, 5);
   gtk_widget_set_sensitive (self->private->videoratehbox, FALSE);
   gtk_table_attach (GTK_TABLE (table), self->private->videoratehbox,
-		    2, 4, 2, 3, FALSE, FALSE, 5, 5);
+		    2, 3, 2, 3, FALSE, FALSE, 5, 5);
 
   gtk_container_add (GTK_CONTAINER (frame), table);
   return frame;
