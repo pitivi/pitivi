@@ -135,6 +135,7 @@ pitivi_toolboxwindow_instance_init (GTypeInstance * instance,
   
   self->private->toolbox = pitivi_toolbox_new ();
   self->private->vbox = gtk_vbox_new (FALSE, 0);
+  gtk_window_set_title (GTK_WINDOW (self), PITIVI_TOOLBOXWINDOW_DF_TITLE);
   menubar = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TOOLBOX_FILENAME);
   GtkActionGroup *ag1 = gtk_action_group_new ("FileBoxRecent");
   GtkActionGroup *ag2 = gtk_action_group_new ("FileBoxMenu");

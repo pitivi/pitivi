@@ -99,15 +99,13 @@ statusbar_set_frames (GtkWidget *statusbar,
 	  display = g_strdup_printf ("%llu", frames);
 	  break;
 	case AS_TIME_LONG:
-	  /*ms = gpi_timeconv_frames_to_ms (frames, PITIVI_DF_RATE);
-	  display = gpi_timeconv_ms_to_time_string (ms);
-	  */
+	  ms = pitivi_timeconv_frames_to_ms (frames, PITIVI_DF_RATE);
+	  display = pitivi_timeconv_ms_to_time_string (ms);
 	  display = g_strdup_printf ("%15c%s", ' ', display);
 	  break;
 	case AS_SECONDS:
-	  /*ms = gpi_timeconv_frames_to_ms (frames, PITIVI_DF_RATE);
+	  ms = pitivi_timeconv_frames_to_ms (frames, PITIVI_DF_RATE);
 	  display = g_strdup_printf ("%llu", ms / 1000);
-	  */
 	  break;
 	default:
 	  return;
@@ -187,13 +185,11 @@ pitivi_timelinewindow_new(void)
   gtk_window_set_icon (GTK_WINDOW (timelinewindow), window_icon);
   
   /* Main Window : Drag And Drop */
-  /*
+  
   gtk_drag_dest_set (GTK_WIDGET (timelinewindow), GTK_DEST_DEFAULT_ALL,
 		     drop_types, num_drop_types, GDK_ACTION_COPY);
   g_signal_connect (G_OBJECT (timelinewindow), "drag_data_received",
 	 	    G_CALLBACK (pitivi_callb_drag_data_received), NULL);
-  */
-  
   /* Timeline */
   
   priv->forms = gtk_table_new (3, 2, FALSE);
@@ -244,7 +240,6 @@ pitivi_timelinewindow_new(void)
   statusbar_set_frames (priv->statusbar_frame, timelinewindow, (guint64) 0);
   gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (priv->statusbar_frame), FALSE);
   gtk_box_pack_start (GTK_BOX (priv->dock_statusbar), priv->statusbar_frame, TRUE, TRUE, 0);  
-
   priv->statusbar_message = gtk_statusbar_new ();
   gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (priv->statusbar_message), FALSE);
   gtk_box_pack_start (GTK_BOX (priv->dock_statusbar), priv->statusbar_message, TRUE, TRUE, 0);

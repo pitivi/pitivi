@@ -43,6 +43,8 @@
 #define PITIVI_IS_TOOLBOXWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_TOOLBOXWINDOW_TYPE))
 #define PITIVI_TOOLBOXWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_TOOLBOXWINDOW_TYPE, PitiviToolboxWindowClass))
 
+#define PITIVI_TOOLBOXWINDOW_DF_TITLE "Pitivi Project"
+
 typedef struct _PitiviToolboxWindow PitiviToolboxWindow;
 typedef struct _PitiviToolboxWindowClass PitiviToolboxWindowClass;
 typedef struct _PitiviToolboxWindowPrivate PitiviToolboxWindowPrivate;
