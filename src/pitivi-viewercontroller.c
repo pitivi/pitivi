@@ -27,46 +27,36 @@
 #include "pitivi-viewercontroller.h"
 #include "pitivi-viewervolume.h"
 
-typedef struct _ViewerButtons
-{
-  guint			  viewer_enum;
-  gchar			  *stock_icon;
-  GtkIconSize		  stock_size;
-  GtkReliefStyle	  relief;
-} ViewerButtons;
-
-typedef enum {
-  PITIVI_VIEWER_BUTTON_PREVIOUS = 1,
-  PITIVI_VIEWER_BUTTON_PLAY,
+enum {
+  PITIVI_VIEWER_BUTTON_REWARD = 1,
   PITIVI_VIEWER_BUTTON_PAUSE,
-  PITIVI_VIEWER_BUTTON_NEXT,
-  PITIVI_VIEWER_BUTTON_STOP,
-  PITIVI_VIEWER_ALL_BUTTONS
-} PitiviEnumViewerActions;
+  PITIVI_VIEWER_BUTTON_FORWARD,
+};
 
-ViewerButtons stockbuttons[PITIVI_VIEWER_ALL_BUTTONS]=
-  {
-    { PITIVI_VIEWER_BUTTON_PREVIOUS, PITIVI_STOCK_VIEWER_PREVIOUS, GTK_ICON_SIZE_BUTTON, GTK_RELIEF_NONE},
-    { PITIVI_VIEWER_BUTTON_PLAY,     PITIVI_STOCK_VIEWER_PLAY, GTK_ICON_SIZE_BUTTON, GTK_RELIEF_NONE},
-    { PITIVI_VIEWER_BUTTON_PAUSE,    PITIVI_STOCK_VIEWER_PAUSE, GTK_ICON_SIZE_BUTTON, GTK_RELIEF_NONE},
-    { PITIVI_VIEWER_BUTTON_NEXT,     PITIVI_STOCK_VIEWER_NEXT, GTK_ICON_SIZE_BUTTON, GTK_RELIEF_NONE},
-    { PITIVI_VIEWER_BUTTON_STOP,     PITIVI_STOCK_VIEWER_STOP, GTK_ICON_SIZE_BUTTON, GTK_RELIEF_NONE},
-    { 0, 0},
-  };
+enum {
+  PITIVI_VIEWER_BUTTON_PLAY = 1,
+  PITIVI_VIEWER_BUTTON_STOP,
+};
 
 struct _PitiviViewerControllerPrivate
 {
   /* instance private members */
   gboolean	        dispose_has_run;
+  
   GtkWidget	        *toolbar;
+  
   GtkWidget	        *seeker_scale;
-  GtkObject	        *seeker_adjust;
   GtkWidget	        *time;
+  
   PitiviViewerVolume	*mixer;
   GtkWidget	        *volume;
   GtkWidget             **state_vol;
-  GtkToolItem           *buttons[PITIVI_VIEWER_ALL_BUTTONS];
-  GSList                *group;
+  GtkObject	        *seeker_adjust;
+
+  GtkToolItem           *b_ffrev[5];
+  GtkToolItem           *b_playing[5];
+  GSList                *group_playing;
+  GSList                *group_ffrev;
 };
 
 /*
@@ -127,6 +117,16 @@ pitivi_viewercontroller_seek_changed_handler                   (GtkWidget       
   return FALSE;
 }
 
+static void
+pitivi_viewercontroller_callb_stop (GtkWidget *widget, gpointer user_data)
+{
+  PitiviViewerController *self = (PitiviViewerController *) user_data;
+
+  if (!gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_ffrev[0])))
+    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_ffrev[0]), TRUE);
+  if (!gtk_toggle_tool_button_get_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_playing[0])))
+    gtk_toggle_tool_button_set_active (GTK_TOGGLE_TOOL_BUTTON (self->private->b_playing[0]), TRUE);
+}
 
 static void
 pitivi_viewercontroller_instance_init (GTypeInstance * instance, gpointer g_class)
@@ -145,30 +145,52 @@ pitivi_viewercontroller_instance_init (GTypeInstance * instance, gpointer g_clas
    * delay initialization completion until the property is set. 
    */
   
-  self->private->toolbar = gtk_toolbar_new();
-  self->private->group = g_new0 (GSList, 1);
-  
-  for (count = 0; count < PITIVI_VIEWER_ALL_BUTTONS - 1; count++)
-    {
-      if (count)
-	self->private->buttons[count] = gtk_radio_tool_button_new_from_stock (self->private->group, stockbuttons[count].stock_icon);
-      else
-	self->private->buttons[count] = gtk_radio_tool_button_new_from_stock (NULL, stockbuttons[count].stock_icon);
-      self->private->group = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON
-							      (self->private->buttons[0]));
-      gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar), GTK_TOOL_ITEM (self->private->buttons[count]), count);
-    }
-    
-  /*self->private->buttons[PITIVI_VIEWER_BUTTON_STOP] = gtk_button_new_from_stock (stockbuttons[PITIVI_VIEWER_BUTTON_STOP].stock_icon);
-  gtk_toolbar_insert (self->private->toolbar, GTK_TOOL_ITEM (self->private->buttons[PITIVI_VIEWER_BUTTON_STOP]), 0);
-  */
 
+  /* Gestion des bouttons de controle */
+  
+  self->private->toolbar = gtk_toolbar_new();   
+  self->private->group_ffrev = g_new(GSList, 1);
+  self->private->group_playing = g_new(GSList, 1);
+
+  /* Creation Avance/Rembobinage Rapide Pause */
+  
+  self->private->b_ffrev[0] = gtk_radio_tool_button_new (NULL);
+  self->private->group_ffrev = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[0]));
+    
+  self->private->b_ffrev[PITIVI_VIEWER_BUTTON_FORWARD] = gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_NEXT);
+  self->private->group_ffrev = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_FORWARD]));
+    
+  self->private->b_ffrev[PITIVI_VIEWER_BUTTON_PAUSE] = gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_PAUSE);
+  self->private->group_ffrev = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_PAUSE]));
+  
+  self->private->b_ffrev[PITIVI_VIEWER_BUTTON_REWARD] = gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_PREVIOUS);
+  self->private->group_ffrev = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_REWARD]));
+    
+  /* Creation boutton Stop */
+
+  self->private->b_playing[0] = gtk_radio_tool_button_new (NULL);
+  self->private->group_playing = gtk_radio_tool_button_get_group GTK_RADIO_TOOL_BUTTON ((self->private->b_playing[0]));
+  
+  self->private->b_playing[PITIVI_VIEWER_BUTTON_PLAY] = gtk_radio_tool_button_new_from_stock (self->private->group_playing, PITIVI_STOCK_VIEWER_PLAY);
+  self->private->group_playing = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_playing[PITIVI_VIEWER_BUTTON_PLAY]));
+  
+  self->private->b_playing[PITIVI_VIEWER_BUTTON_STOP] = gtk_tool_button_new_from_stock (PITIVI_STOCK_VIEWER_STOP);
+  g_signal_connect (self->private->b_playing[PITIVI_VIEWER_BUTTON_STOP], "clicked", G_CALLBACK(pitivi_viewercontroller_callb_stop), self);
+  
+  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar), GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_REWARD]), -1);
+  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar), GTK_TOOL_ITEM (self->private->b_playing[PITIVI_VIEWER_BUTTON_PLAY]), -1);
+  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar), GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_PAUSE]), -1);
+  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar), GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_FORWARD]), -1);  
+  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar), GTK_TOOL_ITEM (self->private->b_playing[PITIVI_VIEWER_BUTTON_STOP]), -1);
+  
   gtk_toolbar_set_orientation (GTK_TOOLBAR(self->private->toolbar), GTK_ORIENTATION_HORIZONTAL);
   gtk_toolbar_set_show_arrow (GTK_TOOLBAR(self->private->toolbar), FALSE);
   gtk_toolbar_set_style (GTK_TOOLBAR(self->private->toolbar), GTK_TOOLBAR_ICONS);
   gtk_toolbar_set_icon_size (GTK_TOOLBAR (self->private->toolbar), GTK_ICON_SIZE_SMALL_TOOLBAR);
 
   gtk_box_pack_start (GTK_BOX (self), self->private->toolbar, TRUE, TRUE, 0);
+  
+  /* Creation du seeker */
   
   self->private->seeker_adjust = gtk_adjustment_new (0, 0, 0, 0, 0, 0);
   self->private->seeker_scale =  gtk_hscale_new (GTK_ADJUSTMENT(self->private->seeker_adjust));
@@ -198,6 +220,8 @@ pitivi_viewercontroller_instance_init (GTypeInstance * instance, gpointer g_clas
   
   gtk_widget_show_all (GTK_WIDGET(self));
   
+  /* Creation du volume */
+
   self->private->mixer = pitivi_viewervolume_new ();
   self->private->state_vol = self->private->mixer->public->state_vol;
   for (count = 0; count < PITIVI_STATE_VOLIMG_ALL; count++)
