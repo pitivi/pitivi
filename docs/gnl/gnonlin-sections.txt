@@ -28,6 +28,7 @@ GnlFindMethod
 gnl_composition_new
 gnl_composition_add_object
 gnl_composition_remove_object
+gnl_composition_set_default_source
 gnl_composition_find_object
 <SUBSECTION Standard>
 GNL_COMPOSITION

@@ -56,6 +56,15 @@ GnlComposition
 @object: 
 
 
+<!-- ##### FUNCTION gnl_composition_set_default_source ##### -->
+<para>
+
+</para>
+
+@comp: 
+@source: 
+
+
 <!-- ##### FUNCTION gnl_composition_find_object ##### -->
 <para>
 
