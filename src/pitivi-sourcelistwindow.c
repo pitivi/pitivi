@@ -40,7 +40,6 @@
 #include "pitivi-viewerwindow.h"
 #include "pitivi-menu.h"
 #include "pitivi-debug.h"
-#include "pitivi-thumbs.h"
 #include "pitivi-lplayerwindow.h"
 
 static	GdkPixbuf *window_icon = NULL;
@@ -149,7 +148,6 @@ enum
   {
     FILEIMPORT_SIGNAL,
     FOLDERIMPORT_SIGNAL,
-    SNAPPED_SIGNAL,
     LAST_SIGNAL
   };
 
@@ -658,19 +656,22 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
       return NULL;
     }
   
-  if (sf->havevideo && sf->haveaudio) 
-    pixbufa = gtk_widget_render_icon(self->private->listview,  
- 				     PITIVI_STOCK_EFFECT_SOUNDTV, 
- 				     GTK_ICON_SIZE_MENU, NULL); 
-  else if (sf->havevideo)
-    pixbufa = gtk_widget_render_icon(self->private->listview, 
-				     PITIVI_STOCK_EFFECT_TV,
-				     GTK_ICON_SIZE_MENU, NULL);
-  else
-    pixbufa = gtk_widget_render_icon(self->private->listview, 
-				     PITIVI_STOCK_EFFECT_SOUND,
-				     GTK_ICON_SIZE_MENU, NULL);
-
+  pixbufa = pitivi_sourcefile_get_first_thumb (sf);
+  if (!pixbufa)
+    {
+      if (sf->havevideo && sf->haveaudio) 
+	pixbufa = gtk_widget_render_icon(self->private->listview,  
+					 PITIVI_STOCK_EFFECT_SOUNDTV, 
+					 GTK_ICON_SIZE_MENU, NULL); 
+      else if (sf->havevideo)
+	pixbufa = gtk_widget_render_icon(self->private->listview, 
+					 PITIVI_STOCK_EFFECT_TV,
+					 GTK_ICON_SIZE_MENU, NULL);
+      else
+	pixbufa = gtk_widget_render_icon(self->private->listview, 
+					 PITIVI_STOCK_EFFECT_SOUND,
+					 GTK_ICON_SIZE_MENU, NULL);
+    }
   /* Creation de la nouvelle ligne */
   
   liststore = get_liststore_for_bin(self, selected_row);
@@ -688,7 +689,6 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
 					   sf->infoaudio,
 					   sf->length,
 					   sf->pipeline);
-  
   gtk_list_store_set(liststore,
 		     &pIter, 
 		     BMP_LISTCOLUMN1,  pixbufa,
@@ -698,10 +698,6 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
 		     TEXT_LISTCOLUMN5, sf->infovideo,
 		     TEXT_LISTCOLUMN6, sf->infoaudio,
 		     POINTER_LISTCOLUMN7, (gpointer)sf, -1);
-  
-  PitiviThumbs* thumb = pitivi_thumbs_new (self->private->filepath, G_OBJECT (self) , i);
-  PITIVI_THUMBS_GET_CLASS (thumb)->generate_thumb (thumb);
-  g_object_unref(pixbufa);
   return sf;
 }
 
@@ -1704,34 +1700,6 @@ pitivi_sourcelistwindow_constructor (GType type,
 }
 
 static void
-snapped (PitiviSourceListWindow *self, PitiviThumbs *data)
-{  
-  PitiviSourceFile  *sf;
-  GdkPixbuf *pixbuf, *icon;
-  GtkTreeModel *model;
-  GtkTreeIter  iter;
-  int	       i = 0;
-
-  pixbuf = gdk_pixbuf_new_from_file (data->output, NULL);
-  if ( pixbuf )
-    {
-      model = gtk_tree_view_get_model (GTK_TREE_VIEW (self->private->listview));
-      gtk_tree_model_get_iter_first (model, &iter);
-      for (i =  0; i <  data->info; i++) gtk_tree_model_iter_next (model, &iter);
-      gtk_tree_model_get (model, &iter, POINTER_LISTCOLUMN7, &sf, -1);
-      sf->thumbs_video = pixbuf;
-      icon = gdk_pixbuf_scale_simple (pixbuf, 50,
-				      50,
-				      GDK_INTERP_NEAREST);
-      gtk_list_store_set(GTK_LIST_STORE (model), &iter,
-			 BMP_LISTCOLUMN1, icon,
-			 -1);
-      
-      G_OBJECT_GET_CLASS ((gpointer) data)->finalize ((gpointer)data);
-    }
-}
-
-static void
 pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow *) instance;
@@ -1761,11 +1729,6 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   gtk_window_set_default_size(GTK_WINDOW(self), PITIVI_SOURCELIST_DF_WIN_WIDTH, PITIVI_SOURCELIST_DF_WIN_HEIGHT);
   gtk_container_add(GTK_CONTAINER(self), self->private->hpaned);
   self->private->nbrchutier = 1;
-  
-  g_signal_connect (G_OBJECT (self), "snapped",
-		    (GCallback)snapped,
-		    NULL
-		    );
 }
 
 static void
@@ -1871,17 +1834,6 @@ pitivi_sourcelistwindow_class_init (gpointer g_class, gpointer g_class_data)
 								      G_TYPE_NONE /* return_type */,
 								      0     /* n_params */,
 								      NULL  /* param_types */);
-  
-  pitivi_sourcelistwindow_signal[SNAPPED_SIGNAL] = g_signal_new ("snapped",
-								 G_TYPE_FROM_CLASS (g_class),
-								 G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-								 G_STRUCT_OFFSET (PitiviSourceListWindowClass, snapped),
-								 NULL,
-								 NULL,       
-								 g_cclosure_marshal_VOID__POINTER,
-								 G_TYPE_NONE, 
-								 1, 
-								 G_TYPE_POINTER);
 }
 
 GType

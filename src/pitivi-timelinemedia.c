@@ -35,7 +35,6 @@
 #include "pitivi-sourceitem.h"
 #include "pitivi-stockicons.h"
 #include "pitivi-drawing.h"
-#include "pitivi-thumbs.h"
 
 static	GtkWidgetClass	*parent_class = NULL;
 
@@ -86,7 +85,6 @@ enum
     MEDIA_SELECT_SIGNAL,
     MEDIA_DISSOCIATE_SIGNAL,
     MEDIA_ASSOCIATE_EFEFCT_SIGNAL,
-    MEDIA_SNAPPED_EFEFCT_SIGNAL,
     LAST_SIGNAL
   };
 
@@ -1031,18 +1029,6 @@ pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *this, gpointer data)
 }
 
 static void
-pitivi_timelinemedia_callb_snapped_effect (PitiviTimelineMedia *this, gpointer data)
-{
-  /* FIXME Deference pointer */
-  g_object_unref (this->private->pixbuf);
-  this->sourceitem->srcfile->thumbs_video = gdk_pixbuf_new_from_file (PITIVI_THUMBS(data)->output, NULL);
-  this->private->pixbuf = gdk_pixbuf_copy (this->sourceitem->srcfile->thumbs_video);
-  draw_media_expose (GTK_WIDGET (this));
-  g_object_ref (this->private->pixbuf);
-  G_OBJECT_GET_CLASS ((gpointer)data)->finalize ((gpointer)data);
-}
-
-static void
 pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
@@ -1106,20 +1092,9 @@ pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
 							       NULL,                
 							       g_cclosure_marshal_VOID__POINTER,
 							       G_TYPE_NONE, 1, G_TYPE_POINTER);
-  
- media_signals[MEDIA_SNAPPED_EFEFCT_SIGNAL] = g_signal_new ("snapped",
-							    G_TYPE_FROM_CLASS (g_class),
-							    G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-							    G_STRUCT_OFFSET (PitiviTimelineMediaClass, snapped_effect),
-							    NULL, 
-							    NULL,                
-							    g_cclosure_marshal_VOID__POINTER,
-							    G_TYPE_NONE, 1, G_TYPE_POINTER);
- 
   media_class->deselect = pitivi_timelinemedia_callb_deselect;
   media_class->dissociate = pitivi_timelinemedia_callb_dissociate;
   media_class->associate_effect = pitivi_timelinemedia_associate_effect;
-  media_class->snapped_effect = pitivi_timelinemedia_callb_snapped_effect;
 }
 
 GType

@@ -588,15 +588,21 @@ bin_was_freed(gpointer udata, GObject *object)
 GdkPixbuf *
 pitivi_sourcefile_get_first_thumb (PitiviSourceFile *sf)
 {
-  if (!sf->private->cacheidx)
+  return (pitivi_sourcefile_get_thumb_at (sf, 0));
+}
+
+GdkPixbuf *
+pitivi_sourcefile_get_thumb_at (PitiviSourceFile *sf, gint nb)
+{
+  if (!sf->private->cacheidx || nb > sf->private->cacheidx)
     return NULL;
-  if (!sf->private->vthumb[0]) {
-    sf->private->vthumb[0] = g_new0(PitiviThumbTab, 1);
-    sf->private->vthumb[0]->time = sf->private->vcache[0]->time;
-    if (!(sf->private->vthumb[0]->pixbuf = gdk_pixbuf_new_from_file(sf->private->vcache[0]->filename, NULL)))
-      g_warning ("Error getting file %s", sf->private->vcache[0]->filename);
+  if (!sf->private->vthumb[nb]) {
+    sf->private->vthumb[nb] = g_new0(PitiviThumbTab, 1);
+    sf->private->vthumb[nb]->time = sf->private->vcache[nb]->time;
+    if (!(sf->private->vthumb[nb]->pixbuf = gdk_pixbuf_new_from_file(sf->private->vcache[nb]->filename, NULL)))
+      g_warning ("Error getting file %s", sf->private->vcache[nb]->filename);
   }
-  return sf->private->vthumb[0]->pixbuf;
+  return sf->private->vthumb[nb]->pixbuf;
 }
 
 /**

@@ -31,7 +31,6 @@
 #include "pitivi-dragdrop.h"
 #include "pitivi-toolbox.h"
 #include "pitivi-drawing.h"
-#include "pitivi-thumbs.h"
 
 #include "../pixmaps/bg.xpm"
 
@@ -1574,6 +1573,11 @@ pitivi_timelinecellrenderer_drag_drop (GtkWidget *widget,
 				       gpointer data)
      
 {
+  PitiviCursor *cursor;
+
+  cursor = pitivi_getcursor_id (widget);
+  if (cursor->type == PITIVI_CURSOR_RESIZE)
+    g_printf ("drop ... %d\n", widget->allocation.x);
   return FALSE;
 }
 
