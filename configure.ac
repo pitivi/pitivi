@@ -35,10 +35,6 @@ AC_PROG_LIBTOOL()
 AC_CONFIG_SRCDIR(src/main.c)
 AM_CONFIG_HEADER(config.h)
 
-dnl uninstalled glade ui dir
-dnl AC_DEFINE_UNQUOTED(GLADEUI_UNINSTALLED_DIR,"`pwd`/src/ui",[path to glade ui dir])
-dnl AC_SUBST(GLADEUI_UNINSTALLED_DIR)
-
 dnl Add parameters for aclocal
 dnl (This must come after AM_INIT_AUTOMAKE, since it modifies ACLOCAL)
 ACLOCAL="$ACLOCAL -I common/m4 $ACLOCAL_FLAGS"
@@ -136,24 +132,6 @@ dnl AC_SUBST(GETTEXT_PACKAGE)
 dnl AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE,"$GETTEXT_PACKAGE",[Define gettext package])
 dnl ALL_LINGUAS="nl no"
 dnl AM_GLIB_GNU_GETTEXT
-
-dnl =========================
-dnl Checks for substitutions
-dnl =========================
-
-dnl make GST_CFLAGS and GST_LIBS available
-dnl AC_SUBST(GST_CFLAGS)
-dnl AC_SUBST(GST_LIBS)
-
-dnl make GTK2_CFLAGS and GTK2_LIBS available
-dnl AC_SUBST(GTK_CONFIG)
-dnl AC_SUBST(GTK2_CFLAGS)
-dnl AC_SUBST(GTK2_LIBS)
-
-dnl FLAGS
-dnl AC_SUBST(CFLAGS, "$CFLAGS -I./include -g3 -O3 -Wall --ansi")
-dnl AC_SUBST(YFLAGS, "-d -p request_lex")
-dnl AC_SUBST(CC, "gcc")
 
 dnl Outputs
 AC_OUTPUT(Makefile 
