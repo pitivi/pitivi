@@ -36,7 +36,7 @@
  * Type macros.
  */
 
-#define FIXED_WIDTH   100
+#define FIXED_WIDTH   6000
 #define FIXED_HEIGHT  50
 
 
@@ -50,18 +50,20 @@
 typedef struct _PitiviTimelineCellRenderer PitiviTimelineCellRenderer;
 typedef struct _PitiviTimelineCellRendererClass PitiviTimelineCellRendererClass;
 typedef struct _PitiviTimelineCellRendererPrivate PitiviTimelineCellRendererPrivate;
+typedef struct _PitiviTimelineMediaChild PitiviTimelineMediaChild;
 
 struct _PitiviTimelineCellRenderer
 {
-  GtkWidget parent;
+  GtkLayout parent;
   
   /* private */
   PitiviTimelineCellRendererPrivate *private;
+  GList				    *children;
 };
 
 struct _PitiviTimelineCellRendererClass
 {
-  GtkWidgetClass parent;
+  GtkLayoutClass parent;
   /* class members */
 };
 

@@ -38,10 +38,10 @@ main (int argc, char **argv)
   gtk_init (&argc, &argv);
   gst_init (&argc, &argv);
  
-  /* We create a PitiviMainApp */
+
   mainapp = pitivi_mainapp_new ();
 
-  /* And we start the fun */
+
   gtk_main ();
   return 0;
 }

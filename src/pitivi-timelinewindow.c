@@ -228,7 +228,7 @@ pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *eve
 {
   PitiviTimelineWindow *self =  (PitiviTimelineWindow *) widget;
 
-  gtk_paned_set_position(GTK_PANED(self->private->hpaned), (GTK_WIDGET(widget)->allocation.width/5));
+  gtk_paned_set_position (GTK_PANED(self->private->hpaned), (80));
   return FALSE;
 }
 
@@ -319,7 +319,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
     
   //Right View
   
-  gtk_paned_set_position(GTK_PANED(self->private->hpaned), (GTK_WIDGET(self)->allocation.width/4));
+  gtk_paned_set_position(GTK_PANED(self->private->hpaned), (80));
   self->private->main_vbox_right = gtk_vbox_new (FALSE, 0);
   
   GtkWidget *hruler = gtk_hruler_new ();

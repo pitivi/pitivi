@@ -510,7 +510,7 @@ pitivi_sourcelistwindow_set_media_property(PitiviSourceListWindow *self,
   if (strstr(caps_str, "video"))
     {
       self->private->havevideo = TRUE;
-      g_printf("caps ==> %s\n", caps_str);
+      //g_printf("caps ==> %s\n", caps_str);
       j = 0;
       /* search for width and height */
       
@@ -547,7 +547,7 @@ pitivi_sourcelistwindow_set_media_property(PitiviSourceListWindow *self,
     }
   if (strstr(caps_str, "audio"))
     {
-      g_printf("caps ==> %s\n", caps_str);      
+      //g_printf("caps ==> %s\n", caps_str);      
       self->private->haveaudio = TRUE;
       j = 0;
       /* while (!strstr(property[j], "rate")) */
@@ -576,7 +576,7 @@ pitivi_sourcelistwindow_check_for_base_type(gchar *mediatype)
   i = 0;
   while (BaseMediaType[i])
     {
-      g_printf("Base Media Type ==> %s\n", BaseMediaType[i]);
+      //g_printf("Base Media Type ==> %s\n", BaseMediaType[i]);
       if (strstr(mediatype, BaseMediaType[i]))
 	return FALSE;
       i++;
@@ -611,7 +611,7 @@ void	have_type_handler(GstElement *typefind, guint probability,
 
 void	eof(GstElement *src)
 {
-  g_printf("== have eos ==\n");
+  //g_printf("== have eos ==\n");
 }
 
 void	new_pad_created(GstElement *parse, GstPad *pad, gpointer data)
@@ -622,9 +622,9 @@ void	new_pad_created(GstElement *parse, GstPad *pad, gpointer data)
   PitiviSettings	*settings;
   gchar	*tmp;
 
-  g_printf("a new pad %s was created\n", gst_pad_get_name(pad));
+  //g_printf("a new pad %s was created\n", gst_pad_get_name(pad));
 
-  g_printf("caps is ==> %s\n", gst_caps_to_string(gst_pad_get_caps(pad)));
+  //g_printf("caps is ==> %s\n", gst_caps_to_string(gst_pad_get_caps(pad)));
 
   self->private->padlist = g_slist_append(self->private->padlist, pad);  
 }
@@ -656,13 +656,13 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
       flag = FALSE;
       pad = (GstPad*)padlist->data;
       
-      g_printf("padname for decoder ==> %s\n", gst_pad_get_name(pad));
+      //g_printf("padname for decoder ==> %s\n", gst_pad_get_name(pad));
 
       caps = gst_pad_get_caps(pad);
   
       caps_str = gst_caps_to_string(caps);
       
-      g_printf("pad mine type ==> %s\n", caps_str);
+      //g_printf("pad mine type ==> %s\n", caps_str);
       
       self->private->mediatype = caps_str;
 
@@ -670,7 +670,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	{
 	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )), caps, DEC_LIST);
 	   
-	  g_printf("decoderlist ==> 0x%x\n", decoderlist);
+	  //g_printf("decoderlist ==> 0x%x\n", decoderlist);
 	   
 	  if (decoderlist)
 	    {
@@ -687,7 +687,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		}
 	      
 	      /* choose the first decoder */
-	      g_printf("decoder ==> %s\n", (gchar*)decoderlist->data);
+	      //g_printf("decoder ==> %s\n", (gchar*)decoderlist->data);
 	      
 	      name = g_strdup_printf("decoder%d", thread_number);
 	      decoder = gst_element_factory_make((gchar*)decoderlist->data, name);
@@ -698,7 +698,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	      self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(decoder, "src")));
 	      self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(decoder, "src"));
 	       
-	      g_printf("decoder source media type ==> %s\n", self->private->mediatype);
+	      //g_printf("decoder source media type ==> %s\n", self->private->mediatype);
 	      pitivi_sourcelistwindow_set_media_property(self, caps_str);
 	      
 	      if (flag)
@@ -733,7 +733,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	    }
 	  else
 	    {
-	      g_printf("no decoder found for type %s \n", caps_str);
+	      //g_printf("no decoder found for type %s \n", caps_str);
 	      
 	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(pitivi_mainapp_settings( mainapp )), caps, DEC_LIST);
 	      
@@ -742,7 +742,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		  
 		  name = g_strdup_printf("thread%d", thread_number);
 		  
-		  //g_printf("thread name ==> %s\n", name);
+		  ////g_printf("thread name ==> %s\n", name);
 		  
 		  /* create a thread for the decoder pipeline */
 		  thread = gst_thread_new(name);
@@ -750,7 +750,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		  
 		  g_free(name);
 		  
-		  g_printf("parser ==> %s\n", (gchar*)parserlist->data);
+		  //g_printf("parser ==> %s\n", (gchar*)parserlist->data);
 		  
 		  name = g_strdup_printf("parser_%s", filename);
 		  parser = gst_element_factory_make((gchar*)parserlist->data, name);
@@ -760,7 +760,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		  self->private->mediatype = gst_caps_to_string(gst_pad_get_caps(gst_element_get_pad(parser, "src")));
 		  self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(parser, "src"));
 		  
-		  g_printf("parser media type ==> %s\n", self->private->mediatype);
+		  //g_printf("parser media type ==> %s\n", self->private->mediatype);
 		  caps = self->private->mediacaps;
 		  
 		  /* create a queue for link the pipeline with the thread */
@@ -790,7 +790,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		} 
 	    }
 	}
-      g_printf("setting to READY state\n");
+      //g_printf("setting to READY state\n");
       
       gst_element_set_state(GST_ELEMENT(thread), GST_STATE_READY);
       
@@ -823,11 +823,11 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   gboolean	element_found;
   PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
 
-  g_printf("== build pipeline by mime ==\n");
+  //g_printf("== build pipeline by mime ==\n");
 
-  g_printf("mine type ==> %s\n", self->private->mediatype);
+  //g_printf("mine type ==> %s\n", self->private->mediatype);
   
-  g_printf("filename ==> %s\n", filename);
+  //g_printf("filename ==> %s\n", filename);
 
   /* Init some variables */
   demux = decoder = parser = NULL;
@@ -866,7 +866,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
       if (demuxlist)
 	{
 	  /* choose the first demuxer */
-	  g_printf("demuxer ==> %s\n", (gchar*)demuxlist->data);
+	  //g_printf("demuxer ==> %s\n", (gchar*)demuxlist->data);
 	  
 	  tmpname = g_strdup_printf("demux_%s", filename);
 	  demux = gst_element_factory_make((gchar*)demuxlist->data, tmpname);
@@ -892,12 +892,12 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   
 
 	  /*   while (gst_bin_iterate(GST_BIN(self->private->pipeline))) */
-	  /*     g_printf("iterate pipeline\n"); */
+	  /*     //g_printf("iterate pipeline\n"); */
 	  
 	  for (i = 0; i < 50; i++)
 	    {
 	      gst_bin_iterate(GST_BIN(self->private->pipeline));
-	      g_printf("iterate pipeline\n");
+	      //g_printf("iterate pipeline\n");
 	    }
 	  
 	 
@@ -908,14 +908,14 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	}
       else /* search for a decoder */
 	{
-	  g_printf("no demuxer found\n");
+	  //g_printf("no demuxer found\n");
 	  
 	  decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings( mainapp )),
 							     self->private->mediacaps, DEC_LIST);
 	  if (decoderlist)
 	    {
 	      /* choose the first decoder */
-	      g_printf("decoder ==> %s\n", (gchar*)decoderlist->data, self->private->mediatype);
+	      //g_printf("decoder ==> %s\n", (gchar*)decoderlist->data, self->private->mediatype);
 	      
 	      tmpname = g_strdup_printf("decoder_%s", filename);
 	      decoder = gst_element_factory_make((gchar*)decoderlist->data, tmpname);
@@ -934,20 +934,18 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 
 	      format = GST_FORMAT_TIME;
 	      gst_element_query(decoder, GST_FORMAT_TIME, &format, &value);
-	      g_printf("format ==> %d\ntime ==> %lld\n", format, 
-		       (value / GST_SECOND) / 60);
-
+	      //g_printf("format ==> %d\ntime ==> %lld\n", format, (value / GST_SECOND) / 60);
 	      element_found = TRUE;
 	    }
 	  else /* search for parser */
 	    {
-	      g_printf("no decoder found\n");
+	      //g_printf("no decoder found\n");
 
 	      parserlist = pitivi_settings_get_flux_parser_list(G_OBJECT(pitivi_mainapp_settings( mainapp )), self->private->mediacaps, DEC_LIST);
 	      
 	      if (parserlist)
 		{
-		  g_printf("parser ==> %s\n", (gchar*)parserlist->data);
+		  //g_printf("parser ==> %s\n", (gchar*)parserlist->data);
 
 		  tmpname = g_strdup_printf("parser_%s", filename);
 		  parser = gst_element_factory_make((gchar*)parserlist->data, tmpname);
@@ -963,15 +961,13 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 		  self->private->mediacaps = gst_pad_get_caps(gst_element_get_pad(parser, "src"));
 		  
 		}
-	      else
-		g_printf("no parser found\n");
+	      // else
+		//g_printf("no parser found\n");
 	    }
-	    
 	} 
   
     }
-
-  g_printf("== end build pipeline by mime ==\n");
+  //g_printf("== end build pipeline by mime ==\n");
 }
 
 void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
@@ -1000,12 +996,12 @@ void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
   g_object_set(source, "location", filename, NULL);
   gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
 
-  g_printf("preparing to iterate pipeline\n");
+  //g_printf("preparing to iterate pipeline\n");
 
   while (self->private->mediatype == NULL)
     gst_bin_iterate(GST_BIN(pipeline));
 
-  g_printf("finish iteration on pipeline\n");
+  //g_printf("finish iteration on pipeline\n");
 
   gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_NULL);
 
@@ -1013,7 +1009,7 @@ void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
       && !strstr(self->private->mediatype, "audio")
     && !strstr(self->private->mediatype, "application/ogg") )
     {
-      g_printf("media type ==> %s\n", self->private->mediatype);
+      //g_printf("media type ==> %s\n", self->private->mediatype);
       self->private->mediatype = NULL;
     }
 
@@ -1372,7 +1368,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
   /* Creation de la vue */
   pListView = gtk_tree_view_new();
 
-  g_printf("enable drag n drop\n");
+  //g_printf("enable drag n drop\n");
   /* enable drag and drop for listview */
  /*  gtk_tree_view_enable_model_drag_source(GTK_TREE_VIEW(pListView),  */
 /* 					 GDK_BUTTON1_MASK, */
@@ -1383,7 +1379,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
 		      TargetEntries, iNbTargetEntries, 
 		      GDK_ACTION_COPY);
   
-  g_printf("end of enable drag N drop\n");
+  //g_printf("end of enable drag N drop\n");
 
   gtk_drag_source_set_icon_stock(pListView, PITIVI_STOCK_EFFECT_SOUND);
 
@@ -1493,7 +1489,7 @@ GtkWidget	*create_treeview(PitiviSourceListWindow *self,
   /* Creation du menu popup */
   self->private->treemenu = create_menupopup(self, TreePopup, iNbTreePopup);
 
-  g_printf("connect signal treeview 0x%x\n", pTreeView);
+  //g_printf("connect signal treeview 0x%x\n", pTreeView);
 
   g_signal_connect_swapped(G_OBJECT(pTreeView), "button_press_event",
 			   G_CALLBACK(my_popup_handler), GTK_OBJECT(self));
@@ -1556,7 +1552,7 @@ gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
 	}
 /*        else */
 /* 	 { */
-/* 	   g_printf("cleanning %s\n", name); */
+/* 	   //g_printf("cleanning %s\n", name); */
 /* 	   /\* remove_all_row_from_listview(self); *\/ */
 /* 	 } */
       
@@ -1823,7 +1819,7 @@ void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget)
       gtk_tree_model_get_iter_first(model, &iter);
       if (gtk_tree_model_iter_n_children(model, &iter) == 0)
 	{
-	  g_printf("we have only one bin\n");
+	  //g_printf("we have only one bin\n");
 	  return;
 	}
     }
@@ -1996,14 +1992,14 @@ pitivi_sourcelistwindow_new(PitiviMainApp *mainapp, PitiviProject *project)
 {
   PitiviSourceListWindow	*sourcelistwindow;
 
-  g_printf("mainapp ==> %p\nproject ==> %p\n", mainapp, project);
+  //g_printf("mainapp ==> %p\nproject ==> %p\n", mainapp, project);
 
   sourcelistwindow = (PitiviSourceListWindow *) g_object_new(PITIVI_SOURCELISTWINDOW_TYPE,
 							     "mainapp", mainapp,
 							     "project", project,
 							     NULL);
  
-  g_printf("show class ==> %p\n", ((PitiviWindows*)sourcelistwindow));
+  //g_printf("show class ==> %p\n", ((PitiviWindows*)sourcelistwindow));
 
   g_assert(sourcelistwindow != NULL);
   return sourcelistwindow;
