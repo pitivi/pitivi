@@ -28,7 +28,6 @@
 #include "pitivi-stockicons.h"
 #include "pitivi-timelinecellrenderer.h"
 #include "pitivi-toolboxwindow.h"
-#include "pitivi-toolbox.h"
 #include "pitivi-newprojectwindow.h"
 #include "pitivi-settingswindow.h"
 #include "pitivi-controller.h"
@@ -72,9 +71,10 @@ struct _PitiviTimelineWindowPrivate
   
   PitiviMainApp		*mainapp;
   GtkWidget		*toolcontainer;
-  PitiviToolbox		*toolbox;
   PitiviController	*controller;
+  
   /* WinSettings */
+  
   PitiviSettingsWindow	*WinSettings;
 };
 
@@ -145,21 +145,22 @@ enum {
 static  GtkActionGroup *actions_group[EA_LAST_ACTION];
 
 static GtkActionEntry file_entries[] = {
-  { "FileMenu",   NULL, "_File" },
-  { "WindowsMenu", NULL, "_Windows" },
-  { "FileNew",    PITIVI_STOCK_NEW_PROJECT, "Ne_w", "<control>N", "New File", G_CALLBACK (pitivi_callb_menufile_new) },
-  { "FileOpen",   GTK_STOCK_OPEN, "_Open", "<control>O", "Open a file",  G_CALLBACK (pitivi_callb_menufile_open) },
-  { "FileSave",   GTK_STOCK_SAVE, "_Save", "<control>S", "Save a file", G_CALLBACK (pitivi_callb_menufile_save) },
-  { "FileSaveAs", GTK_STOCK_SAVE_AS, "Save _As", "<control>A", "Save a file", G_CALLBACK (pitivi_callb_menufile_saveas) },
-  { "FileExit",   GTK_STOCK_QUIT, "_Close", "<control>Q", "Close Project", G_CALLBACK (pitivi_callb_menufile_exit) },
+  { "FileMenu",     NULL, "_File" },
+  { "WindowsMenu",  NULL, "_Windows" },
+  { "FileNew",      PITIVI_STOCK_NEW_PROJECT, "Ne_w", "<control>N", "New File", G_CALLBACK (pitivi_callb_menufile_new) },
+  { "FileOpen",     GTK_STOCK_OPEN, "_Open", "<control>O", "Open a file",  G_CALLBACK (pitivi_callb_menufile_open) },
+  { "FileSave",     GTK_STOCK_SAVE, "_Save", "<control>S", "Save a file", G_CALLBACK (pitivi_callb_menufile_save) },
+  { "FileSaveAs",   GTK_STOCK_SAVE_AS, "Save _As", "<control>A", "Save a file", G_CALLBACK (pitivi_callb_menufile_saveas) },
+  { "FileSettings", GTK_STOCK_PREFERENCES, "_Settings", "<control>S", "Settings",  G_CALLBACK (pitivi_callb_menufile_settings) },
+  { "FileExit",     GTK_STOCK_QUIT, "_Close", "<control>Q", "Close Project", G_CALLBACK (pitivi_callb_menufile_exit) },
 };
 
 static GtkActionEntry recent_entry[]= {
-  { "FileRecent", GTK_STOCK_OPEN, "_Open Recent File", "<control>R", "Open a recent file",  G_CALLBACK (pitivi_callb_menufile_open) },
+  { "FileRecent",   GTK_STOCK_OPEN, "_Open Recent File", "<control>R", "Open a recent file",  G_CALLBACK (pitivi_callb_menufile_open) },
 };
 
 static GtkToggleActionEntry windows_entries[] ={
-  { "EffectWindows", NULL, "E_ffects", "<control>F", "Toggle the effects window", G_CALLBACK (pitivi_callb_menufile_open), FALSE},
+  { "EffectWindows", NULL, "E_ffects", "<control>F", "Toggle the effects window", G_CALLBACK (pitivi_callb_menufile_effectswindow_toggle), FALSE},
 };
 
 
@@ -235,8 +236,8 @@ create_timeline_toolbox (PitiviTimelineWindow *self)
   /* Toolbox */
   
   mainapp = ((PitiviWindows *) self)->mainapp;
-  self->private->toolbox = pitivi_toolbox_new (mainapp);
-  gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET(self->private->toolbox),
+  self->toolbox = pitivi_toolbox_new (mainapp);
+  gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET(self->toolbox),
 		      FALSE, TRUE, 0);
 
   /* Separator */
@@ -416,8 +417,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   /* Main Window : Setting default Size */
   
   gtk_window_set_title (GTK_WINDOW (self), PITIVI_TIMELINE_DF_TITLE);
-  gtk_window_set_default_size (GTK_WINDOW (self), PITIVI_TIMELINE_DF_WIN_WIDTH\
-			       , PITIVI_TIMELINE_DF_WIN_HEIGHT); 
+  gtk_window_set_default_size (GTK_WINDOW (self), PITIVI_TIMELINE_DF_WIN_WIDTH, PITIVI_TIMELINE_DF_WIN_HEIGHT); 
   if (window_icon == NULL) {
     char *filename;
     
@@ -425,7 +425,6 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
     window_icon = gdk_pixbuf_new_from_file (filename, NULL);
     g_free (filename);
   }
-  
   gtk_window_set_icon (GTK_WINDOW (self), window_icon);
 }
 
@@ -583,12 +582,6 @@ pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self )
 }
 
 void
-pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self )
-{
-  gtk_widget_destroy (GTK_WIDGET(self));
-}
-
-void
 pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
 {
   PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
@@ -613,6 +606,29 @@ pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self )
   /* Il faut remplacer cette fonction par une vrai ouverture de fichier */
   if ((project != NULL) && (pitivi_mainapp_add_project( mainapp, project )))
     pitivi_mainapp_create_wintools( mainapp , project );
+}
+
+void
+pitivi_callb_menufile_effectswindow_toggle ( GtkAction *action, PitiviTimelineWindow *self)
+{
+  PitiviMainApp	*mainapp = ((PitiviWindows *) self)->mainapp;
+  
+  pitivi_mainapp_activate_effectswindow(mainapp,
+					gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
+}
+
+void
+pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self )
+{
+  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
+    
+  /* Global Settings */
+
+  if (!GTK_IS_WIDGET (self->private->WinSettings)) {
+    g_print ("Settings\n");
+    self->private->WinSettings = pitivi_settingswindow_new (mainapp);
+  }
+  return ;
 }
 
 void
@@ -651,6 +667,12 @@ pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self )
     pitivi_project_save_to_file(project, project->filename);  
 }
 
+void
+pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self )
+{
+  gtk_widget_destroy (GTK_WIDGET(self));
+}
+
 
 /*
  * MainApp Stuff
@@ -681,18 +703,10 @@ gboolean
 pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *event, gpointer data) 
 {
   PitiviTimelineWindow *self;
-  PitiviToolboxWindow *tbxwin;
-  PitiviToolbox	*toolbox;
+  PitiviCursor *cursor;
 
   self = (PitiviTimelineWindow *) widget;
   gtk_paned_set_position (GTK_PANED(self->private->hpaned), (LEFT_PANED_SIZE));
-    
-  /* Loading Cursor */
-  
-  tbxwin = pitivi_mainapp_get_toolboxwindow (self->private->mainapp);
-  toolbox = pitivi_toolboxwindow_get_toolbox (tbxwin);
-  load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), toolbox->pitivi_cursor, PITIVI_CURSOR_SELECT);
-  
   return FALSE;
 }
 
@@ -705,7 +719,7 @@ pitivi_timelinewindow_deactivate ( PitiviTimelineWindow *self )
 
   /* Loading X Cursor */
   
-  load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), self->private->toolbox->pitivi_cursor, PITIVI_CURSOR_NOALLOW);
+  load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), self->toolbox->pitivi_cursor, PITIVI_CURSOR_NOALLOW);
 }
 
 void
@@ -715,7 +729,7 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   
   /* Loading Select Cursor */
   
-  load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), self->private->toolbox->pitivi_cursor, PITIVI_CURSOR_SELECT);
+  load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), self->toolbox->pitivi_cursor, PITIVI_CURSOR_SELECT);
  
   /* Activate childs */
 

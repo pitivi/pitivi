@@ -4,7 +4,6 @@
  *                      Bloch Stephan <bloch_s@epita.fr>
  *                      Carbon Julien <carbon_j@epita.fr>
  *                      Dubart Loic <dubart_l@epita.fr>
- *			Guillaume Casanova <casano_g@epita.fr>
  *			Delettrez Marc <delett_m@epita.fr>
  *
  * This software has been written in EPITECH <http://www.epitech.net>
@@ -304,14 +303,14 @@ pitivi_mainapp_constructor (GType type,
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.6, "Loading Toolbox");
   
-  self->private->tbxwin = pitivi_toolboxwindow_new(self);
+  self->private->timelinewin = pitivi_timelinewindow_new (self);
   
   /* Connection des Signaux */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
 				      0.8, "Loading Signals");
-  g_signal_connect(G_OBJECT(self->private->tbxwin), "delete_event",
+  g_signal_connect(G_OBJECT(self->private->timelinewin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);
-  gtk_widget_show_all (GTK_WIDGET (self->private->tbxwin));
+  gtk_widget_show_all (GTK_WIDGET (self->private->timelinewin));
   /* finish */
   pitivi_splashscreenwindow_set_both (self->private->splash_screen, 
   				      1.0, "Loading Finished");
@@ -368,7 +367,7 @@ pitivi_mainapp_finalize (GObject * object)
    * You might not need to do much... 
    */
   
-  g_object_unref (self->private->tbxwin);
+  g_object_unref (self->private->timelinewin);
   g_object_unref (self->private->win_new_project);
   g_free (self->private);
 }

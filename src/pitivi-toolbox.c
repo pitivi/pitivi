@@ -84,6 +84,10 @@ load_cursor_size (GdkWindow *win,
       pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, width, height);
       break;
+    case PITIVI_CURSOR_NOALLOW:
+      pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
+      mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, width, height);
+      break;
     default:
       pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, width, height);
@@ -276,8 +280,7 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   g_signal_connect(G_OBJECT(self->private->button[3]), "toggled",
 		   G_CALLBACK(cursor_change_zoom), self) ;
 
-
-
+  
   //gtk_toolbar_set_orientation (tbar, GTK_ORIENTATION_VERTICAL);
   gtk_toolbar_set_orientation (tbar, GTK_ORIENTATION_HORIZONTAL);
   gtk_toolbar_set_show_arrow (tbar, FALSE);
@@ -296,7 +299,6 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   gdk_pixmap_unref (pixmap);
   gdk_pixmap_unref (mask);
   gdk_cursor_unref (self->pitivi_cursor->cursor);
-
 }
 
 static void

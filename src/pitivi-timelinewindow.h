@@ -33,6 +33,7 @@
 #include <gtk/gtk.h>
 #include "pitivi.h"
 #include "pitivi-projectwindows.h"
+#include "pitivi-toolbox.h"
 
 /*
  * Type macros.
@@ -50,7 +51,7 @@
 #define PITIVI_TIMELINE_LOGO "../pixmaps/pitivi-logo48.png"
 #define PITIVI_MENU_TIMELINE_FILE "../ui/pitivi-timeline.xml"
 
-#define PITIVI_TIMELINE_DF_WIN_WIDTH 600
+#define PITIVI_TIMELINE_DF_WIN_WIDTH  1000
 #define PITIVI_TIMELINE_DF_WIN_HEIGHT 300
 
 #define LEFT_PANED_SIZE 80
@@ -64,8 +65,10 @@ struct _PitiviTimelineWindow
   PitiviProjectWindows parent;
 
   /* instance public members */
-  GtkWidget *hruler;
-  GtkWidget *current_time;
+  PitiviToolbox	       *toolbox;
+  GtkWidget	       *hruler;
+  GtkWidget	       *current_time;
+  
   /* private */
   PitiviTimelineWindowPrivate *private;
 };
@@ -113,6 +116,12 @@ pitivi_callb_menufile_saveas ( GtkAction *action, PitiviTimelineWindow *self);
 
 void
 pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_effectswindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
 
 /* ********* */
 /* Utils     */

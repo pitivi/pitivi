@@ -427,21 +427,14 @@ pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
 PitiviCursor *
 pitivi_getcursor_id (GtkWidget *widget)
 {
-  PitiviCursor        *cursor;
-  PitiviMainApp	      *mainApp;
-  PitiviToolboxWindow *tbxwin;
-  PitiviToolbox	      *toolbox;
-  GtkWidget	      *parent;
+  PitiviCursor          *cursor;
+  PitiviTimelineWindow	*parent;
+  PitiviToolbox		*toolbox;
   
   cursor = NULL;
   parent = gtk_widget_get_toplevel (GTK_WIDGET (widget));
   if ( GTK_IS_WINDOW (parent) )
-    {
-      mainApp = pitivi_timelinewindow_get_mainApp (PITIVI_TIMELINEWINDOW (parent));
-      tbxwin  = pitivi_mainapp_get_toolboxwindow (mainApp);
-      toolbox = pitivi_toolboxwindow_get_toolbox (tbxwin);
-      cursor = toolbox->pitivi_cursor;
-    }
+    cursor = parent->toolbox->pitivi_cursor;
   return cursor;
 }
 
