@@ -139,7 +139,8 @@ GstElement		*pitivi_sourcefile_get_effect_bin (PitiviSourceFile *sf);
 
 GdkPixbuf		*pitivi_sourcefile_get_thumb_at (PitiviSourceFile *sf, gint nb);
 GdkPixbuf		*pitivi_sourcefile_get_first_thumb (PitiviSourceFile *sf);
-PitiviThumbTab		**pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop);
+PitiviThumbTab		**pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop,
+							gint *nbthumbs);
 
 int			get_pad_type (GstPad *pad);
 #endif
