@@ -38,7 +38,7 @@ GST_DEBUG_CATEGORY (pitivi_debug_cat);
 void
 pitivi_debug_init (void)
 {
-  GST_DEBUG_CATEGORY_INIT (pitivi_debug_cat, "pitivi", 0, "PiTiVi messages");
+  GST_DEBUG_CATEGORY_INIT (pitivi_debug_cat, "PITIVI", 0, "PiTiVi messages");
 }
 
 
