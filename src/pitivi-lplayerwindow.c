@@ -31,6 +31,7 @@
 
 #include "pitivi.h"
 #include "pitivi-lplayerwindow.h"
+#include "pitivi-controller.h"
 
 static     GObjectClass *parent_class;
 
@@ -52,6 +53,7 @@ struct _PitiviLPlayerWindowPrivate
 
   GtkWidget	*main_vbox;
   GtkWidget	*video_area;
+  GtkWidget	*toolbar;
  
 
 };
@@ -62,6 +64,9 @@ struct _PitiviLPlayerWindowPrivate
  * ####################################################################################
  */
 
+// TODO :::::::::::::::::::
+// quand exit enlever le lien overlay
+// mettre une taille par default
 
 void
 pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
@@ -77,6 +82,11 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
   self->private->video_area = gtk_drawing_area_new ();
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), 
 		      self->private->video_area, TRUE, TRUE, 0);
+
+  // ToolBar
+  self->private->toolbar = (GtkWidget *) pitivi_controller_new();
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), 
+		      self->private->toolbar, FALSE, FALSE, 0);
 
   gtk_widget_show_all (GTK_WIDGET (self));
 
