@@ -265,8 +265,7 @@ create_unitscale_combobox(PitiviTimelineWindow *self, GtkWidget *parentbox)
 
   gtk_object_set_data(GTK_OBJECT(self->private->unitcombobox),
 		      "list", &unittab);
-  g_object_connect(G_OBJECT(self->private->unitcombobox), "signal::changed", 
-		   unit_combobox_cb, self);
+  g_signal_connect(self->private->unitcombobox, "changed", G_CALLBACK(unit_combobox_cb), self);
   gtk_combo_box_set_active(self->private->unitcombobox, 0);
 
   self->private->scalecombobox = (GtkComboBox *) gtk_combo_box_new_text();
@@ -279,8 +278,7 @@ create_unitscale_combobox(PitiviTimelineWindow *self, GtkWidget *parentbox)
 
   gtk_object_set_data(GTK_OBJECT(self->private->scalecombobox),
 		      "list", &scaletab);
-  g_object_connect(G_OBJECT(self->private->scalecombobox), "signal::changed", 
-		   scale_combobox_cb, self);
+  g_signal_connect(self->private->scalecombobox, "changed", G_CALLBACK(scale_combobox_cb), self);
   gtk_combo_box_set_active(self->private->scalecombobox, 0);
 
   gtk_box_pack_start(GTK_BOX(parentbox), gtk_label_new("Unit:"),
