@@ -135,12 +135,14 @@ pitivi_mainapp_project_settings(PitiviMainApp *self)
 void
 pitivi_mainapp_create_wintools(PitiviMainApp *self)
 {
+  
   /* Source List Window */
   
   if (self->timelinewin == NULL)
     {
       self->timelinewin = pitivi_timelinewindow_new();
-      gtk_widget_show_all (GTK_WIDGET (self->timelinewin) ); 
+      gtk_widget_show_all (GTK_WIDGET (self->timelinewin) );
+      gtk_window_move (GTK_WINDOW (self->timelinewin), 110, 450);
     }
 
   /* Source List Window */
@@ -149,18 +151,24 @@ pitivi_mainapp_create_wintools(PitiviMainApp *self)
     {
       self->srclistwin = pitivi_sourcelistwindow_new();
       gtk_widget_show_all (GTK_WIDGET (self->srclistwin) );
+      gtk_window_move (GTK_WINDOW (self->srclistwin), 110, 100);
     }
   
   /* Effects Window */
   
-  if (self->viewerwin == NULL)
+  if (self->effectswin == NULL)
     {
       self->effectswin = pitivi_effectswindow_new();
       gtk_widget_show_all (GTK_WIDGET (self->effectswin) );
+      gtk_window_move (GTK_WINDOW (self->effectswin), 720, 450);
     }
   
   if (self->viewerwin == NULL)
-    self->viewerwin = pitivi_viewerwindow_new();
+    {
+      self->viewerwin = pitivi_viewerwindow_new();
+      gtk_window_move (GTK_WINDOW (self->viewerwin), 720, 100);
+    }
+  gtk_window_move (GTK_WINDOW (self->private->tbxwin), 20, 450);
 }
 
 
