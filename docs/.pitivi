@@ -3,104 +3,18 @@
   <pitivi:settings>
     <pitivi:project_settings>
       <pitivi:categoriesettings>
-        <pitivi:name>DV - NTSC</pitivi:name>
+        <pitivi:name>DV-PAL</pitivi:name>
         <pitivi:list_settings>
-          <pitivi:name>Standard NTSC 48kHz</pitivi:name>
-          <pitivi:description>Description of Setting 48kHz</pitivi:description>
+          <pitivi:name>normal</pitivi:name>
+          <pitivi:description>Description:
+Insert a description of the setting</pitivi:description>
           <pitivi:media_settings>
-            <pitivi:codec_factory_name>ffenc_msmpeg4v2</pitivi:codec_factory_name>
-            <pitivi:caps>video/x-raw-yuv, width=(int)720, height=(int)576, framerate=(int)29</pitivi:caps>
-          </pitivi:media_settings>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>ffenc_adpcm_ms</pitivi:codec_factory_name>
-            <pitivi:caps>audio/x-raw-int, rate=(int)48000, channels=(int)1</pitivi:caps>
-          </pitivi:media_settings>
-        </pitivi:list_settings>
-        <pitivi:list_settings>
-          <pitivi:name>Standard NTSC 32kHz</pitivi:name>
-          <pitivi:description>Description of Setting 32kHz</pitivi:description>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>rtjpegenc</pitivi:codec_factory_name>
+            <pitivi:codec_factory_name>ffenc_dvvideo</pitivi:codec_factory_name>
             <pitivi:caps>video/x-raw-yuv, width=(int)720, height=(int)576, framerate=(int)25</pitivi:caps>
           </pitivi:media_settings>
           <pitivi:media_settings>
-            <pitivi:codec_factory_name>mpegaudio</pitivi:codec_factory_name>
-            <pitivi:caps>audio/x-raw-int, rate=(int)32000, channels=(int)1</pitivi:caps>
-          </pitivi:media_settings>
-        </pitivi:list_settings>
-        <pitivi:list_settings>
-          <pitivi:name>Standard NTSC 24kHz</pitivi:name>
-          <pitivi:description>Description of Setting 24kHz</pitivi:description>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>rtjpegenc</pitivi:codec_factory_name>
-            <pitivi:caps>video/x-raw-yuv, width=(int)720, height=(int)576, framerate=(int)25</pitivi:caps>
-          </pitivi:media_settings>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>rawvorbisenc</pitivi:codec_factory_name>
-            <pitivi:caps>audio/x-raw-int, rate=(int)24000, channels=(int)1</pitivi:caps>
-          </pitivi:media_settings>
-        </pitivi:list_settings>
-        <pitivi:list_settings>
-          <pitivi:name>Standard NTSC 12kHz</pitivi:name>
-          <pitivi:description>Description of Setting 12kHz</pitivi:description>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>y4menc</pitivi:codec_factory_name>
-            <pitivi:caps>video/x-raw-yuv, width=(int)440, height=(int)320, framerate=(int)24</pitivi:caps>
-          </pitivi:media_settings>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>mulawenc</pitivi:codec_factory_name>
-            <pitivi:caps>audio/x-raw-int, rate=(int)12000, channels=(int)1</pitivi:caps>
-          </pitivi:media_settings>
-        </pitivi:list_settings>
-      </pitivi:categoriesettings>
-      <pitivi:categoriesettings>
-        <pitivi:name>DV - PAL</pitivi:name>
-        <pitivi:list_settings>
-          <pitivi:name>Standard PAL 48kHz</pitivi:name>
-          <pitivi:description>Description of Setting 48kHz</pitivi:description>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>ffenc_msmpeg4v2</pitivi:codec_factory_name>
-            <pitivi:caps>video/x-raw-yuv, width=(int)720, height=(int)576, framerate=(int)29</pitivi:caps>
-          </pitivi:media_settings>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>ffenc_adpcm_ms</pitivi:codec_factory_name>
-            <pitivi:caps>audio/x-raw-int, rate=(int)48000, channels=(int)1</pitivi:caps>
-          </pitivi:media_settings>
-        </pitivi:list_settings>
-        <pitivi:list_settings>
-          <pitivi:name>Standard PAL 32kHz</pitivi:name>
-          <pitivi:description>Description of Setting 32kHz</pitivi:description>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>rtjpegenc</pitivi:codec_factory_name>
-            <pitivi:caps>video/x-raw-yuv, width=(int)720, height=(int)576, framerate=(int)25</pitivi:caps>
-          </pitivi:media_settings>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>mpegaudio</pitivi:codec_factory_name>
-            <pitivi:caps>audio/x-raw-int, rate=(int)32000, channels=(int)1</pitivi:caps>
-          </pitivi:media_settings>
-        </pitivi:list_settings>
-        <pitivi:list_settings>
-          <pitivi:name>Standard PAL 24kHz</pitivi:name>
-          <pitivi:description>Description of Setting 24kHz</pitivi:description>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>rtjpegenc</pitivi:codec_factory_name>
-            <pitivi:caps>video/x-raw-yuv, width=(int)720, height=(int)576, framerate=(int)25</pitivi:caps>
-          </pitivi:media_settings>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>rawvorbisenc</pitivi:codec_factory_name>
-            <pitivi:caps>audio/x-raw-int, rate=(int)24000, channels=(int)1</pitivi:caps>
-          </pitivi:media_settings>
-        </pitivi:list_settings>
-        <pitivi:list_settings>
-          <pitivi:name>Standard PAL 12kHz</pitivi:name>
-          <pitivi:description>Description of Setting 12kHz</pitivi:description>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>y4menc</pitivi:codec_factory_name>
-            <pitivi:caps>video/x-raw-yuv, width=(int)440, height=(int)320, framerate=(int)24</pitivi:caps>
-          </pitivi:media_settings>
-          <pitivi:media_settings>
-            <pitivi:codec_factory_name>mulawenc</pitivi:codec_factory_name>
-            <pitivi:caps>audio/x-raw-int, rate=(int)12000, channels=(int)1</pitivi:caps>
+            <pitivi:codec_factory_name>vorbisenc</pitivi:codec_factory_name>
+            <pitivi:caps>audio/x-raw-int, rate=(int)48000, channels=(int)2</pitivi:caps>
           </pitivi:media_settings>
         </pitivi:list_settings>
       </pitivi:categoriesettings>
