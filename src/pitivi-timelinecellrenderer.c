@@ -253,7 +253,12 @@ static void
 pitivi_timelinemedia_drag_begin (GtkWidget          *widget,
 				 GdkDragContext     *context,
 				 gpointer	    user_data)
-{ 
+{
+  PitiviCursor		*cursor;
+  PitiviTimelineCellRenderer *cell;
+  
+  cell = (PitiviTimelineCellRenderer *) gtk_widget_get_parent (widget);
+  pitivi_timelinecellrenderer_deselection_ontracks (GTK_WIDGET (cell), TRUE);
 }
 
 static
@@ -396,7 +401,6 @@ pitivi_getcursor_id (GtkWidget *widget)
   parent = gtk_widget_get_toplevel (GTK_WIDGET (widget));
   if ( GTK_IS_WINDOW (parent) )
     {
-      
       mainApp = pitivi_timelinewindow_get_mainApp (PITIVI_TIMELINEWINDOW (parent));
       tbxwin  = pitivi_mainapp_get_toolboxwindow (mainApp);
       toolbox = pitivi_toolboxwindow_get_toolbox (tbxwin);
@@ -409,7 +413,7 @@ pitivi_getcursor_id (GtkWidget *widget)
 // Checking On all Tracks if there is a selection, delsection begin
 
 void 
-pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget)
+pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected)
 {
   PitiviTimelineCellRenderer *childcells;
   GtkWidget	*container;
@@ -429,13 +433,13 @@ pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget)
 	      if (childcells->private->selected)
 		{
 		  if (GTK_WIDGET (childcells) != widget)
-		    {
-		      childcells->private->selected = FALSE;
-		      gdk_window_clear_area_e (GTK_LAYOUT (childcells)->bin_window,\
-					       0, 0, 
-					       GTK_WIDGET (childcells)->allocation.width, 
-					       GTK_WIDGET (childcells)->allocation.height);
-		    }
+		    childcells->private->selected = FALSE;
+		  else if (self_deselected == TRUE)
+		    childcells->private->selected = FALSE;
+		  gdk_window_clear_area_e (GTK_LAYOUT (childcells)->bin_window,\
+					   0, 0, 
+					   GTK_WIDGET (childcells)->allocation.width, 
+					   GTK_WIDGET (childcells)->allocation.height);
 		}
 	    }
 	}
@@ -459,15 +463,15 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
   
   x = event->x;
   y = event->y;
-  
-  
+
+    
   cursor = pitivi_getcursor_id (widget);
-  if (cursor->type == PITIVI_CURSOR_SELECT)
+  if (cursor->type == PITIVI_CURSOR_SELECT && event->state == GDK_BUTTON1_MASK|GDK_MOD2_MASK)
     if (event->button == PITIVI_MOUSE_RIGHT_CLICK)
       {
 	// Clearing old Selection
       
-	pitivi_timelinecellrenderer_deselection_ontracks (widget);
+	pitivi_timelinecellrenderer_deselection_ontracks (widget, FALSE);
 	old_state = self->private->selected;
 	self->private->selected = FALSE;
 	self->private->selected = old_state;
@@ -488,7 +492,8 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 		widgetchild = GTK_WIDGET (childlist->data);
 		if (event->window != widgetchild->window)
 		  {
-		    if (!(event->x >= widgetchild->allocation.x && event->x <=  widgetchild->allocation.x+widgetchild->allocation.width))
+		    if (!(event->x >= widgetchild->allocation.x 
+			  && event->x <=  widgetchild->allocation.x+widgetchild->allocation.width))
 		      { 
 			if (x1_selection < widgetchild->allocation.x + widgetchild->allocation.width) 
 			  if (event->x > widgetchild->allocation.x  + widgetchild->allocation.width)
