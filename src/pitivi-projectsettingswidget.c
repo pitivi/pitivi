@@ -151,6 +151,7 @@ struct _PitiviProjectSettingsWidgetPrivate
 
   GtkWidget	*videocodeccbox;
   GtkWidget	*videoconfbutton;
+  PitiviSettingsIoElement	*videocodecprops;
 
   GtkWidget	*videosizecbox;
   GtkWidget	*videosizehbox;
@@ -163,6 +164,7 @@ struct _PitiviProjectSettingsWidgetPrivate
 
   GtkWidget	*audiocodeccbox;
   GtkWidget	*audioconfbutton;
+  PitiviSettingsIoElement	*audiocodecprops;
 
   GtkWidget	*audiodepthcbox;
 
@@ -176,6 +178,7 @@ struct _PitiviProjectSettingsWidgetPrivate
 
   GtkWidget	*containercbox;
   GtkWidget	*containerconfbutton;
+  PitiviSettingsIoElement	*containercodecprops;
 
   GList		*venc_list;
   GList		*aenc_list;

@@ -48,13 +48,6 @@
 
 typedef struct _PitiviSettingsPrivate PitiviSettingsPrivate;
 
-typedef struct _PitiviSettingsMimeType PitiviSettingsMimeType;
-
-typedef struct _PitiviSettingsIoElement PitiviSettingsIoElement;
-
-typedef struct _PitiviSettingsProp PitiviSettingsProp;
-
-
 enum {
   ENC_LIST,
   DEC_LIST

@@ -76,6 +76,16 @@ typedef struct _PitiviRulerClass  PitiviRulerClass;
 typedef struct _PitiviSettings PitiviSettings;
 typedef struct _PitiviSettingsClass PitiviSettingsClass;
 
+typedef struct _PitiviSettingsMimeType PitiviSettingsMimeType;
+
+typedef struct _PitiviSettingsIoElement PitiviSettingsIoElement;
+
+typedef struct _PitiviSettingsProp PitiviSettingsProp;
+
+typedef struct _PitiviMediaSettings PitiviMediaSettings;
+typedef struct _PitiviCategorieSettings PitiviCategorieSettings;
+typedef struct _PitiviSettingsValue PitiviSettingsValue;
+
 typedef struct _PitiviSettingsWindow PitiviSettingsWindow;
 typedef struct _PitiviSettingsWindowClass PitiviSettingsWindowClass;
 

@@ -49,6 +49,42 @@ GstCaps			*pitivi_projectsettings_default_acaps_create( );
  * Insert "added-value" functions here
  */
 
+GList	*
+pitivi_settingsvalue_from_settingsioelement (PitiviSettingsIoElement *io)
+{
+  GList	*res = NULL;
+  gint	i;
+  
+  for (i = 0; i < io->n_param; i++)
+    res = g_list_append (res, (PitiviSettingsValue *) &(io->params[0]));
+  return res;
+}
+
+PitiviSettingsIoElement *
+pitivi_mediasettings_to_settingsioelement (PitiviMediaSettings *ms)
+{
+  PitiviSettingsIoElement *io;
+  PitiviSettingsValue	*val;
+  GList	*tmp;
+  gint	i;
+
+  io = g_new0 (PitiviSettingsIoElement, 1);
+  io->factory = gst_element_factory_find (ms->codec_factory_name);
+  for (tmp = ms->codec_properties; tmp; tmp = g_list_next (tmp))
+    io->n_param++;
+  io->params = g_new0(GParameter, io->n_param);
+  for (tmp = ms->codec_properties, i = 0; tmp; tmp = g_list_next (tmp), i++) {
+    GValue	value = { 0, };
+    val = (PitiviSettingsValue *) tmp->data;
+    io->params[i].name = g_strdup (val->name);
+    g_value_init (&value, 
+		  G_VALUE_TYPE (&(val->value)));
+    g_value_copy (&value, &(io->params[i].value));
+    io->params[i].value = value;
+  }
+  return io;
+}
+
 /* Creation des GstCaps Audio et Video */
 GstCaps *
 pitivi_projectsettings_vcaps_create (int width, int height, int framerate)

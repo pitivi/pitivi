@@ -33,6 +33,7 @@
 #include <glib.h>
 #include <gst/gst.h>
 #include "pitivi-types.h"
+#include "pitivi-settings.h"
 
 /*
  * Type macros.
@@ -46,10 +47,6 @@
 #define PITIVI_PROJECTSETTINGS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_PROJECTSETTINGS_TYPE, PitiviProjectSettingsClass))
 
 typedef struct _PitiviProjectSettingsPrivate PitiviProjectSettingsPrivate;
-
-typedef struct _PitiviMediaSettings PitiviMediaSettings;
-typedef struct _PitiviCategorieSettings PitiviCategorieSettings;
-typedef struct _PitiviSettingsValue PitiviSettingsValue;
 
 struct _PitiviCategorieSettings
 {
@@ -116,6 +113,9 @@ int			pitivi_projectsettings_get_audiodepth(PitiviProjectSettings *ps);
 int			pitivi_projectsettings_get_audiochann(PitiviProjectSettings *ps);
 gboolean		pitivi_projectsettings_get_videosize (PitiviProjectSettings *ps, 
 							      gint * width, gint * height);
+
+GList			*pitivi_settingsvalue_from_settingsioelement (PitiviSettingsIoElement *io);
+PitiviSettingsIoElement	*pitivi_mediasettings_to_settingsioelement (PitiviMediaSettings *ms);
 
 xmlNodePtr		pitivi_projectsettings_save_thyself(PitiviProjectSettings *self, xmlNodePtr parent);
 void			pitivi_projectsettings_restore_thyself(PitiviProjectSettings *tofill, xmlNodePtr self);
