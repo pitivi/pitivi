@@ -94,14 +94,15 @@ gboolean	pitivi_lplayer_idle_func (gpointer data)
   if (elem) // we have a true source
     {
       value1 = do_query(elem, GST_QUERY_POSITION);
-
-      g_printf("**idle** : pos:%lld\n", value1);
+      
+      g_printf("**idle** : pos:%lld\n", (signed long long int) value1);
 
     }
 /* } */
 
-  g_print("MA QUESTION: %d\n",sizeof(gdouble) );
-  g_print("IDLE FUNCTION END %lld, %lld\n", self->private->timeline_min, self->private->timeline_max);
+  g_print("IDLE FUNCTION END %lld, %lld\n", 
+	  (signed long long int) self->private->timeline_min, 
+	  (signed long long int) self->private->timeline_max);
 
   return TRUE;
 }

@@ -442,14 +442,14 @@ pitivi_draw_label  (GtkRuler *ruler, int cur)
       break;
     case PITIVI_NANOSECONDS:
       nanoseconds = ((cur * GST_SECOND) / PITIVI_RULER (ruler)->private->videorate);
-      g_snprintf (unit_str, sizeof (unit_str), "%lld" , ( gint64 ) nanoseconds);
+      g_snprintf (unit_str, sizeof (unit_str), "%lld" , ( signed long long int ) nanoseconds);
       break;
     case PITIVI_FRAMES:
       frames = cur * PITIVI_RULER (ruler)->private->videorate;
-      g_snprintf (unit_str, sizeof (unit_str), "%lld" , ( gint64 ) frames);
+      g_snprintf (unit_str, sizeof (unit_str), "%lld" , ( signed long long int ) frames);
       break;
     default:
-      g_snprintf (unit_str, sizeof (unit_str), "%lld" , ( gint64 ) cur);
+      g_snprintf (unit_str, sizeof (unit_str), "%lld" , ( signed long long int ) cur);
       break;
     }
   return label;

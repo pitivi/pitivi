@@ -31,11 +31,11 @@ GST_DEBUG_CATEGORY_EXTERN(GST_CAT_DEFAULT);
 
 #define GST_M_S_M(stime) \
   (stime == GST_CLOCK_TIME_NONE) ? \
-  -1 : stime / (GST_SECOND * 60), \
+  -1 : (signed long long int) (stime / (GST_SECOND * 60)), \
   (stime == GST_CLOCK_TIME_NONE) ? \
-  -1 : (stime % (GST_SECOND * 60)) / GST_SECOND, \
+  -1 : (signed long long int) ((stime % (GST_SECOND * 60)) / GST_SECOND), \
   (stime == GST_CLOCK_TIME_NONE) ? \
-  -1 : (stime % GST_SECOND) / (GST_MSECOND)
+  -1 : (signed long long int) ((stime % GST_SECOND) / (GST_MSECOND))
 
 /* initialize GNL */
 void gnl_init(int *argc,char **argv[]);

@@ -378,7 +378,7 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
     /* Use vthumb path root */
     filename = g_strdup_printf ("%s-%020lld.png",
 				sf->private->vthumb_path_root,
-				GST_BUFFER_TIMESTAMP(buf));
+				(signed long long int) GST_BUFFER_TIMESTAMP(buf));
     g_printf ("Recording video thumbnail to file %s\n", filename);
     fd = open ((const char *) filename,
 	       O_CREAT | O_RDWR | O_TRUNC,
@@ -401,7 +401,7 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
   if (sf->private->vlastcaptured < sf->length) {
     if (!(gst_element_seek (element, GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH,
 			    sf->private->vlastcaptured)))
-      g_printf ("Error seeking to %lld\n", sf->private->vlastcaptured);
+      g_printf ("Error seeking to %lld\n", (signed long long int) sf->private->vlastcaptured);
   }
 }
 
