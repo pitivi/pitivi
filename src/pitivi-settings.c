@@ -409,26 +409,6 @@ pitivi_settings_ajout_element (GList *list, GstElementFactory *factory, gboolean
 	    
 	  }
 	}
-	/*
-	  for (j = 0; j < padtemplate->caps->structs->len; j++) {
-	  PitiviSettingsMimeType *tmp;
-	  
-	  
-	  if ((tmp = pitivi_settings_search_flux (list, gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j))))) {
-	  tmp = pitivi_settings_ajout_factory_element (tmp, 
-	  (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
-	  MY_PAD);
-	  } else {
-	  
-	  tmp = pitivi_settings_init_mime_type (gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j)));
-	  tmp = pitivi_settings_ajout_factory_element (tmp, 
-	  (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
-	  MY_PAD);
-	  list = g_list_append (list, (gpointer) tmp);
-	  }
-	  }
-	*/
-	
       }      
     }
   }
@@ -893,12 +873,43 @@ pitivi_settings_xml_epure_project_settings(GSList *list, xmlNodePtr parent)
     }
 }
 
+void
+pitivi_settings_xml_epure_io (GList *list, xmlNodePtr parent)
+{
+
+  for (; list; list = g_list_next (list)) {
+    PitiviSettingsIoElement *io = (PitiviSettingsIoElement *) list->data;
+    xmlNodePtr	inout_elm, params;
+    gint	i;
+
+    inout_elm = xmlNewChild (parent, NULL, "inout_elm", NULL);
+
+    xmlNewChild (inout_elm, NULL, "factory_name", (char *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(io->factory)));
+
+    xmlNewChild (inout_elm, NULL, "n_param", g_strdup_printf ("%d", io->n_param));
+
+    params = xmlNewChild (inout_elm, NULL, "params", NULL);
+
+    for (i = 0; i < io->n_param; i++) {
+      xmlNodePtr param;
+
+      param = xmlNewChild (params, NULL, "param", NULL);
+      xmlNewChild (param, NULL, "param_name", (char *) io->params[i].name);
+      xmlNewChild (param, NULL, "param_value", (char *) g_strdup_value_contents (&(io->params[i].value)));
+    }
+
+  }
+
+  return ;
+}
+
 xmlDocPtr
 pitivi_settings_save_thyself(PitiviSettings *settings)
 {
   xmlDocPtr	doc;
   xmlNodePtr	projectnode;
   xmlNodePtr	container, codecs, parser, project_settings;
+  xmlNodePtr	audio_in, audio_out, video_in, video_out;
   xmlNsPtr	ns;
 
 
@@ -922,6 +933,18 @@ pitivi_settings_save_thyself(PitiviSettings *settings)
   project_settings = xmlNewChild (projectnode, ns, "project_settings", NULL);
   pitivi_settings_xml_epure_project_settings (settings->project_settings, project_settings);
   
+  audio_in = xmlNewChild (projectnode, ns, "audio_in", NULL);
+  pitivi_settings_xml_epure_io (settings->elm_audio_in, audio_in);
+
+  audio_out = xmlNewChild (projectnode, ns, "audio_out", NULL);
+  pitivi_settings_xml_epure_io (settings->elm_audio_out, audio_out);
+
+  video_in = xmlNewChild (projectnode, ns, "video_in", NULL);
+  pitivi_settings_xml_epure_io (settings->elm_video_in, video_in);
+
+  video_out = xmlNewChild (projectnode, ns, "video_out", NULL);
+  pitivi_settings_xml_epure_io (settings->elm_video_out, video_out);
+
   return doc;
 }
 
