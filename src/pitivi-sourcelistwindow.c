@@ -23,6 +23,11 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <gst/gst.h>
 #include "pitivi.h"
 #include "pitivi-sourcelistwindow.h"
 #include "pitivi-projectsourcelist.h"
@@ -49,6 +54,7 @@ struct _PitiviSourceListWindowPrivate
   GtkWidget	*treemenu;
   GSList	*liststore;
   GtkTreeStore	*treestore;
+  gchar		*mediatype;
   gchar		*treepath;
   gchar		*listpath;
   gchar		*filepath;
@@ -69,7 +75,7 @@ void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget);
 void		OnImportProject(void);
 void		OnFind(void);
 void		OnOptionProject(void);
-
+void		new_file(GtkWidget *widget, gpointer data);
 gboolean	my_popup_handler(gpointer data, GdkEvent *event, gpointer userdata);
 gboolean	on_row_selected(GtkTreeView *view, GtkTreeModel *model,
 				GtkTreePath *path, gboolean path_current, 
@@ -96,8 +102,11 @@ enum
 enum
   {
     FILEIMPORT_SIGNAL,
+    FOLDERIMPORT_SIGNAL,
     LAST_SIGNAL
   };
+
+static guint pitivi_sourcelistwindow_signal[LAST_SIGNAL] = { 0 };
 
 static guint nbrchutier = 1;
 
@@ -174,11 +183,284 @@ static GtkItemFactoryEntry	BinPopup[] = {
 
 static gint	iNbBinPopup = sizeof(BinPopup)/sizeof(BinPopup[0]);
 
+gboolean FOUND = FALSE;
+
 /*
  * insert "added-value" functions here
  */
 
-int	get_selected_row(gchar *path, gint *depth)
+/* temporary functions */
+
+static GList		*container;
+static GList		*codec;
+
+enum {
+  ENC_LIST,
+  DEC_LIST
+};
+
+
+typedef struct	s_mime_type
+{
+  gchar		*flux;
+  GList		*encoder;
+  GList		*decoder;
+}		t_mime_type;
+
+
+/* ############################################ */
+
+/* 
+   affiche les infos d un element
+*/
+void		aff_info_factory (GstElementFactory *factory)
+{
+  g_print ("%s\t%s\t%s\n", 
+	   gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)),
+	   gst_element_factory_get_longname (factory), 
+	   gst_element_factory_get_klass (factory)
+	   );
+  return ;
+}
+
+
+/* 
+   affiche la list des coder 
+   (Encoder|Decoder)
+*/
+void		aff_coder (GList *list)
+{
+  for (; list; list = g_list_next (list)) {
+    g_print ("    %s\n", (gchar *) list->data);
+  }
+  return ;
+}
+
+
+/* 
+   affiche la structure d un flux
+*/
+void		aff_mime_type (t_mime_type *mime_type)
+{
+  g_print ("%s\n", mime_type->flux);
+  g_print ("  Encoder:\n");
+  aff_coder (mime_type->encoder);
+  g_print ("  Decoder:\n");
+  aff_coder (mime_type->decoder);
+  return ;
+}
+
+
+/* 
+   affiche le contenu de la list 
+   (Container|Codec)
+*/
+void		aff_all_list (GList *list)
+{
+  for (; list; list = g_list_next (list)) {
+    aff_mime_type ((t_mime_type *) list->data);
+  }  
+  return ;
+}
+
+
+/* ############################################ */
+
+
+/* 
+   initialise une nouvelle structure 
+   pour un nouveau flux
+*/
+t_mime_type	*init_mime_type (gchar *flux)
+{
+  t_mime_type	*new;
+
+  new = g_malloc (sizeof (t_mime_type));
+  new->flux = g_strdup (flux);
+  new->encoder = 0;
+  new->decoder = 0;
+  return (new);
+}
+
+
+/* 
+   retourne la structure assigne au flux
+   si elle existe sinon retourne NULL
+*/
+t_mime_type	*search_flux (GList *list, gchar *flux, gboolean type)
+{
+  t_mime_type	*tmp;
+  gchar		*current_flux;
+  gint		i;
+
+  //g_printf("flux ==> %s\n", flux);
+  for (; list; list = g_list_next (list)) {
+    tmp = (t_mime_type	*) list->data;
+    //g_printf("tmp->flux ==> %s\n", tmp->flux);
+    if ((strstr(tmp->flux, flux))) {
+      if (type == DEC_LIST)
+	if (!tmp->decoder)
+	  continue;
+      if (type == ENC_LIST)
+	if (!tmp->encoder)
+	  continue;
+
+      return (tmp);
+    }
+  }
+  tmp = 0;
+  return (tmp);
+}
+
+
+/* 
+   parcours la list 
+   et retourne la list des coder demande
+   (Encoder|Decoder) assigne au flux
+   si le flux n existe pas retourne -1
+   si la valeur de retour est NULL 
+   c est que la list est vide
+*/
+GList		*get_flux_coder_list (GList *list, gchar *flux, gboolean LIST)
+{
+  t_mime_type	*tmp;
+
+  if ((tmp = search_flux (list, flux, LIST))) {
+    if (LIST == DEC_LIST) {
+      return (tmp->decoder);
+    } else if (LIST == ENC_LIST) {
+      return (tmp->encoder);
+    } else {
+      g_print ("Don't know this list\n");
+    }
+  }
+  return ((GList*)-1);
+}
+
+
+/* 
+   ajoute un l element factory name
+   dans la list (encoder|decoder) 
+   assignee au flux tmp->flux
+   suivant son pad  (src|sink) 
+*/
+t_mime_type	*ajout_factory_element (t_mime_type *tmp, gchar *element, gboolean MY_PAD)
+{
+
+  if (MY_PAD == GST_PAD_SRC) {
+    tmp->encoder = g_list_append (tmp->encoder, (gpointer) element);
+  } else if (MY_PAD == GST_PAD_SINK) {
+    tmp->decoder = g_list_append (tmp->decoder, (gpointer) element);
+  } else {
+    g_print ("ERROR in (ajout_factory_element) : MY_PAD \n");
+  }
+
+  return (tmp);
+}
+
+
+/* 
+   recupere les flux gerer par l element
+   si le flux existe dans la list
+   ajoute un l element dans la structure de flux
+   sinon cree la struct du flux et lui assigne l element
+   
+*/
+GList		*ajout_element (GList *list, GstElementFactory *factory, gboolean MY_PAD)
+{
+  GstPadTemplate *padtemplate;
+
+  if (factory->numpadtemplates) {
+    gint i;
+    const GList *pads;
+
+    pads = factory->padtemplates;
+    for (i = 0; pads; i++, pads = g_list_next (pads)) {
+      padtemplate = (GstPadTemplate *) (pads->data);
+      if (padtemplate->direction == MY_PAD) {
+	gint j;
+	
+	for (j = 0; j < padtemplate->caps->structs->len; j++) {
+	  t_mime_type	*tmp;
+
+	  /* CHERCHE SI LE TYPE EST DEJA DEFINI */
+	  if ((tmp = search_flux (list, gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j)), -1))) {
+	    tmp = ajout_factory_element (tmp, 
+					 (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
+					 MY_PAD);
+	  } else {
+	    /* SINON L AJOUTE */
+	    tmp = init_mime_type (gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j)));
+	    tmp = ajout_factory_element (tmp, 
+					 (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
+					 MY_PAD);
+	    list = g_list_append (list, (gpointer) tmp);
+	  }
+	}
+      }      
+    }
+  }
+  return (list);
+}
+
+
+/* ############################################ */
+
+
+/* */
+int		init_element_list ()
+{
+  GList		*element;
+  GstElementFactory *factory;
+
+  //  gst_init (&ac, &av);
+
+  /* PARSE TOUS LES ELEMENTS GST */
+  codec = 0;
+  container = 0;
+  element = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
+  while (element) {
+    factory = (GstElementFactory *) element->data;
+    if (!strncmp (gst_element_factory_get_klass (factory), "Codec/Demuxer", 13)) {
+      container = ajout_element (container, factory, GST_PAD_SINK);
+    } else if (!strncmp (gst_element_factory_get_klass (factory), "Codec/Muxer", 11)) {
+      container = ajout_element (container, factory, GST_PAD_SRC);
+    } else if (!strncmp (gst_element_factory_get_klass (factory), "Codec/Encoder/Audio", 19) || 
+	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Audio/Encoder", 19) ||
+	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Video/Encoder", 19) ||
+	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Encoder/Video", 19)
+	       ) {
+      codec = ajout_element (codec, factory, GST_PAD_SRC);
+    } else if (!strncmp (gst_element_factory_get_klass (factory), "Codec/Audio/Decoder", 19) ||
+	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Decoder/Audio", 19) ||
+	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Decoder/Video", 19) ||
+	       !strncmp (gst_element_factory_get_klass (factory), "Codec/Video/Decoder", 19)
+	       ) {
+      codec = ajout_element (codec, factory, GST_PAD_SINK);      
+    }
+    element = element->next;
+  }
+
+  /* AFFICHE LES DEUX LISTES */
+  //g_print ("CODECS : \n");
+  //aff_all_list (codec);
+  //g_print ("CONTAINERS : \n");
+  //aff_all_list (container);
+
+
+  /* AFFICHE LES CODERS DU FLUX DONNER */
+  //aff_coder (get_flux_coder_list (codec, "audio/x-flac", ENC_LIST));
+  //aff_coder (get_flux_coder_list (codec, "audio/x-flac", DEC_LIST));
+
+  return (0);
+}
+
+
+/* ########################################################################## */
+
+
+
+gint	get_selected_row(gchar *path, gint *depth)
 {
   gchar	*tmp;
   gchar *tmp2;
@@ -408,14 +690,335 @@ void	show_file_in_current_bin(PitiviSourceListWindow *self)
  /*  pitivi_projectsourcelist_showfile(self->private->prjsrclist, self->private->treepath); */
 }
 
+void	have_type_handler(GstElement *typefind, guint probability,
+			  const GstCaps *caps, gpointer data)
+{
+  PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
+  gchar *caps_str;
+  gchar *tmp_str;
+
+  caps_str = gst_caps_to_string(caps);
+
+  tmp_str = caps_str;
+  /* basic parsing */
+  while (*tmp_str != 0)
+    {
+      if (*tmp_str == ',')
+	{
+	  *tmp_str = 0;
+	  break;
+	}
+      tmp_str++;
+    }
+
+  self->private->mediatype = g_strdup(caps_str);
+
+  tmp_str = strchr(caps_str, '/');
+
+  *tmp_str = 0;
+
+  if (strcmp(caps_str, "video") && strcmp(caps_str, "audio"))
+    self->private->mediatype = NULL;
+  
+  g_free(caps_str);
+
+  FOUND = TRUE;
+}
+
+void	eof(GstElement *src)
+{
+  g_printf("== have eos ==\n");
+}
+
+void	new_pad_created(GstElement *parse, GstPad *pad, GstElement *pipeline)
+{
+  GstElement	*thread;
+  GstElement	*queue;
+  GstElement	*decoder;
+  GstElement	*play;
+  GstElement	*color;
+  GstElement	*show;
+  GstCaps	*caps;
+  GList		*decoderlist;
+  gchar		*caps_str;
+  gchar		*name;
+  gint		i;
+  static gint	thread_number = 0;
+
+  g_printf("a new pad %s was created\n", gst_pad_get_name(pad));
+
+  gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PAUSED);
+
+  caps = gst_pad_get_caps(pad);
+  
+  caps_str = gst_caps_to_string(caps);
+  
+  g_printf("pad mine type ==> %s\n", caps_str);
+  i = 0;
+  while (caps_str[i] != 0)
+    {
+      if (caps_str[i] == ',')
+	{
+	  caps_str[i] = 0;
+	  break;
+	}
+      i++;
+    }
+  decoderlist = get_flux_coder_list (codec, caps_str, DEC_LIST);
+  //aff_coder(decoderlist);
+  if ((gint)decoderlist != -1)
+    {
+      name = g_malloc(12);
+      sprintf(name, "thread%d", thread_number);
+      //g_printf("thread name ==> %s\n", name);
+
+      /* create a thread for the decoder pipeline */
+      thread = gst_thread_new(name);
+      g_assert(thread != NULL);
+
+      /* choose the first decoder */
+      g_printf("decoder ==> %s\n", (gchar*)decoderlist->data);
+      
+      decoder = gst_element_factory_make((gchar*)decoderlist->data, "decoder");
+      g_assert(decoder != NULL);
+      
+      /* create a queue for link the pipeline with the thread */
+      sprintf(name, "queue%d", thread_number);
+      queue = gst_element_factory_make("queue", name);
+      g_assert(queue != NULL);
+
+      if (strstr(gst_pad_get_name(pad), "audio"))
+	{
+	  play = gst_element_factory_make("osssink", "play_audio");
+	  g_assert(play != NULL);
+	}
+      else if (strstr(gst_pad_get_name(pad), "video"))
+	{
+	  color = gst_element_factory_make("colorspace", "color");
+	  g_assert(color != NULL);
+
+	  show = gst_element_factory_make("xvimagesink", "show");
+	  g_assert(show != NULL);
+	}
+
+      /* add the elements to the thread */
+      gst_bin_add_many(GST_BIN(thread), queue, decoder, NULL);
+
+      gst_element_add_ghost_pad(thread, gst_element_get_pad(queue, "sink"),
+				"sink");
+
+      /* link the elements */
+      gst_element_link(queue, decoder);
+      if (strstr(gst_pad_get_name(pad), "audio"))
+	{
+	  gst_bin_add(GST_BIN(thread), play);
+	  gst_element_link(decoder, play);
+	}
+      else if (strstr(gst_pad_get_name(pad), "video"))
+	{
+	  gst_bin_add(GST_BIN(thread), color);
+	  gst_bin_add(GST_BIN(thread), show);
+	  gst_element_link(decoder, color);
+	  gst_element_link(color, show);
+	}
+      /* add the thread to the main pipeline */
+      gst_bin_add(GST_BIN(pipeline), thread);
+
+      /* link the pad to the sink pad of the thread */
+      gst_pad_link(pad, gst_element_get_pad(thread, "sink"));
+
+      g_printf("setting to READY state\n");
+
+      gst_element_set_state(GST_ELEMENT(thread), GST_STATE_READY);
+
+      thread_number++;
+    }
+  else
+    g_printf("no decoder found for type %s \n", caps_str);
+
+  gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
+}
+
+gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
+{
+  GList *elements;
+  GstElementFactory *factory;
+  GList	*plugins;
+  GstElement	*pipeline;
+  GstElement	*src;
+  GstElement	*demux;
+  GstElement	*decoder;
+  GList		*demuxlist;
+  GList		*decoderlist;
+  GstCaps	*caps;
+  GstCaps	*caps_sav;
+  guint16	id;
+
+  g_printf("== build pipeline by mime ==\n");
+
+  g_printf("mine type ==> %s\n", self->private->mediatype);
+  
+  g_printf("filename ==> %s\n", filename);
+
+  /* create a pipeline */
+  pipeline = gst_pipeline_new("pipeline");
+
+  /* create a file reader */
+  src = gst_element_factory_make("filesrc", "src");
+  
+  g_object_set(G_OBJECT(src), "location", filename, NULL);
+
+  /* add the file reader to the pipeline */
+  gst_bin_add(GST_BIN(pipeline), src);
+
+  /* test if it's a container */
+  demuxlist = get_flux_coder_list (container, self->private->mediatype, DEC_LIST);
+  /* create a demuxer if it's a container */
+  if ((gint)demuxlist != -1)
+    {
+      /* choose the first demuxer */
+      g_printf("demuxer ==> %s\n", (gchar*)demuxlist->data);
+
+      demux = gst_element_factory_make((gchar*)demuxlist->data, "demux");      
+      g_assert(demux != NULL);
+     
+      /* add the demuxer to the main pipeline */
+      gst_bin_add(GST_BIN(pipeline), demux);
+
+      g_signal_connect(G_OBJECT(demux), "new_pad",
+		       G_CALLBACK(new_pad_created), pipeline);
+      
+      /* link element */
+      gst_element_link(src, demux);
+    }
+  if ((gint)demuxlist == -1) /* search for a decoder */
+    {
+      decoderlist = get_flux_coder_list (codec, self->private->mediatype, DEC_LIST);
+      if ((gint)decoderlist != -1)
+	{
+	  /* choose the first decoder */
+	  g_printf("decoder ==> %s\n", (gchar*)decoderlist->data);
+	  
+	  decoder = gst_element_factory_make((gchar*)decoderlist->data, "decoder");
+	  g_assert(decoder != NULL);
+      
+	  /* add the decoder to the main pipeline */
+	  gst_bin_add(GST_BIN(pipeline), decoder);
+
+	  gst_element_link(src, decoder);
+
+	  /* We need a converter compliant with settings */
+	}
+    } 
+  
+  g_signal_connect(G_OBJECT(src), "eos",
+	 	   G_CALLBACK(eof), NULL);
+  
+  gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
+  
+  while (gst_bin_iterate(GST_BIN(pipeline)))
+    g_printf("iterate pipeline\n");
+  
+  gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_NULL);
+  
+  g_printf("== end build pipeline by mime ==\n");
+  
+  gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_NULL);
+}
+
+void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
+{
+  GstElement	*pipeline;
+  GstElement	*source;
+  GstElement	*typefind;
+  gchar		*filename;
+
+  filename = self->private->filepath;
+
+  pipeline = gst_pipeline_new(NULL);
+  source = gst_element_factory_make("filesrc", "source");
+  g_assert(GST_IS_ELEMENT(source));
+
+  typefind = gst_element_factory_make("typefind", "typefind");
+  g_assert(GST_IS_ELEMENT(typefind));
+
+  gst_bin_add_many(GST_BIN(pipeline), source, typefind, NULL);
+  gst_element_link(source, typefind);
+
+  g_signal_connect(G_OBJECT(typefind), "have-type",
+		   G_CALLBACK(have_type_handler), self);
+
+  gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_NULL);
+  g_object_set(source, "location", filename, NULL);
+  gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
+
+  while (gst_bin_iterate(GST_BIN(pipeline)));
+
+  gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_NULL);
+
+  g_object_unref(pipeline);
+
+  if (self->private->mediatype == NULL)
+    return;
+
+  build_pipeline_by_mime(self, filename);
+}
+
+char	*my_strcat(char *dst, char *src)
+{
+  char	*res;
+  char	*tmp_res;
+  int	dst_len;
+  int	src_len;
+
+  dst_len = strlen(dst);
+  src_len = strlen(src);
+
+  res = malloc(dst_len+src_len+1);
+  tmp_res = res;
+
+  while (*dst)
+    *tmp_res++ = *dst++;
+
+  while (*src)
+    *tmp_res++ = *src++;
+
+  *tmp_res = 0;
+  return res;
+}
+void	retrieve_file_from_folder(PitiviSourceListWindow *self)
+{
+  DIR	*dir;
+  struct dirent *entry;
+  gchar	*folderpath;
+  gchar	*fullpathname;
+  gchar	*filename;
+  
+  dir = opendir(self->private->folderpath);
+
+  folderpath = g_strdup(self->private->folderpath); 
+  strcat(folderpath, "/");
+  
+  while ((entry = readdir(dir)))
+    {
+      fullpathname = my_strcat(folderpath, entry->d_name);
+      self->private->filepath = fullpathname;
+      new_file(NULL, self);
+    }
+
+  closedir(dir);
+}
+
 void	new_folder(GtkWidget *widget, gpointer data)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
   GtkTreeSelection *selection;
+  GtkTreePath	*treepath;
   GtkTreeIter	iter;
   GtkTreeIter	iter2;
   GtkListStore	*liststore;
   GdkPixbuf	*pixbufa;
+  gchar		*save;
   gchar		*name;
   gchar		*sMediaType;
   guint		selected_row;
@@ -467,6 +1070,7 @@ void	new_folder(GtkWidget *widget, gpointer data)
 				 G_TYPE_STRING, G_TYPE_STRING,
 				 G_TYPE_STRING, G_TYPE_STRING,
 				 G_TYPE_STRING, G_TYPE_STRING);
+
   
   add_liststore_for_bin(self, liststore);
 
@@ -474,6 +1078,21 @@ void	new_folder(GtkWidget *widget, gpointer data)
 
   pitivi_projectsourcelist_add_folder_to_bin(self->private->prjsrclist, 
 					     self->private->treepath, name);
+
+  /* retrieve GtkTreepath for current folder */
+  treepath = gtk_tree_model_get_path(GTK_TREE_MODEL(self->private->treestore),
+				     &iter2);
+
+  /*set to current treepath */
+  save = self->private->treepath;
+  self->private->treepath = gtk_tree_path_to_string(treepath);
+
+  /* retrieve all files from current folder path */
+  retrieve_file_from_folder(self);
+
+  /* restore original treepath */
+  g_free(self->private->treepath);
+  self->private->treepath = save;
 
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
   gtk_tree_selection_select_iter(selection, &iter);
@@ -499,6 +1118,15 @@ void	new_file(GtkWidget *widget, gpointer data)
   if (self->private->treepath != NULL)
     selected_row = get_selected_row(self->private->treepath, &depth);
 
+  /* use gstreamer to check the file type */
+  self->private->mediatype = NULL;
+  pitivi_sourcelistwindow_type_find(self);
+  if (self->private->mediatype == NULL)
+    {
+      /* do not add file to sourcelist */
+      g_free(self->private->filepath);
+      return;
+    }
   /* call pitivi_projectsourcelist_add_file_to_bin */
   add = pitivi_projectsourcelist_add_file_to_bin(self->private->prjsrclist, 
 						 self->private->treepath,
@@ -527,7 +1155,7 @@ void	new_file(GtkWidget *widget, gpointer data)
   gtk_list_store_set(liststore,
 		     &pIter, BMP_LISTCOLUMN1, pixbufa,
 		     TEXT_LISTCOLUMN2, name,
-		     TEXT_LISTCOLUMN3, sExempleTexte,
+		     TEXT_LISTCOLUMN3, self->private->mediatype,
 		     TEXT_LISTCOLUMN4, sExempleTexte,
 		     TEXT_LISTCOLUMN5, sExempleTexte,
 		     TEXT_LISTCOLUMN6, sExempleTexte,
@@ -535,6 +1163,7 @@ void	new_file(GtkWidget *widget, gpointer data)
 		     -1);
   i++;
   
+  g_free(self->private->mediatype);
   g_free(sTexte);
   g_free(sExempleTexte);
 
@@ -863,7 +1492,7 @@ void	retrieve_path(GtkWidget *bouton, gpointer data)
   self->private->filepath = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(self->private->selectfile)));
 
 
-  g_signal_emit(self, self->private->newfile_signal_id,
+  g_signal_emit(self, pitivi_sourcelistwindow_signal[FILEIMPORT_SIGNAL],
                        0 /* details */, 
                        NULL);
 
@@ -877,11 +1506,15 @@ void	retrieve_folderpath(GtkWidget *bouton, gpointer data)
   self->private->folderpath = g_strdup(gtk_file_selection_get_filename(GTK_FILE_SELECTION(self->private->selectfolder)));
 
 
-  g_signal_emit(self, self->private->newfolder_signal_id,
+  g_signal_emit(self, pitivi_sourcelistwindow_signal[FOLDERIMPORT_SIGNAL],
                        0 /* details */, 
                        NULL);
 
+  g_printf("before destroy\n");
+
   gtk_widget_destroy(self->private->selectfolder);
+  
+  g_printf("== end of retrieve folderpath ==\n");
 }
 
 void	OnNewBin(gpointer data, gint action, GtkWidget *widget)
@@ -1212,27 +1845,6 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
-  self->private->newfile_signal_id = g_signal_newv("newfile",
-                               G_TYPE_FROM_CLASS (g_class),
-                               G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-                               NULL /* class closure */,
-                               NULL /* accumulator */,
-                               NULL /* accu_data */,
-                               g_cclosure_marshal_VOID__VOID,
-                               G_TYPE_NONE /* return_type */,
-                               0     /* n_params */,
-                               NULL  /* param_types */);
-
-  self->private->newfolder_signal_id = g_signal_newv("newfolder",
-                               G_TYPE_FROM_CLASS (g_class),
-                               G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
-                               NULL /* class closure */,
-                               NULL /* accumulator */,
-                               NULL /* accu_data */,
-                               g_cclosure_marshal_VOID__VOID,
-                               G_TYPE_NONE /* return_type */,
-                               0     /* n_params */,
-                               NULL  /* param_types */);
 
   self->private->prjsrclist = pitivi_projectsourcelist_new();
 
@@ -1245,6 +1857,8 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   self->private->treepath = g_strdup("0");
   new_bin(self, g_strdup("bin 1"));
   nbrchutier++;
+  
+  init_element_list();
 
   gtk_window_set_default_size(GTK_WINDOW(self), 600, 200);
 
@@ -1353,7 +1967,28 @@ pitivi_sourcelistwindow_class_init (gpointer g_class, gpointer g_class_data)
   /*   g_object_class_install_property (gobject_class, */
   /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
   /*                                    pspec); */
-
+  pitivi_sourcelistwindow_signal[FILEIMPORT_SIGNAL] = g_signal_newv("newfile",
+								    G_TYPE_FROM_CLASS (g_class),
+								    G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+								    NULL /* class closure */,
+								    NULL /* accumulator */,
+								    NULL /* accu_data */,
+								    g_cclosure_marshal_VOID__VOID,
+								    G_TYPE_NONE /* return_type */,
+								    0     /* n_params */,
+								    NULL  /* param_types */);
+  
+  pitivi_sourcelistwindow_signal[FOLDERIMPORT_SIGNAL] = g_signal_newv("newfolder",
+								      G_TYPE_FROM_CLASS (g_class),
+								      G_SIGNAL_RUN_LAST | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+								      NULL /* class closure */,
+								      NULL /* accumulator */,
+								      NULL /* accu_data */,
+								      g_cclosure_marshal_VOID__VOID,
+								      G_TYPE_NONE /* return_type */,
+								      0     /* n_params */,
+								      NULL  /* param_types */);
+  
 
 }
 
