@@ -30,6 +30,11 @@
 
 static GtkWindowClass	*parent_class = NULL;
 
+enum
+  {
+    TEXT_COLUMN,
+    NUM_COLUMN
+  };
  
 struct _PitiviNewProjectWindowPrivate
 {
@@ -45,6 +50,7 @@ struct _PitiviNewProjectWindowPrivate
   GtkWidget		*button_mod;
   GtkWidget		*button_del;
   GtkTextBuffer		*name_text_buffer;
+  GtkTextBuffer		*preset_text_buffer;
   GtkTextIter		start_description_iter;
   GtkTextIter		end_description_iter;
   GtkWidget		*name_text_settings;
@@ -59,7 +65,7 @@ struct _PitiviNewProjectWindowPrivate
  */
 void		pitivi_fill_hbox		( PitiviNewProjectWindow	*self );
 GtkTreeStore	*pitivi_tree_create		( );
-GtkWidget	*pitivi_tree_show		( GtkTreeStore			*tree );
+GtkWidget	*pitivi_tree_show		( GtkTreeStore			*tree, PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_notebook_new		( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_presets_hbox	( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_create_presets_table	( PitiviNewProjectWindow	*self );
@@ -73,6 +79,8 @@ GtkWidget	*pitivi_make_cat_frame(PitiviNewProjectWindow *self);
 /* Signals Definitions */
 void			pitivi_close_window(GtkButton *button, gpointer user_data);
 void			pitivi_add_settings(GtkButton *button, gpointer user_data);
+gboolean		setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model, 
+					    GtkTreePath *path, gboolean value, gpointer user_data);
 gboolean		pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer user_data);
 
 /*
@@ -142,7 +150,7 @@ pitivi_fill_hbox(PitiviNewProjectWindow *self)
   GtkWidget	*scroll;
 
   tree = pitivi_tree_create();
-  show_tree = pitivi_tree_show(tree);
+  show_tree = pitivi_tree_show(tree, self);
   
 /* Ajout du scrolling pour la selection */
   scroll = gtk_scrolled_window_new(NULL, NULL);
@@ -164,84 +172,124 @@ pitivi_tree_create()
   GtkTreeIter	pIter2;
 
 /* Nouvel arbre */ 
-  tree = gtk_tree_store_new(1, G_TYPE_STRING);
+  tree = gtk_tree_store_new(NUM_COLUMN, G_TYPE_STRING);
 
 /* pere 1*/
   gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "DV - NTSC", -1);
+  gtk_tree_store_set(tree, &pIter, TEXT_COLUMN, "DV - NTSC", -1);
   
 /* fils 1*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "Standard 32kHz", -1);
+  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Standard 32kHz", -1);
   
-/* fils 1*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "Standard 48kHz", -1);
-
-/* fils 1*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "Widescreen 32kHz", -1);
-
-/* fils 1*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "Widescreen 48kHz", -1);
-
-/* pere 1*/
-  gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "DV - PAL", -1);
-
-/* fils 1*/
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "Standard 32kHz", -1);
-
 /* fils 2*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "Standard 48kHz", -1);
+  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Standard 48kHz", -1);
 
 /* fils 3*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "Widescreen 32kHz", -1);
+  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Widescreen 32kHz", -1);
 
 /* fils 4*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "Widescreen 48kHz", -1);
+  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Widescreen 48kHz", -1);
 
-/* pere 1*/
+/* pere 2*/
   gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "Custom Settings", -1);
+  gtk_tree_store_set(tree, &pIter, TEXT_COLUMN, "DV - PAL", -1);
 
 /* fils 1*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "Multimedia Video", -1);
+  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Standard 32kHz", -1);
+
+/* fils 2*/
+  gtk_tree_store_append(tree, &pIter2, &pIter);
+  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Standard 48kHz", -1);
+
+/* fils 3*/
+  gtk_tree_store_append(tree, &pIter2, &pIter);
+  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Widescreen 32kHz", -1);
+
+/* fils 4*/
+  gtk_tree_store_append(tree, &pIter2, &pIter);
+  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Widescreen 48kHz", -1);
+
+/* pere 3*/
+  gtk_tree_store_append(tree, &pIter, NULL);
+  gtk_tree_store_set(tree, &pIter, TEXT_COLUMN, "Custom Settings", -1);
 
 /* fils 1*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "Quicktime for Web", -1);
+  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Multimedia Video", -1);
 
-/* Pere */
+/* fils 2*/
+  gtk_tree_store_append(tree, &pIter2, &pIter);
+  gtk_tree_store_set(tree, &pIter2, TEXT_COLUMN, "Quicktime for Web", -1);
+
+/* Pere par default */
   gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "Personnal Settings", -1);
+  gtk_tree_store_set(tree, &pIter, TEXT_COLUMN, "Personnal Settings", -1);
 
 
   return (tree);
 }
 
+gboolean			setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model, 
+						    GtkTreePath *path, gboolean value, gpointer user_data)
+{
+  gchar				*setting_name;
+  GtkTreeIter			iter;
+  GtkTextIter			piter1;
+  GtkTextIter			piter2;
+  PitiviNewProjectWindow	*self;
+
+  self = (PitiviNewProjectWindow *) user_data;
+
+  if (gtk_tree_model_get_iter(model, &iter, path))
+    {
+
+      gtk_tree_model_get(model, &iter, TEXT_COLUMN, &setting_name, -1);
+      if (!value)
+	{
+	  gtk_text_buffer_set_text(self->private->preset_text_buffer, setting_name, strlen(setting_name));
+	  printf("select setting : \" %s \"\n", setting_name);
+	}
+      else
+	{
+	  gtk_text_buffer_get_start_iter(self->private->preset_text_buffer, &piter1);
+	  gtk_text_buffer_get_end_iter(self->private->preset_text_buffer, &piter2);
+	  gtk_text_buffer_delete (self->private->preset_text_buffer, &piter1, &piter2);
+	  printf("unselect setting : \" %s \"\n", setting_name);
+	}
+    }
+  return TRUE;
+}
+
 GtkWidget*
-pitivi_tree_show(GtkTreeStore *tree)
+pitivi_tree_show(GtkTreeStore *tree, PitiviNewProjectWindow *self)
 {
   GtkWidget		*show_tree;
   GtkCellRenderer	*cell;
   GtkTreeViewColumn	*column;
+  GtkTreeSelection	*select;
+  GtkTreeIter		*iter;
 
-  /* Creation de la vue */
+/* Creation de la vue */
   show_tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(tree));
 
   /* Creation de la premiere colonne */
   cell = gtk_cell_renderer_text_new();
-  column = gtk_tree_view_column_new_with_attributes("Selection", cell, "text", 0, NULL);
+  column = gtk_tree_view_column_new_with_attributes("Selection", cell, "text", TEXT_COLUMN, NULL);
   gtk_tree_view_column_set_sizing(column, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
   /* Ajout de la colonne à la vue */
   gtk_tree_view_append_column(GTK_TREE_VIEW(show_tree), column);
+
+/* selection d'un element  */
+  select = gtk_tree_view_get_selection(GTK_TREE_VIEW(show_tree));
+  gtk_tree_selection_set_mode(select, GTK_SELECTION_SINGLE);
+
+  gtk_tree_selection_set_select_function(select, (GtkTreeSelectionFunc)setting_is_selected,
+					 (gpointer)(GTK_WIDGET(self)), NULL);
   
   return (show_tree);
 }
@@ -322,7 +370,6 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
   GtkTextIter		iter;
   GtkTextTagTable	*tag_table;
   gchar			*presets;
-  GtkTextBuffer		*text_buffer;
   GtkWidget		*button_new;
   GtkWidget		*button_cancel;
   GtkWidget		*text_presets;
@@ -333,13 +380,13 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
 /* Creation de la Tag Table */
   tag_table = gtk_text_tag_table_new();
 /* Creation du buffer text */
-  text_buffer = gtk_text_buffer_new(tag_table);
+  self->private->preset_text_buffer = gtk_text_buffer_new(tag_table);
 /* Creation du champs Text */
   presets = "Setting's descriptions";
-  gtk_text_buffer_get_end_iter(text_buffer, &iter);
-  gtk_text_buffer_set_text (text_buffer, presets, strlen(presets));
+  gtk_text_buffer_get_end_iter(self->private->preset_text_buffer, &iter);
+  gtk_text_buffer_set_text (self->private->preset_text_buffer, presets, strlen(presets));
 /* gtk_text_buffer_insert_interactive(text_buffer, &iter, presets, strlen(presets), FALSE); */
-  text_presets = gtk_text_view_new_with_buffer (text_buffer);
+  text_presets = gtk_text_view_new_with_buffer (self->private->preset_text_buffer);
   gtk_text_view_set_editable(GTK_TEXT_VIEW(text_presets), FALSE);
   gtk_text_view_set_right_margin  (GTK_TEXT_VIEW(text_presets), 3);
   gtk_text_view_set_left_margin  (GTK_TEXT_VIEW(text_presets), 3);
