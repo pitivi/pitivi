@@ -8,7 +8,7 @@
 ##
 
 
-confdir = /etc/conf/
+confdir = /etc/pitivi/
 conf_DATA = pitivi
 
 EXTRA_DIST = $(conf_DATA)
