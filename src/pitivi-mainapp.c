@@ -1,9 +1,10 @@
 /* 
  * PiTiVi
- * Copyright (C) <2004> Edward G. Hervey <hervey_e@epita.fr>
+ * Copyright (C) <2004> Edward Hervey <hervey_e@epita.fr>
  *                      Bloch Stephan <bloch_s@epita.fr>
  *                      Carbon Julien <carbon_j@epita.fr>
  *                      Dubart Loic <dubart_l@epita.fr>
+ *			Guillaume Casanova <casano_g@epita.fr>
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -138,12 +139,12 @@ pitivi_mainapp_project_settings(PitiviMainApp *self)
 }
 
 void
-pitivi_mainapp_create_wintools(PitiviMainApp *self)
+pitivi_mainapp_create_wintools (PitiviMainApp *self)
 {
   
   /* Source List Window */
   
-  if (self->timelinewin == NULL)
+  if (!GTK_IS_WIDGET (self->timelinewin))
     {
       self->timelinewin = pitivi_timelinewindow_new();
       gtk_widget_show_all (GTK_WIDGET (self->timelinewin) );
@@ -152,7 +153,7 @@ pitivi_mainapp_create_wintools(PitiviMainApp *self)
 
   /* Source List Window */
   
-  if (self->srclistwin == NULL)
+  if (!GTK_IS_WIDGET (self->srclistwin))
     {
       self->srclistwin = pitivi_sourcelistwindow_new(self);
       gtk_widget_show_all (GTK_WIDGET (self->srclistwin) );
@@ -161,14 +162,14 @@ pitivi_mainapp_create_wintools(PitiviMainApp *self)
   
   /* Effects Window */
   
-  if (self->effectswin == NULL)
+  if (!GTK_IS_WIDGET (self->effectswin))
     {
       self->effectswin = pitivi_effectswindow_new();
       gtk_widget_show_all (GTK_WIDGET (self->effectswin) );
       gtk_window_move (GTK_WINDOW (self->effectswin), 720, 450);
     }
   
-  if (self->viewerwin == NULL)
+  if (!GTK_IS_WIDGET (self->viewerwin))
     {
       self->viewerwin = pitivi_viewerwindow_new();
       gtk_window_move (GTK_WINDOW (self->viewerwin), 720, 100);
