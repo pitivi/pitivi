@@ -596,11 +596,14 @@ pitivi_sourcefile_get_effect_bin (PitiviSourceFile *sf)
 
   if (!sf->haveeffect)
     return NULL;
-  tmp = g_strdup_printf ("%s-%d", sf->filename, sf->private->lastsinkid++);
-  res = gst_element_factory_create (sf->private->factory, tmp);
-  g_free (tmp);
-  if (sf->private->transitionid)
+  if (sf->private->transitionid) {
+    tmp = g_strdup_printf ("%s-%d", sf->filename, sf->private->lastsinkid++);
+    res = gst_element_factory_create (sf->private->factory, tmp);
+    g_free (tmp);
     g_object_set (G_OBJECT (res), "type", sf->private->transitionid, NULL);
+  } else {
+    res = pitivi_sourcefile_bin_new_effect (sf, sf->private->factory);
+  }
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
   sf->private->bins = g_slist_append(sf->private->bins, res);
   sf->nbbins++;

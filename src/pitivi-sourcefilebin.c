@@ -365,3 +365,65 @@ pitivi_sourcefile_bin_new (PitiviSourceFile *self, int type, PitiviMainApp *main
 
   return pipeline;
 }
+
+gboolean
+pad_is_video_yuv(GstPad *pad)
+{
+  GstCaps	*caps;
+
+  caps = gst_caps_from_string("video/x-raw-yuv,format=(fourcc)I420");
+  if (gst_caps_is_always_compatible(caps, gst_pad_get_caps(pad))) {
+    g_printf("Found yuv I420 compatible stream\n");
+    gst_caps_free (caps);
+    return TRUE;
+  }
+  g_warning ("Didn't found compatible YUV/I420 stream %s\n",
+	     gst_caps_to_string(gst_pad_get_caps(pad)));
+  gst_caps_free (caps);
+  return FALSE;
+}
+
+GstElement *
+pitivi_sourcefile_bin_new_effect (PitiviSourceFile *self, GstElementFactory *factory)
+{
+  GstElement	*bin, *effect;
+  GstElement	*inadapt, *outadapt;
+  gchar		*tmp;
+
+  tmp = g_strdup_printf ("sfbin-%s", self->filename);
+  bin = gst_bin_new(tmp);
+  g_free (tmp);
+
+  effect = gst_element_factory_create (factory, self->filename);
+  g_assert (effect != NULL);
+  gst_bin_add (GST_BIN(bin), effect);
+
+  if (!(pad_is_video_yuv(gst_element_get_pad(effect, "sink")))) {
+    inadapt = gst_element_factory_make ("ffmpegcolorspace", "inadapt");
+    gst_bin_add (GST_BIN(bin), inadapt);
+    gst_element_add_ghost_pad (GST_ELEMENT(bin),
+			       gst_element_get_pad (inadapt, "sink"),
+			       "sink");
+    if (!(gst_element_link (inadapt, effect)))
+      g_warning ("Couldn't link input adapter to effect");
+  } else {
+    gst_element_add_ghost_pad (GST_ELEMENT(bin),
+			       gst_element_get_pad (effect, "sink"),
+			       "sink");
+  }
+
+  if (!(pad_is_video_yuv(gst_element_get_pad(effect, "src")))) {
+    outadapt = gst_element_factory_make ("ffmpegcolorspace", "outadapt");
+    gst_bin_add (GST_BIN(bin), outadapt);
+    gst_element_add_ghost_pad (GST_ELEMENT(bin),
+			       gst_element_get_pad (outadapt, "src"),
+			       "src");
+    if (!(gst_element_link (effect, outadapt)))
+      g_warning ("Couldn't link output adapter to effect");
+  } else {
+    gst_element_add_ghost_pad (GST_ELEMENT(bin),
+			       gst_element_get_pad (effect, "src"),
+			       "src");
+  }
+  return bin;
+}
