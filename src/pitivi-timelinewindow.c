@@ -161,7 +161,7 @@ static GtkActionEntry file_entries[] = {
   { "FileOpen",     GTK_STOCK_OPEN, "_Open", "<control>O", "Open a file",  G_CALLBACK (pitivi_callb_menufile_open) },
   { "FileSave",     GTK_STOCK_SAVE, "_Save", "<control>S", "Save a file", G_CALLBACK (pitivi_callb_menufile_save) },
   { "FileSaveAs",   GTK_STOCK_SAVE_AS, "Save _As", "<control>A", "Save a file", G_CALLBACK (pitivi_callb_menufile_saveas) },
-  { "FileSettings", GTK_STOCK_PREFERENCES, "_Settings", "<control>S", "Settings",  G_CALLBACK (pitivi_callb_menufile_settings) },
+  { "FileSettings", PITIVI_STOCK_TOOLS, "_Settings", "<control>S", "Settings",  G_CALLBACK (pitivi_callb_menufile_settings) },
   { "FileExit",     GTK_STOCK_QUIT, "_Close", "<control>Q", "Close Project", G_CALLBACK (pitivi_callb_menufile_exit) },
 };
 
@@ -891,14 +891,39 @@ pitivi_timelinewindow_get_type (void)
 void
 pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self )
 {
-  PitiviNewProjectWindow *win_new_project;
-  PitiviMainApp		 *mainapp = ((PitiviWindows *) self)->mainapp;
+  PitiviNewProjectWindow	*win_new_project;
+  PitiviMainApp			*mainapp = ((PitiviWindows *) self)->mainapp;
+  GtkWidget			*dialog_box;			
+  gint				dialog_return;
 
-  /* New Project window */
-  win_new_project = pitivi_newprojectwindow_new( mainapp );
-  gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
-  
-  pitivi_npw_select_first_setting(win_new_project);
+  if (mainapp->project)
+    {
+      dialog_box = gtk_message_dialog_new (GTK_WINDOW(self),
+					   GTK_DIALOG_DESTROY_WITH_PARENT,
+					   GTK_MESSAGE_WARNING,
+					   GTK_BUTTONS_YES_NO,
+					   "Save, and start a new project");
+      dialog_return = gtk_dialog_run (GTK_DIALOG (dialog_box));
+      switch (dialog_return)
+	{
+	case GTK_RESPONSE_YES:
+	  /* New Project window */
+	  win_new_project = pitivi_newprojectwindow_new( mainapp );
+	  gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
+	  pitivi_npw_select_first_setting(win_new_project);
+	  break;
+	default:
+	  break;
+	}
+      gtk_widget_destroy (dialog_box);
+    }
+  else
+    {
+      /* New Project window */
+      win_new_project = pitivi_newprojectwindow_new( mainapp );
+      gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
+      pitivi_npw_select_first_setting(win_new_project);
+    }
 }
 
 void

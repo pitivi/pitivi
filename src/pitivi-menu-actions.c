@@ -25,6 +25,7 @@
 
 #include "pitivi.h"
 #include "pitivi-menu.h"
+#include "pitivi-stockicons.h"
 #include "pitivi-menu-actions.h"
 
 static GtkActionGroup *actions_group[EA_LAST_ACTION];
@@ -56,7 +57,7 @@ pitivi_callb_menuhelp_contents ( GtkAction *action, gpointer data )
 static GtkActionEntry default_entries_help[] = {
   { "HelpMenu", NULL, "_Help" },
   { "HelpSearch", GTK_STOCK_FIND, "Search", NULL, "Help Search", G_CALLBACK (pitivi_callb_menuhelp_search) },
-  { "HelpAbout", GTK_STOCK_HELP, "About", NULL, "Help About",  G_CALLBACK (pitivi_callb_menuhelp_about) },
+  { "HelpAbout", PITIVI_STOCK_INFO, "About", NULL, "Help About",  G_CALLBACK (pitivi_callb_menuhelp_about) },
   { "HelpIndex", GTK_STOCK_INDEX, "Index", NULL, "Help Index", G_CALLBACK (pitivi_callb_menuhelp_index) },
   { "HelpContents", GTK_STOCK_SPELL_CHECK, "Contents", NULL, "Help Contents", G_CALLBACK (pitivi_callb_menuhelp_contents) },
 };

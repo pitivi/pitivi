@@ -278,7 +278,7 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
    */
     
   tooltips = gtk_tooltips_new();
-  for (count = 0; count <= 4; count++)
+  for (count = 0; count < (sizeof (button_info)/sizeof(InfoBox)); count++)
     {
       self->private->button[count] =
 	GTK_WIDGET (gtk_radio_tool_button_new_from_stock

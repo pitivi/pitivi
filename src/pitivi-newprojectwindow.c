@@ -921,7 +921,6 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
   GtkTextIter		iter;
   GtkTextTagTable	*tag_table;
   gchar			*presets;
-/*   GtkWidget		*button_new; */
   GtkWidget		*button_cancel;
   GtkWidget		*text_presets;
   GtkWidget		*table;			/* contient la presets et les boutons New 

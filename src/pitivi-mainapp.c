@@ -207,6 +207,7 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
   height = gdk_screen_height ();
   
   if (self->project) {
+    //Popup
     exit(0);
   }
   self->project = project;
