@@ -466,7 +466,7 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 
     
   cursor = pitivi_getcursor_id (widget);
-  if (cursor->type == PITIVI_CURSOR_SELECT && event->state != 0)
+  if (cursor->type == PITIVI_CURSOR_SELECT && event->state != 0) 
     if (event->button == PITIVI_MOUSE_RIGHT_CLICK)
       {
 	// Clearing old Selection

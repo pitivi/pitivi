@@ -1,7 +1,7 @@
 /* 
  * PiTiVi
- * Copyright (C) <2004> Edward G. Hervey <hervey_e@epita.fr>
- *                      Guillaume Casanova <casano_g@epita.fr>
+ * Copyright (C) <2004> Guillaume Casanova <casano_g@epita.fr>
+ *                      
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -25,6 +25,8 @@
 
 #include "pitivi.h"
 #include "pitivi-timelinemedia.h"
+#include "pitivi-cursor.h"
+
 
 static	GtkWidgetClass	*parent_class;
 
@@ -107,9 +109,9 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
   
   PitiviTimelineMedia	*self = PITIVI_TIMELINEMEDIA (widget);
   gtk_paint_box (widget->style, widget->window,
-		 GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+		 GTK_STATE_NORMAL, GTK_SHADOW_IN,
 		 &event->area, widget, "mediadefault",
-		 0, 0, widget->allocation.width, -1);
+		 0, 0, widget->allocation.width-2, -1);
   if (self->selected == TRUE)
     draw_selection_dash (widget, 4);
   return FALSE;
@@ -328,7 +330,13 @@ gint pitivi_timelinemedia_motion_notify_event (GtkWidget        *widget,
   x = event->x;
   y = event->y;
   if (event->is_hint || (event->window != widget->window))
-    gdk_window_get_pointer (widget->window, &x, &y, &mods);
+    {
+      gdk_window_get_pointer (widget->window, &x, &y, &mods);
+      if ((event->x <= widget->allocation.width) && event->x >= (widget->allocation.width - 5))
+	{
+	  //load_cursor (widget->window, pitivi_getcursor_id (widget), PITIVI_CURSOR_RESIZE);
+	}
+    }
 }
 
 static void

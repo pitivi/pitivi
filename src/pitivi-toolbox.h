@@ -34,6 +34,7 @@
 
 #include <gtk/gtk.h>
 #include "pitivi-windows.h"
+#include "pitivi-cursor.h"
 
 /*
  * Type macros.
@@ -51,24 +52,6 @@
 typedef struct _PitiviToolbox PitiviToolbox;
 typedef struct _PitiviToolboxClass PitiviToolboxClass;
 typedef struct _PitiviToolboxPrivate PitiviToolboxPrivate;
-typedef struct _PitiviCursor PitiviCursor;
-
-typedef enum
-{
-  PITIVI_CURSOR_SELECT = 1,
-  PITIVI_CURSOR_CUT,
-  PITIVI_CURSOR_HAND,
-  PITIVI_CURSOR_HAND2,
-  PITIVI_CURSOR_ZOOM,
-  PITIVI_CURSOR_ALL
-  
-} PitiviCursorType;
-
-struct _PitiviCursor
-{
-  GdkCursor	       *cursor;
-  PitiviCursorType     type;
-};
 
 struct _PitiviToolbox
 {
