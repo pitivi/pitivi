@@ -47,7 +47,7 @@
 #define PITIVI_NEWPROJECTWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_NEWPROJECTWINDOW_TYPE, PitiviNewProjectWindowClass))
 
 #define PITIVI_NEWPROJECT_DF_TITLE		"New Project"
-#define PITIVI_NEWPROJECT_LOGO			"../pixmaps/pitivi-logo2.png"
+#define PITIVI_NEWPROJECT_LOGO			"../pixmaps/pitivi-logo3.png"
 #define PITIVI_NEWPROJECT_DF_WIN_WIDTH		600
 #define PITIVI_NEWPROJECT_DF_WIN_HEIGHT		600
 

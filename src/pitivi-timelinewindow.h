@@ -54,7 +54,7 @@
 
 
 #define PITIVI_TIMELINE_DF_TITLE "TimeLine Project"
-#define PITIVI_TIMELINE_LOGO "../pixmaps/pitivi-logo2.png"
+#define PITIVI_TIMELINE_LOGO "../pixmaps/pitivi-logo3.png"
 #define PITIVI_MENU_TIMELINE_FILE "../ui/pitivi-timeline.xml"
 
 #define PITIVI_TIMELINE_DF_WIN_WIDTH  1000
