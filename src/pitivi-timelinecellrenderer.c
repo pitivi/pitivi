@@ -1201,7 +1201,6 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
 	      if ( x < 0)
 		x = 0;
 	      pitivi_timelinecellrenderer_drag_on_transition (self, self->private->current_selection, x, y);
-	      gtk_drag_finish (dc, TRUE, TRUE, time);
 	    }
 	  else if (self->track_type != PITIVI_EFFECTS_TRACK)
 	    pitivi_timelinecellrenderer_drag_effects (self, selection->data, x, y);

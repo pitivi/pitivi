@@ -165,7 +165,6 @@ struct _PitiviTimelineMediaPrivate
   // Caching Operation
   PitiviThumbTab   **thumbs;
   GdkPixmap	   *pixmapcache;
-  GdkPixbuf	   *pixbuf;
 };
 
 /**
@@ -716,7 +715,9 @@ pitivi_timelinemedia_dispose (GObject *object)
    * the most simple solution is to unref all members on which you own a 
    * reference. 
    */
-
+  
+  g_object_unref (this->sourceitem->srcfile);
+  g_object_unref (this->linked);
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
@@ -729,7 +730,11 @@ pitivi_timelinemedia_finalize (GObject *object)
    * Here, complete object destruction. 
    * You might not need to do much... 
    */
-
+  
+  g_free (this->sourceitem);
+  g_list_free (this->effectschilds);
+  
+  g_free (this->private->pixmapcache);
   g_free (this->private);
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }

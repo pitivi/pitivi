@@ -106,8 +106,8 @@ static PitiviDefaultTracks gtab_tracks[]=
     {0, PITIVI_VIDEO_TRACK, "Video A", 5},
     {1, PITIVI_EFFECTS_TRACK, "Fx A",  0},
     {2, PITIVI_TRANSITION_TRACK, "Transition", -1},
-    {4, PITIVI_VIDEO_TRACK, "Video B", 6},
     {3, PITIVI_EFFECTS_TRACK, "Fx B",  4},
+    {4, PITIVI_VIDEO_TRACK, "Video B", 6},
     {5, PITIVI_AUDIO_TRACK, "Audio A", 0},
     {6, PITIVI_AUDIO_TRACK, "Audio B", 4},
   };

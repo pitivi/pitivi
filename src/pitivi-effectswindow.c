@@ -692,25 +692,35 @@ pitivi_effectstree_set_gst (PitiviEffectsWindow *win,
     
   gtk_tree_view_append_column(GTK_TREE_VIEW (tree_effect->treeview), pColumn);
   
-  // Drag 'n Drop Activation
-  
-  gtk_drag_source_set (GTK_WIDGET (tree_effect->treeview), 
-		      GDK_BUTTON1_MASK,
-		      TargetEntries, iNbTargetEntries, 
-		      GDK_ACTION_COPY);
-
-  pixbuf = gtk_widget_render_icon (GTK_WIDGET (tree_effect->treeview), PITIVI_STOCK_HAND, GTK_ICON_SIZE_DND, NULL);
-  gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (tree_effect->treeview), pixbuf);
-
   self = gtk_widget_get_toplevel (tree_effect->treeview);
   
   g_signal_connect (tree_effect->treeview, "drag_data_get",	      
 		    G_CALLBACK (pitivi_effectswindow_drag_data_get), self);
   g_signal_connect (tree_effect->treeview, "drag_begin",	      
 		    G_CALLBACK (pitivi_effectswindow_drag_begin), self);
-  g_signal_connect (tree_effect->treeview, "row-activated", 
-		    G_CALLBACK  ( effectstree_on_row_activated ), 
-		    self);
+    g_signal_connect (tree_effect->treeview, "row-activated", 
+		      G_CALLBACK  ( effectstree_on_row_activated ), 
+		      self);
+  if (eneffects == PITIVI_EFFECT_TRANSITION_TYPE)
+    {
+      // Drag 'n Drop Activation
+      
+      gtk_drag_source_set (GTK_WIDGET (tree_effect->treeview), 
+			   GDK_BUTTON1_MASK,
+			   TargetEntries, iNbTargetEntries, 
+			   GDK_ACTION_COPY);
+      pixbuf = gtk_widget_render_icon (GTK_WIDGET (tree_effect->treeview), PITIVI_STOCK_HAND, 
+				       GTK_ICON_SIZE_DND, NULL);
+      gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (tree_effect->treeview), pixbuf);
+    }
+  else
+    {
+      gtk_tree_view_enable_model_drag_source (GTK_TREE_VIEW (tree_effect->treeview),
+					      GDK_BUTTON1_MASK,
+					      TargetEntries, 
+					      iNbTargetEntries,
+					      GDK_ACTION_COPY|GDK_ACTION_MOVE);
+    }
 }
 
 
