@@ -29,6 +29,16 @@
 static GtkLayoutClass *parent_class = NULL;
 static GdkPixmap *pixmap = NULL;
 static gint g_x, g_y;
+static GtkWidget *button;
+
+typedef struct _GtkLayoutChild   GtkLayoutChild;
+
+struct _GtkLayoutChild {
+  GtkWidget *widget;
+  gint x;
+  gint y;
+};
+
 
 enum
   {
@@ -150,7 +160,7 @@ pitivi_timelinecellrenderer_expose (GtkWidget      *widget,
 
 
 static void
-pitivi_timelinewindow_drag_data_received (GtkWidget *widget, GdkDragContext *dc, gint x, gint y, GtkSelectionData *selection_data, guint info, guint time, gpointer data)
+pitivi_timelinecellrenderer_drag_data_received (GtkWidget *widget, GdkDragContext *dc, gint x, gint y, GtkSelectionData *selection_data, guint info, guint time, gpointer data)
 {
   gtk_drag_finish (dc, FALSE, FALSE, time);
 }
@@ -166,7 +176,7 @@ void add_to_layout (GtkWidget *layout, GtkWidget *widget, gint x, gint y)
 }
 
 static void 
-pitivi_timelinewindow_drag_leave (GtkWidget          *widget,
+pitivi_timelinecellrenderer_drag_leave (GtkWidget          *widget,
 				  GdkDragContext     *context,
 				  guint               time)
 {
@@ -174,22 +184,22 @@ pitivi_timelinewindow_drag_leave (GtkWidget          *widget,
 }
 
 static gboolean 
-pitivi_timelinewindow_drag_drop (GtkWidget *widget, GdkDragContext *dc, gint x, gint y, guint t, gpointer data)
+pitivi_timelinecellrenderer_drag_drop (GtkWidget *widget, GdkDragContext *dc, gint x, gint y, guint t, gpointer data)
 {
   g_x = x;
   g_y = y;
-  GtkWidget *button = gtk_button_new_with_label ("Video");
+  button = gtk_button_new_with_label ("Video");
   add_to_layout ( widget, button, x, y);
   gtk_widget_set_size_request (button,  100, 50);
   gtk_widget_show (button);
 }
 
 static void
-pitivi_timelinewindow_drag_motion (GtkWidget          *widget,
-				   GdkDragContext     *context,
-				   gint                x,
-				   gint                y,
-				   guint               time)
+pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
+					 GdkDragContext     *context,
+					 gint                x,
+					 gint                y,
+					 guint               time)
 {
   GdkEventExpose ev;
   gboolean retval;
@@ -197,7 +207,8 @@ pitivi_timelinewindow_drag_motion (GtkWidget          *widget,
   g_x = x;
   g_y = y;  
   
-  gtk_signal_emit_by_name (GTK_OBJECT (widget), "expose_event", &ev, &retval);
+  gdk_window_clear_area_e (GTK_LAYOUT (widget)->bin_window, x-60, 0, 60, 100);
+  gdk_window_clear_area_e (GTK_LAYOUT (widget)->bin_window, x+60, 0, 60, 100);
   draw_slide (widget, x, 60);
 }
 
@@ -224,14 +235,14 @@ pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_
   
   gtk_drag_dest_set  (GTK_WIDGET (self), GTK_DEST_DEFAULT_ALL, TargetEntries, iNbTargetEntries, GDK_ACTION_COPY);
   gtk_signal_connect (GTK_OBJECT (self), "drag_data_received"\
-		      , GTK_SIGNAL_FUNC ( pitivi_timelinewindow_drag_data_received )\
+		      , GTK_SIGNAL_FUNC ( pitivi_timelinecellrenderer_drag_data_received )\
 		      , NULL);
   gtk_signal_connect (GTK_OBJECT (self), "drag_motion",
-                      GTK_SIGNAL_FUNC ( pitivi_timelinewindow_drag_motion ), NULL);
+                      GTK_SIGNAL_FUNC ( pitivi_timelinecellrenderer_drag_motion ), NULL);
   gtk_signal_connect (GTK_OBJECT (self), "drag_leave",
-                      GTK_SIGNAL_FUNC ( pitivi_timelinewindow_drag_leave ), NULL);
+                      GTK_SIGNAL_FUNC ( pitivi_timelinecellrenderer_drag_leave ), NULL);
   gtk_signal_connect (GTK_OBJECT (self), "drag_drop",
-		      GTK_SIGNAL_FUNC ( pitivi_timelinewindow_drag_drop ), NULL);
+		      GTK_SIGNAL_FUNC ( pitivi_timelinecellrenderer_drag_drop ), NULL);
 }
 
 static void
@@ -379,7 +390,6 @@ pitivi_timelinecellrenderer_motion_notify_event (GtkWidget      *widget,
   return FALSE;
 }
 
-
 static void
 pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
 {
@@ -399,7 +409,6 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   /* Widget properties */
   
   //widget_class->size_request = pitivi_timelinecellrenderer_size_request;
-  //widget_class->size_allocate = pitivi_timelinecellrenderer_size_allocate;
   
   widget_class->expose_event = pitivi_timelinecellrenderer_expose;
   widget_class->configure_event = pitivi_timelinecellrenderer_configure_event;
