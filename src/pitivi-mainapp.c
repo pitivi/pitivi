@@ -139,6 +139,34 @@ pitivi_mainapp_project_settings(PitiviMainApp *self)
 }
 
 void
+pitivi_mainapp_callb_sourcelist (GtkWindow *win, gpointer data)
+{
+  PitiviMainApp *self = data;
+  self->srclistwin = NULL;
+}
+
+void
+pitivi_mainapp_callb_effects (GtkWindow *win, gpointer data)
+{
+  PitiviMainApp *self = data;
+  self->effectswin = NULL;
+}
+
+void
+pitivi_mainapp_callb_viewer (GtkWindow *win, gpointer data)
+{
+  PitiviMainApp *self = data;
+  self->viewerwin = NULL;
+}
+
+void
+pitivi_mainapp_callb_timelinewin (GtkWindow *win, gpointer data)
+{
+  PitiviMainApp *self = data;
+  self->timelinewin = NULL;
+}
+
+void
 pitivi_mainapp_create_wintools (PitiviMainApp *self)
 {
   
@@ -149,30 +177,38 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self)
       self->timelinewin = pitivi_timelinewindow_new();
       gtk_widget_show_all (GTK_WIDGET (self->timelinewin) );
       gtk_window_move (GTK_WINDOW (self->timelinewin), 110, 450);
+      gtk_signal_connect (GTK_OBJECT (self->timelinewin), "destroy"\
+			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_timelinewin), self);
     }
 
   /* Source List Window */
   
-  if (!GTK_IS_WIDGET (self->srclistwin))
+  if (self->srclistwin == NULL)
     {
       self->srclistwin = pitivi_sourcelistwindow_new(self);
       gtk_widget_show_all (GTK_WIDGET (self->srclistwin) );
       gtk_window_move (GTK_WINDOW (self->srclistwin), 110, 100);
+      gtk_signal_connect (GTK_OBJECT (self->srclistwin), "destroy"\
+			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_sourcelist), self);
     }
   
   /* Effects Window */
   
-  if (!GTK_IS_WIDGET (self->effectswin))
+  if (self->effectswin == NULL)
     {
       self->effectswin = pitivi_effectswindow_new();
       gtk_widget_show_all (GTK_WIDGET (self->effectswin) );
       gtk_window_move (GTK_WINDOW (self->effectswin), 720, 450);
+      gtk_signal_connect (GTK_OBJECT (self->effectswin), "destroy"\
+			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_effects), self);
     }
   
-  if (!GTK_IS_WIDGET (self->viewerwin))
+  if (self->viewerwin == NULL)
     {
       self->viewerwin = pitivi_viewerwindow_new();
       gtk_window_move (GTK_WINDOW (self->viewerwin), 720, 100);
+      gtk_signal_connect (GTK_OBJECT (self->viewerwin), "destroy"\
+			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_viewer), self);
     }
   gtk_window_move (GTK_WINDOW (self->private->tbxwin), 20, 450);
 }
