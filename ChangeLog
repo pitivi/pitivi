@@ -1,5 +1,10 @@
 2004-06-25    <bilboed@localhost>
 
+	* src/pitivi-mainapp.h (struct _PitiviMainApp): moved the windows to PitiviMainAppPrivate
+
+	* src/pitivi-effectswindow.c: 
+	* src/pitivi-effectswindow.h: Converted PitiviEffectsWindow to derivate of PitiviWindows
+
 	* src/pitivi-toolboxwindow.c: 
 	* src/pitivi-toolboxwindow.h: 
 	* src/pitivi-newprojectwindow.c: 

@@ -31,8 +31,6 @@
  * Potentially, include other headers on which this header depends.
  */
 
-#include <gtk/gtk.h>
-
 #include "pitivi.h"
 #include "pitivi-windows.h"
 

@@ -36,10 +36,6 @@ typedef struct _PitiviMainApp PitiviMainApp;
  */
 
 #include	"pitivi-projectsettings.h"
-#include	"pitivi-sourcelistwindow.h"
-#include	"pitivi-timelinewindow.h"
-#include	"pitivi-viewerwindow.h"
-#include	"pitivi-effectswindow.h"
 #include	"pitivi-settings.h"
 
 /*
@@ -61,10 +57,7 @@ struct _PitiviMainApp
   GObject parent;
 
   /* instance public members */
-  PitiviSourceListWindow	*srclistwin;
-  PitiviTimelineWindow		*timelinewin;
-  PitiviViewerWindow		*viewerwin;
-  PitiviEffectsWindow		*effectswin;
+
   /* private */
   PitiviMainAppPrivate *private;
 };

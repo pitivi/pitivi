@@ -32,6 +32,7 @@
 #include "pitivi-sourcelistwindow.h"
 #include "pitivi-projectsourcelist.h"
 #include "pitivi-settings.h"
+#include "pitivi-stockicons.h"
 
 static GtkWindowClass *parent_class = NULL;
 
