@@ -117,7 +117,7 @@ void		pitivi_settings_aff_coder (GList *list)
 */
 void		pitivi_settings_aff_mime_type (PitiviSettingsMimeType *mime_type)
 {
-  g_print ("%s\n", mime_type->flux);
+  g_print ("%s\n", gst_caps_to_string (mime_type->flux));
   g_print ("  Encoder:\n");
   pitivi_settings_aff_coder (mime_type->encoder);
   g_print ("  Decoder:\n");
@@ -145,14 +145,14 @@ void		pitivi_settings_aff_all_list (GList *list)
 /* 
    initialise une nouvelle structure 
    pour un nouveau flux
-*/
+0*/
 PitiviSettingsMimeType *
-pitivi_settings_init_mime_type (gchar *flux)
+pitivi_settings_init_mime_type (GstCaps *flux)
 {
   PitiviSettingsMimeType *new;
 
   new = g_malloc (sizeof (PitiviSettingsMimeType));
-  new->flux = g_strdup (flux);
+  new->flux = gst_caps_copy (flux);
   new->encoder = 0;
   new->decoder = 0;
   return (new);
@@ -164,17 +164,31 @@ pitivi_settings_init_mime_type (gchar *flux)
    si elle existe sinon retourne NULL
 */
 PitiviSettingsMimeType *
-pitivi_settings_search_flux (GList *list, gchar *flux)
+pitivi_settings_search_flux (GList *list, GstCaps *flux)
 {
   PitiviSettingsMimeType *tmp;
   
   for (; list; list = g_list_next (list)) {
     tmp = (PitiviSettingsMimeType *) list->data;
-    if ((!strcmp(tmp->flux, flux))) {
+    if (gst_caps_is_equal (tmp->flux, flux)) {
       return (tmp);
     }
   }
-  return (0);
+  return (NULL);
+}
+
+PitiviSettingsMimeType *
+pitivi_settings_search_compatible_flux (GList *list, GstCaps *flux)
+{
+  PitiviSettingsMimeType *tmp;
+
+  for (; list; list = g_list_next (list)) {
+    tmp = (PitiviSettingsMimeType *) list->data;
+    if (gst_caps_is_always_compatible (flux, tmp->flux)) {
+      return (tmp);
+    }
+  }
+  return (NULL);
 }
 
 
@@ -187,11 +201,11 @@ pitivi_settings_search_flux (GList *list, gchar *flux)
    c est que la list est vide
 */
 GList *
-pitivi_settings_get_flux_coder_list (GList *list, gchar *flux, gboolean LIST)
+pitivi_settings_get_flux_coder_list (GList *list, GstCaps *flux, gboolean LIST)
 {
   PitiviSettingsMimeType *tmp;
 
-  if ((tmp = pitivi_settings_search_flux (list, flux))) {
+  if ((tmp = pitivi_settings_search_compatible_flux (list, flux))) {
     if (LIST == DEC_LIST) {
       return (tmp->decoder);
     } else if (LIST == ENC_LIST) {
@@ -247,32 +261,44 @@ pitivi_settings_ajout_element (GList *list, GstElementFactory *factory, gboolean
     for (i = 0; pads; i++, pads = g_list_next (pads)) {
       padtemplate = (GstPadTemplate *) (pads->data);
       if (padtemplate->direction == MY_PAD) {
-	gint j;
+	GstCaps *tmp_caps;
+
+	tmp_caps = (GstCaps *) padtemplate->caps;
+	PitiviSettingsMimeType *tmp_mime;
 	
-	for (j = 0; j < padtemplate->caps->structs->len; j++) {
+	if ((tmp_mime = pitivi_settings_search_flux (list, tmp_caps))) {
+	  tmp_mime = pitivi_settings_ajout_factory_element (tmp_mime, 
+							    (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
+							    MY_PAD);
+	  
+	} else {
+	  tmp_mime = pitivi_settings_init_mime_type (tmp_caps);
+	  tmp_mime = pitivi_settings_ajout_factory_element (tmp_mime, 
+							    (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
+							    MY_PAD);
+	  list = g_list_append (list, (gpointer) tmp_mime);
+	  
+	}
+	/*
+	  for (j = 0; j < padtemplate->caps->structs->len; j++) {
 	  PitiviSettingsMimeType *tmp;
 	  
-	  /* CHERCHE SI LE TYPE EST DEJA DEFINI */
-	  if ((tmp = pitivi_settings_search_flux (list, gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j)))) &&
-	      (padtemplate->caps != NULL))
-	    {
-	      tmp = pitivi_settings_ajout_factory_element (tmp, 
-							   (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
-							   MY_PAD);
-	    } 
-	  else 
-	    {
-	      /* SINON L AJOUTE */
-	      if (padtemplate->caps != NULL)
-		{
-		  tmp = pitivi_settings_init_mime_type (gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j)));
-		  tmp = pitivi_settings_ajout_factory_element (tmp, 
-							       (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
-							       MY_PAD);
-		  list = g_list_append (list, (gpointer) tmp);
-		}
+	  
+	  if ((tmp = pitivi_settings_search_flux (list, gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j))))) {
+	  tmp = pitivi_settings_ajout_factory_element (tmp, 
+	  (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
+	  MY_PAD);
+	  } else {
+	  
+	  tmp = pitivi_settings_init_mime_type (gst_structure_to_string (gst_caps_get_structure (padtemplate->caps, j)));
+	  tmp = pitivi_settings_ajout_factory_element (tmp, 
+	  (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)), 
+	  MY_PAD);
+	  list = g_list_append (list, (gpointer) tmp);
 	  }
-	}
+	  }
+	*/
+	
       }      
     }
   }
@@ -282,7 +308,8 @@ pitivi_settings_ajout_element (GList *list, GstElementFactory *factory, gboolean
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 
-GList			*pitivi_settings_get_flux_codec_list (GObject *object, gchar *flux, gboolean LIST)
+GList *
+pitivi_settings_get_flux_codec_list (GObject *object, GstCaps *flux, gboolean LIST)
 {
   PitiviSettings *self = (PitiviSettings *) object;
 
@@ -290,7 +317,8 @@ GList			*pitivi_settings_get_flux_codec_list (GObject *object, gchar *flux, gboo
 }
 
 
-GList			*pitivi_settings_get_flux_container_list (GObject *object, gchar *flux, gboolean LIST)
+GList *
+pitivi_settings_get_flux_container_list (GObject *object, GstCaps *flux, gboolean LIST)
 {
   PitiviSettings *self = (PitiviSettings *) object;
 
@@ -368,10 +396,8 @@ pitivi_settings_instance_init (GTypeInstance * instance, gpointer g_class)
     }
     sv = sv->next;
   }
-
-/*   pitivi_settings_aff_all_list (self->codec); */
-/*   pitivi_settings_aff_all_list (self->container); */
-
+  pitivi_settings_aff_all_list (self->container);
+  pitivi_settings_aff_all_list (self->codec);
 }
 
 static void
@@ -395,7 +421,7 @@ pitivi_settings_dispose (GObject *object)
 
   pitivi_settings_free_list_all (self->codec);
   pitivi_settings_free_list_all (self->container);
-
+  
   /*
   g_list_free (self->element);
   */

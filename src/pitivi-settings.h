@@ -59,7 +59,7 @@ enum {
 
 struct _PitiviSettingsMimeType
 {
-  gchar		*flux;
+  GstCaps	*flux;
   GList		*encoder;
   GList		*decoder;
 };
@@ -95,9 +95,9 @@ GType pitivi_settings_get_type (void);
 PitiviSettings	*pitivi_settings_new(void);
 
 GList			*pitivi_settings_get_flux_codec_list (GObject *object, 
-								    gchar *flux, 
-								    gboolean LIST);
+							      GstCaps *flux, 
+							      gboolean LIST);
 GList			*pitivi_settings_get_flux_container_list (GObject *object, 
-									gchar *flux, 
-									gboolean LIST);
+								  GstCaps *flux, 
+								  gboolean LIST);
 #endif
