@@ -63,7 +63,6 @@ struct _PitiviTimelineWindowPrivate
   GtkWidget	*timer;
   GtkWidget	*layout_container;
   GtkWidget	*info_container;
-  GtkWidget	*hruler;
   GtkWidget	*hpaned;
   
   GdkWindow     *event_window;
@@ -244,7 +243,7 @@ unit_combobox_cb(GtkWidget *cbox, gpointer data)
   value = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
   if (tw->unit != value) {
     tw->unit = value;
-    pitivi_ruler_set_zoom_metric (tw->private->hruler, tw->unit, tw->zoom);
+    pitivi_ruler_set_zoom_metric (tw->hruler, tw->unit, tw->zoom);
     g_signal_emit_by_name (GTK_OBJECT (tw), "zoom-changed");
   }
 }
@@ -260,7 +259,7 @@ scale_combobox_cb(GtkWidget *cbox, gpointer data)
   value = tab[gtk_combo_box_get_active(GTK_COMBO_BOX(cbox))];
   if (tw->zoom != value) {
     tw->zoom = value;
-    pitivi_ruler_set_zoom_metric (tw->private->hruler, tw->unit, tw->zoom);
+    pitivi_ruler_set_zoom_metric (tw->hruler, tw->unit, tw->zoom);
     g_signal_emit_by_name (GTK_OBJECT (tw), "zoom-changed");
   }
 }
@@ -380,13 +379,13 @@ check_track (GtkWidget *widget, PitiviTimelineCellRenderer *cells)
 void
 create_ruler (PitiviTimelineWindow *self)
 {  
-  self->private->hruler = pitivi_ruler_new (self->unit);
-  pitivi_ruler_set_metric (GTK_RULER (self->private->hruler), PITIVI_RSECONDS);
-  gtk_ruler_set_range (GTK_RULER (self->private->hruler), 0, TOTAL_SECOND_TIME, 0, TOTAL_SECOND_TIME);
-  gtk_widget_set_size_request (self->private->hruler, TOTAL_SECOND_TIME * PIXEL_PER_SECOND, 25);
+  self->hruler = pitivi_ruler_new (self->unit);
+  pitivi_ruler_set_metric (GTK_RULER (self->hruler), PITIVI_RSECONDS);
+  gtk_ruler_set_range (GTK_RULER (self->hruler), 0, TOTAL_SECOND_TIME, 0, TOTAL_SECOND_TIME);
+  gtk_widget_set_size_request (self->hruler, TOTAL_SECOND_TIME * PIXEL_PER_SECOND, 25);
   g_signal_connect_swapped (G_OBJECT (self->private->main_vbox), "motion_notify_event",
-			    G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
-			    G_OBJECT (self->private->hruler));
+			    G_CALLBACK (EVENT_METHOD (self->hruler, motion_notify_event)),
+			    G_OBJECT (self->hruler));
 }
 
 void
@@ -452,7 +451,7 @@ create_tracks (PitiviTimelineWindow *self)
   /* Docking Ruler */
   
   create_ruler (self);
-  gtk_box_pack_start (GTK_BOX (vbox_right), self->private->hruler, FALSE, FALSE, 0);     
+  gtk_box_pack_start (GTK_BOX (vbox_right), self->hruler, FALSE, FALSE, 0);     
 
   self->private->layout_container = gtk_table_new ( len, 1, FALSE );
   self->private->info_container = gtk_table_new ( len, 1, FALSE );
@@ -483,8 +482,8 @@ create_tracks (PitiviTimelineWindow *self)
     }
   create_tracks_links (cell);
   g_signal_connect_swapped (G_OBJECT (GTK_LAYOUT (cell)), "motion_notify_event",
-			    G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
-			    G_OBJECT (self->private->hruler));
+			    G_CALLBACK (EVENT_METHOD (self->hruler, motion_notify_event)),
+			    G_OBJECT (self->hruler));
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->hpaned, FALSE, FALSE, 0);
   
   // Left Scrollbar
@@ -1084,7 +1083,7 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   /* Activating ruler */
   PitiviProject	*proj = PITIVI_WINDOWS(self)->mainapp->project;
   int videorate = pitivi_projectsettings_get_videorate(proj->settings);
-  g_object_set (self->private->hruler, "ruler-videorate", videorate, NULL);
+  g_object_set (self->hruler, "ruler-videorate", videorate, NULL);
   
   /* Activate childs */
 

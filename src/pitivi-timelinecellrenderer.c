@@ -1209,6 +1209,7 @@ pitivi_timelinecellrenderer_scroll_event (GtkWidget *widget, GdkEventScroll *eve
       gtk_adjustment_set_value (self->private->timewin->hscrollbar, value);
     }
   }
+  pitivi_ruler_set_zoom_metric (self->private->timewin->hruler, self->private->timewin->unit, self->private->timewin->zoom);
   return FALSE;
 }
 
