@@ -64,6 +64,8 @@ struct _PitiviProjectSettings
   /* instance public members */
   gchar				*name;
   gchar				*description;
+  gchar				*container_factory_name;
+  GList				*container_properties;
   GSList			*media_settings;
   
   /* private */
@@ -106,10 +108,13 @@ PitiviCategorieSettings	*pitivi_projectsettings_categorie_new(gchar *name/* , GS
 GSList			*pitivi_projectsettings_list_make( );
 
 GstCaps			*pitivi_projectsettings_vcaps_create ( int width, int height, int framerate );
-GstCaps			*pitivi_projectsettings_acaps_create ( int rate, int channel );
+GstCaps			*pitivi_projectsettings_acaps_create ( int rate, int channel, int depth );
 
 int			pitivi_projectsettings_get_videorate(PitiviProjectSettings *ps);
 int			pitivi_projectsettings_get_audiorate(PitiviProjectSettings *ps);
+int			pitivi_projectsettings_get_audiodepth(PitiviProjectSettings *ps);
+gboolean		pitivi_projectsettings_get_videosize (PitiviProjectSettings *ps, 
+							      gint * width, gint * height);
 
 xmlNodePtr		pitivi_projectsettings_save_thyself(PitiviProjectSettings *self, xmlNodePtr parent);
 void			pitivi_projectsettings_restore_thyself(PitiviProjectSettings *tofill, xmlNodePtr self);

@@ -155,17 +155,17 @@ cache_audio_video (PitiviSourceFile *sf)
 void
 bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udata)
 {
-  gint	type;
+  gint	padtype;
   bindata	*data = (bindata *) udata;
   char		*tmp;
   GstElement	*sink;
   
-  type = get_pad_type (pad);
-  if (!type)
+  padtype = get_pad_type (pad);
+  if (!padtype)
     return;
 /*   g_printf("Adding pad type[%d]->[%d] : %s:%s\n", type, data->bintype, GST_DEBUG_PAD_NAME(pad)); */
   /* Connect (adapters and) ghost pads */
-  if (type == IS_AUDIO) {
+  if (padtype == IS_AUDIO) {
     if (data->bintype != IS_VIDEO) {
       /* TODO : Add the adapters */
       if (data->bintype == IS_AUDIO_VIDEO) {
@@ -182,7 +182,7 @@ bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udat
 	g_warning("Error linking decodebin pad to fakesink !!!");
     }
     data->audioready = TRUE;
-  } else if (type == IS_VIDEO) {
+  } else if (padtype == IS_VIDEO) {
     if (data->bintype != IS_AUDIO) {
       /* TODO : Add the adapter */
       if (data->bintype == IS_AUDIO_VIDEO) {
@@ -496,24 +496,6 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
   for (i = 1000; i--; ) {
     if (!(gst_bin_iterate(GST_BIN(self->pipeline))))
       break;
-/*     if (!(i % 5)) { /\* Check every 5 iterations if we have fixed pads *\/ */
-/*       if (self->private->audiopad) */
-/* 	{ */
-/* 	  if (self->private->videopad)  */
-/* 	    { /\* audio and video *\/ */
-/* 	      if (gst_caps_is_fixed(gst_pad_get_caps(self->private->audiopad)) */
-/* 		  && gst_caps_is_fixed(gst_pad_get_caps(self->private->videopad))) */
-/* 		break; */
-/* 	    } */
-/* 	  else /\* audio only *\/ */
-/* 	    if (gst_caps_is_fixed(gst_pad_get_caps(self->private->audiopad)))  */
-/* 	      break; */
-/* 	} */
-/*       else  {/\* video only *\/ */
-/* 	if (self->private->videopad && gst_caps_is_fixed(gst_pad_get_caps(self->private->videopad))) */
-/* 	  break; */
-/*       } */
-/*     } */
   }
   g_signal_handler_disconnect (self->private->decode, ndhandler);
   g_signal_handler_disconnect (self->private->decode, unhandler);
@@ -526,7 +508,7 @@ pitivi_sourcefile_get_info (PitiviSourceFile *self)
     record_pad_info(self, IS_AUDIO, self->private->audiopad);
   }
 
-  /* Remove fakesinks */
+  /* remove elements from bin */
   if (self->private->audioout) {
     gst_element_unlink(self->private->decode, self->private->audioout);
     gst_bin_remove(GST_BIN(self->pipeline), self->private->audioout);

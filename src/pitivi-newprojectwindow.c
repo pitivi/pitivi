@@ -40,11 +40,20 @@ enum
     NUM_COLUMN
   };
 
-gchar	*freq_tab[] = {
+static gchar	*freq_tab[] = {
   "48000",
+  "44100",
   "32000",
   "24000",
   "12000",
+  0
+};
+
+static gint	adepth_tab[] = {
+  8,
+  16,
+  24,
+  32,
   0
 };
 
@@ -103,9 +112,14 @@ struct _PitiviNewProjectWindowPrivate
   GtkWidget		*audio_combo_codec;
   GtkWidget		*audio_combo_freq;
   GtkWidget		*audio_combo_ech;
+  GtkWidget		*audio_combo_depth;
   GList			*audio_listname;
   gchar			**audio_tabname;
   
+  /* Container */
+  GtkWidget		*container_cbox;
+  GList			*container_list;
+
   /* Category */
   GtkWidget		*cat_text;
 
@@ -147,12 +161,14 @@ GtkWidget		*pitivi_create_presets_table	( PitiviNewProjectWindow	*self );
 GtkWidget		*pitivi_make_settings_table	( PitiviNewProjectWindow	*self );
 GtkWidget		*pitivi_make_video_frame	( PitiviNewProjectWindow	*self );
 GtkWidget		*pitivi_make_audio_frame	( PitiviNewProjectWindow	*self );
+GtkWidget		*pitivi_make_container_frame	( PitiviNewProjectWindow	*self );
 GtkWidget		*pitivi_make_name_frame		( PitiviNewProjectWindow	*self );
 GtkWidget		*pitivi_make_cat_frame		( PitiviNewProjectWindow	*self );
 PitiviConfProperties	*pitivi_setprop_new		( gchar				*name, GValue	value, GtkWidget	*pwidget );
 gchar			*pitivi_newprojectwindow_getstr	( gint				i );
 void			pitivi_newprojectwindow_put_info( PitiviNewProjectWindow	*self, gchar		*setting_name );
 gchar			*pitivi_combobox_get_active	( GtkWidget			*combobox, gchar	*listname );
+gchar			*get_selected_container		( PitiviNewProjectWindow	*self );
 int			pitivi_get_nb_codec		( gchar	*klass_choice );
 PitiviCombobox		*pitivi_make_codec_combobox	( gchar	*klass_choice );
 
@@ -258,15 +274,16 @@ pitivi_npw_get_a_media(PitiviNewProjectWindow *self)
 {
   PitiviMediaSettings	*media;
   GstCaps		*caps_audio;
-  gint			freq, rate, index;
+  gint			freq, rate, index, depth;
   gchar			*factory_name;
   
   factory_name = self->private->audio_tabname[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_codec) )];
   index = gtk_combo_box_get_active (GTK_COMBO_BOX(self->private->audio_combo_codec));
   freq = atoi ( freq_tab[ gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_freq)) ]);
   rate = gtk_spin_button_get_value_as_int ( GTK_SPIN_BUTTON( self->private->audio_combo_ech));
+  depth = adepth_tab[gtk_combo_box_get_active( GTK_COMBO_BOX(self->private->audio_combo_depth))];
 
-  caps_audio = pitivi_projectsettings_acaps_create ( freq, rate );
+  caps_audio = pitivi_projectsettings_acaps_create ( freq, rate, depth );
   media = pitivi_projectsettings_media_new( factory_name, caps_audio, index);
 
 // PROPERTIES
@@ -321,6 +338,7 @@ pitivi_npw_add_projectsettings (PitiviNewProjectWindow *self)
   new_setting->media_settings = NULL;
   new_setting->media_settings = g_slist_append(new_setting->media_settings, (gpointer) v_media);
   new_setting->media_settings = g_slist_append(new_setting->media_settings, (gpointer) a_media);
+  new_setting->container_factory_name = get_selected_container (self);
   
   pitivi_settings_add_setting ( mainapp->global_settings, new_setting, self->private->position );
 }
@@ -374,6 +392,7 @@ pitivi_npw_mod_setting(GtkButton *button, gpointer user_data)
       new_setting->media_settings = NULL;
       new_setting->media_settings = g_slist_append(new_setting->media_settings, (gpointer) v_media);
       new_setting->media_settings = g_slist_append(new_setting->media_settings, (gpointer) a_media);
+      new_setting->container_factory_name = get_selected_container (self);
       pitivi_settings_mod_setting( mainapp->global_settings, new_setting, self->private->position );
 
       gtk_tree_store_set(self->private->tree, &self->private->pIter2, 0, 
@@ -593,6 +612,7 @@ pitivi_npw_put_entire_description(PitiviNewProjectWindow *self, PitiviProjectSet
   gchar			*setting_desc;
   gchar			*vmedia_desc;
   gchar			*amedia_desc;
+  gchar			*amedia_desc2;
   gchar			*vprop;
   gchar			*aprop;
   
@@ -605,21 +625,15 @@ pitivi_npw_put_entire_description(PitiviNewProjectWindow *self, PitiviProjectSet
 			   &self->private->end_preset_iter );
   
   //#### SETTING
-  setting_desc = g_new0(gchar, 150);
-  setting_desc = strcat(setting_desc, "SETTING DESCRIPTION :\n\nName : ");
-  setting_desc = strcat(setting_desc, reglage->name);
-  setting_desc = strcat(setting_desc, "\nDescription : ");
-  setting_desc = strcat(setting_desc, reglage->description);
+  setting_desc = g_strdup_printf ("SETTING DESCRIPTION :\n\nName : %s\nDescription : %s",
+				  reglage->name, reglage->description);
   gtk_text_buffer_insert ( self->private->preset_text_buffer, &self->private->start_preset_iter, 
 			   setting_desc, strlen (setting_desc) );
   
   //#### MEDIA VIDEO
   vmedia = (PitiviMediaSettings *) g_slist_nth_data(reglage->media_settings, 0);
-  vmedia_desc = g_new0(gchar, 2000);
-  vmedia_desc = strcat(vmedia_desc, "\n\n\nMEDIAS DESCRIPTIONS :\n\nVideo Codec Name : ");
-  vmedia_desc = strcat(vmedia_desc, vmedia->codec_factory_name);
-  vmedia_desc = strcat(vmedia_desc, "\nCaps Video : ");
-  vmedia_desc = strcat(vmedia_desc, gst_caps_to_string(vmedia->caps) );
+  vmedia_desc = g_strdup_printf ("\n\n\nMEDIAS DESCRIPTIONS :\n\nVideo Codec Name : %s\nCaps Video : %s",
+				 vmedia->codec_factory_name, gst_caps_to_string(vmedia->caps));
   //#### PROPERTIES
   if ( vmedia->codec_properties ) {
     vprop = pitivi_npw_get_properties(vmedia->codec_properties);
@@ -633,22 +647,24 @@ pitivi_npw_put_entire_description(PitiviNewProjectWindow *self, PitiviProjectSet
   
   //#### MEDIA AUDIO
   amedia = (PitiviMediaSettings *) g_slist_nth_data(reglage->media_settings, 1);
-  amedia_desc = g_new0(gchar, 2000);
-  amedia_desc = strcat(amedia_desc, "\n\nAudio Codec Name : ");
-  amedia_desc = strcat(amedia_desc, amedia->codec_factory_name);
-  amedia_desc = strcat(amedia_desc, "\nCaps Audio : ");
-  amedia_desc = strcat(amedia_desc, gst_caps_to_string(amedia->caps) );
+  amedia_desc = g_strdup_printf ("\n\n\nMEDIAS DESCRIPTIONS :\n\nAudio Codec Name : %s\nCaps Audio : %s",
+				 amedia->codec_factory_name, gst_caps_to_string(amedia->caps));
   //#### PROPERTIES
   if ( amedia->codec_properties ) {
     aprop = pitivi_npw_get_properties(amedia->codec_properties);
-    amedia_desc = strcat( amedia_desc, aprop );
+    amedia_desc2 = g_strdup_printf ("%s%s", amedia_desc, aprop);
     g_free(aprop);
+    g_free (amedia_desc);
+    amedia_desc = amedia_desc2;
   }
   
-/*   g_print("Setting L:%d.\nVmedia L:%d.\nAmedia L: %d.\nTotal:%d",  */
-/* 	  strlen(setting_desc), strlen(vmedia_desc), strlen (amedia_desc), */
-/* 	  strlen(setting_desc) + strlen(vmedia_desc) + strlen (amedia_desc) ); */
-  
+  if (reglage->container_factory_name) {
+    amedia_desc2 = g_strdup_printf ("%s\n\nContainer : %s\n", amedia_desc,
+				    reglage->container_factory_name);
+    g_free (amedia_desc);
+    amedia_desc = amedia_desc2;
+  }
+
   gtk_text_buffer_get_iter_at_offset(self->private->preset_text_buffer,
 				     &self->private->start_preset_iter,
 				     strlen(setting_desc) + strlen(vmedia_desc) );
@@ -662,6 +678,17 @@ pitivi_npw_put_entire_description(PitiviNewProjectWindow *self, PitiviProjectSet
 }
 
 gint
+get_index_from_inttab (gint *tabint, gint value)
+{
+  gint	i;
+
+  for (i = 0; tabint[i];i++)
+    if (tabint[i] == value)
+      return i;
+  return (-1);
+}
+
+gint
 pitivi_npw_get_index_from_tabname ( PitiviNewProjectWindow *self, gchar **tabname, gchar *codec_factory_name )
 {
   gint		i;
@@ -670,6 +697,13 @@ pitivi_npw_get_index_from_tabname ( PitiviNewProjectWindow *self, gchar **tabnam
     if ( !strcmp(codec_factory_name, tabname[i] ) )
       return i;
   return ( -1 );
+}
+
+gchar *
+get_selected_container (PitiviNewProjectWindow *self)
+{
+  return g_list_nth_data (self->private->container_list, 
+			  gtk_combo_box_get_active (GTK_COMBO_BOX (self->private->container_cbox)));
 }
 
 void
@@ -683,6 +717,7 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
   GValue			*val;
   PitiviMainApp			*mainapp = ((PitiviWindows *) self)->mainapp;
   gint				index;
+  gint				vali;
 
   categorie = pitivi_settings_get_selected_category( mainapp->global_settings, self->private->position );
   reglage = (PitiviProjectSettings *) g_slist_nth_data(categorie->list_settings, self->private->position[1] );
@@ -732,7 +767,27 @@ pitivi_newprojectwindow_put_info(PitiviNewProjectWindow *self, gchar *setting_na
       index = pitivi_npw_get_index_from_tabname ( self, self->private->audio_tabname, amedia->codec_factory_name );
       if (index != -1)
 	gtk_combo_box_set_active ( GTK_COMBO_BOX (self->private->audio_combo_codec), index );
+
+      if (gst_structure_get_int(structure, "depth", &vali))
+	if ((index = get_index_from_inttab(adepth_tab, vali)) != -1)
+	  gtk_combo_box_set_active ( GTK_COMBO_BOX (self->private->audio_combo_depth), index);
     }
+
+  /*  Set the container choice */
+  if (reglage->container_factory_name) {
+    GList	*contlist;
+    int		i;
+
+    contlist = self->private->container_list;
+    for (i = 0; contlist; contlist = contlist->next, i++) {
+      gchar	*txt = (gchar *) contlist->data;
+
+      if (!g_ascii_strcasecmp (txt, reglage->container_factory_name))
+	break;
+    }
+    gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->container_cbox),
+			      contlist ? i : 0);
+  }
 }
 
 gchar *
@@ -942,6 +997,7 @@ pitivi_make_settings_table(PitiviNewProjectWindow *self)
   GtkWidget		*video_frame;
   GtkWidget		*audio_frame;
   GtkWidget		*name_frame;
+  GtkWidget		*container_frame;
 
   settings_table = gtk_table_new (5, 2, FALSE);
   
@@ -960,6 +1016,10 @@ pitivi_make_settings_table(PitiviNewProjectWindow *self)
   audio_frame = pitivi_make_audio_frame(self);
   gtk_table_attach (GTK_TABLE(settings_table), audio_frame, 
 		    0, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE , 0, 0);
+
+  container_frame = pitivi_make_container_frame (self);
+  gtk_table_attach (GTK_TABLE(settings_table), container_frame, 
+		    0, 2, 3, 4, GTK_EXPAND | GTK_FILL, FALSE , 0, 0);
   
 /*   Ligne 4 */
   button_hbox = gtk_hbox_new(TRUE, 10);
@@ -987,11 +1047,11 @@ pitivi_make_settings_table(PitiviNewProjectWindow *self)
 		    G_CALLBACK(pitivi_npw_del_setting), (gpointer) (GTK_WIDGET(self)) );
 
   gtk_table_attach( GTK_TABLE(settings_table), button_hbox, 
-		    0, 2, 3, 4, FALSE, FALSE, 0, 3);
+		    0, 2, 4, 5, FALSE, FALSE, 0, 3);
   
   /* Ligne 5 */
   cat_frame = pitivi_make_cat_frame(self);
-  gtk_table_attach ( GTK_TABLE(settings_table), cat_frame, 0, 2, 4, 5, 
+  gtk_table_attach ( GTK_TABLE(settings_table), cat_frame, 0, 2, 5, 6, 
 		     GTK_EXPAND | GTK_FILL, FALSE, 0, 0);
   
   return (settings_table);
@@ -1179,6 +1239,56 @@ pitivi_make_codec_combobox(gchar *klass_choice)
 }
 
 GtkWidget*
+make_new_container_cbox (PitiviNewProjectWindow *self)
+{
+  PitiviMainApp	*mainapp = PITIVI_WINDOWS(self)->mainapp;
+  GtkWidget	*cbox;
+  GList		*container;
+  GList		*mylist = NULL;
+  gchar		*msg, *msg2;
+
+  cbox = gtk_combo_box_new_text();
+  for (container = mainapp->global_settings->container; container; container = container->next) {
+    PitiviSettingsMimeType *type = (PitiviSettingsMimeType *) container->data;
+    if (type->encoder) {
+      char *elt = (char *) type->encoder->data;
+      GstPluginFeature *feat;
+
+      feat = gst_registry_pool_find_feature (elt, GST_TYPE_ELEMENT_FACTORY);
+      msg = g_strdup_printf ("%s (%s)", gst_element_factory_get_longname (GST_ELEMENT_FACTORY (feat)),
+			     elt);
+      msg2 = g_strdup (elt);
+      gtk_combo_box_append_text (GTK_COMBO_BOX (cbox), msg);
+      mylist = g_list_append (mylist, msg2);
+    }
+  }
+  gtk_combo_box_set_active (GTK_COMBO_BOX (cbox), 0);
+  self->private->container_list = mylist;
+  return cbox;
+}
+
+GtkWidget*
+pitivi_make_container_frame (PitiviNewProjectWindow *self)
+{
+  GtkWidget	*cframe;
+  GtkWidget	*cbox;
+  GtkWidget	*clabel;
+
+  cframe = gtk_frame_new ("Container");
+  cbox = gtk_hbox_new(FALSE, 5);
+
+  clabel = gtk_label_new("Container : ");
+  self->private->container_cbox = make_new_container_cbox (self);
+
+  gtk_box_pack_start (GTK_BOX (cbox), clabel, FALSE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (cbox), self->private->container_cbox, TRUE, TRUE, 5);
+
+  gtk_container_add (GTK_CONTAINER (cframe), cbox);
+  
+  return cframe;
+}
+
+GtkWidget*
 pitivi_make_video_frame(PitiviNewProjectWindow *self)
 {
   GtkWidget		*video_table;
@@ -1318,12 +1428,14 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
   GtkWidget		*audio_label_codec;
   GtkWidget		*audio_label_freq;
   GtkWidget		*audio_label_ech;
+  GtkWidget		*audio_label_depth;
   GtkWidget		*audio_conf_but;
   GtkWidget		*acodec_hbox;
   GtkWidget		*arate_hbox;
   GtkWidget		*achannels_hbox;
   PitiviCombobox	*audio_combobox;
   int			i;
+  gchar			*tmp;
 
   audio_combobox = g_new0(PitiviCombobox, 1);
   self->private->audio_listname = NULL;
@@ -1409,6 +1521,23 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
   gtk_table_attach (GTK_TABLE(audio_table), achannels_hbox, 
 		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
 
+  audio_label_depth = gtk_label_new("Depth : ");
+  gtk_misc_set_alignment (GTK_MISC (audio_label_depth), 0.0f, 0.0f);
+  gtk_misc_set_padding (GTK_MISC (audio_label_depth), 5, 0);
+  gtk_table_attach (GTK_TABLE(audio_table), audio_label_depth, 
+		    0, 1, 3, 4, GTK_FILL, FALSE, 5, 5);
+
+  /* Audio depth */
+  self->private->audio_combo_depth = gtk_combo_box_new_text();
+  for (i = 0; adepth_tab[i]; i++) {
+    tmp = g_strdup_printf ("%d bits", adepth_tab[i]);
+    gtk_combo_box_append_text (GTK_COMBO_BOX (self->private->audio_combo_depth), tmp);
+  }
+  gtk_combo_box_set_active(GTK_COMBO_BOX (self->private->audio_combo_depth), 1);
+  gtk_table_attach (GTK_TABLE(audio_table), self->private->audio_combo_depth, 
+		    1, 2, 3, 4, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
+  
+
   gtk_container_add(GTK_CONTAINER(audio_frame), audio_table);
   gtk_container_set_border_width (GTK_CONTAINER (audio_frame), 5);
   return (audio_frame);   
@@ -1437,7 +1566,6 @@ PitiviNewProjectWindow	*self;
   self = (PitiviNewProjectWindow *) data;
   elm = pitivi_combobox_get_active (self->private->video_combo_codec, 
 						   "video_listname");
-  g_print ("Button Click:%s\n", elm);
   Dialog = gtk_dialog_new ();
   Label = gtk_label_new (elm);
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
@@ -1478,7 +1606,6 @@ PitiviNewProjectWindow	*self;
 /*   elm = gtk_combo_box_get_active (GTK_COMBO_BOX (self->private->audio_combo_codec)); */
   elm = pitivi_combobox_get_active (self->private->audio_combo_codec, 
 						   "audio_listname");
-  g_print ("Button Click:%s\n", elm);
   Dialog = gtk_dialog_new ();
   Label = gtk_label_new (elm);
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),
