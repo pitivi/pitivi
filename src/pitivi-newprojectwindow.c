@@ -252,14 +252,14 @@ gboolean			setting_is_selected(GtkTreeView *tree_view, GtkTreeModel *model,
       if (!value)
 	{
 	  gtk_text_buffer_set_text(self->private->preset_text_buffer, setting_name, strlen(setting_name));
-	  printf("select setting : \" %s \"\n", setting_name);
+/* 	  printf("select setting : \" %s \"\n", setting_name); */
 	}
       else
 	{
 	  gtk_text_buffer_get_start_iter(self->private->preset_text_buffer, &piter1);
 	  gtk_text_buffer_get_end_iter(self->private->preset_text_buffer, &piter2);
 	  gtk_text_buffer_delete (self->private->preset_text_buffer, &piter1, &piter2);
-	  printf("unselect setting : \" %s \"\n", setting_name);
+/* 	  printf("unselect setting : \" %s \"\n", setting_name); */
 	}
     }
   return TRUE;
