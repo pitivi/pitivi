@@ -32,15 +32,15 @@ pitivi_file (const char *filename)
   int i;
 
   static char *paths[] = {
+    /* Developpement goes first */
+    "../pixmaps/",
+    "../ui/",
     DATADIR "/",
     DATADIR "/pixmaps/",
     DATADIR "/pixmaps/pitivi/",
     DATADIR "/pitivi/ui/",
     DATADIR "/ui/pitivi",
-    DATADIR "/ui/",
-    /* Developpement */
-    "../pixmaps/",
-    "../ui/"
+    DATADIR "/ui/"
   };
 
   for (i = 0; i < (int) G_N_ELEMENTS (paths); i++) {
