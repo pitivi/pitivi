@@ -42,6 +42,10 @@
 #define PITIVI_STOCK_SELECTION_GROW "pitivi-selection-grow"
 #define PITIVI_STOCK_SELECT_ALL "pitivi-select-all"
 #define PITIVI_STOCK_SELECT_NONE "pitivi-select-none"
+#define PITIVI_STOCK_EFFECT_SOUND "pitivi-effects-sound"
+#define PITIVI_STOCK_EFFECT_TV "pitivi-effects-tv"
+#define PITIVI_STOCK_EFFECT_CAT "pitivi-effects-category"
+#define PITIVI_STOCK_EFFECT_CAT_OPEN "pitivi-effects-category-open"
 
 void		pitivi_stockicons_register (void);
 

@@ -182,7 +182,7 @@ pitivi_menu_set_property (GObject * object,
   switch (property_id)
     {
     case PITIVI_FILE_MENU_PROPERTY:
-      pitivi_menubar_set_filename (self, g_value_get_string (value));
+      pitivi_menu_set_filename (self, g_value_get_string (value));
       break;
     case PITIVI_WINDOW_PROPERTY:
       pitivi_set_menu_window (self, g_value_get_object (value));
@@ -193,10 +193,8 @@ pitivi_menu_set_property (GObject * object,
     }
 }
 
-
-
 void
-pitivi_set_menu (PitiviMenu *self)
+pitivi_menu_configure (PitiviMenu *self)
 {
   GError *error;
   
@@ -221,7 +219,7 @@ pitivi_set_menu (PitiviMenu *self)
 
 
 void
-pitivi_menubar_set_filename (PitiviMenu *self, const gchar *filename)
+pitivi_menu_set_filename (PitiviMenu *self, const gchar *filename)
 {
   PitiviMenuPrivate *priv;
   
@@ -286,6 +284,8 @@ pitivi_menu_class_init (gpointer g_class, gpointer g_class_data)
 							"Window",
 							"Window container for menubar.",
 							gtk_window_get_type(), G_PARAM_READWRITE));
+  klass->public = g_new0 (PitiviMenuClassPublic, 1);
+  klass->public->configure = pitivi_menu_configure;
 }
 
 GType

@@ -24,7 +24,9 @@
  */
 
 #include <gtk/gtk.h>
+#include <gst/gst.h>
 #include "pitivi.h"
+#include "pitivi-stockicons.h"
 #include "pitivi-effectswindow.h"
 
 static GtkWindowClass *parent_class = NULL;
@@ -35,8 +37,7 @@ struct _PitiviEffectsWindowPrivate
   gboolean	  dispose_has_run;
   guint		  notebook_id;
   GtkWidget	  *notebook;
-  PitiviTreeModel *first;
-  GList		  *compounds;
+  GtkWidget	  *statusbar;
 };
 
 /*
@@ -44,20 +45,12 @@ struct _PitiviEffectsWindowPrivate
  */
 
 enum {
-  TABTREE_ACTIVATE_SIGNAL = 1,
-  TABTREE_LAST_SIGNAL
+    PITIVI_ICON_COLUMN,
+    PITIVI_TEXT_COLUMN,
+    PITIVI_BG_COLOR_COLUMN,
+    PITIVI_FG_COLOR_COLUMN,
+    PITIVI_NB_COLUMN
 };
-
-static guint tabtreeview_signals[TABTREE_LAST_SIGNAL] = { 0 };
-
-
-enum {
-  NOTEBOOK_LABELS = 1,
-  NOTEBOOK_NEW_LABEL,
-  NOTEBOOK_NEW_STYLE,
-  LAST_ENUM_TABTREE,
-};
-
 
 /*
  * Insert "added-value" functions here
@@ -95,30 +88,24 @@ pitivi_effectswindow_constructor (GType type,
 }
 
 static void
-pitivi_insert_newtabtree(PitiviEffectsWindow *self, PitiviTreeModel *tree)
+pitivi_effectswindow_insert_newtab (GtkNotebook *notebook, PitiviEffectsTree *tree)
 {
-  PitiviEffectsWindowPrivate *priv;
-  GtkWidget *vbox_tree;
-
-  g_return_if_fail (self);
-  g_return_if_fail (tree);
+  GtkWidget *widget;
   
-  priv = self->private;
-  vbox_tree = gtk_vbox_new (FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (vbox_tree), GTK_WIDGET(tree->treeview),
-		      TRUE, TRUE, 0);
-  gtk_notebook_append_page( GTK_NOTEBOOK (priv->notebook),
-			    vbox_tree,
-			    tree->label);
+  gtk_container_add (GTK_CONTAINER (notebook), tree->scroll);
+  gtk_container_add (GTK_CONTAINER (tree->scroll), tree->treeview);
+  widget = gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook), tree->order);
+  gtk_notebook_set_tab_label (GTK_NOTEBOOK ( notebook ), widget, GTK_WIDGET (tree->label));
   gtk_label_set_justify (GTK_LABEL ( tree->label ), GTK_JUSTIFY_LEFT);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(tree->scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW (tree->scroll),
+				 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 }
 
 static void
 pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   int  count;
-  GtkWidget *main_vbox;
+  
   PitiviEffectsWindow *self = (PitiviEffectsWindow *) instance;
   self->private = g_new0(PitiviEffectsWindowPrivate, 1);
   
@@ -129,32 +116,253 @@ pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
-  gtk_window_set_default_size(GTK_WINDOW (self), 150, 100);
+  
+  gtk_window_set_default_size(GTK_WINDOW (self), PITIVI_EFFECTS_WIN_SIZEX, PITIVI_EFFECTS_WIN_SIZEY);
   self->private->notebook = gtk_notebook_new ();
-  gtk_notebook_set_tab_pos (GTK_NOTEBOOK (self->private->notebook), GTK_POS_TOP);
-  main_vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (self), main_vbox);
-  gtk_box_pack_start (GTK_BOX (main_vbox), GTK_WIDGET(self->private->notebook),
-		      TRUE, TRUE, 0);
+  gtk_container_add (GTK_CONTAINER (self), self->private->notebook);
   
-  PitiviTreeModel *videotree = g_new0(PitiviTreeModel, 1);
-  videotree->label = gtk_label_new ("Video");
-  videotree->treeview = gtk_tree_view_new ();
-  videotree->scroll = gtk_scrolled_window_new (NULL, NULL);
-  pitivi_insert_newtabtree(self, videotree);
+  PitiviEffectsTree *video = g_new0(PitiviEffectsTree, 1);
+  video->window = GTK_WIDGET (self);
+  video->label = gtk_label_new (PITIVI_VIDEO_EFFECT_LABEL);
+  video->treeview = gtk_tree_view_new ();
+  video->scroll = gtk_scrolled_window_new (NULL, NULL);
+  video->order = 0;
+  pitivi_effectstree_set_gst (video, PITIVI_EFFECT_VIDEO_TYPE);
+  pitivi_effectswindow_insert_newtab (GTK_NOTEBOOK (self->private->notebook), video);
+    
+  PitiviEffectsTree *audio = g_new0(PitiviEffectsTree, 1);
+  audio->window = GTK_WIDGET (self);
+  audio->label = gtk_label_new (PITIVI_AUDIO_EFFECT_LABEL);
+  audio->treeview = gtk_tree_view_new ();
+  audio->scroll = gtk_scrolled_window_new (NULL, NULL);
+  audio->order = 1;
+  pitivi_effectstree_set_gst (audio, PITIVI_EFFECT_AUDIO_TYPE);
+  pitivi_effectswindow_insert_newtab (GTK_NOTEBOOK (self->private->notebook), audio);
   
-  PitiviTreeModel *audiotree = g_new0(PitiviTreeModel, 1);
-  audiotree->label = gtk_label_new ("Audio");
-  audiotree->treeview = gtk_tree_view_new ();
-  audiotree->scroll = gtk_scrolled_window_new (NULL, NULL);
-  pitivi_insert_newtabtree(self, audiotree);
+  PitiviEffectsTree *transition = g_new0(PitiviEffectsTree, 1);
+  transition->window = GTK_WIDGET (self);
+  transition->label = gtk_label_new (PITIVI_TRANSITION_EFFECT_LABEL);  
+  transition->treeview = gtk_tree_view_new ();
+  transition->scroll = gtk_scrolled_window_new (NULL, NULL);
+  transition->order = 2;
+  pitivi_effectstree_set_gst (transition, PITIVI_EFFECT_TRANSITION_TYPE);
+  pitivi_effectswindow_insert_newtab (GTK_NOTEBOOK (self->private->notebook), transition);
+}
 
-  PitiviTreeModel *autretree = g_new0(PitiviTreeModel, 1);
-  autretree->label = gtk_label_new ("Autre");  
-  autretree->treeview = gtk_tree_view_new ();
-  autretree->scroll = gtk_scrolled_window_new (NULL, NULL);
-  pitivi_insert_newtabtree(self, autretree);
-  gtk_widget_show (GTK_WIDGET(self));
+void
+pitivi_effects_action_on_colexp (GtkTreeView *treeview, GtkTreeIter *TreeIter, gchar *icon, gpointer data)
+{
+  GdkPixbuf           *pixbuf;
+  GtkTreeModel	      *model;
+  PitiviEffectsTree   *effectstree;
+  gchar		      *name;
+   
+  effectstree = (PitiviEffectsTree *) data;
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (treeview));
+  pixbuf = gtk_widget_render_icon(effectstree->window, icon, GTK_ICON_SIZE_MENU, NULL);  
+  gtk_tree_model_get (GTK_TREE_MODEL (model), TreeIter, PITIVI_TEXT_COLUMN, &name, -1);
+  gtk_tree_store_set(GTK_TREE_STORE (model), TreeIter,
+      PITIVI_ICON_COLUMN, pixbuf,
+      PITIVI_TEXT_COLUMN, name,
+			 PITIVI_BG_COLOR_COLUMN, NULL,
+			 PITIVI_FG_COLOR_COLUMN, NULL,
+			 -1);
+}
+
+void
+pitivi_effectstree_col (GtkTreeView *treeview, GtkTreeIter *TreeIter, GtkTreePath *arg2, gpointer data)
+{
+  pitivi_effects_action_on_colexp (treeview, TreeIter, PITIVI_STOCK_EFFECT_CAT, data);
+}
+
+
+void
+pitivi_effectstree_exp (GtkTreeView *treeview, GtkTreeIter *TreeIter, GtkTreePath *arg2, gpointer data)
+{
+  pitivi_effects_action_on_colexp (treeview, TreeIter, PITIVI_STOCK_EFFECT_CAT_OPEN, data);
+}
+
+void
+pitivi_effectstree_insert_child (PitiviEffectsTree *tree_effect,
+				 GtkTreeIter *child,
+				 GtkTreeIter *parent,
+				 const gchar *name,
+				 gchar *icon)
+{
+  GdkPixbuf *pixbuf;
+
+  pixbuf = gtk_widget_render_icon(tree_effect->window, icon, GTK_ICON_SIZE_MENU, NULL);
+  gtk_tree_store_append (tree_effect->model, child, parent);
+  gtk_tree_store_set(tree_effect->model, child,
+		     PITIVI_ICON_COLUMN, pixbuf,
+		     PITIVI_TEXT_COLUMN, name,
+		     PITIVI_BG_COLOR_COLUMN, NULL,
+		     PITIVI_FG_COLOR_COLUMN, NULL,
+		     -1);
+  tree_effect->pixbuf = pixbuf;
+}
+
+void
+pitivi_effectstree_selected_color (GtkTreeView *treeview, gpointer user_data)
+{
+  PitiviEffectsTree   *mytree;
+  GtkTreeSelection  *selection;
+  GtkTreeModel	    *model;
+  GtkCellRenderer   *CellRenderer;
+  GtkTreeIter	    TreeIter;
+  GdkColor 	    foreground[1];
+  gchar		    *name;
+  
+  
+  mytree = (PitiviEffectsTree *) user_data;
+      
+  foreground[0].blue = 0xffff;
+  foreground[0].green = 0xffff;
+  foreground[0].red = 0xffff;  
+    
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (treeview));
+  if (gtk_tree_selection_get_selected(selection, &model, &TreeIter))
+    {      
+      gtk_tree_model_get (model, &TreeIter, PITIVI_TEXT_COLUMN, &name, -1);
+      /*gtk_tree_store_set(model, &TreeIter,
+			 PITIVI_ICON_COLUMN, mytree->pixbuf,
+			 PITIVI_TEXT_COLUMN, name,
+			 PITIVI_BG_COLOR_COLUMN, NULL,
+			 PITIVI_FG_COLOR_COLUMN, foreground,
+			 -1);
+      */
+    }
+}
+
+
+void
+pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, PitiviEffectsTypeEnum eneffects)
+{
+  int			count;  
+  GtkCellRenderer	*pCellRenderer;
+  GtkTreeViewColumn     *pColumn;
+  GdkPixbuf		*pixbuf;
+  const GList		*elements;
+  const gchar		*effectname;
+  const gchar		*klass;
+  GstElementFactory	*factory;
+  GtkTreeIter		Tv_iter;
+  GtkTreeIter		Video_iter;
+
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (tree_effect->treeview), FALSE);
+  tree_effect->model = gtk_tree_store_new ( PITIVI_NB_COLUMN,
+					    GDK_TYPE_PIXBUF,
+					    G_TYPE_STRING,
+					    GDK_TYPE_COLOR,
+					    GDK_TYPE_COLOR,
+					    -1);
+  pitivi_effectstree_insert_child (tree_effect, 
+				&tree_effect->treeiter,
+				NULL,
+				"Simple Effects",
+				PITIVI_STOCK_EFFECT_CAT);
+  switch (eneffects)
+    {
+    case PITIVI_EFFECT_VIDEO_TYPE:
+      pitivi_effectstree_insert_child (tree_effect, 
+				    &Tv_iter,
+				    NULL,
+				    "Tv Effects",
+				    PITIVI_STOCK_EFFECT_CAT);
+      pitivi_effectstree_insert_child (tree_effect, 
+				     &Video_iter,
+				     NULL,
+				     "Video Effects",
+				     PITIVI_STOCK_EFFECT_CAT);
+      break;
+    }
+  elements = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);    
+  for (count = 0; elements != 0; count++)
+    {
+      GtkTreeIter child;
+      
+      factory = (GstElementFactory *) elements->data;
+      klass = gst_element_factory_get_klass (factory);
+      effectname = gst_element_factory_get_longname (factory);
+      switch (eneffects)
+	{
+	case PITIVI_EFFECT_VIDEO_TYPE:
+	  if (!strncmp (klass, "Filter/Effect/Video", 19))
+	    {
+	      gchar *idx;
+	      
+	      if ((idx = strstr (effectname, "TV")))
+		{
+		  *idx = '\0';
+		  pitivi_effectstree_insert_child (tree_effect,
+						&child,
+						&Tv_iter,
+						effectname,
+						PITIVI_STOCK_EFFECT_TV);
+		  
+		}
+	      else if ((idx = strstr (effectname, "ideo")))
+		{
+		  pitivi_effectstree_insert_child (tree_effect,
+						&child,
+						&Video_iter,
+						effectname + 6,
+						PITIVI_STOCK_EFFECT_TV);
+		}
+	      else
+		{
+		  pitivi_effectstree_insert_child (tree_effect, 
+						&child,
+						&tree_effect->treeiter,
+						effectname,
+						PITIVI_STOCK_EFFECT_TV);
+		}
+	    }
+	  break;
+	case PITIVI_EFFECT_AUDIO_TYPE:
+	  if (!strncmp (klass, "Filter/Effect/Audio", 19))
+	    {
+	      pitivi_effectstree_insert_child (tree_effect,
+					       &child,
+					       &tree_effect->treeiter,
+					       effectname,
+					       PITIVI_STOCK_EFFECT_SOUND);
+	    }
+	  break;
+	case PITIVI_EFFECT_TRANSITION_TYPE:
+	  break;
+	}
+      elements = elements->next;
+    }
+  
+  gtk_tree_view_set_model(GTK_TREE_VIEW(tree_effect->treeview), GTK_TREE_MODEL(tree_effect->model));
+  pCellRenderer = gtk_cell_renderer_pixbuf_new();
+  pColumn = gtk_tree_view_column_new_with_attributes("",
+						     pCellRenderer,
+						     "pixbuf",
+						     PITIVI_ICON_COLUMN,
+						     NULL);
+  
+  gtk_tree_view_append_column(GTK_TREE_VIEW(tree_effect->treeview), pColumn);
+  
+  pCellRenderer = gtk_cell_renderer_text_new();
+  pColumn = gtk_tree_view_column_new_with_attributes("",
+						     pCellRenderer,
+						     "text",
+						     PITIVI_TEXT_COLUMN,
+						     "background-gdk",
+						     PITIVI_BG_COLOR_COLUMN,
+						     "foreground-gdk",
+						     PITIVI_FG_COLOR_COLUMN,
+						     NULL);
+  
+  g_signal_connect (tree_effect->treeview, "cursor-changed", G_CALLBACK(pitivi_effectstree_selected_color), \
+		    (gpointer) tree_effect);
+  g_signal_connect (tree_effect->treeview, "row-expanded", G_CALLBACK(pitivi_effectstree_exp),\
+		    (gpointer) tree_effect);
+  g_signal_connect (tree_effect->treeview, "row-collapsed", G_CALLBACK(pitivi_effectstree_col),\
+		    (gpointer) tree_effect);
+  gtk_tree_view_append_column(GTK_TREE_VIEW(tree_effect->treeview), pColumn);
 }
 
 static void

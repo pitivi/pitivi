@@ -313,7 +313,7 @@ static void
 pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   int	count;
-  PitiviMenu *ui;
+  PitiviMenu *menumgr;
   PitiviTimelineWindow *self = (PitiviTimelineWindow *) instance;
   
   self->private = g_new0(PitiviTimelineWindowPrivate, 1);
@@ -346,14 +346,13 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   actions_group[EA_RECENT_FILE] = gtk_action_group_new ("MenuFileRecent");
   gtk_action_group_add_actions (actions_group[EA_DEFAULT_FILE], file_entries\
 				, G_N_ELEMENTS (recent_entry), self);
-  ui = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TIMELINE_FILE);
+  menumgr = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TIMELINE_FILE);
   for (count = 0; count < EA_LAST_ACTION; count++)
     if (actions_group[count])
-      gtk_ui_manager_insert_action_group (ui->public->ui, actions_group[count], 0);
-  pitivi_set_menu (ui);
-  gtk_box_pack_start (GTK_BOX (self->private->menu_dock), ui->public->menu,
+      gtk_ui_manager_insert_action_group (menumgr->public->ui, actions_group[count], 0);
+  PITIVI_MENU_GET_CLASS(menumgr)->public->configure (menumgr);
+  gtk_box_pack_start (GTK_BOX (self->private->menu_dock), menumgr->public->menu,
 		      FALSE, TRUE, 0);
-  
   self->private->operations = g_list_alloc ();
 }
 

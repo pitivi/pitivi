@@ -124,7 +124,8 @@ static void
 pitivi_toolboxwindow_instance_init (GTypeInstance * instance,
 				    gpointer g_class)
 {
-  PitiviMenu *menubar;
+  PitiviMenu *menumgr;
+  GtkWidget  *menu;
   PitiviToolboxWindow *self = (PitiviToolboxWindow *) instance;
   
   self->private = g_new0 (PitiviToolboxWindowPrivate, 1);
@@ -140,16 +141,16 @@ pitivi_toolboxwindow_instance_init (GTypeInstance * instance,
   self->private->toolbox = pitivi_toolbox_new ();
   self->private->vbox = gtk_vbox_new (FALSE, 0);
   gtk_window_set_title (GTK_WINDOW (self), PITIVI_TOOLBOXWINDOW_DF_TITLE);
-  menubar = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TOOLBOX_FILENAME);
+  menumgr = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TOOLBOX_FILENAME);
   GtkActionGroup *ag1 = gtk_action_group_new ("FileBoxRecent");
   GtkActionGroup *ag2 = gtk_action_group_new ("FileBoxMenu");
   gtk_action_group_add_actions (ag1, toolbox_menu_entries, G_N_ELEMENTS (toolbox_menu_entries), self);
   gtk_action_group_add_actions (ag2, toolbox_recent_entries, G_N_ELEMENTS (toolbox_recent_entries), self);
-  gtk_ui_manager_insert_action_group (menubar->public->ui, ag1, 0);
-  gtk_ui_manager_insert_action_group (menubar->public->ui, ag2, 0);
-  pitivi_set_menu (menubar);
+  gtk_ui_manager_insert_action_group (menumgr->public->ui, ag1, 0);
+  gtk_ui_manager_insert_action_group (menumgr->public->ui, ag2, 0);
+  PITIVI_MENU_GET_CLASS(menumgr)->public->configure (menumgr);
   gtk_box_pack_start (GTK_BOX (self->private->vbox),
-		      GTK_WIDGET (menubar->public->menu), FALSE, FALSE, 0);
+		      GTK_WIDGET (menumgr->public->menu), FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (self->private->vbox),
 		     GTK_WIDGET (self->private->toolbox), FALSE, FALSE, 0);
   gtk_container_add (GTK_CONTAINER (self), self->private->vbox);

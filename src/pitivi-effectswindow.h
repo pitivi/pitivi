@@ -44,13 +44,33 @@
 typedef struct _PitiviEffectsWindow PitiviEffectsWindow;
 typedef struct _PitiviEffectsWindowClass PitiviEffectsWindowClass;
 typedef struct _PitiviEffectsWindowPrivate PitiviEffectsWindowPrivate;
-typedef struct _PitiviTreeModel PitiviTreeModel;
+typedef struct _PitiviEffectsTree PitiviEffectsTree;
 
-struct _PitiviTreeModel
+#define PITIVI_EFFECTS_WINDOW_NB_COL 1
+#define PITIVI_AUDIO_EFFECT_LABEL "Audio"
+#define PITIVI_VIDEO_EFFECT_LABEL "Video"
+#define PITIVI_TRANSITION_EFFECT_LABEL "Transition"
+
+#define PITIVI_EFFECTS_WIN_SIZEX 250
+#define PITIVI_EFFECTS_WIN_SIZEY 250
+
+typedef enum {
+  PITIVI_EFFECT_VIDEO_TYPE = 1,
+  PITIVI_EFFECT_AUDIO_TYPE,
+  PITIVI_EFFECT_TRANSITION_TYPE,
+} PitiviEffectsTypeEnum;
+
+
+struct _PitiviEffectsTree
 {
-  GtkWidget *label;
-  GtkWidget *treeview;
-  GtkWidget *scroll;
+  GtkWidget     *window;
+  GtkWidget     *label;
+  GtkWidget     *treeview;
+  GtkTreeStore	*model;
+  GtkTreeIter	treeiter;
+  GdkPixbuf	*pixbuf;
+  GtkWidget     *scroll;
+  guint		order;
 };
 
 struct _PitiviEffectsWindow
@@ -77,5 +97,7 @@ GType pitivi_effectswindow_get_type (void);
  */
 
 PitiviEffectsWindow	*pitivi_effectswindow_new(void);
+
+void pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, PitiviEffectsTypeEnum eneffects);
 
 #endif

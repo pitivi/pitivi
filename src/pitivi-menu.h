@@ -53,6 +53,7 @@ typedef struct _PitiviMenu PitiviMenu;
 typedef struct _PitiviMenuClass PitiviMenuClass;
 typedef struct _PitiviMenuPrivate PitiviMenuPrivate;
 typedef struct _PitiviMenuPublic PitiviMenuPublic;
+typedef struct _PitiviMenuClassPublic PitiviMenuClassPublic; 
 
 struct _PitiviMenuPublic
 {
@@ -71,10 +72,21 @@ struct _PitiviMenu
   PitiviMenuPrivate *private;
 };
 
+
+struct _PitiviMenuClassPublic
+{
+  void (*configure) (PitiviMenu *self);
+};
+
+
 struct _PitiviMenuClass
 {
   GtkWidgetClass parent;
   /* class members */
+
+  /* public */
+  PitiviMenuClassPublic *public;
+  /* private */
 };
 
 /* used by PITIVI_MENU_TYPE */
@@ -85,8 +97,8 @@ GType pitivi_menu_get_type (void);
  */
 
 PitiviMenu	*pitivi_menu_new(GtkWidget *window, gchar *fname);
-void		pitivi_menubar_set_filename (PitiviMenu *menubar, const gchar *filename);
+void		pitivi_menu_set_filename (PitiviMenu *menubar, const gchar *filename);
 void		pitivi_toolbar_set_icon_mode (GtkWidget *toolbar, guint *styles);
-
+void		pitivi_menu_configure (PitiviMenu *self);
 
 #endif
