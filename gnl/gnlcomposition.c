@@ -643,6 +643,7 @@ gnl_composition_schedule_entries(GnlComposition *comp, GstClockTime start,
 {
   gboolean res = TRUE;
   GnlObject	*obj, *tmp = NULL;
+  GnlObject	*keep = NULL;
   GList		*list;
   GnlCompositionEntry	*compentry;
 
@@ -680,28 +681,36 @@ gnl_composition_schedule_entries(GnlComposition *comp, GstClockTime start,
       }
 
       /* fact : tmp->start < obj->stop */
-
+      GST_INFO ("Testing [%20s] against [%20s] [%lld:%lld:%lld]->[%lld:%lld:%lld] prio[%d]",
+		gst_element_get_name (GST_ELEMENT (obj)),
+		gst_element_get_name (GST_ELEMENT (tmp)),
+		GST_M_S_M (tmp->start),
+		GST_M_S_M (tmp->stop),
+		tmp->priority);
       if (((tmp->priority < obj->priority) && (tmp->stop > start))
 	  ||
 	  ((tmp->priority > obj->priority) && (tmp->stop >= obj->stop))) {
 	/* There isn't any gap */
-	GST_INFO("Obj-Tmp : %d || No gap, it's ok", 
+	GST_INFO("Obj - Tmp : %d || No gap, it's ok", 
 		 obj->priority - tmp->priority);
-	break;
+	if (!keep)
+	  keep = tmp;
+	else if (tmp->priority < keep->priority)
+	  keep = tmp;
       }
 
     }
   }
 
-  if (list) {
+  if (keep) {
 
     GST_INFO("next[%s] [%lld]->[%lld]",
 	     gst_element_get_name(GST_ELEMENT(tmp)),
-	     tmp->start, tmp->stop);
-    if (tmp->priority > obj->priority)
+	     keep->start, keep->stop);
+    if (keep->priority > obj->priority)
       stop = obj->stop;
     else
-      stop = MIN(tmp->start, stop);
+      stop = MIN(keep->start, stop);
   } else {
     stop = MIN(obj->stop, stop);
   }
@@ -785,7 +794,7 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
   /* Scbedule the entries from start_pos */
 
   res = gnl_composition_schedule_entries (comp, start_pos,
-					  stop_pos, 1, &pad);
+					  stop_pos, 0, &pad);
 
   if (pad) {
 
