@@ -172,11 +172,13 @@ timer_link (GstPad *pad, const GstCaps *caps)
   GstPad *otherpad;
   TimerGroupLink *link;
 
+  GST_INFO ("timer_link");
   link = gst_pad_get_element_private (pad);
-	        
+  if (!link)
+    GST_WARNING ("No TimerGroupLink in pad data !!!!");
   otherpad = (GST_PAD_IS_SRC (pad)? link->sinkpad : link->srcpad);
 
-  GST_INFO("trying to link pad %s:%s to otherpad %s:%s with caps %s", 
+  GST_INFO("trying to link pad %s:%s to peerpad %s:%s with caps %s", 
 	   GST_DEBUG_PAD_NAME(pad),
 	   GST_DEBUG_PAD_NAME(otherpad),
 	   gst_caps_to_string(caps));
@@ -248,12 +250,19 @@ gnl_timeline_timer_loop (GstElement *element)
     TimerGroupLink* link = (TimerGroupLink *) walk->data;
     GstPad *sinkpad = link->sinkpad;
 
-    GST_INFO("WALK group[%s] time[%lld] Trying pad %s:%s",
-	     gst_element_get_name(GST_ELEMENT(link->group)),
-	     link->time,
-	     GST_DEBUG_PAD_NAME(sinkpad));
+    if (!GST_PAD_PEER (link->sinkpad))
+      GST_INFO("WALK group[%s] time[%lld] Trying pad %s:%s",
+	       gst_element_get_name(GST_ELEMENT(link->group)),
+	       link->time,
+	       GST_DEBUG_PAD_NAME(sinkpad));
+    else
+      GST_INFO("WALK group[%s] time[%lld] Trying pad %s:%s LINKED TO %s:%s",
+	       gst_element_get_name(GST_ELEMENT(link->group)),
+	       link->time,
+	       GST_DEBUG_PAD_NAME(sinkpad),
+	       GST_DEBUG_PAD_NAME (GST_PAD_PEER (link->sinkpad)));      
 
-    if (GST_PAD_IS_USABLE (sinkpad)) {
+    if (GST_PAD_IS_ACTIVE (sinkpad)) {
       if (link->time <= current) {
         to_schedule = link;
         current = link->time;
@@ -321,9 +330,9 @@ gnl_timeline_timer_loop (GstElement *element)
 
         srcpad = gst_element_get_pad (GST_ELEMENT (group), "src");
 	if (srcpad) {
-	  GST_INFO("linking %s to sinkpad[%s]",
-		   gst_pad_get_name(srcpad),
-		   gst_pad_get_name(to_schedule->sinkpad));
+	  GST_INFO("linking %s:%s to %s:%s",
+		   GST_DEBUG_PAD_NAME (srcpad),
+		   GST_DEBUG_PAD_NAME (to_schedule->sinkpad));
           if (!(gst_pad_link (srcpad, to_schedule->sinkpad)))
 	    GST_WARNING ("Couldn't link %s:%s to %s:%s !!",
 			 GST_DEBUG_PAD_NAME(srcpad),

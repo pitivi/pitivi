@@ -219,9 +219,10 @@ gnl_composition_find_entry_priority (GnlComposition *comp, GstClockTime time,
       
       if (entry->object->priority >= minpriority) {
 	gnl_object_get_start_stop (entry->object, &start, &stop);
-	GST_INFO("Comparing %s [%lld]->[%lld]",
+	GST_INFO("Comparing %s [%lld:%02lld:%03lld]->[%lld:%02lld:%03lld] priority:%d",
 		 gst_element_get_name(GST_ELEMENT(entry->object)),
-		 start, stop);
+		 GST_M_S_M(start), GST_M_S_M(stop),
+		 gnl_object_get_priority(entry->object));
 
 	if ((start <= time && start + (stop - start) > time)
 	    && (!tmp || (tmp && tmp->object->priority > entry->object->priority))) {
@@ -291,9 +292,9 @@ gnl_composition_find_object (GnlComposition *comp, GstClockTime time, GnlFindMet
 {
   GnlCompositionEntry *entry;
 
-  GST_INFO ("Composition[%s], time[%lld], Method[%d]",
+  GST_INFO ("Composition[%s], time[%lld:%02lld:%03lld], Method[%d]",
 	    gst_element_get_name(GST_ELEMENT(comp)),
-	    time, method);
+	    GST_M_S_M(time), method);
 
   entry = gnl_composition_find_entry (comp, time, method);
   if (entry) {
@@ -725,12 +726,18 @@ probe_fired (GstProbe *probe, GstData **data, gpointer user_data)
   gboolean res = TRUE;
 
   if (GST_IS_BUFFER (*data)) {
+    GST_INFO ("Got a buffer, updating current_time");
     GNL_OBJECT (comp)->current_time = GST_BUFFER_TIMESTAMP (*data);
   }
   else {
-    GNL_OBJECT (comp)->current_time = comp->next_stop;
+    GST_INFO ("Got an Event : %d",
+	      GST_EVENT_TYPE (*data));
+    if (GST_EVENT_TYPE (*data) == GST_EVENT_EOS) {
+      GST_INFO ("Got EOS, current_time is now previous stop",
+		gst_element_get_name (GST_ELEMENT (comp)));
+      GNL_OBJECT (comp)->current_time = comp->next_stop;
+    }
   }
-
   GST_INFO("%s current_time [%lld] -> [%3lldH:%3lldm:%3llds:%3lld]", 
 	   gst_element_get_name(GST_ELEMENT(comp)),
 	   GNL_OBJECT (comp)->current_time,
@@ -762,15 +769,13 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
   comp->next_stop  = stop_pos;
   
   ghost = gst_element_get_pad (GST_ELEMENT (comp), "src");
-  if (ghost) {
-    
-    GST_INFO("Existing ghost pad and probe, removing");
+  if (ghost) {    
+    GST_INFO("Existing ghost pad and probe, NOT removing");
     /* Remove the GstProbe attached to this pad before deleting it */
     probe = gst_pad_get_element_private(ghost);
     gst_pad_remove_probe(GST_PAD (GST_PAD_REALIZE (ghost)), probe);
     gst_element_remove_pad (GST_ELEMENT (comp), ghost);
-  } else
-    GST_INFO("No existing ghost pad and probe");
+  }
 
   gnl_composition_deactivate_childs (comp->active_objects);
   comp->active_objects = NULL;
@@ -784,20 +789,24 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
     GST_WARNING ("pad %s:%s returned by scheduling is connected to %s:%s",
 		 GST_DEBUG_PAD_NAME(pad),
 		 GST_DEBUG_PAD_NAME(GST_PAD_PEER(pad)));
-    gst_pad_unlink (pad, GST_PAD_PEER(pad));
+    gst_pad_unlink (pad, GST_PAD_PEER (pad));
   }
 
   if (pad) {
 
-    GST_INFO("Have a pad, adding a Probe and Ghost Pad");
-    
+    GST_INFO("Have a pad");
+
+    GST_INFO ("Putting probe and ghost pad back");
     probe = gst_probe_new (FALSE, probe_fired, comp);
-    
-    ghost = gst_element_add_ghost_pad (GST_ELEMENT (comp), pad, "src");
-    
-    gst_pad_add_probe (GST_PAD (GST_PAD_REALIZE (ghost)), probe);
-    
+    ghost = gst_element_add_ghost_pad (GST_ELEMENT (comp), 
+				       pad,
+				       "src");
+    if (!ghost)
+      GST_WARNING ("Wasn't able to create ghost src pad for composition %s",
+		   gst_element_get_name (GST_ELEMENT (comp)));
     gst_pad_set_element_private(ghost, (gpointer) probe);
+    gst_pad_add_probe (GST_PAD (GST_PAD_REALIZE (ghost)), probe);
+    GST_INFO ("Ghost src pad and probe created");
   }
   else {
     GST_WARNING("Haven't got a pad :(");
@@ -999,6 +1008,12 @@ gnl_composition_change_state (GstElement *element)
     break;
   case GST_STATE_PAUSED_TO_READY:
     gnl_composition_deactivate_childs (comp->active_objects);
+    /* De-activate ghost pad */
+    if (gst_element_get_pad (element, "src")) {
+      gst_pad_remove_probe (GST_PAD_REALIZE (gst_element_get_pad (element, "src")),
+			    (GstProbe *) gst_pad_get_element_private (gst_element_get_pad (element, "src")));
+      gst_element_remove_pad (element, gst_element_get_pad (element, "src"));
+    }
     comp->active_objects = NULL;
     break;
   default:

@@ -558,6 +558,10 @@ source_queue_media (GnlSource *source)
 		   (GFunc) activate_internal_sinkpads,
 		   source);
 
+  source_send_seek (source, source->pending_seek);
+  gst_event_unref (source->pending_seek);
+  source->pending_seek = NULL;
+  
   source->queueing = TRUE;
 
   filled = FALSE;
@@ -573,11 +577,6 @@ source_queue_media (GnlSource *source)
 
   source->queueing = FALSE;
 
-  source_send_seek (source, source->pending_seek);
-
-  gst_event_unref (source->pending_seek);
-  source->pending_seek = NULL;
-  
   g_slist_foreach (source->links, 
 		   (GFunc) deactivate_internal_sinkpads,
 		   source);
