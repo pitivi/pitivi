@@ -275,6 +275,7 @@ pitivi_create_new_project ( GtkAction *action, PitiviToolboxWindow *self )
   /* Source List Window */
   srclistwin = pitivi_sourcelistwindow_new();
   gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
+  gtk_widget_destroy (GTK_WIDGET(self));
 }
 
 
@@ -324,7 +325,7 @@ pitivi_create_presets_table(PitiviNewProjectWindow *self)
 		    GTK_EXPAND, FALSE,
 		    1, 1);
   
-  g_signal_connect(button_new, "clicked", G_CALLBACK(pitivi_create_new_project), NULL);
+  g_signal_connect(button_new, "clicked", G_CALLBACK(pitivi_create_new_project), self);
 
   /* Bouton Annuler projet */
   button_cancel = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
