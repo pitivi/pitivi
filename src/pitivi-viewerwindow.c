@@ -381,7 +381,7 @@ output_probe (GstProbe *probe, GstData **data, gpointer udata)
        This is really a crude hack. We have to drop the EOS Event and stop iterating manually,
        otherwise the app segfaults on a gst_object_unref of that EOS event :(
     */
-    gst_element_set_state (project->pipeline, GST_STATE_PAUSED);
+    gst_element_set_state (project->pipeline, GST_STATE_READY);
     self->private->play_status = STOP;
     self->private->new_time = 0;
     g_idle_add (updated_time, self);    

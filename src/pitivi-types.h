@@ -79,6 +79,8 @@ typedef struct _PitiviSettingsWindowClass PitiviSettingsWindowClass;
 typedef struct _PitiviSourceFile PitiviSourceFile;
 typedef struct _PitiviSourceFileClass PitiviSourceFileClass;
 
+typedef struct _bindata bindata;
+
 typedef struct _PitiviSourceListWindow PitiviSourceListWindow;
 typedef struct _PitiviSourceListWindowClass PitiviSourceListWindowClass;
 

@@ -29,19 +29,13 @@
 
 #include "pitivi.h"
 #include "pitivi-sourcefile.h"
+#include "pitivi-sourcefilebin.h"
 #include "pitivi-settings.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-debug.h"
 
 static  GObjectClass *parent_class;
 
-#define DEFAULT_EFFECT_LENGTH 3 * GST_SECOND;
-
-enum {
-  IS_AUDIO = 1,
-  IS_VIDEO,
-  IS_AUDIO_VIDEO
-};
 
 typedef struct {
   gchar	*filename;
@@ -93,14 +87,6 @@ struct _PitiviSourceFilePrivate
   PitiviMainApp *mainapp;
 };
 
-typedef struct  _bindata {
-  GstElement	*bin;
-  gboolean	ready;
-  PitiviSourceFile	*sf;
-  gint		bintype;
-  gboolean	audioready;
-  gboolean	videoready;
-}		bindata;
 
 /*
  * forward definitions
@@ -139,171 +125,6 @@ get_pad_type (GstPad *pad)
   return 0;
 }
 
-void
-cache_audio_video (PitiviSourceFile *sf)
-{
-  if (!gst_element_seek (sf->private->decode,
-			 GST_FORMAT_BYTES | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH, 
-			 0))
-    g_printf("ERROR SEEKING BACK TO 0!!!!\n");
-
-  if (sf->haveaudio) { /* TODO : Cache audio */
-    
-  }
-  if (sf->havevideo) { /* TODO : Cache video */
-
-  }
-}
-
-void
-bin_new_pad_fake_output (GstPad *pad, bindata *data)
-{
-  GstElement	*sink;
-  char		*tmp;
-
-  tmp = g_strdup_printf("fakesink%d", data->sf->private->lastsinkid++);
-  sink = gst_element_factory_make ("fakesink", tmp);
-  g_free(tmp);
-  gst_bin_add(GST_BIN (data->bin), sink);
-  if (!(gst_pad_link(pad, gst_element_get_pad(sink, "sink"))))
-    g_warning("Error linking decodebin pad to fakesink !!!");
-}
-
-void
-bin_new_pad_audio_output (GstPad *pad, bindata *data)
-{
-  /* TODO : Add the audio adapters */
-  if (data->bintype == IS_AUDIO_VIDEO)
-    gst_element_add_ghost_pad (data->bin, pad, "asrc");
-  else
-    gst_element_add_ghost_pad (data->bin, pad, "src");
-}
-
-void
-bin_new_pad_video_output (GstPad *pad, bindata *data)
-{
-  GstElement	*vrate, *vscale, *cspace, *identity, *bcspace;
-  PitiviMediaSettings	*ms;
-  
-  /*
-    If we always keep the following chain, it'l adapt if the PitiviProjectSettings change
-  */
-
-  /* dbin ! videorate ! videoscale ! ffmpegcolorspace ! videocaps ! identity ! */
-      
-  vrate = gst_element_factory_make ("videorate", NULL);
-  vscale = gst_element_factory_make ("videoscale", NULL);
-  bcspace = gst_element_factory_make ("ffmpegcolorspace", NULL);
-  cspace = gst_element_factory_make ("ffmpegcolorspace", NULL);
-  identity = gst_element_factory_make ("identity", NULL);
-
-  gst_bin_add_many (GST_BIN (data->bin),
-		    bcspace, vrate, vscale, cspace, identity,
-		    NULL);
-
-  if (!(gst_pad_link(pad, gst_element_get_pad(bcspace, "sink"))))
-    g_warning("Error linking decodebin pad to first colorspace sink !!!");
-  if (!(gst_element_link_many (bcspace, vrate, vscale, cspace, NULL)))
-    g_warning("Error linking vrate, vscale and cspace");
-      
-  ms = data->sf->private->mainapp->project->settings->media_settings->data;
-      
-  if (!(gst_element_link_filtered(cspace, identity, ms->caps)))
-    g_warning ("Couldn't link filtered colorspace->identity with caps %s",
-	       gst_caps_to_string(ms->caps));
-
-  if (data->bintype == IS_AUDIO_VIDEO) {
-    gst_element_add_ghost_pad (data->bin, 
-			       gst_element_get_pad(identity, "src"), "vsrc");
-  } else {
-    gst_element_add_ghost_pad (data->bin,
-			       gst_element_get_pad(identity, "src"), "src");
-  }
-  
-}
-
-/* bin_new_pad_cb , callback used by outgoing bins when there's a new pad */
-
-void
-bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udata)
-{
-  gint	padtype;
-  bindata	*data = (bindata *) udata;
-  
-  padtype = get_pad_type (pad);
-  if (!padtype)
-    return;
-  g_printf("Adding pad type[%d]->[%d] : %s:%s\n", padtype, data->bintype, GST_DEBUG_PAD_NAME(pad));
-  /* Connect (adapters and) ghost pads */
-  if (padtype == IS_AUDIO) {
-    if (data->bintype != IS_VIDEO)
-      bin_new_pad_audio_output (pad, data);
-    else
-      bin_new_pad_fake_output (pad, data);
-
-    gst_bin_sync_children_state (GST_BIN(data->bin));
-    data->audioready = TRUE;
-  } else if (padtype == IS_VIDEO) {
-    if (data->bintype != IS_AUDIO)
-      bin_new_pad_video_output (pad, data);
-    else
-      bin_new_pad_fake_output (pad, data);
-
-    gst_bin_sync_children_state (GST_BIN(data->bin));
-    data->videoready = TRUE;
-  }
-  /* update ready flag */
-  if ((data->sf->haveaudio && data->sf->havevideo) && data->audioready && data->videoready)
-    data->ready = TRUE;
-  if (data->sf->haveaudio && data->audioready)
-    data->ready = TRUE;
-  if (data->sf->havevideo && data->videoready)
-    data->ready = TRUE;
-}
-
-GstElement *
-create_new_bin (PitiviSourceFile *self, int type)
-{
-  GstElement	*container, *pipeline, *decode;
-  gchar		*tmp;
-  GError	*error = NULL;
-  gint		i;
-  bindata	*data;
-
-
-  tmp = g_strdup_printf ("( filesrc name=src location=\"%s\" ! decodebin name=dbin )",
-			 self->filename);
-  pipeline = gst_parse_launch (tmp, &error);
-  g_assert (pipeline != NULL);
-  g_assert (error == NULL);
-  g_free(tmp);
-
-  container = gst_pipeline_new ("container");
-  gst_bin_add (GST_BIN (container), pipeline);
-
-  data = g_new0(bindata, 1);
-  data->bin = pipeline;
-  data->sf = self;
-  data->bintype = type;
-  decode = gst_bin_get_by_name (GST_BIN (pipeline), "dbin");
-  g_signal_connect (decode, "new-decoded-pad", G_CALLBACK (bin_new_pad_cb), data);
-
-  if (!(gst_element_set_state (container, GST_STATE_PLAYING))) return NULL;
-  
-  for (i = 1000; i--; ) {
-    if (!(gst_bin_iterate(GST_BIN(container))))
-      break;
-    if (data->ready)
-      break;
-  }
-
-  if (!gst_element_seek (decode, GST_FORMAT_BYTES | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH, 0))
-    g_printf("ERROR SEEKING BACK TO 0!!!!\n");
-  gst_object_ref(GST_OBJECT(pipeline));
-  gst_bin_remove (GST_BIN (container), pipeline);
-  gst_element_set_state (container, GST_STATE_READY);
-  return pipeline;
-}
 
 /*
   pretty_caps_to_string
@@ -705,7 +526,7 @@ pitivi_sourcefile_get_bin (PitiviSourceFile *sf)
 
   if (sf->haveeffect)
     return NULL;
-  res = create_new_bin (sf, IS_AUDIO_VIDEO);
+  res = pitivi_sourcefile_bin_new (sf, IS_AUDIO_VIDEO, sf->private->mainapp);
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
   sf->private->bins = g_slist_append(sf->private->bins, res);
   sf->nbbins++;
@@ -726,7 +547,7 @@ pitivi_sourcefile_get_audio_bin (PitiviSourceFile *sf)
 
   if (!sf->haveaudio)
     return NULL;
-  res = create_new_bin (sf, IS_AUDIO);
+  res = pitivi_sourcefile_bin_new (sf, IS_AUDIO, sf->private->mainapp);
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
   sf->private->bins = g_slist_append(sf->private->bins, res);
   sf->nbbins++;
@@ -747,7 +568,7 @@ pitivi_sourcefile_get_video_bin (PitiviSourceFile *sf)
 
   if (!sf->havevideo)
     return NULL;
-  res = create_new_bin (sf, IS_VIDEO);
+  res = pitivi_sourcefile_bin_new (sf, IS_VIDEO, sf->private->mainapp);
   g_object_weak_ref(G_OBJECT(res), bin_was_freed, sf);
   sf->private->bins = g_slist_append(sf->private->bins, res);
   sf->nbbins++;
@@ -813,7 +634,7 @@ pitivi_sourcefile_new (gchar *filename, PitiviMainApp *mainapp)
     return NULL;
   }
 
-  sourcefile->pipeline = create_new_bin (sourcefile, IS_AUDIO_VIDEO);
+  sourcefile->pipeline = pitivi_sourcefile_bin_new (sourcefile, IS_AUDIO_VIDEO, sourcefile->private->mainapp);
   sourcefile->thumbs = pitivi_sourcefile_get_vthumb (sourcefile, 0LL, sourcefile->length);
   return sourcefile;
 }

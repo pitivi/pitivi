@@ -23,6 +23,7 @@ pitivi_SOURCES		= \
 	pitivi-progressbar.c \
 	pitivi-effectswindowproperties.c\
 	pitivi-sourcefile.c\
+	pitivi-sourcefilebin.c\
 	pitivi-timelinewindow.c\
 	pitivi-timelinecellrenderer.c\
 	pitivi-timelinecellrenderer-resizing.c\

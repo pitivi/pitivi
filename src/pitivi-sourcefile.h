@@ -36,6 +36,29 @@
 #include "pitivi-mainapp.h"
 
 
+#define DEFAULT_EFFECT_LENGTH 3 * GST_SECOND;
+
+enum {
+  IS_AUDIO = 1,
+  IS_VIDEO,
+  IS_AUDIO_VIDEO
+};
+
+struct  _bindata {
+  GstElement	*bin;
+  gboolean	ready;
+  PitiviSourceFile	*sf;
+  gint		bintype;
+  GstElement	*videobin;
+  GstElement	*audiobin;
+  GstElement	*videofakesink;
+  GstElement	*audiofakesink;
+  gboolean	audioready;
+  gboolean	videoready;
+  PitiviMainApp	*mainapp;
+  gint		lastsinkid;
+};
+
 /*
  * Type macros.
  */
@@ -117,4 +140,5 @@ GdkPixbuf		*pitivi_sourcefile_get_thumb_at (PitiviSourceFile *sf, gint nb);
 GdkPixbuf		*pitivi_sourcefile_get_first_thumb (PitiviSourceFile *sf);
 PitiviThumbTab		**pitivi_sourcefile_get_vthumb (PitiviSourceFile *sf, gint64 start, gint64 stop);
 
+int			get_pad_type (GstPad *pad);
 #endif
