@@ -1354,6 +1354,14 @@ pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self)
     gtk_combo_box_set_active(self->private->scalecombobox, 4);
     break;
   }
+  switch (self->unit) {
+  case PITIVI_SECONDS:
+    gtk_combo_box_set_active(self->private->unitcombobox, 0);
+    break;
+  case PITIVI_FRAMES:
+    gtk_combo_box_set_active(self->private->unitcombobox, 1);
+    break;
+  }
   list = gtk_container_get_children (GTK_CONTAINER (self->private->layout_container));
   for (tmp = list; tmp; tmp = tmp->next)
     if (GTK_IS_LAYOUT (tmp->data))

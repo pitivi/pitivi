@@ -41,6 +41,7 @@
 #include "pitivi-menu.h"
 #include "pitivi-debug.h"
 #include "pitivi-lplayerwindow.h"
+/*#include "pitivi-progressbar.h"*/
 
 static	GdkPixbuf *window_icon = NULL;
 static PitiviProjectWindowsClass *parent_class = NULL;
@@ -74,10 +75,6 @@ struct _PitiviSourceListWindowPrivate
   GtkTreeStore	*treestore;
   guint		nbrchutier;
 
-  /* GST variable */
-  
-  GstElement	*pipeline;
-  
   /* Property of the media */
   
   gchar		*treepath;
@@ -94,7 +91,11 @@ struct _PitiviSourceListWindowPrivate
   
   PitiviSourceFile *dndsf;
   gchar		*dndtreepath;
-  gint		dndfilepos;
+  gint		 dndfilepos;
+
+  /* Progress bar */
+  
+  /*  PitiviProgressBar *bar; */
 };
 
 /*
@@ -604,7 +605,6 @@ void	new_folder(GtkWidget *widget, gpointer data)
   selected_row = get_selected_row(self->private->treepath, &depth);
 
   name = pitivi_sourcelistwindow_set_folder(self, &iter2);
-
   pitivi_projectsourcelist_add_folder_to_bin(((PitiviProjectWindows*)self)->project->sources,
 					     self->private->treepath, name);
 
@@ -656,6 +656,7 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
       return NULL;
     }
   
+  /*  pitivi_progressbar_set_infos (self->private->bar, sf->filename); */
   pixbufa = pitivi_sourcefile_get_first_thumb (sf);
   if (!pixbufa)
     {
@@ -1727,6 +1728,8 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   gtk_window_set_default_size(GTK_WINDOW(self), PITIVI_SOURCELIST_DF_WIN_WIDTH, PITIVI_SOURCELIST_DF_WIN_HEIGHT);
   gtk_container_add(GTK_CONTAINER(self), self->private->hpaned);
   self->private->nbrchutier = 1;
+  /* Progress bar */
+  /*  self->private->bar = pitivi_progressbar_new (); */
 }
 
 static void

@@ -29,10 +29,10 @@
 /* Conversion */
 
 typedef enum {
-  
-  PITIVI_SECONDS = 1,
   PITIVI_NANOSECONDS,
-  PITIVI_FRAMES
+  PITIVI_SECONDS,
+  PITIVI_FRAMES,
+  PITIVI_LAST_UNIT,
 } PitiviConvert;
 
 #define UNITS_SECOND_TEXT "Seconds"
