@@ -88,8 +88,8 @@ load_cursor (GdkWindow *win, PitiviCursor *pitivi_cursor, PitiviCursorType PiCur
       mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, mask_width, mask_height);
       break;
     case  PITIVI_CURSOR_RESIZE:
-      pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
-      mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, mask_width, mask_height);
+      pixmap = gdk_bitmap_create_from_data (NULL, resize_h_bits, width, height);
+      mask = gdk_bitmap_create_from_data (NULL, resize_h_mask_bits, mask_width, mask_height);
       break;
     default:
       pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, width, height);
@@ -254,9 +254,9 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
 		(self->private->group_button, PITIVI_STOCK_ZOOM));
 
   tooltips = gtk_tooltips_new();
-  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[0]), tooltips, "pointeur", NULL);
-  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[1]), tooltips, "rasoir", NULL);
-  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[2]), tooltips, "main", NULL);
+  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[0]), tooltips, "select", NULL);
+  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[1]), tooltips, "cut", NULL);
+  gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[2]), tooltips, "move", NULL);
   gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->button[3]), tooltips, "zoom", NULL);
 
   /*
