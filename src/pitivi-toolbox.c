@@ -48,21 +48,18 @@ struct _PitiviToolboxPrivate
  * Insert "added-value" functions here
  */
 
-#define mask_width 32
-#define mask_height 32
-#define mask_x_hot 8
-#define mask_y_hot 8
-#define width 32
-#define height 32
-#define x_hot 8
-#define y_hot 8
-
 /*
  * CALLBACKS
  */
 
 void
-load_cursor (GdkWindow *win, PitiviCursor *pitivi_cursor, PitiviCursorType PiCursorType)
+load_cursor_size (GdkWindow *win, 
+		  PitiviCursor *pitivi_cursor, 
+		  PitiviCursorType PiCursorType,
+		  int width,
+		  int height,
+		  int hot_x,
+		  int hot_y)
 {
   GdkPixmap	*pixmap;
   GdkPixmap	*mask;
@@ -73,28 +70,32 @@ load_cursor (GdkWindow *win, PitiviCursor *pitivi_cursor, PitiviCursorType PiCur
     {
     case PITIVI_CURSOR_SELECT:
       pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, width, height);
-      mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, mask_width, mask_height);
+      mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, width, height);
       break;
     case PITIVI_CURSOR_CUT:
       pixmap = gdk_bitmap_create_from_data (NULL, cut_bits, width, height);
-      mask = gdk_bitmap_create_from_data (NULL, cut_mask_bits, mask_width, mask_height);
+      mask = gdk_bitmap_create_from_data (NULL, cut_mask_bits, width, height);
       break;
     case  PITIVI_CURSOR_HAND:
       pixmap = gdk_bitmap_create_from_data (NULL, hand_1_bits, width, height);
-      mask = gdk_bitmap_create_from_data (NULL, hand_1_mask_bits, mask_width, mask_height);
+      mask = gdk_bitmap_create_from_data (NULL, hand_1_mask_bits, width, height);
       break;
     case  PITIVI_CURSOR_ZOOM:
       pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
-      mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, mask_width, mask_height);
+      mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, width, height);
       break;
     default:
       pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, width, height);
-      mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, mask_width, mask_height);
+      mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, width, height);
       break;
     }
   
-  pitivi_cursor->cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg, mask_x_hot, mask_y_hot);
+  pitivi_cursor->cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg, hot_x, hot_y);
   pitivi_cursor->type = PiCursorType;
+  pitivi_cursor->height = height;
+  pitivi_cursor->width = width;
+  pitivi_cursor->hot_x = hot_x;
+  pitivi_cursor->hot_y = hot_y;
   gdk_pixmap_unref (pixmap);
   gdk_pixmap_unref (mask);
   gdk_window_set_cursor(GDK_WINDOW (win), pitivi_cursor->cursor);
@@ -219,6 +220,12 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->group_button = NULL;
 
   self->pitivi_cursor = g_new0 (PitiviCursor, 1);
+  self->pitivi_cursor->width = CST_MASK_WIDTH;
+  self->pitivi_cursor->height = CST_MASK_HEIGHT;
+  self->pitivi_cursor->hot_x = CST_X_HOT;
+  self->pitivi_cursor->hot_y = CST_Y_HOT;
+  self->pitivi_cursor->type =  PITIVI_CURSOR_SELECT;
+  
   /* initialize all public and private members to reasonable default values. */
 
   self->private->dispose_has_run = FALSE;
@@ -281,9 +288,10 @@ pitivi_toolbox_instance_init (GTypeInstance * instance, gpointer g_class)
   gtk_toolbar_insert (tbar, GTK_TOOL_ITEM (self->private->button[3]), 3);
 
 /*   Cursor initialisation */
-  pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, width, height);
-  mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, mask_width, mask_height);
-  self->pitivi_cursor->cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg, mask_x_hot, mask_y_hot);
+
+  pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, CST_WIDTH, CST_HEIGHT);
+  mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, CST_MASK_WIDTH, CST_MASK_HEIGHT);
+  self->pitivi_cursor->cursor = gdk_cursor_new_from_pixmap (pixmap, mask, &fg, &bg,  CST_X_HOT, CST_Y_HOT);
   self->pitivi_cursor->type = PITIVI_CURSOR_SELECT;
   gdk_pixmap_unref (pixmap);
   gdk_pixmap_unref (mask);

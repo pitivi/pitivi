@@ -1,7 +1,6 @@
 /* 
  * PiTiVi
- * Copyright (C) <2004> Edward G. Hervey <hervey_e@epita.fr>
- *                      Guillaume Casanova <casano_g@epita.fr>
+ * Copyright (C) <2004>	 Guillaume Casanova <casano_g@epita.fr>
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -30,6 +29,7 @@
 #include "pitivi-dragdrop.h"
 #include "pitivi-toolboxwindow.h"
 #include "pitivi-toolbox.h"
+#include "pitivi-drawing.h"
 
 // Parent Class
 static GtkLayoutClass	    *parent_class = NULL;
@@ -61,6 +61,7 @@ struct _PitiviTimelineCellRendererPrivate
 /*
  * forward definitions
  */
+
 void  pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
  
 // Properties Enumaration
@@ -174,20 +175,6 @@ draw_selection (GtkWidget *widget, int width, char **dash)
 		       FALSE, 
 		       widget->allocation.x, 0, 
 		       widget->allocation.width, widget->allocation.height);
-}
-
-void 
-draw_slide (GtkWidget *widget, int start, int end)
-{
-  GdkGC *style = gdk_gc_new ( widget->window );
-  gdk_gc_set_line_attributes ( style, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-  GdkWindow *window;
-  
-  if (GTK_IS_LAYOUT (widget))
-    window = GDK_WINDOW (GTK_LAYOUT (widget)->bin_window);
-  else
-    window = GDK_WINDOW (widget->window);
-  gdk_draw_rectangle (GDK_WINDOW (window), widget->style->black_gc, TRUE, start, 0, end, widget->allocation.height);
 }
 
 static gint
@@ -329,7 +316,7 @@ pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *sel
     length = DEFAULT_MEDIA_SIZE;
   else
     sf->length = DEFAULT_MEDIA_SIZE;
-  
+
   type_track_cmp = check_media_type (sf);
   if (type_track_cmp == self->track_type || (type_track_cmp == PITIVI_VIDEO_AUDIO_TRACK))
     {
@@ -430,7 +417,7 @@ pitivi_timelinecellrenderer_drag_drop (GtkWidget *widget,
 
 static void
 pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
-					 GdkDragContext     *context,
+					 GdkDragContext     *drag_context,
 					 gint                x,
 					 gint                y,
 					 guint               time)
@@ -442,31 +429,8 @@ pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
   cursor = pitivi_getcursor_id (widget);
   if (cursor->type == PITIVI_CURSOR_SELECT || cursor->type == PITIVI_CURSOR_HAND)
     {
-      if (self->motion_area->height == 0)
-	{
-	  self->motion_area->width  = DEFAULT_MEDIA_SIZE;
-	  self->motion_area->height = FIXED_HEIGHT;
-	  self->motion_area->x      = DEFAULT_MEDIA_SIZE;
-	  self->motion_area->y      = 0;
-	}
-      
-      if ( self->motion_area->width < DEFAULT_MEDIA_SIZE)
-	mask = self->motion_area->width;
-      // Expose on left
-      gdk_window_clear_area_e (GTK_LAYOUT (widget)->bin_window,
-			       x-self->motion_area->x,
-			       self->motion_area->y,
-			       self->motion_area->width+mask,
-			       self->motion_area->height);
-  
-      // Expose on right
-      gdk_window_clear_area_e (GTK_LAYOUT (widget)->bin_window,
-			       x+self->motion_area->x,
-			       self->motion_area->y,
-			       self->motion_area->width+mask,
-			       self->motion_area->height);
-      
-      draw_slide (widget, x, self->motion_area->width);
+      gdk_window_clear (GTK_LAYOUT (widget)->bin_window);
+      pitivi_draw_slide (widget, x, DEFAULT_MEDIA_SIZE);
     }
 }
 
@@ -645,9 +609,8 @@ pitivi_timelinecellrenderer_button_release_event (GtkWidget      *widget,
 static void
 pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_class)
 {
-  GdkColor color;
-  GtkStyle *DefaultLayoutStyle;
-
+  GdkPixmap *pixmap;
+  
   PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) instance;
 
   self->private = g_new0(PitiviTimelineCellRendererPrivate, 1);
@@ -678,15 +641,10 @@ pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_
   
   // Set background Color
   
-  DefaultLayoutStyle = gtk_style_copy (GTK_WIDGET(self)->style);
-  color.red = 0xc000;
-  color.blue = 0xcfff;
-  color.green = 0xc000;
-  DefaultLayoutStyle->bg[GTK_STATE_NORMAL] = color;
-  gtk_widget_set_style (GTK_WIDGET (self), DefaultLayoutStyle);
-    
+  pixmap = pitivi_drawing_getpixmap (GTK_WIDGET(self), bg_xpm);
+  pitivi_drawing_set_pixmap_bg (GTK_WIDGET(self), pixmap);
+  
   //Signal Connections
-
   gtk_drag_dest_set  (GTK_WIDGET (self), GTK_DEST_DEFAULT_ALL, 
 		      TargetEntries, 
 		      iNbTargetEntries, 

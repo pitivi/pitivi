@@ -349,11 +349,11 @@ pitivi_project_set_video_output(PitiviProject *project, GstElement *output)
 
   project->private->videoqueue = gst_element_factory_make("queue", "queue");
   project->private->videoout = output;
-  gst_element_link(project->private->videoqueue, output);
   gst_bin_add_many(GST_BIN(project->private->vsinkthread),
 		   project->private->videoqueue,
 		   project->private->videoout,
 		   NULL);
+  gst_element_link(project->private->videoqueue, output);
 }
 
 void

@@ -134,8 +134,9 @@ static GObject *
 pitivi_timelinewindow_constructor (GType type,
 			     guint n_construct_properties,
 			     GObjectConstructParam * construct_properties)
-{
-  GObject *obj;
+{ 
+  PitiviMainApp	*mainapp;
+  GObject	*obj;
 
   /* Invoke parent constructor. */
   
@@ -147,6 +148,7 @@ pitivi_timelinewindow_constructor (GType type,
 				   construct_properties);
   /* do stuff. */
   
+  pitivi_toolbox_new (mainapp);
   return obj;
 }
 
