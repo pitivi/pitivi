@@ -72,6 +72,7 @@ struct _PitiviTimelineCellRendererPrivate
 static GtkTargetEntry TargetEntries[] =
   {
     { "pitivi/sourcefile", GTK_TARGET_SAME_APP, DND_TARGET_SOURCEFILEWIN },
+    { "pitivi/sourcefile", GTK_TARGET_SAME_APP, DND_TARGET_TIMELINEWIN },
     { "pitivi/sourceeffect", GTK_TARGET_SAME_APP, DND_TARGET_EFFECTSWIN },
     { "STRING", GTK_TARGET_SAME_APP, DND_TARGET_STRING },
     { "text/plain", GTK_TARGET_SAME_APP, DND_TARGET_URI },
@@ -79,6 +80,13 @@ static GtkTargetEntry TargetEntries[] =
 
 static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
 
+
+static GtkTargetEntry TargetSameEntry[] =
+  {
+    { "pitivi/sourcefile", 0, DND_TARGET_TIMELINEWIN },
+  };
+
+static gint iNbTargetSameEntry = G_N_ELEMENTS (TargetSameEntry);
 
 /*
  * Insert "added-value" functions here
@@ -185,7 +193,12 @@ pitivi_timelinemedia_drag_get  (GtkWidget          *widget,
 				guint32             time,
 				gpointer	    dragging)
 {
-  gtk_selection_data_set (selection_data, selection_data->target, 8, "move", strlen ("move"));
+  g_printf ("drag get moving \n");
+  gtk_selection_data_set (selection_data, 
+			  selection_data->target, 
+			  8, 
+			  "move", 
+			  strlen ("move"));
 }
 
 
@@ -195,14 +208,6 @@ pitivi_timelinemedia_drag_delete  (GtkWidget          *widget,
 				   gpointer	      dragging)
 {
   g_printf ("drag delete \n");
-}
-
-static gint
-pitivi_timelinemedia_button_press (GtkWidget      *widget,
-				   GdkEventButton *event)
-{
-  draw_selection (widget, 0, NULL);
-  return FALSE;
 }
 
 static
@@ -224,18 +229,17 @@ int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
     }
   
   cell->children = gtk_container_get_children (GTK_CONTAINER (self));
+  
   gtk_drag_source_set  (GTK_WIDGET (widget), 
-			GDK_BUTTON1_MASK, 
-			TargetEntries, 
-			iNbTargetEntries, 
+			GDK_BUTTON1_MASK | GDK_BUTTON3_MASK, 
+			TargetSameEntry, 
+			iNbTargetSameEntry, 
 			GDK_ACTION_COPY);
   
   g_signal_connect (widget, "drag_data_get",	      
 		    G_CALLBACK (pitivi_timelinemedia_drag_get), self);
   g_signal_connect (widget, "drag_data_delete",
 		    G_CALLBACK (pitivi_timelinemedia_drag_delete), self);
-  g_signal_connect (widget, "button_press_event",
-		    G_CALLBACK (pitivi_timelinemedia_button_press), self);
   return TRUE;
 }
 
@@ -251,6 +255,8 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
 {
   PitiviTimelineCellRenderer *self = PITIVI_TIMELINECELLRENDERER(object);
   
+  g_printf ("drag receiving  ---%s---%d-- \n", selection->data, info);
+  
   if (!selection->data) {
     gtk_drag_finish (context, FALSE, FALSE, time);
     return;
@@ -259,11 +265,12 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
   self->private->current_selection = selection;
   switch (info) {
   case DND_TARGET_SOURCEFILEWIN:
+    if (strncmp ("move", selection->data, 4))
+      g_printf (" moving \n");
     current_media = pitivi_timelinemedia_new ();
     gtk_widget_set_size_request (GTK_WIDGET (current_media),  60, 50);
     gtk_widget_show (GTK_WIDGET (current_media));
     add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (current_media), x, y);
-    gtk_drag_finish (context, TRUE, TRUE, time);
     break;
   case DND_TARGET_EFFECTSWIN:
     g_printf ("Window Effects dropping %s\n", selection->data);
@@ -505,6 +512,21 @@ pitivi_timelinecellrenderer_motion_notify_event (GtkWidget      *widget,
 }
 
 static void
+pitivi_timelinecellrenderer_remove (GtkContainer *container, 
+				    GtkWidget *child)
+{
+  GList *list;
+  PitiviTimelineCellRenderer *cell = PITIVI_TIMELINECELLRENDERER (container);
+  
+  list = g_list_find(cell->children, child);
+  if (list) {
+    //gtk_widget_hide (child);
+    GTK_CONTAINER_CLASS(parent_class)->remove(container, child);
+    cell->children =  gtk_container_get_children (GTK_CONTAINER (container));
+  }
+}
+
+static void
 pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
@@ -526,7 +548,11 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   widget_class->configure_event = pitivi_timelinecellrenderer_configure_event;
   widget_class->button_press_event = pitivi_timelinecellrenderer_button_press_event;
   widget_class->button_release_event = pitivi_timelinecellrenderer_button_release_event;
+
+  /* Container Properties */
   
+  container_class->remove = pitivi_timelinecellrenderer_remove; 
+
   /* Install the properties in the class here ! */
   
   g_object_class_install_property (G_OBJECT_CLASS (gobject_class),  PITIVI_TML_HEIGHT_PROPERTY,

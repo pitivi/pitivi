@@ -25,6 +25,7 @@
 
 #include "pitivi.h"
 #include "pitivi-effectswindow.h"
+#include "pitivi-dragdrop.h"
 
 static GtkWindowClass *parent_class = NULL;
 
@@ -42,7 +43,7 @@ struct _PitiviEffectsWindowPrivate
   gboolean		dispose_has_run;
   guint			notebook_id;
   GtkWidget		*notebook;
-  PitiviEffectsTree	trees[PITIVI_EFFECT_NBCAT_TYPE];
+  PitiviEffectsTree	*trees[PITIVI_EFFECT_NBCAT_TYPE];
   GtkWidget		*statusbar;
 };
 
@@ -57,6 +58,14 @@ enum {
     PITIVI_FG_COLOR_COLUMN,
     PITIVI_NB_COLUMN
 };
+
+static GtkTargetEntry TargetEntries[] =
+{
+  { "pitivi/sourceeffect", GTK_TARGET_SAME_APP, DND_TARGET_EFFECTSWIN }
+};
+
+static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
+
 
 /*
  * Insert "added-value" functions here
@@ -135,13 +144,14 @@ pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
 
   for (count = 0; count < PITIVI_EFFECT_NBCAT_TYPE - 1; count++)
     {
-      self->private->trees[count].window = GTK_WIDGET (self);
-      self->private->trees[count].label = gtk_label_new (labels[count]);
-      self->private->trees[count].treeview = gtk_tree_view_new ();
-      self->private->trees[count].scroll = gtk_scrolled_window_new (NULL, NULL);
-      self->private->trees[count].order = count;
-      pitivi_effectstree_set_gst (&self->private->trees[count], count+1);
-      pitivi_effectswindow_insert_newtab (GTK_NOTEBOOK (self->private->notebook), &self->private->trees[count]);
+      self->private->trees[count] = g_new0 (PitiviEffectsTree, 1);
+      self->private->trees[count]->window = GTK_WIDGET (self);
+      self->private->trees[count]->label = gtk_label_new (labels[count]);
+      self->private->trees[count]->treeview = gtk_tree_view_new ();
+      self->private->trees[count]->scroll = gtk_scrolled_window_new (NULL, NULL);
+      self->private->trees[count]->order = count;
+      pitivi_effectstree_set_gst (self->private->trees[count], count+1);
+      pitivi_effectswindow_insert_newtab (GTK_NOTEBOOK (self->private->notebook), self->private->trees[count]);
     }
 }
 
@@ -265,6 +275,43 @@ pitivi_effectstree_cursor_move (GtkTreeView *treeview,
 				gpointer user_data)
 {
   
+}
+
+
+static void
+pitivi_effectswindow_drag_data_get (GtkWidget          *widget,
+				    GdkDragContext     *context,
+				    GtkSelectionData   *selection_data,
+				    guint               info,
+				    guint32             time,
+				    gpointer user_data)
+{
+  gtk_selection_data_set (selection_data, 
+			  selection_data->target, 
+			  8, 
+			  "effects", 
+			  strlen ("effects"));
+}
+
+static void
+pitivi_effectswindow_drag_end (GtkWidget          *widget,
+			       GdkDragContext     *context,
+			       gpointer		user_data)
+{
+}
+
+static void
+pitivi_effectswindow_drag_data_delete (GtkWidget          *widget,
+				       GdkDragContext     *context,
+				       gpointer editor)
+{
+}
+
+static void
+pitivi_effectswindow_drag_begin (GtkWidget          *widget,
+				 GdkDragContext     *context,
+				 gpointer		user_data)
+{
 }
 
 void
@@ -404,7 +451,21 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, PitiviEffectsTypeEnu
 		    (gpointer) tree_effect);
   g_signal_connect (tree_effect->treeview, "move-cursor", G_CALLBACK(pitivi_effectstree_cursor_move),\
 		    (gpointer) tree_effect);
-  gtk_tree_view_append_column(GTK_TREE_VIEW(tree_effect->treeview), pColumn);
+  gtk_tree_view_append_column(GTK_TREE_VIEW (tree_effect->treeview), pColumn);
+  
+  // Drag 'n Drop Activation
+  
+  gtk_drag_source_set (GTK_WIDGET (tree_effect->treeview), 
+		      GDK_BUTTON1_MASK,
+		      TargetEntries, iNbTargetEntries, 
+		      GDK_ACTION_COPY);
+
+  g_signal_connect (tree_effect->treeview, "drag_data_get",	      
+		    G_CALLBACK (pitivi_effectswindow_drag_data_get), tree_effect);
+  g_signal_connect (tree_effect->treeview, "drag_end",	      
+		    G_CALLBACK (pitivi_effectswindow_drag_end), tree_effect);
+  g_signal_connect (tree_effect->treeview, "drag_begin",	      
+		    G_CALLBACK (pitivi_effectswindow_drag_begin), tree_effect);
 }
 
 static void
