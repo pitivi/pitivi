@@ -212,7 +212,7 @@ static GtkActionEntry recent_entry[]= {
 static GtkToggleActionEntry windows_entries[] ={
   { "EffectWindows", PITIVI_STOCK_TOOLS, "E_ffects", "<Ctrl><Alt>E", "Toggle the effects window", G_CALLBACK (pitivi_callb_menufile_effectswindow_toggle), TRUE},
   { "SourceListWindows",PITIVI_STOCK_TOOLS, "S_ourceList", "<Ctrl><Alt>F", "Toggle the source list window", G_CALLBACK (pitivi_callb_menufile_sourcelistwindow_toggle), TRUE},
-  { "ViewerWindows", PITIVI_STOCK_TOOLS, "V_iewer", "<Ctrl><alt>V", "Toggle the viewer window", G_CALLBACK (pitivi_callb_menufile_viewerwindow_toggle), TRUE},
+  { "ViewerWindows", PITIVI_STOCK_TOOLS, "V_iewer", "<Ctrl>V", "Toggle the viewer window", G_CALLBACK (pitivi_callb_menufile_viewerwindow_toggle), TRUE},
 };
 
 
