@@ -164,6 +164,8 @@ pitivi_gstelementsettings_conf_value_string (const gchar *name, GValue value)
     gtk_entry_set_text (GTK_ENTRY (text_entry), string_val);
   }
 
+  g_object_set_data (G_OBJECT(text_entry), "name", name);
+
   return (text_entry);
 }
 
@@ -179,8 +181,8 @@ pitivi_gstelementsettings_value_conf_boolean (const gchar *name, GValue value)
 		    
   radio_true = gtk_radio_button_new_with_label (NULL, "True");
   radio_list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (radio_true));
-  radio_false = gtk_radio_button_new_with_label (radio_list, "False");
-		    
+  radio_false = gtk_radio_button_new_with_label (radio_list, "False");		    
+
   if (g_value_get_boolean (&value))
     gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON (radio_true), TRUE);
   else
@@ -188,6 +190,8 @@ pitivi_gstelementsettings_value_conf_boolean (const gchar *name, GValue value)
 
   gtk_box_pack_start(GTK_BOX (button_hbox), radio_true, FALSE, FALSE, BORDER);
   gtk_box_pack_start(GTK_BOX (button_hbox), radio_false, FALSE, FALSE, BORDER);
+
+  g_object_set_data (G_OBJECT(button_hbox), "name", name);
 
   return (button_hbox);
 }
@@ -204,6 +208,8 @@ pitivi_gstelementsettings_value_conf_uint (const gchar *name, GValue value, GPar
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_uint (&value));
 
+  g_object_set_data (G_OBJECT(spin_button), "name", name);
+
   return (spin_button);
 }
 
@@ -218,6 +224,8 @@ pitivi_gstelementsettings_value_conf_int (const gchar *name, GValue value, GPara
 
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_int (&value));
+
+  g_object_set_data (G_OBJECT(spin_button), "name", name);
 
   return (spin_button);
 }
@@ -234,6 +242,8 @@ pitivi_gstelementsettings_value_conf_uint64 (const gchar *name, GValue value, GP
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_uint64 (&value));
 
+  g_object_set_data (G_OBJECT(spin_button), "name", name);
+
   return (spin_button);
 }
 
@@ -248,6 +258,8 @@ pitivi_gstelementsettings_value_conf_int64 (const gchar *name, GValue value, GPa
 
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_int64 (&value));
+
+  g_object_set_data (G_OBJECT(spin_button), "name", name);
 
   return (spin_button);
 }
@@ -264,6 +276,8 @@ pitivi_gstelementsettings_value_conf_ulong (const gchar *name, GValue value, GPa
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_ulong (&value));
 
+  g_object_set_data (G_OBJECT(spin_button), "name", name);
+
   return (spin_button);
 }
 
@@ -278,6 +292,8 @@ pitivi_gstelementsettings_value_conf_long (const gchar *name, GValue value, GPar
 
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_long (&value));
+
+  g_object_set_data (G_OBJECT(spin_button), "name", name);
 
   return (spin_button);
 }
@@ -294,6 +310,8 @@ pitivi_gstelementsettings_value_conf_float (const gchar *name, GValue value, GPa
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_float (&value));
 
+  g_object_set_data (G_OBJECT(spin_button), "name", name);
+
   return (spin_button);
 }
 
@@ -308,6 +326,8 @@ pitivi_gstelementsettings_value_conf_double (const gchar *name, GValue value, GP
 
   /* valeur par defaut */
   gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_button), g_value_get_double (&value));
+
+  g_object_set_data (G_OBJECT(spin_button), "name", name);
 
   return (spin_button);
 }
@@ -346,6 +366,7 @@ pitivi_gstelementsettings_value_conf_default (const gchar *name, GValue value, G
     gtk_combo_box_set_active (GTK_COMBO_BOX (prop_value_combobox), g_value_get_enum(&value));
 
     g_object_set_data (G_OBJECT(prop_value_combobox), "list", combobox_list);
+    g_object_set_data (G_OBJECT(prop_value_combobox), "name", name);
     
     return (prop_value_combobox);
     
@@ -388,7 +409,9 @@ pitivi_gstelementsettings_value_conf_default (const gchar *name, GValue value, G
       }
 
     }
-    
+
+    g_object_set_data (G_OBJECT(Tab), "name", name);
+
     return (Tab);
     
   } else {
@@ -420,47 +443,47 @@ pitivi_gstelementsettings_table_new_param_add (PitiviGstElementSettings *self,
   switch (G_VALUE_TYPE (&value)) {
   case G_TYPE_STRING: {
     tmp = pitivi_gstelementsettings_conf_value_string 
-      (g_strdup(g_param_spec_get_nick (prop)), value);
+      (g_strdup(g_param_spec_get_name (prop)), value);
     break;
   } case G_TYPE_BOOLEAN: {
     tmp = pitivi_gstelementsettings_value_conf_boolean 
-      (g_strdup(g_param_spec_get_nick (prop)), value);
+      (g_strdup(g_param_spec_get_name (prop)), value);
     break;
   } case G_TYPE_UINT: {
     tmp = pitivi_gstelementsettings_value_conf_uint 
-      (g_strdup(g_param_spec_get_nick (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), value, prop);
     break;
   } case G_TYPE_INT: {
     tmp = pitivi_gstelementsettings_value_conf_int 
-      (g_strdup(g_param_spec_get_nick (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), value, prop);
     break;
   } case G_TYPE_UINT64: {
     tmp = pitivi_gstelementsettings_value_conf_uint64 
-      (g_strdup(g_param_spec_get_nick (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), value, prop);
     break;
   } case G_TYPE_INT64: {
     tmp = pitivi_gstelementsettings_value_conf_int64 
-      (g_strdup(g_param_spec_get_nick (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), value, prop);
     break;
   } case G_TYPE_ULONG: {
     tmp = pitivi_gstelementsettings_value_conf_ulong 
-      (g_strdup(g_param_spec_get_nick (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), value, prop);
     break;
   } case G_TYPE_LONG: {
     tmp = pitivi_gstelementsettings_value_conf_long 
-      (g_strdup(g_param_spec_get_nick (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), value, prop);
     break;
   } case G_TYPE_FLOAT: {
     tmp = pitivi_gstelementsettings_value_conf_float 
-      (g_strdup(g_param_spec_get_nick (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), value, prop);
     break;
   } case G_TYPE_DOUBLE: {
     tmp = pitivi_gstelementsettings_value_conf_double 
-      (g_strdup(g_param_spec_get_nick (prop)), value, prop);
+      (g_strdup(g_param_spec_get_name (prop)), value, prop);
     break;
   } default: {
     tmp = pitivi_gstelementsettings_value_conf_default 
-      (g_strdup (g_param_spec_get_nick (prop)), value, prop);
+      (g_strdup (g_param_spec_get_name (prop)), value, prop);
     break;
   }
   }
