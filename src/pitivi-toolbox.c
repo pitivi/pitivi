@@ -70,6 +70,8 @@ cursor_change_select(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
   GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */  
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
 
+  if (!timelinewin)
+    return;
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
      pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, width, height);
@@ -93,6 +95,8 @@ cursor_change_cut(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
   
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
   
+  if (!timelinewin)
+    return;
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
      pixmap = gdk_bitmap_create_from_data (NULL, cut_bits, width, height);
@@ -114,6 +118,9 @@ cursor_change_hand(GtkRadioToolButton *radiobutton, PitiviToolbox *self)
   GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
   GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
+
+  if (!timelinewin)
+    return;
  if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
     {
      pixmap = gdk_bitmap_create_from_data (NULL, hand_1_bits, width, height);
@@ -136,6 +143,8 @@ cursor_change_zoom (GtkRadioToolButton *radiobutton, PitiviToolbox *self)
   GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
   PitiviTimelineWindow *timelinewin = (PitiviTimelineWindow *) pitivi_mainapp_get_timelinewin(self->private->mainapp);
 
+  if (!timelinewin)
+    return;
   if (gtk_toggle_tool_button_get_active(GTK_TOGGLE_TOOL_BUTTON(radiobutton)))
    {
      pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
