@@ -100,7 +100,7 @@ statusbar_set_frames (GtkWidget *statusbar,
 	  break;
 	case AS_TIME_LONG:
 	  ms = pitivi_timeconv_frames_to_ms (frames, PITIVI_DF_RATE);
-	  display = pitivi_timeconv_ms_to_time_string (ms);
+	  //display = pitivi_timeconv_ms_to_time_string ((int)ms);
 	  display = g_strdup_printf ("%15c%s", ' ', display);
 	  break;
 	case AS_SECONDS:

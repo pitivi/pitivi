@@ -18,7 +18,6 @@ pitivi_SOURCES		= \
 	pitivi-project.c \
 	pitivi-toolbox.c \
 	pitivi-timelinewindow.c\
-	pitivi-convert-time.c \
 	pitivi-toolboxwindow.c	\
 	pitivi-sourcelistwindow.c \
 	pitivi-newprojectwindow.c  \

@@ -28,6 +28,7 @@
 #include "pitivi-menu.h"
 #include "pitivi-stockicons.h"
 #include "pitivi-toolbox.h"
+#include "pitivi-effectswindow.h"
 #include "pitivi-timelinewindow.h"
 #include "pitivi-toolboxwindow.h"
 #include "pitivi-sourcelistwindow.h"
@@ -68,13 +69,17 @@ pitivi_callb_toolbox_filenew_project ( GtkAction *action, PitiviToolboxWindow *s
 {  
   PitiviNewProjectWindow *win_new_project;
   PitiviSourceListWindow *srclistwin;
-
+  PitiviEffectsWindow *effectswin;
+ 
   /* New Project window */
   win_new_project = pitivi_newprojectwindow_new();
   gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
   /* Source List Window */
   srclistwin = pitivi_sourcelistwindow_new();
   gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
+  /* Source List Window */
+  effectswin = pitivi_effectswindow_new();
+  gtk_widget_show_all (GTK_WIDGET (effectswin) ); 
 }
 
 void
