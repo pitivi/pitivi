@@ -123,10 +123,6 @@ gnl_source_base_init (gpointer g_class)
 
   gst_element_class_set_details (gstclass, &gnl_object_details);
   
-  /*  gst_element_class_add_pad_template (gstclass,
-				      gst_pad_template_new ("src", GST_PAD_SRC,
-							    GST_PAD_REQUEST, NULL)
-							    );*/
 }
 
 
@@ -205,20 +201,12 @@ gnl_source_dispose (GObject *object)
     priv = (SourcePadPrivate *) pads->data;
 
     g_slist_free (priv->queue);
-/*     gst_pad_remove_probe(GST_PAD (priv->srcpad),  */
-/* 			 priv->probe); */
-/*     gst_object_unref (GST_OBJECT (priv->srcpad)); */
-/*     gst_object_unref (GST_OBJECT (priv->sinkpad)); */
-
     pads = g_slist_next (pads);
   }
 
-  if (source->element) {
+  if (source->element)
     gst_bin_remove (GST_BIN (source->bin), source->element);
-    gst_object_unref (GST_OBJECT (source->element));
-  }
   gst_bin_remove(GST_BIN(source), GST_ELEMENT(source->bin));
-/*   gst_object_unref (GST_OBJECT (source->bin)); */
   
   G_OBJECT_CLASS (parent_class)->dispose (object);
   GST_INFO("dispose END");
@@ -251,7 +239,6 @@ GnlSource*
 gnl_source_new (const gchar *name, GstElement *element)
 {
   GnlSource *source;
-  /*  GstElementClass *sclass;*/
 
   GST_INFO ("name[%s], element[%s]", name,
 	    gst_element_get_name( element ) );
@@ -259,29 +246,14 @@ gnl_source_new (const gchar *name, GstElement *element)
   g_return_val_if_fail (name != NULL, NULL);
   g_return_val_if_fail (element != NULL, NULL);
 
-  /* source = GNL_SOURCE (gst_element_factory_make ("gnlsource", name)); */
   source = g_object_new(GNL_TYPE_SOURCE, NULL);
 		  
-  //source = g_object_new (GNL_TYPE_SOURCE,
-  
   gst_object_set_name(GST_OBJECT(source), name);
   gnl_source_set_element(source, element);
 
   GST_INFO("sched source[%p] bin[%p]", 
 	   GST_ELEMENT_SCHED(source),
 	   GST_ELEMENT_SCHED(source->bin));
-
-  /*  g_object_set (G_OBJECT (source),
-		         "name", name, 
-			 "element", element, 
-			 NULL);
-  */
-/*   sclass = GST_ELEMENT_GET_CLASS (source); */
-/*   if (sclass->padtemplates == NULL) { */
-/*     sclass->padtemplates = g_list_prepend (sclass->padtemplates,  */
-/* 		           gnl_source_src_factory()); */
-/*     sclass->numpadtemplates = 1; */
-/*   } */
 
   return source;
 }
@@ -328,8 +300,6 @@ gnl_source_set_element (GnlSource *source, GstElement *element)
     gst_object_unref (GST_OBJECT (source->element));
   }
   
-  //  gst_object_ref (GST_OBJECT (element));
-
   source->element = element;
   source->linked_pads = 0;
   source->total_pads = 0;
@@ -539,9 +509,7 @@ source_send_seek (GnlSource *source, GstEvent *event)
     GST_WARNING("couldn't set GnlSource's bin to PAUSED !!!");
   while (pads) {  
     GstPad *pad = GST_PAD (pads->data);
-/*     GstEvent *event; */
 
-/*     event = source->pending_seek; */
     gst_event_ref (event);
 
     GST_INFO ("%s: seeking to %lld", 
@@ -557,8 +525,6 @@ source_send_seek (GnlSource *source, GstEvent *event)
   }
   if (wasinplay)
     gst_element_set_state(source->bin, GST_STATE_PLAYING);
-/*   gst_event_unref (source->pending_seek); */
-/*   source->pending_seek = NULL; */
 
   clear_queues (source);
 
@@ -666,7 +632,6 @@ source_chainfunction (GstPad *pad, GstData *buf)
       }
     }
     if (intime > object->media_stop) {
-      /* gst_pad_set_active (pad, FALSE); */
       gst_buffer_unref (buffer);
       buffer = GST_BUFFER (gst_event_new (GST_EVENT_EOS));
     }

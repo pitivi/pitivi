@@ -390,6 +390,7 @@ child_active_changed (GnlObject *object, GParamSpec *arg, gpointer udata)
     GST_FLAG_UNSET (GST_ELEMENT (object), GST_ELEMENT_LOCKED_STATE);
     comp->active_objects = g_list_append (comp->active_objects, object);
   } else {
+    gst_element_set_state (GST_ELEMENT (object), GST_STATE_READY);
     GST_FLAG_SET (GST_ELEMENT (object), GST_ELEMENT_LOCKED_STATE);
     comp->active_objects = g_list_remove(comp->active_objects, object);
   }
@@ -406,17 +407,18 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
 {
   GnlCompositionEntry *entry;
 
-  GST_INFO("Composition[%s] Object[%s] Parent:%s",
+  GST_INFO("Composition[%s] Object[%s] Parent:%s Ref:%d",
 	   gst_element_get_name(GST_ELEMENT (comp)),
 	   gst_element_get_name(GST_ELEMENT (object)),
 	   (gst_element_get_parent(GST_ELEMENT(object)) ?
 	    gst_element_get_name(gst_element_get_parent(GST_ELEMENT(object))):
-	    "None"));
+	    "None"),
+	   G_OBJECT(object)->ref_count);
 
   g_return_if_fail (GNL_IS_COMPOSITION (comp));
 
   if (GNL_IS_OBJECT(object)) {
-    gst_object_ref(GST_OBJECT(object));
+/*     gst_object_ref(GST_OBJECT(object)); */
   
     entry = g_malloc (sizeof (GnlCompositionEntry));
 
@@ -486,11 +488,10 @@ gnl_composition_remove_object (GnlComposition *comp, GnlObject *object)
   comp->active_objects = g_list_remove (comp->active_objects, object);
   comp->objects = g_list_delete_link (comp->objects, lentry);
 
-/*   if (GNL_OBJECT (lentry->data)->comp_private) */
-/*     g_free (GNL_OBJECT (lentry->data)->comp_private); */
   g_free (lentry->data);
-  gst_object_unref(GST_OBJECT(object));
   composition_update_start_stop (comp);
+
+  GST_BIN_CLASS (parent_class)->remove_element(GST_BIN (comp), GST_ELEMENT (object));
 }
 
 /*
