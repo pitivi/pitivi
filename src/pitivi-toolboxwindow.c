@@ -74,7 +74,7 @@ pitivi_toolbar_set_icon_mode (GtkWidget *toolbar, guint *styles)
 static void
 pitivi_callb_toolbox_exit ( GtkAction *action, PitiviToolboxWindow *self )
 {  
-  gtk_main_quit ();
+  pitivi_mainapp_destroy(self, NULL);
 }
 
 void

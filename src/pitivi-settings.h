@@ -104,4 +104,8 @@ GList			*pitivi_settings_get_flux_container_list (GObject *object,
 GList			*pitivi_settings_get_flux_parser_list (GObject *object, 
 								  GstCaps *flux, 
 								  gboolean LIST);
+PitiviSettings		*pitivi_settings_load_from_file(const gchar	*filename);
+gboolean		pitivi_settings_save_to_file(PitiviSettings	*settings,
+						      const gchar	*filename);
+
 #endif

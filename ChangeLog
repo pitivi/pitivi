@@ -1,3 +1,12 @@
+2004-06-28    <bilboed@localhost>
+
+	* src/pitivi-settings.c (pitivi_settings_ajout_factory_element): modification to support priority elements (after loading from file)
+
+	* src/pitivi-projectsettings.c (pitivi_projectsettings_copy): protection against NULL copying
+
+	* src/pitivi-settings.c (pitivi_settings_scan_registry): function to scan the GstRegistry for containers/codecs/parsers and fill the PitiviSettings
+	(pitivi_settings_load_from_file, pitivi_settings_save_to_file): Functions to load/save PitiviSettings from/to file
+
 2004-06-26    <bilboed@localhost>
 
 	* src/pitivi-projectsettings.c (pitivi_projectsettings_copy): function to make copies of PitiviProjectSettings

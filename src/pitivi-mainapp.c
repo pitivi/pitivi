@@ -91,6 +91,15 @@ pitivi_mainapp_settings(PitiviMainApp *self) {
 void
 pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
 {
+  PitiviMainApp *mainapp = PITIVI_WINDOWS(pWidget)->mainapp;
+  gchar	*conf;
+
+  
+  conf = g_strdup_printf("%s/.pitivi", g_get_home_dir());
+  /* Save settings before exiting */
+  if (pitivi_settings_save_to_file(mainapp->private->global_settings, conf) == FALSE)
+    g_printf("Error saving configuration file");
+  g_free(conf);
   gtk_main_quit();
 }
 
@@ -290,6 +299,7 @@ pitivi_mainapp_constructor (GType type,
 			    GObjectConstructParam * construct_properties)
 {
   PitiviMainApp	*self;
+  gchar		*settingsfile;
   GObject	*obj;
   {
     /* Invoke parent constructor. */
@@ -308,10 +318,17 @@ pitivi_mainapp_constructor (GType type,
   pitivi_stockicons_register ();
   /* Creation de la liste des settings par default */
   self->private->project_settings_list = pitivi_projectsettings_list_make();
+
+  /* Creation des settings globaux */
+  settingsfile = g_strdup_printf("%s/.pitivi", g_get_home_dir());
+  if (g_file_test(settingsfile, G_FILE_TEST_EXISTS))
+    self->private->global_settings = pitivi_settings_load_from_file(settingsfile);
+  else
+    self->private->global_settings = pitivi_settings_new();
+  g_free(settingsfile);
+
   /* Creation de la toolboxwindow */
   self->private->tbxwin = pitivi_toolboxwindow_new(self);
-  /* Creation des settings globaux */
-  self->private->global_settings = pitivi_settings_new();
   /* Connection des Signaux */
   g_signal_connect(G_OBJECT(self->private->tbxwin), "delete_event",
 		   G_CALLBACK(pitivi_mainapp_destroy), NULL);

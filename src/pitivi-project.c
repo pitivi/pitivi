@@ -72,14 +72,6 @@ pitivi_project_new_from_file (const gchar *filename)
   if (filename == NULL)
     return NULL;
 
-  /* 
-     TODO
-
-     * Open the file
-     * Restore the XML-formatted PitiviSettings contained in the file
-     * Restore the XML-formatted PitiviSourceList contained in the file
-  */
-#if 1
   doc = xmlParseFile (filename);
 
   if (!doc)
@@ -103,11 +95,9 @@ pitivi_project_new_from_file (const gchar *filename)
       /* found the PitiviProject */
       project = (PitiviProject *) g_object_new (PITIVI_PROJECT_TYPE, NULL);
       pitivi_project_restore_thyself(project, field);
+      continue;
     }
   
-#else
-  project = pitivi_project_new(NULL);
-#endif
   project->filename = g_strdup(filename);
   
   return project;
@@ -154,7 +144,8 @@ pitivi_project_save_thyself(PitiviProject *project)
 
   projectnode = xmlNewChild (doc->xmlRootNode, ns, "project", NULL);
 
-  pitivi_projectsettings_save_thyself ( project->settings , projectnode);
+  if (project->settings)
+    pitivi_projectsettings_save_thyself ( project->settings , projectnode);
 
   return doc;  
 }
@@ -178,13 +169,13 @@ pitivi_project_save_to_file(PitiviProject *project, const gchar *filename)
   gboolean		ret;
   FILE			*out;
 
+  cur = pitivi_project_save_thyself (project);
+  if (!cur)
+    return FALSE;
+
   /* open the file */
   out = fopen(filename, "w+");
   if (out == NULL)
-    return FALSE;
-
-  cur = pitivi_project_save_thyself (project);
-  if (!cur)
     return FALSE;
 
   encoding = (const char *) cur->encoding;

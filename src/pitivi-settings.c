@@ -153,8 +153,8 @@ pitivi_settings_init_mime_type (GstCaps *flux)
 
   new = g_malloc (sizeof (PitiviSettingsMimeType));
   new->flux = gst_caps_copy (flux);
-  new->encoder = 0;
-  new->decoder = 0;
+  new->encoder = NULL;
+  new->decoder = NULL;
   return (new);
 }
 
@@ -217,7 +217,17 @@ pitivi_settings_get_flux_coder_list (GList *list, GstCaps *flux, gboolean LIST)
   return (NULL);
 }
 
-
+gboolean
+my_list_find(gchar *txt, GList *list)
+{
+  g_printf("txt:%s list:%p\n", txt, list);
+  while (list) {
+    if ((list->data) && (!strcmp(txt, (gchar *) list->data)))
+      return TRUE;
+    list = list->next;
+  }
+  return FALSE;
+}
 /* 
    ajoute un l element factory name
    dans la list (encoder|decoder) 
@@ -230,9 +240,11 @@ pitivi_settings_ajout_factory_element (PitiviSettingsMimeType *tmp,
 {
 
   if (MY_PAD == GST_PAD_SRC) {
-    tmp->encoder = g_list_append (tmp->encoder, (gpointer) element);
+    if (!my_list_find(element, tmp->encoder))
+      tmp->encoder = g_list_append (tmp->encoder, (gpointer) element);
   } else if (MY_PAD == GST_PAD_SINK) {
-    tmp->decoder = g_list_append (tmp->decoder, (gpointer) element);
+    if (!my_list_find(element, tmp->decoder))
+      tmp->decoder = g_list_append (tmp->decoder, (gpointer) element);
   } else {
     g_print ("ERROR in (ajout_factory_element) : MY_PAD \n");
   }
@@ -338,52 +350,18 @@ pitivi_settings_get_flux_parser_list (GObject *object, GstCaps *flux, gboolean L
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
-PitiviSettings *
-pitivi_settings_new(void)
-{
-  PitiviSettings	*settings;
+/*
+  pitivi_settings_scan_registry
 
-  settings = (PitiviSettings *) g_object_new(PITIVI_SETTINGS_TYPE, NULL);
-  g_assert(settings != NULL);
-  return settings;
-}
+  Scan the GstRegistry and fills the PitiviSettings with the list of 
+  (De)Coder, (De)Muxer and Parser
+*/
 
-static GObject *
-pitivi_settings_constructor (GType type,
-			     guint n_construct_properties,
-			     GObjectConstructParam * construct_properties)
-{
-  GObject *obj;
-  /* Invoke parent constructor. */
-  obj = parent_class->constructor (type, n_construct_properties,
-				   construct_properties);
-
-  /* do stuff. */
-
-  return obj;
-}
-
-static void
-pitivi_settings_instance_init (GTypeInstance * instance, gpointer g_class)
+void
+pitivi_settings_scan_registry(PitiviSettings *self)
 {
   GList			*sv;
   GstElementFactory	*factory;
-  PitiviSettings *self = (PitiviSettings *) instance;
-
-  self->private = g_new0(PitiviSettingsPrivate, 1);
-  
-  /* initialize all public and private members to reasonable default values. */ 
-  
-  self->private->dispose_has_run = FALSE;
-  
-  /* Do only initialisation here */
-  /* The construction of the object should be done in the Constructor
-     So that properties set at instanciation can be set */
-
-  self->codec = 0;
-  self->container = 0;
-  self->parser = 0;
-  self->element = 0;
 
   self->element = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
   sv = self->element;
@@ -416,6 +394,273 @@ pitivi_settings_instance_init (GTypeInstance * instance, gpointer g_class)
   pitivi_settings_aff_all_list (self->container);
   pitivi_settings_aff_all_list (self->codec);
   pitivi_settings_aff_all_list (self->parser);
+}
+
+GList *
+pitivi_settings_get_xml_list(xmlNodePtr self)
+{
+  PitiviSettingsMimeType	*tmp;
+  GList				*res;
+  xmlNodePtr			child, children;
+  
+  for (res = NULL, child = self->xmlChildrenNode; child; child = child->next)
+    if (!strcmp(child->name, "settingsmimetype")) {
+      tmp = g_new0(PitiviSettingsMimeType, 1);
+      for (children = child->xmlChildrenNode; children; children = children->next) {
+	if (!strcmp(children->name, "caps"))
+	  tmp->flux = gst_caps_from_string(xmlNodeGetContent(children));
+	else if (!strcmp(children->name, "encoder")) {
+	  tmp->encoder = NULL;
+	  tmp->encoder = g_list_append(tmp->encoder, xmlNodeGetContent(children));
+	} else if (!strcmp(children->name, "decoder")) {
+	  tmp->decoder = NULL;
+	  tmp->decoder = g_list_append(tmp->decoder, xmlNodeGetContent(children));
+	}
+      }
+      res = g_list_append(res, tmp);
+    }
+  return res;
+}
+
+void
+pitivi_settings_restore_thyself(PitiviSettings *settings, xmlNodePtr self)
+{
+  xmlNodePtr	child;
+  
+
+  for (child = self->xmlChildrenNode; child; child = child->next) {
+    if (!strcmp(child->name, "container")) {
+      settings->container = pitivi_settings_get_xml_list(child);
+    } else if (!strcmp(child->name, "codec")) {
+      settings->codec = pitivi_settings_get_xml_list(child);
+    } else if (!strcmp(child->name, "parser")) {
+      settings->parser = pitivi_settings_get_xml_list(child);
+    }
+  }
+}
+
+/*
+  pitivi_settings_xml_epure_list
+
+  Returns a xml formatted list with only the first elements of multiple lists
+*/
+
+void
+pitivi_settings_xml_epure_list(GList *list, xmlNodePtr parent)
+{
+  GList	*res = NULL;
+  xmlNodePtr	mime;
+  PitiviSettingsMimeType	*tmp, *toadd;
+
+  for (; list; list = list->next) {
+    tmp = (PitiviSettingsMimeType *) list->data;
+    if ((g_list_length(tmp->encoder) > 1) 
+	|| (g_list_length(tmp->decoder) > 1)){
+      /* Need to add one */
+      mime = xmlNewChild(parent, NULL, "settingsmimetype", NULL);
+      xmlNewChild (mime, NULL, "caps", gst_caps_to_string(tmp->flux));
+
+      if (g_list_length(tmp->encoder) > 1)
+	xmlNewChild (mime, NULL, "encoder", (char *) tmp->encoder->data);
+
+      if (g_list_length(tmp->decoder) > 1)
+	xmlNewChild (mime, NULL, "decoder", (char *) tmp->decoder->data);
+    }
+  }
+}
+
+xmlDocPtr
+pitivi_settings_save_thyself(PitiviSettings *settings)
+{
+  xmlDocPtr doc;
+  xmlNodePtr projectnode;
+  xmlNodePtr container, codecs, parser;
+  xmlNsPtr ns;
+
+  doc = xmlNewDoc ("1.0");
+
+  doc->xmlRootNode = xmlNewDocNode (doc, NULL, "pitivi", NULL);
+
+  ns = xmlNewNs (doc->xmlRootNode, "http://pitivi.org/pitivi-core/0.1/", "pitivi");
+
+  projectnode = xmlNewChild (doc->xmlRootNode, ns, "settings", NULL);
+
+  container = xmlNewChild (projectnode, ns, "container", NULL);
+  pitivi_settings_xml_epure_list (settings->container, container);
+
+  codecs = xmlNewChild (projectnode, ns, "codec", NULL);
+  pitivi_settings_xml_epure_list (settings->codec, codecs);
+  
+  parser = xmlNewChild (projectnode, ns, "parser", NULL);
+  pitivi_settings_xml_epure_list (settings->parser, parser);
+  
+  return doc;    
+}
+
+/*
+  pitivi_settings_load_from_file
+
+  Creates a PitiviSettings from the settings contained in filename
+
+  Returns the created PitiviSettings or NULL if there was a problem
+*/
+
+PitiviSettings *
+pitivi_settings_load_from_file(const gchar *filename)
+{
+  xmlDocPtr	doc;
+  xmlNodePtr	field, cur, child;
+  xmlNsPtr	ns;
+  PitiviSettings	*settings = NULL;
+
+  if (filename == NULL)
+    return NULL;
+
+  doc = xmlParseFile (filename);
+
+  if (!doc)
+    return NULL;
+
+  cur = xmlDocGetRootElement (doc);
+  if (cur == NULL)
+    return NULL;
+
+  ns = xmlSearchNsByHref (doc, cur, "http://pitivi.org/pitivi-core/0.1/");
+  if (ns == NULL)
+    return NULL;
+
+  if (strcmp (cur->name, "pitivi"))
+    return NULL;
+
+  /* Actually extract the contents */
+
+  for (field = cur->xmlChildrenNode; field; field = field->next)
+    if (!strcmp (field->name, "settings") && (field->ns == ns)) {
+      /* found the PitiviSettings */
+      settings = (PitiviSettings *) g_object_new (PITIVI_SETTINGS_TYPE, NULL);
+      pitivi_settings_restore_thyself(settings, field);
+      continue;
+    }
+  pitivi_settings_aff_all_list (settings->container);
+  pitivi_settings_aff_all_list (settings->codec);
+  pitivi_settings_aff_all_list (settings->parser);
+
+  if (settings)
+    pitivi_settings_scan_registry(settings);  
+  
+  return settings;
+}
+
+/*
+  pitivi_settings_save_to_file
+
+  Saves the PitiviSettings settings to the given file
+
+  Returns TRUE if the settings were save to the file, FALSE otherwise
+*/
+
+gboolean
+pitivi_settings_save_to_file(PitiviSettings *settings, const gchar *filename)
+{
+  xmlDocPtr		cur;
+  xmlOutputBufferPtr	buf;
+  const char		*encoding;
+  xmlCharEncodingHandlerPtr handler = NULL;
+  int			indent;
+  gboolean		ret;
+  FILE			*out;
+
+  cur = pitivi_settings_save_thyself (settings);
+  if (!cur)
+    return FALSE;
+
+  /* open the file */
+  out = fopen(filename, "w+");
+  if (out == NULL)
+    return FALSE;
+
+  encoding = (const char *) cur->encoding;
+
+  if (encoding != NULL) {
+    xmlCharEncoding enc;
+
+    enc = xmlParseCharEncoding (encoding);
+
+    if (cur->charset != XML_CHAR_ENCODING_UTF8) {
+      xmlGenericError (xmlGenericErrorContext,
+		       "xmlDocDump: document not in UTF8\n");
+      return FALSE;
+    }
+    if (enc != XML_CHAR_ENCODING_UTF8) {
+      handler = xmlFindCharEncodingHandler (encoding);
+      if (handler == NULL) {
+        xmlFree ((char *) cur->encoding);
+        cur->encoding = NULL;
+      }
+    }
+  }
+
+  buf = xmlOutputBufferCreateFile (out, handler);
+
+  indent = xmlIndentTreeOutput;
+  xmlIndentTreeOutput = 1;
+  ret = xmlSaveFormatFileTo (buf, cur, NULL, 1);
+  xmlIndentTreeOutput = indent;
+
+  /* close the file */
+  fclose(out);
+
+  return TRUE;
+}
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+
+PitiviSettings *
+pitivi_settings_new(void)
+{
+  PitiviSettings	*settings;
+
+  settings = (PitiviSettings *) g_object_new(PITIVI_SETTINGS_TYPE, NULL);
+  pitivi_settings_scan_registry(settings);
+  g_assert(settings != NULL);
+  return settings;
+}
+
+static GObject *
+pitivi_settings_constructor (GType type,
+			     guint n_construct_properties,
+			     GObjectConstructParam * construct_properties)
+{
+  GObject *obj;
+  /* Invoke parent constructor. */
+  obj = parent_class->constructor (type, n_construct_properties,
+				   construct_properties);
+
+  /* do stuff. */
+
+  return obj;
+}
+
+static void
+pitivi_settings_instance_init (GTypeInstance * instance, gpointer g_class)
+{
+  PitiviSettings *self = (PitiviSettings *) instance;
+
+  self->private = g_new0(PitiviSettingsPrivate, 1);
+  
+  /* initialize all public and private members to reasonable default values. */ 
+  
+  self->private->dispose_has_run = FALSE;
+  
+  /* Do only initialisation here */
+  /* The construction of the object should be done in the Constructor
+     So that properties set at instanciation can be set */
+
+  self->codec = NULL;
+  self->container = NULL;
+  self->parser = NULL;
+  self->element = NULL;
+
 }
 
 static void

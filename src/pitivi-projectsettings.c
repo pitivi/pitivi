@@ -317,6 +317,9 @@ pitivi_projectsettings_copy(PitiviProjectSettings *self)
   PitiviMediaSettings	*cat1, *cat2;
   PitiviSettingsValue	*val1, *val2;
 
+  if (self == NULL)
+    return NULL;
+
   res = pitivi_projectsettings_new();
   res->name = g_strdup(self->name);
   res->description = g_strdup(self->description);
