@@ -43,44 +43,6 @@
 #define PITIVI_STOCK_SELECT_ALL "pitivi-select-all"
 #define PITIVI_STOCK_SELECT_NONE "pitivi-select-none"
 
-/*
- * Type macros.
- */
-
-#define PITIVI_STOCKICONS_TYPE (pitivi_stockicons_get_type ())
-#define PITIVI_STOCKICONS(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), PITIVI_STOCKICONS_TYPE, PitiviStockIcons))
-#define PITIVI_STOCKICONS_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), PITIVI_STOCKICONS_TYPE, PitiviStockIconsClass))
-#define PITIVI_IS_STOCKICONS(obj) (G_TYPE_CHECK_TYPE ((obj), PITIVI_STOCKICONS_TYPE))
-#define PITIVI_IS_STOCKICONS_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_STOCKICONS_TYPE))
-#define PITIVI_STOCKICONS_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_STOCKICONS_TYPE, PitiviStockIconsClass))
-
-typedef struct _PitiviStockIcons PitiviStockIcons;
-typedef struct _PitiviStockIconsClass PitiviStockIconsClass;
-typedef struct _PitiviStockIconsPrivate PitiviStockIconsPrivate;
-
-struct _PitiviStockIcons
-{
-  GObject parent;
-
-  /* instance public members */
-
-  /* private */
-  PitiviStockIconsPrivate *private;
-};
-
-struct _PitiviStockIconsClass
-{
-  GObjectClass parent;
-  /* class members */
-};
-
-/* used by PITIVI_STOCKICONS_TYPE */
-GType pitivi_stockicons_get_type (void);
-
-/*
- * Method definitions.
- */
-
-PitiviStockIcons	*pitivi_stockicons_new(void);
+void		pitivi_stockicons_register (void);
 
 #endif
