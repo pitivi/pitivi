@@ -181,6 +181,10 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 
   gtk_window_set_resizable (GTK_WINDOW (Dialog), FALSE);
 
+  ////////////////////////////
+  ////////// creer l element en fonction des settings deja present
+  ////////////////////////////
+
   Properties = pitivi_gstelementsettings_new_with_name 
     ((gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
 
@@ -188,10 +192,10 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 		     GTK_WIDGET (Properties));
 
   gtk_dialog_add_buttons (GTK_DIALOG (Dialog),
-			  GTK_STOCK_OK,
-			  GTK_RESPONSE_ACCEPT,
 			  GTK_STOCK_CANCEL,
 			  GTK_RESPONSE_REJECT,
+			  GTK_STOCK_OK,
+			  GTK_RESPONSE_ACCEPT,
 			  NULL);
 
   gtk_widget_show_all (GTK_WIDGET (Dialog));

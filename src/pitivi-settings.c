@@ -511,7 +511,10 @@ pitivi_settings_ajout_prop (GParamSpec *spec, GstElement *elm)
   GValue value = { 0, };
 
   g_value_init (&(value), spec->value_type);
-  g_object_get_property (G_OBJECT (elm), spec->name, &(value));
+
+  if (spec->flags & G_PARAM_READABLE) {
+    g_object_get_property (G_OBJECT (elm), spec->name, &(value));
+  }
 
   return (pitivi_settings_prop_new (spec->name, value));
 }
