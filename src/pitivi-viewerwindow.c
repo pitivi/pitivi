@@ -24,19 +24,22 @@
  */
 
 #include "pitivi.h"
+#include "pitivi-viewercontroller.h"
 #include "pitivi-viewerwindow.h"
+#include "pitivi-viewerplayer.h"
 
 static GtkWindowClass *parent_class = NULL;
 
 struct _PitiviViewerWindowPrivate
 {
   /* instance private members */
-  gboolean	dispose_has_run;
-  GtkWidget	*main_vbox;
-  GtkTable	*media_control;
-  GtkWidget	*buttons[4];
-  GtkWidget	*seeker;
-  GtkVBox	*play_view;
+  gboolean			dispose_has_run;
+  GtkWidget			*main_vbox;
+  GtkWidget			*playerview;
+  PitiviViewerController	*media_controller;
+  GdkPixbuf			*logo;
+  GtkWidget			*mixer;
+  GtkWidget			*statusbar;
 };
 
 /*
@@ -60,19 +63,47 @@ pitivi_viewerwindow_new(void)
 static void
 pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
-  int	    count;
-  GtkWidget *main_vbox;
   PitiviViewerWindow *self = (PitiviViewerWindow *) instance;
-
+  GtkWidget  *separator;
+  int	     count;
+  
   self->private = g_new0(PitiviViewerWindowPrivate, 1);
   
   /* initialize all public and private members to reasonable default values. */ 
   
   self->private->dispose_has_run = FALSE;
+  gtk_window_set_resizable (GTK_WINDOW (self), FALSE);
   
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */
+  
+  self->private->main_vbox = gtk_vbox_new (FALSE, 0);
+  gtk_widget_set_usize (self->private->main_vbox, 400, 300);
+  gtk_container_add(GTK_CONTAINER(self), GTK_WIDGET(self->private->main_vbox));
+
+  self->private->playerview = pitivi_viewerplayer_new();
+  g_return_if_fail (self->private->playerview != NULL);
+
+  self->private->logo = gdk_pixbuf_new_from_file (PITIVI_APP_LOGO_PATH, NULL);
+  pitivi_viewerplayer_set_minimum_size (PITIVI_VIEWERPLAYER (self->private->playerview), 300, 300);
+  pitivi_viewerplayer_set_logo (PITIVI_VIEWERPLAYER (self->private->playerview), self->private->logo);
+  pitivi_viewerplayer_choose_mode_start (PITIVI_VIEWERPLAYER (self->private->playerview));
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET(self->private->playerview), TRUE, TRUE, 0);
+  
+  separator = gtk_hseparator_new ();
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET(separator), FALSE, FALSE, 0);
+  
+  gtk_widget_show_all (GTK_WIDGET(self));
+  
+  PitiviViewerController *controller = pitivi_viewercontroller_new();
+  self->private->media_controller = controller;
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET(controller), FALSE, FALSE, 0);
+  
+  self->private->statusbar = gtk_statusbar_new ();
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), GTK_WIDGET(self->private->statusbar), FALSE, FALSE, 0);
+  gtk_widget_show (self->private->statusbar);
+  
 }
 
 static void

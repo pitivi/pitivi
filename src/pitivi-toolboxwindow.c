@@ -33,6 +33,7 @@
 #include "pitivi-sourcelistwindow.h"
 #include "pitivi-newprojectwindow.h"
 #include "pitivi-effectswindow.h"
+#include "pitivi-viewerwindow.h"
 
 static GtkWindowClass *parent_class = NULL;
 
@@ -95,18 +96,21 @@ pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *
   PitiviTimelineWindow *timelinewin;
   PitiviSourceListWindow *srclistwin;
   PitiviEffectsWindow *effectswin;
+  PitiviViewerWindow *viewerwin;
     
   /* Source List Window */
-  timelinewin = pitivi_timelinewindow_new();
-  gtk_widget_show_all (GTK_WIDGET (timelinewin) ); 
+  //timelinewin = pitivi_timelinewindow_new();
+  //gtk_widget_show_all (GTK_WIDGET (timelinewin) ); 
   /* Source List Window */
-  srclistwin = pitivi_sourcelistwindow_new();
-  gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
+  //srclistwin = pitivi_sourcelistwindow_new();
+  //gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
   /* Effects Window */
-  effectswin = pitivi_effectswindow_new();
-  gtk_widget_show_all (GTK_WIDGET (effectswin) );
+  //effectswin = pitivi_effectswindow_new();
+  //gtk_widget_show_all (GTK_WIDGET (effectswin) );
+  
+   viewerwin = pitivi_viewerwindow_new();
+   //gtk_widget_show_all (GTK_WIDGET (viewerwin) );
 }
-
 
 static GtkActionEntry toolbox_menu_entries[] = {
   { "FileBoxMenu", NULL, "_File" },

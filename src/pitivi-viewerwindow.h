@@ -31,7 +31,7 @@
  */
 
 #include <gtk/gtk.h>
-
+#include "pitivi-stockicons.h"
 
 /*
  * Type macros.
@@ -43,6 +43,8 @@
 #define PITIVI_IS_VIEWERWINDOW(obj) (G_TYPE_CHECK_TYPE ((obj), PITIVI_VIEWERWINDOW_TYPE))
 #define PITIVI_IS_VIEWERWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_VIEWERWINDOW_TYPE))
 #define PITIVI_VIEWERWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_VIEWERWINDOW_TYPE, PitiviViewerWindowClass))
+
+#define PITIVI_APP_LOGO_PATH "/root/pitivi/pixmaps/pitivi-logo.png"
 
 typedef struct _PitiviViewerWindow PitiviViewerWindow;
 typedef struct _PitiviViewerWindowClass PitiviViewerWindowClass;

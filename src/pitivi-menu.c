@@ -71,7 +71,7 @@ struct  _PitiviMenuPrivate
  */
 
 PitiviMenu *
-pitivi_menu_new(GtkWidget*window, gchar *fname)
+pitivi_menu_new(GtkWidget *window, gchar *fname)
 {
   PitiviMenu	*menu;
 

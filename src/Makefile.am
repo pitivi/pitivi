@@ -24,6 +24,9 @@ pitivi_SOURCES		= \
 	pitivi-projectsourcelist.c \
 	pitivi-newprojectwindow.c  \
 	pitivi-viewerwindow.c \
+	pitivi-viewerplayer.c \
+	pitivi-viewercontroller.c \
+	pitivi-viewervolume.c \
 	pitivi-projectsettings.c \
 	pitivi-stockicons.c \
 	pitivi-menu-actions.c \
