@@ -88,13 +88,18 @@ void	video_play(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+  GdkEventExpose ev;
+  gboolean retval;
 
   if (self->private->play_status == PLAY) {
+    gtk_signal_emit_by_name (GTK_OBJECT (self->private->video_area), "expose_event", &ev, &retval);
     g_print ("[CallBack]:video_pause\n");
     self->private->play_status = PAUSE;
+    gst_element_set_state(project->pipeline, GST_STATE_PAUSED);
   } else if (self->private->play_status == PAUSE) {
     g_print ("[CallBack]:video_play\n");
     self->private->play_status = PLAY;
+    gst_element_set_state(project->pipeline, GST_STATE_PLAYING);
   } else if (self->private->play_status == STOP) {
     g_print ("[CallBack]:video_play\n");
     self->private->play_status = PLAY;
@@ -106,8 +111,11 @@ void	video_play(GtkWidget *widget, gpointer data)
 void	video_stop(GtkWidget *widget, gpointer data)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) data;
+  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
 
   g_print ("[CallBack]:video_stop\n");
+  //gst_element_set_state(project->pipeline, GST_STATE_NULL);
+  gst_element_set_state(project->pipeline, GST_STATE_READY);
   self->private->play_status = STOP;
   return ;
 }
