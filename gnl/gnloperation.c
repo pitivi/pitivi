@@ -24,6 +24,8 @@
 static void 		gnl_operation_class_init 	(GnlOperationClass *klass);
 static void 		gnl_operation_init 		(GnlOperation *operation);
 
+static GstElementStateReturn	gnl_operation_change_state (GstElement *element);
+
 static GnlObjectClass *parent_class = NULL;
 
 GType
@@ -51,13 +53,17 @@ gnl_operation_get_type (void)
 static void
 gnl_operation_class_init (GnlOperationClass *klass)
 {
-  GObjectClass *gobject_class;
+  GObjectClass		*gobject_class;
+  GstElementClass	*gstelement_class;
   GnlObjectClass        *gnlobject_class;
 
   gobject_class =       (GObjectClass*)klass;
+  gstelement_class =	(GstElementClass*)klass;
   gnlobject_class =     (GnlObjectClass*)klass;
 
   parent_class = g_type_class_ref (GNL_TYPE_OBJECT);
+
+  gstelement_class->change_state	= gnl_operation_change_state;
 }
 
 static void
@@ -70,6 +76,7 @@ static void
 gnl_operation_set_element (GnlOperation *operation, GstElement *element)
 {
   const GList *walk;
+  gboolean	foundsrc = FALSE;
 
   operation->element = element;
 
@@ -78,14 +85,22 @@ gnl_operation_set_element (GnlOperation *operation, GstElement *element)
   walk = gst_element_get_pad_list (element);
   while (walk) {
     GstPad *pad = GST_PAD (walk->data);
-
+    
     if (GST_PAD_IS_SRC(pad)) {
+      if (foundsrc)
+	GST_WARNING ("More than one srcpad in %s", gst_element_get_name(GST_ELEMENT (operation)));
+      else
+	foundsrc = TRUE;
       operation->queue = gst_element_factory_make("queue", "operation-queue");
       gst_bin_add(GST_BIN (operation), operation->queue);
-      gst_element_link(element, operation->queue);
-      gst_element_add_ghost_pad (GST_ELEMENT (operation),
-                                 gst_element_get_pad (operation->queue, "src"),
-                                 gst_object_get_name (GST_OBJECT(pad)));
+      if (!gst_element_link(element, operation->queue))
+	GST_WARNING ("Couldn't link %s and operation-queue",
+		     gst_element_get_name(element));
+      if (!gst_element_add_ghost_pad (GST_ELEMENT (operation),
+				      gst_element_get_pad (operation->queue, "src"),
+				      GST_PAD_NAME(pad)))
+	GST_WARNING ("Couldn't add ghost pad src from pad %s:%s !",
+		     GST_DEBUG_PAD_NAME (pad));
     } else {
       gst_element_add_ghost_pad (GST_ELEMENT (operation),
 				 pad, gst_object_get_name (GST_OBJECT (pad)));
@@ -108,6 +123,9 @@ GnlOperation*
 gnl_operation_new (const gchar *name, GstElement *element)
 {
   GnlOperation *operation;
+
+  GST_INFO ("new name:%s element:%s",
+	    name, gst_element_get_name(element));
 
   g_return_val_if_fail (name != NULL, NULL);
 
@@ -134,3 +152,31 @@ gnl_operation_get_num_sinks (GnlOperation *operation)
 
 
 
+static GstElementStateReturn
+gnl_operation_change_state (GstElement *element)
+{
+/*   GnlOperation	*oper = GNL_OPERATION (element); */
+
+  switch (GST_STATE_TRANSITION(element)) {
+  case GST_STATE_NULL_TO_READY:
+    GST_INFO ("NULL -> READY");
+    break;
+  case GST_STATE_READY_TO_PAUSED:
+    GST_INFO ("READY -> PAUSED");
+    break;
+  case GST_STATE_PAUSED_TO_PLAYING:
+    GST_INFO ("PAUSED -> PLAYING");
+    break;
+  case GST_STATE_PLAYING_TO_PAUSED:
+    GST_INFO ("PLAYING -> PAUSED");
+    break;
+  case GST_STATE_PAUSED_TO_READY:
+    GST_INFO ("PAUSED -> READY");
+    break;
+  case GST_STATE_READY_TO_NULL:
+    GST_INFO ("READY -> NULL");
+    break;
+  }
+
+  return GST_ELEMENT_CLASS (parent_class)->change_state (element);
+}

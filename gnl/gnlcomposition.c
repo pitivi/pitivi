@@ -576,7 +576,11 @@ gnl_composition_schedule_operation (GnlComposition *comp, GnlOperation *oper,
     GST_INFO ("Linking source pad %s:%s to operation pad %s:%s",
 	      GST_DEBUG_PAD_NAME (newpad),
 	      GST_DEBUG_PAD_NAME (sinkpad));
-    gst_pad_link (newpad, sinkpad);
+    if (!gst_pad_link (newpad, sinkpad))
+      GST_WARNING ("Couldn't link source pad to operation pad");
+    else
+      GST_INFO ("pads were linked with caps:%s",
+		gst_caps_to_string(gst_pad_get_caps(sinkpad)));
   }
 
   GST_INFO("Finished");
@@ -628,9 +632,6 @@ gnl_composition_schedule_entries(GnlComposition *comp, GstClockTime start,
     return FALSE;
 
   obj = compentry->object;
-
-  /* De-activate active objects */
-  gnl_composition_deactivate_childs (comp);
 
   /* 
      Find the following object
@@ -746,6 +747,9 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
     gst_element_remove_pad (GST_ELEMENT (comp), ghost);
   } else
     GST_INFO("No existing ghost pad and probe");
+
+  /* De-activate previously active objects */
+  gnl_composition_deactivate_childs (comp);
 
   /* Scbedule the entries from start_pos */
 

@@ -371,41 +371,6 @@ source_unlink (GstPad *pad)
   GST_INFO("unlinking !!!");
 }
 
-/*
-  source_probe
-
-  Checks if the data coming out of the source's element is not after the seek_stop position
-  If it is, it sets the source's element to EOS and discards the data
-*/
-
-/* gboolean */
-/* source_probe (GstProbe *probe, GstData **data, gpointer udata) */
-/* { */
-/*   GnlSource *source = GNL_SOURCE(udata); */
-  
-/*   GST_INFO("source probe %s --> %lld:%lld:%lld  object[%lld:%lld:%lld]->[%lld:%lld:%lld]  media[%lld:%lld:%lld]->[%lld:%lld:%lld] seek[%lld:%lld:%lld]->[%lld:%lld:%lld]", */
-/* 	   gst_element_get_name(GST_ELEMENT(source)), */
-/* 	   GST_M_S_M(GST_BUFFER_TIMESTAMP(*data)), */
-/* 	   GST_M_S_M(GNL_OBJECT(source)->start), */
-/* 	   GST_M_S_M(GNL_OBJECT(source)->stop), */
-/* 	   GST_M_S_M(GNL_OBJECT(source)->media_start), */
-/* 	   GST_M_S_M(GNL_OBJECT(source)->media_stop), */
-/* 	   GST_M_S_M(source->private->seek_start), */
-/* 	   GST_M_S_M(source->private->seek_stop)); */
-
-/*   if (GST_IS_BUFFER (*data)  */
-/*       && GST_CLOCK_TIME_IS_VALID(source->private->seek_stop) */
-/*       && (GST_BUFFER_TIMESTAMP(*data) >= source->private->seek_stop)) { */
-/*     GST_INFO("buffer is older than seek_stop, sending EOS on GnlSourceElement"); */
-/*     /\* The data is after the end of seek , set the source element to EOS *\/ */
-/*     gst_element_set_eos(source->element); */
-/*     gnl_object_set_active(GNL_OBJECT(source), FALSE); */
-/*     return FALSE; /\* We don't want this data to carry on *\/ */
-/*   } */
-  
-/*   return TRUE; */
-/* } */
-
 /** 
  * gnl_source_get_pad_for_stream:
  * @source: The source element to query
@@ -458,10 +423,6 @@ gnl_source_get_pad_for_stream (GnlSource *source, const gchar *padname)
   pad = gst_element_get_pad (source->element, padname);
 
   source->total_pads++;
-
-  /* Adding probe to private->srcpad */
-/*   private->probe = gst_probe_new (FALSE, source_probe, source); */
-/*   gst_pad_add_probe (private->srcpad, private->probe); */
 
   if (pad) {
     GST_INFO("%s linked straight away with %s",
@@ -897,7 +858,7 @@ gnl_source_change_state (GstElement *element)
 		gst_element_get_name(element));
     return GST_STATE_FAILURE;
   }
-  GST_INFO("%s : change_state returns %d!%d",
+  GST_INFO("%s : change_state returns %d/%d",
 	   gst_element_get_name(element),
 	   res, res2);
   return res2;
