@@ -48,6 +48,7 @@ typedef struct _PitiviDefaultTracks
   guint track_nb;
   guint	track_type;
   gchar *track_name;
+  guint track_linked;
 } PitiviDefaultTracks;
 
 struct _PitiviTimelineWindowPrivate
@@ -85,14 +86,14 @@ struct _PitiviTimelineWindowPrivate
 
 static PitiviDefaultTracks gtab_tracks[]=
   {
-    {0, PITIVI_VIDEO_TRACK, "Video A"},
-    {1, PITIVI_EFFECTS_TRACK, "Fx A"},
-    {2, PITIVI_TRANSITION_TRACK, "Transition"},
-    {3, PITIVI_EFFECTS_TRACK, "Fx B"},
-    {4, PITIVI_VIDEO_TRACK, "Video B"},
-    {-1, -1, NULL},
-    {5, PITIVI_AUDIO_TRACK, "Audio A"},
-    {6, PITIVI_AUDIO_TRACK, "Audio B"},
+    {0, PITIVI_VIDEO_TRACK, "Video A", 5},
+    {1, PITIVI_EFFECTS_TRACK, "Fx A",  0},
+    {2, PITIVI_TRANSITION_TRACK, "Transition", -1},
+    {3, PITIVI_EFFECTS_TRACK, "Fx B",  4},
+    {4, PITIVI_VIDEO_TRACK, "Video B", 6},
+    {-1, -1, NULL, -2},
+    {5, PITIVI_AUDIO_TRACK, "Audio A", 0},
+    {6, PITIVI_AUDIO_TRACK, "Audio B", 4},
   };
 
 /*
@@ -225,7 +226,7 @@ create_timeline_menu (PitiviTimelineWindow *self)
 }
 
 void	
-create_timeline_toolbox (PitiviTimelineWindow *self)
+create_timeline_toolbar (PitiviTimelineWindow *self)
 {
   PitiviMainApp	*mainapp;
   GtkWidget	*sep;
@@ -239,7 +240,7 @@ create_timeline_toolbox (PitiviTimelineWindow *self)
   // self->toolbox = pitivi_toolbox_new (mainapp);
   // gtk_box_pack_start (GTK_BOX (hbox), GTK_WIDGET(self->toolbox),
   //		      FALSE, TRUE, 0);
-
+  
   /* Separator */
   
   sep = gtk_vseparator_new ();
@@ -277,19 +278,30 @@ check_track (GtkWidget *widget, PitiviTimelineCellRenderer *cells)
 }
 
 void
-create_timer_label (PitiviTimelineWindow *self)
+create_toolbox (PitiviTimelineWindow *self)
 {
   PitiviMainApp	*mainapp;
   GtkWidget	*sep;
 
-  // self->current_time = gtk_label_new ("00:00:00");
   mainapp = ((PitiviWindows *) self)->mainapp;
   self->toolbox = pitivi_toolbox_new (mainapp);
   gtk_toolbar_set_icon_size (GTK_TOOLBAR (self->toolbox), GTK_ICON_SIZE_SMALL_TOOLBAR);
   sep = gtk_hseparator_new ();
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), self->toolbox, FALSE, FALSE, 0);
-  //gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), self->current_time, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), sep, FALSE, FALSE, 0);
+}
+
+void
+create_ruler (PitiviTimelineWindow *self)
+{
+  self->private->hruler = gtk_hruler_new ();
+  self->hruler = self->private->hruler;
+  gtk_ruler_set_metric (GTK_RULER (self->private->hruler), GTK_PIXELS);
+  gtk_ruler_set_range (GTK_RULER (self->private->hruler), 0, 7200, 0, 120);
+  gtk_widget_set_usize (self->hruler, 7200, 30);
+  g_signal_connect_swapped (G_OBJECT (self->private->main_vbox), "motion_notify_event",
+			    G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
+			    G_OBJECT (self->private->hruler));
 }
 
 #define create_separator(box, width, height) create_separator_color (box, NULL, width, height);
@@ -311,53 +323,66 @@ create_separator_color (GtkWidget *box, gchar *colorname, int width, int height)
   gtk_box_pack_start (GTK_BOX (box), sep, FALSE, FALSE, 0);
 }
 
+void
+create_tracks_links (PitiviTimelineCellRenderer **cell)
+{
+  int   len;
+  int	i, j;
+
+  len = (sizeof (gtab_tracks)/sizeof(PitiviDefaultTracks));
+  for (i = 0; i < len; i++)
+    {
+      for (j = 0; j < len; j++)
+	if (gtab_tracks[i].track_nb == gtab_tracks[j].track_linked)
+	  if (gtab_tracks[i].track_type != PITIVI_EFFECTS_TRACK)
+	    if (cell[i])
+	      cell[i]->linked_track = cell[j];
+    }
+}
+
 void	
 create_tracks (PitiviTimelineWindow *self)
 {
-  GtkWidget		*cell;
-  GtkWidget		*nfo;
-  int			count, len = 0;
+  int count = 0;
+  int len = (sizeof (gtab_tracks)/sizeof(PitiviDefaultTracks));
+  GtkWidget *cell[len];
+  GtkWidget *nfo;
 
   self->private->hpaned = gtk_hpaned_new();
-  self->private->main_vbox_left = gtk_vbox_new (FALSE, 0);
-  create_timer_label (self);
+  self->private->main_vbox_left = gtk_vbox_new (FALSE, 0); 
   
+  create_toolbox (self);
   gtk_paned_set_position(GTK_PANED(self->private->hpaned), (80));
   self->private->main_vbox_right = gtk_vbox_new (FALSE, 0);
   
-  self->private->hruler = gtk_hruler_new ();
-  self->hruler = self->private->hruler;
-  gtk_ruler_set_metric (GTK_RULER (self->private->hruler), GTK_PIXELS);
-  gtk_ruler_set_range (GTK_RULER (self->private->hruler), 0, 7200, 0, 120);
-  gtk_widget_set_usize (self->hruler, 7200, 30);
-  g_signal_connect_swapped (G_OBJECT (self->private->main_vbox), "motion_notify_event",
-			    G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
-			    G_OBJECT (self->private->hruler));
   // Docking Ruler
   
+  create_ruler (self);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), self->private->hruler, FALSE, FALSE, 0);     
 
   // Creating Tracks
-
-  for (count = 0, len = (sizeof (gtab_tracks)/sizeof(PitiviDefaultTracks)); count < len; count++)
+  
+  for (count = 0; count < len; count++)
     {
       if (gtab_tracks[count].track_type != -1)
 	{
-	  cell = pitivi_timelinecellrenderer_new (gtab_tracks[count].track_nb, gtab_tracks[count].track_type);
-	  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), cell, FALSE, FALSE, 0);
+	  cell[count] = pitivi_timelinecellrenderer_new (gtab_tracks[count].track_nb, gtab_tracks[count].track_type);
+	  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), cell[count], FALSE, FALSE, 0);
 	  create_separator_color (self->private->main_vbox_right, "black", -1, 5);
 	  
-	  nfo = (GtkWidget *) pitivi_mediatrackinfo_new (cell, gtab_tracks[count].track_name);
+	  nfo = pitivi_mediatrackinfo_new (cell[count], gtab_tracks[count].track_name);
 	  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left),  nfo, FALSE, FALSE, 0);
 	  create_separator (self->private->main_vbox_left, -1, 5);
 	}
       else
-	{
+	{ 
+	  cell[count] = NULL;
 	  create_separator_color (self->private->main_vbox_right, "black", -1, 5);
 	  create_separator (self->private->main_vbox_left, -1, 5);
 	}
     }
   
+  create_tracks_links (cell);
   g_signal_connect_swapped (G_OBJECT (GTK_LAYOUT (cell)), "motion_notify_event",
 			    G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
 			    G_OBJECT (self->private->hruler));
@@ -407,7 +432,7 @@ pitivi_timelinewindow_constructor (GType type,
   create_timeline_menu (self);
   
   /* Timeline Toolbox */
-  create_timeline_toolbox (self);
+  create_timeline_toolbar (self);
   
   /* Create Tracks */
   create_tracks (self);

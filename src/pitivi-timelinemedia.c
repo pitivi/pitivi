@@ -92,7 +92,7 @@ pitivi_timelinemedia_new (PitiviSourceFile *sf)
   PitiviTimelineMedia	*timelinemedia;
   PitiviLayerType	type;
    
-  type = PITIVI_VIDEO_AUDIO_TRACK;
+  type = PITIVI_NO_TRACK;
   if (sf)
     type = check_media_type (sf);
   
@@ -102,6 +102,7 @@ pitivi_timelinemedia_new (PitiviSourceFile *sf)
 						       "media_type",
 						       type,
 						       NULL);
+  timelinemedia->sourceitem->srcfile = sf;
   g_assert(timelinemedia != NULL);
   return timelinemedia;
 }
@@ -111,24 +112,25 @@ pitivi_timelinemedia_constructor (GType type,
 				  guint n_construct_properties,
 				  GObjectConstructParam * construct_properties)
 {
-  GObject *obj;
-  {
-    /* Invoke parent constructor. */
-    PitiviTimelineMediaClass *klass;
-    GObjectClass *parent_class;
-    klass = PITIVI_TIMELINEMEDIA_CLASS (g_type_class_peek (PITIVI_TIMELINEMEDIA_TYPE));
-    parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
-    obj = parent_class->constructor (type, n_construct_properties,
-				     construct_properties);
-  }
+  GObject *object;
+  PitiviTimelineMedia *self;
+  PitiviTimelineMediaClass *klass;
+  GObjectClass *parent_class;
 
-  /* do stuff. */
+  klass = PITIVI_TIMELINEMEDIA_CLASS (g_type_class_peek (PITIVI_TIMELINEMEDIA_TYPE));
+  parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
+  object = parent_class->constructor (type, n_construct_properties,
+				      construct_properties);
   
-  return obj;
+  self = (PitiviTimelineMedia *) object;
+  self->sourceitem = g_new0 (PitiviSourceItem, 1);
+  /* to change */
+  self->sourceitem->gnlsource = g_new0 (PitiviSourceItem, 1);
+  return object;
 }
 
 
-void 
+void
 draw_selection_dash (GtkWidget *widget, int width)
 {
   char dash [2] = {4, 4};
@@ -189,7 +191,7 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
 		      TRUE, 0, 0,
 		      widget->allocation.width-2, -1);
   
-  if (self->sf->filename)
+  /*if (self->sf->filename)
     {
       tab = g_strsplit (self->sf->filename, "/", 20);
       for (i = 0; tab[i] != NULL; i++);
@@ -202,7 +204,8 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
 			GTK_STATE_NORMAL, FALSE,
 			&event->area, widget, "mediadefault",
 			5, 15, layout);
-    }
+			}
+   */
   return FALSE;
 }
 
@@ -214,21 +217,16 @@ pitivi_timelinemedia_drag_get  (GtkWidget          *widget,
 				guint32             time,
 				gpointer	    dragging)
 {
-  PitiviCursor *cursor;
   PitiviTimelineCellRenderer *cell;
   PitiviTimelineMedia	*self = PITIVI_TIMELINEMEDIA (widget);
-  PitiviTimelineMedia	*destwidget;
   
-
-  cursor = pitivi_getcursor_id (widget);
-  destwidget = g_new0 (PitiviTimelineMedia, 1);
-  memcpy (destwidget, self, sizeof (PitiviTimelineMedia));
   gtk_selection_data_set (selection_data, selection_data->target, 
-			  8, (void *) destwidget, 
-			  sizeof (PitiviTimelineMedia));
-  cell = (PitiviTimelineCellRenderer *) gtk_widget_get_parent (widget);
-  cell->motion_area->x = widget->allocation.width;
-  cell->motion_area->width = widget->allocation.width;
+			  8, (void *) self, 
+			  sizeof (*self));
+  
+  //cell = (PitiviTimelineCellRenderer *) gtk_widget_get_parent (widget);
+  //cell->motion_area->x = widget->allocation.width;
+  //cell->motion_area->width = widget->allocation.width;
 }
 
 
@@ -237,10 +235,10 @@ pitivi_timelinemedia_drag_delete  (GtkWidget          *widget,
 				   GdkDragContext     *context,
 				   gpointer	      dragging)
 {
-  GtkContainer *container;
+  //GtkContainer *container;
   
-  container = (GtkContainer *) gtk_widget_get_parent ( widget );
-  pitivi_timelinecellrenderer_remove (container, GTK_WIDGET ( widget ));
+  //  container = (GtkContainer *) gtk_widget_get_parent ( widget );
+  // pitivi_timelinecellrenderer_remove (container, GTK_WIDGET ( widget ));
 }
 
 static void

@@ -74,6 +74,7 @@ struct _PitiviTimelineCellRenderer
   PitiviLayerType	track_type;
   guint			track_nb;
   GList			*children;
+  GtkWidget		*linked_track;
   GdkRectangle		*motion_area;
   
   /* private */
@@ -114,5 +115,10 @@ void		pitivi_timelinecellrenderer_activate (PitiviTimelineCellRenderer *self);
 void		pitivi_timelinecellrenderer_deactivate (PitiviTimelineCellRenderer *self);
 void		pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self );
 void		pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
+
+/* Drag and drop */
+
+void		pitivi_timelinecellrenderer_drag_motion (GtkWidget *widget, GdkDragContext *drag_context, gint x, gint y, guint time);
+void		pitivi_timelinecellrenderer_drag_on_source_file (PitiviTimelineCellRenderer *self, GtkSelectionData *selection, int x, int y);
 
 #endif

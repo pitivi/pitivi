@@ -41,10 +41,11 @@ typedef enum
 
 struct _PitiviSourceItem
 {
-  PitiviSourceFile	*sf;
   PitiviPiste		piste;
   gboolean		isaudio;
-  GnlSource		*source;
+  PitiviSourceFile	*srcfile;
+  GnlSource		*gnlsource;
 };
 
 #endif
+

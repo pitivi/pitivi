@@ -61,7 +61,6 @@ struct _PitiviTimelineMedia
   GtkWidget parent;
 
   /* instance public members */
-  
   PitiviSourceFile *sf;
   PitiviSourceItem *sourceitem;
   GtkWidget        *linked;
