@@ -10,7 +10,8 @@ dnl ------------------------------------------------------------
 dnl GC	   20/02/2004	0.1.1	Upgrading Version of GLIB to 2.3
 dnl GC	   20/03/2004	0.1.1	Upgrading Version of GLIB to 2.4
 dnl EH	   26/04/2004	0.1.1	Uses the common/ macros
-dnl
+dnl GC	   02/05/2004	0.1.1	erasing comment line libglade
+dnl				+ adding dependence AC_OUTPUT (Pixmaps)
 dnl*************************************************************
 
 AC_INIT
@@ -81,25 +82,6 @@ if test "x$GST_WALL" = "xyes"; then
 	AS_COMPILER_FLAG(-Werror,GST_ERROR="$GST_ERROR -Werror",GST_ERROR="$GST_ERROR")
    fi
 fi
-
-
-
-dnl =============================
-dnl Cheching Presence of LIBGLADE
-dnl =============================
-
-dnl LIBGLADE_VERSION=2.0
-dnl LIBGLADE_REQUIRED=2.0
-
-dnl PKG_CHECK_MODULES(LIBGLADE, libglade-$LIBGLADE_VERSION, libglade=true, libglade=false)
-dnl AM_CONDITIONAL(HAVE_LIBGLADE, test x$libglade = xtrue)
-dnl if test "$libglade" = "true"; then
-dnl 	LIBGLADE_CFLAGS=`$PKG_CONFIG --cflags libglade-2.0`
-dnl 	LIBGLADE_LIBS=`$PKG_CONFIG --libs libglade-2.0`
-dnl 	AC_SUBST(LIBGLADE_CFLAGS)
-dnl 	AC_SUBST(LIBGLADE_LIBS)
-dnl fi
-
 
 dnl Now we're ready to ask for gstreamer libs and cflags
 dnl And we can also ask for the right version of gstreamer
@@ -176,4 +158,6 @@ dnl AC_SUBST(CC, "gcc")
 dnl Outputs
 AC_OUTPUT(Makefile 
          src/Makefile
+	 pixmaps/Makefile
+	 ui/Makefile
 	 )
