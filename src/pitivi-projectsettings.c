@@ -304,16 +304,37 @@ PitiviProjectSettings *
 pitivi_projectsettings_copy(PitiviProjectSettings *self)
 {
   PitiviProjectSettings	*res;
-  GSList		*mset;
+  GSList		*mset, *cset;
+  PitiviMediaSettings	*cat1, *cat2;
+  PitiviSettingsValue	*val1, *val2;
 
   res = pitivi_projectsettings_new();
   res->name = g_strdup(self->name);
   res->description = g_strdup(self->description);
-  /*
-    TODO
+  res->media_settings = NULL;
+  
+  for (mset = res->media_settings; mset; mset = mset->next) {
+    cat1 = (PitiviMediaSettings *) mset->data;
+    cat2 = g_new0(PitiviMediaSettings, 1);
 
-    copy the other properties
-  */
+    cat2->codec_factory_name = g_strdup(cat1->codec_factory_name);
+    cat2->codec_settings = NULL;
+
+    for (cset = cat1->codec_settings; cset; cset = cset->next) {
+      val1 = (PitiviSettingsValue *) cset->data;
+      val2 = g_new0(PitiviSettingsValue, 1);
+      
+      val2->name = g_strdup(val1->name);
+      g_value_init(&(val2->value), G_VALUE_TYPE(&(val1->value)));
+      g_value_copy(&(val1->value), &(val2->value));
+      
+      cat2->codec_settings = g_slist_append(cat2->codec_settings, val2);
+    }
+
+    cat2->caps = gst_caps_copy(cat1->caps);
+    res->media_settings = g_slist_append(res->media_settings, cat2);
+  }
+
   return res;
 }
 

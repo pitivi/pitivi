@@ -74,11 +74,11 @@ GType pitivi_project_get_type (void);
  * Method definitions.
  */
 
-PitiviProject *pitivi_project_new (PitiviProjectSettings *settings);
-PitiviProject *pitivi_project_new_from_file (const gchar *filename);
-gboolean pitivi_project_save_to_file(PitiviProject *project, const gchar *filename);
-void pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self);
-xmlDocPtr pitivi_project_save_thyself(PitiviProject *project);
+PitiviProject	*pitivi_project_new (PitiviProjectSettings *settings);
+PitiviProject	*pitivi_project_new_from_file (const gchar *filename);
+gboolean	pitivi_project_save_to_file(PitiviProject *project, const gchar *filename);
+void		pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self);
+xmlDocPtr	pitivi_project_save_thyself(PitiviProject *project);
 
 
 #endif
