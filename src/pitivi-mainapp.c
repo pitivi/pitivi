@@ -451,7 +451,6 @@ pitivi_mainapp_constructor (GType type,
     PITIVI_WARNING ("Couldn't find valid local conf file %s", settingsfile);
     g_free(settingsfile);
     settingsfile = g_strdup_printf("%s/pitivi", CONFDIR);
-    self->global_settings = pitivi_settings_new();
     if ( g_file_test(settingsfile, G_FILE_TEST_EXISTS) &&
 	 (self->global_settings = pitivi_settings_load_from_file(settingsfile)))
       g_free(settingsfile);
