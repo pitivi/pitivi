@@ -30,6 +30,7 @@
 #include	"pitivi-projectsettings.h"
 #include	"pitivi-mainapp.h"
 
+
 static GtkWindowClass	*parent_class = NULL;
 
 enum {
@@ -104,7 +105,7 @@ GtkWidget	*pitivi_make_presets_hbox	( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_create_presets_table	( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_settings_table	( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_video_frame	( PitiviNewProjectWindow	*self );
-GtkWidget	*pitivi_make_audio_frame	( );
+GtkWidget	*pitivi_make_audio_frame	( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_name_frame		( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_cat_frame		( PitiviNewProjectWindow	*self );
 
@@ -512,15 +513,19 @@ pitivi_make_name_frame(PitiviNewProjectWindow *self)
   name_frame = gtk_frame_new("General");
   name_table =  gtk_table_new(2, 2, FALSE);
   name_label = gtk_label_new("Name :");
+  gtk_misc_set_alignment (GTK_MISC (name_label), 0.0f, 0.0f);
+  gtk_misc_set_padding (GTK_MISC (name_label), 5, 0);
   gtk_table_attach (GTK_TABLE(name_table), name_label,
-		    0, 1, 0, 1, FALSE, FALSE, 5, 5);
+		    0, 1, 0, 1, GTK_FILL, FALSE, 5, 5);
 
   self->private->name_text = gtk_entry_new();
   gtk_table_attach (GTK_TABLE(name_table), self->private->name_text, 
 		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
   desc_label = gtk_label_new("Description :");
+  gtk_misc_set_alignment (GTK_MISC (desc_label), 0.0f, 0.0f);
+  gtk_misc_set_padding (GTK_MISC (desc_label), 5, 0);
   gtk_table_attach (GTK_TABLE(name_table), desc_label, 
-		    0, 1, 1, 2, FALSE, FALSE, 5, 5);
+		    0, 1, 1, 2, GTK_FILL, FALSE, 5, 5);
   /* Creation du champs texte de description */
   /* Ajout du scrolling pour le champ texte */
   name_scroll = gtk_scrolled_window_new(NULL, NULL);
@@ -584,6 +589,7 @@ pitivi_make_cat_frame(PitiviNewProjectWindow *self)
   return (cat_frame);
 }
 
+
 GtkWidget*
 pitivi_make_video_frame(PitiviNewProjectWindow *self)
 {
@@ -644,8 +650,10 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
 
   /* Premier label "codecs" */
   video_label_codec = gtk_label_new("Codecs : ");
+  gtk_misc_set_alignment (GTK_MISC (video_label_codec), 0.0f, 0.0f);
+  gtk_misc_set_padding (GTK_MISC (video_label_codec), 5, 0);
   gtk_table_attach (GTK_TABLE(video_table), video_label_codec, 
-		    0, 1, 0, 1, FALSE, FALSE, 5, 5);
+		    0, 1, 0, 1, GTK_FILL, FALSE, 5, 5);
   
   /*   Champ texte "codecs" */
   self->private->video_combo_codec = gtk_combo_box_new_text();
@@ -690,13 +698,15 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
   /* Deuxieme label "size" */
   video_label_size = gtk_label_new("Size : ");
   gtk_table_attach (GTK_TABLE(video_table), video_label_size, 
-		    0, 1, 1, 2, FALSE, FALSE, 5, 5);
-  
-/* champ texte "width" */
-  self->private->size_width = gtk_entry_new();
-  gtk_entry_set_width_chars (GTK_ENTRY(self->private->size_width), 5);
-  gtk_entry_set_text(GTK_ENTRY (self->private->size_width), "720");
-  gtk_box_pack_start(GTK_BOX (size_hbox), self->private->size_width, FALSE, FALSE, 0);
+		    0, 1, 1, 2, GTK_FILL, FALSE, 5, 5);
+  gtk_misc_set_alignment (GTK_MISC (video_label_size), 0.0f, 0.0f);
+  gtk_misc_set_padding (GTK_MISC (video_label_size), 5, 0);
+
+  /* champ texte "width" */
+  size_width = gtk_entry_new();
+  gtk_entry_set_width_chars (GTK_ENTRY(size_width), 5);
+  gtk_entry_set_text(GTK_ENTRY (size_width), "720");
+  gtk_box_pack_start(GTK_BOX (size_hbox), size_width, FALSE, FALSE, 0);
 
   /* label "X" */
   size_label_x = gtk_label_new("X");
@@ -725,8 +735,10 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
 
   /*   Troisieme label "Fps" */
   video_label_fps = gtk_label_new("Rate : ");
+  gtk_misc_set_alignment (GTK_MISC (video_label_fps), 0.0f, 0.0f);
+  gtk_misc_set_padding (GTK_MISC (video_label_fps), 5, 0);
   gtk_table_attach (GTK_TABLE(video_table), video_label_fps, 
-		    0, 1, 2, 3, FALSE, FALSE, 5, 5);
+		    0, 1, 2, 3, GTK_FILL, FALSE, 5, 5);
   
 
 /*   champ texte "Fps" */
@@ -805,8 +817,10 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
   j = 0;  
   /* Premier label "codecs" */
   audio_label_codec = gtk_label_new("Codecs : ");
+  gtk_misc_set_alignment (GTK_MISC (audio_label_codec), 0.0f, 0.0f);
+  gtk_misc_set_padding (GTK_MISC (audio_label_codec), 5, 0);
   gtk_table_attach (GTK_TABLE(audio_table), audio_label_codec, 
-		    0, 1, 0, 1, FALSE, FALSE, 5, 5);
+		    0, 1, 0, 1, GTK_FILL, FALSE, 5, 5);
  
   /* acodec_hbox */
   acodec_hbox = gtk_hbox_new(FALSE, 5);
@@ -848,8 +862,10 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
 
   /* Deuxieme label "frequence" */
   audio_label_freq = gtk_label_new("Rate : ");
+  gtk_misc_set_alignment (GTK_MISC (audio_label_freq), 0.0f, 0.0f);
+  gtk_misc_set_padding (GTK_MISC (audio_label_freq), 5, 0);
   gtk_table_attach (GTK_TABLE(audio_table), audio_label_freq, 
-		    0, 1, 1, 2, FALSE, FALSE, 5, 5);
+		    0, 1, 1, 2, GTK_FILL, FALSE, 5, 5);
 
   /* arate_hbox */
   arate_hbox = gtk_hbox_new(FALSE, 5);
@@ -866,8 +882,10 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
 
   /* Troisieme label "echantillonage" */
   audio_label_ech = gtk_label_new("Channels : ");
+  gtk_misc_set_alignment (GTK_MISC (audio_label_ech), 0.0f, 0.0f);
+  gtk_misc_set_padding (GTK_MISC (audio_label_ech), 5, 0);
   gtk_table_attach (GTK_TABLE(audio_table), audio_label_ech, 
-		    0, 1, 2, 3, FALSE, FALSE, 5, 5);
+		    0, 1, 2, 3, GTK_FILL, FALSE, 5, 5);
 
   /* achannels_hbox */
   achannels_hbox = gtk_hbox_new(FALSE, 5);
@@ -882,6 +900,7 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
   gtk_container_set_border_width (GTK_CONTAINER (audio_frame), 5);
   return (audio_frame);   
 }
+
 
 void
 create_codec_conf_video(GtkButton *button, gpointer user_data)

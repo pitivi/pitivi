@@ -1,3 +1,7 @@
+2037-03-15    <loic@localhost>
+
+	* src/pitivi-newprojectwindow.c : Implementation de la justification des labels dans l'onglet settings
+
 2004-05-15    <ez3kiel@localhost>
 
 	* src/pitivi-newprojectwindow.c (pitivi_newprojectwindow_new): Passage du parametre PitiviMainApp a la PitiviNewprojectWindow
