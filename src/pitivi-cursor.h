@@ -60,14 +60,8 @@ struct _PitiviCursor
 };
 
 /* Cursor Functions */
-
-#define	      load_cursor(win, cursor, type) load_cursor_size (win, cursor, type, CST_WIDTH, CST_HEIGHT, CST_X_HOT, CST_Y_HOT)
-void	      load_cursor_size (GdkWindow *win, 
+void	      load_cursor (GdkWindow *win, 
 				PitiviCursor *pitivi_cursor, 
-				PitiviCursorType PiCursorType,
-				int width,
-				int height,
-				int x_hot,
-				int y_hot);
+				PitiviCursorType PiCursorType);
 
 #endif

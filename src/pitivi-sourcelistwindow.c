@@ -1654,6 +1654,17 @@ void	pitivi_sourcelistwindow_load_project(PitiviSourceListWindow *self)
  *********************************************************
 */
 
+/**
+ * pitivi_sourcelistwindow_new:
+ * @PitiviMainApp: The object containing all references of the application
+ * @PitiviProject: The object containing all references of the multimedia project
+ *
+ * Creates a new window stocking the multimedia's sources
+ *
+ * Returns: An element PitiviSourceListWindow, a window
+ * containing a list a multimedia's sources
+ */
+
 PitiviSourceListWindow *
 pitivi_sourcelistwindow_new(PitiviMainApp *mainapp, PitiviProject *project)
 {

@@ -134,48 +134,9 @@ GType pitivi_timelinewindow_get_type (void);
 
 PitiviTimelineWindow	*pitivi_timelinewindow_new (PitiviMainApp *mainapp);
 PitiviMainApp		*pitivi_timelinewindow_get_mainApp (PitiviTimelineWindow	*timelinewindow);
-GtkWidget		*pitivi_timelinewindow_get_right_view (PitiviTimelineWindow *self);
 GtkWidget		*pitivi_timelinewindow_get_container (PitiviTimelineWindow *self);
 void			pitivi_timelinewindow_windows_set_action (PitiviTimelineWindow *self, gchar *name,
 								  gboolean status);
-
-/* ********* */
-/* Callbacks */
-/* ********* */
-
-void
-pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self );
-
-void
-pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self );
-
-void
-pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self );
-
-void
-pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self );
-
-void
-pitivi_callb_menufile_saveas ( GtkAction *action, PitiviTimelineWindow *self);
-
-void
-pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self );
-
-void
-pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self );
-
-void
-pitivi_callb_menufile_effectswindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
-
-void
-pitivi_callb_menufile_sourcelistwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
-
-void
-pitivi_callb_menufile_viewerwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
-
-gboolean
-pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow * widget, GdkEventKey* event, gpointer data);
-
 /* ********* */
 /* Utils     */
 /* ********* */
@@ -190,6 +151,6 @@ void
 pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self);
 
 gboolean
-pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *event, gpointer data);
+pitivi_timelinewindow_configure_event (GtkWidget *widget);
 
 #endif

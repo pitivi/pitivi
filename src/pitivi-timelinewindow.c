@@ -150,6 +150,44 @@ enum {
 
 static  guint signals[LAST_SIGNAL];
 
+/* ********* */
+/* Callbacks */
+/* ********* */
+
+void
+pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_new ( GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_open ( GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_saveas ( GtkAction *action, PitiviTimelineWindow *self);
+
+void
+pitivi_callb_menufile_save ( GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_settings ( GtkAction *action, PitiviTimelineWindow *self );
+
+void
+pitivi_callb_menufile_effectswindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
+
+void
+pitivi_callb_menufile_sourcelistwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
+
+void
+pitivi_callb_menufile_viewerwindow_toggle ( GtkAction *action, PitiviTimelineWindow *self);
+
+gboolean
+pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow * widget, GdkEventKey* event, gpointer data);
+
+
 /*
  **********************************************************
  * MenuItems  					          *
@@ -178,10 +216,19 @@ static GtkToggleActionEntry windows_entries[] ={
   { "ViewerWindows", PITIVI_STOCK_TOOLS, "V_iewer", "<control>V", "Toggle the viewer window", G_CALLBACK (pitivi_callb_menufile_viewerwindow_toggle), TRUE},
 };
 
+
 /*
  * Insert "added-value" functions here
  */
 
+/**
+ * pitivi_timelinewindow_new:
+ * @PitiviMainApp: The object containing all references of the application
+ *
+ * Create a new window for the timeline
+ *
+ * Returns: An element PitiviTimelineWindow contening the timeline
+ */
 
 PitiviTimelineWindow *
 pitivi_timelinewindow_new (PitiviMainApp *mainapp)
@@ -1077,11 +1124,30 @@ pitivi_callb_menufile_exit (GtkAction *action, PitiviTimelineWindow *self )
  *
  */
 
+/**
+ * pitivi_timelinewindow_get_mainApp:
+ * @PitiviTimelineWindow: The object referencing the timeline
+ *
+ * Get the object MainApp with all references  
+ *
+ * Returns: An element PitiviMainApp 
+ */
+
 PitiviMainApp  *
 pitivi_timelinewindow_get_mainApp (PitiviTimelineWindow	*timelinewindow)
 {
   return ( timelinewindow->private->mainapp );
 }
+
+/**
+ * pitivi_timelinewindow_get_container:
+ * @PitiviTimelineWindow: The object referencing the timeline
+ *
+ * Get the container
+ *
+ * Returns: A Widget with the container
+ */
+
 
 GtkWidget *pitivi_timelinewindow_get_container (PitiviTimelineWindow *self) {
   if (!self)
@@ -1096,8 +1162,17 @@ GtkWidget *pitivi_timelinewindow_get_container (PitiviTimelineWindow *self) {
  *
  */
 
+/**
+ * pitivi_timelinewindow_configure_event: 
+ * @GtkWidget: the widget containing the Hpaned
+ * 
+ * Set the position of the Hpaned
+ *
+ * Returns: A flag gboolean setted to FALSE
+ */
+
 gboolean
-pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *event, gpointer data) 
+pitivi_timelinewindow_configure_event (GtkWidget *widget) 
 {
   PitiviTimelineWindow *self;
 
@@ -1106,6 +1181,13 @@ pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *eve
   return FALSE;
 }
 
+/**
+ * pitivi_timelinewindow_deactivate: 
+ * @PitiviTimelineWindow: The object referencing the timeline
+ *
+ * Deactivates the timeline
+ *
+ */
 
 void
 pitivi_timelinewindow_deactivate ( PitiviTimelineWindow *self )
@@ -1142,6 +1224,14 @@ pitivi_timelinewindow_associate_effect (GtkWidget *widget, gpointer data)
       }
   g_list_free ( childlist );
 }
+
+/**
+ * pitivi_timelinewindow_activate: 
+ * @PitiviTimelineWindow: The object referencing the timeline
+ *
+ * Activates the timeline
+ *
+ */
 
 void
 pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
@@ -1180,6 +1270,14 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   self->private->viewer = ((GtkWidget *)pitivi_mainapp_get_viewerwin ( ((PitiviWindows *)self)->mainapp ));
   connect2viewer (self->private->controller, self->private->viewer);
 }
+
+/**
+ * pitivi_timelinewindow_zoom_changed: 
+ * @PitiviTimelineWindow: The object referencing the timeline
+ *
+ * Changes the zoom
+ *
+ */
 
 void
 pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self)

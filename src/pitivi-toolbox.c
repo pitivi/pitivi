@@ -78,48 +78,66 @@ InfoBox button_info [] = {
  */
 
 void
-load_cursor_size (GdkWindow *win, 
-		  PitiviCursor *pitivi_cursor, 
-		  PitiviCursorType PiCursorType,
-		  int width,
-		  int height,
-		  int hot_x,
-		  int hot_y)
+load_cursor(GdkWindow *win,
+		  PitiviCursor *pitivi_cursor,
+		  PitiviCursorType PiCursorType)
 {
+     int width;
+     int height;
+     int hot_x;
+     int hot_y;
+
   GdkPixmap	*pixmap;
   GdkPixmap	*mask;
   GdkColor fg = { 0, 20000, 20000, 20000 }; /* Grey */
-  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */  
+  GdkColor bg = { 0, 65535, 65535, 65535 }; /* White */
   
+  width = CST_WIDTH;
+  height = CST_HEIGHT;
+
   switch (PiCursorType)
     {
     case PITIVI_CURSOR_SELECT:
       pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, width, height);
+      hot_x = CST_X_HOT + 2;
+      hot_y = CST_Y_HOT + 2;
       break;
     case PITIVI_CURSOR_CUT:
       pixmap = gdk_bitmap_create_from_data (NULL, cut_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, cut_mask_bits, width, height);
+      hot_x = CST_X_HOT + 1;
+      hot_y = CST_Y_HOT + 1;
       break;
     case  PITIVI_CURSOR_HAND:
       pixmap = gdk_bitmap_create_from_data (NULL, hand_1_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, hand_1_mask_bits, width, height);
+      hot_x = CST_X_HOT + 4;
+      hot_y = CST_Y_HOT + 4;
       break;
     case  PITIVI_CURSOR_ZOOM:
       pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, width, height);
+      hot_x = CST_X_HOT + 1;
+      hot_y = CST_Y_HOT + 1;
       break;
     case  PITIVI_CURSOR_RESIZE:
       pixmap = gdk_bitmap_create_from_data (NULL, resize_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, resize_mask_bits, width, height);
+      hot_x = CST_X_HOT + (width / 2);
+      hot_y = CST_Y_HOT + (height / 2);
       break;
     case PITIVI_CURSOR_NOALLOW:
       pixmap = gdk_bitmap_create_from_data (NULL, zoom_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, zoom_mask_bits, width, height);
+      hot_x = CST_X_HOT;
+      hot_y = CST_Y_HOT;
       break;
     default:
       pixmap = gdk_bitmap_create_from_data (NULL, pointer_bits, width, height);
       mask = gdk_bitmap_create_from_data (NULL, pointer_mask_bits, width, height);
+      hot_x = CST_X_HOT;
+      hot_y = CST_Y_HOT;
       break;
     }
   

@@ -79,15 +79,42 @@ void			pitivi_mainapp_del_settings		( PitiviMainApp *self, gint *position );
  * Insert "added-value" functions here
  */
 
+/**
+ * pitivi_mainapp_get_timelinewin:
+ * @PitiviMainApp: The object containing all references of the application
+ * 
+ * Get the timeline's references 
+ *
+ * Returns: An element PitiviTimelineWindow, the timeline window
+ */
+
 PitiviTimelineWindow *
 pitivi_mainapp_get_timelinewin(PitiviMainApp *self) {
   return (PitiviTimelineWindow *) self->private->timelinewin;
 }
 
+/**
+ * pitivi_mainapp_get_viewerwin:
+ * @PitiviMainApp: The object containing all references of the application
+ * 
+ * Get the timeline's references 
+ *
+ * Returns: An element PitiviViewerWindow, the viewer window
+ */
+
 PitiviViewerWindow *
 pitivi_mainapp_get_viewerwin(PitiviMainApp *self) {
   return self->private->viewerwin;
 }
+
+/**
+ * pitivi_mainapp_get_effectwin:
+ * @PitiviMainApp: The object containing all references of the application
+ * 
+ * Get the timeline's references 
+ *
+ * Returns: An element PitiviEffectWindow, the effect window
+ */
 
 PitiviEffectsWindow *
 pitivi_mainapp_get_effectswin(PitiviMainApp *self) {
@@ -138,11 +165,12 @@ pitivi_mainapp_callb_timelinewin (GtkWindow *win, gpointer data)
 }
 
 /**
- * pitivi_mainapp_activate_effectswindow: Active the Effects Window
+ * pitivi_mainapp_activate_effectswindow:
  * @PitiviMainApp: The object containing all references of the application
  * @gboolean: A flag to control if the Effect Window is shown or not
  *
- * Returns: void
+ * Activates the Effects Window
+ *
  */
 
 void
@@ -164,11 +192,12 @@ pitivi_mainapp_activate_effectswindow (PitiviMainApp *self, gboolean activate)
 }
 
 /**
- * pitivi_mainapp_activate_sourcelistwindow: Active the Sourcelist Window
+ * pitivi_mainapp_activate_sourcelistwindow:
  * @PitiviMainApp: The object containing all references of the application
  * @gboolean: A flag to control if the Effect Window is shown or not
+ * 
+ * Active the Sourcelist Window
  *
- * Returns: void
  */
 
 void
@@ -195,11 +224,12 @@ pitivi_mainapp_activate_sourcelistwindow (PitiviMainApp *self, gboolean activate
 }
 
 /**
- * pitivi_mainapp_activate_viewerwindow: Active the Viewer Window
+ * pitivi_mainapp_activate_viewerwindow:
  * @PitiviMainApp: The object containing all references of the application
  * @gboolean: A flag to control if the Effect Window is shown or not
  *
- * Returns: void
+ * Active the Viewer Window
+ *
  */
 
 void
@@ -254,11 +284,12 @@ pitivi_mainapp_create_timelinewin (PitiviMainApp *self, PitiviProject *project)
 }
 
 /**
- * pitivi_mainapp_create_wintools: Set and show all the windows
+ * pitivi_mainapp_create_wintools:
  * @PitiviMainApp: The object containing all references of the application
  * @PitiviProject: The object containing all references of the current project
  *
- * Returns: void
+ * Set and show all the windows
+ *
  */
 
 void
@@ -324,11 +355,12 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 }
 
 /**
- * pitivi_mainapp_add_project: Adds a PitiviProject to the list of projects handled by the application
+ * pitivi_mainapp_add_project:
  * @PitiviMainApp: The object containing all references of the application
  * @PitiviProject: The object containing all references of the current project
  *
- * Returns: A boolean TRUE if it was added properly
+ * Adds a PitiviProject to the list of projects handled by the application
+ *
  */
 
 gboolean
@@ -342,9 +374,10 @@ pitivi_mainapp_add_project(PitiviMainApp *self, PitiviProject *project)
 }
 
 /**
- * pitivi_mainapp_new: Create a new instance for a new Object 
- * @void:
+ * pitivi_mainapp_new:
  * 
+ * Create a new instance for a new Object
+ *
  * Returns: A PitiviMainApp pointer on the new main_app
  */
 
