@@ -88,8 +88,7 @@ pitivi_timelinemedia_new (PitiviSourceFile *sf)
   PitiviTimelineMedia	*timelinemedia;
 
   timelinemedia = (PitiviTimelineMedia *) g_object_new(PITIVI_TIMELINEMEDIA_TYPE, NULL);
-
-  timelinemedia->sf = sf;
+  memcpy (timelinemedia->sf, sf, sizeof (sf));
   g_assert(timelinemedia != NULL);
   return timelinemedia;
 }
@@ -155,7 +154,7 @@ pitivi_timelinemedia_drag_get  (GtkWidget          *widget,
 {
   PitiviCursor *cursor;
   PitiviTimelineCellRenderer *cell;
- 
+  
   cursor = pitivi_getcursor_id (widget);
   if (cursor->type == PITIVI_CURSOR_SELECT || cursor->type == PITIVI_CURSOR_HAND)
     gtk_selection_data_set (selection_data, selection_data->target, 
@@ -205,7 +204,8 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private = g_new0(PitiviTimelineMediaPrivate, 1);
   
   /* initialize all public and private members to reasonable default values. */ 
-  
+ 
+  self->sf = g_new (PitiviSourceFile, 1);
   self->private->dispose_has_run = FALSE;
   
   /* Do only initialisation here */
