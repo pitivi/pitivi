@@ -40,7 +40,7 @@ struct _PitiviEffectsWindowPropertiesPrivate
   gboolean	dispose_has_run;
 
   PitiviGstElementSettings *widget_element;
-
+  GstElement	*effect;
 };
 
 /*
@@ -72,6 +72,8 @@ pitivi_effects_ok (GtkWidget *widget, GObject *obj)
 
   g_print ("PitiviEffectsWindowProperties  OK\n");
 
+  /* TODO : The effect GstElement is self->private->effect !!! */
+
   //GNL_OPERATION(self->private->item->gnlobject)->element = pitivi_gstelementsettings_get_element (self->private->widget_element);
 
   /*
@@ -91,7 +93,8 @@ void
 pitivi_effects_apply (GtkWidget *widget, GObject *obj)
 {
   g_print ("PitiviEffectsWindowProperties  APPLY\n");
- 
+  /* TODO : The effect GstElement is self->private->effect !!! */
+
 }
 
 
@@ -101,6 +104,8 @@ pitivi_effects_cancel (GtkWidget *widget, GObject *obj)
   //PitiviEffectsWindowProperties *self = (PitiviEffectsWindowProperties *) obj;
 
   g_print ("PitiviEffectsWindowProperties  CANCEL\n");
+  /* TODO : The effect GstElement is self->private->effect !!! */
+
 
   gtk_object_destroy(GTK_OBJECT(obj));
 }
@@ -138,7 +143,8 @@ pitivi_effectswindowproperties_constructor (GType type,
   
   main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add  (GTK_CONTAINER (self), main_vbox);
-  widget_element = pitivi_gstelementsettings_new_with_elm (GNL_OPERATION(self->private->item->gnlobject)->element, 1);
+  self->private->effect = g_object_get_data (G_OBJECT (GNL_OPERATION (self->private->item->gnlobject)->element), "effect");
+  widget_element = pitivi_gstelementsettings_new_with_elm (effect, 1);
   gtk_box_pack_start (GTK_BOX (main_vbox), GTK_WIDGET (widget_element), FALSE, FALSE, 0);
   
   /* OK Cancel Buttons*/
