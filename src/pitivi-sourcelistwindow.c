@@ -42,6 +42,8 @@
 #include "pitivi-debug.h"
 #include "pitivi-lplayerwindow.h"
 #include "pitivi-progressbar.h"
+#include "pitivi-toolbox.h"
+#include "pitivi-stockicons.h"
 
 static PitiviProjectWindowsClass *parent_class = NULL;
 
@@ -95,6 +97,10 @@ struct _PitiviSourceListWindowPrivate
   /* Progress bar */
   
   PitiviProgressBar  *bar;
+
+  /* Button import */
+  GtkWidget	*import_button[5];
+  GSList	*import_group_button;
 };
 
 /*
@@ -152,6 +158,22 @@ enum
     FOLDERIMPORT_SIGNAL,
     LAST_SIGNAL
   };
+
+typedef struct _InfoBox
+{
+  gchar *image;
+  gchar *tooltip;
+  void (*callback) (gpointer data, gint action, GtkWidget *widget);
+}	       InfoBox;
+
+InfoBox import_button_info [] = {
+  {GTK_STOCK_NEW, "Add a source file", OnImportFile},
+  {GTK_STOCK_OPEN, "Add a source file directory", OnImportFolder},
+  {GTK_STOCK_ADD, "Add a bin to manage files", OnNewBin},
+  {GTK_STOCK_CLEAR, "Remove all unused sources", OnRemoveUnused},
+  {0, 0, NULL}
+};
+
 
 static guint pitivi_sourcelistwindow_signal[LAST_SIGNAL] = { 0 };
 
@@ -1015,6 +1037,7 @@ GtkWidget	*create_treeview(PitiviSourceListWindow *self)
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(pScrollbar),
 				 GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(pScrollbar), pTreeView);
+
   return pScrollbar;
 }
 
@@ -1540,12 +1563,43 @@ GtkWidget	*create_projectview(PitiviSourceListWindow *self)
   GtkWidget	*pScrollbar;
   GtkWidget	*pScrollbar2;
   GtkWidget	*pHpaned;
+  GtkWidget	*tree_vbox;
+  GtkWidget	*button_bar;
+  gint		count;
+  GtkTooltips	*tooltips;
+
+  button_bar = gtk_toolbar_new();
+  tooltips = gtk_tooltips_new();
+  for (count = 0; import_button_info[count].image; count++)
+    {
+      self->private->import_button[count] = GTK_WIDGET (gtk_tool_button_new_from_stock
+							(import_button_info[count].image));
+/*       self->private->import_group_button = gtk_tool_button_get_group (GTK_TOOL_BUTTON */
+/* 								     (self->private->import_button[0])); */
+      gtk_tool_item_set_tooltip (GTK_TOOL_ITEM (self->private->import_button[count]), 
+				 tooltips, 
+				 import_button_info[count].tooltip, NULL);
+      gtk_toolbar_insert (GTK_TOOLBAR(button_bar),
+			  GTK_TOOL_ITEM (self->private->import_button[count]),
+			  count);
+      g_signal_connect_swapped (G_OBJECT (self->private->import_button[count]),
+			"clicked",
+			G_CALLBACK (import_button_info[count].callback),
+			self);
+    }
+
+  gtk_toolbar_set_orientation (GTK_TOOLBAR(button_bar), GTK_ORIENTATION_HORIZONTAL);
+  gtk_toolbar_set_show_arrow (GTK_TOOLBAR(button_bar), FALSE);
+  gtk_toolbar_set_style (GTK_TOOLBAR(button_bar), GTK_TOOLBAR_ICONS);
 
   pHpaned = gtk_hpaned_new();
-
+  tree_vbox = gtk_vbox_new(FALSE, 0);
   pScrollbar = create_treeview(self);
   pScrollbar2 = create_listview(self);
  
+  gtk_box_pack_start (GTK_BOX (tree_vbox), pScrollbar, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (tree_vbox), button_bar, FALSE, FALSE, 0);
+
   g_signal_connect (G_OBJECT (self), "newfile",
                           (GCallback)new_file,
                           self);
@@ -1555,7 +1609,7 @@ GtkWidget	*create_projectview(PitiviSourceListWindow *self)
                           self);
 
   gtk_paned_set_position(GTK_PANED(pHpaned), 200);
-  gtk_paned_pack1(GTK_PANED(pHpaned), pScrollbar, FALSE, FALSE);
+  gtk_paned_pack1(GTK_PANED(pHpaned), tree_vbox, FALSE, FALSE);
   gtk_paned_pack2(GTK_PANED(pHpaned), pScrollbar2, TRUE, FALSE);
   
   return pHpaned;
