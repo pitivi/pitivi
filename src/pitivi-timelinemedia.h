@@ -28,6 +28,7 @@
 
 /*
  * Potentially, include other headers on which this header depends.
+ * gdk_pixbuf_render_threshold_alpha
  */
 
 #include <gtk/gtk.h>

@@ -155,7 +155,6 @@ struct _PitiviTimelineMediaPrivate
   GdkGC		   **gcs;
   
   /* Popup */
-  
   GtkWidget	   *menu;
   GtkTooltips	   *tooltips;
   
@@ -168,6 +167,7 @@ struct _PitiviTimelineMediaPrivate
   
   // Caching Operation  
   GdkPixmap	   *pixmapcache;
+  GdkPixbuf	   *pixbuf;
 };
 
 /**
@@ -353,10 +353,10 @@ show_video_media (GtkWidget *widget)
   
   if (GTK_IS_WIDGET ( widget ) )
     {
-      if ( this->sourceitem->srcfile->thumbs_video )
+      if ( this->private->pixbuf )
 	{
 	  gdk_draw_pixbuf( this->private->pixmapcache, NULL, 
-			   this->sourceitem->srcfile->thumbs_video, 0, 0, 1, 1, 
+			   this->private->pixbuf, 0, 0, 1, 1, 
 			   -1, 
 			   -1, 
 			   GDK_RGB_DITHER_MAX, 0, 0);
@@ -525,12 +525,14 @@ pitivi_timelinemedia_constructor (GType type,
 	  if (!(bin = pitivi_sourcefile_get_video_bin(this->sourceitem->srcfile)))
 	    return NULL;
 	  this->sourceitem->gnlobject = (GnlObject *)gnl_source_new (name, bin);
+	  this->private->pixbuf = gdk_pixbuf_copy (this->sourceitem->srcfile->thumbs_video);
 	}
       else if ( this->track->track_type == PITIVI_AUDIO_TRACK )
 	{
 	  if (!(bin = pitivi_sourcefile_get_audio_bin(this->sourceitem->srcfile)))
 	    return NULL;
 	  this->sourceitem->gnlobject = (GnlObject *) gnl_source_new (name, bin);
+	  this->private->pixbuf = gdk_pixbuf_copy (this->sourceitem->srcfile->thumbs_audio);
 	}
     }
   this->original_width = this->private->width;
@@ -957,13 +959,14 @@ pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *this, gpointer data)
 }
 
 static void
-pitivi_timelinemedia_callb_snapped_effect (PitiviTimelineMedia *media, gpointer data)
+pitivi_timelinemedia_callb_snapped_effect (PitiviTimelineMedia *this, gpointer data)
 {
   /* FIXME Deference pointer */
-  g_object_unref (media->sourceitem->srcfile->thumbs_video);
-  media->sourceitem->srcfile->thumbs_video = gdk_pixbuf_new_from_file (PITIVI_THUMBS(data)->output, NULL);
-  draw_media_expose (GTK_WIDGET (media));
-  g_object_ref (media->sourceitem->srcfile->thumbs_video);
+  g_object_unref (this->private->pixbuf);
+  this->sourceitem->srcfile->thumbs_video = gdk_pixbuf_new_from_file (PITIVI_THUMBS(data)->output, NULL);
+  this->private->pixbuf = gdk_pixbuf_copy (this->sourceitem->srcfile->thumbs_video);
+  draw_media_expose (GTK_WIDGET (this));
+  g_object_ref (this->private->pixbuf);
   G_OBJECT_GET_CLASS ((gpointer)data)->finalize ((gpointer)data);
 }
 
