@@ -141,7 +141,7 @@ pitivi_splashscreenwindow_constructor (GType type,
   gtk_widget_show (self->private->main_vbox);
 
   // Img
-  self->private->img = gtk_image_new_from_file ("../pixmaps/logo-pitivi.png");
+  self->private->img = gtk_image_new_from_file ("../pixmaps/pitivi-logo-splash.png");
   gtk_container_add (GTK_CONTAINER (self->private->main_vbox), self->private->img);
   gtk_widget_show (self->private->img);
 

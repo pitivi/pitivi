@@ -864,13 +864,7 @@ pitivi_create_new_project ( GtkAction *action, PitiviNewProjectWindow *self )
 
 /*   Creation d'un nouveau projet avec ces settings */
   project = pitivi_project_new( settings );
-
-/*      Si on arrive a ajouter correctement le projet a mainapp alors on affiche les bonnes fenetres  */
-/*      P.S. c'est un peu cra-cra de faire comme ca, vaudrait mieux emmettre un signal et faire que */
-/*      ca soit le PitiviMainApp ou la PitiviToolboxWindow qui gere ca */
-  //if (pitivi_mainapp_add_project(mainapp, project))
-  pitivi_mainapp_create_wintools (mainapp, project);
-  
+  pitivi_mainapp_create_wintools (mainapp, project);  
   gtk_widget_destroy (GTK_WIDGET (self));
 }
 

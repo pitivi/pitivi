@@ -39,7 +39,57 @@ pitivi_callb_menuhelp_search ( GtkAction *action, gpointer data )
 static void
 pitivi_callb_menuhelp_about ( GtkAction *action, gpointer data )
 {
+  GtkWidget			*about_window;
+  GtkWidget			*about_vbox;
+  GtkWidget			*about_hbox;
+  GtkWidget			*team_frame;
+  GtkWidget			*info_frame;
+  GtkWidget			*pitivi_label;
+  GtkWidget			*team_label;
+  GtkWidget			*info_label;
+  GtkWidget			*logo;
 
+  about_vbox = gtk_vbox_new(FALSE, 10);
+  about_hbox = gtk_hbox_new(FALSE, 10);
+  about_window = gtk_dialog_new_with_buttons ("Message",
+					      NULL,
+					      GTK_DIALOG_DESTROY_WITH_PARENT,
+					      GTK_STOCK_OK,
+					      GTK_RESPONSE_ACCEPT,
+					      NULL);
+
+  /* frames */
+  team_frame = gtk_frame_new("Team");
+  info_frame = gtk_frame_new("Info");
+
+  /* Labels */
+  pitivi_label = gtk_label_new("Pitivi is an non-linear\nMultimedia Editor.\nIt is a Open-Source project.\nGNU license.");
+  team_label = gtk_label_new("- HERVEY Edward\n- CASANOVA Guillaume\n- DELETTREZ Marc\n- PRALAT Raphael\n- BLOCH Stephan");
+  info_label = gtk_label_new("Visit our website :\n http://www.pitivi.org");
+  logo = gtk_image_new_from_file("../pixmaps/pitivi-logo-small.png");
+
+  /* alignement */
+  gtk_misc_set_alignment (GTK_MISC (team_label), 0.0f, 0.0f);
+  gtk_misc_set_alignment (GTK_MISC (info_label), 0.0f, 0.0f);
+  gtk_misc_set_padding (GTK_MISC (team_label), 10, 10);
+  gtk_misc_set_padding (GTK_MISC (info_label), 10, 10);
+
+  /* frames */
+  gtk_container_add(GTK_CONTAINER(team_frame), team_label);
+  gtk_container_add(GTK_CONTAINER(info_frame), info_label);
+  gtk_box_pack_start(GTK_BOX (about_hbox), logo, TRUE, TRUE, 5);
+  gtk_box_pack_start(GTK_BOX (about_hbox), pitivi_label, TRUE, TRUE, 5);
+
+  /* fill Vbox */
+  gtk_box_pack_start(GTK_BOX (about_vbox), about_hbox, TRUE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (about_vbox), team_frame, FALSE, TRUE, 5);
+  gtk_box_pack_start (GTK_BOX (about_vbox), info_frame, FALSE, TRUE, 5);
+ 
+  gtk_container_add (GTK_CONTAINER (GTK_DIALOG(about_window)->vbox), about_vbox);
+  gtk_widget_show_all(about_window);
+  
+  if (gtk_dialog_run (GTK_DIALOG (about_window)) == GTK_RESPONSE_ACCEPT)
+    gtk_widget_destroy (about_window);
 }
 
 static void
