@@ -140,7 +140,7 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
   context = pango_context_new ();
   context = gtk_widget_create_pango_context (widget);  
   layout = pango_layout_new (context);
-  pango_layout_set_text (layout, "je pisse sur le pfe", 19);
+  pango_layout_set_text (layout, "Media", 5);
 
   PitiviTimelineMedia	*self = PITIVI_TIMELINEMEDIA (widget);
   gtk_paint_box (widget->style, widget->window,
