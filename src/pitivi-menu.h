@@ -57,8 +57,7 @@ typedef struct _PitiviMenuPublic PitiviMenuPublic;
 struct _PitiviMenuPublic
 {
   GtkWidget *menu;
-  GList	    *popups;
-  gpointer  data;
+  GtkUIManager *ui;
 };
 
 struct _PitiviMenu

@@ -99,6 +99,12 @@ pitivi_menu_constructor (GType type,
   return obj;
 }
 
+void
+pitivi_get_uimanager()
+{
+  
+}
+
 static void
 pitivi_menu_instance_init (GTypeInstance * instance, gpointer g_class)
 {
@@ -109,12 +115,10 @@ pitivi_menu_instance_init (GTypeInstance * instance, gpointer g_class)
   
   /* initialize all public and private members to reasonable default values. */ 
   
-  self->private->dispose_has_run = FALSE; 
+  self->private->dispose_has_run = FALSE;
   self->private->ui_manager = gtk_ui_manager_new ();
- 
+  self->public->ui = self->private->ui_manager;
   self->public->menu = gtk_ui_manager_get_widget (self->private->ui_manager, g_strdup (PITIVI_MAIN_MENUBAR_XML));
-  self->public->popups = g_list_alloc ();
-  self->public->data = NULL;
   gtk_ui_manager_set_add_tearoffs (self->private->ui_manager, TRUE);
   self->private->action_group = gtk_ui_manager_get_action_groups (self->private->ui_manager);
   self->private->accel_group = gtk_ui_manager_get_accel_group (self->private->ui_manager);
@@ -123,7 +127,6 @@ pitivi_menu_instance_init (GTypeInstance * instance, gpointer g_class)
    * delay initialization completion until the property is set. 
    */
   
-  pitivi_menubar_configure (self->private->ui_manager, self->private->window);
   gtk_ui_manager_ensure_update (self->private->ui_manager);
 }
 
@@ -191,48 +194,43 @@ pitivi_menu_set_property (GObject * object,
 }
 
 
+
 void
-pitivi_menubar_set_filename (PitiviMenu *self, const gchar *filename)
+pitivi_set_menu (PitiviMenu *self)
 {
-  PitiviMenuPrivate *priv;
-  guint icon_mode[2] = {GTK_ICON_SIZE_SMALL_TOOLBAR, GTK_TOOLBAR_ICONS};
   GError *error;
   
-  priv = self->private;
-  if (self)
+  error = NULL;
+  PitiviMenuPrivate *priv = self->private;
+  if (priv->merge_id)
+    gtk_ui_manager_remove_ui(priv->ui_manager, priv->merge_id);
+  pitivi_menubar_configure (priv->ui_manager, priv);
+  if ((priv->merge_id = gtk_ui_manager_add_ui_from_file (priv->ui_manager, \
+							 priv->filename, &error)))
     {
-      error = NULL;
-      if (!priv->filename)
-	g_free (priv->filename);
-      priv->filename = g_strdup(filename);
-      gtk_ui_manager_remove_ui(priv->ui_manager, priv->merge_id);
-      if ((priv->merge_id = gtk_ui_manager_add_ui_from_file (priv->ui_manager, \
-							    filename, &error)))
-	{
-	  priv->ui_description = gtk_ui_manager_get_ui (priv->ui_manager);
-	  self->public->menu = gtk_ui_manager_get_widget (priv->ui_manager, PITIVI_MAIN_MENUBAR_XML);
-	  /*
-	    priv->toolbar = gtk_ui_manager_get_widget (priv->ui_manager , PITIVI_MAIN_TOOLBAR_XML);
-	    pitivi_toolbar_set_icon_mode (priv->toolbar, icon_mode);
-	  */
-	  gtk_ui_manager_ensure_update (priv->ui_manager);
-	}
-      else
-	{
-	  g_message ("building menus failed: %s", error->message);
-	  exit (0);
-	}
+      priv->ui_description = gtk_ui_manager_get_ui (priv->ui_manager);
+      self->public->menu = gtk_ui_manager_get_widget (priv->ui_manager, PITIVI_MAIN_MENUBAR_XML);
+      gtk_ui_manager_ensure_update (priv->ui_manager);
+    }
+  else
+    {
+      g_message ("building menus failed: %s", error->message);
+      exit (0);
     }
 }
 
 
 void
-pitivi_toolbar_set_icon_mode (GtkWidget *toolbar, guint *styles)
+pitivi_menubar_set_filename (PitiviMenu *self, const gchar *filename)
 {
-  if (GTK_IS_TOOLBAR (toolbar))
+  PitiviMenuPrivate *priv;
+  
+  priv = self->private;
+  if (self)
     {
-      gtk_toolbar_set_icon_size (GTK_TOOLBAR (toolbar), *styles);
-      gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), *(styles+1));
+      if (!priv->filename)
+	g_free (priv->filename);
+      priv->filename = g_strdup(filename);
     }
 }
 

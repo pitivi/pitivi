@@ -42,22 +42,11 @@ default_action (GtkAction *action, gpointer data )
 static void
 pitivi_callb_menufile_new ( GtkAction *action, gpointer data )
 {  
-  PitiviNewProjectWindow *win_new_project;
-  PitiviTimelineWindow *win_timeline;
-
-  /* New Project window */
-  win_new_project = pitivi_newprojectwindow_new();
-  gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
 }
 
 static void
 pitivi_callb_menufile_open ( GtkAction *action, gpointer data )
 {
-  PitiviSourceListWindow *srclistwin;
-  
-  /* Source List Window */
-  srclistwin = pitivi_sourcelistwindow_new();
-  gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
 }
 
 static void
@@ -390,11 +379,10 @@ pitivi_menubar_configure (GtkUIManager *ui_manager, gpointer data)
   gtk_action_group_add_actions (actions_group[EA_UNDO_EDIT], default_entries_undo, G_N_ELEMENTS (default_entries_undo), data);
   actions_group[EA_REDO_EDIT] = gtk_action_group_new ("EditRedo");
   gtk_action_group_add_actions (actions_group[EA_REDO_EDIT], default_entries_redo, G_N_ELEMENTS (default_entries_redo), data);
-
+  
   for (count = 0; count < EA_LAST_ACTION; count++)
     if (actions_group[count])
        gtk_ui_manager_insert_action_group (ui_manager, actions_group[count], 0);
-  gtk_action_group_set_sensitive (actions_group[EA_RECENT_FILE], FALSE);
   return ( actions_group );
 }
 

@@ -183,15 +183,16 @@ pitivi_timelinewindow_new(void)
     window_icon = gdk_pixbuf_new_from_file (filename, NULL);
     g_free (filename);
   }
+  
   gtk_window_set_icon (GTK_WINDOW (timelinewindow), window_icon);
   
   /* Main Window : Drag And Drop */
-  
+  /*
   gtk_drag_dest_set (GTK_WIDGET (timelinewindow), GTK_DEST_DEFAULT_ALL,
 		     drop_types, num_drop_types, GDK_ACTION_COPY);
   g_signal_connect (G_OBJECT (timelinewindow), "drag_data_received",
 	 	    G_CALLBACK (pitivi_callb_drag_data_received), NULL);
-  
+  */
   
   /* Timeline */
   
@@ -217,8 +218,7 @@ pitivi_timelinewindow_new(void)
 		    GTK_FILL | GTK_EXPAND,
 		    GTK_FILL,
 		    0, 0);
-  
-    
+   
   /* Main Window : Scrollbar */
   
   priv->hscrollbar = gtk_hscrollbar_new (NULL);
@@ -231,13 +231,10 @@ pitivi_timelinewindow_new(void)
 				     GTK_RANGE (priv->hscrollbar)->adjustment,
 				     GTK_RANGE (GTK_SCROLLED_WINDOW (sw)->vscrollbar)->adjustment);
   
-  gtk_widget_show_all (priv->forms);
-  
   /* Main Window : StatusBar */
   
   priv->dock_statusbar = gtk_hbox_new (FALSE, 0);
   gtk_box_pack_end (GTK_BOX (priv->main_vbox), priv->dock_statusbar, FALSE, FALSE, 0);
-  gtk_widget_show ( priv->dock_statusbar );
     
   priv->statusbar_properties = gtk_statusbar_new ();
   gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (priv->statusbar_properties), FALSE);
@@ -252,7 +249,6 @@ pitivi_timelinewindow_new(void)
   gtk_statusbar_set_has_resize_grip (GTK_STATUSBAR (priv->statusbar_message), FALSE);
   gtk_box_pack_start (GTK_BOX (priv->dock_statusbar), priv->statusbar_message, TRUE, TRUE, 0);
   
-  gtk_widget_show_all (priv->main_vbox);
   return timelinewindow;
 }
 
@@ -280,7 +276,7 @@ pitivi_timelinewindow_constructor (GType type,
 static void
 pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
-  GdkRectangle area;
+  PitiviMenu *ui;
   PitiviTimelineWindow *self = (PitiviTimelineWindow *) instance;
   
   self->private = g_new0(PitiviTimelineWindowPrivate, 1);
@@ -296,18 +292,15 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (self->private->main_vbox);
   gtk_container_add (GTK_CONTAINER (self), self->private->main_vbox);
-  
   self->private->menu_dock = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (self->private->menu_dock);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->menu_dock,
 		      FALSE, TRUE, 0);
-  self->private->ui_menus = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_MANAGER_FILE);
-  gtk_widget_show (self->private->ui_menus->public->menu);
-  gtk_box_pack_start (GTK_BOX (self->private->menu_dock), self->private->ui_menus->public->menu,
+  ui = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TIMELINE_FILE);
+  pitivi_set_menu (ui);
+  gtk_widget_show (ui->public->menu);
+  gtk_box_pack_start (GTK_BOX (self->private->menu_dock), ui->public->menu,
 		      FALSE, TRUE, 0);
-  /* gtk_box_pack_start (GTK_BOX (self->private->menu_dock), self->public->ui_menus->toolbar,
-		      FALSE, TRUE, 0);
-  */
   self->private->operations = g_list_alloc ();
 }
 

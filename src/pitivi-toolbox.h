@@ -43,6 +43,8 @@
 #define PITIVI_IS_TOOLBOX_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_TOOLBOX_TYPE))
 #define PITIVI_TOOLBOX_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_TOOLBOX_TYPE, PitiviToolboxClass))
 
+#define PITIVI_MENU_TOOLBOX_FILENAME "../ui/pitivi-toolbox.xml"
+
 typedef struct _PitiviToolbox PitiviToolbox;
 typedef struct _PitiviToolboxClass PitiviToolboxClass;
 typedef struct _PitiviToolboxPrivate PitiviToolboxPrivate;

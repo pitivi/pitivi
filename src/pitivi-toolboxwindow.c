@@ -24,10 +24,14 @@
  */
 
 #include <gtk/gtk.h>
-#include "pitivi-toolbox.h"
-#include "pitivi-toolboxwindow.h"
-#include "pitivi-menu.h"
 #include "pitivi.h"
+#include "pitivi-menu.h"
+#include "pitivi-stockicons.h"
+#include "pitivi-toolbox.h"
+#include "pitivi-timelinewindow.h"
+#include "pitivi-toolboxwindow.h"
+#include "pitivi-sourcelistwindow.h"
+#include "pitivi-newprojectwindow.h"
 
 static GtkWindowClass *parent_class = NULL;
 
@@ -58,6 +62,60 @@ pitivi_toolboxwindow_new (void)
   return toolboxwindow;
 }
 
+
+static void
+pitivi_callb_toolbox_filenew_project ( GtkAction *action, PitiviToolboxWindow *self )
+{  
+  PitiviNewProjectWindow *win_new_project;
+  PitiviSourceListWindow *srclistwin;
+
+  /* New Project window */
+  win_new_project = pitivi_newprojectwindow_new();
+  gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
+  /* Source List Window */
+  srclistwin = pitivi_sourcelistwindow_new();
+  gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
+}
+
+void
+pitivi_toolbar_set_icon_mode (GtkWidget *toolbar, guint *styles)
+{
+  if (GTK_IS_TOOLBAR (toolbar))
+    {
+      gtk_toolbar_set_icon_size (GTK_TOOLBAR (toolbar), *styles);
+      gtk_toolbar_set_style (GTK_TOOLBAR (toolbar), *(styles+1));
+    }
+}
+
+static void
+pitivi_callb_toolbox_exit ( GtkAction *action, PitiviToolboxWindow *self )
+{  
+  gtk_main_quit ();
+}
+
+static void
+pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *self )
+{
+  PitiviTimelineWindow *timelinewin;
+    
+  /* Source List Window */
+  timelinewin = pitivi_timelinewindow_new();
+  gtk_widget_show_all (GTK_WIDGET (timelinewin) ); 
+}
+
+
+static GtkActionEntry toolbox_menu_entries[] = {
+  { "FileBoxMenu", NULL, "_File" },
+  { "FileBoxNew", PITIVI_STOCK_NEW_PROJECT, "Ne_w", "<control>N", "New File", G_CALLBACK (pitivi_callb_toolbox_filenew_project) },
+  { "FileBoxOpen", GTK_STOCK_OPEN, "_Open", "<control>O", "Open a file",  G_CALLBACK (pitivi_callb_toolbox_fileopen_project) },
+  { "FileBoxExit", GTK_STOCK_QUIT, "E_xit", "<control>Q", "Exit the program", G_CALLBACK (pitivi_callb_toolbox_exit)},
+};
+
+static GtkActionEntry toolbox_recent_entries[]= {
+  { "FileBoxRecent", GTK_STOCK_OPEN, "_Open Recent File", "<control>R", "Open a recent file", NULL},
+};
+
+
 static void
 pitivi_toolboxwindow_instance_init (GTypeInstance * instance,
 				    gpointer g_class)
@@ -77,7 +135,14 @@ pitivi_toolboxwindow_instance_init (GTypeInstance * instance,
   
   self->private->toolbox = pitivi_toolbox_new ();
   self->private->vbox = gtk_vbox_new (FALSE, 0);
-  menubar = pitivi_menu_new (GTK_WIDGET (self), PITIVI_DEF_MENUBAR_FILENAME);
+  menubar = pitivi_menu_new (GTK_WIDGET (self), PITIVI_MENU_TOOLBOX_FILENAME);
+  GtkActionGroup *ag1 = gtk_action_group_new ("FileBoxRecent");
+  GtkActionGroup *ag2 = gtk_action_group_new ("FileBoxMenu");
+  gtk_action_group_add_actions (ag1, toolbox_menu_entries, G_N_ELEMENTS (toolbox_menu_entries), self);
+  gtk_action_group_add_actions (ag2, toolbox_recent_entries, G_N_ELEMENTS (toolbox_recent_entries), self);
+  gtk_ui_manager_insert_action_group (menubar->public->ui, ag1, 0);
+  gtk_ui_manager_insert_action_group (menubar->public->ui, ag2, 0);
+  pitivi_set_menu (menubar);
   gtk_box_pack_start (GTK_BOX (self->private->vbox),
 		      GTK_WIDGET (menubar->public->menu), FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (self->private->vbox),
