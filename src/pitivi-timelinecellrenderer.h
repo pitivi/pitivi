@@ -89,5 +89,7 @@ GType pitivi_timelinecellrenderer_get_type (void);
  */
 
 GtkWidget	*pitivi_timelinecellrenderer_new ();
+void		pitivi_timelinecellrenderer_remove (GtkContainer *container, GtkWidget *child);
+
 
 #endif

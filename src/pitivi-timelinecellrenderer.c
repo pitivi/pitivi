@@ -264,7 +264,7 @@ pitivi_timelinecellrenderer_drag_data_received (GObject *object,
     break;
   case DND_TARGET_TIMELINEWIN:
     g_printf ("Timeline Moving  ---%s---%d-- \n", selection->data, info);
-    pitivi_timelinecellrenderer_remove (self, current_media);
+    pitivi_timelinecellrenderer_remove (GTK_CONTAINER (self), GTK_WIDGET (current_media));
     break;
   case DND_TARGET_EFFECTSWIN:
     g_printf ("Window Effects dropping %s\n", selection->data);
@@ -505,16 +505,15 @@ pitivi_timelinecellrenderer_motion_notify_event (GtkWidget      *widget,
   return FALSE;
 }
 
-static void
-pitivi_timelinecellrenderer_remove (GtkContainer *container, 
-				    GtkWidget *child)
+void
+pitivi_timelinecellrenderer_remove (GtkContainer *container, GtkWidget *child)
 {
   GList *list;
   PitiviTimelineCellRenderer *cell = PITIVI_TIMELINECELLRENDERER (container);
   
   list = g_list_find(cell->children, child);
   if (list) {
-    GTK_CONTAINER_CLASS(parent_class)->remove (container, child);
+    GTK_CONTAINER_CLASS(parent_class)->remove (GTK_CONTAINER (container), GTK_WIDGET (child));
     if (cell->children != NULL)
       {
 	g_list_free (cell->children);
