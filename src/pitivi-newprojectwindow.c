@@ -95,6 +95,13 @@ typedef struct	_PitiviRetProperties
   GValue	value;
 }		PitiviRetProperties;
 
+typedef	struct	_PitiviCombobox
+{
+  GtkWidget	*combobox;
+  GList		*listname;
+  gchar		**tabname;
+}		PitiviCombobox;
+
 struct _PitiviNewProjectWindowPrivate
 {
   /* instance private members */
@@ -185,6 +192,8 @@ PitiviConfProperties	*pitivi_setprop_new		( gchar				*name, GValue	value, GtkWid
 gchar			*pitivi_newprojectwindow_getstr	( gint				i );
 void			pitivi_newprojectwindow_put_info( PitiviNewProjectWindow	*self, gchar		*setting_name );
 gchar			*pitivi_combobox_get_active	( GtkWidget			*combobox, gchar	*listname );
+int			pitivi_get_nb_codec		( gchar	*klass_choice );
+PitiviCombobox		*pitivi_make_codec_combobox	( gchar	*klass_choice );
 
 /* 
  *  Signals Definitions 
@@ -1143,6 +1152,89 @@ pitivi_make_cat_frame(PitiviNewProjectWindow *self)
   return (cat_frame);
 }
 
+int
+pitivi_get_nb_codec(gchar *klass_choice)
+{
+  int			i;
+  int			nb_codec;
+  GstElementFactory	*factory;
+  const gchar		*klass;
+  GList			*feature_list;
+
+  nb_codec = 0;
+  feature_list = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
+  for (i = 0; feature_list != NULL; i++)
+    {
+      factory = (GstElementFactory *) feature_list->data;
+      klass = gst_element_factory_get_klass (factory);
+      if (!strncmp (klass, klass_choice, 19))
+	{
+	  nb_codec++;
+	}
+      else
+	{
+	  goto next1;
+	}
+    next1:
+      feature_list = feature_list->next;
+    }
+  return(nb_codec);
+}
+
+PitiviCombobox*
+pitivi_make_codec_combobox(gchar *klass_choice)
+{
+  int			i;
+  int			j;
+  int			nb_codec;
+  GstElementFactory	*factory;
+  const gchar		*klass;
+  const gchar		*name;
+  const gchar		*short_name;
+  GList			*codec_list;
+  PitiviCombobox	*codec_combobox;
+
+  /* nombre de codecs */
+  nb_codec = 0;
+  j = 0;
+  nb_codec = pitivi_get_nb_codec(klass_choice);
+  codec_list = NULL;
+  codec_combobox = g_new0(PitiviCombobox, 1);
+  codec_combobox->combobox = gtk_combo_box_new_text();
+  codec_combobox->listname = NULL;
+  codec_combobox->tabname = g_malloc(sizeof(gchar **) * nb_codec);
+
+  /* on recupere la liste des plugins et on selectionne 
+     les plugins correspondant aux codecs */
+  codec_list = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
+  for (i = 0; codec_list != NULL; i++)
+    {
+      factory = (GstElementFactory *) codec_list->data;
+      klass = gst_element_factory_get_klass (factory);
+      name = gst_element_factory_get_longname (factory);
+      short_name = gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory));
+      if (!strncmp (klass, klass_choice, 19))
+	{
+	  /* on remplit la combobox */
+	  gtk_combo_box_insert_text (GTK_COMBO_BOX (codec_combobox->combobox), i, name);
+	  
+	  /* On remplit un tableau de nom (utilise dans beaucoup de fonctions) */
+	  codec_combobox->tabname[j] = g_strdup(short_name);
+	  
+	  /* On remplit la liste que l on va attacher a la combobox */
+	  codec_combobox->listname = g_list_append (codec_combobox->listname, g_strdup(short_name));
+	  j++;
+	}
+      else
+	{
+	  goto next;
+	}
+    next:
+      codec_list = codec_list->next;
+    }
+  return(codec_combobox);
+}
+
 GtkWidget*
 pitivi_make_video_frame(PitiviNewProjectWindow *self)
 {
@@ -1155,47 +1247,18 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
   GtkWidget		*vrate_hbox;
   GtkWidget		*size_label_x;
   GtkWidget		*video_frame;
-  GstElementFactory	*factory;
-  const gchar		*klass;
-  const gchar		*name;
-  const gchar		*short_name;
-  const gchar		*desc;
-  GtkWidget		*video_conf_but;
+   GtkWidget		*video_conf_but;
   GtkWidget		*rate_unit;
   GtkWidget		*resol_unit;
   GtkWidget		*blank1;
   GtkWidget		*blank2;
-  GstElement		*element;
-  int			i;  
-  int			j;
-  int			nb_videocodec;
+  PitiviCombobox	*video_combobox;
 
-  self->private->video_listname = NULL;
+  video_combobox = g_new0(PitiviCombobox, 1);
   /* Creation de la frame "video" et du tableau principal */
   video_frame = gtk_frame_new("Video");
   video_table = gtk_table_new(2, 2, FALSE);
 
-  nb_videocodec = 0;
-  self->private->video_codec_list = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
-  for (i = 0; self->private->video_codec_list != NULL; i++)
-    {
-      factory = (GstElementFactory *) self->private->video_codec_list->data;
-      klass = gst_element_factory_get_klass (factory);
-      name = gst_element_factory_get_longname (factory);
-      if (!strncmp (klass, "Codec/Encoder/Video", 19))
-	{
-	  nb_videocodec++;
-	}
-      else
-	{
-	  goto next1;
-	}
-    next1:
-      self->private->video_codec_list = self->private->video_codec_list->next;
-    }
-  /* liste des noms des codecs */
-  self->private->video_tabname = g_malloc(sizeof(gchar **) * nb_videocodec);  
-  j = 0;
   /* vcodec_hbox */
   vcodec_hbox = gtk_hbox_new(FALSE, 5);
 
@@ -1205,44 +1268,21 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
   gtk_misc_set_padding (GTK_MISC (video_label_codec), 5, 0);
   gtk_table_attach (GTK_TABLE(video_table), video_label_codec, 
 		    0, 1, 0, 1, GTK_FILL, FALSE, 5, 5);
-  
-  /*   Champ texte "codecs" */
-  self->private->video_combo_codec = gtk_combo_box_new_text();
 
-  self->private->video_codec_list = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
-  for (i = 0; self->private->video_codec_list != NULL; i++)
-    {
-      factory = (GstElementFactory *) self->private->video_codec_list->data;
-      klass = gst_element_factory_get_klass (factory);
-      name = gst_element_factory_get_longname (factory);
-      short_name = gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory));
-      if (!strncmp (klass, "Codec/Encoder/Video", 19))
-	{
-	  gtk_combo_box_insert_text (GTK_COMBO_BOX (self->private->video_combo_codec), i, name/* g_strdup (GST_PLUGIN_FEATURE (factory)->longname) */);
-	  self->private->video_tabname[j] = g_strdup(short_name);
-	  self->private->video_listname = g_list_append (self->private->video_listname, g_strdup(short_name));
-	  j++;
-	}
-      else
-	{
-	  goto next;
-	}
-    next:
-      self->private->video_codec_list = self->private->video_codec_list->next;
-    }
+/* ########################################################################### */
 
-/* On attache la liste des noms des codecs a la combobox */
+  /* Creation de la combobox video */
+  video_combobox = pitivi_make_codec_combobox("Codec/Encoder/Video");
 
+  /* On place les infos dans le self */
+  self->private->video_combo_codec = video_combobox->combobox;
+  self->private->video_tabname = video_combobox->tabname;
+  self->private->video_listname = video_combobox->listname;
+
+  /* On attache les noms des codecs a la combobox */
   g_object_set_data(G_OBJECT(self->private->video_combo_codec), 
 		    "video_listname", 
 		    (gpointer) self->private->video_listname);
-
-
-/*   while (self->private->video_listname) */
-/*     { */
-/*       g_print("Short name : %s\n\n", self->private->video_listname->data); */
-/* 	self->private->video_listname = self->private->video_listname->next; */
-/*     } */
 
   /* Active le premier choix*/
   gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->video_combo_codec), 0);
@@ -1254,6 +1294,8 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
   gtk_box_pack_start(GTK_BOX (vcodec_hbox), video_conf_but, FALSE, FALSE, 0);
   gtk_table_attach (GTK_TABLE(video_table), vcodec_hbox,
 		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
+
+/* ############################################################################ */
 
   /* size hbox */
   size_hbox = gtk_hbox_new(FALSE, 5);
@@ -1337,44 +1379,16 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
   GtkWidget		*acodec_hbox;
   GtkWidget		*arate_hbox;
   GtkWidget		*achannels_hbox;
-  GstElementFactory	*factory;
-  GstElement		*element;
   GtkObject		*spin_adjustment;
-  const gchar		*klass;
-  const gchar		*name;
-  const gchar		*short_name; 
+  PitiviCombobox	*audio_combobox;
   int			i;
-  int			j;
-  int			nb_audiocodec;
 
+  audio_combobox = g_new0(PitiviCombobox, 1);
   self->private->audio_listname = NULL;
   /* Creation de la frame "audio" et du tableau principal */
   audio_frame = gtk_frame_new("Audio"); 
   audio_table = gtk_table_new(2, 2, FALSE);
 
-  nb_audiocodec = 0;
-  self->private->audio_codec_list = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
-  for (i = 0; self->private->audio_codec_list != NULL; i++)
-    {
-      factory = (GstElementFactory *) self->private->audio_codec_list->data;
-      klass = gst_element_factory_get_klass (factory);
-      name = gst_element_factory_get_longname (factory);
-      
-      if (!strncmp (klass, "Codec/Encoder/Audio", 19))
-	{
-	  nb_audiocodec++;
-	}
-      else
-	{
-	  goto next1;
-	}
-    next1:
-      self->private->audio_codec_list = self->private->audio_codec_list->next;
-    }
-
-  /*  nom des codecs  */
-  self->private->audio_tabname = g_malloc(sizeof(gchar **) * nb_audiocodec);  
-  j = 0;  
   /* Premier label "codecs" */
   audio_label_codec = gtk_label_new("Codecs : ");
   gtk_misc_set_alignment (GTK_MISC (audio_label_codec), 0.0f, 0.0f);
@@ -1385,54 +1399,34 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
   /* acodec_hbox */
   acodec_hbox = gtk_hbox_new(FALSE, 5);
 
-  /*   Champ texte "codecs" */
-  self->private->audio_combo_codec = gtk_combo_box_new_text();
+/* ########################################################################### */
 
-  self->private->audio_codec_list = gst_registry_pool_feature_list (GST_TYPE_ELEMENT_FACTORY);
-  for (i = 0; self->private->audio_codec_list != NULL; i++)
-    {
-      factory = (GstElementFactory *) self->private->audio_codec_list->data;
-      klass = gst_element_factory_get_klass (factory);
-      name = gst_element_factory_get_longname (factory);
-      short_name = gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory));
+  /* Creation de la combobox audio */
+  audio_combobox = pitivi_make_codec_combobox("Codec/Encoder/Audio");
 
-      if (!strncmp (klass, "Codec/Encoder/Audio", 19))
-	{
-	  gtk_combo_box_insert_text (GTK_COMBO_BOX (self->private->audio_combo_codec), i, name /* g_strdup (GST_PLUGIN_FEATURE (factory)->name) */);
-	  self->private->audio_tabname[j] = g_strdup(short_name);
-	  self->private->audio_listname = g_list_append (self->private->audio_listname, g_strdup(short_name));
-	  j++;
-	}
-      else
-	{
-	  goto next;
-	}
-    next:
-      self->private->audio_codec_list = self->private->audio_codec_list->next;
-    }
+  /* On place les infos dans le self */
+  self->private->audio_combo_codec = audio_combobox->combobox;
+  self->private->audio_tabname = audio_combobox->tabname;
+  self->private->audio_listname = audio_combobox->listname;
 
-/* On attache la liste des noms des codecs a la combobox */
-
+  /* On attache les noms des codecs a la combobox */
   g_object_set_data(G_OBJECT(self->private->audio_combo_codec), 
 		    "audio_listname", 
 		    (gpointer) self->private->audio_listname);
 
-
-/*   while (self->private->audio_listname) */
-/*     { */
-/*       g_print("Short name : %s\n\n", self->private->audio_listname->data); */
-/* 	self->private->audio_listname = self->private->audio_listname->next; */
-/*     } */
-
-  gtk_combo_box_set_active(GTK_COMBO_BOX (self->private->audio_combo_codec), 0); /*  Choix par defaut */
+  /* Active le premier choix*/
+  gtk_combo_box_set_active (GTK_COMBO_BOX (self->private->audio_combo_codec), 0);
   gtk_box_pack_start(GTK_BOX (acodec_hbox), self->private->audio_combo_codec, TRUE, TRUE, 0);
 
   /* Bouton de configuration des codecs */
   audio_conf_but = gtk_button_new_with_label("Configure");
-  g_signal_connect(G_OBJECT(audio_conf_but), "clicked", G_CALLBACK(create_codec_conf_audio), self);
+  g_signal_connect(audio_conf_but, "clicked", G_CALLBACK(create_codec_conf_audio), self);
   gtk_box_pack_start(GTK_BOX (acodec_hbox), audio_conf_but, FALSE, FALSE, 0);
-  gtk_table_attach (GTK_TABLE(audio_table), acodec_hbox, 
+  gtk_table_attach (GTK_TABLE(audio_table), acodec_hbox,
 		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
+
+/* ############################################################################ */
+
 
   /* Deuxieme label "frequence" */
   audio_label_freq = gtk_label_new("Rate : ");
