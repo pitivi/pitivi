@@ -22,6 +22,34 @@
  * Boston, MA 02111-1307, USA.
  */
 
+/*
+
+TODO TODO TODO TODO TODO TODO
+TODO TODO TODO TODO TODO TODO
+TODO TODO TODO TODO TODO TODO
+TODO TODO TODO TODO TODO TODO
+TODO TODO TODO TODO TODO TODO
+TODO TODO TODO TODO TODO TODO
+TODO TODO TODO TODO TODO TODO
+TODO TODO TODO TODO TODO TODO
+TODO TODO TODO TODO TODO TODO
+TODO TODO TODO TODO TODO TODO
+
+:::::::::::::::::::::::::::::
+
+1) if(param != WRITABLE) gtk_widget_set_sensitive (FALSE)
+
+2) SAVE return LIST with method
+
+3)
+
+
+*/
+
+
+
+
+
 #include "pitivi.h"
 #include "pitivi-gstelementsettings.h"
 #include "pitivi-settingswindow.h"
@@ -520,6 +548,20 @@ pitivi_gstelementsettings_table_new_param_add (PitiviGstElementSettings *self,
   return ;
 }
 
+GParamSpec *
+pitivi_gstelementsettings_get_info_prop (PitiviGstElementSettings *self, gchar *name)
+{
+  gint cpt;
+
+  for (cpt = 0; cpt < self->private->num_prop; cpt++) {
+    if (!strcmp ((self->private->prop)[cpt]->name, name)) {
+      return ((self->private->prop)[cpt]);
+    }
+  }
+
+  return (NULL);
+}
+
 void
 pitivi_gstelementsettings_add_new_frame_prop (PitiviGstElementSettings *self)
 {
@@ -527,24 +569,24 @@ pitivi_gstelementsettings_add_new_frame_prop (PitiviGstElementSettings *self)
 
   self->private->frame_prop = pitivi_gstelementsettings_add_new_frame (self, "Properties:");
 
-  if (self->private->num_prop < 2) {
+  if (self->io->n_param < 1) {
     GtkWidget *Label;
 
     Label = gtk_label_new ("No Properties ...");
     gtk_box_pack_start (GTK_BOX (self->private->frame_prop),
 			Label, FALSE, FALSE, BORDER);
   } else {
-    self->Table = gtk_table_new ((self->private->num_prop - 1), 2, FALSE);
+    self->Table = gtk_table_new ((self->io->n_param), 2, FALSE);
     gtk_box_pack_start (GTK_BOX (self->private->frame_prop), self->Table, FALSE, FALSE, BORDER);
     
-    for (cpt = 1; cpt < self->private->num_prop; cpt++) {
+    for (cpt = 0; cpt < self->io->n_param; cpt++) {
 
-      pitivi_gstelementsettings_table_new_label_add 
-	(self, pitivi_gstelementsettings_string_bold 
-	 ((gchar *) g_param_spec_get_nick (self->private->prop[cpt])), (cpt - 1), 0);
+      pitivi_gstelementsettings_table_new_label_add (self, pitivi_gstelementsettings_string_bold 
+						     ((gchar *) (self->io->params[cpt]).name), cpt, 0);
 
-      pitivi_gstelementsettings_table_new_param_add 
-	(self, self->private->prop[cpt], (cpt - 1), 1);
+      pitivi_gstelementsettings_table_new_param_add (self, 
+						     pitivi_gstelementsettings_get_info_prop (self, (gchar *) (self->io->params[cpt]).name),
+						     cpt, 1);
 
     }
   }
