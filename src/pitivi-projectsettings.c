@@ -115,29 +115,32 @@ pitivi_projectsettings_media_new( gchar *codec_factory_name, GstCaps *caps, gint
   /* Recuperation des proprietes*/
   factory = gst_element_factory_find( codec_factory_name );
   element = gst_element_factory_create(factory, media_setting->codec_factory_name);
-  property_specs = g_object_class_list_properties(G_OBJECT_GET_CLASS (element), &num_properties);
-  for (i = 0; i < num_properties; i++)
+  if (element)
     {
-      GParamSpec *param = property_specs[i];
-      
-      readable = FALSE;
-      setting_value = g_new0( PitiviSettingsValue, 1);
-      g_value_init (&setting_value->value, param->value_type);
-
-      if (param->flags & G_PARAM_READABLE)
+      property_specs = g_object_class_list_properties(G_OBJECT_GET_CLASS (element), &num_properties);
+      for (i = 0; i < num_properties; i++)
 	{
-	  g_object_get_property (G_OBJECT (element), param->name, &setting_value->value);
-	  readable = TRUE;
+	  GParamSpec *param = property_specs[i];
+	  
+	  readable = FALSE;
+	  setting_value = g_new0( PitiviSettingsValue, 1);
+	  g_value_init (&setting_value->value, param->value_type);
+	  
+	  if (param->flags & G_PARAM_READABLE)
+	    {
+	      g_object_get_property (G_OBJECT (element), param->name, &setting_value->value);
+	      readable = TRUE;
+	    }
+	  setting_value->name = g_strdup (g_param_spec_get_nick (param));
+	  media_setting->codec_settings = g_slist_append(media_setting->codec_settings, setting_value);
 	}
-      setting_value->name = g_strdup (g_param_spec_get_nick (param));
-      media_setting->codec_settings = g_slist_append(media_setting->codec_settings, setting_value);
-    }
-  
-  /* Creation du caps par default pour le reglage */
-  if ( caps != NULL )
-    {
-      media_setting->caps = g_new0(GstCaps, 1);
-      media_setting->caps = gst_caps_copy(caps);
+      
+      /* Creation du caps par default pour le reglage */
+      if ( caps != NULL )
+	{
+	  media_setting->caps = g_new0(GstCaps, 1);
+	  media_setting->caps = gst_caps_copy(caps);
+	}
     }
   return (media_setting);
 }
