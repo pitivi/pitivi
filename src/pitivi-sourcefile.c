@@ -284,7 +284,7 @@ video_handoff_cb (GstElement *element, GstBuffer *buf, GstPad *pad, gpointer uda
     if (sf->private->vlastcaptured < sf->length) {
       if (!(gst_element_seek (element, GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH,
 			      sf->private->vlastcaptured)))
-	g_printf ("Error seeking to %lld\n", (signed long long int) sf->private->vlastcaptured);
+	g_warning ("Error seeking to %lld\n", (signed long long int) sf->private->vlastcaptured);
     }
 }
 
@@ -316,7 +316,7 @@ new_decoded_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer 
     {
 /*       g_signal_connect (sink, "handoff", G_CALLBACK (audio_handoff_cb), sf); */
       if (!(gst_element_link(element, sink)))
-	g_printf ("Couldn't link fakesink...\n");
+	g_warning ("Couldn't link fakesink...\n");
       sf->private->audioout = sink;
     } 
   else 
@@ -439,7 +439,7 @@ bin_was_freed(gpointer udata, GObject *object)
 {
   PitiviSourceFile	*self = PITIVI_SOURCEFILE(udata);
 
-  g_printf("!!BIN WAS FREED !!\n");
+/*   g_printf("!!BIN WAS FREED !!\n"); */
   self->private->bins = g_slist_remove(self->private->bins, object);
   self->nbbins--;
 }

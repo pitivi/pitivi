@@ -24,28 +24,6 @@
 
 #include "pitivi-sourcefilebin.h"
 
-/* typedef enum { */
-/*   GST_EVENT_UNKNOWN		= 0, */
-/*   GST_EVENT_EOS			= 1, */
-/*   GST_EVENT_FLUSH		= 2, */
-/*   GST_EVENT_EMPTY		= 3, */
-/*   GST_EVENT_DISCONTINUOUS	= 4, */
-/*   /\*GST_EVENT_NEW_MEDIA		= 5, <- removed *\/ */
-/*   GST_EVENT_QOS			= 6, */
-/*   GST_EVENT_SEEK		= 7, */
-/*   GST_EVENT_SEEK_SEGMENT	= 8, */
-/*   GST_EVENT_SEGMENT_DONE	= 9, */
-/*   GST_EVENT_SIZE		= 10, */
-/*   GST_EVENT_RATE		= 11, */
-/*   GST_EVENT_FILLER		= 12, */
-/*   GST_EVENT_TS_OFFSET		= 13, */
-/*   GST_EVENT_INTERRUPT		= 14, */
-/*   GST_EVENT_NAVIGATION		= 15, */
-/*   GST_EVENT_TAG			= 16 */
-/* } GstEventType; */
-
-
-
 static gchar *
 gst_event_get_name (GstEvent *event)
 {
@@ -101,13 +79,19 @@ testprobe (GstProbe *probe, GstData **data, gpointer pad)
   return TRUE;
 }
 
+void
+bin_notify (GObject *object, GParamSpec *param, gpointer data)
+{
+  g_printf ("Property %s changed in bin\n",
+	    param->name);
+}
 
 GstElement *
 bin_make_new_videobin (gchar *name, GstCaps *caps)
 {
   GstElement	*bin;
   GstElement	*vrate, *vscale, *cspace, *identity;
-  GstProbe	*probe, *probe4;
+/*   GstProbe	*probe, *probe4; */
 
   /* dbin ! videorate ! videoscale ! ffmpegcolorspace ! videocaps ! identity ! */
 
@@ -118,8 +102,10 @@ bin_make_new_videobin (gchar *name, GstCaps *caps)
   /* TODO : Think about moving from identity to queue */
   identity = gst_element_factory_make ("identity", NULL);
 
-  probe = gst_probe_new (FALSE, testprobe, gst_element_get_pad(vrate, "sink"));
-  gst_pad_add_probe (gst_element_get_pad(vrate, "sink"), probe);
+  g_signal_connect (G_OBJECT(bin), "notify", G_CALLBACK(bin_notify), NULL);
+
+/*   probe = gst_probe_new (FALSE, testprobe, gst_element_get_pad(vrate, "sink")); */
+/*   gst_pad_add_probe (gst_element_get_pad(vrate, "sink"), probe); */
 
 /*   probe5 = gst_probe_new (FALSE, testprobe, gst_element_get_pad(vrate, "src")); */
 /*   gst_pad_add_probe (gst_element_get_pad(vrate, "src"), probe5); */
@@ -130,8 +116,8 @@ bin_make_new_videobin (gchar *name, GstCaps *caps)
 /*   probe3 = gst_probe_new (FALSE, testprobe, gst_element_get_pad(cspace, "sink")); */
 /*   gst_pad_add_probe (gst_element_get_pad(cspace, "sink"), probe3); */
   
-  probe4 = gst_probe_new (FALSE, testprobe, gst_element_get_pad(identity, "src"));
-  gst_pad_add_probe (gst_element_get_pad(identity, "src"), probe4);
+/*   probe4 = gst_probe_new (FALSE, testprobe, gst_element_get_pad(identity, "src")); */
+/*   gst_pad_add_probe (gst_element_get_pad(identity, "src"), probe4); */
   
   gst_bin_add_many (GST_BIN (bin),
 		    vrate, vscale, cspace, identity,
@@ -212,8 +198,8 @@ bin_new_pad_audio_output (GstPad *pad, bindata *data)
 void
 bin_new_pad_video_output (GstPad *pad, bindata *data)
 {  
-  g_printf ("New Pad Video Output for pad %s:%s\n",
-	    GST_DEBUG_PAD_NAME (pad));
+/*   g_printf ("New Pad Video Output for pad %s:%s\n", */
+/* 	    GST_DEBUG_PAD_NAME (pad)); */
   if (!(gst_pad_link (pad, gst_element_get_pad (data->videobin, "sink"))))
     g_warning ("Couldn't link pad %s:%s to videobin sink",
 	       GST_DEBUG_PAD_NAME (pad));
@@ -230,7 +216,7 @@ bin_new_pad_cb (GstElement * element, GstPad * pad, gboolean last, gpointer udat
   padtype = get_pad_type (pad);
   if (!padtype)
     return;
-  g_printf("Adding pad type[%d]->[%d] : %s:%s\n", padtype, data->bintype, GST_DEBUG_PAD_NAME(pad));
+/*   g_printf("Adding pad type[%d]->[%d] : %s:%s\n", padtype, data->bintype, GST_DEBUG_PAD_NAME(pad)); */
 
   /* Connect (adapters and) ghost pads */
   if (padtype == IS_AUDIO) {
@@ -278,11 +264,9 @@ bin_preroll (GstElement *container, bindata *data)
   GstElementState	pstate = GST_STATE_READY;
   gboolean	hadfather = FALSE;
 
-  g_printf ("preroll-ing...\n");
-  
   pipeline = gst_pipeline_new(NULL);
   pstate = gst_element_get_state (data->bin);
-  g_printf ("Element was in state %s\n", gst_element_state_get_name(pstate));
+/*   g_printf ("Element was in state %s\n", gst_element_state_get_name(pstate)); */
   if ((father = (GstElement *) gst_object_get_parent (GST_OBJECT(data->bin)))) {
     /* remove it from father */
     hadfather = TRUE;
@@ -310,11 +294,12 @@ bin_preroll (GstElement *container, bindata *data)
   gst_object_ref (GST_OBJECT(data->bin));
   gst_bin_remove (GST_BIN (pipeline), data->bin);
   
-  g_printf ("Element after pre-roll is in state %s\n",
-	    gst_element_state_get_name (gst_element_get_state (data->bin)));
+/*   g_printf ("Element after pre-roll is in state %s\n", */
+/* 	    gst_element_state_get_name (gst_element_get_state (data->bin))); */
   gst_element_set_state (data->bin, pstate);
   if (hadfather) {
     gst_bin_add (GST_BIN(father), data->bin);
+/*     gst_object_unref (GST_OBJECT(data->bin)); */
   }
 }
 
@@ -363,41 +348,20 @@ pitivi_sourcefile_bin_new (PitiviSourceFile *self, int type, PitiviMainApp *main
   gst_element_set_name (pipeline, tmp);
   g_free (tmp);
 
-/*   tmp = g_strdup_printf ("container_%s", self->filename); */
-/*   container = gst_pipeline_new (tmp); */
-/*   g_free (tmp); */
-/*   gst_bin_add (GST_BIN (container), pipeline); */
-
   data = g_new0(bindata, 1);
   data->bin = pipeline;
   data->sf = self;
   data->bintype = type;
   data->mainapp = mainapp;
   decode = gst_bin_get_by_name (GST_BIN (pipeline), "dbin");
-  g_signal_connect (pipeline, "state-change", G_CALLBACK (decodebin_change_state), data);
-  g_signal_connect (decode, "eos", G_CALLBACK (decodebin_eos), data);
-  g_signal_connect (decode, "pad-removed", G_CALLBACK (decodebin_pad_removed), data);
+/*   g_signal_connect (pipeline, "state-change", G_CALLBACK (decodebin_change_state), data); */
+/*   g_signal_connect (decode, "eos", G_CALLBACK (decodebin_eos), data); */
+/*   g_signal_connect (decode, "pad-removed", G_CALLBACK (decodebin_pad_removed), data); */
   g_signal_connect (decode, "new-decoded-pad", G_CALLBACK (bin_new_pad_cb), data);
 
   bin_add_outputbins (data);
 
-/*   if (!(gst_element_set_state (container, GST_STATE_PLAYING))) return NULL; */
-  
-/*   for (i = 1000; i--; ) { */
-/*     if (!(gst_bin_iterate(GST_BIN(container)))) */
-/*       break; */
-/*     if (data->ready) */
-/*       break; */
-/*   } */
-
-/*   if (!gst_element_seek (decode, GST_FORMAT_BYTES | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH, 0)) */
-/*     g_printf("ERROR SEEKING BACK TO 0!!!!\n"); */
-
-/*   gst_element_set_state (pipeline, GST_STATE_PAUSED); */
   gst_element_set_state (pipeline, GST_STATE_READY);
 
-/*   gst_object_ref(GST_OBJECT(pipeline)); */
-/*   gst_bin_remove (GST_BIN (container), pipeline); */
-/*   gst_object_unref (GST_OBJECT(container)); */
   return pipeline;
 }
