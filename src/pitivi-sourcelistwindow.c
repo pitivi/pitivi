@@ -2003,7 +2003,7 @@ pitivi_sourcelistwindow_get_type (void)
 	0,			/* n_preallocs */
 	pitivi_sourcelistwindow_instance_init	/* instance_init */
       };
-      type = g_type_register_static (PITIVI_WINDOWS_TYPE,
+      type = g_type_register_static (PITIVI_PROJECTWINDOWS_TYPE,
 				     "PitiviSourceListWindowType", &info, 0);
     }
 

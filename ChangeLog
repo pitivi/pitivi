@@ -1,5 +1,8 @@
 2004-06-26    <bilboed@rider.bilboed.homelinux.org>
 
+	* src/pitivi-timelinewindow.c (pitivi_timelinewindow_get_type):
+	* src/pitivi-sourcelistwindow.c (pitivi_sourcelistwindow_get_type): set the father class to PITIVI_PROJECTWINDOWS_TYPE
+		
 	* src/pitivi-viewercontroller.c: 
 	* src/pitivi-viewercontroller.h: Converted PitiviViewerController to derivate of PitiviWindows
 

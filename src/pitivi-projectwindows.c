@@ -183,7 +183,7 @@ pitivi_projectwindows_class_init (gpointer g_class, gpointer g_class_data)
   g_object_class_install_property (gobject_class,
                                    PROP_PROJECT,
                                    g_param_spec_pointer ("project",
-							 "Project",
+							 "project",
 							 "Pointer on the PitiviProject instance",
 							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY) );
 
