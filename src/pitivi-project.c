@@ -289,7 +289,7 @@ pitivi_project_set_video_output(PitiviProject *project, GstElement *output)
 			     gst_element_get_pad (project->private->videoqueue, "sink"));
   } else {
     // create and add queue
-    project->private->videoqueue = gst_element_factory_make("queue", "queue");
+    project->private->videoqueue = gst_element_factory_make("queue", "videoqueue");
     gst_bin_add (GST_BIN (project->private->vsinkthread),
 		 project->private->videoqueue);
   }
@@ -334,7 +334,7 @@ pitivi_project_set_audio_output(PitiviProject *project, GstElement *output)
     
   } else {
     // create and add queue
-    project->private->audioqueue = gst_element_factory_make("queue", "queue");
+    project->private->audioqueue = gst_element_factory_make("queue", "audioqueue");
     gst_bin_add (GST_BIN (project->private->asinkthread),
 		 project->private->audioqueue);
   }
@@ -387,15 +387,15 @@ pitivi_project_constructor (GType type,
 
   project->timeline = gnl_timeline_new("project-timeline");
 
-  //gnl_timeline_add_group(project->timeline, project->audiogroup);
-  gnl_timeline_add_group(project->timeline, project->videogroup);
-
   /* add timeline and sink threads to timeline pipe */
   gst_bin_add_many (GST_BIN(project->pipeline),
 		    GST_ELEMENT(project->timeline),
 		    project->private->vsinkthread,
 		    // project->private->asinkthread,
 		    NULL);
+
+  //gnl_timeline_add_group(project->timeline, project->audiogroup);
+  gnl_timeline_add_group(project->timeline, project->videogroup);
 
   return obj;
 }

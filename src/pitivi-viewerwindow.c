@@ -199,7 +199,7 @@ void	video_play(GtkWidget *widget, gpointer data)
   } else if (self->private->play_status == STOP) {
     g_print ("[CallBack]:video_play STOP STATUS\n");
     self->private->play_status = PLAY;
-    do_seek (GST_ELEMENT (project->timeline), 0);
+/*     do_seek (GST_ELEMENT (project->timeline), 0); */
     if (!gst_element_set_state(project->pipeline, GST_STATE_PLAYING))
       g_warning("Couldn't set the project pipeline to PLAYING");
     else {
@@ -371,21 +371,21 @@ gboolean
 output_probe (GstProbe *probe, GstData **data, gpointer udata)
 {
   PitiviViewerWindow *self = (PitiviViewerWindow *) udata;
-  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+/*   PitiviProject	*project = ((PitiviProjectWindows *) self)->project; */
 
   if (GST_IS_BUFFER(*data)) {
     self->private->new_time = GST_BUFFER_TIMESTAMP(*data);
     g_idle_add (updated_time, self);
   } else if (GST_IS_EVENT(*data) && (GST_EVENT_TYPE(*data) == GST_EVENT_EOS)) {
-    /* 
-       This is really a crude hack. We have to drop the EOS Event and stop iterating manually,
-       otherwise the app segfaults on a gst_object_unref of that EOS event :(
-    */
-    gst_element_set_state (project->pipeline, GST_STATE_READY);
+/*     /\*  */
+/*        This is really a crude hack. We have to drop the EOS Event and stop iterating manually, */
+/*        otherwise the app segfaults on a gst_object_unref of that EOS event :( */
+/*     *\/ */
+/*     gst_element_set_state (project->pipeline, GST_STATE_READY); */
     self->private->play_status = STOP;
     self->private->new_time = 0;
-    g_idle_add (updated_time, self);    
-    return FALSE;
+    g_idle_add (updated_time, self);
+    /*     return FALSE; */
   }
   return TRUE;
 }
@@ -496,12 +496,12 @@ gboolean	idle_func_video (gpointer data)
   PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
   
   // remove the idle_func if we're not playing !
-  if (self->private->play_status == STOP) {
+  if (gst_element_get_state (GST_ELEMENT(project->timeline)) != GST_STATE_PLAYING) {
     video_stop (GTK_WIDGET (self), self);
     return FALSE;
   }
   
-  if ( gst_element_get_state (project->pipeline) == GST_STATE_PLAYING ) {
+  if ( gst_element_get_state (GST_ELEMENT (project->timeline)) == GST_STATE_PLAYING ) {
     gst_bin_iterate (GST_BIN (project->pipeline));
   }
   return TRUE;
