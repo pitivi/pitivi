@@ -42,25 +42,34 @@ enum {
 
 struct _PitiviLPlayerWindowPrivate
 {
-  /* instance private members */
   gboolean	dispose_has_run;
-
+  
+  /* instance private members */
+  // Main Gui elements
+  GtkWidget	*main_vbox;
+  GtkWidget	*hbox;
+  // stream
+  GstElement	*sink;
+  GstElement	*spider;
   GstElement	*pipe;
   GstElement	*filesrc;
-  GstElement	*spider;
   GstElement	*colorspace;
   GstElement	*video_sink;
-
-  GtkWidget	*main_vbox;
+  GstElement	*audio_sink;
+  // video_area
   GtkWidget	*video_area;
+  // toolbar
   GtkWidget	*toolbar;
   GtkWidget	*toolbarTEMP;
-
   GtkWidget	*backward;
   GtkWidget	*playpause;
   GtkWidget	*forward;
   GtkWidget	*stop;
-
+  // timeline
+  GtkWidget	*timeline;
+  gint64	timeline_min;
+  gint64	timeline_max;
+  gdouble	timeline_step;
 };
 
 /*
@@ -69,33 +78,85 @@ struct _PitiviLPlayerWindowPrivate
  * ####################################################################################
  */
 
-// TODO :::::::::::::::::::
-// quand exit enlever le lien overlay
-// mettre une taille par default
+// TODO
+// continuer sur la timeline
 
 
-void pitivi_lplayer_play_video (GtkWidget *widget, PitiviLPlayerWindow *self)
+gboolean	pitivi_lplayer_idle_func (gpointer data)
+{
+  PitiviLPlayerWindow *self = (PitiviLPlayerWindow *) data;
+  GstElement *elem;
+  gint64	value1, value2;
+  gdouble	pourcent;
+
+  elem = GST_ELEMENT (self->private->pipe);
+  if (elem) // we have a true source
+    {
+      value1 = do_query(elem, GST_QUERY_POSITION);
+
+      g_printf("**idle** : pos:%lld\n", value1);
+
+    }
+/* } */
+
+  g_print("MA QUESTION: %d\n",sizeof(gdouble) );
+  g_print("IDLE FUCKTION END %lld, %lld\n", self->private->timeline_min, self->private->timeline_max);
+
+  return TRUE;
+}
+
+gboolean	do_lplayer_seek(GstElement *elem, gint64 value)
+{
+  GstEvent	*event;
+  GstPad	*pad;
+  gboolean	res;
+
+  //  pad = gst_element_get_pad(elem, "src");
+  event = gst_event_new_seek (
+			      GST_FORMAT_TIME |	    /* seek on nanoseconds */
+			      GST_SEEK_METHOD_SET | /* set the absolute position */
+			      GST_SEEK_FLAG_FLUSH,  /* flush any pending data */
+			      value);	    /* the seek offset in bytes */
+  
+  /* res = gst_element_send_event (GST_ELEMENT (elem), event); */
+  if (!(res = gst_element_send_event(elem, event)))
+    {
+      g_warning ("seek on element %s failed",
+		 gst_element_get_name(elem));
+      return FALSE;
+    }
+  return TRUE;
+}
+
+
+void pitivi_lplayer_play_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
 {
   if (GTK_TOGGLE_BUTTON (self->private->playpause)->active)
     {
       g_print("FCT__________pitivi_lplayer_play_video:_PLAY\n");
       gst_element_set_state (self->private->pipe, GST_STATE_PLAYING);
-      g_printf("XWindow ID settings\n");
-      gst_x_overlay_set_xwindow_id
-	( GST_X_OVERLAY ( self->private->video_sink ),
-	  GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
-      g_printf("XWindow ID settings END END\n");
+      g_idle_add(pitivi_lplayer_idle_func, self);
     }
   else
     {
       g_print("FCT__________pitivi_lplayer_play_video:_STOP\n");
        gst_element_set_state (self->private->pipe, GST_STATE_PAUSED);
     }
-
 }
 
-void pitivi_lplayer_stop_video (GtkWidget *widget, PitiviLPlayerWindow *self)
+void pitivi_lplayer_pause_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
 {
+  gst_element_set_state (self->private->pipe, GST_STATE_PAUSED);
+}
+
+
+void pitivi_lplayer_stop_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
+{
+  //  PitiviProject	*project = ((PitiviProjectWindows *) self)->project;
+  gboolean res;
+  GstElement *elem;
+  gint64	value;
+  
   if (GTK_TOGGLE_BUTTON (self->private->playpause)->active)
     {
       g_print("PLAY_VIDEO_________from_stop\n");   
@@ -103,12 +164,39 @@ void pitivi_lplayer_stop_video (GtkWidget *widget, PitiviLPlayerWindow *self)
     }
   else
     g_print("STOP_VIDEO_________from_stop\n");
+
+  gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);
+
+  /* rewind the movie */
+  do_lplayer_seek(GST_ELEMENT (self->private->pipe), 0LL);
+  
+  /* query total size */
+  value  = do_query(GST_ELEMENT (self->private->timeline), GST_QUERY_TOTAL);
+
+  /* reset the viewer timeline */
+  gtk_range_set_value(GTK_RANGE (self->private->timeline) , 0);
+
+  // 2 lignes porc pour mettre du noir quand on stop
+  gst_element_set_state (self->private->pipe, GST_STATE_PLAYING);
+  gst_element_set_state (self->private->pipe, GST_STATE_PAUSED);
+  return ;
+
 }
 
+void pitivi_lplayer_backward_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
+{
+
+}
+
+void pitivi_lplayer_forward_stream (GtkWidget *widget, PitiviLPlayerWindow *self)
+{
+
+}
 
 void
 pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 {
+ 
   GtkWidget	*button_image;
 
   g_print ("FILE NAME:%s\n", self->filename);
@@ -130,16 +218,20 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
   gtk_widget_realize (self->private->video_area);
   gdk_window_set_background (self->private->video_area->window, &self->private->video_area->style->black);
 
+
+  // HbOx
+  self->private->hbox = gtk_hbox_new (FALSE, FALSE);
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), 
+		      self->private->hbox, TRUE, TRUE, 0);
+
   // ToolbAr
   self->private->toolbar = gtk_toolbar_new ();
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->toolbar, FALSE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->hbox), self->private->toolbar, FALSE, TRUE, 0);
   gtk_widget_show (self->private->toolbar);
   
   gtk_toolbar_set_orientation (GTK_TOOLBAR (self->private->toolbar), GTK_ORIENTATION_HORIZONTAL);
   gtk_toolbar_set_style (GTK_TOOLBAR (self->private->toolbar), GTK_TOOLBAR_BOTH);
   gtk_container_set_border_width (GTK_CONTAINER (self->private->toolbar), 0);
-  //  gtk_toolbar_set_space_size (GTK_TOOLBAR (toolbar), 5);
-  //gtk_container_add (GTK_CONTAINER (self->private->main_vbox), self->private->toolbar);
 
   button_image = gtk_image_new_from_file ("../pixmaps/backward.xpm");
   self->private->backward = gtk_toolbar_append_item( GTK_TOOLBAR (self->private->toolbar),
@@ -147,7 +239,7 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 						     "My item tooltip",
 						     "private item text",
 						     button_image,
-						     GTK_SIGNAL_FUNC (pitivi_lplayer_play_video),
+						     GTK_SIGNAL_FUNC (pitivi_lplayer_play_stream),
 						     self);
   
   button_image = gtk_image_new_from_file ("../pixmaps/play.xpm");
@@ -158,7 +250,7 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 							 "Play",
 							 "Private",
 							 button_image,
-							 GTK_SIGNAL_FUNC (pitivi_lplayer_play_video),
+							 GTK_SIGNAL_FUNC (pitivi_lplayer_play_stream),
 							 self);
   
   button_image = gtk_image_new_from_file ("../pixmaps/forward.xpm");
@@ -167,7 +259,7 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 						     "My item tooltip",
 						     "private item text",
 						     button_image,
-						     GTK_SIGNAL_FUNC (pitivi_lplayer_play_video),
+						     GTK_SIGNAL_FUNC (pitivi_lplayer_play_stream),
 						     self);
   
   button_image = gtk_image_new_from_file ("../pixmaps/stop.xpm");
@@ -176,63 +268,76 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 						  "My item tooltip",
 						  "private item test",
 						  button_image,
-						  GTK_SIGNAL_FUNC (pitivi_lplayer_stop_video),
+						  GTK_SIGNAL_FUNC (pitivi_lplayer_stop_stream),
 						  self);
+
+
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->private->playpause), FALSE);
+
+  // TiMelinE
+
+
+
+  self->private->timeline = gtk_hscale_new_with_range(self->private->timeline_min, 
+						      self->private->timeline_max, 
+						      self->private->timeline_step);
+  gtk_scale_set_draw_value (GTK_SCALE (self->private->timeline), FALSE);
+  gtk_box_pack_start (GTK_BOX (self->private->hbox), 
+		      self->private->timeline, TRUE, TRUE, 0);
   
+  gtk_widget_show (self->private->timeline);
+  
+  
+  /*   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-press-event",  */
+  /* 		      GTK_SIGNAL_FUNC (pitivi_lplayer_pause_stream), self); */
+  /*   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-release-event",  */
+  /* 		      GTK_SIGNAL_FUNC (seek_stream), self); */
+  /*   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "value-changed",  */
+  /* 		      GTK_SIGNAL_FUNC (move_timeline), self); */
+
   gtk_widget_show_all (GTK_WIDGET (self));
 
-  // gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);
-  
   return ;
 }
 
 void
 pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
 {
-  GstElement	*colorspace;
+   GstElement	*colorspace;
 
-  self->private->pipe = gst_thread_new ("PipeLPlayer");
+  self->private->pipe = gst_element_factory_make("playbin", "spider");
   g_assert (self->private->pipe != NULL);
- 
-  self->private->filesrc = gst_element_factory_make("filesrc", "src");
-  g_assert (self->private->filesrc != NULL);
-  g_object_set (G_OBJECT (self->private->filesrc), "location", self->filename, NULL);
-
-  self->private->spider = gst_element_factory_make("spider", "spider");
-  g_assert (self->private->spider != NULL);
- 
-  self->private->colorspace = gst_element_factory_make("colorspace", "colorspace");
-  g_assert (self->private->colorspace != NULL);
-   
+  
   self->private->video_sink = gst_element_factory_make("ximagesink", "video_sink");
   g_assert (self->private->video_sink != NULL);
-    
-  gst_bin_add_many (GST_BIN (self->private->pipe),
-		    self->private->filesrc,
-		    self->private->spider,
-		    self->private->video_sink,
-		    self->private->colorspace,
-		    NULL);
-		    
-/*   gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);  */
-
-  if (!gst_element_link (self->private->filesrc, self->private->spider))
-    g_print ("Not Link\n");
-  if (!gst_element_link (self->private->spider, self->private->colorspace))
-    g_print ("Not Link\n");
-  if (!gst_element_link (self->private->colorspace, self->private->video_sink))
-    g_print ("Not Link\n");
-
-
-/*   if (!gst_element_set_state(self->private->pipe, GST_STATE_PLAYING)) { */
-/*     g_print ("############################# BAD STATE ########################33\n"); */
-/*     exit (-1); */
-/*   } */
   
-/*   gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);  */
+  self->private->audio_sink = gst_element_factory_make("alsasink", "audio_sink");
+  g_assert (self->private->audio_sink != NULL);
+
+
+
+  g_object_set (G_OBJECT (self->private->pipe), "uri", gst_uri_construct("file", self->filename), NULL);	   
+  
+  g_object_set (G_OBJECT (self->private->pipe), "video-sink", self->private->video_sink, NULL);	
+  g_object_set (G_OBJECT (self->private->pipe), "audio-sink", self->private->audio_sink, NULL);	
+
+  gst_x_overlay_set_xwindow_id
+    ( GST_X_OVERLAY ( self->private->video_sink ),
+      GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
+
+  if (!gst_element_set_state(self->private->pipe, GST_STATE_PLAYING)) {
+    g_print ("############################# BAD STATE ########################33\n");
+    exit (-1);
+  }
+
+
+  gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->private->playpause), TRUE);
 
   return ;
+
 }
+
+
 
 
 /*
@@ -259,6 +364,7 @@ pitivi_lplayerwindow_constructor (GType type,
 			     guint n_construct_properties,
 			     GObjectConstructParam * construct_properties)
 {
+  GstElement *elem;
   GObject *obj;
   /* Invoke parent constructor. */
   obj = parent_class->constructor (type, n_construct_properties,
@@ -271,6 +377,19 @@ pitivi_lplayerwindow_constructor (GType type,
   pitivi_lplayerwindow_create_gui (self);
 
   pitivi_lplayerwindow_create_stream (self);
+
+
+  // Set min max range
+  elem = GST_ELEMENT (self->private->pipe);
+  if (elem) // we have a true source
+    {
+      self->private->timeline_min  = do_query(elem, GST_QUERY_START);
+      self->private->timeline_max  = do_query(elem, GST_QUERY_SEGMENT_END);
+    }
+
+  gtk_range_set_range (GTK_RANGE(self->private->timeline), 
+		       self->private->timeline_min,
+		       self->private->timeline_max);
 
   return obj;
 }
@@ -291,6 +410,10 @@ pitivi_lplayerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->spider = NULL;
   self->private->video_sink = NULL;
 
+  // settings for timeline
+  self->private->timeline_min = 0;
+  self->private->timeline_max = 500;
+  self->private->timeline_step = 1;
   /* Do only initialisation here */
   /* The construction of the object should be done in the Constructor
      So that properties set at instanciation can be set */
@@ -327,6 +450,9 @@ pitivi_lplayerwindow_finalize (GObject *object)
    * Here, complete object destruction. 
    * You might not need to do much... 
    */
+
+  g_idle_remove_by_data (self);
+
   gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);
   gst_object_unref (GST_OBJECT(self->private->pipe));
 
