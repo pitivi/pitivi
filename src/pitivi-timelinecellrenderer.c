@@ -110,12 +110,56 @@ pitivi_timelinecellrenderer_constructor (GType type,
 
 }
 
+
+static void draw_selection (GtkWidget *widget, int width, char dash[])
+{
+  GdkGC *style = gdk_gc_new ( widget->window );
+  gdk_gc_set_dashes ( style, 0, (gint8*)dash, sizeof (dash) / 2); 
+  gdk_gc_set_line_attributes ( style, width, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  gdk_draw_rectangle ( widget->window, style, FALSE, 0, 0, widget->allocation.width, widget->allocation.height);
+}
+
+static void draw_media (GtkWidget *widget, int start, int end)
+{
+  GdkGC *style = gdk_gc_new ( widget->window );
+  gdk_gc_set_line_attributes ( style, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  gdk_draw_rectangle ( widget->window, style, TRUE, start, 0, end, widget->allocation.height);
+}
+
+static void draw_media_area (GtkWidget *widget, GdkRectangle area)
+{
+  GdkGC *style = gdk_gc_new ( widget->window );
+  gdk_gc_set_line_attributes ( style, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  gdk_draw_rectangle ( widget->window, style, TRUE, area.x, area.y, area.width, area.height);
+}
+
+
 static void
 pitivi_timelinewindow_drag_data_received (GtkWidget *widget, GdkDragContext *dc, gint x, gint y, GtkSelectionData *selection_data, guint info, guint time, gpointer data)
 {
   g_printf ("---------------data received-------------- \n");
   gtk_drag_finish(dc, FALSE, FALSE, time);
 }
+
+static void 
+pitivi_timelinewindow_drag_leave (GtkWidget          *widget,
+				  GdkDragContext     *context,
+				  guint               time)
+{
+  g_printf ("---------------drag leave -------------- \n");
+  //gtk_drag_unhighlight ();
+}
+
+static void
+pitivi_timelinewindow_drag_motion (GtkWidget          *widget,
+				   GdkDragContext     *context,
+				   gint                x,
+				   gint                y,
+				   guint               time)
+{
+    draw_media (widget, x, 100);
+}
+
 
 static void
 pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_class)
@@ -136,11 +180,14 @@ pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_
   self->private->height = FIXED_HEIGHT;
   self->private->selected = FALSE;
   
-  gtk_drag_dest_set ( GTK_WIDGET (self), GTK_DEST_DEFAULT_ALL, TargetEntries, iNbTargetEntries, GDK_ACTION_COPY);
+  gtk_drag_dest_set  (GTK_WIDGET (self), GTK_DEST_DEFAULT_ALL, TargetEntries, iNbTargetEntries, GDK_ACTION_COPY);
   gtk_signal_connect (GTK_OBJECT (self), "drag_data_received"\
 		      , GTK_SIGNAL_FUNC ( pitivi_timelinewindow_drag_data_received )\
 		      , NULL);
-  
+  gtk_signal_connect (GTK_OBJECT (self), "drag_motion",
+                      GTK_SIGNAL_FUNC ( pitivi_timelinewindow_drag_motion ), NULL);
+  gtk_signal_connect (GTK_OBJECT (self), "drag_leave",
+                      GTK_SIGNAL_FUNC ( pitivi_timelinewindow_drag_leave ), NULL);
 }
 
 static void
@@ -288,28 +335,6 @@ pitivi_timelinecellrenderer_size_allocate (GtkWidget     *widget,
 			      allocation->width, allocation->height);
 
     }
-}
-
-static void draw_selection (GtkWidget *widget, int width, char dash[])
-{
-  GdkGC *style = gdk_gc_new ( widget->window );
-  gdk_gc_set_dashes ( style, 0, (gint8*)dash, sizeof (dash) / 2); 
-  gdk_gc_set_line_attributes ( style, width, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-  gdk_draw_rectangle ( widget->window, style, FALSE, 0, 0, widget->allocation.width, widget->allocation.height);
-}
-
-static void draw_media (GtkWidget *widget, int start, int end)
-{
-  GdkGC *style = gdk_gc_new ( widget->window );
-  gdk_gc_set_line_attributes ( style, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-  gdk_draw_rectangle ( widget->window, style, TRUE, start, 0, end, widget->allocation.height);
-}
-
-static void draw_media_area (GtkWidget *widget, GdkRectangle area)
-{
-  GdkGC *style = gdk_gc_new ( widget->window );
-  gdk_gc_set_line_attributes ( style, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
-  gdk_draw_rectangle ( widget->window, style, TRUE, area.x, area.y, area.width, area.height);
 }
 
 static gint
