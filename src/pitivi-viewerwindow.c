@@ -208,13 +208,20 @@ pitivi_viewerwindow_drag_data_received (GtkWidget *widget, GdkDragContext *drag_
 					gint x, gint y, GtkSelectionData *data,
 					guint info, guint time, gpointer user_data)
 {
-  gtk_drag_finish (drag_context, TRUE, FALSE, time);
+  PitiviSourceFile	*sf;
+
+  g_printf("drag-data-received viewer\n");
+  sf = (void *) data->data;
+  g_printf("Received file [%s] in viewer\n",
+	   sf->filename);
 }
 
 static gboolean
 pitivi_viewerwindow_drag_drop (GtkWidget *widget, GdkDragContext *dc,
 			       gint x, gint y, guint time, gpointer user_data)
 {
+  g_printf("drag-drop viewer\n");
+  gtk_drag_finish (dc, TRUE, FALSE, time);
   return TRUE;
 }
 
@@ -237,8 +244,14 @@ create_gui (gpointer data)
   g_signal_connect (G_OBJECT (self->private->video_area), "configure_event",
 		    G_CALLBACK (pitivi_viewerwindow_configure_event), NULL);
 
-  gtk_drag_dest_set(GTK_WIDGET(self), 
-		    GTK_DEST_DEFAULT_DROP | GTK_DEST_DEFAULT_HIGHLIGHT,
+  gtk_widget_set_events (self->private->video_area, GDK_EXPOSURE_MASK
+			 | GDK_LEAVE_NOTIFY_MASK
+			 | GDK_BUTTON_PRESS_MASK
+			 | GDK_POINTER_MOTION_MASK
+			 | GDK_POINTER_MOTION_HINT_MASK);
+
+  gtk_drag_dest_set(GTK_WIDGET(self->private->video_area), 
+		    GTK_DEST_DEFAULT_ALL,
 		    TargetEntries, iNbTargetEntries,
 		    GDK_ACTION_COPY);
 
@@ -246,13 +259,6 @@ create_gui (gpointer data)
 		    G_CALLBACK (pitivi_viewerwindow_drag_data_received), self);
   g_signal_connect (G_OBJECT(self->private->video_area), "drag_drop",
 		    G_CALLBACK (pitivi_viewerwindow_drag_drop), self);
-
-
-  gtk_widget_set_events (self->private->video_area, GDK_EXPOSURE_MASK
-			 | GDK_LEAVE_NOTIFY_MASK
-			 | GDK_BUTTON_PRESS_MASK
-			 | GDK_POINTER_MOTION_MASK
-			 | GDK_POINTER_MOTION_HINT_MASK);
 
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->video_area, TRUE, TRUE, 0);
   
