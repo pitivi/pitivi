@@ -120,7 +120,6 @@ pitivi_windows_finalize (GObject *object)
    * You might not need to do much... 
    */
   
-  g_free (self->private->window_icon);
   g_free (self->private);
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }

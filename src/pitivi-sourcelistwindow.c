@@ -1710,8 +1710,7 @@ pitivi_sourcelistwindow_dispose (GObject *object)
     return;
   
   /* Make sure dispose does not run twice. */
-  g_object_unref (self->private->treeview);
-  g_object_unref (self->private->listview);
+  
   self->private->dispose_has_run = TRUE;	
   G_OBJECT_CLASS (parent_class)->dispose (object);
 }
