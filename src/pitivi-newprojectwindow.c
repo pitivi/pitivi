@@ -23,39 +23,85 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include "pitivi.h"
-#include "pitivi-newprojectwindow.h"
+#include	"pitivi.h"
+#include	"pitivi-newprojectwindow.h"
 #include	<gst/gst.h>
 
-static GtkWindowClass *parent_class = NULL;
+
+static GtkWindowClass	*parent_class = NULL;
+
 
 struct _PitiviNewProjectWindowPrivate
 {
   /* instance private members */
-  gboolean	dispose_has_run;
+  gboolean		dispose_has_run;
+  GtkWidget		*hbox;
 
-  GtkWidget     *hbox;
+  /* Arbre des reglages */
+
+   /* Settings */
+  GtkWidget		*name_text;
+  GtkWidget		*button_add;
+  GtkWidget		*button_mod;
+  GtkWidget		*button_del;
+  GtkTextBuffer		*name_text_buffer;
+  GtkTextIter		start_description_iter;
+  GtkTextIter		end_description_iter;
+  GtkWidget		*name_text_settings;
+  GtkWidget		*name_scroll;
+  GtkWidget		*cat_text;
+  GtkWidget		*cat_but_add;
+  GtkWidget		*cat_but_del;
 };
 
 /*
  * forward definitions
  */
+void		pitivi_fill_hbox		( PitiviNewProjectWindow	*self );
+GtkTreeStore	*pitivi_tree_create		( );
+GtkWidget	*pitivi_tree_show		( GtkTreeStore			*tree );
+GtkWidget	*pitivi_notebook_new		( PitiviNewProjectWindow	*self );
+GtkWidget	*pitivi_make_presets_hbox	( PitiviNewProjectWindow	*self );
+GtkWidget	*pitivi_create_presets_table	( PitiviNewProjectWindow	*self );
+GtkWidget	*pitivi_make_settings_table	( PitiviNewProjectWindow	*self );
+GtkWidget	*pitivi_make_video_frame	( );
+GtkWidget	*pitivi_make_audio_frame	( );
+GtkWidget	*pitivi_make_name_frame(PitiviNewProjectWindow *self);
+GtkWidget	*pitivi_make_cat_frame(PitiviNewProjectWindow *self);
 
-GtkTreeStore		*pitivi_tree_create();
-GtkWidget		*pitivi_tree_show(GtkTreeStore *tree);
-GtkWidget		*pitivi_notebook_new(GtkWidget *window);
-GtkWidget		*pitivi_make_presets_hbox(GtkWidget *window, GtkWidget *presets_hbox);
-GtkWidget		*pitivi_create_presets_table(GtkWidget *window);
-GtkWidget		*pitivi_make_settings_table(GtkWidget *settings_table);
-GtkWidget		*pitivi_make_video_frame();
-GtkWidget		*pitivi_make_audio_frame();
-void			pitivi_fill_hbox(GtkWidget *window, GtkWidget *hbox);
+
+/* Signals Definitions */
+void			pitivi_close_window(GtkButton *button, gpointer user_data);
+void			pitivi_add_settings(GtkButton *button, gpointer user_data);
 
 /*
  * Insert "added-value" functions here
  */
+void 
+pitivi_close_window(GtkButton *button, gpointer user_data)
+{
+  gtk_widget_destroy(user_data);
+}
 
-void		pitivi_fill_hbox(GtkWidget *window, GtkWidget *hbox)
+void
+pitivi_add_settings(GtkButton *button, gpointer user_data)
+{
+  PitiviNewProjectWindow	*self;
+
+  self = (PitiviNewProjectWindow *) user_data;
+
+  gtk_text_buffer_get_start_iter(self->private->name_text_buffer, &self->private->start_description_iter);
+  gtk_text_buffer_get_end_iter(self->private->name_text_buffer, &self->private->end_description_iter);
+  
+  printf("Add Settings : Nom:%s\nDescription:%s\n", 
+	 gtk_entry_get_text(GTK_ENTRY(self->private->name_text)),
+	 gtk_text_buffer_get_text ( GTK_TEXT_BUFFER(self->private->name_text_buffer),
+				    &self->private->start_description_iter, 
+				    &self->private->end_description_iter, FALSE) );
+}
+
+void
+pitivi_fill_hbox(PitiviNewProjectWindow *self)
 {
   GtkTreeStore	*tree;
   GtkWidget	*show_tree;
@@ -71,13 +117,14 @@ void		pitivi_fill_hbox(GtkWidget *window, GtkWidget *hbox)
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_container_add(GTK_CONTAINER(scroll), show_tree);
   
-  notebook = pitivi_notebook_new(window);
+  notebook = pitivi_notebook_new(self);
   
-  gtk_box_pack_start (GTK_BOX (hbox ), scroll, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (hbox), notebook, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->hbox ), scroll, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->hbox), notebook, TRUE, TRUE, 0);
 }
 
-GtkTreeStore	*pitivi_tree_create()
+GtkTreeStore*
+pitivi_tree_create()
 {
   GtkTreeStore	*tree;
   GtkTreeIter	pIter;
@@ -93,7 +140,7 @@ GtkTreeStore	*pitivi_tree_create()
 /* fils 1*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
   gtk_tree_store_set(tree, &pIter2, 0, "Standard 32kHz", -1);
-
+  
 /* fils 1*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
   gtk_tree_store_set(tree, &pIter2, 0, "Standard 48kHz", -1);
@@ -105,7 +152,6 @@ GtkTreeStore	*pitivi_tree_create()
 /* fils 1*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
   gtk_tree_store_set(tree, &pIter2, 0, "Widescreen 48kHz", -1);
-
 
 /* pere 1*/
   gtk_tree_store_append(tree, &pIter, NULL);
@@ -127,7 +173,6 @@ GtkTreeStore	*pitivi_tree_create()
   gtk_tree_store_append(tree, &pIter2, &pIter);
   gtk_tree_store_set(tree, &pIter2, 0, "Widescreen 48kHz", -1);
 
-
 /* pere 1*/
   gtk_tree_store_append(tree, &pIter, NULL);
   gtk_tree_store_set(tree, &pIter, 0, "Custom Settings", -1);
@@ -143,7 +188,8 @@ GtkTreeStore	*pitivi_tree_create()
   return (tree);
 }
 
-GtkWidget		*pitivi_tree_show(GtkTreeStore *tree)
+GtkWidget*
+pitivi_tree_show(GtkTreeStore *tree)
 {
   GtkWidget		*show_tree;
   GtkCellRenderer	*cell;
@@ -162,7 +208,8 @@ GtkWidget		*pitivi_tree_show(GtkTreeStore *tree)
   return (show_tree);
 }
 
-GtkWidget	*pitivi_notebook_new(GtkWidget *window)
+GtkWidget*
+pitivi_notebook_new(PitiviNewProjectWindow *self)
 {
   GtkWidget	*notebook;
   GtkWidget	*presets;
@@ -176,13 +223,13 @@ GtkWidget	*pitivi_notebook_new(GtkWidget *window)
   gtk_notebook_set_tab_pos (GTK_NOTEBOOK (notebook), GTK_POS_TOP);
   
   /* Appel a la fct pitivi_make_presets_hbox qui va remplir la hbox de l'onglet presets */
-  presets_hbox = pitivi_make_presets_hbox(window, presets_hbox);
-  settings_table = pitivi_make_settings_table(settings_table);
-
+  presets_hbox = pitivi_make_presets_hbox(self);
+  settings_table = pitivi_make_settings_table(self);
+  
   /* Les deux widgets suivantes serviront a afficher le nom des deux onglets */
   presets = gtk_label_new("Presets");
   settings = gtk_label_new("Settings");
-
+  
   /* On rattache les hbox presets et settings au notebook */
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), presets_hbox, presets);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), settings_table, settings);
@@ -191,8 +238,9 @@ GtkWidget	*pitivi_notebook_new(GtkWidget *window)
 }
 
 GtkWidget*
-pitivi_make_presets_hbox(GtkWidget *window, GtkWidget *presets_hbox)
+pitivi_make_presets_hbox(PitiviNewProjectWindow *self)
 {
+  GtkWidget	*presets_hbox;
   GtkWidget	*table;
   GtkWidget	*presets_frame;
   
@@ -203,14 +251,14 @@ pitivi_make_presets_hbox(GtkWidget *window, GtkWidget *presets_hbox)
   gtk_box_pack_start (GTK_BOX (presets_hbox), presets_frame, TRUE, TRUE, 0);
   
   /* Creation et Insertion du tableau dans la frame de reglages */
-  table = pitivi_create_presets_table(window);
+  table = pitivi_create_presets_table(self);
   gtk_container_add(GTK_CONTAINER(presets_frame), table);
-
+  
   return (presets_hbox);
 }
 
 GtkWidget*
-pitivi_create_presets_table(GtkWidget *window)
+pitivi_create_presets_table(PitiviNewProjectWindow *self)
 {
   GtkTextIter		iter;
   GtkTextTagTable	*tag_table;
@@ -264,118 +312,155 @@ pitivi_create_presets_table(GtkWidget *window)
 		    1, 1);
   
   /* Signal emit lorsque le bouton Annuler est click& */
-/*   g_signal_connect( G_OBJECT(button_cancel), "clicked", */
-/* 		    G_CALLBACK(pitivi_destroy_newproject), (gpointer) (window) ); */
+  g_signal_connect( G_OBJECT(button_cancel), "clicked",
+		    G_CALLBACK(pitivi_close_window), (gpointer) (GTK_WIDGET(self)) );
   
   /* Retourne la table creee */
   return (table);
 }
 
 GtkWidget*
-pitivi_make_settings_table(GtkWidget *settings_table)
+pitivi_make_settings_table(PitiviNewProjectWindow *self)
 {
+  GtkWidget		*settings_table;
   GtkWidget		*button_hbox;
-  GtkWidget		*cat_frame;
-  GtkWidget		*cat_text;
-  GtkWidget		*cat_table;
-  GtkWidget		*cat_but_add;
-  GtkWidget		*cat_but_del;
-  GtkWidget		*cat_but_box;
   GtkWidget		*name_label;
-  GtkWidget		*name_text;
-  GtkWidget		*video_frame;
-  GtkWidget		*audio_frame;
-  GtkWidget		*button_add;
-  GtkWidget		*button_mod;
-  GtkWidget		*button_del;
   GtkWidget		*desc_label;
   GtkTextTagTable	*name_tag_table;
   gchar			*name_settings;
-  GtkTextBuffer		*name_text_buffer;
-  GtkTextIter		name_iter;
-  GtkWidget		*name_text_settings;
-  GtkWidget		*name_scroll;
+  GtkWidget		*cat_frame;
+  GtkWidget		*cat_table;
+  GtkWidget		*cat_but_box;
+  
+  GtkWidget		*video_frame;
+  GtkWidget		*audio_frame;
 
-  settings_table = gtk_table_new (6, 2, FALSE);
+  GtkWidget		*name_frame;
 
+  settings_table = gtk_table_new (5, 2, FALSE);
+  
   /* Ligne 1 */
-  name_label = gtk_label_new("Nom :");
-  gtk_table_attach (GTK_TABLE(settings_table), name_label,
-		    0, 1, 0, 1, FALSE, FALSE, 30, 5);
-
-  name_text = gtk_entry_new();
-  gtk_table_attach (GTK_TABLE(settings_table), name_text, 
-		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 50, 5);
+  name_frame = pitivi_make_name_frame(self);
+  gtk_table_attach (GTK_TABLE(settings_table), name_frame,
+		    0, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 5);
   
-  /* Ligne 2 */
-  desc_label = gtk_label_new("Description :");
-  gtk_table_attach (GTK_TABLE(settings_table), desc_label, 
-		    0, 1, 1, 2, FALSE, FALSE, 30, 5);
-
-  /* Creation du champs texte de description */
-  /* Creation de la Tag Table */
-  name_tag_table = gtk_text_tag_table_new();
-  /* Creation du buffer text */
-  name_text_buffer = gtk_text_buffer_new(name_tag_table);
-  /* Creation du champs Text */
-  name_settings = "Description:\nInserez une description de votre reglage";
-  gtk_text_buffer_get_end_iter(name_text_buffer, &name_iter);
-  gtk_text_buffer_set_text (name_text_buffer, name_settings, strlen(name_settings));
-  name_text_settings = gtk_text_view_new_with_buffer (name_text_buffer);
-  gtk_text_view_set_right_margin  (GTK_TEXT_VIEW(name_text_settings), 3);
-  gtk_text_view_set_left_margin  (GTK_TEXT_VIEW(name_text_settings), 3);
-  
-/* Ajout du scrolling pour le champ texte */
-  name_scroll = gtk_scrolled_window_new(NULL, NULL);
-  gtk_widget_set_usize (name_scroll, -1, 70);
-  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(name_scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-  gtk_container_add(GTK_CONTAINER(name_scroll), name_text_settings);
-
-  gtk_table_attach (GTK_TABLE(settings_table), name_scroll, 
-		    1, 2, 1, 2, GTK_EXPAND | GTK_FILL, FALSE, 50, 5);
-  
-/* Ligne 3 */
+/* Ligne 2 */
   video_frame = pitivi_make_video_frame();
   gtk_table_attach (GTK_TABLE(settings_table), video_frame, 
+		    0, 2, 1, 2, GTK_EXPAND | GTK_FILL, FALSE , 0, 5);
+  
+/* Ligne 3 */
+  audio_frame = pitivi_make_audio_frame();
+  gtk_table_attach (GTK_TABLE(settings_table), audio_frame, 
 		    0, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE , 0, 5);
   
 /* Ligne 4 */
-  audio_frame = pitivi_make_audio_frame();
-  gtk_table_attach (GTK_TABLE(settings_table), audio_frame, 
-		    0, 2, 3, 4, GTK_EXPAND | GTK_FILL, FALSE , 0, 5);
-  
-/* Ligne 5 */
   button_hbox = gtk_hbox_new(TRUE, 10);
   
-  button_add = gtk_button_new_with_label("Add");
-  gtk_box_pack_start(GTK_BOX(button_hbox), button_add, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0);
+  self->private->button_add = gtk_button_new_with_label("Add");
+  gtk_box_pack_start(GTK_BOX(button_hbox), self->private->button_add, 
+		     FALSE, GTK_EXPAND | GTK_FILL, 0);
 
-  button_mod = gtk_button_new_with_label("Modify");
-  gtk_box_pack_start(GTK_BOX(button_hbox), button_mod, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0);
+  self->private->button_mod = gtk_button_new_with_label("Modify");
+  gtk_box_pack_start(GTK_BOX(button_hbox), self->private->button_mod, 
+		     FALSE, GTK_EXPAND | GTK_FILL, 0);
   
-  button_del = gtk_button_new_with_label("Delete");
-  gtk_box_pack_start(GTK_BOX(button_hbox), button_del, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0);
+  self->private->button_del = gtk_button_new_with_label("Delete");
+  gtk_box_pack_start(GTK_BOX(button_hbox), self->private->button_del, 
+		     FALSE, GTK_EXPAND | GTK_FILL, 0);
   
+/* Buttons Settings Signals */
+  g_signal_connect( G_OBJECT(self->private->button_add), "clicked",
+		    G_CALLBACK(pitivi_add_settings), (gpointer) (GTK_WIDGET(self)) );
+
   gtk_table_attach(GTK_TABLE(settings_table), button_hbox, 
-		   0, 2, 4, 5, GTK_EXPAND | GTK_FILL, FALSE, 140, 0);
+		   0, 2, 3, 4, FALSE, FALSE, 0, 5);
   
-/* Ligne 6 */
-  cat_frame = gtk_frame_new("Category");
-  cat_table = gtk_table_new(2, 1, TRUE);
-  cat_but_box =  gtk_hbox_new(TRUE, 10);
-
-  cat_text = gtk_entry_new();
-  gtk_table_attach (GTK_TABLE(cat_table), cat_text, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 20, 5);
-  cat_but_add = gtk_button_new_with_label("Add");
-  gtk_box_pack_start(GTK_BOX(cat_but_box), cat_but_add, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 10);
-  cat_but_del = gtk_button_new_with_label("Delete");
-  gtk_box_pack_start(GTK_BOX(cat_but_box), cat_but_del, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 10);
-  gtk_table_attach (GTK_TABLE(cat_table), cat_but_box, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 10, 5);
-
-  gtk_container_add(GTK_CONTAINER(cat_frame), cat_table);
-  gtk_table_attach(GTK_TABLE(settings_table), cat_frame, 0, 2, 5, 6, GTK_EXPAND | GTK_FILL, FALSE, 0, 0);
-
+/* Ligne 5 */
+  cat_frame = pitivi_make_cat_frame(self);
+  gtk_table_attach ( GTK_TABLE(settings_table), cat_frame, 0, 2, 4, 5, 
+		     GTK_EXPAND | GTK_FILL, FALSE, 0, 5);
+  
   return (settings_table);
+}
+
+GtkWidget*
+pitivi_make_name_frame(PitiviNewProjectWindow *self)
+{
+  GtkWidget		*name_frame;
+  GtkWidget		*name_table;
+  GtkTextTagTable	*name_tag_table;
+  gchar			*name_settings;
+  GtkTextIter		name_iter;
+  GtkWidget		*name_text_settings;
+  GtkWidget		*name_scroll;
+  GtkWidget		*name_label;
+  GtkWidget		*desc_label;
+
+  name_frame = gtk_frame_new("Setting");
+  name_table =  gtk_table_new(2, 2, FALSE);
+  name_label = gtk_label_new("Nom :");
+  gtk_table_attach (GTK_TABLE(name_table), name_label,
+		    0, 1, 0, 1, FALSE, FALSE, 10, 5);
+
+  self->private->name_text = gtk_entry_new();
+  gtk_table_attach (GTK_TABLE(name_table), self->private->name_text, 
+		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 10, 5);
+  desc_label = gtk_label_new("Description :");
+  gtk_table_attach (GTK_TABLE(name_table), desc_label, 
+		    0, 1, 1, 2, FALSE, FALSE, 10, 5);
+  /* Creation du champs texte de description */
+  /* Ajout du scrolling pour le champ texte */
+  name_scroll = gtk_scrolled_window_new(NULL, NULL);
+  /* Creation de la Tag Table */
+  name_tag_table = gtk_text_tag_table_new();
+  /* Creation du buffer text */
+  self->private->name_text_buffer = gtk_text_buffer_new(name_tag_table);
+  /* Creation du champs Text */
+  name_settings = "Description:\nInserez une description de votre reglage";
+    
+  gtk_text_buffer_get_start_iter(self->private->name_text_buffer, &self->private->start_description_iter);
+  gtk_text_buffer_get_end_iter(self->private->name_text_buffer, &self->private->end_description_iter);
+  
+  gtk_text_buffer_set_text (self->private->name_text_buffer, name_settings, strlen(name_settings));
+  name_text_settings = gtk_text_view_new_with_buffer (self->private->name_text_buffer);
+  gtk_text_view_set_right_margin  (GTK_TEXT_VIEW(name_text_settings), 3);
+  gtk_text_view_set_left_margin  (GTK_TEXT_VIEW(name_text_settings), 3);
+
+  gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(name_scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+  gtk_container_add(GTK_CONTAINER(name_scroll), name_text_settings);
+  gtk_table_attach (GTK_TABLE(name_table), name_scroll, 1, 2, 1, 2, 
+		    GTK_EXPAND | GTK_FILL,  GTK_EXPAND | GTK_FILL, 10, 5);
+  /* ajout de la table dans la frame setting */
+  gtk_container_add(GTK_CONTAINER(name_frame), name_table);
+  /* ajout de la frame la table principale */
+
+  gtk_container_set_border_width (GTK_CONTAINER (name_frame), 5);
+  return (name_frame);  
+}
+
+GtkWidget*
+pitivi_make_cat_frame(PitiviNewProjectWindow *self)
+{
+  GtkWidget		*cat_frame;
+  GtkWidget		*cat_table;
+
+  cat_frame= gtk_frame_new("Category");
+  cat_table = gtk_table_new(3, 1, FALSE);
+  self->private->cat_text = gtk_entry_new();
+  gtk_table_attach (GTK_TABLE(cat_table), self->private->cat_text, 
+		    0, 1, 0, 1, FALSE, FALSE, 25, 5);
+  self->private->cat_but_add = gtk_button_new_with_label("  Add   ");
+  gtk_table_attach (GTK_TABLE(cat_table), self->private->cat_but_add, 
+		    1, 2, 0, 1, FALSE, FALSE, 35, 5);
+  self->private->cat_but_del = gtk_button_new_with_label(" Delete ");
+  gtk_table_attach (GTK_TABLE(cat_table), self->private->cat_but_del, 
+		    2, 3, 0, 1,FALSE, FALSE, 20, 5);
+  gtk_container_add(GTK_CONTAINER(cat_frame), cat_table);
+
+  gtk_container_set_border_width (GTK_CONTAINER (cat_frame), 5);
+
+  return (cat_frame);
 }
 
 GtkWidget*
@@ -405,7 +490,7 @@ pitivi_make_video_frame()
 /* Premier label "codecs" */
   video_label_codec = gtk_label_new("Codecs : ");
   gtk_table_attach (GTK_TABLE(video_table), video_label_codec, 
-		    0, 1, 0, 1, FALSE, FALSE, 40, 5);
+		    0, 1, 0, 1, FALSE, FALSE, 10, 5);
   
 /*   Champ texte "codecs" */
   video_combo_codec = gtk_combo_box_new_text();
@@ -432,12 +517,12 @@ pitivi_make_video_frame()
 /* Active le premier choix*/
   gtk_combo_box_set_active (GTK_COMBO_BOX (video_combo_codec), 0);
   gtk_table_attach (GTK_TABLE(video_table), video_combo_codec,
-		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 140, 10);
+		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 10, 10);
   
 /* Deuxieme label "size" */
   video_label_size = gtk_label_new("Size : ");
   gtk_table_attach (GTK_TABLE(video_table), video_label_size, 
-		    0, 1, 1, 2, FALSE, FALSE, 40, 5);
+		    0, 1, 1, 2, FALSE, FALSE, 10, 5);
   
   size_hbox = gtk_hbox_new(FALSE, 5);
 /* champ texte "width" */
@@ -457,25 +542,27 @@ pitivi_make_video_frame()
   gtk_box_pack_start(GTK_BOX (size_hbox), size_height, FALSE, FALSE, 0);
   
   gtk_table_attach(GTK_TABLE(video_table), size_hbox, 
-		   1, 2, 1, 2, FALSE, FALSE, 2, 2);
+		   1, 2, 1, 2, FALSE, FALSE, 10, 2);
    
 /*   Troisieme label "Fps" */
   video_label_fps = gtk_label_new("Fps : ");
   gtk_table_attach (GTK_TABLE(video_table), video_label_fps, 
-		    0, 1, 2, 3, FALSE, FALSE, 40, 10);
+		    0, 1, 2, 3, FALSE, FALSE, 10, 10);
   
 /*   champ texte "Fps" */
   fps_text = gtk_entry_new();
   gtk_entry_set_text(GTK_ENTRY(fps_text), "25");
+  gtk_entry_set_width_chars (GTK_ENTRY(fps_text), 14);
   gtk_table_attach (GTK_TABLE(video_table), fps_text, 
-		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 140, 10);
+		    1, 2, 2, 3, FALSE, FALSE, 10, 10);
   
 /*   Ajoute le tableau principale ds la frame "video" */
   gtk_container_add(GTK_CONTAINER(video_frame), video_table);
+  gtk_container_set_border_width (GTK_CONTAINER (video_frame), 5);
 
   return (video_frame);  
 }
-
+ 
 GtkWidget*
 pitivi_make_audio_frame()
 {
@@ -501,7 +588,7 @@ pitivi_make_audio_frame()
 /* Premier label "codecs" */
   audio_label_codec = gtk_label_new("Codecs : ");
   gtk_table_attach (GTK_TABLE(audio_table), audio_label_codec, 
-		    0, 1, 0, 1, FALSE, FALSE, 20, 10);
+		    0, 1, 0, 1, FALSE, FALSE, 10, 10);
   
 /*   Champ texte "codecs" */
   audio_combo_codec = gtk_combo_box_new_text();
@@ -527,12 +614,12 @@ pitivi_make_audio_frame()
 
   gtk_combo_box_set_active(GTK_COMBO_BOX (audio_combo_codec), 0); /*  Choix par defaut */
   gtk_table_attach (GTK_TABLE(audio_table), audio_combo_codec, 
-		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 140, 10);
+		    1, 2, 0, 1, GTK_EXPAND | GTK_FILL, FALSE, 10, 10);
 
 /* Deuxieme label "frequence" */
   audio_label_freq = gtk_label_new("Frequence : ");
   gtk_table_attach (GTK_TABLE(audio_table), audio_label_freq, 
-		    0, 1, 1, 2, FALSE, FALSE, 20, 0);
+		    0, 1, 1, 2, FALSE, FALSE, 10, 0);
 
 /*   Champ texte "frequence" */
   audio_combo_freq = gtk_combo_box_new_text();
@@ -541,12 +628,12 @@ pitivi_make_audio_frame()
   gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_freq), 2, "12000 Hz");
   gtk_combo_box_set_active(GTK_COMBO_BOX (audio_combo_freq), 0); /*  Choix par defaut */
   gtk_table_attach (GTK_TABLE(audio_table), audio_combo_freq, 
-		    1, 2, 1, 2, GTK_EXPAND | GTK_FILL, FALSE, 140, 10);
+		    1, 2, 1, 2, GTK_EXPAND | GTK_FILL, FALSE, 10, 10);
 
  /* Troisieme label "echantillonage" */
   audio_label_ech = gtk_label_new("Canaux : ");
   gtk_table_attach (GTK_TABLE(audio_table), audio_label_ech, 
-		    0, 1, 2, 3, FALSE, FALSE, 20, 10);
+		    0, 1, 2, 3, FALSE, FALSE, 10, 10);
   
 /*   Champ texte "canaux" */
   audio_combo_ech = gtk_combo_box_new_text();
@@ -556,14 +643,18 @@ pitivi_make_audio_frame()
   gtk_combo_box_insert_text (GTK_COMBO_BOX (audio_combo_ech), 3, "7.1");
   gtk_combo_box_set_active(GTK_COMBO_BOX (audio_combo_ech), 0); /*  Choix par defaut */
   gtk_table_attach (GTK_TABLE(audio_table), audio_combo_ech, 
-		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 140, 10);
+		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 10, 10);
 
   gtk_container_add(GTK_CONTAINER(audio_frame), audio_table);
+  gtk_container_set_border_width (GTK_CONTAINER (audio_frame), 5);
   return (audio_frame);   
 }
 
 
 
+/* 
+ * Object PitiviNewProject initialisation 
+*/
 
 PitiviNewProjectWindow *
 pitivi_newprojectwindow_new(void)
@@ -600,7 +691,7 @@ static void
 pitivi_newprojectwindow_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) instance;
-
+  
   self->private = g_new0(PitiviNewProjectWindowPrivate, 1);
   
   /* initialize all public and private members to reasonable default values. */ 
@@ -613,16 +704,16 @@ pitivi_newprojectwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   
   /*   Creation de la fenetre de reglages d'un nouveau projet */
 /*   self = gtk_window_new (GTK_WINDOW_TOPLEVEL); */
-  gtk_window_set_default_size(GTK_WINDOW (self), 760, 570);
+/*   gtk_window_set_default_size(GTK_WINDOW (self), 760, 570); */
   gtk_window_set_title (GTK_WINDOW (self), "New Project");
   gtk_window_set_position (GTK_WINDOW (self), GTK_WIN_POS_CENTER);
   gtk_window_set_modal (GTK_WINDOW(self), TRUE);
   
 /* Creation de hBox et Insertion dans la window du projet */
   self->private->hbox = gtk_hbox_new (FALSE, 0);
-  gtk_widget_set_usize (self->private->hbox, 750, 520);
+/*   gtk_widget_set_usize (self->private->hbox, 750, 520); */
 /* Creation des elements de la fenetre NewProject */
-  pitivi_fill_hbox(GTK_WIDGET (self), self->private->hbox );
+  pitivi_fill_hbox(self);
   gtk_container_add (GTK_CONTAINER (self), self->private->hbox);
   
   gtk_widget_show_all( GTK_WIDGET(self->private->hbox));
@@ -665,9 +756,8 @@ pitivi_newprojectwindow_finalize (GObject *object)
 }
 
 static void
-pitivi_newprojectwindow_set_property (GObject * object,
-			      guint property_id,
-			      const GValue * value, GParamSpec * pspec)
+pitivi_newprojectwindow_set_property (GObject * object, guint property_id,
+				      const GValue * value, GParamSpec * pspec)
 {
   PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) object;
 
@@ -687,9 +777,8 @@ pitivi_newprojectwindow_set_property (GObject * object,
 }
 
 static void
-pitivi_newprojectwindow_get_property (GObject * object,
-			      guint property_id,
-			      GValue * value, GParamSpec * pspec)
+pitivi_newprojectwindow_get_property (GObject * object, guint property_id,
+				      GValue * value, GParamSpec * pspec)
 {
   PitiviNewProjectWindow *self = (PitiviNewProjectWindow *) object;
 
@@ -733,7 +822,7 @@ pitivi_newprojectwindow_class_init (gpointer g_class, gpointer g_class_data)
 
 }
 
-GType
+GType	
 pitivi_newprojectwindow_get_type (void)
 {
   static GType type = 0;
