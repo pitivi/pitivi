@@ -1639,12 +1639,13 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self,
    */
 
   colormap = gtk_widget_get_colormap (pListView);
-  pixmap = gdk_pixmap_colormap_create_from_xpm_d (pListView->window, 
+  /*  pixmap = gdk_pixmap_colormap_create_from_xpm_d (pListView->window, 
 						  colormap, 
 						  NULL,  
 						  NULL,
 						  backward_xpm);
   gtk_drag_source_set_icon (pListView, colormap, pixmap, NULL);
+  */
   self->private->listview = pListView;
   
   /* Creation du menu popup */
