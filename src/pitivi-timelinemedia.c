@@ -173,17 +173,19 @@ void
 show_video_media (GtkWidget *widget, GdkEventExpose *event)
 {
   PitiviTimelineMedia	*self = PITIVI_TIMELINEMEDIA (widget);
-  GdkPixbuf		*src_pix = self->sourceitem->srcfile->thumbs_video;
   
-  gdk_draw_rectangle ( GDK_WINDOW (widget->window), 
-		       widget->style->black_gc, TRUE, 1, 1,
-		       widget->allocation.width - 2, 
-		       widget->allocation.height - 2);
-  if ( src_pix )
+  if (GTK_IS_WIDGET ( widget ))
     {
-      gdk_draw_pixbuf( widget->window, NULL, GDK_PIXBUF 
-		       (src_pix), 0, 0, 0, 2, -1, widget->allocation.height - 4, 
-		       GDK_RGB_DITHER_MAX, 0, 0);
+      gdk_draw_rectangle ( GDK_WINDOW (widget->window), 
+			   widget->style->black_gc, TRUE, 1, 1,
+			   widget->allocation.width - 2, 
+			   widget->allocation.height - 2);
+      if (self->sourceitem->srcfile->thumbs_video && GDK_IS_PIXBUF (self->sourceitem->srcfile->thumbs_video) )
+      	{
+	  gdk_draw_pixbuf( widget->window, NULL, GDK_PIXBUF 
+			   (self->sourceitem->srcfile->thumbs_video), 0, 0, 0, 2, -1, widget->allocation.height - 4, 
+			   GDK_RGB_DITHER_MAX, 0, 0);
+      	}
     }
 }
 
@@ -702,9 +704,11 @@ pitivi_timelinemedia_callb_key_release_event (GtkWidget *widget,
 static void
 pitivi_timelinemedia_callb_snapped_effect (PitiviTimelineMedia *media, gpointer data)
 {
+  /* FIXME Deference pointer */
   g_object_unref (media->sourceitem->srcfile->thumbs_video);
   media->sourceitem->srcfile->thumbs_video = gdk_pixbuf_new_from_file (data, NULL);
   pitivi_send_expose_event (media);
+  g_object_ref (media->sourceitem->srcfile->thumbs_video);
 }
 
 static void
