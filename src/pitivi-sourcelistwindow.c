@@ -1347,10 +1347,8 @@ pitivi_sourcelistwindow_set_folder(PitiviSourceListWindow *self,
   add_liststore_for_bin(self, liststore);
 
   self->private->treepath[strlen(self->private->treepath) - 2] = 0;
-
   selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
-  gtk_tree_selection_select_iter(selection, &iter);
-  
+  gtk_tree_selection_select_iter(selection, &iter);  
   g_object_unref(pixbufa);
 
   return name;
@@ -1394,6 +1392,7 @@ void	new_folder(GtkWidget *widget, gpointer data)
 gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 {
   GtkTreeIter	pIter;
+  PitiviSourceFile *sf;
   GtkListStore	*liststore;
   GdkPixbuf	*pixbufa;
   gchar		*sTexte;
@@ -1455,10 +1454,11 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 					   self->private->length,
 					   self->private->pipeline);
   
-  self->private->dndsf = pitivi_projectsourcelist_get_sourcefile (
-								  PITIVI_PROJECTWINDOWS(self)->project->sources,
-								  self->private->treepath,
-								  i);
+  sf = pitivi_projectsourcelist_get_sourcefile (
+						PITIVI_PROJECTWINDOWS(self)->project->sources,
+						self->private->treepath,
+						i);
+  
   gtk_list_store_set(liststore,
 		     &pIter, 
 		     BMP_LISTCOLUMN1, pixbufa,
@@ -1468,7 +1468,7 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 		     TEXT_LISTCOLUMN5, self->private->infovideo,
 		     TEXT_LISTCOLUMN6, self->private->infoaudio,
 		     TEXT_LISTCOLUMN7, sExempleTexte,
-		     POINTER_LISTCOLUMN8, (gchar *)self->private->dndsf, -1);
+		     POINTER_LISTCOLUMN8, (gchar *)sf, -1);
   
   i++;
   g_free(sTexte);
@@ -1620,11 +1620,10 @@ drag_begin_cb (GtkWidget          *widget,
   item_select = 0;
   folder_select = 0;
   
-  gtk_tree_model_get(model, &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
-  gtk_tree_model_get (model, &iternext, POINTER_LISTCOLUMN8, &self->private->dndsf);
-  for (i = 0; i++ < selected_list_row;)
+  for (i = 0; i < selected_list_row+1; i++)
     {
-      gtk_tree_model_get(model, &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
+      gtk_tree_model_get (model, &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
+      gtk_tree_model_get (model, &iternext, POINTER_LISTCOLUMN8, &self->private->dndsf, -1);
       if (!strcmp(tmpMediaType, "Bin"))
 	folder_select++;
       else
@@ -1632,7 +1631,7 @@ drag_begin_cb (GtkWidget          *widget,
       gtk_tree_model_iter_next(model, &iternext);
     }
   self->private->dndfilepos = item_select;
-  slide_info (self, self->private->length, tmpMediaType);
+  slide_info (self, self->private->dndsf->length, tmpMediaType);
 }
 
 static void
@@ -1664,11 +1663,11 @@ drag_data_get_cb (GtkWidget          *widget,
     {
       if ( !self->private->dndsf )
 	{
-	  //self->private->dndsf = pitivi_projectsourcelist_get_sourcefile(
-	  //							 PITIVI_PROJECTWINDOWS(self)->project->sources,
-	  //							 self->private->dndtreepath,
-	  //							 self->private->dndfilepos
-	  //							 );
+	  self->private->dndsf = pitivi_projectsourcelist_get_sourcefile(
+									 PITIVI_PROJECTWINDOWS(self)->project->sources,
+									 self->private->dndtreepath,
+									 self->private->dndfilepos
+									 );
 	  if ( !self->private->dndsf )
 	    return ;
 	}
@@ -1964,7 +1963,7 @@ void	on_row_activated (GtkTreeView        *listview,
   self->private->listpath = gtk_tree_path_to_string(path);
   sf = pitivi_sourcelistwindow_get_file(self);
   g_printf("ici %p\n", sf);
-  if (!sf && OnSelectItem(self, &iter, &liststore, &sMediaType, &item_select, 
+  if (!sf && OnSelectItem(self, &iter, &liststore, &sMediaType, TEXT_LISTCOLUMN3, &item_select, 
 			  &folder_select))
     {
       if (!strcmp(sMediaType, "Bin"))
@@ -2140,12 +2139,12 @@ GtkWidget	*dialog;
 }
 
 gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
-			     GtkListStore **liststore, gchar **sMediaType,
+			     GtkListStore **liststore, void **sMediaType, guint type,
 			     gint *item_select, gint *folder_select)
 {
   GtkTreeIter	iternext;
   GtkTreePath	*listpath;
-  gchar		*tmpMediaType;
+  void		*tmpMediaType;
   gint		i;
   gint		selected_tree_row;
   guint		selected_list_row;
@@ -2165,7 +2164,7 @@ gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
   
   g_printf("After select\n");
   gtk_tree_path_free(listpath);
-  gtk_tree_model_get(GTK_TREE_MODEL(*liststore), iter, TEXT_LISTCOLUMN3, &(*sMediaType), -1);
+  gtk_tree_model_get(GTK_TREE_MODEL(*liststore), iter, type, &(*sMediaType), -1);
   gtk_tree_model_get_iter_first(GTK_TREE_MODEL(*liststore), &iternext);
   
   *item_select = 0;
@@ -2175,7 +2174,7 @@ gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
   g_printf("End select\n");
   while (i++ < selected_list_row)
     {
-      gtk_tree_model_get(GTK_TREE_MODEL(*liststore), &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
+      gtk_tree_model_get(GTK_TREE_MODEL(*liststore), &iternext, type, &tmpMediaType, -1);
       if (!strcmp(tmpMediaType, "Bin"))
 	(*folder_select)++;
       else
@@ -2204,14 +2203,18 @@ void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
   gint		item_select;
   gint		folder_select;
 
-  if (!OnSelectItem(self, &iter, &liststore, &sMediaType, &item_select, 
+  if (!OnSelectItem(self, &iter, &liststore, (void **) &sMediaType, TEXT_LISTCOLUMN3, &item_select, 
+		   &folder_select))
+    return;
+  
+  if (!OnSelectItem(self, &iter, &liststore, (void **) &self->private->dndsf, POINTER_LISTCOLUMN8, &item_select, 
 		   &folder_select))
     return;
   
   g_printf("remove item from bin\n");
   if (strcmp(sMediaType, "Bin"))
     {
-      g_printf("removing item only\n");
+      g_printf("removing item only %s\n", self->private->dndsf->filename);
       g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", self->private->dndsf);
       pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
 						    self->private->treepath,
@@ -2346,7 +2349,7 @@ pitivi_sourcelistwindow_get_file(PitiviSourceListWindow *self)
   gint		item_select;
   gint		folder_select;
 
-  if (!OnSelectItem(self, &iter, &liststore, &sMediaType, &item_select,
+  if (!OnSelectItem(self, &iter, &liststore, (void **) &sMediaType, TEXT_LISTCOLUMN3, &item_select,
 		    &folder_select))
     return NULL;
   if (!strcmp(sMediaType, "Bin"))
