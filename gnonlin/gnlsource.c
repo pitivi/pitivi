@@ -599,8 +599,6 @@ source_getfunction (GstPad *pad)
   }
 
   while (!found) {
-    GST_INFO("found == FALSE");
-
     /* No data in private queue, EOS */
     while (!private->queue) {
       if (!gst_bin_iterate (GST_BIN (source->bin))) {
@@ -610,6 +608,7 @@ source_getfunction (GstPad *pad)
 	found = TRUE;
         break;
       }
+      GST_INFO("while !private->queue %p", private->queue);
     }
 
     /* Data in private queue */

@@ -628,6 +628,7 @@ GstElement	*add_decoder_for_demux(PitiviSourceListWindow *self,
       name = g_strdup_printf("thread%d", nb_thread);
       
       /* create a thread for the decoder pipeline */
+      // TODO : IS THREAD NECESSARY ??? thread = gst_thread_new(name);
       thread = gst_thread_new(name);
       g_assert(thread != NULL);
       
@@ -699,6 +700,7 @@ GstElement *add_parser_for_demux(PitiviSourceListWindow *self,
       name = g_strdup_printf("thread%d", nb_thread);
       
       /* create a thread to add the parser in the pipeline */
+      // TODO : CHECK THREAD thread = gst_thread_new(name);
       thread = gst_thread_new(name);
       g_assert(thread != NULL);
       

@@ -130,7 +130,7 @@ gboolean	do_seek(GstElement *elem, gint64 value)
 
   pad = gst_element_get_pad(elem, "src");
   event = gst_event_new_seek (
-			      GST_FORMAT_BYTES |	    /* seek on bytes */
+			      GST_FORMAT_TIME |	    /* seek on nanoseconds */
 			      GST_SEEK_METHOD_SET | /* set the absolute position */
 			      GST_SEEK_FLAG_FLUSH,  /* flush any pending data */
 			      value);	    /* the seek offset in bytes */
@@ -149,7 +149,7 @@ gint64	do_query(GstElement *elem, GstQueryType type)
   GstFormat	format;
   gint64	value;
 
-  format = GST_FORMAT_BYTES;
+  format = GST_FORMAT_TIME;
   if (!gst_element_query(elem, type, &format, &value))
     {
       g_printf("Couldn't perform requested query\n");

@@ -210,6 +210,7 @@ show_effects_media (GtkWidget *widget, GdkEventExpose *event)
 void
 pitivi_timelinemedia_set_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
 {
+  g_printf("pitivi_timelinemedia start:%lld stop:%lld\n", start, stop);
   gnl_object_set_start_stop (media->sourceitem->gnlobject, start, stop);
 }
 
@@ -219,18 +220,21 @@ pitivi_timelinemedia_put (PitiviTimelineMedia *media, gint64 start)
   gint64 mstart, mstop;
 
   gnl_object_get_media_start_stop (media->sourceitem->gnlobject, &mstart, &mstop);
+  g_printf("pitivi_timelinemedia put start:%lld stop:%lld\n", start, start + mstop - mstart);
   gnl_object_set_start_stop (media->sourceitem->gnlobject, start, start + mstop - mstart);
 }
 
 void
 pitivi_timelinemedia_set_media_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
 {
+  g_printf("pitivi_timelinemedia mediastart:%lld mediastop:%lld\n", start, stop);
   gnl_object_set_media_start_stop (media->sourceitem->gnlobject, start, stop);
 }
 
 void
 pitivi_timelinemedia_set_priority (PitiviTimelineMedia *media, gint priority)
 {
+  g_printf("pitivi_timelinemedia priority:%d\n", priority);
   gnl_object_set_priority (media->sourceitem->gnlobject, priority);
 }
 
