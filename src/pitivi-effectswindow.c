@@ -47,7 +47,6 @@ struct _PitiviEffectsWindowPrivate
   gboolean	dispose_has_run;
   guint		notebook_id;
   GtkWidget	*notebook;
-  GpiTreeModel	*first_tree;
   GList		*compounds;
 };
 
