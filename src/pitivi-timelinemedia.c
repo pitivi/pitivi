@@ -88,6 +88,7 @@ pitivi_timelinemedia_new (PitiviSourceFile *sf)
   PitiviTimelineMedia	*timelinemedia;
 
   timelinemedia = (PitiviTimelineMedia *) g_object_new(PITIVI_TIMELINEMEDIA_TYPE, NULL);
+  timelinemedia->sf = sf;
   memcpy (timelinemedia->sf, sf, sizeof (sf));
   g_assert(timelinemedia != NULL);
   return timelinemedia;
@@ -132,13 +133,24 @@ static gint
 pitivi_timelinemedia_expose (GtkWidget      *widget,
 			     GdkEventExpose *event)
 {
-  GdkWindow *window;
-  
+  GdkWindow		*window;
+  PangoLayout		*layout;
+  PangoContext		*context;
+
+  context = pango_context_new ();
+  context = gtk_widget_create_pango_context (widget);  
+  layout = pango_layout_new (context);
+  pango_layout_set_text (layout, "je pisse sur le pfe", 19);
+
   PitiviTimelineMedia	*self = PITIVI_TIMELINEMEDIA (widget);
   gtk_paint_box (widget->style, widget->window,
 		 GTK_STATE_NORMAL, GTK_SHADOW_IN,
 		 &event->area, widget, "mediadefault",
 		 0, 0, widget->allocation.width-2, -1);
+  gtk_paint_layout (widget->style, widget->window,
+		    GTK_STATE_NORMAL, FALSE,
+		    &event->area, widget, "mediadefault",
+		    5, 15, layout);
   if (self->selected == TRUE)
     draw_selection_dash (widget, 4);
   return FALSE;
@@ -458,7 +470,6 @@ pitivi_timelinemedia_configure_event (GtkWidget *widget, GdkEventConfigure *even
   PitiviTimelineMedia *self = PITIVI_TIMELINEMEDIA (widget);
   
   cursor = pitivi_getcursor_id (widget);
-  self->private->cursor_type = cursor->type;
   return FALSE;
 }
 
