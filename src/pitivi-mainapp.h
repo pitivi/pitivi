@@ -29,6 +29,8 @@
 #ifndef PITIVI_MAINAPP_H
 #define PITIVI_MAINAPP_H
 
+typedef struct _PitiviMainApp PitiviMainApp;
+
 /*
  * Potentially, include other headers on which this header depends.
  */
@@ -38,6 +40,7 @@
 #include	"pitivi-timelinewindow.h"
 #include	"pitivi-viewerwindow.h"
 #include	"pitivi-effectswindow.h"
+#include	"pitivi-settings.h"
 
 /*
  * Type macros.
@@ -50,7 +53,6 @@
 #define PITIVI_IS_MAINAPP_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_MAINAPP_TYPE))
 #define PITIVI_MAINAPP_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_MAINAPP_TYPE, PitiviMainAppClass))
 
-typedef struct _PitiviMainApp PitiviMainApp;
 typedef struct _PitiviMainAppClass PitiviMainAppClass;
 typedef struct _PitiviMainAppPrivate PitiviMainAppPrivate;
 
@@ -83,6 +85,7 @@ GType		pitivi_mainapp_get_type (void);
 PitiviCategorieSettings	*pitivi_mainapp_get_selected_category	( PitiviMainApp *self, gint *position );
 PitiviMainApp		*pitivi_mainapp_new (void);
 GSList			*pitivi_mainapp_project_settings( PitiviMainApp *self );
+PitiviSettings		*pitivi_mainapp_settings(PitiviMainApp *self);
 void			pitivi_mainapp_create_wintools(PitiviMainApp *self);
 
 #endif

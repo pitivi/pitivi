@@ -26,10 +26,14 @@
 #ifndef PITIVI_SOURCELISTWINDOW_H
 #define PITIVI_SOURCELISTWINDOW_H
 
+typedef struct _PitiviSourceListWindow PitiviSourceListWindow;
+
 /*
  * Potentially, include other headers on which this header depends.
  */
 #include <gtk/gtk.h>
+#include "pitivi-mainapp.h"
+
 
 /*
  * Type macros.
@@ -42,7 +46,6 @@
 #define PITIVI_IS_SOURCELISTWINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), PITIVI_SOURCELISTWINDOW_TYPE))
 #define PITIVI_SOURCELISTWINDOW_GET_CLASS(obj) (G_TYPE_INSTANCE_GET_CLASS ((obj), PITIVI_SOURCELISTWINDOW_TYPE, PitiviSourceListWindowClass))
 
-typedef struct _PitiviSourceListWindow PitiviSourceListWindow;
 typedef struct _PitiviSourceListWindowClass PitiviSourceListWindowClass;
 typedef struct _PitiviSourceListWindowPrivate PitiviSourceListWindowPrivate;
 typedef struct _PitiviListStore PitiviListStore;
@@ -70,6 +73,7 @@ GType pitivi_sourcelistwindow_get_type (void);
  * Method definitions.
  */
 
-PitiviSourceListWindow	*pitivi_sourcelistwindow_new(void);
+PitiviSourceListWindow*
+pitivi_sourcelistwindow_new(PitiviMainApp *mainapp);
 
 #endif

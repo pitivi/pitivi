@@ -62,6 +62,8 @@ struct _PitiviSourceListWindowPrivate
   gchar		*folderpath;
   guint		newfile_signal_id;
   guint		newfolder_signal_id;
+
+  PitiviMainApp	*mainapp;
 };
 
 /*
@@ -473,6 +475,9 @@ void	new_pad_created(GstElement *parse, GstPad *pad, GstElement *pipeline)
   gchar		*caps_str;
   gchar		*name;
   gint		i;
+
+  PitiviSettings	*settings;
+
   static gint	thread_number = 0;
 
   g_printf("a new pad %s was created\n", gst_pad_get_name(pad));
@@ -494,7 +499,10 @@ void	new_pad_created(GstElement *parse, GstPad *pad, GstElement *pipeline)
 	}
       i++;
     }
-  //  decoderlist = pitivi_settings_get_flux_coder_list (codec, caps_str, DEC_LIST);
+
+/*   settings = pitivi_mainapp_settings(self->private->mainapp); */
+
+/*   decoderlist = pitivi_settings_get_flux_coder_list (codec, caps_str, DEC_LIST); */
   //aff_coder(decoderlist);
   if ((gint)decoderlist != -1 && decoderlist)
     {
@@ -583,6 +591,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   GstCaps	*caps;
   GstCaps	*caps_sav;
   guint16	id;
+  gchar		*tmpname;
 
   g_printf("== build pipeline by mime ==\n");
 
@@ -591,10 +600,14 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   g_printf("filename ==> %s\n", filename);
 
   /* create a pipeline */
-  pipeline = gst_pipeline_new("pipeline");
+  tmpname = g_strdup_printf("pipeline_%s", filename);
+  pipeline = gst_pipeline_new(tmpname);
+  g_free(tmpname);
 
   /* create a file reader */
-  src = gst_element_factory_make("filesrc", "src");
+  tmpname = g_strdup_printf("src_%s", filename);
+  src = gst_element_factory_make("filesrc", tmpname);
+  g_free(tmpname);
   
   g_object_set(G_OBJECT(src), "location", filename, NULL);
 
@@ -602,14 +615,18 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
   gst_bin_add(GST_BIN(pipeline), src);
 
   /* test if it's a container */
-  //demuxlist = pitivi_settings_get_flux_coder_list (container, self->private->mediatype, DEC_LIST);
+  
+  demuxlist = pitivi_settings_get_flux_container_list (G_OBJECT(pitivi_mainapp_settings(self->private->mainapp)),
+						       self->private->mediatype, DEC_LIST);
   /* create a demuxer if it's a container */
-  if ((gint)demuxlist != -1 && demuxlist)
+  if (demuxlist)
     {
       /* choose the first demuxer */
       g_printf("demuxer ==> %s\n", (gchar*)demuxlist->data);
 
-      demux = gst_element_factory_make((gchar*)demuxlist->data, "demux");      
+      tmpname = g_strdup_printf("demux_%s", filename);
+      demux = gst_element_factory_make((gchar*)demuxlist->data, tmpname);
+      g_free(tmpname);
       g_assert(demux != NULL);
      
       /* add the demuxer to the main pipeline */
@@ -621,15 +638,18 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
       /* link element */
       gst_element_link(src, demux);
     }
-  if ((gint)demuxlist == -1) /* search for a decoder */
+  else /* search for a decoder */
     {
-      //  decoderlist = pitivi_settings_get_flux_coder_list (codec, self->private->mediatype, DEC_LIST);
-      if ((gint)decoderlist != -1 && decoderlist)
+      decoderlist = pitivi_settings_get_flux_codec_list (G_OBJECT(pitivi_mainapp_settings(self->private->mainapp)),
+							 self->private->mediatype, DEC_LIST);
+      if (decoderlist)
 	{
 	  /* choose the first decoder */
 	  g_printf("decoder ==> %s\n", (gchar*)decoderlist->data);
 	  
-	  decoder = gst_element_factory_make((gchar*)decoderlist->data, "decoder");
+	  tmpname = g_strdup_printf("decoder_%s", filename);
+	  decoder = gst_element_factory_make((gchar*)decoderlist->data, tmpname);
+	  g_free(tmpname);
 	  g_assert(decoder != NULL);
       
 	  /* add the decoder to the main pipeline */
@@ -691,7 +711,7 @@ void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
   if (self->private->mediatype == NULL)
     return;
 
-  // build_pipeline_by_mime(self, filename);
+  /* build_pipeline_by_mime(self, filename); */
 }
 
 char	*my_strcat(char *dst, char *src)
@@ -1530,12 +1550,13 @@ GtkWidget	*create_projectview(PitiviSourceListWindow *self)
 }
 
 PitiviSourceListWindow *
-pitivi_sourcelistwindow_new(void)
+pitivi_sourcelistwindow_new(PitiviMainApp *mainapp)
 {
   PitiviSourceListWindow	*sourcelistwindow;
 
   sourcelistwindow = (PitiviSourceListWindow *) g_object_new(PITIVI_SOURCELISTWINDOW_TYPE, NULL);
   g_assert(sourcelistwindow != NULL);
+  sourcelistwindow->private->mainapp = mainapp;
   return sourcelistwindow;
 }
 

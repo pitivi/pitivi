@@ -72,6 +72,11 @@ void			pitivi_mainapp_add_newsetting		( PitiviMainApp *self, PitiviProjectSettin
  * Insert "added-value" functions here
  */
 
+PitiviSettings *
+pitivi_mainapp_settings(PitiviMainApp *self) {
+  return self->private->global_settings;
+}
+
 void
 pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
 {
@@ -149,7 +154,7 @@ pitivi_mainapp_create_wintools(PitiviMainApp *self)
   
   if (self->srclistwin == NULL)
     {
-      self->srclistwin = pitivi_sourcelistwindow_new();
+      self->srclistwin = pitivi_sourcelistwindow_new(self);
       gtk_widget_show_all (GTK_WIDGET (self->srclistwin) );
       gtk_window_move (GTK_WINDOW (self->srclistwin), 110, 100);
     }
