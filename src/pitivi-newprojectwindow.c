@@ -1,7 +1,8 @@
 /* 
  * PiTiVi
- * Copyright (C) <2004> Edward G. Hervey <hervey_e@epita.fr>
- *                      Guillaume Casanova <casano_g@epita.fr>
+ * Copyright (C) <2004> Bloch Stephan <bloch_s@epita.fr>
+ *                      Carbon Julien <carbon_j@epita.fr>
+ *                      Dubart Loic <dubart_l@epita.fr>
  *
  * This software has been written in EPITECH <http://www.epitech.net>
  * EPITECH is a computer science school in Paris - FRANCE -
@@ -196,7 +197,7 @@ pitivi_fill_hbox(PitiviNewProjectWindow *self)
   pitivi_tree_create(self);
   self->private->show_tree = pitivi_tree_show( self );
 
-/* Ajout du scrolling pour la selection */
+  /* Ajout du scrolling pour la selection */
   scroll = gtk_scrolled_window_new(NULL, NULL);
   gtk_widget_set_usize (scroll, 150, -1);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), GTK_POLICY_AUTOMATIC,
@@ -278,7 +279,7 @@ pitivi_tree_show(PitiviNewProjectWindow *self)
   GtkTreeSelection	*select;
   GtkTreeIter		*iter;
 
-/* Creation de la vue */
+  /* Creation de la vue */
   show_tree = gtk_tree_view_new_with_model(GTK_TREE_MODEL(self->private->tree));
   
   /* Creation de la premiere colonne */
@@ -712,7 +713,7 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
   size_label_x = gtk_label_new("X");
   gtk_box_pack_start(GTK_BOX (size_hbox), size_label_x, FALSE, FALSE, 0);
 
-/* champ texte "height" */
+  /* champ texte "height" */
   self->private->size_height = gtk_entry_new();
   gtk_entry_set_width_chars (GTK_ENTRY(self->private->size_height), 5);
   gtk_entry_set_text(GTK_ENTRY(self->private->size_height), "576");
@@ -741,7 +742,7 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
 		    0, 1, 2, 3, GTK_FILL, FALSE, 5, 5);
   
 
-/*   champ texte "Fps" */
+  /*   champ texte "Fps" */
   self->private->fps_text = gtk_entry_new();
   gtk_entry_set_text(GTK_ENTRY(self->private->fps_text), "25");
   gtk_entry_set_width_chars (GTK_ENTRY(self->private->fps_text), 14);
@@ -901,7 +902,6 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
   return (audio_frame);   
 }
 
-
 void
 create_codec_conf_video(GtkButton *button, gpointer user_data)
 {
@@ -913,11 +913,16 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
   GParamSpec			**property_specs;
   GstElement			*element;
   GtkWidget			*videoconf_vbox;
+  GtkWidget			*videoconfprop_vbox;
+  GtkWidget			*videoconfdesc_vbox;
   GtkWidget			*video_label_desc_conf;
-  GtkWidget			*videoconf_frame;
+  GtkWidget			*videoconf_frame1;
+  GtkWidget			*videoconf_frame2;
+  GtkWidget			*separator;
   gboolean			readable;
   gint				num_properties;
   gint				active_combo;
+  gint				nb;
   gint				i;
 
   self = (PitiviNewProjectWindow *) user_data;
@@ -927,53 +932,85 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
   video_codecwindow = pitivi_codecconfwindow_new();
   gtk_window_set_position(GTK_WINDOW (video_codecwindow), GTK_WIN_POS_CENTER);
   gtk_window_set_modal(GTK_WINDOW(video_codecwindow), TRUE);
+  /*   gtk_widget_set_usize(GTK_WIDGET(video_codecwindow), 150, 150); */
 
   /* choix selectionne */
   active_combo = gtk_combo_box_get_active(GTK_COMBO_BOX(self->private->video_combo_codec));
 
-  /* Nouvelle frame */
-  factory = gst_element_factory_find(self->private->video_tabname[active_combo]);
-  videoconf_frame = gtk_frame_new(gst_element_factory_get_longname (factory));
-
-  /* vbox */
+  /* vbox contenant l;es dux frames */
   videoconf_vbox = gtk_vbox_new(FALSE, 0);
 
-  /* premiere case de la vbox */
-  video_label_desc_conf = gtk_label_new(gst_element_factory_get_description (factory));
-  gtk_box_pack_start (GTK_BOX (videoconf_vbox), video_label_desc_conf, TRUE, TRUE, 0);
-
-  /* deuxieme case de la vbox */
-  /* Recuperation des infos des proprietes*/
+  /* Nouvelles frames */
+  factory = gst_element_factory_find(self->private->video_tabname[active_combo]);
   
+  /*  frame 1 */
+  videoconf_frame1 = gtk_frame_new(gst_element_factory_get_longname (factory));
+  gtk_container_set_border_width (GTK_CONTAINER (videoconf_frame1), 5);
+
+  /* frame 2 */
+  videoconf_frame2 = gtk_frame_new("Properties");
+  gtk_container_set_border_width (GTK_CONTAINER (videoconf_frame2), 5);
+
+  /* vbox description */
+  videoconfdesc_vbox = gtk_vbox_new(FALSE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (videoconfdesc_vbox), 20);
+  video_label_desc_conf = gtk_label_new(gst_element_factory_get_description (factory));
+
+  /*   On link les widgets de la premiere frame  */
+  gtk_box_pack_start (GTK_BOX (videoconfdesc_vbox), video_label_desc_conf, TRUE, TRUE, 0);
+  gtk_container_add(GTK_CONTAINER(videoconf_frame1), videoconfdesc_vbox);
+  gtk_container_add(GTK_CONTAINER(videoconf_vbox), videoconf_frame1);
+
+  /* vbox propriete */
+  videoconfprop_vbox = gtk_vbox_new(FALSE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (videoconfprop_vbox), 20);
+
+  /* Recuperation des infos des proprietes*/
   intern_name = "Video Codec Configure";
   element = gst_element_factory_create(factory, intern_name);  
   property_specs = g_object_class_list_properties(G_OBJECT_GET_CLASS (element), &num_properties);
-  for (i = 0; i < num_properties; i++)
+  
+  if (num_properties < 2)
     {
-      GValue value = { 0, };
-      GParamSpec *param = property_specs[i];
-
-      readable = FALSE;
-      
-      g_value_init (&value, param->value_type);
-      if (param->flags & G_PARAM_READABLE)
+      /*       separator = gtk_hseparator_new(); */
+      GtkWidget *prop_name = gtk_label_new("No property...");
+      /*       gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), separator, TRUE, TRUE, 0); */
+      gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), prop_name, TRUE, TRUE, 0);
+    }
+  else
+    {
+      for (i = 1; i < (num_properties - 1); i++)
 	{
-	  g_object_get_property (G_OBJECT (element), param->name, &value);
-	  readable = TRUE;
-	}
-      
-      GtkWidget *prop_name = gtk_label_new(g_strdup(g_param_spec_get_nick (param)));
-      GtkWidget	*prop_desc = gtk_label_new(g_strdup(g_param_spec_get_blurb (param)));
-/*       g_print("Nick numero %d : %s\n",i , g_param_spec_get_nick (param)); */
-/*       g_print("Description : %s\n", g_param_spec_get_blurb (param)); */
+	  GValue value = { 0, };
+	  nb = num_properties - 1;
+	  GParamSpec *param = property_specs[i];
+	  GtkWidget *videoconfprop_table = gtk_table_new(2, nb, FALSE);
 
-      gtk_box_pack_start (GTK_BOX (videoconf_vbox), prop_name, TRUE, TRUE, 0);
-      gtk_box_pack_start (GTK_BOX (videoconf_vbox), prop_desc, TRUE, TRUE, 0);
+	  readable = FALSE;
+      
+	  g_value_init (&value, param->value_type);
+	  if (param->flags & G_PARAM_READABLE)
+	    {
+	      g_object_get_property (G_OBJECT (element), param->name, &value);
+	      readable = TRUE;
+	    }
+	  GtkWidget *prop_name = gtk_label_new(g_strdup(g_param_spec_get_nick (param)));
+	  GtkWidget *prop_desc = gtk_label_new(g_strdup(g_param_spec_get_blurb (param)));
+
+	  gtk_table_attach (GTK_TABLE(videoconfprop_table), prop_name,
+			    0, 1, nb, (nb+1), GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+	  gtk_table_attach (GTK_TABLE(videoconfprop_table), prop_desc,
+			    1, 2, nb, (nb+1), GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+  
+	  gtk_box_pack_start (GTK_BOX (videoconfprop_vbox), videoconfprop_table, TRUE, TRUE, 0);
+	}
     }
 
-  gtk_container_add(GTK_CONTAINER(videoconf_frame), videoconf_vbox);
-  /* on link les window */
-  gtk_container_add (GTK_CONTAINER (video_codecwindow), videoconf_frame);
+  gtk_container_add(GTK_CONTAINER(videoconf_frame2), videoconfprop_vbox);
+  gtk_container_add(GTK_CONTAINER(videoconf_vbox), videoconf_frame2);
+  
+  /* on link les contenus a la window mere */
+  gtk_container_add (GTK_CONTAINER (video_codecwindow), videoconf_vbox);
   gtk_widget_show_all (GTK_WIDGET (video_codecwindow)); 
 }
 
@@ -988,70 +1025,107 @@ create_codec_conf_audio(GtkButton *button, gpointer user_data)
   GParamSpec			**property_specs;
   GstElement			*element;
   GtkWidget			*audioconf_vbox;
+  GtkWidget			*audioconfprop_vbox;
+  GtkWidget			*audioconfdesc_vbox;
   GtkWidget			*audio_label_desc_conf;
-  GtkWidget			*audioconf_frame;
+  GtkWidget			*audioconf_frame1;
+  GtkWidget			*audioconf_frame2;
+  GtkWidget			*separator;
   gboolean			readable;
   gint				num_properties;
   gint				active_combo;
+  gint				nb;
   gint				i;
 
   self = (PitiviNewProjectWindow *) user_data;
 
   /* nouvelle fenetre */
   audio_codecwindow = g_new0(PitiviCodecConfWindow, 1);
-  audio_codecwindow = pitivi_codecconfwindow_new();  
+  audio_codecwindow = pitivi_codecconfwindow_new();
   gtk_window_set_position(GTK_WINDOW (audio_codecwindow), GTK_WIN_POS_CENTER);
   gtk_window_set_modal(GTK_WINDOW(audio_codecwindow), TRUE);
+  /*   gtk_widget_set_usize(GTK_WIDGET(audio_codecwindow), 150, 150); */
 
   /* choix selectionne */
   active_combo = gtk_combo_box_get_active(GTK_COMBO_BOX(self->private->audio_combo_codec));
 
-  /* Nouvelle frame */
-  factory = gst_element_factory_find(self->private->audio_tabname[active_combo]);
-  audioconf_frame = gtk_frame_new(gst_element_factory_get_longname (factory));
-
-  /* vbox */
+  /* vbox contenant l;es dux frames */
   audioconf_vbox = gtk_vbox_new(FALSE, 0);
 
-  /* premiere case de la vbox */
-  audio_label_desc_conf = gtk_label_new(gst_element_factory_get_description (factory));
-  gtk_box_pack_start (GTK_BOX (audioconf_vbox), audio_label_desc_conf, TRUE, TRUE, 0);
-
-  /* deuxieme case de la vbox */
-  /* Recuperation des infos des proprietes*/
+  /* Nouvelles frames */
+  factory = gst_element_factory_find(self->private->audio_tabname[active_combo]);
   
+  /*  frame 1 */
+  audioconf_frame1 = gtk_frame_new(gst_element_factory_get_longname (factory));
+  gtk_container_set_border_width (GTK_CONTAINER (audioconf_frame1), 5);
+
+  /* frame 2 */
+  audioconf_frame2 = gtk_frame_new("Properties");
+  gtk_container_set_border_width (GTK_CONTAINER (audioconf_frame2), 5);
+
+  /* vbox description */
+  audioconfdesc_vbox = gtk_vbox_new(FALSE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (audioconfdesc_vbox), 20);
+  audio_label_desc_conf = gtk_label_new(gst_element_factory_get_description (factory));
+
+  /*   On link les widgets de la premiere frame  */
+  gtk_box_pack_start (GTK_BOX (audioconfdesc_vbox), audio_label_desc_conf, TRUE, TRUE, 0);
+  gtk_container_add(GTK_CONTAINER(audioconf_frame1), audioconfdesc_vbox);
+  gtk_container_add(GTK_CONTAINER(audioconf_vbox), audioconf_frame1);
+
+  /* vbox propriete */
+  audioconfprop_vbox = gtk_vbox_new(FALSE, 0);
+  gtk_container_set_border_width (GTK_CONTAINER (audioconfprop_vbox), 20);
+
+  /* Recuperation des infos des proprietes*/
   intern_name = "Audio Codec Configure";
   element = gst_element_factory_create(factory, intern_name);  
   property_specs = g_object_class_list_properties(G_OBJECT_GET_CLASS (element), &num_properties);
-  for (i = 0; i < num_properties; i++)
+  
+  if (num_properties < 2)
     {
-      GValue value = { 0, };
-      GParamSpec *param = property_specs[i];
-
-      readable = FALSE;
-      
-      g_value_init (&value, param->value_type);
-      if (param->flags & G_PARAM_READABLE)
+      /*       separator = gtk_hseparator_new(); */
+      GtkWidget *prop_name = gtk_label_new("No property...");
+      /*       gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), separator, TRUE, TRUE, 0); */
+      gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), prop_name, TRUE, TRUE, 0);
+    }
+  else
+    {
+      for (i = 1; i < (num_properties - 1); i++)
 	{
-	  g_object_get_property (G_OBJECT (element), param->name, &value);
-	  readable = TRUE;
-	}
-      
-      GtkWidget *prop_name = gtk_label_new(g_strdup(g_param_spec_get_nick (param)));
-      GtkWidget	*prop_desc = gtk_label_new(g_strdup(g_param_spec_get_blurb (param)));
-/*       g_print("Nick numero %d : %s\n",i , g_param_spec_get_nick (param)); */
-/*       g_print("Description : %s\n", g_param_spec_get_blurb (param)); */
+	  GValue value = { 0, };
+	  nb = num_properties - 1;
+	  GParamSpec *param = property_specs[i];
+	  GtkWidget *audioconfprop_table = gtk_table_new(2, nb, FALSE);
 
-      gtk_box_pack_start (GTK_BOX (audioconf_vbox), prop_name, TRUE, TRUE, 0);
-      gtk_box_pack_start (GTK_BOX (audioconf_vbox), prop_desc, TRUE, TRUE, 0);
+	  readable = FALSE;
+      
+	  g_value_init (&value, param->value_type);
+	  if (param->flags & G_PARAM_READABLE)
+	    {
+	      g_object_get_property (G_OBJECT (element), param->name, &value);
+	      readable = TRUE;
+	    }
+
+	  GtkWidget *prop_name = gtk_label_new(g_strdup(g_param_spec_get_nick (param)));
+	  GtkWidget *prop_desc = gtk_label_new(g_strdup(g_param_spec_get_blurb (param)));
+	      
+	  gtk_table_attach (GTK_TABLE(audioconfprop_table), prop_name,
+			    0, 1, nb, (nb+1), GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+	  gtk_table_attach (GTK_TABLE(audioconfprop_table), prop_desc,
+			    1, 2, nb, (nb+1), GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+  
+	  gtk_box_pack_start (GTK_BOX (audioconfprop_vbox), audioconfprop_table, TRUE, TRUE, 0);
+	}
     }
 
-  gtk_container_add(GTK_CONTAINER(audioconf_frame), audioconf_vbox);
-  /* on link les window */
-  gtk_container_add (GTK_CONTAINER (audio_codecwindow), audioconf_frame);
+  gtk_container_add(GTK_CONTAINER(audioconf_frame2), audioconfprop_vbox);
+  gtk_container_add(GTK_CONTAINER(audioconf_vbox), audioconf_frame2);
+  
+  /* on link les contenus a la window mere */
+  gtk_container_add (GTK_CONTAINER (audio_codecwindow), audioconf_vbox);
   gtk_widget_show_all (GTK_WIDGET (audio_codecwindow)); 
 }
-
 
 /* 
  * Object PitiviNewProject initialisation 
