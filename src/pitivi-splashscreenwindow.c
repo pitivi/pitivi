@@ -157,7 +157,7 @@ pitivi_splashscreenwindow_constructor (GType type,
 
   gtk_widget_show (GTK_WIDGET (self));
 
-  g_timeout_add (5000, progress_timeout, self);
+  g_timeout_add (2000, progress_timeout, self);
 
   return obj;
 }

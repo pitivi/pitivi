@@ -541,9 +541,10 @@ pitivi_settings_load_from_file(const gchar *filename)
       pitivi_settings_restore_thyself(settings, field);
       continue;
     }
-  pitivi_settings_aff_all_list (settings->container);
-  pitivi_settings_aff_all_list (settings->codec);
-  pitivi_settings_aff_all_list (settings->parser);
+  
+  //pitivi_settings_aff_all_list (settings->container);
+  //pitivi_settings_aff_all_list (settings->codec);
+  //pitivi_settings_aff_all_list (settings->parser);
 
   if (settings)
     pitivi_settings_scan_registry(settings);  
