@@ -40,6 +40,8 @@
 #include "pitivi-menu.h"
 #include "pitivi-debug.h"
 
+#include "pitivi-lplayerwindow.h"
+
 static PitiviProjectWindowsClass *parent_class = NULL;
 
 struct _PitiviListStore
@@ -1939,7 +1941,8 @@ void	on_row_activated (GtkTreeView        *listview,
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)userdata;
   PitiviWindows *window = (PitiviWindows*)self;
-  PitiviViewerWindow	*viewerwin;
+  //PitiviViewerWindow	*viewerwin;
+  PitiviLPlayerWindow *lplayerwin;
   GtkListStore	*liststore;
   GtkTreeIter	iter;
   GtkTreeIter		iternext;
@@ -1972,6 +1975,7 @@ void	on_row_activated (GtkTreeView        *listview,
   //g_printf("get [%s]\n", sf->filename);
   //viewerwin = (PitiviViewerWindow*)pitivi_mainapp_get_viewerwin(window->mainapp);
   //pitivi_viewerwindow_set_source(viewerwin, sf);
+  lplayerwin = pitivi_lplayerwindow_new (sf->filename);
 }
 
 gboolean	my_popup_handler(gpointer data, GdkEvent *event,

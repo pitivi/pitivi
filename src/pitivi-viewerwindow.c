@@ -88,6 +88,7 @@ struct _PitiviViewerWindowPrivate
 // FREE ALL VAR AT THE END
 
 
+
 static gint pitivi_viewerwindow_configure_event( GtkWidget         *widget,
 						 GdkEventConfigure *event )
 {
@@ -206,6 +207,8 @@ gboolean	idle_func_video (gpointer data)
   GstElement *elem;
   gint64	value1, value2;
   gdouble	pourcent;
+
+  //g_print ("BOUCLE2\n");
 
   if ( gst_element_get_state (project->pipeline) == GST_STATE_PLAYING ) {
 /*     g_printf("\n"); */
