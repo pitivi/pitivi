@@ -27,7 +27,6 @@
 #include "pitivi-timelinecellrenderer.h"
 #include "pitivi-timelinemedia.h"
 #include "pitivi-dragdrop.h"
-#include "pitivi-toolboxwindow.h"
 #include "pitivi-toolbox.h"
 #include "pitivi-drawing.h"
 #include "pitivi-thumbs.h"

@@ -39,7 +39,6 @@
 #include <gst/gst.h>
 #include "pitivi.h"
 #include "pitivi-mainapp.h"
-#include "pitivi-toolboxwindow.h"
 #include "pitivi-newprojectwindow.h"
 #include "pitivi-sourcelistwindow.h"
 #include "pitivi-timelinewindow.h"
@@ -57,7 +56,6 @@ struct _PitiviMainAppPrivate
 {
   /* instance private members */
   gboolean			dispose_has_run;
-  PitiviToolboxWindow		*tbxwin;
   PitiviNewProjectWindow	*win_new_project;
 
   PitiviSourceListWindow	*srclistwin;
@@ -89,11 +87,6 @@ void			pitivi_mainapp_del_settings		( PitiviMainApp *self, gint *position );
 /* pitivi_mainapp_settings(PitiviMainApp *self) { */
 /*   return self->private->global_settings; */
 /* } */
-
-PitiviToolboxWindow *
-pitivi_mainapp_get_toolboxwindow(PitiviMainApp *self) {
-  return self->private->tbxwin;
-}
 
 PitiviTimelineWindow *
 pitivi_mainapp_get_timelinewin(PitiviMainApp *self) {
