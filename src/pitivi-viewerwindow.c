@@ -68,6 +68,9 @@ struct _PitiviViewerWindowPrivate
   GtkWidget	*main_vbox;
   GtkWidget	*toolbar; 
   GtkWidget	*button_play;
+  GtkWidget	*image_play;
+  GtkWidget	*image_pause;
+
   GtkWidget	*button_stop;
   GtkWidget	*button_backward;
   GtkWidget	*button_forward;
@@ -153,6 +156,14 @@ gint64	do_query(GstElement *elem, GstQueryType type)
     }
 
   return value;
+}
+
+void
+acitve_widget (GtkWidget *bin, GtkWidget *w1, GtkWidget *w2)
+{
+  gtk_container_remove (GTK_CONTAINER (bin), w2);
+  gtk_container_add (GTK_CONTAINER (bin), w1);
+  return ;
 }
 
 void	video_play(GtkWidget *widget, gpointer data)
@@ -402,9 +413,12 @@ create_gui (gpointer data)
   // main Vbox
   self->private->main_vbox = gtk_vbox_new (FALSE, FALSE);
   gtk_container_add (GTK_CONTAINER (self), self->private->main_vbox);
+  gtk_widget_show (self->private->main_vbox);
 
   // Create Video Display (Drawing Area)
   self->private->video_area = gtk_drawing_area_new ();
+  gtk_widget_show (self->private->video_area);
+
   /* Signals used to handle backing pixmap */
 
   g_signal_connect (G_OBJECT (self->private->video_area), "expose_event",
@@ -433,7 +447,8 @@ create_gui (gpointer data)
   // Create hbox for toolbar
   self->private->toolbar = gtk_hbox_new (FALSE, FALSE);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->toolbar, FALSE, TRUE, 0);
-  
+  gtk_widget_show (self->private->toolbar);
+
   // Buttons for Toolbar
 
   // Button Backward
@@ -444,16 +459,25 @@ create_gui (gpointer data)
   gtk_signal_connect (GTK_OBJECT (self->private->button_backward), "pressed", 
                       GTK_SIGNAL_FUNC (video_backward), self);
   gtk_box_pack_start (GTK_BOX (self->private->toolbar), 
-		      self->private->button_backward, FALSE, FALSE, 0);
+		      self->private->button_backward, FALSE, TRUE, 0);
+  gtk_widget_show (image);
+  gtk_widget_show (self->private->button_backward);
 
   // Button Play
-  image = get_image (self, play_xpm);
+  self->private->image_play = get_image (self, play_xpm);
+  self->private->image_pause = get_image (self, pause_xpm);
   self->private->button_play = gtk_button_new ();
-  gtk_container_add (GTK_CONTAINER (self->private->button_play), image);
+  gtk_container_add (GTK_CONTAINER (self->private->button_play), 
+		     self->private->image_play);
+  //gtk_container_add (GTK_CONTAINER (self->private->button_play), 
+  //self->private->image_pause);
   gtk_signal_connect (GTK_OBJECT (self->private->button_play), "clicked", 
                       GTK_SIGNAL_FUNC (video_play), self);
-  gtk_box_pack_start (GTK_BOX (self->private->toolbar), self->private->button_play, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (self->private->toolbar), self->private->button_play, FALSE, TRUE, 0);
   //gtk_widget_set_size_request (self->private->button_play, 60, 17);
+  gtk_widget_show (self->private->image_pause);
+  gtk_widget_show (self->private->image_play);
+  gtk_widget_show (self->private->button_play);
  
   // Button Forward
   image = get_image (self, forward_xpm);
@@ -464,6 +488,8 @@ create_gui (gpointer data)
                       GTK_SIGNAL_FUNC (video_forward), self);
   gtk_box_pack_start (GTK_BOX (self->private->toolbar),
 		      self->private->button_forward, FALSE, TRUE, 0);
+  gtk_widget_show (image);
+  gtk_widget_show (self->private->button_forward);
 
   // Button Stop
   image = get_image (self, stop_xpm);
@@ -474,12 +500,15 @@ create_gui (gpointer data)
                       GTK_SIGNAL_FUNC (video_stop), self);
   gtk_box_pack_start (GTK_BOX (self->private->toolbar),
 		      self->private->button_stop, FALSE, TRUE, 0);
+  gtk_widget_show (image);
+  gtk_widget_show (self->private->button_stop);
 
   // Timeline
   self->private->timeline = gtk_hscale_new_with_range(self->private->timeline_min, 
 						      self->private->timeline_max, 
 						      self->private->timeline_step);
   gtk_scale_set_draw_value (GTK_SCALE (self->private->timeline), FALSE);
+  gtk_widget_show (self->private->timeline);
 
 
   gtk_signal_connect (GTK_OBJECT (self->private->timeline), "button-press-event", 
@@ -490,8 +519,9 @@ create_gui (gpointer data)
 		      GTK_SIGNAL_FUNC (move_timeline), self);
   gtk_box_pack_start (GTK_BOX (self->private->toolbar), 
 		      self->private->timeline, TRUE, TRUE, 0);
- 
- 
+  
+  gtk_widget_show (GTK_WIDGET (self));
+
   return;
 }
 
@@ -572,7 +602,7 @@ gboolean	idle_func_video (gpointer data)
   gdouble	pourcent;
 
   if ( gst_element_get_state (project->pipeline) == GST_STATE_PLAYING ) {
-/*     print_element_schedulers(project->pipeline); */
+    /*     print_element_schedulers(project->pipeline); */
     gst_x_overlay_set_xwindow_id
       ( GST_X_OVERLAY ( self->private->sink ),
 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
