@@ -530,14 +530,14 @@ pitivi_globalbin_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->videoqueue = gst_element_factory_make ("queue", "videoqueue");
   self->private->audioqueue = gst_element_factory_make ("queue", "audioqueue");
 
-  g_object_set (G_OBJECT(self->private->videoqueue),
-		"max-size-bytes", 300000000 ,
-		"max-size-time", 10 * GST_SECOND,
-		NULL);
-  g_object_set (G_OBJECT(self->private->audioqueue),
-		"max-size-bytes", 300000000, 
-		"max-size-time", 10 * GST_SECOND,
-		NULL);
+/*   g_object_set (G_OBJECT(self->private->videoqueue), */
+/* 		"max-size-bytes", 300000000 , */
+/* 		"max-size-time", 10 * GST_SECOND, */
+/* 		NULL); */
+/*   g_object_set (G_OBJECT(self->private->audioqueue), */
+/* 		"max-size-bytes", 300000000,  */
+/* 		"max-size-time", 10 * GST_SECOND, */
+/* 		NULL); */
 
   gst_bin_add (GST_BIN (self->private->vsinkthread), self->private->videoqueue);
   gst_bin_add (GST_BIN (self->private->asinkthread), self->private->audioqueue);
