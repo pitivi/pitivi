@@ -32,6 +32,8 @@
 
 #include <gtk/gtk.h>
 #include "pitivi-stockicons.h"
+#include "pitivi-viewercontroller.h"
+#include "pitivi-viewerplayer.h"
 
 /*
  * Type macros.

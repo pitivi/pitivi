@@ -25,7 +25,6 @@
 
 #include "pitivi.h"
 #include "pitivi-viewercontroller.h"
-#include "pitivi-viewervolume.h"
 
 enum {
   PITIVI_VIEWER_BUTTON_REWARD = 1,
@@ -99,9 +98,9 @@ pitivi_viewercontroller_constructor (GType type,
 }
 
 gboolean
-pitivi_viewercontroller_seek_started_handler                   (GtkWidget       *widget,
-								GdkEventButton  *event,
-								gpointer         user_data)
+pitivi_viewercontroller_seek_started_handler (GtkWidget       *widget,
+					     GdkEventButton   *event,
+					     gpointer         user_data)
 {
 
   return FALSE;
@@ -109,9 +108,9 @@ pitivi_viewercontroller_seek_started_handler                   (GtkWidget       
 
 
 gboolean
-pitivi_viewercontroller_seek_changed_handler                   (GtkWidget       *widget,
-								GdkEventButton  *event,
-								gpointer         user_data)
+pitivi_viewercontroller_seek_changed_handler (GtkWidget       *widget,
+					      GdkEventButton  *event,
+					      gpointer         user_data)
 {
   
   return FALSE;
@@ -145,7 +144,6 @@ pitivi_viewercontroller_instance_init (GTypeInstance * instance, gpointer g_clas
    * delay initialization completion until the property is set. 
    */
   
-
   /* Gestion des bouttons de controle */
   
   self->private->toolbar = gtk_toolbar_new();   
@@ -157,31 +155,46 @@ pitivi_viewercontroller_instance_init (GTypeInstance * instance, gpointer g_clas
   self->private->b_ffrev[0] = gtk_radio_tool_button_new (NULL);
   self->private->group_ffrev = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[0]));
     
-  self->private->b_ffrev[PITIVI_VIEWER_BUTTON_FORWARD] = gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_NEXT);
-  self->private->group_ffrev = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_FORWARD]));
+  self->private->b_ffrev[PITIVI_VIEWER_BUTTON_FORWARD] = \
+    gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_NEXT);
+  self->private->group_ffrev = \
+    gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_FORWARD]));
     
-  self->private->b_ffrev[PITIVI_VIEWER_BUTTON_PAUSE] = gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_PAUSE);
+  self->private->b_ffrev[PITIVI_VIEWER_BUTTON_PAUSE] = \
+    gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_PAUSE);
   self->private->group_ffrev = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_PAUSE]));
   
-  self->private->b_ffrev[PITIVI_VIEWER_BUTTON_REWARD] = gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_PREVIOUS);
-  self->private->group_ffrev = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_REWARD]));
+  self->private->b_ffrev[PITIVI_VIEWER_BUTTON_REWARD] = \
+    gtk_radio_tool_button_new_from_stock (self->private->group_ffrev, PITIVI_STOCK_VIEWER_PREVIOUS);
+  self->private->group_ffrev = \
+    gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_REWARD]));
     
   /* Creation boutton Stop */
 
-  self->private->b_playing[0] = gtk_radio_tool_button_new (NULL);
-  self->private->group_playing = gtk_radio_tool_button_get_group GTK_RADIO_TOOL_BUTTON ((self->private->b_playing[0]));
+  self->private->b_playing[0] = \
+    gtk_radio_tool_button_new (NULL);
+  self->private->group_playing = \
+    gtk_radio_tool_button_get_group GTK_RADIO_TOOL_BUTTON ((self->private->b_playing[0]));
   
-  self->private->b_playing[PITIVI_VIEWER_BUTTON_PLAY] = gtk_radio_tool_button_new_from_stock (self->private->group_playing, PITIVI_STOCK_VIEWER_PLAY);
-  self->private->group_playing = gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_playing[PITIVI_VIEWER_BUTTON_PLAY]));
+  self->private->b_playing[PITIVI_VIEWER_BUTTON_PLAY] \
+    = gtk_radio_tool_button_new_from_stock (self->private->group_playing, PITIVI_STOCK_VIEWER_PLAY);
+  self->private->group_playing = \
+    gtk_radio_tool_button_get_group (GTK_RADIO_TOOL_BUTTON (self->private->b_playing[PITIVI_VIEWER_BUTTON_PLAY]));
   
   self->private->b_playing[PITIVI_VIEWER_BUTTON_STOP] = gtk_tool_button_new_from_stock (PITIVI_STOCK_VIEWER_STOP);
-  g_signal_connect (self->private->b_playing[PITIVI_VIEWER_BUTTON_STOP], "clicked", G_CALLBACK(pitivi_viewercontroller_callb_stop), self);
+  g_signal_connect (self->private->b_playing[PITIVI_VIEWER_BUTTON_STOP]\
+		    , "clicked", G_CALLBACK(pitivi_viewercontroller_callb_stop), self);
   
-  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar), GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_REWARD]), -1);
-  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar), GTK_TOOL_ITEM (self->private->b_playing[PITIVI_VIEWER_BUTTON_PLAY]), -1);
-  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar), GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_PAUSE]), -1);
-  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar), GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_FORWARD]), -1);  
-  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar), GTK_TOOL_ITEM (self->private->b_playing[PITIVI_VIEWER_BUTTON_STOP]), -1);
+  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
+		      , GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_REWARD]), -1);
+  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
+		      , GTK_TOOL_ITEM (self->private->b_playing[PITIVI_VIEWER_BUTTON_PLAY]), -1);
+  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
+		      , GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_PAUSE]), -1);
+  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
+		      , GTK_TOOL_ITEM (self->private->b_ffrev[PITIVI_VIEWER_BUTTON_FORWARD]), -1);  
+  gtk_toolbar_insert (GTK_TOOLBAR(self->private->toolbar)\
+		      , GTK_TOOL_ITEM (self->private->b_playing[PITIVI_VIEWER_BUTTON_STOP]), -1);
   
   gtk_toolbar_set_orientation (GTK_TOOLBAR(self->private->toolbar), GTK_ORIENTATION_HORIZONTAL);
   gtk_toolbar_set_show_arrow (GTK_TOOLBAR(self->private->toolbar), FALSE);

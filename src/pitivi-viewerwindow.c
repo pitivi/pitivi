@@ -24,9 +24,7 @@
  */
 
 #include "pitivi.h"
-#include "pitivi-viewercontroller.h"
 #include "pitivi-viewerwindow.h"
-#include "pitivi-viewerplayer.h"
 
 static GtkWindowClass *parent_class = NULL;
 

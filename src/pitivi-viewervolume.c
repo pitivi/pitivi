@@ -85,7 +85,6 @@ pitivi_viewervolume_constructor (GType type,
     parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
     obj = parent_class->constructor (type, n_construct_properties,
 				     construct_properties);
-    g_object_set (obj, "type", GTK_WINDOW_POPUP, NULL);
   }
 
   /* do stuff. */
@@ -206,6 +205,7 @@ pitivi_viewervolume_instance_init (GTypeInstance * instance, gpointer g_class)
   /* initialize all public and private members to reasonable default values. */ 
   
   self->private->dispose_has_run = FALSE;
+  gtk_window_set_decorated (GTK_WINDOW (self), FALSE);
   
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 

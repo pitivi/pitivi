@@ -32,6 +32,7 @@
 
 #include <gtk/gtk.h>
 #include "pitivi-stockicons.h"
+#include "pitivi-viewervolume.h"
 
 /*
  * Type macros.
