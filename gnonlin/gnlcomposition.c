@@ -56,11 +56,14 @@ static GstClockTime 	gnl_composition_nearest_cover_func 	(GnlComposition *comp, 
 static gboolean 	gnl_composition_schedule_entries 	(GnlComposition *comp, GstClockTime start,
 								 GstClockTime stop, gint minprio, GstPad **pad);
 
-void	update_start_stop(GnlComposition *comp);
+void	composition_update_start_stop(GnlComposition *comp);
 
 struct _GnlCompositionEntry
 {
   GnlObject *object;
+  gulong	starthandler;
+  gulong	stophandler;
+  gulong	priorityhandler;
 };
 
 #define GNL_COMP_ENTRY(entry)		((GnlCompositionEntry *)entry)
@@ -239,38 +242,6 @@ gnl_composition_find_entry (GnlComposition *comp, GstClockTime time, GnlFindMeth
 	    time, method);
 
   return gnl_composition_find_entry_priority(comp, time, method, 1);
-
-/*   while (objects) { */
-/*     GnlCompositionEntry *entry = (GnlCompositionEntry *) (objects->data); */
-/*     GstClockTime start, stop; */
-
-/*     gnl_object_get_start_stop (entry->object, &start, &stop); */
-
-/*     switch (method) { */
-/*       case GNL_FIND_AT: */
-/*         if ((start <= time) */
-/* 	    && */
-/* 	    (start + (stop - start) > time)) */
-/* 	{ */
-/*           return entry; */
-/* 	} */
-/* 	break; */
-/*       case GNL_FIND_AFTER: */
-/*         if (start >= time) */
-/*           return entry; */
-/* 	break; */
-/*       case GNL_FIND_START: */
-/*         if (start == time) */
-/*           return entry; */
-/* 	break; */
-/*       default: */
-/* 	g_warning ("%s: unkown find method", gst_element_get_name (GST_ELEMENT (comp))); */
-/* 	break; */
-/*     } */
-/*     objects = g_list_next (objects); */
-/*   } */
-
-/*   return NULL; */
 }
 
 GnlObject*
@@ -343,6 +314,23 @@ gnl_composition_new (const gchar *name)
 }
 
 void
+child_priority_changed (GnlObject *object,  GParamSpec *arg, gpointer udata)
+{
+  GnlComposition *comp = GNL_COMPOSITION (udata);
+
+  comp->objects = g_list_sort (comp->objects, _entry_compare_func);
+}
+
+void
+child_start_stop_changed (GnlObject *object, GParamSpec *arg, gpointer udata)
+{
+  GnlComposition *comp = GNL_COMPOSITION (udata);
+
+  comp->objects = g_list_sort (comp->objects, _entry_compare_func);
+  composition_update_start_stop (comp);
+}
+
+void
 gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
 {
   GnlCompositionEntry *entry;
@@ -372,9 +360,13 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
     gnl_source_get_pad_for_stream (GNL_SOURCE (object), "src");
   }
   
+  entry->priorityhandler = g_signal_connect(object, "notify::priority", G_CALLBACK (child_priority_changed), comp);
+  entry->starthandler = g_signal_connect(object, "notify::start", G_CALLBACK (child_start_stop_changed), comp);
+  entry->stophandler = g_signal_connect(object, "notify::stop", G_CALLBACK (child_start_stop_changed), comp);
+  
   comp->objects = g_list_insert_sorted (comp->objects, entry, _entry_compare_func);
-  // update start & stop
-  update_start_stop (comp);
+  
+  composition_update_start_stop (comp);
 }
 
 static gint
@@ -390,6 +382,7 @@ void
 gnl_composition_remove_object (GnlComposition *comp, GnlObject *object)
 {
   GList *lentry;
+  GnlCompositionEntry	*entry;
 
   GST_INFO("Composition[%s] Object[%s]",
 	   gst_element_get_name(GST_ELEMENT (comp)),
@@ -401,10 +394,16 @@ gnl_composition_remove_object (GnlComposition *comp, GnlObject *object)
   lentry = g_list_find_custom (comp->objects, object, (GCompareFunc) find_function);
   g_return_if_fail (lentry);
 
+  entry = (GnlCompositionEntry *) lentry->data;
+  g_signal_handler_disconnect (entry->object, entry->priorityhandler);
+  g_signal_handler_disconnect (entry->object, entry->starthandler);
+  g_signal_handler_disconnect (entry->object, entry->stophandler);
+
   comp->objects = g_list_delete_link (comp->objects, lentry);
 
   g_free (GNL_OBJECT (lentry->data)->comp_private);
   gst_object_unref (GST_OBJECT (lentry->data));
+  composition_update_start_stop (comp);
 }
 
 /*
@@ -606,7 +605,8 @@ probe_fired (GstProbe *probe, GstData **data, gpointer user_data)
     GNL_OBJECT (comp)->current_time = comp->next_stop;
   }
 
-  GST_INFO("current_time [%lld] -> [%3lldH:%3lldm:%3llds:%3lld]", 
+  GST_INFO("%s current_time [%lld] -> [%3lldH:%3lldm:%3llds:%3lld]", 
+	   gst_element_get_name(GST_ELEMENT(comp)),
 	   GNL_OBJECT (comp)->current_time,
 	   GNL_OBJECT (comp)->current_time / (3600 * GST_SECOND),
 	   GNL_OBJECT (comp)->current_time % (3600 * GST_SECOND) / (60 * GST_SECOND),
@@ -810,9 +810,6 @@ gnl_composition_query (GstElement *element, GstQueryType type,
     return res;
 
   switch (type) {
-  GST_QUERY_TOTAL:
-    if (gst_element_get_state(element) < GST_STATE_PLAYING)
-      update_start_stop(GNL_COMPOSITION(element));
   default:
     res = GST_ELEMENT_CLASS (parent_class)->query (element, type, format, value);
       break;
@@ -824,20 +821,24 @@ gnl_composition_query (GstElement *element, GstQueryType type,
   update_start_stop
 
   Updates the composition's start and stop value
+  Should be updated if an object has been added or it's start/stop has been modified
 */
 
 void
-update_start_stop (GnlComposition *comp)
+composition_update_start_stop (GnlComposition *comp)
 {
-  GNL_OBJECT(comp)->start = gnl_composition_nearest_cover (comp, 0, GNL_DIRECTION_FORWARD);
-  if (GNL_OBJECT(comp)->start == GST_CLOCK_TIME_NONE)
-    GNL_OBJECT(comp)->start = 0;
-  GNL_OBJECT(comp)->stop = gnl_composition_nearest_cover (comp, G_MAXINT64, GNL_DIRECTION_BACKWARD);
-  if (GNL_OBJECT(comp)->stop == GST_CLOCK_TIME_NONE)
-    GNL_OBJECT(comp)->stop = G_MAXINT64;
+  GstClockTime	start, stop;
+  
+  start = gnl_composition_nearest_cover (comp, 0, GNL_DIRECTION_FORWARD);
+  if (start == GST_CLOCK_TIME_NONE)
+    start = 0;
+  stop = gnl_composition_nearest_cover (comp, G_MAXINT64, GNL_DIRECTION_BACKWARD);
+  if (stop == GST_CLOCK_TIME_NONE)
+    stop = G_MAXINT64;
   GST_INFO("Start_pos:%lld, Stop_pos:%lld", 
-	   GNL_OBJECT(comp)->start, 
-	   GNL_OBJECT(comp)->stop); 
+	   start, 
+	   stop);
+  gnl_object_set_start_stop(GNL_OBJECT(comp), start, stop);
 }
 
 static GstElementStateReturn
@@ -848,24 +849,24 @@ gnl_composition_change_state (GstElement *element)
   GstElementStateReturn	res;
 
   switch (transition) {
-    case GST_STATE_NULL_TO_READY:
-      update_start_stop(comp);
-      break;
-    case GST_STATE_READY_TO_PAUSED:
-      GST_INFO ( "%s: 1 ready->paused", gst_element_get_name (GST_ELEMENT (comp)));
-      break;
-    case GST_STATE_PAUSED_TO_PLAYING:
-      GST_INFO ( "%s: 1 paused->playing", gst_element_get_name (GST_ELEMENT (comp)));
-      break;
-    case GST_STATE_PLAYING_TO_PAUSED:
-      GST_INFO ( "%s: 1 playing->paused", gst_element_get_name (GST_ELEMENT (comp)));
-      break;
-    case GST_STATE_PAUSED_TO_READY:
-      break;
-    default:
-      break;
+  case GST_STATE_NULL_TO_READY:
+    //composition_update_start_stop(comp);
+    break;
+  case GST_STATE_READY_TO_PAUSED:
+    GST_INFO ( "%s: 1 ready->paused", gst_element_get_name (GST_ELEMENT (comp)));
+    break;
+  case GST_STATE_PAUSED_TO_PLAYING:
+    GST_INFO ( "%s: 1 paused->playing", gst_element_get_name (GST_ELEMENT (comp)));
+    break;
+  case GST_STATE_PLAYING_TO_PAUSED:
+    GST_INFO ( "%s: 1 playing->paused", gst_element_get_name (GST_ELEMENT (comp)));
+    break;
+  case GST_STATE_PAUSED_TO_READY:
+    break;
+  default:
+    break;
   }
-
+  
   res = GST_ELEMENT_CLASS (parent_class)->change_state (element);
   GST_INFO("%s : change_state returns %d",
 	   gst_element_get_name(element),

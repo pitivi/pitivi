@@ -203,19 +203,30 @@ gnl_object_dispose (GObject *object)
 void
 gnl_object_set_start_stop (GnlObject *object, GstClockTime start, GstClockTime stop)
 {
+  gboolean	startm = TRUE;
+  gboolean	stopm = TRUE;
+
   g_return_if_fail (GNL_IS_OBJECT (object));
   g_return_if_fail (start < stop);
   
   GST_INFO("Object:%s , START[%lld]/STOP[%lld]",
 	   gst_element_get_name(GST_ELEMENT(object)),
 	   start, stop);
-
-  object->start = start;
-  object->stop = stop;
+  
+  if (object->start == start)
+    startm = FALSE;
+  else
+    object->start = start;
+  if (object->stop == stop)
+    stopm = FALSE;
+  else
+    object->stop = stop;
 
   g_object_freeze_notify (G_OBJECT (object));
-  g_object_notify (G_OBJECT (object), "start");
-  g_object_notify (G_OBJECT (object), "stop");
+  if (startm)
+    g_object_notify (G_OBJECT (object), "start");
+  if (stopm)
+    g_object_notify (G_OBJECT (object), "stop");
   g_object_thaw_notify (G_OBJECT (object));
 }
 
@@ -250,6 +261,9 @@ gnl_object_get_start_stop (GnlObject *object, GstClockTime *start, GstClockTime 
 void
 gnl_object_set_media_start_stop (GnlObject *object, GstClockTime start, GstClockTime stop)
 {
+  gboolean	startm = TRUE;
+  gboolean	stopm = TRUE;
+
   g_return_if_fail (GNL_IS_OBJECT (object));
   g_return_if_fail (start < stop);
 
@@ -257,20 +271,30 @@ gnl_object_set_media_start_stop (GnlObject *object, GstClockTime start, GstClock
 	   gst_element_get_name(GST_ELEMENT(object)),
 	   start, stop);
 
-  object->media_start = start;
-  object->media_stop = stop;
+  if (object->media_start == start)
+    startm = FALSE;
+  else
+    object->media_start = start;
+  if (object->media_stop == stop)
+    stopm = FALSE;
+  else
+    object->media_stop = stop;
 
-  gnl_object_do_seek (object,
-	              GST_FORMAT_TIME |
-	              GST_SEEK_METHOD_SET |
-		      GST_SEEK_FLAG_FLUSH |
-		      GST_SEEK_FLAG_ACCURATE, 
-		      0, stop - start);
-
-  g_object_freeze_notify (G_OBJECT (object));
-  g_object_notify (G_OBJECT (object), "media_start");
-  g_object_notify (G_OBJECT (object), "media_stop");
-  g_object_thaw_notify (G_OBJECT (object));
+  if (startm || stopm) {
+    gnl_object_do_seek (object,
+			GST_FORMAT_TIME |
+			GST_SEEK_METHOD_SET |
+			GST_SEEK_FLAG_FLUSH |
+			GST_SEEK_FLAG_ACCURATE, 
+			0, stop - start);
+    
+    g_object_freeze_notify (G_OBJECT (object));
+    if (startm)
+      g_object_notify (G_OBJECT (object), "media_start");
+    if (stopm)
+      g_object_notify (G_OBJECT (object), "media_stop");
+    g_object_thaw_notify (G_OBJECT (object));
+  }
 }
 
 /** 
@@ -326,8 +350,10 @@ gnl_object_set_rate_control (GnlObject *object, GnlObjectRateControl control)
   g_return_if_fail (control >= GNL_OBJECT_FIX_MEDIA_STOP &&
                     control <= GNL_OBJECT_USE_MEDIA_STOP);
 
-  object->rate_control = control;
-  g_object_notify (G_OBJECT (object), "rate_control");
+  if (object->rate_control != control) {
+    object->rate_control = control;
+    g_object_notify (G_OBJECT (object), "rate_control");
+  }
 }
 
 /** 
@@ -344,8 +370,10 @@ gnl_object_set_priority (GnlObject *object, gint priority)
   g_return_if_fail (GNL_IS_OBJECT (object));
   g_return_if_fail (priority > 0);
   
-  object->priority = priority;
-  g_object_notify (G_OBJECT (object), "priority");
+  if (object->priority != priority) {
+    object->priority = priority;
+    g_object_notify (G_OBJECT (object), "priority");
+  }
 }
 
 /** 
@@ -396,8 +424,10 @@ gnl_object_set_active (GnlObject *object, gboolean active)
   
   GST_INFO("Active[%d]", active);
 
-  object->active = active;
-  g_object_notify (G_OBJECT (object), "active");
+  if (object->active != active) {
+    object->active = active;
+    g_object_notify (G_OBJECT (object), "active");
+  }
 }
 
 static GstElementStateReturn
@@ -565,9 +595,11 @@ gnl_object_query (GstElement *element, GstQueryType type,
   GST_INFO("Object:%s , Type[%d], Format[%d]",
 	   gst_element_get_name(element),
 	   type, *format);
+  GST_INFO("Start:%lld, Stop:%lld, priority:%d",
+	   object->start, object->stop, object->priority);
 
   if (*format != GST_FORMAT_TIME)
-    return res;
+    return FALSE;
   
   switch (type) {
     case GST_QUERY_TOTAL:
@@ -577,6 +609,7 @@ gnl_object_query (GstElement *element, GstQueryType type,
       *value = object->current_time;
       break;
     case GST_QUERY_START:
+      *value = object->start;
       break;
     case GST_QUERY_SEGMENT_END:
       break;

@@ -714,7 +714,7 @@ source_getfunction (GstPad *pad)
 	if ((GST_CLOCK_TIME_IS_VALID(source->private->seek_stop)
 	     && (intime >= source->private->seek_stop))) {
 	  GST_INFO("Data is after seek_stop, creating EOS");
-	  gst_object_unref(buffer);
+	  gst_data_unref(GST_DATA(buffer));
 	  buffer = GST_BUFFER (gst_event_new (GST_EVENT_EOS));
 	}
 	outtime = intime - object->media_start + object->start;

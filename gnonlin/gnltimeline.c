@@ -340,6 +340,8 @@ static void 		gnl_timeline_init 		(GnlTimeline *timeline);
 static gboolean 	gnl_timeline_prepare 		(GnlObject *object, GstEvent *event);
 static GstElementStateReturn
 			gnl_timeline_change_state 	(GstElement *element);
+static gboolean 	gnl_timeline_query 		(GstElement *element, GstQueryType type,
+		                                         GstFormat *format, gint64 *value);
 
 static GnlCompositionClass *parent_class = NULL;
 
@@ -381,6 +383,7 @@ gnl_timeline_class_init (GnlTimelineClass *klass)
   parent_class = g_type_class_ref (GNL_TYPE_COMPOSITION);
 
   gstelement_class->change_state	= gnl_timeline_change_state;
+  gstelement_class->query		= gnl_timeline_query;
 
   gnlobject_class->prepare              = gnl_timeline_prepare;
 }
@@ -414,6 +417,34 @@ gnl_timeline_new (const gchar *name)
 }
 
 void
+timeline_update_start_stop(GnlTimeline *timeline)
+{
+  GList		*tmp;
+  GnlObject	*obj;
+  GstClockTime	start = G_MAXINT64;
+  GstClockTime	stop = 0LL;
+  
+  if (!timeline->groups) {
+    gnl_object_set_start_stop (GNL_OBJECT(timeline), 0, G_MAXINT64);
+    return;
+  }
+  for (tmp = timeline->groups; tmp; tmp = tmp->next) {
+    obj = GNL_OBJECT (tmp->data);
+    if (obj->start < start)
+      start = obj->start;
+    if (obj->stop > stop)
+      stop = obj->stop;
+  }
+  gnl_object_set_start_stop (GNL_OBJECT(timeline), start, stop);
+}
+
+void
+group_start_stop_changed (GnlGroup *group, GParamSpec *arg, gpointer udata)
+{
+  timeline_update_start_stop(GNL_TIMELINE(udata));
+}
+
+void
 gnl_timeline_add_group (GnlTimeline *timeline, GnlGroup *group)
 {
   GstElement *pipeline;
@@ -433,8 +464,13 @@ gnl_timeline_add_group (GnlTimeline *timeline, GnlGroup *group)
   pipeline = gst_pipeline_new (pipename);
   g_free (pipename);
 
+  g_signal_connect (group, "notify::start", G_CALLBACK (group_start_stop_changed), timeline);
+  g_signal_connect (group, "notify::stop", G_CALLBACK (group_start_stop_changed), timeline);
+
   gst_bin_add (GST_BIN (pipeline), GST_ELEMENT (group));
   gst_bin_add (GST_BIN (timeline), GST_ELEMENT (pipeline));
+  
+  timeline_update_start_stop (timeline);
 }
 
 static TimerGroupLink*
@@ -517,6 +553,21 @@ gnl_timeline_prepare (GnlObject *object, GstEvent *event)
   return res;
 }
 
+static gboolean
+gnl_timeline_query (GstElement *element, GstQueryType type,
+		    GstFormat *format, gint64 *value)
+{
+  GnlTimeline	*timeline = GNL_TIMELINE(element);
+
+  if (*format != GST_FORMAT_TIME)
+    return FALSE;
+
+  if (type == GST_QUERY_POSITION) {
+    *value = timeline->timer->current->time;
+    return TRUE;
+  }
+  return GST_ELEMENT_CLASS (parent_class)->query (element, type, format, value);
+}
 
 static GstElementStateReturn
 gnl_timeline_change_state (GstElement *element)
