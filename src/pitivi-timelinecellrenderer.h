@@ -41,6 +41,9 @@
 #define FIXED_WIDTH   6000
 #define FIXED_HEIGHT  50
 
+// Move on graphic source
+#define DEFAULT_WIDTH_DASHES 4
+
 #define PITIVI_TIMELINECELLRENDERER_TYPE (pitivi_timelinecellrenderer_get_type ())
 #define PITIVI_TIMELINECELLRENDERER(obj) (G_TYPE_CHECK_INSTANCE_CAST ((obj), PITIVI_TIMELINECELLRENDERER_TYPE, PitiviTimelineCellRenderer))
 #define PITIVI_TIMELINECELLRENDERER_CLASS(klass) (G_TYPE_CHECK_CLASS_CAST ((klass), PITIVI_TIMELINECELLRENDERER_TYPE, PitiviTimelineCellRendererClass))

@@ -44,6 +44,13 @@ enum {
   STOP
 };
 
+static GtkTargetEntry TargetEntries[] =
+{
+  { "pitivi/sourcefile", GTK_TARGET_SAME_APP, DND_TARGET_SOURCEFILEWIN }
+};
+
+static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
+
 struct _PitiviViewerWindowPrivate
 {
   gboolean	dispose_has_run;

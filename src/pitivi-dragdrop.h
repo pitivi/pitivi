@@ -28,15 +28,10 @@
 
 enum
   {
-    DND_TARGET_STRING = 1,
-    DND_TARGET_URL = 2
+    DND_TARGET_SOURCEFILEWIN = 0,
+    DND_TARGET_EFFECTSWIN = 1,
+    DND_TARGET_STRING = 2,
+    DND_TARGET_URI = 3,
   };
-
-static GtkTargetEntry TargetEntries[] =
-  {
-    { "pitivi/sourcefile", GTK_TARGET_SAME_APP, 0 },
-  };
-
-static gint iNbTargetEntries = sizeof(TargetEntries)/sizeof(TargetEntries[0]);
 
 #endif /* PITIVI_DRAGDROP_H */

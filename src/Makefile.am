@@ -22,6 +22,7 @@ pitivi_SOURCES		= \
 	pitivi-effectswindow.c\
 	pitivi-timelinewindow.c\
 	pitivi-timelinecellrenderer.c\
+	pitivi-timelinemedia.c\
 	pitivi-toolboxwindow.c	\
 	pitivi-sourcelistwindow.c \
 	pitivi-checkbox.c\

@@ -218,6 +218,13 @@ static gchar	*BaseMediaType[] =
  * insert "added-value" functions here
  */
 
+static GtkTargetEntry TargetEntries[] =
+{
+  { "pitivi/sourcefile", GTK_TARGET_SAME_APP, DND_TARGET_SOURCEFILEWIN }
+};
+
+static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
+
 gint	get_selected_row(gchar *path, gint *depth)
 {
   gchar	*tmp;
@@ -1364,7 +1371,7 @@ drag_data_get_cb (GtkWidget          *widget,
     return ;
   /* convert the pointer to it's character represenation in long long int */
   tmp = g_strdup_printf("%lld",*sf);
-  g_printf("File:%s\n", tmp);
+  g_printf("File:%s selection:%d\n", tmp, selection_data->target);
   gtk_selection_data_set (selection_data, selection_data->target, 8, tmp, strlen (tmp));
   g_printf ("drag get\n");
 }
