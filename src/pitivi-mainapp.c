@@ -192,7 +192,7 @@ pitivi_mainapp_create_timelinewin (PitiviMainApp *self, PitiviProject *project)
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_timelinewin), self);
     }
   else {
-    PITIVI_PROJECTWINDOWS(self->private->timelinewin)->project = project;
+    ((PitiviProjectWindows *) (self->private->timelinewin))->project = project;
     g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "activate");
   }
 }
