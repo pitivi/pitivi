@@ -420,6 +420,17 @@ show_video_media (GtkWidget *widget)
 		}
 	    }
 	}
+      if (GTK_WIDGET (this->track)->allocation.width > 4)
+	{
+	  gdk_draw_line (this->private->pixmapcache,
+			 GTK_WIDGET(this)->style->white_gc,
+			 1, 0, 1, GTK_WIDGET (this->track)->allocation.height);
+	  gdk_draw_line (this->private->pixmapcache,
+			 GTK_WIDGET(this)->style->white_gc,
+			 widget->allocation.width-2, 
+			 0, widget->allocation.width-2, 
+			 GTK_WIDGET (this->track)->allocation.height);
+	}
     }
 }
 
@@ -857,7 +868,7 @@ pitivi_timelinemedia_button_press_event (GtkWidget      *widget,
 	  gtk_widget_grab_focus ( widget );
 	  draw_media_expose (GTK_WIDGET (this));
 	  if ( this->linked )
-	    draw_media_expose ( this->linked );
+	    draw_media_expose ( GTK_WIDGET (this->linked) );
 	}
       else
 	{
@@ -868,6 +879,11 @@ pitivi_timelinemedia_button_press_event (GtkWidget      *widget,
 	    }
 	}
     }
+  gint x = event->x;
+  if ( (x >= widget->allocation.width / 2 ) )
+    this->resz = 0;
+  else
+    this->resz = 1;
   return TRUE;
 }
 
@@ -905,7 +921,7 @@ pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *this, gpointer data)
     if (this->selected)
       {
 	PITIVI_TIMELINEMEDIA (this->linked)->selected = FALSE;
-	pitivi_send_expose_event (this->linked);
+	pitivi_send_expose_event (GTK_WIDGET (this->linked));
 	PITIVI_TIMELINEMEDIA (this->linked)->linked = NULL;
 	this->linked = NULL;
       }
@@ -1029,7 +1045,7 @@ pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *this, gpointer data)
     {
       if ( this->linked )
 	{
-	  gtk_container_remove (GTK_CONTAINER ( this->track->linked_track ), this->linked );
+	  gtk_container_remove (GTK_CONTAINER ( this->track->linked_track ), GTK_WIDGET (this->linked) );
 	  
 	  gst_object_unref (GST_OBJECT (PITIVI_TIMELINEMEDIA (this->linked)->sourceitem->gnlobject));
 	  pitivi_layout_remove_from_composition (PITIVI_TIMELINECELLRENDERER (this->track->linked_track),
@@ -1165,7 +1181,7 @@ pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *this, gpointer data)
       
       gtk_widget_hide (GTK_WIDGET(this));
       if (this->linked)
-	gtk_widget_hide (this->linked);
+	gtk_widget_hide (GTK_WIDGET (this->linked));
   
       GtkWidget *w = gtk_widget_get_toplevel (GTK_WIDGET(this));
       g_signal_emit_by_name (w, "copy-source", this);

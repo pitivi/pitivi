@@ -25,6 +25,8 @@ pitivi_SOURCES		= \
 	pitivi-sourcefile.c\
 	pitivi-timelinewindow.c\
 	pitivi-timelinecellrenderer.c\
+	pitivi-timelinecellrenderer-resizing.c\
+	pitivi-timelinecellrenderer-moving.c\
 	pitivi-timelinemedia.c\
 	pitivi-sourcelistwindow.c \
 	pitivi-checkbox.c\

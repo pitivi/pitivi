@@ -237,99 +237,6 @@ pitivi_timelinecellrenderer_expose (GtkWidget      *widget,
   return FALSE;
 }
 
-
-/* Comparaison */
-
-gint 
-compare_track (gconstpointer a, gconstpointer b)
-{
-  GtkWidget *wa, *wb;
-  
-  wa = GTK_WIDGET (a);
-  wb = GTK_WIDGET (b);
-  
-  if (wa->allocation.x > wb->allocation.x)
-    return 1;
-  else if (wa->allocation.x < wb->allocation.x)
-    return -1;
-  else if ( PITIVI_TIMELINEMEDIA (wa)->track->track_nb > PITIVI_TIMELINEMEDIA (wb)->track->track_nb )
-    return 1;
-  return 0;
-}
-
-/**
- * pitivi_calculate_priorities:
- * @GtkWidget: the widget containing a media source
- * 
- * Calculates the priorities of the media sources
- *
- */
-
-void
-pitivi_calculate_priorities ( GtkWidget *widget )
-{
-  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *)widget;
-  PitiviTimelineMedia *media;
-  GList *containerlist = NULL;
-  GList *layoutlist = NULL;
-  GList *sublist = NULL;
-  int	priority = 2;
-  int   x, width = 0;
-  gboolean found = FALSE;
-
-  if (self->track_type == PITIVI_EFFECTS_TRACK)
-    self = PITIVI_TIMELINECELLRENDERER (self->linked_track);
-  containerlist = gtk_container_get_children (GTK_CONTAINER (gtk_widget_get_parent(GTK_WIDGET (self))));
-  for (; containerlist; containerlist = containerlist->next)
-    if (self->track_type == PITIVI_TIMELINECELLRENDERER (containerlist->data)->track_type)
-      {
-	if (!layoutlist)
-	  {
-	    layoutlist = gtk_container_get_children (GTK_CONTAINER (containerlist->data));
-	    layoutlist = g_list_last  (layoutlist);
-	  }
-	else
-	  layoutlist->next = gtk_container_get_children (GTK_CONTAINER (containerlist->data));
-      }
-  
-  if ( layoutlist )
-    {
-      layoutlist = g_list_first (layoutlist);
-      layoutlist = g_list_sort (layoutlist, compare_track);
-      for (; layoutlist; layoutlist = layoutlist->next)
-	{
-	  media = layoutlist->data;
-	  if ( media->track->effects_track)
-	    {
-	      found = FALSE;
-	      sublist = gtk_container_get_children (GTK_CONTAINER (media->track->effects_track));
-	      for (; sublist; sublist = sublist->next)
-		{
-		  x = GTK_WIDGET (sublist->data)->allocation.x;
-		  width = GTK_WIDGET (sublist->data)->allocation.width;
-		  if (GTK_WIDGET (media)->allocation.x <= x 
-		      && (x-GTK_WIDGET (media)->allocation.x)+width<=GTK_WIDGET (media)->allocation.width)
-		    {
-		      pitivi_timelinemedia_set_priority ( PITIVI_TIMELINEMEDIA (sublist->data), priority);
-		      found = TRUE;
-		    }
-		}
-	      if ( found )
-		priority++;
-	    }
-	  if ( media && media->track->track_type != PITIVI_TRANSITION_TRACK)
-	    {
-	      pitivi_timelinemedia_set_priority ( media, priority);
-	      priority++;
-	    }
-	}
-    }
-  g_list_free (containerlist);
-  g_list_free (layoutlist);
-  g_list_free (sublist);
-}
-
-
 /**
  * pitivi_layout_add_to_composition:
  * @self: The #PitiviTimelineCellRenderer where we wish to add
@@ -373,227 +280,6 @@ pitivi_layout_remove_from_composition(PitiviTimelineCellRenderer *self, PitiviTi
     gnl_composition_remove_object (GNL_COMPOSITION(project->audiogroup),
 				media->sourceitem->gnlobject);
 }
-
-/**
- * pitivi_layout_put:
- * @GtkLayout: the layout to put the widgets into
- * @GtkWidget: the widget to put into the layout
- * @gint: the widget position in X 
- * @gint: the widget position in Y 
- * 
- * Adds the given widget to the layout at the given x/y position.
- * Updates the position of the attached GnlSource.
- *
- */
-
-void
-pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
-{
-  //PitiviProject       *project = PITIVI_WINDOWS (PITIVI_TIMELINECELLRENDERER(layout)->private->timewin)->mainapp->project;
-  
-  widget->allocation.x = x;
-  widget->allocation.y = y;
-  gtk_layout_put ( layout, widget, x, y );
-  pitivi_calculate_priorities (GTK_WIDGET (layout) );
-/*   if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout) */
-/*       && ((PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_AUDIO_TRACK) */
-/* 	  || (PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_VIDEO_TRACK))){ */
-  if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout))
-    pitivi_timelinemedia_put (PITIVI_TIMELINEMEDIA(widget), 
-			      convert_pix_time(PITIVI_TIMELINECELLRENDERER(layout), x));
-  // TODO : Check if widget isn't already on this layout (!move)
-    // set the priority
-/*     pitivi_timelinemedia_set_priority(PITIVI_TIMELINEMEDIA(widget), 1); */
-/*     if (PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_AUDIO_TRACK) { */
-/*       gnl_composition_add_object(GNL_COMPOSITION(project->audiogroup), */
-/* 				 PITIVI_TIMELINEMEDIA(widget)->sourceitem->gnlobject); */
-/*     } else if (PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_VIDEO_TRACK) { */
-/*       gnl_composition_add_object(GNL_COMPOSITION(project->videogroup), */
-/* 				 PITIVI_TIMELINEMEDIA(widget)->sourceitem->gnlobject);       */
-/*     } */
-    // pitivi_printf_element( PITIVI_TIMELINEMEDIA(widget)->sourceitem->srcfile->pipeline );
- 
-    // Add to the composition
-    //  Find what kind of media it is (audio/video) PITIVI_VIDEO/AUDIO_TRACK (layout->track_type)
-    //  gnl_composition_add_object() to the correct group
-}
-
-/*
-  pitivi_layout_move
-
-  Moves the widget in the layout at the given x/y position
-  Updates the position of the attached GnlSource
-*/
-
-void
-pitivi_layout_move (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
-{
-  widget->allocation.x = x;
-  widget->allocation.y = y;
-  gtk_layout_move (layout, widget, x, y);
-  pitivi_calculate_priorities ( GTK_WIDGET (layout) );
-  if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout)) {
-    pitivi_timelinemedia_put (PITIVI_TIMELINEMEDIA(widget), 
-			      convert_pix_time(PITIVI_TIMELINECELLRENDERER(layout), x));
-  }
-}
-
-/*
- **********************************************************
- * Adding Widget  			                  *
- *							  *
- **********************************************************
-*/
-
-void
-link_widgets ( PitiviTimelineMedia *media1, PitiviTimelineMedia *media2)
-{
-  media1->linked = GTK_WIDGET ( media2 );
-  media2->linked = GTK_WIDGET ( media1 );
-}
-
-void move_attached_effects (GtkWidget *widget, int x)
-{
-  PitiviTimelineMedia *media = (PitiviTimelineMedia *) widget;
-  GList	*childs = media->effectschilds;
-  int width = 0;
-
-  while (childs)
-    {
-      pitivi_layout_move (GTK_LAYOUT (PITIVI_TIMELINEMEDIA (childs->data)->track), 
-			  GTK_WIDGET (childs->data), x+width, 0);
-      width += GTK_WIDGET (childs->data)->allocation.width;
-      childs = childs->next;
-    }
-}
-
-GtkWidget **layout_intersection_widget (GtkWidget *self, GtkWidget *widget, gint x, gboolean move)
-{
-  GList	*child;
-  GtkRequisition req;
-  GtkWidget **matches;
-  int xchild, widthchild = 0;
-  
-  matches =  g_new0(GtkWidget *, (int) 2);
-  gtk_widget_size_request (widget, &req);
-  child = gtk_container_get_children (GTK_CONTAINER (self));
-  for (child = g_list_sort (child, compare_littlechild); 
-       child; 
-       child = child->next )
-    {
-      xchild = GTK_WIDGET(child->data)->allocation.x;
-      if (move && xchild == widget->allocation.x)
-	continue;
-      widthchild = GTK_WIDGET(child->data)->allocation.width;
-      if (xchild <= x && x <= xchild + widthchild)
-	matches[0] = GTK_WIDGET (child->data);
-      else if (xchild <= x + req.width && x + req.width <= xchild + widthchild)
-	matches[1] = GTK_WIDGET (child->data);
-    }
-  g_list_free (child);
-  return matches;
-}
-
-
-void move_media (GtkWidget *cell, GtkWidget *widget, guint x, gboolean move)
-{
-  GtkWidget **intersec;
-  GtkWidget *first;
-  int       xbegin;
-
-  intersec = layout_intersection_widget (cell, widget, x, move);
-  first = intersec[1];
-  if (first && GTK_IS_WIDGET (first) && first->allocation.x != x)
-    {
-      xbegin = x + first->allocation.width;
-      pitivi_layout_move (GTK_LAYOUT (cell), first, xbegin, 0);
-      move_attached_effects (first, xbegin);
-      move_media (cell, first, xbegin, move);
-    }
-  return;
-}
-
-void
-move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
-{
-  GtkWidget **intersec;
-  int xbegin = x;
-  
-  intersec = layout_intersection_widget (self, widget, x, TRUE);
-  if (!intersec[1] && intersec[0])
-    {
-      if ( x >=  intersec[0]->allocation.x &&
-	   x <= intersec[0]->allocation.x+intersec[0]->allocation.width )
-	xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
-      else
-	xbegin = x;
-      pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
-      move_attached_effects (widget, xbegin);
-    }
-  else if (!intersec[0] && intersec[1])
-    {
-      move_media (self, widget, x, TRUE);
-      pitivi_layout_move (GTK_LAYOUT (self), widget, x, 0);
-    }
-  else if (intersec[1] && intersec[0])
-    {
-      xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
-      pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
-      move_media (self, widget, xbegin, TRUE);
-      move_attached_effects (widget, x);
-    }
-  else
-    {
-      pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
-      move_attached_effects (widget, xbegin);
-    }
-}
-
-
-/**
- * pitivi_add_to_layout:
- * @GtkWidget: the parent widget
- * @GtkWidget: the child widget
- * @gint: the position in x
- * @gint: the position in y
- *
- * Add a widget to the layer
- *
- * Returns: A flag setted to TRUE
- */
-
-gboolean
-pitivi_add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
-{
-  GtkWidget **intersec = layout_intersection_widget (self, widget, x, FALSE);
-  PitiviTimelineMedia *right =  PITIVI_TIMELINEMEDIA (intersec[0]);
-  PitiviTimelineMedia *left = PITIVI_TIMELINEMEDIA (intersec[1]);
-  int xbegin = 0;
-  
-  if (!right && !left)
-    pitivi_layout_put (GTK_LAYOUT (self), widget, x, 0);
-  else if (!left) /* Case intersection right */
-    {
-      move_media (self, widget, x, FALSE);
-      xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
-      pitivi_layout_put (GTK_LAYOUT (self), widget, xbegin, y);
-    }
-  else if (!right) /* Case intersection left */
-    {
-      move_media (self, GTK_WIDGET (left), x, FALSE);
-      pitivi_layout_put (GTK_LAYOUT (self), widget, x, 0);
-    }
-  else if (right && left) /* Case intersection on left and right */
-    { 
-      xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
-      pitivi_layout_put (GTK_LAYOUT (self), widget, xbegin, 0);
-      move_media (self, intersec[1], xbegin, FALSE);
-    }
-  g_free ( intersec );
-  return TRUE;
-}
-
-
 
 PitiviLayerType
 pitivi_check_media_type_str (gchar *media)
@@ -1113,7 +799,7 @@ pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self,
 	if (parent == self)
 	  {
 	    move_child_on_layout (GTK_WIDGET (self), GTK_WIDGET (source), x);
-	    move_child_on_layout (GTK_WIDGET (self->linked_track), dragged->linked, x);
+	    move_child_on_layout (GTK_WIDGET (self->linked_track), GTK_WIDGET (dragged->linked), x);
 	  }
 	else
 	  {
@@ -1122,8 +808,8 @@ pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self,
 	    
 	    /* linked widget */
 	    
-	    GtkWidget *linked_ref = gtk_widget_ref (dragged->linked);
-	    gtk_container_remove (GTK_CONTAINER (parent->linked_track), dragged->linked);
+	    GtkWidget *linked_ref = gtk_widget_ref (GTK_WIDGET (dragged->linked));
+	    gtk_container_remove (GTK_CONTAINER (parent->linked_track), GTK_WIDGET (dragged->linked));
 	    pitivi_add_to_layout (GTK_WIDGET (self->linked_track), linked_ref, x, 0);
 	    gtk_widget_unref (linked_ref);
 	  }
@@ -1410,57 +1096,50 @@ pitivi_timelinecellrenderer_callb_deselect (PitiviTimelineCellRenderer *self)
   send_signal_to_childs_direct (GTK_WIDGET (self), "deselect", NULL);
 }
 
-
-static void
-pitivi_timelinecellrenderer_callb_dbk_source (PitiviTimelineCellRenderer *self, gpointer data)
-{
-  dispose_medias (self, data, 0);
-}
-
 static void
 pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *container, guint x, gpointer data)
 {
   PitiviTimelineMedia *media[2], *link;
-  GtkWidget *widget;
+  PitiviTimelineMedia *media_source;
   gint64 start1, start2, stop1, stop2, mstart1, mstart2, mstop1, mstop2;
   guint	 pos =  0;
   
   if (GTK_IS_WIDGET (data))
     {
-      widget = data;
-      pos = widget->allocation.x+x; // calcul de la position du nouveau media
+      media_source = data;
+      pos = GTK_WIDGET (media_source)->allocation.x+x; // calcul de la position du nouveau media
 
       start2 = stop1 = convert_pix_time(container, pos);
-      pitivi_timelinemedia_get_start_stop(PITIVI_TIMELINEMEDIA(widget), &start1, &stop2);
-      pitivi_timelinemedia_get_media_start_stop(PITIVI_TIMELINEMEDIA(widget), &mstart1, &mstop2);
+      pitivi_timelinemedia_get_start_stop(media_source, &start1, &stop2);
+      pitivi_timelinemedia_get_media_start_stop(media_source, &mstart1, &mstop2);
       mstop1 = mstart2 = mstart1 + (stop1 - start1);
-      widget->allocation.width = widget->allocation.width - x; // calcul
+      GTK_WIDGET (media_source)->allocation.width = GTK_WIDGET (media_source)->allocation.width - x; // calcul
 
-      media[0] = pitivi_timelinemedia_new ( PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile,
-					    widget->allocation.width, container );
+      media[0] = pitivi_timelinemedia_new ( media_source->sourceitem->srcfile,
+					    GTK_WIDGET (media_source)->allocation.width, container );
       // donner un nouveau stop/media_stop a l'ancien media
-      pitivi_timelinemedia_set_start_stop(PITIVI_TIMELINEMEDIA(widget), start1, stop1);
-      pitivi_timelinemedia_set_media_start_stop(PITIVI_TIMELINEMEDIA(widget), mstart1, mstop1);
+      pitivi_timelinemedia_set_start_stop(media_source, start1, stop1);
+      pitivi_timelinemedia_set_media_start_stop(media_source, mstart1, mstop1);
       // donner un stop/media_start/media_stop au nouveau media
       pitivi_timelinemedia_set_media_start_stop(media[0], mstart2, mstop2);
 
       pitivi_layout_put (GTK_LAYOUT (container),  GTK_WIDGET ( media[0] ), pos, 0); // placement du nouveau media
-      pitivi_media_set_size ( widget, x); // retaillage de l'ancien media
+      pitivi_media_set_size (GTK_WIDGET (media_source), x); // retaillage de l'ancien media
       pitivi_layout_add_to_composition (container, media[0]);
       gtk_widget_show ( GTK_WIDGET ( media[0] ) );
-      if ( PITIVI_TIMELINEMEDIA (widget)->linked )
+      if ( media_source->linked )
 	{
-	  link = PITIVI_TIMELINEMEDIA (PITIVI_TIMELINEMEDIA (widget)->linked);
-	  GTK_WIDGET ( link )->allocation.width = widget->allocation.width;
-	  media[1] = pitivi_timelinemedia_new (PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile,
-					       widget->allocation.width, container->linked_track );
-	  pitivi_media_set_size ( PITIVI_TIMELINEMEDIA (widget)->linked, x);
+	  link = media_source->linked;
+	  GTK_WIDGET ( link )->allocation.width = GTK_WIDGET (media_source)->allocation.width;
+	  media[1] = pitivi_timelinemedia_new (media_source->sourceitem->srcfile,
+					       GTK_WIDGET (media_source)->allocation.width, container->linked_track );
+	  pitivi_media_set_size ( GTK_WIDGET (media_source->linked), x);
 	  link_widgets (media[0], media[1]);
-	  pitivi_timelinemedia_set_media_start_stop(PITIVI_TIMELINEMEDIA(link), mstart1, mstop1);
+	  pitivi_timelinemedia_set_media_start_stop(link, mstart1, mstop1);
 	  pitivi_timelinemedia_set_media_start_stop(media[1], mstart2, mstop2);
 	  pitivi_layout_put (GTK_LAYOUT ( container->linked_track ), GTK_WIDGET ( media[1] ), pos, 0);
 	  pitivi_layout_add_to_composition (PITIVI_TIMELINECELLRENDERER (container->linked_track),
-					    PITIVI_TIMELINEMEDIA (media[1]));
+					    media[1]);
 	  gtk_widget_show (GTK_WIDGET ( media[1] ));
 	}
       else
@@ -1489,12 +1168,14 @@ pitivi_timelinecellrenderer_callb_delete_sf (PitiviTimelineCellRenderer *self, g
 	{
 	  media = delete->data;
 	  if ( media->linked ) {
-	    gtk_container_remove (GTK_CONTAINER (self->linked_track), media->linked);
+	    gtk_container_remove (GTK_CONTAINER (self->linked_track), GTK_WIDGET (media->linked));
 	    pitivi_layout_remove_from_composition (PITIVI_TIMELINECELLRENDERER (self->linked_track),
 						   PITIVI_TIMELINEMEDIA (media->linked));
+	    assign_next_prev ( PITIVI_TIMELINEMEDIA (media->linked)->track );
 	  }
 	  gtk_container_remove (GTK_CONTAINER (self), GTK_WIDGET (media) );
 	  pitivi_layout_remove_from_composition (self, media);
+	  assign_next_prev ( media->track );
 	}
       delete = delete->next;
     }
@@ -1546,79 +1227,21 @@ pitivi_timelinecellrenderer_key_delete (PitiviTimelineCellRenderer* self)
 	  while ( media->effectschilds )
 	    {
 	      if ( media->effectschilds->data )
-		gtk_container_remove ( GTK_CONTAINER (PITIVI_TIMELINEMEDIA (media->effectschilds->data)->track), 
-				       GTK_WIDGET (media->effectschilds->data));
+		{
+		  gtk_container_remove ( GTK_CONTAINER (PITIVI_TIMELINEMEDIA (media->effectschilds->data)->track), 
+					 GTK_WIDGET (media->effectschilds->data));
+		  assign_next_prev ( PITIVI_TIMELINEMEDIA (media->effectschilds->data)->track );
+		}
 	      media->effectschilds = media->effectschilds->next;
 	    }
 	gtk_container_remove ( GTK_CONTAINER (self), GTK_WIDGET (media));
 	pitivi_layout_remove_from_composition (self, media);
+	assign_next_prev ( media->track );
       }
     }
   pitivi_calculate_priorities ( GTK_WIDGET (self) );
   g_list_free (child);
 }
-
-/*
- **********************************************************
- * Resizing  			                          *
- *							  *
- **********************************************************
-*/
-
-void resize_operation (PitiviTimelineMedia *source, guint decrement, guint x)
-{
-  if (x < GTK_WIDGET (source)->allocation.width + GTK_WIDGET (source)->allocation.x - (decrement))
-    {
-      if (GTK_WIDGET (source)->allocation.width-decrement >= 1)
-	gtk_widget_set_size_request (GTK_WIDGET (source),
-				     GTK_WIDGET (source)->allocation.width-decrement,
-				     GTK_WIDGET (source)->allocation.height);
-    }
-  else if (x > GTK_WIDGET (source)->allocation.width + GTK_WIDGET (source)->allocation.x)
-    {
-      if (source->original_width > GTK_WIDGET (source)->allocation.width)
-	{
-	  gtk_widget_set_size_request (GTK_WIDGET (source),
-				       GTK_WIDGET (source)->allocation.width+decrement,
-				       GTK_WIDGET (source)->allocation.height);
-	}
-    }
-}
-
-
-static void
-resizing_media (PitiviTimelineMedia *source, PitiviTimelineCellRenderer *self, guint x)
-{
-  GList *effects;
-  GtkWidget *media_effect;
-  guint decrement = 0;
-  
-  decrement = GTK_RULER(self->private->timewin->hruler)->metric->pixels_per_unit;
-  if (self->private->timewin->unit == PITIVI_FRAMES)
-    decrement *= 10;
-  resize_operation (source, decrement, x);
-  if (source->linked)
-    resize_operation (PITIVI_TIMELINEMEDIA (source->linked), decrement, x);
-  if (source->effectschilds)
-    {
-      effects = g_list_last (source->effectschilds);
-      media_effect = GTK_WIDGET ( effects->data );
-      resize_operation (PITIVI_TIMELINEMEDIA ( media_effect ), decrement, x);
-    }
-}
-
-
-void gnonlin_resize (PitiviTimelineMedia *source, gint64 new_stop)
-{
-  gint64 start, stop, mstart, mstop;
-  
-  pitivi_timelinemedia_get_start_stop(PITIVI_TIMELINEMEDIA(source), &start, &stop);
-  pitivi_timelinemedia_get_media_start_stop(PITIVI_TIMELINEMEDIA(source), &mstart, &mstop);
-  
-  pitivi_timelinemedia_set_start_stop(PITIVI_TIMELINEMEDIA(source), start, new_stop );
-  pitivi_timelinemedia_set_media_start_stop(PITIVI_TIMELINEMEDIA(source), mstart, mstart + (new_stop - start));
-}
-
 
 static gboolean
 pitivi_timelinecellrenderer_drag_drop (GtkWidget *widget, 
@@ -1630,28 +1253,13 @@ pitivi_timelinecellrenderer_drag_drop (GtkWidget *widget,
      
 {
   PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
-  GList *effects;
   PitiviCursor *cursor;
   GtkWidget *source;
-  gint64 new_stop;
-  gint new_width;
   
   cursor = pitivi_getcursor_id (widget);
   source = gtk_drag_get_source_widget(dc);
-  PitiviTimelineMedia *media  = (PitiviTimelineMedia *) source;
-  new_width = source->allocation.x+source->allocation.width;
   if (cursor->type == PITIVI_CURSOR_RESIZE && PITIVI_IS_TIMELINEMEDIA (source))
-    {
-      new_stop = convert_pix_time(self, new_width );
-      gnonlin_resize (media, new_stop);
-      if (media->linked)
-	gnonlin_resize (PITIVI_TIMELINEMEDIA (media->linked), new_stop);
-      if (media->effectschilds)
-	{
-	  effects = g_list_last (media->effectschilds);
-	  gnonlin_resize (PITIVI_TIMELINEMEDIA ( effects->data ), new_stop);
-	}
-    }
+    pitivi_timelinecellrenderer_resize ( self, PITIVI_TIMELINEMEDIA (source) );
   return FALSE;
 }
 
@@ -1697,13 +1305,20 @@ pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
   PitiviTimelineMedia  *source = NULL;
   PitiviCursor *cursor;
   guint width;
+  guint decrement = 0;
   
   cursor = pitivi_getcursor_id (widget);
   source = (PitiviTimelineMedia  *)gtk_drag_get_source_widget(dc);
   if (cursor->type == PITIVI_CURSOR_RESIZE)
     {
-      resizing_media (source, self, x);
-      return;
+      if (PITIVI_IS_TIMELINEMEDIA (source))
+	{
+	  decrement = GTK_RULER(self->private->timewin->hruler)->metric->pixels_per_unit;
+	  if (self->private->timewin->unit == PITIVI_FRAMES)
+	    decrement *= 10;
+	  pitivi_timelinecellrenderer_resizing_media (source, self, decrement, x);
+	  return;
+	}
     }
   else
     {
@@ -1923,16 +1538,7 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
 							NULL,       
 							g_cclosure_marshal_VOID__POINTER,
 							G_TYPE_NONE, 1, G_TYPE_POINTER);
-
-  layoutsignals[DBK_SOURCE_SIGNAL] = g_signal_new ("double-click-source",
-						   G_TYPE_FROM_CLASS (g_class),
-						   G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
-						   G_STRUCT_OFFSET (PitiviTimelineCellRendererClass, dbk_source),
-						   NULL,
-						   NULL,       
-						   g_cclosure_marshal_VOID__POINTER,
-						   G_TYPE_NONE, 1, G_TYPE_POINTER);
-
+  
   layoutsignals[CUT_SOURCE_SIGNAL] = g_signal_new ("cut-source",
 						   G_TYPE_FROM_CLASS (g_class),
 						   G_SIGNAL_RUN_LAST,
@@ -1966,7 +1572,6 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   cell_class->drag_source_begin = pitivi_timelinecellrenderer_callb_drag_source_begin;
   cell_class->drag_source_end = pitivi_timelinecellrenderer_callb_drag_source_end;
   cell_class->delete = pitivi_timelinecellrenderer_callb_delete_sf;
-  cell_class->dbk_source = pitivi_timelinecellrenderer_callb_dbk_source;
   cell_class->cut_source = pitivi_timelinecellrenderer_callb_cut_source;
   cell_class->zoom_changed = pitivi_timelinecellrenderer_zoom_changed;
   cell_class->key_delete = pitivi_timelinecellrenderer_key_delete;

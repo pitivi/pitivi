@@ -140,7 +140,7 @@ pitivi_progressbar_constructor (GType type,
 		    0, 5);
   gtk_box_pack_start (GTK_BOX (main_vbox), GTK_WIDGET (self->private->table), FALSE, FALSE, 0);
   gtk_container_add  (GTK_CONTAINER (self), main_vbox);
-  gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self->bar), 0.1);
+  gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (self->bar), 0.0);
   gtk_widget_show_all (GTK_WIDGET (self));
   g_timeout_add (2000, progress_timeout, self);
   return obj;

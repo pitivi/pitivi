@@ -37,6 +37,7 @@
 #include "pitivi-trackenum.h"
 #include "pitivi-units.h"
 
+
 /*
  * Type macros.
  */
@@ -125,10 +126,12 @@ PitiviCursor    *pitivi_getcursor_id (GtkWidget *widget);
 gboolean	pitivi_add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y);
 
 PitiviLayerType	pitivi_check_media_type (PitiviSourceFile *sf);
+
 /* Deactivation of signals */
 
 void		pitivi_timelinecellrenderer_activate (PitiviTimelineCellRenderer *self);
 void		pitivi_timelinecellrenderer_deactivate (PitiviTimelineCellRenderer *self);
+
 void		pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self);
 GtkWidget *	pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimelineCellRenderer *cell );
 void		pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self );
@@ -140,4 +143,25 @@ void		pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *sel
 							   GtkWidget *source,
 							   int x,
 							   int y);
+
+/* Resizing */
+
+void pitivi_timelinecellrenderer_resize (PitiviTimelineCellRenderer *self, PitiviTimelineMedia *media);
+void pitivi_timelinecellrenderer_resizing_media (PitiviTimelineMedia *source, PitiviTimelineCellRenderer *self, guint decrement, guint x);
+
+/* Moving / Adding */
+
+GtkWidget **layout_intersection_widget (GtkWidget *self, GtkWidget *widget, gint x, gboolean move);
+void	  assign_next_prev (PitiviTimelineCellRenderer *self);
+void	  link_widgets ( PitiviTimelineMedia *media1, PitiviTimelineMedia *media2);
+void	  move_attached_effects (GtkWidget *widget, int x);
+void	  move_media (GtkWidget *cell, GtkWidget *widget, guint x, gboolean move);
+void	  move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x);
+gboolean  pitivi_add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y);
+gint	  compare_track (gconstpointer a, gconstpointer b);
+void	  pitivi_calculate_priorities ( GtkWidget *widget );
+gint	  compare_littlechild (gconstpointer a, gconstpointer b);
+gint	  compare_bigchild (gconstpointer a, gconstpointer b);
+void	  pitivi_layout_move (GtkLayout *layout, GtkWidget *widget, gint x, gint y);
+
 #endif

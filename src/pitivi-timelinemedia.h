@@ -61,22 +61,38 @@ struct _PitiviTimelineMedia
 {
   GtkWidget parent;
   GdkWindow *event_window;
-  /* instance public members */
   
-  PitiviTimelineCellRenderer *track;
-  PitiviSourceItem *sourceitem;
-  GtkWidget        *linked;
-  
- 
-  GList		   *effectschilds;  /* effects on media */
-  guint		   original_width;
-  gboolean	   selected;
-  gboolean	   copied;
-  gboolean	   cutted;
-    
   /* private */
   
   PitiviTimelineMediaPrivate *private;
+  
+  /* instance public members */
+  
+  /* Media Track */
+  PitiviTimelineCellRenderer *track;
+  /* Gnonlin and source file infos */
+  PitiviSourceItem *sourceitem;
+  /* Linked Widget in case of audio/video media */
+  PitiviTimelineMedia  *linked;
+  /* Effects child */
+  GList		       *effectschilds;
+  /* Selection Status */
+  gboolean	   selected;
+        
+  /* Prev / Next near media */
+  
+  PitiviTimelineMedia *next;
+  PitiviTimelineMedia *prev;
+  
+  /* Resize vars */
+  
+  guint		     original_width;
+  gint		     resz;
+  
+  /* Waiting */
+  
+  gboolean	   copied;
+  gboolean	   cutted;
 };
 
 struct _PitiviTimelineMediaClass

@@ -88,12 +88,6 @@ pitivi_send_expose_event (GtkWidget * widget);
 void
 send_signal_to_childs_direct (GtkWidget *container, const gchar *signame, gpointer data);
 
-gint 
-compare_littlechild (gconstpointer a, gconstpointer b);
-
-gint 
-compare_bigchild (gconstpointer a, gconstpointer b);
-
 void
 pitivi_widget_changefont (GtkWidget *widget, const char *fontname);
 

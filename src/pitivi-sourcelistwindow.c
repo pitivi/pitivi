@@ -1373,7 +1373,18 @@ gint		OnSelectItem(PitiviSourceListWindow *self, GtkTreeIter *iter,
 void
 OnTimelineFirstInsert (gpointer data, gint action, GtkWidget *widget)
 {
-  
+}
+
+void
+remove_source (PitiviSourceListWindow *self, GtkListStore *liststore, gint *item_select, GtkTreeIter *iter)
+{
+  if ( self->private->dndsf )
+    g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", self->private->dndsf);
+  pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
+						self->private->treepath,
+						*item_select);
+  gtk_list_store_remove(GTK_LIST_STORE(liststore), iter);
+  g_object_unref(self->private->dndsf);
 }
 
 void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
@@ -1384,6 +1395,7 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
   gchar		*sMediaType;
   gint		item_select;
   gint		folder_select;
+  gint		dialog_return;
 
   if (!OnSelectItem(self, &iter, &liststore, (void **) &sMediaType, TEXT_LISTCOLUMN3, &item_select, 
 		   &folder_select))
@@ -1399,25 +1411,25 @@ void		OnRemoveItem (gpointer data, gint action, GtkWidget *widget)
 
     dialog = gtk_message_dialog_new (GTK_WINDOW (self),
 				     GTK_DIALOG_DESTROY_WITH_PARENT,
-				     GTK_MESSAGE_ERROR,
-				     GTK_BUTTONS_CLOSE,
-				     "This source is used %d times in the project\nYou must remove it from the timeline before deleting it",
+				     GTK_MESSAGE_WARNING,
+				     GTK_BUTTONS_YES_NO,
+				     "This source is used %d times in the project\nAre you sure you want to delete it ?\n",
 				     self->private->dndsf->nbbins);
-    gtk_dialog_run (GTK_DIALOG (dialog));
+    dialog_return = gtk_dialog_run (GTK_DIALOG (dialog));
+    switch (dialog_return)
+      {
+      case GTK_RESPONSE_YES:
+	remove_source (self, liststore, &item_select, &iter);
+	break;
+      default:
+	break;
+      }
     gtk_widget_destroy (dialog);
     return;
   }
 
   if (strcmp(sMediaType, "Bin"))
-    {
-      if ( self->private->dndsf )
-	g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", self->private->dndsf);
-      pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
-						    self->private->treepath,
-						    item_select);
-      gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
-      g_object_unref(self->private->dndsf);
-    }
+    remove_source (self, liststore, &item_select, &iter);
   else /* need to remove folder */
     {
       /* we need to set treepath too */
