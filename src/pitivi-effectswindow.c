@@ -47,6 +47,10 @@ struct _PitiviEffectsWindowPrivate
   PitiviEffectsTree	*trees[PITIVI_EFFECT_NBCAT_TYPE];
   PitiviSourceFile	*dndse;
   GtkWidget		*timelinewin;
+  
+  /* selected media */
+  
+  GtkWidget	        *selected_media;
 };
 
 /*
@@ -69,13 +73,27 @@ static GtkTargetEntry TargetEntries[] =
 
 static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
 
+/*
+ **********************************************************
+ * Signals  					          *
+ *							  *
+ **********************************************************
+*/
+
+enum
+  {
+    SELECT_MEDIA_SOURCE_SIGNAL,
+    LAST_SIGNAL
+  };
+
+static guint	      effects_signals[LAST_SIGNAL] = {0};
 
 /*
  * Insert "added-value" functions here
  */
 
 PitiviEffectsWindow *
-pitivi_effectswindow_new(PitiviMainApp *mainapp)
+pitivi_effectswindow_new (PitiviMainApp *mainapp)
 {
   PitiviEffectsWindow	*effectswindow;
 
@@ -152,9 +170,9 @@ pitivi_effectswindow_instance_init (GTypeInstance * instance, gpointer g_class)
   PitiviEffectsWindow *self = (PitiviEffectsWindow *) instance;
   self->private = g_new0(PitiviEffectsWindowPrivate, 1);
   self->private->dispose_has_run = FALSE;
+  gtk_window_set_title (GTK_WINDOW (self), PITIVI_EFFECTS_DF_TITLE);
 }
 
-void
 pitivi_effects_action_on_colexp (GtkTreeView *treeview, 
 				 GtkTreeIter *TreeIter, 
 				 gchar *icon, 
@@ -164,33 +182,49 @@ pitivi_effects_action_on_colexp (GtkTreeView *treeview,
   GtkTreeModel	      *model;
   PitiviEffectsTree   *effectstree;
   gchar		      *name;
-  gchar		      *test;
    
   effectstree = (PitiviEffectsTree *) data;
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (treeview));
   pixbuf = gtk_widget_render_icon(effectstree->window, icon, GTK_ICON_SIZE_MENU, NULL);  
   gtk_tree_model_get (GTK_TREE_MODEL (model), TreeIter, PITIVI_TEXT_COLUMN, &name, -1);
-  gtk_tree_model_get (GTK_TREE_MODEL (model), TreeIter, PITIVI_POINTER_COLUMN, &test, -1);
   gtk_tree_store_set(GTK_TREE_STORE (model), TreeIter,
 		     PITIVI_ICON_COLUMN, pixbuf,
 		     -1);
 }
 
 void
-pitivi_effectstree_col (GtkTreeView *treeview, 
-			GtkTreeIter *TreeIter, 
-			GtkTreePath *arg2, 
-			gpointer data)
+effectstree_on_row_activated (GtkTreeView        *treeview,
+			      GtkTreePath        *path,
+			      GtkTreeViewColumn  *col,
+			      gpointer            data)
+{
+  PitiviEffectsWindow *self;
+  GtkTreeModel	      *model;
+  PitiviSourceFile    *info;
+  GtkTreeIter	      child;
+
+  self = (PitiviEffectsWindow *) gtk_widget_get_toplevel (GTK_WIDGET (treeview));
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (treeview));
+  gtk_tree_model_get (GTK_TREE_MODEL (model), &child, PITIVI_POINTER_COLUMN, &info, -1);
+  if ( data && info )
+    g_signal_emit_by_name (self->private->selected_media, "associate-effect-to-media", info);
+}
+
+void
+effectstree_on_row_collapsed (GtkTreeView *treeview, 
+			      GtkTreeIter *TreeIter, 
+			      GtkTreePath *arg2, 
+			      gpointer data)
 {
   pitivi_effects_action_on_colexp (treeview, TreeIter, PITIVI_STOCK_EFFECT_CAT, data);
 }
 
 
 void
-pitivi_effectstree_exp (GtkTreeView *treeview,
-			GtkTreeIter *TreeIter,
-			GtkTreePath *arg2, 
-			gpointer data)
+effectstree_on_row_expanded (GtkTreeView *treeview,
+			     GtkTreeIter *TreeIter,
+			     GtkTreePath *arg2, 
+			     gpointer data)
 {
   pitivi_effects_action_on_colexp (treeview, TreeIter, PITIVI_STOCK_EFFECT_CAT_OPEN, data);
 }
@@ -226,7 +260,7 @@ pitivi_create_effect_sourcefile (const gchar *name,
 				 GdkPixbuf *pixbuf)
 {
   PitiviSourceFile *se;
-
+  
   se = g_new0 (PitiviSourceFile, 1);
   se->filename = g_strdup (name);
   se->thumbs_effect = pixbuf;
@@ -601,12 +635,13 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 						     PITIVI_FG_COLOR_COLUMN,
 						     NULL);
   
-  g_signal_connect (tree_effect->treeview, "cursor-changed", G_CALLBACK(pitivi_effectstree_selected_color), \
+  g_signal_connect (tree_effect->treeview, "cursor-changed", G_CALLBACK ( pitivi_effectstree_selected_color ), \
 		    (gpointer) tree_effect);
-  g_signal_connect (tree_effect->treeview, "row-expanded", G_CALLBACK(pitivi_effectstree_exp),\
+  g_signal_connect (tree_effect->treeview, "row-expanded", G_CALLBACK ( effectstree_on_row_expanded ),\
 		    (gpointer) tree_effect);
-  g_signal_connect (tree_effect->treeview, "row-collapsed", G_CALLBACK(pitivi_effectstree_col),\
+  g_signal_connect (tree_effect->treeview, "row-collapsed", G_CALLBACK ( effectstree_on_row_collapsed ),\
 		    (gpointer) tree_effect);
+    
   gtk_tree_view_append_column(GTK_TREE_VIEW (tree_effect->treeview), pColumn);
   
   // Drag 'n Drop Activation
@@ -617,11 +652,23 @@ pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect,
 		      GDK_ACTION_COPY);
 
   self = gtk_widget_get_toplevel (tree_effect->treeview);
+  
   g_signal_connect (tree_effect->treeview, "drag_data_get",	      
 		    G_CALLBACK (pitivi_effectswindow_drag_data_get), self);
   g_signal_connect (tree_effect->treeview, "drag_begin",	      
 		    G_CALLBACK (pitivi_effectswindow_drag_begin), self);
+  g_signal_connect (tree_effect->treeview, "row-activated", 
+		    G_CALLBACK  ( effectstree_on_row_activated ), 
+		    self);
 }
+
+
+static void
+pitivi_effectswindow_selected_media (PitiviEffectsWindow *self, gpointer data)
+{
+  self->private->selected_media = &(*GTK_WIDGET (data));
+}
+
 
 /**************************************************************
  * Window Effects Initialization			      *
@@ -710,6 +757,17 @@ pitivi_effectswindow_class_init (gpointer g_class, gpointer g_class_data)
 
   gobject_class->set_property = pitivi_effectswindow_set_property;
   gobject_class->get_property = pitivi_effectswindow_get_property;
+  
+  effects_signals[SELECT_MEDIA_SOURCE_SIGNAL] = g_signal_new ("selected-source",
+							      G_TYPE_FROM_CLASS (g_class),
+							      G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+							      G_STRUCT_OFFSET (PitiviEffectsWindowClass, selected_media),
+							      NULL, 
+							      NULL,                
+							      g_cclosure_marshal_VOID__POINTER,
+							      G_TYPE_NONE, 1, G_TYPE_POINTER);
+  
+  klass->selected_media = pitivi_effectswindow_selected_media;
 }
 
 GType

@@ -401,7 +401,8 @@ void	pitivi_viewerwindow_set_source(PitiviViewerWindow *self,
 	break;
       binlist = binlist->next;
     }
-  
+  //self->private->timeline sf->length
+  // gtk_range_set_range (self->private);
   do_seek(elem, 0);
   pitivi_project_set_source_element(project, sf->pipeline);
 }
@@ -744,7 +745,8 @@ pitivi_viewerwindow_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->timeline_min = 0;
   self->private->timeline_max = 500;
   self->private->timeline_step = 1;
-
+  
+  gtk_window_set_title (GTK_WINDOW (self), PITIVI_VIEWER_DF_TITLE);
 }
 
 static void

@@ -2509,9 +2509,11 @@ pitivi_sourcelistwindow_instance_init (GTypeInstance * instance, gpointer g_clas
   self->private->hpaned = create_projectview(self);
   self->private->liststore = NULL;
   self->private->treepath = g_strdup("0");
+  gtk_window_set_title (GTK_WINDOW (self), PITIVI_SOURCELIST_DF_TITLE);
   gtk_window_set_default_size(GTK_WINDOW(self), 600, 200);
   gtk_container_add(GTK_CONTAINER(self), self->private->hpaned);
   self->private->nbrchutier = 1;
+  
 }
 
 static void

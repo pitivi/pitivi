@@ -141,13 +141,15 @@ pitivi_stockicons_register (void)
 		
     pixbuf = gdk_pixbuf_new_from_file (fullname, NULL);
     g_free (fullname);
-
-    icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
-    gtk_icon_factory_add (factory, items[i], icon_set);
-    gtk_icon_set_unref (icon_set);
-
-    g_object_unref (G_OBJECT (pixbuf));
-  }
+    
+    if (pixbuf != NULL)
+      {
+	icon_set = gtk_icon_set_new_from_pixbuf (pixbuf);
+	gtk_icon_factory_add (factory, items[i], icon_set);
+	gtk_icon_set_unref (icon_set);
 	
+	g_object_unref (G_OBJECT (pixbuf));
+      }
+  }
   g_object_unref (G_OBJECT (factory));
 }

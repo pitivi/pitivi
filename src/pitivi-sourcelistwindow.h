@@ -49,6 +49,7 @@ typedef struct _PitiviSourceListWindowClass PitiviSourceListWindowClass;
 typedef struct _PitiviSourceListWindowPrivate PitiviSourceListWindowPrivate;
 typedef struct _PitiviListStore PitiviListStore;
 
+#define PITIVI_SOURCELIST_DF_TITLE "SourceList"
 
 struct _PitiviSourceListWindow
 {

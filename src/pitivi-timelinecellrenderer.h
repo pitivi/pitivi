@@ -75,11 +75,12 @@ struct _PitiviTimelineCellRenderer
   /* public members */
   PitiviLayerType	track_type;
   guint			track_nb;
-  GList			*children;
   GtkWidget		*linked_track;
-  GdkGC		        **gcs;
+  GtkWidget		*effects_track;
+  GList			*children;
   
-  /* nb elemnts added no use for */  
+  /* nb elemnts added no use for */
+  
   gint64	        *nb_added;
 
 

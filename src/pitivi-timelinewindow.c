@@ -60,8 +60,8 @@ struct _PitiviTimelineWindowPrivate
   PitiviMenu	*ui_menus;
   GtkWidget	*menu_dock;
   GtkWidget	*main_vbox;
-  GtkWidget	*main_vbox_left;
-  GtkWidget	*main_vbox_right;
+  GtkWidget	*layout_container;
+  GtkWidget	*info_container;
   GtkWidget	*hruler;
   GtkWidget	*hpaned;
   
@@ -94,7 +94,6 @@ static PitiviDefaultTracks gtab_tracks[]=
     {2, PITIVI_TRANSITION_TRACK, "Transition", -1},
     {3, PITIVI_EFFECTS_TRACK, "Fx B",  4},
     {4, PITIVI_VIDEO_TRACK, "Video B", 6},
-    {-1, -1, NULL, -2},
     {5, PITIVI_AUDIO_TRACK, "Audio A", 0},
     {6, PITIVI_AUDIO_TRACK, "Audio B", 4},
   };
@@ -131,6 +130,7 @@ enum {
   DRAG_SOURCE_END_SIGNAL,
   DBK_SOURCE_SIGNAL,
   ZOOM_CHANGED_SIGNAL,
+  SELECT_SOURCE_SIGNAL,
   LAST_SIGNAL
 };
 
@@ -349,7 +349,7 @@ check_track (GtkWidget *widget, PitiviTimelineCellRenderer *cells)
 }
 
 void
-create_toolbox (PitiviTimelineWindow *self)
+create_toolbox (PitiviTimelineWindow *self, GtkWidget *container)
 {
   PitiviMainApp	*mainapp;
   GtkWidget	*sep;
@@ -358,13 +358,14 @@ create_toolbox (PitiviTimelineWindow *self)
   self->toolbox = pitivi_toolbox_new (mainapp);
   gtk_toolbar_set_icon_size (GTK_TOOLBAR (self->toolbox), GTK_ICON_SIZE_SMALL_TOOLBAR);
   sep = gtk_hseparator_new ();
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), GTK_WIDGET (self->toolbox), FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), sep, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (container), GTK_WIDGET (self->toolbox), FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (container), sep, FALSE, FALSE, 0);
 }
 
 void
 create_ruler (PitiviTimelineWindow *self)
 {
+  //self->private->hruler = pitivi_ruler_new ();
   self->private->hruler = gtk_hruler_new ();
   self->hruler = self->private->hruler;
   gtk_ruler_set_metric (GTK_RULER (self->private->hruler), GTK_PIXELS);
@@ -373,25 +374,6 @@ create_ruler (PitiviTimelineWindow *self)
   g_signal_connect_swapped (G_OBJECT (self->private->main_vbox), "motion_notify_event",
 			    G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
 			    G_OBJECT (self->private->hruler));
-}
-
-#define create_separator(box, width, height) create_separator_color (box, NULL, width, height);
-
-void
-create_separator_color (GtkWidget *box, gchar *colorname, int width, int height)
-{
-  GtkWidget		*sep;
-  GtkStyle		*style;
-  GdkColor		color;
-
-  sep = gtk_hseparator_new ();
-  if (colorname)
-    {
-      gdk_color_parse((gchar*)colorname, &color);
-      gtk_widget_modify_bg (sep, GTK_STATE_NORMAL, &color);
-    }
-  gtk_widget_set_size_request ( sep, width, height );
-  gtk_box_pack_start (GTK_BOX (box), sep, FALSE, FALSE, 0);
 }
 
 void
@@ -407,50 +389,66 @@ create_tracks_links (GtkWidget **wcells)
     {
       for (j = 0; j < len; j++)
 	if (gtab_tracks[i].track_nb == gtab_tracks[j].track_linked)
-	  if (gtab_tracks[i].track_type != PITIVI_EFFECTS_TRACK)
+	  {
 	    if (cells[i])
-	      cells[i]->linked_track = GTK_WIDGET (cells[j]);
+	      {
+		if ( gtab_tracks[j].track_type != PITIVI_EFFECTS_TRACK )
+		  cells[i]->linked_track = GTK_WIDGET ( cells[j] );
+		else /* Effects */
+		  cells[i]->effects_track = GTK_WIDGET ( cells[j] );
+	      }
+	  }
     }
 }
 
 void	
 create_tracks (PitiviTimelineWindow *self)
 {
-  int count = 0;
   int len = (sizeof (gtab_tracks)/sizeof(PitiviDefaultTracks));
   GtkWidget *cell[len];
   GtkWidget *nfo;
+  GtkWidget *vbox_right, *vbox_left;
+  int count = 0;
 
   self->private->hpaned = gtk_hpaned_new();
-  self->private->main_vbox_left = gtk_vbox_new (FALSE, 0); 
-  
-  create_toolbox (self);
+  vbox_left = gtk_vbox_new (FALSE, 0); 
+
+  /* Docking Toolbox */
+
+  create_toolbox (self, vbox_left);
   gtk_paned_set_position(GTK_PANED(self->private->hpaned), (80));
-  self->private->main_vbox_right = gtk_vbox_new (FALSE, 0);
+  vbox_right = gtk_vbox_new (FALSE, 0);
   
-  // Docking Ruler
+  /* Docking Ruler */
   
   create_ruler (self);
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), self->private->hruler, FALSE, FALSE, 0);     
+  gtk_box_pack_start (GTK_BOX (vbox_right), self->private->hruler, FALSE, FALSE, 0);     
 
+  self->private->layout_container = gtk_table_new ( len, 1, FALSE );
+  self->private->info_container = gtk_table_new ( len, 1, FALSE );
+  gtk_box_pack_start (GTK_BOX (vbox_right), self->private->layout_container, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox_left),  self->private->info_container,   FALSE, FALSE, 0);
+  
   // Creating Tracks
   for (count = 0; count < len; count++)
     {
       if (gtab_tracks[count].track_type != -1)
 	{
 	  cell[count] = pitivi_timelinecellrenderer_new (gtab_tracks[count].track_nb, gtab_tracks[count].track_type, self);
-	  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), cell[count], FALSE, FALSE, 0);
-	  create_separator_color (self->private->main_vbox_right, "black", -1, 5);
+	  nfo = (GtkWidget *) pitivi_mediatrackinfo_new (((PitiviTimelineCellRenderer *)cell[count]), gtab_tracks[count].track_name);	  
+	  gtk_table_attach (GTK_TABLE (self->private->layout_container), 
+			    cell[count],
+			    0, 1, count, count+1,
+			    GTK_EXPAND | GTK_FILL,
+			    GTK_EXPAND | GTK_FILL,
+			    0, SEPARATOR_WIDTH);
 	  
-	  nfo = (GtkWidget *) pitivi_mediatrackinfo_new (((PitiviTimelineCellRenderer *)cell[count]), gtab_tracks[count].track_name);
-	  gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left),  nfo, FALSE, FALSE, 0);
-	  create_separator (self->private->main_vbox_left, -1, 5);
-	}
-      else
-	{ 
-	  cell[count] = NULL;
-	  create_separator_color (self->private->main_vbox_right, "black", -1, 5);
-	  create_separator (self->private->main_vbox_left, -1, 5);
+	  gtk_table_attach (GTK_TABLE (self->private->info_container), 
+			    nfo,
+			    0, 1, count, count+1,
+			    GTK_EXPAND | GTK_FILL,
+			    GTK_EXPAND | GTK_FILL,
+			    0, SEPARATOR_WIDTH);
 	}
     }
   create_tracks_links (cell);
@@ -460,13 +458,13 @@ create_tracks (PitiviTimelineWindow *self)
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->hpaned, FALSE, FALSE, 0);
   
   // Left Scrollbar
-  gtk_paned_pack1 (GTK_PANED(self->private->hpaned), self->private->main_vbox_left, FALSE, FALSE);
+  gtk_paned_pack1 (GTK_PANED(self->private->hpaned), vbox_left, FALSE, FALSE);
   // Right HScrollbar
   GtkWidget * pHScrollbarRight = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (pHScrollbarRight),
-				  GTK_POLICY_ALWAYS, GTK_POLICY_NEVER);
+  			  GTK_POLICY_ALWAYS, GTK_POLICY_NEVER);
   gtk_scrolled_window_add_with_viewport (GTK_SCROLLED_WINDOW (pHScrollbarRight),
-					 GTK_WIDGET (self->private->main_vbox_right));
+  				 GTK_WIDGET (vbox_right));
   self->hscrollbar = gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(pHScrollbarRight));
   gtk_paned_pack2 (GTK_PANED(self->private->hpaned), pHScrollbarRight, FALSE, FALSE);
   
@@ -627,13 +625,24 @@ pitivi_timelinewindow_get_property (GObject * object,
 void
 send_signal_to_childs (PitiviTimelineWindow *self, const gchar *signame, gpointer data)
 {
-  send_signal_to_childs_direct (self->private->main_vbox_right, signame, data);
+  send_signal_to_childs_direct ( self->private->layout_container , signame, data);
+  send_signal_to_childs_direct ( self->private->info_container , signame, data);
 }
 
 static void
 pitivi_timelinewindow_deselect (PitiviTimelineWindow *self)
 {
   send_signal_to_childs (self, "deselect", NULL);
+}
+
+static void
+pitivi_timelinewindow_selected_source (PitiviTimelineWindow *self, gpointer data)
+{
+  GtkWidget	*receiver;
+
+  receiver = ((GtkWidget *)pitivi_mainapp_get_effectswin ( self->private->mainapp ));
+  if ( receiver )
+    g_signal_emit_by_name (GTK_OBJECT (receiver), "selected-source", data);
 }
 
 static void
@@ -644,7 +653,7 @@ pitivi_timelinewindow_dblclick (PitiviTimelineWindow *self, gpointer data)
   GtkWidget	*container;
   GList		*childlist;
   
-  childlist = gtk_container_get_children (GTK_CONTAINER (self->private->main_vbox_right));
+  childlist = gtk_container_get_children (GTK_CONTAINER (self->private->layout_container));
   for (; childlist; childlist = childlist->next)
     if (GTK_IS_LAYOUT (childlist->data))
       {
@@ -724,6 +733,15 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 					   g_cclosure_marshal_VOID__VOID,
 					   G_TYPE_NONE, 0);
   
+  signals[SELECT_SOURCE_SIGNAL] = g_signal_new ("selected-source",
+						G_TYPE_FROM_CLASS (g_class),
+						G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
+						G_STRUCT_OFFSET (PitiviTimelineWindowClass, selected_source),
+						NULL, 
+						NULL,                
+						g_cclosure_marshal_VOID__POINTER,
+						G_TYPE_NONE, 1, G_TYPE_POINTER);
+  
   signals[DELETE_SIGNAL] = g_signal_new ("delete-source",
 					 G_TYPE_FROM_CLASS (g_class),
 					 G_SIGNAL_RUN_FIRST | G_SIGNAL_ACTION,
@@ -776,6 +794,7 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
   klass->drag_source_begin = pitivi_timelinewindow_drag_source_begin;
   klass->drag_source_end = pitivi_timelinewindow_drag_source_end;
   klass->dbk_source = pitivi_timelinewindow_dblclick;
+  klass->selected_source = pitivi_timelinewindow_selected_source;
   klass->zoom_changed = pitivi_timelinewindow_zoom_changed;
 }
 
@@ -935,7 +954,7 @@ GtkWidget *
 pitivi_timelinewindow_get_main_vbox_right(PitiviTimelineWindow *self) {
   if (!self)
     return NULL;
-  return self->private->main_vbox_right;
+  return self->private->layout_container;
 }
 
 /* Utils */
@@ -979,10 +998,12 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
  
   /* Activate childs */
 
-  GList *childwidget = gtk_container_get_children (GTK_CONTAINER (self->private->main_vbox_right));
+  GList *childwidget = gtk_container_get_children (GTK_CONTAINER (self->private->layout_container));
   for (childlist = childwidget; childlist; childlist = childlist->next )
-    if (GTK_IS_LAYOUT (childlist->data))
-      g_signal_emit_by_name (GTK_OBJECT (childlist->data), "activate");
+    {
+      if (GTK_IS_LAYOUT (childlist->data))
+	g_signal_emit_by_name (GTK_OBJECT (childlist->data), "activate");
+    }
   gtk_widget_set_sensitive (GTK_WIDGET(self->private->toolcontainer), TRUE);
   gtk_widget_set_sensitive (GTK_WIDGET(self->private->hpaned), TRUE);
 }
@@ -1010,7 +1031,7 @@ pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self)
     gtk_combo_box_set_active(self->private->scalecombobox, 4);
     break;
   }
-  list = gtk_container_get_children (GTK_CONTAINER (self->private->main_vbox_right));
+  list = gtk_container_get_children (GTK_CONTAINER (self->private->layout_container));
   for (tmp = list; tmp; tmp = tmp->next)
     if (GTK_IS_LAYOUT (tmp->data))
       g_signal_emit_by_name (GTK_OBJECT (tmp->data), "zoom-changed");
@@ -1024,7 +1045,7 @@ pitivi_timelinewindow_zoom_changed (PitiviTimelineWindow *self)
 */
 
 gboolean
-pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow * widget, GdkEventKey* event, gpointer data) 
+pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow *self, GdkEventKey* event, gpointer data) 
 {
   switch(event->keyval) 
     {
@@ -1032,7 +1053,7 @@ pitivi_timelinewindow_callb_key_press (PitiviTimelineWindow * widget, GdkEventKe
       g_printf ("Rendering\n");
       break;
     case GDK_Delete:
-      send_signal_to_childs (widget, "key-delete-source", NULL);
+      send_signal_to_childs (self, "key-delete-source", NULL);
       break;
     case GDK_Escape:
       g_printf ("Escape\n");

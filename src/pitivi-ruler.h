@@ -49,7 +49,7 @@ typedef struct _PitiviRulerPrivate PitiviRulerPrivate;
 
 struct _PitiviRuler
 {
-  GObject parent;
+  GtkRulerClass parent;
 
   /* instance public members */
 
@@ -59,7 +59,7 @@ struct _PitiviRuler
 
 struct _PitiviRulerClass
 {
-  GObjectClass parent;
+  GtkRulerClass parent;
   /* class members */
 };
 

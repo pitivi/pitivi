@@ -58,6 +58,8 @@
 
 #define LEFT_PANED_SIZE 80
 
+#define SEPARATOR_WIDTH 3
+
 typedef struct _PitiviTimelineWindow PitiviTimelineWindow;
 typedef struct _PitiviTimelineWindowClass PitiviTimelineWindowClass;
 typedef struct _PitiviTimelineWindowPrivate PitiviTimelineWindowPrivate;
@@ -100,8 +102,9 @@ struct _PitiviTimelineWindowClass
   void (* delete)     (PitiviTimelineWindow  *timew, gpointer data);
   void (*drag_source_begin) (PitiviTimelineWindow *timew, gpointer data);
   void (*drag_source_end) (PitiviTimelineWindow *timew, gpointer data);
-  void (*dbk_source) (PitiviTimelineWindow *timew, gpointer data);
-  void (*zoom_changed) (PitiviTimelineWindow  *timew);
+  void (*dbk_source)    (PitiviTimelineWindow *timew, gpointer data);
+  void (*selected_source) (PitiviTimelineWindow *timew, gpointer data);
+  void (*zoom_changed)  (PitiviTimelineWindow  *timew);
 };
 
 /* used by PITIVI_TIMELINEWINDOW_TYPE */

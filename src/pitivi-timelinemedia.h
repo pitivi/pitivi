@@ -32,6 +32,7 @@
 
 #include <gtk/gtk.h>
 #include "pitivi-projectwindows.h"
+#include "pitivi-timelinecellrenderer.h"
 #include "pitivi-sourceitem.h"
 
 /*
@@ -63,9 +64,11 @@ struct _PitiviTimelineMedia
   
   /* instance public members */
   
+  PitiviTimelineCellRenderer *track;
   PitiviSourceItem *sourceitem;
   GtkWidget        *linked;
-  GtkWidget	   *track;
+ 
+  GList		   *effectschilds;  /* effects on media */
   gboolean	   selected;
   gboolean	   copied;
   
@@ -81,6 +84,7 @@ struct _PitiviTimelineMediaClass
   void (* select)   (PitiviTimelineMedia *cell);
   void (* deselect) (PitiviTimelineMedia *cell);
   void (* dissociate) (PitiviTimelineMedia *self, gpointer data);
+  void (* associate_effect) (PitiviTimelineMedia *self, gpointer data);
 };
 
 /* used by PITIVI_TIMELINEMEDIA_TYPE */
@@ -120,5 +124,7 @@ void	pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *self, gpointer data);
 void	pitivi_timelinemedia_callb_copied (PitiviTimelineMedia *self, gpointer data);
 void	pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *self, gpointer data);
 
+gint 
+compare_track (gconstpointer a, gconstpointer b);
 
 #endif

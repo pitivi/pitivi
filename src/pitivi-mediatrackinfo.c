@@ -38,7 +38,6 @@ struct _PitiviMediaTrackInfoPrivate
 {
   PitiviTimelineCellRenderer	*cell;
   GtkWidget			*arrow;
-  GtkWidget			*separators;
   gchar				*trackname;
   gchar				*font_desc;
   
@@ -170,10 +169,9 @@ pitivi_mediatrackinfo_constructor (GType type,
   /* Arrow */
   
   /*  self->private->arrow = gtk_expander_new (NULL);
-      gtk_box_pack_start (GTK_BOX(hbox), self->private->arrow, TRUE, TRUE, 2);
-      gtk_widget_set_usize (GTK_WIDGET (self->private->arrow), 5, 50);
+  gtk_box_pack_start (GTK_BOX(hbox), self->private->arrow, TRUE, FALSE, 2);
+  gtk_widget_set_usize (GTK_WIDGET (self->private->arrow), 5, 50);
   */
-  
   /* label */
 
   label = gtk_label_new (self->private->trackname);

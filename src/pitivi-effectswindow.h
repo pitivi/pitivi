@@ -36,6 +36,7 @@ typedef struct _PitiviEffectsWindow PitiviEffectsWindow;
 #include <gst/gst.h>
 #include "pitivi-windows.h"
 #include "pitivi-stockicons.h"
+#include "pitivi-timelinemedia.h"
 
 /*
  * Type macros.
@@ -51,6 +52,8 @@ typedef struct _PitiviEffectsWindow PitiviEffectsWindow;
 typedef struct _PitiviEffectsWindowClass PitiviEffectsWindowClass;
 typedef struct _PitiviEffectsWindowPrivate PitiviEffectsWindowPrivate;
 typedef struct _PitiviEffectsTree PitiviEffectsTree;
+
+#define PITIVI_EFFECTS_DF_TITLE		  "Effects"
 
 #define PITIVI_EFFECTS_WINDOW_NB_COL	  1
 #define PITIVI_VIDEO_EFFECT_LABEL	  "Video"
@@ -88,6 +91,7 @@ struct _PitiviEffectsWindow
   /* instance public members */
 
   /* private */
+
   PitiviEffectsWindowPrivate *private;
 };
 
@@ -95,6 +99,7 @@ struct _PitiviEffectsWindowClass
 {
   PitiviWindowsClass parent;
   /* class members */
+  void (*selected_media)  (PitiviEffectsWindow *self, gpointer data);
 };
 
 /* used by PITIVI_EFFECTSWINDOW_TYPE */
@@ -109,7 +114,4 @@ PitiviEffectsWindow	*pitivi_effectswindow_new(PitiviMainApp *mainapp);
 void pitivi_effectstree_set_gst (PitiviEffectsTree *tree_effect, 
 				 PitiviEffectsTypeEnum eneffects,  
 				 PitiviSettings *self);
-
-GList *fill_smpte_transition_list(GList* fx_transition);
-
 #endif

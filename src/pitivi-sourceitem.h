@@ -45,7 +45,7 @@ struct _PitiviSourceItem
   PitiviPiste		piste;
   gboolean		isaudio;
   PitiviSourceFile	*srcfile;
-  GnlSource		*gnlsource;
+  GnlObject		*gnlobject;
 };
 
 #endif

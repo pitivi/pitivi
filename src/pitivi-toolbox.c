@@ -102,7 +102,8 @@ load_cursor_size (GdkWindow *win,
   pitivi_cursor->hot_y = hot_y;
   gdk_pixmap_unref (pixmap);
   gdk_pixmap_unref (mask);
-  gdk_window_set_cursor(GDK_WINDOW (win), pitivi_cursor->cursor);
+  if (win)
+    gdk_window_set_cursor(GDK_WINDOW (win), pitivi_cursor->cursor);
 }
 
 void

@@ -105,6 +105,11 @@ pitivi_mainapp_get_viewerwin(PitiviMainApp *self) {
   return self->private->viewerwin;
 }
 
+PitiviEffectsWindow *
+pitivi_mainapp_get_effectswin(PitiviMainApp *self) {
+  return self->private->effectswin;
+}
+
 void
 pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
 {
@@ -156,7 +161,7 @@ pitivi_mainapp_activate_effectswindow (PitiviMainApp *self, gboolean activate)
       gtk_window_move (GTK_WINDOW (self->private->effectswin), 720, 450);
       gtk_signal_connect (GTK_OBJECT (self->private->effectswin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_effects), self);
-  } else if (activate && self->private->effectswin){
+  } else if (!activate && self->private->effectswin){
     gtk_widget_hide (GTK_WIDGET (self->private->effectswin));
   }
   else
@@ -177,7 +182,6 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
   height = gdk_screen_height ();
   
   if (self->project) {
-    g_printf("YA DEJA UN PROJET EN COURS !!\n");
     exit(0);
   }
   self->project = project;
@@ -199,7 +203,6 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
   if (self->private->viewerwin == NULL)
     {
       self->private->viewerwin = pitivi_viewerwindow_new(self, project);
-      //gtk_widget_show_all (GTK_WIDGET (self->private->viewerwin) );
       gtk_window_move (GTK_WINDOW (self->private->viewerwin), (tmp_w + BORDER), 0);
       gtk_signal_connect (GTK_OBJECT (self->private->viewerwin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_viewer), self);
@@ -231,9 +234,6 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
     }
   else
     g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "activate");
-
-  gtk_window_get_size (GTK_WINDOW (self->private->tbxwin), &tmp1_w, &tmp1_h);
-  gtk_window_move (GTK_WINDOW (self->private->tbxwin), 0, (height - (tmp1_h + (4 * BORDER) + tmp_h + BOTTOM2)));
 }
 
 /*
