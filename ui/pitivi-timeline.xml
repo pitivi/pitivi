@@ -16,8 +16,6 @@
             <menuitem name="ViewerWindow"     action="ViewerWindows"/>
        </menu>
        <menu action="HelpMenu">
-            <menuitem name="HelpIndex"  action="HelpIndex"/>
-            <menuitem name="HelpSearch"  action="HelpSearch"/>
             <menuitem name="HelpContents" action="HelpContents"/>
             <menuitem name="HelpAbout"  action="HelpAbout"/>
             <separator/>
