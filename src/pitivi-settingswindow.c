@@ -103,6 +103,7 @@ pitivi_settingswindow_accept_reponse (PitiviGstElementSettings *self)
     PitiviGstElementSettingsProp *prop = (PitiviGstElementSettingsProp *) list->data;
     g_print ("------------------------\n");
     g_print ("name:%s\n", prop->name);
+    g_print ("value:%s\n", g_strdup_value_contents (&(prop->value)));
   }
 
   g_print ("######################################################\n");
