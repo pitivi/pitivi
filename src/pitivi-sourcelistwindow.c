@@ -2216,16 +2216,16 @@ void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
     {
       g_printf("removing item only %s\n", self->private->dndsf->filename);
       g_signal_emit_by_name (GTK_OBJECT (self->private->timelinewin), "delete-source", self->private->dndsf);
-      pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
-						    self->private->treepath,
-						    item_select);
-      gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
+      //pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
+      //					    self->private->treepath,
+      //					    item_select);
+      //gtk_list_store_remove(GTK_LIST_STORE(liststore), &iter);
     }
   else /* need to remove folder */
     {
       /* we need to set treepath too */
-      self->private->treepath = g_strdup_printf("%s:%d", self->private->treepath, folder_select);
-      OnRemoveBin(self, 0, NULL);
+      //self->private->treepath = g_strdup_printf("%s:%d", self->private->treepath, folder_select);
+      //OnRemoveBin(self, 0, NULL);
     }
 }
 

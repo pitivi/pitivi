@@ -30,7 +30,7 @@
 #include "pitivi-dragdrop.h"
 #include "pitivi-sourceitem.h"
 
-static	GtkWidgetClass	*parent_class;
+static	GtkWidgetClass	*parent_class = NULL;
 
 // Caching Operation  
 static	GdkPixmap	*pixmap = NULL;
@@ -40,6 +40,7 @@ static	GdkPixmap	*pixmap = NULL;
 
 typedef enum {
   PROP_MEDIA_TYPE = 1,
+  PROP_SOURCEFILE
 } PitiviMediaProperty;
 
 
@@ -68,10 +69,12 @@ static gint iNbTargetSameEntry = G_N_ELEMENTS (TargetSameEntry);
 struct _PitiviTimelineMediaPrivate
 {
   /* instance private members */
+  
   PitiviCursorType cursor_type;
+  PitiviSourceFile *sf;
+ 
   gboolean	   dispose_has_run;
   int		   media_type;
-
   guint64	   original_width;
   guint64	   original_height;
 };
@@ -92,15 +95,18 @@ pitivi_timelinemedia_new (PitiviSourceFile *sf)
    
   type = PITIVI_NO_TRACK;
   if (sf)
-    type = check_media_type (sf);
-  
+    type = check_media_type (sf);  
   timelinemedia = (PitiviTimelineMedia *) g_object_new(PITIVI_TIMELINEMEDIA_TYPE,
+						       "source_file",
+						       sf,
 						       "media_type",
 						       type,
 						       NULL);
-  timelinemedia->sourceitem->srcfile = sf;
-  timelinemedia->sourceitem->gnlsource = gnl_source_new (sf->filename, sf->pipeline);
   g_assert(timelinemedia != NULL);
+  timelinemedia->sourceitem = g_new0 (PitiviSourceItem, 1);
+  timelinemedia->sourceitem->srcfile = sf;
+  timelinemedia->sourceitem->srcfile->filename = g_strdup ( sf->filename );
+  timelinemedia->sourceitem->gnlsource = gnl_source_new ( timelinemedia->sourceitem->srcfile->filename,  timelinemedia->private->sf->pipeline );
   return timelinemedia;
 }
 
@@ -111,16 +117,9 @@ pitivi_timelinemedia_constructor (GType type,
 {
   GObject *object;
   PitiviTimelineMedia *self;
-  PitiviTimelineMediaClass *klass;
-  GObjectClass *parent_class;
-
-  klass = PITIVI_TIMELINEMEDIA_CLASS (g_type_class_peek (PITIVI_TIMELINEMEDIA_TYPE));
-  parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
-  object = parent_class->constructor (type, n_construct_properties,
-				      construct_properties);
   
-  self = (PitiviTimelineMedia *) object;
-  self->sourceitem = g_new0 (PitiviSourceItem, 1);
+  object = (* G_OBJECT_CLASS (parent_class)->constructor) 
+    (type, n_construct_properties, construct_properties);
   return object;
 }
 
@@ -202,9 +201,8 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
 {
   PitiviCursor  *cursor;
   PitiviTimelineMedia *self = (PitiviTimelineMedia *) instance;
-  
+
   self->private = g_new0(PitiviTimelineMediaPrivate, 1);
-  
   /* initialize all public and private members to reasonable default values. */ 
   
   self->private->dispose_has_run = FALSE;
@@ -242,6 +240,9 @@ pitivi_timelinemedia_set_property (GObject * object,
     case PROP_MEDIA_TYPE:
       self->private->media_type = g_value_get_int (value);
       break; 
+    case PROP_SOURCEFILE:
+      self->private->sf = g_value_get_pointer (value);
+      break;
     default:
       g_assert (FALSE);
       break;
@@ -439,6 +440,11 @@ pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
   g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_MEDIA_TYPE,
 				   g_param_spec_int ("media_type","media_type","media_type",
 						     G_MININT, G_MAXINT, 0,G_PARAM_READWRITE)); 
+ 
+  g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PROP_SOURCEFILE,
+				   g_param_spec_pointer ("source_file","source_file","source_file",
+							 G_PARAM_WRITABLE | G_PARAM_CONSTRUCT_ONLY));
+  
 
   g_signal_new ("select",
 		G_TYPE_FROM_CLASS (g_class),

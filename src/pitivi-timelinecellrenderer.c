@@ -833,27 +833,37 @@ pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean se
 }
 
 void
-pitivi_timelinecellrenderer_callb_delete_sf (GtkWidget *widget, gpointer data)
+pitivi_timelinecellrenderer_callb_delete_sf (PitiviTimelineCellRenderer *self, gpointer data)
 {
-  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
   PitiviTimelineMedia *media;
   PitiviSourceFile *sf;
+  GtkWidget *linked;
   GtkWidget *elm;
-  GList *child;
-  GList *delete;
+  GList *child  = NULL;
+  GList *delete = NULL;
   
   for (child = gtk_container_get_children (GTK_CONTAINER (self)); child; child = child->next )
     {
-      media = child->data;
       sf = data;
-      if (media->sourceitem->srcfile == sf)
+      media = child->data;
+      g_printf ("-----%s------------------------\n", media->sourceitem->srcfile->filename);
+      if (media->sourceitem->srcfile->filename == sf->filename)
 	delete = g_list_append (delete, media);
     }
   while (delete)
     {
       if (GTK_IS_WIDGET (delete->data))
-	{ 
-	  elm = gtk_widget_ref (GTK_WIDGET (delete->data));
+	{
+	  elm = (GtkWidget *)delete->data;
+	  media = gtk_widget_ref (elm);
+	  if (media->linked)
+	    {
+	      linked = gtk_widget_ref (media->linked);
+	      gtk_widget_hide (linked);
+	      gtk_container_remove (GTK_CONTAINER (self->linked_track), linked);
+	      gtk_widget_destroy (media->linked);
+	      gtk_widget_unref (linked);
+	    }
 	  gtk_widget_hide (elm);
 	  gtk_container_remove (GTK_CONTAINER (self), elm);
 	  gtk_widget_destroy (elm);
@@ -1044,6 +1054,7 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
    cell_class->select = pitivi_timelinecellrenderer_callb_select;
    cell_class->deselect = pitivi_timelinecellrenderer_callb_deselect;
    cell_class->drag_source_begin = pitivi_timelinecellrenderer_callb_drag_source_begin;
+   cell_class->delete = pitivi_timelinecellrenderer_callb_delete_sf;
 }
 
 GType
