@@ -26,6 +26,9 @@
 #include "pitivi.h"
 #include "pitivi-template.h"
 
+static     GObjectClass *parent_class;
+
+
 struct _PitiviTemplatePrivate
 {
   /* instance private members */
@@ -56,15 +59,9 @@ pitivi_temp_late_constructor (GType type,
 			     GObjectConstructParam * construct_properties)
 {
   GObject *obj;
-  {
-    /* Invoke parent constructor. */
-    PitiviTemplateClass *klass;
-    GObjectClass *parent_class;
-    klass = PITIVI_TEMPLATE_CLASS (g_type_class_peek (PITIVI_TEMPLATE_TYPE));
-    parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
-    obj = parent_class->constructor (type, n_construct_properties,
-				     construct_properties);
-  }
+  /* Invoke parent constructor. */
+  obj = parent_class->constructor (type, n_construct_properties,
+				   construct_properties);
 
   /* do stuff. */
 
@@ -82,10 +79,9 @@ pitivi_temp_late_instance_init (GTypeInstance * instance, gpointer g_class)
   
   self->private->dispose_has_run = FALSE;
   
-  /* If you need specific consruction properties to complete initialization, 
-   * delay initialization completion until the property is set. 
-   */
-  
+  /* Do only initialisation here */
+  /* The construction of the object should be done in the Constructor
+     So that properties set at instanciation can be set */
 }
 
 static void
@@ -107,6 +103,7 @@ pitivi_temp_late_dispose (GObject *object)
    * reference. 
    */
 
+  G_OBJECT_CLASS (parent_class)->dispose (object);
 }
 
 static void
@@ -120,6 +117,7 @@ pitivi_temp_late_finalize (GObject *object)
    */
 
   g_free (self->private);
+  G_OBJECT_CLASS (parent_class)->finalize (object);
 }
 
 static void
@@ -169,6 +167,8 @@ pitivi_temp_late_class_init (gpointer g_class, gpointer g_class_data)
 {
   GObjectClass *gobject_class = G_OBJECT_CLASS (g_class);
   PitiviTemplateClass *klass = PITIVI_TEMPLATE_CLASS (g_class);
+
+  parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (g_class));
 
   gobject_class->constructor = pitivi_temp_late_constructor;
   gobject_class->dispose = pitivi_temp_late_dispose;
