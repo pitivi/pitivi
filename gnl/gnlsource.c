@@ -84,12 +84,23 @@ static void		source_element_new_pad	 	(GstElement *element,
 static GnlObjectClass *parent_class = NULL;
 static guint gnl_source_signals[LAST_SIGNAL] = { 0 };
 
+enum {
+  TYPE_NONE = 0,
+  TYPE_AUDIO,
+  TYPE_VIDEO,
+  TYPE_OTHER
+};
+
 typedef struct {
   GSList *queue;
   GstPad *srcpad,
          *sinkpad;
   gboolean active;
   GstProbe	*probe;
+  gint		type;
+  gint	audiowidth;
+  gint	nbchanns;
+  gint	rate;
 } SourcePadPrivate;
 
 #define CLASS(source)  GNL_SOURCE_CLASS (G_OBJECT_GET_CLASS (source))
@@ -332,9 +343,31 @@ source_link (GstPad *pad, const GstCaps *caps)
 {
   GstPad *otherpad;
   SourcePadPrivate *private;
+  const gchar	*type;
 
   GST_INFO("linking");
   private = gst_pad_get_element_private (pad);
+  type = gst_structure_get_name (gst_caps_get_structure (caps, 0));
+  if (!g_ascii_strncasecmp (type, "audio/x-raw", 11)) {
+    private->type = TYPE_AUDIO;
+    if (!gst_structure_get_int (gst_caps_get_structure (caps, 0), "width", &private->audiowidth))
+      GST_WARNING ("Couldn't get audio width from pad %s:%s",
+		   GST_DEBUG_PAD_NAME (pad));
+    if (private->audiowidth)
+      private->audiowidth /= 8;
+    if (!gst_structure_get_int (gst_caps_get_structure (caps, 0), "rate", &private->rate))
+      GST_WARNING ("Couldn't get audio rate from pad %s:%s",
+		   GST_DEBUG_PAD_NAME (pad));
+    if (!gst_structure_get_int (gst_caps_get_structure (caps, 0), "channels", &private->nbchanns))
+      GST_WARNING ("Couldn't get audio channels from pad %s:%s",
+		   GST_DEBUG_PAD_NAME (pad));
+  }
+  else if (!g_ascii_strncasecmp (type, "video/x-raw", 11))
+    private->type = TYPE_VIDEO;
+  else private->type = TYPE_OTHER;
+  GST_INFO ("->type : %d, audiowidth : %d, channs : %d, rate : %d",
+	    private->type, private->audiowidth,
+	    private->nbchanns, private->rate);
   
   otherpad = (GST_PAD_IS_SRC (pad)? private->sinkpad : private->srcpad);
 
@@ -344,7 +377,15 @@ source_link (GstPad *pad, const GstCaps *caps)
 void
 source_unlink (GstPad *pad)
 {
+  SourcePadPrivate	*private;
+
   GST_INFO("unlinking !!!");
+
+  private = gst_pad_get_element_private (pad);
+  private->type = TYPE_NONE;
+  private->audiowidth = 0;
+  private->nbchanns = 0;
+  private->rate = 0;
 }
 
 /** 
@@ -480,19 +521,19 @@ source_is_media_queued (GnlSource *source)
 static gboolean
 source_send_seek (GnlSource *source, GstEvent *event)
 {
-/*   const GList *pads; */
+  const GList *pads;
   gboolean	wasinplay = FALSE;
   gboolean	res = FALSE;
 
   /* ghost all pads */
-/*   pads = gst_element_get_pad_list (source->element); */
+  pads = gst_element_get_pad_list (source->element);
 
   if (!event)
     return FALSE;
 
-/*   if (!pads) */
-/*     GST_WARNING("%s has no pads...", */
-/* 	     gst_element_get_name (GST_ELEMENT (source->element))); */
+  if (!pads)
+    GST_WARNING("%s has no pads...",
+	     gst_element_get_name (GST_ELEMENT (source->element)));
 
   source->private->seek_start = GST_EVENT_SEEK_OFFSET (event);
   source->private->seek_stop = GST_EVENT_SEEK_ENDOFFSET (event);
@@ -508,27 +549,27 @@ source_send_seek (GnlSource *source, GstEvent *event)
     wasinplay = TRUE;
   if (!(gst_element_set_state(source->bin, GST_STATE_PAUSED)))
     GST_WARNING("couldn't set GnlSource's bin to PAUSED !!!");
-/*   while (pads) {   */
-/*     GstPad *pad = GST_PAD (GST_PAD_REALIZE (pads->data)); */
+  while (pads) {
+    GstPad *pad = GST_PAD (GST_PAD_REALIZE (pads->data));
     
-/*     GST_INFO ("Trying to seek on pad %s:%s", */
-/* 	      GST_DEBUG_PAD_NAME (pad)); */
-/*     gst_event_ref (event); */
+    GST_INFO ("Trying to seek on pad %s:%s",
+	      GST_DEBUG_PAD_NAME (pad));
+    gst_event_ref (event);
     
-/*     GST_INFO ("%s: seeking to %lld on pad %s:%s",  */
-/* 	      gst_element_get_name (GST_ELEMENT (source)),  */
-/* 	      source->private->seek_start, */
-/* 	      GST_DEBUG_PAD_NAME (pad)); */
+    GST_INFO ("%s: seeking to %lld on pad %s:%s",
+	      gst_element_get_name (GST_ELEMENT (source)),
+	      source->private->seek_start,
+	      GST_DEBUG_PAD_NAME (pad));
     
-/*     if (!gst_pad_send_event (pad, event)) { */
-/*       GST_WARNING ("%s: could not seek",  */
-/* 		   gst_element_get_name (GST_ELEMENT (source))); */
-/*       res &= FALSE; */
-/*     } else */
-/*       res = TRUE; */
+    if (!gst_pad_send_event (pad, event)) {
+      GST_WARNING ("%s: could not seek",
+		   gst_element_get_name (GST_ELEMENT (source)));
+      res &= FALSE;
+    } else
+      res = TRUE;
 
-/*     pads = g_list_next (pads); */
-/*   } */
+    pads = g_list_next (pads);
+  }
   if (!gst_element_send_event (source->element, event)) {
     GST_WARNING ("%s: could not seek",
 		 gst_element_get_name (GST_ELEMENT (source)));
@@ -603,6 +644,50 @@ source_queue_media (GnlSource *source)
   return filled;
 }
 
+static GstBuffer *
+crop_incoming_buffer (GstPad *pad, GstBuffer *buf, GstClockTime start, GstClockTime stop)
+{
+  SourcePadPrivate	*private = gst_pad_get_element_private (pad);
+  GstBuffer		*outbuffer;
+
+  GST_INFO ("start : %lld:%2lld:%3lld , stop : %lld:%2lld:%3lld",
+	    GST_M_S_M (start),
+	    GST_M_S_M (stop));
+  if ((private->type == TYPE_AUDIO) || (private->type == TYPE_VIDEO)) {
+    if (private->type == TYPE_AUDIO) {
+      gint64 offset, size;
+      GST_INFO ("Buffer Size : %d ==> time : %lld:%lld:%lld",
+		GST_BUFFER_SIZE (buf),
+		GST_M_S_M (
+			   (GST_BUFFER_SIZE (buf) * GST_SECOND) / (private->nbchanns * private->audiowidth * private->rate)
+			   ));
+      GST_INFO ("start - timestamp : %lld:%02lld:%03lld, stop - start : %lld:%02lld:%03lld",
+		GST_M_S_M (start - GST_BUFFER_TIMESTAMP (buf)),
+		GST_M_S_M (stop - start));
+      offset = (start - GST_BUFFER_TIMESTAMP (buf)) * private->rate * private->nbchanns * private->audiowidth / GST_SECOND;
+      offset -= offset % (private->nbchanns * private->audiowidth);
+      size = (stop - start) * private->rate * private->nbchanns * private->audiowidth / GST_SECOND;
+      size -= size % (private->nbchanns * private->audiowidth);
+      GST_INFO ("offset : %lld , size : %lld, sum : %lld",
+		offset, size, offset + size);
+
+      if ((offset + size) > GST_BUFFER_SIZE (buf))
+	size -= (offset + size) - GST_BUFFER_SIZE (buf);
+      outbuffer = gst_buffer_create_sub (buf, (guint) offset, (guint) size);
+      gst_buffer_unref (buf);
+    } else
+      outbuffer = buf;
+    GST_BUFFER_TIMESTAMP (outbuffer) = start;
+    GST_BUFFER_DURATION (outbuffer) = stop - start;
+    GST_INFO ("Changed/created buffer with time : %lld:%lld:%lld , duration : %lld:%lld:%lld",
+	      GST_M_S_M (start),
+	      GST_M_S_M (stop - start));
+    return outbuffer;
+  }
+  GST_WARNING ("Can't resize incoming buffer because it isn't AUDIO or VIDEO...");
+  return buf;
+}
+
 static void
 source_chainfunction (GstPad *pad, GstData *buf)
 {
@@ -623,22 +708,30 @@ source_chainfunction (GstPad *pad, GstData *buf)
     GST_INFO("Chaining an event : %d",
 	     GST_EVENT_TYPE(buffer));
   else
-    GST_INFO("Chaining a buffer");
+    GST_INFO("Chaining a buffer time : %lld:%lld:%lld, duration : %lld:%lld:%lld",
+	     GST_M_S_M (GST_BUFFER_TIMESTAMP (buffer)),
+	     GST_M_S_M (GST_BUFFER_DURATION (buffer)));
   if (GST_IS_BUFFER (buffer) && !source->queueing) {
     intime = GST_BUFFER_TIMESTAMP (buffer);
     dur = GST_BUFFER_DURATION (buffer);
     if (dur == GST_CLOCK_TIME_NONE)
       dur = 0LL;
 
-    if ((intime < object->media_start) 
-	&& (dur + intime < object->media_start)) {
+    if (dur + intime < object->media_start) {
       GST_INFO ("buffer doesn't start/end before source start, unreffing buffer");
       gst_buffer_unref (buffer);
       return;
     }
-    if (intime > object->media_stop) {
+    if (intime >= object->media_stop) {
+      GST_INFO ("buffer is after stop, creating EOS");
       gst_buffer_unref (buffer);
       buffer = GST_BUFFER (gst_event_new (GST_EVENT_EOS));
+    } else if ((intime < object->media_start) && ((intime + dur) > object->media_start)) {
+      GST_INFO ("buffer starts before media_start, but ends after media_start");
+      buffer = crop_incoming_buffer (pad, buffer, object->media_start, intime + dur);
+    } else if ((intime < object->media_stop) && ((intime + dur) > object->media_stop)) {
+      GST_INFO ("buffer starts before media_stop, but ends after media_stop");
+      buffer = crop_incoming_buffer (pad, buffer, intime, object->media_stop);
     }
   }
   
