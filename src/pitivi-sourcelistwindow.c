@@ -112,6 +112,8 @@ void		on_row_activated (GtkTreeView        *treeview,
 				  GtkTreePath        *path,
 				  GtkTreeViewColumn  *col,
 				  gpointer            userdata);
+PitiviSourceFile *
+pitivi_sourcelistwindow_get_file(PitiviSourceListWindow *self);
 
 enum
   {
@@ -639,7 +641,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
       self->private->mediatype = caps_str;
       
       thread = decoder = parser = lastelement = NULL;
-      
+      g_printf("caps to search for %s\n", gst_caps_to_string(caps));
       while (pitivi_sourcelistwindow_check_for_base_type(self->private->mediatype))
 	{
 	  g_printf("caps ==> %s\n", gst_caps_to_string(caps));
@@ -659,6 +661,8 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		   
 		  g_free(name);
 		}
+	      g_printf("adding decoder [%s] after demux\n", decoderlist->data);
+
 	      /* choose the first decoder */
 	      name = g_strdup_printf("decoder%d", thread_number);
 	      decoder = gst_element_factory_make((gchar*)decoderlist->data, name);
@@ -726,7 +730,7 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 		    }
 		 
 
-		  //g_printf("parser ==> %s\n", (gchar*)parserlist->data);
+		  g_printf("adding parser [%s] after demux ==> %s\n", (gchar*)parserlist->data);
 		  name = g_strdup_printf("parser_%s", filename);
 		  parser = gst_element_factory_make((gchar*)parserlist->data, name);
 		  g_free(name);
@@ -802,9 +806,30 @@ pitivi_sourcelistwindow_add_decoder(PitiviSourceListWindow *self, gchar *filenam
 	    }
 	}
       if (thread)
-	gst_element_set_state(GST_ELEMENT(thread), GST_STATE_READY);
+	{
+	  gst_element_set_state(GST_ELEMENT(thread), GST_STATE_READY);
+	  thread_number++;
+	}
+      else /* we have a raw data pad */
+	{
+	  GstPad	*temppad;
+	  
+	  if (strstr(caps_str, "video")) /* video*/
+	    {
+	      temppad = gst_element_add_ghost_pad(self->private->pipeline, pad,
+						  "vsrc");
+	      g_assert(temppad != NULL);
+	      g_printf("linking raw pad to vsrc\n");
+	    }
+	  else
+	    {
+	      temppad = gst_element_add_ghost_pad(self->private->pipeline, pad,
+						  "asrc");
+	      g_assert(temppad != NULL);
+	      g_printf("linking raw pad to asrc\n");
+	    }
+	}
       
-      thread_number++;
       padlist = padlist->next;
     }
  
@@ -909,7 +934,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
       if (demuxlist)
 	{
 	  /* choose the first demuxer */
-	  g_printf("adding demuxer %s\n", demuxlist->data);
+	  g_printf("adding demuxer [%s]\n", demuxlist->data);
 	  tmpname = g_strdup_printf("demux_%s", filename);
 	  demux = gst_element_factory_make((gchar*)demuxlist->data, tmpname);
 	  g_free(tmpname);
@@ -984,7 +1009,9 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
 	      
 	      if (parserlist)
 		{
-		  g_printf("adding a parser for this caps ==> %s\n", gst_caps_to_string(self->private->mediacaps));
+		  g_printf("adding parser [%s] for this caps ==> %s\n", 
+			   parserlist->data, 
+			   gst_caps_to_string(self->private->mediacaps));
 		  tmpname = g_strdup_printf("parser_%s", filename);
 		  parser = gst_element_factory_make((gchar*)parserlist->data, tmpname);
 		  g_free(tmpname);
@@ -1288,7 +1315,7 @@ void	new_folder(GtkWidget *widget, gpointer data)
   
 }
 
-void	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
+gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 {
   GtkTreeIter	pIter;
   GtkListStore	*liststore;
@@ -1313,7 +1340,7 @@ void	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
     {
       /* do not add file to sourcelist */
       g_free(self->private->filepath);
-      return;
+      return FALSE;
     }
 
   sTexte = g_malloc(12);
@@ -1361,12 +1388,15 @@ void	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 
   g_object_unref(pixbufa);
 
+  return TRUE;
 }
+
 void	new_file(GtkWidget *widget, gpointer data)
 {
   PitiviSourceListWindow *self = (PitiviSourceListWindow*)data;
 
-  pitivi_sourcelistwindow_set_file(self);
+  if (!pitivi_sourcelistwindow_set_file(self))
+    return;
 
  /*  pitivi_projectsourcelist_showfile(self->private->prjsrclist, selected_row); */
   /* call pitivi_projectsourcelist_add_file_to_bin */
@@ -1794,50 +1824,52 @@ void	on_row_activated (GtkTreeView        *listview,
   gint			item_select;
   gint			folder_select;
   gint			i;
-  gchar			*tmpMediaType;
+  gchar			*sMediaType;
   PitiviSourceFile	*sf;
   gboolean		flag;
+  GtkTreeSelection	*selection;
 
   g_printf("you double click me\n");
 
   g_printf("with the following value ==> [%s]\n", gtk_tree_path_to_string(path));
-
-  flag = FALSE;
-  liststore = get_liststore_for_bin(self, 0);
-  g_printf("filepos ==> %s\n", gtk_tree_path_to_string(path));
-  gtk_tree_model_get_iter_first(GTK_TREE_MODEL(liststore), &iternext);
-  selected_list_row = atoi(gtk_tree_path_to_string(path));
-  item_select = 0;
-  folder_select = 0;
-  
-  i = 0;
-
-  while (i++ < selected_list_row)
+  /* set the lispath */
+  self->private->listpath = gtk_tree_path_to_string(path);
+  sf = pitivi_sourcelistwindow_get_file(self);
+  g_printf("ici %p\n", sf);
+  if (!sf && OnSelectItem(self, &iter, &liststore, &sMediaType, &item_select, 
+			  &folder_select))
     {
-      gtk_tree_model_get(GTK_TREE_MODEL(liststore), &iternext, TEXT_LISTCOLUMN3, &tmpMediaType, -1);
-      if (!strcmp(tmpMediaType, "Bin"))
+      if (!strcmp(sMediaType, "Bin"))
 	{
-	  folder_select++;
-	  flag = TRUE;
+	  char	*folder;
+	  GtkTreePath	*path;
+
+	  g_printf("you select a bin\n");
+	  /* we need to select the corresponding bin in the treeview */
+	  selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(self->private->treeview));
+	  folder = g_strdup_printf(":%d", folder_select);
+	  strcat(self->private->treepath, folder);
+	  g_printf("with the following path [%s]\n", self->private->treepath);
+	  path = gtk_tree_path_new_from_string(self->private->treepath);
+	  /* path = gtk_tree_path_new_from_string("1"); */
+	  if (!path)
+	    g_printf("path is not valid\n");
+	  gtk_tree_model_get_iter(GTK_TREE_MODEL(self->private->treestore),
+				  &iter, path);
+	  gtk_tree_selection_select_iter(selection, &iter);
+	  gtk_signal_emit_by_name (GTK_OBJECT (self->private->treeview), "row-expanded", &iter, &path, NULL, NULL);
+
+	  if (gtk_tree_selection_iter_is_selected(selection, &iter))
+	    g_printf("the item is currently selected\n");
+	  else
+	    g_printf("the item is not selected\n");
+	  
 	}
-      else
-	{
-	  item_select++;
-	  flag = FALSE;
-	}
-      gtk_tree_model_iter_next(GTK_TREE_MODEL(liststore), &iternext);
-    }
-  if (flag) /* the selected  element it's a bin */
-    {
-      g_printf("you select a bin\n");
+	  
       return;
     }
-  g_printf("real filepos is ==> %d\n", item_select);
-
-  sf = pitivi_projectsourcelist_get_sourcefile(PITIVI_PROJECTWINDOWS(self)->project->sources,
-					       self->private->treepath,
-					       item_select);
-
+  
+  g_printf("get [%s]\n", sf->filename);
   viewerwin = (PitiviViewerWindow*)pitivi_mainapp_get_viewerwin(window->mainapp);
   pitivi_viewerwindow_set_source(viewerwin, sf);
 }
@@ -1853,6 +1885,7 @@ gboolean	my_popup_handler(gpointer data, GdkEvent *event,
    * g_signal_connect_swapped() was called.
    */
 
+  
   if (event->type == GDK_BUTTON_PRESS)
     {
       event_button = (GdkEventButton *)event;
@@ -2072,7 +2105,8 @@ void		OnRemoveItem(gpointer data, gint action, GtkWidget *widget)
     pitivi_projectsourcelist_remove_file_from_bin(((PitiviProjectWindows*)self)->project->sources, 
 						  self->private->treepath,
 						  item_select);
-
+  else /* need to remove folder */
+    ;
 }
 
 void		OnRemoveBin(gpointer data, gint action, GtkWidget *widget)
@@ -2195,13 +2229,12 @@ pitivi_sourcelistwindow_get_file(PitiviSourceListWindow *self)
   gint		item_select;
   gint		folder_select;
 
-  if (OnSelectItem(self, &iter, &liststore, &sMediaType, &item_select,
-		   &folder_select))
-    return;
-
+  if (!OnSelectItem(self, &iter, &liststore, &sMediaType, &item_select,
+		    &folder_select))
+    return NULL;
   if (!strcmp(sMediaType, "Bin"))
     return NULL;
-
+  
   return pitivi_projectsourcelist_get_sourcefile(((PitiviProjectWindows*)self)->project->sources, 
 						 self->private->treepath,
 						 item_select);
@@ -2252,9 +2285,8 @@ pitivi_sourcelistwindow_recurse_into_folder(PitiviSourceListWindow *self,
     {
       g_printf("%s\n", file_list->data);
       self->private->filepath = file_list->data;
-      pitivi_sourcelistwindow_set_file(self);
-      
-      pitivi_projectsourcelist_set_file_property_by_name(((PitiviProjectWindows*)self)->project->sources, parent_name, self->private->filepath, self->private->mediatype, self->private->infovideo, self->private->infoaudio, self->private->length, self->private->pipeline);
+      if (pitivi_sourcelistwindow_set_file(self))
+	pitivi_projectsourcelist_set_file_property_by_name(((PitiviProjectWindows*)self)->project->sources, parent_name, self->private->filepath, self->private->mediatype, self->private->infovideo, self->private->infoaudio, self->private->length, self->private->pipeline);
       file_list = file_list->next;
     }
 
