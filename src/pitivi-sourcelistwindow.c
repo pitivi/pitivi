@@ -632,7 +632,6 @@ GstElement	*add_decoder_for_demux(PitiviSourceListWindow *self,
       
       g_free(name);
     }
-  g_printf("adding decoder [%s] after demux\n", decoderlist->data);
   
   /* choose the first decoder */
   name = g_strdup_printf("decoder%d", nb_thread);
@@ -678,8 +677,7 @@ GstElement	*add_decoder_for_demux(PitiviSourceListWindow *self,
   return thread;
   
 }
-
-GstElement	*add_parser_for_demux(PitiviSourceListWindow *self, 
+	*add_parser_for_demux(PitiviSourceListWindow *self, 
 			     GList *parserlist, GstElement *thread,
 			     gint nb_thread, GstPad *pad,
 			     GstElement **element, 
@@ -762,7 +760,7 @@ void	create_thread_ghost_pad(PitiviSourceListWindow *self, GstElement *lasteleme
 	{
 	  GstElement	*sink;
 	  temppad = gst_element_add_ghost_pad(self->private->pipeline, gst_element_get_pad(lastelement, "src"),
-					      "vsrc");
+					      "src");
 	  g_assert(temppad != NULL);
 	  g_printf("adding ghost pad for video\n");
 	  test_video_length(self, lastelement);
@@ -819,14 +817,12 @@ finalize_pipeline_for_demuxer(PitiviSourceListWindow *self, gchar *filename)
   padlist = self->private->padlist;
   while (padlist)
     {
-      g_printf("iterate from padlist\n");
       thread = NULL;
       pad = (GstPad*)padlist->data;
       caps = gst_pad_get_caps(pad);
       caps_str = gst_caps_to_string(caps);
       self->private->mediatype = caps_str;
       thread = decoder = parser = lastelement = NULL;
-      g_printf("caps to search for %s\n", gst_caps_to_string(caps));
 
       while (pitivi_sourcelistwindow_check_for_base_type(self->private->mediatype))
 	{
@@ -844,7 +840,8 @@ finalize_pipeline_for_demuxer(PitiviSourceListWindow *self, gchar *filename)
 		{
 		  thread = add_parser_for_demux(self, parserlist, thread,
 						thread_number, pad, &lastelement, decoder); 
-		} 
+		}
+
 	    }
 	}
       //g_printf("setting to READY state\n");
@@ -939,7 +936,6 @@ gboolean	demuxer_fct(PitiviSourceListWindow * self, GstElement *src,
   for (i = 0; i < 50; i++)
     {
       gst_bin_iterate(GST_BIN(self->private->mainpipeline));
-      //g_printf("iterate pipeline\n");
     }
 	  
   finalize_pipeline_for_demuxer(self, filename);
@@ -1010,9 +1006,9 @@ gboolean	decoder_fct(PitiviSourceListWindow *self, GstElement *src,
 	      
   pitivi_sourcelistwindow_set_media_property(self, self->private->mainmediatype);
 
-  format = GST_FORMAT_TIME;
-  gst_element_query(decoder, GST_FORMAT_TIME, &format, &value);
-  g_printf("format ==> %d\ntime ==> %lld\n", format, (value / GST_SECOND) / 60);
+/*   format = GST_FORMAT_TIME; */
+/*   gst_element_query(decoder, GST_FORMAT_TIME, &format, &value); */
+/*   g_printf("format ==> %d\ntime ==> %lld\n", format, (value / GST_SECOND) / 60); */
   element_found = TRUE;
   lastelement = decoder;
 
@@ -1179,8 +1175,9 @@ void	pitivi_sourcelistwindow_type_find(PitiviSourceListWindow *self)
   g_object_set(source, "location", filename, NULL);
   gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_PLAYING);
 
-  while (self->private->mediatype == NULL)
+  while (self->private->mediatype == NULL) {
     gst_bin_iterate(GST_BIN(pipeline));
+  }
 
   gst_element_set_state(GST_ELEMENT(pipeline), GST_STATE_NULL);
 
@@ -1390,6 +1387,18 @@ void	new_folder(GtkWidget *widget, gpointer data)
   self->private->treepath = save;
 }
 
+/*
+  extract_audio_video_pipelines
+
+  The given PitiviSourceFile has a mixed audio/video pipeline
+  Extracts separate audio and video pipelines
+*/
+
+void	extract_audio_video_pipelines(PitiviSourceFile *sf)
+{
+
+}
+
 gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 {
   GtkTreeIter	pIter;
@@ -1451,6 +1460,15 @@ gboolean	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self)
 						PITIVI_PROJECTWINDOWS(self)->project->sources,
 						self->private->treepath,
 						i);
+  if (sf->infoaudio)
+    if (sf->infovideo) {
+      extract_audio_video_pipelines(sf);
+    } else {
+      sf->pipeline_audio = sf->pipeline;
+    }
+  else
+    sf->pipeline_video = sf->pipeline;
+
   g_printf ("%d\n", sf->pipeline);
   sExempleTexte = g_malloc(12);
   sprintf(sExempleTexte, "exemple %d\0", i);
@@ -2357,8 +2375,8 @@ GtkWidget	*create_projectview(PitiviSourceListWindow *self)
                           self);
 
   gtk_paned_set_position(GTK_PANED(pHpaned), 200);
-  gtk_paned_pack1(GTK_PANED(pHpaned), pScrollbar, TRUE, FALSE);
-  gtk_paned_pack2(GTK_PANED(pHpaned), pScrollbar2, FALSE, FALSE);
+  gtk_paned_pack1(GTK_PANED(pHpaned), pScrollbar, FALSE, FALSE);
+  gtk_paned_pack2(GTK_PANED(pHpaned), pScrollbar2, TRUE, FALSE);
   
   return pHpaned;
 }

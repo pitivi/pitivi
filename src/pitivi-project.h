@@ -59,8 +59,10 @@ struct _PitiviProject
   PitiviProjectSourceList	*sources;
   gchar				*filename;
 
-  GstElement			*pipeline;
-  GnlTimeline			*timeline;
+  GstElement			*pipeline;	// project pipeline
+  GnlTimeline			*timeline;	// timeline
+  GnlGroup			*audiogroup;	// audio composition
+  GnlGroup			*videogroup;	// video composition
   
   /* private */
   PitiviProjectPrivate *private;
