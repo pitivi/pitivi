@@ -192,7 +192,7 @@ show_video_media (GtkWidget *widget, GdkEventExpose *event)
 }
 
 void
-show_transition_media (GtkWidget *widget, GdkEventExpose *event)
+show_effects_media (GtkWidget *widget, GdkEventExpose *event)
 {
   
   PitiviTimelineMedia	*self = PITIVI_TIMELINEMEDIA (widget);
@@ -201,7 +201,7 @@ show_transition_media (GtkWidget *widget, GdkEventExpose *event)
   
   src_pix = self->sourceitem->srcfile->thumbs_effect;
   if (!src_pix)
-    src_pix = gtk_widget_render_icon(widget->window, PITIVI_SMPTE_FAILED, GTK_ICON_SIZE_BUTTON, NULL);;
+    src_pix = gtk_widget_render_icon(widget, PITIVI_SMPTE_FAILED, GTK_ICON_SIZE_BUTTON, NULL);;
   scale_pix = gdk_pixbuf_scale_simple (src_pix, widget->allocation.width, GTK_WIDGET (self->private->cell)->allocation.height, GDK_INTERP_NEAREST);
   gdk_draw_pixbuf( widget->window, NULL, GDK_PIXBUF 
 		   (scale_pix), 0, 0, 0, 0, -1, -1, GDK_RGB_DITHER_MAX, 0, 0);
@@ -255,8 +255,9 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
     case PITIVI_VIDEO_TRACK:
       show_video_media (widget, event);
       break;
+    case PITIVI_EFFECTS_TRACK:
     case PITIVI_TRANSITION_TRACK:
-      show_transition_media (widget, event);
+      show_effects_media (widget, event);
       break;
     }
   if (self->selected)

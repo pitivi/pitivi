@@ -666,9 +666,14 @@ void
 create_effect_on_track (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf, int x)
 {
   PitiviTimelineMedia *media;
+  PitiviLayerType	type_track_cmp;
   
-  media = pitivi_timelinemedia_new (sf, self);
-  add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (media), x, 0);
+  type_track_cmp = check_media_type (sf);
+  if (self->track_type == type_track_cmp)
+    {
+      media = pitivi_timelinemedia_new (sf, self);
+      add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (media), x, 0);
+    }
 }
 
 void
@@ -718,7 +723,7 @@ pitivi_timelinecellrenderer_drag_on_effects (PitiviTimelineCellRenderer *self,
   sf = (PitiviSourceFile *) selection->data;
   if (sf)
     {
-      if (self->track_type == PITIVI_EFFECTS_TRACK || self->track_type == PITIVI_TRANSITION_TRACK)
+      if ((self->track_type == PITIVI_EFFECTS_TRACK || self->track_type == PITIVI_TRANSITION_TRACK))
 	create_effect_on_track (self, sf, x);
     }
 }

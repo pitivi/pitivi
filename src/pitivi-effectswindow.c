@@ -401,7 +401,7 @@ pitivi_effectswindow_drag_begin (GtkWidget		*widget,
   }
   gtk_tree_model_get (model, &iter, PITIVI_POINTER_COLUMN, &se, -1);
   self->private->dndse = se;
-  //  size = ((gint64)332671091277);
+  size = ((gint64)50000000000LL);
   slide_effects_info ( self, size, "transition" );
 }
 
@@ -411,57 +411,6 @@ pitivi_effectswindow_drag_begin (GtkWidget		*widget,
  *							      *
  **************************************************************/
 
-
-GList	*
-get_transition_effects_list (GstElementFactory		*factory)
-{
-  GstElementFactory		*trans_fact;
-  const gchar			*intern_name;
-  GParamSpec			**property_specs;
-  GParamSpec			*param;
-  GstElement			*element;
-  gboolean			readable;
-  GList				*fx_prop_list;
-  gint				num_properties;
-  gint				nb;
-  gint				*enum_values;
-  gint				i;
-
-  trans_fact = factory;
-  intern_name = "transition";
-  fx_prop_list = NULL;
-  if (trans_fact)
-    {
-      element = gst_element_factory_create(trans_fact, intern_name);  
-      property_specs = g_object_class_list_properties(G_OBJECT_GET_CLASS (element), &num_properties);
-      GValue value = { 0, };
-      param = property_specs[1];
-      readable = FALSE;
-      
-      g_value_init (&value, param->value_type);
-      if (param->flags & G_PARAM_READABLE)
-	{
-	  g_object_get_property (G_OBJECT (element), param->name, &value);
-	  readable = TRUE;
-	}
-      if (readable)
-	{		      
-	  if (G_IS_PARAM_SPEC_ENUM (param))
-	    {    
-	      GEnumClass *class = G_ENUM_CLASS (g_type_class_ref (param->value_type));
-	      enum_values = g_new0 (gint, class->n_values);
-	       
-	      for (i=0; i < class->n_values; i++)
-		{
-		  GEnumValue *evalue = &class->values[i];		  
-		  enum_values[i] = evalue->value;
-		  fx_prop_list = g_list_append(fx_prop_list, evalue);
-		}
-	    }
-	}
-    }
-  return(fx_prop_list);
-}
 
 void
 insert_video_effects_on_tree (PitiviEffectsTree *tree_effect, 
@@ -506,13 +455,24 @@ insert_video_effects_on_tree (PitiviEffectsTree *tree_effect,
 	    }
 	  else if ((idx = strstr (effectname, "ideo")))
 	    {
-	      pitivi_effectstree_insert_child (tree_effect, child, &video_iter[1],
-					       effectname + 6, PITIVI_STOCK_EFFECT_TV, NULL);
+	      pitivi_effectstree_insert_smpte (tree_effect, 
+					       &video_iter[1],
+					       &tree_effect->treeiter,
+					       effectname + 6,
+					       "effect", 
+					       PITIVI_STOCK_EFFECT_TV, 
+					       fx_video->data);
 	    }
 	  else
 	    {
-	      pitivi_effectstree_insert_child (tree_effect, child, &tree_effect->treeiter,
-					       effectname, PITIVI_STOCK_EFFECT_TV, NULL);
+	      
+	      pitivi_effectstree_insert_smpte (tree_effect, 
+					       child,
+					       &tree_effect->treeiter,
+					       effectname,
+					       "effect", 
+					       PITIVI_STOCK_EFFECT_TV, 
+					       fx_video->data);
 	    } 
 	}
       fx_video = fx_video->next;
@@ -542,8 +502,13 @@ insert_audio_effects_on_tree (PitiviEffectsTree *tree_effect,
       desc = gst_element_factory_get_description (fx_audio->data);
       if (!strncmp (klass, "Filter/Effect/Audio", 19))
 	{
-	  pitivi_effectstree_insert_child (tree_effect, child, &tree_effect->treeiter,
-					   effectname, PITIVI_STOCK_EFFECT_SOUND, NULL);
+	  pitivi_effectstree_insert_smpte (tree_effect, 
+					   child, 
+					   &tree_effect->treeiter,
+					   effectname,
+					   "effect", 
+					   PITIVI_STOCK_EFFECT_SOUND, 
+					   fx_audio->data);
 	}
       fx_audio = fx_audio->next;
     }
@@ -573,7 +538,11 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
       klass = gst_element_factory_get_klass ( fx_transition->data );
       effectname = gst_element_factory_get_longname (  fx_transition->data );
       desc = gst_element_factory_get_description (  fx_transition->data );
-      g_printf ("transition :%s %s\n", effectname, desc);
+      if (strstr (effectname, "SMPTE"))
+	{
+	  g_printf ("transition :%s %s\n", effectname, desc);
+	  break;
+	}
       fx_transition = fx_transition->next;
     }
 
@@ -593,7 +562,7 @@ insert_transition_effects_on_tree (PitiviEffectsTree *tree_effect,
 					       tab_category[nb].name,
 					       "transition",
 					       tab_category[nb].image,
-					       NULL);
+					       fx_transition->data);
 	    }
 	}
     }

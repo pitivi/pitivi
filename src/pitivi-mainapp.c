@@ -97,7 +97,7 @@ pitivi_mainapp_get_toolboxwindow(PitiviMainApp *self) {
 
 PitiviTimelineWindow *
 pitivi_mainapp_get_timelinewin(PitiviMainApp *self) {
-  return (PitiviWindows *) self->private->timelinewin;
+  return (PitiviTimelineWindow *) self->private->timelinewin;
 }
 
 PitiviViewerWindow *
