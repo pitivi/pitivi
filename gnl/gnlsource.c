@@ -32,8 +32,8 @@ GstElementDetails gnl_source_details = GST_ELEMENT_DETAILS
 
 struct _GnlSourcePrivate {
   gboolean	dispose_has_run;
-  gint64	seek_start;
-  gint64	seek_stop;
+  gint64	seek_start;	/* Beginning of seek in media_time */
+  gint64	seek_stop;	/* End of seek in media_time */
 };
 
 enum {
@@ -622,19 +622,10 @@ source_chainfunction (GstPad *pad, GstData *buf)
   if (GST_IS_BUFFER (buffer) && !source->queueing) {
     intime = GST_BUFFER_TIMESTAMP (buffer);
 
-    if (intime < object->media_start) {
-      GstFormat format = GST_FORMAT_TIME;
-      gint64 value = 0;
-      
-      gst_pad_convert (GST_PAD_PEER (pad), 
-		      GST_FORMAT_BYTES, GST_BUFFER_SIZE (buffer),
-		      &format, &value);
-
-      if (value + intime < object->media_start) {
+    if ((intime < object->media_start) && (GST_BUFFER_DURATION (buffer) + intime < object->media_start)) {
 	GST_INFO ("buffer doesn't start/end before source start, unreffing buffer");
         gst_buffer_unref (buffer);
         return;
-      }
     }
     if (intime > object->media_stop) {
       gst_buffer_unref (buffer);
@@ -718,8 +709,10 @@ source_getfunction (GstPad *pad)
       else {
 	/* If data is buffer */
         GstClockTimeDiff outtime, intime;
+	gboolean	inlimits = FALSE;
 
         intime = GST_BUFFER_TIMESTAMP (buffer);
+	inlimits = gnl_media_to_object_time (object, intime, &outtime);
 
 	/* check if buffer is outside seek range */
 	if ((GST_CLOCK_TIME_IS_VALID(source->private->seek_stop)
@@ -728,8 +721,7 @@ source_getfunction (GstPad *pad)
 	  gst_data_unref(GST_DATA(buffer));
 	  buffer = GST_BUFFER (gst_event_new (GST_EVENT_EOS));
 	  found = TRUE;
-	} else if ( (intime < source->private->seek_start) 
-		    || (!gnl_media_to_object_time (object, intime, &outtime))) {
+	} else if ((!inlimits) || (intime < source->private->seek_start)) {
 	  GST_WARNING ("buffer time is out of media/seek limits ! Dropping buffer");
 	  gst_data_unref (GST_DATA(buffer));
 	} else {
@@ -745,6 +737,9 @@ source_getfunction (GstPad *pad)
 		    GST_M_S_M(object->stop),
 		    GST_M_S_M(object->media_start),
 		    GST_M_S_M(object->media_stop));
+	  GST_INFO ("Seek was from %lld:%lld:%lld -> %lld:%lld:%lld",
+		    GST_M_S_M(source->private->seek_start),
+		    GST_M_S_M(source->private->seek_stop));
 	  
 	  GST_BUFFER_TIMESTAMP (buffer) = outtime;
 	  

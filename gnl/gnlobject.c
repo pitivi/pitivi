@@ -208,9 +208,13 @@ gnl_object_init (GnlObject *object)
 gboolean
 gnl_object_to_media_time (GnlObject *object, GstClockTime otime, GstClockTime *mtime)
 {
+  GST_DEBUG ("ObjectTime : %lld:%lld:%lld",
+	     GST_M_S_M(otime));
   if ((otime < object->start) || (otime >= object->stop))
     return FALSE;
   *mtime = otime + object->media_start - object->start;
+  GST_DEBUG ("Returning MediaTime : %lld:%lld:%lld",
+	     GST_M_S_M(*mtime));
   return TRUE;
 }
 
@@ -229,9 +233,13 @@ gnl_object_to_media_time (GnlObject *object, GstClockTime otime, GstClockTime *m
 gboolean
 gnl_media_to_object_time (GnlObject *object, GstClockTime mtime, GstClockTime *otime)
 {
+  GST_DEBUG ("MediaTime : %lld:%lld:%lld",
+	     GST_M_S_M(mtime));
   if ((mtime < object->media_start) || (mtime >= object->media_stop))
     return FALSE;
   *otime = mtime + object->start - object->media_start;
+  GST_DEBUG ("Returning ObjectTime : %lld:%lld:%lld",
+	     GST_M_S_M(*otime));
   return TRUE;
 }
 

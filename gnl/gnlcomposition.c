@@ -781,7 +781,7 @@ gnl_composition_prepare (GnlObject *object, GstEvent *event)
 
   gnl_composition_deactivate_childs (comp->active_objects);
   comp->active_objects = NULL;
-  
+
   /* Scbedule the entries from start_pos */
 
   res = gnl_composition_schedule_entries (comp, start_pos,
