@@ -96,6 +96,7 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 void
 pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
 {
+  GstElement	*colorspace;
 
   self->private->pipe = gst_thread_new ("PipeLPlayer");
   g_assert (self->private->pipe != NULL);
@@ -170,6 +171,7 @@ pitivi_lplayerwindow_constructor (GType type,
 				   construct_properties);
 
   /* do stuff. */
+  g_printf("lplayer creation !\n");
   PitiviLPlayerWindow *self = (PitiviLPlayerWindow *) obj;
 
   pitivi_lplayerwindow_create_gui (self);

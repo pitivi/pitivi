@@ -1971,7 +1971,7 @@ void	on_row_activated (GtkTreeView        *listview,
 	}
       return;
     }
-  g_signal_emit_by_name (self->private->timelinewin, "double-click-source", sf);
+  //g_signal_emit_by_name (self->private->timelinewin, "double-click-source", sf);
   //g_printf("get [%s]\n", sf->filename);
   //viewerwin = (PitiviViewerWindow*)pitivi_mainapp_get_viewerwin(window->mainapp);
   //pitivi_viewerwindow_set_source(viewerwin, sf);

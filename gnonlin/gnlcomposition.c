@@ -56,6 +56,8 @@ static GstClockTime 	gnl_composition_nearest_cover_func 	(GnlComposition *comp, 
 static gboolean 	gnl_composition_schedule_entries 	(GnlComposition *comp, GstClockTime start,
 								 GstClockTime stop, gint minprio, GstPad **pad);
 
+void	update_start_stop(GnlComposition *comp);
+
 struct _GnlCompositionEntry
 {
   GnlObject *object;
@@ -288,7 +290,6 @@ gnl_composition_find_object (GnlComposition *comp, GstClockTime time, GnlFindMet
   return NULL;
 }
 
-
 /*
   GnlCompositionEntry comparision function
 
@@ -372,6 +373,8 @@ gnl_composition_add_object (GnlComposition *comp, GnlObject *object)
   }
   
   comp->objects = g_list_insert_sorted (comp->objects, entry, _entry_compare_func);
+  // update start & stop
+  update_start_stop (comp);
 }
 
 static gint
@@ -603,12 +606,12 @@ probe_fired (GstProbe *probe, GstData **data, gpointer user_data)
     GNL_OBJECT (comp)->current_time = comp->next_stop;
   }
 
-  GST_INFO("current_time [%lld] -> [%lldH:%lldm:%llds:%lld]", 
+  GST_INFO("current_time [%lld] -> [%3lldH:%3lldm:%3llds:%3lld]", 
 	   GNL_OBJECT (comp)->current_time,
 	   GNL_OBJECT (comp)->current_time / (3600 * GST_SECOND),
-	   GNL_OBJECT (comp)->current_time / (60 * GST_SECOND),
-	   GNL_OBJECT (comp)->current_time / GST_SECOND,
-	   GNL_OBJECT (comp)->current_time / GST_MSECOND);
+	   GNL_OBJECT (comp)->current_time % (3600 * GST_SECOND) / (60 * GST_SECOND),
+	   GNL_OBJECT (comp)->current_time % (60 * GST_SECOND) / GST_SECOND,
+	   GNL_OBJECT (comp)->current_time % GST_SECOND / GST_MSECOND);
 
   return res;
 }
@@ -713,34 +716,67 @@ gnl_composition_nearest_cover_func (GnlComposition *comp, GstClockTime time, Gnl
 {
   GList			*objects = comp->objects;
   GstClockTime		last;
-
+  
   GST_INFO("Object:%s , Time[%lld], Direction:%d",
 	   gst_element_get_name(GST_ELEMENT(comp)),
 	   time, direction);
-
   
-  
-  while (objects) {
-    GnlCompositionEntry *entry = (GnlCompositionEntry *) (objects->data);
-    GstClockTime start;
-
-    gnl_object_get_start_stop (entry->object, &start, NULL);
-
-    GST_INFO("Object[%s] Start[%lld]",
-	     gst_element_get_name(GST_ELEMENT(entry->object)),
-	     start);
+  if (direction == GNL_DIRECTION_BACKWARD) {
+    GnlCompositionEntry	*entry;
+    GnlObject	*endobject = NULL;
     
-    if (start >= time) {
-      if (direction == GNL_DIRECTION_FORWARD)
-        return start;
-      else
-        return last;
+    /* 
+       Look for the last object whose stop is < time
+       return the stop time for that object
+    */
+    
+    for (objects = g_list_last(comp->objects); objects; objects = objects->prev) {
+      entry = (GnlCompositionEntry *) (objects->data);
+      
+      if (endobject) {
+	if (entry->object->stop < endobject->start)
+	  break;
+	if (entry->object->stop > endobject->stop)
+	  endobject = entry->object;
+      } else if (entry->object->stop < time)
+	endobject = entry->object;
+      // if theres a endobject
+      //   if the object ends later than the endobject it becomes the endobject
+      //   if the object ends earlier than the endobject->start break !
+      // else
+      //   if object->stop < time
+      //     it becomes the end object
     }
-    last = start;
-    
-    objects = g_list_next (objects);
+    if (endobject) {
+      GST_INFO("endobject [%lld]->[%lld]",
+	       endobject->start,
+	       endobject->stop);
+      return (endobject->stop);
+    } else
+      GST_INFO("no endobject");
+  } else {
+    GnlCompositionEntry *entry;
+    while (objects) {
+      entry = (GnlCompositionEntry *) (objects->data);
+      GstClockTime start;
+      
+      gnl_object_get_start_stop (entry->object, &start, NULL);
+      
+      GST_INFO("Object[%s] Start[%lld]",
+	       gst_element_get_name(GST_ELEMENT(entry->object)),
+	       start);
+      
+      if (start >= time) {
+	if (direction == GNL_DIRECTION_FORWARD)
+	  return start;
+	else
+	  return last;
+      }
+      last = start;
+      
+      objects = g_list_next (objects);
+    }
   }
-  
   
   return GST_CLOCK_TIME_NONE;
 }
@@ -764,23 +800,44 @@ static gboolean
 gnl_composition_query (GstElement *element, GstQueryType type,
 		       GstFormat *format, gint64 *value)
 {
-  gboolean res = TRUE;
+  gboolean res = FALSE;
 
   GST_INFO("Object:%s , Type[%d], Format[%d]",
 	   gst_element_get_name(element),
 	   type, *format);
 
-
-
   if (*format != GST_FORMAT_TIME)
     return res;
 
   switch (type) {
-    default:
-      res = GST_ELEMENT_CLASS (parent_class)->query (element, type, format, value);
+  GST_QUERY_TOTAL:
+    if (gst_element_get_state(element) < GST_STATE_PLAYING)
+      update_start_stop(GNL_COMPOSITION(element));
+  default:
+    res = GST_ELEMENT_CLASS (parent_class)->query (element, type, format, value);
       break;
   }
   return res;
+}
+
+/*
+  update_start_stop
+
+  Updates the composition's start and stop value
+*/
+
+void
+update_start_stop (GnlComposition *comp)
+{
+  GNL_OBJECT(comp)->start = gnl_composition_nearest_cover (comp, 0, GNL_DIRECTION_FORWARD);
+  if (GNL_OBJECT(comp)->start == GST_CLOCK_TIME_NONE)
+    GNL_OBJECT(comp)->start = 0;
+  GNL_OBJECT(comp)->stop = gnl_composition_nearest_cover (comp, G_MAXINT64, GNL_DIRECTION_BACKWARD);
+  if (GNL_OBJECT(comp)->stop == GST_CLOCK_TIME_NONE)
+    GNL_OBJECT(comp)->stop = G_MAXINT64;
+  GST_INFO("Start_pos:%lld, Stop_pos:%lld", 
+	   GNL_OBJECT(comp)->start, 
+	   GNL_OBJECT(comp)->stop); 
 }
 
 static GstElementStateReturn
@@ -792,15 +849,7 @@ gnl_composition_change_state (GstElement *element)
 
   switch (transition) {
     case GST_STATE_NULL_TO_READY:
-      GNL_OBJECT(comp)->start = gnl_composition_nearest_cover (comp, 0, GNL_DIRECTION_FORWARD);
-      if (GNL_OBJECT(comp)->start == GST_CLOCK_TIME_NONE)
-	GNL_OBJECT(comp)->start = 0;
-      GNL_OBJECT(comp)->stop = gnl_composition_nearest_cover (comp, G_MAXINT64, GNL_DIRECTION_BACKWARD);
-      if (GNL_OBJECT(comp)->stop == GST_CLOCK_TIME_NONE)
-	GNL_OBJECT(comp)->stop = G_MAXINT64;
-      GST_INFO("Start_pos:%lld, Stop_pos:%lld", 
-	       GNL_OBJECT(comp)->start, 
-	       GNL_OBJECT(comp)->stop);
+      update_start_stop(comp);
       break;
     case GST_STATE_READY_TO_PAUSED:
       GST_INFO ( "%s: 1 ready->paused", gst_element_get_name (GST_ELEMENT (comp)));
