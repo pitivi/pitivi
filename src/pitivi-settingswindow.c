@@ -398,7 +398,13 @@ pitivi_settingswindow_create_list_InOut (GList *element, gchar *path)
   for (tmp = NULL; element; element = g_list_next (element)) {
     factory = (GstElementFactory *) element->data;
     if (!strcmp (path, gst_element_factory_get_klass (factory))) {
-      tmp = g_list_append (tmp, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)));
+      //tmp = g_list_append (tmp, (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory)));
+      tmp = g_list_append (tmp, 
+			   g_strdup_printf ("%s [%s]", 
+					    (gchar *) gst_element_factory_get_longname (factory),
+					    (gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(factory))
+					    )
+			   );
     }
   }
 
