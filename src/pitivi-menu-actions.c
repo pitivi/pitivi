@@ -40,17 +40,22 @@ default_action (GtkAction *action, gpointer data )
 static void
 pitivi_callb_menufile_new ( GtkAction *action, gpointer data )
 {  
+  GtkWidget *win_new_project;
+  GtkWidget *srclistwin;
+
   /* New Project window */
-  //self->private->win_new_project = pitivi_newprojectwindow_new();
-  //gtk_widget_show_all ( GTK_WIDGET (self->private->win_new_project) );
+  win_new_project = pitivi_newprojectwindow_new();
+  gtk_widget_show_all ( GTK_WIDGET (win_new_project) );
+  
+  /* Source List Window */
+  srclistwin = pitivi_sourcelistwindow_new();
+  gtk_widget_show_all (GTK_WIDGET (srclistwin) ); 
+
 }
 
 static void
 pitivi_callb_menufile_open ( GtkAction *action, gpointer data )
 {
-  /* Source List Window */
-  //self->private->srclistwin = pitivi_sourcelistwindow_new();
-  //gtk_widget_show_all (GTK_WIDGET (self->private->srclistwin) ); 
 }
 
 static void
