@@ -40,7 +40,6 @@ main (int argc, char **argv)
  
   /* We create a PitiviMainApp */
   mainapp = pitivi_mainapp_new ();
-  
 
   /* And we start the fun */
   gtk_main ();

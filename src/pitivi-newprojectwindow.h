@@ -30,7 +30,11 @@
 /*
  * Potentially, include other headers on which this header depends.
  */
+
+#include <gst/gst.h>
 #include <gtk/gtk.h>
+
+#include "pitivi.h"
 #include "pitivi-effectswindow.h"
 #include "pitivi-toolboxwindow.h"
 #include "pitivi-timelinewindow.h"

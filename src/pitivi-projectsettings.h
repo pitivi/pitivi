@@ -52,6 +52,12 @@ typedef struct _PitiviMediaSettings PitiviMediaSettings;
 typedef struct _PitiviCategorieSettings PitiviCategorieSettings;
 typedef struct _PitiviSettingsValue PitiviSettingsValue;
 
+struct _PitiviCategorieSettings
+{
+  gchar		*name;
+  GSList	*list_settings;
+};
+
 struct _PitiviProjectSettings
 {
   GObject	parent;
@@ -65,10 +71,11 @@ struct _PitiviProjectSettings
   PitiviProjectSettingsPrivate	*private;
 };
 
-struct _PitiviProjectSettingsClass
+struct _PitiviMediaSettings
 {
-  GObjectClass parent;
-  /* class members */
+  gchar		*codec_factory_name;
+  GSList	*codec_settings;
+  GstCaps	*caps;
 };
 
 // Property
@@ -78,21 +85,14 @@ struct _PitiviSettingsValue
   GValue	value;
 };
 
-struct _PitiviMediaSettings
+struct _PitiviProjectSettingsClass
 {
-  gchar		*codec_factory_name;
-  GSList	*codec_settings;
-  GstCaps	*caps;
+  GObjectClass parent;
+  /* class members */
 };
 
-struct _PitiviCategorieSettings
-{
-  gchar		*name;
-  GSList	*list_settings;
-};
 
 /* used by PITIVI_PROJECTSETTINGS_TYPE */
-
 GType			pitivi_projectsettings_get_type (void);
 
 /*
@@ -100,5 +100,9 @@ GType			pitivi_projectsettings_get_type (void);
  */
 
 PitiviProjectSettings	*pitivi_projectsettings_new (void);
+PitiviProjectSettings	*pitivi_projectsettings_new_with_name(gchar *name, gchar *desc, GSList *list);
+
+GstCaps			*pitivi_projectsettings_vcaps_create ( int width, int height, int framerate );
+GstCaps			*pitivi_projectsettings_acaps_create ( int rate, int channel );
 
 #endif

@@ -194,7 +194,6 @@ pitivi_codecconfwindow_class_init (gpointer g_class, gpointer g_class_data)
   /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
   /*                                    pspec); */
 
-
 }
 
 GType

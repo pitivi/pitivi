@@ -30,6 +30,7 @@
  * Potentially, include other headers on which this header depends.
  */
 #include <gtk/gtk.h>
+
 /*
  * Type macros.
  */

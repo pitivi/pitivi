@@ -25,6 +25,27 @@
  * Boston, MA 02111-1307, USA.
  */
 
+
+
+/* Recuperation des caps */
+/*   pad_sink = gst_element_get_pad(element, "sink"); */
+/*   media_setting->caps = gst_pad_get_caps(pad_sink); */
+/*   g_print("Caps Sink:\n%s.\n", gst_caps_to_string (media_setting->caps)); */
+/*   pad_src = gst_element_get_pad(element, "src"); */
+/*   media_setting->caps = gst_pad_get_caps(pad_src); */
+/*   g_print("Caps Src:\n%s.\n", gst_caps_to_string (media_setting->caps)); */
+/*   media_setting->caps = gst_caps_new_simple ("my_caps", "audio/wav",  */
+/* 					     NULL); */
+
+
+/* 
+- Affichage des champs des Settings lorsqu'on clique sur un reglage de la liste
+- Modifier un reglage
+- Supprimer un reglage
+*/
+
+
+#include <gst/gst.h>
 #include "pitivi.h"
 #include "pitivi-mainapp.h"
 #include "pitivi-toolboxwindow.h"
@@ -46,96 +67,60 @@ struct _PitiviMainAppPrivate
 /*
  * forward definitions
  */
+void			pitivi_mainapp_add_newsetting		( PitiviMainApp	*self, PitiviProjectSettings *new_setting );
 GSList			*pitivi_mainapp_project_settings	( PitiviMainApp *self );
-PitiviCategorieSettings	*pitivi_create_new_categorie		( gchar *name, GSList *list_settings);
+
 
 /*
  * Insert "added-value" functions here
  */
-
 void
 pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
 {
   gtk_main_quit();
 }
 
-PitiviMediaSettings *
-pitivi_list_settings_make(gchar *codec_factory_name)
+/* 
+   Add 'new_setting' into the project_settings_list when 
+   the Add_button is clicked in the PitiviNewProjectWindow
+*/
+void
+pitivi_mainapp_add_newsetting(PitiviMainApp *self, 
+			      PitiviProjectSettings *new_setting)
 {
-  
-  return ;
-}
-
-PitiviSettingsValue *
-pitivi_list_media_settings_make(gchar *codec_factory_name)
-{
-  
-  return ;
-}
-
-PitiviCategorieSettings *
-pitivi_create_new_categorie(gchar *name, GSList *list_settings)
-{
+  GSList			*list;
+  PitiviMediaSettings	*media_temp;
   PitiviCategorieSettings	*categorie;
-  PitiviProjectSettings		*setting;
-  
-  categorie = g_new0(PitiviCategorieSettings, 1);
-  categorie->list_settings = NULL;
-
-  categorie->name = g_strdup(name);
-  categorie->list_settings = list_settings;
-  return (categorie);
-}
-
-GSList *
-pitivi_projectsettings_list_make()
-{
+  PitiviCategorieSettings	*selected_category;
   GSList			*list_categories;
-  GSList			*list_reglage;
-  GSList			*list_media_settings;
-  GSList			*list_settings;
+  GSList			*list_reglages;
+  PitiviProjectSettings		*reglage;
+  int				i;
+  int				j;
 
-/* Initialisation du debut de la liste des categories */
-  list_categories = NULL;
-  list_reglage = NULL;
-  list_settings = NULL;
-  list_media_settings = NULL;
+  list = self->private->project_settings_list ;
+  while ( g_slist_next(list) )
+    {
+      categorie = (PitiviCategorieSettings *) g_slist_nth_data(list, 0);
+      g_print( "CATEGORY NAME : %s.\n", categorie->name );
+      list = g_slist_next(list);
+    }
+  categorie = (PitiviCategorieSettings *) g_slist_nth_data(list, 0);
+  g_print( "SELECTED CATEGORY NAME : %s.\n", categorie->name );
   
-/* Categorie 1 */
-  
-/*   list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_list_media_settings_make("6Codec", "Y4mEncode") ); */
-/*   list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_list_media_settings_make("Y4mEncode", 720, 576) ); */
-/*   list_settings = g_slist_append(list_settings, (gpointer) list_settings_make() ); */
-  
-  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", "Description") );
-  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 48kHz", "Description") );
-  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 32kHz", "Description") );
-  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 48kHz", "Description") );
-  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("DV - NTSC", list_reglage) );
-  /***************/
-  
-/* Categorie 2 */
-  list_reglage = NULL;
-  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", "Description") );
-  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 48kHz", "Description") );
-  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 32kHz", "Description") );
-  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 48kHz", "Description") );
-  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("DV - PAL", list_reglage) );
-/***************/
+/* Pointeur vers la categorie selectionnee */
+  selected_category = (PitiviCategorieSettings *) list->data;
 
-/* Categorie 3 */
-  list_reglage = NULL;
-  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Multimedia Video", "Description") );
-  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Quicktime for Web", "Description") );
-  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Petit test", "Description") );
-  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("Custom Settings", list_reglage) );
-/***************/
-
-/* Categorie 4 */
-  list_reglage = NULL;
-  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("Personnal Settings", list_reglage) );
-
-  return (list_categories);
+/* Insertion du nouveau setting ctree dans la liste des settings */
+  selected_category->list_settings = g_slist_append( selected_category->list_settings,
+						     (gpointer) new_setting );
+  
+  for (i = 0; (reglage = g_slist_nth_data(selected_category->list_settings, i)) ; i++)
+    {
+      g_print( "\ti : %d, PitiviMainApp \n\tNAME SETTING : %s.\n\tDescription SETTING : %s.\n\n", i, reglage->name, reglage->description);
+      for (j = 0; (media_temp = (PitiviMediaSettings *) g_slist_nth_data(reglage->media_settings, j) ); j++)
+	g_print("\t\tCodec Name:%s\n\t\tCaps : %s.\n\n\n", media_temp->codec_factory_name, gst_caps_to_string(media_temp->caps) );
+    }
 }
 
 GSList *
@@ -143,6 +128,8 @@ pitivi_mainapp_project_settings(PitiviMainApp *self)
 {
   return ( self->private->project_settings_list );
 }
+
+
 
 PitiviMainApp *
 pitivi_mainapp_new (void)
@@ -177,7 +164,7 @@ pitivi_mainapp_constructor (GType type,
   self = (PitiviMainApp *) obj;
   /* Enregistrement des Icones */
   pitivi_stockicons_register ();
-  /* Creation de la liste des settings */
+  /* Creation de la liste des settings par default */
   self->private->project_settings_list = pitivi_projectsettings_list_make();
   /* Creation de la toolboxwindow */
   self->private->tbxwin = pitivi_toolboxwindow_new(self);
