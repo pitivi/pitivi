@@ -132,7 +132,7 @@ pitivi_settingswindow_cb_button (GtkWidget *widget, gpointer data)
 
   gtk_window_set_resizable (GTK_WINDOW (Dialog), FALSE);
 
-  Properties = pitivi_gstelementsettings_new 
+  Properties = pitivi_gstelementsettings_new_with_name 
     ((gchar *) gst_plugin_feature_get_name (GST_PLUGIN_FEATURE(elm)));
 
   gtk_container_add (GTK_CONTAINER (GTK_DIALOG(Dialog)->vbox),

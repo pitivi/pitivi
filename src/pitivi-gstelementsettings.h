@@ -80,7 +80,8 @@ GType pitivi_gstelementsettings_get_type (void);
  * Method definitions.
  */
 
-PitiviGstElementSettings	*pitivi_gstelementsettings_new(gchar *elm);
+PitiviGstElementSettings	*pitivi_gstelementsettings_new_with_name (gchar *elm);
+PitiviGstElementSettings	*pitivi_gstelementsettings_new_with_elm (GstElement *element);
 GList				*pitivi_gstelementsettings_get_list (PitiviGstElementSettings *self);
 GstElement			*pitivi_gstelementsettings_get_element (PitiviGstElementSettings *self);
 
