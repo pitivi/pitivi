@@ -88,47 +88,91 @@ GtkTreeStore	*pitivi_tree_create()
 
 /* pere 1*/
   gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "category 1", -1);
+  gtk_tree_store_set(tree, &pIter, 0, "DV - NTSC", -1);
+  
+/* fils 1*/
+  gtk_tree_store_append(tree, &pIter2, &pIter);
+  gtk_tree_store_set(tree, &pIter2, 0, "Standard 32kHz", -1);
 
 /* fils 1*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "Standard 48kHz", -1);
 
-/* pere 2*/
+/* fils 1*/
+  gtk_tree_store_append(tree, &pIter2, &pIter);
+  gtk_tree_store_set(tree, &pIter2, 0, "Widescreen 32kHz", -1);
+
+/* fils 1*/
+  gtk_tree_store_append(tree, &pIter2, &pIter);
+  gtk_tree_store_set(tree, &pIter2, 0, "Widescreen 48kHz", -1);
+
+
+/* pere 1*/
   gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "category 2", -1);
+  gtk_tree_store_set(tree, &pIter, 0, "DV - PAL", -1);
+
+/* fils 1*/
+  gtk_tree_store_append(tree, &pIter2, &pIter);
+  gtk_tree_store_set(tree, &pIter2, 0, "Standard 32kHz", -1);
 
 /* fils 2*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1);
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1);
-
-/* pere 3*/
-  gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "category 3", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "Standard 48kHz", -1);
 
 /* fils 3*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1);
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1);
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "setting 3", -1);
-
-/* pere 4*/
-  gtk_tree_store_append(tree, &pIter, NULL);
-  gtk_tree_store_set(tree, &pIter, 0, "category 4", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "Widescreen 32kHz", -1);
 
 /* fils 4*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "Widescreen 48kHz", -1);
+
+
+/* pere 1*/
+  gtk_tree_store_append(tree, &pIter, NULL);
+  gtk_tree_store_set(tree, &pIter, 0, "Custom Settings", -1);
+
+/* fils 1*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "Multimedia Video", -1);
+
+/* fils 1*/
   gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "setting 3", -1);
-  gtk_tree_store_append(tree, &pIter2, &pIter);
-  gtk_tree_store_set(tree, &pIter2, 0, "setting 4", -1);
+  gtk_tree_store_set(tree, &pIter2, 0, "Quicktime for Web", -1);
+
+
+
+/* /\* fils 2*\/ */
+/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
+/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1); */
+/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
+/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1); */
+
+/* /\* pere 3*\/ */
+/*   gtk_tree_store_append(tree, &pIter, NULL); */
+/*   gtk_tree_store_set(tree, &pIter, 0, "category 3", -1); */
+
+/* /\* fils 3*\/ */
+/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
+/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1); */
+/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
+/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1); */
+/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
+/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 3", -1); */
+
+/* /\* pere 4*\/ */
+/*   gtk_tree_store_append(tree, &pIter, NULL); */
+/*   gtk_tree_store_set(tree, &pIter, 0, "category 4", -1); */
+
+/* /\* fils 4*\/ */
+/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
+/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 1", -1); */
+/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
+/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 2", -1); */
+/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
+/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 3", -1); */
+/*   gtk_tree_store_append(tree, &pIter2, &pIter); */
+/*   gtk_tree_store_set(tree, &pIter2, 0, "setting 4", -1); */
 
   return (tree);
 }
@@ -314,9 +358,8 @@ pitivi_make_settings_table(GtkWidget *settings_table)
   name_text_settings = gtk_text_view_new_with_buffer (name_text_buffer);
   gtk_text_view_set_right_margin  (GTK_TEXT_VIEW(name_text_settings), 3);
   gtk_text_view_set_left_margin  (GTK_TEXT_VIEW(name_text_settings), 3);
-
   
-  /* Ajout du scrolling pour le champ texte */
+/* Ajout du scrolling pour le champ texte */
   name_scroll = gtk_scrolled_window_new(NULL, NULL);
   gtk_widget_set_usize (name_scroll, -1, 70);
   gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(name_scroll), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
@@ -434,6 +477,7 @@ pitivi_make_video_frame()
 /* champ texte "width" */
   size_width = gtk_entry_new();
   gtk_entry_set_width_chars (GTK_ENTRY(size_width), 5);
+  gtk_entry_set_text(GTK_ENTRY (size_width), "720");
   gtk_box_pack_start(GTK_BOX (size_hbox), size_width, FALSE, FALSE, 0);
 
 /* label "X" */
@@ -443,6 +487,7 @@ pitivi_make_video_frame()
 /* champ texte "height" */
   size_height = gtk_entry_new();
   gtk_entry_set_width_chars (GTK_ENTRY(size_height), 5);
+  gtk_entry_set_text(GTK_ENTRY(size_height), "576");
   gtk_box_pack_start(GTK_BOX (size_hbox), size_height, FALSE, FALSE, 0);
   
   gtk_table_attach(GTK_TABLE(video_table), size_hbox, 
@@ -455,9 +500,10 @@ pitivi_make_video_frame()
   
 /*   champ texte "Fps" */
   fps_text = gtk_entry_new();
+  gtk_entry_set_text(GTK_ENTRY(fps_text), "25");
   gtk_table_attach (GTK_TABLE(video_table), fps_text, 
 		    1, 2, 2, 3, GTK_EXPAND | GTK_FILL, FALSE, 140, 10);
- 
+  
 /*   Ajoute le tableau principale ds la frame "video" */
   gtk_container_add(GTK_CONTAINER(video_frame), video_table);
 
