@@ -30,6 +30,7 @@
 #include "pitivi-stockicons.h"
 #include "pitivi-projectsettings.h"
 #include "pitivi-newprojectwindow.h"
+#include "pitivi-settingswindow.h"
 
 static PitiviWindowsClass	*parent_class = NULL;
 
@@ -39,6 +40,7 @@ struct _PitiviToolboxWindowPrivate
   gboolean		dispose_has_run;
   GtkWidget		*vbox;
   PitiviToolbox		*toolbox;
+  PitiviSettingsWindow	*WinSettings;
 };
 
 /*
@@ -118,11 +120,26 @@ pitivi_toolboxwindow_cb_effectswindow_toggle( GtkAction *action, PitiviToolboxWi
 					gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action)));
 }
 
+void
+pitivi_callb_toolbox_settings ( GtkAction *action, PitiviToolboxWindow *self )
+{
+  PitiviMainApp *mainapp = ((PitiviWindows *) self)->mainapp;
+    
+  /* Global Settings */
+
+  if (!GTK_IS_WIDGET (self->private->WinSettings)) {
+    g_print ("Settings\n");
+    self->private->WinSettings = pitivi_settingswindow_new (mainapp);
+  }
+  return ;
+}
+
 static GtkActionEntry toolbox_menu_entries[] = {
   { "FileBoxMenu", NULL, "_File" },
   { "WindowsMenu", NULL, "_Windows" },
   { "FileBoxNew", PITIVI_STOCK_NEW_PROJECT, "Ne_w", "<control>N", "New File", G_CALLBACK (pitivi_callb_toolbox_filenew_project) },
   { "FileBoxOpen", GTK_STOCK_OPEN, "_Open", "<control>O", "Open a file",  G_CALLBACK (pitivi_callb_toolbox_fileopen_project) },
+  { "FileBoxSettings", GTK_STOCK_PREFERENCES, "_Settings", "<control>S", "Settings",  G_CALLBACK (pitivi_callb_toolbox_settings) },
   { "FileBoxExit", GTK_STOCK_QUIT, "E_xit", "<control>Q", "Exit the program", G_CALLBACK (pitivi_callb_toolbox_exit)},
 };
 
@@ -207,7 +224,7 @@ pitivi_toolboxwindow_instance_init (GTypeInstance * instance, gpointer g_class)
   /* initialize all public and private members to reasonable default values. */
   
   self->private->dispose_has_run = FALSE;
-  
+  self->private->WinSettings = NULL;
   /* If you need specific consruction properties to complete initialization, 
    * delay initialization completion until the property is set. 
    */

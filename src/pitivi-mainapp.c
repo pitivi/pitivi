@@ -310,7 +310,6 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
 
   gtk_window_get_size (GTK_WINDOW (self->private->tbxwin), &tmp1_w, &tmp1_h);
   gtk_window_move (GTK_WINDOW (self->private->tbxwin), 0, (height - (tmp1_h + (4 * BORDER) + tmp_h + BOTTOM2)));
-  //gtk_window_set_resizable (GTK_WINDOW (self->private->tbxwin), FALSE);
 }
 
 /*
