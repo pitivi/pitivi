@@ -50,6 +50,7 @@ typedef struct _PitiviProjectSettingsPrivate PitiviProjectSettingsPrivate;
 
 typedef struct _PitiviMediaSettings PitiviMediaSettings;
 typedef struct _PitiviCategorieSettings PitiviCategorieSettings;
+typedef struct _PitiviSettingsValue PitiviSettingsValue;
 
 struct _PitiviProjectSettings
 {
@@ -70,6 +71,7 @@ struct _PitiviProjectSettingsClass
   /* class members */
 };
 
+// Property
 struct _PitiviSettingsValue
 {
   gchar		*name;

@@ -36,7 +36,7 @@ struct _PitiviSourceBin
 struct _PitiviProjectSourceListPrivate
 {
   /* instance private members */
-  gboolean	dispose_has_run;
+  gboolean		dispose_has_run;
   GSList		*bin_tree;
 };
 

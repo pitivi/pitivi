@@ -57,6 +57,20 @@ pitivi_mainapp_destroy(GtkWidget *pWidget, gpointer pData)
   gtk_main_quit();
 }
 
+PitiviMediaSettings *
+pitivi_list_settings_make(gchar *codec_factory_name)
+{
+  
+  return ;
+}
+
+PitiviSettingsValue *
+pitivi_list_media_settings_make(gchar *codec_factory_name)
+{
+  
+  return ;
+}
+
 PitiviCategorieSettings *
 pitivi_create_new_categorie(gchar *name, GSList *list_settings)
 {
@@ -75,40 +89,49 @@ GSList *
 pitivi_projectsettings_list_make()
 {
   GSList			*list_categories;
+  GSList			*list_reglage;
+  GSList			*list_media_settings;
   GSList			*list_settings;
 
 /* Initialisation du debut de la liste des categories */
   list_categories = NULL;
+  list_reglage = NULL;
   list_settings = NULL;
+  list_media_settings = NULL;
   
 /* Categorie 1 */
-  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", "Description") );
-  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Standard 48kHz", "Description") );
-  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 32kHz", "Description") );
-  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 48kHz", "Description") );
-  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("DV - NTSC", list_settings) );
+  
+/*   list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_list_media_settings_make("6Codec", "Y4mEncode") ); */
+/*   list_media_settings = g_slist_append(list_media_settings, (gpointer) pitivi_list_media_settings_make("Y4mEncode", 720, 576) ); */
+/*   list_settings = g_slist_append(list_settings, (gpointer) list_settings_make() ); */
+  
+  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", "Description") );
+  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 48kHz", "Description") );
+  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 32kHz", "Description") );
+  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 48kHz", "Description") );
+  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("DV - NTSC", list_reglage) );
   /***************/
   
 /* Categorie 2 */
-  list_settings = NULL;
-  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", "Description") );
-  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Standard 48kHz", "Description") );
-  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 32kHz", "Description") );
-  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 48kHz", "Description") );
-  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("DV - PAL", list_settings) );
+  list_reglage = NULL;
+  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 32kHz", "Description") );
+  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Standard 48kHz", "Description") );
+  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 32kHz", "Description") );
+  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Widescreen 48kHz", "Description") );
+  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("DV - PAL", list_reglage) );
 /***************/
 
 /* Categorie 3 */
-  list_settings = NULL;
-  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Multimedia Video", "Description") );
-  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Quicktime for Web", "Description") );
-  list_settings = g_slist_append(list_settings, (gpointer) pitivi_projectsettings_new_with_name("Petit test", "Description") );
-  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("Custom Settings", list_settings) );
+  list_reglage = NULL;
+  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Multimedia Video", "Description") );
+  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Quicktime for Web", "Description") );
+  list_reglage = g_slist_append(list_reglage, (gpointer) pitivi_projectsettings_new_with_name("Petit test", "Description") );
+  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("Custom Settings", list_reglage) );
 /***************/
 
 /* Categorie 4 */
-  list_settings = NULL;
-  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("Personnal Settings", list_settings) );
+  list_reglage = NULL;
+  list_categories = g_slist_append(list_categories, (gpointer) pitivi_create_new_categorie("Personnal Settings", list_reglage) );
 
   return (list_categories);
 }

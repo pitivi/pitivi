@@ -74,6 +74,6 @@ GType			pitivi_newprojectwindow_get_type (void);
  * Method definitions.
  */
 
-PitiviNewProjectWindow	*pitivi_newprojectwindow_new(PitiviMainApp *main_app);
+PitiviNewProjectWindow	*pitivi_newprojectwindow_new(PitiviMainApp *mainapp);
 
 #endif

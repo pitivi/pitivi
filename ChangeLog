@@ -1,3 +1,11 @@
+2004-05-15    <ez3kiel@localhost>
+
+	* src/pitivi-newprojectwindow.c (pitivi_newprojectwindow_new): Passage du parametre PitiviMainApp a la PitiviNewprojectWindow
+
+	* src/pitivi-toolboxwindow.c (pitivi_toolboxwindow_new): Passage du parametre PitiviMainApp a la PitiviToolboxWindow
+
+	* src/pitivi-mainapp.c (pitivi_projectsettings_list_make): creation de la liste des PitiviProjectSettings dans le fichier mainapp
+
 2004-05-10    <cracoucas42@localhost>
 
 	* src/pitivi-newprojectwindow.c: Affichage de la description correspondant a la categorie ou sous-categorie selectionnee dans l arbre des pre-reglages

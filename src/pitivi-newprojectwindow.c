@@ -58,27 +58,39 @@ struct _PitiviNewProjectWindowPrivate
   GtkTreeIter		pIter;
   GtkTreeIter		pIter2;
 
-
   /* Custom Settings */
   GtkWidget		*name_text;
-  GtkWidget		*button_add;
-  GtkWidget		*button_mod;
-  GtkWidget		*button_del;
   GtkTextBuffer		*name_text_buffer;
   GtkTextBuffer		*preset_text_buffer;
   GtkTextIter		start_description_iter;
   GtkTextIter		end_description_iter;
   GtkWidget		*name_text_settings;
   GtkWidget		*name_scroll;
+
+  /* Codecs Videos */
+  GtkWidget		*video_combo_codec;
+  GList			*video_codec_list;
+  GtkWidget		*size_width;
+  GtkWidget		*size_height;
+  GtkWidget		*fps_text;
+  gchar			**video_tabname;
+
+  /* Codecs Audio */
+  GtkWidget		*audio_combo_codec;
+  GtkWidget		*audio_combo_freq;
+  GList			*audio_codec_list;
+  gchar			**audio_tabname;
+
+  /* Category */
   GtkWidget		*cat_text;
+
+  /* Buttons */
   GtkWidget		*cat_but_add;
   GtkWidget		*cat_but_del;
-  GtkWidget		*video_combo_codec;
-  GtkWidget		*audio_combo_codec;
-  GList			*video_codec_list;
-  GList			*audio_codec_list;
-  gchar			**video_tabname;
-  gchar			**audio_tabname;
+  GtkWidget		*button_add;
+  GtkWidget		*button_mod;
+  GtkWidget		*button_del;
+
 };
 
 /*
@@ -91,7 +103,7 @@ GtkWidget	*pitivi_notebook_new		( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_presets_hbox	( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_create_presets_table	( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_settings_table	( PitiviNewProjectWindow	*self );
-GtkWidget	*pitivi_make_video_frame	( );
+GtkWidget	*pitivi_make_video_frame	( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_audio_frame	( );
 GtkWidget	*pitivi_make_name_frame		( PitiviNewProjectWindow	*self );
 GtkWidget	*pitivi_make_cat_frame		( PitiviNewProjectWindow	*self );
@@ -445,6 +457,7 @@ pitivi_make_settings_table(PitiviNewProjectWindow *self)
   
   /* Ligne 2 */
   video_frame = pitivi_make_video_frame(self);
+
   gtk_table_attach (GTK_TABLE(settings_table), video_frame, 
 		    0, 2, 1, 2, GTK_EXPAND | GTK_FILL, FALSE , 0, 0);
   
@@ -545,6 +558,7 @@ pitivi_make_name_frame(PitiviNewProjectWindow *self)
 GtkWidget*
 pitivi_make_cat_frame(PitiviNewProjectWindow *self)
 {
+
   GtkWidget		*cat_frame;
   GtkWidget		*cat_table;
   GtkWidget		*cat_but_hbox;
@@ -678,21 +692,21 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
   gtk_table_attach (GTK_TABLE(video_table), video_label_size, 
 		    0, 1, 1, 2, FALSE, FALSE, 5, 5);
   
-  /* champ texte "width" */
-  size_width = gtk_entry_new();
-  gtk_entry_set_width_chars (GTK_ENTRY(size_width), 5);
-  gtk_entry_set_text(GTK_ENTRY (size_width), "720");
-  gtk_box_pack_start(GTK_BOX (size_hbox), size_width, FALSE, FALSE, 0);
+/* champ texte "width" */
+  self->private->size_width = gtk_entry_new();
+  gtk_entry_set_width_chars (GTK_ENTRY(self->private->size_width), 5);
+  gtk_entry_set_text(GTK_ENTRY (self->private->size_width), "720");
+  gtk_box_pack_start(GTK_BOX (size_hbox), self->private->size_width, FALSE, FALSE, 0);
 
   /* label "X" */
   size_label_x = gtk_label_new("X");
   gtk_box_pack_start(GTK_BOX (size_hbox), size_label_x, FALSE, FALSE, 0);
 
-  /* champ texte "height" */
-  size_height = gtk_entry_new();
-  gtk_entry_set_width_chars (GTK_ENTRY(size_height), 5);
-  gtk_entry_set_text(GTK_ENTRY(size_height), "576");
-  gtk_box_pack_start(GTK_BOX (size_hbox), size_height, FALSE, FALSE, 0);
+/* champ texte "height" */
+  self->private->size_height = gtk_entry_new();
+  gtk_entry_set_width_chars (GTK_ENTRY(self->private->size_height), 5);
+  gtk_entry_set_text(GTK_ENTRY(self->private->size_height), "576");
+  gtk_box_pack_start(GTK_BOX (size_hbox), self->private->size_height, FALSE, FALSE, 0);
 
   /* pixel */
   resol_unit = gtk_label_new("pixel");
@@ -705,7 +719,6 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
   
   gtk_table_attach(GTK_TABLE(video_table), size_hbox, 
 		   1, 3, 1, 2, GTK_EXPAND | GTK_FILL, FALSE, 5, 5);
-
  
   /* rate hbox */
   vrate_hbox = gtk_hbox_new(FALSE, 5);
@@ -715,11 +728,13 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
   gtk_table_attach (GTK_TABLE(video_table), video_label_fps, 
 		    0, 1, 2, 3, FALSE, FALSE, 5, 5);
   
-  /*   champ texte "Fps" */
-  fps_text = gtk_entry_new();
-  gtk_entry_set_text(GTK_ENTRY(fps_text), "25");
-  gtk_entry_set_width_chars (GTK_ENTRY(fps_text), 14);
-  gtk_box_pack_start(GTK_BOX (vrate_hbox), fps_text, FALSE, FALSE, 0);
+
+/*   champ texte "Fps" */
+  self->private->fps_text = gtk_entry_new();
+  gtk_entry_set_text(GTK_ENTRY(self->private->fps_text), "25");
+  gtk_entry_set_width_chars (GTK_ENTRY(self->private->fps_text), 14);
+  gtk_box_pack_start(GTK_BOX (vrate_hbox), self->private->fps_text, FALSE, FALSE, 0);
+
   rate_unit = gtk_label_new("fps");
   gtk_box_pack_start(GTK_BOX (vrate_hbox), rate_unit, FALSE, FALSE, 0);
 
@@ -735,7 +750,7 @@ pitivi_make_video_frame(PitiviNewProjectWindow *self)
   gtk_container_add(GTK_CONTAINER(video_frame), video_table);
   gtk_container_set_border_width (GTK_CONTAINER (video_frame), 5);
 
-  return (video_frame);  
+  return (video_frame);
 }
  
 GtkWidget*
@@ -757,7 +772,7 @@ pitivi_make_audio_frame(PitiviNewProjectWindow *self)
   const gchar		*klass;
   const gchar		*name;
   const gchar		*short_name; 
- int			i;
+  int			i;
   int			j;
   int			nb_audiocodec;
 
@@ -890,7 +905,7 @@ create_codec_conf_video(GtkButton *button, gpointer user_data)
 
   /* nouvelle fenetre */
   video_codecwindow = g_new0(PitiviCodecConfWindow, 1);
-  video_codecwindow = pitivi_codecconfwindow_new();  
+  video_codecwindow = pitivi_codecconfwindow_new();
   gtk_window_set_position(GTK_WINDOW (video_codecwindow), GTK_WIN_POS_CENTER);
   gtk_window_set_modal(GTK_WINDOW(video_codecwindow), TRUE);
 
