@@ -27,6 +27,7 @@
 #include "pitivi-timelinecellrenderer.h"
 
 static GtkWidgetClass *parent_class = NULL;
+static GdkPixmap *pixmap = NULL;
 
 enum {
   PITIVI_TML_LAYER_AUDIO,
@@ -43,10 +44,14 @@ enum {
 struct _PitiviTimelineCellRendererPrivate
 {
   /* instance private members */
+ 
+  GList		medias;
   gboolean	dispose_has_run;
+  gboolean	selected;
   guint		cell_type;
   gint		width;
   gint		height;
+  
 };
 
 /*
@@ -107,6 +112,7 @@ pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_
   
   self->private->width  = FIXED_WIDTH;
   self->private->height = FIXED_HEIGHT;
+  self->private->selected = FALSE;
 }
 
 static void
@@ -256,11 +262,33 @@ pitivi_timelinecellrenderer_size_allocate (GtkWidget     *widget,
     }
 }
 
+static void draw_selection (GtkWidget *widget, int width, char dash[])
+{
+  GdkGC *style = gdk_gc_new ( widget->window );
+  gdk_gc_set_dashes ( style, 0, (gint8*)dash, sizeof (dash) / 2); 
+  gdk_gc_set_line_attributes ( style, width, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  gdk_draw_rectangle ( widget->window, style, FALSE, 0, 0, widget->allocation.width, widget->allocation.height);
+}
+
+static void draw_media (GtkWidget *widget, int start, int end)
+{
+  GdkGC *style = gdk_gc_new ( widget->window );
+  gdk_gc_set_line_attributes ( style, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  gdk_draw_rectangle ( widget->window, style, TRUE, start, 0, end, widget->allocation.height);
+}
+
+static void draw_media_area (GtkWidget *widget, GdkRectangle area)
+{
+  GdkGC *style = gdk_gc_new ( widget->window );
+  gdk_gc_set_line_attributes ( style, 1, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_MITER);
+  gdk_draw_rectangle ( widget->window, style, TRUE, area.x, area.y, area.width, area.height);
+}
 
 static gint
 pitivi_timelinecellrenderer_expose (GtkWidget      *widget,
 				    GdkEventExpose *event)
 {
+  char				dash [2] = {5, 4};
   PitiviTimelineCellRenderer	*cell = PITIVI_TIMELINECELLRENDERER (widget);
   gint				width, height;
   gint				x_offset, y_offset;
@@ -268,24 +296,66 @@ pitivi_timelinecellrenderer_expose (GtkWidget      *widget,
   GtkStateType			state;
   GtkShadowType			shadow;
   
-    if (GTK_WIDGET_HAS_FOCUS (widget))
-      state = GTK_STATE_ACTIVE;
-    else
-      state = GTK_STATE_NORMAL;
+  
+  if (GTK_WIDGET_HAS_FOCUS (widget))
+    state = GTK_STATE_ACTIVE;
+  else
+    state = GTK_STATE_NORMAL;
     
-    shadow = GTK_SHADOW_NONE;
-    gtk_paint_box (widget->style, widget->window,
-		   state, shadow,
-		   NULL, widget, "layer",
-		   0,
-		   0,
-		   widget->allocation.width,
-		   height);
-    
-    gtk_draw_hline (widget->style, (GdkWindow *)widget->window, state,  0, widget->allocation.width, FIXED_HEIGHT/2);
-    return FALSE;
+  shadow = GTK_SHADOW_NONE;
+  
+  gdk_draw_rectangle (widget->window,
+		      widget->style->dark_gc[GTK_STATE_NORMAL],
+		      TRUE, 0, 0,
+		      widget->allocation.width, height);
+  
+  gtk_draw_hline (widget->style, (GdkWindow *)widget->window, \
+		  state,  0, widget->allocation.width, FIXED_HEIGHT/2);    
+  
+  if ( cell->private->selected == TRUE )
+    {
+      draw_selection (widget, 2, dash);
+      draw_media ( widget, 20, 600);
+    }
+  return FALSE;
 }
 
+static gint
+pitivi_timelinecellrenderer_configure_event (GtkWidget *widget, GdkEventConfigure *event)
+{
+  if (pixmap)
+    gdk_pixmap_unref(pixmap);
+  
+  pixmap = gdk_pixmap_new (widget->window,
+			   widget->allocation.width,
+			   widget->allocation.height,
+			   -1);
+  
+}
+
+static gint
+pitivi_timelinecellrenderer_button_press_event (GtkWidget      *widget,
+						GdkEventButton *event)
+{
+  char dash [2] = {5, 4};
+  PitiviTimelineCellRenderer *cell;
+  GdkEventExpose ev;
+  gboolean retval;
+  
+  cell = PITIVI_TIMELINECELLRENDERER (widget);
+  if ( cell->private->selected  == FALSE)
+    {
+      cell->private->selected = TRUE;
+      draw_selection ( widget , 2, dash );
+      draw_media ( widget, 20, 600);
+    }
+  else
+    {
+      cell->private->selected = FALSE;
+      gtk_signal_emit_by_name (GTK_OBJECT (widget), "expose_event", &ev, &retval);
+    }
+  return FALSE;
+}
 
 static void
 pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
@@ -301,11 +371,13 @@ pitivi_timelinecellrenderer_class_init (gpointer g_class, gpointer g_class_data)
   gobject_class->finalize = pitivi_timelinecellrenderer_finalize;
   gobject_class->set_property = pitivi_timelinecellrenderer_set_property;
   gobject_class->get_property = pitivi_timelinecellrenderer_get_property;
-
+  
   widget_class->realize = pitivi_timelinecellrenderer_realize;
   widget_class->expose_event = pitivi_timelinecellrenderer_expose;
   widget_class->size_request = pitivi_timelinecellrenderer_size_request;
   widget_class->size_allocate = pitivi_timelinecellrenderer_size_allocate;
+  widget_class->configure_event = pitivi_timelinecellrenderer_configure_event;
+  widget_class->button_press_event = pitivi_timelinecellrenderer_button_press_event;
   
   /* Install the properties in the class here ! */
   

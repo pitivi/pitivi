@@ -34,6 +34,8 @@
 #include <gst/play/play.h>
 
 static     PitiviProjectWindowsClass *parent_class;
+static	   GdkPixmap *pixmap = NULL;
+
 
 enum {
   PLAY,
@@ -128,9 +130,41 @@ get_image (gpointer data, char **im_name)
 						  NULL,
 						  im_name);
   pixmapw = gtk_image_new_from_pixmap (pixmap, mask);
-
   return pixmapw;
 }  
+
+static gint pitivi_viewerwindow_configure_event( GtkWidget         *widget,
+						 GdkEventConfigure *event )
+{
+  if (pixmap)
+    g_object_unref (pixmap);
+
+  pixmap = gdk_pixmap_new (widget->window,
+			   widget->allocation.width,
+			   widget->allocation.height,
+			   -1);
+  gdk_draw_rectangle (pixmap,
+		      widget->style->black_gc,
+		      TRUE,
+		      0, 0,
+		      widget->allocation.width,
+		      widget->allocation.height);
+  return TRUE;
+}
+
+static gint pitivi_viewerwindow_expose_event( GtkWidget      *widget,
+					      GdkEventExpose *event )
+{
+  gdk_draw_drawable (widget->window,
+		     widget->style->fg_gc[GTK_WIDGET_STATE (widget)],
+		     pixmap,
+		     event->area.x, event->area.y,
+		     event->area.x, event->area.y,
+		     event->area.width, event->area.height);
+  return FALSE;
+}
+
+
 
 void
 create_gui (gpointer data)
@@ -144,9 +178,21 @@ create_gui (gpointer data)
 
   // Create Video Display (Drawing Area)
   self->private->video_area = gtk_drawing_area_new ();
-  //gtk_widget_set_size_request (self->private->video_area, 320, 240);
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->video_area, TRUE, TRUE, 0);
+  /* Signals used to handle backing pixmap */
 
+  g_signal_connect (G_OBJECT (self->private->video_area), "expose_event",
+		    G_CALLBACK (pitivi_viewerwindow_expose_event), NULL);
+  g_signal_connect (G_OBJECT (self->private->video_area), "configure_event",
+		    G_CALLBACK (pitivi_viewerwindow_configure_event), NULL);
+
+  gtk_widget_set_events (self->private->video_area, GDK_EXPOSURE_MASK
+			 | GDK_LEAVE_NOTIFY_MASK
+			 | GDK_BUTTON_PRESS_MASK
+			 | GDK_POINTER_MOTION_MASK
+			 | GDK_POINTER_MOTION_HINT_MASK);
+
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->video_area, TRUE, TRUE, 0);
+  
   // Create hbox for toolbar
   self->private->toolbar = gtk_hbox_new (FALSE, FALSE);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->toolbar, FALSE, TRUE, 0);
@@ -191,7 +237,8 @@ create_gui (gpointer data)
                       GTK_SIGNAL_FUNC (video_stop), self);
   gtk_box_pack_start (GTK_BOX (self->private->toolbar),
 		      self->private->button_stop, FALSE, TRUE, 0);
- 
+
+  
   return;
 }
 
