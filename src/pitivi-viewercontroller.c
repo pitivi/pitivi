@@ -24,8 +24,11 @@
  */
 
 #include "pitivi.h"
+#include <gtk/gtk.h>
+#include "pitivi-stockicons.h"
+#include "pitivi-viewervolume.h"
 #include "pitivi-viewercontroller.h"
-#include "pitivi-viewerwindow.h"
+
 
 enum {
   PITIVI_VIEWER_BUTTON_REWARD = 1,
@@ -75,7 +78,9 @@ pitivi_viewercontroller_new (PitiviViewerWindow *viewer)
 {
   PitiviViewerController	*viewercontroller;
 
-  viewercontroller = (PitiviViewerController *) g_object_new(PITIVI_VIEWERCONTROLLER_TYPE, NULL);
+  viewercontroller = (PitiviViewerController *) g_object_new(PITIVI_VIEWERCONTROLLER_TYPE, 
+							     "mainapp", ((PitiviWindows *)viewer)->mainapp,
+							     NULL);
   viewercontroller->private->viewer = viewer;
   g_assert(viewercontroller != NULL);
   return viewercontroller;
@@ -394,7 +399,7 @@ pitivi_viewercontroller_get_type (void)
 	0,			/* n_preallocs */
 	pitivi_viewercontroller_instance_init	/* instance_init */
       };
-      type = g_type_register_static (GTK_TYPE_WINDOW,
+      type = g_type_register_static (PITIVI_WINDOWS_TYPE,
 				     "PitiviViewerControllerType", &info, 0);
     }
 

@@ -30,10 +30,8 @@
  * Potentially, include other headers on which this header depends.
  */
 
-#include <gtk/gtk.h>
-#include "pitivi-stockicons.h"
-#include "pitivi-viewervolume.h"
-
+#include "pitivi-windows.h"
+#include "pitivi-viewerwindow.h"
 
 /*
  * Type macros.
@@ -52,7 +50,7 @@ typedef struct _PitiviViewerControllerPrivate PitiviViewerControllerPrivate;
 
 struct _PitiviViewerController
 {
-  GtkWindow parent;
+  PitiviWindows parent;
 
   /* instance public members */
 
@@ -62,7 +60,7 @@ struct _PitiviViewerController
 
 struct _PitiviViewerControllerClass
 {
-  GtkWindowClass parent;
+  PitiviWindowsClass parent;
   /* class members */
 };
 
@@ -73,6 +71,6 @@ GType pitivi_viewercontroller_get_type (void);
  * Method definitions.
  */
 
-PitiviViewerController	*pitivi_viewercontroller_new ( );
+PitiviViewerController	*pitivi_viewercontroller_new ( PitiviViewerWindow *viewer );
 
 #endif

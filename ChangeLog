@@ -1,5 +1,11 @@
 2004-06-26    <bilboed@rider.bilboed.homelinux.org>
 
+	* src/pitivi-viewercontroller.c: 
+	* src/pitivi-viewercontroller.h: Converted PitiviViewerController to derivate of PitiviWindows
+
+	* src/pitivi-viewerwindow.c:
+	* src/pitivi-viewerwindow.h: Converted PitiviViewerWindow to derivate of PitiviWindows
+
 	* src/pitivi-sourcelistwindow.c: 
 	* src/pitivi-sourcelistwindow.h: Converted PitiviSourceListWindow to derivate of PitiviProjectWindows
 

@@ -30,13 +30,9 @@
  * Potentially, include other headers on which this header depends.
  */
 
-#include <gst/xoverlay/xoverlay.h>
-#include <gst/play/play.h>
 #include <gst/gst.h>
 #include <gtk/gtk.h>
-#include <gdk/gdkx.h>
-#include "pitivi-stockicons.h"
-#include "pitivi-viewercontroller.h"
+#include "pitivi-projectwindows.h"
 
 /*
  * Type macros.
@@ -66,7 +62,7 @@ enum PITIVI_GST_ELEMENT
 
 struct _PitiviViewerWindow
 {
-  GtkWindow parent;
+  PitiviWindows parent;
 
   /* instance public members */
   
@@ -80,7 +76,7 @@ struct _PitiviViewerWindow
 
 struct _PitiviViewerWindowClass
 {
-  GtkWindowClass parent;
+  PitiviWindowsClass parent;
   /* class members */
 };
 
@@ -91,6 +87,6 @@ GType pitivi_viewerwindow_get_type (void);
  * Method definitions.
  */
 
-PitiviViewerWindow	*pitivi_viewerwindow_new(void);
+PitiviViewerWindow	*pitivi_viewerwindow_new(PitiviMainApp *mainapp);
 
 #endif

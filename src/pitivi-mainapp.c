@@ -246,7 +246,7 @@ pitivi_mainapp_create_wintools (PitiviMainApp *self, PitiviProject *project)
   
   if (self->private->viewerwin == NULL)
     {
-      self->private->viewerwin = pitivi_viewerwindow_new();
+      self->private->viewerwin = pitivi_viewerwindow_new(self);
       gtk_window_move (GTK_WINDOW (self->private->viewerwin), 720, 100);
       gtk_signal_connect (GTK_OBJECT (self->private->viewerwin), "destroy"\
 			  , GTK_SIGNAL_FUNC (pitivi_mainapp_callb_viewer), self);

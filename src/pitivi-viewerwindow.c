@@ -25,6 +25,11 @@
 
 #include "pitivi.h"
 #include "pitivi-viewerwindow.h"
+#include <gst/xoverlay/xoverlay.h>
+#include <gst/play/play.h>
+#include <gdk/gdkx.h>
+#include "pitivi-stockicons.h"
+#include "pitivi-viewercontroller.h"
 
 static GtkWindowClass *parent_class = NULL;
 
@@ -49,11 +54,13 @@ struct _PitiviViewerWindowPrivate
  */
 
 PitiviViewerWindow *
-pitivi_viewerwindow_new(void)
+pitivi_viewerwindow_new(PitiviMainApp *mainapp)
 {
   PitiviViewerWindow *viewerwindow;
 
-  viewerwindow = (PitiviViewerWindow *) g_object_new(PITIVI_VIEWERWINDOW_TYPE, NULL);
+  viewerwindow = (PitiviViewerWindow *) g_object_new(PITIVI_VIEWERWINDOW_TYPE,
+						     "mainapp", mainapp,
+						     NULL);
   g_assert(viewerwindow != NULL);
   return viewerwindow;
 }
@@ -259,7 +266,7 @@ pitivi_viewerwindow_get_type (void)
 	0,			/* n_preallocs */
 	pitivi_viewerwindow_instance_init	/* instance_init */
       };
-      type = g_type_register_static (GTK_TYPE_WINDOW,
+      type = g_type_register_static (PITIVI_WINDOWS_TYPE,
 				     "PitiviViewerWindowType", &info, 0);
     }
 
