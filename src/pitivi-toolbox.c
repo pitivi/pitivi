@@ -236,6 +236,15 @@ cursor_change_resize (GtkRadioToolButton *radiobutton, PitiviToolbox *self)
  * Standard GObject functions
  */
 
+/**
+ * pitivi_toolbox_new: 
+ * @PitiviMainApp: The object referencing the application
+ *
+ * Creates a new element PitiviToolbox, the toolbox
+ *
+ * Returns: A element PitiviToolbox
+ */
+
 PitiviToolbox *
 pitivi_toolbox_new (PitiviMainApp *mainapp)
 {

@@ -124,7 +124,6 @@ enum {
 
 static  guint layoutsignals[LAST_SIGNAL] = {0};
 
-
 /*
  **********************************************************
  * Drag and drop  			                  *
@@ -147,6 +146,17 @@ static gint iNbTargetEntries = G_N_ELEMENTS (TargetEntries);
 
 /*
  * Insert "added-value" functions here
+ */
+
+/**
+ * pitivi_timelinecellrenderer_new:
+ * @guint: number of track
+ * @PitiviLayerType: type of track
+ * @PitiviTimelineWindow: the timeline window
+ * 
+ * Creates a new widget for an element TimelineCelleRenderer
+ *
+ * Returns: A widget containing an element PitiviTimelineCellRenderer
  */
 
 GtkWidget *
@@ -259,8 +269,16 @@ compare_track (gconstpointer a, gconstpointer b)
   return 0;
 }
 
+/**
+ * pitivi_calculate_priorities:
+ * @GtkWidget: the widget containing a media source
+ * 
+ * Calculates the priorities of the media sources
+ *
+ */
+
 void
-calculate_priorities ( GtkWidget *widget )
+pitivi_calculate_priorities ( GtkWidget *widget )
 {
   PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *)widget;
   PitiviTimelineMedia *media;
@@ -360,6 +378,18 @@ pitivi_layout_remove_from_composition(PitiviTimelineCellRenderer *self, PitiviTi
   Updates the position of the attached GnlSource
 */
 
+
+/**
+ * pitivi_layout_put:
+ * @GtkLayout: the layout to put the widgets into
+ * @GtkWidget: the widget to put into the layout
+ * @gint: the widget position in X 
+ * @gint: the widget position in Y 
+ * 
+ * Put a widget into a layout
+ *
+ */
+
 void
 pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
 {
@@ -369,7 +399,7 @@ pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
   widget->allocation.y = y;
   g_printf ("pitivi_layout_put x:%d y:%d TrackType:%d\n", x, y, PITIVI_TIMELINECELLRENDERER (layout)->track_type);
   gtk_layout_put ( layout, widget, x, y );
-  calculate_priorities (GTK_WIDGET (layout) );
+  pitivi_calculate_priorities (GTK_WIDGET (layout) );
 /*   if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout) */
 /*       && ((PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_AUDIO_TRACK) */
 /* 	  || (PITIVI_TIMELINECELLRENDERER(layout)->track_type == PITIVI_VIDEO_TRACK))){ */
@@ -406,7 +436,7 @@ pitivi_layout_move (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
   widget->allocation.x = x;
   widget->allocation.y = y;
   gtk_layout_move (layout, widget, x, y);
-  calculate_priorities ( GTK_WIDGET (layout) );
+  pitivi_calculate_priorities ( GTK_WIDGET (layout) );
   if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout)) {
     pitivi_timelinemedia_put (PITIVI_TIMELINEMEDIA(widget), 
 			      convert_pix_time(PITIVI_TIMELINECELLRENDERER(layout), x));
@@ -519,7 +549,20 @@ link_widgets ( PitiviTimelineMedia *media1, PitiviTimelineMedia *media2)
   media2->linked = GTK_WIDGET ( media1 );
 }
 
-int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
+/**
+ * pitivi_add_to_layout:
+ * @GtkWidget: the parent widget
+ * @GtkWidget: the child widget
+ * @gint: the position in x
+ * @gint: the position in y
+ *
+ * Add a widget to the layer
+ *
+ * Returns: A flag setted to TRUE
+ */
+
+gboolean
+pitivi_add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
 {
   PitiviTimelineCellRenderer *cell;
   GtkWidget **intersec;
@@ -551,7 +594,7 @@ int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
 
 
 PitiviLayerType
-check_media_type_str (gchar *media)
+pitivi_check_media_type_str (gchar *media)
 {
   if (strstr  (media, "effect"))
     return (PITIVI_EFFECTS_TRACK);
@@ -567,8 +610,17 @@ check_media_type_str (gchar *media)
   return (PITIVI_NO_TRACK);
 }
 
+/**
+ * pitivi_check_media_type:
+ * @PitiviSourceFilet: The list of media sources
+ *
+ * Check the type of the media
+ *
+ * Returns: The type of the media or PITIVI_NO_TRACK
+ */
+
 PitiviLayerType
-check_media_type (PitiviSourceFile *sf)
+pitivi_check_media_type (PitiviSourceFile *sf)
 {
   PitiviLayerType layer;
   gchar *media;
@@ -578,13 +630,22 @@ check_media_type (PitiviSourceFile *sf)
       if (sf->mediatype)
 	{
 	  media = g_strdup (sf->mediatype);
-	  layer = check_media_type_str (media);
+	  layer = pitivi_check_media_type_str (media);
 	  g_free (media);
 	  return layer;
 	}
     }
   return (PITIVI_NO_TRACK);
 }
+
+/**
+ * pitivi_getcursor_id:
+ * @GtkWidget: the parent widget to put the cursor into
+ * 
+ * Get the cursor by id
+ *
+ * Returns: An element PitiviCursor, the cursor
+ */
 
 PitiviCursor *
 pitivi_getcursor_id (GtkWidget *widget)
@@ -863,8 +924,8 @@ create_media_video_audio_track (PitiviTimelineCellRenderer *cell, PitiviSourceFi
   
   /* Putting on first Layout */
   
-  add_to_layout ( GTK_WIDGET (cell), GTK_WIDGET (media[0]), x, 0);
-  add_to_layout ( GTK_WIDGET (cell->linked_track), GTK_WIDGET (media[1]), x, 0);
+  pitivi_add_to_layout ( GTK_WIDGET (cell), GTK_WIDGET (media[0]), x, 0);
+  pitivi_add_to_layout ( GTK_WIDGET (cell->linked_track), GTK_WIDGET (media[1]), x, 0);
   
   /* Linking widgets */
   
@@ -894,10 +955,10 @@ create_media_track (PitiviTimelineCellRenderer *self,
   media = pitivi_timelinemedia_new (sf, width, self);
   gtk_widget_show (GTK_WIDGET (media));
   if (invert) {
-    add_to_layout ( GTK_WIDGET (self->linked_track), GTK_WIDGET (media), x, 0);
+    pitivi_add_to_layout ( GTK_WIDGET (self->linked_track), GTK_WIDGET (media), x, 0);
     pitivi_layout_add_to_composition (PITIVI_TIMELINECELLRENDERER (self->linked_track), media);
   } else {
-    add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (media), x, 0);
+    pitivi_add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (media), x, 0);
     pitivi_layout_add_to_composition (self, media);
   }
 }
@@ -908,11 +969,11 @@ create_effect_on_track (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf, 
   PitiviTimelineMedia *media;
   PitiviLayerType	type_track_cmp;
   
-  type_track_cmp = check_media_type (sf);
+  type_track_cmp = pitivi_check_media_type (sf);
   if (self->track_type == type_track_cmp)
     {
       media = pitivi_timelinemedia_new (sf, self->private->slide_width, self);
-      add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (media), x, 0);
+      pitivi_add_to_layout ( GTK_WIDGET (self), GTK_WIDGET (media), x, 0);
       pitivi_layout_add_to_composition (self, media);
     }
 }
@@ -924,7 +985,7 @@ dispose_medias (PitiviTimelineCellRenderer *self, PitiviSourceFile *sf, int x)
 
   if (self->track_type != PITIVI_EFFECTS_TRACK && self->track_type != PITIVI_TRANSITION_TRACK)
     {
-      type_track_cmp = check_media_type (sf);
+      type_track_cmp = pitivi_check_media_type (sf);
       if (type_track_cmp == PITIVI_VIDEO_AUDIO_TRACK)
 	create_media_video_audio_track (self, sf, x);
       else
@@ -997,13 +1058,13 @@ pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self,
 	else
 	  {
 	    gtk_container_remove (GTK_CONTAINER (parent), GTK_WIDGET (source));
-	    add_to_layout (GTK_WIDGET (self),  source, x, 0);
+	    pitivi_add_to_layout (GTK_WIDGET (self),  source, x, 0);
 	    
 	    /* linked widget */
 	    
 	    GtkWidget *linked_ref = gtk_widget_ref (dragged->linked);
 	    gtk_container_remove (GTK_CONTAINER (parent->linked_track), dragged->linked);
-	    add_to_layout (GTK_WIDGET (self->linked_track), linked_ref, x, 0);
+	    pitivi_add_to_layout (GTK_WIDGET (self->linked_track), linked_ref, x, 0);
 	    gtk_widget_unref (linked_ref);
 	  }
 	pitivi_send_expose_event (self->linked_track);
@@ -1011,7 +1072,7 @@ pitivi_timelinecellrenderer_drag_on_track (PitiviTimelineCellRenderer *self,
       else /* Single Widget */
 	{
 	  GTK_CONTAINER_CLASS (parent_class)->remove (GTK_CONTAINER (parent), GTK_WIDGET (dragged));
-	  add_to_layout  (GTK_WIDGET (self),  GTK_WIDGET (dragged), x, 0);
+	  pitivi_add_to_layout  (GTK_WIDGET (self),  GTK_WIDGET (dragged), x, 0);
 	}
     }
 }
@@ -1122,17 +1183,41 @@ pitivi_timelinecellrenderer_drag_motion (GtkWidget          *widget,
  *							      *
  **************************************************************/
 
+/**
+ * pitivi_timelinecellrenderer_activate:
+ * @PitiviTimelineCellRenderer: the timelinecellrenderer
+ *
+ * Activates a layout
+ *
+ */
+
 void
 pitivi_timelinecellrenderer_activate (PitiviTimelineCellRenderer *self)
 {
   g_signal_emit_by_name (GTK_OBJECT (self), "activate");
 }
 
+/**
+ * pitivi_timelinecellrenderer_deactivate:
+ * @PitiviTimelineCellRenderer: the timelinecellrenderer
+ *
+ * Deactivates a layout
+ *
+ */
+
 void
 pitivi_timelinecellrenderer_deactivate (PitiviTimelineCellRenderer *self)
 {
   g_signal_emit_by_name (GTK_OBJECT (self), "deactivate");
 }
+
+/**
+ * pitivi_timelinecellrenderer_zoom_changed:
+ * @PitiviTimelineCellRenderer: the timelinecellrenderer
+ *
+ * Update the track with the new zoom settings
+ *
+ */
 
 void
 pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
@@ -1158,6 +1243,14 @@ pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
     }
   }
 }
+
+/**
+ * pitivi_setback_tracktype:
+ * @PitiviTimelineCellRenderer: the timelinecellrenderer
+ *
+ * Set the background of the widget
+ *
+ */
 
 void
 pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self )
@@ -1236,8 +1329,17 @@ pitivi_timecellrenderer_track_type ( PitiviTimelineCellRenderer *cell )
 void
 pitivi_timelinecellrenderer_rendering ( PitiviTimelineCellRenderer *cell )
 {
-  calculate_priorities ( GTK_WIDGET (cell) );
+  pitivi_calculate_priorities ( GTK_WIDGET (cell) );
 }
+
+/**
+ * pitivi_timelinecellrenderer_media_selected_ontrack:
+ * @PitiviTimelineCellRenderer: the timelinecellrenderer
+ *
+ * Update the selected media widget on the track
+ *
+ * Returns: A widget GtkWidget, or NULL if no widget is selected 
+ */
 
 GtkWidget *
 pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimelineCellRenderer *cell )
@@ -1340,7 +1442,7 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
 	  gtk_widget_show (GTK_WIDGET ( media[1] ));
 	}
       else
-	calculate_priorities ( GTK_WIDGET (container) );
+	pitivi_calculate_priorities ( GTK_WIDGET (container) );
       PitiviThumbs* thumb = pitivi_thumbs_new (PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile->filename, 
 					       G_OBJECT (media[0]),
 					       0);
@@ -1382,7 +1484,7 @@ pitivi_timelinecellrenderer_callb_delete_sf (PitiviTimelineCellRenderer *self, g
     }
   g_list_free (delete);
   g_list_free (child);
-  calculate_priorities ( GTK_WIDGET (self) );
+  pitivi_calculate_priorities ( GTK_WIDGET (self) );
 }
 
 
@@ -1402,7 +1504,7 @@ pitivi_timelinecellrenderer_callb_drag_source_begin (PitiviTimelineCellRenderer 
   len = slide->length;
   if (len > 0)
     self->private->slide_width = convert_time_pix (self, len);
-  type = check_media_type_str (slide->path);
+  type = pitivi_check_media_type_str (slide->path);
   if (type == PITIVI_VIDEO_AUDIO_TRACK)
     self->private->slide_both = TRUE;
 }
@@ -1444,7 +1546,7 @@ pitivi_timelinecellrenderer_key_delete (PitiviTimelineCellRenderer* self)
 	pitivi_layout_remove_from_composition (self, media);
       }
     }
-  calculate_priorities ( GTK_WIDGET (self) );
+  pitivi_calculate_priorities ( GTK_WIDGET (self) );
   g_list_free (child);
 }
 

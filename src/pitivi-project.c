@@ -58,8 +58,10 @@ struct _PitiviProjectPrivate
 
 
 /**
- * pitivi_project_new: Create an object for the new project
+ * pitivi_project_new: 
  * @PitiviProjectSettings: The object containing the project's settings 
+ *
+ * Create an object for the new project
  *
  * Returns: The PitiviProject
  */
@@ -80,8 +82,10 @@ pitivi_project_new (PitiviProjectSettings *settings)
 }
 
 /**
- * pitivi_project_from_file: Loads a PitiviProject from the given file filename
+ * pitivi_project_from_file: 
  * @const gchar: The filename of the file to be loaded  
+ *
+ * Loads a PitiviProject from the given file filename
  *
  * Returns: The loaded PitiviProject, or NULL if there's a problem
  */
@@ -129,9 +133,11 @@ pitivi_project_new_from_file (const gchar *filename)
 }
 
 /**
- * pitivi_project_restore_thyself: Restore the other properties of the PitiviProject
+ * pitivi_project_restore_thyself: 
  * @PitiviProject: A PitiviProject
  * @xmlNodePtr: A pointer on the xml file associated with the PitiviProject
+ *
+ * Restore the other properties of the PitiviProject
  *
  * Returns: Void
  */
@@ -158,8 +164,10 @@ pitivi_project_restore_thyself(PitiviProject *project, xmlNodePtr self)
 }
 
 /**
- * pitivi_project_save_thyself: Save the current project in a XMLDocument format
+ * pitivi_project_save_thyself: 
  * @PitiviProject: A PitiviProject
+ *
+ * Save the current project in a XMLDocument format
  *
  * Returns: Returns a pointer xmlDocPtr to the XMLDocument filled with the contents of the PitiviProject
  */
@@ -188,9 +196,11 @@ pitivi_project_save_thyself(PitiviProject *project)
 }
 
 /**
- * pitivi_project_save_to_file: Saves the given project to the file filename
+ * pitivi_project_save_to_file:
  * @PitiviProject: A PitiviProject
  * @const gchar: The filename of the file to save 
+ *
+ * Saves the given project to the file filename
  *
  * Returns: Returns TRUE if the file was saved properly, FALSE otherwise
  */
@@ -250,10 +260,12 @@ pitivi_project_save_to_file(PitiviProject *project, const gchar *filename)
 }
 
 /**
- * pitivi_project_set_video_output: Sets/Replaces the video output for the pipeline\n
+ * pitivi_project_set_video_output:
  * ONLY TO BE USED TO CHANGE THE VIDEO OUTPUT SINKS ! ! !
  * @PitiviProject: A PitiviProject
  * @GstElement: A Gstreamer element 
+ *
+ * Sets/Replaces the video output for the pipeline\n
  *
  * Returns: Void
  */
@@ -293,10 +305,12 @@ pitivi_project_set_video_output(PitiviProject *project, GstElement *output)
 }
 
 /**
- * pitivi_project_set_video_output: Sets/Replaces the audio output for the pipeline\n
+ * pitivi_project_set_video_output:
  * ONLY TO BE USED TO CHANGE THE AUDIO OUTPUT SINKS ! ! !
  * @PitiviProject: A PitiviProject
  * @GstElement: A Gstreamer element 
+ *
+ * Sets/Replaces the audio output for the pipeline\n
  *
  * Returns: Void
  */

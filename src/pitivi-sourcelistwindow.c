@@ -922,7 +922,7 @@ GtkWidget	*create_listview(PitiviSourceListWindow *self)
   self->private->listview = pListView;
 
   /* Creation du menu popup */
-  self->private->listmenu = create_menupopup(GTK_WIDGET (self), ListPopup, iNbListPopup);
+  self->private->listmenu = pitivi_create_menupopup(GTK_WIDGET (self), ListPopup, iNbListPopup);
 
   g_signal_connect_swapped(G_OBJECT(pListView), "button_press_event",
 			   G_CALLBACK(my_popup_handler), 
@@ -1022,7 +1022,7 @@ GtkWidget	*create_treeview(PitiviSourceListWindow *self)
   self->private->treeview = pTreeView;
 
   /* Creation du menu popup */
-  self->private->treemenu = create_menupopup (GTK_WIDGET (self), TreePopup, iNbTreePopup);
+  self->private->treemenu = pitivi_create_menupopup (GTK_WIDGET (self), TreePopup, iNbTreePopup);
 
   //g_printf("connect signal treeview 0x%x\n", pTreeView);
 
@@ -1198,11 +1198,11 @@ gboolean	my_popup_handler(gpointer data, GdkEvent *event,
 		      
 		      /* create menu for popup */
 		 
-		      pMenu = GTK_MENU(create_menupopup (GTK_WIDGET (self), ItemPopup, 
+		      pMenu = GTK_MENU(pitivi_create_menupopup (GTK_WIDGET (self), ItemPopup, 
 							 iNbItemPopup));
 		    }
 		  else
-		    pMenu = GTK_MENU(create_menupopup (GTK_WIDGET (self), BinPopup,
+		    pMenu = GTK_MENU(pitivi_create_menupopup (GTK_WIDGET (self), BinPopup,
 						       iNbBinPopup));
 		}
 	      else

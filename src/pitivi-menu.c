@@ -70,6 +70,16 @@ struct  _PitiviMenuPrivate
  * Insert "added-value" functions here
  */
 
+/**
+ * pitivi_menu_new:
+ * @GtkWidget: the widget containing the menu 
+ * @gchar: the menu name
+ *
+ * Creates a new menu
+ *
+ * Returns: A PitiviMenu, the menu
+ */
+
 PitiviMenu *
 pitivi_menu_new(GtkWidget *window, gchar *fname)
 {
@@ -99,9 +109,21 @@ pitivi_menu_constructor (GType type,
   return obj;
 }
 
-GtkWidget	*create_menupopup(GtkWidget *self, 
-				  GtkItemFactoryEntry *pMenuItem, 
-				  gint iNbMenuItem)
+/**
+ * pitivi_create_menupopup:
+ * @GtkWidget: the widget containing the menu 
+ * @GtkItemFactoryEntry: the different items of the menu
+ * @gint: the number of items
+ *
+ * Creates the menupopup
+ *
+ * Returns: A GtkWidget, the menupopup
+ */
+
+GtkWidget *
+pitivi_create_menupopup(GtkWidget *self, 
+			GtkItemFactoryEntry *pMenuItem, 
+			gint iNbMenuItem)
 {
   GtkWidget		*pMenu;
   GtkItemFactory	*pItemFactory;
@@ -211,6 +233,14 @@ pitivi_menu_set_property (GObject * object,
     }
 }
 
+/**
+ * pitivi_menu_configure:
+ * @GtkWidget: the widget containing the menu 
+ *
+ * Configure the menu
+ *
+ */
+
 void
 pitivi_menu_configure (PitiviMenu *self)
 {
@@ -235,6 +265,14 @@ pitivi_menu_configure (PitiviMenu *self)
     }
 }
 
+/**
+ * pitivi_menu_set_filename:
+ * @PitiviMenu: All references about the menu
+ * @const gchar: the menu filename
+ *
+ * Set the menu filename
+ *
+ */
 
 void
 pitivi_menu_set_filename (PitiviMenu *self, const gchar *filename)

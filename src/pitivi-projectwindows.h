@@ -72,6 +72,4 @@ GType pitivi_projectwindows_get_type (void);
  * Method definitions.
  */
 
-PitiviProjectWindows	*pitivi_projectwindows_new(void);
-
 #endif

@@ -47,18 +47,6 @@ struct _PitiviProjectWindowsPrivate
  * Insert "added-value" functions here
  */
 
-/* We cannot create PitiviProjectWindows directly, it's an interface */
-
-/* PitiviProjectWindows * */
-/* pitivi_projectwindows_new(void) */
-/* { */
-/*   PitiviProjectWindows	*projectwindows; */
-
-/*   projectwindows = (PitiviProjectWindows *) g_object_new(PITIVI_PROJECTWINDOWS_TYPE, NULL); */
-/*   g_assert(projectwindows != NULL); */
-/*   return projectwindows; */
-/* } */
-
 static GObject *
 pitivi_projectwindows_constructor (GType type,
 			     guint n_construct_properties,

@@ -96,9 +96,6 @@ GType pitivi_timelinemedia_get_type (void);
 
 PitiviTimelineMedia	*pitivi_timelinemedia_new ();
 
-void	draw_selection (GtkWidget *widget, int width, char **dash);
-void	draw_slide (GtkWidget *widget, int start, int end);
-
 void
 pitivi_timelinemedia_get_start_stop (PitiviTimelineMedia *media, gint64 *start, gint64 *stop);
 void
@@ -120,16 +117,6 @@ pitivi_timelinemedia_get_track (PitiviTimelineMedia *media);
  *							  *
  **********************************************************
 */
-
-void	pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *self, gpointer data);
-
-/* Menu */
-
-void	pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *self, gpointer data);
-void	pitivi_timelinemedia_callb_copied (PitiviTimelineMedia *self, gpointer data);
-void	pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *self, gpointer data);
-
-gint 
-compare_track (gconstpointer a, gconstpointer b);
-
+void
+pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *sel, gpointer dataf);
 #endif

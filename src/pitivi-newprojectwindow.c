@@ -426,6 +426,14 @@ pitivi_del_desc(GtkWidget *name_text_settings, GdkEventButton *event, gpointer u
 *  Personal Fonctions
 */
 
+/**
+ * pitivi_npw_select_first_setting:
+ * @PitiviNewProjectWindow: the project's window
+ *
+ * Select the default settings, the first
+ *
+ */
+
 void
 pitivi_npw_select_first_setting(PitiviNewProjectWindow *self)
 {
@@ -1504,6 +1512,15 @@ PitiviNewProjectWindow	*self;
 
 /* 
  * Object PitiviNewProject initialisation 
+ */
+
+/**
+ * pitivi_newprojectwindow_new:
+ * @mainapp: The #PitiviMainApp
+ *
+ * Creates a window for a new project
+ *
+ * Returns: A newly-allocated #PitiviNewProjectWindow
  */
 
 PitiviNewProjectWindow *

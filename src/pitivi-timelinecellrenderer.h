@@ -121,25 +121,18 @@ GType pitivi_timelinecellrenderer_get_type (void);
  */
 
 GtkWidget	*pitivi_timelinecellrenderer_new (guint track_nb, PitiviLayerType track_type, PitiviTimelineWindow *tw);
-
-void		pitivi_timelinecellrenderer_remove (GtkContainer *container, GtkWidget *child);
-
-void		pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
-
 PitiviCursor    *pitivi_getcursor_id (GtkWidget *widget);
+gboolean	pitivi_add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y);
 
-int		add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y);
-
-PitiviLayerType	check_media_type (PitiviSourceFile *sf);
+PitiviLayerType	pitivi_check_media_type (PitiviSourceFile *sf);
 /* Deactivation of signals */
 
 void		pitivi_timelinecellrenderer_activate (PitiviTimelineCellRenderer *self);
 void		pitivi_timelinecellrenderer_deactivate (PitiviTimelineCellRenderer *self);
-void		pitivi_timelinecellrenderer_deselection_ontracks (GtkWidget *widget, gboolean self_deselected);
 void		pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self);
 GtkWidget *	pitivi_timelinecellrenderer_media_selected_ontrack  ( PitiviTimelineCellRenderer *cell );
 void		pitivi_setback_tracktype ( PitiviTimelineCellRenderer *self );
 void		pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y);
-void		calculate_priorities ( GtkWidget *widget );
+void		pitivi_calculate_priorities ( GtkWidget *widget );
 
 #endif

@@ -749,7 +749,7 @@ pitivi_timelinewindow_dblclick (PitiviTimelineWindow *self, gpointer data)
     if (GTK_IS_LAYOUT (childlist->data))
       {
 	cell = childlist->data;
-	type = check_media_type (data);
+	type = pitivi_check_media_type (data);
 	if ((cell->track_type == type) || 
 	     ((cell->track_type == PITIVI_VIDEO_TRACK) 
 	      && type == PITIVI_VIDEO_AUDIO_TRACK))

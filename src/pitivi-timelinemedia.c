@@ -44,9 +44,14 @@ static	GtkWidgetClass	*parent_class = NULL;
  **********************************************************
 */
 
-void draw_media (GtkWidget *widget);
-void draw_media_expose (GtkWidget *widget);
-
+void
+draw_media (GtkWidget *widget);
+void 
+draw_media_expose (GtkWidget *widget);
+void
+draw_selection (GtkWidget *widget, int width, char **dash);
+void
+draw_slide (GtkWidget *widget, int start, int end);
 
 // Properties Enumaration
 
@@ -156,6 +161,17 @@ struct _PitiviTimelineMediaPrivate
   GdkPixmap	   *pixmapcache;
 };
 
+/**
+ * pitivi_timelinemedia_new:
+ * @PitiviSourceFile: the file source
+ * @int: the width of the source file
+ * @PitiviTimelineCellRenderer: the track to put the media into
+ *
+ * Creates a new element media
+ *
+ * Returns: An element PitiviTimelineMedia contening the media
+ */
+
 PitiviTimelineMedia *
 pitivi_timelinemedia_new ( PitiviSourceFile *sf, int width, PitiviTimelineCellRenderer *track )
 {
@@ -165,7 +181,7 @@ pitivi_timelinemedia_new ( PitiviSourceFile *sf, int width, PitiviTimelineCellRe
   g_printf("PitiviTimelineMedia new, sf = %p\n", sf);
   type = PITIVI_NO_TRACK;
   if (sf)
-    type = check_media_type (sf);
+    type = pitivi_check_media_type (sf);
   
   this = (PitiviTimelineMedia *) g_object_new(PITIVI_TIMELINEMEDIA_TYPE,
 						       "source_file",
@@ -204,11 +220,31 @@ pitivi_timelinemedia_update_tooltip (PitiviTimelineMedia *this)
   g_free(str);
 }
 
+/**
+ * pitivi_timelinemedia_get_start_stop:
+ * @PitiviTimelineMedia: the media
+ * @gint64: the begining of the media
+ * @gint64: the end of the media
+ *
+ * Get the begining and the end of a media in the timeline
+ *
+ */
+
 void
 pitivi_timelinemedia_get_start_stop (PitiviTimelineMedia *media, gint64 *start, gint64 *stop)
 {
   gnl_object_get_start_stop(media->sourceitem->gnlobject, start, stop);
 }
+
+/**
+ * pitivi_timelinemedia_set_start_stop:
+ * @PitiviTimelineMedia: the media
+ * @gint64: the begining of the media
+ * @gint64: the end of the media
+ *
+ * Set the begining and the end of a media in a timeline
+ *
+ */
 
 void
 pitivi_timelinemedia_set_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
@@ -216,6 +252,15 @@ pitivi_timelinemedia_set_start_stop (PitiviTimelineMedia *media, gint64 start, g
   gnl_object_set_start_stop (media->sourceitem->gnlobject, start, stop);
   pitivi_timelinemedia_update_tooltip(media);
 }
+
+/**
+ * pitivi_timelinemedia_put:
+ * @PitiviTimelineMedia: the media
+ * @gint64: the begining of the media
+ *
+ * Place the media in the timeline
+ *
+ */
 
 void
 pitivi_timelinemedia_put (PitiviTimelineMedia *media, gint64 start)
@@ -228,12 +273,31 @@ pitivi_timelinemedia_put (PitiviTimelineMedia *media, gint64 start)
   pitivi_timelinemedia_update_tooltip(media);
 }
 
+/**
+ * pitivi_timelinemedia_get_media_start_stop:
+ * @PitiviTimelineMedia: the media
+ * @gint64: the begining of the media
+ * @gint64: the end of the media
+ *
+ * Get media between the begining and the end selected
+ *
+ */
+
 void
 pitivi_timelinemedia_get_media_start_stop (PitiviTimelineMedia *media, gint64 *start, gint64 *stop)
 {
   gnl_object_get_media_start_stop (media->sourceitem->gnlobject, start, stop);
 }
 
+/**
+ * pitivi_timelinemedia_set_media_start_stop:
+ * @PitiviTimelineMedia: the media
+ * @gint64: the begining of the media
+ * @gint64: the end of the media
+ *
+ * Set media between the begining and the end selected
+ *
+ */
 
 void
 pitivi_timelinemedia_set_media_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
@@ -242,12 +306,30 @@ pitivi_timelinemedia_set_media_start_stop (PitiviTimelineMedia *media, gint64 st
   pitivi_timelinemedia_update_tooltip(media);
 }
 
+/**
+ * pitivi_timelinemedia_set_media_start_stop:
+ * @PitiviTimelineMedia: the media
+ * @gint: the priority
+ *
+ * Set the media priority
+ *
+ */
+
 void
 pitivi_timelinemedia_set_priority (PitiviTimelineMedia *media, gint priority)
 {
   gnl_object_set_priority (media->sourceitem->gnlobject, priority);
   pitivi_timelinemedia_update_tooltip (media);
 }
+
+/**
+ * pitivi_timelinemedia_get_track:
+ * @PitiviTimelineMedia: the media
+ *
+ * Get the track where the media is in
+ *
+ * Returns: A media widget
+ */
 
 GtkWidget *
 pitivi_timelinemedia_get_track (PitiviTimelineMedia *media)
@@ -696,7 +778,7 @@ pitivi_timelinemedia_button_press_event (GtkWidget      *widget,
 	}
       else
 	{
-	  this->private->menu = GTK_WIDGET (create_menupopup (widget, TimeItemPopup, iNbTimeItemPopup));
+	  this->private->menu = GTK_WIDGET (pitivi_create_menupopup (widget, TimeItemPopup, iNbTimeItemPopup));
 	  gtk_menu_popup(GTK_MENU (this->private->menu), NULL, NULL, NULL, NULL, event->button, event->time);
 	}
     }
@@ -838,6 +920,15 @@ pitivi_timelinemedia_callb_associate_effect (PitiviTimelineMedia *this, gpointer
     }
 }
 
+
+/**
+ * pitivi_timelinemedia_callb_destroy:
+ * @PitiviTimelineMedia: the media
+ *
+ * Destroy the media
+ *
+ */
+
 void
 pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *this, gpointer data)
 {
@@ -848,11 +939,11 @@ pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *this, gpointer data)
       if ( this->linked )
 	{
 	  gtk_container_remove (GTK_CONTAINER ( this->track->linked_track ), this->linked );
-	  calculate_priorities ( this->track->linked_track );
+	  pitivi_calculate_priorities ( this->track->linked_track );
 	}
       track = &(*GTK_WIDGET (this->track));
       gtk_container_remove (GTK_CONTAINER ( track ), GTK_WIDGET (this) );
-      calculate_priorities ( track );
+      pitivi_calculate_priorities ( track );
     }
 }
 
@@ -980,7 +1071,17 @@ pitivi_timelinemedia_get_type (void)
  **********************************************************
 */
 
-void	pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *this, gpointer data)
+/**
+ * pitivi_timelinemedia_callb_cut:
+ * @PitiviTimelineMedia: the media
+ * @gpointer: data which can be attached
+ * 
+ * Cut the media 
+ *
+ */
+
+void
+pitivi_timelinemedia_callb_cut (PitiviTimelineMedia *this, gpointer data)
 {
   if (!this->cutted)
     {
