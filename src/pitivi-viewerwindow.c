@@ -330,9 +330,9 @@ gboolean	idle_func_video (gpointer data)
     gst_x_overlay_set_xwindow_id
       ( GST_X_OVERLAY ( self->private->sink ),
 	GDK_WINDOW_XWINDOW ( self->private->video_area->window ) );
-    //gst_bin_iterate (GST_BIN (project->pipeline));
+    gst_bin_iterate (GST_BIN (project->pipeline));
   }
-  return FALSE;
+  return TRUE;
 }
 
 /*

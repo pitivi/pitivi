@@ -308,24 +308,20 @@ pitivi_project_blank_source(PitiviProject *project)
   
   /* take off the source */
   if (project->private->source) {
-    g_printf("removing source\n");
     gst_bin_remove(GST_BIN(project->pipeline), project->private->source);
     project->private->source = NULL;
   }
   if (!project->private->vst) {
-    g_printf("adding vsinkthread to pipeline\n");
     gst_bin_add(GST_BIN(project->pipeline),
 		project->private->vsinkthread);
     project->private->vst = TRUE;
   }
   if (project->private->ast) {
-    g_printf("removing asinkthread to pipeline\n");
     gst_bin_remove(GST_BIN(project->pipeline),
 		   project->private->asinkthread);
     project->private->ast = FALSE;
   }
   if (!project->private->vblankconn) {
-    g_printf("adding videoblank to pipeline and connecting it to vsinkthread\n");
     gst_bin_add(GST_BIN(project->pipeline),
 		project->private->videoblank);
     gst_element_link(project->private->videoblank, project->private->videoqueue);
@@ -384,6 +380,10 @@ pitivi_project_constructor (GType type,
     create container for timeline,
     Create audio&video groups and add them to the timeline
   */
+
+  project->private->vsinkthread = gst_thread_new("vsinkthread");
+  project->private->asinkthread = gst_thread_new("asinkthread");
+
   project->private->timelinepipe = gst_pipeline_new("timeline-pipe");
   project->private->audiogroup = gnl_group_new("audiogroup");
   project->private->videogroup = gnl_group_new("videogroup");
@@ -430,16 +430,13 @@ pitivi_project_instance_init (GTypeInstance * instance, gpointer g_class)
   self->sources = NULL; 
   self->filename = NULL;
 
-  self->pipeline = gst_thread_new("project-pipeline");
+  self->pipeline = gst_pipeline_new("project-pipeline");
   gst_element_set_state(self->pipeline, GST_STATE_READY);
 
   self->timeline = gnl_timeline_new("project-timeline");
 
   self->private->videoblank = gst_element_factory_make("videotestsrc", "videoblank");
   //self->private->audioblank = gst_element_factory_make("silence", "audioblank");
-
-  self->private->vsinkthread = gst_thread_new("vsinkthread");
-  self->private->asinkthread = gst_thread_new("asinkthread");
 
   self->private->vst = FALSE;
   self->private->ast = FALSE;
