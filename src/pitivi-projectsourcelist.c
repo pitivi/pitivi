@@ -369,7 +369,7 @@ pitivi_projectsourcelist_restore_thyself(PitiviProjectSourceList *SourceList, xm
 xmlNodePtr
 pitivi_projectsourcelist_save_thyself(PitiviProjectSourceList *self, xmlNodePtr parent)
 {
-  xmlNodePtr	selfptr, msetptr;
+  xmlNodePtr	selfptr, msetptr, binptr;
   GSList	*sourcelist;
   GSList	*binlist;
   GSList	*folderlist;
@@ -383,24 +383,21 @@ pitivi_projectsourcelist_save_thyself(PitiviProjectSourceList *self, xmlNodePtr 
   for (binlist = self->private->bin_tree; sourcelist; binlist = binlist->next) 
     {
       sourcebin = (PitiviSourceBin*) binlist->data;
-      xmlNewChild (selfptr, NULL, "name", sourcebin->bin_name);
+
+      binptr = xmlNewChild (selfptr, NULL, "bin", NULL);
+      xmlNewChild (binptr, NULL, "name", sourcebin->bin_name);
       
       
       /* list of source */
       for (sourcelist = sourcebin->source; sourcelist; sourcelist = sourcelist->next)
 	{
-	  msetptr = xmlNewChild(selfptr, NULL, "file", NULL);
+	  msetptr = xmlNewChild(binptr, NULL, "file", NULL);
 	  sourcefile = (PitiviSourceFile*)sourcelist->data;
 	  xmlNewChild (msetptr, NULL, "filename", sourcefile->filename);
-	  xmlNewChild (msetptr, NULL, "mediatype", sourcefile->mediatype);
-	  xmlNewChild (msetptr, NULL, "infovideo", sourcefile->infovideo);
-	  xmlNewChild (msetptr, NULL, "infoaudio", sourcefile->infoaudio);
-	  xmlNewChild (msetptr, NULL, "length", l64a(sourcefile->length));
-	  /* gst_xml_write(sourcefile->pipeline); */
 	}
       for (folderlist = sourcebin->child; folderlist; folderlist = folderlist->next)
 	{
-	  msetptr = xmlNewChild(selfptr, NULL, "folder", NULL);
+	  msetptr = xmlNewChild(binptr, NULL, "folder", NULL);
 	  childbin = (PitiviSourceBin*)folderlist->data;
 	  xmlNewChild (msetptr, NULL, "foldername", childbin->bin_name);
 	}
