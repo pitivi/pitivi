@@ -115,9 +115,6 @@ style "label"
   font = "-adobe-courier-bold-r-normal--18-*"
 }
 
-
-pixmap_path "~/.pixmaps"
-
 # These set the widget types to use the styles defined above.
 # The widget types are listed in the class hierarchy, but could probably be
 # just listed in this document for the users reference.
