@@ -60,7 +60,8 @@ struct _GnlComposition {
   GList			*objects;
 
   GstClockTime	 	 next_stop;
-  GList			*active_objects;
+  GList			*active_objects;	/* List of currently active objects */
+  GList			*to_remove;		/* List of objects to deactivate */
 };
 
 struct _GnlCompositionClass {

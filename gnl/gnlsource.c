@@ -748,8 +748,8 @@ source_getfunction (GstPad *pad)
     }
   }
   GST_INFO("END");
-  if (GST_IS_EVENT(buffer) && (GST_EVENT_TYPE (buffer) == GST_EVENT_EOS))
-    gnl_object_set_active(object, FALSE);
+/*   if (GST_IS_EVENT(buffer) && (GST_EVENT_TYPE (buffer) == GST_EVENT_EOS)) */
+/*     gnl_object_set_active(object, FALSE); */
   return (GstData *) buffer;
 }
 
@@ -802,6 +802,8 @@ gnl_source_change_state (GstElement *element)
   case GST_STATE_NULL_TO_READY:
     break;
   case GST_STATE_READY_TO_PAUSED:
+    source->pending_seek = \
+      gst_event_new_seek (GST_FORMAT_TIME | GST_SEEK_METHOD_SET | GST_SEEK_FLAG_FLUSH, 0LL);
     if (!source_queue_media (source))
       res = GST_STATE_FAILURE;
     break;
@@ -813,8 +815,9 @@ gnl_source_change_state (GstElement *element)
       res = GST_STATE_FAILURE;
     break;
   case GST_STATE_PLAYING_TO_PAUSED:
-    if (!gst_element_set_state (source->bin, GST_STATE_PAUSED))
-      res = GST_STATE_FAILURE;
+    /* done by GstBin->change_state */
+    /*     if (!gst_element_set_state (source->bin, GST_STATE_PAUSED)) */
+    /*       res = GST_STATE_FAILURE; */
     break;
   case GST_STATE_PAUSED_TO_READY:
     break;
