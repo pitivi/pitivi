@@ -795,7 +795,6 @@ convert_time_pix (PitiviTimelineCellRenderer *self, gint64 timelength)
     default:
       break;
     }
-  g_printf("convert time pix  time:%lld pix:%lld\n", timelength, len);
   return len;
 }
 
@@ -826,7 +825,6 @@ convert_sub_pix_time (guint pos,
     res = pos;
     break;
   }
-  g_printf("convert pix time pix:%d time:%lld [%llds]\n", pos, res, res/GST_SECOND);
   return res;
 }
 
@@ -1301,10 +1299,6 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
       pitivi_timelinemedia_get_start_stop(PITIVI_TIMELINEMEDIA(widget), &start1, &stop2);
       pitivi_timelinemedia_get_media_start_stop(PITIVI_TIMELINEMEDIA(widget), &mstart1, &mstop2);
       mstop1 = mstart2 = mstart1 + (stop1 - start1);
-      g_printf("**\nCutting at %lld\nOldMedia: [%lld]->[%lld] / Media [%lld]->[%lld]\nNewMedia: [%lld]->[%lld] / Media [%lld]->[%lld]\n",
-	       stop1,
-	       start1, stop1, mstart1, mstop1,
-	       start2, stop2, mstart2, mstop2);
       widget->allocation.width = widget->allocation.width - x; // calcul
 
       // TODO / PABO : Creation d'un nouveau PitiviSourceFile pour le placer dans le nouveau PitiviTimelineMedia

@@ -188,10 +188,14 @@ pitivi_timelinemedia_update_tooltip (PitiviTimelineMedia *this)
   /* Make the string */
   str = g_strdup_printf("%s\nposition : %4lld:%3lld->%4lld:%3lld\nMedia : %4lld:%3lld->%4lld:%3lld\nPriority : %d\n",
 			gst_element_get_name(GST_ELEMENT (obj)),
-			obj->start / GST_SECOND, (obj->start % GST_SECOND) / GST_MSECOND,
-			obj->stop / GST_SECOND, (obj->stop % GST_SECOND) / GST_MSECOND,
-			obj->media_start / GST_SECOND, (obj->media_start % GST_SECOND) / GST_MSECOND,
-			obj->media_stop / GST_SECOND, (obj->media_stop % GST_SECOND) / GST_MSECOND,
+			(signed long long int) (obj->start / GST_SECOND),
+			(signed long long int) ((obj->start % GST_SECOND) / GST_MSECOND),
+			(signed long long int) (obj->stop / GST_SECOND), 
+			(signed long long int) ((obj->stop % GST_SECOND) / GST_MSECOND),
+			(signed long long int) (obj->media_start / GST_SECOND), 
+			(signed long long int) ((obj->media_start % GST_SECOND) / GST_MSECOND),
+			(signed long long int) (obj->media_stop / GST_SECOND), 
+			(signed long long int) ((obj->media_stop % GST_SECOND) / GST_MSECOND),
 			obj->priority);
   gtk_tooltips_set_tip (this->private->tooltips, GTK_WIDGET(this),
 			str, NULL);
@@ -207,7 +211,6 @@ pitivi_timelinemedia_get_start_stop (PitiviTimelineMedia *media, gint64 *start, 
 void
 pitivi_timelinemedia_set_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
 {
-  g_printf("pitivi_timelinemedia start:%lld stop:%lld\n", start, stop);
   gnl_object_set_start_stop (media->sourceitem->gnlobject, start, stop);
   pitivi_timelinemedia_update_tooltip(media);
 }
@@ -219,7 +222,6 @@ pitivi_timelinemedia_put (PitiviTimelineMedia *media, gint64 start)
 
   // check the size of the widget !!!
   gnl_object_get_media_start_stop (media->sourceitem->gnlobject, &mstart, &mstop);
-  g_printf("pitivi_timelinemedia_put start:%lld stop:%lld\n", start, start + mstop - mstart);
   gnl_object_set_start_stop (media->sourceitem->gnlobject, start, start + mstop - mstart);
   pitivi_timelinemedia_update_tooltip(media);
 }
@@ -234,7 +236,6 @@ pitivi_timelinemedia_get_media_start_stop (PitiviTimelineMedia *media, gint64 *s
 void
 pitivi_timelinemedia_set_media_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
 {
-  g_printf("pitivi_timelinemedia mediastart:%lld mediastop:%lld\n", start, stop);
   gnl_object_set_media_start_stop (media->sourceitem->gnlobject, start, stop);
   pitivi_timelinemedia_update_tooltip(media);
 }
@@ -304,7 +305,7 @@ pitivi_timelinemedia_constructor (GType type,
       /* Construct Id : filename + '_' + mediatype  + '_' + id */
       
       name = g_strdup_printf ("%s_%s_%lld", this->sourceitem->srcfile->filename, 
-			      this->sourceitem->srcfile->mediatype, this->sourceitem->id);
+			      this->sourceitem->srcfile->mediatype, (signed long long int) (this->sourceitem->id));
       if ( this->track->track_type == PITIVI_EFFECTS_TRACK ||  this->track->track_type == PITIVI_TRANSITION_TRACK )
 	{
 	  if (!(bin = pitivi_sourcefile_get_effect_bin(this->sourceitem->srcfile))) {

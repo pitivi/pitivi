@@ -490,7 +490,7 @@ gboolean	idle_func_video (gpointer data)
     if (elem) /* we have a true source */
       {
 	value1 = do_query(elem, GST_QUERY_POSITION);
-	g_printf("**idle** : pos:%lld\n", value1);
+	g_printf("**idle** : pos:%lld\n", (signed long long int) value1);
 	gtk_range_set_value(GTK_RANGE (self->private->timeline) , value1);
       }
   }

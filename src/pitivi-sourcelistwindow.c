@@ -696,7 +696,7 @@ PitiviSourceFile *	pitivi_sourcelistwindow_set_file(PitiviSourceListWindow *self
 		     BMP_LISTCOLUMN1,  pixbufa,
 		     TEXT_LISTCOLUMN2, name,
 		     TEXT_LISTCOLUMN3, sf->mediatype,
-		     TEXT_LISTCOLUMN4, g_strdup_printf("%llds", sf->length / GST_SECOND),
+		     TEXT_LISTCOLUMN4, g_strdup_printf("%llds", (signed long long int) (sf->length / GST_SECOND)),
 		     TEXT_LISTCOLUMN5, sf->infovideo,
 		     TEXT_LISTCOLUMN6, sf->infoaudio,
 		     POINTER_LISTCOLUMN7, (gpointer)sf, -1);

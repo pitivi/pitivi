@@ -157,7 +157,7 @@ pitivi_projectsourcelist_showfile(PitiviProjectSourceList *self,
       g_printf("mediatype ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->mediatype);
       g_printf("info video ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->infovideo);
       g_printf("info audio ==> %s\n", ((PitiviSourceFile*)sourcelist->data)->infoaudio);
-      g_printf("length ==> %lld\n", ((PitiviSourceFile*)sourcelist->data)->length);
+      g_printf("length ==> %lld\n", ((signed long long int) ((PitiviSourceFile*)sourcelist->data)->length));
 
       sourcelist = sourcelist->next;
     }

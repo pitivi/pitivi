@@ -285,7 +285,7 @@ pitivi_thumbs_generate (PitiviThumbs *this)
       if ( tmp )
 	{
 	  this->output = g_malloc (strlen (this->private->filename) + DIR_LENGTH);
-	  g_sprintf (this->output, "/tmp/%s%c%lld", tmp, '\0', this->info);
+	  g_sprintf (this->output, "/tmp/%s%c%lld", tmp, '\0', (signed long long int) this->info);
 	  if ( pitivi_thumbnail_pngenc_get (this) > 0)
 	      return this->output;
 	}
