@@ -54,7 +54,12 @@ struct _PitiviLPlayerWindowPrivate
   GtkWidget	*main_vbox;
   GtkWidget	*video_area;
   GtkWidget	*toolbar;
- 
+  GtkWidget	*toolbarTEMP;
+
+  GtkWidget	*backward;
+  GtkWidget	*playpause;
+  GtkWidget	*forward;
+  GtkWidget	*stop;
 
 };
 
@@ -68,9 +73,39 @@ struct _PitiviLPlayerWindowPrivate
 // quand exit enlever le lien overlay
 // mettre une taille par default
 
+
+void pitivi_lplayer_play_video (GtkWidget *widget, PitiviLPlayerWindow *self)
+{
+  if (GTK_TOGGLE_BUTTON (self->private->playpause)->active)
+    {
+      g_print("FCT__________pitivi_lplayer_play_video:_PLAY\n");
+      gst_element_set_state (self->private->pipe, GST_STATE_PLAYING);
+    }
+  else
+    {
+      g_print("FCT__________pitivi_lplayer_play_video:_STOP\n");
+       gst_element_set_state (self->private->pipe, GST_STATE_PAUSED);
+    }
+
+}
+
+void pitivi_lplayer_stop_video (GtkWidget *widget, PitiviLPlayerWindow *self)
+{
+  if (GTK_TOGGLE_BUTTON (self->private->playpause)->active)
+    {
+      g_print("PLAY_VIDEO_________from_stop\n");   
+      gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(self->private->playpause), FALSE);
+    }
+  else
+    g_print("STOP_VIDEO_________from_stop\n");
+}
+
+
 void
 pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 {
+  GtkWidget	*button_image;
+
   g_print ("FILE NAME:%s\n", self->filename);
 
   // main Vbox
@@ -84,14 +119,65 @@ pitivi_lplayerwindow_create_gui (PitiviLPlayerWindow *self)
 			 PITIVI_DEFAULT_VIEWER_AREA_HEIGHT);
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), 
 		      self->private->video_area, TRUE, TRUE, 0);
+  gtk_widget_set_size_request (self->private->video_area, 355, 190);
 
-  // ToolBar
-  self->private->toolbar = (GtkWidget *) pitivi_controller_new();
-  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), 
-		      self->private->toolbar, FALSE, FALSE, 0);
+  // set Background for video_area
+  gtk_widget_realize (self->private->video_area);
+  gdk_window_set_background (self->private->video_area->window, &self->private->video_area->style->black);
 
+  // ToolbAr
+  self->private->toolbar = gtk_toolbar_new ();
+  gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->toolbar, FALSE, TRUE, 0);
+  gtk_widget_show (self->private->toolbar);
+  
+  gtk_toolbar_set_orientation (GTK_TOOLBAR (self->private->toolbar), GTK_ORIENTATION_HORIZONTAL);
+  gtk_toolbar_set_style (GTK_TOOLBAR (self->private->toolbar), GTK_TOOLBAR_BOTH);
+  gtk_container_set_border_width (GTK_CONTAINER (self->private->toolbar), 0);
+  //  gtk_toolbar_set_space_size (GTK_TOOLBAR (toolbar), 5);
+  gtk_container_add (GTK_CONTAINER (self->private->main_vbox), self->private->toolbar);
+
+  button_image = gtk_image_new_from_file ("../pixmaps/backward.xpm");
+  self->private->backward = gtk_toolbar_append_item( GTK_TOOLBAR (self->private->toolbar),
+						     NULL,
+						     "My item tooltip",
+						     "private item text",
+						     button_image,
+						     GTK_SIGNAL_FUNC (pitivi_lplayer_play_video),
+						     self);
+  
+  button_image = gtk_image_new_from_file ("../pixmaps/play.xpm");
+  self->private->playpause = gtk_toolbar_append_element (GTK_TOOLBAR (self->private->toolbar),
+							 GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
+							 NULL,
+							 NULL,
+							 "Play",
+							 "Private",
+							 button_image,
+							 GTK_SIGNAL_FUNC (pitivi_lplayer_play_video),
+							 self);
+  
+  button_image = gtk_image_new_from_file ("../pixmaps/forward.xpm");
+  self->private->forward  = gtk_toolbar_append_item( GTK_TOOLBAR (self->private->toolbar),
+						     NULL,
+						     "My item tooltip",
+						     "private item text",
+						     button_image,
+						     GTK_SIGNAL_FUNC (pitivi_lplayer_play_video),
+						     self);
+  
+  button_image = gtk_image_new_from_file ("../pixmaps/stop.xpm");
+  self->private->stop  = gtk_toolbar_append_item( GTK_TOOLBAR (self->private->toolbar),
+						  NULL,
+						  "My item tooltip",
+						  "private item test",
+						  button_image,
+						  GTK_SIGNAL_FUNC (pitivi_lplayer_stop_video),
+						  self);
+  
   gtk_widget_show_all (GTK_WIDGET (self));
 
+  // gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);
+  
   return ;
 }
 
@@ -138,6 +224,8 @@ pitivi_lplayerwindow_create_stream (PitiviLPlayerWindow *self)
     g_print ("############################# BAD STATE ########################33\n");
     exit (-1);
   }
+  
+  gst_element_set_state(self->private->pipe, GST_STATE_PAUSED); 
 
   return ;
 }
@@ -235,6 +323,8 @@ pitivi_lplayerwindow_finalize (GObject *object)
    * Here, complete object destruction. 
    * You might not need to do much... 
    */
+  gst_element_set_state(self->private->pipe, GST_STATE_PAUSED);
+  gst_object_unref (GST_OBJECT(self->private->pipe));
 
   g_free (self->private);
   G_OBJECT_CLASS (parent_class)->finalize (object);
