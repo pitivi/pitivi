@@ -185,9 +185,16 @@ pitivi_timelinecellrenderer_new (guint track_nb, PitiviLayerType track_type, Pit
 void
 pitivi_media_set_size (GtkWidget *widget, guint width)
 {
+  gint real_width;
+
   gtk_widget_set_size_request (widget, width, widget->allocation.height);
   if (PITIVI_IS_TIMELINEMEDIA (widget))
-    PITIVI_TIMELINEMEDIA (widget)->original_width = width;
+    {      
+      PitiviTimelineMedia *media = PITIVI_TIMELINEMEDIA (widget);
+
+      real_width = convert_time_pix (media->track, media->sourceitem->srcfile->length);
+      media->original_width = real_width;
+    }
 }
 
 
@@ -1126,7 +1133,6 @@ resizing_media (PitiviTimelineMedia *source, PitiviTimelineCellRenderer *self, g
     decrement *= 10;
   if (x < GTK_WIDGET (source)->allocation.width + GTK_WIDGET (source)->allocation.x - (decrement))
     {
-      /* Don"t touch please. */
       if (GTK_WIDGET (source)->allocation.width-decrement >= 1)
 	gtk_widget_set_size_request (GTK_WIDGET (source),
 				     GTK_WIDGET (source)->allocation.width-decrement,
@@ -1414,7 +1420,6 @@ static void
 pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *container, guint x, gpointer data)
 {
   PitiviTimelineMedia *media[2], *link;
-/*   PitiviSourceFile	*sf; */
   GtkWidget *widget;
   gint64 start1, start2, stop1, stop2, mstart1, mstart2, mstop1, mstop2;
   guint	 pos =  0;
@@ -1430,10 +1435,6 @@ pitivi_timelinecellrenderer_callb_cut_source  (PitiviTimelineCellRenderer *conta
       mstop1 = mstart2 = mstart1 + (stop1 - start1);
       widget->allocation.width = widget->allocation.width - x; // calcul
 
-      // TODO / PABO : Creation d'un nouveau PitiviSourceFile pour le placer dans le nouveau PitiviTimelineMedia
-      
-/*       sf = pitivi_sourcefile_new(PITIVI_TIMELINEMEDIA(widget)->sourceitem->srcfile->filename, */
-/* 				 PITIVI_WINDOWS(container->private->timewin)->mainapp); */
       media[0] = pitivi_timelinemedia_new ( PITIVI_TIMELINEMEDIA (widget)->sourceitem->srcfile,
 					    widget->allocation.width, container );
       // donner un nouveau stop/media_stop a l'ancien media
@@ -1572,11 +1573,24 @@ pitivi_timelinecellrenderer_drag_drop (GtkWidget *widget,
 				       gpointer data)
      
 {
+  PitiviTimelineCellRenderer *self = (PitiviTimelineCellRenderer *) widget;
+  gint64 new_stop, start, stop, mstart, mstop;
   PitiviCursor *cursor;
-
+  GtkWidget *source;
+  gint new_width;
+  
   cursor = pitivi_getcursor_id (widget);
+  source = gtk_drag_get_source_widget(dc);
+  new_width = source->allocation.x+source->allocation.width;
   if (cursor->type == PITIVI_CURSOR_RESIZE)
-    g_printf ("drop ... %d\n", widget->allocation.x);
+    {
+      new_stop = convert_pix_time(self, new_width );
+      pitivi_timelinemedia_get_start_stop(PITIVI_TIMELINEMEDIA(source), &start, &stop);
+      pitivi_timelinemedia_get_media_start_stop(PITIVI_TIMELINEMEDIA(source), &mstart, &mstop);
+      
+      pitivi_timelinemedia_set_start_stop(PITIVI_TIMELINEMEDIA(source), start, new_stop );
+      pitivi_timelinemedia_set_media_start_stop(PITIVI_TIMELINEMEDIA(source), mstart, mstart + (new_stop - start));
+    }
   return FALSE;
 }
 
@@ -1621,6 +1635,7 @@ pitivi_timelinecellrenderer_instance_init (GTypeInstance * instance, gpointer g_
 		      TargetEntries,
 		      iNbTargetEntries,
 		      GDK_ACTION_COPY|GDK_ACTION_MOVE);
+  
   g_signal_connect (G_OBJECT (self), "drag_drop",\
 		    G_CALLBACK ( pitivi_timelinecellrenderer_drag_drop ), NULL);
   g_signal_connect (G_OBJECT (self), "drag_leave",\

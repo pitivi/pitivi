@@ -209,7 +209,6 @@ pitivi_mainapp_activate_sourcelistwindow (PitiviMainApp *self, gboolean activate
       gtk_window_get_position(GTK_WINDOW (self->private->srclistwin), 
 			      &self->private->srclistwin->x, 
 			      &self->private->srclistwin->y);
-
       if (!activate)
 	gtk_widget_hide (GTK_WIDGET (self->private->srclistwin));
       else

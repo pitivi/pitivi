@@ -282,10 +282,24 @@ create_timeline_menu (PitiviTimelineWindow *self)
 		      FALSE, TRUE, 0);
 }
 
+GtkAction *
+pitivi_timelinewindow_get_action_by_idx_name (PitiviTimelineWindow *self, int idx, gchar *name)
+{
+  GtkAction *action = gtk_action_group_get_action  (self->actions_group[idx], name);
+  return action; 
+}
+void
+pitivi_timelinewindow_file_set_action (PitiviTimelineWindow *self, gchar *name, gboolean status)
+{
+  GtkAction *action = pitivi_timelinewindow_get_action_by_idx_name (self, (int)EA_DEFAULT_FILE, name );
+  g_object_set(G_OBJECT(action),
+	       "sensitive", status, NULL);
+}
+
 void
 pitivi_timelinewindow_windows_set_action (PitiviTimelineWindow *self, gchar *name, gboolean status)
 {
-  GtkAction *action = gtk_action_group_get_action  (self->actions_group[EA_WINDOWMENU_FILE], name);
+  GtkAction *action = pitivi_timelinewindow_get_action_by_idx_name (self, (int)EA_WINDOWMENU_FILE, name );
   gtk_toggle_action_set_active (((GtkToggleAction *)action), status);
 }
 
@@ -359,6 +373,13 @@ create_unitscale_combobox(PitiviTimelineWindow *self, GtkWidget *parentbox)
   gtk_box_pack_start(GTK_BOX (parentbox), GTK_WIDGET(self->private->scalecombobox),
 		     FALSE, TRUE, 2);
 }
+
+/*
+ **********************************************************
+ * Creation of tracks / Timer Label / Toolbar             *
+ * 							  *
+ **********************************************************
+*/
 
 void
 create_toolbox (PitiviTimelineWindow *self, GtkWidget *container)
@@ -1228,6 +1249,8 @@ pitivi_timelinewindow_deactivate ( PitiviTimelineWindow *self )
 
   /* Deactivate Windows Menu */
   gtk_action_group_set_sensitive (self->actions_group[EA_WINDOWMENU_FILE], FALSE);
+  pitivi_timelinewindow_file_set_action (self, "FileSave", FALSE);
+  pitivi_timelinewindow_file_set_action (self, "FileSaveAs", FALSE);
 }
 
 void
@@ -1277,6 +1300,8 @@ pitivi_timelinewindow_activate (PitiviTimelineWindow *self)
   
   /* Activate Windows Menu */
   gtk_action_group_set_sensitive (self->actions_group[EA_WINDOWMENU_FILE], TRUE);
+  pitivi_timelinewindow_file_set_action (self, "FileSave", TRUE);
+  pitivi_timelinewindow_file_set_action (self, "FileSaveAs", TRUE);
 
   /* Activate childs */
 
