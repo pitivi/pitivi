@@ -254,7 +254,6 @@ pitivi_viewerplayer_unrealize (GtkWidget * widget)
   if (GTK_WIDGET_CLASS (parent_class)->unrealize)
     GTK_WIDGET_CLASS (parent_class)->unrealize (widget);
   
-  g_printf ("pitivi_viewerplayer_unrealize : unrealize ....\n");
 }
 
 static void
@@ -327,7 +326,6 @@ pitivi_viewerplayer_realize (GtkWidget * widget)
   widget->style = gtk_style_attach (widget->style, widget->window);
   
   gtk_style_set_background (widget->style, widget->window, GTK_STATE_NORMAL);
-  g_printf ("pitivi_viewerplayer_realize : realize ....\n");
 }
 
 static void
@@ -337,8 +335,6 @@ pitivi_viewerplayer_size_request (GtkWidget * widget, GtkRequisition * requisiti
   
   requisition->width  = self->private->width_mini;
   requisition->height = self->private->height_mini;
-  
-  g_printf ("pitivi_viewerplayer_size_request : size request ....\n");
 }
 
 static gint
@@ -403,13 +399,6 @@ pitivi_viewerplayer_expose (GtkWidget * widget, GdkEventExpose * event)
 				    event->area.width, event->area.height,
 				    GDK_RGB_DITHER_NORMAL, pixels,
 				    rowstride, event->area.x, event->area.y);
-      
-      g_printf ("width:%d %d %d height:%d %d %d rowstride : %d pixels : %d\n area.x:%d area.y:%d area.w:%d area.h:%d\n", width\
-		, widget->allocation.width, logo_x, widget->allocation.height,
-		height, logo_y, rowstride, pixels[1],
-		event->area.x, event->area.y,
-		event->area.width, event->area.height);
-      
       g_object_unref (frame);
     } else {
       gdk_draw_rectangle (widget->window, widget->style->black_gc, TRUE,
@@ -417,7 +406,6 @@ pitivi_viewerplayer_expose (GtkWidget * widget, GdkEventExpose * event)
     }
 
   }
-  g_printf ("pitivi_viewerplayer_expose : expose ....\n");
   return FALSE;
 }
 
