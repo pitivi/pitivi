@@ -84,6 +84,7 @@ GType pitivi_timelinewindow_get_type (void);
  */
 
 PitiviTimelineWindow	*pitivi_timelinewindow_new (PitiviMainApp *mainapp, PitiviProject *project);
+PitiviMainApp		*pitivi_timelinewindow_get_mainApp (PitiviTimelineWindow	*timelinewindow);
 GtkWidget		*pitivi_timelinewindow_get_right_view (PitiviTimelineWindow *self);
 
 #endif

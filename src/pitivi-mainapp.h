@@ -77,6 +77,7 @@ GType		pitivi_mainapp_get_type (void);
  * Method definitions.
  */
 
+
 PitiviCategorieSettings	*pitivi_mainapp_get_selected_category	( PitiviMainApp *self, gint *position );
 PitiviMainApp		*pitivi_mainapp_new (void);
 GSList			*pitivi_mainapp_project_settings( PitiviMainApp *self );

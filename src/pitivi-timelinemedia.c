@@ -31,6 +31,14 @@ static	GtkWidgetClass	*parent_class;
 // Caching Operation  
 static	GdkPixmap	*pixmap = NULL;
 
+
+// Properties Enumaration
+
+typedef enum {
+  PITIVI_MD_SOURCEFILE_PROPERTY = 1,
+} PitiviMediaProperty;
+
+
 struct _PitiviTimelineMediaPrivate
 {
   /* instance private members */
@@ -46,11 +54,12 @@ struct _PitiviTimelineMediaPrivate
  */
 
 PitiviTimelineMedia *
-pitivi_timelinemedia_new(void)
+pitivi_timelinemedia_new (PitiviSourceFile *sf)
 {
   PitiviTimelineMedia	*timelinemedia;
 
   timelinemedia = (PitiviTimelineMedia *) g_object_new(PITIVI_TIMELINEMEDIA_TYPE, NULL);
+  timelinemedia->sf = sf;
   g_assert(timelinemedia != NULL);
   return timelinemedia;
 }
@@ -97,14 +106,20 @@ pitivi_timelinemedia_expose (GtkWidget      *widget,
   GdkWindow *window;
   
   PitiviTimelineMedia	*self = PITIVI_TIMELINEMEDIA (widget);
-  gdk_draw_rectangle (widget->window,
-		      widget->style->dark_gc[GTK_STATE_NORMAL],
-		      TRUE, 0, 0,
-		      widget->allocation.width, -1);
-  
+  gtk_paint_box (widget->style, widget->window,
+		 GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+		 &event->area, widget, "mediadefault",
+		 0, 0, widget->allocation.width, -1);
   if (self->selected == TRUE)
     draw_selection_dash (widget, 4);
   return FALSE;
+}
+
+static
+void video_selection ( GtkWidget *widget,
+		       gpointer   data )
+{
+  g_printf ("video selection\n");
 }
 
 static void
@@ -121,6 +136,8 @@ pitivi_timelinemedia_instance_init (GTypeInstance * instance, gpointer g_class)
   /* Do only initialisation here */
   /* The construction of the object should be done in the Constructor
      So that properties set at instanciation can be set */
+  
+  // g_signal_connect (G_OBJECT (self), "pitivi-video-selection", G_CALLBACK (video_selection), NULL);
   self->selected = FALSE;
 }
 
@@ -173,21 +190,17 @@ pitivi_timelinemedia_finalize (GObject *object)
 
 static void
 pitivi_timelinemedia_set_property (GObject * object,
-			      guint property_id,
-			      const GValue * value, GParamSpec * pspec)
+				   guint property_id,
+				   const GValue * value, GParamSpec * pspec)
 {
   PitiviTimelineMedia *self = (PitiviTimelineMedia *) object;
 
   switch (property_id)
     {
-      /*   case PITIVI_TIMELINEMEDIA_PROPERTY: { */
-      /*     g_free (self->private->name); */
-      /*     self->private->name = g_value_dup_string (value); */
-      /*     g_print ("maman: %s\n",self->private->name); */
-      /*   } */
-      /*     break; */
+    case PITIVI_MD_SOURCEFILE_PROPERTY:
+      //self->sf = g_value_get_object (value); 
+      break;
     default:
-      /* We don't have any other property... */
       g_assert (FALSE);
       break;
     }
@@ -202,10 +215,6 @@ pitivi_timelinemedia_get_property (GObject * object,
 
   switch (property_id)
     {
-      /*  case PITIVI_TIMELINEMEDIA_PROPERTY: { */
-      /*     g_value_set_string (value, self->private->name); */
-      /*   } */
-      /*     break; */
     default:
       /* We don't have any other property... */
       g_assert (FALSE);
@@ -237,6 +246,7 @@ pitivi_timelinemedia_size_allocate (GtkWidget     *widget,
       gdk_window_move_resize (widget->window,
 			      allocation->x, allocation->y,
 			      allocation->width, allocation->height);
+      
     }
 }
 
@@ -250,24 +260,29 @@ pitivi_timelinemedia_realize (GtkWidget *widget)
 
   GTK_WIDGET_SET_FLAGS (widget, GTK_REALIZED);
   
+  attributes.window_type = GDK_WINDOW_CHILD;
   attributes.x = widget->allocation.x;
   attributes.y = widget->allocation.y;
   attributes.width = widget->allocation.width;
   attributes.height = widget->allocation.height;
   attributes.wclass = GDK_INPUT_OUTPUT;
-  attributes.window_type = GDK_WINDOW_CHILD;
   attributes.event_mask = gtk_widget_get_events (widget) | 
-    GDK_EXPOSURE_MASK | 
-    GDK_BUTTON_PRESS_MASK | 
-    GDK_BUTTON_RELEASE_MASK | 
+    GDK_EXPOSURE_MASK |
+    GDK_ENTER_NOTIFY_MASK |
+    GDK_LEAVE_NOTIFY_MASK |
+    GDK_BUTTON_PRESS_MASK |
+    GDK_BUTTON_RELEASE_MASK |
     GDK_POINTER_MOTION_MASK |
     GDK_POINTER_MOTION_HINT_MASK;
   
   attributes.visual = gtk_widget_get_visual (widget);
   attributes.colormap = gtk_widget_get_colormap (widget);
+
   attributes_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
+  
   widget->window = gdk_window_new (widget->parent->window, &attributes, attributes_mask);
   widget->style = gtk_style_attach (widget->style, widget->window);
+  
   gdk_window_set_user_data (widget->window, widget);
   gtk_style_set_background (widget->style, widget->window, GTK_STATE_ACTIVE);
 }
@@ -276,17 +291,16 @@ static
 gint pitivi_timelinemedia_button_press (GtkWidget        *widget,
 					GdkEventButton   *event)
 {
-
 }
 
 static
 gint pitivi_timelinemedia_button_release (GtkWidget        *widget,
 					  GdkEventButton   *event)
 {
-  PitiviTimelineMedia *self = (PitiviTimelineMedia *) widget;
+  PitiviTimelineMedia *self = PITIVI_TIMELINEMEDIA (widget);
   GdkEventExpose ev;
   gboolean retval;
-
+  
   if (self->selected == FALSE)
     {
       self->selected = TRUE;
@@ -303,7 +317,18 @@ static
 gint pitivi_timelinemedia_motion_notify_event (GtkWidget        *widget,
 					       GdkEventMotion   *event)
 {
+  PitiviTimelineMedia *self;
+  GdkModifierType mods;
+  gint x, y, mask;
   
+  g_return_val_if_fail (widget != NULL, FALSE);
+  g_return_val_if_fail (event != NULL, FALSE);
+  self = PITIVI_TIMELINEMEDIA (widget);
+  
+  x = event->x;
+  y = event->y;
+  if (event->is_hint || (event->window != widget->window))
+    gdk_window_get_pointer (widget->window, &x, &y, &mods);
 }
 
 static void
@@ -326,9 +351,16 @@ pitivi_timelinemedia_class_init (gpointer g_class, gpointer g_class_data)
   widget_class->size_request = pitivi_timelinemedia_size_request;
   widget_class->size_allocate = pitivi_timelinemedia_size_allocate; 
   widget_class->realize = pitivi_timelinemedia_realize;
-  widget_class->button_press_event = pitivi_timelinemedia_button_press;
-  widget_class->button_release_event = pitivi_timelinemedia_button_release;
   widget_class->motion_notify_event = pitivi_timelinemedia_motion_notify_event;
+  
+  /*
+  g_object_class_install_property (G_OBJECT_CLASS (gobject_class), PITIVI_MD_SOURCEFILE_PROPERTY,
+				   g_param_spec_object ("pitivisourcefile",
+							"pitivisourcefile", 
+							"pitivisourcefile",
+							PITIVI_PROJECT_TYPE, 
+							G_PARAM_READ));
+  */
 }
 
 GType

@@ -36,6 +36,7 @@ typedef struct _PitiviToolboxWindow PitiviToolboxWindow;
 
 #include <gtk/gtk.h>
 #include "pitivi-windows.h"
+#include "pitivi-toolbox.h"
 
 /*
  * Type macros.
@@ -79,5 +80,10 @@ GType pitivi_toolboxwindow_get_type (void);
 
 PitiviToolboxWindow	*pitivi_toolboxwindow_new (PitiviMainApp *main_app);
 void			pitivi_callb_toolbox_fileopen_project ( GtkAction *action, PitiviToolboxWindow *self );
+
+// Functions Declarations
+
+PitiviToolbox		*pitivi_toolboxwindow_get_toolbox (PitiviToolboxWindow *self);
+PitiviToolboxWindow	*pitivi_mainapp_get_toolboxwindow (PitiviMainApp *self);
 
 #endif

@@ -30,10 +30,11 @@
  * Potentially, include other headers on which this header depends.
  */
 
-#define DEFAULT_WIDTH   60
+#define DEFAULT_WIDTH   7200
 #define DEFAULT_HEIGHT  50
 
 #include <gtk/gtk.h>
+#include "pitivi-projectwindows.h"
 
 /*
  * Type macros.
@@ -55,6 +56,7 @@ struct _PitiviTimelineMedia
   GtkWidget parent;
 
   /* instance public members */
+  PitiviSourceFile *sf;
   gboolean selected;
   /* private */
   PitiviTimelineMediaPrivate *private;
@@ -73,8 +75,8 @@ GType pitivi_timelinemedia_get_type (void);
  * Method definitions.
  */
 
-PitiviTimelineMedia	*pitivi_timelinemedia_new(void);
-void draw_selection (GtkWidget *widget, int width, char dash[]);
+PitiviTimelineMedia	*pitivi_timelinemedia_new ();
+void draw_selection (GtkWidget *widget, int width, char **dash);
 void draw_slide (GtkWidget *widget, int start, int end);
 
 #endif

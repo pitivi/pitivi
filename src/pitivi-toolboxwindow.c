@@ -28,7 +28,6 @@
 #include "pitivi-toolboxwindow.h"
 #include "pitivi-menu.h"
 #include "pitivi-stockicons.h"
-#include "pitivi-toolbox.h"
 #include "pitivi-projectsettings.h"
 #include "pitivi-newprojectwindow.h"
 

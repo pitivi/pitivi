@@ -28,11 +28,11 @@
 #include "pitivi-menu.h"
 #include "pitivi-stockicons.h"
 #include "pitivi-timelinecellrenderer.h"
+#include "pitivi-toolboxwindow.h"
+#include "pitivi-toolbox.h"
 
 static	GdkPixbuf *window_icon = NULL;
 static  PitiviWindowsClass *parent_class = NULL;
-
-#define EVENT_METHOD(i, x) GTK_WIDGET_GET_CLASS(i)->x
 
 #define PITIVI_MAX_PISTE 6
 
@@ -118,7 +118,14 @@ pitivi_timelinewindow_new (PitiviMainApp *mainapp, PitiviProject *project)
 							 "project", project, NULL);
   timelinewindow->private->mainapp = mainapp;
   g_assert(timelinewindow != NULL);
+  
   return timelinewindow;
+}
+
+PitiviMainApp  *
+pitivi_timelinewindow_get_mainApp (PitiviTimelineWindow	*timelinewindow)
+{
+  return ( timelinewindow->private->mainapp );
 }
 
 static GObject *
@@ -127,19 +134,17 @@ pitivi_timelinewindow_constructor (GType type,
 			     GObjectConstructParam * construct_properties)
 {
   GObject *obj;
-  {
-    /* Invoke parent constructor. */
-    
-    PitiviTimelineWindowClass *klass;
-    GObjectClass *parent_class;
-    klass = PITIVI_TIMELINEWINDOW_CLASS (g_type_class_peek (PITIVI_TIMELINEWINDOW_TYPE));
-    parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
-    obj = parent_class->constructor (type, n_construct_properties,
-				     construct_properties);
-  }
 
+  /* Invoke parent constructor. */
+  
+  PitiviTimelineWindowClass *klass;
+  GObjectClass *parent_class;
+  klass = PITIVI_TIMELINEWINDOW_CLASS (g_type_class_peek (PITIVI_TIMELINEWINDOW_TYPE));
+  parent_class = G_OBJECT_CLASS (g_type_class_peek_parent (klass));
+  obj = parent_class->constructor (type, n_construct_properties,
+				   construct_properties);
   /* do stuff. */
-
+  
   return obj;
 }
 
@@ -216,9 +221,19 @@ static GtkActionEntry recent_entry[]= {
 static gboolean
 pitivi_timelinewindow_configure_event (GtkWidget *widget, GdkEventConfigure *event, gpointer data) 
 {
-  PitiviTimelineWindow *self =  (PitiviTimelineWindow *) widget;
+  PitiviTimelineWindow *self;
+  PitiviToolboxWindow *tbxwin;
+  PitiviToolbox	*toolbox;
 
+  self = (PitiviTimelineWindow *) widget;
   gtk_paned_set_position (GTK_PANED(self->private->hpaned), (LEFT_PANED_SIZE));
+    
+  /* Loading Cursor */
+  
+  tbxwin = pitivi_mainapp_get_toolboxwindow (self->private->mainapp);
+  toolbox = pitivi_toolboxwindow_get_toolbox (tbxwin);
+  load_cursor (GDK_WINDOW (GTK_WIDGET (self)->window), toolbox->pitivi_cursor, PITIVI_CURSOR_SELECT);
+  
   return FALSE;
 }
 
@@ -231,7 +246,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   GtkWidget		*Rseparators;
   GtkWidget		*sw;
   GtkWidget		*cell;
-  int			count;
+  int			pv, pa, count = 0;
   
   PitiviTimelineWindow *self = (PitiviTimelineWindow *) instance;
   self->private = g_new0(PitiviTimelineWindowPrivate, 1);
@@ -262,7 +277,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->main_vbox = gtk_vbox_new (FALSE, 0);
   gtk_widget_show (self->private->main_vbox);
   gtk_container_add  (GTK_CONTAINER (self), self->private->main_vbox);
-
+  
   /* Putting Menu to timeline */
   
   self->private->menu_dock = gtk_vbox_new (FALSE, 0);
@@ -311,7 +326,7 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
   self->private->hruler = gtk_hruler_new ();
   self->hruler = self->private->hruler;
   gtk_ruler_set_metric (GTK_RULER (self->private->hruler), GTK_PIXELS);
-  gtk_ruler_set_range (GTK_RULER (self->private->hruler), 0, 15, 0, 20);
+  gtk_ruler_set_range (GTK_RULER (self->private->hruler), 0, 7200, 0, 120);
   
   g_signal_connect_swapped (G_OBJECT (self->private->main_vbox), "motion_notify_event",
 			    G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
@@ -335,13 +350,15 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
       
       if (count < (PITIVI_MAX_PISTE/2))
 	{
-	  cell = pitivi_timelinecellrenderer_new (PITIVI_VIDEO_TRACK);
+	  cell = pitivi_timelinecellrenderer_new (pv, PITIVI_VIDEO_TRACK);
 	  gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new ("Video"), FALSE, FALSE, 0);
+	  pv++;
 	}
       else
 	{
-	  cell = pitivi_timelinecellrenderer_new (PITIVI_AUDIO_TRACK);
+	  cell = pitivi_timelinecellrenderer_new (pa, PITIVI_AUDIO_TRACK);
 	  gtk_box_pack_start (GTK_BOX (hbox[count]), gtk_label_new ("Audio"), FALSE, FALSE, 0);
+	  pa++;
 	}
       Lseparators = gtk_hseparator_new ();
       gtk_box_pack_start (GTK_BOX (self->private->main_vbox_left), hbox[count], FALSE, FALSE, 0);
@@ -350,15 +367,15 @@ pitivi_timelinewindow_instance_init (GTypeInstance * instance, gpointer g_class)
       
       // Right View
       
-      g_signal_connect_swapped (G_OBJECT (GTK_LAYOUT (cell)), "motion_notify_event",
-				G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
-				G_OBJECT (self->private->hruler));
-      
       Rseparators = gtk_hseparator_new ();
       gtk_widget_set_usize (cell, FIXED_WIDTH, FIXED_HEIGHT);
       gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), cell, FALSE, FALSE, 0);
       gtk_box_pack_start (GTK_BOX (self->private->main_vbox_right), Rseparators, FALSE, FALSE, 0);
       gtk_widget_set_usize (Rseparators, -1, 5);
+      
+      g_signal_connect_swapped (G_OBJECT (GTK_LAYOUT (cell)), "motion_notify_event",
+				G_CALLBACK (EVENT_METHOD (self->private->hruler, motion_notify_event)),
+				G_OBJECT (self->private->hruler));
     }
   
   gtk_box_pack_start (GTK_BOX (self->private->main_vbox), self->private->hpaned, FALSE, FALSE, 0);
@@ -439,14 +456,7 @@ pitivi_timelinewindow_set_property (GObject * object,
 
   switch (property_id)
     {
-      /*   case PITIVI_TIMELINEWINDOW_PROPERTY: { */
-      /*     g_free (self->private->name); */
-      /*     self->private->name = g_value_dup_string (value); */
-      /*     g_print ("maman: %s\n",self->private->name); */
-      /*   } */
-      /*     break; */
     default:
-      /* We don't have any other property... */
       g_assert (FALSE);
       break;
     }
@@ -454,19 +464,14 @@ pitivi_timelinewindow_set_property (GObject * object,
 
 static void
 pitivi_timelinewindow_get_property (GObject * object,
-			      guint property_id,
-			      GValue * value, GParamSpec * pspec)
+				    guint property_id,
+				    GValue * value, GParamSpec * pspec)
 {
   PitiviTimelineWindow *self = (PitiviTimelineWindow *) object;
 
   switch (property_id)
     {
-      /*  case PITIVI_TIMELINEWINDOW_PROPERTY: { */
-      /*     g_value_set_string (value, self->private->name); */
-      /*   } */
-      /*     break; */
     default:
-      /* We don't have any other property... */
       g_assert (FALSE);
       break;
     }
@@ -486,18 +491,6 @@ pitivi_timelinewindow_class_init (gpointer g_class, gpointer g_class_data)
 
   gobject_class->set_property = pitivi_timelinewindow_set_property;
   gobject_class->get_property = pitivi_timelinewindow_get_property;
-
-  /* Install the properties in the class here ! */
-  /*   pspec = g_param_spec_string ("maman-name", */
-  /*                                "Maman construct prop", */
-  /*                                "Set maman's name", */
-  /*                                "no-name-set" /\* default value *\/, */
-  /*                                G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE); */
-  /*   g_object_class_install_property (gobject_class, */
-  /*                                    MAMAN_BAR_CONSTRUCT_NAME, */
-  /*                                    pspec); */
-
-
 }
 
 GType

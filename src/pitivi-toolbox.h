@@ -94,6 +94,7 @@ GType pitivi_toolbox_get_type (void);
  */
 
 PitiviToolbox *pitivi_toolbox_new (PitiviMainApp *mainapp);
+void	      load_cursor (GdkWindow *win, PitiviCursor *pitivi_cursor, PitiviCursorType PiCursorType);
 
 /*
  * Cursor's definitions.

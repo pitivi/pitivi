@@ -869,6 +869,7 @@ gboolean	build_pipeline_by_mime(PitiviSourceListWindow *self, gchar *filename)
       if (demuxlist)
 	{
 	  /* choose the first demuxer */
+	  g_printf("adding demuxer %s\n", demuxlist->data);
 	  tmpname = g_strdup_printf("demux_%s", filename);
 	  demux = gst_element_factory_make((gchar*)demuxlist->data, tmpname);
 	  g_free(tmpname);
