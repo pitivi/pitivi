@@ -50,9 +50,27 @@ typedef struct _PitiviSettingsPrivate PitiviSettingsPrivate;
 
 typedef struct _PitiviSettingsMimeType PitiviSettingsMimeType;
 
+typedef struct _PitiviSettingsIoElement PitiviSettingsIoElement;
+
+typedef struct _PitiviSettingsProp PitiviSettingsProp;
+
 enum {
   ENC_LIST,
   DEC_LIST
+};
+
+
+struct _PitiviSettingsProp
+{
+  gchar		*name;
+  GValue	value;
+};
+
+
+struct _PitiviSettingsIoElement
+{
+  GstElementFactory	*factory;
+  GList			*prop_list;
 };
 
 
@@ -78,6 +96,11 @@ struct _PitiviSettings
   GList		*transition_effects;
 
   GSList	*project_settings;
+
+  GList		*elm_audio_in;
+  GList		*elm_video_in;
+  GList		*elm_audio_out;
+  GList		*elm_video_out;
 
   /* private */
   PitiviSettingsPrivate *private;
