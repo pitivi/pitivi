@@ -108,7 +108,8 @@ struct _PitiviTimelineCellRendererClass
 
 guint
 convert_time_pix (PitiviTimelineCellRenderer *self, gint64 timelength);
-
+gint64
+convert_pix_time (PitiviTimelineCellRenderer *self, guint pos);
 
 /* used by PITIVI_TIMELINECELLRENDERER_TYPE */
 GType pitivi_timelinecellrenderer_get_type (void);

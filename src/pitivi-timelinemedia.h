@@ -96,4 +96,13 @@ void	draw_slide (GtkWidget *widget, int start, int end);
 void	pitivi_timelinemedia_callb_dissociate (PitiviTimelineMedia *self, gpointer data);
 void	pitivi_timelinemedia_callb_destroy (PitiviTimelineMedia *self, gpointer data);
 
+void
+pitivi_timelinemedia_set_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop);
+void
+pitivi_timelinemedia_set_media_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop);
+void
+pitivi_timelinemedia_set_priority (PitiviTimelineMedia *media, gint priority);
+void
+pitivi_timelinemedia_put (PitiviTimelineMedia *media, gint64 start);
+
 #endif

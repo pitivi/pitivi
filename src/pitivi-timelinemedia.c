@@ -202,6 +202,32 @@ show_transition_media (GtkWidget *widget, GdkEventExpose *event)
 		       widget->allocation.height - 2);
 }
 
+void
+pitivi_timelinemedia_set_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
+{
+  gnl_object_set_start_stop (GNL_OBJECT(media->sourceitem->gnlsource), start, stop);
+}
+
+void
+pitivi_timelinemedia_put (PitiviTimelineMedia *media, gint64 start)
+{
+  gint64 mstart, mstop;
+
+  gnl_object_get_media_start_stop (GNL_OBJECT(media->sourceitem->gnlsource), &mstart, &mstop);
+  gnl_object_set_start_stop (GNL_OBJECT(media->sourceitem->gnlsource), start, start + mstop - mstart);
+}
+
+void
+pitivi_timelinemedia_set_media_start_stop (PitiviTimelineMedia *media, gint64 start, gint64 stop)
+{
+  gnl_object_set_media_start_stop (GNL_OBJECT(media->sourceitem->gnlsource), start, stop);
+}
+
+void
+pitivi_timelinemedia_set_priority (PitiviTimelineMedia *media, gint priority)
+{
+  gnl_object_set_priority (GNL_OBJECT(media->sourceitem->gnlsource), priority);
+}
 
 static gint
 pitivi_timelinemedia_expose (GtkWidget      *widget,
@@ -258,6 +284,7 @@ pitivi_timelinemedia_constructor (GType type,
   name = g_malloc (strlen (self->sourceitem->srcfile->filename) + strlen (self->sourceitem->srcfile->mediatype) + 10);
   sprintf (name, "%s_%s_%lld", self->sourceitem->srcfile->filename, self->sourceitem->srcfile->mediatype, self->sourceitem->id);
   self->sourceitem->gnlsource = gnl_source_new (name, self->sourceitem->srcfile->pipeline);
+  gnl_object_set_media_start_stop (GNL_OBJECT(self->sourceitem->gnlsource), 0, self->sourceitem->srcfile->length);
   return object;
 }
 

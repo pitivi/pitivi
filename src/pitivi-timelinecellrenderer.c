@@ -199,6 +199,42 @@ pitivi_timelinecellrenderer_expose (GtkWidget      *widget,
   return FALSE;
 }
 
+/*
+  pitivi_layout_put
+
+  Adds the given widget to the layout at the given x/y position
+  Updates the position of the attached GnlSource
+*/
+
+void
+pitivi_layout_put (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
+{
+  
+  gtk_layout_put (layout, widget, x, y);
+  if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout)) {
+    pitivi_timelinemedia_put (PITIVI_TIMELINEMEDIA(widget), 
+			      convert_pix_time(PITIVI_TIMELINECELLRENDERER(layout), x));
+  }  
+}
+
+/*
+  pitivi_layout_move
+
+  Moves the widget in the layout at the given x/y position
+  Updates the position of the attached GnlSource
+*/
+
+void
+pitivi_layout_move (GtkLayout *layout, GtkWidget *widget, gint x, gint y)
+{
+  
+  gtk_layout_move (layout, widget, x, y);
+  if (PITIVI_IS_TIMELINEMEDIA(widget) && PITIVI_IS_TIMELINECELLRENDERER(layout)) {
+    pitivi_timelinemedia_put (PITIVI_TIMELINEMEDIA(widget), 
+			      convert_pix_time(PITIVI_TIMELINECELLRENDERER(layout), x));
+  }
+}
+
 GtkWidget **layout_intersection_widget (GtkWidget *self, GtkWidget *widget, gint x)
 {
   GList	*child;
@@ -237,7 +273,7 @@ void move_media (GtkWidget *cell, GtkWidget *widget, guint x)
   if (first && GTK_IS_WIDGET (first) && first->allocation.x != x)
     {
       xbegin = x + first->allocation.width;
-      gtk_layout_move (GTK_LAYOUT (cell), first, xbegin, 0);
+      pitivi_layout_move (GTK_LAYOUT (cell), first, xbegin, 0);
       move_media (cell, first, xbegin);
     }
   return;
@@ -255,21 +291,21 @@ move_child_on_layout (GtkWidget *self, GtkWidget *widget, gint x)
   if (!intersec[1] && intersec[0])
     {
       xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
-      gtk_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
+      pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
     }
   else if (!intersec[0] && intersec[1])
     {
       move_media (self, intersec[1], x);
-      gtk_layout_move (GTK_LAYOUT (self), widget, x, 0);
+      pitivi_layout_move (GTK_LAYOUT (self), widget, x, 0);
     }
   else if (intersec[1] && intersec[0])
     {
       xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
-      gtk_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
+      pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
       move_media (self, widget, xbegin);
     }
   else
-    gtk_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
+    pitivi_layout_move (GTK_LAYOUT (self), widget, xbegin, 0);
 }
 
 int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
@@ -283,22 +319,22 @@ int add_to_layout (GtkWidget *self, GtkWidget *widget, gint x, gint y)
   gtk_widget_size_request (widget, &req);
   intersec = layout_intersection_widget (self, widget, x);
   if (!intersec[0] && !intersec[1])
-    gtk_layout_put (GTK_LAYOUT (self), widget, x, 0);
+    pitivi_layout_put (GTK_LAYOUT (self), widget, x, 0);
   else if (!intersec[1]) /* right */
     {
       move_media (self, widget, x);
       xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
-      gtk_layout_put (GTK_LAYOUT (self), widget, xbegin, y);
+      pitivi_layout_put (GTK_LAYOUT (self), widget, xbegin, y);
     }
   else if (!intersec[0]) /* left */
     {
       move_media (self, intersec[1], x);
-      gtk_layout_put (GTK_LAYOUT (self), widget, x, 0);
+      pitivi_layout_put (GTK_LAYOUT (self), widget, x, 0);
     }
   else if (intersec[1] && intersec[0])
     { 
       xbegin = intersec[0]->allocation.x+intersec[0]->allocation.width;
-      gtk_layout_put (GTK_LAYOUT (self), widget, xbegin, 0);
+      pitivi_layout_put (GTK_LAYOUT (self), widget, xbegin, 0);
       move_media (self, intersec[1], xbegin);
     }
   return TRUE;
@@ -543,6 +579,34 @@ convert_time_pix (PitiviTimelineCellRenderer *self, gint64 timelength)
   return len;
 }
 
+/*
+  convert_pix_time
+  Converts given pixel position into nanosecond time,
+	depends on the zoom level, and the unit of the ruler
+*/
+
+gint64
+convert_pix_time (PitiviTimelineCellRenderer *self, guint pos)
+{
+  gint64 res;
+  PitiviProject	*proj = PITIVI_WINDOWS(self->private->timewin)->mainapp->project;
+
+  switch (self->private->timewin->unit) {
+  case PITIVI_SECONDS:
+    res = (pos / self->private->timewin->zoom) * GST_SECOND;
+    break;
+  case PITIVI_FRAMES:
+    res = pos 
+      / (pitivi_projectsettings_get_videorate(proj->settings) * self->private->timewin->zoom) 
+      * GST_SECOND;
+    break;
+  case PITIVI_NANOSECONDS:
+  default:
+    res = pos;
+    break;
+  }
+  return res;
+}
 
 void
 create_media_video_audio_track (PitiviTimelineCellRenderer *cell, PitiviSourceFile *sf, int x)
@@ -813,8 +877,26 @@ pitivi_timelinecellrenderer_deactivate (PitiviTimelineCellRenderer *self)
 void
 pitivi_timelinecellrenderer_zoom_changed (PitiviTimelineCellRenderer *self)
 {
+  GList	*child;
+  GnlSource	*source;
+  gint64	start,mstart,mstop;
+
   // redraw all childs at the good position and at the good width
-  g_printf("zoom-changed to %d for track %d\n", self->private->timewin->zoom, self->track_nb);
+  for (child = gtk_container_get_children(GTK_CONTAINER(self)); child; child = child->next) {
+    if (PITIVI_IS_TIMELINEMEDIA(child->data)) {
+      // get the child time position, it's length
+      source = PITIVI_TIMELINEMEDIA(child->data)->sourceitem->gnlsource;
+      start = GNL_OBJECT(source)->start;
+      gnl_object_get_media_start_stop(GNL_OBJECT(source), &mstart, &mstop);
+      // resize the child
+      gtk_widget_set_size_request(GTK_WIDGET (child->data),
+				  convert_time_pix(self, mstop-mstart),
+				  FIXED_HEIGHT);
+      // move it to the good position
+      pitivi_layout_move(GTK_LAYOUT(self), GTK_WIDGET(child->data), 
+			 convert_time_pix(self, start) ,0);
+    }
+  }
 }
 
 void
