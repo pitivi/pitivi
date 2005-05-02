@@ -1,0 +1,21 @@
+<ui>
+  <menubar name="MainMenuBar">
+    <menu action="File">
+      <menuitem action="NewProject" />
+      <menuitem action="OpenProject" />
+      <menuitem action="SaveProject" />
+      <menuitem action="SaveProjectAs" />
+      <separator />
+      <menuitem action="Quit" />
+    </menu>
+    <menu action="Help">
+      <menuitem action="About" />
+    </menu>
+  </menubar>
+  <toolbar name="MainToolBar">
+    <toolitem action="NewProject" />
+    <toolitem action="OpenProject" />
+    <toolitem action="SaveProject" />
+    <toolitem action="SaveProjectAs" />
+  </toolbar>
+</ui>

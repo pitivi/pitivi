@@ -1,5 +1,30 @@
 2005-05-02  Edward Hervey  <bilboed@bilboed.com>
 
+	* __init__.py:
+	* bin/pitivi.in:
+	* pitivi/__init__.py:
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/dnd.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/sourcelist.py:
+	* pitivi/pixmaps/pitivi-file.png:
+	* pitivi/pixmaps/pitivi-sound.png:
+	* pitivi/pixmaps/pitivi-video.png:
+	* pitivi/ui/__init__.py:
+	* pitivi/ui/actions.xml:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/sourcelist.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	Initial python version commit
+
+2005-05-02  Edward Hervey  <bilboed@bilboed.com>
+
 	* NEWS: indicated switch to python version
 
 	* AUTHORS: updated
