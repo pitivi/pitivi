@@ -1,3 +1,14 @@
+2005-05-02  Edward Hervey  <bilboed@bilboed.com>
+
+	* NEWS: indicated switch to python version
+
+	* AUTHORS: updated
+
+2005-05-02  Edward Hervey  <bilboed@bilboed.com>
+
+	Switch to python version. C/GObject version is discontinued, but still
+	available in the PITIVI_C_IS_DEAD branch on cvs
+	
 2005-01-20 12:22  bilboed
 
 	* src/pitivi-globalbin.c: PitiviGlobalBin : disabling EOS, let

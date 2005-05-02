@@ -1,0 +1,31 @@
+PiTiVi Python Version
+Redone from scratch in Python (pygtk/gst-python)
+
+March 2005 - ...
+
+Edward     HERVEY    <bilboed@bilboed.com>
+
+
+==================================================
+
+PiTiVi C/GObject Version
+
+/!\ DISCONTINUED /!\
+
+available in PITIVI_C_IS_DEAD branch on cvs
+
+December 2003 - February 2005
+
+2003-2005
+Edward	   HERVEY    <hervey_e@epitech.net>
+Stephan    BLOCH     <bloch_s@epitech.net>
+Guillaume  CASANOVA  <casano_g@epitech.net>
+Marc	   DELETTREZ <delett_m@epitech.net>
+Raphael    PRALAT    <pralat_r@epitech.net>   
+
+2003-2004
+Julien     CARBONNIER <carbon_j@epitech.net>
+Loic       DUBART     <dubart_l@epitech.net>
+Heidy      HERY       <hery_h@epitech.net>
+
+==================================================
