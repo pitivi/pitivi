@@ -1,8 +1,0 @@
-#include <gst/gst.h>
-
-gnl_object_get_type
-gnl_source_get_type
-gnl_operation_get_type
-gnl_composition_get_type
-gnl_group_get_type
-gnl_timeline_get_type
