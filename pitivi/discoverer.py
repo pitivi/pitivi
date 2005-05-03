@@ -90,20 +90,13 @@ class Discoverer(gobject.GObject):
             dbin = self.pipeline.get_by_name("dbin")
             dbin.connect("new-decoded-pad", self._new_decoded_pad_cb)
             self.pipeline.set_state(gst.STATE_PLAYING)
-            print "starting loop"
             for i in range(100):
                 if not self.pipeline.iterate():
                     break
                 if not i % 2:
                     while gtk.events_pending():
                         gtk.main_iteration(False)
-            print "finished loop"
-            #for probe, pad in self.probepads:
-            #    pad.remove_probe(probe)
-            #    probe.destroy()
-            #self.probepads = []
             self.pipeline.set_state(gst.STATE_NULL)
-            print "finished setting pipeline to NULL"
             if not self.currentfactory:
                 self.emit("not_media_file", self.current)
             self._del_analyze_data()
@@ -164,7 +157,7 @@ class Discoverer(gobject.GObject):
             # Get video info
             # TODO, we should check if we already have it or not
             caps = pad.get_caps()
-            struct = caps.get_structure(0)
+            struct = caps[0]
             rw = struct["width"]
             he = struct["height"]
             if not self.currentfactory.video_info:
@@ -254,7 +247,7 @@ class Discoverer(gobject.GObject):
                     width = 64
                     caps = pad.get_caps()
                     print "caps : ", caps
-                    struct = caps.get_structure(0)
+                    struct = caps[0]
                     print "struct : ", struct
                     rw = struct["width"]
                     he = struct["height"]
@@ -277,42 +270,7 @@ class Discoverer(gobject.GObject):
                     # Only stop pipeline if there isn't any video to thumbnail
                     self.pipeline.set_eos()
 
-    def _video_probe_cb(self, probe, data, pad):
-        print "video data", data
-        if not isinstance(data, gst.Event):
-            length = pad.query(gst.QUERY_TOTAL, gst.FORMAT_TIME)
-            if length:
-                if not self.currentfactory.length:
-                    self.currentfactory.set_length(length)
-                    self.pipeline.set_eos()
-        return True
-
-    def _audio_probe_cb(self, probe, data, pad):
-        print "audio data", data
-        if not isinstance(data, gst.Event):
-            length = pad.query(gst.QUERY_TOTAL, gst.FORMAT_TIME)
-            if length:
-                if not self.currentfactory.length:
-                    self.currentfactory.set_length(length)
-                    self.pipeline.set_eos()
-        return True
-
     def _del_analyze_data(self):
-        if self.audioprobe:
-            print "removing audioprobe"
-            print gc.get_referents(self.audioprobe)
-            self.audioprobe.destroy()
-            del self.audioprobe
-            self.audioprobe = None
-            print gc.get_referents(self.audioprobe)
-        if self.videoprobe:
-            print "removing videoprobe"
-            print gc.get_referents(self.videoprobe)
-            self.videoprobe.destroy()
-            del self.videoprobe
-            self.videoprobe = None
-            print gc.get_referents(self.videoprobe)
-        print "removing pipeline"
         del self.pipeline
         self.pipeline = None
         self.currentfactory = None

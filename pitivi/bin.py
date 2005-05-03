@@ -117,7 +117,7 @@ class SmartFileBin(SmartBin):
         self.has_audio = factory.is_audio
         self.length = factory.length
         if self.factory.video_info:
-            struct = self.factory.video_info.get_structure(0)
+            struct = self.factory.video_info[0]
             self.height = struct["height"]
             self.width = struct["width"]
         self.source = self.factory.make_bin()

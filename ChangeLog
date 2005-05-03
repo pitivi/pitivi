@@ -1,3 +1,9 @@
+2005-05-03  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/bin.py: (SmartFileBin): 
+	* pitivi/discoverer.py: (Discoverer):
+	Cleanup and using caps[i] instead of caps.get_structure(i)
+
 2005-05-02  Edward Hervey  <bilboed@bilboed.com>
 
 	* __init__.py:
