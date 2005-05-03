@@ -1,5 +1,11 @@
 2005-05-03  Edward Hervey  <bilboed@bilboed.com>
 
+	* pitivi/ui/viewer.py: (PitiviViewer._create_sinkthreads): 
+	revert to ximagesink if xvimagesink isn't available
+	revert to osssink if alsasink isn't available
+
+2005-05-03  Edward Hervey  <bilboed@bilboed.com>
+
 	* pitivi/bin.py: (SmartFileBin): 
 	* pitivi/discoverer.py: (Discoverer):
 	Cleanup and using caps[i] instead of caps.get_structure(i)

@@ -45,7 +45,12 @@ class PitiviViewer(gtk.VBox):
     def _create_sinkthreads(self):
         """ Creates the sink threads for the playground """
         self.videosink = gst.element_factory_make("xvimagesink", "vsink")
+        if not self.videosink:
+            self.videosink = gst.element_factory_make("ximagesink", "vsink")
         self.audiosink = gst.element_factory_make("alsasink", "asink")
+        if not self.audiosink:
+            self.audiosink = gst.element_factory_make("osssink", "asink")
+            
         self.vqueue = gst.element_factory_make("queue", "vqueue")
         self.aqueue = gst.element_factory_make("queue", "aqueue")
         self.vsinkthread = gst.Thread("vsinkthread")
