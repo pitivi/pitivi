@@ -20,6 +20,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import string
 import gobject
 import gst
 
@@ -105,12 +106,10 @@ class ObjectFactory(gobject.GObject):
 
     def set_audio(self, is_audio):
         """ sets whether the element has audio stream """
-        print "setting audio"
         self.set_property("is-audio", is_audio)
 
     def set_video(self, is_video):
         """ sets whether the element has video stream """
-        print "setting video"
         self.set_property("is-video", is_video)
 
     def set_length(self, length):
@@ -120,6 +119,36 @@ class ObjectFactory(gobject.GObject):
     def set_thumbnail(self, thumbnail):
         """ Sets the thumbnail filename of the element """
         self.set_property("thumbnail", thumbnail)
+
+    def get_pretty_info(self):
+        """ Returns a prettyfied information string """
+        # Audio : [Mono|Stereo|<nbchanns>] @ <rate> Hz
+        # Video : <width> x <Height> @ <rate> fps
+        if self.is_effect:
+            if self.is_audio:
+                return "Video Effect"
+            elif self.is_video:
+                return "Audio Effect"
+            return "Effect"
+        if not self.is_video and not self.is_audio:
+            "Unknown"
+        stl = []
+        if self.is_video:
+            if self.video_info:
+                stl.append("Video: %d x %d @ %3f fps" % (self.video_info[0]["width"],
+                                                        self.video_info[0]["height"],
+                                                        self.video_info[0]["framerate"]))
+            else:
+                stl.append("Video")
+        if self.is_audio:
+            if self.audio_info:
+                nbchanns = self.audio_info[0]["channels"]
+                rate = self.audio_info[0]["rate"]
+                stl.append("Audio: %d channels @ %d Hz" % (nbchanns, rate))
+            else:
+                stl.append("Audio")
+        return string.join(stl, "\n")
+            
 
 gobject.type_register(ObjectFactory)
 

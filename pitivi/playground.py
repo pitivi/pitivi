@@ -140,6 +140,8 @@ class PlayGround(gobject.GObject):
 
     def play_temporary_filesourcefactory(self, factory):
         """ temporarely play a FileSourceFactory """
+        if isinstance(self.current, SmartFileBin) and self.current.factory == factory:
+            return
         tempbin = SmartFileBin(factory)
         self._play_temporary_bin(tempbin)
 

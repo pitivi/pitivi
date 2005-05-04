@@ -110,7 +110,7 @@ class SourceListWidget(gtk.VBox):
         namecol.pack_start(txtcell)
         namecol.add_attribute(txtcell, "text", 1)
 
-        typecol = gtk.TreeViewColumn("Type")
+        typecol = gtk.TreeViewColumn("Info")
         self.treeview.append_column(typecol)
         txtcell = gtk.CellRendererText()
         typecol.pack_start(txtcell)
@@ -240,14 +240,15 @@ class SourceListWidget(gtk.VBox):
         factory.connect("notify::is-video", self._fact_type_cb)
         factory.connect("notify::length", self._fact_length_cb)
         factory.connect("notify::thumbnail", self._fact_thumbnail_cb)
+        factory.connect("notify::audio-info", self._fact_infoupdate_cb)
+        factory.connect("notify::video-info", self._fact_infoupdate_cb)
         piter = self.storemodel.get_iter_first()
         while piter:
             if factory.name == self.storemodel.get_value(piter, 5):
+                self.storemodel.set(piter, 2, factory.get_pretty_info())
                 if factory.is_video:
-                    self.storemodel.set(piter, 2, "Video")
                     self.storemodel.set(piter, 0, self.videofilepixbuf)
                 elif factory.is_audio:
-                    self.storemodel.set(piter, 2, "Audio")
                     self.storemodel.set(piter, 0, self.audiofilepixbuf)
                 self.storemodel.set(piter, 4, factory)
                 print "added stuff"
@@ -261,17 +262,21 @@ class SourceListWidget(gtk.VBox):
         piter = self.storemodel.get_iter_first()
         while piter:
             if factory == self.storemodel.get_value(piter, 4):
-                if factory.is_video:
-                    if factory.is_audio:
-                        self.storemodel.set(piter, 2, "Audio/Video")
-                    else:
-                        self.storemodel.set(piter, 2, "Video")
-                    if not factory.thumbnail:
+                self.storemodel.set(piter, 2, factory.get_pretty_info())
+                if not factory.thumbnail:
+                    if factory.is_video:
                         self.storemodel.set(piter, 0, self.videofilepixbuf)
-                else:
-                    self.storemodel.set(piter, 2, "Audio")
-                    if not factory.thumbnail:
+                    elif factory.is_audio:
                         self.storemodel.set(piter, 0, self.audiofilepixbuf)
+                break
+            piter = self.storemodel.iter_next(piter)
+
+    def _fact_infoupdate_cb(self, factory, property):
+        """ info on the factory was updated """
+        piter = self.storemodel.get_iter_first()
+        while piter:
+            if factory == self.storemodel.get_value(piter, 4):
+                self.storemodel.set(piter, 2, factory.get_pretty_info())
                 break
             piter = self.storemodel.iter_next(piter)
 

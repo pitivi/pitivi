@@ -47,16 +47,25 @@ class PitiviViewer(gtk.VBox):
         self.videosink = gst.element_factory_make("xvimagesink", "vsink")
         if not self.videosink:
             self.videosink = gst.element_factory_make("ximagesink", "vsink")
+            csp = gst.element_factory_make("ffmpegcolorspace", "csp")
+        else:
+            csp = None
         self.audiosink = gst.element_factory_make("alsasink", "asink")
         if not self.audiosink:
             self.audiosink = gst.element_factory_make("osssink", "asink")
-            
+
         self.vqueue = gst.element_factory_make("queue", "vqueue")
         self.aqueue = gst.element_factory_make("queue", "aqueue")
         self.vsinkthread = gst.Thread("vsinkthread")
         self.asinkthread = gst.Thread("asinkthread")
         self.vsinkthread.add_many(self.videosink, self.vqueue)
-        self.vqueue.link(self.videosink)
+        if csp:
+            self.vsinkthread.add(csp)
+            self.vqueue.link(csp)
+            csp.link(self.videosink)
+        else:
+            self.vqueue.link(self.videosink)
+        
         self.vsinkthread.add_ghost_pad(self.vqueue.get_pad("sink"), "sink")
         self.asinkthread.add_many(self.audiosink, self.aqueue)
         self.aqueue.link(self.audiosink)
@@ -74,6 +83,12 @@ class PitiviViewer(gtk.VBox):
         self.drawingarea = gtk.DrawingArea()
         self.drawingarea.connect_after("expose-event", self._drawingarea_expose_event)
         self.aframe.add(self.drawingarea)
+
+        # Slider
+        self.posadjust = gtk.Adjustment()
+        self.slider = gtk.HScale(self.posadjust)
+        self.slider.set_draw_value(False)
+        self.pack_start(self.slider, expand=False)
         
         # Buttons/Controls
         bbox = gtk.HBox()

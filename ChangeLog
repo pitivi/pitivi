@@ -1,3 +1,27 @@
+2005-05-04  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/viewer.py: 
+	(PitiviViewer._create_sinkthreads): 
+	Use ximagesink if xvimagesink isn't available
+	Use osssink if alsasink isn't available
+	(PitiviViewer._create_gui): Added slider
+
+	* pitivi/ui/sourcefactories.py: (SourceListWidget):
+	Switch to using ObjectFactory.get_pretty_info()
+
+	* pitivi/playground.py: (PlayGround.play_temporary_filesourcefactory): 
+	Don't create a new SmartFileBin of the given factory if that factory
+	is already being played
+
+	* pitivi/objectfactory.py: (ObjectFactory.get_pretty_info): 
+	Added method to get a prettyfied information string
+
+	* pitivi/discoverer.py:
+	Faster discovery of audio/video properties, and cleanup
+
+	* pitivi/bin.py: (SmartBin.set_video_sink_thread):
+	Connect to video sink thread with proper filtered link
+
 2005-05-03  Edward Hervey  <bilboed@bilboed.com>
 
 	* pitivi/ui/viewer.py: (PitiviViewer._create_sinkthreads): 

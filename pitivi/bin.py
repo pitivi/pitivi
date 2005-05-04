@@ -77,7 +77,11 @@ class SmartBin(gst.Bin):
         if self.has_video:
             self.vsinkthread = vsinkthread
             self.add(self.vsinkthread)
-            self.vtee.get_pad("src%d").link(self.vsinkthread.get_pad("sink"))
+            if self.width and self.height:
+                filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d;video/x-raw-rgb,width=%d,height=%d" % (self.width, self.height, self.width, self.height))
+                self.vtee.get_pad("src%d").link_filtered(self.vsinkthread.get_pad("sink"), filtcaps)
+            else:
+                self.vtee.get_pad("src%d").link(self.vsinkthread.get_pad("sink"))
         return True
 
     def remove_audio_sink_thread(self):
