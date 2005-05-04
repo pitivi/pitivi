@@ -86,7 +86,7 @@ class Discoverer(gobject.GObject):
                 continue
             dbin = self.pipeline.get_by_name("dbin")
             dbin.connect("new-decoded-pad", self._new_decoded_pad_cb)
-            self.pipeline.set_state(gst.STATE_PLAYING):
+            self.pipeline.set_state(gst.STATE_PLAYING)
             for i in range(100):
                 if not self.pipeline.iterate():
                     break
