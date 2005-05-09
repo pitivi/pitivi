@@ -1,0 +1,88 @@
+Timeline view design document (c) 2005 Edward Hervey
+
+* How is the timeline handled in PiTiVi ?
+
+  The timeline follows the "View - Model - Data" design.
+   _ Data is the gnonlin timeline (GnlTimeline)
+   _ Model is the part which will be saved by pitivi
+   _ View is the UI
+
+  This design allows pitivi to have different 'views':
+   _ The 'Simple' View : à la iMovie
+   _ The 'Tracks' View : à la Premiere, or like the previous version of pitivi.
+  
+
+* Simple View
+
+  This view displays everything on one line. It is aimed to be very simple to
+  use.
+
+ * Actions
+
+   The simple view allows only SOME actions amongst all those available through
+   the model:
+
+   * Add a Source
+     _ Sources are added before or after a source.
+     _ Sources CANNOT be added next to a transition.
+     _ Sources CAN be added next to an effect.
+     _ Once the source is added, move the following sources later in time.
+     _ If the source has audio, add the audio source.
+
+   * Move a Source
+     _ follows the same rules as 'Add a Source'
+     _ If the source has audio, move the audio source too.
+
+   * Remove a Source
+     _ "Collapse" the following sources
+     _ If the source has audio, remove the audio source too.
+
+   * Add an effect
+     _ An effect can only be added to one source
+     _ There can only be at most one effect on each source
+
+   * Remove an effect
+
+   * Add a transition
+     _ Can ONLY go between two sources
+     _ If the adjacent sources have audio, apply an audio transition to the
+     audio sources.
+     _ Has a given duration on each source
+     _ Overlaps the two sources
+     _ move the following sources back in time
+
+   * Remove a transition
+     _ if there's an audio transition, remove it too
+     _ Move the following sources back into place (just after the first source)
+
+ * Display
+
+   * Sources
+     _ All have the same width (which doesn't mean it's fixed)
+     _ In normal situations, the sources follow each others without any gaps.
+     _ Special Cases:
+       * Gap between two sources : 
+	 => Black source (which can be removed)
+       * Source A overlaps part of Source B:
+	 => Display normally
+       * Source A is over and "inside" Source B
+	 (A.start > B.start, A.stop < B.stop):
+	 => Display A inside B , but it cannot be moved in the simple View
+
+   * Effects
+     _ Effects applied on one source entirely have their icons displayed in the
+       corner of the source
+
+   * Transitions
+     _ Show like a source (maybe half-width)
+     _ Represent somewhat differently
+
+
+* Tracks View
+
+  * Actions
+
+  * Display
+
+
+* Model

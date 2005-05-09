@@ -1,3 +1,8 @@
+2005-05-09  Edward Hervey  <bilboed@bilboed.com>
+
+	* docs/design/timeline.txt:
+	Design document for the timeline
+
 2005-05-04  Edward Hervey  <bilboed@bilboed.com>
 
 	* pitivi/discoverer.py:
