@@ -24,6 +24,7 @@ import os
 import gobject
 import gst
 import gnome.vfs
+from timeline import Timeline
 from sourcelist import SourceList
 
 class Project(gobject.GObject):
@@ -45,13 +46,20 @@ class Project(gobject.GObject):
         self.uri = uri
         self.sources = SourceList(self)
         self.settings = ProjectSettings(self)
+        self._load()
 
     def _load(self):
         """ loads the project from a file """
-        # TODO
-        if not self.uri or not gnome.vfs.exists(uri):
-            return False
-        pass
+        if self.timeline:
+            return
+        self.timeline = Timeline(self)
+        if self.uri:
+            if not gnome.vfs.exists(uri):
+                # given uri doesn't exist !!!
+                # TODO raise exception
+                return
+            # TODO fill the timeline from the uri
+            pass
 
     def _save(self, filename):
         """ internal save function """
@@ -69,6 +77,9 @@ class Project(gobject.GObject):
 gobject.type_register(Project)
 
 class ProjectSettings(gobject.GObject):
+
+    # TODO
+    # Audio/Video settings for the project
 
     def __init__(self, project):
         gobject.GObject.__init__(self)

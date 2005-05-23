@@ -50,6 +50,7 @@ class SourceList(gobject.GObject):
         self.discoverer = Discoverer()
         self.discoverer.connect("new_sourcefilefactory", self._new_sourcefilefactory_cb)
         self.discoverer.connect("not_media_file", self._not_media_file_cb)
+        self.discoverer.connect("finished_analyzing", self._finished_analyzing_cb)
 
     def __contains__(self, uri):
         return self.sources.__contains__(uri)
@@ -120,7 +121,10 @@ class SourceList(gobject.GObject):
         if factory.name in self and not self[factory.name]:
             self.sources[factory.name] = factory
             self.emit("file_is_valid", factory)
-        elif factory.name in self.tempsources:
+
+    def _finished_analyzing_cb(self, discoverer, factory):
+        # callback from finishing analyzing factory
+        if factory.name in self.tempsources:
             self.tempsources[factory.name] = factory
             self.emit("tmp_is_ready", factory)
 

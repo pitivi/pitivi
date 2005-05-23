@@ -42,7 +42,10 @@ class Discoverer(gobject.GObject):
                                    (gobject.TYPE_PYOBJECT, )),
         "not_media_file" : (gobject.SIGNAL_RUN_LAST,
                             gobject.TYPE_NONE,
-                            (gobject.TYPE_STRING, ))
+                            (gobject.TYPE_STRING, )),
+        "finished_analyzing" : ( gobject.SIGNAL_RUN_LAST,
+                                 gobject.TYPE_NONE,
+                                 (gobject.TYPE_PYOBJECT, ))
         }
 
     def __init__(self):
@@ -96,6 +99,8 @@ class Discoverer(gobject.GObject):
             self.pipeline.set_state(gst.STATE_NULL)
             if not self.currentfactory:
                 self.emit("not_media_file", self.current)
+            else:
+                self.emit("finished_analyzing", self.currentfactory)
             self._del_analyze_data()
         self.working = False
 
@@ -115,19 +120,19 @@ class Discoverer(gobject.GObject):
         fakesink = gst.element_factory_make("fakesink")
 
         vcsp = gst.element_factory_make("ffmpegcolorspace")
-        vscale = gst.element_factory_make("videoscale")
+        #vscale = gst.element_factory_make("videoscale")
         vpng = gst.element_factory_make("jpegenc")
         #vpng.set_property("snapshot", False)
         vpngfakesink = gst.element_factory_make("fakesink")
         vpngfakesink.set_property("signal-handoffs", True)
 
         vident.connect("handoff", self._vident_handoff_cb,
-                       (vident, fakesink, vcsp, vscale, vpng, vpngfakesink, pad))
+                       (vident, fakesink, vcsp, vpng, vpngfakesink, pad))
         vpngfakesink.connect("handoff", self._vpngsink_handoff_cb,
-                             (vident, fakesink, vcsp, vscale, vpng, vpngfakesink, pad))
+                             (vident, fakesink, vcsp, vpng, vpngfakesink, pad))
         
         self.pipeline.set_state(gst.STATE_PAUSED)
-        self.pipeline.add_many(vident, fakesink, vcsp, vscale, vpng, vpngfakesink)
+        self.pipeline.add_many(vident, fakesink, vcsp, vpng, vpngfakesink)
         pad.link(vident.get_pad("sink"))
         vident.link(fakesink)
         self.pipeline.set_state(gst.STATE_PLAYING)
@@ -142,7 +147,7 @@ class Discoverer(gobject.GObject):
         if self.thumbnailing:
             return
         if not isinstance(buffer, gst.Event):
-            vident, fakesink, vcsp, vscale, vpng, vpngfakesink, pad = data
+            vident, fakesink, vcsp, vpng, vpngfakesink, pad = data
             if not self.currentfactory.length:
                 # Get the length
                 length = pad.query(gst.QUERY_TOTAL, gst.FORMAT_TIME)
@@ -159,8 +164,8 @@ class Discoverer(gobject.GObject):
             # Connect correct pipeline
             self.pipeline.set_state(gst.STATE_PAUSED)
             element.unlink(fakesink)
-            element.link(vscale)
-            vscale.link_filtered(vpng, gst.caps_from_string("video/x-raw-yuv,width=(int)%d,height=(int)%d" % (96, height)))
+            element.link(vpng)
+            #vscale.link_filtered(vpng, gst.caps_from_string("video/x-raw-yuv,width=(int)%d,height=(int)%d" % (96, height)))
             vpng.link(vpngfakesink)
             self.pipeline.set_state(gst.STATE_PLAYING)
             self.thumbnailing = True
@@ -170,7 +175,7 @@ class Discoverer(gobject.GObject):
         if not self.thumbnailing:
             print "ERROR !!! the png fakesink shouldn't be called here !!!"
             return
-        vident, fakesink, vcsp, vscale, vpng, vpngfakesink, pad = data
+        vident, fakesink, vcsp, vpng, vpngfakesink, pad = data
         # save the buffer to a file
         filename = "/tmp/" + self.currentfactory.name.encode('base64').replace('\n','') + ".jpg"
         pngfile = open(filename, "wb")
@@ -179,7 +184,7 @@ class Discoverer(gobject.GObject):
         self.currentfactory.set_thumbnail(filename)
         # disconnect this pipeline
         self.pipeline.set_state(gst.STATE_PAUSED)
-        vident.unlink(vscale)
+        vident.unlink(vpng)
         # reconnect the fakesink
         vident.link(fakesink)
         self.pipeline.set_state(gst.STATE_PLAYING)

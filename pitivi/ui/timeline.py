@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # PiTiVi , Non-linear video editor
 #
-#       ui/timeline.py
+#       pitivi/ui/timeline.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #
@@ -22,6 +22,7 @@
 
 import gtk
 import gobject
+from timelineobjects import SimpleSourceWidget, SimpleTimeline
 
 class TimelineWidget(gtk.VBox):
     """ Widget for reprensenting Pitivi's Timeline """
@@ -36,23 +37,55 @@ class TimelineWidget(gtk.VBox):
         self.hadjustment = gtk.Adjustment()
         self.leftsizegroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
 
-        self.content = SimpleTimelineContentWidget(self)
+        self.simpleview = SimpleTimelineContentWidget(self)
+        self.complexview = ComplexTimelineContentWidget(self)
         #contentframe = gtk.Frame()
         #contentframe.add(self.content)
-        self.pack_start(self.content)
+        #self.pack_start(self.content)
 
         hbox = gtk.HBox()
         
-        switchmenuframe = gtk.Frame()
-        simpleview = gtk.Label("Simple View")
-        simpleview.set_padding(5,0)
-        switchmenuframe.add(simpleview)
-        self.leftsizegroup.add_widget(switchmenuframe)
-        
-        hbox.pack_start(switchmenuframe, expand=False)
-        hbox.pack_start(gtk.HScrollbar(self.hadjustment))
+        #switchmenuframe = gtk.Frame()
+        liststore = gtk.ListStore(gobject.TYPE_STRING)
+        combobox = gtk.ComboBox(liststore)
+        cell = gtk.CellRendererText()
+        combobox.pack_start(cell, True)
+        combobox.add_attribute(cell, 'text', 0)
+        liststore.append(["Simple View"])
+        liststore.append(["Complex View"])
+        combobox.set_active(0)
+        combobox.connect("changed", self._combobox_changed)
 
-        self.pack_start(hbox, expand=False)
+        #switchmenuframe.add(combobox)
+        self.leftsizegroup.add_widget(combobox)
+        
+        hbox.pack_start(combobox, expand=False)
+        self.hscroll = gtk.HScrollbar(self.hadjustment)
+        hbox.pack_start(self.hscroll)
+
+        self.pack_end(hbox, expand=False)
+        self._show_simple_view()
+
+    def _combobox_changed(self, cbox):
+        if cbox.get_active():
+            self._show_complex_view()
+        else:
+            self._show_simple_view()
+
+    def _show_simple_view(self):
+        if self.complexview in self.get_children():
+            self.remove(self.complexview)
+        self.pack_start(self.simpleview, expand=True)
+        self.simpleview.connect("scroll-event", self._simple_scroll_cb)
+
+    def _show_complex_view(self):
+        if self.simpleview in self.get_children():
+            self.remove(self.simpleview)
+        self.pack_start(self.complexview, expand=True)
+
+    def _simple_scroll_cb(self, simplet, event):
+        self.hscroll.emit("scroll-event", event)
+        
         
 gobject.type_register(TimelineWidget)
 
@@ -64,7 +97,6 @@ class SimpleTimelineContentWidget(gtk.HBox):
         self.twidget = twidget
         gtk.HBox.__init__(self)
         self._create_gui()
-        self.layout.put(gtk.Label("pouet"), 0, 0)
 
     def _create_gui(self):
         """ draw the GUI """
@@ -72,24 +104,24 @@ class SimpleTimelineContentWidget(gtk.HBox):
         self.twidget.leftsizegroup.add_widget(self.header)
         self.pack_start(self.header, expand=False)
 
-        self.layout = gtk.Layout(hadjustment = self.twidget.hadjustment)
-        self.layout.set_size(1000, 0)
-        self.layout.set_size_request(100, 50)
-        self.layout.connect_after("realize", self.realize_after_cb)
-
+        self.timeline = SimpleTimeline(self.twidget, self.twidget.pitivi,
+                                       hadjustment = self.twidget.hadjustment)
+        
         layoutframe = gtk.Frame()
-        layoutframe.add(self.layout)
+        layoutframe.add(self.timeline)
         self.pack_start(layoutframe)
 
-    def realize_after_cb(self, widget):
-        self.layout.realize()
-        cmap = self.layout.bin_window.get_colormap()
-        self.layout.bin_window.set_background(cmap.alloc_color(65000, 65000, 65000))
-
-    def expose_event_cb(self, widget, event):
-        print "expose", event.area.x, event.area.y, event.area.width, event.area.height
-        cmap = self.layout.bin_window.get_colormap()
-        white = cmap.alloc_color(65000, 65000, 65000)
-        self.layout.bin_window.set_background(white)
-
 gobject.type_register(SimpleTimelineContentWidget)
+
+class ComplexTimelineContentWidget(gtk.HBox):
+    """ Widget for complex timeline content display """
+
+    def __init__(self, twidget):
+        self.twidget = twidget
+        gtk.HBox.__init__(self)
+        self._create_gui()
+
+    def _create_gui(self):
+        pass
+
+gobject.type_register(ComplexTimelineContentWidget)

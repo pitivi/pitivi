@@ -32,7 +32,7 @@ def beautify_length(length):
     sec = length / gst.SECOND
     min = sec / 60
     sec = sec % 60    
-    return "%02sm%02ss" % (min, sec)
+    return "%02dm%02ds" % (min, sec)
 
 class SourceFactoriesWidget(gtk.Notebook):
     """
@@ -294,6 +294,8 @@ class SourceListWidget(gtk.VBox):
         """ a thumbnail is available """
         print "thumbnail available"
         pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
+        desiredheight = 128 * pixbuf.get_height() / pixbuf.get_width()
+        pixbuf = pixbuf.scale_simple(128, desiredheight, gtk.gdk.INTERP_BILINEAR)
         piter = self.storemodel.get_iter_first()
         while piter:
             if factory == self.storemodel.get_value(piter, 4):
@@ -364,6 +366,8 @@ class SourceListWidget(gtk.VBox):
                 length = beautify_length(factory.length)
                 if factory.thumbnail:
                     thumbnail = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
+                    desiredheight = 128 * thumbnail.get_height() / thumbnail.get_width()
+                    thumbnail = thumbnail.scale_simple(128, desiredheight, gtk.gdk.INTERP_BILINEAR)
                 name = os.path.basename(unquote(factory.name))
                 if factory.is_video:
                     if factory.is_audio:
@@ -400,8 +404,15 @@ class SourceListWidget(gtk.VBox):
 
     def _dnd_icon_begin(self, widget, context):
         print "icon drag_begin"
-        if len(self.iconview.get_selected_items()) < 1:
+        items = self.iconview.get_selected_items()
+        print "got", len(items), "items"
+        if len(items) < 1:
             context.drag_abort(int(time.time()))
+        else:
+            if len(items) == 1:
+                thumbnail = self.storemodel.get_value(self.storemodel.get_iter(items[0]), 0)
+                self.iconview.drag_source_set_icon_pixbuf(thumbnail)
+        
 
     def _dnd_tree_begin(self, widget, context):
         print "tree drag_begin"

@@ -20,6 +20,8 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import os.path
+from urllib import unquote
 import string
 import gobject
 import gst
@@ -64,6 +66,7 @@ class ObjectFactory(gobject.GObject):
     def __init__(self):
         gobject.GObject.__init__(self)
         self.name = ""
+        self.displayname = ""
         self.is_audio = False
         self.is_video = False
         self.is_effect = False
@@ -91,10 +94,6 @@ class ObjectFactory(gobject.GObject):
             self.audio_info = value
         else:
             raise AttributeError, 'unknown property %s' % property.name
-
-    def do_discover(self):
-        """ discover properties about the element """
-        pass
 
     def set_audio_info(self, caps):
         """ sets the audio caps of the element """
@@ -160,51 +159,138 @@ class FileSourceFactory(ObjectFactory):
     def __init__(self, filename):
         ObjectFactory.__init__(self)
         self.name = filename
+        self.displayname = os.path.basename(unquote(self.name))
+        self.lastbinid = 0
 
     def make_bin(self):
         """ returns a source bin with all pads """
+        # pipeline = gst.Pipeline()
         bin = gst.Bin()
         src = gst.element_factory_make("gnomevfssrc")
         src.set_property("location", self.name)
         dbin = gst.element_factory_make("decodebin")
         bin.add_many(src, dbin)
         src.link(dbin)
-        if self.is_audio:
-            aident = gst.element_factory_make("identity")
-            bin.add(aident)
-            bin.add_ghost_pad(aident.get_pad("src"), "asrc")
-        else:
-            aident = None
-        if self.is_video:
-            vident = gst.element_factory_make("identity")
-            bin.add(vident)
-            bin.add_ghost_pad(vident.get_pad("src"), "vsrc")
-        else:
-            vident = None
+##         if self.is_audio:
+##             aident = gst.element_factory_make("identity")
+##             bin.add(aident)
+##             bin.add_ghost_pad(aident.get_pad("src"), "asrc")
+##         else:
+##             aident = None
+##         if self.is_video:
+##             vident = gst.element_factory_make("identity")
+##             bin.add(vident)
+##             bin.add_ghost_pad(vident.get_pad("src"), "vsrc")
+##         else:
+##             vident = None
 
-        dbin.connect("new-decoded-pad", self._bin_new_decoded_pad,
-                     (bin, aident, vident))
+        dbin.connect("new-decoded-pad", self._bin_new_decoded_pad, bin )
+        dbin.connect("removed-decoded-pad", self._bin_removed_decoded_pad, bin)
+
+##         pipeline.add(bin)
+##         pipeline.set_state(gst.STATE_PLAYING)
+        
+##         for i in range(100):
+##             if not pipeline.iterate():
+##                 break
+
+##         print bin.get_pad_list()
+##         pipeline.set_state(gst.STATE_PAUSED)
+##         bin.seek(gst.FORMAT_TIME, 0L) 
+##         print bin.get_pad_list()
+##         pipeline.remove(bin)
+##         print bin.get_pad_list()
+##         dbin.disconnect(sig)
 
         self.instances.append(bin)
         return bin
 
-    def _bin_new_decoded_pad(self, dbin, pad, is_last, data):
-        bin, aident, vident = data
-        if "audio" in pad.get_caps().to_string() and aident:
-            pad.link(aident.get_pad("sink"))
-        elif "video" in pad.get_caps().to_string() and vident:
-            pad.link(vident.get_pad("sink"))
+##     def _aprobe(self, probe, data):
+##         print "aprobe", data
+##         return True
+
+##     def _vprobe(self, probe, data):
+##         print "vprobe", data
+##         return True
+
+    def _bin_new_decoded_pad(self, dbin, pad, is_last, bin):
+        print "decoded pad", pad.get_caps().to_string()
+        # add it as ghost_pad to the bin
+        if "audio" in pad.get_caps().to_string():
+            bin.add_ghost_pad(pad, "asrc")
+        elif "video" in pad.get_caps().to_string():
+            bin.add_ghost_pad(pad, "vsrc")
+        else:
+            return
+        #self.emit("new-decoded-pad", newpad)
+
+    def _bin_removed_decoded_pad(self, dbin, pad, bin):
+        print "pad", pad, "was removed"
+        if "audio" in pad.get_caps().to_string():
+            mypad = bin.get_pad("asrc")
+        elif "video" in pad.get_caps().to_string():
+            mypad = bin.get_pad("vsrc")
+        else:
+            return
+        #self.emit("removed-decoded-pad", mypad)
+        bin.remove_pad(mypad)
+        
+##         if "audio" in pad.get_caps().to_string():
+##             probe = gst.Probe(False, self._aprobe)
+##             pad.add_probe(probe)
+##             bin.add_ghost_pad(pad, "asrc")
+##             if not self.is_video or bin.get_pad("vsrc"):
+##                 bin.set_eos()
+##         elif "video" in pad.get_caps().to_string():
+##             probe = gst.Probe(False, self._vprobe)
+##             pad.add_probe(probe)
+##             bin.add_ghost_pad(pad, "vsrc")
+##             if not self.is_audio or bin.get_pad("asrc"):
+##                 bin.set_eos()
 
 
     def bin_is_destroyed(self, bin):
         if bin in self.instances:
             self.instances.remove(bin)
 
+    def _single_bin_new_decoded_pad(self, dbin, pad, is_last, data):
+        # add safe de-activation of the other pad
+        bin, mtype, identity = data
+        if mtype in pad.get_caps().to_string():
+            pad.link(identity.get_pad("sink"))
+        if identity.get_pad("sink").get_peer():
+            for pad in [x for x in dbin.get_pad_list() if x.get_direction == gst.PAD_SRC]:
+                if not mtype in pad.get_caps().to_string():
+                    pad.activate_recursive(False)
+            
+    def _single_bin_removed_decoded_pad(self, dbin, pad, data):
+        bin, mtype, identity = data
+        if mtype in pad.get_caps().to_string():
+            pad.unlink(identity.get_pad("sink"))
+
+    def _make_single_bin(self, type):
+        # Use identity and ghost pad !
+        bin = gst.Bin(self.name + str(self.lastbinid))
+        self.lastbinid = self.lastbinid + 1
+        src = gst.element_factory_make("gnomevfssrc")
+        src.set_property("location", self.name)
+        dbin = gst.element_factory_make("decodebin")
+        ident = gst.element_factory_make("identity")
+        bin.add_many(src, dbin, ident)
+        src.link(dbin)
+        bin.add_ghost_pad(ident.get_pad("src"), "src")
+        
+        dbin.connect("new-decoded-pad", self._single_bin_new_decoded_pad, (bin, type, ident))
+        dbin.connect("removed-decoded-pad", self._single_bin_removed_decoded_pad, (bin, type, ident))
+
+        self.instances.append(bin)
+        return bin
+
     def make_audio_bin(self):
-        pass
+        return self._make_single_bin("audio")
 
     def make_video_bin(self):
-        pass
+        return self._make_single_bin("video")
 
     def make_audio_gnlsource(self):
         pass
