@@ -48,8 +48,9 @@ class Discoverer(gobject.GObject):
                                  (gobject.TYPE_PYOBJECT, ))
         }
 
-    def __init__(self):
+    def __init__(self, project):
         gobject.GObject.__init__(self)
+        self.project = project
         self.queue = []
         self.working = False
         self.currentfactory = None
@@ -215,12 +216,12 @@ class Discoverer(gobject.GObject):
         #   create one, emit "new_sourcefile_factory"
         if "video" in pad.get_caps().to_string():
             if not self.currentfactory:
-                self.currentfactory = objectfactory.FileSourceFactory(self.current)
+                self.currentfactory = objectfactory.FileSourceFactory(self.current, self.project)
                 self.emit("new_sourcefilefactory", self.currentfactory)
             self._new_video_pad_cb(element, pad)
         elif "audio" in pad.get_caps().to_string():
             if not self.currentfactory:
-                self.currentfactory = objectfactory.FileSourceFactory(self.current)
+                self.currentfactory = objectfactory.FileSourceFactory(self.current, self.project)
                 self.emit("new_sourcefilefactory", self.currentfactory)
             self._new_audio_pad_cb(element, pad)
 

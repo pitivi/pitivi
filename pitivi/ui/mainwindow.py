@@ -26,6 +26,7 @@ import gtk
 from timeline import TimelineWidget
 from sourcefactories import SourceFactoriesWidget
 from viewer import PitiviViewer
+from projectsettings import ProjectSettingsDialog
 
 PITIVI_VERSION = "0.1.9"
 
@@ -54,12 +55,19 @@ class PitiviMainWindow(gtk.Window):
                         ("OpenProject", gtk.STOCK_OPEN, "_Open Project", None, "Opens an existing project", self.open_project_cb),
                         ("SaveProject", gtk.STOCK_SAVE, "_Save Project", None, "Save the current project", self.save_project_cb),
                         ("SaveProjectAs", gtk.STOCK_SAVE_AS, "Save Project As...", None, "Save the current project", self.save_project_as_cb),
+                        ("ProjectSettings", gtk.STOCK_PROPERTIES, "Project Settings", None, "Edit the project settings", self.project_settings_cb),
                         ("Quit", gtk.STOCK_QUIT, "_Quit PiTiVi", None, "Quit PiTiVi", self.quit_cb),
                         ("About", gtk.STOCK_ABOUT, "About PiTiVi", None, "Information about PiTiVi", self.about_cb),
                         ("File", None, "_File"),
                         ("Help", None, "_Help")]
         self.actiongroup = gtk.ActionGroup("mainwindow")
         self.actiongroup.add_actions (self.actions)
+        # deactivating non-functional actions
+        for action in self.actiongroup.list_actions():
+            if action.get_name() in ["ProjectSettings", "Quit", "File", "Help"]:
+                action.set_sensitive(True)
+            else:
+                action.set_sensitive(False)
         self.uimanager = gtk.UIManager()
         self.add_accel_group(self.uimanager.get_accel_group())
         self.uimanager.insert_action_group(self.actiongroup, 0)
@@ -116,6 +124,11 @@ class PitiviMainWindow(gtk.Window):
 
     def save_project_as_cb(self, action):
         print "save project as"
+
+    def project_settings_cb(self, action):
+        print "project settings"
+        l = ProjectSettingsDialog(self, self.pitivi.current)
+        l.show()
 
     def quit_cb(self, action):
         print "quit"

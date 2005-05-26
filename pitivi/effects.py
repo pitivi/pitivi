@@ -33,8 +33,25 @@ from objectfactory import OperationFactory,TransitionFactory,SMPTETransitionFact
 #     that are too cumbersome to use as such
 #  _ Complex Audio/Video Effects
 
-def get_effect_list():
-    """ Returns all available effects as a list of OperationFactory"""
-    pass
+class Magician:
+    """
+    Handles all the effects
+    """
 
+    def __init__(self, pitivi):
+        self.pitivi = pitivi
+        self.simple_video = []
+        self.simple_audio = []
+        self.transitions = []
+        self._get_simple_filters()
 
+    def _get_simple_filters(self):
+        # go trough the list of element factories and
+        # add them to the correct list
+        factlist = gst.registry_pool_feature_list(gst.ElementFactory)
+        for fact in factlist:
+            if "Filter/Effect/Audio" in fact.get_klass():
+                self.simple_audio.append(fact)
+            elif "Filter/Effect/Video" in fact.get_klass():
+                self.simple_video.append(fact)
+                

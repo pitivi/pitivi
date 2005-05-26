@@ -100,7 +100,7 @@ class SimpleTimelineContentWidget(gtk.HBox):
 
     def _create_gui(self):
         """ draw the GUI """
-        self.header = gtk.Label("Header")
+        self.header = gtk.Label("Timeline")
         self.twidget.leftsizegroup.add_widget(self.header)
         self.pack_start(self.header, expand=False)
 

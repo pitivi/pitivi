@@ -61,6 +61,7 @@ class Timeline(gobject.GObject):
         self.project = project
         self.timeline = gst.element_factory_make("gnltimeline", "timeline-" + project.name)
         self._fill_contents()
+        self.project.settings.connect_after("settings-changed", self._settings_changed_cb)
 
     def _fill_contents(self):
         # TODO create the initial timeline according to the project settings
@@ -69,6 +70,12 @@ class Timeline(gobject.GObject):
         self.videocomp.link_object(self.audiocomp)
         self.timeline.add_many(self.audiocomp.gnlobject,
                                self.videocomp.gnlobject)
+
+    def _settings_changed_cb(self, settings):
+        # reset the timeline !
+        pstate = self.timeline.get_state()
+        self.timeline.set_state(gst.STATE_READY)
+        self.timeline.set_state(pstate)
 
 gobject.type_register(Timeline)
 

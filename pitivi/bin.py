@@ -186,23 +186,106 @@ class SmartTimelineBin(SmartBin):
         self.has_video = True
         self.has_audio = True
 
-        # TODO : width/height depends on project settings
-        self.width = 320
-        self.height = 240
+        self.width = project.settings.videowidth
+        self.height = project.settings.videoheight
         self.source = project.timeline.timeline
+        self.project.settings.connect("settings-changed", self._settings_changed_cb)
         project.timeline.videocomp.connect("start-stop-changed", self._start_stop_changed)
         self.length = project.timeline.videocomp.stop - project.timeline.videocomp.start
+        self.encthread = None
         SmartBin.__init__(self, "project-" + project.name,
                           displayname = "Project: " + project.name)
 
     def add_source(self):
         self.add(self.source)
 
+    def _settings_changed_cb(self, settings):
+        self.width = settings.videowidth
+        self.height = settings.videoheight
+
     def connect_source(self):
-        print "connecting timeline to audio/video tees"
-        print self.project.timeline.timeline.get_pad_list()
-        self.source.get_pad("src_" + self.project.timeline.audiocomp.gnlobject.get_name()).link(self.atee.get_pad("sink"))
-        self.source.get_pad("src_" + self.project.timeline.videocomp.gnlobject.get_name()).link(self.vtee.get_pad("sink"))
+        srcpad = self.source.get_pad("src_" + self.project.timeline.audiocomp.gnlobject.get_name())
+        srcpad.link(self.atee.get_pad("sink"))
+        srcpad = self.source.get_pad("src_" + self.project.timeline.videocomp.gnlobject.get_name())
+        srcpad.link(self.vtee.get_pad("sink"))
+
+    def record(self, uri):
+        """ render the timeline to the given uri """
+        self.encthread = self._make_encthread()
+        if self.get_state() == gst.STATE_PLAYING:
+            self.set_state(gst.STATE_PAUSED)
+        self.encthread.filesink.set_property("location", uri)
+        self.add(self.encthread)
+        self.vtee.get_pad("src%d").link(self.encthread.get_pad("vsink"))
+        self.atee.get_pad("src%d").link(self.encthread.get_pad("asink"))
+
+        self.source.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
+                         long(0))
+        self.set_state(gst.STATE_PLAYING)
+
+    def stop_recording(self):
+        """ stop the recording, removing the encoding thread """
+        self.set_state(gst.STATE_PAUSED)
+        if self.encthread:
+            self.vtee.unlink(self.encthread)
+            self.atee.unlink(self.encthread)
+            self.remove(self.encthread)
+            self.encthread = None
+
+    def _make_encthread(self):
+        # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
+        ainq = gst.element_factory_make("queue", "ainq")
+        aoutq = gst.element_factory_make("queue", "aoutq")
+        vinq = gst.element_factory_make("queue", "vinq")
+        voutq = gst.element_factory_make("queue", "voutq")
+        aenc = gst.element_factory_make(self.project.settings.aencoder ,"aenc")
+        venc = gst.element_factory_make(self.project.settings.vencoder, "venc")
+        mux = gst.element_factory_make(self.project.settings.muxer, "mux")
+        fsink = gst.element_factory_make("gnomevfssink", "fsink")
+
+        thread = gst.Thread("encthread")
+        thread.add_many(mux, fsink, aoutq, voutq)
+
+        # Audio encoding thread
+        aencthread = gst.Thread("aencthread")
+        aencthread.add_many(ainq, aenc)
+        thread.add(aencthread)
+        
+        filtcaps = gst.caps_from_string("audio/x-raw-int")
+        if not len(filtcaps.intersect(aenc.get_pad("sink").get_caps())):
+            aconv = gst.element_factory_make("audioconvert", "aconv")
+            aencthread.add(aconv)
+            ainq.link(aconv)
+            aconv.link(aenc)
+        else:
+            ainq.link(aenc)
+        aenc.link(aoutq)
+
+        # Video encoding thread
+        vencthread = gst.Thread("vencthread")
+        vencthread.add_many(vinq, venc)
+        thread.add(vencthread)
+        
+        filtcaps = gst.caps_from_string("video/x-raw-yuv")
+        if not len(filtcaps.intersect(venc.get_pad("sink").get_caps())):
+            csp = gst.element_factory_make("ffmpegcolorspace", "csp")
+            vencthread.add(csp)
+            ainq.link(csp)
+            csp.link(venc)
+        else:
+            vinq.link(venc)
+        venc.link(voutq)
+
+        thread.add_ghost_pad(vinq.get_pad("sink"), "vsink")
+        thread.add_ghost_pad(ainq.get_pad("sink"), "asink")
+
+        thread.filesink = fsink
+
+        aoutq.link(mux)
+        voutq.link(mux)
+        mux.link(fsink)
+
+        return thread
 
     def _start_stop_changed(self, videocomp, start, stop):
         print "smart timeline bin: start stop changed", start, stop
@@ -223,8 +306,8 @@ class SmartDefaultBin(SmartBin):
         self.silence = gst.element_factory_make("silence", "silence")
         self.has_audio = True
         self.has_video = True
-        self.width = 320
-        self.height = 240
+        self.width = 720
+        self.height = 576
         SmartBin.__init__(self, "smartdefaultbin")
 
     def add_source(self):

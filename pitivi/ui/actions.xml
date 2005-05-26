@@ -5,6 +5,7 @@
       <menuitem action="OpenProject" />
       <menuitem action="SaveProject" />
       <menuitem action="SaveProjectAs" />
+      <menuitem action="ProjectSettings" />
       <separator />
       <menuitem action="Quit" />
     </menu>

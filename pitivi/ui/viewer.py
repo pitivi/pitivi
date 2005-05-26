@@ -20,11 +20,13 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import os.path
 import gobject
 import gtk
 import gst
 import pango
 import gst.interfaces
+from glade import GladeWindow
 from pitivi.bin import SmartTimelineBin
 from pitivi.objectfactory import FileSourceFactory
 import pitivi.dnd as dnd
@@ -56,6 +58,8 @@ class PitiviViewer(gtk.VBox):
         self.pitivi.playground.connect("bin-added", self._bin_added_cb)
         self.pitivi.playground.connect("bin-removed", self._bin_removed_cb)
 
+        self.pitivi.current.settings.connect("settings-changed",
+                                             self._settings_changed_cb)
         self._add_timeline_to_playground()
 
     def _create_gui(self):
@@ -64,15 +68,14 @@ class PitiviViewer(gtk.VBox):
         
         # drawing area
         self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.0, ratio=4.0/3.0, obey_child=False)
-        self.aframe.connect("expose-event", self._frame_expose_event)
         self.pack_start(self.aframe, expand=True)
         self.drawingarea = ViewerWidget()
 ##         self.drawingarea = gtk.DrawingArea()
 ##         self.drawingarea.connect("expose-event", self._drawingarea_expose_event)
-        self.drawingarea.connect("realize", self._drawingarea_realize_cb)
+        self.drawingarea.connect_after("realize", self._drawingarea_realize_cb)
 ##         self.drawingarea.connect("configure-event", self._drawingarea_configure_event)
         self.aframe.add(self.drawingarea)
-
+        
         # horizontal line
         self.pack_start(gtk.HSeparator(), expand=False)
 
@@ -155,7 +158,6 @@ class PitiviViewer(gtk.VBox):
 
     def _create_sinkthreads(self):
         """ Creates the sink threads for the playground """
-        print "_create_sinkthread"
         self.videosink = gst.element_factory_make("xvimagesink", "vsink")
         if not self.videosink:
             self.videosink = gst.element_factory_make("ximagesink", "vsink")
@@ -163,10 +165,8 @@ class PitiviViewer(gtk.VBox):
         else:
             csp = None
 
-        print "before set_xwindow_id"
         self.drawingarea.videosink = self.videosink
         self.videosink.set_xwindow_id(self.drawingarea.window.xid)
-        print "after set_xwindow_id"
         
         self.audiosink = gst.element_factory_make("alsasink", "asink")
         if not self.audiosink:
@@ -194,27 +194,12 @@ class PitiviViewer(gtk.VBox):
         self.pitivi.playground.set_audio_sink_thread(self.asinkthread)
         self.pitivi.playground.connect("current-changed", self._current_playground_changed)
 
-##     def _drawingarea_expose_event(self, drawingarea, event):
-##         print "drawingarea expose_event"
-##         self.videosink.set_xwindow_id(drawingarea.window.xid)
-##         drawingarea.window.draw_rectangle(drawingarea.style.black_gc,
-##                                           True,
-##                                           0, 0,
-##                                           drawingarea.allocation.width,
-##                                           drawingarea.allocation.height)
-##         self.videosink.expose()
-##         return False
-
-##     def _drawingarea_configure_event(self, drawingarea, event):
-##         print "drawingarea configure_event"
-##         self._drawingarea_expose_event(drawingarea, event)
-
-    def _frame_expose_event(self, frame, event):
-        print "frame expose_event"
-        return False
+    def _settings_changed_cb(self, settings):
+        print "current project settings changed"
+        # modify the ratio if it's the timeline that's playing
+        self.aframe.set_property("ratio", float(settings.videowidth) / float(settings.videoheight))
 
     def _drawingarea_realize_cb(self, drawingarea):
-        print "drawingarea realize_cb"
         drawingarea.modify_bg(gtk.STATE_NORMAL, drawingarea.style.black)
         self._create_sinkthreads()
         self.pitivi.playground.play()
@@ -238,7 +223,7 @@ class PitiviViewer(gtk.VBox):
             return True
         # don't check time if the timeline is paused !
         value = self.current_time
-        if not self.pitivi.playground.state == gst.STATE_PAUSED:
+        if not (isinstance(self.pitivi.playground.current, SmartTimelineBin) and not self.pitivi.playground.state == gst.STATE_PLAYING):
             value = self.videosink.query(gst.QUERY_POSITION, gst.FORMAT_TIME)
         # if the current_time or the length has changed, update time
         if not float(self.pitivi.playground.current.length) == self.posadjust.upper or not value == self.current_time:
@@ -293,8 +278,11 @@ class PitiviViewer(gtk.VBox):
                 start = smartbin.project.timeline.videocomp.start
                 stop = smartbin.project.timeline.videocomp.stop
                 self.posadjust.upper = float(stop - start)
+                self.record_button.set_sensitive(True)
             else:
                 self.posadjust.upper = float(smartbin.factory.length)
+                self.record_button.set_sensitive(False)
+            self._new_time(0)
         self.sourcecombobox.set_active(self._get_smartbin_index(smartbin))
 
     def _dnd_data_received(self, widget, context, x, y, selection, targetType, time):
@@ -319,12 +307,14 @@ class PitiviViewer(gtk.VBox):
     def _new_project_cb(self, pitivi, project):
         """ the current project has changed """
         self.pitivi.current.sources.connect("tmp_is_ready", self._tmp_is_ready)
+        self.pitivi.current.settings.connect("settings-changed", self._settings_changed_cb)
         
     def _add_timeline_to_playground(self):
-        self.pitivi.playground.add_pipeline(SmartTimelineBin(self.pitivi.current))
+        self.pitivi.playground.add_pipeline(self.pitivi.current.get_bin())
 
     def record_cb(self, button):
-        pass
+        win = EncodingDialog(self.pitivi.current)
+        win.show()
 
     def rewind_cb(self, button):
         pass
@@ -367,23 +357,83 @@ gobject.type_register(PitiviViewer)
 
 class ViewerWidget(gtk.DrawingArea):
 
-    __gsignals__ = {
-        "expose-event" : "override"
-        }
-
     def __init__(self):
+        gtk.DrawingArea.__init__(self)
         self.videosink = None
-        gobject.GObject.__init__(self)
+        self.have_set_xid = False
 
     def do_expose_event(self, event):
-        print "viewer widget expose"
         if self.videosink:
             self.window.draw_rectangle(self.style.white_gc,
                                        True, 0, 0,
                                        self.allocation.width,
                                        self.allocation.height)
-            self.videosink.set_xwindow_id(self.window.xid)
-            self.videosink.expose()
+            if not self.have_set_xid:
+                self.videosink.set_xwindow_id(self.window.xid)
+                self.have_set_xid = True
+            #self.videosink.expose()
         return True
 
 gobject.type_register(ViewerWidget)
+
+class EncodingDialog(GladeWindow):
+    glade_file = "encodingdialog.glade"
+
+    def __init__(self, project):
+        GladeWindow.__init__(self)
+        self.project = project
+        self.bin = project.get_bin()
+        self.bin.connect("eos", self._eos_cb)
+        self.outfile = None
+        self.progressbar = self.widgets["progressbar"]
+        self.timeoutid = None
+        self.rendering = False
+
+    def filebutton_clicked(self, button):
+        
+        dialog = gtk.FileChooserDialog(title="Choose file to render to",
+                                       parent=self.window,
+                                       buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
+                                                gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT),
+                                       action=gtk.FILE_CHOOSER_ACTION_SAVE)
+        if self.outfile:
+            dialog.set_current_name(self.outfile)
+        res = dialog.run()
+        dialog.hide()
+        if res == gtk.RESPONSE_ACCEPT:
+            self.outfile = dialog.get_uri()
+            button.set_label(os.path.basename(self.outfile))
+        dialog.destroy()
+
+    def recordbutton_clicked(self, button):
+        if self.outfile and not self.rendering:
+            self.bin.record(self.outfile)
+            self.timeoutid = gobject.timeout_add(400, self._timeout_cb)
+            self.rendering = True
+
+    def _timeout_cb(self):
+        if self.bin.get_state() == gst.STATE_PLAYING and self.rendering:
+            # check time
+            value = self.bin.source.query(gst.QUERY_POSITION,
+                                          gst.FORMAT_TIME)
+            # set progresbar to percentage
+            self.progressbar.set_fraction(float(value) / float(self.bin.length))
+            
+            # display current time in progressbar
+            self.progressbar.set_text(time_to_string(value))
+            return True
+        self.timeoutid = False
+        return False
+
+    def _eos_cb(self, bin):
+        self.rendering = False
+        self.progressbar.set_text("Rendering Finished")
+        self.progressbar.set_fraction(1.0)
+        gobject.source_remove(self.timeoutid)
+        
+    def cancelbutton_clicked(self, button):
+        self.bin.stop_recording()
+        if self.timeoutid:
+            gobject.source_remove(self.timeoutid)
+            self.timeoutid = None
+        self.destroy()

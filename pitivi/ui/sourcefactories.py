@@ -20,6 +20,7 @@
 # Boston, MA 02111-1307, USA.
 
 import os
+import os.path
 import time
 import string
 import gobject
@@ -27,6 +28,7 @@ import gtk
 import gst
 from urllib import unquote
 import pitivi.dnd as dnd
+from pitivi.configure import get_pixmap_dir
 
 def beautify_length(length):
     sec = length / gst.SECOND
@@ -51,10 +53,13 @@ class SourceFactoriesWidget(gtk.Notebook):
         self.sourcelist = SourceListWidget(self.pitivi)
         self.append_page(self.sourcelist, gtk.Label("Sources"))
         self.audiofxlist = AudioFxListWidget(self.pitivi)
+        self.audiofxlist.set_sensitive(False)
         self.append_page(self.audiofxlist, gtk.Label("Audio FX"))
         self.videofxlist = VideoFxListWidget(self.pitivi)
+        self.videofxlist.set_sensitive(False)
         self.append_page(self.videofxlist, gtk.Label("Video FX"))
         self.transitionlist = TransitionListWidget(self.pitivi)
+        self.transitionlist.set_sensitive(False)
         self.append_page(self.transitionlist, gtk.Label("Transitions"))
 
 gobject.type_register(SourceFactoriesWidget)
@@ -159,10 +164,10 @@ class SourceListWidget(gtk.VBox):
         self.pitivi.connect("new-project", self._new_project_cb)
 
         # default pixbufs
-        pixdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../pixmaps/")
-        self.filepixbuf = gtk.gdk.pixbuf_new_from_file(pixdir + "pitivi-file.png")
-        self.audiofilepixbuf = gtk.gdk.pixbuf_new_from_file(pixdir + "pitivi-sound.png")
-        self.videofilepixbuf = gtk.gdk.pixbuf_new_from_file(pixdir + "pitivi-video.png")
+        pixdir = get_pixmap_dir()
+        self.filepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-file.png"))
+        self.audiofilepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-sound.png"))
+        self.videofilepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-video.png"))
         
         # Drag and Drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
@@ -317,10 +322,11 @@ class SourceListWidget(gtk.VBox):
         dialog.set_select_multiple(True)
         response = dialog.run()
         filenames = None
+        dialog.hide()
         if response == gtk.RESPONSE_OK:
             filenames = dialog.get_uris()
+            self.add_files(filenames)
         dialog.destroy()
-        self.add_files(filenames)
 
     def remove_button_clicked_cb(self, widget):
         """ Called when a user clicks on the remove button """

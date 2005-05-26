@@ -86,7 +86,7 @@ class PlayGround(gobject.GObject):
 
     def add_pipeline(self, pipeline):
         """ add a pipeline to the playground """
-        print "adding pipeline to playground"
+        print "adding pipeline", pipeline, "to playground"
         if not isinstance(pipeline, SmartBin):
             return
         #self.playthread.add(pipeline)
@@ -211,6 +211,9 @@ class PlayGround(gobject.GObject):
         if not prevstate == gst.STATE_PAUSED:
             self.pause()
         if not self.vsinkthread.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
+                                     value):
+            print "COULDN'T SEEK !!!!!!!"
+        if not self.asinkthread.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
                                      value):
             print "COULDN'T SEEK !!!!!!!"
         if prevstate == gst.STATE_PLAYING:

@@ -47,7 +47,7 @@ class SourceList(gobject.GObject):
         self.project = project
         self.sources = {}
         self.tempsources = {}
-        self.discoverer = Discoverer()
+        self.discoverer = Discoverer(self.project)
         self.discoverer.connect("new_sourcefilefactory", self._new_sourcefilefactory_cb)
         self.discoverer.connect("not_media_file", self._not_media_file_cb)
         self.discoverer.connect("finished_analyzing", self._finished_analyzing_cb)

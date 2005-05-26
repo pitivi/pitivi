@@ -25,6 +25,7 @@ from ui import mainwindow
 from discoverer import Discoverer
 from playground import PlayGround
 from project import Project, file_is_project
+from effects import Magician
 
 class Pitivi(gobject.GObject):
     """
@@ -57,9 +58,10 @@ class Pitivi(gobject.GObject):
         """
         gobject.GObject.__init__(self)
         # TODO parse cmd line arguments
-        self.discoverer = Discoverer()
+        #self.discoverer = Discoverer(self)
         self.playground = PlayGround()
-        self.current = Project()
+        self.current = Project("New Project")
+        self.effects = Magician(self)
         
         # we're starting a GUI for the time being
         self.gui = mainwindow.PitiviMainWindow(self)
@@ -95,7 +97,7 @@ class Pitivi(gobject.GObject):
         # if there's a running project we must close it
         if self._close_running_project():
             self.playground.pause()
-            self.current = Project()
+            self.current = Project("New Project")
             self.emit("new-project", self.current)
         
 gobject.type_register(Pitivi)

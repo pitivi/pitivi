@@ -41,18 +41,6 @@ class ObjectFactory(gobject.GObject):
                        "Contains video stream",
                        "Does the element contain video",
                        False, gobject.PARAM_READWRITE),
-        "length" : ( gobject.TYPE_UINT64,
-                     "Length",
-                     "Length of element",
-                     0,
-                     -1,
-                     0,
-                     gobject.PARAM_READWRITE ),
-        "thumbnail" :  ( gobject.TYPE_STRING,
-                         "Thumbnail filename",
-                         "Filename for the element's thumbnail",
-                         "",
-                         gobject.PARAM_READWRITE ),
         "audio-info" : ( gobject.TYPE_PYOBJECT,
                          "Audio Information",
                          "GstCaps of the audio stream",
@@ -70,12 +58,7 @@ class ObjectFactory(gobject.GObject):
         self.is_audio = False
         self.is_video = False
         self.is_effect = False
-        self.nbinput = 0
-        self.nboutput = 0
-        self.thumbnail = ""
-        self.thumbnails = []
         self.instances = []
-        self.length = 0
         self.audio_info = None
         self.video_info = None
 
@@ -84,10 +67,6 @@ class ObjectFactory(gobject.GObject):
             self.is_audio = value
         elif property.name == "is-video":
             self.is_video = value
-        elif property.name == "length":
-            self.length = value
-        elif property.name == "thumbnail":
-            self.thumbnail = value
         elif property.name == "video-info":
             self.video_info = value
         elif property.name == "audio-info":
@@ -110,6 +89,137 @@ class ObjectFactory(gobject.GObject):
     def set_video(self, is_video):
         """ sets whether the element has video stream """
         self.set_property("is-video", is_video)
+
+    def make_audio_bin(self):
+        """ returns a audio only bin """
+        pass
+
+    def make_video_bin(self):
+        """ returns a video only bin """
+        pass
+
+gobject.type_register(ObjectFactory)
+
+class FileSourceFactory(ObjectFactory):
+    """
+    Provides File sources useable in a timeline
+    """
+
+    __gproperties__ = {
+        "length" : ( gobject.TYPE_UINT64,
+                     "Length",
+                     "Length of element",
+                     0,
+                     -1,
+                     0,
+                     gobject.PARAM_READWRITE ),
+        "thumbnail" :  ( gobject.TYPE_STRING,
+                         "Thumbnail filename",
+                         "Filename for the element's thumbnail",
+                         "",
+                         gobject.PARAM_READWRITE )
+        }
+
+    def __init__(self, filename, project):
+        ObjectFactory.__init__(self)
+        self.project = project
+        self.name = filename
+        self.displayname = os.path.basename(unquote(self.name))
+        self.lastbinid = 0
+        self.length = 0
+        self.thumbnail = ""
+        self.thumbnails = []
+
+    def do_set_property(self, property, value):
+        if property.name == "length":
+            self.length = value
+        elif property.name == "thumbnail":
+            self.thumbnail = value
+        else:
+            ObjectFactory.do_set_property(self, property, value)
+
+    def make_bin(self):
+        """ returns a source bin with all pads """
+        bin = gst.Bin()
+        src = gst.element_factory_make("gnomevfssrc")
+        src.set_property("location", self.name)
+        dbin = gst.element_factory_make("decodebin")
+        bin.add_many(src, dbin)
+        src.link(dbin)
+
+        dbin.connect("new-decoded-pad", self._bin_new_decoded_pad, bin )
+        dbin.connect("removed-decoded-pad", self._bin_removed_decoded_pad, bin)
+
+        self.instances.append(bin)
+        return bin
+
+    def _bin_new_decoded_pad(self, dbin, pad, is_last, bin):
+        print "decoded pad", pad.get_caps().to_string()
+        # add it as ghost_pad to the bin
+        if "audio" in pad.get_caps().to_string():
+            bin.add_ghost_pad(pad, "asrc")
+        elif "video" in pad.get_caps().to_string():
+            bin.add_ghost_pad(pad, "vsrc")
+        else:
+            return
+
+    def _bin_removed_decoded_pad(self, dbin, pad, bin):
+        print "pad", pad, "was removed"
+        if "audio" in pad.get_caps().to_string():
+            mypad = bin.get_pad("asrc")
+        elif "video" in pad.get_caps().to_string():
+            mypad = bin.get_pad("vsrc")
+        else:
+            return
+        bin.remove_pad(mypad)
+        
+    def bin_is_destroyed(self, bin):
+        if bin in self.instances:
+            self.instances.remove(bin)
+
+    def _single_bin_new_decoded_pad(self, dbin, pad, is_last, data):
+        # add safe de-activation of the other pad
+        bin, mtype, identity = data
+        if mtype in pad.get_caps().to_string():
+            pad.link(identity.get_pad("sink"))
+        if identity.get_pad("sink").get_peer():
+            for pad in [x for x in dbin.get_pad_list() if x.get_direction == gst.PAD_SRC]:
+                if not mtype in pad.get_caps().to_string():
+                    pad.activate_recursive(False)
+            
+    def _single_bin_removed_decoded_pad(self, dbin, pad, data):
+        bin, mtype, identity = data
+        if mtype in pad.get_caps().to_string():
+            pad.unlink(identity.get_pad("sink"))
+
+    def _make_single_bin(self, type):
+        # Use identity and ghost pad !
+        # TODO : add the adapters
+        bin = gst.Bin(self.name + str(self.lastbinid))
+        self.lastbinid = self.lastbinid + 1
+        src = gst.element_factory_make("gnomevfssrc")
+        src.set_property("location", self.name)
+        dbin = gst.element_factory_make("decodebin")
+        #ident = gst.element_factory_make("identity")
+        if type == "video":
+            ident = self.make_video_adapter_bin()
+        else:
+            ident = self.make_audio_adapter_bin()
+        bin.add_many(src, dbin, ident)
+        src.link(dbin)
+        bin.add_ghost_pad(ident.get_pad("src"), "src")
+        
+        dbin.connect("new-decoded-pad", self._single_bin_new_decoded_pad, (bin, type, ident))
+        dbin.connect("removed-decoded-pad", self._single_bin_removed_decoded_pad, (bin, type, ident))
+
+        self.instances.append(bin)
+        return bin
+
+    def make_audio_bin(self):
+        return self._make_single_bin("audio")
+
+    def make_video_bin(self):
+        return self._make_single_bin("video")
 
     def set_length(self, length):
         """ sets the length of the element """
@@ -147,156 +257,141 @@ class ObjectFactory(gobject.GObject):
             else:
                 stl.append("Audio")
         return string.join(stl, "\n")
-            
 
-gobject.type_register(ObjectFactory)
+    def _update_video_adapter_bin(self, psettings, data):
+        bin, vrate, vscale, vbox, ident = data
+        srcwidth = self.video_info[0]["width"]
+        srcheight = self.video_info[0]["height"]
+        srcrate = self.video_info[0]["framerate"]
+        src_ratio = float(srcwidth) / float(srcheight)
+        dst_ratio = float(self.project.settings.videowidth) / float(self.project.settings.videoheight)
 
-class FileSourceFactory(ObjectFactory):
-    """
-    Provides File sources useable in a timeline
-    """
+        pstate = bin.get_state()
+        if pstate > gst.STATE_READY:
+            bin.set_state(gst.STATE_READY)
 
-    def __init__(self, filename):
-        ObjectFactory.__init__(self)
-        self.name = filename
-        self.displayname = os.path.basename(unquote(self.name))
-        self.lastbinid = 0
+        vrate.unlink(vbox)
+        filtcaps = gst.caps_from_string("video/x-raw-yuv,framerate=%f"
+                                        % self.project.settings.videorate)
+        vrate.link(vbox, filtcaps)
 
-    def make_bin(self):
-        """ returns a source bin with all pads """
-        # pipeline = gst.Pipeline()
+        if src_ratio < dst_ratio:
+            # keep height, box on sides
+            padding = int((srcheight * dst_ratio) / 2)
+            vbox.set_property("top", 0)
+            vbox.set_property("bottom", 0)
+            vbox.set_property("left", -padding)
+            vbox.set_property("right", -padding)
+        elif src_ratio > dst_ratio:
+            # keep width, box above/under
+            padding = int(srcwidth / (dst_ratio * 2))
+            vbox.set_property("top", -padding)
+            vbox.set_property("bottom", -padding)
+            vbox.set_property("left", 0)
+            vbox.set_property("right", 0)
+        else:
+            # keep as such
+            for side in ["top", "bottom", "left", "right"]:
+                vbox.set_property(side, 0)
+
+
+        filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f"
+                                        % (psettings.videowidth,
+                                           psettings.videoheight,
+                                           psettings.videorate))
+        vscale.unlink(ident)
+        vscale.link(ident, filtcaps)
+        if pstate > gst.STATE_READY:
+            bin.set_state(pstate)
+
+    def _update_audio_adapter_bin(self, psettings, data):
+        bin, ascale, ident = data
+        pstate = bin.get_state()
+        if pstate > gst.STATE_READY:
+            bin.set_state(gst.STATE_READY)
+        filtcaps = gst.caps_from_string("audio/x-raw-int,channels=%d,rate=%d,depth=%d"
+                                        % (psettings.audiochannels,
+                                           psettings.audiorate,
+                                           psettings.audiodepth))
+        ascale.unlink(ident)
+        ascale.link(ident, filtcaps)
+        if pstate > gst.STATE_READY:
+            bin.set_state(pstate)
+    
+    def make_video_adapter_bin(self):
+        srcwidth = self.video_info[0]["width"]
+        srcheight = self.video_info[0]["height"]
+        srcrate = self.video_info[0]["framerate"]
+        
         bin = gst.Bin()
-        src = gst.element_factory_make("gnomevfssrc")
-        src.set_property("location", self.name)
-        dbin = gst.element_factory_make("decodebin")
-        bin.add_many(src, dbin)
-        src.link(dbin)
-##         if self.is_audio:
-##             aident = gst.element_factory_make("identity")
-##             bin.add(aident)
-##             bin.add_ghost_pad(aident.get_pad("src"), "asrc")
-##         else:
-##             aident = None
-##         if self.is_video:
-##             vident = gst.element_factory_make("identity")
-##             bin.add(vident)
-##             bin.add_ghost_pad(vident.get_pad("src"), "vsrc")
-##         else:
-##             vident = None
-
-        dbin.connect("new-decoded-pad", self._bin_new_decoded_pad, bin )
-        dbin.connect("removed-decoded-pad", self._bin_removed_decoded_pad, bin)
-
-##         pipeline.add(bin)
-##         pipeline.set_state(gst.STATE_PLAYING)
-        
-##         for i in range(100):
-##             if not pipeline.iterate():
-##                 break
-
-##         print bin.get_pad_list()
-##         pipeline.set_state(gst.STATE_PAUSED)
-##         bin.seek(gst.FORMAT_TIME, 0L) 
-##         print bin.get_pad_list()
-##         pipeline.remove(bin)
-##         print bin.get_pad_list()
-##         dbin.disconnect(sig)
-
-        self.instances.append(bin)
-        return bin
-
-##     def _aprobe(self, probe, data):
-##         print "aprobe", data
-##         return True
-
-##     def _vprobe(self, probe, data):
-##         print "vprobe", data
-##         return True
-
-    def _bin_new_decoded_pad(self, dbin, pad, is_last, bin):
-        print "decoded pad", pad.get_caps().to_string()
-        # add it as ghost_pad to the bin
-        if "audio" in pad.get_caps().to_string():
-            bin.add_ghost_pad(pad, "asrc")
-        elif "video" in pad.get_caps().to_string():
-            bin.add_ghost_pad(pad, "vsrc")
-        else:
-            return
-        #self.emit("new-decoded-pad", newpad)
-
-    def _bin_removed_decoded_pad(self, dbin, pad, bin):
-        print "pad", pad, "was removed"
-        if "audio" in pad.get_caps().to_string():
-            mypad = bin.get_pad("asrc")
-        elif "video" in pad.get_caps().to_string():
-            mypad = bin.get_pad("vsrc")
-        else:
-            return
-        #self.emit("removed-decoded-pad", mypad)
-        bin.remove_pad(mypad)
-        
-##         if "audio" in pad.get_caps().to_string():
-##             probe = gst.Probe(False, self._aprobe)
-##             pad.add_probe(probe)
-##             bin.add_ghost_pad(pad, "asrc")
-##             if not self.is_video or bin.get_pad("vsrc"):
-##                 bin.set_eos()
-##         elif "video" in pad.get_caps().to_string():
-##             probe = gst.Probe(False, self._vprobe)
-##             pad.add_probe(probe)
-##             bin.add_ghost_pad(pad, "vsrc")
-##             if not self.is_audio or bin.get_pad("asrc"):
-##                 bin.set_eos()
-
-
-    def bin_is_destroyed(self, bin):
-        if bin in self.instances:
-            self.instances.remove(bin)
-
-    def _single_bin_new_decoded_pad(self, dbin, pad, is_last, data):
-        # add safe de-activation of the other pad
-        bin, mtype, identity = data
-        if mtype in pad.get_caps().to_string():
-            pad.link(identity.get_pad("sink"))
-        if identity.get_pad("sink").get_peer():
-            for pad in [x for x in dbin.get_pad_list() if x.get_direction == gst.PAD_SRC]:
-                if not mtype in pad.get_caps().to_string():
-                    pad.activate_recursive(False)
-            
-    def _single_bin_removed_decoded_pad(self, dbin, pad, data):
-        bin, mtype, identity = data
-        if mtype in pad.get_caps().to_string():
-            pad.unlink(identity.get_pad("sink"))
-
-    def _make_single_bin(self, type):
-        # Use identity and ghost pad !
-        bin = gst.Bin(self.name + str(self.lastbinid))
-        self.lastbinid = self.lastbinid + 1
-        src = gst.element_factory_make("gnomevfssrc")
-        src.set_property("location", self.name)
-        dbin = gst.element_factory_make("decodebin")
+        vrate = gst.element_factory_make("videorate")
+        vbox = gst.element_factory_make("videobox")
         ident = gst.element_factory_make("identity")
-        bin.add_many(src, dbin, ident)
-        src.link(dbin)
-        bin.add_ghost_pad(ident.get_pad("src"), "src")
-        
-        dbin.connect("new-decoded-pad", self._single_bin_new_decoded_pad, (bin, type, ident))
-        dbin.connect("removed-decoded-pad", self._single_bin_removed_decoded_pad, (bin, type, ident))
 
-        self.instances.append(bin)
+        vscale = gst.element_factory_make("ffvideoscale")
+        if not vscale:
+            vscale = gst.element_factory_make("videoscale")
+
+        bin.add_many(vrate, vbox, vscale, ident)
+        filtcaps = gst.caps_from_string("video/x-raw-yuv,framerate=%f"
+                                        % self.project.settings.videorate)
+        vrate.link(vbox, filtcaps)
+
+        src_ratio = float(srcwidth) / float(srcheight)
+        dst_ratio = float(self.project.settings.videowidth) / float(self.project.settings.videoheight)
+
+        print "src_ratio:", src_ratio, "dst_ratio:", dst_ratio
+
+        if src_ratio < dst_ratio:
+            # keep height, box on sides
+            padding = int((srcheight * dst_ratio - srcwidth) / 2)
+            print "padding:", -padding
+            vbox.set_property("top", 0)
+            vbox.set_property("bottom", 0)
+            vbox.set_property("left", -padding)
+            vbox.set_property("right", -padding)
+        elif src_ratio > dst_ratio:
+            # keep width, box above/under
+            padding = int(((srcwidth / dst_ratio) - srcheight) / 2)
+            print "padding:", -padding
+            vbox.set_property("top", -padding)
+            vbox.set_property("bottom", -padding)
+            vbox.set_property("left", 0)
+            vbox.set_property("right", 0)
+        else:
+            # keep as such
+            for side in ["top", "bottom", "left", "right"]:
+                vbox.set_property(side, 0)
+        
+        vbox.link(vscale)
+        filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f"
+                                        % (self.project.settings.videowidth,
+                                           self.project.settings.videoheight,
+                                           self.project.settings.videorate))
+        vscale.link(ident, filtcaps)
+        bin.add_ghost_pad(vrate.get_pad("sink"), "sink")
+        bin.add_ghost_pad(ident.get_pad("src"), "src")
+        self.project.settings.connect("settings-changed", self._update_video_adapter_bin,
+                                 (bin, vrate, vscale, vbox, ident))
         return bin
 
-    def make_audio_bin(self):
-        return self._make_single_bin("audio")
-
-    def make_video_bin(self):
-        return self._make_single_bin("video")
-
-    def make_audio_gnlsource(self):
-        pass
-
-    def make_video_gnlsource(self):
-        pass
+    def make_audio_adapter_bin(self):
+        bin = gst.Bin()
+        aconv = gst.element_factory_make("audioconvert")
+        ascale = gst.element_factory_make("audioscale")
+        ident = gst.element_factory_make("identity")
+        bin.add_many(aconv, ascale, ident)
+        aconv.link(ascale)
+        filtcaps = gst.caps_from_string("audio/x-raw-int,channels=%d,rate=%d,depth=%d"
+                                        % (self.project.settings.audiochannels,
+                                           self.project.settings.audiorate,
+                                           self.project.settings.audiodepth))
+        ascale.link(ident, filtcaps)
+        bin.add_ghost_pad(aconv.get_pad("sink"), "sink")
+        bin.add_ghost_pad(ident.get_pad("src"), "src")
+        self.project.settings.connect("settings-changed", self._update_audio_adapter_bin,
+                                 (bin, ascale, ident))
+        return bin
 
 gobject.type_register(FileSourceFactory)
 
@@ -307,8 +402,45 @@ class OperationFactory(ObjectFactory):
 
     def __init__(self):
         ObjectFactory.__init__(self)
+        self.nbinput = 1
+        self.nboutput = 1
 
 gobject.type_register(OperationFactory)
+
+class SimpleOperationFactory(OperationFactory):
+    """
+    Provides simple (audio OR video) operations useable in a timeline
+    """
+
+    def __init__(self, elementfactory):
+        """ elementfactory is the GstElementFactory """
+        OperationFactory.__init__(self)
+        self.name = elementfactory.get_name()
+        self.displayname = elementfactory.get_longname()
+        # check what type the output pad is (AUDIO/VIDEO)
+        for padt in elementfactory.get_pad_templates():
+            if padt.direction == gst.PAD_SRC:
+                if "audio" in padt.get_caps().to_string():
+                    self.is_audio = True
+                elif "video" in padt.get_caps().to_string():
+                    self.is_video = True
+
+    def _make_bin(self, mtype):
+        # make a bin with adapters
+        # TODO: add the adapters
+        bin = gst.Bin()
+        el = gst.element_factory_make(self.name)
+        bin.add(el)
+        return bin
+
+    def make_audio_bin(self):
+        if not self.is_audio:
+            raise NameError, "this operation does not handle audio"
+
+    def make_video_bin(self):
+        if not self.is_video:
+            raise NameError, "This operation does not handle video"
+        
 
 class TransitionFactory(OperationFactory):
     """
@@ -329,3 +461,69 @@ class SMPTETransitionFactory(TransitionFactory):
         TransitionFactory.__init__(self)
 
 gobject.type_register(TransitionFactory)
+
+def _update_video_adapter_bin(settings, data):
+    bin, vscale, ident = data
+    pstate = bin.get_state()
+    if pstate > gst.STATE_READY:
+        bin.set_state(gst.STATE_READY)
+    filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f"
+                                    % (settings.videowidth,
+                                       settings.videoheight,
+                                       settings.videorate))
+    vscale.unlink(ident)
+    vscale.link(ident, filtcaps)
+    if pstate > gst.STATE_READY:
+        bin.set_state(pstate)
+
+def _update_audio_adapter_bin(settings, data):
+    bin, ascale, ident = data
+    pstate = bin.get_state()
+    if pstate > gst.STATE_READY:
+        bin.set_state(gst.STATE_READY)
+    filtcaps = gst.caps_from_string("audio/x-raw-int,channels=%d,rate=%d,depth=%d"
+                                    % (settings.audiochannels,
+                                       settings.audiorate,
+                                       settings.audiodepth))
+    ascale.unlink(ident)
+    ascale.link(ident, filtcaps)
+    if pstate > gst.STATE_READY:
+        bin.set_state(pstate)
+
+def make_video_adapter_bin(project):
+    bin = gst.Bin()
+    vrate = gst.element_factory_make("videorate")
+    vscale = gst.element_factory_make("ffvideoscale")
+    ident = gst.element_factory_make("identity")
+    if not vscale:
+        vscale = gst.element_factory_make("videoscale")
+    bin.add_many(vrate, vscale, ident)
+    vrate.link(vscale)
+    filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f"
+                                    % (project.settings.videowidth,
+                                       project.settings.videoheight,
+                                       project.settings.videorate))
+    vscale.link(ident, filtcaps)
+    bin.add_ghost_pad(vrate.get_pad("sink"), "sink")
+    bin.add_ghost_pad(ident.get_pad("src"), "src")
+    project.settings.connect("settings-changed", _update_video_adapter_bin,
+                             (bin, vscale, ident))
+    return bin
+
+def make_audio_adapter_bin(project):
+    bin = gst.Bin()
+    aconv = gst.element_factory_make("audioconvert")
+    ascale = gst.element_factory_make("audioscale")
+    ident = gst.element_factory_make("identity")
+    bin.add_many(aconv, ascale, ident)
+    aconv.link(ascale)
+    filtcaps = gst.caps_from_string("audio/x-raw-int,channels=%d,rate=%d,depth=%d"
+                                    % (project.settings.audiochannels,
+                                       project.settings.audiorate,
+                                       project.settings.audiodepth))
+    ascale.link(ident, filtcaps)
+    bin.add_ghost_pad(aconv.get_pad("sink"), "sink")
+    bin.add_ghost_pad(ident.get_pad("src"), "src")
+    project.settings.connect("settings-changed", _update_audio_adapter_bin,
+                             (bin, ascale, ident))
+    return bin
