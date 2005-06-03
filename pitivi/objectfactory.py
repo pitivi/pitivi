@@ -180,12 +180,21 @@ class FileSourceFactory(ObjectFactory):
     def _single_bin_new_decoded_pad(self, dbin, pad, is_last, data):
         # add safe de-activation of the other pad
         bin, mtype, identity = data
+        goodpad = None
+        badpads = []
         if mtype in pad.get_caps().to_string():
             pad.link(identity.get_pad("sink"))
+        # only deactivate the other pad if we've already connected the good pad!
         if identity.get_pad("sink").get_peer():
             for pad in [x for x in dbin.get_pad_list() if x.get_direction == gst.PAD_SRC]:
                 if not mtype in pad.get_caps().to_string():
-                    pad.activate_recursive(False)
+                    badpads.append(pad)
+                else:
+                    goodpad = pad
+        if goodpad:
+            for pad in badpads:
+                pad.activate_recursive(False)
+                    
             
     def _single_bin_removed_decoded_pad(self, dbin, pad, data):
         bin, mtype, identity = data
@@ -341,11 +350,14 @@ class FileSourceFactory(ObjectFactory):
         dst_ratio = float(self.project.settings.videowidth) / float(self.project.settings.videoheight)
 
         print "src_ratio:", src_ratio, "dst_ratio:", dst_ratio
+        print "src wxh:", srcwidth, srcheight,
+        print "dst wxh", self.project.settings.videowidth, self.project.settings.videoheight
 
         if src_ratio < dst_ratio:
             # keep height, box on sides
             padding = int((srcheight * dst_ratio - srcwidth) / 2)
-            print "padding:", -padding
+            print "side padding:", -padding
+            print "results in", srcwidth + 2 * padding, srcheight
             vbox.set_property("top", 0)
             vbox.set_property("bottom", 0)
             vbox.set_property("left", -padding)
@@ -353,7 +365,8 @@ class FileSourceFactory(ObjectFactory):
         elif src_ratio > dst_ratio:
             # keep width, box above/under
             padding = int(((srcwidth / dst_ratio) - srcheight) / 2)
-            print "padding:", -padding
+            print "top/bottom padding:", -padding
+            print "results in", srcwidth, srcheight + 2 * padding
             vbox.set_property("top", -padding)
             vbox.set_property("bottom", -padding)
             vbox.set_property("left", 0)
@@ -362,8 +375,9 @@ class FileSourceFactory(ObjectFactory):
             # keep as such
             for side in ["top", "bottom", "left", "right"]:
                 vbox.set_property(side, 0)
-        
-        vbox.link(vscale)
+
+        filtcaps = gst.caps_from_string("video/x-raw-yuv,format=(fourcc)I420")
+        vbox.link(vscale, filtcaps)
         filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f"
                                         % (self.project.settings.videowidth,
                                            self.project.settings.videoheight,
