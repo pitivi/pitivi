@@ -1,5 +1,10 @@
 2005-06-03  Edward Hervey  <bilboed@bilboed.com>
 
+	* pitivi/ui/projectsettings.glade: 
+	Translation
+
+2005-06-03  Edward Hervey  <bilboed@bilboed.com>
+
 	* pitivi/objectfactory.py: (FileSourceFactory.make_video_adapter_bin): 
 	filtered link between videobox and videoscale to avoid borkage...
 

@@ -425,7 +425,7 @@
 	      <child>
 		<widget class="GtkLabel" id="label1">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">&lt;b&gt;Video Settings&lt;/b&gt;</property>
+		  <property name="label" translatable="yes">&lt;b&gt;Video Output&lt;/b&gt;</property>
 		  <property name="use_underline">False</property>
 		  <property name="use_markup">True</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -622,7 +622,7 @@ Stereo (2)</property>
 	      <child>
 		<widget class="GtkLabel" id="label6">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">&lt;b&gt;Audio Settings&lt;/b&gt;</property>
+		  <property name="label" translatable="yes">&lt;b&gt;Audio Output&lt;/b&gt;</property>
 		  <property name="use_underline">False</property>
 		  <property name="use_markup">True</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -799,7 +799,7 @@ Stereo (2)</property>
 	      <child>
 		<widget class="GtkLabel" id="label2">
 		  <property name="visible">True</property>
-		  <property name="label" translatable="yes">&lt;b&gt;Output format&lt;/b&gt;</property>
+		  <property name="label" translatable="yes">&lt;b&gt;Export to&lt;/b&gt;</property>
 		  <property name="use_underline">False</property>
 		  <property name="use_markup">True</property>
 		  <property name="justify">GTK_JUSTIFY_LEFT</property>
