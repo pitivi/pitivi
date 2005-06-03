@@ -1,3 +1,10 @@
+2005-06-03  Jono Bacon <jonobacon@gmail.com>
+
+	Reviewed by: Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/mainwindow.py: (PitiviMainWindow.about_cb): 
+	Added about dialog
+
 2005-05-09  Edward Hervey  <bilboed@bilboed.com>
 
 	* docs/design/timeline.txt:

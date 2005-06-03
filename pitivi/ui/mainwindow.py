@@ -64,7 +64,7 @@ class PitiviMainWindow(gtk.Window):
         self.actiongroup.add_actions (self.actions)
         # deactivating non-functional actions
         for action in self.actiongroup.list_actions():
-            if action.get_name() in ["ProjectSettings", "Quit", "File", "Help"]:
+            if action.get_name() in ["ProjectSettings", "Quit", "File", "Help", "About"]:
                 action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
@@ -136,6 +136,14 @@ class PitiviMainWindow(gtk.Window):
 
     def about_cb(self, action):
         print "About..."
+	abt = gtk.AboutDialog()
+	abt.set_name("PiTiVi")
+	abt.set_version("v%s" % PITIVI_VERSION)
+	abt.set_website("http://www.pitivi.org/")
+	authors = ["Edward Hervey" ]
+	abt.set_authors(authors)
+	abt.set_license("GNU Lesser Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details")
+	abt.show()
 
     def _new_project_cb(self, pitivi, project):
         print "Starting up a new project", project
