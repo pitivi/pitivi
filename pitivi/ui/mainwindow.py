@@ -39,6 +39,7 @@ class PitiviMainWindow(gtk.Window):
         """ initialize with the Pitivi object """
         self.pitivi = pitivi
         gtk.Window.__init__(self)
+        self.maximize()
         self._set_actions()
         self._create_gui()
         self.pitivi.connect("new-project", self._new_project_cb)

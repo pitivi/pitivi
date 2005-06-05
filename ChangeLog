@@ -1,3 +1,10 @@
+2005-06-05  Jono Bacon <jonobacon@gmail.com>
+
+	Reviewed by : Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/mainwindow.py: (PitiviMainWindow.__init__): 
+	Maximize main window at startup
+
 2005-06-03  Edward Hervey  <bilboed@bilboed.com>
 
 	* pitivi/ui/projectsettings.glade: 
