@@ -45,7 +45,10 @@ class Discoverer(gobject.GObject):
                             (gobject.TYPE_STRING, )),
         "finished_analyzing" : ( gobject.SIGNAL_RUN_LAST,
                                  gobject.TYPE_NONE,
-                                 (gobject.TYPE_PYOBJECT, ))
+                                 (gobject.TYPE_PYOBJECT, )),
+        "ready" : ( gobject.SIGNAL_RUN_LAST,
+                    gobject.TYPE_NONE,
+                    ( ))
         }
 
     def __init__(self, project):
@@ -104,6 +107,7 @@ class Discoverer(gobject.GObject):
                 self.emit("finished_analyzing", self.currentfactory)
             self._del_analyze_data()
         self.working = False
+        self.emit("ready")
 
     def _new_video_pad_cb(self, element, pad):
         """ a new video pad was found """
