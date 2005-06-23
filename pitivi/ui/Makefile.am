@@ -4,7 +4,9 @@ uidir = $(libdir)/pitivi/ui
 
 ui_PYTHON = \
 	__init__.py \
+	exportsettings.py \
 	glade.py \
+	gstwidget.py \
 	mainwindow.py \
 	projectsettings.py \
 	sourcefactories.py \
@@ -14,7 +16,9 @@ ui_PYTHON = \
 
 ui_DATA = \
 	actions.xml \
+	elementsettingsdialog.glade \
 	encodingdialog.glade \
+	exportsettingswidget.glade \
 	projectsettings.glade
 
 clean-local:

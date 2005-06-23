@@ -1,5 +1,9 @@
 2005-06-23  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/Makefile.am:
+	* pitivi/Makefile.am:
+	Added new files to be installed
+
 	* pitivi/ui/viewer.py: (EncodingDialog): 
 	* pitivi/ui/encodingdialog.glade:
 	Added settings in Encoding Dialog

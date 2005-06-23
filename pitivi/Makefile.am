@@ -15,6 +15,7 @@ pitivi_PYTHON = \
 	pitivi.py \
 	playground.py \
 	project.py \
+	settings.py \
 	sourcelist.py \
 	timeline.py
 
