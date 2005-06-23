@@ -32,14 +32,17 @@ PiTiVi non-linear video editor
 %build
 %configure
 
-make
+%makeinstall
 
 %files
 %defattr(-,root,root,-)
 %doc ChangeLog AUTHORS
 %{_bindir}/pitivi
 %{_libdir}/pitivi
+%{_datadir}/pitivi/pixmaps/*
 
 %changelog
+* Thu Jun 23 2005 Christian Schaller <christian at fluendo dot com>
+- Update for current version and switch make with %makeinstall
 * Thu May 26 2005 Edward Hervey <edward at fluendo dot com>
 - Initial release
