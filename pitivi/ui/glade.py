@@ -28,7 +28,6 @@ import gtk
 import gtk.glade
 import gobject
 
-
 # proc := module1.module2.moduleN.proc1().maybe_another_proc()
 #  -> eval proc1().maybe_another_proc() in module1.module2.moduleN
 def flumotion_glade_custom_handler(xml, proc, name, *args):
@@ -173,6 +172,7 @@ class GladeWindow(gobject.GObject):
         self.show = self.window.show
         self.hide = self.window.hide
         self.present = self.window.present
+        self.run = self.window.run
 
     def destroy(self):
         self.window.destroy()

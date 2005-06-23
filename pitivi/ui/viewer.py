@@ -30,6 +30,8 @@ from glade import GladeWindow
 from pitivi.bin import SmartTimelineBin
 from pitivi.objectfactory import FileSourceFactory
 import pitivi.dnd as dnd
+from pitivi.settings import ExportSettings
+from exportsettingswidget import ExportSettingsDialog
 
 def time_to_string(value):
     ms = value / gst.MSECOND
@@ -167,6 +169,9 @@ class PitiviViewer(gtk.VBox):
 
         self.drawingarea.videosink = self.videosink
         self.videosink.set_xwindow_id(self.drawingarea.window.xid)
+
+        # adding audioconvert
+        aconv = gst.element_factory_make("audioconvert", "aconv")
         
         self.audiosink = gst.element_factory_make("alsasink", "asink")
         if not self.audiosink:
@@ -183,10 +188,11 @@ class PitiviViewer(gtk.VBox):
             csp.link(self.videosink)
         else:
             self.vqueue.link(self.videosink)
-        
         self.vsinkthread.add_ghost_pad(self.vqueue.get_pad("sink"), "sink")
-        self.asinkthread.add_many(self.audiosink, self.aqueue)
-        self.aqueue.link(self.audiosink)
+        
+        self.asinkthread.add_many(self.audiosink, self.aqueue, aconv)
+        self.aqueue.link(aconv)
+        aconv.link(self.audiosink)
         self.asinkthread.add_ghost_pad(self.aqueue.get_pad("sink"), "sink")
 
         # setting sinkthreads on playground
@@ -214,6 +220,7 @@ class PitiviViewer(gtk.VBox):
     def _slider_button_release_cb(self, slider, event):
         print "slider button release at", time_to_string(long(slider.get_value()))
         self.moving_slider = False
+
         self.pitivi.playground.seek_in_current(long(slider.get_value()))
         return False
 
@@ -388,6 +395,7 @@ class EncodingDialog(GladeWindow):
         self.progressbar = self.widgets["progressbar"]
         self.timeoutid = None
         self.rendering = False
+        self.settings = ExportSettings()
 
     def filebutton_clicked(self, button):
         
@@ -407,9 +415,17 @@ class EncodingDialog(GladeWindow):
 
     def recordbutton_clicked(self, button):
         if self.outfile and not self.rendering:
-            self.bin.record(self.outfile)
+            self.bin.record(self.outfile, self.settings)
             self.timeoutid = gobject.timeout_add(400, self._timeout_cb)
             self.rendering = True
+
+    def settingsbutton_clicked(self, button):
+        dialog = ExportSettingsDialog(self.settings)
+        res = dialog.run()
+        dialog.hide()
+        if res == gtk.RESPONSE_ACCEPT:
+            self.settings = dialog.get_settings()
+        dialog.destroy()
 
     def _timeout_cb(self):
         if self.bin.get_state() == gst.STATE_PLAYING and self.rendering:
@@ -437,3 +453,5 @@ class EncodingDialog(GladeWindow):
             gobject.source_remove(self.timeoutid)
             self.timeoutid = None
         self.destroy()
+        
+gobject.type_register(EncodingDialog)

@@ -259,8 +259,6 @@ class PlayGround(gobject.GObject):
         if not self.current or self.current == self.default:
             return
         if not self.state == gst.STATE_PAUSED:
-            self.vsinkthread.set_state(gst.STATE_PAUSED)
-            self.asinkthread.set_state(gst.STATE_PAUSED)
             #self.current.set_state(gst.STATE_PAUSED)
             self.state = gst.STATE_PAUSED
             self.playthread.set_state(self.state)

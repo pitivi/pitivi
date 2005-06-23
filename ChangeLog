@@ -1,3 +1,40 @@
+2005-06-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py: (EncodingDialog): 
+	* pitivi/ui/encodingdialog.glade:
+	Added settings in Encoding Dialog
+
+	* pitivi/ui/viewer.py:
+	Added audioconvert in the Audio Sink Thread
+
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/projectsettings.glade:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/elementsettingsdialog.glade:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/exportsettingswidget.glade:
+	Split up Settings Dialogs in smaller widgets
+
+	* pitivi/ui/glade.py:
+	Wrapper for the run() dialog method
+
+	* pitivi/bin.py:
+	SmartBin are no longer gst.Thread but gst.Bin
+	Added support for element properties in timeline encoding thread
+
+	* pitivi/objectfactory.py: (FileSourceFactory):
+	Added support for 'pixel-aspect-ratio'
+
+	* pitivi/playground.py:
+	Removed useless state_change()
+
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	Moved ProjectSettings to a more generic ExportSettings
+
+	* pitivi/debug.py:
+	Debugging functions
+
 2005-06-08  Edward Hervey  <bilboed@bilboed.com>
 
 	* pitivi/discoverer.py: (Discoverer): 

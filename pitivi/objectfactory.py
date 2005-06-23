@@ -304,7 +304,7 @@ class FileSourceFactory(ObjectFactory):
                 vbox.set_property(side, 0)
 
 
-        filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f"
+        filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f,pixel-aspect-ratio=(fraction)1/1"
                                         % (psettings.videowidth,
                                            psettings.videoheight,
                                            psettings.videorate))
@@ -331,22 +331,29 @@ class FileSourceFactory(ObjectFactory):
         srcwidth = self.video_info[0]["width"]
         srcheight = self.video_info[0]["height"]
         srcrate = self.video_info[0]["framerate"]
+        if self.video_info[0].has_key("pixel-aspect-ratio"):
+            srcpar = self.video_info[0]["pixel-aspect-ratio"]
+        else:
+            srcpar = None
         
         bin = gst.Bin()
         vrate = gst.element_factory_make("videorate")
         vbox = gst.element_factory_make("videobox")
         ident = gst.element_factory_make("identity")
 
-        vscale = gst.element_factory_make("ffvideoscale")
-        if not vscale:
-            vscale = gst.element_factory_make("videoscale")
+##         vscale = gst.element_factory_make("ffvideoscale")
+##         if not vscale:
+        vscale = gst.element_factory_make("videoscale")
 
         bin.add_many(vrate, vbox, vscale, ident)
         filtcaps = gst.caps_from_string("video/x-raw-yuv,framerate=%f"
                                         % self.project.settings.videorate)
         vrate.link(vbox, filtcaps)
 
-        src_ratio = float(srcwidth) / float(srcheight)
+        if srcpar:
+            src_ratio = (float(srcwidth) * srcpar.num ) / (float(srcheight) * srcpar.denom)
+        else:
+            src_ratio = float(srcwidth) / float(srcheight)
         dst_ratio = float(self.project.settings.videowidth) / float(self.project.settings.videoheight)
 
         print "src_ratio:", src_ratio, "dst_ratio:", dst_ratio
@@ -378,7 +385,7 @@ class FileSourceFactory(ObjectFactory):
 
         filtcaps = gst.caps_from_string("video/x-raw-yuv,format=(fourcc)I420")
         vbox.link(vscale, filtcaps)
-        filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f"
+        filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f,pixel-aspect-ratio=(fraction)1/1"
                                         % (self.project.settings.videowidth,
                                            self.project.settings.videoheight,
                                            self.project.settings.videorate))

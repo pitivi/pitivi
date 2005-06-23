@@ -22,7 +22,7 @@
 import gobject
 import gst
 
-class SmartBin(gst.Thread):
+class SmartBin(gst.Bin):
     """
     Self-contained Bin with playing/encoding ready places
     It also has length information
@@ -193,6 +193,7 @@ class SmartTimelineBin(SmartBin):
         project.timeline.videocomp.connect("start-stop-changed", self._start_stop_changed)
         self.length = project.timeline.videocomp.stop - project.timeline.videocomp.start
         self.encthread = None
+        self.tmpasink = None
         SmartBin.__init__(self, "project-" + project.name,
                           displayname = "Project: " + project.name)
 
@@ -209,13 +210,18 @@ class SmartTimelineBin(SmartBin):
         srcpad = self.source.get_pad("src_" + self.project.timeline.videocomp.gnlobject.get_name())
         srcpad.link(self.vtee.get_pad("sink"))
 
-    def record(self, uri):
+    def record(self, uri, settings=None):
         """ render the timeline to the given uri """
-        self.encthread = self._make_encthread()
+        self.encthread = self._make_encthread(settings)
         if self.get_state() == gst.STATE_PLAYING:
             self.set_state(gst.STATE_PAUSED)
         self.encthread.filesink.set_property("location", uri)
         self.add(self.encthread)
+
+        # temporarily remove the audiosinkthread
+        self.tmpasink = self.asinkthread
+        self.remove_audio_sink_thread()
+        
         self.vtee.get_pad("src%d").link(self.encthread.get_pad("vsink"))
         self.atee.get_pad("src%d").link(self.encthread.get_pad("asink"))
 
@@ -226,21 +232,40 @@ class SmartTimelineBin(SmartBin):
     def stop_recording(self):
         """ stop the recording, removing the encoding thread """
         self.set_state(gst.STATE_PAUSED)
+        # safely seek back to 0 and flush everything
+        self.source.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
+                    long(0))
         if self.encthread:
-            self.vtee.unlink(self.encthread)
-            self.atee.unlink(self.encthread)
+            apad = self.encthread.get_pad("vsink")
+            apad.unlink(apad.get_peer())
+            apad = self.encthread.get_pad("asink")
+            apad.unlink(apad.get_peer())
+            #self.vtee.unlink(self.encthread)
+            #self.atee.unlink(self.encthread)
             self.remove(self.encthread)
-            self.encthread = None
+            del self.encthread
+            self.encthread= None
+            self.set_audio_sink_thread(self.tmpasink)
+            self.tmpasink = None
 
-    def _make_encthread(self):
+    def _make_encthread(self, settings=None):
         # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
+        if not settings:
+            settings = self.project.settings
         ainq = gst.element_factory_make("queue", "ainq")
         aoutq = gst.element_factory_make("queue", "aoutq")
         vinq = gst.element_factory_make("queue", "vinq")
         voutq = gst.element_factory_make("queue", "voutq")
-        aenc = gst.element_factory_make(self.project.settings.aencoder ,"aenc")
-        venc = gst.element_factory_make(self.project.settings.vencoder, "venc")
-        mux = gst.element_factory_make(self.project.settings.muxer, "mux")
+        aenc = gst.element_factory_make(settings.aencoder ,"aenc")
+        for prop, value in settings.acodecsettings.iteritems():
+            aenc.set_property(prop, value)
+        venc = gst.element_factory_make(settings.vencoder, "venc")
+        for prop, value in settings.vcodecsettings.iteritems():
+            print "setting property", prop, "to value", value
+            venc.set_property(prop, value)
+        mux = gst.element_factory_make(settings.muxer, "mux")
+        for prop, value in settings.containersettings.iteritems():
+            mux.set_property(prop, value)
         fsink = gst.element_factory_make("gnomevfssink", "fsink")
 
         thread = gst.Thread("encthread")
@@ -290,7 +315,6 @@ class SmartTimelineBin(SmartBin):
     def _start_stop_changed(self, videocomp, start, stop):
         print "smart timeline bin: start stop changed", start, stop
         self.length = stop - start
-        
 
 gobject.type_register(SmartTimelineBin)
 
