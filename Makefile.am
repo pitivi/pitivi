@@ -9,4 +9,5 @@ EXTRA_DIST = \
 	ChangeLog \
 	autogen.sh \
 	NEWS \
-	AUTHORS
+	AUTHORS \
+	RELEASE
