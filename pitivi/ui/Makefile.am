@@ -4,7 +4,7 @@ uidir = $(libdir)/pitivi/ui
 
 ui_PYTHON = \
 	__init__.py \
-	exportsettings.py \
+	exportsettingswidget.py \
 	glade.py \
 	gstwidget.py \
 	mainwindow.py \
