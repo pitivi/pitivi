@@ -23,7 +23,7 @@
 import os
 import gobject
 import gst
-import gnome.vfs
+import gnomevfs
 from timeline import Timeline
 from sourcelist import SourceList
 from bin import SmartTimelineBin
@@ -59,7 +59,7 @@ class Project(gobject.GObject):
             return
         self.timeline = Timeline(self)
         if self.uri:
-            if not gnome.vfs.exists(uri):
+            if not gnomevfs.exists(uri):
                 # given uri doesn't exist !!!
                 # TODO raise exception
                 return
@@ -93,5 +93,5 @@ gobject.type_register(Project)
 def file_is_project(uri):
     """ returns True if the given uri is a PitiviProject file"""
     # TODO
-    return gnome.vfs.exists(uri)
+    return gnomevfs.exists(uri)
 

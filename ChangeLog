@@ -1,5 +1,14 @@
 2005-06-24  Edward Hervey  <edward@fluendo.com>
 
+	* configure.ac:
+	0.1.9.2 pre-release !
+	
+	* pitivi/project.py:
+	* configure.ac:
+	* pitivi.spec.in:
+	Bumped required gnome-python version to 2.10.0
+	Now using gnomevfs instead of gnome.vfs
+
 	* pitivi/ui/Makefile.am: (ui_PYTHON): 
 	typo
 

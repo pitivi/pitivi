@@ -15,6 +15,7 @@ Requires:	gstreamer >= @GST_REQ@
 Requires:	gstreamer-python >= @PYGST_REQ@
 Requires:	pygtk2 >= @PYGTK_REQ@
 Requires:	gnonlin >= @GNONLIN_REQ@
+Requires:	gnome-python >=@PYGNOME_REQ@
 
 Requires(post):	openssl
 

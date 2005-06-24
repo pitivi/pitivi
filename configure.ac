@@ -1,6 +1,6 @@
 AC_INIT(AUTHORS)
 
-AS_VERSION(pitivi, PITIVI, 0, 1, 9, 1)
+AS_VERSION(pitivi, PITIVI, 0, 1, 9, 2)
 AC_SUBST(RELEASE, $PITIVI_RELEASE)
 
 AC_SUBST_FILE(AUTHORS)
@@ -8,6 +8,7 @@ AUTHORS=$srcdir/AUTHORS
 
 AC_SUBST(PYGTK_REQ, 2.6.0)
 AC_SUBST(PYGST_REQ, 0.8.0)
+AC_SUBST(PYGNOME_REQ, 2.10.0)
 AC_SUBST(GST_REQ, 0.8.8)
 AC_SUBST(GNONLIN_REQ, 0.2.2)
 
@@ -73,6 +74,10 @@ else
   AC_MSG_RESULT(not found)
   AC_MSG_ERROR([You need to have python libglade bindings installed])
 fi
+
+dnl checks for gnome-python
+PKG_CHECK_MODULES(PYGNOME, gnome-python-2.0 >= $PYGNOME_REQ)
+
 
 dnl checks for gst-python
 PKG_CHECK_MODULES(PYGST, gst-python-0.8 >= $PYGST_REQ)
