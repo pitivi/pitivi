@@ -1,8 +1,14 @@
 2005-06-24  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac:
-	0.1.9.2 pre-release !
+	* RELEASE
+	0.1.10 release :)
 	
+2005-06-24  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	0.1.9.2 pre-release !
+
 	* pitivi/project.py:
 	* configure.ac:
 	* pitivi.spec.in:
