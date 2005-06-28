@@ -1,6 +1,6 @@
 AUTOMAKE_OPTIONS = dist-bzip2
 
-SUBDIRS			= bin pitivi common
+SUBDIRS	= bin pitivi common
 
 EXTRA_DIST = \
 	pitivi.spec \

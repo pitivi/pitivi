@@ -1,3 +1,13 @@
+2005-06-28  Thomas Vander Stichele <thomas@apestaart.org>
+
+	Reviewed by Edward Hervey <edward@fluendo.com>
+
+	* Makefile.am:
+	* bin/pitivi.in:
+	* pitivi/Makefile.am:
+	* pitivi/ui/Makefile.am:
+	installation fixes
+
 2005-06-24  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac:

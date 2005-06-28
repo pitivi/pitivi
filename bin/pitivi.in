@@ -35,8 +35,10 @@ def _add_pitivi_path():
     if os.path.exists(os.path.join(dir, 'CVS')):
         root = os.path.split(dir)[0]
     else:
-        root = LIBDIR
-    sys.path.insert(0, root)
+        root = os.path.join(LIBDIR, 'pitivi', 'python')
+
+    if not root in sys.path:
+        sys.path.insert(0, root)
 
 def _init_gobject_gtk_gst():
     try:

@@ -2,7 +2,7 @@ SUBDIRS = \
 	ui \
 	pixmaps
 
-pitividir = $(libdir)/pitivi
+pitividir = $(libdir)/pitivi/python/pitivi
 
 pitivi_PYTHON = \
 	__init__.py \

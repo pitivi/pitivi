@@ -1,6 +1,6 @@
 include $(top_srcdir)/common/python.mk
 
-uidir = $(libdir)/pitivi/ui
+uidir = $(libdir)/pitivi/python/pitivi/ui
 
 ui_PYTHON = \
 	__init__.py \
