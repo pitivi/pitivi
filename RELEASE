@@ -1,5 +1,5 @@
 
-PiTIVi: Release notes for PiTiVi 0.1.9.2 "Gimme some more"
+PiTIVi: Release notes for PiTiVi 0.1.10 "Gimme some more"
         
 
 The GStreamer and PiTiVi team are pleased to announce a new pre-release of
@@ -8,8 +8,8 @@ PiTiVi.
 This release is in beta state, may suffer from hangs and is not yet ready for
 production. Transcoding/Encoding works though for files.
 
-This pre-release is also the last version based on the 0.8.x GStreamer
-series. Work is now aimed at the 0.9/0.10 series.
+This release is also the last version based on the 0.8.x GStreamer series. Work
+is now aimed at the 0.9/0.10 series.
   
 Features of this release
     
