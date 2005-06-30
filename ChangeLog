@@ -1,3 +1,9 @@
+2005-06-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py: (PitiviViewer._create_sinkthreads): 
+	Audio and Video sinks are now selected by GConf GNome media selector
+	keys.
+
 2005-06-28  Thomas Vander Stichele <thomas@apestaart.org>
 
 	Reviewed by Edward Hervey <edward@fluendo.com>

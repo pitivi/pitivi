@@ -24,6 +24,7 @@ import os.path
 import gobject
 import gtk
 import gst
+import gconf
 import pango
 import gst.interfaces
 from glade import GladeWindow
@@ -48,6 +49,7 @@ class PitiviViewer(gtk.VBox):
         self.pitivi = pitivi
         gtk.VBox.__init__(self)
         self.current_time = long(0)
+        self.gconf_client = gconf.client_get_default()
         self._create_gui()
 
         # connect to the sourcelist for temp factories
@@ -160,34 +162,21 @@ class PitiviViewer(gtk.VBox):
 
     def _create_sinkthreads(self):
         """ Creates the sink threads for the playground """
-        self.videosink = gst.element_factory_make("xvimagesink", "vsink")
-        if not self.videosink:
-            self.videosink = gst.element_factory_make("ximagesink", "vsink")
-            csp = gst.element_factory_make("ffmpegcolorspace", "csp")
-        else:
-            csp = None
+        self.videosink = gst.parse_launch(self.gconf_client.get("/system/gstreamer/0.8/default/videosink").to_string())
 
         self.drawingarea.videosink = self.videosink
         self.videosink.set_xwindow_id(self.drawingarea.window.xid)
 
         # adding audioconvert
         aconv = gst.element_factory_make("audioconvert", "aconv")
+        self.audiosink = gst.parse_launch(self.gconf_client.get("/system/gstreamer/0.8/default/audiosink").to_string())
         
-        self.audiosink = gst.element_factory_make("alsasink", "asink")
-        if not self.audiosink:
-            self.audiosink = gst.element_factory_make("osssink", "asink")
-
         self.vqueue = gst.element_factory_make("queue", "vqueue")
         self.aqueue = gst.element_factory_make("queue", "aqueue")
         self.vsinkthread = gst.Thread("vsinkthread")
         self.asinkthread = gst.Thread("asinkthread")
         self.vsinkthread.add_many(self.videosink, self.vqueue)
-        if csp:
-            self.vsinkthread.add(csp)
-            self.vqueue.link(csp)
-            csp.link(self.videosink)
-        else:
-            self.vqueue.link(self.videosink)
+        self.vqueue.link(self.videosink)
         self.vsinkthread.add_ghost_pad(self.vqueue.get_pad("sink"), "sink")
         
         self.asinkthread.add_many(self.audiosink, self.aqueue, aconv)
