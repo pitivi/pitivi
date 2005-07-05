@@ -261,7 +261,6 @@ class SmartTimelineBin(SmartBin):
             aenc.set_property(prop, value)
         venc = gst.element_factory_make(settings.vencoder, "venc")
         for prop, value in settings.vcodecsettings.iteritems():
-            print "setting property", prop, "to value", value
             venc.set_property(prop, value)
         mux = gst.element_factory_make(settings.muxer, "mux")
         for prop, value in settings.containersettings.iteritems():

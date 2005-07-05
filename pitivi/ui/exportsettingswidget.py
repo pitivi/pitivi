@@ -318,6 +318,7 @@ class ExportSettingsWidget(GladeWidget):
         self.settings.containersettings = self.containersettings
         self.settings.acodecsettings = self.acodecsettings
         self.settings.vcodecsettings = self.vcodecsettings
+        print self.settings
         
 gobject.type_register(ExportSettingsWidget)
 

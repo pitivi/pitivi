@@ -54,6 +54,15 @@ class ExportSettings(gobject.GObject):
         self.vencoders = available_video_encoders()
         self.aencoders = available_audio_encoders()
 
+    def __str__(self):
+        msg = "Export Settings\n"
+        msg += "Video :" + str(self.videowidth) + " " + str(self.videoheight) + " " + str(self.videorate)
+        msg += "\n\t" + str(self.vencoder) + " " +str(self.vcodecsettings)
+        msg += "\nAudio :" + str(self.audiochannels) + " " + str(self.audiorate) + " " + str(self.audiodepth)
+        msg += "\n\t" + str(self.aencoder) + " " + str(self.acodecsettings)
+        msg += "\nMuxer :" + str(self.muxer) + " " + str(self.containersettings)
+        return msg
+
     def set_video_properties(self, width=-1, height=-1, framerate=-1):
         print "set_video_props", width, height, framerate
         changed = False

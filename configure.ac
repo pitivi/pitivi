@@ -35,6 +35,9 @@ AS_PATH_PYTHON(2.3)
 dnl useful when we compile our own python modules
 dnl AM_CHECK_PYTHON_HEADERS(,[AC_MSG_ERROR(could not find Python headers)])
 
+AS_AC_EXPAND(PYTHONDIR, $pythondir)
+AC_MSG_NOTICE(Using pythondir $PYTHONDIR)
+
 dnl check for GStreamer
 PKG_CHECK_MODULES(GST, gstreamer-0.8 >= $GST_REQ)
 

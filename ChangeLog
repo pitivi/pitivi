@@ -1,3 +1,19 @@
+2005-07-05  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	* configure.ac:
+	Use PYTHONDIR
+	
+	* pitivi/bin.py:
+	cleanup
+	
+	* pitivi/settings.py:
+	added __str__()
+	
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/viewer.py:
+	Reuse the project settings :)
+
 2005-06-30  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/viewer.py: (PitiviViewer._create_sinkthreads): 

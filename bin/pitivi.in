@@ -24,7 +24,7 @@ import os
 import sys
 
 # variables
-LIBDIR = '@LIBDIR@'
+PYTHONDIR = '@PYTHONDIR@'
 
 # Check if we're in development or installed version
 # Add the path of pitivi stuff

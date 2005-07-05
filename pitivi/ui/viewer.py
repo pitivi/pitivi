@@ -162,7 +162,8 @@ class PitiviViewer(gtk.VBox):
 
     def _create_sinkthreads(self):
         """ Creates the sink threads for the playground """
-        self.videosink = gst.parse_launch(self.gconf_client.get("/system/gstreamer/0.8/default/videosink").to_string())
+        vsink = self.gconf_client.get("/system/gstreamer/0.8/default/videosink").to_string()
+        self.videosink = gst.parse_launch(vsink)
 
         self.drawingarea.videosink = self.videosink
         self.videosink.set_xwindow_id(self.drawingarea.window.xid)
@@ -176,7 +177,16 @@ class PitiviViewer(gtk.VBox):
         self.vsinkthread = gst.Thread("vsinkthread")
         self.asinkthread = gst.Thread("asinkthread")
         self.vsinkthread.add_many(self.videosink, self.vqueue)
-        self.vqueue.link(self.videosink)
+        if vsink == "ximagesink":
+            vscale = gst.element_factory_make("videoscale")
+            csp = gst.element_factory_make("ffmpegcolorspace")
+            print vscale, csp
+            self.vsinkthread.add_many(vscale, csp)
+            self.vqueue.link(vscale)
+            vscale.link(csp)
+            csp.link(self.videosink)
+        else:
+            self.vqueue.link(self.videosink)
         self.vsinkthread.add_ghost_pad(self.vqueue.get_pad("sink"), "sink")
         
         self.asinkthread.add_many(self.audiosink, self.aqueue, aconv)
@@ -384,7 +394,7 @@ class EncodingDialog(GladeWindow):
         self.progressbar = self.widgets["progressbar"]
         self.timeoutid = None
         self.rendering = False
-        self.settings = ExportSettings()
+        self.settings = project.settings
 
     def filebutton_clicked(self, button):
         
