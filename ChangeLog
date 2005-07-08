@@ -1,3 +1,10 @@
+2005-07-08  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/configure.py.in: (pitivi_version):
+	* pitivi/ui/mainwindow.py:
+	Added configure.pitivi_version variable created at compilation so the
+	version number is coherent.
+
 2005-07-05  Edward Hervey  <edward@fluendo.com>
 
 	* bin/pitivi.in:

@@ -23,6 +23,7 @@ import os.path
 
 LIBDIR = '@LIBDIR@'
 PKGDATADIR = '@DATADIR@/@PACKAGE@'
+pitivi_version = '@VERSION@'
 
 def get_pixmap_dir():
     dir = os.path.dirname(os.path.abspath(__file__))

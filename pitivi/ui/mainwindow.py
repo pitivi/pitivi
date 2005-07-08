@@ -27,8 +27,7 @@ from timeline import TimelineWidget
 from sourcefactories import SourceFactoriesWidget
 from viewer import PitiviViewer
 from projectsettings import ProjectSettingsDialog
-
-PITIVI_VERSION = "0.1.9"
+from pitivi.configure import pitivi_version
 
 class PitiviMainWindow(gtk.Window):
     """
@@ -76,7 +75,7 @@ class PitiviMainWindow(gtk.Window):
 
     def _create_gui(self):
         """ Create the graphical interface """
-        self.set_title("PiTiVi v%s" % PITIVI_VERSION)
+        self.set_title("PiTiVi v%s" % pitivi_version)
         self.set_geometry_hints(min_width=400, min_height=300)
 
         self.connect("destroy", self.destroy)
@@ -139,9 +138,9 @@ class PitiviMainWindow(gtk.Window):
         print "About..."
 	abt = gtk.AboutDialog()
 	abt.set_name("PiTiVi")
-	abt.set_version("v%s" % PITIVI_VERSION)
+	abt.set_version("v%s" % pitivi_version)
 	abt.set_website("http://www.pitivi.org/")
-	authors = ["Edward Hervey" ]
+	authors = ["Edward Hervey <edward@fluendo.com>" ]
 	abt.set_authors(authors)
 	abt.set_license("GNU Lesser Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details")
 	abt.show()
