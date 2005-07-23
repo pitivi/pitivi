@@ -1,16 +1,16 @@
 AC_INIT(AUTHORS)
 
-AS_VERSION(pitivi, PITIVI, 0, 1, 10, 0)
+AS_VERSION(pitivi, PITIVI, 0, 2, 0, 1)
 AC_SUBST(RELEASE, $PITIVI_RELEASE)
 
 AC_SUBST_FILE(AUTHORS)
 AUTHORS=$srcdir/AUTHORS
 
 AC_SUBST(PYGTK_REQ, 2.6.0)
-AC_SUBST(PYGST_REQ, 0.8.2)
+AC_SUBST(PYGST_REQ, 0.9.0)
 AC_SUBST(PYGNOME_REQ, 2.10.0)
-AC_SUBST(GST_REQ, 0.8.8)
-AC_SUBST(GNONLIN_REQ, 0.2.2)
+AC_SUBST(GST_REQ, 0.9.0)
+dnl AC_SUBST(GNONLIN_REQ, 0.3.0)
 
 AM_INIT_AUTOMAKE($PACKAGE, $VERSION)
 AC_SUBST(ACLOCAL_AMFLAGS, "-I m4")
@@ -39,10 +39,10 @@ AS_AC_EXPAND(PYTHONDIR, $pythondir)
 AC_MSG_NOTICE(Using pythondir $PYTHONDIR)
 
 dnl check for GStreamer
-PKG_CHECK_MODULES(GST, gstreamer-0.8 >= $GST_REQ)
+PKG_CHECK_MODULES(GST, gstreamer-0.9 >= $GST_REQ)
 
 dnl check for GNonlin
-PKG_CHECK_MODULES(GNONLIN, gnonlin >= $GNONLIN_REQ)
+dnl PKG_CHECK_MODULES(GNONLIN, gnonlin >= $GNONLIN_REQ)
 
 dnl check for pygtk
 PKG_CHECK_MODULES(PYGTK, pygtk-2.0 >= $PYGTK_REQ)
@@ -83,8 +83,8 @@ PKG_CHECK_MODULES(PYGNOME, gnome-python-2.0 >= $PYGNOME_REQ)
 
 
 dnl checks for gst-python
-PKG_CHECK_MODULES(PYGST, gst-python-0.8 >= $PYGST_REQ)
-PYGST_DIR="`$PKG_CONFIG --variable=pyexecdir gst-python-0.8`"
+PKG_CHECK_MODULES(PYGST, gst-python-0.9 >= $PYGST_REQ)
+PYGST_DIR="`$PKG_CONFIG --variable=pyexecdir gst-python-0.9`"
 AC_SUBST(PYGST_DIR)
 AC_MSG_NOTICE(Using gstreamer-python installed in $PYGST_DIR)
 

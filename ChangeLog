@@ -1,3 +1,10 @@
+2005-07-23  Edward Hervey  <edward@fluendo.com>
+
+	On our way to a gstreamer 0.9 pitivi :)
+
+	* configure.ac:
+	updated dependencies, removed compile-time dependency on gnonlin
+
 2005-07-08  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/configure.py.in: (pitivi_version):
