@@ -112,7 +112,7 @@ gobject.type_register(ExportSettings)
 
 def available_muxers():
     """ return all available muxers """
-    flist = gst.registry_pool_feature_list(gst.ElementFactory)
+    flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
     res = []
     for fact in flist:
         if "Codec/Muxer" == fact.get_klass():
@@ -121,7 +121,7 @@ def available_muxers():
 
 def available_video_encoders():
     """ returns all available video encoders """
-    flist = gst.registry_pool_feature_list(gst.ElementFactory)
+    flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
     res = []
     for fact in flist:
         if "Codec/Encoder/Video" in fact.get_klass():
@@ -130,7 +130,7 @@ def available_video_encoders():
 
 def available_audio_encoders():
     """ returns all available audio encoders """
-    flist = gst.registry_pool_feature_list(gst.ElementFactory)
+    flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
     res = []
     for fact in flist:
         if "Codec/Encoder/Audio" in fact.get_klass():

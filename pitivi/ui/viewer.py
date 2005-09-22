@@ -46,6 +46,7 @@ class PitiviViewer(gtk.VBox):
     """ Pitivi's graphical viewer """
 
     def __init__(self, pitivi):
+        gst.info("New PitiviViewer")
         self.pitivi = pitivi
         gtk.VBox.__init__(self)
         self.current_time = long(0)
@@ -64,7 +65,8 @@ class PitiviViewer(gtk.VBox):
 
         self.pitivi.current.settings.connect("settings-changed",
                                              self._settings_changed_cb)
-        self._add_timeline_to_playground()
+        # FIXME : uncomment when gnonlin is ported
+        # self._add_timeline_to_playground()
 
     def _create_gui(self):
         """ Creates the Viewer GUI """
@@ -316,6 +318,7 @@ class PitiviViewer(gtk.VBox):
         self.pitivi.current.settings.connect("settings-changed", self._settings_changed_cb)
         
     def _add_timeline_to_playground(self):
+        gst.info("")
         self.pitivi.playground.add_pipeline(self.pitivi.current.get_bin())
 
     def record_cb(self, button):

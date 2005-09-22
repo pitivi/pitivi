@@ -59,12 +59,13 @@ class PlayGround(gobject.GObject):
     #   The rest should only be remembered in the playground itself
     
     def __init__(self):
+        gst.info("Starting up playground")
         gobject.GObject.__init__(self)
         # List of used pipelines
         self.pipelines = []
         
-        self.playthread = gst.Thread("playground-thread")
-        self.playthread.connect("element-added", self._reset_scheduler_clock)
+        self.playthread = gst.Bin("playground-thread")
+        #        self.playthread.connect("element-added", self._reset_scheduler_clock)
         self.vsinkthread = None
         self.asinkthread = None
         
@@ -86,7 +87,7 @@ class PlayGround(gobject.GObject):
 
     def add_pipeline(self, pipeline):
         """ add a pipeline to the playground """
-        print "adding pipeline", pipeline, "to playground"
+        gst.debug("pipeline : %s" % pipeline)
         if not isinstance(pipeline, SmartBin):
             return
         #self.playthread.add(pipeline)
@@ -95,7 +96,7 @@ class PlayGround(gobject.GObject):
 
     def remove_pipeline(self, pipeline):
         """ removes a pipeline from the playground """
-        print "removing pipeline from playground"
+        gst.debug("pipeline : %s" % pipeline)
         if not pipeline in self.pipelines:
             return
         pipeline.set_state(gst.STATE_READY)
@@ -107,7 +108,7 @@ class PlayGround(gobject.GObject):
 
     def switch_to_pipeline(self, pipeline):
         """ switch to the given pipeline for play output """
-        print "switching to another pipeline"
+        gst.debug("pipeline : %s" % pipeline)
         if self.current == pipeline:
             return
         if not pipeline in self.pipelines and not pipeline == self.default:
@@ -137,25 +138,26 @@ class PlayGround(gobject.GObject):
             self.asinkthread.set_state(gst.STATE_READY)
             self.current.set_audio_sink_thread(self.asinkthread)
         self.emit("current-changed", self.current)
-        self.cur_state_signal = self.current.connect("state-change", self._current_state_change_cb)
-        self.cur_eos_signal = self.current.connect("eos", self._current_eos_cb)
+        self.cur_state_signal = self.current.connect("state-changed", self._current_state_change_cb)
+        ## FIXME : eos signal doesn't exist anymore
+        #self.cur_eos_signal = self.current.connect("eos", self._current_eos_cb)
         self.current.set_state(gst.STATE_PAUSED)
 
     def switch_to_default(self):
         """ switch to the default pipeline """
-        print "switching to default"
+        gst.debug("switching to default")
         self.switch_to_pipeline(self.default)
         #self.default.set_state(gst.STATE_PLAYING)
 
-    def _reset_scheduler_clock(self, playthread, element_added):
-        # hack for 0.8
-        sched = self.playthread.get_scheduler()
-        clock = sched.get_clock()
-        sched.set_clock(clock)
+##     def _reset_scheduler_clock(self, playthread, element_added):
+##         # hack for 0.8
+##         sched = self.playthread.get_scheduler()
+##         clock = sched.get_clock()
+##         sched.set_clock(clock)
 
     def set_video_sink_thread(self, vsinkthread):
         """ sets the video sink thread """
-        print "set video sink thread :", vsinkthread
+        gst.debug("video sink thread :", vsinkthread)
         if self.vsinkthread and self.current:
             self.current.set_state(gst.STATE_PAUSED)
             self.current.remove_video_sink_thread()
@@ -167,7 +169,7 @@ class PlayGround(gobject.GObject):
 
     def set_audio_sink_thread(self, asinkthread):
         """ sets the audio sink thread """
-        print "set audio sink thread :", asinkthread
+        gst.debug("set audio sink thread :", asinkthread)
         if self.asinkthread and self.current:
             self.current.set_state(gst.STATE_PAUSED)
             self.current.remove_audio_sink_thread()
@@ -179,6 +181,7 @@ class PlayGround(gobject.GObject):
 
     def _play_temporary_bin(self, tempbin):
         """ temporarely play a smartbin """
+        gst.debug("tempbin : %s" % tempbin)
         self.pause()
         self.add_pipeline(tempbin)
         self.switch_to_pipeline(tempbin)
@@ -189,12 +192,14 @@ class PlayGround(gobject.GObject):
 
     def play_temporary_uri(self, uri):
         """ plays a uri """
+        gst.debug("uri : %s" % uri)
         tempbin = SmartTempUriBin(uri)
         self._play_temporary_bin(tempbin)
         pass
 
     def play_temporary_filesourcefactory(self, factory):
         """ temporarely play a FileSourceFactory """
+        gst.debug("factory : %s" % factory)
         if isinstance(self.current, SmartFileBin) and self.current.factory == factory:
             return
         tempbin = SmartFileBin(factory)
@@ -202,6 +207,7 @@ class PlayGround(gobject.GObject):
 
     def seek_in_current(self, value):
         """ seek to the given position in the current playing bin """
+        gst.debug("value : %s" % value) 
         if not self.current:
             return
 ##         prevstate = self.current.get_state()
@@ -222,7 +228,7 @@ class PlayGround(gobject.GObject):
 ##             self.current.set_state(prevstate)
 
     def _current_state_change_cb(self, current, prevstate, newstate):
-        print current, "changed state from", prevstate, "to", newstate
+        current.debug("changed state from %s to %s" % (prevstate, newstate))
         if newstate in [int(gst.STATE_PAUSED), int(gst.STATE_PLAYING)]:
             if newstate == int(gst.STATE_PAUSED):
                 self.state = gst.STATE_PAUSED
@@ -230,9 +236,9 @@ class PlayGround(gobject.GObject):
                 self.state = gst.STATE_PLAYING
             self.emit("current-state", newstate)
 
-    def _current_eos_cb(self, current):
-        print current, "has EOS!"
-        self.emit("current-state", gst.STATE_READY)
+##     def _current_eos_cb(self, current):
+##         print current, "has EOS!"
+##         self.emit("current-state", gst.STATE_READY)
 
     #
     # playing proxy functions
@@ -240,7 +246,7 @@ class PlayGround(gobject.GObject):
 
     def play(self):
         """ play the current pipeline """
-        print "setting playground to play"
+        self.debug("play")
         print "self.current, self.asinkthread, self.vsinkthread :", self.current, self.asinkthread, self.vsinkthread
         if not self.current or not self.asinkthread or not self.vsinkthread:
             print "returning ????"
@@ -255,7 +261,7 @@ class PlayGround(gobject.GObject):
 
     def pause(self):
         """ pause the current pipeline """
-        print "setting playground to pause"
+        self.debug("pause")
         if not self.current or self.current == self.default:
             return
         if not self.state == gst.STATE_PAUSED:

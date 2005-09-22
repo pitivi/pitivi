@@ -20,6 +20,7 @@
 # Boston, MA 02111-1307, USA.
 
 import gobject
+import gst
 from discoverer import Discoverer
 
 class SourceList(gobject.GObject):
@@ -43,6 +44,7 @@ class SourceList(gobject.GObject):
         }
 
     def __init__(self, project):
+        gst.info("new sourcelist for project %s" % project)
         gobject.GObject.__init__(self)
         self.project = project
         self.sources = {}

@@ -52,6 +52,9 @@ def _init_gobject_gtk_gst():
         raise SystemExit("PyGTK couldn't be found !")
 
     try:
+        import pygst
+        pygst.require('0.9')
+        
         import gst
     except ImportError:
         raise SystemExit("Gst-Python couldn't be found!")

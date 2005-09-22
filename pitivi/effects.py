@@ -39,6 +39,7 @@ class Magician:
     """
 
     def __init__(self, pitivi):
+        gst.info("New Magician")
         self.pitivi = pitivi
         self.simple_video = []
         self.simple_audio = []
@@ -48,7 +49,7 @@ class Magician:
     def _get_simple_filters(self):
         # go trough the list of element factories and
         # add them to the correct list
-        factlist = gst.registry_pool_feature_list(gst.ElementFactory)
+        factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
         for fact in factlist:
             if "Filter/Effect/Audio" in fact.get_klass():
                 self.simple_audio.append(fact)

@@ -52,6 +52,7 @@ class Discoverer(gobject.GObject):
         }
 
     def __init__(self, project):
+        gst.info("new discoverer for project %s" % project)
         gobject.GObject.__init__(self)
         self.project = project
         self.queue = []

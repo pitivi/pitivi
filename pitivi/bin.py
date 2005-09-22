@@ -34,6 +34,7 @@ class SmartBin(gst.Bin):
     height = 0
 
     def __init__(self, name, displayname=""):
+        gst.info('name : %s, displayname : %s' % (name, displayname))
         gobject.GObject.__init__(self)
         self.name = name
         self.displayname = displayname
@@ -60,7 +61,7 @@ class SmartBin(gst.Bin):
 
     def set_audio_sink_thread(self, asinkthread):
         """ set the audio sink thread """
-        print "setting asinkthread in", self.name
+        self.debug("asinkthread : %s" % asinkthread)
         if self.get_state() > gst.STATE_PAUSED:
             print self.name, "is in PAUSED or higher"
             return False
@@ -76,7 +77,7 @@ class SmartBin(gst.Bin):
 
     def set_video_sink_thread(self, vsinkthread):
         """ set the video sink thread """
-        print "setting vsinkthread in ", self.name
+        self.debug("vsinkthread : %s" % asinkthread)
         if self.get_state() > gst.STATE_PAUSED:
             return False
         if self.vsinkthread:
@@ -95,7 +96,7 @@ class SmartBin(gst.Bin):
 
     def remove_audio_sink_thread(self):
         """ remove the audio sink thread """
-        print "removing asinkthread in ", self.name
+        self.debug("asinkthread : %s" % asinkthread)
         if self.get_state() > gst.STATE_PAUSED:
             return False
         if not self.asinkthread:
@@ -107,7 +108,7 @@ class SmartBin(gst.Bin):
 
     def remove_video_sink_thread(self):
         """ remove the videos sink thread """
-        print "removing vsinkthread in ", self.name
+        self.debug("vsinkthread : %s" % asinkthread)
         if self.get_state() > gst.STATE_PAUSED:
             return False
         if not self.vsinkthread:
@@ -125,7 +126,7 @@ class SmartFileBin(SmartBin):
     """
 
     def __init__(self, factory):
-        print "new SmartFileBin for factory:%s, audio:%s, video:%s" % (factory, factory.is_audio, factory.is_video)
+        gst.debug("new SmartFileBin for factory:%s, audio:%s, video:%s" % (factory, factory.is_audio, factory.is_video))
         self.factory = factory
         self.has_video = factory.is_video
         self.has_audio = factory.is_audio
@@ -142,8 +143,7 @@ class SmartFileBin(SmartBin):
         self.add(self.source)
 
     def connect_source(self):
-        print "connect_source for ", self.source.get_pad_list()
-        print "delayed to 'new-decoded-pad' signal"
+        self.debug("pad_list %s" % self.source.get_pad_list())
         self.source.connect("new-pad", self._bin_new_decoded_pad)
         self.source.connect("pad-removed", self._bin_removed_decoded_pad)
 ##         if self.has_video:
@@ -155,7 +155,7 @@ class SmartFileBin(SmartBin):
 
     def _bin_new_decoded_pad(self, bin, pad):
         # connect to good tee
-        print "SmartFileBin's source has a new pad:", pad , pad.get_caps().to_string()
+        self.debug("SmartFileBin's source has a new pad: %s %s" % (pad , pad.get_caps().to_string()))
         if "audio" in pad.get_caps().to_string():
             pad.link(self.atee.get_pad("sink"))
         elif "video" in pad.get_caps().to_string():
@@ -179,7 +179,7 @@ class SmartTimelineBin(SmartBin):
     """
 
     def __init__(self, project):
-        print "new SmartTimelineBin for project", project
+        gst.info("new SmartTimelineBin for project %s" % project)
         self.project = project
         
         # TODO : change this to use the project settings
@@ -324,9 +324,10 @@ class SmartDefaultBin(SmartBin):
     """
 
     def __init__(self):
-        print "Creating new smartdefaultbin"
+        gst.info("Creating new smartdefaultbin")
         self.videotestsrc = gst.element_factory_make("videotestsrc", "vtestsrc")
-        self.silence = gst.element_factory_make("silence", "silence")
+        self.silence = gst.element_factory_make("sinesrc", "silence")
+        self.silence.set_property("volume", 0.0)
         self.has_audio = True
         self.has_video = True
         self.width = 720
@@ -337,11 +338,11 @@ class SmartDefaultBin(SmartBin):
         self.add_many(self.videotestsrc, self.silence)
 
     def connect_source(self):
-        print "connecting sources"
-        vcaps = gst.caps_from_string("video/x-raw-yuv,width=320,height=240,framerate=25.0")
-        self.videotestsrc.get_pad("src").link_filtered(self.vtee.get_pad("sink"), vcaps)
+        self.debug("connecting sources")
+        #vcaps = gst.caps_from_string("video/x-raw-yuv,width=320,height=240,framerate=25.0")
+        self.videotestsrc.get_pad("src").link(self.vtee.get_pad("sink"))
         self.silence.get_pad("src").link(self.atee.get_pad("sink"))
-        print "finished connecting sources"
+        self.debug("finished connecting sources")
 
 gobject.type_register(SmartDefaultBin)
 

@@ -1,3 +1,23 @@
+2005-09-22  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	Use gst-python 0.9
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	Added some debugging output,
+	commented out gnonlin-specific parts of PiTiVi, which will have to be
+	removed once gnonlin is ported
+
 2005-07-23  Edward Hervey  <edward@fluendo.com>
 
 	On our way to a gstreamer 0.9 pitivi :)

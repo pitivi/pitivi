@@ -57,10 +57,15 @@ class Timeline(gobject.GObject):
     # for the time being we hardcode an audio and a video composition
     
     def __init__(self, project):
+        gst.info("new Timeline for project %s" % project)
         gobject.GObject.__init__(self)
         self.project = project
-        self.timeline = gst.element_factory_make("gnltimeline", "timeline-" + project.name)
-        self._fill_contents()
+        
+        # FIXME : uncomment when we have gnonlin ported
+        # self.timeline = gst.element_factory_make("gnltimeline", "timeline-" + project.name)
+        #self._fill_contents()
+        self.timeline = None
+
         self.project.settings.connect_after("settings-changed", self._settings_changed_cb)
 
     def _fill_contents(self):
@@ -68,6 +73,7 @@ class Timeline(gobject.GObject):
         self.audiocomp = TimelineComposition(media_type = MEDIA_TYPE_AUDIO, name="audiocomp")
         self.videocomp = TimelineComposition(media_type = MEDIA_TYPE_VIDEO, name="videocomp")
         self.videocomp.link_object(self.audiocomp)
+
         self.timeline.add_many(self.audiocomp.gnlobject,
                                self.videocomp.gnlobject)
 

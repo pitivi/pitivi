@@ -21,6 +21,8 @@
 
 import gobject
 import gtk
+import gst
+import sys
 from ui import mainwindow
 from discoverer import Discoverer
 from playground import PlayGround
@@ -56,9 +58,9 @@ class Pitivi(gobject.GObject):
         """
         initialize pitivi with the command line arguments
         """
+        gst.info("starting up pitivi...")
         gobject.GObject.__init__(self)
         # TODO parse cmd line arguments
-        #self.discoverer = Discoverer(self)
         self.playground = PlayGround()
         self.current = Project("New Project")
         self.effects = Magician(self)
@@ -69,6 +71,7 @@ class Pitivi(gobject.GObject):
 
     def load_project(self, uri=None, filepath=None):
         """ Load the given file through it's uri or filepath """
+        gst.info("uri:%s, filepath:%s" % (uri, filepath))
         if not uri and not filepath:
             self.emit("not-project", "")
             return
@@ -85,6 +88,7 @@ class Pitivi(gobject.GObject):
 
     def _close_running_project(self):
         """ close the current project """
+        gst.info("closing running project")
         if self.current:
             if not self.emit("closing-project", self.current):
                 return False
