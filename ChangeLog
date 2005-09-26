@@ -1,5 +1,19 @@
 2005-09-22  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/bin.py:
+	Updated to new state handling
+	* pitivi/discoverer.py:
+	Added debugging
+	* pitivi/playground.py:
+	Tss... we need a toplevel pipeline
+	Added debugging
+	* pitivi/ui/viewer.py:
+	Updated gconf magic to grab gstreamer 0.9 keys
+	Thread -> Bin
+	ghostpad modifications
+
+2005-09-22  Edward Hervey  <edward@fluendo.com>
+
 	* bin/pitivi.in:
 	Use gst-python 0.9
 	* pitivi/bin.py:

@@ -64,7 +64,7 @@ class PlayGround(gobject.GObject):
         # List of used pipelines
         self.pipelines = []
         
-        self.playthread = gst.Bin("playground-thread")
+        self.playthread = gst.Pipeline("playground-thread")
         #        self.playthread.connect("element-added", self._reset_scheduler_clock)
         self.vsinkthread = None
         self.asinkthread = None
@@ -157,7 +157,7 @@ class PlayGround(gobject.GObject):
 
     def set_video_sink_thread(self, vsinkthread):
         """ sets the video sink thread """
-        gst.debug("video sink thread :", vsinkthread)
+        gst.debug("video sink thread : %s" % vsinkthread)
         if self.vsinkthread and self.current:
             self.current.set_state(gst.STATE_PAUSED)
             self.current.remove_video_sink_thread()
@@ -165,11 +165,10 @@ class PlayGround(gobject.GObject):
         if self.current:
             self.current.set_video_sink_thread(self.vsinkthread)
             self.current.set_state(gst.STATE_PAUSED)
-        print "finished setting video sink thread"
 
     def set_audio_sink_thread(self, asinkthread):
         """ sets the audio sink thread """
-        gst.debug("set audio sink thread :", asinkthread)
+        gst.debug("set audio sink thread : %s" % asinkthread)
         if self.asinkthread and self.current:
             self.current.set_state(gst.STATE_PAUSED)
             self.current.remove_audio_sink_thread()
@@ -177,7 +176,6 @@ class PlayGround(gobject.GObject):
         if self.current:
             self.current.set_audio_sink_thread(self.asinkthread)
             self.current.set_state(gst.STATE_PAUSED)
-        print "finished setting audio sink thread"
 
     def _play_temporary_bin(self, tempbin):
         """ temporarely play a smartbin """
@@ -218,10 +216,10 @@ class PlayGround(gobject.GObject):
             self.pause()
         if not self.vsinkthread.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
                                      value):
-            print "COULDN'T SEEK !!!!!!!"
+            gst.error("COULDN'T SEEK !!!!!!!")
         if not self.asinkthread.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
                                      value):
-            print "COULDN'T SEEK !!!!!!!"
+            gst.error("COULDN'T SEEK !!!!!!!")
         if prevstate == gst.STATE_PLAYING:
             self.play()
 ##         if not prevstate == gst.STATE_PAUSED:
@@ -246,13 +244,12 @@ class PlayGround(gobject.GObject):
 
     def play(self):
         """ play the current pipeline """
-        self.debug("play")
-        print "self.current, self.asinkthread, self.vsinkthread :", self.current, self.asinkthread, self.vsinkthread
+        gst.debug("play")
         if not self.current or not self.asinkthread or not self.vsinkthread:
-            print "returning ????"
+            gst.warning("returning ???")
             return
         if not self.state == gst.STATE_PLAYING:
-            print "setting to play"
+            gst.debug("setting to play")
             #self.vsinkthread.set_state(gst.STATE_PLAYING)
             #self.asinkthread.set_state(gst.STATE_PLAYING)
             #self.current.set_state(gst.STATE_PLAYING)
@@ -261,7 +258,7 @@ class PlayGround(gobject.GObject):
 
     def pause(self):
         """ pause the current pipeline """
-        self.debug("pause")
+        gst.debug("pause")
         if not self.current or self.current == self.default:
             return
         if not self.state == gst.STATE_PAUSED:

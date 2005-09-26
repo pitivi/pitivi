@@ -62,23 +62,24 @@ class SmartBin(gst.Bin):
     def set_audio_sink_thread(self, asinkthread):
         """ set the audio sink thread """
         self.debug("asinkthread : %s" % asinkthread)
-        if self.get_state() > gst.STATE_PAUSED:
-            print self.name, "is in PAUSED or higher"
+        res, state, pending = self.get_state(0.0)
+        if state > gst.STATE_PAUSED:
+            self.warning("is in PAUSED or higher")
             return False
         if self.asinkthread:
-            print self.name, "already has an asinkthread??"
+            self.warning("already has an asinkthread??")
             return False
         if self.has_audio:
             self.asinkthread = asinkthread
             self.add(self.asinkthread)
             self.atee.get_pad("src%d").link(self.asinkthread.get_pad("sink"))
-        print "atee has now #pads", self.atee.get_property("num_pads")
         return True
 
     def set_video_sink_thread(self, vsinkthread):
         """ set the video sink thread """
-        self.debug("vsinkthread : %s" % asinkthread)
-        if self.get_state() > gst.STATE_PAUSED:
+        self.debug("vsinkthread : %s" % vsinkthread)
+        res , state , pending = self.get_state(0.0)
+        if state > gst.STATE_PAUSED:
             return False
         if self.vsinkthread:
             return False
@@ -91,7 +92,6 @@ class SmartBin(gst.Bin):
                 self.vtee.get_pad("src%d").link(self.vsinkthread.get_pad("sink"))
             else:
                 self.vtee.get_pad("src%d").link(self.vsinkthread.get_pad("sink"))
-            print "vtee has now #pads:", self.vtee.get_property("num_pads")
         return True
 
     def remove_audio_sink_thread(self):

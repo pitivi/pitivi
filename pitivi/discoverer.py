@@ -65,6 +65,7 @@ class Discoverer(gobject.GObject):
 
     def add_file(self, filename):
         """ queue a filename to be discovered """
+        gst.info("filename: %s" % filename)
         self.queue.append(filename)
         while gtk.events_pending():
             gtk.main_iteration(False)
@@ -73,6 +74,7 @@ class Discoverer(gobject.GObject):
 
     def add_files(self, filenames):
         """ queue a list of filenames to be discovered """
+        gst.info("filenames : %s" % filenames)
         self.queue.extend(filenames)
         while gtk.events_pending():
             gtk.main_iteration(False)
