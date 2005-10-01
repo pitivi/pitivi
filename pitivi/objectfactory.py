@@ -63,6 +63,7 @@ class ObjectFactory(gobject.GObject):
         self.video_info = None
 
     def do_set_property(self, property, value):
+        gst.info(property.name)
         if property.name == "is-audio":
             self.is_audio = value
         elif property.name == "is-video":
@@ -121,6 +122,7 @@ class FileSourceFactory(ObjectFactory):
         }
 
     def __init__(self, filename, project):
+        gst.info("filename:%s , project:%s" % (filename, project))
         ObjectFactory.__init__(self)
         self.project = project
         self.name = filename
@@ -140,11 +142,12 @@ class FileSourceFactory(ObjectFactory):
 
     def make_bin(self):
         """ returns a source bin with all pads """
-        bin = gst.Bin()
+        bin = gst.Bin("%s-%d" % (self.name, self.lastbinid))
+        self.lastbinid = self.lastbinid + 1
         src = gst.element_factory_make("gnomevfssrc")
         src.set_property("location", self.name)
         dbin = gst.element_factory_make("decodebin")
-        bin.add_many(src, dbin)
+        bin.add(src, dbin)
         src.link(dbin)
 
         dbin.connect("new-decoded-pad", self._bin_new_decoded_pad, bin )
@@ -154,12 +157,12 @@ class FileSourceFactory(ObjectFactory):
         return bin
 
     def _bin_new_decoded_pad(self, dbin, pad, is_last, bin):
-        print "decoded pad", pad.get_caps().to_string()
+        gst.info(pad.get_caps().to_string())
         # add it as ghost_pad to the bin
         if "audio" in pad.get_caps().to_string():
-            bin.add_ghost_pad(pad, "asrc")
+            bin.add_pad(gst.GhostPad("asrc", pad))
         elif "video" in pad.get_caps().to_string():
-            bin.add_ghost_pad(pad, "vsrc")
+            bin.add_pad(gst.GhostPad("vsrc", pad))
         else:
             return
 
@@ -214,9 +217,9 @@ class FileSourceFactory(ObjectFactory):
             ident = self.make_video_adapter_bin()
         else:
             ident = self.make_audio_adapter_bin()
-        bin.add_many(src, dbin, ident)
+        bin.add(src, dbin, ident)
         src.link(dbin)
-        bin.add_ghost_pad(ident.get_pad("src"), "src")
+        bin.add_pad(gst.GhostPad("src", ident.get_pad("src")))
         
         dbin.connect("new-decoded-pad", self._single_bin_new_decoded_pad, (bin, type, ident))
         dbin.connect("removed-decoded-pad", self._single_bin_removed_decoded_pad, (bin, type, ident))
@@ -275,7 +278,7 @@ class FileSourceFactory(ObjectFactory):
         src_ratio = float(srcwidth) / float(srcheight)
         dst_ratio = float(self.project.settings.videowidth) / float(self.project.settings.videoheight)
 
-        pstate = bin.get_state()
+        result, pstate, pending = bin.get_state(0.0)
         if pstate > gst.STATE_READY:
             bin.set_state(gst.STATE_READY)
 
@@ -315,7 +318,7 @@ class FileSourceFactory(ObjectFactory):
 
     def _update_audio_adapter_bin(self, psettings, data):
         bin, ascale, ident = data
-        pstate = bin.get_state()
+        result, pstate, pending = bin.get_state(0.0)
         if pstate > gst.STATE_READY:
             bin.set_state(gst.STATE_READY)
         filtcaps = gst.caps_from_string("audio/x-raw-int,channels=%d,rate=%d,depth=%d"
@@ -345,7 +348,7 @@ class FileSourceFactory(ObjectFactory):
 ##         if not vscale:
         vscale = gst.element_factory_make("videoscale")
 
-        bin.add_many(vrate, vbox, vscale, ident)
+        bin.add(vrate, vbox, vscale, ident)
         filtcaps = gst.caps_from_string("video/x-raw-yuv,framerate=%f"
                                         % self.project.settings.videorate)
         vrate.link(vbox, filtcaps)
@@ -390,8 +393,8 @@ class FileSourceFactory(ObjectFactory):
                                            self.project.settings.videoheight,
                                            self.project.settings.videorate))
         vscale.link(ident, filtcaps)
-        bin.add_ghost_pad(vrate.get_pad("sink"), "sink")
-        bin.add_ghost_pad(ident.get_pad("src"), "src")
+        bin.add_pad(gst.GhostPad("sink", vrate.get_pad("sink")))
+        bin.add_pad(gst.GhostPad("src", ident.get_pad("src")))
         self.project.settings.connect("settings-changed", self._update_video_adapter_bin,
                                  (bin, vrate, vscale, vbox, ident))
         return bin
@@ -401,15 +404,15 @@ class FileSourceFactory(ObjectFactory):
         aconv = gst.element_factory_make("audioconvert")
         ascale = gst.element_factory_make("audioscale")
         ident = gst.element_factory_make("identity")
-        bin.add_many(aconv, ascale, ident)
+        bin.add(aconv, ascale, ident)
         aconv.link(ascale)
         filtcaps = gst.caps_from_string("audio/x-raw-int,channels=%d,rate=%d,depth=%d"
                                         % (self.project.settings.audiochannels,
                                            self.project.settings.audiorate,
                                            self.project.settings.audiodepth))
         ascale.link(ident, filtcaps)
-        bin.add_ghost_pad(aconv.get_pad("sink"), "sink")
-        bin.add_ghost_pad(ident.get_pad("src"), "src")
+        bin.add_pad(gst.GhostPad("sink", aconv.get_pad("sink")))
+        bin.add_pad(gst.GhostPad("src", ident.get_pad("src")))
         self.project.settings.connect("settings-changed", self._update_audio_adapter_bin,
                                  (bin, ascale, ident))
         return bin
@@ -485,7 +488,7 @@ gobject.type_register(TransitionFactory)
 
 def _update_video_adapter_bin(settings, data):
     bin, vscale, ident = data
-    pstate = bin.get_state()
+    result, pstate, pending = bin.get_state(0.0)
     if pstate > gst.STATE_READY:
         bin.set_state(gst.STATE_READY)
     filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f"
@@ -499,7 +502,7 @@ def _update_video_adapter_bin(settings, data):
 
 def _update_audio_adapter_bin(settings, data):
     bin, ascale, ident = data
-    pstate = bin.get_state()
+    result, pstate, pending = bin.get_state(0.0)
     if pstate > gst.STATE_READY:
         bin.set_state(gst.STATE_READY)
     filtcaps = gst.caps_from_string("audio/x-raw-int,channels=%d,rate=%d,depth=%d"
@@ -518,15 +521,15 @@ def make_video_adapter_bin(project):
     ident = gst.element_factory_make("identity")
     if not vscale:
         vscale = gst.element_factory_make("videoscale")
-    bin.add_many(vrate, vscale, ident)
+    bin.add(vrate, vscale, ident)
     vrate.link(vscale)
     filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f"
                                     % (project.settings.videowidth,
                                        project.settings.videoheight,
                                        project.settings.videorate))
     vscale.link(ident, filtcaps)
-    bin.add_ghost_pad(vrate.get_pad("sink"), "sink")
-    bin.add_ghost_pad(ident.get_pad("src"), "src")
+    bin.add_pad(gst.GhostPad("sink", vrate.get_pad("sink")))
+    bin.add_pad(gst.GhostPad("src", ident.get_pad("src")))
     project.settings.connect("settings-changed", _update_video_adapter_bin,
                              (bin, vscale, ident))
     return bin
@@ -536,15 +539,15 @@ def make_audio_adapter_bin(project):
     aconv = gst.element_factory_make("audioconvert")
     ascale = gst.element_factory_make("audioscale")
     ident = gst.element_factory_make("identity")
-    bin.add_many(aconv, ascale, ident)
+    bin.add(aconv, ascale, ident)
     aconv.link(ascale)
     filtcaps = gst.caps_from_string("audio/x-raw-int,channels=%d,rate=%d,depth=%d"
                                     % (project.settings.audiochannels,
                                        project.settings.audiorate,
                                        project.settings.audiodepth))
     ascale.link(ident, filtcaps)
-    bin.add_ghost_pad(aconv.get_pad("sink"), "sink")
-    bin.add_ghost_pad(ident.get_pad("src"), "src")
+    bin.add_pad(gst.GhostPad("sink", aconv.get_pad("sink")))
+    bin.add_pad(gst.GhostPad("src", ident.get_pad("src")))
     project.settings.connect("settings-changed", _update_audio_adapter_bin,
                              (bin, ascale, ident))
     return bin

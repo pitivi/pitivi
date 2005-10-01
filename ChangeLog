@@ -1,3 +1,24 @@
+2005-10-01  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/playground.py:
+	* pitivi/settings.py:
+	* pitivi/timeline.py:
+	Update to make pitivi work with gst 0.9
+	Playground's global thread has gone and SmartBin's are now Pipelines
+	
+	* pitivi/ui/elementsettingsdialog.glade:
+	* pitivi/ui/encodingdialog.glade:
+	* pitivi/ui/sourcefactories.py:
+	Make interface more HIG compliant
+	
+	* pitivi/ui/viewer.py:
+	Update to _create_sinkthreads() and _check_time() for gst 0.9
+
+	Added debug logging a bit everywhere...
+
 2005-09-22  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/bin.py:

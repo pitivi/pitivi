@@ -76,6 +76,8 @@ class SourceListWidget(gtk.VBox):
         # icon, name, type(audio/video), length, objectfactory, uri
         self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, object, str)
 
+        self.set_border_width(5)
+
         # Scrolled Window
         self.scrollwin = gtk.ScrolledWindow()
         self.scrollwin.set_policy(gtk.POLICY_AUTOMATIC,gtk.POLICY_AUTOMATIC)

@@ -64,7 +64,7 @@ class PlayGround(gobject.GObject):
         # List of used pipelines
         self.pipelines = []
         
-        self.playthread = gst.Pipeline("playground-thread")
+        ##         self.playthread = gst.Pipeline("playground-thread")
         #        self.playthread.connect("element-added", self._reset_scheduler_clock)
         self.vsinkthread = None
         self.asinkthread = None
@@ -83,15 +83,19 @@ class PlayGround(gobject.GObject):
         
         self.switch_to_default()
         self.state = gst.STATE_READY
-        self.playthread.set_state(self.state)
+        self.current.set_state(self.state)
+        #self.playthread.set_state(self.state)
 
     def add_pipeline(self, pipeline):
         """ add a pipeline to the playground """
         gst.debug("pipeline : %s" % pipeline)
         if not isinstance(pipeline, SmartBin):
             return
-        #self.playthread.add(pipeline)
+
         self.pipelines.append(pipeline)
+        bus = pipeline.get_bus()
+        bus.add_signal_watch()
+        bus.connect("message", self._bus_message_cb, pipeline)
         self.emit("bin-added", pipeline)
 
     def remove_pipeline(self, pipeline):
@@ -99,6 +103,10 @@ class PlayGround(gobject.GObject):
         gst.debug("pipeline : %s" % pipeline)
         if not pipeline in self.pipelines:
             return
+
+        bus = pipeline.get_bus()
+        bus.remove_signal_watch()
+
         pipeline.set_state(gst.STATE_READY)
         if self.current == pipeline:
             self.switch_to_default()
@@ -114,68 +122,69 @@ class PlayGround(gobject.GObject):
         if not pipeline in self.pipelines and not pipeline == self.default:
             return
         if self.current:
-            self.current.set_state(gst.STATE_PAUSED)
-            self.vsinkthread.set_state(gst.STATE_READY)
-            self.asinkthread.set_state(gst.STATE_READY)
+            gst.info("setting current to READY")
+            a, state, pending = self.current.get_state()
+            while not state == gst.STATE_READY:
+                gst.info("forcing state change to READY")
+                self.current.set_state(gst.STATE_READY)
+                a, state, pending = self.current.get_state()
+            #self.vsinkthread.set_state(gst.STATE_READY)
+            #self.asinkthread.set_state(gst.STATE_READY)
             self.current.remove_audio_sink_thread()
             self.current.remove_video_sink_thread()
             if self.cur_state_signal:
                 self.current.disconnect(self.cur_state_signal)
             if self.cur_eos_signal:
                 self.current.disconnect(self.cur_eos_signal)
-            self.playthread.remove(self.current)
+            #self.playthread.remove(self.current)
             # remove the tempsmartbin if it's the current
             if self.current == self.tempsmartbin:
                 self.tempsmartbin = None
 
-        self.playthread.add(pipeline)
         self.current = pipeline
-        self.current.set_state(gst.STATE_PAUSED)
+        # only set self.current to PAUSED if it has the sinkthreads set up
+        #self.current.set_state(gst.STATE_PAUSED)
         if self.current.has_video and self.vsinkthread:
-            self.vsinkthread.set_state(gst.STATE_READY)
+            #self.vsinkthread.set_state(gst.STATE_READY)
             self.current.set_video_sink_thread(self.vsinkthread)
         if self.current.has_audio and self.asinkthread:
-            self.asinkthread.set_state(gst.STATE_READY)
+            #self.asinkthread.set_state(gst.STATE_READY)
             self.current.set_audio_sink_thread(self.asinkthread)
         self.emit("current-changed", self.current)
-        self.cur_state_signal = self.current.connect("state-changed", self._current_state_change_cb)
-        ## FIXME : eos signal doesn't exist anymore
-        #self.cur_eos_signal = self.current.connect("eos", self._current_eos_cb)
-        self.current.set_state(gst.STATE_PAUSED)
+
+        videoready = self.current.has_video and self.current.vsinkthread
+        audioready = self.current.has_audio and self.current.asinkthread
+        if (videoready and audioready) or videoready or audioready:
+            self.current.set_state(gst.STATE_PAUSED)
 
     def switch_to_default(self):
         """ switch to the default pipeline """
         gst.debug("switching to default")
         self.switch_to_pipeline(self.default)
-        #self.default.set_state(gst.STATE_PLAYING)
-
-##     def _reset_scheduler_clock(self, playthread, element_added):
-##         # hack for 0.8
-##         sched = self.playthread.get_scheduler()
-##         clock = sched.get_clock()
-##         sched.set_clock(clock)
 
     def set_video_sink_thread(self, vsinkthread):
         """ sets the video sink thread """
         gst.debug("video sink thread : %s" % vsinkthread)
-        if self.vsinkthread and self.current:
+        if self.vsinkthread and self.current.has_video:
             self.current.set_state(gst.STATE_PAUSED)
             self.current.remove_video_sink_thread()
         self.vsinkthread = vsinkthread
-        if self.current:
+        if self.current and self.current.has_video:
             self.current.set_video_sink_thread(self.vsinkthread)
-            self.current.set_state(gst.STATE_PAUSED)
+            if self.current.asinkthread or not self.current.has_audio:
+                self.current.set_state(gst.STATE_PAUSED)
 
     def set_audio_sink_thread(self, asinkthread):
         """ sets the audio sink thread """
         gst.debug("set audio sink thread : %s" % asinkthread)
-        if self.asinkthread and self.current:
+        if self.asinkthread and self.current.asinkthread:
             self.current.set_state(gst.STATE_PAUSED)
             self.current.remove_audio_sink_thread()
         self.asinkthread = asinkthread
-        if self.current:
+        if self.current and self.current.has_audio:
             self.current.set_audio_sink_thread(self.asinkthread)
-            self.current.set_state(gst.STATE_PAUSED)
+            if self.current.vsinkthread or not self.current.has_video:
+                self.current.set_state(gst.STATE_PAUSED)
 
     def _play_temporary_bin(self, tempbin):
         """ temporarely play a smartbin """
@@ -208,22 +217,20 @@ class PlayGround(gobject.GObject):
         gst.debug("value : %s" % value) 
         if not self.current:
             return
-##         prevstate = self.current.get_state()
+        self.current.seek(1.0, gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH,
+                          gst.SEEK_TYPE_SET, value,
+                          gst.SEEK_TYPE_NONE, 0)
+##         prevstate = self.state
 ##         if not prevstate == gst.STATE_PAUSED:
-##             self.current.set_state(gst.STATE_PAUSED)
-        prevstate = self.state
-        if not prevstate == gst.STATE_PAUSED:
-            self.pause()
-        if not self.vsinkthread.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
-                                     value):
-            gst.error("COULDN'T SEEK !!!!!!!")
-        if not self.asinkthread.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
-                                     value):
-            gst.error("COULDN'T SEEK !!!!!!!")
-        if prevstate == gst.STATE_PLAYING:
-            self.play()
-##         if not prevstate == gst.STATE_PAUSED:
-##             self.current.set_state(prevstate)
+##             self.pause()
+##         if not self.vsinkthread.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
+##                                      value):
+##             gst.error("COULDN'T SEEK !!!!!!!")
+##         if not self.asinkthread.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
+##                                      value):
+##             gst.error("COULDN'T SEEK !!!!!!!")
+##         if prevstate == gst.STATE_PLAYING:
+##             self.play()
 
     def _current_state_change_cb(self, current, prevstate, newstate):
         current.debug("changed state from %s to %s" % (prevstate, newstate))
@@ -234,9 +241,13 @@ class PlayGround(gobject.GObject):
                 self.state = gst.STATE_PLAYING
             self.emit("current-state", newstate)
 
-##     def _current_eos_cb(self, current):
-##         print current, "has EOS!"
-##         self.emit("current-state", gst.STATE_READY)
+    #
+    # Bus handler
+    #
+    def _bus_message_cb(self, bus, message, pipeline):
+        """ handler for messages from the pipelines' buses """
+        gst.info("%s" % message.type)
+
 
     #
     # playing proxy functions
@@ -248,14 +259,14 @@ class PlayGround(gobject.GObject):
         if not self.current or not self.asinkthread or not self.vsinkthread:
             gst.warning("returning ???")
             return
-        if not self.state == gst.STATE_PLAYING:
-            gst.debug("setting to play")
-            #self.vsinkthread.set_state(gst.STATE_PLAYING)
-            #self.asinkthread.set_state(gst.STATE_PLAYING)
-            #self.current.set_state(gst.STATE_PLAYING)
-            self.state = gst.STATE_PLAYING
-            self.playthread.set_state(self.state)
-
+        gst.debug("setting to play")
+        self.state = gst.STATE_PLAYING
+##         self.playthread.set_state(self.state)
+        self.current.set_state(self.state)
+##        gst.debug("set_state() done, getting state now")
+##         value = self.current.get_state(None)
+##        gst.debug("got_state : %s" % str(value))
+ 
     def pause(self):
         """ pause the current pipeline """
         gst.debug("pause")
@@ -264,7 +275,10 @@ class PlayGround(gobject.GObject):
         if not self.state == gst.STATE_PAUSED:
             #self.current.set_state(gst.STATE_PAUSED)
             self.state = gst.STATE_PAUSED
-            self.playthread.set_state(self.state)
+##             self.playthread.set_state(self.state)
+##             self.playthread.get_state(None)
+            self.current.set_state(self.state)
+            self.current.get_state(None)
 
     def fast_forward(self):
         """ fast forward the current pipeline """

@@ -64,7 +64,7 @@ class ExportSettings(gobject.GObject):
         return msg
 
     def set_video_properties(self, width=-1, height=-1, framerate=-1):
-        print "set_video_props", width, height, framerate
+        gst.info("set_video_props %d x %d @ %f fps" % (width, height, framerate))
         changed = False
         if not width == -1 and not width == self.videowidth:
             self.videowidth = width
@@ -79,7 +79,7 @@ class ExportSettings(gobject.GObject):
             self.emit("settings-changed")
 
     def set_audio_properties(self, nbchanns=-1, rate=-1, depth=-1):
-        print "set_audio_props", nbchanns, rate, depth
+        gst.info("%d x %dHz %dbits" % (nbchanns, rate, depth))
         changed = False
         if not nbchanns == -1 and not nbchanns == self.audiochannels:
             self.audiochannels = nbchanns
@@ -117,6 +117,7 @@ def available_muxers():
     for fact in flist:
         if "Codec/Muxer" == fact.get_klass():
             res.append(fact)
+    gst.info(str(res))
     return res
 
 def available_video_encoders():
@@ -126,6 +127,7 @@ def available_video_encoders():
     for fact in flist:
         if "Codec/Encoder/Video" in fact.get_klass():
             res.append(fact)
+    gst.info(str(res))
     return res
 
 def available_audio_encoders():
@@ -135,10 +137,12 @@ def available_audio_encoders():
     for fact in flist:
         if "Codec/Encoder/Audio" in fact.get_klass():
             res.append(fact)
+    gst.info(str(res))
     return res
 
 def encoders_muxer_compatible(encoders, muxer):
     """ returns the list of encoders compatible with the given muxer """
+    gst.info("")
     res = []
     for encoder in encoders:
         for caps in [x.get_caps() for x in encoder.get_pad_templates() if x.direction == gst.PAD_SRC]:

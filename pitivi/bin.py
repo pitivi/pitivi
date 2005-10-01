@@ -22,7 +22,7 @@
 import gobject
 import gst
 
-class SmartBin(gst.Bin):
+class SmartBin(gst.Pipeline):
     """
     Self-contained Bin with playing/encoding ready places
     It also has length information
@@ -63,8 +63,8 @@ class SmartBin(gst.Bin):
         """ set the audio sink thread """
         self.debug("asinkthread : %s" % asinkthread)
         res, state, pending = self.get_state(0.0)
-        if state > gst.STATE_PAUSED:
-            self.warning("is in PAUSED or higher")
+        if state == gst.STATE_PLAYING:
+            self.warning("is in PAUSED or higher : %s" % state)
             return False
         if self.asinkthread:
             self.warning("already has an asinkthread??")
@@ -79,9 +79,11 @@ class SmartBin(gst.Bin):
         """ set the video sink thread """
         self.debug("vsinkthread : %s" % vsinkthread)
         res , state , pending = self.get_state(0.0)
-        if state > gst.STATE_PAUSED:
+        if state == gst.STATE_PLAYING:
+            self.warning("is in PAUSED or higher : %s" % state)
             return False
         if self.vsinkthread:
+            self.warning("already has an vsinkthread??")
             return False
         if self.has_video:
             self.vsinkthread = vsinkthread
@@ -96,10 +98,13 @@ class SmartBin(gst.Bin):
 
     def remove_audio_sink_thread(self):
         """ remove the audio sink thread """
-        self.debug("asinkthread : %s" % asinkthread)
-        if self.get_state() > gst.STATE_PAUSED:
+        self.debug("asinkthread : %s" % self.asinkthread)
+        result, state, pending = self.get_state(0.0)
+        if state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
+            self.warning("is in PAUSED or higher : %s" % state)
             return False
         if not self.asinkthread:
+            self.warning("doesn't have an asinkthread??")
             return False
         self.asinkthread.get_pad("sink").get_peer().unlink(self.asinkthread.get_pad("sink"))
         self.remove(self.asinkthread)
@@ -108,10 +113,13 @@ class SmartBin(gst.Bin):
 
     def remove_video_sink_thread(self):
         """ remove the videos sink thread """
-        self.debug("vsinkthread : %s" % asinkthread)
-        if self.get_state() > gst.STATE_PAUSED:
+        self.debug("vsinkthread : %s" % self.vsinkthread)
+        result, state, pending = self.get_state(0.0)
+        if state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
+            self.warning("is in PAUSED or higher : %s" % state)
             return False
         if not self.vsinkthread:
+            self.warning("doesn't have a vsinkthread??")
             return False
         self.vsinkthread.get_pad("sink").get_peer().unlink(self.vsinkthread.get_pad("sink"))
         self.remove(self.vsinkthread)
@@ -143,8 +151,7 @@ class SmartFileBin(SmartBin):
         self.add(self.source)
 
     def connect_source(self):
-        self.debug("pad_list %s" % self.source.get_pad_list())
-        self.source.connect("new-pad", self._bin_new_decoded_pad)
+        self.source.connect("pad-added", self._bin_new_decoded_pad)
         self.source.connect("pad-removed", self._bin_removed_decoded_pad)
 ##         if self.has_video:
 ##             if not self.source.get_pad("vsrc").link(self.vtee.get_pad("sink")):
@@ -213,7 +220,8 @@ class SmartTimelineBin(SmartBin):
     def record(self, uri, settings=None):
         """ render the timeline to the given uri """
         self.encthread = self._make_encthread(settings)
-        if self.get_state() == gst.STATE_PLAYING:
+        result, state, pending = self.get_state(0.0)
+        if state == gst.STATE_PLAYING:
             self.set_state(gst.STATE_PAUSED)
         self.encthread.filesink.set_property("location", uri)
         self.add(self.encthread)
@@ -268,11 +276,11 @@ class SmartTimelineBin(SmartBin):
         fsink = gst.element_factory_make("gnomevfssink", "fsink")
 
         thread = gst.Thread("encthread")
-        thread.add_many(mux, fsink, aoutq, voutq)
+        thread.add(mux, fsink, aoutq, voutq)
 
         # Audio encoding thread
         aencthread = gst.Thread("aencthread")
-        aencthread.add_many(ainq, aenc)
+        aencthread.add(ainq, aenc)
         thread.add(aencthread)
         
         filtcaps = gst.caps_from_string("audio/x-raw-int")
@@ -287,7 +295,7 @@ class SmartTimelineBin(SmartBin):
 
         # Video encoding thread
         vencthread = gst.Thread("vencthread")
-        vencthread.add_many(vinq, venc)
+        vencthread.add(vinq, venc)
         thread.add(vencthread)
         
         filtcaps = gst.caps_from_string("video/x-raw-yuv")
@@ -300,8 +308,8 @@ class SmartTimelineBin(SmartBin):
             vinq.link(venc)
         venc.link(voutq)
 
-        thread.add_ghost_pad(vinq.get_pad("sink"), "vsink")
-        thread.add_ghost_pad(ainq.get_pad("sink"), "asink")
+        thread.add_pad(gst.GhostPad("vsink", vinq.get_pad("sink")))
+        thread.add_pad(gst.GhostPad("asink", ainq.get_pad("sink")))
 
         thread.filesink = fsink
 
@@ -335,7 +343,7 @@ class SmartDefaultBin(SmartBin):
         SmartBin.__init__(self, "smartdefaultbin")
 
     def add_source(self):
-        self.add_many(self.videotestsrc, self.silence)
+        self.add(self.videotestsrc, self.silence)
 
     def connect_source(self):
         self.debug("connecting sources")
@@ -364,7 +372,7 @@ gobject.type_register(SmartDefaultBin)
 ##         self.dbin.connect("new-decoded-pad", self._bin_new_decoded_pad)
 ##         self.aident = gst.element_factory_make("queue", "aident")
 ##         self.vident = gst.element_factory_make("queue", "vident")
-##         self.add_many(filesrc, self.dbin, self.aident, self.vident)
+##         self.add(filesrc, self.dbin, self.aident, self.vident)
 
 ##     def connect_source(self):
 ##         print "connecting ident to tee"

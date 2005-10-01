@@ -60,7 +60,8 @@ class Timeline(gobject.GObject):
         gst.info("new Timeline for project %s" % project)
         gobject.GObject.__init__(self)
         self.project = project
-        
+
+        gst.error("FIXME : GNONLIN ELEMENTS NOT AVAILABLE YET !!!")
         # FIXME : uncomment when we have gnonlin ported
         # self.timeline = gst.element_factory_make("gnltimeline", "timeline-" + project.name)
         #self._fill_contents()
@@ -74,12 +75,12 @@ class Timeline(gobject.GObject):
         self.videocomp = TimelineComposition(media_type = MEDIA_TYPE_VIDEO, name="videocomp")
         self.videocomp.link_object(self.audiocomp)
 
-        self.timeline.add_many(self.audiocomp.gnlobject,
-                               self.videocomp.gnlobject)
+        self.timeline.add(self.audiocomp.gnlobject,
+                          self.videocomp.gnlobject)
 
     def _settings_changed_cb(self, settings):
         # reset the timeline !
-        pstate = self.timeline.get_state()
+        result, pstate, pending = self.timeline.get_state(0.0)
         self.timeline.set_state(gst.STATE_READY)
         self.timeline.set_state(pstate)
 
