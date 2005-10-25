@@ -1,3 +1,13 @@
+2005-10-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py:
+	* pitivi/bin.py:
+	* pitivi/objectfactory.py:
+	* pitivi/playground.py:
+	* pitivi/timeline.py:
+	* configure.ac:	
+	State change updates + better scrubbing
+	
 2005-10-01  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/bin.py:

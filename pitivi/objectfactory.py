@@ -278,7 +278,7 @@ class FileSourceFactory(ObjectFactory):
         src_ratio = float(srcwidth) / float(srcheight)
         dst_ratio = float(self.project.settings.videowidth) / float(self.project.settings.videoheight)
 
-        result, pstate, pending = bin.get_state(0.0)
+        result, pstate, pending = bin.get_state(0)
         if pstate > gst.STATE_READY:
             bin.set_state(gst.STATE_READY)
 
@@ -318,7 +318,7 @@ class FileSourceFactory(ObjectFactory):
 
     def _update_audio_adapter_bin(self, psettings, data):
         bin, ascale, ident = data
-        result, pstate, pending = bin.get_state(0.0)
+        result, pstate, pending = bin.get_state(0)
         if pstate > gst.STATE_READY:
             bin.set_state(gst.STATE_READY)
         filtcaps = gst.caps_from_string("audio/x-raw-int,channels=%d,rate=%d,depth=%d"
@@ -488,7 +488,7 @@ gobject.type_register(TransitionFactory)
 
 def _update_video_adapter_bin(settings, data):
     bin, vscale, ident = data
-    result, pstate, pending = bin.get_state(0.0)
+    result, pstate, pending = bin.get_state(0)
     if pstate > gst.STATE_READY:
         bin.set_state(gst.STATE_READY)
     filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d,framerate=%f"
@@ -502,7 +502,7 @@ def _update_video_adapter_bin(settings, data):
 
 def _update_audio_adapter_bin(settings, data):
     bin, ascale, ident = data
-    result, pstate, pending = bin.get_state(0.0)
+    result, pstate, pending = bin.get_state(0)
     if pstate > gst.STATE_READY:
         bin.set_state(gst.STATE_READY)
     filtcaps = gst.caps_from_string("audio/x-raw-int,channels=%d,rate=%d,depth=%d"

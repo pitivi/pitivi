@@ -80,7 +80,7 @@ class Timeline(gobject.GObject):
 
     def _settings_changed_cb(self, settings):
         # reset the timeline !
-        result, pstate, pending = self.timeline.get_state(0.0)
+        result, pstate, pending = self.timeline.get_state(0)
         self.timeline.set_state(gst.STATE_READY)
         self.timeline.set_state(pstate)
 

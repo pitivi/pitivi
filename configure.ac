@@ -62,6 +62,8 @@ AC_MSG_CHECKING(for gtk.glade)
 prog="
 import sys
 try:
+  import pygtk
+  pygtk.require('2.0')
   import gtk.glade
 except RuntimeError:
   sys.exit(0)

@@ -62,7 +62,7 @@ class SmartBin(gst.Pipeline):
     def set_audio_sink_thread(self, asinkthread):
         """ set the audio sink thread """
         self.debug("asinkthread : %s" % asinkthread)
-        res, state, pending = self.get_state(0.0)
+        res, state, pending = self.get_state(0)
         if state == gst.STATE_PLAYING:
             self.warning("is in PAUSED or higher : %s" % state)
             return False
@@ -78,7 +78,7 @@ class SmartBin(gst.Pipeline):
     def set_video_sink_thread(self, vsinkthread):
         """ set the video sink thread """
         self.debug("vsinkthread : %s" % vsinkthread)
-        res , state , pending = self.get_state(0.0)
+        res , state , pending = self.get_state(0)
         if state == gst.STATE_PLAYING:
             self.warning("is in PAUSED or higher : %s" % state)
             return False
@@ -99,7 +99,7 @@ class SmartBin(gst.Pipeline):
     def remove_audio_sink_thread(self):
         """ remove the audio sink thread """
         self.debug("asinkthread : %s" % self.asinkthread)
-        result, state, pending = self.get_state(0.0)
+        result, state, pending = self.get_state(0)
         if state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
             self.warning("is in PAUSED or higher : %s" % state)
             return False
@@ -114,7 +114,7 @@ class SmartBin(gst.Pipeline):
     def remove_video_sink_thread(self):
         """ remove the videos sink thread """
         self.debug("vsinkthread : %s" % self.vsinkthread)
-        result, state, pending = self.get_state(0.0)
+        result, state, pending = self.get_state(0)
         if state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
             self.warning("is in PAUSED or higher : %s" % state)
             return False
@@ -175,7 +175,7 @@ class SmartFileBin(SmartBin):
             pad.unlink(self.vtee)
 
     def do_destroy(self):
-        print "do_destroy"
+        self.info("destroyed")
         self.factory.bin_is_destroyed(self.source)
 
 gobject.type_register(SmartFileBin)
@@ -220,7 +220,7 @@ class SmartTimelineBin(SmartBin):
     def record(self, uri, settings=None):
         """ render the timeline to the given uri """
         self.encthread = self._make_encthread(settings)
-        result, state, pending = self.get_state(0.0)
+        result, state, pending = self.get_state(0)
         if state == gst.STATE_PLAYING:
             self.set_state(gst.STATE_PAUSED)
         self.encthread.filesink.set_property("location", uri)
@@ -320,7 +320,7 @@ class SmartTimelineBin(SmartBin):
         return thread
 
     def _start_stop_changed(self, videocomp, start, stop):
-        print "smart timeline bin: start stop changed", start, stop
+        self.info("smart timeline bin: start stop changed %lld %lld" %( start, stop ))
         self.length = stop - start
 
 gobject.type_register(SmartTimelineBin)
@@ -353,36 +353,3 @@ class SmartDefaultBin(SmartBin):
         self.debug("finished connecting sources")
 
 gobject.type_register(SmartDefaultBin)
-
-## class SmartTempUriBin(SmartBin):
-##     """
-##     SmartBin for temporary uris
-##     """
-
-##     def __init__(self, uri):
-##         self.uri = uri
-##         self.has_audio = True
-##         self.has_video = True
-##         SmartBin.__init__(self, "temp-" + uri)
-
-##     def add_source(self):
-##         filesrc = gst.element_factory_make("gnomevfssrc", "src")
-##         filesrc.set_property("location", self.uri)
-##         self.dbin = gst.element_factory_make("decodebin", "dbin")
-##         self.dbin.connect("new-decoded-pad", self._bin_new_decoded_pad)
-##         self.aident = gst.element_factory_make("queue", "aident")
-##         self.vident = gst.element_factory_make("queue", "vident")
-##         self.add(filesrc, self.dbin, self.aident, self.vident)
-
-##     def connect_source(self):
-##         print "connecting ident to tee"
-##         print self.aident.get_pad("src").link(self.atee.get_pad("sink"))
-##         print self.vident.get_pad("src").link(self.vtee.get_pad("sink"))
-
-##     def _bin_new_decoded_pad(self, dbin, pad, is_last):
-##         if "audio" in pad.get_caps().to_string():
-##             pad.link(self.aident.get_caps("sink"))
-##         elif "video" in pad.get_caps().to_string():
-##             pad.link(self.vident.get_caps("sink"))
-
-## gobject.type_register(SmartTempUriBin)

@@ -124,10 +124,9 @@ class PlayGround(gobject.GObject):
         if self.current:
             gst.info("setting current to READY")
             a, state, pending = self.current.get_state()
-            while not state == gst.STATE_READY:
+            if not state == gst.STATE_READY:
                 gst.info("forcing state change to READY")
                 self.current.set_state(gst.STATE_READY)
-                a, state, pending = self.current.get_state()
             #self.vsinkthread.set_state(gst.STATE_READY)
             #self.asinkthread.set_state(gst.STATE_READY)
             self.current.remove_audio_sink_thread()
@@ -208,29 +207,37 @@ class PlayGround(gobject.GObject):
         """ temporarely play a FileSourceFactory """
         gst.debug("factory : %s" % factory)
         if isinstance(self.current, SmartFileBin) and self.current.factory == factory:
+            gst.info("Already playing factory : %s" % factory)
             return
         tempbin = SmartFileBin(factory)
         self._play_temporary_bin(tempbin)
 
-    def seek_in_current(self, value):
+    def seek_in_current(self, value, format=gst.FORMAT_TIME):
         """ seek to the given position in the current playing bin """
-        gst.debug("value : %s" % value) 
+        gst.debug("value : %s , format : %s" % (value, format))
         if not self.current:
             return
-        self.current.seek(1.0, gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH,
+        # for frame seeking, we need to seek on the video stream
+        if not format == gst.FORMAT_TIME:
+            # and we need to pause that smartbin since we don't call it directly
+            result, state, pending = self.current.get_state()
+            if state == gst.STATE_PLAYING:
+                self.current.set_state(gst.STATE_PAUSED)
+            target = self.vsinkthread
+        else:
+            target = self.current
+
+        # actual seeking
+        res = target.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
                           gst.SEEK_TYPE_SET, value,
-                          gst.SEEK_TYPE_NONE, 0)
-##         prevstate = self.state
-##         if not prevstate == gst.STATE_PAUSED:
-##             self.pause()
-##         if not self.vsinkthread.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
-##                                      value):
-##             gst.error("COULDN'T SEEK !!!!!!!")
-##         if not self.asinkthread.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
-##                                      value):
-##             gst.error("COULDN'T SEEK !!!!!!!")
-##         if prevstate == gst.STATE_PLAYING:
-##             self.play()
+                          gst.SEEK_TYPE_NONE, -1)
+        if not res:
+            gst.warning ("Seeking in current failed !");
+
+        # bring back current to previous state
+        if not format == gst.FORMAT_TIME:
+            if state == gst.STATE_PLAYING:
+                self.current.set_state(gst.STATE_PLAYING)
 
     def _current_state_change_cb(self, current, prevstate, newstate):
         current.debug("changed state from %s to %s" % (prevstate, newstate))
@@ -246,7 +253,8 @@ class PlayGround(gobject.GObject):
     #
     def _bus_message_cb(self, bus, message, pipeline):
         """ handler for messages from the pipelines' buses """
-        gst.info("%s" % message.type)
+        if message.src == self.current:
+            gst.info("%s [%s]" % (message.type, message.src))
 
 
     #
@@ -272,13 +280,15 @@ class PlayGround(gobject.GObject):
         gst.debug("pause")
         if not self.current or self.current == self.default:
             return
-        if not self.state == gst.STATE_PAUSED:
-            #self.current.set_state(gst.STATE_PAUSED)
-            self.state = gst.STATE_PAUSED
-##             self.playthread.set_state(self.state)
-##             self.playthread.get_state(None)
-            self.current.set_state(self.state)
-            self.current.get_state(None)
+        self.state = gst.STATE_PAUSED
+        self.current.set_state(self.state)
+##         if not self.state == gst.STATE_PAUSED:
+##             #self.current.set_state(gst.STATE_PAUSED)
+##             self.state = gst.STATE_PAUSED
+## ##             self.playthread.set_state(self.state)
+## ##             self.playthread.get_state(None)
+##             self.current.set_state(self.state)
+##             self.current.get_state(None)
 
     def fast_forward(self):
         """ fast forward the current pipeline """

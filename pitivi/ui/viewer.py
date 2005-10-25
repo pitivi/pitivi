@@ -50,6 +50,8 @@ class PitiviViewer(gtk.VBox):
         self.pitivi = pitivi
         gtk.VBox.__init__(self)
         self.current_time = long(0)
+        self.current_frame = -1
+        self.valuechangedid = 0
         self.gconf_client = gconf.client_get_default()
         self._create_gui()
 
@@ -57,7 +59,7 @@ class PitiviViewer(gtk.VBox):
         # TODO remove/replace the signal when closing/opening projects
         self.pitivi.current.sources.connect("tmp_is_ready", self._tmp_is_ready)
 
-        gobject.timeout_add(500, self._check_time)
+        self.checktimeoutid = gobject.timeout_add(300, self._check_time)
         self.pitivi.connect("new-project", self._new_project_cb)
         self.pitivi.playground.connect("current-state", self._current_state_cb)
         self.pitivi.playground.connect("bin-added", self._bin_added_cb)
@@ -92,6 +94,7 @@ class PitiviViewer(gtk.VBox):
         self.slider.set_draw_value(False)
         self.slider.connect("button-press-event", self._slider_button_press_cb)
         self.slider.connect("button-release-event", self._slider_button_release_cb)
+        self.slider.connect("scroll-event", self._slider_scroll_cb)
         self.pack_start(self.slider, expand=False)
         self.moving_slider = False
         
@@ -231,16 +234,49 @@ class PitiviViewer(gtk.VBox):
         print drawingarea.window.get_events()
 
     def _slider_button_press_cb(self, slider, event):
-        print "slider button_press"
+        gst.info("button pressed")
         self.moving_slider = True
+        if self.checktimeoutid:
+            gobject.source_remove(self.checktimeoutid)
+            self.checktimeoutid = 0
+        self.valuechangedid = slider.connect("value-changed", self._slider_value_changed_cb)
+        self.pitivi.playground.current.set_state(gst.STATE_PAUSED)
         return False
 
     def _slider_button_release_cb(self, slider, event):
-        print "slider button release at", time_to_string(long(slider.get_value()))
+        gst.info("slider button release at %s" % time_to_string(long(slider.get_value())))
         self.moving_slider = False
-
-        self.pitivi.playground.seek_in_current(long(slider.get_value()))
+        if self.valuechangedid:
+            slider.disconnect(self.valuechangedid)
+            self.valuechangedid = 0
+        if not self.checktimeoutid:
+            self.checktimeoutid = gobject.timeout_add(300, self._check_time)
+        self.pitivi.playground.current.set_state(gst.STATE_PLAYING)
         return False
+
+    def _slider_value_changed_cb(self, slider):
+        """ seeks when the value of the slider has changed """
+        value = long(slider.get_value())
+        gst.info(time_to_string(value))
+        self._new_time(value)
+        self.pitivi.playground.seek_in_current(value)
+
+    def _slider_scroll_cb(self, slider, event):
+        # calculate new seek position
+        if self.current_frame == -1:
+            # time scrolling, 0.5s forward/backward
+            if event.direction in [gtk.gdk.SCROLL_LEFT, gtk.gdk.SCROLL_DOWN]:
+                seekvalue = max(self.current_time - gst.SECOND / 2, 0)
+            else:
+                seekvalue = min(self.current_time + gst.SECOND / 2, self.pitivi.playground.current.length)
+            self.pitivi.playground.seek_in_current(seekvalue)
+        else:
+            # frame scrolling, frame by frame
+            if event.direction in [gtk.gdk.SCROLL_LEFT, gtk.gdk.SCROLL_DOWN]:
+                seekvalue = max(self.current_frame - 1, 0)
+            else:
+                seekvalue = min(self.current_frame + 1, self.pitivi.playground.current.length)
+            self.pitivi.playground.seek_in_current(seekvalue, gst.FORMAT_DEFAULT)
 
     def _check_time(self):
         # check time callback
@@ -257,14 +293,23 @@ class PitiviViewer(gtk.VBox):
                 if not res:
                     return True
                 cur, end, format = res
+                gst.info("about to query for FORMAT_DEFAULT")
+                res = self.videosink.get_pad("sink").get_peer().query_position(gst.FORMAT_DEFAULT)
+                gst.info("FORMAT_DEFAULT : %s" % res)
+                curf, endf, formatf = res
+                if formatf == gst.FORMAT_DEFAULT:
+                    currentframe = curf
+                else:
+                    currentframe = -1
         # if the current_time or the length has changed, update time
-        if not float(self.pitivi.playground.current.length) == self.posadjust.upper or not cur == self.current_time:
+        if not float(self.pitivi.playground.current.length) == self.posadjust.upper or not cur == self.current_time or not currentframe == self.current_frame:
             self.posadjust.upper = float(self.pitivi.playground.current.length)
-            self._new_time(cur)
+            self._new_time(cur, currentframe)
         return True
 
-    def _new_time(self, value):
+    def _new_time(self, value, frame=-1):
         self.current_time = value
+        self.current_frame = frame
         self.timelabel.set_text(time_to_string(value) + " / " + time_to_string(self.pitivi.playground.current.length))
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
@@ -318,7 +363,7 @@ class PitiviViewer(gtk.VBox):
         self.sourcecombobox.set_active(self._get_smartbin_index(smartbin))
 
     def _dnd_data_received(self, widget, context, x, y, selection, targetType, time):
-        print "data received in viewer, type:", targetType
+        gst.info("context:%s, targetType:%s" % (context, targetType))
         if targetType == dnd.DND_TYPE_URI_LIST:
             uri = selection.data.strip().split("\n")[0].strip()
         elif targetType == dnd.DND_TYPE_PITIVI_FILESOURCE:
@@ -454,7 +499,7 @@ class EncodingDialog(GladeWindow):
         dialog.destroy()
 
     def _timeout_cb(self):
-        result, state, pending = self.bin.get_state(0.0)
+        result, state, pending = self.bin.get_state(0)
         if state == gst.STATE_PLAYING and self.rendering:
             # check time
             value = self.bin.source.query(gst.QUERY_POSITION,
