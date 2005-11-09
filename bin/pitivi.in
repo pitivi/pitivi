@@ -25,6 +25,7 @@ import sys
 
 # variables
 PYTHONDIR = '@PYTHONDIR@'
+LIBDIR = '@LIBDIR@'
 
 # Check if we're in development or installed version
 # Add the path of pitivi stuff
@@ -50,6 +51,8 @@ def _init_gobject_gtk_gst():
         import gobject
     except ImportError:
         raise SystemExit("PyGTK couldn't be found !")
+
+    gobject.threads_init()
 
     try:
         import pygst
