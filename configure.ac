@@ -91,11 +91,15 @@ AC_SUBST(PYGST_DIR)
 AC_MSG_NOTICE(Using gstreamer-python installed in $PYGST_DIR)
 
 export PYTHONPATH=$PYGST_DIR:$PYTHONPATH
-AS_PYTHON_IMPORT([gst],,
-                 AC_MSG_ERROR([Maybe you forgot to set your PYTHONPATH?]))
+dnl AS_PYTHON_IMPORT([gst],,
+dnl                  AC_MSG_ERROR([Maybe you forgot to set your PYTHONPATH?]))
 
-AS_PYTHON_IMPORT([gst, gst.interfaces],,
-                 AC_MSG_ERROR([You need to recompile gst-python with gst.interfaces support]))
+dnl AS_PYTHON_IMPORT([gst, gst.interfaces],,
+dnl                  AC_MSG_ERROR([You need to recompile gst-python with gst.interfaces support]))
+
+dnl the gettext stuff needed
+AM_GNU_GETTEXT_VERSION(0.11.5)
+AM_GNU_GETTEXT([external])
 
 dnl output stuff
 AC_OUTPUT(
@@ -103,6 +107,7 @@ Makefile
 bin/pitivi
 bin/Makefile
 common/Makefile
+common/m4/Makefile
 pitivi/Makefile
 pitivi/configure.py
 pitivi/ui/Makefile

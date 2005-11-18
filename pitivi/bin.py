@@ -47,7 +47,6 @@ class SmartBin(gst.Pipeline):
             self.add(self.atee)
         self.add_source()
         self.connect_source()
-        self.set_state(gst.STATE_PAUSED)
         self.asinkthread = None
         self.vsinkthread = None
 
@@ -153,26 +152,20 @@ class SmartFileBin(SmartBin):
     def connect_source(self):
         self.source.connect("pad-added", self._bin_new_decoded_pad)
         self.source.connect("pad-removed", self._bin_removed_decoded_pad)
-##         if self.has_video:
-##             if not self.source.get_pad("vsrc").link(self.vtee.get_pad("sink")):
-##                 print "problem connecting source:vsrc to vtee:sink"
-##         if self.has_audio:
-##             if not self.source.get_pad("asrc").link(self.atee.get_pad("sink")):
-##                 print "problem connection source:asrc to atee:sink"
 
     def _bin_new_decoded_pad(self, bin, pad):
         # connect to good tee
         self.debug("SmartFileBin's source has a new pad: %s %s" % (pad , pad.get_caps().to_string()))
-        if "audio" in pad.get_caps().to_string():
+        if "audio" in pad.get_caps().to_string()[:5]:
             pad.link(self.atee.get_pad("sink"))
-        elif "video" in pad.get_caps().to_string():
+        elif "video" in pad.get_caps().to_string()[:5]:
             pad.link(self.vtee.get_pad("sink"))
 
     def _bin_removed_decoded_pad(self, bin, pad):
-        if "audio" in pad.get_caps().to_string():
-            pad.unlink(self.atee)
-        elif "video" in pad.get_caps().to_string():
-            pad.unlink(self.vtee)
+        if "audio" in pad.get_caps().to_string()[:5]:
+            pad.unlink(self.atee.get_pad("sink"))
+        elif "video" in pad.get_caps().to_string()[:5]:
+            pad.unlink(self.vtee.get_pad("sink"))
 
     def do_destroy(self):
         self.info("destroyed")
@@ -195,6 +188,7 @@ class SmartTimelineBin(SmartBin):
 
         self.width = project.settings.videowidth
         self.height = project.settings.videoheight
+        self.info("source is %s" % project.timeline.timeline)
         self.source = project.timeline.timeline
         self.project.settings.connect("settings-changed", self._settings_changed_cb)
         project.timeline.videocomp.connect("start-stop-changed", self._start_stop_changed)
@@ -211,11 +205,14 @@ class SmartTimelineBin(SmartBin):
         self.width = settings.videowidth
         self.height = settings.videoheight
 
+    def _new_pad_cb(self, source, pad):
+        if pad.get_name() == "asrc":
+            pad.link(self.atee.get_pad("sink"))
+        elif pad.get_name() == "vsrc":
+            pad.link(self.vtee.get_pad("sink"))
+
     def connect_source(self):
-        srcpad = self.source.get_pad("src_" + self.project.timeline.audiocomp.gnlobject.get_name())
-        srcpad.link(self.atee.get_pad("sink"))
-        srcpad = self.source.get_pad("src_" + self.project.timeline.videocomp.gnlobject.get_name())
-        srcpad.link(self.vtee.get_pad("sink"))
+        self.source.connect("pad-added", self._new_pad_cb)
 
     def record(self, uri, settings=None):
         """ render the timeline to the given uri """

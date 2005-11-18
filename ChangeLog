@@ -1,3 +1,35 @@
+2005-11-18  Edward Hervey  <edward@fluendo.com>
+
+	* autogen.sh:
+	* configure.ac:
+	Switch to using gstreamer common
+	* pitivi/bin.py:
+	Dynamic pad handling for SmartFileSource and SmartTimelineBin
+	* pitivi/discoverer.py:
+	First pre-roll, then discover properties, then set to play to get
+	then thumbnail.
+	Oh, and do that while removing half the codelines :)
+	* pitivi/objectfactory.py:
+	Properly remove (ghost)pads
+	* pitivi/playground.py:
+	Much saner pipeline switching
+	 _ Set pipelines to READY, switch sinks
+	* pitivi/timeline.py:
+	Timeline finally working. It needs a serious look to remove all the
+	0.8 bloated stuff.
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/plumber.py:
+	Added Plumber
+	* pitivi/ui/sourcefactories.py:
+	debug
+	* pitivi/ui/timeline.py:
+	re-enable simple timeline widget
+	* pitivi/ui/viewer.py:
+	Use Plumber for proper audio/video sink creation
+	Fix the flicker in video widget
+	Added Totem-like play/pause button
+	
+
 2005-11-09  Edward Hervey  <edward@fluendo.com>
 
 	* bin/pitivi.in:

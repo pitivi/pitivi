@@ -107,11 +107,11 @@ class SimpleTimelineContentWidget(gtk.HBox):
         self.pack_start(self.header, expand=False)
 
         # FIXME : uncomment when gnonlin is ported
-        #self.timeline = SimpleTimeline(self.twidget, self.twidget.pitivi,
-        #                               hadjustment = self.twidget.hadjustment)
+        self.timeline = SimpleTimeline(self.twidget, self.twidget.pitivi,
+                                       hadjustment = self.twidget.hadjustment)
         
         layoutframe = gtk.Frame()
-        #layoutframe.add(self.timeline)
+        layoutframe.add(self.timeline)
         self.pack_start(layoutframe)
 
 gobject.type_register(SimpleTimelineContentWidget)

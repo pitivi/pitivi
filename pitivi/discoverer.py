@@ -26,6 +26,8 @@ import gtk
 import objectfactory
 import gc
 
+import os.path
+
 class Discoverer(gobject.GObject):
     """
     Queues requests to discover information about given files.
@@ -149,60 +151,53 @@ class Discoverer(gobject.GObject):
         self.bus.connect("message", self._bus_message_cb)
         self.bus.add_signal_watch()
         gst.info("setting pipeline to play")
-        self.pipeline.set_state(gst.STATE_PLAYING)
+        self.pipeline.set_state(gst.STATE_PAUSED)
 
         # return False so we don't get called again
         return False
         
-##         self.working = True
-##         while len(self.queue) > 0:
-##             self.current = self.queue.pop(0)
-##             gst.info("Analyzing %s" % self.current)
-##             self.currentfactory = None
-##                 self._del_analyze_data()
-##                 continue
-##             dbin = self.pipeline.get_by_name("dbin")
-##             dbin.connect("new-decoded-pad", self._new_decoded_pad_cb)
-##             self.pipeline.set_state(gst.STATE_PLAYING)
-##             for i in range(100):
-##                 if not self.pipeline.iterate():
-##                     break
-##                 if not i % 2:
-##                     while gtk.events_pending():
-##                         gtk.main_iteration(False)
-##             self.pipeline.set_state(gst.STATE_NULL)
-##             if not self.currentfactory:
-##                 gst.warning("This is not a media file : %s" % self.current)
-##                 self.emit("not_media_file", self.current)
-##             else:
-##                 self.emit("finished_analyzing", self.currentfactory)
-##             self._del_analyze_data()
-##         self.working = False
-##         self.emit("ready")
-
     def _bus_message_cb(self, bus, message):
         if message.type == gst.MESSAGE_STATE_CHANGED:
-            print message.src, message.parse_state_changed()
-        elif message.type in [gst.MESSAGE_EOS, gst.MESSAGE_ERROR]:
+            gst.log("%s:%s" % ( message.src, message.parse_state_changed()))
+            if message.src == self.pipeline:
+                prev, new, pending = message.parse_state_changed()
+                if prev == gst.STATE_READY and new == gst.STATE_PAUSED:
+                    # Let's get the information from all the pads
+                    self._get_pads_info()
+                    gst.log("pipeline has gone to PAUSED, now pushing to PLAYING")
+                    self.pipeline.set_state(gst.STATE_PLAYING)
+        elif message.type == gst.MESSAGE_EOS:
+            gst.log("got EOS")
+            filename = "/tmp/" + self.currentfactory.name.encode('base64').replace('\n','') + ".png"
+            if os.path.isfile(filename):
+                self.currentfactory.set_thumbnail(filename)
+            gobject.idle_add(self._finish_analysis)
+        elif message.type == gst.MESSAGE_ERROR:
+            gst.warning("got an ERROR")
             gobject.idle_add(self._finish_analysis)
         else:
-            print message.type, message.src
+            gst.log("%s:%s" % ( message.type, message.src))
 
-    def _vcaps_notify(self, pad, property):
-        caps = pad.get_negotiated_caps()
-        if caps and not self.currentfactory.video_info:
-            self.currentfactory.set_video_info(caps)
+    def _get_pads_info(self):
+        # iterate all src pads and check their informatiosn
+        for pad in list(self.pipeline.get_by_name("dbin").pads()):
+            if pad.get_direction() == gst.PAD_SINK:
+                continue
+            caps = pad.get_caps()
+            gst.info("testing pad %s : %s" % (pad, caps))
+            if caps.is_fixed():
+                if "audio/" == caps.to_string()[:6] and not self.currentfactory.audio_info:
+                    self.currentfactory.set_audio_info(caps)
+                elif "video/" == caps.to_string()[:6] and not self.currentfactory.video_info:
+                    self.currentfactory.set_video_info(caps)
             if not self.currentfactory.length:
-                pad = pad.get_peer()
-                gst.info("querying time on pad %s" % pad)
-                value = pad.query_position(gst.FORMAT_TIME)
-                gst.info("%s" % value)
-                if value:
-                    cur, length, format = value
+                try:
+                    length, format = pad.query_duration(gst.FORMAT_TIME)
+                except:
+                    pad.warning("duration query failed")
+                else:
                     if format == gst.FORMAT_TIME:
                         self.currentfactory.set_property("length", length)
-            if not self.currentfactory.is_audio or self.currentfactory.audio_info:
-                gobject.idle_add(self._finish_analysis)
 
     def _new_video_pad_cb(self, element, pad):
         """ a new video pad was found """
@@ -210,133 +205,28 @@ class Discoverer(gobject.GObject):
         if pad.get_caps().is_fixed():
             self.currentfactory.set_video_info(pad.get_caps())
 
-        fakesink = gst.element_factory_make("fakesink")
+        # replacing queue-fakesink by ffmpegcolorspace-queue-pngenc
+        csp = gst.element_factory_make("ffmpegcolorspace")
         queue = gst.element_factory_make("queue")
-        self.pipeline.add(fakesink, queue)
-        queue.link(fakesink)
-        pad.link(queue.get_pad("sink"))
-        fakesink.get_pad("sink").connect("notify::caps", self._vcaps_notify)
-        for element in [queue, fakesink]:
+        pngenc = gst.element_factory_make("pngenc")
+        pngsink = gst.element_factory_make("filesink")
+        pngsink.set_property("location", "/tmp/" + self.currentfactory.name.encode('base64').replace('\n','') + ".png")
+        self.pipeline.add(csp, queue, pngenc, pngsink)
+        pngenc.link(pngsink)
+        queue.link(pngenc)
+        csp.link(queue)
+        pad.link(csp.get_pad("sink"))
+        ##pad.connect("notify::caps", self._vcaps_notify)
+        for element in [csp, queue, pngenc, pngsink]:
             element.set_state(gst.STATE_PAUSED)
-        # Connect identity to fakesink at first
-        # This allows to check when the desired buffer number arrives
-        # When this happens we will connect the thumbnail-ing chain
-
-##         self.thumbnailing = False
-
-##         vident = gst.element_factory_make("identity")
-##         fakesink = gst.element_factory_make("fakesink")
-
-##         vcsp = gst.element_factory_make("ffmpegcolorspace")
-##         #vscale = gst.element_factory_make("videoscale")
-##         vpng = gst.element_factory_make("jpegenc")
-##         #vpng.set_property("snapshot", False)
-##         vpngfakesink = gst.element_factory_make("fakesink")
-##         vpngfakesink.set_property("signal-handoffs", True)
-
-##         vident.connect("handoff", self._vident_handoff_cb,
-##                        (vident, fakesink, vcsp, vpng, vpngfakesink, pad))
-##         vpngfakesink.connect("handoff", self._vpngsink_handoff_cb,
-##                              (vident, fakesink, vcsp, vpng, vpngfakesink, pad))
         
-##         self.pipeline.set_state(gst.STATE_PAUSED)
-##         self.pipeline.add(vident, fakesink, vcsp, vpng, vpngfakesink)
-##         pad.link(vident.get_pad("sink"))
-##         vident.link(fakesink)
-##         self.pipeline.set_state(gst.STATE_PLAYING)
-
-    def _vident_handoff_cb(self, element, buffer, data):
-        """ cb on handoff on identity """
-        # If this is the first run,
-        #   get video pad info
-        #   if don't have length, get it
-        # if this is the right buffer
-        # disconnect fakesink and connect the correct pipeline
-        if self.thumbnailing:
-            return
-        if not isinstance(buffer, gst.Event):
-            vident, fakesink, vcsp, vpng, vpngfakesink, pad = data
-            if not self.currentfactory.length:
-                # Get the length
-                length = pad.query(gst.QUERY_TOTAL, gst.FORMAT_TIME)
-                if length:
-                    self.currentfactory.set_length(length)
-            # Get video info
-            struct = pad.get_caps()[0]
-            rw = struct["width"]
-            he = struct["height"]
-            if not self.currentfactory.video_info:
-                self.currentfactory.set_video_info(pad.get_caps())
-            height = 96 * he / rw #/ 16 * 16
-            
-            # Connect correct pipeline
-            self.pipeline.set_state(gst.STATE_PAUSED)
-            element.unlink(fakesink)
-            element.link(vpng)
-            #vscale.link_filtered(vpng, gst.caps_from_string("video/x-raw-yuv,width=(int)%d,height=(int)%d" % (96, height)))
-            vpng.link(vpngfakesink)
-            self.pipeline.set_state(gst.STATE_PLAYING)
-            self.thumbnailing = True
-
-    def _vpngsink_handoff_cb(self, element, buffer, sinkpad, data):
-        """ cb on handoff on png fakesink """
-        if not self.thumbnailing:
-            gst.error("ERROR !!! the png fakesink shouldn't be called here !!!")
-            return
-        vident, fakesink, vcsp, vpng, vpngfakesink, pad = data
-        # save the buffer to a file
-        filename = "/tmp/" + self.currentfactory.name.encode('base64').replace('\n','') + ".jpg"
-        pngfile = open(filename, "wb")
-        pngfile.write(buffer.get_data())
-        pngfile.close()
-        self.currentfactory.set_thumbnail(filename)
-        # disconnect this pipeline
-        self.pipeline.set_state(gst.STATE_PAUSED)
-        vident.unlink(vpng)
-        # reconnect the fakesink
-        vident.link(fakesink)
-        self.pipeline.set_state(gst.STATE_PLAYING)
-        # EVENTUALLY eos the pipeline
-        if not self.currentfactory.is_audio or self.currentfactory.audio_info:
-            self.pipeline.set_eos()
-        
-    def _acaps_notify(self, pad, property):
-        caps = pad.get_negotiated_caps()
-        if caps and not self.currentfactory.audio_info:
-            self.currentfactory.set_audio_info(caps)
-            if not self.currentfactory.length:
-                pad = pad.get_peer()
-                gst.info("querying time on pad %s" % pad)
-                value = pad.query_position(gst.FORMAT_TIME)
-                gst.info("%s" % value)
-                if value:
-                    cur, length, format = value
-                    if format == gst.FORMAT_TIME:
-                        self.currentfactory.set_property("length", length)
-            if not self.currentfactory.is_video or self.currentfactory.video_info:
-                gobject.idle_add(self._finish_analysis)
-
     def _new_audio_pad_cb(self, element, pad):
         """ a new audio pad was found """
         self.currentfactory.set_audio(True)
 
         if pad.get_caps().is_fixed():
             self.currentfactory.set_audio_info(pad.get_caps())
-        
-#        cb = self._audio_handoff_cb
-        fakesink = gst.element_factory_make("fakesink")
-        queue = gst.element_factory_make("queue")
-#        fakesink.set_property("signal-handoffs", True)
-#        fakesink.connect("handoff", cb, pad)
-        #self.pipeline.set_state(gst.STATE_PAUSED)
-        self.pipeline.add(fakesink, queue)
-        queue.link(fakesink)
-        pad.link(queue.get_pad("sink"))
-        queue.get_pad("sink").connect("notify::caps", self._acaps_notify)
-        for element in [queue, fakesink]:
-            element.set_state(gst.STATE_PAUSED)
-        #self.pipeline.set_state(gst.STATE_PLAYING)
-        
+            
     def _unknown_type_cb(self, dbin, pad, caps):
         gst.info(caps.to_string())
         if not self.currentfactory or not self.currentfactory.is_audio or not self.currentfactory.is_video:
@@ -348,7 +238,7 @@ class Discoverer(gobject.GObject):
         # check out the type (audio/video)
         # if we don't already have self.currentfactory
         #   create one, emit "new_sourcefile_factory"
-        gst.info(pad.get_caps().to_string())
+        gst.info("pad:%s caps:%s" % (pad, pad.get_caps().to_string()))
         if "video" in pad.get_caps().to_string():
             if not self.currentfactory:
                 self.currentfactory = objectfactory.FileSourceFactory(self.current, self.project)
@@ -364,23 +254,4 @@ class Discoverer(gobject.GObject):
                 gst.warning("couldn't find a usable pad")
                 gobject.idle_add(self._finish_analysis)
 
-    def _audio_handoff_cb(self, fakesink, data, sinkpad, pad):
-        if not self.currentfactory.audio_info and pad.get_caps().is_fixed():
-            self.currentfactory.set_audio_info(pad.get_caps())
-        if not self.currentfactory.length:
-            length = pad.query(gst.QUERY_TOTAL, gst.FORMAT_TIME)
-            if length:
-                self.currentfactory.set_length(length)
-        # Stop pipeline if we have all info
-        if self.currentfactory.audio_info and (not self.currentfactory.is_video or self.currentfactory.video_info):
-            # Only stop pipeline if there isn't any video to thumbnail
-            self.pipeline.set_eos()
-
-    def _del_analyze_data(self):
-        del self.pipeline
-        self.pipeline = None
-        self.currentfactory = None
-        self.current = None
-        
-        
 gobject.type_register(Discoverer)

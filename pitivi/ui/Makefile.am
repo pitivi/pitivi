@@ -1,5 +1,3 @@
-include $(top_srcdir)/common/python.mk
-
 uidir = $(libdir)/pitivi/python/pitivi/ui
 
 ui_PYTHON = \
@@ -12,7 +10,8 @@ ui_PYTHON = \
 	sourcefactories.py \
 	timeline.py \
 	timelineobjects.py \
-	viewer.py
+	viewer.py \
+	plumber.py
 
 ui_DATA = \
 	actions.xml \

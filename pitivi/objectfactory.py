@@ -160,14 +160,22 @@ class FileSourceFactory(ObjectFactory):
         gst.info(pad.get_caps().to_string())
         # add it as ghost_pad to the bin
         if "audio" in pad.get_caps().to_string():
+            mypad = bin.get_pad("asrc")
+            if mypad:
+                gst.warning("Removing previous asrc. WHY didn't decodebin remove it??")
+                bin.remove_pad(mypad)
             bin.add_pad(gst.GhostPad("asrc", pad))
         elif "video" in pad.get_caps().to_string():
+            mypad = bin.get_pad("vsrc")
+            if mypad:
+                gst.warning("Removing previous vsrc. WHY didn't decodebin remove it??")
+                bin.remove_pad(mypad)
             bin.add_pad(gst.GhostPad("vsrc", pad))
         else:
             return
 
     def _bin_removed_decoded_pad(self, dbin, pad, bin):
-        print "pad", pad, "was removed"
+        gst.info("pad %s was removed" % pad)
         if "audio" in pad.get_caps().to_string():
             mypad = bin.get_pad("asrc")
         elif "video" in pad.get_caps().to_string():
@@ -359,15 +367,15 @@ class FileSourceFactory(ObjectFactory):
             src_ratio = float(srcwidth) / float(srcheight)
         dst_ratio = float(self.project.settings.videowidth) / float(self.project.settings.videoheight)
 
-        print "src_ratio:", src_ratio, "dst_ratio:", dst_ratio
-        print "src wxh:", srcwidth, srcheight,
-        print "dst wxh", self.project.settings.videowidth, self.project.settings.videoheight
+        gst.info("src_ratio: %f dst_rate:%f" %( src_ratio, dst_ratio))
+        gst.info("src wxh: %d x %d" % ( srcwidth, srcheight))
+        gst.info("dst wxh: %d x %d" % ( self.project.settings.videowidth, self.project.settings.videoheight))
 
         if src_ratio < dst_ratio:
             # keep height, box on sides
             padding = int((srcheight * dst_ratio - srcwidth) / 2)
-            print "side padding:", -padding
-            print "results in", srcwidth + 2 * padding, srcheight
+            gst.info("side padding: %d" % -padding)
+            gst.info("results in %d x %d" % ( srcwidth + 2 * padding, srcheight))
             vbox.set_property("top", 0)
             vbox.set_property("bottom", 0)
             vbox.set_property("left", -padding)

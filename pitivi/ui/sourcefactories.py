@@ -190,7 +190,7 @@ class SourceListWidget(gtk.VBox):
 
     def use_treeview(self):
         """ use the treeview """
-        print "Use tree view"
+        gst.info("Use tree view")
         if not self.iconviewmode:
             return
         else:
@@ -202,7 +202,7 @@ class SourceListWidget(gtk.VBox):
 
     def use_iconview(self):
         """ use the iconview """
-        print "use icon view"
+        gst.info("use icon view")
         if self.iconviewmode:
             return
         else:
@@ -242,7 +242,7 @@ class SourceListWidget(gtk.VBox):
         """ a uri was found as being a valid media file """
         # update info in storemodel
         # hookup callbacks
-        print factory.name, "is a valid media file"
+        gst.debug("%s is a valid media file" % factory.name)
         factory.connect("notify::is-audio", self._fact_type_cb)
         factory.connect("notify::is-video", self._fact_type_cb)
         factory.connect("notify::length", self._fact_length_cb)
@@ -258,14 +258,14 @@ class SourceListWidget(gtk.VBox):
                 elif factory.is_audio:
                     self.storemodel.set(piter, 0, self.audiofilepixbuf)
                 self.storemodel.set(piter, 4, factory)
-                print "added stuff"
+                gst.info("added stuff")
                 break
             piter = self.storemodel.iter_next(piter)
-        print "finished"
+        gst.info("finished")
         
     def _fact_type_cb(self, factory, property):
         """ type of factory was updated """
-        print "type changed"
+        gst.info("type changed")
         piter = self.storemodel.get_iter_first()
         while piter:
             if factory == self.storemodel.get_value(piter, 4):
@@ -289,7 +289,7 @@ class SourceListWidget(gtk.VBox):
 
     def _fact_length_cb(self, factory, property):
         """ length of factory was updated """
-        print "length changed"
+        gst.info("length changed")
         piter = self.storemodel.get_iter_first()
         while piter:
             if factory == self.storemodel.get_value(piter, 4):
@@ -299,7 +299,7 @@ class SourceListWidget(gtk.VBox):
 
     def _fact_thumbnail_cb(self, factory, property):
         """ a thumbnail is available """
-        print "thumbnail available"
+        gst.info("thumbnail available")
         pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
         desiredheight = 128 * pixbuf.get_height() / pixbuf.get_width()
         pixbuf = pixbuf.scale_simple(128, desiredheight, gtk.gdk.INTERP_BILINEAR)
@@ -353,7 +353,7 @@ class SourceListWidget(gtk.VBox):
         if len(paths) < 1:
             return
         factory = self.storemodel.get_value(self.storemodel.get_iter(paths[0]), 4)
-        print "Let's play ", factory.name
+        gst.debug("Let's play %s" % factory.name)
         self.pitivi.playground.play_temporary_filesourcefactory(factory)
 
     def treeview_button_press_event_cb(self, treeview, event):
@@ -411,9 +411,9 @@ class SourceListWidget(gtk.VBox):
         self.add_files(filenames)
 
     def _dnd_icon_begin(self, widget, context):
-        print "icon drag_begin"
+        gst.info("icon drag_begin")
         items = self.iconview.get_selected_items()
-        print "got", len(items), "items"
+        gst.info("got %d items" % len(items))
         if len(items) < 1:
             context.drag_abort(int(time.time()))
         else:
@@ -423,15 +423,14 @@ class SourceListWidget(gtk.VBox):
         
 
     def _dnd_tree_begin(self, widget, context):
-        print "tree drag_begin"
+        gst.info("tree drag_begin")
         model, rows = self.treeview.get_selection().get_selected_rows()
-        print rows
         if len(rows) < 1:
             context.drag_abort(int(time.time()))
 
     def _dnd_icon_data_get(self, widget, context, selection, targetType, eventTime):
         # calls context.drag_abort(time) if not in a valide place
-        print "icon list data_get, type:", targetType
+        gst.info("icon list data_get, type: %d" % targetType)
         # get the list of selected uris
         uris = [self.storemodel.get_value(self.storemodel.get_iter(x), 5) for x in self.iconview.get_selected_items()]
         if len(uris) < 1:
@@ -445,7 +444,7 @@ class SourceListWidget(gtk.VBox):
 
     def _dnd_tree_data_get(self, widget, context, selection, targetType, eventTime):
         # calls context.drag_abort(time) if not in a valide place
-        print "tree list data_get, type:", targetType
+        gst.info("tree list data_get, type: %d" % targetType)
         # get the list of selected uris
         model, rows = self.treeview.get_selection().get_selected_rows()
         uris = [self.storemodel.get_value(self.storemodel.get_iter(x), 5) for x in rows]
