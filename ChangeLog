@@ -1,3 +1,8 @@
+2005-11-26  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	sinesrc is dead, long live sinesrc
+
 2005-11-18  Edward Hervey  <edward@fluendo.com>
 
 	* autogen.sh:
