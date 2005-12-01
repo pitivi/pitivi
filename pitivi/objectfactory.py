@@ -26,6 +26,8 @@ import string
 import gobject
 import gst
 
+import utils
+
 class ObjectFactory(gobject.GObject):
     """
     base class for object factories which provide elements to use
@@ -266,7 +268,7 @@ class FileSourceFactory(ObjectFactory):
             if self.video_info:
                 stl.append("Video: %d x %d @ %3f fps" % (self.video_info[0]["width"],
                                                         self.video_info[0]["height"],
-                                                        self.video_info[0]["framerate"]))
+                                                        utils.float_framerate(self.video_info[0]["framerate"])))
             else:
                 stl.append("Video")
         if self.is_audio:
@@ -383,8 +385,8 @@ class FileSourceFactory(ObjectFactory):
         elif src_ratio > dst_ratio:
             # keep width, box above/under
             padding = int(((srcwidth / dst_ratio) - srcheight) / 2)
-            print "top/bottom padding:", -padding
-            print "results in", srcwidth, srcheight + 2 * padding
+            gst.info("top/bottom padding: %d" % -padding)
+            gst.info("results in %d x %d" % (srcwidth, srcheight + 2 * padding))
             vbox.set_property("top", -padding)
             vbox.set_property("bottom", -padding)
             vbox.set_property("left", 0)

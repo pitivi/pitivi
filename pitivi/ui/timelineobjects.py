@@ -24,6 +24,7 @@ from urllib import unquote
 import gobject
 import pango
 import gtk
+import gst
 from gtk import gdk
 from pitivi.timeline import Timeline, TimelineComposition, TimelineFileSource, TimelineSource, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 import pitivi.dnd as dnd
@@ -96,7 +97,7 @@ class SimpleTimeline(gtk.Layout):
         """ add/remove the widgets """
         print "condensed list changed in videocomp:"
         for i in clist:
-            print i, i.start, i.stop
+            print i, gst.TIME_ARGS(i.start), gst.TIME_ARGS(i.duration)
         current = self.widgets.keys()
         self.condensed = clist
         # go through the condensed list
@@ -229,7 +230,7 @@ class SimpleTimeline(gtk.Layout):
         # TODO show where the dragged item would go
         pos = self._get_nearest_source_slot_pixels(x + (self.hadjustment.get_value()))
         rpos = self._get_nearest_source_slot(x + self.hadjustment.get_value())
-        print "source would go at", rpos
+        gst.log("source would go at %d" % rpos)
         if not pos == self.slotposition:
             if not self.slotposition == -1:
                 # erase previous slot position
@@ -340,7 +341,7 @@ class SimpleSourceWidget(gtk.DrawingArea):
         self.connect("expose-event", self._expose_event_cb)
         self.connect("realize", self._realize_cb)
         self.connect("configure-event", self._configure_event_cb)
-        self.filesource.connect("start-stop-changed", self._start_stop_changed_cb)
+        self.filesource.connect("start-duration-changed", self._start_duration_changed_cb)
         self.tooltips = gtk.Tooltips()
         self.tooltips.enable()
 
@@ -405,8 +406,8 @@ class SimpleSourceWidget(gtk.DrawingArea):
                                     gtk.gdk.CAP_ROUND, gtk.gdk.JOIN_ROUND)
         self.gc.set_background(self.style.white)
         self._draw_data()
-        self.tooltips.set_tip(self, "start:\t%s\nstop:\t%s" % (beautify_length(self.filesource.start),
-                                                            beautify_length(self.filesource.stop)))
+        self.tooltips.set_tip(self, "start:\t%s\nsduration:\t%s" % (beautify_length(self.filesource.start),
+                                                                    beautify_length(self.filesource.duration)))
 
 
     def _expose_event_cb(self, widget, event):
@@ -416,8 +417,8 @@ class SimpleSourceWidget(gtk.DrawingArea):
                                   x, y, x, y, w, h)
         return True
 
-    def _start_stop_changed_cb(self, filesource, start, stop):
-        self.tooltips.set_tip(self, "start:\t%s\nstop:\t%s" % (beautify_length(start), beautify_length(stop)))
+    def _start_duration_changed_cb(self, filesource, start, duration):
+        self.tooltips.set_tip(self, "start:\t%s\nduration:\t%s" % (beautify_length(start), beautify_length(duration)))
 
 gobject.type_register(SimpleSourceWidget)
 

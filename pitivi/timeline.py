@@ -61,7 +61,6 @@ class Timeline(gobject.GObject):
         gobject.GObject.__init__(self)
         self.project = project
 
-        # FIXME : uncomment when we have gnonlin ported
         self.timeline = gst.Bin("timeline-" + project.name)
         self._fill_contents()
 
@@ -97,7 +96,7 @@ class TimelineObject(gobject.GObject):
     Base class for all timeline objects
 
     * Properties
-      _ Start/Stop Time
+      _ Start/Duration Time
       _ Media Type
       _ Gnonlin Object
       _ Linked Object
@@ -107,12 +106,12 @@ class TimelineObject(gobject.GObject):
         _ This is the same object but with the other media_type
 
     * signals
-      _ 'start-stop-changed' : start position, stop position
+      _ 'start-duration-changed' : start position, duration position
       _ 'linked-changed' : new linked object
     """
 
     __gsignals__ = {
-        "start-stop-changed" : ( gobject.SIGNAL_RUN_LAST,
+        "start-duration-changed" : ( gobject.SIGNAL_RUN_LAST,
                                  gobject.TYPE_NONE,
                                  (gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, )),
         "linked-changed" : ( gobject.SIGNAL_RUN_LAST,
@@ -121,19 +120,19 @@ class TimelineObject(gobject.GObject):
         }
     
 ##     start = -1  # start time
-##     stop = -1   # stop time
+##     duration = -1   # duration time
 ##     linked = None       # linked object
 ##     brother = None      # brother object, the other-media equivalent of this object
 ##     factory = None      # the Factory with more details about this object
 ##     gnlobject = None    # The corresponding GnlObject
 ##     media_type = MEDIA_TYPE_NONE        # The Media Type of this object
 
-    def __init__(self, factory=None, start=-1, stop=-1,
+    def __init__(self, factory=None, start=-1, duration=-1,
                  media_type=MEDIA_TYPE_NONE, name=""):
         gobject.GObject.__init__(self)
         gst.info("new TimelineObject :%s" % name)
         self.start = -1
-        self.stop = -1
+        self.duration = -1
         self.linked = None
         self.brother = None
         self.name = name
@@ -141,9 +140,9 @@ class TimelineObject(gobject.GObject):
         self.factory = factory
         self.media_type = media_type
         self._make_gnl_object()
-        self.gnlobject.connect("notify::start", self._start_stop_changed_cb)
-        self.gnlobject.connect("notify::stop", self._start_stop_changed_cb)
-        self._set_start_stop_time(start, stop)
+        self.gnlobject.connect("notify::start", self._start_duration_changed_cb)
+        self.gnlobject.connect("notify::duration", self._start_duration_changed_cb)
+        self._set_start_duration_time(start, duration)
 
     def _make_gnl_object(self):
         """ create the gnl_object """
@@ -209,40 +208,41 @@ class TimelineObject(gobject.GObject):
         """
         return None
     
-    def _set_start_stop_time(self, start=-1, stop=-1):
-        # really modify the start/stop time
-        self.gnlobject.info("start:%d , stop:%d" %( start, stop))
-        if not stop == -1 and not self.stop == stop:
-            self.stop = stop
-            self.gnlobject.set_property("duration", long(stop))
+    def _set_start_duration_time(self, start=-1, duration=-1):
+        # really modify the start/duration time
+        self.gnlobject.info("start:%s , duration:%s" %( gst.TIME_ARGS(start),
+                                                        gst.TIME_ARGS(duration)))
+        if not duration == -1 and not self.duration == duration:
+            self.duration = duration
+            self.gnlobject.set_property("duration", long(duration))
         if not start == -1 and not self.start == start:
             self.start = start
             self.gnlobject.set_property("start", long(start))
             
-    def set_start_stop_time(self, start=-1, stop=-1):
-        """ sets the start and/or stop time """
-        self._set_start_stop_time(start, stop)
+    def set_start_duration_time(self, start=-1, duration=-1):
+        """ sets the start and/or duration time """
+        self._set_start_duration_time(start, duration)
         if self.linked:
-            self.linked._set_start_stop_time(start, stop)
+            self.linked._set_start_duration_time(start, duration)
 
-    def _start_stop_changed_cb(self, gnlobject, property):
-        """ start/stop time has changed """
+    def _start_duration_changed_cb(self, gnlobject, property):
+        """ start/duration time has changed """
         start = -1
-        stop = -1
+        duration = -1
         if property.name == "start":
             start = gnlobject.get_property("start")
             if start == self.start:
                 start = -1
             else:
                 self.start = long(start)
-        elif property.name == "stop":
-            stop = gnlobject.get_property("duration")
-            if stop == self.stop:
-                stop = -1
+        elif property.name == "duration":
+            duration = gnlobject.get_property("duration")
+            if duration == self.duration:
+                duration = -1
             else:
-                self.stop = long(stop)
-        #if not start == -1 or not stop == -1:
-        self.emit("start-stop-changed", self.start, self.stop)
+                self.duration = long(duration)
+        #if not start == -1 or not duration == -1:
+        self.emit("start-duration-changed", self.start, self.duration)
             
 
 gobject.type_register(TimelineObject)
@@ -262,7 +262,8 @@ class TimelineSource(TimelineObject):
             caps = gst.caps_from_string("video/x-raw-yuv;video/x-raw-rgb")
         else:
             raise NameError, "media type is NONE !"
-        self.gnlobject = gst.element_factory_make("gnlfilesource", "source-" + self.name)
+        self.factory.lastbinid = self.factory.lastbinid + 1
+        self.gnlobject = gst.element_factory_make("gnlfilesource", "source-" + self.name + str(self.factory.lastbinid))
         self.gnlobject.set_property("location", self.factory.name)
         self.gnlobject.set_property("caps", caps)
         self.gnlobject.set_property("start", long(0))
@@ -275,23 +276,23 @@ class TimelineFileSource(TimelineSource):
     Seekable sources (mostly files)
     """
     __gsignals__ = {
-        "media-start-stop-changed" : ( gobject.SIGNAL_RUN_LAST,
+        "media-start-duration-changed" : ( gobject.SIGNAL_RUN_LAST,
                                        gobject.TYPE_NONE,
                                        (gobject.TYPE_UINT64, gobject.TYPE_UINT64))
         }
 
     media_start = -1
-    media_stop = -1
+    media_duration = -1
     
-    def __init__(self, media_start=-1, media_stop=-1, **kw):
+    def __init__(self, media_start=-1, media_duration=-1, **kw):
         TimelineSource.__init__(self, **kw)
-        self.gnlobject.connect("notify::media-start", self._media_start_stop_changed_cb)
-        self.gnlobject.connect("notify::media-stop", self._media_start_stop_changed_cb)
+        self.gnlobject.connect("notify::media-start", self._media_start_duration_changed_cb)
+        self.gnlobject.connect("notify::media-duration", self._media_start_duration_changed_cb)
         if media_start == -1:
             media_start = 0
-        if media_stop == -1:
-            media_stop = self.factory.length
-        self.set_media_start_stop_time(media_start, media_stop)
+        if media_duration == -1:
+            media_duration = self.factory.length
+        self.set_media_start_duration_time(media_start, media_duration)
         
     def _make_brother(self):
         """ make the brother element """
@@ -302,51 +303,52 @@ class TimelineFileSource(TimelineSource):
         if self.media_type == MEDIA_TYPE_VIDEO:
             if not self.factory.is_audio:
                 return None
-            brother = TimelineFileSource(media_start=self.media_start, media_stop=self.media_stop,
-                                         factory=self.factory, start=self.start, stop=self.stop,
+            brother = TimelineFileSource(media_start=self.media_start, media_duration=self.media_duration,
+                                         factory=self.factory, start=self.start, duration=self.duration,
                                          media_type=MEDIA_TYPE_AUDIO, name=self.name)
         elif self.media_type == MEDIA_TYPE_AUDIO:
             if not self.factory.is_video:
                 return None
-            brother = TimelineFileSource(media_start=self.media_start, media_stop=self.media_stop,
-                                         factory=self.factory, start=self.start, stop=self.stop,
+            brother = TimelineFileSource(media_start=self.media_start, media_duration=self.media_duration,
+                                         factory=self.factory, start=self.start, duration=self.duration,
                                          media_type=MEDIA_TYPE_VIDEO, name=self.name)
         else:
             brother = None
         return brother
 
-    def _set_media_start_stop_time(self, start=-1, stop=-1):
-        if not stop == -1 and not self.media_stop == stop:
-            self.media_stop = stop
-            self.gnlobject.set_property("media-duration", long(stop))
+    def _set_media_start_duration_time(self, start=-1, duration=-1):
+        gst.info("TimelineFileSource start:%d , duration:%d" % (start, duration))
+        if not duration == -1 and not self.media_duration == duration:
+            self.media_duration = duration
+            self.gnlobject.set_property("media-duration", long(duration))
         if not start == -1 and not self.media_start == start:
             self.media_start = start
             self.gnlobject.set_property("media-start", long(start))
 
-    def set_media_start_stop_time(self, start=-1, stop=-1):
-        """ sets the media start/stop time """
-        self._set_media_start_stop_time(start, stop)
+    def set_media_start_duration_time(self, start=-1, duration=-1):
+        """ sets the media start/duration time """
+        self._set_media_start_duration_time(start, duration)
         if self.linked and isinstance(self.linked, TimelineFileSource):
-            self.linked._set_media_start_stop_time(start, stop)
+            self.linked._set_media_start_duration_time(start, duration)
 
-    def _media_start_stop_changed_cb(self, gnlobject, property):
+    def _media_start_duration_changed_cb(self, gnlobject, property):
         mstart = None
-        mstop = None
+        mduration = None
         if property.name == "media-start":
             mstart = gnlobject.get_property("media-start")
             if mstart == self.media_start:
                 mstart = None
             else:
                 self.media_start = mstart
-        elif property.name == "media-stop":
-            mstop = gnlobject.get_property("media-duration")
-            if mstop == self.media_stop:
-                mstop = None
+        elif property.name == "media-duration":
+            mduration = gnlobject.get_property("media-duration")
+            if mduration == self.media_duration:
+                mduration = None
             else:
-                self.media_stop = mstop
-        if mstart or mstop:
-            self.emit("media-start-stop-changed",
-                      self.media_start, self.media_stop)
+                self.media_duration = mduration
+        if mstart or mduration:
+            self.emit("media-start-duration-changed",
+                      self.media_start, self.media_duration)
 
 gobject.type_register(TimelineFileSource)
 
@@ -418,7 +420,7 @@ class TimelineComposition(TimelineSource):
 
     def _make_gnl_object(self):
         self.gnlobject = gst.element_factory_make("gnlcomposition", "composition-" + self.name)
-        # connect to start/stop notify time
+        # connect to start/duration notify time
 
     # global effects
     
@@ -521,12 +523,12 @@ class TimelineComposition(TimelineSource):
         if self.condensed:
             # compare it to the self.condensed
             list_changed = False
-            print "comparing:"
-            for i in self.condensed:
-                print i.gnlobject, i.start, i.stop
-            print "with"
-            for i in clist:
-                print i.gnlobject, i.start, i.stop
+##             print "comparing:"
+##             for i in self.condensed:
+##                 print i.gnlobject, i.start, i.duration
+##             print "with"
+##             for i in clist:
+##                 print i.gnlobject, i.start, i.duration
             if not len(clist) == len(self.condensed):
                 list_changed = True
             else:
@@ -589,7 +591,7 @@ class TimelineComposition(TimelineSource):
 
     def add_source(self, source, position, auto_linked=True):
         """
-        add a source (with correct start/stop time already set)
+        add a source (with correct start/duration time already set)
         position : the vertical position
           _ 0 : insert above all other layers
           _ n : insert at the given position (1: top row)
@@ -634,9 +636,9 @@ class TimelineComposition(TimelineSource):
         if existingsource is None, it puts the source at the beginning
         """
         if existingsource:
-            print self.gnlobject, "insert_source", source.gnlobject, "after", existingsource.gnlobject
+            self.gnlobject.info("insert_source after %s" % existingsource.gnlobject)
         else:
-            print self.gnlobject, "insert_source", source.gnlobject, "at the beginning"
+            self.gnlobject.info("insert_source at the beginning")
             
         # find the time where it's going to be added
         if not existingsource or not self._have_got_this_source(existingsource):
@@ -644,26 +646,29 @@ class TimelineComposition(TimelineSource):
             position = 1
             existorder = 0
         else:
-            start = existingsource.stop
+            start = existingsource.duration
             position = self._get_source_position(existingsource)
             existorder = self.sources[position - 1][2].index(existingsource) + 1
 
-        print "start=%d, position=%d, existorder=%d, sourcelength=%d" % (start, position, existorder, source.factory.length)
-        for i in self.sources[position -1][2]:
-            print i.gnlobject, i.start, i.stop
-        # set the correct start/stop time
-        stop = start + source.factory.length
-        source.set_start_stop_time(start, stop)
+        gst.info("start=%s, position=%d, existorder=%d, sourcelength=%s" % (gst.TIME_ARGS(start),
+                                                                            position,
+                                                                            existorder,
+                                                                            gst.TIME_ARGS(source.factory.length)))
+##         for i in self.sources[position -1][2]:
+##             print i.gnlobject, i.start, i.duration
+        # set the correct start/duration time
+        duration = source.factory.length
+        source.set_start_duration_time(start, duration)
         
         # pushing following
         if push_following and not position in [-1, 0]:
-            print self.gnlobject, "pushing following", existorder, len(self.sources[position - 1][2])
+            #print self.gnlobject, "pushing following", existorder, len(self.sources[position - 1][2])
             for i in range(existorder, len(self.sources[position - 1][2])):
                 mvsrc = self.sources[position - 1][2][i]
-                print "run", i, "start", mvsrc.start, "stop", mvsrc.stop
+                self.gnlobject.info("pushing following")
+                #print "run", i, "start", mvsrc.start, "duration", mvsrc.duration
                 # increment self.sources[position - 1][i] by source.factory.length
-                mvsrc.set_start_stop_time(mvsrc.start + source.factory.length,
-                                          mvsrc.stop + source.factory.length)
+                mvsrc.set_start_duration_time(mvsrc.start + source.factory.length)
         
         self.add_source(source, position, auto_linked=auto_linked)
 
@@ -671,8 +676,8 @@ class TimelineComposition(TimelineSource):
         """
         puts a source after all the others
         """
-        print self.gnlobject, "append_source", source.gnlobject
-        # find the source with the highest stop time on the first layer
+        self.gnlobject.info("source:%s" % source.gnlobject)
+        # find the source with the highest duration time on the first layer
         if self.sources[position - 1]:
             existingsource = self.sources[position - 1][2][-1]
         else:
@@ -685,7 +690,7 @@ class TimelineComposition(TimelineSource):
         """
         adds a source to the beginning of the sources
         """
-        print self.gnlobject, "prepend_source", source.gnlobject
+        self.gnlobject.info("source:%s" % source.gnlobject)
         self.insert_source_after(source, None, push_following, auto_linked)
 
     def move_source(self, source, newpos):

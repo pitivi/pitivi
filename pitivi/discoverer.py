@@ -150,8 +150,11 @@ class Discoverer(gobject.GObject):
         self.bus = self.pipeline.get_bus()
         self.bus.connect("message", self._bus_message_cb)
         self.bus.add_signal_watch()
-        gst.info("setting pipeline to play")
-        self.pipeline.set_state(gst.STATE_PAUSED)
+        gst.info("setting pipeline to PAUSED")
+        if self.pipeline.set_state(gst.STATE_PAUSED) == gst.STATE_CHANGE_FAILURE:
+            self.emit("not_media_file", self.current)
+            gst.info("pipeline didn't want to go to PAUSED")
+            gobject.idle_add(self._finish_analysis)
 
         # return False so we don't get called again
         return False
@@ -174,18 +177,23 @@ class Discoverer(gobject.GObject):
             gobject.idle_add(self._finish_analysis)
         elif message.type == gst.MESSAGE_ERROR:
             gst.warning("got an ERROR")
+            if not self.currentfactory:
+                self.emit("not_media_file", self.current)
             gobject.idle_add(self._finish_analysis)
         else:
             gst.log("%s:%s" % ( message.type, message.src))
 
     def _get_pads_info(self):
         # iterate all src pads and check their informatiosn
+        gst.info("Getting pads info on decodebin")
         for pad in list(self.pipeline.get_by_name("dbin").pads()):
             if pad.get_direction() == gst.PAD_SINK:
                 continue
             caps = pad.get_caps()
+            if not caps.is_fixed():
+                caps = pad.get_negotiated_caps()
             gst.info("testing pad %s : %s" % (pad, caps))
-            if caps.is_fixed():
+            if caps and caps.is_fixed():
                 if "audio/" == caps.to_string()[:6] and not self.currentfactory.audio_info:
                     self.currentfactory.set_audio_info(caps)
                 elif "video/" == caps.to_string()[:6] and not self.currentfactory.video_info:
@@ -198,6 +206,10 @@ class Discoverer(gobject.GObject):
                 else:
                     if format == gst.FORMAT_TIME:
                         self.currentfactory.set_property("length", length)
+
+    def _vcaps_notify(self, pad, property):
+        if pad.get_caps().is_fixed():
+            self.currentfactory.set_video_info(pad.get_caps())
 
     def _new_video_pad_cb(self, element, pad):
         """ a new video pad was found """
@@ -216,7 +228,8 @@ class Discoverer(gobject.GObject):
         queue.link(pngenc)
         csp.link(queue)
         pad.link(csp.get_pad("sink"))
-        ##pad.connect("notify::caps", self._vcaps_notify)
+        if not self.currentfactory.video_info:
+            pad.connect("notify::caps", self._vcaps_notify)
         for element in [csp, queue, pngenc, pngsink]:
             element.set_state(gst.STATE_PAUSED)
         

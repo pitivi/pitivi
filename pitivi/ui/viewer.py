@@ -256,7 +256,7 @@ class PitiviViewer(gtk.VBox):
         # don't check time if the timeline is not playing
         cur = self.current_time
         currentframe = self.current_frame
-        if not isinstance(self.pitivi.playground.current, SmartTimelineBin):
+        if True: #not isinstance(self.pitivi.playground.current, SmartTimelineBin):
             pending, state, result = self.pitivi.playground.current.get_state(10)
             if not state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
                 return
@@ -324,15 +324,15 @@ class PitiviViewer(gtk.VBox):
             self.aframe.set_property("ratio", 4.0/3.0)
         if not smartbin == playground.default:
             if isinstance(smartbin, SmartTimelineBin):
-                start = smartbin.project.timeline.videocomp.start
-                stop = smartbin.project.timeline.videocomp.stop
-                gst.info("switching to Timeline, setting duration to stop-start : %d" % (stop - start))
-                self.posadjust.upper = float(stop - start)
+##                 start = smartbin.project.timeline.videocomp.start
+##                 stop = smartbin.project.timeline.videocomp.stop
+                gst.info("switching to Timeline, setting duration to %s" % (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
+                self.posadjust.upper = float(smartbin.project.timeline.videocomp.duration)
                 self.record_button.set_sensitive(True)
             else:
                 self.posadjust.upper = float(smartbin.factory.length)
                 self.record_button.set_sensitive(False)
-            #self._new_time(0)
+            self._new_time(0)
         self.sourcecombobox.set_active(self._get_smartbin_index(smartbin))
 
     def _dnd_data_received(self, widget, context, x, y, selection, targetType, time):

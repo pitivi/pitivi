@@ -191,8 +191,8 @@ class SmartTimelineBin(SmartBin):
         self.info("source is %s" % project.timeline.timeline)
         self.source = project.timeline.timeline
         self.project.settings.connect("settings-changed", self._settings_changed_cb)
-        project.timeline.videocomp.connect("start-stop-changed", self._start_stop_changed)
-        self.length = project.timeline.videocomp.stop - project.timeline.videocomp.start
+        project.timeline.videocomp.connect("start-duration-changed", self._start_duration_changed)
+        self.length = project.timeline.videocomp.duration
         self.encthread = None
         self.tmpasink = None
         SmartBin.__init__(self, "project-" + project.name,
@@ -316,9 +316,9 @@ class SmartTimelineBin(SmartBin):
 
         return thread
 
-    def _start_stop_changed(self, videocomp, start, stop):
-        self.info("smart timeline bin: start stop changed %lld %lld" %( start, stop ))
-        self.length = stop - start
+    def _start_duration_changed(self, videocomp, start, duration):
+        self.info("smart timeline bin: start duration changed %d %d" %( start, duration ))
+        self.length = duration
 
 gobject.type_register(SmartTimelineBin)
 

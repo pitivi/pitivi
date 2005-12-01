@@ -1,3 +1,20 @@
+2005-12-01  Edward Hervey  <edward@fluendo.com>
+
+	Misc updates for new gnonlin start/duration scheme
+	(and no longer start/stop)
+
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	Fixes for better non-media-file detection
+	* pitivi/objectfactory.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/viewer.py:
+	Show proper timeline duration/status
+	* pitivi/utils.py:
+	New utility file, will have to add more of the common utility
+	functions in there.
+
 2005-11-26  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/bin.py:
