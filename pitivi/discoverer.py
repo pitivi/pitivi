@@ -266,5 +266,3 @@ class Discoverer(gobject.GObject):
             if not self.currentfactory or not self.currentfactory.is_audio or not self.currentfactory.is_video:
                 gst.warning("couldn't find a usable pad")
                 gobject.idle_add(self._finish_analysis)
-
-gobject.type_register(Discoverer)

@@ -275,4 +275,3 @@ class PlayGround(gobject.GObject):
         """ seek in the current pipeline """
         pass
 
-gobject.type_register(PlayGround)

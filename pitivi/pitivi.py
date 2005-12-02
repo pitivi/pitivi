@@ -104,8 +104,6 @@ class Pitivi(gobject.GObject):
             self.current = Project("New Project")
             self.emit("new-project", self.current)
         
-gobject.type_register(Pitivi)
-
 def main(argv):
     ptv = Pitivi(argv)
     gtk.main()

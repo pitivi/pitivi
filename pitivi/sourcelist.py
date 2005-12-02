@@ -138,4 +138,3 @@ class SourceList(gobject.GObject):
         elif uri in self.tempsources:
             del self.tempsources[uri]
 
-gobject.type_register(SourceList)

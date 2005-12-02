@@ -101,7 +101,6 @@ class ObjectFactory(gobject.GObject):
         """ returns a video only bin """
         pass
 
-gobject.type_register(ObjectFactory)
 
 class FileSourceFactory(ObjectFactory):
     """
@@ -427,7 +426,6 @@ class FileSourceFactory(ObjectFactory):
                                  (bin, ascale, ident))
         return bin
 
-gobject.type_register(FileSourceFactory)
 
 class OperationFactory(ObjectFactory):
     """
@@ -439,7 +437,6 @@ class OperationFactory(ObjectFactory):
         self.nbinput = 1
         self.nboutput = 1
 
-gobject.type_register(OperationFactory)
 
 class SimpleOperationFactory(OperationFactory):
     """
@@ -484,7 +481,6 @@ class TransitionFactory(OperationFactory):
     def __init__(self):
         OperationFactory.__init__(self)
 
-gobject.type_register(TransitionFactory)
 
 class SMPTETransitionFactory(TransitionFactory):
     """
@@ -494,7 +490,6 @@ class SMPTETransitionFactory(TransitionFactory):
     def __init__(self):
         TransitionFactory.__init__(self)
 
-gobject.type_register(TransitionFactory)
 
 def _update_video_adapter_bin(settings, data):
     bin, vscale, ident = data

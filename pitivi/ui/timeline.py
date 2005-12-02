@@ -89,7 +89,6 @@ class TimelineWidget(gtk.VBox):
         self.hscroll.emit("scroll-event", event)
         
         
-gobject.type_register(TimelineWidget)
 
 class SimpleTimelineContentWidget(gtk.HBox):
     """ Widget for Simple Timeline content display """
@@ -114,7 +113,6 @@ class SimpleTimelineContentWidget(gtk.HBox):
         layoutframe.add(self.timeline)
         self.pack_start(layoutframe)
 
-gobject.type_register(SimpleTimelineContentWidget)
 
 class ComplexTimelineContentWidget(gtk.HBox):
     """ Widget for complex timeline content display """
@@ -127,4 +125,3 @@ class ComplexTimelineContentWidget(gtk.HBox):
     def _create_gui(self):
         pass
 
-gobject.type_register(ComplexTimelineContentWidget)

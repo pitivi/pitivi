@@ -399,7 +399,6 @@ class PitiviViewer(gtk.VBox):
                 self.checktimeoutid = gobject.timeout_add(300, self._check_time)
             self.playpause_button.set_play()
 
-gobject.type_register(PitiviViewer)
 
 class ViewerWidget(gtk.DrawingArea):
 
@@ -417,7 +416,6 @@ class ViewerWidget(gtk.DrawingArea):
             self.videosink.expose()
         return False
 
-gobject.type_register(ViewerWidget)
 
 class PlayPauseButton(gtk.Button):
 
@@ -450,7 +448,6 @@ class PlayPauseButton(gtk.Button):
         self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON))
         self.playing = True
 
-gobject.type_register(PlayPauseButton)
 
 class EncodingDialog(GladeWindow):
     glade_file = "encodingdialog.glade"
@@ -524,4 +521,3 @@ class EncodingDialog(GladeWindow):
             self.timeoutid = None
         self.destroy()
         
-gobject.type_register(EncodingDialog)

@@ -163,4 +163,3 @@ class PitiviMainWindow(gtk.Window):
         print uri, "is not a project file !"
 
         
-gobject.type_register(PitiviMainWindow)

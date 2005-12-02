@@ -312,7 +312,6 @@ class SimpleTimeline(gtk.Layout):
         self.set_property("width", newwidth)
 
 
-gobject.type_register(SimpleTimeline)
 
 
 class SimpleSourceWidget(gtk.DrawingArea):
@@ -420,7 +419,6 @@ class SimpleSourceWidget(gtk.DrawingArea):
     def _start_duration_changed_cb(self, filesource, start, duration):
         self.tooltips.set_tip(self, "start:\t%s\nduration:\t%s" % (beautify_length(start), beautify_length(duration)))
 
-gobject.type_register(SimpleSourceWidget)
 
 class SimpleTransitionWidget(gtk.DrawingArea):
     """ Widget for representing a transition in simple timeline view """
@@ -473,5 +471,4 @@ class SimpleTransitionWidget(gtk.DrawingArea):
                                   x, y, x, y, w, h)
         return True
     
-gobject.type_register(SimpleTransitionWidget)
     

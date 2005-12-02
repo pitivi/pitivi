@@ -70,7 +70,6 @@ class GladeWidget(gtk.VBox):
     class MyWidget(GladeWidget):
         glade_file = 'my_glade_file.glade'
         ...
-    gobject.type_register(MyWidget)
 
     Remember to chain up if you customize __init__().
     '''
@@ -113,7 +112,6 @@ class GladeWidget(gtk.VBox):
         self.add(w)
         win.destroy()
         wtree.signal_autoconnect(self)
-gobject.type_register(GladeWidget)
 
 
 class GladeWindow(gobject.GObject):
@@ -178,4 +176,3 @@ class GladeWindow(gobject.GObject):
         self.window.destroy()
         del self.window
 
-gobject.type_register(GladeWindow)

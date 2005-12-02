@@ -89,7 +89,6 @@ class Timeline(gobject.GObject):
         self.timeline.set_state(gst.STATE_READY)
         self.timeline.set_state(pstate)
 
-gobject.type_register(Timeline)
 
 class TimelineObject(gobject.GObject):
     """
@@ -245,7 +244,6 @@ class TimelineObject(gobject.GObject):
         self.emit("start-duration-changed", self.start, self.duration)
             
 
-gobject.type_register(TimelineObject)
         
 class TimelineSource(TimelineObject):
     """
@@ -269,7 +267,6 @@ class TimelineSource(TimelineObject):
         self.gnlobject.set_property("start", long(0))
         self.gnlobject.set_property("duration", long(self.factory.length))
         
-gobject.type_register(TimelineSource)
 
 class TimelineFileSource(TimelineSource):
     """
@@ -350,7 +347,6 @@ class TimelineFileSource(TimelineSource):
             self.emit("media-start-duration-changed",
                       self.media_start, self.media_duration)
 
-gobject.type_register(TimelineFileSource)
 
 class TimelineLiveSource(TimelineSource):
     """
@@ -360,7 +356,6 @@ class TimelineLiveSource(TimelineSource):
     def __init__(self, **kw):
         TimelineSource.__init__(self, **kw)
 
-gobject.type_register(TimelineLiveSource)
 
 class TimelineComposition(TimelineSource):
     """
@@ -710,7 +705,6 @@ class TimelineComposition(TimelineSource):
         # if self.linked and remove_linked, self.linked.remove_source()
         pass
 
-gobject.type_register(TimelineComposition)
 
 class TimelineEffect(TimelineObject):
     """
@@ -728,7 +722,6 @@ class TimelineEffect(TimelineObject):
     def _set_up_gnl_operation(self):
         """ fill up the gnloperation for the first go """
 
-gobject.type_register(TimelineEffect)
 
 class TimelineSimpleEffect(TimelineEffect):
     """
@@ -743,7 +736,6 @@ class TimelineSimpleEffect(TimelineEffect):
         # fill up the gnloperation for the first go
         pass
 
-gobject.type_register(TimelineSimpleEffect)
 
 class TimelineTransition(TimelineEffect):
     """
@@ -767,7 +759,6 @@ class TimelineTransition(TimelineEffect):
         # fill up the gnloperation for the first go
         pass
 
-gobject.type_register(TimelineTransition)
 
 class TimelineComplexEffect(TimelineEffect):
     """
@@ -784,4 +775,3 @@ class TimelineComplexEffect(TimelineEffect):
         # fill up the gnloperation for the first go
         pass
 
-gobject.type_register(TimelineComplexEffect)

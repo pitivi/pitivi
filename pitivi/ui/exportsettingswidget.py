@@ -320,7 +320,6 @@ class ExportSettingsWidget(GladeWidget):
         self.settings.vcodecsettings = self.vcodecsettings
         print self.settings
         
-gobject.type_register(ExportSettingsWidget)
 
 class ExportSettingsDialog(gtk.Dialog):
 
@@ -339,4 +338,3 @@ class ExportSettingsDialog(gtk.Dialog):
         self.setwidget._update_settings()
         return self.setwidget.settings
 
-gobject.type_register(ExportSettingsDialog)

@@ -1,3 +1,28 @@
+2005-12-02  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	* configure.ac:
+	Preparation for oh ten oh
+	Update dependency on (py)gtk to 2.8.0
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/glade.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/viewer.py:
+	Remove pygtk 2.8 deprecated object registration
+
 2005-12-01  Edward Hervey  <edward@fluendo.com>
 
 	Misc updates for new gnonlin start/duration scheme

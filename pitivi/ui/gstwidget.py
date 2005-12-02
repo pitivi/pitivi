@@ -115,7 +115,6 @@ class GstElementSettingsWidget(gtk.VBox):
                 d[property.name] = value
         return d
                             
-gobject.type_register(GstElementSettingsWidget)
 
     
 class GstElementSettingsDialog(GladeWindow):
@@ -143,4 +142,3 @@ class GstElementSettingsDialog(GladeWindow):
         """ returns the property/value dictionnary of the selected settings """
         return self.widgets["elementsettings"].get_settings()
 
-gobject.type_register(GstElementSettingsDialog)

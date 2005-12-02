@@ -62,7 +62,6 @@ class SourceFactoriesWidget(gtk.Notebook):
         self.transitionlist.set_sensitive(False)
         self.append_page(self.transitionlist, gtk.Label("Transitions"))
 
-gobject.type_register(SourceFactoriesWidget)
 
 
 class SourceListWidget(gtk.VBox):
@@ -457,7 +456,6 @@ class SourceListWidget(gtk.VBox):
             selection.set(selection.target, 8,
                           string.join(uris, "\n"))
 
-gobject.type_register(SourceListWidget)
 
 class AudioFxListWidget(gtk.VBox):
     """ Widget for listing audio effects """
@@ -469,7 +467,6 @@ class AudioFxListWidget(gtk.VBox):
         self.treeview = gtk.TreeView()
         self.pack_start(self.iconview)
 
-gobject.type_register(AudioFxListWidget)
 
 class VideoFxListWidget(gtk.VBox):
     """ Widget for listing video effects """
@@ -481,7 +478,6 @@ class VideoFxListWidget(gtk.VBox):
         self.treeview = gtk.TreeView()
         self.pack_start(self.iconview)
 
-gobject.type_register(VideoFxListWidget)
 
 class TransitionListWidget(gtk.VBox):
     """ Widget for listing transitions """
@@ -493,4 +489,3 @@ class TransitionListWidget(gtk.VBox):
         self.treeview = gtk.TreeView()
         self.pack_start(self.iconview)
 
-gobject.type_register(TransitionListWidget)

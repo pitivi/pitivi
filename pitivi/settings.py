@@ -107,8 +107,6 @@ class ExportSettings(gobject.GObject):
         if changed:
             self.emit("encoders-changed")
 
-gobject.type_register(ExportSettings)
-
 
 def available_muxers():
     """ return all available muxers """

@@ -88,7 +88,6 @@ class Project(gobject.GObject):
         """ Saves the project to the given file name """
         self._save(self, filename)
         
-gobject.type_register(Project)
 
 
 def file_is_project(uri):

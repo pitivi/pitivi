@@ -125,7 +125,6 @@ class SmartBin(gst.Pipeline):
         self.vsinkthread = None
         return True
 
-gobject.type_register(SmartBin)
 
 class SmartFileBin(SmartBin):
     """
@@ -171,7 +170,6 @@ class SmartFileBin(SmartBin):
         self.info("destroyed")
         self.factory.bin_is_destroyed(self.source)
 
-gobject.type_register(SmartFileBin)
 
 class SmartTimelineBin(SmartBin):
     """
@@ -320,7 +318,6 @@ class SmartTimelineBin(SmartBin):
         self.info("smart timeline bin: start duration changed %d %d" %( start, duration ))
         self.length = duration
 
-gobject.type_register(SmartTimelineBin)
 
 class SmartDefaultBin(SmartBin):
     """
@@ -349,4 +346,3 @@ class SmartDefaultBin(SmartBin):
         self.silence.get_pad("src").link(self.atee.get_pad("sink"))
         self.debug("finished connecting sources")
 
-gobject.type_register(SmartDefaultBin)
