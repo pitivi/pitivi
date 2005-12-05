@@ -85,8 +85,8 @@ PKG_CHECK_MODULES(PYGNOME, gnome-python-2.0 >= $PYGNOME_REQ)
 
 
 dnl checks for gst-python
-PKG_CHECK_MODULES(PYGST, gst-python-0.9 >= $PYGST_REQ)
-PYGST_DIR="`$PKG_CONFIG --variable=pyexecdir gst-python-0.9`"
+PKG_CHECK_MODULES(PYGST, gst-python-0.10 >= $PYGST_REQ)
+PYGST_DIR="`$PKG_CONFIG --variable=pyexecdir gst-python-0.10`"
 AC_SUBST(PYGST_DIR)
 AC_MSG_NOTICE(Using gstreamer-python installed in $PYGST_DIR)
 
