@@ -226,6 +226,7 @@ class TimelineObject(gobject.GObject):
 
     def _start_duration_changed_cb(self, gnlobject, property):
         """ start/duration time has changed """
+        self.gnlobject.debug("property:%s" % property.name)
         start = -1
         duration = -1
         if property.name == "start":
@@ -239,6 +240,7 @@ class TimelineObject(gobject.GObject):
             if duration == self.duration:
                 duration = -1
             else:
+                self.gnlobject.debug("duration changed:%s" % gst.TIME_ARGS(duration))
                 self.duration = long(duration)
         #if not start == -1 or not duration == -1:
         self.emit("start-duration-changed", self.start, self.duration)
@@ -594,7 +596,7 @@ class TimelineComposition(TimelineSource):
         auto_linked : if True will add the brother (if any) of the given source
                 to the linked composition with the same parameters
         """
-        self.gnlobject.info("source %s , self.sources:%s" %(source,  self.sources))
+        self.gnlobject.info("source %s , position:%d, self.sources:%s" %(source, position, self.sources))
         def my_add_sorted(sources, object):
             slist = sources[2]
             i = 0
@@ -641,7 +643,7 @@ class TimelineComposition(TimelineSource):
             position = 1
             existorder = 0
         else:
-            start = existingsource.duration
+            start = existingsource.start + existingsource.duration
             position = self._get_source_position(existingsource)
             existorder = self.sources[position - 1][2].index(existingsource) + 1
 
