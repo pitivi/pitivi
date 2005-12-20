@@ -1,3 +1,23 @@
+2005-12-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	Add utils.py to the list of dist-ed files
+	* pitivi/bin.py:
+	Fixes for the encoding bin for SmartTimelineBin
+	* pitivi/playground.py:
+	cleanup
+	* pitivi/settings.py:
+	Default audio encoder is now vorbisenc
+	Update for 0.10 way of getting static pad templates
+	* pitivi/ui/plumber.py:
+	Don't use gconf if it's not available
+	If the videosink has the "force-aspect-ratio" property, use it.
+	* pitivi/ui/timelineobjects.py:
+	cleanup
+	* pitivi/ui/viewer.py:
+	Aspect ratio for the Viewer Window is updated on the fly.
+	Make the EncodingDialog work with gstreamer 0.10 api
+
 2005-12-10  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/timeline.py:

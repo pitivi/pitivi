@@ -215,21 +215,22 @@ class SmartTimelineBin(SmartBin):
     def record(self, uri, settings=None):
         """ render the timeline to the given uri """
         self.encthread = self._make_encthread(settings)
-        result, state, pending = self.get_state(0)
-        if state == gst.STATE_PLAYING:
-            self.set_state(gst.STATE_PAUSED)
-        self.encthread.filesink.set_property("location", uri)
+        self.set_state(gst.STATE_PAUSED)
+        self.encthread.filesink.set_uri(uri)
         self.add(self.encthread)
+        self.set_state(gst.STATE_PAUSED)
 
         # temporarily remove the audiosinkthread
         self.tmpasink = self.asinkthread
         self.remove_audio_sink_thread()
-        
         self.vtee.get_pad("src%d").link(self.encthread.get_pad("vsink"))
         self.atee.get_pad("src%d").link(self.encthread.get_pad("asink"))
 
-        self.source.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
-                         long(0))
+        if not self.seek(1.0, gst.FORMAT_TIME,
+                         gst.SEEK_FLAG_FLUSH,
+                         gst.SEEK_TYPE_CUR, 0,
+                         gst.SEEK_TYPE_NONE, -1):
+            self.warning("Couldn't seek to beginning before encoding")
         self.set_state(gst.STATE_PLAYING)
 
     def stop_recording(self):
@@ -268,39 +269,28 @@ class SmartTimelineBin(SmartBin):
         mux = gst.element_factory_make(settings.muxer, "mux")
         for prop, value in settings.containersettings.iteritems():
             mux.set_property(prop, value)
-        fsink = gst.element_factory_make("gnomevfssink", "fsink")
+        try:
+            fsink = gst.element_factory_make("gnomevfssink", "fsink")
+        except:
+            fsink = gst.element_factory_make("filesink", "fsink")
 
-        thread = gst.Thread("encthread")
+
+        thread = gst.Bin("encthread")
         thread.add(mux, fsink, aoutq, voutq)
 
-        # Audio encoding thread
-        aencthread = gst.Thread("aencthread")
-        aencthread.add(ainq, aenc)
-        thread.add(aencthread)
-        
-        filtcaps = gst.caps_from_string("audio/x-raw-int")
-        if not len(filtcaps.intersect(aenc.get_pad("sink").get_caps())):
-            aconv = gst.element_factory_make("audioconvert", "aconv")
-            aencthread.add(aconv)
-            ainq.link(aconv)
-            aconv.link(aenc)
-        else:
-            ainq.link(aenc)
+        thread.add(ainq, aenc)
+       
+        aconv = gst.element_factory_make("audioconvert", "aconv")
+        thread.add(aconv)
+        ainq.link(aconv)
+        aconv.link(aenc)
         aenc.link(aoutq)
 
-        # Video encoding thread
-        vencthread = gst.Thread("vencthread")
-        vencthread.add(vinq, venc)
-        thread.add(vencthread)
-        
-        filtcaps = gst.caps_from_string("video/x-raw-yuv")
-        if not len(filtcaps.intersect(venc.get_pad("sink").get_caps())):
-            csp = gst.element_factory_make("ffmpegcolorspace", "csp")
-            vencthread.add(csp)
-            ainq.link(csp)
-            csp.link(venc)
-        else:
-            vinq.link(venc)
+        thread.add(vinq, venc)
+        csp = gst.element_factory_make("ffmpegcolorspace", "csp")
+        thread.add(csp)
+        vinq.link(csp)
+        csp.link(venc)
         venc.link(voutq)
 
         thread.add_pad(gst.GhostPad("vsink", vinq.get_pad("sink")))

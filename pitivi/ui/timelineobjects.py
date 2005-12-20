@@ -77,12 +77,10 @@ class SimpleTimeline(gtk.Layout):
         self.set_property("height", int(DEFAULT_HEIGHT))
 
         # event callbacks
-##         self.add_events(gdk.POINTER_MOTION_MASK)
         self.connect("expose-event", self._expose_event_cb)
         self.connect("notify::width", self._width_changed_cb)
         self.connect("size-allocate", self._size_allocate_cb)
         self.connect("realize", self._realize_cb)
-##         self.connect("motion-notify-event", self._motion_notify_event_cb)
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,

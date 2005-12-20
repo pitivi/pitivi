@@ -160,6 +160,17 @@ class PitiviViewer(gtk.VBox):
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dnd_data_received)
 
+    def _videosink_caps_notify_cb(self, sinkpad, property):
+        caps = sinkpad.get_negotiated_caps()
+        if not caps:
+            return
+        gst.debug("caps:%s" % caps.to_string())
+        width = caps[0]["width"]
+        height = caps[0]["height"]
+
+        # set aspect ratio
+        self.aframe.set_property("ratio", float(width) / float(height))
+
     def _create_sinkthreads(self):
         """ Creates the sink threads for the playground """
         # video elements
@@ -170,6 +181,10 @@ class PitiviViewer(gtk.VBox):
         vsinkthread.add(self.videosink, vqueue)
         vqueue.link(self.videosink)
         vsinkthread.add_pad(gst.GhostPad("sink", vqueue.get_pad('sink')))
+
+        if self.videosink.realsink:
+            self.videosink.info("Setting callback on 'notify::caps'")
+            self.videosink.realsink.get_pad("sink").connect("notify::caps", self._videosink_caps_notify_cb)
 
         self.drawingarea.videosink = self.videosink
         self.videosink.set_xwindow_id(self.drawingarea.window.xid)
@@ -191,7 +206,6 @@ class PitiviViewer(gtk.VBox):
     def _settings_changed_cb(self, settings):
         gst.info("current project settings changed")
         # modify the ratio if it's the timeline that's playing
-        self.aframe.set_property("ratio", float(settings.videowidth) / float(settings.videoheight))
 
     def _drawingarea_realize_cb(self, drawingarea):
         drawingarea.modify_bg(gtk.STATE_NORMAL, drawingarea.style.black)
@@ -266,11 +280,11 @@ class PitiviViewer(gtk.VBox):
                 self.pitivi.playground.current.warning("couldn't get position")
                 cur = 0
 
-            gst.info("about to conver %s to GST_FORMAT_DEFAULT" % cur)
-            try:
-                format, currentframe = self.videosink.query_convert(gst.FORMAT_TIME, cur, gst.FORMAT_DEFAULT)
-            except:
-                gst.info("convert query failed")
+##             gst.info("about to conver %s to GST_FORMAT_DEFAULT" % cur)
+##             try:
+##                 format, currentframe = self.videosink.query_convert(gst.FORMAT_TIME, cur, gst.FORMAT_DEFAULT)
+##             except:
+##                 gst.info("convert query failed")
 
         # if the current_time or the length has changed, update time
         if not float(self.pitivi.playground.current.length) == self.posadjust.upper or not cur == self.current_time or not currentframe == self.current_frame:
@@ -324,8 +338,6 @@ class PitiviViewer(gtk.VBox):
             self.aframe.set_property("ratio", 4.0/3.0)
         if not smartbin == playground.default:
             if isinstance(smartbin, SmartTimelineBin):
-##                 start = smartbin.project.timeline.videocomp.start
-##                 stop = smartbin.project.timeline.videocomp.stop
                 gst.info("switching to Timeline, setting duration to %s" % (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
                 self.posadjust.upper = float(smartbin.project.timeline.videocomp.duration)
                 self.record_button.set_sensitive(True)
@@ -456,7 +468,9 @@ class EncodingDialog(GladeWindow):
         GladeWindow.__init__(self)
         self.project = project
         self.bin = project.get_bin()
-        self.bin.connect("eos", self._eos_cb)
+        self.bus = self.bin.get_bus()
+        self.bus.add_signal_watch()
+        self.eosid = self.bus.connect("message::eos", self._eos_cb)
         self.outfile = None
         self.progressbar = self.widgets["progressbar"]
         self.timeoutid = None
@@ -508,7 +522,12 @@ class EncodingDialog(GladeWindow):
         self.timeoutid = False
         return False
 
-    def _eos_cb(self, bin):
+    def do_destroy(self):
+        gst.debug("cleaning up...")
+        self.bus.remove_signal_watch()
+        gobject.source_remove(self.eosid)
+
+    def _eos_cb(self, bus, message):
         self.rendering = False
         self.progressbar.set_text("Rendering Finished")
         self.progressbar.set_fraction(1.0)
@@ -520,4 +539,4 @@ class EncodingDialog(GladeWindow):
             gobject.source_remove(self.timeoutid)
             self.timeoutid = None
         self.destroy()
-        
+

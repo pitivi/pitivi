@@ -17,7 +17,8 @@ pitivi_PYTHON = \
 	project.py \
 	settings.py \
 	sourcelist.py \
-	timeline.py
+	timeline.py \
+	utils.py
 
 clean-local:
 	rm -rf *.pyc *.pyo

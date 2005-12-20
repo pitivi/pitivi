@@ -53,11 +53,6 @@ class PlayGround(gobject.GObject):
                           ( gobject.TYPE_PYOBJECT, ))
         }
 
-    # TODO
-    #
-    # * Only put in the thread what is being played/rendered
-    #   The rest should only be remembered in the playground itself
-    
     def __init__(self):
         gst.info("Starting up playground")
         gobject.GObject.__init__(self)

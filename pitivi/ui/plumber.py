@@ -27,17 +27,28 @@
 # exist out there
 #
 
+import gobject
 import gst
 import gst.interfaces
-import gconf
+try:
+    import gconf
+except:
+    havegconf = False
+else:
+    havegconf = True
 
 gconfvideostring = "/system/gstreamer/0.9/default/videosink"
 gconfaudiostring = "/system/gstreamer/0.9/default/audiosink"
 
 def get_video_sink(pitivi):
     """ Returns a video sink bin that can be used in the Discoverer """
-    gconf_client = gconf.client_get_default()
-    gconfsink = gst.parse_launch(gconf_client.get(gconfvideostring).to_string())
+    if havegconf:
+        gconf_client = gconf.client_get_default()
+        gconfsink = gst.parse_launch(gconf_client.get(gconfvideostring).to_string())
+    else:
+        gconfsink = gst.element_factory_make("autovideosink")
+    gconfsink.realsink = None
+    
 
     gconfsink.set_state(gst.STATE_READY)
     
@@ -51,11 +62,19 @@ def get_video_sink(pitivi):
             realsink.info("implements XOverlay interface")
             gconfsink.set_xwindow_id = realsink.set_xwindow_id
             gconfsink.expose = realsink.expose
-            
+            gconfsink.realsink = realsink
+    else:
+        gconfsink.realsink = gconfsink
+    if gconfsink.realsink:
+        if "force-aspect-ratio"in [prop.name for prop in gobject.list_properties(gconfsink.realsink)]:
+            gconfsink.realsink.set_property("force-aspect-ratio", True)
     return gconfsink
 
 def get_audio_sink(pitivi):
     """ Returns an audio sink bin that can be used in the Discoverer """
-    gconf_client = gconf.client_get_default()
-    gconfsink = gst.parse_launch(gconf_client.get(gconfaudiostring).to_string())
+    if havegconf:
+        gconf_client = gconf.client_get_default()
+        gconfsink = gst.parse_launch(gconf_client.get(gconfaudiostring).to_string())
+    else:
+        gconfsink = gst.element_factory_make("autoaudiosink")
     return gconfsink

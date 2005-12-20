@@ -45,7 +45,7 @@ class ExportSettings(gobject.GObject):
         self.audiorate = 44100
         self.audiodepth = 16
         self.vencoder = "theoraenc"
-        self.aencoder = "rawvorbisenc"
+        self.aencoder = "vorbisenc"
         self.muxer = "oggmux"
         self.containersettings = {}
         self.acodecsettings = {}
@@ -143,7 +143,7 @@ def encoders_muxer_compatible(encoders, muxer):
     gst.info("")
     res = []
     for encoder in encoders:
-        for caps in [x.get_caps() for x in encoder.get_pad_templates() if x.direction == gst.PAD_SRC]:
+        for caps in [x.get_caps() for x in encoder.get_static_pad_templates() if x.direction == gst.PAD_SRC]:
             if muxer.can_sink_caps(caps):
                 res.append(encoder)
                 break
