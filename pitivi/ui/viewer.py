@@ -293,7 +293,7 @@ class PitiviViewer(gtk.VBox):
         return True
 
     def _new_time(self, value, frame=-1):
-        gst.info("value:%d, frame:%d" % (value, frame))
+        gst.info("value:%s, frame:%d" % (gst.TIME_ARGS(value), frame))
         self.current_time = value
         self.current_frame = frame
         self.timelabel.set_text(time_to_string(value) + " / " + time_to_string(self.pitivi.playground.current.length))
@@ -340,12 +340,18 @@ class PitiviViewer(gtk.VBox):
             if isinstance(smartbin, SmartTimelineBin):
                 gst.info("switching to Timeline, setting duration to %s" % (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
                 self.posadjust.upper = float(smartbin.project.timeline.videocomp.duration)
+                smartbin.project.timeline.videocomp.connect("start-duration-changed",
+                                                            self._timeline_duration_changed)
                 self.record_button.set_sensitive(True)
             else:
                 self.posadjust.upper = float(smartbin.factory.length)
                 self.record_button.set_sensitive(False)
             self._new_time(0)
         self.sourcecombobox.set_active(self._get_smartbin_index(smartbin))
+
+    def _timeline_duration_changed(self, composition, start, duration):
+        self.posadjust.upper = float(duration)
+        self.timelabel.set_text(time_to_string(self.current_time) + " / " + time_to_string(self.pitivi.playground.current.length))
 
     def _dnd_data_received(self, widget, context, x, y, selection, targetType, time):
         gst.info("context:%s, targetType:%s" % (context, targetType))

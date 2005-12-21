@@ -1,3 +1,26 @@
+2005-12-21  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Bump requirement to gst(-python) 0.10.0
+	* pitivi/bin.py:
+	Correct seek when stoping recording
+	* pitivi/discoverer.py:
+	Correctly emit 'finished-analyzing' when the discoverer
+	has finished analyzing a uri.
+	* pitivi/sourcelist.py:
+	Remove 'file-is-valid' signal.
+	The SourceList now only emits the 'file-added' signal
+	when the file was correctly discovered.
+	* pitivi/ui/gstwidget.py:
+	Add debugging
+	* pitivi/ui/sourcefactories.py:
+	Use the new Discoverer/SourceList design
+	Add the FileSourceFactory to the gtk.TreeModel only, and when,
+	the uri was properly discovered.
+	* pitivi/ui/viewer.py:
+	Properly update the displaid duration when the timeline
+	duration changes
+
 2005-12-20  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/Makefile.am:

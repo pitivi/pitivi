@@ -22,6 +22,7 @@
 import string
 import gobject
 import gtk
+import gst
 from glade import GladeWindow
 
 def get_widget_propvalue(property, widget):
@@ -77,6 +78,7 @@ class GstElementSettingsWidget(gtk.VBox):
         gtk.VBox.__init__(self)
 
     def set_element(self, element, properties={}, ignore=['name']):
+        gst.info("element:%s, properties:%s" % (element, properties))
         self.element = element
         self.ignore = ignore
         self.properties = {} #key:name, value:widget
@@ -122,8 +124,11 @@ class GstElementSettingsDialog(GladeWindow):
 
     def __init__(self, elementfactory, properties={}):
         GladeWindow.__init__(self)
+        gst.debug("factory:%s, properties:%s" % (elementfactory, properties))
         self.factory = elementfactory
         self.element = self.factory.create("elementsettings")
+        if not self.element:
+            gst.warning("Couldn't create element from factory %s" % self.factory)
         self.desclabel = self.widgets["descriptionlabel"]
         self.authlabel = self.widgets["authorlabel"]
         self.properties = properties

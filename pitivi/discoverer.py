@@ -112,6 +112,7 @@ class Discoverer(gobject.GObject):
         gst.info("before setting to NULL")
         self.pipeline.set_state(gst.STATE_READY)
         gst.info("after setting to NULL")
+        self.emit('finished-analyzing', self.currentfactory)
         self.analyzing = False
         self.current = None
         self.currentfactory = None

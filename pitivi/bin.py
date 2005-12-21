@@ -237,8 +237,11 @@ class SmartTimelineBin(SmartBin):
         """ stop the recording, removing the encoding thread """
         self.set_state(gst.STATE_PAUSED)
         # safely seek back to 0 and flush everything
-        self.source.seek(gst.SEEK_METHOD_SET | gst.FORMAT_TIME | gst.SEEK_FLAG_FLUSH,
-                    long(0))
+        if not self.seek(1.0, gst.FORMAT_TIME,
+                         gst.SEEK_FLAG_FLUSH,
+                         gst.SEEK_TYPE_CUR, 0,
+                         gst.SEEK_TYPE_NONE, -1):
+            self.warning("Couldn't seek to beginning after encoding")
         if self.encthread:
             apad = self.encthread.get_pad("vsink")
             apad.unlink(apad.get_peer())

@@ -1,6 +1,6 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/pitivi.py
+#       pitivi/sourcelist.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
 #
@@ -26,15 +26,20 @@ from discoverer import Discoverer
 class SourceList(gobject.GObject):
     """
     Contains the sources for a project, stored as FileSourceFactory
+
+    Signals:
+    _ file-added (FileSourceFactory) :
+                A file has been completely discovered and is valid.
+    _ file-removed (string : uri) :
+                A file was removed from the SourceList
+    _ tmp-is-ready (FileSourceFactory) :
+                The temporary uri given to the SourceList is ready to use.
     """
 
     __gsignals__ = {
         "file_added" : (gobject.SIGNAL_RUN_LAST,
                         gobject.TYPE_NONE,
-                        (gobject.TYPE_STRING, )),
-        "file_is_valid" : (gobject.SIGNAL_RUN_LAST,
-                           gobject.TYPE_NONE,
-                           (gobject.TYPE_PYOBJECT, )),
+                        (gobject.TYPE_PYOBJECT, )),
         "file_removed" : (gobject.SIGNAL_RUN_LAST,
                           gobject.TYPE_NONE,
                           (gobject.TYPE_STRING, )),
@@ -50,7 +55,6 @@ class SourceList(gobject.GObject):
         self.sources = {}
         self.tempsources = {}
         self.discoverer = Discoverer(self.project)
-        self.discoverer.connect("new_sourcefilefactory", self._new_sourcefilefactory_cb)
         self.discoverer.connect("not_media_file", self._not_media_file_cb)
         self.discoverer.connect("finished_analyzing", self._finished_analyzing_cb)
 
@@ -86,7 +90,6 @@ class SourceList(gobject.GObject):
         if uri in self.sources.keys():
             return
         self.sources[uri] = None
-        self.emit("file_added", uri)
         self.discoverer.add_file(uri)
 
     def add_uris(self, uris):
@@ -95,7 +98,6 @@ class SourceList(gobject.GObject):
         for uri in uris:
             if not uri in self.sources.keys():
                 self.sources[uri] = None
-                self.emit("file_added", uri)
                 rlist.append(uri)
         self.discoverer.add_files(rlist)
 
@@ -118,23 +120,19 @@ class SourceList(gobject.GObject):
         for uri in rmuri:
             del self[uri]
 
-    def _new_sourcefilefactory_cb(self, discoverer, factory):
-        # callback from the discoverer's 'new_sourcefilefactory' signal
-        if factory.name in self and not self[factory.name]:
-            self.sources[factory.name] = factory
-            self.emit("file_is_valid", factory)
-
     def _finished_analyzing_cb(self, discoverer, factory):
         # callback from finishing analyzing factory
         if factory.name in self.tempsources:
             self.tempsources[factory.name] = factory
-            self.emit("tmp_is_ready", factory)
+            self.emit("tmp-is-ready", factory)
+        elif factory.name in self.sources:
+            self.sources[factory.name] = factory
+            self.emit("file-added", factory)
 
     def _not_media_file_cb(self, discoverer, uri):
         # callback from the discoverer's 'not_media_file' signal
         # remove it from the list
-        if uri in self and not self[uri]:
-            del self[uri]
+        if uri in self.sources and not self.sources[uri]:
+            del self.sources[uri]
         elif uri in self.tempsources:
             del self.tempsources[uri]
-

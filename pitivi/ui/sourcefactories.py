@@ -160,7 +160,6 @@ class SourceListWidget(gtk.VBox):
         # TODO : we must remove and reset the callbacks when changing project
         self.pitivi.current.sources.connect("file_added", self._file_added_cb)
         self.pitivi.current.sources.connect("file_removed", self._file_removed_cb)
-        self.pitivi.current.sources.connect("file_is_valid", self._file_is_valid_cb)
 
         self.pitivi.connect("new-project", self._new_project_cb)
 
@@ -221,11 +220,30 @@ class SourceListWidget(gtk.VBox):
             self.use_iconview()
             self.listviewbutton.set_active(False)
 
-    def _file_added_cb(self, sourcelist, uri):
+    def _file_added_cb(self, sourcelist, factory):
         """ a file was added to the sourcelist """
-        self.storemodel.append([self.filepixbuf,
-                                os.path.basename(unquote(uri)),
-                                "Analyzing...", "N/A", None, uri])
+        if not factory.thumbnail:
+            if factory.is_video:
+                thumbnail = self.videofilepixbuf
+            elif factory.is_audio:
+                thumbnail = self.audiofilepixbuf
+        else:
+            pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
+            desiredheight = 128 * pixbuf.get_height() / pixbuf.get_width()
+            thumbnail = pixbuf.scale_simple(128, desiredheight, gtk.gdk.INTERP_BILINEAR)
+        if factory.is_video:
+            if factory.is_audio:
+                desc = "Audio/Video"
+            else:
+                desc = "Video"
+        else:
+            desc = "Audio"
+        self.storemodel.append([thumbnail,
+                                os.path.basename(unquote(factory.name)),
+                                desc,
+                                beautify_length(factory.length),
+                                factory,
+                                factory.name])
 
     def _file_removed_cb(self, sourcelist, uri):
         """ the given uri was removed from the sourcelist """
@@ -235,77 +253,6 @@ class SourceListWidget(gtk.VBox):
             if uri == self.storemodel.get_value(piter, 5):
                 self.storemodel.remove(piter)
                 break
-            piter = self.storemodel.iter_next(piter)
-
-    def _file_is_valid_cb(self, sourcelist, factory):
-        """ a uri was found as being a valid media file """
-        # update info in storemodel
-        # hookup callbacks
-        gst.debug("%s is a valid media file" % factory.name)
-        factory.connect("notify::is-audio", self._fact_type_cb)
-        factory.connect("notify::is-video", self._fact_type_cb)
-        factory.connect("notify::length", self._fact_length_cb)
-        factory.connect("notify::thumbnail", self._fact_thumbnail_cb)
-        factory.connect("notify::audio-info", self._fact_infoupdate_cb)
-        factory.connect("notify::video-info", self._fact_infoupdate_cb)
-        piter = self.storemodel.get_iter_first()
-        while piter:
-            if factory.name == self.storemodel.get_value(piter, 5):
-                self.storemodel.set(piter, 2, factory.get_pretty_info())
-                if factory.is_video:
-                    self.storemodel.set(piter, 0, self.videofilepixbuf)
-                elif factory.is_audio:
-                    self.storemodel.set(piter, 0, self.audiofilepixbuf)
-                self.storemodel.set(piter, 4, factory)
-                gst.info("added stuff")
-                break
-            piter = self.storemodel.iter_next(piter)
-        gst.info("finished")
-        
-    def _fact_type_cb(self, factory, property):
-        """ type of factory was updated """
-        gst.info("type changed")
-        piter = self.storemodel.get_iter_first()
-        while piter:
-            if factory == self.storemodel.get_value(piter, 4):
-                self.storemodel.set(piter, 2, factory.get_pretty_info())
-                if not factory.thumbnail:
-                    if factory.is_video:
-                        self.storemodel.set(piter, 0, self.videofilepixbuf)
-                    elif factory.is_audio:
-                        self.storemodel.set(piter, 0, self.audiofilepixbuf)
-                break
-            piter = self.storemodel.iter_next(piter)
-
-    def _fact_infoupdate_cb(self, factory, property):
-        """ info on the factory was updated """
-        piter = self.storemodel.get_iter_first()
-        while piter:
-            if factory == self.storemodel.get_value(piter, 4):
-                self.storemodel.set(piter, 2, factory.get_pretty_info())
-                break
-            piter = self.storemodel.iter_next(piter)
-
-    def _fact_length_cb(self, factory, property):
-        """ length of factory was updated """
-        gst.info("length changed")
-        piter = self.storemodel.get_iter_first()
-        while piter:
-            if factory == self.storemodel.get_value(piter, 4):
-                self.storemodel.set(piter, 3, beautify_length(factory.length))
-                break
-            piter = self.storemodel.iter_next(piter)
-
-    def _fact_thumbnail_cb(self, factory, property):
-        """ a thumbnail is available """
-        gst.info("thumbnail available")
-        pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
-        desiredheight = 128 * pixbuf.get_height() / pixbuf.get_width()
-        pixbuf = pixbuf.scale_simple(128, desiredheight, gtk.gdk.INTERP_BILINEAR)
-        piter = self.storemodel.get_iter_first()
-        while piter:
-            if factory == self.storemodel.get_value(piter, 4):
-                self.storemodel.set(piter, 0, pixbuf)
             piter = self.storemodel.iter_next(piter)
 
     def add_files(self, list):
@@ -392,17 +339,6 @@ class SourceListWidget(gtk.VBox):
         self.pitivi.current.sources.connect("file_added", self._file_added_cb)
         self.pitivi.current.sources.connect("file_removed", self._file_removed_cb)
         self.pitivi.current.sources.connect("file_is_valid", self._file_is_valid_cb)
-
-##     def _dnd_motion_cb(self, widget, context, x, y, timestamp):
-##         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
-##         return True
-
-##     def _dnd_drop_cb(self, widget, context, x, y, timestamp):
-##         print "drag drop"
-##         print '\n'.join([str(t) for t in context.targets])
-##         print "\n"
-##         context.finish()
-##         return True
 
     def _dnd_data_received(self, widget, context, x, y, selection, targetType,
                            time):
