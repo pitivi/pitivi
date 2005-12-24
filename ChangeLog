@@ -1,3 +1,19 @@
+2005-12-24  Edward Hervey  <edward@fluendo.com>
+
+	0.9.9.1 release
+	
+	* RELEASE:
+	* bin/pitivi.in:
+	Switch on threads
+	* configure.ac:
+	0.9.9.1 release (thanks a lot stupid sourceforge)
+	* pitivi/bin.py:
+	don't seek back to the beginning after recording in fact
+	* pitivi/ui/glade.py:
+	esthetic fixes
+	* pitivi/ui/viewer.py:
+	Deactivate record button since it doesn't work 100% yet
+
 2005-12-21  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac:

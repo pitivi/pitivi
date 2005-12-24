@@ -1,34 +1,40 @@
 
-PiTIVi: Release notes for PiTiVi 0.1.10 "Gimme some more"
+PiTIVi: Release notes for PiTiVi 0.9.9.1 "A glass of wine next to the fireplace"
         
 
 The GStreamer and PiTiVi team are pleased to announce a new pre-release of
 PiTiVi.
 
-This release is in beta state, may suffer from hangs and is not yet ready for
-production. Transcoding/Encoding works though for files.
+This is the first release to work with the new 0.10 series of the GStreamer
+multimedia framework.
 
-This release is also the last version based on the 0.8.x GStreamer series. Work
-is now aimed at the 0.9/0.10 series.
-  
 Features of this release
-    
-      * UI updates
-      * Settings control
-      * Transcoding
 
+  * Import of audio/video files
+  * Playback and scrubbing (view while seeking) of files
+  * Adding files in a Timeline
+  * Playback and scrubbing on timeline
 
 Download
 
 You can find source releases of PiTiVi here:
 http://sourceforge.net/project/showfiles.php?group_id=100591
 
+Website
+
+More information can be found on the PiTiVi website:
+http://www.pitivi.org/
+
 Support and Bugs
 
 We use SourceForge for bug reports and feature requests:
 http://sourceforge.net/projects/pitivi/
 
-  
-Contributors to this release
-    
-      * Jono Bacon
+Requirements
+
+  * GStreamer core and plugins >= 0.10.0
+  * GNonlin >= 0.10.0.3
+  * Python bindings for GTK+, pygtk >= 2.8.0
+    * With libglade bindings
+  * Python bindings for Gnome, gnome-python >= 2.12.0
+  * Python bindings for GStreamer, gst-python >= 0.10.0

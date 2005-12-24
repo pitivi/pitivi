@@ -482,6 +482,7 @@ class EncodingDialog(GladeWindow):
         self.timeoutid = None
         self.rendering = False
         self.settings = project.settings
+        self.widgets["recordbutton"].set_sensitive(False)
 
     def filebutton_clicked(self, button):
         
