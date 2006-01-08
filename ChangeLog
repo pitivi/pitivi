@@ -1,3 +1,8 @@
+2006-01-08  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/plumber.py:
+	Check for the gstreamer 0.10 (and not 0.9) gconf keys.
+
 2005-12-24  Edward Hervey  <edward@fluendo.com>
 
 	0.9.9.1 release

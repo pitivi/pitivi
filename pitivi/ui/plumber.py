@@ -37,8 +37,8 @@ except:
 else:
     havegconf = True
 
-gconfvideostring = "/system/gstreamer/0.9/default/videosink"
-gconfaudiostring = "/system/gstreamer/0.9/default/audiosink"
+gconfvideostring = "/system/gstreamer/0.10/default/videosink"
+gconfaudiostring = "/system/gstreamer/0.10/default/audiosink"
 
 def get_video_sink(pitivi):
     """ Returns a video sink bin that can be used in the Discoverer """
