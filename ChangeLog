@@ -1,5 +1,10 @@
 2006-01-11  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/discoverer.py:
+	Don't emit 'finished-analyzing' if there's nothing discovered.
+
+2006-01-11  Edward Hervey  <edward@fluendo.com>
+
 	* configure.ac:
 	PyGnome 2.10.0 is sufficient requirement.
 	* pitivi/ui/plumber.py:
