@@ -30,26 +30,15 @@
 import gobject
 import gst
 import gst.interfaces
-try:
-    import gconf
-except:
-    havegconf = False
-else:
-    havegconf = True
-
-gconfvideostring = "/system/gstreamer/0.10/default/videosink"
-gconfaudiostring = "/system/gstreamer/0.10/default/audiosink"
 
 def get_video_sink(pitivi):
     """ Returns a video sink bin that can be used in the Discoverer """
-    if havegconf:
-        gconf_client = gconf.client_get_default()
-        gconfsink = gst.parse_launch(gconf_client.get(gconfvideostring).to_string())
-    else:
+    try:
+        gconfsink = gst.element_factory_make("gconfvideosink")
+    except:
         gconfsink = gst.element_factory_make("autovideosink")
     gconfsink.realsink = None
     
-
     gconfsink.set_state(gst.STATE_READY)
     
     if not gconfsink.implements_interface(gst.interfaces.XOverlay):
@@ -72,9 +61,8 @@ def get_video_sink(pitivi):
 
 def get_audio_sink(pitivi):
     """ Returns an audio sink bin that can be used in the Discoverer """
-    if havegconf:
-        gconf_client = gconf.client_get_default()
-        gconfsink = gst.parse_launch(gconf_client.get(gconfaudiostring).to_string())
-    else:
+    try:
+        gconfsink = gst.element_factory_make("gconfaudiosink")
+    except:
         gconfsink = gst.element_factory_make("autoaudiosink")
     return gconfsink

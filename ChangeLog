@@ -1,3 +1,10 @@
+2006-01-11  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	PyGnome 2.10.0 is sufficient requirement.
+	* pitivi/ui/plumber.py:
+	Use gconf*sink elements instead of creating them ourselves.
+
 2006-01-08  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/plumber.py:
