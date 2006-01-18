@@ -64,7 +64,6 @@ class Discoverer(gobject.GObject):
         self.current = None
         self.pipeline = None
         self.thumbnailing = False
-        # TODO create pipeline
 
     def add_file(self, filename):
         """ queue a filename to be discovered """

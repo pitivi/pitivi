@@ -67,7 +67,6 @@ class PitiviViewer(gtk.VBox):
 
         self.pitivi.current.settings.connect("settings-changed",
                                              self._settings_changed_cb)
-        # FIXME : uncomment when gnonlin is ported
         self._add_timeline_to_playground()
 
     def _create_gui(self):

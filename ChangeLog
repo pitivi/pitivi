@@ -1,3 +1,22 @@
+2006-01-18  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Require gnonlin 0.10.0.5
+	
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	cleanup.
+	
+	* pitivi/ui/sourcefactories.py:
+	Add mini-doc
+	* pitivi/ui/timeline.py:
+	cleanup.
+	* pitivi/ui/timelineobjects.py:
+	Remove/debug all the print statements.
+	* pitivi/ui/viewer.py:
+	cleanup.
+
 2006-01-11  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/discoverer.py:

@@ -228,6 +228,7 @@ class SourceListWidget(gtk.VBox):
             elif factory.is_audio:
                 thumbnail = self.audiofilepixbuf
         else:
+            # FIXME : Use DAR from factory
             pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
             desiredheight = 128 * pixbuf.get_height() / pixbuf.get_width()
             thumbnail = pixbuf.scale_simple(128, desiredheight, gtk.gdk.INTERP_BILINEAR)
