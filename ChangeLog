@@ -1,3 +1,15 @@
+2006-01-24  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	* pitivi/timeline.py:
+	doc fix
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexstack.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	Make way for the ComplexTimelineView
+
 2006-01-18  Edward Hervey  <edward@fluendo.com>
 
 	Release 0.9.9.2 "No te entiendo"

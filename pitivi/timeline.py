@@ -37,8 +37,6 @@ MEDIA_TYPE_VIDEO = 2
 ##    |	   +---- LiveSource
 ##    |	   |
 ##    |	   +---- Composition
-##    |		   |
-##    |		   +---- Group
 ##    |
 ##    +---- Effect
 ## 	   |

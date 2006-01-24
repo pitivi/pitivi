@@ -91,6 +91,8 @@ class SimpleTimeline(gtk.Layout):
         self.connect("drag-motion", self._drag_motion_cb)
         self.slotposition = -1
 
+        self.show_all()
+
     def _condensed_list_changed_cb(self, videocomp, clist):
         """ add/remove the widgets """
         gst.debug("condensed list changed in videocomp")

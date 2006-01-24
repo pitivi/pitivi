@@ -24,6 +24,7 @@ import gtk
 import gobject
 import gst
 from timelineobjects import SimpleSourceWidget, SimpleTimeline
+from complextimeline import ComplexTimelineWidget
 
 class TimelineWidget(gtk.VBox):
     """ Widget for reprensenting Pitivi's Timeline """
@@ -37,17 +38,17 @@ class TimelineWidget(gtk.VBox):
     def _create_gui(self):
         """ draw the GUI """
         self.hadjustment = gtk.Adjustment()
+        self.vadjustment = gtk.Adjustment()
         self.leftsizegroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
 
         self.simpleview = SimpleTimelineContentWidget(self)
         self.complexview = ComplexTimelineContentWidget(self)
-        #contentframe = gtk.Frame()
-        #contentframe.add(self.content)
-        #self.pack_start(self.content)
+
+        self.simpleview.connect("scroll-event", self._simple_scroll_cb)
+        self.complexview.connect("scroll-event", self._simple_scroll_cb)
 
         hbox = gtk.HBox()
         
-        #switchmenuframe = gtk.Frame()
         liststore = gtk.ListStore(gobject.TYPE_STRING)
         combobox = gtk.ComboBox(liststore)
         cell = gtk.CellRendererText()
@@ -55,10 +56,9 @@ class TimelineWidget(gtk.VBox):
         combobox.add_attribute(cell, 'text', 0)
         liststore.append(["Simple View"])
         liststore.append(["Complex View"])
-        combobox.set_active(0)
+        combobox.set_active(1)
         combobox.connect("changed", self._combobox_changed)
 
-        #switchmenuframe.add(combobox)
         self.leftsizegroup.add_widget(combobox)
         
         hbox.pack_start(combobox, expand=False)
@@ -66,9 +66,11 @@ class TimelineWidget(gtk.VBox):
         hbox.pack_start(self.hscroll)
 
         self.pack_end(hbox, expand=False)
-        self._show_simple_view()
+        #self._show_simple_view()
+        self._show_complex_view()
 
     def _combobox_changed(self, cbox):
+        gst.debug("switching view")
         if cbox.get_active():
             self._show_complex_view()
         else:
@@ -77,13 +79,16 @@ class TimelineWidget(gtk.VBox):
     def _show_simple_view(self):
         if self.complexview in self.get_children():
             self.remove(self.complexview)
+            self.complexview.hide()
         self.pack_start(self.simpleview, expand=True)
-        self.simpleview.connect("scroll-event", self._simple_scroll_cb)
+        self.simpleview.show_all()
 
     def _show_complex_view(self):
         if self.simpleview in self.get_children():
             self.remove(self.simpleview)
+            self.simpleview.hide()
         self.pack_start(self.complexview, expand=True)
+        self.complexview.show_all()
 
     def _simple_scroll_cb(self, simplet, event):
         self.hscroll.emit("scroll-event", event)
@@ -92,12 +97,12 @@ class TimelineWidget(gtk.VBox):
 
 class SimpleTimelineContentWidget(gtk.HBox):
     """ Widget for Simple Timeline content display """
-
     def __init__(self, twidget):
         """ init """
         self.twidget = twidget
         gtk.HBox.__init__(self)
         self._create_gui()
+        self.show_all()
 
     def _create_gui(self):
         """ draw the GUI """
@@ -112,7 +117,6 @@ class SimpleTimelineContentWidget(gtk.HBox):
         layoutframe.add(self.timeline)
         self.pack_start(layoutframe)
 
-
 class ComplexTimelineContentWidget(gtk.HBox):
     """ Widget for complex timeline content display """
 
@@ -120,7 +124,13 @@ class ComplexTimelineContentWidget(gtk.HBox):
         self.twidget = twidget
         gtk.HBox.__init__(self)
         self._create_gui()
+        self.show_all()
 
     def _create_gui(self):
-        pass
+        self.timeline = ComplexTimelineWidget(self.twidget.pitivi,
+                                              self.twidget.hadjustment,
+                                              self.twidget.vadjustment)
+        self.pack_start(self.timeline, expand=True, fill=True)
+        self.scrollbar = gtk.VScrollbar(self.twidget.vadjustment)
+        self.pack_start(self.scrollbar, expand=False)
 
