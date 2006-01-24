@@ -1,5 +1,12 @@
 2006-01-18  Edward Hervey  <edward@fluendo.com>
 
+	Release 0.9.9.2 "No te entiendo"
+
+	* RELEASE:
+	* configure.ac:
+
+2006-01-18  Edward Hervey  <edward@fluendo.com>
+
 	* configure.ac:
 	Require gnonlin 0.10.0.5
 	

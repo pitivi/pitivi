@@ -1,11 +1,11 @@
 
-PiTIVi: Release notes for PiTiVi 0.9.9.1 "A glass of wine next to the fireplace"
+PiTIVi: Release notes for PiTiVi 0.9.9.2 "No te entiendo"
         
 
 The GStreamer and PiTiVi team are pleased to announce a new pre-release of
 PiTiVi.
 
-This is the first release to work with the new 0.10 series of the GStreamer
+This is the second release to work with the new 0.10 series of the GStreamer
 multimedia framework.
 
 Features of this release
@@ -14,6 +14,7 @@ Features of this release
   * Playback and scrubbing (view while seeking) of files
   * Adding files in a Timeline
   * Playback and scrubbing on timeline
+  * Fixes for GConf issues
 
 Download
 
@@ -33,7 +34,7 @@ http://sourceforge.net/projects/pitivi/
 Requirements
 
   * GStreamer core and plugins >= 0.10.0
-  * GNonlin >= 0.10.0.3
+  * GNonlin >= 0.10.0.5
   * Python bindings for GTK+, pygtk >= 2.8.0
     * With libglade bindings
   * Python bindings for Gnome, gnome-python >= 2.12.0
