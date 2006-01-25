@@ -1,3 +1,8 @@
+2006-01-25  Christian Schaller <christian@fluendo.com>
+
+	* Add .cvsignore files
+	* Add COPYING file with the LGPL
+
 2006-01-24  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac:
