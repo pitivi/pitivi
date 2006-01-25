@@ -2,6 +2,9 @@ uidir = $(libdir)/pitivi/python/pitivi/ui
 
 ui_PYTHON = \
 	__init__.py \
+	complexlayer.py \
+	complexstack.py \
+	complextimeline.py \
 	exportsettingswidget.py \
 	glade.py \
 	gstwidget.py \

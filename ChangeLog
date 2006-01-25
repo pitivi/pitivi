@@ -1,3 +1,8 @@
+2006-01-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/Makefile.am: (ui_PYTHON): 
+	Forgot to add those files to be distributed.
+
 2006-01-25  Christian Schaller <christian@fluendo.com>
 
 	* Add .cvsignore files
