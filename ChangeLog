@@ -2,6 +2,7 @@
 
 	* Add .cvsignore files
 	* Add COPYING file with the LGPL
+	* Configure .desktop file to get installed
 
 2006-01-24  Edward Hervey  <edward@fluendo.com>
 

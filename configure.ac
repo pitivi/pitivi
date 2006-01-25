@@ -116,4 +116,5 @@ pitivi/configure.py
 pitivi/ui/Makefile
 pitivi/pixmaps/Makefile
 pitivi.spec
+pitivi.desktop
 )

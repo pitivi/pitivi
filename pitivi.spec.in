@@ -42,6 +42,7 @@ PiTiVi non-linear video editor
 %{_bindir}/pitivi
 %{_libdir}/pitivi
 %{_datadir}/pitivi/pixmaps/*
+%{_datadir}/applications/pitivi.desktop
 
 %changelog
 * Thu Jun 23 2005 Christian Schaller <christian at fluendo dot com>

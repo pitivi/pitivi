@@ -16,4 +16,4 @@ mkinstalldirs
 pitivi.spec
 py-compile
 stamp-h.in
-
+pitivi.desktop
