@@ -64,6 +64,7 @@ class Discoverer(gobject.GObject):
         self.current = None
         self.pipeline = None
         self.thumbnailing = False
+        self.thisdone = False
 
     def add_file(self, filename):
         """ queue a filename to be discovered """
@@ -104,13 +105,15 @@ class Discoverer(gobject.GObject):
             gst.warning("called when not analyzing!!")
             return False
 
+        self.thisdone = True
+
         gst.info("Cleaning up after finished analyzing %s" % self.current)
         # finish current, cleanup
         self.bus.remove_signal_watch()
         self.bus = None
         gst.info("before setting to NULL")
-        self.pipeline.set_state(gst.STATE_READY)
-        gst.info("after setting to NULL")
+        res = self.pipeline.set_state(gst.STATE_NULL)
+        gst.info("after setting to NULL : %s" % res)
         if self.currentfactory:
             self.emit('finished-analyzing', self.currentfactory)
         self.analyzing = False
@@ -133,6 +136,7 @@ class Discoverer(gobject.GObject):
         Sets up a pipeline to analyze the given uri
         """
         self.analyzing = True
+        self.thisdone = False
         self.current = self.queue.pop(0)
         gst.info("Analyzing %s" % self.current)
         self.currentfactory = None
@@ -161,6 +165,8 @@ class Discoverer(gobject.GObject):
         return False
         
     def _bus_message_cb(self, bus, message):
+        if self.thisdone:
+            return
         if message.type == gst.MESSAGE_STATE_CHANGED:
             gst.log("%s:%s" % ( message.src, message.parse_state_changed()))
             if message.src == self.pipeline:
@@ -172,15 +178,22 @@ class Discoverer(gobject.GObject):
                     self.pipeline.set_state(gst.STATE_PLAYING)
         elif message.type == gst.MESSAGE_EOS:
             gst.log("got EOS")
+            self.thisdone = True
             filename = "/tmp/" + self.currentfactory.name.encode('base64').replace('\n','') + ".png"
             if os.path.isfile(filename):
                 self.currentfactory.set_thumbnail(filename)
             gobject.idle_add(self._finish_analysis)
         elif message.type == gst.MESSAGE_ERROR:
             gst.warning("got an ERROR")
+            self.thisdone = True
             if not self.currentfactory:
                 self.emit("not_media_file", self.current)
             gobject.idle_add(self._finish_analysis)
+        elif message.type == gst.MESSAGE_ELEMENT:
+            gst.debug("Element message %s" % message.structure.to_string())
+            if message.structure.get_name() == "redirect":
+                gst.warning("We don't implement redirections currently, ignoring file")
+                gobject.idle_add(self._finish_analysis)
         else:
             gst.log("%s:%s" % ( message.type, message.src))
 

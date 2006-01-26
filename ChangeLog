@@ -1,3 +1,10 @@
+2006-01-26  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Handle gracefully files that contain no stream but emit a
+	GST_TAG_ELEMENT with redirection.
+	Force pipeline to NULL when finished analyzing a file.
+
 2006-01-25  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/Makefile.am: (ui_PYTHON): 
