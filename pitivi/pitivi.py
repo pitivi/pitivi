@@ -23,6 +23,7 @@ import gobject
 import gtk
 import gst
 import sys
+import check
 from ui import mainwindow
 from discoverer import Discoverer
 from playground import PlayGround
@@ -61,6 +62,7 @@ class Pitivi(gobject.GObject):
         gst.info("starting up pitivi...")
         gobject.GObject.__init__(self)
         # TODO parse cmd line arguments
+
         self.playground = PlayGround()
         self.current = Project("New Project")
         self.effects = Magician(self)
@@ -103,7 +105,9 @@ class Pitivi(gobject.GObject):
             self.playground.pause()
             self.current = Project("New Project")
             self.emit("new-project", self.current)
+
         
 def main(argv):
+    check.initial_checks()
     ptv = Pitivi(argv)
     gtk.main()

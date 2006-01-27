@@ -8,6 +8,7 @@ pitivi_PYTHON = \
 	__init__.py \
 	configure.py \
 	bin.py \
+	check.py \
 	discoverer.py \
 	dnd.py \
 	effects.py \

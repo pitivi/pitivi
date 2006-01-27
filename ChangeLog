@@ -1,3 +1,11 @@
+2006-01-27  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	* pitivi/check.py:
+	* pitivi/pitivi.py:
+	Added check system at startup to tell users in a clear fashion what
+	the problem is (if any).
+
 2006-01-26  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/discoverer.py:
