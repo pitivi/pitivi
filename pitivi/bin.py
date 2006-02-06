@@ -34,7 +34,7 @@ class SmartBin(gst.Pipeline):
     height = 0
 
     def __init__(self, name, displayname=""):
-        gst.info('name : %s, displayname : %s' % (name, displayname))
+        gst.log('name : %s, displayname : %s' % (name, displayname))
         gobject.GObject.__init__(self)
         self.name = name
         self.displayname = displayname
@@ -132,7 +132,7 @@ class SmartFileBin(SmartBin):
     """
 
     def __init__(self, factory):
-        gst.debug("new SmartFileBin for factory:%s, audio:%s, video:%s" % (factory, factory.is_audio, factory.is_video))
+        gst.log("new SmartFileBin for factory:%s, audio:%s, video:%s" % (factory, factory.is_audio, factory.is_video))
         self.factory = factory
         self.has_video = factory.is_video
         self.has_audio = factory.is_audio
@@ -177,7 +177,7 @@ class SmartTimelineBin(SmartBin):
     """
 
     def __init__(self, project):
-        gst.info("new SmartTimelineBin for project %s" % project)
+        gst.log("new SmartTimelineBin for project %s" % project)
         self.project = project
         
         # TODO : change this to use the project settings
@@ -186,7 +186,7 @@ class SmartTimelineBin(SmartBin):
 
         self.width = project.settings.videowidth
         self.height = project.settings.videoheight
-        self.info("source is %s" % project.timeline.timeline)
+        self.log("source is %s" % project.timeline.timeline)
         self.source = project.timeline.timeline
         self.project.settings.connect("settings-changed", self._settings_changed_cb)
         project.timeline.videocomp.connect("start-duration-changed", self._start_duration_changed)
@@ -313,7 +313,7 @@ class SmartDefaultBin(SmartBin):
     """
 
     def __init__(self):
-        gst.info("Creating new smartdefaultbin")
+        gst.log("Creating new smartdefaultbin")
         self.videotestsrc = gst.element_factory_make("videotestsrc", "vtestsrc")
         self.silence = gst.element_factory_make("audiotestsrc", "silence")
         self.silence.set_property("wave", 4)

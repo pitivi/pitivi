@@ -1,3 +1,39 @@
+2006-02-06  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/check.py:
+	Added check for autodetect plugins existence.
+
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/sourcelist.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	Better debug levels
+
+	* pitivi/timeline.py:
+	gnlfilesource is only used by TimelineFileSource
+	Added more signals to TimelineComposition
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/ruler.py:
+	Added complexinterface.py, complexsource.py and ruler.py
+
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexstack.py:
+	* pitivi/ui/complextimeline.py:
+	Better designed ComplexTimeline, layer and tracks
+	
+	* pitivi/ui/timeline.py:
+	CTRL + scroll does vertical scrolling in complex timeline.
+	* pitivi/ui/timelineobjects.py:
+	ooops, don't need pango anymore
+
 2006-01-27  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/Makefile.am:

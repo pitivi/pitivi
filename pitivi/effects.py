@@ -39,7 +39,7 @@ class Magician:
     """
 
     def __init__(self, pitivi):
-        gst.info("New Magician")
+        gst.log("New Magician")
         self.pitivi = pitivi
         self.simple_video = []
         self.simple_audio = []

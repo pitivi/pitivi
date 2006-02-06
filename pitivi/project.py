@@ -46,7 +46,7 @@ class Project(gobject.GObject):
         name : the name of the project
         uri : the uri of the project
         """
-        gst.info("name:%s, uri:%s" % (name, uri))
+        gst.log("name:%s, uri:%s" % (name, uri))
         gobject.GObject.__init__(self)
         self.name = name
         self.uri = uri

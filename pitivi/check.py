@@ -42,7 +42,11 @@ def initial_checks():
     sys.exit()
     
 def _checks():
-    if not gst.registry_get_default().find_plugin("gnonlin"):
+    reg = gst.registry_get_default()
+    if not reg.find_plugin("gnonlin"):
         return ("Could not find the GNonLin plugins!",
                 "Make sure the plugins were installed and are available in the GStreamer plugins path")
+    if not reg.find_plugin("autodetect"):
+        return ("Could not find the autodetect plugins!",
+                "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path")
     return None

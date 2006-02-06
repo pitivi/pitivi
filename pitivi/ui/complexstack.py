@@ -22,98 +22,226 @@
 
 import gtk
 import gst
-from complexlayer import ComplexTimelineInfoLayer, ComplexTimelineTrackLayer
-    
-class ComplexTimelineStack(gtk.Layout):
+from complexlayer import InfoLayer, TrackLayer
+from ruler import ScaleRuler
+from complexinterface import LayeredWidgetInterface, ZoomableWidgetInterface
 
-    __gsignals__ = {
-        "expose-event":"override",
-        "size-request":"override",
+class TrackLayout(gtk.Layout, LayeredWidgetInterface, ZoomableWidgetInterface):
+    __gsignals = {
+        "size-allocate":"override",
         }
-    layerclass = None
 
-    def __init__(self, widthflexible=False):
-        self.widthflexible = self.layerclass.resizeable
+    def __init__(self, layerInfoList, vadj):
         gtk.Layout.__init__(self)
-        self.layers = []
-        self.compositions = []
+        self.tracks = []
+        LayeredWidgetInterface.__init__(self, layerInfoList)
+        self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(32000,0,0))
+        self.set_vadjustment(vadj)
 
-    def do_expose_event(self, event):
-        gst.debug("stack expose %s" % list(event.area))
-        gst.debug("size %s" % list(self.get_size()))
-        ypos = 0
-        width,height = self.get_size()
-        for widget in self.layers:
-            nw, nh = widget.size_request()
-            # draw handle at 0, ypos + nh
-            # w x h == width, 10
-            self.style.paint_handle(self.bin_window,
-                                    gtk.STATE_NORMAL,
-                                    gtk.SHADOW_NONE,
-                                    None, self, "paned",
-                                    0, ypos + nh,
-                                    width, 10,
-                                    gtk.ORIENTATION_VERTICAL)
-        return False
+        # TODO : implement size-request/allocation
+
+        # TODO : implement LayeredWidgetInterface vmethods
+        
+        # TODO : implement ZoomableWidgetInterface vmethods
+
+
+    ## gtk.Widget overrides
+
+    def do_size_allocate(self, allocation):
+        gst.debug("TrackLayout got allocation %s" % list(allocation))
+        gtk.Layout.do_size_allocate(self, allocation)
+
+    def __updateLayoutHeight(self):
+        width, height = max(self.get_size(), self.allocation.width)
+        self.set_size(width, self.layerinfolist.totalHeight)
+        self.queue_resize()
+
+    ## gtk.Layout overrides
+
+    def set_size(self, width, height):
+        gst.debug("Setting TrackLayout size to %d x %d" % (width, height))
+        gtk.Layout.set_size(self, width, height)
+        
+    ## LayeredWidgetInterface methods
+        
+    def layerExpanded(self, layerposition, expanded):
+        # TODO : resize track
+        # modify layout size
+        self.__updateLayoutHeight()
+
+    def layerHeightChanged(self, layerposition):
+        # TODO : resize track
+        self.tracks[layerposition].set_property("height-request",
+                                                self.layerinfolist[layerposition].currentHeight)
+        # modify layout size
+        self.__updateLayoutHeight()
+
+    def layerAdded(self, layerposition):
+        gst.debug("Adding a layer to TrackLayout")
+        layerinfo = self.layerinfolist[layerposition]
+        track = TrackLayer(layerinfo)
+        track.set_property("height-request",
+                           layerinfo.currentHeight)
+        self.tracks.insert(layerposition, track)
+        self.__updateLayoutHeight()
+        self.put(track, 0, layerinfo.yposition)
+        # TODO : force redraw
+
+    def layerRemoved(self, layerposition):
+        track = self.tracks.pop(layerposition)
+        self.remove(track)
+        self.__updateLayoutHeight()
+        # TOOD : force redraw    
+
+
+    ## ZoomableWidgetInterface methods
+
+    def get_duration(self):
+        if len(self.tracks):
+            return max([track.get_duration() for track in self.tracks])
+        return 0
+
+    def get_start_time(self):
+        if len(self.tracks):
+            return min([track.get_start_time() for track in self.tracks])
+        return 0
+
+    def zoomChanged(self):
+        # propagate to childs
+        for track in self.tracks:
+            track.zoomChanged()
+        # resize ourself
+        w, h = self.get_size()
+        self.set_size(self.get_pixel_width(),
+                      h)
+
+class LayerStack(gtk.Layout, ZoomableWidgetInterface):
+    __gsignals__ = {
+         "size-allocate":"override",
+        }
+
+    def __init__(self, layerInfoList, hadj, vadj):
+        gtk.Layout.__init__(self)
+
+        self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(16000,16000,16000))
+        
+        self.horizontalAdj = hadj
+        self.verticalAdj = vadj
+        self.set_hadjustment(self.horizontalAdj)
+
+        # top Scale Ruler
+        self.scaleRuler = ScaleRuler()
+        self.scaleRuler.get_duration = self.get_duration
+        self.scaleRuler.get_start_time = self.get_start_time
+        self.put(self.scaleRuler, 0, 0)
+        layerInfoList.topSizeGroup.add_widget(self.scaleRuler)
+        width, self.offset = self.scaleRuler.size_request()
+
+        # track Layout
+        self.trackLayout = TrackLayout(layerInfoList, vadj)
+        self.put(self.trackLayout, 0, self.offset)
+
+    ## gtk.Widget overrides
+
+    def do_size_allocate(self, allocation):
+        gst.debug("LayerStack got allocation:%s" % list(allocation))
+        # The height of this layout needs to be the same as what is allocated
+        # set the child size_request before calling parent size_allocate
+
+        # width is the greatest of:
+        #   _ allocated area
+        #   _ timeline pixel width
+        width = max(allocation.width, self.get_pixel_width())
+        
+        self.set_size(width, allocation.height)
+        self.scaleRuler.set_property("width-request", width)
+        #self.scaleRuler.set_property("height-request", self.offset)
+        gst.debug("LayerStack is giving %d x %d request to TrackLayout" % (width, allocation.height - self.offset))
+        self.trackLayout.set_property("width-request", width)
+        self.trackLayout.set_property("height-request", allocation.height-self.offset)
+        ret = gtk.Layout.do_size_allocate(self, allocation)
+        return ret
+
+    ## ZoomableWidgetInterface methodse
+
+    def get_duration(self):
+        return self.trackLayout.get_duration()
+
+    def get_start_time(self):
+        return self.trackLayout.get_start_time()
+
+    def zoomChanged(self):
+        # propagate to childs
+        self.scaleRuler.zoomChanged()
+        self.trackLayout.zoomChanged()
+        # resize ourself
+        w,h = self.get_size()
+        self.set_size(self.get_pixel_width(),
+                      h)
+
+class InfoLayout(gtk.Layout, LayeredWidgetInterface):
+    __gsignals__ = {
+         "size-request":"override",
+         "size-allocate":"override",
+        }
+
+    def __init__(self, layerInfoList, vadj):
+        gtk.Layout.__init__(self)
+        self.tracks = []
+        LayeredWidgetInterface.__init__(self, layerInfoList)
+        self.set_vadjustment(vadj)
+
+    ## gtk.Widget overrides
 
     def do_size_request(self, requisition):
-        gst.info("stack requisition %s" % list(requisition))
+        gst.debug("InfoLayout requisition %s" % list(requisition))
         width = 0
-        height = 0
-        for widget in self.layers:
-            nw, nh = widget.size_request()
-            nx, ny = self.child_get(widget, "x", "y")
-            if (nw + nx) > width:
-                width = nw + nx
-            if (nh + ny) > height:
-                height = nh + ny
-        if not self.widthflexible:
-            requisition.width = width
-        gst.debug("setting width to %d" % width)
-        self.set_size(width, height)
-        #requisition.height = height
+        # figure out width
+        for i in range(len(self.tracks)):
+            track = self.tracks[i]
+            childwidth, childheight = track.size_request()
+            width = max(width, childwidth)
+        # set child requisition
+        for i in range(len(self.tracks)):        
+            self.tracks[i].set_size_request(width,
+                                            self.layerinfolist[i].currentHeight)
+        # inform container of required width
+        requisition.width = width
+        gst.debug("returning %s" % list(requisition))
 
-    def _update_compositions(self):
-        # update the position/size of the compositions
-        ypos = 0
-        for layer in self.layers:
-            # position correctly
-            nw, nh = layer.size_request()
-            self.move(layer, 0, ypos)
-            ypos += nh + 10
+    def do_size_allocate(self, allocation):
+        # TODO : We should expand the layers height if we have more allocation
+        # height than needed
+        gst.debug("InfoLayout got allocation:%s" % list(allocation))
+        ret = gtk.Layout.do_size_allocate(self, allocation)
+        return ret
 
-    def __delitem__(self, pos):
-        # del x[pos]
-        self._update_compositions()
-        pass
+    def __updateLayoutHeight(self):
+        width, height = self.get_size()
+        self.set_size(width, self.layerinfolist.totalHeight)
 
-    def __getitem__(self, pos):
-        # x[pos]
-        pass
+    ## gtk.Layout overrides
 
-    def __iter__(self):
-        return self.compositions.__iter__()
+    def set_size(self, width, height):
+        gst.debug("InfoLayout setting size to %dx%d" % (width, height))
+        gtk.Layout.set_size(self, width, height)
 
-    def append(self, composition):
-        # TODO : do type checking here
-        self.compositions.append(composition)
-        layer = self.layerclass(composition)
-        self.layers.append(layer)
-        self.put(layer, 0, 0)
-        self._update_compositions()
 
-    def insert(self, pos, composition):
-        # insert composition before pos
-        self.compositions.insert(pos, composition)
-        layer = self.layerclass(composition)
-        self.layers.insert(pos, layer)
-        self.put(layer, 0, 0)
-        self._update_compositions()
+    ## LayeredWidgetInterface methods
 
-class ComplexTimelineInfoStack(ComplexTimelineStack):
+    def layerAdded(self, layerposition):
+        track = InfoLayer(self.layerinfolist[layerposition])
+        self.tracks.insert(layerposition, track)
+        self.__updateLayoutHeight()
+        self.put(track, 0, self.layerinfolist[layerposition].yposition)
+        # TODO : force redraw
 
-    layerclass = ComplexTimelineInfoLayer
+    def layerRemoved(self, layerposition):
+        track = self.tracks.pop(layerposition)
+        self.remove(track)
+        self.__updateLayoutHeight()
+        # TODO : force redraw
 
-class ComplexTimelineTrackStack(ComplexTimelineStack):
+    # TODO : implement other LayeredWidgetInterface methods
 
-    layerclass = ComplexTimelineTrackLayer
+

@@ -46,7 +46,7 @@ class PitiviViewer(gtk.VBox):
     """ Pitivi's graphical viewer """
 
     def __init__(self, pitivi):
-        gst.info("New PitiviViewer")
+        gst.log("New PitiviViewer")
         self.pitivi = pitivi
         gtk.VBox.__init__(self)
         self.current_time = long(0)
@@ -163,7 +163,7 @@ class PitiviViewer(gtk.VBox):
         caps = sinkpad.get_negotiated_caps()
         if not caps:
             return
-        gst.debug("caps:%s" % caps.to_string())
+        gst.log("caps:%s" % caps.to_string())
         width = caps[0]["width"]
         height = caps[0]["height"]
 
@@ -173,7 +173,7 @@ class PitiviViewer(gtk.VBox):
     def _create_sinkthreads(self):
         """ Creates the sink threads for the playground """
         # video elements
-        gst.info("Creating video sink")
+        gst.debug("Creating video sink")
         self.videosink = plumber.get_video_sink(self.pitivi)
         vsinkthread = gst.Bin('vsinkthread')
         vqueue = gst.element_factory_make('queue')
@@ -189,7 +189,7 @@ class PitiviViewer(gtk.VBox):
         self.videosink.set_xwindow_id(self.drawingarea.window.xid)
 
         # audio elements
-        gst.info("Creating audio sink")
+        gst.debug("Creating audio sink")
         self.audiosink = plumber.get_audio_sink(self.pitivi)
         asinkthread = gst.Bin('asinkthread')
         aqueue = gst.element_factory_make('queue')
@@ -377,7 +377,6 @@ class PitiviViewer(gtk.VBox):
         self.pitivi.current.settings.connect("settings-changed", self._settings_changed_cb)
         
     def _add_timeline_to_playground(self):
-        gst.info("")
         self.pitivi.playground.add_pipeline(self.pitivi.current.get_bin())
 
     def record_cb(self, button):

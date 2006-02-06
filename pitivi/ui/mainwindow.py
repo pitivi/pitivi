@@ -37,7 +37,7 @@ class PitiviMainWindow(gtk.Window):
 
     def __init__(self, pitivi):
         """ initialize with the Pitivi object """
-        gst.info("Creating MainWindow")
+        gst.log("Creating MainWindow")
         self.pitivi = pitivi
         gtk.Window.__init__(self)
         self.maximize()

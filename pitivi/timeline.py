@@ -55,7 +55,7 @@ class Timeline(gobject.GObject):
     # for the time being we hardcode an audio and a video composition
     
     def __init__(self, project):
-        gst.info("new Timeline for project %s" % project)
+        gst.log("new Timeline for project %s" % project)
         gobject.GObject.__init__(self)
         self.project = project
 
@@ -127,7 +127,7 @@ class TimelineObject(gobject.GObject):
     def __init__(self, factory=None, start=-1, duration=-1,
                  media_type=MEDIA_TYPE_NONE, name=""):
         gobject.GObject.__init__(self)
-        gst.info("new TimelineObject :%s" % name)
+        gst.log("new TimelineObject :%s" % name)
         self.start = -1
         self.duration = -1
         self.linked = None
@@ -252,20 +252,6 @@ class TimelineSource(TimelineObject):
 
     def __init__(self, **kw):
         TimelineObject.__init__(self, **kw)
-
-    def _make_gnl_object(self):
-        if self.media_type == MEDIA_TYPE_AUDIO:
-            caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
-        elif self.media_type == MEDIA_TYPE_VIDEO:
-            caps = gst.caps_from_string("video/x-raw-yuv;video/x-raw-rgb")
-        else:
-            raise NameError, "media type is NONE !"
-        self.factory.lastbinid = self.factory.lastbinid + 1
-        self.gnlobject = gst.element_factory_make("gnlfilesource", "source-" + self.name + str(self.factory.lastbinid))
-        self.gnlobject.set_property("location", self.factory.name)
-        self.gnlobject.set_property("caps", caps)
-        self.gnlobject.set_property("start", long(0))
-        self.gnlobject.set_property("duration", long(self.factory.length))
         
 
 class TimelineFileSource(TimelineSource):
@@ -290,6 +276,20 @@ class TimelineFileSource(TimelineSource):
         if media_duration == -1:
             media_duration = self.factory.length
         self.set_media_start_duration_time(media_start, media_duration)
+        
+    def _make_gnl_object(self):
+        if self.media_type == MEDIA_TYPE_AUDIO:
+            caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
+        elif self.media_type == MEDIA_TYPE_VIDEO:
+            caps = gst.caps_from_string("video/x-raw-yuv;video/x-raw-rgb")
+        else:
+            raise NameError, "media type is NONE !"
+        self.factory.lastbinid = self.factory.lastbinid + 1
+        self.gnlobject = gst.element_factory_make("gnlfilesource", "source-" + self.name + str(self.factory.lastbinid))
+        self.gnlobject.set_property("location", self.factory.name)
+        self.gnlobject.set_property("caps", caps)
+        self.gnlobject.set_property("start", long(0))
+        self.gnlobject.set_property("duration", long(self.factory.length))
         
     def _make_brother(self):
         """ make the brother element """
@@ -391,13 +391,52 @@ class TimelineComposition(TimelineSource):
 
     * Signals:
       _ 'condensed-list-changed' : condensed list
-    
+      _ 'global-effect-added' : a global-effect was added to the composition
+      _ 'global-effect-removed' : a global-effect was removed from the composition
+      _ 'simple-effect-added' : a simple-effect was added to the composition
+      _ 'simple-effect-removed' : a simple-effect was removed from the composition
+      _ 'complex-effect-added' : a complex-effect was added to the composition
+      _ 'complex-effect-removed' : a complex-effect was removed from the composition
+      _ 'transition-added' : a transition was added to the composition
+      _ 'transition-removed' : a transitions was removed from the composition
+      _ 'source-added' : a TimelineSource was added to the composition
+      _ 'source-removed' : a TimelineSource was removed from the composition
     """
 
     __gsignals__ = {
         'condensed-list-changed' : ( gobject.SIGNAL_RUN_LAST,
                                      gobject.TYPE_NONE,
-                                     (gobject.TYPE_PYOBJECT, ))
+                                     (gobject.TYPE_PYOBJECT, )),
+        'global-effect-added' : ( gobject.SIGNAL_RUN_LAST,
+                                  gobject.TYPE_NONE,
+                                  (gobject.TYPE_PYOBJECT, )),
+        'global-effect-removed' : ( gobject.SIGNAL_RUN_LAST,
+                                    gobject.TYPE_NONE,
+                                    (gobject.TYPE_PYOBJECT, )),
+        'simple-effect-added' : ( gobject.SIGNAL_RUN_LAST,
+                                  gobject.TYPE_NONE,
+                                  (gobject.TYPE_PYOBJECT, )),
+        'simple-effect-removed' : ( gobject.SIGNAL_RUN_LAST,
+                                    gobject.TYPE_NONE,
+                                    (gobject.TYPE_PYOBJECT, )),
+        'complex-effect-added' : ( gobject.SIGNAL_RUN_LAST,
+                                   gobject.TYPE_NONE,
+                                   (gobject.TYPE_PYOBJECT, )),
+        'complex-effect-removed' : ( gobject.SIGNAL_RUN_LAST,
+                                     gobject.TYPE_NONE,
+                                     (gobject.TYPE_PYOBJECT, )),
+        'transitions-added' : ( gobject.SIGNAL_RUN_LAST,
+                                gobject.TYPE_NONE,
+                                (gobject.TYPE_PYOBJECT, )),
+        'transition-removed' : ( gobject.SIGNAL_RUN_LAST,
+                                 gobject.TYPE_NONE,
+                                 (gobject.TYPE_PYOBJECT, )),
+        'source-added' : ( gobject.SIGNAL_RUN_LAST,
+                           gobject.TYPE_NONE,
+                           (gobject.TYPE_PYOBJECT, )),
+        'source-removed' : ( gobject.SIGNAL_RUN_LAST,
+                             gobject.TYPE_NONE,
+                             (gobject.TYPE_PYOBJECT, )),
         }
 
     global_effects = [] # list of effects starting from highest priority
@@ -624,6 +663,7 @@ class TimelineComposition(TimelineSource):
                 self.linked.add_source(source.brother, position, auto_linked=False)
         self.gnlobject.info("added source %s" % source.gnlobject)
         gst.info("%s" % str(self.sources))
+        self.emit('source-added', source)
 
     def insert_source_after(self, source, existingsource, push_following=True, auto_linked=True):
         """

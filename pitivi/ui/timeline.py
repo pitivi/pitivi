@@ -30,7 +30,7 @@ class TimelineWidget(gtk.VBox):
     """ Widget for reprensenting Pitivi's Timeline """
 
     def __init__(self, pitivi):
-        gst.info("New Timeline Widget")
+        gst.log("New Timeline Widget")
         self.pitivi = pitivi
         gtk.VBox.__init__(self)
         self._create_gui()
@@ -91,6 +91,7 @@ class TimelineWidget(gtk.VBox):
         self.complexview.show_all()
 
     def _simple_scroll_cb(self, simplet, event):
+        gst.debug("state:%s" % event.state)
         self.hscroll.emit("scroll-event", event)
         
         
@@ -133,4 +134,14 @@ class ComplexTimelineContentWidget(gtk.HBox):
         self.pack_start(self.timeline, expand=True, fill=True)
         self.scrollbar = gtk.VScrollbar(self.twidget.vadjustment)
         self.pack_start(self.scrollbar, expand=False)
+        self.connect('scroll-event', self._scroll_event_cb)
+
+    def _scroll_event_cb(self, timeline, event):
+        gst.debug("complex state:%s" % event.state)
+        if not event.state & gtk.gdk.CONTROL_MASK:
+            return False
+        if event.state & gtk.gdk.CONTROL_MASK:
+            self.scrollbar.emit("scroll-event", event)
+        return True
+
 

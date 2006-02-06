@@ -54,7 +54,7 @@ class PlayGround(gobject.GObject):
         }
 
     def __init__(self):
-        gst.info("Starting up playground")
+        gst.log("Starting up playground")
         gobject.GObject.__init__(self)
         # List of used pipelines
         self.pipelines = []
@@ -235,9 +235,8 @@ class PlayGround(gobject.GObject):
         if not self.current or not self.asinkthread or not self.vsinkthread:
             gst.warning("returning ???")
             return
-        gst.debug("setting to play")
         self.state = gst.STATE_PLAYING
-        gst.info("%s" % self.current.set_state(self.state))
+        gst.log("%s" % self.current.set_state(self.state))
 ##        gst.debug("set_state() done, getting state now")
 ##         value = self.current.get_state(None)
 ##        gst.debug("got_state : %s" % str(value))

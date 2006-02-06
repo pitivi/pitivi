@@ -115,7 +115,7 @@ def available_muxers():
     for fact in flist:
         if "Codec/Muxer" == fact.get_klass():
             res.append(fact)
-    gst.info(str(res))
+    gst.log(str(res))
     return res
 
 def available_video_encoders():
@@ -125,7 +125,7 @@ def available_video_encoders():
     for fact in flist:
         if "Codec/Encoder/Video" in fact.get_klass():
             res.append(fact)
-    gst.info(str(res))
+    gst.log(str(res))
     return res
 
 def available_audio_encoders():
@@ -135,7 +135,7 @@ def available_audio_encoders():
     for fact in flist:
         if "Codec/Encoder/Audio" in fact.get_klass():
             res.append(fact)
-    gst.info(str(res))
+    gst.log(str(res))
     return res
 
 def encoders_muxer_compatible(encoders, muxer):

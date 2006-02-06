@@ -4,7 +4,9 @@ ui_PYTHON = \
 	__init__.py \
 	complexlayer.py \
 	complexstack.py \
+	complexsource.py \
 	complextimeline.py \
+	complexinterface.py \
 	exportsettingswidget.py \
 	glade.py \
 	gstwidget.py \
@@ -14,6 +16,7 @@ ui_PYTHON = \
 	timeline.py \
 	timelineobjects.py \
 	viewer.py \
+	ruler.py \
 	plumber.py
 
 ui_DATA = \

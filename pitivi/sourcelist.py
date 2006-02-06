@@ -49,7 +49,7 @@ class SourceList(gobject.GObject):
         }
 
     def __init__(self, project):
-        gst.info("new sourcelist for project %s" % project)
+        gst.log("new sourcelist for project %s" % project)
         gobject.GObject.__init__(self)
         self.project = project
         self.sources = {}

@@ -22,7 +22,6 @@
 import os.path
 from urllib import unquote
 import gobject
-import pango
 import gtk
 import gst
 from gtk import gdk

@@ -59,7 +59,7 @@ class Pitivi(gobject.GObject):
         """
         initialize pitivi with the command line arguments
         """
-        gst.info("starting up pitivi...")
+        gst.log("starting up pitivi...")
         gobject.GObject.__init__(self)
         # TODO parse cmd line arguments
 
