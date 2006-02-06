@@ -68,6 +68,7 @@ class LayerInfo:
         If currentHeight is None, it will be set to the given minimumHeight.
         """
         self.composition = composition
+        self.sizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_VERTICAL)
         self.minimumHeight = minimumHeight
         self.expanded = expanded
         self.yposition = 0
@@ -208,17 +209,20 @@ class LayerInfoList(gobject.GObject):
             return
 
         # update total height
-        self.currentHeight += (height - layer.currentHeight)
+        self.totalHeight += (height - layer.currentHeight)
         
         # save previous height
         layer.previousHeight = layer.currentHeight
         layer.currentHeight = height
 
         self.recalculatePositions()
-        self.emit('layer-height-changed', position, height)
+        self.emit('layer-height-changed', position)
         
 
 class InfoLayer(gtk.Expander):
+    __gsignals__ = {
+        "size-request":"override",
+        }
 
     def __init__(self, layerInfo):
         gtk.Expander.__init__(self, "pouet")
@@ -230,7 +234,15 @@ class InfoLayer(gtk.Expander):
         # . react on 'expand' virtual method
         # . put content
 
+    def do_size_request(self, requisition):
+        gtk.Expander.do_size_request(self, requisition)
+        gst.debug("InfoLayer returning requisition %s" % list(requisition))
+
 class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
+
+    __gsignals__ = {
+        #"size-request":"override",
+        }
 
     # Safe adding zone on the left/right
     border = 5
@@ -242,14 +254,19 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         self.layerInfo = layerInfo
         self.layerInfo.composition.connect('start-duration-changed', self.compStartDurationChangedCb)
         self.set_property("width-request", self.get_pixel_width())
-        self.set_property("height-request", self.layerInfo.currentHeight)
+        #self.set_property("height-request", self.layerInfo.currentHeight)
 
     def compStartDurationChangedCb(self, composition, start, duration):
         gst.info("setting width-request to %d" % self.get_pixel_width())
         self.set_property("width-request", self.get_pixel_width())
-        self.set_property("height-request", self.layerInfo.currentHeight)
+        #self.set_property("height-request", self.layerInfo.currentHeight)
         self.start_duration_changed()
 
+
+##     def do_size_request(self, requisition):
+##         gst.debug("TrackLayer got requisition %s" % list(requisition))
+##         gtk.Layout.do_size_request(self, requisition)
+##         gst.debug("TrackLayer returning requisition %s" % list(requisition))
 
     ## ZoomableWidgetInterface methods
 

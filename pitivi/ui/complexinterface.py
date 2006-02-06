@@ -181,7 +181,7 @@ class LayeredWidgetInterface:
 
     def changeLayerHeight(self, layerposition, height):
         """ set the layer at the given position to the requested height """
-        pass
+        self.layerinfolist.changeLayerHeight(layerposition, height)
 
     def __expanded_cb(self, list, layerposition, expanded):
         self.layerExpanded(layerposition, expanded)

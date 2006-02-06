@@ -1,3 +1,12 @@
+2006-02-07  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexstack.py:
+	* pitivi/ui/mainwindow.py:
+	Use gtk.SizeGroup to synchronize layers' height.
+	Don't maximize on startup.
+
 2006-02-06  Edward Hervey  <edward@fluendo.com>
 
 	* MAINTAINERS:

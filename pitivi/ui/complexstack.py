@@ -29,6 +29,7 @@ from complexinterface import LayeredWidgetInterface, ZoomableWidgetInterface
 class TrackLayout(gtk.Layout, LayeredWidgetInterface, ZoomableWidgetInterface):
     __gsignals = {
         "size-allocate":"override",
+        "size-request":"override",
         }
 
     def __init__(self, layerInfoList, vadj):
@@ -47,11 +48,28 @@ class TrackLayout(gtk.Layout, LayeredWidgetInterface, ZoomableWidgetInterface):
 
     ## gtk.Widget overrides
 
+    def reposition_tracks(self):
+        for track, layerinfo in zip(self.tracks, self.layerinfolist):
+            prevy = self.child_get_property(track, "y")
+            newy = layerinfo.yposition
+            gst.debug("TrackLayer is currently at y:%d, should be at y:%d" % (prevy, newy))
+            if newy == prevy:
+                continue
+            gst.debug("Moving TrackLayer to y:%d" % newy)
+            self.move(track, 0, newy)
+
+    def do_size_request(self, requisition):
+        gst.debug("TrackLayout got requisition %s" % list(requisition))
+        gtk.Layout.do_size_request(self, requisition)
+        gst.debug("TrackLayout returning requisition %s" % list(requisition))
+
     def do_size_allocate(self, allocation):
         gst.debug("TrackLayout got allocation %s" % list(allocation))
+        self.reposition_tracks()
         gtk.Layout.do_size_allocate(self, allocation)
 
     def __updateLayoutHeight(self):
+        gst.info("TrackLayout update Layout Height")
         width, height = max(self.get_size(), self.allocation.width)
         self.set_size(width, self.layerinfolist.totalHeight)
         self.queue_resize()
@@ -71,19 +89,22 @@ class TrackLayout(gtk.Layout, LayeredWidgetInterface, ZoomableWidgetInterface):
 
     def layerHeightChanged(self, layerposition):
         # TODO : resize track
-        self.tracks[layerposition].set_property("height-request",
-                                                self.layerinfolist[layerposition].currentHeight)
+##         self.tracks[layerposition].set_property("height-request",
+##                                                 self.layerinfolist[layerposition].currentHeight)
         # modify layout size
+        self.reposition_tracks()
         self.__updateLayoutHeight()
 
     def layerAdded(self, layerposition):
         gst.debug("Adding a layer to TrackLayout")
         layerinfo = self.layerinfolist[layerposition]
         track = TrackLayer(layerinfo)
-        track.set_property("height-request",
-                           layerinfo.currentHeight)
+        layerinfo.sizeGroup.add_widget(track)
+##         track.set_property("height-request",
+##                            layerinfo.currentHeight)
         self.tracks.insert(layerposition, track)
         self.__updateLayoutHeight()
+        gst.debug("putting the TrackLayer at yposition:%d" % layerinfo.yposition)
         self.put(track, 0, layerinfo.yposition)
         # TODO : force redraw
 
@@ -139,6 +160,7 @@ class LayerStack(gtk.Layout, ZoomableWidgetInterface):
 
         # track Layout
         self.trackLayout = TrackLayout(layerInfoList, vadj)
+        gst.debug("Putting the Track Layout at yposition:%d" % self.offset)
         self.put(self.trackLayout, 0, self.offset)
 
     ## gtk.Widget overrides
@@ -196,15 +218,23 @@ class InfoLayout(gtk.Layout, LayeredWidgetInterface):
     def do_size_request(self, requisition):
         gst.debug("InfoLayout requisition %s" % list(requisition))
         width = 0
+        ypos = 0
         # figure out width
         for i in range(len(self.tracks)):
             track = self.tracks[i]
             childwidth, childheight = track.size_request()
+            gst.debug("InfoLayout, got %d x %d from child size_request" % (childwidth, childheight))
             width = max(width, childwidth)
+            self.changeLayerHeight(i, childheight)
+            #self.layerinfolist[i].currentHeight = childheight
+        self.layerinfolist.recalculatePositions()
+#            gst.debug("positioning track at 0,ypos:%d" % ypos)
+#            self.move(track, 0, ypos)
+#            ypos += childheight
         # set child requisition
-        for i in range(len(self.tracks)):        
-            self.tracks[i].set_size_request(width,
-                                            self.layerinfolist[i].currentHeight)
+##         for i in range(len(self.tracks)):        
+##             self.tracks[i].set_size_request(width,
+##                                             self.layerinfolist[i].currentHeight)
         # inform container of required width
         requisition.width = width
         gst.debug("returning %s" % list(requisition))
@@ -213,6 +243,15 @@ class InfoLayout(gtk.Layout, LayeredWidgetInterface):
         # TODO : We should expand the layers height if we have more allocation
         # height than needed
         gst.debug("InfoLayout got allocation:%s" % list(allocation))
+        for i in range(len(self.tracks)):
+            prevy = self.child_get_property(self.tracks[i], "y")
+            newy = self.layerinfolist[i].yposition
+            gst.debug("previous y:%d, new y:%d" % (prevy,newy))
+            if prevy == newy:
+                continue
+            gst.debug("moving InfoLayer to yposition:%d" %  self.layerinfolist[i].yposition)
+            self.move(self.tracks[i], 0,
+                      self.layerinfolist[i].yposition)
         ret = gtk.Layout.do_size_allocate(self, allocation)
         return ret
 
@@ -230,9 +269,12 @@ class InfoLayout(gtk.Layout, LayeredWidgetInterface):
     ## LayeredWidgetInterface methods
 
     def layerAdded(self, layerposition):
-        track = InfoLayer(self.layerinfolist[layerposition])
+        layerinfo = self.layerinfolist[layerposition]
+        track = InfoLayer(layerinfo)
+        layerinfo.sizeGroup.add_widget(track)
         self.tracks.insert(layerposition, track)
         self.__updateLayoutHeight()
+        gst.debug("Putting InfoLayer at yposition:%d" % self.layerinfolist[layerposition].yposition)
         self.put(track, 0, self.layerinfolist[layerposition].yposition)
         # TODO : force redraw
 
@@ -241,6 +283,9 @@ class InfoLayout(gtk.Layout, LayeredWidgetInterface):
         self.remove(track)
         self.__updateLayoutHeight()
         # TODO : force redraw
+
+    def layerHeightChanged(self, layerposition):
+        pass
 
     # TODO : implement other LayeredWidgetInterface methods
 
