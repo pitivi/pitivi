@@ -1,5 +1,12 @@
 2006-02-06  Edward Hervey  <edward@fluendo.com>
 
+	* MAINTAINERS:
+	* Makefile.am:
+	Added maintainers file in order to have proper pitivi-main@gnome.org.
+	Welcome PiTiVi to gnome.org :)
+
+2006-02-06  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/check.py:
 	Added check for autodetect plugins existence.
 

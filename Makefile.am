@@ -13,4 +13,5 @@ EXTRA_DIST = \
 	autogen.sh \
 	NEWS \
 	AUTHORS \
-	RELEASE
+	RELEASE	\
+	MAINTAINERS
