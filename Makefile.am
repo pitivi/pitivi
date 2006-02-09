@@ -5,6 +5,8 @@ SUBDIRS	= bin pitivi common
 desktopdir = $(datadir)/applications
 desktop_DATA = pitivi.desktop
 
+icondir = $(datadir)/pixmaps
+icon_DATA = application-pitivi.png
 
 EXTRA_DIST = \
 	pitivi.spec \
@@ -13,5 +15,5 @@ EXTRA_DIST = \
 	autogen.sh \
 	NEWS \
 	AUTHORS \
-	RELEASE	\
-	MAINTAINERS
+	RELEASE \
+	application-pitivi.png
