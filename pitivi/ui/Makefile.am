@@ -17,6 +17,7 @@ ui_PYTHON = \
 	timelineobjects.py \
 	viewer.py \
 	ruler.py \
+	layerwidgets.py \
 	plumber.py
 
 ui_DATA = \

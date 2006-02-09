@@ -439,16 +439,16 @@ class TimelineComposition(TimelineSource):
                              (gobject.TYPE_PYOBJECT, )),
         }
 
-    global_effects = [] # list of effects starting from highest priority
-    simple_effects = [[]] # list of layers of simple effects (order: priority, then time)
-    complex_effects = [] # complex effect sorted by time
-    transitions = [] # transitions sorted by time
-    # list of layers of simple effects (order: priority, then time)
-    # each layer contains (min priority, max priority, list objects)
-    #sources = [(2048, 2060, [])] 
-    condensed = [] # list of sources/transitions seen from a top-level view
 
     def __init__(self, **kw):
+        self.global_effects = [] # list of effects starting from highest priority
+        self.simple_effects = [[]] # list of layers of simple effects (order: priority, then time)
+        self.complex_effects = [] # complex effect sorted by time
+        self.transitions = [] # transitions sorted by time
+        # list of layers of simple effects (order: priority, then time)
+        # each layer contains (min priority, max priority, list objects)
+        #sources = [(2048, 2060, [])] 
+        self.condensed = [] # list of sources/transitions seen from a top-level view
         self.sources = [(2048, 2060, [])]
         TimelineSource.__init__(self, **kw)
 

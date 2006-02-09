@@ -24,11 +24,11 @@ import gtk
 import gst
 
 from pitivi.timeline import TimelineSource
-from complexinterface import ComplexZoomableWidgetInterface
+from complexinterface import ZoomableWidgetInterface
 
 # TODO : We might need an abstract class for ComplexTimelineObjects....
 
-class ComplexTimelineSource(gtk.DrawingArea, ComplexZoomableWidgetInterface):
+class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
     __gsignals__ = {
         "expose-event":"override",
         "size-request":"override",
@@ -36,14 +36,23 @@ class ComplexTimelineSource(gtk.DrawingArea, ComplexZoomableWidgetInterface):
 
     modelclass = TimelineSource
 
-    def __init__(self, source):
+    def __init__(self, source, layerInfo):
         gtk.DrawingArea.__init__(self)
-        self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(0,0,0))
+        self.layerInfo = layerInfo
+        #self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(0,0,0))
         self.source = source
         self.source.connect("start-duration-changed", self._start_duration_changed_cb)
 
+
+    def get_height(self):
+        # TODO, maybe this should be zoomable too ?
+        return 50
+
+    ## gtk.Widget overrides
+
     def do_expose_event(self, event):
         gst.debug("timelinesource %s" % list(event.area))
+        # TODO : we need to check to see if a redraw is necessary
         self.context = self.window.cairo_create()
         self.context.rectangle(*event.area)
         self.context.clip()
@@ -53,13 +62,17 @@ class ComplexTimelineSource(gtk.DrawingArea, ComplexZoomableWidgetInterface):
     def do_size_request(self, requisition):
         gst.debug("source, requisition:%s" % list(requisition))
         requisition.width=self.get_pixel_width()
-        requisition.height=50
+        if self.layerInfo.expanded:
+            requisition.height=self.get_height()
 
     def draw(self, context):
         rect = self.get_allocation()
+        gst.debug("Source draw %s" % list(rect))
         context.set_source_rgb(1, 0, 0)
         context.rectangle(0, 0, rect.width, rect.height)
         context.stroke()
+
+    ## ZoomableWidgetInterface methods
 
     def get_duration(self):
         return self.source.duration

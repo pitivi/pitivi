@@ -103,6 +103,8 @@ class ZoomableWidgetInterface:
         if duration == gst.CLOCK_TIME_NONE:
             return 0
         return int((float(duration) / gst.SECOND) * self.zoomratio)
+
+    ## Methods to implement in subclasses
         
     def get_duration(self):
         """
@@ -116,6 +118,9 @@ class ZoomableWidgetInterface:
         Return the start time in nanosecond of the object
         To be implemented by subclasses
         """
+        raise NotImplementedError
+
+    def zoomChanged(self):
         raise NotImplementedError
 
     def duration_changed(self):
@@ -137,9 +142,6 @@ class ZoomableWidgetInterface:
         gst.debug("Changing zoomratio to %f" % zoomratio)
         self.zoomratio = zoomratio
         self.zoomChanged()
-
-    def zoomChanged(self):
-        raise NotImplementedError
 
 class LayeredWidgetInterface:
 

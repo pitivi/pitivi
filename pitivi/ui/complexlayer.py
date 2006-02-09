@@ -25,6 +25,7 @@ import gobject
 import gst
 
 from complexinterface import ZoomableWidgetInterface
+from complexsource import ComplexTimelineSource
 
 #
 # Layer system v1 (01 Feb 2006)
@@ -155,6 +156,7 @@ class LayerInfoList(gobject.GObject):
         """ Recalculate the Y Position of each layer """
         ypos = 0
         for layer in self._list:
+            gst.debug("setting layer position to %d" % ypos)
             layer.yposition = ypos
             ypos += layer.currentHeight
 
@@ -169,6 +171,7 @@ class LayerInfoList(gobject.GObject):
 
     def expandLayer(self, position, expanded):
         """ expand (or reduce) the layer at given position """
+        gst.debug("Expanding layer[%d] to be expanded:%s" % (position, expanded))
         try:
             layer = self._list[position]
         except:
@@ -179,12 +182,12 @@ class LayerInfoList(gobject.GObject):
         
         if expanded:
             # update total height
-            self.currentHeight += (layer.previousHeight - layer.currentHeight)
+            self.totalHeight += (layer.previousHeight - layer.currentHeight)
             # set back to the previous height
             layer.currentHeight = layer.previousHeight
         else:
             # update total height
-            self.currentHeight -= (layer.currentHeight - layer.minimumHeight)
+            self.totalHeight -= (layer.currentHeight - layer.minimumHeight)
             # save height and set currentHeight to minimum
             layer.previousHeight = layer.currentHeight
             layer.currentHeight = layer.minimumHeight
@@ -194,6 +197,7 @@ class LayerInfoList(gobject.GObject):
 
     def changeLayerHeight(self, position, height):
         """ change the height for the layer at given position """
+        gst.debug("Changing height of layer[%d] to height:%d" % (position, height))
         try:
             layer = self._list[position]
         except:
@@ -220,41 +224,46 @@ class LayerInfoList(gobject.GObject):
         
 
 class InfoLayer(gtk.Expander):
-    __gsignals__ = {
-        "size-request":"override",
-        }
 
     def __init__(self, layerInfo):
-        gtk.Expander.__init__(self, "pouet")
+        gtk.Expander.__init__(self, "Track")
         self.layerInfo = layerInfo
+        self.set_border_width(5)
         self.set_expanded(self.layerInfo.expanded)
-        self.add(gtk.Label("A track"))
+        self.add(gtk.Label("Track Info"))
 
         # TODO :
         # . react on 'expand' virtual method
         # . put content
 
-    def do_size_request(self, requisition):
-        gtk.Expander.do_size_request(self, requisition)
-        gst.debug("InfoLayer returning requisition %s" % list(requisition))
 
 class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
     __gsignals__ = {
-        #"size-request":"override",
+        "size-request":"override",
         }
 
     # Safe adding zone on the left/right
     border = 5
+    effectgutter = 5
+    layergutter = 5
 
-    def __init__(self, layerInfo):
+    def __init__(self, layerInfo, hadj):
         gst.log("new TrackLayer for composition %r" % layerInfo.composition)
         gtk.Layout.__init__(self)
-        self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(1,0,0))
+        self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(20000,20000,16000))
+
+        self.set_hadjustment(hadj)
+        self.sources = {}
+        
         self.layerInfo = layerInfo
         self.layerInfo.composition.connect('start-duration-changed', self.compStartDurationChangedCb)
+        self.layerInfo.composition.connect('source-added', self.compSourceAddedCb)
         self.set_property("width-request", self.get_pixel_width())
         #self.set_property("height-request", self.layerInfo.currentHeight)
+
+
+    ## composition signal callbacks
 
     def compStartDurationChangedCb(self, composition, start, duration):
         gst.info("setting width-request to %d" % self.get_pixel_width())
@@ -262,11 +271,26 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         #self.set_property("height-request", self.layerInfo.currentHeight)
         self.start_duration_changed()
 
+    def compSourceAddedCb(self, composition, source):
+        # create new widget
+        widget = ComplexTimelineSource(source, self.layerInfo)
+        
+        # add it to self at the correct position
+        self.sources[source] = widget
+        self.put(widget, widget.get_pixel_position() + self.border,
+                 self.effectgutter)
 
-##     def do_size_request(self, requisition):
-##         gst.debug("TrackLayer got requisition %s" % list(requisition))
-##         gtk.Layout.do_size_request(self, requisition)
-##         gst.debug("TrackLayer returning requisition %s" % list(requisition))
+
+    def do_size_request(self, requisition):
+        gtk.Layout.do_size_request(self, requisition)
+        if False and self.layerInfo.expanded:
+            # TODO : update this formula
+            # calculate height needed
+            # effect gutter height
+            # layer gutter height
+            # layer height
+            requisition.height = self.effectgutter + 50
+            requisition.width = self.get_pixel_width()
 
     ## ZoomableWidgetInterface methods
 
@@ -278,3 +302,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
     def get_pixel_width(self):
         return ZoomableWidgetInterface.get_pixel_width(self) + 2 * self.border
+            
+    def do_size_allocate(self, allocation):
+        gst.debug("%r got allocation %s" % (self, list(allocation)))
+        gtk.Layout.do_size_allocate(self, allocation)

@@ -23,93 +23,120 @@ import gtk
 import gst
 from complexstack import LayerStack, InfoLayout
 from complexlayer import LayerInfoList
+from layerwidgets import TopLayer, CompositionLayer
+from complexinterface import ZoomableWidgetInterface
+
+class CompositionLayers(gtk.VBox, ZoomableWidgetInterface):
+
+    def __init__(self, leftsizegroup, hadj, layerinfolist):
+        gtk.VBox.__init__(self)
+        self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(1,0,0))
+        self.leftSizeGroup = leftsizegroup
+        self.hadj = hadj
+        self.layerInfoList = layerinfolist
+        self._createUI()
+
+    def _createUI(self):
+        self.set_spacing(5)
+        self.set_border_width(2)
+        self.layers = []
+        for layerinfo in self.layerInfoList:
+            complayer = CompositionLayer(self.leftSizeGroup, self.hadj,
+                                         layerinfo)
+            self.layers.append(complayer)
+            self.pack_start(complayer, expand=False)
+
+
+    ## ZoomableWidgetInterface overrides
+
+    def get_duration(self):
+        gst.debug("CompositionLayers get_duration")
+        return max([layer.get_duration() for layer in self.layers])
+
+    def get_start_time(self):
+        # the start time is always 0 (for display reason)
+        return 0
+
+    def zoomChanged(self):
+        for layer in self.layers:
+            layer.zoomChanged()
 
 #
-# Complex Timeline Design v1 (01 Feb 2006)
+# Complex Timeline Design v2 (08 Feb 2006)
 #
 #
 # Tree of contents (ClassName(ParentClass))
 # -----------------------------------------
 #
-# ComplexTimelineWidget (gtk.HBox)
+# ComplexTimelineWidget(gtk.VBox)
 # |  Top container
 # |
-# +- InfoStack (gtk.VBox)
-# |  |  Left side Stack. Tool and information on the streams
-# |  |
-# |  +- TopWidget (gtk.Label)
-# |  |    Global information, could contain tools
-# |  |
-# |  +- InfoLayout (gtk.Layout)
-# |     |  Uses the Timeline Vertical Adjustment
-# |     |  
-# |     +- InfoLayer (?, possibly gtk.DrawingArea or gtk.Expander)
-# |          Information on the associated layer
+# +--TopLayer (TimelineLayer (gtk.HBox))
+# |   |
+# |   +--TopLeftTimelineWidget(?)
+# |   |
+# |   +--ScaleRuler(gtk.Layout)
 # |
-# +- LayerStack (gtk.Layout)
-#    |  Uses the Timeline Horizontal Adjustment
-#    |
-#    +- ScaleRuler (gtk.DrawingArea)
-#    |    Imitates the behaviour of a gtk.Ruler but for Time/Frames
-#    |
-#    +- TrackLayout (gtk.Layout)
-#       |  Uses the Timeline Vertical Adjustment
+# +--gtk.ScrolledWindow
+#    | 
+#    +--CompositionsLayer(gtk.VBox)
 #       |
-#       +- TrackLayer (gtk.Layout)
-#            The actual timeline layer containing the sources/effects/...
-#
-# -----------------------------------------
-#
+#       +--CompositionLayer(TimelineLayer(gtk.HBox))
+#          |
+#          +--InfoLayer(gtk.Expander)
+#          |
+#          +--TrackLayer(gtk.Layout)
 
-class ComplexTimelineWidget(gtk.HBox):
-    __gsignals__ = {
-         "size-request":"override",
-         "size-allocate":"override",
-        }
-    _minheight = 200
+class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
 
-    def __init__(self, pitivi, hadj, vadj):
-        gst.log("creating")
-        gtk.HBox.__init__(self)
-        self.pitivi = pitivi
-        self.set_spacing(5)
-        self.hadj = hadj
-        self.vadj = vadj
+    def __init__(self, topwidget):
+        gst.log("Creating ComplexTimelineWidget")
+        gtk.VBox.__init__(self)
+
+        self.pitivi = topwidget.pitivi
+        self.hadj = topwidget.hadjustment
+        self.vadj = topwidget.vadjustment
 
         # common LayerInfoList
-        self.layerInfoList = LayerInfoList(pitivi.current.timeline)
+        self.layerInfoList = LayerInfoList(self.pitivi.current.timeline)
 
-        # Left Stack
-        self.leftStack = gtk.VBox()
-        self.leftTopWidget = self._getLeftTopWidget()
-        self.leftStack.pack_start(self.leftTopWidget, expand=False)
-        self.layerInfoList.topSizeGroup.add_widget(self.leftTopWidget)
-        self.infoLayout = InfoLayout(self.layerInfoList, self.vadj)
-        self.leftStack.pack_start(self.infoLayout, expand=True)
+        self._createUI()
 
-        self.pack_start(self.leftStack, expand=False, fill=True)
+    def _createUI(self):
+        self.set_border_width(4)
+        self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
 
-        # Right Stack
-        self.rightStack = LayerStack(self.layerInfoList, self.hadj, self.vadj)
+        # top layer (TopLayer)
+        self.topLayer = TopLayer(self.leftSizeGroup, self.hadj)
+        # overriding topLayer's ZoomableWidgetInterface methods
+        self.topLayer.get_duration = self.get_duration
+        self.topLayer.get_start_time = self.get_start_time
+        self.topLayer.overrideZoomableWidgetInterfaceMethods()
+        self.pack_start(self.topLayer, expand=False)
 
-        self.pack_start(self.rightStack, expand=True, fill=True)
 
-    ## left TopWidget methods
+        # List of CompositionLayers
+        self.compositionLayers = CompositionLayers(self.leftSizeGroup,
+                                                   self.hadj, self.layerInfoList)
 
-    def _getLeftTopWidget(self):
-        # return the widget that goes at the top of the left stack
-        # TODO : something better than a Label
-        return gtk.Label("Layers")
+        # ... in a scrolled window
+        self.scrolledWindow = gtk.ScrolledWindow()
+        self.scrolledWindow.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+        self.scrolledWindow.add_with_viewport(self.compositionLayers)
+        self.pack_start(self.scrolledWindow, expand=True)
 
-    ## gtk.Widget overrides
+    ## ZoomableWidgetInterface overrides
         
-    def do_size_request(self, requisition):
-        gst.debug("timeline requisition %s" % list(requisition))
-        ret = gtk.HBox.do_size_request(self, requisition)
-        gst.debug("returning %s" % list(requisition))
-        return ret
+    ## * we send everything to self.compositionLayers
+    ## * topLayer's function calls will also go there
 
-    def do_size_allocate(self, allocation):
-        gst.debug("timeline got allocation:%s" % list(allocation))
-        ret = gtk.HBox.do_size_allocate(self, allocation)
-        return ret
+    def get_duration(self):
+        return self.compositionLayers.get_duration()
+
+    def get_start_time(self):
+        return self.compositionLayers.get_start_time()
+
+    def zoomChanged(self):
+        self.topLayer.zoomChanged()
+        self.compositionLayers.zoomChanged()
+

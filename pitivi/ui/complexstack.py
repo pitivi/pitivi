@@ -226,15 +226,7 @@ class InfoLayout(gtk.Layout, LayeredWidgetInterface):
             gst.debug("InfoLayout, got %d x %d from child size_request" % (childwidth, childheight))
             width = max(width, childwidth)
             self.changeLayerHeight(i, childheight)
-            #self.layerinfolist[i].currentHeight = childheight
         self.layerinfolist.recalculatePositions()
-#            gst.debug("positioning track at 0,ypos:%d" % ypos)
-#            self.move(track, 0, ypos)
-#            ypos += childheight
-        # set child requisition
-##         for i in range(len(self.tracks)):        
-##             self.tracks[i].set_size_request(width,
-##                                             self.layerinfolist[i].currentHeight)
         # inform container of required width
         requisition.width = width
         gst.debug("returning %s" % list(requisition))
@@ -266,12 +258,23 @@ class InfoLayout(gtk.Layout, LayeredWidgetInterface):
         gtk.Layout.set_size(self, width, height)
 
 
+    ## callbacks on signals from child tracks
+
+    def _track_activate_cb(self, track):
+        try:
+            pos = self.tracks.index(track)
+        except:
+            gst.warning("got callback from non-handled InfoLayer")
+            return
+        self.expandLayer(pos, not track.get_expanded())
+
     ## LayeredWidgetInterface methods
 
     def layerAdded(self, layerposition):
         layerinfo = self.layerinfolist[layerposition]
         track = InfoLayer(layerinfo)
         layerinfo.sizeGroup.add_widget(track)
+        track.connect("activate", self._track_activate_cb)
         self.tracks.insert(layerposition, track)
         self.__updateLayoutHeight()
         gst.debug("Putting InfoLayer at yposition:%d" % self.layerinfolist[layerposition].yposition)
@@ -285,6 +288,10 @@ class InfoLayout(gtk.Layout, LayeredWidgetInterface):
         # TODO : force redraw
 
     def layerHeightChanged(self, layerposition):
+        pass
+
+    def layerExpanded(self, layerposition, expanded):
+        # recalculate position
         pass
 
     # TODO : implement other LayeredWidgetInterface methods

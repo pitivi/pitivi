@@ -42,7 +42,7 @@ class TimelineWidget(gtk.VBox):
         self.leftsizegroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
 
         self.simpleview = SimpleTimelineContentWidget(self)
-        self.complexview = ComplexTimelineContentWidget(self)
+        self.complexview = ComplexTimelineWidget(self)
 
         self.simpleview.connect("scroll-event", self._simple_scroll_cb)
         self.complexview.connect("scroll-event", self._simple_scroll_cb)
@@ -117,31 +117,4 @@ class SimpleTimelineContentWidget(gtk.HBox):
         layoutframe = gtk.Frame()
         layoutframe.add(self.timeline)
         self.pack_start(layoutframe)
-
-class ComplexTimelineContentWidget(gtk.HBox):
-    """ Widget for complex timeline content display """
-
-    def __init__(self, twidget):
-        self.twidget = twidget
-        gtk.HBox.__init__(self)
-        self._create_gui()
-        self.show_all()
-
-    def _create_gui(self):
-        self.timeline = ComplexTimelineWidget(self.twidget.pitivi,
-                                              self.twidget.hadjustment,
-                                              self.twidget.vadjustment)
-        self.pack_start(self.timeline, expand=True, fill=True)
-        self.scrollbar = gtk.VScrollbar(self.twidget.vadjustment)
-        self.pack_start(self.scrollbar, expand=False)
-        self.connect('scroll-event', self._scroll_event_cb)
-
-    def _scroll_event_cb(self, timeline, event):
-        gst.debug("complex state:%s" % event.state)
-        if not event.state & gtk.gdk.CONTROL_MASK:
-            return False
-        if event.state & gtk.gdk.CONTROL_MASK:
-            self.scrollbar.emit("scroll-event", event)
-        return True
-
 

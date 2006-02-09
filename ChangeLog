@@ -1,3 +1,21 @@
+2006-02-09  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline.py:
+	Wow, how long did this stay in for ??
+	
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/complexstack.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/timeline.py:
+	Complex Timeline Design #2
+	Less code, looks better, works faster.
+	Still has code to remove/refactor
+
 2006-02-07  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/complexinterface.py:
