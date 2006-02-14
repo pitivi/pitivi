@@ -1,3 +1,9 @@
+2006-02-14  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	Use '/usr/bin/env python' instead of '/usr/bin/python'.
+	Closes (#330579)
+
 2006-02-09  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/timeline.py:
