@@ -24,11 +24,8 @@ import gtk
 import gobject
 import gst
 
-from complexinterface import ZoomableWidgetInterface
-from complexsource import ComplexTimelineSource
-
 #
-# Layer system v1 (01 Feb 2006)
+# Layer system v2 (16 Feb 2006)
 #
 #
 # The layer information are stored in a LayerInfo.
@@ -40,19 +37,12 @@ from complexsource import ComplexTimelineSource
 # Contents:
 # . composition (Model.TimelineComposition)
 # . expanded (boolean, default=True)
-# . currentHeight (pixels)
-# . minimumHeight (pixels)
-# . previousHeight (pixels)
 #
 #
 # LayerInfoList (gobject.GObject)
 # -------------------------------
 # Provides the common python list accessors
 # Signals:
-# . 'layer-expanded' (layerposition (int), expanded (boolean))
-#       The given layer is now expanded or not
-# . 'layer-height-changed' (layerposition (int))
-#       The given layer's height has changed
 # . 'layer-added'
 #       A layer was added
 # . 'layer-removed'
@@ -62,30 +52,17 @@ from complexsource import ComplexTimelineSource
 class LayerInfo:
     """ Information on a layer for the complex timeline widgets """
 
-    def __init__(self, composition, minimumHeight,
-                 expanded=True, currentHeight=None,
-                 yposition=0):
+    def __init__(self, composition, expanded=True):
         """
         If currentHeight is None, it will be set to the given minimumHeight.
         """
         self.composition = composition
-        self.sizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_VERTICAL)
-        self.minimumHeight = minimumHeight
         self.expanded = expanded
-        self.yposition = 0
-        self.currentHeight = currentHeight or self.minimumHeight
-        self.previousHeight = self.minimumHeight
 
 class LayerInfoList(gobject.GObject):
     """ List, on steroids, of the LayerInfo"""
 
     __gsignals__ = {
-        'layer-expanded' : ( gobject.SIGNAL_RUN_LAST,
-                             gobject.TYPE_NONE,
-                             ( gobject.TYPE_INT, gobject.TYPE_BOOLEAN )),
-        'layer-height-changed' : ( gobject.SIGNAL_RUN_LAST,
-                                   gobject.TYPE_NONE,
-                                   ( gobject.TYPE_INT, )),
         'layer-added' : ( gobject.SIGNAL_RUN_LAST,
                           gobject.TYPE_NONE,
                           ( gobject.TYPE_INT, ) ),
@@ -94,24 +71,18 @@ class LayerInfoList(gobject.GObject):
                           ( gobject.TYPE_INT, ) ),
         }
 
-    __defaultLayerMinimumHeight = 20
-    __defaultLayerHeight = 50
-
-    def __init__(self, timeline, layerminimumheight=None):
+    def __init__(self, timeline):
         gobject.GObject.__init__(self)
         self.timeline = timeline
-        self.layerMinimumHeight = layerminimumheight or self.__defaultLayerMinimumHeight
-        self.totalHeight = 0
-        self.topSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_VERTICAL)
         self._list = []
         self.__fillList()
 
     def __fillList(self):
         gst.debug("filling up LayerInfoList")
         self.addComposition(self.timeline.videocomp)
-        self.addComposition(self.timeline.audiocomp, minimumHeight=50)
+        self.addComposition(self.timeline.audiocomp)
 
-    def addComposition(self, composition, pos=-1, minimumHeight=None):
+    def addComposition(self, composition, pos=-1):
         """
         Insert the composition at the given position (default end)
         Returns the created LayerInfo
@@ -120,13 +91,11 @@ class LayerInfoList(gobject.GObject):
         if self.findCompositionLayerInfo(composition):
             gst.warning("composition[%r] is already controlled!" % composition)
             return
-        layer = LayerInfo(composition, minimumHeight or self.layerMinimumHeight)
+        layer = LayerInfo(composition)
         if pos == -1:
             self._list.append(layer)
         else:
             self._list.insert(pos, layer)
-        self.totalHeight += layer.currentHeight
-        self.recalculatePositions()
         self.emit('layer-added', pos)
         return layer
 
@@ -141,8 +110,6 @@ class LayerInfoList(gobject.GObject):
             return False
         position = self._list.index(layer)
         self._list.remove(layer)
-        self.totalHeight -= layer.currentHeight
-        self.recalculatePositions()
         self.emit('layer-removed', position)
 
     def findCompositionLayerInfo(self, composition):
@@ -152,14 +119,6 @@ class LayerInfoList(gobject.GObject):
                 return layer
         return None
 
-    def recalculatePositions(self):
-        """ Recalculate the Y Position of each layer """
-        ypos = 0
-        for layer in self._list:
-            gst.debug("setting layer position to %d" % ypos)
-            layer.yposition = ypos
-            ypos += layer.currentHeight
-
     def __iter__(self):
         return self._list.__iter__()
 
@@ -168,141 +127,3 @@ class LayerInfoList(gobject.GObject):
 
     def __getitem__(self, y):
         return self._list.__getitem__(y)
-
-    def expandLayer(self, position, expanded):
-        """ expand (or reduce) the layer at given position """
-        gst.debug("Expanding layer[%d] to be expanded:%s" % (position, expanded))
-        try:
-            layer = self._list[position]
-        except:
-            return
-        if layer.expanded == expanded:
-            return
-        layer.expanded = expanded
-        
-        if expanded:
-            # update total height
-            self.totalHeight += (layer.previousHeight - layer.currentHeight)
-            # set back to the previous height
-            layer.currentHeight = layer.previousHeight
-        else:
-            # update total height
-            self.totalHeight -= (layer.currentHeight - layer.minimumHeight)
-            # save height and set currentHeight to minimum
-            layer.previousHeight = layer.currentHeight
-            layer.currentHeight = layer.minimumHeight
-
-        self.recalculatePositions()
-        self.emit('layer-expanded', position, expanded)
-
-    def changeLayerHeight(self, position, height):
-        """ change the height for the layer at given position """
-        gst.debug("Changing height of layer[%d] to height:%d" % (position, height))
-        try:
-            layer = self._list[position]
-        except:
-            return
-        
-        # you can't resize reduced layers
-        if not layer.expanded:
-            return
-        
-        # don't resize below the minimumHeight
-        height = max(height, layer.minimumHeight)
-        if layer.currentHeight == height:
-            return
-
-        # update total height
-        self.totalHeight += (height - layer.currentHeight)
-        
-        # save previous height
-        layer.previousHeight = layer.currentHeight
-        layer.currentHeight = height
-
-        self.recalculatePositions()
-        self.emit('layer-height-changed', position)
-        
-
-class InfoLayer(gtk.Expander):
-
-    def __init__(self, layerInfo):
-        gtk.Expander.__init__(self, "Track")
-        self.layerInfo = layerInfo
-        self.set_border_width(5)
-        self.set_expanded(self.layerInfo.expanded)
-        self.add(gtk.Label("Track Info"))
-
-        # TODO :
-        # . react on 'expand' virtual method
-        # . put content
-
-
-class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
-
-    __gsignals__ = {
-        "size-request":"override",
-        }
-
-    # Safe adding zone on the left/right
-    border = 5
-    effectgutter = 5
-    layergutter = 5
-
-    def __init__(self, layerInfo, hadj):
-        gst.log("new TrackLayer for composition %r" % layerInfo.composition)
-        gtk.Layout.__init__(self)
-        self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(20000,20000,16000))
-
-        self.set_hadjustment(hadj)
-        self.sources = {}
-        
-        self.layerInfo = layerInfo
-        self.layerInfo.composition.connect('start-duration-changed', self.compStartDurationChangedCb)
-        self.layerInfo.composition.connect('source-added', self.compSourceAddedCb)
-        self.set_property("width-request", self.get_pixel_width())
-        #self.set_property("height-request", self.layerInfo.currentHeight)
-
-
-    ## composition signal callbacks
-
-    def compStartDurationChangedCb(self, composition, start, duration):
-        gst.info("setting width-request to %d" % self.get_pixel_width())
-        self.set_property("width-request", self.get_pixel_width())
-        #self.set_property("height-request", self.layerInfo.currentHeight)
-        self.start_duration_changed()
-
-    def compSourceAddedCb(self, composition, source):
-        # create new widget
-        widget = ComplexTimelineSource(source, self.layerInfo)
-        
-        # add it to self at the correct position
-        self.sources[source] = widget
-        self.put(widget, widget.get_pixel_position() + self.border,
-                 self.effectgutter)
-
-
-    def do_size_request(self, requisition):
-        gtk.Layout.do_size_request(self, requisition)
-        if False and self.layerInfo.expanded:
-            # TODO : update this formula
-            # calculate height needed
-            # effect gutter height
-            # layer gutter height
-            # layer height
-            requisition.height = self.effectgutter + 50
-            requisition.width = self.get_pixel_width()
-
-    ## ZoomableWidgetInterface methods
-
-    def get_duration(self):
-        return self.layerInfo.composition.duration
-
-    def get_start_time(self):
-        return self.layerInfo.composition.start
-
-    def get_pixel_width(self):
-        return ZoomableWidgetInterface.get_pixel_width(self) + 2 * self.border
-            
-    def do_size_allocate(self, allocation):
-        gst.debug("%r got allocation %s" % (self, list(allocation)))
-        gtk.Layout.do_size_allocate(self, allocation)

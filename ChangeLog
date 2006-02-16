@@ -1,3 +1,14 @@
+2006-02-16  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexstack.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/tracklayer.py:
+	Split up files, clean up, make timeline design v2 work more efficiently.
+
 2006-02-14  Edward Hervey  <edward@fluendo.com>
 
 	* bin/pitivi.in:

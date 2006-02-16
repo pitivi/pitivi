@@ -21,7 +21,8 @@
 
 import gtk
 import gst
-from complexlayer import InfoLayer, TrackLayer
+from infolayer import InfoLayer
+from tracklayer import TrackLayer
 from ruler import ScaleRuler
 from complexinterface import ZoomableWidgetInterface
 
@@ -86,6 +87,13 @@ class TopLayer(TimelineLayer, ZoomableWidgetInterface):
         self.rightWidget.get_start_time = self.get_start_time
 
 class CompositionLayer(TimelineLayer, ZoomableWidgetInterface):
+
+    def __init__(self, leftSizeGroup, hadj, layerInfo):
+        TimelineLayer.__init__(self, leftSizeGroup, hadj, layerInfo)
+
+        # leftWidget's get_height() comes from the righWidget
+        self.leftWidget.getNeededHeight = self.rightWidget.getNeededHeight
+        
 
     def getLeftWidget(self):
         return InfoLayer(self.layerInfo)

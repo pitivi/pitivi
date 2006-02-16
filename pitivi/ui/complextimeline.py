@@ -21,12 +21,13 @@
 
 import gtk
 import gst
-from complexstack import LayerStack, InfoLayout
+
 from complexlayer import LayerInfoList
 from layerwidgets import TopLayer, CompositionLayer
 from complexinterface import ZoomableWidgetInterface
 
 class CompositionLayers(gtk.VBox, ZoomableWidgetInterface):
+    """ Souped-up VBox that contains the timeline's CompositionLayer """
 
     def __init__(self, leftsizegroup, hadj, layerinfolist):
         gtk.VBox.__init__(self)
@@ -34,6 +35,8 @@ class CompositionLayers(gtk.VBox, ZoomableWidgetInterface):
         self.leftSizeGroup = leftsizegroup
         self.hadj = hadj
         self.layerInfoList = layerinfolist
+        self.layerInfoList.connect('layer-added', self.__layerAddedCb)
+        self.layerInfoList.connect('layer-removed', self.__layerRemovedCb)
         self._createUI()
 
     def _createUI(self):
@@ -60,6 +63,21 @@ class CompositionLayers(gtk.VBox, ZoomableWidgetInterface):
     def zoomChanged(self):
         for layer in self.layers:
             layer.zoomChanged()
+
+    ## LayerInfoList callbacks
+
+    def __layerAddedCb(self, layerInfoList, position):
+        complayer = CompositionLayer(self.leftSizeGroup, self.hadj,
+                                     layerInfoList[position])
+        self.layers.insert(position, complayer)
+        self.pack_start(complayer, expand=False)
+        self.reorder_child(complayer, position)
+
+    def __layerRemovedCb(self, layerInfoList, position):
+        # find the proper child
+        child = self.layers[position]
+        # remove it
+        self.remove(child)
 
 #
 # Complex Timeline Design v2 (08 Feb 2006)
