@@ -22,8 +22,9 @@
 
 import gtk
 import gst
+import cairo
 
-from pitivi.timeline import TimelineSource
+from pitivi.timeline import TimelineSource, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
 from complexinterface import ZoomableWidgetInterface
 
 # TODO : We might need an abstract class for ComplexTimelineObjects....
@@ -39,9 +40,9 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
     def __init__(self, source, layerInfo):
         gtk.DrawingArea.__init__(self)
         self.layerInfo = layerInfo
-        #self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(0,0,0))
         self.source = source
         self.source.connect("start-duration-changed", self._start_duration_changed_cb)
+        self.thumbnailsurface = cairo.ImageSurface.create_from_png(self.source.factory.thumbnail)
 
 
     def get_height(self):
@@ -68,9 +69,48 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
     def draw(self, context):
         rect = self.get_allocation()
         gst.debug("Source draw %s" % list(rect))
+
+        self.draw_background(context, rect)
+
+        if self.source.media_type == MEDIA_TYPE_VIDEO:
+            self.draw_thumbnail(context, rect)
+
+        self.draw_decoration_border(context, rect)
+
+    def draw_background(self, context, allocation):
+        context.save()
+        context.set_source_rgb(1.0, 0.9, 0.9)
+        context.rectangle(0, 0, allocation.width, allocation.height)
+        context.fill()
+        context.stroke()
+        context.restore()
+        
+    def draw_decoration_border(self, context, allocation):
+        rect = self.get_allocation()
         context.set_source_rgb(1, 0, 0)
         context.rectangle(0, 0, rect.width, rect.height)
         context.stroke()
+        
+
+    def draw_thumbnail(self, context, allocation):
+        context.save()
+
+        alloc = self.get_allocation()
+
+        # figure out the scaleratio
+        surfwidth = self.thumbnailsurface.get_width()
+        surfheight = self.thumbnailsurface.get_height()
+        widthratio = float(alloc.width - 10) / float(surfwidth)
+        heightratio = float(alloc.height - 10) / float(surfheight)
+        ratio = min(widthratio, heightratio)
+
+        context.scale(ratio, ratio)
+        context.set_source_surface(self.thumbnailsurface,
+                                   ((alloc.width / ratio) - surfwidth) / 2 ,
+                                   5 / ratio)
+        context.paint()
+
+        context.restore()
 
     ## ZoomableWidgetInterface methods
 

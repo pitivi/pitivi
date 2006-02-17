@@ -447,7 +447,6 @@ class PlayPauseButton(gtk.Button):
         self.connect('clicked', self._clicked)        
 
     def _clicked(self, whatever):
-        print "clicked"
         if not self.playing:
             self.set_pause()
         else:

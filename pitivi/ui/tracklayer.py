@@ -22,6 +22,7 @@
 
 import gtk
 import gst
+import cairo
 
 from complexinterface import ZoomableWidgetInterface
 from complexsource import ComplexTimelineSource
@@ -48,7 +49,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
     def __init__(self, layerInfo, hadj):
         gst.log("new TrackLayer for composition %r" % layerInfo.composition)
         gtk.Layout.__init__(self)
-        self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(20000,20000,16000))
+        #self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(20000,20000,16000))
 
         self.set_hadjustment(hadj)
         self.sources = {}
@@ -58,13 +59,12 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         self.layerInfo.composition.connect('source-added', self.compSourceAddedCb)
         self.set_property("width-request", self.get_pixel_width())
 
-
     ## composition signal callbacks
 
     def compStartDurationChangedCb(self, composition, start, duration):
         gst.info("setting width-request to %d" % self.get_pixel_width())
         self.set_property("width-request", self.get_pixel_width())
-        self.set_size(self.get_pixel_width(), self.allocation.height)
+        self.set_size(self.get_pixel_width() + 2 * self.border, self.allocation.height)
         #self.set_property("height-request", self.layerInfo.currentHeight)
         self.start_duration_changed()
 
@@ -87,8 +87,8 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
                                                self.effectgutter + self.layergutter,
                                                widget.get_pixel_width(),
                                                height))
-        #widget.set_property("height-request", height)
-        #self.queue_draw()
+        # we need to keep track of the child's position
+        source.connect_after('start-duration-changed', self.__childStartDurationChangedCb)
 
     ## ZoomableWidgetInterface methods
 
@@ -115,7 +115,39 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
     def do_expose_event(self, event):
         gst.debug("TrackLayer %s" % list(event.area))
+        self.context = self.bin_window.cairo_create()
+        self.context.rectangle(*event.area)
+        self.context.clip()
+        self.draw(self.context)
         gtk.Layout.do_expose_event(self, event)
+
+    ## Drawing methods
+
+    def draw(self, context):
+        # let's draw a nice gradient on the background
+        alloc = self.get_allocation()
+        pat = cairo.LinearGradient(0, 0, 0, alloc.height)
+        pat.add_color_stop_rgb(0, 0.5, 0.5, 0.6)
+        pat.add_color_stop_rgb(1, 0.6, 0.6, 0.7)
+
+        context.rectangle(0, 0, alloc.width, alloc.height)
+        context.set_source(pat)
+        context.fill()
+        context.stroke()
+
+    ## Child callbacks
+
+    def __childStartDurationChangedCb(self, source, start, duration):
+        # move accordingly
+        gst.debug("%r start:%s duration:%s" % (source, gst.TIME_ARGS(start),
+                                               gst.TIME_ARGS(duration)))
+        if start != -1:
+            widget = self.sources[source]
+            x = widget.get_pixel_position()
+            if x != self.child_get_property(widget, "x"):
+                self.move(widget, x + self.border,
+                          self.effectgutter + self.layergutter)
+            self.queue_resize()
 
     ## methods needed by the container (CompositionLayer)
 

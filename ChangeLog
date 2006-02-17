@@ -1,3 +1,10 @@
+2006-02-17  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	I think I finally understood cairo :)
+
 2006-02-16  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/Makefile.am:
