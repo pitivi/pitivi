@@ -1,5 +1,13 @@
 2006-02-20  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/playground.py:
+	more helpful debug
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/projectsettings.py:
+	s/print/gst.debug/
+
+2006-02-20  Edward Hervey  <edward@fluendo.com>
+
 	* configure.ac:
 	* pitivi.spec.in:
 	We need PyCairo now, update this for configure and packagers.

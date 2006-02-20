@@ -176,7 +176,6 @@ class ExportSettingsWidget(GladeWidget):
             idx = idx + 1
 
     def _put_good_audiorate(self, value):
-        print "put good audiorate", value
         idx = 0
         for rate in self.audio_rates:
             if value == rate[1]:
@@ -185,7 +184,6 @@ class ExportSettingsWidget(GladeWidget):
             idx = idx + 1
 
     def _put_good_audiodepth(self, value):
-        print "put good audiodepth", value
         idx = 0
         for depth in self.audio_depths:
             if value == depth[1]:
@@ -194,7 +192,6 @@ class ExportSettingsWidget(GladeWidget):
             idx = idx + 1
 
     def videocombobox_changed(self, widget):
-        print "videocombobox changed"
         idx = widget.get_active()
         if idx == len(self.video_presets):
             activate = True
@@ -208,7 +205,6 @@ class ExportSettingsWidget(GladeWidget):
         self.videoratecbox.set_sensitive(activate)
 
     def audiocombobox_changed(self, widget):
-        print "audiocombobox changed"
         idx = widget.get_active()
         if idx == len(self.audio_presets):
             activate = True
@@ -222,8 +218,6 @@ class ExportSettingsWidget(GladeWidget):
         self.audiodepthcbox.set_sensitive(activate)
 
     def muxercombobox_changed(self, widget):
-        print "muxercombobox changed"
-
         if self.validvencoders:
             prevvenc = self.validvencoders[self.vcodeccbox.get_active()].get_name()
         else:
@@ -235,8 +229,6 @@ class ExportSettingsWidget(GladeWidget):
         # find the valid audio/video codec with the given muxer
         self.validaencoders = encoders_muxer_compatible(self.settings.aencoders, self.muxers[widget.get_active()])
         self.validvencoders = encoders_muxer_compatible(self.settings.vencoders, self.muxers[widget.get_active()])
-        print "valid vencoder", self.validvencoders
-        print "valid aencoder", self.validaencoders
 
         venclist = self.vcodeccbox.get_model()
         venclist.clear()
@@ -318,7 +310,6 @@ class ExportSettingsWidget(GladeWidget):
         self.settings.containersettings = self.containersettings
         self.settings.acodecsettings = self.acodecsettings
         self.settings.vcodecsettings = self.vcodecsettings
-        print self.settings
         
 
 class ExportSettingsDialog(gtk.Dialog):

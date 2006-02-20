@@ -196,7 +196,10 @@ class PlayGround(gobject.GObject):
 
     def seek_in_current(self, value, format=gst.FORMAT_TIME):
         """ seek to the given position in the current playing bin """
-        gst.debug("value : %s , format : %s" % (value, format))
+        if format == gst.FORMAT_TIME:
+            gst.debug("value : %s" % gst.TIME_ARGS (value))
+        else:
+            gst.debug("value : %d , format:%d" % (value, format))
         if not self.current:
             return
         target = self.current

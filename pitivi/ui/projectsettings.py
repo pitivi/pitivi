@@ -54,8 +54,5 @@ class ProjectSettingsDialog(GladeWindow):
         # else destroy yourself !
         self.hide()
         if response == gtk.RESPONSE_OK:
-            print "settings updated"
             self._update_settings()
-        else:
-            print "settings NOT updated!"
         self.destroy()
