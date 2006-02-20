@@ -17,6 +17,7 @@ Requires:	pygtk2 >= @PYGTK_REQ@
 Requires:	gnonlin >= @GNONLIN_REQ@
 Requires:	gnome-python2 >= @PYGNOME_REQ@
 Requires:	gnome-python2-gconf
+Requires:	pycairo >= @PYCAIRO_REQ@
 
 Requires(post):	openssl
 
@@ -46,6 +47,8 @@ PiTiVi non-linear video editor
 %{_datadir}/applications/pitivi.desktop
 
 %changelog
+* Mon Feb 20 2006 Edward Hervey <edward at fluendo dot com>
+- Update for pycairo requirement
 * Thu Jun 23 2005 Christian Schaller <christian at fluendo dot com>
 - Update for current version and switch make with %makeinstall
 * Thu May 26 2005 Edward Hervey <edward at fluendo dot com>
