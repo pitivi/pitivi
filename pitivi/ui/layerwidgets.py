@@ -76,13 +76,12 @@ class TopLayer(TimelineLayer, ZoomableWidgetInterface):
         # The border width of the top layer needs to be set to
         # ComplexTimelineWidget.border_width + 1
         self.set_border_width(3)
+
+    def overrideZoomableWidgetInterfaceMethods(self):
         # these override will cause the right widget to
         # call the container (ComplexTimelineWidget) methods
         # since the ScaleRuler has no clue what the duration
         # and size is
-        gst.debug("TopLayer, get_duration:%r, get_start_time:%r" % (self.get_duration, self.get_start_time))
-
-    def overrideZoomableWidgetInterfaceMethods(self):
         self.rightWidget.get_duration = self.get_duration
         self.rightWidget.get_start_time = self.get_start_time
 

@@ -36,12 +36,11 @@ from complexsource import ComplexTimelineSource
 class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
     __gsignals__ = {
-#        "size-request":"override",
         "size-allocate":"override",
-        "expose-event":"override"
+        "expose-event":"override",
+        "realize":"override",
         }
 
-    # Safe adding zone on the left/right
     border = 5
     effectgutter = 5
     layergutter = 5
@@ -49,15 +48,16 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
     def __init__(self, layerInfo, hadj):
         gst.log("new TrackLayer for composition %r" % layerInfo.composition)
         gtk.Layout.__init__(self)
-        #self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(20000,20000,16000))
 
         self.set_hadjustment(hadj)
-        self.sources = {}
-        
+        self.sources = {}        
         self.layerInfo = layerInfo
         self.layerInfo.composition.connect('start-duration-changed', self.compStartDurationChangedCb)
         self.layerInfo.composition.connect('source-added', self.compSourceAddedCb)
         self.set_property("width-request", self.get_pixel_width())
+
+        self.pixmap = None
+
 
     ## composition signal callbacks
 
@@ -90,18 +90,23 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         # we need to keep track of the child's position
         source.connect_after('start-duration-changed', self.__childStartDurationChangedCb)
 
+
     ## ZoomableWidgetInterface methods
 
     def get_duration(self):
+        gst.debug("returning %s" % gst.TIME_ARGS(self.layerInfo.composition.duration))
         return self.layerInfo.composition.duration
 
     def get_start_time(self):
         return self.layerInfo.composition.start
 
     def get_pixel_width(self):
-        return ZoomableWidgetInterface.get_pixel_width(self) + 2 * self.border
+        pwidth = ZoomableWidgetInterface.get_pixel_width(self) + 2 * self.border
+        gst.debug("returning %d" % pwidth)
+        return pwidth
 
-    ## virtual methods overrides
+
+    ## gtk.Widget methods overrides
             
     def do_size_allocate(self, allocation):
         gst.debug("%r got allocation %s" % (self, list(allocation)))
@@ -112,20 +117,34 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
                 height = allocation.height - self.effectgutter - 2 * self.layergutter
             self.sources[source].set_property("height-request", height)
         gtk.Layout.do_size_allocate(self, allocation)
+        self.drawPixmap()
+
+    def do_realize(self):
+        gtk.Layout.do_realize(self)
+        self.drawPixmap()
 
     def do_expose_event(self, event):
         gst.debug("TrackLayer %s" % list(event.area))
-        self.context = self.bin_window.cairo_create()
-        self.context.rectangle(*event.area)
-        self.context.clip()
-        self.draw(self.context)
+        x, y, width, height = event.area
+
+        self.bin_window.draw_drawable(self.style.fg_gc[gtk.STATE_NORMAL],
+                                      self.pixmap,
+                                      x, y, x, y, width, height)
         gtk.Layout.do_expose_event(self, event)
+        self.drawPixmap()
+        return False
+
 
     ## Drawing methods
 
-    def draw(self, context):
+    def drawPixmap(self):
         # let's draw a nice gradient on the background
+        if not self.flags() & gtk.REALIZED:
+            return
         alloc = self.get_allocation()
+        self.pixmap = gtk.gdk.Pixmap(self.bin_window, alloc.width, alloc.height)
+        context = self.pixmap.cairo_create()
+        
         pat = cairo.LinearGradient(0, 0, 0, alloc.height)
         pat.add_color_stop_rgb(0, 0.5, 0.5, 0.6)
         pat.add_color_stop_rgb(1, 0.6, 0.6, 0.7)
@@ -134,6 +153,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         context.set_source(pat)
         context.fill()
         context.stroke()
+
 
     ## Child callbacks
 
@@ -148,6 +168,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
                 self.move(widget, x + self.border,
                           self.effectgutter + self.layergutter)
             self.queue_resize()
+
 
     ## methods needed by the container (CompositionLayer)
 

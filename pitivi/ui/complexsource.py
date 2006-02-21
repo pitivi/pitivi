@@ -33,6 +33,8 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
     __gsignals__ = {
         "expose-event":"override",
         "size-request":"override",
+        "size-allocate":"override",
+        "realize":"override",
         }
 
     modelclass = TimelineSource
@@ -43,7 +45,7 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
         self.source = source
         self.source.connect("start-duration-changed", self._start_duration_changed_cb)
         self.thumbnailsurface = cairo.ImageSurface.create_from_png(self.source.factory.thumbnail)
-
+        self.pixmap = None
 
     def get_height(self):
         # TODO, maybe this should be zoomable too ?
@@ -53,12 +55,19 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
 
     def do_expose_event(self, event):
         gst.debug("timelinesource %s" % list(event.area))
-        # TODO : we need to check to see if a redraw is necessary
-        self.context = self.window.cairo_create()
-        self.context.rectangle(*event.area)
-        self.context.clip()
-        self.draw(self.context)
+        x, y, width, height = event.area
+        self.window.draw_drawable(self.style.fg_gc[gtk.STATE_NORMAL],
+                                  self.pixmap,
+                                  x, y, x, y, width, height)
         return False
+
+    def do_realize(self):
+        gtk.DrawingArea.do_realize(self)
+        self.doPixmap()
+
+    def do_size_allocate(self, allocation):
+        gtk.DrawingArea.do_size_allocate(self, allocation)
+        self.doPixmap()
 
     def do_size_request(self, requisition):
         gst.debug("source, requisition:%s" % list(requisition))
@@ -66,10 +75,18 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
         if self.layerInfo.expanded:
             requisition.height=self.get_height()
 
-    def draw(self, context):
+
+    ## Drawing methods
+
+    def doPixmap(self):
+        if not self.flags() & gtk.REALIZED:
+            return
         rect = self.get_allocation()
         gst.debug("Source draw %s" % list(rect))
 
+        self.pixmap = gtk.gdk.Pixmap(self.window, rect.width, rect.height)
+        context = self.pixmap.cairo_create()
+        
         self.draw_background(context, rect)
 
         if self.source.media_type == MEDIA_TYPE_VIDEO:
@@ -111,6 +128,7 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
         context.paint()
 
         context.restore()
+
 
     ## ZoomableWidgetInterface methods
 
