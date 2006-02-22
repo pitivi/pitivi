@@ -158,3 +158,9 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
         self.topLayer.zoomChanged()
         self.compositionLayers.zoomChanged()
 
+
+    ## timeline position callback
+
+    def timelinePositionChanged(self, value, frame):
+        # for the time being we only inform the ruler
+        self.topLayer.timelinePositionChanged(value, frame)

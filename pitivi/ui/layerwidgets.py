@@ -85,6 +85,9 @@ class TopLayer(TimelineLayer, ZoomableWidgetInterface):
         self.rightWidget.get_duration = self.get_duration
         self.rightWidget.get_start_time = self.get_start_time
 
+    def timelinePositionChanged(self, value, frame):
+        self.rightWidget.timelinePositionChanged(value, frame)
+
 class CompositionLayer(TimelineLayer, ZoomableWidgetInterface):
 
     def __init__(self, leftSizeGroup, hadj, layerInfo):

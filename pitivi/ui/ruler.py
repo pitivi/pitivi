@@ -38,6 +38,8 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         gtk.Layout.__init__(self)
         self.set_hadjustment(hadj)
         self.pixmap = None
+        # position is in nanoseconds
+        self.position = 0
 
     ## ZoomableWidgetInterface methods are handled by the container (LayerStack)
     ## Except for ZoomChanged
@@ -48,6 +50,17 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
 
     def get_pixel_width(self):
         return ZoomableWidgetInterface.get_pixel_width(self) + 2 * self.border
+
+
+    ## timeline position changed callback
+
+    def timelinePositionChanged(self, value, frame):
+        previous = self.position
+        self.position = value
+        self.queue_draw_area(max(self.ns_to_pixel(min(value, previous)) - 5, 0),
+                             0,
+                             self.ns_to_pixel(max(value, previous)) + 5,
+                             self.get_allocation().height)
 
     ## gtk.Widget overrides
 
@@ -72,6 +85,9 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         self.bin_window.draw_drawable(self.style.fg_gc[gtk.STATE_NORMAL],
                                       self.pixmap,
                                       x, y, x, y, width, height)
+        # draw the position
+        context = self.bin_window.cairo_create()
+        self.draw_position(context, self.get_allocation())
         return False
 
     def doPixmap(self):
@@ -96,12 +112,19 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
 
     def draw_background(self, context, allocation):
         context.save()
-        
-        context.set_source_rgb(0.8, 0.8, 0.8)
+
+        context.set_source_rgb(0.5, 0.5, 0.5)
         context.rectangle(0, 0,
                           allocation.width, allocation.height)
         context.fill()
-        context.stroke
+        context.stroke()
+
+        if self.get_duration() > 0:
+            context.set_source_rgb(0.8, 0.8, 0.8)
+            context.rectangle(0, 0,
+                              self.get_pixel_width(), allocation.height)
+            context.fill()
+            context.stroke
         
         context.restore()
 
@@ -116,11 +139,28 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
             context.move_to(i, 0)
             
             if (i - self.border) % 100:
+                # second
                 context.line_to(i, allocation.height / 4)
             elif (i - self.border) % 600:
+                # 10 seconds
                 context.line_to(i, allocation.height / 2)
             else:
+                # minute
                 context.line_to(i, allocation.height)
             
         context.stroke()
+        context.restore()
+
+    def draw_position(self, context, allocation):
+        if self.get_duration() <= 0:
+            return
+        # a simple RED line will do for now
+        xpos = self.ns_to_pixel(self.position) + self.border
+        context.save()
+        context.set_source_rgb(1.0, 0, 0)
+
+        context.move_to(xpos, 0)
+        context.line_to(xpos, allocation.height)
+        context.stroke()
+        
         context.restore()

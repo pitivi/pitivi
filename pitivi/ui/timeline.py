@@ -94,7 +94,8 @@ class TimelineWidget(gtk.VBox):
         gst.debug("state:%s" % event.state)
         self.hscroll.emit("scroll-event", event)
         
-        
+    def timelinePositionChanged(self, value, frame):
+        self.complexview.timelinePositionChanged(value, frame)
 
 class SimpleTimelineContentWidget(gtk.HBox):
     """ Widget for Simple Timeline content display """

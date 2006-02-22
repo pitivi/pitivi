@@ -215,17 +215,23 @@ class SmartTimelineBin(SmartBin):
     def record(self, uri, settings=None):
         """ render the timeline to the given uri """
         self.encthread = self._make_encthread(settings)
-        self.set_state(gst.STATE_PAUSED)
-        self.encthread.filesink.set_uri(uri)
         self.add(self.encthread)
-        self.set_state(gst.STATE_PAUSED)
+        self.encthread.filesink.set_uri(uri)
 
         # temporarily remove the audiosinkthread
         self.tmpasink = self.asinkthread
         self.remove_audio_sink_thread()
+
+        # set sync=false on the videosink
+        self.get_real_video_sink().set_property("sync", False)
+        
+        self.debug("linking vtee to ecnthread:vsink")
         self.vtee.get_pad("src%d").link(self.encthread.get_pad("vsink"))
+        self.debug("linking atee to encthread:asink")
         self.atee.get_pad("src%d").link(self.encthread.get_pad("asink"))
 
+        self.set_state(gst.STATE_PAUSED)
+        self.debug("About to seek to beginning for encoding")
         if not self.seek(1.0, gst.FORMAT_TIME,
                          gst.SEEK_FLAG_FLUSH,
                          gst.SEEK_TYPE_CUR, 0,
@@ -236,6 +242,7 @@ class SmartTimelineBin(SmartBin):
     def stop_recording(self):
         """ stop the recording, removing the encoding thread """
         self.set_state(gst.STATE_PAUSED)
+        
         if self.encthread:
             apad = self.encthread.get_pad("vsink")
             apad.unlink(apad.get_peer())
@@ -248,6 +255,14 @@ class SmartTimelineBin(SmartBin):
             self.encthread= None
             self.set_audio_sink_thread(self.tmpasink)
             self.tmpasink = None
+
+        self.get_real_video_sink().set_property("sync", True)
+
+    def get_real_video_sink(self):
+        """ returns the real video sink element or None """
+        if not self.vsinkthread:
+            return None
+        return self.vsinkthread.videosink.realsink
 
     def _make_encthread(self, settings=None):
         # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int

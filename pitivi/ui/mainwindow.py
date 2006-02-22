@@ -110,6 +110,9 @@ class PitiviMainWindow(gtk.Window):
         viewerframe = gtk.Frame()
         viewerframe.add(self.viewer)
 
+        # connect viewer's timeline position callback to the timeline widget
+        self.viewer.addTimelinePositionCallback(self.timeline.timelinePositionChanged)
+
         hpaned.pack1(self.sourcefactories, resize=True, shrink=False)
         hpaned.pack2(viewerframe, resize=False, shrink=False)
 
@@ -145,6 +148,9 @@ class PitiviMainWindow(gtk.Window):
 	abt.set_authors(authors)
 	abt.set_license("GNU Lesser Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details")
 	abt.show()
+
+
+    ## PiTiVi main object callbacks
 
     def _new_project_cb(self, pitivi, project):
         print "Starting up a new project", project

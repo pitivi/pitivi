@@ -1,3 +1,22 @@
+2006-02-22  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Fix up encoding for 0.10.
+	* pitivi/ui/infolayer.py:
+	More sensible info in InfoLayer
+
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/timeline.py:
+	Display current position in Ruler.
+	Beautified Ruler.
+	
+	* pitivi/ui/viewer.py:
+	Temporary hack to distribute current timeline position.
+	Re-activate rendering
+
 2006-02-21  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/complexsource.py:
