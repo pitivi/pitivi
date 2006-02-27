@@ -38,9 +38,8 @@ class Magician:
     Handles all the effects
     """
 
-    def __init__(self, pitivi):
+    def __init__(self):
         gst.log("New Magician")
-        self.pitivi = pitivi
         self.simple_video = []
         self.simple_audio = []
         self.transitions = []

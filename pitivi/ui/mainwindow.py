@@ -24,6 +24,8 @@ import gobject
 import gtk
 import gst
 
+import pitivi.instance as instance
+
 from timeline import TimelineWidget
 from sourcefactories import SourceFactoriesWidget
 from viewer import PitiviViewer
@@ -35,16 +37,17 @@ class PitiviMainWindow(gtk.Window):
     Pitivi's main window
     """
 
-    def __init__(self, pitivi):
+    def __init__(self):
         """ initialize with the Pitivi object """
         gst.log("Creating MainWindow")
-        self.pitivi = pitivi
         gtk.Window.__init__(self)
+        
         self._set_actions()
         self._create_gui()
-        self.pitivi.connect("new-project", self._new_project_cb)
-        self.pitivi.connect("closing-project", self._closing_project_cb)
-        self.pitivi.connect("not-project", self._not_project_cb)
+        
+        instance.PiTiVi.connect("new-project", self._new_project_cb)
+        instance.PiTiVi.connect("closing-project", self._closing_project_cb)
+        instance.PiTiVi.connect("not-project", self._not_project_cb)
         self.show_all()
 
     def destroy(self, widget, data=None):
@@ -94,7 +97,7 @@ class PitiviMainWindow(gtk.Window):
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
         
-        self.timeline = TimelineWidget(self.pitivi)
+        self.timeline = TimelineWidget()
         timelineframe = gtk.Frame()
         timelineframe.add(self.timeline)
         vpaned.pack2(timelineframe, resize=False, shrink=False)
@@ -103,10 +106,10 @@ class PitiviMainWindow(gtk.Window):
         vpaned.pack1(hpaned, resize=True, shrink=False)
 
         # source-and-effects list
-        self.sourcefactories = SourceFactoriesWidget(self.pitivi)
+        self.sourcefactories = SourceFactoriesWidget()
 
         # Viewer
-        self.viewer = PitiviViewer(self.pitivi)
+        self.viewer = PitiviViewer()
         viewerframe = gtk.Frame()
         viewerframe.add(self.viewer)
 
@@ -118,7 +121,7 @@ class PitiviMainWindow(gtk.Window):
 
     def new_project_cb(self, action):
         print "new project"
-        self.pitivi.new_blank_project()
+        instance.PiTiVi.new_blank_project()
 
     def open_project_cb(self, action):
         print "open project"
@@ -131,7 +134,7 @@ class PitiviMainWindow(gtk.Window):
 
     def project_settings_cb(self, action):
         print "project settings"
-        l = ProjectSettingsDialog(self, self.pitivi.current)
+        l = ProjectSettingsDialog(self, instance.PiTiVi.current)
         l.show()
 
     def quit_cb(self, action):

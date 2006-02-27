@@ -25,6 +25,8 @@ import gobject
 import gtk
 import gst
 from gtk import gdk
+
+import pitivi.instance as instance
 from pitivi.timeline import Timeline, TimelineComposition, TimelineFileSource, TimelineSource, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 import pitivi.dnd as dnd
 from sourcefactories import beautify_length
@@ -48,15 +50,13 @@ MINIMUM_WIDTH = 3 * DEFAULT_HEIGHT
 class SimpleTimeline(gtk.Layout):
     """ Simple Timeline representation """
 
-    def __init__(self, twidget, pitivi, **kw):
+    def __init__(self, **kw):
         gobject.GObject.__init__(self, **kw)
-        self.twidget = twidget
-        self.pitivi = pitivi
 
         self.hadjustment = self.get_property("hadjustment")
 
         # timeline and top level compositions
-        self.timeline = self.pitivi.current.timeline
+        self.timeline = instance.PiTiVi.current.timeline
         self.condensed = self.timeline.videocomp.condensed
 
         # TODO : connect signals for when the timeline changes
@@ -245,7 +245,7 @@ class SimpleTimeline(gtk.Layout):
         else:
             context.finish(False, False, timestamp)
         x = x + int(self.hadjustment.get_value())
-        self._got_filefactory(self.pitivi.current.sources[uri], x, y)
+        self._got_filefactory(instance.PiTiVi.current.sources[uri], x, y)
         context.finish(True, False, timestamp)
 
     def _realize_cb(self, layout):

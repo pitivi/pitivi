@@ -27,7 +27,9 @@ import gst
 import pango
 import gst.interfaces
 from glade import GladeWindow
+
 import plumber
+import pitivi.instance as instance
 from pitivi.bin import SmartTimelineBin, SmartDefaultBin
 from pitivi.objectfactory import FileSourceFactory
 import pitivi.dnd as dnd
@@ -45,9 +47,8 @@ def time_to_string(value):
 class PitiviViewer(gtk.VBox):
     """ Pitivi's graphical viewer """
 
-    def __init__(self, pitivi):
+    def __init__(self):
         gst.log("New PitiviViewer")
-        self.pitivi = pitivi
         gtk.VBox.__init__(self)
         self.current_time = long(0)
         self.current_frame = -1
@@ -56,17 +57,17 @@ class PitiviViewer(gtk.VBox):
 
         # connect to the sourcelist for temp factories
         # TODO remove/replace the signal when closing/opening projects
-        self.pitivi.current.sources.connect("tmp_is_ready", self._tmp_is_ready)
+        instance.PiTiVi.current.sources.connect("tmp_is_ready", self._tmp_is_ready)
 
         # Only set the check time timeout in certain cases...
         self.checktimeoutid = 0
         self.positionChangedCallbacks = []
-        self.pitivi.connect("new-project", self._new_project_cb)
-        self.pitivi.playground.connect("current-state", self._current_state_cb)
-        self.pitivi.playground.connect("bin-added", self._bin_added_cb)
-        self.pitivi.playground.connect("bin-removed", self._bin_removed_cb)
+        instance.PiTiVi.connect("new-project", self._new_project_cb)
+        instance.PiTiVi.playground.connect("current-state", self._current_state_cb)
+        instance.PiTiVi.playground.connect("bin-added", self._bin_added_cb)
+        instance.PiTiVi.playground.connect("bin-removed", self._bin_removed_cb)
 
-        self.pitivi.current.settings.connect("settings-changed",
+        instance.PiTiVi.current.settings.connect("settings-changed",
                                              self._settings_changed_cb)
         self._add_timeline_to_playground()
 
@@ -175,7 +176,7 @@ class PitiviViewer(gtk.VBox):
         """ Creates the sink threads for the playground """
         # video elements
         gst.debug("Creating video sink")
-        self.videosink = plumber.get_video_sink(self.pitivi)
+        self.videosink = plumber.get_video_sink()
         vsinkthread = gst.Bin('vsinkthread')
         vqueue = gst.element_factory_make('queue')
         vsinkthread.add(self.videosink, vqueue)
@@ -192,7 +193,7 @@ class PitiviViewer(gtk.VBox):
 
         # audio elements
         gst.debug("Creating audio sink")
-        self.audiosink = plumber.get_audio_sink(self.pitivi)
+        self.audiosink = plumber.get_audio_sink()
         asinkthread = gst.Bin('asinkthread')
         aqueue = gst.element_factory_make('queue')
         asinkthread.add(self.audiosink, aqueue)
@@ -201,9 +202,9 @@ class PitiviViewer(gtk.VBox):
         asinkthread.add_pad(gst.GhostPad("sink", aqueue.get_pad('sink')))
 
         # setting sinkthreads on playground
-        self.pitivi.playground.set_video_sink_thread(vsinkthread)
-        self.pitivi.playground.set_audio_sink_thread(asinkthread)
-        self.pitivi.playground.connect("current-changed", self._current_playground_changed)
+        instance.PiTiVi.playground.set_video_sink_thread(vsinkthread)
+        instance.PiTiVi.playground.set_audio_sink_thread(asinkthread)
+        instance.PiTiVi.playground.connect("current-changed", self._current_playground_changed)
 
     def _settings_changed_cb(self, settings):
         gst.info("current project settings changed")
@@ -213,7 +214,7 @@ class PitiviViewer(gtk.VBox):
         drawingarea.modify_bg(gtk.STATE_NORMAL, drawingarea.style.black)
         self._create_sinkthreads()
         drawingarea.do_expose_event("hello")
-        self.pitivi.playground.play()
+        instance.PiTiVi.playground.play()
 
     ## gtk.HScale callbacks for self.slider
 
@@ -224,7 +225,7 @@ class PitiviViewer(gtk.VBox):
             gobject.source_remove(self.checktimeoutid)
             self.checktimeoutid = 0
         self.valuechangedid = slider.connect("value-changed", self._slider_value_changed_cb)
-        self.pitivi.playground.current.set_state(gst.STATE_PAUSED)
+        instance.PiTiVi.playground.current.set_state(gst.STATE_PAUSED)
         return False
 
     def _slider_button_release_cb(self, slider, event):
@@ -236,7 +237,7 @@ class PitiviViewer(gtk.VBox):
         if not self.checktimeoutid:
             gst.debug("adding checktime again")
             self.checktimeoutid = gobject.timeout_add(300, self._check_time)
-        self.pitivi.playground.current.set_state(gst.STATE_PLAYING)
+        instance.PiTiVi.playground.current.set_state(gst.STATE_PLAYING)
         return False
 
     def _slider_value_changed_cb(self, slider):
@@ -244,7 +245,7 @@ class PitiviViewer(gtk.VBox):
         value = long(slider.get_value())
         gst.info(time_to_string(value))
         self._new_time(value)
-        self.pitivi.playground.seek_in_current(value)
+        instance.PiTiVi.playground.seek_in_current(value)
 
     def _slider_scroll_cb(self, slider, event):
         # calculate new seek position
@@ -253,8 +254,8 @@ class PitiviViewer(gtk.VBox):
             if event.direction in [gtk.gdk.SCROLL_LEFT, gtk.gdk.SCROLL_DOWN]:
                 seekvalue = max(self.current_time - gst.SECOND / 2, 0)
             else:
-                seekvalue = min(self.current_time + gst.SECOND / 2, self.pitivi.playground.current.length)
-            self.pitivi.playground.seek_in_current(seekvalue)
+                seekvalue = min(self.current_time + gst.SECOND / 2, instance.PiTiVi.playground.current.length)
+            instance.PiTiVi.playground.seek_in_current(seekvalue)
         else:
             # frame scrolling, frame by frame
             gst.info("scroll direction:%s" % event.direction)
@@ -263,8 +264,8 @@ class PitiviViewer(gtk.VBox):
                 seekvalue = max(self.current_frame - 1, 0)
             else:
                 gst.info("scrolling forward")
-                seekvalue = min(self.current_frame + 1, self.pitivi.playground.current.length)
-            self.pitivi.playground.seek_in_current(seekvalue, gst.FORMAT_DEFAULT)
+                seekvalue = min(self.current_frame + 1, instance.PiTiVi.playground.current.length)
+            instance.PiTiVi.playground.seek_in_current(seekvalue, gst.FORMAT_DEFAULT)
 
 
     ## timeout functions for checking current time
@@ -273,24 +274,24 @@ class PitiviViewer(gtk.VBox):
     def _check_time(self):
         # check time callback
         gst.log("checking time")
-        if self.pitivi.playground.current == self.pitivi.playground.default:
+        if instance.PiTiVi.playground.current == instance.PiTiVi.playground.default:
             return True
         # don't check time if the timeline is not playing
         cur = self.current_time
         currentframe = self.current_frame
-        if True: #not isinstance(self.pitivi.playground.current, SmartTimelineBin):
-            pending, state, result = self.pitivi.playground.current.get_state(10)
+        if True: #not isinstance(instance.PiTiVi.playground.current, SmartTimelineBin):
+            pending, state, result = instance.PiTiVi.playground.current.get_state(10)
             if not state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
                 return
             try:
-                cur, format = self.pitivi.playground.current.query_position(gst.FORMAT_TIME)
+                cur, format = instance.PiTiVi.playground.current.query_position(gst.FORMAT_TIME)
             except:
-                self.pitivi.playground.current.warning("couldn't get position")
+                instance.PiTiVi.playground.current.warning("couldn't get position")
                 cur = 0
 
         # if the current_time or the length has changed, update time
-        if not float(self.pitivi.playground.current.length) == self.posadjust.upper or not cur == self.current_time or not currentframe == self.current_frame:
-            self.posadjust.upper = float(self.pitivi.playground.current.length)
+        if not float(instance.PiTiVi.playground.current.length) == self.posadjust.upper or not cur == self.current_time or not currentframe == self.current_frame:
+            self.posadjust.upper = float(instance.PiTiVi.playground.current.length)
             self._new_time(cur, currentframe)
         return True
 
@@ -298,10 +299,10 @@ class PitiviViewer(gtk.VBox):
         gst.info("value:%s, frame:%d" % (gst.TIME_ARGS(value), frame))
         self.current_time = value
         self.current_frame = frame
-        self.timelabel.set_text(time_to_string(value) + " / " + time_to_string(self.pitivi.playground.current.length))
+        self.timelabel.set_text(time_to_string(value) + " / " + time_to_string(instance.PiTiVi.playground.current.length))
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
-        if isinstance(self.pitivi.playground.current, SmartTimelineBin):
+        if isinstance(instance.PiTiVi.playground.current, SmartTimelineBin):
             self.__triggerTimelinePositionCallbacks(value, frame)
         return False
 
@@ -320,15 +321,15 @@ class PitiviViewer(gtk.VBox):
         idx = cbox.get_active()
         # get the corresponding smartbin
         smartbin = self.sourcelist[idx][1]
-        if not self.pitivi.playground.current == smartbin:
-            self.pitivi.playground.switch_to_pipeline(smartbin)
+        if not instance.PiTiVi.playground.current == smartbin:
+            instance.PiTiVi.playground.switch_to_pipeline(smartbin)
 
 
     ## active Timeline calllbacks
 
     def _timeline_duration_changed(self, composition, start, duration):
         self.posadjust.upper = float(duration)
-        self.timelabel.set_text(time_to_string(self.current_time) + " / " + time_to_string(self.pitivi.playground.current.length))
+        self.timelabel.set_text(time_to_string(self.current_time) + " / " + time_to_string(instance.PiTiVi.playground.current.length))
 
     def _dnd_data_received(self, widget, context, x, y, selection, targetType, time):
         gst.info("context:%s, targetType:%s" % (context, targetType))
@@ -339,29 +340,29 @@ class PitiviViewer(gtk.VBox):
         else:
             return
         gst.info("got file:%s" % uri)
-        if uri in self.pitivi.current.sources:
-            self.pitivi.playground.play_temporary_filesourcefactory(self.pitivi.current.sources[uri])
+        if uri in instance.PiTiVi.current.sources:
+            instance.PiTiVi.playground.play_temporary_filesourcefactory(instance.PiTiVi.current.sources[uri])
         else:
-            self.pitivi.current.sources.add_tmp_uri(uri)
+            instance.PiTiVi.current.sources.add_tmp_uri(uri)
 
     def _tmp_is_ready(self, sourcelist, factory):
         """ the temporary factory is ready, we can know set it to play """
         gst.info("%s" % factory)
-        self.pitivi.playground.play_temporary_filesourcefactory(factory)
+        instance.PiTiVi.playground.play_temporary_filesourcefactory(factory)
 
     def _new_project_cb(self, pitivi, project):
         """ the current project has changed """
-        self.pitivi.current.sources.connect("tmp_is_ready", self._tmp_is_ready)
-        self.pitivi.current.settings.connect("settings-changed", self._settings_changed_cb)
+        instance.PiTiVi.current.sources.connect("tmp_is_ready", self._tmp_is_ready)
+        instance.PiTiVi.current.settings.connect("settings-changed", self._settings_changed_cb)
         
     def _add_timeline_to_playground(self):
-        self.pitivi.playground.add_pipeline(self.pitivi.current.get_bin())
+        instance.PiTiVi.playground.add_pipeline(instance.PiTiVi.current.get_bin())
 
 
     ## Control gtk.Button callbacks
         
     def record_cb(self, button):
-        win = EncodingDialog(self.pitivi.current)
+        win = EncodingDialog(instance.PiTiVi.current)
         win.show()
 
     def rewind_cb(self, button):
@@ -372,9 +373,9 @@ class PitiviViewer(gtk.VBox):
 
     def _play_button_cb(self, button, isplaying):
         if isplaying:
-            self.pitivi.playground.play()
+            instance.PiTiVi.playground.play()
         else:
-            self.pitivi.playground.pause()
+            instance.PiTiVi.playground.pause()
 
     def next_cb(self, button):
         pass

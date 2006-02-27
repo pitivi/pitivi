@@ -30,8 +30,7 @@ class TopLeftTimelineWidget(gtk.Label):
     # TODO : We should replace this by a minimalist toolbar maybe...
 
     def __init__(self):
-        gtk.Label.__init__(self, "pouet")
-        self.modify_bg(gtk.STATE_NORMAL, gtk.gdk.Color(1,0,0))
+        gtk.Label.__init__(self, "Tracks")
 
 class TimelineLayer(gtk.HBox):
 
@@ -87,6 +86,9 @@ class TopLayer(TimelineLayer, ZoomableWidgetInterface):
 
     def timelinePositionChanged(self, value, frame):
         self.rightWidget.timelinePositionChanged(value, frame)
+
+    def start_duration_changed(self):
+        self.rightWidget.start_duration_changed()
 
 class CompositionLayer(TimelineLayer, ZoomableWidgetInterface):
 

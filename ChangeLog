@@ -1,3 +1,33 @@
+2006-02-27  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	* pitivi/instance.py:
+	* pitivi/check.py:
+	Added global application instance (instance.PiTiVi) to avoid having to
+	do some crack like passing pitivi's self down all the objects for the
+	one single object that needs it.
+	* pitivi/effects.py:
+	* pitivi/pitivi.py:
+	Files fixed to use instance.PiTiVi
+	* pitivi/timeline.py:
+	wrong comment
+	* pitivi/ui/complextimeline.py:
+	Connect to composition duration update to inform ruler.
+	* pitivi/ui/layerwidgets.py:
+	cleanup
+	
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/plumber.py:
+	* pitivi/ui/viewer.py:
+	switch to instance.PiTiVi
+	* pitivi/ui/sourcefactories.py:
+	First try at showing audio/video FX in the UI
+	* pitivi/ui/tracklayer.py:
+	First go at complex timeline source drag/drop
+	
+
 2006-02-22  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/bin.py:

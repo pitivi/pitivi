@@ -7,6 +7,7 @@ pitividir = $(libdir)/pitivi/python/pitivi
 pitivi_PYTHON = \
 	__init__.py \
 	configure.py \
+	instance.py \
 	bin.py \
 	check.py \
 	discoverer.py \

@@ -24,6 +24,10 @@ import gtk
 import gst
 import cairo
 
+import pitivi.dnd as dnd
+import pitivi.instance as instance
+
+from pitivi.timeline import TimelineFileSource
 from complexinterface import ZoomableWidgetInterface
 from complexsource import ComplexTimelineSource
 
@@ -49,6 +53,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         gst.log("new TrackLayer for composition %r" % layerInfo.composition)
         gtk.Layout.__init__(self)
 
+        self.hadjustment = hadj
         self.set_hadjustment(hadj)
         self.sources = {}        
         self.layerInfo = layerInfo
@@ -58,6 +63,15 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
         self.pixmap = None
 
+        # drag and drop
+        self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
+                           [dnd.DND_FILESOURCE_TUPLE],
+                           gtk.gdk.ACTION_COPY)
+        self.connect('drag-data-received', self.dragDataReceivedCb)
+        self.connect('drag-leave', self.dragLeaveCb)
+        self.connect('drag-motion', self.dragMotionCb)
+        # object being currently dragged
+        self.dragObject = None
 
     ## composition signal callbacks
 
@@ -87,6 +101,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
                                                self.effectgutter + self.layergutter,
                                                widget.get_pixel_width(),
                                                height))
+        widget.show()
         # we need to keep track of the child's position
         source.connect_after('start-duration-changed', self.__childStartDurationChangedCb)
 
@@ -180,3 +195,37 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
             height = self.effectgutter + 2 * self.layergutter + 100
             return height
         return 0
+
+
+    ## Drag and Drop
+
+    def dragDataReceivedCb(self, layout, context, x, y, selection,
+                           targetType, timestamp):
+        # something was dropped
+        gst.debug("%s" % type(selection))
+        self.dragObject = None
+        if targetType == dnd.DND_TYPE_PITIVI_FILESOURCE:
+            # a source was dropped
+            source = instance.PiTiVi.current.sources[selection.data]
+        else:
+            context.finish(False, False, timestamp)
+            return
+        x += int(self.hadjustment.get_value())
+        gst.debug("got source %s x:%d" % (source, x))
+        # do something with source
+        self.layerInfo.composition.prepend_source(TimelineFileSource(factory=source,
+                                                                    media_type=self.layerInfo.composition.media_type,
+                                                                    name = source.name))
+
+        context.finish(True, False, timestamp)
+
+    def dragLeaveCb(self, layout, context, timestamp):
+        gst.debug("something left")
+        self.dragObject = None
+
+    def dragMotionCb(self, layout, context, x, y, timestamp):
+        gst.debug("something entered x:%d, y:%d" % (x,y))
+        if not self.dragObject:
+            source = context.get_source_widget().getSelectedItems()[0]
+            self.dragObject = instance.PiTiVi.current.sources[source]
+        gst.debug("we have %s" % self.dragObject)

@@ -29,6 +29,7 @@ from discoverer import Discoverer
 from playground import PlayGround
 from project import Project, file_is_project
 from effects import Magician
+import instance
 
 class Pitivi(gobject.GObject):
     """
@@ -61,14 +62,18 @@ class Pitivi(gobject.GObject):
         """
         gst.log("starting up pitivi...")
         gobject.GObject.__init__(self)
+
+        # store ourself in the instance global
+        instance.PiTiVi = self
+        
         # TODO parse cmd line arguments
 
         self.playground = PlayGround()
         self.current = Project("New Project")
-        self.effects = Magician(self)
+        self.effects = Magician()
         
         # we're starting a GUI for the time being
-        self.gui = mainwindow.PitiviMainWindow(self)
+        self.gui = mainwindow.PitiviMainWindow()
         self.gui.show()
 
     def load_project(self, uri=None, filepath=None):

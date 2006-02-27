@@ -22,6 +22,8 @@
 import gtk
 import gst
 
+import pitivi.instance as instance
+
 from complexlayer import LayerInfoList
 from layerwidgets import TopLayer, CompositionLayer
 from complexinterface import ZoomableWidgetInterface
@@ -53,7 +55,6 @@ class CompositionLayers(gtk.VBox, ZoomableWidgetInterface):
     ## ZoomableWidgetInterface overrides
 
     def get_duration(self):
-        gst.debug("CompositionLayers get_duration")
         return max([layer.get_duration() for layer in self.layers])
 
     def get_start_time(self):
@@ -111,12 +112,14 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
         gst.log("Creating ComplexTimelineWidget")
         gtk.VBox.__init__(self)
 
-        self.pitivi = topwidget.pitivi
         self.hadj = topwidget.hadjustment
         self.vadj = topwidget.vadjustment
 
         # common LayerInfoList
-        self.layerInfoList = LayerInfoList(self.pitivi.current.timeline)
+        self.layerInfoList = LayerInfoList(instance.PiTiVi.current.timeline)
+        for layer in self.layerInfoList:
+            layer.composition.connect('start-duration-changed',
+                                      self._layerStartDurationChangedCb)
 
         self._createUI()
 
@@ -142,6 +145,10 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
         self.scrolledWindow.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.scrolledWindow.add_with_viewport(self.compositionLayers)
         self.pack_start(self.scrolledWindow, expand=True)
+
+    def _layerStartDurationChangedCb(self, composition, start, duration):
+        # Force resize of ruler
+        self.topLayer.start_duration_changed()
 
     ## ZoomableWidgetInterface overrides
         

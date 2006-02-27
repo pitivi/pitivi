@@ -23,15 +23,15 @@
 import gtk
 import gobject
 import gst
+
 from timelineobjects import SimpleSourceWidget, SimpleTimeline
 from complextimeline import ComplexTimelineWidget
 
 class TimelineWidget(gtk.VBox):
     """ Widget for reprensenting Pitivi's Timeline """
 
-    def __init__(self, pitivi):
+    def __init__(self):
         gst.log("New Timeline Widget")
-        self.pitivi = pitivi
         gtk.VBox.__init__(self)
         self._create_gui()
 
@@ -112,8 +112,7 @@ class SimpleTimelineContentWidget(gtk.HBox):
         self.twidget.leftsizegroup.add_widget(self.header)
         self.pack_start(self.header, expand=False)
 
-        self.timeline = SimpleTimeline(self.twidget, self.twidget.pitivi,
-                                       hadjustment = self.twidget.hadjustment)
+        self.timeline = SimpleTimeline(hadjustment = self.twidget.hadjustment)
         
         layoutframe = gtk.Frame()
         layoutframe.add(self.timeline)

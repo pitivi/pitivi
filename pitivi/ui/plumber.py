@@ -31,7 +31,7 @@ import gobject
 import gst
 import gst.interfaces
 
-def get_video_sink(pitivi):
+def get_video_sink():
     """ Returns a video sink bin that can be used in the Discoverer """
     try:
         gconfsink = gst.element_factory_make("gconfvideosink")
@@ -59,7 +59,7 @@ def get_video_sink(pitivi):
             gconfsink.realsink.set_property("force-aspect-ratio", True)
     return gconfsink
 
-def get_audio_sink(pitivi):
+def get_audio_sink():
     """ Returns an audio sink bin that can be used in the Discoverer """
     try:
         gconfsink = gst.element_factory_make("gconfaudiosink")

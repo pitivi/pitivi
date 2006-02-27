@@ -26,7 +26,10 @@ import string
 import gobject
 import gtk
 import gst
+import pango
 from urllib import unquote
+
+import pitivi.instance as instance
 import pitivi.dnd as dnd
 from pitivi.configure import get_pixmap_dir
 
@@ -41,24 +44,23 @@ class SourceFactoriesWidget(gtk.Notebook):
     Widget for the various source factories (files, effects, live,...)
     """
 
-    def __init__(self, pitivi):
+    def __init__(self):
         """ initialize """
         gtk.Notebook.__init__(self)
-        self.pitivi = pitivi
         self._create_gui()
 
     def _create_gui(self):
         """ set up the gui """
         self.set_tab_pos(gtk.POS_BOTTOM)
-        self.sourcelist = SourceListWidget(self.pitivi)
+        self.sourcelist = SourceListWidget()
         self.append_page(self.sourcelist, gtk.Label("Sources"))
-        self.audiofxlist = AudioFxListWidget(self.pitivi)
-        self.audiofxlist.set_sensitive(False)
+        self.audiofxlist = AudioFxListWidget()
+        #self.audiofxlist.set_sensitive(False)
         self.append_page(self.audiofxlist, gtk.Label("Audio FX"))
-        self.videofxlist = VideoFxListWidget(self.pitivi)
-        self.videofxlist.set_sensitive(False)
+        self.videofxlist = VideoFxListWidget()
+        #self.videofxlist.set_sensitive(False)
         self.append_page(self.videofxlist, gtk.Label("Video FX"))
-        self.transitionlist = TransitionListWidget(self.pitivi)
+        self.transitionlist = TransitionListWidget()
         self.transitionlist.set_sensitive(False)
         self.append_page(self.transitionlist, gtk.Label("Transitions"))
 
@@ -67,9 +69,8 @@ class SourceFactoriesWidget(gtk.Notebook):
 class SourceListWidget(gtk.VBox):
     """ Widget for listing sources """
 
-    def __init__(self, pitivi):
+    def __init__(self):
         gtk.VBox.__init__(self)
-        self.pitivi = pitivi
 
         # Store
         # icon, name, type(audio/video), length, objectfactory, uri
@@ -158,10 +159,10 @@ class SourceListWidget(gtk.VBox):
 
         # callbacks from discoverer
         # TODO : we must remove and reset the callbacks when changing project
-        self.pitivi.current.sources.connect("file_added", self._file_added_cb)
-        self.pitivi.current.sources.connect("file_removed", self._file_removed_cb)
+        instance.PiTiVi.current.sources.connect("file_added", self._file_added_cb)
+        instance.PiTiVi.current.sources.connect("file_removed", self._file_removed_cb)
 
-        self.pitivi.connect("new-project", self._new_project_cb)
+        instance.PiTiVi.connect("new-project", self._new_project_cb)
 
         # default pixbufs
         pixdir = get_pixmap_dir()
@@ -179,12 +180,16 @@ class SourceListWidget(gtk.VBox):
                                       [dnd.DND_URI_TUPLE, dnd.DND_FILESOURCE_TUPLE],
                                       gtk.gdk.ACTION_COPY)
         self.iconview.connect("drag_begin", self._dnd_icon_begin)
-        self.iconview.connect("drag_data_get", self._dnd_icon_data_get)
+        self.iconview.connect("drag_data_get", self._dnd_data_get)
+        
         self.treeview.drag_source_set(gtk.gdk.BUTTON1_MASK,
                                       [dnd.DND_URI_TUPLE, dnd.DND_FILESOURCE_TUPLE],
                                       gtk.gdk.ACTION_COPY)
         self.treeview.connect("drag_begin", self._dnd_tree_begin)
-        self.treeview.connect("drag_data_get", self._dnd_tree_data_get)
+        self.treeview.connect("drag_data_get", self._dnd_data_get)
+        # Hack so that the views have the same method as self
+        self.iconview.getSelectedItems = self.getSelectedItems
+        self.treeview.getSelectedItems = self.getSelectedItems
 
     def use_treeview(self):
         """ use the treeview """
@@ -258,7 +263,7 @@ class SourceListWidget(gtk.VBox):
 
     def add_files(self, list):
         """ Add files to the list """
-        self.pitivi.current.sources.add_uris(list)
+        instance.PiTiVi.current.sources.add_uris(list)
             
     def add_button_clicked_cb(self, widget):
         """ called when a user clicks on the add button """
@@ -288,7 +293,7 @@ class SourceListWidget(gtk.VBox):
             store, selected = tsel.get_selected_rows()
         uris = [self.storemodel.get_value(self.storemodel.get_iter(path), 5) for path in selected]
         for uri in uris:
-            del self.pitivi.current.sources[uri]
+            del instance.PiTiVi.current.sources[uri]
 
     def play_button_clicked_cb(self, widget):
         """ Called when a user clicks on the play button """
@@ -301,7 +306,7 @@ class SourceListWidget(gtk.VBox):
             return
         factory = self.storemodel.get_value(self.storemodel.get_iter(paths[0]), 4)
         gst.debug("Let's play %s" % factory.name)
-        self.pitivi.playground.play_temporary_filesourcefactory(factory)
+        instance.PiTiVi.playground.play_temporary_filesourcefactory(factory)
 
     def treeview_button_press_event_cb(self, treeview, event):
         if event.button == 3:
@@ -337,9 +342,9 @@ class SourceListWidget(gtk.VBox):
                         thumbnail = self.audiofilepixbuf
                 self.storemodel.append([thumbnail, name, desc, length, factory, factory.name])
         
-        self.pitivi.current.sources.connect("file_added", self._file_added_cb)
-        self.pitivi.current.sources.connect("file_removed", self._file_removed_cb)
-        self.pitivi.current.sources.connect("file_is_valid", self._file_is_valid_cb)
+        instance.PiTiVi.current.sources.connect("file_added", self._file_added_cb)
+        instance.PiTiVi.current.sources.connect("file_removed", self._file_removed_cb)
+        instance.PiTiVi.current.sources.connect("file_is_valid", self._file_is_valid_cb)
 
     def _dnd_data_received(self, widget, context, x, y, selection, targetType,
                            time):
@@ -364,11 +369,18 @@ class SourceListWidget(gtk.VBox):
         if len(rows) < 1:
             context.drag_abort(int(time.time()))
 
-    def _dnd_icon_data_get(self, widget, context, selection, targetType, eventTime):
-        # calls context.drag_abort(time) if not in a valide place
-        gst.info("icon list data_get, type: %d" % targetType)
-        # get the list of selected uris
-        uris = [self.storemodel.get_value(self.storemodel.get_iter(x), 5) for x in self.iconview.get_selected_items()]
+    def getSelectedItems(self):
+        """ returns a list of selected items uri """
+        if self.iconviewmode:
+            uris = [self.storemodel.get_value(self.storemodel.get_iter(x), 5) for x in self.iconview.get_selected_items()]
+        else:
+            model, rows = self.treeview.get_selection().get_selected_rows()
+            uris = [self.storemodel.get_value(self.storemodel.get_iter(x), 5) for x in rows]
+        return uris
+
+    def _dnd_data_get(self, widget, context, selection, targetType, eventTime):
+        gst.info("data get, type:%d" % targetType)
+        uris = self.getSelectedItems()
         if len(uris) < 1:
             return
         if targetType == dnd.DND_TYPE_PITIVI_FILESOURCE:
@@ -377,50 +389,95 @@ class SourceListWidget(gtk.VBox):
         elif targetType == dnd.DND_TYPE_URI_LIST:
             selection.set(selection.target, 8,
                           string.join(uris, "\n"))
-
-    def _dnd_tree_data_get(self, widget, context, selection, targetType, eventTime):
-        # calls context.drag_abort(time) if not in a valide place
-        gst.info("tree list data_get, type: %d" % targetType)
-        # get the list of selected uris
-        model, rows = self.treeview.get_selection().get_selected_rows()
-        uris = [self.storemodel.get_value(self.storemodel.get_iter(x), 5) for x in rows]
-        if len(uris) < 1:
-            return
-        if targetType == dnd.DND_TYPE_PITIVI_FILESOURCE:
-            selection.set(selection.target, 8,
-                          uris[0])
-        elif targetType == dnd.DND_TYPE_URI_LIST:
-            selection.set(selection.target, 8,
-                          string.join(uris, "\n"))
-
+        
 
 class AudioFxListWidget(gtk.VBox):
-    """ Widget for listing audio effects """
+    """ Widget for listing video effects """
 
-    def __init__(self, pitivi):
-        self.pitivi = pitivi
+    def __init__(self):
         gtk.VBox.__init__(self)
-        self.iconview = gtk.IconView()
-        self.treeview = gtk.TreeView()
-        self.pack_start(self.iconview)
+        self.set_border_width(5)
 
+        # model
+        self.storemodel = gtk.ListStore(str, str, object)
+        
+        self.scrollwin = gtk.ScrolledWindow()
+        self.scrollwin.set_policy(gtk.POLICY_NEVER,
+                                  gtk.POLICY_AUTOMATIC)
+        self.pack_start(self.scrollwin)
+        
+        self.iconview = gtk.IconView(self.storemodel)
+        self.treeview = gtk.TreeView(self.storemodel)
+
+        namecol = gtk.TreeViewColumn("Name")
+        self.treeview.append_column(namecol)
+        namecell = gtk.CellRendererText()
+        namecol.pack_start(namecell)
+        namecol.add_attribute(namecell, "text", 0)
+        
+        namecol = gtk.TreeViewColumn("Description")
+        self.treeview.append_column(namecol)
+        namecell = gtk.CellRendererText()
+        namecell.set_property("ellipsize", pango.ELLIPSIZE_END)
+        namecol.pack_start(namecell)
+        namecol.add_attribute(namecell, "text", 1)
+        
+        self.scrollwin.add(self.treeview)
+
+        self._fillUpModel()
+
+    def _fillUpModel(self):
+        for factory in instance.PiTiVi.effects.simple_audio:
+            self.storemodel.append([factory.get_longname(),
+                                    factory.get_description(),
+                                    factory])
 
 class VideoFxListWidget(gtk.VBox):
     """ Widget for listing video effects """
 
-    def __init__(self, pitivi):
-        self.pitivi = pitivi
+    def __init__(self):
         gtk.VBox.__init__(self)
-        self.iconview = gtk.IconView()
-        self.treeview = gtk.TreeView()
-        self.pack_start(self.iconview)
+        self.set_border_width(5)
+
+        # model
+        self.storemodel = gtk.ListStore(str, str, object)
+
+        self.scrollwin = gtk.ScrolledWindow()
+        self.scrollwin.set_policy(gtk.POLICY_NEVER,
+                                  gtk.POLICY_AUTOMATIC)
+        self.pack_start(self.scrollwin)
+        
+        self.iconview = gtk.IconView(self.storemodel)
+        self.treeview = gtk.TreeView(self.storemodel)
+
+        namecol = gtk.TreeViewColumn("Name")
+        self.treeview.append_column(namecol)
+        namecell = gtk.CellRendererText()
+        namecol.pack_start(namecell)
+        namecol.add_attribute(namecell, "text", 0)
+        
+        namecol = gtk.TreeViewColumn("Description")
+        self.treeview.append_column(namecol)
+        namecell = gtk.CellRendererText()
+        namecell.set_property("ellipsize", pango.ELLIPSIZE_END)
+        namecol.pack_start(namecell)
+        namecol.add_attribute(namecell, "text", 1)
+        
+        self.scrollwin.add(self.treeview)
+
+        self._fillUpModel()
+
+    def _fillUpModel(self):
+        for factory in instance.PiTiVi.effects.simple_video:
+            self.storemodel.append([factory.get_longname(),
+                                    factory.get_description(),
+                                    factory])
 
 
 class TransitionListWidget(gtk.VBox):
     """ Widget for listing transitions """
 
-    def __init__(self, pitivi):
-        self.pitivi = pitivi
+    def __init__(self):
         gtk.VBox.__init__(self)
         self.iconview = gtk.IconView()
         self.treeview = gtk.TreeView()

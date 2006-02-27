@@ -454,7 +454,6 @@ class TimelineComposition(TimelineSource):
 
     def _make_gnl_object(self):
         self.gnlobject = gst.element_factory_make("gnlcomposition", "composition-" + self.name)
-        # connect to start/duration notify time
 
     # global effects
     
