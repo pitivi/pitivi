@@ -23,6 +23,7 @@
 import gtk
 import gst
 import cairo
+import gc
 
 from pitivi.timeline import TimelineSource, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
 from complexinterface import ZoomableWidgetInterface
@@ -66,6 +67,8 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
         self.doPixmap()
 
     def do_size_allocate(self, allocation):
+        if list(allocation) == list(self.allocation):
+            return
         gtk.DrawingArea.do_size_allocate(self, allocation)
         self.doPixmap()
 
@@ -84,6 +87,9 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
         rect = self.get_allocation()
         gst.debug("Source draw %s" % list(rect))
 
+        if self.pixmap:
+            del self.pixmap
+            gc.collect()
         self.pixmap = gtk.gdk.Pixmap(self.window, rect.width, rect.height)
         context = self.pixmap.cairo_create()
         

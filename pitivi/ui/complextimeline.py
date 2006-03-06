@@ -112,6 +112,8 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
         gst.log("Creating ComplexTimelineWidget")
         gtk.VBox.__init__(self)
 
+        self.zoomratio = 10.0
+
         self.hadj = topwidget.hadjustment
         self.vadj = topwidget.vadjustment
 
@@ -135,7 +137,6 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
         self.topLayer.overrideZoomableWidgetInterfaceMethods()
         self.pack_start(self.topLayer, expand=False)
 
-
         # List of CompositionLayers
         self.compositionLayers = CompositionLayers(self.leftSizeGroup,
                                                    self.hadj, self.layerInfoList)
@@ -151,7 +152,6 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
         self.topLayer.start_duration_changed()
 
     ## ZoomableWidgetInterface overrides
-        
     ## * we send everything to self.compositionLayers
     ## * topLayer's function calls will also go there
 
@@ -162,9 +162,14 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
         return self.compositionLayers.get_start_time()
 
     def zoomChanged(self):
-        self.topLayer.zoomChanged()
+        self.topLayer.rightWidget.zoomChanged()
         self.compositionLayers.zoomChanged()
 
+
+    ## ToolBar callbacks
+
+    def toolBarZoomChangedCb(self, toolbar, zoomratio):
+        self.set_zoom_ratio(self, zoomratio)
 
     ## timeline position callback
 

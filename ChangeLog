@@ -1,3 +1,23 @@
+2006-03-06  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/effects.py:
+	better effect klass checking
+	* pitivi/playground.py:
+	more correct state changing when switching pipelines
+	* pitivi/ui/complexinterface.py:
+	zoomratio now belongs to a toplevel element
+	* pitivi/ui/complexsource.py:
+	python has lazy garbage collection, but gc.collect might induce heavy
+	processing... this needs more thinking
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/tracklayer.py:
+	implement zoom with zoom buttons
+	Remove a memleak
+	* pitivi/ui/viewer.py:
+	Insert necessary audio/video adapters, closes #332754
+
 2006-02-27  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/Makefile.am:

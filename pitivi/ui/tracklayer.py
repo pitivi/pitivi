@@ -59,7 +59,6 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         self.layerInfo = layerInfo
         self.layerInfo.composition.connect('start-duration-changed', self.compStartDurationChangedCb)
         self.layerInfo.composition.connect('source-added', self.compSourceAddedCb)
-        self.set_property("width-request", self.get_pixel_width())
 
         self.pixmap = None
 
@@ -94,7 +93,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         else:
             height = self.allocation.height - self.effectgutter - 2 * self.layergutter
         # TODO : set Y position depending on layer it's on
-        self.put(widget, widget.get_pixel_position() + self.border,
+        self.put(widget, self.ns_to_pixel(widget.get_start_time()) + self.border,
                  self.effectgutter + self.layergutter)
         # we need to force the size_allocation
         widget.size_allocate(gtk.gdk.Rectangle(widget.get_pixel_position() + self.border,
@@ -120,6 +119,11 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         gst.debug("returning %d" % pwidth)
         return pwidth
 
+    def zoomChanged(self):
+        for source in self.sources.itervalues():
+            self.move(source,
+                      source.get_pixel_position() + self.border,
+                      self.effectgutter + self.layergutter)
 
     ## gtk.Widget methods overrides
             
@@ -146,7 +150,6 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
                                       self.pixmap,
                                       x, y, x, y, width, height)
         gtk.Layout.do_expose_event(self, event)
-        self.drawPixmap()
         return False
 
 
@@ -156,7 +159,10 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         # let's draw a nice gradient on the background
         if not self.flags() & gtk.REALIZED:
             return
+        gst.debug("drawPixmap")
         alloc = self.get_allocation()
+        if self.pixmap:
+            del self.pixmap
         self.pixmap = gtk.gdk.Pixmap(self.bin_window, alloc.width, alloc.height)
         context = self.pixmap.cairo_create()
         

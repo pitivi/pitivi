@@ -67,8 +67,6 @@ import gst
 
 class ZoomableWidgetInterface:
 
-    zoomratio = 10.0
-    
     def get_pixel_width(self):
         """
         Returns the width in pixels corresponding to the duration of the object
@@ -93,7 +91,7 @@ class ZoomableWidgetInterface:
         """
         Returns the pixel equivalent in nanoseconds according to the zoomratio
         """
-        return int(pixel * gst.SECOND / self.zoomratio)
+        return int(pixel * gst.SECOND / self.get_zoom_ratio())
 
     def ns_to_pixel(self, duration):
         """
@@ -102,7 +100,7 @@ class ZoomableWidgetInterface:
         """
         if duration == gst.CLOCK_TIME_NONE:
             return 0
-        return int((float(duration) / gst.SECOND) * self.zoomratio)
+        return int((float(duration) / gst.SECOND) * self.get_zoom_ratio())
 
     ## Methods to implement in subclasses
         
@@ -134,14 +132,24 @@ class ZoomableWidgetInterface:
         self.queue_resize()
     
     def get_zoom_ratio(self):
-        return self.zoomratio
+        # either the current object is the top-level object that contains the zoomratio
+        if hasattr(self, 'zoomratio'):
+            return self.zoomratio
+        # chain up to the parent
+        parent = self.parent
+        while not hasattr(parent, 'get_zoom_ratio'):
+            parent = parent.parent
+        return parent.get_zoom_ratio()
 
     def set_zoom_ratio(self, zoomratio):
-        if self.zoomratio == zoomratio:
-            return
-        gst.debug("Changing zoomratio to %f" % zoomratio)
-        self.zoomratio = zoomratio
-        self.zoomChanged()
+        if hasattr(self, 'zoomratio'):
+            if self.zoomratio == zoomratio:
+                return
+            gst.debug("Changing zoomratio to %f" % zoomratio)
+            self.zoomratio = zoomratio
+            self.zoomChanged()
+        else:
+            self.parent.set_zoom_ratio(zoomratio)
 
 class LayeredWidgetInterface:
 

@@ -130,13 +130,13 @@ class PlayGround(gobject.GObject):
                 self.tempsmartbin = None
 
         self.current = pipeline
-        self.current.set_state(gst.STATE_READY)
         if self.current.has_video and self.vsinkthread:
             #self.vsinkthread.set_state(gst.STATE_READY)
             self.current.set_video_sink_thread(self.vsinkthread)
         if self.current.has_audio and self.asinkthread:
             #self.asinkthread.set_state(gst.STATE_READY)
             self.current.set_audio_sink_thread(self.asinkthread)
+        self.current.set_state(gst.STATE_PAUSED)
         self.emit("current-changed", self.current)
 
         pipeline.debug("END")

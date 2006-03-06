@@ -26,11 +26,37 @@ from tracklayer import TrackLayer
 from ruler import ScaleRuler
 from complexinterface import ZoomableWidgetInterface
 
-class TopLeftTimelineWidget(gtk.Label):
-    # TODO : We should replace this by a minimalist toolbar maybe...
+class TimelineToolBar(gtk.HBox):
 
     def __init__(self):
-        gtk.Label.__init__(self, "Tracks")
+        gtk.HBox.__init__(self, homogeneous=True)
+        self._addButtons()
+
+    def _addButtons(self):
+        # zoom
+        self.zoomInButton = gtk.Button(label="")
+        image = gtk.image_new_from_stock(gtk.STOCK_ZOOM_IN,
+                                         gtk.ICON_SIZE_BUTTON)
+        self.zoomInButton.set_image(image)
+        self.pack_start(self.zoomInButton, expand=False)
+        self.zoomInButton.connect('clicked', self.zoomClickedCb)
+        
+        self.zoomOutButton = gtk.Button(label="")
+        self.zoomOutButton.set_image(gtk.image_new_from_stock(gtk.STOCK_ZOOM_OUT,
+                                                              gtk.ICON_SIZE_BUTTON))
+        self.pack_start(self.zoomOutButton, expand=False)
+        self.zoomOutButton.connect('clicked', self.zoomClickedCb)
+
+    def zoomClickedCb(self, button):
+        if button == self.zoomInButton:
+            gst.debug("Zooming IN button clicked")
+            ratio = self.get_zoom_ratio() * 2.0
+        elif button == self.zoomOutButton:
+            gst.debug("Zooming OUT button clicked")
+            ratio = self.get_zoom_ratio() / 2.0
+        else:
+            return
+        self.set_zoom_ratio(ratio)
 
 class TimelineLayer(gtk.HBox):
 
@@ -67,7 +93,7 @@ class TimelineLayer(gtk.HBox):
 
 class TopLayer(TimelineLayer, ZoomableWidgetInterface):
 
-    leftWidgetClass = TopLeftTimelineWidget
+    leftWidgetClass = TimelineToolBar
     rightWidgetClass = ScaleRuler
 
     def __init__(self, leftSizeGroup, hadj):
@@ -83,6 +109,8 @@ class TopLayer(TimelineLayer, ZoomableWidgetInterface):
         # and size is
         self.rightWidget.get_duration = self.get_duration
         self.rightWidget.get_start_time = self.get_start_time
+        self.leftWidget.get_zoom_ratio = self.get_zoom_ratio
+        self.leftWidget.set_zoom_ratio = self.set_zoom_ratio
 
     def timelinePositionChanged(self, value, frame):
         self.rightWidget.timelinePositionChanged(value, frame)

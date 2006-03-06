@@ -179,10 +179,12 @@ class PitiviViewer(gtk.VBox):
         self.videosink = plumber.get_video_sink()
         vsinkthread = gst.Bin('vsinkthread')
         vqueue = gst.element_factory_make('queue')
-        vsinkthread.add(self.videosink, vqueue)
+        cspace = gst.element_factory_make('ffmpegcolorspace')
+        vsinkthread.add(self.videosink, vqueue, cspace)
+        cspace.link(vqueue)
         vqueue.link(self.videosink)
         vsinkthread.videosink = self.videosink
-        vsinkthread.add_pad(gst.GhostPad("sink", vqueue.get_pad('sink')))
+        vsinkthread.add_pad(gst.GhostPad("sink", cspace.get_pad('sink')))
 
         if self.videosink.realsink:
             self.videosink.info("Setting callback on 'notify::caps'")
@@ -196,10 +198,12 @@ class PitiviViewer(gtk.VBox):
         self.audiosink = plumber.get_audio_sink()
         asinkthread = gst.Bin('asinkthread')
         aqueue = gst.element_factory_make('queue')
-        asinkthread.add(self.audiosink, aqueue)
+        aconv = gst.element_factory_make('audioconvert')
+        asinkthread.add(self.audiosink, aqueue, aconv)
+        aconv.link(aqueue)
         aqueue.link(self.audiosink)
         asinkthread.audiosink = self.audiosink
-        asinkthread.add_pad(gst.GhostPad("sink", aqueue.get_pad('sink')))
+        asinkthread.add_pad(gst.GhostPad("sink", aconv.get_pad('sink')))
 
         # setting sinkthreads on playground
         instance.PiTiVi.playground.set_video_sink_thread(vsinkthread)
@@ -213,7 +217,6 @@ class PitiviViewer(gtk.VBox):
     def _drawingarea_realize_cb(self, drawingarea):
         drawingarea.modify_bg(gtk.STATE_NORMAL, drawingarea.style.black)
         self._create_sinkthreads()
-        drawingarea.do_expose_event("hello")
         instance.PiTiVi.playground.play()
 
     ## gtk.HScale callbacks for self.slider
@@ -441,6 +444,8 @@ class PitiviViewer(gtk.VBox):
 
 
 class ViewerWidget(gtk.DrawingArea):
+
+    __gsignals__ = {}
 
     def __init__(self):
         gtk.DrawingArea.__init__(self)

@@ -22,7 +22,7 @@
 
 import gobject
 import gst
-from objectfactory import OperationFactory,TransitionFactory,SMPTETransitionFactory
+from objectfactory import OperationFactory, TransitionFactory, SMPTETransitionFactory
 
 # There are different types of effects available:
 #  _ Simple Audio/Video Effects
@@ -44,14 +44,21 @@ class Magician:
         self.simple_audio = []
         self.transitions = []
         self._get_simple_filters()
+        self._get_effect_plugins()
 
     def _get_simple_filters(self):
         # go trough the list of element factories and
         # add them to the correct list
         factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
         for fact in factlist:
-            if "Filter/Effect/Audio" in fact.get_klass():
+            klass = fact.get_klass()
+            if 'Audio' in klass and 'Effect' in klass:
                 self.simple_audio.append(fact)
-            elif "Filter/Effect/Video" in fact.get_klass():
+            elif 'Video' in klass and 'Effect' in klass:
                 self.simple_video.append(fact)
                 
+
+    def _get_effect_plugins(self):
+        # find all the pitivi plugins that provide effects
+        # TODO : implement
+        pass

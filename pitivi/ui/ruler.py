@@ -99,6 +99,8 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         lwidth, lheight = self.get_size()
         allocation.width = max(allocation.width, lwidth)
         gst.debug("Creating pixmap(self.window, width:%d, height:%d)" % (allocation.width, allocation.height))
+        if self.pixmap:
+            del self.pixmap
         self.pixmap = gtk.gdk.Pixmap(self.bin_window, allocation.width, allocation.height)
         context = self.pixmap.cairo_create()
         self.draw_background(context, allocation)
@@ -135,13 +137,13 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         context.set_line_width(0.5 * context.get_line_width())
         context.set_source_rgb(0, 0, 0)
         
-        for i in range(self.border, allocation.width, 10):
+        for i in range(self.border, allocation.width, self.get_zoom_ratio()):
             context.move_to(i, 0)
             
-            if (i - self.border) % 100:
+            if (i - self.border) % (10 * self.get_zoom_ratio()):
                 # second
                 context.line_to(i, allocation.height / 4)
-            elif (i - self.border) % 600:
+            elif (i - self.border) % (60 * self.get_zoom_ratio()):
                 # 10 seconds
                 context.line_to(i, allocation.height / 2)
             else:
