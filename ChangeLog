@@ -1,5 +1,12 @@
 2006-03-07  Edward Hervey  <edward@fluendo.com>
 
+	* bin/pitivi.in:
+	* configure.ac:
+	Add the path detected for pygtk and gst-python at configure to sys.path.
+	This should solve problems like #333177
+
+2006-03-07  Edward Hervey  <edward@fluendo.com>
+
 	* configure.ac:
 	* pitivi/check.py:
 	Checks at configure and at runtime for cairo support in PyGTK.

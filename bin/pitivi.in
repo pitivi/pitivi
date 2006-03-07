@@ -22,9 +22,10 @@
 
 import os
 import sys
+import string
 
 # variables
-PYTHONDIR = '@PYTHONDIR@'
+PYTHONPATH = '@PYTHONPATH@'
 LIBDIR = '@LIBDIR@'
 
 # Check if we're in development or installed version
@@ -40,6 +41,10 @@ def _add_pitivi_path():
 
     if not root in sys.path:
         sys.path.insert(0, root)
+
+    # prepend directories found at configure time
+    for path in string.split(PYTHONPATH, ':'):
+        sys.path.insert(0, path)
 
 def _init_gobject_gtk_gst():
     try:

@@ -33,11 +33,6 @@ AC_PROG_LIBTOOL
 
 dnl check for python
 AS_PATH_PYTHON(2.3)
-dnl useful when we compile our own python modules
-dnl AM_CHECK_PYTHON_HEADERS(,[AC_MSG_ERROR(could not find Python headers)])
-
-AS_AC_EXPAND(PYTHONDIR, $pythondir)
-AC_MSG_NOTICE(Using pythondir $PYTHONDIR)
 
 dnl check for GStreamer
 PKG_CHECK_MODULES(GST, gstreamer-0.10 >= $GST_REQ)
@@ -107,7 +102,7 @@ then
   AC_MSG_RESULT(found)
 else
   AC_MSG_RESULT(not found)
-  AC_MSG_ERROR([You need a version of PyGTK with cairo support enabled])
+  AC_MSG_ERROR([You need a version of PyGTK (Python bindings for GTK+) with cairo support enabled])
 fi
 
 
@@ -122,15 +117,12 @@ AC_SUBST(PYGST_DIR)
 AC_MSG_NOTICE(Using gstreamer-python installed in $PYGST_DIR)
 
 export PYTHONPATH=$PYGST_DIR:$PYTHONPATH
-dnl AS_PYTHON_IMPORT([gst],,
-dnl                  AC_MSG_ERROR([Maybe you forgot to set your PYTHONPATH?]))
-
-dnl AS_PYTHON_IMPORT([gst, gst.interfaces],,
-dnl                  AC_MSG_ERROR([You need to recompile gst-python with gst.interfaces support]))
 
 dnl the gettext stuff needed
 AM_GNU_GETTEXT_VERSION(0.11.5)
 AM_GNU_GETTEXT([external])
+
+AC_SUBST(PYTHONPATH)
 
 dnl output stuff
 AC_OUTPUT(
