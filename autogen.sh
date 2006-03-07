@@ -5,8 +5,9 @@ package=pitivi
 srcfile=pitivi/pitivi.py
 
 # a quick cvs co to ease the transition
-if test ! -d common;
+if test ! -f common/Makefile.am;
 then
+  rm -R common/
   echo "+ getting common/ from cvs"
   if test -e CVS/Tag
   then

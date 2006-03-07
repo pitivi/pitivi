@@ -1,5 +1,11 @@
 2006-03-07  Edward Hervey  <edward@fluendo.com>
 
+	* autogen.sh:
+	Clean the bogus common/ directory before checking it out from gstreamer
+	cvs.
+
+2006-03-07  Edward Hervey  <edward@fluendo.com>
+
 	* bin/pitivi.in:
 	* configure.ac:
 	Add the path detected for pygtk and gst-python at configure to sys.path.
