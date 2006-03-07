@@ -45,12 +45,15 @@ def initial_checks():
 def _checks():
     reg = gst.registry_get_default()
     if instance.PiTiVi:
-        return ("PiTiVi is already running",
-                "An instance of PiTiVi is already running in this script")
+        return ("PiTiVi is already running!",
+                "An instance of PiTiVi is already running in this script.")
     if not reg.find_plugin("gnonlin"):
         return ("Could not find the GNonLin plugins!",
-                "Make sure the plugins were installed and are available in the GStreamer plugins path")
+                "Make sure the plugins were installed and are available in the GStreamer plugins path.")
     if not reg.find_plugin("autodetect"):
         return ("Could not find the autodetect plugins!",
-                "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path")
+                "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path.")
+    if not hasattr(gtk.gdk.Window, 'cairo_create'):
+        return ("PyGTK doesn't have cairo support!",
+                "Please use a version of the Python bindings for GTK+ compiled with Cairo support.")
     return None

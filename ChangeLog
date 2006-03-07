@@ -1,3 +1,9 @@
+2006-03-07  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	* pitivi/check.py:
+	Checks at configure and at runtime for cairo support in PyGTK.
+
 2006-03-06  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/effects.py:

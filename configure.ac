@@ -87,6 +87,30 @@ else
   AC_MSG_ERROR([You need to have python libglade bindings installed])
 fi
 
+dnl check for cairo support in pygtk
+AC_MSG_CHECKING(for cairo support in PyGTK)
+prog="
+import sys
+try:
+  import pygtk
+  pygtk.require('2.0')
+  import gtk
+except RuntimeError:
+  sys.exit(0)
+if not hasattr(gtk.gdk.Window, 'cairo_create'):
+  sys.exit(1)
+sys.exit(0)
+"
+
+if $PYTHON -c "$prog" 1>&AC_FD_CC 2>&AC_FD_CC
+then
+  AC_MSG_RESULT(found)
+else
+  AC_MSG_RESULT(not found)
+  AC_MSG_ERROR([You need a version of PyGTK with cairo support enabled])
+fi
+
+
 dnl checks for gnome-python
 PKG_CHECK_MODULES(PYGNOME, gnome-python-2.0 >= $PYGNOME_REQ)
 
