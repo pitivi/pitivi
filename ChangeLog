@@ -1,3 +1,9 @@
+2006-03-09  Edward Hervey  <edward@fluendo.com>
+
+	* autogen.sh:
+	* configure.ac:
+	comment out i18n cruft and set proper ACLOCAL_AMFLAGS.
+
 2006-03-07  Edward Hervey  <edward@fluendo.com>
 
 	* autogen.sh:

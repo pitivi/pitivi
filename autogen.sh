@@ -63,14 +63,14 @@ toplevel_check $srcfile
 
 # autopoint
 #    older autopoint (< 0.12) has a tendency to complain about mkinstalldirs
-if test -x mkinstalldirs; then rm mkinstalldirs; fi
+#if test -x mkinstalldirs; then rm mkinstalldirs; fi
 #    first remove patch if necessary, then run autopoint, then reapply
-if test -f po/Makefile.in.in;
-then
-  patch -p0 -R < common/gettext.patch
-fi
-tool_run "$autopoint --force"
-patch -p0 < common/gettext.patch
+#if test -f po/Makefile.in.in;
+#then
+#  patch -p0 -R < common/gettext.patch
+#fi
+#tool_run "$autopoint --force"
+#patch -p0 < common/gettext.patch
 
 tool_run "$aclocal" "-I m4 -I common/m4 $ACLOCAL_FLAGS"
 tool_run "$libtoolize" "--copy --force"
