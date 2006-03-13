@@ -53,6 +53,9 @@ def _checks():
     if not reg.find_plugin("autodetect"):
         return ("Could not find the autodetect plugins!",
                 "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path.")
+    if not reg.find_plugin("gnomevfs"):
+        return ("Could not find the GnomeVFS plugins!",
+                "Make sure you have installed the GnomeVFS plugins and they are available in the GStreamer plugin path.")
     if not hasattr(gtk.gdk.Window, 'cairo_create'):
         return ("PyGTK doesn't have cairo support!",
                 "Please use a version of the Python bindings for GTK+ compiled with Cairo support.")
