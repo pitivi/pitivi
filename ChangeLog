@@ -1,5 +1,10 @@
 2006-03-13  Edward Hervey  <edward@fluendo.com>
 
+	* autogen.sh:
+	Remove path for non-existing directory for aclocal inclusions.
+
+2006-03-13  Edward Hervey  <edward@fluendo.com>
+
 	* configure.ac: (ACLOCAL_AMFLAGS):
 	Remove path of non-existing directory
 
