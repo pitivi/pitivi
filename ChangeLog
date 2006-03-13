@@ -1,5 +1,8 @@
 2006-03-13  Edward Hervey  <edward@fluendo.com>
 
+	* configure.ac: (ACLOCAL_AMFLAGS):
+	Remove path of non-existing directory
+
 	* pitivi/check.py:
 	Added another check for the gnomeVFS gstreamer plugins.
 
