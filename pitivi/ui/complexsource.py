@@ -30,9 +30,8 @@ from complexinterface import ZoomableWidgetInterface
 
 # TODO : We might need an abstract class for ComplexTimelineObjects....
 
-class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
+class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
     __gsignals__ = {
-        "expose-event":"override",
         "size-request":"override",
         "size-allocate":"override",
         "realize":"override",
@@ -41,7 +40,7 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
     modelclass = TimelineSource
 
     def __init__(self, source, layerInfo):
-        gtk.DrawingArea.__init__(self)
+        gtk.Image.__init__(self)
         self.layerInfo = layerInfo
         self.source = source
         self.source.connect("start-duration-changed", self._start_duration_changed_cb)
@@ -54,22 +53,14 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
 
     ## gtk.Widget overrides
 
-    def do_expose_event(self, event):
-        gst.debug("timelinesource %s" % list(event.area))
-        x, y, width, height = event.area
-        self.window.draw_drawable(self.style.fg_gc[gtk.STATE_NORMAL],
-                                  self.pixmap,
-                                  x, y, x, y, width, height)
-        return False
-
     def do_realize(self):
-        gtk.DrawingArea.do_realize(self)
+        gtk.Image.do_realize(self)
         self.doPixmap()
 
     def do_size_allocate(self, allocation):
         if list(allocation) == list(self.allocation):
             return
-        gtk.DrawingArea.do_size_allocate(self, allocation)
+        gtk.Image.do_size_allocate(self, allocation)
         self.doPixmap()
 
     def do_size_request(self, requisition):
@@ -89,7 +80,7 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
 
         if self.pixmap:
             del self.pixmap
-            gc.collect()
+            #gc.collect()
         self.pixmap = gtk.gdk.Pixmap(self.window, rect.width, rect.height)
         context = self.pixmap.cairo_create()
         
@@ -99,6 +90,7 @@ class ComplexTimelineSource(gtk.DrawingArea, ZoomableWidgetInterface):
             self.draw_thumbnail(context, rect)
 
         self.draw_decoration_border(context, rect)
+        self.set_from_pixmap(self.pixmap, None)
 
     def draw_background(self, context, allocation):
         context.save()

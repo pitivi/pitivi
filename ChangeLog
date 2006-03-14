@@ -1,3 +1,9 @@
+2006-03-14  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/complexsource.py:
+	ComplexSource is now a subclass of gtk.Image so that C/Gtk+ does
+	the double-buffering trick.
+
 2006-03-13  Edward Hervey  <edward@fluendo.com>
 
 	* autogen.sh:
