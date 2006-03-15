@@ -1,3 +1,11 @@
+2006-03-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	Implement shutdown method for properly exiting PiTiVi
+	* pitivi/ui/mainwindow.py:
+	Use instance.PiTiVi.shutdown() when quitting
+
 2006-03-14  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/complexsource.py:

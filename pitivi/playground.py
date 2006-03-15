@@ -210,8 +210,17 @@ class PlayGround(gobject.GObject):
                           gst.SEEK_TYPE_NONE, -1)
         if not res:
             gst.warning ("Seeking in current failed !");
+        else:
+            gst.debug("Seeking to %s succeeded" % gst.TIME_ARGS (value))
 
         # bring back current to previous state
+
+    def shutdown(self):
+        for pipeline in self.pipelines:
+            gst.debug("Setting pipeline to NULL : %r" % pipeline)
+            pipeline.set_state(gst.STATE_NULL)
+        gst.debug("Setting DefaultBin to NULL")
+        self.default.set_state(gst.STATE_NULL)
 
     #
     # Bus handler

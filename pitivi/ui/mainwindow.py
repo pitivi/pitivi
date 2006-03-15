@@ -51,7 +51,7 @@ class PitiviMainWindow(gtk.Window):
         self.show_all()
 
     def destroy(self, widget, data=None):
-        gtk.main_quit()
+        instance.PiTiVi.shutdown()
 
     def _set_actions(self):
         """ sets up the GtkActions """
@@ -120,29 +120,25 @@ class PitiviMainWindow(gtk.Window):
         hpaned.pack2(viewerframe, resize=False, shrink=False)
 
     def new_project_cb(self, action):
-        print "new project"
         instance.PiTiVi.new_blank_project()
 
     def open_project_cb(self, action):
-        print "open project"
+        raise NotImplementedError
 
     def save_project_cb(self, action):
-        print "save project"
+        raise NotImplementedError
 
     def save_project_as_cb(self, action):
-        print "save project as"
+        raise NotImplementedError
 
     def project_settings_cb(self, action):
-        print "project settings"
         l = ProjectSettingsDialog(self, instance.PiTiVi.current)
         l.show()
 
     def quit_cb(self, action):
-        print "quit"
-        gtk.main_quit()
+        instance.PiTiVi.shutdown()
 
     def about_cb(self, action):
-        print "About..."
 	abt = gtk.AboutDialog()
 	abt.set_name("PiTiVi")
 	abt.set_version("v%s" % pitivi_version)
@@ -156,10 +152,9 @@ class PitiviMainWindow(gtk.Window):
     ## PiTiVi main object callbacks
 
     def _new_project_cb(self, pitivi, project):
-        print "Starting up a new project", project
+        raise NotImplementedError
 
     def _closing_project_cb(self, pitivi, project):
-        print "Project", project, "is being closed"
         # Return True if we accept the project being close
         # if we want to save it before it being closed, we must
         #   do so
@@ -168,6 +163,6 @@ class PitiviMainWindow(gtk.Window):
         return True
 
     def _not_project_cb(self, pitivi, uri):
-        print uri, "is not a project file !"
+        raise NotImplementedError
 
         

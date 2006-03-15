@@ -111,6 +111,15 @@ class Pitivi(gobject.GObject):
             self.current = Project("New Project")
             self.emit("new-project", self.current)
 
+    def shutdown(self):
+        """ close PiTiVi """
+        gst.debug("shutting down")
+        if not self._close_running_project():
+            return
+        self.playground.shutdown()
+        gst.debug("Exiting main loop")
+        gtk.main_quit()
+
         
 def main(argv):
     check.initial_checks()
