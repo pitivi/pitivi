@@ -127,7 +127,7 @@ class SimpleTimeline(gtk.Layout):
         Returns n , the element before which it should go
         Return -1 if it's meant to go last
         """
-        if not len(self.condensed) or x < 0:
+        if not self.condensed or x < 0:
             return 0
         if x > self.width - DEFAULT_SIMPLE_SPACING:
             return -1
@@ -155,7 +155,7 @@ class SimpleTimeline(gtk.Layout):
         returns the nearest file slot position available for the given position
         Returns the value in pixels
         """
-        if not len(self.condensed) or x < 0:
+        if not self.condensed or x < 0:
             return DEFAULT_SIMPLE_SPACING
         if x > self.width - DEFAULT_SIMPLE_SPACING:
             return self.width - 2 * DEFAULT_SIMPLE_SPACING

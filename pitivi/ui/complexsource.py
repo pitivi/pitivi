@@ -34,7 +34,6 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
     __gsignals__ = {
         "size-request":"override",
         "size-allocate":"override",
-        "realize":"override",
         }
 
     modelclass = TimelineSource
@@ -53,22 +52,15 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
 
     ## gtk.Widget overrides
 
-    def do_realize(self):
-        gtk.Image.do_realize(self)
-        self.doPixmap()
-
     def do_size_allocate(self, allocation):
-        if list(allocation) == list(self.allocation):
-            return
+        changed = not (list(allocation) == list(self.allocation))
         gtk.Image.do_size_allocate(self, allocation)
-        self.doPixmap()
+        if changed:
+            self.doPixmap()
 
     def do_size_request(self, requisition):
         gst.debug("source, requisition:%s" % list(requisition))
         requisition.width=self.get_pixel_width()
-        if self.layerInfo.expanded:
-            requisition.height=self.get_height()
-
 
     ## Drawing methods
 
@@ -100,18 +92,14 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
         context.stroke()
         context.restore()
         
-    def draw_decoration_border(self, context, allocation):
-        rect = self.get_allocation()
+    def draw_decoration_border(self, context, rect):
         context.set_source_rgb(1, 0, 0)
         context.rectangle(0, 0, rect.width, rect.height)
         context.stroke()
         
 
-    def draw_thumbnail(self, context, allocation):
+    def draw_thumbnail(self, context, alloc):
         context.save()
-
-        alloc = self.get_allocation()
-
         # figure out the scaleratio
         surfwidth = self.thumbnailsurface.get_width()
         surfheight = self.thumbnailsurface.get_height()

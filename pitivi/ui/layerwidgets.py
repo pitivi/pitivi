@@ -36,14 +36,14 @@ class TimelineToolBar(gtk.HBox):
         # zoom
         self.zoomInButton = gtk.Button(label="")
         image = gtk.image_new_from_stock(gtk.STOCK_ZOOM_IN,
-                                         gtk.ICON_SIZE_BUTTON)
+                                         gtk.ICON_SIZE_SMALL_TOOLBAR)
         self.zoomInButton.set_image(image)
         self.pack_start(self.zoomInButton, expand=False)
         self.zoomInButton.connect('clicked', self.zoomClickedCb)
         
         self.zoomOutButton = gtk.Button(label="")
         self.zoomOutButton.set_image(gtk.image_new_from_stock(gtk.STOCK_ZOOM_OUT,
-                                                              gtk.ICON_SIZE_BUTTON))
+                                                              gtk.ICON_SIZE_SMALL_TOOLBAR))
         self.pack_start(self.zoomOutButton, expand=False)
         self.zoomOutButton.connect('clicked', self.zoomClickedCb)
 

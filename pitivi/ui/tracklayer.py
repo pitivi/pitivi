@@ -82,7 +82,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         self.start_duration_changed()
 
     def compSourceAddedCb(self, composition, source):
-        gst.debug("Got a new source to put in %s !!" % list(self.get_size()))
+        gst.debug("Got a new source")
         # create new widget
         widget = ComplexTimelineSource(source, self.layerInfo)
         
@@ -95,28 +95,23 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         # TODO : set Y position depending on layer it's on
         self.put(widget, self.ns_to_pixel(widget.get_start_time()) + self.border,
                  self.effectgutter + self.layergutter)
-        # we need to force the size_allocation
-        widget.size_allocate(gtk.gdk.Rectangle(widget.get_pixel_position() + self.border,
-                                               self.effectgutter + self.layergutter,
-                                               widget.get_pixel_width(),
-                                               height))
         widget.show()
         # we need to keep track of the child's position
-        source.connect_after('start-duration-changed', self.__childStartDurationChangedCb)
+        source.connect_after('start-duration-changed', self._childStartDurationChangedCb)
+        gst.debug("Finished adding source")
 
 
     ## ZoomableWidgetInterface methods
 
     def get_duration(self):
-        gst.debug("returning %s" % gst.TIME_ARGS(self.layerInfo.composition.duration))
         return self.layerInfo.composition.duration
 
     def get_start_time(self):
         return self.layerInfo.composition.start
 
     def get_pixel_width(self):
+        # Add borders
         pwidth = ZoomableWidgetInterface.get_pixel_width(self) + 2 * self.border
-        gst.debug("returning %d" % pwidth)
         return pwidth
 
     def zoomChanged(self):
@@ -149,8 +144,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         self.bin_window.draw_drawable(self.style.fg_gc[gtk.STATE_NORMAL],
                                       self.pixmap,
                                       x, y, x, y, width, height)
-        gtk.Layout.do_expose_event(self, event)
-        return False
+        return gtk.Layout.do_expose_event(self, event)
 
 
     ## Drawing methods
@@ -178,7 +172,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
     ## Child callbacks
 
-    def __childStartDurationChangedCb(self, source, start, duration):
+    def _childStartDurationChangedCb(self, source, start, duration):
         # move accordingly
         gst.debug("%r start:%s duration:%s" % (source, gst.TIME_ARGS(start),
                                                gst.TIME_ARGS(duration)))

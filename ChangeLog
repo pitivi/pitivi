@@ -1,3 +1,25 @@
+2006-03-16  Edward Hervey  <edward@fluendo.com>
+
+	* docs/HACKING
+	New document about hacking on PiTiVi.
+	* pitivi/bin.py:
+	Fixes according to PEP-8
+	* pitivi/check.py:
+	Added runtime check for gnomevfs module availability
+	* pitivi/discoverer.py:
+	Fixes according to PEP-8
+	* pitivi/ui/complexsource.py:
+	Speed optimizations and fixes
+	* pitivi/ui/layerwidgets.py:
+	Smaller buttons
+	* pitivi/ui/timelineobjects.py:
+	Fixes according to PEP-8
+	* pitivi/ui/tracklayer.py:
+	Fix method naming and less useless debug
+	* pitivi/ui/viewer.py:
+	Fixes according to PEP-8
+	More fixes to encoding dialog
+
 2006-03-15  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/pitivi.py:

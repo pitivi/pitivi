@@ -426,7 +426,7 @@ class PitiviViewer(gtk.VBox):
         if idx < 0:
             return
         del self.sourcelist[idx]
-        if len(self.sourcelist) == 0:
+        if not self.sourcelist:
             self.sourcecombobox.set_sensitive(False)
 
     def _current_state_cb(self, playground, state):
@@ -543,8 +543,7 @@ class EncodingDialog(GladeWindow):
         result, state, pending = self.bin.get_state(0)
         if state == gst.STATE_PLAYING and self.rendering:
             # check time
-            value = self.bin.source.query(gst.QUERY_POSITION,
-                                          gst.FORMAT_TIME)
+            value, format = self.bin.query_position(gst.FORMAT_TIME)
             # set progresbar to percentage
             self.progressbar.set_fraction(float(value) / float(self.bin.length))
             

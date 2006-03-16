@@ -88,7 +88,7 @@ class Discoverer(gobject.GObject):
             gst.warning("called when still working!")
             return False
         
-        if not len(self.queue):
+        if not self.queue:
             gst.warning("Nothing to analyze!!")
             return False
         
@@ -122,7 +122,7 @@ class Discoverer(gobject.GObject):
         self.pipeline = None
         
         # restart an analysis if there's more...
-        if len(self.queue):
+        if self.queue:
             gobject.idle_add(self._analyze)
         else:
             self.working = False
@@ -208,9 +208,9 @@ class Discoverer(gobject.GObject):
                 caps = pad.get_negotiated_caps()
             gst.info("testing pad %s : %s" % (pad, caps))
             if caps and caps.is_fixed():
-                if "audio/" == caps.to_string()[:6] and not self.currentfactory.audio_info:
+                if caps.to_string().startswith("audio/") and not self.currentfactory.audio_info:
                     self.currentfactory.set_audio_info(caps)
-                elif "video/" == caps.to_string()[:6] and not self.currentfactory.video_info:
+                elif caps.to_string().startswith("video/") and not self.currentfactory.video_info:
                     self.currentfactory.set_video_info(caps)
             if not self.currentfactory.length:
                 try:

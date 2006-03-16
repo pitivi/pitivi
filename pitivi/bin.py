@@ -155,15 +155,15 @@ class SmartFileBin(SmartBin):
     def _bin_new_decoded_pad(self, bin, pad):
         # connect to good tee
         self.debug("SmartFileBin's source has a new pad: %s %s" % (pad , pad.get_caps().to_string()))
-        if "audio" in pad.get_caps().to_string()[:5]:
+        if pad.get_caps().to_string().startswith("audio"):
             pad.link(self.atee.get_pad("sink"))
-        elif "video" in pad.get_caps().to_string()[:5]:
+        elif pad.get_caps().to_string().startswith("video"):
             pad.link(self.vtee.get_pad("sink"))
 
     def _bin_removed_decoded_pad(self, bin, pad):
-        if "audio" in pad.get_caps().to_string()[:5]:
+        if pad.get_caps().to_string().startswith("audio"):
             pad.unlink(self.atee.get_pad("sink"))
-        elif "video" in pad.get_caps().to_string()[:5]:
+        elif pad.get_caps().to_string().startswith("video"):
             pad.unlink(self.vtee.get_pad("sink"))
 
     def do_destroy(self):
