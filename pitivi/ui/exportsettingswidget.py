@@ -58,11 +58,11 @@ class ExportSettingsWidget(GladeWidget):
         self.vcodecsettings = {}
         self.acodecsettings = {}
 
-    def set_settings(self, settings):
+    def setSettings(self, settings):
         self.settings = settings
-        self._fill_settings()
+        self._fillSettings()
 
-    def _fill_settings(self):
+    def _fillSettings(self):
         # Video settings
         self.videowidthspin.set_value(self.settings.videowidth)
         self.videoheightspin.set_value(self.settings.videoheight)
@@ -102,13 +102,13 @@ class ExportSettingsWidget(GladeWidget):
         audiolist.clear()
         for rate in self.audio_rates:
             audiolist.append([rate[0]])
-        self._put_good_audiorate(self.settings.audiorate)
+        self._putGoodAudiorate(self.settings.audiorate)
 
         audiolist = self.audiodepthcbox.get_model()
         audiolist.clear()
         for depth in self.audio_depths:
             audiolist.append([depth[0]])
-        self._put_good_audiodepth(self.settings.audiodepth)
+        self._putGoodAudiodepth(self.settings.audiodepth)
         
         audiolist = self.audiocombobox.get_model()
         audiolist.clear()
@@ -167,7 +167,7 @@ class ExportSettingsWidget(GladeWidget):
         self.acodecsettings = self.settings.acodecsettings
         self.vcodecsettings = self.settings.vcodecsettings
 
-    def _put_good_videorate(self, value):
+    def _putGoodVideorate(self, value):
         idx = 0
         for rate in self.video_rates:
             if value == rate[1]:
@@ -175,7 +175,7 @@ class ExportSettingsWidget(GladeWidget):
                 return
             idx = idx + 1
 
-    def _put_good_audiorate(self, value):
+    def _putGoodAudiorate(self, value):
         idx = 0
         for rate in self.audio_rates:
             if value == rate[1]:
@@ -183,7 +183,7 @@ class ExportSettingsWidget(GladeWidget):
                 return
             idx = idx + 1
 
-    def _put_good_audiodepth(self, value):
+    def _putGoodAudiodepth(self, value):
         idx = 0
         for depth in self.audio_depths:
             if value == depth[1]:
@@ -191,7 +191,7 @@ class ExportSettingsWidget(GladeWidget):
                 return
             idx = idx + 1
 
-    def videocombobox_changed(self, widget):
+    def _videoComboboxChangedCb(self, widget):
         idx = widget.get_active()
         if idx == len(self.video_presets):
             activate = True
@@ -199,25 +199,25 @@ class ExportSettingsWidget(GladeWidget):
             activate = False
             self.videowidthspin.set_value(self.video_presets[idx][1])
             self.videoheightspin.set_value(self.video_presets[idx][2])
-            self._put_good_videorate(self.video_presets[idx][3])
+            self._putGoodVideorate(self.video_presets[idx][3])
         self.videowidthspin.set_sensitive(activate)
         self.videoheightspin.set_sensitive(activate)
         self.videoratecbox.set_sensitive(activate)
 
-    def audiocombobox_changed(self, widget):
+    def _audioComboboxChangedCb(self, widget):
         idx = widget.get_active()
         if idx == len(self.audio_presets):
             activate = True
         else:
             activate = False
             self.audiochanncbox.set_active(self.audio_presets[idx][1] - 1)
-            self._put_good_audiorate(self.audio_presets[idx][2])
-            self._put_good_audiodepth(self.audio_presets[idx][3])
+            self._putGoodAudiorate(self.audio_presets[idx][2])
+            self._putGoodAudiodepth(self.audio_presets[idx][3])
         self.audiochanncbox.set_sensitive(activate)
         self.audioratecbox.set_sensitive(activate)
         self.audiodepthcbox.set_sensitive(activate)
 
-    def muxercombobox_changed(self, widget):
+    def _muxerComboboxChangedCb(self, widget):
         if self.validvencoders:
             prevvenc = self.validvencoders[self.vcodeccbox.get_active()].get_name()
         else:
@@ -227,8 +227,10 @@ class ExportSettingsWidget(GladeWidget):
         else:
             prevaenc = self.settings.aencoder
         # find the valid audio/video codec with the given muxer
-        self.validaencoders = encoders_muxer_compatible(self.settings.aencoders, self.muxers[widget.get_active()])
-        self.validvencoders = encoders_muxer_compatible(self.settings.vencoders, self.muxers[widget.get_active()])
+        self.validaencoders = encoders_muxer_compatible(self.settings.aencoders,
+                                                        self.muxers[widget.get_active()])
+        self.validvencoders = encoders_muxer_compatible(self.settings.vencoders,
+                                                        self.muxers[widget.get_active()])
 
         venclist = self.vcodeccbox.get_model()
         venclist.clear()
@@ -252,7 +254,7 @@ class ExportSettingsWidget(GladeWidget):
             idx = idx + 1
         self.acodeccbox.set_active(selected)
 
-    def run_settings_dialog(self, factory, settings):
+    def runSettingsDialog(self, factory, settings):
         dialog = GstElementSettingsDialog(factory, settings)
         if dialog.run() == gtk.RESPONSE_OK:
             dialog.hide()
@@ -262,32 +264,32 @@ class ExportSettingsWidget(GladeWidget):
         dialog.destroy()
         return settings        
 
-    def on_muxersettingsbutton_clicked(self, button):
+    def _muxerSettingsButtonClickedCb(self, button):
         factory = self.settings.muxers[self.muxercombobox.get_active()]
         if not factory:
             return
-        set = self.run_settings_dialog(factory, self.containersettings)
+        set = self.runSettingsDialog(factory, self.containersettings)
         if set:
             self.containersettings = set
 
-    def on_acodecsettingsbutton_clicked(self, button):
+    def _acodecSettingsButtonClickedCb(self, button):
         factory = self.validaencoders[self.acodeccbox.get_active()]
         if not factory:
             return
-        set = self.run_settings_dialog(factory, self.acodecsettings)
+        set = self.runSettingsDialog(factory, self.acodecsettings)
         if set:
             self.acodecsettings = set
 
-    def on_vcodecsettingsbutton_clicked(self, button):
+    def _vcodecSettingsButtonClickedCb(self, button):
         factory = self.validvencoders[self.vcodeccbox.get_active()]
         if not factory:
             return
-        set = self.run_settings_dialog(factory, self.vcodecsettings)
+        set = self.runSettingsDialog(factory, self.vcodecsettings)
         if set:
             self.vcodecsettings = set
         
         
-    def _update_settings(self):
+    def updateSettings(self):
         # Video Settings
         width = self.videowidthspin.get_value()
         height = self.videoheightspin.get_value()
@@ -322,10 +324,10 @@ class ExportSettingsDialog(gtk.Dialog):
                                      gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
         self.setwidget = ExportSettingsWidget()
         self.vbox.pack_start(self.setwidget)
-        self.setwidget.set_settings(settings)
+        self.setwidget.setSettings(settings)
         self.setwidget.show_all()
 
-    def get_settings(self):
-        self.setwidget._update_settings()
+    def getSettings(self):
+        self.setwidget.updateSettings()
         return self.setwidget.settings
 

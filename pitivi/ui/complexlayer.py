@@ -75,9 +75,9 @@ class LayerInfoList(gobject.GObject):
         gobject.GObject.__init__(self)
         self.timeline = timeline
         self._list = []
-        self.__fillList()
+        self._fillList()
 
-    def __fillList(self):
+    def _fillList(self):
         gst.debug("filling up LayerInfoList")
         self.addComposition(self.timeline.videocomp)
         self.addComposition(self.timeline.audiocomp)

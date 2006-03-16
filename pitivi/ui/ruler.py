@@ -48,8 +48,8 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         self.doPixmap()
         self.queue_draw()
 
-    def get_pixel_width(self):
-        return ZoomableWidgetInterface.get_pixel_width(self) + 2 * self.border
+    def getPixelWidth(self):
+        return ZoomableWidgetInterface.getPixelWidth(self) + 2 * self.border
 
 
     ## timeline position changed callback
@@ -57,9 +57,9 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
     def timelinePositionChanged(self, value, frame):
         previous = self.position
         self.position = value
-        self.queue_draw_area(max(self.ns_to_pixel(min(value, previous)) - 5, 0),
+        self.queue_draw_area(max(self.nsToPixel(min(value, previous)) - 5, 0),
                              0,
-                             self.ns_to_pixel(max(value, previous)) + 5,
+                             self.nsToPixel(max(value, previous)) + 5,
                              self.get_allocation().height)
 
     ## gtk.Widget overrides
@@ -67,7 +67,7 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
     def do_size_allocate(self, allocation):
         gst.debug("ScaleRuler got %s" % list(allocation))
         gtk.Layout.do_size_allocate(self, allocation)
-        width = max(self.get_pixel_width(), allocation.width)
+        width = max(self.getPixelWidth(), allocation.width)
         gst.debug("Setting layout size to %d x %d" % (width, allocation.height))
         self.set_size(width, allocation.height)
         # the size has changed, therefore we want to redo our pixmap
@@ -87,7 +87,7 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
                                       x, y, x, y, width, height)
         # draw the position
         context = self.bin_window.cairo_create()
-        self.draw_position(context, self.get_allocation())
+        self.drawPosition(context, self.get_allocation())
         return False
 
     def doPixmap(self):
@@ -103,16 +103,16 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
             del self.pixmap
         self.pixmap = gtk.gdk.Pixmap(self.bin_window, allocation.width, allocation.height)
         context = self.pixmap.cairo_create()
-        self.draw_background(context, allocation)
-        self.draw_ruler(context, allocation)
+        self.drawBackground(context, allocation)
+        self.drawRuler(context, allocation)
 
     def draw(self, context):
         rect = self.get_allocation()
         gst.debug("Ruler draw %s" % list(rect))
-        self.draw_background(context, rect)
-        self.draw_ruler(context, rect)
+        self.drawBackground(context, rect)
+        self.drawRuler(context, rect)
 
-    def draw_background(self, context, allocation):
+    def drawBackground(self, context, allocation):
         context.save()
 
         context.set_source_rgb(0.5, 0.5, 0.5)
@@ -121,29 +121,31 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         context.fill()
         context.stroke()
 
-        if self.get_duration() > 0:
+        if self.getDuration() > 0:
             context.set_source_rgb(0.8, 0.8, 0.8)
             context.rectangle(0, 0,
-                              self.get_pixel_width(), allocation.height)
+                              self.getPixelWidth(), allocation.height)
             context.fill()
             context.stroke
         
         context.restore()
 
-    def draw_ruler(self, context, allocation):
+    def drawRuler(self, context, allocation):
         # one tick every second
         # FIXME : respect zoomratio !!!!
         context.save()
         context.set_line_width(0.5 * context.get_line_width())
         context.set_source_rgb(0, 0, 0)
+
+        zoomRatio = self.getZoomRatio()
         
-        for i in range(self.border, allocation.width, self.get_zoom_ratio()):
+        for i in range(self.border, allocation.width, zoomRatio):
             context.move_to(i, 0)
             
-            if (i - self.border) % (10 * self.get_zoom_ratio()):
+            if (i - self.border) % (10 * zoomRatio):
                 # second
                 context.line_to(i, allocation.height / 4)
-            elif (i - self.border) % (60 * self.get_zoom_ratio()):
+            elif (i - self.border) % (60 * zoomRatio):
                 # 10 seconds
                 context.line_to(i, allocation.height / 2)
             else:
@@ -153,11 +155,11 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         context.stroke()
         context.restore()
 
-    def draw_position(self, context, allocation):
-        if self.get_duration() <= 0:
+    def drawPosition(self, context, allocation):
+        if self.getDuration() <= 0:
             return
         # a simple RED line will do for now
-        xpos = self.ns_to_pixel(self.position) + self.border
+        xpos = self.nsToPixel(self.position) + self.border
         context.save()
         context.set_source_rgb(1.0, 0, 0)
 

@@ -67,51 +67,51 @@ import gst
 
 class ZoomableWidgetInterface:
 
-    def get_pixel_width(self):
+    def getPixelWidth(self):
         """
         Returns the width in pixels corresponding to the duration of the object
         """
-        dur = self.get_duration()
-        width = self.ns_to_pixel(dur)
+        dur = self.getDuration()
+        width = self.nsToPixel(dur)
         gst.log("Got time %s, returning width : %d" % (gst.TIME_ARGS(dur), width))
         return width
 
-    def get_pixel_position(self):
+    def getPixelPosition(self):
         """
         Returns the pixel offset of the widget in it's container, according to:
         _ the start position of the object in it's timeline container,
         _ and the set zoom ratio
         """
-        start = self.get_start_time()
-        pos = self.ns_to_pixel(start)
+        start = self.getStartTime()
+        pos = self.nsToPixel(start)
         gst.log("Got start time %s, returning offset %d" % (gst.TIME_ARGS(start), pos))
         return pos
 
-    def pixel_to_ns(self, pixel):
+    def pixelToNs(self, pixel):
         """
         Returns the pixel equivalent in nanoseconds according to the zoomratio
         """
-        return int(pixel * gst.SECOND / self.get_zoom_ratio())
+        return int(pixel * gst.SECOND / self.getZoomRatio())
 
-    def ns_to_pixel(self, duration):
+    def nsToPixel(self, duration):
         """
         Returns the pixel equivalent of the given duration, according to the
         set zoom ratio
         """
         if duration == gst.CLOCK_TIME_NONE:
             return 0
-        return int((float(duration) / gst.SECOND) * self.get_zoom_ratio())
+        return int((float(duration) / gst.SECOND) * self.getZoomRatio())
 
     ## Methods to implement in subclasses
         
-    def get_duration(self):
+    def getDuration(self):
         """
         Return the duration in nanoseconds of the object
         To be implemented by subclasses
         """
         raise NotImplementedError
 
-    def get_start_time(self):
+    def getStartTime(self):
         """
         Return the start time in nanosecond of the object
         To be implemented by subclasses
@@ -121,27 +121,27 @@ class ZoomableWidgetInterface:
     def zoomChanged(self):
         raise NotImplementedError
 
-    def duration_changed(self):
+    def durationChanged(self):
         self.queue_resize()
 
-    def start_changed(self):
+    def startChanged(self):
         self.queue_resize()
 
-    def start_duration_changed(self):
+    def startDurationChanged(self):
         gst.info("start/duration changed")
         self.queue_resize()
     
-    def get_zoom_ratio(self):
+    def getZoomRatio(self):
         # either the current object is the top-level object that contains the zoomratio
         if hasattr(self, 'zoomratio'):
             return self.zoomratio
         # chain up to the parent
         parent = self.parent
-        while not hasattr(parent, 'get_zoom_ratio'):
+        while not hasattr(parent, 'getZoomRatio'):
             parent = parent.parent
-        return parent.get_zoom_ratio()
+        return parent.getZoomRatio()
 
-    def set_zoom_ratio(self, zoomratio):
+    def setZoomRatio(self, zoomratio):
         if hasattr(self, 'zoomratio'):
             if self.zoomratio == zoomratio:
                 return
@@ -149,7 +149,7 @@ class ZoomableWidgetInterface:
             self.zoomratio = zoomratio
             self.zoomChanged()
         else:
-            self.parent.set_zoom_ratio(zoomratio)
+            self.parent.setZoomRatio(zoomratio)
 
 class LayeredWidgetInterface:
 
@@ -193,16 +193,16 @@ class LayeredWidgetInterface:
         """ set the layer at the given position to the requested height """
         self.layerinfolist.changeLayerHeight(layerposition, height)
 
-    def __expanded_cb(self, list, layerposition, expanded):
+    def _expandedCb(self, list, layerposition, expanded):
         self.layerExpanded(layerposition, expanded)
 
-    def __layer_height_changed_cb(self, list, layerposition):
+    def _layerHeightChangedCb(self, list, layerposition):
         self.layerHeightChanged(layerposition)
 
-    def __layer_added_cb(self, list, position):
+    def _layerAddedCb(self, list, position):
         self.layerAdded(position)
 
-    def __layer_removed_cb(self, list, position):
+    def _layerRemovedCb(self, list, position):
         self.layerRemoved(position)
 
     def layerExpanded(self, layerposition, expanded):

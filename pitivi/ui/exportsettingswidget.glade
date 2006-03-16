@@ -60,7 +60,7 @@
 		      <property name="items" translatable="yes">Video Preset</property>
 		      <property name="add_tearoffs">False</property>
 		      <property name="focus_on_click">True</property>
-		      <signal name="changed" handler="videocombobox_changed" last_modification_time="Tue, 24 May 2005 13:42:43 GMT"/>
+		      <signal name="changed" handler="_videoComboboxChangedCb" last_modification_time="Tue, 24 May 2005 13:42:43 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">0</property>
@@ -289,7 +289,7 @@
 		      <property name="items" translatable="yes">Audio Preset</property>
 		      <property name="add_tearoffs">False</property>
 		      <property name="focus_on_click">True</property>
-		      <signal name="changed" handler="audiocombobox_changed" last_modification_time="Tue, 24 May 2005 13:42:37 GMT"/>
+		      <signal name="changed" handler="_audioComboboxChangedCb" last_modification_time="Tue, 24 May 2005 13:42:37 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">0</property>
@@ -627,7 +627,7 @@ Stereo (2)</property>
 		      <property name="items" translatable="yes">Muxer</property>
 		      <property name="add_tearoffs">False</property>
 		      <property name="focus_on_click">True</property>
-		      <signal name="changed" handler="muxercombobox_changed" last_modification_time="Tue, 24 May 2005 19:18:10 GMT"/>
+		      <signal name="changed" handler="_muxerComboboxChangedCb" last_modification_time="Tue, 24 May 2005 19:18:10 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">1</property>
@@ -647,7 +647,7 @@ Stereo (2)</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>
-		      <signal name="clicked" handler="on_muxersettingsbutton_clicked" last_modification_time="Sat, 18 Jun 2005 17:45:50 GMT"/>
+		      <signal name="clicked" handler="_muxerSettingsButtonClickedCb" last_modification_time="Sat, 18 Jun 2005 17:45:50 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">2</property>
@@ -667,7 +667,7 @@ Stereo (2)</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>
-		      <signal name="clicked" handler="on_acodecsettingsbutton_clicked" last_modification_time="Sat, 18 Jun 2005 17:45:55 GMT"/>
+		      <signal name="clicked" handler="_acodecSettingsButtonClickedCb" last_modification_time="Sat, 18 Jun 2005 17:45:55 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">2</property>
@@ -687,7 +687,7 @@ Stereo (2)</property>
 		      <property name="use_underline">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>
-		      <signal name="clicked" handler="on_vcodecsettingsbutton_clicked" last_modification_time="Sat, 18 Jun 2005 17:46:55 GMT"/>
+		      <signal name="clicked" handler="_vcodecSettingsButtonClickedCb" last_modification_time="Sat, 18 Jun 2005 17:46:55 GMT"/>
 		    </widget>
 		    <packing>
 		      <property name="left_attach">2</property>

@@ -39,24 +39,24 @@ class TimelineToolBar(gtk.HBox):
                                          gtk.ICON_SIZE_SMALL_TOOLBAR)
         self.zoomInButton.set_image(image)
         self.pack_start(self.zoomInButton, expand=False)
-        self.zoomInButton.connect('clicked', self.zoomClickedCb)
+        self.zoomInButton.connect('clicked', self._zoomClickedCb)
         
         self.zoomOutButton = gtk.Button(label="")
         self.zoomOutButton.set_image(gtk.image_new_from_stock(gtk.STOCK_ZOOM_OUT,
                                                               gtk.ICON_SIZE_SMALL_TOOLBAR))
         self.pack_start(self.zoomOutButton, expand=False)
-        self.zoomOutButton.connect('clicked', self.zoomClickedCb)
+        self.zoomOutButton.connect('clicked', self._zoomClickedCb)
 
-    def zoomClickedCb(self, button):
+    def _zoomClickedCb(self, button):
         if button == self.zoomInButton:
             gst.debug("Zooming IN button clicked")
-            ratio = self.get_zoom_ratio() * 2.0
+            ratio = self.getZoomRatio() * 2.0
         elif button == self.zoomOutButton:
             gst.debug("Zooming OUT button clicked")
-            ratio = self.get_zoom_ratio() / 2.0
+            ratio = self.getZoomRatio() / 2.0
         else:
             return
-        self.set_zoom_ratio(ratio)
+        self.setZoomRatio(ratio)
 
 class TimelineLayer(gtk.HBox):
 
@@ -107,16 +107,16 @@ class TopLayer(TimelineLayer, ZoomableWidgetInterface):
         # call the container (ComplexTimelineWidget) methods
         # since the ScaleRuler has no clue what the duration
         # and size is
-        self.rightWidget.get_duration = self.get_duration
-        self.rightWidget.get_start_time = self.get_start_time
-        self.leftWidget.get_zoom_ratio = self.get_zoom_ratio
-        self.leftWidget.set_zoom_ratio = self.set_zoom_ratio
+        self.rightWidget.getDuration = self.getDuration
+        self.rightWidget.getStartTime = self.getStartTime
+        self.leftWidget.getZoomRatio = self.getZoomRatio
+        self.leftWidget.setZoomRatio = self.setZoomRatio
 
     def timelinePositionChanged(self, value, frame):
         self.rightWidget.timelinePositionChanged(value, frame)
 
-    def start_duration_changed(self):
-        self.rightWidget.start_duration_changed()
+    def startDurationChanged(self):
+        self.rightWidget.startDurationChanged()
 
 class CompositionLayer(TimelineLayer, ZoomableWidgetInterface):
 
@@ -135,8 +135,8 @@ class CompositionLayer(TimelineLayer, ZoomableWidgetInterface):
 
     ## ZoomableWidgetInterface override
 
-    def get_duration(self):
-        return self.rightWidget.get_duration()
+    def getDuration(self):
+        return self.rightWidget.getDuration()
 
-    def get_start_time(self):
-        return self.rightWidget.get_start_time()
+    def getStartTime(self):
+        return self.rightWidget.getStartTime()

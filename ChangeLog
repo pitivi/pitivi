@@ -1,5 +1,32 @@
 2006-03-16  Edward Hervey  <edward@fluendo.com>
 
+	* docs/HACKING:
+	More precision on coding style
+	
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/encodingdialog.glade:
+	* pitivi/ui/exportsettingswidget.glade:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/projectsettings.glade:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	Update all UI section to proper coding style, still have to do the
+	non-ui part.
+
+2006-03-16  Edward Hervey  <edward@fluendo.com>
+
 	* docs/HACKING
 	New document about hacking on PiTiVi.
 	* pitivi/bin.py:

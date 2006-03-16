@@ -42,47 +42,50 @@ class PitiviMainWindow(gtk.Window):
         gst.log("Creating MainWindow")
         gtk.Window.__init__(self)
         
-        self._set_actions()
-        self._create_gui()
+        self._setActions()
+        self._createUi()
         
-        instance.PiTiVi.connect("new-project", self._new_project_cb)
-        instance.PiTiVi.connect("closing-project", self._closing_project_cb)
-        instance.PiTiVi.connect("not-project", self._not_project_cb)
+        instance.PiTiVi.connect("new-project", self._newProjectCb)
+        instance.PiTiVi.connect("closing-project", self._closingProjectCb)
+        instance.PiTiVi.connect("not-project", self._notProjectCb)
         self.show_all()
 
-    def destroy(self, widget, data=None):
-        instance.PiTiVi.shutdown()
-
-    def _set_actions(self):
+    def _setActions(self):
         """ sets up the GtkActions """
-        self.actions = [("NewProject", gtk.STOCK_NEW, "_New Project", None, "Create a new project", self.new_project_cb),
-                        ("OpenProject", gtk.STOCK_OPEN, "_Open Project", None, "Opens an existing project", self.open_project_cb),
-                        ("SaveProject", gtk.STOCK_SAVE, "_Save Project", None, "Save the current project", self.save_project_cb),
-                        ("SaveProjectAs", gtk.STOCK_SAVE_AS, "Save Project As...", None, "Save the current project", self.save_project_as_cb),
-                        ("ProjectSettings", gtk.STOCK_PROPERTIES, "Project Settings", None, "Edit the project settings", self.project_settings_cb),
-                        ("Quit", gtk.STOCK_QUIT, "_Quit PiTiVi", None, "Quit PiTiVi", self.quit_cb),
-                        ("About", gtk.STOCK_ABOUT, "About PiTiVi", None, "Information about PiTiVi", self.about_cb),
-                        ("File", None, "_File"),
-                        ("Help", None, "_Help")]
+        self.actions = [
+            ("NewProject", gtk.STOCK_NEW, "_New Project", None, "Create a new project", self._newProjectCb),
+            ("OpenProject", gtk.STOCK_OPEN, "_Open Project", None, "Opens an existing project", self._openProjectCb),
+            ("SaveProject", gtk.STOCK_SAVE, "_Save Project", None, "Save the current project", self._saveProjectCb),
+            ("SaveProjectAs", gtk.STOCK_SAVE_AS, "Save Project As...", None, "Save the current project", self._saveProjectAsCb),
+            ("ProjectSettings", gtk.STOCK_PROPERTIES, "Project Settings", None, "Edit the project settings", self._projectSettingsCb),
+            ("Quit", gtk.STOCK_QUIT, "_Quit PiTiVi", None, "Quit PiTiVi", self._quitCb),
+            ("About", gtk.STOCK_ABOUT, "About PiTiVi", None, "Information about PiTiVi", self._aboutCb),
+            ("File", None, "_File"),
+            ("Help", None, "_Help")
+            ]
+
         self.actiongroup = gtk.ActionGroup("mainwindow")
-        self.actiongroup.add_actions (self.actions)
+        self.actiongroup.add_actions(self.actions)
+        
         # deactivating non-functional actions
+        # FIXME : reactivate them
         for action in self.actiongroup.list_actions():
             if action.get_name() in ["ProjectSettings", "Quit", "File", "Help", "About"]:
                 action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
+                
         self.uimanager = gtk.UIManager()
         self.add_accel_group(self.uimanager.get_accel_group())
         self.uimanager.insert_action_group(self.actiongroup, 0)
         self.uimanager.add_ui_from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "actions.xml"))
 
-    def _create_gui(self):
+    def _createUi(self):
         """ Create the graphical interface """
         self.set_title("PiTiVi v%s" % pitivi_version)
         self.set_geometry_hints(min_width=400, min_height=300)
 
-        self.connect("destroy", self.destroy)
+        self.connect("destroy", self._destroyCb)
 
         vbox = gtk.VBox(False, 5)
         self.add(vbox)
@@ -119,26 +122,35 @@ class PitiviMainWindow(gtk.Window):
         hpaned.pack1(self.sourcefactories, resize=True, shrink=False)
         hpaned.pack2(viewerframe, resize=False, shrink=False)
 
-    def new_project_cb(self, action):
+
+    ## UI Callbacks
+
+    def _destroyCb(self, widget, data=None):
+        instance.PiTiVi.shutdown()
+
+
+    ## Toolbar/Menu actions callback
+        
+    def _newProjectCb(self, action):
         instance.PiTiVi.new_blank_project()
 
-    def open_project_cb(self, action):
+    def _openProjectCb(self, action):
         raise NotImplementedError
 
-    def save_project_cb(self, action):
+    def _saveProjectCb(self, action):
         raise NotImplementedError
 
-    def save_project_as_cb(self, action):
+    def _saveProjectAsCb(self, action):
         raise NotImplementedError
 
-    def project_settings_cb(self, action):
+    def _projectSettingsCb(self, action):
         l = ProjectSettingsDialog(self, instance.PiTiVi.current)
         l.show()
 
-    def quit_cb(self, action):
+    def _quitCb(self, action):
         instance.PiTiVi.shutdown()
 
-    def about_cb(self, action):
+    def _aboutCb(self, action):
 	abt = gtk.AboutDialog()
 	abt.set_name("PiTiVi")
 	abt.set_version("v%s" % pitivi_version)
@@ -151,10 +163,10 @@ class PitiviMainWindow(gtk.Window):
 
     ## PiTiVi main object callbacks
 
-    def _new_project_cb(self, pitivi, project):
+    def _newProjectCb(self, pitivi, project):
         raise NotImplementedError
 
-    def _closing_project_cb(self, pitivi, project):
+    def _closingProjectCb(self, pitivi, project):
         # Return True if we accept the project being close
         # if we want to save it before it being closed, we must
         #   do so
@@ -162,7 +174,6 @@ class PitiviMainWindow(gtk.Window):
         # For the time being we always accept it being closed
         return True
 
-    def _not_project_cb(self, pitivi, uri):
+    def _notProjectCb(self, pitivi, uri):
         raise NotImplementedError
-
-        
+    

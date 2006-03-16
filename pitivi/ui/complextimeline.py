@@ -37,8 +37,8 @@ class CompositionLayers(gtk.VBox, ZoomableWidgetInterface):
         self.leftSizeGroup = leftsizegroup
         self.hadj = hadj
         self.layerInfoList = layerinfolist
-        self.layerInfoList.connect('layer-added', self.__layerAddedCb)
-        self.layerInfoList.connect('layer-removed', self.__layerRemovedCb)
+        self.layerInfoList.connect('layer-added', self._layerAddedCb)
+        self.layerInfoList.connect('layer-removed', self._layerRemovedCb)
         self._createUI()
 
     def _createUI(self):
@@ -54,10 +54,10 @@ class CompositionLayers(gtk.VBox, ZoomableWidgetInterface):
 
     ## ZoomableWidgetInterface overrides
 
-    def get_duration(self):
-        return max([layer.get_duration() for layer in self.layers])
+    def getDuration(self):
+        return max([layer.getDuration() for layer in self.layers])
 
-    def get_start_time(self):
+    def getStartTime(self):
         # the start time is always 0 (for display reason)
         return 0
 
@@ -67,14 +67,14 @@ class CompositionLayers(gtk.VBox, ZoomableWidgetInterface):
 
     ## LayerInfoList callbacks
 
-    def __layerAddedCb(self, layerInfoList, position):
+    def _layerAddedCb(self, layerInfoList, position):
         complayer = CompositionLayer(self.leftSizeGroup, self.hadj,
                                      layerInfoList[position])
         self.layers.insert(position, complayer)
         self.pack_start(complayer, expand=False)
         self.reorder_child(complayer, position)
 
-    def __layerRemovedCb(self, layerInfoList, position):
+    def _layerRemovedCb(self, layerInfoList, position):
         # find the proper child
         child = self.layers[position]
         # remove it
@@ -132,8 +132,8 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
         # top layer (TopLayer)
         self.topLayer = TopLayer(self.leftSizeGroup, self.hadj)
         # overriding topLayer's ZoomableWidgetInterface methods
-        self.topLayer.get_duration = self.get_duration
-        self.topLayer.get_start_time = self.get_start_time
+        self.topLayer.getDuration = self.getDuration
+        self.topLayer.getStartTime = self.getStartTime
         self.topLayer.overrideZoomableWidgetInterfaceMethods()
         self.pack_start(self.topLayer, expand=False)
 
@@ -149,17 +149,17 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
 
     def _layerStartDurationChangedCb(self, composition, start, duration):
         # Force resize of ruler
-        self.topLayer.start_duration_changed()
+        self.topLayer.startDurationChanged()
 
     ## ZoomableWidgetInterface overrides
     ## * we send everything to self.compositionLayers
     ## * topLayer's function calls will also go there
 
-    def get_duration(self):
-        return self.compositionLayers.get_duration()
+    def getDuration(self):
+        return self.compositionLayers.getDuration()
 
-    def get_start_time(self):
-        return self.compositionLayers.get_start_time()
+    def getStartTime(self):
+        return self.compositionLayers.getStartTime()
 
     def zoomChanged(self):
         self.topLayer.rightWidget.zoomChanged()
@@ -169,7 +169,7 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
     ## ToolBar callbacks
 
     def toolBarZoomChangedCb(self, toolbar, zoomratio):
-        self.set_zoom_ratio(self, zoomratio)
+        self.setZoomRatio(self, zoomratio)
 
     ## timeline position callback
 

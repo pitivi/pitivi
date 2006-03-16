@@ -42,19 +42,19 @@ class InfoLayer(gtk.Expander):
         self.set_border_width(5)
         self.set_expanded(self.layerInfo.expanded)
 
-        self.label = gtk.Label(self.get_duration_string())
+        self.label = gtk.Label(self.getDurationString())
         self.add(self.label)
 
         self.layerInfo.composition.connect('start-duration-changed',
-                                           self.compositionStartDurationChangedCb)
+                                           self._compositionStartDurationChangedCb)
 
         # TODO :
         # . put content
 
     ## signal from composition
 
-    def compositionStartDurationChangedCb(self, composition, start, duration):
-        self.label.set_text(self.get_duration_string())
+    def _compositionStartDurationChangedCb(self, composition, start, duration):
+        self.label.set_text(self.getDurationString())
 
     ## Gtk.Expander override
 
@@ -74,7 +74,7 @@ class InfoLayer(gtk.Expander):
 
     ## utils
 
-    def get_duration_string(self):
+    def getDurationString(self):
         if self.layerInfo.composition.duration > 0:
             return time_to_string(self.layerInfo.composition.duration)
         return "Empty"

@@ -57,8 +57,8 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         self.set_hadjustment(hadj)
         self.sources = {}        
         self.layerInfo = layerInfo
-        self.layerInfo.composition.connect('start-duration-changed', self.compStartDurationChangedCb)
-        self.layerInfo.composition.connect('source-added', self.compSourceAddedCb)
+        self.layerInfo.composition.connect('start-duration-changed', self._compStartDurationChangedCb)
+        self.layerInfo.composition.connect('source-added', self._compSourceAddedCb)
 
         self.pixmap = None
 
@@ -66,22 +66,22 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
                            [dnd.DND_FILESOURCE_TUPLE],
                            gtk.gdk.ACTION_COPY)
-        self.connect('drag-data-received', self.dragDataReceivedCb)
-        self.connect('drag-leave', self.dragLeaveCb)
-        self.connect('drag-motion', self.dragMotionCb)
+        self.connect('drag-data-received', self._dragDataReceivedCb)
+        self.connect('drag-leave', self._dragLeaveCb)
+        self.connect('drag-motion', self._dragMotionCb)
         # object being currently dragged
         self.dragObject = None
 
     ## composition signal callbacks
 
-    def compStartDurationChangedCb(self, composition, start, duration):
-        gst.info("setting width-request to %d" % self.get_pixel_width())
-        self.set_property("width-request", self.get_pixel_width())
-        self.set_size(self.get_pixel_width() + 2 * self.border, self.allocation.height)
+    def _compStartDurationChangedCb(self, composition, start, duration):
+        gst.info("setting width-request to %d" % self.getPixelWidth())
+        self.set_property("width-request", self.getPixelWidth())
+        self.set_size(self.getPixelWidth() + 2 * self.border, self.allocation.height)
         #self.set_property("height-request", self.layerInfo.currentHeight)
-        self.start_duration_changed()
+        self.startDurationChanged()
 
-    def compSourceAddedCb(self, composition, source):
+    def _compSourceAddedCb(self, composition, source):
         gst.debug("Got a new source")
         # create new widget
         widget = ComplexTimelineSource(source, self.layerInfo)
@@ -93,7 +93,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         else:
             height = self.allocation.height - self.effectgutter - 2 * self.layergutter
         # TODO : set Y position depending on layer it's on
-        self.put(widget, self.ns_to_pixel(widget.get_start_time()) + self.border,
+        self.put(widget, self.nsToPixel(widget.getStartTime()) + self.border,
                  self.effectgutter + self.layergutter)
         widget.show()
         # we need to keep track of the child's position
@@ -103,21 +103,21 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
     ## ZoomableWidgetInterface methods
 
-    def get_duration(self):
+    def getDuration(self):
         return self.layerInfo.composition.duration
 
-    def get_start_time(self):
+    def getStartTime(self):
         return self.layerInfo.composition.start
 
-    def get_pixel_width(self):
+    def getPixelWidth(self):
         # Add borders
-        pwidth = ZoomableWidgetInterface.get_pixel_width(self) + 2 * self.border
+        pwidth = ZoomableWidgetInterface.getPixelWidth(self) + 2 * self.border
         return pwidth
 
     def zoomChanged(self):
         for source in self.sources.itervalues():
             self.move(source,
-                      source.get_pixel_position() + self.border,
+                      source.getPixelPosition() + self.border,
                       self.effectgutter + self.layergutter)
 
     ## gtk.Widget methods overrides
@@ -178,7 +178,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
                                                gst.TIME_ARGS(duration)))
         if start != -1:
             widget = self.sources[source]
-            x = widget.get_pixel_position()
+            x = widget.getPixelPosition()
             if x != self.child_get_property(widget, "x"):
                 self.move(widget, x + self.border,
                           self.effectgutter + self.layergutter)
@@ -199,7 +199,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
     ## Drag and Drop
 
-    def dragDataReceivedCb(self, layout, context, x, y, selection,
+    def _dragDataReceivedCb(self, layout, context, x, y, selection,
                            targetType, timestamp):
         # something was dropped
         gst.debug("%s" % type(selection))
@@ -219,11 +219,11 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
         context.finish(True, False, timestamp)
 
-    def dragLeaveCb(self, layout, context, timestamp):
+    def _dragLeaveCb(self, layout, context, timestamp):
         gst.debug("something left")
         self.dragObject = None
 
-    def dragMotionCb(self, layout, context, x, y, timestamp):
+    def _dragMotionCb(self, layout, context, x, y, timestamp):
         gst.debug("something entered x:%d, y:%d" % (x,y))
         if not self.dragObject:
             source = context.get_source_widget().getSelectedItems()[0]

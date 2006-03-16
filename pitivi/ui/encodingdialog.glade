@@ -41,7 +41,7 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-5</property>
-	      <signal name="clicked" handler="recordbutton_clicked" last_modification_time="Tue, 24 May 2005 21:41:00 GMT"/>
+	      <signal name="clicked" handler="_recordButtonClickedCb" last_modification_time="Tue, 24 May 2005 21:41:00 GMT"/>
 	    </widget>
 	  </child>
 
@@ -55,7 +55,7 @@
 	      <property name="relief">GTK_RELIEF_NORMAL</property>
 	      <property name="focus_on_click">True</property>
 	      <property name="response_id">-6</property>
-	      <signal name="clicked" handler="cancelbutton_clicked" last_modification_time="Tue, 24 May 2005 21:41:09 GMT"/>
+	      <signal name="clicked" handler="_cancelButtonClickedCb" last_modification_time="Tue, 24 May 2005 21:41:09 GMT"/>
 	    </widget>
 	  </child>
 	</widget>
@@ -113,7 +113,7 @@
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="focus_on_click">True</property>
-		  <signal name="clicked" handler="filebutton_clicked" last_modification_time="Tue, 24 May 2005 21:28:02 GMT"/>
+		  <signal name="clicked" handler="_fileButtonClickedCb" last_modification_time="Tue, 24 May 2005 21:28:02 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>
@@ -168,7 +168,7 @@
 		  <property name="use_underline">True</property>
 		  <property name="relief">GTK_RELIEF_NORMAL</property>
 		  <property name="focus_on_click">True</property>
-		  <signal name="clicked" handler="settingsbutton_clicked" last_modification_time="Thu, 23 Jun 2005 15:31:45 GMT"/>
+		  <signal name="clicked" handler="_settingsButtonClickedCb" last_modification_time="Thu, 23 Jun 2005 15:31:45 GMT"/>
 		</widget>
 		<packing>
 		  <property name="padding">0</property>

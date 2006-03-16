@@ -42,11 +42,11 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
         gtk.Image.__init__(self)
         self.layerInfo = layerInfo
         self.source = source
-        self.source.connect("start-duration-changed", self._start_duration_changed_cb)
+        self.source.connect("start-duration-changed", self._startDurationChangedCb)
         self.thumbnailsurface = cairo.ImageSurface.create_from_png(self.source.factory.thumbnail)
         self.pixmap = None
 
-    def get_height(self):
+    def getHeight(self):
         # TODO, maybe this should be zoomable too ?
         return 50
 
@@ -60,7 +60,7 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
 
     def do_size_request(self, requisition):
         gst.debug("source, requisition:%s" % list(requisition))
-        requisition.width=self.get_pixel_width()
+        requisition.width=self.getPixelWidth()
 
     ## Drawing methods
 
@@ -76,15 +76,15 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
         self.pixmap = gtk.gdk.Pixmap(self.window, rect.width, rect.height)
         context = self.pixmap.cairo_create()
         
-        self.draw_background(context, rect)
+        self.drawBackground(context, rect)
 
         if self.source.media_type == MEDIA_TYPE_VIDEO:
-            self.draw_thumbnail(context, rect)
+            self.drawThumbnail(context, rect)
 
-        self.draw_decoration_border(context, rect)
+        self.drawDecorationBorder(context, rect)
         self.set_from_pixmap(self.pixmap, None)
 
-    def draw_background(self, context, allocation):
+    def drawBackground(self, context, allocation):
         context.save()
         context.set_source_rgb(1.0, 0.9, 0.9)
         context.rectangle(0, 0, allocation.width, allocation.height)
@@ -92,13 +92,13 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
         context.stroke()
         context.restore()
         
-    def draw_decoration_border(self, context, rect):
+    def drawDecorationBorder(self, context, rect):
         context.set_source_rgb(1, 0, 0)
         context.rectangle(0, 0, rect.width, rect.height)
         context.stroke()
         
 
-    def draw_thumbnail(self, context, alloc):
+    def drawThumbnail(self, context, alloc):
         context.save()
         # figure out the scaleratio
         surfwidth = self.thumbnailsurface.get_width()
@@ -118,11 +118,11 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
 
     ## ZoomableWidgetInterface methods
 
-    def get_duration(self):
+    def getDuration(self):
         return self.source.duration
 
-    def get_start_time(self):
+    def getStartTime(self):
         return self.source.start
 
-    def _start_duration_changed_cb(self, source, start, duration):
-        self.start_duration_changed()
+    def _startDurationChangedCb(self, source, start, duration):
+        self.startDurationChanged()

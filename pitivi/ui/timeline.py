@@ -33,9 +33,9 @@ class TimelineWidget(gtk.VBox):
     def __init__(self):
         gst.log("New Timeline Widget")
         gtk.VBox.__init__(self)
-        self._create_gui()
+        self._createUi()
 
-    def _create_gui(self):
+    def _createUi(self):
         """ draw the GUI """
         self.hadjustment = gtk.Adjustment()
         self.vadjustment = gtk.Adjustment()
@@ -44,8 +44,8 @@ class TimelineWidget(gtk.VBox):
         self.simpleview = SimpleTimelineContentWidget(self)
         self.complexview = ComplexTimelineWidget(self)
 
-        self.simpleview.connect("scroll-event", self._simple_scroll_cb)
-        self.complexview.connect("scroll-event", self._simple_scroll_cb)
+        self.simpleview.connect("scroll-event", self._simpleScrollCb)
+        self.complexview.connect("scroll-event", self._simpleScrollCb)
 
         hbox = gtk.HBox()
         
@@ -57,7 +57,7 @@ class TimelineWidget(gtk.VBox):
         liststore.append(["Simple View"])
         liststore.append(["Complex View"])
         combobox.set_active(1)
-        combobox.connect("changed", self._combobox_changed)
+        combobox.connect("changed", self._comboboxChangedCb)
 
         self.leftsizegroup.add_widget(combobox)
         
@@ -67,33 +67,33 @@ class TimelineWidget(gtk.VBox):
 
         self.pack_end(hbox, expand=False)
         #self._show_simple_view()
-        self._show_complex_view()
+        self._showComplexView()
 
-    def _combobox_changed(self, cbox):
+    def _comboboxChangedCb(self, cbox):
         gst.debug("switching view")
         if cbox.get_active():
-            self._show_complex_view()
+            self._showComplexView()
         else:
-            self._show_simple_view()
+            self._showSimpleView()
 
-    def _show_simple_view(self):
+    def _showSimpleView(self):
         if self.complexview in self.get_children():
             self.remove(self.complexview)
             self.complexview.hide()
         self.pack_start(self.simpleview, expand=True)
         self.simpleview.show_all()
 
-    def _show_complex_view(self):
+    def _showComplexView(self):
         if self.simpleview in self.get_children():
             self.remove(self.simpleview)
             self.simpleview.hide()
         self.pack_start(self.complexview, expand=True)
         self.complexview.show_all()
 
-    def _simple_scroll_cb(self, simplet, event):
+    def _simpleScrollCb(self, simplet, event):
         gst.debug("state:%s" % event.state)
         self.hscroll.emit("scroll-event", event)
-        
+
     def timelinePositionChanged(self, value, frame):
         self.complexview.timelinePositionChanged(value, frame)
 
@@ -103,10 +103,10 @@ class SimpleTimelineContentWidget(gtk.HBox):
         """ init """
         self.twidget = twidget
         gtk.HBox.__init__(self)
-        self._create_gui()
+        self._createUi()
         self.show_all()
 
-    def _create_gui(self):
+    def _createUi(self):
         """ draw the GUI """
         self.header = gtk.Label("Timeline")
         self.twidget.leftsizegroup.add_widget(self.header)

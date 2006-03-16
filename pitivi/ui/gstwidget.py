@@ -77,14 +77,14 @@ class GstElementSettingsWidget(gtk.VBox):
     def __init__(self):
         gtk.VBox.__init__(self)
 
-    def set_element(self, element, properties={}, ignore=['name']):
+    def setElement(self, element, properties={}, ignore=['name']):
         gst.info("element:%s, properties:%s" % (element, properties))
         self.element = element
         self.ignore = ignore
         self.properties = {} #key:name, value:widget
-        self._add_widgets(properties)        
+        self._addWidgets(properties)        
 
-    def _add_widgets(self, properties):
+    def _addWidgets(self, properties):
         props = [x for x in gobject.list_properties(self.element) if not x.name in self.ignore]
         if not props:
             self.pack_start(gtk.Label("No properties..."))
@@ -106,7 +106,7 @@ class GstElementSettingsWidget(gtk.VBox):
         self.pack_start(table)
         self.show_all()
 
-    def get_settings(self):
+    def getSettings(self):
         """ returns the dictionnary of propertyname/propertyvalue """
         d = {}
         for property, widget in self.properties.iteritems():
@@ -132,18 +132,18 @@ class GstElementSettingsDialog(GladeWindow):
         self.desclabel = self.widgets["descriptionlabel"]
         self.authlabel = self.widgets["authorlabel"]
         self.properties = properties
-        self._fill_window()
+        self._fillWindow()
 
-    def _fill_window(self):
+    def _fillWindow(self):
         # set title and frame label
         self.window.set_title("Properties for " + self.factory.get_longname())
         self.widgets["infolabel"].set_markup("<b>" + self.factory.get_longname() + "</b>")
         self.desclabel.set_text(self.factory.get_description())
         self.authlabel.set_text(string.join(self.factory.get_author().split(","), "\n"))
         self.authlabel.set_justify(gtk.JUSTIFY_RIGHT)
-        self.widgets["elementsettings"].set_element(self.element, self.properties)
+        self.widgets["elementsettings"].setElement(self.element, self.properties)
 
-    def get_settings(self):
+    def getSettings(self):
         """ returns the property/value dictionnary of the selected settings """
-        return self.widgets["elementsettings"].get_settings()
+        return self.widgets["elementsettings"].getSettings()
 

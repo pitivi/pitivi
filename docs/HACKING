@@ -1,0 +1,35 @@
+Hacking on PiTiVi
+
+* Coding Style Guide
+--------------------
+- We rely on the Python Style Guide PEP-8
+	(http://www.python.org/doc/peps/pep-0008/)
+
+- for method names we use the mixedCase style
+  Ex :
+  class MyClass:
+
+     def aReallyImportantMethod(self):
+         self.doSomething()
+
+- for callbacks, the name of the methods used should:
+  - follow same conventions as normal method names
+  - be prepended with an underscore
+  - be appended with Cb
+  Ex :
+
+  class MyClass:
+
+     def someMethod(self):
+         self.someobject.connect('event', self._someObjectEventCb)
+
+     def _someObjectEventCb(self, object, arg):
+         print "our callback was called"
+
+* Debugging
+-----------
+
+- All debug output should be done through the gstreamer debugging system:
+  ex : gst.debug("wow")
+
+- Whenever appliable, the debugging should be used on gstreamer objects

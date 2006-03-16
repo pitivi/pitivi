@@ -29,16 +29,16 @@ class ProjectSettingsDialog(GladeWindow):
     def __init__(self, parent, project):
         GladeWindow.__init__(self, parent)
         self.project = project
-        self.widgets["exportwidget"].set_settings(self.project.settings)
-        self._fill_settings()
+        self.widgets["exportwidget"].setSettings(self.project.settings)
+        self._fillSettings()
 
-    def _fill_settings(self):
+    def _fillSettings(self):
         w = self.widgets
         w["nameentry"].set_text(self.project.name)
         w["descriptiontextview"].get_buffer().set_text(self.project.description)
         
 
-    def _update_settings(self):
+    def updateSettings(self):
         # apply selected settings to project
         w = self.widgets
         
@@ -47,12 +47,12 @@ class ProjectSettingsDialog(GladeWindow):
         txtbuffer = w["descriptiontextview"].get_buffer()
         self.project.description = txtbuffer.get_text(txtbuffer.get_start_iter(),
                                                       txtbuffer.get_end_iter())
-        w["exportwidget"]._update_settings()
+        w["exportwidget"].updateSettings()
 
-    def response_cb(self, widget, response):
+    def _responseCb(self, widget, response):
         # if the response is gtk.RESPONSE_OK update the settings
         # else destroy yourself !
         self.hide()
         if response == gtk.RESPONSE_OK:
-            self._update_settings()
+            self.updateSettings()
         self.destroy()
