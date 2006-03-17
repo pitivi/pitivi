@@ -76,7 +76,7 @@ class Pitivi(gobject.GObject):
         self.gui = mainwindow.PitiviMainWindow()
         self.gui.show()
 
-    def load_project(self, uri=None, filepath=None):
+    def loadProject(self, uri=None, filepath=None):
         """ Load the given file through it's uri or filepath """
         gst.info("uri:%s, filepath:%s" % (uri, filepath))
         if not uri and not filepath:
@@ -89,11 +89,11 @@ class Pitivi(gobject.GObject):
             self.emit("not-project", uri)
             return
         # if current project, try to close it
-        if self._close_running_project():
+        if self._closeRunningProject():
             self.current = Project(uri)
             self.emit("new-project", self.current)
 
-    def _close_running_project(self):
+    def _closeRunningProject(self):
         """ close the current project """
         gst.info("closing running project")
         if self.current:
@@ -103,10 +103,10 @@ class Pitivi(gobject.GObject):
             self.current = None
         return True
         
-    def new_blank_project(self):
+    def newBlankProject(self):
         """ start up a new blank project """
         # if there's a running project we must close it
-        if self._close_running_project():
+        if self._closeRunningProject():
             self.playground.pause()
             self.current = Project("New Project")
             self.emit("new-project", self.current)
@@ -114,7 +114,7 @@ class Pitivi(gobject.GObject):
     def shutdown(self):
         """ close PiTiVi """
         gst.debug("shutting down")
-        if not self._close_running_project():
+        if not self._closeRunningProject():
             return
         self.playground.shutdown()
         gst.debug("Exiting main loop")

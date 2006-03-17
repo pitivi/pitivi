@@ -60,28 +60,28 @@ class Timeline(gobject.GObject):
         self.project = project
 
         self.timeline = gst.Bin("timeline-" + project.name)
-        self._fill_contents()
+        self._fillContents()
 
-        self.project.settings.connect_after("settings-changed", self._settings_changed_cb)
+        self.project.settings.connect_after("settings-changed", self._settingsChangedCb)
 
-    def _fill_contents(self):
+    def _fillContents(self):
         # TODO create the initial timeline according to the project settings
         self.audiocomp = TimelineComposition(media_type = MEDIA_TYPE_AUDIO, name="audiocomp")
         self.videocomp = TimelineComposition(media_type = MEDIA_TYPE_VIDEO, name="videocomp")
-        self.videocomp.link_object(self.audiocomp)
+        self.videocomp.linkObject(self.audiocomp)
 
         self.timeline.add(self.audiocomp.gnlobject,
                           self.videocomp.gnlobject)
-        self.audiocomp.gnlobject.connect("pad-added", self._new_audio_pad_cb)
-        self.videocomp.gnlobject.connect("pad-added", self._new_video_pad_cb)
+        self.audiocomp.gnlobject.connect("pad-added", self._newAudioPadCb)
+        self.videocomp.gnlobject.connect("pad-added", self._newVideoPadCb)
 
-    def _new_audio_pad_cb(self, audiocomp, pad):
+    def _newAudioPadCb(self, audiocomp, pad):
         self.timeline.add_pad(gst.GhostPad("asrc", pad))
 
-    def _new_video_pad_cb(self, videocomp, pad):
+    def _newVideoPadCb(self, videocomp, pad):
         self.timeline.add_pad(gst.GhostPad("vsrc", pad))
 
-    def _settings_changed_cb(self, settings):
+    def _settingsChangedCb(self, settings):
         # reset the timeline !
         result, pstate, pending = self.timeline.get_state(0)
         self.timeline.set_state(gst.STATE_READY)
@@ -136,76 +136,76 @@ class TimelineObject(gobject.GObject):
         # Set factory and media_type and then create the gnlobject
         self.factory = factory
         self.media_type = media_type
-        self._make_gnl_object()
-        self.gnlobject.connect("notify::start", self._start_duration_changed_cb)
-        self.gnlobject.connect("notify::duration", self._start_duration_changed_cb)
-        self._set_start_duration_time(start, duration)
+        self._makeGnlObject()
+        self.gnlobject.connect("notify::start", self._startDurationChangedCb)
+        self.gnlobject.connect("notify::duration", self._startDurationChangedCb)
+        self._setStartDurationTime(start, duration)
 
-    def _make_gnl_object(self):
+    def _makeGnlObject(self):
         """ create the gnl_object """
-        pass
+        raise NotImplementedError
 
-    def _unlink_object(self):
+    def _unlinkObject(self):
         # really unlink the objects
         if self.linked:
             self.linked = None
             self.emit("linked-changed", None)
 
-    def _link_object(self, object):
+    def _linkObject(self, object):
         # really do the link
         self.linked = object
         self.emit("linked-changed", self.linked)
 
-    def link_object(self, object):
+    def linkObject(self, object):
         """
         link another object to this one.
         If there already is a linked object ,it will unlink it
         """
         if self.linked and not self.linked == object:
-            self.unlink_object()
-        self._link_object(object)
+            self.unlinkObject()
+        self._linkObject(object)
         pass
 
-    def unlink_object(self):
+    def unlinkObject(self):
         """
         unlink from the current linked object
         """
-        self.linked._unlink_object()
-        self._unlink_object()
+        self.linked._unlinkObject()
+        self._unlinkObject()
 
-    def relink_brother(self):
+    def relinkBrother(self):
         """
         links the object back to it's brother
         """
         # if already linked, unlink from previous
         if self.linked:
-            self.unlink_object()
+            self.unlinkObject()
 
         # link to brother
         if self.brother:
-            self.link_object(self.brother)
+            self.linkObject(self.brother)
 
-    def get_brother(self, autolink=True):
+    def getBrother(self, autolink=True):
         """
         returns the brother element if it's possible,
         if autolink, then automatically link it to this element
         """
         if not self.brother:
-            self.brother = self._make_brother()
+            self.brother = self._makeBrother()
             if not self.brother:
                 return None
         if autolink and not self.linked == self.brother:
-            self.relink_brother()
+            self.relinkBrother()
         return self.brother
 
-    def _make_brother(self):
+    def _makeBrother(self):
         """
         Make the exact same object for the other media_type
         implemented in subclasses
         """
-        return None
+        raise NotImplementedError
     
-    def _set_start_duration_time(self, start=-1, duration=-1):
+    def _setStartDurationTime(self, start=-1, duration=-1):
         # really modify the start/duration time
         self.gnlobject.info("start:%s , duration:%s" %( gst.TIME_ARGS(start),
                                                         gst.TIME_ARGS(duration)))
@@ -216,13 +216,13 @@ class TimelineObject(gobject.GObject):
             self.start = start
             self.gnlobject.set_property("start", long(start))
             
-    def set_start_duration_time(self, start=-1, duration=-1):
+    def setStartDurationTime(self, start=-1, duration=-1):
         """ sets the start and/or duration time """
-        self._set_start_duration_time(start, duration)
+        self._setStartDurationTime(start, duration)
         if self.linked:
-            self.linked._set_start_duration_time(start, duration)
+            self.linked._setStartDurationTime(start, duration)
 
-    def _start_duration_changed_cb(self, gnlobject, property):
+    def _startDurationChangedCb(self, gnlobject, property):
         """ start/duration time has changed """
         self.gnlobject.debug("property:%s" % property.name)
         start = -1
@@ -269,15 +269,15 @@ class TimelineFileSource(TimelineSource):
     
     def __init__(self, media_start=-1, media_duration=-1, **kw):
         TimelineSource.__init__(self, **kw)
-        self.gnlobject.connect("notify::media-start", self._media_start_duration_changed_cb)
-        self.gnlobject.connect("notify::media-duration", self._media_start_duration_changed_cb)
+        self.gnlobject.connect("notify::media-start", self._mediaStartDurationChangedCb)
+        self.gnlobject.connect("notify::media-duration", self._mediaStartDurationChangedCb)
         if media_start == -1:
             media_start = 0
         if media_duration == -1:
             media_duration = self.factory.length
-        self.set_media_start_duration_time(media_start, media_duration)
+        self.setMediaStartDurationTime(media_start, media_duration)
         
-    def _make_gnl_object(self):
+    def _makeGnlObject(self):
         if self.media_type == MEDIA_TYPE_AUDIO:
             caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
         elif self.media_type == MEDIA_TYPE_VIDEO:
@@ -291,7 +291,7 @@ class TimelineFileSource(TimelineSource):
         self.gnlobject.set_property("start", long(0))
         self.gnlobject.set_property("duration", long(self.factory.length))
         
-    def _make_brother(self):
+    def _makeBrother(self):
         """ make the brother element """
         self.gnlobject.info("making filesource brother")
         # find out if the factory provides the other element type
@@ -313,7 +313,7 @@ class TimelineFileSource(TimelineSource):
             brother = None
         return brother
 
-    def _set_media_start_duration_time(self, start=-1, duration=-1):
+    def _setMediaStartDurationTime(self, start=-1, duration=-1):
         gst.info("TimelineFileSource start:%d , duration:%d" % (start, duration))
         if not duration == -1 and not self.media_duration == duration:
             self.media_duration = duration
@@ -322,13 +322,13 @@ class TimelineFileSource(TimelineSource):
             self.media_start = start
             self.gnlobject.set_property("media-start", long(start))
 
-    def set_media_start_duration_time(self, start=-1, duration=-1):
+    def setMediaStartDurationTime(self, start=-1, duration=-1):
         """ sets the media start/duration time """
-        self._set_media_start_duration_time(start, duration)
+        self._setMediaStartDurationTime(start, duration)
         if self.linked and isinstance(self.linked, TimelineFileSource):
-            self.linked._set_media_start_duration_time(start, duration)
+            self.linked._setMediaStartDurationTime(start, duration)
 
-    def _media_start_duration_changed_cb(self, gnlobject, property):
+    def _mediaStartDurationChangedCb(self, gnlobject, property):
         mstart = None
         mduration = None
         if property.name == "media-start":
@@ -452,12 +452,12 @@ class TimelineComposition(TimelineSource):
         self.sources = [(2048, 2060, [])]
         TimelineSource.__init__(self, **kw)
 
-    def _make_gnl_object(self):
+    def _makeGnlObject(self):
         self.gnlobject = gst.element_factory_make("gnlcomposition", "composition-" + self.name)
 
     # global effects
     
-    def add_global_effect(self, global_effect, order, auto_linked=True):
+    def addGlobalEffect(self, global_effect, order, auto_linked=True):
         """
         add a global effect
         order :
@@ -466,19 +466,19 @@ class TimelineComposition(TimelineSource):
         auto_linked : if True will add the brother (if any) of the given effect
                 to the linked composition with the same order
         """
-        pass
+        raise NotImplementedError
 
-    def remove_global_effect(self, global_effect, remove_linked=True):
+    def removeGlobalEffect(self, global_effect, remove_linked=True):
         """
         remove a global effect
         If remove_linked is True and the effect has a linked effect, will remove
         it from the linked composition
         """
-        pass
+        raise NotImplementedError
 
     # simple effects
     
-    def add_simple_effect(self, simple_effect, order, auto_linked=True):
+    def addSimpleEffect(self, simple_effect, order, auto_linked=True):
         """
         add a simple effect
 
@@ -488,36 +488,36 @@ class TimelineComposition(TimelineSource):
         auto_linked : if True will add the brother (if any) of the given effect
                 to the linked composition with the same order
         """
-        pass
+        raise NotImplementedError
 
-    def remove_simple_effect(self, simple_effect, remove_linked=True):
+    def removeSimpleEffect(self, simple_effect, remove_linked=True):
         """
         removes a simple effect
         If remove_linked is True and the effect has a linked effect, will remove
         it from the linked composition
         """
-        pass
+        raise NotImplementedError
 
     # complex effect
 
-    def add_complex_effect(self, complex_effect, auto_linked=True):
+    def addComplexEffect(self, complex_effect, auto_linked=True):
         """
         adds a complex effect
         auto_linked : if True will add the brother (if any) of the given effect
                 to the linked composition with the same order
         """
         # if it overlaps with existing complex effect, raise exception
-        pass
+        raise NotImplementedError
 
-    def remove_complex_effect(self, complex_effect, remove_linked=True):
+    def removeComplexEffect(self, complex_effect, remove_linked=True):
         """
         removes a complex effect
         If remove_linked is True and the effect has a linked effect, will remove
         it from the linked composition
         """
-        pass
+        raise NotImplementedError
 
-    def _make_condensed_list(self):
+    def _makeCondensedList(self):
         """ makes a condensed list """
         def condensed_sum(list1, list2):
             """ returns a condensed list of the two given lists """
@@ -548,11 +548,11 @@ class TimelineComposition(TimelineSource):
         lists.insert(0, self.transitions)
         return reduce(condensed_sum, lists)
 
-    def _update_condensed_list(self):
+    def _updateCondensedList(self):
         """ updates the condensed list """
         self.gnlobject.info("_update_condensed_list")
         # build a condensed list
-        clist = self._make_condensed_list()
+        clist = self._makeCondensedList()
         if self.condensed:
             # compare it to the self.condensed
             list_changed = False
@@ -578,21 +578,21 @@ class TimelineComposition(TimelineSource):
 
     # Transitions
 
-    def add_transition(self, transition, source1, source2, auto_linked=True):
+    def addTransition(self, transition, source1, source2, auto_linked=True):
         """
         adds a transition between source1 and source2
         auto_linked : if True will add the brother (if any) of the given transition
                 to the linked composition with the same parameters
         """
         # if it overlaps with existing transition, raise exception
-        pass
+        raise NotImplementedError
 
-    def move_transition(self, transition, source1, source2):
+    def moveTransition(self, transition, source1, source2):
         """ move a transition between source1 and source2 """
         # if it overlays with existing transition, raise exception
-        pass
+        raise NotImplementedError
 
-    def remove_transition(self, transition, reorder_sources=True, remove_linked=True):
+    def removeTransition(self, transition, reorder_sources=True, remove_linked=True):
         """
         removes a transition,
         If reorder sources is True it puts the sources
@@ -600,11 +600,11 @@ class TimelineComposition(TimelineSource):
         If remove_linked is True and the transition has a linked effect, will remove
         it from the linked composition
         """
-        pass
+        raise NotImplementedError
 
     # Sources
 
-    def _get_source_position(self, source):
+    def _getSourcePosition(self, source):
         position = 0
         foundit = False
         for slist in self.sources:
@@ -616,13 +616,13 @@ class TimelineComposition(TimelineSource):
             return position + 1
         return 0
 
-    def _have_got_this_source(self, source):
+    def _haveGotThisSource(self, source):
         for slist in self.sources:
             if source in slist[2]:
                 return True
         return False
 
-    def add_source(self, source, position, auto_linked=True):
+    def addSource(self, source, position, auto_linked=True):
         """
         add a source (with correct start/duration time already set)
         position : the vertical position
@@ -633,6 +633,7 @@ class TimelineComposition(TimelineSource):
                 to the linked composition with the same parameters
         """
         self.gnlobject.info("source %s , position:%d, self.sources:%s" %(source, position, self.sources))
+        
         def my_add_sorted(sources, object):
             slist = sources[2]
             i = 0
@@ -642,6 +643,7 @@ class TimelineComposition(TimelineSource):
                 i = i + 1
             object.gnlobject.set_property("priority", sources[0])
             slist.insert(i, object)
+            
         # TODO : add functionnality to add above/under
         # For the time being it's hardcoded to a single layer
         position = 1
@@ -654,17 +656,17 @@ class TimelineComposition(TimelineSource):
         self.gnlobject.add(source.gnlobject)
 
         # update the condensed list
-        self._update_condensed_list()
+        self._updateCondensedList()
 
         # if auto_linked and self.linked, add brother to self.linked with same parameters
         if auto_linked and self.linked:
-            if source.get_brother():
-                self.linked.add_source(source.brother, position, auto_linked=False)
+            if source.getBrother():
+                self.linked.addSource(source.brother, position, auto_linked=False)
         self.gnlobject.info("added source %s" % source.gnlobject)
         gst.info("%s" % str(self.sources))
         self.emit('source-added', source)
 
-    def insert_source_after(self, source, existingsource, push_following=True, auto_linked=True):
+    def insertSourceAfter(self, source, existingsource, push_following=True, auto_linked=True):
         """
         inserts a source after the existingsource, pushing the following ones
         if existingsource is None, it puts the source at the beginning
@@ -675,13 +677,13 @@ class TimelineComposition(TimelineSource):
             self.gnlobject.info("insert_source at the beginning")
             
         # find the time where it's going to be added
-        if not existingsource or not self._have_got_this_source(existingsource):
+        if not existingsource or not self._haveGotThisSource(existingsource):
             start = 0
             position = 1
             existorder = 0
         else:
             start = existingsource.start + existingsource.duration
-            position = self._get_source_position(existingsource)
+            position = self._getSourcePosition(existingsource)
             existorder = self.sources[position - 1][2].index(existingsource) + 1
 
         gst.info("start=%s, position=%d, existorder=%d, sourcelength=%s" % (gst.TIME_ARGS(start),
@@ -692,7 +694,7 @@ class TimelineComposition(TimelineSource):
 ##             print i.gnlobject, i.start, i.duration
         # set the correct start/duration time
         duration = source.factory.length
-        source.set_start_duration_time(start, duration)
+        source.setStartDurationTime(start, duration)
         
         # pushing following
         if push_following and not position in [-1, 0]:
@@ -702,11 +704,11 @@ class TimelineComposition(TimelineSource):
                 self.gnlobject.info("pushing following")
                 #print "run", i, "start", mvsrc.start, "duration", mvsrc.duration
                 # increment self.sources[position - 1][i] by source.factory.length
-                mvsrc.set_start_duration_time(mvsrc.start + source.factory.length)
+                mvsrc.setStartDurationTime(mvsrc.start + source.factory.length)
         
-        self.add_source(source, position, auto_linked=auto_linked)
+        self.addSource(source, position, auto_linked=auto_linked)
 
-    def append_source(self, source, position=1, auto_linked=True):
+    def appendSource(self, source, position=1, auto_linked=True):
         """
         puts a source after all the others
         """
@@ -717,32 +719,29 @@ class TimelineComposition(TimelineSource):
         else:
             existingsource = None
 
-        self.insert_source_after(source, existingsource, push_following=False,
-                                 auto_linked=auto_linked)
+        self.insertSourceAfter(source, existingsource, push_following=False,
+                               auto_linked=auto_linked)
 
-    def prepend_source(self, source, push_following=True, auto_linked=True):
+    def prependSource(self, source, push_following=True, auto_linked=True):
         """
         adds a source to the beginning of the sources
         """
         self.gnlobject.info("source:%s" % source.gnlobject)
-        self.insert_source_after(source, None, push_following, auto_linked)
+        self.insertSourceAfter(source, None, push_following, auto_linked)
 
-    def move_source(self, source, newpos):
+    def moveSource(self, source, newpos):
         """
         moves the source to the new position
         """
-        self._update_condensed_list()
-        pass
+        raise NotImplementedError
 
-    def remove_source(self, source, remove_linked=True, collapse_neighbours=False):
+    def removeSource(self, source, remove_linked=True, collapse_neighbours=False):
         """
         removes a source
         If remove_linked is True and the source has a linked source, will remove
         it from the linked composition
         """
-        self._update_condensed_list()
-        # if self.linked and remove_linked, self.linked.remove_source()
-        pass
+        raise NotImplementedError
 
 
 class TimelineEffect(TimelineObject):
@@ -754,13 +753,13 @@ class TimelineEffect(TimelineObject):
         self.nbinputs = nbinputs
         TimelineObject.__init__(self, **kw)
 
-    def _make_gnl_obejct(self):
+    def _makeGnlObject(self):
         self.gnlobject = gst.element_factory_make("gnloperation", "operation-" + self.name)
-        self._set_up_gnl_operation()
+        self._setUpGnlOperation()
 
-    def _set_up_gnl_operation(self):
+    def _setUpGnlOperation(self):
         """ fill up the gnloperation for the first go """
-
+        raise NotImplementedError
 
 class TimelineSimpleEffect(TimelineEffect):
     """
@@ -770,10 +769,6 @@ class TimelineSimpleEffect(TimelineEffect):
     def __init__(self, factory, **kw):
         self.factory = factory
         TimelineEffect.__init__(self, **kw)
-
-    def _set_up_gnl_operation(self):
-        # fill up the gnloperation for the first go
-        pass
 
 
 class TimelineTransition(TimelineEffect):
@@ -786,17 +781,12 @@ class TimelineTransition(TimelineEffect):
     def __init__(self, factory, source1=None, source2=None, **kw):
         self.factory = factory
         TimelineEffect.__init__(self, nbinputs=2, **kw)
-        self.source1 = source1
-        self.source2 = source2
+        self.setSource(source1, source2)
 
-    def set_sources(self, source1, source2):
+    def setSources(self, source1, source2):
         """ changes the sources in between which the transition lies """
         self.source1 = source1
         self.source2 = source2
-
-    def _set_up_gnl_operation(self):
-        # fill up the gnloperation for the first go
-        pass
 
 
 class TimelineComplexEffect(TimelineEffect):
@@ -809,8 +799,3 @@ class TimelineComplexEffect(TimelineEffect):
         # Find out the number of inputs
         nbinputs = 2
         TimelineEffect.__init__(self, nbinputs=nbinputs, **kw)
-
-    def _set_up_gnl_operation(self):
-        # fill up the gnloperation for the first go
-        pass
-

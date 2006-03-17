@@ -63,7 +63,7 @@ class ExportSettings(gobject.GObject):
         msg += "\nMuxer :" + str(self.muxer) + " " + str(self.containersettings)
         return msg
 
-    def set_video_properties(self, width=-1, height=-1, framerate=-1):
+    def setVideoProperties(self, width=-1, height=-1, framerate=-1):
         gst.info("set_video_props %d x %d @ %f fps" % (width, height, framerate))
         changed = False
         if not width == -1 and not width == self.videowidth:
@@ -78,7 +78,7 @@ class ExportSettings(gobject.GObject):
         if changed:
             self.emit("settings-changed")
 
-    def set_audio_properties(self, nbchanns=-1, rate=-1, depth=-1):
+    def setAudioProperties(self, nbchanns=-1, rate=-1, depth=-1):
         gst.info("%d x %dHz %dbits" % (nbchanns, rate, depth))
         changed = False
         if not nbchanns == -1 and not nbchanns == self.audiochannels:
@@ -93,7 +93,7 @@ class ExportSettings(gobject.GObject):
         if changed:
             self.emit("settings-changed")
 
-    def set_encoders(self, muxer="", vencoder="", aencoder=""):
+    def setEncoders(self, muxer="", vencoder="", aencoder=""):
         changed = False
         if not muxer == "" and not muxer == self.muxer:
             self.muxer = muxer

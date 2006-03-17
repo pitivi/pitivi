@@ -67,7 +67,7 @@ class Project(gobject.GObject):
             # TODO fill the timeline from the uri
             pass
 
-    def get_bin(self):
+    def getBin(self):
         """ returns the SmartTimelineBin of the project """
         if not self.timeline:
             return None
@@ -84,7 +84,7 @@ class Project(gobject.GObject):
         """ Saves the project to the project's current file """
         self._save(self, self.filename)
 
-    def save_as(self, filename):
+    def saveAs(self, filename):
         """ Saves the project to the given file name """
         self._save(self, filename)
         

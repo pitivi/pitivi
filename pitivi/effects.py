@@ -43,10 +43,10 @@ class Magician:
         self.simple_video = []
         self.simple_audio = []
         self.transitions = []
-        self._get_simple_filters()
-        self._get_effect_plugins()
+        self._getSimpleFilters()
+        self._getEffectPlugins()
 
-    def _get_simple_filters(self):
+    def _getSimpleFilters(self):
         # go trough the list of element factories and
         # add them to the correct list
         factlist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
@@ -58,7 +58,7 @@ class Magician:
                 self.simple_video.append(fact)
                 
 
-    def _get_effect_plugins(self):
+    def _getEffectPlugins(self):
         # find all the pitivi plugins that provide effects
         # TODO : implement
         pass

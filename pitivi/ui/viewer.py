@@ -209,8 +209,8 @@ class PitiviViewer(gtk.VBox):
         asinkthread.add_pad(gst.GhostPad("sink", aconv.get_pad('sink')))
 
         # setting sinkthreads on playground
-        instance.PiTiVi.playground.set_video_sink_thread(vsinkthread)
-        instance.PiTiVi.playground.set_audio_sink_thread(asinkthread)
+        instance.PiTiVi.playground.setVideoSinkThread(vsinkthread)
+        instance.PiTiVi.playground.setAudioSinkThread(asinkthread)
         instance.PiTiVi.playground.connect("current-changed", self._currentPlaygroundChangedCb)
 
     def _settingsChangedCb(self, settings):
@@ -252,7 +252,7 @@ class PitiviViewer(gtk.VBox):
         value = long(slider.get_value())
         gst.info(time_to_string(value))
         self._newTime(value)
-        instance.PiTiVi.playground.seek_in_current(value)
+        instance.PiTiVi.playground.seekInCurrent(value)
 
     def _sliderScrollCb(self, slider, event):
         # calculate new seek position
@@ -262,7 +262,7 @@ class PitiviViewer(gtk.VBox):
                 seekvalue = max(self.current_time - gst.SECOND / 2, 0)
             else:
                 seekvalue = min(self.current_time + gst.SECOND / 2, instance.PiTiVi.playground.current.length)
-            instance.PiTiVi.playground.seek_in_current(seekvalue)
+            instance.PiTiVi.playground.seekInCurrent(seekvalue)
         else:
             # frame scrolling, frame by frame
             gst.info("scroll direction:%s" % event.direction)
@@ -272,7 +272,7 @@ class PitiviViewer(gtk.VBox):
             else:
                 gst.info("scrolling forward")
                 seekvalue = min(self.current_frame + 1, instance.PiTiVi.playground.current.length)
-            instance.PiTiVi.playground.seek_in_current(seekvalue, gst.FORMAT_DEFAULT)
+            instance.PiTiVi.playground.seekInCurrent(seekvalue, gst.FORMAT_DEFAULT)
 
 
     ## timeout functions for checking current time
@@ -329,7 +329,7 @@ class PitiviViewer(gtk.VBox):
         # get the corresponding smartbin
         smartbin = self.sourcelist[idx][1]
         if not instance.PiTiVi.playground.current == smartbin:
-            instance.PiTiVi.playground.switch_to_pipeline(smartbin)
+            instance.PiTiVi.playground.switchToPipeline(smartbin)
 
 
     ## active Timeline calllbacks
@@ -348,22 +348,22 @@ class PitiviViewer(gtk.VBox):
             return
         gst.info("got file:%s" % uri)
         if uri in instance.PiTiVi.current.sources:
-            instance.PiTiVi.playground.play_temporary_filesourcefactory(instance.PiTiVi.current.sources[uri])
+            instance.PiTiVi.playground.playTemporaryFilesourcefactory(instance.PiTiVi.current.sources[uri])
         else:
-            instance.PiTiVi.current.sources.add_tmp_uri(uri)
+            instance.PiTiVi.current.sources.addTmpUri(uri)
 
     def _tmpIsReadyCb(self, sourcelist, factory):
         """ the temporary factory is ready, we can know set it to play """
         gst.info("%s" % factory)
-        instance.PiTiVi.playground.play_temporary_filesourcefactory(factory)
+        instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
 
     def _newProjectCb(self, pitivi, project):
         """ the current project has changed """
-        instance.PiTiVi.current.sources.connect("tmp_is_ready", self._tmpIsReady)
+        instance.PiTiVi.current.sources.connect("tmp_is_ready", self._tmpIsReadyCb)
         instance.PiTiVi.current.settings.connect("settings-changed", self._settingsChangedCb)
         
     def _addTimelineToPlayground(self):
-        instance.PiTiVi.playground.add_pipeline(instance.PiTiVi.current.get_bin())
+        instance.PiTiVi.playground.addPipeline(instance.PiTiVi.current.getBin())
 
 
     ## Control gtk.Button callbacks
@@ -503,7 +503,7 @@ class EncodingDialog(GladeWindow):
     def __init__(self, project):
         GladeWindow.__init__(self)
         self.project = project
-        self.bin = project.get_bin()
+        self.bin = project.getBin()
         self.bus = self.bin.get_bus()
         self.bus.add_signal_watch()
         self.eosid = self.bus.connect("message::eos", self._eosCb)
@@ -569,7 +569,7 @@ class EncodingDialog(GladeWindow):
         gobject.source_remove(self.timeoutid)
         
     def _cancelButtonClickedCb(self, button):
-        self.bin.stop_recording()
+        self.bin.stopRecording()
         if self.timeoutid:
             gobject.source_remove(self.timeoutid)
             self.timeoutid = None

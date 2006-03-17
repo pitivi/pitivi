@@ -26,6 +26,9 @@ Hacking on PiTiVi
      def _someObjectEventCb(self, object, arg):
          print "our callback was called"
 
+- for function names, we use the small_caps_with_underscore style.
+  This enables clear separation between functions and methods.
+
 * Debugging
 -----------
 

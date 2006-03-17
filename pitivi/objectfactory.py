@@ -77,27 +77,27 @@ class ObjectFactory(gobject.GObject):
         else:
             raise AttributeError, 'unknown property %s' % property.name
 
-    def set_audio_info(self, caps):
+    def setAudioInfo(self, caps):
         """ sets the audio caps of the element """
         self.set_property("audio-info", caps)
 
-    def set_video_info(self, caps):
+    def setVideoInfo(self, caps):
         """ set the video caps of the element """
         self.set_property("video-info", caps)
 
-    def set_audio(self, is_audio):
+    def setAudio(self, is_audio):
         """ sets whether the element has audio stream """
         self.set_property("is-audio", is_audio)
 
-    def set_video(self, is_video):
+    def setVideo(self, is_video):
         """ sets whether the element has video stream """
         self.set_property("is-video", is_video)
 
-    def make_audio_bin(self):
+    def makeAudioBin(self):
         """ returns a audio only bin """
         pass
 
-    def make_video_bin(self):
+    def makeVideoBin(self):
         """ returns a video only bin """
         pass
 
@@ -141,7 +141,7 @@ class FileSourceFactory(ObjectFactory):
         else:
             ObjectFactory.do_set_property(self, property, value)
 
-    def make_bin(self):
+    def makeBin(self):
         """ returns a source bin with all pads """
         bin = gst.Bin("%s-%d" % (self.name, self.lastbinid))
         self.lastbinid = self.lastbinid + 1
@@ -151,13 +151,13 @@ class FileSourceFactory(ObjectFactory):
         bin.add(src, dbin)
         src.link(dbin)
 
-        dbin.connect("new-decoded-pad", self._bin_new_decoded_pad, bin )
-        dbin.connect("removed-decoded-pad", self._bin_removed_decoded_pad, bin)
+        dbin.connect("new-decoded-pad", self._binNewDecodedPadCb, bin )
+        dbin.connect("removed-decoded-pad", self._binRemovedDecodedPadCb, bin)
 
         self.instances.append(bin)
         return bin
 
-    def _bin_new_decoded_pad(self, dbin, pad, is_last, bin):
+    def _binNewDecodedPadCb(self, dbin, pad, is_last, bin):
         gst.info(pad.get_caps().to_string())
         # add it as ghost_pad to the bin
         if "audio" in pad.get_caps().to_string():
@@ -175,7 +175,7 @@ class FileSourceFactory(ObjectFactory):
         else:
             return
 
-    def _bin_removed_decoded_pad(self, dbin, pad, bin):
+    def _binRemovedDecodedPadCb(self, dbin, pad, bin):
         gst.info("pad %s was removed" % pad)
         if "audio" in pad.get_caps().to_string():
             mypad = bin.get_pad("asrc")
@@ -185,43 +185,19 @@ class FileSourceFactory(ObjectFactory):
             return
         bin.remove_pad(mypad)
         
-    def bin_is_destroyed(self, bin):
+    def binIsDestroyed(self, bin):
         if bin in self.instances:
             self.instances.remove(bin)
 
-    def _single_bin_new_decoded_pad(self, dbin, pad, is_last, data):
-        # add safe de-activation of the other pad
-        bin, mtype, identity = data
-        goodpad = None
-        badpads = []
-        if mtype in pad.get_caps().to_string():
-            pad.link(identity.get_pad("sink"))
-        # only deactivate the other pad if we've already connected the good pad!
-        if identity.get_pad("sink").get_peer():
-            for pad in [x for x in dbin.get_pad_list() if x.get_direction == gst.PAD_SRC]:
-                if not mtype in pad.get_caps().to_string():
-                    badpads.append(pad)
-                else:
-                    goodpad = pad
-        if goodpad:
-            for pad in badpads:
-                pad.activate_recursive(False)
-                    
-            
-    def _single_bin_removed_decoded_pad(self, dbin, pad, data):
-        bin, mtype, identity = data
-        if mtype in pad.get_caps().to_string():
-            pad.unlink(identity.get_pad("sink"))
-
-    def set_length(self, length):
+    def setLength(self, length):
         """ sets the length of the element """
         self.set_property("length", length)
 
-    def set_thumbnail(self, thumbnail):
+    def setThumbnail(self, thumbnail):
         """ Sets the thumbnail filename of the element """
         self.set_property("thumbnail", thumbnail)
 
-    def get_pretty_info(self):
+    def getPrettyInfo(self):
         """ Returns a prettyfied information string """
         # Audio : [Mono|Stereo|<nbchanns>] @ <rate> Hz
         # Video : <width> x <Height> @ <rate> fps
@@ -280,7 +256,7 @@ class SimpleOperationFactory(OperationFactory):
                 elif "video" in padt.get_caps().to_string():
                     self.is_video = True
 
-    def _make_bin(self, mtype):
+    def _makeBin(self, mtype):
         # make a bin with adapters
         # TODO: add the adapters
         bin = gst.Bin()
@@ -288,11 +264,11 @@ class SimpleOperationFactory(OperationFactory):
         bin.add(el)
         return bin
 
-    def make_audio_bin(self):
+    def makeAudioBin(self):
         if not self.is_audio:
             raise NameError, "this operation does not handle audio"
 
-    def make_video_bin(self):
+    def makeVideoBin(self):
         if not self.is_video:
             raise NameError, "This operation does not handle video"
         

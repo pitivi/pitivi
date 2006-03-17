@@ -294,19 +294,19 @@ class ExportSettingsWidget(GladeWidget):
         width = self.videowidthspin.get_value()
         height = self.videoheightspin.get_value()
         rate = self.video_rates[self.videoratecbox.get_active()][1]
-        self.settings.set_video_properties(width, height, rate)
+        self.settings.setVideoProperties(width, height, rate)
 
         # Audio Settings
         nbchanns = self.audiochanncbox.get_active() + 1
         rate = self.audio_rates[self.audioratecbox.get_active()][1]
         depth = self.audio_depths[self.audiodepthcbox.get_active()][1]
-        self.settings.set_audio_properties(nbchanns, rate, depth)
+        self.settings.setAudioProperties(nbchanns, rate, depth)
 
         # Encoders
         muxer = self.settings.muxers[self.muxercombobox.get_active()].get_name()
         vencoder = self.validvencoders[self.vcodeccbox.get_active()].get_name()
         aencoder = self.validaencoders[self.acodeccbox.get_active()].get_name()
-        self.settings.set_encoders(muxer, vencoder, aencoder)
+        self.settings.setEncoders(muxer, vencoder, aencoder)
 
         # encoder/muxer settings
         self.settings.containersettings = self.containersettings

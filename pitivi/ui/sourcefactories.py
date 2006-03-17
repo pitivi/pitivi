@@ -172,7 +172,7 @@ class SourceListWidget(gtk.VBox):
         
         # Drag and Drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           [dnd.DND_URI_TUPLE],
+                           [dnd.DND_URI_TUPLE, dnd.DND_FILE_TUPLE],
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
@@ -254,7 +254,7 @@ class SourceListWidget(gtk.VBox):
 
     def addFiles(self, list):
         """ Add files to the list """
-        instance.PiTiVi.current.sources.add_uris(list)
+        instance.PiTiVi.current.sources.addUris(list)
 
 
     ## UI Button callbacks
@@ -300,7 +300,7 @@ class SourceListWidget(gtk.VBox):
             return
         factory = self.storemodel.get_value(self.storemodel.get_iter(paths[0]), 4)
         gst.debug("Let's play %s" % factory.name)
-        instance.PiTiVi.playground.play_temporary_filesourcefactory(factory)
+        instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
 
     def _listViewButtonToggledCb(self, button):
         if button.get_active():
@@ -355,7 +355,11 @@ class SourceListWidget(gtk.VBox):
 
     def _dndDataReceivedCb(self, widget, context, x, y, selection, targetType,
                            time):
-        filenames = [x.strip() for x in selection.data.strip().split("\n")]
+        gst.debug("targetType:%d, selection.data:%s" % (targetType, selection.data))
+        if targetType == dnd.DND_TYPE_URI_LIST:
+            filenames = [x.strip() for x in selection.data.strip().split("\n")]
+        elif targetType == dnd.DND_TYPE_TEXT_PLAIN:
+            filenames = [selection.data.strip()]
         self.addFiles(filenames)
 
     def _dndIconBeginCb(self, widget, context):

@@ -165,7 +165,7 @@ class SimpleTimeline(gtk.Layout):
         for source in self.condensed:
             if isinstance(source, TimelineSource):
                 spacing = self.childheight
-            elif insinstance(source, TimelineTransition):
+            elif isinstance(source, TimelineTransition):
                 spacing = self.childheight / 2
             else:
                 # this shouldn't happen !! The condensed list only contains
@@ -206,11 +206,11 @@ class SimpleTimeline(gtk.Layout):
                                     name=filefactory.name)
         gst.debug("_got_filefactory pos : %d" % pos)
         if pos == -1:
-            self.timeline.videocomp.append_source(source)
+            self.timeline.videocomp.appendSource(source)
         elif pos:
-            self.timeline.videocomp.insert_source_after(source, self.condensed[pos - 1])
+            self.timeline.videocomp.insertSourceAfter(source, self.condensed[pos - 1])
         else:
-            self.timeline.videocomp.prepend_source(source)
+            self.timeline.videocomp.prependSource(source)
 
     def _widthChangedCb(self, layout, property):
         if not property.name == "width":

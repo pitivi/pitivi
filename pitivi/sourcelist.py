@@ -55,8 +55,8 @@ class SourceList(gobject.GObject):
         self.sources = {}
         self.tempsources = {}
         self.discoverer = Discoverer(self.project)
-        self.discoverer.connect("not_media_file", self._not_media_file_cb)
-        self.discoverer.connect("finished_analyzing", self._finished_analyzing_cb)
+        self.discoverer.connect("not_media_file", self._notMediaFileCb)
+        self.discoverer.connect("finished_analyzing", self._finishedAnalyzingCb)
 
     def __contains__(self, uri):
         return self.sources.__contains__(uri)
@@ -82,7 +82,7 @@ class SourceList(gobject.GObject):
         """ returns an (uri, factory) iterator over the sources """
         return self.sources.iteritems()
         
-    def add_uri(self, uri):
+    def addUri(self, uri):
         # here we add the uri and emit a signal
         # later on the existence of the file will be confirmed or not
         # Until it's confirmed, the uri stays in the temporary list
@@ -90,25 +90,25 @@ class SourceList(gobject.GObject):
         if uri in self.sources.keys():
             return
         self.sources[uri] = None
-        self.discoverer.add_file(uri)
+        self.discoverer.addFile(uri)
 
-    def add_uris(self, uris):
+    def addUris(self, uris):
         # same as above but for a list
         rlist = []
         for uri in uris:
             if not uri in self.sources.keys():
                 self.sources[uri] = None
                 rlist.append(uri)
-        self.discoverer.add_files(rlist)
+        self.discoverer.addFiles(rlist)
 
-    def add_tmp_uri(self, uri):
+    def addTmpUri(self, uri):
         """ Adds a temporary uri, will not be saved """
         if uri in self.sources.keys():
             return
         self.tempsources[uri] = None
-        self.discoverer.add_file(uri)
+        self.discoverer.addFile(uri)
 
-    def remove_factory(self, factory):
+    def removeFactory(self, factory):
         # TODO
         # remove an item using the factory as a key
         # otherwise just use the __delitem__
@@ -120,7 +120,7 @@ class SourceList(gobject.GObject):
         for uri in rmuri:
             del self[uri]
 
-    def _finished_analyzing_cb(self, discoverer, factory):
+    def _finishedAnalyzingCb(self, discoverer, factory):
         # callback from finishing analyzing factory
         if factory.name in self.tempsources:
             self.tempsources[factory.name] = factory
@@ -129,7 +129,7 @@ class SourceList(gobject.GObject):
             self.sources[factory.name] = factory
             self.emit("file-added", factory)
 
-    def _not_media_file_cb(self, discoverer, uri):
+    def _notMediaFileCb(self, discoverer, uri):
         # callback from the discoverer's 'not_media_file' signal
         # remove it from the list
         if uri in self.sources and not self.sources[uri]:

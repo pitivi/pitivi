@@ -45,20 +45,20 @@ class SmartBin(gst.Pipeline):
         if self.has_audio:
             self.atee = gst.element_factory_make("tee", "atee")
             self.add(self.atee)
-        self.add_source()
-        self.connect_source()
+        self.addSource()
+        self.connectSource()
         self.asinkthread = None
         self.vsinkthread = None
 
-    def add_source(self):
+    def addSource(self):
         """ add the source to self, implement in subclasses """
         pass
 
-    def connect_source(self):
+    def connectSource(self):
         """ connect the source to the tee, implement in subclasses """
         pass
 
-    def set_audio_sink_thread(self, asinkthread):
+    def setAudioSinkThread(self, asinkthread):
         """ set the audio sink thread """
         self.debug("asinkthread : %s" % asinkthread)
         res, state, pending = self.get_state(0)
@@ -74,7 +74,7 @@ class SmartBin(gst.Pipeline):
             self.atee.get_pad("src%d").link(self.asinkthread.get_pad("sink"))
         return True
 
-    def set_video_sink_thread(self, vsinkthread):
+    def setVideoSinkThread(self, vsinkthread):
         """ set the video sink thread """
         self.debug("vsinkthread : %s" % vsinkthread)
         res , state , pending = self.get_state(0)
@@ -95,7 +95,7 @@ class SmartBin(gst.Pipeline):
                 self.vtee.get_pad("src%d").link(self.vsinkthread.get_pad("sink"))
         return True
 
-    def remove_audio_sink_thread(self):
+    def removeAudioSinkThread(self):
         """ remove the audio sink thread """
         self.debug("asinkthread : %s" % self.asinkthread)
         result, state, pending = self.get_state(0)
@@ -110,7 +110,7 @@ class SmartBin(gst.Pipeline):
         self.asinkthread = None
         return True
 
-    def remove_video_sink_thread(self):
+    def removeVideoSinkThread(self):
         """ remove the videos sink thread """
         self.debug("vsinkthread : %s" % self.vsinkthread)
         result, state, pending = self.get_state(0)
@@ -141,18 +141,18 @@ class SmartFileBin(SmartBin):
             struct = self.factory.video_info[0]
             self.height = struct["height"]
             self.width = struct["width"]
-        self.source = self.factory.make_bin()
+        self.source = self.factory.makeBin()
         SmartBin.__init__(self, "smartfilebin-" + factory.name,
                           displayname=factory.displayname)
 
-    def add_source(self):
+    def addSource(self):
         self.add(self.source)
 
-    def connect_source(self):
-        self.source.connect("pad-added", self._bin_new_decoded_pad)
-        self.source.connect("pad-removed", self._bin_removed_decoded_pad)
+    def connectSource(self):
+        self.source.connect("pad-added", self._binNewDecodedPadCb)
+        self.source.connect("pad-removed", self._binRemovedDecodedPadCb)
 
-    def _bin_new_decoded_pad(self, bin, pad):
+    def _binNewDecodedPadCb(self, bin, pad):
         # connect to good tee
         self.debug("SmartFileBin's source has a new pad: %s %s" % (pad , pad.get_caps().to_string()))
         if pad.get_caps().to_string().startswith("audio"):
@@ -160,7 +160,7 @@ class SmartFileBin(SmartBin):
         elif pad.get_caps().to_string().startswith("video"):
             pad.link(self.vtee.get_pad("sink"))
 
-    def _bin_removed_decoded_pad(self, bin, pad):
+    def _binRemovedDecodedPadCb(self, bin, pad):
         if pad.get_caps().to_string().startswith("audio"):
             pad.unlink(self.atee.get_pad("sink"))
         elif pad.get_caps().to_string().startswith("video"):
@@ -168,7 +168,7 @@ class SmartFileBin(SmartBin):
 
     def do_destroy(self):
         self.info("destroyed")
-        self.factory.bin_is_destroyed(self.source)
+        self.factory.binIsDestroyed(self.source)
 
 
 class SmartTimelineBin(SmartBin):
@@ -188,42 +188,42 @@ class SmartTimelineBin(SmartBin):
         self.height = project.settings.videoheight
         self.log("source is %s" % project.timeline.timeline)
         self.source = project.timeline.timeline
-        self.project.settings.connect("settings-changed", self._settings_changed_cb)
-        project.timeline.videocomp.connect("start-duration-changed", self._start_duration_changed)
+        self.project.settings.connect("settings-changed", self._settingsChangedCb)
+        project.timeline.videocomp.connect("start-duration-changed", self._startDurationChangedCb)
         self.length = project.timeline.videocomp.duration
         self.encthread = None
         self.tmpasink = None
         SmartBin.__init__(self, "project-" + project.name,
                           displayname = "Project: " + project.name)
 
-    def add_source(self):
+    def addSource(self):
         self.add(self.source)
 
-    def _settings_changed_cb(self, settings):
+    def _settingsChangedCb(self, settings):
         self.width = settings.videowidth
         self.height = settings.videoheight
 
-    def _new_pad_cb(self, source, pad):
+    def _newPadCb(self, source, pad):
         if pad.get_name() == "asrc":
             pad.link(self.atee.get_pad("sink"))
         elif pad.get_name() == "vsrc":
             pad.link(self.vtee.get_pad("sink"))
 
-    def connect_source(self):
-        self.source.connect("pad-added", self._new_pad_cb)
+    def connectSource(self):
+        self.source.connect("pad-added", self._newPadCb)
 
     def record(self, uri, settings=None):
         """ render the timeline to the given uri """
-        self.encthread = self._make_encthread(settings)
+        self.encthread = self._makeEncThread(settings)
         self.add(self.encthread)
         self.encthread.filesink.set_uri(uri)
 
         # temporarily remove the audiosinkthread
         self.tmpasink = self.asinkthread
-        self.remove_audio_sink_thread()
+        self.removeAudioSinkThread()
 
         # set sync=false on the videosink
-        self.get_real_video_sink().set_property("sync", False)
+        self.getRealVideoSink().set_property("sync", False)
         
         self.debug("linking vtee to ecnthread:vsink")
         self.vtee.get_pad("src%d").link(self.encthread.get_pad("vsink"))
@@ -239,7 +239,7 @@ class SmartTimelineBin(SmartBin):
             self.warning("Couldn't seek to beginning before encoding")
         self.set_state(gst.STATE_PLAYING)
 
-    def stop_recording(self):
+    def stopRecording(self):
         """ stop the recording, removing the encoding thread """
         self.set_state(gst.STATE_PAUSED)
         
@@ -253,18 +253,18 @@ class SmartTimelineBin(SmartBin):
             self.remove(self.encthread)
             del self.encthread
             self.encthread= None
-            self.set_audio_sink_thread(self.tmpasink)
+            self.setAudioSinkThread(self.tmpasink)
             self.tmpasink = None
 
-        self.get_real_video_sink().set_property("sync", True)
+        self.getRealVideoSink().set_property("sync", True)
 
-    def get_real_video_sink(self):
+    def getRealVideoSink(self):
         """ returns the real video sink element or None """
         if not self.vsinkthread:
             return None
         return self.vsinkthread.videosink.realsink
 
-    def _make_encthread(self, settings=None):
+    def _makeEncThread(self, settings=None):
         # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
         if not settings:
             settings = self.project.settings
@@ -316,7 +316,7 @@ class SmartTimelineBin(SmartBin):
 
         return thread
 
-    def _start_duration_changed(self, videocomp, start, duration):
+    def _startDurationChangedCb(self, videocomp, start, duration):
         self.info("smart timeline bin: start duration changed %d %d" %( start, duration ))
         self.length = duration
 
@@ -338,10 +338,10 @@ class SmartDefaultBin(SmartBin):
         self.height = 576
         SmartBin.__init__(self, "smartdefaultbin")
 
-    def add_source(self):
+    def addSource(self):
         self.add(self.videotestsrc, self.silence)
 
-    def connect_source(self):
+    def connectSource(self):
         self.debug("connecting sources")
         #vcaps = gst.caps_from_string("video/x-raw-yuv,width=320,height=240,framerate=25.0")
         self.videotestsrc.get_pad("src").link(self.vtee.get_pad("sink"))

@@ -213,9 +213,9 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         x += int(self.hadjustment.get_value())
         gst.debug("got source %s x:%d" % (source, x))
         # do something with source
-        self.layerInfo.composition.prepend_source(TimelineFileSource(factory=source,
+        self.layerInfo.composition.prependSource(TimelineFileSource(factory=source,
                                                                     media_type=self.layerInfo.composition.media_type,
-                                                                    name = source.name))
+                                                                    name=source.name))
 
         context.finish(True, False, timestamp)
 

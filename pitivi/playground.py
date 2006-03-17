@@ -74,12 +74,12 @@ class PlayGround(gobject.GObject):
         self.cur_state_signal = None
         self.cur_eos_signal = None
         
-        self.switch_to_default()
+        self.switchToDefault()
         self.state = gst.STATE_READY
         self.current.set_state(self.state)
         #self.playthread.set_state(self.state)
 
-    def add_pipeline(self, pipeline):
+    def addPipeline(self, pipeline):
         """ add a pipeline to the playground """
         gst.debug("pipeline : %s" % pipeline)
         if not isinstance(pipeline, SmartBin):
@@ -88,10 +88,10 @@ class PlayGround(gobject.GObject):
         self.pipelines.append(pipeline)
         bus = pipeline.get_bus()
         bus.add_signal_watch()
-        bus.connect("message", self._bus_message_cb, pipeline)
+        bus.connect("message", self._busMessageCb, pipeline)
         self.emit("bin-added", pipeline)
 
-    def remove_pipeline(self, pipeline):
+    def removePipeline(self, pipeline):
         """ removes a pipeline from the playground """
         gst.debug("pipeline : %s" % pipeline)
         if not pipeline in self.pipelines:
@@ -102,11 +102,11 @@ class PlayGround(gobject.GObject):
 
         pipeline.set_state(gst.STATE_READY)
         if self.current == pipeline:
-            self.switch_to_default()
+            self.switchToDefault()
         self.pipelines.remove(pipeline)
         self.emit("bin-removed", pipeline)
 
-    def switch_to_pipeline(self, pipeline):
+    def switchToPipeline(self, pipeline):
         """
         switch to the given pipeline for play output
         """
@@ -118,8 +118,8 @@ class PlayGround(gobject.GObject):
         if self.current:
             self.current.info("setting to READY")
             self.current.set_state(gst.STATE_READY)
-            self.current.remove_audio_sink_thread()
-            self.current.remove_video_sink_thread()
+            self.current.removeAudioSinkThread()
+            self.current.removeVideoSinkThread()
             if self.cur_state_signal:
                 self.current.disconnect(self.cur_state_signal)
             if self.cur_eos_signal:
@@ -132,69 +132,69 @@ class PlayGround(gobject.GObject):
         self.current = pipeline
         if self.current.has_video and self.vsinkthread:
             #self.vsinkthread.set_state(gst.STATE_READY)
-            self.current.set_video_sink_thread(self.vsinkthread)
+            self.current.setVideoSinkThread(self.vsinkthread)
         if self.current.has_audio and self.asinkthread:
             #self.asinkthread.set_state(gst.STATE_READY)
-            self.current.set_audio_sink_thread(self.asinkthread)
+            self.current.setAudioSinkThread(self.asinkthread)
         self.current.set_state(gst.STATE_PAUSED)
         self.emit("current-changed", self.current)
 
         pipeline.debug("END")
 
-    def switch_to_default(self):
+    def switchToDefault(self):
         """ switch to the default pipeline """
         gst.debug("switching to default")
-        self.switch_to_pipeline(self.default)
+        self.switchToPipeline(self.default)
 
-    def set_video_sink_thread(self, vsinkthread):
+    def setVideoSinkThread(self, vsinkthread):
         """ sets the video sink thread """
         gst.debug("video sink thread : %s" % vsinkthread)
         if self.vsinkthread and self.current.has_video:
             self.current.set_state(gst.STATE_READY)
-            self.current.remove_video_sink_thread()
+            self.current.removeVideoSinkThread()
         self.vsinkthread = vsinkthread
         if self.current and self.current.has_video:
-            self.current.set_video_sink_thread(self.vsinkthread)
+            self.current.setVideoSinkThread(self.vsinkthread)
 
-    def set_audio_sink_thread(self, asinkthread):
+    def setAudioSinkThread(self, asinkthread):
         """ sets the audio sink thread """
         gst.debug("set audio sink thread : %s" % asinkthread)
         if self.asinkthread and self.current.asinkthread:
             self.current.set_state(gst.STATE_READY)
-            self.current.remove_audio_sink_thread()
+            self.current.removeAudioSinkThread()
         self.asinkthread = asinkthread
         if self.current and self.current.has_audio:
-            self.current.set_audio_sink_thread(self.asinkthread)
+            self.current.setAudioSinkThread(self.asinkthread)
 
-    def _play_temporary_bin(self, tempbin):
+    def _playTemporaryBin(self, tempbin):
         """ temporarely play a smartbin """
         gst.debug("BEGINNING tempbin : %s" % tempbin)
         self.pause()
-        self.add_pipeline(tempbin)
-        res = self.switch_to_pipeline(tempbin)
+        self.addPipeline(tempbin)
+        res = self.switchToPipeline(tempbin)
         if self.tempsmartbin:
-            self.remove_pipeline(self.tempsmartbin)
+            self.removePipeline(self.tempsmartbin)
         self.tempsmartbin = tempbin
         self.play()
         gst.debug("END tempbin : %s" % tempbin)
 
-    def play_temporary_uri(self, uri):
+    def playTemporaryUri(self, uri):
         """ plays a uri """
         gst.debug("uri : %s" % uri)
         tempbin = SmartTempUriBin(uri)
-        self._play_temporary_bin(tempbin)
+        self._playTemporaryBin(tempbin)
         pass
 
-    def play_temporary_filesourcefactory(self, factory):
+    def playTemporaryFilesourcefactory(self, factory):
         """ temporarely play a FileSourceFactory """
         gst.debug("factory : %s" % factory)
         if isinstance(self.current, SmartFileBin) and self.current.factory == factory:
             gst.info("Already playing factory : %s" % factory)
             return
         tempbin = SmartFileBin(factory)
-        self._play_temporary_bin(tempbin)
+        self._playTemporaryBin(tempbin)
 
-    def seek_in_current(self, value, format=gst.FORMAT_TIME):
+    def seekInCurrent(self, value, format=gst.FORMAT_TIME):
         """ seek to the given position in the current playing bin """
         if format == gst.FORMAT_TIME:
             gst.debug("value : %s" % gst.TIME_ARGS (value))
@@ -225,7 +225,7 @@ class PlayGround(gobject.GObject):
     #
     # Bus handler
     #
-    def _bus_message_cb(self, bus, message, pipeline):
+    def _busMessageCb(self, bus, message, pipeline):
         """ handler for messages from the pipelines' buses """
         gst.info("%s [%s]" % (message.type, message.src))
         if message.src == self.current:
