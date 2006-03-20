@@ -43,6 +43,9 @@ class SourceList(gobject.GObject):
         "file_removed" : (gobject.SIGNAL_RUN_LAST,
                           gobject.TYPE_NONE,
                           (gobject.TYPE_STRING, )),
+        "not_media_file" : (gobject.SIGNAL_RUN_LAST,
+                            gobject.TYPE_NONE,
+                            (gobject.TYPE_STRING, gobject.TYPE_STRING)),
         "tmp_is_ready": (gobject.SIGNAL_RUN_LAST,
                          gobject.TYPE_NONE,
                          (gobject.TYPE_PYOBJECT, ))
@@ -129,9 +132,10 @@ class SourceList(gobject.GObject):
             self.sources[factory.name] = factory
             self.emit("file-added", factory)
 
-    def _notMediaFileCb(self, discoverer, uri):
+    def _notMediaFileCb(self, discoverer, uri, reason):
         # callback from the discoverer's 'not_media_file' signal
         # remove it from the list
+        self.emit("not_media_file", uri, reason)
         if uri in self.sources and not self.sources[uri]:
             del self.sources[uri]
         elif uri in self.tempsources:

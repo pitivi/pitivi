@@ -32,6 +32,7 @@ from urllib import unquote
 import pitivi.instance as instance
 import pitivi.dnd as dnd
 from pitivi.configure import get_pixmap_dir
+from glade import GladeWindow
 
 def beautify_length(length):
     sec = length / gst.SECOND
@@ -161,6 +162,7 @@ class SourceListWidget(gtk.VBox):
         # TODO : we must remove and reset the callbacks when changing project
         instance.PiTiVi.current.sources.connect("file_added", self._fileAddedCb)
         instance.PiTiVi.current.sources.connect("file_removed", self._fileRemovedCb)
+        instance.PiTiVi.current.sources.connect("not_media_file", self._notMediaFileCb)
 
         instance.PiTiVi.connect("new-project", self._newProjectCb)
 
@@ -191,6 +193,9 @@ class SourceListWidget(gtk.VBox):
         # Hack so that the views have the same method as self
         self.iconview.getSelectedItems = self.getSelectedItems
         self.treeview.getSelectedItems = self.getSelectedItems
+
+        # Error dialog box
+        self.errorDialogBox = None
 
     def useTreeView(self):
         """ use the treeview """
@@ -252,9 +257,30 @@ class SourceListWidget(gtk.VBox):
                 break
             piter = self.storemodel.iter_next(piter)
 
+    def _notMediaFileCb(self, sourcelist, uri, reason):
+        """ The given uri isn't a media file """
+        # popup a dialog box and fill up with reasons
+        if not self.errorDialogBox:
+            # construct and display it
+            self.errorDialogBox = DiscovererErrorDialog()
+            self.errorDialogBox.connect('close', self._errorDialogBoxCloseCb)
+            self.errorDialogBox.connect('response', self._errorDialogBoxResponseCb)
+            self.errorDialogBox.show()
+        self.errorDialogBox.addFailedFile(uri, reason)
+
     def addFiles(self, list):
         """ Add files to the list """
         instance.PiTiVi.current.sources.addUris(list)
+
+    ## Error Dialog Box callbacks
+
+    def _errorDialogBoxCloseCb(self, dialog):
+        self.errorDialogBox.destroy()
+        self.errorDialogBox = None
+
+    def _errorDialogBoxResponseCb(self, dialog, response):
+        self.errorDialogBox.destroy()
+        self.errorDialogBox = None
 
 
     ## UI Button callbacks
@@ -494,3 +520,48 @@ class TransitionListWidget(gtk.VBox):
         self.treeview = gtk.TreeView()
         self.pack_start(self.iconview)
 
+
+class DiscovererErrorDialog(GladeWindow):
+    """ Dialog box for showing errors from discovering files """
+    glade_file = "discoverererrordialog.glade"
+    __gsignals__ = {
+        'close': (gobject.SIGNAL_RUN_LAST,
+                  gobject.TYPE_NONE,
+                  ( )),
+        'response': (gobject.SIGNAL_RUN_LAST,
+                     gobject.TYPE_NONE,
+                     (gobject.TYPE_PYOBJECT, ))
+        }
+
+    def __init__(self):
+        GladeWindow.__init__(self)
+        self.treeview = self.widgets["treeview"]
+        self._setUpTreeView()
+
+    def _setUpTreeView(self):
+        self.storemodel = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING)
+        self.treeview.set_model(self.storemodel)
+
+        txtcell = gtk.CellRendererText()
+        uricol = gtk.TreeViewColumn("File", txtcell, text=0)
+        self.treeview.append_column(uricol)
+
+        txtcell2 = gtk.CellRendererText()
+        reasoncol = gtk.TreeViewColumn("Reason", txtcell2, text=1)
+        self.treeview.append_column(reasoncol)
+
+    def addFailedFile(self, uri, reason="Unknown reason"):
+        """Add the given uri to the list of failed files. You can optionnaly
+        give a string identifying the reason why the file failed to be
+        discovered
+        """
+        gst.debug("Uri:%s, reason:%s" % (uri, reason))
+        self.storemodel.append([str(uri), str(reason)])
+
+    ## Callbacks from glade
+
+    def _closeCb(self, dialog):
+        self.emit('close')
+
+    def _responseCb(self, dialog, response):
+        self.emit('response', response)

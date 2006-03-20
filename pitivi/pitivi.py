@@ -64,6 +64,8 @@ class Pitivi(gobject.GObject):
         gobject.GObject.__init__(self)
 
         # store ourself in the instance global
+        if instance.PiTiVi:
+            raise RuntimeWarning("There is already a PiTiVi instance, inform developers")
         instance.PiTiVi = self
         
         # TODO parse cmd line arguments

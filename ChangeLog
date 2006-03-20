@@ -1,5 +1,17 @@
 2006-03-20  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/discoverer.py:
+	Let's grab more issues when discovering.
+	Extended 'not-media-file' signal to also signal a reason
+	* pitivi/pitivi.py:
+	small fix
+	* pitivi/sourcelist.py:
+	Added 'not-media-file' signal.
+	* pitivi/ui/sourcefactories.py:
+	Added dialog box to inform user of files that couldn't be discovered.
+
+2006-03-20  Edward Hervey  <edward@fluendo.com>
+
 	* __init__.py: removed
 	* pitivi/ui/complexinterface.py:
 	LayeredWidgetInterface is no longer used

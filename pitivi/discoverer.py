@@ -44,7 +44,7 @@ class Discoverer(gobject.GObject):
                                    (gobject.TYPE_PYOBJECT, )),
         "not_media_file" : (gobject.SIGNAL_RUN_LAST,
                             gobject.TYPE_NONE,
-                            (gobject.TYPE_STRING, )),
+                            (gobject.TYPE_STRING, gobject.TYPE_STRING)),
         "finished_analyzing" : ( gobject.SIGNAL_RUN_LAST,
                                  gobject.TYPE_NONE,
                                  (gobject.TYPE_PYOBJECT, )),
@@ -145,7 +145,7 @@ class Discoverer(gobject.GObject):
         self.pipeline = gst.parse_launch("gnomevfssrc name=src location=\"%s\" ! decodebin name=dbin" % self.current)
         if not self.pipeline:
             gst.warning("This is not a media file : %s" % self.current)
-            self.emit("not_media_file", self.current)
+            self.emit("not_media_file", self.current, "Couldn't construct pipeline.")
             gobject.idle_add(self._finishAnalysis)
             return
         gst.info("analysis pipeline created")
@@ -157,7 +157,7 @@ class Discoverer(gobject.GObject):
         self.bus.add_signal_watch()
         gst.info("setting pipeline to PAUSED")
         if self.pipeline.set_state(gst.STATE_PAUSED) == gst.STATE_CHANGE_FAILURE:
-            self.emit("not_media_file", self.current)
+            self.emit("not_media_file", self.current, "Pipeline didn't want to go to PAUSED")
             gst.info("pipeline didn't want to go to PAUSED")
             gobject.idle_add(self._finishAnalysis)
 
@@ -183,11 +183,11 @@ class Discoverer(gobject.GObject):
             if os.path.isfile(filename):
                 self.currentfactory.setThumbnail(filename)
             gobject.idle_add(self._finishAnalysis)
-        elif message.type == gst.MESSAGE_ERROR:
-            gst.warning("got an ERROR")
+        elif message.type in [gst.MESSAGE_ERROR, gst.MESSAGE_WARNING]:
+            gst.warning("got an ERROR/WARNING")
             self.thisdone = True
             if not self.currentfactory:
-                self.emit("not_media_file", self.current)
+                self.emit("not_media_file", self.current, "Couldn't figure out file type")
             gobject.idle_add(self._finishAnalysis)
         elif message.type == gst.MESSAGE_ELEMENT:
             gst.debug("Element message %s" % message.structure.to_string())
@@ -207,10 +207,11 @@ class Discoverer(gobject.GObject):
             if not caps.is_fixed():
                 caps = pad.get_negotiated_caps()
             gst.info("testing pad %s : %s" % (pad, caps))
+            
             if caps and caps.is_fixed():
-                if caps.to_string().startswith("audio/") and not self.currentfactory.audio_info:
+                if caps.to_string().startswith("audio/x-raw") and not self.currentfactory.audio_info:
                     self.currentfactory.setAudioInfo(caps)
-                elif caps.to_string().startswith("video/") and not self.currentfactory.video_info:
+                elif caps.to_string().startswith("video/x-raw") and not self.currentfactory.video_info:
                     self.currentfactory.setVideoInfo(caps)
             if not self.currentfactory.length:
                 try:
@@ -258,25 +259,28 @@ class Discoverer(gobject.GObject):
         gst.info(caps.to_string())
         if not self.currentfactory or not self.currentfactory.is_audio or not self.currentfactory.is_video:
             gst.warning("got unknown pad without anything else")
-            self.emit("not_media_file", self.current)
+            self.emit("not_media_file", self.current, "Got unknown stream type : %s" % caps.to_string())
             gobject.idle_add(self._finishAnalysis)
 
     def _newDecodedPadCb(self, element, pad, is_last):
         # check out the type (audio/video)
         # if we don't already have self.currentfactory
         #   create one, emit "new_sourcefile_factory"
-        gst.info("pad:%s caps:%s" % (pad, pad.get_caps().to_string()))
-        if "video" in pad.get_caps().to_string():
+        capsstr = pad.get_caps().to_string()
+        gst.info("pad:%s caps:%s" % (pad, capsstr))
+        if capsstr.startswith("video/x-raw"):
             if not self.currentfactory:
                 self.currentfactory = objectfactory.FileSourceFactory(self.current, self.project)
                 self.emit("new_sourcefilefactory", self.currentfactory)
             self._newVideoPadCb(element, pad)
-        elif "audio" in pad.get_caps().to_string():
+        elif capsstr.startswith("audio/x-raw"):
             if not self.currentfactory:
                 self.currentfactory = objectfactory.FileSourceFactory(self.current, self.project)
                 self.emit("new_sourcefilefactory", self.currentfactory)
             self._newAudioPadCb(element, pad)
-        if is_last:
-            if not self.currentfactory or not self.currentfactory.is_audio or not self.currentfactory.is_video:
-                gst.warning("couldn't find a usable pad")
-                gobject.idle_add(self._finishAnalysis)
+        else:
+            if is_last:
+                if not self.currentfactory or not self.currentfactory.is_audio or not self.currentfactory.is_video:
+                    gst.warning("couldn't find a usable pad")
+                    self.emit("not_media_file", self.current, "Got unknown stream type : %s" % capsstr)
+                    gobject.idle_add(self._finishAnalysis)
