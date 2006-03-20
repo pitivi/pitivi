@@ -52,7 +52,7 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         return ZoomableWidgetInterface.getPixelWidth(self) + 2 * self.border
 
 
-    ## timeline position changed callback
+    ## timeline position changed method
 
     def timelinePositionChanged(self, value, frame):
         previous = self.position
@@ -90,6 +90,9 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         self.drawPosition(context, self.get_allocation())
         return False
 
+
+    ## Drawing methods
+    
     def doPixmap(self):
         """ (re)create the buffered drawable for the Widget """
         # we can't create the pixmap if we're not realized

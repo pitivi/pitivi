@@ -37,32 +37,12 @@ import gst
 # ex : 1.0 = 1 pixel for a second
 #
 # Methods:
-# . set_zoomratio(ratio)
-# . get_zoomratio(ratio)
-# . pixel_to_ns(pixels)
-# . ns_to_pixels(time)
-# . get_pixel_width()
+# . setZoomRatio(ratio)
+# . getZoomRatio(ratio)
+# . pixelToNs(pixels)
+# . nsToPixels(time)
+# . getPixelWidth()
 #
-#
-# LayeredWidgetInterface
-# ----------------
-# Interface for 'layered' widgets.
-# The layers correspond to the top-level Composition of the Timeline Model.
-# It's purpose is to handle the contained layers' height and position
-# It uses the LayerInfoList which is shared across the various widgets
-# implementing the LayeredInterface, so that those widgets have layers which
-# are synchronized (in height, number and content).
-#
-# The widgets implementing this interface should use it's methods to request
-# expansion/resize/adding of layers, and should implement the needed virtual
-# methods for actually resizing the layers.
-#
-# . set_layerinfo(layerinfo)
-# . expand_layer(layerposition, boolean)
-# . change_layer_height(layerposition, newheight)
-# . layer_expanded(layerposition, boolean) Implement
-# . layer_height_changed(layerposition, newheight)
-# . add_layer(layerposition, composition)
 #
 
 class ZoomableWidgetInterface:
@@ -150,77 +130,3 @@ class ZoomableWidgetInterface:
             self.zoomChanged()
         else:
             self.parent.setZoomRatio(zoomratio)
-
-class LayeredWidgetInterface:
-
-    def __init__(self, infolist):
-        self.layerinfolist = None
-        self.__expandedSig = 0
-        self.__heightChangedSig = 0
-        self.__addedSig = 0
-        self.__removedSig = 0
-        
-        self.setLayerInfoList(infolist)
-        
-    def setLayerInfoList(self, infolist):
-        """ set the LayerInfoList and connect the signal handlers """
-        if self.layerinfolist:
-            # remove existing signal handlers
-            for sigid in [self.__expandedSig, self.__heightChangedSig,
-                          self.__addedSig, self.__removedSig]:
-                self.layerinfolist.disconnect(sigid)
-        # save list and set signal handlers
-        self.layerinfolist = infolist
-        self.__expandedSig = self.layerinfolist.connect('layer-expanded',
-                                                        self.__expanded_cb)
-        self.__heightChangedSig = self.layerinfolist.connect('layer-height-changed',
-                                                             self.__layer_height_changed_cb)
-        self.__addedSig = self.layerinfolist.connect('layer-added',
-                                                     self.__layer_added_cb)
-        self.__removedSig = self.layerinfolist.connect('layer-removed',
-                                                     self.__layer_removed_cb)
-        
-        gst.info("calling layerAdded for all the existing layers")
-        for i in range(len(self.layerinfolist)):
-            self.layerAdded(i)
-            
-
-    def expandLayer(self, layerposition, expanded):
-        """ expand (or reduce) the layer at given position """
-        self.layerinfolist.expandLayer(layerposition, expanded)
-
-    def changeLayerHeight(self, layerposition, height):
-        """ set the layer at the given position to the requested height """
-        self.layerinfolist.changeLayerHeight(layerposition, height)
-
-    def _expandedCb(self, list, layerposition, expanded):
-        self.layerExpanded(layerposition, expanded)
-
-    def _layerHeightChangedCb(self, list, layerposition):
-        self.layerHeightChanged(layerposition)
-
-    def _layerAddedCb(self, list, position):
-        self.layerAdded(position)
-
-    def _layerRemovedCb(self, list, position):
-        self.layerRemoved(position)
-
-    def layerExpanded(self, layerposition, expanded):
-        raise NotImplementedError
-
-    def layerHeightChanged(self, layerposition):
-        raise NotImplementedError
-
-    def layerAdded(self, position):
-        """
-        A layer was added, position is the position where it was added
-        """
-        raise NotImplementedError
-
-    def layerRemoved(self, position):
-        """
-        A layer was removed, position is the position where it previously was
-        """
-        raise NotImplementedError
-
-    

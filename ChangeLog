@@ -1,3 +1,12 @@
+2006-03-20  Edward Hervey  <edward@fluendo.com>
+
+	* __init__.py: removed
+	* pitivi/ui/complexinterface.py:
+	LayeredWidgetInterface is no longer used
+	* pitivi/ui/ruler.py:
+	more comments
+	
+
 2006-03-17  Edward Hervey  <edward@fluendo.com>
 
 	* docs/HACKING:
