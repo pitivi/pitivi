@@ -381,9 +381,9 @@ class SourceListWidget(gtk.VBox):
 
     def _dndDataReceivedCb(self, widget, context, x, y, selection, targetType,
                            time):
-        gst.debug("targetType:%d, selection.data:%s" % (targetType, selection.data))
+        gst.debug("targetType:%d, selection.data:%r" % (targetType, selection.data))
         if targetType == dnd.DND_TYPE_URI_LIST:
-            filenames = [x.strip() for x in selection.data.strip().split("\n")]
+            filenames = [x.strip('\x00') for x in selection.data.strip().split("\n")]
         elif targetType == dnd.DND_TYPE_TEXT_PLAIN:
             filenames = [selection.data.strip()]
         self.addFiles(filenames)

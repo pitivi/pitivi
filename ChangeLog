@@ -1,3 +1,9 @@
+2006-03-22  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py: (SourceListWidget._dndDataReceivedCb): 
+	remove cruft from selection.data in drag and drop.
+	Closes #335503
+
 2006-03-20  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/discoverer.py:
