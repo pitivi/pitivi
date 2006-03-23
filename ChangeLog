@@ -1,5 +1,10 @@
 2006-03-23  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/debug.py:
+	File that should have gone a long time ago.
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/__init__.py:
 	Documentation
 	* pitivi/bin.py:
