@@ -288,9 +288,9 @@ class ExportSettingsWidget(GladeWidget):
         factory = self.validvencoders[self.vcodeccbox.get_active()]
         if not factory:
             return
-        set = self.runSettingsDialog(factory, self.vcodecsettings)
-        if set:
-            self.vcodecsettings = set
+        settings = self.runSettingsDialog(factory, self.vcodecsettings)
+        if settings:
+            self.vcodecsettings = settings
         
         
     def updateSettings(self):

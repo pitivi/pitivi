@@ -99,11 +99,11 @@ class ObjectFactory(gobject.GObject):
 
     def makeAudioBin(self):
         """ returns a audio only bin """
-        pass
+        raise NotImplementedError
 
     def makeVideoBin(self):
         """ returns a video only bin """
-        pass
+        raise NotImplementedError
 
 
 class FileSourceFactory(ObjectFactory):
@@ -260,22 +260,6 @@ class SimpleOperationFactory(OperationFactory):
                 elif "video" in padt.get_caps().to_string():
                     self.is_video = True
 
-    def _makeBin(self, mtype):
-        # make a bin with adapters
-        # TODO: add the adapters
-        bin = gst.Bin()
-        el = gst.element_factory_make(self.name)
-        bin.add(el)
-        return bin
-
-    def makeAudioBin(self):
-        if not self.is_audio:
-            raise NameError, "this operation does not handle audio"
-
-    def makeVideoBin(self):
-        if not self.is_video:
-            raise NameError, "This operation does not handle video"
-        
 
 class TransitionFactory(OperationFactory):
     """

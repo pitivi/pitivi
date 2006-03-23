@@ -1,3 +1,26 @@
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timelineobjects.py:
+	Cleanup and fixes thanks to pychecker.
+	Moved Christian's patch for appicon into each of the windows and dialog
+	boxes classes.
+
 2006-03-23  Christian Schaller  <christian@fluendo.com>
 
 	* pitivi/pitivi.py: Add appicon to window decoration

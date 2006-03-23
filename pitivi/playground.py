@@ -175,7 +175,7 @@ class PlayGround(gobject.GObject):
         gst.debug("BEGINNING tempbin : %s" % tempbin)
         self.pause()
         self.addPipeline(tempbin)
-        res = self.switchToPipeline(tempbin)
+        self.switchToPipeline(tempbin)
         if self.tempsmartbin:
             self.removePipeline(self.tempsmartbin)
         self.tempsmartbin = tempbin

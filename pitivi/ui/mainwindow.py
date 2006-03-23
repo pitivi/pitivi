@@ -126,6 +126,8 @@ class PitiviMainWindow(gtk.Window):
         hpaned.pack1(self.sourcefactories, resize=True, shrink=False)
         hpaned.pack2(viewerframe, resize=False, shrink=False)
 
+        #application icon
+        self.set_icon_from_file("application-pitivi.png")
 
     ## UI Callbacks
 
@@ -162,6 +164,7 @@ class PitiviMainWindow(gtk.Window):
 	authors = ["Edward Hervey <edward@fluendo.com>" ]
 	abt.set_authors(authors)
 	abt.set_license("GNU Lesser Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details")
+        abt.set_icon_from_file("application-pitivi.png")
 	abt.show()
 
 

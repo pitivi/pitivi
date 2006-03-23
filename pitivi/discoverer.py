@@ -26,9 +26,7 @@ Discover file multimedia information.
 
 import gobject
 import gst
-import gtk
 import objectfactory
-import gc
 
 import os.path
 

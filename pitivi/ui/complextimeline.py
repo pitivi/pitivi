@@ -173,7 +173,7 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
     ## ToolBar callbacks
 
     def toolBarZoomChangedCb(self, toolbar, zoomratio):
-        self.setZoomRatio(self, zoomratio)
+        self.setZoomRatio(zoomratio)
 
     ## timeline position callback
 

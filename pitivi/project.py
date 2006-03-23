@@ -24,7 +24,6 @@
 Project class
 """
 
-import os
 import gobject
 import gst
 import gnomevfs
@@ -64,12 +63,12 @@ class Project(gobject.GObject):
             return
         self.timeline = Timeline(self)
         if self.uri:
-            if not gnomevfs.exists(uri):
+            if not gnomevfs.exists(self.uri):
                 # given uri doesn't exist !!!
                 # TODO raise exception
-                return
+                raise RuntimeError("uri %s doesn't exist" % self.uri)
             # TODO fill the timeline from the uri
-            pass
+            raise NotImplementedError
 
     def getBin(self):
         """ returns the SmartTimelineBin of the project """
@@ -86,11 +85,11 @@ class Project(gobject.GObject):
 
     def save(self):
         """ Saves the project to the project's current file """
-        self._save(self, self.filename)
+        self._save(self.uri)
 
     def saveAs(self, filename):
         """ Saves the project to the given file name """
-        self._save(self, filename)
+        self._save(filename)
         
 
 

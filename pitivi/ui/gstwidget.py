@@ -99,13 +99,13 @@ class GstElementSettingsWidget(gtk.VBox):
         table.set_col_spacings(5)
         table.set_border_width(5)
         y = 0
-        for property in props:
-            label = gtk.Label(property.nick)
+        for prop in props:
+            label = gtk.Label(prop.nick)
             label.set_alignment(0.0, 0.5)
-            widget = make_property_widget(self.element, property, properties.get(property.name))
+            widget = make_property_widget(self.element, prop, properties.get(prop.name))
             table.attach(label, 0, 1, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
             table.attach(widget, 1, 2, y, y+1, yoptions=gtk.FILL)
-            self.properties[property] = widget
+            self.properties[prop] = widget
             y += 1
         self.pack_start(table)
         self.show_all()
@@ -113,12 +113,12 @@ class GstElementSettingsWidget(gtk.VBox):
     def getSettings(self):
         """ returns the dictionnary of propertyname/propertyvalue """
         d = {}
-        for property, widget in self.properties.iteritems():
-            if not property.flags & gobject.PARAM_WRITABLE:
+        for prop, widget in self.properties.iteritems():
+            if not prop.flags & gobject.PARAM_WRITABLE:
                 continue
-            value = get_widget_propvalue(property, widget)
+            value = get_widget_propvalue(prop, widget)
             if not value == None:
-                d[property.name] = value
+                d[prop.name] = value
         return d
                             
 

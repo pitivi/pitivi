@@ -140,13 +140,13 @@ class TimelineObject(gobject.GObject):
         # Set factory and media_type and then create the gnlobject
         self.factory = factory
         self.media_type = media_type
-        self._makeGnlObject()
+        self.gnlobject = self._makeGnlObject()
         self.gnlobject.connect("notify::start", self._startDurationChangedCb)
         self.gnlobject.connect("notify::duration", self._startDurationChangedCb)
         self._setStartDurationTime(start, duration)
 
     def _makeGnlObject(self):
-        """ create the gnl_object """
+        """ create and return the gnl_object """
         raise NotImplementedError
 
     def _unlinkObject(self):
@@ -289,11 +289,12 @@ class TimelineFileSource(TimelineSource):
         else:
             raise NameError, "media type is NONE !"
         self.factory.lastbinid = self.factory.lastbinid + 1
-        self.gnlobject = gst.element_factory_make("gnlfilesource", "source-" + self.name + str(self.factory.lastbinid))
-        self.gnlobject.set_property("location", self.factory.name)
-        self.gnlobject.set_property("caps", caps)
-        self.gnlobject.set_property("start", long(0))
-        self.gnlobject.set_property("duration", long(self.factory.length))
+        gnlobject = gst.element_factory_make("gnlfilesource", "source-" + self.name + str(self.factory.lastbinid))
+        gnlobject.set_property("location", self.factory.name)
+        gnlobject.set_property("caps", caps)
+        gnlobject.set_property("start", long(0))
+        gnlobject.set_property("duration", long(self.factory.length))
+        return gnlobject
         
     def _makeBrother(self):
         """ make the brother element """
@@ -457,7 +458,7 @@ class TimelineComposition(TimelineSource):
         TimelineSource.__init__(self, **kw)
 
     def _makeGnlObject(self):
-        self.gnlobject = gst.element_factory_make("gnlcomposition", "composition-" + self.name)
+        return gst.element_factory_make("gnlcomposition", "composition-" + self.name)
 
     # global effects
     
@@ -758,10 +759,11 @@ class TimelineEffect(TimelineObject):
         TimelineObject.__init__(self, **kw)
 
     def _makeGnlObject(self):
-        self.gnlobject = gst.element_factory_make("gnloperation", "operation-" + self.name)
-        self._setUpGnlOperation()
+        gnlobject = gst.element_factory_make("gnloperation", "operation-" + self.name)
+        self._setUpGnlOperation(gnlobject)
+        return gnlobject
 
-    def _setUpGnlOperation(self):
+    def _setUpGnlOperation(self, gnlobject):
         """ fill up the gnloperation for the first go """
         raise NotImplementedError
 
@@ -785,7 +787,7 @@ class TimelineTransition(TimelineEffect):
     def __init__(self, factory, source1=None, source2=None, **kw):
         self.factory = factory
         TimelineEffect.__init__(self, nbinputs=2, **kw)
-        self.setSource(source1, source2)
+        self.setSources(source1, source2)
 
     def setSources(self, source1, source2):
         """ changes the sources in between which the transition lies """

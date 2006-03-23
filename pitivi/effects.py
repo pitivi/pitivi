@@ -24,7 +24,6 @@
 Effects global handling
 """
 
-import gobject
 import gst
 from objectfactory import OperationFactory, TransitionFactory, SMPTETransitionFactory
 

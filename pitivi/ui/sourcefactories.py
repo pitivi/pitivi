@@ -40,9 +40,9 @@ from glade import GladeWindow
 
 def beautify_length(length):
     sec = length / gst.SECOND
-    min = sec / 60
+    mins = sec / 60
     sec = sec % 60    
-    return "%02dm%02ds" % (min, sec)
+    return "%02dm%02ds" % (mins, sec)
 
 class SourceFactoriesWidget(gtk.Notebook):
     """

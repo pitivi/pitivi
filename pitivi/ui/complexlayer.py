@@ -24,7 +24,6 @@
 Layer system for the complex view
 """
 
-import gtk
 import gobject
 import gst
 

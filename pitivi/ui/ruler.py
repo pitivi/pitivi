@@ -133,7 +133,7 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
             context.rectangle(0, 0,
                               self.getPixelWidth(), allocation.height)
             context.fill()
-            context.stroke
+            context.stroke()
         
         context.restore()
 

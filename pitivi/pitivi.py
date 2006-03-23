@@ -80,7 +80,6 @@ class Pitivi(gobject.GObject):
         
         # we're starting a GUI for the time being
         self.gui = mainwindow.PitiviMainWindow()
-        self.gui.set_icon_from_file("application-pitivi.png")
         self.gui.show()
 
     def loadProject(self, uri=None, filepath=None):

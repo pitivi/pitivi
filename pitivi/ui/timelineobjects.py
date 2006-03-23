@@ -28,10 +28,9 @@ from urllib import unquote
 import gobject
 import gtk
 import gst
-from gtk import gdk
 
 import pitivi.instance as instance
-from pitivi.timeline import Timeline, TimelineComposition, TimelineFileSource, TimelineSource, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
+from pitivi.timeline import Timeline, TimelineComposition, TimelineFileSource, TimelineSource, TimelineTransition, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 import pitivi.dnd as dnd
 from sourcefactories import beautify_length
 
@@ -88,7 +87,7 @@ class SimpleTimeline(gtk.Layout):
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
                            [dnd.FILESOURCE_TUPLE],
-                           gdk.ACTION_COPY)
+                           gtk.gdk.ACTION_COPY)
         self.connect("drag-data-received", self._dragDataReceivedCb)
         self.connect("drag-leave", self._dragLeaveCb)
         self.connect("drag-motion", self._dragMotionCb)
@@ -142,7 +141,7 @@ class SimpleTimeline(gtk.Layout):
         for source in self.condensed:
             if isinstance(source, TimelineSource):
                 spacing = self.childheight
-            elif insinstance(source, TimelineTransition):
+            elif isinstance(source, TimelineTransition):
                 spacing = self.childheight / 2
             else:
                 # this shouldn't happen !! The condensed list only contains
@@ -258,8 +257,8 @@ class SimpleTimeline(gtk.Layout):
     def _areaIntersect(self, x, y, w, h, x2, y2, w2, h2):
         """ returns True if the area intersects, else False """
         # is zone to the left of zone2
-        z1 = gdk.Rectangle(x, y, w, h)
-        z2 = gdk.Rectangle(x2, y2, w2, h2)
+        z1 = gtk.gdk.Rectangle(x, y, w, h)
+        z2 = gtk.gdk.Rectangle(x2, y2, w2, h2)
         r = z1.intersect(z2)
         a, b, c, d = r
         if a or b or c or d:
@@ -319,12 +318,12 @@ class SimpleSourceWidget(gtk.DrawingArea):
     def __init__(self, filesource):
         gobject.GObject.__init__(self)
         self.gc = None
-        self.add_events(gdk.POINTER_MOTION_MASK | gdk.ENTER_NOTIFY_MASK
-                        | gdk.LEAVE_NOTIFY_MASK) # enter, leave, pointer-motion
+        self.add_events(gtk.gdk.POINTER_MOTION_MASK | gtk.gdk.ENTER_NOTIFY_MASK
+                        | gtk.gdk.LEAVE_NOTIFY_MASK) # enter, leave, pointer-motion
         self.width = 0
         self.height = 0
         self.filesource = filesource
-        self.thumbnail = gdk.pixbuf_new_from_file(self.filesource.factory.thumbnail)
+        self.thumbnail = gtk.gdk.pixbuf_new_from_file(self.filesource.factory.thumbnail)
         self.thratio = float(self.thumbnail.get_width()) / float(self.thumbnail.get_height())
         self.pixmap = None
         self.namelayout = self.create_pango_layout(os.path.basename(unquote(self.filesource.factory.name)))
@@ -368,7 +367,7 @@ class SimpleSourceWidget(gtk.DrawingArea):
             self.pixmap.draw_layout(self.gc, self.border, self.border, self.namelayout)
             
             # draw pixbuf
-            subpixbuf = self.thumbnail.scale_simple(sw, sh, gdk.INTERP_BILINEAR)
+            subpixbuf = self.thumbnail.scale_simple(sw, sh, gtk.gdk.INTERP_BILINEAR)
             self.pixmap.draw_pixbuf(self.gc, subpixbuf, 0, 0,
                                     (self.width - sw) / 2,
                                     (self.height - sh) / 2,
@@ -420,7 +419,7 @@ class SimpleTransitionWidget(gtk.DrawingArea):
         self.width = 0
         self.height = 0
         self.pixmap = None
-        self.factory = filefactory
+        self.factory = transitionfactory
         self.connect("expose-event", self._exposeEventCb)
         self.connect("realize", self._realizeCb)
         self.connect("configure-event", self._configureEventCb)
