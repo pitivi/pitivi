@@ -23,6 +23,7 @@ ui_PYTHON =			\
 
 ui_DATA =				\
 	actions.xml			\
+	discoverererrordialog.glade	\
 	elementsettingsdialog.glade	\
 	encodingdialog.glade		\
 	exportsettingswidget.glade	\

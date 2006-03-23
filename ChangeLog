@@ -1,5 +1,11 @@
 2006-03-23  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/discoverererrordialog.glade:
+	Adding glade file for the DiscovererErrorDialog.
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/viewer.py:
 	Don't display bogus value when the duration is not valid.
 	Only activate controls/slider when not on default view(videotestsrc).
