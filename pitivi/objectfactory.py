@@ -20,6 +20,10 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+"""
+Providers of elements to use in a timeline
+"""
+
 import os.path
 from urllib import unquote
 import string

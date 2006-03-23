@@ -21,6 +21,10 @@
 # Boston, MA 02111-1307, USA.
 #
 
+"""
+Classes for easily using glade widgets
+"""
+
 import os
 import sys
 

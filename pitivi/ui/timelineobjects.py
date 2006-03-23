@@ -19,6 +19,10 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+"""
+Simple view timeline widgets
+"""
+
 import os.path
 from urllib import unquote
 import gobject
@@ -83,7 +87,7 @@ class SimpleTimeline(gtk.Layout):
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           [dnd.DND_FILESOURCE_TUPLE],
+                           [dnd.FILESOURCE_TUPLE],
                            gdk.ACTION_COPY)
         self.connect("drag-data-received", self._dragDataReceivedCb)
         self.connect("drag-leave", self._dragLeaveCb)
@@ -240,7 +244,7 @@ class SimpleTimeline(gtk.Layout):
 
     def _dragDataReceivedCb(self, layout, context, x, y, selection,
                             targetType, timestamp):
-        if targetType == dnd.DND_TYPE_PITIVI_FILESOURCE:
+        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
             uri = selection.data
         else:
             context.finish(False, False, timestamp)

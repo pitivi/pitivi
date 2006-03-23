@@ -19,6 +19,10 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+"""
+Source and effects list widgets
+"""
+
 import os
 import os.path
 import time
@@ -174,18 +178,18 @@ class SourceListWidget(gtk.VBox):
         
         # Drag and Drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           [dnd.DND_URI_TUPLE, dnd.DND_FILE_TUPLE],
+                           [dnd.URI_TUPLE, dnd.FILE_TUPLE],
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
         self.iconview.drag_source_set(gtk.gdk.BUTTON1_MASK,
-                                      [dnd.DND_URI_TUPLE, dnd.DND_FILESOURCE_TUPLE],
+                                      [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
                                       gtk.gdk.ACTION_COPY)
         self.iconview.connect("drag_begin", self._dndIconBeginCb)
         self.iconview.connect("drag_data_get", self._dndDataGetCb)
         
         self.treeview.drag_source_set(gtk.gdk.BUTTON1_MASK,
-                                      [dnd.DND_URI_TUPLE, dnd.DND_FILESOURCE_TUPLE],
+                                      [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
                                       gtk.gdk.ACTION_COPY)
         self.treeview.connect("drag_begin", self._dndTreeBeginCb)
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
@@ -382,9 +386,9 @@ class SourceListWidget(gtk.VBox):
     def _dndDataReceivedCb(self, widget, context, x, y, selection, targetType,
                            time):
         gst.debug("targetType:%d, selection.data:%r" % (targetType, selection.data))
-        if targetType == dnd.DND_TYPE_URI_LIST:
+        if targetType == dnd.TYPE_URI_LIST:
             filenames = [x.strip('\x00') for x in selection.data.strip().split("\n")]
-        elif targetType == dnd.DND_TYPE_TEXT_PLAIN:
+        elif targetType == dnd.TYPE_TEXT_PLAIN:
             filenames = [selection.data.strip()]
         self.addFiles(filenames)
 
@@ -420,10 +424,10 @@ class SourceListWidget(gtk.VBox):
         uris = self.getSelectedItems()
         if len(uris) < 1:
             return
-        if targetType == dnd.DND_TYPE_PITIVI_FILESOURCE:
+        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
             selection.set(selection.target, 8,
                           uris[0])
-        elif targetType == dnd.DND_TYPE_URI_LIST:
+        elif targetType == dnd.TYPE_URI_LIST:
             selection.set(selection.target, 8,
                           string.join(uris, "\n"))
         

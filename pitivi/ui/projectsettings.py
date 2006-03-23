@@ -19,6 +19,10 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+"""
+Dialog box for project settings
+"""
+
 import gobject
 import gtk
 from glade import GladeWindow

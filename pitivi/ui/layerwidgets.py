@@ -19,6 +19,10 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+"""
+Widgets for the complex view layers
+"""
+
 import gtk
 import gst
 from infolayer import InfoLayer

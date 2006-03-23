@@ -20,6 +20,10 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+"""
+Complex timeline composition track widget
+"""
+
 import gtk
 import gst
 import cairo
@@ -64,7 +68,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           [dnd.DND_FILESOURCE_TUPLE],
+                           [dnd.FILESOURCE_TUPLE],
                            gtk.gdk.ACTION_COPY)
         self.connect('drag-data-received', self._dragDataReceivedCb)
         self.connect('drag-leave', self._dragLeaveCb)
@@ -204,7 +208,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         # something was dropped
         gst.debug("%s" % type(selection))
         self.dragObject = None
-        if targetType == dnd.DND_TYPE_PITIVI_FILESOURCE:
+        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
             # a source was dropped
             source = instance.PiTiVi.current.sources[selection.data]
         else:
