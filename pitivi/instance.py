@@ -20,7 +20,13 @@
 # Boston, MA 02111-1307, USA.
 
 """
-PiTiVi is the current instance of pitivi top-level class
+Current PiTiVi instance module
+
+This module holds the current instance of the PiTiVi program at runtime as a
+global pitivi.Pitivi instance.
+
+PiTiVi : current instance of pitivi top-level class.
 """
 
 PiTiVi = None
+

@@ -1,3 +1,16 @@
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/__init__.py:
+	Documentation
+	* pitivi/bin.py:
+	Documentation and prepending private method names with underscore
+	* pitivi/check.py:
+	* pitivi/discoverer.py:
+	* pitivi/instance.py:
+	Documentation
+	* pitivi/ui/__init__.py:
+	Documentation
+
 2006-03-22  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/sourcefactories.py: (SourceListWidget._dndDataReceivedCb): 

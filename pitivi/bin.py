@@ -19,12 +19,16 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+"""
+High-level Pipelines with plugable back-ends
+"""
+
 import gobject
 import gst
 
 class SmartBin(gst.Pipeline):
     """
-    Self-contained Bin with playing/encoding ready places
+    High-level pipeline with playing/encoding ready places
     It also has length information
     """
     length = 0
@@ -34,6 +38,12 @@ class SmartBin(gst.Pipeline):
     height = 0
 
     def __init__(self, name, displayname=""):
+        """
+        @type name: string
+        @param name: The name of the SmartBin (for internal use)
+        @type displayname: string
+        @param displayname: The user-friendly name of the SmartBin
+        """
         gst.log('name : %s, displayname : %s' % (name, displayname))
         gobject.GObject.__init__(self)
         self.name = name
@@ -45,18 +55,18 @@ class SmartBin(gst.Pipeline):
         if self.has_audio:
             self.atee = gst.element_factory_make("tee", "atee")
             self.add(self.atee)
-        self.addSource()
-        self.connectSource()
+        self._addSource()
+        self._connectSource()
         self.asinkthread = None
         self.vsinkthread = None
 
-    def addSource(self):
-        """ add the source to self, implement in subclasses """
-        pass
+    def _addSource(self):
+        """ add the source to self """
+        raise NotImplementedError
 
-    def connectSource(self):
-        """ connect the source to the tee, implement in subclasses """
-        pass
+    def _connectSource(self):
+        """ connect the source to the tee """
+        raise NotImplementedError
 
     def setAudioSinkThread(self, asinkthread):
         """ set the audio sink thread """
@@ -145,10 +155,10 @@ class SmartFileBin(SmartBin):
         SmartBin.__init__(self, "smartfilebin-" + factory.name,
                           displayname=factory.displayname)
 
-    def addSource(self):
+    def _addSource(self):
         self.add(self.source)
 
-    def connectSource(self):
+    def _connectSource(self):
         self.source.connect("pad-added", self._binNewDecodedPadCb)
         self.source.connect("pad-removed", self._binRemovedDecodedPadCb)
 
@@ -196,8 +206,11 @@ class SmartTimelineBin(SmartBin):
         SmartBin.__init__(self, "project-" + project.name,
                           displayname = "Project: " + project.name)
 
-    def addSource(self):
+    def _addSource(self):
         self.add(self.source)
+
+    def _connectSource(self):
+        self.source.connect("pad-added", self._newPadCb)
 
     def _settingsChangedCb(self, settings):
         self.width = settings.videowidth
@@ -208,9 +221,6 @@ class SmartTimelineBin(SmartBin):
             pad.link(self.atee.get_pad("sink"))
         elif pad.get_name() == "vsrc":
             pad.link(self.vtee.get_pad("sink"))
-
-    def connectSource(self):
-        self.source.connect("pad-added", self._newPadCb)
 
     def record(self, uri, settings=None):
         """ render the timeline to the given uri """
@@ -338,10 +348,10 @@ class SmartDefaultBin(SmartBin):
         self.height = 576
         SmartBin.__init__(self, "smartdefaultbin")
 
-    def addSource(self):
+    def _addSource(self):
         self.add(self.videotestsrc, self.silence)
 
-    def connectSource(self):
+    def _connectSource(self):
         self.debug("connecting sources")
         #vcaps = gst.caps_from_string("video/x-raw-yuv,width=320,height=240,framerate=25.0")
         self.videotestsrc.get_pad("src").link(self.vtee.get_pad("sink"))
