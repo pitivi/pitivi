@@ -20,9 +20,11 @@
 # Boston, MA 02111-1307, USA.
 
 import os.path
+import string
 
 LIBDIR = '@LIBDIR@'
 PKGDATADIR = '@DATADIR@/@PACKAGE@'
+PIXMAPDIR = '@DATADIR@/pixmaps'
 pitivi_version = '@VERSION@'
 
 def get_pixmap_dir():
@@ -32,3 +34,11 @@ def get_pixmap_dir():
     else:
         root = PKGDATADIR
     return os.path.join(root, 'pixmaps')
+
+def get_global_pixmap_dir():
+    dir = os.path.dirname(os.path.abspath(__file__))
+    if os.path.exists(os.path.join(dir, 'CVS')):
+        root = string.join(dir.split('/')[:-1], '/')
+    else:
+        root = PIXMAPDIR
+    return root

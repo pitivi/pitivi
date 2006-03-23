@@ -1,5 +1,15 @@
 2006-03-23  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/configure.py.in:
+	Added get_global_pixmap_dir() for being able to use local/global installed
+	pixmap directory.
+	* pitivi/ui/mainwindow.py:
+	Fix window icon behaviour for cvs and installed
+	* pitivi/ui/projectsettings.py:
+	icon not needed here
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/discoverer.py:
 	* pitivi/effects.py:
 	* pitivi/objectfactory.py:

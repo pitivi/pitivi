@@ -35,7 +35,6 @@ class ProjectSettingsDialog(GladeWindow):
         self.project = project
         self.widgets["exportwidget"].setSettings(self.project.settings)
         self._fillSettings()
-        self.set_icon_from_file("application-pitivi.png")
 
     def _fillSettings(self):
         w = self.widgets
