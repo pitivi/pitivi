@@ -47,7 +47,7 @@ def time_to_string(value):
     return "%02dm%02ds%03d" % (min, sec, ms)
 
 class PitiviViewer(gtk.VBox):
-    """ Pitivi's graphical viewer """
+    """ Pitivi's viewer widget with controls """
 
     def __init__(self):
         gst.log("New PitiviViewer")
@@ -339,6 +339,7 @@ class PitiviViewer(gtk.VBox):
             callback(value, frame)
 
     def addTimelinePositionCallback(self, function):
+        """ Set the function that will be called whenever the timeline position has changed """
         self.positionChangedCallbacks.append(function)
 
 
@@ -477,6 +478,9 @@ class PitiviViewer(gtk.VBox):
 
 
 class ViewerWidget(gtk.DrawingArea):
+    """
+    Widget for displaying properly GStreamer video sink
+    """
 
     __gsignals__ = {}
 
@@ -487,6 +491,7 @@ class ViewerWidget(gtk.DrawingArea):
         self.unset_flags(gtk.DOUBLE_BUFFERED)
 
     def do_expose_event(self, event):
+        """ 'expose-event' override """
         if self.videosink:
             if not self.have_set_xid:
                 self.videosink.set_xwindow_id(self.window.xid)
@@ -496,6 +501,7 @@ class ViewerWidget(gtk.DrawingArea):
 
 
 class PlayPauseButton(gtk.Button):
+    """ Double state gtk.Button which displays play/pause """
 
     __gsignals__ = {
         "play" : ( gobject.SIGNAL_RUN_LAST,
@@ -527,6 +533,7 @@ class PlayPauseButton(gtk.Button):
 
 
 class EncodingDialog(GladeWindow):
+    """ Encoding dialog box """
     glade_file = "encodingdialog.glade"
 
     def __init__(self, project):

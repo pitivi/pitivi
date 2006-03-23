@@ -28,6 +28,7 @@ PIXMAPDIR = '@DATADIR@/pixmaps'
 pitivi_version = '@VERSION@'
 
 def get_pixmap_dir():
+    """ Returns the directory for program-only pixmaps """
     dir = os.path.dirname(os.path.abspath(__file__))
     if os.path.exists(os.path.join(dir, 'CVS')):
         root = dir
@@ -36,6 +37,7 @@ def get_pixmap_dir():
     return os.path.join(root, 'pixmaps')
 
 def get_global_pixmap_dir():
+    """ Returns the directory for global pixmaps (ex : application icon) """
     dir = os.path.dirname(os.path.abspath(__file__))
     if os.path.exists(os.path.join(dir, 'CVS')):
         root = string.join(dir.split('/')[:-1], '/')

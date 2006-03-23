@@ -1,6 +1,17 @@
 2006-03-23  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/configure.py.in:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/playground.py:
+	* pitivi/settings.py:
+	* pitivi/sourcelist.py:
+	* pitivi/ui/viewer.py:
+	More API documentation
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/configure.py.in:
 	Added get_global_pixmap_dir() for being able to use local/global installed
 	pixmap directory.
 	* pitivi/ui/mainwindow.py:

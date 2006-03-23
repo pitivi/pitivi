@@ -35,9 +35,16 @@ class Discoverer(gobject.GObject):
     Queues requests to discover information about given files.
     The discovery is done in a very fragmented way, so that it appears to be
     running in a separate thread.
-    The "new_sourcefilefactory" signal is triggered when a file is established
+    
+    The "new_sourcefilefactory" signal is emitted when a file is established
     to be a media_file and the FileSourceFactory() is included in the signal.
-    The "not_media_file" signal is triggered if a file is not a media_file.
+    
+    The "not_media_file" signal is emitted if a file is not a media_file.
+
+    The "finished-analyzing" signal is emitted a file is finished being analyzed
+
+    The "ready" signal is emitted when the discoverer has no more files to
+    analyze.
     """
 
     __gsignals__ = {

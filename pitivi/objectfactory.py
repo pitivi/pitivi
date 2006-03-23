@@ -69,6 +69,9 @@ class ObjectFactory(gobject.GObject):
         self.video_info = None
 
     def do_set_property(self, property, value):
+        """
+        override for the "set_property" gobject virtual method
+        """
         gst.info(property.name)
         if property.name == "is-audio":
             self.is_audio = value
@@ -190,6 +193,7 @@ class FileSourceFactory(ObjectFactory):
         bin.remove_pad(mypad)
         
     def binIsDestroyed(self, bin):
+        """ Remove the given bin from the list of instances """
         if bin in self.instances:
             self.instances.remove(bin)
 

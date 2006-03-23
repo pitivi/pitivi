@@ -96,7 +96,7 @@ class PlayGround(gobject.GObject):
         self.emit("bin-added", pipeline)
 
     def removePipeline(self, pipeline):
-        """ removes a pipeline from the playground """
+        """ remove a pipeline from the playground """
         gst.debug("pipeline : %s" % pipeline)
         if not pipeline in self.pipelines:
             return
@@ -220,6 +220,7 @@ class PlayGround(gobject.GObject):
         # bring back current to previous state
 
     def shutdown(self):
+        """ shutdown the playground and all pipelines """
         for pipeline in self.pipelines:
             gst.debug("Setting pipeline to NULL : %r" % pipeline)
             pipeline.set_state(gst.STATE_NULL)

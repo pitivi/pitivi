@@ -29,6 +29,14 @@ import gst
 
 
 class ExportSettings(gobject.GObject):
+    """
+    Multimedia export settings
+
+    Signals:
+
+    'settings-changed' : the settings have changed
+    'encoders-changed' : The encoders or muxer have changed
+    """
     __gsignals__ = {
         "settings-changed" : ( gobject.SIGNAL_RUN_LAST,
                               gobject.TYPE_NONE,
@@ -68,6 +76,7 @@ class ExportSettings(gobject.GObject):
         return msg
 
     def setVideoProperties(self, width=-1, height=-1, framerate=-1):
+        """ Set the video width, height and framerate """
         gst.info("set_video_props %d x %d @ %f fps" % (width, height, framerate))
         changed = False
         if not width == -1 and not width == self.videowidth:
@@ -83,6 +92,7 @@ class ExportSettings(gobject.GObject):
             self.emit("settings-changed")
 
     def setAudioProperties(self, nbchanns=-1, rate=-1, depth=-1):
+        """ Set the number of audio channels, rate and depth """
         gst.info("%d x %dHz %dbits" % (nbchanns, rate, depth))
         changed = False
         if not nbchanns == -1 and not nbchanns == self.audiochannels:
@@ -98,6 +108,7 @@ class ExportSettings(gobject.GObject):
             self.emit("settings-changed")
 
     def setEncoders(self, muxer="", vencoder="", aencoder=""):
+        """ Set the video/audio encoder and muxer """
         changed = False
         if not muxer == "" and not muxer == self.muxer:
             self.muxer = muxer

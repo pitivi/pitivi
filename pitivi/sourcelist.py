@@ -90,6 +90,7 @@ class SourceList(gobject.GObject):
         return self.sources.iteritems()
         
     def addUri(self, uri):
+        """ Add the uri to the list of sources, will be discovered """
         # here we add the uri and emit a signal
         # later on the existence of the file will be confirmed or not
         # Until it's confirmed, the uri stays in the temporary list
@@ -100,6 +101,7 @@ class SourceList(gobject.GObject):
         self.discoverer.addFile(uri)
 
     def addUris(self, uris):
+        """ Add the list of uris to the list of sources, they will be discovered """
         # same as above but for a list
         rlist = []
         for uri in uris:
@@ -116,6 +118,7 @@ class SourceList(gobject.GObject):
         self.discoverer.addFile(uri)
 
     def removeFactory(self, factory):
+        """ Remove a file using it's objectfactory """
         # TODO
         # remove an item using the factory as a key
         # otherwise just use the __delitem__
