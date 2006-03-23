@@ -1,6 +1,17 @@
 2006-03-23  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/viewer.py:
+	Don't display bogus value when the duration is not valid.
+	Only activate controls/slider when not on default view(videotestsrc).
+	Update for new dnd module naming.
+	New scrubbing system. Don't seek like a mad man, but at most every 80ms
+	Only activate the record button for timelines that have content.
+	
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/dnd.py:
+	replace dnd.DND_* with dnd.*
 	* pitivi/effects.py:
 	* pitivi/objectfactory.py:
 	* pitivi/pitivi.py:

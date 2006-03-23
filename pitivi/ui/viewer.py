@@ -37,6 +37,8 @@ from pitivi.settings import ExportSettings
 from exportsettingswidget import ExportSettingsDialog
 
 def time_to_string(value):
+    if value == -1:
+        return "--m--s---"
     ms = value / gst.MSECOND
     sec = ms / 1000
     ms = ms % 1000
@@ -51,8 +53,10 @@ class PitiviViewer(gtk.VBox):
         gst.log("New PitiviViewer")
         gtk.VBox.__init__(self)
         self.current_time = long(0)
+        self.requested_time = long(0)
         self.current_frame = -1
         self.valuechangedid = 0
+        self.currentlySeeking = False
         self._createUi()
 
         # connect to the sourcelist for temp factories
@@ -95,6 +99,7 @@ class PitiviViewer(gtk.VBox):
         self.slider.connect("scroll-event", self._sliderScrollCb)
         self.pack_start(self.slider, expand=False)
         self.moving_slider = False
+        self.slider.set_sensitive(False)
         
         # Buttons/Controls
         bbox = gtk.HBox()
@@ -120,6 +125,7 @@ class PitiviViewer(gtk.VBox):
         self.playpause_button = PlayPauseButton()
         self.playpause_button.connect("play", self._playButtonCb)
         bbox.pack_start(self.playpause_button, expand=False)
+        self.playpause_button.set_sensitive(False)
         
         self.next_button = gtk.ToolButton(gtk.STOCK_MEDIA_NEXT)
         self.next_button.connect("clicked", self._nextCb)
@@ -157,7 +163,7 @@ class PitiviViewer(gtk.VBox):
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           [dnd.DND_FILESOURCE_TUPLE, dnd.DND_URI_TUPLE],
+                           [dnd.FILESOURCE_TUPLE, dnd.URI_TUPLE],
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
@@ -251,8 +257,8 @@ class PitiviViewer(gtk.VBox):
         """ seeks when the value of the slider has changed """
         value = long(slider.get_value())
         gst.info(time_to_string(value))
-        self._newTime(value)
-        instance.PiTiVi.playground.seekInCurrent(value)
+        self._doSeek(value)
+        #instance.PiTiVi.playground.seekInCurrent(value)
 
     def _sliderScrollCb(self, slider, event):
         # calculate new seek position
@@ -262,7 +268,8 @@ class PitiviViewer(gtk.VBox):
                 seekvalue = max(self.current_time - gst.SECOND / 2, 0)
             else:
                 seekvalue = min(self.current_time + gst.SECOND / 2, instance.PiTiVi.playground.current.length)
-            instance.PiTiVi.playground.seekInCurrent(seekvalue)
+            self._doSeek(seekvalue)
+            #instance.PiTiVi.playground.seekInCurrent(seekvalue)
         else:
             # frame scrolling, frame by frame
             gst.info("scroll direction:%s" % event.direction)
@@ -272,8 +279,22 @@ class PitiviViewer(gtk.VBox):
             else:
                 gst.info("scrolling forward")
                 seekvalue = min(self.current_frame + 1, instance.PiTiVi.playground.current.length)
-            instance.PiTiVi.playground.seekInCurrent(seekvalue, gst.FORMAT_DEFAULT)
+            self._doSeek(seekvalue, gst.FORMAT_DEFAULT)
+            #instance.PiTiVi.playground.seekInCurrent(seekvalue, gst.FORMAT_DEFAULT)
 
+    def _seekTimeoutCb(self):
+        self.currentlySeeking = False
+        if not self.current_time == self.requested_time:
+            self._doSeek(self.requested_time)
+
+    def _doSeek(self, value, format=gst.FORMAT_TIME):
+        if not self.currentlySeeking:
+            self.currentlySeeking = True
+            gobject.timeout_add(80, self._seekTimeoutCb)
+            instance.PiTiVi.playground.seekInCurrent(value, format)
+            self._newTime(value)
+        elif format == gst.FORMAT_TIME:
+            self.requested_time = value
 
     ## timeout functions for checking current time
 
@@ -335,14 +356,17 @@ class PitiviViewer(gtk.VBox):
     ## active Timeline calllbacks
 
     def _timelineDurationChangedCb(self, composition, start, duration):
+        # deactivate record button is the duration is null
+        self.record_button.set_sensitive((duration > 0) and True or False)
+            
         self.posadjust.upper = float(duration)
         self.timelabel.set_text(time_to_string(self.current_time) + " / " + time_to_string(instance.PiTiVi.playground.current.length))
 
     def _dndDataReceivedCb(self, widget, context, x, y, selection, targetType, time):
         gst.info("context:%s, targetType:%s" % (context, targetType))
-        if targetType == dnd.DND_TYPE_URI_LIST:
+        if targetType == dnd.TYPE_URI_LIST:
             uri = selection.data.strip().split("\n")[0].strip()
-        elif targetType == dnd.DND_TYPE_PITIVI_FILESOURCE:
+        elif targetType == dnd.TYPE_PITIVI_FILESOURCE:
             uri = selection.data
         else:
             return
@@ -404,11 +428,16 @@ class PitiviViewer(gtk.VBox):
                 self.posadjust.upper = float(smartbin.project.timeline.videocomp.duration)
                 smartbin.project.timeline.videocomp.connect("start-duration-changed",
                                                             self._timelineDurationChangedCb)
-                self.record_button.set_sensitive(True)
+                if smartbin.project.timeline.videocomp.duration > 0:
+                    self.record_button.set_sensitive(True)
+                else:
+                    self.record_button.set_sensitive(False)
             else:
                 self.posadjust.upper = float(smartbin.factory.length)
                 self.record_button.set_sensitive(False)
             self._newTime(0)
+            self.slider.set_sensitive(True)
+            self.playpause_button.set_sensitive(True)
         self.sourcecombobox.set_active(self._getSmartbinIndex(smartbin))
 
     def _binAddedCb(self, playground, smartbin):
