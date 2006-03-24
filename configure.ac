@@ -8,7 +8,6 @@ AUTHORS=$srcdir/AUTHORS
 
 AC_SUBST(PYGTK_REQ, 2.8.0)
 AC_SUBST(PYGST_REQ, 0.10.0)
-AC_SUBST(PYGNOME_REQ, 2.10.0)
 AC_SUBST(GST_REQ, 0.10.0)
 AC_SUBST(GNONLIN_REQ, 0.10.0.5)
 AC_SUBST(PYCAIRO_REQ, 1.0.0)
@@ -56,9 +55,6 @@ export PYTHONPATH=$PYGTK_DIR:$PYTHONPATH
 dnl check for pycairo
 PKG_CHECK_MODULES(PYCAIRO, pycairo >= $PYCAIRO_REQ)
 
-dnl check for gnome-python
-PKG_CHECK_MODULES(GNOMEPYTHON, gnome-python-2.0 >= $PYGNOME_REQ)
-
 dnl check for libglade
 AC_MSG_CHECKING(for gtk.glade)
 prog="
@@ -104,10 +100,6 @@ else
   AC_MSG_RESULT(not found)
   AC_MSG_ERROR([You need a version of PyGTK (Python bindings for GTK+) with cairo support enabled])
 fi
-
-
-dnl checks for gnome-python
-PKG_CHECK_MODULES(PYGNOME, gnome-python-2.0 >= $PYGNOME_REQ)
 
 
 dnl checks for gst-python

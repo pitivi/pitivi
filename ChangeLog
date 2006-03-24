@@ -1,5 +1,13 @@
 2006-03-24  Edward Hervey  <edward@fluendo.com>
 
+	* configure.ac:
+	Remove gnome-python dependency. If ever we need gnome-specific stuff, it
+	should go in a pitivi plugin.
+	* pitivi.spec.in:
+	remove cruft
+
+2006-03-24  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/bin.py:
 	* pitivi/check.py:
 	* pitivi/discoverer.py:

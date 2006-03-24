@@ -19,8 +19,6 @@ Requires:	gnome-python2 >= @PYGNOME_REQ@
 Requires:	gnome-python2-gconf
 Requires:	pycairo >= @PYCAIRO_REQ@
 
-Requires(post):	openssl
-
 BuildRequires:	gstreamer-devel >= @GST_REQ@
 BuildRequires:	gstreamer-python >= @PYGST_REQ@
 BuildRequires:	python-devel >= 2.3
