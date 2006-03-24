@@ -152,7 +152,7 @@ class FileSourceFactory(ObjectFactory):
         """ returns a source bin with all pads """
         bin = gst.Bin("%s-%d" % (self.name, self.lastbinid))
         self.lastbinid = self.lastbinid + 1
-        src = gst.element_make_from_uri(gst.SRC_URI, self.name, "file source")
+        src = gst.element_make_from_uri(gst.URI_SRC, self.name, "file source")
         dbin = gst.element_factory_make("decodebin")
         bin.add(src, dbin)
         src.link(dbin)
