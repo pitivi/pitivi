@@ -151,19 +151,24 @@ class Discoverer(gobject.GObject):
         self.currentfactory = None
         
         # setup graph and start analyzing
-        self.pipeline = gst.parse_launch("gnomevfssrc name=src location=\"%s\" ! decodebin name=dbin" % self.current)
-        if not self.pipeline:
+        self.pipeline = gst.Pipeline("Discoverer-%s" % self.current)
+        source = gst.element_make_from_uri(gst.URI_SRC, self.current, "src-%s" % self.current)
+        if not source:
             gst.warning("This is not a media file : %s" % self.current)
             self.emit("not_media_file", self.current, "Couldn't construct pipeline.")
             gobject.idle_add(self._finishAnalysis)
             return
-        gst.info("analysis pipeline created")
-        dbin = self.pipeline.get_by_name("dbin")
+        dbin = gst.element_factory_make("decodebin", "dbin")
         dbin.connect("new-decoded-pad", self._newDecodedPadCb)
         dbin.connect("unknown-type", self._unknownTypeCb)
+        self.pipeline.add(source, dbin)
+        source.link(dbin)
+        gst.info("analysis pipeline created")
+        
         self.bus = self.pipeline.get_bus()
         self.bus.connect("message", self._busMessageCb)
         self.bus.add_signal_watch()
+
         gst.info("setting pipeline to PAUSED")
         if self.pipeline.set_state(gst.STATE_PAUSED) == gst.STATE_CHANGE_FAILURE:
             self.emit("not_media_file", self.current, "Pipeline didn't want to go to PAUSED")

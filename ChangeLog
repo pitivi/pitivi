@@ -1,3 +1,14 @@
+2006-03-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	* pitivi/check.py:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/project.py:
+	Remove dependency on gnomevfs python module, and use the gstreamer uri
+	utilities instead (gst.element_make_from_uri, gst.uri_get_protocol,
+	gst.uri_get_location)
+
 2006-03-23  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/configure.py.in:

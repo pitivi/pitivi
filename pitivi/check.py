@@ -46,14 +46,6 @@ def initial_checks():
 
     sys.exit()
 
-def _gnomevfscheck():
-    try:
-        import gnomevfs
-    except ImportError:
-
-        return False
-    return True
-    
 def _checks():
     reg = gst.registry_get_default()
     if instance.PiTiVi:
@@ -65,13 +57,7 @@ def _checks():
     if not reg.find_plugin("autodetect"):
         return ("Could not find the autodetect plugins!",
                 "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path.")
-    if not reg.find_plugin("gnomevfs"):
-        return ("Could not find the GnomeVFS plugins!",
-                "Make sure you have installed the GnomeVFS plugins and they are available in the GStreamer plugin path.")
     if not hasattr(gtk.gdk.Window, 'cairo_create'):
         return ("PyGTK doesn't have cairo support!",
                 "Please use a version of the Python bindings for GTK+ built with Cairo support.")
-    if not _gnomevfscheck():
-        return ("GnomeVFS support is not available in py-gnome",
-                "Please use a version of the Python bindings for Gnome built with GnomeVFS support.")
     return None

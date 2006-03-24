@@ -224,9 +224,8 @@ class SmartTimelineBin(SmartBin):
 
     def record(self, uri, settings=None):
         """ render the timeline to the given uri """
-        self.encthread = self._makeEncThread(settings)
+        self.encthread = self._makeEncThread(uri, settings)
         self.add(self.encthread)
-        self.encthread.filesink.set_uri(uri)
 
         # temporarily remove the audiosinkthread
         self.tmpasink = self.asinkthread
@@ -274,7 +273,7 @@ class SmartTimelineBin(SmartBin):
             return None
         return self.vsinkthread.videosink.realsink
 
-    def _makeEncThread(self, settings=None):
+    def _makeEncThread(self, uri, settings=None):
         # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
         if not settings:
             settings = self.project.settings
@@ -291,10 +290,7 @@ class SmartTimelineBin(SmartBin):
         mux = gst.element_factory_make(settings.muxer, "mux")
         for prop, value in settings.containersettings.iteritems():
             mux.set_property(prop, value)
-        try:
-            fsink = gst.element_factory_make("gnomevfssink", "fsink")
-        except:
-            fsink = gst.element_factory_make("filesink", "fsink")
+        fsink = gst.element_make_from_uri(gst.URI_SINK, uri, "fsink")
 
 
         thread = gst.Bin("encthread")

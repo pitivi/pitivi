@@ -24,9 +24,9 @@
 Project class
 """
 
+import os.path
 import gobject
 import gst
-import gnomevfs
 from timeline import Timeline
 from sourcelist import SourceList
 from bin import SmartTimelineBin
@@ -63,11 +63,6 @@ class Project(gobject.GObject):
             return
         self.timeline = Timeline(self)
         if self.uri:
-            if not gnomevfs.exists(self.uri):
-                # given uri doesn't exist !!!
-                # TODO raise exception
-                raise RuntimeError("uri %s doesn't exist" % self.uri)
-            # TODO fill the timeline from the uri
             raise NotImplementedError
 
     def getBin(self):
@@ -96,5 +91,7 @@ class Project(gobject.GObject):
 def file_is_project(uri):
     """ returns True if the given uri is a PitiviProject file"""
     # TODO
-    return gnomevfs.exists(uri)
+    if not gst.uri_get_protocol(uri) == "file":
+        raise NotImplementedError("PiTiVi doesn't yet handle non local projects")
+    return os.path.isfile(gst.uri_get_location(uri))
 
