@@ -17,3 +17,5 @@ pitivi.spec
 py-compile
 stamp-h.in
 pitivi.desktop
+prepare-ChangeLog.pl
+autom4te.cache

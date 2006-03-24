@@ -1,3 +1,9 @@
+2006-03-24  Christian Schaller  <Christian@fluendo.com>
+
+	* .cvsignore: add more generated files
+	* pitivi/.cvsignore: add more generated files
+	* pitivi/ui/.cvsignore: add more generated files
+
 2006-03-24  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/objectfactory.py:
