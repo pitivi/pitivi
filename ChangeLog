@@ -1,5 +1,10 @@
 2006-03-28  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/sourcefactories.py:
+	Fix drag and drop data parsing even more.
+
+2006-03-28  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/mainwindow.py:
 	Default window size is 800x600 instead of the cramped size that was
 	previously set.

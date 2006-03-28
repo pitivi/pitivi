@@ -387,7 +387,7 @@ class SourceListWidget(gtk.VBox):
                            time):
         gst.debug("targetType:%d, selection.data:%r" % (targetType, selection.data))
         if targetType == dnd.TYPE_URI_LIST:
-            filenames = [x.strip('\x00') for x in selection.data.strip().split("\n")]
+            filenames = [x.strip('\x00') for x in selection.data.strip().split("\r\n") if x.strip('\x00')]
         elif targetType == dnd.TYPE_TEXT_PLAIN:
             filenames = [selection.data.strip()]
         self.addFiles(filenames)
