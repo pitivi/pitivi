@@ -1,6 +1,7 @@
 2006-03-28  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
 	Also set the combobox to show the simple view default.
 
 2006-03-28  Edward Hervey  <edward@fluendo.com>

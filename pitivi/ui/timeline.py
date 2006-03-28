@@ -60,7 +60,7 @@ class TimelineWidget(gtk.VBox):
         combobox.add_attribute(cell, 'text', 0)
         liststore.append(["Simple View"])
         liststore.append(["Complex View"])
-        combobox.set_active(1)
+        combobox.set_active(0)
         combobox.connect("changed", self._comboboxChangedCb)
 
         self.leftsizegroup.add_widget(combobox)
