@@ -36,9 +36,6 @@ AS_PATH_PYTHON(2.3)
 dnl check for GStreamer
 PKG_CHECK_MODULES(GST, gstreamer-0.10 >= $GST_REQ)
 
-dnl check for GNonlin
-PKG_CHECK_MODULES(GNONLIN, gnonlin >= $GNONLIN_REQ)
-
 dnl check for pygtk
 PKG_CHECK_MODULES(PYGTK, pygtk-2.0 >= $PYGTK_REQ)
 PYGTK_DIR="`$PKG_CONFIG --variable=pyexecdir pygtk-2.0`"
@@ -53,11 +50,31 @@ fi
 export PYTHONPATH=$PYGTK_DIR:$PYTHONPATH
 
 dnl check for pycairo
-PKG_CHECK_MODULES(PYCAIRO, pycairo >= $PYCAIRO_REQ)
+AC_MSG_CHECKING(for pycairo)
+prog=<<EOF
+import sys
+try:
+  import cairo
+except ImportError:
+  sys.exit(1)
+if cairo.version < "$PYCAIRO_REQ":
+  sys.exit(1)
+else:
+  sys.exit(0)
+EOF
+
+if $PYTHON -c "$prog"
+then
+  AC_MSG_RESULT(found)
+else
+  AC_MSG_RESULT(not found)
+  AC_MSG_ERROR(
+    [You need to have python cairo bindings >= $PYCAIRO_REQ installed])
+fi
 
 dnl check for libglade
 AC_MSG_CHECKING(for gtk.glade)
-prog="
+prog=<<EOF
 import sys
 try:
   import pygtk
@@ -68,7 +85,7 @@ except RuntimeError:
 except ImportError:
   sys.exit(1)
 sys.exit(0)
-"
+EOF
 
 if $PYTHON -c "$prog" 1>&AC_FD_CC 2>&AC_FD_CC
 then
@@ -80,7 +97,7 @@ fi
 
 dnl check for cairo support in pygtk
 AC_MSG_CHECKING(for cairo support in PyGTK)
-prog="
+prog=<<EOF
 import sys
 try:
   import pygtk
@@ -91,7 +108,7 @@ except RuntimeError:
 if not hasattr(gtk.gdk.Window, 'cairo_create'):
   sys.exit(1)
 sys.exit(0)
-"
+EOF
 
 if $PYTHON -c "$prog" 1>&AC_FD_CC 2>&AC_FD_CC
 then
@@ -109,6 +126,26 @@ AC_SUBST(PYGST_DIR)
 AC_MSG_NOTICE(Using gstreamer-python installed in $PYGST_DIR)
 
 export PYTHONPATH=$PYGST_DIR:$PYTHONPATH
+
+dnl check for GNonlin
+prog=<<EOF
+import sys
+import pygst; pygst.require('0.10')
+import gst
+plugin = gst.get_default_registry().find_plugin('gnonlin')
+if plugin and p.get_version() >= "$GNONLIN_REQ"):
+  sys.exit(0)
+sys.exit(1)
+EOF
+AC_MSG_CHECKING([for gnonlin >= $GNONLIN_REQ])
+if $PYTHON -c "$prog" 1>&AC_FD_CC 2>&AC_FD_CC
+then
+  AC_MSG_RESULT(found)
+else
+  AC_MSG_RESULT(not found)
+  AC_MSG_ERROR([You need to install the gnonlin plugins and make sure
+ they are in your \$GST_PLUGIN_PATH.])
+fi
 
 dnl the gettext stuff needed
 dnl AM_GNU_GETTEXT_VERSION(0.11.5)

@@ -1,3 +1,8 @@
+2006-03-28  Andy Wingo  <wingo@pobox.com>
+
+	* configure.ac: Check for gnonlin and cairo using python and not
+	pkg-config.
+
 2006-03-24  Christian Schaller  <Christian@fluendo.com>
 
 	* .cvsignore: add more generated files
