@@ -1,3 +1,11 @@
+2006-03-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Default window size is 800x600 instead of the cramped size that was
+	previously set.
+	* pitivi/ui/timeline.py:
+	Timeline defaults to Simple View.
+
 2006-03-28  Andy Wingo  <wingo@pobox.com>
 
 	* configure.ac: Check for gnonlin and cairo using python and not

@@ -88,7 +88,7 @@ class PitiviMainWindow(gtk.Window):
     def _createUi(self):
         """ Create the graphical interface """
         self.set_title("PiTiVi v%s" % pitivi_version)
-        self.set_geometry_hints(min_width=400, min_height=300)
+        self.set_geometry_hints(min_width=800, min_height=600)
 
         self.connect("destroy", self._destroyCb)
 

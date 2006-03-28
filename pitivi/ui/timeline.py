@@ -70,8 +70,8 @@ class TimelineWidget(gtk.VBox):
         hbox.pack_start(self.hscroll)
 
         self.pack_end(hbox, expand=False)
-        #self._show_simple_view()
-        self._showComplexView()
+        self._showSimpleView()
+        #self._showComplexView()
 
     def _comboboxChangedCb(self, cbox):
         gst.debug("switching view")
