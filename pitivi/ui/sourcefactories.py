@@ -298,6 +298,7 @@ class SourceListWidget(gtk.VBox):
 
         dialog.set_default_response(gtk.RESPONSE_OK)
         dialog.set_select_multiple(True)
+        dialog.set_modal(False)
         response = dialog.run()
         filenames = None
         dialog.hide()
@@ -539,6 +540,7 @@ class DiscovererErrorDialog(GladeWindow):
 
     def __init__(self):
         GladeWindow.__init__(self)
+        self.window.set_modal(False)
         self.treeview = self.widgets["treeview"]
         self._setUpTreeView()
 

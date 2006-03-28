@@ -1,6 +1,11 @@
 2006-03-28  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/sourcefactories.py:
+	Also set the combobox to show the simple view default.
+
+2006-03-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
 	Fix drag and drop data parsing even more.
 
 2006-03-28  Edward Hervey  <edward@fluendo.com>
