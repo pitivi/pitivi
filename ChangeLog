@@ -1,5 +1,10 @@
 2006-03-29  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/discoverer.py:
+	Revert previous change until decodebin is fixed.
+
+2006-03-29  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/bin.py: (SmartTimelineBin):
 	Unlink from tees when pads are removed.
 	Make the Rendering process more efficient.
