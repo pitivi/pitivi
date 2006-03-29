@@ -271,7 +271,7 @@ class Discoverer(gobject.GObject):
             
     def _unknownTypeCb(self, dbin, pad, caps):
         gst.info(caps.to_string())
-        if not self.currentfactory or not self.currentfactory.is_audio or not self.currentfactory.is_video:
+        if not self.currentfactory or (not self.currentfactory.is_audio and not self.currentfactory.is_video):
             gst.warning("got unknown pad without anything else")
             self.emit("not_media_file", self.current, "Got unknown stream type : %s" % caps.to_string())
             gobject.idle_add(self._finishAnalysis)

@@ -140,6 +140,7 @@ class PlayGround(gobject.GObject):
         if self.current.has_audio and self.asinkthread:
             #self.asinkthread.set_state(gst.STATE_READY)
             self.current.setAudioSinkThread(self.asinkthread)
+        self.current.log("Setting the new pipeline to PAUSED so it prerolls")
         self.current.set_state(gst.STATE_PAUSED)
         self.emit("current-changed", self.current)
 
@@ -233,13 +234,15 @@ class PlayGround(gobject.GObject):
     def _busMessageCb(self, bus, message, pipeline):
         """ handler for messages from the pipelines' buses """
         gst.info("%s [%s]" % (message.type, message.src))
-        if message.src == self.current:
-            if message.type == gst.MESSAGE_STATE_CHANGED:
-                oldstate, newstate, pending = message.parse_state_changed()
-                self.current.info("old:%s, new:%s, pending:%s" %
-                                  (oldstate, newstate, pending))
+        if message.type == gst.MESSAGE_STATE_CHANGED:
+            oldstate, newstate, pending = message.parse_state_changed()
+            message.src.debug("old:%s, new:%s, pending:%s" %
+                               (oldstate, newstate, pending))
+            if message.src == self.current:
                 if pending == gst.STATE_VOID_PENDING:
                     self.emit("current-state", newstate)
+        elif message.type in [ gst.MESSAGE_ERROR, gst.MESSAGE_WARNING ]:
+            self.current.warning("%s", message.structure.to_string())
 
 
     #

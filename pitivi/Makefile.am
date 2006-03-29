@@ -22,5 +22,7 @@ pitivi_PYTHON = \
 	timeline.py \
 	utils.py
 
+BUILT_SOURCES=configure.py
+
 clean-local:
 	rm -rf *.pyc *.pyo

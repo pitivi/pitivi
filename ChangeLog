@@ -1,5 +1,15 @@
 2006-03-29  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/Makefile.am:
+	add configure.py to BUILT_SOURCES so it gets rebuilt correctly when
+	modified.
+	* pitivi/discoverer.py:
+	More sensible behaviour when getting an unknown stream.
+	* pitivi/playground.py:
+	More debugging
+
+2006-03-29  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/discoverer.py:
 	Revert previous change until decodebin is fixed.
 
