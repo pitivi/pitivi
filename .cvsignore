@@ -19,3 +19,5 @@ stamp-h.in
 pitivi.desktop
 prepare-ChangeLog.pl
 autom4te.cache
+aclocal.m4
+INSTALL
