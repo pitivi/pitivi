@@ -567,9 +567,11 @@ class EncodingDialog(GladeWindow):
 
     def _recordButtonClickedCb(self, button):
         if self.outfile and not self.rendering:
-            self.bin.record(self.outfile, self.settings)
-            self.timeoutid = gobject.timeout_add(400, self._timeoutCb)
-            self.rendering = True
+            if self.bin.record(self.outfile, self.settings):
+                self.timeoutid = gobject.timeout_add(400, self._timeoutCb)
+                self.rendering = True
+            else:
+                self.progressbar.set_text("Couldn't start rendering")
 
     def _settingsButtonClickedCb(self, button):
         dialog = ExportSettingsDialog(self.settings)

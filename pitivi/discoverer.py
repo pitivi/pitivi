@@ -188,8 +188,12 @@ class Discoverer(gobject.GObject):
                 if prev == gst.STATE_READY and new == gst.STATE_PAUSED:
                     # Let's get the information from all the pads
                     self._getPadsInfo()
-                    gst.log("pipeline has gone to PAUSED, now pushing to PLAYING")
-                    self.pipeline.set_state(gst.STATE_PLAYING)
+                    if self.currentfactory.is_video:
+                        gst.log("pipeline has gone to PAUSED, now pushing to PLAYING")
+                        self.pipeline.set_state(gst.STATE_PLAYING)
+                    else:
+                        gst.log("uri doesn't have video, not pushing to PLAYING and stopping")
+                        gobject.idle_add(self._finishAnalysis)
         elif message.type == gst.MESSAGE_EOS:
             gst.log("got EOS")
             self.thisdone = True

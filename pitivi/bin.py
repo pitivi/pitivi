@@ -110,7 +110,7 @@ class SmartBin(gst.Pipeline):
         self.debug("asinkthread : %s" % self.asinkthread)
         result, state, pending = self.get_state(0)
         if state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
-            self.warning("is in PAUSED or higher : %s" % state)
+            self.warning("is in PAUSED, not removing audiosink")
             return False
         if not self.asinkthread:
             self.warning("doesn't have an asinkthread??")
@@ -211,6 +211,7 @@ class SmartTimelineBin(SmartBin):
 
     def _connectSource(self):
         self.source.connect("pad-added", self._newPadCb)
+        self.source.connect("pad-removed", self._removedPadCb)
 
     def _settingsChangedCb(self, settings):
         self.width = settings.videowidth
@@ -222,31 +223,47 @@ class SmartTimelineBin(SmartBin):
         elif pad.get_name() == "vsrc":
             pad.link(self.vtee.get_pad("sink"))
 
+    def _removedPadCb(self, source, pad):
+        if pad.get_name() == "asrc":
+            pad.unlink(self.atee.get_pad("sink"))
+        elif pad.get_name() == "vsrc":
+            pad.unlink(self.vtee.get_pad("sink"))
+
     def record(self, uri, settings=None):
-        """ render the timeline to the given uri """
-        self.encthread = self._makeEncThread(uri, settings)
-        self.add(self.encthread)
+        """
+        render the timeline to the given uri.
+        Returns : True if the encoding process could be started properly, False otherwise."""
+        self.debug("setting to READY")
+        self.set_state(gst.STATE_READY)
 
         # temporarily remove the audiosinkthread
         self.tmpasink = self.asinkthread
-        self.removeAudioSinkThread()
+        if not self.removeAudioSinkThread():
+            return False
+
+        self.debug("creating and adding encoding thread")
+        self.encthread = self._makeEncThread(uri, settings)
+        self.add(self.encthread)
+        self.debug("encoding thread added")
 
         # set sync=false on the videosink
         self.getRealVideoSink().set_property("sync", False)
         
         self.debug("linking vtee to ecnthread:vsink")
-        self.vtee.get_pad("src%d").link(self.encthread.get_pad("vsink"))
+        try:
+            self.vtee.get_pad("src%d").link(self.encthread.get_pad("vsink"))
+        except:
+            return False
+        
         self.debug("linking atee to encthread:asink")
-        self.atee.get_pad("src%d").link(self.encthread.get_pad("asink"))
+        try:
+            self.atee.get_pad("src%d").link(self.encthread.get_pad("asink"))
+        except:
+            return False
 
-        self.set_state(gst.STATE_PAUSED)
-        self.debug("About to seek to beginning for encoding")
-        if not self.seek(1.0, gst.FORMAT_TIME,
-                         gst.SEEK_FLAG_FLUSH,
-                         gst.SEEK_TYPE_CUR, 0,
-                         gst.SEEK_TYPE_NONE, -1):
-            self.warning("Couldn't seek to beginning before encoding")
+        self.debug("going back to PLAYING")
         self.set_state(gst.STATE_PLAYING)
+        return True
 
     def stopRecording(self):
         """ stop the recording, removing the encoding thread """
@@ -254,9 +271,9 @@ class SmartTimelineBin(SmartBin):
         
         if self.encthread:
             apad = self.encthread.get_pad("vsink")
-            apad.unlink(apad.get_peer())
+            apad.get_peer().unlink(apad)
             apad = self.encthread.get_pad("asink")
-            apad.unlink(apad.get_peer())
+            apad.get_peer().unlink(apad) 
             #self.vtee.unlink(self.encthread)
             #self.atee.unlink(self.encthread)
             self.remove(self.encthread)

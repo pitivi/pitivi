@@ -1,3 +1,16 @@
+2006-03-29  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py: (SmartTimelineBin):
+	Unlink from tees when pads are removed.
+	Make the Rendering process more efficient.
+	* pitivi/discoverer.py:
+	Don't try to thumbnail non-video files.
+	* pitivi/timeline.py:
+	Remove ghostpads in the timeline when composition pads are
+	removed.
+	* pitivi/ui/viewer.py:
+	Display a message if we couldn't start the rendering.
+
 2006-03-28  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/sourcefactories.py:
