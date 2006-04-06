@@ -1,7 +1,24 @@
-AC_INIT(AUTHORS)
+AC_PREREQ(2.52)
 
-AS_VERSION(pitivi, PITIVI, 0, 9, 9, 3)
-AC_SUBST(RELEASE, $PITIVI_RELEASE)
+dnl initialize autoconf
+dnl when going to/from release please set the nano (fourth number) right !
+dnl releases only do Wall, cvs and prerelease does Werror too
+AC_INIT(PiTiVi, 0.9.9.3,
+    http://www.pitivi.org/,
+    pitivi)
+
+dnl initialize automake
+AM_INIT_AUTOMAKE
+
+dnl define PACKAGE_VERSION_* variables
+AS_VERSION
+
+dnl check if this is a release version
+AS_NANO(PITIVI_CVS="no", PITIVI_CVS="yes")
+
+dnl can autoconf find the source ?
+AC_CONFIG_SRCDIR([pitivi/pitivi.py])
+
 
 AC_SUBST_FILE(AUTHORS)
 AUTHORS=$srcdir/AUTHORS

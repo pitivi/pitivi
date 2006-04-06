@@ -242,7 +242,7 @@ class PlayGround(gobject.GObject):
                 if pending == gst.STATE_VOID_PENDING:
                     self.emit("current-state", newstate)
         elif message.type in [ gst.MESSAGE_ERROR, gst.MESSAGE_WARNING ]:
-            self.current.warning("%s", message.structure.to_string())
+            self.current.warning("%s" % message.structure.to_string())
 
 
     #

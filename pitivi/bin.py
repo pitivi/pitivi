@@ -224,6 +224,7 @@ class SmartTimelineBin(SmartBin):
             pad.link(self.vtee.get_pad("sink"))
 
     def _removedPadCb(self, source, pad):
+        self.debug("pad %r went away" % pad)
         if pad.get_name() == "asrc":
             pad.unlink(self.atee.get_pad("sink"))
         elif pad.get_name() == "vsrc":
@@ -234,9 +235,12 @@ class SmartTimelineBin(SmartBin):
         render the timeline to the given uri.
         Returns : True if the encoding process could be started properly, False otherwise."""
         self.debug("setting to READY")
-        self.set_state(gst.STATE_READY)
+        if self.set_state(gst.STATE_READY) == gst.STATE_CHANGE_FAILURE:
+            self.warning("Couldn't switch to READY !")
+            return False
 
         # temporarily remove the audiosinkthread
+        self.debug("disconnecting audio sink thread")
         self.tmpasink = self.asinkthread
         if not self.removeAudioSinkThread():
             return False
@@ -262,7 +266,10 @@ class SmartTimelineBin(SmartBin):
             return False
 
         self.debug("going back to PLAYING")
-        self.set_state(gst.STATE_PLAYING)
+        changeret = self.set_state(gst.STATE_PLAYING)
+        self.debug("now in PLAYING, set_state() returned %r" % changeret)
+        if changeret == gst.STATE_CHANGE_FAILURE:
+            return False
         return True
 
     def stopRecording(self):

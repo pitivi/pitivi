@@ -1,3 +1,12 @@
+2006-04-06  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Fixes for common/ modifications
+	* pitivi/bin.py:
+	More debug information when recording
+	* pitivi/playground.py:
+	debug fix
+
 2006-03-29  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/Makefile.am:
