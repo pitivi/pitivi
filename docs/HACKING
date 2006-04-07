@@ -29,6 +29,13 @@ Hacking on PiTiVi
 - for function names, we use the small_caps_with_underscore style.
   This enables clear separation between functions and methods.
 
+- unused arguments in method should be prefixed by 'unused_'.
+  The most common place where this would happen is in callbacks from gobject
+  signals:
+  Ex : (we don't use the second argument, but we do use pad)
+     def _padAddedCb(self, unused_element, pad):
+        ...
+
 * Debugging
 -----------
 

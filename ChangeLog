@@ -1,3 +1,30 @@
+2006-04-07  Edward Hervey  <edward@fluendo.com>
+
+	* docs/HACKING:
+	Added part about unused variables.
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/playground.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/glade.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	Prepend 'unused_' to all unused variables in callbacks (helps clear out
+	pychecker runs).
+	Comment out non-working parts of the UI so not to confuser users trying
+	those parts.
+	More pychecker cleaning.
+
 2006-04-06  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac:

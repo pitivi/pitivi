@@ -78,7 +78,7 @@ class CompositionLayers(gtk.VBox, ZoomableWidgetInterface):
         self.pack_start(complayer, expand=False)
         self.reorder_child(complayer, position)
 
-    def _layerRemovedCb(self, layerInfoList, position):
+    def _layerRemovedCb(self, unused_layerInfoList, position):
         # find the proper child
         child = self.layers[position]
         # remove it
@@ -151,7 +151,8 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
         self.scrolledWindow.add_with_viewport(self.compositionLayers)
         self.pack_start(self.scrolledWindow, expand=True)
 
-    def _layerStartDurationChangedCb(self, composition, start, duration):
+    def _layerStartDurationChangedCb(self, unused_composition, unused_start,
+                                     unused_duration):
         # Force resize of ruler
         self.topLayer.startDurationChanged()
 
@@ -172,7 +173,7 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
 
     ## ToolBar callbacks
 
-    def toolBarZoomChangedCb(self, toolbar, zoomratio):
+    def toolBarZoomChangedCb(self, unused_toolbar, zoomratio):
         self.setZoomRatio(zoomratio)
 
     ## timeline position callback

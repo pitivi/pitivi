@@ -178,7 +178,7 @@ class Discoverer(gobject.GObject):
         # return False so we don't get called again
         return False
         
-    def _busMessageCb(self, bus, message):
+    def _busMessageCb(self, unused_bus, message):
         if self.thisdone:
             return
         if message.type == gst.MESSAGE_STATE_CHANGED:
@@ -236,7 +236,7 @@ class Discoverer(gobject.GObject):
                     if format == gst.FORMAT_TIME:
                         self.currentfactory.set_property("length", length)
 
-    def _vcapsNotifyCb(self, pad, property):
+    def _vcapsNotifyCb(self, pad, unused_property):
         if pad.get_caps().is_fixed():
             self.currentfactory.setVideoInfo(pad.get_caps())
 
@@ -262,14 +262,14 @@ class Discoverer(gobject.GObject):
         for element in [csp, queue, pngenc, pngsink]:
             element.set_state(gst.STATE_PAUSED)
         
-    def _newAudioPadCb(self, element, pad):
+    def _newAudioPadCb(self, unused_element, pad):
         """ a new audio pad was found """
         self.currentfactory.setAudio(True)
 
         if pad.get_caps().is_fixed():
             self.currentfactory.setAudioInfo(pad.get_caps())
             
-    def _unknownTypeCb(self, dbin, pad, caps):
+    def _unknownTypeCb(self, unused_dbin, unused_pad, caps):
         gst.info(caps.to_string())
         if not self.currentfactory or (not self.currentfactory.is_audio and not self.currentfactory.is_video):
             gst.warning("got unknown pad without anything else")

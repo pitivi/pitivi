@@ -34,7 +34,7 @@ import gobject
 
 # proc := module1.module2.moduleN.proc1().maybe_another_proc()
 #  -> eval proc1().maybe_another_proc() in module1.module2.moduleN
-def flumotion_glade_custom_handler(xml, proc, name, *args):
+def flumotion_glade_custom_handler(unused_xml, proc, name, *unused_args):
     def takewhile(proc, l):
         ret = []
         while l and proc(l[0]):

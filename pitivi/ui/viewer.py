@@ -24,7 +24,6 @@ import os.path
 import gobject
 import gtk
 import gst
-import pango
 import gst.interfaces
 from glade import GladeWindow
 
@@ -42,9 +41,9 @@ def time_to_string(value):
     ms = value / gst.MSECOND
     sec = ms / 1000
     ms = ms % 1000
-    min = sec / 60
+    mins = sec / 60
     sec = sec % 60
-    return "%02dm%02ds%03d" % (min, sec, ms)
+    return "%02dm%02ds%03d" % (mins, sec, ms)
 
 class PitiviViewer(gtk.VBox):
     """ Pitivi's viewer widget with controls """
@@ -167,7 +166,7 @@ class PitiviViewer(gtk.VBox):
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
-    def _videosinkCapsNotifyCb(self, sinkpad, property):
+    def _videosinkCapsNotifyCb(self, sinkpad, unused_property):
         caps = sinkpad.get_negotiated_caps()
         if not caps:
             return
@@ -219,7 +218,7 @@ class PitiviViewer(gtk.VBox):
         instance.PiTiVi.playground.setAudioSinkThread(asinkthread)
         instance.PiTiVi.playground.connect("current-changed", self._currentPlaygroundChangedCb)
 
-    def _settingsChangedCb(self, settings):
+    def _settingsChangedCb(self, unused_settings):
         gst.info("current project settings changed")
         # modify the ratio if it's the timeline that's playing
         raise NotImplementedError
@@ -231,7 +230,7 @@ class PitiviViewer(gtk.VBox):
 
     ## gtk.HScale callbacks for self.slider
 
-    def _sliderButtonPressCb(self, slider, event):
+    def _sliderButtonPressCb(self, slider, unused_event):
         gst.info("button pressed")
         self.moving_slider = True
         if self.checktimeoutid:
@@ -241,7 +240,7 @@ class PitiviViewer(gtk.VBox):
         instance.PiTiVi.playground.current.set_state(gst.STATE_PAUSED)
         return False
 
-    def _sliderButtonReleaseCb(self, slider, event):
+    def _sliderButtonReleaseCb(self, slider, unused_event):
         gst.info("slider button release at %s" % time_to_string(long(slider.get_value())))
         self.moving_slider = False
         if self.valuechangedid:
@@ -260,7 +259,7 @@ class PitiviViewer(gtk.VBox):
         self._doSeek(value)
         #instance.PiTiVi.playground.seekInCurrent(value)
 
-    def _sliderScrollCb(self, slider, event):
+    def _sliderScrollCb(self, unused_slider, event):
         # calculate new seek position
         if self.current_frame == -1:
             # time scrolling, 0.5s forward/backward
@@ -356,14 +355,16 @@ class PitiviViewer(gtk.VBox):
 
     ## active Timeline calllbacks
 
-    def _timelineDurationChangedCb(self, composition, start, duration):
+    def _timelineDurationChangedCb(self, unused_composition, unused_start,
+                                   duration):
         # deactivate record button is the duration is null
         self.record_button.set_sensitive((duration > 0) and True or False)
             
         self.posadjust.upper = float(duration)
         self.timelabel.set_text(time_to_string(self.current_time) + " / " + time_to_string(instance.PiTiVi.playground.current.length))
 
-    def _dndDataReceivedCb(self, widget, context, x, y, selection, targetType, time):
+    def _dndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
+                           selection, targetType, unused_time):
         gst.info("context:%s, targetType:%s" % (context, targetType))
         if targetType == dnd.TYPE_URI_LIST:
             uri = selection.data.strip().split("\n")[0].strip()
@@ -377,12 +378,12 @@ class PitiviViewer(gtk.VBox):
         else:
             instance.PiTiVi.current.sources.addTmpUri(uri)
 
-    def _tmpIsReadyCb(self, sourcelist, factory):
+    def _tmpIsReadyCb(self, unused_sourcelist, factory):
         """ the temporary factory is ready, we can know set it to play """
         gst.info("%s" % factory)
         instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
 
-    def _newProjectCb(self, pitivi, project):
+    def _newProjectCb(self, unused_pitivi, unused_project):
         """ the current project has changed """
         instance.PiTiVi.current.sources.connect("tmp_is_ready", self._tmpIsReadyCb)
         instance.PiTiVi.current.settings.connect("settings-changed", self._settingsChangedCb)
@@ -393,26 +394,26 @@ class PitiviViewer(gtk.VBox):
 
     ## Control gtk.Button callbacks
         
-    def _recordCb(self, button):
+    def _recordCb(self, unused_button):
         win = EncodingDialog(instance.PiTiVi.current)
         win.show()
 
-    def _rewindCb(self, button):
+    def _rewindCb(self, unused_button):
         pass
 
-    def _backCb(self, button):
+    def _backCb(self, unused_button):
         pass
 
-    def _playButtonCb(self, button, isplaying):
+    def _playButtonCb(self, unused_button, isplaying):
         if isplaying:
             instance.PiTiVi.playground.play()
         else:
             instance.PiTiVi.playground.pause()
 
-    def _nextCb(self, button):
+    def _nextCb(self, unused_button):
         pass
 
-    def _forwardCb(self, button):
+    def _forwardCb(self, unused_button):
         pass
 
 
@@ -441,7 +442,7 @@ class PitiviViewer(gtk.VBox):
             self.playpause_button.set_sensitive(True)
         self.sourcecombobox.set_active(self._getSmartbinIndex(smartbin))
 
-    def _binAddedCb(self, playground, smartbin):
+    def _binAddedCb(self, unused_playground, smartbin):
         # a smartbin was added
         self.sourcelist.append([smartbin.displayname, smartbin])
         self.sourcecombobox.set_sensitive(True)
@@ -454,7 +455,7 @@ class PitiviViewer(gtk.VBox):
                 return pos
         return -1
 
-    def _binRemovedCb(self, playground, smartbin):
+    def _binRemovedCb(self, unused_playground, smartbin):
         # a smartbin was removed
         idx = self._getSmartbinIndex(smartbin)
         if idx < 0:
@@ -490,7 +491,7 @@ class ViewerWidget(gtk.DrawingArea):
         self.have_set_xid = False
         self.unset_flags(gtk.DOUBLE_BUFFERED)
 
-    def do_expose_event(self, event):
+    def do_expose_event(self, unused_event):
         """ 'expose-event' override """
         if self.videosink:
             if not self.have_set_xid:
@@ -514,7 +515,7 @@ class PlayPauseButton(gtk.Button):
         self.setPlay()
         self.connect('clicked', self._clickedCb)        
 
-    def _clickedCb(self, whatever):
+    def _clickedCb(self, unused):
         if not self.playing:
             self.setPause()
         else:
@@ -549,7 +550,7 @@ class EncodingDialog(GladeWindow):
         self.rendering = False
         self.settings = project.settings
 
-    def _fileButtonClickedCb(self, button):
+    def _fileButtonClickedCb(self, unused_button):
         
         dialog = gtk.FileChooserDialog(title="Choose file to render to",
                                        parent=self.window,
@@ -565,7 +566,7 @@ class EncodingDialog(GladeWindow):
             button.set_label(os.path.basename(self.outfile))
         dialog.destroy()
 
-    def _recordButtonClickedCb(self, button):
+    def _recordButtonClickedCb(self, unused_button):
         if self.outfile and not self.rendering:
             if self.bin.record(self.outfile, self.settings):
                 self.timeoutid = gobject.timeout_add(400, self._timeoutCb)
@@ -573,7 +574,7 @@ class EncodingDialog(GladeWindow):
             else:
                 self.progressbar.set_text("Couldn't start rendering")
 
-    def _settingsButtonClickedCb(self, button):
+    def _settingsButtonClickedCb(self, unused_button):
         dialog = ExportSettingsDialog(self.settings)
         res = dialog.run()
         dialog.hide()
@@ -600,13 +601,13 @@ class EncodingDialog(GladeWindow):
         self.bus.remove_signal_watch()
         gobject.source_remove(self.eosid)
 
-    def _eosCb(self, bus, message):
+    def _eosCb(self, unused_bus, unused_message):
         self.rendering = False
         self.progressbar.set_text("Rendering Finished")
         self.progressbar.set_fraction(1.0)
         gobject.source_remove(self.timeoutid)
         
-    def _cancelButtonClickedCb(self, button):
+    def _cancelButtonClickedCb(self, unused_button):
         self.bin.stopRecording()
         if self.timeoutid:
             gobject.source_remove(self.timeoutid)

@@ -81,19 +81,19 @@ class Timeline(gobject.GObject):
         self.audiocomp.gnlobject.connect("pad-removed", self._removedAudioPadCb)
         self.videocomp.gnlobject.connect("pad-removed", self._removedVideoPadCb)
 
-    def _newAudioPadCb(self, audiocomp, pad):
+    def _newAudioPadCb(self, unused_audiocomp, pad):
         self.timeline.add_pad(gst.GhostPad("asrc", pad))
 
-    def _newVideoPadCb(self, videocomp, pad):
+    def _newVideoPadCb(self, unused_videocomp, pad):
         self.timeline.add_pad(gst.GhostPad("vsrc", pad))
 
-    def _removedAudioPadCb(self, audiocomp, pad):
+    def _removedAudioPadCb(self, unused_audiocomp, pad):
         self.timeline.remove_pad(self.timeline.get_pad("asrc"))
 
-    def _removedVideoPadCb(self, audiocomp, pad):
+    def _removedVideoPadCb(self, unused_audiocomp, pad):
         self.timeline.remove_pad(self.timeline.get_pad("vsrc"))
 
-    def _settingsChangedCb(self, settings):
+    def _settingsChangedCb(self, unused_settings):
         # reset the timeline !
         result, pstate, pending = self.timeline.get_state(0)
         self.timeline.set_state(gst.STATE_READY)

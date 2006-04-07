@@ -231,7 +231,7 @@ class PlayGround(gobject.GObject):
     #
     # Bus handler
     #
-    def _busMessageCb(self, bus, message, pipeline):
+    def _busMessageCb(self, unused_bus, message, unused_pipeline):
         """ handler for messages from the pipelines' buses """
         gst.info("%s [%s]" % (message.type, message.src))
         if message.type == gst.MESSAGE_STATE_CHANGED:

@@ -163,7 +163,7 @@ class FileSourceFactory(ObjectFactory):
         self.instances.append(bin)
         return bin
 
-    def _binNewDecodedPadCb(self, dbin, pad, is_last, bin):
+    def _binNewDecodedPadCb(self, unused_dbin, pad, unused_is_last, bin):
         gst.info(pad.get_caps().to_string())
         # add it as ghost_pad to the bin
         if "audio" in pad.get_caps().to_string():
@@ -181,7 +181,7 @@ class FileSourceFactory(ObjectFactory):
         else:
             return
 
-    def _binRemovedDecodedPadCb(self, dbin, pad, bin):
+    def _binRemovedDecodedPadCb(self, unused_dbin, pad, bin):
         gst.info("pad %s was removed" % pad)
         if "audio" in pad.get_caps().to_string():
             mypad = bin.get_pad("asrc")

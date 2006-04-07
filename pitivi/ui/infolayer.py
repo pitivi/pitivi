@@ -57,7 +57,8 @@ class InfoLayer(gtk.Expander):
 
     ## signal from composition
 
-    def _compositionStartDurationChangedCb(self, composition, start, duration):
+    def _compositionStartDurationChangedCb(self, unused_composition,
+                                           unused_start, unused_duration):
         self.label.set_text(self.getDurationString())
 
     ## Gtk.Expander override

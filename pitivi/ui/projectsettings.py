@@ -53,7 +53,7 @@ class ProjectSettingsDialog(GladeWindow):
                                                       txtbuffer.get_end_iter())
         w["exportwidget"].updateSettings()
 
-    def _responseCb(self, widget, response):
+    def _responseCb(self, unused_widget, response):
         # if the response is gtk.RESPONSE_OK update the settings
         # else destroy yourself !
         self.hide()

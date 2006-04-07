@@ -59,15 +59,19 @@ class SourceFactoriesWidget(gtk.Notebook):
         self.set_tab_pos(gtk.POS_BOTTOM)
         self.sourcelist = SourceListWidget()
         self.append_page(self.sourcelist, gtk.Label("Sources"))
-        self.audiofxlist = AudioFxListWidget()
-        #self.audiofxlist.set_sensitive(False)
-        self.append_page(self.audiofxlist, gtk.Label("Audio FX"))
-        self.videofxlist = VideoFxListWidget()
-        #self.videofxlist.set_sensitive(False)
-        self.append_page(self.videofxlist, gtk.Label("Video FX"))
-        self.transitionlist = TransitionListWidget()
-        self.transitionlist.set_sensitive(False)
-        self.append_page(self.transitionlist, gtk.Label("Transitions"))
+
+        ## FIXME: The following are deactivated until they do more than just
+        ##      display things.
+        
+##         self.audiofxlist = AudioFxListWidget()
+##         #self.audiofxlist.set_sensitive(False)
+##         self.append_page(self.audiofxlist, gtk.Label("Audio FX"))
+##         self.videofxlist = VideoFxListWidget()
+##         #self.videofxlist.set_sensitive(False)
+##         self.append_page(self.videofxlist, gtk.Label("Video FX"))
+##         self.transitionlist = TransitionListWidget()
+##         self.transitionlist.set_sensitive(False)
+##         self.append_page(self.transitionlist, gtk.Label("Transitions"))
 
 
 
@@ -225,7 +229,7 @@ class SourceListWidget(gtk.VBox):
         self.iconview.show()
         self.iconviewmode = True
 
-    def _fileAddedCb(self, sourcelist, factory):
+    def _fileAddedCb(self, unused_sourcelist, factory):
         """ a file was added to the sourcelist """
         if not factory.thumbnail:
             if factory.is_video:
@@ -251,7 +255,7 @@ class SourceListWidget(gtk.VBox):
                                 factory,
                                 factory.name])
 
-    def _fileRemovedCb(self, sourcelist, uri):
+    def _fileRemovedCb(self, unused_sourcelist, uri):
         """ the given uri was removed from the sourcelist """
         # find the good line in the storemodel and remove it
         piter = self.storemodel.get_iter_first()
@@ -261,7 +265,7 @@ class SourceListWidget(gtk.VBox):
                 break
             piter = self.storemodel.iter_next(piter)
 
-    def _notMediaFileCb(self, sourcelist, uri, reason):
+    def _notMediaFileCb(self, unused_sourcelist, uri, reason):
         """ The given uri isn't a media file """
         # popup a dialog box and fill up with reasons
         if not self.errorDialogBox:
@@ -278,18 +282,18 @@ class SourceListWidget(gtk.VBox):
 
     ## Error Dialog Box callbacks
 
-    def _errorDialogBoxCloseCb(self, dialog):
+    def _errorDialogBoxCloseCb(self, unused_dialog):
         self.errorDialogBox.destroy()
         self.errorDialogBox = None
 
-    def _errorDialogBoxResponseCb(self, dialog, response):
+    def _errorDialogBoxResponseCb(self, unused_dialog, unused_response):
         self.errorDialogBox.destroy()
         self.errorDialogBox = None
 
 
     ## UI Button callbacks
             
-    def _addButtonClickedCb(self, widget):
+    def _addButtonClickedCb(self, unused_widget=None):
         """ called when a user clicks on the add button """
         dialog = gtk.FileChooserDialog("Import a file", None,
                                        gtk.FILE_CHOOSER_ACTION_OPEN,
@@ -307,7 +311,7 @@ class SourceListWidget(gtk.VBox):
             self.addFiles(filenames)
         dialog.destroy()
 
-    def _removeButtonClickedCb(self, widget):
+    def _removeButtonClickedCb(self, unused_widget=None):
         """ Called when a user clicks on the remove button """
         if self.iconviewmode:
             selected = self.iconview.get_selected_items()
@@ -320,7 +324,7 @@ class SourceListWidget(gtk.VBox):
         for uri in uris:
             del instance.PiTiVi.current.sources[uri]
 
-    def _playButtonClickedCb(self, widget):
+    def _playButtonClickedCb(self, unused_widget):
         """ Called when a user clicks on the play button """
         # get the selected filesourcefactory
         if self.scrollwin.get_children()[0] == self.treeview:
@@ -344,15 +348,15 @@ class SourceListWidget(gtk.VBox):
             self.listviewbutton.set_active(False)
 
 
-    def _treeViewButtonPressEventCb(self, treeview, event):
+    def _treeViewButtonPressEventCb(self, unused_treeview, event):
         if event.button == 3:
             self.popup.popup(None, None, None, event.button, event.time)
 
-    def _iconViewButtonPressEventCb(self, treeview, event):
+    def _iconViewButtonPressEventCb(self, unused_treeview, event):
         if event.button == 3:
             self.popup.popup(None, None, None, event.button, event.time)
 
-    def _newProjectCb(self, pitivi, project):
+    def _newProjectCb(self, unused_pitivi, project):
         # clear the storemodel
         self.storemodel.clear()
 
@@ -384,8 +388,8 @@ class SourceListWidget(gtk.VBox):
 
     ## Drag and Drop
 
-    def _dndDataReceivedCb(self, widget, context, x, y, selection, targetType,
-                           time):
+    def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
+                           unused_y, selection, targetType, unused_time):
         gst.debug("targetType:%d, selection.data:%r" % (targetType, selection.data))
         if targetType == dnd.TYPE_URI_LIST:
             filenames = [x.strip('\x00') for x in selection.data.strip().split("\r\n") if x.strip('\x00')]
@@ -393,7 +397,7 @@ class SourceListWidget(gtk.VBox):
             filenames = [selection.data.strip()]
         self.addFiles(filenames)
 
-    def _dndIconBeginCb(self, widget, context):
+    def _dndIconBeginCb(self, unused_widget, context):
         gst.info("icon drag_begin")
         items = self.iconview.get_selected_items()
         gst.info("got %d items" % len(items))
@@ -405,7 +409,7 @@ class SourceListWidget(gtk.VBox):
                 self.iconview.drag_source_set_icon_pixbuf(thumbnail)
         
 
-    def _dndTreeBeginCb(self, widget, context):
+    def _dndTreeBeginCb(self, unused_widget, context):
         gst.info("tree drag_begin")
         model, rows = self.treeview.get_selection().get_selected_rows()
         if len(rows) < 1:
@@ -420,7 +424,8 @@ class SourceListWidget(gtk.VBox):
             uris = [self.storemodel.get_value(self.storemodel.get_iter(x), 5) for x in rows]
         return uris
 
-    def _dndDataGetCb(self, widget, context, selection, targetType, eventTime):
+    def _dndDataGetCb(self, unused_widget, unused_context, selection,
+                      targetType, unused_eventTime):
         gst.info("data get, type:%d" % targetType)
         uris = self.getSelectedItems()
         if len(uris) < 1:
@@ -432,7 +437,6 @@ class SourceListWidget(gtk.VBox):
             selection.set(selection.target, 8,
                           string.join(uris, "\n"))
         
-
 class AudioFxListWidget(gtk.VBox):
     """ Widget for listing video effects """
 
@@ -566,8 +570,8 @@ class DiscovererErrorDialog(GladeWindow):
 
     ## Callbacks from glade
 
-    def _closeCb(self, dialog):
+    def _closeCb(self, unused_dialog):
         self.emit('close')
 
-    def _responseCb(self, dialog, response):
+    def _responseCb(self, unused_dialog, response):
         self.emit('response', response)

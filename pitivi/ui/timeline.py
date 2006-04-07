@@ -94,7 +94,7 @@ class TimelineWidget(gtk.VBox):
         self.pack_start(self.complexview, expand=True)
         self.complexview.show_all()
 
-    def _simpleScrollCb(self, simplet, event):
+    def _simpleScrollCb(self, unused_simplet, event):
         gst.debug("state:%s" % event.state)
         self.hscroll.emit("scroll-event", event)
 

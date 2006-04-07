@@ -127,5 +127,5 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
     def getStartTime(self):
         return self.source.start
 
-    def _startDurationChangedCb(self, source, start, duration):
+    def _startDurationChangedCb(self, unused_source, unused_start, unused_duration):
         self.startDurationChanged()

@@ -78,24 +78,21 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
     ## composition signal callbacks
 
-    def _compStartDurationChangedCb(self, composition, start, duration):
+    def _compStartDurationChangedCb(self, unused_composition, unused_start,
+                                    unused_duration):
         gst.info("setting width-request to %d" % self.getPixelWidth())
         self.set_property("width-request", self.getPixelWidth())
         self.set_size(self.getPixelWidth() + 2 * self.border, self.allocation.height)
         #self.set_property("height-request", self.layerInfo.currentHeight)
         self.startDurationChanged()
 
-    def _compSourceAddedCb(self, composition, source):
+    def _compSourceAddedCb(self, unused_composition, source):
         gst.debug("Got a new source")
         # create new widget
         widget = ComplexTimelineSource(source, self.layerInfo)
         
         # add it to self at the correct position
         self.sources[source] = widget
-        if self.layerInfo.expanded:
-            height = 100
-        else:
-            height = self.allocation.height - self.effectgutter - 2 * self.layergutter
         # TODO : set Y position depending on layer it's on
         self.put(widget, self.nsToPixel(widget.getStartTime()) + self.border,
                  self.effectgutter + self.layergutter)
@@ -176,7 +173,8 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
     ## Child callbacks
 
-    def _childStartDurationChangedCb(self, source, start, duration):
+    def _childStartDurationChangedCb(self, source, start,
+                                     duration):
         # move accordingly
         gst.debug("%r start:%s duration:%s" % (source, gst.TIME_ARGS(start),
                                                gst.TIME_ARGS(duration)))
@@ -203,7 +201,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
     ## Drag and Drop
 
-    def _dragDataReceivedCb(self, layout, context, x, y, selection,
+    def _dragDataReceivedCb(self, unused_layout, context, x, unused_y, selection,
                            targetType, timestamp):
         # something was dropped
         gst.debug("%s" % type(selection))
@@ -223,11 +221,11 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
         context.finish(True, False, timestamp)
 
-    def _dragLeaveCb(self, layout, context, timestamp):
+    def _dragLeaveCb(self, unused_layout, unused_context, unused_timestamp):
         gst.debug("something left")
         self.dragObject = None
 
-    def _dragMotionCb(self, layout, context, x, y, timestamp):
+    def _dragMotionCb(self, unused_layout, context, x, y, unused_timestamp):
         gst.debug("something entered x:%d, y:%d" % (x,y))
         if not self.dragObject:
             source = context.get_source_widget().getSelectedItems()[0]

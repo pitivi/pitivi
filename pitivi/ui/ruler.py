@@ -58,7 +58,7 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
 
     ## timeline position changed method
 
-    def timelinePositionChanged(self, value, frame):
+    def timelinePositionChanged(self, value, unused_frame):
         previous = self.position
         self.position = value
         self.queue_draw_area(max(self.nsToPixel(min(value, previous)) - 5, 0),

@@ -95,7 +95,7 @@ class SimpleTimeline(gtk.Layout):
 
         self.show_all()
 
-    def _condensedListChangedCb(self, videocomp, clist):
+    def _condensedListChangedCb(self, unused_videocomp, clist):
         """ add/remove the widgets """
         gst.debug("condensed list changed in videocomp")
         current = self.widgets.keys()
@@ -193,7 +193,7 @@ class SimpleTimeline(gtk.Layout):
                                        self.slotposition, DEFAULT_SIMPLE_SPACING,
                                        DEFAULT_SIMPLE_SPACING, self.childheight)        
 
-    def _gotFileFactory(self, filefactory, x, y):
+    def _gotFileFactory(self, filefactory, x, unused_y):
         """ got a filefactory at the given position """
         # remove the slot
         self._eraseDragSlot()
@@ -215,7 +215,7 @@ class SimpleTimeline(gtk.Layout):
         else:
             self.timeline.videocomp.prependSource(source)
 
-    def _widthChangedCb(self, layout, property):
+    def _widthChangedCb(self, unused_layout, property):
         if not property.name == "width":
             return
         self.width = self.get_property("width")
@@ -223,7 +223,8 @@ class SimpleTimeline(gtk.Layout):
     def _motionNotifyEventCb(self, layout, event):
         pass
 
-    def _dragMotionCb(self, layout, context, x, y, timestamp):
+    def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
+                      unused_timestamp):
         # TODO show where the dragged item would go
         pos = self._getNearestSourceSlotPixels(x + (self.hadjustment.get_value()))
         rpos = self._getNearestSourceSlot(x + self.hadjustment.get_value())
@@ -236,12 +237,12 @@ class SimpleTimeline(gtk.Layout):
             self.slotposition = pos
             self._drawDragSlot()
 
-    def _dragLeaveCb(self, layout, context, timestamp):
+    def _dragLeaveCb(self, unused_layout, unused_context, unused_timestamp):
         self._eraseDragSlot()
         self.slotposition = -1
         # TODO remove the drag emplacement
 
-    def _dragDataReceivedCb(self, layout, context, x, y, selection,
+    def _dragDataReceivedCb(self, unused_layout, context, x, y, selection,
                             targetType, timestamp):
         if targetType == dnd.TYPE_PITIVI_FILESOURCE:
             uri = selection.data
@@ -251,7 +252,7 @@ class SimpleTimeline(gtk.Layout):
         self._gotFileFactory(instance.PiTiVi.current.sources[uri], x, y)
         context.finish(True, False, timestamp)
 
-    def _realizeCb(self, layout):
+    def _realizeCb(self, unused_layout):
         self.modify_bg(gtk.STATE_NORMAL, self.style.white)
 
     def _areaIntersect(self, x, y, w, h, x2, y2, w2, h2):
@@ -265,7 +266,7 @@ class SimpleTimeline(gtk.Layout):
             return True
         return False
 
-    def _exposeEventCb(self, layout, event):
+    def _exposeEventCb(self, unused_layout, event):
         x, y, w, h = event.area
         # redraw the slot rectangle if there's one
         if not self.slotposition == -1:
@@ -278,7 +279,7 @@ class SimpleTimeline(gtk.Layout):
  
         return False
 
-    def _sizeAllocateCb(self, layout, allocation):
+    def _sizeAllocateCb(self, unused_layout, allocation):
         if not self.height == allocation.height:
             self.height = allocation.height
             self.childheight = self.height - 2 * DEFAULT_SIMPLE_SPACING
@@ -380,7 +381,7 @@ class SimpleSourceWidget(gtk.DrawingArea):
                                     self.lengthlayout)
 
 
-    def _configureEventCb(self, layout, event):
+    def _configureEventCb(self, unused_layout, event):
         self.width = event.width
         self.height = event.height
         self.border = event.width / 20
@@ -389,7 +390,7 @@ class SimpleSourceWidget(gtk.DrawingArea):
             self._drawData()
         return False
 
-    def _realizeCb(self, widget):
+    def _realizeCb(self, unused_widget):
         self.gc = self.window.new_gc()
         self.gc.set_line_attributes(2, gtk.gdk.LINE_SOLID,
                                     gtk.gdk.CAP_ROUND, gtk.gdk.JOIN_ROUND)
@@ -399,13 +400,13 @@ class SimpleSourceWidget(gtk.DrawingArea):
                                                                     beautify_length(self.filesource.duration)))
 
 
-    def _exposeEventCb(self, widget, event):
+    def _exposeEventCb(self, unused_widget, event):
         x, y, w, h = event.area
         self.window.draw_drawable(self.gc, self.pixmap,
                                   x, y, x, y, w, h)
         return True
 
-    def _startDurationChangedCb(self, filesource, start, duration):
+    def _startDurationChangedCb(self, unused_filesource, start, duration):
         self.tooltips.set_tip(self, "start:\t%s\nduration:\t%s" % (beautify_length(start), beautify_length(duration)))
 
 
@@ -435,7 +436,7 @@ class SimpleTransitionWidget(gtk.DrawingArea):
                                        1, 1, self.width - 2, self.height - 2)
             # draw name
 
-    def _configureEventCb(self, layout, event):
+    def _configureEventCb(self, unused_layout, event):
         self.width = event.width
         self.height = event.height
         # draw background pixmap
@@ -443,14 +444,14 @@ class SimpleTransitionWidget(gtk.DrawingArea):
             self._drawData()
         return False
 
-    def _realizeCb(self, widget):
+    def _realizeCb(self, unused_widget):
         self.gc = self.window.new_gc()
         self.gc.set_line_attributes(2, gtk.gdk.LINE_SOLID,
                                     gtk.gdk.CAP_ROUND, gtk.gdk.JOIN_ROUND)
         self.gc.set_background(self.style.white)
         self._drawData()
 
-    def _exposeEventCb(self, widget, event):
+    def _exposeEventCb(self, unused_widget, event):
         x, y, w, h = event.area
         self.window.draw_drawable(self.gc, self.pixmap,
                                   x, y, x, y, w, h)

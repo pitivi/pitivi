@@ -162,7 +162,7 @@ class SmartFileBin(SmartBin):
         self.source.connect("pad-added", self._binNewDecodedPadCb)
         self.source.connect("pad-removed", self._binRemovedDecodedPadCb)
 
-    def _binNewDecodedPadCb(self, bin, pad):
+    def _binNewDecodedPadCb(self, unused_bin, pad):
         # connect to good tee
         self.debug("SmartFileBin's source has a new pad: %s %s" % (pad , pad.get_caps().to_string()))
         if pad.get_caps().to_string().startswith("audio"):
@@ -170,7 +170,7 @@ class SmartFileBin(SmartBin):
         elif pad.get_caps().to_string().startswith("video"):
             pad.link(self.vtee.get_pad("sink"))
 
-    def _binRemovedDecodedPadCb(self, bin, pad):
+    def _binRemovedDecodedPadCb(self, unused_bin, pad):
         if pad.get_caps().to_string().startswith("audio"):
             pad.unlink(self.atee.get_pad("sink"))
         elif pad.get_caps().to_string().startswith("video"):
@@ -217,13 +217,13 @@ class SmartTimelineBin(SmartBin):
         self.width = settings.videowidth
         self.height = settings.videoheight
 
-    def _newPadCb(self, source, pad):
+    def _newPadCb(self, unused_source, pad):
         if pad.get_name() == "asrc":
             pad.link(self.atee.get_pad("sink"))
         elif pad.get_name() == "vsrc":
             pad.link(self.vtee.get_pad("sink"))
 
-    def _removedPadCb(self, source, pad):
+    def _removedPadCb(self, unused_source, pad):
         self.debug("pad %r went away" % pad)
         if pad.get_name() == "asrc":
             pad.unlink(self.atee.get_pad("sink"))
@@ -346,7 +346,7 @@ class SmartTimelineBin(SmartBin):
 
         return thread
 
-    def _startDurationChangedCb(self, videocomp, start, duration):
+    def _startDurationChangedCb(self, unused_videocomp, start, duration):
         self.info("smart timeline bin: start duration changed %d %d" %( start, duration ))
         self.length = duration
 

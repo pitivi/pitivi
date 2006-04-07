@@ -130,7 +130,7 @@ class SourceList(gobject.GObject):
         for uri in rmuri:
             del self[uri]
 
-    def _finishedAnalyzingCb(self, discoverer, factory):
+    def _finishedAnalyzingCb(self, unused_discoverer, factory):
         # callback from finishing analyzing factory
         if factory.name in self.tempsources:
             self.tempsources[factory.name] = factory
@@ -139,7 +139,7 @@ class SourceList(gobject.GObject):
             self.sources[factory.name] = factory
             self.emit("file-added", factory)
 
-    def _notMediaFileCb(self, discoverer, uri, reason):
+    def _notMediaFileCb(self, unused_discoverer, uri, reason):
         # callback from the discoverer's 'not_media_file' signal
         # remove it from the list
         self.emit("not_media_file", uri, reason)
