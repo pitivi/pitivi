@@ -87,10 +87,10 @@ class Timeline(gobject.GObject):
     def _newVideoPadCb(self, unused_videocomp, pad):
         self.timeline.add_pad(gst.GhostPad("vsrc", pad))
 
-    def _removedAudioPadCb(self, unused_audiocomp, pad):
+    def _removedAudioPadCb(self, unused_audiocomp, unused_pad):
         self.timeline.remove_pad(self.timeline.get_pad("asrc"))
 
-    def _removedVideoPadCb(self, unused_audiocomp, pad):
+    def _removedVideoPadCb(self, unused_audiocomp, unused_pad):
         self.timeline.remove_pad(self.timeline.get_pad("vsrc"))
 
     def _settingsChangedCb(self, unused_settings):

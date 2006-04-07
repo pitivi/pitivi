@@ -1,5 +1,12 @@
 2006-04-07  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/playground.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/layerwidgets.py:
+	More cleaning up, and marking unused arguments as such.
+
+2006-04-07  Edward Hervey  <edward@fluendo.com>
+
 	* docs/HACKING:
 	Added part about unused variables.
 	* pitivi/bin.py:

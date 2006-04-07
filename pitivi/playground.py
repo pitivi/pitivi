@@ -26,7 +26,7 @@ Where all gstreamer pipelines play
 
 import gobject
 import gst
-from bin import SmartBin, SmartDefaultBin, SmartFileBin#, SmartTempUriBin
+from bin import SmartBin, SmartDefaultBin, SmartFileBin
 
 class PlayGround(gobject.GObject):
     """
@@ -182,13 +182,6 @@ class PlayGround(gobject.GObject):
         self.tempsmartbin = tempbin
         self.play()
         gst.debug("END tempbin : %s" % tempbin)
-
-    def playTemporaryUri(self, uri):
-        """ plays a uri """
-        gst.debug("uri : %s" % uri)
-        tempbin = SmartTempUriBin(uri)
-        self._playTemporaryBin(tempbin)
-        pass
 
     def playTemporaryFilesourcefactory(self, factory):
         """ temporarely play a FileSourceFactory """

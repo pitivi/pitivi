@@ -129,7 +129,6 @@ class CompositionLayer(TimelineLayer, ZoomableWidgetInterface):
 
         # leftWidget's get_height() comes from the righWidget
         self.leftWidget.getNeededHeight = self.rightWidget.getNeededHeight
-        
 
     def getLeftWidget(self):
         return InfoLayer(self.layerInfo)
