@@ -150,12 +150,17 @@ class PitiviMainWindow(gtk.Window):
 
     ## PlayGround callback
 
+    def _errorMessageResponseCb(self, dialogbox, unused_response):
+        dialogbox.hide()
+        dialogbox.destroy()
+
     def _playGroundErrorCb(self, unused_playground, error, detail):
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL,
                                    gtk.MESSAGE_ERROR,
                                    gtk.BUTTONS_OK,
                                    None)
         dialog.set_markup("<b>%s</b>" % error)
+        dialog.connect("response", self._errorMessageResponseCb)
         if detail:
             dialog.format_secondary_text(detail)
         dialog.show()

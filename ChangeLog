@@ -1,6 +1,15 @@
 2006-04-10  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/playground.py:
+	Connect bus message handler to the default bin too.
+	* pitivi/ui/mainwindow.py:
+	Close error message when you click on OK
+	* pitivi/ui/viewer.py:
+	Remove error message for failed state change.
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
 	Added "error" signal
 	* pitivi/ui/mainwindow.py:
 	Show Error dialog box on playground bus errors.

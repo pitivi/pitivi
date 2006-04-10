@@ -71,6 +71,9 @@ class PlayGround(gobject.GObject):
         
         # Defaut pipeline if no other pipeline is playing
         self.default = SmartDefaultBin()
+        bus = self.default.get_bus()
+        bus.add_signal_watch()
+        bus.connect("message", self._busMessageCb, self.default)
 
         # Current playing pipeline
         self.current = None

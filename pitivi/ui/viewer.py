@@ -227,22 +227,10 @@ class PitiviViewer(gtk.VBox):
         # modify the ratio if it's the timeline that's playing
         raise NotImplementedError
 
-    def _showErrorDialog(self, mainreason, subreason=None):
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL,
-                                   gtk.MESSAGE_ERROR,
-                                   gtk.BUTTONS_OK, None)
-        dialog.set_markup("<b>%s</b>" % mainreason)
-        if subreason:
-            dialog.format_secondary_text(subreason)
-        dialog.show()
-
     def _drawingAreaRealizeCb(self, drawingarea):
         drawingarea.modify_bg(gtk.STATE_NORMAL, drawingarea.style.black)
         self._createSinkThreads()
-        if instance.PiTiVi.playground.play() == gst.STATE_CHANGE_FAILURE:
-            gobject.idle_add(self._showErrorDialog,
-                             "Couldn't switch on the main GStreamer pipeline",
-                             "Make sure you have configured your audio/video output sinks correctly")
+        instance.PiTiVi.playground.play()
 
     ## gtk.HScale callbacks for self.slider
 
