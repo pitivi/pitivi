@@ -1,7 +1,7 @@
 Summary:	Pitivi non-linear video editor
 Name:		@PACKAGE@
 Version:	@VERSION@
-Release:	@RELEASE@
+Release:	@PACKAGE_VERSION_RELEASE@
 
 Source:		http://download.sf.net/pitivi/%{name}-%{version}.tar.gz
 Packager:	edward@fluendo.com
