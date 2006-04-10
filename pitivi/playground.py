@@ -249,7 +249,9 @@ class PlayGround(gobject.GObject):
             gst.warning("returning ???")
             return
         self.state = gst.STATE_PLAYING
-        gst.log("%s" % self.current.set_state(self.state))
+        ret = self.current.set_state(self.state)
+        gst.debug("change state returned %s" % ret)
+        return ret
 ##        gst.debug("set_state() done, getting state now")
 ##         value = self.current.get_state(None)
 ##        gst.debug("got_state : %s" % str(value))

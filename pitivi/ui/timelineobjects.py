@@ -333,9 +333,6 @@ class SimpleSourceWidget(gtk.DrawingArea):
         self.connect("expose-event", self._exposeEventCb)
         self.connect("realize", self._realizeCb)
         self.connect("configure-event", self._configureEventCb)
-        self.filesource.connect("start-duration-changed", self._startDurationChangedCb)
-        self.tooltips = gtk.Tooltips()
-        self.tooltips.enable()
 
     def _drawData(self):
         # actually do the drawing in the pixmap here
@@ -396,18 +393,12 @@ class SimpleSourceWidget(gtk.DrawingArea):
                                     gtk.gdk.CAP_ROUND, gtk.gdk.JOIN_ROUND)
         self.gc.set_background(self.style.white)
         self._drawData()
-        self.tooltips.set_tip(self, "start:\t%s\nsduration:\t%s" % (beautify_length(self.filesource.start),
-                                                                    beautify_length(self.filesource.duration)))
-
 
     def _exposeEventCb(self, unused_widget, event):
         x, y, w, h = event.area
         self.window.draw_drawable(self.gc, self.pixmap,
                                   x, y, x, y, w, h)
         return True
-
-    def _startDurationChangedCb(self, unused_filesource, start, duration):
-        self.tooltips.set_tip(self, "start:\t%s\nduration:\t%s" % (beautify_length(start), beautify_length(duration)))
 
 
 class SimpleTransitionWidget(gtk.DrawingArea):

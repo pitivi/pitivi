@@ -1,5 +1,14 @@
 2006-04-10  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/playground.py:
+	Return gst.StateChangeReturn from setting pipeline to PLAYING in play()
+	* pitivi/ui/viewer.py:
+	Display error message if we couldn't set the default bin to PLAYING
+	* pitivi/ui/timelineobjects.py:
+	remove debug tooltip
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/mainwindow.py:
 	Better sentence for tooltip of "Toggle Fullscreen" action
 	* pitivi/ui/sourcefactories.py:
