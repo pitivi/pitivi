@@ -426,7 +426,6 @@ class PitiviViewer(gtk.VBox):
     def _currentPlaygroundChangedCb(self, playground, smartbin):
         if smartbin.width and smartbin.height:
             if isinstance(smartbin, SmartFileBin) and smartbin.factory.video_info_stream:
-                print smartbin.factory.video_info_stream.dar
                 ratio = float(smartbin.factory.video_info_stream.dar.denom) / float(smartbin.factory.video_info_stream.dar.num)
                 self.aframe.set_property("ratio", ratio)
         else:
