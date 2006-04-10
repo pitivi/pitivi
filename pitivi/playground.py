@@ -54,7 +54,10 @@ class PlayGround(gobject.GObject):
                        ( gobject.TYPE_PYOBJECT, )),
         "bin-removed" : ( gobject.SIGNAL_RUN_LAST,
                           gobject.TYPE_NONE,
-                          ( gobject.TYPE_PYOBJECT, ))
+                          ( gobject.TYPE_PYOBJECT, )),
+        "error" : ( gobject.SIGNAL_RUN_LAST,
+                    gobject.TYPE_NONE,
+                    ( gobject.TYPE_STRING, gobject.TYPE_STRING ))
         }
 
     def __init__(self):
@@ -236,6 +239,9 @@ class PlayGround(gobject.GObject):
                     self.emit("current-state", newstate)
         elif message.type in [ gst.MESSAGE_ERROR, gst.MESSAGE_WARNING ]:
             self.current.warning("%s" % message.structure.to_string())
+            if message.type == gst.MESSAGE_ERROR:
+                error, detail = message.parse_error()
+                self.emit("error", str(error), str(detail))
 
 
     #

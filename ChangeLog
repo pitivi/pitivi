@@ -1,6 +1,15 @@
 2006-04-10  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/playground.py:
+	Added "error" signal
+	* pitivi/ui/mainwindow.py:
+	Show Error dialog box on playground bus errors.
+	* pitivi/ui/viewer.py:
+	slight bug
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
 	Return gst.StateChangeReturn from setting pipeline to PLAYING in play()
 	* pitivi/ui/viewer.py:
 	Display error message if we couldn't set the default bin to PLAYING

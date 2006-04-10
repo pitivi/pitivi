@@ -229,7 +229,8 @@ class PitiviViewer(gtk.VBox):
 
     def _showErrorDialog(self, mainreason, subreason=None):
         dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL,
-                                   gtk.MESSAGE_ERROR, None)
+                                   gtk.MESSAGE_ERROR,
+                                   gtk.BUTTONS_OK, None)
         dialog.set_markup("<b>%s</b>" % mainreason)
         if subreason:
             dialog.format_secondary_text(subreason)
