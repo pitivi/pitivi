@@ -1,5 +1,12 @@
 2006-04-10  Edward Hervey  <edward@fluendo.com>
 
+	* configure.ac:
+	GNonLin >= 0.10.1
+	GStreamer >= 0.10.4
+	0.9.9.4 pre-release
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
 	* application-pitivi.png:
 	* pitivi.png:
 	* Makefile.am:
