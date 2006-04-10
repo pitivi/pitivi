@@ -1,3 +1,36 @@
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Added timeout of 10s for discovering each file, should be enough and
+	prevents the discoverer from idling on broken files/plugins.
+	Added tagging discovery.
+	Only push the pipeline to PLAYING if we need a thumbnail.
+	* pitivi/objectfactory.py:
+	Moved getPrettyInfo to ObjectFactory class
+	Added MediaStream classes to contain information about multimedia
+	streams and their handling in ObjectFactory classes.
+	Check if the file is valid when setting a thumbnail file.
+	* pitivi/utils.py:
+	float_framerate() now retuns a string
+	* pitivi/ui/actions.xml:
+	Added and re-ordered menus and toolbar
+	* pitivi/ui/mainwindow.py:
+	Added full-screen toggling facilities with menu/toolbar item and
+	shortcuts.
+	Added menu/toolbar item for adding Sources.
+	More cleaning up.
+	* pitivi/ui/plumber.py:
+	If present, set qos to FALSE on videosink
+	* pitivi/ui/sourcefactories.py:
+	Clear up the sources list.
+	There is now only a gtk.TreeView with less columns but more information.
+	Added SourceListWidget.showImportSourcesDialog()
+	Made the ImportSourcesDialog run asynchronously instead of with .run()
+	Make the DiscovererErrorDialog look a bit nicer.
+	* pitivi/ui/viewer.py:
+	Use computed display-aspect-ratio for the gtk.AspectFrame of the viewer.
+	Use fixed-size font for time/duration label.
+
 2006-04-07  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/playground.py:

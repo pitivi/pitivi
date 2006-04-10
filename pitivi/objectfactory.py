@@ -66,7 +66,12 @@ class ObjectFactory(gobject.GObject):
         self.is_effect = False
         self.instances = []
         self.audio_info = None
+        self.audio_info_stream = None
         self.video_info = None
+        self.video_info_stream = None
+        self.mediaTags = {}
+        self.title = None
+        self.artist = None
 
     def do_set_property(self, property, value):
         """
@@ -79,8 +84,10 @@ class ObjectFactory(gobject.GObject):
             self.is_video = value
         elif property.name == "video-info":
             self.video_info = value
+            self.video_info_stream = get_stream_for_caps(value)
         elif property.name == "audio-info":
             self.audio_info = value
+            self.audio_info_stream = get_stream_for_caps(value)
         else:
             raise AttributeError, 'unknown property %s' % property.name
 
@@ -99,6 +106,54 @@ class ObjectFactory(gobject.GObject):
     def setVideo(self, is_video):
         """ sets whether the element has video stream """
         self.set_property("is-video", is_video)
+
+    def addMediaTags(self, tags=[]):
+        """ Add the given gst.Tag or gst.TagList to the factory """
+        gst.debug("tags:%s" % tags)
+        for tag in tags:
+            self.mediaTags.update(tag)
+        for tag in self.mediaTags.keys():
+            if isinstance(self.mediaTags[tag], str):
+                self.mediaTags[tag] = self.mediaTags[tag].replace('&', '&amp;').strip()
+            if isinstance(self.mediaTags[tag], gst.Date):
+                d = self.mediaTags[tag]
+                self.mediaTags[tag] = "%s/%s/%s" % (d.day, d.month, d.year)
+        gst.debug("tags:%s" % self.mediaTags)
+        if self.video_info_stream:
+            self.video_info_stream.set_codec(self.mediaTags.get(gst.TAG_VIDEO_CODEC))
+        if self.audio_info_stream:
+            self.audio_info_stream.set_codec(self.mediaTags.get(gst.TAG_AUDIO_CODEC))
+        self.artist = self.mediaTags.get(gst.TAG_ARTIST)
+        if self.artist:
+            self.artist.strip()
+        self.title = self.mediaTags.get(gst.TAG_TITLE)
+        if self.title:
+            self.title.strip()
+
+    def getPrettyInfo(self):
+        """ Returns a prettyfied information string """
+        # Audio : [Mono|Stereo|<nbchanns>] @ <rate> Hz
+        # Video : <width> x <Height> @ <rate> fps
+        if self.is_effect:
+            if self.is_audio:
+                return "Video Effect"
+            elif self.is_video:
+                return "Audio Effect"
+            return "Effect"
+        if not self.is_video and not self.is_audio:
+            "Unknown"
+        stl = []
+        if self.title:
+            stl.append("<b>Title:</b> %s" % self.title)
+        if self.artist:
+            stl.append("<b>Artist:</b> %s" % self.artist)
+        if self.is_video and self.video_info_stream:
+            stl.append(self.video_info_stream.getMarkup())
+        if self.is_audio and self.audio_info_stream:
+            stl.append(self.audio_info_stream.getMarkup())
+##         if self.mediaTags:
+##             stl.append("%s" % self.mediaTags)
+        return string.join(stl, "\n")
 
     def makeAudioBin(self):
         """ returns a audio only bin """
@@ -144,7 +199,8 @@ class FileSourceFactory(ObjectFactory):
         if property.name == "length":
             self.length = value
         elif property.name == "thumbnail":
-            self.thumbnail = value
+            if os.path.isfile(value):
+                self.thumbnail = value
         else:
             ObjectFactory.do_set_property(self, property, value)
 
@@ -204,36 +260,6 @@ class FileSourceFactory(ObjectFactory):
         """ Sets the thumbnail filename of the element """
         self.set_property("thumbnail", thumbnail)
 
-    def getPrettyInfo(self):
-        """ Returns a prettyfied information string """
-        # Audio : [Mono|Stereo|<nbchanns>] @ <rate> Hz
-        # Video : <width> x <Height> @ <rate> fps
-        if self.is_effect:
-            if self.is_audio:
-                return "Video Effect"
-            elif self.is_video:
-                return "Audio Effect"
-            return "Effect"
-        if not self.is_video and not self.is_audio:
-            "Unknown"
-        stl = []
-        if self.is_video:
-            if self.video_info:
-                # FIXME : use DAR
-                stl.append("Video: %d x %d @ %3f fps" % (self.video_info[0]["width"],
-                                                        self.video_info[0]["height"],
-                                                        utils.float_framerate(self.video_info[0]["framerate"])))
-            else:
-                stl.append("Video")
-        if self.is_audio:
-            if self.audio_info:
-                nbchanns = self.audio_info[0]["channels"]
-                rate = self.audio_info[0]["rate"]
-                stl.append("Audio: %d channels @ %d Hz" % (nbchanns, rate))
-            else:
-                stl.append("Audio")
-        return string.join(stl, "\n")
-
 class OperationFactory(ObjectFactory):
     """
     Provides operations useable in a timeline
@@ -280,3 +306,140 @@ class SMPTETransitionFactory(TransitionFactory):
 
     def __init__(self):
         TransitionFactory.__init__(self)
+
+class MultimediaStream:
+
+    def __init__(self, caps):
+        self.caps = caps
+        self.raw = False
+        self.fixed = True
+        self.codec = None
+        self._analyzeCaps()
+
+    def set_codec(self, codecstring=None):
+        if codecstring and codecstring.strip():
+            self.codec = codecstring.strip()
+
+    def _analyzeCaps(self):
+        raise NotImplementedError
+
+class VideoStream(MultimediaStream):
+
+    def _analyzeCaps(self):
+        if len(self.caps) > 1:
+            self.fixed = False
+            
+        struct = self.caps[0]
+        self.videotype = struct.get_name()
+        if self.videotype.startswith("video/x-raw-"):
+            self.raw=True
+        else:
+            self.raw=False
+
+        try:
+            self.format = struct["format"]
+        except:
+            self.format = None
+        try:
+            self.width = struct["width"]
+        except:
+            self.width = None
+        try:
+            self.height = struct["height"]
+        except:
+            self.height = None
+        try:
+            self.framerate = struct["framerate"]
+        except:
+            self.framerate = None
+        try:
+            self.par = struct["pixel-aspect-ratio"]
+        except:
+            self.par = None
+
+        if self.width and self.height and self.par:
+            self.dar = gst.Fraction(self.width * self.par.num, self.height * self.par.denom)
+        else:
+            if self.width and self.height:
+                self.dar = gst.Fraction(self.width, self.height)
+            else:
+                self.dar = gst.Fraction(4, 3)
+
+    def getMarkup(self):
+        if self.raw:
+            if self.framerate.num:
+                templ = "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+                templ = templ % (self.dar.num * self.height / self.dar.denom, self.height, float(self.framerate.num) / float(self.framerate.denom))
+            else:
+                templ = "<b>Image:</b> %d x %d <i>pixels</i>"
+                templ = templ % (self.dar.num * self.height / self.dar.denom, self.height)
+            if self.codec:
+                templ = templ + " <i>(%s)</i>" % self.codec
+            return templ
+        return "<b>Unknown Video format:</b> %s" % self.videotype
+            
+class AudioStream(MultimediaStream):
+
+    def _analyzeCaps(self):
+        if len(self.caps) > 1:
+            self.fixed = False
+
+        struct = self.caps[0]
+        self.audiotype = struct.get_name()
+        if self.audiotype.startswith("audio/x-raw-"):
+            self.raw = True
+        else:
+            self.raw = False
+
+        if self.audiotype == "audio/x-raw-float":
+            self.float = True
+        else:
+            self.float = False
+
+        try:
+            self.channels = struct["channels"]
+        except:
+            self.channels = None
+        try:
+            self.rate = struct["rate"]
+        except:
+            self.rate = None
+        try:
+            self.width = struct["width"]
+        except:
+            self.width = None
+        try:
+            self.depth = struct["depth"]
+        except:
+            self.depth = None
+
+    def getMarkup(self):
+        if self.raw:
+            templ = "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+            templ = templ % (self.channels, self.rate, self.width)
+            if self.codec:
+                templ = templ + " <i>(%s)</i>" % self.codec
+            return templ
+        return "<b>Unknown Audio format:</b> %s" % self.audiotype
+
+class TextStream(MultimediaStream):
+
+    def _analyzeCaps(self):
+        if len(self.caps) > 1:
+            self.fixed = False
+
+        self.texttype = self.caps[0].get_name()
+
+    def getMarkup(self):
+        return "<b>Text:</b> %s" % self.texttype
+
+def get_stream_for_caps(caps):
+    val = caps.to_string()
+    if val.startswith("video/"):
+        return VideoStream(caps)
+    if val.startswith("audio/"):
+        return AudioStream(caps)
+    if val.startswith("text/"):
+        return TextStream
+    return None
+                     

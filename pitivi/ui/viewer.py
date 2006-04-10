@@ -29,7 +29,7 @@ from glade import GladeWindow
 
 import plumber
 import pitivi.instance as instance
-from pitivi.bin import SmartTimelineBin, SmartDefaultBin
+from pitivi.bin import SmartTimelineBin, SmartDefaultBin, SmartFileBin
 from pitivi.objectfactory import FileSourceFactory
 import pitivi.dnd as dnd
 from pitivi.settings import ExportSettings
@@ -80,7 +80,7 @@ class PitiviViewer(gtk.VBox):
         self.set_spacing(5)
         
         # drawing area
-        self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.0, ratio=4.0/3.0, obey_child=False)
+        self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.5, ratio=4.0/3.0, obey_child=False)
         self.pack_start(self.aframe, expand=True)
         self.drawingarea = ViewerWidget()
         self.drawingarea.connect_after("realize", self._drawingAreaRealizeCb)
@@ -153,7 +153,8 @@ class PitiviViewer(gtk.VBox):
         
         # current time
         timeframe = gtk.Frame()
-        self.timelabel = gtk.Label("00m00s000 / --m--s---")
+        self.timelabel = gtk.Label()
+        self.timelabel.set_markup("<tt>00m00s000 / --m--s---</tt>")
         self.timelabel.set_alignment(1.0, 0.5)
         self.timelabel.set_padding(5, 5)
         timeframe.add(self.timelabel)
@@ -174,9 +175,12 @@ class PitiviViewer(gtk.VBox):
         try:
             width = caps[0]["width"]
             height = caps[0]["height"]
-            
-            # set aspect ratio
-            self.aframe.set_property("ratio", float(width) / float(height))
+            try:
+                par = caps[0]["pixel-aspect-ratio"]
+                self.aframe.set_property("ratio", float(width * par.num) / float(par.denom * height))
+            except:
+                # set aspect ratio
+                self.aframe.set_property("ratio", float(width) / float(height))
         except:
             gst.warning("Something went wrong when getting the video sink aspect ratio")
 
@@ -326,7 +330,7 @@ class PitiviViewer(gtk.VBox):
         gst.info("value:%s, frame:%d" % (gst.TIME_ARGS(value), frame))
         self.current_time = value
         self.current_frame = frame
-        self.timelabel.set_text(time_to_string(value) + " / " + time_to_string(instance.PiTiVi.playground.current.length))
+        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(value), time_to_string(instance.PiTiVi.playground.current.length)))
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
         if isinstance(instance.PiTiVi.playground.current, SmartTimelineBin):
@@ -361,7 +365,7 @@ class PitiviViewer(gtk.VBox):
         self.record_button.set_sensitive((duration > 0) and True or False)
             
         self.posadjust.upper = float(duration)
-        self.timelabel.set_text(time_to_string(self.current_time) + " / " + time_to_string(instance.PiTiVi.playground.current.length))
+        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time), time_to_string(instance.PiTiVi.playground.current.length)))
 
     def _dndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
                            selection, targetType, unused_time):
@@ -421,7 +425,10 @@ class PitiviViewer(gtk.VBox):
     
     def _currentPlaygroundChangedCb(self, playground, smartbin):
         if smartbin.width and smartbin.height:
-            self.aframe.set_property("ratio", float(smartbin.width) / float(smartbin.height))
+            if isinstance(smartbin, SmartFileBin) and smartbin.factory.video_info_stream:
+                print smartbin.factory.video_info_stream.dar
+                ratio = float(smartbin.factory.video_info_stream.dar.denom) / float(smartbin.factory.video_info_stream.dar.num)
+                self.aframe.set_property("ratio", ratio)
         else:
             self.aframe.set_property("ratio", 4.0/3.0)
         if not smartbin == playground.default:
@@ -550,7 +557,7 @@ class EncodingDialog(GladeWindow):
         self.rendering = False
         self.settings = project.settings
 
-    def _fileButtonClickedCb(self, unused_button):
+    def _fileButtonClickedCb(self, button):
         
         dialog = gtk.FileChooserDialog(title="Choose file to render to",
                                        parent=self.window,

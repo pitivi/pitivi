@@ -49,6 +49,8 @@ class PitiviMainWindow(gtk.Window):
         
         self._setActions()
         self._createUi()
+
+        self.isFullScreen = False
         
         instance.PiTiVi.connect("new-project", self._newProjectCb)
         instance.PiTiVi.connect("closing-project", self._closingProjectCb)
@@ -63,9 +65,12 @@ class PitiviMainWindow(gtk.Window):
             ("SaveProject", gtk.STOCK_SAVE, "_Save Project", None, "Save the current project", self._saveProjectCb),
             ("SaveProjectAs", gtk.STOCK_SAVE_AS, "Save Project As...", None, "Save the current project", self._saveProjectAsCb),
             ("ProjectSettings", gtk.STOCK_PROPERTIES, "Project Settings", None, "Edit the project settings", self._projectSettingsCb),
+            ("ImportSources", gtk.STOCK_ADD, "_Import Sources...", None, "Import sources to use", self._importSourcesCb),
             ("Quit", gtk.STOCK_QUIT, "_Quit PiTiVi", None, "Quit PiTiVi", self._quitCb),
+            ("FullScreen", gtk.STOCK_FULLSCREEN, "Toggle _Full Screen", None, "View the main window on all the screen", self._fullScreenCb),
             ("About", gtk.STOCK_ABOUT, "About PiTiVi", None, "Information about PiTiVi", self._aboutCb),
             ("File", None, "_File"),
+            ("View", None, "_View"),
             ("Help", None, "_Help")
             ]
 
@@ -75,7 +80,8 @@ class PitiviMainWindow(gtk.Window):
         # deactivating non-functional actions
         # FIXME : reactivate them
         for action in self.actiongroup.list_actions():
-            if action.get_name() in ["ProjectSettings", "Quit", "File", "Help", "About"]:
+            if action.get_name() in ["ProjectSettings", "Quit", "File", "Help",
+                                     "About", "View", "FullScreen", "ImportSources"]:
                 action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
@@ -84,6 +90,8 @@ class PitiviMainWindow(gtk.Window):
         self.add_accel_group(self.uimanager.get_accel_group())
         self.uimanager.insert_action_group(self.actiongroup, 0)
         self.uimanager.add_ui_from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "actions.xml"))
+
+        self.connect("key-press-event", self._keyPressEventCb)
 
     def _createUi(self):
         """ Create the graphical interface """
@@ -130,34 +138,50 @@ class PitiviMainWindow(gtk.Window):
         #application icon
         self.set_icon_from_file(configure.get_global_pixmap_dir() + "/application-pitivi.png")
 
+    def toggleFullScreen(self):
+        """ Toggle the fullscreen mode of the application """
+        if not self.isFullScreen:
+            self.viewer.window.fullscreen()
+            self.isFullScreen = True
+        else:
+            self.viewer.window.unfullscreen()
+            self.isFullScreen = False
+
     ## UI Callbacks
 
-    def _destroyCb(self, widget, data=None):
+    def _destroyCb(self, unused_widget, data=None):
         instance.PiTiVi.shutdown()
 
+
+    def _keyPressEventCb(self, unused_widget, event):
+        if gtk.gdk.keyval_name(event.keyval) in ['f', 'F', 'F11']:
+            self.toggleFullScreen()
 
     ## Toolbar/Menu actions callback
         
-    def _newProjectCb(self, action):
+    def _newProjectCb(self, unused_action):
         instance.PiTiVi.new_blank_project()
 
-    def _openProjectCb(self, action):
+    def _openProjectCb(self, unused_action):
         raise NotImplementedError
 
-    def _saveProjectCb(self, action):
+    def _saveProjectCb(self, unused_action):
         raise NotImplementedError
 
-    def _saveProjectAsCb(self, action):
+    def _saveProjectAsCb(self, unused_action):
         raise NotImplementedError
 
-    def _projectSettingsCb(self, action):
+    def _projectSettingsCb(self, unused_action):
         l = ProjectSettingsDialog(self, instance.PiTiVi.current)
         l.show()
 
-    def _quitCb(self, action):
+    def _quitCb(self, unused_action):
         instance.PiTiVi.shutdown()
 
-    def _aboutCb(self, action):
+    def _fullScreenCb(self, unused_action):
+        self.toggleFullScreen()
+
+    def _aboutCb(self, unused_action):
 	abt = gtk.AboutDialog()
 	abt.set_name("PiTiVi")
 	abt.set_version("v%s" % pitivi_version)
@@ -168,6 +192,8 @@ class PitiviMainWindow(gtk.Window):
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/application-pitivi.png")
 	abt.show()
 
+    def _importSourcesCb(self, unused_action):
+        self.sourcefactories.sourcelist.showImportSourcesDialog()
 
     ## PiTiVi main object callbacks
 

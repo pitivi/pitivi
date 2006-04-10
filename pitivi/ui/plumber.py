@@ -61,6 +61,8 @@ def get_video_sink():
     if gconfsink.realsink:
         if "force-aspect-ratio"in [prop.name for prop in gobject.list_properties(gconfsink.realsink)]:
             gconfsink.realsink.set_property("force-aspect-ratio", True)
+        if "qos"in [prop.name for prop in gobject.list_properties(gconfsink.realsink)]:
+            gconfsink.realsink.set_property("qos", False)
     return gconfsink
 
 def get_audio_sink():

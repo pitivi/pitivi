@@ -23,4 +23,6 @@
 # set of utility functions
 
 def float_framerate(framerate):
-    return (float(framerate.num) / float(framerate.denom))
+    if framerate.denom == 1:
+        "%d" % framerate.num
+    return "%.2f" % (float(framerate.num) / float(framerate.denom))

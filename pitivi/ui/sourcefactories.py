@@ -41,8 +41,12 @@ from glade import GladeWindow
 def beautify_length(length):
     sec = length / gst.SECOND
     mins = sec / 60
-    sec = sec % 60    
-    return "%02dm%02ds" % (mins, sec)
+    sec = sec % 60
+    if mins < 60:
+        return "%02dm%02ds" % (mins, sec)
+    hours = mins / 60
+    mins = mins % 60
+    return "%02dh%02dm%02ds" % (hours, mins, sec)
 
 class SourceFactoriesWidget(gtk.Notebook):
     """
@@ -56,7 +60,7 @@ class SourceFactoriesWidget(gtk.Notebook):
 
     def _createUi(self):
         """ set up the gui """
-        self.set_tab_pos(gtk.POS_BOTTOM)
+        self.set_tab_pos(gtk.POS_TOP)
         self.sourcelist = SourceListWidget()
         self.append_page(self.sourcelist, gtk.Label("Sources"))
 
@@ -82,8 +86,8 @@ class SourceListWidget(gtk.VBox):
         gtk.VBox.__init__(self)
 
         # Store
-        # icon, name, type(audio/video), length, objectfactory, uri
-        self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, str, str, object, str)
+        # icon, infotext, objectfactory, uri, length
+        self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, object, str, str)
 
         self.set_border_width(5)
 
@@ -111,60 +115,48 @@ class SourceListWidget(gtk.VBox):
         # Displays icon, name, type, length
         self.treeview = gtk.TreeView(self.storemodel)
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
+        self.treeview.set_property("rules_hint", True)
+        self.treeview.set_headers_visible(False)
         tsel = self.treeview.get_selection()
         tsel.set_mode(gtk.SELECTION_MULTIPLE)
         
         pixbufcol = gtk.TreeViewColumn("Icon")
+        pixbufcol.set_expand(False)
+        pixbufcol.set_spacing(5)
         self.treeview.append_column(pixbufcol)
         pixcell = gtk.CellRendererPixbuf()
         pixbufcol.pack_start(pixcell)
         pixbufcol.add_attribute(pixcell, 'pixbuf', 0)
 
-        namecol = gtk.TreeViewColumn("Name")
+        namecol = gtk.TreeViewColumn("Information")
+        self.treeview.append_column(namecol)
+        namecol.set_expand(True)
+        namecol.set_spacing(5)
+        txtcell = gtk.CellRendererText()
+        txtcell.set_property("ellipsize", pango.ELLIPSIZE_END)
+        namecol.pack_start(txtcell)
+        namecol.add_attribute(txtcell, "markup", 1)
+
+        namecol = gtk.TreeViewColumn("Duration")
+        namecol.set_expand(False)
         self.treeview.append_column(namecol)
         txtcell = gtk.CellRendererText()
+        txtcell.set_property("yalign", 0.0)
         namecol.pack_start(txtcell)
-        namecol.add_attribute(txtcell, "text", 1)
-
-        typecol = gtk.TreeViewColumn("Info")
-        self.treeview.append_column(typecol)
-        txtcell = gtk.CellRendererText()
-        typecol.pack_start(txtcell)
-        typecol.add_attribute(txtcell, "text", 2)
-
-        lencol = gtk.TreeViewColumn("Length")
-        self.treeview.append_column(lencol)
-        txtcell = gtk.CellRendererText()
-        lencol.pack_start(txtcell)
-        lencol.add_attribute(txtcell, "text", 3)
-
-        # IconView
-        self.iconview = gtk.IconView(self.storemodel)
-        self.iconview.set_pixbuf_column(0)
-        self.iconview.set_text_column(1)
-        self.iconview.set_selection_mode(gtk.SELECTION_MULTIPLE)
-        self.iconview.connect("button-press-event", self._iconViewButtonPressEventCb)
+        namecol.add_attribute(txtcell, "markup", 4)
 
         # buttons (list/icon view, add, remove)
         button = gtk.Button(stock=gtk.STOCK_ADD)
         button.connect("clicked", self._addButtonClickedCb)
         rbut = gtk.Button(stock=gtk.STOCK_REMOVE)
         rbut.connect("clicked", self._removeButtonClickedCb)
-        self.listviewbutton = gtk.ToggleButton("List View")
-        self.listviewbutton.connect("toggled", self._listViewButtonToggledCb)
-        self.iconviewbutton = gtk.ToggleButton("Icon View")
-        self.iconviewbutton.connect("toggled", self._iconViewButtonToggledCb)        
         bothbox = gtk.HBox()
-        bothbox.pack_end(button, expand=False)
-        bothbox.pack_end(rbut, expand=False)
-        bothbox.pack_end(self.listviewbutton, expand=False)
-        bothbox.pack_end(self.iconviewbutton, expand=False)
+        bothbox.pack_start(button, expand=False)
+        bothbox.pack_start(rbut, expand=False)
         self.pack_start(bothbox, expand=False)
 
         # Start up with tree view
-        self.iconviewmode = True
-        self.scrollwin.add(self.iconview)
-        self.iconviewbutton.set_active(True)
+        self.scrollwin.add(self.treeview)
 
         # callbacks from discoverer
         # TODO : we must remove and reset the callbacks when changing project
@@ -186,12 +178,6 @@ class SourceListWidget(gtk.VBox):
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
-        self.iconview.drag_source_set(gtk.gdk.BUTTON1_MASK,
-                                      [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
-                                      gtk.gdk.ACTION_COPY)
-        self.iconview.connect("drag_begin", self._dndIconBeginCb)
-        self.iconview.connect("drag_data_get", self._dndDataGetCb)
-        
         self.treeview.drag_source_set(gtk.gdk.BUTTON1_MASK,
                                       [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
                                       gtk.gdk.ACTION_COPY)
@@ -199,48 +185,31 @@ class SourceListWidget(gtk.VBox):
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
         
         # Hack so that the views have the same method as self
-        self.iconview.getSelectedItems = self.getSelectedItems
         self.treeview.getSelectedItems = self.getSelectedItems
 
         # Error dialog box
         self.errorDialogBox = None
 
-    def useTreeView(self):
-        """ use the treeview """
-        gst.info("Use tree view")
-        if not self.iconviewmode:
-            return
-        else:
-            self.scrollwin.remove(self.iconview)
-            self.iconview.hide()
-        self.scrollwin.add(self.treeview)
-        self.treeview.show()
-        self.iconviewmode = False
-
-    def useIconView(self):
-        """ use the iconview """
-        gst.info("use icon view")
-        if self.iconviewmode:
-            return
-        else:
-            self.scrollwin.remove(self.treeview)
-            self.treeview.hide()
-        self.scrollwin.add(self.iconview)
-        self.iconview.show()
-        self.iconviewmode = True
-
     def _fileAddedCb(self, unused_sourcelist, factory):
         """ a file was added to the sourcelist """
-        if not factory.thumbnail:
+        try:
+            pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
+        except:
             if factory.is_video:
                 thumbnail = self.videofilepixbuf
             elif factory.is_audio:
                 thumbnail = self.audiofilepixbuf
         else:
             # FIXME : Use DAR from factory
-            pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
-            desiredheight = 128 * pixbuf.get_height() / pixbuf.get_width()
-            thumbnail = pixbuf.scale_simple(128, desiredheight, gtk.gdk.INTERP_BILINEAR)
+            #pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
+            if not factory.video_info_stream:
+                desiredheight = 64 * pixbuf.get_height() / pixbuf.get_width()
+            else:
+                vi = factory.video_info_stream
+                print vi.width, vi.height, vi.par, vi.dar
+                desiredheight = 64 * vi.dar.denom / vi.dar.num
+            print desiredheight
+            thumbnail = pixbuf.scale_simple(64, desiredheight, gtk.gdk.INTERP_BILINEAR)
         if factory.is_video:
             if factory.is_audio:
                 desc = "Audio/Video"
@@ -249,18 +218,17 @@ class SourceListWidget(gtk.VBox):
         else:
             desc = "Audio"
         self.storemodel.append([thumbnail,
-                                os.path.basename(unquote(factory.name)),
-                                desc,
-                                beautify_length(factory.length),
+                                "<b>%s</b>\n<small>%s</small>" % (os.path.basename(unquote(factory.name)), factory.getPrettyInfo()),
                                 factory,
-                                factory.name])
+                                factory.name,
+                                "<b>%s</b>" % beautify_length(factory.length)])
 
     def _fileRemovedCb(self, unused_sourcelist, uri):
         """ the given uri was removed from the sourcelist """
         # find the good line in the storemodel and remove it
         piter = self.storemodel.get_iter_first()
         while piter:
-            if uri == self.storemodel.get_value(piter, 5):
+            if uri == self.storemodel.get_value(piter, 3):
                 self.storemodel.remove(piter)
                 break
             piter = self.storemodel.iter_next(piter)
@@ -292,9 +260,15 @@ class SourceListWidget(gtk.VBox):
 
 
     ## UI Button callbacks
-            
-    def _addButtonClickedCb(self, unused_widget=None):
-        """ called when a user clicks on the add button """
+
+    def _dialogBoxResponseCb(self, dialogbox, response):
+        dialogbox.hide()
+        if response == gtk.RESPONSE_OK:
+            filenames = dialogbox.get_uris()
+            self.addFiles(filenames)
+        dialogbox.destroy()
+
+    def showImportSourcesDialog(self):
         dialog = gtk.FileChooserDialog("Import a file", None,
                                        gtk.FILE_CHOOSER_ACTION_OPEN,
                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
@@ -303,56 +277,50 @@ class SourceListWidget(gtk.VBox):
         dialog.set_default_response(gtk.RESPONSE_OK)
         dialog.set_select_multiple(True)
         dialog.set_modal(False)
-        response = dialog.run()
-        filenames = None
-        dialog.hide()
-        if response == gtk.RESPONSE_OK:
-            filenames = dialog.get_uris()
-            self.addFiles(filenames)
-        dialog.destroy()
+        dialog.connect('response', self._dialogBoxResponseCb)
+        dialog.show()
+        
+            
+    def _addButtonClickedCb(self, unused_widget=None):
+        """ called when a user clicks on the add button """
+        self.showImportSourcesDialog()
+##         dialog = gtk.FileChooserDialog("Import a file", None,
+##                                        gtk.FILE_CHOOSER_ACTION_OPEN,
+##                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+##                                         gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+
+##         dialog.set_default_response(gtk.RESPONSE_OK)
+##         dialog.set_select_multiple(True)
+##         dialog.set_modal(False)
+##         response = dialog.run()
+##         filenames = None
+##         dialog.hide()
+##         if response == gtk.RESPONSE_OK:
+##             filenames = dialog.get_uris()
+##             self.addFiles(filenames)
+##         dialog.destroy()
 
     def _removeButtonClickedCb(self, unused_widget=None):
         """ Called when a user clicks on the remove button """
-        if self.iconviewmode:
-            selected = self.iconview.get_selected_items()
-        else:
-            tsel = self.treeview.get_selection()
-            if tsel.count_selected_rows() < 1:
-                return
-            store, selected = tsel.get_selected_rows()
-        uris = [self.storemodel.get_value(self.storemodel.get_iter(path), 5) for path in selected]
+        tsel = self.treeview.get_selection()
+        if tsel.count_selected_rows() < 1:
+            return
+        store, selected = tsel.get_selected_rows()
+        uris = [self.storemodel.get_value(self.storemodel.get_iter(path), 3) for path in selected]
         for uri in uris:
             del instance.PiTiVi.current.sources[uri]
 
     def _playButtonClickedCb(self, unused_widget):
         """ Called when a user clicks on the play button """
         # get the selected filesourcefactory
-        if self.scrollwin.get_children()[0] == self.treeview:
-            model, paths = self.treeview.get_selection().get_selected_rows()
-        else:
-            paths = self.iconview.get_selected_items()
+        model, paths = self.treeview.get_selection().get_selected_rows()
         if len(paths) < 1:
             return
-        factory = self.storemodel.get_value(self.storemodel.get_iter(paths[0]), 4)
+        factory = self.storemodel.get_value(self.storemodel.get_iter(paths[0]), 2)
         gst.debug("Let's play %s" % factory.name)
         instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
 
-    def _listViewButtonToggledCb(self, button):
-        if button.get_active():
-            self.useTreeView()
-            self.iconviewbutton.set_active(False)
-
-    def _iconViewButtonToggledCb(self, button):
-        if button.get_active():
-            self.useIconView()
-            self.listviewbutton.set_active(False)
-
-
     def _treeViewButtonPressEventCb(self, unused_treeview, event):
-        if event.button == 3:
-            self.popup.popup(None, None, None, event.button, event.time)
-
-    def _iconViewButtonPressEventCb(self, unused_treeview, event):
         if event.button == 3:
             self.popup.popup(None, None, None, event.button, event.time)
 
@@ -366,8 +334,8 @@ class SourceListWidget(gtk.VBox):
                 length = beautify_length(factory.length)
                 if factory.thumbnail:
                     thumbnail = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
-                    desiredheight = 128 * thumbnail.get_height() / thumbnail.get_width()
-                    thumbnail = thumbnail.scale_simple(128, desiredheight, gtk.gdk.INTERP_BILINEAR)
+                    desiredheight = 64 * thumbnail.get_height() / thumbnail.get_width()
+                    thumbnail = thumbnail.scale_simple(64, desiredheight, gtk.gdk.INTERP_BILINEAR)
                 name = os.path.basename(unquote(factory.name))
                 if factory.is_video:
                     if factory.is_audio:
@@ -380,7 +348,9 @@ class SourceListWidget(gtk.VBox):
                     desc = "Audio"
                     if not factory.thumbnail:
                         thumbnail = self.audiofilepixbuf
-                self.storemodel.append([thumbnail, name, desc, length, factory, factory.name])
+                # FIXME : update with new table structure (icon, infotext, objectfactory, uri
+                self.storemodel.append([thumbnail, name, factory, factory.name,
+                                "<b>%s</b>" % beautify_length(factory.length)])
         
         instance.PiTiVi.current.sources.connect("file_added", self._fileAddedCb)
         instance.PiTiVi.current.sources.connect("file_removed", self._fileRemovedCb)
@@ -397,18 +367,6 @@ class SourceListWidget(gtk.VBox):
             filenames = [selection.data.strip()]
         self.addFiles(filenames)
 
-    def _dndIconBeginCb(self, unused_widget, context):
-        gst.info("icon drag_begin")
-        items = self.iconview.get_selected_items()
-        gst.info("got %d items" % len(items))
-        if len(items) < 1:
-            context.drag_abort(int(time.time()))
-        else:
-            if len(items) == 1:
-                thumbnail = self.storemodel.get_value(self.storemodel.get_iter(items[0]), 0)
-                self.iconview.drag_source_set_icon_pixbuf(thumbnail)
-        
-
     def _dndTreeBeginCb(self, unused_widget, context):
         gst.info("tree drag_begin")
         model, rows = self.treeview.get_selection().get_selected_rows()
@@ -417,11 +375,8 @@ class SourceListWidget(gtk.VBox):
 
     def getSelectedItems(self):
         """ returns a list of selected items uri """
-        if self.iconviewmode:
-            uris = [self.storemodel.get_value(self.storemodel.get_iter(x), 5) for x in self.iconview.get_selected_items()]
-        else:
-            model, rows = self.treeview.get_selection().get_selected_rows()
-            uris = [self.storemodel.get_value(self.storemodel.get_iter(x), 5) for x in rows]
+        model, rows = self.treeview.get_selection().get_selected_rows()
+        uris = [self.storemodel.get_value(self.storemodel.get_iter(x), 3) for x in rows]
         return uris
 
     def _dndDataGetCb(self, unused_widget, unused_context, selection,
@@ -546,6 +501,7 @@ class DiscovererErrorDialog(GladeWindow):
         GladeWindow.__init__(self)
         self.window.set_modal(False)
         self.treeview = self.widgets["treeview"]
+        self.window.set_geometry_hints(min_width=400, min_height=300)
         self._setUpTreeView()
 
     def _setUpTreeView(self):
@@ -553,11 +509,15 @@ class DiscovererErrorDialog(GladeWindow):
         self.treeview.set_model(self.storemodel)
 
         txtcell = gtk.CellRendererText()
+        txtcell.set_property("ellipsize", pango.ELLIPSIZE_START)
         uricol = gtk.TreeViewColumn("File", txtcell, text=0)
+        uricol.set_expand(True)
         self.treeview.append_column(uricol)
 
         txtcell2 = gtk.CellRendererText()
+        txtcell2.set_property("ellipsize", pango.ELLIPSIZE_END)
         reasoncol = gtk.TreeViewColumn("Reason", txtcell2, text=1)
+        reasoncol.set_expand(True)
         self.treeview.append_column(reasoncol)
 
     def addFailedFile(self, uri, reason="Unknown reason"):

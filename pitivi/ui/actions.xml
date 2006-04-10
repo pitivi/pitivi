@@ -7,7 +7,12 @@
       <menuitem action="SaveProjectAs" />
       <menuitem action="ProjectSettings" />
       <separator />
+      <menuitem action="ImportSources" />
+      <separator />
       <menuitem action="Quit" />
+    </menu>
+    <menu action="View">
+      <menuitem action="FullScreen" />
     </menu>
     <menu action="Help">
       <menuitem action="About" />
@@ -18,5 +23,9 @@
     <toolitem action="OpenProject" />
     <toolitem action="SaveProject" />
     <toolitem action="SaveProjectAs" />
+    <separator />
+    <toolitem action="ImportSources" />
+    <separator />
+    <toolitem action="FullScreen" />
   </toolbar>
 </ui>
