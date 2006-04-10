@@ -111,6 +111,9 @@ class SourceListWidget(gtk.VBox):
         self.popup.append(remitem)
         self.popup.append(playmenuitem)
 
+        # import sources dialogbox
+        self._importDialog = None
+
         # TreeView
         # Displays icon, name, type, length
         self.treeview = gtk.TreeView(self.storemodel)
@@ -262,23 +265,32 @@ class SourceListWidget(gtk.VBox):
     ## UI Button callbacks
 
     def _dialogBoxResponseCb(self, dialogbox, response):
+        gst.debug("response:%r" % response)
         dialogbox.hide()
         if response == gtk.RESPONSE_OK:
             filenames = dialogbox.get_uris()
             self.addFiles(filenames)
         dialogbox.destroy()
+        self._importDialog = None
+
+    def _dialogBoxCloseCb(self, dialogbox):
+        gst.debug("closing")
+        self._importDialog = None
 
     def showImportSourcesDialog(self):
-        dialog = gtk.FileChooserDialog("Import a file", None,
-                                       gtk.FILE_CHOOSER_ACTION_OPEN,
-                                       (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                        gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        if self._importDialog:
+            return
+        self._importDialog = gtk.FileChooserDialog("Import a file", None,
+                                                   gtk.FILE_CHOOSER_ACTION_OPEN,
+                                                   (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                                    gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
-        dialog.set_default_response(gtk.RESPONSE_OK)
-        dialog.set_select_multiple(True)
-        dialog.set_modal(False)
-        dialog.connect('response', self._dialogBoxResponseCb)
-        dialog.show()
+        self._importDialog.set_default_response(gtk.RESPONSE_OK)
+        self._importDialog.set_select_multiple(True)
+        self._importDialog.set_modal(False)
+        self._importDialog.connect('response', self._dialogBoxResponseCb)
+        self._importDialog.connect('close', self._dialogBoxCloseCb)
+        self._importDialog.show()
         
             
     def _addButtonClickedCb(self, unused_widget=None):

@@ -1,5 +1,10 @@
 2006-04-10  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/sourcefactories.py:
+	Small variable for not displaying the "import sources" dialog box twice.
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/discoverer.py:
 	Added timeout of 10s for discovering each file, should be enough and
 	prevents the discoverer from idling on broken files/plugins.
