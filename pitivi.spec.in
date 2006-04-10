@@ -41,10 +41,12 @@ PiTiVi non-linear video editor
 %{_bindir}/pitivi
 %{_libdir}/pitivi
 %{_datadir}/pitivi/pixmaps/*
-%{_datadir}/pixmaps/application-pitivi.png
+%{_datadir}/pixmaps/pitivi.png
 %{_datadir}/applications/pitivi.desktop
 
 %changelog
+* Mon Apr 10 2006 Edward Hervey <edward at fluendo dot com>
+- Changing application-pitivi.png to pitivi.png
 * Mon Feb 20 2006 Edward Hervey <edward at fluendo dot com>
 - Update for pycairo requirement
 * Thu Jun 23 2005 Christian Schaller <christian at fluendo dot com>

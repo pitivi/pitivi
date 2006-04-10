@@ -6,6 +6,6 @@ Comment[fr]=Editeur Vidéo Non-Linéaire
 Exec=pitivi
 Terminal=false
 Type=Application
-Icon=application-pitivi.png
+Icon=pitivi.png
 Categories=GNOME;GTK;Application;AudioVideo;X-Ximian-Main;X-Red-Hat-Base;
 StartupNotify=true

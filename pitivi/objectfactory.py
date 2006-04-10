@@ -310,6 +310,7 @@ class SMPTETransitionFactory(TransitionFactory):
 class MultimediaStream:
 
     def __init__(self, caps):
+        gst.log("new with caps %s" % caps.to_string())
         self.caps = caps
         self.raw = False
         self.fixed = True
@@ -440,6 +441,6 @@ def get_stream_for_caps(caps):
     if val.startswith("audio/"):
         return AudioStream(caps)
     if val.startswith("text/"):
-        return TextStream
+        return TextStream(caps)
     return None
                      

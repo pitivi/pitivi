@@ -1,5 +1,18 @@
 2006-04-10  Edward Hervey  <edward@fluendo.com>
 
+	* application-pitivi.png:
+	* pitivi.png:
+	* Makefile.am:
+	* pitivi.desktop.in:
+	* pitivi.spec.in:
+	* pitivi/ui/mainwindow.py:
+	Changing pitivi-application.png to pitivi.png
+	Closes #337726
+	* pitivi/objectfactory.py:
+	slight bugfixes and debug
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/sourcefactories.py:
 	* pitivi/ui/viewer.py:
 	Remove prints

@@ -6,7 +6,7 @@ desktopdir = $(datadir)/applications
 desktop_DATA = pitivi.desktop
 
 icondir = $(datadir)/pixmaps
-icon_DATA = application-pitivi.png
+icon_DATA = pitivi.png
 
 EXTRA_DIST = \
 	pitivi.spec \
@@ -16,4 +16,4 @@ EXTRA_DIST = \
 	NEWS \
 	AUTHORS \
 	RELEASE \
-	application-pitivi.png
+	pitivi.png
