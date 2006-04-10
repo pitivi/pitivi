@@ -67,7 +67,7 @@ class PitiviMainWindow(gtk.Window):
             ("ProjectSettings", gtk.STOCK_PROPERTIES, "Project Settings", None, "Edit the project settings", self._projectSettingsCb),
             ("ImportSources", gtk.STOCK_ADD, "_Import Sources...", None, "Import sources to use", self._importSourcesCb),
             ("Quit", gtk.STOCK_QUIT, "_Quit PiTiVi", None, "Quit PiTiVi", self._quitCb),
-            ("FullScreen", gtk.STOCK_FULLSCREEN, "Toggle _Full Screen", None, "View the main window on all the screen", self._fullScreenCb),
+            ("FullScreen", gtk.STOCK_FULLSCREEN, "Toggle _Full Screen", None, "View the main window on the whole screen", self._fullScreenCb),
             ("About", gtk.STOCK_ABOUT, "About PiTiVi", None, "Information about PiTiVi", self._aboutCb),
             ("File", None, "_File"),
             ("View", None, "_View"),

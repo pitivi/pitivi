@@ -118,6 +118,7 @@ class SourceListWidget(gtk.VBox):
         # Displays icon, name, type, length
         self.treeview = gtk.TreeView(self.storemodel)
         self.treeview.connect("button-press-event", self._treeViewButtonPressEventCb)
+        self.treeview.connect("row-activated", self._rowActivatedCb)
         self.treeview.set_property("rules_hint", True)
         self.treeview.set_headers_visible(False)
         tsel = self.treeview.get_selection()
@@ -193,6 +194,28 @@ class SourceListWidget(gtk.VBox):
         # Error dialog box
         self.errorDialogBox = None
 
+    def showImportSourcesDialog(self):
+        if self._importDialog:
+            return
+        self._importDialog = gtk.FileChooserDialog("Import a file", None,
+                                                   gtk.FILE_CHOOSER_ACTION_OPEN,
+                                                   (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                                    gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+
+        self._importDialog.set_default_response(gtk.RESPONSE_OK)
+        self._importDialog.set_select_multiple(True)
+        self._importDialog.set_modal(False)
+        self._importDialog.connect('response', self._dialogBoxResponseCb)
+        self._importDialog.connect('close', self._dialogBoxCloseCb)
+        self._importDialog.show()
+        
+    def addFiles(self, list):
+        """ Add files to the list """
+        instance.PiTiVi.current.sources.addUris(list)
+
+
+    # sourcelist callbacks
+    
     def _fileAddedCb(self, unused_sourcelist, factory):
         """ a file was added to the sourcelist """
         try:
@@ -245,9 +268,6 @@ class SourceListWidget(gtk.VBox):
             self.errorDialogBox.show()
         self.errorDialogBox.addFailedFile(uri, reason)
 
-    def addFiles(self, list):
-        """ Add files to the list """
-        instance.PiTiVi.current.sources.addUris(list)
 
     ## Error Dialog Box callbacks
 
@@ -260,8 +280,8 @@ class SourceListWidget(gtk.VBox):
         self.errorDialogBox = None
 
 
-    ## UI Button callbacks
-
+    ## Import Sources Dialog Box callbacks
+        
     def _dialogBoxResponseCb(self, dialogbox, response):
         gst.debug("response:%r" % response)
         dialogbox.hide()
@@ -275,40 +295,12 @@ class SourceListWidget(gtk.VBox):
         gst.debug("closing")
         self._importDialog = None
 
-    def showImportSourcesDialog(self):
-        if self._importDialog:
-            return
-        self._importDialog = gtk.FileChooserDialog("Import a file", None,
-                                                   gtk.FILE_CHOOSER_ACTION_OPEN,
-                                                   (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                                    gtk.STOCK_OPEN, gtk.RESPONSE_OK))
 
-        self._importDialog.set_default_response(gtk.RESPONSE_OK)
-        self._importDialog.set_select_multiple(True)
-        self._importDialog.set_modal(False)
-        self._importDialog.connect('response', self._dialogBoxResponseCb)
-        self._importDialog.connect('close', self._dialogBoxCloseCb)
-        self._importDialog.show()
-        
-            
+    ## UI Button callbacks
+
     def _addButtonClickedCb(self, unused_widget=None):
         """ called when a user clicks on the add button """
         self.showImportSourcesDialog()
-##         dialog = gtk.FileChooserDialog("Import a file", None,
-##                                        gtk.FILE_CHOOSER_ACTION_OPEN,
-##                                        (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-##                                         gtk.STOCK_OPEN, gtk.RESPONSE_OK))
-
-##         dialog.set_default_response(gtk.RESPONSE_OK)
-##         dialog.set_select_multiple(True)
-##         dialog.set_modal(False)
-##         response = dialog.run()
-##         filenames = None
-##         dialog.hide()
-##         if response == gtk.RESPONSE_OK:
-##             filenames = dialog.get_uris()
-##             self.addFiles(filenames)
-##         dialog.destroy()
 
     def _removeButtonClickedCb(self, unused_widget=None):
         """ Called when a user clicks on the remove button """
@@ -333,6 +325,10 @@ class SourceListWidget(gtk.VBox):
     def _treeViewButtonPressEventCb(self, unused_treeview, event):
         if event.button == 3:
             self.popup.popup(None, None, None, event.button, event.time)
+
+    def _rowActivatedCb(self, unused_treeview, path, unused_column):
+        factory = self.storemodel.get_value(self.storemodel.get_iter(path), 2)
+        instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
 
     def _newProjectCb(self, unused_pitivi, project):
         # clear the storemodel

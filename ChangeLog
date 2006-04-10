@@ -1,5 +1,13 @@
 2006-04-10  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/mainwindow.py:
+	Better sentence for tooltip of "Toggle Fullscreen" action
+	* pitivi/ui/sourcefactories.py:
+	Double-click on a row makes it play.
+	Slight cleanup.
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
 	* configure.ac:
 	GNonLin >= 0.10.1
 	GStreamer >= 0.10.4
