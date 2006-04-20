@@ -56,6 +56,7 @@ class PitiviViewer(gtk.VBox):
         self.current_frame = -1
         self.valuechangedid = 0
         self.currentlySeeking = False
+        self.currentState = gst.STATE_PAUSED
         self._createUi()
 
         # connect to the sourcelist for temp factories
@@ -232,7 +233,8 @@ class PitiviViewer(gtk.VBox):
     def _drawingAreaRealizeCb(self, drawingarea):
         drawingarea.modify_bg(gtk.STATE_NORMAL, drawingarea.style.black)
         self._createSinkThreads()
-        instance.PiTiVi.playground.play()
+        if not instance.PiTiVi.playground.play() == gst.STATE_CHANGE_FAILURE:
+            self.currentState = gst.STATE_PLAYING
 
     ## gtk.HScale callbacks for self.slider
 
@@ -255,7 +257,8 @@ class PitiviViewer(gtk.VBox):
         if not self.checktimeoutid:
             gst.debug("adding checktime again")
             self.checktimeoutid = gobject.timeout_add(300, self._checkTimeCb)
-        instance.PiTiVi.playground.current.set_state(gst.STATE_PLAYING)
+        # revert to previous state
+        instance.PiTiVi.playground.current.set_state(self.currentState)
         return False
 
     def _sliderValueChangedCb(self, slider):
@@ -412,9 +415,11 @@ class PitiviViewer(gtk.VBox):
 
     def _playButtonCb(self, unused_button, isplaying):
         if isplaying:
-            instance.PiTiVi.playground.play()
+            if not instance.PiTiVi.playground.play() == gst.STATE_CHANGE_FAILURE:
+                self.currentState = gst.STATE_PLAYING
         else:
-            instance.PiTiVi.playground.pause()
+            if not instance.PiTiVi.playground.pause() == gst.STATE_CHANGE_FAILURE:
+                self.currentState = gst.STATE_PAUSED
 
     def _nextCb(self, unused_button):
         pass
