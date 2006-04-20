@@ -303,7 +303,7 @@ class PlayGround(gobject.GObject):
                 self.emit("error", "Audio output problem"<
                           "There is a problem with your audio output device")
         else:
-            self.emit("error", detail, gerror.message)
+            self.emit("error", gerror.message, detail)
             
         
 

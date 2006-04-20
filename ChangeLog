@@ -1,5 +1,10 @@
 2006-04-20  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/playground.py:
+	Format default error messages in a saner way.
+
+2006-04-20  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/bin.py:
 	Moved getRealVideoSink(), record() and stopRecording() methods up from
 	SmartTimelineBin to SmartBin.
