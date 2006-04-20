@@ -1,3 +1,21 @@
+2006-04-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Moved getRealVideoSink(), record() and stopRecording() methods up from
+	SmartTimelineBin to SmartBin.
+	* pitivi/playground.py:
+	Documentation cleanup.
+	Make relevant functions return False for failures.
+	Added _handleError() and _handleWarning() methods for analyzing the
+	error/warning information and creating user-friendly messages.
+	* pitivi/utils.py:
+	New function bin_contains() in order to figure out if an element is in
+	a bin recursively.
+	* pitivi/ui/mainwindow.py:
+	Only display one ErrorDialogBox at a time
+	* pitivi/ui/viewer.py:
+	Improve aspect ratio handling
+
 2006-04-10  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/playground.py:

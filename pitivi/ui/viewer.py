@@ -175,14 +175,18 @@ class PitiviViewer(gtk.VBox):
         try:
             width = caps[0]["width"]
             height = caps[0]["height"]
+        except:
+            gst.warning("Something went wrong when getting the video sink aspect ratio")
+        else:
             try:
                 par = caps[0]["pixel-aspect-ratio"]
-                self.aframe.set_property("ratio", float(width * par.num) / float(par.denom * height))
             except:
                 # set aspect ratio
                 self.aframe.set_property("ratio", float(width) / float(height))
-        except:
-            gst.warning("Something went wrong when getting the video sink aspect ratio")
+                gst.warning("setting aspectratio to %f" % (float(width) / float(height)))
+            else:
+                self.aframe.set_property("ratio", float(width * par.num) / float(par.denom * height))
+                gst.warning("setting aspectratio to %f" % (float(width * par.num) / float(par.denom * height)))
 
     def _createSinkThreads(self):
         """ Creates the sink threads for the playground """
@@ -193,14 +197,12 @@ class PitiviViewer(gtk.VBox):
         vqueue = gst.element_factory_make('queue')
         cspace = gst.element_factory_make('ffmpegcolorspace')
         vsinkthread.add(self.videosink, vqueue, cspace)
-        cspace.link(vqueue)
         vqueue.link(self.videosink)
+        cspace.link(vqueue)
         vsinkthread.videosink = self.videosink
         vsinkthread.add_pad(gst.GhostPad("sink", cspace.get_pad('sink')))
 
-        if self.videosink.realsink:
-            self.videosink.info("Setting callback on 'notify::caps'")
-            self.videosink.realsink.get_pad("sink").connect("notify::caps", self._videosinkCapsNotifyCb)
+        vsinkthread.get_pad("sink").connect("notify::caps", self._videosinkCapsNotifyCb)
 
         self.drawingarea.videosink = self.videosink
         self.videosink.set_xwindow_id(self.drawingarea.window.xid)
@@ -424,12 +426,6 @@ class PitiviViewer(gtk.VBox):
     ## Playground callbacks
     
     def _currentPlaygroundChangedCb(self, playground, smartbin):
-        if smartbin.width and smartbin.height:
-            if isinstance(smartbin, SmartFileBin) and smartbin.factory.video_info_stream:
-                ratio = float(smartbin.factory.video_info_stream.dar.denom) / float(smartbin.factory.video_info_stream.dar.num)
-                self.aframe.set_property("ratio", ratio)
-        else:
-            self.aframe.set_property("ratio", 4.0/3.0)
         if not smartbin == playground.default:
             if isinstance(smartbin, SmartTimelineBin):
                 gst.info("switching to Timeline, setting duration to %s" % (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))

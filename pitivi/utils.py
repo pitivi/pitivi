@@ -22,7 +22,22 @@
 
 # set of utility functions
 
+import gst
+
 def float_framerate(framerate):
     if framerate.denom == 1:
         "%d" % framerate.num
     return "%.2f" % (float(framerate.num) / float(framerate.denom))
+
+def bin_contains(bin, element):
+    """ Returns True if the bin contains the given element, the search is recursive """
+    if not isinstance(bin, gst.Bin):
+        return False
+    if not isinstance(element, gst.Element):
+        return False
+    for elt in bin:
+        if element is elt:
+            return True
+        if isinstance(elt, gst.Bin) and bin_contains(elt, element):
+            return True
+    return False

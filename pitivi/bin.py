@@ -59,6 +59,8 @@ class SmartBin(gst.Pipeline):
         self._connectSource()
         self.asinkthread = None
         self.vsinkthread = None
+        self.encthread = None
+        self.tmpasink = None
 
     def _addSource(self):
         """ add the source to self """
@@ -69,7 +71,10 @@ class SmartBin(gst.Pipeline):
         raise NotImplementedError
 
     def setAudioSinkThread(self, asinkthread):
-        """ set the audio sink thread """
+        """
+        Set the audio sink thread.
+        Returns False if there was a problem.
+        """
         self.debug("asinkthread : %s" % asinkthread)
         res, state, pending = self.get_state(0)
         if state == gst.STATE_PLAYING:
@@ -85,7 +90,10 @@ class SmartBin(gst.Pipeline):
         return True
 
     def setVideoSinkThread(self, vsinkthread):
-        """ set the video sink thread """
+        """
+        Set the video sink thread.
+        Returns False if there was a problem.
+        """
         self.debug("vsinkthread : %s" % vsinkthread)
         res , state , pending = self.get_state(0)
         if state == gst.STATE_PLAYING:
@@ -106,7 +114,10 @@ class SmartBin(gst.Pipeline):
         return True
 
     def removeAudioSinkThread(self):
-        """ remove the audio sink thread """
+        """
+        Remove the audio sink thread.
+        Returns False if there was a problem.
+        """
         self.debug("asinkthread : %s" % self.asinkthread)
         result, state, pending = self.get_state(0)
         if state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
@@ -121,7 +132,10 @@ class SmartBin(gst.Pipeline):
         return True
 
     def removeVideoSinkThread(self):
-        """ remove the videos sink thread """
+        """
+        Remove the videos sink thread.
+        Returns False if there was a problem.
+        """
         self.debug("vsinkthread : %s" % self.vsinkthread)
         result, state, pending = self.get_state(0)
         if state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
@@ -135,6 +149,125 @@ class SmartBin(gst.Pipeline):
         self.vsinkthread = None
         return True
 
+    def getRealVideoSink(self):
+        """ returns the real video sink element or None """
+        if not self.vsinkthread:
+            return None
+        return self.vsinkthread.videosink.realsink
+
+    def record(self, uri, settings=None):
+        """
+        Render the SmartBin to the given uri.
+        Returns : True if the encoding process could be started properly, False otherwise."""
+        self.debug("setting to READY")
+        if self.set_state(gst.STATE_READY) == gst.STATE_CHANGE_FAILURE:
+            self.warning("Couldn't switch to READY !")
+            return False
+
+        # temporarily remove the audiosinkthread
+        self.debug("disconnecting audio sink thread")
+        self.tmpasink = self.asinkthread
+        if not self.removeAudioSinkThread():
+            return False
+
+        self.debug("creating and adding encoding thread")
+        self.encthread = self._makeEncThread(uri, settings)
+        if not self.encthread:
+            gst.warning("Couldn't create encoding thread")
+            return False
+        self.add(self.encthread)
+        self.debug("encoding thread added")
+
+        # set sync=false on the videosink
+        self.getRealVideoSink().set_property("sync", False)
+        
+        self.debug("linking vtee to ecnthread:vsink")
+        try:
+            self.vtee.get_pad("src%d").link(self.encthread.get_pad("vsink"))
+        except:
+            return False
+        
+        self.debug("linking atee to encthread:asink")
+        try:
+            self.atee.get_pad("src%d").link(self.encthread.get_pad("asink"))
+        except:
+            return False
+
+        self.debug("going back to PLAYING")
+        changeret = self.set_state(gst.STATE_PLAYING)
+        self.debug("now in PLAYING, set_state() returned %r" % changeret)
+        if changeret == gst.STATE_CHANGE_FAILURE:
+            return False
+        return True
+
+    def stopRecording(self):
+        """ stop the recording, removing the encoding thread """
+        self.set_state(gst.STATE_PAUSED)
+        
+        if self.encthread:
+            apad = self.encthread.get_pad("vsink")
+            apad.get_peer().unlink(apad)
+            apad = self.encthread.get_pad("asink")
+            apad.get_peer().unlink(apad)
+            self.remove(self.encthread)
+            del self.encthread
+            self.encthread = None
+            self.setAudioSinkThread(self.tmpasink)
+            self.tmpasink = None
+
+        self.getRealVideoSink().set_property("sync", True)
+
+    def _makeEncThread(self, uri, settings=None):
+        # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
+        if not settings:
+            if isinstance(self, SmartTimelineBin):
+                settings = self.project.settings
+            else:
+                return None
+        ainq = gst.element_factory_make("queue", "ainq")
+        aoutq = gst.element_factory_make("queue", "aoutq")
+        vinq = gst.element_factory_make("queue", "vinq")
+        voutq = gst.element_factory_make("queue", "voutq")
+        aenc = gst.element_factory_make(settings.aencoder ,"aenc")
+        for prop, value in settings.acodecsettings.iteritems():
+            aenc.set_property(prop, value)
+        venc = gst.element_factory_make(settings.vencoder, "venc")
+        for prop, value in settings.vcodecsettings.iteritems():
+            venc.set_property(prop, value)
+        mux = gst.element_factory_make(settings.muxer, "mux")
+        for prop, value in settings.containersettings.iteritems():
+            mux.set_property(prop, value)
+        fsink = gst.element_make_from_uri(gst.URI_SINK, uri, "fsink")
+
+
+        thread = gst.Bin("encthread")
+        thread.add(mux, fsink, aoutq, voutq)
+
+        thread.add(ainq, aenc)
+       
+        aconv = gst.element_factory_make("audioconvert", "aconv")
+        thread.add(aconv)
+        ainq.link(aconv)
+        aconv.link(aenc)
+        aenc.link(aoutq)
+
+        thread.add(vinq, venc)
+        csp = gst.element_factory_make("ffmpegcolorspace", "csp")
+        thread.add(csp)
+        vinq.link(csp)
+        csp.link(venc)
+        venc.link(voutq)
+
+        thread.add_pad(gst.GhostPad("vsink", vinq.get_pad("sink")))
+        thread.add_pad(gst.GhostPad("asink", ainq.get_pad("sink")))
+
+        thread.filesink = fsink
+
+        aoutq.link(mux)
+        voutq.link(mux)
+        mux.link(fsink)
+
+        return thread
 
 class SmartFileBin(SmartBin):
     """
@@ -201,8 +334,6 @@ class SmartTimelineBin(SmartBin):
         self.project.settings.connect("settings-changed", self._settingsChangedCb)
         project.timeline.videocomp.connect("start-duration-changed", self._startDurationChangedCb)
         self.length = project.timeline.videocomp.duration
-        self.encthread = None
-        self.tmpasink = None
         SmartBin.__init__(self, "project-" + project.name,
                           displayname = "Project: " + project.name)
 
@@ -230,121 +361,6 @@ class SmartTimelineBin(SmartBin):
         elif pad.get_name() == "vsrc":
             pad.unlink(self.vtee.get_pad("sink"))
 
-    def record(self, uri, settings=None):
-        """
-        render the timeline to the given uri.
-        Returns : True if the encoding process could be started properly, False otherwise."""
-        self.debug("setting to READY")
-        if self.set_state(gst.STATE_READY) == gst.STATE_CHANGE_FAILURE:
-            self.warning("Couldn't switch to READY !")
-            return False
-
-        # temporarily remove the audiosinkthread
-        self.debug("disconnecting audio sink thread")
-        self.tmpasink = self.asinkthread
-        if not self.removeAudioSinkThread():
-            return False
-
-        self.debug("creating and adding encoding thread")
-        self.encthread = self._makeEncThread(uri, settings)
-        self.add(self.encthread)
-        self.debug("encoding thread added")
-
-        # set sync=false on the videosink
-        self.getRealVideoSink().set_property("sync", False)
-        
-        self.debug("linking vtee to ecnthread:vsink")
-        try:
-            self.vtee.get_pad("src%d").link(self.encthread.get_pad("vsink"))
-        except:
-            return False
-        
-        self.debug("linking atee to encthread:asink")
-        try:
-            self.atee.get_pad("src%d").link(self.encthread.get_pad("asink"))
-        except:
-            return False
-
-        self.debug("going back to PLAYING")
-        changeret = self.set_state(gst.STATE_PLAYING)
-        self.debug("now in PLAYING, set_state() returned %r" % changeret)
-        if changeret == gst.STATE_CHANGE_FAILURE:
-            return False
-        return True
-
-    def stopRecording(self):
-        """ stop the recording, removing the encoding thread """
-        self.set_state(gst.STATE_PAUSED)
-        
-        if self.encthread:
-            apad = self.encthread.get_pad("vsink")
-            apad.get_peer().unlink(apad)
-            apad = self.encthread.get_pad("asink")
-            apad.get_peer().unlink(apad) 
-            #self.vtee.unlink(self.encthread)
-            #self.atee.unlink(self.encthread)
-            self.remove(self.encthread)
-            del self.encthread
-            self.encthread= None
-            self.setAudioSinkThread(self.tmpasink)
-            self.tmpasink = None
-
-        self.getRealVideoSink().set_property("sync", True)
-
-    def getRealVideoSink(self):
-        """ returns the real video sink element or None """
-        if not self.vsinkthread:
-            return None
-        return self.vsinkthread.videosink.realsink
-
-    def _makeEncThread(self, uri, settings=None):
-        # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
-        if not settings:
-            settings = self.project.settings
-        ainq = gst.element_factory_make("queue", "ainq")
-        aoutq = gst.element_factory_make("queue", "aoutq")
-        vinq = gst.element_factory_make("queue", "vinq")
-        voutq = gst.element_factory_make("queue", "voutq")
-        aenc = gst.element_factory_make(settings.aencoder ,"aenc")
-        for prop, value in settings.acodecsettings.iteritems():
-            aenc.set_property(prop, value)
-        venc = gst.element_factory_make(settings.vencoder, "venc")
-        for prop, value in settings.vcodecsettings.iteritems():
-            venc.set_property(prop, value)
-        mux = gst.element_factory_make(settings.muxer, "mux")
-        for prop, value in settings.containersettings.iteritems():
-            mux.set_property(prop, value)
-        fsink = gst.element_make_from_uri(gst.URI_SINK, uri, "fsink")
-
-
-        thread = gst.Bin("encthread")
-        thread.add(mux, fsink, aoutq, voutq)
-
-        thread.add(ainq, aenc)
-       
-        aconv = gst.element_factory_make("audioconvert", "aconv")
-        thread.add(aconv)
-        ainq.link(aconv)
-        aconv.link(aenc)
-        aenc.link(aoutq)
-
-        thread.add(vinq, venc)
-        csp = gst.element_factory_make("ffmpegcolorspace", "csp")
-        thread.add(csp)
-        vinq.link(csp)
-        csp.link(venc)
-        venc.link(voutq)
-
-        thread.add_pad(gst.GhostPad("vsink", vinq.get_pad("sink")))
-        thread.add_pad(gst.GhostPad("asink", ainq.get_pad("sink")))
-
-        thread.filesink = fsink
-
-        aoutq.link(mux)
-        voutq.link(mux)
-        mux.link(fsink)
-
-        return thread
 
     def _startDurationChangedCb(self, unused_videocomp, start, duration):
         self.info("smart timeline bin: start duration changed %d %d" %( start, duration ))

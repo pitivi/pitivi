@@ -51,6 +51,7 @@ class PitiviMainWindow(gtk.Window):
         self._createUi()
 
         self.isFullScreen = False
+        self.errorDialogBox = None
         
         instance.PiTiVi.connect("new-project", self._newProjectCb)
         instance.PiTiVi.connect("closing-project", self._closingProjectCb)
@@ -153,17 +154,20 @@ class PitiviMainWindow(gtk.Window):
     def _errorMessageResponseCb(self, dialogbox, unused_response):
         dialogbox.hide()
         dialogbox.destroy()
+        self.errorDialogBox = None
 
     def _playGroundErrorCb(self, unused_playground, error, detail):
-        dialog = gtk.MessageDialog(None, gtk.DIALOG_MODAL,
-                                   gtk.MESSAGE_ERROR,
-                                   gtk.BUTTONS_OK,
-                                   None)
-        dialog.set_markup("<b>%s</b>" % error)
-        dialog.connect("response", self._errorMessageResponseCb)
+        if self.errorDialogBox:
+            return
+        self.errorDialogBox = gtk.MessageDialog(None, gtk.DIALOG_MODAL,
+                                                gtk.MESSAGE_ERROR,
+                                                gtk.BUTTONS_OK,
+                                                None)
+        self.errorDialogBox.set_markup("<b>%s</b>" % error)
+        self.errorDialogBox.connect("response", self._errorMessageResponseCb)
         if detail:
-            dialog.format_secondary_text(detail)
-        dialog.show()
+            self.errorDialogBox.format_secondary_text(detail)
+        self.errorDialogBox.show()
 
 
     ## UI Callbacks
