@@ -1,3 +1,10 @@
+2006-04-21  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Make the Viewer take the remaining space, rather than the sourcelist.
+	* pitivi/ui/sourcefactories.py:
+	The minimum width of the source list is set to 300pixels.
+
 2006-04-21  Andy Wingo  <wingo@pobox.com>
 
 	* pitivi/objectfactory.py (FileSourceFactory.__gproperties__): Fix

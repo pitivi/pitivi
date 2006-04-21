@@ -134,8 +134,8 @@ class PitiviMainWindow(gtk.Window):
         # connect viewer's timeline position callback to the timeline widget
         self.viewer.addTimelinePositionCallback(self.timeline.timelinePositionChanged)
 
-        hpaned.pack1(self.sourcefactories, resize=True, shrink=False)
-        hpaned.pack2(viewerframe, resize=False, shrink=False)
+        hpaned.pack1(self.sourcefactories, resize=False, shrink=False)
+        hpaned.pack2(viewerframe, resize=True, shrink=False)
 
         #application icon
         self.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")

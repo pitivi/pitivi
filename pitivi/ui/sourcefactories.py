@@ -90,6 +90,7 @@ class SourceListWidget(gtk.VBox):
         self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, object, str, str)
 
         self.set_border_width(5)
+        self.set_size_request(300, -1)
 
         # Scrolled Window
         self.scrollwin = gtk.ScrolledWindow()
