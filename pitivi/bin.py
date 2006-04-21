@@ -377,6 +377,7 @@ class SmartDefaultBin(SmartBin):
         gst.log("Creating new smartdefaultbin")
         self.videotestsrc = gst.element_factory_make("videotestsrc", "vtestsrc")
         self.silence = gst.element_factory_make("audiotestsrc", "silence")
+        self.videotestsrc.set_property("pattern", 2)
         self.silence.set_property("wave", 4)
         self.has_audio = True
         self.has_video = True

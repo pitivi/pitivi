@@ -386,6 +386,7 @@ class PitiviViewer(gtk.VBox):
             instance.PiTiVi.playground.playTemporaryFilesourcefactory(instance.PiTiVi.current.sources[uri])
         else:
             instance.PiTiVi.current.sources.addTmpUri(uri)
+        gst.info("end")
 
     def _tmpIsReadyCb(self, unused_sourcelist, factory):
         """ the temporary factory is ready, we can know set it to play """
@@ -451,14 +452,18 @@ class PitiviViewer(gtk.VBox):
 
     def _binAddedCb(self, unused_playground, smartbin):
         # a smartbin was added
-        self.sourcelist.append([smartbin.displayname, smartbin])
+        # check if the item isn't already in the sourcelist:
         self.sourcecombobox.set_sensitive(True)
+        for name, bin in self.sourcelist:
+            if name == smartbin.displayname:
+                return
+        self.sourcelist.append([smartbin.displayname, smartbin])
 
     def _getSmartbinIndex(self, smartbin):
         # find the index of a smartbin
         # return -1 if it's not in there
         for pos in range(len(self.sourcelist)):
-            if self.sourcelist[pos][1] == smartbin:
+            if self.sourcelist[pos][0] == smartbin.displayname:
                 return pos
         return -1
 
@@ -519,6 +524,7 @@ class PlayPauseButton(gtk.Button):
 
     def __init__(self):
         gtk.Button.__init__(self, label="")
+        self.playing = True
         self.setPlay()
         self.connect('clicked', self._clickedCb)        
 
@@ -531,13 +537,17 @@ class PlayPauseButton(gtk.Button):
 
     def setPlay(self):
         """ display the play image """
-        self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PLAY, gtk.ICON_SIZE_BUTTON))
-        self.playing = False
+        gst.log("setPlay")
+        if self.playing:
+            self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PLAY, gtk.ICON_SIZE_BUTTON))
+            self.playing = False
 
     def setPause(self):
+        gst.log("setPause")
         """ display the pause image """
-        self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON))
-        self.playing = True
+        if not self.playing:
+            self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON))
+            self.playing = True
 
 
 class EncodingDialog(GladeWindow):

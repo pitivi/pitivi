@@ -1,5 +1,14 @@
 2006-04-21  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/bin.py:
+	Use black pattern for default video source
+	* pitivi/ui/timeline.py:
+	Don't show the timeline label at the left of the timeline window.
+	* pitivi/ui/viewer.py:
+	Don't add more than once the bins in the combobox.
+
+2006-04-21  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/mainwindow.py:
 	Make the Viewer take the remaining space, rather than the sourcelist.
 	* pitivi/ui/sourcefactories.py:
