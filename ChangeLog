@@ -1,5 +1,8 @@
 2006-04-21  Andy Wingo  <wingo@pobox.com>
 
+	* pitivi/objectfactory.py (FileSourceFactory.__gproperties__): Fix
+	range of "length" pspec.
+
 	* configure.ac: Remove calls to libtool.
 
 	* autogen.sh: Update to simplify, not run libtoolize.

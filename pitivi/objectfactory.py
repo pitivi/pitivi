@@ -174,7 +174,7 @@ class FileSourceFactory(ObjectFactory):
                      "Length",
                      "Length of element",
                      0,
-                     -1,
+                     (1<<63)-1, # should be (1<<64)-1 but #335854
                      0,
                      gobject.PARAM_READWRITE ),
         "thumbnail" :  ( gobject.TYPE_STRING,
