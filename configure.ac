@@ -58,11 +58,6 @@ PKG_CHECK_MODULES(PYGTK, pygtk-2.0 >= $PYGTK_REQ)
 PYGTK_DIR="`$PKG_CONFIG --variable=pyexecdir pygtk-2.0`"
 AC_SUBST(PYGTK_DIR)
 AC_MSG_NOTICE(Using pygtk installed in $PYGTK_DIR)
-PYGTK_VERSION="`$PKG_CONFIG --modversion pygtk-2.0`"
-if test "x$PYGTK_VERSION" = "x2.5.2"
-then
-  AC_MSG_ERROR([PyGTK 2.5.2 contains known bugs, please install other version])
-fi
 
 export PYTHONPATH=$PYGTK_DIR:$PYTHONPATH
 
