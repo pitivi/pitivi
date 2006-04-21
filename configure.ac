@@ -142,7 +142,7 @@ import sys
 import pygst; pygst.require('0.10')
 import gst
 plugin = gst.registry_get_default().find_plugin('gnonlin')
-if plugin and p.get_version() >= '$GNONLIN_REQ'):
+if plugin and plugin.get_version() >= '$GNONLIN_REQ':
   sys.exit(0)
 sys.exit(1)
 "

@@ -1,5 +1,7 @@
 2006-04-21  Andy Wingo  <wingo@pobox.com>
 
+	* configure.ac: Fix the gnonlin check FO REAL.
+
 	* bin/pitivi.in (CONFIGURED_PYTHONPATH): Update for PYTHONPATH
 	name change.
 	(_add_pitivi_path): If a path in the configured pythonpath is
