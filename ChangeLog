@@ -1,5 +1,10 @@
 2006-04-21  Andy Wingo  <wingo@pobox.com>
 
+	* bin/Makefile.am: No need for the makefile rule any more.
+
+	* configure.ac: Output bin/pitivi using AC_CONFIG_FILES, so that
+	we can make it executable directly after the configure.
+
 	* configure.ac: Fix the gnonlin check FO REAL.
 
 	* bin/pitivi.in (CONFIGURED_PYTHONPATH): Update for PYTHONPATH

@@ -163,10 +163,11 @@ dnl AM_GNU_GETTEXT([external])
 CONFIGURED_PYTHONPATH=$PYTHONPATH
 AC_SUBST(CONFIGURED_PYTHONPATH)
 
+AC_CONFIG_FILES([bin/pitivi], [chmod +x bin/pitivi])
+
 dnl output stuff
 AC_OUTPUT(
 Makefile
-bin/pitivi
 bin/Makefile
 common/Makefile
 common/m4/Makefile
