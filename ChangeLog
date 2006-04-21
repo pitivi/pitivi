@@ -1,5 +1,10 @@
 2006-04-21  Edward Hervey  <edward@fluendo.com>
 
+	* configure.ac:
+	0.9.9.5 pre-release
+
+2006-04-21  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/bin.py:
 	Use black pattern for default video source
 	* pitivi/ui/timeline.py:
