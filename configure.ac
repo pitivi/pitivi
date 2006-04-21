@@ -63,18 +63,17 @@ export PYTHONPATH=$PYGTK_DIR:$PYTHONPATH
 
 dnl check for pycairo
 AC_MSG_CHECKING(for pycairo)
-prog=<<EOF
+prog="
 import sys
 try:
   import cairo
 except ImportError:
   sys.exit(1)
-if cairo.version < "$PYCAIRO_REQ":
+if cairo.version < '$PYCAIRO_REQ':
   sys.exit(1)
 else:
   sys.exit(0)
-EOF
-
+"
 if $PYTHON -c "$prog"
 then
   AC_MSG_RESULT(found)
@@ -86,7 +85,7 @@ fi
 
 dnl check for libglade
 AC_MSG_CHECKING(for gtk.glade)
-prog=<<EOF
+prog="
 import sys
 try:
   import pygtk
@@ -97,8 +96,7 @@ except RuntimeError:
 except ImportError:
   sys.exit(1)
 sys.exit(0)
-EOF
-
+"
 if $PYTHON -c "$prog" 1>&AC_FD_CC 2>&AC_FD_CC
 then
   AC_MSG_RESULT(found)
@@ -109,7 +107,7 @@ fi
 
 dnl check for cairo support in pygtk
 AC_MSG_CHECKING(for cairo support in PyGTK)
-prog=<<EOF
+prog="
 import sys
 try:
   import pygtk
@@ -120,8 +118,7 @@ except RuntimeError:
 if not hasattr(gtk.gdk.Window, 'cairo_create'):
   sys.exit(1)
 sys.exit(0)
-EOF
-
+"
 if $PYTHON -c "$prog" 1>&AC_FD_CC 2>&AC_FD_CC
 then
   AC_MSG_RESULT(found)
@@ -140,15 +137,15 @@ AC_MSG_NOTICE(Using gstreamer-python installed in $PYGST_DIR)
 export PYTHONPATH=$PYGST_DIR:$PYTHONPATH
 
 dnl check for GNonlin
-prog=<<EOF
+prog="
 import sys
 import pygst; pygst.require('0.10')
 import gst
-plugin = gst.get_default_registry().find_plugin('gnonlin')
-if plugin and p.get_version() >= "$GNONLIN_REQ"):
+plugin = gst.registry_get_default().find_plugin('gnonlin')
+if plugin and p.get_version() >= '$GNONLIN_REQ'):
   sys.exit(0)
 sys.exit(1)
-EOF
+"
 AC_MSG_CHECKING([for gnonlin >= $GNONLIN_REQ])
 if $PYTHON -c "$prog" 1>&AC_FD_CC 2>&AC_FD_CC
 then
@@ -163,7 +160,8 @@ dnl the gettext stuff needed
 dnl AM_GNU_GETTEXT_VERSION(0.11.5)
 dnl AM_GNU_GETTEXT([external])
 
-AC_SUBST(PYTHONPATH)
+CONFIGURED_PYTHONPATH=$PYTHONPATH
+AC_SUBST(CONFIGURED_PYTHONPATH)
 
 dnl output stuff
 AC_OUTPUT(

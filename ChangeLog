@@ -1,5 +1,14 @@
 2006-04-21  Andy Wingo  <wingo@pobox.com>
 
+	* bin/pitivi.in (CONFIGURED_PYTHONPATH): Update for PYTHONPATH
+	name change.
+	(_add_pitivi_path): If a path in the configured pythonpath is
+	already in sys.path, leave it where it is.
+
+	* configure.ac: Fix embarrassing errors in checks for cairo,
+	glade, gtk cairo support, and gnonlin. Rename PYTHONPATH subst'ed
+	var to CONFIGURED_PYTHONPATH.
+
 	* configure.ac: Remove check for obsolete pygtk version that
 	doesn't meet our requirements.
 
