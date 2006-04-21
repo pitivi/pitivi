@@ -44,9 +44,6 @@ AC_MSG_NOTICE(Storing configuration files in $SYSCONFDIR)
 AS_AC_EXPAND(LOCALSTATEDIR, $localstatedir)
 AC_MSG_NOTICE(Using localstatedir $LOCALSTATEDIR)
 
-AC_DISABLE_STATIC
-AC_PROG_LIBTOOL
-
 dnl check for python
 AS_PATH_PYTHON(2.3)
 

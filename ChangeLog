@@ -1,5 +1,9 @@
 2006-04-21  Andy Wingo  <wingo@pobox.com>
 
+	* configure.ac: Remove calls to libtool.
+
+	* autogen.sh: Update to simplify, not run libtoolize.
+
 	* bin/Makefile.am: No need for the makefile rule any more.
 
 	* configure.ac: Output bin/pitivi using AC_CONFIG_FILES, so that
