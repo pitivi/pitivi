@@ -373,19 +373,21 @@ class PitiviViewer(gtk.VBox):
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time), time_to_string(instance.PiTiVi.playground.current.length)))
 
     def _dndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
-                           selection, targetType, unused_time):
+                           selection, targetType, ctime):
         gst.info("context:%s, targetType:%s" % (context, targetType))
         if targetType == dnd.TYPE_URI_LIST:
             uri = selection.data.strip().split("\n")[0].strip()
         elif targetType == dnd.TYPE_PITIVI_FILESOURCE:
             uri = selection.data
         else:
+            context.finish(False, False, ctime)
             return
         gst.info("got file:%s" % uri)
         if uri in instance.PiTiVi.current.sources:
             instance.PiTiVi.playground.playTemporaryFilesourcefactory(instance.PiTiVi.current.sources[uri])
         else:
             instance.PiTiVi.current.sources.addTmpUri(uri)
+        context.finish(True, False, ctime)
         gst.info("end")
 
     def _tmpIsReadyCb(self, unused_sourcelist, factory):

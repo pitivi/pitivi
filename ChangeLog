@@ -1,3 +1,11 @@
+2006-04-22  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Only make the remove button sensitive when there's at least one source
+	in the list.
+	* pitivi/ui/viewer.py:
+	Properly end drag-and-drop. This should fix some hangs after DnD.
+
 2006-04-21  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac:

@@ -153,11 +153,12 @@ class SourceListWidget(gtk.VBox):
         # buttons (list/icon view, add, remove)
         button = gtk.Button(stock=gtk.STOCK_ADD)
         button.connect("clicked", self._addButtonClickedCb)
-        rbut = gtk.Button(stock=gtk.STOCK_REMOVE)
-        rbut.connect("clicked", self._removeButtonClickedCb)
+        self.rbut = gtk.Button(stock=gtk.STOCK_REMOVE)
+        self.rbut.connect("clicked", self._removeButtonClickedCb)
+        self.rbut.set_sensitive(False)
         bothbox = gtk.HBox()
         bothbox.pack_start(button, expand=False)
-        bothbox.pack_start(rbut, expand=False)
+        bothbox.pack_start(self.rbut, expand=False)
         self.pack_start(bothbox, expand=False)
 
         # Start up with tree view
@@ -247,6 +248,7 @@ class SourceListWidget(gtk.VBox):
                                 factory,
                                 factory.name,
                                 "<b>%s</b>" % beautify_length(factory.length)])
+        self.rbut.set_sensitive(True)
 
     def _fileRemovedCb(self, unused_sourcelist, uri):
         """ the given uri was removed from the sourcelist """
@@ -257,6 +259,8 @@ class SourceListWidget(gtk.VBox):
                 self.storemodel.remove(piter)
                 break
             piter = self.storemodel.iter_next(piter)
+        if not len(self.storemodel):
+            self.rbut.set_sensitive(False)
 
     def _notMediaFileCb(self, unused_sourcelist, uri, reason):
         """ The given uri isn't a media file """
