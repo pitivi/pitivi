@@ -203,7 +203,17 @@ class PitiviViewer(gtk.VBox):
         vsinkthread.videosink = self.videosink
         vsinkthread.add_pad(gst.GhostPad("sink", cspace.get_pad('sink')))
 
-        vsinkthread.get_pad("sink").connect("notify::caps", self._videosinkCapsNotifyCb)
+        # WARNING
+        # The notify has to be put on the downstream side of the queue. If it is
+        # put upstream, the notify will do some BadThings(tm) like screwup the
+        # resizing of the windows
+        
+        # FIXME : Once we add videoscale, we should put it AFTER the queue, but
+        #       keep the notify callback where it is right now so that we don't
+        #       get the problems mentionned above AND we can't get the non-resi-
+        #       zed caps.
+        
+        vqueue.get_pad("src").connect("notify::caps", self._videosinkCapsNotifyCb)
 
         self.drawingarea.videosink = self.videosink
         self.videosink.set_xwindow_id(self.drawingarea.window.xid)

@@ -1,3 +1,10 @@
+2006-04-24  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	We need gnonlin 0.10.2 released 3 days ago.
+	* pitivi/ui/viewer.py:
+	Some threading madness.... That was a nasty bug.
+
 2006-04-22  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/sourcefactories.py:
