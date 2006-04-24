@@ -1,5 +1,11 @@
 2006-04-24  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/playground.py:
+	gst-python doesn't have the GstError quarks defined yet. Let's just
+	use the strings instead.
+
+2006-04-24  Edward Hervey  <edward@fluendo.com>
+
 	* configure.ac:
 	We need gnonlin 0.10.2 released 3 days ago.
 	* pitivi/ui/viewer.py:

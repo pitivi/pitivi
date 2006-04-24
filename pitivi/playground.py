@@ -289,14 +289,14 @@ class PlayGround(gobject.GObject):
         gst.warning("GError : code:%s, domain:%s (%s), message:%s" % (gerror.code, gerror.domain,
                                                                       type(gerror.domain), gerror.message))
         if bin_contains(self.vsinkthread, source):
-            if gerror.domain == gst.RESOURCE_ERROR and gerror.code == gst.RESOURCE_ERROR_BUSY:
+            if gerror.domain == 'gst-resource-error-quark' and gerror.code == gst.RESOURCE_ERROR_BUSY:
                 self.emit("error", "Video output is busy",
                           "Please check that your video output device isn't already used by another application")
             else:
                 self.emit("error", "Video output problem",
                           "There is a problem with your video output device")
         elif bin_contains(self.asinkthread, source):
-            if gerror.domain == gst.RESOURCE_ERROR and gerror.code == gst.RESOURCE_ERROR_BUSY:
+            if gerror.domain == 'gst-resource-error-quark' and gerror.code == gst.RESOURCE_ERROR_BUSY:
                 self.emit("error", "Audio output device is busy",
                           "Please check that your audio output device isn't already used by another application.")
             else:
