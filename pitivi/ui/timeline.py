@@ -43,7 +43,6 @@ class TimelineWidget(gtk.VBox):
         """ draw the GUI """
         self.hadjustment = gtk.Adjustment()
         self.vadjustment = gtk.Adjustment()
-        self.leftsizegroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
 
         self.simpleview = SimpleTimelineContentWidget(self)
         self.complexview = ComplexTimelineWidget(self)
@@ -51,43 +50,19 @@ class TimelineWidget(gtk.VBox):
         self.simpleview.connect("scroll-event", self._simpleScrollCb)
         self.complexview.connect("scroll-event", self._simpleScrollCb)
 
-        hbox = gtk.HBox()
-        
-        liststore = gtk.ListStore(gobject.TYPE_STRING)
-        combobox = gtk.ComboBox(liststore)
-        cell = gtk.CellRendererText()
-        combobox.pack_start(cell, True)
-        combobox.add_attribute(cell, 'text', 0)
-        liststore.append(["Simple View"])
-        liststore.append(["Complex View"])
-        combobox.set_active(0)
-        combobox.connect("changed", self._comboboxChangedCb)
-
-        self.leftsizegroup.add_widget(combobox)
-        
-        hbox.pack_start(combobox, expand=False)
         self.hscroll = gtk.HScrollbar(self.hadjustment)
-        hbox.pack_start(self.hscroll)
+        self.pack_end(self.hscroll, expand=False)
 
-        self.pack_end(hbox, expand=False)
-        self._showSimpleView()
-        #self._showComplexView()
-
-    def _comboboxChangedCb(self, cbox):
-        gst.debug("switching view")
-        if cbox.get_active():
-            self._showComplexView()
-        else:
-            self._showSimpleView()
-
-    def _showSimpleView(self):
+    def showSimpleView(self):
+        """ Show the simple timeline """
         if self.complexview in self.get_children():
             self.remove(self.complexview)
             self.complexview.hide()
         self.pack_start(self.simpleview, expand=True)
         self.simpleview.show_all()
 
-    def _showComplexView(self):
+    def showComplexView(self):
+        """ Show the advanced timeline """
         if self.simpleview in self.get_children():
             self.remove(self.simpleview)
             self.simpleview.hide()
@@ -117,4 +92,3 @@ class SimpleTimelineContentWidget(gtk.HBox):
         layoutframe = gtk.Frame()
         layoutframe.add(self.timeline)
         self.pack_start(layoutframe)
-

@@ -13,6 +13,7 @@
     </menu>
     <menu action="View">
       <menuitem action="FullScreen" />
+      <menuitem action="AdvancedView" />
     </menu>
     <menu action="Help">
       <menuitem action="About" />
@@ -27,5 +28,6 @@
     <toolitem action="ImportSources" />
     <separator />
     <toolitem action="FullScreen" />
+    <toolitem action="AdvancedView" />
   </toolbar>
 </ui>

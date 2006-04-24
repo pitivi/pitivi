@@ -75,15 +75,20 @@ class PitiviMainWindow(gtk.Window):
             ("View", None, "_View"),
             ("Help", None, "_Help")
             ]
+        self.toggleactions = [
+            ("AdvancedView", None, "Advanced Vie_w", None, "Switch to advanced view", self._advancedViewCb)
+            ]
 
         self.actiongroup = gtk.ActionGroup("mainwindow")
         self.actiongroup.add_actions(self.actions)
+        self.actiongroup.add_toggle_actions(self.toggleactions)
         
         # deactivating non-functional actions
         # FIXME : reactivate them
         for action in self.actiongroup.list_actions():
             if action.get_name() in ["ProjectSettings", "Quit", "File", "Help",
-                                     "About", "View", "FullScreen", "ImportSources"]:
+                                     "About", "View", "FullScreen", "ImportSources",
+                                     "AdvancedView"]:
                 action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
@@ -110,12 +115,15 @@ class PitiviMainWindow(gtk.Window):
 
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
         self.toolbar.set_style(gtk.TOOLBAR_ICONS)
+
         vbox.pack_start(self.toolbar, expand=False)
+
         
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
         
         self.timeline = TimelineWidget()
+        self.timeline.showSimpleView()
         timelineframe = gtk.Frame()
         timelineframe.add(self.timeline)
         vpaned.pack2(timelineframe, resize=False, shrink=False)
@@ -128,14 +136,12 @@ class PitiviMainWindow(gtk.Window):
 
         # Viewer
         self.viewer = PitiviViewer()
-        viewerframe = gtk.Frame()
-        viewerframe.add(self.viewer)
 
         # connect viewer's timeline position callback to the timeline widget
         self.viewer.addTimelinePositionCallback(self.timeline.timelinePositionChanged)
 
         hpaned.pack1(self.sourcefactories, resize=False, shrink=False)
-        hpaned.pack2(viewerframe, resize=True, shrink=False)
+        hpaned.pack2(self.viewer, resize=True, shrink=False)
 
         #application icon
         self.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")
@@ -203,6 +209,12 @@ class PitiviMainWindow(gtk.Window):
 
     def _fullScreenCb(self, unused_action):
         self.toggleFullScreen()
+
+    def _advancedViewCb(self, action):
+        if action.get_active():
+            self.timeline.showComplexView()
+        else:
+            self.timeline.showSimpleView()
 
     def _aboutCb(self, unused_action):
 	abt = gtk.AboutDialog()

@@ -142,7 +142,6 @@ class PitiviViewer(gtk.VBox):
         self.pack_start(infohbox, expand=False)
 
         # available sources combobox
-        infoframe = gtk.Frame()
         self.sourcelist = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_PYOBJECT)
         self.sourcecombobox = gtk.ComboBox(self.sourcelist)
         cell = gtk.CellRendererText()
@@ -150,17 +149,14 @@ class PitiviViewer(gtk.VBox):
         self.sourcecombobox.add_attribute(cell, "text", 0)
         self.sourcecombobox.set_sensitive(False)
         self.sourcecombobox.connect("changed", self._comboboxChangedCb)
-        infoframe.add(self.sourcecombobox)
         
         # current time
-        timeframe = gtk.Frame()
         self.timelabel = gtk.Label()
         self.timelabel.set_markup("<tt>00m00s000 / --m--s---</tt>")
         self.timelabel.set_alignment(1.0, 0.5)
         self.timelabel.set_padding(5, 5)
-        timeframe.add(self.timelabel)
-        infohbox.pack_start(infoframe, expand=True)
-        infohbox.pack_end(timeframe, expand=False)
+        infohbox.pack_start(self.sourcecombobox, expand=True)
+        infohbox.pack_end(self.timelabel, expand=False)
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
