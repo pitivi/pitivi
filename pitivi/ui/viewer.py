@@ -183,10 +183,14 @@ class PitiviViewer(gtk.VBox):
                 par = caps[0]["pixel-aspect-ratio"]
             except:
                 # set aspect ratio
+                gtk.gdk.threads_enter()
                 self.aframe.set_property("ratio", float(width) / float(height))
+                gtk.gdk.threads_leave()
                 gst.warning("setting aspectratio to %f" % (float(width) / float(height)))
             else:
+                gtk.gdk.threads_enter()
                 self.aframe.set_property("ratio", float(width * par.num) / float(par.denom * height))
+                gtk.gdk.threads_leave()
                 gst.warning("setting aspectratio to %f" % (float(width * par.num) / float(par.denom * height)))
 
     def _createSinkThreads(self):
@@ -203,17 +207,7 @@ class PitiviViewer(gtk.VBox):
         vsinkthread.videosink = self.videosink
         vsinkthread.add_pad(gst.GhostPad("sink", cspace.get_pad('sink')))
 
-        # WARNING
-        # The notify has to be put on the downstream side of the queue. If it is
-        # put upstream, the notify will do some BadThings(tm) like screwup the
-        # resizing of the windows
-        
-        # FIXME : Once we add videoscale, we should put it AFTER the queue, but
-        #       keep the notify callback where it is right now so that we don't
-        #       get the problems mentionned above AND we can't get the non-resi-
-        #       zed caps.
-        
-        vqueue.get_pad("src").connect("notify::caps", self._videosinkCapsNotifyCb)
+        vsinkthread.get_pad("sink").connect("notify::caps", self._videosinkCapsNotifyCb)
 
         self.drawingarea.videosink = self.videosink
         self.videosink.set_xwindow_id(self.drawingarea.window.xid)
@@ -377,10 +371,12 @@ class PitiviViewer(gtk.VBox):
     def _timelineDurationChangedCb(self, unused_composition, unused_start,
                                    duration):
         # deactivate record button is the duration is null
+        gtk.gdk.threads_enter()
         self.record_button.set_sensitive((duration > 0) and True or False)
             
         self.posadjust.upper = float(duration)
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time), time_to_string(instance.PiTiVi.playground.current.length)))
+        gtk.gdk.threads_leave()
 
     def _dndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
                            selection, targetType, ctime):

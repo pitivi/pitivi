@@ -1,5 +1,15 @@
 2006-04-24  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/pitivi.py:
+	Call gtk.gdk.threads_init() to inform pygtk that we might be doing calls
+	from remote threads.
+	* pitivi/ui/viewer.py:
+	The fix to the threading issue was in fact to call
+	gtk.gdk.threads_enter() and _leave() before and after calls to gtk
+	being made from a non-main thread.
+
+2006-04-24  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/playground.py:
 	gst-python doesn't have the GstError quarks defined yet. Let's just
 	use the strings instead.
