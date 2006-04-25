@@ -164,6 +164,10 @@ class PitiviViewer(gtk.VBox):
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
+    def _asyncFrameRatioChange(self, ratio):
+        gst.debug("ratio:%f" % ratio)
+        self.aframe.set_property("ratio", ratio)
+        
     def _videosinkCapsNotifyCb(self, sinkpad, unused_property):
         caps = sinkpad.get_negotiated_caps()
         if not caps:
@@ -179,15 +183,9 @@ class PitiviViewer(gtk.VBox):
                 par = caps[0]["pixel-aspect-ratio"]
             except:
                 # set aspect ratio
-                gtk.gdk.threads_enter()
-                self.aframe.set_property("ratio", float(width) / float(height))
-                gtk.gdk.threads_leave()
-                gst.warning("setting aspectratio to %f" % (float(width) / float(height)))
+                gobject.idle_add(self._asyncFrameRatioChange, float(width) / float(height))
             else:
-                gtk.gdk.threads_enter()
-                self.aframe.set_property("ratio", float(width * par.num) / float(par.denom * height))
-                gtk.gdk.threads_leave()
-                gst.warning("setting aspectratio to %f" % (float(width * par.num) / float(par.denom * height)))
+                gobject.idle_add(self._asyncFrameRatioChange, float(width * par.num) / float(par.denom * height))
 
     def _createSinkThreads(self):
         """ Creates the sink threads for the playground """
@@ -364,15 +362,17 @@ class PitiviViewer(gtk.VBox):
 
     ## active Timeline calllbacks
 
-    def _timelineDurationChangedCb(self, unused_composition, unused_start,
-                                   duration):
+    def _asyncTimelineDurationChanged(self, duration):
         # deactivate record button is the duration is null
-        gtk.gdk.threads_enter()
         self.record_button.set_sensitive((duration > 0) and True or False)
             
         self.posadjust.upper = float(duration)
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time), time_to_string(instance.PiTiVi.playground.current.length)))
-        gtk.gdk.threads_leave()
+        
+
+    def _timelineDurationChangedCb(self, unused_composition, unused_start,
+                                   duration):
+        gobject.idle_add(self._asyncTimelineDurationChanged, duration)
 
     def _dndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
                            selection, targetType, ctime):

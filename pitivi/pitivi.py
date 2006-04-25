@@ -130,7 +130,4 @@ class Pitivi(gobject.GObject):
 def main(argv):
     check.initial_checks()
     ptv = Pitivi(argv)
-    # we need to inform pygtk that we are going to be using gdk from other
-    # threads
-    gtk.gdk.threads_init()
     gtk.main()

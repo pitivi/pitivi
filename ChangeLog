@@ -1,5 +1,18 @@
 2006-04-25  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/discoverer.py:
+	Add error handling imporoved.
+	Add fakesinks to audio pads if there's no video, otherwise audio only
+	files will not get discovered properly.
+	* pitivi/pitivi.py:
+	* pitivi/ui/viewer.py:
+	Revert gtk.gdk.threads_* patches.
+	If we start going down that alley, it means putting those function calls
+	everywhere.
+	Instead, just put the critical parts in a gobject.idle_add()
+
+2006-04-25  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi.spec.in:
 	Better group and ExclusiveArch for rpm.
 	Patch by <ahziem1@mailbolt.com>

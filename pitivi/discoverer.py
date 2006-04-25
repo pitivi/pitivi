@@ -221,12 +221,11 @@ class Discoverer(gobject.GObject):
             if os.path.isfile(filename):
                 self.currentfactory.setThumbnail(filename)
             gobject.idle_add(self._finishAnalysis)
-        elif message.type in [gst.MESSAGE_ERROR, gst.MESSAGE_WARNING]:
-            gst.warning("got an ERROR/WARNING")
-            self.thisdone = True
-            if not self.currentfactory:
-                self.emit("not_media_file", self.current, "An error occured while analyzing this file")
-            gobject.idle_add(self._finishAnalysis)
+        elif message.type == gst.MESSAGE_ERROR:
+            error, detail = message.parse_error()
+            self._handleError(error, detail, message.src)
+        elif message.type == gst.MESSAGE_WARNING:
+            gst.warning("got a WARNING")
         elif message.type == gst.MESSAGE_ELEMENT:
             gst.debug("Element message %s" % message.structure.to_string())
             if message.structure.get_name() == "redirect":
@@ -237,6 +236,15 @@ class Discoverer(gobject.GObject):
             self.currentTags.append(message.parse_tag())
         else:
             gst.log("%s:%s" % ( message.type, message.src))
+
+    def _handleError(self, gerror, detail, source):
+        gst.warning("got an ERROR")
+        
+        self.emit("not_media_file", self.current, "An error occured while analyzing this file")
+        self.emit("not_media_file", self.current, gerror.message)
+        self.thisdone = True
+        self.currentfactory = None
+        gobject.idle_add(self._finishAnalysis)
 
     def _getPadsInfo(self):
         # iterate all src pads and check their informatiosn
@@ -301,13 +309,15 @@ class Discoverer(gobject.GObject):
         if pad.get_caps().is_fixed():
             self.currentfactory.setAudioInfo(pad.get_caps())
 
-##         q = gst.element_factory_make("queue")
-##         fakesink = gst.element_factory_make("fakesink")
-##         self.pipeline.add(fakesink, q)
-##         pad.link(q.get_pad("sink"))
-##         q.link(fakesink)
-##         q.set_state(gst.STATE_PAUSED)
-##         fakesink.set_state(gst.STATE_PAUSED)
+        if not self.currentfactory.is_video:
+            # we need to add a fakesink
+            q = gst.element_factory_make("queue")
+            fakesink = gst.element_factory_make("fakesink")
+            self.pipeline.add(fakesink, q)
+            pad.link(q.get_pad("sink"))
+            q.link(fakesink)
+            q.set_state(gst.STATE_PAUSED)
+            fakesink.set_state(gst.STATE_PAUSED)
             
     def _unknownTypeCb(self, unused_dbin, unused_pad, caps):
         gst.info(caps.to_string())
