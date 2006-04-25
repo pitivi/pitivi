@@ -1,3 +1,9 @@
+2006-04-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi.spec.in:
+	Better group and ExclusiveArch for rpm.
+	Patch by <ahziem1@mailbolt.com>
+
 2006-04-24  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/actions.xml:

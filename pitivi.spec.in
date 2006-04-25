@@ -6,7 +6,7 @@ Release:	@PACKAGE_VERSION_RELEASE@
 Source:		http://download.sf.net/pitivi/%{name}-%{version}.tar.gz
 Packager:	edward@fluendo.com
 License:	LGPL
-Group:		NLE
+Group:		Applications/Multimedia
 URL:		http://www.pitivi.org/
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -23,6 +23,7 @@ BuildRequires:	gstreamer-devel >= @GST_REQ@
 BuildRequires:	gstreamer-python >= @PYGST_REQ@
 BuildRequires:	python-devel >= 2.3
 BuildRequires:	pygtk2-devel >= @PYGTK_REQ@
+ExclusiveArch:  noarch
 
 %description
 PiTiVi non-linear video editor
