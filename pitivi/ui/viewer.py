@@ -363,6 +363,7 @@ class PitiviViewer(gtk.VBox):
     ## active Timeline calllbacks
 
     def _asyncTimelineDurationChanged(self, duration):
+        gst.debug("duration : %d" % duration)
         # deactivate record button is the duration is null
         self.record_button.set_sensitive((duration > 0) and True or False)
             
@@ -372,6 +373,7 @@ class PitiviViewer(gtk.VBox):
 
     def _timelineDurationChangedCb(self, unused_composition, unused_start,
                                    duration):
+        gst.debug("duration : %d" % duration)
         gobject.idle_add(self._asyncTimelineDurationChanged, duration)
 
     def _dndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,

@@ -166,6 +166,7 @@ class PlayGround(gobject.GObject):
         if not pipeline == self.default:
             pipeline.log("Setting the new pipeline to PAUSED so it prerolls")
             if pipeline.set_state(gst.STATE_PAUSED) == gst.STATE_CHANGE_FAILURE:
+                pipeline.error("Failed prerolling the pipeline")
                 return False
         self.current = pipeline
         self.emit("current-changed", self.current)

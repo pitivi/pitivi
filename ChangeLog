@@ -1,3 +1,9 @@
+2006-04-26  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	* pitivi/ui/viewer.py:
+	Add debugging to ease reporting by users
+
 2006-04-25  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/discoverer.py:
