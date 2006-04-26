@@ -1,2 +1,6 @@
-2005-05-02 :
-	* Switch to python version
+2006 Apr 26 - PiTiVi 0.10.0
+
+ * Lots of UI improvements for usability
+ * Better error handling
+ * Many playback issues fixed
+ * Works in non-gnome environments

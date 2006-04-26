@@ -1,41 +1,79 @@
+0.10.0 Release : It's a birthday party
+--------------------------------------
 
-PiTIVi: Release notes for PiTiVi 0.9.9.2 "No te entiendo"
-        
+The PiTiVi team is proud to announce the first release of the 0.10.x series of
+the PiTiVi opensource video editor.
 
-The GStreamer and PiTiVi team are pleased to announce a new pre-release of
-PiTiVi.
+The 0.10.x series is an unstable series with 3-week release cycles. The goal of
+this series is to allow users to test new versions often, give their feedback,
+and remove bugs more often.
 
-This is the second release to work with the new 0.10 series of the GStreamer
-multimedia framework.
 
-Features of this release
+* Features of this release
 
-  * Import of audio/video files
-  * Playback and scrubbing (view while seeking) of files
-  * Adding files in a Timeline
-  * Playback and scrubbing on timeline
-  * Fixes for GConf issues
+ * Lots of UI improvements for usability
+ * Better error handling
+ * Many playback issues fixed
+ * Works in non-gnome environments
 
-Download
 
-You can find source releases of PiTiVi here:
-http://sourceforge.net/project/showfiles.php?group_id=100591
+* Bugs Fixed
 
-Website
+ * 330142 : Maintainer unresponsive to feature requests
+ * 330579 : Pitivi won't start
+ * 330860 : configure doesn't check for gnomevfs python bindings
+ * 332754 : play project stops after a second
+ * 334400 : missing an m4 directory
+ * 335481 : Pitivi don't work properly after pressing render
+ * 335503 : drag'n'drop from fileselector doesn't work
+ * 335651 : discoverererrordialog.glade is missing
+ * 335808 : issues on ppc, xfce
+ * 336328 : Window cramped the first time pitivi is run
+ * 336329 : First time pitivi is run, the complex timeline is shown
+ * 336333 : error dragging files from the filechooser to the sources ...
+ * 336343 : UI hang when opening specific media file
+ * 336345 : Useless toolbar
+ * 336346 : Icon/list view buttons should be an option menu
+ * 336347 : List view could be prettier
+ * 337726 : pitivi.desktop application icon name wrong
+ * 337964 : remove videotestsrc default view
+ * 338064 : starts playing after seek
+ * 339328 : window resizing should resize video, not sources list
+ * 339664 : [patch] rpm .spec
 
-More information can be found on the PiTiVi website:
-http://www.pitivi.org/
 
-Support and Bugs
+* Known issues
 
-We use SourceForge for bug reports and feature requests:
-http://sourceforge.net/projects/pitivi/
+ * Using ximagesink as your video sink will not allow scaling. Please try to 
+   avoid using that video output element until the relevant bug has been
+   solved in GStreamer. More info here:
+     http://bugzilla.gnome.org/show_bug.cgi?id=339201
 
-Requirements
+ * Quicktime and .mp4 files might cause issues. Those issues have been solved in
+   the cvs version of gst-plugins-bad and will be available in the next release
+   (0.10.2).
 
-  * GStreamer core and plugins >= 0.10.0
-  * GNonlin >= 0.10.0.5
-  * Python bindings for GTK+, pygtk >= 2.8.0
-    * With libglade bindings
-  * Python bindings for Gnome, gnome-python >= 2.12.0
-  * Python bindings for GStreamer, gst-python >= 0.10.0
+
+* Requirements
+
+ * gstreamer >= 0.10.4
+ * gst-python >= 0.10.0
+ * gnonlin >= 0.10.2
+ * pygtk >= 0.10.0
+
+
+* Contributors
+
+ * Andy Wingo
+ * Andrew Z
+ * Christian Schaller
+ * Edward Hervey
+
+
+* Information and Feedback
+
+ * Information for users and developers can be found on the PiTiVi website :
+     http://www.pitivi.org/
+ * Comments and feedback are welcome.
+  * Mailing-list : pitivi-pitivi@lists.sourceforge.net
+  * PiTiVi bug-tracker : http://bugzilla.gnome.org/browse.cgi?product=pitivi
