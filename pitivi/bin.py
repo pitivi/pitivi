@@ -49,11 +49,15 @@ class SmartBin(gst.Pipeline):
         self.name = name
         self.displayname = displayname
         self.set_name(name)
+        # Until  basetransform issues are fixed, we use an identity instead
+        # of a tee
         if self.has_video:
-            self.vtee = gst.element_factory_make("tee", "vtee")
+            #self.vtee = gst.element_factory_make("tee", "vtee")
+            self.vtee = gst.element_factory_make("identity", "vtee")
             self.add(self.vtee)
         if self.has_audio:
-            self.atee = gst.element_factory_make("tee", "atee")
+            #self.atee = gst.element_factory_make("tee", "atee")
+            self.atee = gst.element_factory_make("identity", "atee")
             self.add(self.atee)
         self._addSource()
         self._connectSource()
@@ -86,7 +90,8 @@ class SmartBin(gst.Pipeline):
         if self.has_audio:
             self.asinkthread = asinkthread
             self.add(self.asinkthread)
-            self.atee.get_pad("src%d").link(self.asinkthread.get_pad("sink"))
+            # identity vs tee issue
+            self.atee.get_pad("src").link(self.asinkthread.get_pad("sink"))
         return True
 
     def setVideoSinkThread(self, vsinkthread):
@@ -105,12 +110,11 @@ class SmartBin(gst.Pipeline):
         if self.has_video:
             self.vsinkthread = vsinkthread
             self.add(self.vsinkthread)
+            # identity vs tee issue
             if self.width and self.height:
-                #filtcaps = gst.caps_from_string("video/x-raw-yuv,width=%d,height=%d;video/x-raw-rgb,width=%d,height=%d" % (self.width, self.height, self.width, self.height))
-                #self.vtee.get_pad("src%d").link_filtered(self.vsinkthread.get_pad("sink"), filtcaps)
-                self.vtee.get_pad("src%d").link(self.vsinkthread.get_pad("sink"))
+                self.vtee.get_pad("src").link(self.vsinkthread.get_pad("sink"))
             else:
-                self.vtee.get_pad("src%d").link(self.vsinkthread.get_pad("sink"))
+                self.vtee.get_pad("src").link(self.vsinkthread.get_pad("sink"))
         return True
 
     def removeAudioSinkThread(self):

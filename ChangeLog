@@ -1,5 +1,14 @@
 2006-05-15  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/bin.py:
+	First round of hack for BaseTransform issues and ximagesink.
+	* pitivi/ui/plumber.py:
+	To cancel qos, we also need to set "max-lateness" to -1
+	* pitivi/ui/viewer.py:
+	Add videoscale for ximagesink.
+
+2006-05-15  Edward Hervey  <edward@fluendo.com>
+
 	* configure.ac:
 	Back to development cycle
 

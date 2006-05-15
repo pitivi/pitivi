@@ -63,6 +63,8 @@ def get_video_sink():
             gconfsink.realsink.set_property("force-aspect-ratio", True)
         if "qos"in [prop.name for prop in gobject.list_properties(gconfsink.realsink)]:
             gconfsink.realsink.set_property("qos", False)
+        if "max-lateness"in [prop.name for prop in gobject.list_properties(gconfsink.realsink)]:
+            gconfsink.realsink.set_property("max-lateness", -1)
     return gconfsink
 
 def get_audio_sink():
