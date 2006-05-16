@@ -1,5 +1,22 @@
 2006-05-16  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/playground.py:
+	Added 'position' signal which is emitted to inform a change of position
+	with the current SmartBin.
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	Switch to use playground's 'position' signal in Viewer and
+	ComplexTimeline.
+
+	This should fix several issues:
+	_ Position checking not being in ui-independent part,
+	_ Position updating not starting,
+	_ Position checking done during critical parts (state change).
+
+2006-05-16  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/configure.py.in:
 	Add APPNAME, which contains the configured application name.
 	This will easily allow changing the application name later on.

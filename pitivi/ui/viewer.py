@@ -63,13 +63,11 @@ class PitiviViewer(gtk.VBox):
         # TODO remove/replace the signal when closing/opening projects
         instance.PiTiVi.current.sources.connect("tmp_is_ready", self._tmpIsReadyCb)
 
-        # Only set the check time timeout in certain cases...
-        self.checktimeoutid = 0
-        self.positionChangedCallbacks = []
         instance.PiTiVi.connect("new-project", self._newProjectCb)
         instance.PiTiVi.playground.connect("current-state", self._currentStateCb)
         instance.PiTiVi.playground.connect("bin-added", self._binAddedCb)
         instance.PiTiVi.playground.connect("bin-removed", self._binRemovedCb)
+        instance.PiTiVi.playground.connect("position", self._playgroundPositionCb)
 
         instance.PiTiVi.current.settings.connect("settings-changed",
                                                  self._settingsChangedCb)
@@ -241,11 +239,8 @@ class PitiviViewer(gtk.VBox):
     def _sliderButtonPressCb(self, slider, unused_event):
         gst.info("button pressed")
         self.moving_slider = True
-        if self.checktimeoutid:
-            gobject.source_remove(self.checktimeoutid)
-            self.checktimeoutid = 0
         self.valuechangedid = slider.connect("value-changed", self._sliderValueChangedCb)
-        instance.PiTiVi.playground.current.set_state(gst.STATE_PAUSED)
+        instance.PiTiVi.playground.pause()
         return False
 
     def _sliderButtonReleaseCb(self, slider, unused_event):
@@ -254,11 +249,11 @@ class PitiviViewer(gtk.VBox):
         if self.valuechangedid:
             slider.disconnect(self.valuechangedid)
             self.valuechangedid = 0
-        if not self.checktimeoutid:
-            gst.debug("adding checktime again")
-            self.checktimeoutid = gobject.timeout_add(300, self._checkTimeCb)
         # revert to previous state
-        instance.PiTiVi.playground.current.set_state(self.currentState)
+        if self.currentState == gst.STATE_PAUSED:
+            instance.PiTiVi.playground.pause()
+        else:
+            instance.PiTiVi.playground.play()
         return False
 
     def _sliderValueChangedCb(self, slider):
@@ -266,7 +261,6 @@ class PitiviViewer(gtk.VBox):
         value = long(slider.get_value())
         gst.info(time_to_string(value))
         self._doSeek(value)
-        #instance.PiTiVi.playground.seekInCurrent(value)
 
     def _sliderScrollCb(self, unused_slider, event):
         # calculate new seek position
@@ -277,7 +271,6 @@ class PitiviViewer(gtk.VBox):
             else:
                 seekvalue = min(self.current_time + gst.SECOND / 2, instance.PiTiVi.playground.current.length)
             self._doSeek(seekvalue)
-            #instance.PiTiVi.playground.seekInCurrent(seekvalue)
         else:
             # frame scrolling, frame by frame
             gst.info("scroll direction:%s" % event.direction)
@@ -288,7 +281,6 @@ class PitiviViewer(gtk.VBox):
                 gst.info("scrolling forward")
                 seekvalue = min(self.current_frame + 1, instance.PiTiVi.playground.current.length)
             self._doSeek(seekvalue, gst.FORMAT_DEFAULT)
-            #instance.PiTiVi.playground.seekInCurrent(seekvalue, gst.FORMAT_DEFAULT)
 
     def _seekTimeoutCb(self):
         self.currentlySeeking = False
@@ -304,33 +296,6 @@ class PitiviViewer(gtk.VBox):
         elif format == gst.FORMAT_TIME:
             self.requested_time = value
 
-    ## timeout functions for checking current time
-
-    ## TODO : check_time timeout should in fact be in the playground to be more generic
-    def _checkTimeCb(self):
-        # check time callback
-        gst.log("checking time")
-        if instance.PiTiVi.playground.current == instance.PiTiVi.playground.default:
-            return True
-        # don't check time if the timeline is not playing
-        cur = self.current_time
-        currentframe = self.current_frame
-        if True: #not isinstance(instance.PiTiVi.playground.current, SmartTimelineBin):
-            pending, state, result = instance.PiTiVi.playground.current.get_state(10)
-            if not state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
-                return
-            try:
-                cur, format = instance.PiTiVi.playground.current.query_position(gst.FORMAT_TIME)
-            except:
-                instance.PiTiVi.playground.current.warning("couldn't get position")
-                cur = 0
-
-        # if the current_time or the length has changed, update time
-        if not float(instance.PiTiVi.playground.current.length) == self.posadjust.upper or not cur == self.current_time or not currentframe == self.current_frame:
-            self.posadjust.upper = float(instance.PiTiVi.playground.current.length)
-            self._newTime(cur, currentframe)
-        return True
-
     def _newTime(self, value, frame=-1):
         gst.info("value:%s, frame:%d" % (gst.TIME_ARGS(value), frame))
         self.current_time = value
@@ -338,18 +303,7 @@ class PitiviViewer(gtk.VBox):
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(value), time_to_string(instance.PiTiVi.playground.current.length)))
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
-        if isinstance(instance.PiTiVi.playground.current, SmartTimelineBin):
-            self._triggerTimelinePositionCallbacks(value, frame)
         return False
-
-    def _triggerTimelinePositionCallbacks(self, value, frame = -1):
-        for callback in self.positionChangedCallbacks:
-            callback(value, frame)
-
-    def addTimelinePositionCallback(self, function):
-        """ Set the function that will be called whenever the timeline position has changed """
-        self.positionChangedCallbacks.append(function)
-
 
     ## gtk.ComboBox callbacks for sources
 
@@ -439,6 +393,10 @@ class PitiviViewer(gtk.VBox):
 
     ## Playground callbacks
     
+    def _playgroundPositionCb(self, playground, smartbin, pos):
+        self._newTime(pos)
+        print smartbin, pos
+
     def _currentPlaygroundChangedCb(self, playground, smartbin):
         if not smartbin == playground.default:
             if isinstance(smartbin, SmartTimelineBin):
@@ -487,14 +445,8 @@ class PitiviViewer(gtk.VBox):
     def _currentStateCb(self, playground, state):
         gst.info("current state changed : %s" % state)
         if state == int(gst.STATE_PLAYING):
-            if not isinstance(playground.current, SmartDefaultBin) and not self.checktimeoutid:
-                gst.info("adding checktime")
-                self.checktimeoutid = gobject.timeout_add(300, self._checkTimeCb)
             self.playpause_button.setPause()
         elif state == int(gst.STATE_PAUSED):
-            if not isinstance(playground.current, SmartDefaultBin) and not self.checktimeoutid:
-                gst.info("adding checktime")
-                self.checktimeoutid = gobject.timeout_add(300, self._checkTimeCb)
             self.playpause_button.setPlay()
 
 

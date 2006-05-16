@@ -28,6 +28,7 @@ import gst
 
 import pitivi.instance as instance
 
+from pitivi.bin import SmartTimelineBin
 from complexlayer import LayerInfoList
 from layerwidgets import TopLayer, CompositionLayer
 from complexinterface import ZoomableWidgetInterface
@@ -123,6 +124,7 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
 
         # common LayerInfoList
         self.layerInfoList = LayerInfoList(instance.PiTiVi.current.timeline)
+        instance.PiTiVi.playground.connect('position', self._playgroundPositionCb)
         for layer in self.layerInfoList:
             layer.composition.connect('start-duration-changed',
                                       self._layerStartDurationChangedCb)
@@ -176,8 +178,9 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
     def toolBarZoomChangedCb(self, unused_toolbar, zoomratio):
         self.setZoomRatio(zoomratio)
 
-    ## timeline position callback
+    ## PlayGround timeline position callback
 
-    def timelinePositionChanged(self, value, frame):
-        # for the time being we only inform the ruler
-        self.topLayer.timelinePositionChanged(value, frame)
+    def _playgroundPositionCb(self, unused_playground, smartbin, value):
+        if isinstance(smartbin, SmartTimelineBin):
+            # for the time being we only inform the ruler
+            self.topLayer.timelinePositionChanged(value, frame=-1)

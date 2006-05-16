@@ -137,9 +137,6 @@ class PitiviMainWindow(gtk.Window):
         # Viewer
         self.viewer = PitiviViewer()
 
-        # connect viewer's timeline position callback to the timeline widget
-        self.viewer.addTimelinePositionCallback(self.timeline.timelinePositionChanged)
-
         hpaned.pack1(self.sourcefactories, resize=False, shrink=False)
         hpaned.pack2(self.viewer, resize=True, shrink=False)
 

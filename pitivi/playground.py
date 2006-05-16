@@ -45,6 +45,7 @@ class PlayGround(gobject.GObject):
       bin-added : The given bin was added to the playground
       bin-removed : The given bin was removed from the playground
       error : An error was seen (two strings : reason, details)
+      position : Updated position (SmartBin, position)
     """
 
     __gsignals__ = {
@@ -62,7 +63,10 @@ class PlayGround(gobject.GObject):
                           ( gobject.TYPE_PYOBJECT, )),
         "error" : ( gobject.SIGNAL_RUN_LAST,
                     gobject.TYPE_NONE,
-                    ( gobject.TYPE_STRING, gobject.TYPE_STRING ))
+                    ( gobject.TYPE_STRING, gobject.TYPE_STRING )),
+        "position" : ( gobject.SIGNAL_RUN_LAST,
+                       gobject.TYPE_NONE,
+                       ( gobject.TYPE_PYOBJECT, gobject.TYPE_UINT64 ))
         }
 
     def __init__(self):
@@ -90,6 +94,9 @@ class PlayGround(gobject.GObject):
         self.cur_eos_signal = None
         
         self.state = gst.STATE_READY
+
+        # handle for the position g_timeout_add()
+        self._positiontimeoutid = 0
 
         if self.switchToDefault():
             if self.current.set_state(self.state) == gst.STATE_CHANGE_FAILURE:
@@ -142,6 +149,9 @@ class PlayGround(gobject.GObject):
         if not pipeline in self.pipelines and not pipeline == self.default:
             return True
         if self.current:
+            if self._positiontimeoutid:
+                gobject.source_remove(self._positiontimeoutid)
+                self._positiontimeoutid = 0
             self.current.info("setting to READY")
             self.current.set_state(gst.STATE_READY)
             self.current.removeAudioSinkThread()
@@ -238,6 +248,10 @@ class PlayGround(gobject.GObject):
             return False
         target = self.current
 
+        if self._positiontimeoutid:
+            gobject.source_remove(self._positiontimeoutid)
+            self._positiontimeoutid = 0
+
         # actual seeking
         res = target.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
                           gst.SEEK_TYPE_SET, value,
@@ -246,6 +260,9 @@ class PlayGround(gobject.GObject):
             gst.warning ("Seeking in current failed !");
             return False
         gst.debug("Seeking to %s succeeded" % gst.TIME_ARGS (value))
+
+        self.emit('position', self.current, value)
+        
         return True
 
     def shutdown(self):
@@ -253,8 +270,27 @@ class PlayGround(gobject.GObject):
         for pipeline in self.pipelines:
             gst.debug("Setting pipeline to NULL : %r" % pipeline)
             pipeline.set_state(gst.STATE_NULL)
+        if self._positiontimeoutid:
+            gobject.source_remove(self._positiontimeoutid)
+            self._positiontimeoutid = 0
         gst.debug("Setting DefaultBin to NULL")
         self.default.set_state(gst.STATE_NULL)
+
+    #
+    # Position callback
+    #
+
+    def _checkTimeCb(self):
+        gst.log("Checking time, current:%r" % self.current)
+        try:
+            cur, format = self.current.query_position(gst.FORMAT_TIME)
+        except:
+            self.current.warning("Couldn't get position in time")
+            cur = 0
+        self.emit('position', self.current, cur)
+
+        # hit me !
+        return True
 
     #
     # Bus handler
@@ -266,8 +302,11 @@ class PlayGround(gobject.GObject):
             oldstate, newstate, pending = message.parse_state_changed()
             message.src.debug("old:%s, new:%s, pending:%s" %
                                (oldstate, newstate, pending))
-            if message.src == self.current:
+            if (not self.current == self.default) and message.src == self.current:
                 if pending == gst.STATE_VOID_PENDING:
+                    if (not self._positiontimeoutid) and newstate in [gst.STATE_PLAYING]:
+			self._checkTimeCb()
+                        self._positiontimeoutid = gobject.timeout_add(300, self._checkTimeCb)
                     self.emit("current-state", newstate)
         elif message.type == gst.MESSAGE_ERROR:
             error, detail = message.parse_error()
@@ -344,7 +383,12 @@ class PlayGround(gobject.GObject):
         if not self.current or self.current == self.default:
             return gst.STATE_CHANGE_SUCCESS
         self.state = gst.STATE_PAUSED
-        return self.current.set_state(self.state)
+        res = self.current.set_state(self.state)
+
+        if self._positiontimeoutid:
+            gobject.source_remove(self._positiontimeoutid)
+            self._positiontimeoutid = 0
+        return res
 
     def fast_forward(self):
         """ fast forward the current pipeline """
