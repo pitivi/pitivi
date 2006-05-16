@@ -1,5 +1,10 @@
 2006-05-16  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/viewer.py:
+	removed print statement
+
+2006-05-16  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/playground.py:
 	Added 'position' signal which is emitted to inform a change of position
 	with the current SmartBin.
