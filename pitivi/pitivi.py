@@ -33,6 +33,7 @@ from discoverer import Discoverer
 from playground import PlayGround
 from project import Project, file_is_project
 from effects import Magician
+from configure import APPNAME
 import instance
 
 class Pitivi(gobject.GObject):
@@ -69,7 +70,7 @@ class Pitivi(gobject.GObject):
 
         # store ourself in the instance global
         if instance.PiTiVi:
-            raise RuntimeWarning("There is already a PiTiVi instance, inform developers")
+            raise RuntimeWarning("There is already a %s instance, inform developers" % APPNAME)
         instance.PiTiVi = self
         
         # TODO parse cmd line arguments

@@ -26,6 +26,7 @@ LIBDIR = '@LIBDIR@'
 PKGDATADIR = '@DATADIR@/@PACKAGE@'
 PIXMAPDIR = '@DATADIR@/pixmaps'
 pitivi_version = '@VERSION@'
+APPNAME = '@PACKAGE_NAME@'
 
 def get_pixmap_dir():
     """ Returns the directory for program-only pixmaps """

@@ -1,3 +1,19 @@
+2006-05-16  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/configure.py.in:
+	Add APPNAME, which contains the configured application name.
+	This will easily allow changing the application name later on.
+	* pitivi/check.py:
+	* pitivi/pitivi.py:
+	* pitivi/project.py:
+	* pitivi/ui/mainwindow.py:
+	Use configure.APPNAME for every string occurence of PiTiVi.
+	(PitiviMainWindow._setActions): 
+	Don't set action string for some stock items. (NEW, OPEN, SAVE, SAVE_AS,
+	QUIT, FULLSCREEN, ABOUT). I'm leaving what we set for the others, since
+	I used them because I couldn't find any better icon.
+	Closes #339993
+
 2006-05-15  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/bin.py:

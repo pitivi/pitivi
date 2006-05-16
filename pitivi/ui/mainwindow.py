@@ -35,7 +35,7 @@ from timeline import TimelineWidget
 from sourcefactories import SourceFactoriesWidget
 from viewer import PitiviViewer
 from projectsettings import ProjectSettingsDialog
-from pitivi.configure import pitivi_version
+from pitivi.configure import pitivi_version, APPNAME
 
 class PitiviMainWindow(gtk.Window):
     """
@@ -62,15 +62,15 @@ class PitiviMainWindow(gtk.Window):
     def _setActions(self):
         """ sets up the GtkActions """
         self.actions = [
-            ("NewProject", gtk.STOCK_NEW, "_New Project", None, "Create a new project", self._newProjectCb),
-            ("OpenProject", gtk.STOCK_OPEN, "_Open Project", None, "Opens an existing project", self._openProjectCb),
-            ("SaveProject", gtk.STOCK_SAVE, "_Save Project", None, "Save the current project", self._saveProjectCb),
-            ("SaveProjectAs", gtk.STOCK_SAVE_AS, "Save Project As...", None, "Save the current project", self._saveProjectAsCb),
+            ("NewProject", gtk.STOCK_NEW, None, None, "Create a new project", self._newProjectCb),
+            ("OpenProject", gtk.STOCK_OPEN, None, None, "Opens an existing project", self._openProjectCb),
+            ("SaveProject", gtk.STOCK_SAVE, None, None, "Save the current project", self._saveProjectCb),
+            ("SaveProjectAs", gtk.STOCK_SAVE_AS, None, None, "Save the current project", self._saveProjectAsCb),
             ("ProjectSettings", gtk.STOCK_PROPERTIES, "Project Settings", None, "Edit the project settings", self._projectSettingsCb),
             ("ImportSources", gtk.STOCK_ADD, "_Import Sources...", None, "Import sources to use", self._importSourcesCb),
-            ("Quit", gtk.STOCK_QUIT, "_Quit PiTiVi", None, "Quit PiTiVi", self._quitCb),
-            ("FullScreen", gtk.STOCK_FULLSCREEN, "Toggle _Full Screen", None, "View the main window on the whole screen", self._fullScreenCb),
-            ("About", gtk.STOCK_ABOUT, "About PiTiVi", None, "Information about PiTiVi", self._aboutCb),
+            ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
+            ("FullScreen", gtk.STOCK_FULLSCREEN, None, None, "View the main window on the whole screen", self._fullScreenCb),
+            ("About", gtk.STOCK_ABOUT, None, None, "Information about %s" % APPNAME, self._aboutCb),
             ("File", None, "_File"),
             ("View", None, "_View"),
             ("Help", None, "_Help")
@@ -102,7 +102,7 @@ class PitiviMainWindow(gtk.Window):
 
     def _createUi(self):
         """ Create the graphical interface """
-        self.set_title("PiTiVi v%s" % pitivi_version)
+        self.set_title("%s v%s" % (APPNAME, pitivi_version))
         self.set_geometry_hints(min_width=800, min_height=600)
 
         self.connect("destroy", self._destroyCb)
@@ -218,7 +218,7 @@ class PitiviMainWindow(gtk.Window):
 
     def _aboutCb(self, unused_action):
 	abt = gtk.AboutDialog()
-	abt.set_name("PiTiVi")
+	abt.set_name(APPNAME)
 	abt.set_version("v%s" % pitivi_version)
 	abt.set_website("http://www.pitivi.org/")
 	authors = ["Edward Hervey <edward@fluendo.com>" ]

@@ -27,6 +27,7 @@ import gtk
 import gst
 import sys
 import instance
+from configure import APPNAME
 
 def initial_checks():
     """
@@ -49,8 +50,8 @@ def initial_checks():
 def _checks():
     reg = gst.registry_get_default()
     if instance.PiTiVi:
-        return ("PiTiVi is already running!",
-                "An instance of PiTiVi is already running in this script.")
+        return ("%s is already running!" % APPNAME,
+                "An instance of %s is already running in this script." % APPNAME)
     if not reg.find_plugin("gnonlin"):
         return ("Could not find the GNonLin plugins!",
                 "Make sure the plugins were installed and are available in the GStreamer plugins path.")

@@ -31,6 +31,7 @@ from timeline import Timeline
 from sourcelist import SourceList
 from bin import SmartTimelineBin
 from settings import ExportSettings
+from configure import APPNAME
 
 class Project(gobject.GObject):
     """ The base class for PiTiVi projects """
@@ -92,6 +93,6 @@ def file_is_project(uri):
     """ returns True if the given uri is a PitiviProject file"""
     # TODO
     if not gst.uri_get_protocol(uri) == "file":
-        raise NotImplementedError("PiTiVi doesn't yet handle non local projects")
+        raise NotImplementedError("%s doesn't yet handle non local projects" % APPNAME)
     return os.path.isfile(gst.uri_get_location(uri))
 
