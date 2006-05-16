@@ -22,6 +22,7 @@
 
 import os.path
 import gobject
+import time
 import gtk
 import gst
 import gst.interfaces
@@ -365,9 +366,14 @@ class PitiviViewer(gtk.VBox):
 
 
     ## Control gtk.Button callbacks
+
+    def _encodingDialogDestroyCb(self, unused_dialog):
+        instance.PiTiVi.gui.set_sensitive(True)
         
     def _recordCb(self, unused_button):
         win = EncodingDialog(instance.PiTiVi.current)
+        win.window.connect("destroy", self._encodingDialogDestroyCb)
+        instance.PiTiVi.gui.set_sensitive(False)
         win.show()
 
     def _rewindCb(self, unused_button):
@@ -395,7 +401,6 @@ class PitiviViewer(gtk.VBox):
     
     def _playgroundPositionCb(self, playground, smartbin, pos):
         self._newTime(pos)
-        print smartbin, pos
 
     def _currentPlaygroundChangedCb(self, playground, smartbin):
         if not smartbin == playground.default:
@@ -523,9 +528,11 @@ class EncodingDialog(GladeWindow):
         self.eosid = self.bus.connect("message::eos", self._eosCb)
         self.outfile = None
         self.progressbar = self.widgets["progressbar"]
-        self.timeoutid = None
+        self.cancelbutton = self.widgets["cancelbutton"]
+        self.positionhandler = 0
         self.rendering = False
         self.settings = project.settings
+        self.timestarted = 0
 
     def _fileButtonClickedCb(self, button):
         
@@ -543,11 +550,23 @@ class EncodingDialog(GladeWindow):
             button.set_label(os.path.basename(self.outfile))
         dialog.destroy()
 
+    def _positionCb(self, playground, smartbin, position):
+        timediff = time.time() - self.timestarted
+        self.progressbar.set_fraction(float(position) / float(self.bin.length))
+        if timediff > 5.0:
+            # only display ETA after 5s in order to have enough averaging
+            totaltime = (timediff * float(self.bin.length) / float(position)) - timediff
+            self.progressbar.set_text("Finished in %dm%ds" % (int(totaltime) / 60,
+                                                              int(totaltime) % 60))
+
     def _recordButtonClickedCb(self, unused_button):
         if self.outfile and not self.rendering:
             if self.bin.record(self.outfile, self.settings):
-                self.timeoutid = gobject.timeout_add(400, self._timeoutCb)
+                self.timestarted = time.time()
+                self.positionhandler = instance.PiTiVi.playground.connect('position', self._positionCb)
                 self.rendering = True
+                self.cancelbutton.set_label("gtk-cancel")
+                self.progressbar.set_text("Rendering")
             else:
                 self.progressbar.set_text("Couldn't start rendering")
 
@@ -559,20 +578,6 @@ class EncodingDialog(GladeWindow):
             self.settings = dialog.getSettings()
         dialog.destroy()
 
-    def _timeoutCb(self):
-        result, state, pending = self.bin.get_state(0)
-        if state == gst.STATE_PLAYING and self.rendering:
-            # check time
-            value, format = self.bin.query_position(gst.FORMAT_TIME)
-            # set progresbar to percentage
-            self.progressbar.set_fraction(float(value) / float(self.bin.length))
-            
-            # display current time in progressbar
-            self.progressbar.set_text(time_to_string(value))
-            return True
-        self.timeoutid = False
-        return False
-
     def do_destroy(self):
         gst.debug("cleaning up...")
         self.bus.remove_signal_watch()
@@ -580,14 +585,18 @@ class EncodingDialog(GladeWindow):
 
     def _eosCb(self, unused_bus, unused_message):
         self.rendering = False
-        self.progressbar.set_text("Rendering Finished")
+        if self.positionhandler:
+            instance.PiTiVi.playground.disconnect(self.positionhandler)
+            self.positionhandler = 0
+        self.progressbar.set_text("Rendering Complete")
         self.progressbar.set_fraction(1.0)
-        gobject.source_remove(self.timeoutid)
+        self.cancelbutton.set_label("gtk-close")
         
     def _cancelButtonClickedCb(self, unused_button):
         self.bin.stopRecording()
-        if self.timeoutid:
-            gobject.source_remove(self.timeoutid)
-            self.timeoutid = None
+        if self.positionhandler:
+            instance.PiTiVi.playground.disconnect(self.positionhandler)
+            self.positionhandler = 0
+        instance.PiTiVi.playground.pause()
         self.destroy()
 

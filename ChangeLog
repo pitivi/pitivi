@@ -1,5 +1,24 @@
 2006-05-16  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/bin.py:
+	Fixed recording for tee -> identity conversion/hack.
+	We remove audio/video sink when encoding and put them back when finished.
+	* pitivi/playground.py:
+	added debug for position signal emission.
+	* pitivi/ui/complextimeline.py:
+	don't send a negative frame value to toplayer's timelinePositionChanged
+	* pitivi/ui/encodingdialog.glade:
+	Better order for buttons.
+	Cancel button becomes close button.
+	* pitivi/ui/viewer.py:
+	Grey-out (set_sensitive()) the main window when the encoding dialog is showing.
+	Lots of fixes with the EncodingDialog:
+	_ Close button becomes cancel when encoding
+	_ Show Time Left in progressbar
+	_ Use playground's 'position' signal
+
+2006-05-16  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/viewer.py:
 	removed print statement
 

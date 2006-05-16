@@ -287,6 +287,7 @@ class PlayGround(gobject.GObject):
         except:
             self.current.warning("Couldn't get position in time")
             cur = 0
+        gst.log("emitting 'position' with value %s" % gst.TIME_ARGS(cur))
         self.emit('position', self.current, cur)
 
         # hit me !

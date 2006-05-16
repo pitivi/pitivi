@@ -65,6 +65,7 @@ class SmartBin(gst.Pipeline):
         self.vsinkthread = None
         self.encthread = None
         self.tmpasink = None
+        self.tmpvsink = None
 
     def _addSource(self):
         """ add the source to self """
@@ -174,6 +175,12 @@ class SmartBin(gst.Pipeline):
         if not self.removeAudioSinkThread():
             return False
 
+        # FIXME : remove this once BaseTransform is fixed
+        # Also temporarily remove the videosinkthread
+        self.tmpvsink = self.vsinkthread
+        if not self.removeVideoSinkThread():
+            return False
+
         self.debug("creating and adding encoding thread")
         self.encthread = self._makeEncThread(uri, settings)
         if not self.encthread:
@@ -183,17 +190,17 @@ class SmartBin(gst.Pipeline):
         self.debug("encoding thread added")
 
         # set sync=false on the videosink
-        self.getRealVideoSink().set_property("sync", False)
+        #self.getRealVideoSink().set_property("sync", False)
         
         self.debug("linking vtee to ecnthread:vsink")
         try:
-            self.vtee.get_pad("src%d").link(self.encthread.get_pad("vsink"))
+            self.vtee.get_pad("src").link(self.encthread.get_pad("vsink"))
         except:
             return False
         
         self.debug("linking atee to encthread:asink")
         try:
-            self.atee.get_pad("src%d").link(self.encthread.get_pad("asink"))
+            self.atee.get_pad("src").link(self.encthread.get_pad("asink"))
         except:
             return False
 
@@ -214,10 +221,13 @@ class SmartBin(gst.Pipeline):
             apad = self.encthread.get_pad("asink")
             apad.get_peer().unlink(apad)
             self.remove(self.encthread)
+            self.encthread.set_state(gst.STATE_NULL)
             del self.encthread
             self.encthread = None
             self.setAudioSinkThread(self.tmpasink)
+            self.setVideoSinkThread(self.tmpvsink)
             self.tmpasink = None
+            self.tmpvsink = None
 
         self.getRealVideoSink().set_property("sync", True)
 

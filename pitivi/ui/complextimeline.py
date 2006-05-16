@@ -183,4 +183,4 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
     def _playgroundPositionCb(self, unused_playground, smartbin, value):
         if isinstance(smartbin, SmartTimelineBin):
             # for the time being we only inform the ruler
-            self.topLayer.timelinePositionChanged(value, frame=-1)
+            self.topLayer.timelinePositionChanged(value, 0)
