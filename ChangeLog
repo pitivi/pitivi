@@ -1,5 +1,10 @@
 2006-05-16  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/exportsettingswidget.py:
+	Put button in proper orders (Cancel then OK)
+
+2006-05-16  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/bin.py:
 	Fixed recording for tee -> identity conversion/hack.
 	We remove audio/video sink when encoding and put them back when finished.

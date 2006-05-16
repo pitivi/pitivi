@@ -324,8 +324,8 @@ class ExportSettingsDialog(gtk.Dialog):
         gtk.Dialog.__init__(self, parent=None,
                             title="Export Settings",
                             flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
-                            buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
-                                     gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT))
+                            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                                     gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
         self.setwidget = ExportSettingsWidget()
         self.vbox.pack_start(self.setwidget)
         self.setwidget.setSettings(settings)
