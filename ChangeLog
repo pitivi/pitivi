@@ -1,3 +1,8 @@
+2006-05-17  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	typo error
+
 2006-05-16  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/exportsettingswidget.py:

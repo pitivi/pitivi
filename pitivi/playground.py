@@ -341,7 +341,7 @@ class PlayGround(gobject.GObject):
                 self.emit("error", "Audio output device is busy",
                           "Please check that your audio output device isn't already used by another application.")
             else:
-                self.emit("error", "Audio output problem"<
+                self.emit("error", "Audio output problem",
                           "There is a problem with your audio output device")
         else:
             self.emit("error", gerror.message, detail)
