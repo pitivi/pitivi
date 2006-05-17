@@ -1,5 +1,13 @@
 2006-05-17  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/discoverer.py:
+	* pitivi/playground.py:
+	Ignore error messages coming from GstQueue. Hopefully these hacks will
+	go away once we can depend on GStreamer core >= 0.10.7
+	If query_position() returns -1, don't emit position update.
+
+2006-05-17  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/playground.py:
 	typo error
 

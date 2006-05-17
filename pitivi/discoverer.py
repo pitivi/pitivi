@@ -77,6 +77,10 @@ class Discoverer(gobject.GObject):
         self.thisdone = False
         self.timeoutid = 0
 
+        # FIXME : CRACK CRACK
+        # We want to ignore error messages coming from queue (fixing in 0.10.6.1)
+        self._queuetype = type(gst.element_factory_make("queue"))
+
     def addFile(self, filename):
         """ queue a filename to be discovered """
         gst.info("filename: %s" % filename)
@@ -222,8 +226,10 @@ class Discoverer(gobject.GObject):
                 self.currentfactory.setThumbnail(filename)
             gobject.idle_add(self._finishAnalysis)
         elif message.type == gst.MESSAGE_ERROR:
-            error, detail = message.parse_error()
-            self._handleError(error, detail, message.src)
+	    # Fix until we can depend on GStreamer >= 0.10.7
+            if not isinstance(message.src, self._queuetype):
+                error, detail = message.parse_error()
+                self._handleError(error, detail, message.src)
         elif message.type == gst.MESSAGE_WARNING:
             gst.warning("got a WARNING")
         elif message.type == gst.MESSAGE_ELEMENT:

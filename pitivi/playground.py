@@ -95,6 +95,10 @@ class PlayGround(gobject.GObject):
         
         self.state = gst.STATE_READY
 
+        # FIXME : THIS IS CRACK, THIS IS CRACK
+        # This is so we have the GstQueue type handy
+        self._queuetype = type(gst.element_factory_make("queue"))
+
         # handle for the position g_timeout_add()
         self._positiontimeoutid = 0
 
@@ -287,8 +291,11 @@ class PlayGround(gobject.GObject):
         except:
             self.current.warning("Couldn't get position in time")
             cur = 0
-        gst.log("emitting 'position' with value %s" % gst.TIME_ARGS(cur))
-        self.emit('position', self.current, cur)
+        if cur == -1:
+            gst.warning("seeking returned GST_CLOCK_TIME_NONE")
+        else:
+            gst.log("emitting 'position' with value %s" % gst.TIME_ARGS(cur))
+            self.emit('position', self.current, cur)
 
         # hit me !
         return True
@@ -326,6 +333,9 @@ class PlayGround(gobject.GObject):
         Uses the information from the Gerror, detail and source to
         create meaningful error messages for the User Interface.
         """
+        # FIME : This will be solved in 0.10.7
+        if isinstance(source, self._queuetype):
+            return
         gst.warning("gerror:%s , detail:%s , source:%s" % (gerror, detail, source))
         gst.warning("GError : code:%s, domain:%s (%s), message:%s" % (gerror.code, gerror.domain,
                                                                       type(gerror.domain), gerror.message))
