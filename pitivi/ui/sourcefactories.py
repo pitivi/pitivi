@@ -114,6 +114,7 @@ class SourceListWidget(gtk.VBox):
 
         # import sources dialogbox
         self._importDialog = None
+        self._lastFolder = None
 
         # TreeView
         # Displays icon, name, type, length
@@ -207,6 +208,8 @@ class SourceListWidget(gtk.VBox):
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
         self._importDialog.set_select_multiple(True)
         self._importDialog.set_modal(False)
+        if self._lastFolder:
+            self._importDialog.set_current_folder(self._lastFolder)
         self._importDialog.connect('response', self._dialogBoxResponseCb)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
         self._importDialog.show()
@@ -243,8 +246,9 @@ class SourceListWidget(gtk.VBox):
                 desc = "Video"
         else:
             desc = "Audio"
+        print factory.getPrettyInfo()
         self.storemodel.append([thumbnail,
-                                "<b>%s</b>\n<small>%s</small>" % (os.path.basename(unquote(factory.name)), factory.getPrettyInfo()),
+                                factory.getPrettyInfo(),
                                 factory,
                                 factory.name,
                                 "<b>%s</b>" % beautify_length(factory.length)])
@@ -291,6 +295,7 @@ class SourceListWidget(gtk.VBox):
         gst.debug("response:%r" % response)
         dialogbox.hide()
         if response == gtk.RESPONSE_OK:
+            self._lastFolder = dialogbox.get_current_folder()
             filenames = dialogbox.get_uris()
             self.addFiles(filenames)
         dialogbox.destroy()

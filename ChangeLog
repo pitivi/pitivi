@@ -1,3 +1,11 @@
+2006-05-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/objectfactory.py:
+	Better Markup for getPrettyInfo()
+	* pitivi/ui/sourcefactories.py:
+	Remember last directory sources were taken from so we can reopen the
+	FileChooserDialog with that directory.
+
 2006-05-17  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/discoverer.py:

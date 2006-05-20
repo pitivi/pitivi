@@ -132,8 +132,6 @@ class ObjectFactory(gobject.GObject):
 
     def getPrettyInfo(self):
         """ Returns a prettyfied information string """
-        # Audio : [Mono|Stereo|<nbchanns>] @ <rate> Hz
-        # Video : <width> x <Height> @ <rate> fps
         if self.is_effect:
             if self.is_audio:
                 return "Video Effect"
@@ -143,17 +141,26 @@ class ObjectFactory(gobject.GObject):
         if not self.is_video and not self.is_audio:
             "Unknown"
         stl = []
-        if self.title:
-            stl.append("<b>Title:</b> %s" % self.title)
-        if self.artist:
-            stl.append("<b>Artist:</b> %s" % self.artist)
+        filename = os.path.basename(unquote(self.name))
+        if not self.title:
+            stl.append("<b>%s</b><small>" % gobject.markup_escape_text(filename))
+        else:
+            # either 'Title' or 'Title (Artist)'
+            if self.artist:
+                stl.append("<b>%s</b> (%s)" % (gobject.markup_escape_text(self.title),
+                                               gobject.markup_escape_text(self.artist)))
+            else:
+                stl.append("<b>%s</b>" % gobject.markup_escape_text(self.title))
+            stl.append("<small><b>File:</b> %s" % filename)
+##         if self.title:
+##             stl.append("<b>Title:</b> %s" % self.title)
+##         if self.artist:
+##             stl.append("<b>Artist:</b> %s" % self.artist)
         if self.is_video and self.video_info_stream:
             stl.append(self.video_info_stream.getMarkup())
         if self.is_audio and self.audio_info_stream:
             stl.append(self.audio_info_stream.getMarkup())
-##         if self.mediaTags:
-##             stl.append("%s" % self.mediaTags)
-        return string.join(stl, "\n")
+        return string.join(stl, "\n") + "</small>"
 
     def makeAudioBin(self):
         """ returns a audio only bin """
