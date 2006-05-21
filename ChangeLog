@@ -1,5 +1,10 @@
 2006-05-20  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/sourcefactories.py:
+	remove print statement
+
+2006-05-20  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/objectfactory.py:
 	Better Markup for getPrettyInfo()
 	* pitivi/ui/sourcefactories.py:

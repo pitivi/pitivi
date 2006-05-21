@@ -246,7 +246,6 @@ class SourceListWidget(gtk.VBox):
                 desc = "Video"
         else:
             desc = "Audio"
-        print factory.getPrettyInfo()
         self.storemodel.append([thumbnail,
                                 factory.getPrettyInfo(),
                                 factory,
