@@ -220,7 +220,7 @@ class PitiviMainWindow(gtk.Window):
 	abt.set_website("http://www.pitivi.org/")
 	authors = ["Edward Hervey <edward@fluendo.com>" ]
 	abt.set_authors(authors)
-	abt.set_license("GNU Lesser Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details")
+	abt.set_license("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details")
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")
 	abt.show()
 

@@ -1,3 +1,13 @@
+2006-05-22  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py: (PitiviMainWindow._aboutCb): 
+	LGPL is Lesser General Public License
+
+2006-05-22  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	0.10.0.2 pre-release
+
 2006-05-20  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/sourcefactories.py:
