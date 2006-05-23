@@ -47,6 +47,20 @@ def initial_checks():
 
     sys.exit()
 
+def initiate_videosinks():
+    sink = gst.element_factory_make("autovideosink")
+    if not sink.set_state(gst.STATE_READY):
+        return False
+    sink.set_state(gst.STATE_NULL)
+    return True
+
+def initiate_audiosinks():
+    sink = gst.element_factory_make("autoaudiosink")
+    if not sink.set_state(gst.STATE_READY):
+        return False
+    sink.set_state(gst.STATE_NULL)
+    return True
+
 def _checks():
     reg = gst.registry_get_default()
     if instance.PiTiVi:
@@ -61,4 +75,10 @@ def _checks():
     if not hasattr(gtk.gdk.Window, 'cairo_create'):
         return ("PyGTK doesn't have cairo support!",
                 "Please use a version of the Python bindings for GTK+ built with Cairo support.")
+    if not initiate_videosinks():
+        return ("Could not initiate the video output plugins",
+                "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)")
+    if not initiate_audiosinks():
+        return ("Could not initiate the audio output plugins",
+                "Make sure you have at least one valid audio output sink available (alsasink or osssink)")
     return None
