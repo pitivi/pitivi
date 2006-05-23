@@ -1,3 +1,8 @@
+2006-05-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/objectfactory.py: (FileSourceFactory.__gproperties__): 
+	The << operator causes issues with Python 2.3. Replacing 2<<63 with 2**63.
+
 2006-05-22  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/mainwindow.py: (PitiviMainWindow._aboutCb): 
