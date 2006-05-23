@@ -1,3 +1,11 @@
+=== release 0.10.1 ===
+
+2006-05-23  Edward Hervey  <edward@fluendo.com>
+
+	* RELEASE:
+	* configure.ac:
+	Releasing 0.10.1
+
 2006-05-23  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/check.py:
