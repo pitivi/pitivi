@@ -1,3 +1,20 @@
+2006-06-19  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	* pitivi/Makefile.am:
+	* pitivi/elements/Makefile.am:
+	* pitivi/elements/__init__.py:
+	New directory for python gstreamer elements.
+	* pitivi/elements/singledecodebin.py:
+	New queue-less, single stream, decodebin-like bin for use in timelines.
+	This makes seeking/scrubbing snappier.
+	Also uses less memory.
+	* pitivi/timeline.py:
+	Use new SingleDecodeBin element.
+	* pitivi/ui/viewer.py:
+	Make own debug similarto gst debug.
+	Don't seek on position change if it wasn't caused by the user.
+
 2006-05-23  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac:

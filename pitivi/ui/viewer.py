@@ -260,8 +260,9 @@ class PitiviViewer(gtk.VBox):
     def _sliderValueChangedCb(self, slider):
         """ seeks when the value of the slider has changed """
         value = long(slider.get_value())
-        gst.info(time_to_string(value))
-        self._doSeek(value)
+        gst.info(gst.TIME_ARGS(value))
+        if self.moving_slider:
+            self._doSeek(value)
 
     def _sliderScrollCb(self, unused_slider, event):
         # calculate new seek position

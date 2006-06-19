@@ -171,6 +171,7 @@ common/m4/Makefile
 pitivi/Makefile
 pitivi/configure.py
 pitivi/ui/Makefile
+pitivi/elements/Makefile
 pitivi/pixmaps/Makefile
 pitivi.spec
 pitivi.desktop

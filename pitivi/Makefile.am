@@ -1,5 +1,6 @@
 SUBDIRS = \
 	ui \
+	elements \
 	pixmaps
 
 pitividir = $(libdir)/pitivi/python/pitivi

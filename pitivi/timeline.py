@@ -26,6 +26,8 @@ Timeline and timeline objects
 import gobject
 import gst
 
+from elements.singledecodebin import SingleDecodeBin
+
 MEDIA_TYPE_NONE = 0
 MEDIA_TYPE_AUDIO = 1
 MEDIA_TYPE_VIDEO = 2
@@ -292,13 +294,18 @@ class TimelineFileSource(TimelineSource):
     def _makeGnlObject(self):
         if self.media_type == MEDIA_TYPE_AUDIO:
             caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
+            postfix = "audio"
         elif self.media_type == MEDIA_TYPE_VIDEO:
             caps = gst.caps_from_string("video/x-raw-yuv;video/x-raw-rgb")
+            postfix = "video"
         else:
             raise NameError, "media type is NONE !"
         self.factory.lastbinid = self.factory.lastbinid + 1
-        gnlobject = gst.element_factory_make("gnlfilesource", "source-" + self.name + str(self.factory.lastbinid))
-        gnlobject.set_property("location", self.factory.name)
+
+        gnlobject = gst.element_factory_make("gnlsource", "source-" + self.name + "-" + postfix + str(self.factory.lastbinid))
+        decodebin = SingleDecodeBin(caps=caps, uri=self.factory.name)
+        gnlobject.add(decodebin)
+##         gnlobject.set_property("location", self.factory.name)
         gnlobject.set_property("caps", caps)
         gnlobject.set_property("start", long(0))
         gnlobject.set_property("duration", long(self.factory.length))
