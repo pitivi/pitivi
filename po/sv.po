@@ -1,0 +1,480 @@
+# Swedish messages for pitivi.
+# Copyright (C) 2006 Free Software Foundation, Inc.
+# Christian Rose <menthos@menthos.com>, 2006.
+#
+# $Id: sv.po,v 1.1 2006/06/27 15:33:52 menthos Exp $
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pitivi\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-06-27 17:32+0200\n"
+"PO-Revision-Date: 2006-06-27 17:32+0200\n"
+"Last-Translator: Christian Rose <menthos@menthos.com>\n"
+"Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../pitivi/ui/discoverererrordialog.glade.h:1
+msgid "Error while analyzing files"
+msgstr "Fel vid analys av filer"
+
+#: ../pitivi/ui/discoverererrordialog.glade.h:2
+#, fuzzy
+msgid "The following files weren't discovered properly."
+msgstr "Följande filer kunde inte läsas in:"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:1
+#, fuzzy
+msgid "<b>Author :</b>"
+msgstr "<b>Ljud</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:2
+#, fuzzy
+msgid "<b>Description :</b>"
+msgstr "<b>Speltid:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:3
+#, fuzzy
+msgid "<b>Plugin Name</b>"
+msgstr "<b>_Namn</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:4
+#, fuzzy
+msgid "<b>Properties</b>"
+msgstr "<b>Förhandsgranskning</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:5
+#, fuzzy
+msgid "Author"
+msgstr "Upphovsman:"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:6
+msgid "Description"
+msgstr "Beskrivning"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:7
+#, fuzzy
+msgid "Properties for <element>"
+msgstr "Egenskaper för den aktuella låten"
+
+#: ../pitivi/ui/encodingdialog.glade.h:1
+#, fuzzy
+msgid "Choose File"
+msgstr "Textfil"
+
+#: ../pitivi/ui/encodingdialog.glade.h:2
+#, fuzzy
+msgid "Output File :"
+msgstr "_Utdata:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:3
+#, fuzzy
+msgid "Please choose an output file"
+msgstr "Välj ett annat namn på emblemet."
+
+#: ../pitivi/ui/encodingdialog.glade.h:4
+msgid "Render Project"
+msgstr ""
+
+#: ../pitivi/ui/encodingdialog.glade.h:5
+#: ../pitivi/ui/exportsettingswidget.glade.h:33
+msgid "Settings"
+msgstr "Inställningar"
+
+#: ../pitivi/ui/encodingdialog.glade.h:6
+msgid "Settings :"
+msgstr ""
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:1
+msgid ""
+"12 fps\n"
+"23,97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29,97 fps\n"
+"30 fps\n"
+"60 fps"
+msgstr ""
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:8
+msgid ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+msgstr ""
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:12
+msgid ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+msgstr ""
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:18
+msgid "<b>Audio Output</b>"
+msgstr "<b>Ljudutmatning</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:19
+#, fuzzy
+msgid "<b>Export to</b>"
+msgstr "<b>Format</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:20
+#, fuzzy
+msgid "<b>Video Output</b>"
+msgstr "<b>Ljudutmatning</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:21
+#, fuzzy
+msgid "Audio Codec"
+msgstr "Ljudprofil"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:22
+#, fuzzy
+msgid "Audio Codec :"
+msgstr "Komprimeringsmetod:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:23
+#, fuzzy
+msgid "Audio Preset"
+msgstr "Ljudprofil"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:24
+#, fuzzy
+msgid "Channels :"
+msgstr "4-kanal"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:25
+#, fuzzy
+msgid "Container :"
+msgstr "_Fortsätt"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:26
+msgid "Depth :"
+msgstr ""
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:27
+#, fuzzy
+msgid "Frame rate:"
+msgstr "Ledigt utrymme:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:28
+#, fuzzy
+msgid "Height :"
+msgstr "_Höger"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:29
+msgid ""
+"Mono (1)\n"
+"Stereo (2)"
+msgstr ""
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:31
+#, fuzzy
+msgid "Muxer"
+msgstr "Muine"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:32
+#, fuzzy
+msgid "Rate :"
+msgstr "Datum:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:34
+#, fuzzy
+msgid "Video Codec"
+msgstr "Video"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:35
+#, fuzzy
+msgid "Video Codec :"
+msgstr "Komprimeringsmetod:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:36
+msgid "Video Preset"
+msgstr ""
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:37
+msgid "Width :"
+msgstr "Bredd:"
+
+#: ../pitivi/ui/projectsettings.glade.h:1
+msgid "A short description of your project."
+msgstr ""
+
+#: ../pitivi/ui/projectsettings.glade.h:2
+msgid "Description :"
+msgstr "Beskrivning:"
+
+#: ../pitivi/ui/projectsettings.glade.h:3
+msgid "Name :"
+msgstr "Namn:"
+
+#: ../pitivi/ui/projectsettings.glade.h:4
+msgid "Project Settings"
+msgstr "Projektinställningar"
+
+#: ../pitivi/ui/projectsettings.glade.h:5
+msgid "The name of your project."
+msgstr "Namnet på ditt projekt."
+
+#~ msgid "Width:"
+#~ msgstr "Bredd:"
+
+#~ msgid "Description:"
+#~ msgstr "Beskrivning:"
+
+#~ msgid "Name:"
+#~ msgstr "Namn:"
+
+#~ msgid "<b>Device</b>"
+#~ msgstr "<b>Enhet</b>"
+
+#~ msgid "<b>_Artist:</b>"
+#~ msgstr "<b>_Artist:</b>"
+
+#~ msgid "<b>_Genre:</b>"
+#~ msgstr "<b>_Genre:</b>"
+
+#~ msgid "<b>_Title:</b>"
+#~ msgstr "<b>_Titel:</b>"
+
+#~ msgid "Edit _Profiles..."
+#~ msgstr "Redigera _profiler..."
+
+#~ msgid "File _name:"
+#~ msgstr "Fil_namn:"
+
+#~ msgid "Folder hie_rarchy:"
+#~ msgstr "Mapphie_rarki:"
+
+#~ msgid "O_utput Format:"
+#~ msgstr "_Utdataformat:"
+
+#~ msgid "Pre_vious Track"
+#~ msgstr "F_öregående spår"
+
+#~ msgid "Preferences"
+#~ msgstr "Inställningar"
+
+#~ msgid "Select A Folder"
+#~ msgstr "Välj en mapp"
+
+#~ msgid "Skip to the next track"
+#~ msgstr "Hoppa till nästa spår"
+
+#~ msgid "Skip to the previous track"
+#~ msgstr "Hoppa till föregående spår"
+
+#~ msgid "_Contents"
+#~ msgstr "_Innehåll"
+
+#~ msgid "_Deselect All"
+#~ msgstr "_Avmarkera alla"
+
+#~ msgid "_Edit"
+#~ msgstr "_Redigera"
+
+#~ msgid "_Folder:"
+#~ msgstr "_Mapp:"
+
+#~ msgid "_Help"
+#~ msgstr "_Hjälp"
+
+#~ msgid "_Next Track"
+#~ msgstr "_Nästa spår"
+
+#~ msgid "_Play / Pause"
+#~ msgstr "_Spela / Gör paus"
+
+#~ msgid "_Select All"
+#~ msgstr "_Markera alla"
+
+#~ msgid "_Strip special characters"
+#~ msgstr "_Ta bort specialtecken"
+
+#~ msgid "_Submit Track Names..."
+#~ msgstr "_Skicka spårnamn..."
+
+#~ msgid "Audio Profile with which to encode"
+#~ msgstr "Ljudprofil att koda med"
+
+#~ msgid "If to strip special characters from filenames"
+#~ msgstr "Om specialtecken ska tas bort från filnamn"
+
+#~ msgid "The directory structure for the files"
+#~ msgstr "Katalogstrukturen för filerna"
+
+#~ msgid "The name pattern for files"
+#~ msgstr "Namnmönstret för filer"
+
+#~ msgid "+"
+#~ msgstr "+"
+
+#~ msgid "-"
+#~ msgstr "-"
+
+#~ msgid "GConf error: %s"
+#~ msgstr "GConf-fel: %s"
+
+#~ msgid "All further errors shown only on terminal."
+#~ msgstr "Alla ytterligare fel visas endast på terminalen."
+
+#~ msgid "translator-credits"
+#~ msgstr ""
+#~ "Christian Rose\n"
+#~ "Skicka synpunkter på översättningen till tp-sv@listor.tp-sv.se"
+
+#~ msgid ""
+#~ "A file called '%s' exists, size %s.\n"
+#~ "Do you want to skip this track or overwrite it?"
+#~ msgstr ""
+#~ "En fil med namnet \"%s\" finns redan med storleken %s.\n"
+#~ "Vill du hoppa över detta spår eller skriva över det?"
+
+#~ msgid "_Skip"
+#~ msgstr "_Hoppa över"
+
+#~ msgid "_Overwrite"
+#~ msgstr "Skriv _över"
+
+#~ msgid "Estimated time left: %d:%02d (at %0.1f×)"
+#~ msgstr "Uppskattad kvarvarande tid: %d.%02d (med %0.1f×)"
+
+#~ msgid "Estimated time left: unknown"
+#~ msgstr "Uppskattad kvarvarande tid: okänd"
+
+#~ msgid "Could not create GStreamer encoders for %s"
+#~ msgstr "Kunde inte skapa GStreamer-kodare för %s"
+
+#~ msgid "Could not create GStreamer file output"
+#~ msgstr "Kunde inte skapa GStreamer-filutdata"
+
+#~ msgid "Could not link pipeline"
+#~ msgstr "Kunde inte länka rör"
+
+#~ msgid "Could not get current track position"
+#~ msgstr "Kund einte få tag i aktuell spårposition"
+
+#~ msgid ""
+#~ "Extractor object is not valid. This is bad, check your console for errors."
+#~ msgstr ""
+#~ "Extraktörsobjekt är inte giltigt. Detta är illa. Kontrollera eventuella "
+#~ "fel på din konsoll."
+
+#~ msgid "Could not get track start position"
+#~ msgstr "Kunde inte få tag i startposition"
+
+#~ msgid "The plugin necessary for file access was not found"
+#~ msgstr "Insticksmodulen som är nödvändig för filåtkomst hittades inte"
+
+#~ msgid "E_xtract"
+#~ msgstr "E_xtrahera"
+
+#~ msgid "Reason"
+#~ msgstr "Orsak"
+
+#~ msgid "Please consult the documentation for assistance."
+#~ msgstr "Läs dokumentationen för hjälp."
+
+#~ msgid "(unknown)"
+#~ msgstr "(okänd)"
+
+#~ msgid "Title"
+#~ msgstr "Titel"
+
+#~ msgid "Artist"
+#~ msgstr "Artist"
+
+#~ msgid "Could not read the CD"
+#~ msgstr "Kunde inte läsa cd-skivan"
+
+#~ msgid "Retrieving track listing...please wait."
+#~ msgstr "Hämtar spårlista... var vänlig vänta."
+
+#~ msgid ""
+#~ "The currently selected audio profile is not available on your "
+#~ "installation."
+#~ msgstr ""
+#~ "Den för tillfället valda ljudprofilen är inte tillgänglig i din "
+#~ "installation."
+
+#~ msgid "_Change Profile"
+#~ msgstr "_Byt profil"
+
+#~ msgid "Could not open URL"
+#~ msgstr "Kunde inte öppna url"
+
+#~ msgid "Start extracting immediately"
+#~ msgstr "Starta extrahering direkt"
+
+#~ msgid "Start playing immediately"
+#~ msgstr "Starta uppspelning direkt"
+
+#~ msgid "DEVICE"
+#~ msgstr "ENHET"
+
+#~ msgid "Could not create GConf client.\n"
+#~ msgstr "Kunde inte skapa GConf-klient.\n"
+
+#~ msgid "Track"
+#~ msgstr "Spår"
+
+#~ msgid "Duration"
+#~ msgstr "Speltid"
+
+#~ msgid "Unknown Artist"
+#~ msgstr "Okänd artist"
+
+#~ msgid "Unknown Title"
+#~ msgstr "Okänd titel"
+
+#~ msgid "Track %d"
+#~ msgstr "Spår %d"
+
+#~ msgid "Various"
+#~ msgstr "Diverse"
+
+#~ msgid "Failed to link pipeline"
+#~ msgstr "Misslyckades med länka rör"
+
+#~ msgid "Failed to create audio output"
+#~ msgstr "Misslyckades med att skapa ljudutdata"
+
+#~ msgid "Seeking to %s"
+#~ msgstr "Spolar till %s"
+
+#~ msgid "Example Path:"
+#~ msgstr "Exempelsökväg:"
+
+#~ msgid "label"
+#~ msgstr "etikett"
+
+#~ msgid "Pre_vious"
+#~ msgstr "F_öregående"
+
+#~ msgid "_Pause"
+#~ msgstr "_Paus"
+
+#~ msgid "Estimated time left:"
+#~ msgstr "Uppskattad kvarvarande tid:"
+
+#~ msgid "Progress"
+#~ msgstr "Förlopp"
+
+#~ msgid "Unknown"
+#~ msgstr "Okänd"
+
+#~ msgid "Extracting '%s'"
+#~ msgstr "Extraherar \"%s\""
+
+#~ msgid "%d:%02d (at %0.1fx)"
+#~ msgstr "%d.%02d (vid %0.1fx)"
+
+#~ msgid "Unknown (at 0.0x)"
+#~ msgstr "Okänt (vid 0.0x)"
