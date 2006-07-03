@@ -1,0 +1,231 @@
+# Greek translation of PiTiVi.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PiTiVi package.
+#
+# Simos Xenitellis <simos@gnome.org>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: el\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-07-03 19:46+0100\n"
+"PO-Revision-Date: 2006-07-03 19:56+0100\n"
+"Last-Translator: Simos Xenitellis <simos@gnome.org>\n"
+"Language-Team: Greek <team@gnome.gr>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.2\n"
+"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+
+#: ../pitivi/ui/discoverererrordialog.glade.h:1
+msgid "Error while analyzing files"
+msgstr "Σφάλμα κατά την ανάλυση των αρχείων"
+
+#: ../pitivi/ui/discoverererrordialog.glade.h:2
+msgid "The following files weren't discovered properly."
+msgstr "Τα επόμενα αρχεία δεν εντοπίστηκαν σωστά."
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:1
+msgid "<b>Author :</b>"
+msgstr "<b>Συγγραφέας:</b>"
+
+# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
+#: ../pitivi/ui/elementsettingsdialog.glade.h:2
+msgid "<b>Description :</b>"
+msgstr "<b>Περιγραφή:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:3
+msgid "<b>Plugin Name</b>"
+msgstr "<b>Όνομα αρθρώματος</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:4
+msgid "<b>Properties</b>"
+msgstr "<b>Ιδιότητες</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:5
+msgid "Author"
+msgstr "Δημιουργός"
+
+# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
+#
+#: ../pitivi/ui/elementsettingsdialog.glade.h:6
+msgid "Description"
+msgstr "Περιγραφή"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:7
+msgid "Properties for <element>"
+msgstr "Ιδιότητες για <element>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:1
+msgid "Choose File"
+msgstr "Επιλογή αρχείου"
+
+#: ../pitivi/ui/encodingdialog.glade.h:2
+msgid "Output File :"
+msgstr "Αρχείο εξόδου:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:3
+msgid "Please choose an output file"
+msgstr "Παρακαλώ επιλέξτε ένα αρχείου εξόδου"
+
+#: ../pitivi/ui/encodingdialog.glade.h:4
+msgid "Render Project"
+msgstr "Εκτέλεση έργου"
+
+#: ../pitivi/ui/encodingdialog.glade.h:5
+#: ../pitivi/ui/exportsettingswidget.glade.h:33
+msgid "Settings"
+msgstr "Ρυθμίσεις"
+
+#: ../pitivi/ui/encodingdialog.glade.h:6
+msgid "Settings :"
+msgstr "Ρυθμίσεις:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:1
+msgid ""
+"12 fps\n"
+"23,97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29,97 fps\n"
+"30 fps\n"
+"60 fps"
+msgstr ""
+"12 fps\n"
+"23,97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29,97 fps\n"
+"30 fps\n"
+"60 fps"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:8
+msgid ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+msgstr ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:12
+msgid ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+msgstr ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:18
+msgid "<b>Audio Output</b>"
+msgstr "<b>Έξοδος Ήχου</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:19
+msgid "<b>Export to</b>"
+msgstr "<b>Εξαγωγή σε</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:20
+msgid "<b>Video Output</b>"
+msgstr "<b>Έξοδος Βίντεο</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:21
+msgid "Audio Codec"
+msgstr "Κόντεκ ήχου"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:22
+msgid "Audio Codec :"
+msgstr "Κόντεκ ήχου:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:23
+msgid "Audio Preset"
+msgstr "Προφίλ ήχου"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:24
+msgid "Channels :"
+msgstr "Κανάλια:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:25
+msgid "Container :"
+msgstr "Συσκευασία:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:26
+msgid "Depth :"
+msgstr "Βάθος:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:27
+msgid "Frame rate:"
+msgstr "Ρυθμός καρέ:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:28
+msgid "Height :"
+msgstr "Ύψος:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:29
+msgid ""
+"Mono (1)\n"
+"Stereo (2)"
+msgstr ""
+"Μόνο (1)\n"
+"Στέρεο (2)"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:31
+msgid "Muxer"
+msgstr "Muxer"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:32
+msgid "Rate :"
+msgstr "Ρυθμός:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:34
+msgid "Video Codec"
+msgstr "Κόντεκ βίντεο"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:35
+msgid "Video Codec :"
+msgstr "Κόντεκ βίντεο:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:36
+msgid "Video Preset"
+msgstr "Προφίλ βίντεο"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:37
+msgid "Width :"
+msgstr "Πλάτος:"
+
+#: ../pitivi/ui/projectsettings.glade.h:1
+msgid "A short description of your project."
+msgstr "Μια σύντομη περιγραφή του έργου σας."
+
+#: ../pitivi/ui/projectsettings.glade.h:2
+msgid "Description :"
+msgstr "Περιγραφή:"
+
+# #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
+#
+# #-#-#-#-#  ekiga.gnome-2-14.el.po (el)  #-#-#-#-#
+#
+# #-#-#-#-#  gnome-system-tools.gnome-2-14.el.po (el)  #-#-#-#-#
+#
+#: ../pitivi/ui/projectsettings.glade.h:3
+msgid "Name :"
+msgstr "Όνομα:"
+
+#: ../pitivi/ui/projectsettings.glade.h:4
+msgid "Project Settings"
+msgstr "Ρυθμίσεις έργου"
+
+#: ../pitivi/ui/projectsettings.glade.h:5
+msgid "The name of your project."
+msgstr "Το όνομα του έργου σας."
+
