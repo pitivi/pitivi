@@ -1,3 +1,12 @@
+2006-07-12  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/elementsettingsdialog.glade:
+	* pitivi/ui/encodingdialog.glade:
+	* pitivi/ui/exportsettingswidget.glade:
+	* pitivi/ui/projectsettings.glade:
+	Removed whitespaces in front of punctuation in dialogbox.
+	Fixes #346585.
+
 2006-06-19  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac:
