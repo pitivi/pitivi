@@ -1,16 +1,17 @@
 # Swedish messages for pitivi.
 # Copyright (C) 2006 Free Software Foundation, Inc.
+# Daniel Nylander <po@danielnylander.se>, 2006.
 # Christian Rose <menthos@menthos.com>, 2006.
 #
-# $Id: sv.po,v 1.2 2006/07/13 01:16:39 menthos Exp $
+# $Id: sv.po,v 1.3 2006/07/16 16:01:28 dnylande Exp $
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-13 03:16+0200\n"
-"PO-Revision-Date: 2006-07-13 03:15+0200\n"
-"Last-Translator: Christian Rose <menthos@menthos.com>\n"
+"POT-Creation-Date: 2006-07-16 05:07+0200\n"
+"PO-Revision-Date: 2006-07-16 17:49+0100\n"
+"Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -66,9 +67,8 @@ msgid "Please choose an output file"
 msgstr "Välj en utdatafil"
 
 #: ../pitivi/ui/encodingdialog.glade.h:4
-#, fuzzy
 msgid "Render Project"
-msgstr "Påminnelseanteckningar"
+msgstr "Rendera projekt"
 
 #: ../pitivi/ui/encodingdialog.glade.h:5
 #: ../pitivi/ui/exportsettingswidget.glade.h:33
@@ -89,6 +89,13 @@ msgid ""
 "30 fps\n"
 "60 fps"
 msgstr ""
+"12 bilder/s\n"
+"23,97 bilder/s\n"
+"24 bilder/s\n"
+"25 bilder/s\n"
+"29,97 bilder/s\n"
+"30 bilder/s\n"
+"60 bilder/s"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:8
 msgid ""
@@ -97,6 +104,10 @@ msgid ""
 "24 bit\n"
 "32 bit"
 msgstr ""
+"8 bitar\n"
+"16 bitar\n"
+"24 bitar\n"
+"32 bitar"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:12
 msgid ""
@@ -135,18 +146,17 @@ msgid "Audio Codec:"
 msgstr "Ljudkodek:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:23
-#, fuzzy
 msgid "Audio Preset"
-msgstr "Återställ zoom"
+msgstr "Ljudförval"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:24
 msgid "Channels:"
 msgstr "Kanaler:"
 
+# Bra ord på svenska sökes
 #: ../pitivi/ui/exportsettingswidget.glade.h:25
-#, fuzzy
 msgid "Container:"
-msgstr "Fortsätt"
+msgstr "Container:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:26
 msgid "Depth:"
@@ -154,7 +164,7 @@ msgstr "Djup:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:27
 msgid "Frame rate:"
-msgstr ""
+msgstr "Bildhastighet:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:28
 msgid "Height:"
@@ -168,15 +178,14 @@ msgstr ""
 "Mono (1)\n"
 "Stereo (2)"
 
+# Bra ord på svenska sökes
 #: ../pitivi/ui/exportsettingswidget.glade.h:31
-#, fuzzy
 msgid "Muxer"
-msgstr "Mus"
+msgstr "Muxer"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:32
-#, fuzzy
 msgid "Rate:"
-msgstr "Datum:"
+msgstr "Hastighet:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:34
 msgid "Video Codec"
@@ -187,9 +196,8 @@ msgid "Video Codec:"
 msgstr "Videokodek:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:36
-#, fuzzy
 msgid "Video Preset"
-msgstr "Videochatt"
+msgstr "Videoförval"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:37
 msgid "Width:"
@@ -217,172 +225,116 @@ msgstr "Namnet på ditt projekt."
 
 #~ msgid "Author:"
 #~ msgstr "Författare:"
-
 #~ msgid "Plugin Name"
 #~ msgstr "Namn på insticksmodul"
-
 #~ msgid "Audio Output"
 #~ msgstr "Ljudutmatning"
-
 #~ msgid "Export to"
 #~ msgstr "Exportera till"
-
 #~ msgid "Video Output"
 #~ msgstr "Videoutmatning"
-
 #~ msgid "Add..."
 #~ msgstr "Lägg till..."
-
 #~ msgid "Move Down"
 #~ msgstr "Flytta ned"
-
 #~ msgid "Move Up"
 #~ msgstr "Flytta upp"
-
 #~ msgid "Playlist"
 #~ msgstr "Spellista"
-
 #~ msgid "Remove"
 #~ msgstr "Ta bort"
-
 #~ msgid "Save..."
 #~ msgstr "Spara..."
-
 #~ msgid "_Copy Location"
 #~ msgstr "_Kopiera plats"
-
 #~ msgid "Next chapter or movie"
 #~ msgstr "Nästa kapitel eller film"
-
 #~ msgid "Play / Pa_use"
 #~ msgstr "Spela upp / Gör pa_us"
-
 #~ msgid "Play or pause the movie"
 #~ msgstr "Spela upp eller gör paus i filmen"
-
 #~ msgid "Previous chapter or movie"
 #~ msgstr "Föregående kapitel eller film"
-
 #~ msgid "Show _Controls"
 #~ msgstr "Visa _kontroller"
-
 #~ msgid "Show controls"
 #~ msgstr "Visa kontroller"
-
 #~ msgid "Skip _Backwards"
 #~ msgstr "Hoppa _bakåt"
-
 #~ msgid "Skip _Forward"
 #~ msgstr "Hoppa _framåt"
-
 #~ msgid "Skip backwards"
 #~ msgstr "Hoppa bakåt"
-
 #~ msgid "Skip forward"
 #~ msgstr "Hoppa framåt"
-
 #~ msgid "Volume Down"
 #~ msgstr "Volym ned"
-
 #~ msgid "Volume Up"
 #~ msgstr "Volym upp"
-
 #~ msgid "Volume up"
 #~ msgstr "Volym upp"
-
 #~ msgid "_Next Chapter/Movie"
 #~ msgstr "_Nästa kapitel/film"
-
 #~ msgid "_Previous Chapter/Movie"
 #~ msgstr "_Föregående kapitel/film"
-
 #~ msgid "    "
 #~ msgstr "    "
-
 #~ msgid "0 frames per second"
 #~ msgstr "0 ramar per sekund"
-
 #~ msgid "0 kbps"
 #~ msgstr "0 kb/s"
-
 #~ msgid "0 seconds"
 #~ msgstr "0 sekunder"
-
 #~ msgid "0 x 0"
 #~ msgstr "0 × 0"
-
 #~ msgid "<b>General</b>"
 #~ msgstr "<b>Allmänt</b>"
-
 #~ msgid "<b>Video</b>"
 #~ msgstr "<b>Video</b>"
-
 #~ msgid "Album:"
 #~ msgstr "Album:"
-
 #~ msgid "Artist:"
 #~ msgstr "Artist:"
-
 #~ msgid "Bitrate:"
 #~ msgstr "Bithastighet:"
-
 #~ msgid "Codec:"
 #~ msgstr "Kodek:"
-
 #~ msgid "Dimensions:"
 #~ msgstr "Dimensioner:"
-
 #~ msgid "Duration:"
 #~ msgstr "Speltid:"
-
 #~ msgid "N/A"
 #~ msgstr "-"
-
 #~ msgid "Properties"
 #~ msgstr "Egenskaper"
-
 #~ msgid "Title:"
 #~ msgstr "Titel:"
-
 #~ msgid "Unknown"
 #~ msgstr "Okänd"
-
 #~ msgid "Year:"
 #~ msgstr "År:"
-
 #~ msgid "*"
 #~ msgstr "*"
-
 #~ msgid "<b>Preview</b>"
 #~ msgstr "<b>Förhandsgranskning</b>"
-
 #~ msgid "Save Screenshot"
 #~ msgstr "Spara skärmdump"
-
 #~ msgid "Save screenshot"
 #~ msgstr "Spara skärmdump"
-
 #~ msgid "Save screenshot to _desktop"
 #~ msgstr "Spara skärmdump på _skrivbordet"
-
 #~ msgid "Save screenshot to _file:"
 #~ msgstr "Spara skärmdump i _filen:"
-
 #~ msgid "Skip to"
 #~ msgstr "Hoppa till"
-
 #~ msgid "_Skip to:"
 #~ msgstr "_Hoppa till:"
-
 #~ msgid "seconds"
 #~ msgstr "sekunder"
-
 #~ msgid "Movie Player"
 #~ msgstr "Filmuppspelare"
-
 #~ msgid "Play movies and songs"
 #~ msgstr "Spela upp filmer och låtar"
-
 #~ msgid ""
 #~ "14.4 Kbps Modem\n"
 #~ "19.2 Kbps Modem\n"
@@ -409,1080 +361,16 @@ msgstr "Namnet på ditt projekt."
 #~ "512 kbit/s DSL/kabelmodem\n"
 #~ "1,5 Mbit/s T1/Intranet/Lokalt nätverk\n"
 #~ "Intranet/Lokalt nätverk"
-
 #~ msgid "16:9 (Widescreen)"
 #~ msgstr "16:9 (widescreen)"
-
 #~ msgid "2.11:1 (DVB)"
 #~ msgstr "2,11:1 (DVB)"
-
 #~ msgid "4:3 (TV)"
 #~ msgstr "4:3 (TV)"
-
 #~ msgid "<b>Color balance</b>"
 #~ msgstr "<b>Färgbalans</b>"
-
 #~ msgid "<b>Display</b>"
 #~ msgstr "<b>Bild</b>"
-
 #~ msgid "<b>Networking</b>"
 #~ msgstr "<b>Nätverk</b>"
 
-# "Textremsor" enligt önskemål, inte undertitlar
-#~ msgid "<b>Subtitles</b>"
-#~ msgstr "<b>Textremsor</b>"
-
-#~ msgid "<b>TV-Out</b>"
-#~ msgstr "<b>TV-ut</b>"
-
-#~ msgid "<b>Visual Effects</b>"
-#~ msgstr "<b>Visuella effekter</b>"
-
-#~ msgid "<span size=\"medium\"><b>No file</b></span>"
-#~ msgstr "<span size=\"medium\"><b>Ingen fil</b></span>"
-
-#~ msgid "A_udio Menu"
-#~ msgstr "_Ljudmeny"
-
-#~ msgid "Always on _Top"
-#~ msgstr "Alltid _överst"
-
-#~ msgid "Always on top"
-#~ msgstr "Alltid överst"
-
-#~ msgid "Audio"
-#~ msgstr "Ljud"
-
-#~ msgid "Auto"
-#~ msgstr "Auto"
-
-#~ msgid "Automatically _resize the window when a new video is loaded"
-#~ msgstr "_Ändra automatiskt storlek på fönstret när en ny video läses in"
-
-#~ msgid "Co_ntrast:"
-#~ msgstr "Ko_ntrast:"
-
-#~ msgid "Connection _speed:"
-#~ msgstr "Anslutnings_hastighet:"
-
-# Osäker
-#~ msgid "Deinterlace"
-#~ msgstr "Avsammanfläta"
-
-#~ msgid "Display"
-#~ msgstr "Bild"
-
-#~ msgid "Fit Window to Movie"
-#~ msgstr "Anpassa fönstret till filmen"
-
-#~ msgid "General"
-#~ msgstr "Allmänt"
-
-#~ msgid "Go to the DVD menu"
-#~ msgstr "Gå till DVD-menyn"
-
-#~ msgid "Go to the angle menu"
-#~ msgstr "Gå till vinkelmenyn"
-
-#~ msgid "Go to the audio menu"
-#~ msgstr "Gå till ljudmenyn"
-
-#~ msgid "Go to the chapter menu"
-#~ msgstr "Gå till kapitelmenyn"
-
-#~ msgid "Go to the title menu"
-#~ msgstr "Gå till titelmenyn"
-
-#~ msgid "Help contents"
-#~ msgstr "Hjälpinnehåll"
-
-#~ msgid "Languages"
-#~ msgstr "Språk"
-
-#~ msgid "Leave Fullscreen"
-#~ msgstr "Lämna helskärmsläge"
-
-#~ msgid "Next"
-#~ msgstr "Nästa"
-
-#~ msgid "No Language Selection Available"
-#~ msgstr "Inget språkval tillgängligt"
-
-#~ msgid "No subtitles selection available"
-#~ msgstr "Inget textremseval tillgängligt"
-
-#~ msgid "Open _Location..."
-#~ msgstr "Öppna _plats..."
-
-#~ msgid "Open a non-local file"
-#~ msgstr "Öppna en icke-lokal fil"
-
-#~ msgid "Play/Pause"
-#~ msgstr "Spela upp/Gör paus"
-
-#~ msgid "Prefere_nces"
-#~ msgstr "Inställni_ngar"
-
-#~ msgid "Previous"
-#~ msgstr "Föregående"
-
-#~ msgid "Reset To _Defaults"
-#~ msgstr "_Återställ till standard"
-
-#~ msgid "Resize _1:1"
-#~ msgstr "Ändra storlek till _1:1"
-
-#~ msgid "Resize _2:1"
-#~ msgstr "Ändra storlek till _2:1"
-
-#~ msgid "Resize to half the video size"
-#~ msgstr "Ändra storlek till halva videostorleken"
-
-#~ msgid "Resize to twice the video size"
-#~ msgstr "Ändra storlek till dubbla videostorleken"
-
-#~ msgid "Resize to video size"
-#~ msgstr "Ändra storlek till videostorleken"
-
-# "Textremsor" enligt önskemål, inte undertitlar
-#~ msgid "S_ubtitles"
-#~ msgstr "Te_xtremsor"
-
-#~ msgid "Sat_uration:"
-#~ msgstr "M_ättnad:"
-
-#~ msgid "Set the aspect ratio"
-#~ msgstr "Ställ in bildförhållandet"
-
-#~ msgid "Set the repeat mode"
-#~ msgstr "Ställ in upprepningsläget"
-
-#~ msgid "Set the shuffle mode"
-#~ msgstr "Ställ in blandningsläget"
-
-#~ msgid "Sets 16:9 (Anamorphic) aspect ratio"
-#~ msgstr "Ställer in bildförhållandet 16:9 (anamorfiskt)"
-
-#~ msgid "Sets 2.11:1 (DVB) aspect ratio"
-#~ msgstr "Ställer in bildförhållandet 2,11:1 (DVB)"
-
-#~ msgid "Sets 4:3 (TV) aspect ratio"
-#~ msgstr "Ställer in bildförhållandet 4:3 (TV)"
-
-#~ msgid "Sets automatic aspect ratio"
-#~ msgstr "Ställer in automatiskt bildförhållande"
-
-#~ msgid "Sets square aspect ratio"
-#~ msgstr "Ställer in kvadratiskt bildförhållande"
-
-#~ msgid "Show _visual effects when an audio file is played"
-#~ msgstr "Visa _visuella effekter då en ljudfil spelas upp"
-
-#~ msgid "Show or hide the sidebar"
-#~ msgstr "Visa eller dölj sidopanelen"
-
-#~ msgid "Shuff_le Mode"
-#~ msgstr "Blandnings_läge"
-
-#~ msgid "Side_bar"
-#~ msgstr "_Sidopanel"
-
-#~ msgid "Skip to a specific time"
-#~ msgstr "Hoppa till en specifik tid"
-
-#~ msgid ""
-#~ "Small\n"
-#~ "Normal\n"
-#~ "Large\n"
-#~ "Extra Large"
-#~ msgstr ""
-#~ "Liten\n"
-#~ "Normal\n"
-#~ "Stor\n"
-#~ "Extrastor"
-
-#~ msgid "Square"
-#~ msgstr "Kvadrat"
-
-#~ msgid ""
-#~ "Stereo\n"
-#~ "4-channel\n"
-#~ "4.1-channel\n"
-#~ "5.0-channel\n"
-#~ "5.1-channel\n"
-#~ "AC3 Passthrough"
-#~ msgstr ""
-#~ "Stereo\n"
-#~ "4-kanal\n"
-#~ "4.1-kanal\n"
-#~ "5.0-kanal\n"
-#~ "5.1-kanal\n"
-#~ "AC3-genomsläppning"
-
-# "Textremsor" enligt önskemål, inte undertitlar
-#~ msgid "Subtitles"
-#~ msgstr "Textremsor"
-
-# Osäker.
-#~ msgid "Switch An_gles"
-#~ msgstr "Byt _vinkel"
-
-# Osäker.
-#~ msgid "Switch angles"
-#~ msgstr "Byt vinkel"
-
-#~ msgid "Switch to fullscreen"
-#~ msgstr "Växla till helskärmsläge"
-
-#~ msgid "Take _Screenshot..."
-#~ msgstr "Ta _skärmdump..."
-
-#~ msgid "Take a screenshot"
-#~ msgstr "Ta en skärmdump"
-
-#~ msgid "Time:"
-#~ msgstr "Tid:"
-
-#~ msgid "Visualisation _size:"
-#~ msgstr "Visualiserings_storlek:"
-
-#~ msgid "Volume _Down"
-#~ msgstr "Volym _ned"
-
-#~ msgid "Volume _Up"
-#~ msgstr "Volym _upp"
-
-#~ msgid "Volume down"
-#~ msgstr "Volym ned"
-
-#~ msgid "Zoom In"
-#~ msgstr "Zooma in"
-
-#~ msgid "Zoom Out"
-#~ msgstr "Zooma ut"
-
-#~ msgid "Zoom Reset"
-#~ msgstr "Återställ zoom"
-
-#~ msgid "Zoom in"
-#~ msgstr "Zooma in"
-
-#~ msgid "Zoom out"
-#~ msgstr "Zooma ut"
-
-#~ msgid "_About"
-#~ msgstr "_Om"
-
-#~ msgid "_Angle Menu"
-#~ msgstr "_Vinkelmeny"
-
-#~ msgid "_Aspect Ratio"
-#~ msgstr "_Bildförhållande"
-
-#~ msgid "_Audio output type:"
-#~ msgstr "Typ av _ljudutmatning:"
-
-#~ msgid "_Brightness:"
-#~ msgstr "_Ljusstyrka:"
-
-#~ msgid "_Chapter Menu"
-#~ msgstr "_Kapitelmeny"
-
-#~ msgid "_Contents"
-#~ msgstr "_Innehåll"
-
-#~ msgid "_DVD Menu"
-#~ msgstr "_DVD-meny"
-
-# Osäker
-#~ msgid "_Deinterlace"
-#~ msgstr "_Avsammanfläta"
-
-#~ msgid "_Edit"
-#~ msgstr "R_edigera"
-
-#~ msgid "_Eject"
-#~ msgstr "_Mata ut"
-
-#~ msgid "_Font:"
-#~ msgstr "_Typsnitt:"
-
-#~ msgid "_Fullscreen"
-#~ msgstr "_Helskärm"
-
-#~ msgid "_Go"
-#~ msgstr "_Gå"
-
-#~ msgid "_Help"
-#~ msgstr "_Hjälp"
-
-#~ msgid "_Hue:"
-#~ msgstr "_Nyans:"
-
-#~ msgid "_Languages"
-#~ msgstr "_Språk"
-
-#~ msgid "_Movie"
-#~ msgstr "_Film"
-
-#~ msgid "_No TV-out"
-#~ msgstr "_Ingen TV-ut"
-
-#~ msgid "_Open..."
-#~ msgstr "_Öppna..."
-
-#~ msgid "_Properties"
-#~ msgstr "_Egenskaper"
-
-#~ msgid "_Quit"
-#~ msgstr "A_vsluta"
-
-#~ msgid "_Repeat Mode"
-#~ msgstr "_Upprepningsläge"
-
-#~ msgid "_Resize 1:2"
-#~ msgstr "_Ändra storlek till 1:2"
-
-#~ msgid "_Sidebar"
-#~ msgstr "_Sidopanel"
-
-#~ msgid "_Skip to..."
-#~ msgstr "_Hoppa till..."
-
-#~ msgid "_Sound"
-#~ msgstr "_Ljud"
-
-#~ msgid "_Title Menu"
-#~ msgstr "_Titelmeny"
-
-#~ msgid "_Type of visualisation:"
-#~ msgstr "_Typ av visualisering:"
-
-#~ msgid "_View"
-#~ msgstr "_Visa"
-
-#~ msgid ""
-#~ "Amount of data to buffer for network streams before starting to display "
-#~ "the stream (in seconds)"
-#~ msgstr ""
-#~ "Mängd data som ska buffras i nätverksflöden innan flödet börjar visas (i "
-#~ "sekunder)"
-
-#~ msgid "Buffer size"
-#~ msgstr "Buffertstorlek"
-
-# Osäker
-#~ msgid "Enable deinterlacing"
-#~ msgstr "Aktivera sammanflätning"
-
-#~ msgid "Height of the video widget"
-#~ msgstr "Höjd på videowidgeten"
-
-#~ msgid "Maximum amount of data to decode ahead of display (in seconds)"
-#~ msgstr "Maximal mängd data som ska avkodas innan visning (i sekunder)"
-
-#~ msgid "Name of the visual effects plugins"
-#~ msgstr "Namn på insticksmodulerna för visuella effekter"
-
-#~ msgid "Network buffering threshold"
-#~ msgstr "Tröskel för nätverksbuffring"
-
-#~ msgid "Pango font description for subtitle rendering"
-#~ msgstr "Pango-typsnittsbeskrivning för rendering av textremsor"
-
-#~ msgid "Repeat mode"
-#~ msgstr "Upprepningsläge"
-
-#~ msgid "Resize the canvas automatically on file load"
-#~ msgstr "Ändra storleken automatiskt vid filinläsning"
-
-#~ msgid "Show visual effects when no video is displayed"
-#~ msgstr "Visa visuella effekter då ingen video visas"
-
-#~ msgid "Show visual effects when playing an audio only file."
-#~ msgstr "Visa visuella effekter då en fil med endast ljud spelas upp."
-
-#~ msgid "Shuffle mode"
-#~ msgstr "Blandningsläge"
-
-#~ msgid "Sound volume"
-#~ msgstr "Ljudvolym"
-
-#~ msgid "Sound volume, in percent, between 0 and 100"
-#~ msgstr "Ljudvolym i procent mellan 0 och 100"
-
-#~ msgid "Subtitle font"
-#~ msgstr "Textremsetypsnitt"
-
-#~ msgid "The brightness of the video"
-#~ msgstr "Ljusstyrkan för videon"
-
-#~ msgid "The contrast of the video"
-#~ msgstr "Kontrasten för videon"
-
-#~ msgid "The hue of the video"
-#~ msgstr "Nyansen för videon"
-
-#~ msgid "The saturation of the video"
-#~ msgstr "Mättnaden för videon"
-
-#~ msgid "Type of audio output to use"
-#~ msgstr "Typ av ljudutmatning som ska användas"
-
-#~ msgid ""
-#~ "Type of audio output to use: \"0\" for stereo, \"1\" for 4-channel "
-#~ "output, \"2\" for 5.0 channel output, \"3\" for 5.1 channel output, \"4\" "
-#~ "for AC3 Passthrough."
-#~ msgstr ""
-#~ "Typ av ljudutmatning som ska användas: \"0\" för stereo, \"1\" för 4-"
-#~ "kanalsutmatning, \"2\" för 5.0-kanalsutmatning, \"3\" för 5.1-"
-#~ "kanalsutmatning, \"4\" för AC3-genomsläppning."
-
-#~ msgid "Whether the main window should stay on top"
-#~ msgstr "Huruvida huvudfönstret ska vara överst"
-
-#~ msgid "Whether the main window should stay on top of the other ones"
-#~ msgstr "Huruvida huvudfönstret ska vara över de andra"
-
-#~ msgid "Whether the sidebar is shown"
-#~ msgstr "Huruvida sidopanelen visas"
-
-#~ msgid "Whether to enable debug for the playback engine"
-#~ msgstr "Huruvida felsökning för uppspelningsmotorn ska aktiveras"
-
-#~ msgid "Width of the video widget"
-#~ msgstr "Bredd på videowidgeten"
-
-#~ msgid "Enter the _address of the file you would like to open:"
-#~ msgstr "Ange _platsen för filen som du vill öppna:"
-
-#~ msgid "Open Location"
-#~ msgstr "Öppna plats"
-
-#~ msgid "Vanity Webcam utility"
-#~ msgstr "Webbkameraverktyget Vanity"
-
-#~ msgid "View live webcam and upload pictures"
-#~ msgstr "Visa webbkamerabilder och lämna bilder"
-
-#~ msgid "Save File"
-#~ msgstr "Spara fil"
-
-#~ msgid "Vanity"
-#~ msgstr "Vanity"
-
-#~ msgid "Vanity Preferences"
-#~ msgstr "Inställningar för Vanity"
-
-#~ msgid "Zoom 1:1"
-#~ msgstr "Zooma 1:1"
-
-#~ msgid "Zoom 1:2"
-#~ msgstr "Zooma 1:2"
-
-#~ msgid "Zoom 2:1"
-#~ msgstr "Zooma 2:1"
-
-#~ msgid "Zoom _1:1"
-#~ msgstr "Zooma _1:1"
-
-#~ msgid "Zoom _2:1"
-#~ msgstr "Zooma _2:1"
-
-#~ msgid "_Picture"
-#~ msgstr "_Bild"
-
-#~ msgid "_Zoom 1:2"
-#~ msgstr "_Zooma 1:2"
-
-#~ msgid "Unnamed CDROM"
-#~ msgstr "Namnlös cd-rom"
-
-#~ msgid "%d x %d"
-#~ msgstr "%d × %d"
-
-#~ msgid "%d frames per second"
-#~ msgstr "%d ramar per sekund"
-
-#~ msgid "%d kbps"
-#~ msgstr "%d kb/s"
-
-#~ msgid "Properties dialog"
-#~ msgstr "Egenskapsdialog"
-
-#~ msgid "+"
-#~ msgstr "+"
-
-#~ msgid "-"
-#~ msgstr "-"
-
-#~ msgid "Open '%s'"
-#~ msgstr "Öppna \"%s\""
-
-#~ msgid "Empty"
-#~ msgstr "Tom"
-
-#~ msgid "Couldn't load the '%s' interface."
-#~ msgstr "Kunde inte läsa in gränssnittet för \"%s\"."
-
-#~ msgid "None"
-#~ msgstr "Ingen"
-
-#~ msgid "Play Disc '%s'"
-#~ msgstr "Spela upp skivan \"%s\""
-
-#~ msgid "Backend options"
-#~ msgstr "Bakändesalternativ"
-
-#~ msgid "Enable debug"
-#~ msgstr "Aktivera felsökning"
-
-#~ msgid "Play"
-#~ msgstr "Spela upp"
-
-#~ msgid "Pause"
-#~ msgstr "Gör paus"
-
-#~ msgid "Seek Forwards"
-#~ msgstr "Spola framlänges"
-
-#~ msgid "Seek Backwards"
-#~ msgstr "Spola baklänges"
-
-#~ msgid "Toggle Fullscreen"
-#~ msgstr "Växla helskärmsläge"
-
-#~ msgid "Show/Hide Controls"
-#~ msgstr "Visa/Dölj kontroller"
-
-#~ msgid "Quit"
-#~ msgstr "Avsluta"
-
-#~ msgid "Enqueue"
-#~ msgstr "Kölägg"
-
-#~ msgid "Replace"
-#~ msgstr "Ersätt"
-
-#~ msgid "Option '%s' is unknown and was ignored\n"
-#~ msgstr "Flaggan \"%s\" är okänd och ignorerades\n"
-
-#~ msgid "Could not save the playlist"
-#~ msgstr "Kunde inte spara spellistan"
-
-#~ msgid "Unknown file extension."
-#~ msgstr "Okänd filändelse."
-
-#~ msgid "Select playlist format:"
-#~ msgstr "Välj spellisteformat:"
-
-#~ msgid "By extension"
-#~ msgstr "Efter filändelse"
-
-#~ msgid "Save Playlist"
-#~ msgstr "Spara spellista"
-
-#~ msgid "Overwrite file?"
-#~ msgstr "Skriv över fil?"
-
-#~ msgid ""
-#~ "A file named '%s' already exists.  Are you sure you want to overwrite it?"
-#~ msgstr ""
-#~ "En fil med namnet \"%s\" finns redan. Är du säker på att du vill skriva "
-#~ "över den?"
-
-#~ msgid "playlist"
-#~ msgstr "spellista"
-
-#~ msgid "Playlist error"
-#~ msgstr "Fel i spellista"
-
-#~ msgid "The playlist '%s' could not be parsed, it might be damaged."
-#~ msgstr "Spellistan \"%s\" kunde inte tolkas. Den kan vara skadad."
-
-#~ msgid "Enable visual effects?"
-#~ msgstr "Aktivera visuella effekter?"
-
-#~ msgid "Audio/Video"
-#~ msgstr "Ljud/Video"
-
-#~ msgid "Video"
-#~ msgstr "Video"
-
-#~ msgid "Screenshot%d.png"
-#~ msgstr "Skärmdump%d.png"
-
-#~ msgid "File '%s' already exists."
-#~ msgstr "Filen \"%s\" finns redan."
-
-#~ msgid "The screenshot was not saved"
-#~ msgstr "Skärmdumpen sparades inte"
-
-#~ msgid "There was an error saving the screenshot."
-#~ msgstr "Ett fel uppstod vid sparandet av skärmdumpen."
-
-#~ msgid "Screenshot.png"
-#~ msgstr "Skärmdump.png"
-
-#~ msgid "Playing a movie"
-#~ msgstr "Spelar upp en film"
-
-#~ msgid "Shadow type"
-#~ msgstr "Skuggtyp"
-
-#~ msgid "Style of bevel around the statusbar text"
-#~ msgstr "Stil på kanten runt statusradstexten"
-
-#~ msgid "Stopped"
-#~ msgstr "Stoppad"
-
-#~ msgid "0:00 / 0:00"
-#~ msgstr "0:00 / 0:00"
-
-#~ msgid "%s (Streaming)"
-#~ msgstr "%s (Direktuppspelning)"
-
-#~ msgid "%s / %s"
-#~ msgstr "%s / %s"
-
-#~ msgid "Seek to %s / %s"
-#~ msgstr "Spola till %s / %s"
-
-#~ msgid "Buffering"
-#~ msgstr "Buffrar"
-
-#~ msgid "%d %%"
-#~ msgstr "%d%%"
-
-#~ msgid "All files"
-#~ msgstr "Alla filer"
-
-#~ msgid "Supported files"
-#~ msgstr "Filer som stöds"
-
-#~ msgid "Select Movies or Playlists"
-#~ msgstr "Välj filmer eller spellistor"
-
-#~ msgid "Playing"
-#~ msgstr "Spelar upp"
-
-#~ msgid "Paused"
-#~ msgstr "Gör paus"
-
-#~ msgid "No reason."
-#~ msgstr "Ingen orsak."
-
-#~ msgid "No File"
-#~ msgstr "Ingen fil"
-
-#~ msgid "No error message"
-#~ msgstr "Inget felmeddelande"
-
-#~ msgid "An error occurred"
-#~ msgstr "Ett fel inträffade"
-
-#~ msgid "Open Location..."
-#~ msgstr "Öppna plats..."
-
-#~ msgid "GTK+"
-#~ msgstr "GTK+"
-
-#~ msgid "GNOME"
-#~ msgstr "GNOME"
-
-#~ msgid "Movie Player using %s and %s"
-#~ msgstr "Filmuppspelare som använder %s och %s"
-
-#~ msgid "Copyright © 2002-2006 Bastien Nocera"
-#~ msgstr "Copyright © 2002-2006 Bastien Nocera"
-
-#~ msgid "translator-credits"
-#~ msgstr ""
-#~ "Daniel Nylander\n"
-#~ "Christian Rose\n"
-#~ "Skicka synpunkter på översättningen till tp-sv@listor.tp-sv.se"
-
-#~ msgid "Could not initialize the thread-safe libraries."
-#~ msgstr "Kunde inte initiera de trådsäkra biblioteken."
-
-#~ msgid "Make sure that GNOME is properly installed."
-#~ msgstr "Försäkra dig om att GNOME är korrekt installerat."
-
-#~ msgid "main window"
-#~ msgstr "huvudfönster"
-
-#~ msgid "video popup menu"
-#~ msgstr "videopopupmeny"
-
-#~ msgid "Debug mode on"
-#~ msgstr "Felsökningsläge på"
-
-#~ msgid "Webcam utility using %s"
-#~ msgstr "Webbkameraverktyg som använder %s"
-
-#~ msgid "Copyright © 2002-2005 Bastien Nocera"
-#~ msgstr "Copyright © 2002-2005 Bastien Nocera"
-
-#~ msgid ""
-#~ "Vanity could not startup:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Vanity kunde inte starta:\n"
-#~ "%s"
-
-#~ msgid "No reason"
-#~ msgstr "Ingen orsak"
-
-#~ msgid ""
-#~ "Vanity could not contact the webcam.\n"
-#~ "Reason: %s"
-#~ msgstr ""
-#~ "Vanity kunde inte kontakta webbkameran.\n"
-#~ "Orsak: %s"
-
-#~ msgid ""
-#~ "Vanity could not play video from the webcam.\n"
-#~ "Reason: %s"
-#~ msgstr ""
-#~ "Vanity kunde inte spela upp video från webbkameran.\n"
-#~ "Orsak: %s"
-
-#~ msgid "Vanity Webcam Utility"
-#~ msgstr "Webbkameraverktyget Vanity"
-
-#~ msgid ""
-#~ "Could not initialize the thread-safe libraries.\n"
-#~ "Verify your system installation. Vanity will now exit."
-#~ msgstr ""
-#~ "Kunde inte initiera de trådsäkra biblioteken.\n"
-#~ "Kontrollera din systeminstallation. Vanity kommer nu att avslutas."
-
-#~ msgid ""
-#~ "Vanity could not initialize the \n"
-#~ "configuration engine:\n"
-#~ "%s"
-#~ msgstr ""
-#~ "Vanity kunde inte initiera\n"
-#~ "konfigurationsmotorn:\n"
-#~ "%s"
-
-#~ msgid ""
-#~ "Couldn't load the main interface (vanity.glade).\n"
-#~ "Make sure that Vanity is properly installed."
-#~ msgstr ""
-#~ "Kunde inte läsa in huvudgränssnittet (vanity.glade).\n"
-#~ "Försäkra dig om att Vanity är korrekt installerat."
-
-# FIXME: Bör ha punkt på slutet.
-# http://bugzilla.gnome.org/show_bug.cgi?id=318817
-#
-#~ msgid ""
-#~ "The requested audio output was not found. Please select another audio "
-#~ "output in the Multimedia Systems Selector."
-#~ msgstr ""
-#~ "Den begärda ljudutgången hittades inte. Välj en annan ljudutgång i "
-#~ "väljaren för multimediasystem."
-
-#~ msgid "Location not found."
-#~ msgstr "Platsen hittades inte."
-
-#~ msgid ""
-#~ "Could not open location; You may not have permission to open the file."
-#~ msgstr ""
-#~ "Kunde inte öppna platsen; Du kanske inte har rättighet att öppna filen."
-
-#~ msgid ""
-#~ "The video output is in use by another application. Please close other "
-#~ "video applications, or select another video output in the Multimedia "
-#~ "Systems Selector."
-#~ msgstr ""
-#~ "Videoutgången används av ett annat program. Stäng andra videoprogram "
-#~ "eller välj en annan videoutgång i väljaren för multimediasystem."
-
-#~ msgid ""
-#~ "The audio output is in use by another application. Please select another "
-#~ "audio output in the Multimedia Systems Selector. You may want to consider "
-#~ "using a sound server."
-#~ msgstr ""
-#~ "Ljudutgången används av ett annat program. Välj en annan ljudutgång i "
-#~ "väljaren för multimediasystem. Du kanske bör överväga att använda en "
-#~ "ljudserver."
-
-#~ msgid ""
-#~ "Cannot play this file over the network. Try downloading it to disk first."
-#~ msgstr ""
-#~ "Kan inte spela upp den här filen över nätverket. Försök hämta ner den "
-#~ "till disk först."
-
-#~ msgid "Media file could not be played."
-#~ msgstr "Mediafilen kunde inte spelas upp."
-
-#~ msgid "Failed to retrieve working directory"
-#~ msgstr "Misslyckades med att hämta arbetskatalogen"
-
-#~ msgid "Too old version of GStreamer installed."
-#~ msgstr "En för gammal version av GStreamer är installerad."
-
-#~ msgid "Media contains no supported video streams."
-#~ msgstr "Mediumet innehåller inga videoflöden som stöds."
-
-#~ msgid ""
-#~ "Failed to create a GStreamer play object. Please check your GStreamer "
-#~ "installation."
-#~ msgstr ""
-#~ "Misslyckades med att skapa ett GStreamer-spelobjekt. Kontrollera din "
-#~ "installation av GStreamer."
-
-#~ msgid ""
-#~ "Failed to open video output. It may not be available. Please select "
-#~ "another video output in the Multimedia Systems Selector."
-#~ msgstr ""
-#~ "Misslyckades med att öppna videoutgången. Den kanske inte är tillgänglig. "
-#~ "Välj en annan videoutgång i väljaren för multimediasystem."
-
-#~ msgid ""
-#~ "Could not find the video output. You may need to install additional "
-#~ "GStreamer plugins, or select another video output in the Multimedia "
-#~ "Systems Selector."
-#~ msgstr ""
-#~ "Kunde inte hitta videoutgången. Du kanske behöver installera ytterligare "
-#~ "insticksmoduler för GStreamer eller välja en annan videoutgång i väljaren "
-#~ "för multimediasystem."
-
-#~ msgid ""
-#~ "Failed to open audio output. You may not have permission to open the "
-#~ "sound device, or the sound server may not be running. Please select "
-#~ "another audio output in the Multimedia Systems Selector."
-#~ msgstr ""
-#~ "Misslyckades med att öppna ljudutgången. Du kanske inte har rättigheter "
-#~ "att öppna ljudutgången, eller så kanske inte ljudservern körs. Välj en "
-#~ "annan ljudutgång i väljaren för multimediasystem."
-
-# FIXME: Bör ha punkt på slutet.
-# http://bugzilla.gnome.org/show_bug.cgi?id=318817
-#
-#~ msgid ""
-#~ "Could not find the audio output. You may need to install additional "
-#~ "GStreamer plugins, or select another audio output in the Multimedia "
-#~ "Systems Selector."
-#~ msgstr ""
-#~ "Kunde inte hitta ljudutgången. Du kanske behöver installera ytterligare "
-#~ "insticksmoduler för GStreamer eller välja en annan ljudutgång i väljaren "
-#~ "för multimediasystem."
-
-#~ msgid ""
-#~ "Couldn't load the '%s' audio driver\n"
-#~ "Check that the device is not busy."
-#~ msgstr ""
-#~ "Kunde inte läsa in ljuddrivrutinen \"%s\"\n"
-#~ "Kontrollera att enheten inte är upptagen."
-
-#~ msgid ""
-#~ "No video output is available. Make sure that the program is correctly "
-#~ "installed."
-#~ msgstr ""
-#~ "Ingen videoutmatning är tillgänglig. Försäkra dig om att programmet är "
-#~ "korrekt installerat."
-
-#~ msgid "The server you are trying to connect to is not known."
-#~ msgstr "Servern du försöker ansluta till är inte känd."
-
-#~ msgid "The device name you specified (%s) seems to be invalid."
-#~ msgstr "Enhetsnamnet du angav (%s) verkar vara ogiltigt."
-
-#~ msgid "The server you are trying to connect to (%s) is unreachable."
-#~ msgstr "Servern du försöker ansluta till (%s) är onåbar."
-
-#~ msgid "The connection to this server was refused."
-#~ msgstr "Anslutning till denna server nekades."
-
-#~ msgid "The specified movie could not be found."
-#~ msgstr "Den angivna filmen kunde inte hittas."
-
-#~ msgid ""
-#~ "The source seems encrypted, and can't be read. Are you trying to play an "
-#~ "encrypted DVD without libdvdcss?"
-#~ msgstr ""
-#~ "Källan verkar krypterad och kan inte läsas. Försöker du spela upp en "
-#~ "krypterad DVD utan libdvdcss?"
-
-#~ msgid "The movie could not be read."
-#~ msgstr "Filmen kunde inte läsas."
-
-#~ msgid "A problem occurred while loading a library or a decoder (%s)."
-#~ msgstr ""
-#~ "Ett problem inträffade vid inläsning av ett bibliotek eller en avkodare (%"
-#~ "s)."
-
-#~ msgid "This file is encrypted and cannot be played back."
-#~ msgstr "Denna film är krypterad och kan inte spelas upp."
-
-#~ msgid "For security reasons, this movie can not be played back."
-#~ msgstr "Denna film kan inte spelas upp av säkerhetsskäl."
-
-#~ msgid "The audio device is busy. Is another application using it?"
-#~ msgstr "Ljudenheten är upptagen. Använder ett annat program den?"
-
-#~ msgid "You are not allowed to open this file."
-#~ msgstr "Du får inte öppna denna fil."
-
-#~ msgid "The server refused access to this file or stream."
-#~ msgstr "Servern vägrade åtkomst till denna fil eller detta flöde."
-
-#~ msgid "The file you tried to play is an empty file."
-#~ msgstr "Filen du försökte spela upp är en tom fil."
-
-#~ msgid "There is no input plugin to handle the location of this movie"
-#~ msgstr ""
-#~ "Det finns ingen inmatningsinsticksmodul för att hantera platsen för denna "
-#~ "film"
-
-#~ msgid "There is no plugin to handle this movie."
-#~ msgstr "Det finns ingen insticksmodul för att hantera denna film."
-
-#~ msgid "This movie is broken and can not be played further."
-#~ msgstr "Denna film är trasig och kan inte spelas upp längre."
-
-#~ msgid "This location is not a valid one."
-#~ msgstr "Denna plats är inte giltig."
-
-#~ msgid "This movie could not be opened."
-#~ msgstr "Denna film kunde inte öppnas."
-
-#~ msgid "Generic Error."
-#~ msgstr "Allmänt fel."
-
-#~ msgid "This movie is a still image. You can open it with an image viewer."
-#~ msgstr "Denna film är en stillbild. Du kan öppna den med en bildvisare."
-
-#~ msgid ""
-#~ "Video codec '%s' is not handled. You might need to install additional "
-#~ "plugins to be able to play some types of movies"
-#~ msgstr ""
-#~ "Videokodeken \"%s\" hanteras inte. Du kan behöva installera ytterligare "
-#~ "insticksmoduler för att kunna spela upp en del filmtyper"
-
-#~ msgid ""
-#~ "Audio codec '%s' is not handled. You might need to install additional "
-#~ "plugins to be able to play some types of movies"
-#~ msgstr ""
-#~ "Ljudkodeken \"%s\" hanteras inte. Du kan behöva installera ytterligare "
-#~ "insticksmoduler för att kunna spela upp en del filmtyper"
-
-#~ msgid "This is an audio-only file, and there is no audio output available."
-#~ msgstr "Detta är en fil med endast ljud, och ingen ljuddata är tillgänglig."
-
-#~ msgid "Language %d"
-#~ msgstr "Språk %d"
-
-#~ msgid "No video to capture."
-#~ msgstr "Ingen video att fånga."
-
-#~ msgid "Video codec is not handled."
-#~ msgstr "Videokodeken hanteras inte."
-
-#~ msgid "Movie is not playing."
-#~ msgstr "Filmen spelas inte upp."
-
-#~ msgid "long time format|%d:%02d:%02d"
-#~ msgstr "%d:%02d:%02d"
-
-#~ msgid "short time format|%d:%02d"
-#~ msgstr "%d:%02d"
-
-#~ msgid "%d hour"
-#~ msgid_plural "%d hours"
-#~ msgstr[0] "%d timme"
-#~ msgstr[1] "%d timmar"
-
-#~ msgid "%d minute"
-#~ msgid_plural "%d minutes"
-#~ msgstr[0] "%d minut"
-#~ msgstr[1] "%d minuter"
-
-#~ msgid "%d second"
-#~ msgid_plural "%d seconds"
-#~ msgstr[0] "%d sekund"
-#~ msgstr[1] "%d sekunder"
-
-#~ msgid "%s %s %s"
-#~ msgstr "%s, %s, %s"
-
-#~ msgid "%s %s"
-#~ msgstr "%s, %s"
-
-#~ msgid "%s"
-#~ msgstr "%s"
-
-#~ msgid "Failed to find real device node for %s: %s"
-#~ msgstr "Misslyckades med att hitta verkliga enhetsnoden för %s: %s"
-
-#~ msgid "Failed to read symbolic link %s: %s"
-#~ msgstr "Misslyckades med att läsa symboliska länken %s: %s"
-
-#~ msgid "Failed to find mountpoint for device %s"
-#~ msgstr "Misslyckades med att hitta monteringspunkten för enheten %s"
-
-#~ msgid "Could not connect to the HAL daemon"
-#~ msgstr "Kunde inte ansluta till HAL-demonen"
-
-#~ msgid "Please check that a disc is present in the drive."
-#~ msgstr "Kontrollera att det finns en skiva i enheten."
-
-#~ msgid "Failed to mount %s"
-#~ msgstr "Misslyckades med att montera %s"
-
-#~ msgid "Failed to find mountpoint for %s"
-#~ msgstr "Misslyckades med att hitta monteringspunkten för %s"
-
-#~ msgid "DVD"
-#~ msgstr "DVD"
-
-#~ msgid "Couldn't write parser: %s"
-#~ msgstr "Kunde inte skriva tolk: %s"
-
-#~ msgid "Couldn't open file '%s': %s"
-#~ msgstr "Kunde inte öppna filen \"%s\": %s"
-
-#~ msgid "_DXR3 TV-out"
-#~ msgstr "_DXR3 TV-ut"
-
-#~ msgid "Failed to open media file; unknown error"
-#~ msgstr "Misslyckades med att öppna mediafil; okänt fel"
-
-#~ msgid "Failed to play: %s"
-#~ msgstr "Misslyckades med att spela upp: %s"
-
-#~ msgid "unknown error"
-#~ msgstr "okänt fel"
-
-#~ msgid "Failed to find mountpoint for device %s in /etc/fstab"
-#~ msgstr ""
-#~ "Misslyckades med att hitta monteringspunkten för enheten %s i /etc/fstab"
-
-#~ msgid "Failed to open device %s for reading: %s"
-#~ msgstr "Misslyckades med att öppna enheten %s för läsning: %s"
-
-#~ msgid "Failed to retrieve capabilities of device %s: %s"
-#~ msgstr "Misslyckades med att hämta förmågorna för enheten %s: %s"
-
-#~ msgid "Drive status 0x%x (%s) - check disc"
-#~ msgstr "Enhetsstatus 0x%x (%s) - kontrollera skivan"
-
-#~ msgid "Error getting %s disc status: %s"
-#~ msgstr "Fel vid hämtande av skivstatusen %s: %s"
-
-#~ msgid "Unexpected/unknown cd type 0x%x (%s)"
-#~ msgstr "Oväntad/okänd cd-typ 0x%x (%s)"
-
-#~ msgid "Select CD"
-#~ msgstr "Välj cd-skiva"
-
-#~ msgid "Please select the currently playing CD:"
-#~ msgstr "Välj den cd-skiva som spelas för tillfället:"
-
-#~ msgid "Failed to play Audio/Video Disc"
-#~ msgstr "Misslyckades med att spela ljud-/videoskiva"
-
-#~ msgid "Reason unknown"
-#~ msgstr "Okänd orsak"
