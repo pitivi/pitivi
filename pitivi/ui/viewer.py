@@ -205,7 +205,6 @@ class PitiviViewer(gtk.VBox):
         vsinkthread.get_pad("sink").connect("notify::caps", self._videosinkCapsNotifyCb)
 
         self.drawingarea.videosink = self.videosink
-        self.videosink.set_xwindow_id(self.drawingarea.window.xid)
 
         # audio elements
         gst.debug("Creating audio sink")
