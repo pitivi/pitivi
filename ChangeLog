@@ -1,3 +1,25 @@
+2006-08-09  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Added switchToTimeline() method.
+	Don't seek to values lower than 0.
+	* pitivi/timeline.py:
+	Add default sources behaviours in compositions.
+	Added setDefaultSource() and getDefaultSource() methods.
+	* pitivi/ui/complexinterface.py:
+	pixelToNs should return a long (to cope with 2**64 values).
+	* pitivi/ui/complexlayer.py:
+	Don't expand audio tracks at startup.
+	* pitivi/ui/ruler.py:
+	Allow seeking on the ruler.
+	* pitivi/ui/sourcefactories.py:
+	Use the source thumbnail as the icon pixbuf when doing drag and drop.
+	* pitivi/ui/timelineobjects.py:
+	Switch to Timeline in the playground if we drop something in it.
+	* pitivi/ui/viewer.py:
+	Use bilinear scaling method with videoscale.
+	Use videosink pad to figure out caps modifications.
+
 2006-08-08  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/viewer.py:

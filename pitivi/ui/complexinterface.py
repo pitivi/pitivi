@@ -75,7 +75,7 @@ class ZoomableWidgetInterface:
         """
         Returns the pixel equivalent in nanoseconds according to the zoomratio
         """
-        return int(pixel * gst.SECOND / self.getZoomRatio())
+        return long(pixel * gst.SECOND / self.getZoomRatio())
 
     def nsToPixel(self, duration):
         """

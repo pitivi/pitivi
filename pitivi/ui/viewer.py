@@ -195,6 +195,7 @@ class PitiviViewer(gtk.VBox):
         vqueue = gst.element_factory_make('queue')
         cspace = gst.element_factory_make('ffmpegcolorspace')
         vscale = gst.element_factory_make('videoscale')
+        vscale.props.method = 1
         vsinkthread.add(self.videosink, vqueue, vscale, cspace)
         vqueue.link(self.videosink)
         cspace.link(vscale)
@@ -202,7 +203,7 @@ class PitiviViewer(gtk.VBox):
         vsinkthread.videosink = self.videosink
         vsinkthread.add_pad(gst.GhostPad("sink", cspace.get_pad('sink')))
 
-        vsinkthread.get_pad("sink").connect("notify::caps", self._videosinkCapsNotifyCb)
+        self.videosink.get_pad("sink").connect("notify::caps", self._videosinkCapsNotifyCb)
 
         self.drawingarea.videosink = self.videosink
 

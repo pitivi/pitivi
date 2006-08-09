@@ -387,6 +387,8 @@ class SourceListWidget(gtk.VBox):
         model, rows = self.treeview.get_selection().get_selected_rows()
         if len(rows) < 1:
             context.drag_abort(int(time.time()))
+        else:
+            self.treeview.drag_source_set_icon_pixbuf(model[rows[0]][0])
 
     def getSelectedItems(self):
         """ returns a list of selected items uri """

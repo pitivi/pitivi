@@ -76,6 +76,19 @@ class Timeline(gobject.GObject):
         self.videocomp = TimelineComposition(media_type = MEDIA_TYPE_VIDEO, name="videocomp")
         self.videocomp.linkObject(self.audiocomp)
 
+        # add default audio/video sources
+        defaultaudio = gst.element_factory_make("audiotestsrc")
+        defaultaudio.props.volume = 0
+        defaultaudiosource = gst.element_factory_make("gnlsource", "defaultaudiosource")
+        defaultaudiosource.add(defaultaudio)
+        self.audiocomp.setDefaultSource(defaultaudiosource)
+
+        defaultvideo = gst.element_factory_make("videotestsrc")
+        defaultvideo.props.pattern = 2
+        defaultvideosource = gst.element_factory_make("gnlsource", "defaultvideosource")
+        defaultvideosource.add(defaultvideo)
+        self.videocomp.setDefaultSource(defaultvideosource)
+
         self.timeline.add(self.audiocomp.gnlobject,
                           self.videocomp.gnlobject)
         self.audiocomp.gnlobject.connect("pad-added", self._newAudioPadCb)
@@ -470,6 +483,7 @@ class TimelineComposition(TimelineSource):
         #sources = [(2048, 2060, [])] 
         self.condensed = [] # list of sources/transitions seen from a top-level view
         self.sources = [(2048, 2060, [])]
+        self.defaultSource = None
         TimelineSource.__init__(self, **kw)
 
     def _makeGnlObject(self):
@@ -763,6 +777,22 @@ class TimelineComposition(TimelineSource):
         """
         raise NotImplementedError
 
+    def setDefaultSource(self, source):
+        """
+        Adds a default source to the composition.
+        Default sources will be used for gaps within the composition.
+        """
+        if self.defaultSource:
+            self.gnlobject.remove(self.defaultSource)
+        source.props.priority = 2 ** 32 - 1
+        self.gnlobject.add(source)
+        self.defaultSource = source
+
+    def getDefaultSource(self, source):
+        """
+        Returns the default source.
+        """
+        return self.defaultSource
 
 class TimelineEffect(TimelineObject):
     """

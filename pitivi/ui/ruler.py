@@ -23,8 +23,10 @@
 Widget for the complex view ruler
 """
 
+import gobject
 import gtk
 import gst
+import pitivi.instance as instance
 from complexinterface import ZoomableWidgetInterface
 
 class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
@@ -33,6 +35,9 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         "expose-event":"override",
         "size-allocate":"override",
         "realize":"override",
+        "button-press-event":"override",
+        "button-release-event":"override",
+        "motion-notify-event":"override",
         }
 
     border = 5
@@ -40,10 +45,15 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
     def __init__(self, hadj):
         gst.log("Creating new ScaleRule")
         gtk.Layout.__init__(self)
+        self.add_events(gtk.gdk.POINTER_MOTION_MASK | gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
         self.set_hadjustment(hadj)
         self.pixmap = None
         # position is in nanoseconds
         self.position = 0
+
+        self.requested_time = long(0)
+        self.currentlySeeking = False
+        self.pressed = False
 
     ## ZoomableWidgetInterface methods are handled by the container (LayerStack)
     ## Except for ZoomChanged
@@ -94,6 +104,45 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         self.drawPosition(context, self.get_allocation())
         return False
 
+    def do_button_press_event(self, event):
+        gst.debug("button pressed at x:%d" % event.x)
+        instance.PiTiVi.playground.switchToTimeline()
+        self.pressed = True
+        # seek at position
+        cur = self.pixelToNs(event.x)
+        self._doSeek(cur)
+        return True
+
+    def do_button_release_event(self, event):
+        gst.debug("button released at x:%d" % event.x)
+        self.pressed = False
+        return False
+
+    def do_motion_notify_event(self, event):
+        gst.debug("motion at event.x %d" % event.x)
+        if self.pressed:
+            # seek at position
+            cur = self.pixelToNs(event.x)
+            self._doSeek(cur)
+        return False
+
+    ## Seeking methods
+
+    def _seekTimeoutCb(self):
+        gst.debug("timeout")
+        self.currentlySeeking = False
+        if not self.position == self.requested_time:
+            self._doSeek(self.requested_time)
+
+    def _doSeek(self, value, format=gst.FORMAT_TIME):
+        gst.debug("seeking to %s" % gst.TIME_ARGS (value))
+        if not self.currentlySeeking:
+            self.currentlySeeking = True
+            self.requested_time = value
+            gobject.timeout_add(80, self._seekTimeoutCb)
+            instance.PiTiVi.playground.seekInCurrent(value, format)
+        elif format == gst.FORMAT_TIME:
+            self.requested_time = value    
 
     ## Drawing methods
     
@@ -146,7 +195,7 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
 
         zoomRatio = self.getZoomRatio()
         
-        for i in range(self.border, allocation.width, zoomRatio):
+        for i in range(self.border, allocation.width, int(zoomRatio)):
             context.move_to(i, 0)
             
             if (i - self.border) % (10 * zoomRatio):

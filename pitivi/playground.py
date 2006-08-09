@@ -26,7 +26,7 @@ Where all gstreamer pipelines play.
 
 import gobject
 import gst
-from bin import SmartBin, SmartDefaultBin, SmartFileBin
+from bin import SmartBin, SmartDefaultBin, SmartFileBin, SmartTimelineBin
 from utils import bin_contains
 
 class PlayGround(gobject.GObject):
@@ -190,6 +190,21 @@ class PlayGround(gobject.GObject):
         gst.debug("switching to default")
         return self.switchToPipeline(self.default)
 
+    def switchToTimeline(self):
+        """
+        switch to the timeline.
+        Warning : if there's more than one timeline controlled, the first one
+        will be taken.
+        """
+        if isinstance(self.current, SmartTimelineBin):
+            # fast path
+            return True
+        for pipeline in self.pipelines:
+            if isinstance(pipeline, SmartTimelineBin):
+                self.switchToPipeline(pipeline)
+                return True
+        return False
+
     def setVideoSinkThread(self, vsinkthread):
         """ sets the video sink thread """
         gst.debug("video sink thread : %s" % vsinkthread)
@@ -255,6 +270,9 @@ class PlayGround(gobject.GObject):
         if self._positiontimeoutid:
             gobject.source_remove(self._positiontimeoutid)
             self._positiontimeoutid = 0
+
+        if value < 0:
+            value = long(0)
 
         # actual seeking
         res = target.seek(1.0, format, gst.SEEK_FLAG_FLUSH,

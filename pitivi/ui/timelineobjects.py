@@ -251,6 +251,7 @@ class SimpleTimeline(gtk.Layout):
         x = x + int(self.hadjustment.get_value())
         self._gotFileFactory(instance.PiTiVi.current.sources[uri], x, y)
         context.finish(True, False, timestamp)
+        instance.PiTiVi.playground.switchToTimeline()
 
     def _realizeCb(self, unused_layout):
         self.modify_bg(gtk.STATE_NORMAL, self.style.white)
