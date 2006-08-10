@@ -1,3 +1,10 @@
+2006-08-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Commented out the reporting of Warning messages to the UI.
+	If it is really fatal to playback/editing/encoding, it should have been
+	an Error message.
+
 2006-08-09  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/playground.py:

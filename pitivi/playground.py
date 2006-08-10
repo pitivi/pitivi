@@ -337,9 +337,10 @@ class PlayGround(gobject.GObject):
         elif message.type == gst.MESSAGE_ERROR:
             error, detail = message.parse_error()
             self._handleError(error, detail, message.src)
-        elif message.type == gst.MESSAGE_WARNING:
-            error, detail = message.parse_warning()
-            self._handleError(error, detail, message.src)
+        # let's ignore warnings for the time being.
+##         elif message.type == gst.MESSAGE_WARNING:
+##             error, detail = message.parse_warning()
+##             self._handleError(error, detail, message.src)
 
 
     #
