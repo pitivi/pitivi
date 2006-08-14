@@ -23,10 +23,14 @@
 import os
 import sys
 import string
+import locale
+from gettext import bindtextdomain, textdomain
 
 # variables
 CONFIGURED_PYTHONPATH = '@CONFIGURED_PYTHONPATH@'
 LIBDIR = '@LIBDIR@'
+
+localedir = ""
 
 # Check if we're in development or installed version
 # Add the path of pitivi stuff
@@ -36,8 +40,11 @@ def _add_pitivi_path():
     dir = os.path.dirname(os.path.abspath(__file__))
     if os.path.exists(os.path.join(dir, 'CVS')):
         root = os.path.split(dir)[0]
+	localedir = os.path.join(root, 'locale')
+	print "localedir is defined as: ", localedir
     else:
         root = os.path.join(LIBDIR, 'pitivi', 'python')
+    	localedir = "@prefix@/@DATADIRNAME@/locale"
 
     if not root in sys.path:
         sys.path.insert(0, root)
@@ -48,6 +55,11 @@ def _add_pitivi_path():
     for path in string.split(CONFIGURED_PYTHONPATH, ':'):
         if path not in sys.path:
             sys.path.insert(0, path)
+    
+    # Added for i18n
+    locale.setlocale(locale.LC_ALL, '')
+    bindtextdomain('pitivi', localedir)
+    textdomain('pitivi')
 
 def _init_gobject_gtk_gst():
     try:
@@ -62,6 +74,13 @@ def _init_gobject_gtk_gst():
         raise SystemExit("PyGTK couldn't be found !")
 
     gobject.threads_init()
+
+    try:
+        from gtk import glade
+    except ImportError:
+        raise SystemExit("Can't find glade module")
+
+    glade.bindtextdomain('pitivi', localedir)
 
     try:
         import pygst

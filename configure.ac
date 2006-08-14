@@ -154,8 +154,13 @@ else
 fi
 
 dnl the gettext stuff needed
-dnl AM_GNU_GETTEXT_VERSION(0.11.5)
-dnl AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION(0.11.5)
+AM_GNU_GETTEXT([external])
+
+dnl ALL_LINGUAS="fr"
+GETTEXT_PACKAGE="pitivi"
+AC_SUBST(GETTEXT_PACKAGE)
+AC_DEFINE_UNQUOTED(GETTEXT_PACKAGE, "$GETTEXT_PACKAGE", [Gettext package])
 
 CONFIGURED_PYTHONPATH=$PYTHONPATH
 AC_SUBST(CONFIGURED_PYTHONPATH)
@@ -175,4 +180,6 @@ pitivi/elements/Makefile
 pitivi/pixmaps/Makefile
 pitivi.spec
 pitivi.desktop
+po/Makefile.in
+po/Makefile
 )

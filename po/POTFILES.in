@@ -1,8 +1,9 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-[encoding: UTF-8]
+# [encoding: UTF-8]
 pitivi/ui/discoverererrordialog.glade
 pitivi/ui/elementsettingsdialog.glade
 pitivi/ui/encodingdialog.glade
 pitivi/ui/exportsettingswidget.glade
 pitivi/ui/projectsettings.glade
+pitivi/ui/mainwindow.py

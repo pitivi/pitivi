@@ -1,3 +1,25 @@
+2006-08-14  Edward Hervey  <edward@fluendo.com>
+
+	* ABOUT-NLS:
+	* intltool-extract.in:
+	* intltool-merge.in:
+	* intltool-update.in:
+	new files
+	* Makefile.am:
+	Added new files, support for uninstalled locales and build of po/
+	* bin/pitivi.in:
+	support for i18n
+	* configure.ac:
+	support for i18n
+	* pitivi/ui/mainwindow.py:
+	First python file with i18n support (Advanced view)
+	* po/LINGUAS:
+	Added french
+	* po/POTFILES.in:
+	Added pitivi/ui/mainwindow.py file
+	* po/fr.po:
+	new french translation.
+
 2006-08-10  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/playground.py:

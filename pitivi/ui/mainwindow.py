@@ -31,6 +31,8 @@ import gst
 import pitivi.instance as instance
 import pitivi.configure as configure
 
+from gettext import gettext as _
+
 from timeline import TimelineWidget
 from sourcefactories import SourceFactoriesWidget
 from viewer import PitiviViewer
@@ -75,8 +77,9 @@ class PitiviMainWindow(gtk.Window):
             ("View", None, "_View"),
             ("Help", None, "_Help")
             ]
-        self.toggleactions = [
-            ("AdvancedView", None, "Advanced Vie_w", None, "Switch to advanced view", self._advancedViewCb)
+	
+	self.toggleactions = [
+            ("AdvancedView", None, _("Advanced Vie_w"), None, _("Switch to advanced view"), self._advancedViewCb)
             ]
 
         self.actiongroup = gtk.ActionGroup("mainwindow")
