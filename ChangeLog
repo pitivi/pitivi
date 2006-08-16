@@ -1,3 +1,9 @@
+2006-08-16  Edward Hervey  <edward@fluendo.com>
+
+	* po/.cvsignore:
+	* po/Makefile.in.in:
+	Forgot to commit Makefile.in.in
+
 2006-08-14  Edward Hervey  <edward@fluendo.com>
 
 	* ABOUT-NLS:
