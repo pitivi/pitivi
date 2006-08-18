@@ -266,10 +266,12 @@ class SmartBin(gst.Pipeline):
         aenc.link(aoutq)
 
         thread.add(vinq, venc)
+        vrate = gst.element_factory_make("videorate", "vrate")
         csp = gst.element_factory_make("ffmpegcolorspace", "csp")
-        thread.add(csp)
+        thread.add(csp, vrate)
         vinq.link(csp)
-        csp.link(venc)
+        csp.link(vrate)
+        vrate.link(venc)
         venc.link(voutq)
 
         thread.add_pad(gst.GhostPad("vsink", vinq.get_pad("sink")))

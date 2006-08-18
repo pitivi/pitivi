@@ -1,5 +1,11 @@
 2006-08-18  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/bin.py: (SmartBin._makeEncThread):
+	Insert a videorate before the video encoder in order to cope with
+	encoders that don't react well to non-perfect/non-continuous streams.
+
+2006-08-18  Edward Hervey  <edward@fluendo.com>
+
 	* bin/pitivi.in:
 	Remove unwanted print statement
 	* pitivi/elements/singledecodebin.py:
