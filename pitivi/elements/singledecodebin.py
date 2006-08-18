@@ -55,9 +55,6 @@ class SingleDecodeBin(gst.Bin):
         self.typefind = gst.element_factory_make("typefind", "internal-typefind")
         self.add(self.typefind)
 
-        self.fakesink = gst.element_factory_make("fakesink", "internal-fakesink")
-        self.add(self.fakesink)
-
         self.uri = uri
         if self.uri and gst.uri_is_valid(self.uri):
             self.urisrc = gst.element_make_from_uri(gst.URI_SRC, uri, "urisrc")
@@ -240,8 +237,6 @@ class SingleDecodeBin(gst.Bin):
         self.log("ghosting pad %s" % pad.get_name)
         self._srcpad = gst.GhostPad("src", pad)
         self.add_pad(self._srcpad)
-        self.fakesink.set_state(gst.STATE_NULL)
-        self.remove(self.fakesink)
         self.post_message(gst.message_new_state_dirty(self))
 
     def _markValidElements(self, element):
@@ -282,7 +277,7 @@ class SingleDecodeBin(gst.Bin):
             self.remove(element)
         self._validelements = []
 
-##     ## Overrides
+    ## Overrides
         
     def do_change_state(self, transition):
         self.debug("transition:%r" % transition)

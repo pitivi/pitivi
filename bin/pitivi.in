@@ -41,7 +41,6 @@ def _add_pitivi_path():
     if os.path.exists(os.path.join(dir, 'CVS')):
         root = os.path.split(dir)[0]
 	localedir = os.path.join(root, 'locale')
-	print "localedir is defined as: ", localedir
     else:
         root = os.path.join(LIBDIR, 'pitivi', 'python')
     	localedir = "@prefix@/@DATADIRNAME@/locale"

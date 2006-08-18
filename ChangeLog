@@ -1,3 +1,10 @@
+2006-08-18  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	Remove unwanted print statement
+	* pitivi/elements/singledecodebin.py:
+	Remove use of fakesink, doesn't seem to break anything.
+
 2006-08-16  Edward Hervey  <edward@fluendo.com>
 
 	* po/.cvsignore:
