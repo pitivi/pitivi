@@ -216,6 +216,9 @@ class PitiviMainWindow(gtk.Window):
         else:
             self.timeline.showSimpleView()
 
+    def _aboutResponseCb(self, dialog, unused_response):
+        dialog.destroy()
+
     def _aboutCb(self, unused_action):
 	abt = gtk.AboutDialog()
 	abt.set_name(APPNAME)
@@ -225,6 +228,7 @@ class PitiviMainWindow(gtk.Window):
 	abt.set_authors(authors)
 	abt.set_license("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details")
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")
+        abt.connect("response", self._aboutResponseCb)
 	abt.show()
 
     def _importSourcesCb(self, unused_action):

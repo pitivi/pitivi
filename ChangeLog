@@ -1,3 +1,8 @@
+2006-08-21  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Close the About dialogbox when the user clicks on the [Close] button.
+
 2006-08-18  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/bin.py: (SmartBin._makeEncThread):
