@@ -27,6 +27,7 @@ import os
 import gobject
 import gtk
 import gst
+import gconf
 
 import pitivi.instance as instance
 import pitivi.configure as configure
@@ -38,6 +39,11 @@ from sourcefactories import SourceFactoriesWidget
 from viewer import PitiviViewer
 from projectsettings import ProjectSettingsDialog
 from pitivi.configure import pitivi_version, APPNAME
+
+D_G_INTERFACE = "/desktop/gnome/interface"
+
+for gconf_dir in (D_G_INTERFACE,):
+    gconf.client_get_default ().add_dir (gconf_dir, gconf.CLIENT_PRELOAD_NONE)
 
 class PitiviMainWindow(gtk.Window):
     """
@@ -117,7 +123,6 @@ class PitiviMainWindow(gtk.Window):
         vbox.pack_start(self.menu, expand=False)
 
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
-        self.toolbar.set_style(gtk.TOOLBAR_ICONS)
 
         vbox.pack_start(self.toolbar, expand=False)
 
