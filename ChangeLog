@@ -1,5 +1,11 @@
 2006-08-21  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/glade.py:
+	Specify the 'pitivi' domain when importing glade files, so i18n can work
+	on glade-based widgets.
+
+2006-08-21  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/mainwindow.py:
 	Close the About dialogbox when the user clicks on the [Close] button.
 

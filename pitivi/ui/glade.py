@@ -88,10 +88,10 @@ class GladeWidget(gtk.VBox):
             assert self.glade_file
             filepath = os.path.join(self.glade_dir, self.glade_file)
             if self.glade_typedict:
-                wtree = gtk.glade.XML(filepath, typedict=self.glade_typedict)
+                wtree = gtk.glade.XML(filepath, typedict=self.glade_typedict, domain='pitivi')
             else:
                 # pygtk 2.4 doesn't like typedict={} ?
-                wtree = gtk.glade.XML(filepath)
+                wtree = gtk.glade.XML(filepath, domain='pitivi')
         except RuntimeError, e:
             raise RuntimeError('Failed to load file %s from directory %s: %s'
                                % (self.glade_file, self.glade_dir, e))
@@ -145,10 +145,10 @@ class GladeWindow(gobject.GObject):
             assert self.glade_file
             filepath = os.path.join(self.glade_dir, self.glade_file)
             if self.glade_typedict:
-                wtree = gtk.glade.XML(filepath, typedict=self.glade_typedict)
+                wtree = gtk.glade.XML(filepath, typedict=self.glade_typedict, domain='pitivi')
             else:
                 # pygtk 2.4 doesn't like typedict={} ?
-                wtree = gtk.glade.XML(filepath)
+                wtree = gtk.glade.XML(filepath, domain='pitivi')
         except RuntimeError, e:
             raise RuntimeError('Failed to load file %s from directory %s: %s'
                                % (self.glade_file, self.glade_dir, e))
