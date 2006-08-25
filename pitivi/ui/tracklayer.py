@@ -47,6 +47,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         "size-allocate":"override",
         "expose-event":"override",
         "realize":"override",
+        "motion-notify-event":"override",
         }
 
     border = 5
@@ -63,6 +64,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         self.layerInfo = layerInfo
         self.layerInfo.composition.connect('start-duration-changed', self._compStartDurationChangedCb)
         self.layerInfo.composition.connect('source-added', self._compSourceAddedCb)
+        self.layerInfo.composition.connect('source-removed', self._compSourceRemovedCb)
 
         self.pixmap = None
 
@@ -73,8 +75,11 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         self.connect('drag-data-received', self._dragDataReceivedCb)
         self.connect('drag-leave', self._dragLeaveCb)
         self.connect('drag-motion', self._dragMotionCb)
+
         # object being currently dragged
         self.dragObject = None
+
+        self.add_events(gtk.gdk.POINTER_MOTION_MASK | gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
 
     ## composition signal callbacks
 
@@ -101,6 +106,18 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         source.connect_after('start-duration-changed', self._childStartDurationChangedCb)
         gst.debug("Finished adding source")
 
+    def _compSourceRemovedCb(self, unused_composition, source):
+        gst.debug("source removed")
+
+        try:
+            widget = self.sources[source]
+        except:
+            return
+
+        widget.hide()
+        self.remove(widget)
+
+        gst.debug("finished removing source")
 
     ## ZoomableWidgetInterface methods
 
@@ -147,6 +164,8 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
                                       x, y, x, y, width, height)
         return gtk.Layout.do_expose_event(self, event)
 
+    def do_motion_notify_event(self, event):
+        gst.debug("motion x:%d y:%d" % (event.x , event.y))
 
     ## Drawing methods
 
@@ -214,7 +233,9 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
             return
         x += int(self.hadjustment.get_value())
         gst.debug("got source %s x:%d" % (source, x))
+
         # do something with source
+        # FIXME : CURRENTLY ONLY ADDED AT BEGINNING
         self.layerInfo.composition.prependSource(TimelineFileSource(factory=source,
                                                                     media_type=self.layerInfo.composition.media_type,
                                                                     name=source.name))

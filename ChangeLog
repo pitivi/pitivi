@@ -1,6 +1,15 @@
 2006-08-25  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/timeline.py:
+	Actually emit the 'source-removed' signal when a source is removed
+	from a composition.
+	* pitivi/ui/tracklayer.py:
+	remove source graphically from the complex timeline when it gets
+	removed.
+
+2006-08-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline.py:
 	Implement TimelineComposition::RemoveSource
 	Added more comments
 	* pitivi/ui/timelineobjects.py:

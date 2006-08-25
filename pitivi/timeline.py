@@ -829,8 +829,10 @@ class TimelineComposition(TimelineSource):
         # if we have a brother
         if remove_linked and self.linked and self.linked.gnlobject:
             self.linked.gnlobject.remove(source.linked.gnlobject)
+            self.linked.emit('source-removed', source.linked)
             self.linked._updateCondensedList()
 
+        self.emit('source-removed', source)
         # update the condensed list
         self._updateCondensedList()
 
