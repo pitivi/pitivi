@@ -312,6 +312,8 @@ class PitiviViewer(gtk.VBox):
     def _comboboxChangedCb(self, cbox):
         # selected another source
         idx = cbox.get_active()
+        if idx == -1:
+            return
         # get the corresponding smartbin
         smartbin = self.sourcelist[idx][1]
         if not instance.PiTiVi.playground.current == smartbin:
@@ -329,9 +331,16 @@ class PitiviViewer(gtk.VBox):
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time), time_to_string(instance.PiTiVi.playground.current.length)))
         
 
+    def _backToDefaultCb(self):
+        instance.PiTiVi.playground.switchToDefault()
+        instance.PiTiVi.playground.play()
+        self._newTime(0)
+
     def _timelineDurationChangedCb(self, unused_composition, unused_start,
                                    duration):
         gst.debug("duration : %d" % duration)
+        if duration == 0:
+            gobject.idle_add(self._backToDefaultCb)
         gobject.idle_add(self._asyncTimelineDurationChanged, duration)
 
     def _dndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
@@ -404,7 +413,13 @@ class PitiviViewer(gtk.VBox):
         self._newTime(pos)
 
     def _currentPlaygroundChangedCb(self, playground, smartbin):
-        if not smartbin == playground.default:
+        gst.log("smartbin:%s" % smartbin)
+        if smartbin == playground.default:
+            self.sourcecombobox.set_active(-1)
+            self.slider.set_sensitive(False)
+            self.playpause_button.set_sensitive(False)
+            self.record_button.set_sensitive(False)
+        else:
             if isinstance(smartbin, SmartTimelineBin):
                 gst.info("switching to Timeline, setting duration to %s" % (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
                 self.posadjust.upper = float(smartbin.project.timeline.videocomp.duration)
@@ -420,7 +435,7 @@ class PitiviViewer(gtk.VBox):
             self._newTime(0)
             self.slider.set_sensitive(True)
             self.playpause_button.set_sensitive(True)
-        self.sourcecombobox.set_active(self._getSmartbinIndex(smartbin))
+            self.sourcecombobox.set_active(self._getSmartbinIndex(smartbin))
 
     def _binAddedCb(self, unused_playground, smartbin):
         # a smartbin was added

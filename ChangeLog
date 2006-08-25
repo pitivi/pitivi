@@ -1,3 +1,15 @@
+2006-08-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline.py:
+	Implement TimelineComposition::RemoveSource
+	Added more comments
+	* pitivi/ui/timelineobjects.py:
+	Implement popup menu for sources, with remove item
+	Add 'delete-me' signal for sources
+	Implement removal of sources from the Simple Timeline
+	* pitivi/ui/viewer.py:
+	Implement proper behaviour for when the timeline becomes empty again.
+
 2006-08-21  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/mainwindow.py:

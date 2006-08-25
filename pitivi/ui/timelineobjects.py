@@ -111,6 +111,7 @@ class SimpleTimeline(gtk.Layout):
                 gst.debug("Adding new element to the layout")
                 if isinstance(element, TimelineFileSource):
                     widget = SimpleSourceWidget(element)
+                    widget.connect("delete-me", self._sourceDeleteMeCb, element)
                 else:
                     widget = SimpleTransitionWidget(element)
                 self.widgets[element] = widget
@@ -305,7 +306,10 @@ class SimpleTimeline(gtk.Layout):
         newwidth = pos + DEFAULT_SIMPLE_SPACING
         self.set_property("width", newwidth)
 
-
+    def _sourceDeleteMeCb(self, widget, element):
+        # remove this element from the timeline
+        print element
+        self.timeline.videocomp.removeSource(element, collapse_neighbours=True)
 
 
 class SimpleSourceWidget(gtk.DrawingArea):
@@ -314,6 +318,12 @@ class SimpleSourceWidget(gtk.DrawingArea):
     Takes a TimelineFileSource
     """
 
+    __gsignals__ = {
+        'delete-me' : (gobject.SIGNAL_RUN_LAST,
+                       gobject.TYPE_NONE,
+                       ( ))
+        }
+
     border = 10
 
     # TODO change the factory argument into a TimelineFileSource
@@ -321,7 +331,7 @@ class SimpleSourceWidget(gtk.DrawingArea):
         gobject.GObject.__init__(self)
         self.gc = None
         self.add_events(gtk.gdk.POINTER_MOTION_MASK | gtk.gdk.ENTER_NOTIFY_MASK
-                        | gtk.gdk.LEAVE_NOTIFY_MASK) # enter, leave, pointer-motion
+                        | gtk.gdk.LEAVE_NOTIFY_MASK | gtk.gdk.BUTTON_PRESS_MASK) # enter, leave, pointer-motion
         self.width = 0
         self.height = 0
         self.filesource = filesource
@@ -334,6 +344,14 @@ class SimpleSourceWidget(gtk.DrawingArea):
         self.connect("expose-event", self._exposeEventCb)
         self.connect("realize", self._realizeCb)
         self.connect("configure-event", self._configureEventCb)
+        self.connect("button-press-event", self._buttonPressCb)
+
+        # popup menus
+        self._popupMenu = gtk.Menu()
+        deleteitem = gtk.MenuItem("Remove")
+        deleteitem.connect("activate", self._deleteMenuItemCb)
+        deleteitem.show()
+        self._popupMenu.append(deleteitem)        
 
     def _drawData(self):
         # actually do the drawing in the pixmap here
@@ -400,6 +418,13 @@ class SimpleSourceWidget(gtk.DrawingArea):
         self.window.draw_drawable(self.gc, self.pixmap,
                                   x, y, x, y, w, h)
         return True
+
+    def _deleteMenuItemCb(self, unused_menuitem):
+        self.emit('delete-me')
+
+    def _buttonPressCb(self, unused_widget, event):
+        if event.button == 3:
+            self._popupMenu.popup(None,None,None,event.button,event.time)
 
 
 class SimpleTransitionWidget(gtk.DrawingArea):

@@ -397,7 +397,7 @@ class TimelineComposition(TimelineSource):
     _ Effects have always got priorities higher than the sources
     _ Can contain global effects that have the highest priority
       _ Those global effect spread the whole duration of the composition
-    _ Simple effects can overlap each other
+    _ Simple effects (applies on one source), can overlap each other
     _ Complex Effect(s) have a lower priority than Simple Effect(s)
       _ For sanity reasons, Complex Effect(s) can't overlap each other
     _ Transitions have the lowest effect priority
@@ -472,6 +472,28 @@ class TimelineComposition(TimelineSource):
                              (gobject.TYPE_PYOBJECT, )),
         }
 
+    # mid-level representation/storage of sources/effecst lists
+    #
+    # Global effects:
+    #   Apply on the whole duration of the composition.
+    #   Sorted by priority (first: most important)
+    #
+    # Simple effects:
+    #   2 dimensional list
+    #   Priority, then time
+    #
+    # Complex effect:
+    # Transitions:
+    #   Simple list sorted by time
+    #
+    # Source List:
+    #   List of layers
+    #   Layers:
+    #      Handles priority attribution to contained sources
+    #      3-tuple:
+    #      _ minimum priority
+    #      _ maximum priority
+    #      _ list of sources sorted by time
 
     def __init__(self, **kw):
         self.global_effects = [] # list of effects starting from highest priority
@@ -557,9 +579,9 @@ class TimelineComposition(TimelineSource):
             """ returns a condensed list of the two given lists """
             self.gnlobject.info( "condensed_sum")
             self.gnlobject.info( "comparing %s with %s" % (list1, list2))
-            if not list1:
+            if not len(list1):
                 return list2[:]
-            if not list2:
+            if not len(list2):
                 return list1[:]
             
             res = list1[:]
@@ -587,6 +609,7 @@ class TimelineComposition(TimelineSource):
         self.gnlobject.info("_update_condensed_list")
         # build a condensed list
         clist = self._makeCondensedList()
+        self.gnlobject.info("clist:%r" % clist)
         if self.condensed:
             # compare it to the self.condensed
             list_changed = False
@@ -605,6 +628,7 @@ class TimelineComposition(TimelineSource):
                         break
         else:
             list_changed = True
+        self.gnlobject.log("list_change : %s" % list_changed)
         # if it's different or new, set it to self.condensed and emit the signal
         if list_changed:
             self.condensed = clist
@@ -656,18 +680,9 @@ class TimelineComposition(TimelineSource):
                 return True
         return False
 
-    def addSource(self, source, position, auto_linked=True):
-        """
-        add a source (with correct start/duration time already set)
-        position : the vertical position
-          _ 0 : insert above all other layers
-          _ n : insert at the given position (1: top row)
-          _ -1 : insert at the bottom, under all sources
-        auto_linked : if True will add the brother (if any) of the given source
-                to the linked composition with the same parameters
-        """
-        self.gnlobject.info("source %s , position:%d, self.sources:%s" %(source, position, self.sources))
-        
+
+    def _addSource(self, source, position):
+        """ private version of addSource """
         def my_add_sorted(sources, object):
             slist = sources[2]
             i = 0
@@ -689,16 +704,31 @@ class TimelineComposition(TimelineSource):
         self.gnlobject.info("adding %s to our composition" % source.gnlobject)
         self.gnlobject.add(source.gnlobject)
 
+        self.gnlobject.info("added source %s" % source.gnlobject)
+        gst.info("%s" % str(self.sources))
+        self.emit('source-added', source)
+
         # update the condensed list
         self._updateCondensedList()
+
+    def addSource(self, source, position, auto_linked=True):
+        """
+        add a source (with correct start/duration time already set)
+        position : the vertical position
+          _ 0 : insert above all other layers
+          _ n : insert at the given position (1: top row)
+          _ -1 : insert at the bottom, under all sources
+        auto_linked : if True will add the brother (if any) of the given source
+                to the linked composition with the same parameters
+        """
+        self.gnlobject.info("source %s , position:%d, self.sources:%s" %(source, position, self.sources))
+        
+        self._addSource(source, position)
 
         # if auto_linked and self.linked, add brother to self.linked with same parameters
         if auto_linked and self.linked:
             if source.getBrother():
-                self.linked.addSource(source.brother, position, auto_linked=False)
-        self.gnlobject.info("added source %s" % source.gnlobject)
-        gst.info("%s" % str(self.sources))
-        self.emit('source-added', source)
+                self.linked._addSource(source.brother, position)
 
     def insertSourceAfter(self, source, existingsource, push_following=True, auto_linked=True):
         """
@@ -771,11 +801,39 @@ class TimelineComposition(TimelineSource):
 
     def removeSource(self, source, remove_linked=True, collapse_neighbours=False):
         """
-        removes a source
+        Removes a source.
+        
         If remove_linked is True and the source has a linked source, will remove
-        it from the linked composition
+        it from the linked composition.
+        If collapse_neighbours is True, then all object after the removed source
+        will be shifted in the past by the duration of the removed source.
         """
-        raise NotImplementedError
+        self.gnlobject.info("source:%s, remove_linked:%s, collapse_neighbours:%s" % (source, remove_linked, collapse_neighbours))
+        sources = self.sources[0]
+
+        pos = sources[2].index(source)
+        self.gnlobject.info("source was at position %d in his layer" % pos)
+
+        # actually remove it
+        self.gnlobject.info("Really removing %s from our composition" % source.gnlobject)
+        self.gnlobject.remove(source.gnlobject)
+        del sources[2][pos]
+
+        # collapse neighbours
+        if collapse_neighbours:
+            self.gnlobject.info("Collapsing neighbours")
+            for i in range(pos, len(sources[2])):
+                obj = sources[2][i]
+                obj.setStartDurationTime(start = (obj.start - source.duration))
+
+        # if we have a brother
+        if remove_linked and self.linked and self.linked.gnlobject:
+            self.linked.gnlobject.remove(source.linked.gnlobject)
+            self.linked._updateCondensedList()
+
+        # update the condensed list
+        self._updateCondensedList()
+
 
     def setDefaultSource(self, source):
         """
