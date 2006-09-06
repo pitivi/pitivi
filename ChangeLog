@@ -1,3 +1,9 @@
+2006-09-06  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py:
+	Die combobox... DIEEEE!!!!!
+	Solves #338065
+
 2006-08-25  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/timeline.py:

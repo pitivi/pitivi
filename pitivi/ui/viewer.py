@@ -30,7 +30,7 @@ from glade import GladeWindow
 
 import plumber
 import pitivi.instance as instance
-from pitivi.bin import SmartTimelineBin, SmartDefaultBin, SmartFileBin
+from pitivi.bin import SmartTimelineBin
 from pitivi.objectfactory import FileSourceFactory
 import pitivi.dnd as dnd
 from pitivi.settings import ExportSettings
@@ -66,8 +66,6 @@ class PitiviViewer(gtk.VBox):
 
         instance.PiTiVi.connect("new-project", self._newProjectCb)
         instance.PiTiVi.playground.connect("current-state", self._currentStateCb)
-        instance.PiTiVi.playground.connect("bin-added", self._binAddedCb)
-        instance.PiTiVi.playground.connect("bin-removed", self._binRemovedCb)
         instance.PiTiVi.playground.connect("position", self._playgroundPositionCb)
 
         instance.PiTiVi.current.settings.connect("settings-changed",
@@ -135,27 +133,14 @@ class PitiviViewer(gtk.VBox):
         self.forward_button.connect("clicked", self._forwardCb)
         self.forward_button.set_sensitive(False)
         bbox.pack_start(self.forward_button, expand=False)
-        
-        infohbox = gtk.HBox()
-        infohbox.set_spacing(5)
-        self.pack_start(infohbox, expand=False)
 
-        # available sources combobox
-        self.sourcelist = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_PYOBJECT)
-        self.sourcecombobox = gtk.ComboBox(self.sourcelist)
-        cell = gtk.CellRendererText()
-        self.sourcecombobox.pack_start(cell, True)
-        self.sourcecombobox.add_attribute(cell, "text", 0)
-        self.sourcecombobox.set_sensitive(False)
-        self.sourcecombobox.connect("changed", self._comboboxChangedCb)
-        
         # current time
         self.timelabel = gtk.Label()
         self.timelabel.set_markup("<tt>00m00s000 / --m--s---</tt>")
         self.timelabel.set_alignment(1.0, 0.5)
-        self.timelabel.set_padding(5, 5)
-        infohbox.pack_start(self.sourcecombobox, expand=True)
-        infohbox.pack_end(self.timelabel, expand=False)
+        self.timelabel.set_padding(5, 5)        
+        bbox.pack_start(self.timelabel, expand=False, padding=10)
+        
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
@@ -307,18 +292,6 @@ class PitiviViewer(gtk.VBox):
             self.posadjust.set_value(float(value))
         return False
 
-    ## gtk.ComboBox callbacks for sources
-
-    def _comboboxChangedCb(self, cbox):
-        # selected another source
-        idx = cbox.get_active()
-        if idx == -1:
-            return
-        # get the corresponding smartbin
-        smartbin = self.sourcelist[idx][1]
-        if not instance.PiTiVi.playground.current == smartbin:
-            instance.PiTiVi.playground.switchToPipeline(smartbin)
-
 
     ## active Timeline calllbacks
 
@@ -415,7 +388,6 @@ class PitiviViewer(gtk.VBox):
     def _currentPlaygroundChangedCb(self, playground, smartbin):
         gst.log("smartbin:%s" % smartbin)
         if smartbin == playground.default:
-            self.sourcecombobox.set_active(-1)
             self.slider.set_sensitive(False)
             self.playpause_button.set_sensitive(False)
             self.record_button.set_sensitive(False)
@@ -435,33 +407,6 @@ class PitiviViewer(gtk.VBox):
             self._newTime(0)
             self.slider.set_sensitive(True)
             self.playpause_button.set_sensitive(True)
-            self.sourcecombobox.set_active(self._getSmartbinIndex(smartbin))
-
-    def _binAddedCb(self, unused_playground, smartbin):
-        # a smartbin was added
-        # check if the item isn't already in the sourcelist:
-        self.sourcecombobox.set_sensitive(True)
-        for name, bin in self.sourcelist:
-            if name == smartbin.displayname:
-                return
-        self.sourcelist.append([smartbin.displayname, smartbin])
-
-    def _getSmartbinIndex(self, smartbin):
-        # find the index of a smartbin
-        # return -1 if it's not in there
-        for pos in range(len(self.sourcelist)):
-            if self.sourcelist[pos][0] == smartbin.displayname:
-                return pos
-        return -1
-
-    def _binRemovedCb(self, unused_playground, smartbin):
-        # a smartbin was removed
-        idx = self._getSmartbinIndex(smartbin)
-        if idx < 0:
-            return
-        del self.sourcelist[idx]
-        if not self.sourcelist:
-            self.sourcecombobox.set_sensitive(False)
 
     def _currentStateCb(self, playground, state):
         gst.info("current state changed : %s" % state)
