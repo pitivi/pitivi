@@ -202,8 +202,8 @@ class SourceListWidget(gtk.VBox):
             return
         self._importDialog = gtk.FileChooserDialog("Import a file", None,
                                                    gtk.FILE_CHOOSER_ACTION_OPEN,
-                                                   (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                                    gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+                                                   (gtk.STOCK_ADD, gtk.RESPONSE_OK,
+                                                    gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE))
 
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
         self._importDialog.set_select_multiple(True)
@@ -292,13 +292,13 @@ class SourceListWidget(gtk.VBox):
         
     def _dialogBoxResponseCb(self, dialogbox, response):
         gst.debug("response:%r" % response)
-        dialogbox.hide()
         if response == gtk.RESPONSE_OK:
             self._lastFolder = dialogbox.get_current_folder()
             filenames = dialogbox.get_uris()
             self.addFiles(filenames)
-        dialogbox.destroy()
-        self._importDialog = None
+        else:
+            dialogbox.destroy()
+            self._importDialog = None
 
     def _dialogBoxCloseCb(self, dialogbox):
         gst.debug("closing")
