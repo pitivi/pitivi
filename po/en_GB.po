@@ -1,0 +1,229 @@
+# English (British) translation for pitivi
+# Copyright (C) 2006 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the pitivi package.
+# David Lodge <dave@cirt.net>, 2006
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-torrent\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-09-13 07:18+0100\n"
+"PO-Revision-Date: 2006-09-13 21:52-0000\n"
+"Last-Translator: David Lodge <dave@cirt.net>\n"
+"Language-Team: en_GB <en@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../pitivi/ui/discoverererrordialog.glade.h:1
+msgid "Error while analyzing files"
+msgstr "Error while analysing files"
+
+#: ../pitivi/ui/discoverererrordialog.glade.h:2
+msgid "The following files weren't discovered properly."
+msgstr "The following files weren't discovered properly."
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:1
+msgid "<b>Author:</b>"
+msgstr "<b>Author:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:2
+msgid "<b>Description:</b>"
+msgstr "<b>Description:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:3
+msgid "<b>Plugin Name</b>"
+msgstr "<b>Plugin Name</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:4
+msgid "<b>Properties</b>"
+msgstr "<b>Properties</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:5
+msgid "Author"
+msgstr "Author"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:6
+msgid "Description"
+msgstr "Description"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:7
+msgid "Properties for <element>"
+msgstr "Properties for <element>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:1
+msgid "Choose File"
+msgstr "Choose File"
+
+#: ../pitivi/ui/encodingdialog.glade.h:2
+msgid "Output File:"
+msgstr "Output File:"
+
+#: ../pitivi/ui/encodingdialog.glade.h:3
+msgid "Please choose an output file"
+msgstr "Please choose an output file"
+
+#: ../pitivi/ui/encodingdialog.glade.h:4
+msgid "Render Project"
+msgstr "Render Project"
+
+#: ../pitivi/ui/encodingdialog.glade.h:5
+#: ../pitivi/ui/exportsettingswidget.glade.h:33
+msgid "Settings"
+msgstr "Settings"
+
+#: ../pitivi/ui/encodingdialog.glade.h:6
+msgid "Settings:"
+msgstr "Settings:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:1
+msgid ""
+"12 fps\n"
+"23,97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29,97 fps\n"
+"30 fps\n"
+"60 fps"
+msgstr ""
+"12 fps\n"
+"23,97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29,97 fps\n"
+"30 fps\n"
+"60 fps"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:8
+msgid ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+msgstr ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:12
+msgid ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+msgstr ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:18
+msgid "<b>Audio Output</b>"
+msgstr "<b>Audio Output</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:19
+msgid "<b>Export to</b>"
+msgstr "<b>Export to</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:20
+msgid "<b>Video Output</b>"
+msgstr "<b>Video Output</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:21
+msgid "Audio Codec"
+msgstr "Audio Codec"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:22
+msgid "Audio Codec:"
+msgstr "Audio Codec:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:23
+msgid "Audio Preset"
+msgstr "Audio Preset"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:24
+msgid "Channels:"
+msgstr "Channels:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:25
+msgid "Container:"
+msgstr "Container:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:26
+msgid "Depth:"
+msgstr "Depth:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:27
+msgid "Frame rate:"
+msgstr "Frame rate:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:28
+msgid "Height:"
+msgstr "Height:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:29
+msgid ""
+"Mono (1)\n"
+"Stereo (2)"
+msgstr ""
+"Mono (1)\n"
+"Stereo (2)"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:31
+msgid "Muxer"
+msgstr "Muxer"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:32
+msgid "Rate:"
+msgstr "Rate:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:34
+msgid "Video Codec"
+msgstr "Video Codec"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:35
+msgid "Video Codec:"
+msgstr "Video Codec:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:36
+msgid "Video Preset"
+msgstr "Video Preset"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:37
+msgid "Width:"
+msgstr "Width:"
+
+#: ../pitivi/ui/projectsettings.glade.h:1
+msgid "A short description of your project."
+msgstr "A short description of your project."
+
+#: ../pitivi/ui/projectsettings.glade.h:2
+msgid "Description:"
+msgstr "Description:"
+
+#: ../pitivi/ui/projectsettings.glade.h:3
+msgid "Name:"
+msgstr "Name:"
+
+#: ../pitivi/ui/projectsettings.glade.h:4
+msgid "Project Settings"
+msgstr "Project Settings"
+
+#: ../pitivi/ui/projectsettings.glade.h:5
+msgid "The name of your project."
+msgstr "The name of your project."
+
+#: ../pitivi/ui/mainwindow.py:88
+msgid "Advanced Vie_w"
+msgstr "Advanced Vie_w"
+
+#: ../pitivi/ui/mainwindow.py:88
+msgid "Switch to advanced view"
+msgstr "Switch to advanced view"
+
