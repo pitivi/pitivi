@@ -1,5 +1,9 @@
 2006-09-13  David Lodge <dave@cirt.net>
 
+	* LINGUAS: Added "en_GB" to LINGUAS.
+
+2006-09-13  David Lodge <dave@cirt.net>
+
 	* en_GB.po: Updated English (British) translation
 
 2006-08-13  Francisco Javier F. Serrador  <serrador@openshine.com>
