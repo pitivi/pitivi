@@ -36,6 +36,8 @@ from effects import Magician
 from configure import APPNAME
 import instance
 
+from gettext import gettext as _
+
 class Pitivi(gobject.GObject):
     """
     Pitivi's main class
@@ -70,13 +72,13 @@ class Pitivi(gobject.GObject):
 
         # store ourself in the instance global
         if instance.PiTiVi:
-            raise RuntimeWarning("There is already a %s instance, inform developers" % APPNAME)
+            raise RuntimeWarning(_("There is already a %s instance, inform developers") % APPNAME)
         instance.PiTiVi = self
         
         # TODO parse cmd line arguments
 
         self.playground = PlayGround()
-        self.current = Project("New Project")
+        self.current = Project(_("New Project"))
         self.effects = Magician()
         
         # we're starting a GUI for the time being
@@ -115,7 +117,7 @@ class Pitivi(gobject.GObject):
         # if there's a running project we must close it
         if self._closeRunningProject():
             self.playground.pause()
-            self.current = Project("New Project")
+            self.current = Project(_("New Project"))
             self.emit("new-project", self.current)
 
     def shutdown(self):

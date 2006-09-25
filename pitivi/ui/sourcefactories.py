@@ -38,6 +38,8 @@ import pitivi.dnd as dnd
 from pitivi.configure import get_pixmap_dir
 from glade import GladeWindow
 
+from gettext import gettext as _
+
 def beautify_length(length):
     sec = length / gst.SECOND
     mins = sec / 60
@@ -99,9 +101,9 @@ class SourceListWidget(gtk.VBox):
 
         # Popup Menu
         self.popup = gtk.Menu()
-        additem = gtk.MenuItem("Add Sources...")
-        remitem = gtk.MenuItem("Remove Sources...")
-        playmenuitem = gtk.MenuItem("Play")
+        additem = gtk.MenuItem(_("Add Sources..."))
+        remitem = gtk.MenuItem(_("Remove Sources..."))
+        playmenuitem = gtk.MenuItem(_("Play"))
         playmenuitem.connect("activate", self._playButtonClickedCb)
         additem.connect("activate", self._addButtonClickedCb)
         remitem.connect("activate", self._removeButtonClickedCb)
@@ -126,7 +128,7 @@ class SourceListWidget(gtk.VBox):
         tsel = self.treeview.get_selection()
         tsel.set_mode(gtk.SELECTION_MULTIPLE)
         
-        pixbufcol = gtk.TreeViewColumn("Icon")
+        pixbufcol = gtk.TreeViewColumn(_("Icon"))
         pixbufcol.set_expand(False)
         pixbufcol.set_spacing(5)
         self.treeview.append_column(pixbufcol)
@@ -134,7 +136,7 @@ class SourceListWidget(gtk.VBox):
         pixbufcol.pack_start(pixcell)
         pixbufcol.add_attribute(pixcell, 'pixbuf', 0)
 
-        namecol = gtk.TreeViewColumn("Information")
+        namecol = gtk.TreeViewColumn(_("Information"))
         self.treeview.append_column(namecol)
         namecol.set_expand(True)
         namecol.set_spacing(5)
@@ -143,7 +145,7 @@ class SourceListWidget(gtk.VBox):
         namecol.pack_start(txtcell)
         namecol.add_attribute(txtcell, "markup", 1)
 
-        namecol = gtk.TreeViewColumn("Duration")
+        namecol = gtk.TreeViewColumn(_("Duration"))
         namecol.set_expand(False)
         self.treeview.append_column(namecol)
         txtcell = gtk.CellRendererText()
@@ -200,7 +202,7 @@ class SourceListWidget(gtk.VBox):
     def showImportSourcesDialog(self):
         if self._importDialog:
             return
-        self._importDialog = gtk.FileChooserDialog("Import a file", None,
+        self._importDialog = gtk.FileChooserDialog(_("Import a file"), None,
                                                    gtk.FILE_CHOOSER_ACTION_OPEN,
                                                    (gtk.STOCK_ADD, gtk.RESPONSE_OK,
                                                     gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE))
@@ -231,8 +233,6 @@ class SourceListWidget(gtk.VBox):
             elif factory.is_audio:
                 thumbnail = self.audiofilepixbuf
         else:
-            # FIXME : Use DAR from factory
-            #pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
             if not factory.video_info_stream:
                 desiredheight = 64 * pixbuf.get_height() / pixbuf.get_width()
             else:
@@ -427,13 +427,13 @@ class AudioFxListWidget(gtk.VBox):
         self.iconview = gtk.IconView(self.storemodel)
         self.treeview = gtk.TreeView(self.storemodel)
 
-        namecol = gtk.TreeViewColumn("Name")
+        namecol = gtk.TreeViewColumn(_("Name"))
         self.treeview.append_column(namecol)
         namecell = gtk.CellRendererText()
         namecol.pack_start(namecell)
         namecol.add_attribute(namecell, "text", 0)
         
-        namecol = gtk.TreeViewColumn("Description")
+        namecol = gtk.TreeViewColumn(_("Description"))
         self.treeview.append_column(namecol)
         namecell = gtk.CellRendererText()
         namecell.set_property("ellipsize", pango.ELLIPSIZE_END)
@@ -468,13 +468,13 @@ class VideoFxListWidget(gtk.VBox):
         self.iconview = gtk.IconView(self.storemodel)
         self.treeview = gtk.TreeView(self.storemodel)
 
-        namecol = gtk.TreeViewColumn("Name")
+        namecol = gtk.TreeViewColumn(_("Name"))
         self.treeview.append_column(namecol)
         namecell = gtk.CellRendererText()
         namecol.pack_start(namecell)
         namecol.add_attribute(namecell, "text", 0)
         
-        namecol = gtk.TreeViewColumn("Description")
+        namecol = gtk.TreeViewColumn(_("Description"))
         self.treeview.append_column(namecol)
         namecell = gtk.CellRendererText()
         namecell.set_property("ellipsize", pango.ELLIPSIZE_END)
@@ -527,17 +527,17 @@ class DiscovererErrorDialog(GladeWindow):
 
         txtcell = gtk.CellRendererText()
         txtcell.set_property("ellipsize", pango.ELLIPSIZE_START)
-        uricol = gtk.TreeViewColumn("File", txtcell, text=0)
+        uricol = gtk.TreeViewColumn(_("File"), txtcell, text=0)
         uricol.set_expand(True)
         self.treeview.append_column(uricol)
 
         txtcell2 = gtk.CellRendererText()
         txtcell2.set_property("ellipsize", pango.ELLIPSIZE_END)
-        reasoncol = gtk.TreeViewColumn("Reason", txtcell2, text=1)
+        reasoncol = gtk.TreeViewColumn(_("Reason"), txtcell2, text=1)
         reasoncol.set_expand(True)
         self.treeview.append_column(reasoncol)
 
-    def addFailedFile(self, uri, reason="Unknown reason"):
+    def addFailedFile(self, uri, reason=_("Unknown reason")):
         """Add the given uri to the list of failed files. You can optionnaly
         give a string identifying the reason why the file failed to be
         discovered

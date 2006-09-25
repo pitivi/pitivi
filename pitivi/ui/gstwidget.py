@@ -29,6 +29,8 @@ import gtk
 import gst
 from glade import GladeWindow
 
+from gettext import gettext as _
+
 def get_widget_propvalue(property, widget):
     """ returns the value of the given propertywidget """
     type_name = gobject.type_name(property.value_type)
@@ -140,7 +142,7 @@ class GstElementSettingsDialog(GladeWindow):
 
     def _fillWindow(self):
         # set title and frame label
-        self.window.set_title("Properties for " + self.factory.get_longname())
+        self.window.set_title(_("Properties for ") + self.factory.get_longname())
         self.widgets["infolabel"].set_markup("<b>" + self.factory.get_longname() + "</b>")
         self.desclabel.set_text(self.factory.get_description())
         self.authlabel.set_text(string.join(self.factory.get_author().split(","), "\n"))

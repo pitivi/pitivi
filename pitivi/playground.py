@@ -29,6 +29,8 @@ import gst
 from bin import SmartBin, SmartDefaultBin, SmartFileBin, SmartTimelineBin
 from utils import bin_contains
 
+from gettext import gettext as _
+
 class PlayGround(gobject.GObject):
     """
     Holds all the applications pipelines.
@@ -360,18 +362,18 @@ class PlayGround(gobject.GObject):
                                                                       type(gerror.domain), gerror.message))
         if bin_contains(self.vsinkthread, source):
             if gerror.domain == 'gst-resource-error-quark' and gerror.code == gst.RESOURCE_ERROR_BUSY:
-                self.emit("error", "Video output is busy",
-                          "Please check that your video output device isn't already used by another application")
+                self.emit("error", _("Video output is busy"),
+                          _("Please check that your video output device isn't already used by another application"))
             else:
-                self.emit("error", "Video output problem",
-                          "There is a problem with your video output device")
+                self.emit("error", _("Video output problem"),
+                          _("There is a problem with your video output device"))
         elif bin_contains(self.asinkthread, source):
             if gerror.domain == 'gst-resource-error-quark' and gerror.code == gst.RESOURCE_ERROR_BUSY:
-                self.emit("error", "Audio output device is busy",
-                          "Please check that your audio output device isn't already used by another application.")
+                self.emit("error", _("Audio output device is busy"),
+                          _("Please check that your audio output device isn't already used by another application."))
             else:
-                self.emit("error", "Audio output problem",
-                          "There is a problem with your audio output device")
+                self.emit("error", _("Audio output problem"),
+                          _("There is a problem with your audio output device"))
         else:
             self.emit("error", gerror.message, detail)
             

@@ -27,6 +27,7 @@ Multimedia settings
 import gobject
 import gst
 
+from gettext import gettext as _
 
 class ExportSettings(gobject.GObject):
     """
@@ -67,12 +68,12 @@ class ExportSettings(gobject.GObject):
         self.aencoders = available_audio_encoders()
 
     def __str__(self):
-        msg = "Export Settings\n"
-        msg += "Video :" + str(self.videowidth) + " " + str(self.videoheight) + " " + str(self.videorate)
+        msg = _("Export Settings\n")
+        msg += _("Video :") + str(self.videowidth) + " " + str(self.videoheight) + " " + str(self.videorate)
         msg += "\n\t" + str(self.vencoder) + " " +str(self.vcodecsettings)
-        msg += "\nAudio :" + str(self.audiochannels) + " " + str(self.audiorate) + " " + str(self.audiodepth)
+        msg += _("\nAudio :") + str(self.audiochannels) + " " + str(self.audiorate) + " " + str(self.audiodepth)
         msg += "\n\t" + str(self.aencoder) + " " + str(self.acodecsettings)
-        msg += "\nMuxer :" + str(self.muxer) + " " + str(self.containersettings)
+        msg += _("\nMuxer :") + str(self.muxer) + " " + str(self.containersettings)
         return msg
 
     def setVideoProperties(self, width=-1, height=-1, framerate=-1):

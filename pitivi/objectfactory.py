@@ -32,6 +32,8 @@ import gst
 
 import utils
 
+from gettext import gettext as _
+
 class ObjectFactory(gobject.GObject):
     """
     base class for object factories which provide elements to use
@@ -143,15 +145,15 @@ class ObjectFactory(gobject.GObject):
         stl = []
         filename = os.path.basename(unquote(self.name))
         if not self.title:
-            stl.append("<b>%s</b><small>" % gobject.markup_escape_text(filename))
+            stl.append(_("<b>%s</b><small>") % gobject.markup_escape_text(filename))
         else:
             # either 'Title' or 'Title (Artist)'
             if self.artist:
-                stl.append("<b>%s</b> (%s)" % (gobject.markup_escape_text(self.title),
+                stl.append(_("<b>%s</b> (%s)") % (gobject.markup_escape_text(self.title),
                                                gobject.markup_escape_text(self.artist)))
             else:
-                stl.append("<b>%s</b>" % gobject.markup_escape_text(self.title))
-            stl.append("<small><b>File:</b> %s" % filename)
+                stl.append(_("<b>%s</b>") % gobject.markup_escape_text(self.title))
+            stl.append(_("<small><b>File:</b> %s") % filename)
 ##         if self.title:
 ##             stl.append("<b>Title:</b> %s" % self.title)
 ##         if self.artist:
@@ -376,15 +378,15 @@ class VideoStream(MultimediaStream):
     def getMarkup(self):
         if self.raw:
             if self.framerate.num:
-                templ = "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+                templ = _("<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>")
                 templ = templ % (self.dar.num * self.height / self.dar.denom, self.height, float(self.framerate.num) / float(self.framerate.denom))
             else:
-                templ = "<b>Image:</b> %d x %d <i>pixels</i>"
+                templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
                 templ = templ % (self.dar.num * self.height / self.dar.denom, self.height)
             if self.codec:
-                templ = templ + " <i>(%s)</i>" % self.codec
+                templ = templ + _(" <i>(%s)</i>") % self.codec
             return templ
-        return "<b>Unknown Video format:</b> %s" % self.videotype
+        return _("<b>Unknown Video format:</b> %s") % self.videotype
             
 class AudioStream(MultimediaStream):
 
@@ -423,12 +425,12 @@ class AudioStream(MultimediaStream):
 
     def getMarkup(self):
         if self.raw:
-            templ = "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+            templ = _("<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)")
             templ = templ % (self.channels, self.rate, self.width)
             if self.codec:
-                templ = templ + " <i>(%s)</i>" % self.codec
+                templ = templ + _(" <i>(%s)</i>") % self.codec
             return templ
-        return "<b>Unknown Audio format:</b> %s" % self.audiotype
+        return _("<b>Unknown Audio format:</b> %s") % self.audiotype
 
 class TextStream(MultimediaStream):
 
@@ -439,7 +441,7 @@ class TextStream(MultimediaStream):
         self.texttype = self.caps[0].get_name()
 
     def getMarkup(self):
-        return "<b>Text:</b> %s" % self.texttype
+        return _("<b>Text:</b> %s") % self.texttype
 
 def get_stream_for_caps(caps):
     val = caps.to_string()

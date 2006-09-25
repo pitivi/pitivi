@@ -1,3 +1,24 @@
+2006-09-25  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Christophe Sauthier <christophe.sauthier@gmail.com>
+	
+	* pitivi/check.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/viewer.py:
+	* po/POTFILES.in:
+	* po/fr.po:
+	Implement i18n in code, this completes transition to i18n.
+	Closes #337990
+
 2006-09-06  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/sourcefactories.py:

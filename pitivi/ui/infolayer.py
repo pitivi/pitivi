@@ -29,6 +29,8 @@ import gst
 import pitivi.timeline
 from viewer import time_to_string
 
+from gettext import gettext as _
+
 class InfoLayer(gtk.Expander):
 
     __gsignals__ = {
@@ -38,9 +40,9 @@ class InfoLayer(gtk.Expander):
 
     def __init__(self, layerInfo):
         if layerInfo.composition.media_type == pitivi.timeline.MEDIA_TYPE_AUDIO:
-            name = "Audio Track"
+            name = _("Audio Track")
         elif layerInfo.composition.media_type == pitivi.timeline.MEDIA_TYPE_VIDEO:
-            name = "Video Track"
+            name = _("Video Track")
         gtk.Expander.__init__(self, name)
         self.layerInfo = layerInfo
         self.set_border_width(5)
@@ -82,4 +84,4 @@ class InfoLayer(gtk.Expander):
     def getDurationString(self):
         if self.layerInfo.composition.duration > 0:
             return time_to_string(self.layerInfo.composition.duration)
-        return "Empty"
+        return _("Empty")

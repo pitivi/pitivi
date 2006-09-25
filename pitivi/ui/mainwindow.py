@@ -70,15 +70,15 @@ class PitiviMainWindow(gtk.Window):
     def _setActions(self):
         """ sets up the GtkActions """
         self.actions = [
-            ("NewProject", gtk.STOCK_NEW, None, None, "Create a new project", self._newProjectCb),
-            ("OpenProject", gtk.STOCK_OPEN, None, None, "Opens an existing project", self._openProjectCb),
-            ("SaveProject", gtk.STOCK_SAVE, None, None, "Save the current project", self._saveProjectCb),
-            ("SaveProjectAs", gtk.STOCK_SAVE_AS, None, None, "Save the current project", self._saveProjectAsCb),
-            ("ProjectSettings", gtk.STOCK_PROPERTIES, "Project Settings", None, "Edit the project settings", self._projectSettingsCb),
-            ("ImportSources", gtk.STOCK_ADD, "_Import Sources...", None, "Import sources to use", self._importSourcesCb),
+            ("NewProject", gtk.STOCK_NEW, None, None, _("Create a new project"), self._newProjectCb),
+            ("OpenProject", gtk.STOCK_OPEN, None, None, _("Open an existing project"), self._openProjectCb),
+            ("SaveProject", gtk.STOCK_SAVE, None, None, _("Save the current project"), self._saveProjectCb),
+            ("SaveProjectAs", gtk.STOCK_SAVE_AS, None, None, _("Save the current project"), self._saveProjectAsCb),
+            ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"), None, _("Edit the project settings"), self._projectSettingsCb),
+            ("ImportSources", gtk.STOCK_ADD, _("_Import Sources..."), None, _("Import sources to use"), self._importSourcesCb),
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
-            ("FullScreen", gtk.STOCK_FULLSCREEN, None, None, "View the main window on the whole screen", self._fullScreenCb),
-            ("About", gtk.STOCK_ABOUT, None, None, "Information about %s" % APPNAME, self._aboutCb),
+            ("FullScreen", gtk.STOCK_FULLSCREEN, None, None, _("View the main window on the whole screen"), self._fullScreenCb),
+            ("About", gtk.STOCK_ABOUT, None, None, _("Information about %s") % APPNAME, self._aboutCb),
             ("File", None, "_File"),
             ("View", None, "_View"),
             ("Help", None, "_Help")
@@ -231,7 +231,7 @@ class PitiviMainWindow(gtk.Window):
 	abt.set_website("http://www.pitivi.org/")
 	authors = ["Edward Hervey <edward@fluendo.com>" ]
 	abt.set_authors(authors)
-	abt.set_license("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details")
+	abt.set_license(_("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details"))
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")
         abt.connect("response", self._aboutResponseCb)
 	abt.show()

@@ -45,6 +45,8 @@ msgid "Author"
 msgstr "Auteur"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
+#: ../pitivi/ui/sourcefactories.py:438
+#: ../pitivi/ui/sourcefactories.py:479
 msgid "Description"
 msgstr "Description"
 
@@ -211,6 +213,7 @@ msgstr "Description:"
 msgid "Name:"
 msgstr "Nom :"
 
+#:  ../pitivi/ui/mainwindow.py:77
 #: ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
 msgstr "Paramètres du projet"
@@ -219,6 +222,336 @@ msgstr "Paramètres du projet"
 msgid "The name of your project."
 msgstr "Le nom de votre projet."
 
-#: ../pitivi/ui/mainwindow.py:79
+#:  ../pitivi/ui/mainwindow.py:73
+msgid "Create a new project"
+msgstr "Créer un nouveau projet"
+
+#:  ../pitivi/ui/mainwindow.py:74
+msgid "Open an existing project"
+msgstr "Ouvrir un projet existant"
+
+#:  ../pitivi/ui/mainwindow.py:75
+#:  ../pitivi/ui/mainwindow.py:76
+msgid "Save the current project"
+msgstr "Enregistrer le projet actuel"
+
+#:  ../pitivi/ui/mainwindow.py:77
+msgid "Edit the project settings"
+msgstr "Configurer les paramètres du projet"
+
+#:  ../pitivi/ui/mainwindow.py:78
+msgid "_Import Sources..."
+msgstr "Importer des sources..."
+
+#:  ../pitivi/ui/mainwindow.py:78
+msgid "Import sources to use"
+msgstr "Importer des sources pour le utiliser"
+
+#: ../pitivi/ui/mainwindow.py:80
+msgid  "View the main window on the whole screen"
+msgstr "Voir la fenêtre principale en plein écran"
+
+#: ../pitivi/ui/mainwindow.py:80
+msgid "Information about %s"
+msgstr "Informations sur %s"
+
+#: ../pitivi/ui/mainwindow.py:88
 msgid "Advanced Vie_w"
 msgstr "Vue Avancée"
+
+#: ../pitivi/ui/mainwindow.py:88
+msgid "Switch to advanced view"
+msgstr "Basculer en vue avancée"
+
+#: ../pitivi/ui/mainwindow.py:234
+msgid "GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details"
+msgstr "GNU Lesser General Public Licence\nVoir http://www.gnu.org/copyleft/lesser.html pour plus de détails"
+
+#: ../pitivi/ui/exportsettingswidget.py:325
+msgid "Export Settings"
+msgstr "Expoter les paramètres"
+
+#: ../pitivi/ui/gstwidget.py:143
+msgid "Properties for "
+msgstr "Propriétés de "
+
+#: ../pitivi/ui/infolayer.py:41
+msgid "Audio Track"
+msgstr "Piste Audio"
+
+#: ../pitivi/ui/infolayer.py:43
+msgid "Video Track"
+msgstr "Piste Vidéo"
+
+#: ../pitivi/ui/infolayer.py:87
+msgid "Empty"
+msgstr "Vide"
+
+#: ../pitivi/ui/sourcefactories.py:104
+msgid "Add Sources..."
+msgstr "Ajouter des Sources..."
+
+#: ../pitivi/ui/sourcefactories.py:105
+msgid "Remove Sources..."
+msgstr "Supprimer des Sources..."
+
+#: ../pitivi/ui/sourcefactories.py:106
+msgid "Play"
+msgstr "Jouer"
+
+#: ../pitivi/ui/sourcefactories.py:131
+msgid "Icon"
+msgstr "Icone"
+
+#: ../pitivi/ui/sourcefactories.py:139
+msgid "Information"
+msgstr "Information"
+
+#: ../pitivi/ui/sourcefactories.py:148
+msgid "Duration"
+msgstr "Durée"
+
+#: ../pitivi/ui/sourcefactories.py:205
+msgid "Import a file"
+msgstr "Importer un fichier"
+
+#: ../pitivi/ui/sourcefactories.py:432
+#: ../pitivi/ui/sourcefactories.py:473
+msgid "Name"
+msgstr "Nom"
+
+#: ../pitivi/ui/sourcefactories.py:532
+msgid "File"
+msgstr "Fichier"
+
+#: ../pitivi/ui/sourcefactories.py:538
+msgid "Reason"
+msgstr "Cause"
+
+#: ../pitivi/ui/sourcefactories.py:542
+msgid "Unknown reason"
+msgstr "Cause inconnue"
+
+#: ../pitivi/ui/timelineobjects.py:351
+msgid "Remove"
+msgstr "Retirer"
+
+#: ../pitivi/ui/viewer.py:500
+msgid "Choose file to render to"
+msgstr "Choisir le fichier dont on veux le rendu"
+
+#: ../pitivi/ui/viewer.py:520
+msgid "Finished in %dm%ds"
+msgstr "Terminé dans %dm%ds"
+
+#: ../pitivi/ui/viewer.py:500
+msgid "Rendering"
+msgstr "Calcul du rendu en cours"
+
+#: ../pitivi/ui/viewer.py:520
+msgid "Couldn't start rendering"
+msgstr "Impossible de démarrer le rendu"
+
+#: ../pitivi/ui/viewer.py:554
+msgid "Rendering Complete"
+msgstr "Rendu terminé"
+
+#: ../pitivi/ui/check.py:69
+msgid "%s is already running!"
+msgstr "%s est dans en cours d'éxécution!"
+
+#: ../pitivi/ui/check.py:70
+msgid "An instance of %s is already running in this script."
+msgstr "Une instance de %s est déjà en cours d'éxécution dans ce script."
+
+#: ../pitivi/ui/check.py:72
+msgid "Could not find the GNonLin plugins!"
+msgstr "Impossible de trouver les greffons GNolin!"
+
+#: ../pitivi/ui/check.py:73
+msgid "Make sure the plugins were installed and are available in the GStreamer plugins path."
+msgstr "Assurez vous que les greffons sont installés et qu'ils sont accessibles dans le chemin des greffons de GStreamer."
+
+#: ../pitivi/ui/check.py:75
+msgid "Could not find the autodetect plugins!"
+msgstr "Impossible de trouver les greffons d'auto-détéction!"
+
+#: ../pitivi/ui/check.py:76
+msgid "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path."
+msgstr "Assurez vous que vous avez installé gst-plugins-good et qu'il est accessible dans le chemin des greffons de GStreamer."
+
+#: ../pitivi/ui/check.py:78
+msgid "PyGTK doesn't have Cairo support!"
+msgstr "PyGTK n'a pas de support pour Cairo!"
+
+#: ../pitivi/ui/check.py:79
+msgid "Please use a version of the Python bindings for GTK+ built with Cairo support."
+msgstr "Utilisez s'il vous plaît une version des bindings Python pour GTK+ avec le support de Cairo"
+
+#: ../pitivi/ui/check.py:81
+msgid "Could not initiate the video output plugins"
+msgstr "Impossible d'initialiser les greffons de sortie pour la vidéo"
+
+#: ../pitivi/ui/check.py:82
+msgid "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)"
+msgstr "Assurez vous que vous avez au moins une destination de sortie vidéo valide (xvimagesink ou ximagesink)"
+
+#: ../pitivi/ui/check.py:84
+msgid "Could not initiate the audio output plugins"
+msgstr "Impossible d'initialiser les greffons de sortie pour l'audio"
+
+#: ../pitivi/ui/check.py:85
+msgid "Make sure you have at least one valid audio output sink available (alsasink or osssink)"
+msgstr "Assurez vous que vous avez au moins une destination de sortie audio valide (alsasink ou ossink)"
+
+#: ../pitivi/ui/objectfactory.py:44
+msgid "Contains audio stream"
+msgstr "Contient un flux audio"
+
+#: ../pitivi/ui/objectfactory.py:45
+msgid "Does the element contain audio"
+msgstr "Est ce que l'élément contient un flux audio"
+
+#: ../pitivi/ui/objectfactory.py:49
+msgid "Contains video stream"
+msgstr "Contient un flux vidéo"
+
+#: ../pitivi/ui/objectfactory.py:50
+msgid "Does the element contain video"
+msgstr "Est ce que l'élément contient un flux vidéo"
+
+#: ../pitivi/ui/objectfactory.py:53
+msgid "Audio Information"
+msgstr "Informations audio"
+
+#: ../pitivi/ui/objectfactory.py:54
+msgid "GstCaps of the audio stream"
+msgstr "GstCaps d flux audio"
+
+#: ../pitivi/ui/objectfactory.py:57
+msgid "Video Information"
+msgstr "Informations vidéo"
+
+#: ../pitivi/ui/objectfactory.py:58
+msgid "GstCaps of the video stream"
+msgstr "GstCaps d flux vidéo"
+
+#: ../pitivi/ui/objectfactory.py:148
+msgid "<b>%s</b><small>"
+msgstr "<b>%s</b><small>"
+
+#: ../pitivi/ui/objectfactory.py:152
+msgid "<b>%s</b> (%s)"
+msgstr "<b>%s</b> (%s)"
+
+#: ../pitivi/ui/objectfactory.py:156
+msgid "<small><b>File:</b> %s"
+msgstr "<small><b>File:</b> %s"
+
+#: ../pitivi/ui/objectfactory.py:183
+msgid "Length"
+msgstr "Durée"
+
+#: ../pitivi/ui/objectfactory.py:184
+msgid "Length of element"
+msgstr "Durée de l'élément"
+
+#FUZZY
+#: ../pitivi/ui/objectfactory.py:184
+msgid "Thumbnail filename"
+msgstr ""
+
+#FUZZY
+#: ../pitivi/ui/objectfactory.py:184
+msgid "Filename for the element's thumbnail"
+msgstr ""
+
+#: ../pitivi/ui/objectfactory.py:381
+msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+msgstr "<b>Vidéo:</b> %d x %d <i>pixels</i> à %.2f<i>fps</i>"
+
+#: ../pitivi/ui/objectfactory.py:384
+msgid "<b>Image:</b> %d x %d <i>pixels</i>"
+msgstr "<b>Image:</b> %d x %d <i>pixels</i>"
+
+#: ../pitivi/ui/objectfactory.py:387
+#: ../pitivi/ui/objectfactory.py:431
+msgid " <i>(%s)</i>"
+msgstr " <i>(%s)</i>"
+
+#: ../pitivi/ui/objectfactory.py:389
+msgid "<b>Unknown Video format:</b> %s"
+msgstr "<b>Format vidéo inconnu:</b> %s"
+
+#: ../pitivi/ui/objectfactory.py:428
+msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr "<b>Audio:</b> %d canaux à %d <i>Hz</i> (%d <i>bits</i>)"
+
+#: ../pitivi/ui/objectfactory.py:433
+msgid "<b>Unknown Audio format:</b> %s"
+msgstr "<b>Format audio inconnu:</b> %s"
+
+#: ../pitivi/ui/objectfactory.py:444
+msgid "<b>Text:</b> %s"
+msgstr "<b>Texte :</b> %s"
+
+#: ../pitivi/ui/pitivi.py:73
+msgid "There is already a %s instance, inform developers"
+msgstr "Il y a déjà une instance de %s, informez les développeurs"
+
+#: ../pitivi/ui/pitivi.py:74
+#: ../pitivi/ui/pitivi.py:120
+msgid "New Project"
+msgstr "Nouveau Projet"
+
+#: ../pitivi/ui/playground.py:363
+msgid "Video output is busy"
+msgstr "La sortie vidéo est utilisée"
+
+#: ../pitivi/ui/playground.py:364
+msgid "Please check that your video output device isn't already used by another application"
+msgstr "Veuillez vérifier que votre périphérique de sortie vidéo n'est pas déjà utilisé par une autre application"
+
+#: ../pitivi/ui/playground.py:366
+msgid "Video output problem"
+msgstr "Problème de sortie vidéo"
+
+#: ../pitivi/ui/playground.py:367
+msgid "There is a problem with your video output device"
+msgstr "Il y a un problème avec le périphérique de sortie vidéo"
+
+#: ../pitivi/ui/playground.py:370
+msgid "Audio output is busy"
+msgstr "La sortie audio est utilisée"
+
+#: ../pitivi/ui/playground.py:371
+msgid "Please check that your audio output device isn't already used by another application"
+msgstr "Veuillez vérifier que votre périphérique de sortie audio n'est pas déjà utilisé par une autre application"
+
+#: ../pitivi/ui/playground.py:373
+msgid "Audio output problem"
+msgstr "Problème de sortie audio"
+
+#: ../pitivi/ui/playground.py:374
+msgid "There is a problem with your audio output device"
+msgstr "Il y a un problème avec le périphérique de sortie audio"
+
+#: ../pitivi/ui/project.py:96
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s ne gère pas encore les projets non présent localement"
+
+#: ../pitivi/ui/project.py:70
+msgid "Export Settings\n"
+msgstr "Paramètres d'exportation\n"
+
+#: ../pitivi/ui/project.py:71
+msgid "Video :"
+msgstr "Vidéo :"
+
+#: ../pitivi/ui/project.py:73
+msgid "\nAudio :"
+msgstr "\nAudio :"
+
+#: ../pitivi/ui/project.py:75
+msgid "\nMuxer :"
+msgstr "\nMultiplexeur :"

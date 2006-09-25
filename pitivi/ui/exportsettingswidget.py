@@ -29,6 +29,8 @@ from glade import GladeWidget
 from pitivi.settings import encoders_muxer_compatible
 from gstwidget import GstElementSettingsDialog
 
+from gettext import gettext as _
+
 class ExportSettingsWidget(GladeWidget):
     glade_file = "exportsettingswidget.glade"
     video_presets = ( ("DVD PAL",  720,    576,    25.0),
@@ -322,7 +324,7 @@ class ExportSettingsDialog(gtk.Dialog):
 
     def __init__(self, settings):
         gtk.Dialog.__init__(self, parent=None,
-                            title="Export Settings",
+                            title=_("Export Settings"),
                             flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
                                      gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))

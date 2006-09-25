@@ -36,6 +36,8 @@ import pitivi.dnd as dnd
 from pitivi.settings import ExportSettings
 from exportsettingswidget import ExportSettingsDialog
 
+from gettext import gettext as _
+
 def time_to_string(value):
     if value == -1:
         return "--m--s---"
@@ -497,7 +499,7 @@ class EncodingDialog(GladeWindow):
 
     def _fileButtonClickedCb(self, button):
         
-        dialog = gtk.FileChooserDialog(title="Choose file to render to",
+        dialog = gtk.FileChooserDialog(title=_("Choose file to render to"),
                                        parent=self.window,
                                        buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
                                                 gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT),
@@ -517,7 +519,7 @@ class EncodingDialog(GladeWindow):
         if timediff > 5.0:
             # only display ETA after 5s in order to have enough averaging
             totaltime = (timediff * float(self.bin.length) / float(position)) - timediff
-            self.progressbar.set_text("Finished in %dm%ds" % (int(totaltime) / 60,
+            self.progressbar.set_text(_("Finished in %dm%ds") % (int(totaltime) / 60,
                                                               int(totaltime) % 60))
 
     def _recordButtonClickedCb(self, unused_button):
@@ -527,9 +529,9 @@ class EncodingDialog(GladeWindow):
                 self.positionhandler = instance.PiTiVi.playground.connect('position', self._positionCb)
                 self.rendering = True
                 self.cancelbutton.set_label("gtk-cancel")
-                self.progressbar.set_text("Rendering")
+                self.progressbar.set_text(_("Rendering"))
             else:
-                self.progressbar.set_text("Couldn't start rendering")
+                self.progressbar.set_text(_("Couldn't start rendering"))
 
     def _settingsButtonClickedCb(self, unused_button):
         dialog = ExportSettingsDialog(self.settings)
@@ -549,7 +551,7 @@ class EncodingDialog(GladeWindow):
         if self.positionhandler:
             instance.PiTiVi.playground.disconnect(self.positionhandler)
             self.positionhandler = 0
-        self.progressbar.set_text("Rendering Complete")
+        self.progressbar.set_text(_("Rendering Complete"))
         self.progressbar.set_fraction(1.0)
         self.cancelbutton.set_label("gtk-close")
         

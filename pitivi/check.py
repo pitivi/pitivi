@@ -29,6 +29,8 @@ import sys
 import instance
 from configure import APPNAME
 
+from gettext import gettext as _
+
 def initial_checks():
     """
     do some basic check
@@ -64,21 +66,21 @@ def initiate_audiosinks():
 def _checks():
     reg = gst.registry_get_default()
     if instance.PiTiVi:
-        return ("%s is already running!" % APPNAME,
-                "An instance of %s is already running in this script." % APPNAME)
+        return (_("%s is already running!") % APPNAME,
+                _("An instance of %s is already running in this script.") % APPNAME)
     if not reg.find_plugin("gnonlin"):
-        return ("Could not find the GNonLin plugins!",
-                "Make sure the plugins were installed and are available in the GStreamer plugins path.")
+        return (_("Could not find the GNonLin plugins!"),
+                _("Make sure the plugins were installed and are available in the GStreamer plugins path."))
     if not reg.find_plugin("autodetect"):
-        return ("Could not find the autodetect plugins!",
-                "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path.")
+        return (_("Could not find the autodetect plugins!"),
+                _("Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path."))
     if not hasattr(gtk.gdk.Window, 'cairo_create'):
-        return ("PyGTK doesn't have cairo support!",
-                "Please use a version of the Python bindings for GTK+ built with Cairo support.")
+        return (_("PyGTK doesn't have Cairo support!"),
+                _("Please use a version of the Python bindings for GTK+ built with Cairo support."))
     if not initiate_videosinks():
-        return ("Could not initiate the video output plugins",
-                "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)")
+        return (_("Could not initiate the video output plugins"),
+                _("Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)"))
     if not initiate_audiosinks():
-        return ("Could not initiate the audio output plugins",
-                "Make sure you have at least one valid audio output sink available (alsasink or osssink)")
+        return (_("Could not initiate the audio output plugins"),
+                _("Make sure you have at least one valid audio output sink available (alsasink or osssink)"))
     return None
