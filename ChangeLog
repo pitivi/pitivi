@@ -1,3 +1,16 @@
+2006-09-29  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	Trying in vain to fix the way i18n works with both standard python i18n
+	using gettext and glade/gtk.
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fr.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	Those have been borked for some time, they were using *.glade.h !!
+
 2006-09-25  Edward Hervey  <edward@fluendo.com>
 
 	Patch by: Christophe Sauthier <christophe.sauthier@gmail.com>

@@ -24,7 +24,7 @@ import os
 import sys
 import string
 import locale
-from gettext import bindtextdomain, textdomain
+import gettext
 
 # variables
 CONFIGURED_PYTHONPATH = '@CONFIGURED_PYTHONPATH@'
@@ -43,7 +43,7 @@ def _add_pitivi_path():
 	localedir = os.path.join(root, 'locale')
     else:
         root = os.path.join(LIBDIR, 'pitivi', 'python')
-    	localedir = "@prefix@/@DATADIRNAME@/locale"
+    	localedir = "@DATADIR@/locale"
 
     if not root in sys.path:
         sys.path.insert(0, root)
@@ -57,8 +57,11 @@ def _add_pitivi_path():
     
     # Added for i18n
     locale.setlocale(locale.LC_ALL, '')
-    bindtextdomain('pitivi', localedir)
-    textdomain('pitivi')
+    locale.bindtextdomain('pitivi', localedir)
+    locale.textdomain('pitivi')
+
+    gettext.bindtextdomain('pitivi', localedir)
+    gettext.textdomain('pitivi')
 
 def _init_gobject_gtk_gst():
     try:
