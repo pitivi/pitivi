@@ -1,3 +1,8 @@
+2006-10-25  Ilkka Tuohela  <hile@iki.fi>
+
+	* fi.po: Added Finnish translation.
+	* LINGUAS: Added "fi".
+
 2006-10-21  Josep Puigdemont i Casamajó  <josep.puigdemont@gmail.com>
 
 	* ca.po: Added Catalan translation by
