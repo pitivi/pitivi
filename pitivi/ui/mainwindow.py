@@ -76,6 +76,7 @@ class PitiviMainWindow(gtk.Window):
             ("SaveProjectAs", gtk.STOCK_SAVE_AS, None, None, _("Save the current project"), self._saveProjectAsCb),
             ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"), None, _("Edit the project settings"), self._projectSettingsCb),
             ("ImportSources", gtk.STOCK_ADD, _("_Import Sources..."), None, _("Import sources to use"), self._importSourcesCb),
+            ("ImportSourcesFolder", gtk.STOCK_ADD, _("_Import Folder of sources..."), None, _("Import folder of sources to use"), self._importSourcesFolderCb),
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
             ("FullScreen", gtk.STOCK_FULLSCREEN, None, None, _("View the main window on the whole screen"), self._fullScreenCb),
             ("About", gtk.STOCK_ABOUT, None, None, _("Information about %s") % APPNAME, self._aboutCb),
@@ -97,7 +98,7 @@ class PitiviMainWindow(gtk.Window):
         for action in self.actiongroup.list_actions():
             if action.get_name() in ["ProjectSettings", "Quit", "File", "Help",
                                      "About", "View", "FullScreen", "ImportSources",
-                                     "AdvancedView"]:
+                                     "ImportSourcesFolder", "AdvancedView"]:
                 action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
@@ -229,7 +230,9 @@ class PitiviMainWindow(gtk.Window):
 	abt.set_name(APPNAME)
 	abt.set_version("v%s" % pitivi_version)
 	abt.set_website("http://www.pitivi.org/")
-	authors = ["Edward Hervey <edward@fluendo.com>" ]
+	authors = ["Edward Hervey <edward@fluendo.com>","",_("Contributors:"),
+                   "Christophe Sauthier <christophe.sauthier@gmail.com> (i18n)",
+                   "Laszlo Pandy <laszlok2@gmail.com> (UI)", ]
 	abt.set_authors(authors)
 	abt.set_license(_("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details"))
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")
@@ -238,6 +241,9 @@ class PitiviMainWindow(gtk.Window):
 
     def _importSourcesCb(self, unused_action):
         self.sourcefactories.sourcelist.showImportSourcesDialog()
+
+    def _importSourcesFolderCb(self, unused_action):
+        self.sourcefactories.sourcelist.showImportSourcesDialog(True)
 
     ## PiTiVi main object callbacks
 

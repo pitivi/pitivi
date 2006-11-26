@@ -8,6 +8,7 @@
       <menuitem action="ProjectSettings" />
       <separator />
       <menuitem action="ImportSources" />
+      <menuitem action="ImportSourcesFolder" />
       <separator />
       <menuitem action="Quit" />
     </menu>

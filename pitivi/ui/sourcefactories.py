@@ -102,15 +102,19 @@ class SourceListWidget(gtk.VBox):
         # Popup Menu
         self.popup = gtk.Menu()
         additem = gtk.MenuItem(_("Add Sources..."))
+        folderitem = gtk.MenuItem(_("Add Folder of Sources..."))
         remitem = gtk.MenuItem(_("Remove Sources..."))
         playmenuitem = gtk.MenuItem(_("Play"))
         playmenuitem.connect("activate", self._playButtonClickedCb)
         additem.connect("activate", self._addButtonClickedCb)
+        folderitem.connect("activate", self._addFolderButtonClickedCb)
         remitem.connect("activate", self._removeButtonClickedCb)
         additem.show()
+        folderitem.show()
         remitem.show()
         playmenuitem.show()
         self.popup.append(additem)
+        self.popup.append(folderitem)
         self.popup.append(remitem)
         self.popup.append(playmenuitem)
 
@@ -156,13 +160,23 @@ class SourceListWidget(gtk.VBox):
         # buttons (list/icon view, add, remove)
         button = gtk.Button(stock=gtk.STOCK_ADD)
         button.connect("clicked", self._addButtonClickedCb)
+        
+        folderbutton = gtk.Button(_("Add Folder"))
+        folderbutton.set_image(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_BUTTON))
+        folderbutton.connect("clicked", self._addFolderButtonClickedCb)
+        
+        self.errorDialogButton = gtk.ToolButton(gtk.STOCK_DIALOG_WARNING)
+        self.errorDialogButton.connect("clicked", self._errorDialogButtonClickedCb)
+        
         self.rbut = gtk.Button(stock=gtk.STOCK_REMOVE)
         self.rbut.connect("clicked", self._removeButtonClickedCb)
         self.rbut.set_sensitive(False)
-        bothbox = gtk.HBox()
-        bothbox.pack_start(button, expand=False)
-        bothbox.pack_start(self.rbut, expand=False)
-        self.pack_start(bothbox, expand=False)
+        
+        self.bothbox = gtk.HBox()
+        self.bothbox.pack_start(button, expand=False)
+        self.bothbox.pack_start(folderbutton, expand=False)
+        self.bothbox.pack_start(self.rbut, expand=False)
+        self.pack_start(self.bothbox, expand=False)
 
         # Start up with tree view
         self.scrollwin.add(self.treeview)
@@ -199,11 +213,19 @@ class SourceListWidget(gtk.VBox):
         # Error dialog box
         self.errorDialogBox = None
 
-    def showImportSourcesDialog(self):
+    def showImportSourcesDialog(self, select_folders=False):
         if self._importDialog:
             return
-        self._importDialog = gtk.FileChooserDialog(_("Import a file"), None,
-                                                   gtk.FILE_CHOOSER_ACTION_OPEN,
+            
+        if select_folders:
+                chooser_action = gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER
+                dialogtitle = _("Import a folder")
+        else:
+                chooser_action = gtk.FILE_CHOOSER_ACTION_OPEN
+                dialogtitle = _("Import a file")
+                
+        self._importDialog = gtk.FileChooserDialog(dialogtitle, None,
+                                                   chooser_action,
                                                    (gtk.STOCK_ADD, gtk.RESPONSE_OK,
                                                     gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE))
 
@@ -212,7 +234,7 @@ class SourceListWidget(gtk.VBox):
         self._importDialog.set_modal(False)
         if self._lastFolder:
             self._importDialog.set_current_folder(self._lastFolder)
-        self._importDialog.connect('response', self._dialogBoxResponseCb)
+        self._importDialog.connect('response', self._dialogBoxResponseCb, select_folders)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
         self._importDialog.show()
         
@@ -220,6 +242,17 @@ class SourceListWidget(gtk.VBox):
         """ Add files to the list """
         instance.PiTiVi.current.sources.addUris(list)
 
+    def addFolders(self, list):
+        """ walks the trees of the folders in the list and adds the files it finds """
+        uriList = []
+        for folder in list:
+            if folder.startswith("file://"):
+                folder = folder[len("file://"):]
+            for path, dirs, files in os.walk(folder):
+                for file in files:
+                    uriList.append("file://%s" % os.path.join(path, file))
+        
+        instance.PiTiVi.current.sources.addUris(uriList)
 
     # sourcelist callbacks
     
@@ -269,11 +302,15 @@ class SourceListWidget(gtk.VBox):
         """ The given uri isn't a media file """
         # popup a dialog box and fill up with reasons
         if not self.errorDialogBox:
-            # construct and display it
+            # construct the dialog but leave it hidden
             self.errorDialogBox = DiscovererErrorDialog()
             self.errorDialogBox.connect('close', self._errorDialogBoxCloseCb)
             self.errorDialogBox.connect('response', self._errorDialogBoxResponseCb)
-            self.errorDialogBox.show()
+            self.errorDialogBox.hide()
+        if not self.errorDialogBox.isVisible() and not self.errorDialogButton.parent:
+            # show the button that will open the dialog
+            self.bothbox.pack_start(self.errorDialogButton, expand=False)
+            self.bothbox.show_all()
         self.errorDialogBox.addFailedFile(uri, reason)
 
 
@@ -290,12 +327,15 @@ class SourceListWidget(gtk.VBox):
 
     ## Import Sources Dialog Box callbacks
         
-    def _dialogBoxResponseCb(self, dialogbox, response):
+    def _dialogBoxResponseCb(self, dialogbox, response, select_folders):
         gst.debug("response:%r" % response)
         if response == gtk.RESPONSE_OK:
             self._lastFolder = dialogbox.get_current_folder()
             filenames = dialogbox.get_uris()
-            self.addFiles(filenames)
+            if select_folders:
+                self.addFolders(filenames)
+            else:
+                self.addFiles(filenames)
         else:
             dialogbox.destroy()
             self._importDialog = None
@@ -310,6 +350,10 @@ class SourceListWidget(gtk.VBox):
     def _addButtonClickedCb(self, unused_widget=None):
         """ called when a user clicks on the add button """
         self.showImportSourcesDialog()
+        
+    def _addFolderButtonClickedCb(self, unused_widget=None):
+        """ called when a user clicks on the add button """
+        self.showImportSourcesDialog(select_folders=True)
 
     def _removeButtonClickedCb(self, unused_widget=None):
         """ Called when a user clicks on the remove button """
@@ -321,6 +365,13 @@ class SourceListWidget(gtk.VBox):
         for uri in uris:
             del instance.PiTiVi.current.sources[uri]
 
+    def _errorDialogButtonClickedCb(self, unused_widget=None):
+        """ called when the user click on the import errors button """
+        if self.errorDialogBox:
+            self.errorDialogBox.show()
+        if self.errorDialogButton.parent:
+            self.bothbox.remove(self.errorDialogButton)
+    
     def _playButtonClickedCb(self, unused_widget):
         """ Called when a user clicks on the play button """
         # get the selected filesourcefactory
@@ -544,6 +595,10 @@ class DiscovererErrorDialog(GladeWindow):
         """
         gst.debug("Uri:%s, reason:%s" % (uri, reason))
         self.storemodel.append([str(uri), str(reason)])
+        
+    def isVisible(self):
+        """ returns True if this dialog is currently shown """
+        return self.window.get_property("visible")
 
     ## Callbacks from glade
 
