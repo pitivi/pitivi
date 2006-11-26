@@ -1,3 +1,16 @@
+2006-11-26  Edward Hervey  <edward@fluendo.com>
+
+	* AUTHORS:
+	Added contributors.
+	* configure.ac:
+	Bump gst core requirement to 0.10.8 for proper GstQueue behaviour
+	* pitivi/discoverer.py:
+	Handle gracefully more cases using no-more-pads information.
+	Remove hack for GstQueue mis-behaviour in pre-0.10.8 GStreamer.
+	Remove queues used when doing video thumbnailing (it only needs one
+	frame anyway).
+	Sprinkle a little more debug
+
 2006-11-26  Laszlo Pandy <laszlok2@gmail.com>
 
 	reviewed by: Edward Hervey  <edward@fluendo.com>

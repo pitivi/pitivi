@@ -75,11 +75,11 @@ class Discoverer(gobject.GObject):
         self.pipeline = None
         self.thumbnailing = False
         self.thisdone = False
+        self.prerolled = False
+        self.nomorepads = False
         self.timeoutid = 0
+        self.signalsid = []
 
-        # FIXME : CRACK CRACK
-        # We want to ignore error messages coming from queue (fixing in 0.10.6.1)
-        self._queuetype = type(gst.element_factory_make("queue"))
 
     def addFile(self, filename):
         """ queue a filename to be discovered """
@@ -130,6 +130,10 @@ class Discoverer(gobject.GObject):
         # finish current, cleanup
         self.bus.remove_signal_watch()
         self.bus = None
+        gst.log("disconnecting all signal handlers")
+        for object, sigid in self.signalsid:
+            object.disconnect(sigid)
+        self.signalsid = []
         gst.info("before setting to NULL")
         res = self.pipeline.set_state(gst.STATE_NULL)
         gst.info("after setting to NULL : %s" % res)
@@ -141,6 +145,8 @@ class Discoverer(gobject.GObject):
         self.current = None
         self.currentfactory = None
         self.pipeline = None
+        self.prerolled = False
+        self.nomorepads = False
         
         # restart an analysis if there's more...
         if self.queue:
@@ -175,14 +181,14 @@ class Discoverer(gobject.GObject):
             gobject.idle_add(self._finishAnalysis)
             return False
         dbin = gst.element_factory_make("decodebin", "dbin")
-        dbin.connect("new-decoded-pad", self._newDecodedPadCb)
-        dbin.connect("unknown-type", self._unknownTypeCb)
+        self.signalsid.append((dbin, dbin.connect("new-decoded-pad", self._newDecodedPadCb)))
+        self.signalsid.append((dbin, dbin.connect("unknown-type", self._unknownTypeCb)))
         self.pipeline.add(source, dbin)
         source.link(dbin)
         gst.info("analysis pipeline created")
         
         self.bus = self.pipeline.get_bus()
-        self.bus.connect("message", self._busMessageCb)
+        self.signalsid.append((self.bus, self.bus.connect("message", self._busMessageCb)))
         self.bus.add_signal_watch()
 
         gst.info("setting pipeline to PAUSED")
@@ -201,11 +207,13 @@ class Discoverer(gobject.GObject):
     def _busMessageCb(self, unused_bus, message):
         if self.thisdone:
             return
+        gst.log("%s:%s" % (message.src.get_name(), message.type))
         if message.type == gst.MESSAGE_STATE_CHANGED:
             gst.log("%s:%s" % ( message.src, message.parse_state_changed()))
             if message.src == self.pipeline:
                 prev, new, pending = message.parse_state_changed()
                 if prev == gst.STATE_READY and new == gst.STATE_PAUSED and pending == gst.STATE_VOID_PENDING:
+                    self.prerolled = True
                     # Let's get the information from all the pads
                     self._getPadsInfo()
                     # Only go to PLAYING if we have an video stream to thumbnail
@@ -215,9 +223,11 @@ class Discoverer(gobject.GObject):
                             self.emit("not_media_file", self.current, "Pipeline didn't want to go to PLAYING")
                             gst.info("Pipeline didn't want to go to playing")
                             gobject.idle_add(self._finishAnalysis)
-                    else:
+                    elif self.nomorepads:
                         gst.info("finished analyzing")
                         gobject.idle_add(self._finishAnalysis)
+                    else:
+                        gst.warning("got prerolled but haven't got all pads yet")
         elif message.type == gst.MESSAGE_EOS:
             gst.log("got EOS")
             self.thisdone = True
@@ -226,10 +236,8 @@ class Discoverer(gobject.GObject):
                 self.currentfactory.setThumbnail(filename)
             gobject.idle_add(self._finishAnalysis)
         elif message.type == gst.MESSAGE_ERROR:
-	    # Fix until we can depend on GStreamer >= 0.10.7
-            if not isinstance(message.src, self._queuetype):
-                error, detail = message.parse_error()
-                self._handleError(error, detail, message.src)
+            error, detail = message.parse_error()
+            self._handleError(error, detail, message.src)
         elif message.type == gst.MESSAGE_WARNING:
             gst.warning("got a WARNING")
         elif message.type == gst.MESSAGE_ELEMENT:
@@ -282,6 +290,7 @@ class Discoverer(gobject.GObject):
                         self.currentfactory.set_property("length", length)
 
     def _vcapsNotifyCb(self, pad, unused_property):
+        gst.info("pad:%s , caps:%s" % (pad, pad.get_caps().to_string()))
         if pad.get_caps().is_fixed() and (not self.currentfactory.video_info_stream or not self.currentfactory.video_info_stream.fixed):
             self.currentfactory.setVideoInfo(pad.get_caps())
 
@@ -293,19 +302,16 @@ class Discoverer(gobject.GObject):
 
         # replacing queue-fakesink by ffmpegcolorspace-queue-pngenc
         csp = gst.element_factory_make("ffmpegcolorspace")
-        queue = gst.element_factory_make("queue")
         pngenc = gst.element_factory_make("pngenc")
         pngsink = gst.element_factory_make("filesink")
         pngsink.set_property("location", "/tmp/" + self.currentfactory.name.encode('base64').replace('\n','') + ".png")
-        self.pipeline.add(csp, queue, pngenc, pngsink)
-##      queue.link(pngsink)
-##      pngenc.link(queue)
+        self.pipeline.add(csp, pngenc, pngsink)
         pngenc.link(pngsink)
         csp.link(pngenc)
         pad.link(csp.get_pad("sink"))
         if not self.currentfactory.video_info:
-            pad.connect("notify::caps", self._vcapsNotifyCb)
-        for element in [csp, queue, pngenc, pngsink]:
+            self.signalsid.append((pad, pad.connect("notify::caps", self._vcapsNotifyCb)))
+        for element in [csp, pngenc, pngsink]:
             element.set_state(gst.STATE_PAUSED)
         
     def _newAudioPadCb(self, unused_element, pad):
@@ -337,7 +343,7 @@ class Discoverer(gobject.GObject):
         # if we don't already have self.currentfactory
         #   create one, emit "new_sourcefile_factory"
         capsstr = pad.get_caps().to_string()
-        gst.info("pad:%s caps:%s" % (pad, capsstr))
+        gst.info("pad:%s caps:%s is_last:%s" % (pad, capsstr, is_last))
         if capsstr.startswith("video/x-raw"):
             if not self.currentfactory:
                 self.currentfactory = objectfactory.FileSourceFactory(self.current, self.project)
@@ -354,3 +360,8 @@ class Discoverer(gobject.GObject):
                     gst.warning("couldn't find a usable pad")
                     self.emit("not_media_file", self.current, "Got unknown stream type : %s" % capsstr)
                     gobject.idle_add(self._finishAnalysis)
+
+    def _noMorePadsCb(self, element):
+        gst.debug("no more pads on decodebin !")
+        self.nomorepads = True
+        # normally state changes should end the discovery
