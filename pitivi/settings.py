@@ -49,11 +49,15 @@ class ExportSettings(gobject.GObject):
 
     # Audio/Video settings for processing/export
 
+    # TODO : Add PAR/DAR for video
+    # TODO : switch to using GstFraction internally where appliable
+
     def __init__(self):
         gobject.GObject.__init__(self)
         self.videowidth = 720
         self.videoheight = 576
         self.videorate = 25.0
+        self.videopar = gst.Fraction(1,1)
         self.audiochannels = 2
         self.audiorate = 44100
         self.audiodepth = 16
@@ -76,7 +80,19 @@ class ExportSettings(gobject.GObject):
         msg += _("\nMuxer :") + str(self.muxer) + " " + str(self.containersettings)
         return msg
 
-    def setVideoProperties(self, width=-1, height=-1, framerate=-1):
+    def getVideoCaps(self):
+        """ Returns the GstCaps corresponding to the video settings """
+        astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/1" % (self.videowidth, self.videoheight,
+                                                                               self.videopar.num, self.videopar.denom,
+                                                                               self.videorate)
+        return gst.caps_from_string("video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (astr, astr))
+
+    def getAudioCaps(self):
+        """ Returns the GstCaps corresponding to the audio settings """
+        astr = "rate=%d,depth=%d,channels=%d" % (self.audiorate, self.audiodepth, self.audiochannels)
+        return gst.caps_from_string("audio/x-raw-int,%s;audio/x-raw-float,%s" % (astr, astr))
+
+    def setVideoProperties(self, width=-1, height=-1, framerate=-1, par=-1):
         """ Set the video width, height and framerate """
         gst.info("set_video_props %d x %d @ %f fps" % (width, height, framerate))
         changed = False
@@ -88,6 +104,9 @@ class ExportSettings(gobject.GObject):
             changed = True
         if not framerate == -1 and not framerate == self.videorate:
             self.videorate = framerate
+            changed = True
+        if not par == -1 and not par == self.videopar:
+            self.videopar = par
             changed = True
         if changed:
             self.emit("settings-changed")

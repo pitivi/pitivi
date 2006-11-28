@@ -25,6 +25,7 @@ High-level Pipelines with plugable back-ends
 
 import gobject
 import gst
+from elements.smartscale import SmartVideoScale
 
 class SmartBin(gst.Pipeline):
     """
@@ -232,56 +233,79 @@ class SmartBin(gst.Pipeline):
         self.getRealVideoSink().set_property("sync", True)
 
     def _makeEncThread(self, uri, settings=None):
+        """ Construct the encoding bin according to the given setting. """
         # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
+        # TODO : Add identity single-segment=True so encoders are happy
+        # TODO : use video/audio settings !
+        # TODO : Check if we really do both audio and video !
+        
         if not settings:
             if isinstance(self, SmartTimelineBin):
                 settings = self.project.settings
             else:
+                self.error("No settings available to create the Encoding Thread")
                 return None
-        ainq = gst.element_factory_make("queue", "ainq")
-        aoutq = gst.element_factory_make("queue", "aoutq")
-        vinq = gst.element_factory_make("queue", "vinq")
-        voutq = gst.element_factory_make("queue", "voutq")
-        aenc = gst.element_factory_make(settings.aencoder ,"aenc")
-        for prop, value in settings.acodecsettings.iteritems():
-            aenc.set_property(prop, value)
-        venc = gst.element_factory_make(settings.vencoder, "venc")
-        for prop, value in settings.vcodecsettings.iteritems():
-            venc.set_property(prop, value)
+        
+        thread = gst.Bin("encthread")
+
+        ##
+        ## Muxer/FileSink part
+        ##
+
         mux = gst.element_factory_make(settings.muxer, "mux")
+        # set properties on the muxer
         for prop, value in settings.containersettings.iteritems():
             mux.set_property(prop, value)
         fsink = gst.element_make_from_uri(gst.URI_SINK, uri, "fsink")
+        thread.add(mux, fsink)
+        mux.link(fsink)
 
-
-        thread = gst.Bin("encthread")
-        thread.add(mux, fsink, aoutq, voutq)
-
-        thread.add(ainq, aenc)
-       
+        ##
+        ## Audio part
+        ##
+            
+        ainq = gst.element_factory_make("queue", "ainq")
+        aident = gst.element_factory_make("identity", "aident")
+        aident.props.single_segment = True
         aconv = gst.element_factory_make("audioconvert", "aconv")
-        thread.add(aconv)
-        ainq.link(aconv)
-        aconv.link(aenc)
-        aenc.link(aoutq)
+        aenc = gst.element_factory_make(settings.aencoder ,"aenc")
+        # set properties on the encoder
+        for prop, value in settings.acodecsettings.iteritems():
+            aenc.set_property(prop, value)
+        aoutq = gst.element_factory_make("queue", "aoutq")
 
-        thread.add(vinq, venc)
-        vrate = gst.element_factory_make("videorate", "vrate")
-        csp = gst.element_factory_make("ffmpegcolorspace", "csp")
-        thread.add(csp, vrate)
-        vinq.link(csp)
-        csp.link(vrate)
-        vrate.link(venc)
-        venc.link(voutq)
+        # add and link all required audio elements
+        thread.add(ainq, aident, aconv, aenc, aoutq)
+        gst.element_link_many(ainq, aident, aconv, aenc, aoutq, mux)
 
-        thread.add_pad(gst.GhostPad("vsink", vinq.get_pad("sink")))
+        # ghost sinkpad
         thread.add_pad(gst.GhostPad("asink", ainq.get_pad("sink")))
 
-        thread.filesink = fsink
+        ##
+        ## Video part
+        ##
+            
+        vinq = gst.element_factory_make("queue", "vinq")
+        vident = gst.element_factory_make("identity", "vident")
+        vident.props.single_segment = True
+        csp = gst.element_factory_make("ffmpegcolorspace", "csp")
+        vrate = gst.element_factory_make("videorate", "vrate")
+        vscale = SmartVideoScale()
+        venc = gst.element_factory_make(settings.vencoder, "venc")
+        # set properties on the encoder
+        for prop, value in settings.vcodecsettings.iteritems():
+            venc.set_property(prop, value)
+        voutq = gst.element_factory_make("queue", "voutq")
 
-        aoutq.link(mux)
-        voutq.link(mux)
-        mux.link(fsink)
+        # add and link all required video elements
+        thread.add(vinq, vident, csp, vrate, vscale, venc, voutq)
+        gst.element_link_many(vinq, vident, csp, vrate, vscale, venc, voutq, mux)
+
+        # ghost sinkpad
+        thread.add_pad(gst.GhostPad("vsink", vinq.get_pad("sink")))
+
+
+        thread.filesink = fsink
 
         return thread
 

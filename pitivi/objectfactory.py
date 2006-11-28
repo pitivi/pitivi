@@ -206,6 +206,9 @@ class FileSourceFactory(ObjectFactory):
 
     def do_set_property(self, property, value):
         if property.name == "length":
+            if self.length and self.length != value:
+                gst.warning("%s : Trying to set a new length (%s) different from previous one (%s)" % (gst.TIME_ARGS(self.length),
+                                                                                                       gst.TIME_ARGS(value)))
             self.length = value
         elif property.name == "thumbnail":
             if os.path.isfile(value):

@@ -1,3 +1,18 @@
+2006-11-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Rewrite of the encoding bins.
+	Added TODOs for next release.
+	* pitivi/elements/Makefile.am:
+	* pitivi/elements/smartscale.py:
+	New SmartScale element for combining videoscale and videobox.
+	* pitivi/objectfactory.py:
+	More debug
+	* pitivi/settings.py:
+	Added more TODOS
+	Added video pixel-aspect-ratio property
+	Added methods to create audio/video craps from settings
+
 2006-11-26  Edward Hervey  <edward@fluendo.com>
 
 	* AUTHORS:
