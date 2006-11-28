@@ -1,5 +1,17 @@
 2006-11-28  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/playground.py:
+	Added new signal 'element-message' to receive gst.MESSAGE_ELEMENT
+	messages. This is done synchronously (unlike the other messages
+	which are received asynchronously).
+	* pitivi/ui/viewer.py:
+	Wait for the video sink to request us to give it a XID before setting
+	one, this avoids crashes because of setting an XID on something not
+	created yet.
+	Fixes #377117
+	
+2006-11-28  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/bin.py:
 	Rewrite of the encoding bins.
 	Added TODOs for next release.

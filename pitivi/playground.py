@@ -48,6 +48,7 @@ class PlayGround(gobject.GObject):
       bin-removed : The given bin was removed from the playground
       error : An error was seen (two strings : reason, details)
       position : Updated position (SmartBin, position)
+      element-message : messages received of type gst.MESSAGE_ELEMENT
     """
 
     __gsignals__ = {
@@ -68,7 +69,10 @@ class PlayGround(gobject.GObject):
                     ( gobject.TYPE_STRING, gobject.TYPE_STRING )),
         "position" : ( gobject.SIGNAL_RUN_LAST,
                        gobject.TYPE_NONE,
-                       ( gobject.TYPE_PYOBJECT, gobject.TYPE_UINT64 ))
+                       ( gobject.TYPE_PYOBJECT, gobject.TYPE_UINT64 )),
+        "element-message" : ( gobject.SIGNAL_RUN_LAST,
+                              gobject.TYPE_NONE,
+                              ( gst.Message, ))
         }
 
     def __init__(self):
@@ -85,6 +89,7 @@ class PlayGround(gobject.GObject):
         bus = self.default.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self._busMessageCb, self.default)
+        bus.set_sync_handler(self._busSyncMessageHandler)
 
         # Current playing pipeline
         self.current = None
@@ -121,6 +126,7 @@ class PlayGround(gobject.GObject):
         bus = pipeline.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self._busMessageCb, pipeline)
+        bus.set_sync_handler(self._busSyncMessageHandler)
         self.emit("bin-added", pipeline)
         return True
 
@@ -135,6 +141,7 @@ class PlayGround(gobject.GObject):
 
         bus = pipeline.get_bus()
         bus.remove_signal_watch()
+        bus.set_sync_handler(None)
 
         if pipeline.set_state(gst.STATE_READY) == gst.STATE_CHANGE_FAILURE:
             return False
@@ -339,11 +346,13 @@ class PlayGround(gobject.GObject):
         elif message.type == gst.MESSAGE_ERROR:
             error, detail = message.parse_error()
             self._handleError(error, detail, message.src)
-        # let's ignore warnings for the time being.
-##         elif message.type == gst.MESSAGE_WARNING:
-##             error, detail = message.parse_warning()
-##             self._handleError(error, detail, message.src)
 
+
+    def _busSyncMessageHandler(self, bus, message):
+        if message.type == gst.MESSAGE_ELEMENT:
+            # handle element message synchronously
+            self.emit('element-message', message)
+        return gst.BUS_PASS
 
     #
     # Error handling

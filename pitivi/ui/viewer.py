@@ -70,6 +70,9 @@ class PitiviViewer(gtk.VBox):
         instance.PiTiVi.playground.connect("current-state", self._currentStateCb)
         instance.PiTiVi.playground.connect("position", self._playgroundPositionCb)
 
+        # callback to know when to set the XID on our viewer widget
+        instance.PiTiVi.playground.connect("element-message", self._playgroundElementMessageCb)
+
         instance.PiTiVi.current.settings.connect("settings-changed",
                                                  self._settingsChangedCb)
         self._addTimelineToPlayground()
@@ -417,6 +420,16 @@ class PitiviViewer(gtk.VBox):
         elif state == int(gst.STATE_PAUSED):
             self.playpause_button.setPlay()
 
+    def _playgroundElementMessageCb(self, playground, message):
+        name = message.structure.get_name()
+        gst.log('message:%s / %s' % (message, name))
+        if name == 'prepare-xwindow-id':
+            dav = self.drawingarea.videosink
+            gst.log('%s' % dav)
+            if dav and dav.realsink and dav.realsink == message.src:
+                self.drawingarea.can_set_xid = True
+                self.drawingarea.set_xwindow_id()
+
 
 class ViewerWidget(gtk.DrawingArea):
     """
@@ -429,16 +442,30 @@ class ViewerWidget(gtk.DrawingArea):
         gtk.DrawingArea.__init__(self)
         self.videosink = None
         self.have_set_xid = False
+        self.can_set_xid = False
         self.unset_flags(gtk.DOUBLE_BUFFERED)
 
     def do_expose_event(self, unused_event):
         """ 'expose-event' override """
         if self.videosink:
-            if not self.have_set_xid:
-                self.videosink.set_xwindow_id(self.window.xid)
-                self.have_set_xid = True
-            self.videosink.expose()
+            if not self.have_set_xid and self.can_set_xid:
+                self.set_xwindow_id()
+            elif self.have_set_xid:
+                self.videosink.expose()
         return False
+
+    def set_xwindow_id(self):
+        """ set the widget's XID on the configured videosink. """
+        gst.log("...")
+        if not self.videosink:
+            return
+        if self.have_set_xid:
+            return
+        gst.log("About to set %s's xid to %d" % (self.videosink,
+                                                 self.window.xid))
+        self.videosink.set_xwindow_id(self.window.xid)
+        self.have_set_xid = True
+        self.videosink.expose()
 
 
 class PlayPauseButton(gtk.Button):
