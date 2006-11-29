@@ -1,3 +1,11 @@
+2006-11-29  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pitivi.py:
+	* pitivi/pitivigstutils.py:
+	Added new file that contains a series of python class overloads to
+	simplify the code in pitivi.
+	Let's start with overloads for Gst.Fraction
+
 2006-11-28  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/playground.py:

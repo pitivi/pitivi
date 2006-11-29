@@ -28,6 +28,7 @@ import gtk
 import gst
 import sys
 import check
+import pitivigstutils
 from ui import mainwindow
 from discoverer import Discoverer
 from playground import PlayGround
