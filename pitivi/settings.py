@@ -56,7 +56,7 @@ class ExportSettings(gobject.GObject):
         gobject.GObject.__init__(self)
         self.videowidth = 720
         self.videoheight = 576
-        self.videorate = 25.0
+        self.videorate = gst.Fraction(25,1)
         self.videopar = gst.Fraction(1,1)
         self.audiochannels = 2
         self.audiorate = 44100
@@ -82,10 +82,21 @@ class ExportSettings(gobject.GObject):
 
     def getVideoCaps(self):
         """ Returns the GstCaps corresponding to the video settings """
-        astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/1" % (self.videowidth, self.videoheight,
-                                                                               self.videopar.num, self.videopar.denom,
-                                                                               self.videorate)
+        astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (self.videowidth, self.videoheight,
+                                                                                self.videopar.num, self.videopar.denom,
+                                                                                self.videorate.num, self.videorate.denom)
         return gst.caps_from_string("video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (astr, astr))
+
+    def getVideoDescription(self):
+        """ Returns a human-readable markup-ed string describing the video properties """
+        res = "%d x %d <i>pixels</i> at %.2f <i>fps</i> <i>(%s)</i>"
+        return res % (self.videowidth, self.videoheight,
+                      float(self.videorate), self.vencoder)
+
+    def getAudioDescription(self):
+        """ Returns a human-readable markup-ed string describing the audio properties """
+        res = "%d channels at %d <i>Hz</i> (%d <i>bits</i>) <i>(%s)</i>"
+        return res % (self.audiochannels, self.audiorate, self.audiodepth, self.aencoder)
 
     def getAudioCaps(self):
         """ Returns the GstCaps corresponding to the audio settings """
@@ -94,7 +105,7 @@ class ExportSettings(gobject.GObject):
 
     def setVideoProperties(self, width=-1, height=-1, framerate=-1, par=-1):
         """ Set the video width, height and framerate """
-        gst.info("set_video_props %d x %d @ %f fps" % (width, height, framerate))
+        gst.info("set_video_props %d x %d @ %r fps" % (width, height, framerate))
         changed = False
         if not width == -1 and not width == self.videowidth:
             self.videowidth = width

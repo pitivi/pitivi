@@ -73,8 +73,8 @@ class PitiviViewer(gtk.VBox):
         # callback to know when to set the XID on our viewer widget
         instance.PiTiVi.playground.connect("element-message", self._playgroundElementMessageCb)
 
-        instance.PiTiVi.current.settings.connect("settings-changed",
-                                                 self._settingsChangedCb)
+        instance.PiTiVi.current.connect("settings-changed",
+                                        self._settingsChangedCb)
         self._addTimelineToPlayground()
 
     def _createUi(self):
@@ -214,10 +214,11 @@ class PitiviViewer(gtk.VBox):
         instance.PiTiVi.playground.setAudioSinkThread(asinkthread)
         instance.PiTiVi.playground.connect("current-changed", self._currentPlaygroundChangedCb)
 
-    def _settingsChangedCb(self, unused_settings):
+    def _settingsChangedCb(self, unused_project):
         gst.info("current project settings changed")
         # modify the ratio if it's the timeline that's playing
-        raise NotImplementedError
+        # FIXME : do we really need to modify the ratio ??
+        pass
 
     def _drawingAreaRealizeCb(self, drawingarea):
         drawingarea.modify_bg(gtk.STATE_NORMAL, drawingarea.style.black)
@@ -347,7 +348,7 @@ class PitiviViewer(gtk.VBox):
     def _newProjectCb(self, unused_pitivi, unused_project):
         """ the current project has changed """
         instance.PiTiVi.current.sources.connect("tmp_is_ready", self._tmpIsReadyCb)
-        instance.PiTiVi.current.settings.connect("settings-changed", self._settingsChangedCb)
+        instance.PiTiVi.current.connect("settings-changed", self._settingsChangedCb)
         
     def _addTimelineToPlayground(self):
         instance.PiTiVi.playground.addPipeline(instance.PiTiVi.current.getBin())
@@ -521,8 +522,15 @@ class EncodingDialog(GladeWindow):
         self.cancelbutton = self.widgets["cancelbutton"]
         self.positionhandler = 0
         self.rendering = False
-        self.settings = project.settings
+        self.settings = project.getSettings()
         self.timestarted = 0
+        self.vinfo = self.widgets["videoinfolabel"]
+        self.ainfo = self.widgets["audioinfolabel"]
+        self._displaySettings()
+
+    def _displaySettings(self):
+        self.vinfo.set_markup(self.settings.getVideoDescription())
+        self.ainfo.set_markup(self.settings.getAudioDescription())
 
     def _fileButtonClickedCb(self, button):
         
@@ -566,6 +574,7 @@ class EncodingDialog(GladeWindow):
         dialog.hide()
         if res == gtk.RESPONSE_ACCEPT:
             self.settings = dialog.getSettings()
+            self._displaySettings()
         dialog.destroy()
 
     def do_destroy(self):

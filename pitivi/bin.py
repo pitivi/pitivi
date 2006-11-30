@@ -241,7 +241,7 @@ class SmartBin(gst.Pipeline):
         
         if not settings:
             if isinstance(self, SmartTimelineBin):
-                settings = self.project.settings
+                settings = self.project.getSettings()
             else:
                 self.error("No settings available to create the Encoding Thread")
                 return None
@@ -367,11 +367,12 @@ class SmartTimelineBin(SmartBin):
         self.has_video = True
         self.has_audio = True
 
-        self.width = project.settings.videowidth
-        self.height = project.settings.videoheight
+        settings = project.getSettings()
+        self.width = settings.videowidth
+        self.height = settings.videoheight
         self.log("source is %s" % project.timeline.timeline)
         self.source = project.timeline.timeline
-        self.project.settings.connect("settings-changed", self._settingsChangedCb)
+        self.project.connect("settings-changed", self._settingsChangedCb)
         project.timeline.videocomp.connect("start-duration-changed", self._startDurationChangedCb)
         self.length = project.timeline.videocomp.duration
         SmartBin.__init__(self, "project-" + project.name,
@@ -384,7 +385,8 @@ class SmartTimelineBin(SmartBin):
         self.source.connect("pad-added", self._newPadCb)
         self.source.connect("pad-removed", self._removedPadCb)
 
-    def _settingsChangedCb(self, settings):
+    def _settingsChangedCb(self, project):
+        settings = project.getSettings()
         self.width = settings.videowidth
         self.height = settings.videoheight
 

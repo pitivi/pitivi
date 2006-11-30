@@ -27,6 +27,7 @@ import gobject
 import gst
 
 from elements.singledecodebin import SingleDecodeBin
+from settings import ExportSettings
 
 MEDIA_TYPE_NONE = 0
 MEDIA_TYPE_AUDIO = 1
@@ -68,8 +69,6 @@ class Timeline(gobject.GObject):
         self.timeline = gst.Bin("timeline-" + project.name)
         self._fillContents()
 
-        self.project.settings.connect_after("settings-changed", self._settingsChangedCb)
-
     def _fillContents(self):
         # TODO create the initial timeline according to the project settings
         self.audiocomp = TimelineComposition(media_type = MEDIA_TYPE_AUDIO, name="audiocomp")
@@ -108,11 +107,24 @@ class Timeline(gobject.GObject):
     def _removedVideoPadCb(self, unused_audiocomp, unused_pad):
         self.timeline.remove_pad(self.timeline.get_pad("vsrc"))
 
-    def _settingsChangedCb(self, unused_settings):
-        # reset the timeline !
-        result, pstate, pending = self.timeline.get_state(0)
-        self.timeline.set_state(gst.STATE_READY)
-        self.timeline.set_state(pstate)
+    def getAutoSettings(self):
+        v = self.videocomp._getAutoSettings()
+        a = self.audiocomp._getAutoSettings()
+        if not v and not a:
+            return None
+        # return an ExportSettings containing the combination of
+        # the autosettings from the audio and video composition.
+        s = ExportSettings()
+        if v:
+            s.videowidth = v.videowidth
+            s.videoheight = v.videoheight
+            s.videorate = v.videorate
+            s.videopar = v.videopar
+        if a:
+            s.audiochannels = a.audiochannels
+            s.audiorate = a.audiorate
+            s.audiodepth = a.audiodepth
+        return s
 
 
 class TimelineObject(gobject.GObject):
@@ -380,6 +392,9 @@ class TimelineFileSource(TimelineSource):
             self.emit("media-start-duration-changed",
                       self.media_start, self.media_duration)
 
+    def getExportSettings(self):
+        return self.factory.getExportSettings()
+
 
 class TimelineLiveSource(TimelineSource):
     """
@@ -507,6 +522,13 @@ class TimelineComposition(TimelineSource):
         self.sources = [(2048, 2060, [])]
         self.defaultSource = None
         TimelineSource.__init__(self, **kw)
+
+    def __len__(self):
+        """ return the number of sources in this composition """
+        l = 0
+        for min, max, sources in self.sources:
+            l += len(sources)
+        return l
 
     def _makeGnlObject(self):
         return gst.element_factory_make("gnlcomposition", "composition-" + self.name)
@@ -853,6 +875,57 @@ class TimelineComposition(TimelineSource):
         Returns the default source.
         """
         return self.defaultSource
+
+
+    # AutoSettings methods
+
+    def _maxUsedVideoSettings(self):
+        # return a ExportSettings in which all videos of the composition
+        # will be able to be exported without loss
+        biggest = None
+        # FIXME : we suppose we only have only source layer !!!
+        # FIXME : we in fact return None if not all sources are identical !
+        for source in self.sources[0][2]:
+            if not biggest:
+                biggest = source.getExportSettings()
+            else:
+                set = source.getExportSettings()
+                for prop in ['videowidth', 'videoheight',
+                             'videopar', 'videorate']:
+                    if set.__getattribute__(prop) != biggest.__getattribute__(prop):
+                        return None
+        return biggest
+
+    def _maxUsedAudioSettings(self):
+        # return an ExportSettings in which all audio source of the composition
+        # will be able to be exported without (too much) loss
+        biggest = None
+        # FIXME : we suppose we only have only source layer !!!
+        # FIXME : we in fact return None if not all sources are identical !
+        for source in self.sources[0][2]:
+            if not biggest:
+                biggest = source.getExportSettings()
+            else:
+                set = source.getExportSettings()
+                for prop in ['audiorate', 'audiochannels', 'audiodepth']:
+                    if set.__getattribute__(prop) != biggest.__getattribute__(prop):
+                        return None
+        return biggest
+
+
+    def _getAutoSettings(self):
+        gst.log("len(self) : %d" % len(self))
+        if not len(self):
+            return None
+        if len(self) == 1:
+            # return the settings of our only source
+            return self.sources[0][2][0].getExportSettings()
+        else:
+            if self.media_type == MEDIA_TYPE_AUDIO:
+                return self._maxUsedAudioSettings()
+            else:
+                return self._maxUsedVideoSettings()
+        
 
 class TimelineEffect(TimelineObject):
     """

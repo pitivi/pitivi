@@ -270,7 +270,7 @@ class SourceListWidget(gtk.VBox):
                 desiredheight = 64 * pixbuf.get_height() / pixbuf.get_width()
             else:
                 vi = factory.video_info_stream
-                desiredheight = 64 * vi.dar.denom / vi.dar.num
+                desiredheight = int(64 / float(vi.dar))
             thumbnail = pixbuf.scale_simple(64, desiredheight, gtk.gdk.INTERP_BILINEAR)
         if factory.is_video:
             if factory.is_audio:

@@ -55,23 +55,33 @@ class SmartVideoScale(gst.Bin):
 
     def _sinkPadCapsNotifyCb(self, pad, unused_prop):
         caps = pad.get_negotiated_caps()
+        if not caps:
+            return
         self.log("caps:%s" % caps.to_string())
         if not caps.is_fixed():
             return
         # store values
         self.widthin = caps[0]["width"]
         self.heightin = caps[0]["height"]
-        self.parin = caps[0].get("pixel-aspect-ratio", gst.Fraction(1,1))
+        if caps[0].has_field('pixel-aspect-ratio'):
+            self.parin = caps[0]["pixel-aspect-ratio"]
+        else:
+            self.parin = gst.Fraction(1,1)
 
     def _srcPadCapsNotifyCb(self, pad, unused_prop):
         caps = pad.get_negotiated_caps()
+        if not caps:
+            return
         self.log("caps:%s" % caps.to_string())
         if not caps.is_fixed():
             return
         # store values
         self.widthout = caps[0]["width"]
         self.heightout = caps[0]["height"]
-        self.parout = caps[0].get("pixel-aspect-ratio", gst.Fraction(1,1))
+        if caps[0].has_field('pixel-aspect-ratio'):
+            self.parout = caps[0]['pixel-aspect-ratio']
+        else:
+            self.parout = gst.Fraction(1,1)
 
     def _computeAndSetValues(self):
         """ Calculate the new values to set on capsfilter and videobox. """

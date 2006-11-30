@@ -38,14 +38,11 @@ from gettext import gettext as _
 class Project(gobject.GObject):
     """ The base class for PiTiVi projects """
 
-    name = ""
-    settings = None
-    description = ""
-    uri = None
-    sources = None
-    settings = None
-    timeline = None
-    timelinebin = None
+    __gsignals__ = {
+        "settings-changed" : ( gobject.SIGNAL_RUN_LAST,
+                               gobject.TYPE_NONE,
+                               (  ))
+        }
 
     def __init__(self, name="", uri=None):
         """
@@ -55,9 +52,13 @@ class Project(gobject.GObject):
         gst.log("name:%s, uri:%s" % (name, uri))
         gobject.GObject.__init__(self)
         self.name = name
+        self.settings = None
+        self.description = ""
         self.uri = uri
         self.sources = SourceList(self)
-        self.settings = ExportSettings()
+        self.timeline = None
+        self.timelinebin = None
+        self.settingssigid = 0
         self._load()
 
     def _load(self):
@@ -88,7 +89,56 @@ class Project(gobject.GObject):
     def saveAs(self, filename):
         """ Saves the project to the given file name """
         self._save(filename)
+
+    # setting methods
+    def _settingsChangedCb(self, settings):
+        self.emit('settings-changed')
+    
+    def getSettings(self):
+        """
+        return the currently configured settings.
+        If no setting have been explicitely set, some smart settings will be
+        chosen.
+        """
+        return self.settings or self.getAutoSettings()
+
+    def setSettings(self, settings):
+        """
+        Sets the given settings as the project's settings.
+        If settings is None, the current settings will be unset
+        """
+        gst.log("Setting %s as the project's settings" % settings)
+        if self.settings:
+            self.settings.disconnect(self.settingssigid)
+        self.settings = settings
+        self.emit('settings-changed')
+        self.settingssigid = self.settings.connect('settings-changed', self._settingsChangedCb)
+
+    def unsetSettings(self, settings):
+        """ Remove the currently configured settings."""
+        self.setSettings(None)
+
+    def getAutoSettings(self):
+        """
+        Computes and returns smart settings for the project.
+        If the project only has one source, it will be that source's settings.
+        If it has more than one, it will return the largest setting that suits
+        all contained sources.
+        """
+        if not self.timeline:
+            gst.warning("project doesn't have a timeline, returning default settings")
+            return ExportSettings()
+        settings = self.timeline.getAutoSettings()
+        if not settings:
+            gst.warning("Timeline didn't return any auto settings, return default settings")
+            return ExportSettings()
         
+        # add the encoders and muxer of the default settings
+        curset = self.settings or ExportSettings()
+        settings.vencoder = curset.vencoder
+        settings.aencoder = curset.aencoder
+        settings.muxer = curset.muxer
+        return settings
 
 
 def file_is_project(uri):

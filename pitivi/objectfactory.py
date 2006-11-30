@@ -31,6 +31,7 @@ import gobject
 import gst
 
 import utils
+from settings import ExportSettings
 
 from gettext import gettext as _
 
@@ -272,6 +273,26 @@ class FileSourceFactory(ObjectFactory):
         """ Sets the thumbnail filename of the element """
         self.set_property("thumbnail", thumbnail)
 
+    def getExportSettings(self):
+        """ Returns the ExportSettings corresponding to this source """
+        settings = ExportSettings()
+        if self.video_info_stream:
+            # Fill video properties
+            vs = self.video_info_stream
+            settings.videowidth = vs.width
+            settings.videoheight = vs.height
+            settings.videorate = vs.framerate
+            settings.videopar = vs.par
+
+        if self.audio_info_stream:
+            # Fill audio properties
+            as = self.audio_info_stream
+            settings.audiochannels = as.channels
+            settings.audiorate = as.rate
+            settings.audiodepth = as.depth
+            
+        return settings
+
 class OperationFactory(ObjectFactory):
     """
     Provides operations useable in a timeline
@@ -382,10 +403,10 @@ class VideoStream(MultimediaStream):
         if self.raw:
             if self.framerate.num:
                 templ = _("<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>")
-                templ = templ % (self.dar.num * self.height / self.dar.denom, self.height, float(self.framerate.num) / float(self.framerate.denom))
+                templ = templ % (self.dar * self.height , self.height, float(self.framerate))
             else:
                 templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
-                templ = templ % (self.dar.num * self.height / self.dar.denom, self.height)
+                templ = templ % (self.dar * self.height, self.height)
             if self.codec:
                 templ = templ + _(" <i>(%s)</i>") % self.codec
             return templ

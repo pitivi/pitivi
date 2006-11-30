@@ -33,7 +33,7 @@ class ProjectSettingsDialog(GladeWindow):
     def __init__(self, parent, project):
         GladeWindow.__init__(self, parent)
         self.project = project
-        self.widgets["exportwidget"].setSettings(self.project.settings)
+        self.widgets["exportwidget"].setSettings(self.project.getSettings())
         self._fillSettings()
 
     def _fillSettings(self):
@@ -51,7 +51,7 @@ class ProjectSettingsDialog(GladeWindow):
         txtbuffer = w["descriptiontextview"].get_buffer()
         self.project.description = txtbuffer.get_text(txtbuffer.get_start_iter(),
                                                       txtbuffer.get_end_iter())
-        w["exportwidget"].updateSettings()
+        self.project.setSettings(w["exportwidget"].updateSettings())
 
     def _responseCb(self, unused_widget, response):
         # if the response is gtk.RESPONSE_OK update the settings

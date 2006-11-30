@@ -25,6 +25,7 @@ Widget for the output settings
 
 import gobject
 import gtk
+import gst
 from glade import GladeWidget
 from pitivi.settings import encoders_muxer_compatible
 from gstwidget import GstElementSettingsDialog
@@ -33,15 +34,15 @@ from gettext import gettext as _
 
 class ExportSettingsWidget(GladeWidget):
     glade_file = "exportsettingswidget.glade"
-    video_presets = ( ("DVD PAL",  720,    576,    25.0),
-                      ("320x240x30", 320,  240,    30.0) )
-    video_rates = ( ("12 fps",      12.0),
-                    ("24 fps",      24.0),
-                    ("23,97 fps",   2400.0/1001.0),
-                    ("25 fps",      25.0),
-                    ("29,97 fps",   3000.0/1001.0),
-                    ("30 fps",      30.0),
-                    ("60 fps",      60.0) )
+    video_presets = ( ("DVD PAL",  720,    576,    25.0,        1.0),
+                      ("320x240x30", 320,  240,    30.0,        1.0) )
+    video_rates = ( ("12 fps",      12.0, 1.0),
+                    ("24 fps",      24.0, 1.0),
+                    ("23,97 fps",   2400.0, 1001.0),
+                    ("25 fps",      25.0, 1.0),
+                    ("29,97 fps",   3000.0, 1001.0),
+                    ("30 fps",      30.0, 1.0),
+                    ("60 fps",      60.0, 1.0) )
     audio_presets = ( ("CD",  2,      44100,  16), )
     audio_rates = ( ("8 KHz",   8000),
                     ("11 KHz",  11025),
@@ -79,7 +80,7 @@ class ExportSettingsWidget(GladeWidget):
         value = -1
         for rate in self.video_rates:
             videolist.append([rate[0]])
-            if rate[1] == self.settings.videorate:
+            if rate[1] == self.settings.videorate.num and rate[2] == self.settings.videorate.denom:
                 value = idx
             idx = idx + 1
         self.videoratecbox.set_active(value)
@@ -95,7 +96,8 @@ class ExportSettingsWidget(GladeWidget):
         for preset in self.video_presets:
             if (self.settings.videowidth,
                 self.settings.videoheight,
-                self.settings.videorate) == preset[1:]:
+                self.settings.videorate.num,
+                self.settings.videorate.denom) == preset[1:]:
                 break
             idx = idx + 1
         self.videocombobox.set_active(idx)
@@ -296,10 +298,11 @@ class ExportSettingsWidget(GladeWidget):
         
         
     def updateSettings(self):
+        """ Updates and returns the ExportSettings configured in the widget """
         # Video Settings
         width = self.videowidthspin.get_value()
         height = self.videoheightspin.get_value()
-        rate = self.video_rates[self.videoratecbox.get_active()][1]
+        rate = gst.Fraction(*self.video_rates[self.videoratecbox.get_active()][1:])
         self.settings.setVideoProperties(width, height, rate)
 
         # Audio Settings
@@ -318,6 +321,8 @@ class ExportSettingsWidget(GladeWidget):
         self.settings.containersettings = self.containersettings
         self.settings.acodecsettings = self.acodecsettings
         self.settings.vcodecsettings = self.vcodecsettings
+
+        return self.settings
         
 
 class ExportSettingsDialog(gtk.Dialog):

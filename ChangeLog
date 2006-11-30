@@ -1,3 +1,44 @@
+2006-11-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	Add pitivigstutils.py. whoops :(
+	* pitivi/bin.py:
+	Use project.getSettings() instead of project.settings
+	* pitivi/objectfactory.py:
+	(FileSourceFactory.getExportSettings): new method to get the settings
+	from an file.
+	(VideoStream.getMarkup): use gst.Fraction
+	* pitivi/project.py:
+	Add 'settings-changed' signal.
+	Added methods for handling project's Settings, including automatic
+	settings.
+	cleanup.
+	* pitivi/settings.py:
+	Use gst.Fraction for video framerate.
+	Added methods for getting a markup-ed human-readable description of the
+	audio and video settings.
+	* pitivi/timeline.py:
+	Added methods for computing the auto ExportSettings of a timeline.
+	* pitivi/utils.py:
+	Remove deprecated function
+	* pitivi/elements/smartscale.py:
+	better handling of caps.
+	* pitivi/ui/encodingdialog.glade:
+	Modified a bit, added a summary of the settings used so you don't need
+	to go into the Settings dialog to know what settings are going to be
+	used for the export.
+	* pitivi/ui/exportsettingswidget.py:
+	Modify for video framerate now using gst.Fraction.
+	* pitivi/ui/projectsettings.py:
+	Use project.getSettings() and project.setSettings() instead of directly
+	accessing it.
+	* pitivi/ui/sourcefactories.py:
+	Use new gst.Fraction overload to simplify the code.
+	* pitivi/ui/viewer.py:
+	Changes for ExportSettings' signal
+	(EncodingDialog): use project.getSettings(), project.setSettings() and
+	implement methods for updating the settings summary in the glade dialog.
+
 2006-11-29  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/pitivi.py:
