@@ -530,6 +530,10 @@ class TimelineComposition(TimelineSource):
             l += len(sources)
         return l
 
+    def __nonzero__(self):
+        """ Always returns True, else bool(object) will return False if len(object) == 0 """
+        return True
+
     def _makeGnlObject(self):
         return gst.element_factory_make("gnlcomposition", "composition-" + self.name)
 

@@ -1,5 +1,13 @@
 2006-11-30  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/bin.py:
+	small debug addition
+	* pitivi/timeline.py:
+	Implement TimelineComposition.__nonzero__ so that bool(timeline) returns
+	True, even though it has a length of 0 (because it has no sources).
+
+2006-11-30  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/Makefile.am:
 	Add pitivigstutils.py. whoops :(
 	* pitivi/bin.py:
