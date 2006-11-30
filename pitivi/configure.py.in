@@ -18,6 +18,10 @@
 # License along with this program; if not, write to the
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
+"""
+Utilities for getting the location of various directories.
+Enables identical use for installed and uninstalled versions.
+"""
 
 import os.path
 import string

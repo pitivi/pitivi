@@ -31,19 +31,23 @@ class SmartVideoScale(gst.Bin):
     def __init__(self):
         gst.Bin.__init__(self)
         self.videoscale = gst.element_factory_make("videoscale")
+        # set the scaling method to bilinear (cleaner)
+        # FIXME : we should figure out if better methods are available in the
+        # future, or ask the user which method he wants to use
+        self.videoscale.props.method = 1
         self.videobox = gst.element_factory_make("videobox")
         self.capsfilter = gst.element_factory_make("capsfilter")
         self.add(self.videoscale, self.capsfilter, self.videobox)
-        gst.element_link_many(self.videobox, self.capsfilter, self.videoscale)
+        gst.element_link_many(self.videoscale, self.capsfilter, self.videobox)
 
-        self._sinkPad = gst.GhostPad("sink", self.videobox.get_pad("sink"))
-        self._srcPad = gst.GhostPad("src", self.videoscale.get_pad("src"))
+        self._sinkPad = gst.GhostPad("sink", self.videoscale.get_pad("sink"))
+        self._srcPad = gst.GhostPad("src", self.videobox.get_pad("src"))
 
         self.add_pad(self._sinkPad)
         self.add_pad(self._srcPad)
 
-        self.videobox.get_pad("sink").connect("notify::caps", self._sinkPadCapsNotifyCb)
-        self.videoscale.get_pad("src").connect("notify::caps", self._srcPadCapsNotifyCb)
+        self.videoscale.get_pad("sink").connect("notify::caps", self._sinkPadCapsNotifyCb)
+        self.videobox.get_pad("src").connect("notify::caps", self._srcPadCapsNotifyCb)
 
         # input/output values
         self.widthin = -1

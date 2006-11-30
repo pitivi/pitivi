@@ -32,11 +32,6 @@ class SmartBin(gst.Pipeline):
     High-level pipeline with playing/encoding ready places
     It also has length information
     """
-    length = 0
-    has_video = False
-    has_audio = False
-    width = 0
-    height = 0
 
     def __init__(self, name, displayname=""):
         """
@@ -47,6 +42,12 @@ class SmartBin(gst.Pipeline):
         """
         gst.log('name : %s, displayname : %s' % (name, displayname))
         gobject.GObject.__init__(self)
+        length = 0
+        has_video = False
+        has_audio = False
+        width = 0
+        height = 0
+
         self.name = name
         self.displayname = displayname
         self.set_name(name)
@@ -235,7 +236,6 @@ class SmartBin(gst.Pipeline):
     def _makeEncThread(self, uri, settings=None):
         """ Construct the encoding bin according to the given setting. """
         # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
-        # TODO : Add identity single-segment=True so encoders are happy
         # TODO : use video/audio settings !
         # TODO : Check if we really do both audio and video !
         
@@ -268,6 +268,7 @@ class SmartBin(gst.Pipeline):
         aident = gst.element_factory_make("identity", "aident")
         aident.props.single_segment = True
         aconv = gst.element_factory_make("audioconvert", "aconv")
+        ares = gst.element_factory_make("audioresample", "ares")
         aenc = gst.element_factory_make(settings.aencoder ,"aenc")
         # set properties on the encoder
         for prop, value in settings.acodecsettings.iteritems():
@@ -275,8 +276,17 @@ class SmartBin(gst.Pipeline):
         aoutq = gst.element_factory_make("queue", "aoutq")
 
         # add and link all required audio elements
-        thread.add(ainq, aident, aconv, aenc, aoutq)
-        gst.element_link_many(ainq, aident, aconv, aenc, aoutq, mux)
+        thread.add(ainq, aident, aconv, ares, aenc, aoutq)
+        gst.element_link_many(ainq, aident, aconv, ares)
+
+        # link to encoder using the settings caps
+        self.log("About to link encoder with settings pads")
+        try:
+            ares.link(aenc, settings.getAudioCaps())
+        except:
+            self.error("The audio encoder doesn't accept the audio settings")
+            return None
+        gst.element_link_many(aenc, aoutq, mux)
 
         # ghost sinkpad
         thread.add_pad(gst.GhostPad("asink", ainq.get_pad("sink")))
@@ -299,7 +309,16 @@ class SmartBin(gst.Pipeline):
 
         # add and link all required video elements
         thread.add(vinq, vident, csp, vrate, vscale, venc, voutq)
-        gst.element_link_many(vinq, vident, csp, vrate, vscale, venc, voutq, mux)
+        gst.element_link_many(vinq, vident, csp, vscale, vrate)
+
+        # link to encoder using the settings caps
+        self.log("About to link encoder with settings pads")
+        try:
+            vrate.link(venc, settings.getVideoCaps())
+        except:
+            self.error("The video encoder doesn't accept the video settings")
+            return None
+        gst.element_link_many(venc, voutq, mux)
 
         # ghost sinkpad
         thread.add_pad(gst.GhostPad("vsink", vinq.get_pad("sink")))

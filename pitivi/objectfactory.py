@@ -385,11 +385,13 @@ class VideoStream(MultimediaStream):
         try:
             self.framerate = struct["framerate"]
         except:
-            self.framerate = None
+            # if no framerate was given, use 1fps
+            self.framerate = gst.Fraction(1,1)
         try:
             self.par = struct["pixel-aspect-ratio"]
         except:
-            self.par = None
+            # use a default setting, None is not valid !
+            self.par = gst.Fraction(1,1)
 
         if self.width and self.height and self.par:
             self.dar = gst.Fraction(self.width * self.par.num, self.height * self.par.denom)

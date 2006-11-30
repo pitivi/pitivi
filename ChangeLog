@@ -1,6 +1,28 @@
 2006-11-30  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/bin.py:
+	Use the ExportSettings audio and video caps.
+	Add an audioresample for the audio encoder.
+	Put videorate AFTER videoscale and BEFORE the encoder.
+	* pitivi/check.py:
+	* pitivi/configure.py.in:
+	* pitivi/elements/__init__.py:
+	Add documentation
+	* pitivi/elements/smartscale.py:
+	Put videoscale before videobox.
+	Use bilinear scaling for videoscale.
+	* pitivi/objectfactory.py:
+	(VideoStream): Set default framerate and pixel-aspect-ratio to
+	gst.Fraction(1,1)
+	* pitivi/settings.py:
+	(ExportSettings.__str__):add the PAR
+	* pitivi/timeline.py:
+	(TimelineComposition._getAutoSettings): In fact, always return the
+	ExportSettings of the first source.
+
+2006-11-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
 	small debug addition
 	* pitivi/timeline.py:
 	Implement TimelineComposition.__nonzero__ so that bool(timeline) returns

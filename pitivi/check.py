@@ -50,6 +50,10 @@ def initial_checks():
     sys.exit()
 
 def initiate_videosinks():
+    """
+    Test if the autovideosink element can initiate, return TRUE if it is the
+    case.
+    """
     sink = gst.element_factory_make("autovideosink")
     if not sink.set_state(gst.STATE_READY):
         return False
@@ -57,6 +61,10 @@ def initiate_videosinks():
     return True
 
 def initiate_audiosinks():
+    """
+    Test if the autoaudiosink element can initiate, return TRUE if it is the
+    case.
+    """
     sink = gst.element_factory_make("autoaudiosink")
     if not sink.set_state(gst.STATE_READY):
         return False

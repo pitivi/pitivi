@@ -883,12 +883,12 @@ class TimelineComposition(TimelineSource):
 
     # AutoSettings methods
 
-    def _maxUsedVideoSettings(self):
+    def _autoVideoSettings(self):
         # return a ExportSettings in which all videos of the composition
         # will be able to be exported without loss
         biggest = None
         # FIXME : we suppose we only have only source layer !!!
-        # FIXME : we in fact return None if not all sources are identical !
+        # FIXME : we in fact return the first file's settings
         for source in self.sources[0][2]:
             if not biggest:
                 biggest = source.getExportSettings()
@@ -897,15 +897,15 @@ class TimelineComposition(TimelineSource):
                 for prop in ['videowidth', 'videoheight',
                              'videopar', 'videorate']:
                     if set.__getattribute__(prop) != biggest.__getattribute__(prop):
-                        return None
+                        return biggest
         return biggest
 
-    def _maxUsedAudioSettings(self):
+    def _autoAudioSettings(self):
         # return an ExportSettings in which all audio source of the composition
         # will be able to be exported without (too much) loss
         biggest = None
         # FIXME : we suppose we only have only source layer !!!
-        # FIXME : we in fact return None if not all sources are identical !
+        # FIXME : we in fact return the first file's settings
         for source in self.sources[0][2]:
             if not biggest:
                 biggest = source.getExportSettings()
@@ -913,7 +913,7 @@ class TimelineComposition(TimelineSource):
                 set = source.getExportSettings()
                 for prop in ['audiorate', 'audiochannels', 'audiodepth']:
                     if set.__getattribute__(prop) != biggest.__getattribute__(prop):
-                        return None
+                        return biggest
         return biggest
 
 
@@ -926,9 +926,9 @@ class TimelineComposition(TimelineSource):
             return self.sources[0][2][0].getExportSettings()
         else:
             if self.media_type == MEDIA_TYPE_AUDIO:
-                return self._maxUsedAudioSettings()
+                return self._autoAudioSettings()
             else:
-                return self._maxUsedVideoSettings()
+                return self._autoVideoSettings()
         
 
 class TimelineEffect(TimelineObject):
