@@ -1,3 +1,11 @@
+2006-12-01  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/elements/smartscale.py:
+	Implement the smart scaling logic in SmartVideoScale()
+	* pitivi/bin.py:
+	Small modification to properly use SmartVideoScale()
+	Videos are now properly scaled, with black borders if needed.
+
 2006-11-30  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/bin.py:

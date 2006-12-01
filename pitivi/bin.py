@@ -309,12 +309,14 @@ class SmartBin(gst.Pipeline):
 
         # add and link all required video elements
         thread.add(vinq, vident, csp, vrate, vscale, venc, voutq)
+        caps = settings.getVideoCaps()
+        vscale.set_caps(caps)
         gst.element_link_many(vinq, vident, csp, vscale, vrate)
 
         # link to encoder using the settings caps
         self.log("About to link encoder with settings pads")
         try:
-            vrate.link(venc, settings.getVideoCaps())
+            vrate.link(venc, caps)
         except:
             self.error("The video encoder doesn't accept the video settings")
             return None
