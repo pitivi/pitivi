@@ -447,7 +447,7 @@ class AudioStream(MultimediaStream):
         try:
             self.depth = struct["depth"]
         except:
-            self.depth = None
+            self.depth = self.width
 
     def getMarkup(self):
         if self.raw:

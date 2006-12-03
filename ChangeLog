@@ -1,3 +1,8 @@
+2006-12-03  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/objectfactory.py:
+	If an audio caps does not have a depth property, use the width property.
+
 2006-12-02  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac: (PYGST_REQ): Add requirement for gst-python >= 0.10.5.4
