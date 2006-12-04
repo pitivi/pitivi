@@ -38,7 +38,8 @@ localedir = ""
 
 def _add_pitivi_path():
     dir = os.path.dirname(os.path.abspath(__file__))
-    if os.path.exists(os.path.join(dir, 'CVS')):
+    if (os.path.exists(os.path.join(dir, 'CVS')) or 
+        os.path.exists(os.path.join(dir, '.svn'))):
         root = os.path.split(dir)[0]
 	localedir = os.path.join(root, 'locale')
     else:

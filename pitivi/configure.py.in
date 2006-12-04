@@ -35,7 +35,8 @@ APPNAME = '@PACKAGE_NAME@'
 def get_pixmap_dir():
     """ Returns the directory for program-only pixmaps """
     dir = os.path.dirname(os.path.abspath(__file__))
-    if os.path.exists(os.path.join(dir, 'CVS')):
+    if (os.path.exists(os.path.join(dir, 'CVS')) or
+        os.path.exists(os.path.join(dir, '.svn'))):
         root = dir
     else:
         root = PKGDATADIR
@@ -44,7 +45,8 @@ def get_pixmap_dir():
 def get_global_pixmap_dir():
     """ Returns the directory for global pixmaps (ex : application icon) """
     dir = os.path.dirname(os.path.abspath(__file__))
-    if os.path.exists(os.path.join(dir, 'CVS')):
+    if (os.path.exists(os.path.join(dir, 'CVS')) or
+        os.path.exists(os.path.join(dir, '.svn'))):
         root = string.join(dir.split('/')[:-1], '/')
     else:
         root = PIXMAPDIR

@@ -2,6 +2,16 @@
 
 	Patch by: Richard Boulton <richard@tartarus.org>
 	
+	* bin/pitivi.in:
+	* pitivi/configure.py.in:
+	Allow pitivi to work on local svn repositories in the same way it works
+	when using uninstalled from CVS.
+	Fixes #381970
+
+2006-12-04  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Richard Boulton <richard@tartarus.org>
+	
 	* pitivi/ui/mainwindow.py: (PitiviMainWindow._setActions): 
 	Use connect_after instead of connect when connection to key events, so
 	that standard handlers (like menu shortcuts) can actually work.
