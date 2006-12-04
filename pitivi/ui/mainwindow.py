@@ -108,7 +108,7 @@ class PitiviMainWindow(gtk.Window):
         self.uimanager.insert_action_group(self.actiongroup, 0)
         self.uimanager.add_ui_from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "actions.xml"))
 
-        self.connect("key-press-event", self._keyPressEventCb)
+        self.connect_after("key-press-event", self._keyPressEventCb)
 
     def _createUi(self):
         """ Create the graphical interface """

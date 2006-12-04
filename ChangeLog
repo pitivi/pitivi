@@ -1,5 +1,14 @@
 2006-12-04  Edward Hervey  <edward@fluendo.com>
 
+	Patch by: Richard Boulton <richard@tartarus.org>
+	
+	* pitivi/ui/mainwindow.py: (PitiviMainWindow._setActions): 
+	Use connect_after instead of connect when connection to key events, so
+	that standard handlers (like menu shortcuts) can actually work.
+	Fixes #381959
+
+2006-12-04  Edward Hervey  <edward@fluendo.com>
+
 	* configure.ac:
 	Small typo fix.
 
