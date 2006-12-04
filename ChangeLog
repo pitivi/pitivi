@@ -1,3 +1,11 @@
+2006-12-04  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Switch checks for gst-python and pygtk to python checks instead of
+	relying on pkg-config since there might be several versions of the
+	modules (on per python version) and pkg-config only handles one version.
+	Fixes #382249
+
 2006-12-03  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/objectfactory.py:

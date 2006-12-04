@@ -51,10 +51,28 @@ dnl check for GStreamer
 PKG_CHECK_MODULES(GST, gstreamer-0.10 >= $GST_REQ)
 
 dnl check for pygtk
-PKG_CHECK_MODULES(PYGTK, pygtk-2.0 >= $PYGTK_REQ)
-PYGTK_DIR="`$PKG_CONFIG --variable=pyexecdir pygtk-2.0`"
-AC_SUBST(PYGTK_DIR)
-AC_MSG_NOTICE(Using pygtk installed in $PYGTK_DIR)
+AC_MSG_CHECKING(for GTK python bindings)
+prog="
+import sys
+try:
+  import pygtk
+  pygtk.require('2.0')
+  import gtk
+except ImportError:
+  sys.exit(1)
+if gtk.pygtk_version < tuple([int(x) for x in '$PYGTK_REQ'.split('.')]):
+  sys.exit(1)
+else:
+  sys.exit(0)
+"
+if $PYTHON -c "$prog"
+then
+  AC_MSG_RESULT(found)
+else
+  AC_MSG_RESULT(not found)
+  AC_MSG_ERROR(
+    [You need to have python gtk bindings >= $PYGTK_REQ installed])
+fi
 
 export PYTHONPATH=$PYGTK_DIR:$PYTHONPATH
 
@@ -126,10 +144,28 @@ fi
 
 
 dnl checks for gst-python
-PKG_CHECK_MODULES(PYGST, gst-python-0.10 >= $PYGST_REQ)
-PYGST_DIR="`$PKG_CONFIG --variable=pyexecdir gst-python-0.10`"
-AC_SUBST(PYGST_DIR)
-AC_MSG_NOTICE(Using gstreamer-python installed in $PYGST_DIR)
+AC_MSG_CHECKING(for GStreamer python bindings)
+prog="
+import sys
+try:
+  import pygst
+  pygst.require('0.10')
+  import gst
+except ImportError:
+  sys.exit(1)
+if gst.get_pygst_version() < tuple([int(x) for x in '$PYGST_REQ'.split('.')]):
+  sys.exit(1)
+else:
+  sys.exit(0)
+"
+if $PYTHON -c "$prog"
+then
+  AC_MSG_RESULT(found)
+else
+  AC_MSG_RESULT(not found)
+  AC_MSG_ERROR(
+    [You need to have python GStreamer bindings >= $PYGTK_REQ installed])
+fi
 
 export PYTHONPATH=$PYGST_DIR:$PYTHONPATH
 
