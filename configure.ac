@@ -164,7 +164,7 @@ then
 else
   AC_MSG_RESULT(not found)
   AC_MSG_ERROR(
-    [You need to have python GStreamer bindings >= $PYGTK_REQ installed])
+    [You need to have python GStreamer bindings >= $PYGST_REQ installed])
 fi
 
 export PYTHONPATH=$PYGST_DIR:$PYTHONPATH
