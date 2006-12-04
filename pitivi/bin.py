@@ -233,6 +233,18 @@ class SmartBin(gst.Pipeline):
 
         self.getRealVideoSink().set_property("sync", True)
 
+    def _debugProbe(self, pad, data, categoryname):
+        if isinstance(data, gst.Buffer):
+            self.log("%s\tBUFFER timestamp:%s duration:%s size:%d" % (categoryname,
+                                                                      gst.TIME_ARGS(data.timestamp),
+                                                                      gst.TIME_ARGS(data.duration),
+                                                                      data.size))
+            if not data.flag_is_set(gst.BUFFER_FLAG_DELTA_UNIT):
+                self.log("%s\tKEYFRAME" % categoryname)
+        else:
+            self.log("%s\tEVENT %s" % (categoryname, data))
+        return True
+
     def _makeEncThread(self, uri, settings=None):
         """ Construct the encoding bin according to the given setting. """
         # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
@@ -269,6 +281,7 @@ class SmartBin(gst.Pipeline):
         aident.props.single_segment = True
         aconv = gst.element_factory_make("audioconvert", "aconv")
         ares = gst.element_factory_make("audioresample", "ares")
+        arate = gst.element_factory_make("audiorate", "arate")
         aenc = gst.element_factory_make(settings.aencoder ,"aenc")
         # set properties on the encoder
         for prop, value in settings.acodecsettings.iteritems():
@@ -276,13 +289,13 @@ class SmartBin(gst.Pipeline):
         aoutq = gst.element_factory_make("queue", "aoutq")
 
         # add and link all required audio elements
-        thread.add(ainq, aident, aconv, ares, aenc, aoutq)
-        gst.element_link_many(ainq, aident, aconv, ares)
+        thread.add(ainq, aident, aconv, ares, arate, aenc, aoutq)
+        gst.element_link_many(ainq, aident, aconv, ares, arate)
 
         # link to encoder using the settings caps
         self.log("About to link encoder with settings pads")
         try:
-            ares.link(aenc, settings.getAudioCaps())
+            arate.link(aenc, settings.getAudioCaps())
         except:
             self.error("The audio encoder doesn't accept the audio settings")
             return None
@@ -290,6 +303,9 @@ class SmartBin(gst.Pipeline):
 
         # ghost sinkpad
         thread.add_pad(gst.GhostPad("asink", ainq.get_pad("sink")))
+
+##         aenc.get_pad("sink").add_data_probe(self._debugProbe, "aenc-sink")
+##         aenc.get_pad("src").add_data_probe(self._debugProbe, "aenc-src")
 
         ##
         ## Video part
@@ -325,6 +341,8 @@ class SmartBin(gst.Pipeline):
         # ghost sinkpad
         thread.add_pad(gst.GhostPad("vsink", vinq.get_pad("sink")))
 
+##         vrate.get_pad("sink").add_data_probe(self._debugProbe, "before-vrate")
+##         vrate.get_pad("src").add_data_probe(self._debugProbe, "after-vrate")
 
         thread.filesink = fsink
 

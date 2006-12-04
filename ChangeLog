@@ -1,5 +1,12 @@
 2006-12-04  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/bin.py: (SmartBin):
+	Add an audiorate to the audio part of the encoding bin.
+	(SmartBin._debugProbe):probe method for debug uses. The lines using it
+	are commented since it's expensive in debug output.
+
+2006-12-04  Edward Hervey  <edward@fluendo.com>
+
 	Patch by: Richard Boulton <richard@tartarus.org>
 	
 	* bin/pitivi.in:
