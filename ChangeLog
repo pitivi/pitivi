@@ -1,5 +1,12 @@
 2006-12-04  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/.cvsignore:
+	* pitivi/elements/.cvsignore:
+	* pitivi/ui/.cvsignore:
+	CVS ignore cleanup
+
+2006-12-04  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/bin.py: (SmartBin):
 	Add an audiorate to the audio part of the encoding bin.
 	(SmartBin._debugProbe):probe method for debug uses. The lines using it
