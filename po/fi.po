@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-10-25 08:24+0300\n"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/\n"
+"POT-Creation-Date: 2006-12-06 19:45+0100\n"
 "PO-Revision-Date: 2006-10-25 08:43+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
@@ -45,7 +45,7 @@ msgid "Author"
 msgstr "Tekijä"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:436 ../pitivi/ui/sourcefactories.py:477
+#: ../pitivi/ui/sourcefactories.py:487 ../pitivi/ui/sourcefactories.py:528
 msgid "Description"
 msgstr "Kuvaus"
 
@@ -54,29 +54,36 @@ msgid "Properties for <element>"
 msgstr "Elementin <element> ominaisuudet"
 
 #: ../pitivi/ui/encodingdialog.glade.h:1
+#, fuzzy
+msgid "<b>Audio :</b>"
+msgstr "<b>Ääniulostulo</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:2
+#, fuzzy
+msgid "<b>Nothing yet</b>"
+msgstr "<b>Vie tiedostoon</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:3
+#, fuzzy
+msgid "<b>Settings</b>"
+msgstr "Asetukset"
+
+#: ../pitivi/ui/encodingdialog.glade.h:4
+#, fuzzy
+msgid "<b>Video :</b>"
+msgstr "<b>Videoulostulo</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:5
 msgid "Choose File"
 msgstr "Valitse tiedosto"
 
-#: ../pitivi/ui/encodingdialog.glade.h:2
+#: ../pitivi/ui/encodingdialog.glade.h:6
+msgid "Modify"
+msgstr ""
+
+#: ../pitivi/ui/encodingdialog.glade.h:7
 msgid "Output File:"
 msgstr "Tulostiedosto:"
-
-#: ../pitivi/ui/encodingdialog.glade.h:3
-msgid "Please choose an output file"
-msgstr "Valitse tulostiedosto"
-
-#: ../pitivi/ui/encodingdialog.glade.h:4
-msgid "Render Project"
-msgstr "Piirrä projekti"
-
-#: ../pitivi/ui/encodingdialog.glade.h:5
-#: ../pitivi/ui/exportsettingswidget.glade.h:33
-msgid "Settings"
-msgstr "Asetukset"
-
-#: ../pitivi/ui/encodingdialog.glade.h:6
-msgid "Settings:"
-msgstr "Asetukset:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:1
 msgid ""
@@ -184,6 +191,10 @@ msgstr "Muxaaja"
 msgid "Rate:"
 msgstr "Nopeus:"
 
+#: ../pitivi/ui/exportsettingswidget.glade.h:33
+msgid "Settings"
+msgstr "Asetukset"
+
 #: ../pitivi/ui/exportsettingswidget.glade.h:34
 msgid "Video Codec"
 msgstr "Videokodekki"
@@ -200,7 +211,7 @@ msgstr "Videon esivalinta"
 msgid "Width:"
 msgstr "Leveys"
 
-#: ../pitivi/ui/exportsettingswidget.py:327
+#: ../pitivi/ui/exportsettingswidget.py:332
 msgid "Export Settings"
 msgstr "Vie asetukset"
 
@@ -249,24 +260,52 @@ msgstr "_Tuo lähteet..."
 msgid "Import sources to use"
 msgstr "Tuo käytettävät lähteet"
 
-#: ../pitivi/ui/mainwindow.py:80
+#: ../pitivi/ui/mainwindow.py:79
+#, fuzzy
+msgid "_Import Folder of sources..."
+msgstr "_Tuo lähteet..."
+
+#: ../pitivi/ui/mainwindow.py:79
+#, fuzzy
+msgid "Import folder of sources to use"
+msgstr "Tuo käytettävät lähteet"
+
+#: ../pitivi/ui/mainwindow.py:81
 msgid "View the main window on the whole screen"
 msgstr "Näytä pääikkuna kokoruudun kokoisena"
 
-#: ../pitivi/ui/mainwindow.py:81
+#: ../pitivi/ui/mainwindow.py:82
 #, python-format
 msgid "Information about %s"
 msgstr "Tietoja tiedostosta %s"
 
-#: ../pitivi/ui/mainwindow.py:88
+#: ../pitivi/ui/mainwindow.py:83
+#, fuzzy
+msgid "_File"
+msgstr "Tiedosto"
+
+#: ../pitivi/ui/mainwindow.py:84
+msgid "_View"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:85
+msgid "_Help"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:89
 msgid "Advanced Vie_w"
 msgstr "Näkymä _lisätiedoilla"
 
-#: ../pitivi/ui/mainwindow.py:88
+#: ../pitivi/ui/mainwindow.py:89
 msgid "Switch to advanced view"
 msgstr "Siirry lisätietoja sisältävään näkymään"
 
-#: ../pitivi/ui/mainwindow.py:234
+#: ../pitivi/ui/mainwindow.py:233
+#, fuzzy
+msgid "Contributors:"
+msgstr "Säilö:"
+
+#: ../pitivi/ui/mainwindow.py:237
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -295,81 +334,99 @@ msgid "Add Sources..."
 msgstr "Lisää lähteitä..."
 
 #: ../pitivi/ui/sourcefactories.py:105
+#, fuzzy
+msgid "Add Folder of Sources..."
+msgstr "Lisää lähteitä..."
+
+#: ../pitivi/ui/sourcefactories.py:106
 msgid "Remove Sources..."
 msgstr "Poista lähteitä..."
 
-#: ../pitivi/ui/sourcefactories.py:106
+#: ../pitivi/ui/sourcefactories.py:107
 msgid "Play"
 msgstr "Toista"
 
-#: ../pitivi/ui/sourcefactories.py:131
+#: ../pitivi/ui/sourcefactories.py:135
 msgid "Icon"
 msgstr "Kuvake"
 
-#: ../pitivi/ui/sourcefactories.py:139
+#: ../pitivi/ui/sourcefactories.py:143
 msgid "Information"
 msgstr "Tietoja"
 
-#: ../pitivi/ui/sourcefactories.py:148
+#: ../pitivi/ui/sourcefactories.py:152
 msgid "Duration"
 msgstr "Kesto"
 
-#: ../pitivi/ui/sourcefactories.py:205
+#: ../pitivi/ui/sourcefactories.py:164
+msgid "Add Folder"
+msgstr ""
+
+#: ../pitivi/ui/sourcefactories.py:222
+#, fuzzy
+msgid "Import a folder"
+msgstr "Tuo tiedosto"
+
+#: ../pitivi/ui/sourcefactories.py:225
 msgid "Import a file"
 msgstr "Tuo tiedosto"
 
-#: ../pitivi/ui/sourcefactories.py:430 ../pitivi/ui/sourcefactories.py:471
+#: ../pitivi/ui/sourcefactories.py:481 ../pitivi/ui/sourcefactories.py:522
 msgid "Name"
 msgstr "Nimi"
 
-#: ../pitivi/ui/sourcefactories.py:530
+#: ../pitivi/ui/sourcefactories.py:581
 msgid "File"
 msgstr "Tiedosto"
 
-#: ../pitivi/ui/sourcefactories.py:536
+#: ../pitivi/ui/sourcefactories.py:587
 msgid "Reason"
 msgstr "Syy"
 
-#: ../pitivi/ui/sourcefactories.py:540
+#: ../pitivi/ui/sourcefactories.py:591
 msgid "Unknown reason"
 msgstr "Tuntematon syy"
 
-#: ../pitivi/ui/viewer.py:502
+#: ../pitivi/ui/timelineobjects.py:355
+msgid "Remove"
+msgstr ""
+
+#: ../pitivi/ui/viewer.py:537
 msgid "Choose file to render to"
 msgstr "Valitse tiedosto, johon tuotetaan"
 
-#: ../pitivi/ui/viewer.py:522
+#: ../pitivi/ui/viewer.py:557
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "Valmistui ajassa %dmin %ds"
 
-#: ../pitivi/ui/viewer.py:532
+#: ../pitivi/ui/viewer.py:567
 msgid "Rendering"
 msgstr "Tuotetaan"
 
-#: ../pitivi/ui/viewer.py:534
+#: ../pitivi/ui/viewer.py:569
 msgid "Couldn't start rendering"
 msgstr "Tuottamista ei voitu aloittaa"
 
-#: ../pitivi/ui/viewer.py:554
+#: ../pitivi/ui/viewer.py:590
 msgid "Rendering Complete"
 msgstr "Tuottaminen valmistui"
 
-#: ../pitivi/check.py:69
+#: ../pitivi/check.py:77
 #, python-format
 msgid "%s is already running!"
 msgstr "%s on jo käynnissä!"
 
-#: ../pitivi/check.py:70
+#: ../pitivi/check.py:78
 #, python-format
 msgid "An instance of %s is already running in this script."
 msgstr "Tehtävän %s instanssi on jo käynnissä tässä skriptissä."
 
-#: ../pitivi/check.py:72
+#: ../pitivi/check.py:80
 msgid "Could not find the GNonLin plugins!"
 msgstr "GnonLin-liitännäisiä ei löydy!"
 
-#: ../pitivi/check.py:73
+#: ../pitivi/check.py:81
 msgid ""
 "Make sure the plugins were installed and are available in the GStreamer "
 "plugins path."
@@ -377,11 +434,11 @@ msgstr ""
 "Varmista että liitännäiset on asennettu ja saatavilla GStreamerin "
 "liitännäispolulta."
 
-#: ../pitivi/check.py:75
+#: ../pitivi/check.py:83
 msgid "Could not find the autodetect plugins!"
 msgstr "Automaattitunnistuksen liitännäistä ei löydy!"
 
-#: ../pitivi/check.py:76
+#: ../pitivi/check.py:84
 msgid ""
 "Make sure you have installed gst-plugins-good and is available in the "
 "GStreamer plugin path."
@@ -389,23 +446,22 @@ msgstr ""
 "Varmista että paketti gst-plugins-good on asennettu ja saatavilla "
 "GStreamerin liitännäispolulta."
 
-#: ../pitivi/check.py:78
+#: ../pitivi/check.py:86
 msgid "PyGTK doesn't have Cairo support!"
 msgstr "PyGTK ei sisällä Cairo-tukea!"
 
-#: ../pitivi/check.py:79
+#: ../pitivi/check.py:87
 msgid ""
 "Please use a version of the Python bindings for GTK+ built with Cairo "
 "support."
 msgstr ""
-"Käytä pythonin GTK-sidoksista versiota, joka on käännetty Cairo-tuen "
-"kanssa."
+"Käytä pythonin GTK-sidoksista versiota, joka on käännetty Cairo-tuen kanssa."
 
-#: ../pitivi/check.py:81
+#: ../pitivi/check.py:89
 msgid "Could not initiate the video output plugins"
 msgstr "Videon ulostuloliitännäisiä ei voitu alustaa"
 
-#: ../pitivi/check.py:82
+#: ../pitivi/check.py:90
 msgid ""
 "Make sure you have at least one valid video output sink available "
 "(xvimagesink or ximagesink)"
@@ -413,135 +469,133 @@ msgstr ""
 "Varmista että ainakin yksi toimiva videon ulostulo on saatavilla "
 "(xvimagesink tai ximagesink)"
 
-#: ../pitivi/check.py:84
+#: ../pitivi/check.py:92
 msgid "Could not initiate the audio output plugins"
 msgstr "Äänen ulostuloliitännäisiä ei voitu alustaa"
 
-#: ../pitivi/check.py:85
+#: ../pitivi/check.py:93
 msgid ""
 "Make sure you have at least one valid audio output sink available (alsasink "
 "or osssink)"
 msgstr ""
-"Varmista että ainakin yksi toimiva äänen ulostulo on saatavilla "
-"(alsasink tai osssink)"
+"Varmista että ainakin yksi toimiva äänen ulostulo on saatavilla (alsasink "
+"tai osssink)"
 
-#: ../pitivi/objectfactory.py:148
+#: ../pitivi/objectfactory.py:149
 #, python-format
 msgid "<b>%s</b><small>"
 msgstr "<b>%s</b><small>"
 
-#: ../pitivi/objectfactory.py:152
+#: ../pitivi/objectfactory.py:153
 #, python-format
 msgid "<b>%s</b> (%s)"
 msgstr "<b>%s</b> (%s)"
 
-#: ../pitivi/objectfactory.py:155
+#: ../pitivi/objectfactory.py:156
 #, python-format
 msgid "<b>%s</b>"
 msgstr "<b>%s</b>"
 
-#: ../pitivi/objectfactory.py:156
+#: ../pitivi/objectfactory.py:157
 #, python-format
 msgid "<small><b>File:</b> %s"
 msgstr "<small><b>Tiedosto:</b> %s"
 
-#: ../pitivi/objectfactory.py:381
+#: ../pitivi/objectfactory.py:407
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr "<b>Video:</b> %d x %d <i>pikseliä</i> nopeudella %.2f<i>fps</i>"
 
-#: ../pitivi/objectfactory.py:384
+#: ../pitivi/objectfactory.py:410
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>Kuva:</b> %d x %d <i>pikseliä</i>"
 
-
-#: ../pitivi/objectfactory.py:387 ../pitivi/objectfactory.py:431
+#: ../pitivi/objectfactory.py:413 ../pitivi/objectfactory.py:457
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr " <i>(%s)</i>"
 
-#: ../pitivi/objectfactory.py:389
+#: ../pitivi/objectfactory.py:415
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "<b>Tuntematon videomuoto:</b> %s"
 
-#: ../pitivi/objectfactory.py:428
+#: ../pitivi/objectfactory.py:454
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr "<b>Ääni:</b> %d kanavaa näytetaajudella %d <i>Hz</i> (%d <i>bittiä</i>)"
+msgstr ""
+"<b>Ääni:</b> %d kanavaa näytetaajudella %d <i>Hz</i> (%d <i>bittiä</i>)"
 
-#: ../pitivi/objectfactory.py:433
+#: ../pitivi/objectfactory.py:459
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "<b>Tuntematon äänimuoto:</b> %s"
 
-#: ../pitivi/objectfactory.py:444
+#: ../pitivi/objectfactory.py:470
 #, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>Teksti:</b> %s"
 
-#: ../pitivi/pitivi.py:75
+#: ../pitivi/pitivi.py:76
 #, python-format
 msgid "There is already a %s instance, inform developers"
 msgstr "Instanssi %s on jo olemassa, raportoi vika kehittäjille"
 
-#: ../pitivi/pitivi.py:81 ../pitivi/pitivi.py:120
+#: ../pitivi/pitivi.py:82 ../pitivi/pitivi.py:121
 msgid "New Project"
 msgstr "Uusi projekti"
 
-#: ../pitivi/playground.py:365
+#: ../pitivi/playground.py:374
 msgid "Video output is busy"
 msgstr "Videoulostulo on käytössä"
 
-#: ../pitivi/playground.py:366
+#: ../pitivi/playground.py:375
 msgid ""
 "Please check that your video output device isn't already used by another "
 "application"
-msgstr ""
-"Varmista, ettei videon ulostulo ole jo toisen sovelluksen käytössä."
+msgstr "Varmista, ettei videon ulostulo ole jo toisen sovelluksen käytössä."
 
-#: ../pitivi/playground.py:368
+#: ../pitivi/playground.py:377
 msgid "Video output problem"
 msgstr "Videoulostulossa on ongelmia"
 
-#: ../pitivi/playground.py:369
+#: ../pitivi/playground.py:378
 msgid "There is a problem with your video output device"
 msgstr "Videoulostulon laitteen kanssa on ongelmia"
 
-#: ../pitivi/playground.py:372
+#: ../pitivi/playground.py:381
 msgid "Audio output device is busy"
 msgstr "Ääniulostulo on käytössä"
 
-#: ../pitivi/playground.py:373
+#: ../pitivi/playground.py:382
 msgid ""
 "Please check that your audio output device isn't already used by another "
 "application."
-msgstr ""
-"Varmista, ettei äänen ulostulo ole jo toisen sovelluksen käytössä."
+msgstr "Varmista, ettei äänen ulostulo ole jo toisen sovelluksen käytössä."
 
-#: ../pitivi/playground.py:375
+#: ../pitivi/playground.py:384
 msgid "Audio output problem"
 msgstr "Ääniulostulossa on ongelmia"
 
-#: ../pitivi/playground.py:376
+#: ../pitivi/playground.py:385
 msgid "There is a problem with your audio output device"
 msgstr "Ääniulostulon laitteen kanssa on ongelmia"
 
-#: ../pitivi/project.py:98
+#: ../pitivi/project.py:148
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s ei vielä voi käsitellä etäprojekteja"
 
-#: ../pitivi/settings.py:71
+#: ../pitivi/settings.py:75
 msgid "Export Settings\n"
 msgstr "Vie asetukset\n"
 
-#: ../pitivi/settings.py:72
+#: ../pitivi/settings.py:76
 msgid "Video :"
 msgstr "Video :"
 
-#: ../pitivi/settings.py:74
+#: ../pitivi/settings.py:78
 msgid ""
 "\n"
 "Audio :"
@@ -549,7 +603,7 @@ msgstr ""
 "\n"
 "Ääni :"
 
-#: ../pitivi/settings.py:76
+#: ../pitivi/settings.py:80
 msgid ""
 "\n"
 "Muxer :"
@@ -557,3 +611,11 @@ msgstr ""
 "\n"
 "Muxaaja :"
 
+#~ msgid "Render Project"
+#~ msgstr "Piirrä projekti"
+
+#~ msgid "Settings:"
+#~ msgstr "Asetukset:"
+
+#~ msgid "Please choose an output file"
+#~ msgstr "Valitse tulostiedosto"

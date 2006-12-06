@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-torrent\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-09-25 16:56+0200\n"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/\n"
+"POT-Creation-Date: 2006-12-06 19:45+0100\n"
 "PO-Revision-Date: 2006-09-13 21:52-0000\n"
 "Last-Translator: David Lodge <dave@cirt.net>\n"
 "Language-Team: en_GB <en@li.org>\n"
@@ -16,90 +16,76 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: pitivi/ui/discoverererrordialog.glade:9
+#: ../pitivi/ui/discoverererrordialog.glade.h:1
 msgid "Error while analyzing files"
 msgstr "Error while analysing files"
 
-#: pitivi/ui/discoverererrordialog.glade:85
+#: ../pitivi/ui/discoverererrordialog.glade.h:2
 msgid "The following files weren't discovered properly."
 msgstr "The following files weren't discovered properly."
 
-#: pitivi/ui/elementsettingsdialog.glade:9
-msgid "Properties for <element>"
-msgstr "Properties for <element>"
-
-#: pitivi/ui/elementsettingsdialog.glade:108
-msgid "Author"
-msgstr "Author"
-
-#: pitivi/ui/elementsettingsdialog.glade:135 pitivi/ui/sourcefactories.py:436
-#: pitivi/ui/sourcefactories.py:477
-msgid "Description"
-msgstr "Description"
-
-#: pitivi/ui/elementsettingsdialog.glade:162
-msgid "<b>Description:</b>"
-msgstr "<b>Description:</b>"
-
-#: pitivi/ui/elementsettingsdialog.glade:190
+#: ../pitivi/ui/elementsettingsdialog.glade.h:1
 msgid "<b>Author:</b>"
 msgstr "<b>Author:</b>"
 
-#: pitivi/ui/elementsettingsdialog.glade:222
+#: ../pitivi/ui/elementsettingsdialog.glade.h:2
+msgid "<b>Description:</b>"
+msgstr "<b>Description:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:3
 msgid "<b>Plugin Name</b>"
 msgstr "<b>Plugin Name</b>"
 
-#: pitivi/ui/elementsettingsdialog.glade:288
+#: ../pitivi/ui/elementsettingsdialog.glade.h:4
 msgid "<b>Properties</b>"
 msgstr "<b>Properties</b>"
 
-#: pitivi/ui/encodingdialog.glade:9
-msgid "Render Project"
-msgstr "Render Project"
+#: ../pitivi/ui/elementsettingsdialog.glade.h:5
+msgid "Author"
+msgstr "Author"
 
-#: pitivi/ui/encodingdialog.glade:87
-msgid "Output File:"
-msgstr "Output File:"
+#: ../pitivi/ui/elementsettingsdialog.glade.h:6
+#: ../pitivi/ui/sourcefactories.py:487 ../pitivi/ui/sourcefactories.py:528
+msgid "Description"
+msgstr "Description"
 
-#: pitivi/ui/encodingdialog.glade:113
+#: ../pitivi/ui/elementsettingsdialog.glade.h:7
+msgid "Properties for <element>"
+msgstr "Properties for <element>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:1
+#, fuzzy
+msgid "<b>Audio :</b>"
+msgstr "<b>Audio Output</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:2
+#, fuzzy
+msgid "<b>Nothing yet</b>"
+msgstr "<b>Export to</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:3
+#, fuzzy
+msgid "<b>Settings</b>"
+msgstr "Settings"
+
+#: ../pitivi/ui/encodingdialog.glade.h:4
+#, fuzzy
+msgid "<b>Video :</b>"
+msgstr "<b>Video Output</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:5
 msgid "Choose File"
 msgstr "Choose File"
 
-#: pitivi/ui/encodingdialog.glade:142
-msgid "Settings:"
-msgstr "Settings:"
-
-#: pitivi/ui/encodingdialog.glade:168 pitivi/ui/exportsettingswidget.glade:647
-#: pitivi/ui/exportsettingswidget.glade:667
-#: pitivi/ui/exportsettingswidget.glade:687
-msgid "Settings"
-msgstr "Settings"
-
-#: pitivi/ui/encodingdialog.glade:194
-msgid "Please choose an output file"
-msgstr "Please choose an output file"
-
-#: pitivi/ui/exportsettingswidget.glade:8
-msgid "window1"
+#: ../pitivi/ui/encodingdialog.glade.h:6
+msgid "Modify"
 msgstr ""
 
-#: pitivi/ui/exportsettingswidget.glade:61
-msgid "Video Preset"
-msgstr "Video Preset"
+#: ../pitivi/ui/encodingdialog.glade.h:7
+msgid "Output File:"
+msgstr "Output File:"
 
-#: pitivi/ui/exportsettingswidget.glade:77
-msgid "Width:"
-msgstr "Width:"
-
-#: pitivi/ui/exportsettingswidget.glade:105
-msgid "Height:"
-msgstr "Height:"
-
-#: pitivi/ui/exportsettingswidget.glade:133
-msgid "Frame rate:"
-msgstr "Frame rate:"
-
-#: pitivi/ui/exportsettingswidget.glade:203
+#: ../pitivi/ui/exportsettingswidget.glade.h:1
 msgid ""
 "12 fps\n"
 "23,97 fps\n"
@@ -117,35 +103,19 @@ msgstr ""
 "30 fps\n"
 "60 fps"
 
-#: pitivi/ui/exportsettingswidget.glade:230
-msgid "<b>Video Output</b>"
-msgstr "<b>Video Output</b>"
-
-#: pitivi/ui/exportsettingswidget.glade:290
-msgid "Audio Preset"
-msgstr "Audio Preset"
-
-#: pitivi/ui/exportsettingswidget.glade:306
-msgid "Channels:"
-msgstr "Channels:"
-
-#: pitivi/ui/exportsettingswidget.glade:334
-msgid "Rate:"
-msgstr "Rate:"
-
-#: pitivi/ui/exportsettingswidget.glade:362
-msgid "Depth:"
-msgstr "Depth:"
-
-#: pitivi/ui/exportsettingswidget.glade:390
+#: ../pitivi/ui/exportsettingswidget.glade.h:8
 msgid ""
-"Mono (1)\n"
-"Stereo (2)"
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
 msgstr ""
-"Mono (1)\n"
-"Stereo (2)"
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
 
-#: pitivi/ui/exportsettingswidget.glade:407
+#: ../pitivi/ui/exportsettingswidget.glade.h:12
 msgid ""
 "8000 Hz\n"
 "11025 Hz\n"
@@ -161,403 +131,486 @@ msgstr ""
 "48000 Hz\n"
 "96000 Hz"
 
-#: pitivi/ui/exportsettingswidget.glade:428
-msgid ""
-"8 bit\n"
-"16 bit\n"
-"24 bit\n"
-"32 bit"
-msgstr ""
-"8 bit\n"
-"16 bit\n"
-"24 bit\n"
-"32 bit"
-
-#: pitivi/ui/exportsettingswidget.glade:451
+#: ../pitivi/ui/exportsettingswidget.glade.h:18
 msgid "<b>Audio Output</b>"
 msgstr "<b>Audio Output</b>"
 
-#: pitivi/ui/exportsettingswidget.glade:511
-msgid "Video Codec:"
-msgstr "Video Codec:"
-
-#: pitivi/ui/exportsettingswidget.glade:539
-msgid "Audio Codec:"
-msgstr "Audio Codec:"
-
-#: pitivi/ui/exportsettingswidget.glade:567
-msgid "Video Codec"
-msgstr "Video Codec"
-
-#: pitivi/ui/exportsettingswidget.glade:584
-msgid "Audio Codec"
-msgstr "Audio Codec"
-
-#: pitivi/ui/exportsettingswidget.glade:600
-msgid "Container:"
-msgstr "Container:"
-
-#: pitivi/ui/exportsettingswidget.glade:628
-msgid "Muxer"
-msgstr "Muxer"
-
-#: pitivi/ui/exportsettingswidget.glade:710
+#: ../pitivi/ui/exportsettingswidget.glade.h:19
 msgid "<b>Export to</b>"
 msgstr "<b>Export to</b>"
 
-#: pitivi/ui/exportsettingswidget.py:327
+#: ../pitivi/ui/exportsettingswidget.glade.h:20
+msgid "<b>Video Output</b>"
+msgstr "<b>Video Output</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:21
+msgid "Audio Codec"
+msgstr "Audio Codec"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:22
+msgid "Audio Codec:"
+msgstr "Audio Codec:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:23
+msgid "Audio Preset"
+msgstr "Audio Preset"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:24
+msgid "Channels:"
+msgstr "Channels:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:25
+msgid "Container:"
+msgstr "Container:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:26
+msgid "Depth:"
+msgstr "Depth:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:27
+msgid "Frame rate:"
+msgstr "Frame rate:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:28
+msgid "Height:"
+msgstr "Height:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:29
+msgid ""
+"Mono (1)\n"
+"Stereo (2)"
+msgstr ""
+"Mono (1)\n"
+"Stereo (2)"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:31
+msgid "Muxer"
+msgstr "Muxer"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:32
+msgid "Rate:"
+msgstr "Rate:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:33
+msgid "Settings"
+msgstr "Settings"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:34
+msgid "Video Codec"
+msgstr "Video Codec"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:35
+msgid "Video Codec:"
+msgstr "Video Codec:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:36
+msgid "Video Preset"
+msgstr "Video Preset"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:37
+msgid "Width:"
+msgstr "Width:"
+
+#: ../pitivi/ui/exportsettingswidget.py:332
 #, fuzzy
 msgid "Export Settings"
 msgstr "Project Settings"
 
-#: pitivi/ui/gstwidget.py:145
+#. set title and frame label
+#: ../pitivi/ui/gstwidget.py:145
 #, fuzzy
 msgid "Properties for "
 msgstr "Properties for <element>"
 
-#: pitivi/ui/infolayer.py:43
+#: ../pitivi/ui/infolayer.py:43
 #, fuzzy
 msgid "Audio Track"
 msgstr "Audio Codec"
 
-#: pitivi/ui/infolayer.py:45
+#: ../pitivi/ui/infolayer.py:45
 #, fuzzy
 msgid "Video Track"
 msgstr "Video Codec"
 
-#: pitivi/ui/infolayer.py:87
+#: ../pitivi/ui/infolayer.py:87
 msgid "Empty"
 msgstr ""
 
-#: pitivi/ui/mainwindow.py:73
+#: ../pitivi/ui/mainwindow.py:73
 msgid "Create a new project"
 msgstr ""
 
-#: pitivi/ui/mainwindow.py:74
+#: ../pitivi/ui/mainwindow.py:74
 msgid "Open an existing project"
 msgstr ""
 
-#: pitivi/ui/mainwindow.py:75 pitivi/ui/mainwindow.py:76
+#: ../pitivi/ui/mainwindow.py:75 ../pitivi/ui/mainwindow.py:76
 msgid "Save the current project"
 msgstr ""
 
-#: pitivi/ui/mainwindow.py:77 pitivi/ui/projectsettings.glade:9
+#: ../pitivi/ui/mainwindow.py:77 ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
 msgstr "Project Settings"
 
-#: pitivi/ui/mainwindow.py:77
+#: ../pitivi/ui/mainwindow.py:77
 #, fuzzy
 msgid "Edit the project settings"
 msgstr "Project Settings"
 
-#: pitivi/ui/mainwindow.py:78
+#: ../pitivi/ui/mainwindow.py:78
 msgid "_Import Sources..."
 msgstr ""
 
-#: pitivi/ui/mainwindow.py:78
+#: ../pitivi/ui/mainwindow.py:78
 msgid "Import sources to use"
 msgstr ""
 
-#: pitivi/ui/mainwindow.py:80
+#: ../pitivi/ui/mainwindow.py:79
+msgid "_Import Folder of sources..."
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:79
+msgid "Import folder of sources to use"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:81
 msgid "View the main window on the whole screen"
 msgstr ""
 
-#: pitivi/ui/mainwindow.py:81
+#: ../pitivi/ui/mainwindow.py:82
 #, python-format
 msgid "Information about %s"
 msgstr ""
 
-#: pitivi/ui/mainwindow.py:88
+#: ../pitivi/ui/mainwindow.py:83
+msgid "_File"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:84
+msgid "_View"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:85
+msgid "_Help"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:89
 msgid "Advanced Vie_w"
 msgstr "Advanced Vie_w"
 
-#: pitivi/ui/mainwindow.py:88
+#: ../pitivi/ui/mainwindow.py:89
 msgid "Switch to advanced view"
 msgstr "Switch to advanced view"
 
-#: pitivi/ui/mainwindow.py:234
+#: ../pitivi/ui/mainwindow.py:233
+#, fuzzy
+msgid "Contributors:"
+msgstr "Container:"
+
+#: ../pitivi/ui/mainwindow.py:237
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
 msgstr ""
 
-#: pitivi/ui/projectsettings.glade:170
-msgid "The name of your project."
-msgstr "The name of your project."
-
-#: pitivi/ui/projectsettings.glade:177
-msgid "Name:"
-msgstr "Name:"
-
-#: pitivi/ui/projectsettings.glade:207
+#: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
 msgstr "A short description of your project."
 
-#: pitivi/ui/projectsettings.glade:214
+#: ../pitivi/ui/projectsettings.glade.h:2
 msgid "Description:"
 msgstr "Description:"
 
-#: pitivi/ui/sourcefactories.py:104
+#: ../pitivi/ui/projectsettings.glade.h:3
+msgid "Name:"
+msgstr "Name:"
+
+#: ../pitivi/ui/projectsettings.glade.h:5
+msgid "The name of your project."
+msgstr "The name of your project."
+
+#: ../pitivi/ui/sourcefactories.py:104
 msgid "Add Sources..."
 msgstr ""
 
-#: pitivi/ui/sourcefactories.py:105
+#: ../pitivi/ui/sourcefactories.py:105
+msgid "Add Folder of Sources..."
+msgstr ""
+
+#: ../pitivi/ui/sourcefactories.py:106
 msgid "Remove Sources..."
 msgstr ""
 
-#: pitivi/ui/sourcefactories.py:106
+#: ../pitivi/ui/sourcefactories.py:107
 msgid "Play"
 msgstr ""
 
-#: pitivi/ui/sourcefactories.py:131
+#: ../pitivi/ui/sourcefactories.py:135
 msgid "Icon"
 msgstr ""
 
-#: pitivi/ui/sourcefactories.py:139
+#: ../pitivi/ui/sourcefactories.py:143
 msgid "Information"
 msgstr ""
 
-#: pitivi/ui/sourcefactories.py:148
+#: ../pitivi/ui/sourcefactories.py:152
 #, fuzzy
 msgid "Duration"
 msgstr "Description"
 
-#: pitivi/ui/sourcefactories.py:205
+#: ../pitivi/ui/sourcefactories.py:164
+msgid "Add Folder"
+msgstr ""
+
+#: ../pitivi/ui/sourcefactories.py:222
+msgid "Import a folder"
+msgstr ""
+
+#: ../pitivi/ui/sourcefactories.py:225
 msgid "Import a file"
 msgstr ""
 
-#: pitivi/ui/sourcefactories.py:430 pitivi/ui/sourcefactories.py:471
+#: ../pitivi/ui/sourcefactories.py:481 ../pitivi/ui/sourcefactories.py:522
 #, fuzzy
 msgid "Name"
 msgstr "Name:"
 
-#: pitivi/ui/sourcefactories.py:530
+#: ../pitivi/ui/sourcefactories.py:581
 msgid "File"
 msgstr ""
 
-#: pitivi/ui/sourcefactories.py:536
+#: ../pitivi/ui/sourcefactories.py:587
 msgid "Reason"
 msgstr ""
 
-#: pitivi/ui/sourcefactories.py:540
+#: ../pitivi/ui/sourcefactories.py:591
 msgid "Unknown reason"
 msgstr ""
 
-#: pitivi/ui/timelineobjects.py:355
+#: ../pitivi/ui/timelineobjects.py:355
 msgid "Remove"
 msgstr ""
 
-#: pitivi/ui/viewer.py:502
+#: ../pitivi/ui/viewer.py:537
 msgid "Choose file to render to"
 msgstr ""
 
-#: pitivi/ui/viewer.py:522
+#: ../pitivi/ui/viewer.py:557
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr ""
 
-#: pitivi/ui/viewer.py:532
+#: ../pitivi/ui/viewer.py:567
 msgid "Rendering"
 msgstr ""
 
-#: pitivi/ui/viewer.py:534
+#: ../pitivi/ui/viewer.py:569
 msgid "Couldn't start rendering"
 msgstr ""
 
-#: pitivi/ui/viewer.py:554
+#: ../pitivi/ui/viewer.py:590
 #, fuzzy
 msgid "Rendering Complete"
 msgstr "Render Project"
 
-#: pitivi/check.py:69
+#: ../pitivi/check.py:77
 #, python-format
 msgid "%s is already running!"
 msgstr ""
 
-#: pitivi/check.py:70
+#: ../pitivi/check.py:78
 #, python-format
 msgid "An instance of %s is already running in this script."
 msgstr ""
 
-#: pitivi/check.py:72
+#: ../pitivi/check.py:80
 msgid "Could not find the GNonLin plugins!"
 msgstr ""
 
-#: pitivi/check.py:73
+#: ../pitivi/check.py:81
 msgid ""
 "Make sure the plugins were installed and are available in the GStreamer "
 "plugins path."
 msgstr ""
 
-#: pitivi/check.py:75
+#: ../pitivi/check.py:83
 msgid "Could not find the autodetect plugins!"
 msgstr ""
 
-#: pitivi/check.py:76
+#: ../pitivi/check.py:84
 msgid ""
 "Make sure you have installed gst-plugins-good and is available in the "
 "GStreamer plugin path."
 msgstr ""
 
-#: pitivi/check.py:78
+#: ../pitivi/check.py:86
 msgid "PyGTK doesn't have Cairo support!"
 msgstr ""
 
-#: pitivi/check.py:79
+#: ../pitivi/check.py:87
 msgid ""
 "Please use a version of the Python bindings for GTK+ built with Cairo "
 "support."
 msgstr ""
 
-#: pitivi/check.py:81
+#: ../pitivi/check.py:89
 msgid "Could not initiate the video output plugins"
 msgstr ""
 
-#: pitivi/check.py:82
+#: ../pitivi/check.py:90
 msgid ""
 "Make sure you have at least one valid video output sink available "
 "(xvimagesink or ximagesink)"
 msgstr ""
 
-#: pitivi/check.py:84
+#: ../pitivi/check.py:92
 msgid "Could not initiate the audio output plugins"
 msgstr ""
 
-#: pitivi/check.py:85
+#: ../pitivi/check.py:93
 msgid ""
 "Make sure you have at least one valid audio output sink available (alsasink "
 "or osssink)"
 msgstr ""
 
-#: pitivi/objectfactory.py:148
+#: ../pitivi/objectfactory.py:149
 #, python-format
 msgid "<b>%s</b><small>"
 msgstr ""
 
-#: pitivi/objectfactory.py:152
+#: ../pitivi/objectfactory.py:153
 #, python-format
 msgid "<b>%s</b> (%s)"
 msgstr ""
 
-#: pitivi/objectfactory.py:155
+#: ../pitivi/objectfactory.py:156
 #, fuzzy, python-format
 msgid "<b>%s</b>"
 msgstr "<b>Properties</b>"
 
-#: pitivi/objectfactory.py:156
+#: ../pitivi/objectfactory.py:157
 #, python-format
 msgid "<small><b>File:</b> %s"
 msgstr ""
 
-#: pitivi/objectfactory.py:381
+#: ../pitivi/objectfactory.py:407
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr ""
 
-#: pitivi/objectfactory.py:384
+#: ../pitivi/objectfactory.py:410
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr ""
 
-#: pitivi/objectfactory.py:387 pitivi/objectfactory.py:431
+#: ../pitivi/objectfactory.py:413 ../pitivi/objectfactory.py:457
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr ""
 
-#: pitivi/objectfactory.py:389
+#: ../pitivi/objectfactory.py:415
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr ""
 
-#: pitivi/objectfactory.py:428
+#: ../pitivi/objectfactory.py:454
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr ""
 
-#: pitivi/objectfactory.py:433
+#: ../pitivi/objectfactory.py:459
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr ""
 
-#: pitivi/objectfactory.py:444
+#: ../pitivi/objectfactory.py:470
 #, fuzzy, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>Author:</b>"
 
-#: pitivi/pitivi.py:75
+#: ../pitivi/pitivi.py:76
 #, python-format
 msgid "There is already a %s instance, inform developers"
 msgstr ""
 
-#: pitivi/pitivi.py:81 pitivi/pitivi.py:120
+#: ../pitivi/pitivi.py:82 ../pitivi/pitivi.py:121
 #, fuzzy
 msgid "New Project"
 msgstr "Render Project"
 
-#: pitivi/playground.py:365
+#: ../pitivi/playground.py:374
 #, fuzzy
 msgid "Video output is busy"
 msgstr "<b>Video Output</b>"
 
-#: pitivi/playground.py:366
+#: ../pitivi/playground.py:375
 msgid ""
 "Please check that your video output device isn't already used by another "
 "application"
 msgstr ""
 
-#: pitivi/playground.py:368
+#: ../pitivi/playground.py:377
 #, fuzzy
 msgid "Video output problem"
 msgstr "<b>Video Output</b>"
 
-#: pitivi/playground.py:369
+#: ../pitivi/playground.py:378
 msgid "There is a problem with your video output device"
 msgstr ""
 
-#: pitivi/playground.py:372
+#: ../pitivi/playground.py:381
 msgid "Audio output device is busy"
 msgstr ""
 
-#: pitivi/playground.py:373
+#: ../pitivi/playground.py:382
 msgid ""
 "Please check that your audio output device isn't already used by another "
 "application."
 msgstr ""
 
-#: pitivi/playground.py:375
+#: ../pitivi/playground.py:384
 #, fuzzy
 msgid "Audio output problem"
 msgstr "<b>Audio Output</b>"
 
-#: pitivi/playground.py:376
+#: ../pitivi/playground.py:385
 msgid "There is a problem with your audio output device"
 msgstr ""
 
-#: pitivi/project.py:98
+#: ../pitivi/project.py:148
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr ""
 
-#: pitivi/settings.py:71
+#: ../pitivi/settings.py:75
 #, fuzzy
 msgid "Export Settings\n"
 msgstr "Project Settings"
 
-#: pitivi/settings.py:72
+#: ../pitivi/settings.py:76
 #, fuzzy
 msgid "Video :"
 msgstr "Video Codec:"
 
-#: pitivi/settings.py:74
+#: ../pitivi/settings.py:78
 #, fuzzy
 msgid ""
 "\n"
 "Audio :"
 msgstr "Audio Codec:"
 
-#: pitivi/settings.py:76
+#: ../pitivi/settings.py:80
 #, fuzzy
 msgid ""
 "\n"
 "Muxer :"
 msgstr "Muxer"
+
+#~ msgid "Render Project"
+#~ msgstr "Render Project"
+
+#~ msgid "Settings:"
+#~ msgstr "Settings:"
+
+#~ msgid "Please choose an output file"
+#~ msgstr "Please choose an output file"
