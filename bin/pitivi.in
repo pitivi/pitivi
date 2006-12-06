@@ -37,6 +37,7 @@ localedir = ""
 # TODO : change it when it's finally in cvs
 
 def _add_pitivi_path():
+    global localedir
     dir = os.path.dirname(os.path.abspath(__file__))
     if (os.path.exists(os.path.join(dir, 'CVS')) or 
         os.path.exists(os.path.join(dir, '.svn'))):
@@ -65,6 +66,7 @@ def _add_pitivi_path():
     gettext.textdomain('pitivi')
 
 def _init_gobject_gtk_gst():
+    global localedir
     try:
         import pygtk
         pygtk.require("2.0")
@@ -84,7 +86,7 @@ def _init_gobject_gtk_gst():
         raise SystemExit("Can't find glade module")
 
     glade.bindtextdomain('pitivi', localedir)
-
+    
     try:
         import pygst
         pygst.require('0.10')

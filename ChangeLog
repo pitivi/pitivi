@@ -1,3 +1,9 @@
+2006-12-06  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	localedir is a global variable. Without specifying that, we end up with 
+	localedir never being set globally.
+
 2006-12-04  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/.cvsignore:
