@@ -1,5 +1,10 @@
 2006-12-06  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/mainwindow.py:
+	Mark File, View and Help menu text as translateable.
+
+2006-12-06  Edward Hervey  <edward@fluendo.com>
+
 	* bin/pitivi.in:
 	localedir is a global variable. Without specifying that, we end up with 
 	localedir never being set globally.

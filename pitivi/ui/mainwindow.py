@@ -80,9 +80,9 @@ class PitiviMainWindow(gtk.Window):
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
             ("FullScreen", gtk.STOCK_FULLSCREEN, None, None, _("View the main window on the whole screen"), self._fullScreenCb),
             ("About", gtk.STOCK_ABOUT, None, None, _("Information about %s") % APPNAME, self._aboutCb),
-            ("File", None, "_File"),
-            ("View", None, "_View"),
-            ("Help", None, "_Help")
+            ("File", None, _("_File")),
+            ("View", None, _("_View")),
+            ("Help", None, _("_Help"))
             ]
 	
 	self.toggleactions = [
