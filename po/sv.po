@@ -3,14 +3,14 @@
 # Daniel Nylander <po@danielnylander.se>, 2006.
 # Christian Rose <menthos@menthos.com>, 2006.
 #
-# $Id: sv.po,v 1.6 2006/12/06 18:53:09 edwardrv Exp $
+# $Id: sv.po,v 1.7 2006/12/10 18:21:33 dnylande Exp $
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2006-12-06 19:45+0100\n"
-"PO-Revision-Date: 2006-10-03 14:12-0700\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-12-10 14:14+0100\n"
+"PO-Revision-Date: 2006-12-10 15:42+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -47,7 +47,8 @@ msgid "Author"
 msgstr "Författare"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:487 ../pitivi/ui/sourcefactories.py:528
+#: ../pitivi/ui/sourcefactories.py:487
+#: ../pitivi/ui/sourcefactories.py:528
 msgid "Description"
 msgstr "Beskrivning"
 
@@ -56,24 +57,20 @@ msgid "Properties for <element>"
 msgstr "Egenskaper för <element>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:1
-#, fuzzy
 msgid "<b>Audio :</b>"
-msgstr "<b>Ljudutmatning</b>"
+msgstr "<b>Ljud :</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:2
-#, fuzzy
 msgid "<b>Nothing yet</b>"
-msgstr "<b>Nätverk</b>"
+msgstr "<b>Ingenting ännu</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:3
-#, fuzzy
 msgid "<b>Settings</b>"
-msgstr "<b>Nätverk</b>"
+msgstr "<b>Inställningar</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:4
-#, fuzzy
 msgid "<b>Video :</b>"
-msgstr "<b>Video</b>"
+msgstr "<b>Video :</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:5
 msgid "Choose File"
@@ -81,7 +78,7 @@ msgstr "Välj fil"
 
 #: ../pitivi/ui/encodingdialog.glade.h:6
 msgid "Modify"
-msgstr ""
+msgstr "Ändra"
 
 #: ../pitivi/ui/encodingdialog.glade.h:7
 msgid "Output File:"
@@ -244,11 +241,13 @@ msgstr "Skapa ett nytt projekt"
 msgid "Open an existing project"
 msgstr "Öppna ett existerande projekt"
 
-#: ../pitivi/ui/mainwindow.py:75 ../pitivi/ui/mainwindow.py:76
+#: ../pitivi/ui/mainwindow.py:75
+#: ../pitivi/ui/mainwindow.py:76
 msgid "Save the current project"
 msgstr "Spara aktuellt projekt"
 
-#: ../pitivi/ui/mainwindow.py:77 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:77
+#: ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
 msgstr "Projektinställningar"
 
@@ -265,14 +264,12 @@ msgid "Import sources to use"
 msgstr "Importera källor att använda"
 
 #: ../pitivi/ui/mainwindow.py:79
-#, fuzzy
 msgid "_Import Folder of sources..."
-msgstr "_Importera källor..."
+msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:79
-#, fuzzy
 msgid "Import folder of sources to use"
-msgstr "Importera källor att använda"
+msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:81
 msgid "View the main window on the whole screen"
@@ -284,17 +281,16 @@ msgid "Information about %s"
 msgstr "Information om %s"
 
 #: ../pitivi/ui/mainwindow.py:83
-#, fuzzy
 msgid "_File"
-msgstr "Fil"
+msgstr "_Arkiv"
 
 #: ../pitivi/ui/mainwindow.py:84
 msgid "_View"
-msgstr ""
+msgstr "_Visa"
 
 #: ../pitivi/ui/mainwindow.py:85
 msgid "_Help"
-msgstr ""
+msgstr "_Hjälp"
 
 #: ../pitivi/ui/mainwindow.py:89
 msgid "Advanced Vie_w"
@@ -306,9 +302,8 @@ msgstr "Växla till avancerad vy"
 
 # Bra ord på svenska sökes
 #: ../pitivi/ui/mainwindow.py:233
-#, fuzzy
 msgid "Contributors:"
-msgstr "Container:"
+msgstr "Bidragsgivare:"
 
 #: ../pitivi/ui/mainwindow.py:237
 msgid ""
@@ -339,9 +334,8 @@ msgid "Add Sources..."
 msgstr "Lägg till källor..."
 
 #: ../pitivi/ui/sourcefactories.py:105
-#, fuzzy
 msgid "Add Folder of Sources..."
-msgstr "Lägg till källor..."
+msgstr ""
 
 #: ../pitivi/ui/sourcefactories.py:106
 msgid "Remove Sources..."
@@ -365,18 +359,18 @@ msgstr "Speltid"
 
 #: ../pitivi/ui/sourcefactories.py:164
 msgid "Add Folder"
-msgstr ""
+msgstr "Lägg till mapp"
 
 #: ../pitivi/ui/sourcefactories.py:222
-#, fuzzy
 msgid "Import a folder"
-msgstr "Importera en fil"
+msgstr "Importera en mapp"
 
 #: ../pitivi/ui/sourcefactories.py:225
 msgid "Import a file"
 msgstr "Importera en fil"
 
-#: ../pitivi/ui/sourcefactories.py:481 ../pitivi/ui/sourcefactories.py:522
+#: ../pitivi/ui/sourcefactories.py:481
+#: ../pitivi/ui/sourcefactories.py:522
 msgid "Name"
 msgstr "Namn"
 
@@ -391,10 +385,6 @@ msgstr "Anledning"
 #: ../pitivi/ui/sourcefactories.py:591
 msgid "Unknown reason"
 msgstr "Okänd anledning"
-
-#: ../pitivi/ui/timelineobjects.py:355
-msgid "Remove"
-msgstr "Ta bort"
 
 #: ../pitivi/ui/viewer.py:537
 msgid "Choose file to render to"
@@ -432,33 +422,23 @@ msgid "Could not find the GNonLin plugins!"
 msgstr "Kunde inte hitta GNonLin-insticksmodulerna!"
 
 #: ../pitivi/check.py:81
-msgid ""
-"Make sure the plugins were installed and are available in the GStreamer "
-"plugins path."
-msgstr ""
-"Kontrollera att insticksmodulerna blev installerade och finns tillgängliga i "
-"sökvägen för GStreamer-insticksmodulerna."
+msgid "Make sure the plugins were installed and are available in the GStreamer plugins path."
+msgstr "Kontrollera att insticksmodulerna blev installerade och finns tillgängliga i sökvägen för GStreamer-insticksmodulerna."
 
 #: ../pitivi/check.py:83
 msgid "Could not find the autodetect plugins!"
 msgstr "Kunde inte hitta insticksmodulerna för automatisk identifiering!"
 
 #: ../pitivi/check.py:84
-msgid ""
-"Make sure you have installed gst-plugins-good and is available in the "
-"GStreamer plugin path."
-msgstr ""
-"Kontrollera att du har installerat gst-plugins-good och finns tillgänglig i "
-"sökvägen för GStreamer-insticksmodulerna."
+msgid "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path."
+msgstr "Kontrollera att du har installerat gst-plugins-good och finns tillgänglig i sökvägen för GStreamer-insticksmodulerna."
 
 #: ../pitivi/check.py:86
 msgid "PyGTK doesn't have Cairo support!"
 msgstr "PyGTK har inte stöd för Cairo!"
 
 #: ../pitivi/check.py:87
-msgid ""
-"Please use a version of the Python bindings for GTK+ built with Cairo "
-"support."
+msgid "Please use a version of the Python bindings for GTK+ built with Cairo support."
 msgstr "Använd en version av Python-bindningar för GTK+ byggda med Cairo-stöd."
 
 #: ../pitivi/check.py:89
@@ -466,24 +446,16 @@ msgid "Could not initiate the video output plugins"
 msgstr "Kunde inte initiera insticksmoduler för videoutmatning"
 
 #: ../pitivi/check.py:90
-msgid ""
-"Make sure you have at least one valid video output sink available "
-"(xvimagesink or ximagesink)"
-msgstr ""
-"Kontrollera att du har åtminstone en giltig videoutmatningssink tillgängligt "
-"(xvimagesink eller ximagesink)"
+msgid "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)"
+msgstr "Kontrollera att du har åtminstone en giltig videoutmatningssink tillgängligt (xvimagesink eller ximagesink)"
 
 #: ../pitivi/check.py:92
 msgid "Could not initiate the audio output plugins"
 msgstr "Kunde inte initiera insticksmoduler för ljudutmatning"
 
 #: ../pitivi/check.py:93
-msgid ""
-"Make sure you have at least one valid audio output sink available (alsasink "
-"or osssink)"
-msgstr ""
-"Kontrollera att du har åtminstone en giltig ljudutmatningssink tillgängligt "
-"(alsasink eller osssink)"
+msgid "Make sure you have at least one valid audio output sink available (alsasink or osssink)"
+msgstr "Kontrollera att du har åtminstone en giltig ljudutmatningssink tillgängligt (alsasink eller osssink)"
 
 #: ../pitivi/objectfactory.py:149
 #, python-format
@@ -515,7 +487,8 @@ msgstr "<b>Video:</b> %d × %d <i>bildpunkter</i> med %.2f<i>bilder/s</i>"
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>Bild:</b> %d × %d <i>bildpunkter</i>"
 
-#: ../pitivi/objectfactory.py:413 ../pitivi/objectfactory.py:457
+#: ../pitivi/objectfactory.py:413
+#: ../pitivi/objectfactory.py:457
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr " <i>(%s)</i>"
@@ -545,7 +518,8 @@ msgstr "<b>Text:</b> %s"
 msgid "There is already a %s instance, inform developers"
 msgstr "Det finns redan en instans av %s, informera utvecklarna"
 
-#: ../pitivi/pitivi.py:82 ../pitivi/pitivi.py:121
+#: ../pitivi/pitivi.py:82
+#: ../pitivi/pitivi.py:121
 msgid "New Project"
 msgstr "Nytt projekt"
 
@@ -554,12 +528,8 @@ msgid "Video output is busy"
 msgstr "Videoutmatning är upptagen"
 
 #: ../pitivi/playground.py:375
-msgid ""
-"Please check that your video output device isn't already used by another "
-"application"
-msgstr ""
-"Kontrollera att din videoutmatningsenhet inte redan används av ett annat "
-"program."
+msgid "Please check that your video output device isn't already used by another application"
+msgstr "Kontrollera att din videoutmatningsenhet inte redan används av ett annat program."
 
 #: ../pitivi/playground.py:377
 msgid "Video output problem"
@@ -574,12 +544,8 @@ msgid "Audio output device is busy"
 msgstr "Ljudutmatningsenheten är upptagen"
 
 #: ../pitivi/playground.py:382
-msgid ""
-"Please check that your audio output device isn't already used by another "
-"application."
-msgstr ""
-"Kontrollera att din ljudutmatningsenhet inte redan används av ett annat "
-"program."
+msgid "Please check that your audio output device isn't already used by another application."
+msgstr "Kontrollera att din ljudutmatningsenhet inte redan används av ett annat program."
 
 #: ../pitivi/playground.py:384
 msgid "Audio output problem"
@@ -619,156 +585,108 @@ msgstr ""
 "\n"
 "Muxer :"
 
+#~ msgid "Remove"
+#~ msgstr "Ta bort"
 #~ msgid "window1"
 #~ msgstr "fönster1"
-
 #~ msgid "Render Project"
 #~ msgstr "Rendera projekt"
-
 #~ msgid "Settings:"
 #~ msgstr "Inställningar:"
-
 #~ msgid "Please choose an output file"
 #~ msgstr "Välj en utdatafil"
-
 #~ msgid "Author:"
 #~ msgstr "Författare:"
-
 #~ msgid "Plugin Name"
 #~ msgstr "Namn på insticksmodul"
-
 #~ msgid "Export to"
 #~ msgstr "Exportera till"
-
 #~ msgid "Move Down"
 #~ msgstr "Flytta ned"
-
 #~ msgid "Move Up"
 #~ msgstr "Flytta upp"
-
 #~ msgid "Save..."
 #~ msgstr "Spara..."
-
 #~ msgid "_Copy Location"
 #~ msgstr "_Kopiera plats"
-
 #~ msgid "Next chapter or movie"
 #~ msgstr "Nästa kapitel eller film"
-
 #~ msgid "Play / Pa_use"
 #~ msgstr "Spela upp / Gör pa_us"
-
 #~ msgid "Play or pause the movie"
 #~ msgstr "Spela upp eller gör paus i filmen"
-
 #~ msgid "Previous chapter or movie"
 #~ msgstr "Föregående kapitel eller film"
-
 #~ msgid "Show _Controls"
 #~ msgstr "Visa _kontroller"
-
 #~ msgid "Show controls"
 #~ msgstr "Visa kontroller"
-
 #~ msgid "Skip _Backwards"
 #~ msgstr "Hoppa _bakåt"
-
 #~ msgid "Skip _Forward"
 #~ msgstr "Hoppa _framåt"
-
 #~ msgid "Skip backwards"
 #~ msgstr "Hoppa bakåt"
-
 #~ msgid "Skip forward"
 #~ msgstr "Hoppa framåt"
-
 #~ msgid "Volume Down"
 #~ msgstr "Volym ned"
-
 #~ msgid "Volume Up"
 #~ msgstr "Volym upp"
-
 #~ msgid "Volume up"
 #~ msgstr "Volym upp"
-
 #~ msgid "_Next Chapter/Movie"
 #~ msgstr "_Nästa kapitel/film"
-
 #~ msgid "_Previous Chapter/Movie"
 #~ msgstr "_Föregående kapitel/film"
-
 #~ msgid "    "
 #~ msgstr "    "
-
 #~ msgid "0 frames per second"
 #~ msgstr "0 ramar per sekund"
-
 #~ msgid "0 kbps"
 #~ msgstr "0 kb/s"
-
 #~ msgid "0 seconds"
 #~ msgstr "0 sekunder"
-
 #~ msgid "0 x 0"
 #~ msgstr "0 × 0"
-
 #~ msgid "<b>General</b>"
 #~ msgstr "<b>Allmänt</b>"
-
 #~ msgid "Album:"
 #~ msgstr "Album:"
-
 #~ msgid "Artist:"
 #~ msgstr "Artist:"
-
 #~ msgid "Bitrate:"
 #~ msgstr "Bithastighet:"
-
 #~ msgid "Codec:"
 #~ msgstr "Kodek:"
-
 #~ msgid "Dimensions:"
 #~ msgstr "Dimensioner:"
-
 #~ msgid "N/A"
 #~ msgstr "-"
-
 #~ msgid "Year:"
 #~ msgstr "År:"
-
 #~ msgid "*"
 #~ msgstr "*"
-
 #~ msgid "<b>Preview</b>"
 #~ msgstr "<b>Förhandsgranskning</b>"
-
 #~ msgid "Save Screenshot"
 #~ msgstr "Spara skärmdump"
-
 #~ msgid "Save screenshot"
 #~ msgstr "Spara skärmdump"
-
 #~ msgid "Save screenshot to _desktop"
 #~ msgstr "Spara skärmdump på _skrivbordet"
-
 #~ msgid "Save screenshot to _file:"
 #~ msgstr "Spara skärmdump i _filen:"
-
 #~ msgid "Skip to"
 #~ msgstr "Hoppa till"
-
 #~ msgid "_Skip to:"
 #~ msgstr "_Hoppa till:"
-
 #~ msgid "seconds"
 #~ msgstr "sekunder"
-
 #~ msgid "Movie Player"
 #~ msgstr "Filmuppspelare"
-
 #~ msgid "Play movies and songs"
 #~ msgstr "Spela upp filmer och låtar"
-
 #~ msgid ""
 #~ "14.4 Kbps Modem\n"
 #~ "19.2 Kbps Modem\n"
@@ -795,15 +713,12 @@ msgstr ""
 #~ "512 kbit/s DSL/kabelmodem\n"
 #~ "1,5 Mbit/s T1/Intranet/Lokalt nätverk\n"
 #~ "Intranet/Lokalt nätverk"
-
 #~ msgid "16:9 (Widescreen)"
 #~ msgstr "16:9 (widescreen)"
-
 #~ msgid "2.11:1 (DVB)"
 #~ msgstr "2,11:1 (DVB)"
-
 #~ msgid "4:3 (TV)"
 #~ msgstr "4:3 (TV)"
-
 #~ msgid "<b>Color balance</b>"
 #~ msgstr "<b>Färgbalans</b>"
+
