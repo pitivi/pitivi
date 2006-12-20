@@ -99,7 +99,6 @@ class SourceListWidget(gtk.VBox):
         # Scrolled Window
         self.scrollwin = gtk.ScrolledWindow()
         self.scrollwin.set_policy(gtk.POLICY_AUTOMATIC,gtk.POLICY_AUTOMATIC)
-        self.pack_start(self.scrollwin)
 
         # Popup Menu
         self.popup = gtk.Menu()
@@ -183,6 +182,26 @@ class SourceListWidget(gtk.VBox):
         # Start up with tree view
         self.scrollwin.add(self.treeview)
 
+        # Explanatory message label
+        txtbuffer = gtk.TextBuffer()
+        txtbuffer.set_text(_("Import your clips by dragging them here or by using buttons below."))
+        txttag = gtk.TextTag()
+        txttag.props.size = self.style.font_desc.get_size() * 1.5
+        txtbuffer.tag_table.add(txttag)
+        txtbuffer.apply_tag(txttag, txtbuffer.get_start_iter(),
+                            txtbuffer.get_end_iter())
+        self.messagewindow = gtk.TextView(txtbuffer)
+        self.messagewindow.set_justification(gtk.JUSTIFY_CENTER)
+        self.messagewindow.set_wrap_mode(gtk.WRAP_WORD)
+        self.messagewindow.set_pixels_above_lines(50)
+        self.messagewindow.set_cursor_visible(False)
+        self.messagewindow.set_editable(False)
+        self.messagewindow.set_left_margin(10)
+        self.messagewindow.set_right_margin(10)
+        self.pack_start(self.messagewindow)
+        self.reorder_child(self.messagewindow, 0)
+        self.showingTreeView = False
+
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
         self.project_signals = SignalGroup()
@@ -223,6 +242,32 @@ class SourceListWidget(gtk.VBox):
         self.project_signals.connect(project.sources, "file_added", None, self._fileAddedCb)
         self.project_signals.connect(project.sources, "file_removed", None, self._fileRemovedCb)
         self.project_signals.connect(project.sources, "not_media_file", None, self._notMediaFileCb)
+
+    def _displayTreeView(self, displayed=True):
+        """ Display the tree view in the scrolled window.
+        If displayed is False, then the default explanation message will be
+        shown.
+        """
+        if displayed:
+            if self.showingTreeView:
+                return
+            gst.debug("displaying tree view")
+            self.remove(self.messagewindow)
+            self.messagewindow.hide()
+            self.pack_start(self.scrollwin)
+            self.reorder_child(self.scrollwin, 0)
+            self.scrollwin.show_all()
+            self.showingTreeView = True
+        else:
+            if not self.showingTreeView:
+                return
+            gst.debug("hiding tree view")
+            self.remove(self.scrollwin)
+            self.scrollwin.hide()
+            self.pack_start(self.messagewindow)
+            self.reorder_child(self.messagewindow, 0)
+            self.messagewindow.show()
+            self.showingTreeView = False
 
     def showImportSourcesDialog(self, select_folders=False):
         if self._importDialog:
@@ -288,6 +333,7 @@ class SourceListWidget(gtk.VBox):
                                 factory,
                                 factory.name,
                                 "<b>%s</b>" % beautify_length(factory.length)])
+        self._displayTreeView()
         self.rbut.set_sensitive(True)
 
     def _fileRemovedCb(self, unused_sourcelist, uri):
@@ -300,6 +346,7 @@ class SourceListWidget(gtk.VBox):
                 break
             piter = self.storemodel.iter_next(piter)
         if not len(self.storemodel):
+            self._displayTreeView(False)
             self.rbut.set_sensitive(False)
 
     def _notMediaFileCb(self, unused_sourcelist, uri, reason):
