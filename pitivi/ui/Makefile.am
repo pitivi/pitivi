@@ -6,7 +6,8 @@ ui_PYTHON =			\
 	complexsource.py	\
 	complextimeline.py	\
 	complexinterface.py	\
-	exportsettingswidget.py \
+	exportsettingswidget.py	\
+	filelisterrordialog.py	\
 	glade.py		\
 	gstwidget.py		\
 	mainwindow.py		\
@@ -23,10 +24,10 @@ ui_PYTHON =			\
 
 ui_DATA =				\
 	actions.xml			\
-	discoverererrordialog.glade	\
 	elementsettingsdialog.glade	\
 	encodingdialog.glade		\
 	exportsettingswidget.glade	\
+	filelisterrordialog.glade	\
 	projectsettings.glade
 
 clean-local:

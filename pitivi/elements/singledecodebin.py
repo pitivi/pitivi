@@ -119,10 +119,6 @@ class SingleDecodeBin(gst.Bin):
         self.debug("returning %r" % res)
         return res
 
-    def _finishDiscovery(self, caps, goodid):
-        raise NotImplementedError
-
-
     def _closeLink(self, element):
         """
         Inspects element and tries to connect something on the srcpads.

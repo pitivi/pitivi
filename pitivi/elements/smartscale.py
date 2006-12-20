@@ -79,14 +79,14 @@ class SmartVideoScale(gst.Bin):
         """ set the outgoing caps, because gst.BaseTransform is full of CRACK ! """
         self.widthout, self.heightout, self.parout, self.darout = self._getValuesFromCaps(caps, True)
 
-    def _sinkSetCaps(self, pad, caps):
+    def _sinkSetCaps(self, unused_pad, caps):
         self.log("caps:%s" % caps.to_string())
         self.widthin, self.heightin, self.parin, self.darin = self._getValuesFromCaps(caps)
         self._computeAndSetValues()
         res = self.videoscale.get_pad("sink").set_caps(caps)
         return res
 
-    def _srcSetCaps(self, pad, caps):
+    def _srcSetCaps(self, unused_pad, caps):
         self.log("caps:%s" % caps.to_string())
         self.widthout, self.heightout, self.parout, self.darout = self._getValuesFromCaps(caps)
         res = self.videobox.get_pad("src").set_caps(caps)

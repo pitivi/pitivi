@@ -36,6 +36,11 @@ Hacking on PiTiVi
      def _padAddedCb(self, unused_element, pad):
         ...
 
+- Imported modules should be done in this order:
+  * system modules
+  * top-level pitivi modules (ex : pitivi.project)
+  * modules in the same directory
+
 * Debugging
 -----------
 

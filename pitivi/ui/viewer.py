@@ -34,6 +34,8 @@ from pitivi.bin import SmartTimelineBin
 from pitivi.objectfactory import FileSourceFactory
 import pitivi.dnd as dnd
 from pitivi.settings import ExportSettings
+from pitivi.signalgroup import SignalGroup
+
 from exportsettingswidget import ExportSettingsDialog
 
 from gettext import gettext as _
@@ -62,10 +64,10 @@ class PitiviViewer(gtk.VBox):
         self.currentState = gst.STATE_PAUSED
         self._createUi()
 
-        # connect to the sourcelist for temp factories
-        # TODO remove/replace the signal when closing/opening projects
-        instance.PiTiVi.current.sources.connect("tmp_is_ready", self._tmpIsReadyCb)
-
+        # Connect to project.  We must remove and reset the callbacks when
+        # changing project.
+        self.project_signals = SignalGroup()
+        self._connectToProject(instance.PiTiVi.current)
         instance.PiTiVi.connect("new-project", self._newProjectCb)
         instance.PiTiVi.playground.connect("current-state", self._currentStateCb)
         instance.PiTiVi.playground.connect("position", self._playgroundPositionCb)
@@ -73,9 +75,19 @@ class PitiviViewer(gtk.VBox):
         # callback to know when to set the XID on our viewer widget
         instance.PiTiVi.playground.connect("element-message", self._playgroundElementMessageCb)
 
-        instance.PiTiVi.current.connect("settings-changed",
-                                        self._settingsChangedCb)
         self._addTimelineToPlayground()
+
+    def _connectToProject(self, project):
+        """Connect signal handlers to a project.
+ 
+        This first disconnects any handlers connected to an old project.
+        If project is None, this just disconnects any connected handlers.
+ 
+        """
+        self.project_signals.connect(project.sources, "tmp_is_ready",
+                                     None, self._tmpIsReadyCb)
+        self.project_signals.connect(project, "settings-changed",
+                                     None, self._settingsChangedCb)
 
     def _createUi(self):
         """ Creates the Viewer GUI """
@@ -345,10 +357,10 @@ class PitiviViewer(gtk.VBox):
         gst.info("%s" % factory)
         instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
 
-    def _newProjectCb(self, unused_pitivi, unused_project):
+    def _newProjectCb(self, unused_pitivi, project):
         """ the current project has changed """
-        instance.PiTiVi.current.sources.connect("tmp_is_ready", self._tmpIsReadyCb)
-        instance.PiTiVi.current.connect("settings-changed", self._settingsChangedCb)
+        assert(instance.PiTiVi.current == project)
+        self._connectToProject(project)
         
     def _addTimelineToPlayground(self):
         instance.PiTiVi.playground.addPipeline(instance.PiTiVi.current.getBin())
@@ -414,14 +426,14 @@ class PitiviViewer(gtk.VBox):
             self.slider.set_sensitive(True)
             self.playpause_button.set_sensitive(True)
 
-    def _currentStateCb(self, playground, state):
+    def _currentStateCb(self, unused_playground, state):
         gst.info("current state changed : %s" % state)
         if state == int(gst.STATE_PLAYING):
             self.playpause_button.setPause()
         elif state == int(gst.STATE_PAUSED):
             self.playpause_button.setPlay()
 
-    def _playgroundElementMessageCb(self, playground, message):
+    def _playgroundElementMessageCb(self, unused_playground, message):
         name = message.structure.get_name()
         gst.log('message:%s / %s' % (message, name))
         if name == 'prepare-xwindow-id':
@@ -548,7 +560,7 @@ class EncodingDialog(GladeWindow):
             button.set_label(os.path.basename(self.outfile))
         dialog.destroy()
 
-    def _positionCb(self, playground, smartbin, position):
+    def _positionCb(self, unused_playground, unused_smartbin, position):
         timediff = time.time() - self.timestarted
         self.progressbar.set_fraction(float(position) / float(self.bin.length))
         if timediff > 5.0:

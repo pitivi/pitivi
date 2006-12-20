@@ -874,7 +874,7 @@ class TimelineComposition(TimelineSource):
         self.gnlobject.add(source)
         self.defaultSource = source
 
-    def getDefaultSource(self, source):
+    def getDefaultSource(self):
         """
         Returns the default source.
         """

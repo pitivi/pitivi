@@ -36,6 +36,8 @@ class SourceList(gobject.GObject):
                 A file has been completely discovered and is valid.
     _ file-removed (string : uri) :
                 A file was removed from the SourceList
+    _ not-media-file (string : uri, string : reason)
+                The given uri is not a media file
     _ tmp-is-ready (FileSourceFactory) :
                 The temporary uri given to the SourceList is ready to use.
     """

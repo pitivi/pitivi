@@ -33,7 +33,8 @@ class SmartBin(gst.Pipeline):
     It also has length information
     """
 
-    def __init__(self, name, displayname=""):
+    def __init__(self, name, displayname="", has_video=False, has_audio=False,
+                 length=0, width=0, height=0):
         """
         @type name: string
         @param name: The name of the SmartBin (for internal use)
@@ -42,14 +43,17 @@ class SmartBin(gst.Pipeline):
         """
         gst.log('name : %s, displayname : %s' % (name, displayname))
         gobject.GObject.__init__(self)
-        length = 0
-        has_video = False
-        has_audio = False
-        width = 0
-        height = 0
-
+        self.length = length
+        self.has_video = has_video
+        self.has_audio = has_audio
+        self.width = width
+        self.height = height
         self.name = name
         self.displayname = displayname
+        
+        self.vtee = None
+        self.atee = None
+        
         self.set_name(name)
         # Until  basetransform issues are fixed, we use an identity instead
         # of a tee
@@ -356,16 +360,20 @@ class SmartFileBin(SmartBin):
     def __init__(self, factory):
         gst.log("new SmartFileBin for factory:%s, audio:%s, video:%s" % (factory, factory.is_audio, factory.is_video))
         self.factory = factory
-        self.has_video = factory.is_video
-        self.has_audio = factory.is_audio
-        self.length = factory.length
         if self.factory.video_info:
             struct = self.factory.video_info[0]
-            self.height = struct["height"]
-            self.width = struct["width"]
+            height = struct["height"]
+            width = struct["width"]
+        else:
+            height = 0
+            width = 0
         self.source = self.factory.makeBin()
         SmartBin.__init__(self, "smartfilebin-" + factory.name,
-                          displayname=factory.displayname)
+                          displayname=factory.displayname,
+                          has_video = factory.is_video,
+                          has_audio = factory.is_audio,
+                          width = width, height = height,
+                          length = factory.length)
 
     def _addSource(self):
         self.add(self.source)
@@ -402,20 +410,19 @@ class SmartTimelineBin(SmartBin):
         gst.log("new SmartTimelineBin for project %s" % project)
         self.project = project
         
-        # TODO : change this to use the project settings
-        self.has_video = True
-        self.has_audio = True
-
         settings = project.getSettings()
-        self.width = settings.videowidth
-        self.height = settings.videoheight
         self.log("source is %s" % project.timeline.timeline)
         self.source = project.timeline.timeline
         self.project.connect("settings-changed", self._settingsChangedCb)
         project.timeline.videocomp.connect("start-duration-changed", self._startDurationChangedCb)
-        self.length = project.timeline.videocomp.duration
+
+        # TODO : change has_audio/has_video to project settings value
         SmartBin.__init__(self, "project-" + project.name,
-                          displayname = "Project: " + project.name)
+                          displayname = "Project: " + project.name,
+                          has_video=True, has_audio=True,
+                          width=settings.videowidth,
+                          height=settings.videoheight,
+                          length=project.timeline.videocomp.duration)
 
     def _addSource(self):
         self.add(self.source)
@@ -460,11 +467,8 @@ class SmartDefaultBin(SmartBin):
         self.silence = gst.element_factory_make("audiotestsrc", "silence")
         self.videotestsrc.set_property("pattern", 2)
         self.silence.set_property("wave", 4)
-        self.has_audio = True
-        self.has_video = True
-        self.width = 720
-        self.height = 576
-        SmartBin.__init__(self, "smartdefaultbin")
+        SmartBin.__init__(self, "smartdefaultbin", has_video=True, has_audio=True,
+                          width=720, height=576)
 
     def _addSource(self):
         self.add(self.videotestsrc, self.silence)

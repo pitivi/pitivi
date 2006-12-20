@@ -1,3 +1,41 @@
+2006-12-20  Edward Hervey  <edward@fluendo.com>
+
+	* docs/HACKING:
+	Added note about order in which modules should be imported.
+	* pitivi/Makefile.am:
+	* pitivi/signalgroup.py:
+	Added signalgroup.py.
+	Patch from Richard Boulton <richard@tartarus.org>
+	* pitivi/bin.py:
+	Make length, has_video, has_audio, width and height construction
+	properties of SmartBin. Modify subclasses accordingly.
+	* pitivi/elements/singledecodebin.py:
+	Remove unused code
+	* pitivi/elements/smartscale.py:
+	Rename unused method arguments
+	* pitivi/objectfactory.py:
+	Code fix.
+	* pitivi/sourcelist.py:
+	Added 'not-media-file' signal to SourceList.
+	* pitivi/timeline.py:
+	Small fix.
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/discoverererrordialog.glade:
+	* pitivi/ui/filelisterrordialog.glade:
+	* pitivi/ui/filelisterrordialog.py:
+	Rename discoverererrordialog to filelisterrordialog.
+	Create separate python file for FileListErrorDialog.
+	Patch from Richard Boulton <richard@tartarus.org>
+	* pitivi/ui/sourcefactories.py:
+	Use SignalGroup for signals from the project.
+	Use FileListErrorDialog instead of DiscovererErrorDialog.
+	Move DiscovererErrorDialog code to separate python file.
+	Remove dead code.
+	Patch from Richard Boulton <richard@tartarus.org>
+	* pitivi/ui/viewer.py:
+	Use SignalGroup for signals from the project.
+	Rename unused method arguments.
+
 2006-12-06  Edward Hervey  <edward@fluendo.com>
 
 	* po/ar.po:

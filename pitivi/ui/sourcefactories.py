@@ -36,7 +36,9 @@ from urllib import unquote
 import pitivi.instance as instance
 import pitivi.dnd as dnd
 from pitivi.configure import get_pixmap_dir
-from glade import GladeWindow
+from pitivi.signalgroup import SignalGroup
+
+from filelisterrordialog import FileListErrorDialog
 
 from gettext import gettext as _
 
@@ -181,12 +183,10 @@ class SourceListWidget(gtk.VBox):
         # Start up with tree view
         self.scrollwin.add(self.treeview)
 
-        # callbacks from discoverer
-        # TODO : we must remove and reset the callbacks when changing project
-        instance.PiTiVi.current.sources.connect("file_added", self._fileAddedCb)
-        instance.PiTiVi.current.sources.connect("file_removed", self._fileRemovedCb)
-        instance.PiTiVi.current.sources.connect("not_media_file", self._notMediaFileCb)
-
+        # Connect to project.  We must remove and reset the callbacks when
+        # changing project.
+        self.project_signals = SignalGroup()
+        self._connectToProject(instance.PiTiVi.current)
         instance.PiTiVi.connect("new-project", self._newProjectCb)
 
         # default pixbufs
@@ -212,6 +212,17 @@ class SourceListWidget(gtk.VBox):
 
         # Error dialog box
         self.errorDialogBox = None
+
+    def _connectToProject(self, project):
+        """Connect signal handlers to a project.
+
+        This first disconnects any handlers connected to an old project.
+        If project is None, this just disconnects any connected handlers.
+
+        """
+        self.project_signals.connect(project.sources, "file_added", None, self._fileAddedCb)
+        self.project_signals.connect(project.sources, "file_removed", None, self._fileRemovedCb)
+        self.project_signals.connect(project.sources, "not_media_file", None, self._notMediaFileCb)
 
     def showImportSourcesDialog(self, select_folders=False):
         if self._importDialog:
@@ -249,8 +260,8 @@ class SourceListWidget(gtk.VBox):
             if folder.startswith("file://"):
                 folder = folder[len("file://"):]
             for path, dirs, files in os.walk(folder):
-                for file in files:
-                    uriList.append("file://%s" % os.path.join(path, file))
+                for afile in files:
+                    uriList.append("file://%s" % os.path.join(path, afile))
         
         instance.PiTiVi.current.sources.addUris(uriList)
 
@@ -272,13 +283,6 @@ class SourceListWidget(gtk.VBox):
                 vi = factory.video_info_stream
                 desiredheight = int(64 / float(vi.dar))
             thumbnail = pixbuf.scale_simple(64, desiredheight, gtk.gdk.INTERP_BILINEAR)
-        if factory.is_video:
-            if factory.is_audio:
-                desc = "Audio/Video"
-            else:
-                desc = "Video"
-        else:
-            desc = "Audio"
         self.storemodel.append([thumbnail,
                                 factory.getPrettyInfo(),
                                 factory,
@@ -303,7 +307,11 @@ class SourceListWidget(gtk.VBox):
         # popup a dialog box and fill up with reasons
         if not self.errorDialogBox:
             # construct the dialog but leave it hidden
-            self.errorDialogBox = DiscovererErrorDialog()
+            self.errorDialogBox = FileListErrorDialog(
+                _("Error while analyzing files"),
+                _("The following files weren't discovered properly.")
+            )
+
             self.errorDialogBox.connect('close', self._errorDialogBoxCloseCb)
             self.errorDialogBox.connect('response', self._errorDialogBoxResponseCb)
             self.errorDialogBox.hide()
@@ -397,29 +405,22 @@ class SourceListWidget(gtk.VBox):
         # synchronize the storemodel with the new project's sourcelist
         for uri, factory in project.sources:
             if factory:
-                length = beautify_length(factory.length)
                 if factory.thumbnail:
                     thumbnail = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
                     desiredheight = 64 * thumbnail.get_height() / thumbnail.get_width()
                     thumbnail = thumbnail.scale_simple(64, desiredheight, gtk.gdk.INTERP_BILINEAR)
                 name = os.path.basename(unquote(factory.name))
                 if factory.is_video:
-                    if factory.is_audio:
-                        desc = "Audio/Video"
-                    else:
-                        desc = "Video"
                     if not factory.thumbnail:
                         thumbnail = self.videofilepixbuf
                 else:
-                    desc = "Audio"
                     if not factory.thumbnail:
                         thumbnail = self.audiofilepixbuf
                 # FIXME : update with new table structure (icon, infotext, objectfactory, uri
                 self.storemodel.append([thumbnail, name, factory, factory.name,
                                 "<b>%s</b>" % beautify_length(factory.length)])
-        
-        instance.PiTiVi.current.sources.connect("file_added", self._fileAddedCb)
-        instance.PiTiVi.current.sources.connect("file_removed", self._fileRemovedCb)
+
+        self._connectToProject(project)
 
 
     ## Drag and Drop
@@ -551,59 +552,3 @@ class TransitionListWidget(gtk.VBox):
         self.iconview = gtk.IconView()
         self.treeview = gtk.TreeView()
         self.pack_start(self.iconview)
-
-
-class DiscovererErrorDialog(GladeWindow):
-    """ Dialog box for showing errors from discovering files """
-    glade_file = "discoverererrordialog.glade"
-    __gsignals__ = {
-        'close': (gobject.SIGNAL_RUN_LAST,
-                  gobject.TYPE_NONE,
-                  ( )),
-        'response': (gobject.SIGNAL_RUN_LAST,
-                     gobject.TYPE_NONE,
-                     (gobject.TYPE_PYOBJECT, ))
-        }
-
-    def __init__(self):
-        GladeWindow.__init__(self)
-        self.window.set_modal(False)
-        self.treeview = self.widgets["treeview"]
-        self.window.set_geometry_hints(min_width=400, min_height=300)
-        self._setUpTreeView()
-
-    def _setUpTreeView(self):
-        self.storemodel = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING)
-        self.treeview.set_model(self.storemodel)
-
-        txtcell = gtk.CellRendererText()
-        txtcell.set_property("ellipsize", pango.ELLIPSIZE_START)
-        uricol = gtk.TreeViewColumn(_("File"), txtcell, text=0)
-        uricol.set_expand(True)
-        self.treeview.append_column(uricol)
-
-        txtcell2 = gtk.CellRendererText()
-        txtcell2.set_property("ellipsize", pango.ELLIPSIZE_END)
-        reasoncol = gtk.TreeViewColumn(_("Reason"), txtcell2, text=1)
-        reasoncol.set_expand(True)
-        self.treeview.append_column(reasoncol)
-
-    def addFailedFile(self, uri, reason=_("Unknown reason")):
-        """Add the given uri to the list of failed files. You can optionnaly
-        give a string identifying the reason why the file failed to be
-        discovered
-        """
-        gst.debug("Uri:%s, reason:%s" % (uri, reason))
-        self.storemodel.append([str(uri), str(reason)])
-        
-    def isVisible(self):
-        """ returns True if this dialog is currently shown """
-        return self.window.get_property("visible")
-
-    ## Callbacks from glade
-
-    def _closeCb(self, unused_dialog):
-        self.emit('close')
-
-    def _responseCb(self, unused_dialog, response):
-        self.emit('response', response)

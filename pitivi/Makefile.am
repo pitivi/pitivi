@@ -22,7 +22,8 @@ pitivi_PYTHON = \
 	sourcelist.py 	\
 	timeline.py 	\
 	utils.py 	\
-	pitivigstutils.py
+	pitivigstutils.py \
+	signalgroup.py
 
 BUILT_SOURCES=configure.py
 

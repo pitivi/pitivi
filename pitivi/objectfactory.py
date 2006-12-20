@@ -208,7 +208,8 @@ class FileSourceFactory(ObjectFactory):
     def do_set_property(self, property, value):
         if property.name == "length":
             if self.length and self.length != value:
-                gst.warning("%s : Trying to set a new length (%s) different from previous one (%s)" % (gst.TIME_ARGS(self.length),
+                gst.warning("%s : Trying to set a new length (%s) different from previous one (%s)" % (self.name,
+                                                                                                       gst.TIME_ARGS(self.length),
                                                                                                        gst.TIME_ARGS(value)))
             self.length = value
         elif property.name == "thumbnail":
@@ -473,9 +474,10 @@ def get_stream_for_caps(caps):
     val = caps.to_string()
     if val.startswith("video/"):
         return VideoStream(caps)
-    if val.startswith("audio/"):
+    elif val.startswith("audio/"):
         return AudioStream(caps)
-    if val.startswith("text/"):
+    elif val.startswith("text/"):
         return TextStream(caps)
-    return None
+    else:
+        return None
                      
