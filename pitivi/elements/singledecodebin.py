@@ -64,6 +64,7 @@ class SingleDecodeBin(gst.Bin):
             self.urisrc.link(self.typefind)
         else:
             self._sinkpad = gst.GhostPad("sink", self.typefind.get_pad("sink"))
+            self._sinkpad.set_active(True)
             self.add_pad(self._sinkpad)
 
         self.typefind.connect("have_type", self._typefindHaveTypeCb)
@@ -232,6 +233,7 @@ class SingleDecodeBin(gst.Bin):
         self._removeUnusedElements(self.typefind)
         self.log("ghosting pad %s" % pad.get_name)
         self._srcpad = gst.GhostPad("src", pad)
+        self._srcpad.set_active(True)
         self.add_pad(self._srcpad)
         self.post_message(gst.message_new_state_dirty(self))
 

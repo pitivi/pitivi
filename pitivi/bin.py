@@ -306,7 +306,9 @@ class SmartBin(gst.Pipeline):
         gst.element_link_many(aenc, aoutq, mux)
 
         # ghost sinkpad
-        thread.add_pad(gst.GhostPad("asink", ainq.get_pad("sink")))
+        aghost = gst.GhostPad("asink", ainq.get_pad("sink"))
+        aghost.set_active(True)
+        thread.add_pad(aghost)
 
 ##         aenc.get_pad("sink").add_data_probe(self._debugProbe, "aenc-sink")
 ##         aenc.get_pad("src").add_data_probe(self._debugProbe, "aenc-src")
@@ -343,7 +345,9 @@ class SmartBin(gst.Pipeline):
         gst.element_link_many(venc, voutq, mux)
 
         # ghost sinkpad
-        thread.add_pad(gst.GhostPad("vsink", vinq.get_pad("sink")))
+        vghost = gst.GhostPad("vsink", vinq.get_pad("sink"))
+        vghost.set_active(True)
+        thread.add_pad(vghost)
 
 ##         vrate.get_pad("sink").add_data_probe(self._debugProbe, "before-vrate")
 ##         vrate.get_pad("src").add_data_probe(self._debugProbe, "after-vrate")

@@ -241,13 +241,17 @@ class FileSourceFactory(ObjectFactory):
             if mypad:
                 gst.warning("Removing previous asrc. WHY didn't decodebin remove it??")
                 bin.remove_pad(mypad)
-            bin.add_pad(gst.GhostPad("asrc", pad))
+            asrc = gst.GhostPad("asrc", pad)
+            asrc.set_active(True)
+            bin.add_pad(asrc)
         elif "video" in pad.get_caps().to_string():
             mypad = bin.get_pad("vsrc")
             if mypad:
                 gst.warning("Removing previous vsrc. WHY didn't decodebin remove it??")
                 bin.remove_pad(mypad)
-            bin.add_pad(gst.GhostPad("vsrc", pad))
+            vsrc = gst.GhostPad("vsrc", pad)
+            vsrc.set_active(True)
+            bin.add_pad(vsrc)
         else:
             return
 

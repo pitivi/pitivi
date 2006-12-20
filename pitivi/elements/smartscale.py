@@ -55,7 +55,9 @@ class SmartVideoScale(gst.Bin):
         gst.element_link_many(self.videoscale, self.capsfilter, self.videobox)
 
         self._sinkPad = gst.GhostPad("sink", self.videoscale.get_pad("sink"))
+        self._sinkPad.set_active(True)
         self._srcPad = gst.GhostPad("src", self.videobox.get_pad("src"))
+        self._srcPad.set_active(True)
 
         self.add_pad(self._sinkPad)
         self.add_pad(self._srcPad)
