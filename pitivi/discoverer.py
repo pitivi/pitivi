@@ -79,7 +79,7 @@ class Discoverer(gobject.GObject):
         self.nomorepads = False
         self.timeoutid = 0
         self.signalsid = []
-
+        self.fakesink = None
 
     def addFile(self, filename):
         """ queue a filename to be discovered """
@@ -137,6 +137,8 @@ class Discoverer(gobject.GObject):
         gst.info("before setting to NULL")
         res = self.pipeline.set_state(gst.STATE_NULL)
         gst.info("after setting to NULL : %s" % res)
+        if self.fakesink:
+            self.fakesink.set_state(gst.STATE_NULL)
         if self.currentfactory:
             self.currentfactory.addMediaTags(self.currentTags)
             self.emit('finished-analyzing', self.currentfactory)
@@ -145,6 +147,7 @@ class Discoverer(gobject.GObject):
         self.current = None
         self.currentfactory = None
         self.pipeline = None
+        self.fakesink = None
         self.prerolled = False
         self.nomorepads = False
         
@@ -183,9 +186,14 @@ class Discoverer(gobject.GObject):
         dbin = gst.element_factory_make("decodebin", "dbin")
         self.signalsid.append((dbin, dbin.connect("new-decoded-pad", self._newDecodedPadCb)))
         self.signalsid.append((dbin, dbin.connect("unknown-type", self._unknownTypeCb)))
+        self.signalsid.append((dbin, dbin.connect("no-more-pads", self._noMorePadsCb)))
         self.pipeline.add(source, dbin)
         source.link(dbin)
         gst.info("analysis pipeline created")
+
+        # adding fakesink to make pipeline not terminate state before receiving no-more-pads
+        self.fakesink = gst.element_factory_make("fakesink")
+        self.pipeline.add(self.fakesink)
         
         self.bus = self.pipeline.get_bus()
         self.signalsid.append((self.bus, self.bus.connect("message", self._busMessageCb)))
@@ -296,32 +304,53 @@ class Discoverer(gobject.GObject):
 
     def _newVideoPadCb(self, element, pad):
         """ a new video pad was found """
+        gst.debug("pad %s" % pad)
+
         self.currentfactory.setVideo(True)
+
         if pad.get_caps().is_fixed():
             self.currentfactory.setVideoInfo(pad.get_caps())
 
-        # replacing queue-fakesink by ffmpegcolorspace-queue-pngenc
+        q = gst.element_factory_make("queue")
+        q.props.max_size_bytes = 5 * 1024 * 1024
+        q.props.max_size_time = 5 * gst.SECOND
         csp = gst.element_factory_make("ffmpegcolorspace")
         pngenc = gst.element_factory_make("pngenc")
         pngsink = gst.element_factory_make("filesink")
         pngsink.set_property("location", "/tmp/" + self.currentfactory.name.encode('base64').replace('\n','') + ".png")
-        self.pipeline.add(csp, pngenc, pngsink)
-        pngenc.link(pngsink)
-        csp.link(pngenc)
-        pad.link(csp.get_pad("sink"))
+        
+        self.pipeline.add(q, csp, pngenc, pngsink)
+        gst.element_link_many(q, csp, pngenc, pngsink)
+        pad.link(q.get_pad("sink"))
+        
         if not self.currentfactory.video_info:
             self.signalsid.append((pad, pad.connect("notify::caps", self._vcapsNotifyCb)))
-        for element in [csp, pngenc, pngsink]:
+
+        for element in [q, csp, pngenc, pngsink]:
             element.set_state(gst.STATE_PAUSED)
+
+        if self.currentfactory.is_audio:
+            gst.debug("already have audio, calling no_more_pads")
+            self._noMorePadsCb(None)
         
     def _newAudioPadCb(self, unused_element, pad):
         """ a new audio pad was found """
+        gst.debug("pad %s" % pad)
+
         self.currentfactory.setAudio(True)
 
+        # if we already saw another pad, remove no-more-pads hack
+        if self.currentfactory.is_video:
+            gst.debug("already have video, calling no_more_pads")
+            self._noMorePadsCb(None)
+            
         if pad.get_caps().is_fixed():
+            gst.debug("fixed caps, setting info on factory")
             self.currentfactory.setAudioInfo(pad.get_caps())
-
-        if not self.currentfactory.is_video:
+            # if we already have fixed caps, we don't need to take this stream.
+        else:
+            gst.debug("non-fixed caps, adding queue and fakesink")
+            ##         if not self.currentfactory.is_video:
             # we need to add a fakesink
             q = gst.element_factory_make("queue")
             fakesink = gst.element_factory_make("fakesink")
@@ -330,7 +359,7 @@ class Discoverer(gobject.GObject):
             q.link(fakesink)
             q.set_state(gst.STATE_PAUSED)
             fakesink.set_state(gst.STATE_PAUSED)
-            
+
     def _unknownTypeCb(self, unused_dbin, unused_pad, caps):
         gst.info(caps.to_string())
         if not self.currentfactory or (not self.currentfactory.is_audio and not self.currentfactory.is_video):
@@ -364,4 +393,11 @@ class Discoverer(gobject.GObject):
     def _noMorePadsCb(self, element):
         gst.debug("no more pads on decodebin !")
         self.nomorepads = True
+
+        # remove fakesink
+        gst.debug("removing fakesink")
+        if self.fakesink:
+            self.fakesink.set_state(gst.STATE_NULL)
+            self.pipeline.remove(self.fakesink)
+            self.fakesink = None
         # normally state changes should end the discovery
