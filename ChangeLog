@@ -1,5 +1,22 @@
 2006-12-20  Edward Hervey  <edward@fluendo.com>
 
+	* po/POTFILES.in:
+	pitivi/ui/discoverererrordialog.glade is now
+	pitivi/ui/filelisterrordialog.glade.
+	* po/ar.po:
+	* po/ca.po:
+	* po/dz.po:
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fi.po:
+	* po/fr.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	Updated po files for code modifications.
+
+2006-12-20  Edward Hervey  <edward@fluendo.com>
+
 	* docs/HACKING:
 	Added note about order in which modules should be imported.
 	* pitivi/Makefile.am:

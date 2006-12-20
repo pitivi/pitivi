@@ -7,21 +7,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: https://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2006-12-06 19:45+0100\n"
+"POT-Creation-Date: 2006-12-20 12:18+0100\n"
 "PO-Revision-Date: 2006-07-02 14:46+0800\n"
 "Last-Translator: Funda Wang <fundawang@linux.net.cn>\n"
 "Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: ../pitivi/ui/discoverererrordialog.glade.h:1
-msgid "Error while analyzing files"
-msgstr "分析文件时出错"
-
-#: ../pitivi/ui/discoverererrordialog.glade.h:2
-msgid "The following files weren't discovered properly."
-msgstr "下列文件未正确发现。"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 #, fuzzy
@@ -46,7 +38,7 @@ msgid "Author"
 msgstr "作者"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:487 ../pitivi/ui/sourcefactories.py:528
+#: ../pitivi/ui/sourcefactories.py:488 ../pitivi/ui/sourcefactories.py:529
 msgid "Description"
 msgstr "描述"
 
@@ -341,86 +333,82 @@ msgstr "名称："
 msgid "The name of your project."
 msgstr "您工程的名称。"
 
-#: ../pitivi/ui/sourcefactories.py:104
+#: ../pitivi/ui/sourcefactories.py:106
 msgid "Add Sources..."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:105
+#: ../pitivi/ui/sourcefactories.py:107
 msgid "Add Folder of Sources..."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:106
+#: ../pitivi/ui/sourcefactories.py:108
 msgid "Remove Sources..."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:107
+#: ../pitivi/ui/sourcefactories.py:109
 msgid "Play"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:135
+#: ../pitivi/ui/sourcefactories.py:137
 msgid "Icon"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:143
+#: ../pitivi/ui/sourcefactories.py:145
 msgid "Information"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:152
+#: ../pitivi/ui/sourcefactories.py:154
 #, fuzzy
 msgid "Duration"
 msgstr "描述"
 
-#: ../pitivi/ui/sourcefactories.py:164
+#: ../pitivi/ui/sourcefactories.py:166
 msgid "Add Folder"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:222
+#: ../pitivi/ui/sourcefactories.py:233
 msgid "Import a folder"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:225
+#: ../pitivi/ui/sourcefactories.py:236
 msgid "Import a file"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:481 ../pitivi/ui/sourcefactories.py:522
+#: ../pitivi/ui/sourcefactories.py:311
+msgid "Error while analyzing files"
+msgstr "分析文件时出错"
+
+#: ../pitivi/ui/sourcefactories.py:312
+msgid "The following files weren't discovered properly."
+msgstr "下列文件未正确发现。"
+
+#: ../pitivi/ui/sourcefactories.py:482 ../pitivi/ui/sourcefactories.py:523
 #, fuzzy
 msgid "Name"
 msgstr "名称："
 
-#: ../pitivi/ui/sourcefactories.py:581
-msgid "File"
-msgstr ""
-
-#: ../pitivi/ui/sourcefactories.py:587
-msgid "Reason"
-msgstr ""
-
-#: ../pitivi/ui/sourcefactories.py:591
-msgid "Unknown reason"
-msgstr ""
-
-#: ../pitivi/ui/timelineobjects.py:355
+#: ../pitivi/ui/timelineobjects.py:370
 msgid "Remove"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:537
+#: ../pitivi/ui/viewer.py:549
 msgid "Choose file to render to"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:557
+#: ../pitivi/ui/viewer.py:569
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:567
+#: ../pitivi/ui/viewer.py:579
 msgid "Rendering"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:569
+#: ../pitivi/ui/viewer.py:581
 msgid "Couldn't start rendering"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:590
+#: ../pitivi/ui/viewer.py:602
 #, fuzzy
 msgid "Rendering Complete"
 msgstr "渲染项目"
@@ -505,37 +493,37 @@ msgstr "<b>属性</b>"
 msgid "<small><b>File:</b> %s"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:407
+#: ../pitivi/objectfactory.py:408
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:410
+#: ../pitivi/objectfactory.py:411
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:413 ../pitivi/objectfactory.py:457
+#: ../pitivi/objectfactory.py:414 ../pitivi/objectfactory.py:458
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:415
+#: ../pitivi/objectfactory.py:416
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:454
+#: ../pitivi/objectfactory.py:455
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:459
+#: ../pitivi/objectfactory.py:460
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:470
+#: ../pitivi/objectfactory.py:471
 #, fuzzy, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>作者：</b>"
