@@ -1,0 +1,582 @@
+# translation of pitivi.HEAD.po to Punjabi
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+#
+# A S Alam <apbrar@gmail.com>, 2006.
+msgid ""
+msgstr ""
+"Project-Id-Version: pitivi.HEAD\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2006-12-23 06:16+0100\n"
+"PO-Revision-Date: 2006-12-23 14:03+0530\n"
+"Last-Translator: A S Alam <apbrar@gmail.com>\n"
+"Language-Team: Punjabi <fedora-trans-pa@redhat.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: KBabel 1.11.4\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:1
+msgid "<b>Author:</b>"
+msgstr "<b>ਲੇਖਕ:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:2
+msgid "<b>Description:</b>"
+msgstr "<b>ਵੇਰਵਾ:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:3
+msgid "<b>Plugin Name</b>"
+msgstr "<b>ਪਲੱਗਇਨ ਨਾਂ</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:4
+msgid "<b>Properties</b>"
+msgstr "<b>ਵਿਸ਼ੇਸ਼ਤਾ</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:5
+msgid "Author"
+msgstr "ਲੇਖਕ"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:6
+#: ../pitivi/ui/sourcefactories.py:535 ../pitivi/ui/sourcefactories.py:576
+msgid "Description"
+msgstr "ਵੇਰਵਾ"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:7
+msgid "Properties for <element>"
+msgstr "<element> ਲਈ ਵਿਸ਼ੇਸ਼ਤਾ"
+
+#: ../pitivi/ui/encodingdialog.glade.h:1
+msgid "<b>Audio :</b>"
+msgstr "<b>ਆਡੀਓ:</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:2
+msgid "<b>Nothing yet</b>"
+msgstr "<b>ਹਾਲੇ ਕੁਝ ਨਹੀਂ</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:3
+msgid "<b>Settings</b>"
+msgstr "<b>ਸੈਟਿੰਗ</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:4
+msgid "<b>Video :</b>"
+msgstr "<b>ਵੀਡਿਓ:</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:5
+msgid "Choose File"
+msgstr "ਫਾਇਲ ਚੁਣੋ"
+
+#: ../pitivi/ui/encodingdialog.glade.h:6
+msgid "Modify"
+msgstr "ਸੋਧ"
+
+#: ../pitivi/ui/encodingdialog.glade.h:7
+msgid "Output File:"
+msgstr "ਆਉਟਪੁੱਟ ਫਾਇਲ:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:1
+msgid ""
+"12 fps\n"
+"23,97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29,97 fps\n"
+"30 fps\n"
+"60 fps"
+msgstr ""
+"12 fps\n"
+"23,97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29,97 fps\n"
+"30 fps\n"
+"60 fps"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:8
+msgid ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+msgstr ""
+"8 ਬਿੱਟ\n"
+"16 ਬਿੱਟ\n"
+"24 ਬਿੱਟ\n"
+"32 ਬਿੱਟ"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:12
+msgid ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+msgstr ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:18
+msgid "<b>Audio Output</b>"
+msgstr "<b>ਆਡੀਓ ਆਉਟਪੁੱਟ</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:19
+msgid "<b>Export to</b>"
+msgstr "<b>ਨਿਰਯਾਤ</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:20
+msgid "<b>Video Output</b>"
+msgstr "<b>ਵੀਡਿਓ ਆਉਟਪੁੱਟ</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:21
+msgid "Audio Codec"
+msgstr "ਆਡੀਓ Codec"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:22
+msgid "Audio Codec:"
+msgstr "ਆਡੀਓ Codec:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:23
+msgid "Audio Preset"
+msgstr "ਆਡੀਓ ਪ੍ਰੀ-ਸੈੱਟ"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:24
+msgid "Channels:"
+msgstr "ਚੈਨਲ:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:25
+msgid "Container:"
+msgstr "ਕੰਨਟੇਨਰ:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:26
+msgid "Depth:"
+msgstr "ਡੂੰਘਾਈ:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:27
+msgid "Frame rate:"
+msgstr "ਫਰੇਮ ਰੇਟ:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:28
+msgid "Height:"
+msgstr "ਉਚਾਈ:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:29
+msgid ""
+"Mono (1)\n"
+"Stereo (2)"
+msgstr ""
+"ਮੋਨੋ (1)\n"
+"ਸਟੀਰਿਓ (2)"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:31
+msgid "Muxer"
+msgstr "Muxer"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:32
+msgid "Rate:"
+msgstr "ਰੇਟ:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:33
+msgid "Settings"
+msgstr "ਸੈਟਿੰਗ"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:34
+msgid "Video Codec"
+msgstr "ਵੀਡਿਓ Codec"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:35
+msgid "Video Codec:"
+msgstr "ਵੀਡਿਓ Codec:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:36
+msgid "Video Preset"
+msgstr "ਵੀਡਿਓ ਪ੍ਰੀ-ਸੈੱਟ"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:37
+msgid "Width:"
+msgstr "ਚੌੜਾਈ:"
+
+#: ../pitivi/ui/exportsettingswidget.py:332
+msgid "Export Settings"
+msgstr "ਸੈਟਿੰਗ ਨਿਰਯਾਤ"
+
+#. set title and frame label
+#: ../pitivi/ui/gstwidget.py:145
+msgid "Properties for "
+msgstr "ਵਿਸ਼ੇਸ਼ਤਾ"
+
+#: ../pitivi/ui/infolayer.py:43
+msgid "Audio Track"
+msgstr "ਆਡੀਓ ਟਰੈਕ"
+
+#: ../pitivi/ui/infolayer.py:45
+msgid "Video Track"
+msgstr "ਵੀਡਿਓ ਟਰੈਕ"
+
+#: ../pitivi/ui/infolayer.py:87
+msgid "Empty"
+msgstr "ਖਾਲੀ"
+
+#: ../pitivi/ui/mainwindow.py:73
+msgid "Create a new project"
+msgstr "ਇੱਕ ਨਵਾਂ ਪ੍ਰੋਜੈਕਟ ਬਣਾਓ"
+
+#: ../pitivi/ui/mainwindow.py:74
+msgid "Open an existing project"
+msgstr "ਇੱਕ ਮੌਜੂਦ ਪ੍ਰੋਜੈਕਟ ਸੰਭਾਲੋ"
+
+#: ../pitivi/ui/mainwindow.py:75 ../pitivi/ui/mainwindow.py:76
+msgid "Save the current project"
+msgstr "ਮੌਜੂਦਾ ਪ੍ਰੋਜੈਕਟ ਸੰਭਾਲੋ"
+
+#: ../pitivi/ui/mainwindow.py:77 ../pitivi/ui/projectsettings.glade.h:4
+msgid "Project Settings"
+msgstr "ਪ੍ਰੋਜੈਕਟ ਸੈਟਿੰਗ"
+
+#: ../pitivi/ui/mainwindow.py:77
+msgid "Edit the project settings"
+msgstr "ਪ੍ਰੋਜੈਕਟ ਸਥਾਪਨ ਦੀ ਸੋਧ"
+
+#: ../pitivi/ui/mainwindow.py:78
+msgid "_Import Sources..."
+msgstr "ਸਰੋਤ ਆਯਾਤ(_I)..."
+
+#: ../pitivi/ui/mainwindow.py:78
+msgid "Import sources to use"
+msgstr "ਵਰਤਣ ਲਈ ਸਰੋਤ ਆਯਾਤ"
+
+#: ../pitivi/ui/mainwindow.py:79
+msgid "_Import Folder of sources..."
+msgstr "ਸਰੋਤ ਦਾ ਫੋਲਡਰ ਆਯਾਤ(_I)..."
+
+#: ../pitivi/ui/mainwindow.py:79
+msgid "Import folder of sources to use"
+msgstr "ਵਰਤਣ ਲਈ ਸਰੋਤ ਦਾ ਫੋਲਡਰ ਆਯਾਤ ਕਰੋ"
+
+#: ../pitivi/ui/mainwindow.py:81
+msgid "View the main window on the whole screen"
+msgstr "ਪੂਰੀ ਸਕਰੀਨ ਤੇ ਮੁੱਖ ਝਰੋਖਾ ਵੇਖੋ"
+
+#: ../pitivi/ui/mainwindow.py:82
+#, python-format
+msgid "Information about %s"
+msgstr "%s ਬਾਰੇ ਜਾਣਕਾਰੀ"
+
+#: ../pitivi/ui/mainwindow.py:83
+msgid "_File"
+msgstr "ਫਾਇਲ(_F)"
+
+#: ../pitivi/ui/mainwindow.py:84
+msgid "_View"
+msgstr "ਵੇਖੋ(_V)"
+
+#: ../pitivi/ui/mainwindow.py:85
+msgid "_Help"
+msgstr "ਸਹਾਇਤਾ(_H)"
+
+#: ../pitivi/ui/mainwindow.py:89
+msgid "Advanced Vie_w"
+msgstr "ਤਕਨੀਕੀ ਝਲਕ(_w)"
+
+#: ../pitivi/ui/mainwindow.py:89
+msgid "Switch to advanced view"
+msgstr "ਤਕਨੀਕੀ ਝਲਕ ਵੇਖਾਓ"
+
+#: ../pitivi/ui/mainwindow.py:233
+msgid "Contributors:"
+msgstr "ਯੋਗਦਾਨ:"
+
+#: ../pitivi/ui/mainwindow.py:237
+msgid ""
+"GNU Lesser General Public License\n"
+"See http://www.gnu.org/copyleft/lesser.html for more details"
+msgstr ""
+"GNU Lesser General Public License\n"
+"ਹੋਰ ਜਾਣਕਾਰੀ ਲਈ http://www.gnu.org/copyleft/lesser.html ਵੇਖੋ"
+
+#: ../pitivi/ui/projectsettings.glade.h:1
+msgid "A short description of your project."
+msgstr "ਤੁਹਾਡੇ ਪ੍ਰੋਜੈਕਟ ਬਾਰੇ ਵੇਰਵਾ ਹੈ।"
+
+#: ../pitivi/ui/projectsettings.glade.h:2
+msgid "Description:"
+msgstr "ਵੇਰਵਾ:"
+
+#: ../pitivi/ui/projectsettings.glade.h:3
+msgid "Name:"
+msgstr "ਨਾਂ:"
+
+#: ../pitivi/ui/projectsettings.glade.h:5
+msgid "The name of your project."
+msgstr "ਤੁਹਾਡੇ ਪ੍ਰੋਜੈਕਟ ਦਾ ਨਾਂ ਹੈ।"
+
+#: ../pitivi/ui/sourcefactories.py:105
+msgid "Add Sources..."
+msgstr "ਸਰੋਤ ਸ਼ਾਮਿਲ..."
+
+#: ../pitivi/ui/sourcefactories.py:106
+msgid "Add Folder of Sources..."
+msgstr "ਸਰੋਤ ਦਾ ਫੋਲਡਰ ਸ਼ਾਮਿਲ..."
+
+#: ../pitivi/ui/sourcefactories.py:107
+msgid "Remove Sources..."
+msgstr "ਸਰੋਤ ਹਟਾਓ..."
+
+#: ../pitivi/ui/sourcefactories.py:108
+msgid "Play"
+msgstr "ਚਲਾਓ"
+
+#: ../pitivi/ui/sourcefactories.py:136
+msgid "Icon"
+msgstr "ਆਈਕਾਨ"
+
+#: ../pitivi/ui/sourcefactories.py:144
+msgid "Information"
+msgstr "ਜਾਣਕਾਰੀ"
+
+#: ../pitivi/ui/sourcefactories.py:153
+msgid "Duration"
+msgstr "ਅੰਤਰਾਲ"
+
+#: ../pitivi/ui/sourcefactories.py:165
+msgid "Add Folder"
+msgstr "ਫੋਲਡਰ ਸ਼ਾਮਿਲ"
+
+#: ../pitivi/ui/sourcefactories.py:187
+msgid "Import your clips by dragging them here or by using buttons below."
+msgstr ""
+
+#: ../pitivi/ui/sourcefactories.py:278
+msgid "Import a folder"
+msgstr "ਇੱਕ ਫੋਲਡਰ ਆਯਾਤ"
+
+#: ../pitivi/ui/sourcefactories.py:281
+msgid "Import a file"
+msgstr "ਇੱਕ ਫਾਇਲ ਆਯਾਤ"
+
+#: ../pitivi/ui/sourcefactories.py:358
+msgid "Error while analyzing files"
+msgstr "ਫਾਇਲਾਂ ਦੀ ਜਾਂਚ ਦੌਰਨ ਗਲਤੀ"
+
+#: ../pitivi/ui/sourcefactories.py:359
+msgid "The following files weren't discovered properly."
+msgstr ""
+
+#: ../pitivi/ui/sourcefactories.py:529 ../pitivi/ui/sourcefactories.py:570
+msgid "Name"
+msgstr "ਨਾਂ"
+
+#: ../pitivi/ui/viewer.py:549
+msgid "Choose file to render to"
+msgstr "ਰੈਡਰ ਕਰਨ ਲਈ ਫਾਇਲ ਚੁਣੋ"
+
+#: ../pitivi/ui/viewer.py:569
+#, python-format
+msgid "Finished in %dm%ds"
+msgstr "%dm%ds 'ਚ ਖਤਮ"
+
+#: ../pitivi/ui/viewer.py:579
+msgid "Rendering"
+msgstr "ਰੈਡਰਿੰਗ"
+
+#: ../pitivi/ui/viewer.py:581
+msgid "Couldn't start rendering"
+msgstr "ਰੈਡਰਿੰਗ ਸ਼ੁਰੂ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ"
+
+#: ../pitivi/ui/viewer.py:602
+msgid "Rendering Complete"
+msgstr "ਰੈਡਰਿੰਗ ਮੁਕੰਮਲ ਹੋਈ"
+
+#: ../pitivi/check.py:77
+#, python-format
+msgid "%s is already running!"
+msgstr "%s ਪਹਿਲਾਂ ਹੀ ਚੱਲ ਰਿਹਾ ਹੈ!"
+
+#: ../pitivi/check.py:78
+#, python-format
+msgid "An instance of %s is already running in this script."
+msgstr "ਇਹ ਸਕ੍ਰਿਪਟ ਵਿੱਚ %s ਪਹਿਲਾਂ ਹੀ ਚੱਲ ਰਿਹਾ ਹੈ।"
+
+#: ../pitivi/check.py:80
+msgid "Could not find the GNonLin plugins!"
+msgstr ""
+
+#: ../pitivi/check.py:81
+msgid ""
+"Make sure the plugins were installed and are available in the GStreamer "
+"plugins path."
+msgstr ""
+
+#: ../pitivi/check.py:83
+msgid "Could not find the autodetect plugins!"
+msgstr "ਆਟੋ-ਡੀਟੈਕਟ ਪਲੱਗਇਨ ਨਹੀਂ ਲੱਭੀਆਂ ਜਾ ਸਕੀਆਂ!"
+
+#: ../pitivi/check.py:84
+msgid ""
+"Make sure you have installed gst-plugins-good and is available in the "
+"GStreamer plugin path."
+msgstr ""
+
+#: ../pitivi/check.py:86
+msgid "PyGTK doesn't have Cairo support!"
+msgstr "PyGTK ਵਿੱਚ Cairo ਸਹਿਯੋਗ ਨਹੀਂ!"
+
+#: ../pitivi/check.py:87
+msgid ""
+"Please use a version of the Python bindings for GTK+ built with Cairo "
+"support."
+msgstr ""
+
+#: ../pitivi/check.py:89
+msgid "Could not initiate the video output plugins"
+msgstr "ਵੀਡਿਓ ਆਉਟਪੁੱਟ ਪਲੱਗਇਨ ਸ਼ੁਰੂ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀਆਂ"
+
+#: ../pitivi/check.py:90
+msgid ""
+"Make sure you have at least one valid video output sink available "
+"(xvimagesink or ximagesink)"
+msgstr ""
+
+#: ../pitivi/check.py:92
+msgid "Could not initiate the audio output plugins"
+msgstr ""
+
+#: ../pitivi/check.py:93
+msgid ""
+"Make sure you have at least one valid audio output sink available (alsasink "
+"or osssink)"
+msgstr ""
+
+#: ../pitivi/objectfactory.py:149
+#, python-format
+msgid "<b>%s</b><small>"
+msgstr "<b>%s</b><small>"
+
+#: ../pitivi/objectfactory.py:153
+#, python-format
+msgid "<b>%s</b> (%s)"
+msgstr "<b>%s</b> (%s)"
+
+#: ../pitivi/objectfactory.py:156
+#, python-format
+msgid "<b>%s</b>"
+msgstr "<b>%s</b>"
+
+#: ../pitivi/objectfactory.py:157
+#, python-format
+msgid "<small><b>File:</b> %s"
+msgstr "<small><b>ਫਾਇਲ:</b> %s"
+
+#: ../pitivi/objectfactory.py:412
+#, python-format
+msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+msgstr "<b>ਵੀਡਿਓ:</b> %d x %d <i>ਪਿਕਸਲ</i> %.2f<i>fps</i> ਨਾਲ"
+
+#: ../pitivi/objectfactory.py:415
+#, python-format
+msgid "<b>Image:</b> %d x %d <i>pixels</i>"
+msgstr "<b>ਚਿੱਤਰ:</b> %d x %d <i>ਪਿਕਸਲ</i>"
+
+#: ../pitivi/objectfactory.py:418 ../pitivi/objectfactory.py:462
+#, python-format
+msgid " <i>(%s)</i>"
+msgstr " <i>(%s)</i>"
+
+#: ../pitivi/objectfactory.py:420
+#, python-format
+msgid "<b>Unknown Video format:</b> %s"
+msgstr "<b>ਅਣਜਾਣ ਵੀਡਿਓ ਫਾਰਮੈਟ:</b> %s"
+
+#: ../pitivi/objectfactory.py:459
+#, python-format
+msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr "<b>ਆਡਿਓ:</b> %d ਚੈਨਲ %d <i>Hz</i> ਨਾਲ (%d <i>ਬਿੱਟ</i>)"
+
+#: ../pitivi/objectfactory.py:464
+#, python-format
+msgid "<b>Unknown Audio format:</b> %s"
+msgstr "<b>ਅਣਜਾਣ ਆਡੀਓ ਫਾਰਮੈਟ:</b> %s"
+
+#: ../pitivi/objectfactory.py:475
+#, python-format
+msgid "<b>Text:</b> %s"
+msgstr "<b>ਪਾਠ:</b> %s"
+
+#: ../pitivi/pitivi.py:76
+#, python-format
+msgid "There is already a %s instance, inform developers"
+msgstr "ਇੱਕ %s ਪਹਿਲਾਂ ਹੀ ਚੱਲ ਰਿਹਾ ਹੈ, ਡੀਵੈਲਪਰਾਂ ਨੂੰ ਦੱਸੋ"
+
+#: ../pitivi/pitivi.py:82 ../pitivi/pitivi.py:121
+msgid "New Project"
+msgstr "ਨਵਾਂ ਪ੍ਰੋਜੈਕਟ"
+
+#: ../pitivi/playground.py:374
+msgid "Video output is busy"
+msgstr "ਵੀਡਿਓ ਆਉਟਪੁੱਟ ਰੁੱਝੀ ਹੈ"
+
+#: ../pitivi/playground.py:375
+msgid ""
+"Please check that your video output device isn't already used by another "
+"application"
+msgstr ""
+
+#: ../pitivi/playground.py:377
+msgid "Video output problem"
+msgstr "ਵੀਡਿਓ ਆਉਟਪੁੱਟ ਸਮੱਸਿਆ"
+
+#: ../pitivi/playground.py:378
+msgid "There is a problem with your video output device"
+msgstr "ਤੁਹਾਡੇ ਵੀਡਿਓ ਆਉਟਪੁੱਟ ਜੰਤਰ ਨਾਲ ਇੱਕ ਸਮੱਸਿਆ ਆਈ ਹੈ।"
+
+#: ../pitivi/playground.py:381
+msgid "Audio output device is busy"
+msgstr "ਆਡੀਓ ਆਉਟਪੁੱਟ ਜੰਤਰ ਰੁੱਝਿਆ ਹੈ।"
+
+#: ../pitivi/playground.py:382
+msgid ""
+"Please check that your audio output device isn't already used by another "
+"application."
+msgstr ""
+
+#: ../pitivi/playground.py:384
+msgid "Audio output problem"
+msgstr "ਆਡੀਓ ਆਉਟਪੁੱਟ ਸਮੱਸਿਆ"
+
+#: ../pitivi/playground.py:385
+msgid "There is a problem with your audio output device"
+msgstr "ਤੁਹਾਡੇ ਆਡੀਓ ਆਉਟਪੁੱਟ ਜੰਤਰ ਨਾਲ ਸਮੱਸਿਆ ਹੈ"
+
+#: ../pitivi/project.py:148
+#, python-format
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s ਹਾਲੇ ਨਾ-ਲੋਕਲ ਪ੍ਰੋਜੈਕਟਾਂ ਨੂੰ ਹੈਂਡਲ ਨਹੀਂ ਕਰ ਸਕਦਾ"
+
+#: ../pitivi/settings.py:75
+msgid "Export Settings\n"
+msgstr "ਸਥਾਪਨ ਨਿਰਯਾਤ\n"
+
+#: ../pitivi/settings.py:76
+msgid "Video :"
+msgstr "ਵੀਡਿਓ:"
+
+#: ../pitivi/settings.py:78
+msgid ""
+"\n"
+"Audio :"
+msgstr ""
+"\n"
+"ਆਡੀਓ:"
+
+#: ../pitivi/settings.py:80
+msgid ""
+"\n"
+"Muxer :"
+msgstr ""
+"\n"
+"Muxer :"
+

@@ -1,3 +1,8 @@
+2006-12-23  Amanpreet Singh Alam <apbrar@gmail.com>
+
+	* LINGUAS: Add 'pa'
+	* pa.po: New Punjabi Translation is added
+
 2006-12-14  Pema Geyleg  <pgeyleg@gmail.com>
 
 	* LINGUAS: Added 'dz'
