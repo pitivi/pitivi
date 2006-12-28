@@ -1,3 +1,11 @@
+2006-12-28  Ernst Persson  <ernstp@gmail.com>
+
+	reviewed by: Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/ruler.py:
+	Make the ruler nicer. Add time text position.
+	
+
 2006-12-20  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/sourcefactories.py:

@@ -187,27 +187,87 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         context.restore()
 
     def drawRuler(self, context, allocation):
-        # one tick every second
-        # FIXME : respect zoomratio !!!!
         context.save()
-        context.set_line_width(0.5 * context.get_line_width())
-        context.set_source_rgb(0, 0, 0)
 
         zoomRatio = self.getZoomRatio()
         
-        for i in range(self.border, allocation.width, int(zoomRatio)):
-            context.move_to(i, 0)
-            
-            if (i - self.border) % (10 * zoomRatio):
-                # second
-                context.line_to(i, allocation.height / 4)
-            elif (i - self.border) % (60 * zoomRatio):
-                # 10 seconds
-                context.line_to(i, allocation.height / 2)
+        paintpos = float(self.border) + 0.5
+        seconds = 0
+        secspertic = 1
+        next_text = -1
+        
+        timeprint = 0
+        ticspertime = 1
+
+        # FIXME : this should be beautified (instead of all the if/elif/else)
+        if zoomRatio < 0.05:
+            #Smallest tic is 10 minutes
+            secspertic = 600
+            if zoomRatio < 0.006:
+                ticspertime = 24
+            elif zoomRatio < 0.0125:
+                ticspertime = 12
+            elif zoomRatio < 0.025:
+                ticspertime = 6
             else:
-                # minute
-                context.line_to(i, allocation.height)
+                ticspertime = 3
+        elif zoomRatio < 0.5:
+            #Smallest tic is 1 minute
+            secspertic = 60
+            if zoomRatio < 0.25:
+                ticspertime = 10
+            else:
+                ticspertime = 5
+        elif zoomRatio < 3:
+            #Smallest tic is 10 seconds
+            secspertic = 10
+            if zoomRatio < 1:
+                ticspertime = 12
+            else:
+                ticspertime = 6
+        else:
+            #Smallest tic is 1 second
+            if zoomRatio < 5:
+                ticspertime = 20
+            elif zoomRatio < 10:
+                ticspertime = 10
+            elif zoomRatio < 20:
+                ticspertime = 5
+            elif zoomRatio < 40:
+                ticspertime = 2
+
+        while paintpos < allocation.width:
+            context.move_to(paintpos, 0)
             
+            if seconds % 600 == 0:
+                context.line_to(paintpos, allocation.height)
+            elif seconds % 60 == 0:
+                context.line_to(paintpos, allocation.height * 3 / 4)
+            elif seconds % 10 == 0:
+                context.line_to(paintpos, allocation.height / 2)
+            else:
+                context.line_to(paintpos, allocation.height / 4)
+
+            if timeprint == 0:
+                # draw the text position
+                hours = seconds / 3600
+                mins = seconds % 3600 / 60
+                secs = seconds % 60
+                time = "%02d:%02d:%02d" % (hours, mins, secs)
+                txtwidth, txtheight = context.text_extents(time)[2:4]
+                context.move_to( paintpos - txtwidth / 2.0,
+                                 allocation.height - 2 )
+                context.show_text( time )
+                timeprint = ticspertime
+            timeprint -= 1
+            
+            paintpos += zoomRatio * secspertic
+            seconds += secspertic
+        
+        #Since drawing is done in batch we can't use different styles
+        context.set_line_width(1)
+        context.set_source_rgb(0, 0, 0)
+        
         context.stroke()
         context.restore()
 
@@ -215,7 +275,7 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         if self.getDuration() <= 0:
             return
         # a simple RED line will do for now
-        xpos = self.nsToPixel(self.position) + self.border
+        xpos = self.nsToPixel(self.position) + self.border + 0.5
         context.save()
         context.set_source_rgb(1.0, 0, 0)
 
