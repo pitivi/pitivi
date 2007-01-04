@@ -1,3 +1,8 @@
+2007-01-02  Raphael Higino <raphaelh@svn.gnome.org>
+
+	* LINGUAS: Added pt_BR.
+	* pt_BR.po: Added Brazilian Portuguese translation.
+
 2006-12-26  Daniel Nylander <po@danielnylander.se>
 
 	* sv.po: Updated Swedish translation.
