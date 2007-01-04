@@ -23,7 +23,7 @@ BuildRequires:	gstreamer-devel >= @GST_REQ@
 BuildRequires:	gstreamer-python >= @PYGST_REQ@
 BuildRequires:	python-devel >= 2.3
 BuildRequires:	pygtk2-devel >= @PYGTK_REQ@
-ExclusiveArch:  noarch
+BuildArch: 	noarch
 
 %description
 PiTiVi non-linear video editor
@@ -44,6 +44,7 @@ PiTiVi non-linear video editor
 %{_datadir}/pitivi/pixmaps/*
 %{_datadir}/pixmaps/pitivi.png
 %{_datadir}/applications/pitivi.desktop
+%{_datadir}/locale
 
 %changelog
 * Mon Apr 10 2006 Edward Hervey <edward at fluendo dot com>
