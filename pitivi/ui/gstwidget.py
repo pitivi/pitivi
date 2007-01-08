@@ -61,7 +61,7 @@ def make_property_widget(element, property, value=None):
     if (type_name == 'gchararray'):
         widget = gtk.Entry()
         widget.set_text(str(value))
-    elif (type_name in ['guint64', 'gint64', 'gint', 'gfloat', 'gulong']):
+    elif (type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat', 'gulong']):
         widget = gtk.SpinButton()
         if type_name == 'gint':
             widget.set_range(-(2**31), 2**31 - 1)

@@ -1,5 +1,10 @@
 2007-01-08  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/gstwidget.py:
+	Also take gint into account. I wonder how that one went away...
+
+2007-01-08  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/exportsettingswidget.py:
 	Typo fix
 	* pitivi/ui/gstwidget.py:
