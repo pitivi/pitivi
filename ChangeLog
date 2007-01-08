@@ -1,3 +1,10 @@
+2007-01-08  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/timelineobjects.py:
+	Use default video icon if no real thumbnail is available.
+	Fixes #392204
+
 2006-12-28  Ernst Persson  <ernstp@gmail.com>
 
 	reviewed by: Edward Hervey  <edward@fluendo.com>

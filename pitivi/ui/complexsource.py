@@ -29,6 +29,7 @@ import gst
 import cairo
 
 from pitivi.timeline import TimelineSource, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
+from pitivi.configure import get_pixmap_dir
 from complexinterface import ZoomableWidgetInterface
 
 # TODO : We might need an abstract class for ComplexTimelineObjects....
@@ -46,7 +47,10 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
         self.layerInfo = layerInfo
         self.source = source
         self.source.connect("start-duration-changed", self._startDurationChangedCb)
-        self.thumbnailsurface = cairo.ImageSurface.create_from_png(self.source.factory.thumbnail)
+        if self.source.factory.thumbnail:
+            self.thumbnailsurface = cairo.ImageSurface.create_from_png(self.source.factory.thumbnail)
+        else:
+            self.thumbnailsurface = cairo.ImageSurface.create_from_png(os.path.join(get_pixmap_dir(), "pitivi-video.png"))
         self.pixmap = None
 
     def getHeight(self):
@@ -102,6 +106,8 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
         
 
     def drawThumbnail(self, context, alloc):
+        if not self.thumbnailsurface:
+            return
         context.save()
         # figure out the scaleratio
         surfwidth = self.thumbnailsurface.get_width()

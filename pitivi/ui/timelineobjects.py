@@ -31,6 +31,7 @@ import gst
 
 import pitivi.instance as instance
 from pitivi.timeline import Timeline, TimelineComposition, TimelineFileSource, TimelineSource, TimelineTransition, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
+from pitivi.configure import get_pixmap_dir
 import pitivi.dnd as dnd
 from sourcefactories import beautify_length
 
@@ -335,7 +336,10 @@ class SimpleSourceWidget(gtk.DrawingArea):
         self.width = 0
         self.height = 0
         self.filesource = filesource
-        self.thumbnail = gtk.gdk.pixbuf_new_from_file(self.filesource.factory.thumbnail)
+        if self.filesource.factory.thumbnail:
+            self.thumbnail = gtk.gdk.pixbuf_new_from_file(self.filesource.factory.thumbnail)
+        else:
+            self.thumbnail = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(), "pitivi-video.png"))
         self.thratio = float(self.thumbnail.get_width()) / float(self.thumbnail.get_height())
         self.pixmap = None
         self.namelayout = self.create_pango_layout(os.path.basename(unquote(self.filesource.factory.name)))
