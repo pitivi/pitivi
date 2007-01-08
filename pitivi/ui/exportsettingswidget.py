@@ -266,7 +266,7 @@ class ExportSettingsWidget(GladeWidget):
         dialog = GstElementSettingsDialog(factory, settings)
         if dialog.run() == gtk.RESPONSE_OK:
             dialog.hide()
-            settings = dialog.get_settings()
+            settings = dialog.getSettings()
         else:
             settings = None
         dialog.destroy()

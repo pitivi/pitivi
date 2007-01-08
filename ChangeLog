@@ -1,5 +1,12 @@
 2007-01-08  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/exportsettingswidget.py:
+	Typo fix
+	* pitivi/ui/gstwidget.py:
+	Add support for GEnum in property widgets.
+
+2007-01-08  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/complexsource.py:
 	* pitivi/ui/timelineobjects.py:
 	Use default video icon if no real thumbnail is available.

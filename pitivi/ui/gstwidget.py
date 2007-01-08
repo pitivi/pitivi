@@ -33,7 +33,9 @@ from gettext import gettext as _
 
 def get_widget_propvalue(property, widget):
     """ returns the value of the given propertywidget """
-    type_name = gobject.type_name(property.value_type)
+    # FIXME : implement the case for flags
+    type_name = gobject.type_name(property.value_type.fundamental)
+
     if (type_name == 'gchararray'):
         return widget.get_text()
     if (type_name in ['guint64', 'gint64', 'gint', 'gulong']):
@@ -42,13 +44,20 @@ def get_widget_propvalue(property, widget):
         return widget.get_value()
     if (type_name in ['gboolean']):
         return widget.get_active()
+    if type_name in ['GEnum']:
+        idx = widget.get_active()
+        model = widget.get_model()
+        name, val = model[idx]
+        return val
     return None
 
 def make_property_widget(element, property, value=None):
     """ Creates a Widget for the given element property """
-    type_name = gobject.type_name(property.value_type)
+    # FIXME : implement the case for flags
+    type_name = gobject.type_name(property.value_type.fundamental)
+
     if value == None:
-        value = element.get_property(property.name)
+        value = property.default_value
     if (type_name == 'gchararray'):
         widget = gtk.Entry()
         widget.set_text(str(value))
@@ -70,6 +79,21 @@ def make_property_widget(element, property, value=None):
         widget = gtk.CheckButton()
         if value:
             widget.set_active(True)
+    elif (type_name == 'GEnum'):
+        model = gtk.ListStore(gobject.TYPE_STRING, property.value_type)
+        widget = gtk.ComboBox(model)
+        cell = gtk.CellRendererText()
+        widget.pack_start(cell, True)
+        widget.add_attribute(cell, 'text', 0)
+
+        idx = 0
+        for key, val in property.enum_class.__enum_values__.iteritems():
+            gst.log("adding %s / %s" % (val.value_name, val))
+            model.append([val.value_name, val])
+            if val == value:
+                selected = idx
+            idx = idx + 1
+        widget.set_active(selected)
     else:
         widget = gtk.Label(type_name)
         widget.set_alignment(1.0, 0.5)
