@@ -184,6 +184,9 @@ class TimelineObject(gobject.GObject):
         self.gnlobject.connect("notify::duration", self._startDurationChangedCb)
         self._setStartDurationTime(start, duration)
 
+    def __repr__(self):
+        return '<%s %s>' % (type(self).__name__, self.name)
+
     def _makeGnlObject(self):
         """ create and return the gnl_object """
         raise NotImplementedError
@@ -823,11 +826,76 @@ class TimelineComposition(TimelineSource):
         self.gnlobject.info("source:%s" % source.gnlobject)
         self.insertSourceAfter(source, None, push_following, auto_linked)
 
-    def moveSource(self, source, newpos):
+    def moveSource(self, source, newpos, move_linked=True, push_neighbours=True, collapse_neighbours=True):
         """
-        moves the source to the new position
+        Moves the source to the new position. The position is the existing source before which to move
+        the source.
+        
+        If move_linked is True and the source has a linked source, the linked source will
+        be moved to the same position.
+        If collapse_neighbours is True, all sources located AFTER the OLD position of the
+        source will be shifted in the past by the duration of the removed source.
+        If push_neighbours is True, then sources located AFTER the NEW position will be shifted
+        forward in time, in order to have enough free space to insert the source.
         """
-        raise NotImplementedError
+        self.gnlobject.info("source:%s , newpos:%d, move_linked:%s, push_neighbours:%s, collapse_neighbours:%s" % (source,
+                                                                                                                   newpos,
+                                                                                                                   move_linked,
+                                                                                                                   push_neighbours,
+                                                                                                                   collapse_neighbours))
+        sources = self.sources[0][2]
+        oldpos = sources.index(source)
+        if newpos == -1:
+            newpos = len(sources)
+
+        self.gnlobject.info("source was at position %d in his layer" % oldpos)
+
+        # if we're not moving, return
+        if (oldpos == newpos):
+            self.gnlobject.warning("source is already at the correct position, not moving")
+            return
+
+        # 0. Temporarily remove moving source from composition
+        self.gnlobject.log("Setting source priority at maximum [%d]" % self.sources[0][1])
+        source.gnlobject.set_property("priority", self.sources[0][1])
+
+        # 1. if collapse_neighbours, shift all downstream sources by duration
+        if collapse_neighbours and oldpos != len(sources) - 1:
+            self.gnlobject.log("collapsing all following neighbours after the old position [%d]" % oldpos)
+            for i in range(oldpos + 1, len(sources)):
+                obj = sources[i]
+                self.gnlobject.log("moving source %d %s" % (i, obj))
+                obj.setStartDurationTime(start = (obj.start - source.duration))
+
+        # 2. if push_neighbours, make sure there's enough room at the new position
+        if push_neighbours and newpos != len(sources):
+            pushmin = source.duration
+            if newpos != 0:
+                pushmin += sources[newpos - 1].start + sources[newpos - 1].duration
+            self.gnlobject.log("We need to make sure sources after newpos are at or after %s" % gst.TIME_ARGS(pushmin))
+            if sources[newpos].start < pushmin:
+                self.gnlobject.log("pushing neighbours after new position [%d]" % newpos)
+                for i in range(newpos, len(sources)):
+                    obj = sources[i]
+                    obj.setStartDurationTime(start = pushmin)
+                    pushmin += obj.duration
+
+        # 3. move the source
+        newtimepos = sources[newpos - 1].start + sources[newpos - 1].duration
+        self.gnlobject.log("Setting source start position to %s" % gst.TIME_ARGS(newtimepos))
+        source.setStartDurationTime(start = newtimepos)
+
+        self.gnlobject.log("Removing source from position [%d] and putting it to position [%d]" % (oldpos, newpos - 1))
+        del sources[oldpos]
+        sources.insert(newpos - 1, source)
+        source.gnlobject.set_property("priority", self.sources[0][0])
+
+        # 4. same thing for brother
+        # FIXME : TODO
+
+        # 5. update condensed list
+        self.gnlobject.log("Done moving %s , updating condensed list" % source)
+        self._updateCondensedList()
 
     def removeSource(self, source, remove_linked=True, collapse_neighbours=False):
         """

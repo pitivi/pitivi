@@ -263,6 +263,18 @@ class PlayGround(gobject.GObject):
         tempbin = SmartFileBin(factory)
         return self._playTemporaryBin(tempbin)
 
+    def getCurrentTimePosition(self):
+        """
+        Returns the current position of the current bin in gst.FORMAT_TIME
+        """
+        try:
+            cur, format = self.current.query_position(gst.FORMAT_TIME)
+        except:
+            self.current.warning("Couldn't get position in time")
+            cur = 0
+        self.current.log("Returning %s" % gst.TIME_ARGS(cur))
+        return cur
+
     def seekInCurrent(self, value, format=gst.FORMAT_TIME):
         """
         Seek to the given position in the current playing bin.
@@ -313,11 +325,7 @@ class PlayGround(gobject.GObject):
 
     def _checkTimeCb(self):
         gst.log("Checking time, current:%r" % self.current)
-        try:
-            cur, format = self.current.query_position(gst.FORMAT_TIME)
-        except:
-            self.current.warning("Couldn't get position in time")
-            cur = 0
+        cur = self.getCurrentTimePosition()
         if cur == -1:
             gst.warning("seeking returned GST_CLOCK_TIME_NONE")
         else:

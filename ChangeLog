@@ -1,3 +1,22 @@
+2007-01-10  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Now depend on gst-python 0.10.6.1 for GIL lock issues in virtualmethods.
+	Now depend on gnonlin-0.10.6.1 for locking issues when modifying the
+	timeline.
+	* pitivi/playground.py:
+	(PlayGround.getCurrentTimePosition): new function for getting the time
+	of the current bin.
+	* pitivi/timeline.py:
+	(TimelineObject.__repr__): Implement for proper representation in
+	debug messages.
+	(TimelineComposition.moveSource): Implement move method.
+	* pitivi/ui/viewer.py:
+	(SimpleTimeline): Use SignalGroup for signals from the project. Add
+	support for dragging sources within the timeline, and effectively
+	propose moving around sources. Cleanup code a bit more.
+	(SimpleTimelineSource): Add DnD support.
+
 2007-01-08  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/gstwidget.py:

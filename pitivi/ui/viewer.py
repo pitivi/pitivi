@@ -457,6 +457,7 @@ class ViewerWidget(gtk.DrawingArea):
         self.have_set_xid = False
         self.can_set_xid = False
         self.unset_flags(gtk.DOUBLE_BUFFERED)
+        self.unset_flags(gtk.SENSITIVE)
 
     def do_expose_event(self, unused_event):
         """ 'expose-event' override """
