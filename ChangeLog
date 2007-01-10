@@ -11,7 +11,6 @@
 	(TimelineObject.__repr__): Implement for proper representation in
 	debug messages.
 	(TimelineComposition.moveSource): Implement move method.
-	* pitivi/ui/viewer.py:
 	(SimpleTimeline): Use SignalGroup for signals from the project. Add
 	support for dragging sources within the timeline, and effectively
 	propose moving around sources. Cleanup code a bit more.
