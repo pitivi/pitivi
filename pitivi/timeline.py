@@ -874,14 +874,21 @@ class TimelineComposition(TimelineSource):
                 pushmin += sources[newpos - 1].start + sources[newpos - 1].duration
             self.gnlobject.log("We need to make sure sources after newpos are at or after %s" % gst.TIME_ARGS(pushmin))
             if sources[newpos].start < pushmin:
-                self.gnlobject.log("pushing neighbours after new position [%d]" % newpos)
-                for i in range(newpos, len(sources)):
+                # don't push sources after old position
+                if oldpos > newpos:
+                    stoppos = oldpos
+                else:
+                    stoppos = len(sources)
+                self.gnlobject.log("pushing neighbours between new position [%d] and stop [%d]" % (newpos, stoppos))
+                for i in range(newpos, stoppos):
                     obj = sources[i]
                     obj.setStartDurationTime(start = pushmin)
                     pushmin += obj.duration
 
         # 3. move the source
-        newtimepos = sources[newpos - 1].start + sources[newpos - 1].duration
+        newtimepos = 0
+        if newpos:
+            newtimepos += sources[newpos - 1].start + sources[newpos - 1].duration
         self.gnlobject.log("Setting source start position to %s" % gst.TIME_ARGS(newtimepos))
         source.setStartDurationTime(start = newtimepos)
 

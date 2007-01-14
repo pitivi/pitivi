@@ -1,5 +1,10 @@
 2007-01-14  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/timeline.py:
+	Bug fixes when moving sources to the beginning position.
+
+2007-01-14  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/timelineobjects.py:
 	Forgot to add this file during the last commit.
 
