@@ -1,3 +1,25 @@
+2007-01-15  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	* pitivi/Makefile.am:
+	* pitivi/effects.py:
+	* pitivi/timeline.py:
+	* pitivi/timeline:
+	* pitivi/timeline/Makefile.am:
+	* pitivi/timeline/__init__.py:
+	* pitivi/timeline/effects.py:
+	* pitivi/timeline/timeline.py:
+	Create pitivi/timeline/ directory and move timeline.py and effects.py
+	into there.
+	* pitivi/pitivi.py:
+	* pitivi/project.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	import adjustments for timeline module location modifications.
+
 2007-01-14  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/timeline.py:

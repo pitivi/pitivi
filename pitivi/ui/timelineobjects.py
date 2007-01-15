@@ -30,7 +30,7 @@ import gtk
 import gst
 
 import pitivi.instance as instance
-from pitivi.timeline import TimelineFileSource, TimelineSource, TimelineTransition, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
+from pitivi.timeline.timeline import TimelineFileSource, TimelineSource, TimelineTransition, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 from pitivi.configure import get_pixmap_dir
 import pitivi.dnd as dnd
 from pitivi.signalgroup import SignalGroup

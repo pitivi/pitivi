@@ -1,7 +1,8 @@
 SUBDIRS = \
-	ui \
-	elements \
-	pixmaps
+	ui 		\
+	elements 	\
+	pixmaps		\
+	timeline
 
 pitividir = $(libdir)/pitivi/python/pitivi
 
@@ -13,14 +14,12 @@ pitivi_PYTHON = \
 	check.py 	\
 	discoverer.py 	\
 	dnd.py 		\
-	effects.py 	\
 	objectfactory.py \
 	pitivi.py 	\
 	playground.py 	\
 	project.py 	\
 	settings.py 	\
 	sourcelist.py 	\
-	timeline.py 	\
 	utils.py 	\
 	pitivigstutils.py \
 	signalgroup.py

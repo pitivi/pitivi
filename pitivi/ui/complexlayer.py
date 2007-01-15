@@ -27,7 +27,7 @@ Layer system for the complex view
 import gobject
 import gst
 
-import pitivi.timeline
+import pitivi.timeline.timeline
 
 #
 # Layer system v2 (16 Feb 2006)
@@ -96,7 +96,7 @@ class LayerInfoList(gobject.GObject):
         if self.findCompositionLayerInfo(composition):
             gst.warning("composition[%r] is already controlled!" % composition)
             return
-        if composition.media_type == pitivi.timeline.MEDIA_TYPE_AUDIO:
+        if composition.media_type == pitivi.timeline.timeline.MEDIA_TYPE_AUDIO:
             expanded = False
         else:
             expanded = True

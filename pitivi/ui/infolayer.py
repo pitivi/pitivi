@@ -26,7 +26,7 @@ Left-hand side widget of complex view layers
 import gtk
 import gst
 
-import pitivi.timeline
+import pitivi.timeline.timeline
 from viewer import time_to_string
 
 from gettext import gettext as _
@@ -39,9 +39,9 @@ class InfoLayer(gtk.Expander):
         }
 
     def __init__(self, layerInfo):
-        if layerInfo.composition.media_type == pitivi.timeline.MEDIA_TYPE_AUDIO:
+        if layerInfo.composition.media_type == pitivi.timeline.timeline.MEDIA_TYPE_AUDIO:
             name = _("Audio Track")
-        elif layerInfo.composition.media_type == pitivi.timeline.MEDIA_TYPE_VIDEO:
+        elif layerInfo.composition.media_type == pitivi.timeline.timeline.MEDIA_TYPE_VIDEO:
             name = _("Video Track")
         gtk.Expander.__init__(self, name)
         self.layerInfo = layerInfo

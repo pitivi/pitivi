@@ -216,6 +216,7 @@ pitivi/configure.py
 pitivi/ui/Makefile
 pitivi/elements/Makefile
 pitivi/pixmaps/Makefile
+pitivi/timeline/Makefile
 pitivi.spec
 pitivi.desktop
 po/Makefile.in

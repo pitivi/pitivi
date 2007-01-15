@@ -28,7 +28,7 @@ import gtk
 import gst
 import cairo
 
-from pitivi.timeline import TimelineSource, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
+from pitivi.timeline.timeline import TimelineSource, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
 from pitivi.configure import get_pixmap_dir
 from complexinterface import ZoomableWidgetInterface
 

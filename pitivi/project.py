@@ -27,7 +27,7 @@ Project class
 import os.path
 import gobject
 import gst
-from timeline import Timeline
+from timeline.timeline import Timeline
 from sourcelist import SourceList
 from bin import SmartTimelineBin
 from settings import ExportSettings

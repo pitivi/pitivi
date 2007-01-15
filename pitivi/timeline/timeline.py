@@ -26,8 +26,8 @@ Timeline and timeline objects
 import gobject
 import gst
 
-from elements.singledecodebin import SingleDecodeBin
-from settings import ExportSettings
+from pitivi.elements.singledecodebin import SingleDecodeBin
+from pitivi.settings import ExportSettings
 
 MEDIA_TYPE_NONE = 0
 MEDIA_TYPE_AUDIO = 1
