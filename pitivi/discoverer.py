@@ -183,7 +183,10 @@ class Discoverer(gobject.GObject):
             self.emit("not_media_file", self.current, "Couldn't construct pipeline.")
             gobject.idle_add(self._finishAnalysis)
             return False
-        dbin = gst.element_factory_make("decodebin", "dbin")
+        if os.getenv("USE_DECODEBIN2"):
+            dbin = gst.element_factory_make("decodebin2", "dbin")
+        else:
+            dbin = gst.element_factory_make("decodebin", "dbin")
         self.signalsid.append((dbin, dbin.connect("new-decoded-pad", self._newDecodedPadCb)))
         self.signalsid.append((dbin, dbin.connect("unknown-type", self._unknownTypeCb)))
         self.signalsid.append((dbin, dbin.connect("no-more-pads", self._noMorePadsCb)))

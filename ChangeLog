@@ -1,3 +1,9 @@
+2007-01-19  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Use decodebin2 if the env variable is set. Because we want to use
+	decodebin2... DO IT !  NOW !
+
 2007-01-15  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac:
