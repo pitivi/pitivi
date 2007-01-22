@@ -1,5 +1,21 @@
 2007-01-22  Edward Hervey  <edward@fluendo.com>
 
+	* po/ar.po:
+	* po/ca.po:
+	* po/dz.po:
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fi.po:
+	* po/fr.po:
+	* po/pa.po:
+	* po/pt_BR.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	Update po files for newly added translatable file.
+
+2007-01-22  Edward Hervey  <edward@fluendo.com>
+
 	* po/POTFILES.in:
 	Add pitivi/ui/filelisterrordialog.py to translatable files.
 

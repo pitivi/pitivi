@@ -7,14 +7,26 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2006-12-20 12:18+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-01-22 11:48+0100\n"
 "PO-Revision-Date: 2006-10-21 09:40+0200\n"
 "Last-Translator: Gil Forcada <gilforcada@guifi.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#: ../pitivi/ui/filelisterrordialog.py:61
+msgid "File"
+msgstr "Fitxer"
+
+#: ../pitivi/ui/filelisterrordialog.py:67
+msgid "Reason"
+msgstr ""
+
+#: ../pitivi/ui/filelisterrordialog.py:71
+msgid "Unknown reason"
+msgstr ""
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 msgid "<b>Author:</b>"
@@ -37,7 +49,7 @@ msgid "Author"
 msgstr "Autor"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:488 ../pitivi/ui/sourcefactories.py:529
+#: ../pitivi/ui/sourcefactories.py:535 ../pitivi/ui/sourcefactories.py:576
 msgid "Description"
 msgstr "Descripció"
 
@@ -209,7 +221,7 @@ msgid "Export Settings"
 msgstr "Paràmetres del projecte"
 
 #. set title and frame label
-#: ../pitivi/ui/gstwidget.py:145
+#: ../pitivi/ui/gstwidget.py:169
 msgid "Properties for "
 msgstr "Propietats de"
 
@@ -319,80 +331,84 @@ msgstr "Nom:"
 msgid "The name of your project."
 msgstr "El nom del vostre projecte."
 
-#: ../pitivi/ui/sourcefactories.py:106
+#: ../pitivi/ui/sourcefactories.py:105
 msgid "Add Sources..."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:107
+#: ../pitivi/ui/sourcefactories.py:106
 msgid "Add Folder of Sources..."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:108
+#: ../pitivi/ui/sourcefactories.py:107
 msgid "Remove Sources..."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:109
+#: ../pitivi/ui/sourcefactories.py:108
 msgid "Play"
 msgstr "Reprodueix"
 
-#: ../pitivi/ui/sourcefactories.py:137
+#: ../pitivi/ui/sourcefactories.py:136
 msgid "Icon"
 msgstr "Icona"
 
-#: ../pitivi/ui/sourcefactories.py:145
+#: ../pitivi/ui/sourcefactories.py:144
 msgid "Information"
 msgstr "Informació"
 
-#: ../pitivi/ui/sourcefactories.py:154
+#: ../pitivi/ui/sourcefactories.py:153
 msgid "Duration"
 msgstr "Durada"
 
-#: ../pitivi/ui/sourcefactories.py:166
+#: ../pitivi/ui/sourcefactories.py:165
 msgid "Add Folder"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:233
+#: ../pitivi/ui/sourcefactories.py:187
+msgid "Import your clips by dragging them here or by using buttons below."
+msgstr ""
+
+#: ../pitivi/ui/sourcefactories.py:278
 msgid "Import a folder"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:236
+#: ../pitivi/ui/sourcefactories.py:281
 msgid "Import a file"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:311
+#: ../pitivi/ui/sourcefactories.py:358
 msgid "Error while analyzing files"
 msgstr "S'ha produït un error en analitzar els fitxers"
 
-#: ../pitivi/ui/sourcefactories.py:312
+#: ../pitivi/ui/sourcefactories.py:359
 msgid "The following files weren't discovered properly."
 msgstr "Els següents fitxers no s'han descobert correctament."
 
-#: ../pitivi/ui/sourcefactories.py:482 ../pitivi/ui/sourcefactories.py:523
+#: ../pitivi/ui/sourcefactories.py:529 ../pitivi/ui/sourcefactories.py:570
 msgid "Name"
 msgstr "Nom"
 
-#: ../pitivi/ui/timelineobjects.py:370
+#: ../pitivi/ui/timelineobjects.py:432
 msgid "Remove"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:549
+#: ../pitivi/ui/viewer.py:550
 msgid "Choose file to render to"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:569
+#: ../pitivi/ui/viewer.py:570
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "S'ha acabat en %dm%ds"
 
-#: ../pitivi/ui/viewer.py:579
+#: ../pitivi/ui/viewer.py:580
 msgid "Rendering"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:581
+#: ../pitivi/ui/viewer.py:582
 msgid "Couldn't start rendering"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:602
+#: ../pitivi/ui/viewer.py:603
 #, fuzzy
 msgid "Rendering Complete"
 msgstr "Renderitza el projecte"
@@ -477,37 +493,37 @@ msgstr "<b>%s</b>"
 msgid "<small><b>File:</b> %s"
 msgstr "<small><b>Fitxer:</b> %s"
 
-#: ../pitivi/objectfactory.py:408
+#: ../pitivi/objectfactory.py:412
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:411
+#: ../pitivi/objectfactory.py:415
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:414 ../pitivi/objectfactory.py:458
+#: ../pitivi/objectfactory.py:418 ../pitivi/objectfactory.py:462
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr " <i>(%s)</i>"
 
-#: ../pitivi/objectfactory.py:416
+#: ../pitivi/objectfactory.py:420
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:455
+#: ../pitivi/objectfactory.py:459
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:460
+#: ../pitivi/objectfactory.py:464
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:471
+#: ../pitivi/objectfactory.py:475
 #, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>Text:</b> %s"
@@ -522,41 +538,41 @@ msgstr ""
 msgid "New Project"
 msgstr "Renderitza el projecte"
 
-#: ../pitivi/playground.py:374
+#: ../pitivi/playground.py:382
 msgid "Video output is busy"
 msgstr "La sortida de vídeo està ocupada"
 
-#: ../pitivi/playground.py:375
+#: ../pitivi/playground.py:383
 msgid ""
 "Please check that your video output device isn't already used by another "
 "application"
 msgstr ""
 
-#: ../pitivi/playground.py:377
+#: ../pitivi/playground.py:385
 #, fuzzy
 msgid "Video output problem"
 msgstr "<b>Sortida de vídeo</b>"
 
-#: ../pitivi/playground.py:378
+#: ../pitivi/playground.py:386
 msgid "There is a problem with your video output device"
 msgstr ""
 
-#: ../pitivi/playground.py:381
+#: ../pitivi/playground.py:389
 msgid "Audio output device is busy"
 msgstr ""
 
-#: ../pitivi/playground.py:382
+#: ../pitivi/playground.py:390
 msgid ""
 "Please check that your audio output device isn't already used by another "
 "application."
 msgstr ""
 
-#: ../pitivi/playground.py:384
+#: ../pitivi/playground.py:392
 #, fuzzy
 msgid "Audio output problem"
 msgstr "<b>Sortida d'àudio</b>"
 
-#: ../pitivi/playground.py:385
+#: ../pitivi/playground.py:393
 msgid "There is a problem with your audio output device"
 msgstr ""
 
@@ -589,9 +605,6 @@ msgid ""
 msgstr ""
 "\n"
 "Mesclador :"
-
-#~ msgid "File"
-#~ msgstr "Fitxer"
 
 #~ msgid "Render Project"
 #~ msgstr "Renderitza el projecte"

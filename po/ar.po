@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Project\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2006-12-20 12:18+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-01-22 11:48+0100\n"
 "PO-Revision-Date: 2006-11-18 00:59+0100\n"
 "Last-Translator: Djihed Afifi <djihed@gmail.com>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
@@ -17,6 +17,21 @@ msgstr ""
 "Plural-Forms: nplurals=6; plural=n == 0 ? 0 : n == 1 ? 1 : n == 2 ? 2 : n >= "
 "3 && n <= 10 ? 3 : n >= 11 && n <= 99 ? 4 : 5;\n"
 "X-Poedit-Language: Arabic\n"
+
+#: ../pitivi/ui/filelisterrordialog.py:61
+#, fuzzy
+msgid "File"
+msgstr "الملف"
+
+#: ../pitivi/ui/filelisterrordialog.py:67
+#, fuzzy
+msgid "Reason"
+msgstr "السبب"
+
+#: ../pitivi/ui/filelisterrordialog.py:71
+#, fuzzy
+msgid "Unknown reason"
+msgstr "سبب مجهول"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 #, fuzzy
@@ -44,7 +59,7 @@ msgid "Author"
 msgstr "<b>المؤلف:</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:488 ../pitivi/ui/sourcefactories.py:529
+#: ../pitivi/ui/sourcefactories.py:535 ../pitivi/ui/sourcefactories.py:576
 #, fuzzy
 msgid "Description"
 msgstr "الوصف"
@@ -218,7 +233,7 @@ msgid "Export Settings"
 msgstr "اختر الإعدادات"
 
 #. set title and frame label
-#: ../pitivi/ui/gstwidget.py:145
+#: ../pitivi/ui/gstwidget.py:169
 #, fuzzy
 msgid "Properties for "
 msgstr "ل_لّغة:"
@@ -345,94 +360,98 @@ msgstr "اسم:"
 msgid "The name of your project."
 msgstr "أدخل اسمك الأول"
 
-#: ../pitivi/ui/sourcefactories.py:106
+#: ../pitivi/ui/sourcefactories.py:105
 #, fuzzy
 msgid "Add Sources..."
 msgstr "إضافة تطبيق"
 
-#: ../pitivi/ui/sourcefactories.py:107
+#: ../pitivi/ui/sourcefactories.py:106
 #, fuzzy
 msgid "Add Folder of Sources..."
 msgstr "إضافة تطبيق"
 
-#: ../pitivi/ui/sourcefactories.py:108
+#: ../pitivi/ui/sourcefactories.py:107
 #, fuzzy
 msgid "Remove Sources..."
 msgstr "هل أحذف السمة \"%s\" ؟"
 
-#: ../pitivi/ui/sourcefactories.py:109
+#: ../pitivi/ui/sourcefactories.py:108
 #, fuzzy
 msgid "Play"
 msgstr "العب"
 
-#: ../pitivi/ui/sourcefactories.py:137
+#: ../pitivi/ui/sourcefactories.py:136
 #, fuzzy
 msgid "Icon"
 msgstr "أيقونة."
 
-#: ../pitivi/ui/sourcefactories.py:145
+#: ../pitivi/ui/sourcefactories.py:144
 #, fuzzy
 msgid "Information"
 msgstr "معلومات"
 
-#: ../pitivi/ui/sourcefactories.py:154
+#: ../pitivi/ui/sourcefactories.py:153
 #, fuzzy
 msgid "Duration"
 msgstr "المدّة"
 
-#: ../pitivi/ui/sourcefactories.py:166
+#: ../pitivi/ui/sourcefactories.py:165
 msgid "Add Folder"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:233
+#: ../pitivi/ui/sourcefactories.py:187
+msgid "Import your clips by dragging them here or by using buttons below."
+msgstr ""
+
+#: ../pitivi/ui/sourcefactories.py:278
 #, fuzzy
 msgid "Import a folder"
 msgstr "إستيراد ملف"
 
-#: ../pitivi/ui/sourcefactories.py:236
+#: ../pitivi/ui/sourcefactories.py:281
 #, fuzzy
 msgid "Import a file"
 msgstr "إستيراد ملف"
 
-#: ../pitivi/ui/sourcefactories.py:311
+#: ../pitivi/ui/sourcefactories.py:358
 #, fuzzy
 msgid "Error while analyzing files"
 msgstr "حدث خطأ عند استخراج الملفات."
 
-#: ../pitivi/ui/sourcefactories.py:312
+#: ../pitivi/ui/sourcefactories.py:359
 msgid "The following files weren't discovered properly."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:482 ../pitivi/ui/sourcefactories.py:523
+#: ../pitivi/ui/sourcefactories.py:529 ../pitivi/ui/sourcefactories.py:570
 #, fuzzy
 msgid "Name"
 msgstr "اسم"
 
-#: ../pitivi/ui/timelineobjects.py:370
+#: ../pitivi/ui/timelineobjects.py:432
 msgid "Remove"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:549
+#: ../pitivi/ui/viewer.py:550
 #, fuzzy
 msgid "Choose file to render to"
 msgstr "اختيار ملف لتذييل أمر..."
 
-#: ../pitivi/ui/viewer.py:569
+#: ../pitivi/ui/viewer.py:570
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:579
+#: ../pitivi/ui/viewer.py:580
 #, fuzzy
 msgid "Rendering"
 msgstr "جاري رسم الصفحة %d من %d..."
 
-#: ../pitivi/ui/viewer.py:581
+#: ../pitivi/ui/viewer.py:582
 #, fuzzy
 msgid "Couldn't start rendering"
 msgstr "تفاصيل ترجمة الخط"
 
-#: ../pitivi/ui/viewer.py:602
+#: ../pitivi/ui/viewer.py:603
 #, fuzzy
 msgid "Rendering Complete"
 msgstr "تمَّ التّحديث\n"
@@ -519,37 +538,37 @@ msgstr ""
 msgid "<small><b>File:</b> %s"
 msgstr "إنتقاء ملف"
 
-#: ../pitivi/objectfactory.py:408
+#: ../pitivi/objectfactory.py:412
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:411
+#: ../pitivi/objectfactory.py:415
 #, fuzzy, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "بكسل/ثانية"
 
-#: ../pitivi/objectfactory.py:414 ../pitivi/objectfactory.py:458
+#: ../pitivi/objectfactory.py:418 ../pitivi/objectfactory.py:462
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:416
+#: ../pitivi/objectfactory.py:420
 #, fuzzy, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "تهيئة الصورة مجهولة"
 
-#: ../pitivi/objectfactory.py:455
+#: ../pitivi/objectfactory.py:459
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:460
+#: ../pitivi/objectfactory.py:464
 #, fuzzy, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "تهيئة الصورة مجهولة"
 
-#: ../pitivi/objectfactory.py:471
+#: ../pitivi/objectfactory.py:475
 #, fuzzy, python-format
 msgid "<b>Text:</b> %s"
 msgstr "النّص"
@@ -564,45 +583,45 @@ msgstr ""
 msgid "New Project"
 msgstr "فا_صل جديد"
 
-#: ../pitivi/playground.py:374
+#: ../pitivi/playground.py:382
 #, fuzzy
 msgid "Video output is busy"
 msgstr "المستخدم المحلي مشغول"
 
-#: ../pitivi/playground.py:375
+#: ../pitivi/playground.py:383
 msgid ""
 "Please check that your video output device isn't already used by another "
 "application"
 msgstr ""
 
-#: ../pitivi/playground.py:377
+#: ../pitivi/playground.py:385
 #, fuzzy
 msgid "Video output problem"
 msgstr ""
 "مشكلة توثيق: %s\n"
 "المُصدر: %s"
 
-#: ../pitivi/playground.py:378
+#: ../pitivi/playground.py:386
 msgid "There is a problem with your video output device"
 msgstr ""
 
-#: ../pitivi/playground.py:381
+#: ../pitivi/playground.py:389
 #, fuzzy
 msgid "Audio output device is busy"
 msgstr "رجاءً اختر جهاز خرج الصّوت:"
 
-#: ../pitivi/playground.py:382
+#: ../pitivi/playground.py:390
 msgid ""
 "Please check that your audio output device isn't already used by another "
 "application."
 msgstr ""
 
-#: ../pitivi/playground.py:384
+#: ../pitivi/playground.py:392
 #, fuzzy
 msgid "Audio output problem"
 msgstr "جهاز خرج الصوت"
 
-#: ../pitivi/playground.py:385
+#: ../pitivi/playground.py:393
 msgid "There is a problem with your audio output device"
 msgstr ""
 
@@ -632,18 +651,6 @@ msgid ""
 "\n"
 "Muxer :"
 msgstr ""
-
-#, fuzzy
-#~ msgid "File"
-#~ msgstr "الملف"
-
-#, fuzzy
-#~ msgid "Reason"
-#~ msgstr "السبب"
-
-#, fuzzy
-#~ msgid "Unknown reason"
-#~ msgstr "سبب مجهول"
 
 #, fuzzy
 #~ msgid "Render Project"

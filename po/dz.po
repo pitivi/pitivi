@@ -6,8 +6,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/\n"
-"POT-Creation-Date: 2006-12-20 12:18+0100\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-01-22 11:48+0100\n"
 "PO-Revision-Date: 2006-12-13 00:10+0530\n"
 "Last-Translator: yangka <yanang_ka@hotmail.com>\n"
 "Language-Team: dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -18,6 +18,18 @@ msgstr ""
 "X-Poedit-Language: Dzongkha\n"
 "X-Poedit-Country: BHUTAN\n"
 "X-Poedit-SourceCharset: utf-8\n"
+
+#: ../pitivi/ui/filelisterrordialog.py:61
+msgid "File"
+msgstr "ཡིག་སྣོད།"
+
+#: ../pitivi/ui/filelisterrordialog.py:67
+msgid "Reason"
+msgstr "རྒྱུ་མཚན།"
+
+#: ../pitivi/ui/filelisterrordialog.py:71
+msgid "Unknown reason"
+msgstr "རྒྱུ་མཚན་མ་ཤེསཔ།"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 msgid "<b>Author:</b>"
@@ -40,7 +52,7 @@ msgid "Author"
 msgstr "རྩོམ་པ་པོ།"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:488 ../pitivi/ui/sourcefactories.py:529
+#: ../pitivi/ui/sourcefactories.py:535 ../pitivi/ui/sourcefactories.py:576
 msgid "Description"
 msgstr "འགྲེལ་བཤད།"
 
@@ -207,7 +219,7 @@ msgid "Export Settings"
 msgstr "ཕྱིར་འདྲེན་སྒྲིག་སྟངས་ཚུ།"
 
 #. set title and frame label
-#: ../pitivi/ui/gstwidget.py:145
+#: ../pitivi/ui/gstwidget.py:169
 msgid "Properties for "
 msgstr "དོན་ལུ་རྒྱ་དངོས་ཚུ།"
 
@@ -316,80 +328,84 @@ msgstr "མིང་།:"
 msgid "The name of your project."
 msgstr "ཁྱོད་རའི་ལས་འགུལ་གྱི་མིང་འདི།"
 
-#: ../pitivi/ui/sourcefactories.py:106
+#: ../pitivi/ui/sourcefactories.py:105
 msgid "Add Sources..."
 msgstr "འབྱུང་ཁུངས་ཚུ་ཁ་སྐོང་རྐྱབས།..."
 
-#: ../pitivi/ui/sourcefactories.py:107
+#: ../pitivi/ui/sourcefactories.py:106
 msgid "Add Folder of Sources..."
 msgstr "འབྱུང་ཁུངས་ཚུ་གི་སྣོད་འཛིན་ཁ་སྐོང་རྐྱབས།..."
 
-#: ../pitivi/ui/sourcefactories.py:108
+#: ../pitivi/ui/sourcefactories.py:107
 msgid "Remove Sources..."
 msgstr "འབྱུང་ཁུངས་ཚུ་རྩ་བསྐྲད་གཏང་།..."
 
-#: ../pitivi/ui/sourcefactories.py:109
+#: ../pitivi/ui/sourcefactories.py:108
 msgid "Play"
 msgstr "གཏང་།"
 
-#: ../pitivi/ui/sourcefactories.py:137
+#: ../pitivi/ui/sourcefactories.py:136
 msgid "Icon"
 msgstr "ངོས་དཔར།"
 
-#: ../pitivi/ui/sourcefactories.py:145
+#: ../pitivi/ui/sourcefactories.py:144
 msgid "Information"
 msgstr "བརྡ་དོན།"
 
-#: ../pitivi/ui/sourcefactories.py:154
+#: ../pitivi/ui/sourcefactories.py:153
 msgid "Duration"
 msgstr "དུས་ཡུན།"
 
-#: ../pitivi/ui/sourcefactories.py:166
+#: ../pitivi/ui/sourcefactories.py:165
 msgid "Add Folder"
 msgstr "སྣོད་འཛིན་ཁ་སྐོང་རྐྱབས།"
 
-#: ../pitivi/ui/sourcefactories.py:233
+#: ../pitivi/ui/sourcefactories.py:187
+msgid "Import your clips by dragging them here or by using buttons below."
+msgstr ""
+
+#: ../pitivi/ui/sourcefactories.py:278
 msgid "Import a folder"
 msgstr "སྣོད་འཛིན་ཅིག་ནང་འདྲེན་འབད།"
 
-#: ../pitivi/ui/sourcefactories.py:236
+#: ../pitivi/ui/sourcefactories.py:281
 msgid "Import a file"
 msgstr "ཡིག་སྣོད་ཅིག་ནང་འདྲེན་འབད།"
 
-#: ../pitivi/ui/sourcefactories.py:311
+#: ../pitivi/ui/sourcefactories.py:358
 msgid "Error while analyzing files"
 msgstr "ཡིག་སྣོད་ཚུ་དཔྱད་ཞིབ་འབད་བའི་སྐབས་འཛོལ་བ།"
 
-#: ../pitivi/ui/sourcefactories.py:312
+#: ../pitivi/ui/sourcefactories.py:359
 msgid "The following files weren't discovered properly."
 msgstr "འོག་གི་ཡིག་སྣོད་ཚུ་ཚུལ་ལྡན་སྦེ་གསར་རྙེད་མ་འབད་བས།"
 
-#: ../pitivi/ui/sourcefactories.py:482 ../pitivi/ui/sourcefactories.py:523
+#: ../pitivi/ui/sourcefactories.py:529 ../pitivi/ui/sourcefactories.py:570
 msgid "Name"
 msgstr "མིང་།"
 
-#: ../pitivi/ui/timelineobjects.py:370
+#: ../pitivi/ui/timelineobjects.py:432
 msgid "Remove"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:549
+#: ../pitivi/ui/viewer.py:550
 msgid "Choose file to render to"
 msgstr "ཡིག་སྣོད་ལྷག་སྟོན་འབད་ནི་ལུ་གདམ།"
 
-#: ../pitivi/ui/viewer.py:569
+#: ../pitivi/ui/viewer.py:570
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "ནང་མཇུག་བསྡུ་ཡོདཔ། %dm%ds"
 
-#: ../pitivi/ui/viewer.py:579
+#: ../pitivi/ui/viewer.py:580
 msgid "Rendering"
 msgstr "ལྷག་སྟོན་འབད་དོ།"
 
-#: ../pitivi/ui/viewer.py:581
+#: ../pitivi/ui/viewer.py:582
 msgid "Couldn't start rendering"
 msgstr "ལྷག་སྟོན་འབད་ནི་འགོ་བཙུགས་མ་ཚུགསཔ།"
 
-#: ../pitivi/ui/viewer.py:602
+#: ../pitivi/ui/viewer.py:603
 msgid "Rendering Complete"
 msgstr "ལྷག་སྟོན་འབད་ནི་མཇུག་བསྡུ།"
 
@@ -483,37 +499,37 @@ msgstr "<b>%s</b>"
 msgid "<small><b>File:</b> %s"
 msgstr "<small><b>ཡིག་སྣོད།:</b> %s"
 
-#: ../pitivi/objectfactory.py:408
+#: ../pitivi/objectfactory.py:412
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr "<b>ཝི་ཌིའོ:</b> %d x %d <i>པིག་སེལ་ཚུ་</i> ལུ་ %.2f<i>ཨེཕ་པི་ཨེསི།</i>"
 
-#: ../pitivi/objectfactory.py:411
+#: ../pitivi/objectfactory.py:415
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>གཟུགས་བརྙན:</b> %d x %d <i>པིག་སེལ་ཚུ།</i>"
 
-#: ../pitivi/objectfactory.py:414 ../pitivi/objectfactory.py:458
+#: ../pitivi/objectfactory.py:418 ../pitivi/objectfactory.py:462
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr " <i>(%s)</i>"
 
-#: ../pitivi/objectfactory.py:416
+#: ../pitivi/objectfactory.py:420
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "<b>མ་ཤེས་པའི་ཝི་ཌིའོ་རྩ་སྒྲིག:</b> %s"
 
-#: ../pitivi/objectfactory.py:455
+#: ../pitivi/objectfactory.py:459
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr "<b>རྣར་ཉན་:</b> %d རྒྱུན་ལམ་ཚུ་ %d <i>ཨེཆ་ཇེཌི་</i> (%d <i>བིཌིསི་ལུ།</i>)"
 
-#: ../pitivi/objectfactory.py:460
+#: ../pitivi/objectfactory.py:464
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "<b>མ་ཤེས་པའི་རྣར་ཉན་རྩ་སྒྲིག:</b> %s"
 
-#: ../pitivi/objectfactory.py:471
+#: ../pitivi/objectfactory.py:475
 #, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>ཚིག་ཡིག:</b> %s"
@@ -527,30 +543,30 @@ msgstr "ཧེ་མ་ལས་ %s དུས་སྐབས་བརྡ་ད�
 msgid "New Project"
 msgstr "ལས་འགུལ་གསརཔ།"
 
-#: ../pitivi/playground.py:374
+#: ../pitivi/playground.py:382
 msgid "Video output is busy"
 msgstr "ཝི་ཌིའོ་ཨའུཊི་པུཊི་འདི་ཁོམ་མེད།"
 
-#: ../pitivi/playground.py:375
+#: ../pitivi/playground.py:383
 msgid ""
 "Please check that your video output device isn't already used by another "
 "application"
 msgstr ""
 "ཁྱོད་ཀྱི་ཝི་ཌིའོ་ཨའུཊི་པུཊི་ཐབས་འཕྲུལ་དེ་གཞན་གློག་རིམ་གྱིས་ཧེ་མ་ལས་ལག་ལེན་མ་འཐབ་ཞིབ་དཔྱད་འབད་གནང་།"
 
-#: ../pitivi/playground.py:377
+#: ../pitivi/playground.py:385
 msgid "Video output problem"
 msgstr "ཝི་ཌིའོ་ཨའུཊི་པུཊི་དཀའ་ངལ།"
 
-#: ../pitivi/playground.py:378
+#: ../pitivi/playground.py:386
 msgid "There is a problem with your video output device"
 msgstr "ཁྱོད་ཀྱི་ཝི་ཌིའོ་ཨའུཊི་པུཊི་ཐབས་འཕྲུལ་དང་གཅིག་ཁར་དཀའ་ངལ་ཅིག་ཡོདཔ།"
 
-#: ../pitivi/playground.py:381
+#: ../pitivi/playground.py:389
 msgid "Audio output device is busy"
 msgstr "རྣར་ཉན་ཨའུཊི་པུཊི་ཐབས་འཕྲུལ་འདི་ཁོམ་མེད།"
 
-#: ../pitivi/playground.py:382
+#: ../pitivi/playground.py:390
 msgid ""
 "Please check that your audio output device isn't already used by another "
 "application."
@@ -558,11 +574,11 @@ msgstr ""
 "ཁྱོད་ཀྱི་རྣར་ཉན་ཨའུཊི་པུཊི་ཐབས་འཕྲུལ་དེ་གཞན་གློག་རིམ་གྱིས་ཧེ་མ་ལས་ལག་ལེན་མ་འཐབ་ཨིནམ་ཞིབ་དཔྱད་འབད་"
 "གནང་།"
 
-#: ../pitivi/playground.py:384
+#: ../pitivi/playground.py:392
 msgid "Audio output problem"
 msgstr "རྣར་ཉན་ཨའུཊི་པུཊི་དཀའ་ངལ།"
 
-#: ../pitivi/playground.py:385
+#: ../pitivi/playground.py:393
 msgid "There is a problem with your audio output device"
 msgstr "ཁྱོད་ཀྱི་རྣར་ཉན་ཨའུཊི་པུཊི་ཐབས་འཕྲུལ་དང་གཅིིག་ཁར་དཀའ་ངལ་ཅིག་ཡོདཔ།"
 
@@ -594,12 +610,3 @@ msgid ""
 msgstr ""
 "\n"
 "མུཀཟར། :"
-
-#~ msgid "File"
-#~ msgstr "ཡིག་སྣོད།"
-
-#~ msgid "Reason"
-#~ msgstr "རྒྱུ་མཚན།"
-
-#~ msgid "Unknown reason"
-#~ msgstr "རྒྱུ་མཚན་མ་ཤེསཔ།"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-12-23 06:16+0100\n"
+"POT-Creation-Date: 2007-01-22 11:48+0100\n"
 "PO-Revision-Date: 2006-12-23 14:03+0530\n"
 "Last-Translator: A S Alam <apbrar@gmail.com>\n"
 "Language-Team: Punjabi <fedora-trans-pa@redhat.com>\n"
@@ -16,6 +16,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ../pitivi/ui/filelisterrordialog.py:61
+#, fuzzy
+msgid "File"
+msgstr "ਫਾਇਲ(_F)"
+
+#: ../pitivi/ui/filelisterrordialog.py:67
+msgid "Reason"
+msgstr ""
+
+#: ../pitivi/ui/filelisterrordialog.py:71
+msgid "Unknown reason"
+msgstr ""
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 msgid "<b>Author:</b>"
@@ -205,7 +218,7 @@ msgid "Export Settings"
 msgstr "ਸੈਟਿੰਗ ਨਿਰਯਾਤ"
 
 #. set title and frame label
-#: ../pitivi/ui/gstwidget.py:145
+#: ../pitivi/ui/gstwidget.py:169
 msgid "Properties for "
 msgstr "ਵਿਸ਼ੇਸ਼ਤਾ"
 
@@ -370,24 +383,28 @@ msgstr ""
 msgid "Name"
 msgstr "ਨਾਂ"
 
-#: ../pitivi/ui/viewer.py:549
+#: ../pitivi/ui/timelineobjects.py:432
+msgid "Remove"
+msgstr ""
+
+#: ../pitivi/ui/viewer.py:550
 msgid "Choose file to render to"
 msgstr "ਰੈਡਰ ਕਰਨ ਲਈ ਫਾਇਲ ਚੁਣੋ"
 
-#: ../pitivi/ui/viewer.py:569
+#: ../pitivi/ui/viewer.py:570
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "%dm%ds 'ਚ ਖਤਮ"
 
-#: ../pitivi/ui/viewer.py:579
+#: ../pitivi/ui/viewer.py:580
 msgid "Rendering"
 msgstr "ਰੈਡਰਿੰਗ"
 
-#: ../pitivi/ui/viewer.py:581
+#: ../pitivi/ui/viewer.py:582
 msgid "Couldn't start rendering"
 msgstr "ਰੈਡਰਿੰਗ ਸ਼ੁਰੂ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ"
 
-#: ../pitivi/ui/viewer.py:602
+#: ../pitivi/ui/viewer.py:603
 msgid "Rendering Complete"
 msgstr "ਰੈਡਰਿੰਗ ਮੁਕੰਮਲ ਹੋਈ"
 
@@ -515,39 +532,39 @@ msgstr "ਇੱਕ %s ਪਹਿਲਾਂ ਹੀ ਚੱਲ ਰਿਹਾ ਹੈ, �
 msgid "New Project"
 msgstr "ਨਵਾਂ ਪ੍ਰੋਜੈਕਟ"
 
-#: ../pitivi/playground.py:374
+#: ../pitivi/playground.py:382
 msgid "Video output is busy"
 msgstr "ਵੀਡਿਓ ਆਉਟਪੁੱਟ ਰੁੱਝੀ ਹੈ"
 
-#: ../pitivi/playground.py:375
+#: ../pitivi/playground.py:383
 msgid ""
 "Please check that your video output device isn't already used by another "
 "application"
 msgstr ""
 
-#: ../pitivi/playground.py:377
+#: ../pitivi/playground.py:385
 msgid "Video output problem"
 msgstr "ਵੀਡਿਓ ਆਉਟਪੁੱਟ ਸਮੱਸਿਆ"
 
-#: ../pitivi/playground.py:378
+#: ../pitivi/playground.py:386
 msgid "There is a problem with your video output device"
 msgstr "ਤੁਹਾਡੇ ਵੀਡਿਓ ਆਉਟਪੁੱਟ ਜੰਤਰ ਨਾਲ ਇੱਕ ਸਮੱਸਿਆ ਆਈ ਹੈ।"
 
-#: ../pitivi/playground.py:381
+#: ../pitivi/playground.py:389
 msgid "Audio output device is busy"
 msgstr "ਆਡੀਓ ਆਉਟਪੁੱਟ ਜੰਤਰ ਰੁੱਝਿਆ ਹੈ।"
 
-#: ../pitivi/playground.py:382
+#: ../pitivi/playground.py:390
 msgid ""
 "Please check that your audio output device isn't already used by another "
 "application."
 msgstr ""
 
-#: ../pitivi/playground.py:384
+#: ../pitivi/playground.py:392
 msgid "Audio output problem"
 msgstr "ਆਡੀਓ ਆਉਟਪੁੱਟ ਸਮੱਸਿਆ"
 
-#: ../pitivi/playground.py:385
+#: ../pitivi/playground.py:393
 msgid "There is a problem with your audio output device"
 msgstr "ਤੁਹਾਡੇ ਆਡੀਓ ਆਉਟਪੁੱਟ ਜੰਤਰ ਨਾਲ ਸਮੱਸਿਆ ਹੈ"
 
@@ -579,4 +596,3 @@ msgid ""
 msgstr ""
 "\n"
 "Muxer :"
-
