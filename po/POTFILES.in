@@ -2,6 +2,7 @@
 # Please keep this file sorted alphabetically.
 # [encoding: UTF-8]
 pitivi/ui/filelisterrordialog.glade
+pitivi/ui/filelisterrordialog.py
 pitivi/ui/elementsettingsdialog.glade
 pitivi/ui/encodingdialog.glade
 pitivi/ui/exportsettingswidget.glade

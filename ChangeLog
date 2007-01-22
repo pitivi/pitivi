@@ -1,3 +1,8 @@
+2007-01-22  Edward Hervey  <edward@fluendo.com>
+
+	* po/POTFILES.in:
+	Add pitivi/ui/filelisterrordialog.py to translatable files.
+
 2007-01-19  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/discoverer.py:
