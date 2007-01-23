@@ -91,7 +91,7 @@ class Project(gobject.GObject):
         self._save(filename)
 
     # setting methods
-    def _settingsChangedCb(self, settings):
+    def _settingsChangedCb(self, unused_settings):
         self.emit('settings-changed')
     
     def getSettings(self):
@@ -114,7 +114,7 @@ class Project(gobject.GObject):
         self.emit('settings-changed')
         self.settingssigid = self.settings.connect('settings-changed', self._settingsChangedCb)
 
-    def unsetSettings(self, settings):
+    def unsetSettings(self, unused_settings):
         """ Remove the currently configured settings."""
         self.setSettings(None)
 

@@ -400,7 +400,7 @@ class PitiviViewer(gtk.VBox):
 
     ## Playground callbacks
     
-    def _playgroundPositionCb(self, playground, smartbin, pos):
+    def _playgroundPositionCb(self, unused_playground, unused_smartbin, pos):
         self._newTime(pos)
 
     def _currentPlaygroundChangedCb(self, playground, smartbin):

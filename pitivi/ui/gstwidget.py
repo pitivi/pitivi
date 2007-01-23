@@ -51,7 +51,7 @@ def get_widget_propvalue(property, widget):
         return val
     return None
 
-def make_property_widget(element, property, value=None):
+def make_property_widget(unused_element, property, value=None):
     """ Creates a Widget for the given element property """
     # FIXME : implement the case for flags
     type_name = gobject.type_name(property.value_type.fundamental)

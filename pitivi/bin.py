@@ -237,7 +237,11 @@ class SmartBin(gst.Pipeline):
 
         self.getRealVideoSink().set_property("sync", True)
 
-    def _debugProbe(self, pad, data, categoryname):
+    def getSettings(self):
+        """ Return the ExportSettings for the bin """
+        return None
+
+    def _debugProbe(self, unused_pad, data, categoryname):
         if isinstance(data, gst.Buffer):
             self.log("%s\tBUFFER timestamp:%s duration:%s size:%d" % (categoryname,
                                                                       gst.TIME_ARGS(data.timestamp),
@@ -256,9 +260,8 @@ class SmartBin(gst.Pipeline):
         # TODO : Check if we really do both audio and video !
         
         if not settings:
-            if isinstance(self, SmartTimelineBin):
-                settings = self.project.getSettings()
-            else:
+            setting = self.getSettings()
+            if not settings:
                 self.error("No settings available to create the Encoding Thread")
                 return None
         
@@ -405,6 +408,9 @@ class SmartFileBin(SmartBin):
             pad.unlink(self.atee.get_pad("sink"))
         elif pad.get_caps().to_string().startswith("video") and self.vtee:
             pad.unlink(self.vtee.get_pad("sink"))
+
+    def getSettings(self):
+        return self.project.getSettings()
 
     def do_destroy(self):
         self.info("destroyed")

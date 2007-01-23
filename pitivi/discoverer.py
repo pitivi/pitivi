@@ -131,8 +131,8 @@ class Discoverer(gobject.GObject):
         self.bus.remove_signal_watch()
         self.bus = None
         gst.log("disconnecting all signal handlers")
-        for object, sigid in self.signalsid:
-            object.disconnect(sigid)
+        for sobject, sigid in self.signalsid:
+            sobject.disconnect(sigid)
         self.signalsid = []
         gst.info("before setting to NULL")
         res = self.pipeline.set_state(gst.STATE_NULL)
@@ -262,7 +262,7 @@ class Discoverer(gobject.GObject):
         else:
             gst.log("%s:%s" % ( message.type, message.src))
 
-    def _handleError(self, gerror, detail, source):
+    def _handleError(self, gerror, unused_detail, unused_source):
         gst.warning("got an ERROR")
         
         self.emit("not_media_file", self.current, "An error occured while analyzing this file")
@@ -393,7 +393,7 @@ class Discoverer(gobject.GObject):
                     self.emit("not_media_file", self.current, "Got unknown stream type : %s" % capsstr)
                     gobject.idle_add(self._finishAnalysis)
 
-    def _noMorePadsCb(self, element):
+    def _noMorePadsCb(self, unused_element):
         gst.debug("no more pads on decodebin !")
         self.nomorepads = True
 

@@ -356,7 +356,7 @@ class PlayGround(gobject.GObject):
             self._handleError(error, detail, message.src)
 
 
-    def _busSyncMessageHandler(self, bus, message):
+    def _busSyncMessageHandler(self, unused_bus, message):
         if message.type == gst.MESSAGE_ELEMENT:
             # handle element message synchronously
             self.emit('element-message', message)
@@ -396,7 +396,7 @@ class PlayGround(gobject.GObject):
             
         
 
-    def _handleWarning(self, error, detail, source):
+    def _handleWarning(self, gerror, detail, source):
         """
         Uses the information from the Gerror, detail and source to
         create meaningful warning messages for the User Interface.

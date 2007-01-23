@@ -1,3 +1,30 @@
+2007-01-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	* pitivi/effects.py:
+	Move the magician back to the top-level.
+	* pitivi/timeline/Makefile.am:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/effects.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/timeline/timeline.py:
+	Split the timeline objects into smaller files for easier comprehension.
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	Fix inconsistencies detected by pychecker.
+	Adapt code to timeline objects split-up.
+
 2007-01-22  Edward Hervey  <edward@fluendo.com>
 
 	* po/ar.po:

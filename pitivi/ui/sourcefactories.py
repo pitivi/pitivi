@@ -395,7 +395,7 @@ class SourceListWidget(gtk.VBox):
             dialogbox.destroy()
             self._importDialog = None
 
-    def _dialogBoxCloseCb(self, dialogbox):
+    def _dialogBoxCloseCb(self, unused_dialogbox):
         gst.debug("closing")
         self._importDialog = None
 

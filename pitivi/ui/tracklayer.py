@@ -31,7 +31,7 @@ import cairo
 import pitivi.dnd as dnd
 import pitivi.instance as instance
 
-from pitivi.timeline.timeline import TimelineFileSource
+from pitivi.timeline.source import TimelineFileSource
 from complexinterface import ZoomableWidgetInterface
 from complexsource import ComplexTimelineSource
 

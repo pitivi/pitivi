@@ -30,7 +30,9 @@ import gtk
 import gst
 
 import pitivi.instance as instance
-from pitivi.timeline.timeline import TimelineFileSource, TimelineSource, TimelineTransition, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
+from pitivi.timeline.source import TimelineFileSource, TimelineSource
+from pitivi.timeline.effects import TimelineTransition
+from pitivi.timeline.objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 from pitivi.configure import get_pixmap_dir
 import pitivi.dnd as dnd
 from pitivi.signalgroup import SignalGroup
@@ -370,18 +372,18 @@ class SimpleTimeline(gtk.Layout):
 
     ## Child callbacks
         
-    def _sourceDeleteMeCb(self, widget, element):
+    def _sourceDeleteMeCb(self, unused_widget, element):
         # remove this element from the timeline
         self.timeline.videocomp.removeSource(element, collapse_neighbours=True)
 
-    def _sourceDragBeginCb(self, widget, context, element):
+    def _sourceDragBeginCb(self, unused_widget, unused_context, element):
         gst.log("Timeline drag beginning on %s" % element)
         if self.draggedelement:
             gst.error("We were already doing a DnD ???")
         self.draggedelement = element
         # this element is starting to be dragged
 
-    def _sourceDragEndCb(self, widget, context, element):
+    def _sourceDragEndCb(self, unused_widget, unused_context, element):
         gst.log("Timeline drag ending on %s" % element)
         if not self.draggedelement == element:
             gst.error("The DnD that ended is not the one that started before ???")

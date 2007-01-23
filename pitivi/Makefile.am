@@ -14,6 +14,7 @@ pitivi_PYTHON = \
 	check.py 	\
 	discoverer.py 	\
 	dnd.py 		\
+	effects.py	\
 	objectfactory.py \
 	pitivi.py 	\
 	playground.py 	\

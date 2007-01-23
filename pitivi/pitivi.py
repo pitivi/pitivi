@@ -33,7 +33,7 @@ from ui import mainwindow
 from discoverer import Discoverer
 from playground import PlayGround
 from project import Project, file_is_project
-from timeline.effects import Magician
+from effects import Magician
 from configure import APPNAME
 import instance
 

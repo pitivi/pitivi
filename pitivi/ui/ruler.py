@@ -194,7 +194,6 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         paintpos = float(self.border) + 0.5
         seconds = 0
         secspertic = 1
-        next_text = -1
         
         timeprint = 0
         ticspertime = 1

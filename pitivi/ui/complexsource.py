@@ -27,8 +27,10 @@ Source widget for the complex view
 import gtk
 import gst
 import cairo
+import os
 
-from pitivi.timeline.timeline import TimelineSource, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
+from pitivi.timeline.source import TimelineSource
+from pitivi.timeline.objects import MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
 from pitivi.configure import get_pixmap_dir
 from complexinterface import ZoomableWidgetInterface
 
