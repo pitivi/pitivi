@@ -1,5 +1,10 @@
 2007-01-23  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/timeline/effects.py:
+	cough, sven is stupid, cough
+
+2007-01-23  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/Makefile.am:
 	* pitivi/effects.py:
 	Move the magician back to the top-level.
