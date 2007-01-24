@@ -30,26 +30,6 @@ from pitivi.settings import ExportSettings
 from composition import TimelineComposition
 from objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 
-## * Object Hierarchy
-
-##   Object
-##    |
-##    +---- Source
-##    |	   |
-##    |	   +---- FileSource
-##    |	   |
-##    |	   +---- LiveSource
-##    |	   |
-##    |	   +---- Composition
-##    |
-##    +---- Effect
-## 	   |
-## 	   +---- Simple Effect (1->1)
-## 	   |
-## 	   +---- Transition
-## 	   |
-## 	   +---- Complex Effect (N->1)
-
 class Timeline(gobject.GObject):
     """
     Fully fledged timeline

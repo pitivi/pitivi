@@ -1,3 +1,10 @@
+2007-01-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/timeline.py:
+	More code refactoring in timeline objects.
+
 2007-01-23  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/timeline/effects.py:

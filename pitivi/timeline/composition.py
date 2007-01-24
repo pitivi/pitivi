@@ -28,7 +28,54 @@ import gst
 
 from pitivi.settings import ExportSettings
 from source import TimelineSource
-from objects import MEDIA_TYPE_AUDIO
+from objects import BrotherObjects, MEDIA_TYPE_AUDIO
+
+class Layer(BrotherObjects):
+    """
+    Base class for composition layers (effects, sources, ...)
+    """
+
+    def __init__(self):
+        gobject.GObject.__init__(self)
+
+
+class EffectsLayer(Layer):
+    """
+    Layers of the composition that have only one priority
+    """
+
+    def __init__(self, priority):
+        Layer.__initi__(self)
+        self._priority = priority
+        self._effects = []
+
+    def __len__(self):
+        return len(self._effects)
+
+    def __getitem__(self, x):
+        return self._effects.__getitem__(x)
+
+class SourcesLayer(Layer):
+    """
+    Layers of the composition that have minimum and maximum priority
+    Sources are sorted by start time and then by priority
+    """
+
+    def __init__(self, minprio, maxprio):
+        Layer.__initi__(self)
+        self._minprio = minprio
+        self._maxprio = maxprio
+        self._sources = []
+
+    def __len__(self):
+        return len(self._sources)
+
+    def __contains__(self, source):
+        return self._sources.__contains__(source)
+
+    def index(self, source):
+        return self._sources.index(source)
+
 
 class TimelineComposition(TimelineSource):
     """
@@ -141,9 +188,9 @@ class TimelineComposition(TimelineSource):
         self.complex_effects = [] # complex effect sorted by time
         self.transitions = [] # transitions sorted by time
         # list of layers of simple effects (order: priority, then time)
+        self.condensed = [] # list of sources/transitions seen from a top-level view
         # each layer contains (min priority, max priority, list objects)
         #sources = [(2048, 2060, [])] 
-        self.condensed = [] # list of sources/transitions seen from a top-level view
         self.sources = [(2048, 2060, [])]
         self.defaultSource = None
         TimelineSource.__init__(self, **kw)
