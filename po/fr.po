@@ -9,13 +9,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-22 11:48+0100\n"
+"POT-Creation-Date: 2007-01-25 18:55+0100\n"
 "PO-Revision-Date: 2007-01-22 11:52+0100\n"
 "Last-Translator: Christophe Sauthier <christophe.sauthier@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: ../pitivi/ui/filelisterrordialog.py:61
 msgid "File"
@@ -360,7 +360,9 @@ msgstr "Ajouter répertoire"
 
 #: ../pitivi/ui/sourcefactories.py:187
 msgid "Import your clips by dragging them here or by using buttons below."
-msgstr "Importez vos clips en les glissant ici ou en utilisant les boutons ci-dessous."
+msgstr ""
+"Importez vos clips en les glissant ici ou en utilisant les boutons ci-"
+"dessous."
 
 #: ../pitivi/ui/sourcefactories.py:278
 msgid "Import a folder"
@@ -382,7 +384,7 @@ msgstr "Les fichiers suivant n'ont pas été découverts correctement."
 msgid "Name"
 msgstr "Nom"
 
-#: ../pitivi/ui/timelineobjects.py:432
+#: ../pitivi/ui/timelineobjects.py:434
 msgid "Remove"
 msgstr "Retirer"
 

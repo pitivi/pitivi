@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-22 11:48+0100\n"
+"POT-Creation-Date: 2007-01-25 18:55+0100\n"
 "PO-Revision-Date: 2006-11-18 00:59+0100\n"
 "Last-Translator: Djihed Afifi <djihed@gmail.com>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
@@ -427,7 +427,7 @@ msgstr ""
 msgid "Name"
 msgstr "اسم"
 
-#: ../pitivi/ui/timelineobjects.py:432
+#: ../pitivi/ui/timelineobjects.py:434
 msgid "Remove"
 msgstr ""
 

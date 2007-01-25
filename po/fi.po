@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-22 11:48+0100\n"
+"POT-Creation-Date: 2007-01-25 18:55+0100\n"
 "PO-Revision-Date: 2006-10-25 08:43+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
@@ -391,7 +391,7 @@ msgstr "Seuraavia tiedostoja ei havaittu oikein."
 msgid "Name"
 msgstr "Nimi"
 
-#: ../pitivi/ui/timelineobjects.py:432
+#: ../pitivi/ui/timelineobjects.py:434
 msgid "Remove"
 msgstr ""
 

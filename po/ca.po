@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-22 11:48+0100\n"
+"POT-Creation-Date: 2007-01-25 18:55+0100\n"
 "PO-Revision-Date: 2006-10-21 09:40+0200\n"
 "Last-Translator: Gil Forcada <gilforcada@guifi.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
@@ -387,7 +387,7 @@ msgstr "Els següents fitxers no s'han descobert correctament."
 msgid "Name"
 msgstr "Nom"
 
-#: ../pitivi/ui/timelineobjects.py:432
+#: ../pitivi/ui/timelineobjects.py:434
 msgid "Remove"
 msgstr ""
 

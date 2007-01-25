@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-22 11:48+0100\n"
+"POT-Creation-Date: 2007-01-25 18:55+0100\n"
 "PO-Revision-Date: 2006-07-02 14:46+0800\n"
 "Last-Translator: Funda Wang <fundawang@linux.net.cn>\n"
 "Language-Team: zh_CN <i18n-translation@lists.linux.net.cn>\n"
@@ -403,7 +403,7 @@ msgstr "下列文件未正确发现。"
 msgid "Name"
 msgstr "名称："
 
-#: ../pitivi/ui/timelineobjects.py:432
+#: ../pitivi/ui/timelineobjects.py:434
 msgid "Remove"
 msgstr ""
 
