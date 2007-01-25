@@ -1,5 +1,10 @@
 2007-01-25  Edward Hervey  <edward@fluendo.com>
 
+	* configure.ac:
+	0.10.1.2 pre-release
+
+2007-01-25  Edward Hervey  <edward@fluendo.com>
+
 	* po/ar.po:
 	* po/ca.po:
 	* po/dz.po:
