@@ -1,3 +1,10 @@
+2007-01-26  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac: (PYGST_REQ): 
+	Bring gst-python requirement down to 0.10.6. 0.10.7 is not a hard
+	requirement, but highly recommended since it fixes big thread-safety
+	issues.
+
 2007-01-25  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac:
