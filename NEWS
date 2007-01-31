@@ -1,3 +1,18 @@
+2007 Jan 31 - PiTiVi 0.10.2
+
+ * UI improvements for usability
+ * decodebin2 support
+ * Rendering improvements
+ * i18n support, translated in 12 languages
+ * Critical bugfixes
+
+2006 May 23 - PiTiVi 0.10.1
+
+ * More UI improvements for usability
+ * Works with X11/Imagesink
+ * Handles more formats
+ * More startup checks
+
 2006 Apr 26 - PiTiVi 0.10.0
 
  * Lots of UI improvements for usability

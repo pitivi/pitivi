@@ -1,42 +1,68 @@
-0.10.1 Release : Sister and friend
-----------------------------------
+0.10.2 Release : A New Toy
+--------------------------
 
-The PiTiVi team is proud to announce the second release of the 0.10.x series of the PiTiVi opensource video editor.
+The PiTiVi team is proud to announce the third release of the 0.10.x series of the PiTiVi opensource video editor.
 
-The 0.10.x series is an unstable series with 3-week release cycles. The goal of this series is to allow users to test new versions often, give their feedback, and remove bugs more often.
+The goal of this series is to allow users to test new versions often, give their feedback, and remove bugs more often.
 
 
 * Features of this release
 
- * More UI improvements for usability
- * Works with X11/Imagesink
- * Handles more formats
- * More startup checks
+ * UI improvements for usability
+ * decodebin2 support
+ * Rendering improvements
+ * i18n support, translated in 12 languages
+ * Critical bugfixes
 
 * Bugs Fixed
 
- * 335500 : Render dialog never goes away
- * 339993 : [i18n] use stock labels included with stock items
- * 339998 : Gnome button order
- * 340382 : current position should be ui-independent
- * 342674 : Segmentation fault on load
+ * 353859 : [discoverer] Use 'no-more-pads' information 
+ * 335699 : Pitivi fails to work if project created at wrong time 
+ * 335822 : Transcoding WMV creates tiny file 
+ * 335826 : Cancel and restarting rendering not possible 
+ * 336332 : Can't play a file in pitivi until i scrub forward 
+ * 337990 : [Tracker] Need internationalization/localization 
+ * 338065 : combobox next to time is useless and should go 
+ * 339994 : follow the gnome toolbar and menu settings 
+ * 346584 : pitivi should have intltool and gettext support 
+ * 346585 : Don't use whitespace before punctuation in pitivi messages 
+ * 348232 : hang when loading an ogg 
+ * 350562 : Error message when transcoding 
+ * 352400 : [importing] Allow importing (sub)folders 
+ * 353861 : Don't close filechooser dialog box immediatly 
+ * 377117 : pitivi won't start 
+ * 378865 : Windows media transcoding borks with audio 
+ * 381959 : Pressing Alt-F to activate file menu toggles fullscreen 
+ * 381970 : Make pitivi work uninstalled from SVN repositories 
+ * 382249 : configure on ubuntu edgy fails to find pygtk 
+ * 383826 : Pitivi can't scroll one 0.5 sec tic at a time 
+ * 392204 : pitivi crash when objectfactory doesn't have valid thumbn... 
+ * 396808 : Split up code from pitivi/ to subdirectories 
 
 
 * Requirements
 
- * gstreamer >= 0.10.4
- * gst-python >= 0.10.0
- * gnonlin >= 0.10.2
- * pygtk >= 0.10.0
+ * gstreamer >= 0.10.8
+ * gst-python >= 0.10.6
+ * gnonlin >= 0.10.7
+ * pygtk >= 2.8.0
 
 
 * Contributors
 
- * Andy Wingo
- * Andrew Z
- * Christian Schaller
+ * Christophe Sauthier
  * Edward Hervey
+ * Ernst Persson
+ * Laszlo Pandy
+ * Richard Boulton
 
+
+* Download
+
+  PiTiVi source tarballs are available on gnome FTP:
+   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.10/
+
+  See the website for distribution-specific packages.
 
 * Information and Feedback
 
