@@ -1,3 +1,9 @@
+2007-02-02  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Make requirement of gconf optional, since we want pitivi to also
+	work on pure gtk+ installations.
+
 2007-01-31  Edward Hervey  <edward@fluendo.com>
 
 	* configure.ac:

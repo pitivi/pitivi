@@ -27,7 +27,13 @@ import os
 import gobject
 import gtk
 import gst
-import gconf
+
+try:
+    import gconf
+except:
+    have_gconf=False
+else:
+    have_gconf=True
 
 import pitivi.instance as instance
 import pitivi.configure as configure
@@ -40,10 +46,12 @@ from viewer import PitiviViewer
 from projectsettings import ProjectSettingsDialog
 from pitivi.configure import pitivi_version, APPNAME
 
-D_G_INTERFACE = "/desktop/gnome/interface"
+if have_gconf:
+    D_G_INTERFACE = "/desktop/gnome/interface"
+    
+    for gconf_dir in (D_G_INTERFACE,):
+        gconf.client_get_default ().add_dir (gconf_dir, gconf.CLIENT_PRELOAD_NONE)
 
-for gconf_dir in (D_G_INTERFACE,):
-    gconf.client_get_default ().add_dir (gconf_dir, gconf.CLIENT_PRELOAD_NONE)
 
 class PitiviMainWindow(gtk.Window):
     """
