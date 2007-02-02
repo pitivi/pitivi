@@ -1,5 +1,12 @@
 2007-02-02  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/timeline.py:
+	Show an explanation text in the timeline when it is empty so new users
+	know what to do.
+	Fixes #383402
+
+2007-02-02  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/mainwindow.py:
 	Make requirement of gconf optional, since we want pitivi to also
 	work on pure gtk+ installations.

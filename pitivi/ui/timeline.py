@@ -28,6 +28,8 @@ import gtk
 import gobject
 import gst
 
+from gettext import gettext as _
+
 from timelineobjects import SimpleSourceWidget, SimpleTimeline
 from complextimeline import ComplexTimelineWidget
 
@@ -86,6 +88,61 @@ class SimpleTimelineContentWidget(gtk.HBox):
         """ draw the GUI """
         self.timeline = SimpleTimeline(hadjustment = self.twidget.hadjustment)
         
-        layoutframe = gtk.Frame()
-        layoutframe.add(self.timeline)
-        self.pack_start(layoutframe)
+        # real simple timeline
+        self.layoutframe = gtk.Frame()
+        self.layoutframe.add(self.timeline)
+
+        # Explanatory message label
+        txtbuffer = gtk.TextBuffer()
+        txtbuffer.set_text(_("Start working with your project by dragging clips here"))
+        txttag = gtk.TextTag()
+        txttag.props.size = self.style.font_desc.get_size() * 1.5
+        txtbuffer.tag_table.add(txttag)
+        txtbuffer.apply_tag(txttag, txtbuffer.get_start_iter(),
+                            txtbuffer.get_end_iter())
+        self.messagewindow = gtk.TextView(txtbuffer)
+        self.messagewindow.set_justification(gtk.JUSTIFY_CENTER)
+        self.messagewindow.set_wrap_mode(gtk.WRAP_WORD)
+        self.messagewindow.set_pixels_above_lines(30)
+        self.messagewindow.set_cursor_visible(False)
+        self.messagewindow.set_editable(False)
+        self.messagewindow.set_left_margin(10)
+        self.messagewindow.set_right_margin(10)
+        self.messagewindow.set_size_request(-1, 100)
+        
+        self.messagewindow.add_events(gtk.gdk.ENTER_NOTIFY_MASK)
+        
+        self.pack_start(self.messagewindow)
+        
+        self.motionSigId = self.messagewindow.connect("drag-motion", self._dragMotionCb)
+
+        self.showingTimeline = False
+        
+    def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
+                      unused_timestamp):
+        gst.log("motion...")
+        gobject.idle_add(self._displayTimeline)
+
+    def _displayTimeline(self, displayed=True):
+        if displayed:
+            if self.showingTimeline:
+                return
+            gst.debug("displaying timeline")
+            self.messagewindow.disconnect(self.motionSigId)
+            self.motionSigId = None
+            self.remove(self.messagewindow)
+            self.messagewindow.hide()
+            self.pack_start(self.layoutframe)
+            self.reorder_child(self.layoutframe, 0)
+            self.layoutframe.show_all()
+            self.showingTimeline = True
+        else:
+            if not self.showingTimeline:
+                return
+            gst.debug("hiding timeline")
+            self.remove(self.layoutframe)
+            self.layoutframe.hide()
+            self.pack_start(self.messagewindow)
+            self.reorder_child(self.messagewindow, 0)
+            self.messagewindo.show()
+            self.showingTimeline = False
