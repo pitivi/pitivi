@@ -202,6 +202,8 @@ class SourceListWidget(gtk.VBox):
         self.reorder_child(self.messagewindow, 0)
         self.showingTreeView = False
 
+        self.dragMotionSigId = self.messagewindow.connect("drag-motion", self._dragMotionCb)
+
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
         self.project_signals = SignalGroup()
@@ -243,10 +245,15 @@ class SourceListWidget(gtk.VBox):
         self.project_signals.connect(project.sources, "file_removed", None, self._fileRemovedCb)
         self.project_signals.connect(project.sources, "not_media_file", None, self._notMediaFileCb)
 
-    def _displayTreeView(self, displayed=True):
+
+    ## Explanatory message methods
+
+    def _displayTreeView(self, displayed=True, usesignals=True):
         """ Display the tree view in the scrolled window.
         If displayed is False, then the default explanation message will be
         shown.
+        If usesignals is True, then signals on the mesagewindow will be
+        (dis)connected
         """
         if displayed:
             if self.showingTreeView:
@@ -254,6 +261,10 @@ class SourceListWidget(gtk.VBox):
             gst.debug("displaying tree view")
             self.remove(self.messagewindow)
             self.messagewindow.hide()
+            if usesignals:
+                if self.dragMotionSigId:
+                    self.messagewindow.disconnect(self.dragMotionSigId)
+                    self.dragMotionSigId = 0
             self.pack_start(self.scrollwin)
             self.reorder_child(self.scrollwin, 0)
             self.scrollwin.show_all()
@@ -268,6 +279,11 @@ class SourceListWidget(gtk.VBox):
             self.reorder_child(self.messagewindow, 0)
             self.messagewindow.show()
             self.showingTreeView = False
+
+    def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
+                      unused_timestamp):
+        gst.log("motion")
+        gobject.idle_add(self._displayTreeView, True, False)
 
     def showImportSourcesDialog(self, select_folders=False):
         if self._importDialog:

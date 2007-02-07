@@ -1,3 +1,10 @@
+2007-02-07  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Make the explanation message go away when dragging into the source
+	list. This allows drag-and-drop again from outside pitivi.
+	Fixes #403877
+
 2007-02-02  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/timeline.py:
