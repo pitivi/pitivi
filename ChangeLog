@@ -1,3 +1,9 @@
+2007-02-08  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timelineobjects.py:
+	First step of implementing simple timeline editing mode.
+	Still need to fill in the SimpleEditingWidget.
+	
 2007-02-07  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/sourcefactories.py:

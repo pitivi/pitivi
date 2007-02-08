@@ -74,6 +74,12 @@ class SimpleTimeline(gtk.Layout):
         # MAPPING timelineobject => widget
         self.widgets = {}
 
+        # edit-mode
+        # True when in editing mode
+        self._editingMode = False
+        self.editingWidget = SimpleEditingWidget()
+        self.editingWidget.connect("hide-me", self._editingWidgetHideMeCb)
+
         # Connect to timeline.  We must remove and reset the callbacks when
         # changing project.
         self.project_signals = SignalGroup()
@@ -83,6 +89,7 @@ class SimpleTimeline(gtk.Layout):
         # size
         self.width = int(DEFAULT_WIDTH)
         self.height = int(DEFAULT_HEIGHT)
+        self.realWidth = 0 # displayed width of the layout
         self.childheight = int(DEFAULT_SIMPLE_ELEMENT_HEIGHT)
         self.set_size_request(int(MINIMUM_WIDTH), int(MINIMUM_HEIGHT))
         self.set_property("width", int(DEFAULT_WIDTH))
@@ -147,6 +154,7 @@ class SimpleTimeline(gtk.Layout):
             if isinstance(element, TimelineFileSource):
                 widget = SimpleSourceWidget(element)
                 widget.connect("delete-me", self._sourceDeleteMeCb, element)
+                widget.connect("edit-me", self._sourceEditMeCb, element)
                 widget.connect("drag-begin", self._sourceDragBeginCb, element)
                 widget.connect("drag-end", self._sourceDragEndCb, element)
             else:
@@ -161,7 +169,9 @@ class SimpleTimeline(gtk.Layout):
             del self.widgets[element]
             
         self._resizeChildrens()
-        # call a redraw
+
+
+    ## Utility methods
 
     def _getNearestSourceSlot(self, x):
         """
@@ -218,6 +228,9 @@ class SimpleTimeline(gtk.Layout):
                 return pos
             pos = pos + spacing + DEFAULT_SIMPLE_SPACING
         return pos
+
+    
+    ## Drawing
 
     def _drawDragSlot(self):
         if self.slotposition == -1:
@@ -277,7 +290,7 @@ class SimpleTimeline(gtk.Layout):
         pass
 
 
-    ## Drag and Drop
+    ## Drag and Drop callbacks
     
     def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
                       unused_timestamp):
@@ -349,12 +362,19 @@ class SimpleTimeline(gtk.Layout):
             self.height = allocation.height
             self.childheight = self.height - 2 * DEFAULT_SIMPLE_SPACING
             self._resizeChildrens()
+        self.realWidth = allocation.width
+        if self._editingMode:
+            self.editingWidget.set_size_request(self.realWidth - 20,
+                                                self.height - 20)
+
             
     def _resizeChildrens(self):
         # resize the childrens to self.height
         # also need to move them to their correct position
         # TODO : check if there already at the given position
         # TODO : check if they already have the good size
+        if self._editingMode:
+            return
         pos = 2 * DEFAULT_SIMPLE_SPACING
         for source in self.condensed:
             widget = self.widgets[source]
@@ -376,6 +396,9 @@ class SimpleTimeline(gtk.Layout):
         # remove this element from the timeline
         self.timeline.videocomp.removeSource(element, collapse_neighbours=True)
 
+    def _sourceEditMeCb(self, unused_widget, element):
+        self.switchToEditingMode(element)
+
     def _sourceDragBeginCb(self, unused_widget, unused_context, element):
         gst.log("Timeline drag beginning on %s" % element)
         if self.draggedelement:
@@ -389,6 +412,115 @@ class SimpleTimeline(gtk.Layout):
             gst.error("The DnD that ended is not the one that started before ???")
         self.draggedelement = None
         # this element is no longer dragged
+        
+    def _editingWidgetHideMeCb(self, unused_widget):
+        self.switchToNormalMode()
+
+
+    ## Editing mode
+
+    def _switchEditingMode(self, source, mode=True):
+        """ Switch editing mode for the given TimelineSource """
+        gst.log("source:%s , mode:%s" % (source, mode))
+
+        if self._editingMode == mode:
+            gst.warning("We were already in the correct editing mode : %s" % mode)
+            return
+
+        if mode and not source:
+            gst.warning("You need to specify a valid TimelineSource")
+            return
+
+        if mode:
+            # switching TO editing mode
+            gst.log("Switching TO editing mode")
+            
+            # 1. Hide all sources
+            for widget in self.widgets.itervalues():
+                widget.hide()
+                self.remove(widget) 
+
+            self._editingMode = mode
+               
+            # 2. Show editing widget
+            self.editingWidget.setSource(source)
+            self.put(self.editingWidget, 10, 10)
+            self.props.width = self.realWidth
+            self.editingWidget.set_size_request(self.realWidth - 20, self.height - 20)
+            self.editingWidget.show()
+            
+        else:
+            gst.log("Switching back to normal mode")
+            # switching FROM editing mode
+
+            # 1. Hide editing widget
+            self.editingWidget.hide()
+            self.remove(self.editingWidget)
+
+            self._editingMode = mode
+            
+            # 2. Show all sources
+            for widget in self.widgets.itervalues():
+                self.put(widget, 0, 0)
+                widget.show()
+            self._resizeChildrens()
+
+    def switchToEditingMode(self, source):
+        """ Switch to Editing mode for the given TimelineSource """
+        self._switchEditingMode(source)
+
+    def switchToNormalMode(self):
+        """ Switch back to normal timeline mode """
+        self._switchEditingMode(None, False)
+
+
+class SimpleEditingWidget(gtk.DrawingArea):
+    """
+    Widget for editing a source in the SimpleTimeline
+    """
+
+    __gsignals__ = {
+        "hide-me" : (gobject.SIGNAL_RUN_LAST,
+                     gobject.TYPE_NONE,
+                     ( ))
+        }
+
+    def __init__(self):
+        gtk.DrawingArea.__init__(self)
+        self.gc = None
+        self.add_events(gtk.gdk.BUTTON_RELEASE_MASK | gtk.gdk.BUTTON_PRESS_MASK)
+        self.connect("realize", self._realizeCb)
+        self.connect("expose-event", self._exposeEventCb)
+        self.connect("button-press-event", self._buttonPressEventCb)
+        self._source = None
+
+        #popup menu
+        self._popupMenu = gtk.Menu()
+        closeitem = gtk.MenuItem(_("Close"))
+        closeitem.connect("activate", self._closeMenuItemCb)
+        closeitem.show()
+        self._popupMenu.append(closeitem)
+
+    def setSource(self, source):
+        self._source = source
+
+    def _realizeCb(self, unused_widget):
+        gst.log("realize")
+        self.gc = self.window.new_gc()
+        self.gc.set_background(self.style.black)
+
+    def _exposeEventCb(self, unused_widget, event):
+        x, y, w, h = event.area
+        gst.log("expose %s" % ([x,y,w,h]))
+
+    def _closeMenuItemCb(self, unused_menuitem):
+        self.emit("hide-me")
+
+    def _buttonPressEventCb(self, unused_widget, event):
+        if event.button == 3:
+            self._popupMenu.popup(None, None, None, event.button,
+                                  event.time)
+
 
 
 class SimpleSourceWidget(gtk.DrawingArea):
@@ -400,7 +532,10 @@ class SimpleSourceWidget(gtk.DrawingArea):
     __gsignals__ = {
         'delete-me' : (gobject.SIGNAL_RUN_LAST,
                        gobject.TYPE_NONE,
-                       ( ))
+                       ( )),
+        'edit-me' : (gobject.SIGNAL_RUN_LAST,
+                     gobject.TYPE_NONE,
+                     ( ))
         }
 
     border = 10
@@ -423,7 +558,7 @@ class SimpleSourceWidget(gtk.DrawingArea):
         self.pixmap = None
         self.namelayout = self.create_pango_layout(os.path.basename(unquote(self.filesource.factory.name)))
         self.lengthlayout = self.create_pango_layout(beautify_length(self.filesource.factory.length))
-        #self.layout.set_font_description(pango.FontDescription("sans serif 11"))
+
         self.connect("expose-event", self._exposeEventCb)
         self.connect("realize", self._realizeCb)
         self.connect("configure-event", self._configureEventCb)
@@ -434,7 +569,11 @@ class SimpleSourceWidget(gtk.DrawingArea):
         deleteitem = gtk.MenuItem(_("Remove"))
         deleteitem.connect("activate", self._deleteMenuItemCb)
         deleteitem.show()
+        edititem = gtk.MenuItem(_("Edit"))
+        edititem.connect("activate", self._editMenuItemCb)
+        edititem.show()
         self._popupMenu.append(deleteitem)
+        self._popupMenu.append(edititem)
 
         # drag and drop
         self.drag_source_set(gtk.gdk.BUTTON1_MASK,
@@ -522,6 +661,9 @@ class SimpleSourceWidget(gtk.DrawingArea):
 
     def _deleteMenuItemCb(self, unused_menuitem):
         self.emit('delete-me')
+
+    def _editMenuItemCb(self, unused_menuitem):
+        self.emit('edit-me')
 
     def _buttonPressCb(self, unused_widget, event):
         gst.debug("button %d" % event.button)
