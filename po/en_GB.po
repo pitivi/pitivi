@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-torrent\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-08 10:46+0100\n"
-"PO-Revision-Date: 2007-01-23 20:24-0000\n"
+"POT-Creation-Date: 2007-02-08 19:25+0000\n"
+"PO-Revision-Date: 2007-02-08 19:25-0000\n"
 "Last-Translator: David Lodge <dave@cirt.net>\n"
 "Language-Team: en_GB <en@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -49,7 +49,8 @@ msgid "Author"
 msgstr "Author"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:551 ../pitivi/ui/sourcefactories.py:592
+#: ../pitivi/ui/sourcefactories.py:551
+#: ../pitivi/ui/sourcefactories.py:592
 msgid "Description"
 msgstr "Description"
 
@@ -240,11 +241,13 @@ msgstr "Create a new project"
 msgid "Open an existing project"
 msgstr "Open an existing project"
 
-#: ../pitivi/ui/mainwindow.py:83 ../pitivi/ui/mainwindow.py:84
+#: ../pitivi/ui/mainwindow.py:83
+#: ../pitivi/ui/mainwindow.py:84
 msgid "Save the current project"
 msgstr "Save the current project"
 
-#: ../pitivi/ui/mainwindow.py:85 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:85
+#: ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
 msgstr "Project Settings"
 
@@ -377,13 +380,14 @@ msgstr "Error while analysing files"
 msgid "The following files weren't discovered properly."
 msgstr "The following files weren't discovered properly."
 
-#: ../pitivi/ui/sourcefactories.py:545 ../pitivi/ui/sourcefactories.py:586
+#: ../pitivi/ui/sourcefactories.py:545
+#: ../pitivi/ui/sourcefactories.py:586
 msgid "Name"
 msgstr "Name"
 
 #: ../pitivi/ui/timelineobjects.py:499
 msgid "Close"
-msgstr ""
+msgstr "Close"
 
 #: ../pitivi/ui/timelineobjects.py:569
 msgid "Remove"
@@ -391,11 +395,11 @@ msgstr "Remove"
 
 #: ../pitivi/ui/timelineobjects.py:572
 msgid "Edit"
-msgstr ""
+msgstr "Edit"
 
 #: ../pitivi/ui/timeline.py:97
 msgid "Start working with your project by dragging clips here"
-msgstr ""
+msgstr "Start working with your project by dragging clips here"
 
 #: ../pitivi/ui/viewer.py:550
 msgid "Choose file to render to"
@@ -433,60 +437,40 @@ msgid "Could not find the GNonLin plugins!"
 msgstr "Could not find the GNonLin plugins!"
 
 #: ../pitivi/check.py:81
-msgid ""
-"Make sure the plugins were installed and are available in the GStreamer "
-"plugins path."
-msgstr ""
-"Make sure the plugins were installed and are available in the GStreamer "
-"plugins path."
+msgid "Make sure the plugins were installed and are available in the GStreamer plugins path."
+msgstr "Make sure the plugins were installed and are available in the GStreamer plugins path."
 
 #: ../pitivi/check.py:83
 msgid "Could not find the autodetect plugins!"
 msgstr "Could not find the autodetect plugins!"
 
 #: ../pitivi/check.py:84
-msgid ""
-"Make sure you have installed gst-plugins-good and is available in the "
-"GStreamer plugin path."
-msgstr ""
-"Make sure you have installed gst-plugins-good and is available in the "
-"GStreamer plugin path."
+msgid "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path."
+msgstr "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path."
 
 #: ../pitivi/check.py:86
 msgid "PyGTK doesn't have Cairo support!"
 msgstr "PyGTK doesn't have Cairo support!"
 
 #: ../pitivi/check.py:87
-msgid ""
-"Please use a version of the Python bindings for GTK+ built with Cairo "
-"support."
-msgstr ""
-"Please use a version of the Python bindings for GTK+ built with Cairo "
-"support."
+msgid "Please use a version of the Python bindings for GTK+ built with Cairo support."
+msgstr "Please use a version of the Python bindings for GTK+ built with Cairo support."
 
 #: ../pitivi/check.py:89
 msgid "Could not initiate the video output plugins"
 msgstr "Could not initiate the video output plugins"
 
 #: ../pitivi/check.py:90
-msgid ""
-"Make sure you have at least one valid video output sink available "
-"(xvimagesink or ximagesink)"
-msgstr ""
-"Make sure you have at least one valid video output sink available "
-"(xvimagesink or ximagesink)"
+msgid "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)"
+msgstr "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)"
 
 #: ../pitivi/check.py:92
 msgid "Could not initiate the audio output plugins"
 msgstr "Could not initiate the audio output plugins"
 
 #: ../pitivi/check.py:93
-msgid ""
-"Make sure you have at least one valid audio output sink available (alsasink "
-"or osssink)"
-msgstr ""
-"Make sure you have at least one valid audio output sink available (alsasink "
-"or osssink)"
+msgid "Make sure you have at least one valid audio output sink available (alsasink or osssink)"
+msgstr "Make sure you have at least one valid audio output sink available (alsasink or osssink)"
 
 #: ../pitivi/objectfactory.py:149
 #, python-format
@@ -518,7 +502,8 @@ msgstr "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>Image:</b> %d x %d <i>pixels</i>"
 
-#: ../pitivi/objectfactory.py:418 ../pitivi/objectfactory.py:462
+#: ../pitivi/objectfactory.py:418
+#: ../pitivi/objectfactory.py:462
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr " <i>(%s)</i>"
@@ -548,7 +533,8 @@ msgstr "<b>Text:</b> %s"
 msgid "There is already a %s instance, inform developers"
 msgstr "There is already a %s instance, inform developers"
 
-#: ../pitivi/pitivi.py:82 ../pitivi/pitivi.py:121
+#: ../pitivi/pitivi.py:82
+#: ../pitivi/pitivi.py:121
 msgid "New Project"
 msgstr "New Project"
 
@@ -557,12 +543,8 @@ msgid "Video output is busy"
 msgstr "Video output is busy"
 
 #: ../pitivi/playground.py:383
-msgid ""
-"Please check that your video output device isn't already used by another "
-"application"
-msgstr ""
-"Please check that your video output device isn't already used by another "
-"application"
+msgid "Please check that your video output device isn't already used by another application"
+msgstr "Please check that your video output device isn't already used by another application"
 
 #: ../pitivi/playground.py:385
 msgid "Video output problem"
@@ -577,12 +559,8 @@ msgid "Audio output device is busy"
 msgstr "Audio output device is busy"
 
 #: ../pitivi/playground.py:390
-msgid ""
-"Please check that your audio output device isn't already used by another "
-"application."
-msgstr ""
-"Please check that your audio output device isn't already used by another "
-"application."
+msgid "Please check that your audio output device isn't already used by another application."
+msgstr "Please check that your audio output device isn't already used by another application."
 
 #: ../pitivi/playground.py:392
 msgid "Audio output problem"
@@ -623,9 +601,8 @@ msgstr ""
 
 #~ msgid "Render Project"
 #~ msgstr "Render Project"
-
 #~ msgid "Settings:"
 #~ msgstr "Settings:"
-
 #~ msgid "Please choose an output file"
 #~ msgstr "Please choose an output file"
+
