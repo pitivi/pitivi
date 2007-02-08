@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-25 18:55+0100\n"
+"POT-Creation-Date: 2007-02-08 10:46+0100\n"
 "PO-Revision-Date: 2006-12-23 14:03+0530\n"
 "Last-Translator: A S Alam <apbrar@gmail.com>\n"
 "Language-Team: Punjabi <fedora-trans-pa@redhat.com>\n"
@@ -51,7 +51,7 @@ msgid "Author"
 msgstr "ਲੇਖਕ"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:535 ../pitivi/ui/sourcefactories.py:576
+#: ../pitivi/ui/sourcefactories.py:551 ../pitivi/ui/sourcefactories.py:592
 msgid "Description"
 msgstr "ਵੇਰਵਾ"
 
@@ -234,76 +234,76 @@ msgstr "ਵੀਡਿਓ ਟਰੈਕ"
 msgid "Empty"
 msgstr "ਖਾਲੀ"
 
-#: ../pitivi/ui/mainwindow.py:73
+#: ../pitivi/ui/mainwindow.py:81
 msgid "Create a new project"
 msgstr "ਇੱਕ ਨਵਾਂ ਪ੍ਰੋਜੈਕਟ ਬਣਾਓ"
 
-#: ../pitivi/ui/mainwindow.py:74
+#: ../pitivi/ui/mainwindow.py:82
 msgid "Open an existing project"
 msgstr "ਇੱਕ ਮੌਜੂਦ ਪ੍ਰੋਜੈਕਟ ਸੰਭਾਲੋ"
 
-#: ../pitivi/ui/mainwindow.py:75 ../pitivi/ui/mainwindow.py:76
+#: ../pitivi/ui/mainwindow.py:83 ../pitivi/ui/mainwindow.py:84
 msgid "Save the current project"
 msgstr "ਮੌਜੂਦਾ ਪ੍ਰੋਜੈਕਟ ਸੰਭਾਲੋ"
 
-#: ../pitivi/ui/mainwindow.py:77 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:85 ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
 msgstr "ਪ੍ਰੋਜੈਕਟ ਸੈਟਿੰਗ"
 
-#: ../pitivi/ui/mainwindow.py:77
+#: ../pitivi/ui/mainwindow.py:85
 msgid "Edit the project settings"
 msgstr "ਪ੍ਰੋਜੈਕਟ ਸਥਾਪਨ ਦੀ ਸੋਧ"
 
-#: ../pitivi/ui/mainwindow.py:78
+#: ../pitivi/ui/mainwindow.py:86
 msgid "_Import Sources..."
 msgstr "ਸਰੋਤ ਆਯਾਤ(_I)..."
 
-#: ../pitivi/ui/mainwindow.py:78
+#: ../pitivi/ui/mainwindow.py:86
 msgid "Import sources to use"
 msgstr "ਵਰਤਣ ਲਈ ਸਰੋਤ ਆਯਾਤ"
 
-#: ../pitivi/ui/mainwindow.py:79
+#: ../pitivi/ui/mainwindow.py:87
 msgid "_Import Folder of sources..."
 msgstr "ਸਰੋਤ ਦਾ ਫੋਲਡਰ ਆਯਾਤ(_I)..."
 
-#: ../pitivi/ui/mainwindow.py:79
+#: ../pitivi/ui/mainwindow.py:87
 msgid "Import folder of sources to use"
 msgstr "ਵਰਤਣ ਲਈ ਸਰੋਤ ਦਾ ਫੋਲਡਰ ਆਯਾਤ ਕਰੋ"
 
-#: ../pitivi/ui/mainwindow.py:81
+#: ../pitivi/ui/mainwindow.py:89
 msgid "View the main window on the whole screen"
 msgstr "ਪੂਰੀ ਸਕਰੀਨ ਤੇ ਮੁੱਖ ਝਰੋਖਾ ਵੇਖੋ"
 
-#: ../pitivi/ui/mainwindow.py:82
+#: ../pitivi/ui/mainwindow.py:90
 #, python-format
 msgid "Information about %s"
 msgstr "%s ਬਾਰੇ ਜਾਣਕਾਰੀ"
 
-#: ../pitivi/ui/mainwindow.py:83
+#: ../pitivi/ui/mainwindow.py:91
 msgid "_File"
 msgstr "ਫਾਇਲ(_F)"
 
-#: ../pitivi/ui/mainwindow.py:84
+#: ../pitivi/ui/mainwindow.py:92
 msgid "_View"
 msgstr "ਵੇਖੋ(_V)"
 
-#: ../pitivi/ui/mainwindow.py:85
+#: ../pitivi/ui/mainwindow.py:93
 msgid "_Help"
 msgstr "ਸਹਾਇਤਾ(_H)"
 
-#: ../pitivi/ui/mainwindow.py:89
+#: ../pitivi/ui/mainwindow.py:97
 msgid "Advanced Vie_w"
 msgstr "ਤਕਨੀਕੀ ਝਲਕ(_w)"
 
-#: ../pitivi/ui/mainwindow.py:89
+#: ../pitivi/ui/mainwindow.py:97
 msgid "Switch to advanced view"
 msgstr "ਤਕਨੀਕੀ ਝਲਕ ਵੇਖਾਓ"
 
-#: ../pitivi/ui/mainwindow.py:233
+#: ../pitivi/ui/mainwindow.py:241
 msgid "Contributors:"
 msgstr "ਯੋਗਦਾਨ:"
 
-#: ../pitivi/ui/mainwindow.py:237
+#: ../pitivi/ui/mainwindow.py:245
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -363,28 +363,40 @@ msgstr "ਫੋਲਡਰ ਸ਼ਾਮਿਲ"
 msgid "Import your clips by dragging them here or by using buttons below."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:278
+#: ../pitivi/ui/sourcefactories.py:294
 msgid "Import a folder"
 msgstr "ਇੱਕ ਫੋਲਡਰ ਆਯਾਤ"
 
-#: ../pitivi/ui/sourcefactories.py:281
+#: ../pitivi/ui/sourcefactories.py:297
 msgid "Import a file"
 msgstr "ਇੱਕ ਫਾਇਲ ਆਯਾਤ"
 
-#: ../pitivi/ui/sourcefactories.py:358
+#: ../pitivi/ui/sourcefactories.py:374
 msgid "Error while analyzing files"
 msgstr "ਫਾਇਲਾਂ ਦੀ ਜਾਂਚ ਦੌਰਨ ਗਲਤੀ"
 
-#: ../pitivi/ui/sourcefactories.py:359
+#: ../pitivi/ui/sourcefactories.py:375
 msgid "The following files weren't discovered properly."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:529 ../pitivi/ui/sourcefactories.py:570
+#: ../pitivi/ui/sourcefactories.py:545 ../pitivi/ui/sourcefactories.py:586
 msgid "Name"
 msgstr "ਨਾਂ"
 
-#: ../pitivi/ui/timelineobjects.py:434
+#: ../pitivi/ui/timelineobjects.py:499
+msgid "Close"
+msgstr ""
+
+#: ../pitivi/ui/timelineobjects.py:569
 msgid "Remove"
+msgstr ""
+
+#: ../pitivi/ui/timelineobjects.py:572
+msgid "Edit"
+msgstr ""
+
+#: ../pitivi/ui/timeline.py:97
+msgid "Start working with your project by dragging clips here"
 msgstr ""
 
 #: ../pitivi/ui/viewer.py:550

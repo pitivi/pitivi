@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-25 18:55+0100\n"
+"POT-Creation-Date: 2007-02-08 10:46+0100\n"
 "PO-Revision-Date: 2006-11-18 00:59+0100\n"
 "Last-Translator: Djihed Afifi <djihed@gmail.com>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
@@ -59,7 +59,7 @@ msgid "Author"
 msgstr "<b>المؤلف:</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:535 ../pitivi/ui/sourcefactories.py:576
+#: ../pitivi/ui/sourcefactories.py:551 ../pitivi/ui/sourcefactories.py:592
 #, fuzzy
 msgid "Description"
 msgstr "الوصف"
@@ -253,89 +253,89 @@ msgstr "قطعة مجهولة"
 msgid "Empty"
 msgstr "فارغ"
 
-#: ../pitivi/ui/mainwindow.py:73
+#: ../pitivi/ui/mainwindow.py:81
 #, fuzzy
 msgid "Create a new project"
 msgstr "انشاء موضوع جديد"
 
-#: ../pitivi/ui/mainwindow.py:74
+#: ../pitivi/ui/mainwindow.py:82
 #, fuzzy
 msgid "Open an existing project"
 msgstr "فتح مستند مسبق"
 
-#: ../pitivi/ui/mainwindow.py:75 ../pitivi/ui/mainwindow.py:76
+#: ../pitivi/ui/mainwindow.py:83 ../pitivi/ui/mainwindow.py:84
 #, fuzzy
 msgid "Save the current project"
 msgstr "إ_حفظ الصورة الحالية"
 
-#: ../pitivi/ui/mainwindow.py:77 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:85 ../pitivi/ui/projectsettings.glade.h:4
 #, fuzzy
 msgid "Project Settings"
 msgstr "اختر الإعدادات"
 
-#: ../pitivi/ui/mainwindow.py:77
+#: ../pitivi/ui/mainwindow.py:85
 #, fuzzy
 msgid "Edit the project settings"
 msgstr "تحرير إ_عدادات القفل"
 
-#: ../pitivi/ui/mainwindow.py:78
+#: ../pitivi/ui/mainwindow.py:86
 #, fuzzy
 msgid "_Import Sources..."
 msgstr "استيراد مؤشّرات"
 
-#: ../pitivi/ui/mainwindow.py:78
+#: ../pitivi/ui/mainwindow.py:86
 #, fuzzy
 msgid "Import sources to use"
 msgstr "استخدم النّقر للإضافة"
 
-#: ../pitivi/ui/mainwindow.py:79
+#: ../pitivi/ui/mainwindow.py:87
 #, fuzzy
 msgid "_Import Folder of sources..."
 msgstr "استيراد مؤشّرات"
 
-#: ../pitivi/ui/mainwindow.py:79
+#: ../pitivi/ui/mainwindow.py:87
 #, fuzzy
 msgid "Import folder of sources to use"
 msgstr "استخدم النّقر للإضافة"
 
-#: ../pitivi/ui/mainwindow.py:81
+#: ../pitivi/ui/mainwindow.py:89
 msgid "View the main window on the whole screen"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:82
+#: ../pitivi/ui/mainwindow.py:90
 #, fuzzy, python-format
 msgid "Information about %s"
 msgstr "معلومات عن البرنامج"
 
-#: ../pitivi/ui/mainwindow.py:83
+#: ../pitivi/ui/mainwindow.py:91
 #, fuzzy
 msgid "_File"
 msgstr "الملف"
 
-#: ../pitivi/ui/mainwindow.py:84
+#: ../pitivi/ui/mainwindow.py:92
 msgid "_View"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:85
+#: ../pitivi/ui/mainwindow.py:93
 msgid "_Help"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:89
+#: ../pitivi/ui/mainwindow.py:97
 #, fuzzy
 msgid "Advanced Vie_w"
 msgstr "إعدادات متقدمة"
 
-#: ../pitivi/ui/mainwindow.py:89
+#: ../pitivi/ui/mainwindow.py:97
 #, fuzzy
 msgid "Switch to advanced view"
 msgstr "أعِد ضبط المشهد للإ_فتراضي"
 
-#: ../pitivi/ui/mainwindow.py:233
+#: ../pitivi/ui/mainwindow.py:241
 #, fuzzy
 msgid "Contributors:"
 msgstr "حاوي html"
 
-#: ../pitivi/ui/mainwindow.py:237
+#: ../pitivi/ui/mainwindow.py:245
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -403,32 +403,44 @@ msgstr ""
 msgid "Import your clips by dragging them here or by using buttons below."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:278
+#: ../pitivi/ui/sourcefactories.py:294
 #, fuzzy
 msgid "Import a folder"
 msgstr "إستيراد ملف"
 
-#: ../pitivi/ui/sourcefactories.py:281
+#: ../pitivi/ui/sourcefactories.py:297
 #, fuzzy
 msgid "Import a file"
 msgstr "إستيراد ملف"
 
-#: ../pitivi/ui/sourcefactories.py:358
+#: ../pitivi/ui/sourcefactories.py:374
 #, fuzzy
 msgid "Error while analyzing files"
 msgstr "حدث خطأ عند استخراج الملفات."
 
-#: ../pitivi/ui/sourcefactories.py:359
+#: ../pitivi/ui/sourcefactories.py:375
 msgid "The following files weren't discovered properly."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:529 ../pitivi/ui/sourcefactories.py:570
+#: ../pitivi/ui/sourcefactories.py:545 ../pitivi/ui/sourcefactories.py:586
 #, fuzzy
 msgid "Name"
 msgstr "اسم"
 
-#: ../pitivi/ui/timelineobjects.py:434
+#: ../pitivi/ui/timelineobjects.py:499
+msgid "Close"
+msgstr ""
+
+#: ../pitivi/ui/timelineobjects.py:569
 msgid "Remove"
+msgstr ""
+
+#: ../pitivi/ui/timelineobjects.py:572
+msgid "Edit"
+msgstr ""
+
+#: ../pitivi/ui/timeline.py:97
+msgid "Start working with your project by dragging clips here"
 msgstr ""
 
 #: ../pitivi/ui/viewer.py:550

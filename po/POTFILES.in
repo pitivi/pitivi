@@ -13,6 +13,7 @@ pitivi/ui/mainwindow.py
 pitivi/ui/projectsettings.glade
 pitivi/ui/sourcefactories.py
 pitivi/ui/timelineobjects.py
+pitivi/ui/timeline.py
 pitivi/ui/viewer.py
 pitivi/check.py
 pitivi/objectfactory.py
