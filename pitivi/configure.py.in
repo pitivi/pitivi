@@ -31,6 +31,11 @@ PKGDATADIR = '@DATADIR@/@PACKAGE@'
 PIXMAPDIR = '@DATADIR@/pixmaps'
 pitivi_version = '@VERSION@'
 APPNAME = '@PACKAGE_NAME@'
+PYGTK_REQ = '@PYGTK_REQ@'
+PYGST_REQ = '@PYGST_REQ@'
+GST_REQ = '@GST_REQ@'
+GNONLIN_REQ = '@GNONLIN_REQ@'
+PYCAIRO_REQ = '@PYCAIRO_REQ@'
 
 def get_pixmap_dir():
     """ Returns the directory for program-only pixmaps """

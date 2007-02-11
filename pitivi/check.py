@@ -27,7 +27,7 @@ import gtk
 import gst
 import sys
 import instance
-from configure import APPNAME
+from configure import APPNAME, PYGTK_REQ, PYGST_REQ, GST_REQ, GNONLIN_REQ, PYCAIRO_REQ
 
 from gettext import gettext as _
 
@@ -71,6 +71,46 @@ def initiate_audiosinks():
     sink.set_state(gst.STATE_NULL)
     return True
 
+def __try_import__(modulename):
+    try:
+        __import__(modulename)
+        return True
+    except:
+        return False
+
+def _version_to_string(version):
+    import string
+    return string.join([str(x) for x in version], ".")
+
+def _string_to_list(version):
+    return [int(x) for x in version.split(".")]
+
+def check_required_version(modulename):
+    """
+    Checks if the installed module is the required version or more recent.
+    Returns [None, None] if it's recent enough, else will return a list
+    containing the strings of the required version and the installed version.
+    This function does not check for the existence of the given module !
+    """
+    if modulename == "gtk":
+        if list(gtk.pygtk_version) < _string_to_list(PYGTK_REQ):
+            return [PYGTK_REQ, _version_to_string(gtk.pygtk_version)]
+    if modulename == "pygst":
+        if list(gst.pygst_version) < _string_to_list(PYGST_REQ):
+            return [PYGST_REQ, _version_to_string(gst.pygst_version)]
+    if modulename == "cairo":
+        import cairo
+        if _string_to_list(cairo.cairo_version_string()) < _string_to_list(PYCAIRO_REQ):
+            return [PYCAIRO_REQ, cairo.cairo_version_string()]
+    if modulename == "gst":
+        if list(gst.gst_version) < _string_to_list(GST_REQ):
+            return [GST_REQ, _version_to_string(gst.gst_version)]
+    if modulename == "gnonlin":
+        gnlver = gst.registry_get_default().find_plugin("gnonlin").get_version()
+        if _string_to_list(gnlver) < _string_to_list(GNONLIN_REQ):
+            return [GNONLIN_REQ, gnlver]
+    return [None, None]
+
 def _checks():
     reg = gst.registry_get_default()
     if instance.PiTiVi:
@@ -91,4 +131,30 @@ def _checks():
     if not initiate_audiosinks():
         return (_("Could not initiate the audio output plugins"),
                 _("Make sure you have at least one valid audio output sink available (alsasink or osssink)"))
+    if not __try_import__("cairo"):
+        return (_("Could not import the Python bindings for cairo"),
+                _("Make sure you have the Python bindings for cairo installed"))
+    if not __try_import__("gtk.glade"):
+        return (_("Could not import the Python bindings for libglade"),
+                _("Make sure you have the Python bindings for libglade installed"))
+    req, inst = check_required_version("gtk")
+    if req:
+        return (_("You do not have a recent enough version of the GTK+ Python Bindings (currently %s)") % inst,
+                ("Install a version of the GTK+ Python bindings greater or equal to %s") % req)
+    req, inst = check_required_version("pygst")
+    if req:
+        return (_("You do not have a recent enough version of the GStreamer Python Bindings (currently %s)") % inst,
+                ("Install a version of the GStreamer Python bindings greater or equal to %s") % req)
+    req, inst = check_required_version("gst")
+    if req:
+        return (_("You do not have a recent enough version of GStreamer (currently %s)") % inst,
+                ("Install a version of the GStreamer greater or equal to %s") % req)
+    req, inst = check_required_version("cairo")
+    if req:
+        return (_("You do not have a recent enough version of the Cairo Python Bindings (currently %s)") % inst,
+                ("Install a version of the Cairo Python bindings greater or equal to %s") % req)
+    req, inst = check_required_version("gnonlin")
+    if req:
+        return (_("You do not have a recent enough version of the GNonLin GStreamer plugin (currently %s)") % inst,
+                ("Install a version of the GNonLin GStreamer plugin greater or equal to %s") % req)
     return None

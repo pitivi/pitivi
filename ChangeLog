@@ -1,3 +1,9 @@
+2007-02-11  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/check.py:
+	* pitivi/configure.py.in:
+	Moved all checks (including version checks) to runtime checking.
+
 2007-02-08  Edward Hervey  <edward@fluendo.com>
 
 	* po/POTFILES.in:
