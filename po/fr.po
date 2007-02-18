@@ -9,13 +9,13 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-08 10:46+0100\n"
+"POT-Creation-Date: 2007-02-18 15:33+0100\n"
 "PO-Revision-Date: 2007-02-08 10:46+0100\n"
 "Last-Translator: Christophe Sauthier <christophe.sauthier@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit"
+"Content-Transfer-Encoding: 8bit\n"
 
 #: ../pitivi/ui/filelisterrordialog.py:61
 msgid "File"
@@ -421,21 +421,21 @@ msgstr "Impossible de démarrer le rendu"
 msgid "Rendering Complete"
 msgstr "Rendu terminé"
 
-#: ../pitivi/check.py:77
+#: ../pitivi/check.py:117
 #, python-format
 msgid "%s is already running!"
 msgstr "%s est dans en cours d'éxécution!"
 
-#: ../pitivi/check.py:78
+#: ../pitivi/check.py:118
 #, python-format
 msgid "An instance of %s is already running in this script."
 msgstr "Une instance de %s est déjà en cours d'éxécution dans ce script."
 
-#: ../pitivi/check.py:80
+#: ../pitivi/check.py:120
 msgid "Could not find the GNonLin plugins!"
 msgstr "Impossible de trouver les greffons GNolin!"
 
-#: ../pitivi/check.py:81
+#: ../pitivi/check.py:121
 msgid ""
 "Make sure the plugins were installed and are available in the GStreamer "
 "plugins path."
@@ -443,11 +443,11 @@ msgstr ""
 "Assurez vous que les greffons sont installés et qu'ils sont accessibles dans "
 "le chemin des greffons de GStreamer."
 
-#: ../pitivi/check.py:83
+#: ../pitivi/check.py:123
 msgid "Could not find the autodetect plugins!"
 msgstr "Impossible de trouver les greffons d'auto-détéction!"
 
-#: ../pitivi/check.py:84
+#: ../pitivi/check.py:124
 msgid ""
 "Make sure you have installed gst-plugins-good and is available in the "
 "GStreamer plugin path."
@@ -455,11 +455,11 @@ msgstr ""
 "Assurez vous que vous avez installé gst-plugins-good et qu'il est accessible "
 "dans le chemin des greffons de GStreamer."
 
-#: ../pitivi/check.py:86
+#: ../pitivi/check.py:126
 msgid "PyGTK doesn't have Cairo support!"
 msgstr "PyGTK n'a pas de support pour Cairo!"
 
-#: ../pitivi/check.py:87
+#: ../pitivi/check.py:127
 msgid ""
 "Please use a version of the Python bindings for GTK+ built with Cairo "
 "support."
@@ -467,11 +467,11 @@ msgstr ""
 "Utilisez s'il vous plaît une version des bindings Python pour GTK+ avec le "
 "support de Cairo"
 
-#: ../pitivi/check.py:89
+#: ../pitivi/check.py:129
 msgid "Could not initiate the video output plugins"
 msgstr "Impossible d'initialiser les greffons de sortie pour la vidéo"
 
-#: ../pitivi/check.py:90
+#: ../pitivi/check.py:130
 msgid ""
 "Make sure you have at least one valid video output sink available "
 "(xvimagesink or ximagesink)"
@@ -479,17 +479,69 @@ msgstr ""
 "Assurez vous que vous avez au moins une destination de sortie vidéo valide "
 "(xvimagesink ou ximagesink)"
 
-#: ../pitivi/check.py:92
+#: ../pitivi/check.py:132
 msgid "Could not initiate the audio output plugins"
 msgstr "Impossible d'initialiser les greffons de sortie pour l'audio"
 
-#: ../pitivi/check.py:93
+#: ../pitivi/check.py:133
 msgid ""
 "Make sure you have at least one valid audio output sink available (alsasink "
 "or osssink)"
 msgstr ""
 "Assurez vous que vous avez au moins une destination de sortie audio valide "
 "(alsasink ou ossink)"
+
+#: ../pitivi/check.py:135
+msgid "Could not import the Python bindings for cairo"
+msgstr ""
+
+#: ../pitivi/check.py:136
+#, fuzzy
+msgid "Make sure you have the Python bindings for cairo installed"
+msgstr ""
+"Utilisez s'il vous plaît une version des bindings Python pour GTK+ avec le "
+"support de Cairo"
+
+#: ../pitivi/check.py:138
+msgid "Could not import the Python bindings for libglade"
+msgstr ""
+
+#: ../pitivi/check.py:139
+msgid "Make sure you have the Python bindings for libglade installed"
+msgstr ""
+
+#: ../pitivi/check.py:142
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GTK+ Python Bindings "
+"(currently %s)"
+msgstr ""
+
+#: ../pitivi/check.py:146
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GStreamer Python Bindings "
+"(currently %s)"
+msgstr ""
+
+#: ../pitivi/check.py:150
+#, python-format
+msgid "You do not have a recent enough version of GStreamer (currently %s)"
+msgstr ""
+
+#: ../pitivi/check.py:154
+#, python-format
+msgid ""
+"You do not have a recent enough version of the Cairo Python Bindings "
+"(currently %s)"
+msgstr ""
+
+#: ../pitivi/check.py:158
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GNonLin GStreamer plugin "
+"(currently %s)"
+msgstr ""
 
 #: ../pitivi/objectfactory.py:149
 #, python-format
