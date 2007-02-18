@@ -23,6 +23,14 @@ AC_CONFIG_SRCDIR([pitivi/pitivi.py])
 AC_SUBST_FILE(AUTHORS)
 AUTHORS=$srcdir/AUTHORS
 
+dnl Note for packagers
+dnl The following requirements are run-time requirements,
+dnl make sure you don't forget them, even though you're able to
+dnl build pitivi without them.
+dnl
+dnl For a more exhaustive list of checks, you can have a look at
+dnl the runtime checks in pitivi/check.py
+
 AC_SUBST(PYGTK_REQ, 2.8.0)
 AC_SUBST(PYGST_REQ, 0.10.6)
 AC_SUBST(GST_REQ, 0.10.8)
@@ -46,152 +54,6 @@ AC_MSG_NOTICE(Using localstatedir $LOCALSTATEDIR)
 
 dnl check for python
 AS_PATH_PYTHON(2.3)
-
-dnl check for GStreamer
-PKG_CHECK_MODULES(GST, gstreamer-0.10 >= $GST_REQ)
-
-dnl check for pygtk
-AC_MSG_CHECKING(for GTK python bindings)
-prog="
-import sys
-try:
-  import pygtk
-  pygtk.require('2.0')
-  import gtk
-except ImportError:
-  sys.exit(1)
-if gtk.pygtk_version < tuple([int(x) for x in '$PYGTK_REQ'.split('.')]):
-  sys.exit(1)
-else:
-  sys.exit(0)
-"
-if $PYTHON -c "$prog"
-then
-  AC_MSG_RESULT(found)
-else
-  AC_MSG_RESULT(not found)
-  AC_MSG_ERROR(
-    [You need to have python gtk bindings >= $PYGTK_REQ installed])
-fi
-
-export PYTHONPATH=$PYGTK_DIR:$PYTHONPATH
-
-dnl check for pycairo
-AC_MSG_CHECKING(for pycairo)
-prog="
-import sys
-try:
-  import cairo
-except ImportError:
-  sys.exit(1)
-if cairo.version < '$PYCAIRO_REQ':
-  sys.exit(1)
-else:
-  sys.exit(0)
-"
-if $PYTHON -c "$prog"
-then
-  AC_MSG_RESULT(found)
-else
-  AC_MSG_RESULT(not found)
-  AC_MSG_ERROR(
-    [You need to have python cairo bindings >= $PYCAIRO_REQ installed])
-fi
-
-dnl check for libglade
-AC_MSG_CHECKING(for gtk.glade)
-prog="
-import sys
-try:
-  import pygtk
-  pygtk.require('2.0')
-  import gtk.glade
-except RuntimeError:
-  sys.exit(0)
-except ImportError:
-  sys.exit(1)
-sys.exit(0)
-"
-if $PYTHON -c "$prog" 1>&AC_FD_CC 2>&AC_FD_CC
-then
-  AC_MSG_RESULT(found)
-else
-  AC_MSG_RESULT(not found)
-  AC_MSG_ERROR([You need to have python libglade bindings installed])
-fi
-
-dnl check for cairo support in pygtk
-AC_MSG_CHECKING(for cairo support in PyGTK)
-prog="
-import sys
-try:
-  import pygtk
-  pygtk.require('2.0')
-  import gtk
-except RuntimeError:
-  sys.exit(0)
-if not hasattr(gtk.gdk.Window, 'cairo_create'):
-  sys.exit(1)
-sys.exit(0)
-"
-if $PYTHON -c "$prog" 1>&AC_FD_CC 2>&AC_FD_CC
-then
-  AC_MSG_RESULT(found)
-else
-  AC_MSG_RESULT(not found)
-  AC_MSG_ERROR([You need a version of PyGTK (Python bindings for GTK+) with cairo support enabled])
-fi
-
-
-dnl checks for gst-python
-AC_MSG_CHECKING(for GStreamer python bindings)
-prog="
-import sys
-try:
-  import pygst
-  pygst.require('0.10')
-  import gst
-except ImportError:
-  sys.exit(1)
-if gst.get_pygst_version() < tuple([int(x) for x in '$PYGST_REQ'.split('.')]):
-  sys.exit(1)
-else:
-  sys.exit(0)
-"
-if $PYTHON -c "$prog"
-then
-  AC_MSG_RESULT(found)
-else
-  AC_MSG_RESULT(not found)
-  AC_MSG_ERROR(
-    [You need to have python GStreamer bindings >= $PYGST_REQ installed])
-fi
-
-export PYTHONPATH=$PYGST_DIR:$PYTHONPATH
-
-dnl check for GNonlin
-prog="
-import sys
-import pygst; pygst.require('0.10')
-import gst
-plugin = gst.registry_get_default().find_plugin('gnonlin')
-if plugin and plugin.get_version() >= '$GNONLIN_REQ':
-  sys.exit(0)
-sys.exit(1)
-"
-AC_MSG_CHECKING([for gnonlin >= $GNONLIN_REQ])
-if $PYTHON -c "$prog" 1>&AC_FD_CC 2>&AC_FD_CC
-then
-  AC_MSG_RESULT(found)
-else
-  AC_MSG_RESULT(not found)
-  AC_MSG_ERROR([You need to install the gnonlin plugins and make sure
- they are in your \$GST_PLUGIN_PATH.])
-fi
-
-dnl the gettext stuff needed
-dnl AM_GNU_GETTEXT_VERSION(0.11.5)
-dnl AM_GNU_GETTEXT([external])
 
 dnl ALL_LINGUAS="fr"
 GETTEXT_PACKAGE="pitivi"
