@@ -1,3 +1,11 @@
+2007-02-18  Andreas Volz <lists@brachttal.net>
+
+	reviewed by: Edward Hervey  <edward@fluendo.com>
+
+	* LINGUAS:
+	* de.po:
+	Added german translation.
+
 2007-02-17  David Lodge <dave@cirt.net>
 
 	* en_GB.po: Updated English (British) translation
