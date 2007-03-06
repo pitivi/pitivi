@@ -447,15 +447,35 @@ class PlayGround(gobject.GObject):
         """ play the current pipeline backwards """
         pass
 
+    ## Frame by frame seeking
+    # Goes forward/backward in the stream by one video frame
+    # For timelines, it will use the current export setting framerate as the
+    # framerate to use for calculatiosn. Not perfect, but still very close.
+
     def forward_one(self):
         """ forward the current pipeline by one video frame """
-        pass
+        if not self.current or not type(self.current) in [SmartTimelineBin, SmartFileBin]:
+            gst.warning("you can only do frame seeking on files or timelines")
+            return
+        pos = self.getCurrentTimePosition()
+        framerate = self.current.getSettings().videorate
+        target = pos + framerate.denom * gst.SECOND / framerate.num
+        gst.log("current position is %s , seeking to %s" % (
+            gst.TIME_ARGS(pos),
+            gst.TIME_ARGS(target)))
+        self.seekInCurrent(target)
 
     def backward_one(self):
         """ rewind the current pipeline by one video frame """
-        pass
+        if not self.current or not type(self.current) in [SmartTimelineBin, SmartFileBin]:
+            gst.warning("you can only do frame seeking on files or timelines")
+            return
+        pos = self.getCurrentTimePosition()
+        framerate = self.current.getSettings().videorate
+        target = pos - framerate.denom * gst.SECOND / framerate.num
+        gst.log("current position is %s , seeking to %s" % (
+            gst.TIME_ARGS(pos),
+            gst.TIME_ARGS(target)))
+        self.seekInCurrent(target)
 
-    def seek(self, time):
-        """ seek in the current pipeline """
-        pass
-
+    

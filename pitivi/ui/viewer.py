@@ -381,7 +381,7 @@ class PitiviViewer(gtk.VBox):
         pass
 
     def _backCb(self, unused_button):
-        pass
+        instance.PiTiVi.playground.backward_one()
 
     def _playButtonCb(self, unused_button, isplaying):
         if isplaying:
@@ -392,7 +392,7 @@ class PitiviViewer(gtk.VBox):
                 self.currentState = gst.STATE_PAUSED
 
     def _nextCb(self, unused_button):
-        pass
+        instance.PiTiVi.playground.forward_one()
 
     def _forwardCb(self, unused_button):
         pass
@@ -408,6 +408,8 @@ class PitiviViewer(gtk.VBox):
         if smartbin == playground.default:
             self.slider.set_sensitive(False)
             self.playpause_button.set_sensitive(False)
+            self.next_button.set_sensitive(False)
+            self.back_button.set_sensitive(False)
             self.record_button.set_sensitive(False)
         else:
             if isinstance(smartbin, SmartTimelineBin):
@@ -425,6 +427,8 @@ class PitiviViewer(gtk.VBox):
             self._newTime(0)
             self.slider.set_sensitive(True)
             self.playpause_button.set_sensitive(True)
+            self.next_button.set_sensitive(True)
+            self.back_button.set_sensitive(True)
 
     def _currentStateCb(self, unused_playground, state):
         gst.info("current state changed : %s" % state)

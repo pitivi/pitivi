@@ -1,5 +1,16 @@
 2007-03-06  Edward Hervey  <edward@fluendo.com>
 
+	Patch by: Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/playground.py:
+	* pitivi/ui/viewer.py:
+	Implement frame-by-frame forward/backward seeking in the playground
+	and in the UI.
+	Brandon, welcome to the PiTiVi developer team :)
+	Fixes #353857
+
+2007-03-06  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/bin.py:
 	Properly implement the getSettings method in SmartTimelineBin and
 	SmartFileBin.
