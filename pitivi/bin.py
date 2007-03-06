@@ -410,7 +410,7 @@ class SmartFileBin(SmartBin):
             pad.unlink(self.vtee.get_pad("sink"))
 
     def getSettings(self):
-        return self.project.getSettings()
+        return self.factory.getExportSettings()
 
     def do_destroy(self):
         self.info("destroyed")
@@ -470,6 +470,8 @@ class SmartTimelineBin(SmartBin):
         self.info("smart timeline bin: start duration changed %d %d" %( start, duration ))
         self.length = duration
 
+    def getSettings(self):
+        return self.project.getSettings()
 
 class SmartDefaultBin(SmartBin):
     """

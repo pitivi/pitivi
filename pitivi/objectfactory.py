@@ -204,6 +204,7 @@ class FileSourceFactory(ObjectFactory):
         self.length = 0
         self.thumbnail = ""
         self.thumbnails = []
+        self.settings = None
 
     def do_set_property(self, property, value):
         if property.name == "length":
@@ -280,23 +281,26 @@ class FileSourceFactory(ObjectFactory):
 
     def getExportSettings(self):
         """ Returns the ExportSettings corresponding to this source """
-        settings = ExportSettings()
+        if self.settings:
+            return self.settings
+        
+        self.settings = ExportSettings()
         if self.video_info_stream:
             # Fill video properties
             vs = self.video_info_stream
-            settings.videowidth = vs.width
-            settings.videoheight = vs.height
-            settings.videorate = vs.framerate
-            settings.videopar = vs.par
+            self.settings.videowidth = vs.width
+            self.settings.videoheight = vs.height
+            self.settings.videorate = vs.framerate
+            self.settings.videopar = vs.par
 
         if self.audio_info_stream:
             # Fill audio properties
             as = self.audio_info_stream
-            settings.audiochannels = as.channels
-            settings.audiorate = as.rate
-            settings.audiodepth = as.depth
+            self.settings.audiochannels = as.channels
+            self.settings.audiorate = as.rate
+            self.settings.audiodepth = as.depth
             
-        return settings
+        return self.settings
 
 class OperationFactory(ObjectFactory):
     """
