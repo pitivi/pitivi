@@ -31,9 +31,7 @@ from glade import GladeWindow
 import plumber
 import pitivi.instance as instance
 from pitivi.bin import SmartTimelineBin
-from pitivi.objectfactory import FileSourceFactory
 import pitivi.dnd as dnd
-from pitivi.settings import ExportSettings
 from pitivi.signalgroup import SignalGroup
 
 from exportsettingswidget import ExportSettingsDialog

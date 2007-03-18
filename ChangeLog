@@ -1,5 +1,17 @@
 2007-03-18  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	Remove unused imports, detected by pyflakes.
+
+2007-03-18  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/bin.py:
 	* pitivi/discoverer.py:
 	* pitivi/effects.py:

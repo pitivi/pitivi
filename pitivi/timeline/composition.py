@@ -26,7 +26,6 @@ Timeline Composition object
 import gobject
 import gst
 
-from pitivi.settings import ExportSettings
 from source import TimelineSource
 from objects import BrotherObjects, MEDIA_TYPE_AUDIO
 

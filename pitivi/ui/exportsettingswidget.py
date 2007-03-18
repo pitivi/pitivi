@@ -23,7 +23,6 @@
 Widget for the output settings
 """
 
-import gobject
 import gtk
 import gst
 from glade import GladeWidget

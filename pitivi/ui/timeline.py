@@ -30,7 +30,7 @@ import gst
 
 from gettext import gettext as _
 
-from timelineobjects import SimpleSourceWidget, SimpleTimeline
+from timelineobjects import SimpleTimeline
 from complextimeline import ComplexTimelineWidget
 
 class TimelineWidget(gtk.VBox):

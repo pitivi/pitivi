@@ -30,7 +30,6 @@ import string
 import gobject
 import gst
 
-import utils
 from settings import ExportSettings
 
 from gettext import gettext as _

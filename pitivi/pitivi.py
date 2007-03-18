@@ -22,15 +22,11 @@
 """
 Main application
 """
-import os
 import gobject
 import gtk
 import gst
-import sys
 import check
-import pitivigstutils
 from ui import mainwindow
-from discoverer import Discoverer
 from playground import PlayGround
 from project import Project, file_is_project
 from effects import Magician

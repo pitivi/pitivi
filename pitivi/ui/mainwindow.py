@@ -24,7 +24,6 @@ Main GTK+ window
 """
 
 import os
-import gobject
 import gtk
 import gst
 
@@ -78,7 +77,7 @@ class PitiviMainWindow(gtk.Window):
     def _setActions(self):
         """ sets up the GtkActions """
         self.actions = [
-            ("NewProject", gtk.STOCK_NEW, None, None, _("Create a new project"), self._newProjectCb),
+            ("NewProject", gtk.STOCK_NEW, None, None, _("Create a new project"), self._newProjectMenuCb),
             ("OpenProject", gtk.STOCK_OPEN, None, None, _("Open an existing project"), self._openProjectCb),
             ("SaveProject", gtk.STOCK_SAVE, None, None, _("Save the current project"), self._saveProjectCb),
             ("SaveProjectAs", gtk.STOCK_SAVE_AS, None, None, _("Save the current project"), self._saveProjectAsCb),
@@ -202,7 +201,7 @@ class PitiviMainWindow(gtk.Window):
 
     ## Toolbar/Menu actions callback
 
-    def _newProjectCb(self, unused_action):
+    def _newProjectMenuCb(self, unused_action):
         instance.PiTiVi.new_blank_project()
 
     def _openProjectCb(self, unused_action):

@@ -23,7 +23,6 @@
 Dialog box for project settings
 """
 
-import gobject
 import gtk
 from glade import GladeWindow
 
