@@ -84,7 +84,7 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
             #gc.collect()
         self.pixmap = gtk.gdk.Pixmap(self.window, rect.width, rect.height)
         context = self.pixmap.cairo_create()
-        
+
         self.drawBackground(context, rect)
 
         if self.source.media_type == MEDIA_TYPE_VIDEO:
@@ -100,12 +100,12 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
         context.fill()
         context.stroke()
         context.restore()
-        
+
     def drawDecorationBorder(self, context, rect):
         context.set_source_rgb(1, 0, 0)
         context.rectangle(0, 0, rect.width, rect.height)
         context.stroke()
-        
+
 
     def drawThumbnail(self, context, alloc):
         if not self.thumbnailsurface:

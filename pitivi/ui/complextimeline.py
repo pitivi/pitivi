@@ -102,7 +102,7 @@ class CompositionLayers(gtk.VBox, ZoomableWidgetInterface):
 # |   +--ScaleRuler(gtk.Layout)
 # |
 # +--gtk.ScrolledWindow
-#    | 
+#    |
 #    +--CompositionsLayer(gtk.VBox)
 #       |
 #       +--CompositionLayer(TimelineLayer(gtk.HBox))

@@ -60,7 +60,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
         self.hadjustment = hadj
         self.set_hadjustment(hadj)
-        self.sources = {}        
+        self.sources = {}
         self.layerInfo = layerInfo
         self.layerInfo.composition.connect('start-duration-changed', self._compStartDurationChangedCb)
         self.layerInfo.composition.connect('source-added', self._compSourceAddedCb)
@@ -95,7 +95,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         gst.debug("Got a new source")
         # create new widget
         widget = ComplexTimelineSource(source, self.layerInfo)
-        
+
         # add it to self at the correct position
         self.sources[source] = widget
         # TODO : set Y position depending on layer it's on
@@ -139,7 +139,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
                       self.effectgutter + self.layergutter)
 
     ## gtk.Widget methods overrides
-            
+
     def do_size_allocate(self, allocation):
         gst.debug("%r got allocation %s" % (self, list(allocation)))
         for source in self.sources:
@@ -179,7 +179,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
             del self.pixmap
         self.pixmap = gtk.gdk.Pixmap(self.bin_window, alloc.width, alloc.height)
         context = self.pixmap.cairo_create()
-        
+
         pat = cairo.LinearGradient(0, 0, 0, alloc.height)
         pat.add_color_stop_rgb(0, 0.5, 0.5, 0.6)
         pat.add_color_stop_rgb(1, 0.6, 0.6, 0.7)

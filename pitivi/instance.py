@@ -29,4 +29,3 @@ PiTiVi : current instance of pitivi top-level class.
 """
 
 PiTiVi = None
-

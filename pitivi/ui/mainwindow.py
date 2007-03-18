@@ -48,7 +48,7 @@ from pitivi.configure import pitivi_version, APPNAME
 
 if have_gconf:
     D_G_INTERFACE = "/desktop/gnome/interface"
-    
+
     for gconf_dir in (D_G_INTERFACE,):
         gconf.client_get_default ().add_dir (gconf_dir, gconf.CLIENT_PRELOAD_NONE)
 
@@ -62,13 +62,13 @@ class PitiviMainWindow(gtk.Window):
         """ initialize with the Pitivi object """
         gst.log("Creating MainWindow")
         gtk.Window.__init__(self)
-        
+
         self._setActions()
         self._createUi()
 
         self.isFullScreen = False
         self.errorDialogBox = None
-        
+
         instance.PiTiVi.connect("new-project", self._newProjectCb)
         instance.PiTiVi.connect("closing-project", self._closingProjectCb)
         instance.PiTiVi.connect("not-project", self._notProjectCb)
@@ -92,15 +92,15 @@ class PitiviMainWindow(gtk.Window):
             ("View", None, _("_View")),
             ("Help", None, _("_Help"))
             ]
-	
-	self.toggleactions = [
+
+        self.toggleactions = [
             ("AdvancedView", None, _("Advanced Vie_w"), None, _("Switch to advanced view"), self._advancedViewCb)
             ]
 
         self.actiongroup = gtk.ActionGroup("mainwindow")
         self.actiongroup.add_actions(self.actions)
         self.actiongroup.add_toggle_actions(self.toggleactions)
-        
+
         # deactivating non-functional actions
         # FIXME : reactivate them
         for action in self.actiongroup.list_actions():
@@ -110,7 +110,7 @@ class PitiviMainWindow(gtk.Window):
                 action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
-                
+
         self.uimanager = gtk.UIManager()
         self.add_accel_group(self.uimanager.get_accel_group())
         self.uimanager.insert_action_group(self.actiongroup, 0)
@@ -135,16 +135,16 @@ class PitiviMainWindow(gtk.Window):
 
         vbox.pack_start(self.toolbar, expand=False)
 
-        
+
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
-        
+
         self.timeline = TimelineWidget()
         self.timeline.showSimpleView()
         timelineframe = gtk.Frame()
         timelineframe.add(self.timeline)
         vpaned.pack2(timelineframe, resize=False, shrink=False)
-        
+
         hpaned = gtk.HPaned()
         vpaned.pack1(hpaned, resize=True, shrink=False)
 
@@ -201,7 +201,7 @@ class PitiviMainWindow(gtk.Window):
             self.toggleFullScreen()
 
     ## Toolbar/Menu actions callback
-        
+
     def _newProjectCb(self, unused_action):
         instance.PiTiVi.new_blank_project()
 
@@ -234,18 +234,18 @@ class PitiviMainWindow(gtk.Window):
         dialog.destroy()
 
     def _aboutCb(self, unused_action):
-	abt = gtk.AboutDialog()
-	abt.set_name(APPNAME)
-	abt.set_version("v%s" % pitivi_version)
-	abt.set_website("http://www.pitivi.org/")
-	authors = ["Edward Hervey <edward@fluendo.com>","",_("Contributors:"),
+        abt = gtk.AboutDialog()
+        abt.set_name(APPNAME)
+        abt.set_version("v%s" % pitivi_version)
+        abt.set_website("http://www.pitivi.org/")
+        authors = ["Edward Hervey <edward@fluendo.com>","",_("Contributors:"),
                    "Christophe Sauthier <christophe.sauthier@gmail.com> (i18n)",
                    "Laszlo Pandy <laszlok2@gmail.com> (UI)", ]
-	abt.set_authors(authors)
-	abt.set_license(_("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details"))
+        abt.set_authors(authors)
+        abt.set_license(_("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details"))
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")
         abt.connect("response", self._aboutResponseCb)
-	abt.show()
+        abt.show()
 
     def _importSourcesCb(self, unused_action):
         self.sourcefactories.sourcelist.showImportSourcesDialog()
@@ -268,4 +268,3 @@ class PitiviMainWindow(gtk.Window):
 
     def _notProjectCb(self, pitivi, uri):
         raise NotImplementedError
-    

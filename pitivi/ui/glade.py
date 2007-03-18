@@ -77,7 +77,7 @@ class GladeWidget(gtk.VBox):
 
     Remember to chain up if you customize __init__().
     '''
-        
+
     glade_dir = os.path.dirname(os.path.abspath(__file__))
     glade_file = None
     glade_typedict = None
@@ -103,7 +103,7 @@ class GladeWidget(gtk.VBox):
                 assert win == None
                 win = widget
                 continue
-            
+
             if hasattr(self, wname) and getattr(self, wname):
                 raise AssertionError (
                     "There is already an attribute called %s in %r" %
@@ -160,7 +160,7 @@ class GladeWindow(gobject.GObject):
                 assert self.window == None
                 self.window = widget
                 continue
-            
+
             if wname in self.widgets:
                 raise AssertionError("Two objects with same name (%s): %r %r"
                                      % (wname, self.widgets[wname], widget))
@@ -179,4 +179,3 @@ class GladeWindow(gobject.GObject):
     def destroy(self):
         self.window.destroy()
         del self.window
-

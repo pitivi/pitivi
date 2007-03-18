@@ -35,20 +35,20 @@ MEDIA_TYPE_VIDEO = 2
 ##   Object
 ##    |
 ##    +---- Source
-##    |	   |
-##    |	   +---- FileSource
-##    |	   |
-##    |	   +---- LiveSource
-##    |	   |
-##    |	   +---- Composition
+##    |    |
+##    |    +---- FileSource
+##    |    |
+##    |    +---- LiveSource
+##    |    |
+##    |    +---- Composition
 ##    |
 ##    +---- Effect
-## 	   |
-## 	   +---- Simple Effect (1->1)
-## 	   |
-## 	   +---- Transition
-## 	   |
-## 	   +---- Complex Effect (N->1)
+##         |
+##         +---- Simple Effect (1->1)
+##         |
+##         +---- Transition
+##         |
+##         +---- Complex Effect (N->1)
 
 class BrotherObjects(gobject.GObject):
     """
@@ -141,7 +141,7 @@ class BrotherObjects(gobject.GObject):
         implemented in subclasses
         """
         raise NotImplementedError
-    
+
 class TimelineObject(BrotherObjects):
     """
     Base class for all timeline objects
@@ -151,8 +151,8 @@ class TimelineObject(BrotherObjects):
       _ Media Type
       _ Gnonlin Object
       _ Linked Object
-	_ Can be None
-	_ Must have same duration
+        _ Can be None
+        _ Must have same duration
       _ Brother object
         _ This is the same object but with the other media_type
 
@@ -166,7 +166,7 @@ class TimelineObject(BrotherObjects):
                                  gobject.TYPE_NONE,
                                  (gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, ))
         }
-    
+
 ##     start = -1  # start time
 ##     duration = -1   # duration time
 ##     factory = None      # the Factory with more details about this object
@@ -205,7 +205,7 @@ class TimelineObject(BrotherObjects):
         if not start == -1 and not self.start == start:
             self.start = start
             self.gnlobject.set_property("start", long(start))
-            
+
     def setStartDurationTime(self, start=-1, duration=-1):
         """ sets the start and/or duration time """
         self._setStartDurationTime(start, duration)
@@ -232,4 +232,3 @@ class TimelineObject(BrotherObjects):
                 self.duration = long(duration)
         #if not start == -1 or not duration == -1:
         self.emit("start-duration-changed", self.start, self.duration)
-            

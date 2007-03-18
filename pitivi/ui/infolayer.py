@@ -72,7 +72,7 @@ class InfoLayer(gtk.Expander):
 
 
     ## Gtk.Widget override
-        
+
     def do_size_request(self, requisition):
         # setting the requested height of the whole layer should be done here.
         gtk.Expander.do_size_request(self, requisition)

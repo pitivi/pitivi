@@ -112,7 +112,7 @@ class GstElementSettingsWidget(gtk.VBox):
         self.element = element
         self.ignore = ignore
         self.properties = {} #key:name, value:widget
-        self._addWidgets(properties)        
+        self._addWidgets(properties)
 
     def _addWidgets(self, properties):
         props = [x for x in gobject.list_properties(self.element) if not x.name in self.ignore]
@@ -146,9 +146,9 @@ class GstElementSettingsWidget(gtk.VBox):
             if not value == None:
                 d[prop.name] = value
         return d
-                            
 
-    
+
+
 class GstElementSettingsDialog(GladeWindow):
     glade_file = "elementsettingsdialog.glade"
 
@@ -176,4 +176,3 @@ class GstElementSettingsDialog(GladeWindow):
     def getSettings(self):
         """ returns the property/value dictionnary of the selected settings """
         return self.widgets["elementsettings"].getSettings()
-

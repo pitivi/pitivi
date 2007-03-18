@@ -87,7 +87,7 @@ class ZoomableWidgetInterface:
         return int((float(duration) / gst.SECOND) * self.getZoomRatio())
 
     ## Methods to implement in subclasses
-        
+
     def getDuration(self):
         """
         Return the duration in nanoseconds of the object
@@ -114,7 +114,7 @@ class ZoomableWidgetInterface:
     def startDurationChanged(self):
         gst.info("start/duration changed")
         self.queue_resize()
-    
+
     def getZoomRatio(self):
         # either the current object is the top-level object that contains the zoomratio
         if hasattr(self, 'zoomratio'):

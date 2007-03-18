@@ -35,10 +35,10 @@ class Discoverer(gobject.GObject):
     Queues requests to discover information about given files.
     The discovery is done in a very fragmented way, so that it appears to be
     running in a separate thread.
-    
+
     The "new_sourcefilefactory" signal is emitted when a file is established
     to be a media_file and the FileSourceFactory() is included in the signal.
-    
+
     The "not_media_file" signal is emitted if a file is not a media_file.
 
     The "finished-analyzing" signal is emitted a file is finished being analyzed
@@ -102,11 +102,11 @@ class Discoverer(gobject.GObject):
         if self.working:
             gst.warning("called when still working!")
             return False
-        
+
         if not self.queue:
             gst.warning("Nothing to analyze!!")
             return False
-        
+
         self.working = True
         gobject.idle_add(self._analyze)
         return False
@@ -150,7 +150,7 @@ class Discoverer(gobject.GObject):
         self.fakesink = None
         self.prerolled = False
         self.nomorepads = False
-        
+
         # restart an analysis if there's more...
         if self.queue:
             gobject.idle_add(self._analyze)
@@ -164,7 +164,7 @@ class Discoverer(gobject.GObject):
         gst.debug("timeout")
         gobject.idle_add(self._finishAnalysis)
         return False
-    
+
     def _analyze(self):
         """
         Sets up a pipeline to analyze the given uri
@@ -174,7 +174,7 @@ class Discoverer(gobject.GObject):
         self.current = self.queue.pop(0)
         gst.info("Analyzing %s" % self.current)
         self.currentfactory = None
-        
+
         # setup graph and start analyzing
         self.pipeline = gst.Pipeline("Discoverer-%s" % self.current)
         source = gst.element_make_from_uri(gst.URI_SRC, self.current, "src-%s" % self.current)
@@ -197,7 +197,7 @@ class Discoverer(gobject.GObject):
         # adding fakesink to make pipeline not terminate state before receiving no-more-pads
         self.fakesink = gst.element_factory_make("fakesink")
         self.pipeline.add(self.fakesink)
-        
+
         self.bus = self.pipeline.get_bus()
         self.signalsid.append((self.bus, self.bus.connect("message", self._busMessageCb)))
         self.bus.add_signal_watch()
@@ -214,7 +214,7 @@ class Discoverer(gobject.GObject):
 
         # return False so we don't get called again
         return False
-        
+
     def _busMessageCb(self, unused_bus, message):
         if self.thisdone:
             return
@@ -264,7 +264,7 @@ class Discoverer(gobject.GObject):
 
     def _handleError(self, gerror, unused_detail, unused_source):
         gst.warning("got an ERROR")
-        
+
         self.emit("not_media_file", self.current, "An error occured while analyzing this file")
         self.emit("not_media_file", self.current, gerror.message)
         self.thisdone = True
@@ -321,11 +321,11 @@ class Discoverer(gobject.GObject):
         pngenc = gst.element_factory_make("pngenc")
         pngsink = gst.element_factory_make("filesink")
         pngsink.set_property("location", "/tmp/" + self.currentfactory.name.encode('base64').replace('\n','') + ".png")
-        
+
         self.pipeline.add(q, csp, pngenc, pngsink)
         gst.element_link_many(q, csp, pngenc, pngsink)
         pad.link(q.get_pad("sink"))
-        
+
         if not self.currentfactory.video_info:
             self.signalsid.append((pad, pad.connect("notify::caps", self._vcapsNotifyCb)))
 
@@ -335,7 +335,7 @@ class Discoverer(gobject.GObject):
         if self.currentfactory.is_audio:
             gst.debug("already have audio, calling no_more_pads")
             self._noMorePadsCb(None)
-        
+
     def _newAudioPadCb(self, unused_element, pad):
         """ a new audio pad was found """
         gst.debug("pad %s" % pad)
@@ -346,7 +346,7 @@ class Discoverer(gobject.GObject):
         if self.currentfactory.is_video:
             gst.debug("already have video, calling no_more_pads")
             self._noMorePadsCb(None)
-            
+
         if pad.get_caps().is_fixed():
             gst.debug("fixed caps, setting info on factory")
             self.currentfactory.setAudioInfo(pad.get_caps())

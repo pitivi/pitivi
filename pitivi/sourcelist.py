@@ -90,7 +90,7 @@ class SourceList(gobject.GObject):
     def __iter__(self):
         """ returns an (uri, factory) iterator over the sources """
         return self.sources.iteritems()
-        
+
     def addUri(self, uri):
         """ Add the uri to the list of sources, will be discovered """
         # here we add the uri and emit a signal

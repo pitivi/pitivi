@@ -85,4 +85,3 @@ class SignalGroup:
         for id in objids:
             old_object, handler_id = self.signal_handler_ids.pop(id)
             old_object.disconnect(handler_id)
-            

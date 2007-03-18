@@ -42,9 +42,9 @@ def get_video_sink():
     except:
         gconfsink = gst.element_factory_make("autovideosink")
     gconfsink.realsink = None
-    
+
     gconfsink.set_state(gst.STATE_READY)
-    
+
     if not gconfsink.implements_interface(gst.interfaces.XOverlay):
         gconfsink.info("doesn't implement XOverlay interface")
         realsink = gconfsink.get_by_interface(gst.interfaces.XOverlay)

@@ -136,14 +136,14 @@ class SimpleTimeline(gtk.Layout):
 
 
     ## Timeline callbacks
-        
+
     def _condensedListChangedCb(self, unused_videocomp, clist):
         """ add/remove the widgets """
         gst.debug("condensed list changed in videocomp")
-        
+
         current = self.widgets.keys()
         self.condensed = clist
-        
+
         new = [x for x in clist if not x in current]
         removed = [x for x in current if not x in clist]
 
@@ -167,7 +167,7 @@ class SimpleTimeline(gtk.Layout):
         for element in removed:
             self.remove(self.widgets[element])
             del self.widgets[element]
-            
+
         self._resizeChildrens()
 
 
@@ -184,7 +184,7 @@ class SimpleTimeline(gtk.Layout):
             return 0
         if x > self.width - DEFAULT_SIMPLE_SPACING:
             return -1
-        
+
         pos = DEFAULT_SIMPLE_SPACING
         order = 0
         # TODO Need to avoid getting position between source and transition
@@ -212,7 +212,7 @@ class SimpleTimeline(gtk.Layout):
             return DEFAULT_SIMPLE_SPACING
         if x > self.width - DEFAULT_SIMPLE_SPACING:
             return self.width - 2 * DEFAULT_SIMPLE_SPACING
-        
+
         pos = DEFAULT_SIMPLE_SPACING
         # TODO Need to avoid getting position between source and transition
         for source in self.condensed:
@@ -229,7 +229,7 @@ class SimpleTimeline(gtk.Layout):
             pos = pos + spacing + DEFAULT_SIMPLE_SPACING
         return pos
 
-    
+
     ## Drawing
 
     def _drawDragSlot(self):
@@ -244,7 +244,7 @@ class SimpleTimeline(gtk.Layout):
             return
         self.bin_window.draw_rectangle(self.style.white_gc, True,
                                        self.slotposition, DEFAULT_SIMPLE_SPACING,
-                                       DEFAULT_SIMPLE_SPACING, self.childheight)        
+                                       DEFAULT_SIMPLE_SPACING, self.childheight)
 
     def _gotFileFactory(self, filefactory, x, unused_y):
         """ got a filefactory at the given position """
@@ -274,7 +274,7 @@ class SimpleTimeline(gtk.Layout):
         self._eraseDragSlot()
         self.slotposition = -1
         pos = self._getNearestSourceSlot(x)
-        
+
         self.timeline.videocomp.moveSource(element, pos)
 
         # force flush, seek again at current position
@@ -291,7 +291,7 @@ class SimpleTimeline(gtk.Layout):
 
 
     ## Drag and Drop callbacks
-    
+
     def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
                       unused_timestamp):
         # TODO show where the dragged item would go
@@ -329,7 +329,7 @@ class SimpleTimeline(gtk.Layout):
 
 
     ## Drawing
-        
+
     def _realizeCb(self, unused_layout):
         self.modify_bg(gtk.STATE_NORMAL, self.style.white)
 
@@ -354,7 +354,7 @@ class SimpleTimeline(gtk.Layout):
                 self.bin_window.draw_rectangle(self.style.black_gc, True,
                                                self.slotposition, DEFAULT_SIMPLE_SPACING,
                                                DEFAULT_SIMPLE_SPACING, self.childheight)
- 
+
         return False
 
     def _sizeAllocateCb(self, unused_layout, allocation):
@@ -367,7 +367,7 @@ class SimpleTimeline(gtk.Layout):
             self.editingWidget.set_size_request(self.realWidth - 20,
                                                 self.height - 20)
 
-            
+
     def _resizeChildrens(self):
         # resize the childrens to self.height
         # also need to move them to their correct position
@@ -391,7 +391,7 @@ class SimpleTimeline(gtk.Layout):
 
 
     ## Child callbacks
-        
+
     def _sourceDeleteMeCb(self, unused_widget, element):
         # remove this element from the timeline
         self.timeline.videocomp.removeSource(element, collapse_neighbours=True)
@@ -412,7 +412,7 @@ class SimpleTimeline(gtk.Layout):
             gst.error("The DnD that ended is not the one that started before ???")
         self.draggedelement = None
         # this element is no longer dragged
-        
+
     def _editingWidgetHideMeCb(self, unused_widget):
         self.switchToNormalMode()
 
@@ -434,21 +434,21 @@ class SimpleTimeline(gtk.Layout):
         if mode:
             # switching TO editing mode
             gst.log("Switching TO editing mode")
-            
+
             # 1. Hide all sources
             for widget in self.widgets.itervalues():
                 widget.hide()
-                self.remove(widget) 
+                self.remove(widget)
 
             self._editingMode = mode
-               
+
             # 2. Show editing widget
             self.editingWidget.setSource(source)
             self.put(self.editingWidget, 10, 10)
             self.props.width = self.realWidth
             self.editingWidget.set_size_request(self.realWidth - 20, self.height - 20)
             self.editingWidget.show()
-            
+
         else:
             gst.log("Switching back to normal mode")
             # switching FROM editing mode
@@ -458,7 +458,7 @@ class SimpleTimeline(gtk.Layout):
             self.remove(self.editingWidget)
 
             self._editingMode = mode
-            
+
             # 2. Show all sources
             for widget in self.widgets.itervalues():
                 self.put(widget, 0, 0)
@@ -587,7 +587,7 @@ class SimpleSourceWidget(gtk.DrawingArea):
             vi = self.filesource.factory.video_info_stream
             height = 64 * vi.dar.denom / vi.dar.num
         smallthumbnail = self.thumbnail.scale_simple(64, height, gtk.gdk.INTERP_BILINEAR)
-        
+
         self.drag_source_set_icon_pixbuf(smallthumbnail)
 
 
@@ -619,10 +619,10 @@ class SimpleSourceWidget(gtk.DrawingArea):
                 sh = th
             if sw < 1 or sh < 1:
                 return
-            
+
             # draw name
             self.pixmap.draw_layout(self.gc, self.border, self.border, self.namelayout)
-            
+
             # draw pixbuf
             subpixbuf = self.thumbnail.scale_simple(sw, sh, gtk.gdk.INTERP_BILINEAR)
             self.pixmap.draw_pixbuf(self.gc, subpixbuf, 0, 0,
@@ -728,5 +728,3 @@ class SimpleTransitionWidget(gtk.DrawingArea):
         self.window.draw_drawable(self.gc, self.pixmap,
                                   x, y, x, y, w, h)
         return True
-    
-    

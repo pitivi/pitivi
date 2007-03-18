@@ -94,13 +94,13 @@ class TimelineComposition(TimelineSource):
 
     _ Provides a "condensed list" of the objects contained within
       _ Allows to quickly show a top-level view of the composition
-    
+
     * Sandwich view example (top: high priority):
-	     [ Global Simple Effect(s) (RGB, YUV, Speed,...)	]
-	     [ Simple Effect(s), can be several layers		]
-	     [ Complex Effect(s), non-overlapping		]
-	     [ Transition(s), non-overlapping			]
-	     [ Layers of sources				]
+             [ Global Simple Effect(s) (RGB, YUV, Speed,...)    ]
+             [ Simple Effect(s), can be several layers          ]
+             [ Complex Effect(s), non-overlapping               ]
+             [ Transition(s), non-overlapping                   ]
+             [ Layers of sources                                ]
 
     * Properties:
       _ Global Simple Effect(s) (Optionnal)
@@ -190,7 +190,7 @@ class TimelineComposition(TimelineSource):
         # list of layers of simple effects (order: priority, then time)
         self.condensed = [] # list of sources/transitions seen from a top-level view
         # each layer contains (min priority, max priority, list objects)
-        #sources = [(2048, 2060, [])] 
+        #sources = [(2048, 2060, [])]
         self.sources = [(2048, 2060, [])]
         self.defaultSource = None
         TimelineSource.__init__(self, **kw)
@@ -210,7 +210,7 @@ class TimelineComposition(TimelineSource):
         return gst.element_factory_make("gnlcomposition", "composition-" + self.name)
 
     # global effects
-    
+
     def addGlobalEffect(self, global_effect, order, auto_linked=True):
         """
         add a global effect
@@ -231,7 +231,7 @@ class TimelineComposition(TimelineSource):
         raise NotImplementedError
 
     # simple effects
-    
+
     def addSimpleEffect(self, simple_effect, order, auto_linked=True):
         """
         add a simple effect
@@ -281,7 +281,7 @@ class TimelineComposition(TimelineSource):
                 return list2[:]
             if not len(list2):
                 return list1[:]
-            
+
             res = list1[:]
 
             # find the objects in list2 that go under list1 and insert them at
@@ -296,8 +296,8 @@ class TimelineComposition(TimelineSource):
                     res.append(obj)
             self.gnlobject.info("returning %s" % res)
             return res
-                
-            
+
+
         lists = [x[2] for x in self.sources]
         lists.insert(0, self.transitions)
         return reduce(condensed_sum, lists)
@@ -390,14 +390,14 @@ class TimelineComposition(TimelineSource):
                 i = i + 1
             object.gnlobject.set_property("priority", sources[0])
             slist.insert(i, object)
-            
+
         # TODO : add functionnality to add above/under
         # For the time being it's hardcoded to a single layer
         position = 1
 
         # add it to the correct self.sources[position]
         my_add_sorted(self.sources[position-1], source)
-        
+
         # add it to self.gnlobject
         self.gnlobject.info("adding %s to our composition" % source.gnlobject)
         self.gnlobject.add(source.gnlobject)
@@ -420,7 +420,7 @@ class TimelineComposition(TimelineSource):
                 to the linked composition with the same parameters
         """
         self.gnlobject.info("source %s , position:%d, self.sources:%s" %(source, position, self.sources))
-        
+
         self._addSource(source, position)
 
         # if auto_linked and self.linked, add brother to self.linked with same parameters
@@ -437,7 +437,7 @@ class TimelineComposition(TimelineSource):
             self.gnlobject.info("insert_source after %s" % existingsource.gnlobject)
         else:
             self.gnlobject.info("insert_source at the beginning")
-            
+
         # find the time where it's going to be added
         if not existingsource or not self._haveGotThisSource(existingsource):
             start = 0
@@ -457,7 +457,7 @@ class TimelineComposition(TimelineSource):
         # set the correct start/duration time
         duration = source.factory.length
         source.setStartDurationTime(start, duration)
-        
+
         # pushing following
         if push_following and not position in [-1, 0]:
             #print self.gnlobject, "pushing following", existorder, len(self.sources[position - 1][2])
@@ -467,7 +467,7 @@ class TimelineComposition(TimelineSource):
                 #print "run", i, "start", mvsrc.start, "duration", mvsrc.duration
                 # increment self.sources[position - 1][i] by source.factory.length
                 mvsrc.setStartDurationTime(mvsrc.start + source.factory.length)
-        
+
         self.addSource(source, position, auto_linked=auto_linked)
 
     def appendSource(self, source, position=1, auto_linked=True):
@@ -495,7 +495,7 @@ class TimelineComposition(TimelineSource):
         """
         Moves the source to the new position. The position is the existing source before which to move
         the source.
-        
+
         If move_linked is True and the source has a linked source, the linked source will
         be moved to the same position.
         If collapse_neighbours is True, all sources located AFTER the OLD position of the
@@ -572,7 +572,7 @@ class TimelineComposition(TimelineSource):
     def removeSource(self, source, remove_linked=True, collapse_neighbours=False):
         """
         Removes a source.
-        
+
         If remove_linked is True and the source has a linked source, will remove
         it from the linked composition.
         If collapse_neighbours is True, then all object after the removed source

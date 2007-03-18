@@ -54,7 +54,7 @@ class ExportSettingsWidget(GladeWidget):
                      ("16 bit", 16),
                      ("24 bit", 24),
                      ("32 bit", 32) )
-    
+
 
     def __init__(self):
         GladeWidget.__init__(self)
@@ -117,7 +117,7 @@ class ExportSettingsWidget(GladeWidget):
         for depth in self.audio_depths:
             audiolist.append([depth[0]])
         self._putGoodAudiodepth(self.settings.audiodepth)
-        
+
         audiolist = self.audiocombobox.get_model()
         audiolist.clear()
         for preset in self.audio_presets:
@@ -145,7 +145,7 @@ class ExportSettingsWidget(GladeWidget):
                 selected = idx
             idx = idx + 1
         self.vcodeccbox.set_active(selected)
-        
+
         aenclist = self.acodeccbox.get_model()
         aenclist.clear()
         idx = 0
@@ -156,7 +156,7 @@ class ExportSettingsWidget(GladeWidget):
                 selected = idx
             idx = idx + 1
         self.acodeccbox.set_active(selected)
-        
+
         # Muxer
         self.muxers = self.settings.muxers
         muxs = self.muxercombobox.get_model()
@@ -270,7 +270,7 @@ class ExportSettingsWidget(GladeWidget):
         else:
             settings = None
         dialog.destroy()
-        return settings        
+        return settings
 
     def _muxerSettingsButtonClickedCb(self, button):
         factory = self.settings.muxers[self.muxercombobox.get_active()]
@@ -295,8 +295,8 @@ class ExportSettingsWidget(GladeWidget):
         settings = self.runSettingsDialog(factory, self.vcodecsettings)
         if settings:
             self.vcodecsettings = settings
-        
-        
+
+
     def updateSettings(self):
         """ Updates and returns the ExportSettings configured in the widget """
         # Video Settings
@@ -323,7 +323,7 @@ class ExportSettingsWidget(GladeWidget):
         self.settings.vcodecsettings = self.vcodecsettings
 
         return self.settings
-        
+
 
 class ExportSettingsDialog(gtk.Dialog):
 
@@ -341,4 +341,3 @@ class ExportSettingsDialog(gtk.Dialog):
     def getSettings(self):
         self.setwidget.updateSettings()
         return self.setwidget.settings
-

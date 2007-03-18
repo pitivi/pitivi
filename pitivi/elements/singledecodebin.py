@@ -184,7 +184,7 @@ class SingleDecodeBin(gst.Bin):
 
             result = element
             break
-            
+
         return result
 
     def _closePadLink(self, element, pad, caps):
@@ -209,7 +209,7 @@ class SingleDecodeBin(gst.Bin):
         elif is_raw(caps):
             self.log("We hit a raw caps which isn't the wanted one")
             # FIXME : recursively remove everything until demux/typefind
-            
+
         else:
             # Find something
             if len(caps) > 1:
@@ -226,7 +226,7 @@ class SingleDecodeBin(gst.Bin):
         Ghost the given pad of element.
         Remove non-used elements.
         """
-        
+
         if self._srcpad:
             return
         self._markValidElements(element)
@@ -249,7 +249,7 @@ class SingleDecodeBin(gst.Bin):
         pad = list(element.sink_pads())[0]
         parent = pad.get_peer().get_parent()
         self._markValidElements(parent)
-            
+
     def _removeUnusedElements(self, element):
         """
         Remove unused elements connected to srcpad(s) of element
@@ -276,7 +276,7 @@ class SingleDecodeBin(gst.Bin):
         self._validelements = []
 
     ## Overrides
-        
+
     def do_change_state(self, transition):
         self.debug("transition:%r" % transition)
         res = gst.Bin.do_change_state(self, transition)

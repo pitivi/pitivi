@@ -142,10 +142,10 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
             gobject.timeout_add(80, self._seekTimeoutCb)
             instance.PiTiVi.playground.seekInCurrent(value, format)
         elif format == gst.FORMAT_TIME:
-            self.requested_time = value    
+            self.requested_time = value
 
     ## Drawing methods
-    
+
     def doPixmap(self):
         """ (re)create the buffered drawable for the Widget """
         # we can't create the pixmap if we're not realized
@@ -183,18 +183,18 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
                               self.getPixelWidth(), allocation.height)
             context.fill()
             context.stroke()
-        
+
         context.restore()
 
     def drawRuler(self, context, allocation):
         context.save()
 
         zoomRatio = self.getZoomRatio()
-        
+
         paintpos = float(self.border) + 0.5
         seconds = 0
         secspertic = 1
-        
+
         timeprint = 0
         ticspertime = 1
 
@@ -237,7 +237,7 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
 
         while paintpos < allocation.width:
             context.move_to(paintpos, 0)
-            
+
             if seconds % 600 == 0:
                 context.line_to(paintpos, allocation.height)
             elif seconds % 60 == 0:
@@ -259,14 +259,14 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
                 context.show_text( time )
                 timeprint = ticspertime
             timeprint -= 1
-            
+
             paintpos += zoomRatio * secspertic
             seconds += secspertic
-        
+
         #Since drawing is done in batch we can't use different styles
         context.set_line_width(1)
         context.set_source_rgb(0, 0, 0)
-        
+
         context.stroke()
         context.restore()
 
@@ -281,5 +281,5 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         context.move_to(xpos, 0)
         context.line_to(xpos, allocation.height)
         context.stroke()
-        
+
         context.restore()

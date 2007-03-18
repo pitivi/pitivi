@@ -44,7 +44,7 @@ class TimelineToolBar(gtk.HBox):
         self.zoomInButton.set_image(image)
         self.pack_start(self.zoomInButton, expand=False)
         self.zoomInButton.connect('clicked', self._zoomClickedCb)
-        
+
         self.zoomOutButton = gtk.Button(label="")
         self.zoomOutButton.set_image(gtk.image_new_from_stock(gtk.STOCK_ZOOM_OUT,
                                                               gtk.ICON_SIZE_SMALL_TOOLBAR))
@@ -81,7 +81,7 @@ class TimelineLayer(gtk.HBox):
         # Create/Pack right widget
         self.rightWidget = self.getRightWidget(hadj)
         self.pack_start(self.rightWidget, expand=True)
-        
+
     def getLeftWidget(self):
         """ override in subclasses if needed """
         return self.leftWidgetClass()

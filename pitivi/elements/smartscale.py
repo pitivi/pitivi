@@ -29,7 +29,7 @@ Smart video scaler
 # DAR is the same in videoscale (We need to make sure)
 #
 # The whole idea is to modify the caps between videobox and videoscale so that
-# the 
+# the
 
 import gobject
 import gst
@@ -63,7 +63,7 @@ class SmartVideoScale(gst.Bin):
         self.add_pad(self._srcPad)
 
         self._sinkPad.set_setcaps_function(self._sinkSetCaps)
-        
+
 
         # input/output values
         self.capsin = None
@@ -188,7 +188,7 @@ class SmartVideoScale(gst.Bin):
         self.debug("Settings filter caps %s" % caps.to_string())
         self.capsfilter.props.caps = caps
         self.debug("done")
-        
-        
+
+
 
 gobject.type_register(SmartVideoScale)

@@ -40,12 +40,12 @@ class ProjectSettingsDialog(GladeWindow):
         w = self.widgets
         w["nameentry"].set_text(self.project.name)
         w["descriptiontextview"].get_buffer().set_text(self.project.description)
-        
+
 
     def updateSettings(self):
         # apply selected settings to project
         w = self.widgets
-        
+
         # Name/Description
         self.project.name = w["nameentry"].get_text()
         txtbuffer = w["descriptiontextview"].get_buffer()

@@ -50,10 +50,10 @@ class SmartBin(gst.Pipeline):
         self.height = height
         self.name = name
         self.displayname = displayname
-        
+
         self.vtee = None
         self.atee = None
-        
+
         self.set_name(name)
         # Until  basetransform issues are fixed, we use an identity instead
         # of a tee
@@ -197,13 +197,13 @@ class SmartBin(gst.Pipeline):
 
         # set sync=false on the videosink
         #self.getRealVideoSink().set_property("sync", False)
-        
+
         self.debug("linking vtee to ecnthread:vsink")
         try:
             self.vtee.get_pad("src").link(self.encthread.get_pad("vsink"))
         except:
             return False
-        
+
         self.debug("linking atee to encthread:asink")
         try:
             self.atee.get_pad("src").link(self.encthread.get_pad("asink"))
@@ -220,7 +220,7 @@ class SmartBin(gst.Pipeline):
     def stopRecording(self):
         """ stop the recording, removing the encoding thread """
         self.set_state(gst.STATE_PAUSED)
-        
+
         if self.encthread:
             apad = self.encthread.get_pad("vsink")
             apad.get_peer().unlink(apad)
@@ -258,13 +258,13 @@ class SmartBin(gst.Pipeline):
         # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
         # TODO : use video/audio settings !
         # TODO : Check if we really do both audio and video !
-        
+
         if not settings:
             setting = self.getSettings()
             if not settings:
                 self.error("No settings available to create the Encoding Thread")
                 return None
-        
+
         thread = gst.Bin("encthread")
 
         ##
@@ -282,7 +282,7 @@ class SmartBin(gst.Pipeline):
         ##
         ## Audio part
         ##
-            
+
         ainq = gst.element_factory_make("queue", "ainq")
         aident = gst.element_factory_make("identity", "aident")
         aident.props.single_segment = True
@@ -319,7 +319,7 @@ class SmartBin(gst.Pipeline):
         ##
         ## Video part
         ##
-            
+
         vinq = gst.element_factory_make("queue", "vinq")
         vident = gst.element_factory_make("identity", "vident")
         vident.props.single_segment = True
@@ -425,7 +425,7 @@ class SmartTimelineBin(SmartBin):
     def __init__(self, project):
         gst.log("new SmartTimelineBin for project %s" % project)
         self.project = project
-        
+
         settings = project.getSettings()
         self.log("source is %s" % project.timeline.timeline)
         self.source = project.timeline.timeline
@@ -497,4 +497,3 @@ class SmartDefaultBin(SmartBin):
         self.videotestsrc.get_pad("src").link(self.vtee.get_pad("sink"))
         self.silence.get_pad("src").link(self.atee.get_pad("sink"))
         self.debug("finished connecting sources")
-

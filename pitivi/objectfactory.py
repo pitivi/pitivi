@@ -45,7 +45,7 @@ class ObjectFactory(gobject.GObject):
                        "Contains audio stream",
                        "Does the element contain audio",
                        False, gobject.PARAM_READWRITE),
-        
+
         "is-video" : ( gobject.TYPE_BOOLEAN,
                        "Contains video stream",
                        "Does the element contain video",
@@ -265,7 +265,7 @@ class FileSourceFactory(ObjectFactory):
         else:
             return
         bin.remove_pad(mypad)
-        
+
     def binIsDestroyed(self, bin):
         """ Remove the given bin from the list of instances """
         if bin in self.instances:
@@ -283,7 +283,7 @@ class FileSourceFactory(ObjectFactory):
         """ Returns the ExportSettings corresponding to this source """
         if self.settings:
             return self.settings
-        
+
         self.settings = ExportSettings()
         if self.video_info_stream:
             # Fill video properties
@@ -299,7 +299,7 @@ class FileSourceFactory(ObjectFactory):
             self.settings.audiochannels = as.channels
             self.settings.audiorate = as.rate
             self.settings.audiodepth = as.depth
-            
+
         return self.settings
 
 class OperationFactory(ObjectFactory):
@@ -371,7 +371,7 @@ class VideoStream(MultimediaStream):
     def _analyzeCaps(self):
         if len(self.caps) > 1:
             self.fixed = False
-            
+
         struct = self.caps[0]
         self.videotype = struct.get_name()
         if self.videotype.startswith("video/x-raw-"):
@@ -422,7 +422,7 @@ class VideoStream(MultimediaStream):
                 templ = templ + _(" <i>(%s)</i>") % self.codec
             return templ
         return _("<b>Unknown Video format:</b> %s") % self.videotype
-            
+
 class AudioStream(MultimediaStream):
 
     def _analyzeCaps(self):
@@ -488,4 +488,3 @@ def get_stream_for_caps(caps):
         return TextStream(caps)
     else:
         return None
-                     

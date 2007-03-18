@@ -70,7 +70,7 @@ class SourceFactoriesWidget(gtk.Notebook):
 
         ## FIXME: The following are deactivated until they do more than just
         ##      display things.
-        
+
 ##         self.audiofxlist = AudioFxListWidget()
 ##         #self.audiofxlist.set_sensitive(False)
 ##         self.append_page(self.audiofxlist, gtk.Label("Audio FX"))
@@ -132,7 +132,7 @@ class SourceListWidget(gtk.VBox):
         self.treeview.set_headers_visible(False)
         tsel = self.treeview.get_selection()
         tsel.set_mode(gtk.SELECTION_MULTIPLE)
-        
+
         pixbufcol = gtk.TreeViewColumn(_("Icon"))
         pixbufcol.set_expand(False)
         pixbufcol.set_spacing(5)
@@ -161,18 +161,18 @@ class SourceListWidget(gtk.VBox):
         # buttons (list/icon view, add, remove)
         button = gtk.Button(stock=gtk.STOCK_ADD)
         button.connect("clicked", self._addButtonClickedCb)
-        
+
         folderbutton = gtk.Button(_("Add Folder"))
         folderbutton.set_image(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_BUTTON))
         folderbutton.connect("clicked", self._addFolderButtonClickedCb)
-        
+
         self.errorDialogButton = gtk.ToolButton(gtk.STOCK_DIALOG_WARNING)
         self.errorDialogButton.connect("clicked", self._errorDialogButtonClickedCb)
-        
+
         self.rbut = gtk.Button(stock=gtk.STOCK_REMOVE)
         self.rbut.connect("clicked", self._removeButtonClickedCb)
         self.rbut.set_sensitive(False)
-        
+
         self.bothbox = gtk.HBox()
         self.bothbox.pack_start(button, expand=False)
         self.bothbox.pack_start(folderbutton, expand=False)
@@ -215,7 +215,7 @@ class SourceListWidget(gtk.VBox):
         self.filepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-file.png"))
         self.audiofilepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-sound.png"))
         self.videofilepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-video.png"))
-        
+
         # Drag and Drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
                            [dnd.URI_TUPLE, dnd.FILE_TUPLE],
@@ -227,7 +227,7 @@ class SourceListWidget(gtk.VBox):
                                       gtk.gdk.ACTION_COPY)
         self.treeview.connect("drag_begin", self._dndTreeBeginCb)
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
-        
+
         # Hack so that the views have the same method as self
         self.treeview.getSelectedItems = self.getSelectedItems
 
@@ -288,14 +288,14 @@ class SourceListWidget(gtk.VBox):
     def showImportSourcesDialog(self, select_folders=False):
         if self._importDialog:
             return
-            
+
         if select_folders:
-                chooser_action = gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER
-                dialogtitle = _("Import a folder")
+            chooser_action = gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER
+            dialogtitle = _("Import a folder")
         else:
-                chooser_action = gtk.FILE_CHOOSER_ACTION_OPEN
-                dialogtitle = _("Import a file")
-                
+            chooser_action = gtk.FILE_CHOOSER_ACTION_OPEN
+            dialogtitle = _("Import a file")
+
         self._importDialog = gtk.FileChooserDialog(dialogtitle, None,
                                                    chooser_action,
                                                    (gtk.STOCK_ADD, gtk.RESPONSE_OK,
@@ -309,7 +309,7 @@ class SourceListWidget(gtk.VBox):
         self._importDialog.connect('response', self._dialogBoxResponseCb, select_folders)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
         self._importDialog.show()
-        
+
     def addFiles(self, list):
         """ Add files to the list """
         instance.PiTiVi.current.sources.addUris(list)
@@ -323,11 +323,11 @@ class SourceListWidget(gtk.VBox):
             for path, dirs, files in os.walk(folder):
                 for afile in files:
                     uriList.append("file://%s" % os.path.join(path, afile))
-        
+
         instance.PiTiVi.current.sources.addUris(uriList)
 
     # sourcelist callbacks
-    
+
     def _fileAddedCb(self, unused_sourcelist, factory):
         """ a file was added to the sourcelist """
         try:
@@ -397,7 +397,7 @@ class SourceListWidget(gtk.VBox):
 
 
     ## Import Sources Dialog Box callbacks
-        
+
     def _dialogBoxResponseCb(self, dialogbox, response, select_folders):
         gst.debug("response:%r" % response)
         if response == gtk.RESPONSE_OK:
@@ -421,7 +421,7 @@ class SourceListWidget(gtk.VBox):
     def _addButtonClickedCb(self, unused_widget=None):
         """ called when a user clicks on the add button """
         self.showImportSourcesDialog()
-        
+
     def _addFolderButtonClickedCb(self, unused_widget=None):
         """ called when a user clicks on the add button """
         self.showImportSourcesDialog(select_folders=True)
@@ -442,7 +442,7 @@ class SourceListWidget(gtk.VBox):
             self.errorDialogBox.show()
         if self.errorDialogButton.parent:
             self.bothbox.remove(self.errorDialogButton)
-    
+
     def _playButtonClickedCb(self, unused_widget):
         """ Called when a user clicks on the play button """
         # get the selected filesourcefactory
@@ -523,7 +523,7 @@ class SourceListWidget(gtk.VBox):
         elif targetType == dnd.TYPE_URI_LIST:
             selection.set(selection.target, 8,
                           string.join(uris, "\n"))
-        
+
 class AudioFxListWidget(gtk.VBox):
     """ Widget for listing video effects """
 
@@ -533,12 +533,12 @@ class AudioFxListWidget(gtk.VBox):
 
         # model
         self.storemodel = gtk.ListStore(str, str, object)
-        
+
         self.scrollwin = gtk.ScrolledWindow()
         self.scrollwin.set_policy(gtk.POLICY_NEVER,
                                   gtk.POLICY_AUTOMATIC)
         self.pack_start(self.scrollwin)
-        
+
         self.iconview = gtk.IconView(self.storemodel)
         self.treeview = gtk.TreeView(self.storemodel)
 
@@ -547,14 +547,14 @@ class AudioFxListWidget(gtk.VBox):
         namecell = gtk.CellRendererText()
         namecol.pack_start(namecell)
         namecol.add_attribute(namecell, "text", 0)
-        
+
         namecol = gtk.TreeViewColumn(_("Description"))
         self.treeview.append_column(namecol)
         namecell = gtk.CellRendererText()
         namecell.set_property("ellipsize", pango.ELLIPSIZE_END)
         namecol.pack_start(namecell)
         namecol.add_attribute(namecell, "text", 1)
-        
+
         self.scrollwin.add(self.treeview)
 
         self._fillUpModel()
@@ -579,7 +579,7 @@ class VideoFxListWidget(gtk.VBox):
         self.scrollwin.set_policy(gtk.POLICY_NEVER,
                                   gtk.POLICY_AUTOMATIC)
         self.pack_start(self.scrollwin)
-        
+
         self.iconview = gtk.IconView(self.storemodel)
         self.treeview = gtk.TreeView(self.storemodel)
 
@@ -588,14 +588,14 @@ class VideoFxListWidget(gtk.VBox):
         namecell = gtk.CellRendererText()
         namecol.pack_start(namecell)
         namecol.add_attribute(namecell, "text", 0)
-        
+
         namecol = gtk.TreeViewColumn(_("Description"))
         self.treeview.append_column(namecol)
         namecell = gtk.CellRendererText()
         namecell.set_property("ellipsize", pango.ELLIPSIZE_END)
         namecol.pack_start(namecell)
         namecol.add_attribute(namecell, "text", 1)
-        
+
         self.scrollwin.add(self.treeview)
 
         self._fillUpModel()

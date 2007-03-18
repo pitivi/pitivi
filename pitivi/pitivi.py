@@ -75,13 +75,13 @@ class Pitivi(gobject.GObject):
         if instance.PiTiVi:
             raise RuntimeWarning(_("There is already a %s instance, inform developers") % APPNAME)
         instance.PiTiVi = self
-        
+
         # TODO parse cmd line arguments
 
         self.playground = PlayGround()
         self.current = Project(_("New Project"))
         self.effects = Magician()
-        
+
         # we're starting a GUI for the time being
         self.gui = mainwindow.PitiviMainWindow()
         self.gui.show()
@@ -112,7 +112,7 @@ class Pitivi(gobject.GObject):
             self.playground.pause()
             self.current = None
         return True
-        
+
     def newBlankProject(self):
         """ start up a new blank project """
         # if there's a running project we must close it
@@ -130,7 +130,7 @@ class Pitivi(gobject.GObject):
         gst.debug("Exiting main loop")
         gtk.main_quit()
 
-        
+
 def main(argv):
     check.initial_checks()
     ptv = Pitivi(argv)

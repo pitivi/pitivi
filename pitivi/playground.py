@@ -80,10 +80,10 @@ class PlayGround(gobject.GObject):
         gobject.GObject.__init__(self)
         # List of used pipelines
         self.pipelines = []
-        
+
         self.vsinkthread = None
         self.asinkthread = None
-        
+
         # Defaut pipeline if no other pipeline is playing
         self.default = SmartDefaultBin()
         bus = self.default.get_bus()
@@ -99,7 +99,7 @@ class PlayGround(gobject.GObject):
         self.tempsmartbin = None
         self.cur_state_signal = None
         self.cur_eos_signal = None
-        
+
         self.state = gst.STATE_READY
 
         # FIXME : THIS IS CRACK, THIS IS CRACK
@@ -154,7 +154,7 @@ class PlayGround(gobject.GObject):
 
     def switchToPipeline(self, pipeline):
         """
-        Switch to the given pipeline for play output.        
+        Switch to the given pipeline for play output.
         Returns True if the switch was possible.
         """
         if self.current == pipeline:
@@ -305,7 +305,7 @@ class PlayGround(gobject.GObject):
         gst.debug("Seeking to %s succeeded" % gst.TIME_ARGS (value))
 
         self.emit('position', self.current, value)
-        
+
         return True
 
     def shutdown(self):
@@ -348,7 +348,7 @@ class PlayGround(gobject.GObject):
             if (not self.current == self.default) and message.src == self.current:
                 if pending == gst.STATE_VOID_PENDING:
                     if (not self._positiontimeoutid) and newstate in [gst.STATE_PLAYING]:
-			self._checkTimeCb()
+                        self._checkTimeCb()
                         self._positiontimeoutid = gobject.timeout_add(300, self._checkTimeCb)
                     self.emit("current-state", newstate)
         elif message.type == gst.MESSAGE_ERROR:
@@ -393,8 +393,8 @@ class PlayGround(gobject.GObject):
                           _("There is a problem with your audio output device"))
         else:
             self.emit("error", gerror.message, detail)
-            
-        
+
+
 
     def _handleWarning(self, gerror, detail, source):
         """
@@ -403,7 +403,7 @@ class PlayGround(gobject.GObject):
         """
         gst.warning("gerror:%s , detail:%s , source:%s" % (gerror, detail, source))
         gst.warning("GError : code:%s, domain:%s, message:%s" % (gerror.code, gerror.domain, gerror.message))
-        
+
 
     #
     # playing proxy functions
@@ -422,7 +422,7 @@ class PlayGround(gobject.GObject):
         ret = self.current.set_state(self.state)
         gst.debug("change state returned %s" % ret)
         return ret
- 
+
     def pause(self):
         """
         Set the current Pipeline to Pause.
@@ -477,5 +477,3 @@ class PlayGround(gobject.GObject):
             gst.TIME_ARGS(pos),
             gst.TIME_ARGS(target)))
         self.seekInCurrent(target)
-
-    

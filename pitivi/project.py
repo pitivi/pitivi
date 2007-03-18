@@ -93,7 +93,7 @@ class Project(gobject.GObject):
     # setting methods
     def _settingsChangedCb(self, unused_settings):
         self.emit('settings-changed')
-    
+
     def getSettings(self):
         """
         return the currently configured settings.
@@ -132,7 +132,7 @@ class Project(gobject.GObject):
         if not settings:
             gst.warning("Timeline didn't return any auto settings, return default settings")
             return ExportSettings()
-        
+
         # add the encoders and muxer of the default settings
         curset = self.settings or ExportSettings()
         settings.vencoder = curset.vencoder
@@ -147,4 +147,3 @@ def file_is_project(uri):
     if not gst.uri_get_protocol(uri) == "file":
         raise NotImplementedError(_("%s doesn't yet handle non local projects") % APPNAME)
     return os.path.isfile(gst.uri_get_location(uri))
-

@@ -79,10 +79,10 @@ class PitiviViewer(gtk.VBox):
 
     def _connectToProject(self, project):
         """Connect signal handlers to a project.
- 
+
         This first disconnects any handlers connected to an old project.
         If project is None, this just disconnects any connected handlers.
- 
+
         """
         self.project_signals.connect(project.sources, "tmp_is_ready",
                                      None, self._tmpIsReadyCb)
@@ -93,14 +93,14 @@ class PitiviViewer(gtk.VBox):
         """ Creates the Viewer GUI """
         self.set_border_width(5)
         self.set_spacing(5)
-        
+
         # drawing area
         self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.5, ratio=4.0/3.0, obey_child=False)
         self.pack_start(self.aframe, expand=True)
         self.drawingarea = ViewerWidget()
         self.drawingarea.connect_after("realize", self._drawingAreaRealizeCb)
         self.aframe.add(self.drawingarea)
-        
+
         # horizontal line
         self.pack_start(gtk.HSeparator(), expand=False)
 
@@ -114,7 +114,7 @@ class PitiviViewer(gtk.VBox):
         self.pack_start(self.slider, expand=False)
         self.moving_slider = False
         self.slider.set_sensitive(False)
-        
+
         # Buttons/Controls
         bbox = gtk.HBox()
         boxalign = gtk.Alignment(xalign=0.5, yalign=0.5)
@@ -125,12 +125,12 @@ class PitiviViewer(gtk.VBox):
         self.record_button.connect("clicked", self._recordCb)
         self.record_button.set_sensitive(False)
         bbox.pack_start(self.record_button, expand=False)
-        
+
         self.rewind_button = gtk.ToolButton(gtk.STOCK_MEDIA_REWIND)
         self.rewind_button.connect("clicked", self._rewindCb)
         self.rewind_button.set_sensitive(False)
         bbox.pack_start(self.rewind_button, expand=False)
-        
+
         self.back_button = gtk.ToolButton(gtk.STOCK_MEDIA_PREVIOUS)
         self.back_button.connect("clicked", self._backCb)
         self.back_button.set_sensitive(False)
@@ -140,12 +140,12 @@ class PitiviViewer(gtk.VBox):
         self.playpause_button.connect("play", self._playButtonCb)
         bbox.pack_start(self.playpause_button, expand=False)
         self.playpause_button.set_sensitive(False)
-        
+
         self.next_button = gtk.ToolButton(gtk.STOCK_MEDIA_NEXT)
         self.next_button.connect("clicked", self._nextCb)
         self.next_button.set_sensitive(False)
         bbox.pack_start(self.next_button, expand=False)
-        
+
         self.forward_button = gtk.ToolButton(gtk.STOCK_MEDIA_FORWARD)
         self.forward_button.connect("clicked", self._forwardCb)
         self.forward_button.set_sensitive(False)
@@ -155,9 +155,9 @@ class PitiviViewer(gtk.VBox):
         self.timelabel = gtk.Label()
         self.timelabel.set_markup("<tt>00m00s000 / --m--s---</tt>")
         self.timelabel.set_alignment(1.0, 0.5)
-        self.timelabel.set_padding(5, 5)        
+        self.timelabel.set_padding(5, 5)
         bbox.pack_start(self.timelabel, expand=False, padding=10)
-        
+
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
@@ -168,7 +168,7 @@ class PitiviViewer(gtk.VBox):
     def _asyncFrameRatioChange(self, ratio):
         gst.debug("ratio:%f" % ratio)
         self.aframe.set_property("ratio", ratio)
-        
+
     def _videosinkCapsNotifyCb(self, sinkpad, unused_property):
         caps = sinkpad.get_negotiated_caps()
         if not caps:
@@ -317,10 +317,10 @@ class PitiviViewer(gtk.VBox):
         gst.debug("duration : %d" % duration)
         # deactivate record button is the duration is null
         self.record_button.set_sensitive((duration > 0) and True or False)
-            
+
         self.posadjust.upper = float(duration)
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time), time_to_string(instance.PiTiVi.playground.current.length)))
-        
+
 
     def _backToDefaultCb(self):
         instance.PiTiVi.playground.switchToDefault()
@@ -361,7 +361,7 @@ class PitiviViewer(gtk.VBox):
         """ the current project has changed """
         assert(instance.PiTiVi.current == project)
         self._connectToProject(project)
-        
+
     def _addTimelineToPlayground(self):
         instance.PiTiVi.playground.addPipeline(instance.PiTiVi.current.getBin())
 
@@ -370,7 +370,7 @@ class PitiviViewer(gtk.VBox):
 
     def _encodingDialogDestroyCb(self, unused_dialog):
         instance.PiTiVi.gui.set_sensitive(True)
-        
+
     def _recordCb(self, unused_button):
         win = EncodingDialog(instance.PiTiVi.current)
         win.window.connect("destroy", self._encodingDialogDestroyCb)
@@ -399,7 +399,7 @@ class PitiviViewer(gtk.VBox):
 
 
     ## Playground callbacks
-    
+
     def _playgroundPositionCb(self, unused_playground, unused_smartbin, pos):
         self._newTime(pos)
 
@@ -499,7 +499,7 @@ class PlayPauseButton(gtk.Button):
         gtk.Button.__init__(self, label="")
         self.playing = True
         self.setPlay()
-        self.connect('clicked', self._clickedCb)        
+        self.connect('clicked', self._clickedCb)
 
     def _clickedCb(self, unused):
         if not self.playing:
@@ -550,7 +550,7 @@ class EncodingDialog(GladeWindow):
         self.ainfo.set_markup(self.settings.getAudioDescription())
 
     def _fileButtonClickedCb(self, button):
-        
+
         dialog = gtk.FileChooserDialog(title=_("Choose file to render to"),
                                        parent=self.window,
                                        buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
@@ -607,7 +607,7 @@ class EncodingDialog(GladeWindow):
         self.progressbar.set_text(_("Rendering Complete"))
         self.progressbar.set_fraction(1.0)
         self.cancelbutton.set_label("gtk-close")
-        
+
     def _cancelButtonClickedCb(self, unused_button):
         self.bin.stopRecording()
         if self.positionhandler:
@@ -615,4 +615,3 @@ class EncodingDialog(GladeWindow):
             self.positionhandler = 0
         instance.PiTiVi.playground.pause()
         self.destroy()
-

@@ -59,7 +59,7 @@ class Magician:
                 self.simple_audio.append(fact)
             elif 'Video' in klass and 'Effect' in klass:
                 self.simple_video.append(fact)
-                
+
 
     def _getEffectPlugins(self):
         # find all the pitivi plugins that provide effects

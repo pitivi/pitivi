@@ -87,7 +87,7 @@ class SimpleTimelineContentWidget(gtk.HBox):
     def _createUi(self):
         """ draw the GUI """
         self.timeline = SimpleTimeline(hadjustment = self.twidget.hadjustment)
-        
+
         # real simple timeline
         self.layoutframe = gtk.Frame()
         self.layoutframe.add(self.timeline)
@@ -109,15 +109,15 @@ class SimpleTimelineContentWidget(gtk.HBox):
         self.messagewindow.set_left_margin(10)
         self.messagewindow.set_right_margin(10)
         self.messagewindow.set_size_request(-1, 100)
-        
+
         self.messagewindow.add_events(gtk.gdk.ENTER_NOTIFY_MASK)
-        
+
         self.pack_start(self.messagewindow)
-        
+
         self.motionSigId = self.messagewindow.connect("drag-motion", self._dragMotionCb)
 
         self.showingTimeline = False
-        
+
     def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
                       unused_timestamp):
         gst.log("motion...")

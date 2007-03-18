@@ -27,7 +27,7 @@ import gobject
 import gst
 from pitivi.elements.singledecodebin import SingleDecodeBin
 from objects import TimelineObject, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO, MEDIA_TYPE_NONE
-        
+
 class TimelineSource(TimelineObject):
     """
     Base class for all sources (O input)
@@ -35,7 +35,7 @@ class TimelineSource(TimelineObject):
 
     def __init__(self, **kw):
         TimelineObject.__init__(self, **kw)
-        
+
 
 class TimelineFileSource(TimelineSource):
     """
@@ -49,7 +49,7 @@ class TimelineFileSource(TimelineSource):
 
     media_start = -1
     media_duration = -1
-    
+
     def __init__(self, media_start=-1, media_duration=-1, **kw):
         TimelineSource.__init__(self, **kw)
         self.gnlobject.connect("notify::media-start", self._mediaStartDurationChangedCb)
@@ -59,7 +59,7 @@ class TimelineFileSource(TimelineSource):
         if media_duration == -1:
             media_duration = self.factory.length
         self.setMediaStartDurationTime(media_start, media_duration)
-        
+
     def _makeGnlObject(self):
         if self.media_type == MEDIA_TYPE_AUDIO:
             caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
@@ -79,7 +79,7 @@ class TimelineFileSource(TimelineSource):
         gnlobject.set_property("start", long(0))
         gnlobject.set_property("duration", long(self.factory.length))
         return gnlobject
-        
+
     def _makeBrother(self):
         """ make the brother element """
         self.gnlobject.info("making filesource brother")
@@ -147,5 +147,3 @@ class TimelineLiveSource(TimelineSource):
 
     def __init__(self, **kw):
         TimelineSource.__init__(self, **kw)
-
-

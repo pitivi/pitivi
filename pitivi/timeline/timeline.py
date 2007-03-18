@@ -37,7 +37,7 @@ class Timeline(gobject.GObject):
 
     # TODO make the compositions more versatile
     # for the time being we hardcode an audio and a video composition
-    
+
     def __init__(self, project):
         gst.log("new Timeline for project %s" % project)
         gobject.GObject.__init__(self)
@@ -106,5 +106,3 @@ class Timeline(gobject.GObject):
             s.audiorate = a.audiorate
             s.audiodepth = a.audiodepth
         return s
-
-        
