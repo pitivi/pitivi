@@ -27,6 +27,7 @@ import gtk
 import gst
 import check
 from ui import mainwindow
+from pitivigstutils import patch_gst_python
 from playground import PlayGround
 from project import Project, file_is_project
 from effects import Magician
@@ -129,5 +130,6 @@ class Pitivi(gobject.GObject):
 
 def main(argv):
     check.initial_checks()
+    patch_gst_python()
     ptv = Pitivi(argv)
     gtk.main()

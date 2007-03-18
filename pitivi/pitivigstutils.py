@@ -55,8 +55,9 @@ def fraction_div(frac, other):
         return float(frac.num) / (other * float(frac.denom))
     return TypeError
 
-gst.Fraction.__float__ = fraction_float
-gst.Fraction.__eq__ = fraction_eq
-gst.Fraction.__ne__ = fraction_ne
-gst.Fraction.__mul__ = fraction_mul
-gst.Fraction.__div__ = fraction_div
+def patch_gst_python():
+    gst.Fraction.__float__ = fraction_float
+    gst.Fraction.__eq__ = fraction_eq
+    gst.Fraction.__ne__ = fraction_ne
+    gst.Fraction.__mul__ = fraction_mul
+    gst.Fraction.__div__ = fraction_div
