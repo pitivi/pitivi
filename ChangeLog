@@ -1,3 +1,8 @@
+2007-03-18  Johan Dahlin  <jdahlin@async.com.br>
+
+	* pitivi/ui/sourcefactories.py: Modernize the usage of
+	treemodel and use enums to access the columns.
+
 2007-03-18  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/objectfactory.py:

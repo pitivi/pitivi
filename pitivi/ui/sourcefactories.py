@@ -24,7 +24,6 @@ Source and effects list widgets
 """
 
 import os
-import os.path
 import time
 import string
 import gobject
@@ -82,6 +81,11 @@ class SourceFactoriesWidget(gtk.Notebook):
 ##         self.append_page(self.transitionlist, gtk.Label("Transitions"))
 
 
+(COL_ICON,
+ COL_INFOTEXT,
+ COL_FACTORY,
+ COL_URI,
+ COL_LENGTH) = range(5)
 
 class SourceListWidget(gtk.VBox):
     """ Widget for listing sources """
@@ -139,7 +143,7 @@ class SourceListWidget(gtk.VBox):
         self.treeview.append_column(pixbufcol)
         pixcell = gtk.CellRendererPixbuf()
         pixbufcol.pack_start(pixcell)
-        pixbufcol.add_attribute(pixcell, 'pixbuf', 0)
+        pixbufcol.add_attribute(pixcell, 'pixbuf', COL_ICON)
 
         namecol = gtk.TreeViewColumn(_("Information"))
         self.treeview.append_column(namecol)
@@ -148,7 +152,7 @@ class SourceListWidget(gtk.VBox):
         txtcell = gtk.CellRendererText()
         txtcell.set_property("ellipsize", pango.ELLIPSIZE_END)
         namecol.pack_start(txtcell)
-        namecol.add_attribute(txtcell, "markup", 1)
+        namecol.add_attribute(txtcell, "markup", COL_INFOTEXT)
 
         namecol = gtk.TreeViewColumn(_("Duration"))
         namecol.set_expand(False)
@@ -156,7 +160,7 @@ class SourceListWidget(gtk.VBox):
         txtcell = gtk.CellRendererText()
         txtcell.set_property("yalign", 0.0)
         namecol.pack_start(txtcell)
-        namecol.add_attribute(txtcell, "markup", 4)
+        namecol.add_attribute(txtcell, "markup", COL_LENGTH)
 
         # buttons (list/icon view, add, remove)
         button = gtk.Button(stock=gtk.STOCK_ADD)
@@ -355,13 +359,12 @@ class SourceListWidget(gtk.VBox):
     def _fileRemovedCb(self, unused_sourcelist, uri):
         """ the given uri was removed from the sourcelist """
         # find the good line in the storemodel and remove it
-        piter = self.storemodel.get_iter_first()
-        while piter:
-            if uri == self.storemodel.get_value(piter, 3):
-                self.storemodel.remove(piter)
+        model = self.storemodel
+        for row in model:
+            if uri == row[COL_URI]:
+                model.remove(row.iter)
                 break
-            piter = self.storemodel.iter_next(piter)
-        if not len(self.storemodel):
+        if not len(model):
             self._displayTreeView(False)
             self.rbut.set_sensitive(False)
 
@@ -431,9 +434,9 @@ class SourceListWidget(gtk.VBox):
         tsel = self.treeview.get_selection()
         if tsel.count_selected_rows() < 1:
             return
-        store, selected = tsel.get_selected_rows()
-        uris = [self.storemodel.get_value(self.storemodel.get_iter(path), 3) for path in selected]
-        for uri in uris:
+        model, selected = tsel.get_selected_rows()
+        for path in selected:
+            uri = model[path][COL_URI]
             del instance.PiTiVi.current.sources[uri]
 
     def _errorDialogButtonClickedCb(self, unused_widget=None):
@@ -449,7 +452,8 @@ class SourceListWidget(gtk.VBox):
         model, paths = self.treeview.get_selection().get_selected_rows()
         if len(paths) < 1:
             return
-        factory = self.storemodel.get_value(self.storemodel.get_iter(paths[0]), 2)
+        path = paths[0]
+        factory = model[path][COL_FACTORY]
         gst.debug("Let's play %s" % factory.name)
         instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
 
@@ -458,7 +462,7 @@ class SourceListWidget(gtk.VBox):
             self.popup.popup(None, None, None, event.button, event.time)
 
     def _rowActivatedCb(self, unused_treeview, path, unused_column):
-        factory = self.storemodel.get_value(self.storemodel.get_iter(path), 2)
+        factory = self.storemodel[path][COL_FACTORY]
         instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
 
     def _newProjectCb(self, unused_pitivi, project):
@@ -508,8 +512,7 @@ class SourceListWidget(gtk.VBox):
     def getSelectedItems(self):
         """ returns a list of selected items uri """
         model, rows = self.treeview.get_selection().get_selected_rows()
-        uris = [self.storemodel.get_value(self.storemodel.get_iter(x), 3) for x in rows]
-        return uris
+        return [model[path][COL_URI] for path in rows]
 
     def _dndDataGetCb(self, unused_widget, unused_context, selection,
                       targetType, unused_eventTime):
@@ -565,6 +568,10 @@ class AudioFxListWidget(gtk.VBox):
                                     factory.get_description(),
                                     factory])
 
+(COL_NAME,
+ COL_DESCRIPTION,
+ COL_FACTORY) = range(3)
+
 class VideoFxListWidget(gtk.VBox):
     """ Widget for listing video effects """
 
@@ -587,14 +594,14 @@ class VideoFxListWidget(gtk.VBox):
         self.treeview.append_column(namecol)
         namecell = gtk.CellRendererText()
         namecol.pack_start(namecell)
-        namecol.add_attribute(namecell, "text", 0)
+        namecol.add_attribute(namecell, "text", COL_NAME)
 
         namecol = gtk.TreeViewColumn(_("Description"))
         self.treeview.append_column(namecol)
         namecell = gtk.CellRendererText()
         namecell.set_property("ellipsize", pango.ELLIPSIZE_END)
         namecol.pack_start(namecell)
-        namecol.add_attribute(namecell, "text", 1)
+        namecol.add_attribute(namecell, "text", COL_DESCRIPTION)
 
         self.scrollwin.add(self.treeview)
 
