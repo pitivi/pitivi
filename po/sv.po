@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-18 15:33+0100\n"
-"PO-Revision-Date: 2006-12-26 10:30+0100\n"
+"POT-Creation-Date: 2007-03-19 11:58+0100\n"
+"PO-Revision-Date: 2007-03-19 11:50+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -51,7 +51,7 @@ msgid "Author"
 msgstr "Författare"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:551 ../pitivi/ui/sourcefactories.py:592
+#: ../pitivi/ui/sourcefactories.py:558 ../pitivi/ui/sourcefactories.py:603
 msgid "Description"
 msgstr "Beskrivning"
 
@@ -215,7 +215,7 @@ msgstr "Videoförval"
 msgid "Width:"
 msgstr "Bredd:"
 
-#: ../pitivi/ui/exportsettingswidget.py:332
+#: ../pitivi/ui/exportsettingswidget.py:331
 msgid "Export Settings"
 msgstr "Exportera inställningar"
 
@@ -236,77 +236,77 @@ msgstr "Videospår"
 msgid "Empty"
 msgstr "Tom"
 
-#: ../pitivi/ui/mainwindow.py:81
+#: ../pitivi/ui/mainwindow.py:80
 msgid "Create a new project"
 msgstr "Skapa ett nytt projekt"
 
-#: ../pitivi/ui/mainwindow.py:82
+#: ../pitivi/ui/mainwindow.py:81
 msgid "Open an existing project"
 msgstr "Öppna ett existerande projekt"
 
-#: ../pitivi/ui/mainwindow.py:83 ../pitivi/ui/mainwindow.py:84
+#: ../pitivi/ui/mainwindow.py:82 ../pitivi/ui/mainwindow.py:83
 msgid "Save the current project"
 msgstr "Spara aktuellt projekt"
 
-#: ../pitivi/ui/mainwindow.py:85 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:84 ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
 msgstr "Projektinställningar"
 
-#: ../pitivi/ui/mainwindow.py:85
+#: ../pitivi/ui/mainwindow.py:84
 msgid "Edit the project settings"
 msgstr "Redigera projektinställningarna"
 
-#: ../pitivi/ui/mainwindow.py:86
+#: ../pitivi/ui/mainwindow.py:85
 msgid "_Import Sources..."
 msgstr "_Importera källor..."
 
-#: ../pitivi/ui/mainwindow.py:86
+#: ../pitivi/ui/mainwindow.py:85
 msgid "Import sources to use"
 msgstr "Importera källor att använda"
 
-#: ../pitivi/ui/mainwindow.py:87
+#: ../pitivi/ui/mainwindow.py:86
 msgid "_Import Folder of sources..."
 msgstr "_Importera mapp med källor..."
 
-#: ../pitivi/ui/mainwindow.py:87
+#: ../pitivi/ui/mainwindow.py:86
 msgid "Import folder of sources to use"
 msgstr "Importera mapp med källor att använda"
 
-#: ../pitivi/ui/mainwindow.py:89
+#: ../pitivi/ui/mainwindow.py:88
 msgid "View the main window on the whole screen"
 msgstr "Visa huvudfönstret på hela skärmen"
 
-#: ../pitivi/ui/mainwindow.py:90
+#: ../pitivi/ui/mainwindow.py:89
 #, python-format
 msgid "Information about %s"
 msgstr "Information om %s"
 
-#: ../pitivi/ui/mainwindow.py:91
+#: ../pitivi/ui/mainwindow.py:90
 msgid "_File"
 msgstr "_Arkiv"
 
-#: ../pitivi/ui/mainwindow.py:92
+#: ../pitivi/ui/mainwindow.py:91
 msgid "_View"
 msgstr "_Visa"
 
-#: ../pitivi/ui/mainwindow.py:93
+#: ../pitivi/ui/mainwindow.py:92
 msgid "_Help"
 msgstr "_Hjälp"
 
-#: ../pitivi/ui/mainwindow.py:97
+#: ../pitivi/ui/mainwindow.py:96
 msgid "Advanced Vie_w"
 msgstr "Avancerad v_y"
 
-#: ../pitivi/ui/mainwindow.py:97
+#: ../pitivi/ui/mainwindow.py:96
 msgid "Switch to advanced view"
 msgstr "Växla till avancerad vy"
 
 # Bra ord på svenska sökes
-#: ../pitivi/ui/mainwindow.py:241
+#: ../pitivi/ui/mainwindow.py:240
 msgid "Contributors:"
 msgstr "Bidragsgivare:"
 
-#: ../pitivi/ui/mainwindow.py:245
+#: ../pitivi/ui/mainwindow.py:244
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -330,67 +330,67 @@ msgstr "Namn:"
 msgid "The name of your project."
 msgstr "Namnet på ditt projekt."
 
-#: ../pitivi/ui/sourcefactories.py:105
+#: ../pitivi/ui/sourcefactories.py:109
 msgid "Add Sources..."
 msgstr "Lägg till källor..."
 
-#: ../pitivi/ui/sourcefactories.py:106
+#: ../pitivi/ui/sourcefactories.py:110
 msgid "Add Folder of Sources..."
 msgstr "Lägg till mapp med källor..."
 
-#: ../pitivi/ui/sourcefactories.py:107
+#: ../pitivi/ui/sourcefactories.py:111
 msgid "Remove Sources..."
 msgstr "Ta bort källor..."
 
-#: ../pitivi/ui/sourcefactories.py:108
+#: ../pitivi/ui/sourcefactories.py:112
 msgid "Play"
 msgstr "Spela upp"
 
-#: ../pitivi/ui/sourcefactories.py:136
+#: ../pitivi/ui/sourcefactories.py:140
 msgid "Icon"
 msgstr "Ikon"
 
-#: ../pitivi/ui/sourcefactories.py:144
+#: ../pitivi/ui/sourcefactories.py:148
 msgid "Information"
 msgstr "Information"
 
-#: ../pitivi/ui/sourcefactories.py:153
+#: ../pitivi/ui/sourcefactories.py:157
 msgid "Duration"
 msgstr "Speltid"
 
-#: ../pitivi/ui/sourcefactories.py:165
+#: ../pitivi/ui/sourcefactories.py:169
 msgid "Add Folder"
 msgstr "Lägg till mapp"
 
-#: ../pitivi/ui/sourcefactories.py:187
+#: ../pitivi/ui/sourcefactories.py:191
 msgid "Import your clips by dragging them here or by using buttons below."
 msgstr ""
-"Importera dina klipp genom att dra dem hit eller genom att använda knapparna "
-"nedan."
+"Importera dina videoklipp genom att dra dem hit eller genom att använda "
+"knapparna nedan."
 
-#: ../pitivi/ui/sourcefactories.py:294
+#: ../pitivi/ui/sourcefactories.py:298
 msgid "Import a folder"
 msgstr "Importera en mapp"
 
-#: ../pitivi/ui/sourcefactories.py:297
+#: ../pitivi/ui/sourcefactories.py:301
 msgid "Import a file"
 msgstr "Importera en fil"
 
-#: ../pitivi/ui/sourcefactories.py:374
+#: ../pitivi/ui/sourcefactories.py:377
 msgid "Error while analyzing files"
 msgstr "Fel vid analysering av filerna"
 
-#: ../pitivi/ui/sourcefactories.py:375
+#: ../pitivi/ui/sourcefactories.py:378
 msgid "The following files weren't discovered properly."
 msgstr "Följande filer blev inte identifierade korrekt."
 
-#: ../pitivi/ui/sourcefactories.py:545 ../pitivi/ui/sourcefactories.py:586
+#: ../pitivi/ui/sourcefactories.py:552 ../pitivi/ui/sourcefactories.py:597
 msgid "Name"
 msgstr "Namn"
 
 #: ../pitivi/ui/timelineobjects.py:499
 msgid "Close"
-msgstr ""
+msgstr "Stäng"
 
 #: ../pitivi/ui/timelineobjects.py:569
 msgid "Remove"
@@ -398,30 +398,30 @@ msgstr "Ta bort"
 
 #: ../pitivi/ui/timelineobjects.py:572
 msgid "Edit"
-msgstr ""
+msgstr "Redigera"
 
 #: ../pitivi/ui/timeline.py:97
 msgid "Start working with your project by dragging clips here"
-msgstr ""
+msgstr "Börja arbeta med ditt projekt genom att dra videoklipp hit"
 
-#: ../pitivi/ui/viewer.py:550
+#: ../pitivi/ui/viewer.py:552
 msgid "Choose file to render to"
 msgstr "Välj fil att rendera till"
 
-#: ../pitivi/ui/viewer.py:570
+#: ../pitivi/ui/viewer.py:572
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "Färdig om %d min %d s"
 
-#: ../pitivi/ui/viewer.py:580
+#: ../pitivi/ui/viewer.py:582
 msgid "Rendering"
 msgstr "Rendering"
 
-#: ../pitivi/ui/viewer.py:582
+#: ../pitivi/ui/viewer.py:584
 msgid "Couldn't start rendering"
 msgstr "Kunde inte påbörja rendering"
 
-#: ../pitivi/ui/viewer.py:603
+#: ../pitivi/ui/viewer.py:605
 msgid "Rendering Complete"
 msgstr "Rendering färdig"
 
@@ -495,20 +495,19 @@ msgstr ""
 
 #: ../pitivi/check.py:135
 msgid "Could not import the Python bindings for cairo"
-msgstr ""
+msgstr "Kunde inte importera Python-bindningarna för cairo"
 
 #: ../pitivi/check.py:136
-#, fuzzy
 msgid "Make sure you have the Python bindings for cairo installed"
-msgstr "Använd en version av Python-bindningar för GTK+ byggda med Cairo-stöd."
+msgstr "Kontrollera att du har Python-bindningar för Cairo installerat"
 
 #: ../pitivi/check.py:138
 msgid "Could not import the Python bindings for libglade"
-msgstr ""
+msgstr "Kunde inte importera Python-bindningarna för libglade"
 
 #: ../pitivi/check.py:139
 msgid "Make sure you have the Python bindings for libglade installed"
-msgstr ""
+msgstr "Kontrollera att du har Python-bindningar för libglade installerat"
 
 #: ../pitivi/check.py:142
 #, python-format
@@ -516,6 +515,8 @@ msgid ""
 "You do not have a recent enough version of the GTK+ Python Bindings "
 "(currently %s)"
 msgstr ""
+"Du har inte en tillräckligt ny version av Python-bindningar för GTK+  (för "
+"närvarande %s)"
 
 #: ../pitivi/check.py:146
 #, python-format
@@ -523,11 +524,14 @@ msgid ""
 "You do not have a recent enough version of the GStreamer Python Bindings "
 "(currently %s)"
 msgstr ""
+"Du har inte en tillräckligt ny version av Python-bindningar för GStreamer "
+"(för närvarande %s)"
 
 #: ../pitivi/check.py:150
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
 msgstr ""
+"Du har inte en tillräckligt ny version av GStreamer (för närvarande %s)"
 
 #: ../pitivi/check.py:154
 #, python-format
@@ -535,6 +539,8 @@ msgid ""
 "You do not have a recent enough version of the Cairo Python Bindings "
 "(currently %s)"
 msgstr ""
+"Du har inte en tillräckligt ny version av Python-bindningar för Cairo (för "
+"närvarande %s)"
 
 #: ../pitivi/check.py:158
 #, python-format
@@ -542,68 +548,70 @@ msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
 "(currently %s)"
 msgstr ""
+"Du har inte en tillräckligt ny version av GStreamer-insticksmodulen GNonLin "
+"(för närvarande %s)"
 
-#: ../pitivi/objectfactory.py:149
+#: ../pitivi/objectfactory.py:148
 #, python-format
 msgid "<b>%s</b><small>"
 msgstr "<b>%s</b><small>"
 
-#: ../pitivi/objectfactory.py:153
+#: ../pitivi/objectfactory.py:152
 #, python-format
 msgid "<b>%s</b> (%s)"
 msgstr "<b>%s</b> (%s)"
 
-#: ../pitivi/objectfactory.py:156
+#: ../pitivi/objectfactory.py:155
 #, python-format
 msgid "<b>%s</b>"
 msgstr "<b>%s</b>"
 
-#: ../pitivi/objectfactory.py:157
+#: ../pitivi/objectfactory.py:156
 #, python-format
 msgid "<small><b>File:</b> %s"
 msgstr "<small><b>Fil:</b> %s"
 
-#: ../pitivi/objectfactory.py:412
+#: ../pitivi/objectfactory.py:415
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr "<b>Video:</b> %d × %d <i>bildpunkter</i> med %.2f<i>bilder/s</i>"
 
-#: ../pitivi/objectfactory.py:415
+#: ../pitivi/objectfactory.py:418
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>Bild:</b> %d × %d <i>bildpunkter</i>"
 
-#: ../pitivi/objectfactory.py:418 ../pitivi/objectfactory.py:462
+#: ../pitivi/objectfactory.py:421 ../pitivi/objectfactory.py:465
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr " <i>(%s)</i>"
 
-#: ../pitivi/objectfactory.py:420
+#: ../pitivi/objectfactory.py:423
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "<b>Okänt videoformat:</b> %s"
 
-#: ../pitivi/objectfactory.py:459
+#: ../pitivi/objectfactory.py:462
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr "<b>Ljud:</b> %d kanaler i %d <i>Hz</i> (%d <i>bitar</i>)"
 
-#: ../pitivi/objectfactory.py:464
+#: ../pitivi/objectfactory.py:467
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "<b>Okänt ljudformat:</b> %s"
 
-#: ../pitivi/objectfactory.py:475
+#: ../pitivi/objectfactory.py:478
 #, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>Text:</b> %s"
 
-#: ../pitivi/pitivi.py:76
+#: ../pitivi/pitivi.py:73
 #, python-format
 msgid "There is already a %s instance, inform developers"
 msgstr "Det finns redan en instans av %s, informera utvecklarna"
 
-#: ../pitivi/pitivi.py:82 ../pitivi/pitivi.py:121
+#: ../pitivi/pitivi.py:79 ../pitivi/pitivi.py:118
 msgid "New Project"
 msgstr "Nytt projekt"
 
