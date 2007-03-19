@@ -435,6 +435,9 @@ class SourceListWidget(gtk.VBox):
         if tsel.count_selected_rows() < 1:
             return
         model, selected = tsel.get_selected_rows()
+        # Sort the list in reverse order so we remove from
+        # the end and make sure that the paths are always valid
+        selected.sort(reverse=True)
         for path in selected:
             uri = model[path][COL_URI]
             del instance.PiTiVi.current.sources[uri]
