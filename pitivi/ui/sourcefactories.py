@@ -506,11 +506,12 @@ class SourceListWidget(gtk.VBox):
 
     def _dndTreeBeginCb(self, unused_widget, context):
         gst.info("tree drag_begin")
-        model, rows = self.treeview.get_selection().get_selected_rows()
-        if len(rows) < 1:
+        model, paths = self.treeview.get_selection().get_selected_rows()
+        if len(paths) < 1:
             context.drag_abort(int(time.time()))
         else:
-            self.treeview.drag_source_set_icon_pixbuf(model[rows[0]][0])
+            row = model[paths[0]]
+            self.treeview.drag_source_set_icon_pixbuf(row[COL_ICON])
 
     def getSelectedItems(self):
         """ returns a list of selected items uri """
