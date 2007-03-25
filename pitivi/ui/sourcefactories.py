@@ -98,11 +98,12 @@ class SourceListWidget(gtk.VBox):
         self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, object, str, str)
 
         self.set_border_width(5)
-        self.set_size_request(300, -1)
+        self.set_size_request(320, -1)
 
         # Scrolled Window
         self.scrollwin = gtk.ScrolledWindow()
         self.scrollwin.set_policy(gtk.POLICY_AUTOMATIC,gtk.POLICY_AUTOMATIC)
+        self.scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
 
         # Popup Menu
         self.popup = gtk.Menu()
@@ -142,6 +143,7 @@ class SourceListWidget(gtk.VBox):
         pixbufcol.set_spacing(5)
         self.treeview.append_column(pixbufcol)
         pixcell = gtk.CellRendererPixbuf()
+        pixcell.props.xpad = 6
         pixbufcol.pack_start(pixcell)
         pixbufcol.add_attribute(pixcell, 'pixbuf', COL_ICON)
 
@@ -177,36 +179,44 @@ class SourceListWidget(gtk.VBox):
         self.rbut.connect("clicked", self._removeButtonClickedCb)
         self.rbut.set_sensitive(False)
 
-        self.bothbox = gtk.HBox()
+        self.bothbox = gtk.HBox(spacing=6)
         self.bothbox.pack_start(button, expand=False)
         self.bothbox.pack_start(folderbutton, expand=False)
         self.bothbox.pack_start(self.rbut, expand=False)
-        self.pack_start(self.bothbox, expand=False)
+        self.pack_start(self.bothbox, expand=False, padding=6)
 
         # Start up with tree view
         self.scrollwin.add(self.treeview)
 
         # Explanatory message label
-        txtbuffer = gtk.TextBuffer()
-        txtbuffer.set_text(_("Import your clips by dragging them here or by using buttons below."))
-        txttag = gtk.TextTag()
-        txttag.props.size = self.style.font_desc.get_size() * 1.5
-        txtbuffer.tag_table.add(txttag)
-        txtbuffer.apply_tag(txttag, txtbuffer.get_start_iter(),
-                            txtbuffer.get_end_iter())
-        self.messagewindow = gtk.TextView(txtbuffer)
-        self.messagewindow.set_justification(gtk.JUSTIFY_CENTER)
-        self.messagewindow.set_wrap_mode(gtk.WRAP_WORD)
-        self.messagewindow.set_pixels_above_lines(50)
-        self.messagewindow.set_cursor_visible(False)
-        self.messagewindow.set_editable(False)
-        self.messagewindow.set_left_margin(10)
-        self.messagewindow.set_right_margin(10)
-        self.pack_start(self.messagewindow)
-        self.reorder_child(self.messagewindow, 0)
+        frame = gtk.Frame()
+        frame.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        frame.show()
+
+        textbox = gtk.EventBox()
+        textbox.set_size_request(200, -1)
+        textbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
+        textbox.show()
+        frame.add(textbox)
+
+        txtlabel = gtk.Label()
+        txtlabel.set_padding(10, 10)
+        txtlabel.set_line_wrap(True)
+        txtlabel.set_line_wrap_mode(pango.WRAP_WORD)
+        txtlabel.set_markup(
+            _("<b>Import your clips by dragging them here or "
+              "by using buttons below.</b>"))
+        textbox.add(txtlabel)
+        self.txtlabel = txtlabel
+
+        self.textbox = frame
+
+        self.pack_start(self.textbox)
+        self.reorder_child(self.textbox, 0)
         self.showingTreeView = False
 
-        self.dragMotionSigId = self.messagewindow.connect("drag-motion", self._dragMotionCb)
+        self.dragMotionSigId = self.txtlabel.connect("drag-motion",
+                                                     self._dragMotionCb)
 
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
@@ -263,11 +273,11 @@ class SourceListWidget(gtk.VBox):
             if self.showingTreeView:
                 return
             gst.debug("displaying tree view")
-            self.remove(self.messagewindow)
-            self.messagewindow.hide()
+            self.remove(self.textbox)
+            self.txtlabel.hide()
             if usesignals:
                 if self.dragMotionSigId:
-                    self.messagewindow.disconnect(self.dragMotionSigId)
+                    self.txtlabel.disconnect(self.dragMotionSigId)
                     self.dragMotionSigId = 0
             self.pack_start(self.scrollwin)
             self.reorder_child(self.scrollwin, 0)
@@ -279,9 +289,9 @@ class SourceListWidget(gtk.VBox):
             gst.debug("hiding tree view")
             self.remove(self.scrollwin)
             self.scrollwin.hide()
-            self.pack_start(self.messagewindow)
-            self.reorder_child(self.messagewindow, 0)
-            self.messagewindow.show()
+            self.pack_start(self.textbox)
+            self.reorder_child(self.textbox, 0)
+            self.txtlabel.show()
             self.showingTreeView = False
 
     def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
