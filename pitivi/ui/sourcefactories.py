@@ -312,8 +312,8 @@ class SourceListWidget(gtk.VBox):
 
         self._importDialog = gtk.FileChooserDialog(dialogtitle, None,
                                                    chooser_action,
-                                                   (gtk.STOCK_ADD, gtk.RESPONSE_OK,
-                                                    gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE))
+                                                   (gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE,
+                                                    gtk.STOCK_ADD, gtk.RESPONSE_OK))
 
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
         self._importDialog.set_select_multiple(True)

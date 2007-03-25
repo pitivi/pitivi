@@ -1,5 +1,10 @@
 2007-03-25  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/sourcefactories.py:
+	The order of the dialogbox buttons should be [close, add].
+
+2007-03-25  Edward Hervey  <edward@fluendo.com>
+
 	Patch by: Johan Dahlin <jdahlin@async.com.br>
 
 	* pitivi/ui/sourcefactories.py:
