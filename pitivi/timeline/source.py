@@ -47,9 +47,6 @@ class TimelineFileSource(TimelineSource):
                                        (gobject.TYPE_UINT64, gobject.TYPE_UINT64))
         }
 
-    media_start = -1
-    media_duration = -1
-
     def __init__(self, media_start=-1, media_duration=-1, **kw):
         TimelineSource.__init__(self, **kw)
         self.gnlobject.connect("notify::media-start", self._mediaStartDurationChangedCb)
@@ -74,7 +71,6 @@ class TimelineFileSource(TimelineSource):
         gnlobject = gst.element_factory_make("gnlsource", "source-" + self.name + "-" + postfix + str(self.factory.lastbinid))
         decodebin = SingleDecodeBin(caps=caps, uri=self.factory.name)
         gnlobject.add(decodebin)
-##         gnlobject.set_property("location", self.factory.name)
         gnlobject.set_property("caps", caps)
         gnlobject.set_property("start", long(0))
         gnlobject.set_property("duration", long(self.factory.length))

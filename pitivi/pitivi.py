@@ -61,12 +61,15 @@ class Pitivi(gobject.GObject):
 
     project = None
 
-    def __init__(self, *args):
+    def __init__(self, use_ui=True, *args, **kwargs):
         """
         initialize pitivi with the command line arguments
         """
         gst.log("starting up pitivi...")
         gobject.GObject.__init__(self)
+
+        # patch gst-python for new behaviours
+        patch_gst_python()
 
         # store ourself in the instance global
         if instance.PiTiVi:
@@ -79,9 +82,10 @@ class Pitivi(gobject.GObject):
         self.current = Project(_("New Project"))
         self.effects = Magician()
 
-        # we're starting a GUI for the time being
-        self.gui = mainwindow.PitiviMainWindow()
-        self.gui.show()
+        if use_ui:
+            # we're starting a GUI for the time being
+            self.gui = mainwindow.PitiviMainWindow()
+            self.gui.show()
 
     def loadProject(self, uri=None, filepath=None):
         """ Load the given file through it's uri or filepath """
@@ -130,6 +134,5 @@ class Pitivi(gobject.GObject):
 
 def main(argv):
     check.initial_checks()
-    patch_gst_python()
     ptv = Pitivi(argv)
     gtk.main()
