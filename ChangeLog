@@ -1,3 +1,20 @@
+2007-03-27  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pitivi.py:
+	Separate the gtk mainloop handling outside of the Pitivi class.
+	This allows not forcing the use of a gobject MainLoop when using
+	PiTiVi.
+	* Makefile.am:
+	* configure.ac:
+	* tests/:
+	* tests/Makefile.am:
+	* tests/runtests.py:
+	* tests/test_basic.py:
+	Added unit-test system. First provided test tests that pitivi gets
+	properly created and destroyed, nothing fancy.
+	This should lead the way to a whole bunch of unit-tests. Ideally we
+	should have one unit test per relevant code file.
+
 2007-03-25  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/pitivi.py:

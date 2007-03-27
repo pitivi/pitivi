@@ -82,4 +82,5 @@ pitivi/timeline/Makefile
 pitivi.spec
 pitivi.desktop
 po/Makefile.in
+tests/Makefile
 )

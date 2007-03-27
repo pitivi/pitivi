@@ -45,6 +45,7 @@ class Pitivi(gobject.GObject):
       closing-project : Pitivi wishes to close the project, callbacks return False
                 if they don't want the project to be closed, True otherwise
       not-project : The given uri is not a project file
+      shutdown : PiTiVi has shutdown
 
     """
     __gsignals__ = {
@@ -56,7 +57,10 @@ class Pitivi(gobject.GObject):
                               (gobject.TYPE_PYOBJECT, )),
         "not-project" : ( gobject.SIGNAL_RUN_LAST,
                           gobject.TYPE_NONE,
-                          (gobject.TYPE_STRING, ))
+                          (gobject.TYPE_STRING, )),
+        "shutdown" : ( gobject.SIGNAL_RUN_LAST,
+                       gobject.TYPE_NONE,
+                       ( ))
         }
 
     project = None
@@ -67,6 +71,8 @@ class Pitivi(gobject.GObject):
         """
         gst.log("starting up pitivi...")
         gobject.GObject.__init__(self)
+
+        self._use_ui = use_ui
 
         # patch gst-python for new behaviours
         patch_gst_python()
@@ -82,7 +88,7 @@ class Pitivi(gobject.GObject):
         self.current = Project(_("New Project"))
         self.effects = Magician()
 
-        if use_ui:
+        if self._use_ui:
             # we're starting a GUI for the time being
             self.gui = mainwindow.PitiviMainWindow()
             self.gui.show()
@@ -125,14 +131,21 @@ class Pitivi(gobject.GObject):
     def shutdown(self):
         """ close PiTiVi """
         gst.debug("shutting down")
-        if not self._closeRunningProject():
+        # we refuse to close if we're running a user interface and the user
+        # doesn't want us to close the current project.
+        if self._use_ui and not self._closeRunningProject():
+            gst.warning("Not closing since running project doesn't want to close")
             return
         self.playground.shutdown()
-        gst.debug("Exiting main loop")
-        gtk.main_quit()
+        instance.PiTiVi = None
+        self.emit("shutdown")
 
+def shutdownCb(pitivi):
+    gst.debug("Exiting main loop")
+    gtk.main_quit()
 
 def main(argv):
     check.initial_checks()
     ptv = Pitivi(argv)
+    ptv.connect('shutdown', shutdownCb)
     gtk.main()
