@@ -61,9 +61,6 @@ class BrotherObjects(gobject.GObject):
                             (gobject.TYPE_PYOBJECT, ))
         }
 
-##     linked = None       # linked object
-##     brother = None      # brother object, the other-media equivalent of this object
-
     def __init__(self):
         gobject.GObject.__init__(self)
         self.linked = None
@@ -88,7 +85,15 @@ class BrotherObjects(gobject.GObject):
         if self.linked and not self.linked == object:
             self.unlinkObject()
         self._linkObject(object)
+        self.linked._linkObject(self)
         pass
+
+    def getLinkedObject(self):
+        """
+        Returns the object currently linked to this one.
+        This is NOT guaranteed to be the brother
+        """
+        return self.linked
 
     def unlinkObject(self):
         """
@@ -166,12 +171,6 @@ class TimelineObject(BrotherObjects):
                                  gobject.TYPE_NONE,
                                  (gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, ))
         }
-
-##     start = -1  # start time
-##     duration = -1   # duration time
-##     factory = None      # the Factory with more details about this object
-##     gnlobject = None    # The corresponding GnlObject
-##     media_type = MEDIA_TYPE_NONE        # The Media Type of this object
 
     def __init__(self, factory=None, start=-1, duration=-1,
                  media_type=MEDIA_TYPE_NONE, name=""):

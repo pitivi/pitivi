@@ -1,3 +1,16 @@
+2007-03-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/objects.py:
+	Add a getBrother() method to BrotherObjects.
+	small cleanups
+	* tests/Makefile.am:
+	* tests/common.py:
+	New file to contain the test pitivi objects
+	* tests/test_timeline_objects.py:
+	Unit test for the pitivi.timeline.objects file.
+	Only contains tests for the BrotherObjects, still need to add tests
+	for the TimelineObjects.
+
 2007-03-27  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/pitivi.py:
