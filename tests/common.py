@@ -30,6 +30,19 @@ class TestTimelineObject(pitivi.timeline.objects.TimelineObject):
 class TestTimelineSource(pitivi.timeline.source.TimelineSource):
     pass
 
+class TestTimelineFileSource(pitivi.timeline.source.TimelineFileSource):
+    """
+    Dummy TimelineFileSource
+    """
+
+    # we only override the gnlobject creation since we want to test all
+    # other behaviour.
+
+    def _makeGnlObject(self):
+        gnlobject = gst.element_factory_make("gnlsource")
+        fakesrc = gst.element_factory_make("fakesrc")
+        gnlobject.add(fakesrc)
+        return gnlobject
 
 class TestObjectFactory(pitivi.objectfactory.ObjectFactory):
     """
@@ -52,3 +65,10 @@ class TestObjectFactory(pitivi.objectfactory.ObjectFactory):
         self.__id = self.__id + 1
         gnlobj.add(gst.element_factory_make("videotestsrc"))
         return gnlobj
+
+class TestFileSourceFactory(TestObjectFactory):
+
+    def __init__(self, *args, **kwargs):
+        TestObjectFactory.__init__(self, *args, **kwargs)
+        self.length = 0
+

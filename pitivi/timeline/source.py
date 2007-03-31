@@ -33,6 +33,8 @@ class TimelineSource(TimelineObject):
     Base class for all sources (O input)
     """
 
+    # FIXME : media_start and media_duration should be in this class
+
     def __init__(self, **kw):
         TimelineObject.__init__(self, **kw)
 
@@ -49,6 +51,8 @@ class TimelineFileSource(TimelineSource):
 
     def __init__(self, media_start=-1, media_duration=-1, **kw):
         TimelineSource.__init__(self, **kw)
+        self.media_start = 0
+        self.media_duration = 0
         self.gnlobject.connect("notify::media-start", self._mediaStartDurationChangedCb)
         self.gnlobject.connect("notify::media-duration", self._mediaStartDurationChangedCb)
         if media_start == -1:

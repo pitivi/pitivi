@@ -1,3 +1,13 @@
+2007-03-31  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/source.py:
+	Set initial values for TimelineSource media_start and media_duration
+	* tests/common.py:
+	New TimelineFileSource and FileSourceFactory test objects
+	* tests/test_timeline_source.py:
+	Test some behaviour of TimelineFileSource
+	Fixes #424228
+
 2007-03-28  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/timeline/objects.py:
