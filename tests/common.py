@@ -2,35 +2,37 @@
 A collection of objects to use for testing
 """
 
-import pitivi
+from pitivi.timeline.objects import TimelineObject, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
+from pitivi.timeline.source import TimelineSource, TimelineFileSource
+from pitivi.objectfactory import ObjectFactory
 import gst
 
-class TestTimelineObject(pitivi.timeline.objects.TimelineObject):
+class TestTimelineObject(TimelineObject):
 
     def _makeBrother(self):
-        if self.media_type == pitivi.timeline.objects.MEDIA_TYPE_AUDIO:
+        if self.media_type == MEDIA_TYPE_AUDIO:
             return TestTimelineObject(factory=self.factory,
                                       start=self.start,
                                       duration=self.duration,
-                                      media_type=pitivi.timeline.objects.MEDIA_TYPE_VIDEO,
+                                      media_type=MEDIA_TYPE_VIDEO,
                                       name=self.name)
-        if self.media_type == pitivi.timeline.objects.MEDIA_TYPE_VIDEO:
+        if self.media_type == MEDIA_TYPE_VIDEO:
             return TestTimelineObject(factory=self.factory,
                                       start=self.start,
                                       duration=self.duration,
-                                      media_type=pitivi.timeline.objects.MEDIA_TYPE_AUDIO,
+                                      media_type=MEDIA_TYPE_AUDIO,
                                       name=self.name)
 
     def _makeGnlObject(self):
-        if self.media_type == pitivi.timeline.objects.MEDIA_TYPE_AUDIO:
+        if self.media_type == MEDIA_TYPE_AUDIO:
             return self.factory.makeAudioBin()
-        if self.media_type == pitivi.timeline.objects.MEDIA_TYPE_VIDEO:
+        if self.media_type == MEDIA_TYPE_VIDEO:
             return self.factory.makeVideoBin()
 
-class TestTimelineSource(pitivi.timeline.source.TimelineSource):
+class TestTimelineSource(TimelineSource):
     pass
 
-class TestTimelineFileSource(pitivi.timeline.source.TimelineFileSource):
+class TestTimelineFileSource(TimelineFileSource):
     """
     Dummy TimelineFileSource
     """
@@ -44,9 +46,9 @@ class TestTimelineFileSource(pitivi.timeline.source.TimelineFileSource):
         gnlobject.add(fakesrc)
         return gnlobject
 
-class TestObjectFactory(pitivi.objectfactory.ObjectFactory):
+class TestObjectFactory(ObjectFactory):
     """
-    Test pitivi.objectfactory.ObjectFactory
+    Test ObjectFactory
     """
 
     def __init__(self, audio=True, video=False):
