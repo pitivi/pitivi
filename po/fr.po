@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the pitivi package.
 #
 # Christophe Sauthier <christophe.sauthier@gmail.com>, 2006.
-# Vincent Untz <vuntz@gnome.org>, 2007. 
+# Vincent Untz <vuntz@gnome.org>, 2007.
 # Claude Paroz <claude@2xlibre.net>, 2007.
 # Stéphane Raimbault <stephane.raimbault@gmail.com>, 2007.
 #
@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-06 20:04+0100\n"
-"PO-Revision-Date: 2007-03-06 20:26+0100\n"
+"POT-Creation-Date: 2007-04-07 08:57+0200\n"
+"PO-Revision-Date: 2007-04-07 08:59+0200\n"
 "Last-Translator: Stéphane Raimbault <stephane.raimbault@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
@@ -52,7 +52,7 @@ msgid "Author"
 msgstr "Auteur"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:551 ../pitivi/ui/sourcefactories.py:592
+#: ../pitivi/ui/sourcefactories.py:568 ../pitivi/ui/sourcefactories.py:613
 msgid "Description"
 msgstr "Description"
 
@@ -214,7 +214,7 @@ msgstr "Pré-sélection vidéo"
 msgid "Width:"
 msgstr "Largeur :"
 
-#: ../pitivi/ui/exportsettingswidget.py:332
+#: ../pitivi/ui/exportsettingswidget.py:331
 msgid "Export Settings"
 msgstr "Exporter les paramètres"
 
@@ -235,76 +235,76 @@ msgstr "Piste vidéo"
 msgid "Empty"
 msgstr "Vide"
 
-#: ../pitivi/ui/mainwindow.py:81
+#: ../pitivi/ui/mainwindow.py:80
 msgid "Create a new project"
 msgstr "Crée un nouveau projet"
 
-#: ../pitivi/ui/mainwindow.py:82
+#: ../pitivi/ui/mainwindow.py:81
 msgid "Open an existing project"
 msgstr "Ouvre un projet existant"
 
-#: ../pitivi/ui/mainwindow.py:83 ../pitivi/ui/mainwindow.py:84
+#: ../pitivi/ui/mainwindow.py:82 ../pitivi/ui/mainwindow.py:83
 msgid "Save the current project"
 msgstr "Enregistre le projet actuel"
 
-#: ../pitivi/ui/mainwindow.py:85 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:84 ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
 msgstr "Paramètres du projet"
 
-#: ../pitivi/ui/mainwindow.py:85
+#: ../pitivi/ui/mainwindow.py:84
 msgid "Edit the project settings"
 msgstr "Configure les paramètres du projet"
 
-#: ../pitivi/ui/mainwindow.py:86
+#: ../pitivi/ui/mainwindow.py:85
 msgid "_Import Sources..."
 msgstr "_Importer des sources..."
 
-#: ../pitivi/ui/mainwindow.py:86
+#: ../pitivi/ui/mainwindow.py:85
 msgid "Import sources to use"
 msgstr "Importe des sources à exploiter"
 
-#: ../pitivi/ui/mainwindow.py:87
+#: ../pitivi/ui/mainwindow.py:86
 msgid "_Import Folder of sources..."
 msgstr "_Importer un dossier de sources..."
 
-#: ../pitivi/ui/mainwindow.py:87
+#: ../pitivi/ui/mainwindow.py:86
 msgid "Import folder of sources to use"
 msgstr "Importe un dossier de sources à exploiter"
 
-#: ../pitivi/ui/mainwindow.py:89
+#: ../pitivi/ui/mainwindow.py:88
 msgid "View the main window on the whole screen"
 msgstr "Affiche la fenêtre principale en plein écran"
 
-#: ../pitivi/ui/mainwindow.py:90
+#: ../pitivi/ui/mainwindow.py:89
 #, python-format
 msgid "Information about %s"
 msgstr "Informations sur %s"
 
-#: ../pitivi/ui/mainwindow.py:91
+#: ../pitivi/ui/mainwindow.py:90
 msgid "_File"
 msgstr "_Fichier"
 
-#: ../pitivi/ui/mainwindow.py:92
+#: ../pitivi/ui/mainwindow.py:91
 msgid "_View"
 msgstr "_Affichage"
 
-#: ../pitivi/ui/mainwindow.py:93
+#: ../pitivi/ui/mainwindow.py:92
 msgid "_Help"
 msgstr "Aid_e"
 
-#: ../pitivi/ui/mainwindow.py:97
+#: ../pitivi/ui/mainwindow.py:96
 msgid "Advanced Vie_w"
 msgstr "Afficha_ge avancé"
 
-#: ../pitivi/ui/mainwindow.py:97
+#: ../pitivi/ui/mainwindow.py:96
 msgid "Switch to advanced view"
 msgstr "Bascule en affichage avancé"
 
-#: ../pitivi/ui/mainwindow.py:241
+#: ../pitivi/ui/mainwindow.py:240
 msgid "Contributors:"
 msgstr "Contributeurs :"
 
-#: ../pitivi/ui/mainwindow.py:245
+#: ../pitivi/ui/mainwindow.py:244
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -328,61 +328,62 @@ msgstr "Nom :"
 msgid "The name of your project."
 msgstr "Le nom de votre projet."
 
-#: ../pitivi/ui/sourcefactories.py:105
+#: ../pitivi/ui/sourcefactories.py:110
 msgid "Add Sources..."
 msgstr "Ajouter des sources..."
 
-#: ../pitivi/ui/sourcefactories.py:106
+#: ../pitivi/ui/sourcefactories.py:111
 msgid "Add Folder of Sources..."
 msgstr "Ajouter un dossier de sources..."
 
-#: ../pitivi/ui/sourcefactories.py:107
+#: ../pitivi/ui/sourcefactories.py:112
 msgid "Remove Sources..."
 msgstr "Supprimer des sources..."
 
-#: ../pitivi/ui/sourcefactories.py:108
+#: ../pitivi/ui/sourcefactories.py:113
 msgid "Play"
 msgstr "Jouer"
 
-#: ../pitivi/ui/sourcefactories.py:136
+#: ../pitivi/ui/sourcefactories.py:141
 msgid "Icon"
 msgstr "Icône"
 
-#: ../pitivi/ui/sourcefactories.py:144
+#: ../pitivi/ui/sourcefactories.py:150
 msgid "Information"
 msgstr "Informations"
 
-#: ../pitivi/ui/sourcefactories.py:153
+#: ../pitivi/ui/sourcefactories.py:159
 msgid "Duration"
 msgstr "Durée"
 
-#: ../pitivi/ui/sourcefactories.py:165
+#: ../pitivi/ui/sourcefactories.py:171
 msgid "Add Folder"
 msgstr "Ajouter dossier"
 
-#: ../pitivi/ui/sourcefactories.py:187
-msgid "Import your clips by dragging them here or by using buttons below."
+#: ../pitivi/ui/sourcefactories.py:207
+msgid ""
+"<b>Import your clips by dragging them here or by using buttons below.</b>"
 msgstr ""
-"Importez vos clips en les glissant ici ou en utilisant les boutons ci-"
-"dessous."
+"<b>Importez vos clips en les glissant ici ou en utilisant les boutons ci-"
+"dessous.</b>"
 
-#: ../pitivi/ui/sourcefactories.py:294
+#: ../pitivi/ui/sourcefactories.py:308
 msgid "Import a folder"
 msgstr "Importer un dossier"
 
-#: ../pitivi/ui/sourcefactories.py:297
+#: ../pitivi/ui/sourcefactories.py:311
 msgid "Import a file"
 msgstr "Importer un fichier"
 
-#: ../pitivi/ui/sourcefactories.py:374
+#: ../pitivi/ui/sourcefactories.py:387
 msgid "Error while analyzing files"
 msgstr "Erreur lors de l'analyse des fichiers"
 
-#: ../pitivi/ui/sourcefactories.py:375
+#: ../pitivi/ui/sourcefactories.py:388
 msgid "The following files weren't discovered properly."
 msgstr "Les fichiers suivants n'ont pas été découverts correctement."
 
-#: ../pitivi/ui/sourcefactories.py:545 ../pitivi/ui/sourcefactories.py:586
+#: ../pitivi/ui/sourcefactories.py:562 ../pitivi/ui/sourcefactories.py:607
 msgid "Name"
 msgstr "Nom"
 
@@ -402,24 +403,24 @@ msgstr "Éditer"
 msgid "Start working with your project by dragging clips here"
 msgstr "Commencez à travailler sur votre projet en glissant des clips ici"
 
-#: ../pitivi/ui/viewer.py:550
+#: ../pitivi/ui/viewer.py:552
 msgid "Choose file to render to"
 msgstr "Choisissez le fichier cible du rendu"
 
-#: ../pitivi/ui/viewer.py:570
+#: ../pitivi/ui/viewer.py:572
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "Terminé dans %dm%ds"
 
-#: ../pitivi/ui/viewer.py:580
+#: ../pitivi/ui/viewer.py:582
 msgid "Rendering"
 msgstr "Calcul du rendu en cours"
 
-#: ../pitivi/ui/viewer.py:582
+#: ../pitivi/ui/viewer.py:584
 msgid "Couldn't start rendering"
 msgstr "Impossible de démarrer le rendu"
 
-#: ../pitivi/ui/viewer.py:603
+#: ../pitivi/ui/viewer.py:605
 msgid "Rendering Complete"
 msgstr "Rendu terminé"
 
@@ -514,95 +515,105 @@ msgstr "Assurez-vous que les liaisons Python pour libglade sont installées"
 msgid ""
 "You do not have a recent enough version of the GTK+ Python Bindings "
 "(currently %s)"
-msgstr "Vous ne disposez pas d'une version assez récente des liaisons Python pour GTK+ (actuellement %s)"
+msgstr ""
+"Vous ne disposez pas d'une version assez récente des liaisons Python pour GTK"
+"+ (actuellement %s)"
 
 #: ../pitivi/check.py:146
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GStreamer Python Bindings "
 "(currently %s)"
-msgstr "Vous ne disposez pas d'une version assez récente des liaisons Python pour GStreamer (actuellement %s)"
+msgstr ""
+"Vous ne disposez pas d'une version assez récente des liaisons Python pour "
+"GStreamer (actuellement %s)"
 
 #: ../pitivi/check.py:150
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
-msgstr "Vous ne disposez pas d'une version assez récente de GStreamer (actuellement %s)"
+msgstr ""
+"Vous ne disposez pas d'une version assez récente de GStreamer (actuellement %"
+"s)"
 
 #: ../pitivi/check.py:154
 #, python-format
 msgid ""
 "You do not have a recent enough version of the Cairo Python Bindings "
 "(currently %s)"
-msgstr "Vous ne disposez pas d'une version assez récente des liaisons Python pour Cairo (actuellement %s)"
+msgstr ""
+"Vous ne disposez pas d'une version assez récente des liaisons Python pour "
+"Cairo (actuellement %s)"
 
 #: ../pitivi/check.py:158
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
 "(currently %s)"
-msgstr "Vous ne disposez pas d'une version assez récente du greffon GNonLin pour GStreamer (actuellement %s)"
+msgstr ""
+"Vous ne disposez pas d'une version assez récente du greffon GNonLin pour "
+"GStreamer (actuellement %s)"
 
-#: ../pitivi/objectfactory.py:149
+#: ../pitivi/objectfactory.py:148
 #, python-format
 msgid "<b>%s</b><small>"
 msgstr "<b>%s</b><small>"
 
-#: ../pitivi/objectfactory.py:153
+#: ../pitivi/objectfactory.py:152
 #, python-format
 msgid "<b>%s</b> (%s)"
 msgstr "<b>%s</b> (%s)"
 
-#: ../pitivi/objectfactory.py:156
+#: ../pitivi/objectfactory.py:155
 #, python-format
 msgid "<b>%s</b>"
 msgstr "<b>%s</b>"
 
-#: ../pitivi/objectfactory.py:157
+#: ../pitivi/objectfactory.py:156
 #, python-format
 msgid "<small><b>File:</b> %s"
 msgstr "<small><b>Fichier :</b> %s"
 
-#: ../pitivi/objectfactory.py:412
+#: ../pitivi/objectfactory.py:415
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr "<b>Vidéo :</b> %d x %d <i>pixels</i> à %.2f <i>fps</i>"
 
-#: ../pitivi/objectfactory.py:415
+#: ../pitivi/objectfactory.py:418
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>Image :</b> %d x %d <i>pixels</i>"
 
-#: ../pitivi/objectfactory.py:418 ../pitivi/objectfactory.py:462
+#: ../pitivi/objectfactory.py:421 ../pitivi/objectfactory.py:465
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr " <i>(%s)</i>"
 
-#: ../pitivi/objectfactory.py:420
+#: ../pitivi/objectfactory.py:423
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "<b>Format vidéo inconnu :</b> %s"
 
-#: ../pitivi/objectfactory.py:459
+#: ../pitivi/objectfactory.py:462
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr "<b>Audio :</b> %d canaux à %d <i>Hz</i> (%d <i>bits</i>)"
 
-#: ../pitivi/objectfactory.py:464
+#: ../pitivi/objectfactory.py:467
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "<b>Format audio inconnu :</b> %s"
 
-#: ../pitivi/objectfactory.py:475
+#: ../pitivi/objectfactory.py:478
 #, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>Texte :</b> %s"
 
-#: ../pitivi/pitivi.py:76
+#: ../pitivi/pitivi.py:82
 #, python-format
 msgid "There is already a %s instance, inform developers"
 msgstr "Il y a déjà une instance de %s, informez les développeurs"
 
-#: ../pitivi/pitivi.py:82 ../pitivi/pitivi.py:121
+#: ../pitivi/pitivi.py:88 ../pitivi/pitivi.py:128
 msgid "New Project"
 msgstr "Nouveau projet"
 
