@@ -203,6 +203,7 @@ class SourceListWidget(gtk.VBox):
         txtlabel.set_padding(10, 10)
         txtlabel.set_line_wrap(True)
         txtlabel.set_line_wrap_mode(pango.WRAP_WORD)
+        txtlabel.set_justify(gtk.JUSTIFY_CENTER)
         txtlabel.set_markup(
             _("<b>Import your clips by dragging them here or "
               "by using buttons below.</b>"))

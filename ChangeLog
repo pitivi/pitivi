@@ -1,3 +1,15 @@
+2007-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	Fixup and document Composition.appendsource()
+	Minor cleanups
+	* pitivi/ui/sourcefactories.py:
+	Make the explanation text centered.
+	* tests/common.py:
+	Add a few things to TestFileSourceFactory.__init__
+	* tests/test_timeline_composition.py:
+	New test file for pitivi.timeline.composition behaviour.
+
 2007-04-04  Edward Hervey  <edward@fluendo.com>
 
 	* tests/common.py:

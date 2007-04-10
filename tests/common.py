@@ -55,6 +55,10 @@ class TestObjectFactory(ObjectFactory):
         self.__audio = audio
         self.__video = video
         self.__id = 0
+        ObjectFactory.__init__(self)
+        self.is_video = video
+        self.is_audio = audio
+        self.lastbinid = 0
 
     def makeAudioBin(self):
         gnlobj = gst.element_factory_make("gnlsource", "test-audio-%d" % self.__id)

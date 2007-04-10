@@ -44,7 +44,7 @@ class EffectsLayer(Layer):
     """
 
     def __init__(self, priority):
-        Layer.__initi__(self)
+        Layer.__init__(self)
         self._priority = priority
         self._effects = []
 
@@ -61,7 +61,7 @@ class SourcesLayer(Layer):
     """
 
     def __init__(self, minprio, maxprio):
-        Layer.__initi__(self)
+        Layer.__init__(self)
         self._minprio = minprio
         self._maxprio = maxprio
         self._sources = []
@@ -471,11 +471,13 @@ class TimelineComposition(TimelineSource):
 
     def appendSource(self, source, position=1, auto_linked=True):
         """
-        puts a source after all the others
+        puts a source after all the others.
+        position is the layer number
         """
         self.gnlobject.info("source:%s" % source.gnlobject)
+
         # find the source with the highest duration time on the first layer
-        if self.sources[position - 1]:
+        if self.sources[position - 1] and len(self.sources[position - 1][2]):
             existingsource = self.sources[position - 1][2][-1]
         else:
             existingsource = None
