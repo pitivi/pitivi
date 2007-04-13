@@ -1,5 +1,11 @@
 2007-04-13  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/timeline/source.py:
+	initialize media-start and media-duration to -1 so we properly set the
+	values on the gnlobject the first time round.
+
+2007-04-13  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/timeline/composition.py:
 	Fix removal of linked sources.
 	Raise an exception if we try to remove a source while collapsing the

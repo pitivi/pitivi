@@ -51,8 +51,8 @@ class TimelineFileSource(TimelineSource):
 
     def __init__(self, media_start=-1, media_duration=-1, **kw):
         TimelineSource.__init__(self, **kw)
-        self.media_start = 0
-        self.media_duration = 0
+        self.media_start = -1
+        self.media_duration = -1
         self.gnlobject.connect("notify::media-start", self._mediaStartDurationChangedCb)
         self.gnlobject.connect("notify::media-duration", self._mediaStartDurationChangedCb)
         if media_start == -1:
@@ -105,7 +105,9 @@ class TimelineFileSource(TimelineSource):
         return brother
 
     def _setMediaStartDurationTime(self, start=-1, duration=-1):
-        gst.info("TimelineFileSource start:%d , duration:%d" % (start, duration))
+        gst.info("TimelineFileSource start:%s , duration:%s" % (
+                gst.TIME_ARGS(start), 
+                gst.TIME_ARGS(duration)))
         if not duration == -1 and not self.media_duration == duration:
             self.media_duration = duration
             self.gnlobject.set_property("media-duration", long(duration))
