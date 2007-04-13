@@ -128,8 +128,86 @@ class TestTimelineComposition(unittest.TestCase):
         self.assertEquals(self.source2.getBrother().start, gst.SECOND)
         
 
-    def testMoveSource(self):
-        pass
+
+
+    def testMoveSource1(self):
+        self.composition.appendSource(self.source1)
+        self.composition.appendSource(self.source2)
+        self.composition.appendSource(self.source3)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1, self.source2, self.source3])
+        self.assertEquals(self.othercomposition.condensed,
+                          [self.source1.getBrother(),
+                           self.source2.getBrother(),
+                           self.source3.getBrother()])
+
+        # move source2 to the middle position
+        self.composition.moveSource(self.source3, 1)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1, self.source3, self.source2])        
+        self.assertEquals(self.source1.start, 0)
+        self.assertEquals(self.source3.start, gst.SECOND)
+        self.assertEquals(self.source2.start, 2 * gst.SECOND)
+
+    def testMoveSource2(self):
+        self.composition.appendSource(self.source1)
+        self.composition.appendSource(self.source2)
+        self.composition.appendSource(self.source3)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1, self.source2, self.source3])
+        self.assertEquals(self.othercomposition.condensed,
+                          [self.source1.getBrother(),
+                           self.source2.getBrother(),
+                           self.source3.getBrother()])
+
+        # move source3 to the beginning
+        self.composition.moveSource(self.source3, 0)
+        self.assertEquals(self.composition.condensed,
+                          [self.source3, self.source1, self.source2])
+        self.assertEquals(self.source3.start, 0)
+        self.assertEquals(self.source1.start, gst.SECOND)
+        self.assertEquals(self.source2.start, 2 * gst.SECOND)
+
+
+    def testMoveSource3(self):
+        self.composition.appendSource(self.source1)
+        self.composition.appendSource(self.source2)
+        self.composition.appendSource(self.source3)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1, self.source2, self.source3])
+        self.assertEquals(self.othercomposition.condensed,
+                          [self.source1.getBrother(),
+                           self.source2.getBrother(),
+                           self.source3.getBrother()])
+
+        # move source1 just before source3
+        self.composition.moveSource(self.source1, 2)
+        self.assertEquals(self.composition.condensed,
+                          [self.source2, self.source1, self.source3])
+        self.assertEquals(self.source2.start, 0)
+        self.assertEquals(self.source1.start, gst.SECOND)
+        self.assertEquals(self.source3.start, 2 * gst.SECOND)
+
+
+    def testMoveSource4(self):
+        self.composition.appendSource(self.source1)
+        self.composition.appendSource(self.source2)
+        self.composition.appendSource(self.source3)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1, self.source2, self.source3])
+        self.assertEquals(self.othercomposition.condensed,
+                          [self.source1.getBrother(),
+                           self.source2.getBrother(),
+                           self.source3.getBrother()])
+
+        # move source1 to the end
+        self.composition.moveSource(self.source1, -1)
+        self.assertEquals(self.composition.condensed,
+                          [self.source2, self.source3, self.source1])
+        self.assertEquals(self.source2.start, 0)
+        self.assertEquals(self.source3.start, gst.SECOND)
+        self.assertEquals(self.source1.start, 2 * gst.SECOND)
+
 
     def testPrependSource(self):
         # put source1 at the beginning

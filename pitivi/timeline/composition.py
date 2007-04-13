@@ -558,9 +558,13 @@ class TimelineComposition(TimelineSource):
         self.gnlobject.log("Setting source start position to %s" % gst.TIME_ARGS(newtimepos))
         source.setStartDurationTime(start = newtimepos)
 
-        self.gnlobject.log("Removing source from position [%d] and putting it to position [%d]" % (oldpos, newpos - 1))
+        # take into account the offset of removing the source from the list
+        if oldpos < newpos:
+            newpos -= 1
+
+        self.gnlobject.log("Inserting source to position [%d]" % (newpos))
         del sources[oldpos]
-        sources.insert(newpos - 1, source)
+        sources.insert(newpos, source)
         source.gnlobject.set_property("priority", self.sources[0][0])
 
         # 4. same thing for brother

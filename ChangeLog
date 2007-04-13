@@ -1,5 +1,14 @@
 2007-04-13  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/timeline/composition.py:
+	Adjust the new position of the source when moving it further in time
+	only.
+	Fixes #416702
+	* tests/test_timeline_composition.py:
+	Unit tests for composition.moveSource().
+
+2007-04-13  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/timeline/source.py:
 	initialize media-start and media-duration to -1 so we properly set the
 	values on the gnlobject the first time round.
