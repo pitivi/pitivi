@@ -91,13 +91,15 @@ class TimelineFileSource(TimelineSource):
                 return None
             brother = TimelineFileSource(media_start=self.media_start, media_duration=self.media_duration,
                                          factory=self.factory, start=self.start, duration=self.duration,
-                                         media_type=MEDIA_TYPE_AUDIO, name=self.name)
+                                         media_type=MEDIA_TYPE_AUDIO,
+                                         name=self.name + "-brother")
         elif self.media_type == MEDIA_TYPE_AUDIO:
             if not self.factory.is_video:
                 return None
             brother = TimelineFileSource(media_start=self.media_start, media_duration=self.media_duration,
                                          factory=self.factory, start=self.start, duration=self.duration,
-                                         media_type=MEDIA_TYPE_VIDEO, name=self.name)
+                                         media_type=MEDIA_TYPE_VIDEO,
+                                         name=self.name + "-brother")
         else:
             brother = None
         return brother

@@ -578,7 +578,11 @@ class TimelineComposition(TimelineSource):
         it from the linked composition.
         If collapse_neighbours is True, then all object after the removed source
         will be shifted in the past by the duration of the removed source.
+
+        You cannot have remove_linked=False and collapse_neighbours=True !
         """
+        if collapse_neighbours and not remove_linked:
+            raise Exception("You cannot use remove_linked=False and collapse_neighbourse=True")
         self.gnlobject.info("source:%s, remove_linked:%s, collapse_neighbours:%s" % (source, remove_linked, collapse_neighbours))
         sources = self.sources[0]
 
@@ -590,7 +594,8 @@ class TimelineComposition(TimelineSource):
         self.gnlobject.remove(source.gnlobject)
         del sources[2][pos]
 
-        # collapse neighbours
+        # collapse neighbours, changing the start/duration will automatically
+        # change it for the linked sources
         if collapse_neighbours:
             self.gnlobject.info("Collapsing neighbours")
             for i in range(pos, len(sources[2])):
@@ -599,6 +604,9 @@ class TimelineComposition(TimelineSource):
 
         # if we have a brother
         if remove_linked and self.linked and self.linked.gnlobject:
+            sources = self.linked.sources[0]
+            pos = sources[2].index(source.linked)
+            del sources[2][pos]
             self.linked.gnlobject.remove(source.linked.gnlobject)
             self.linked.emit('source-removed', source.linked)
             self.linked._updateCondensedList()

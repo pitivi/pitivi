@@ -74,7 +74,7 @@ class TestObjectFactory(ObjectFactory):
 
 class TestFileSourceFactory(TestObjectFactory):
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, duration=gst.SECOND, *args, **kwargs):
         TestObjectFactory.__init__(self, *args, **kwargs)
-        self.length = 0
+        self.length = duration
 

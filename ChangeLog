@@ -1,3 +1,17 @@
+2007-04-13  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	Fix removal of linked sources.
+	Raise an exception if we try to remove a source while collapsing the
+	neighbours but not removing the linked object.
+	* pitivi/timeline/source.py:
+	Give a better name to brothers of TimelineFileSource to make it easier
+	to spot them in debug logs.
+	* tests/common.py:
+	Allow setting durations on TestFileSourceFactory, with a default of 1s.
+	* tests/test_timeline_composition.py:
+	Added tests for insertSourceAfter, prependSource and removeSource
+
 2007-04-10  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/timeline/composition.py:
