@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Project\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-02-18 15:33+0100\n"
+"POT-Creation-Date: 2007-04-14 18:23+0100\n"
 "PO-Revision-Date: 2006-11-18 00:59+0100\n"
 "Last-Translator: Djihed Afifi <djihed@gmail.com>\n"
 "Language-Team: Arabic <doc@arabeyes.org>\n"
@@ -59,7 +59,7 @@ msgid "Author"
 msgstr "<b>المؤلف:</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:551 ../pitivi/ui/sourcefactories.py:592
+#: ../pitivi/ui/sourcefactories.py:569 ../pitivi/ui/sourcefactories.py:614
 #, fuzzy
 msgid "Description"
 msgstr "الوصف"
@@ -227,7 +227,7 @@ msgstr "قناة الفيديو"
 msgid "Width:"
 msgstr "العرض:"
 
-#: ../pitivi/ui/exportsettingswidget.py:332
+#: ../pitivi/ui/exportsettingswidget.py:331
 #, fuzzy
 msgid "Export Settings"
 msgstr "اختر الإعدادات"
@@ -253,89 +253,89 @@ msgstr "قطعة مجهولة"
 msgid "Empty"
 msgstr "فارغ"
 
-#: ../pitivi/ui/mainwindow.py:81
+#: ../pitivi/ui/mainwindow.py:80
 #, fuzzy
 msgid "Create a new project"
 msgstr "انشاء موضوع جديد"
 
-#: ../pitivi/ui/mainwindow.py:82
+#: ../pitivi/ui/mainwindow.py:81
 #, fuzzy
 msgid "Open an existing project"
 msgstr "فتح مستند مسبق"
 
-#: ../pitivi/ui/mainwindow.py:83 ../pitivi/ui/mainwindow.py:84
+#: ../pitivi/ui/mainwindow.py:82 ../pitivi/ui/mainwindow.py:83
 #, fuzzy
 msgid "Save the current project"
 msgstr "إ_حفظ الصورة الحالية"
 
-#: ../pitivi/ui/mainwindow.py:85 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:84 ../pitivi/ui/projectsettings.glade.h:4
 #, fuzzy
 msgid "Project Settings"
 msgstr "اختر الإعدادات"
 
-#: ../pitivi/ui/mainwindow.py:85
+#: ../pitivi/ui/mainwindow.py:84
 #, fuzzy
 msgid "Edit the project settings"
 msgstr "تحرير إ_عدادات القفل"
 
-#: ../pitivi/ui/mainwindow.py:86
+#: ../pitivi/ui/mainwindow.py:85
 #, fuzzy
 msgid "_Import Sources..."
 msgstr "استيراد مؤشّرات"
 
-#: ../pitivi/ui/mainwindow.py:86
+#: ../pitivi/ui/mainwindow.py:85
 #, fuzzy
 msgid "Import sources to use"
 msgstr "استخدم النّقر للإضافة"
 
-#: ../pitivi/ui/mainwindow.py:87
+#: ../pitivi/ui/mainwindow.py:86
 #, fuzzy
 msgid "_Import Folder of sources..."
 msgstr "استيراد مؤشّرات"
 
-#: ../pitivi/ui/mainwindow.py:87
+#: ../pitivi/ui/mainwindow.py:86
 #, fuzzy
 msgid "Import folder of sources to use"
 msgstr "استخدم النّقر للإضافة"
 
-#: ../pitivi/ui/mainwindow.py:89
+#: ../pitivi/ui/mainwindow.py:88
 msgid "View the main window on the whole screen"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:90
+#: ../pitivi/ui/mainwindow.py:89
 #, fuzzy, python-format
 msgid "Information about %s"
 msgstr "معلومات عن البرنامج"
 
-#: ../pitivi/ui/mainwindow.py:91
+#: ../pitivi/ui/mainwindow.py:90
 #, fuzzy
 msgid "_File"
 msgstr "الملف"
 
-#: ../pitivi/ui/mainwindow.py:92
+#: ../pitivi/ui/mainwindow.py:91
 msgid "_View"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:93
+#: ../pitivi/ui/mainwindow.py:92
 msgid "_Help"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:97
+#: ../pitivi/ui/mainwindow.py:96
 #, fuzzy
 msgid "Advanced Vie_w"
 msgstr "إعدادات متقدمة"
 
-#: ../pitivi/ui/mainwindow.py:97
+#: ../pitivi/ui/mainwindow.py:96
 #, fuzzy
 msgid "Switch to advanced view"
 msgstr "أعِد ضبط المشهد للإ_فتراضي"
 
-#: ../pitivi/ui/mainwindow.py:241
+#: ../pitivi/ui/mainwindow.py:240
 #, fuzzy
 msgid "Contributors:"
 msgstr "حاوي html"
 
-#: ../pitivi/ui/mainwindow.py:245
+#: ../pitivi/ui/mainwindow.py:244
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -360,69 +360,70 @@ msgstr "اسم:"
 msgid "The name of your project."
 msgstr "أدخل اسمك الأول"
 
-#: ../pitivi/ui/sourcefactories.py:105
+#: ../pitivi/ui/sourcefactories.py:110
 #, fuzzy
 msgid "Add Sources..."
 msgstr "إضافة تطبيق"
 
-#: ../pitivi/ui/sourcefactories.py:106
+#: ../pitivi/ui/sourcefactories.py:111
 #, fuzzy
 msgid "Add Folder of Sources..."
 msgstr "إضافة تطبيق"
 
-#: ../pitivi/ui/sourcefactories.py:107
+#: ../pitivi/ui/sourcefactories.py:112
 #, fuzzy
 msgid "Remove Sources..."
 msgstr "هل أحذف السمة \"%s\" ؟"
 
-#: ../pitivi/ui/sourcefactories.py:108
+#: ../pitivi/ui/sourcefactories.py:113
 #, fuzzy
 msgid "Play"
 msgstr "العب"
 
-#: ../pitivi/ui/sourcefactories.py:136
+#: ../pitivi/ui/sourcefactories.py:141
 #, fuzzy
 msgid "Icon"
 msgstr "أيقونة."
 
-#: ../pitivi/ui/sourcefactories.py:144
+#: ../pitivi/ui/sourcefactories.py:150
 #, fuzzy
 msgid "Information"
 msgstr "معلومات"
 
-#: ../pitivi/ui/sourcefactories.py:153
+#: ../pitivi/ui/sourcefactories.py:159
 #, fuzzy
 msgid "Duration"
 msgstr "المدّة"
 
-#: ../pitivi/ui/sourcefactories.py:165
+#: ../pitivi/ui/sourcefactories.py:171
 msgid "Add Folder"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:187
-msgid "Import your clips by dragging them here or by using buttons below."
+#: ../pitivi/ui/sourcefactories.py:208
+msgid ""
+"<b>Import your clips by dragging them here or by using buttons below.</b>"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:294
+#: ../pitivi/ui/sourcefactories.py:309
 #, fuzzy
 msgid "Import a folder"
 msgstr "إستيراد ملف"
 
-#: ../pitivi/ui/sourcefactories.py:297
+#: ../pitivi/ui/sourcefactories.py:312
 #, fuzzy
 msgid "Import a file"
 msgstr "إستيراد ملف"
 
-#: ../pitivi/ui/sourcefactories.py:374
+#: ../pitivi/ui/sourcefactories.py:388
 #, fuzzy
 msgid "Error while analyzing files"
 msgstr "حدث خطأ عند استخراج الملفات."
 
-#: ../pitivi/ui/sourcefactories.py:375
+#: ../pitivi/ui/sourcefactories.py:389
 msgid "The following files weren't discovered properly."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:545 ../pitivi/ui/sourcefactories.py:586
+#: ../pitivi/ui/sourcefactories.py:563 ../pitivi/ui/sourcefactories.py:608
 #, fuzzy
 msgid "Name"
 msgstr "اسم"
@@ -443,27 +444,27 @@ msgstr ""
 msgid "Start working with your project by dragging clips here"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:550
+#: ../pitivi/ui/viewer.py:552
 #, fuzzy
 msgid "Choose file to render to"
 msgstr "اختيار ملف لتذييل أمر..."
 
-#: ../pitivi/ui/viewer.py:570
+#: ../pitivi/ui/viewer.py:572
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr ""
 
-#: ../pitivi/ui/viewer.py:580
+#: ../pitivi/ui/viewer.py:582
 #, fuzzy
 msgid "Rendering"
 msgstr "جاري رسم الصفحة %d من %d..."
 
-#: ../pitivi/ui/viewer.py:582
+#: ../pitivi/ui/viewer.py:584
 #, fuzzy
 msgid "Couldn't start rendering"
 msgstr "تفاصيل ترجمة الخط"
 
-#: ../pitivi/ui/viewer.py:603
+#: ../pitivi/ui/viewer.py:605
 #, fuzzy
 msgid "Rendering Complete"
 msgstr "تمَّ التّحديث\n"
@@ -579,67 +580,67 @@ msgid ""
 "(currently %s)"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:149
+#: ../pitivi/objectfactory.py:148
 #, fuzzy, python-format
 msgid "<b>%s</b><small>"
 msgstr "<i>صغير</i>"
 
-#: ../pitivi/objectfactory.py:153
+#: ../pitivi/objectfactory.py:152
 #, python-format
 msgid "<b>%s</b> (%s)"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:156
+#: ../pitivi/objectfactory.py:155
 #, python-format
 msgid "<b>%s</b>"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:157
+#: ../pitivi/objectfactory.py:156
 #, fuzzy, python-format
 msgid "<small><b>File:</b> %s"
 msgstr "إنتقاء ملف"
 
-#: ../pitivi/objectfactory.py:412
+#: ../pitivi/objectfactory.py:415
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:415
+#: ../pitivi/objectfactory.py:418
 #, fuzzy, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "بكسل/ثانية"
 
-#: ../pitivi/objectfactory.py:418 ../pitivi/objectfactory.py:462
+#: ../pitivi/objectfactory.py:421 ../pitivi/objectfactory.py:465
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:420
+#: ../pitivi/objectfactory.py:423
 #, fuzzy, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "تهيئة الصورة مجهولة"
 
-#: ../pitivi/objectfactory.py:459
+#: ../pitivi/objectfactory.py:462
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr ""
 
-#: ../pitivi/objectfactory.py:464
+#: ../pitivi/objectfactory.py:467
 #, fuzzy, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "تهيئة الصورة مجهولة"
 
-#: ../pitivi/objectfactory.py:475
+#: ../pitivi/objectfactory.py:478
 #, fuzzy, python-format
 msgid "<b>Text:</b> %s"
 msgstr "النّص"
 
-#: ../pitivi/pitivi.py:76
+#: ../pitivi/pitivi.py:82
 #, python-format
 msgid "There is already a %s instance, inform developers"
 msgstr ""
 
-#: ../pitivi/pitivi.py:82 ../pitivi/pitivi.py:121
+#: ../pitivi/pitivi.py:88 ../pitivi/pitivi.py:128
 #, fuzzy
 msgid "New Project"
 msgstr "فا_صل جديد"
@@ -714,13 +715,13 @@ msgid ""
 msgstr ""
 
 #, fuzzy
+#~ msgid "Please choose an output file"
+#~ msgstr "رجاءً اختر جهاز خرج الصّوت:"
+
+#, fuzzy
 #~ msgid "Render Project"
 #~ msgstr "أجزاء  رسم الإطار"
 
 #, fuzzy
 #~ msgid "Settings:"
 #~ msgstr "التعيينات"
-
-#, fuzzy
-#~ msgid "Please choose an output file"
-#~ msgstr "رجاءً اختر جهاز خرج الصّوت:"
