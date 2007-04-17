@@ -511,13 +511,19 @@ class TimelineComposition(TimelineSource):
                                                                                                                    collapse_neighbours))
         sources = self.sources[0][2]
         oldpos = sources.index(source)
-        if newpos == -1:
+
+        # limit newpos to sane values
+        if (newpos == -1) or (newpos > len(sources)):
+            # we want to move the source at the end
             newpos = len(sources)
+        elif (newpos < -1):
+            # we want to move the source at the beginning
+            newpos = 0
 
         self.gnlobject.info("source was at position %d in his layer" % oldpos)
 
         # if we're not moving, return
-        if (oldpos == newpos):
+        if (oldpos == newpos) or ((newpos == len(sources)) and (oldpos == newpos - 1)):
             self.gnlobject.warning("source is already at the correct position, not moving")
             return
 

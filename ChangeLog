@@ -1,3 +1,13 @@
+2007-04-17  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	(TimelineComposition.movesource): Clamp new positions values, and fixup
+	check for same-position-as-before.
+	Fixes #420847
+	* tests/test_timeline_composition.py:
+	Add unit tests for same position moves, and insane values of new
+	positions.
+
 2007-04-13  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/timeline/composition.py:

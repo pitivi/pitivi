@@ -208,6 +208,47 @@ class TestTimelineComposition(unittest.TestCase):
         self.assertEquals(self.source3.start, gst.SECOND)
         self.assertEquals(self.source1.start, 2 * gst.SECOND)
 
+    def testMoveSourceSimpleAtBeginning(self):
+        self.composition.appendSource(self.source1)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1])
+        self.assertEquals(self.source1.start, 0)
+
+        # move source1 to the beginning
+        self.composition.moveSource(self.source1, 0)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1])
+        self.assertEquals(self.source1.start, 0)
+
+    def testMoveSourceSimpleAtEnd(self):
+        self.composition.appendSource(self.source1)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1])
+        self.assertEquals(self.source1.start, 0)
+
+        # move source1 to the end
+        self.composition.moveSource(self.source1, -1)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1])
+        self.assertEquals(self.source1.start, 0)
+
+    def testMoveSourceSimpleReallyFar(self):
+        self.composition.appendSource(self.source1)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1])
+        self.assertEquals(self.source1.start, 0)
+
+        # move source1 to a distant futur
+        self.composition.moveSource(self.source1, 100)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1])
+        self.assertEquals(self.source1.start, 0)
+
+        # move source1 to prehistoric times
+        self.composition.moveSource(self.source1, -100)
+        self.assertEquals(self.composition.condensed,
+                          [self.source1])
+        self.assertEquals(self.source1.start, 0)
 
     def testPrependSource(self):
         # put source1 at the beginning
