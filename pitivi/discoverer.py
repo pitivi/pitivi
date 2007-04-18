@@ -79,6 +79,7 @@ class Discoverer(gobject.GObject):
         self.nomorepads = False
         self.timeoutid = 0
         self.signalsid = []
+        self.error = None # reason for error
         self.fakesink = None
 
     def addFile(self, filename):
@@ -142,6 +143,8 @@ class Discoverer(gobject.GObject):
         if self.currentfactory:
             self.currentfactory.addMediaTags(self.currentTags)
             self.emit('finished-analyzing', self.currentfactory)
+        elif self.error:
+            self.emit('not_media_file', self.current, self.error)
         self.currentTags = []
         self.analyzing = False
         self.current = None
@@ -180,7 +183,8 @@ class Discoverer(gobject.GObject):
         source = gst.element_make_from_uri(gst.URI_SRC, self.current, "src-%s" % self.current)
         if not source:
             gst.warning("This is not a media file : %s" % self.current)
-            self.emit("not_media_file", self.current, "Couldn't construct pipeline.")
+            if not self.error:
+                self.error = "Couldn't construct pipeline."
             gobject.idle_add(self._finishAnalysis)
             return False
         if os.getenv("USE_DECODEBIN2"):
@@ -204,7 +208,8 @@ class Discoverer(gobject.GObject):
 
         gst.info("setting pipeline to PAUSED")
         if self.pipeline.set_state(gst.STATE_PAUSED) == gst.STATE_CHANGE_FAILURE:
-            self.emit("not_media_file", self.current, "Pipeline didn't want to go to PAUSED")
+            if not self.error:
+                self.error = "Pipeline didn't want to go to PAUSED"
             gst.info("pipeline didn't want to go to PAUSED")
             gobject.idle_add(self._finishAnalysis)
             return False
@@ -231,7 +236,8 @@ class Discoverer(gobject.GObject):
                     if self.currentfactory and self.currentfactory.is_video:
                         gst.log("pipeline has gone to PAUSED, now pushing to PLAYING")
                         if self.pipeline.set_state(gst.STATE_PLAYING) == gst.STATE_CHANGE_FAILURE:
-                            self.emit("not_media_file", self.current, "Pipeline didn't want to go to PLAYING")
+                            if not self.error:
+                                self.error = "Pipeline didn't want to go to PLAYING"
                             gst.info("Pipeline didn't want to go to playing")
                             gobject.idle_add(self._finishAnalysis)
                     elif self.nomorepads:
@@ -264,9 +270,10 @@ class Discoverer(gobject.GObject):
 
     def _handleError(self, gerror, unused_detail, unused_source):
         gst.warning("got an ERROR")
+        
+        if not self.error:
+            self.error = "An error occured while analyzing this file : %s" % gerror.message
 
-        self.emit("not_media_file", self.current, "An error occured while analyzing this file")
-        self.emit("not_media_file", self.current, gerror.message)
         self.thisdone = True
         self.currentfactory = None
         gobject.idle_add(self._finishAnalysis)
@@ -367,7 +374,8 @@ class Discoverer(gobject.GObject):
         gst.info(caps.to_string())
         if not self.currentfactory or (not self.currentfactory.is_audio and not self.currentfactory.is_video):
             gst.warning("got unknown pad without anything else")
-            self.emit("not_media_file", self.current, "Got unknown stream type : %s" % caps.to_string())
+            if not self.error:
+                self.error = "Got unknown stream type : %s" % caps.to_string()
             gobject.idle_add(self._finishAnalysis)
 
     def _newDecodedPadCb(self, element, pad, is_last):
@@ -390,7 +398,8 @@ class Discoverer(gobject.GObject):
             if is_last:
                 if not self.currentfactory or not self.currentfactory.is_audio or not self.currentfactory.is_video:
                     gst.warning("couldn't find a usable pad")
-                    self.emit("not_media_file", self.current, "Got unknown stream type : %s" % capsstr)
+                    if not self.error:
+                        self.error = "Got unknown stream type : %s" % capsstr
                     gobject.idle_add(self._finishAnalysis)
 
     def _noMorePadsCb(self, unused_element):

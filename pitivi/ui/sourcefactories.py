@@ -386,7 +386,7 @@ class SourceListWidget(gtk.VBox):
             # construct the dialog but leave it hidden
             self.errorDialogBox = FileListErrorDialog(
                 _("Error while analyzing files"),
-                _("The following files weren't discovered properly.")
+                _("The following files can not be used with PiTiVi.")
             )
 
             self.errorDialogBox.connect('close', self._errorDialogBoxCloseCb)

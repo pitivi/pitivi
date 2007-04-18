@@ -1,3 +1,12 @@
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Only establish if the file is valid or not at the complete end of the
+	discovery. This avoids having 'not_media_file' emitted several times for
+	one file.
+	* pitivi/ui/sourcefactories.py:
+	Make the text message for the discoverer error dialog more user-friendly.
+
 2007-04-17  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/timeline/composition.py:
