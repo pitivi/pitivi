@@ -226,10 +226,10 @@ class SourceListWidget(gtk.VBox):
         instance.PiTiVi.connect("new-project", self._newProjectCb)
 
         # default pixbufs
-        pixdir = get_pixmap_dir()
-        self.filepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-file.png"))
-        self.audiofilepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-sound.png"))
-        self.videofilepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-video.png"))
+        icontheme = gtk.icon_theme_get_default()
+        self.filepixbuf = icontheme.load_icon("misc", 32, 0)
+        self.audiofilepixbuf = icontheme.load_icon("audio-x-generic", 32, 0)
+        self.videofilepixbuf = icontheme.load_icon("video-x-generic", 32, 0)
 
         # Drag and Drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,

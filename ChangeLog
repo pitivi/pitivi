@@ -1,5 +1,11 @@
 2007-04-18  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/sourcefactories.py:
+	Use default gtk theme icons for files, audio files and video files.
+	Fixes #431060
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
 	* bin/pitivi.in:
 	Don't stop pitivi from starting if we can't find the required locale.
 
