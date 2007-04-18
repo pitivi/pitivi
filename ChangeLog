@@ -1,5 +1,11 @@
 2007-04-18  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/pixmaps/pitivi-advanced.png:
+	* pitivi/ui/mainwindow.py:
+	New icon for Advanced mode.
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/timeline.py:
 	comments fixups.
 	* pitivi/ui/viewer.py:

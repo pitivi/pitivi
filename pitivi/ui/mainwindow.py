@@ -62,6 +62,7 @@ class PitiviMainWindow(gtk.Window):
         gst.log("Creating MainWindow")
         gtk.Window.__init__(self)
 
+        self._createStockIcons()
         self._setActions()
         self._createUi()
 
@@ -73,6 +74,16 @@ class PitiviMainWindow(gtk.Window):
         instance.PiTiVi.connect("not-project", self._notProjectCb)
         instance.PiTiVi.playground.connect("error", self._playGroundErrorCb)
         self.show_all()
+
+    def _createStockIcons(self):
+        """ Creates the pitivi-only stock icons """
+        gtk.stock_add([('pitivi-advanced-mode', 'Advanced Mode', 0, 0, 'pitivi')])
+        factory = gtk.IconFactory()
+        pixbuf = gtk.gdk.pixbuf_new_from_file (configure.get_pixmap_dir() + "/pitivi-advanced.png")
+        iconset = gtk.IconSet(pixbuf)
+        factory.add('pitivi-advanced-mode', iconset)
+        factory.add_default()
+
 
     def _setActions(self):
         """ sets up the GtkActions """
@@ -93,7 +104,7 @@ class PitiviMainWindow(gtk.Window):
             ]
 
         self.toggleactions = [
-            ("AdvancedView", None, _("Advanced Vie_w"), None, _("Switch to advanced view"), self._advancedViewCb)
+            ("AdvancedView", 'pitivi-advanced-mode', _("Advanced Vie_w"), None, _("Switch to advanced view"), self._advancedViewCb)
             ]
 
         self.actiongroup = gtk.ActionGroup("mainwindow")
