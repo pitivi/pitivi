@@ -1,5 +1,11 @@
 2007-04-18  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/timeline/composition.py:
+	* tests/test_timeline_composition.py:
+	Fix more cases when removing sources from the composition.
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/discoverer.py:
 	Only establish if the file is valid or not at the complete end of the
 	discovery. This avoids having 'not_media_file' emitted several times for

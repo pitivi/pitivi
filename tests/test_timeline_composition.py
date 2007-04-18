@@ -33,6 +33,16 @@ class TestTimelineComposition(unittest.TestCase):
                                                      media_start=0,
                                                      media_duration=gst.SECOND)
 
+    def tearDown(self):
+        # remove all sources and their linked element
+        for source in self.composition.condensed:
+            self.composition.removeSource(source)
+        self.assertEquals(self.composition.condensed, [])
+
+        # there might be some sources only present in the other composition
+        for source in self.othercomposition.condensed:
+            self.othercomposition.removeSource(source)
+        self.assertEquals(self.othercomposition.condensed, [])
 
     def testRemoveSourceBasic(self):
         self.composition.appendSource(self.source1)
