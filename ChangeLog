@@ -1,5 +1,10 @@
 2007-04-18  Edward Hervey  <edward@fluendo.com>
 
+	* bin/pitivi.in:
+	Don't stop pitivi from starting if we can't find the required locale.
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/exportsettingswidget.py:
 	Small typo fix.
 

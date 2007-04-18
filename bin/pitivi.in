@@ -58,12 +58,15 @@ def _add_pitivi_path():
             sys.path.insert(0, path)
     
     # Added for i18n
-    locale.setlocale(locale.LC_ALL, '')
-    locale.bindtextdomain('pitivi', localedir)
-    locale.textdomain('pitivi')
+    try:
+        locale.setlocale(locale.LC_ALL, '')
+        locale.bindtextdomain('pitivi', localedir)
+        locale.textdomain('pitivi')
 
-    gettext.bindtextdomain('pitivi', localedir)
-    gettext.textdomain('pitivi')
+        gettext.bindtextdomain('pitivi', localedir)
+        gettext.textdomain('pitivi')
+    except:
+        print "Couldn't set locale !, reverting to C locale"
 
 def _init_gobject_gtk_gst():
     global localedir
