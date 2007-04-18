@@ -1,5 +1,15 @@
 2007-04-18  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/timeline.py:
+	comments fixups.
+	* pitivi/ui/viewer.py:
+	Pause the timeline when opening the render dialogbox.
+	Grey-out the 'Record' button until the user has chosen a file.
+	Remove the 'Choose file to render to' message once the user has chosen
+	a file.
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/timeline/composition.py:
 	* tests/test_timeline_composition.py:
 	Fix more cases when removing sources from the composition.

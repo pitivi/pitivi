@@ -112,10 +112,9 @@ class SimpleTimelineContentWidget(gtk.HBox):
 
         self.messagewindow.add_events(gtk.gdk.ENTER_NOTIFY_MASK)
 
+        # we start with showing the hint message
         self.pack_start(self.messagewindow)
-
         self.motionSigId = self.messagewindow.connect("drag-motion", self._dragMotionCb)
-
         self.showingTimeline = False
 
     def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,

@@ -370,6 +370,9 @@ class PitiviViewer(gtk.VBox):
         instance.PiTiVi.gui.set_sensitive(True)
 
     def _recordCb(self, unused_button):
+        # pause timeline !
+        instance.PiTiVi.playground.pause()
+
         win = EncodingDialog(instance.PiTiVi.current)
         win.window.connect("destroy", self._encodingDialogDestroyCb)
         instance.PiTiVi.gui.set_sensitive(False)
@@ -535,6 +538,8 @@ class EncodingDialog(GladeWindow):
         self.outfile = None
         self.progressbar = self.widgets["progressbar"]
         self.cancelbutton = self.widgets["cancelbutton"]
+        self.recordbutton = self.widgets["recordbutton"]
+        self.recordbutton.set_sensitive(False)
         self.positionhandler = 0
         self.rendering = False
         self.settings = project.getSettings()
@@ -561,6 +566,8 @@ class EncodingDialog(GladeWindow):
         if res == gtk.RESPONSE_ACCEPT:
             self.outfile = dialog.get_uri()
             button.set_label(os.path.basename(self.outfile))
+            self.recordbutton.set_sensitive(True)
+            self.progressbar.set_text(_(""))
         dialog.destroy()
 
     def _positionCb(self, unused_playground, unused_smartbin, position):
