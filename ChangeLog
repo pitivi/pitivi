@@ -1,5 +1,10 @@
 2007-04-18  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/exportsettingswidget.py:
+	Small typo fix.
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/pixmaps/pitivi-advanced.png:
 	* pitivi/ui/mainwindow.py:
 	New icon for Advanced mode.

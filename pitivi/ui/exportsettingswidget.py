@@ -34,7 +34,7 @@ from gettext import gettext as _
 class ExportSettingsWidget(GladeWidget):
     glade_file = "exportsettingswidget.glade"
     video_presets = ( ("DVD PAL",  720,    576,    25.0,        1.0),
-                      ("320x240x30", 320,  240,    30.0,        1.0) )
+                      ("320x240 @ 30fps", 320,  240,    30.0,        1.0) )
     video_rates = ( ("12 fps",      12.0, 1.0),
                     ("24 fps",      24.0, 1.0),
                     ("23,97 fps",   2400.0, 1001.0),
