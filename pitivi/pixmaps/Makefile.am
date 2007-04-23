@@ -1,7 +1,9 @@
 pixmapdir = $(pkgdatadir)/pixmaps
 pixmap_DATA = \
-	pitivi-file.png \
-	pitivi-sound.png \
+	pitivi-advanced-22.png	\
+	pitivi-advanced-24.png	\
+	pitivi-render-22.png	\
+	pitivi-render-24.png	\
 	pitivi-video.png
 
 EXTRA_DIST = \

@@ -1,5 +1,10 @@
 2007-04-23  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/pixmaps/Makefile.am:
+	Modify for new/removed icons.
+
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/actions.xml:
 	* pitivi/ui/mainwindow.py:
 	* pitivi/ui/viewer.py:
