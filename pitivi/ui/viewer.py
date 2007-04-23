@@ -34,8 +34,6 @@ from pitivi.bin import SmartTimelineBin
 import pitivi.dnd as dnd
 from pitivi.signalgroup import SignalGroup
 
-from exportsettingswidget import ExportSettingsDialog
-
 from gettext import gettext as _
 
 def time_to_string(value):
@@ -118,11 +116,6 @@ class PitiviViewer(gtk.VBox):
         boxalign = gtk.Alignment(xalign=0.5, yalign=0.5)
         boxalign.add(bbox)
         self.pack_start(boxalign, expand=False)
-
-        self.record_button = gtk.ToolButton(gtk.STOCK_MEDIA_RECORD)
-        self.record_button.connect("clicked", self._recordCb)
-        self.record_button.set_sensitive(False)
-        bbox.pack_start(self.record_button, expand=False)
 
         self.rewind_button = gtk.ToolButton(gtk.STOCK_MEDIA_REWIND)
         self.rewind_button.connect("clicked", self._rewindCb)
@@ -314,7 +307,6 @@ class PitiviViewer(gtk.VBox):
     def _asyncTimelineDurationChanged(self, duration):
         gst.debug("duration : %d" % duration)
         # deactivate record button is the duration is null
-        self.record_button.set_sensitive((duration > 0) and True or False)
 
         self.posadjust.upper = float(duration)
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time), time_to_string(instance.PiTiVi.playground.current.length)))
@@ -366,18 +358,6 @@ class PitiviViewer(gtk.VBox):
 
     ## Control gtk.Button callbacks
 
-    def _encodingDialogDestroyCb(self, unused_dialog):
-        instance.PiTiVi.gui.set_sensitive(True)
-
-    def _recordCb(self, unused_button):
-        # pause timeline !
-        instance.PiTiVi.playground.pause()
-
-        win = EncodingDialog(instance.PiTiVi.current)
-        win.window.connect("destroy", self._encodingDialogDestroyCb)
-        instance.PiTiVi.gui.set_sensitive(False)
-        win.show()
-
     def _rewindCb(self, unused_button):
         pass
 
@@ -411,20 +391,14 @@ class PitiviViewer(gtk.VBox):
             self.playpause_button.set_sensitive(False)
             self.next_button.set_sensitive(False)
             self.back_button.set_sensitive(False)
-            self.record_button.set_sensitive(False)
         else:
             if isinstance(smartbin, SmartTimelineBin):
                 gst.info("switching to Timeline, setting duration to %s" % (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
                 self.posadjust.upper = float(smartbin.project.timeline.videocomp.duration)
                 smartbin.project.timeline.videocomp.connect("start-duration-changed",
                                                             self._timelineDurationChangedCb)
-                if smartbin.project.timeline.videocomp.duration > 0:
-                    self.record_button.set_sensitive(True)
-                else:
-                    self.record_button.set_sensitive(False)
             else:
                 self.posadjust.upper = float(smartbin.factory.length)
-                self.record_button.set_sensitive(False)
             self._newTime(0)
             self.slider.set_sensitive(True)
             self.playpause_button.set_sensitive(True)
@@ -524,99 +498,4 @@ class PlayPauseButton(gtk.Button):
             self.playing = True
 
 
-class EncodingDialog(GladeWindow):
-    """ Encoding dialog box """
-    glade_file = "encodingdialog.glade"
 
-    def __init__(self, project):
-        GladeWindow.__init__(self)
-        self.project = project
-        self.bin = project.getBin()
-        self.bus = self.bin.get_bus()
-        self.bus.add_signal_watch()
-        self.eosid = self.bus.connect("message::eos", self._eosCb)
-        self.outfile = None
-        self.progressbar = self.widgets["progressbar"]
-        self.cancelbutton = self.widgets["cancelbutton"]
-        self.recordbutton = self.widgets["recordbutton"]
-        self.recordbutton.set_sensitive(False)
-        self.positionhandler = 0
-        self.rendering = False
-        self.settings = project.getSettings()
-        self.timestarted = 0
-        self.vinfo = self.widgets["videoinfolabel"]
-        self.ainfo = self.widgets["audioinfolabel"]
-        self._displaySettings()
-
-    def _displaySettings(self):
-        self.vinfo.set_markup(self.settings.getVideoDescription())
-        self.ainfo.set_markup(self.settings.getAudioDescription())
-
-    def _fileButtonClickedCb(self, button):
-
-        dialog = gtk.FileChooserDialog(title=_("Choose file to render to"),
-                                       parent=self.window,
-                                       buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
-                                                gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT),
-                                       action=gtk.FILE_CHOOSER_ACTION_SAVE)
-        if self.outfile:
-            dialog.set_current_name(self.outfile)
-        res = dialog.run()
-        dialog.hide()
-        if res == gtk.RESPONSE_ACCEPT:
-            self.outfile = dialog.get_uri()
-            button.set_label(os.path.basename(self.outfile))
-            self.recordbutton.set_sensitive(True)
-            self.progressbar.set_text(_(""))
-        dialog.destroy()
-
-    def _positionCb(self, unused_playground, unused_smartbin, position):
-        timediff = time.time() - self.timestarted
-        self.progressbar.set_fraction(float(position) / float(self.bin.length))
-        if timediff > 5.0:
-            # only display ETA after 5s in order to have enough averaging
-            totaltime = (timediff * float(self.bin.length) / float(position)) - timediff
-            self.progressbar.set_text(_("Finished in %dm%ds") % (int(totaltime) / 60,
-                                                              int(totaltime) % 60))
-
-    def _recordButtonClickedCb(self, unused_button):
-        if self.outfile and not self.rendering:
-            if self.bin.record(self.outfile, self.settings):
-                self.timestarted = time.time()
-                self.positionhandler = instance.PiTiVi.playground.connect('position', self._positionCb)
-                self.rendering = True
-                self.cancelbutton.set_label("gtk-cancel")
-                self.progressbar.set_text(_("Rendering"))
-            else:
-                self.progressbar.set_text(_("Couldn't start rendering"))
-
-    def _settingsButtonClickedCb(self, unused_button):
-        dialog = ExportSettingsDialog(self.settings)
-        res = dialog.run()
-        dialog.hide()
-        if res == gtk.RESPONSE_ACCEPT:
-            self.settings = dialog.getSettings()
-            self._displaySettings()
-        dialog.destroy()
-
-    def do_destroy(self):
-        gst.debug("cleaning up...")
-        self.bus.remove_signal_watch()
-        gobject.source_remove(self.eosid)
-
-    def _eosCb(self, unused_bus, unused_message):
-        self.rendering = False
-        if self.positionhandler:
-            instance.PiTiVi.playground.disconnect(self.positionhandler)
-            self.positionhandler = 0
-        self.progressbar.set_text(_("Rendering Complete"))
-        self.progressbar.set_fraction(1.0)
-        self.cancelbutton.set_label("gtk-close")
-
-    def _cancelButtonClickedCb(self, unused_button):
-        self.bin.stopRecording()
-        if self.positionhandler:
-            instance.PiTiVi.playground.disconnect(self.positionhandler)
-            self.positionhandler = 0
-        instance.PiTiVi.playground.pause()
-        self.destroy()

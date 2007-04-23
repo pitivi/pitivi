@@ -26,6 +26,7 @@ Main GTK+ window
 import os
 import gtk
 import gst
+import time
 
 try:
     import gconf
@@ -42,8 +43,12 @@ from gettext import gettext as _
 from timeline import TimelineWidget
 from sourcefactories import SourceFactoriesWidget
 from viewer import PitiviViewer
+from pitivi.bin import SmartTimelineBin
 from projectsettings import ProjectSettingsDialog
 from pitivi.configure import pitivi_version, APPNAME
+from glade import GladeWindow
+
+from exportsettingswidget import ExportSettingsDialog
 
 if have_gconf:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -56,6 +61,7 @@ class PitiviMainWindow(gtk.Window):
     """
     Pitivi's main window
     """
+
 
     def __init__(self):
         """ initialize with the Pitivi object """
@@ -75,13 +81,44 @@ class PitiviMainWindow(gtk.Window):
         instance.PiTiVi.playground.connect("error", self._playGroundErrorCb)
         self.show_all()
 
+    def _encodingDialogDestroyCb(self, unused_dialog):
+        instance.PiTiVi.gui.set_sensitive(True)
+
+    def _recordCb(self, unused_button):
+        # pause timeline !
+        instance.PiTiVi.playground.pause()
+
+        win = EncodingDialog(instance.PiTiVi.current)
+        win.window.connect("destroy", self._encodingDialogDestroyCb)
+        instance.PiTiVi.gui.set_sensitive(False)
+        win.show()
+
+    def _currentPlaygroundChangedCb(self, playground, smartbin):
+	if smartbin == playground.default:
+	    self.render_button.set_sensitive(False)
+        else:
+            if isinstance(smartbin, SmartTimelineBin):
+                gst.info("switching to Timeline, setting duration to %s" % (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
+                if smartbin.project.timeline.videocomp.duration > 0:
+		    self.render_button.set_sensitive(True)
+                else:
+		    self.render_button.set_sensitive(False)
+            else:
+		self.render_button.set_sensitive(True)
+
     def _createStockIcons(self):
         """ Creates the pitivi-only stock icons """
-        gtk.stock_add([('pitivi-advanced-mode', 'Advanced Mode', 0, 0, 'pitivi')])
+        gtk.stock_add([
+                ('pitivi-advanced-mode', 'Advanced Mode', 0, 0, 'pitivi'),
+                ('pitivi-render', 'Render', 0, 0, 'pitivi')
+                ])
         factory = gtk.IconFactory()
-        pixbuf = gtk.gdk.pixbuf_new_from_file (configure.get_pixmap_dir() + "/pitivi-advanced.png")
+        pixbuf = gtk.gdk.pixbuf_new_from_file (configure.get_pixmap_dir() + "/pitivi-advanced-24.png")
         iconset = gtk.IconSet(pixbuf)
         factory.add('pitivi-advanced-mode', iconset)
+        pixbuf = gtk.gdk.pixbuf_new_from_file (configure.get_pixmap_dir() + "/pitivi-render-24.png")
+        iconset = gtk.IconSet(pixbuf)
+        factory.add('pitivi-render', iconset)
         factory.add_default()
 
 
@@ -95,6 +132,7 @@ class PitiviMainWindow(gtk.Window):
             ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"), None, _("Edit the project settings"), self._projectSettingsCb),
             ("ImportSources", gtk.STOCK_ADD, _("_Import Sources..."), None, _("Import sources to use"), self._importSourcesCb),
             ("ImportSourcesFolder", gtk.STOCK_ADD, _("_Import Folder of sources..."), None, _("Import folder of sources to use"), self._importSourcesFolderCb),
+	    ("RenderProject", 'pitivi-render' , _("_Render project"), None, _("Render project"), self._recordCb),
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
             ("FullScreen", gtk.STOCK_FULLSCREEN, None, None, _("View the main window on the whole screen"), self._fullScreenCb),
             ("About", gtk.STOCK_ABOUT, None, None, _("Information about %s") % APPNAME, self._aboutCb),
@@ -114,6 +152,8 @@ class PitiviMainWindow(gtk.Window):
         # deactivating non-functional actions
         # FIXME : reactivate them
         for action in self.actiongroup.list_actions():
+            if action.get_name() == "RenderProject":
+                self.render_button = action;
             if action.get_name() in ["ProjectSettings", "Quit", "File", "Help",
                                      "About", "View", "FullScreen", "ImportSources",
                                      "ImportSourcesFolder", "AdvancedView"]:
@@ -163,6 +203,8 @@ class PitiviMainWindow(gtk.Window):
 
         # Viewer
         self.viewer = PitiviViewer()
+
+	instance.PiTiVi.playground.connect("current-changed", self._currentPlaygroundChangedCb)
 
         hpaned.pack1(self.sourcefactories, resize=False, shrink=False)
         hpaned.pack2(self.viewer, resize=True, shrink=False)
@@ -278,3 +320,101 @@ class PitiviMainWindow(gtk.Window):
 
     def _notProjectCb(self, pitivi, uri):
         raise NotImplementedError
+
+class EncodingDialog(GladeWindow):
+    """ Encoding dialog box """
+    glade_file = "encodingdialog.glade"
+
+    def __init__(self, project):
+        GladeWindow.__init__(self)
+        self.project = project
+        self.bin = project.getBin()
+        self.bus = self.bin.get_bus()
+        self.bus.add_signal_watch()
+        self.eosid = self.bus.connect("message::eos", self._eosCb)
+        self.outfile = None
+        self.progressbar = self.widgets["progressbar"]
+        self.cancelbutton = self.widgets["cancelbutton"]
+        self.recordbutton = self.widgets["recordbutton"]
+        self.recordbutton.set_sensitive(False)
+        self.positionhandler = 0
+        self.rendering = False
+        self.settings = project.getSettings()
+        self.timestarted = 0
+        self.vinfo = self.widgets["videoinfolabel"]
+        self.ainfo = self.widgets["audioinfolabel"]
+        self._displaySettings()
+
+    def _displaySettings(self):
+        self.vinfo.set_markup(self.settings.getVideoDescription())
+        self.ainfo.set_markup(self.settings.getAudioDescription())
+
+    def _fileButtonClickedCb(self, button):
+
+        dialog = gtk.FileChooserDialog(title=_("Choose file to render to"),
+                                       parent=self.window,
+                                       buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
+                                                gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT),
+                                       action=gtk.FILE_CHOOSER_ACTION_SAVE)
+        if self.outfile:
+            dialog.set_current_name(self.outfile)
+        res = dialog.run()
+        dialog.hide()
+        if res == gtk.RESPONSE_ACCEPT:
+            self.outfile = dialog.get_uri()
+            button.set_label(os.path.basename(self.outfile))
+            self.recordbutton.set_sensitive(True)
+            self.progressbar.set_text(_(""))
+        dialog.destroy()
+
+    def _positionCb(self, unused_playground, unused_smartbin, position):
+        timediff = time.time() - self.timestarted
+        self.progressbar.set_fraction(float(position) / float(self.bin.length))
+        if timediff > 5.0:
+            # only display ETA after 5s in order to have enough averaging
+            totaltime = (timediff * float(self.bin.length) / float(position)) - timediff
+            self.progressbar.set_text(_("Finished in %dm%ds") % (int(totaltime) / 60,
+                                                              int(totaltime) % 60))
+
+    def _recordButtonClickedCb(self, unused_button):
+        if self.outfile and not self.rendering:
+            if self.bin.record(self.outfile, self.settings):
+                self.timestarted = time.time()
+                self.positionhandler = instance.PiTiVi.playground.connect('position', self._positionCb)
+                self.rendering = True
+                self.cancelbutton.set_label("gtk-cancel")
+                self.progressbar.set_text(_("Rendering"))
+            else:
+                self.progressbar.set_text(_("Couldn't start rendering"))
+
+    def _settingsButtonClickedCb(self, unused_button):
+        dialog = ExportSettingsDialog(self.settings)
+        res = dialog.run()
+        dialog.hide()
+        if res == gtk.RESPONSE_ACCEPT:
+            self.settings = dialog.getSettings()
+            self._displaySettings()
+        dialog.destroy()
+
+    def do_destroy(self):
+        gst.debug("cleaning up...")
+        self.bus.remove_signal_watch()
+        gobject.source_remove(self.eosid)
+
+    def _eosCb(self, unused_bus, unused_message):
+        self.rendering = False
+        if self.positionhandler:
+            instance.PiTiVi.playground.disconnect(self.positionhandler)
+            self.positionhandler = 0
+        self.progressbar.set_text(_("Rendering Complete"))
+        self.progressbar.set_fraction(1.0)
+        self.recordbutton.set_sensitive(False)
+        self.cancelbutton.set_label("gtk-close")
+
+    def _cancelButtonClickedCb(self, unused_button):
+        self.bin.stopRecording()
+        if self.positionhandler:
+            instance.PiTiVi.playground.disconnect(self.positionhandler)
+            self.positionhandler = 0
+        instance.PiTiVi.playground.pause()
+        self.destroy()

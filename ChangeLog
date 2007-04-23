@@ -1,3 +1,22 @@
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/actions.xml:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	Move render button to toolbar/menu.
+	Patch by: Thibaut Girka <thibaut.girka@gmail.com>
+	Fixes #421652
+	* pitivi/pixmaps/pitivi-file.png:
+	* pitivi/pixmaps/pitivi-sound.png:
+	Remove no longer used icons.
+	* pitivi/pixmaps/pitivi-advanced.png:
+	* pitivi/pixmaps/pitivi-advanced-22.png:
+	* pitivi/pixmaps/pitivi-advanced-24.png:
+	* pitivi/pixmaps/pitivi-render-22.png:
+	* pitivi/pixmaps/pitivi-render-24.png:
+	Rename icons.
+	New render icon by Andreas Nilsson.
+
 2007-04-18  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/sourcefactories.py:

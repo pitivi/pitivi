@@ -10,6 +10,8 @@
       <menuitem action="ImportSources" />
       <menuitem action="ImportSourcesFolder" />
       <separator />
+      <menuitem action="RenderProject" />
+      <separator />
       <menuitem action="Quit" />
     </menu>
     <menu action="View">
@@ -27,6 +29,8 @@
     <toolitem action="SaveProjectAs" />
     <separator />
     <toolitem action="ImportSources" />
+    <separator />
+    <toolitem action="RenderProject" />
     <separator />
     <toolitem action="FullScreen" />
     <toolitem action="AdvancedView" />
