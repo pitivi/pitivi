@@ -1,5 +1,12 @@
 2007-04-23  Edward Hervey  <edward@fluendo.com>
 
+	Patch by: Jeff Fortin <nekohayo@gmail.com>
+	* pitivi/ui/viewer.py:
+	Remove horizontal bar between viewer and viewer controls.
+	Fixes #421672
+
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/pixmaps/Makefile.am:
 	* pitivi/pixmaps/pitivi-advanced-16.png:
 	* pitivi/pixmaps/pitivi-render-16.png:

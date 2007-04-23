@@ -97,9 +97,6 @@ class PitiviViewer(gtk.VBox):
         self.drawingarea.connect_after("realize", self._drawingAreaRealizeCb)
         self.aframe.add(self.drawingarea)
 
-        # horizontal line
-        self.pack_start(gtk.HSeparator(), expand=False)
-
         # Slider
         self.posadjust = gtk.Adjustment()
         self.slider = gtk.HScale(self.posadjust)
