@@ -1,5 +1,10 @@
 2007-04-23  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/mainwindow.py:
+	Don't enable render button when we are viewing a temporary source.
+
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
 	Patch by: Jeff Fortin <nekohayo@gmail.com>
 	* pitivi/ui/viewer.py:
 	Remove horizontal bar between viewer and viewer controls.

@@ -104,7 +104,7 @@ class PitiviMainWindow(gtk.Window):
                 else:
 		    self.render_button.set_sensitive(False)
             else:
-		self.render_button.set_sensitive(True)
+		self.render_button.set_sensitive(False)
 
     def _createStockIcons(self):
         """ Creates the pitivi-only stock icons """
