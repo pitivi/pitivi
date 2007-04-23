@@ -303,8 +303,6 @@ class PitiviViewer(gtk.VBox):
 
     def _asyncTimelineDurationChanged(self, duration):
         gst.debug("duration : %d" % duration)
-        # deactivate record button is the duration is null
-
         self.posadjust.upper = float(duration)
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time), time_to_string(instance.PiTiVi.playground.current.length)))
 

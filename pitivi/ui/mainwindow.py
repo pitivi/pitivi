@@ -27,6 +27,7 @@ import os
 import gtk
 import gst
 import time
+import gobject
 
 try:
     import gconf
@@ -93,14 +94,23 @@ class PitiviMainWindow(gtk.Window):
         instance.PiTiVi.gui.set_sensitive(False)
         win.show()
 
+    def _timelineDurationChangedCb(self, unused_composition, unused_start,
+                                   duration):
+        self.render_button.set_sensitive((duration > 0) and True or False)
+        if duration > 0 :
+            gobject.idle_add(self.timeline.simpleview._displayTimeline)
+
     def _currentPlaygroundChangedCb(self, playground, smartbin):
 	if smartbin == playground.default:
 	    self.render_button.set_sensitive(False)
         else:
             if isinstance(smartbin, SmartTimelineBin):
                 gst.info("switching to Timeline, setting duration to %s" % (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
+                smartbin.project.timeline.videocomp.connect("start-duration-changed",
+                                                            self._timelineDurationChangedCb)
                 if smartbin.project.timeline.videocomp.duration > 0:
 		    self.render_button.set_sensitive(True)
+                    gobject.idle_add(self.timeline.simpleview._displayTimeline)
                 else:
 		    self.render_button.set_sensitive(False)
             else:

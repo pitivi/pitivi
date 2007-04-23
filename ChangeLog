@@ -1,5 +1,15 @@
 2007-04-23  Edward Hervey  <edward@fluendo.com>
 
+	Patch by: Thibaut Girka <thibaut.girka@gmail.com>
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	Make simple timeline view active when it contains elements, even though
+	it wasn't previously displayed.
+	Fixed #430686
+
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/mainwindow.py:
 	Don't enable render button when we are viewing a temporary source.
 

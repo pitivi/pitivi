@@ -241,6 +241,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
                                                                     name=source.name))
 
         context.finish(True, False, timestamp)
+        instance.PiTiVi.playground.switchToTimeline()
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_timestamp):
         gst.debug("something left")
