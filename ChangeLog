@@ -1,6 +1,15 @@
 2007-04-23  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/pixmaps/Makefile.am:
+	* pitivi/pixmaps/pitivi-advanced-16.png:
+	* pitivi/pixmaps/pitivi-render-16.png:
+	Add new 16x16 icons by Andreas Nilsson.
+	* pitivi/ui/mainwindow.py:
+	Set render icon on the render dialog box.
+
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pixmaps/Makefile.am:
 	Modify for new/removed icons.
 
 2007-04-23  Edward Hervey  <edward@fluendo.com>

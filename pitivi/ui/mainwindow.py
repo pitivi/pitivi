@@ -343,6 +343,7 @@ class EncodingDialog(GladeWindow):
         self.timestarted = 0
         self.vinfo = self.widgets["videoinfolabel"]
         self.ainfo = self.widgets["audioinfolabel"]
+        self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
         self._displaySettings()
 
     def _displaySettings(self):
