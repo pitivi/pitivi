@@ -80,6 +80,8 @@ class PitiviMainWindow(gtk.Window):
         instance.PiTiVi.connect("closing-project", self._closingProjectCb)
         instance.PiTiVi.connect("not-project", self._notProjectCb)
         instance.PiTiVi.playground.connect("error", self._playGroundErrorCb)
+        instance.PiTiVi.current.sources.connect_after("file_added", self._sourcesFileAddedCb)
+
         self.show_all()
 
     def _encodingDialogDestroyCb(self, unused_dialog):
@@ -253,6 +255,13 @@ class PitiviMainWindow(gtk.Window):
         if detail:
             self.errorDialogBox.format_secondary_text(detail)
         self.errorDialogBox.show()
+
+
+    ## Project source list callbacks
+
+    def _sourcesFileAddedCb(self, unused_sources, unused_factory):
+        if len(self.sourcefactories.sourcelist.storemodel) == 1 and not len(instance.PiTiVi.current.timeline.videocomp):
+            self.timeline.simpleview._displayTimeline(False)
 
 
     ## UI Callbacks

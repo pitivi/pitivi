@@ -96,7 +96,7 @@ class SimpleTimelineContentWidget(gtk.HBox):
 
         # Explanatory message label
         txtbuffer = gtk.TextBuffer()
-        txtbuffer.set_text(_("Start working with your project by dragging clips here"))
+        txtbuffer.set_text(_("Add clips to the timeline by dragging them here."))
         txttag = gtk.TextTag()
         txttag.props.size = self.style.font_desc.get_size() * 1.5
         txtbuffer.tag_table.add(txttag)
@@ -118,6 +118,7 @@ class SimpleTimelineContentWidget(gtk.HBox):
         self.pack_start(self.messagewindow)
         self.motionSigId = self.messagewindow.connect("drag-motion", self._dragMotionCb)
         self.showingTimeline = False
+        self._displayTimeline()
 
     def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
                       unused_timestamp):

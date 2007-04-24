@@ -65,7 +65,7 @@ class SourceFactoriesWidget(gtk.Notebook):
         """ set up the gui """
         self.set_tab_pos(gtk.POS_TOP)
         self.sourcelist = SourceListWidget()
-        self.append_page(self.sourcelist, gtk.Label("Sources"))
+        self.append_page(self.sourcelist, gtk.Label("Clips"))
 
         ## FIXME: The following are deactivated until they do more than just
         ##      display things.
@@ -98,8 +98,7 @@ class SourceListWidget(gtk.VBox):
         self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, object, str, str)
 
         self.set_border_width(5)
-        self.set_size_request(320, -1)
-
+        
         # Scrolled Window
         self.scrollwin = gtk.ScrolledWindow()
         self.scrollwin.set_policy(gtk.POLICY_AUTOMATIC,gtk.POLICY_AUTOMATIC)
@@ -107,20 +106,16 @@ class SourceListWidget(gtk.VBox):
 
         # Popup Menu
         self.popup = gtk.Menu()
-        additem = gtk.MenuItem(_("Add Sources..."))
-        folderitem = gtk.MenuItem(_("Add Folder of Sources..."))
-        remitem = gtk.MenuItem(_("Remove Sources..."))
-        playmenuitem = gtk.MenuItem(_("Play"))
+        additem = gtk.MenuItem(_("Add Clips..."))
+        remitem = gtk.MenuItem(_("Remove Clip"))
+        playmenuitem = gtk.MenuItem(_("Play Clip"))
         playmenuitem.connect("activate", self._playButtonClickedCb)
         additem.connect("activate", self._addButtonClickedCb)
-        folderitem.connect("activate", self._addFolderButtonClickedCb)
         remitem.connect("activate", self._removeButtonClickedCb)
         additem.show()
-        folderitem.show()
         remitem.show()
         playmenuitem.show()
         self.popup.append(additem)
-        self.popup.append(folderitem)
         self.popup.append(remitem)
         self.popup.append(playmenuitem)
 
@@ -189,15 +184,9 @@ class SourceListWidget(gtk.VBox):
         self.scrollwin.add(self.treeview)
 
         # Explanatory message label
-        frame = gtk.Frame()
-        frame.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        frame.show()
-
         textbox = gtk.EventBox()
-        textbox.set_size_request(200, -1)
         textbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
         textbox.show()
-        frame.add(textbox)
 
         txtlabel = gtk.Label()
         txtlabel.set_padding(10, 10)
@@ -205,14 +194,14 @@ class SourceListWidget(gtk.VBox):
         txtlabel.set_line_wrap_mode(pango.WRAP_WORD)
         txtlabel.set_justify(gtk.JUSTIFY_CENTER)
         txtlabel.set_markup(
-            _("<b>Import your clips by dragging them here or "
-              "by using buttons below.</b>"))
+            _("<span size='x-large'>Import your clips by dragging them here or "
+              "by using buttons below.</span>"))
         textbox.add(txtlabel)
         self.txtlabel = txtlabel
 
-        self.textbox = frame
+        self.textbox = textbox
 
-        self.pack_start(self.textbox)
+        self.pack_start(self.textbox, expand=True, fill=True)
         self.reorder_child(self.textbox, 0)
         self.showingTreeView = False
 

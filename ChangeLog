@@ -1,5 +1,17 @@
 2007-04-24  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	Remove cruft that was causing the explanation message to be hidden.
+	Fixes #432656
+	* pitivi/ui/timeline.py:
+	Start by displaying the timeline. Fix explanation message.
+	Only display explanation message in the timeline once there's at least
+	one clip to add. Fixes #432724
+	
+
+2007-04-24  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/timeline.py:
 	Show explanation message again if a drag was canceled.
 	Fixes #432682
