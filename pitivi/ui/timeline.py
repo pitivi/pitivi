@@ -30,6 +30,8 @@ import gst
 
 from gettext import gettext as _
 
+import pitivi.instance as instance
+
 from timelineobjects import SimpleTimeline
 from complextimeline import ComplexTimelineWidget
 
@@ -108,7 +110,7 @@ class SimpleTimelineContentWidget(gtk.HBox):
         self.messagewindow.set_editable(False)
         self.messagewindow.set_left_margin(10)
         self.messagewindow.set_right_margin(10)
-        self.messagewindow.set_size_request(-1, 100)
+        self.messagewindow.set_size_request(-1, 120)
 
         self.messagewindow.add_events(gtk.gdk.ENTER_NOTIFY_MASK)
 
@@ -120,7 +122,15 @@ class SimpleTimelineContentWidget(gtk.HBox):
     def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
                       unused_timestamp):
         gst.log("motion...")
+        self.showingTimeline = False
         gobject.idle_add(self._displayTimeline)
+
+    def _dragLeaveCb(self, unused_layout, unused_context, unused_timestamp):
+        gst.log("leave...")
+        if len(instance.PiTiVi.current.timeline.videocomp):
+            return
+        self.showingTimeline = True
+        gobject.idle_add(self._displayTimeline, False)
 
     def _displayTimeline(self, displayed=True):
         if displayed:
@@ -134,14 +144,18 @@ class SimpleTimelineContentWidget(gtk.HBox):
             self.pack_start(self.layoutframe)
             self.reorder_child(self.layoutframe, 0)
             self.layoutframe.show_all()
+            self.dragLeaveSigId = self.timeline.connect("drag-leave", self._dragLeaveCb)
             self.showingTimeline = True
         else:
             if not self.showingTimeline:
                 return
             gst.debug("hiding timeline")
+            self.timeline.disconnect(self.dragLeaveSigId)
+            self.dragLeaveSigId = None
             self.remove(self.layoutframe)
             self.layoutframe.hide()
             self.pack_start(self.messagewindow)
             self.reorder_child(self.messagewindow, 0)
-            self.messagewindo.show()
+            self.messagewindow.show()
+            self.motionSigId = self.messagewindow.connect("drag-motion", self._dragMotionCb)
             self.showingTimeline = False
