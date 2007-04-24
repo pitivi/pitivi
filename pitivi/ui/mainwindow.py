@@ -163,7 +163,10 @@ class PitiviMainWindow(gtk.Window):
         # FIXME : reactivate them
         for action in self.actiongroup.list_actions():
             if action.get_name() == "RenderProject":
-                self.render_button = action;
+                self.render_button = action
+            if action.get_name() == "AdvancedView":
+                if not instance.PiTiVi.settings.advancedModeEnabled:
+                    action.set_visible(False)
             if action.get_name() in ["ProjectSettings", "Quit", "File", "Help",
                                      "About", "View", "FullScreen", "ImportSources",
                                      "ImportSourcesFolder", "AdvancedView"]:

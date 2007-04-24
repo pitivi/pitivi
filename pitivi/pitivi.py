@@ -32,6 +32,7 @@ from playground import PlayGround
 from project import Project, file_is_project
 from effects import Magician
 from configure import APPNAME
+from settings import GlobalSettings
 import instance
 
 from gettext import gettext as _
@@ -83,6 +84,9 @@ class Pitivi(gobject.GObject):
         instance.PiTiVi = self
 
         # TODO parse cmd line arguments
+
+        # get settings
+        self.settings = GlobalSettings()
 
         self.playground = PlayGround()
         self.current = Project(_("New Project"))

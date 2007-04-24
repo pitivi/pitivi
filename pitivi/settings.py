@@ -24,10 +24,58 @@
 Multimedia settings
 """
 
+import os
 import gobject
 import gst
 
 from gettext import gettext as _
+
+def get_bool_env(name):
+    """
+    Checks the given env variable name and returns a boolean answer.
+    If it exists AND contains something different from '' or 0, then this
+    function will return True. Else it will return False.
+    """
+    var = os.getenv(name)
+    if not var:
+        return False
+    if var == '0':
+        return False
+    return True
+
+class GlobalSettings:
+    """
+    Global PiTiVi settings
+    """
+
+    # TODO : Improve this class to make it more flexible
+    # * The settings should be discover-able by UI for ex
+    # * plugins should be able to add some settings
+
+    def __init__(self):
+        self._setDefaults()
+        self._readSettings()
+
+    def _setDefaults(self):
+        self.advancedModeEnabled = False
+
+    def _readSettings(self):
+        self._readSettingsFromGlobalConfiguration()
+        self._readSettingsFromConfigurationFile()
+        # env variables have the highest priority
+        self._readSettingsFromEnvironmentVariables()
+
+    def _readSettingsFromGlobalConfiguration(self):
+        # ideally, this should read settings from GConf for ex
+        pass
+
+    def _readSettingsFromConfigurationFile(self):
+        # This reads the configuration from the user configuration file
+        pass
+
+    def _readSettingsFromEnvironmentVariables(self):
+        # reads some settings from environment variable
+        self.advancedModeEnabled = get_bool_env("PITIVI_ADVANCED_MODE")
 
 class ExportSettings(gobject.GObject):
     """

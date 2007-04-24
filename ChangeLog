@@ -1,3 +1,12 @@
+2007-04-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pitivi.py:
+	* pitivi/settings.py:
+	* pitivi/ui/mainwindow.py:
+	Disable Advanced Mode by default until it works effectivelly.
+	If you wish to use it, set the PITIVI_ADVANCED_MODE env variable to 1
+	Fixes #432644
+
 2007-04-23  Edward Hervey  <edward@fluendo.com>
 
 	Patch by: Thibaut Girka <thibaut.girka@gmail.com>
