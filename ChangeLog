@@ -1,3 +1,13 @@
+2007-04-25  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Jeff Fortin <nekohayo@gmail.com>
+	* pitivi/ui/mainwindow.py:
+	Make fullscreen action toggle-able (like other gtk/gnome apps).
+	Remove 5px spacing in Global VBox that made the toolbar look weird.
+	* pitivi/ui/sourcefactories.py:
+	Add icons to popup-menu.
+	Fixes #415060
+
 2007-04-24  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/mainwindow.py:

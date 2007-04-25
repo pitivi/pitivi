@@ -146,7 +146,6 @@ class PitiviMainWindow(gtk.Window):
             ("ImportSourcesFolder", gtk.STOCK_ADD, _("_Import Folder of sources..."), None, _("Import folder of sources to use"), self._importSourcesFolderCb),
 	    ("RenderProject", 'pitivi-render' , _("_Render project"), None, _("Render project"), self._recordCb),
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
-            ("FullScreen", gtk.STOCK_FULLSCREEN, None, None, _("View the main window on the whole screen"), self._fullScreenCb),
             ("About", gtk.STOCK_ABOUT, None, None, _("Information about %s") % APPNAME, self._aboutCb),
             ("File", None, _("_File")),
             ("View", None, _("_View")),
@@ -154,7 +153,8 @@ class PitiviMainWindow(gtk.Window):
             ]
 
         self.toggleactions = [
-            ("AdvancedView", 'pitivi-advanced-mode', _("Advanced Vie_w"), None, _("Switch to advanced view"), self._advancedViewCb)
+            ("AdvancedView", 'pitivi-advanced-mode', _("Advanced Vie_w"), None, _("Switch to advanced view"), self._advancedViewCb),
+            ("FullScreen", gtk.STOCK_FULLSCREEN, None, None, _("View the main window on the whole screen"), self._fullScreenCb)
             ]
 
         self.actiongroup = gtk.ActionGroup("mainwindow")
@@ -190,7 +190,7 @@ class PitiviMainWindow(gtk.Window):
 
         self.connect("destroy", self._destroyCb)
 
-        vbox = gtk.VBox(False, 5)
+        vbox = gtk.VBox(False)
         self.add(vbox)
 
         self.menu = self.uimanager.get_widget("/MainMenuBar")

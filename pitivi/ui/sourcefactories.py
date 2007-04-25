@@ -106,8 +106,15 @@ class SourceListWidget(gtk.VBox):
 
         # Popup Menu
         self.popup = gtk.Menu()
-        additem = gtk.MenuItem(_("Add Clips..."))
-        remitem = gtk.MenuItem(_("Remove Clip"))
+        additem = gtk.ImageMenuItem(_("Add Clips..."))
+        image = gtk.Image()
+        image.set_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_MENU)
+        additem.set_image(image)
+
+        remitem = gtk.ImageMenuItem(_("Remove Clip"))
+        image = gtk.Image()
+        image.set_from_stock(gtk.STOCK_REMOVE, gtk.ICON_SIZE_MENU)
+        remitem.set_image(image)
         playmenuitem = gtk.MenuItem(_("Play Clip"))
         playmenuitem.connect("activate", self._playButtonClickedCb)
         additem.connect("activate", self._addButtonClickedCb)
