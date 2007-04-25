@@ -387,7 +387,7 @@ class EncodingDialog(GladeWindow):
             self.outfile = dialog.get_uri()
             button.set_label(os.path.basename(self.outfile))
             self.recordbutton.set_sensitive(True)
-            self.progressbar.set_text(_(""))
+            self.progressbar.set_text("")
         dialog.destroy()
 
     def _positionCb(self, unused_playground, unused_smartbin, position):
@@ -407,6 +407,7 @@ class EncodingDialog(GladeWindow):
                 self.rendering = True
                 self.cancelbutton.set_label("gtk-cancel")
                 self.progressbar.set_text(_("Rendering"))
+                self.recordbutton.set_sensitive(False)
             else:
                 self.progressbar.set_text(_("Couldn't start rendering"))
 
@@ -431,7 +432,7 @@ class EncodingDialog(GladeWindow):
             self.positionhandler = 0
         self.progressbar.set_text(_("Rendering Complete"))
         self.progressbar.set_fraction(1.0)
-        self.recordbutton.set_sensitive(False)
+        self.recordbutton.set_sensitive(True)
         self.cancelbutton.set_label("gtk-close")
 
     def _cancelButtonClickedCb(self, unused_button):
