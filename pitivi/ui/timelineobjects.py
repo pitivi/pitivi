@@ -277,10 +277,6 @@ class SimpleTimeline(gtk.Layout):
 
         self.timeline.videocomp.moveSource(element, pos)
 
-        # force flush, seek again at current position
-        #cur = instance.PiTiVi.playground.getCurrentTimePosition()
-        #instance.PiTiVi.playground.seekInCurrent(cur)
-
     def _widthChangedCb(self, unused_layout, property):
         if not property.name == "width":
             return

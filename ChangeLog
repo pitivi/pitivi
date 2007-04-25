@@ -1,5 +1,12 @@
 2007-04-25  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/timeline.py:
+	Only hide the timeline if it's empty.
+	* pitivi/ui/timelineobjects.py:
+	Remove unused code.
+
+2007-04-25  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/encodingdialog.glade:
 	* pitivi/ui/exportsettingswidget.py:
 	* pitivi/ui/mainwindow.py:

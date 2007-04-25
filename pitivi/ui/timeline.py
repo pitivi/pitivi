@@ -150,13 +150,15 @@ class SimpleTimelineContentWidget(gtk.HBox):
         else:
             if not self.showingTimeline:
                 return
-            gst.debug("hiding timeline")
-            self.timeline.disconnect(self.dragLeaveSigId)
-            self.dragLeaveSigId = None
-            self.remove(self.layoutframe)
-            self.layoutframe.hide()
-            self.pack_start(self.messagewindow)
-            self.reorder_child(self.messagewindow, 0)
-            self.messagewindow.show()
-            self.motionSigId = self.messagewindow.connect("drag-motion", self._dragMotionCb)
-            self.showingTimeline = False
+            # only hide if there's nothing left in the timeline
+            if not len(instance.PiTiVi.current.timeline.videocomp):
+                gst.debug("hiding timeline")
+                self.timeline.disconnect(self.dragLeaveSigId)
+                self.dragLeaveSigId = None
+                self.remove(self.layoutframe)
+                self.layoutframe.hide()
+                self.pack_start(self.messagewindow)
+                self.reorder_child(self.messagewindow, 0)
+                self.messagewindow.show()
+                self.motionSigId = self.messagewindow.connect("drag-motion", self._dragMotionCb)
+                self.showingTimeline = False
