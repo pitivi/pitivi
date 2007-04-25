@@ -328,7 +328,7 @@ class ExportSettingsDialog(gtk.Dialog):
 
     def __init__(self, settings):
         gtk.Dialog.__init__(self, parent=None,
-                            title=_("Export Settings"),
+                            title=_("Export settings"),
                             flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
                                      gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))

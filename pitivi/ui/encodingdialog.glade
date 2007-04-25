@@ -10,7 +10,7 @@
   <widget class="GtkDialog" id="encodingdialog">
     <property name="visible">True</property>
     <property name="border_width">5</property>
-    <property name="title">Render Project</property>
+    <property name="title">Render project</property>
     <property name="modal">True</property>
     <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
     <child internal-child="vbox">
@@ -29,7 +29,7 @@
                   <widget class="GtkLabel" id="label1">
                     <property name="visible">True</property>
                     <property name="xalign">0.000000</property>
-                    <property name="label" translatable="yes">Output File:</property>
+                    <property name="label" translatable="yes">Output file:</property>
                   </widget>
                 </child>
                 <child>

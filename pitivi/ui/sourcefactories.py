@@ -65,7 +65,7 @@ class SourceFactoriesWidget(gtk.Notebook):
         """ set up the gui """
         self.set_tab_pos(gtk.POS_TOP)
         self.sourcelist = SourceListWidget()
-        self.append_page(self.sourcelist, gtk.Label("Clips"))
+        self.append_page(self.sourcelist, gtk.Label(_("Clips")))
 
         ## FIXME: The following are deactivated until they do more than just
         ##      display things.
@@ -167,10 +167,11 @@ class SourceListWidget(gtk.VBox):
         namecol.add_attribute(txtcell, "markup", COL_LENGTH)
 
         # buttons (list/icon view, add, remove)
-        button = gtk.Button(stock=gtk.STOCK_ADD)
+        button = gtk.Button(_("Import"))
+        button.set_image(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_BUTTON))
         button.connect("clicked", self._addButtonClickedCb)
 
-        folderbutton = gtk.Button(_("Add Folder"))
+        folderbutton = gtk.Button(_("Import folder"))
         folderbutton.set_image(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_BUTTON))
         folderbutton.connect("clicked", self._addFolderButtonClickedCb)
 
@@ -202,7 +203,7 @@ class SourceListWidget(gtk.VBox):
         txtlabel.set_justify(gtk.JUSTIFY_CENTER)
         txtlabel.set_markup(
             _("<span size='x-large'>Import your clips by dragging them here or "
-              "by using buttons below.</span>"))
+              "by using the buttons above.</span>"))
         textbox.add(txtlabel)
         self.txtlabel = txtlabel
 
@@ -305,7 +306,7 @@ class SourceListWidget(gtk.VBox):
             dialogtitle = _("Import a folder")
         else:
             chooser_action = gtk.FILE_CHOOSER_ACTION_OPEN
-            dialogtitle = _("Import a file")
+            dialogtitle = _("Import a clip")
 
         self._importDialog = gtk.FileChooserDialog(dialogtitle, None,
                                                    chooser_action,

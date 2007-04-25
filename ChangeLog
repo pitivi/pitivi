@@ -1,5 +1,13 @@
 2007-04-25  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/encodingdialog.glade:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	Terminology fixes.
+
+2007-04-25  Edward Hervey  <edward@fluendo.com>
+
 	Patch by: Thibaut Girka <thibaut.girka@free.fr>
 	* pitivi/ui/mainwindow.py:
 	Fix i18n bug.

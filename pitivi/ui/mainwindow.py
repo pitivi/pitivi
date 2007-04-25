@@ -141,9 +141,9 @@ class PitiviMainWindow(gtk.Window):
             ("OpenProject", gtk.STOCK_OPEN, None, None, _("Open an existing project"), self._openProjectCb),
             ("SaveProject", gtk.STOCK_SAVE, None, None, _("Save the current project"), self._saveProjectCb),
             ("SaveProjectAs", gtk.STOCK_SAVE_AS, None, None, _("Save the current project"), self._saveProjectAsCb),
-            ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"), None, _("Edit the project settings"), self._projectSettingsCb),
-            ("ImportSources", gtk.STOCK_ADD, _("_Import Sources..."), None, _("Import sources to use"), self._importSourcesCb),
-            ("ImportSourcesFolder", gtk.STOCK_ADD, _("_Import Folder of sources..."), None, _("Import folder of sources to use"), self._importSourcesFolderCb),
+            ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project settings"), None, _("Edit the project settings"), self._projectSettingsCb),
+            ("ImportSources", gtk.STOCK_ADD, _("_Import clips..."), None, _("Import clips to use"), self._importSourcesCb),
+            ("ImportSourcesFolder", gtk.STOCK_ADD, _("_Import folder of clips..."), None, _("Import folder of clips to use"), self._importSourcesFolderCb),
 	    ("RenderProject", 'pitivi-render' , _("_Render project"), None, _("Render project"), self._recordCb),
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
             ("About", gtk.STOCK_ABOUT, None, None, _("Information about %s") % APPNAME, self._aboutCb),
@@ -153,7 +153,7 @@ class PitiviMainWindow(gtk.Window):
             ]
 
         self.toggleactions = [
-            ("AdvancedView", 'pitivi-advanced-mode', _("Advanced Vie_w"), None, _("Switch to advanced view"), self._advancedViewCb),
+            ("AdvancedView", 'pitivi-advanced-mode', _("Advanced vie_w"), None, _("Switch to advanced view"), self._advancedViewCb),
             ("FullScreen", gtk.STOCK_FULLSCREEN, None, None, _("View the main window on the whole screen"), self._fullScreenCb)
             ]
 
