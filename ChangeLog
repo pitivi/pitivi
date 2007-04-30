@@ -1,3 +1,8 @@
+2007-04-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi.desktop.in:
+	Add bugzilla fields so that bug-buddy can work properly with pitivi.
+
 2007-04-25  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/timeline.py:
