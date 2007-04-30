@@ -98,10 +98,11 @@ class SourceListWidget(gtk.VBox):
         self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, object, str, str)
 
         self.set_border_width(5)
+        self.set_spacing(6)
         
         # Scrolled Window
         self.scrollwin = gtk.ScrolledWindow()
-        self.scrollwin.set_policy(gtk.POLICY_AUTOMATIC,gtk.POLICY_AUTOMATIC)
+        self.scrollwin.set_policy(gtk.POLICY_NEVER,gtk.POLICY_AUTOMATIC)
         self.scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
 
         # Popup Menu
@@ -153,6 +154,8 @@ class SourceListWidget(gtk.VBox):
         self.treeview.append_column(namecol)
         namecol.set_expand(True)
         namecol.set_spacing(5)
+        namecol.set_sizing(gtk.TREE_VIEW_COLUMN_GROW_ONLY)
+        namecol.set_min_width(150)
         txtcell = gtk.CellRendererText()
         txtcell.set_property("ellipsize", pango.ELLIPSIZE_END)
         namecol.pack_start(txtcell)
@@ -165,28 +168,6 @@ class SourceListWidget(gtk.VBox):
         txtcell.set_property("yalign", 0.0)
         namecol.pack_start(txtcell)
         namecol.add_attribute(txtcell, "markup", COL_LENGTH)
-
-        # buttons (list/icon view, add, remove)
-        button = gtk.Button(_("Import"))
-        button.set_image(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_BUTTON))
-        button.connect("clicked", self._addButtonClickedCb)
-
-        folderbutton = gtk.Button(_("Import folder"))
-        folderbutton.set_image(gtk.image_new_from_stock(gtk.STOCK_ADD, gtk.ICON_SIZE_BUTTON))
-        folderbutton.connect("clicked", self._addFolderButtonClickedCb)
-
-        self.errorDialogButton = gtk.ToolButton(gtk.STOCK_DIALOG_WARNING)
-        self.errorDialogButton.connect("clicked", self._errorDialogButtonClickedCb)
-
-        self.rbut = gtk.Button(stock=gtk.STOCK_REMOVE)
-        self.rbut.connect("clicked", self._removeButtonClickedCb)
-        self.rbut.set_sensitive(False)
-
-        self.bothbox = gtk.HBox(spacing=6)
-        self.bothbox.pack_start(button, expand=False)
-        self.bothbox.pack_start(folderbutton, expand=False)
-        self.bothbox.pack_start(self.rbut, expand=False)
-        self.pack_start(self.bothbox, expand=False, padding=6)
 
         # Start up with tree view
         self.scrollwin.add(self.treeview)
@@ -215,6 +196,9 @@ class SourceListWidget(gtk.VBox):
 
         self.dragMotionSigId = self.txtlabel.connect("drag-motion",
                                                      self._dragMotionCb)
+
+        self.infostub = InfoStub()
+        self.infostub.connect("remove-me", self._removeInfoStub)
 
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
@@ -256,7 +240,9 @@ class SourceListWidget(gtk.VBox):
         self.project_signals.connect(project.sources, "file_added", None, self._fileAddedCb)
         self.project_signals.connect(project.sources, "file_removed", None, self._fileRemovedCb)
         self.project_signals.connect(project.sources, "not_media_file", None, self._notMediaFileCb)
-
+        self.project_signals.connect(project.sources, "ready", None, self._sourcesStoppedImportingCb)
+        self.project_signals.connect(project.sources, "starting", None, self._sourcesStartedImportingCb)
+        
 
     ## Explanatory message methods
 
@@ -362,7 +348,6 @@ class SourceListWidget(gtk.VBox):
                                 factory.name,
                                 "<b>%s</b>" % beautify_length(factory.length)])
         self._displayTreeView()
-        self.rbut.set_sensitive(True)
 
     def _fileRemovedCb(self, unused_sourcelist, uri):
         """ the given uri was removed from the sourcelist """
@@ -374,27 +359,21 @@ class SourceListWidget(gtk.VBox):
                 break
         if not len(model):
             self._displayTreeView(False)
-            self.rbut.set_sensitive(False)
 
     def _notMediaFileCb(self, unused_sourcelist, uri, reason):
         """ The given uri isn't a media file """
-        # popup a dialog box and fill up with reasons
-        if not self.errorDialogBox:
-            # construct the dialog but leave it hidden
-            self.errorDialogBox = FileListErrorDialog(
-                _("Error while analyzing files"),
-                _("The following files can not be used with PiTiVi.")
-            )
+        self.infostub.addErrors(uri, reason)
 
-            self.errorDialogBox.connect('close', self._errorDialogBoxCloseCb)
-            self.errorDialogBox.connect('response', self._errorDialogBoxResponseCb)
-            self.errorDialogBox.hide()
-        if not self.errorDialogBox.isVisible() and not self.errorDialogButton.parent:
-            # show the button that will open the dialog
-            self.bothbox.pack_start(self.errorDialogButton, expand=False)
-            self.bothbox.show_all()
-        self.errorDialogBox.addFailedFile(uri, reason)
+    def _sourcesStartedImportingCb(self, unused_sourcelist):
+        if not self.infostub.showing:
+            self.pack_start(self.infostub, expand=False)
+        self.infostub.startingImport()
 
+    def _sourcesStoppedImportingCb(self, unused_sourcelist):
+        self.infostub.stoppingImport()
+
+    def _removeInfoStub(self, infostub):
+        self.remove(self.infostub)
 
     ## Error Dialog Box callbacks
 
@@ -432,10 +411,6 @@ class SourceListWidget(gtk.VBox):
     def _addButtonClickedCb(self, unused_widget=None):
         """ called when a user clicks on the add button """
         self.showImportSourcesDialog()
-
-    def _addFolderButtonClickedCb(self, unused_widget=None):
-        """ called when a user clicks on the add button """
-        self.showImportSourcesDialog(select_folders=True)
 
     def _removeButtonClickedCb(self, unused_widget=None):
         """ Called when a user clicks on the remove button """
@@ -634,3 +609,121 @@ class TransitionListWidget(gtk.VBox):
         self.iconview = gtk.IconView()
         self.treeview = gtk.TreeView()
         self.pack_start(self.iconview)
+
+class InfoStub(gtk.HBox):
+    """
+    Box used to display information on the current state of the lists
+    """
+
+    __gsignals__ = {
+        "remove-me" : (gobject.SIGNAL_RUN_LAST,
+                       gobject.TYPE_NONE,
+                       ( ))
+        }
+
+    def __init__(self):
+        gtk.HBox.__init__(self)
+        self.errors = []
+        self.showing = False
+        self._importingmessage = _("Importing clips...")
+        self._errormessage = _("Error(s) while importing")
+        self._makeUI()
+
+    def _makeUI(self):
+        self.set_spacing(6)
+        anim = gtk.gdk.PixbufAnimation(get_pixmap_dir() + "/busy.gif")
+        self.busyanim = gtk.image_new_from_animation(anim)
+
+        self.erroricon = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
+                                                  gtk.ICON_SIZE_SMALL_TOOLBAR)
+
+        self.infolabel = gtk.Label(self._importingmessage)
+        self.infolabel.set_alignment(0, 0.5)
+
+        self.questionbutton = gtk.Button()
+        self.questionbutton.set_image(gtk.image_new_from_stock(gtk.STOCK_INFO,
+                                                               gtk.ICON_SIZE_SMALL_TOOLBAR))
+        self.questionbutton.connect("clicked", self._questionButtonClickedCb)
+        self._questionshowing = False
+
+        self.pack_start(self.busyanim, expand=False)
+        self._busyshowing = True
+        self.pack_start(self.infolabel, expand=True, fill=True)
+
+    def startingImport(self):
+        if self.showing:
+            if self.errors:
+                # if we're already showing and we have errors, show spinner
+                self._showBusyAnim()
+        else:
+            self._showBusyAnim()
+            self.infolabel.set_text(self._importingmessage)
+            self._showQuestionButton(False)
+            self.show()
+
+    def stoppingImport(self):
+        if self.errors:
+            self._showErrorIcon()
+            self.infolabel.set_text(self._errormessage)
+            self._showQuestionButton()
+        else:
+            self.hide()
+            self.emit("remove-me")
+
+    def addErrors(self, *args):
+        self.errors.append(args)
+
+    def _showBusyAnim(self):
+        if self._busyshowing:
+            return
+        self.remove(self.erroricon)
+        self.pack_start(self.busyanim, expand=False)
+        self.reorder_child(self.busyanim, 0)
+        self.busyanim.show()
+        self._busyshowing = True
+
+    def _showErrorIcon(self):
+        if not self._busyshowing:
+            return
+        self.remove(self.busyanim)
+        self.pack_start(self.erroricon, expand=False)
+        self.reorder_child(self.erroricon, 0)
+        self.erroricon.show()
+        self._busyshowing = False
+
+    def _showQuestionButton(self, visible=True):
+        if visible and not self._questionshowing:
+            self.pack_start(self.questionbutton, expand=False)
+            self.questionbutton.show()
+            self._questionshowing = True
+        elif not visible and self._questionshowing:
+            self.remove(self.questionbutton)
+            self._questionshowing = False
+
+    def _errorDialogBoxCloseCb(self, dialog):
+        dialog.destroy()
+
+    def _errorDialogBoxResponseCb(self, dialog, unused_response):
+        dialog.destroy()
+
+    def _questionButtonClickedCb(self, unused_button):
+        # show error dialog
+        dbox = FileListErrorDialog(
+            _("Error while analyzing files"),
+            _("The following files can not be used with PiTiVi."))
+        dbox.connect("close", self._errorDialogBoxCloseCb)
+        dbox.connect("response", self._errorDialogBoxResponseCb)
+        for uri,reason in self.errors:
+            dbox.addFailedFile(uri, reason)
+        dbox.show()  
+        self.hide()
+
+    def show(self):
+        gst.log("showing")
+        self.show_all()
+        self.showing = True
+
+    def hide(self):
+        gst.log("hiding")
+        gtk.VBox.hide(self)
+        self.showing = False

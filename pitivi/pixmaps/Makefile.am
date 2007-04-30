@@ -1,5 +1,6 @@
 pixmapdir = $(pkgdatadir)/pixmaps
 pixmap_DATA = \
+	busy.gif		\
 	pitivi-advanced-16.png	\
 	pitivi-advanced-22.png	\
 	pitivi-advanced-24.png	\

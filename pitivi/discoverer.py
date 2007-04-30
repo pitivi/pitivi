@@ -43,6 +43,9 @@ class Discoverer(gobject.GObject):
 
     The "finished-analyzing" signal is emitted a file is finished being analyzed
 
+    The "starting" signal isemitted when the discoverer starts analyzing some
+    files.
+
     The "ready" signal is emitted when the discoverer has no more files to
     analyze.
     """
@@ -59,7 +62,10 @@ class Discoverer(gobject.GObject):
                                  (gobject.TYPE_PYOBJECT, )),
         "ready" : ( gobject.SIGNAL_RUN_LAST,
                     gobject.TYPE_NONE,
-                    ( ))
+                    ( )),
+        "starting" : ( gobject.SIGNAL_RUN_LAST,
+                       gobject.TYPE_NONE,
+                       ( ))        
         }
 
     def __init__(self, project):
@@ -109,6 +115,7 @@ class Discoverer(gobject.GObject):
             return False
 
         self.working = True
+        self.emit("starting")
         gobject.idle_add(self._analyze)
         return False
 

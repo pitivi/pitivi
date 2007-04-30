@@ -1,5 +1,19 @@
 2007-04-30  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/discoverer.py:
+	* pitivi/pixmaps/Makefile.am:
+	* pitivi/pixmaps/busy.gif:
+	* pitivi/sourcelist.py:
+	* pitivi/ui/sourcefactories.py:
+	Remove buttons in source list.
+	The actions present in the toolbar and menu are enough, plus the fact
+	that you can drop some files in it too.
+	Add an indicator in the source list when importing is taking place.
+	Much slicker than previous versions.
+	Fixes #432714
+
+2007-04-30  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi.desktop.in:
 	Add bugzilla fields so that bug-buddy can work properly with pitivi.
 

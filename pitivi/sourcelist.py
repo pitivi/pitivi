@@ -40,6 +40,10 @@ class SourceList(gobject.GObject):
                 The given uri is not a media file
     _ tmp-is-ready (FileSourceFactory) :
                 The temporary uri given to the SourceList is ready to use.
+    _ ready :
+                No more files are being discovered/added
+    _ starting :
+                Some files are being discovered/added
     """
 
     __gsignals__ = {
@@ -54,7 +58,13 @@ class SourceList(gobject.GObject):
                             (gobject.TYPE_STRING, gobject.TYPE_STRING)),
         "tmp_is_ready": (gobject.SIGNAL_RUN_LAST,
                          gobject.TYPE_NONE,
-                         (gobject.TYPE_PYOBJECT, ))
+                         (gobject.TYPE_PYOBJECT, )),
+        "ready" : ( gobject.SIGNAL_RUN_LAST,
+                    gobject.TYPE_NONE,
+                    ( )),
+        "starting" : ( gobject.SIGNAL_RUN_LAST,
+                       gobject.TYPE_NONE,
+                       ( ))        
         }
 
     def __init__(self, project):
@@ -66,6 +76,8 @@ class SourceList(gobject.GObject):
         self.discoverer = Discoverer(self.project)
         self.discoverer.connect("not_media_file", self._notMediaFileCb)
         self.discoverer.connect("finished_analyzing", self._finishedAnalyzingCb)
+        self.discoverer.connect("starting", self._discovererStartingCb)
+        self.discoverer.connect("ready", self._discovererReadyCb)
 
     def __contains__(self, uri):
         return self.sources.__contains__(uri)
@@ -149,3 +161,9 @@ class SourceList(gobject.GObject):
             del self.sources[uri]
         elif uri in self.tempsources:
             del self.tempsources[uri]
+
+    def _discovererStartingCb(self, unused_discoverer):
+        self.emit("starting")
+
+    def _discovererReadyCb(self, unused_discoverer):
+        self.emit("ready")
