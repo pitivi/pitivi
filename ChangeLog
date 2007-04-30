@@ -1,5 +1,10 @@
 2007-04-30  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/exportsettingswidget.py:
+	whoops :)
+
+2007-04-30  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/discoverer.py:
 	* pitivi/pixmaps/Makefile.am:
 	* pitivi/pixmaps/busy.gif:
