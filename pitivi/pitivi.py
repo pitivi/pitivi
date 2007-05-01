@@ -33,6 +33,7 @@ from project import Project, file_is_project
 from effects import Magician
 from configure import APPNAME
 from settings import GlobalSettings
+from threads import ThreadMaster
 import instance
 
 from gettext import gettext as _
@@ -87,6 +88,7 @@ class Pitivi(gobject.GObject):
 
         # get settings
         self.settings = GlobalSettings()
+        self.threads = ThreadMaster()
 
         self.playground = PlayGround()
         self.current = Project(_("New Project"))
@@ -140,6 +142,7 @@ class Pitivi(gobject.GObject):
         if self._use_ui and not self._closeRunningProject():
             gst.warning("Not closing since running project doesn't want to close")
             return
+        self.threads.stopAllThreads()
         self.playground.shutdown()
         instance.PiTiVi = None
         self.emit("shutdown")

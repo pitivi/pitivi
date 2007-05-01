@@ -23,7 +23,8 @@ pitivi_PYTHON = \
 	sourcelist.py 	\
 	utils.py 	\
 	pitivigstutils.py \
-	signalgroup.py
+	signalgroup.py	\
+	threads.py
 
 BUILT_SOURCES=configure.py
 

@@ -1,5 +1,24 @@
 2007-05-01  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/Makefile.am:
+	* pitivi/threads.py:
+	* pitivi/pitivi.py:
+	Threading convenience class and class to manage all threads in
+	existence during runtime.
+	* pitivi/sourcelist.py:
+	* pitivi/discoverer.py:
+	Add extra argument to not-media-file signal.
+	Add error case when we can't figure out the duration of a file.
+	* pitivi/ui/filelisterrordialog.glade:
+	* pitivi/ui/filelisterrordialog.py:
+	Start modifications of importing error reporting dialog.
+	* pitivi/ui/sourcefactories.py:
+	Spawn separate thread for recursively discovering threads so it doesn't
+	block the UI main thread.
+	Fixes #432655
+
+2007-05-01  Edward Hervey  <edward@fluendo.com>
+
 	* tests/test_timeline_composition.py:
 	Remove dangling whitespaces.
 

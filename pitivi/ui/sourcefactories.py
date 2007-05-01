@@ -30,12 +30,14 @@ import gobject
 import gtk
 import gst
 import pango
+import threading
 from urllib import unquote
 
 import pitivi.instance as instance
 import pitivi.dnd as dnd
 from pitivi.configure import get_pixmap_dir
 from pitivi.signalgroup import SignalGroup
+from pitivi.threads import Thread
 
 from filelisterrordialog import FileListErrorDialog
 
@@ -99,7 +101,7 @@ class SourceListWidget(gtk.VBox):
 
         self.set_border_width(5)
         self.set_spacing(6)
-        
+
         # Scrolled Window
         self.scrollwin = gtk.ScrolledWindow()
         self.scrollwin.set_policy(gtk.POLICY_NEVER,gtk.POLICY_AUTOMATIC)
@@ -242,7 +244,7 @@ class SourceListWidget(gtk.VBox):
         self.project_signals.connect(project.sources, "not_media_file", None, self._notMediaFileCb)
         self.project_signals.connect(project.sources, "ready", None, self._sourcesStoppedImportingCb)
         self.project_signals.connect(project.sources, "starting", None, self._sourcesStartedImportingCb)
-        
+
 
     ## Explanatory message methods
 
@@ -314,15 +316,7 @@ class SourceListWidget(gtk.VBox):
 
     def addFolders(self, list):
         """ walks the trees of the folders in the list and adds the files it finds """
-        uriList = []
-        for folder in list:
-            if folder.startswith("file://"):
-                folder = folder[len("file://"):]
-            for path, dirs, files in os.walk(folder):
-                for afile in files:
-                    uriList.append("file://%s" % os.path.join(path, afile))
-
-        instance.PiTiVi.current.sources.addUris(uriList)
+        instance.PiTiVi.threads.addThread(PathWalker, list, instance.PiTiVi.current.sources.addUris)
 
     # sourcelist callbacks
 
@@ -360,9 +354,9 @@ class SourceListWidget(gtk.VBox):
         if not len(model):
             self._displayTreeView(False)
 
-    def _notMediaFileCb(self, unused_sourcelist, uri, reason):
+    def _notMediaFileCb(self, unused_sourcelist, uri, reason, extra):
         """ The given uri isn't a media file """
-        self.infostub.addErrors(uri, reason)
+        self.infostub.addErrors(uri, reason, extra)
 
     def _sourcesStartedImportingCb(self, unused_sourcelist):
         if not self.infostub.showing:
@@ -626,7 +620,8 @@ class InfoStub(gtk.HBox):
         self.errors = []
         self.showing = False
         self._importingmessage = _("Importing clips...")
-        self._errormessage = _("Error(s) while importing")
+        self._errorsmessage = _("Error(s) occured while importing")
+        self._errormessage = _("An error occured while importing")
         self._makeUI()
 
     def _makeUI(self):
@@ -664,7 +659,10 @@ class InfoStub(gtk.HBox):
     def stoppingImport(self):
         if self.errors:
             self._showErrorIcon()
-            self.infolabel.set_text(self._errormessage)
+            if len(self.errors) > 1:
+                self.infolabel.set_text(self._errorsmessage)
+            else:
+                self.infolabel.set_text(self._errormessage)
             self._showQuestionButton()
         else:
             self.hide()
@@ -713,9 +711,11 @@ class InfoStub(gtk.HBox):
             _("The following files can not be used with PiTiVi."))
         dbox.connect("close", self._errorDialogBoxCloseCb)
         dbox.connect("response", self._errorDialogBoxResponseCb)
-        for uri,reason in self.errors:
+        for uri,reason,extra in self.errors:
             dbox.addFailedFile(uri, reason)
-        dbox.show()  
+        dbox.show()
+        # reset error list
+        self.errors = []
         self.hide()
 
     def show(self):
@@ -727,3 +727,33 @@ class InfoStub(gtk.HBox):
         gst.log("hiding")
         gtk.VBox.hide(self)
         self.showing = False
+
+
+class PathWalker(Thread):
+    """
+    Thread for recursively searching in a list of directories
+    """
+
+    def __init__(self, paths, callback):
+        Thread.__init__(self)
+        gst.log("New PathWalker for %s" % paths)
+        self.paths = paths
+        self.callback = callback
+        self.stopme = threading.Event()
+
+    def process(self):
+        for folder in self.paths:
+            gst.log("folder %s" % folder)
+            if folder.startswith("file://"):
+                folder = folder[len("file://"):]
+            for path, dirs, files in os.walk(folder):
+                if self.stopme.isSet():
+                    return
+                uriList = []
+                for afile in files:
+                    uriList.append("file://%s" % os.path.join(path, afile))
+                if uriList:
+                    self.callback(uriList)
+
+    def abort(self):
+        self.stopme.set()

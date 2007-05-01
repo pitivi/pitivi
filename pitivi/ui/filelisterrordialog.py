@@ -48,33 +48,43 @@ class FileListErrorDialog(GladeWindow):
         self.window.set_modal(False)
         self.widgets["headline"].set_text(headline)
         self.window.set_title(title)
-        self.treeview = self.widgets["treeview"]
-        self.window.set_geometry_hints(min_width=400, min_height=300)
-        self._setUpTreeView()
+        self.errorvbox = self.widgets["errorvbox"]
+#        self.treeview = self.widgets["treeview"]
+        self.window.set_geometry_hints(min_width=400)
+#         self._setUpTreeView()
 
-    def _setUpTreeView(self):
-        self.storemodel = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING)
-        self.treeview.set_model(self.storemodel)
+#     def _setUpTreeView(self):
+#         self.storemodel = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING)
+#         self.treeview.set_model(self.storemodel)
 
-        txtcell = gtk.CellRendererText()
-        txtcell.set_property("ellipsize", pango.ELLIPSIZE_START)
-        uricol = gtk.TreeViewColumn(_("File"), txtcell, text=0)
-        uricol.set_expand(True)
-        self.treeview.append_column(uricol)
+#         txtcell = gtk.CellRendererText()
+#         txtcell.set_property("ellipsize", pango.ELLIPSIZE_START)
+#         uricol = gtk.TreeViewColumn(_("File"), txtcell, text=0)
+#         uricol.set_expand(True)
+#         self.treeview.append_column(uricol)
 
-        txtcell2 = gtk.CellRendererText()
-        txtcell2.set_property("ellipsize", pango.ELLIPSIZE_END)
-        reasoncol = gtk.TreeViewColumn(_("Reason"), txtcell2, text=1)
-        reasoncol.set_expand(True)
-        self.treeview.append_column(reasoncol)
+#         txtcell2 = gtk.CellRendererText()
+#         txtcell2.set_property("ellipsize", pango.ELLIPSIZE_END)
+#         reasoncol = gtk.TreeViewColumn(_("Reason"), txtcell2, text=1)
+#         reasoncol.set_expand(True)
+#         self.treeview.append_column(reasoncol)
 
-    def addFailedFile(self, uri, reason=_("Unknown reason")):
+    def addFailedFile(self, uri, reason=_("Unknown reason"), extra=None):
         """Add the given uri to the list of failed files. You can optionnaly
         give a string identifying the reason why the file failed to be
         discovered
         """
         gst.debug("Uri:%s, reason:%s" % (uri, reason))
-        self.storemodel.append([str(uri), str(reason)])
+        exp = self._createFileExpander(uri, reason)
+        self.errorvbox.pack_start(exp)
+        exp.show_all()
+        #self.storemodel.append([str(uri), str(reason)])
+
+    def _createFileExpander(self, uri, reason):
+        exp = gtk.Expander(uri)
+        label = gtk.Label(reason)
+        exp.add(label)
+        return exp
 
     def isVisible(self):
         """ returns True if this dialog is currently shown """

@@ -28,6 +28,7 @@ import gobject
 import gst
 import objectfactory
 
+from gettext import gettext as _
 import os.path
 
 class Discoverer(gobject.GObject):
@@ -56,7 +57,7 @@ class Discoverer(gobject.GObject):
                                    (gobject.TYPE_PYOBJECT, )),
         "not_media_file" : (gobject.SIGNAL_RUN_LAST,
                             gobject.TYPE_NONE,
-                            (gobject.TYPE_STRING, gobject.TYPE_STRING)),
+                            (gobject.TYPE_STRING, gobject.TYPE_STRING, gobject.TYPE_STRING)),
         "finished_analyzing" : ( gobject.SIGNAL_RUN_LAST,
                                  gobject.TYPE_NONE,
                                  (gobject.TYPE_PYOBJECT, )),
@@ -65,7 +66,7 @@ class Discoverer(gobject.GObject):
                     ( )),
         "starting" : ( gobject.SIGNAL_RUN_LAST,
                        gobject.TYPE_NONE,
-                       ( ))        
+                       ( ))
         }
 
     def __init__(self, project):
@@ -149,9 +150,14 @@ class Discoverer(gobject.GObject):
             self.fakesink.set_state(gst.STATE_NULL)
         if self.currentfactory:
             self.currentfactory.addMediaTags(self.currentTags)
-            self.emit('finished-analyzing', self.currentfactory)
+            if not self.currentfactory.length:
+                self.emit('not_media_file', self.current,
+                          _("Could not establish the duration of the file"),
+                          "")
+            else:
+                self.emit('finished-analyzing', self.currentfactory)
         elif self.error:
-            self.emit('not_media_file', self.current, self.error)
+            self.emit('not_media_file', self.current, self.error, "")
         self.currentTags = []
         self.analyzing = False
         self.current = None
