@@ -112,7 +112,7 @@ class TestTimelineComposition(unittest.TestCase):
                           self.composition.removeSource, self.source1,
                           remove_linked=False,
                           collapse_neighbours=True)
-        
+
 
     def testRemoveSourceNotCollapseNeighbourNotLinked(self):
         # [source1, source2] with auto-linked brothers
@@ -136,7 +136,7 @@ class TestTimelineComposition(unittest.TestCase):
                            self.source2.getBrother()])
         self.assertEquals(self.source1.getBrother().start, 0)
         self.assertEquals(self.source2.getBrother().start, gst.SECOND)
-        
+
 
 
 
@@ -154,7 +154,7 @@ class TestTimelineComposition(unittest.TestCase):
         # move source2 to the middle position
         self.composition.moveSource(self.source3, 1)
         self.assertEquals(self.composition.condensed,
-                          [self.source1, self.source3, self.source2])        
+                          [self.source1, self.source3, self.source2])
         self.assertEquals(self.source1.start, 0)
         self.assertEquals(self.source3.start, gst.SECOND)
         self.assertEquals(self.source2.start, 2 * gst.SECOND)
@@ -297,7 +297,7 @@ class TestTimelineComposition(unittest.TestCase):
 
         self.composition.appendSource(self.source3, auto_linked=False)
         self.assertEquals(self.composition.condensed,
-                          [self.source1, self.source2, self.source3])        
+                          [self.source1, self.source2, self.source3])
         self.assertEquals(self.othercomposition.condensed,
                           [])
 
@@ -318,15 +318,15 @@ class TestTimelineComposition(unittest.TestCase):
 
         self.composition.appendSource(self.source3, auto_linked=True)
         self.assertEquals(self.composition.condensed,
-                          [self.source1, self.source2, self.source3])        
+                          [self.source1, self.source2, self.source3])
         brother3 = self.source3.getBrother()
         self.assertEquals(self.othercomposition.condensed,
-                          [brother1, brother2, brother3])        
+                          [brother1, brother2, brother3])
 
 
     def testInsertSourceAfter(self):
         # we want to end up with [source1, source2, source3]
-        
+
         # first add source2 (after nothing)
         self.composition.insertSourceAfter(self.source2, None)
         self.assertEquals(self.composition.condensed,
