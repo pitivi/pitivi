@@ -11,23 +11,29 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-04-07 08:57+0200\n"
-"PO-Revision-Date: 2007-04-07 08:59+0200\n"
+"POT-Creation-Date: 2007-05-05 08:20+0200\n"
+"PO-Revision-Date: 2007-05-05 08:40+0200\n"
 "Last-Translator: Stéphane Raimbault <stephane.raimbault@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../pitivi/ui/filelisterrordialog.py:61
-msgid "File"
-msgstr "Fichier"
-
-#: ../pitivi/ui/filelisterrordialog.py:67
-msgid "Reason"
-msgstr "Cause"
-
-#: ../pitivi/ui/filelisterrordialog.py:71
+#. self._setUpTreeView()
+#. def _setUpTreeView(self):
+#. self.storemodel = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING)
+#. self.treeview.set_model(self.storemodel)
+#. txtcell = gtk.CellRendererText()
+#. txtcell.set_property("ellipsize", pango.ELLIPSIZE_START)
+#. uricol = gtk.TreeViewColumn(_("File"), txtcell, text=0)
+#. uricol.set_expand(True)
+#. self.treeview.append_column(uricol)
+#. txtcell2 = gtk.CellRendererText()
+#. txtcell2.set_property("ellipsize", pango.ELLIPSIZE_END)
+#. reasoncol = gtk.TreeViewColumn(_("Reason"), txtcell2, text=1)
+#. reasoncol.set_expand(True)
+#. self.treeview.append_column(reasoncol)
+#: ../pitivi/ui/filelisterrordialog.py:72
 msgid "Unknown reason"
 msgstr "Cause inconnue"
 
@@ -52,7 +58,7 @@ msgid "Author"
 msgstr "Auteur"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:568 ../pitivi/ui/sourcefactories.py:613
+#: ../pitivi/ui/sourcefactories.py:535 ../pitivi/ui/sourcefactories.py:580
 msgid "Description"
 msgstr "Description"
 
@@ -85,7 +91,7 @@ msgid "Modify"
 msgstr "Modifier"
 
 #: ../pitivi/ui/encodingdialog.glade.h:7
-msgid "Output File:"
+msgid "Output file:"
 msgstr "Fichier de sortie :"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:1
@@ -215,7 +221,7 @@ msgid "Width:"
 msgstr "Largeur :"
 
 #: ../pitivi/ui/exportsettingswidget.py:331
-msgid "Export Settings"
+msgid "Export settings"
 msgstr "Exporter les paramètres"
 
 #. set title and frame label
@@ -235,82 +241,111 @@ msgstr "Piste vidéo"
 msgid "Empty"
 msgstr "Vide"
 
-#: ../pitivi/ui/mainwindow.py:80
+#: ../pitivi/ui/mainwindow.py:140
 msgid "Create a new project"
 msgstr "Crée un nouveau projet"
 
-#: ../pitivi/ui/mainwindow.py:81
+#: ../pitivi/ui/mainwindow.py:141
 msgid "Open an existing project"
 msgstr "Ouvre un projet existant"
 
-#: ../pitivi/ui/mainwindow.py:82 ../pitivi/ui/mainwindow.py:83
+#: ../pitivi/ui/mainwindow.py:142 ../pitivi/ui/mainwindow.py:143
 msgid "Save the current project"
 msgstr "Enregistre le projet actuel"
 
-#: ../pitivi/ui/mainwindow.py:84 ../pitivi/ui/projectsettings.glade.h:4
-msgid "Project Settings"
+#: ../pitivi/ui/mainwindow.py:144
+msgid "Project settings"
 msgstr "Paramètres du projet"
 
-#: ../pitivi/ui/mainwindow.py:84
+#: ../pitivi/ui/mainwindow.py:144
 msgid "Edit the project settings"
 msgstr "Configure les paramètres du projet"
 
-#: ../pitivi/ui/mainwindow.py:85
-msgid "_Import Sources..."
-msgstr "_Importer des sources..."
+#: ../pitivi/ui/mainwindow.py:145
+msgid "_Import clips..."
+msgstr "_Importer des séquences..."
 
-#: ../pitivi/ui/mainwindow.py:85
-msgid "Import sources to use"
-msgstr "Importe des sources à exploiter"
+#: ../pitivi/ui/mainwindow.py:145
+msgid "Import clips to use"
+msgstr "Importe des séquences pour les utiliser"
 
-#: ../pitivi/ui/mainwindow.py:86
-msgid "_Import Folder of sources..."
-msgstr "_Importer un dossier de sources..."
+#: ../pitivi/ui/mainwindow.py:146
+msgid "_Import folder of clips..."
+msgstr "_Importer un dossier de séquences..."
 
-#: ../pitivi/ui/mainwindow.py:86
-msgid "Import folder of sources to use"
-msgstr "Importe un dossier de sources à exploiter"
+#: ../pitivi/ui/mainwindow.py:146
+msgid "Import folder of clips to use"
+msgstr "Importe un dossier de séquences pour les utiliser"
 
-#: ../pitivi/ui/mainwindow.py:88
-msgid "View the main window on the whole screen"
-msgstr "Affiche la fenêtre principale en plein écran"
+#: ../pitivi/ui/mainwindow.py:147
+msgid "_Render project"
+msgstr "_Rendu du projet"
 
-#: ../pitivi/ui/mainwindow.py:89
+#: ../pitivi/ui/mainwindow.py:147
+msgid "Render project"
+msgstr "Rendu du projet"
+
+#: ../pitivi/ui/mainwindow.py:149
 #, python-format
 msgid "Information about %s"
 msgstr "Informations sur %s"
 
-#: ../pitivi/ui/mainwindow.py:90
+#: ../pitivi/ui/mainwindow.py:150
 msgid "_File"
 msgstr "_Fichier"
 
-#: ../pitivi/ui/mainwindow.py:91
+#: ../pitivi/ui/mainwindow.py:151
 msgid "_View"
 msgstr "_Affichage"
 
-#: ../pitivi/ui/mainwindow.py:92
+#: ../pitivi/ui/mainwindow.py:152
 msgid "_Help"
 msgstr "Aid_e"
 
-#: ../pitivi/ui/mainwindow.py:96
-msgid "Advanced Vie_w"
+#: ../pitivi/ui/mainwindow.py:156
+msgid "Advanced vie_w"
 msgstr "Afficha_ge avancé"
 
-#: ../pitivi/ui/mainwindow.py:96
+#: ../pitivi/ui/mainwindow.py:156
 msgid "Switch to advanced view"
 msgstr "Bascule en affichage avancé"
 
-#: ../pitivi/ui/mainwindow.py:240
+#: ../pitivi/ui/mainwindow.py:157
+msgid "View the main window on the whole screen"
+msgstr "Affiche la fenêtre principale en plein écran"
+
+#: ../pitivi/ui/mainwindow.py:315
 msgid "Contributors:"
 msgstr "Contributeurs :"
 
-#: ../pitivi/ui/mainwindow.py:244
+#: ../pitivi/ui/mainwindow.py:319
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
 msgstr ""
 "GNU Lesser General Public Licence\n"
 "Voir http://www.gnu.org/copyleft/lesser.html pour plus de détails"
+
+#: ../pitivi/ui/mainwindow.py:377
+msgid "Choose file to render to"
+msgstr "Choisissez le fichier cible du rendu"
+
+#: ../pitivi/ui/mainwindow.py:399
+#, python-format
+msgid "Finished in %dm%ds"
+msgstr "Terminé dans %d m %d s"
+
+#: ../pitivi/ui/mainwindow.py:409
+msgid "Rendering"
+msgstr "Rendu en cours"
+
+#: ../pitivi/ui/mainwindow.py:412
+msgid "Couldn't start rendering"
+msgstr "Impossible de démarrer le rendu"
+
+#: ../pitivi/ui/mainwindow.py:433
+msgid "Rendering Complete"
+msgstr "Rendu terminé"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
@@ -324,110 +359,100 @@ msgstr "Description :"
 msgid "Name:"
 msgstr "Nom :"
 
+#: ../pitivi/ui/projectsettings.glade.h:4
+msgid "Project Settings"
+msgstr "Paramètres du projet"
+
 #: ../pitivi/ui/projectsettings.glade.h:5
 msgid "The name of your project."
 msgstr "Le nom de votre projet."
 
-#: ../pitivi/ui/sourcefactories.py:110
-msgid "Add Sources..."
-msgstr "Ajouter des sources..."
-
-#: ../pitivi/ui/sourcefactories.py:111
-msgid "Add Folder of Sources..."
-msgstr "Ajouter un dossier de sources..."
+#: ../pitivi/ui/sourcefactories.py:70
+msgid "Clips"
+msgstr "Séquences"
 
 #: ../pitivi/ui/sourcefactories.py:112
-msgid "Remove Sources..."
-msgstr "Supprimer des sources..."
+msgid "Add Clips..."
+msgstr "Ajouter des séquences..."
 
-#: ../pitivi/ui/sourcefactories.py:113
-msgid "Play"
-msgstr "Jouer"
+#: ../pitivi/ui/sourcefactories.py:117
+msgid "Remove Clip"
+msgstr "Retirer une séquence"
 
-#: ../pitivi/ui/sourcefactories.py:141
+#: ../pitivi/ui/sourcefactories.py:121
+msgid "Play Clip"
+msgstr "Lire une séquence"
+
+#: ../pitivi/ui/sourcefactories.py:146
 msgid "Icon"
 msgstr "Icône"
 
-#: ../pitivi/ui/sourcefactories.py:150
+#: ../pitivi/ui/sourcefactories.py:155
 msgid "Information"
 msgstr "Informations"
 
-#: ../pitivi/ui/sourcefactories.py:159
+#: ../pitivi/ui/sourcefactories.py:166
 msgid "Duration"
 msgstr "Durée"
 
-#: ../pitivi/ui/sourcefactories.py:171
-msgid "Add Folder"
-msgstr "Ajouter dossier"
-
-#: ../pitivi/ui/sourcefactories.py:207
+#: ../pitivi/ui/sourcefactories.py:188
 msgid ""
-"<b>Import your clips by dragging them here or by using buttons below.</b>"
-msgstr ""
-"<b>Importez vos clips en les glissant ici ou en utilisant les boutons ci-"
-"dessous.</b>"
+"<span size='x-large'>Import your clips by dragging them here or by using the "
+"buttons above.</span>"
+msgstr "<span size='x-large'>Importez vos séquences en les glissant ici ou en utilisant les boutons ci-dessous.</span>"
 
-#: ../pitivi/ui/sourcefactories.py:308
+#: ../pitivi/ui/sourcefactories.py:294
 msgid "Import a folder"
 msgstr "Importer un dossier"
 
-#: ../pitivi/ui/sourcefactories.py:311
-msgid "Import a file"
-msgstr "Importer un fichier"
+#: ../pitivi/ui/sourcefactories.py:297
+msgid "Import a clip"
+msgstr "Importer une séquence"
 
-#: ../pitivi/ui/sourcefactories.py:387
-msgid "Error while analyzing files"
-msgstr "Erreur lors de l'analyse des fichiers"
-
-#: ../pitivi/ui/sourcefactories.py:388
-msgid "The following files weren't discovered properly."
-msgstr "Les fichiers suivants n'ont pas été découverts correctement."
-
-#: ../pitivi/ui/sourcefactories.py:562 ../pitivi/ui/sourcefactories.py:607
+#: ../pitivi/ui/sourcefactories.py:529 ../pitivi/ui/sourcefactories.py:574
 msgid "Name"
 msgstr "Nom"
 
-#: ../pitivi/ui/timelineobjects.py:499
+#: ../pitivi/ui/sourcefactories.py:622
+msgid "Importing clips..."
+msgstr "Importation des séquences..."
+
+#: ../pitivi/ui/sourcefactories.py:623
+msgid "Error(s) occured while importing"
+msgstr "Erreur(s) survenue(s) durant l'importation"
+
+#: ../pitivi/ui/sourcefactories.py:624
+msgid "An error occured while importing"
+msgstr "Un erreur a eu lieu lors de l'importation"
+
+#: ../pitivi/ui/sourcefactories.py:710
+msgid "Error while analyzing files"
+msgstr "Erreur lors de l'analyse des fichiers"
+
+#: ../pitivi/ui/sourcefactories.py:711
+msgid "The following files can not be used with PiTiVi."
+msgstr "Les fichiers suivants ne peuvent pas être utilisés par PiTiVi."
+
+#: ../pitivi/ui/timelineobjects.py:495
 msgid "Close"
 msgstr "Fermer"
 
-#: ../pitivi/ui/timelineobjects.py:569
+#: ../pitivi/ui/timelineobjects.py:565
 msgid "Remove"
 msgstr "Retirer"
 
-#: ../pitivi/ui/timelineobjects.py:572
+#: ../pitivi/ui/timelineobjects.py:568
 msgid "Edit"
 msgstr "Éditer"
 
-#: ../pitivi/ui/timeline.py:97
-msgid "Start working with your project by dragging clips here"
-msgstr "Commencez à travailler sur votre projet en glissant des clips ici"
-
-#: ../pitivi/ui/viewer.py:552
-msgid "Choose file to render to"
-msgstr "Choisissez le fichier cible du rendu"
-
-#: ../pitivi/ui/viewer.py:572
-#, python-format
-msgid "Finished in %dm%ds"
-msgstr "Terminé dans %dm%ds"
-
-#: ../pitivi/ui/viewer.py:582
-msgid "Rendering"
-msgstr "Calcul du rendu en cours"
-
-#: ../pitivi/ui/viewer.py:584
-msgid "Couldn't start rendering"
-msgstr "Impossible de démarrer le rendu"
-
-#: ../pitivi/ui/viewer.py:605
-msgid "Rendering Complete"
-msgstr "Rendu terminé"
+#: ../pitivi/ui/timeline.py:99
+msgid "Add clips to the timeline by dragging them here."
+msgstr "Ajoutez des séquences à la chronologie en les glissant ici."
 
 #: ../pitivi/check.py:117
 #, python-format
 msgid "%s is already running!"
-msgstr "%s est déjà en cours d'exécution !"
+msgstr "%s est déjà en cours d'exécution."
 
 #: ../pitivi/check.py:118
 #, python-format
@@ -608,12 +633,12 @@ msgstr "<b>Format audio inconnu :</b> %s"
 msgid "<b>Text:</b> %s"
 msgstr "<b>Texte :</b> %s"
 
-#: ../pitivi/pitivi.py:82
+#: ../pitivi/pitivi.py:84
 #, python-format
 msgid "There is already a %s instance, inform developers"
-msgstr "Il y a déjà une instance de %s, informez les développeurs"
+msgstr "Il y a déjà une instance de %s, veuillez informer les développeurs"
 
-#: ../pitivi/pitivi.py:88 ../pitivi/pitivi.py:128
+#: ../pitivi/pitivi.py:94 ../pitivi/pitivi.py:134
 msgid "New Project"
 msgstr "Nouveau projet"
 
@@ -662,15 +687,15 @@ msgstr "Il y a un problème avec le périphérique de sortie audio"
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s ne gère pas encore les projets non présents localement"
 
-#: ../pitivi/settings.py:75
+#: ../pitivi/settings.py:123
 msgid "Export Settings\n"
 msgstr "Paramètres d'exportation\n"
 
-#: ../pitivi/settings.py:76
+#: ../pitivi/settings.py:124
 msgid "Video :"
 msgstr "Vidéo :"
 
-#: ../pitivi/settings.py:78
+#: ../pitivi/settings.py:126
 msgid ""
 "\n"
 "Audio :"
@@ -678,7 +703,7 @@ msgstr ""
 "\n"
 "Audio :"
 
-#: ../pitivi/settings.py:80
+#: ../pitivi/settings.py:128
 msgid ""
 "\n"
 "Muxer :"
