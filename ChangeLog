@@ -1,5 +1,10 @@
 2007-05-07  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/filelisterrordialog.py:
+	First try at using gtk.TextView for error information.
+
+2007-05-07  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/discoverer.py:
 	* pitivi/ui/filelisterrordialog.py:
 	* pitivi/ui/sourcefactories.py:

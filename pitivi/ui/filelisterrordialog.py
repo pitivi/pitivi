@@ -66,13 +66,38 @@ class FileListErrorDialog(GladeWindow):
         if uri[:7] == "file://":
             uri = uri[7:]
         exp = gtk.Expander(uri)
+        
+        textbuffer = gtk.TextBuffer()
+        table = textbuffer.get_tag_table()
+        boldtag = gtk.TextTag()
+        boldtag.props.weight = pango.WEIGHT_BOLD
+        table.add(boldtag)
+
+        # <b>URI :</b> % uri
+        end = textbuffer.get_end_iter()
+        textbuffer.insert_with_tags(end, _("URI : "), boldtag)
+ 
+        end = textbuffer.get_end_iter()
+        textbuffer.insert(end, "%s\n" % uri)
+
+        end = textbuffer.get_end_iter()
+        textbuffer.insert_with_tags(end, _("Problem : "), boldtag)
+
+        end = textbuffer.get_end_iter()
+        textbuffer.insert(end, "%s\n" % reason)
+
         if extra:
-            label = gtk.Label("%s\n%s" % (reason, extra))
-        else:
-            label = gtk.Label(reason)
-        label.set_alignment(0.0, 0.5)
-        label.set_line_wrap(True)
-        exp.add(label)
+            end = textbuffer.get_end_iter()
+            textbuffer.insert_with_tags(end, _("Extra information : "), boldtag)
+            
+            end = textbuffer.get_end_iter()
+            textbuffer.insert(end, "%s\n" % reason)
+
+        textview = gtk.TextView(textbuffer)
+        textview.set_wrap_mode(gtk.WRAP_WORD)
+
+        exp.add(textview)
+
         return exp
 
     def isVisible(self):
