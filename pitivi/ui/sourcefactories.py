@@ -474,11 +474,30 @@ class SourceListWidget(gtk.VBox):
 
     def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
                            unused_y, selection, targetType, unused_time):
+        def isfile(path):
+            if path[:7] == "file://":
+                # either it's on local system and we know if it's a directory
+                return os.path.isfile(path[7:])
+            elif "://" in path:
+                # or it's not, in which case we assume it's a file
+                return True
+            # or it's on local system with "file://"
+            return os.path.isfile(path)
+
         gst.debug("targetType:%d, selection.data:%r" % (targetType, selection.data))
+        directories = []
         if targetType == dnd.TYPE_URI_LIST:
-            filenames = [x.strip('\x00') for x in selection.data.strip().split("\r\n") if x.strip('\x00')]
+            incoming = [x.strip('\x00') for x in selection.data.strip().split("\r\n") if x.strip('\x00')]
+            filenames = [x for x in incoming if isfile(x)]
+            directories = [x for x in incoming if not isfile(x)]
         elif targetType == dnd.TYPE_TEXT_PLAIN:
-            filenames = [selection.data.strip()]
+            incoming = selection.data.strip()
+            if isfile(incoming):
+                filenames = [incoming]
+            else:
+                directories = [incoming]
+        if directories:
+            self.addFolders(directories)
         self.addFiles(filenames)
 
     def _dndTreeBeginCb(self, unused_widget, context):

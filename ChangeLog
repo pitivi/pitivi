@@ -1,3 +1,8 @@
+2007-05-07  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Sort files from folders when receiving dropped uris.
+
 2007-05-01  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/Makefile.am:
