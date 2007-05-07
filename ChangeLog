@@ -1,5 +1,13 @@
 2007-05-07  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/discoverer.py:
+	* pitivi/ui/filelisterrordialog.py:
+	* pitivi/ui/sourcefactories.py:
+	Use the extra information field for 'not-media-file' signals.
+	UI cleanups will follow soon.
+
+2007-05-07  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/sourcefactories.py:
 	Sort files from folders when receiving dropped uris.
 

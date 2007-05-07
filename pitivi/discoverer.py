@@ -87,6 +87,7 @@ class Discoverer(gobject.GObject):
         self.timeoutid = 0
         self.signalsid = []
         self.error = None # reason for error
+        self.extrainfo = None # extra information about the error
         self.fakesink = None
 
     def addFile(self, filename):
@@ -148,16 +149,16 @@ class Discoverer(gobject.GObject):
         gst.info("after setting to NULL : %s" % res)
         if self.fakesink:
             self.fakesink.set_state(gst.STATE_NULL)
-        if self.currentfactory:
+        if self.error:
+            self.emit('not_media_file', self.current, self.error, self.extrainfo)
+        elif self.currentfactory:
             self.currentfactory.addMediaTags(self.currentTags)
             if not self.currentfactory.length:
                 self.emit('not_media_file', self.current,
-                          _("Could not establish the duration of the file"),
-                          "")
+                          _("Could not establish the duration of the file."),
+                          _("This clip seems to be in a format which cannot be accessed in a random fashion."))
             else:
                 self.emit('finished-analyzing', self.currentfactory)
-        elif self.error:
-            self.emit('not_media_file', self.current, self.error, "")
         self.currentTags = []
         self.analyzing = False
         self.current = None
@@ -166,6 +167,8 @@ class Discoverer(gobject.GObject):
         self.fakesink = None
         self.prerolled = False
         self.nomorepads = False
+        self.error = None
+        self.extrainfo = None
 
         # restart an analysis if there's more...
         if self.queue:
@@ -197,7 +200,8 @@ class Discoverer(gobject.GObject):
         if not source:
             gst.warning("This is not a media file : %s" % self.current)
             if not self.error:
-                self.error = "Couldn't construct pipeline."
+                self.error = _("Couldn't construct pipeline.")
+                self.extrainfo = _("GStreamer does not have an element to handle files coming from this type of file system.")
             gobject.idle_add(self._finishAnalysis)
             return False
         if os.getenv("USE_DECODEBIN2"):
@@ -222,7 +226,7 @@ class Discoverer(gobject.GObject):
         gst.info("setting pipeline to PAUSED")
         if self.pipeline.set_state(gst.STATE_PAUSED) == gst.STATE_CHANGE_FAILURE:
             if not self.error:
-                self.error = "Pipeline didn't want to go to PAUSED"
+                self.error = _("Pipeline didn't want to go to PAUSED.")
             gst.info("pipeline didn't want to go to PAUSED")
             gobject.idle_add(self._finishAnalysis)
             return False
@@ -250,7 +254,7 @@ class Discoverer(gobject.GObject):
                         gst.log("pipeline has gone to PAUSED, now pushing to PLAYING")
                         if self.pipeline.set_state(gst.STATE_PLAYING) == gst.STATE_CHANGE_FAILURE:
                             if not self.error:
-                                self.error = "Pipeline didn't want to go to PLAYING"
+                                self.error = _("Pipeline didn't want to go to PLAYING.")
                             gst.info("Pipeline didn't want to go to playing")
                             gobject.idle_add(self._finishAnalysis)
                     elif self.nomorepads:
@@ -274,6 +278,9 @@ class Discoverer(gobject.GObject):
             gst.debug("Element message %s" % message.structure.to_string())
             if message.structure.get_name() == "redirect":
                 gst.warning("We don't implement redirections currently, ignoring file")
+                if not self.error:
+                    self.error = _("File contains a redirection to another clip.")
+                    self.extrainfo = _("PiTiVi does not currently does not handle redirection files.")
                 gobject.idle_add(self._finishAnalysis)
         elif message.type == gst.MESSAGE_TAG:
             gst.debug("Got tags %s" % message.structure.to_string())
@@ -281,11 +288,12 @@ class Discoverer(gobject.GObject):
         else:
             gst.log("%s:%s" % ( message.type, message.src))
 
-    def _handleError(self, gerror, unused_detail, unused_source):
+    def _handleError(self, gerror, detail, unused_source):
         gst.warning("got an ERROR")
         
         if not self.error:
-            self.error = "An error occured while analyzing this file : %s" % gerror.message
+            self.error = _("An internal error occured while analyzing this file : %s") % gerror.message
+            self.extrainfo = detail
 
         self.thisdone = True
         self.currentfactory = None
@@ -388,7 +396,8 @@ class Discoverer(gobject.GObject):
         if not self.currentfactory or (not self.currentfactory.is_audio and not self.currentfactory.is_video):
             gst.warning("got unknown pad without anything else")
             if not self.error:
-                self.error = "Got unknown stream type : %s" % caps.to_string()
+                self.error = _("Got unknown stream type : %s") % caps.to_string()
+                self.extrainfo = _("You are missing an element to handle this media type.")
             gobject.idle_add(self._finishAnalysis)
 
     def _newDecodedPadCb(self, element, pad, is_last):
@@ -413,6 +422,7 @@ class Discoverer(gobject.GObject):
                     gst.warning("couldn't find a usable pad")
                     if not self.error:
                         self.error = "Got unknown stream type : %s" % capsstr
+                        self.extrainfo = _("You are missing an element to handle this media type.")
                     gobject.idle_add(self._finishAnalysis)
 
     def _noMorePadsCb(self, unused_element):

@@ -731,7 +731,7 @@ class InfoStub(gtk.HBox):
         dbox.connect("close", self._errorDialogBoxCloseCb)
         dbox.connect("response", self._errorDialogBoxResponseCb)
         for uri,reason,extra in self.errors:
-            dbox.addFailedFile(uri, reason)
+            dbox.addFailedFile(uri, reason, extra)
         dbox.show()
         # reset error list
         self.errors = []

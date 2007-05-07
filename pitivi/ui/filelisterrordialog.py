@@ -49,40 +49,29 @@ class FileListErrorDialog(GladeWindow):
         self.widgets["headline"].set_text(headline)
         self.window.set_title(title)
         self.errorvbox = self.widgets["errorvbox"]
-#        self.treeview = self.widgets["treeview"]
-        self.window.set_geometry_hints(min_width=400)
-#         self._setUpTreeView()
-
-#     def _setUpTreeView(self):
-#         self.storemodel = gtk.ListStore(gobject.TYPE_STRING, gobject.TYPE_STRING)
-#         self.treeview.set_model(self.storemodel)
-
-#         txtcell = gtk.CellRendererText()
-#         txtcell.set_property("ellipsize", pango.ELLIPSIZE_START)
-#         uricol = gtk.TreeViewColumn(_("File"), txtcell, text=0)
-#         uricol.set_expand(True)
-#         self.treeview.append_column(uricol)
-
-#         txtcell2 = gtk.CellRendererText()
-#         txtcell2.set_property("ellipsize", pango.ELLIPSIZE_END)
-#         reasoncol = gtk.TreeViewColumn(_("Reason"), txtcell2, text=1)
-#         reasoncol.set_expand(True)
-#         self.treeview.append_column(reasoncol)
+        self.window.set_geometry_hints(min_width=400, min_height=200)
 
     def addFailedFile(self, uri, reason=_("Unknown reason"), extra=None):
         """Add the given uri to the list of failed files. You can optionnaly
         give a string identifying the reason why the file failed to be
         discovered
         """
-        gst.debug("Uri:%s, reason:%s" % (uri, reason))
-        exp = self._createFileExpander(uri, reason)
+        gst.debug("Uri:%s, reason:%s, extra:%s" % (uri, reason, extra))
+        exp = self._createFileExpander(uri, reason, extra)
         self.errorvbox.pack_start(exp)
         exp.show_all()
         #self.storemodel.append([str(uri), str(reason)])
 
-    def _createFileExpander(self, uri, reason):
+    def _createFileExpander(self, uri, reason, extra=None):
+        if uri[:7] == "file://":
+            uri = uri[7:]
         exp = gtk.Expander(uri)
-        label = gtk.Label(reason)
+        if extra:
+            label = gtk.Label("%s\n%s" % (reason, extra))
+        else:
+            label = gtk.Label(reason)
+        label.set_alignment(0.0, 0.5)
+        label.set_line_wrap(True)
         exp.add(label)
         return exp
 
