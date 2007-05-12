@@ -1,3 +1,10 @@
+2007-05-12  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/filelisterrordialog.py:
+	more cleanup
+	* pitivi/ui/sourcefactories.py:
+	Emit signal so InfoStub can be properly removed.
+
 2007-05-07  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/filelisterrordialog.py:

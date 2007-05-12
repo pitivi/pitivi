@@ -65,7 +65,7 @@ class FileListErrorDialog(GladeWindow):
     def _createFileExpander(self, uri, reason, extra=None):
         if uri[:7] == "file://":
             uri = uri[7:]
-        exp = gtk.Expander(uri)
+        exp = gtk.Expander(uri.split('/')[-1])
         
         textbuffer = gtk.TextBuffer()
         table = textbuffer.get_tag_table()
@@ -91,7 +91,7 @@ class FileListErrorDialog(GladeWindow):
             textbuffer.insert_with_tags(end, _("Extra information : "), boldtag)
             
             end = textbuffer.get_end_iter()
-            textbuffer.insert(end, "%s\n" % reason)
+            textbuffer.insert(end, "%s\n" % extra)
 
         textview = gtk.TextView(textbuffer)
         textview.set_wrap_mode(gtk.WRAP_WORD)

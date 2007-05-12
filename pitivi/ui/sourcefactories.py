@@ -736,6 +736,7 @@ class InfoStub(gtk.HBox):
         # reset error list
         self.errors = []
         self.hide()
+        self.emit("remove-me")
 
     def show(self):
         gst.log("showing")
