@@ -1,3 +1,8 @@
+2007-05-15  Daniel Nylander <po@danielnylander.se>
+
+	* sv.po: Updated Swedish translation.
+	* POTFILES.in: Added missing file and sorted the list.
+	
 2007-05-05  Stéphane Raimbault  <stephane.raimbault@gmail.com>
 
 	* fr.po: Updated French translation by Jonathan Ernst,

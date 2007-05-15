@@ -1,12 +1,19 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
 # [encoding: UTF-8]
-pitivi/ui/filelisterrordialog.glade
-pitivi/ui/filelisterrordialog.py
+pitivi/check.py
+pitivi/discoverer.py
+pitivi/objectfactory.py
+pitivi/pitivi.py
+pitivi/playground.py
+pitivi/project.py
+pitivi/settings.py
 pitivi/ui/elementsettingsdialog.glade
 pitivi/ui/encodingdialog.glade
 pitivi/ui/exportsettingswidget.glade
 pitivi/ui/exportsettingswidget.py
+pitivi/ui/filelisterrordialog.glade
+pitivi/ui/filelisterrordialog.py
 pitivi/ui/gstwidget.py
 pitivi/ui/infolayer.py
 pitivi/ui/mainwindow.py
@@ -15,9 +22,3 @@ pitivi/ui/sourcefactories.py
 pitivi/ui/timelineobjects.py
 pitivi/ui/timeline.py
 pitivi/ui/viewer.py
-pitivi/check.py
-pitivi/objectfactory.py
-pitivi/pitivi.py
-pitivi/playground.py
-pitivi/project.py
-pitivi/settings.py
