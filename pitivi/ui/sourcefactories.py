@@ -724,10 +724,14 @@ class InfoStub(gtk.HBox):
         dialog.destroy()
 
     def _questionButtonClickedCb(self, unused_button):
+        if len(self.errors) > 1:
+            msgs = (_("Error while analyzing files"),
+                    _("The following files can not be used with PiTiVi."))
+        else:
+            msgs = (_("Error while analyzing a file"),
+                    _("The following file can not be used with PiTiVi."))
         # show error dialog
-        dbox = FileListErrorDialog(
-            _("Error while analyzing files"),
-            _("The following files can not be used with PiTiVi."))
+        dbox = FileListErrorDialog(*msgs)
         dbox.connect("close", self._errorDialogBoxCloseCb)
         dbox.connect("response", self._errorDialogBoxResponseCb)
         for uri,reason,extra in self.errors:

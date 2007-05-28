@@ -1,3 +1,9 @@
+2007-05-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Set the proper title and heading on dialog box depending on whether
+	there is one OR more files that failed.
+
 2007-05-12  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/ui/filelisterrordialog.py:
