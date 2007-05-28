@@ -1,5 +1,10 @@
 2007-05-28  Edward Hervey  <edward@fluendo.com>
 
+	* configure.ac:
+	0.10.2.2 pre-release
+
+2007-05-28  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/timeline/source.py:
 	New TimelineBlankSource for audio/video blanks.
 	* pitivi/ui/timelineobjects.py:
