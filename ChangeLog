@@ -1,5 +1,12 @@
 2007-05-28  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/elements/smartscale.py:
+	Always set the pixel-aspect-ratio on the intermediate capsfilter to
+	handle video streams that don't specify the PAR (which in that case
+	defaults to 1/1).
+
+2007-05-28  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/sourcefactories.py:
 	Set the proper title and heading on dialog box depending on whether
 	there is one OR more files that failed.
