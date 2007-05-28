@@ -30,7 +30,7 @@ import gtk
 import gst
 
 import pitivi.instance as instance
-from pitivi.timeline.source import TimelineFileSource, TimelineSource
+from pitivi.timeline.source import TimelineFileSource, TimelineSource, TimelineBlankSource
 from pitivi.timeline.effects import TimelineTransition
 from pitivi.timeline.objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 from pitivi.configure import get_pixmap_dir
@@ -255,12 +255,21 @@ class SimpleTimeline(gtk.Layout):
             return
         pos = self._getNearestSourceSlot(x)
 
+        gst.debug("_got_filefactory pos : %d" % pos)
+
         # we just add it here, the drawing will be done in the condensed_list
         # callback
         source = TimelineFileSource(factory=filefactory,
                                     media_type=MEDIA_TYPE_VIDEO,
                                     name=filefactory.name)
-        gst.debug("_got_filefactory pos : %d" % pos)
+
+        # ONLY FOR SIMPLE TIMELINE : if video-only, we link a blank audio object
+        if not filefactory.is_audio:
+            audiobrother = TimelineBlankSource(factory=filefactory,
+                                               media_type=MEDIA_TYPE_AUDIO,
+                                               name=filefactory.name)
+            source.setBrother(audiobrother)
+
         if pos == -1:
             self.timeline.videocomp.appendSource(source)
         elif pos:

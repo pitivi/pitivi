@@ -1,5 +1,14 @@
 2007-05-28  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/timeline/source.py:
+	New TimelineBlankSource for audio/video blanks.
+	* pitivi/ui/timelineobjects.py:
+	When adding a video-only clip to the timeline, link a blank audio
+	brother to it to avoid issues.
+	Fixes #441784
+
+2007-05-28  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/elements/smartscale.py:
 	Always set the pixel-aspect-ratio on the intermediate capsfilter to
 	handle video streams that don't specify the PAR (which in that case

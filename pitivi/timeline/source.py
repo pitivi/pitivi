@@ -38,6 +38,29 @@ class TimelineSource(TimelineObject):
     def __init__(self, **kw):
         TimelineObject.__init__(self, **kw)
 
+class TimelineBlankSource(TimelineSource):
+    """
+    Blank source for testing purposes.
+    """
+
+    def __init__(self, **kw):
+        TimelineObject.__init__(self, **kw)
+
+    def _makeGnlObject(self):
+        if self.media_type == MEDIA_TYPE_AUDIO:
+            src = gst.element_factory_make("audiotestsrc")
+            src.set_property("volume", 0)
+        elif self.media_type == MEDIA_TYPE_VIDEO:
+            src = gst.element_factory_make("videotestsrc")
+        else:
+            gst.Error("Can only handle Audio OR Video sources")
+            return
+        gnl = gst.element_factory_make("gnlsource")
+        gnl.add(src)
+        return gnl
+
+    def getExportSettings(self):
+        return self.factory.getExportSettings()
 
 class TimelineFileSource(TimelineSource):
     """
