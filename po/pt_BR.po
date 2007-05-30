@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-28 15:44+0200\n"
+"POT-Creation-Date: 2007-05-30 12:33+0200\n"
 "PO-Revision-Date: 2006-12-29 19:29-0200\n"
 "Last-Translator: Raphael Higino <phhigino@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <gnome-l10n-br@listas.cipsga.org.br>\n"
@@ -629,7 +629,7 @@ msgstr "Mostra a janela principal na tela toda"
 msgid "Contributors:"
 msgstr "Contribuições:"
 
-#: ../pitivi/ui/mainwindow.py:319
+#: ../pitivi/ui/mainwindow.py:325
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -637,24 +637,24 @@ msgstr ""
 "Licenção Pública Geral Menor GNU (LGPL)\n"
 "See http://www.gnu.org/copyleft/lesser.html para mais detalhes"
 
-#: ../pitivi/ui/mainwindow.py:377
+#: ../pitivi/ui/mainwindow.py:383
 msgid "Choose file to render to"
 msgstr "Escolha um arquivo para o qual renderizar"
 
-#: ../pitivi/ui/mainwindow.py:399
+#: ../pitivi/ui/mainwindow.py:405
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "Terminado em %dm%ds"
 
-#: ../pitivi/ui/mainwindow.py:409
+#: ../pitivi/ui/mainwindow.py:415
 msgid "Rendering"
 msgstr "Renderizando"
 
-#: ../pitivi/ui/mainwindow.py:412
+#: ../pitivi/ui/mainwindow.py:418
 msgid "Couldn't start rendering"
 msgstr "Não foi possível começar a renderizar"
 
-#: ../pitivi/ui/mainwindow.py:433
+#: ../pitivi/ui/mainwindow.py:439
 msgid "Rendering Complete"
 msgstr "Renderização completa"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-28 15:44+0200\n"
+"POT-Creation-Date: 2007-05-30 12:33+0200\n"
 "PO-Revision-Date: 2006-10-25 08:43+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
@@ -631,7 +631,7 @@ msgstr "Näytä pääikkuna kokoruudun kokoisena"
 msgid "Contributors:"
 msgstr "Säilö:"
 
-#: ../pitivi/ui/mainwindow.py:319
+#: ../pitivi/ui/mainwindow.py:325
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -639,24 +639,24 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Lue lisää osoitteesta http://www.gnu.org/copyleft/lesser.html"
 
-#: ../pitivi/ui/mainwindow.py:377
+#: ../pitivi/ui/mainwindow.py:383
 msgid "Choose file to render to"
 msgstr "Valitse tiedosto, johon tuotetaan"
 
-#: ../pitivi/ui/mainwindow.py:399
+#: ../pitivi/ui/mainwindow.py:405
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "Valmistui ajassa %dmin %ds"
 
-#: ../pitivi/ui/mainwindow.py:409
+#: ../pitivi/ui/mainwindow.py:415
 msgid "Rendering"
 msgstr "Tuotetaan"
 
-#: ../pitivi/ui/mainwindow.py:412
+#: ../pitivi/ui/mainwindow.py:418
 msgid "Couldn't start rendering"
 msgstr "Tuottamista ei voitu aloittaa"
 
-#: ../pitivi/ui/mainwindow.py:433
+#: ../pitivi/ui/mainwindow.py:439
 msgid "Rendering Complete"
 msgstr "Tuottaminen valmistui"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.HEAD\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-28 15:44+0200\n"
+"POT-Creation-Date: 2007-05-30 12:33+0200\n"
 "PO-Revision-Date: 2006-12-23 14:03+0530\n"
 "Last-Translator: A S Alam <apbrar@gmail.com>\n"
 "Language-Team: Punjabi <fedora-trans-pa@redhat.com>\n"
@@ -614,7 +614,7 @@ msgstr "ਪੂਰੀ ਸਕਰੀਨ ਤੇ ਮੁੱਖ ਝਰੋਖਾ ਵੇ�
 msgid "Contributors:"
 msgstr "ਯੋਗਦਾਨ:"
 
-#: ../pitivi/ui/mainwindow.py:319
+#: ../pitivi/ui/mainwindow.py:325
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -622,24 +622,24 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "ਹੋਰ ਜਾਣਕਾਰੀ ਲਈ http://www.gnu.org/copyleft/lesser.html ਵੇਖੋ"
 
-#: ../pitivi/ui/mainwindow.py:377
+#: ../pitivi/ui/mainwindow.py:383
 msgid "Choose file to render to"
 msgstr "ਰੈਡਰ ਕਰਨ ਲਈ ਫਾਇਲ ਚੁਣੋ"
 
-#: ../pitivi/ui/mainwindow.py:399
+#: ../pitivi/ui/mainwindow.py:405
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "%dm%ds 'ਚ ਖਤਮ"
 
-#: ../pitivi/ui/mainwindow.py:409
+#: ../pitivi/ui/mainwindow.py:415
 msgid "Rendering"
 msgstr "ਰੈਡਰਿੰਗ"
 
-#: ../pitivi/ui/mainwindow.py:412
+#: ../pitivi/ui/mainwindow.py:418
 msgid "Couldn't start rendering"
 msgstr "ਰੈਡਰਿੰਗ ਸ਼ੁਰੂ ਨਹੀਂ ਕੀਤੀ ਜਾ ਸਕੀ"
 
-#: ../pitivi/ui/mainwindow.py:433
+#: ../pitivi/ui/mainwindow.py:439
 msgid "Rendering Complete"
 msgstr "ਰੈਡਰਿੰਗ ਮੁਕੰਮਲ ਹੋਈ"
 

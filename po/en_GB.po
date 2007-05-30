@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-torrent\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-28 15:44+0200\n"
+"POT-Creation-Date: 2007-05-30 12:33+0200\n"
 "PO-Revision-Date: 2007-05-16 08:50-0000\n"
 "Last-Translator: David Lodge <dave@cirt.net>\n"
 "Language-Team: en_GB <en@li.org>\n"
@@ -627,7 +627,7 @@ msgstr "View the main window on the whole screen"
 msgid "Contributors:"
 msgstr "Contributors:"
 
-#: ../pitivi/ui/mainwindow.py:319
+#: ../pitivi/ui/mainwindow.py:325
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -635,24 +635,24 @@ msgstr ""
 "GNU Lesser General Public Licence\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
 
-#: ../pitivi/ui/mainwindow.py:377
+#: ../pitivi/ui/mainwindow.py:383
 msgid "Choose file to render to"
 msgstr "Choose file to render to"
 
-#: ../pitivi/ui/mainwindow.py:399
+#: ../pitivi/ui/mainwindow.py:405
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "Finished in %dm%ds"
 
-#: ../pitivi/ui/mainwindow.py:409
+#: ../pitivi/ui/mainwindow.py:415
 msgid "Rendering"
 msgstr "Rendering"
 
-#: ../pitivi/ui/mainwindow.py:412
+#: ../pitivi/ui/mainwindow.py:418
 msgid "Couldn't start rendering"
 msgstr "Couldn't start rendering"
 
-#: ../pitivi/ui/mainwindow.py:433
+#: ../pitivi/ui/mainwindow.py:439
 msgid "Rendering Complete"
 msgstr "Rendering Complete"
 

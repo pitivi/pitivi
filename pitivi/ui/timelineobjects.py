@@ -574,11 +574,12 @@ class SimpleSourceWidget(gtk.DrawingArea):
         deleteitem = gtk.MenuItem(_("Remove"))
         deleteitem.connect("activate", self._deleteMenuItemCb)
         deleteitem.show()
-        edititem = gtk.MenuItem(_("Edit"))
-        edititem.connect("activate", self._editMenuItemCb)
-        edititem.show()
+        # temporarily deactivate editing for 0.10.3 release !
+#         edititem = gtk.MenuItem(_("Edit"))
+#         edititem.connect("activate", self._editMenuItemCb)
+#         edititem.show()
         self._popupMenu.append(deleteitem)
-        self._popupMenu.append(edititem)
+#        self._popupMenu.append(edititem)
 
         # drag and drop
         self.drag_source_set(gtk.gdk.BUTTON1_MASK,

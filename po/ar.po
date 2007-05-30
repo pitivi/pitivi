@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Arabic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-28 15:44+0200\n"
+"POT-Creation-Date: 2007-05-30 12:33+0200\n"
 "PO-Revision-Date: 2007-04-14 18:49+0100\n"
 "Last-Translator: Djihed Afifi <djihed@gmail.com>\n"
 "Language-Team: Arabeyes <doc@arabeyes.org>\n"
@@ -641,33 +641,33 @@ msgstr "اشمل حدّ النافذ مع صورة الشاشة"
 msgid "Contributors:"
 msgstr "المساهمون:"
 
-#: ../pitivi/ui/mainwindow.py:319
+#: ../pitivi/ui/mainwindow.py:325
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:377
+#: ../pitivi/ui/mainwindow.py:383
 #, fuzzy
 msgid "Choose file to render to"
 msgstr "اختر ملفاً لإضافته للمكتبة"
 
-#: ../pitivi/ui/mainwindow.py:399
+#: ../pitivi/ui/mainwindow.py:405
 #, fuzzy, python-format
 msgid "Finished in %dm%ds"
 msgstr "انتهى في"
 
-#: ../pitivi/ui/mainwindow.py:409
+#: ../pitivi/ui/mainwindow.py:415
 #, fuzzy
 msgid "Rendering"
 msgstr "منتظِر"
 
-#: ../pitivi/ui/mainwindow.py:412
+#: ../pitivi/ui/mainwindow.py:418
 #, fuzzy
 msgid "Couldn't start rendering"
 msgstr "تعذّر وضع وصف."
 
-#: ../pitivi/ui/mainwindow.py:433
+#: ../pitivi/ui/mainwindow.py:439
 #, fuzzy
 msgid "Rendering Complete"
 msgstr "انه المستوى"
