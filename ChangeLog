@@ -1,5 +1,11 @@
 2007-05-30  Edward Hervey  <edward@fluendo.com>
 
+	* pitivi/ui/timelineobjects.py:
+	re-activate "remove" popup button on sources now that the release is 
+	done.
+
+2007-05-30  Edward Hervey  <edward@fluendo.com>
+
 	* configure.ac:
 	Back to development cycle.
 
