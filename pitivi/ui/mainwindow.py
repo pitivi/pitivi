@@ -314,7 +314,13 @@ class PitiviMainWindow(gtk.Window):
         abt.set_website("http://www.pitivi.org/")
         authors = ["Edward Hervey <edward@fluendo.com>","",_("Contributors:"),
                    "Christophe Sauthier <christophe.sauthier@gmail.com> (i18n)",
-                   "Laszlo Pandy <laszlok2@gmail.com> (UI)", ]
+                   "Laszlo Pandy <laszlok2@gmail.com> (UI)",
+                   "Ernst Persson  <ernstp@gmail.com>",
+                   "Richard Boulton <richard@tartarus.org>",
+                   "Thibaut Girka <thibaut.girka@free.fr> (UI)",
+                   "Jeff Fortin <nekohayo@gmail.com> (UI)",
+                   "Johan Dahlin <jdahlin@async.com.br> (UI)",
+                   "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)"]
         abt.set_authors(authors)
         abt.set_license(_("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details"))
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")

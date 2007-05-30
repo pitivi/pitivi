@@ -1,5 +1,11 @@
 2007-05-30  Edward Hervey  <edward@fluendo.com>
 
+	* AUTHORS:
+	* pitivi/ui/mainwindow.py:
+	Give credit to the contributors !
+
+2007-05-30  Edward Hervey  <edward@fluendo.com>
+
 	* po/ar.po:
 	* po/ca.po:
 	* po/de.po:
