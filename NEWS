@@ -1,3 +1,14 @@
+2007 May 30 - PiTiVi 0.10.3
+
+ * Improvement of first time user experience.
+ * Frame-by-frame seeking
+ * UI improvements for usability
+ * New graphics
+ * i18n support, translated in 14 languages
+ * Critical bugfixes
+ * Unit tests
+ * Advanced view disabled by default
+
 2007 Jan 31 - PiTiVi 0.10.2
 
  * UI improvements for usability

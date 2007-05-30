@@ -1,44 +1,46 @@
-0.10.2 Release : A New Toy
---------------------------
+0.10.3 Release : Got some new t-shirts
+--------------------------------------
 
-The PiTiVi team is proud to announce the third release of the 0.10.x series of the PiTiVi opensource video editor.
+The PiTiVi team is proud to announce the fourth release of the 0.10.x series of the PiTiVi opensource video editor.
 
 The goal of this series is to allow users to test new versions often, give their feedback, and remove bugs more often.
 
 
 * Features of this release
 
+ * Improvement of first time user experience.
+ * Frame-by-frame seeking
  * UI improvements for usability
- * decodebin2 support
- * Rendering improvements
- * i18n support, translated in 12 languages
+ * New graphics
+ * i18n support, translated in 14 languages
  * Critical bugfixes
+ * Unit tests
+ * Advanced view disabled by default
+
 
 * Bugs Fixed
 
- * 353859 : [discoverer] Use 'no-more-pads' information 
- * 335699 : Pitivi fails to work if project created at wrong time 
- * 335822 : Transcoding WMV creates tiny file 
- * 335826 : Cancel and restarting rendering not possible 
- * 336332 : Can't play a file in pitivi until i scrub forward 
- * 337990 : [Tracker] Need internationalization/localization 
- * 338065 : combobox next to time is useless and should go 
- * 339994 : follow the gnome toolbar and menu settings 
- * 346584 : pitivi should have intltool and gettext support 
- * 346585 : Don't use whitespace before punctuation in pitivi messages 
- * 348232 : hang when loading an ogg 
- * 350562 : Error message when transcoding 
- * 352400 : [importing] Allow importing (sub)folders 
- * 353861 : Don't close filechooser dialog box immediatly 
- * 377117 : pitivi won't start 
- * 378865 : Windows media transcoding borks with audio 
- * 381959 : Pressing Alt-F to activate file menu toggles fullscreen 
- * 381970 : Make pitivi work uninstalled from SVN repositories 
- * 382249 : configure on ubuntu edgy fails to find pygtk 
- * 383826 : Pitivi can't scroll one 0.5 sec tic at a time 
- * 392204 : pitivi crash when objectfactory doesn't have valid thumbn... 
- * 396808 : Split up code from pitivi/ to subdirectories 
-
+ * 353857 : [feature request] Frame-by-frame seeking
+ * 383402 : Add explanatory text in empty sourcelist and timeline
+ * 403877 : Can't drag from nautilus and drop on source list
+ * 405467 : [i18n] pitivi/ui/timeline.py isn't included in translatable files
+ * 406341 : [configure] Don't stop build if runtime-dependencies are not available
+ * 415060 : various toolbar HIG fixes
+ * 416702 : Moving clips in simple view is broken
+ * 420847 : do not grow the timeline length if no clip was added or moved
+ * 421652 : render button should be in the main toolbar
+ * 421672 : remove the separator between video preview and playback controls
+ * 424228 : regression, cannot add a clip to the timeline
+ * 430686 : [Simple Timeline] Clips are not painted when switching from advanced timeline
+ * 430954 : Fix terminology and naming.
+ * 432204 : [Rendering dialog] Gettext issue, and button not disabled when rendering
+ * 432644 : [Advanced Timeline] Disable alltogether until it works
+ * 432655 : [Importing Files] Blocking and progress indication
+ * 432656 : Source List explanation message gets cropped
+ * 432682 : [Simple Timeline] Explanation message doesn't come back if we don't drop
+ * 432714 : [Source List] Remove buttons
+ * 432724 : [Simple Timeline] Don't show explanation message too soon
+ * 441784 : [Simple Timeline] Make video-only clips work
 
 * Requirements
 
@@ -50,11 +52,11 @@ The goal of this series is to allow users to test new versions often, give their
 
 * Contributors
 
- * Christophe Sauthier
  * Edward Hervey
- * Ernst Persson
- * Laszlo Pandy
- * Richard Boulton
+ * Thibaut Girka
+ * Jeff Fortin
+ * Johan Dahlin
+ * Brandon Lewis
 
 
 * Download
