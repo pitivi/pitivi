@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-30 12:33+0200\n"
-"PO-Revision-Date: 2007-05-15 19:35+0200\n"
+"POT-Creation-Date: 2007-05-31 03:28+0100\n"
+"PO-Revision-Date: 2007-06-07 22:47+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -109,33 +109,33 @@ msgstr "Asegúrese de que tiene instalados los bindings de Python para libglade"
 msgid ""
 "You do not have a recent enough version of the GTK+ Python Bindings "
 "(currently %s)"
-msgstr ""
+msgstr "No tiene una versión reciente de los bindings de Python para GTK+ (actual %s)"
 
 #: ../pitivi/check.py:146
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GStreamer Python Bindings "
 "(currently %s)"
-msgstr ""
+msgstr "No tiene una versión reciente de los bindings de Python para GStreamer (actual %s)"
 
 #: ../pitivi/check.py:150
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
-msgstr ""
+msgstr "No tiene una versión reciente de GStreamer (actual %s)"
 
 #: ../pitivi/check.py:154
 #, python-format
 msgid ""
 "You do not have a recent enough version of the Cairo Python Bindings "
 "(currently %s)"
-msgstr ""
+msgstr "No tiene una versión reciente de los bindings de Python para Cairo (actual %s)"
 
 #: ../pitivi/check.py:158
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
 "(currently %s)"
-msgstr ""
+msgstr "No tiene una versión reciente del complemento de GStreamer GNonLin (actual %s)"
 
 #: ../pitivi/discoverer.py:158
 msgid "Could not establish the duration of the file."
@@ -739,14 +739,12 @@ msgid "The following files can not be used with PiTiVi."
 msgstr "Los siguientes archivos no se pueden usar con PiTiVi."
 
 #: ../pitivi/ui/sourcefactories.py:731
-#, fuzzy
 msgid "Error while analyzing a file"
-msgstr "Error al analizar los archivos"
+msgstr "Error al analizar un archivo"
 
 #: ../pitivi/ui/sourcefactories.py:732
-#, fuzzy
 msgid "The following file can not be used with PiTiVi."
-msgstr "Los siguientes archivos no se pueden usar con PiTiVi."
+msgstr "El siguiente archivo no se puede usar con PiTiVi."
 
 #: ../pitivi/ui/timelineobjects.py:504
 msgid "Close"
@@ -756,10 +754,12 @@ msgstr "Cerrar"
 msgid "Remove"
 msgstr "Quitar"
 
-#: ../pitivi/ui/timelineobjects.py:577
+#. temporarily deactivate editing for 0.10.3 release !
+#: ../pitivi/ui/timelineobjects.py:578
 msgid "Edit"
 msgstr "Editar"
 
 #: ../pitivi/ui/timeline.py:99
 msgid "Add clips to the timeline by dragging them here."
 msgstr "Añada vídeos a la línea de tiempos arrastrándolos aquí."
+
