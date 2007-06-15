@@ -1,3 +1,8 @@
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/elements/Makefile.am: (elements_PYTHON): 
+	Add the new thumbnailsink.
+
 2007-06-14  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/elements/thumbnailsink.py:
