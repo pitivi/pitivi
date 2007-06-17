@@ -284,7 +284,7 @@ class PitiviViewer(gtk.VBox):
         if not self.currentlySeeking:
             self.currentlySeeking = True
             gobject.timeout_add(80, self._seekTimeoutCb)
-            instance.PiTiVi.playground.seekInCurrent(value, format)
+            instance.PiTiVi.playground.seekInCurrent(value, format=format)
             self._newTime(value)
         if format == gst.FORMAT_TIME:
             self.requested_time = value

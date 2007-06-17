@@ -1,3 +1,13 @@
+2007-06-17  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	(getCurrentTimePosition): added a 'onlyvideo' default parameter because
+	of issues with audio streams (namely mad/mp3).
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/viewer.py:
+	Specify format when doing a seek. Good if we add other parameters to
+	Playground.seekInCurrent() later on.
+
 2007-06-15  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/elements/Makefile.am: (elements_PYTHON): 

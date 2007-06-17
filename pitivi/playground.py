@@ -263,12 +263,21 @@ class PlayGround(gobject.GObject):
         tempbin = SmartFileBin(factory)
         return self._playTemporaryBin(tempbin)
 
-    def getCurrentTimePosition(self):
+    def getCurrentTimePosition(self, onlyvideo=True):
         """
         Returns the current position of the current bin in gst.FORMAT_TIME
         """
+        # FIXME : Yes, we're forcing by default to query the position only on
+        # the video stream. The problem is that because of some formats screwing
+        # up big time when doing accurate seek (namely mad/mp3 in avi), the
+        # position in the audiosink will be greater than the position in the
+        # videosink... and the result will be a position further than what's
+        # actually being displayed currently :(
         try:
-            cur, format = self.current.query_position(gst.FORMAT_TIME)
+            if onlyvideo:
+                cur,format = self.vsinkthread.query_position(gst.FORMAT_TIME)
+            else:
+                cur, format = self.current.query_position(gst.FORMAT_TIME)
         except:
             self.current.warning("Couldn't get position in time")
             cur = 0

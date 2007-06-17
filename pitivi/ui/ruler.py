@@ -140,7 +140,7 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
             self.currentlySeeking = True
             self.requested_time = value
             gobject.timeout_add(80, self._seekTimeoutCb)
-            instance.PiTiVi.playground.seekInCurrent(value, format)
+            instance.PiTiVi.playground.seekInCurrent(value, format=format)
         elif format == gst.FORMAT_TIME:
             self.requested_time = value
 
