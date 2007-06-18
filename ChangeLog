@@ -1,3 +1,9 @@
+2007-06-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/elements/smartscale.py:
+	Revert previous commit since it breaks a lot of behaviours :( If there's
+	no pixel-aspect-ratio in the caps, that means it's 1/1.
+
 2007-06-17  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/playground.py:

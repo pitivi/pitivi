@@ -145,9 +145,7 @@ class SmartVideoScale(gst.Bin):
         if self.darin == self.darout:
             self.log("We have same input and output caps, resetting capsfilter and videobox settings")
             # same DAR, set inputcaps on capsfilter, reset videobox values
-            astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d" % (self.widthout, self.heightout,
-                                                                    self.parout.num,
-                                                                    self.parout.denom)
+            caps = gst.caps_new_any()
             left = 0
             right = 0
             top = 0
@@ -166,9 +164,7 @@ class SmartVideoScale(gst.Bin):
                 bottom = extra - top # compensate for odd extra
                 left = right = 0
                 # calculate filter caps
-                astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d" % (self.widthout, newheight,
-                                                                        self.parout.num,
-                                                                        self.parout.denom)
+                astr = "width=%d,height=%d" % (self.widthout, newheight)
             else:
                 self.log("incoming DAR is smaller than outgoing DAR. Adding left/right borders")
                 # height, PAR stays the same as output
@@ -180,10 +176,8 @@ class SmartVideoScale(gst.Bin):
                 right = extra - left # compensate for odd extra
                 top = bottom = 0
                 # calculate filter caps
-                astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d" % (newwidth, self.heightout,
-                                                                        self.parout.num,
-                                                                        self.parout.denom)
-        caps = gst.caps_from_string("video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (astr, astr))
+                astr = "width=%d,height=%d" % (newwidth, self.heightout)
+            caps = gst.caps_from_string("video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (astr, astr))
 
         # set properties on elements
         self.debug("About to set left/right/top/bottom : %d/%d/%d/%d" % (-left, -right, -top, -bottom))
