@@ -1,3 +1,11 @@
+2007-06-30  Edward Hervey  <bilboed@bilboed.com>
+
+	* MAINTAINERS:
+	* pitivi.spec.in:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/plumber.py:
+	Changing email adress for my copyrights, since I'm no longer at Fluendo.
+
 2007-06-18  Edward Hervey  <edward@fluendo.com>
 
 	* pitivi/elements/smartscale.py:

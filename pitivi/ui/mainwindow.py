@@ -312,7 +312,7 @@ class PitiviMainWindow(gtk.Window):
         abt.set_name(APPNAME)
         abt.set_version("v%s" % pitivi_version)
         abt.set_website("http://www.pitivi.org/")
-        authors = ["Edward Hervey <edward@fluendo.com>","",_("Contributors:"),
+        authors = ["Edward Hervey <bilboed@bilboed.com>","",_("Contributors:"),
                    "Christophe Sauthier <christophe.sauthier@gmail.com> (i18n)",
                    "Laszlo Pandy <laszlok2@gmail.com> (UI)",
                    "Ernst Persson  <ernstp@gmail.com>",

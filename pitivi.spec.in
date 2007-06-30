@@ -4,7 +4,7 @@ Version:	@VERSION@
 Release:	@PACKAGE_VERSION_RELEASE@
 
 Source:		http://download.sf.net/pitivi/%{name}-%{version}.tar.gz
-Packager:	edward@fluendo.com
+Packager:	bilboed@bilboed.com
 License:	LGPL
 Group:		Applications/Multimedia
 URL:		http://www.pitivi.org/
