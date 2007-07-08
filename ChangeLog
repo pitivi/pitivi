@@ -1,3 +1,10 @@
+2007-07-08  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/timeline.py:
+	Use a gtk.Label with an eventbox instead of the previous method in order
+	to display the informational message in the timeline.
+	Fixes #405462
+
 2007-06-30  Edward Hervey  <bilboed@bilboed.com>
 
 	* MAINTAINERS:

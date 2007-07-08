@@ -27,10 +27,12 @@ Main timeline widget
 import gtk
 import gobject
 import gst
+import pango
 
 from gettext import gettext as _
 
 import pitivi.instance as instance
+import pitivi.dnd as dnd
 
 from timelineobjects import SimpleTimeline
 from complextimeline import ComplexTimelineWidget
@@ -88,35 +90,41 @@ class SimpleTimelineContentWidget(gtk.HBox):
 
     def _createUi(self):
         """ draw the GUI """
-        self.timeline = SimpleTimeline(hadjustment = self.twidget.hadjustment)
 
-        # real simple timeline
+        # (A) real simple timeline
+        self.timeline = SimpleTimeline(hadjustment = self.twidget.hadjustment)
         self.layoutframe = gtk.Frame()
         self.layoutframe.add(self.timeline)
 
-        # Explanatory message label
-        txtbuffer = gtk.TextBuffer()
-        txtbuffer.set_text(_("Add clips to the timeline by dragging them here."))
-        txttag = gtk.TextTag()
-        txttag.props.size = self.style.font_desc.get_size() * 1.5
-        txtbuffer.tag_table.add(txttag)
-        txtbuffer.apply_tag(txttag, txtbuffer.get_start_iter(),
-                            txtbuffer.get_end_iter())
-        self.messagewindow = gtk.TextView(txtbuffer)
-        self.messagewindow.set_justification(gtk.JUSTIFY_CENTER)
-        self.messagewindow.set_wrap_mode(gtk.WRAP_WORD)
-        self.messagewindow.set_pixels_above_lines(30)
-        self.messagewindow.set_cursor_visible(False)
-        self.messagewindow.set_editable(False)
-        self.messagewindow.set_left_margin(10)
-        self.messagewindow.set_right_margin(10)
-        self.messagewindow.set_size_request(-1, 120)
 
-        self.messagewindow.add_events(gtk.gdk.ENTER_NOTIFY_MASK)
+        # (B) Explanatory message label
+        self.messageframe = gtk.Frame()
+        self.messageframe.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        self.messageframe.show()
 
-        # we start with showing the hint message
-        self.pack_start(self.messagewindow)
-        self.motionSigId = self.messagewindow.connect("drag-motion", self._dragMotionCb)
+        self.textbox = gtk.EventBox()
+        self.textbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
+        self.textbox.add_events(gtk.gdk.ENTER_NOTIFY_MASK)
+        self.textbox.show()
+        self.messageframe.add(self.textbox)
+
+        txtlabel = gtk.Label()
+        txtlabel.set_padding(10, 10)
+        txtlabel.set_line_wrap(True)
+        txtlabel.set_line_wrap_mode(pango.WRAP_WORD)
+        txtlabel.set_justify(gtk.JUSTIFY_CENTER)
+        txtlabel.set_markup(
+            _("<span size='x-large'>Add clips to the timeline by dragging them here.</span>"))
+        self.textbox.add(txtlabel)
+        self.txtlabel = txtlabel
+
+        self.pack_start(self.messageframe, expand=True, fill=True)
+        self.reorder_child(self.messageframe, 0)
+        self.motionSigId = self.textbox.connect("drag-motion", self._dragMotionCb)
+        self.textbox.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
+                                   [dnd.URI_TUPLE, dnd.FILE_TUPLE],
+                                   gtk.gdk.ACTION_COPY)
+
         self.showingTimeline = False
         self._displayTimeline()
 
@@ -138,10 +146,10 @@ class SimpleTimelineContentWidget(gtk.HBox):
             if self.showingTimeline:
                 return
             gst.debug("displaying timeline")
-            self.messagewindow.disconnect(self.motionSigId)
+            self.remove(self.messageframe)
+            self.txtlabel.hide()
+            self.textbox.disconnect(self.motionSigId)
             self.motionSigId = None
-            self.remove(self.messagewindow)
-            self.messagewindow.hide()
             self.pack_start(self.layoutframe)
             self.reorder_child(self.layoutframe, 0)
             self.layoutframe.show_all()
@@ -157,8 +165,8 @@ class SimpleTimelineContentWidget(gtk.HBox):
                 self.dragLeaveSigId = None
                 self.remove(self.layoutframe)
                 self.layoutframe.hide()
-                self.pack_start(self.messagewindow)
-                self.reorder_child(self.messagewindow, 0)
-                self.messagewindow.show()
-                self.motionSigId = self.messagewindow.connect("drag-motion", self._dragMotionCb)
+                self.pack_start(self.messageframe)
+                self.reorder_child(self.messageframe, 0)
+                self.txtlabel.show()
+                self.motionSigId = self.textbox.connect("drag-motion", self._dragMotionCb)
                 self.showingTimeline = False
