@@ -27,6 +27,7 @@ Multimedia settings
 import os
 import gobject
 import gst
+import string
 
 from gettext import gettext as _
 
@@ -201,13 +202,28 @@ class ExportSettings(gobject.GObject):
         if changed:
             self.emit("encoders-changed")
 
+def list_compat(a, b):
+    for x in a:
+        if not x in b:
+            return False
+    return True
+
+def my_can_sink_caps(muxer, ocaps):
+    """ returns True if the given caps intersect with some of the muxer's
+    sink pad templates' caps.
+    """
+    sinkcaps = [x.get_caps() for x in muxer.get_static_pad_templates() if x.direction == gst.PAD_SINK]
+    for x in sinkcaps:
+        if not x.intersect(ocaps).is_empty():
+            return True
+    return False
 
 def available_muxers():
     """ return all available muxers """
     flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
     res = []
     for fact in flist:
-        if "Codec/Muxer" == fact.get_klass():
+        if list_compat(["Codec", "Muxer"], string.split(fact.get_klass(), '/')):
             res.append(fact)
     gst.log(str(res))
     return res
@@ -217,7 +233,9 @@ def available_video_encoders():
     flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
     res = []
     for fact in flist:
-        if "Codec/Encoder/Video" in fact.get_klass():
+        if list_compat(["Codec", "Encoder", "Video"], string.split(fact.get_klass(), '/')):
+            res.append(fact)
+        elif list_compat(["Codec", "Encoder", "Image"], string.split(fact.get_klass(), '/')):
             res.append(fact)
     gst.log(str(res))
     return res
@@ -227,7 +245,7 @@ def available_audio_encoders():
     flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
     res = []
     for fact in flist:
-        if "Codec/Encoder/Audio" in fact.get_klass():
+        if list_compat(["Codec", "Encoder", "Audio"], string.split(fact.get_klass(), '/')):
             res.append(fact)
     gst.log(str(res))
     return res
@@ -238,7 +256,7 @@ def encoders_muxer_compatible(encoders, muxer):
     res = []
     for encoder in encoders:
         for caps in [x.get_caps() for x in encoder.get_static_pad_templates() if x.direction == gst.PAD_SRC]:
-            if muxer.can_sink_caps(caps):
+            if my_can_sink_caps(muxer, caps):
                 res.append(encoder)
                 break
     return res
