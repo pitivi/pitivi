@@ -223,7 +223,10 @@ class FileSourceFactory(ObjectFactory):
         bin = gst.Bin("%s-%d" % (self.name, self.lastbinid))
         self.lastbinid = self.lastbinid + 1
         src = gst.element_make_from_uri(gst.URI_SRC, self.name, "file source")
-        dbin = gst.element_factory_make("decodebin")
+        try:
+            dbin = gst.element_factory_make("decodebin2")
+        except:
+            dbin = gst.element_factory_make("decodebin")
         bin.add(src, dbin)
         src.link(dbin)
 
