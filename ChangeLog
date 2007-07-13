@@ -1,3 +1,9 @@
+2007-07-13  Edward Hervey  <bilboed@bilboed.com>
+
+	Patch by: Thijs Vermeir <thijsvermeir@gmail.com>
+	* pitivi/ui/mainwindow.py:
+	Fix issues with rendering progress bar.
+
 2007-07-08  Edward Hervey  <bilboed@bilboed.com>
 
 	* pitivi/settings.py:

@@ -398,9 +398,10 @@ class EncodingDialog(GladeWindow):
 
     def _positionCb(self, unused_playground, unused_smartbin, position):
         timediff = time.time() - self.timestarted
-        self.progressbar.set_fraction(float(position) / float(self.bin.length))
-        if timediff > 5.0:
-            # only display ETA after 5s in order to have enough averaging
+        self.progressbar.set_fraction(float(min(position, self.bin.length)) / float(self.bin.length))
+        if timediff > 5.0 and position:
+            # only display ETA after 5s in order to have enough averaging and
+            # if the position is non-null
             totaltime = (timediff * float(self.bin.length) / float(position)) - timediff
             self.progressbar.set_text(_("Finished in %dm%ds") % (int(totaltime) / 60,
                                                               int(totaltime) % 60))
