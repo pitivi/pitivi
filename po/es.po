@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-31 03:28+0100\n"
-"PO-Revision-Date: 2007-06-07 22:47+0200\n"
+"POT-Creation-Date: 2007-07-09 03:32+0100\n"
+"PO-Revision-Date: 2007-08-01 00:19+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -116,7 +116,9 @@ msgstr "No tiene una versión reciente de los bindings de Python para GTK+ (actu
 msgid ""
 "You do not have a recent enough version of the GStreamer Python Bindings "
 "(currently %s)"
-msgstr "No tiene una versión reciente de los bindings de Python para GStreamer (actual %s)"
+msgstr ""
+"No tiene una versión reciente de los bindings de Python para GStreamer "
+"(actual %s)"
 
 #: ../pitivi/check.py:150
 #, python-format
@@ -128,14 +130,18 @@ msgstr "No tiene una versión reciente de GStreamer (actual %s)"
 msgid ""
 "You do not have a recent enough version of the Cairo Python Bindings "
 "(currently %s)"
-msgstr "No tiene una versión reciente de los bindings de Python para Cairo (actual %s)"
+msgstr ""
+"No tiene una versión reciente de los bindings de Python para Cairo (actual %"
+"s)"
 
 #: ../pitivi/check.py:158
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
 "(currently %s)"
-msgstr "No tiene una versión reciente del complemento de GStreamer GNonLin (actual %s)"
+msgstr ""
+"No tiene una versión reciente del complemento de GStreamer GNonLin (actual %"
+"s)"
 
 #: ../pitivi/discoverer.py:158
 msgid "Could not establish the duration of the file."
@@ -255,11 +261,11 @@ msgstr "Hay ya una instancia de %s, informe a los desarrolladores"
 msgid "New Project"
 msgstr "Proyecto nuevo"
 
-#: ../pitivi/playground.py:382
+#: ../pitivi/playground.py:391
 msgid "Video output is busy"
 msgstr "La salida de vídeo está ocupada"
 
-#: ../pitivi/playground.py:383
+#: ../pitivi/playground.py:392
 msgid ""
 "Please check that your video output device isn't already used by another "
 "application"
@@ -267,19 +273,19 @@ msgstr ""
 "Compruebe que su dispositivo de salida de vídeo no lo esté usando ya otra "
 "aplicación"
 
-#: ../pitivi/playground.py:385
+#: ../pitivi/playground.py:394
 msgid "Video output problem"
 msgstr "Problema de salida de vídeo"
 
-#: ../pitivi/playground.py:386
+#: ../pitivi/playground.py:395
 msgid "There is a problem with your video output device"
 msgstr "Hayun problema con su dispositivo de salida de vídeo"
 
-#: ../pitivi/playground.py:389
+#: ../pitivi/playground.py:398
 msgid "Audio output device is busy"
 msgstr "El dispositivo de salida de audio"
 
-#: ../pitivi/playground.py:390
+#: ../pitivi/playground.py:399
 msgid ""
 "Please check that your audio output device isn't already used by another "
 "application."
@@ -287,11 +293,11 @@ msgstr ""
 "Compruebe que su dispositivo de salida de audio no lo esté usando ya otra "
 "aplicación."
 
-#: ../pitivi/playground.py:392
+#: ../pitivi/playground.py:401
 msgid "Audio output problem"
 msgstr "Problema con la salida de sonido"
 
-#: ../pitivi/playground.py:393
+#: ../pitivi/playground.py:402
 msgid "There is a problem with your audio output device"
 msgstr "Hay un problema con su dispositivo de salida de audio"
 
@@ -300,15 +306,15 @@ msgstr "Hay un problema con su dispositivo de salida de audio"
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s no puede manipular aún proyectos no locales"
 
-#: ../pitivi/settings.py:123
+#: ../pitivi/settings.py:124
 msgid "Export Settings\n"
 msgstr "Exportar ajustes\n"
 
-#: ../pitivi/settings.py:124
+#: ../pitivi/settings.py:125
 msgid "Video :"
 msgstr "Vídeo:"
 
-#: ../pitivi/settings.py:126
+#: ../pitivi/settings.py:127
 msgid ""
 "\n"
 "Audio :"
@@ -316,7 +322,7 @@ msgstr ""
 "\n"
 "Audio:"
 
-#: ../pitivi/settings.py:128
+#: ../pitivi/settings.py:129
 msgid ""
 "\n"
 "Muxer :"
@@ -759,7 +765,7 @@ msgstr "Quitar"
 msgid "Edit"
 msgstr "Editar"
 
-#: ../pitivi/ui/timeline.py:99
-msgid "Add clips to the timeline by dragging them here."
-msgstr "Añada vídeos a la línea de tiempos arrastrándolos aquí."
+#: ../pitivi/ui/timeline.py:117
+msgid "<span size='x-large'>Add clips to the timeline by dragging them here.</span>"
+msgstr "<span size='x-large'>Añada vídeos a la línea de tiempos arrastrándolos aquí.</span>"
 
