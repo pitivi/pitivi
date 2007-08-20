@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-05-30 12:33+0200\n"
-"PO-Revision-Date: 2007-08-07 12:10+0200\n"
+"PO-Revision-Date: 2007-08-20 19:34+0200\n"
 "Last-Translator: Yannig MARCHEGAY (Kokoyaya) <yannig@marchegay.org>\n"
 "Language-Team: Occitan (post 1500) <ubuntu-l10n-oci@lists.ubuntu.com>\n"
 "MIME-Version: 1.0\n"
@@ -307,7 +307,7 @@ msgstr "<b>Autor :</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:2
 msgid "<b>Description:</b>"
-msgstr ""
+msgstr "<b>Description :</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:3
 msgid "<b>Plugin Name</b>"
@@ -475,7 +475,7 @@ msgstr ""
 
 #: ../pitivi/ui/filelisterrordialog.py:78
 msgid "URI : "
-msgstr ""
+msgstr "URI : "
 
 #: ../pitivi/ui/filelisterrordialog.py:84
 msgid "Problem : "
