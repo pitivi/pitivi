@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-08-06 17:12+0300\n"
+"POT-Creation-Date: 2007-08-23 08:39+0300\n"
 "PO-Revision-Date: 2007-02-26 22:44+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
@@ -136,54 +136,57 @@ msgstr "GNonLin gstreamer-liitännäisen versiosi on liian vanha (versio on %s)"
 
 #: ../pitivi/discoverer.py:158
 msgid "Could not establish the duration of the file."
-msgstr ""
+msgstr "Tiedoston kestoa ei voitua määrittää."
 
 #: ../pitivi/discoverer.py:159
 msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
 msgstr ""
+"Tämä tiedosto näyttää olevan muodossa, jossa sitä ei voi lukea satunnaisesti "
+"kohdasta."
 
 #: ../pitivi/discoverer.py:203
-#, fuzzy
 msgid "Couldn't construct pipeline."
-msgstr "Tuottamista ei voitu aloittaa"
+msgstr "Liukuhihnaa ei voitu luoda."
 
 #: ../pitivi/discoverer.py:204
 msgid ""
 "GStreamer does not have an element to handle files coming from this type of "
 "file system."
 msgstr ""
+"GStreamer ei sisällä elementtiä tämäntyyppisestä tiedostojärjestelmästä "
+"tuleville tiedostoille."
 
 #: ../pitivi/discoverer.py:229
 msgid "Pipeline didn't want to go to PAUSED."
-msgstr ""
+msgstr "Liukuhihna kieltäytyi pysäyttämisestä."
 
 #: ../pitivi/discoverer.py:257
 msgid "Pipeline didn't want to go to PLAYING."
-msgstr ""
+msgstr "Liukuhihna kieltäytyi toiston jatkamisesta."
 
 #: ../pitivi/discoverer.py:282
 msgid "File contains a redirection to another clip."
-msgstr ""
+msgstr "Tiedosto sisältää uudelleenohjauksen toiseen leikkeeseen."
 
 #: ../pitivi/discoverer.py:283
 msgid "PiTiVi does not currently does not handle redirection files."
-msgstr ""
+msgstr "PiTiVi ei tällä hetkellä käsittele uudelleenohjaustiedostoja."
 
 #: ../pitivi/discoverer.py:295
-#, fuzzy, python-format
+#, python-format
 msgid "An internal error occured while analyzing this file : %s"
-msgstr "Virhe analysoitaessa tiedostoja"
+msgstr "Tapahtui virhe analysoitaessa tätä tiedostoa: %s"
 
 #: ../pitivi/discoverer.py:399
 #, python-format
 msgid "Got unknown stream type : %s"
-msgstr ""
+msgstr "Saatiin tuntematon virran tyyppi: %s"
 
 #: ../pitivi/discoverer.py:400 ../pitivi/discoverer.py:425
 msgid "You are missing an element to handle this media type."
-msgstr ""
+msgstr "Tälle mediatyypille ei ole asennettu käsittelyelementtiä."
 
 #: ../pitivi/objectfactory.py:148
 #, python-format
@@ -690,11 +693,12 @@ msgid "Duration"
 msgstr "Kesto"
 
 #: ../pitivi/ui/sourcefactories.py:188
-#, fuzzy
 msgid ""
 "<span size='x-large'>Import your clips by dragging them here or by using the "
 "buttons above.</span>"
-msgstr "Tuo leikkeet raahaamalla tähän tai käyttämällä allaolevia painikkeita."
+msgstr ""
+"<span size='x-large'>Tuo leikkeet raahaamalla tähän tai käyttämällä "
+"ylläolevia painikkeita.</span>"
 
 #: ../pitivi/ui/sourcefactories.py:294
 msgid "Import a folder"
@@ -714,11 +718,11 @@ msgstr "Tuodaan  leikkeitä..."
 
 #: ../pitivi/ui/sourcefactories.py:642
 msgid "Error(s) occured while importing"
-msgstr ""
+msgstr "Tuotaeessa tapahtui virheitä"
 
 #: ../pitivi/ui/sourcefactories.py:643
 msgid "An error occured while importing"
-msgstr ""
+msgstr "Tuotaessa tapahtui virhe"
 
 #: ../pitivi/ui/sourcefactories.py:728
 msgid "Error while analyzing files"
@@ -726,16 +730,15 @@ msgstr "Virhe analysoitaessa tiedostoja"
 
 #: ../pitivi/ui/sourcefactories.py:729
 msgid "The following files can not be used with PiTiVi."
-msgstr ""
+msgstr "Seuraavia tiedostoja ei voi käyttää PiTiVi:n kanssa."
 
 #: ../pitivi/ui/sourcefactories.py:731
-#, fuzzy
 msgid "Error while analyzing a file"
-msgstr "Virhe analysoitaessa tiedostoja"
+msgstr "Virhe analysoitaessa tiedostoa"
 
 #: ../pitivi/ui/sourcefactories.py:732
 msgid "The following file can not be used with PiTiVi."
-msgstr ""
+msgstr "Seuraavaa tiedostoa ei voi käyttää PiTiVi:ssä."
 
 #: ../pitivi/ui/timelineobjects.py:504
 msgid "Close"
@@ -754,6 +757,7 @@ msgstr "Muokkaa"
 msgid ""
 "<span size='x-large'>Add clips to the timeline by dragging them here.</span>"
 msgstr ""
+"<span size='x-large'>Lisää leikkeitä aikajanalle raahaamalla ne tähän</span>"
 
 #~ msgid "File"
 #~ msgstr "Tiedosto"
