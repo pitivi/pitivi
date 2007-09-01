@@ -6,14 +6,15 @@
 # Vincent Untz <vuntz@gnome.org>, 2007.
 # Claude Paroz <claude@2xlibre.net>, 2007.
 # Stéphane Raimbault <stephane.raimbault@gmail.com>, 2007.
+# Christophe Benz <christophe.benz@gmail.com>, 2007.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-30 12:33+0200\n"
-"PO-Revision-Date: 2007-05-05 08:40+0200\n"
-"Last-Translator: Stéphane Raimbault <stephane.raimbault@gmail.com>\n"
+"POT-Creation-Date: 2007-09-01 10:08+0200\n"
+"PO-Revision-Date: 2007-08-31 12:01+0100\n"
+"Last-Translator: Christophe Benz <christophe.benz@gmail.com>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -150,54 +151,57 @@ msgstr ""
 
 #: ../pitivi/discoverer.py:158
 msgid "Could not establish the duration of the file."
-msgstr ""
+msgstr "Impossible de déterminer la durée du fichier."
 
 #: ../pitivi/discoverer.py:159
 msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
 msgstr ""
+"Cette séquence semble être codée dans un format qui n'accepte pas l'accès "
+"aléatoire."
 
 #: ../pitivi/discoverer.py:203
-#, fuzzy
 msgid "Couldn't construct pipeline."
-msgstr "Impossible de démarrer le rendu"
+msgstr "Impossible de construire le pipeline."
 
 #: ../pitivi/discoverer.py:204
 msgid ""
 "GStreamer does not have an element to handle files coming from this type of "
 "file system."
 msgstr ""
+"GStreamer n'a pas d'élément permettant de gérer les fichiers provenant de ce "
+"type de système de fichiers."
 
 #: ../pitivi/discoverer.py:229
 msgid "Pipeline didn't want to go to PAUSED."
-msgstr ""
+msgstr "Le pipeline a refusé de se mettre en mode pause (PAUSED)."
 
 #: ../pitivi/discoverer.py:257
 msgid "Pipeline didn't want to go to PLAYING."
-msgstr ""
+msgstr "Le pipeline a refusé de se mettre en mode lecture (PLAYING)."
 
 #: ../pitivi/discoverer.py:282
 msgid "File contains a redirection to another clip."
-msgstr ""
+msgstr "Le fichier contient une redirection vers une autre séquence."
 
 #: ../pitivi/discoverer.py:283
 msgid "PiTiVi does not currently does not handle redirection files."
-msgstr ""
+msgstr "PiTiVi ne gère pas encore les fichiers de redirection."
 
 #: ../pitivi/discoverer.py:295
-#, fuzzy, python-format
+#, python-format
 msgid "An internal error occured while analyzing this file : %s"
-msgstr "Erreur lors de l'analyse des fichiers"
+msgstr "Une erreur interne s'est produite lors de l'analyse de ce fichier : %s"
 
 #: ../pitivi/discoverer.py:399
 #, python-format
 msgid "Got unknown stream type : %s"
-msgstr ""
+msgstr "Type de flux inconnu : %s"
 
 #: ../pitivi/discoverer.py:400 ../pitivi/discoverer.py:425
 msgid "You are missing an element to handle this media type."
-msgstr ""
+msgstr "Il manque un élément pour gérer ce type de média."
 
 #: ../pitivi/objectfactory.py:148
 #, python-format
@@ -219,37 +223,37 @@ msgstr "<b>%s</b>"
 msgid "<small><b>File:</b> %s"
 msgstr "<small><b>Fichier :</b> %s"
 
-#: ../pitivi/objectfactory.py:415
+#: ../pitivi/objectfactory.py:418
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr "<b>Vidéo :</b> %d x %d <i>pixels</i> à %.2f <i>fps</i>"
 
-#: ../pitivi/objectfactory.py:418
+#: ../pitivi/objectfactory.py:421
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>Image :</b> %d x %d <i>pixels</i>"
 
-#: ../pitivi/objectfactory.py:421 ../pitivi/objectfactory.py:465
+#: ../pitivi/objectfactory.py:424 ../pitivi/objectfactory.py:468
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr " <i>(%s)</i>"
 
-#: ../pitivi/objectfactory.py:423
+#: ../pitivi/objectfactory.py:426
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "<b>Format vidéo inconnu :</b> %s"
 
-#: ../pitivi/objectfactory.py:462
+#: ../pitivi/objectfactory.py:465
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr "<b>Audio :</b> %d canaux à %d <i>Hz</i> (%d <i>bits</i>)"
 
-#: ../pitivi/objectfactory.py:467
+#: ../pitivi/objectfactory.py:470
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "<b>Format audio inconnu :</b> %s"
 
-#: ../pitivi/objectfactory.py:478
+#: ../pitivi/objectfactory.py:481
 #, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>Texte :</b> %s"
@@ -263,11 +267,11 @@ msgstr "Il y a déjà une instance de %s, veuillez informer les développeurs"
 msgid "New Project"
 msgstr "Nouveau projet"
 
-#: ../pitivi/playground.py:382
+#: ../pitivi/playground.py:391
 msgid "Video output is busy"
 msgstr "La sortie vidéo est déjà utilisée"
 
-#: ../pitivi/playground.py:383
+#: ../pitivi/playground.py:392
 msgid ""
 "Please check that your video output device isn't already used by another "
 "application"
@@ -275,19 +279,19 @@ msgstr ""
 "Veuillez vérifier que votre périphérique de sortie vidéo n'est pas déjà "
 "utilisé par une autre application"
 
-#: ../pitivi/playground.py:385
+#: ../pitivi/playground.py:394
 msgid "Video output problem"
 msgstr "Problème de sortie vidéo"
 
-#: ../pitivi/playground.py:386
+#: ../pitivi/playground.py:395
 msgid "There is a problem with your video output device"
 msgstr "Il y a un problème avec le périphérique de sortie vidéo"
 
-#: ../pitivi/playground.py:389
+#: ../pitivi/playground.py:398
 msgid "Audio output device is busy"
 msgstr "La sortie audio est déjà utilisée"
 
-#: ../pitivi/playground.py:390
+#: ../pitivi/playground.py:399
 msgid ""
 "Please check that your audio output device isn't already used by another "
 "application."
@@ -295,11 +299,11 @@ msgstr ""
 "Veuillez vérifier que votre périphérique de sortie audio n'est pas déjà "
 "utilisé par une autre application"
 
-#: ../pitivi/playground.py:392
+#: ../pitivi/playground.py:401
 msgid "Audio output problem"
 msgstr "Problème de sortie audio"
 
-#: ../pitivi/playground.py:393
+#: ../pitivi/playground.py:402
 msgid "There is a problem with your audio output device"
 msgstr "Il y a un problème avec le périphérique de sortie audio"
 
@@ -308,15 +312,15 @@ msgstr "Il y a un problème avec le périphérique de sortie audio"
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s ne gère pas encore les projets non présents localement"
 
-#: ../pitivi/settings.py:123
+#: ../pitivi/settings.py:124
 msgid "Export Settings\n"
 msgstr "Paramètres d'exportation\n"
 
-#: ../pitivi/settings.py:124
+#: ../pitivi/settings.py:125
 msgid "Video :"
 msgstr "Vidéo :"
 
-#: ../pitivi/settings.py:126
+#: ../pitivi/settings.py:127
 msgid ""
 "\n"
 "Audio :"
@@ -324,7 +328,7 @@ msgstr ""
 "\n"
 "Audio :"
 
-#: ../pitivi/settings.py:128
+#: ../pitivi/settings.py:129
 msgid ""
 "\n"
 "Muxer :"
@@ -525,16 +529,15 @@ msgstr "Cause inconnue"
 
 #: ../pitivi/ui/filelisterrordialog.py:78
 msgid "URI : "
-msgstr ""
+msgstr "URI :"
 
 #: ../pitivi/ui/filelisterrordialog.py:84
 msgid "Problem : "
-msgstr ""
+msgstr "Problème :"
 
 #: ../pitivi/ui/filelisterrordialog.py:91
-#, fuzzy
 msgid "Extra information : "
-msgstr "Informations"
+msgstr "Informations supplémentaires :"
 
 #. set title and frame label
 #: ../pitivi/ui/gstwidget.py:169
@@ -642,20 +645,20 @@ msgstr ""
 msgid "Choose file to render to"
 msgstr "Choisissez le fichier cible du rendu"
 
-#: ../pitivi/ui/mainwindow.py:405
+#: ../pitivi/ui/mainwindow.py:406
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "Terminé dans %d m %d s"
 
-#: ../pitivi/ui/mainwindow.py:415
+#: ../pitivi/ui/mainwindow.py:416
 msgid "Rendering"
 msgstr "Rendu en cours"
 
-#: ../pitivi/ui/mainwindow.py:418
+#: ../pitivi/ui/mainwindow.py:419
 msgid "Couldn't start rendering"
 msgstr "Impossible de démarrer le rendu"
 
-#: ../pitivi/ui/mainwindow.py:439
+#: ../pitivi/ui/mainwindow.py:440
 msgid "Rendering Complete"
 msgstr "Rendu terminé"
 
@@ -748,12 +751,10 @@ msgid "The following files can not be used with PiTiVi."
 msgstr "Les fichiers suivants ne peuvent pas être utilisés par PiTiVi."
 
 #: ../pitivi/ui/sourcefactories.py:731
-#, fuzzy
 msgid "Error while analyzing a file"
-msgstr "Erreur lors de l'analyse des fichiers"
+msgstr "Erreur lors de l'analyse d'un fichier"
 
 #: ../pitivi/ui/sourcefactories.py:732
-#, fuzzy
 msgid "The following file can not be used with PiTiVi."
 msgstr "Le fichier suivant ne peut pas être utilisé par PiTiVi."
 
@@ -765,10 +766,14 @@ msgstr "Fermer"
 msgid "Remove"
 msgstr "Retirer"
 
-#: ../pitivi/ui/timelineobjects.py:577
+#. temporarily deactivate editing for 0.10.3 release !
+#: ../pitivi/ui/timelineobjects.py:578
 msgid "Edit"
 msgstr "Éditer"
 
-#: ../pitivi/ui/timeline.py:99
-msgid "Add clips to the timeline by dragging them here."
-msgstr "Ajoutez des séquences à la chronologie en les glissant ici."
+#: ../pitivi/ui/timeline.py:117
+msgid ""
+"<span size='x-large'>Add clips to the timeline by dragging them here.</span>"
+msgstr ""
+"<span size='x-large'>Ajoutez des séquences au banc de montage en les "
+"glissant ici.</span>"
