@@ -1,3 +1,0 @@
-"""
-Main PiTiVi package
-"""
