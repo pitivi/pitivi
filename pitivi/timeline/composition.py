@@ -34,6 +34,8 @@ class Layer(BrotherObjects):
     Base class for composition layers (effects, sources, ...)
     """
 
+    __data_type__ = "timeline-layer"
+
     def __init__(self):
         gobject.GObject.__init__(self)
 
@@ -42,6 +44,8 @@ class EffectsLayer(Layer):
     """
     Layers of the composition that have only one priority
     """
+
+    __data_type__ = "timeline-effects-layer"
 
     def __init__(self, priority):
         Layer.__init__(self)
@@ -59,6 +63,8 @@ class SourcesLayer(Layer):
     Layers of the composition that have minimum and maximum priority
     Sources are sorted by start time and then by priority
     """
+
+    __data_type__ = "timeline-sources-layer"
 
     def __init__(self, minprio, maxprio):
         Layer.__init__(self)
@@ -157,6 +163,9 @@ class TimelineComposition(TimelineSource):
                              gobject.TYPE_NONE,
                              (gobject.TYPE_PYOBJECT, )),
         }
+
+    __data_type__ = "timeline-composition"
+    __requires_factory__ = False
 
     # mid-level representation/storage of sources/effecst lists
     #
@@ -310,12 +319,6 @@ class TimelineComposition(TimelineSource):
         if self.condensed:
             # compare it to the self.condensed
             list_changed = False
-##             print "comparing:"
-##             for i in self.condensed:
-##                 print i.gnlobject, i.start, i.duration
-##             print "with"
-##             for i in clist:
-##                 print i.gnlobject, i.start, i.duration
             if not len(clist) == len(self.condensed):
                 list_changed = True
             else:
@@ -359,7 +362,12 @@ class TimelineComposition(TimelineSource):
 
     # Sources
 
-    def _getSourcePosition(self, source):
+    def getSourceLayerPosition(self, source):
+        """
+        Returns the layer position of the given source in the timeline.
+        First position = 1
+        Not found = 0
+        """
         position = 0
         foundit = False
         for slist in self.sources:
@@ -370,6 +378,17 @@ class TimelineComposition(TimelineSource):
         if foundit:
             return position + 1
         return 0
+
+    def getSimpleSourcePosition(self, source):
+        """
+        Returns the position of the given source in the timeline.
+        First position = 1
+        Not found = 0
+        """
+        layer = self.getSourceLayerPosition(source)
+        if not layer:
+            return 0
+        return self.sources[layer - 1][2].index(source) + 1
 
     def _haveGotThisSource(self, source):
         for slist in self.sources:
@@ -444,15 +463,13 @@ class TimelineComposition(TimelineSource):
             existorder = 0
         else:
             start = existingsource.start + existingsource.duration
-            position = self._getSourcePosition(existingsource)
+            position = self.getSourceLayerPosition(existingsource)
             existorder = self.sources[position - 1][2].index(existingsource) + 1
 
         gst.info("start=%s, position=%d, existorder=%d, sourcelength=%s" % (gst.TIME_ARGS(start),
                                                                             position,
                                                                             existorder,
                                                                             gst.TIME_ARGS(source.factory.length)))
-##         for i in self.sources[position -1][2]:
-##             print i.gnlobject, i.start, i.duration
         # set the correct start/duration time
         duration = source.factory.length
         source.setStartDurationTime(start, duration)
@@ -460,12 +477,7 @@ class TimelineComposition(TimelineSource):
         # pushing following
         if push_following and not position in [-1, 0]:
             #print self.gnlobject, "pushing following", existorder, len(self.sources[position - 1][2])
-            for i in range(existorder, len(self.sources[position - 1][2])):
-                mvsrc = self.sources[position - 1][2][i]
-                self.gnlobject.info("pushing following")
-                #print "run", i, "start", mvsrc.start, "duration", mvsrc.duration
-                # increment self.sources[position - 1][i] by source.factory.length
-                mvsrc.setStartDurationTime(mvsrc.start + source.factory.length)
+            self.shiftSources(source.factory.length, existorder, len(self.sources[position - 1][2]))
 
         self.addSource(source, position, auto_linked=auto_linked)
 
@@ -534,10 +546,7 @@ class TimelineComposition(TimelineSource):
         # 1. if collapse_neighbours, shift all downstream sources by duration
         if collapse_neighbours and oldpos != len(sources) - 1:
             self.gnlobject.log("collapsing all following neighbours after the old position [%d]" % oldpos)
-            for i in range(oldpos + 1, len(sources)):
-                obj = sources[i]
-                self.gnlobject.log("moving source %d %s" % (i, obj))
-                obj.setStartDurationTime(start = (obj.start - source.duration))
+            self.shiftSources(-source.duration, oldpos + 1)
 
         # 2. if push_neighbours, make sure there's enough room at the new position
         if push_neighbours and newpos != len(sources):
@@ -608,14 +617,12 @@ class TimelineComposition(TimelineSource):
         # change it for the linked sources
         if collapse_neighbours:
             self.gnlobject.info("Collapsing neighbours")
-            for i in range(pos, len(sources[2])):
-                obj = sources[2][i]
-                obj.setStartDurationTime(start = (obj.start - source.duration))
+            self.shiftSources(-source.duration, pos)
 
         # if we have a brother
         if remove_linked and self.linked and source.linked:
             sources = self.linked.sources[0]
-            if source.linked in sources[2]: 
+            if source.linked in sources[2]:
                 pos = sources[2].index(source.linked)
                 del sources[2][pos]
                 self.linked.gnlobject.remove(source.linked.gnlobject)
@@ -626,6 +633,38 @@ class TimelineComposition(TimelineSource):
         # update the condensed list
         self._updateCondensedList()
 
+    def shiftSources(self, offset, startpos, endpos=-1):
+        """
+        Shifts by offset ns (can be negative) all sources from the given start
+        position to the given end position.
+        If no end position is specified (default:-1) all sources starting from
+        the given start position will be shifted.
+        """
+        self.gnlobject.info("offset:%d, startpos:%d, endpos:%d" % (offset, startpos, endpos))
+        sources = self.sources[0]
+        if endpos == -1:
+            endpos = len(sources[2])
+        if startpos > endpos:
+            raise Exception("startpos needs to be smaller or equal to endpos !")
+        for i in range(startpos, endpos):
+            obj = sources[2][i]
+            obj.gnlobject.log("Position %d , setting start from %d to %d" % (i, obj.start, obj.start + offset))
+            obj.setStartDurationTime(start = (obj.start + offset))
+
+    def shiftSourcesBySource(self, offset, startsource, endsource=None):
+        """
+        Shifts by offset ns (can be negative) all sources from the given start
+        position to the given end position.
+        If no end position is specified (default:-1) all sources starting from
+        the given start position will be shifted.
+        """
+        self.gnlobject.info("offset:%d, startsource:%s, endsource:%s" % (offset, startsource, endsource))
+        startpos = self.getSourcePosition(startsource)
+        if endsource:
+            endpos = self.getSourcePosition(endsource)
+        else:
+            endpos = -1
+        self.shiftSources(offset, startpos, endpos)
 
     def setDefaultSource(self, source):
         """
@@ -693,3 +732,44 @@ class TimelineComposition(TimelineSource):
                 return self._autoAudioSettings()
             else:
                 return self._autoVideoSettings()
+
+    # Serializable methods
+
+    def toDataFormat(self):
+        ret = TimelineSource.toDataFormat(self)
+
+        # effects
+        ret["global-effects"] = [fx.toDataFormat() for fx in self.global_effects]
+        ret["simple-effects"] = [[fx.toDataFormat() for fx in ls] for ls in self.simple_effects]
+        ret["complex-effects"] = [fx.toDataFormat() for fx in self.complex_effects]
+        ret["transitions"] = [fx.toDataFormat() for fx in self.transitions]
+
+        # sources
+        # GRMBL... this is really crap, we need the layer system
+
+        # default source
+        if self.defaultSource:
+            ret["default-source"] = self.defaultSource.toDataFormat()
+        return ret
+
+    def fromDataFormat(self, obj):
+        TimelineSource.fromDataFormat(self, obj)
+
+        # effects
+        for fx in obj["global-effects"]:
+            self.global_effects.append(to_object_from_data_type(fx))
+        for line in obj["simple-effects"]:
+            tmp = []
+            for fx in line:
+                tmp.append(to_object_from_data_type(fx))
+            self.simple_effects.append(tmp)
+        for fx in obj["complex-effects"]:
+            self.complex_effects.append(to_object_from_data_type(fx))
+        for fx in obj["transitions"]:
+            self.transitions.append(to_object_from_data_type(fx))
+
+        # sources
+
+        # default source
+        if "default-source" in obj:
+            self.setDefaultSource(to_object_from_data_type(obj["default-source"]))

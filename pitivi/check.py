@@ -103,8 +103,8 @@ def check_required_version(modulename):
         if _string_to_list(cairo.cairo_version_string()) < _string_to_list(PYCAIRO_REQ):
             return [PYCAIRO_REQ, cairo.cairo_version_string()]
     if modulename == "gst":
-        if list(gst.gst_version) < _string_to_list(GST_REQ):
-            return [GST_REQ, _version_to_string(gst.gst_version)]
+        if list(gst.get_gst_version()) < _string_to_list(GST_REQ):
+            return [GST_REQ, _version_to_string(gst.get_gst_version())]
     if modulename == "gnonlin":
         gnlver = gst.registry_get_default().find_plugin("gnonlin").get_version()
         if _string_to_list(gnlver) < _string_to_list(GNONLIN_REQ):

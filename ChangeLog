@@ -1,20 +1,342 @@
-2007-08-14  Edward Hervey  <edward@fluendo.com>
+2007-08-31  Edward Hervey  <bilboed@bilboed.com>
 
-	* MAINTAINERS:
-	Fix file according to
-	http://live.gnome.org/MaintainersCorner#maintainers
+	* AUTHORS:
+	* pitivi/ui/mainwindow.py:
+	Add Luca to the Authors list.
 
-2007-07-13  Edward Hervey  <bilboed@bilboed.com>
+2007-08-31  Edward Hervey  <bilboed@bilboed.com>
 
-	Patch by: Thijs Vermeir <thijsvermeir@gmail.com>
+	Patch by: Luca Della Santina <dellasantina@farm.unipi.it>
+	* pitivi/Makefile.am:
+	* pitivi/pitivi.py:
+	* pitivi/plugincore.py:
+	* pitivi/pluginmanager.py:
+	* pitivi/settings.py:
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/actions.xml:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/pluginmanagerdialog.glade:
+	* pitivi/ui/pluginmanagerdialog.py:
+	Plugin system (core + ui) !
+	Tests will be commited soon, along with example plugin.
+
+2007-08-25  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/timeline/composition.py:
+	Compositions don't require factories.
+	Fixup Serializable-related methods, even though they don't do much yet.
+	The TimelineComposition is going to require a refactoring before I go
+	any further.
+	* pitivi/timeline/objects.py:
+	Use weakref proxy objects for storing objects requiring objects that
+	aren't created yet. This allows objects to be properly free'd once
+	nobody use them.
+	Add TimelineObject.__requires_factory__ to specify if the class needs
+	an object factory in order to create its gnlobject.
+	Fix up Serializable methods to take into account the fact that some
+	classes don't use object factories.
+	* pitivi/timeline/source.py:
+	Add __requires_factory__ to needed classes.
+	Fix up wrong use of __data_type__.
+	Added documentation of Serializable properties.
+	Delay media-duration/start handling until we have a gnlobject.
+	Fix Serializable methods.
+	* tests/common.py:
+	Fix TestTimelineFileSource for new behaviour.
+	* tests/runtests.py:
+	white line fixes...
+	* tests/test_timeline_composition.py:
+	Also check for proper composition 'start-duration-changed' signal
+	emission.
+	Add extremely basic serialization test.
+	* tests/test_timeline_objects.py:
+	Added tests for making sure the proper number of instances are
+	registered in BrotherObjects.__instances__
+	* tests/test_timeline_source.py:
+	Added tests for Serializable methods.
+
+2007-08-24  Edward Hervey  <bilboed@bilboed.com>
+
 	* pitivi/objectfactory.py:
-	Use decodebin2 if available for temporary file sources.
+	Make ObjectFactory serializable.
+	Add UniqueID property and methods.
+	* pitivi/serializable.py:
+	Add check for serializable sub-classes that have the same
+	__data_type__
+	* pitivi/timeline/objects.py:
+	Add documentation about serializable properties.
+	Add UniqueID property and methods.
+	Add methods for delayed object creation.
+	Adapted code so we can create objects both with and without
+	initial parameters.
+	* tests/common.py:
+	ObjectFactories need __data_type__
+	* tests/test_serializable.py:
+	Add tests for uniqueness.
+	* tests/test_timeline_objects.py:
+	Add serialization tests for BrotherObjects and TimelineObject
+
+2007-08-24  Edward Hervey  <bilboed@bilboed.com>
+
+	* tests/test_file_load_save.py:
+	Fix typos.
+
+2007-08-22  Edward Hervey  <bilboed@bilboed.com>
+
+	* tests/Makefile.am:
+	* tests/test_serializable.py:
+	Added new test to check for pitivi.serializable behaviour.
+
+2007-08-22  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/project.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/effects.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/timeline/timeline.py:
+	* tests/common.py:
+	Add __data_type__ for proper intermediary <=> object conversion.
+	* pitivi/projectsaver.py:
+	Fix so that it builds.
+	* pitivi/serializable.py:
+	Add methods to search all existing Serializable subclasses and create
+	an object from an intermediary format data structure.
+
+2007-08-22  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/Makefile.am:
+	* tests/Makefile.am:
+	Add new files to distributed files.
+
+2007-08-21  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/project.py:
+	* pitivi/projectsaver.py:
+	* pitivi/serializable.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/timeline/timeline.py:
+	* tests/test_file_load_save.py:
+	This is the final SoC commit. This includes a lot of broken/unfinished
+	code, but I felt the need to sort of delimit where my official
+	contribution ends. I have added the "Serializable" interface, and
+	implemented it in most of the project classes. None of this has been
+	tested, and PiTiVi may even be broken, although it does seem to load
+	and run. There's also likely to be some code which is left over from
+	an earlier attempt to implement saving and loading.
+
+2007-08-17  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/projectsaver.py:
+	* tests/test_file_load_save.py:
+	added more internal error checking
+	added more test cases
+
+2007-08-17  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/projectsaver.py:
+	* tests/test_file_load_save.py:
+  added basic file saver backend framework code. 
+  added rudimentary test cases.
+
+2007-08-06  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/pitivi.py:
+	* tests/test_file_load_save.py:
+	Changed the signature of the "new-project-failed" so that it also
+	includes the uri of the failed project.
+
+2007-08-04  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/pitivi.py:
+	* pitivi/project.py:
+	* tests/test_file_load_save.py:
+	implemented first part of application logic
+	added test cases for new/load/save application logic
+
+2007-08-02  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/pitivi.py:
+	* pitivi/project.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/viewer.py:
+ First minimal changes required to get file load/save application logic going.
+ I've renamed some signals, and added some new ones. This broke Pitivi, so
+ i've made minimal changes to allow Pitivi to run and work as before.
+ new-project -> new-project-loaded
+ not-project -> new-project-failed
+ added new-project-loading (emitted from Pitivi)
+ added new-project-failed (emitted from Pitivi)
+ added save-uri-requested (emitted from Project)
+ added confirm-overwrite (emitted from Project)
+ 
+
+2007-07-27  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/tracklayer.py:
+	Don't forget to remove our widget from self.sources when a source has
+	been removed.
+
+2007-07-24  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/check.py:
+	Fix for current gstreamer version.
+
+2007-07-24  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/plumber.py:
+	Force audio output for previewing to stereo 16bit 44.1kHz.
+
+2007-07-24  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/tracklayer.py:
+	Only save mouseDownPosition for left mouse button.
+
+2007-07-24  Edward Hervey  <bilboed@bilboed.com>
+
+	* configure.ac:
+	Depend on cvs gstreamer core and gnonlin. I know it sucks, but I can't
+	come up with non-cvs workarounds this time :(
+	* pitivi/elements/smartscale.py:
+	Don't revert that change in fact, it was capsfilter that was broken
+	in fact.
+
+2007-07-23  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/elements/smartscale.py:
+	Revert issue already reverted in TRUNK
+	* pitivi/elements/thumbnailsink.py:
+	small fixes.
+	* pitivi/settings.py:
+	Re-enable advanced view.
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/tracklayer.py:
+	We can move and cut on the advanced timeline \o/.
+
+2007-07-20  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/ui/slider.py:
+	Slider no longer connects to TimelineFileSource signals, but a new
+	public interface for setting the slider's endpoints has been added.
+	* pitivi/ui/timelineobjects.py:
+	Added cancel button
+	Wrapped all button label strings in _().
+	Rewrote the start/stop trimming code so that it stores changes
+	temporarily, and directly updates the endpoint display.
+	The TimelineFileSource start/duration are not changed until the user
+	clicks Done. Cancel will have no effect.
+
+2007-07-18  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/timeline/composition.py:
+	removed TimelineComposition.getSourcePositition, replaced with
+	TimelineComposotion.getSourceLayerPosition, and
+	TimelineComposition.getSimpleSourcePosition
+	* pitivi/timeline/source.py:
+	added volume control element to the TimelineFileSource object
+	added method to set volume
+	added workaround for gstreamer unlinking bug
+	* pitivi/ui/timelineobjects.py:
+	adjusted range of volume slider
+	* pitivi/thumbnailer.py:
+	changed debug statements from warning to log
+
+2007-07-17  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	* pitivi/ui/timelineobjects.py:
+	Rename method to get layer position of a source in a composition.
+	Add new method for getting position of a source in the simple
+	representation of a composition.
+	Fix editing widget to use the proper method to get the position of a
+	source in the timeline.
 
 2007-07-13  Edward Hervey  <bilboed@bilboed.com>
 
 	Patch by: Thijs Vermeir <thijsvermeir@gmail.com>
 	* pitivi/ui/mainwindow.py:
 	Fix issues with rendering progress bar.
+
+2007-07-12  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/slider.py:
+	Added a bit of debugging.
+	* pitivi/ui/timelineobjects.py:
+	Remember initial values in the timeline widget.
+	When closing the widget, shift the following sources by the proper
+	offset.
+	Whiteline cleanup.
+
+2007-07-12  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/timeline/composition.py:
+	Make getSourcePosition a public method.
+	Added shiftSources() method to offset one or more sources.
+	Adapt existing code to use new shiftSources method.
+	* tests/test_timeline_composition.py:
+	Unit test for new shiftSources method.
+
+2007-07-12  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/timeline/source.py:
+	None and 0 are both False. But 0 is a valid value for start.
+
+2007-07-12  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/Makefile.am:
+	Add slider to list of distributed files.
+
+2007-07-09  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/timelineobjects.py:
+	Fix sign error.
+
+2007-07-09  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/slider.py:
+	bugfix in _playgroundCurrentChangedCb where seek being called with
+	non-integer
+	* pitivi/ui/timelineobjects.py:
+	the arrow buttons now work to set the endpoints of the clip.
+	currently they advance/rewind start and stop points by 1 second
+
+2007-07-08  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelineobjects.py:
+	  editing widget makes trim buttons insensitive when slider is beyond
+	  valid range. i.o.w. it is impossible to set the start after the end,
+	  and vice versa.
+
+2007-07-08  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/slider.py:
+	split editing slider code out of timelineobjects.py into new file
+	* pitivi/ui/timelineobjects.py:
+	editing slider now shows start and stop points above the slider
+	removed most slider-related code from SimpleEditingWidget
 
 2007-07-08  Edward Hervey  <bilboed@bilboed.com>
 
@@ -26,9 +348,36 @@
 2007-07-08  Edward Hervey  <bilboed@bilboed.com>
 
 	* pitivi/ui/timeline.py:
-	Use a gtk.Label with an eventbox instead of the previous method in order
-	to display the informational message in the timeline.
-	Fixes #405462
+	Use a label for the informational message instead of the previous
+	method. This should avoid a lot of segfaults.
+
+2007-07-07 Brandon Lewis <brandon_lewis@berkeley.edy>
+
+    * pitivi/ui/timelineobjects.py:
+    Tweaked default SimpleTimeline sizes
+    Split _createUI() out of SimpleSourceWidget.__init__()
+    Cosmetic tweaks for SimpleSourceWidget
+    SimpleSourceWidget ellipsizes it's file names
+    SimpleSourceWidget updates its duration after filesource duration changes
+    Also updates it's thumbnails after media start changes
+    Made volume slider set source volume (needs to be implemented in backend)
+    * pitivi/timeline/sources.py:
+    added new blank method TimelineFileSource.setVolume()
+
+
+2007-07-06 Brandon Lewis <brandon_lewis@berkeley.edu>
+
+    * pitivi/ui/timelineobjects.py:
+    Hopefully definitive fix for thumbnail aspect ratios
+    ScaledThumbnailViewer.setPixelAspectRatio() should work now
+
+2007-07-01  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/timelineobjects.py:
+	Fix thumbnail aspect ratio a bit more.
+	Fix small issues.
+	* pitivi/ui/viewer.py:
+	Fix small issues.
 
 2007-06-30  Edward Hervey  <bilboed@bilboed.com>
 
@@ -36,23 +385,93 @@
 	* pitivi.spec.in:
 	* pitivi/ui/mainwindow.py:
 	* pitivi/ui/plumber.py:
-	Changing email adress for my copyrights, since I'm no longer at Fluendo.
+	Changing email adress for my copyrights since I'm no longer working at
+	Fluendo.
 
-2007-06-18  Edward Hervey  <edward@fluendo.com>
+2007-06-27  Brandon Lewis <brandon_lewis@berkeley.edu>
 
-	* pitivi/elements/smartscale.py:
-	Revert previous commit since it breaks a lot of behaviours :( If there's
-	no pixel-aspect-ratio in the caps, that means it's 1/1.
+    	* pitivi/ui/timelineobjects.py:
+    	Changed ScaledThumbnailViewer so that _drawData is called after calling
+    	setPixbuf on a thumbnail viewer.
+	
+    	Added a bunch of stuff to make the editing slider work. It's
+	functional, but not quite right yet.
+
+	Renamed SimpleEditingWidget._playgroundPositionChangedCb to
+	_playgroundPositionCb to be more consistent with signal name.
+
+	SimpleEditingWidget.set_source() now creates editing pipeline directly.
+	
+    	* pitivi/playground.py:
+    	Playground._playTemporaryBin() now returns the temporary bin
+    	instead of True if successfull --- EDIT: reversed this change.
 
 2007-06-17  Edward Hervey  <edward@fluendo.com>
 
-	* pitivi/playground.py:
-	(getCurrentTimePosition): added a 'onlyvideo' default parameter because
-	of issues with audio streams (namely mad/mp3).
-	* pitivi/ui/ruler.py:
+	* pitivi/Makefile.am:
+	* pitivi/thumbnailer.py:
+	Added new thumbnailer utility class.
+	* pitivi/elements/singledecodebin.py:
+	typo fix
+	* pitivi/elements/thumbnailsink.py:
+	also implement do_preroll() !
+	added debug.
+	* pitivi/timeline/source.py:
+	white fixes.
+	* pitivi/ui/timelineobjects.py:
+	First go at implementing thumbnailing support.
+	It works... except the refresh isn't automatic. You need to force it
+	through resizing the window.
+
+2007-06-16  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timelineobjects.py: (SimpleEditingWidget.setSource): 
+	Comment out initial seek with appropriate FIXME.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timelineobjects.py:
+	Hey... trimming works :)
+	The slider in the editing window isn't connected yet, so we need to use
+	the slider present in the viewer area.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
 	* pitivi/ui/viewer.py:
-	Specify format when doing a seek. Good if we add other parameters to
-	Playground.seekInCurrent() later on.
+	Better time-to-string conversion. Now includes hours also.
+	Only show the duration change if it's the currently playing source that
+	changed it's duration.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* tests/test_timeline_source.py:
+	Test for media_start/media_duration invalid values handling.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Only activate the render icon if it's really the timeline being active
+	in the playground
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/source.py:
+	Don't set media_duration/media_start before calling the gobject
+	set-property. They will be set in the notify handler.
+	Make sure we only give media-start and media-stop valid values.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Add 'playit' parameter to Playground.playTemporaryFilesourcefactory so
+	we can make the play-when-loaded optional.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timelineobjects.py:
+	To disconnect a signal handler, you need to use the signal ID returned
+	when you connected to it.
+
 
 2007-06-15  Edward Hervey  <edward@fluendo.com>
 
@@ -64,6 +483,12 @@
 	* pitivi/elements/thumbnailsink.py:
 	First take at a thumbnailing sink that converts RGB buffers into
 	GdkPixbuf usable in gtk widgets.
+2007-06-11  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Brandon Lewis <brandon_lewis@berkeley.edu>
+	* pitivi/ui/timelineobjects.py:
+	Start of SoC work by Brandon. Commiting it until his svn account is
+	properly activated.
 
 2007-05-30  Edward Hervey  <edward@fluendo.com>
 

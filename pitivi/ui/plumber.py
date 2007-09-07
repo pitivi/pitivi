@@ -70,7 +70,18 @@ def get_video_sink():
 def get_audio_sink():
     """ Returns an audio sink bin that can be used in the Discoverer """
     try:
-        gconfsink = gst.element_factory_make("gconfaudiosink")
+        realsink = gst.element_factory_make("gconfaudiosink")
     except:
-        gconfsink = gst.element_factory_make("autoaudiosink")
-    return gconfsink
+        realsink = gst.element_factory_make("autoaudiosink")
+
+    audiosink = gst.Bin("pitivi-audiosink")
+    aconv = gst.element_factory_make("audioconvert","audiobin-convert")
+    ares = gst.element_factory_make("audioresample", "audiobin-resample")
+
+    audiosink.add(aconv, ares, realsink)
+    aconv.link(ares)
+    ares.link(realsink, gst.Caps("audio/x-raw-int,channels=2,rate=44100,depth=16;audio/x-raw-float,channels=2,rate=44100"))
+
+    audiosink.add_pad(gst.GhostPad("sink", aconv.get_pad("sink")))
+
+    return audiosink

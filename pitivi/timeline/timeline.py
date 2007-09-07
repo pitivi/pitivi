@@ -29,11 +29,14 @@ import gst
 from pitivi.settings import ExportSettings
 from composition import TimelineComposition
 from objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
+from pitivi.serializable import Serializable
 
-class Timeline(gobject.GObject):
+class Timeline(gobject.GObject, Serializable):
     """
     Fully fledged timeline
     """
+
+    __data_type__ = "timeline"
 
     # TODO make the compositions more versatile
     # for the time being we hardcode an audio and a video composition
@@ -106,3 +109,19 @@ class Timeline(gobject.GObject):
             s.audiorate = a.audiorate
             s.audiodepth = a.audiodepth
         return s
+
+    def toDataFormat(self):
+        ret = Serializable(self)
+        ret["compositions"] = dict((\
+            (self.audiocomp.name, self.audiocomp.toDataFormat()),
+            (self.videocomp.name, self.videocomp.toDataFormat())))
+        return ret
+
+    def fromDataFormat(self, obj):
+        Serializable.fromDataFormat(self, obj)
+        audio = obj["compositions"]["audiocomp"]
+        video = obj["compositions"]["videocomp"]
+        self._fillcontents()
+        self.audiocomp.fromDataFormat(audio)
+        self.videocomp.fromdataFormat(video)
+

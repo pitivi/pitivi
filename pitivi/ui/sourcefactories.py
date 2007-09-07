@@ -206,7 +206,7 @@ class SourceListWidget(gtk.VBox):
         # changing project.
         self.project_signals = SignalGroup()
         self._connectToProject(instance.PiTiVi.current)
-        instance.PiTiVi.connect("new-project", self._newProjectCb)
+        instance.PiTiVi.connect("new-project-loaded", self._newProjectCb)
 
         # default pixbufs
         icontheme = gtk.icon_theme_get_default()
@@ -329,6 +329,7 @@ class SourceListWidget(gtk.VBox):
                 thumbnail = self.videofilepixbuf
             elif factory.is_audio:
                 thumbnail = self.audiofilepixbuf
+        #FIXME: should this be continue??
         else:
             if not factory.video_info_stream:
                 desiredheight = 64 * pixbuf.get_height() / pixbuf.get_width()

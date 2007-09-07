@@ -231,7 +231,7 @@ class SingleDecodeBin(gst.Bin):
             return
         self._markValidElements(element)
         self._removeUnusedElements(self.typefind)
-        self.log("ghosting pad %s" % pad.get_name)
+        self.log("ghosting pad %s" % pad.get_name())
         self._srcpad = gst.GhostPad("src", pad)
         self._srcpad.set_active(True)
         self.add_pad(self._srcpad)

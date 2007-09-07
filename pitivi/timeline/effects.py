@@ -31,6 +31,8 @@ class TimelineEffect(TimelineObject):
     Base class for effects (1->n input(s))
     """
 
+    __data_type__ = "timeline-effect"
+
     def __init__(self, nbinputs=1, **kw):
         self.nbinputs = nbinputs
         TimelineObject.__init__(self, **kw)
@@ -49,6 +51,8 @@ class TimelineSimpleEffect(TimelineEffect):
     Simple effects (1 input)
     """
 
+    __data_type__ = "timeline-simple-effect"
+
     def __init__(self, factory, **kw):
         self.factory = factory
         TimelineEffect.__init__(self, **kw)
@@ -60,6 +64,8 @@ class TimelineTransition(TimelineEffect):
     """
     source1 = None
     source2 = None
+
+    __data_type__ = "timeline-transition"
 
     def __init__(self, factory, source1=None, source2=None, **kw):
         self.factory = factory
@@ -76,6 +82,8 @@ class TimelineComplexEffect(TimelineEffect):
     """
     Complex Effect
     """
+
+    __data_type__ = "timeline-complex-effect"
 
     def __init__(self, factory, **kw):
         self.factory = factory

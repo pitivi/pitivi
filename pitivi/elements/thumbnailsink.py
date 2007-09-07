@@ -56,11 +56,17 @@ class PixbufThumbnailSink(gst.BaseSink):
         self.set_sync(False)
 
     def do_set_caps(self, caps):
+        self.log("caps %s" % caps.to_string())
+        self.log("padcaps %s" % self.get_pad("sink").get_caps().to_string())
         self.width = caps[0]["width"]
         self.height = caps[0]["height"]
+        if not caps[0].get_name() == "video/x-raw-rgb":
+            return False
         return True
 
     def do_render(self, buffer):
+        self.log("buffer %s %d" % (gst.TIME_ARGS(buffer.timestamp),
+                                   len(buffer.data)))
         pixb = gtk.gdk.pixbuf_new_from_data(buffer.data,
                                             gtk.gdk.COLORSPACE_RGB,
                                             False,
@@ -71,3 +77,8 @@ class PixbufThumbnailSink(gst.BaseSink):
 
         self.emit('thumbnail', pixb, buffer.timestamp)
         return gst.FLOW_OK
+
+    def do_preroll(self, buffer):
+        return self.do_render(buffer)
+
+gobject.type_register(PixbufThumbnailSink)

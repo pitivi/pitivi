@@ -26,8 +26,9 @@ Handles the list of source for a project
 import gobject
 import gst
 from discoverer import Discoverer
+from serializable import Serializable
 
-class SourceList(gobject.GObject):
+class SourceList(gobject.GObject, Serializable):
     """
     Contains the sources for a project, stored as FileSourceFactory
 
@@ -67,6 +68,8 @@ class SourceList(gobject.GObject):
                        gobject.TYPE_NONE,
                        ( ))
         }
+
+    __data_type__ = "source-list"
 
     def __init__(self, project):
         gst.log("new sourcelist for project %s" % project)
@@ -168,3 +171,10 @@ class SourceList(gobject.GObject):
 
     def _discovererReadyCb(self, unused_discoverer):
         self.emit("ready")
+
+    def toDataFormat(self):
+        return [source.toDataFormat() for source in self]
+
+    def fromDataFormat(self, obj):
+        self.addUris(obj)
+

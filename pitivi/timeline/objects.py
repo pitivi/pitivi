@@ -23,8 +23,12 @@
 Timeline objects
 """
 
+import weakref
+from random import randint
 import gobject
 import gst
+from pitivi.serializable import Serializable
+from pitivi.objectfactory import ObjectFactory
 
 MEDIA_TYPE_NONE = 0
 MEDIA_TYPE_AUDIO = 1
@@ -50,10 +54,16 @@ MEDIA_TYPE_VIDEO = 2
 ##         |
 ##         +---- Complex Effect (N->1)
 
-class BrotherObjects(gobject.GObject):
+class BrotherObjects(gobject.GObject, Serializable):
     """
     Base class for objects that can have a brother and be linked to something else
+
+    Save/Load properties:
+    * (optional) 'linked' (int) : UID of linked object
+    * (optional) 'brother' (int) : UID of brother object
     """
+
+    __data_type__ = "timeline-brother-objects"
 
     __gsignals__ = {
         "linked-changed" : (gobject.SIGNAL_RUN_LAST,
@@ -61,10 +71,18 @@ class BrotherObjects(gobject.GObject):
                             (gobject.TYPE_PYOBJECT, ))
         }
 
+    # UID (int) => object (BrotherObjects) mapping.
+    __instances__ = weakref.WeakValueDictionary()
+
+    # dictionnary of objects waiting for pending objects for completion
+    # pending UID (int) => objects (list of BrotherObjects and extra field)
+    __waiting_for_pending_objects__ = {}
+
     def __init__(self):
         gobject.GObject.__init__(self)
         self.linked = None
         self.brother = None
+        self.uid = -1
 
     def _unlinkObject(self):
         # really unlink the objects
@@ -134,6 +152,7 @@ class BrotherObjects(gobject.GObject):
         what his brother is.
         Use with caution
         """
+        gst.log("brother:%r , autolink:%r" % (brother, autolink))
         self.brother = brother
         # set ourselves as our brother's brother
         self.brother.brother = self
@@ -146,6 +165,115 @@ class BrotherObjects(gobject.GObject):
         implemented in subclasses
         """
         raise NotImplementedError
+
+    # Serializable methods
+
+    def toDataFormat(self):
+        ret = Serializable.toDataFormat(self)
+        ret["uid"] = self.getUniqueID()
+        if self.brother:
+            ret["brother"] = self.brother.getUniqueID()
+        if self.linked:
+            ret["linked"] = self.linked.getUniqueID()
+        return ret
+
+    def fromDataFormat(self, obj):
+        Serializable.fromDataFormat(self, obj)
+        self.setUniqueID(obj["uid"])
+
+        if "brother" in obj:
+            brother = BrotherObjects.getObjectByUID(obj["brother"])
+            if not brother:
+                BrotherObjects.addPendingObjectRequest(self, obj["brother"], "brother")
+            else:
+                self.setBrother(brother)
+
+        if "linked" in obj:
+            linked = BrotherObjects.getObjectByUID(obj["linked"])
+            if not linked:
+                BrotherObjects.addPendingObjectRequest(self, obj["linked"], "linked")
+            else:
+                self.linkObject(linked)
+
+    def pendingObjectCreated(self, obj, field):
+        gst.log("field:%s, obj:%r" % (field, obj))
+        if field == "brother":
+            self.setBrother(obj, autolink=False)
+        elif field == "linked":
+            self.linkObject(obj)
+
+    # Unique ID methods
+
+    def getUniqueID(self):
+        if self.uid == -1:
+            i = randint(0, 2**32)
+            while i in BrotherObjects.__instances__:
+                i = randint(0, 2 ** 32)
+            self.uid = i
+            gst.log("Assigned uid %d to %r, adding to __instances__" % (self.uid, self))
+            BrotherObjects.__instances__[self.uid] = self
+        return self.uid
+
+    def setUniqueID(self, uid):
+        if not self.uid == -1:
+            gst.warning("Trying to set uid [%d] on an object that already has one [%d]" % (uid, self.uid))
+            return
+
+        if uid in BrotherObjects.__instances__:
+            gst.warning("Uid [%d] is already in use by another object [%r]" % (uid, BrotherObjects.__instances__[uid]))
+            return
+
+        self.uid = uid
+        gst.log("Recording __instances__[uid:%d] = %r" % (self.uid, self))
+        BrotherObjects.__instances__[self.uid] = self
+
+        # Check if an object needs to be informed of our creation
+        self._haveNewID(self.uid)
+
+    @classmethod
+    def getObjectByUID(cls, uid):
+        """
+        Returns the object with the given uid if it exists.
+        Returns None if no object with the given uid exist.
+        """
+        gst.log("uid:%d" % uid)
+        if uid in cls.__instances__:
+            return cls.__instances__[uid]
+        return None
+
+    # Delayed object creation methods
+
+    def _haveNewID(self, uid):
+        """
+        This method is called when an object gets a new ID.
+        It will check to see if any object needs to be informed of the creation
+        of this object.
+        """
+        gst.log("uid:%d" % uid)
+        if uid in BrotherObjects.__waiting_for_pending_objects__ and uid in BrotherObjects.__instances__:
+            for obj, extra in BrotherObjects.__waiting_for_pending_objects__[uid]:
+                # obj is a weakref.Proxy object
+                obj.pendingObjectCreated(BrotherObjects.__instances__[uid], extra)
+            del BrotherObjects.__waiting_for_pending_objects__[uid]
+
+
+    @classmethod
+    def addPendingObjectRequest(cls, obj, uid, extra=None):
+        """
+        Ask to be called when the object with the given uid is created.
+        obj : calling object
+        uid : uid of the object we need to be informed of creation
+        extra : extradata with which obj's callback will be called
+
+        The class will call the calling object's when the requested object
+        is available using the following method call:
+        obj.pendingObjectCreated(new_object, extra)
+        """
+        if not uid in cls.__waiting_for_pending_objects__:
+            cls.__waiting_for_pending_objects__[uid] = []
+        cls.__waiting_for_pending_objects__[uid].append((weakref.proxy(obj), extra))
+
+gobject.type_register(BrotherObjects)
 
 class TimelineObject(BrotherObjects):
     """
@@ -164,7 +292,20 @@ class TimelineObject(BrotherObjects):
     * signals
       _ 'start-duration-changed' : start position, duration position
       _ 'linked-changed' : new linked object
+
+    Save/Load properties
+    * 'start' (int) : start position in nanoseconds
+    * 'duration' (int) : duration in nanoseconds
+    * 'name' (string) : name of the object
+    * 'factory' (int) : UID of the objectfactory
+    * 'mediatype' (int) : media type of the object
     """
+
+    __data_type__ = "timeline-object"
+
+    # Set this to False in sub-classes that don't require a factory in
+    # order to create their gnlobject.
+    __requires_factory__ = True
 
     __gsignals__ = {
         "start-duration-changed" : ( gobject.SIGNAL_RUN_LAST,
@@ -175,24 +316,34 @@ class TimelineObject(BrotherObjects):
     def __init__(self, factory=None, start=-1, duration=-1,
                  media_type=MEDIA_TYPE_NONE, name=""):
         BrotherObjects.__init__(self)
-        gst.log("new TimelineObject :%s" % name)
-        self.start = -1
-        self.duration = -1
         self.name = name
+        gst.log("new TimelineObject :%s %r" % (name, self))
+        self.start = start
+        self.duration = duration
+        self.factory = None
         # Set factory and media_type and then create the gnlobject
-        self.factory = factory
         self.media_type = media_type
-        self.gnlobject = self._makeGnlObject()
-        self.gnlobject.connect("notify::start", self._startDurationChangedCb)
-        self.gnlobject.connect("notify::duration", self._startDurationChangedCb)
-        self._setStartDurationTime(start, duration)
+        self.gnlobject = None
+        self._setFactory(factory)
 
     def __repr__(self):
-        return '<%s %s>' % (type(self).__name__, self.name)
+        return "<%s '%s' at 0x%x>" % (type(self).__name__, self.name, id(self))
 
     def _makeGnlObject(self):
         """ create and return the gnl_object """
         raise NotImplementedError
+
+    def _setFactory(self, factory):
+        if self.factory:
+            gst.warning("Can't set a factory, this object already has one : %r" % self.factory)
+            return
+        gst.log("factory:%r requires factory:%r" % (factory, self.__requires_factory__))
+        self.factory = factory
+        if not self.__requires_factory__ or self.factory:
+            self.gnlobject = self._makeGnlObject()
+            self.gnlobject.connect("notify::start", self._startDurationChangedCb)
+            self.gnlobject.connect("notify::duration", self._startDurationChangedCb)
+            self._setStartDurationTime(self.start, self.duration)
 
     def _setStartDurationTime(self, start=-1, duration=-1):
         # really modify the start/duration time
@@ -231,3 +382,39 @@ class TimelineObject(BrotherObjects):
                 self.duration = long(duration)
         #if not start == -1 or not duration == -1:
         self.emit("start-duration-changed", self.start, self.duration)
+
+
+    # Serializable methods
+
+    def toDataFormat(self):
+        ret = BrotherObjects.toDataFormat(self)
+        ret["start"] = self.start
+        ret["duration"] = self.duration
+        ret["name"] = self.name
+        if self.factory:
+            ret["factory"] = self.factory.getUniqueID()
+        ret["mediatype"] = self.media_type
+        return ret
+
+    def fromDataFormat(self, obj):
+        BrotherObjects.fromDataFormat(self, obj)
+        self.start = obj["start"]
+        self.duration = obj["duration"]
+
+        self.name = obj["name"]
+
+        self.media_type = obj["mediatype"]
+
+        if "factory" in obj:
+            factory = ObjectFactory.getObjectByUID(obj["factory"])
+            gst.log("For factory-id %d we got factory %r" % (obj["factory"], factory))
+            if not factory:
+                ObjectFactory.addPendingObjectRequest(self, obj["factory"], "factory")
+            else:
+                self._setFactory(factory)
+
+    def pendingObjectCreated(self, obj, field):
+        if field == "factory":
+            self._setFactory(obj)
+        else:
+            BrotherObjects.pendingObjectCreated(self, obj, field)

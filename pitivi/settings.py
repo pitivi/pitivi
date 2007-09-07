@@ -58,7 +58,7 @@ class GlobalSettings:
         self._readSettings()
 
     def _setDefaults(self):
-        self.advancedModeEnabled = False
+        self.advancedModeEnabled = True
 
     def _readSettings(self):
         self._readSettingsFromGlobalConfiguration()
@@ -76,7 +76,44 @@ class GlobalSettings:
 
     def _readSettingsFromEnvironmentVariables(self):
         # reads some settings from environment variable
-        self.advancedModeEnabled = get_bool_env("PITIVI_ADVANCED_MODE")
+        #self.advancedModeEnabled = get_bool_env("PITIVI_ADVANCED_MODE")
+        pass
+
+    def get_local_plugin_path(autocreate=True):
+        """
+        Compute the absolute path to local plugin repository
+
+        @param autocreate: create the path if missing
+        @return: the plugin repository path
+        """
+
+        pitivi_path = os.path.expanduser("~/.pitivi")
+        if not os.path.exists(pitivi_path):
+            os.mkdir(pitivi_path)
+
+        repository_path = os.path.expanduser("~/.pitivi/plugins")
+        if not os.path.exists(repository_path):
+            os.mkdir(repository_path)
+
+        return repository_path
+
+    def get_plugin_settings_path(autocreate=True):
+        """
+        Compute the absolute path to local plugin settings' repository
+
+        @param autocreate: create the path if missing
+        @return: the plugin settings path
+        """
+
+        pitivi_path = os.path.expanduser("~/.pitivi")
+        if not os.path.exists(pitivi_path):
+            os.mkdir(pitivi_path)
+
+        repository_path = os.path.expanduser("~/.pitivi/plugins-settings")
+        if not os.path.exists(repository_path):
+            os.mkdir(repository_path)
+
+        return repository_path
 
 class ExportSettings(gobject.GObject):
     """

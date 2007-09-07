@@ -24,7 +24,12 @@ pitivi_PYTHON = \
 	utils.py 	\
 	pitivigstutils.py \
 	signalgroup.py	\
-	threads.py
+	threads.py	\
+	thumbnailer.py	\
+	serializable.py	\
+	projectsaver.py	\
+	plugincore.py	\
+	pluginmanager.py
 
 BUILT_SOURCES=configure.py
 

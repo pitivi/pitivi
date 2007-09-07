@@ -70,6 +70,10 @@ class CompositionLayers(gtk.VBox, ZoomableWidgetInterface):
         for layer in self.layers:
             layer.zoomChanged()
 
+    def timelinePositionChanged(self, value, frame):
+        for layer in self.layers:
+            layer.timelinePositionChanged(value, frame)
+
     ## LayerInfoList callbacks
 
     def _layerAddedCb(self, layerInfoList, position):
@@ -184,3 +188,4 @@ class ComplexTimelineWidget(gtk.VBox, ZoomableWidgetInterface):
         if isinstance(smartbin, SmartTimelineBin):
             # for the time being we only inform the ruler
             self.topLayer.timelinePositionChanged(value, 0)
+            self.compositionLayers.timelinePositionChanged(value, 0)

@@ -26,15 +26,18 @@ Providers of elements to use in a timeline
 
 import os.path
 from urllib import unquote
+import weakref
+from random import randint
 import string
 import gobject
 import gst
 
+from serializable import Serializable
 from settings import ExportSettings
 
 from gettext import gettext as _
 
-class ObjectFactory(gobject.GObject):
+class ObjectFactory(gobject.GObject, Serializable):
     """
     base class for object factories which provide elements to use
     in the timeline
@@ -59,6 +62,15 @@ class ObjectFactory(gobject.GObject):
                          gobject.PARAM_READWRITE )
         }
 
+    __data_type__ = "object-factory"
+
+    # UID (int) => object (BrotherObjects) mapping.
+    __instances__ = weakref.WeakValueDictionary()
+
+    # dictionnary of objects waiting for pending objects for completion
+    # pending UID (int) => objects (list of BrotherObjects and extra field)
+    __waiting_for_pending_objects__ = {}
+
     def __init__(self):
         gobject.GObject.__init__(self)
         self.name = ""
@@ -74,6 +86,7 @@ class ObjectFactory(gobject.GObject):
         self.mediaTags = {}
         self.title = None
         self.artist = None
+        self.uid = -1
 
     def do_set_property(self, property, value):
         """
@@ -154,10 +167,6 @@ class ObjectFactory(gobject.GObject):
             else:
                 stl.append(_("<b>%s</b>") % gobject.markup_escape_text(self.title))
             stl.append(_("<small><b>File:</b> %s") % filename)
-##         if self.title:
-##             stl.append("<b>Title:</b> %s" % self.title)
-##         if self.artist:
-##             stl.append("<b>Artist:</b> %s" % self.artist)
         if self.is_video and self.video_info_stream:
             stl.append(self.video_info_stream.getMarkup())
         if self.is_audio and self.audio_info_stream:
@@ -172,6 +181,89 @@ class ObjectFactory(gobject.GObject):
         """ returns a video only bin """
         raise NotImplementedError
 
+
+    # Serializable methods
+
+    def toDataFormat(self):
+        ret = Serializable.toDataFormat(self)
+        ret["uid"] = self.getUniqueID()
+
+    def fromDataFormat(self, obj):
+        Serializable.fromDataFormat(self)
+        self.setUniqueID(obj["uid"])
+
+    # Unique ID methods
+
+    def __del__(self):
+        if not self.uid == -1:
+            if self.uid in self.__instances__:
+                del self.__instances__[uid]
+
+    def getUniqueID(self):
+        if self.uid == -1:
+            i = randint(0, 2**32)
+            while i in self.__instances__:
+                i = randint(0, 2 ** 32)
+            self.uid = i
+            self.__instances__[self.uid] = self
+        return self.uid
+
+    def setUniqueID(self, uid):
+        if not self.uid == -1:
+            gst.warning("Trying to set uid [%d] on an object that already has one [%d]" % (uid, self.uid))
+            return
+
+        if uid in self.__instances__:
+            gst.warning("Uid [%d] is already in use by another object [%r]" % (uid, self.__instances__[uid]))
+            return
+
+        self.uid = uid
+        gst.log("Recording __instances__[uid:%d] = %r" % (self.uid, self))
+        self.__instances__[self.uid] = self
+
+        # Check if an object needs to be informed of our creation
+        self._haveNewID()
+
+    @classmethod
+    def getObjectByUID(cls, uid):
+        """
+        Returns the object with the given uid if it exists.
+        Returns None if no object with the given uid exist.
+        """
+        if uid in cls.__instances__:
+            return cls.__instances__[uid]
+        return None
+
+    # Delayed object creation methods
+
+    def _haveNewID(self, uid):
+        """
+        This method is called when an object gets a new ID.
+        It will check to see if any object needs to be informed of the creation
+        of this object.
+        """
+        if uid in self.__waiting_for_pending_objects__ and uid in self.__instances__:
+            for obj, extra in self.__waiting_for_pending_objects__[uid]:
+                obj.pendingObjectCreated(self.__instances__[uid], extra)
+            del self.__waiting_for_pendings_objects__[uid]
+
+
+    @classmethod
+    def addPendingObjectRequest(cls, obj, uid, extra=None):
+        """
+        Ask to be called when the object with the given uid is created.
+        obj : calling object
+        uid : uid of the object we need to be informed of creation
+        extra : extradata with which obj's callback will be called
+
+        The class will call the calling object's when the requested object
+        is available using the following method call:
+        obj.pendingObjectCreated(new_object, extra)
+        """
+        if not uid in cls.__waiting_for_pending_objects__:
+            cls.__waiting_for_pending_objects__[uid] = []
+        ls = cls.__waiting_for_pending_objects__[uid]
+        ls.append((obj, extra))
 
 class FileSourceFactory(ObjectFactory):
     """
@@ -192,6 +284,8 @@ class FileSourceFactory(ObjectFactory):
                          "",
                          gobject.PARAM_READWRITE )
         }
+
+    __data_type__ = "file-source-factory"
 
     def __init__(self, filename, project):
         gst.info("filename:%s , project:%s" % (filename, project))
@@ -309,6 +403,8 @@ class OperationFactory(ObjectFactory):
     Provides operations useable in a timeline
     """
 
+    __data_type__ = "operation-factory"
+
     def __init__(self):
         ObjectFactory.__init__(self)
         self.nbinput = 1
@@ -319,6 +415,8 @@ class SimpleOperationFactory(OperationFactory):
     """
     Provides simple (audio OR video) operations useable in a timeline
     """
+
+    __data_type__ = "simple-operation-factory"
 
     def __init__(self, elementfactory):
         """ elementfactory is the GstElementFactory """
@@ -339,6 +437,8 @@ class TransitionFactory(OperationFactory):
     Provides transitions useable in a timeline
     """
 
+    __data_type__ = "transition-factory"
+
     def __init__(self):
         OperationFactory.__init__(self)
 
@@ -347,6 +447,8 @@ class SMPTETransitionFactory(TransitionFactory):
     """
     Provides SMPTE video transitions useable in a timeline
     """
+
+    __data_type__ = "SMPTE-transition-factory"
 
     def __init__(self):
         TransitionFactory.__init__(self)

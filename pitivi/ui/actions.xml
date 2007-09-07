@@ -14,6 +14,9 @@
       <separator />
       <menuitem action="Quit" />
     </menu>
+    <menu action="Edit">
+      <menuitem action="PluginManager" />
+    </menu>
     <menu action="View">
       <menuitem action="FullScreen" />
       <menuitem action="AdvancedView" />

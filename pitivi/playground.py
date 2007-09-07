@@ -234,10 +234,13 @@ class PlayGround(gobject.GObject):
         if self.current and self.current.has_audio:
             self.current.setAudioSinkThread(self.asinkthread)
 
-    def _playTemporaryBin(self, tempbin):
+    def _playTemporaryBin(self, tempbin, playit=True):
         """
         Temporarely play a smartbin.
         Return False if there was a problem.
+
+        By default the bin will start playing, except if you set
+        playit to False
         """
         gst.debug("BEGINNING tempbin : %s" % tempbin)
         self.pause()
@@ -246,22 +249,25 @@ class PlayGround(gobject.GObject):
         if self.tempsmartbin:
             self.removePipeline(self.tempsmartbin)
         self.tempsmartbin = tempbin
-        if self.play() == gst.STATE_CHANGE_FAILURE:
+        if playit and self.play() == gst.STATE_CHANGE_FAILURE:
             return False
         gst.debug("END tempbin : %s" % tempbin)
         return True
 
-    def playTemporaryFilesourcefactory(self, factory):
+    def playTemporaryFilesourcefactory(self, factory, playit=True):
         """
         Temporarely play a FileSourceFactory.
         Returns False if there was a problem.
+
+        By default the bin will start playing, except if you set
+        playit to False
         """
         gst.debug("factory : %s" % factory)
         if isinstance(self.current, SmartFileBin) and self.current.factory == factory:
             gst.info("Already playing factory : %s" % factory)
             return True
         tempbin = SmartFileBin(factory)
-        return self._playTemporaryBin(tempbin)
+        return self._playTemporaryBin(tempbin, playit)
 
     def getCurrentTimePosition(self, onlyvideo=True):
         """

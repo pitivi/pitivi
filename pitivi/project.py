@@ -34,15 +34,42 @@ from settings import ExportSettings
 from configure import APPNAME
 
 from gettext import gettext as _
+from serializable import Serializable
 
-class Project(gobject.GObject):
-    """ The base class for PiTiVi projects """
+class Project(gobject.GObject, Serializable):
+    """ The base class for PiTiVi projects 
+    Signals
+
+       string save-uri-requested()
+            The the current project has been requested to save itself, but
+            needs a URI to which to save. Handlers should return a uri to save
+            the file to or None, in which case the file will not be saved.
+
+        boolean confirm-overwrite()
+            The project has been requested to save itself, but the file on
+            disk either already exists, or has been changed since the previous
+            load/ save operation. In this case, the project wants permition to
+            overwrite before continuing. handlers should return True if it is
+            ok to overwrit the file, or False otherwise. By default, this
+            signal handler assumes True.
+
+        void settings-changed()
+            The project settings have changed
+    """
 
     __gsignals__ = {
+        "save-uri-requested" : ( gobject.SIGNAL_RUN_LAST,
+                                     gobject.TYPE_STRING,
+                                     ( )),
+        "confirm-overwrite" : ( gobject.SIGNAL_RUN_LAST,
+                                gobject.TYPE_BOOLEAN,
+                                (gobject.TYPE_STRING, )),
         "settings-changed" : ( gobject.SIGNAL_RUN_LAST,
                                gobject.TYPE_NONE,
                                (  ))
         }
+
+    __data_type__ = "project"
 
     def __init__(self, name="", uri=None):
         """
@@ -59,7 +86,14 @@ class Project(gobject.GObject):
         self.timeline = None
         self.timelinebin = None
         self.settingssigid = 0
+        self._dirty = False
         self._load()
+
+    #def do_save_uri_requested(self):
+    #    return None
+
+    #def do_confirm_overwrite(self):
+    #    return True
 
     def _load(self):
         """ loads the project from a file """
@@ -67,7 +101,16 @@ class Project(gobject.GObject):
             return
         self.timeline = Timeline(self)
         if self.uri:
-            raise NotImplementedError
+            if uri_is_project(self.uri):
+                loader = newProjectSaver()
+                path = gst.uri_get_location(self.uri)
+                fileobj = open(path, "w")
+                try:
+                    tree = loader.deserialize(fileobj)
+                    project.fromDataType(tree)
+                except ProjectLoadError:
+                    return False
+                fileobj.close()
 
     def getBin(self):
         """ returns the SmartTimelineBin of the project """
@@ -77,18 +120,40 @@ class Project(gobject.GObject):
             self.timelinebin = SmartTimelineBin(self)
         return self.timelinebin
 
-    def _save(self, filename):
+    def _save(self):
         """ internal save function """
-        # TODO
-        pass
+        if uri_is_valid(self.uri):
+            path = gst.uri_get_location(self.uri)
+        else:
+            return False
+        #TODO: a bit more sophisticated overwite detection
+        if os.path.exists(path):
+            if not self.emit("confirm-overwrite", self.uri):
+                return False
+        try:
+            # dummy save code for now
+            os.system("touch %s" % path)
+            self._dirty = False
+            return True
+        except IOError:
+            return False
 
     def save(self):
         """ Saves the project to the project's current file """
-        self._save(self.uri)
+        if not self.uri:
+            uri = self.emit("save-uri-requested")
+            if not uri:
+                return False
+            self.uri = uri
+        return self._save()
 
-    def saveAs(self, filename):
+    def saveAs(self):
         """ Saves the project to the given file name """
-        self._save(filename)
+        uri = self.emit("save-uri-requested")
+        if not uri:
+            return False
+        self.uri = uri
+        return self._save()
 
     # setting methods
     def _settingsChangedCb(self, unused_settings):
@@ -112,7 +177,8 @@ class Project(gobject.GObject):
             self.settings.disconnect(self.settingssigid)
         self.settings = settings
         self.emit('settings-changed')
-        self.settingssigid = self.settings.connect('settings-changed', self._settingsChangedCb)
+        self.settingssigid = self.settings.connect('settings-changed', 
+            self._settingsChangedCb)
 
     def unsetSettings(self, unused_settings):
         """ Remove the currently configured settings."""
@@ -140,10 +206,30 @@ class Project(gobject.GObject):
         settings.muxer = curset.muxer
         return settings
 
+    def setModificationState(self, state):
+        self._dirty = state
+
+    def hasUnsavedModifications(self):
+        return self._dirty
+
+    def toDataFormat(self):
+        ret = Serializable.toDataFormat(self)
+        ret["timeline"] = self.timeline.toDataFormat()
+        ret["sources"] = self.sources.toDataFormat()
+        ret["settings"] = self.settings.toDataFormat()
+
+    def fromDataFormat(self, obj):
+        Serializable.fromDataFormat(self, obj)
+        self.timeline = object_from_data_type(obj["timeline"])
+        self.sources = object_from_data_type(obj["sources"])
+        self.settings = object_from_data_type(obj["settings"])
+
+def uri_is_valid(uri):
+    return gst.uri_get_protocol(uri) == "file"
 
 def file_is_project(uri):
     """ returns True if the given uri is a PitiviProject file"""
-    # TODO
-    if not gst.uri_get_protocol(uri) == "file":
-        raise NotImplementedError(_("%s doesn't yet handle non local projects") % APPNAME)
+    if not uri_is_valid(uri):
+        raise NotImplementedError(
+            _("%s doesn't yet handle non local projects") % APPNAME)
     return os.path.isfile(gst.uri_get_location(uri))

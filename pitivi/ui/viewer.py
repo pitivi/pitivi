@@ -38,13 +38,14 @@ from gettext import gettext as _
 
 def time_to_string(value):
     if value == -1:
-        return "--m--s---"
+        return "--:--:--.---"
     ms = value / gst.MSECOND
     sec = ms / 1000
     ms = ms % 1000
     mins = sec / 60
     sec = sec % 60
-    return "%02dm%02ds%03d" % (mins, sec, ms)
+    hours = mins / 60
+    return "%02d:%02d:%02d.%03d" % (hours, mins, sec, ms)
 
 class PitiviViewer(gtk.VBox):
     """ Pitivi's viewer widget with controls """
@@ -64,12 +65,15 @@ class PitiviViewer(gtk.VBox):
         # changing project.
         self.project_signals = SignalGroup()
         self._connectToProject(instance.PiTiVi.current)
-        instance.PiTiVi.connect("new-project", self._newProjectCb)
+        instance.PiTiVi.connect("new-project-loaded", self._newProjectCb)
         instance.PiTiVi.playground.connect("current-state", self._currentStateCb)
         instance.PiTiVi.playground.connect("position", self._playgroundPositionCb)
 
         # callback to know when to set the XID on our viewer widget
         instance.PiTiVi.playground.connect("element-message", self._playgroundElementMessageCb)
+
+        # signal for timeline duration changes : (composition, sigid)
+        self._timelineDurationChangedSigId = (None, None)
 
         self._addTimelineToPlayground()
 
@@ -386,14 +390,25 @@ class PitiviViewer(gtk.VBox):
             self.playpause_button.set_sensitive(False)
             self.next_button.set_sensitive(False)
             self.back_button.set_sensitive(False)
+            if not self._timelineDurationChangedSigId == (None, None):
+                obj, sigid = self._timelineDurationChangedSigId
+                obj.disconnect(sigid)
+                self._timelineDurationChangedSigId = (None, None)
         else:
             if isinstance(smartbin, SmartTimelineBin):
                 gst.info("switching to Timeline, setting duration to %s" % (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
                 self.posadjust.upper = float(smartbin.project.timeline.videocomp.duration)
-                smartbin.project.timeline.videocomp.connect("start-duration-changed",
-                                                            self._timelineDurationChangedCb)
+                # FIXME : we need to disconnect from this signal !
+                sigid = smartbin.project.timeline.videocomp.connect("start-duration-changed",
+                                                                    self._timelineDurationChangedCb)
+                self._timelineDurationChangedSigId = (smartbin.project.timeline.videocomp,
+                                                      sigid)
             else:
                 self.posadjust.upper = float(smartbin.factory.length)
+                if not self._timelineDurationChangedSigId == (None, None):
+                    obj, sigid = self._timelineDurationChangedSigId
+                    obj.disconnect(sigid)
+                    self._timelineDurationChangedSigId = (None, None)
             self._newTime(0)
             self.slider.set_sensitive(True)
             self.playpause_button.set_sensitive(True)

@@ -46,6 +46,7 @@ from sourcefactories import SourceFactoriesWidget
 from viewer import PitiviViewer
 from pitivi.bin import SmartTimelineBin
 from projectsettings import ProjectSettingsDialog
+from pluginmanagerdialog import PluginManagerDialog
 from pitivi.configure import pitivi_version, APPNAME
 from glade import GladeWindow
 
@@ -76,9 +77,9 @@ class PitiviMainWindow(gtk.Window):
         self.isFullScreen = False
         self.errorDialogBox = None
 
-        instance.PiTiVi.connect("new-project", self._newProjectCb)
+        instance.PiTiVi.connect("new-project-loaded", self._newProjectCb)
         instance.PiTiVi.connect("closing-project", self._closingProjectCb)
-        instance.PiTiVi.connect("not-project", self._notProjectCb)
+        instance.PiTiVi.connect("new-project-failed", self._notProjectCb)
         instance.PiTiVi.playground.connect("error", self._playGroundErrorCb)
         instance.PiTiVi.current.sources.connect_after("file_added", self._sourcesFileAddedCb)
 
@@ -98,6 +99,8 @@ class PitiviMainWindow(gtk.Window):
 
     def _timelineDurationChangedCb(self, unused_composition, unused_start,
                                    duration):
+        if not isinstance(instance.PiTiVi.playground.current, SmartTimelineBin):
+            return
         self.render_button.set_sensitive((duration > 0) and True or False)
         if duration > 0 :
             gobject.idle_add(self.timeline.simpleview._displayTimeline)
@@ -144,10 +147,12 @@ class PitiviMainWindow(gtk.Window):
             ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project settings"), None, _("Edit the project settings"), self._projectSettingsCb),
             ("ImportSources", gtk.STOCK_ADD, _("_Import clips..."), None, _("Import clips to use"), self._importSourcesCb),
             ("ImportSourcesFolder", gtk.STOCK_ADD, _("_Import folder of clips..."), None, _("Import folder of clips to use"), self._importSourcesFolderCb),
-	    ("RenderProject", 'pitivi-render' , _("_Render project"), None, _("Render project"), self._recordCb),
+            ("RenderProject", 'pitivi-render' , _("_Render project"), None, _("Render project"), self._recordCb),
+            ("PluginManager", gtk.STOCK_PREFERENCES , _("_Plugins..."), None, _("Manage plugins"), self._pluginManagerCb),
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
             ("About", gtk.STOCK_ABOUT, None, None, _("Information about %s") % APPNAME, self._aboutCb),
             ("File", None, _("_File")),
+            ("Edit", None, _("_Edit")),
             ("View", None, _("_View")),
             ("Help", None, _("_Help"))
             ]
@@ -169,9 +174,9 @@ class PitiviMainWindow(gtk.Window):
             if action.get_name() == "AdvancedView":
                 if not instance.PiTiVi.settings.advancedModeEnabled:
                     action.set_visible(False)
-            if action.get_name() in ["ProjectSettings", "Quit", "File", "Help",
+            if action.get_name() in ["ProjectSettings", "Quit", "File", "Edit", "Help",
                                      "About", "View", "FullScreen", "ImportSources",
-                                     "ImportSourcesFolder", "AdvancedView"]:
+                                     "ImportSourcesFolder", "AdvancedView", "PluginManager"]:
                 action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
@@ -320,7 +325,8 @@ class PitiviMainWindow(gtk.Window):
                    "Thibaut Girka <thibaut.girka@free.fr> (UI)",
                    "Jeff Fortin <nekohayo@gmail.com> (UI)",
                    "Johan Dahlin <jdahlin@async.com.br> (UI)",
-                   "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)"]
+                   "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)",
+                   "Luca Della Santina <dellasantina@farm.unipi.it>"]
         abt.set_authors(authors)
         abt.set_license(_("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details"))
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")
@@ -332,6 +338,9 @@ class PitiviMainWindow(gtk.Window):
 
     def _importSourcesFolderCb(self, unused_action):
         self.sourcefactories.sourcelist.showImportSourcesDialog(True)
+
+    def _pluginManagerCb(self, unused_action):
+        PluginManagerDialog(instance.PiTiVi.plugin_manager)
 
     ## PiTiVi main object callbacks
 

@@ -20,7 +20,9 @@ ui_PYTHON =			\
 	layerwidgets.py		\
 	tracklayer.py		\
 	infolayer.py		\
-	plumber.py
+	plumber.py		\
+	slider.py	\
+	pluginmanagerdialog.py
 
 ui_DATA =				\
 	actions.xml			\
@@ -28,7 +30,8 @@ ui_DATA =				\
 	encodingdialog.glade		\
 	exportsettingswidget.glade	\
 	filelisterrordialog.glade	\
-	projectsettings.glade
+	projectsettings.glade	\
+	pluginmanagerdialog.glade
 
 clean-local:
 	rm -rf *.pyc *.pyo

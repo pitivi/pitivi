@@ -90,6 +90,9 @@ class TimelineLayer(gtk.HBox):
         """ override in subclasses if needed """
         return self.rightWidgetClass(hadj)
 
+    def timelinePositionChanged(self, value, frame):
+        self.rightWidget.timelinePositionChanged(value, frame)
+
     ## ZoomableWidgetInterface methods
 
     def zoomChanged(self):

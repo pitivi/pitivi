@@ -34,6 +34,7 @@ from effects import Magician
 from configure import APPNAME
 from settings import GlobalSettings
 from threads import ThreadMaster
+from pluginmanager import PluginManager
 import instance
 
 from gettext import gettext as _
@@ -42,24 +43,37 @@ class Pitivi(gobject.GObject):
     """
     Pitivi's main class
 
-    Signals:
-      new-project : A new project has been loaded, the Project object is given
-      closing-project : Pitivi wishes to close the project, callbacks return False
-                if they don't want the project to be closed, True otherwise
-      not-project : The given uri is not a project file
-      shutdown : PiTiVi has shutdown
+    Signals
+        void new-project-loading()
+            Pitivi is attempting to load a new project
+        void new-project-loaded (project)
+            a new project has been loaded, and the UI should refresh it's views
+            * project - the project which has been loaded
+        void new-project-failed(reason, uri)
+            a new project could not be created
+            * reason - the reason for failure
+            * uri - the uri which failed to load (or None)
+        boolean closing-project(project)
+            pitivi would like to close a project. handlers should return false
+            if they do not want this project to close. by default, assumes
+            true.
+            * project - the project Pitivi would like to close
+        shutdown
+            used internally, do not catch this signals"""
 
-    """
     __gsignals__ = {
-        "new-project" : ( gobject.SIGNAL_RUN_LAST,
+        "new-project-loading" : (gobject.SIGNAL_RUN_LAST,
+                          gobject.TYPE_NONE,
+                          ()),
+        "new-project-loaded" : ( gobject.SIGNAL_RUN_LAST,
                           gobject.TYPE_NONE,
                           (gobject.TYPE_PYOBJECT, )),
         "closing-project" : ( gobject.SIGNAL_RUN_LAST,
                               gobject.TYPE_BOOLEAN,
                               (gobject.TYPE_PYOBJECT, )),
-        "not-project" : ( gobject.SIGNAL_RUN_LAST,
+        "new-project-failed" : ( gobject.SIGNAL_RUN_LAST,
                           gobject.TYPE_NONE,
-                          (gobject.TYPE_STRING, )),
+                          (gobject.TYPE_STRING, gobject.TYPE_STRING)),
         "shutdown" : ( gobject.SIGNAL_RUN_LAST,
                        gobject.TYPE_NONE,
                        ( ))
@@ -81,7 +95,8 @@ class Pitivi(gobject.GObject):
 
         # store ourself in the instance global
         if instance.PiTiVi:
-            raise RuntimeWarning(_("There is already a %s instance, inform developers") % APPNAME)
+            raise RuntimeWarning(
+                _("There is already a %s instance, inform developers") % APPNAME)
         instance.PiTiVi = self
 
         # TODO parse cmd line arguments
@@ -89,6 +104,9 @@ class Pitivi(gobject.GObject):
         # get settings
         self.settings = GlobalSettings()
         self.threads = ThreadMaster()
+
+        self.plugin_manager = PluginManager(self.settings.get_local_plugin_path(),\
+                                            self.settings.get_plugin_settings_path())
 
         self.playground = PlayGround()
         self.current = Project(_("New Project"))
@@ -99,28 +117,43 @@ class Pitivi(gobject.GObject):
             self.gui = mainwindow.PitiviMainWindow()
             self.gui.show()
 
+    def do_closing_project(self, project):
+        return True
+
     def loadProject(self, uri=None, filepath=None):
         """ Load the given file through it's uri or filepath """
         gst.info("uri:%s, filepath:%s" % (uri, filepath))
         if not uri and not filepath:
-            self.emit("not-project", "")
+            self.emit("new-project-failed", _("Not a valid project file."),
+                uri)
             return
         if filepath:
             uri = "file://" + filepath
         # is the given filepath a valid pitivi project
         if not file_is_project(uri):
-            self.emit("not-project", uri)
+            self.emit("new-project-failed", _("Not a valid project file."),
+                uri)
             return
         # if current project, try to close it
         if self._closeRunningProject():
-            self.current = Project(uri)
-            self.emit("new-project", self.current)
+            self.emit("new-project-loading")
+            try:
+                self.current = Project(uri)
+                self.emit("new-project-loaded", self.current)
+            except:
+                self.emit("new-project-failed", 
+                    _("There was an error loading the file."), uri)
 
     def _closeRunningProject(self):
         """ close the current project """
         gst.info("closing running project")
         if self.current:
-            if not self.emit("closing-project", self.current):
+            if self.current.hasUnsavedModifications():
+                result = self.current.save()
+                if not result:
+                    return False
+            result = not self.emit("closing-project", self.current)
+            if result:
                 return False
             self.playground.pause()
             self.current = None
@@ -131,15 +164,16 @@ class Pitivi(gobject.GObject):
         # if there's a running project we must close it
         if self._closeRunningProject():
             self.playground.pause()
+            self.emit("new-project-loading")
             self.current = Project(_("New Project"))
-            self.emit("new-project", self.current)
+            self.emit("new-project-loaded", self.current)
 
     def shutdown(self):
         """ close PiTiVi """
         gst.debug("shutting down")
         # we refuse to close if we're running a user interface and the user
         # doesn't want us to close the current project.
-        if self._use_ui and not self._closeRunningProject():
+        if not self._closeRunningProject():
             gst.warning("Not closing since running project doesn't want to close")
             return
         self.threads.stopAllThreads()

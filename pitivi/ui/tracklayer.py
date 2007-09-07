@@ -24,6 +24,7 @@
 Complex timeline composition track widget
 """
 
+import gobject
 import gtk
 import gst
 import cairo
@@ -34,6 +35,7 @@ import pitivi.instance as instance
 from pitivi.timeline.source import TimelineFileSource
 from complexinterface import ZoomableWidgetInterface
 from complexsource import ComplexTimelineSource
+from gettext import gettext as _
 
 #
 # TrackLayer
@@ -66,6 +68,8 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         self.layerInfo.composition.connect('source-added', self._compSourceAddedCb)
         self.layerInfo.composition.connect('source-removed', self._compSourceRemovedCb)
 
+        self.position = 0
+
         self.pixmap = None
 
         # drag and drop
@@ -76,10 +80,81 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
         self.connect('drag-leave', self._dragLeaveCb)
         self.connect('drag-motion', self._dragMotionCb)
 
+        self.connect('button-press-event', self._buttonPressEventCb)
+        self.connect('button-release-event', self._buttonReleaseEventCb)
+
+        self._mouseDownPosition = [None, None]
+        self._movingSource = None
+        self._origSourcePosition = None
+        self._requestedPosition = None
+        self._currentlyMoving = False
+
+        self._popupMenu = gtk.Menu()
+        deleteitem = gtk.MenuItem(_("Remove"))
+        deleteitem.connect("activate", self._deleteMenuItemCb)
+        deleteitem.show()
+        self._popupMenu.append(deleteitem)
+
+        cutitem = gtk.MenuItem(_("Cut"))
+        cutitem.connect("activate", self._cutMenuItemCb)
+        cutitem.show()
+        self._popupMenu.append(cutitem)
+
         # object being currently dragged
         self.dragObject = None
 
         self.add_events(gtk.gdk.POINTER_MOTION_MASK | gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
+
+    def _deleteMenuItemCb(self, menuitem):
+        # remove currently selected source
+        gst.log("removing source")
+        self.layerInfo.composition.removeSource(self._movingSource)
+        self._movingSource = None
+
+    def _cutMenuItemCb(self, menuitem):
+        gst.log("cut at position %s" % gst.TIME_ARGS(self.position))
+        # cut current source at current position
+        source = self._findSourceAtPositionTime(self.position)
+
+        gst.log("source:%s start:%s duration:%s" % (source,
+                                                    gst.TIME_ARGS(source.start),
+                                                    gst.TIME_ARGS(source.duration)))
+        gst.log("media start:%s duration:%s" % (gst.TIME_ARGS(source.media_start),
+                                                gst.TIME_ARGS(source.media_duration)))
+
+        # 1 . change duration
+        newfirstduration = self.position - source.start
+        newfirstmediaduration = source.media_duration * (self.position - source.start) / source.duration
+
+        newsecondduration = source.start + source.duration - self.position
+        newsecondmediaduration = source.media_duration - newfirstmediaduration
+
+        source.setStartDurationTime(duration = newfirstduration)
+        source.setMediaStartDurationTime(duration = newfirstmediaduration)
+
+        gst.log("source:%s start:%s duration:%s" % (source,
+                                                    gst.TIME_ARGS(source.start),
+                                                    gst.TIME_ARGS(source.duration)))
+        gst.log("media start:%s duration:%s" % (gst.TIME_ARGS(source.media_start),
+                                                gst.TIME_ARGS(source.media_duration)))
+
+        # 2 . Add new item
+        newsource = TimelineFileSource(factory = source.factory,
+                                       media_type = self.layerInfo.composition.media_type,
+                                       name = source.factory.name,
+                                       start = self.position, duration = newsecondduration,
+                                       media_start = source.media_start + newfirstmediaduration,
+                                       media_duration = newsecondmediaduration)
+
+        gst.log("source:%s start:%s duration:%s" % (newsource,
+                                                    gst.TIME_ARGS(newsource.start),
+                                                    gst.TIME_ARGS(newsource.duration)))
+        gst.log("media start:%s duration:%s" % (gst.TIME_ARGS(newsource.media_start),
+                                                gst.TIME_ARGS(newsource.media_duration)))
+
+        self.layerInfo.composition.addSource(newsource, 1)
+
+        # 3 . Change position/duration of new item
 
     ## composition signal callbacks
 
@@ -116,6 +191,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
         widget.hide()
         self.remove(widget)
+        del self.sources[source]
 
         gst.debug("finished removing source")
 
@@ -164,8 +240,28 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
                                       x, y, x, y, width, height)
         return gtk.Layout.do_expose_event(self, event)
 
+    def _moveTimeoutCb(self):
+        self._currentlyMoving = False
+        if self._requestedPosition and self._movingSource:
+            self._movingSource.setStartDurationTime(start = self._requestedPosition)
+
     def do_motion_notify_event(self, event):
         gst.debug("motion x:%d y:%d" % (event.x , event.y))
+        if not self._mouseDownPosition[0] == None:
+            diffx = event.x - self._mouseDownPosition[0]
+            diffy = event.y - self._mouseDownPosition[1]
+            gst.debug("we moved by x:%d, y:%d" % (diffx, diffy))
+            if self._movingSource:
+                newstart = self._origSourcePosition + self.pixelToNs(diffx)
+                # FIXME : implement blocking !!
+                if newstart < 0:
+                    newstart = 0
+                gst.debug("we should move the source to %s" % gst.TIME_ARGS(newstart))
+                if not self._currentlyMoving:
+                    self._currentlyMoving = True
+                    gobject.timeout_add(80, self._moveTimeoutCb)
+                    self._movingSource.setStartDurationTime(start = newstart)
+                self._requestedPosition = newstart
 
     ## Drawing methods
 
@@ -217,6 +313,8 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
             return height
         return 0
 
+    def timelinePositionChanged(self, value, unused_frame):
+        self.position = value
 
     ## Drag and Drop
 
@@ -253,3 +351,57 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
             source = context.get_source_widget().getSelectedItems()[0]
             self.dragObject = instance.PiTiVi.current.sources[source]
         gst.debug("we have %s" % self.dragObject)
+
+    ## Mouse callbacks
+
+    def _buttonPressEventCb(self, unused_layout, event):
+        if event.button == 1:
+            self._mouseDownPosition = [event.x, event.y]
+            gst.log("Mouse down at %d / %d" % (event.x, event.y))
+            source = self._findSourceAtPosition(event.x)
+            if source:
+                gst.log("we are moving %s" % source)
+                self._movingSource = source
+                self._origSourcePosition = source.start
+        elif event.button == 3:
+            source = self._findSourceAtPosition(event.x)
+            if source:
+                gst.log("we are moving %s" % source)
+                self._movingSource = source
+                self._origSourcePosition = source.start
+                self._popupMenu.popup(None,None,None, event.button, event.time)
+
+    def _buttonReleaseEventCb(self, unused_layout, event):
+        gst.log("Mouse up !")
+        # reset values
+        self._mouseDownPosition = [None,None]
+        self._movingSource = None
+        self._origSourcePosition = None
+
+    def _findSourceAtPosition(self, position):
+        """
+        Find which source is at the given pixel position.
+        Returns the source if there is one, or None if no source
+        is at the given position
+        """
+        position -= self.border
+        for source, widget in self.sources.iteritems():
+            minv = widget.getPixelPosition()
+            maxv = minv + widget.getPixelWidth()
+            if position >= minv and position < maxv:
+                return source
+
+        return None
+
+    def _findSourceAtPositionTime(self, position):
+        """
+        Find which source is at the given time.
+        Returns the source if there is one, or None if no source is
+        at the requested time.
+        """
+        for source, widget in self.sources.iteritems():
+            start = source.start
+            stop = start + source.duration
+            if position >= start and position < stop:
+                return source
+        return None
