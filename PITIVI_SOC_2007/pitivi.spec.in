@@ -1,0 +1,57 @@
+Summary:	Pitivi non-linear video editor
+Name:		@PACKAGE@
+Version:	@VERSION@
+Release:	@PACKAGE_VERSION_RELEASE@
+
+Source:		http://download.sf.net/pitivi/%{name}-%{version}.tar.gz
+Packager:	bilboed@bilboed.com
+License:	LGPL
+Group:		Applications/Multimedia
+URL:		http://www.pitivi.org/
+BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+Requires:	python >= 2.3
+Requires:	gstreamer >= @GST_REQ@
+Requires:	gstreamer-python >= @PYGST_REQ@
+Requires:	pygtk2 >= @PYGTK_REQ@
+Requires:	gnonlin >= @GNONLIN_REQ@
+Requires:	gnome-python2 >= @PYGNOME_REQ@
+Requires:	gnome-python2-gconf
+Requires:	pycairo >= @PYCAIRO_REQ@
+
+BuildRequires:	gstreamer-devel >= @GST_REQ@
+BuildRequires:	gstreamer-python >= @PYGST_REQ@
+BuildRequires:	python-devel >= 2.3
+BuildRequires:	pygtk2-devel >= @PYGTK_REQ@
+BuildArch: 	noarch
+
+%description
+PiTiVi non-linear video editor
+
+%prep
+%setup -q
+
+%build
+%configure
+
+%makeinstall
+
+%files
+%defattr(-,root,root,-)
+%doc ChangeLog AUTHORS
+%{_bindir}/pitivi
+%{_libdir}/pitivi
+%{_datadir}/pitivi/pixmaps/*
+%{_datadir}/pixmaps/pitivi.png
+%{_datadir}/applications/pitivi.desktop
+%{_datadir}/locale
+
+%changelog
+* Mon Apr 10 2006 Edward Hervey <edward at fluendo dot com>
+- Changing application-pitivi.png to pitivi.png
+* Mon Feb 20 2006 Edward Hervey <edward at fluendo dot com>
+- Update for pycairo requirement
+* Thu Jun 23 2005 Christian Schaller <christian at fluendo dot com>
+- Update for current version and switch make with %makeinstall
+* Thu May 26 2005 Edward Hervey <edward at fluendo dot com>
+- Initial release

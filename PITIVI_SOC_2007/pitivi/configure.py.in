@@ -1,0 +1,58 @@
+# PiTiVi , Non-linear video editor
+#
+#       ui/configure.py
+#
+# Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+"""
+Utilities for getting the location of various directories.
+Enables identical use for installed and uninstalled versions.
+"""
+
+import os.path
+import string
+
+LIBDIR = '@LIBDIR@'
+PKGDATADIR = '@DATADIR@/@PACKAGE@'
+PIXMAPDIR = '@DATADIR@/pixmaps'
+pitivi_version = '@VERSION@'
+APPNAME = '@PACKAGE_NAME@'
+PYGTK_REQ = '@PYGTK_REQ@'
+PYGST_REQ = '@PYGST_REQ@'
+GST_REQ = '@GST_REQ@'
+GNONLIN_REQ = '@GNONLIN_REQ@'
+PYCAIRO_REQ = '@PYCAIRO_REQ@'
+
+def get_pixmap_dir():
+    """ Returns the directory for program-only pixmaps """
+    dir = os.path.dirname(os.path.abspath(__file__))
+    if (os.path.exists(os.path.join(dir, 'CVS')) or
+        os.path.exists(os.path.join(dir, '.svn'))):
+        root = dir
+    else:
+        root = PKGDATADIR
+    return os.path.join(root, 'pixmaps')
+
+def get_global_pixmap_dir():
+    """ Returns the directory for global pixmaps (ex : application icon) """
+    dir = os.path.dirname(os.path.abspath(__file__))
+    if (os.path.exists(os.path.join(dir, 'CVS')) or
+        os.path.exists(os.path.join(dir, '.svn'))):
+        root = string.join(dir.split('/')[:-1], '/')
+    else:
+        root = PIXMAPDIR
+    return root

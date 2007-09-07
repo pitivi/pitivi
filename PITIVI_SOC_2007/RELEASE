@@ -1,0 +1,75 @@
+0.10.3 Release : Got some new t-shirts
+--------------------------------------
+
+The PiTiVi team is proud to announce the fourth release of the 0.10.x series of the PiTiVi opensource video editor.
+
+The goal of this series is to allow users to test new versions often, give their feedback, and remove bugs more often.
+
+
+* Features of this release
+
+ * Improvement of first time user experience.
+ * Frame-by-frame seeking
+ * UI improvements for usability
+ * New graphics
+ * i18n support, translated in 14 languages
+ * Critical bugfixes
+ * Unit tests
+ * Advanced view disabled by default
+
+
+* Bugs Fixed
+
+ * 353857 : [feature request] Frame-by-frame seeking
+ * 383402 : Add explanatory text in empty sourcelist and timeline
+ * 403877 : Can't drag from nautilus and drop on source list
+ * 405467 : [i18n] pitivi/ui/timeline.py isn't included in translatable files
+ * 406341 : [configure] Don't stop build if runtime-dependencies are not available
+ * 415060 : various toolbar HIG fixes
+ * 416702 : Moving clips in simple view is broken
+ * 420847 : do not grow the timeline length if no clip was added or moved
+ * 421652 : render button should be in the main toolbar
+ * 421672 : remove the separator between video preview and playback controls
+ * 424228 : regression, cannot add a clip to the timeline
+ * 430686 : [Simple Timeline] Clips are not painted when switching from advanced timeline
+ * 430954 : Fix terminology and naming.
+ * 432204 : [Rendering dialog] Gettext issue, and button not disabled when rendering
+ * 432644 : [Advanced Timeline] Disable alltogether until it works
+ * 432655 : [Importing Files] Blocking and progress indication
+ * 432656 : Source List explanation message gets cropped
+ * 432682 : [Simple Timeline] Explanation message doesn't come back if we don't drop
+ * 432714 : [Source List] Remove buttons
+ * 432724 : [Simple Timeline] Don't show explanation message too soon
+ * 441784 : [Simple Timeline] Make video-only clips work
+
+* Requirements
+
+ * gstreamer >= 0.10.8
+ * gst-python >= 0.10.6
+ * gnonlin >= 0.10.7
+ * pygtk >= 2.8.0
+
+
+* Contributors
+
+ * Edward Hervey
+ * Thibaut Girka
+ * Jeff Fortin
+ * Johan Dahlin
+ * Brandon Lewis
+
+
+* Download
+
+  PiTiVi source tarballs are available on gnome FTP:
+   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.10/
+
+  See the website for distribution-specific packages.
+
+* Information and Feedback
+
+ * Information for users and developers can be found on the PiTiVi website :
+     http://www.pitivi.org/
+ * Comments and feedback are welcome.
+  * Mailing-list : pitivi-pitivi@lists.sourceforge.net
+  * PiTiVi bug-tracker : http://bugzilla.gnome.org/browse.cgi?product=pitivi

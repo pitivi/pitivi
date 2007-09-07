@@ -1,0 +1,6608 @@
+2007-08-31  Edward Hervey  <bilboed@bilboed.com>
+
+	* AUTHORS:
+	* pitivi/ui/mainwindow.py:
+	Add Luca to the Authors list.
+
+2007-08-31  Edward Hervey  <bilboed@bilboed.com>
+
+	Patch by: Luca Della Santina <dellasantina@farm.unipi.it>
+	* pitivi/Makefile.am:
+	* pitivi/pitivi.py:
+	* pitivi/plugincore.py:
+	* pitivi/pluginmanager.py:
+	* pitivi/settings.py:
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/actions.xml:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/pluginmanagerdialog.glade:
+	* pitivi/ui/pluginmanagerdialog.py:
+	Plugin system (core + ui) !
+	Tests will be commited soon, along with example plugin.
+
+2007-08-25  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/timeline/composition.py:
+	Compositions don't require factories.
+	Fixup Serializable-related methods, even though they don't do much yet.
+	The TimelineComposition is going to require a refactoring before I go
+	any further.
+	* pitivi/timeline/objects.py:
+	Use weakref proxy objects for storing objects requiring objects that
+	aren't created yet. This allows objects to be properly free'd once
+	nobody use them.
+	Add TimelineObject.__requires_factory__ to specify if the class needs
+	an object factory in order to create its gnlobject.
+	Fix up Serializable methods to take into account the fact that some
+	classes don't use object factories.
+	* pitivi/timeline/source.py:
+	Add __requires_factory__ to needed classes.
+	Fix up wrong use of __data_type__.
+	Added documentation of Serializable properties.
+	Delay media-duration/start handling until we have a gnlobject.
+	Fix Serializable methods.
+	* tests/common.py:
+	Fix TestTimelineFileSource for new behaviour.
+	* tests/runtests.py:
+	white line fixes...
+	* tests/test_timeline_composition.py:
+	Also check for proper composition 'start-duration-changed' signal
+	emission.
+	Add extremely basic serialization test.
+	* tests/test_timeline_objects.py:
+	Added tests for making sure the proper number of instances are
+	registered in BrotherObjects.__instances__
+	* tests/test_timeline_source.py:
+	Added tests for Serializable methods.
+
+2007-08-24  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/objectfactory.py:
+	Make ObjectFactory serializable.
+	Add UniqueID property and methods.
+	* pitivi/serializable.py:
+	Add check for serializable sub-classes that have the same
+	__data_type__
+	* pitivi/timeline/objects.py:
+	Add documentation about serializable properties.
+	Add UniqueID property and methods.
+	Add methods for delayed object creation.
+	Adapted code so we can create objects both with and without
+	initial parameters.
+	* tests/common.py:
+	ObjectFactories need __data_type__
+	* tests/test_serializable.py:
+	Add tests for uniqueness.
+	* tests/test_timeline_objects.py:
+	Add serialization tests for BrotherObjects and TimelineObject
+
+2007-08-24  Edward Hervey  <bilboed@bilboed.com>
+
+	* tests/test_file_load_save.py:
+	Fix typos.
+
+2007-08-22  Edward Hervey  <bilboed@bilboed.com>
+
+	* tests/Makefile.am:
+	* tests/test_serializable.py:
+	Added new test to check for pitivi.serializable behaviour.
+
+2007-08-22  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/project.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/effects.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/timeline/timeline.py:
+	* tests/common.py:
+	Add __data_type__ for proper intermediary <=> object conversion.
+	* pitivi/projectsaver.py:
+	Fix so that it builds.
+	* pitivi/serializable.py:
+	Add methods to search all existing Serializable subclasses and create
+	an object from an intermediary format data structure.
+
+2007-08-22  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/Makefile.am:
+	* tests/Makefile.am:
+	Add new files to distributed files.
+
+2007-08-21  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/project.py:
+	* pitivi/projectsaver.py:
+	* pitivi/serializable.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/timeline/timeline.py:
+	* tests/test_file_load_save.py:
+	This is the final SoC commit. This includes a lot of broken/unfinished
+	code, but I felt the need to sort of delimit where my official
+	contribution ends. I have added the "Serializable" interface, and
+	implemented it in most of the project classes. None of this has been
+	tested, and PiTiVi may even be broken, although it does seem to load
+	and run. There's also likely to be some code which is left over from
+	an earlier attempt to implement saving and loading.
+
+2007-08-17  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/projectsaver.py:
+	* tests/test_file_load_save.py:
+	added more internal error checking
+	added more test cases
+
+2007-08-17  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/projectsaver.py:
+	* tests/test_file_load_save.py:
+  added basic file saver backend framework code. 
+  added rudimentary test cases.
+
+2007-08-06  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/pitivi.py:
+	* tests/test_file_load_save.py:
+	Changed the signature of the "new-project-failed" so that it also
+	includes the uri of the failed project.
+
+2007-08-04  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/pitivi.py:
+	* pitivi/project.py:
+	* tests/test_file_load_save.py:
+	implemented first part of application logic
+	added test cases for new/load/save application logic
+
+2007-08-02  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/pitivi.py:
+	* pitivi/project.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/viewer.py:
+ First minimal changes required to get file load/save application logic going.
+ I've renamed some signals, and added some new ones. This broke Pitivi, so
+ i've made minimal changes to allow Pitivi to run and work as before.
+ new-project -> new-project-loaded
+ not-project -> new-project-failed
+ added new-project-loading (emitted from Pitivi)
+ added new-project-failed (emitted from Pitivi)
+ added save-uri-requested (emitted from Project)
+ added confirm-overwrite (emitted from Project)
+ 
+
+2007-07-27  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/tracklayer.py:
+	Don't forget to remove our widget from self.sources when a source has
+	been removed.
+
+2007-07-24  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/check.py:
+	Fix for current gstreamer version.
+
+2007-07-24  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/plumber.py:
+	Force audio output for previewing to stereo 16bit 44.1kHz.
+
+2007-07-24  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/tracklayer.py:
+	Only save mouseDownPosition for left mouse button.
+
+2007-07-24  Edward Hervey  <bilboed@bilboed.com>
+
+	* configure.ac:
+	Depend on cvs gstreamer core and gnonlin. I know it sucks, but I can't
+	come up with non-cvs workarounds this time :(
+	* pitivi/elements/smartscale.py:
+	Don't revert that change in fact, it was capsfilter that was broken
+	in fact.
+
+2007-07-23  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/elements/smartscale.py:
+	Revert issue already reverted in TRUNK
+	* pitivi/elements/thumbnailsink.py:
+	small fixes.
+	* pitivi/settings.py:
+	Re-enable advanced view.
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/tracklayer.py:
+	We can move and cut on the advanced timeline \o/.
+
+2007-07-20  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/ui/slider.py:
+	Slider no longer connects to TimelineFileSource signals, but a new
+	public interface for setting the slider's endpoints has been added.
+	* pitivi/ui/timelineobjects.py:
+	Added cancel button
+	Wrapped all button label strings in _().
+	Rewrote the start/stop trimming code so that it stores changes
+	temporarily, and directly updates the endpoint display.
+	The TimelineFileSource start/duration are not changed until the user
+	clicks Done. Cancel will have no effect.
+
+2007-07-18  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/timeline/composition.py:
+	removed TimelineComposition.getSourcePositition, replaced with
+	TimelineComposotion.getSourceLayerPosition, and
+	TimelineComposition.getSimpleSourcePosition
+	* pitivi/timeline/source.py:
+	added volume control element to the TimelineFileSource object
+	added method to set volume
+	added workaround for gstreamer unlinking bug
+	* pitivi/ui/timelineobjects.py:
+	adjusted range of volume slider
+	* pitivi/thumbnailer.py:
+	changed debug statements from warning to log
+
+2007-07-17  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	* pitivi/ui/timelineobjects.py:
+	Rename method to get layer position of a source in a composition.
+	Add new method for getting position of a source in the simple
+	representation of a composition.
+	Fix editing widget to use the proper method to get the position of a
+	source in the timeline.
+
+2007-07-13  Edward Hervey  <bilboed@bilboed.com>
+
+	Patch by: Thijs Vermeir <thijsvermeir@gmail.com>
+	* pitivi/ui/mainwindow.py:
+	Fix issues with rendering progress bar.
+
+2007-07-12  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/slider.py:
+	Added a bit of debugging.
+	* pitivi/ui/timelineobjects.py:
+	Remember initial values in the timeline widget.
+	When closing the widget, shift the following sources by the proper
+	offset.
+	Whiteline cleanup.
+
+2007-07-12  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/timeline/composition.py:
+	Make getSourcePosition a public method.
+	Added shiftSources() method to offset one or more sources.
+	Adapt existing code to use new shiftSources method.
+	* tests/test_timeline_composition.py:
+	Unit test for new shiftSources method.
+
+2007-07-12  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/timeline/source.py:
+	None and 0 are both False. But 0 is a valid value for start.
+
+2007-07-12  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/Makefile.am:
+	Add slider to list of distributed files.
+
+2007-07-09  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/timelineobjects.py:
+	Fix sign error.
+
+2007-07-09  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/slider.py:
+	bugfix in _playgroundCurrentChangedCb where seek being called with
+	non-integer
+	* pitivi/ui/timelineobjects.py:
+	the arrow buttons now work to set the endpoints of the clip.
+	currently they advance/rewind start and stop points by 1 second
+
+2007-07-08  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelineobjects.py:
+	  editing widget makes trim buttons insensitive when slider is beyond
+	  valid range. i.o.w. it is impossible to set the start after the end,
+	  and vice versa.
+
+2007-07-08  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/slider.py:
+	split editing slider code out of timelineobjects.py into new file
+	* pitivi/ui/timelineobjects.py:
+	editing slider now shows start and stop points above the slider
+	removed most slider-related code from SimpleEditingWidget
+
+2007-07-08  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/settings.py:
+	More flexible algorithm for finding compatible muxers and encoders.
+	It still leaves the problem of limitations because of the
+	encoders (in size, depth, ...).
+
+2007-07-08  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/timeline.py:
+	Use a label for the informational message instead of the previous
+	method. This should avoid a lot of segfaults.
+
+2007-07-07 Brandon Lewis <brandon_lewis@berkeley.edy>
+
+    * pitivi/ui/timelineobjects.py:
+    Tweaked default SimpleTimeline sizes
+    Split _createUI() out of SimpleSourceWidget.__init__()
+    Cosmetic tweaks for SimpleSourceWidget
+    SimpleSourceWidget ellipsizes it's file names
+    SimpleSourceWidget updates its duration after filesource duration changes
+    Also updates it's thumbnails after media start changes
+    Made volume slider set source volume (needs to be implemented in backend)
+    * pitivi/timeline/sources.py:
+    added new blank method TimelineFileSource.setVolume()
+
+
+2007-07-06 Brandon Lewis <brandon_lewis@berkeley.edu>
+
+    * pitivi/ui/timelineobjects.py:
+    Hopefully definitive fix for thumbnail aspect ratios
+    ScaledThumbnailViewer.setPixelAspectRatio() should work now
+
+2007-07-01  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/timelineobjects.py:
+	Fix thumbnail aspect ratio a bit more.
+	Fix small issues.
+	* pitivi/ui/viewer.py:
+	Fix small issues.
+
+2007-06-30  Edward Hervey  <bilboed@bilboed.com>
+
+	* MAINTAINERS:
+	* pitivi.spec.in:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/plumber.py:
+	Changing email adress for my copyrights since I'm no longer working at
+	Fluendo.
+
+2007-06-27  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+    	* pitivi/ui/timelineobjects.py:
+    	Changed ScaledThumbnailViewer so that _drawData is called after calling
+    	setPixbuf on a thumbnail viewer.
+	
+    	Added a bunch of stuff to make the editing slider work. It's
+	functional, but not quite right yet.
+
+	Renamed SimpleEditingWidget._playgroundPositionChangedCb to
+	_playgroundPositionCb to be more consistent with signal name.
+
+	SimpleEditingWidget.set_source() now creates editing pipeline directly.
+	
+    	* pitivi/playground.py:
+    	Playground._playTemporaryBin() now returns the temporary bin
+    	instead of True if successfull --- EDIT: reversed this change.
+
+2007-06-17  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	* pitivi/thumbnailer.py:
+	Added new thumbnailer utility class.
+	* pitivi/elements/singledecodebin.py:
+	typo fix
+	* pitivi/elements/thumbnailsink.py:
+	also implement do_preroll() !
+	added debug.
+	* pitivi/timeline/source.py:
+	white fixes.
+	* pitivi/ui/timelineobjects.py:
+	First go at implementing thumbnailing support.
+	It works... except the refresh isn't automatic. You need to force it
+	through resizing the window.
+
+2007-06-16  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timelineobjects.py: (SimpleEditingWidget.setSource): 
+	Comment out initial seek with appropriate FIXME.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timelineobjects.py:
+	Hey... trimming works :)
+	The slider in the editing window isn't connected yet, so we need to use
+	the slider present in the viewer area.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py:
+	Better time-to-string conversion. Now includes hours also.
+	Only show the duration change if it's the currently playing source that
+	changed it's duration.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* tests/test_timeline_source.py:
+	Test for media_start/media_duration invalid values handling.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Only activate the render icon if it's really the timeline being active
+	in the playground
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/source.py:
+	Don't set media_duration/media_start before calling the gobject
+	set-property. They will be set in the notify handler.
+	Make sure we only give media-start and media-stop valid values.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Add 'playit' parameter to Playground.playTemporaryFilesourcefactory so
+	we can make the play-when-loaded optional.
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timelineobjects.py:
+	To disconnect a signal handler, you need to use the signal ID returned
+	when you connected to it.
+
+
+2007-06-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/elements/Makefile.am: (elements_PYTHON): 
+	Add the new thumbnailsink.
+
+2007-06-14  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/elements/thumbnailsink.py:
+	First take at a thumbnailing sink that converts RGB buffers into
+	GdkPixbuf usable in gtk widgets.
+2007-06-11  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Brandon Lewis <brandon_lewis@berkeley.edu>
+	* pitivi/ui/timelineobjects.py:
+	Start of SoC work by Brandon. Commiting it until his svn account is
+	properly activated.
+
+2007-05-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timelineobjects.py:
+	re-activate "remove" popup button on sources now that the release is 
+	done.
+
+2007-05-30  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Back to development cycle.
+
+=== release 0.10.3 ===
+
+2007-05-30  Edward Hervey  <edward@fluendo.com>
+
+	* NEWS:
+	* RELEASE:
+	* configure.ac:
+	Releasing 0.10.3 "Got some new t-shirts"
+
+2007-05-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timelineobjects.py: (SimpleSourceWidget.__init__):
+	Disable source editing for the release.
+	* po/ar.po:
+	* po/ca.po:
+	* po/de.po:
+	* po/dz.po:
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fi.po:
+	* po/fr.po:
+	* po/it.po:
+	* po/pa.po:
+	* po/pt_BR.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	po files adjusted.
+
+2007-05-30  Edward Hervey  <edward@fluendo.com>
+
+	* AUTHORS:
+	* pitivi/ui/mainwindow.py:
+	Give credit to the contributors !
+
+2007-05-30  Edward Hervey  <edward@fluendo.com>
+
+	* po/ar.po:
+	* po/ca.po:
+	* po/de.po:
+	* po/dz.po:
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fi.po:
+	* po/fr.po:
+	* po/it.po:
+	* po/pa.po:
+	* po/pt_BR.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	Update translations.
+
+2007-05-28  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	0.10.2.2 pre-release
+
+2007-05-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/source.py:
+	New TimelineBlankSource for audio/video blanks.
+	* pitivi/ui/timelineobjects.py:
+	When adding a video-only clip to the timeline, link a blank audio
+	brother to it to avoid issues.
+	Fixes #441784
+
+2007-05-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/elements/smartscale.py:
+	Always set the pixel-aspect-ratio on the intermediate capsfilter to
+	handle video streams that don't specify the PAR (which in that case
+	defaults to 1/1).
+
+2007-05-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Set the proper title and heading on dialog box depending on whether
+	there is one OR more files that failed.
+
+2007-05-12  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/filelisterrordialog.py:
+	more cleanup
+	* pitivi/ui/sourcefactories.py:
+	Emit signal so InfoStub can be properly removed.
+
+2007-05-07  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/filelisterrordialog.py:
+	First try at using gtk.TextView for error information.
+
+2007-05-07  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	* pitivi/ui/filelisterrordialog.py:
+	* pitivi/ui/sourcefactories.py:
+	Use the extra information field for 'not-media-file' signals.
+	UI cleanups will follow soon.
+
+2007-05-07  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Sort files from folders when receiving dropped uris.
+
+2007-05-01  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	* pitivi/threads.py:
+	* pitivi/pitivi.py:
+	Threading convenience class and class to manage all threads in
+	existence during runtime.
+	* pitivi/sourcelist.py:
+	* pitivi/discoverer.py:
+	Add extra argument to not-media-file signal.
+	Add error case when we can't figure out the duration of a file.
+	* pitivi/ui/filelisterrordialog.glade:
+	* pitivi/ui/filelisterrordialog.py:
+	Start modifications of importing error reporting dialog.
+	* pitivi/ui/sourcefactories.py:
+	Spawn separate thread for recursively discovering threads so it doesn't
+	block the UI main thread.
+	Fixes #432655
+
+2007-05-01  Edward Hervey  <edward@fluendo.com>
+
+	* tests/test_timeline_composition.py:
+	Remove dangling whitespaces.
+
+2007-04-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/exportsettingswidget.py:
+	whoops :)
+
+2007-04-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	* pitivi/pixmaps/Makefile.am:
+	* pitivi/pixmaps/busy.gif:
+	* pitivi/sourcelist.py:
+	* pitivi/ui/sourcefactories.py:
+	Remove buttons in source list.
+	The actions present in the toolbar and menu are enough, plus the fact
+	that you can drop some files in it too.
+	Add an indicator in the source list when importing is taking place.
+	Much slicker than previous versions.
+	Fixes #432714
+
+2007-04-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi.desktop.in:
+	Add bugzilla fields so that bug-buddy can work properly with pitivi.
+
+2007-04-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timeline.py:
+	Only hide the timeline if it's empty.
+	* pitivi/ui/timelineobjects.py:
+	Remove unused code.
+
+2007-04-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/encodingdialog.glade:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	Terminology fixes.
+
+2007-04-25  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Thibaut Girka <thibaut.girka@free.fr>
+	* pitivi/ui/mainwindow.py:
+	Fix i18n bug.
+	Disable/enable [Render] button at correct time.
+	Fixes #432204
+
+2007-04-25  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Jeff Fortin <nekohayo@gmail.com>
+	* pitivi/ui/mainwindow.py:
+	Make fullscreen action toggle-able (like other gtk/gnome apps).
+	Remove 5px spacing in Global VBox that made the toolbar look weird.
+	* pitivi/ui/sourcefactories.py:
+	Add icons to popup-menu.
+	Fixes #415060
+
+2007-04-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	Remove cruft that was causing the explanation message to be hidden.
+	Fixes #432656
+	* pitivi/ui/timeline.py:
+	Start by displaying the timeline. Fix explanation message.
+	Only display explanation message in the timeline once there's at least
+	one clip to add. Fixes #432724
+	
+
+2007-04-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timeline.py:
+	Show explanation message again if a drag was canceled.
+	Fixes #432682
+
+2007-04-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pitivi.py:
+	* pitivi/settings.py:
+	* pitivi/ui/mainwindow.py:
+	Disable Advanced Mode by default until it works effectivelly.
+	If you wish to use it, set the PITIVI_ADVANCED_MODE env variable to 1
+	Fixes #432644
+
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Thibaut Girka <thibaut.girka@gmail.com>
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	Make simple timeline view active when it contains elements, even though
+	it wasn't previously displayed.
+	Fixed #430686
+
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Don't enable render button when we are viewing a temporary source.
+
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Jeff Fortin <nekohayo@gmail.com>
+	* pitivi/ui/viewer.py:
+	Remove horizontal bar between viewer and viewer controls.
+	Fixes #421672
+
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pixmaps/Makefile.am:
+	* pitivi/pixmaps/pitivi-advanced-16.png:
+	* pitivi/pixmaps/pitivi-render-16.png:
+	Add new 16x16 icons by Andreas Nilsson.
+	* pitivi/ui/mainwindow.py:
+	Set render icon on the render dialog box.
+
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pixmaps/Makefile.am:
+	Modify for new/removed icons.
+
+2007-04-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/actions.xml:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	Move render button to toolbar/menu.
+	Patch by: Thibaut Girka <thibaut.girka@gmail.com>
+	Fixes #421652
+	* pitivi/pixmaps/pitivi-file.png:
+	* pitivi/pixmaps/pitivi-sound.png:
+	Remove no longer used icons.
+	* pitivi/pixmaps/pitivi-advanced.png:
+	* pitivi/pixmaps/pitivi-advanced-22.png:
+	* pitivi/pixmaps/pitivi-advanced-24.png:
+	* pitivi/pixmaps/pitivi-render-22.png:
+	* pitivi/pixmaps/pitivi-render-24.png:
+	Rename icons.
+	New render icon by Andreas Nilsson.
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Use default gtk theme icons for files, audio files and video files.
+	Fixes #431060
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	Don't stop pitivi from starting if we can't find the required locale.
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/exportsettingswidget.py:
+	Small typo fix.
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pixmaps/pitivi-advanced.png:
+	* pitivi/ui/mainwindow.py:
+	New icon for Advanced mode.
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timeline.py:
+	comments fixups.
+	* pitivi/ui/viewer.py:
+	Pause the timeline when opening the render dialogbox.
+	Grey-out the 'Record' button until the user has chosen a file.
+	Remove the 'Choose file to render to' message once the user has chosen
+	a file.
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	* tests/test_timeline_composition.py:
+	Fix more cases when removing sources from the composition.
+
+2007-04-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Only establish if the file is valid or not at the complete end of the
+	discovery. This avoids having 'not_media_file' emitted several times for
+	one file.
+	* pitivi/ui/sourcefactories.py:
+	Make the text message for the discoverer error dialog more user-friendly.
+
+2007-04-17  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	(TimelineComposition.movesource): Clamp new positions values, and fixup
+	check for same-position-as-before.
+	Fixes #420847
+	* tests/test_timeline_composition.py:
+	Add unit tests for same position moves, and insane values of new
+	positions.
+
+2007-04-13  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	Adjust the new position of the source when moving it further in time
+	only.
+	Fixes #416702
+	* tests/test_timeline_composition.py:
+	Unit tests for composition.moveSource().
+
+2007-04-13  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/source.py:
+	initialize media-start and media-duration to -1 so we properly set the
+	values on the gnlobject the first time round.
+
+2007-04-13  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	Fix removal of linked sources.
+	Raise an exception if we try to remove a source while collapsing the
+	neighbours but not removing the linked object.
+	* pitivi/timeline/source.py:
+	Give a better name to brothers of TimelineFileSource to make it easier
+	to spot them in debug logs.
+	* tests/common.py:
+	Allow setting durations on TestFileSourceFactory, with a default of 1s.
+	* tests/test_timeline_composition.py:
+	Added tests for insertSourceAfter, prependSource and removeSource
+
+2007-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	Fixup and document Composition.appendsource()
+	Minor cleanups
+	* pitivi/ui/sourcefactories.py:
+	Make the explanation text centered.
+	* tests/common.py:
+	Add a few things to TestFileSourceFactory.__init__
+	* tests/test_timeline_composition.py:
+	New test file for pitivi.timeline.composition behaviour.
+
+2007-04-04  Edward Hervey  <edward@fluendo.com>
+
+	* tests/common.py:
+	Some systems/python don't like doing in-depth import.
+
+2007-03-31  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/source.py:
+	Set initial values for TimelineSource media_start and media_duration
+	* tests/common.py:
+	New TimelineFileSource and FileSourceFactory test objects
+	* tests/test_timeline_source.py:
+	Test some behaviour of TimelineFileSource
+	Fixes #424228
+
+2007-03-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/objects.py:
+	Add a getBrother() method to BrotherObjects.
+	small cleanups
+	* tests/Makefile.am:
+	* tests/common.py:
+	New file to contain the test pitivi objects
+	* tests/test_timeline_objects.py:
+	Unit test for the pitivi.timeline.objects file.
+	Only contains tests for the BrotherObjects, still need to add tests
+	for the TimelineObjects.
+
+2007-03-27  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pitivi.py:
+	Separate the gtk mainloop handling outside of the Pitivi class.
+	This allows not forcing the use of a gobject MainLoop when using
+	PiTiVi.
+	* Makefile.am:
+	* configure.ac:
+	* tests/:
+	* tests/Makefile.am:
+	* tests/runtests.py:
+	* tests/test_basic.py:
+	Added unit-test system. First provided test tests that pitivi gets
+	properly created and destroyed, nothing fancy.
+	This should lead the way to a whole bunch of unit-tests. Ideally we
+	should have one unit test per relevant code file.
+
+2007-03-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pitivi.py:
+	Add an option for ui-less pitivi. Needed for unit-testing.
+	* pitivi/timeline/source.py:
+	Remove cruft.
+
+2007-03-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	The order of the dialogbox buttons should be [close, add].
+
+2007-03-25  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Johan Dahlin <jdahlin@async.com.br>
+
+	* pitivi/ui/sourcefactories.py:
+	HIG fixes.
+	Switch the explanation message from a gtk.TextView to a gtk.Label,
+	in order to avoid issues with text selections.
+
+2007-03-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pitivi.py:
+	* pitivi/pitivigstutils.py:
+	Import pitivi gst utils explicitely.
+
+2007-03-18  Johan Dahlin  <jdahlin@async.com.br>
+
+	* pitivi/ui/sourcefactories.py: Modernize the usage of
+	treemodel and use enums to access the columns.
+
+2007-03-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	Remove unused imports, detected by pyflakes.
+
+2007-03-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/elements/singledecodebin.py:
+	* pitivi/elements/smartscale.py:
+	* pitivi/instance.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/signalgroup.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/glade.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/plumber.py:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	Remove trailing whitespaces by using reindent.py script.
+
+2007-03-06  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/playground.py:
+	* pitivi/ui/viewer.py:
+	Implement frame-by-frame forward/backward seeking in the playground
+	and in the UI.
+	Brandon, welcome to the PiTiVi developer team :)
+	Fixes #353857
+
+2007-03-06  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Properly implement the getSettings method in SmartTimelineBin and
+	SmartFileBin.
+	* pitivi/objectfactory.py:
+	Cache the result of FileSourceFactory.getExportSettings() so we don't
+	calculate it every time it's being asked.
+
+2007-02-18  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Removed checking for runtime-dependencies. Maintainers should make sure
+	they are correctly set when packaging.
+	Fixes #406341
+
+2007-02-11  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/check.py:
+	* pitivi/configure.py.in:
+	Moved all checks (including version checks) to runtime checking.
+
+2007-02-08  Edward Hervey  <edward@fluendo.com>
+
+	* po/POTFILES.in:
+	Add pitivi/ui/timeline.py for translatable strings
+	* po/ar.po:
+	* po/ca.po:
+	* po/dz.po:
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fi.po:
+	* po/fr.po:
+	* po/pa.po:
+	* po/pt_BR.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	Update po files for latest modifications.
+	Includes french translation by Julien Tous <julien.tous@gmail.com>
+	Fixes #405467
+
+2007-02-08  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timelineobjects.py:
+	First step of implementing simple timeline editing mode.
+	Still need to fill in the SimpleEditingWidget.
+	
+2007-02-07  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Make the explanation message go away when dragging into the source
+	list. This allows drag-and-drop again from outside pitivi.
+	Fixes #403877
+
+2007-02-02  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timeline.py:
+	Show an explanation text in the timeline when it is empty so new users
+	know what to do.
+	Fixes #383402
+
+2007-02-02  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Make requirement of gconf optional, since we want pitivi to also
+	work on pure gtk+ installations.
+
+2007-01-31  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Back to development cycle
+
+=== release 0.10.2 ===
+
+2007-01-31  Edward Hervey  <edward@fluendo.com>
+	* NEWS:
+	* RELEASE:
+	* configure.ac:
+	Releasing 0.10.2
+
+2007-01-28  Edward Hervey  <edward@fluendo.com>
+
+	* AUTHORS: (Contributors): 
+	Updated contributor list
+
+2007-01-26  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	0.10.1.3 pre-release
+
+2007-01-26  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac: (PYGST_REQ): 
+	Bring gst-python requirement down to 0.10.6. 0.10.7 is not a hard
+	requirement, but highly recommended since it fixes big thread-safety
+	issues.
+
+2007-01-25  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	0.10.1.2 pre-release
+
+2007-01-25  Edward Hervey  <edward@fluendo.com>
+
+	* po/ar.po:
+	* po/ca.po:
+	* po/dz.po:
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fi.po:
+	* po/fr.po:
+	* po/pa.po:
+	* po/pt_BR.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	Update po files for pre-release
+
+2007-01-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/timeline.py:
+	More code refactoring in timeline objects.
+
+2007-01-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline/effects.py:
+	cough, sven is stupid, cough
+
+2007-01-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	* pitivi/effects.py:
+	Move the magician back to the top-level.
+	* pitivi/timeline/Makefile.am:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/effects.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/timeline/timeline.py:
+	Split the timeline objects into smaller files for easier comprehension.
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	Fix inconsistencies detected by pychecker.
+	Adapt code to timeline objects split-up.
+
+2007-01-22  Edward Hervey  <edward@fluendo.com>
+
+	* po/ar.po:
+	* po/ca.po:
+	* po/dz.po:
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fi.po:
+	* po/fr.po:
+	* po/pa.po:
+	* po/pt_BR.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	Update po files for newly added translatable file.
+
+2007-01-22  Edward Hervey  <edward@fluendo.com>
+
+	* po/POTFILES.in:
+	Add pitivi/ui/filelisterrordialog.py to translatable files.
+
+2007-01-19  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Use decodebin2 if the env variable is set. Because we want to use
+	decodebin2... DO IT !  NOW !
+
+2007-01-15  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	* pitivi/Makefile.am:
+	* pitivi/effects.py:
+	* pitivi/timeline.py:
+	* pitivi/timeline:
+	* pitivi/timeline/Makefile.am:
+	* pitivi/timeline/__init__.py:
+	* pitivi/timeline/effects.py:
+	* pitivi/timeline/timeline.py:
+	Create pitivi/timeline/ directory and move timeline.py and effects.py
+	into there.
+	* pitivi/pitivi.py:
+	* pitivi/project.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	import adjustments for timeline module location modifications.
+
+2007-01-14  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline.py:
+	Bug fixes when moving sources to the beginning position.
+
+2007-01-14  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/timelineobjects.py:
+	Forgot to add this file during the last commit.
+
+2007-01-10  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Now depend on gst-python 0.10.6.1 for GIL lock issues in virtualmethods.
+	Now depend on gnonlin-0.10.6.1 for locking issues when modifying the
+	timeline.
+	* pitivi/playground.py:
+	(PlayGround.getCurrentTimePosition): new function for getting the time
+	of the current bin.
+	* pitivi/timeline.py:
+	(TimelineObject.__repr__): Implement for proper representation in
+	debug messages.
+	(TimelineComposition.moveSource): Implement move method.
+	(SimpleTimeline): Use SignalGroup for signals from the project. Add
+	support for dragging sources within the timeline, and effectively
+	propose moving around sources. Cleanup code a bit more.
+	(SimpleTimelineSource): Add DnD support.
+
+2007-01-08  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/gstwidget.py:
+	Also take gint into account. I wonder how that one went away...
+
+2007-01-08  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/exportsettingswidget.py:
+	Typo fix
+	* pitivi/ui/gstwidget.py:
+	Add support for GEnum in property widgets.
+
+2007-01-08  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/timelineobjects.py:
+	Use default video icon if no real thumbnail is available.
+	Fixes #392204
+
+2006-12-28  Ernst Persson  <ernstp@gmail.com>
+
+	reviewed by: Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/ruler.py:
+	Make the ruler nicer. Add time text position.
+	
+
+2006-12-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Add explanatory message in the source list when there's no sources.
+	This helps people understand what they can do when they start PiTiVi.
+
+2006-12-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Don't call link/unlink functions if atee/vtee do not exist. This removes
+	some warnings.
+	* pitivi/discoverer.py:
+	Change behaviour of discoverer to handle cases where demuxers do not
+	create all pads at once, but rely on emitting 'no-more-pads' to say
+	there are no more coming.
+	Fixes #353859
+
+2006-12-20  Ernst Persson  <ernstp@gmail.com>
+
+	reviewed by: Edward Hervey <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py:
+	Properly scroll by half a second when using the scrollwheel of a
+	mouse.
+	Fixes #383826
+
+2006-12-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	* pitivi/elements/singledecodebin.py:
+	* pitivi/elements/smartscale.py:
+	* pitivi/objectfactory.py:
+	* pitivi/timeline.py:
+	Activate pads before adding them to an element.
+
+2006-12-20  Edward Hervey  <edward@fluendo.com>
+
+	* po/POTFILES.in:
+	pitivi/ui/discoverererrordialog.glade is now
+	pitivi/ui/filelisterrordialog.glade.
+	* po/ar.po:
+	* po/ca.po:
+	* po/dz.po:
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fi.po:
+	* po/fr.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	Updated po files for code modifications.
+
+2006-12-20  Edward Hervey  <edward@fluendo.com>
+
+	* docs/HACKING:
+	Added note about order in which modules should be imported.
+	* pitivi/Makefile.am:
+	* pitivi/signalgroup.py:
+	Added signalgroup.py.
+	Patch from Richard Boulton <richard@tartarus.org>
+	* pitivi/bin.py:
+	Make length, has_video, has_audio, width and height construction
+	properties of SmartBin. Modify subclasses accordingly.
+	* pitivi/elements/singledecodebin.py:
+	Remove unused code
+	* pitivi/elements/smartscale.py:
+	Rename unused method arguments
+	* pitivi/objectfactory.py:
+	Code fix.
+	* pitivi/sourcelist.py:
+	Added 'not-media-file' signal to SourceList.
+	* pitivi/timeline.py:
+	Small fix.
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/discoverererrordialog.glade:
+	* pitivi/ui/filelisterrordialog.glade:
+	* pitivi/ui/filelisterrordialog.py:
+	Rename discoverererrordialog to filelisterrordialog.
+	Create separate python file for FileListErrorDialog.
+	Patch from Richard Boulton <richard@tartarus.org>
+	* pitivi/ui/sourcefactories.py:
+	Use SignalGroup for signals from the project.
+	Use FileListErrorDialog instead of DiscovererErrorDialog.
+	Move DiscovererErrorDialog code to separate python file.
+	Remove dead code.
+	Patch from Richard Boulton <richard@tartarus.org>
+	* pitivi/ui/viewer.py:
+	Use SignalGroup for signals from the project.
+	Rename unused method arguments.
+
+2006-12-06  Edward Hervey  <edward@fluendo.com>
+
+	* po/ar.po:
+	* po/ca.po:
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fi.po:
+	* po/fr.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	Update .po files for latest code modifications.
+
+2006-12-06  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Mark File, View and Help menu text as translateable.
+
+2006-12-06  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	localedir is a global variable. Without specifying that, we end up with 
+	localedir never being set globally.
+
+2006-12-04  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/.cvsignore:
+	* pitivi/elements/.cvsignore:
+	* pitivi/ui/.cvsignore:
+	CVS ignore cleanup
+
+2006-12-04  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py: (SmartBin):
+	Add an audiorate to the audio part of the encoding bin.
+	(SmartBin._debugProbe):probe method for debug uses. The lines using it
+	are commented since it's expensive in debug output.
+
+2006-12-04  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Richard Boulton <richard@tartarus.org>
+	
+	* bin/pitivi.in:
+	* pitivi/configure.py.in:
+	Allow pitivi to work on local svn repositories in the same way it works
+	when using uninstalled from CVS.
+	Fixes #381970
+
+2006-12-04  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Richard Boulton <richard@tartarus.org>
+	
+	* pitivi/ui/mainwindow.py: (PitiviMainWindow._setActions): 
+	Use connect_after instead of connect when connection to key events, so
+	that standard handlers (like menu shortcuts) can actually work.
+	Fixes #381959
+
+2006-12-04  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Small typo fix.
+
+2006-12-04  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Switch checks for gst-python and pygtk to python checks instead of
+	relying on pkg-config since there might be several versions of the
+	modules (on per python version) and pkg-config only handles one version.
+	Fixes #382249
+
+2006-12-03  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/objectfactory.py:
+	If an audio caps does not have a depth property, use the width property.
+
+2006-12-02  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac: (PYGST_REQ): Add requirement for gst-python >= 0.10.5.4
+	since we need some new additions that are used in the smart video
+	scaler.
+
+2006-12-01  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/elements/smartscale.py:
+	Implement the smart scaling logic in SmartVideoScale()
+	* pitivi/bin.py:
+	Small modification to properly use SmartVideoScale()
+	Videos are now properly scaled, with black borders if needed.
+
+2006-11-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Use the ExportSettings audio and video caps.
+	Add an audioresample for the audio encoder.
+	Put videorate AFTER videoscale and BEFORE the encoder.
+	* pitivi/check.py:
+	* pitivi/configure.py.in:
+	* pitivi/elements/__init__.py:
+	Add documentation
+	* pitivi/elements/smartscale.py:
+	Put videoscale before videobox.
+	Use bilinear scaling for videoscale.
+	* pitivi/objectfactory.py:
+	(VideoStream): Set default framerate and pixel-aspect-ratio to
+	gst.Fraction(1,1)
+	* pitivi/settings.py:
+	(ExportSettings.__str__):add the PAR
+	* pitivi/timeline.py:
+	(TimelineComposition._getAutoSettings): In fact, always return the
+	ExportSettings of the first source.
+
+2006-11-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	small debug addition
+	* pitivi/timeline.py:
+	Implement TimelineComposition.__nonzero__ so that bool(timeline) returns
+	True, even though it has a length of 0 (because it has no sources).
+
+2006-11-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	Add pitivigstutils.py. whoops :(
+	* pitivi/bin.py:
+	Use project.getSettings() instead of project.settings
+	* pitivi/objectfactory.py:
+	(FileSourceFactory.getExportSettings): new method to get the settings
+	from an file.
+	(VideoStream.getMarkup): use gst.Fraction
+	* pitivi/project.py:
+	Add 'settings-changed' signal.
+	Added methods for handling project's Settings, including automatic
+	settings.
+	cleanup.
+	* pitivi/settings.py:
+	Use gst.Fraction for video framerate.
+	Added methods for getting a markup-ed human-readable description of the
+	audio and video settings.
+	* pitivi/timeline.py:
+	Added methods for computing the auto ExportSettings of a timeline.
+	* pitivi/utils.py:
+	Remove deprecated function
+	* pitivi/elements/smartscale.py:
+	better handling of caps.
+	* pitivi/ui/encodingdialog.glade:
+	Modified a bit, added a summary of the settings used so you don't need
+	to go into the Settings dialog to know what settings are going to be
+	used for the export.
+	* pitivi/ui/exportsettingswidget.py:
+	Modify for video framerate now using gst.Fraction.
+	* pitivi/ui/projectsettings.py:
+	Use project.getSettings() and project.setSettings() instead of directly
+	accessing it.
+	* pitivi/ui/sourcefactories.py:
+	Use new gst.Fraction overload to simplify the code.
+	* pitivi/ui/viewer.py:
+	Changes for ExportSettings' signal
+	(EncodingDialog): use project.getSettings(), project.setSettings() and
+	implement methods for updating the settings summary in the glade dialog.
+
+2006-11-29  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pitivi.py:
+	* pitivi/pitivigstutils.py:
+	Added new file that contains a series of python class overloads to
+	simplify the code in pitivi.
+	Let's start with overloads for Gst.Fraction
+
+2006-11-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Added new signal 'element-message' to receive gst.MESSAGE_ELEMENT
+	messages. This is done synchronously (unlike the other messages
+	which are received asynchronously).
+	* pitivi/ui/viewer.py:
+	Wait for the video sink to request us to give it a XID before setting
+	one, this avoids crashes because of setting an XID on something not
+	created yet.
+	Fixes #377117
+	
+2006-11-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Rewrite of the encoding bins.
+	Added TODOs for next release.
+	* pitivi/elements/Makefile.am:
+	* pitivi/elements/smartscale.py:
+	New SmartScale element for combining videoscale and videobox.
+	* pitivi/objectfactory.py:
+	More debug
+	* pitivi/settings.py:
+	Added more TODOS
+	Added video pixel-aspect-ratio property
+	Added methods to create audio/video craps from settings
+
+2006-11-26  Edward Hervey  <edward@fluendo.com>
+
+	* AUTHORS:
+	Added contributors.
+	* configure.ac:
+	Bump gst core requirement to 0.10.8 for proper GstQueue behaviour
+	* pitivi/discoverer.py:
+	Handle gracefully more cases using no-more-pads information.
+	Remove hack for GstQueue mis-behaviour in pre-0.10.8 GStreamer.
+	Remove queues used when doing video thumbnailing (it only needs one
+	frame anyway).
+	Sprinkle a little more debug
+
+2006-11-26  Laszlo Pandy <laszlok2@gmail.com>
+
+	reviewed by: Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/actions.xml:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	Added new option for recursively importing sources from folders.
+	Don't automatically display the error dialog box, instead show a
+	warning button which the user can click on. This makes the whole process
+	less obstrusive.
+	Added proper credits to About dialog box.
+
+2006-09-29  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	Trying in vain to fix the way i18n works with both standard python i18n
+	using gettext and glade/gtk.
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fr.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	Those have been borked for some time, they were using *.glade.h !!
+
+2006-09-25  Edward Hervey  <edward@fluendo.com>
+
+	Patch by: Christophe Sauthier <christophe.sauthier@gmail.com>
+	
+	* pitivi/check.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/viewer.py:
+	* po/POTFILES.in:
+	* po/fr.po:
+	Implement i18n in code, this completes transition to i18n.
+	Closes #337990
+
+2006-09-06  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Don't close filechooser dialog when adding a file. Instead provide
+	both a [ADD] and a [CLOSE] button for the dialogbox.
+	Closes #353861
+
+2006-09-06  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py:
+	Die combobox... DIEEEE!!!!!
+	Solves #338065
+
+2006-08-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline.py:
+	Actually emit the 'source-removed' signal when a source is removed
+	from a composition.
+	* pitivi/ui/tracklayer.py:
+	remove source graphically from the complex timeline when it gets
+	removed.
+
+2006-08-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline.py:
+	Implement TimelineComposition::RemoveSource
+	Added more comments
+	* pitivi/ui/timelineobjects.py:
+	Implement popup menu for sources, with remove item
+	Add 'delete-me' signal for sources
+	Implement removal of sources from the Simple Timeline
+	* pitivi/ui/viewer.py:
+	Implement proper behaviour for when the timeline becomes empty again.
+
+2006-08-21  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Follow the gnome toolbar and menu settings.
+	Closes #339994
+
+2006-08-21  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/glade.py:
+	Specify the 'pitivi' domain when importing glade files, so i18n can work
+	on glade-based widgets.
+
+2006-08-21  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Close the About dialogbox when the user clicks on the [Close] button.
+
+2006-08-18  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py: (SmartBin._makeEncThread):
+	Insert a videorate before the video encoder in order to cope with
+	encoders that don't react well to non-perfect/non-continuous streams.
+
+2006-08-18  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	Remove unwanted print statement
+	* pitivi/elements/singledecodebin.py:
+	Remove use of fakesink, doesn't seem to break anything.
+
+2006-08-16  Edward Hervey  <edward@fluendo.com>
+
+	* po/.cvsignore:
+	* po/Makefile.in.in:
+	Forgot to commit Makefile.in.in
+
+2006-08-14  Edward Hervey  <edward@fluendo.com>
+
+	* ABOUT-NLS:
+	* intltool-extract.in:
+	* intltool-merge.in:
+	* intltool-update.in:
+	new files
+	* Makefile.am:
+	Added new files, support for uninstalled locales and build of po/
+	* bin/pitivi.in:
+	support for i18n
+	* configure.ac:
+	support for i18n
+	* pitivi/ui/mainwindow.py:
+	First python file with i18n support (Advanced view)
+	* po/LINGUAS:
+	Added french
+	* po/POTFILES.in:
+	Added pitivi/ui/mainwindow.py file
+	* po/fr.po:
+	new french translation.
+
+2006-08-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Commented out the reporting of Warning messages to the UI.
+	If it is really fatal to playback/editing/encoding, it should have been
+	an Error message.
+
+2006-08-09  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Added switchToTimeline() method.
+	Don't seek to values lower than 0.
+	* pitivi/timeline.py:
+	Add default sources behaviours in compositions.
+	Added setDefaultSource() and getDefaultSource() methods.
+	* pitivi/ui/complexinterface.py:
+	pixelToNs should return a long (to cope with 2**64 values).
+	* pitivi/ui/complexlayer.py:
+	Don't expand audio tracks at startup.
+	* pitivi/ui/ruler.py:
+	Allow seeking on the ruler.
+	* pitivi/ui/sourcefactories.py:
+	Use the source thumbnail as the icon pixbuf when doing drag and drop.
+	* pitivi/ui/timelineobjects.py:
+	Switch to Timeline in the playground if we drop something in it.
+	* pitivi/ui/viewer.py:
+	Use bilinear scaling method with videoscale.
+	Use videosink pad to figure out caps modifications.
+
+2006-08-08  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py:
+	Only set the XID of the viewer window, on the video sink, once it is
+	realized.
+
+2006-07-12  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/elementsettingsdialog.glade:
+	* pitivi/ui/encodingdialog.glade:
+	* pitivi/ui/exportsettingswidget.glade:
+	* pitivi/ui/projectsettings.glade:
+	Removed whitespaces in front of punctuation in dialogbox.
+	Fixes #346585.
+
+2006-06-19  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	* pitivi/Makefile.am:
+	* pitivi/elements/Makefile.am:
+	* pitivi/elements/__init__.py:
+	New directory for python gstreamer elements.
+	* pitivi/elements/singledecodebin.py:
+	New queue-less, single stream, decodebin-like bin for use in timelines.
+	This makes seeking/scrubbing snappier.
+	Also uses less memory.
+	* pitivi/timeline.py:
+	Use new SingleDecodeBin element.
+	* pitivi/ui/viewer.py:
+	Make own debug similarto gst debug.
+	Don't seek on position change if it wasn't caused by the user.
+
+2006-05-23  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Back to development cycle
+
+=== release 0.10.1 ===
+
+2006-05-23  Edward Hervey  <edward@fluendo.com>
+
+	* RELEASE:
+	* configure.ac:
+	Releasing 0.10.1
+
+2006-05-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/check.py:
+	Added check to see if autodetect plugin can initialize themselves and
+	found at least one valid real sink.
+
+2006-05-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/objectfactory.py: (FileSourceFactory.__gproperties__): 
+	The << operator causes issues with Python 2.3. Replacing 2<<63 with 2**63.
+
+2006-05-22  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py: (PitiviMainWindow._aboutCb): 
+	LGPL is Lesser General Public License
+
+2006-05-22  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	0.10.0.2 pre-release
+
+2006-05-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	remove print statement
+
+2006-05-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/objectfactory.py:
+	Better Markup for getPrettyInfo()
+	* pitivi/ui/sourcefactories.py:
+	Remember last directory sources were taken from so we can reopen the
+	FileChooserDialog with that directory.
+
+2006-05-17  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	* pitivi/playground.py:
+	Ignore error messages coming from GstQueue. Hopefully these hacks will
+	go away once we can depend on GStreamer core >= 0.10.7
+	If query_position() returns -1, don't emit position update.
+
+2006-05-17  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	typo error
+
+2006-05-16  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/exportsettingswidget.py:
+	Put button in proper orders (Cancel then OK)
+
+2006-05-16  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Fixed recording for tee -> identity conversion/hack.
+	We remove audio/video sink when encoding and put them back when finished.
+	* pitivi/playground.py:
+	added debug for position signal emission.
+	* pitivi/ui/complextimeline.py:
+	don't send a negative frame value to toplayer's timelinePositionChanged
+	* pitivi/ui/encodingdialog.glade:
+	Better order for buttons.
+	Cancel button becomes close button.
+	* pitivi/ui/viewer.py:
+	Grey-out (set_sensitive()) the main window when the encoding dialog is showing.
+	Lots of fixes with the EncodingDialog:
+	_ Close button becomes cancel when encoding
+	_ Show Time Left in progressbar
+	_ Use playground's 'position' signal
+
+2006-05-16  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py:
+	removed print statement
+
+2006-05-16  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Added 'position' signal which is emitted to inform a change of position
+	with the current SmartBin.
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	Switch to use playground's 'position' signal in Viewer and
+	ComplexTimeline.
+
+	This should fix several issues:
+	_ Position checking not being in ui-independent part,
+	_ Position updating not starting,
+	_ Position checking done during critical parts (state change).
+
+2006-05-16  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/configure.py.in:
+	Add APPNAME, which contains the configured application name.
+	This will easily allow changing the application name later on.
+	* pitivi/check.py:
+	* pitivi/pitivi.py:
+	* pitivi/project.py:
+	* pitivi/ui/mainwindow.py:
+	Use configure.APPNAME for every string occurence of PiTiVi.
+	(PitiviMainWindow._setActions): 
+	Don't set action string for some stock items. (NEW, OPEN, SAVE, SAVE_AS,
+	QUIT, FULLSCREEN, ABOUT). I'm leaving what we set for the others, since
+	I used them because I couldn't find any better icon.
+	Closes #339993
+
+2006-05-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	First round of hack for BaseTransform issues and ximagesink.
+	* pitivi/ui/plumber.py:
+	To cancel qos, we also need to set "max-lateness" to -1
+	* pitivi/ui/viewer.py:
+	Add videoscale for ximagesink.
+
+2006-05-15  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Back to development cycle
+
+=== release 0.10.0 ===
+
+2006-04-26  Edward Hervey  <edward@fluendo.com>
+
+	* NEWS:
+	* RELEASE:
+	* configure.ac:
+	Releasing 0.10.0
+
+2006-04-26  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	* pitivi/ui/viewer.py:
+	Add debugging to ease reporting by users
+
+2006-04-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Add error handling imporoved.
+	Add fakesinks to audio pads if there's no video, otherwise audio only
+	files will not get discovered properly.
+	* pitivi/pitivi.py:
+	* pitivi/ui/viewer.py:
+	Revert gtk.gdk.threads_* patches.
+	If we start going down that alley, it means putting those function calls
+	everywhere.
+	Instead, just put the critical parts in a gobject.idle_add()
+
+2006-04-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi.spec.in:
+	Better group and ExclusiveArch for rpm.
+	Patch by <ahziem1@mailbolt.com>
+
+2006-04-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/actions.xml:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	Remove gtk.Frame from useless places.
+	Made the timeline advanced view switcher a ToolAction and add it to the
+	menu and the toolbar.
+
+2006-04-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pitivi.py:
+	Call gtk.gdk.threads_init() to inform pygtk that we might be doing calls
+	from remote threads.
+	* pitivi/ui/viewer.py:
+	The fix to the threading issue was in fact to call
+	gtk.gdk.threads_enter() and _leave() before and after calls to gtk
+	being made from a non-main thread.
+
+2006-04-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	gst-python doesn't have the GstError quarks defined yet. Let's just
+	use the strings instead.
+
+2006-04-24  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	We need gnonlin 0.10.2 released 3 days ago.
+	* pitivi/ui/viewer.py:
+	Some threading madness.... That was a nasty bug.
+
+2006-04-22  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Only make the remove button sensitive when there's at least one source
+	in the list.
+	* pitivi/ui/viewer.py:
+	Properly end drag-and-drop. This should fix some hangs after DnD.
+
+2006-04-21  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	0.9.9.5 pre-release
+
+2006-04-21  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Use black pattern for default video source
+	* pitivi/ui/timeline.py:
+	Don't show the timeline label at the left of the timeline window.
+	* pitivi/ui/viewer.py:
+	Don't add more than once the bins in the combobox.
+
+2006-04-21  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Make the Viewer take the remaining space, rather than the sourcelist.
+	* pitivi/ui/sourcefactories.py:
+	The minimum width of the source list is set to 300pixels.
+
+2006-04-21  Andy Wingo  <wingo@pobox.com>
+
+	* pitivi/objectfactory.py (FileSourceFactory.__gproperties__): Fix
+	range of "length" pspec.
+
+	* configure.ac: Remove calls to libtool.
+
+	* autogen.sh: Update to simplify, not run libtoolize.
+
+	* bin/Makefile.am: No need for the makefile rule any more.
+
+	* configure.ac: Output bin/pitivi using AC_CONFIG_FILES, so that
+	we can make it executable directly after the configure.
+
+	* configure.ac: Fix the gnonlin check FO REAL.
+
+	* bin/pitivi.in (CONFIGURED_PYTHONPATH): Update for PYTHONPATH
+	name change.
+	(_add_pitivi_path): If a path in the configured pythonpath is
+	already in sys.path, leave it where it is.
+
+	* configure.ac: Fix embarrassing errors in checks for cairo,
+	glade, gtk cairo support, and gnonlin. Rename PYTHONPATH subst'ed
+	var to CONFIGURED_PYTHONPATH.
+
+	* configure.ac: Remove check for obsolete pygtk version that
+	doesn't meet our requirements.
+
+2006-04-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py:
+	Remember previous state before scrubbing, so we can go back to that
+	state (playing or paused).
+	Should fix #338064
+
+2006-04-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Format default error messages in a saner way.
+
+2006-04-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Moved getRealVideoSink(), record() and stopRecording() methods up from
+	SmartTimelineBin to SmartBin.
+	* pitivi/playground.py:
+	Documentation cleanup.
+	Make relevant functions return False for failures.
+	Added _handleError() and _handleWarning() methods for analyzing the
+	error/warning information and creating user-friendly messages.
+	* pitivi/utils.py:
+	New function bin_contains() in order to figure out if an element is in
+	a bin recursively.
+	* pitivi/ui/mainwindow.py:
+	Only display one ErrorDialogBox at a time
+	* pitivi/ui/viewer.py:
+	Improve aspect ratio handling
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Connect bus message handler to the default bin too.
+	* pitivi/ui/mainwindow.py:
+	Close error message when you click on OK
+	* pitivi/ui/viewer.py:
+	Remove error message for failed state change.
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Added "error" signal
+	* pitivi/ui/mainwindow.py:
+	Show Error dialog box on playground bus errors.
+	* pitivi/ui/viewer.py:
+	slight bug
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	Return gst.StateChangeReturn from setting pipeline to PLAYING in play()
+	* pitivi/ui/viewer.py:
+	Display error message if we couldn't set the default bin to PLAYING
+	* pitivi/ui/timelineobjects.py:
+	remove debug tooltip
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Better sentence for tooltip of "Toggle Fullscreen" action
+	* pitivi/ui/sourcefactories.py:
+	Double-click on a row makes it play.
+	Slight cleanup.
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	GNonLin >= 0.10.1
+	GStreamer >= 0.10.4
+	0.9.9.4 pre-release
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* application-pitivi.png:
+	* pitivi.png:
+	* Makefile.am:
+	* pitivi.desktop.in:
+	* pitivi.spec.in:
+	* pitivi/ui/mainwindow.py:
+	Changing pitivi-application.png to pitivi.png
+	Closes #337726
+	* pitivi/objectfactory.py:
+	slight bugfixes and debug
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/viewer.py:
+	Remove prints
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Small variable for not displaying the "import sources" dialog box twice.
+
+2006-04-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Added timeout of 10s for discovering each file, should be enough and
+	prevents the discoverer from idling on broken files/plugins.
+	Added tagging discovery.
+	Only push the pipeline to PLAYING if we need a thumbnail.
+	* pitivi/objectfactory.py:
+	Moved getPrettyInfo to ObjectFactory class
+	Added MediaStream classes to contain information about multimedia
+	streams and their handling in ObjectFactory classes.
+	Check if the file is valid when setting a thumbnail file.
+	* pitivi/utils.py:
+	float_framerate() now retuns a string
+	* pitivi/ui/actions.xml:
+	Added and re-ordered menus and toolbar
+	* pitivi/ui/mainwindow.py:
+	Added full-screen toggling facilities with menu/toolbar item and
+	shortcuts.
+	Added menu/toolbar item for adding Sources.
+	More cleaning up.
+	* pitivi/ui/plumber.py:
+	If present, set qos to FALSE on videosink
+	* pitivi/ui/sourcefactories.py:
+	Clear up the sources list.
+	There is now only a gtk.TreeView with less columns but more information.
+	Added SourceListWidget.showImportSourcesDialog()
+	Made the ImportSourcesDialog run asynchronously instead of with .run()
+	Make the DiscovererErrorDialog look a bit nicer.
+	* pitivi/ui/viewer.py:
+	Use computed display-aspect-ratio for the gtk.AspectFrame of the viewer.
+	Use fixed-size font for time/duration label.
+
+2006-04-07  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/layerwidgets.py:
+	More cleaning up, and marking unused arguments as such.
+
+2006-04-07  Edward Hervey  <edward@fluendo.com>
+
+	* docs/HACKING:
+	Added part about unused variables.
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/playground.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/glade.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	Prepend 'unused_' to all unused variables in callbacks (helps clear out
+	pychecker runs).
+	Comment out non-working parts of the UI so not to confuser users trying
+	those parts.
+	More pychecker cleaning.
+
+2006-04-06  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Fixes for common/ modifications
+	* pitivi/bin.py:
+	More debug information when recording
+	* pitivi/playground.py:
+	debug fix
+
+2006-03-29  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	add configure.py to BUILT_SOURCES so it gets rebuilt correctly when
+	modified.
+	* pitivi/discoverer.py:
+	More sensible behaviour when getting an unknown stream.
+	* pitivi/playground.py:
+	More debugging
+
+2006-03-29  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Revert previous change until decodebin is fixed.
+
+2006-03-29  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py: (SmartTimelineBin):
+	Unlink from tees when pads are removed.
+	Make the Rendering process more efficient.
+	* pitivi/discoverer.py:
+	Don't try to thumbnail non-video files.
+	* pitivi/timeline.py:
+	Remove ghostpads in the timeline when composition pads are
+	removed.
+	* pitivi/ui/viewer.py:
+	Display a message if we couldn't start the rendering.
+
+2006-03-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
+	Also set the combobox to show the simple view default.
+
+2006-03-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py:
+	Fix drag and drop data parsing even more.
+
+2006-03-28  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/mainwindow.py:
+	Default window size is 800x600 instead of the cramped size that was
+	previously set.
+	* pitivi/ui/timeline.py:
+	Timeline defaults to Simple View.
+
+2006-03-28  Andy Wingo  <wingo@pobox.com>
+
+	* configure.ac: Check for gnonlin and cairo using python and not
+	pkg-config.
+
+2006-03-24  Christian Schaller  <Christian@fluendo.com>
+
+	* .cvsignore: add more generated files
+	* pitivi/.cvsignore: add more generated files
+	* pitivi/ui/.cvsignore: add more generated files
+
+2006-03-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/objectfactory.py:
+	typo fix.
+
+2006-03-24  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Remove gnome-python dependency. If ever we need gnome-specific stuff, it
+	should go in a pitivi plugin.
+	* pitivi.spec.in:
+	remove cruft
+
+2006-03-24  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	* pitivi/check.py:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/project.py:
+	Remove dependency on gnomevfs python module, and use the gstreamer uri
+	utilities instead (gst.element_make_from_uri, gst.uri_get_protocol,
+	gst.uri_get_location)
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/configure.py.in:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/playground.py:
+	* pitivi/settings.py:
+	* pitivi/sourcelist.py:
+	* pitivi/ui/viewer.py:
+	More API documentation
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/configure.py.in:
+	Added get_global_pixmap_dir() for being able to use local/global installed
+	pixmap directory.
+	* pitivi/ui/mainwindow.py:
+	Fix window icon behaviour for cvs and installed
+	* pitivi/ui/projectsettings.py:
+	icon not needed here
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timelineobjects.py:
+	Cleanup and fixes thanks to pychecker.
+	Moved Christian's patch for appicon into each of the windows and dialog
+	boxes classes.
+
+2006-03-23  Christian Schaller  <christian@fluendo.com>
+
+	* pitivi/pitivi.py: Add appicon to window decoration
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/discoverererrordialog.glade:
+	Adding glade file for the DiscovererErrorDialog.
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py:
+	Don't display bogus value when the duration is not valid.
+	Only activate controls/slider when not on default view(videotestsrc).
+	Update for new dnd module naming.
+	New scrubbing system. Don't seek like a mad man, but at most every 80ms
+	Only activate the record button for timelines that have content.
+	
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/dnd.py:
+	replace dnd.DND_* with dnd.*
+	* pitivi/effects.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/glade.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/plumber.py:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	More module documentation
+	* pitivi/ui/sourcelist.py:
+	What on earth is that file still doing in cvs ??
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/debug.py:
+	File that should have gone a long time ago.
+
+2006-03-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/__init__.py:
+	Documentation
+	* pitivi/bin.py:
+	Documentation and prepending private method names with underscore
+	* pitivi/check.py:
+	* pitivi/discoverer.py:
+	* pitivi/instance.py:
+	Documentation
+	* pitivi/ui/__init__.py:
+	Documentation
+
+2006-03-22  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/sourcefactories.py: (SourceListWidget._dndDataReceivedCb): 
+	remove cruft from selection.data in drag and drop.
+	Closes #335503
+
+2006-03-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Let's grab more issues when discovering.
+	Extended 'not-media-file' signal to also signal a reason
+	* pitivi/pitivi.py:
+	small fix
+	* pitivi/sourcelist.py:
+	Added 'not-media-file' signal.
+	* pitivi/ui/sourcefactories.py:
+	Added dialog box to inform user of files that couldn't be discovered.
+
+2006-03-20  Edward Hervey  <edward@fluendo.com>
+
+	* __init__.py: removed
+	* pitivi/ui/complexinterface.py:
+	LayeredWidgetInterface is no longer used
+	* pitivi/ui/ruler.py:
+	more comments
+	
+
+2006-03-17  Edward Hervey  <edward@fluendo.com>
+
+	* docs/HACKING:
+	More precision...
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	Final part of coding style compliance.
+	* pitivi/ui/sourcefactories.py:
+	Accept drop from text/plain sources.
+
+2006-03-16  Edward Hervey  <edward@fluendo.com>
+
+	* docs/HACKING:
+	More precision on coding style
+	
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/encodingdialog.glade:
+	* pitivi/ui/exportsettingswidget.glade:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/projectsettings.glade:
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	Update all UI section to proper coding style, still have to do the
+	non-ui part.
+
+2006-03-16  Edward Hervey  <edward@fluendo.com>
+
+	* docs/HACKING
+	New document about hacking on PiTiVi.
+	* pitivi/bin.py:
+	Fixes according to PEP-8
+	* pitivi/check.py:
+	Added runtime check for gnomevfs module availability
+	* pitivi/discoverer.py:
+	Fixes according to PEP-8
+	* pitivi/ui/complexsource.py:
+	Speed optimizations and fixes
+	* pitivi/ui/layerwidgets.py:
+	Smaller buttons
+	* pitivi/ui/timelineobjects.py:
+	Fixes according to PEP-8
+	* pitivi/ui/tracklayer.py:
+	Fix method naming and less useless debug
+	* pitivi/ui/viewer.py:
+	Fixes according to PEP-8
+	More fixes to encoding dialog
+
+2006-03-15  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	Implement shutdown method for properly exiting PiTiVi
+	* pitivi/ui/mainwindow.py:
+	Use instance.PiTiVi.shutdown() when quitting
+
+2006-03-14  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/complexsource.py:
+	ComplexSource is now a subclass of gtk.Image so that C/Gtk+ does
+	the double-buffering trick.
+
+2006-03-13  Edward Hervey  <edward@fluendo.com>
+
+	* autogen.sh:
+	Remove path for non-existing directory for aclocal inclusions.
+
+2006-03-13  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac: (ACLOCAL_AMFLAGS):
+	Remove path of non-existing directory
+
+	* pitivi/check.py:
+	Added another check for the gnomeVFS gstreamer plugins.
+
+2006-03-09  Edward Hervey  <edward@fluendo.com>
+
+	* autogen.sh:
+	* configure.ac:
+	comment out i18n cruft and set proper ACLOCAL_AMFLAGS.
+
+2006-03-07  Edward Hervey  <edward@fluendo.com>
+
+	* autogen.sh:
+	Clean the bogus common/ directory before checking it out from gstreamer
+	cvs.
+
+2006-03-07  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	* configure.ac:
+	Add the path detected for pygtk and gst-python at configure to sys.path.
+	This should solve problems like #333177
+
+2006-03-07  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	* pitivi/check.py:
+	Checks at configure and at runtime for cairo support in PyGTK.
+
+2006-03-06  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/effects.py:
+	better effect klass checking
+	* pitivi/playground.py:
+	more correct state changing when switching pipelines
+	* pitivi/ui/complexinterface.py:
+	zoomratio now belongs to a toplevel element
+	* pitivi/ui/complexsource.py:
+	python has lazy garbage collection, but gc.collect might induce heavy
+	processing... this needs more thinking
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/tracklayer.py:
+	implement zoom with zoom buttons
+	Remove a memleak
+	* pitivi/ui/viewer.py:
+	Insert necessary audio/video adapters, closes #332754
+
+2006-02-27  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	* pitivi/instance.py:
+	* pitivi/check.py:
+	Added global application instance (instance.PiTiVi) to avoid having to
+	do some crack like passing pitivi's self down all the objects for the
+	one single object that needs it.
+	* pitivi/effects.py:
+	* pitivi/pitivi.py:
+	Files fixed to use instance.PiTiVi
+	* pitivi/timeline.py:
+	wrong comment
+	* pitivi/ui/complextimeline.py:
+	Connect to composition duration update to inform ruler.
+	* pitivi/ui/layerwidgets.py:
+	cleanup
+	
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/plumber.py:
+	* pitivi/ui/viewer.py:
+	switch to instance.PiTiVi
+	* pitivi/ui/sourcefactories.py:
+	First try at showing audio/video FX in the UI
+	* pitivi/ui/tracklayer.py:
+	First go at complex timeline source drag/drop
+	
+
+2006-02-22  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Fix up encoding for 0.10.
+	* pitivi/ui/infolayer.py:
+	More sensible info in InfoLayer
+
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/timeline.py:
+	Display current position in Ruler.
+	Beautified Ruler.
+	
+	* pitivi/ui/viewer.py:
+	Temporary hack to distribute current timeline position.
+	Re-activate rendering
+
+2006-02-21  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/tracklayer.py:
+	Double-buffered widgets for more reactive timeline.
+	Start at ruler drawing, for the time being fixed zoom ratio.
+
+2006-02-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/playground.py:
+	more helpful debug
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/projectsettings.py:
+	s/print/gst.debug/
+
+2006-02-20  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	* pitivi.spec.in:
+	We need PyCairo now, update this for configure and packagers.
+
+2006-02-17  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	I think I finally understood cairo :)
+
+2006-02-16  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexstack.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/infolayer.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/tracklayer.py:
+	Split up files, clean up, make timeline design v2 work more efficiently.
+
+2006-02-14  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	Use '/usr/bin/env python' instead of '/usr/bin/python'.
+	Closes (#330579)
+
+2006-02-09  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline.py:
+	Wow, how long did this stay in for ??
+	
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/complexstack.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/timeline.py:
+	Complex Timeline Design #2
+	Less code, looks better, works faster.
+	Still has code to remove/refactor
+
+2006-02-07  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexstack.py:
+	* pitivi/ui/mainwindow.py:
+	Use gtk.SizeGroup to synchronize layers' height.
+	Don't maximize on startup.
+
+2006-02-06  Edward Hervey  <edward@fluendo.com>
+
+	* MAINTAINERS:
+	* Makefile.am:
+	Added maintainers file in order to have proper pitivi-main@gnome.org.
+	Welcome PiTiVi to gnome.org :)
+
+2006-02-06  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/check.py:
+	Added check for autodetect plugins existence.
+
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/sourcelist.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	Better debug levels
+
+	* pitivi/timeline.py:
+	gnlfilesource is only used by TimelineFileSource
+	Added more signals to TimelineComposition
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/ruler.py:
+	Added complexinterface.py, complexsource.py and ruler.py
+
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexstack.py:
+	* pitivi/ui/complextimeline.py:
+	Better designed ComplexTimeline, layer and tracks
+	
+	* pitivi/ui/timeline.py:
+	CTRL + scroll does vertical scrolling in complex timeline.
+	* pitivi/ui/timelineobjects.py:
+	ooops, don't need pango anymore
+
+2006-01-27  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	* pitivi/check.py:
+	* pitivi/pitivi.py:
+	Added check system at startup to tell users in a clear fashion what
+	the problem is (if any).
+
+2006-01-26  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Handle gracefully files that contain no stream but emit a
+	GST_TAG_ELEMENT with redirection.
+	Force pipeline to NULL when finished analyzing a file.
+
+2006-01-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/Makefile.am: (ui_PYTHON): 
+	Forgot to add those files to be distributed.
+
+2006-01-25  Christian Schaller <christian@fluendo.com>
+
+	* Add .cvsignore files
+	* Add COPYING file with the LGPL
+	* Configure .desktop file to get installed
+
+2006-01-24  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	* pitivi/timeline.py:
+	doc fix
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complexstack.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	Make way for the ComplexTimelineView
+
+2006-01-18  Edward Hervey  <edward@fluendo.com>
+
+	Release 0.9.9.2 "No te entiendo"
+
+	* RELEASE:
+	* configure.ac:
+
+2006-01-18  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Require gnonlin 0.10.0.5
+	
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	cleanup.
+	
+	* pitivi/ui/sourcefactories.py:
+	Add mini-doc
+	* pitivi/ui/timeline.py:
+	cleanup.
+	* pitivi/ui/timelineobjects.py:
+	Remove/debug all the print statements.
+	* pitivi/ui/viewer.py:
+	cleanup.
+
+2006-01-11  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/discoverer.py:
+	Don't emit 'finished-analyzing' if there's nothing discovered.
+
+2006-01-11  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	PyGnome 2.10.0 is sufficient requirement.
+	* pitivi/ui/plumber.py:
+	Use gconf*sink elements instead of creating them ourselves.
+
+2006-01-08  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/plumber.py:
+	Check for the gstreamer 0.10 (and not 0.9) gconf keys.
+
+2005-12-24  Edward Hervey  <edward@fluendo.com>
+
+	0.9.9.1 release
+	
+	* RELEASE:
+	* bin/pitivi.in:
+	Switch on threads
+	* configure.ac:
+	0.9.9.1 release (thanks a lot stupid sourceforge)
+	* pitivi/bin.py:
+	don't seek back to the beginning after recording in fact
+	* pitivi/ui/glade.py:
+	esthetic fixes
+	* pitivi/ui/viewer.py:
+	Deactivate record button since it doesn't work 100% yet
+
+2005-12-21  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Bump requirement to gst(-python) 0.10.0
+	* pitivi/bin.py:
+	Correct seek when stoping recording
+	* pitivi/discoverer.py:
+	Correctly emit 'finished-analyzing' when the discoverer
+	has finished analyzing a uri.
+	* pitivi/sourcelist.py:
+	Remove 'file-is-valid' signal.
+	The SourceList now only emits the 'file-added' signal
+	when the file was correctly discovered.
+	* pitivi/ui/gstwidget.py:
+	Add debugging
+	* pitivi/ui/sourcefactories.py:
+	Use the new Discoverer/SourceList design
+	Add the FileSourceFactory to the gtk.TreeModel only, and when,
+	the uri was properly discovered.
+	* pitivi/ui/viewer.py:
+	Properly update the displaid duration when the timeline
+	duration changes
+
+2005-12-20  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/Makefile.am:
+	Add utils.py to the list of dist-ed files
+	* pitivi/bin.py:
+	Fixes for the encoding bin for SmartTimelineBin
+	* pitivi/playground.py:
+	cleanup
+	* pitivi/settings.py:
+	Default audio encoder is now vorbisenc
+	Update for 0.10 way of getting static pad templates
+	* pitivi/ui/plumber.py:
+	Don't use gconf if it's not available
+	If the videosink has the "force-aspect-ratio" property, use it.
+	* pitivi/ui/timelineobjects.py:
+	cleanup
+	* pitivi/ui/viewer.py:
+	Aspect ratio for the Viewer Window is updated on the fly.
+	Make the EncodingDialog work with gstreamer 0.10 api
+
+2005-12-10  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/timeline.py:
+	Fix for new gnonlin api
+
+2005-12-07  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/utils.py:
+	whoops, forgot to add a file to the repository :)
+
+2005-12-05  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	Whoops, also use gst-python oh ten oh
+
+2005-12-02  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	* configure.ac:
+	Preparation for oh ten oh
+	Update dependency on (py)gtk to 2.8.0
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/glade.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/viewer.py:
+	Remove pygtk 2.8 deprecated object registration
+
+2005-12-01  Edward Hervey  <edward@fluendo.com>
+
+	Misc updates for new gnonlin start/duration scheme
+	(and no longer start/stop)
+
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	Fixes for better non-media-file detection
+	* pitivi/objectfactory.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/viewer.py:
+	Show proper timeline duration/status
+	* pitivi/utils.py:
+	New utility file, will have to add more of the common utility
+	functions in there.
+
+2005-11-26  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	sinesrc is dead, long live sinesrc
+
+2005-11-18  Edward Hervey  <edward@fluendo.com>
+
+	* autogen.sh:
+	* configure.ac:
+	Switch to using gstreamer common
+	* pitivi/bin.py:
+	Dynamic pad handling for SmartFileSource and SmartTimelineBin
+	* pitivi/discoverer.py:
+	First pre-roll, then discover properties, then set to play to get
+	then thumbnail.
+	Oh, and do that while removing half the codelines :)
+	* pitivi/objectfactory.py:
+	Properly remove (ghost)pads
+	* pitivi/playground.py:
+	Much saner pipeline switching
+	 _ Set pipelines to READY, switch sinks
+	* pitivi/timeline.py:
+	Timeline finally working. It needs a serious look to remove all the
+	0.8 bloated stuff.
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/plumber.py:
+	Added Plumber
+	* pitivi/ui/sourcefactories.py:
+	debug
+	* pitivi/ui/timeline.py:
+	re-enable simple timeline widget
+	* pitivi/ui/viewer.py:
+	Use Plumber for proper audio/video sink creation
+	Fix the flicker in video widget
+	Added Totem-like play/pause button
+	
+
+2005-11-09  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	Waow, how long has LIBDIR been gone for ??
+
+2005-10-25  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py:
+	* pitivi/bin.py:
+	* pitivi/objectfactory.py:
+	* pitivi/playground.py:
+	* pitivi/timeline.py:
+	* configure.ac:	
+	State change updates + better scrubbing
+	
+2005-10-01  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/playground.py:
+	* pitivi/settings.py:
+	* pitivi/timeline.py:
+	Update to make pitivi work with gst 0.9
+	Playground's global thread has gone and SmartBin's are now Pipelines
+	
+	* pitivi/ui/elementsettingsdialog.glade:
+	* pitivi/ui/encodingdialog.glade:
+	* pitivi/ui/sourcefactories.py:
+	Make interface more HIG compliant
+	
+	* pitivi/ui/viewer.py:
+	Update to _create_sinkthreads() and _check_time() for gst 0.9
+
+	Added debug logging a bit everywhere...
+
+2005-09-22  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/bin.py:
+	Updated to new state handling
+	* pitivi/discoverer.py:
+	Added debugging
+	* pitivi/playground.py:
+	Tss... we need a toplevel pipeline
+	Added debugging
+	* pitivi/ui/viewer.py:
+	Updated gconf magic to grab gstreamer 0.9 keys
+	Thread -> Bin
+	ghostpad modifications
+
+2005-09-22  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	Use gst-python 0.9
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	Added some debugging output,
+	commented out gnonlin-specific parts of PiTiVi, which will have to be
+	removed once gnonlin is ported
+
+2005-07-23  Edward Hervey  <edward@fluendo.com>
+
+	On our way to a gstreamer 0.9 pitivi :)
+
+	* configure.ac:
+	updated dependencies, removed compile-time dependency on gnonlin
+
+2005-07-08  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/configure.py.in: (pitivi_version):
+	* pitivi/ui/mainwindow.py:
+	Added configure.pitivi_version variable created at compilation so the
+	version number is coherent.
+
+2005-07-05  Edward Hervey  <edward@fluendo.com>
+
+	* bin/pitivi.in:
+	* configure.ac:
+	Use PYTHONDIR
+	
+	* pitivi/bin.py:
+	cleanup
+	
+	* pitivi/settings.py:
+	added __str__()
+	
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/viewer.py:
+	Reuse the project settings :)
+
+2005-06-30  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/viewer.py: (PitiviViewer._create_sinkthreads): 
+	Audio and Video sinks are now selected by GConf GNome media selector
+	keys.
+
+2005-06-28  Thomas Vander Stichele <thomas@apestaart.org>
+
+	Reviewed by Edward Hervey <edward@fluendo.com>
+
+	* Makefile.am:
+	* bin/pitivi.in:
+	* pitivi/Makefile.am:
+	* pitivi/ui/Makefile.am:
+	installation fixes
+
+2005-06-24  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	* RELEASE
+	0.1.10 release :)
+	
+2005-06-24  Edward Hervey  <edward@fluendo.com>
+
+	* configure.ac:
+	0.1.9.2 pre-release !
+
+	* pitivi/project.py:
+	* configure.ac:
+	* pitivi.spec.in:
+	Bumped required gnome-python version to 2.10.0
+	Now using gnomevfs instead of gnome.vfs
+
+	* pitivi/ui/Makefile.am: (ui_PYTHON): 
+	typo
+
+2005-06-23  Edward Hervey  <edward@fluendo.com>
+
+	* pitivi/ui/Makefile.am:
+	* pitivi/Makefile.am:
+	Added new files to be installed
+
+	* pitivi/ui/viewer.py: (EncodingDialog): 
+	* pitivi/ui/encodingdialog.glade:
+	Added settings in Encoding Dialog
+
+	* pitivi/ui/viewer.py:
+	Added audioconvert in the Audio Sink Thread
+
+	* pitivi/ui/projectsettings.py:
+	* pitivi/ui/projectsettings.glade:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/elementsettingsdialog.glade:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/exportsettingswidget.glade:
+	Split up Settings Dialogs in smaller widgets
+
+	* pitivi/ui/glade.py:
+	Wrapper for the run() dialog method
+
+	* pitivi/bin.py:
+	SmartBin are no longer gst.Thread but gst.Bin
+	Added support for element properties in timeline encoding thread
+
+	* pitivi/objectfactory.py: (FileSourceFactory):
+	Added support for 'pixel-aspect-ratio'
+
+	* pitivi/playground.py:
+	Removed useless state_change()
+
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	Moved ProjectSettings to a more generic ExportSettings
+
+	* pitivi/debug.py:
+	Debugging functions
+
+2005-06-08  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/discoverer.py: (Discoverer): 
+	Added 'ready' signal for end of discovery
+
+2005-06-05  Jono Bacon <jonobacon@gmail.com>
+
+	Reviewed by : Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/mainwindow.py: (PitiviMainWindow.__init__): 
+	Maximize main window at startup
+
+2005-06-03  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/projectsettings.glade: 
+	Translation
+
+2005-06-03  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/objectfactory.py: (FileSourceFactory.make_video_adapter_bin): 
+	filtered link between videobox and videoscale to avoid borkage...
+
+2005-06-03  Jono Bacon <jonobacon@gmail.com>
+
+	Reviewed by: Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/mainwindow.py: (PitiviMainWindow.about_cb): 
+	Added about dialog
+
+2005-05-09  Edward Hervey  <bilboed@bilboed.com>
+
+	* docs/design/timeline.txt:
+	Design document for the timeline
+
+2005-05-04  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/discoverer.py:
+	(Discoverer._analyze): whooops, typo :(
+
+2005-05-04  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/viewer.py: 
+	(PitiviViewer._create_sinkthreads): 
+	Use ximagesink if xvimagesink isn't available
+	Use osssink if alsasink isn't available
+	(PitiviViewer._create_gui): Added slider
+
+	* pitivi/ui/sourcefactories.py: (SourceListWidget):
+	Switch to using ObjectFactory.get_pretty_info()
+
+	* pitivi/playground.py: (PlayGround.play_temporary_filesourcefactory): 
+	Don't create a new SmartFileBin of the given factory if that factory
+	is already being played
+
+	* pitivi/objectfactory.py: (ObjectFactory.get_pretty_info): 
+	Added method to get a prettyfied information string
+
+	* pitivi/discoverer.py:
+	Faster discovery of audio/video properties, and cleanup
+
+	* pitivi/bin.py: (SmartBin.set_video_sink_thread):
+	Connect to video sink thread with proper filtered link
+
+2005-05-03  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/viewer.py: (PitiviViewer._create_sinkthreads): 
+	revert to ximagesink if xvimagesink isn't available
+	revert to osssink if alsasink isn't available
+
+2005-05-03  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/bin.py: (SmartFileBin): 
+	* pitivi/discoverer.py: (Discoverer):
+	Cleanup and using caps[i] instead of caps.get_structure(i)
+
+2005-05-02  Edward Hervey  <bilboed@bilboed.com>
+
+	* __init__.py:
+	* bin/pitivi.in:
+	* pitivi/__init__.py:
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/dnd.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/sourcelist.py:
+	* pitivi/pixmaps/pitivi-file.png:
+	* pitivi/pixmaps/pitivi-sound.png:
+	* pitivi/pixmaps/pitivi-video.png:
+	* pitivi/ui/__init__.py:
+	* pitivi/ui/actions.xml:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/sourcelist.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	Initial python version commit
+
+2005-05-02  Edward Hervey  <bilboed@bilboed.com>
+
+	* NEWS: indicated switch to python version
+
+	* AUTHORS: updated
+
+2005-05-02  Edward Hervey  <bilboed@bilboed.com>
+
+	Switch to python version. C/GObject version is discontinued, but still
+	available in the PITIVI_C_IS_DEAD branch on cvs
+	
+2005-01-20 12:22  bilboed
+
+	* src/pitivi-globalbin.c: PitiviGlobalBin : disabling EOS, let
+	  gstreamer do it normally...
+
+2005-01-17 15:54  bilboed
+
+	* src/pitivi-newprojectwindow.c: NewProjectWindow: applied patch
+	  for NULL-terminated vector from Alexander Boström (oddityfds)
+
+2005-01-17 15:51  bilboed
+
+	* src/: pitivi-checkbox.c, pitivi-controller.c, pitivi-cursor.h,
+	  pitivi-debug.c, pitivi-effectswindow.c,
+	  pitivi-effectswindowproperties.c, pitivi-encodewindow.c,
+	  pitivi-globalbin.c, pitivi-gstelementsettings.c,
+	  pitivi-lplayerwindow.c, pitivi-mainapp.c,
+	  pitivi-newprojectwindow.c, pitivi-progressbar.c,
+	  pitivi-project.c, pitivi-projectsettings.c,
+	  pitivi-projectsourcelist.c, pitivi-ruler.c, pitivi-settings.c,
+	  pitivi-settingswindow.c, pitivi-sourcefile.c,
+	  pitivi-sourcefilebin.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinebin.c, pitivi-timelinebin.h,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-toolbox.c, pitivi-viewerwindow.c: src/: Applied static
+	  flag to needed functions and commented functions that aren't used
+
+2005-01-17 12:18  bilboed
+
+	* src/pitivi-timelinemedia.c: PitiviTimelineMedia : properties
+	  dialog box didn't show and hanged application, fixed
+
+2005-01-14 15:54  bilboed
+
+	* gnl/: gnlcomposition.c, gnlobject.c, gnlsource.c: GnlSource :
+	  corrected out-of-limits buffer dropage/EOS, faster chainfunction;
+	  GnlObject : commented object<=>media time conversion functions
+
+2005-01-14 15:47  bilboed
+
+	* src/pitivi-globalbin.c: Increase audio/video queues size in
+	  PitiviGlobalBin
+
+2005-01-14 15:47  bilboed
+
+	* src/pitivi-timelinecellrenderer.c: Forgot to adjust stop time for
+	  linked element in cut
+
+2005-01-14 00:03  bilboed
+
+	* src/pitivi-effectswindowproperties.c: applyed patch for
+	  gcc-2.95.4 from kwm
+
+2005-01-13 18:24  bilboed
+
+	* configure.ac: bumping up to v0.1.1.3
+
+2005-01-13 18:07  bilboed
+
+	* src/pitivi-newprojectwindow.c: NewProjectWindow : better category
+	  frame adjustment
+
+2005-01-13 17:59  bilboed
+
+	* src/pitivi-newprojectwindow.c: PitiviNewProjectWindow : Moved
+	  Category frame under left-side category tree
+
+2005-01-13 17:30  bilboed
+
+	* src/pitivi-sourcefile.c: PitiviSourceFile : got rid of a useless
+	  gst_element_set_state()
+
+2005-01-13 17:14  bilboed
+
+	* docs/gnl/gnonlin-sections.txt, docs/gnl/tmpl/gnlobject.sgml,
+	  gnl/gnlcomposition.c, gnl/gnlobject.c, gnl/gnlobject.h,
+	  gnl/gnlsource.c: GnlObject: added media<=>object time conversion
+	  functions; GnlSource: discards discont events that are before
+	  seek_start
+
+2005-01-12 18:13  bilboed
+
+	* configure.ac: pumping up to v0.1.1.2
+
+2005-01-12 18:09  bilboed
+
+	* src/pitivi-sourcefilebin.c: protecting
+	  gst_pad_set_active_recursive until gst>0.8.8 comes out
+
+2005-01-12 18:00  bilboed
+
+	* Makefile.am, configure.ac, pitivi.spec, pitivi.spec.in: better
+	  pitivi.spec
+
+2005-01-12 16:49  bilboed
+
+	* src/pitivi-debug.c: debug category name is now PITIVI (capital
+	  letters according to gst documentation)
+
+2005-01-12 16:48  bilboed
+
+	* gnl/: gnlcomposition.c, gnlsource.c, gnltimeline.c:
+	  GST_EVENT_DISCONTINUOUS is now handled; GnlTimelineTimer now
+	  resets in GST_STATE_PAUSED_TO_READY
+
+2005-01-11 18:08  bilboed
+
+	* src/: pitivi-sourcefile.c, pitivi-sourcefilebin.c:
+	  PitiviSourceFile : faster thumbnailing; PitiviSourceFileBin:
+	  correct de-activation of non-used decoders/pads
+
+2005-01-11 01:01  bilboed
+
+	* src/pitivi-sourcefile.c: use ffmpegcolorspace instead of
+	  ffcolorspace, since the second is not available if gst-ffmpeg is
+	  not installed
+
+2005-01-10 19:01  bilboed
+
+	* src/: pitivi-projectsettingswidget.c,
+	  pitivi-projectsettingswindow.c, pitivi-sourcefilebin.c:
+	  ProjectSettingsWidget : cleanup; ProjectSettingsWindow : really
+	  apply changes; PitiviSourceFileBin : static flags, cleanup,
+	  included gst_pad_set_active_recursive(), doesn't use fakesinks
+	  anymore
+
+2005-01-09 22:55  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settings.c,
+	  pitivi-settings.h: integration de la copy de la struct io
+
+2005-01-07 18:17  bilboed
+
+	* src/: pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h, pitivi-projectsettingswidget.c,
+	  pitivi-projectsettingswidget.h, pitivi-projectsettingswindow.c:
+	  PitiviProjectSettingsWidget can now import/export project
+	  settings
+
+2005-01-07 16:12  bilboed
+
+	* src/pitivi-sourcelistwindow.c: Safer way to get the basename of a
+	  filepath
+
+2005-01-06 19:04  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-projectsettingswidget.c, pitivi-projectsettingswidget.h,
+	  pitivi-projectsettingswindow.c: Added conversion functions for
+	  PitiviSettingsIoElement, Added codec configuration window in
+	  PitiviProjectSettingsWidget
+
+2005-01-06 17:41  cracoucas42
+
+	* src/pitivi-effectswindowproperties.c: Application des preferences
+	  des effets...
+
+2005-01-06 14:17  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-projectsettingswidget.c, pitivi-settings.h,
+	  pitivi-types.h: Added PitiviSettingsIoElement <=>
+	  PitiviSettingsValue conversion fonctions
+
+2005-01-05 17:29  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-projectsettingswidget.c, pitivi-projectsettingswidget.h:
+	  ProjectSettingsWidget : Finished loading and improved GUI
+
+2005-01-04 17:08  bilboed
+
+	* src/pitivi-projectsettingswidget.c: Added video width/height
+	  handling
+
+2005-01-04 16:50  bilboed
+
+	* src/: pitivi-projectsettingswidget.c,
+	  pitivi-projectsettingswidget.h, pitivi-projectsettingswindow.c:
+	  improvements on PitiviProjectSettingsWidget
+
+2005-01-04 15:21  bilboed
+
+	* src/Makefile.am, src/pitivi-projectsettingswidget.c,
+	  src/pitivi-projectsettingswidget.h,
+	  src/pitivi-projectsettingswindow.c, src/pitivi-timelinewindow.c,
+	  src/pitivi-types.h, ui/pitivi-timeline.xml: Added
+	  PitiviSettingsWidget, inserted in interface. Corrected menu items
+	  titles
+
+2005-01-01 16:40  bilboed
+
+	* src/pitivi-settingswindow.c: Real title for preferences window
+
+2004-12-29 13:15  bilboed
+
+	* src/pitivi-file-utils.c: Look for development files first
+
+2004-12-28 16:09  bilboed
+
+	* src/: pitivi-mainapp.c, pitivi-settings.c: more PITIVI_DEBUG
+	  functions
+
+2004-12-28 16:08  bilboed
+
+	* gnl/gnlcomposition.c: Composition _prepare() doesn't segfault if
+	  empty
+
+2004-12-21 19:13  bilboed
+
+	* src/pitivi-mainapp.c: removed extra pitivi_settings_new(), was a
+	  memory leak
+
+2004-12-21 18:46  bilboed
+
+	* gnl/gnlcomposition.c, src/pitivi-effectswindowproperties.c,
+	  src/pitivi-gstelementsettings.c, src/pitivi-lplayerwindow.c,
+	  src/pitivi-mainapp.c, src/pitivi-menu.c,
+	  src/pitivi-progressbar.c, src/pitivi-settings.c,
+	  src/pitivi-settingswindow.c, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinemedia.c,
+	  src/pitivi-timelinewindow.c: Applyed kwm patches for gcc-2.95.4
+	  compatibilty
+
+2004-12-21 18:45  bilboed
+
+	* configure.ac: Bumping version to 0.1.1.1 after release
+
+2004-12-20 04:07  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinewindow.c: remove
+	  unused clip
+
+2004-12-19 19:13  casaxno
+
+	* src/pitivi-timelinewindow.c: confirmation on exit
+
+2004-12-19 17:30  bilboed
+
+	* ChangeLog, NEWS, TODO, src/pitivi-settings.c: cleanup for release
+	  0.1.1
+
+2004-12-19 16:28  bilboed
+
+	* pitivi.desktop: Better with contents...
+
+2004-12-19 16:19  bilboed
+
+	* AUTHORS, conf/Makefile.am, src/Makefile.am, src/pitivi-mainapp.c,
+	  src/pitivi-settings.c, src/pitivi-sourcefilebin.c,
+	  src/pitivi-sourcelistwindow.c: deactivated LightPlayer for
+	  release, re-activated videorate, Updated AUTHORS, Improved
+	  global/local configuration file loading
+
+2004-12-19 01:16  bilboed
+
+	* gnl/gnltimeline.c, src/main.c, src/pitivi-controller.c,
+	  src/pitivi-debug.c, src/pitivi-debug.h,
+	  src/pitivi-effectswindow.c, src/pitivi-effectswindowproperties.c,
+	  src/pitivi-globalbin.c, src/pitivi-globalbin.h,
+	  src/pitivi-gstelementsettings.c, src/pitivi-lplayerwindow.c,
+	  src/pitivi-mainapp.c, src/pitivi-newprojectwindow.c,
+	  src/pitivi-project.c, src/pitivi-projectsettings.c,
+	  src/pitivi-projectsourcelist.c, src/pitivi-settings.c,
+	  src/pitivi-settingswindow.c, src/pitivi-sourcefile.c,
+	  src/pitivi-sourcefilebin.c, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-timelinebin.c,
+	  src/pitivi-timelinecellrenderer-zooming.c,
+	  src/pitivi-timelinemedia.c, src/pitivi-timelinewindow.c,
+	  src/pitivi-viewerwindow.c: Added gst-debug functionnalities,
+	  Corrected EOS problems in PitiviGlobalBin and PitiviTimelineBin,
+	  Removed videorate element pending validation in gst-plugins,
+	  allowed popup handling on timelinemedia with any tool and without
+	  having to select
+
+2004-12-18 23:24  nemoglobine
+
+	* src/pitivi-settings.c: SAVE IO SETTINGS
+
+2004-12-18 22:53  cracoucas42
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c: [no
+	  log message]
+
+2004-12-18 18:30  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settings.c, pitivi-settings.h, pitivi-settingswindow.c:
+	  gstelementsettings OPERATIONNEL
+
+2004-12-18 17:43  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-newprojectwindow.c,
+	  pitivi-projectsourcelist.c, pitivi-timelinewindow.c: please wait
+	  dialog
+
+2004-12-18 17:27  cracoucas42
+
+	* src/pitivi-sourcelistwindow.c: ajout de boutons dans la source
+	  List
+
+2004-12-18 16:31  casaxno
+
+	* src/: pitivi-progressbar.c, pitivi-sourcelistwindow.c: cancel
+	  operation
+
+2004-12-17 18:35  nemoglobine
+
+	* src/pitivi-gstelementsettings.c: any changes
+
+2004-12-17 18:23  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-projectsourcelist.c,
+	  pitivi-timelinewindow.c: Lors d un chargement dun projet et que
+	  les sources ont ete deplace, une fenetre propose de reactualiser
+	  les l emplacement des sources...
+
+2004-12-17 17:28  nemoglobine
+
+	* src/: pitivi-effectswindowproperties.c,
+	  pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-newprojectwindow.c, pitivi-settingswindow.c: any changes
+
+2004-12-17 15:50  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-settings.h,
+	  pitivi-settingswindow.c: any changes
+
+2004-12-16 17:44  bilboed
+
+	* gnl/gnl.h, gnl/gnlsource.c, gnl/gnltimeline.c,
+	  pixmaps/Makefile.am, pixmaps/pitivi-viewer-record.png,
+	  src/Makefile.am, src/pitivi-controller.c,
+	  src/pitivi-controller.h, src/pitivi-effectswindow.h,
+	  src/pitivi-encodewindow.c, src/pitivi-encodewindow.h,
+	  src/pitivi-globalbin.c, src/pitivi-globalbin.h,
+	  src/pitivi-project.c, src/pitivi-project.h,
+	  src/pitivi-sourcefile.c, src/pitivi-sourcefilebin.c,
+	  src/pitivi-stockicons.c, src/pitivi-stockicons.h,
+	  src/pitivi-timelinebin.c, src/pitivi-timelinebin.h,
+	  src/pitivi-timelinewindow.c, src/pitivi-types.h,
+	  src/pitivi-viewerwindow.c: Added/Updated classes for recording,
+	  Corrected XWindowID for viewer, corrections in gnl.h
+
+2004-12-16 17:09  bilboed
+
+	* ChangeLog: Update changelog with cvs2cl
+
+2004-12-16 15:22  bilboed
+
+	* src/pitivi-effectswindowproperties.c: whoops, forgot to correct
+	  something
+
+2004-12-16 15:15  bilboed
+
+	* src/: pitivi-effectswindowproperties.c, pitivi-sourcefilebin.c:
+	  PitiviEffectsSettingsWindow now has correct effect GstElement,
+	  corrections in PitiviSourceFileBins
+
+2004-12-15 09:41  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settings.c,
+	  pitivi-settings.h, pitivi-settingswindow.c: any changes
+
+2004-12-11 22:06  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-windows.c: free
+
+2004-12-11 21:56  casaxno
+
+	* src/: pitivi-controller.c, pitivi-menu.c, pitivi-progressbar.c,
+	  pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c,
+	  pitivi-stockicons.c, pitivi-timelinewindow.c, pitivi-toolbox.c,
+	  pitivi-windows.c: free
+
+2004-12-11 21:07  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-mainapp.c, pitivi-sourcelistwindow.c,
+	  pitivi-sourcelistwindow.h, pitivi-stockicons.c,
+	  pitivi-stockicons.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-viewerwindow.c, pitivi-windows.c:
+	  centralize icons
+
+2004-12-10 00:37  casaxno
+
+	* src/pitivi-timelinewindow.c, ui/pitivi-timeline.xml: shortcuts
+
+2004-12-10 00:34  casaxno
+
+	* src/pitivi-sourcelistwindow.h: pixmap sourcelist
+
+2004-12-10 00:31  casaxno
+
+	* src/: pitivi-menu.c, pitivi-menu.h, pitivi-sourcelistwindow.c,
+	  pitivi-splashscreenwindow.c, pitivi-timelinewindow.c: shortcuts
+
+2004-12-09 21:09  casaxno
+
+	* src/: Makefile.am, pitivi-progressbar.c,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer-zooming.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi.h: utf8
+
+2004-12-09 21:09  raph_tv
+
+	* src/pitivi-lplayerwindow.c: plus d'arret avec alsa, un message
+
+2004-12-09 20:58  nemoglobine
+
+	* src/: pitivi-effectswindowproperties.c, pitivi-settings.c,
+	  pitivi-settings.h, pitivi-settingswindow.c: new struct for Prop
+
+2004-12-09 16:18  cracoucas42
+
+	* src/: pitivi-menu-actions.c, pitivi-newprojectwindow.c,
+	  pitivi-timelinewindow.c, pitivi.h: Ajout de l'affichage de la box
+	  de conf des codecs lors de la creation d un nouveau projet
+
+2004-12-08 19:02  bilboed
+
+	* gnl/: gnlcomposition.c, gnlsource.c, gnltimeline.c: better debug,
+	  faster source handling
+
+2004-12-07 14:19  bilboed
+
+	* pitivi.desktop: converted pitivi.desktop from ISO-8859-1 to UTF-8
+
+2004-12-07 11:47  bilboed
+
+	* gnl/: gnlcomposition.c, gnltimeline.c: proper unlinking of pads
+	  before re-using them
+
+2004-12-06 20:59  bilboed
+
+	* src/: pitivi-sourcefile.c, pitivi-sourcefilebin.c,
+	  pitivi-sourcefilebin.h: and we now have RGB effects
+
+2004-12-06 18:24  bilboed
+
+	* src/: pitivi-project.c, pitivi-viewerwindow.c: Better naming of
+	  output audio/video queue, simpler handling of global pipeline
+
+2004-12-06 18:23  bilboed
+
+	* conf/Makefile.am: Correct directory for configuration file
+
+2004-12-06 18:18  bilboed
+
+	* gnl/: gnlcomposition.c, gnlmarshal.c, gnloperation.c,
+	  gnltimeline.c: corrections for operations (don't use the friggin'
+	  threads\!)
+
+2004-12-06 14:39  bilboed
+
+	* src/pitivi-file-utils.c: Correct paths for pixmaps
+
+2004-12-06 14:03  bilboed
+
+	* pitivi.desktop: accents en francais
+
+2004-12-06 13:57  bilboed
+
+	* pitivi.desktop: emplacement de l'icone
+
+2004-12-06 11:09  bilboed
+
+	* pitivi.desktop: works better with the file :)
+
+2004-12-05 21:49  casaxno
+
+	* conf/: .pitivi, Makefile.am, pitivi: desktop gnome
+
+2004-12-05 21:35  casaxno
+
+	* Makefile.am, pixmaps/Makefile.am, src/pitivi-file-utils.c,
+	  conf/Makefile.am: icon desktop
+
+2004-12-03 07:52  casaxno
+
+	* src/: Makefile.am, pitivi-newprojectwindow.c,
+	  pitivi-newprojectwindow.h: make install
+
+2004-12-03 00:57  bilboed
+
+	* gnl/Makefile.am: removed GNL_LIBS from linking command... doesn't
+	  exist yet :)
+
+2004-12-03 00:53  bilboed
+
+	* Makefile.am, configure.ac, gnl/Makefile.am, gnl/gnl.c: modified
+	  file in order have installable configure.ac/Makefile.am
+
+2004-12-03 00:17  bilboed
+
+	* docs/.pitivi: .pitivi moved to conf/.pitivi
+
+2004-12-03 00:13  casaxno
+
+	* Makefile.am, conf/.pitivi, conf/Makefile.am: .pitivi
+
+2004-12-03 00:07  casaxno
+
+	* Makefile.am, configure.ac, src/Makefile.am: makefile
+
+2004-12-02 23:25  casaxno
+
+	* src/: pitivi-file-utils.c~, pitivi-file-utils.h~: delete
+
+2004-12-02 23:04  casaxno
+
+	* src/Makefile.am, src/pitivi-effectswindow.c,
+	  src/pitivi-effectswindow.h, src/pitivi-file-utils.c,
+	  src/pitivi-file-utils.c~, src/pitivi-file-utils.h,
+	  src/pitivi-file-utils.h~, src/pitivi-menu-actions.c,
+	  src/pitivi-sourcelistwindow.c, src/pitivi-splashscreenwindow.c,
+	  src/pitivi-stockicons.c, src/pitivi-timelinewindow.c,
+	  src/pitivi-timelinewindow.h, src/pitivi-viewerwindow.c,
+	  src/pitivi-viewerwindow.h, src/pitivi.h, Makefile.am,
+	  gnl/Makefile.am, pixmaps/Makefile.am,
+	  pixmaps/pitivi-newproject.png, pixmaps/pitivi-tools.png,
+	  ui/Makefile.am, ui/pitivi-timeline.xml: makefile
+
+2004-12-02 20:50  bilboed
+
+	* src/: pitivi-newprojectwindow.c, pitivi-sourcefile.c,
+	  pitivi-viewerwindow.c: puts the timeline at GST_STATE_READY when
+	  stopping it, instead of GST_STATE_PAUSED
+
+2004-12-02 18:43  bilboed
+
+	* gnl/: gnlcomposition.c, gnlcomposition.h, gnlsource.c: don't make
+	  elements we'll still be using do PAUSED->READY->PAUSED
+
+2004-12-02 17:49  bilboed
+
+	* src/pitivi-sourcelistwindow.c: removes a source not used without
+	  asking user
+
+2004-12-02 13:28  raph_tv
+
+	* src/pitivi-effectswindowproperties.c: juste apply en plus
+
+2004-12-02 12:41  casaxno
+
+	* pitivi.spec: spec
+
+2004-12-02 07:10  casaxno
+
+	* src/: pitivi-progressbar.c, pitivi-progressbar.h,
+	  pitivi-sourcefile.c, pitivi-sourcelistwindow.c: sourcelistwindow
+
+2004-12-01 16:07  casaxno
+
+	* src/: pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer-resizing.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi.h: resize
+
+2004-12-01 00:04  casaxno
+
+	* Makefile.am, pixmaps/Makefile.am, ui/Makefile.am: Makefile
+
+2004-11-30 23:34  casaxno
+
+	* pixmaps/Makefile.am: Makefile
+
+2004-11-30 22:56  casaxno
+
+	* src/: pitivi-progressbar.c, pitivi-sourcelistwindow.c: -
+
+2004-11-30 19:18  bilboed
+
+	* src/: pitivi-sourcefile.c, pitivi-sourcefilebin.c: removing debug
+	  messages
+
+2004-11-30 19:09  bilboed
+
+	* gnl/: gnlcomposition.c, gnlsource.c: Better handling of
+	  add/remove objects in GnlComposition
+
+2004-11-30 16:33  nemoglobine
+
+	* src/: pitivi-effectswindowproperties.c,
+	  pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settings.c, pitivi-settings.h, pitivi-settingswindow.c:
+	  properties update aff type not in combobox
+
+2004-11-30 16:26  bilboed
+
+	* src/: Makefile.am, pitivi-sourcefile.c, pitivi-sourcefile.h,
+	  pitivi-sourcefilebin.c, pitivi-sourcefilebin.h, pitivi-types.h,
+	  pitivi-viewerwindow.c: Better PitiviSourceFile bins handling,
+	  less memory, less cpu usage
+
+2004-11-30 16:24  bilboed
+
+	* configure.ac: Updated required gstreamer version to 0.8.6 (in
+	  order to have pngenc patch)
+
+2004-11-30 16:22  bilboed
+
+	* gnl/: gnlcomposition.c, gnlsource.c: Set non-active objects in a
+	  composition to GST_STATE_READY
+
+2004-11-30 16:03  casaxno
+
+	* src/: Makefile.am, pitivi-drawing.c, pitivi-drawing.h,
+	  pitivi-progressbar.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer-moving.c,
+	  pitivi-timelinecellrenderer-resizing.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h: resizing
+
+2004-11-29 19:17  raph_tv
+
+	* src/: pitivi-effectswindowproperties.c, pitivi-lplayerwindow.c,
+	  pitivi-timelinemedia.c: options setting/trans OK CANCEL
+
+2004-11-29 02:29  bilboed
+
+	* src/pitivi-progressbar.c: text in english
+
+2004-11-28 14:25  bilboed
+
+	* src/pitivi-mainapp.c, ui/styles.rc: Removed the styles
+
+2004-11-28 13:42  casaxno
+
+	* ui/styles.rc: style
+
+2004-11-28 13:38  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c: track mistake
+
+2004-11-28 13:30  bilboed
+
+	* docs/.pitivi: OGG is not VORBIS
+
+2004-11-28 13:27  bilboed
+
+	* src/pitivi-menu-actions.c: License is GNU GPL
+
+2004-11-28 12:36  bilboed
+
+	* src/: pitivi-progressbar.c~, pitivi-progressbar.h~: remove backup
+	  files
+
+2004-11-28 11:58  casaxno
+
+	* src/: pitivi-checkbox.c, pitivi-controller.c,
+	  pitivi-effectswindow.c, pitivi-effectswindowproperties.c,
+	  pitivi-lplayerwindow.c, pitivi-mainapp.c,
+	  pitivi-mediatrackinfo.c, pitivi-menu.c,
+	  pitivi-newprojectwindow.c, pitivi-progressbar.c,
+	  pitivi-project.c, pitivi-projectsettings.c,
+	  pitivi-projectsettingswindow.c, pitivi-projectsourcelist.c,
+	  pitivi-projectwindows.c, pitivi-ruler.c, pitivi-settings.c,
+	  pitivi-settingswindow.c, pitivi-sourcefile.c,
+	  pitivi-sourcelistwindow.c, pitivi-splashscreenwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c, pitivi-toolbox.c, pitivi-viewerwindow.c:
+	  get-set
+
+2004-11-28 10:28  casaxno
+
+	* src/: Makefile.am, pitivi-progressbar.c, pitivi-progressbar.c~,
+	  pitivi-progressbar.h, pitivi-progressbar.h~,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c: progress bar
+
+2004-11-27 18:55  bilboed
+
+	* docs/.pitivi, src/pitivi-newprojectwindow.c,
+	  src/pitivi-projectsettings.c, src/pitivi-projectsettings.h,
+	  src/pitivi-ruler.c, src/pitivi-sourcefile.c,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinemedia.c,
+	  src/pitivi-timelinewindow.c: video framerate in caps is a double,
+	  did the modifications to the related code. Use new .pitivi
+
+2004-11-27 10:43  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinewindow.c, pitivi-units.h: resizing part two
+
+2004-11-27 04:11  casaxno
+
+	* ui/styles.rc: style
+
+2004-11-26 18:09  bilboed
+
+	* gnl/: gnlcomposition.c, gnloperation.c, gnlsource.c: gnonlin
+	  cleanup, added change_state to GnlOperation
+
+2004-11-26 16:16  bilboed
+
+	* gnl/gnlcomposition.c, gnl/gnltimeline.c, src/pitivi-debug.c,
+	  src/pitivi-menu-actions.c, src/pitivi-sourcefile.c,
+	  src/pitivi-timelinewindow.c, src/pitivi-timelinewindow.h,
+	  src/pitivi-viewerwindow.c: improved gnonlin state-change
+	  handling, Spellcheking (About), More PitiviSourceFile hacks
+
+2004-11-26 12:54  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.h:
+	  cells
+
+2004-11-26 12:27  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinewindow.c: resize light version
+
+2004-11-26 11:09  bilboed
+
+	* src/: pitivi-sourcefile.c, pitivi-sourcelistwindow.c: Corrections
+	  for handling non-supported files
+
+2004-11-26 05:36  casaxno
+
+	* ui/pitivi-timeline.xml: menu unused
+
+2004-11-25 19:11  cracoucas42
+
+	* src/: pitivi-menu-actions.c, pitivi-menu-actions.h,
+	  pitivi-timelinewindow.c: Ajout de raccourcis claviers pour le
+	  menu file et help
+
+2004-11-25 19:05  bilboed
+
+	* src/: pitivi-sourcefile.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c: Effects/transitions have a real gnonlin
+	  time now
+
+2004-11-25 17:46  bilboed
+
+	* src/: pitivi-effectswindow.c, pitivi-sourcefile.c,
+	  pitivi-sourcefile.h: Gestion des transitions dans les
+	  PitiviSourceFile
+
+2004-11-25 16:29  bilboed
+
+	* docs/.pitivi, src/pitivi-newprojectwindow.c,
+	  src/pitivi-projectsettings.c, src/pitivi-projectsettings.h,
+	  src/pitivi-settings.c, src/pitivi-sourcefile.c: Added container
+	  and audio depth preferences to PitiviProjectSettings. Updated
+	  NewProjectWindow, ProjectSettings and PitiviSettings accordingly.
+	  Load/Save file/preferences now works
+
+2004-11-25 16:19  casaxno
+
+	* src/: pitivi-thumbs.c, pitivi-thumbs.h: thumbs.c .h removed
+
+2004-11-25 15:44  casaxno
+
+	* src/: Makefile.am, pitivi-sourcefile.c, pitivi-sourcefile.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c: thumbs sourcelist
+
+2004-11-25 15:30  cracoucas42
+
+	* pixmaps/pitivi-logo-small.png, pixmaps/pitivi-logo-splash.png,
+	  src/pitivi-cursorbits.h, src/pitivi-menu-actions.c,
+	  src/pitivi-newprojectwindow.c, src/pitivi-splashscreenwindow.c:
+	  Ajout de la fenetre About dans le menu Help...
+
+2004-11-25 14:44  casaxno
+
+	* src/: pitivi-sourcefile.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h: resolving bug on
+	  moving widget
+
+2004-11-25 12:39  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-settingswindow.c: REPLACE BUGS
+
+2004-11-25 11:17  cracoucas42
+
+	* src/pitivi-timelinewindow.c: Plus de segfault si on sauve un
+	  project qui n est pas cree...
+
+2004-11-25 10:37  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-viewerwindow.c: moving widget bug
+	  resolved
+
+2004-11-25 00:11  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-sourcelistwindow.c:
+	  removed unused menu items in PitiviSourceListWindow
+
+2004-11-24 23:14  bilboed
+
+	* gnl/gnlcomposition.c, gnl/gnlobject.c, gnl/gnlsource.c,
+	  gnl/gnltimeline.c, src/pitivi-mainapp.c, src/pitivi-project.c,
+	  src/pitivi-projectsourcelist.c, src/pitivi-settings.c,
+	  src/pitivi-sourcefile.c, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinemedia.c,
+	  src/pitivi-viewerwindow.c: corrected : gnonlin buffering, state
+	  change and scheduling problems, Thumbnails generation/handling
+	  with large files, better audio/video detection, g_printf cleanup
+
+2004-11-24 15:47  bilboed
+
+	* gnl/gnl.h, src/pitivi-lplayerwindow.c, src/pitivi-ruler.c,
+	  src/pitivi-sourcefile.c: correction pour athlon64
+
+2004-11-24 09:34  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-sourcefile.c, pitivi-sourcefile.h,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c: first
+	  version multiple thumnails please wait for cut ... thanks
+
+2004-11-24 04:49  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-splashscreenwindow.c: position and
+	  size
+
+2004-11-24 03:37  casaxno
+
+	* src/: pitivi-ruler.c, pitivi-ruler.h, pitivi-timelinewindow.c,
+	  pitivi-viewerwindow.c: ruler last
+
+2004-11-24 01:19  casaxno
+
+	* src/: pitivi-ruler.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-viewerwindow.c: ruler first
+
+2004-11-23 23:08  casaxno
+
+	* src/: pitivi-ruler.c, pitivi-ruler.h, pitivi-timelinewindow.c:
+	  indicator
+
+2004-11-23 16:00  bilboed
+
+	* src/: pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-viewerwindow.c: Update time in timelinewindow
+
+2004-11-23 15:25  bilboed
+
+	* src/pitivi-viewerwindow.c: avoid EOS in global pipeline,
+	  otherwise it segfaults
+
+2004-11-22 19:14  bilboed
+
+	* docs/gnl/gnonlin-sections.txt, docs/gnl/tmpl/gnl.sgml, gnl/gnl.h,
+	  gnl/gnlcomposition.c, gnl/gnlobject.c, gnl/gnlsource.c: Corrected
+	  gnl_object_do_seek, added GST_M_S_M() debug function
+
+2004-11-22 19:13  bilboed
+
+	* src/: pitivi-debug.c, pitivi-gstelementsettings.c,
+	  pitivi-sourcefile.c, pitivi-timelinecellrenderer.c,
+	  pitivi-viewerwindow.c: misc bug corrections in PitiviSourceFile
+	  and PitiviTimelineMedia. Moved idle to probe in
+	  PitiviViewerWindow
+
+2004-11-22 15:29  cracoucas42
+
+	* src/: pitivi-effectswindow.h, pitivi-mainapp.c,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h,
+	  pitivi-viewerwindow.c, pitivi-viewerwindow.h: Correction sur le
+	  replacement des fenetres apres avoir ete cache...
+
+2004-11-22 11:50  cracoucas42
+
+	* pixmaps/pitivi-logo3.png: [no log message]
+
+2004-11-22 11:38  cracoucas42
+
+	* src/pitivi-mainapp.c: sourceListWindow, viewerWindow,
+	  effectWindow conservent leurs places apres un hide / show
+
+2004-11-20 19:13  bilboed
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcefile.c, pitivi-sourcefile.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinemedia.c: Multiple video
+	  thumbnails handling in PitiviSourceFile + little fixes
+
+2004-11-20 18:41  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settings.c, pitivi-settingswindow.c: UPDATE GST SETTINGS
+
+2004-11-20 16:58  casaxno
+
+	* src/: pitivi-effectswindowproperties.c, pitivi-timelinemedia.c:
+	  effects settings window
+
+2004-11-20 16:23  casaxno
+
+	* src/: Makefile.am, pitivi-effectswindowproperties.c,
+	  pitivi-effectswindowproperties.h, pitivi-sourceitem.h,
+	  pitivi-timelinemedia.c: effects settings
+
+2004-11-20 11:41  cracoucas42
+
+	* src/: pitivi-effectswindow.h, pitivi-newprojectwindow.h,
+	  pitivi-sourcelistwindow.h, pitivi-timelinewindow.h,
+	  pitivi-viewerwindow.h: Nouveau logo sur la barre des fenetres...
+	  a paufiner...
+
+2004-11-20 08:48  casaxno
+
+	* src/pitivi-controller.c: ###########
+
+2004-11-20 08:32  casaxno
+
+	* src/: pitivi-controller.c, pitivi-effectswindow.c,
+	  pitivi-mainapp.c, pitivi-ruler.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c, pitivi-windows.c, pitivi-windows.h:
+	  controller
+
+2004-11-20 05:08  casaxno
+
+	* ui/styles.rc: styles
+
+2004-11-19 20:26  raph_tv
+
+	* src/pitivi-lplayerwindow.c: moins son sur lplayer
+
+2004-11-19 19:44  nemoglobine
+
+	* src/pitivi-settings.c: UPDATE GST SETTINGS
+
+2004-11-19 19:42  bilboed
+
+	* gnl/gnlcomposition.c, gnl/gnloperation.c, gnl/gnloperation.h,
+	  gnl/gnlsource.c, gnl/gnltimeline.c,
+	  src/pitivi-timelinecellrenderer.c,
+	  src/pitivi-timelinecellrenderer.h, src/pitivi-timelinemedia.c,
+	  ui/styles.rc: liberation correct des bins du PitiviSourceFile
+
+2004-11-19 17:17  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-settings.h: UPDATE GST SETTINGS
+
+2004-11-19 16:59  cracoucas42
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-newprojectwindow.c, pitivi-newprojectwindow.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h,
+	  pitivi-timelinewindow.h, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h: Ajout de l'icone pitivi dans les fenetres
+	  de l'application
+
+2004-11-19 15:57  casaxno
+
+	* ui/styles.rc: style.rc
+
+2004-11-19 12:53  casaxno
+
+	* src/: pitivi-timelinemedia.c, pitivi-timelinemedia.h: ###########
+
+2004-11-19 09:50  casaxno
+
+	* src/pitivi-timelinemedia.c: ##############
+
+2004-11-19 09:47  casaxno
+
+	* src/pitivi-timelinecellrenderer.c: ##############
+
+2004-11-19 09:38  casaxno
+
+	* src/pitivi-cursor.h, src/pitivi-effectswindow.c,
+	  src/pitivi-effectswindow.h, src/pitivi-mainapp.c,
+	  src/pitivi-ruler.c, src/pitivi-ruler.h,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinemedia.c,
+	  src/pitivi-timelinemedia.h, src/pitivi-timelinewindow.c,
+	  src/pitivi-toolbox.c, ui/Makefile.am: resizing first version
+
+2004-11-18 18:44  bilboed
+
+	* gnl/gnlcomposition.c, gnl/gnlobject.c, gnl/gnlsource.c,
+	  gnl/gnltimeline.c, src/pitivi-sourcefile.c,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinemedia.c,
+	  src/pitivi-timelinewindow.c, src/pitivi-toolbox.c:
+	  warning/critical cleanup, gnonlin dispose/finalize checked
+
+2004-11-18 18:22  cracoucas42
+
+	* src/: pitivi-menu.c, pitivi-menu.h, pitivi-newprojectwindow.c,
+	  pitivi-project.c, pitivi-projectwindows.c,
+	  pitivi-projectwindows.h, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c, pitivi-toolbox.c: Ajout de commentaires
+	  dans les fichiers toolbox.c, sourcelistwindow.c, sourcefile.c,
+	  new_projectwindow.c, projectwindow.c, timelinecellrenderer.c,
+	  timelinemedia.c et menu.c
+
+2004-11-18 17:54  raph_tv
+
+	* src/pitivi-timelinemedia.c: Properties VIDEO/AUDIO or VIDEO or
+	  AUDIO for media
+
+2004-11-18 15:20  cracoucas42
+
+	* src/: pitivi-cursor.h, pitivi-mainapp.c,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-toolbox.c: Ajout de commentaires dans les fichiers
+	  mainapp.c et timelinewindow.c, ajustement de la position des
+	  icones
+
+2004-11-18 14:44  bilboed
+
+	* src/main.c: ajout de gnl/gnl.h
+
+2004-11-18 11:13  bilboed
+
+	* gnl/gnlcomposition.c: correction bug
+	  gnl_composition_schedule_entrie
+
+2004-11-17 02:35  bilboed
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c,
+	  pitivi-thumbs.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-viewerwindow.c: correction gint64
+	  -> signed long long int pour portabilite athlon64
+
+2004-11-17 02:06  bilboed
+
+	* configure.ac, gnl/Makefile.am, gnl/gnl.h, gnl/gnlcomposition.c,
+	  gnl/gnlcomposition.h, gnl/gnlgroup.h, gnl/gnlobject.c,
+	  gnl/gnlobject.h, gnl/gnloperation.h, gnl/gnlsource.h,
+	  gnl/gnltimeline.h, gnl/gnltypes.h, src/Makefile.am,
+	  src/pitivi-checkbox.c, src/pitivi-checkbox.h,
+	  src/pitivi-codecconfwindow.c, src/pitivi-codecconfwindow.h,
+	  src/pitivi-controller.c, src/pitivi-controller.h,
+	  src/pitivi-cursor.h, src/pitivi-cursorbits.h, src/pitivi-debug.c,
+	  src/pitivi-debug.h, src/pitivi-drawing.h,
+	  src/pitivi-effectswindow.c, src/pitivi-effectswindow.h,
+	  src/pitivi-gstelementsettings.c, src/pitivi-gstelementsettings.h,
+	  src/pitivi-lplayerwindow.c, src/pitivi-lplayerwindow.h,
+	  src/pitivi-mainapp.c, src/pitivi-mainapp.h,
+	  src/pitivi-mediatrackinfo.c, src/pitivi-mediatrackinfo.h,
+	  src/pitivi-menu-actions.h, src/pitivi-menu.h,
+	  src/pitivi-newprojectwindow.c, src/pitivi-newprojectwindow.h,
+	  src/pitivi-project.c, src/pitivi-project.h,
+	  src/pitivi-projectsettings.c, src/pitivi-projectsettings.h,
+	  src/pitivi-projectsettingswindow.c,
+	  src/pitivi-projectsettingswindow.h,
+	  src/pitivi-projectsourcelist.c, src/pitivi-projectsourcelist.h,
+	  src/pitivi-projectwindows.c, src/pitivi-projectwindows.h,
+	  src/pitivi-ruler.c, src/pitivi-ruler.h, src/pitivi-settings.c,
+	  src/pitivi-settings.h, src/pitivi-settingswindow.c,
+	  src/pitivi-settingswindow.h, src/pitivi-sourcefile.c,
+	  src/pitivi-sourcefile.h, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-sourcelistwindow.h, src/pitivi-splashscreenwindow.c,
+	  src/pitivi-splashscreenwindow.h, src/pitivi-thumbs.c,
+	  src/pitivi-thumbs.h, src/pitivi-timelinecellrenderer.c,
+	  src/pitivi-timelinecellrenderer.h, src/pitivi-timelinemedia.c,
+	  src/pitivi-timelinemedia.h, src/pitivi-timelinewindow.c,
+	  src/pitivi-timelinewindow.h, src/pitivi-toolbox.c,
+	  src/pitivi-toolbox.h, src/pitivi-types.h,
+	  src/pitivi-viewerwindow.c, src/pitivi-viewerwindow.h,
+	  src/pitivi-windows.c, src/pitivi-windows.h: Ajout -Wall -Werror ,
+	  correction des bugs/oublis/idioties associes
+
+2004-11-16 16:40  casaxno
+
+	* src/pitivi-mainapp.c: bugs
+
+2004-11-16 16:35  casaxno
+
+	* src/: pitivi-controller.c, pitivi-mainapp.c,
+	  pitivi-timelinewindow.c: bugs
+
+2004-11-16 16:07  casaxno
+
+	* src/pitivi-mainapp.c: little bug
+
+2004-11-16 15:58  casaxno
+
+	* gnl/gnlmarshal.c, src/pitivi-mainapp.c,
+	  src/pitivi-timelinewindow.c, ui/pitivi-timeline.xml:
+	  little bug
+
+2004-11-16 15:10  casaxno
+
+	* src/: pitivi-controller.c, pitivi-effectswindow.c,
+	  pitivi-mainapp.c, pitivi-mainapp.h, pitivi-menu-actions.c,
+	  pitivi-menu-actions.h, pitivi-ruler.c, pitivi-ruler.h,
+	  pitivi-sourcefile.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-viewerwindow.c: minimize
+
+2004-11-15 22:56  bilboed
+
+	* configure.ac, docs/Makefile.am, docs/gnl/gnonlin-sections.txt,
+	  docs/gnl/tmpl/gnl.sgml, gnl/gnl.c, gnl/gnl.h,
+	  gnl/gnlcomposition.c, gnl/gnlcomposition.h, gnl/gnlgroup.h,
+	  gnl/gnlobject.c, gnl/gnlobject.h, gnl/gnloperation.h,
+	  gnl/gnlsource.c, gnl/gnlsource.h, gnl/gnltimeline.c,
+	  gnl/gnltimeline.h, src/pitivi-debug.c,
+	  src/pitivi-effectswindow.c, src/pitivi-effectswindow.h,
+	  src/pitivi-project.h, src/pitivi-projectsourcelist.c,
+	  src/pitivi-projectsourcelist.h, src/pitivi-sourcefile.c,
+	  src/pitivi-sourcefile.h, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-thumbs.c, src/pitivi-timelinecellrenderer.c,
+	  src/pitivi-timelinemedia.c, src/pitivi-viewerwindow.c: Conversion
+	  PitiviSourceFile a decodebin, modifications des autres classes,
+	  correction dnd
+
+2004-11-15 22:27  raph_tv
+
+	* src/pitivi-lplayerwindow.c: lplay
+
+2004-11-13 17:22  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settingswindow.c: UPDATE GST SETTINGS
+
+2004-11-12 14:04  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-timelinecellrenderer.c:
+	  addiotionals features not necessary needed TO IMPLEMENT and to
+	  TEST THE EFFECTS with gnonlin
+
+2004-11-12 13:44  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-timelinecellrenderer.c:
+	  effetcs
+
+2004-11-12 11:50  cracoucas42
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-mainapp.c, pitivi-mainapp.h, pitivi-newprojectwindow.c,
+	  pitivi-project.c, pitivi-stockicons.c, pitivi-stockicons.h,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h: Ajout de
+	  commentaires dans les fichiers mainapp.c et project.c
+
+2004-11-12 10:42  cracoucas42
+
+	* src/: pitivi-cursor.h, pitivi-timelinewindow.c, pitivi-toolbox.c:
+	  Ajout du pointer de resize de la timeline lorsqu on clique sur le
+	  resize de la menu bar, ajout popup lors de la creation de projets
+	  successifs (a finir)
+
+2004-11-11 21:03  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c: priority works until to find better
+	  solution
+
+2004-11-11 19:04  cracoucas42
+
+	* pixmaps/pitivi-ddl_resize.png, pixmaps/pitivi-ddr_resize.png,
+	  pixmaps/pitivi-dtl_resize.png, pixmaps/pitivi-dtr_resize.png,
+	  pixmaps/pitivi-info.png, pixmaps/pitivi-resize.png,
+	  pixmaps/pitivi-stock-h-resize.png,
+	  pixmaps/pitivi-stock-v-resize.png, src/pitivi-effectswindow.c,
+	  src/pitivi-mainapp.c, src/pitivi-menu-actions.c,
+	  src/pitivi-newprojectwindow.c, src/pitivi-stockicons.c,
+	  src/pitivi-stockicons.h, src/pitivi-timelinewindow.c,
+	  src/pitivi-toolbox.c: Ajout d'icones et popup de nouveau projet
+
+2004-11-11 18:00  nemoglobine
+
+	* src/pitivi-settingswindow.c: UPDATE GST SETTINGS
+
+2004-11-11 17:47  bilboed
+
+	* src/: pitivi-checkbox.h, pitivi-lplayerwindow.c,
+	  pitivi-mainapp.c, pitivi-mainapp.h, pitivi-project.h,
+	  pitivi-sourcefile.h, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-viewerwindow.c: corrections
+	  player,viewer,cut,gnonlin
+
+2004-11-11 17:36  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settingswindow.c: UPDATE GST SETTINGS
+
+2004-11-11 15:19  bilboed
+
+	* docs/Makefile.am: oubli Makefile
+
+2004-11-11 14:31  raph_tv
+
+	* src/pitivi-lplayerwindow.c: UPDATE LIGHT PLAYER
+
+2004-11-10 18:38  bilboed
+
+	* docs/gnl/Makefile.in: removed useless Makefile.in
+
+2004-11-10 18:30  bilboed
+
+	* Makefile.am, configure.ac, docs/gnl/Makefile.am,
+	  docs/gnl/Makefile.in, docs/gnl/gnonlin-docs.sgml,
+	  docs/gnl/gnonlin-sections.txt, docs/gnl/gnonlin.types,
+	  docs/gnl/tmpl/gnl.sgml, docs/gnl/tmpl/gnlcomposition.sgml,
+	  docs/gnl/tmpl/gnlgroup.sgml, docs/gnl/tmpl/gnlmarshal.sgml,
+	  docs/gnl/tmpl/gnlobject.sgml, docs/gnl/tmpl/gnloperation.sgml,
+	  docs/gnl/tmpl/gnlsource.sgml, docs/gnl/tmpl/gnltimeline.sgml,
+	  docs/gnl/tmpl/gnlversion.sgml, docs/gnl/tmpl/gnonlin-unused.sgml,
+	  gnl/gnlcomposition.c, gnl/gnlcomposition.h, gnl/gnlobject.c,
+	  gnl/gnloperation.c, gnl/gnltimeline.c: Added gnonlin gtk-doc
+	  documentation
+
+2004-11-09 21:28  bilboed
+
+	* gnl/gnlmarshal.list: piti oubli
+
+2004-11-09 16:29  bilboed
+
+	* src/pitivi-sourcelistwindow.c: get rid of useless functions
+
+2004-11-09 16:20  bilboed
+
+	* docs/.pitivi: adding pitivi test file
+
+2004-11-09 16:09  bilboed
+
+	* Makefile.am, configure.ac, gnl/Makefile.am, gnl/gnl.c, gnl/gnl.h,
+	  gnl/gnlcomposition.c, gnl/gnlcomposition.h, gnl/gnlelements.c,
+	  gnl/gnlgroup.c, gnl/gnlgroup.h, gnl/gnlmarshal.c,
+	  gnl/gnlmarshal.h, gnl/gnlobject.c, gnl/gnlobject.h,
+	  gnl/gnloperation.c, gnl/gnloperation.h, gnl/gnlsource.c,
+	  gnl/gnlsource.h, gnl/gnltimeline.c, gnl/gnltimeline.h,
+	  gnl/gnlversion.h: deplacement gnonlin->gnl
+
+2004-11-09 04:21  casaxno
+
+	* src/pitivi-effectswindow.c:
+	  hand drag
+
+2004-11-09 04:11  casaxno
+
+	* src/: Makefile.am, pitivi-effectswindow.c,
+	  pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-viewerwindow.c,
+	  pitivi-sourcefile.c, pitivi-sourcefile.h, pitivi-thumbs.c~,
+	  pitivi-thumbs.h~:
+	  PitiviSourceFile Object
+
+2004-11-06 21:52  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-timelinecellrenderer.c:
+	  deleting pitivi-toolboxwindow.c
+
+2004-11-06 21:48  casaxno
+
+	* src/: Makefile.am, pitivi-toolboxwindow.c,
+	  pitivi-toolboxwindow.h:
+	  deleting pitivi-toolboxwindow
+
+2004-11-06 21:43  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  version
+
+2004-11-06 21:23  casaxno
+
+	* src/Makefile.am:
+	  add pitivi-thumbs.c to Makefile
+
+2004-11-06 21:19  casaxno
+
+	* src/: Makefile.am, pitivi-ruler.c, pitivi-sourcelistwindow.c,
+	  pitivi-thumbs.c, pitivi-thumbs.c~, pitivi-thumbs.h,
+	  pitivi-thumbs.h~, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-videothumbnails.c:
+	  thumbnail
+
+2004-11-06 18:39  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-effectswindow.c, pitivi-ruler.c,
+	  pitivi-ruler.h, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c:
+	  pixmap caching
+
+2004-11-04 17:25  cracoucas42
+
+	* pixmaps/pitivi_BPWS_effect.png, pixmaps/pitivi_IIr_effect.png,
+	  pixmaps/pitivi_LPWS_effect.png, pixmaps/pitivi_RevTV_effect.png,
+	  pixmaps/pitivi_adjust_effect.png,
+	  pixmaps/pitivi_agingTV_effect.png,
+	  pixmaps/pitivi_audio_rate_effect.png,
+	  pixmaps/pitivi_diceTV_effect.png,
+	  pixmaps/pitivi_edgeTV_effect.png,
+	  pixmaps/pitivi_envelope_volume_effect.png,
+	  pixmaps/pitivi_pass_effect.png,
+	  pixmaps/pitivi_quarkTV_effect.png,
+	  pixmaps/pitivi_quark_effect.png,
+	  pixmaps/pitivi_shagadelicTV_effect.png,
+	  pixmaps/pitivi_speed_effect.png,
+	  pixmaps/pitivi_stereo_effect.png,
+	  pixmaps/pitivi_synthetiser_effect.png,
+	  pixmaps/pitivi_vertigoTV_effect.png,
+	  pixmaps/pitivi_volume_effect.png,
+	  pixmaps/pitivi_warpTV_effect.png, src/pitivi-effects_cat.h,
+	  src/pitivi-effectswindow.c, src/pitivi-stockicons.c,
+	  src/pitivi-stockicons.h: Ajout des icones pour les effets audios
+
+2004-11-02 19:20  bilboed
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h: graphical cut synchronised with gnonlin
+
+2004-11-01 18:00  bilboed
+
+	* src/: pitivi-project.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h: seek fonctionne un peu mieux...
+
+2004-11-01 16:43  bilboed
+
+	* src/pitivi-mainapp.c: I hate weird macros...
+
+2004-11-01 07:03  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-viewerwindow.c: UPDATE SETTINGS
+
+2004-10-31 14:01  bilboed
+
+	* src/pitivi-mainapp.c: timelinewindow->project est maintenant mis
+
+2004-10-31 12:11  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h: create a
+	  separete audio and video pipeline
+
+2004-10-31 04:22  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settingswindow.c, pitivi-settingswindow.h: UPDATE SETTINGS
+
+2004-10-30 20:21  bilboed
+
+	* src/pitivi-viewerwindow.c: more work on gnonlin
+
+2004-10-30 17:44  casaxno
+
+	* src/pitivi-timelinemedia.c: cut bug
+
+2004-10-30 16:53  casaxno
+
+	* src/: pitivi-lplayerwindow.c, pitivi-lplayerwindow.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-videothumbnails.c: [no log
+	  message]
+
+2004-10-30 14:06  casaxno
+
+	* src/: pitivi-controller.c, pitivi-effectswindow.c,
+	  pitivi-effectswindow.h, pitivi-mediatrackinfo.c, pitivi-ruler.c,
+	  pitivi-ruler.h, pitivi-sourcelistwindow.c, pitivi-stockicons.c,
+	  pitivi-stockicons.h, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c, pitivi-toolbox.c,
+	  pitivi-videothumbnails.c: [no log message]
+
+2004-10-29 19:36  bilboed
+
+	* src/: pitivi-videothumbnails.c, pitivi-viewerwindow.c:
+	  viewerwindow slider synchronised with timeline
+
+2004-10-29 16:16  bilboed
+
+	* pixmaps/bg.xpm: correction du bg.xpm
+
+2004-10-29 12:21  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  cell renderer
+
+2004-10-29 12:14  casaxno
+
+	* pixmaps/smpte-failed.png, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-sourcelistwindow.h, src/pitivi-timelinecellrenderer.c,
+	  src/pitivi-timelinemedia.c, src/pitivi-timelinewindow.c,
+	  src/pitivi-timelinewindow.h:
+	  smpte failed
+
+2004-10-29 11:54  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c:
+	  mods on effects
+
+2004-10-29 11:40  cracoucas42
+
+	* pixmaps/pitivi_alpha_color_effect.png,
+	  pixmaps/pitivi_alpha_effect.png,
+	  pixmaps/pitivi_balance_effect.png, pixmaps/pitivi_box_effect.png,
+	  pixmaps/pitivi_crop_effect.png,
+	  pixmaps/pitivi_deinterlace_effect.png,
+	  pixmaps/pitivi_flipper_effect.png,
+	  pixmaps/pitivi_frame_effect.png, pixmaps/pitivi_gamma_effect.png,
+	  pixmaps/pitivi_median_effect.png, pixmaps/pitivi_rate_effect.png,
+	  pixmaps/pitivi_scaler_effect.png,
+	  pixmaps/pitivi_smooth_effect.png, src/pitivi-effects_cat.h,
+	  src/pitivi-effectswindow.c, src/pitivi-effectswindow.h,
+	  src/pitivi-stockicons.c, src/pitivi-stockicons.h: Ajout des
+	  icones pour quelques effets de videos
+
+2004-10-29 03:57  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-lplayerwindow.c,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c:
+	  effects
+
+2004-10-29 01:38  casaxno
+
+	* src/: pitivi-mediatrackinfo.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c:
+	  modifications
+
+2004-10-29 00:27  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-videothumbnails.c:
+	  Updating thumbs
+
+2004-10-29 00:17  casaxno
+
+	* src/: Makefile.am, pitivi-controller.c, pitivi-controller.h,
+	  pitivi-drawing.c, pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-mainapp.c, pitivi-mediatrackinfo.c, pitivi-menu-actions.c,
+	  pitivi-project.c, pitivi-ruler.c, pitivi-ruler.h,
+	  pitivi-sourcelistwindow.c, pitivi-stockicons.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-trackenum.h,
+	  pitivi-videothumbnails.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h:
+	  last modifications
+
+2004-10-28 18:28  bilboed
+
+	* src/: pitivi-lplayerwindow.c, pitivi-sourcelistwindow.c:
+	  GnlComposition correct start/stop
+
+2004-10-28 13:15  nemoglobine
+
+	* src/pitivi-lplayerwindow.c: UPDATE PLAYER
+
+2004-10-28 13:02  nemoglobine
+
+	* src/pitivi-lplayerwindow.c: UPDATE PLAYER
+
+2004-10-28 12:49  nemoglobine
+
+	* src/: pitivi-lplayerwindow.c, pitivi-lplayerwindow.h: UPDATE
+	  PLAYER
+
+2004-10-28 12:46  nemoglobine
+
+	* src/: pitivi-lplayerwindow.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h: UPDATE PLAYER
+
+2004-10-28 07:30  nemoglobine
+
+	* src/: Makefile.am, pitivi-lplayerwindow.c,
+	  pitivi-lplayerwindow.h, pitivi-sourcelistwindow.c,
+	  pitivi-viewerwindow.c: UPDATE LIGHTPLAYER
+
+2004-10-28 04:12  nemoglobine
+
+	* src/: pitivi-viewerwindow.c, pitivi-viewerwindow.h: UPDATE
+	  VIEWERWINDOW
+
+2004-10-27 08:05  nemoglobine
+
+	* src/pitivi-gstelementsettings.c: UPDATE4 GSTELEMENTSETTINGS
+
+2004-10-27 07:50  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settingswindow.c:
+	  UPDATE3 GSTELEMENTSETTINGS
+
+2004-10-27 07:45  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settingswindow.c:
+	  UPDATE2 GSTELEMENTSETTINGS
+
+2004-10-27 07:36  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settingswindow.c:
+	  UPDATE GSTELEMENTSETTINGS
+
+2004-10-27 05:24  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settingswindow.c: NEW
+	  IMPLEMENTATION DE GSTELEMENTSETTINGS
+
+2004-10-27 04:51  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-settingswindow.c: NEW
+	  IMPLEMENTATION DE GSTELEMENTSETTINGS
+
+2004-10-26 18:20  bilboed
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-viewerwindow.c: correction
+	  gnl_composition_add/remove_object()
+
+2004-10-25 18:11  bilboed
+
+	* src/: pitivi-debug.c, pitivi-project.c,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-viewerwindow.c: liaison gnonlin-viewer fonctionnelle
+
+2004-10-25 17:28  bilboed
+
+	* src/: Makefile.am, pitivi-debug.c, pitivi-debug.h: Ajout de
+	  PitiviDebug
+
+2004-10-25 13:32  casaxno
+
+	* src/: pitivi-dragdrop.h, pitivi-effectswindow.c,
+	  pitivi-effectswindow.h, pitivi-mainapp.c,
+	  pitivi-mediatrackinfo.c, pitivi-projectsourcelist.h,
+	  pitivi-ruler.c, pitivi-ruler.h, pitivi-sourceitem.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h,
+	  pitivi-stockicons.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-toolbox.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h:
+	  priority
+
+2004-10-23 17:31  bilboed
+
+	* src/: pitivi-mainapp.h, pitivi-project.h,
+	  pitivi-sourcelistwindow.c: ajout champ
+
+2004-10-23 10:35  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h:
+	  media
+
+2004-10-23 07:25  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-timelinecellrenderer.c:
+	  selection
+
+2004-10-23 03:47  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settingswindow.c: NEW IMPLEMENTATION DE GSTELEMENTSETTINGS
+
+2004-10-22 15:22  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-drawing.h,
+	  pitivi-timelinecellrenderer.c: selection
+
+2004-10-22 14:49  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-mainapp.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c: [no log
+	  message]
+
+2004-10-22 14:03  bilboed
+
+	* src/: pitivi-mainapp.c, pitivi-timelinewindow.c: timeline
+	  activated only after selecting a project
+
+2004-10-22 10:21  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-projectsourcelist.h,
+	  pitivi-stockicons.c, pitivi-stockicons.h,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  drag effects
+
+2004-10-22 04:01  casaxno
+
+	* src/pitivi-effectswindow.c:
+	  simplify code
+
+2004-10-22 02:09  casaxno
+
+	* src/pitivi-effects_cat.h:
+	  split
+
+2004-10-22 02:08  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h:
+	  addind effects
+
+2004-10-21 20:00  bilboed
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c:
+	  update de la position du ruler dans les PitiviMedia
+
+2004-10-21 18:28  casaxno
+
+	* src/pitivi-timelinecellrenderer.c: [no log message]
+
+2004-10-21 18:12  cracoucas42
+
+	* src/: pitivi-effectswindow.c, pitivi-stockicons.c,
+	  pitivi-stockicons.h: Ajout des icones pour les effets de
+	  transitions
+
+2004-10-21 18:02  bilboed
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h: Zoom fonctionnel
+
+2004-10-21 16:59  cracoucas42
+
+	* src/pitivi-effectswindow.c: Upload des PNG des effets
+
+2004-10-21 16:54  cracoucas42
+
+	* configure.ac, src/pitivi-dragdrop.h, src/pitivi-effectswindow.c,
+	  pixmaps/smpte1.png, pixmaps/smpte101.png, pixmaps/smpte102.png,
+	  pixmaps/smpte103.png, pixmaps/smpte104.png, pixmaps/smpte105.png,
+	  pixmaps/smpte106.png, pixmaps/smpte107.png, pixmaps/smpte108.png,
+	  pixmaps/smpte109.png, pixmaps/smpte110.png, pixmaps/smpte111.png,
+	  pixmaps/smpte112.png, pixmaps/smpte113.png, pixmaps/smpte114.png,
+	  pixmaps/smpte119.png, pixmaps/smpte120.png, pixmaps/smpte121.png,
+	  pixmaps/smpte122.png, pixmaps/smpte123.png, pixmaps/smpte124.png,
+	  pixmaps/smpte125.png, pixmaps/smpte127.png, pixmaps/smpte128.png,
+	  pixmaps/smpte129.png, pixmaps/smpte130.png, pixmaps/smpte131.png,
+	  pixmaps/smpte2.png, pixmaps/smpte201.png, pixmaps/smpte202.png,
+	  pixmaps/smpte203.png, pixmaps/smpte204.png, pixmaps/smpte205.png,
+	  pixmaps/smpte206.png, pixmaps/smpte207.png, pixmaps/smpte21.png,
+	  pixmaps/smpte211.png, pixmaps/smpte212.png, pixmaps/smpte213.png,
+	  pixmaps/smpte214.png, pixmaps/smpte22.png, pixmaps/smpte221.png,
+	  pixmaps/smpte222.png, pixmaps/smpte223.png, pixmaps/smpte224.png,
+	  pixmaps/smpte225.png, pixmaps/smpte226.png, pixmaps/smpte227.png,
+	  pixmaps/smpte228.png, pixmaps/smpte23.png, pixmaps/smpte231.png,
+	  pixmaps/smpte232.png, pixmaps/smpte233.png, pixmaps/smpte234.png,
+	  pixmaps/smpte235.png, pixmaps/smpte236.png, pixmaps/smpte24.png,
+	  pixmaps/smpte241.png, pixmaps/smpte242.png, pixmaps/smpte243.png,
+	  pixmaps/smpte244.png, pixmaps/smpte245.png, pixmaps/smpte246.png,
+	  pixmaps/smpte25.png, pixmaps/smpte251.png, pixmaps/smpte252.png,
+	  pixmaps/smpte253.png, pixmaps/smpte254.png, pixmaps/smpte26.png,
+	  pixmaps/smpte261.png, pixmaps/smpte262.png, pixmaps/smpte263.png,
+	  pixmaps/smpte264.png, pixmaps/smpte3.png, pixmaps/smpte301.png,
+	  pixmaps/smpte302.png, pixmaps/smpte303.png, pixmaps/smpte304.png,
+	  pixmaps/smpte305.png, pixmaps/smpte306.png, pixmaps/smpte310.png,
+	  pixmaps/smpte311.png, pixmaps/smpte312.png, pixmaps/smpte313.png,
+	  pixmaps/smpte314.png, pixmaps/smpte315.png, pixmaps/smpte316.png,
+	  pixmaps/smpte317.png, pixmaps/smpte320.png, pixmaps/smpte321.png,
+	  pixmaps/smpte322.png, pixmaps/smpte323.png, pixmaps/smpte324.png,
+	  pixmaps/smpte325.png, pixmaps/smpte326.png, pixmaps/smpte327.png,
+	  pixmaps/smpte328.png, pixmaps/smpte329.png, pixmaps/smpte340.png,
+	  pixmaps/smpte341.png, pixmaps/smpte342.png, pixmaps/smpte343.png,
+	  pixmaps/smpte344.png, pixmaps/smpte345.png, pixmaps/smpte350.png,
+	  pixmaps/smpte351.png, pixmaps/smpte352.png, pixmaps/smpte353.png,
+	  pixmaps/smpte4.png, pixmaps/smpte41.png, pixmaps/smpte42.png,
+	  pixmaps/smpte43.png, pixmaps/smpte44.png, pixmaps/smpte45.png,
+	  pixmaps/smpte46.png, pixmaps/smpte47.png, pixmaps/smpte48.png,
+	  pixmaps/smpte5.png, pixmaps/smpte6.png, pixmaps/smpte61.png,
+	  pixmaps/smpte62.png, pixmaps/smpte63.png, pixmaps/smpte64.png,
+	  pixmaps/smpte65.png, pixmaps/smpte66.png, pixmaps/smpte67.png,
+	  pixmaps/smpte68.png, pixmaps/smpte7.png, pixmaps/smpte71.png,
+	  pixmaps/smpte72.png, pixmaps/smpte73.png, pixmaps/smpte74.png,
+	  pixmaps/smpte8.png: Upload des PNG des effets
+
+2004-10-21 16:13  cracoucas42
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h: Remplissage
+	  de la fenetre des effets
+
+2004-10-21 15:12  bilboed
+
+	* src/pitivi-projectsourcelist.h: rajoute pipeline audio et video
+	  seul dans sourcefile
+
+2004-10-21 14:54  bilboed
+
+	* src/pitivi-projectsourcelist.h: rajoute pipeline audio dans
+	  sourcefile
+
+2004-10-21 13:52  casaxno
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourceitem.h,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  unique id gnlsource element
+
+2004-10-21 11:39  casaxno
+
+	* src/pitivi-timelinemedia.c:
+	  removing widget
+
+2004-10-21 10:12  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-drawing.h,
+	  pitivi-timelinecellrenderer.c:
+	  cell
+
+2004-10-21 04:02  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-drawing.h, pitivi-menu.c,
+	  pitivi-menu.h, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c:
+	  pitivi
+
+2004-10-20 23:41  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-mainapp.c,
+	  pitivi-projectsourcelist.h, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-trackenum.h:
+	  bugs
+
+2004-10-18 19:08  bilboed
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h: Ajout callbacks zoom
+
+2004-10-18 17:17  bilboed
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h: Deplacement/scroll avec la souris
+
+2004-10-18 12:41  bilboed
+
+	* src/pitivi-timelinewindow.c: correction signaux
+
+2004-10-17 05:09  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  cells mods
+
+2004-10-16 20:46  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c:
+	  zzz-
+
+2004-10-16 19:24  casaxno
+
+	* src/pitivi-sourcelistwindow.c:
+	  sourcelist
+
+2004-10-16 18:33  cracoucas42
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-mainapp.c, pitivi-mainapp.h, pitivi-newprojectwindow.c,
+	  pitivi-settings.c, pitivi-settings.h, pitivi-settingswindow.c,
+	  pitivi-sourcelistwindow.c, pitivi-timelinewindow.c: Passage des
+	  effets depuis la self, et ajout des effets de transitions dans la
+	  effectwindow
+
+2004-10-16 17:24  bilboed
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-units.h, pitivi-viewerwindow.c:
+	  ajout zoom, corrections bugs project et mainapp
+
+2004-10-16 17:18  casaxno
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c:
+	  updates-
+
+2004-10-16 15:21  casaxno
+
+	* src/pitivi-sourcelistwindow.c:
+	  mnods
+
+2004-10-16 15:14  casaxno
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinewindow.c: [no log message]
+
+2004-10-16 12:03  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c:
+	  merging
+
+2004-10-15 13:31  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  xxx
+
+2004-10-15 05:24  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c:
+	  slide
+
+2004-10-15 04:06  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h:
+	  pitivi
+
+2004-10-14 20:17  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  modifications on slide
+
+2004-10-14 16:59  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  -Wall problem
+
+2004-10-14 16:33  bilboed
+
+	* Makefile.am, configure.ac, pixmaps/bg_effects.xpm~,
+	  src/pitivi-controller.c~, src/pitivi-controller.h~,
+	  src/pitivi-mediatrackinfo.c~, src/pitivi-mediatrackinfo.h~: added
+	  gnonlin as static library
+
+2004-10-14 15:48  casaxno
+
+	* src/: pitivi-ruler.c, pitivi-ruler.h, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h:
+	  modifications
+
+2004-10-14 14:55  bilboed
+
+	* src/pitivi-sourcelistwindow.c: added time in PitiviSourceFile(s)
+
+2004-10-14 14:08  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-timelinecellrenderer.c:
+	  move_medio est au bon endroit
+
+2004-10-14 10:55  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  recursivity
+
+2004-10-14 04:30  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c:
+	  cell renderer
+
+2004-10-13 15:00  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinemedia.c,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h:
+	  medias
+
+2004-10-13 04:03  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-drawing.h,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c:
+	  modifications on timeline
+
+2004-10-11 12:07  casaxno
+
+	* src/: pitivi-sourceitem.h, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c:
+	  mods
+
+2004-10-10 20:36  casaxno
+
+	* pixmaps/: bg_audio.xpm, bg_effects.xpm, bg_trans.xpm,
+	  bg_video.xpm:
+	  new pixmaps
+
+2004-10-10 20:33  casaxno
+
+	* src/: pitivi-drawing.h, pitivi-mediatrackinfo.h,
+	  pitivi-mediatrackinfo.h~, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c, pitivi-trackenum.h:
+	  modifications
+
+2004-10-10 14:50  casaxno
+
+	* ui/pitivi-timeline.xml:
+	  ui modifications
+
+2004-10-10 14:49  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-toolbox.c:
+	  modifications on single timeline window
+
+2004-10-10 02:19  casaxno
+
+	* pixmaps/: bg.xpm, bg_audio.xpm, bg_effects.xpm, bg_effects.xpm~,
+	  bg_video.xpm:
+	  adding xpm
+
+2004-10-10 02:18  casaxno
+
+	* src/: pitivi-controller.c, pitivi-controller.c~,
+	  pitivi-controller.h, pitivi-controller.h~,
+	  pitivi-mediatrackinfo.c, pitivi-mediatrackinfo.c~,
+	  pitivi-mediatrackinfo.h, pitivi-mediatrackinfo.h~,
+	  pitivi-ruler.c, pitivi-ruler.h, pitivi-trackenum.h:
+	  adding new files.
+
+2004-10-10 02:15  casaxno
+
+	* src/: Makefile.am, pitivi-cursor.h, pitivi-drawing.c,
+	  pitivi-drawing.h, pitivi-mainapp.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  main modification simple project system.
+
+2004-10-07 18:13  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: ok
+
+2004-10-07 17:16  cracoucas42
+
+	* src/: pitivi-gstelementsettings.c, pitivi-newprojectwindow.c:
+	  Modification des fonctions create frame, simplification, creation
+	  d une fonction generique pour creer les comboboxs des codecs,
+	  plus listage des noms
+
+2004-10-01 16:01  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c,
+	  pitivi-sourcelistwindow.h: toto z la
+
+2004-10-01 11:49  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-settingswindow.c:
+	  Alegement du codedans le fichier, retret des fonctions inutiles
+	  quiseront remplacees par les methodes des objets
+
+2004-09-30 20:03  nemoglobine
+
+	* src/: pitivi-gstelementsettings.c, pitivi-gstelementsettings.h,
+	  pitivi-settingswindow.c: IMPLEMENTATION DE GSTELEMENTSETTINGS
+
+2004-09-30 19:14  casaxno
+
+	* src/: pitivi-project.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c:
+	  warnings
+
+2004-09-30 18:57  casaxno
+
+	* src/: Makefile.am, pitivi-cursor.h, pitivi-project.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c,
+	  pitivi-toolbox.c, pitivi-toolbox.h:
+	  new modification
+
+2004-09-30 18:19  casaxno
+
+	* src/: pitivi-drawing.c, pitivi-drawing.h:
+	  drawing functions
+
+2004-09-30 18:16  casaxno
+
+	* src/: pitivi-sourceitem.h, pitivi-sourcelistwindow.c:
+	  modyfing
+
+2004-09-30 18:12  nemoglobine
+
+	* src/: Makefile.am, pitivi-settingswindow.c,
+	  pitivi-gstelementsettings.c, pitivi-gstelementsettings.h:
+	  DeLaBalle_de_bombE
+
+2004-09-30 17:41  bilboed
+
+	* src/: pitivi-project.c, pitivi-sourcelistwindow.c,
+	  pitivi-viewerwindow.c: upload version soutenance
+
+2004-09-27 14:15  casaxno
+
+	* pixmaps/blank.xpm:
+	  blank xpxpm:w
+
+2004-09-27 02:28  casaxno
+
+	* pixmaps/: bg.xpm, blank.xpm:
+	  new pixmap
+
+2004-09-27 02:20  casaxno
+
+	* src/pitivi-sourcelistwindow.c:
+	  Changing context
+
+2004-07-09 19:24  loic2
+
+	* src/pitivi-toolbox.c: solve a little bug
+
+2004-07-09 19:13  loic2
+
+	* src/pitivi-toolbox.c: tooltips in english
+
+2004-07-09 18:59  hheidy
+
+	* src/pitivi-sourcelistwindow.c: correction d'un bug du doubleclick
+
+2004-07-09 18:43  hheidy
+
+	* src/pitivi-sourcelistwindow.c: gestion du doubleclick
+
+2004-07-09 18:10  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c:
+	  timeline
+
+2004-07-09 15:26  guize
+
+	* src/: pitivi-mainapp.c, pitivi-newprojectwindow.c,
+	  pitivi-toolboxwindow.c: Selection du premier reglage de la
+	  fenetre NewProject et desactivation du bouton Nouveau Projet
+	  lorsqu'une categorie est selectionnee
+
+2004-07-09 14:06  nemoglobine
+
+	* src/: pitivi-mainapp.c, pitivi-viewerwindow.c: viewer widget show
+
+2004-07-09 12:47  loic2
+
+	* src/pitivi-timelinemedia.c: add color and filename to rectangle -
+	  my brain is back
+
+2004-07-09 12:38  nemoglobine
+
+	* src/pitivi-settingswindow.c: settings affichage
+
+2004-07-09 12:21  nemoglobine
+
+	* src/pitivi-settingswindow.c: settings affichage
+
+2004-07-09 11:29  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c:
+	  managing cut
+
+2004-07-09 10:53  bilboed
+
+	* src/pitivi-timelinemedia.c: Mustn't forget to get somebody a
+	  brain...
+
+2004-07-09 00:14  loic2
+
+	* src/pitivi-timelinemedia.c: ajout nom source ds rectangle
+	  timeline
+
+2004-07-08 21:55  casaxno
+
+	* src/pitivi-timelinemedia.c:
+	  timeline
+
+2004-07-08 21:18  casaxno
+
+	* src/: pitivi-newprojectwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h:
+	  timeline
+
+2004-07-08 19:52  hheidy
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h, pitivi-project.c,
+	  pitivi-sourcelistwindow.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h: on peut maintenant jouer plusieurs video
+	  et jouer une video en cliquant 2 fois dessus
+
+2004-07-08 12:20  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-toolbox.c, pitivi-toolbox.h:
+	  ???
+
+2004-07-08 04:01  guize
+
+	* src/: pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h, pitivi-settings.c: D Bugs en moins sur
+	  la NewProjectWindow
+
+2004-07-08 03:54  guize
+
+	* docs/.pitivi: Fichier .pitivi avec les reglages minimalistes
+
+2004-07-07 23:22  guize
+
+	* TODO, src/pitivi-mainapp.c, src/pitivi-mainapp.h,
+	  src/pitivi-newprojectwindow.c, src/pitivi-projectsettings.c,
+	  src/pitivi-projectsettings.h, src/pitivi-settings.c,
+	  src/pitivi-settings.h, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-timelinecellrenderer.c, src/pitivi-timelinewindow.c,
+	  src/pitivi-viewerwindow.c: sauvegarde des ProjectsSettings dans
+	  le fichier xml
+
+2004-07-07 22:51  nemoglobine
+
+	* src/: pitivi-effectswindow.c, pitivi-newprojectwindow.c: tree
+	  view expand
+
+2004-07-07 21:52  nemoglobine
+
+	* ui/pitivi-toolbox.xml: champ settings dans le menu
+
+2004-07-07 21:25  hheidy
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-viewerwindow.c: gestion
+	  des query et des seek
+
+2004-07-07 21:14  nemoglobine
+
+	* src/pitivi-settingswindow.c: debut save global settings
+
+2004-07-07 20:35  casaxno
+
+	* src/: pitivi-cursor.h, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-toolbox.c, pitivi-toolbox.h: header cursor file
+
+2004-07-07 20:29  nemoglobine
+
+	* src/pitivi-settingswindow.c: add tooltips to settings window
+
+2004-07-07 19:31  loic2
+
+	* src/pitivi-toolbox.c: resolution seg fault
+
+2004-07-07 18:55  nemoglobine
+
+	* src/: pitivi-mainapp.c, pitivi-settingswindow.c,
+	  pitivi-toolboxwindow.c: add menu settings window
+
+2004-07-07 17:00  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  selections
+
+2004-07-07 10:08  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  cell renderer
+
+2004-07-07 10:04  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  cellrenderer agqin
+
+2004-07-07 08:10  casaxno
+
+	* src/: pitivi-mainapp.h, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinemedia.c, pitivi-timelinemedia.h,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-toolbox.c, pitivi-toolbox.h, pitivi-toolboxwindow.c,
+	  pitivi-toolboxwindow.h:
+	  MAin modifications for timeline
+
+2004-07-06 23:39  nemoglobine
+
+	* src/pitivi-viewerwindow.c: remove expose player bug
+
+2004-07-06 23:24  nemoglobine
+
+	* src/pitivi-viewerwindow.c: play/pause on viewer
+
+2004-07-06 23:00  nemoglobine
+
+	* src/: pitivi-mainapp.c, pitivi-toolboxwindow.c: set unresizable
+	  toolbox
+
+2004-07-06 22:23  loic2
+
+	* src/: pitivi-timelinewindow.c, pitivi-toolbox.c: Modif curseur
+
+2004-07-06 22:12  hheidy
+
+	* src/: pitivi-project.c, pitivi-sourcelistwindow.c,
+	  pitivi-viewerwindow.c: changement du pipeline en bin pour le
+	  viewer
+
+2004-07-06 22:09  nemoglobine
+
+	* src/: pitivi-mainapp.c, pitivi-toolbox.c: alignement des fenetres
+
+2004-07-06 19:06  loic2
+
+	* src/pitivi-toolbox.c: initialisation du curseur
+
+2004-07-06 18:18  loic2
+
+	* src/: pitivi-mainapp.c, pitivi-toolboxwindow.c: acces aux
+	  curseurs depuis la timeline
+
+2004-07-06 15:31  bilboed
+
+	* src/pitivi-mainapp.c: effectswindow loads on new project
+
+2004-07-05 20:25  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c: ajout de la recursion pour le
+	  chargement de projet
+
+2004-07-05 17:20  hheidy
+
+	* src/pitivi-viewerwindow.c: nop
+
+2004-07-05 17:19  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-viewerwindow.c: ajout des ghost
+	  pad
+
+2004-07-05 16:43  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c:
+	  cell renderer connected swap
+
+2004-07-05 16:08  bilboed
+
+	* src/pitivi-toolbox.c: remove segfault when clicking on toolbox
+	  and no timelinewindow present
+
+2004-07-05 15:37  bilboed
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-viewerwindow.c:
+	  SourceListWindow now exports (PitiviSourceFile *) for drag and
+	  drop, and ViewerWindow receives it
+
+2004-07-05 15:33  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h:
+	  cell renderer again
+
+2004-07-05 15:18  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinemedia.c,
+	  pitivi-timelinemedia.h, pitivi-timelinewindow.c:
+	  media timeline
+
+2004-07-05 15:02  bilboed
+
+	* pixmaps/logo-pitivi.png: cleaner splashscreen logo
+
+2004-07-05 14:04  casaxno
+
+	* src/: pitivi-dragdrop.h, pitivi-effectswindow.c,
+	  pitivi-timelinecellrenderer.c:
+	  Differecing windows on drag and drop
+
+2004-07-05 09:42  casaxno
+
+	* src/: Makefile.am, pitivi-dragdrop.h, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-viewerwindow.c:
+	  timeline modifications
+
+2004-07-05 02:25  bilboed
+
+	* ChangeLog, src/pitivi-dragdrop.h, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-viewerwindow.c: Drag and Drop now sends pointer to the
+	  selected PitiviSourceFile
+
+2004-07-04 13:53  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  timeline new modifications
+
+2004-07-03 23:16  casaxno
+
+	* src/pitivi-dragdrop.h:
+	  oki
+
+2004-07-03 23:04  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  ok
+
+2004-07-03 23:02  casaxno
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c:
+	  Managing drag 'n drop first version
+
+2004-07-03 21:49  hheidy
+
+	* src/: pitivi-sourcelistwindow.c, pitivi-viewerwindow.c:
+	  suppression de certains bug
+
+2004-07-03 19:42  bilboed
+
+	* src/: pitivi-project.c, pitivi-viewerwindow.c: Changed project
+	  pipeline from GstThread to GstPipeline
+
+2004-07-03 19:06  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h, pitivi-toolbox.c, pitivi-toolbox.h:
+	  Cursor management
+
+2004-07-03 17:26  bilboed
+
+	* src/pitivi-project.c: added audio and video GnlGroups to Timeline
+
+2004-07-03 15:36  loic2
+
+	* src/: pitivi-toolbox.c, pitivi-toolboxwindow.c, pitivi-mainapp.c,
+	  pitivi-toolbox.h: Ajout curseurs
+
+2004-07-03 14:24  bilboed
+
+	* ChangeLog, configure.ac, src/Makefile.am, src/main.c,
+	  src/pitivi-project.c, src/pitivi-project.h,
+	  src/pitivi-viewerwindow.c: added link to gnonlin and project
+	  timeline/pipeline
+
+2004-07-03 13:37  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  resolv cellrenderer
+
+2004-07-02 22:52  casaxno
+
+	* src/: main.c, pitivi-sourcelistwindow.c,
+	  pitivi-timelinecellrenderer.c, pitivi-timelinecellrenderer.h,
+	  pitivi-timelinewindow.c:
+	  layout method for widget
+
+2004-07-02 21:52  hheidy
+
+	* src/: pitivi-project.c, pitivi-project.h,
+	  pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c: ajout de la serialisation et de la
+	  deserialisation
+
+2004-07-02 14:27  nemoglobine
+
+	* pixmaps/logo-pitivi.png: logo-pitivi
+
+2004-07-02 14:13  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-splashscreenwindow.c: reglages
+
+2004-07-02 13:19  nemoglobine
+
+	* src/: pitivi-mainapp.c, pitivi-settings.c,
+	  pitivi-splashscreenwindow.c, pitivi-viewerwindow.c: ajout splash
+	  screen
+
+2004-07-02 11:06  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  dropping cell
+
+2004-07-02 10:50  nemoglobine
+
+	* src/: pitivi-viewerwindow.c, pitivi-viewerwindow.h:
+	  ajout-timeline in viewer
+
+2004-07-02 10:45  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  dragging begin
+
+2004-07-02 10:01  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c, pitivi-timelinewindow.c,
+	  pitivi-viewerwindow.c:
+	  timeline modifications
+
+2004-07-01 14:10  bilboed
+
+	* ChangeLog, configure.ac, src/pitivi-projectsettings.c,
+	  src/pitivi-timelinewindow.c: deleted save menus/dialog back in
+
+2004-07-01 10:16  casaxno
+
+	* src/: pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  new timeline defintion
+
+2004-06-30 13:42  nemoglobine
+
+	* src/: Makefile.am, pitivi-splashscreenwindow.c,
+	  pitivi-splashscreenwindow.h: ajout splash screen
+
+2004-06-30 13:31  nemoglobine
+
+	* pixmaps/logo-pitivi.png: ajout du logo
+
+2004-06-29 19:19  hheidy
+
+	* src/pitivi-projectsourcelist.c: xml ajout
+
+2004-06-29 19:08  hheidy
+
+	* src/: pitivi-project.c, pitivi-projectsourcelist.c,
+	  pitivi-projectsourcelist.h, pitivi-sourcelistwindow.c: ajout de
+	  pitivi_projectsourcelist_restore...
+
+2004-06-29 19:01  bilboed
+
+	* src/pitivi-mainapp.c: added verification on effectswindow destroy
+
+2004-06-29 18:10  bilboed
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-mainapp.h,
+	  src/pitivi-toolboxwindow.c, ui/pitivi-toolbox.xml: Added toggling
+	  windows menu in Toolbox
+
+2004-06-29 17:56  hheidy
+
+	* src/pitivi-mainapp.c: activation de la viewerwindow
+
+2004-06-29 17:55  hheidy
+
+	* src/: pitivi-mainapp.c, pitivi-project.c, pitivi-project.h,
+	  pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h: reglage de
+	  bug du pipeline gstreamer
+
+2004-06-29 16:55  bilboed
+
+	* ChangeLog, TODO, src/pitivi-projectsettings.c,
+	  src/pitivi-settings.c: Corrected PitiviProjectSettings bug
+
+2004-06-28 21:00  bilboed
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-project.c,
+	  src/pitivi-projectsettings.c, src/pitivi-settings.c,
+	  src/pitivi-settings.h, src/pitivi-toolboxwindow.c: PitiviSettings
+	  file save/load OK
+
+2004-06-28 19:16  nemoglobine
+
+	* src/: pitivi-viewercontroller.c, pitivi-viewercontroller.h,
+	  pitivi-viewerplayer.c, pitivi-viewerplayer.h,
+	  pitivi-viewervolume.c, pitivi-viewervolume.h: remove other elem
+	  viewer
+
+2004-06-28 19:08  nemoglobine
+
+	* pixmaps/: backward.xpm, forward.xpm, pause.xpm, play.xpm,
+	  stop.xpm, volume.xpm: add xpms
+
+2004-06-28 18:34  nemoglobine
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h: Change Player
+
+2004-06-28 15:11  bilboed
+
+	* TODO: added the TODO
+
+2004-06-28 14:11  bilboed
+
+	* src/pitivi-projectsettings.c: added a few PitiviProjectSettings
+	  saves
+
+2004-06-26 18:31  bilboed
+
+	* src/: pitivi-project.h, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h: finished pitivi_projectsettings_copy
+
+2004-06-26 18:06  bilboed
+
+	* ChangeLog, configure.ac, src/pitivi-newprojectwindow.c,
+	  src/pitivi-project.c, src/pitivi-project.h,
+	  src/pitivi-projectsettings.c, src/pitivi-projectsettings.h,
+	  src/pitivi-timelinewindow.c, src/pitivi.h,
+	  ui/pitivi-timeline.xml: Project Save/Load functionnal
+
+2004-06-26 13:53  bilboed
+
+	* ChangeLog, src/pitivi-project.c, src/pitivi-project.h,
+	  src/pitivi-toolboxwindow.c: File Chooser to open Project files
+
+2004-06-26 13:02  bilboed
+
+	* ChangeLog, src/Makefile.am, src/pitivi-projectsettingswindow.c,
+	  src/pitivi-projectsettingswindow.h, src/pitivi-settingswindow.c,
+	  src/pitivi-settingswindow.h, src/pitivi-sourcelistwindow.c: Added
+	  PitiviSettingsWindow and PitiviProjectSettingsWindow
+
+2004-06-26 00:33  bilboed
+
+	* ChangeLog, src/pitivi-projectwindows.c,
+	  src/pitivi-sourcelistwindow.c, src/pitivi-timelinewindow.c: set
+	  PitiviTimelineWindow and PitiviSourceListWindow father class to
+	  PITIVI_PROJECTWINDOWS_TYPE
+
+2004-06-26 00:07  bilboed
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-viewercontroller.c,
+	  src/pitivi-viewercontroller.h, src/pitivi-viewerwindow.c,
+	  src/pitivi-viewerwindow.h: Changed PitiviViewerWindow and
+	  PitiviViewerController to derivates of PitiviWindows
+
+2004-06-25 23:47  bilboed
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-mainapp.h,
+	  src/pitivi-newprojectwindow.c, src/pitivi-project.c,
+	  src/pitivi-project.h, src/pitivi-sourcelistwindow.c,
+	  src/pitivi-sourcelistwindow.h, src/pitivi-timelinewindow.c,
+	  src/pitivi-timelinewindow.h, src/pitivi-toolboxwindow.c: Changed
+	  PitiviTimelineWindow and PitiviSourceListWindow to derivates of
+	  PitiviProjectWindows
+
+2004-06-25 22:58  bilboed
+
+	* ChangeLog, src/pitivi-effectswindow.c,
+	  src/pitivi-effectswindow.h, src/pitivi-mainapp.c: forgot to
+	  update pitivi_effectswindow_new()
+
+2004-06-25 21:49  bilboed
+
+	* ChangeLog, src/pitivi-effectswindow.c,
+	  src/pitivi-effectswindow.h, src/pitivi-mainapp.c,
+	  src/pitivi-mainapp.h, src/pitivi-newprojectwindow.h,
+	  src/pitivi-sourcelistwindow.c, src/pitivi-windows.h: Updated
+	  PitiviEffectsWindow to derivate of PitiviWindows
+
+2004-06-25 20:53  bilboed
+
+	* ChangeLog, src/pitivi-newprojectwindow.c,
+	  src/pitivi-newprojectwindow.h, src/pitivi-toolboxwindow.c,
+	  src/pitivi-toolboxwindow.h: Updated PitiviToolboxWindow and
+	  PitiviNewProjectWindow to be derivate of PitiviWindows
+
+2004-06-25 20:28  bilboed
+
+	* docs/pitivi-classes: adding new documenation on classes
+
+2004-06-25 18:37  hheidy
+
+	* pixmaps/pitivi-effects-soundtv.png: ajout d un png
+
+2004-06-25 18:35  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-stockicons.c,
+	  pitivi-stockicons.h: ajout d une structure a
+	  pitivi-projectsourcelist
+
+2004-06-25 16:13  bilboed
+
+	* src/: Makefile.am, pitivi-project.h, pitivi-projectwindows.c,
+	  pitivi-projectwindows.h, pitivi-windows.c, pitivi-windows.h:
+	  Adding PitiviWindows and PitiviProjectWindows classes
+
+2004-06-22 19:40  hheidy
+
+	* src/pitivi-sourcelistwindow.c: integration des parseur au graphe
+	  il y a encore qque bug
+
+2004-06-22 14:19  nemoglobine
+
+	* src/pitivi-settings.c: remove elements with gstcaps_is_any
+
+2004-06-22 12:47  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-settings.h: ajout de la methode
+	  pour recup les parsers
+
+2004-06-22 01:53  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-projectsettings.h:
+	  definition of _media_new now in the header
+
+2004-06-21 19:55  nemoglobine
+
+	* src/: pitivi-settings.c, pitivi-settings.h: ajout des parsers
+	  dans settings
+
+2004-06-20 10:58  casaxno
+
+	* src/: Makefile.am, pitivi-checkbox.c, pitivi-checkbox.h:
+	  putting pitivi checkbox
+
+2004-06-19 18:06  hheidy
+
+	* src/pitivi-sourcelistwindow.c: modification du pipeline de la
+	  source
+
+2004-06-18 19:48  hheidy
+
+	* src/: pitivi-settings.c, pitivi-settings.h,
+	  pitivi-sourcelistwindow.c: correction des bugs sur les GstCaps
+
+2004-06-18 11:07  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-settings.c: Liste des proprietes terminees, sont dans la
+	  structure self
+
+2004-06-17 19:22  guize
+
+	* src/: pitivi-codecconfwindow.h, pitivi-mainapp.c,
+	  pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-settings.c, pitivi-toolboxwindow.c: Ajout - modif - delete
+	  de reglages dans le fenetre newprojectwindow
+
+2004-06-17 10:35  guize
+
+	* src/pitivi-projectsettings.c: correction liste des categories
+
+2004-06-16 04:32  casaxno
+
+	* src/pitivi-mainapp.c:
+	  ?????
+
+2004-06-16 04:15  casaxno
+
+	* src/pitivi-mainapp.c:
+	  little modification
+
+2004-06-15 16:09  bilboed
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h: added
+	  MainApp to SourceListWindow
+
+2004-06-15 13:32  casaxno
+
+	* src/: pitivi-viewercontroller.c, pitivi-viewercontroller.h,
+	  pitivi-viewerwindow.c, pitivi-viewerwindow.h:
+	  more modifications
+
+2004-06-15 13:12  casaxno
+
+	* src/: pitivi-viewercontroller.c, pitivi-viewercontroller.h,
+	  pitivi-viewerwindow.c, pitivi-viewerwindow.h:
+	  begin to launch gstreamer. Make other mofication after.
+
+2004-06-15 11:36  casaxno
+
+	* src/pitivi-mainapp.c:
+	  moving elements in GUI.
+
+2004-06-15 10:49  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-newprojectwindow.c, pitivi-toolboxwindow.c:
+	  launch windows only on one time.
+
+2004-06-15 08:47  casaxno
+
+	* src/: pitivi-toolboxwindow.c, pitivi-toolboxwindow.h:
+	  loading only once differents windows
+
+2004-06-14 16:04  guize
+
+	* AUTHORS, ChangeLog, src/pitivi-projectsettings.c: Mise au point
+	  settings
+
+2004-06-12 21:41  casaxno
+
+	* src/pitivi-viewerplayer.c:
+	  putting off expose print.
+
+2004-06-12 21:40  casaxno
+
+	* src/pitivi-projectsettings.c:
+	  miss testing on unknown codec as epitivo. For example casaxno
+	  doesn't have epitivo codec
+
+2004-06-12 16:45  nemoglobine
+
+	* src/pitivi-mainapp.c: ajout des settings dans main app
+
+2004-06-12 15:37  guize
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h: interaction reglages et les champs,
+	  dans la fenetre newprojectwindow
+
+2004-06-12 15:07  hheidy
+
+	* src/pitivi-sourcelistwindow.c: remove a bad function
+
+2004-06-11 23:02  nemoglobine
+
+	* src/: pitivi-settings.c~, pitivi-settings.h~: [no log message]
+
+2004-06-11 22:58  nemoglobine
+
+	* src/pitivi-settings.c: [no log message]
+
+2004-06-11 22:45  nemoglobine
+
+	* src/: Makefile.am, pitivi-settings.c, pitivi-settings.c~,
+	  pitivi-settings.h, pitivi-settings.h~: vrai ajout de
+	  pitivisettings
+
+2004-06-11 22:20  bilboed
+
+	* src/: pitivi-pitivisettings.c, pitivi-pitivisettings.c~,
+	  pitivi-pitivisettings.h, pitivi-pitivisettings.h~: getting rid of
+	  mistake
+
+2004-06-11 21:59  nemoglobine
+
+	* src/: pitivi-pitivisettings.c, pitivi-pitivisettings.c~,
+	  pitivi-pitivisettings.h, pitivi-pitivisettings.h~: ajout de
+	  pitivisettings
+
+2004-06-11 18:02  hheidy
+
+	* src/pitivi-sourcelistwindow.c: ajout de typefinding
+
+2004-06-11 15:13  loic2
+
+	* src/pitivi-newprojectwindow.c: Modif setting_is_selected et
+	  put_info
+
+2004-06-07 14:56  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Enlevement du segfault a la
+	  fermeture de la fenetre de configuration d un codec sans
+	  proprietes
+
+2004-06-07 11:38  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Affichage des modifications des
+	  proprietes d un codec faites par un user....
+
+2004-06-05 18:02  guize
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-newprojectwindow.c, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h: interaction Liste des reglages et la
+	  fenetre newprojectwindow
+
+2004-06-05 17:41  nemoglobine
+
+	* ChangeLog, src/Makefile.am: ajout de pitivisettings
+
+2004-06-03 18:11  guize
+
+	* src/: main.c, pitivi-codecconfwindow.c, pitivi-mainapp.c,
+	  pitivi-mainapp.h, pitivi-newprojectwindow.c,
+	  pitivi-newprojectwindow.h, pitivi-projectsettings.c,
+	  pitivi-projectsettings.h, pitivi-sourcelistwindow.h: mise a jour
+	  structure mainapp
+
+2004-06-03 17:57  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Ajout de boutons dans la fenetre
+	  de configuration des codecs ...
+
+2004-05-31 18:25  loic2
+
+	* src/pitivi-newprojectwindow.c: reglage du conflit
+
+2004-05-31 18:22  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Update de la fenetre de
+	  configuration des codecs
+
+2004-05-31 15:02  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Update de la fenetre des propriete
+	  des codecs
+
+2004-05-23 20:37  bilboed
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-menu.c,
+	  src/pitivi-newprojectwindow.c, src/pitivi-toolbox.c: little
+	  memory cleanup
+
+2004-05-20 01:27  casaxno
+
+	* src/pitivi-timelinewindow.c:
+	  timeline
+
+2004-05-19 18:22  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c, pitivi-sourcelistwindow.h: gestion des
+	  fils de l'arbre
+
+2004-05-19 11:05  casaxno
+
+	* src/: pitivi-newprojectwindow.c, pitivi-toolboxwindow.c:
+	  loading viewer
+
+2004-05-18 20:23  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Recuperation des valeurs et
+	  affichage correct en fonction du type des valeurs
+
+2004-05-18 18:32  casaxno
+
+	* configure.ac:
+	  Adding gstreamer-gconf-0.8 support
+
+2004-05-18 09:05  casaxno
+
+	* src/pitivi-timelinecellrenderer.c:
+	  cell renderer change
+
+2004-05-18 08:20  casaxno
+
+	* src/: Makefile.am, pitivi-timelinecellrenderer.c,
+	  pitivi-timelinecellrenderer.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  new timeline definition
+
+2004-05-17 12:07  cracoucas42
+
+	* AUTHORS, src/pitivi-codecconfwindow.c, src/pitivi-mainapp.c,
+	  src/pitivi-mainapp.h, src/pitivi-newprojectwindow.c,
+	  src/pitivi-newprojectwindow.h, src/pitivi-toolbox.c,
+	  src/pitivi-toolbox.h, src/pitivi-toolboxwindow.c,
+	  src/pitivi-toolboxwindow.h: Mise en page de la fenetre de conf
+	  des codecs video / audio
+
+2004-05-15 22:11  casaxno
+
+	* src/: pitivi-timelinewindow.c, pitivi-timelinewindow.h:
+	  timeline other new implementation
+
+2004-05-15 15:10  loic2
+
+	* ChangeLog, src/pitivi-newprojectwindow.c: Justification des
+	  labels ds la fenetre NewProject
+
+2004-05-15 15:01  guize
+
+	* ChangeLog, src/pitivi-mainapp.c, src/pitivi-newprojectwindow.c,
+	  src/pitivi-newprojectwindow.h, src/pitivi-projectsettings.h,
+	  src/pitivi-projectsourcelist.c: creation des ListProjectSettings
+	  depuis le mainapp
+
+2004-05-15 12:40  cracoucas42
+
+	* src/: Makefile.am, pitivi-codecconfwindow.c,
+	  pitivi-codecconfwindow.h, pitivi-newprojectwindow.c: Mise en
+	  place des fenetre de configuration de codecs
+
+2004-05-15 01:56  guize
+
+	* src/: pitivi-mainapp.c, pitivi-mainapp.h,
+	  pitivi-newprojectwindow.c, pitivi-newprojectwindow.h,
+	  pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-toolboxwindow.c, pitivi-toolboxwindow.h: passage de
+	  mainapp a la fenetre newpeoject
+
+2004-05-14 18:51  casaxno
+
+	* src/: pitivi-toolboxwindow.c, pitivi-viewerplayer.c,
+	  pitivi-viewerwindow.c:
+	  no log needed
+
+2004-05-14 15:27  loic2
+
+	* src/pitivi-toolbox.c: Ajout tooltips a la toolbox
+
+2004-05-14 15:24  bilboed
+
+	* docs/pitivi-classtemplate.c: parent_class and constructor
+	  corrections
+
+2004-05-14 13:42  casaxno
+
+	* src/: pitivi-viewercontroller.c, pitivi-viewercontroller.h,
+	  pitivi-viewervolume.c, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h:
+	  modifying headers
+
+2004-05-14 04:29  casaxno
+
+	* src/pitivi-viewercontroller.c:
+	  ok
+
+2004-05-14 00:00  casaxno
+
+	* src/: pitivi-viewercontroller.c~, pitivi-viewervolume.c~,
+	  pitivi-viewervolume.h~:
+	  no log needed for this operation
+
+2004-05-13 23:58  casaxno
+
+	* src/: pitivi-viewerplayer.c~, pitivi-viewerplayer.h~:
+	  Deleting worng added files
+
+2004-05-13 23:53  casaxno
+
+	* src/: pitivi-viewercontroller.c, pitivi-viewercontroller.c~,
+	  pitivi-viewercontroller.h, pitivi-viewerplayer.c,
+	  pitivi-viewerplayer.c~, pitivi-viewerplayer.h,
+	  pitivi-viewerplayer.h~:
+	  Adding controller files
+
+2004-05-13 23:43  casaxno
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-menu.c,
+	  pitivi-toolboxwindow.c, pitivi-viewervolume.c,
+	  pitivi-viewervolume.c~, pitivi-viewervolume.h,
+	  pitivi-viewervolume.h~, pitivi-viewerwindow.c,
+	  pitivi-viewerwindow.h:
+	  Adding volume files for viewer
+
+2004-05-13 19:00  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-projectsourcelist.h,
+	  pitivi-sourcelistwindow.c: gestion de la suppression
+
+2004-05-13 18:01  casaxno
+
+	* pixmaps/: pitivi-viewer-next.png, pitivi-viewer-pause.png,
+	  pitivi-viewer-play.png, pitivi-viewer-previous.png,
+	  pitivi-viewer-stop.png:
+	  actions bouttons on player
+
+2004-05-13 17:55  casaxno
+
+	* pixmaps/pitivi-logo.png:
+	  Pitivi logo
+
+2004-05-13 17:54  casaxno
+
+	* src/: pitivi-stockicons.c, pitivi-stockicons.h:
+	  Modifying stock icons
+
+2004-05-13 17:51  casaxno
+
+	* pixmaps/: pitivi-logo.png, pitivi-viewer-volume-max.png,
+	  pitivi-viewer-volume-medium.png, pitivi-viewer-volume-min.png,
+	  pitivi-viewer-volume-zero.png, pitivi-viewer-volume.png:
+	  Adding new image files for viewer
+
+2004-05-11 19:28  hheidy
+
+	* src/pitivi-sourcelistwindow.c: mise a jour de sourcelistwindows
+
+2004-05-11 14:30  casaxno
+
+	* src/pitivi-viewerwindow.c:
+	  error
+
+2004-05-11 14:25  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h:
+	  trying again de modify effects window files last chance
+
+2004-05-11 13:24  casaxno
+
+	* src/pitivi-viewerwindow.c:
+	  effects files not modified there is a big problem
+
+2004-05-11 12:54  casaxno
+
+	* src/pitivi-viewerwindow.c:
+	  modifying files effects window
+
+2004-05-11 10:06  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h,
+	  pitivi-viewerwindow.c:
+	  just little modification on effects functions
+
+2004-05-10 21:10  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: marge de 5 dans le cadre ou s
+	  affiche les descriptions des settings
+
+2004-05-10 19:45  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: [no log message]
+
+2004-05-10 19:43  cracoucas42
+
+	* ChangeLog, src/pitivi-newprojectwindow.c:  Affichage de la
+	  description correspondant a la categorie ou sous-categorie
+	  selectionnee dans l arbre des pre-reglages
+
+2004-05-10 18:57  bilboed
+
+	* ChangeLog: adding ChangeLog
+
+2004-05-10 18:45  hheidy
+
+	* src/: pitivi-projectsourcelist.c, pitivi-sourcelistwindow.c:
+	  modify sourcelistwindow and projectsourcelist
+
+2004-05-10 17:38  loic2
+
+	* src/pitivi-newprojectwindow.c: effacement du champ description qd
+	  on clique dedans
+
+2004-05-10 17:23  casaxno
+
+	* pixmaps/pitivi-effects-category-open.png,
+	  pixmaps/pitivi-effects-category.png,
+	  pixmaps/pitivi-effects-sound.png, pixmaps/pitivi-effects-tv.png,
+	  src/pitivi-effectswindow.c, src/pitivi-effectswindow.h,
+	  src/pitivi-menu.c, src/pitivi-menu.h, src/pitivi-stockicons.c,
+	  src/pitivi-stockicons.h, src/pitivi-timelinewindow.c,
+	  src/pitivi-toolboxwindow.c: [no log message]
+
+2004-05-10 15:28  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: reformattage de la fenetre
+	  new_projectwindow
+
+2004-05-10 12:32  bilboed
+
+	* src/pitivi-projectsettings.h: changed codec_props to
+	  codec_settings
+
+2004-05-09 13:16  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-menu-actions.c,
+	  pitivi-timelinewindow.c:
+	  Closing windows
+
+2004-05-09 00:10  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-menu-actions.c,
+	  pitivi-menu-actions.h, pitivi-timelinewindow.c,
+	  pitivi-timelinewindow.h:
+	  modifying actions
+
+2004-05-08 20:16  casaxno
+
+	* src/: Makefile.am, pitivi-effectswindow.c,
+	  pitivi-effectswindow.h, pitivi-newprojectwindow.c,
+	  pitivi-newprojectwindow.h, pitivi-toolboxwindow.c:
+	  New modifications on effects window
+
+2004-05-08 18:50  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: fenetre new project se ferme lors
+	  de la creation d'un pojet
+
+2004-05-08 18:15  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-newprojectwindow.h,
+	  pitivi-toolboxwindow.c, pitivi-toolboxwindow.h: le bouton new
+	  ouvre la sourceliste et la timeline
+
+2004-05-08 18:09  hheidy
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-projectsourcelist.c,
+	  pitivi-projectsourcelist.h, pitivi-sourcelistwindow.c: ajout des
+	  fichiers de projectsourcelist
+
+2004-05-08 18:03  casaxno
+
+	* src/pitivi-timelinewindow.c:
+	  modyfing files timeline
+
+2004-05-08 18:00  casaxno
+
+	* src/: Makefile.am, pitivi-convert-time.c, pitivi-convert-time.h,
+	  pitivi-timelinewindow.c, pitivi-toolboxwindow.c:
+	  removing convert pitivi files
+
+2004-05-08 17:50  bilboed
+
+	* src/: pitivi-projectsettings.c, pitivi-projectsettings.h,
+	  pitivi-viewerwindow.c, pitivi-viewerwindow.h: really added the
+	  files viewerwindow and projectsettings
+
+2004-05-08 17:48  bilboed
+
+	* Makefile.am, src/Makefile.am: added PitiviProjectSettings and
+	  PitiviViewerWindow
+
+2004-05-08 17:21  loic2
+
+	* src/pitivi-newprojectwindow.c: ajout des codecs supplementaires
+	  de gstreamer ds les combo box
+
+2004-05-08 17:00  cracoucas42
+
+	* src/pitivi-newprojectwindow.c: Mise en forme de la fenetre
+	  settings plus ajout des boutons configure
+
+2004-05-08 16:21  loic2
+
+	* src/pitivi-newprojectwindow.c: modif champ canaux ds new project
+	  window
+
+2004-05-08 14:11  casaxno
+
+	* src/: Makefile.am, pitivi-convert-time.c, pitivi-convert-time.h,
+	  pitivi-timelinewindow.c, pitivi-toolboxwindow.c,
+	  pitivi-toolboxwindow.h:
+	  Addding Time convert file
+
+2004-05-08 13:37  guize
+
+	* src/pitivi-newprojectwindow.c: finitions graphiques de la fenetre
+	  new project
+
+2004-05-08 13:35  casaxno
+
+	* ui/: main_menubar.xml, pitivi-timeline.xml, pitivi-toolbox.xml:
+	  Adding Toolbox ui configuration files
+
+2004-05-08 13:30  casaxno
+
+	* src/: Makefile.am, pitivi-menu-actions.c, pitivi-menu.c,
+	  pitivi-menu.h, pitivi-timelinewindow.c, pitivi-timelinewindow.h,
+	  pitivi-toolbox.h, pitivi-toolboxwindow.c:
+	  some important modifications
+
+2004-05-08 12:45  casaxno
+
+	* src/pitivi-effectswindow.c:
+	  effects windows
+
+2004-05-08 12:42  casaxno
+
+	* src/: pitivi-effectswindow.c, pitivi-effectswindow.h:
+	  effects window files
+
+2004-05-07 21:12  guize
+
+	* src/pitivi-newprojectwindow.c: ajout des basics settings
+
+2004-05-07 21:00  guize
+
+	* src/pitivi-newprojectwindow.c: ajout des basics settings
+
+2004-05-07 20:33  bilboed
+
+	* configure.ac: get rid of all useless comments
+
+2004-05-07 20:30  casaxno
+
+	* pixmaps/pitivi-select-none.png, src/Makefile.am,
+	  src/pitivi-menu-actions.c:
+	  Add xpm file
+
+2004-05-07 15:31  cracoucas42
+
+	* src/: pitivi-newprojectwindow.c, pitivi-toolbox.c: Ajout de
+	  boutons dans le aNew Project
+
+2004-05-07 15:26  loic2
+
+	* src/: pitivi-newprojectwindow.c, pitivi-toolbox.c: ajout icones
+
+2004-05-07 15:04  casaxno
+
+	* pixmaps/pitivi-selection-shrink.png:
+	  new pixmaps
+
+2004-05-07 15:00  casaxno
+
+	* ui/: Makefile.am, pitivi-timeline.xml:
+	  XML timeline file
+
+2004-05-07 14:38  casaxno
+
+	* src/: Makefile.am, pitivi-menu-actions.c,
+	  pitivi-timelinewindow.c, pitivi-timelinewindow.h:
+	  Adding timeline window files
+
+2004-05-07 10:57  casaxno
+
+	* ui/main_menubar.xml:
+	  menu.xml
+
+2004-05-07 10:54  casaxno
+
+	* src/: pitivi-mainapp.c, pitivi-menu-actions.c: [no log message]
+
+2004-05-07 10:52  casaxno
+
+	* pixmaps/: pitivi-cut.png, pitivi-hand.png, pitivi-pointer.png,
+	  pitivi-zoom.png:
+	  Addind new Pimaxps Files
+
+2004-05-07 10:34  casaxno
+
+	* src/: pitivi-stockicons.c, pitivi-stockicons.h:
+	  no more object for this files
+
+2004-05-07 10:31  casaxno
+
+	* pixmaps/Makefile.am:
+	  Adding new pixmap File
+
+2004-05-07 10:27  casaxno
+
+	* pixmaps/pitivi-48.png, pixmaps/pitivi-logo.png,
+	  pixmaps/pitivi-new-sample.png, pixmaps/pitivi-select-all.png,
+	  pixmaps/pitivi-selection-grow.png, src/pitivi-menu-actions.c,
+	  ui/main_menubar.xml:
+	  adding pixmaps
+
+2004-05-06 18:38  casaxno
+
+	* ui/Makefile.am:
+	  Qdd Makefile
+
+2004-05-06 18:18  casaxno
+
+	* src/: Makefile.am, pitivi-menu-actions.c, pitivi-stockicons.h:
+	  adding new icons on Sotck-icons.h -
+
+2004-05-06 17:24  casaxno
+
+	* configure.ac, src/pitivi-menu-actions.h, src/pitivi-menu.h:
+	  Headers Files for menu files and Makefile for xml files
+
+2004-05-06 17:14  guize
+
+	* src/: pitivi-stockicons.c, pitivi-stockicons.h: ajout des
+	  fichiers stockicons.c .h
+
+2004-05-06 17:13  casaxno
+
+	* src/: Makefile.am, main.c, pitivi-mainapp.c,
+	  pitivi-menu-actions.c, pitivi-menu.c, pitivi-toolboxwindow.c:
+	  add new file menu for all windows
+
+2004-05-06 15:37  cracoucas42
+
+	* src/: pitivi-toolbox.c, pitivi-toolbox.h: New cursors were
+	  integrated into the toolbox
+
+2004-05-04 18:03  loic2
+
+	* src/pitivi-newprojectwindow.c: ajout liste codecs dans la fenetre
+	  new project
+
+2004-05-03 17:33  bilboed
+
+	* src/: pitivi-mainapp.c, pitivi-sourcelistwindow.c: getting rid of
+	  warnings
+
+2004-05-03 16:50  hheidy
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-sourcelistwindow.c,
+	  pitivi-sourcelistwindow.h: ajout du fichier de creation de la
+	  source list window
+
+2004-05-03 14:38  bilboed
+
+	* src/: pitivi-newprojectwindow.c, pitivi-project.c,
+	  pitivi-toolbox.c: remove the useless printf(s)
+
+2004-05-01 20:43  bilboed
+
+	* docs/pitivi-classtemplate.c, src/pitivi-mainapp.c,
+	  src/pitivi-newprojectwindow.c, src/pitivi-toolboxwindow.c: clean
+	  up
+
+2004-05-01 20:03  guize
+
+	* src/: Makefile.am, pitivi-mainapp.c, pitivi-newprojectwindow.c,
+	  pitivi-newprojectwindow.h: Ajout PitiviNewProjectWindow
+
+2004-05-01 15:48  bilboed
+
+	* src/pitivi-toolboxwindow.c: rajout deuxieme commentaire de test
+
+2004-05-01 15:42  loic2
+
+	* src/pitivi-toolboxwindow.c: ajout commentaire
+
+2004-05-01 15:07  bilboed
+
+	* docs/CLASSES: [no log message]
+
+2004-05-01 14:40  bilboed
+
+	* docs/: pitivi-template.c, pitivi-template.h: Added normal
+	  templates
+
+2004-05-01 12:48  bilboed
+
+	* AUTHORS, COPYING, INSTALL, Makefile.am, NEWS, NORME, README,
+	  autogen.sh, configure.ac, common/ChangeLog, common/Makefile.am,
+	  common/as-libtool.mak, common/gettext.patch, common/glib-gen.mak,
+	  common/gst-autogen.sh, common/m4/.cvsignore,
+	  common/m4/Makefile.am, common/m4/README,
+	  common/m4/as-ac-expand.m4, common/m4/as-auto-alt.m4,
+	  common/m4/as-compiler-flag.m4, common/m4/as-compiler.m4,
+	  common/m4/as-docbook.m4, common/m4/as-libtool.m4,
+	  common/m4/as-python.m4, common/m4/as-scrub-include.m4,
+	  common/m4/as-version.m4, common/m4/ax_create_stdint_h.m4,
+	  common/m4/glib-gettext.m4, common/m4/gst-arch.m4,
+	  common/m4/gst-debuginfo.m4, common/m4/gst-doc.m4,
+	  common/m4/gst-feature.m4, common/m4/gst-function.m4,
+	  common/m4/gst-glib2.m4, common/m4/gst-gstreamer.m4,
+	  common/m4/gst-libxml2.m4, common/m4/gst-makecontext.m4,
+	  common/m4/gst-mcsc.m4, common/m4/pkg.m4, docs/CLASSES,
+	  docs/make_filter, docs/pitivi-classtemplate.c,
+	  docs/pitivi-classtemplate.h, src/Makefile.am, src/main.c,
+	  src/pitivi-mainapp.c, src/pitivi-mainapp.h, src/pitivi-project.c,
+	  src/pitivi-project.h, src/pitivi-toolbox.c, src/pitivi-toolbox.h,
+	  src/pitivi-toolboxwindow.c, src/pitivi-toolboxwindow.h,
+	  src/pitivi.h: Initial revision
+
+2004-05-01 12:48  bilboed
+
+	* AUTHORS, COPYING, INSTALL, Makefile.am, NEWS, NORME, README,
+	  autogen.sh, configure.ac, common/ChangeLog, common/Makefile.am,
+	  common/as-libtool.mak, common/gettext.patch, common/glib-gen.mak,
+	  common/gst-autogen.sh, common/m4/.cvsignore,
+	  common/m4/Makefile.am, common/m4/README,
+	  common/m4/as-ac-expand.m4, common/m4/as-auto-alt.m4,
+	  common/m4/as-compiler-flag.m4, common/m4/as-compiler.m4,
+	  common/m4/as-docbook.m4, common/m4/as-libtool.m4,
+	  common/m4/as-python.m4, common/m4/as-scrub-include.m4,
+	  common/m4/as-version.m4, common/m4/ax_create_stdint_h.m4,
+	  common/m4/glib-gettext.m4, common/m4/gst-arch.m4,
+	  common/m4/gst-debuginfo.m4, common/m4/gst-doc.m4,
+	  common/m4/gst-feature.m4, common/m4/gst-function.m4,
+	  common/m4/gst-glib2.m4, common/m4/gst-gstreamer.m4,
+	  common/m4/gst-libxml2.m4, common/m4/gst-makecontext.m4,
+	  common/m4/gst-mcsc.m4, common/m4/pkg.m4, docs/CLASSES,
+	  docs/make_filter, docs/pitivi-classtemplate.c,
+	  docs/pitivi-classtemplate.h, src/Makefile.am, src/main.c,
+	  src/pitivi-mainapp.c, src/pitivi-mainapp.h, src/pitivi-project.c,
+	  src/pitivi-project.h, src/pitivi-toolbox.c, src/pitivi-toolbox.h,
+	  src/pitivi-toolboxwindow.c, src/pitivi-toolboxwindow.h,
+	  src/pitivi.h: initial import
+

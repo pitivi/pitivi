@@ -1,0 +1,225 @@
+Timeline view design document (c) 2005 Edward Hervey
+
+* How is the timeline handled in PiTiVi ?
+
+  The timeline follows the "View - Model - Data" design.
+   _ Data is the gnonlin timeline (GnlTimeline)
+   _ Model is the part which will be saved by pitivi
+   _ View is the UI
+
+  This design allows pitivi to have different 'views':
+   _ The 'Simple' View : à la iMovie
+   _ The 'Full' View : Allows every possible composition
+  
+
+* Simple View
+
+  This view displays everything on one line. It is aimed to be very simple to
+  use.
+
+ * Display
+
+   * Timeline
+     _ The timeline contains one line, which acts as a summary of the underlying
+     timeline.
+
+   * Sources
+     _ All have the same width (which doesn't mean it's fixed)
+     _ Display a thumbnail of the source if it's video
+     _ In normal situations, the sources follow each others without any gaps.
+     _ Special Cases:
+       * Gap between two sources : 
+	 => Black source (which can be removed)
+       * Source A overlaps part of Source B:
+	 => Display normally
+       * Source A is over and "inside" Source B
+	 (A.start > B.start, A.stop < B.stop):
+	 => Display A inside B , but it cannot be moved in the simple View
+
+   * Effects
+     _ Effects applied on one source entirely have their icons displayed in the
+       corner of the source
+
+   * Transitions
+     _ Show like a source (maybe half-width)
+     _ Represent somewhat differently
+
+ * Actions
+
+   The simple view allows only SOME actions amongst all those available through
+   the model:
+
+   * Add a Source
+     _ Sources are added before or after a source.
+     _ Sources CANNOT be added next to a transition.
+     _ Sources CAN be added next to an effect.
+     _ Once the source is added, move the following sources later in time.
+     _ If the source has audio, add the audio source.
+
+   * Move a Source
+     _ follows the same rules as 'Add a Source'
+     _ If the source has audio, move the audio source too.
+
+   * Remove a Source
+     _ "Collapse" the following sources
+     _ If the source has audio, remove the audio source too.
+
+   * Add an effect
+     _ An effect can only be added to one source
+     _ There can only be at most one effect on each source
+
+   * Remove an effect
+
+   * Add a transition
+     _ Can ONLY go between two sources
+     _ If the adjacent sources have audio, apply an audio transition to the
+     audio sources.
+     _ Has a given duration on each source
+     _ Overlaps the two sources
+     _ move the following sources back in time
+
+   * Remove a transition
+     _ if there's an audio transition, remove it too
+     _ Move the following sources back into place (just after the first source)
+
+
+* Complex View
+
+  * This is a representation of the actual model
+
+********************************************************************************
+
+* Model
+
+  The model must:
+  _ Have objects that offer a simpler interface to gnonlin.
+  _ Allow the views to do all the actions they wish to do.
+
+
+* Object Hierarchy
+
+  Object
+   |
+   +---- Source
+   |	   |
+   |	   +---- FileSource
+   |	   |
+   |	   +---- LiveSource
+   |	   |
+   |	   +---- Composition
+   |		   |
+   |		   +---- Group
+   |
+   +---- Effect
+	   |
+	   +---- Simple Effect (1->1)
+	   |
+	   +---- Transition
+	   |
+	   +---- Complex Effect (N->1)
+
+  * Object
+    Base class for all timeline objects
+
+    * Properties
+      _ Start/Stop Time
+      _ Media Type (None, Audio, Video)
+      _ Gnonlin Object
+      _ Linked Object
+	_ Can be None
+	_ Must have same duration
+      _ Brother Object
+	_ This is the same object but with the other media_type
+      _ Factory containing more info on the object
+
+    * Signals
+      start-stop-changed : uint64 start, uint64 stop
+      linked-changed : linked_object
+
+    * Methods
+      link_object(object)
+      unlink_object(object)
+      relink_brother(object)
+      get_brother(object)
+      set_start_stop_time(start, stop)
+
+    * Virtual methods
+      _make_gnl_object()
+      _make_brother()
+
+  * Source
+    Base class for all sources (0 input, 1 output)
+
+    * Implemented Methods
+      _make_gnl_object()
+
+  * FileSource
+    Seekable sources (mostly files)
+    
+    * Properties
+      _ Media Start/Stop Time
+
+    * Methods
+      set_media_start_stop_time(mediastart, mediastop)
+
+    * Implemented methods
+      _make_brother()
+
+  * LiveSource
+    Non-seekable sources (like cameras)
+
+  * Composition
+    Combines Source(s) and Effect(s)
+    _ Sets the priority of the GnlObject(s) contained within
+    _ Effects have always got priorities higher than the sources
+    _ Can contain global effects that have the highest priority
+      _ Those global effect spread the whole duration of the composition
+    _ Simple effects can overlap each other
+    _ Complex Effect(s) have a lower priority than Simple Effect(s)
+      _ For sanity reasons, Complex Effect(s) can't overlap each other
+    _ Transitions have the lowest effect priority
+    _ Source(s) contained in it follow each other if possible
+    _ Source can overlap each other
+      _ Knows the "visibility" of the sources contained within
+    
+    * Sandwich view example (top: high priority):
+	     [ Global Simple Effect(s) (RGB, YUV, Speed,...)	]
+	     [ Simple Effect(s), can be several layers		]
+	     [ Complex Effect(s), non-overlapping		]
+	     [ Transition(s), non-overlapping			]
+	     [ Layers of sources				]
+
+    * Properties:
+      _ Global Simple Effect(s) (Optionnal)
+      _ Simple Effect(s)
+      _ Complex Effect(s)
+      _ Transition(s)
+
+    * Methods:
+      add_global_effect(effect, order)
+      remove_global_effect(effect)
+      add_simple_effect(effect, order)
+      remove_simple_effect(effect)
+      add_transition(transition)
+      remove_transition(transition)
+      add_source(source, position)
+      remove_source(source)
+      
+    * Implemented Methods:
+      _make_gnl_object()
+
+  * Group
+    Top-level composition
+
+  * Effect
+    Base class for effects
+    Belongs to a Composition
+
+  * Simple Effect
+    Only has 1 input
+
+  * Transition
+    Has 2 inputs, considered as begin and end sources
+
+  * Complex Effect
+    Has n inputs

@@ -1,0 +1,87 @@
+# PiTiVi , Non-linear video editor
+#
+#       pitivi/ui/infolayer.py
+#
+# Copyright (c) 2006, Edward Hervey <bilboed@bilboed.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
+"""
+Left-hand side widget of complex view layers
+"""
+
+import gtk
+import gst
+
+import pitivi.timeline.timeline
+from viewer import time_to_string
+
+from gettext import gettext as _
+
+class InfoLayer(gtk.Expander):
+
+    __gsignals__ = {
+        "activate":"override",
+        "size-request":"override"
+        }
+
+    def __init__(self, layerInfo):
+        if layerInfo.composition.media_type == pitivi.timeline.timeline.MEDIA_TYPE_AUDIO:
+            name = _("Audio Track")
+        elif layerInfo.composition.media_type == pitivi.timeline.timeline.MEDIA_TYPE_VIDEO:
+            name = _("Video Track")
+        gtk.Expander.__init__(self, name)
+        self.layerInfo = layerInfo
+        self.set_border_width(5)
+        self.set_expanded(self.layerInfo.expanded)
+
+        self.label = gtk.Label(self.getDurationString())
+        self.add(self.label)
+
+        self.layerInfo.composition.connect('start-duration-changed',
+                                           self._compositionStartDurationChangedCb)
+
+        # TODO :
+        # . put content
+
+    ## signal from composition
+
+    def _compositionStartDurationChangedCb(self, unused_composition,
+                                           unused_start, unused_duration):
+        self.label.set_text(self.getDurationString())
+
+    ## Gtk.Expander override
+
+    def do_activate(self):
+        gst.debug("do activate")
+        self.layerInfo.expanded = not self.get_expanded()
+        gtk.Expander.do_activate(self)
+
+
+    ## Gtk.Widget override
+
+    def do_size_request(self, requisition):
+        # setting the requested height of the whole layer should be done here.
+        gtk.Expander.do_size_request(self, requisition)
+        requisition.height = max(requisition.height, self.getNeededHeight())
+        gst.debug("%r expanded:%d returning %s" % (self, self.layerInfo.expanded, list(requisition)))
+
+    ## utils
+
+    def getDurationString(self):
+        if self.layerInfo.composition.duration > 0:
+            return time_to_string(self.layerInfo.composition.duration)
+        return _("Empty")

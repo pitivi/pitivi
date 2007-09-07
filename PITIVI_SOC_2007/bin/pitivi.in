@@ -1,0 +1,115 @@
+#!/usr/bin/env python
+# PiTiVi , Non-linear video editor
+#
+#       pitivi
+#
+# Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
+import os
+import sys
+import string
+import locale
+import gettext
+
+# variables
+CONFIGURED_PYTHONPATH = '@CONFIGURED_PYTHONPATH@'
+LIBDIR = '@LIBDIR@'
+
+localedir = ""
+
+# Check if we're in development or installed version
+# Add the path of pitivi stuff
+# TODO : change it when it's finally in cvs
+
+def _add_pitivi_path():
+    global localedir
+    dir = os.path.dirname(os.path.abspath(__file__))
+    if (os.path.exists(os.path.join(dir, 'CVS')) or 
+        os.path.exists(os.path.join(dir, '.svn'))):
+        root = os.path.split(dir)[0]
+	localedir = os.path.join(root, 'locale')
+    else:
+        root = os.path.join(LIBDIR, 'pitivi', 'python')
+    	localedir = "@DATADIR@/locale"
+
+    if not root in sys.path:
+        sys.path.insert(0, root)
+
+    # prepend any directories found at configure time if they're not
+    # already in the path. (if they are already in the path, the user
+    # chose to have it that way, so we leave their order)
+    for path in string.split(CONFIGURED_PYTHONPATH, ':'):
+        if path not in sys.path:
+            sys.path.insert(0, path)
+    
+    # Added for i18n
+    try:
+        locale.setlocale(locale.LC_ALL, '')
+        locale.bindtextdomain('pitivi', localedir)
+        locale.textdomain('pitivi')
+
+        gettext.bindtextdomain('pitivi', localedir)
+        gettext.textdomain('pitivi')
+    except:
+        print "Couldn't set locale !, reverting to C locale"
+
+def _init_gobject_gtk_gst():
+    global localedir
+    try:
+        import pygtk
+        pygtk.require("2.0")
+
+        import gtk
+
+        import gobject
+        gobject.threads_init()
+    except ImportError:
+        raise SystemExit("PyGTK couldn't be found !")
+
+    gobject.threads_init()
+
+    try:
+        from gtk import glade
+    except ImportError:
+        raise SystemExit("Can't find glade module")
+
+    glade.bindtextdomain('pitivi', localedir)
+    
+    try:
+        import pygst
+        pygst.require('0.10')
+        
+        import gst
+    except ImportError:
+        raise SystemExit("Gst-Python couldn't be found!")
+
+def _run_pitivi():
+    import pitivi.pitivi as pitivi
+
+    try:
+        sys.exit(pitivi.main(sys.argv))
+    except StandardError, e:
+        print "Error: ", e
+        sys.exit(1)
+
+try:
+    _add_pitivi_path()
+    _init_gobject_gtk_gst()
+    _run_pitivi()
+except KeyboardInterrupt:
+    print "Interrupted by user!"
