@@ -26,12 +26,8 @@ import pango
 import gobject
 from gettext import gettext as _
 
-try:
-    import pitivi.plugincore as plugincore
-    import pitivi.pluginmanager as pluginmanager
-except:
-    import plugincore
-    import pluginmanager
+import pitivi.plugincore as plugincore
+import pitivi.pluginmanager as pluginmanager
 
 (COL_ENABLED, COL_INFO, COL_CATEGORY, COL_PLUGIN) = range(4)
 (RESPONSE_ABOUT, RESPONSE_CONFIGURE, RESPONSE_DELETE) = range(3)

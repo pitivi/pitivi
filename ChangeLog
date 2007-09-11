@@ -1,3 +1,11 @@
+2007-09-11  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/check.py:
+	Add checks for newly required python modules (zope.interface and
+	distutils).
+	* pitivi/ui/pluginmanagerdialog.py:
+	Fix import statements.
+
 2007-09-07  Edward Hervey  <bilboed@bilboed.com>
 
 	* configure.ac:

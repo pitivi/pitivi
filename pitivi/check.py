@@ -157,4 +157,10 @@ def _checks():
     if req:
         return (_("You do not have a recent enough version of the GNonLin GStreamer plugin (currently %s)") % inst,
                 ("Install a version of the GNonLin GStreamer plugin greater or equal to %s") % req)
+    if not __try_import__("zope.interface"):
+        return (_("Could not import the Zope Interface module"),
+                _("Make sure you have the zope.interface module installed"))
+    if not __try_import__("pkg_resources"):
+        return (_("Could not import the distutils modules"),
+                _("Make sure you have the distutils python module installed"))
     return None
