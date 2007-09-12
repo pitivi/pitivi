@@ -1,5 +1,10 @@
 2007-09-12  Edward Hervey  <bilboed@bilboed.com>
 
+	* pitivi/sourcelist.py:
+	Raise an exception only if we REALLY have an existing source.
+
+2007-09-12  Edward Hervey  <bilboed@bilboed.com>
+
 	* pitivi/objectfactory.py:
 	Clean unique serialization methods.
 	Add more documentation

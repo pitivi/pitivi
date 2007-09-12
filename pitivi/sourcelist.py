@@ -151,7 +151,7 @@ class SourceList(gobject.GObject, Serializable):
         """
         Add an objectfactory for the given uri.
         """
-        if uri in self:
+        if uri in self and self[uri]:
             raise Exception("We already have an objectfactory for uri %s" % uri)
         self.sources[uri] = factory
         self.emit("file-added", factory)
