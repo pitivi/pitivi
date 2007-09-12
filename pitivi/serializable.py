@@ -26,12 +26,28 @@ class Serializable(object):
     __data_type__ = "serializable"
 
     def toDataFormat(self):
-        """All serializable objects must chain up to this function."""
+        """
+        Return the Data Format dictionnary containing serializable information for
+        this object.
+
+        All serializable objects must chain up to the parent class function before
+        filling in the returned dictionnary.
+        """
         return { "datatype" : self.__data_type__ }
 
     def fromDataFormat(self, obj):
-        """All serializable objects must chain up to this function."""
+        """
+        Fill self with the information contained in the 'obj' dictionnary.
+
+        All serializable objects must chain up to the parent class function before
+        extracting their information.
+        """
+        if not obj["datatype"]:
+            raise Exception("dictionnary doesn't contain the type information !!")
+        if not obj["datatype"] == self.__data_type__:
+            raise Exception("Mismatch in dictionnary data-type (%s) and class data-type (%s)" % (obj["datatype"],                                                                                                 self.__data_type__))
         return
+
 
 def get_serialized_classes():
     """
@@ -44,13 +60,15 @@ def get_serialized_classes():
             res.extend(get_valid_subclasses(i))
         return res
     listclasses = get_valid_subclasses(Serializable)
+
     # add a little check for duplicates here !
     check = {}
     for i,j in listclasses:
         if not i in check:
             check[i] = j
         else:
-            print "ERROR ! Type %r and %r share the same __data_type__ : %s" % (j, check[i], i)
+            raise Exception("ERROR ! Type %r and %r share the same __data_type__ : %s" % (j, check[i], i))
+
     return dict(listclasses)
 
 def to_object_from_data_type(data):

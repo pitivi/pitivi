@@ -1,3 +1,32 @@
+2007-09-12  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/objectfactory.py:
+	Clean unique serialization methods.
+	Add more documentation
+	* pitivi/project.py:
+	Implement Serializable on Project.
+	* pitivi/serializable.py:
+	Add more checks. Raise Exceptions instead of print.
+	* pitivi/settings.py:
+	Implement Serializable on ExportSettings.
+	* pitivi/sourcelist.py:
+	New method : SourceList.addFactory(self, uri,factory)
+	Implement Serializable on SourceList a bit better.
+	* pitivi/timeline/composition.py:
+	New method : Composition.cleanUp(self)
+	Implement Serializable on Composition with checks.
+	* pitivi/timeline/objects.py:
+	raise Exceptions instead of warning for critical issues.
+	* pitivi/timeline/timeline.py:
+	minor cleanups
+	* tests/test_file_load_save.py:
+	cleanup.
+	* tests/test_timeline_composition.py:
+	More checks for serialization, uniqueness and correct property
+	attributions.
+	* tests/test_timeline_objects.py:
+	Also check that gnlobject is created after deserialization.
+
 2007-09-11  Edward Hervey  <bilboed@bilboed.com>
 
 	* pitivi/check.py:

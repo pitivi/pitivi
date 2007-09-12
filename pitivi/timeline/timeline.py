@@ -51,8 +51,10 @@ class Timeline(gobject.GObject, Serializable):
 
     def _fillContents(self):
         # TODO create the initial timeline according to the project settings
-        self.audiocomp = TimelineComposition(media_type = MEDIA_TYPE_AUDIO, name="audiocomp")
-        self.videocomp = TimelineComposition(media_type = MEDIA_TYPE_VIDEO, name="videocomp")
+        self.audiocomp = TimelineComposition(media_type = MEDIA_TYPE_AUDIO,
+                                             name="audiocomp")
+        self.videocomp = TimelineComposition(media_type = MEDIA_TYPE_VIDEO,
+                                             name="videocomp")
         self.videocomp.linkObject(self.audiocomp)
 
         # add default audio/video sources
@@ -110,8 +112,10 @@ class Timeline(gobject.GObject, Serializable):
             s.audiodepth = a.audiodepth
         return s
 
+    # Serializable methods
+
     def toDataFormat(self):
-        ret = Serializable(self)
+        ret = Serializable.toDataFormat(self)
         ret["compositions"] = dict((\
             (self.audiocomp.name, self.audiocomp.toDataFormat()),
             (self.videocomp.name, self.videocomp.toDataFormat())))
@@ -121,7 +125,6 @@ class Timeline(gobject.GObject, Serializable):
         Serializable.fromDataFormat(self, obj)
         audio = obj["compositions"]["audiocomp"]
         video = obj["compositions"]["videocomp"]
-        self._fillcontents()
         self.audiocomp.fromDataFormat(audio)
         self.videocomp.fromdataFormat(video)
 

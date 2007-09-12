@@ -16,9 +16,9 @@ testSourceC = ""
 
 testProjectTree = \
 {
-    "timeline" : 
+    "timeline" :
         {
-            "sources" : 
+            "sources" :
                 [
                     {
                         "type" : "file-source",
@@ -26,33 +26,33 @@ testProjectTree = \
                         "start" : 2000.0
                     }
                 ],
-            "effects" : 
+            "effects" :
                 [
-                
+
                 ],
             "transitions" :
                 [
-                
+
                 ],
         },
     "sources" :
         {
-            "sourceA" : 
+            "sourceA" :
                 {
 
                 },
-            "sourceB" : 
+            "sourceB" :
                 {
 
                 },
-            "sourceC" : 
+            "sourceC" :
                 {
 
                 },
         },
     "settings" :
         {
-        
+
         },
 }
 
@@ -83,30 +83,30 @@ class ApplicationLogicTest(unittest.TestCase):
         pitivi.instance.PiTiVi = None
 
     def testShutdownNoSave(self):
-        # check that closing ptv will not work unless unsaved changes are 
+        # check that closing ptv will not work unless unsaved changes are
         # written to disk
         self.ptv.connect("closing-project",
             self._closingProjectCb, True)
-        self.ptv.current.connect("save-uri-requested", 
+        self.ptv.current.connect("save-uri-requested",
             self._saveUriRequestedCb, None)
-        
+
         self.ptv.current.setModificationState(True)
         self.ptv.shutdown()
-        
+
         self.assertTrue(self._got_save_uri_requested_signal)
         self.assertFalse(self._got_closing_project_requested_signal)
 
     def testShutdownSave(self):
-        #check the closing ptv works when unsaved changes are written 
+        #check the closing ptv works when unsaved changes are written
         # to disk
-        self.ptv.connect("closing-project", 
+        self.ptv.connect("closing-project",
             self._closingProjectCb, True)
         self.ptv.current.connect("save-uri-requested",
             self._saveUriRequestedCb, testUri)
-        
+
         self.ptv.current.setModificationState(True)
         self.ptv.shutdown()
-        
+
         self.assertTrue(self._got_save_uri_requested_signal)
         self.assertTrue(self._got_closing_project_requested_signal)
 
@@ -119,7 +119,7 @@ class ApplicationLogicTest(unittest.TestCase):
     def testCloseProjectNoUnsaved(self):
         # tests that closing a project will prompt the user if the current
         # project has unsaved changes
-        self.ptv.current.connect("save-uri-requested", 
+        self.ptv.current.connect("save-uri-requested",
             self._saveUriRequestedCb, testUri)
         self.ptv.connect("closing-project",
             self._closingProjectCb, False)
@@ -254,36 +254,3 @@ class ProjectSaverTest(unittest.TestCase):
                 raise self.fail("Failed to load project")
             except projectsaver.ProjectSaveError:
                 raise self.fail("Failed to save project")
-
-# Test that Core classes properly serialize and deserialize
-class SerializationTest(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def testCompositionSource(self):
-        pass
-
-    def testCompositionTransition(self):
-        pass
-
-    def testCompositionEffect(self):
-        pass
-
-    def testComposition(self):
-        pass
-
-    def testSourceListSource(self):
-        pass
-
-    def testSourceList(self):
-        pass
-
-    def testProjectSettings(self):
-        pass
-
-    def testProject(self):
-        pass
-
-if __name__ == "__main__":
-    unittest.main()
-

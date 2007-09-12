@@ -187,25 +187,21 @@ class ObjectFactory(gobject.GObject, Serializable):
     def toDataFormat(self):
         ret = Serializable.toDataFormat(self)
         ret["uid"] = self.getUniqueID()
+        return ret
 
     def fromDataFormat(self, obj):
-        Serializable.fromDataFormat(self)
+        Serializable.fromDataFormat(self, obj)
         self.setUniqueID(obj["uid"])
 
     # Unique ID methods
 
-    def __del__(self):
-        if not self.uid == -1:
-            if self.uid in self.__instances__:
-                del self.__instances__[uid]
-
     def getUniqueID(self):
         if self.uid == -1:
             i = randint(0, 2**32)
-            while i in self.__instances__:
+            while i in ObjectFactory.__instances__:
                 i = randint(0, 2 ** 32)
             self.uid = i
-            self.__instances__[self.uid] = self
+            ObjectFactory.__instances__[self.uid] = self
         return self.uid
 
     def setUniqueID(self, uid):
@@ -213,16 +209,16 @@ class ObjectFactory(gobject.GObject, Serializable):
             gst.warning("Trying to set uid [%d] on an object that already has one [%d]" % (uid, self.uid))
             return
 
-        if uid in self.__instances__:
-            gst.warning("Uid [%d] is already in use by another object [%r]" % (uid, self.__instances__[uid]))
+        if uid in ObjectFactory.__instances__:
+            gst.warning("Uid [%d] is already in use by another object [%r]" % (uid, ObjectFactory.__instances__[uid]))
             return
 
         self.uid = uid
         gst.log("Recording __instances__[uid:%d] = %r" % (self.uid, self))
-        self.__instances__[self.uid] = self
+        ObjectFactory.__instances__[self.uid] = self
 
         # Check if an object needs to be informed of our creation
-        self._haveNewID()
+        self._haveNewID(self.uid)
 
     @classmethod
     def getObjectByUID(cls, uid):
@@ -242,10 +238,10 @@ class ObjectFactory(gobject.GObject, Serializable):
         It will check to see if any object needs to be informed of the creation
         of this object.
         """
-        if uid in self.__waiting_for_pending_objects__ and uid in self.__instances__:
-            for obj, extra in self.__waiting_for_pending_objects__[uid]:
-                obj.pendingObjectCreated(self.__instances__[uid], extra)
-            del self.__waiting_for_pendings_objects__[uid]
+        if uid in ObjectFactory.__waiting_for_pending_objects__ and uid in ObjectFactory.__instances__:
+            for obj, extra in ObjectFactory.__waiting_for_pending_objects__[uid]:
+                obj.pendingObjectCreated(ObjectFactory.__instances__[uid], extra)
+            del ObjectFactory.__waiting_for_pendings_objects__[uid]
 
 
     @classmethod
@@ -262,8 +258,9 @@ class ObjectFactory(gobject.GObject, Serializable):
         """
         if not uid in cls.__waiting_for_pending_objects__:
             cls.__waiting_for_pending_objects__[uid] = []
-        ls = cls.__waiting_for_pending_objects__[uid]
-        ls.append((obj, extra))
+        cls.__waiting_for_pending_objects__[uid].append((weakref.proxy(obj), extra))
+
+gobject.type_register(ObjectFactory)
 
 class FileSourceFactory(ObjectFactory):
     """
@@ -453,7 +450,21 @@ class SMPTETransitionFactory(TransitionFactory):
     def __init__(self):
         TransitionFactory.__init__(self)
 
+##
+## Multimedia streams, used for definition of media streams
+##
+
+
 class MultimediaStream:
+    """
+    Defines a media stream
+
+    Properties:
+    * raw (boolean) : True if the stream is a raw media format
+    * fixed (boolean) : True if the stream is entirely defined
+    * codec (string) : User-friendly description of the codec used
+    * caps (gst.Caps) : Caps corresponding to the stream
+    """
 
     def __init__(self, caps):
         gst.log("new with caps %s" % caps.to_string())
@@ -470,7 +481,17 @@ class MultimediaStream:
     def _analyzeCaps(self):
         raise NotImplementedError
 
+    def getMarkup(self):
+        """
+        Returns a pango-markup string definition of the stream
+        Subclasses need to implement this
+        """
+        raise NotImplementedError
+
 class VideoStream(MultimediaStream):
+    """
+    Video Stream
+    """
 
     def _analyzeCaps(self):
         if len(self.caps) > 1:
@@ -528,6 +549,9 @@ class VideoStream(MultimediaStream):
         return _("<b>Unknown Video format:</b> %s") % self.videotype
 
 class AudioStream(MultimediaStream):
+    """
+    Audio stream
+    """
 
     def _analyzeCaps(self):
         if len(self.caps) > 1:
@@ -572,6 +596,9 @@ class AudioStream(MultimediaStream):
         return _("<b>Unknown Audio format:</b> %s") % self.audiotype
 
 class TextStream(MultimediaStream):
+    """
+    Text media stream
+    """
 
     def _analyzeCaps(self):
         if len(self.caps) > 1:
@@ -583,6 +610,10 @@ class TextStream(MultimediaStream):
         return _("<b>Text:</b> %s") % self.texttype
 
 def get_stream_for_caps(caps):
+    """
+    Returns the appropriate MediaStream corresponding to the
+    given caps.
+    """
     val = caps.to_string()
     if val.startswith("video/"):
         return VideoStream(caps)
@@ -591,4 +622,5 @@ def get_stream_for_caps(caps):
     elif val.startswith("text/"):
         return TextStream(caps)
     else:
+        # FIXME : we should have an 'unknow' data stream class
         return None

@@ -29,6 +29,8 @@ import gobject
 import gst
 import string
 
+from serializable import Serializable, to_object_from_data_type
+
 from gettext import gettext as _
 
 def get_bool_env(name):
@@ -115,7 +117,7 @@ class GlobalSettings:
 
         return repository_path
 
-class ExportSettings(gobject.GObject):
+class ExportSettings(gobject.GObject, Serializable):
     """
     Multimedia export settings
 
@@ -132,6 +134,8 @@ class ExportSettings(gobject.GObject):
                                gobject.TYPE_NONE,
                                ( ))
         }
+
+    __data_type__ = "export-settings"
 
     # Audio/Video settings for processing/export
 
@@ -238,6 +242,52 @@ class ExportSettings(gobject.GObject):
             changed = True
         if changed:
             self.emit("encoders-changed")
+
+    ## Serializable methods
+
+    def toDataFormat(self):
+        ret = Serializable.toDataFormat(self)
+        ret["video-width"] = self.videowidth
+        ret["video-height"] = self.videoheight
+        ret["video-rate"] = [ self.videorate.num,
+                             self.videorate.denom ]
+        ret["video-par"] = [ self.videopar.num,
+                            self.videopar.denom ]
+        ret["audio-channels"] = self.audiochannels
+        ret["audio-rate"] = self.audiorate
+        ret["audio-depth"] = self.audiodepth
+        ret["video-encoder"] = self.vencoder
+        ret["audio-encoder"] = self.aencoder
+        ret["muxer"] = self.muxer
+        if self.containersettings:
+            ret["container-settings"] = self.containersettings
+        if self.acodecsettings:
+            ret["audio-encoder-settings"] = self.acodecsettings
+        if self.vcodecsettings:
+            ret["video-encoder-settings"] = self.vcodecsettings
+        return ret
+
+    def fromDataFormat(self, obj):
+        Serializable.fromDataFormat(self, obj)
+        self.videowidth = ret["video-width"]
+        self.videoheight = ret["video-height"]
+        self.videorate = gst.Fraction(*ret["video-rate"])
+        self.videopar = gst.Fraction(*ret["video-par"])
+
+        self.audiochannels = ret["audio-channels"]
+        self.audiorate = ret["audio-rate"]
+        self.audiodepth = ret["audio-depth"]
+
+        # FIXME : check if the given encoder/muxer are available
+        self.vencoder = ret["video-encoder"]
+        self.aencoder = ret["audio-encoder"]
+        self.muxer = ret["muxer"]
+        if "container-settings" in ret:
+            self.containersettings = ret["container-settings"]
+        if "audio-encoder-settings" in ret:
+            self.acodecsettings = ret["audio-encoder-settings"]
+        if "video-encoder-settings" in ret:
+            self.vcodecsettings = ret["video-encoder-settings"]
 
 def list_compat(a, b):
     for x in a:

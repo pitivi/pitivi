@@ -34,10 +34,10 @@ from settings import ExportSettings
 from configure import APPNAME
 
 from gettext import gettext as _
-from serializable import Serializable
+from serializable import Serializable, to_object_from_data_type
 
 class Project(gobject.GObject, Serializable):
-    """ The base class for PiTiVi projects 
+    """ The base class for PiTiVi projects
     Signals
 
        string save-uri-requested()
@@ -88,12 +88,6 @@ class Project(gobject.GObject, Serializable):
         self.settingssigid = 0
         self._dirty = False
         self._load()
-
-    #def do_save_uri_requested(self):
-    #    return None
-
-    #def do_confirm_overwrite(self):
-    #    return True
 
     def _load(self):
         """ loads the project from a file """
@@ -212,17 +206,22 @@ class Project(gobject.GObject, Serializable):
     def hasUnsavedModifications(self):
         return self._dirty
 
+    # Serializable methods
+
     def toDataFormat(self):
         ret = Serializable.toDataFormat(self)
-        ret["timeline"] = self.timeline.toDataFormat()
+        ret["name"] = self.name
+        ret["settings"] = self.getSettings().toDataFormat()
         ret["sources"] = self.sources.toDataFormat()
-        ret["settings"] = self.settings.toDataFormat()
+        ret["timeline"] = self.timeline.toDataFormat()
+        return ret
 
     def fromDataFormat(self, obj):
         Serializable.fromDataFormat(self, obj)
-        self.timeline = object_from_data_type(obj["timeline"])
-        self.sources = object_from_data_type(obj["sources"])
-        self.settings = object_from_data_type(obj["settings"])
+        self.name = obj["name"]
+        self.timeline = to_object_from_data_type(obj["timeline"])
+        self.sources = to_object_from_data_type(obj["sources"])
+        self.settings = to_object_from_data_type(obj["settings"])
 
 def uri_is_valid(uri):
     return gst.uri_get_protocol(uri) == "file"

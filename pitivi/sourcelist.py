@@ -94,7 +94,6 @@ class SourceList(gobject.GObject, Serializable):
         else:
             # emit deleted item signal
             self.emit("file_removed", uri)
-            pass
 
     def __getitem__(self, uri):
         try:
@@ -148,14 +147,22 @@ class SourceList(gobject.GObject, Serializable):
         for uri in rmuri:
             del self[uri]
 
+    def addFactory(self, uri, factory):
+        """
+        Add an objectfactory for the given uri.
+        """
+        if uri in self:
+            raise Exception("We already have an objectfactory for uri %s" % uri)
+        self.sources[uri] = factory
+        self.emit("file-added", factory)
+
     def _finishedAnalyzingCb(self, unused_discoverer, factory):
         # callback from finishing analyzing factory
         if factory.name in self.tempsources:
             self.tempsources[factory.name] = factory
             self.emit("tmp-is-ready", factory)
         elif factory.name in self.sources:
-            self.sources[factory.name] = factory
-            self.emit("file-added", factory)
+            self.addFactory(factory.name, factory)
 
     def _notMediaFileCb(self, unused_discoverer, uri, reason, extra):
         # callback from the discoverer's 'not_media_file' signal
@@ -172,9 +179,21 @@ class SourceList(gobject.GObject, Serializable):
     def _discovererReadyCb(self, unused_discoverer):
         self.emit("ready")
 
+    ## Serializable methods
+
     def toDataFormat(self):
-        return [source.toDataFormat() for source in self]
+        ret = Serializable.toDataFormat(self)
+        d = {}
+        for uri, factory in self:
+            d[uri] = factory.toDataFormat()
+        ret["sources-factories"] = d
+        return ret
 
     def fromDataFormat(self, obj):
-        self.addUris(obj)
+        Serializable.fromDataFormat(self, obj)
+        # FIXME : We're supposing we have complete objectfactories
+        # with all information !!!
+        if "sources-factories" in obj:
+            for uri, factory in obj["source-factories"].iteritems():
+                self.addFactory(uri, factory)
 

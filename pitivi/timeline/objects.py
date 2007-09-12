@@ -216,11 +216,11 @@ class BrotherObjects(gobject.GObject, Serializable):
 
     def setUniqueID(self, uid):
         if not self.uid == -1:
-            gst.warning("Trying to set uid [%d] on an object that already has one [%d]" % (uid, self.uid))
+            raise Exception("Trying to set uid [%d] on an object that already has one [%d]" % (uid, self.uid))
             return
 
         if uid in BrotherObjects.__instances__:
-            gst.warning("Uid [%d] is already in use by another object [%r]" % (uid, BrotherObjects.__instances__[uid]))
+            raise Exception("Uid [%d] is already in use by another object [%r]" % (uid, BrotherObjects.__instances__[uid]))
             return
 
         self.uid = uid

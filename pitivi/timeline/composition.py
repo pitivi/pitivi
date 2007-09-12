@@ -28,6 +28,7 @@ import gst
 
 from source import TimelineSource
 from objects import BrotherObjects, MEDIA_TYPE_AUDIO
+from pitivi.serializable import to_object_from_data_type
 
 class Layer(BrotherObjects):
     """
@@ -126,6 +127,14 @@ class TimelineComposition(TimelineSource):
       _ 'transition-removed' : a transitions was removed from the composition
       _ 'source-added' : a TimelineSource was added to the composition
       _ 'source-removed' : a TimelineSource was removed from the composition
+
+    Save/Load properties:
+    * (optional) 'global-effects' (list of TimelineSimpleEffect) : list of global effects
+    * (optional) 'simple-effects' (list of list of TimelineSimpleEffect) : list of list of simple effects
+    * (optional) 'complex-effects' (list of TimelineComplexEffect) : list of complex effects
+    * (optional) 'transitions' (list of TimelineTransition) : list of transitions
+    * 'sources' (list of list of sources) : layers of sources of the composition
+    * (optional) 'default-source' (TimelineSource) : Default source for the composition.
     """
 
     __gsignals__ = {
@@ -192,7 +201,7 @@ class TimelineComposition(TimelineSource):
 
     def __init__(self, **kw):
         self.global_effects = [] # list of effects starting from highest priority
-        self.simple_effects = [[]] # list of layers of simple effects (order: priority, then time)
+        self.simple_effects = [] # list of layers of simple effects (order: priority, then time)
         self.complex_effects = [] # complex effect sorted by time
         self.transitions = [] # transitions sorted by time
         # list of layers of simple effects (order: priority, then time)
@@ -202,6 +211,7 @@ class TimelineComposition(TimelineSource):
         self.sources = [(2048, 2060, [])]
         self.defaultSource = None
         TimelineSource.__init__(self, **kw)
+        self.setStartDurationTime(0,0)
 
     def __len__(self):
         """ return the number of sources in this composition """
@@ -439,6 +449,12 @@ class TimelineComposition(TimelineSource):
         """
         self.gnlobject.info("source %s , position:%d, self.sources:%s" %(source, position, self.sources))
 
+        # make sure object to add has valid start/duration
+        if source.start == -1 or source.duration <= 0:
+            self.gnlobject.warning("Trying to add a source with non-valid start/duration")
+            raise Exception("Source has invalid start[%s] or duration[%s]" % (gst.TIME_ARGS(source.start),
+                                                                              gst.TIME_ARGS(source.duration)))
+
         self._addSource(source, position)
 
         # if auto_linked and self.linked, add brother to self.linked with same parameters
@@ -666,6 +682,31 @@ class TimelineComposition(TimelineSource):
             endpos = -1
         self.shiftSources(offset, startpos, endpos)
 
+    def cleanUp(self):
+        """
+        Removes all sources/effects from the composition
+        """
+        self.gnlobject.info("cleaning up")
+        # effects
+
+        for fx in self.global_effects:
+            self.removeGlobalEffect(fx)
+        for layer in self.simple_effects:
+            for fx in layer:
+                self.removeSimpleEffect(fx)
+        for fx in self.complex_effects:
+            self.removeComplexEffect(fx)
+        for fx in self.transitions:
+            self.removeTransition(fx)
+
+        # sources
+        for layer in self.sources:
+            min, max, sources = layer
+            for source in sources[:]:
+                self.removeSource(source)
+
+    # Default Source methods
+
     def setDefaultSource(self, source):
         """
         Adds a default source to the composition.
@@ -738,14 +779,25 @@ class TimelineComposition(TimelineSource):
     def toDataFormat(self):
         ret = TimelineSource.toDataFormat(self)
 
-        # effects
-        ret["global-effects"] = [fx.toDataFormat() for fx in self.global_effects]
-        ret["simple-effects"] = [[fx.toDataFormat() for fx in ls] for ls in self.simple_effects]
-        ret["complex-effects"] = [fx.toDataFormat() for fx in self.complex_effects]
-        ret["transitions"] = [fx.toDataFormat() for fx in self.transitions]
+        # effects (optional)
+        if self.global_effects:
+            ret["global-effects"] = [fx.toDataFormat() for fx in self.global_effects]
+        if self.simple_effects and len(self.simple_effects[0]):
+            ret["simple-effects"] = [[fx.toDataFormat() for fx in ls] for ls in self.simple_effects]
+        if self.complex_effects:
+            ret["complex-effects"] = [fx.toDataFormat() for fx in self.complex_effects]
+        if self.transitions:
+            ret["transitions"] = [fx.toDataFormat() for fx in self.transitions]
 
         # sources
-        # GRMBL... this is really crap, we need the layer system
+        # WARNING / FIXME / TODO : This is a temporary format !!!
+        tmp = []
+        for layer in self.sources:
+            lay = []
+            for source in layer[2]:
+                lay.append(source.toDataFormat())
+            tmp.append(lay)
+        ret["sources"] = tmp
 
         # default source
         if self.defaultSource:
@@ -756,19 +808,30 @@ class TimelineComposition(TimelineSource):
         TimelineSource.fromDataFormat(self, obj)
 
         # effects
-        for fx in obj["global-effects"]:
-            self.global_effects.append(to_object_from_data_type(fx))
-        for line in obj["simple-effects"]:
-            tmp = []
-            for fx in line:
-                tmp.append(to_object_from_data_type(fx))
-            self.simple_effects.append(tmp)
-        for fx in obj["complex-effects"]:
-            self.complex_effects.append(to_object_from_data_type(fx))
-        for fx in obj["transitions"]:
-            self.transitions.append(to_object_from_data_type(fx))
+        if "global-effects" in obj:
+            for fx in obj["global-effects"]:
+                self.global_effects.append(to_object_from_data_type(fx))
+        if "simple-effects" in obj:
+            for line in obj["simple-effects"]:
+                tmp = []
+                for fx in line:
+                    tmp.append(to_object_from_data_type(fx))
+                self.simple_effects.append(tmp)
+        if "complex-effects" in obj:
+            for fx in obj["complex-effects"]:
+                self.complex_effects.append(to_object_from_data_type(fx))
+        if "transitions" in obj:
+            for fx in obj["transitions"]:
+                self.transitions.append(to_object_from_data_type(fx))
 
         # sources
+        # WARNING / FIXME / TODO : This is a temporary format !!!
+        gst.log("recreating sources")
+        pos = 1
+        for layer in obj["sources"]:
+            for source in layer:
+                self.addSource(to_object_from_data_type(source), pos)
+            pos += 1
 
         # default source
         if "default-source" in obj:

@@ -94,6 +94,7 @@ class TestTimelineObjects(unittest.TestCase):
         self.assertEquals(obj1.name, "test1")
         self.assertEquals(obj1.linked, None)
         self.assertEquals(obj1.brother, None)
+        self.assert_(not obj1.gnlobject == None)
 
     def testLinkedBrotherSerialization(self):
         # get the brother of object1
