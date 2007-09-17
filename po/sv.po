@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-10 20:03+0200\n"
-"PO-Revision-Date: 2007-09-10 20:04+0100\n"
+"POT-Creation-Date: 2007-09-17 15:39+0200\n"
+"PO-Revision-Date: 2007-09-17 15:40+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -109,6 +109,22 @@ msgstr "Du har inte en tillräckligt ny version av Python-bindningar för Cairo 
 msgid "You do not have a recent enough version of the GNonLin GStreamer plugin (currently %s)"
 msgstr "Du har inte en tillräckligt ny version av GStreamer-insticksmodulen GNonLin (för närvarande %s)"
 
+#: ../pitivi/check.py:161
+msgid "Could not import the Zope Interface module"
+msgstr "Kunde inte importera Zope-gränssnittsmodulen"
+
+#: ../pitivi/check.py:162
+msgid "Make sure you have the zope.interface module installed"
+msgstr "Kontrollera att du har modulen zope.interface installerad"
+
+#: ../pitivi/check.py:164
+msgid "Could not import the distutils modules"
+msgstr "Kunde inte importera distutils-modulerna"
+
+#: ../pitivi/check.py:165
+msgid "Make sure you have the distutils python module installed"
+msgstr "Kontrollera att du har python-modulen distutils installerad"
+
 #: ../pitivi/discoverer.py:158
 msgid "Could not establish the duration of the file."
 msgstr "Kunde inte fastställa längden på filen."
@@ -176,38 +192,38 @@ msgstr "<b>%s</b>"
 msgid "<small><b>File:</b> %s"
 msgstr "<small><b>Fil:</b> %s"
 
-#: ../pitivi/objectfactory.py:520
+#: ../pitivi/objectfactory.py:541
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr "<b>Video:</b> %d × %d <i>bildpunkter</i> med %.2f<i>bilder/s</i>"
 
-#: ../pitivi/objectfactory.py:523
+#: ../pitivi/objectfactory.py:544
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>Bild:</b> %d × %d <i>bildpunkter</i>"
 
-#: ../pitivi/objectfactory.py:526
-#: ../pitivi/objectfactory.py:570
+#: ../pitivi/objectfactory.py:547
+#: ../pitivi/objectfactory.py:594
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr " <i>(%s)</i>"
 
-#: ../pitivi/objectfactory.py:528
+#: ../pitivi/objectfactory.py:549
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "<b>Okänt videoformat:</b> %s"
 
-#: ../pitivi/objectfactory.py:567
+#: ../pitivi/objectfactory.py:591
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr "<b>Ljud:</b> %d kanaler i %d <i>Hz</i> (%d <i>bitar</i>)"
 
-#: ../pitivi/objectfactory.py:572
+#: ../pitivi/objectfactory.py:596
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "<b>Okänt ljudformat:</b> %s"
 
-#: ../pitivi/objectfactory.py:583
+#: ../pitivi/objectfactory.py:610
 #, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>Text:</b> %s"
@@ -263,20 +279,20 @@ msgstr "Ljudutmatningsproblem"
 msgid "There is a problem with your audio output device"
 msgstr "Det inträffade ett problem med din ljudutmatningsenhet"
 
-#: ../pitivi/project.py:234
+#: ../pitivi/project.py:233
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s kan ännu inte hantera icke-lokala projekt"
 
-#: ../pitivi/settings.py:161
+#: ../pitivi/settings.py:165
 msgid "Export Settings\n"
 msgstr "Exportera inställningar\n"
 
-#: ../pitivi/settings.py:162
+#: ../pitivi/settings.py:166
 msgid "Video :"
 msgstr "Video :"
 
-#: ../pitivi/settings.py:164
+#: ../pitivi/settings.py:168
 msgid ""
 "\n"
 "Audio :"
@@ -285,7 +301,7 @@ msgstr ""
 "Ljud :"
 
 # Bra ord på svenska sökes
-#: ../pitivi/settings.py:166
+#: ../pitivi/settings.py:170
 msgid ""
 "\n"
 "Muxer :"
