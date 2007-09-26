@@ -60,7 +60,7 @@ class PluginManager(gobject.GObject):
     """
 
     __gsignals__ = {
-        "plugin-activated-changed" : (gobject.SIGNAL_RUN_LAST,\
+        "plugin-enabled-changed" : (gobject.SIGNAL_RUN_LAST,\
                                       gobject.TYPE_NONE,\
                                       (gobject.TYPE_PYOBJECT,)),
         "plugin-installed" : (gobject.SIGNAL_RUN_LAST,\

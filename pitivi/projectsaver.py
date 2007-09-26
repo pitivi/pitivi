@@ -24,13 +24,17 @@
 Project File Serialization and Deserialization
 """
 from cPickle import load, dump, PicklingError, UnpicklingError
+import timeline.objects
+import timeline.source
+import timeline.composition
+import settings
 
 class ProjectError(Exception):
     def __init__(self, reason):
         self.reason = reason
     def __str__(self):
         return self.reason
-    def getReason():
+    def getReason(self):
         return self.reason
 
 class ProjectSaveError(ProjectError):
@@ -59,7 +63,7 @@ class ProjectSaver:
         return [((key, ) + value)[:-1] for key, value in cls._formats.items()]
 
     @classmethod
-    def newProjectSaver(format="pickle", *args):
+    def newProjectSaver(cls, format="pickle", *args):
         assert(format in cls._formats)
         instance = cls._formats[format][-1](*args)
         assert(instance.serialize)
@@ -67,11 +71,12 @@ class ProjectSaver:
         return instance
 
     #FIXME: make this dynamagical instead of hard-coded crack
+    @classmethod
     def buildClassList(cls):
-        crack = [("file-source", TimelineFileSource),
-                 ("composition", TimelineComposition),
+        crack = [("file-source", timeline.source.TimelineFileSource),
+                 ("composition", timeline.composition.TimelineComposition),
                  ("project-source", ),
-                 ("project-settings", ProjectSettings)]
+                 ("project-settings", settings.ExportSettings)]
 
         cls.classes = dict(crack)
 
