@@ -1,5 +1,14 @@
 2007-09-27  Brandon Lewis  <brandon_lewis@berkeley.edu>
 
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/serializable.py:
+	added some comments
+	* pitivi/projectsaver.py:
+	added introspection code for probing of file formats
+
+2007-09-27  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
 	* pitivi/project.py:
 	Adjusted code to work with changes to projectsaver interface
 	* pitivi/projectsaver.py:

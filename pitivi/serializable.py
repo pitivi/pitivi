@@ -59,6 +59,7 @@ def get_serialized_classes():
         for i in cls.__subclasses__():
             res.extend(get_valid_subclasses(i))
         return res
+
     listclasses = get_valid_subclasses(Serializable)
 
     # add a little check for duplicates here !
@@ -77,6 +78,13 @@ def to_object_from_data_type(data):
     """
     # 1. Find class for data-type
     dt = data["datatype"]
+
+    # FIXME: do we really want to rebuils this list EVERY time we
+    # call to_object_from_data_type? this could make project loading
+    # slower than it has to be. Morever, the list is not likely to
+    # change at runtime, unlike, say, the list of implemented file
+    # formats. Probably we only want to build this list once.
+
     classes = get_serialized_classes()
     if not dt in classes:
         raise Exception, "Don't have a class to handle data-type %r" % dt

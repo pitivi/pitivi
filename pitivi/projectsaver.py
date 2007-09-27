@@ -46,11 +46,13 @@ class ProjectSaveError(ProjectError):
 class ProjectLoadError(ProjectError):
     pass
 
-class ProjectSaver:
+class ProjectSaver(object):
     """Provides minimal base functionality for saving project
     files. Other file formats can be implemented by deriving from this
     class"""
 
+    __file_format = "None"
+    
     @classmethod
     def newProjectSaver(cls, fmt="pickle"):
         """Returns a new instance of a project saver derivative.
@@ -59,9 +61,10 @@ class ProjectSaver:
         returns  -- instance of project saver or None if format
         unavailable"""
 
-        if fmt != "pickle":
+        formats = cls._getformats()
+        if fmt not in formats:
             return None
-        return PickleFormat()
+        return formats[fmt]()
 
     # This may be redundant now with the advent of plugin manager
     @classmethod
@@ -69,7 +72,14 @@ class ProjectSaver:
         """Returns a list of implemented file formats
         """
         #FIXME: this is crack
-        return ("pickle",)
+        return cls._getformats().keys()
+
+    @classmethod
+    def _getformats(cls):
+        formats = {}
+        for sbcls in cls.__subclasses__():
+            formats[sbcls.__file_format__] = sbcls
+        return formats
 
     def __init__(self, format=None):
         pass
@@ -138,7 +148,7 @@ class ProjectSaver:
     
 class PickleFormat(ProjectSaver):
     """ Implements default file format project files using cpickle"""
-    file_format = "pickle"
+    __file_format__ = "pickle"
     
     def load(self, input_stream):
         try:
