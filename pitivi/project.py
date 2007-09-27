@@ -35,6 +35,7 @@ from configure import APPNAME
 
 from gettext import gettext as _
 from serializable import Serializable, to_object_from_data_type
+from projectsaver import ProjectSaver, ProjectSaveError, ProjectLoadError
 
 class Project(gobject.GObject, Serializable):
     """ The base class for PiTiVi projects
@@ -95,13 +96,13 @@ class Project(gobject.GObject, Serializable):
             return
         self.timeline = Timeline(self)
         if self.uri:
-            if uri_is_project(self.uri):
-                loader = newProjectSaver()
+            if file_is_project(self.uri):
+                loader = ProjectSaver.newProjectSaver("pickle")
                 path = gst.uri_get_location(self.uri)
                 fileobj = open(path, "w")
                 try:
                     tree = loader.deserialize(fileobj)
-                    project.fromDataType(tree)
+                    self.fromDataType(tree)
                 except ProjectLoadError:
                     return False
                 fileobj.close()

@@ -230,7 +230,7 @@ class ProjectSaverTest(unittest.TestCase):
         formats = projectsaver.ProjectSaver.listFormats()
         self.projectsavers = {}
         for format in formats:
-            saver = projectsaver.newProjectSaver(format[0])
+            saver = projectsaver.ProjectSaver.newProjectSaver(format)
             self.projectsavers[format] = saver
 
     def tearDown(self):
@@ -244,10 +244,10 @@ class ProjectSaverTest(unittest.TestCase):
         for saver in self.projectsavers.values():
             try:
                 output_file = open(testPath, "w")
-                saver.serialize(testProjectTree, output_file)
+                saver.saveToFile(testProjectTree, output_file)
                 output_file.close()
                 input_file = open(testPath, "r")
-                read_tree = saver.deserialize(input_file)
+                read_tree = saver.openFromFile(input_file)
                 input_file.close()
                 self.assertTrue(read_tree == testProjectTree)
             except projectsaver.ProjectLoadError:

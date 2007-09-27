@@ -21,11 +21,14 @@
 # Boston, MA 02111-1307, USA.
 
 """
-Project File Serialization and Deserialization
+This module handles conversion from project files/edit decision lists
+to intermediate representations. It provides a base class which can be
+derived to implement different file formats, exception classes for
+representing errors, and a sample implementation which uses cPickle to
+load and store data
 """
+
 from cPickle import load, dump, PicklingError, UnpicklingError
-import timeline.objects
-import timeline.source
 import timeline.composition
 import settings
 
@@ -44,74 +47,109 @@ class ProjectLoadError(ProjectError):
     pass
 
 class ProjectSaver:
-    _formats = {}
-    _classes = {}
+    """Provides minimal base functionality for saving project
+    files. Other file formats can be implemented by deriving from this
+    class"""
 
-    #TODO: make listFormats, registerFormat, and newProjectSaver thread safe
     @classmethod
-    def registerFormat(cls, format, description, extensions, implementation):
-        assert(format not in cls._formats.keys())
-        assert(type(format) == str)
-        assert(type(description) == str)
-        assert(type(extensions) in (list, tuple))
-        cls._formats[format] = (description, extensions, implementation)
+    def newProjectSaver(cls, fmt="pickle"):
+        """Returns a new instance of a project saver derivative.
 
+        fmt      -- format string which represents the file format module
+        returns  -- instance of project saver or None if format
+        unavailable"""
+
+        if fmt != "pickle":
+            return None
+        return PickleFormat()
+
+    # This may be redundant now with the advent of plugin manager
     @classmethod
     def listFormats(cls):
-        """return a generator of all registered formats as list of 
-        (format, description, extensions) tuples."""
-        return [((key, ) + value)[:-1] for key, value in cls._formats.items()]
-
-    @classmethod
-    def newProjectSaver(cls, format="pickle", *args):
-        assert(format in cls._formats)
-        instance = cls._formats[format][-1](*args)
-        assert(instance.serialize)
-        assert(instance.deserialize)
-        return instance
-
-    #FIXME: make this dynamagical instead of hard-coded crack
-    @classmethod
-    def buildClassList(cls):
-        crack = [("file-source", timeline.source.TimelineFileSource),
-                 ("composition", timeline.composition.TimelineComposition),
-                 ("project-source", ),
-                 ("project-settings", settings.ExportSettings)]
-
-        cls.classes = dict(crack)
-
-    @classmethod
-    def findObject(cls, type):
-        return cls._classes[type]
-
-    @classmethod
-    def objectFromDataType(cls, obj):
-        cls = findObject(obj["type"])
-        instance = cls()
-        instance.fromDataType(obj)
-        return
+        """Returns a list of implemented file formats
+        """
+        #FIXME: this is crack
+        return ("pickle",)
 
     def __init__(self, format=None):
         pass
 
-    def serialize(self, tree, output_stream):
-        try:
-            dump(tree, output_stream, protocol = 2)
-        except PicklingError, e:
-            raise ProjectSaveError, "Error Saving File: " + e
+    def saveToFile(self, tree, output_stream):
+        """The public method for saving files. Users of this class should
+        call this method to save projects to an open file object.
 
-    def deserialize(self, input_stream):
+        tree          -- a representation of a project file in the
+                         intermediate format
+        output_stream -- a file object open for writing.
+
+        throws: ProjectSaveError if project not successfully saved"""
+
+        if not self.dump(tree, output_stream):
+            raise ProjectSaveError ("Error Saving File: ")
+
+    def openFromFile(self, input_stream):
+        """Public method for loading files. Users of this class should
+        call this method to load a file from an open file object.
+
+        input_stream -- open file object from which to read
+
+        throws: ProjectLoadError if stream cannot be read"""
+        
+        tree = self.load(input_stream)
+        self.validate(tree)
+        return tree
+
+    
+    def validate(self, tree):
+        """Used internally to validate the project data structure
+        before it is used by the application.
+
+        tree -- the unvalidated file in the intermediate format
+
+        throws: ProjectLoadError if tree is invalid"""
+        #TODO: implement this
+        pass
+
+    def load(self, input_stream):
+        """Subclasses should implement this method
+
+        Reads input_stream, and returns a project tree in the
+        intermediate format.
+
+        input_stream -- open file object containing data to read
+        returns      -- an intermediate format representation of the
+                        project if file successfully read, or None"""
+        
+        raise Exception("Not Implemented!")
+
+    def dump(self, tree, output_stream):
+        """Subclasses should implement this method
+
+        Takes a tree, and a reference to an open file object and
+        writes a representation of the tree to the output
+        stream.
+
+        tree          -- intermediate format representation of project
+        output_stream -- file object open for writing returns True on
+                         success, False otherwise."""
+        
+        raise Exception("Not Implemented!")
+    
+    
+class PickleFormat(ProjectSaver):
+    """ Implements default file format project files using cpickle"""
+    file_format = "pickle"
+    
+    def load(self, input_stream):
         try:
             tree = load(input_stream)
-            #TODO: some more validation on the returned python object.
-            # I.E. is it in fact a dictionary? does it have the appropriate
-            # elements? basically make sure that PiTiVi won't crash when we
-            # hand off this data structure
             return tree
-        except UnpicklingError, e:
-            raise ProjectLoadError, "Error Loading File: " + e
+        except UnpicklingError:
+            return None
 
-#registerFormat("pickle", "PiTiVi Native Format (pickle)", ("pptv",), ProjectSaver)
-
-#ProjectSaver.buildClassDict()
-
+    def dump(self, tree, output_stream):
+        try:
+            dump(tree, output_stream, protocol=2)
+            return True
+        except PicklingError:
+            return False

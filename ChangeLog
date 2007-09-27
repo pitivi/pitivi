@@ -1,3 +1,16 @@
+2007-09-27  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/project.py:
+	Adjusted code to work with changes to projectsaver interface
+	* pitivi/projectsaver.py:
+	Redesigned projectsaver interface. no longer has facilities for
+	"registering" formats, since this can be handled by pluginmanager.
+	Factored out pickle file format into subclass of projectsaver
+	Removed the global function newProjectSaver from the module, in
+	favor of project saver class method which does the same thing
+	* tests/test_file_load_save.py:
+	adjusted test cases changes to projectsaver interface
+
 2007-09-26  Brandon Lewis  <brandon_lewis@berkeley.edu>
 
 	* pitivi/pluginmanager.py:
