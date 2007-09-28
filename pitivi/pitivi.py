@@ -182,10 +182,12 @@ class Pitivi(gobject.GObject):
         self.emit("shutdown")
 
 def shutdownCb(pitivi):
+    """ shutdown callback used by main()"""
     gst.debug("Exiting main loop")
     gtk.main_quit()
 
 def main(argv):
+    """ Start PiTiVi ! """
     check.initial_checks()
     ptv = Pitivi(argv)
     ptv.connect('shutdown', shutdownCb)

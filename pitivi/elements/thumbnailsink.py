@@ -27,6 +27,11 @@ import gst
 import gtk
 
 class PixbufThumbnailSink(gst.BaseSink):
+    """
+    GStreamer thumbnailing sink element.
+
+    Can be used in pipelines to generates gtk.gdk.Pixbuf automatically.
+    """
 
     __gsignals__ = {
         "thumbnail" : (gobject.SIGNAL_RUN_LAST,

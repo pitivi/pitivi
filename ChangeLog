@@ -1,3 +1,13 @@
+2007-09-28  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/check.py:
+	* pitivi/elements/singledecodebin.py:
+	* pitivi/elements/thumbnailsink.py:
+	* pitivi/pitivi.py:
+	* pitivi/pitivigstutils.py:
+	* pitivi/plugincore.py:
+	Add/Fix inline documentation
+
 2007-09-27  Brandon Lewis  <brandon_lewis@berkeley.edu>
 
 	reviewed by: <delete if not using a buddy>

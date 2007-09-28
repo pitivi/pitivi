@@ -36,6 +36,12 @@ def is_raw(caps):
     return False
 
 class SingleDecodeBin(gst.Bin):
+    """
+    A variant of decodebin.
+
+    * Only outputs one stream
+    * Doesn't contain any internal queue
+    """
 
     __gsttemplates__ = (
         gst.PadTemplate ("sinkpadtemplate",

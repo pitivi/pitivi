@@ -28,17 +28,21 @@ that we don't have to depend on too recent versions of gst-python.
 import gst
 
 def fraction_float(frac):
+    """ override for gst.Fraction.__float__ """
     return float(frac.num) / float(frac.denom)
 
 def fraction_eq(frac, other):
+    """ override for gst.Fraction.__eq__ """
     if isinstance(other, gst.Fraction):
         return frac.num * other.denom == frac.denom * other.num
     return False
 
 def fraction_ne(frac, other):
+    """ override for gst.Fraction.__ne__ """
     return not fraction_eq(frac, other)
 
 def fraction_mul(frac, other):
+    """ override for gst.Fraction.__mul__ """
     if isinstance(other, gst.Fraction):
         return gst.Fraction(frac.num * other.num,
                             frac.denom * other.denom)
@@ -49,6 +53,7 @@ def fraction_mul(frac, other):
     raise TypeError
 
 def fraction_div(frac, other):
+    """ override for gst.Fraction.__div__ """
     if isinstance(other, int):
         return frac.num / (frac.denom * other)
     if isinstance(other, float):
@@ -56,6 +61,7 @@ def fraction_div(frac, other):
     return TypeError
 
 def patch_gst_python():
+    """ override gst.Fraction methods not available in all gst-python """
     gst.Fraction.__float__ = fraction_float
     gst.Fraction.__eq__ = fraction_eq
     gst.Fraction.__ne__ = fraction_ne

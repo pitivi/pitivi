@@ -72,6 +72,10 @@ def initiate_audiosinks():
     return True
 
 def __try_import__(modulename):
+    """
+    Attempt to load given module.
+    Returns True on success, else False.
+    """
     try:
         __import__(modulename)
         return True

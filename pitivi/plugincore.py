@@ -21,6 +21,10 @@
 
 from zope.interface import Interface, Attribute
 
+"""
+PiTiVi plugin system
+"""
+
 # Interfaces
 class IPlugin(Interface):
     """ Every plugin must implement this interface """
