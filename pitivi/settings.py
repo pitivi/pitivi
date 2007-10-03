@@ -61,6 +61,7 @@ class GlobalSettings:
 
     def _setDefaults(self):
         self.advancedModeEnabled = True
+        self.fileSupportEnabled = False
 
     def _readSettings(self):
         self._readSettingsFromGlobalConfiguration()
@@ -78,7 +79,9 @@ class GlobalSettings:
 
     def _readSettingsFromEnvironmentVariables(self):
         # reads some settings from environment variable
-        #self.advancedModeEnabled = get_bool_env("PITIVI_ADVANCED_MODE")
+        #self.advancedModeEnabled =
+        #get_bool_env("PITIVI_ADVANCED_MODE")
+        self.fileSupportEnabled = get_bool_env("PITIVI_FILE_SUPPORT")
         pass
 
     def get_local_plugin_path(autocreate=True):

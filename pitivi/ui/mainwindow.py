@@ -80,6 +80,8 @@ class PitiviMainWindow(gtk.Window):
         instance.PiTiVi.connect("new-project-loaded", self._newProjectCb)
         instance.PiTiVi.connect("closing-project", self._closingProjectCb)
         instance.PiTiVi.connect("new-project-failed", self._notProjectCb)
+        instance.PiTiVi.current.connect("save-uri-requested", self._saveAsDialogCb)
+        instance.PiTiVi.current.connect("confirm-overwrite", self._confirmOverwriteCb)
         instance.PiTiVi.playground.connect("error", self._playGroundErrorCb)
         instance.PiTiVi.current.sources.connect_after("file_added", self._sourcesFileAddedCb)
 
@@ -110,7 +112,8 @@ class PitiviMainWindow(gtk.Window):
 	    self.render_button.set_sensitive(False)
         else:
             if isinstance(smartbin, SmartTimelineBin):
-                gst.info("switching to Timeline, setting duration to %s" % (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
+                gst.info("switching to Timeline, setting duration to %s" %
+                         (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
                 smartbin.project.timeline.videocomp.connect("start-duration-changed",
                                                             self._timelineDurationChangedCb)
                 if smartbin.project.timeline.videocomp.duration > 0:
@@ -171,13 +174,16 @@ class PitiviMainWindow(gtk.Window):
         for action in self.actiongroup.list_actions():
             if action.get_name() == "RenderProject":
                 self.render_button = action
-            if action.get_name() == "AdvancedView":
+            elif action.get_name() == "AdvancedView":
                 if not instance.PiTiVi.settings.advancedModeEnabled:
                     action.set_visible(False)
-            if action.get_name() in ["ProjectSettings", "Quit", "File", "Edit", "Help",
+            elif action.get_name() in ["ProjectSettings", "Quit", "File", "Edit", "Help",
                                      "About", "View", "FullScreen", "ImportSources",
                                      "ImportSourcesFolder", "AdvancedView", "PluginManager"]:
                 action.set_sensitive(True)
+            elif action.get_name() in ["SaveProject", "SaveProjectAs"]:
+                if not instance.PiTiVi.settings.fileSupportEnabled:
+                    action.set_sensitive(False)
             else:
                 action.set_sensitive(False)
 
@@ -288,10 +294,10 @@ class PitiviMainWindow(gtk.Window):
         raise NotImplementedError
 
     def _saveProjectCb(self, unused_action):
-        raise NotImplementedError
+        instance.PiTiVi.current.save()
 
     def _saveProjectAsCb(self, unused_action):
-        raise NotImplementedError
+        instance.PiTiVi.current.saveAs()
 
     def _projectSettingsCb(self, unused_action):
         l = ProjectSettingsDialog(self, instance.PiTiVi.current)
@@ -357,6 +363,47 @@ class PitiviMainWindow(gtk.Window):
 
     def _notProjectCb(self, pitivi, uri):
         raise NotImplementedError
+
+    ## PiTiVi current project callbacks
+
+    def _confirmOverwriteCb(self, unused_project, uri):
+        message = "Do you wish to overwrite existing file \"%s\"?" %\
+                 gst.uri_get_location(uri)
+        
+        dialog = gtk.MessageDialog(self,
+                                   gtk.DIALOG_MODAL,
+                                   gtk.MESSAGE_WARNING,
+                                   gtk.BUTTONS_YES_NO,
+                                   message)
+        
+        dialog.set_title(_("Overwrite Existing File?"))
+        response = dialog.run()
+        dialog.destroy()
+        if response == gtk.RESPONSE_YES:
+            return True
+        else:
+            return False
+
+    def _saveAsDialogCb(self, unused_project):
+        chooser = gtk.FileChooserDialog(_("Save As..."),
+                                        self,
+                                        action=gtk.FILE_CHOOSER_ACTION_SAVE,
+                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                                                 gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+        chooser.set_select_multiple(False)
+        chooser.set_current_name(_("Untitled"))
+        chooser.set_default_response(gtk.RESPONSE_CANCEL)
+        #TODO: get appropriate filters from projectsaver module
+
+        response = chooser.run()
+  
+        if response == gtk.RESPONSE_OK:
+            fn = "file://" + chooser.get_filename()
+        else:
+            fn = None
+        chooser.destroy()
+        return fn
+        
 
 class EncodingDialog(GladeWindow):
     """ Encoding dialog box """

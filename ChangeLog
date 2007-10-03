@@ -1,3 +1,14 @@
+2007-10-03  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/settings.py:
+	added new setting for enabling experimental file support
+	* pitivi/ui/mainwindow.py:
+	added basic ui support for Save / SaveAs commands
+	enable experimental file support with PITIVI_FILE_SUPPORT
+	environment variable
+
 2007-09-28  Edward Hervey  <bilboed@bilboed.com>
 
 	* pitivi/check.py:
