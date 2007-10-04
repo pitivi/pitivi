@@ -370,13 +370,13 @@ class PitiviMainWindow(gtk.Window):
             return True
         return False
 
-    def _notProjectCb(self, pitivi, uri):
+    def _notProjectCb(self, pitivi, reason, uri):
         dialog = gtk.MessageDialog(self,
             gtk.DIALOG_MODAL,
             gtk.MESSAGE_ERROR,
             gtk.BUTTONS_OK,
-            _("PiTiVi is unable to load the requested uri: \"%s\"") %
-        uri)
+            _("PiTiVi is unable to load file \"%s\": %s") %
+                (uri, reason))
         dialog.set_title(_("Error Loading File"))
         dialog.run()
         dialog.destroy()           

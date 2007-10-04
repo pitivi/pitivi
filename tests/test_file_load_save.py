@@ -208,7 +208,7 @@ class ApplicationLogicTest(unittest.TestCase):
         self._got_confirm_overwrite_signal = True
         return argument
 
-    def _newProjectLoadingCb(self, unused_pitivi):
+    def _newProjectLoadingCb(self, unused_pitivi, unused_project):
         self._got_new_project_loading_signal = True
 
     def _newProjectLoadedCb(self, unused_pitivi, project):

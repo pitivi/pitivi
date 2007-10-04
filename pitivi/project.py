@@ -88,8 +88,21 @@ class Project(gobject.GObject, Serializable):
         self.timelinebin = None
         self.settingssigid = 0
         self._dirty = False
-        self._load()
+        self.timeline = Timeline(self)
+        # don't want to make calling load() necessary for blank projects
+        if self.uri:
+            self._loaded = False
+        else:
+            self._loaded = True
 
+
+    def load(self):
+        """ call this to load a project from a file (once) """
+        if self._loaded:
+            # should this return false? 
+            return True
+        return self._load()
+        
     def _load(self):
         """ loads the project from a file """
         if self.timeline:

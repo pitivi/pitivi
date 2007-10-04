@@ -1,3 +1,22 @@
+2007-10-04  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/pitivi.py:
+	changed "new-project-loading" signal prototype, now passes the new
+	project as first parameter
+	* pitivi/project.py:
+	project's timeline now initialized in constructor. users of class
+	must call "load()" to load the project from a file. this will only
+	have an effect the first time it is called.
+	* pitivi/ui/mainwindow.py:
+	added reason parameter to the notProjectCb prototype, and added
+	the reason to the error message.
+	* pitivi/ui/timelineobjects.py:
+	adjustments to new-project-* signal handlers
+	* tests/test_file_load_save.py:
+	adjustment to new-project-loading signal handler
+
 2007-10-03  Brandon Lewis  <brandon_lewis@berkeley.edu>
 
 	reviewed by: <delete if not using a buddy>

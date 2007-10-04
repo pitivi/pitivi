@@ -64,7 +64,7 @@ class Pitivi(gobject.GObject):
     __gsignals__ = {
         "new-project-loading" : (gobject.SIGNAL_RUN_LAST,
                           gobject.TYPE_NONE,
-                          ()),
+                          (gobject.TYPE_PYOBJECT, )),
         "new-project-loaded" : ( gobject.SIGNAL_RUN_LAST,
                           gobject.TYPE_NONE,
                           (gobject.TYPE_PYOBJECT, )),
@@ -138,12 +138,15 @@ class Pitivi(gobject.GObject):
             return
         # if current project, try to close it
         if self._closeRunningProject():
-            self.emit("new-project-loading")
+            project = Project(uri)
+            self.emit("new-project-loading", project)
             try:
-                self.current = Project(uri)
+                project.load()
+                self.current = project
                 self.emit("new-project-loaded", self.current)
             except:
-                self.emit("new-project-failed", 
+                self.current = None
+                self.emit("new-project-failed",
                     _("There was an error loading the file."), uri)
 
     def _closeRunningProject(self):
@@ -163,9 +166,10 @@ class Pitivi(gobject.GObject):
         """ start up a new blank project """
         # if there's a running project we must close it
         if self._closeRunningProject():
+            project = Project(_("New Project"))
             self.playground.pause()
-            self.emit("new-project-loading")
-            self.current = Project(_("New Project"))
+            self.emit("new-project-loading", project)
+            self.current = project
             self.emit("new-project-loaded", self.current)
 
     def shutdown(self):

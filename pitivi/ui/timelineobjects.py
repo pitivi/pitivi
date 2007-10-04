@@ -145,21 +145,25 @@ class SimpleTimeline(gtk.Layout):
                                      "condensed-list-changed",
                                      None, self._condensedListChangedCb)
 
-    def _newProjectLoadingCb(self, inst):
+    def _newProjectLoadingCb(self, inst, project):
         # depopulate timeline -- no matter what happens, we don't want
         # this stuff hanging around
         self._clearTimeline()
+        # now we connect to the new project, so we can receive any
+        # signals that might be emitted while the project is loading
+        self._connectToTimeline(project.timeline)
         # TODO: supress display of changes to timeline until loading
         # is finisshed
 
     def _newProjectLoadedCb(self, inst, project):
         assert(instance.PiTiVi.current == project)
         # TODO: display final state of project now that loading has
-        # completed
-        self._connectToTimeline(project.timeline)
+        # completed. this callback doesn't do do much else
+        
         
     def _newProjectFailedCb(self, inst, reason, uri):
-        pass
+        # oops the project failed to load
+        self._clearTimeine()
  
     def _clearTimeline(self):
         self.switchToNormalMode()
