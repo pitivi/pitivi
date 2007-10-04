@@ -2,6 +2,19 @@
 
 	reviewed by: <delete if not using a buddy>
 
+	* pitivi/ui/sourcefactories.py:
+	added handler for new-project-failed signal (simply disconnects
+	project signals, and clears liststore.
+
+	this should be all the changes required for the simple UI to
+	handle file loading. file saving should be easier still, however a
+	bunch of seemingly unrelated test cases broke as soon as I
+	replaced the dummy filesaving code. i'll investigate.
+
+2007-10-04  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
 	* pitivi/pitivi.py:
 	changed "new-project-loading" signal prototype, now passes the new
 	project as first parameter

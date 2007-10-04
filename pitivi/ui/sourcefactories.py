@@ -206,7 +206,10 @@ class SourceListWidget(gtk.VBox):
         # changing project.
         self.project_signals = SignalGroup()
         self._connectToProject(instance.PiTiVi.current)
-        instance.PiTiVi.connect("new-project-loaded", self._newProjectCb)
+        instance.PiTiVi.connect("new-project-loaded",
+            self._newProjectLoadedCb)
+        instance.PiTiVi.connect("new-project-failed",
+            self._newProjectFailedCb)
 
         # default pixbufs
         icontheme = gtk.icon_theme_get_default()
@@ -239,11 +242,16 @@ class SourceListWidget(gtk.VBox):
         If project is None, this just disconnects any connected handlers.
 
         """
-        self.project_signals.connect(project.sources, "file_added", None, self._fileAddedCb)
-        self.project_signals.connect(project.sources, "file_removed", None, self._fileRemovedCb)
-        self.project_signals.connect(project.sources, "not_media_file", None, self._notMediaFileCb)
-        self.project_signals.connect(project.sources, "ready", None, self._sourcesStoppedImportingCb)
-        self.project_signals.connect(project.sources, "starting", None, self._sourcesStartedImportingCb)
+        self.project_signals.connect(
+            project.sources, "file_added", None, self._fileAddedCb)
+        self.project_signals.connect(
+            project.sources, "file_removed", None, self._fileRemovedCb)
+        self.project_signals.connect(
+            project.sources, "not_media_file", None, self._notMediaFileCb)
+        self.project_signals.connect(
+            project.sources, "ready", None, self._sourcesStoppedImportingCb)
+        self.project_signals.connect(
+            project.sources, "starting", None, self._sourcesStartedImportingCb)
 
 
     ## Explanatory message methods
@@ -446,7 +454,7 @@ class SourceListWidget(gtk.VBox):
         factory = self.storemodel[path][COL_FACTORY]
         instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
 
-    def _newProjectCb(self, unused_pitivi, project):
+    def _newProjectLoadedCb(self, unused_pitivi, project):
         # clear the storemodel
         self.storemodel.clear()
 
@@ -455,8 +463,10 @@ class SourceListWidget(gtk.VBox):
             if factory:
                 if factory.thumbnail:
                     thumbnail = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
-                    desiredheight = 64 * thumbnail.get_height() / thumbnail.get_width()
-                    thumbnail = thumbnail.scale_simple(64, desiredheight, gtk.gdk.INTERP_BILINEAR)
+                    desiredheight = (64 * thumbnail.get_height() /
+                        thumbnail.get_width())
+                    thumbnail = thumbnail.scale_simple(
+                        64, desiredheight, gtk.gdk.INTERP_BILINEAR)
                 name = os.path.basename(unquote(factory.name))
                 if factory.is_video:
                     if not factory.thumbnail:
@@ -464,11 +474,17 @@ class SourceListWidget(gtk.VBox):
                 else:
                     if not factory.thumbnail:
                         thumbnail = self.audiofilepixbuf
-                # FIXME : update with new table structure (icon, infotext, objectfactory, uri
+                # FIXME : update with new table structure (icon,
+                # infotext, objectfactory, uri)
                 self.storemodel.append([thumbnail, name, factory, factory.name,
-                                "<b>%s</b>" % beautify_length(factory.length)])
+                    "<b>%s</b>" % beautify_length(factory.length)])
 
         self._connectToProject(project)
+
+    def _newProjectFailedCb(self, unused_pitivi, unused_reason,
+        unused_uri):
+        self.storemodel.clear()
+        self.project_signals.disconnectAll()
 
 
     ## Drag and Drop
