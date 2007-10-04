@@ -2,6 +2,20 @@
 
 	reviewed by: <delete if not using a buddy>
 
+	* pitivi/pitivi.py:
+	minor formatting changes
+	* pitivi/ui/mainwindow.py:
+	added preliminary support for the new project command. Improved
+	support will require some refactoring, so i'm going to commit that
+	separately
+	* pitivi/ui/timelineobjects.py:
+	added handlers for the new-project-* signals. the old code was
+	based on the the earlier project signals.
+
+2007-10-03  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
 	* pitivi/settings.py:
 	added new setting for enabling experimental file support
 	* pitivi/ui/mainwindow.py:

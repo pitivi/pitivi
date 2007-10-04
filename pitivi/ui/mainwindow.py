@@ -181,7 +181,8 @@ class PitiviMainWindow(gtk.Window):
                                      "About", "View", "FullScreen", "ImportSources",
                                      "ImportSourcesFolder", "AdvancedView", "PluginManager"]:
                 action.set_sensitive(True)
-            elif action.get_name() in ["SaveProject", "SaveProjectAs"]:
+            elif action.get_name() in ["SaveProject", "SaveProjectAs",
+                                       "NewProject"]:
                 if not instance.PiTiVi.settings.fileSupportEnabled:
                     action.set_sensitive(False)
             else:
@@ -288,7 +289,7 @@ class PitiviMainWindow(gtk.Window):
     ## Toolbar/Menu actions callback
 
     def _newProjectMenuCb(self, unused_action):
-        instance.PiTiVi.new_blank_project()
+        instance.PiTiVi.newBlankProject()
 
     def _openProjectCb(self, unused_action):
         raise NotImplementedError
@@ -351,45 +352,60 @@ class PitiviMainWindow(gtk.Window):
     ## PiTiVi main object callbacks
 
     def _newProjectCb(self, pitivi, project):
-        raise NotImplementedError
+        pass
 
     def _closingProjectCb(self, pitivi, project):
-        # Return True if we accept the project being close
-        # if we want to save it before it being closed, we must
-        #   do so
-
-        # For the time being we always accept it being closed
-        return True
+        if not project.hasUnsavedModifications():
+            return True
+        
+        dialog = gtk.MessageDialog(
+            self,
+            gtk.DIALOG_MODAL,
+            gtk.MESSAGE_QUESTION,
+            gtk.BUTTONS_YES_NO,
+            _("The project has unsaved changes. Do you wish to close the project?"))
+        response = dialog.run()
+        dialog.destroy()
+        if response == gtk.RESPONSE_YES:
+            return True
+        return False
 
     def _notProjectCb(self, pitivi, uri):
-        raise NotImplementedError
+        dialog = gtk.MessageDialog(self,
+            gtk.DIALOG_MODAL,
+            gtk.MESSAGE_ERROR,
+            gtk.BUTTONS_OK,
+            _("PiTiVi is unable to load the requested uri: \"%s\"") %
+        uri)
+        dialog.set_title(_("Error Loading File"))
+        dialog.run()
+        dialog.destroy()           
 
     ## PiTiVi current project callbacks
 
     def _confirmOverwriteCb(self, unused_project, uri):
-        message = "Do you wish to overwrite existing file \"%s\"?" %\
+        message = _("Do you wish to overwrite existing file \"%s\"?") %\
                  gst.uri_get_location(uri)
         
         dialog = gtk.MessageDialog(self,
-                                   gtk.DIALOG_MODAL,
-                                   gtk.MESSAGE_WARNING,
-                                   gtk.BUTTONS_YES_NO,
-                                   message)
+            gtk.DIALOG_MODAL,
+            gtk.MESSAGE_WARNING,
+            gtk.BUTTONS_YES_NO,
+            message)
         
         dialog.set_title(_("Overwrite Existing File?"))
         response = dialog.run()
         dialog.destroy()
         if response == gtk.RESPONSE_YES:
             return True
-        else:
-            return False
+        return False
 
     def _saveAsDialogCb(self, unused_project):
         chooser = gtk.FileChooserDialog(_("Save As..."),
-                                        self,
-                                        action=gtk.FILE_CHOOSER_ACTION_SAVE,
-                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                                                 gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+            self,
+            action=gtk.FILE_CHOOSER_ACTION_SAVE,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+            gtk.STOCK_SAVE, gtk.RESPONSE_OK))
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled"))
         chooser.set_default_response(gtk.RESPONSE_CANCEL)

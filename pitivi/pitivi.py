@@ -96,7 +96,8 @@ class Pitivi(gobject.GObject):
         # store ourself in the instance global
         if instance.PiTiVi:
             raise RuntimeWarning(
-                _("There is already a %s instance, inform developers") % APPNAME)
+                _("There is already a %s instance, inform developers")
+                % APPNAME)
         instance.PiTiVi = self
 
         # TODO parse cmd line arguments
@@ -105,8 +106,9 @@ class Pitivi(gobject.GObject):
         self.settings = GlobalSettings()
         self.threads = ThreadMaster()
 
-        self.plugin_manager = PluginManager(self.settings.get_local_plugin_path(),\
-                                            self.settings.get_plugin_settings_path())
+        self.plugin_manager = PluginManager(
+            self.settings.get_local_plugin_path(),
+            self.settings.get_plugin_settings_path())
 
         self.playground = PlayGround()
         self.current = Project(_("New Project"))
@@ -149,11 +151,9 @@ class Pitivi(gobject.GObject):
         gst.info("closing running project")
         if self.current:
             if self.current.hasUnsavedModifications():
-                result = self.current.save()
-                if not result:
+                if not self.current.save():
                     return False
-            result = not self.emit("closing-project", self.current)
-            if result:
+            if not self.emit("closing-project", self.current):
                 return False
             self.playground.pause()
             self.current = None

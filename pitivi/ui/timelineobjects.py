@@ -96,8 +96,15 @@ class SimpleTimeline(gtk.Layout):
         # Connect to timeline.  We must remove and reset the callbacks when
         # changing project.
         self.project_signals = SignalGroup()
+        # FIXME: do we need this? or will the newproject sginal implicitly
+        # handle this???
         self._connectToTimeline(instance.PiTiVi.current.timeline)
-        instance.PiTiVi.connect("new-project-loaded", self._newProjectCb)
+        instance.PiTiVi.connect("new-project-loaded",
+            self._newProjectLoadedCb)
+        instance.PiTiVi.connect("new-project-loading",
+            self._newProjectLoadingCb)
+        instance.PiTiVi.connect("new-project-failed",
+            self._newProjectFailedCb)
 
         # size
         self.width = int(DEFAULT_WIDTH)
@@ -134,21 +141,33 @@ class SimpleTimeline(gtk.Layout):
     def _connectToTimeline(self, timeline):
         self.timeline = timeline
         self.condensed = self.timeline.videocomp.condensed
-
         self.project_signals.connect(self.timeline.videocomp,
                                      "condensed-list-changed",
                                      None, self._condensedListChangedCb)
 
-    def _newProjectCb(self, unused_pitivi, project):
-        assert(instance.PiTiVi.current == project)
+    def _newProjectLoadingCb(self, inst):
+        # depopulate timeline -- no matter what happens, we don't want
+        # this stuff hanging around
+        self._clearTimeline()
+        # TODO: supress display of changes to timeline until loading
+        # is finisshed
 
+    def _newProjectLoadedCb(self, inst, project):
+        assert(instance.PiTiVi.current == project)
+        # TODO: display final state of project now that loading has
+        # completed
+        self._connectToTimeline(project.timeline)
+        
+    def _newProjectFailedCb(self, inst, reason, uri):
+        pass
+ 
+    def _clearTimeline(self):
+        self.switchToNormalMode()
+        self.project_signals.disconnectAll()
         for widget in self.widgets.itervalues():
             self.remove(widget)
         self.widgets = {}
-
-        self._connectToTimeline(instance.PiTiVi.current.timeline)
-
-
+    
     ## Timeline callbacks
 
     def _condensedListChangedCb(self, unused_videocomp, clist):
