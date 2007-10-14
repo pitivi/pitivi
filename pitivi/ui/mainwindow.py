@@ -333,7 +333,8 @@ class PitiviMainWindow(gtk.Window):
                    "Jeff Fortin <nekohayo@gmail.com> (UI)",
                    "Johan Dahlin <jdahlin@async.com.br> (UI)",
                    "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)",
-                   "Luca Della Santina <dellasantina@farm.unipi.it>"]
+                   "Luca Della Santina <dellasantina@farm.unipi.it>",
+                   "Thijs Vermeir <thijsvermeir@gmail.com>"]
         abt.set_authors(authors)
         abt.set_license(_("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details"))
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")

@@ -1,5 +1,11 @@
 2007-10-14  Edward Hervey  <bilboed@bilboed.com>
 
+	* AUTHORS:
+	* pitivi/ui/mainwindow.py:
+	Add Thijs Vermeir to the list of contributors
+
+2007-10-14  Edward Hervey  <bilboed@bilboed.com>
+
 	* pitivi/bin.py:
 	Add 'recording' property to SmartBin, set to True when it is in
 	recording mode.
