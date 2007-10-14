@@ -86,7 +86,7 @@ class SmartBin(gst.Pipeline):
         Set the audio sink thread.
         Returns False if there was a problem.
         """
-        self.debug("asinkthread : %s" % asinkthread)
+        self.debug("asinkthread : %r" % asinkthread)
         res, state, pending = self.get_state(0)
         if state == gst.STATE_PLAYING:
             self.warning("is in PAUSED or higher : %s" % state)
@@ -106,7 +106,7 @@ class SmartBin(gst.Pipeline):
         Set the video sink thread.
         Returns False if there was a problem.
         """
-        self.debug("vsinkthread : %s" % vsinkthread)
+        self.debug("vsinkthread : %r" % vsinkthread)
         res , state , pending = self.get_state(0)
         if state == gst.STATE_PLAYING:
             self.warning("is in PAUSED or higher : %s" % state)
@@ -129,7 +129,7 @@ class SmartBin(gst.Pipeline):
         Remove the audio sink thread.
         Returns False if there was a problem.
         """
-        self.debug("asinkthread : %s" % self.asinkthread)
+        self.debug("asinkthread : %r" % self.asinkthread)
         result, state, pending = self.get_state(0)
         if state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
             self.warning("is in PAUSED, not removing audiosink")
@@ -147,7 +147,7 @@ class SmartBin(gst.Pipeline):
         Remove the videos sink thread.
         Returns False if there was a problem.
         """
-        self.debug("vsinkthread : %s" % self.vsinkthread)
+        self.debug("vsinkthread : %r" % self.vsinkthread)
         result, state, pending = self.get_state(0)
         if state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
             self.warning("is in PAUSED or higher : %s" % state)
@@ -427,7 +427,7 @@ class SmartTimelineBin(SmartBin):
         self.project = project
 
         settings = project.getSettings()
-        self.log("source is %s" % project.timeline.timeline)
+        self.log("source is %r" % project.timeline.timeline)
         self.source = project.timeline.timeline
         self.project.connect("settings-changed", self._settingsChangedCb)
         project.timeline.videocomp.connect("start-duration-changed", self._startDurationChangedCb)

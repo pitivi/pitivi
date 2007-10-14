@@ -118,7 +118,7 @@ class PlayGround(gobject.GObject):
         Adds the given pipeline to the playground.
         Returns True if the pipeline was added to the playground.
         """
-        gst.debug("pipeline : %s" % pipeline)
+        gst.debug("pipeline : %r" % pipeline)
         if not isinstance(pipeline, SmartBin):
             return False
 
@@ -135,7 +135,7 @@ class PlayGround(gobject.GObject):
         Removes the given pipeline from the playground.
         Return True if everything went well.
         """
-        gst.debug("pipeline : %s" % pipeline)
+        gst.debug("pipeline : %r" % pipeline)
         if not pipeline in self.pipelines:
             return True
 
@@ -216,7 +216,7 @@ class PlayGround(gobject.GObject):
 
     def setVideoSinkThread(self, vsinkthread):
         """ sets the video sink thread """
-        gst.debug("video sink thread : %s" % vsinkthread)
+        gst.debug("video sink thread : %r" % vsinkthread)
         if self.vsinkthread and self.current.has_video:
             self.current.set_state(gst.STATE_READY)
             self.current.removeVideoSinkThread()
@@ -226,7 +226,7 @@ class PlayGround(gobject.GObject):
 
     def setAudioSinkThread(self, asinkthread):
         """ sets the audio sink thread """
-        gst.debug("set audio sink thread : %s" % asinkthread)
+        gst.debug("set audio sink thread : %r" % asinkthread)
         if self.asinkthread and self.current.asinkthread:
             self.current.set_state(gst.STATE_READY)
             self.current.removeAudioSinkThread()
@@ -242,7 +242,7 @@ class PlayGround(gobject.GObject):
         By default the bin will start playing, except if you set
         playit to False
         """
-        gst.debug("BEGINNING tempbin : %s" % tempbin)
+        gst.debug("BEGINNING tempbin : %r" % tempbin)
         self.pause()
         self.addPipeline(tempbin)
         self.switchToPipeline(tempbin)
@@ -251,7 +251,7 @@ class PlayGround(gobject.GObject):
         self.tempsmartbin = tempbin
         if playit and self.play() == gst.STATE_CHANGE_FAILURE:
             return False
-        gst.debug("END tempbin : %s" % tempbin)
+        gst.debug("END tempbin : %r" % tempbin)
         return True
 
     def playTemporaryFilesourcefactory(self, factory, playit=True):
@@ -355,7 +355,7 @@ class PlayGround(gobject.GObject):
     #
     def _busMessageCb(self, unused_bus, message, unused_pipeline):
         """ handler for messages from the pipelines' buses """
-        gst.info("%s [%s]" % (message.type, message.src))
+        gst.info("%s [%r]" % (message.type, message.src))
         if message.type == gst.MESSAGE_STATE_CHANGED:
             oldstate, newstate, pending = message.parse_state_changed()
             message.src.debug("old:%s, new:%s, pending:%s" %
@@ -416,7 +416,7 @@ class PlayGround(gobject.GObject):
         Uses the information from the Gerror, detail and source to
         create meaningful warning messages for the User Interface.
         """
-        gst.warning("gerror:%s , detail:%s , source:%s" % (gerror, detail, source))
+        gst.warning("gerror:%s , detail:%s , source:%r" % (gerror, detail, source))
         gst.warning("GError : code:%s, domain:%s, message:%s" % (gerror.code, gerror.domain, gerror.message))
 
 
