@@ -1,3 +1,14 @@
+2007 Oct 14 - PiTiVi 0.11.0
+
+ * Merging of all the 2007 Summer-Of-Code branch
+ * Simple timeline improvements : trimming and moving of sources
+ * Simple timeline improvement : volume change
+ * Advanced timeline re-activated
+ * Advanced timeline features : cutting and moving of sources
+ * Plugin framework added
+ * File save/load framework added, not activated yet
+ * i18n support, translated in 16 languages
+
 2007 May 30 - PiTiVi 0.10.3
 
  * Improvement of first time user experience.

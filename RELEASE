@@ -1,68 +1,62 @@
-0.10.3 Release : Got some new t-shirts
---------------------------------------
+0.11.0 Release : A hooligan's game played by gentlemen
+------------------------------------------------------
 
-The PiTiVi team is proud to announce the fourth release of the 0.10.x series of the PiTiVi opensource video editor.
+The PiTiVi team is proud to announce the first release in the unstable 0.11
+PiTiVi series.
 
-The goal of this series is to allow users to test new versions often, give their feedback, and remove bugs more often.
+Expect a new release every 3-weeks, regardless of current code status.
+
+This release series is not intended to be production-ready, but instead to allow
+users to try more often new features that will be available in the next stable
+series.
+
+The developers will not be held accountable for any work lost, flooding or war
+caused by this unstable series.
 
 
 * Features of this release
 
- * Improvement of first time user experience.
- * Frame-by-frame seeking
- * UI improvements for usability
- * New graphics
- * i18n support, translated in 14 languages
- * Critical bugfixes
- * Unit tests
- * Advanced view disabled by default
+ * Merging of all the 2007 Summer-Of-Code branch
+ * Simple timeline improvements : trimming and moving of sources
+ * Simple timeline improvement : volume change
+ * Advanced timeline re-activated
+ * Advanced timeline features : cutting and moving of sources
+ * Plugin framework added
+ * File save/load framework added, not activated yet
+ * i18n support, translated in 16 languages
 
 
 * Bugs Fixed
 
- * 353857 : [feature request] Frame-by-frame seeking
- * 383402 : Add explanatory text in empty sourcelist and timeline
- * 403877 : Can't drag from nautilus and drop on source list
- * 405467 : [i18n] pitivi/ui/timeline.py isn't included in translatable files
- * 406341 : [configure] Don't stop build if runtime-dependencies are not available
- * 415060 : various toolbar HIG fixes
- * 416702 : Moving clips in simple view is broken
- * 420847 : do not grow the timeline length if no clip was added or moved
- * 421652 : render button should be in the main toolbar
- * 421672 : remove the separator between video preview and playback controls
- * 424228 : regression, cannot add a clip to the timeline
- * 430686 : [Simple Timeline] Clips are not painted when switching from advanced timeline
- * 430954 : Fix terminology and naming.
- * 432204 : [Rendering dialog] Gettext issue, and button not disabled when rendering
- * 432644 : [Advanced Timeline] Disable alltogether until it works
- * 432655 : [Importing Files] Blocking and progress indication
- * 432656 : Source List explanation message gets cropped
- * 432682 : [Simple Timeline] Explanation message doesn't come back if we don't drop
- * 432714 : [Source List] Remove buttons
- * 432724 : [Simple Timeline] Don't show explanation message too soon
- * 441784 : [Simple Timeline] Make video-only clips work
+ * 335505 : [Simple Timeline] No obviosu way to remove a clip
+ * 405462 : Dragging from nautilus over sourceliste and timeline makes pitivi crash
+ * 430685 : [Simple Timeline] Shuffling clips around repeatedly hangs PiTiVi
+ * 430695 : [Advanced Timeline] cannot move clips around
+ * 456260 : Use decodebin2 for temporary clips.
+ * 456289 : Progressbar assertion failed when rendering project
+ * 456297 : ZeroDivisionError when rendering a project
+
 
 * Requirements
 
- * gstreamer >= 0.10.8
+ * gstreamer >= 0.10.14
  * gst-python >= 0.10.6
- * gnonlin >= 0.10.7
+ * gnonlin >= 0.10.9
  * pygtk >= 2.8.0
 
 
 * Contributors
 
  * Edward Hervey
- * Thibaut Girka
- * Jeff Fortin
- * Johan Dahlin
  * Brandon Lewis
+ * Luca Della Santina
+ * Thijs Vermeir
 
 
 * Download
 
   PiTiVi source tarballs are available on gnome FTP:
-   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.10/
+   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.11/
 
   See the website for distribution-specific packages.
 
