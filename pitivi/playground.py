@@ -280,7 +280,7 @@ class PlayGround(gobject.GObject):
         # videosink... and the result will be a position further than what's
         # actually being displayed currently :(
         try:
-            if onlyvideo:
+            if onlyvideo and not self.current.recording:
                 cur,format = self.vsinkthread.query_position(gst.FORMAT_TIME)
             else:
                 cur, format = self.current.query_position(gst.FORMAT_TIME)

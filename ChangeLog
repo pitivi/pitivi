@@ -1,6 +1,16 @@
 2007-10-14  Edward Hervey  <bilboed@bilboed.com>
 
 	* pitivi/bin.py:
+	Add 'recording' property to SmartBin, set to True when it is in
+	recording mode.
+	* pitivi/playground.py:
+	Query on the vsinkthread ONLY if the current smartbin is not in
+	recording mode, else query on the whole SmartBin.
+	This fixes the progress bar not working when encoding.
+
+2007-10-14  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/bin.py:
 	* pitivi/elements/singledecodebin.py:
 	* pitivi/playground.py:
 	Replace use of '%s' by '%r' for gst.Object subclasses in order to

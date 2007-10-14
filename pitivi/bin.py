@@ -72,6 +72,7 @@ class SmartBin(gst.Pipeline):
         self.encthread = None
         self.tmpasink = None
         self.tmpvsink = None
+        self.recording = False
 
     def _addSource(self):
         """ add the source to self """
@@ -140,6 +141,7 @@ class SmartBin(gst.Pipeline):
         self.asinkthread.get_pad("sink").get_peer().unlink(self.asinkthread.get_pad("sink"))
         self.remove(self.asinkthread)
         self.asinkthread = None
+        self.log("asinkthread removed succesfully")
         return True
 
     def removeVideoSinkThread(self):
@@ -158,6 +160,7 @@ class SmartBin(gst.Pipeline):
         self.vsinkthread.get_pad("sink").get_peer().unlink(self.vsinkthread.get_pad("sink"))
         self.remove(self.vsinkthread)
         self.vsinkthread = None
+        self.log("vsinkthread removed succesfully")
         return True
 
     def getRealVideoSink(self):
@@ -174,6 +177,10 @@ class SmartBin(gst.Pipeline):
         if self.set_state(gst.STATE_READY) == gst.STATE_CHANGE_FAILURE:
             self.warning("Couldn't switch to READY !")
             return False
+
+        if self.recording:
+            self.error("This bin is already in in recording mode !")
+            return
 
         # temporarily remove the audiosinkthread
         self.debug("disconnecting audio sink thread")
@@ -215,10 +222,16 @@ class SmartBin(gst.Pipeline):
         self.debug("now in PLAYING, set_state() returned %r" % changeret)
         if changeret == gst.STATE_CHANGE_FAILURE:
             return False
+
+        self.recording = True
         return True
 
     def stopRecording(self):
         """ stop the recording, removing the encoding thread """
+        if self.recording == False:
+            self.error("This bin is not in recording mode !")
+            return False
+
         self.set_state(gst.STATE_PAUSED)
 
         if self.encthread:
@@ -236,6 +249,9 @@ class SmartBin(gst.Pipeline):
             self.tmpvsink = None
 
         self.getRealVideoSink().set_property("sync", True)
+
+        self.recording = False
+        return True
 
     def getSettings(self):
         """ Return the ExportSettings for the bin """
