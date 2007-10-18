@@ -88,7 +88,7 @@ class ApplicationLogicTest(unittest.TestCase):
         self.ptv.connect("closing-project",
             self._closingProjectCb, True)
         self.ptv.current.connect("save-uri-requested",
-            self._saveUriRequestedCb, None)
+            self._saveUriRequestedCb, None, False)
 
         self.ptv.current.setModificationState(True)
         self.ptv.shutdown()
@@ -102,7 +102,7 @@ class ApplicationLogicTest(unittest.TestCase):
         self.ptv.connect("closing-project",
             self._closingProjectCb, True)
         self.ptv.current.connect("save-uri-requested",
-            self._saveUriRequestedCb, testUri)
+            self._saveUriRequestedCb, testUri, True)
 
         self.ptv.current.setModificationState(True)
         self.ptv.shutdown()
@@ -120,7 +120,7 @@ class ApplicationLogicTest(unittest.TestCase):
         # tests that closing a project will prompt the user if the current
         # project has unsaved changes
         self.ptv.current.connect("save-uri-requested",
-            self._saveUriRequestedCb, testUri)
+            self._saveUriRequestedCb, testUri, True)
         self.ptv.connect("closing-project",
             self._closingProjectCb, False)
 
@@ -131,7 +131,7 @@ class ApplicationLogicTest(unittest.TestCase):
 
     def testCloseProjectUnsaved(self):
         self.ptv.current.connect("save-uri-requested",
-            self._saveUriRequestedCb, testUri)
+            self._saveUriRequestedCb, testUri, True)
         self.ptv.connect("closing-project",
             self._closingProjectCb, False)
 
@@ -144,7 +144,7 @@ class ApplicationLogicTest(unittest.TestCase):
     def testNewProjectComplex(self):
         # test creating new project when current project has unsaved changes
         self.ptv.current.connect("save-uri-requested",
-            self._saveUriRequestedCb, testUri)
+            self._saveUriRequestedCb, testUri, True)
         self.ptv.current.connect("confirm-overwrite",
             self._confirmOverwriteCb, True)
         self.ptv.connect("new-project-loading",
@@ -169,7 +169,7 @@ class ApplicationLogicTest(unittest.TestCase):
         # existing project is detected, and that returning true results in the
         # project being overwritten.
         self.ptv.current.connect("save-uri-requested",
-            self._saveUriRequestedCb, testUri)
+            self._saveUriRequestedCb, testUri, True)
         self.ptv.current.connect("confirm-overwrite",
             self._confirmOverwriteCb, True)
         self.ptv.connect_after("closing-project",
@@ -200,9 +200,11 @@ class ApplicationLogicTest(unittest.TestCase):
     def testLoadProject(self):
         pass
 
-    def _saveUriRequestedCb(self, unused_project, argument):
+    def _saveUriRequestedCb(self, unused_project, uri, retval):
         self._got_save_uri_requested_signal = True
-        return argument
+        if retval:
+            self.ptv.current.setUri(uri)
+        return retval
 
     def _confirmOverwriteCb(self, unused_project, uri, argument):
         self._got_confirm_overwrite_signal = True
@@ -230,7 +232,7 @@ class ProjectSaverTest(unittest.TestCase):
         formats = projectsaver.ProjectSaver.listFormats()
         self.projectsavers = {}
         for format in formats:
-            saver = projectsaver.ProjectSaver.newProjectSaver(format)
+            saver = projectsaver.ProjectSaver.newProjectSaver(format[0])
             self.projectsavers[format] = saver
 
     def tearDown(self):

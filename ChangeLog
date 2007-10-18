@@ -1,3 +1,10 @@
+2007-10-18  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* tests/test_file_load_save.py:
+	updated test cases
+
 2007-10-17  Brandon Lewis  <brandon_lewis@berkeley.edu>
 
 	reviewed by: <delete if not using a buddy>
