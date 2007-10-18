@@ -32,7 +32,6 @@ from sourcelist import SourceList
 from bin import SmartTimelineBin
 from settings import ExportSettings
 from configure import APPNAME
-
 from gettext import gettext as _
 from serializable import Serializable, to_object_from_data_type
 from projectsaver import ProjectSaver, ProjectSaveError, ProjectLoadError
@@ -43,8 +42,10 @@ class Project(gobject.GObject, Serializable):
 
        string save-uri-requested()
             The the current project has been requested to save itself, but
-            needs a URI to which to save. Handlers should return a uri to save
-            the file to or None, in which case the file will not be saved.
+            needs a URI to which to save. Handlers should first call
+            setUri(), with the uri to save the file (optionally
+            specifying the file format) and return True, or simply
+            return False to cancel the file save operation.
 
         boolean confirm-overwrite()
             The project has been requested to save itself, but the file on
@@ -60,7 +61,7 @@ class Project(gobject.GObject, Serializable):
 
     __gsignals__ = {
         "save-uri-requested" : ( gobject.SIGNAL_RUN_LAST,
-                                     gobject.TYPE_STRING,
+                                     gobject.TYPE_BOOLEAN,
                                      ( )),
         "confirm-overwrite" : ( gobject.SIGNAL_RUN_LAST,
                                 gobject.TYPE_BOOLEAN,
@@ -83,6 +84,7 @@ class Project(gobject.GObject, Serializable):
         self.settings = None
         self.description = ""
         self.uri = uri
+        self.format = None
         self.sources = SourceList(self)
         self.timeline = None
         self.timelinebin = None
@@ -112,10 +114,10 @@ class Project(gobject.GObject, Serializable):
             if file_is_project(self.uri):
                 loader = ProjectSaver.newProjectSaver("pickle")
                 path = gst.uri_get_location(self.uri)
-                fileobj = open(path, "w")
+                fileobj = open(path, "r")
                 try:
-                    tree = loader.deserialize(fileobj)
-                    self.fromDataType(tree)
+                    tree = loader.openFromFile(fileobj)
+                    self.fromDataFormat(tree)
                 except ProjectLoadError:
                     return False
                 fileobj.close()
@@ -139,7 +141,11 @@ class Project(gobject.GObject, Serializable):
             if not self.emit("confirm-overwrite", self.uri):
                 return False
         try:
-            # dummy save code for now
+            # fileobj = open(path, "w")
+            # loader = ProjectSaver.newProjectSaver(self.format)
+            # tree = self.toDataFormat()
+            # loader.saveToFile({}, fileobj)
+            gst.info("pretending to save file in %s" % self.format)
             os.system("touch %s" % path)
             self._dirty = False
             return True
@@ -149,23 +155,31 @@ class Project(gobject.GObject, Serializable):
     def save(self):
         """ Saves the project to the project's current file """
         if not self.uri:
-            uri = self.emit("save-uri-requested")
-            if not uri:
-                return False
-            self.uri = uri
-        return self._save()
+            if self.emit("save-uri-requested"):
+                if not self.uri:
+                    return False
+                return self._save()
+        return False
 
     def saveAs(self):
         """ Saves the project to the given file name """
-        uri = self.emit("save-uri-requested")
-        if not uri:
+        if not self.emit("save-uri-requested"):
             return False
-        self.uri = uri
+        if not self.uri:
+            return False
         return self._save()
 
     # setting methods
     def _settingsChangedCb(self, unused_settings):
         self.emit('settings-changed')
+
+    def setUri(self, uri, format=None):
+        self.uri = uri
+        if not format:
+            path = gst.uri_get_location(uri)
+            ext = os.path.splitext(path)[1]
+            format = ProjectSaver.getFormat(ext)
+        self.format = format
 
     def getSettings(self):
         """

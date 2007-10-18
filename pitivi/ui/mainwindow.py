@@ -38,6 +38,7 @@ else:
 
 import pitivi.instance as instance
 import pitivi.configure as configure
+from pitivi.projectsaver import ProjectSaver
 
 from gettext import gettext as _
 
@@ -73,6 +74,9 @@ class PitiviMainWindow(gtk.Window):
         self._createStockIcons()
         self._setActions()
         self._createUi()
+        self.actions = None
+        self.toggleactions = None
+        self.actiongroup = None
 
         self.isFullScreen = False
         self.errorDialogBox = None
@@ -131,10 +135,12 @@ class PitiviMainWindow(gtk.Window):
                 ('pitivi-render', 'Render', 0, 0, 'pitivi')
                 ])
         factory = gtk.IconFactory()
-        pixbuf = gtk.gdk.pixbuf_new_from_file (configure.get_pixmap_dir() + "/pitivi-advanced-24.png")
+        pixbuf = gtk.gdk.pixbuf_new_from_file(
+            configure.get_pixmap_dir() + "/pitivi-advanced-24.png")
         iconset = gtk.IconSet(pixbuf)
         factory.add('pitivi-advanced-mode', iconset)
-        pixbuf = gtk.gdk.pixbuf_new_from_file (configure.get_pixmap_dir() + "/pitivi-render-24.png")
+        pixbuf = gtk.gdk.pixbuf_new_from_file(
+            configure.get_pixmap_dir() + "/pitivi-render-24.png")
         iconset = gtk.IconSet(pixbuf)
         factory.add('pitivi-render', iconset)
         factory.add_default()
@@ -143,27 +149,41 @@ class PitiviMainWindow(gtk.Window):
     def _setActions(self):
         """ sets up the GtkActions """
         self.actions = [
-            ("NewProject", gtk.STOCK_NEW, None, None, _("Create a new project"), self._newProjectMenuCb),
-            ("OpenProject", gtk.STOCK_OPEN, None, None, _("Open an existing project"), self._openProjectCb),
-            ("SaveProject", gtk.STOCK_SAVE, None, None, _("Save the current project"), self._saveProjectCb),
-            ("SaveProjectAs", gtk.STOCK_SAVE_AS, None, None, _("Save the current project"), self._saveProjectAsCb),
-            ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project settings"), None, _("Edit the project settings"), self._projectSettingsCb),
-            ("ImportSources", gtk.STOCK_ADD, _("_Import clips..."), None, _("Import clips to use"), self._importSourcesCb),
-            ("ImportSourcesFolder", gtk.STOCK_ADD, _("_Import folder of clips..."), None, _("Import folder of clips to use"), self._importSourcesFolderCb),
-            ("RenderProject", 'pitivi-render' , _("_Render project"), None, _("Render project"), self._recordCb),
-            ("PluginManager", gtk.STOCK_PREFERENCES , _("_Plugins..."), None, _("Manage plugins"), self._pluginManagerCb),
+            ("NewProject", gtk.STOCK_NEW, None,
+             None, _("Create a new project"), self._newProjectMenuCb),
+            ("OpenProject", gtk.STOCK_OPEN, None,
+             None, _("Open an existing project"), self._openProjectCb),
+            ("SaveProject", gtk.STOCK_SAVE, None,
+             None, _("Save the current project"), self._saveProjectCb),
+            ("SaveProjectAs", gtk.STOCK_SAVE_AS, None,
+             None, _("Save the current project"), self._saveProjectAsCb),
+            ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project settings"),
+             None, _("Edit the project settings"), self._projectSettingsCb),
+            ("ImportSources", gtk.STOCK_ADD, _("_Import clips..."),
+             None, _("Import clips to use"), self._importSourcesCb),
+            ("ImportSourcesFolder", gtk.STOCK_ADD,
+             _("_Import folder of clips..."), None,
+             _("Import folder of clips to use"), self._importSourcesFolderCb),
+            ("RenderProject", 'pitivi-render' , _("_Render project"),
+             None, _("Render project"), self._recordCb),
+            ("PluginManager", gtk.STOCK_PREFERENCES ,
+             _("_Plugins..."),
+             None, _("Manage plugins"), self._pluginManagerCb),
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
-            ("About", gtk.STOCK_ABOUT, None, None, _("Information about %s") % APPNAME, self._aboutCb),
+            ("About", gtk.STOCK_ABOUT, None, None,
+             _("Information about %s") % APPNAME, self._aboutCb),
             ("File", None, _("_File")),
             ("Edit", None, _("_Edit")),
             ("View", None, _("_View")),
             ("Help", None, _("_Help"))
-            ]
+        ]
 
         self.toggleactions = [
-            ("AdvancedView", 'pitivi-advanced-mode', _("Advanced vie_w"), None, _("Switch to advanced view"), self._advancedViewCb),
-            ("FullScreen", gtk.STOCK_FULLSCREEN, None, None, _("View the main window on the whole screen"), self._fullScreenCb)
-            ]
+            ("AdvancedView", 'pitivi-advanced-mode', _("Advanced vie_w"),
+             None, _("Switch to advanced view"), self._advancedViewCb),
+            ("FullScreen", gtk.STOCK_FULLSCREEN, None, None,
+             _("View the main window on the whole screen"), self._fullScreenCb)
+        ]
 
         self.actiongroup = gtk.ActionGroup("mainwindow")
         self.actiongroup.add_actions(self.actions)
@@ -177,12 +197,13 @@ class PitiviMainWindow(gtk.Window):
             elif action.get_name() == "AdvancedView":
                 if not instance.PiTiVi.settings.advancedModeEnabled:
                     action.set_visible(False)
-            elif action.get_name() in ["ProjectSettings", "Quit", "File", "Edit", "Help",
-                                     "About", "View", "FullScreen", "ImportSources",
-                                     "ImportSourcesFolder", "AdvancedView", "PluginManager"]:
+            elif action.get_name() in [
+                "ProjectSettings", "Quit", "File", "Edit", "Help",
+                "About", "View", "FullScreen", "ImportSources",
+                "ImportSourcesFolder", "AdvancedView", "PluginManager"]:
                 action.set_sensitive(True)
             elif action.get_name() in ["SaveProject", "SaveProjectAs",
-                                       "NewProject"]:
+                    "NewProject", "OpenProject"]:
                 if not instance.PiTiVi.settings.fileSupportEnabled:
                     action.set_sensitive(False)
             else:
@@ -292,7 +313,32 @@ class PitiviMainWindow(gtk.Window):
         instance.PiTiVi.newBlankProject()
 
     def _openProjectCb(self, unused_action):
-        raise NotImplementedError
+        chooser = gtk.FileChooserDialog(_("Open File ..."),
+            self,
+            action=gtk.FILE_CHOOSER_ACTION_OPEN,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser.set_select_multiple(False)
+        chooser.set_default_response(gtk.RESPONSE_CANCEL)
+        formats = ProjectSaver.listFormats()
+        default = gtk.FileFilter()
+        default.set_name("All")
+        default.add_pattern("*")
+        chooser.add_filter(default)
+        for format in formats:
+            filt = gtk.FileFilter()
+            filt.set_name(format[0])
+            for ext in format[1]:
+                filt.add_pattern("*%s" % ext)
+            chooser.add_filter(filt)
+
+        response = chooser.run()
+
+        if response == gtk.RESPONSE_OK:
+            path = chooser.get_filename()
+            instance.PiTiVi.loadProject(filepath = path)
+        chooser.destroy()
+        return True
 
     def _saveProjectCb(self, unused_action):
         instance.PiTiVi.current.save()
@@ -401,25 +447,41 @@ class PitiviMainWindow(gtk.Window):
             return True
         return False
 
-    def _saveAsDialogCb(self, unused_project):
+    def _saveAsDialogCb(self, project):
         chooser = gtk.FileChooserDialog(_("Save As..."),
             self,
             action=gtk.FILE_CHOOSER_ACTION_SAVE,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
             gtk.STOCK_SAVE, gtk.RESPONSE_OK))
+        
         chooser.set_select_multiple(False)
-        chooser.set_current_name(_("Untitled"))
+        chooser.set_current_name(_("Untitled.pptv"))
         chooser.set_default_response(gtk.RESPONSE_CANCEL)
-        #TODO: get appropriate filters from projectsaver module
-
+        formats = ProjectSaver.listFormats()
+        default = gtk.FileFilter()
+        default.set_name(_("Detect Automatically"))
+        default.add_pattern("*")
+        chooser.add_filter(default)
+        for format in formats:
+            filt = gtk.FileFilter()
+            filt.set_name(format[0])
+            for ext in format[1]:
+                filt.add_pattern("*.%s" % ext)
+            chooser.add_filter(filt)
+        
         response = chooser.run()
   
         if response == gtk.RESPONSE_OK:
-            fn = "file://" + chooser.get_filename()
-        else:
-            fn = None
+            # need to do this to work around bug in gst.uri_construct
+            # which escapes all /'s in path!
+            uri = "file://" + chooser.get_filename()
+            format = chooser.get_filter().get_name()
+            format = None if format == _("Detect Automatically") else format
+            project.setUri(uri, format)
+            chooser.destroy()
+            return True
         chooser.destroy()
-        return fn
+        return False
         
 
 class EncodingDialog(GladeWindow):

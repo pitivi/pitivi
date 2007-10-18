@@ -1,3 +1,20 @@
+2007-10-17  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/project.py:
+	redefined prototype for save-uri-requested signal -- uri, format
+	made changes to application logic, which was buggy
+	now passed into method call setUri()
+	* pitivi/projectsaver.py:
+	added some more classmethods for working with projectSaver derivatives
+	* pitivi/ui/mainwindow.py:
+	implemented file type filters in in open and save dialogs.
+
+	Note: this code breaks some test cases relating to the applicaiton
+	logic, but appears to work properly. Want to get changes to
+	server, will debug the application logic in next commit.
+
 2007-10-14  Edward Hervey  <bilboed@bilboed.com>
 
 	* configure.ac:

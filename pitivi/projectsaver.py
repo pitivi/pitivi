@@ -52,6 +52,7 @@ class ProjectSaver(object):
     class"""
 
     __file_format = "None"
+    __extensions = ()
     
     @classmethod
     def newProjectSaver(cls, fmt="pickle"):
@@ -61,7 +62,7 @@ class ProjectSaver(object):
         returns  -- instance of project saver or None if format
         unavailable"""
 
-        formats = cls._getformats()
+        formats = cls.getFormats()
         if fmt not in formats:
             return None
         return formats[fmt]()
@@ -69,17 +70,34 @@ class ProjectSaver(object):
     # This may be redundant now with the advent of plugin manager
     @classmethod
     def listFormats(cls):
-        """Returns a list of implemented file formats
+        """Returns a list of (format, extensions) tuples
         """
         #FIXME: this is crack
-        return cls._getformats().keys()
+        return [(i[0], i[1].__extensions__) for i
+                in cls.getFormats().items()]
 
     @classmethod
-    def _getformats(cls):
+    def getFormats(cls):
+        """Returns a dict of file formats objects"""
         formats = {}
         for sbcls in cls.__subclasses__():
             formats[sbcls.__file_format__] = sbcls
         return formats
+
+    @classmethod
+    def getFormat(cls, ext):
+        """Returns a string specifying the first format that matches
+           given extension"""
+        ret = cls.defaultFormat()
+        for subcls in cls.__subclasses__():
+            if ext in subcls.__extensions__:
+                ret = subcls.__file_format__
+        return ret
+
+    @classmethod
+    def defaultFormat(cls):
+        """Somewhat arbitrarily defines the default format as 'pickle"""
+        return "pickle"
 
     def __init__(self, format=None):
         pass
@@ -149,6 +167,7 @@ class ProjectSaver(object):
 class PickleFormat(ProjectSaver):
     """ Implements default file format project files using cpickle"""
     __file_format__ = "pickle"
+    __extensions__ = (".pptv",)
     
     def load(self, input_stream):
         try:
