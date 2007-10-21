@@ -43,6 +43,8 @@ caused by this unstable series.
  * gst-python >= 0.10.6
  * gnonlin >= 0.10.9
  * pygtk >= 2.8.0
+ * zope.interface (http://www.zope.org/Products/ZopeInterface)
+ * setuptools (http://peak.telecommunity.com/DevCenter/setuptools)
 
 
 * Contributors

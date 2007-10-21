@@ -1,3 +1,20 @@
+2007-10-21  Edward Hervey  <bilboed@bilboed.com>
+
+	* RELEASE:
+	Add new dependencies
+	* pitivi/settings.py:
+	getVideoCaps() and getAudioCaps() now return intersection of
+	configured settings AND corresponding encoder sink caps.
+	* pitivi/timeline/objects.py:
+	Add a mode to force setting start/duration on the gnlobject.
+	Fixes a stupid bug with cutting.
+	* pitivi/timeline/source.py:
+	Fix debugging
+	* pitivi/ui/viewer.py:
+	Fix debugging.
+	Only set XID on videosink widget if it is exposed in order to avoid
+	X errors.
+
 2007-10-18  Brandon Lewis  <brandon_lewis@berkeley.edu>
 
 	reviewed by: <delete if not using a buddy>

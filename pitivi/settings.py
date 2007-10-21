@@ -178,7 +178,10 @@ class ExportSettings(gobject.GObject, Serializable):
         astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (self.videowidth, self.videoheight,
                                                                                 self.videopar.num, self.videopar.denom,
                                                                                 self.videorate.num, self.videorate.denom)
-        return gst.caps_from_string("video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (astr, astr))
+        vcaps = gst.caps_from_string("video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (astr, astr))
+        if self.vencoder:
+            return get_compatible_sink_caps(self.vencoder, vcaps)
+        return vcaps
 
     def getVideoDescription(self):
         """ Returns a human-readable markup-ed string describing the video properties """
@@ -194,7 +197,12 @@ class ExportSettings(gobject.GObject, Serializable):
     def getAudioCaps(self):
         """ Returns the GstCaps corresponding to the audio settings """
         astr = "rate=%d,depth=%d,channels=%d" % (self.audiorate, self.audiodepth, self.audiochannels)
-        return gst.caps_from_string("audio/x-raw-int,%s;audio/x-raw-float,%s" % (astr, astr))
+        astrcaps = gst.caps_from_string("audio/x-raw-int,%s;audio/x-raw-float,%s" % (astr, astr))
+        if self.aencoder:
+            return get_compatible_sink_caps(self.aencoder, astrcaps)
+        return astrcaps
+
+        # interset with current audioencoder sink pad caps
 
     def setVideoProperties(self, width=-1, height=-1, framerate=-1, par=-1):
         """ Set the video width, height and framerate """
@@ -291,6 +299,24 @@ class ExportSettings(gobject.GObject, Serializable):
             self.acodecsettings = ret["audio-encoder-settings"]
         if "video-encoder-settings" in ret:
             self.vcodecsettings = ret["video-encoder-settings"]
+
+def get_compatible_sink_caps(factoryname, caps):
+    """
+    Returns the compatible caps between 'caps' and the sink pad caps of 'factoryname'
+    """
+    factory = gst.registry_get_default().lookup_feature(factoryname)
+    if factory == None:
+        return None
+
+    res = []
+    sinkcaps = [x.get_caps() for x in factory.get_static_pad_templates() if x.direction == gst.PAD_SINK]
+    for c in sinkcaps:
+        inter = caps.intersect(c)
+        if inter:
+            res.append(inter)
+    if len(res) > 0:
+        return res[0]
+    return None
 
 def list_compat(a, b):
     for x in a:

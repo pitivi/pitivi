@@ -181,12 +181,14 @@ class TimelineFileSource(TimelineSource):
         return brother
 
     def _setMediaStartDurationTime(self, start=-1, duration=-1):
-        gst.info("TimelineFileSource start:%s , duration:%s" % (
-                gst.TIME_ARGS(start),
-                gst.TIME_ARGS(duration)))
-        gst.info("TimelineFileSource EXISTING start:%s , duration:%s" % (
-                gst.TIME_ARGS(self.media_start),
-                gst.TIME_ARGS(self.media_duration)))
+        gst.info("TimelineFileSource %s start:%s , duration:%s" % (
+            self,
+            gst.TIME_ARGS(start),
+            gst.TIME_ARGS(duration)))
+        gst.info("TimelineFileSource %s EXISTING start:%s , duration:%s" % (
+            self,
+            gst.TIME_ARGS(self.media_start),
+            gst.TIME_ARGS(self.media_duration)))
         if not duration == -1 and not self.media_duration == duration:
             self.gnlobject.set_property("media-duration", long(duration))
         if not start == -1 and not self.media_start == start:
@@ -205,7 +207,7 @@ class TimelineFileSource(TimelineSource):
             self.linked._setMediaStartDurationTime(start, duration)
 
     def _mediaStartDurationChangedCb(self, gnlobject, property):
-        gst.log("%s %s" % (property, property.name))
+        gst.log("%r %s %s" % (gnlobject, property, property.name))
         mstart = None
         mduration = None
         if property.name == "media-start":

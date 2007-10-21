@@ -343,16 +343,16 @@ class TimelineObject(BrotherObjects):
             self.gnlobject = self._makeGnlObject()
             self.gnlobject.connect("notify::start", self._startDurationChangedCb)
             self.gnlobject.connect("notify::duration", self._startDurationChangedCb)
-            self._setStartDurationTime(self.start, self.duration)
+            self._setStartDurationTime(self.start, self.duration, True)
 
-    def _setStartDurationTime(self, start=-1, duration=-1):
+    def _setStartDurationTime(self, start=-1, duration=-1, force=False):
         # really modify the start/duration time
         self.gnlobject.info("start:%s , duration:%s" %( gst.TIME_ARGS(start),
                                                         gst.TIME_ARGS(duration)))
-        if not duration == -1 and not self.duration == duration:
+        if not duration == -1 and (not self.duration == duration or force):
             self.duration = duration
             self.gnlobject.set_property("duration", long(duration))
-        if not start == -1 and not self.start == start:
+        if not start == -1 and (not self.start == start or force):
             self.start = start
             self.gnlobject.set_property("start", long(start))
 
