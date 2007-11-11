@@ -1,3 +1,10 @@
+2007-11-11  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/ui/sourcefactories.py:
+	If the system isn't icon-theme-spec compliant, load pixbufs the old way
+	using shipped pngs.
+	Fixes #461913
+
 2007-10-21  Edward Hervey  <bilboed@bilboed.com>
 
 	* RELEASE:

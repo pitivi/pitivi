@@ -214,8 +214,14 @@ class SourceListWidget(gtk.VBox):
         # default pixbufs
         icontheme = gtk.icon_theme_get_default()
         self.filepixbuf = icontheme.load_icon("misc", 32, 0)
+        if not self.filepixbuf:
+            self.filepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-file.png"))
         self.audiofilepixbuf = icontheme.load_icon("audio-x-generic", 32, 0)
+        if not self.audiofilepixbuf:
+            self.audiofilepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-sound.png"))
         self.videofilepixbuf = icontheme.load_icon("video-x-generic", 32, 0)
+        if not self.videofilepixbuf:
+            self.videofilepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-video.png"))
 
         # Drag and Drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
