@@ -196,7 +196,7 @@ class ExportSettings(gobject.GObject, Serializable):
 
     def getAudioCaps(self):
         """ Returns the GstCaps corresponding to the audio settings """
-        astr = "rate=%d,depth=%d,channels=%d" % (self.audiorate, self.audiodepth, self.audiochannels)
+        astr = "rate=%d,channels=%d" % (self.audiorate, self.audiochannels)
         astrcaps = gst.caps_from_string("audio/x-raw-int,%s;audio/x-raw-float,%s" % (astr, astr))
         if self.aencoder:
             return get_compatible_sink_caps(self.aencoder, astrcaps)
@@ -304,16 +304,21 @@ def get_compatible_sink_caps(factoryname, caps):
     """
     Returns the compatible caps between 'caps' and the sink pad caps of 'factoryname'
     """
+    gst.log("factoryname : %s , caps : %s" % (factoryname, caps.to_string()))
     factory = gst.registry_get_default().lookup_feature(factoryname)
     if factory == None:
+        gst.warning("%s is not a valid factoryname" % factoryname)
         return None
 
     res = []
     sinkcaps = [x.get_caps() for x in factory.get_static_pad_templates() if x.direction == gst.PAD_SINK]
     for c in sinkcaps:
+        gst.log("sinkcaps %s" % c.to_string())
         inter = caps.intersect(c)
+        gst.log("intersection %s" % inter.to_string())
         if inter:
             res.append(inter)
+
     if len(res) > 0:
         return res[0]
     return None

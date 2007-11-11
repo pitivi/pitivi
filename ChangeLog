@@ -1,5 +1,13 @@
 2007-11-11  Edward Hervey  <bilboed@bilboed.com>
 
+	* pitivi/settings.py:
+	Add some debugging.
+	Don't specify audio depth in settings caps, this causes too many issues
+	with compatible encoder caps.
+	Fixes #487455
+
+2007-11-11  Edward Hervey  <bilboed@bilboed.com>
+
 	* pitivi/ui/sourcefactories.py:
 	If the system isn't icon-theme-spec compliant, load pixbufs the old way
 	using shipped pngs.
