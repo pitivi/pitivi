@@ -510,7 +510,7 @@ class SourceListWidget(gtk.VBox):
         gst.debug("targetType:%d, selection.data:%r" % (targetType, selection.data))
         directories = []
         if targetType == dnd.TYPE_URI_LIST:
-            incoming = [x.strip('\x00') for x in selection.data.strip().split("\r\n") if x.strip('\x00')]
+            incoming = [unquote(x.strip('\x00')) for x in selection.data.strip().split("\r\n") if x.strip('\x00')]
             filenames = [x for x in incoming if isfile(x)]
             directories = [x for x in incoming if not isfile(x)]
         elif targetType == dnd.TYPE_TEXT_PLAIN:

@@ -1,3 +1,11 @@
+2007-11-12  Edward Hervey  <bilboed@bilboed.com>
+
+	Patch by: Tommy <yobbobandana at yahoo dot co dot nz>
+
+	* pitivi/ui/sourcefactories.py:
+	unquote urls from drag and drop, this should fix some issues when
+	DnD'ing files from Nautilus for ex.
+
 2007-11-11  Edward Hervey  <bilboed@bilboed.com>
 
 	* pitivi/settings.py:
