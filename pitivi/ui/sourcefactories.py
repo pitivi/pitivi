@@ -332,10 +332,7 @@ class SourceListWidget(gtk.VBox):
         """ walks the trees of the folders in the list and adds the files it finds """
         instance.PiTiVi.threads.addThread(PathWalker, list, instance.PiTiVi.current.sources.addUris)
 
-    # sourcelist callbacks
-
-    def _fileAddedCb(self, unused_sourcelist, factory):
-        """ a file was added to the sourcelist """
+    def _addFactory(self, factory):
         try:
             pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
         except:
@@ -357,6 +354,12 @@ class SourceListWidget(gtk.VBox):
                                 factory.name,
                                 "<b>%s</b>" % beautify_length(factory.length)])
         self._displayTreeView()
+
+    # sourcelist callbacks
+
+    def _fileAddedCb(self, unused_sourcelist, factory):
+        """ a file was added to the sourcelist """
+        self._addFactory(factory)
 
     def _fileRemovedCb(self, unused_sourcelist, uri):
         """ the given uri was removed from the sourcelist """
@@ -463,29 +466,11 @@ class SourceListWidget(gtk.VBox):
     def _newProjectLoadedCb(self, unused_pitivi, project):
         # clear the storemodel
         self.storemodel.clear()
-
+        self._connectToProject(project)
         # synchronize the storemodel with the new project's sourcelist
         for uri, factory in project.sources:
-            if factory:
-                if factory.thumbnail:
-                    thumbnail = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
-                    desiredheight = (64 * thumbnail.get_height() /
-                        thumbnail.get_width())
-                    thumbnail = thumbnail.scale_simple(
-                        64, desiredheight, gtk.gdk.INTERP_BILINEAR)
-                name = os.path.basename(unquote(factory.name))
-                if factory.is_video:
-                    if not factory.thumbnail:
-                        thumbnail = self.videofilepixbuf
-                else:
-                    if not factory.thumbnail:
-                        thumbnail = self.audiofilepixbuf
-                # FIXME : update with new table structure (icon,
-                # infotext, objectfactory, uri)
-                self.storemodel.append([thumbnail, name, factory, factory.name,
-                    "<b>%s</b>" % beautify_length(factory.length)])
-
-        self._connectToProject(project)
+            gst.log("loading uri %s" % uri)
+            self._addFactory(factory)
 
     def _newProjectFailedCb(self, unused_pitivi, unused_reason,
         unused_uri):

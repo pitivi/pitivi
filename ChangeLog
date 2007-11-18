@@ -1,5 +1,11 @@
 2007-11-18  Edward Hervey  <bilboed@bilboed.com>
 
+	* pitivi/ui/sourcefactories.py:
+	Fixes to display factories when a new project is loaded.
+	Re-factored code a bit to avoid duplicates.
+
+2007-11-18  Edward Hervey  <bilboed@bilboed.com>
+
 	* pitivi/pitivi.py:
 	The uri is a keyword argument to Project()
 	* pitivi/project.py:
