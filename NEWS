@@ -1,3 +1,11 @@
+2007 Nov 18 - PiTiVi 0.11.1
+
+ * More work on project save/load, use PITIVI_FILE_SUPPORT=1 to try it.
+ * Be more flexible with encoding caps, should fix more issues when encoding.
+ * Fixed issues for non icon-theme-spec compliant systems
+ * i18n updates
+ * Misc fixes
+
 2007 Oct 14 - PiTiVi 0.11.0
 
  * Merging of all the 2007 Summer-Of-Code branch

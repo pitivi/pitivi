@@ -1,7 +1,7 @@
-0.11.0 Release : A hooligan's game played by gentlemen
-------------------------------------------------------
+0.11.1 Release : A gentlemen game played by hooligans
+-----------------------------------------------------
 
-The PiTiVi team is proud to announce the first release in the unstable 0.11
+The PiTiVi team is proud to announce the second release in the unstable 0.11
 PiTiVi series.
 
 Expect a new release every 3-weeks, regardless of current code status.
@@ -16,26 +16,16 @@ caused by this unstable series.
 
 * Features of this release
 
- * Merging of all the 2007 Summer-Of-Code branch
- * Simple timeline improvements : trimming and moving of sources
- * Simple timeline improvement : volume change
- * Advanced timeline re-activated
- * Advanced timeline features : cutting and moving of sources
- * Plugin framework added
- * File save/load framework added, not activated yet
- * i18n support, translated in 16 languages
-
+ * More work on project save/load, use PITIVI_FILE_SUPPORT=1 to try it.
+ * Be more flexible with encoding caps, should fix more issues when encoding.
+ * Fixed issues for non icon-theme-spec compliant systems
+ * Misc fixes
 
 * Bugs Fixed
 
- * 335505 : [Simple Timeline] No obviosu way to remove a clip
- * 405462 : Dragging from nautilus over sourceliste and timeline makes pitivi crash
- * 430685 : [Simple Timeline] Shuffling clips around repeatedly hangs PiTiVi
- * 430695 : [Advanced Timeline] cannot move clips around
- * 456260 : Use decodebin2 for temporary clips.
- * 456289 : Progressbar assertion failed when rendering project
- * 456297 : ZeroDivisionError when rendering a project
-
+ * 461913 : Error: Icon not present in theme
+ * 486271 : crash in Pitivi Video Editor: I close the PiTiVI windo...
+ * 487455 : Dragging multichannel .mov file onto timeline produce err...
 
 * Requirements
 
@@ -51,8 +41,7 @@ caused by this unstable series.
 
  * Edward Hervey
  * Brandon Lewis
- * Luca Della Santina
- * Thijs Vermeir
+ * Tommy
 
 
 * Download
