@@ -485,7 +485,8 @@ class PitiviMainWindow(gtk.Window):
             # which escapes all /'s in path!
             uri = "file://" + chooser.get_filename()
             format = chooser.get_filter().get_name()
-            format = None if format == _("Detect Automatically") else format
+            if format == _("Detect Automatically"):
+                format = None
             project.setUri(uri, format)
             chooser.destroy()
             return True
