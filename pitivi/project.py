@@ -73,7 +73,7 @@ class Project(gobject.GObject, Serializable):
 
     __data_type__ = "project"
 
-    def __init__(self, name="", uri=None):
+    def __init__(self, name="", uri=None, **kwargs):
         """
         name : the name of the project
         uri : the uri of the project
@@ -92,35 +92,40 @@ class Project(gobject.GObject, Serializable):
         self._dirty = False
         self.timeline = Timeline(self)
         # don't want to make calling load() necessary for blank projects
-        if self.uri:
-            self._loaded = False
-        else:
+        if self.uri == None:
             self._loaded = True
-
+        else:
+            self._loaded = False
 
     def load(self):
         """ call this to load a project from a file (once) """
         if self._loaded:
-            # should this return false? 
+            # should this return false?
+            gst.warning("Already loaded !!!")
             return True
         return self._load()
-        
+
     def _load(self):
-        """ loads the project from a file """
-        if self.timeline:
-            return
-        self.timeline = Timeline(self)
-        if self.uri:
-            if file_is_project(self.uri):
-                loader = ProjectSaver.newProjectSaver("pickle")
-                path = gst.uri_get_location(self.uri)
-                fileobj = open(path, "r")
-                try:
-                    tree = loader.openFromFile(fileobj)
-                    self.fromDataFormat(tree)
-                except ProjectLoadError:
-                    return False
-                fileobj.close()
+        """
+        loads the project from a file
+        Private method, use load() instead
+        """
+        gst.log("uri:%s" % self.uri)
+        gst.debug("Creating timeline")
+        if self.uri and file_is_project(self.uri):
+            self.timeline = Timeline(self)
+            loader = ProjectSaver.newProjectSaver("pickle")
+            path = gst.uri_get_location(self.uri)
+            fileobj = open(path, "r")
+            try:
+                tree = loader.openFromFile(fileobj)
+                self.fromDataFormat(tree)
+            except ProjectLoadError:
+                gst.error("Error while loading the project !!!")
+                return False
+            fileobj.close()
+            return True
+        return False
 
     def getBin(self):
         """ returns the SmartTimelineBin of the project """
@@ -141,12 +146,10 @@ class Project(gobject.GObject, Serializable):
             if not self.emit("confirm-overwrite", self.uri):
                 return False
         try:
-            # fileobj = open(path, "w")
-            # loader = ProjectSaver.newProjectSaver(self.format)
-            # tree = self.toDataFormat()
-            # loader.saveToFile({}, fileobj)
-            gst.info("pretending to save file in %s" % self.format)
-            os.system("touch %s" % path)
+            fileobj = open(path, "w")
+            loader = ProjectSaver.newProjectSaver(self.format)
+            tree = self.toDataFormat()
+            loader.saveToFile(tree, fileobj)
             self._dirty = False
             return True
         except IOError:
@@ -247,9 +250,9 @@ class Project(gobject.GObject, Serializable):
     def fromDataFormat(self, obj):
         Serializable.fromDataFormat(self, obj)
         self.name = obj["name"]
-        self.timeline = to_object_from_data_type(obj["timeline"])
-        self.sources = to_object_from_data_type(obj["sources"])
         self.settings = to_object_from_data_type(obj["settings"])
+        self.sources = to_object_from_data_type(obj["sources"])
+        self.timeline = to_object_from_data_type(obj["timeline"])
 
 def uri_is_valid(uri):
     return gst.uri_get_protocol(uri) == "file"

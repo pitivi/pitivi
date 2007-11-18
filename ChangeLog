@@ -1,5 +1,21 @@
 2007-11-18  Edward Hervey  <bilboed@bilboed.com>
 
+	* pitivi/pitivi.py:
+	The uri is a keyword argument to Project()
+	* pitivi/project.py:
+	Serializable sub-classes need to have keyword-only arguments.
+	Activate proper save
+	Small code re-organization
+	* pitivi/projectsaver.py:
+	Add debugging
+	whitespace-fixes
+	* pitivi/ui/mainwindow.py:
+	methods renaming
+	added debugging
+	whitespace-fixes
+
+2007-11-18  Edward Hervey  <bilboed@bilboed.com>
+
 	* pitivi/objectfactory.py:
 	* pitivi/serializable.py:
 	* pitivi/settings.py:

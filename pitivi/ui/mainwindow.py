@@ -81,7 +81,8 @@ class PitiviMainWindow(gtk.Window):
         self.isFullScreen = False
         self.errorDialogBox = None
 
-        instance.PiTiVi.connect("new-project-loaded", self._newProjectCb)
+        instance.PiTiVi.connect("new-project-loaded", self._newProjectLoadedCb)
+        instance.PiTiVi.connect("new-project-loading", self._newProjectLoadingCb)
         instance.PiTiVi.connect("closing-project", self._closingProjectCb)
         instance.PiTiVi.connect("new-project-failed", self._notProjectCb)
         instance.PiTiVi.current.connect("save-uri-requested", self._saveAsDialogCb)
@@ -319,7 +320,6 @@ class PitiviMainWindow(gtk.Window):
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                 gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         chooser.set_select_multiple(False)
-        chooser.set_default_response(gtk.RESPONSE_CANCEL)
         formats = ProjectSaver.listFormats()
         default = gtk.FileFilter()
         default.set_name("All")
@@ -398,13 +398,20 @@ class PitiviMainWindow(gtk.Window):
 
     ## PiTiVi main object callbacks
 
-    def _newProjectCb(self, pitivi, project):
-        pass
+    def _newProjectLoadedCb(self, pitivi, project):
+        gst.log("A NEW project is loaded, update the UI!")
+        # ungrey UI
+        self.set_sensitive(True)
+
+    def _newProjectLoadingCb(self, pitivi, project):
+        gst.log("A NEW project is being loaded, deactivate UI")
+        # grey UI
+        self.set_sensitive(False)
 
     def _closingProjectCb(self, pitivi, project):
         if not project.hasUnsavedModifications():
             return True
-        
+
         dialog = gtk.MessageDialog(
             self,
             gtk.DIALOG_MODAL,
@@ -418,6 +425,7 @@ class PitiviMainWindow(gtk.Window):
         return False
 
     def _notProjectCb(self, pitivi, reason, uri):
+        # ungrey UI
         dialog = gtk.MessageDialog(self,
             gtk.DIALOG_MODAL,
             gtk.MESSAGE_ERROR,
@@ -426,20 +434,21 @@ class PitiviMainWindow(gtk.Window):
                 (uri, reason))
         dialog.set_title(_("Error Loading File"))
         dialog.run()
-        dialog.destroy()           
+        dialog.destroy()
+        self.set_sensitive(True)
 
     ## PiTiVi current project callbacks
 
     def _confirmOverwriteCb(self, unused_project, uri):
         message = _("Do you wish to overwrite existing file \"%s\"?") %\
                  gst.uri_get_location(uri)
-        
+
         dialog = gtk.MessageDialog(self,
             gtk.DIALOG_MODAL,
             gtk.MESSAGE_WARNING,
             gtk.BUTTONS_YES_NO,
             message)
-        
+
         dialog.set_title(_("Overwrite Existing File?"))
         response = dialog.run()
         dialog.destroy()
@@ -453,7 +462,7 @@ class PitiviMainWindow(gtk.Window):
             action=gtk.FILE_CHOOSER_ACTION_SAVE,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
             gtk.STOCK_SAVE, gtk.RESPONSE_OK))
-        
+
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled.pptv"))
         chooser.set_default_response(gtk.RESPONSE_CANCEL)
@@ -468,9 +477,9 @@ class PitiviMainWindow(gtk.Window):
             for ext in format[1]:
                 filt.add_pattern("*.%s" % ext)
             chooser.add_filter(filt)
-        
+
         response = chooser.run()
-  
+
         if response == gtk.RESPONSE_OK:
             # need to do this to work around bug in gst.uri_construct
             # which escapes all /'s in path!
@@ -482,7 +491,7 @@ class PitiviMainWindow(gtk.Window):
             return True
         chooser.destroy()
         return False
-        
+
 
 class EncodingDialog(GladeWindow):
     """ Encoding dialog box """

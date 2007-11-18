@@ -138,7 +138,7 @@ class Pitivi(gobject.GObject):
             return
         # if current project, try to close it
         if self._closeRunningProject():
-            project = Project(uri)
+            project = Project(uri=uri)
             self.emit("new-project-loading", project)
             try:
                 project.load()

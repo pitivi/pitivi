@@ -28,6 +28,7 @@ representing errors, and a sample implementation which uses cPickle to
 load and store data
 """
 
+import gst
 from cPickle import load, dump, PicklingError, UnpicklingError
 import timeline.composition
 import settings
@@ -53,7 +54,7 @@ class ProjectSaver(object):
 
     __file_format = "None"
     __extensions = ()
-    
+
     @classmethod
     def newProjectSaver(cls, fmt="pickle"):
         """Returns a new instance of a project saver derivative.
@@ -122,12 +123,13 @@ class ProjectSaver(object):
         input_stream -- open file object from which to read
 
         throws: ProjectLoadError if stream cannot be read"""
-        
+        gst.log("loading stream")
         tree = self.load(input_stream)
         self.validate(tree)
+        gst.log("tree validated, returning %r" % tree)
         return tree
 
-    
+
     def validate(self, tree):
         """Used internally to validate the project data structure
         before it is used by the application.
@@ -147,7 +149,7 @@ class ProjectSaver(object):
         input_stream -- open file object containing data to read
         returns      -- an intermediate format representation of the
                         project if file successfully read, or None"""
-        
+
         raise Exception("Not Implemented!")
 
     def dump(self, tree, output_stream):
@@ -160,15 +162,15 @@ class ProjectSaver(object):
         tree          -- intermediate format representation of project
         output_stream -- file object open for writing returns True on
                          success, False otherwise."""
-        
+
         raise Exception("Not Implemented!")
-    
-    
+
+
 class PickleFormat(ProjectSaver):
     """ Implements default file format project files using cpickle"""
     __file_format__ = "pickle"
     __extensions__ = (".pptv",)
-    
+
     def load(self, input_stream):
         try:
             tree = load(input_stream)
