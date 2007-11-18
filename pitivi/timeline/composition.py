@@ -866,3 +866,5 @@ class TimelineComposition(TimelineSource):
         if "default-source" in obj:
             self.setDefaultSource(to_object_from_data_type(obj["default-source"]))
         gst.log("done adding sources")
+
+        self._updateCondensedList()

@@ -72,6 +72,7 @@ class ApplicationLogicTest(unittest.TestCase):
 
         # initialize properties
         self._got_closing_project_requested_signal = False
+        self._got_project_closed_signal = False
         self._got_save_uri_requested_signal = False
         self._got_confirm_overwrite_signal = False
         self._got_new_project_loading_signal = False
@@ -89,26 +90,32 @@ class ApplicationLogicTest(unittest.TestCase):
             self._closingProjectCb, True)
         self.ptv.current.connect("save-uri-requested",
             self._saveUriRequestedCb, None, False)
+        self.ptv.connect("project-closed",
+                         self._projectClosedCb)
 
         self.ptv.current.setModificationState(True)
         self.ptv.shutdown()
 
         self.assertTrue(self._got_save_uri_requested_signal)
         self.assertFalse(self._got_closing_project_requested_signal)
+        self.assertFalse(self._got_project_closed_signal)
 
     def testShutdownSave(self):
-        #check the closing ptv works when unsaved changes are written
+        # check the closing ptv works when unsaved changes are written
         # to disk
         self.ptv.connect("closing-project",
             self._closingProjectCb, True)
         self.ptv.current.connect("save-uri-requested",
             self._saveUriRequestedCb, testUri, True)
+        self.ptv.connect("project-closed",
+                         self._projectClosedCb)
 
         self.ptv.current.setModificationState(True)
         self.ptv.shutdown()
 
         self.assertTrue(self._got_save_uri_requested_signal)
         self.assertTrue(self._got_closing_project_requested_signal)
+        self.assertTrue(self._got_project_closed_signal)
 
     def testNewProjectSimple(self):
         # check that creating a new project works
@@ -222,6 +229,9 @@ class ApplicationLogicTest(unittest.TestCase):
     def _closingProjectCb(self, unused_pitivi, project, argument):
         self._got_closing_project_requested_signal = True
         return argument
+
+    def _projectClosedCb(self, unused_pitivi, project):
+        self._got_project_closed_signal = True
 
 class ProjectSaverTest(unittest.TestCase):
     """Given a properly serialized tree, test that ProjectSaver will correctly

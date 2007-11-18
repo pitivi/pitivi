@@ -57,7 +57,14 @@ class Pitivi(gobject.GObject):
             pitivi would like to close a project. handlers should return false
             if they do not want this project to close. by default, assumes
             true.
+            This signal should only be used by classes that might want to abort
+            the closing of a project.
             * project - the project Pitivi would like to close
+        void project-closed(project)
+            The project is closed, it will be freed when the callback returns.
+            Classes should connect to this instance when they want to know that
+            data related to that project is no longer going to be used.
+            * project - the project closed
         shutdown
             used internally, do not catch this signals"""
 
@@ -71,6 +78,9 @@ class Pitivi(gobject.GObject):
         "closing-project" : ( gobject.SIGNAL_RUN_LAST,
                               gobject.TYPE_BOOLEAN,
                               (gobject.TYPE_PYOBJECT, )),
+        "project-closed" : ( gobject.SIGNAL_RUN_LAST,
+                             gobject.TYPE_NONE,
+                             ( gobject.TYPE_PYOBJECT, )),
         "new-project-failed" : ( gobject.SIGNAL_RUN_LAST,
                           gobject.TYPE_NONE,
                           (gobject.TYPE_STRING, gobject.TYPE_STRING)),
@@ -159,6 +169,7 @@ class Pitivi(gobject.GObject):
             if not self.emit("closing-project", self.current):
                 return False
             self.playground.pause()
+            self.emit("project-closed", self.current)
             self.current = None
         return True
 

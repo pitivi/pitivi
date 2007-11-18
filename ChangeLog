@@ -1,5 +1,16 @@
 2007-11-18  Edward Hervey  <bilboed@bilboed.com>
 
+	* pitivi/pitivi.py:
+	Added new 'project-closed' signal to confirm that a project is closed.
+	* pitivi/timeline/composition.py:
+	Update condensed-list once everything is added to the timeline
+	* pitivi/ui/timelineobjects.py:
+	Add a bit more logic for when a project is loaded/closed
+	* tests/test_file_load_save.py:
+	Added tests for new 'project-closed' signal
+
+2007-11-18  Edward Hervey  <bilboed@bilboed.com>
+
 	* pitivi/ui/mainwindow.py:
 	Use portable 'if' syntax
 

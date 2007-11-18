@@ -101,6 +101,7 @@ class SimpleTimeline(gtk.Layout):
         self._connectToTimeline(instance.PiTiVi.current.timeline)
         instance.PiTiVi.connect("new-project-loaded",
             self._newProjectLoadedCb)
+        instance.PiTiVi.connect("project-closed", self._projectClosedCb)
         instance.PiTiVi.connect("new-project-loading",
             self._newProjectLoadingCb)
         instance.PiTiVi.connect("new-project-failed",
@@ -146,20 +147,19 @@ class SimpleTimeline(gtk.Layout):
                                      None, self._condensedListChangedCb)
 
     def _newProjectLoadingCb(self, inst, project):
-        # depopulate timeline -- no matter what happens, we don't want
-        # this stuff hanging around
-        self._clearTimeline()
+        gst.log("...")
+
+    def _newProjectLoadedCb(self, inst, project):
+        gst.log("...")
+        assert(instance.PiTiVi.current == project)
         # now we connect to the new project, so we can receive any
         # signals that might be emitted while the project is loading
         self._connectToTimeline(project.timeline)
-        # TODO: supress display of changes to timeline until loading
-        # is finisshed
-
-    def _newProjectLoadedCb(self, inst, project):
-        assert(instance.PiTiVi.current == project)
         # TODO: display final state of project now that loading has
         # completed. this callback doesn't do do much else
 
+        # LOAD THE TIMELINE !!!
+        self._condensedListChangedCb(None, self.timeline.videocomp.condensed)
 
     def _newProjectFailedCb(self, inst, reason, uri):
         # oops the project failed to load
@@ -171,6 +171,9 @@ class SimpleTimeline(gtk.Layout):
         for widget in self.widgets.itervalues():
             self.remove(widget)
         self.widgets = {}
+
+    def _projectClosedCb(self, unused_pitivi, unused_project):
+        self._clearTimeline()
 
     ## Timeline callbacks
 
