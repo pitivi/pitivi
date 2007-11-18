@@ -19,6 +19,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import gst
 
 class Serializable(object):
     """An interface which all objects expected to be saved/loaded into project
@@ -42,6 +43,7 @@ class Serializable(object):
         All serializable objects must chain up to the parent class function before
         extracting their information.
         """
+        gst.log("obj : %r" % obj)
         if not obj["datatype"]:
             raise Exception("dictionnary doesn't contain the type information !!")
         if not obj["datatype"] == self.__data_type__:
@@ -88,6 +90,11 @@ def to_object_from_data_type(data):
     classes = get_serialized_classes()
     if not dt in classes:
         raise Exception, "Don't have a class to handle data-type %r" % dt
-    obj = classes[dt]()
+    gst.log("Creating obj of type %s , kwargs:%r" % (dt, data))
+    if dt == "serializable":
+        # base class
+        obj = classes[dt]()
+    else:
+        obj = classes[dt](**data)
     obj.fromDataFormat(data)
     return obj

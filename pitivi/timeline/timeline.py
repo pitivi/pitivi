@@ -29,6 +29,7 @@ import gst
 from pitivi.settings import ExportSettings
 from composition import TimelineComposition
 from objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
+from source import TimelineBlankSource
 from pitivi.serializable import Serializable
 
 class Timeline(gobject.GObject, Serializable):
@@ -41,12 +42,16 @@ class Timeline(gobject.GObject, Serializable):
     # TODO make the compositions more versatile
     # for the time being we hardcode an audio and a video composition
 
-    def __init__(self, project):
+    def __init__(self, project=None, **kwargs):
         gst.log("new Timeline for project %s" % project)
         gobject.GObject.__init__(self)
         self.project = project
 
-        self.timeline = gst.Bin("timeline-" + project.name)
+        if self.project:
+            name = project.name
+        else:
+            name = "XXX"
+        self.timeline = gst.Bin("timeline-" + name)
         self._fillContents()
 
     def _fillContents(self):
@@ -58,16 +63,12 @@ class Timeline(gobject.GObject, Serializable):
         self.videocomp.linkObject(self.audiocomp)
 
         # add default audio/video sources
-        defaultaudio = gst.element_factory_make("audiotestsrc")
-        defaultaudio.props.volume = 0
-        defaultaudiosource = gst.element_factory_make("gnlsource", "defaultaudiosource")
-        defaultaudiosource.add(defaultaudio)
+        defaultaudiosource = TimelineBlankSource(media_type=MEDIA_TYPE_AUDIO,
+                                                 name="default-audio")
         self.audiocomp.setDefaultSource(defaultaudiosource)
 
-        defaultvideo = gst.element_factory_make("videotestsrc")
-        defaultvideo.props.pattern = 2
-        defaultvideosource = gst.element_factory_make("gnlsource", "defaultvideosource")
-        defaultvideosource.add(defaultvideo)
+        defaultvideosource = TimelineBlankSource(media_type=MEDIA_TYPE_VIDEO,
+                                                 name="default-video")
         self.videocomp.setDefaultSource(defaultvideosource)
 
         self.timeline.add(self.audiocomp.gnlobject,
@@ -126,5 +127,5 @@ class Timeline(gobject.GObject, Serializable):
         audio = obj["compositions"]["audiocomp"]
         video = obj["compositions"]["videocomp"]
         self.audiocomp.fromDataFormat(audio)
-        self.videocomp.fromdataFormat(video)
+        self.videocomp.fromDataFormat(video)
 

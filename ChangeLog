@@ -1,3 +1,28 @@
+2007-11-18  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/objectfactory.py:
+	* pitivi/serializable.py:
+	* pitivi/settings.py:
+	* pitivi/sourcelist.py:
+	Classes implementing Serializable need to have keyword-only arguments
+	Store some more info for factories
+	Misc fixes
+	* pitivi/timeline/composition.py:
+	defaultSource should be a TimelineFileSource and not a pure gnlobject
+	De-serialize all contents before adding them to the composition.
+	* pitivi/timeline/objects.py:
+	change naming of serializable attributes.
+	* pitivi/timeline/source.py:
+	Small fixes
+	* pitivi/timeline/timeline.py:
+	Switch to using TimelineBlankSource for default sources
+	Small fixes
+	* pitivi/ui/timelineobjects.py:
+	small fixes
+	* tests/common.py:
+	* tests/test_serializable.py:
+	Classes implementing Serializable need to have keyword-only arguments
+
 2007-11-12  Edward Hervey  <bilboed@bilboed.com>
 
 	Patch by: Tommy <yobbobandana at yahoo dot co dot nz>

@@ -55,7 +55,7 @@ class GlobalSettings:
     # * The settings should be discover-able by UI for ex
     # * plugins should be able to add some settings
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         self._setDefaults()
         self._readSettings()
 
@@ -145,7 +145,7 @@ class ExportSettings(gobject.GObject, Serializable):
     # TODO : Add PAR/DAR for video
     # TODO : switch to using GstFraction internally where appliable
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         gobject.GObject.__init__(self)
         self.videowidth = 720
         self.videoheight = 576
@@ -280,25 +280,25 @@ class ExportSettings(gobject.GObject, Serializable):
 
     def fromDataFormat(self, obj):
         Serializable.fromDataFormat(self, obj)
-        self.videowidth = ret["video-width"]
-        self.videoheight = ret["video-height"]
-        self.videorate = gst.Fraction(*ret["video-rate"])
-        self.videopar = gst.Fraction(*ret["video-par"])
+        self.videowidth = obj["video-width"]
+        self.videoheight = obj["video-height"]
+        self.videorate = gst.Fraction(*obj["video-rate"])
+        self.videopar = gst.Fraction(*obj["video-par"])
 
-        self.audiochannels = ret["audio-channels"]
-        self.audiorate = ret["audio-rate"]
-        self.audiodepth = ret["audio-depth"]
+        self.audiochannels = obj["audio-channels"]
+        self.audiorate = obj["audio-rate"]
+        self.audiodepth = obj["audio-depth"]
 
         # FIXME : check if the given encoder/muxer are available
-        self.vencoder = ret["video-encoder"]
-        self.aencoder = ret["audio-encoder"]
-        self.muxer = ret["muxer"]
-        if "container-settings" in ret:
-            self.containersettings = ret["container-settings"]
-        if "audio-encoder-settings" in ret:
-            self.acodecsettings = ret["audio-encoder-settings"]
-        if "video-encoder-settings" in ret:
-            self.vcodecsettings = ret["video-encoder-settings"]
+        self.vencoder = obj["video-encoder"]
+        self.aencoder = obj["audio-encoder"]
+        self.muxer = obj["muxer"]
+        if "container-settings" in obj:
+            self.containersettings = obj["container-settings"]
+        if "audio-encoder-settings" in obj:
+            self.acodecsettings = obj["audio-encoder-settings"]
+        if "video-encoder-settings" in obj:
+            self.vcodecsettings = obj["video-encoder-settings"]
 
 def get_compatible_sink_caps(factoryname, caps):
     """

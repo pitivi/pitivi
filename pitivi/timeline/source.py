@@ -53,12 +53,15 @@ class TimelineBlankSource(TimelineSource):
 
     def _makeGnlObject(self):
         if self.media_type == MEDIA_TYPE_AUDIO:
+            # silent audiotestsrc
             src = gst.element_factory_make("audiotestsrc")
             src.set_property("volume", 0)
         elif self.media_type == MEDIA_TYPE_VIDEO:
+            # black videotestsrc
             src = gst.element_factory_make("videotestsrc")
+            src.props.pattern = 2
         else:
-            gst.Error("Can only handle Audio OR Video sources")
+            gst.error("Can only handle Audio OR Video sources")
             return
         gnl = gst.element_factory_make("gnlsource")
         gnl.add(src)

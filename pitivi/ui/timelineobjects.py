@@ -159,19 +159,19 @@ class SimpleTimeline(gtk.Layout):
         assert(instance.PiTiVi.current == project)
         # TODO: display final state of project now that loading has
         # completed. this callback doesn't do do much else
-        
-        
+
+
     def _newProjectFailedCb(self, inst, reason, uri):
         # oops the project failed to load
-        self._clearTimeine()
- 
+        self._clearTimeline()
+
     def _clearTimeline(self):
         self.switchToNormalMode()
         self.project_signals.disconnectAll()
         for widget in self.widgets.itervalues():
             self.remove(widget)
         self.widgets = {}
-    
+
     ## Timeline callbacks
 
     def _condensedListChangedCb(self, unused_videocomp, clist):

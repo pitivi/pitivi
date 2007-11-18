@@ -71,7 +71,7 @@ class ObjectFactory(gobject.GObject, Serializable):
     # pending UID (int) => objects (list of BrotherObjects and extra field)
     __waiting_for_pending_objects__ = {}
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         gobject.GObject.__init__(self)
         self.name = ""
         self.displayname = ""
@@ -187,10 +187,18 @@ class ObjectFactory(gobject.GObject, Serializable):
     def toDataFormat(self):
         ret = Serializable.toDataFormat(self)
         ret["uid"] = self.getUniqueID()
+        ret["name"] = self.name
+        ret["displayname"] = self.displayname
+        ret["is_audio"] = self.is_audio
+        ret["is_video"] = self.is_video
         return ret
 
     def fromDataFormat(self, obj):
         Serializable.fromDataFormat(self, obj)
+        self.name = obj["name"]
+        self.displayname = obj["displayname"]
+        self.is_audio = obj["is_audio"]
+        self.is_video = obj["is_video"]
         self.setUniqueID(obj["uid"])
 
     # Unique ID methods
@@ -241,7 +249,7 @@ class ObjectFactory(gobject.GObject, Serializable):
         if uid in ObjectFactory.__waiting_for_pending_objects__ and uid in ObjectFactory.__instances__:
             for obj, extra in ObjectFactory.__waiting_for_pending_objects__[uid]:
                 obj.pendingObjectCreated(ObjectFactory.__instances__[uid], extra)
-            del ObjectFactory.__waiting_for_pendings_objects__[uid]
+            del ObjectFactory.__waiting_for_pending_objects__[uid]
 
 
     @classmethod
@@ -284,9 +292,9 @@ class FileSourceFactory(ObjectFactory):
 
     __data_type__ = "file-source-factory"
 
-    def __init__(self, filename, project):
+    def __init__(self, filename="", project=None, **kwargs):
         gst.info("filename:%s , project:%s" % (filename, project))
-        ObjectFactory.__init__(self)
+        ObjectFactory.__init__(self, **kwargs)
         self.project = project
         self.name = filename
         self.displayname = os.path.basename(unquote(self.name))
@@ -395,6 +403,20 @@ class FileSourceFactory(ObjectFactory):
 
         return self.settings
 
+    # Serializable methods
+
+    def toDataFormat(self):
+        ret = ObjectFactory.toDataFormat(self)
+        ret["filename"] = self.name
+        ret["length"] = self.length
+        return ret
+
+    def fromDataFormat(self, obj):
+        ObjectFactory.fromDataFormat(self, obj)
+        self.name = obj["filename"]
+        self.length = obj["length"]
+
+
 class OperationFactory(ObjectFactory):
     """
     Provides operations useable in a timeline
@@ -402,8 +424,8 @@ class OperationFactory(ObjectFactory):
 
     __data_type__ = "operation-factory"
 
-    def __init__(self):
-        ObjectFactory.__init__(self)
+    def __init__(self, **kwargs):
+        ObjectFactory.__init__(self, **kwargs)
         self.nbinput = 1
         self.nboutput = 1
 
@@ -415,9 +437,9 @@ class SimpleOperationFactory(OperationFactory):
 
     __data_type__ = "simple-operation-factory"
 
-    def __init__(self, elementfactory):
+    def __init__(self, elementfactory, **kwargs):
         """ elementfactory is the GstElementFactory """
-        OperationFactory.__init__(self)
+        OperationFactory.__init__(self, **kwargs)
         self.name = elementfactory.get_name()
         self.displayname = elementfactory.get_longname()
         # check what type the output pad is (AUDIO/VIDEO)
@@ -436,8 +458,8 @@ class TransitionFactory(OperationFactory):
 
     __data_type__ = "transition-factory"
 
-    def __init__(self):
-        OperationFactory.__init__(self)
+    def __init__(self, **kwargs):
+        OperationFactory.__init__(self, **kwargs)
 
 
 class SMPTETransitionFactory(TransitionFactory):
@@ -447,8 +469,8 @@ class SMPTETransitionFactory(TransitionFactory):
 
     __data_type__ = "SMPTE-transition-factory"
 
-    def __init__(self):
-        TransitionFactory.__init__(self)
+    def __init__(self, **kwargs):
+        TransitionFactory.__init__(self, **kwargs)
 
 ##
 ## Multimedia streams, used for definition of media streams

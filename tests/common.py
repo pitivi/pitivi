@@ -94,11 +94,11 @@ class TestObjectFactory(ObjectFactory):
 
     __data_type__ = "test-object-factory"
 
-    def __init__(self, audio=True, video=False):
+    def __init__(self, audio=True, video=False, **kwargs):
         self.__audio = audio
         self.__video = video
         self.__id = 0
-        ObjectFactory.__init__(self)
+        ObjectFactory.__init__(self, **kwargs)
         self.is_video = video
         self.is_audio = audio
         self.lastbinid = 0

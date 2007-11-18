@@ -709,13 +709,13 @@ class TimelineComposition(TimelineSource):
 
     def setDefaultSource(self, source):
         """
-        Adds a default source to the composition.
+        Adds a default TimelineSource to the composition.
         Default sources will be used for gaps within the composition.
         """
         if self.defaultSource:
-            self.gnlobject.remove(self.defaultSource)
-        source.props.priority = 2 ** 32 - 1
-        self.gnlobject.add(source)
+            self.gnlobject.remove(self.defaultSource.gnlobject)
+        source.gnlobject.props.priority = 2 ** 32 - 1
+        self.gnlobject.add(source.gnlobject)
         self.defaultSource = source
 
     def getDefaultSource(self):
@@ -807,32 +807,62 @@ class TimelineComposition(TimelineSource):
     def fromDataFormat(self, obj):
         TimelineSource.fromDataFormat(self, obj)
 
-        # effects
+        # deserialize all objects
+        globalfx = []
+        simplefx = []
+        complexfx = []
+        transitions = []
+        layers = []
+
         if "global-effects" in obj:
             for fx in obj["global-effects"]:
-                self.global_effects.append(to_object_from_data_type(fx))
+                globalfx.append(to_object_from_data_type(fx))
+                #self.global_effects.append(to_object_from_data_type(fx))
         if "simple-effects" in obj:
             for line in obj["simple-effects"]:
                 tmp = []
                 for fx in line:
                     tmp.append(to_object_from_data_type(fx))
-                self.simple_effects.append(tmp)
+                simplefx.append(tmp)
+                #self.simple_effects.append(tmp)
         if "complex-effects" in obj:
             for fx in obj["complex-effects"]:
-                self.complex_effects.append(to_object_from_data_type(fx))
+                complexfx.append(to_object_from_data_type(fx))
+                #self.complex_effects.append(to_object_from_data_type(fx))
         if "transitions" in obj:
             for fx in obj["transitions"]:
-                self.transitions.append(to_object_from_data_type(fx))
+                transitions.append(to_object_from_data_type(fx))
+                #self.transitions.append(to_object_from_data_type(fx))
 
-        # sources
         # WARNING / FIXME / TODO : This is a temporary format !!!
         gst.log("recreating sources")
         pos = 1
         for layer in obj["sources"]:
+            tmp = []
             for source in layer:
-                self.addSource(to_object_from_data_type(source), pos)
+                tmp.append(to_object_from_data_type(source))
+            layers.append(tmp)
             pos += 1
+
+        gst.log("adding effects")
+        # add objects
+        for fx in globalfx:
+            self.global_effects.append(fx)
+        for lay in simplefx:
+            self.simple_effects.append(lay)
+        for fx in complexfx:
+            self.complex_effects.append(fx)
+        for fx in transitions:
+            self.transitions.append(fx)
+
+        gst.log("adding sources")
+        pos = 1
+        for layer in layers:
+            for source in layer:
+                self.addSource(source, pos, auto_linked=False)
+            pos +=1
 
         # default source
         if "default-source" in obj:
             self.setDefaultSource(to_object_from_data_type(obj["default-source"]))
+        gst.log("done adding sources")

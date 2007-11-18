@@ -78,7 +78,7 @@ class BrotherObjects(gobject.GObject, Serializable):
     # pending UID (int) => objects (list of BrotherObjects and extra field)
     __waiting_for_pending_objects__ = {}
 
-    def __init__(self):
+    def __init__(self, **kwargs):
         gobject.GObject.__init__(self)
         self.linked = None
         self.brother = None
@@ -172,26 +172,26 @@ class BrotherObjects(gobject.GObject, Serializable):
         ret = Serializable.toDataFormat(self)
         ret["uid"] = self.getUniqueID()
         if self.brother:
-            ret["brother"] = self.brother.getUniqueID()
+            ret["brother-uid"] = self.brother.getUniqueID()
         if self.linked:
-            ret["linked"] = self.linked.getUniqueID()
+            ret["linked-uid"] = self.linked.getUniqueID()
         return ret
 
     def fromDataFormat(self, obj):
         Serializable.fromDataFormat(self, obj)
         self.setUniqueID(obj["uid"])
 
-        if "brother" in obj:
-            brother = BrotherObjects.getObjectByUID(obj["brother"])
+        if "brother-uid" in obj:
+            brother = BrotherObjects.getObjectByUID(obj["brother-uid"])
             if not brother:
-                BrotherObjects.addPendingObjectRequest(self, obj["brother"], "brother")
+                BrotherObjects.addPendingObjectRequest(self, obj["brother-uid"], "brother")
             else:
                 self.setBrother(brother)
 
-        if "linked" in obj:
-            linked = BrotherObjects.getObjectByUID(obj["linked"])
+        if "linked-uid" in obj:
+            linked = BrotherObjects.getObjectByUID(obj["linked-uid"])
             if not linked:
-                BrotherObjects.addPendingObjectRequest(self, obj["linked"], "linked")
+                BrotherObjects.addPendingObjectRequest(self, obj["linked-uid"], "linked")
             else:
                 self.linkObject(linked)
 
@@ -314,8 +314,8 @@ class TimelineObject(BrotherObjects):
         }
 
     def __init__(self, factory=None, start=-1, duration=-1,
-                 media_type=MEDIA_TYPE_NONE, name=""):
-        BrotherObjects.__init__(self)
+                 media_type=MEDIA_TYPE_NONE, name="", **kwargs):
+        BrotherObjects.__init__(self, **kwargs)
         self.name = name
         gst.log("new TimelineObject :%s %r" % (name, self))
         self.start = start
@@ -392,8 +392,8 @@ class TimelineObject(BrotherObjects):
         ret["duration"] = self.duration
         ret["name"] = self.name
         if self.factory:
-            ret["factory"] = self.factory.getUniqueID()
-        ret["mediatype"] = self.media_type
+            ret["factory-uid"] = self.factory.getUniqueID()
+        ret["media_type"] = self.media_type
         return ret
 
     def fromDataFormat(self, obj):
@@ -403,13 +403,13 @@ class TimelineObject(BrotherObjects):
 
         self.name = obj["name"]
 
-        self.media_type = obj["mediatype"]
+        self.media_type = obj["media_type"]
 
-        if "factory" in obj:
-            factory = ObjectFactory.getObjectByUID(obj["factory"])
-            gst.log("For factory-id %d we got factory %r" % (obj["factory"], factory))
+        if "factory-uid" in obj:
+            factory = ObjectFactory.getObjectByUID(obj["factory-uid"])
+            gst.log("For factory-id %d we got factory %r" % (obj["factory-uid"], factory))
             if not factory:
-                ObjectFactory.addPendingObjectRequest(self, obj["factory"], "factory")
+                ObjectFactory.addPendingObjectRequest(self, obj["factory-uid"], "factory")
             else:
                 self._setFactory(factory)
 

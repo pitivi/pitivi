@@ -11,7 +11,7 @@ class TestSerializableObject(gobject.GObject, Serializable):
 
     __objects__ = weakref.WeakValueDictionary()
 
-    def __init__(self, int1=0, string2=None):
+    def __init__(self, int1=0, string2=None, **kwargs):
         gobject.GObject.__init__(self)
         self.int1 = int1
         self.string2 = string2

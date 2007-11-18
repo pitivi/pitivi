@@ -26,7 +26,7 @@ Handles the list of source for a project
 import gobject
 import gst
 from discoverer import Discoverer
-from serializable import Serializable
+from serializable import Serializable, to_object_from_data_type
 
 class SourceList(gobject.GObject, Serializable):
     """
@@ -71,7 +71,7 @@ class SourceList(gobject.GObject, Serializable):
 
     __data_type__ = "source-list"
 
-    def __init__(self, project):
+    def __init__(self, project=None, **kwargs):
         gst.log("new sourcelist for project %s" % project)
         gobject.GObject.__init__(self)
         self.project = project
@@ -194,6 +194,6 @@ class SourceList(gobject.GObject, Serializable):
         # FIXME : We're supposing we have complete objectfactories
         # with all information !!!
         if "sources-factories" in obj:
-            for uri, factory in obj["source-factories"].iteritems():
-                self.addFactory(uri, factory)
+            for uri, factory in obj["sources-factories"].iteritems():
+                self.addFactory(uri, to_object_from_data_type(factory))
 
