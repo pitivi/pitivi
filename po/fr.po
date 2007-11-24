@@ -13,9 +13,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-30 19:41+0200\n"
-"PO-Revision-Date: 2007-09-30 19:52+0200\n"
-"Last-Translator: Ivan Buresi <err747@free.fr>\n"
+"POT-Creation-Date: 2007-11-24 18:39+0100\n"
+"PO-Revision-Date: 2007-11-24 18:46+0100\n"
+"Last-Translator: Claude Paroz <claude@2xlibre.net>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -240,55 +240,55 @@ msgstr "<b>%s</b>"
 msgid "<small><b>File:</b> %s"
 msgstr "<small><b>Fichier :</b> %s"
 
-#: ../pitivi/objectfactory.py:541
+#: ../pitivi/objectfactory.py:563
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr "<b>Vidéo :</b> %d x %d <i>pixels</i> à %.2f <i>fps</i>"
 
-#: ../pitivi/objectfactory.py:544
+#: ../pitivi/objectfactory.py:566
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>Image :</b> %d x %d <i>pixels</i>"
 
-#: ../pitivi/objectfactory.py:547 ../pitivi/objectfactory.py:594
+#: ../pitivi/objectfactory.py:569 ../pitivi/objectfactory.py:616
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr " <i>(%s)</i>"
 
-#: ../pitivi/objectfactory.py:549
+#: ../pitivi/objectfactory.py:571
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "<b>Format vidéo inconnu :</b> %s"
 
-#: ../pitivi/objectfactory.py:591
+#: ../pitivi/objectfactory.py:613
 #, python-format
 msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr "<b>Audio :</b> %d canaux à %d <i>Hz</i> (%d <i>bits</i>)"
 
-#: ../pitivi/objectfactory.py:596
+#: ../pitivi/objectfactory.py:618
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "<b>Format audio inconnu :</b> %s"
 
-#: ../pitivi/objectfactory.py:610
+#: ../pitivi/objectfactory.py:632
 #, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>Texte :</b> %s"
 
-#: ../pitivi/pitivi.py:99
+#: ../pitivi/pitivi.py:109
 #, python-format
 msgid "There is already a %s instance, inform developers"
 msgstr "Il y a déjà une instance de %s, veuillez informer les développeurs"
 
-#: ../pitivi/pitivi.py:112 ../pitivi/pitivi.py:168
+#: ../pitivi/pitivi.py:124 ../pitivi/pitivi.py:180
 msgid "New Project"
 msgstr "Nouveau projet"
 
-#: ../pitivi/pitivi.py:127 ../pitivi/pitivi.py:134
+#: ../pitivi/pitivi.py:139 ../pitivi/pitivi.py:146
 msgid "Not a valid project file."
 msgstr "Ce n'est pas un fichier de projet valide."
 
-#: ../pitivi/pitivi.py:145
+#: ../pitivi/pitivi.py:160
 msgid "There was an error loading the file."
 msgstr "Il y a eu une erreur au chargement du fichier."
 
@@ -332,20 +332,20 @@ msgstr "Problème de sortie audio"
 msgid "There is a problem with your audio output device"
 msgstr "Il y a un problème avec le périphérique de sortie audio"
 
-#: ../pitivi/project.py:234
+#: ../pitivi/project.py:264
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s ne gère pas encore les projets non présents localement"
 
-#: ../pitivi/settings.py:165
+#: ../pitivi/settings.py:168
 msgid "Export Settings\n"
 msgstr "Paramètres d'exportation\n"
 
-#: ../pitivi/settings.py:166
+#: ../pitivi/settings.py:169
 msgid "Video :"
 msgstr "Vidéo :"
 
-#: ../pitivi/settings.py:168
+#: ../pitivi/settings.py:171
 msgid ""
 "\n"
 "Audio :"
@@ -353,7 +353,7 @@ msgstr ""
 "\n"
 "Audio :"
 
-#: ../pitivi/settings.py:170
+#: ../pitivi/settings.py:173
 msgid ""
 "\n"
 "Muxer :"
@@ -382,7 +382,7 @@ msgid "Author"
 msgstr "Auteur"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:555 ../pitivi/ui/sourcefactories.py:600
+#: ../pitivi/ui/sourcefactories.py:562 ../pitivi/ui/sourcefactories.py:607
 msgid "Description"
 msgstr "Description"
 
@@ -581,96 +581,100 @@ msgstr "Piste vidéo"
 msgid "Empty"
 msgstr "Vide"
 
-#: ../pitivi/ui/mainwindow.py:143
+#: ../pitivi/ui/mainwindow.py:154
 msgid "Create a new project"
 msgstr "Crée un nouveau projet"
 
-#: ../pitivi/ui/mainwindow.py:144
+#: ../pitivi/ui/mainwindow.py:156
 msgid "Open an existing project"
 msgstr "Ouvre un projet existant"
 
-#: ../pitivi/ui/mainwindow.py:145 ../pitivi/ui/mainwindow.py:146
+#: ../pitivi/ui/mainwindow.py:158 ../pitivi/ui/mainwindow.py:160
 msgid "Save the current project"
 msgstr "Enregistre le projet actuel"
 
-#: ../pitivi/ui/mainwindow.py:147
+#: ../pitivi/ui/mainwindow.py:161
 msgid "Project settings"
 msgstr "Paramètres du projet"
 
-#: ../pitivi/ui/mainwindow.py:147
+#: ../pitivi/ui/mainwindow.py:162
 msgid "Edit the project settings"
 msgstr "Configure les paramètres du projet"
 
-#: ../pitivi/ui/mainwindow.py:148
+#: ../pitivi/ui/mainwindow.py:163
 msgid "_Import clips..."
 msgstr "_Importer des séquences..."
 
-#: ../pitivi/ui/mainwindow.py:148
+#: ../pitivi/ui/mainwindow.py:164
 msgid "Import clips to use"
 msgstr "Importe des séquences pour les utiliser"
 
-#: ../pitivi/ui/mainwindow.py:149
+#: ../pitivi/ui/mainwindow.py:166
 msgid "_Import folder of clips..."
 msgstr "_Importer un dossier de séquences..."
 
-#: ../pitivi/ui/mainwindow.py:149
+#: ../pitivi/ui/mainwindow.py:167
 msgid "Import folder of clips to use"
 msgstr "Importe un dossier de séquences pour les utiliser"
 
-#: ../pitivi/ui/mainwindow.py:150
+#: ../pitivi/ui/mainwindow.py:168
 msgid "_Render project"
 msgstr "_Rendu du projet"
 
-#: ../pitivi/ui/mainwindow.py:150
+#: ../pitivi/ui/mainwindow.py:169
 msgid "Render project"
 msgstr "Rendu du projet"
 
-#: ../pitivi/ui/mainwindow.py:151
+#: ../pitivi/ui/mainwindow.py:171
 msgid "_Plugins..."
 msgstr "_Greffons..."
 
-#: ../pitivi/ui/mainwindow.py:151
+#: ../pitivi/ui/mainwindow.py:172
 msgid "Manage plugins"
 msgstr "Gérer les greffons"
 
-#: ../pitivi/ui/mainwindow.py:153
+#: ../pitivi/ui/mainwindow.py:175
 #, python-format
 msgid "Information about %s"
 msgstr "Informations sur %s"
 
-#: ../pitivi/ui/mainwindow.py:154
+#: ../pitivi/ui/mainwindow.py:176
 msgid "_File"
 msgstr "_Fichier"
 
-#: ../pitivi/ui/mainwindow.py:155
+#: ../pitivi/ui/mainwindow.py:177
 msgid "_Edit"
 msgstr "É_dition"
 
-#: ../pitivi/ui/mainwindow.py:156
+#: ../pitivi/ui/mainwindow.py:178
 msgid "_View"
 msgstr "_Affichage"
 
-#: ../pitivi/ui/mainwindow.py:157
+#: ../pitivi/ui/mainwindow.py:179
 msgid "_Help"
 msgstr "Aid_e"
 
-#: ../pitivi/ui/mainwindow.py:161
+#: ../pitivi/ui/mainwindow.py:183
 msgid "Advanced vie_w"
 msgstr "Afficha_ge avancé"
 
-#: ../pitivi/ui/mainwindow.py:161
+#: ../pitivi/ui/mainwindow.py:184
 msgid "Switch to advanced view"
 msgstr "Bascule en affichage avancé"
 
-#: ../pitivi/ui/mainwindow.py:162
+#: ../pitivi/ui/mainwindow.py:186
 msgid "View the main window on the whole screen"
 msgstr "Affiche la fenêtre principale en plein écran"
 
-#: ../pitivi/ui/mainwindow.py:320
+#: ../pitivi/ui/mainwindow.py:317
+msgid "Open File ..."
+msgstr "Ouvrir un fichier..."
+
+#: ../pitivi/ui/mainwindow.py:373
 msgid "Contributors:"
 msgstr "Contributeurs :"
 
-#: ../pitivi/ui/mainwindow.py:331
+#: ../pitivi/ui/mainwindow.py:385
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -678,24 +682,60 @@ msgstr ""
 "GNU Lesser General Public Licence\n"
 "Voir http://www.gnu.org/copyleft/lesser.html pour plus de détails"
 
-#: ../pitivi/ui/mainwindow.py:392
+#: ../pitivi/ui/mainwindow.py:420
+msgid "The project has unsaved changes. Do you wish to close the project?"
+msgstr ""
+"Le projet contient des modifications non enregistrées. Voulez-vous tout "
+"de même fermer le projet ?"
+
+#: ../pitivi/ui/mainwindow.py:433
+#, python-format
+msgid "PiTiVi is unable to load file \"%s\": %s"
+msgstr "PiTiVi ne peut charger le fichier « %s » : %s"
+
+#: ../pitivi/ui/mainwindow.py:435
+msgid "Error Loading File"
+msgstr "Erreur lors du chargement d'un fichier"
+
+#: ../pitivi/ui/mainwindow.py:443
+#, python-format
+msgid "Do you wish to overwrite existing file \"%s\"?"
+msgstr "Voulez-vous écraser le fichier existant « %s » ?"
+
+#: ../pitivi/ui/mainwindow.py:452
+msgid "Overwrite Existing File?"
+msgstr "Écraser le fichier existant ?"
+
+#: ../pitivi/ui/mainwindow.py:460
+msgid "Save As..."
+msgstr "Enregistrer sous..."
+
+#: ../pitivi/ui/mainwindow.py:467
+msgid "Untitled.pptv"
+msgstr "SansTitre.pptv"
+
+#: ../pitivi/ui/mainwindow.py:471 ../pitivi/ui/mainwindow.py:488
+msgid "Detect Automatically"
+msgstr "Détecter automatiquement"
+
+#: ../pitivi/ui/mainwindow.py:528
 msgid "Choose file to render to"
 msgstr "Choisissez le fichier cible du rendu"
 
-#: ../pitivi/ui/mainwindow.py:415
+#: ../pitivi/ui/mainwindow.py:551
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "Terminé dans %d m %d s"
 
-#: ../pitivi/ui/mainwindow.py:425
+#: ../pitivi/ui/mainwindow.py:561
 msgid "Rendering"
 msgstr "Rendu en cours"
 
-#: ../pitivi/ui/mainwindow.py:428
+#: ../pitivi/ui/mainwindow.py:564
 msgid "Couldn't start rendering"
 msgstr "Impossible de démarrer le rendu"
 
-#: ../pitivi/ui/mainwindow.py:449
+#: ../pitivi/ui/mainwindow.py:585
 msgid "Rendering Complete"
 msgstr "Rendu terminé"
 
@@ -755,85 +795,85 @@ msgstr ""
 "<span size='x-large'>Importez vos séquences en les glissant ici ou en "
 "utilisant les boutons ci-dessous.</span>"
 
-#: ../pitivi/ui/sourcefactories.py:294
+#: ../pitivi/ui/sourcefactories.py:308
 msgid "Import a folder"
 msgstr "Importer un dossier"
 
-#: ../pitivi/ui/sourcefactories.py:297
+#: ../pitivi/ui/sourcefactories.py:311
 msgid "Import a clip"
 msgstr "Importer une séquence"
 
-#: ../pitivi/ui/sourcefactories.py:549 ../pitivi/ui/sourcefactories.py:594
+#: ../pitivi/ui/sourcefactories.py:556 ../pitivi/ui/sourcefactories.py:601
 msgid "Name"
 msgstr "Nom"
 
-#: ../pitivi/ui/sourcefactories.py:642
+#: ../pitivi/ui/sourcefactories.py:649
 msgid "Importing clips..."
 msgstr "Importation des séquences..."
 
-#: ../pitivi/ui/sourcefactories.py:643
+#: ../pitivi/ui/sourcefactories.py:650
 msgid "Error(s) occured while importing"
 msgstr "Erreur(s) survenue(s) durant l'importation"
 
-#: ../pitivi/ui/sourcefactories.py:644
+#: ../pitivi/ui/sourcefactories.py:651
 msgid "An error occured while importing"
 msgstr "Un erreur a eu lieu lors de l'importation"
 
-#: ../pitivi/ui/sourcefactories.py:729
+#: ../pitivi/ui/sourcefactories.py:736
 msgid "Error while analyzing files"
 msgstr "Erreur lors de l'analyse des fichiers"
 
-#: ../pitivi/ui/sourcefactories.py:730
+#: ../pitivi/ui/sourcefactories.py:737
 msgid "The following files can not be used with PiTiVi."
 msgstr "Les fichiers suivants ne peuvent pas être utilisés par PiTiVi."
 
-#: ../pitivi/ui/sourcefactories.py:732
+#: ../pitivi/ui/sourcefactories.py:739
 msgid "Error while analyzing a file"
 msgstr "Erreur lors de l'analyse d'un fichier"
 
-#: ../pitivi/ui/sourcefactories.py:733
+#: ../pitivi/ui/sourcefactories.py:740
 msgid "The following file can not be used with PiTiVi."
 msgstr "Le fichier suivant ne peut pas être utilisé par PiTiVi."
 
-#: ../pitivi/ui/timelineobjects.py:535
+#: ../pitivi/ui/timelineobjects.py:561
 msgid "Close"
 msgstr "Fermer"
 
 #. done and cancel buttons
-#: ../pitivi/ui/timelineobjects.py:558
+#: ../pitivi/ui/timelineobjects.py:584
 msgid "Done"
 msgstr "Appliquer"
 
-#: ../pitivi/ui/timelineobjects.py:560
+#: ../pitivi/ui/timelineobjects.py:586
 msgid "Cancel"
 msgstr "Annuler"
 
-#: ../pitivi/ui/timelineobjects.py:578
+#: ../pitivi/ui/timelineobjects.py:604
 msgid "Start"
 msgstr "Début"
 
-#: ../pitivi/ui/timelineobjects.py:580 ../pitivi/ui/timelineobjects.py:607
+#: ../pitivi/ui/timelineobjects.py:606 ../pitivi/ui/timelineobjects.py:633
 msgid "Trim"
 msgstr "Découper"
 
-#: ../pitivi/ui/timelineobjects.py:605
+#: ../pitivi/ui/timelineobjects.py:631
 msgid "End"
 msgstr "Fin"
 
-#: ../pitivi/ui/timelineobjects.py:1043
+#: ../pitivi/ui/timelineobjects.py:1069
 msgid "Remove"
 msgstr "Retirer"
 
 #. temporarily deactivate editing for 0.10.3 release !
-#: ../pitivi/ui/timelineobjects.py:1048 ../pitivi/ui/timelineobjects.py:1091
+#: ../pitivi/ui/timelineobjects.py:1074 ../pitivi/ui/timelineobjects.py:1117
 msgid "Edit"
 msgstr "Éditer"
 
-#: ../pitivi/ui/timelineobjects.py:1104
+#: ../pitivi/ui/timelineobjects.py:1130
 msgid "Effect"
 msgstr "Effet"
 
-#: ../pitivi/ui/timelineobjects.py:1112
+#: ../pitivi/ui/timelineobjects.py:1138
 msgid "Sound"
 msgstr "Son"
 
