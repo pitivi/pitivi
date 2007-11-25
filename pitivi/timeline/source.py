@@ -132,13 +132,13 @@ class TimelineFileSource(TimelineSource):
 
         return gnlobject
 
-    def _decodebinPadAddedCb(self, dbin, pad):
+    def _decodebinPadAddedCb(self, unused_dbin, pad):
         pad.link(self.audioconv.get_pad("sink"))
         ghost = gst.GhostPad("src", self.volumeElement.get_pad("src"))
         ghost.set_active(True)
         self.volumeBin.add_pad(ghost)
 
-    def _decodebinPadRemovedCb(self, dbin, pad):
+    def _decodebinPadRemovedCb(self, unused_dbin, pad):
         gst.log("pad:%s" % pad)
         # workaround for gstreamer bug ...
         gpad = self.volumeBin.get_pad("src")

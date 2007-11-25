@@ -105,13 +105,13 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
 
         self.add_events(gtk.gdk.POINTER_MOTION_MASK | gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
 
-    def _deleteMenuItemCb(self, menuitem):
+    def _deleteMenuItemCb(self, unused_menuitem):
         # remove currently selected source
         gst.log("removing source")
         self.layerInfo.composition.removeSource(self._movingSource)
         self._movingSource = None
 
-    def _cutMenuItemCb(self, menuitem):
+    def _cutMenuItemCb(self, unused_menuitem):
         gst.log("cut at position %s" % gst.TIME_ARGS(self.position))
         # cut current source at current position
         source = self._findSourceAtPositionTime(self.position)
@@ -371,7 +371,7 @@ class TrackLayer(gtk.Layout, ZoomableWidgetInterface):
                 self._origSourcePosition = source.start
                 self._popupMenu.popup(None,None,None, event.button, event.time)
 
-    def _buttonReleaseEventCb(self, unused_layout, event):
+    def _buttonReleaseEventCb(self, unused_layout, unused_event):
         gst.log("Mouse up !")
         # reset values
         self._mouseDownPosition = [None,None]

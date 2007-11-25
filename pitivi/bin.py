@@ -276,7 +276,7 @@ class SmartBin(gst.Pipeline):
         # TODO : Check if we really do both audio and video !
 
         if not settings:
-            setting = self.getSettings()
+            settings = self.getSettings()
             if not settings:
                 self.error("No settings available to create the Encoding Thread")
                 return None

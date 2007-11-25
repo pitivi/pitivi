@@ -62,11 +62,11 @@ class Thumbnailer(gst.Pipeline):
         self.sbin.connect('pad-added', self._sbinPadAddedCb)
         self.set_state(gst.STATE_PAUSED)
 
-    def _sbinPadAddedCb(self, sbin, pad):
+    def _sbinPadAddedCb(self, unused_sbin, pad):
         self.log("pad : %s" % pad)
         pad.link(self.csp.get_pad("sink"))
 
-    def _thumbnailCb(self, thsink, pixbuf, timestamp):
+    def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
         self.log("pixbuf:%s, timestamp:%s" % (pixbuf, gst.TIME_ARGS(timestamp)))
         if not self._ready:
             # we know we're prerolled when we get the initial thumbnail

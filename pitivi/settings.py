@@ -55,7 +55,7 @@ class GlobalSettings:
     # * The settings should be discover-able by UI for ex
     # * plugins should be able to add some settings
 
-    def __init__(self, **kwargs):
+    def __init__(self, **unused_kw):
         self._setDefaults()
         self._readSettings()
 
@@ -84,7 +84,7 @@ class GlobalSettings:
         self.fileSupportEnabled = get_bool_env("PITIVI_FILE_SUPPORT")
         pass
 
-    def get_local_plugin_path(autocreate=True):
+    def get_local_plugin_path(self, autocreate=True):
         """
         Compute the absolute path to local plugin repository
 
@@ -93,16 +93,16 @@ class GlobalSettings:
         """
 
         pitivi_path = os.path.expanduser("~/.pitivi")
-        if not os.path.exists(pitivi_path):
+        if not os.path.exists(pitivi_path) and autocreate:
             os.mkdir(pitivi_path)
 
         repository_path = os.path.expanduser("~/.pitivi/plugins")
-        if not os.path.exists(repository_path):
+        if not os.path.exists(repository_path) and autocreate:
             os.mkdir(repository_path)
 
         return repository_path
 
-    def get_plugin_settings_path(autocreate=True):
+    def get_plugin_settings_path(self, autocreate=True):
         """
         Compute the absolute path to local plugin settings' repository
 
@@ -111,11 +111,11 @@ class GlobalSettings:
         """
 
         pitivi_path = os.path.expanduser("~/.pitivi")
-        if not os.path.exists(pitivi_path):
+        if not os.path.exists(pitivi_path) and autocreate:
             os.mkdir(pitivi_path)
 
         repository_path = os.path.expanduser("~/.pitivi/plugins-settings")
-        if not os.path.exists(repository_path):
+        if not os.path.exists(repository_path) and autocreate:
             os.mkdir(repository_path)
 
         return repository_path
@@ -145,7 +145,7 @@ class ExportSettings(gobject.GObject, Serializable):
     # TODO : Add PAR/DAR for video
     # TODO : switch to using GstFraction internally where appliable
 
-    def __init__(self, **kwargs):
+    def __init__(self, **unused_kw):
         gobject.GObject.__init__(self)
         self.videowidth = 720
         self.videoheight = 576

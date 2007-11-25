@@ -1,5 +1,29 @@
 2007-11-25  Edward Hervey  <bilboed@bilboed.com>
 
+	* bin/pitivi.in:
+	* pitivi/bin.py:
+	* pitivi/objectfactory.py:
+	* pitivi/settings.py:
+	* pitivi/threads.py:
+	* pitivi/thumbnailer.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/slider.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/tracklayer.py:
+	* pitivi/ui/viewer.py:
+	Fix misc issues detected by pychecker.
+	Renaming unused method arguments
+	Whitespace/tabs fixes.
+
+2007-11-25  Edward Hervey  <bilboed@bilboed.com>
+
 	Patch by: Tommy <yobbobandana at yahoo dot co dot nz>
 	* pitivi/ui/timelineobjects.py:
 	Fix drag and drop slots in the simple timeline.

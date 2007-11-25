@@ -128,7 +128,7 @@ class SimpleTimelineContentWidget(gtk.HBox):
         self.showingTimeline = False
         self._displayTimeline()
 
-    def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
+    def _dragMotionCb(self, unused_layout, unused_context, unused_x, unused_y,
                       unused_timestamp):
         gst.log("motion...")
         self.showingTimeline = False

@@ -216,7 +216,7 @@ class TimelineComposition(TimelineSource):
     def __len__(self):
         """ return the number of sources in this composition """
         l = 0
-        for min, max, sources in self.sources:
+        for mn, mx, sources in self.sources:
             l += len(sources)
         return l
 
@@ -675,9 +675,9 @@ class TimelineComposition(TimelineSource):
         the given start position will be shifted.
         """
         self.gnlobject.info("offset:%d, startsource:%s, endsource:%s" % (offset, startsource, endsource))
-        startpos = self.getSourcePosition(startsource)
+        startpos = self.getSimpleSourcePosition(startsource)
         if endsource:
-            endpos = self.getSourcePosition(endsource)
+            endpos = self.getSimpleSourcePosition(endsource)
         else:
             endpos = -1
         self.shiftSources(offset, startpos, endpos)
@@ -701,7 +701,7 @@ class TimelineComposition(TimelineSource):
 
         # sources
         for layer in self.sources:
-            min, max, sources = layer
+            mn, mx, sources = layer
             for source in sources[:]:
                 self.removeSource(source)
 

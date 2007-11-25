@@ -130,13 +130,13 @@ class PipelineSlider(gtk.VBox):
             self._buttonReleaseEventCb)
 
         # connect to playground
-        id = instance.PiTiVi.playground.connect("position",
+        pid = instance.PiTiVi.playground.connect("position",
             self._playgroundPositionCb)
-        self._playgroundPositionSigId = id
+        self._playgroundPositionSigId = pid
 
-        id = instance.PiTiVi.playground.connect("current-changed", 
+        pid = instance.PiTiVi.playground.connect("current-changed", 
             self._playgroundCurrentChangedCb)
-        self._playgroundCurrentChangedSigId = id
+        self._playgroundCurrentChangedSigId = pid
 
     def _createUi(self):
         if self._displayEndpoints == True:
@@ -148,17 +148,17 @@ class PipelineSlider(gtk.VBox):
         self.pack_start(self._slider)
         self.show_all()
 
-    def _buttonPressEventCb(self, slider, unused_event):
+    def _buttonPressEventCb(self, unused_slider, unused_event):
         gst.info("button pressed")
         self._movingSlider = True
-        id = self._slider.connect("value-changed", self._valueChangedCb)
-        self._valueChangedSigId = id
+        sid = self._slider.connect("value-changed", self._valueChangedCb)
+        self._valueChangedSigId = sid
 
         if self._switchSource == True:
             instance.PiTiVi.playground.switchToPipeline(self._pipeline)
         return False
 
-    def _buttonReleaseEventCb(self, slider, unused_event):
+    def _buttonReleaseEventCb(self, unused_slider, unused_event):
         gst.info("slider button release")
         self._movingSlider = False
         if self._valueChangedSigId:
@@ -167,7 +167,7 @@ class PipelineSlider(gtk.VBox):
 
         return False
 
-    def _valueChangedCb(self, slider):
+    def _valueChangedCb(self, unused_slider):
         if self._movingSlider == True:
             position = long(self._slider.get_value())
             instance.PiTiVi.playground.seekInCurrent(position)
@@ -182,7 +182,7 @@ class PipelineSlider(gtk.VBox):
         else:
             self._switchSource = True
 
-    def _playgroundPositionCb(self, playground, bin, position):
+    def _playgroundPositionCb(self, unused_playground, unused_bin, position):
         if (self._movingSlider == False) and (self._switchSource == False):
             self._slider.set_value(float(position))
 

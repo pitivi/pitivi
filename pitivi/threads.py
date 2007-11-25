@@ -56,6 +56,9 @@ class Thread(threading.Thread, gobject.GObject):
         self.process()
         gobject.idle_add(self.emit, "done")
 
+    def process(self):
+        """ Implement this in subclasses """
+        raise NotImplementedError
 
     def abort(self):
         """ Abort the thread. Subclass have to implement this method ! """

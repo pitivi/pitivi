@@ -42,7 +42,7 @@ class Timeline(gobject.GObject, Serializable):
     # TODO make the compositions more versatile
     # for the time being we hardcode an audio and a video composition
 
-    def __init__(self, project=None, **kwargs):
+    def __init__(self, project=None, **unused_kw):
         gst.log("new Timeline for project %s" % project)
         gobject.GObject.__init__(self)
         self.project = project

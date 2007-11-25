@@ -22,7 +22,6 @@
 
 import os.path
 import gobject
-import time
 import gtk
 import gst
 import gst.interfaces

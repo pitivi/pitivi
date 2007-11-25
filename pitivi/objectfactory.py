@@ -71,7 +71,7 @@ class ObjectFactory(gobject.GObject, Serializable):
     # pending UID (int) => objects (list of BrotherObjects and extra field)
     __waiting_for_pending_objects__ = {}
 
-    def __init__(self, **kwargs):
+    def __init__(self, **unused_kw):
         gobject.GObject.__init__(self)
         self.name = ""
         self.displayname = ""

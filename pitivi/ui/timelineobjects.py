@@ -146,10 +146,10 @@ class SimpleTimeline(gtk.Layout):
                                      "condensed-list-changed",
                                      None, self._condensedListChangedCb)
 
-    def _newProjectLoadingCb(self, inst, project):
+    def _newProjectLoadingCb(self, unused_inst, unused_project):
         gst.log("...")
 
-    def _newProjectLoadedCb(self, inst, project):
+    def _newProjectLoadedCb(self, unused_inst, project):
         gst.log("...")
         assert(instance.PiTiVi.current == project)
         # now we connect to the new project, so we can receive any
@@ -161,7 +161,7 @@ class SimpleTimeline(gtk.Layout):
         # LOAD THE TIMELINE !!!
         self._condensedListChangedCb(None, self.timeline.videocomp.condensed)
 
-    def _newProjectFailedCb(self, inst, reason, uri):
+    def _newProjectFailedCb(self, unused_inst, unused_reason, unused_uri):
         # oops the project failed to load
         self._clearTimeline()
 
@@ -668,9 +668,9 @@ class SimpleEditingWidget(gtk.EventBox):
         self._mediaDuration = source.media_duration
 
         ## connect to playground position change
-        id = instance.PiTiVi.playground.connect("position",
+        sid = instance.PiTiVi.playground.connect("position",
             self._playgroundPositionCb)
-        self._playgroundPositionSigId = id
+        self._playgroundPositionSigId = sid
 
         # set viewer source
         self._pipeline = SmartFileBin(source.factory)

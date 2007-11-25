@@ -249,7 +249,7 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
 
             if timeprint == 0:
                 # draw the text position
-                hours = seconds / 3600
+                hours = int(seconds / 3600)
                 mins = seconds % 3600 / 60
                 secs = seconds % 60
                 time = "%02d:%02d:%02d" % (hours, mins, secs)

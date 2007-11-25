@@ -113,8 +113,8 @@ class PitiviMainWindow(gtk.Window):
             gobject.idle_add(self.timeline.simpleview._displayTimeline)
 
     def _currentPlaygroundChangedCb(self, playground, smartbin):
-	if smartbin == playground.default:
-	    self.render_button.set_sensitive(False)
+        if smartbin == playground.default:
+            self.render_button.set_sensitive(False)
         else:
             if isinstance(smartbin, SmartTimelineBin):
                 gst.info("switching to Timeline, setting duration to %s" %
@@ -122,12 +122,12 @@ class PitiviMainWindow(gtk.Window):
                 smartbin.project.timeline.videocomp.connect("start-duration-changed",
                                                             self._timelineDurationChangedCb)
                 if smartbin.project.timeline.videocomp.duration > 0:
-		    self.render_button.set_sensitive(True)
+                    self.render_button.set_sensitive(True)
                     gobject.idle_add(self.timeline.simpleview._displayTimeline)
                 else:
-		    self.render_button.set_sensitive(False)
+                    self.render_button.set_sensitive(False)
             else:
-		self.render_button.set_sensitive(False)
+                self.render_button.set_sensitive(False)
 
     def _createStockIcons(self):
         """ Creates the pitivi-only stock icons """
@@ -253,7 +253,7 @@ class PitiviMainWindow(gtk.Window):
         # Viewer
         self.viewer = PitiviViewer()
 
-	instance.PiTiVi.playground.connect("current-changed", self._currentPlaygroundChangedCb)
+        instance.PiTiVi.playground.connect("current-changed", self._currentPlaygroundChangedCb)
 
         hpaned.pack1(self.sourcefactories, resize=False, shrink=False)
         hpaned.pack2(self.viewer, resize=True, shrink=False)

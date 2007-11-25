@@ -214,6 +214,7 @@ class SourceListWidget(gtk.VBox):
         # default pixbufs
         icontheme = gtk.icon_theme_get_default()
         self.filepixbuf = icontheme.load_icon("misc", 32, 0)
+        pixdir = get_pixmap_dir()
         if not self.filepixbuf:
             self.filepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-file.png"))
         self.audiofilepixbuf = icontheme.load_icon("audio-x-generic", 32, 0)
@@ -294,7 +295,7 @@ class SourceListWidget(gtk.VBox):
             self.txtlabel.show()
             self.showingTreeView = False
 
-    def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
+    def _dragMotionCb(self, unused_layout, unused_context, unused_x, unused_y,
                       unused_timestamp):
         gst.log("motion")
         gobject.idle_add(self._displayTreeView, True, False)
@@ -384,7 +385,7 @@ class SourceListWidget(gtk.VBox):
     def _sourcesStoppedImportingCb(self, unused_sourcelist):
         self.infostub.stoppingImport()
 
-    def _removeInfoStub(self, infostub):
+    def _removeInfoStub(self, unused_i):
         self.remove(self.infostub)
 
     ## Error Dialog Box callbacks
@@ -436,13 +437,6 @@ class SourceListWidget(gtk.VBox):
         for path in selected:
             uri = model[path][COL_URI]
             del instance.PiTiVi.current.sources[uri]
-
-    def _errorDialogButtonClickedCb(self, unused_widget=None):
-        """ called when the user click on the import errors button """
-        if self.errorDialogBox:
-            self.errorDialogBox.show()
-        if self.errorDialogButton.parent:
-            self.bothbox.remove(self.errorDialogButton)
 
     def _playButtonClickedCb(self, unused_widget):
         """ Called when a user clicks on the play button """
