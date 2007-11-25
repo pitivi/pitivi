@@ -1,3 +1,10 @@
+2007-11-25  Edward Hervey  <bilboed@bilboed.com>
+
+	Patch by: Tommy <yobbobandana at yahoo dot co dot nz>
+	* pitivi/ui/timelineobjects.py:
+	Fix drag and drop slots in the simple timeline.
+	Fixes #498071
+
 2007-11-18  Edward Hervey  <bilboed@bilboed.com>
 
 	* configure.ac:

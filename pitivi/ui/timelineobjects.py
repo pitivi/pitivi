@@ -230,9 +230,9 @@ class SimpleTimeline(gtk.Layout):
         # TODO Need to avoid getting position between source and transition
         for source in self.condensed:
             if isinstance(source, TimelineSource):
-                spacing = self.childheight
+                spacing = self.childwidth
             elif isinstance(source, TimelineTransition):
-                spacing = self.childheight / 2
+                spacing = self.childwidth / 2
             else:
                 # this shouldn't happen !! The condensed list only contains
                 # sources and/or transitions
@@ -257,9 +257,9 @@ class SimpleTimeline(gtk.Layout):
         # TODO Need to avoid getting position between source and transition
         for source in self.condensed:
             if isinstance(source, TimelineSource):
-                spacing = self.childheight
+                spacing = self.childwidth
             elif isinstance(source, TimelineTransition):
-                spacing = self.childheight / 2
+                spacing = self.childwidth / 2
             else:
                 # this shouldn't happen !! The condensed list only contains
                 # sources and/or transitions
