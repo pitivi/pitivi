@@ -457,6 +457,7 @@ class PitiviMainWindow(gtk.Window):
         return False
 
     def _saveAsDialogCb(self, project):
+        gst.log("Save URI requested")
         chooser = gtk.FileChooserDialog(_("Save As..."),
             self,
             action=gtk.FILE_CHOOSER_ACTION_SAVE,
@@ -465,7 +466,6 @@ class PitiviMainWindow(gtk.Window):
 
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled.pptv"))
-        chooser.set_default_response(gtk.RESPONSE_CANCEL)
         formats = ProjectSaver.listFormats()
         default = gtk.FileFilter()
         default.set_name(_("Detect Automatically"))
@@ -481,17 +481,22 @@ class PitiviMainWindow(gtk.Window):
         response = chooser.run()
 
         if response == gtk.RESPONSE_OK:
+            gst.log("User chose a URI to save project to")
             # need to do this to work around bug in gst.uri_construct
             # which escapes all /'s in path!
             uri = "file://" + chooser.get_filename()
             format = chooser.get_filter().get_name()
             if format == _("Detect Automatically"):
                 format = None
+            gst.log("uri:%s , format:%s" % (uri, format))
             project.setUri(uri, format)
-            chooser.destroy()
-            return True
+            ret = True
+        else:
+            gst.log("User didn't choose a URI to save project to")
+            ret = False
+
         chooser.destroy()
-        return False
+        return ret
 
 
 class EncodingDialog(GladeWindow):

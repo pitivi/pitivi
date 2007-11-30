@@ -1,3 +1,13 @@
+2007-11-30  Edward Hervey  <bilboed@bilboed.com>
+
+	* pitivi/project.py:
+	Fixed issues when saving existing projects.
+	Documentation fixes.
+	Added more debug statements.
+	Added default signal handlers for signals that return something.
+	* pitivi/ui/mainwindow.py:
+	Added some debugging statements and cleaned up code a little bit.
+
 2007-11-25  Edward Hervey  <bilboed@bilboed.com>
 
 	* bin/pitivi.in:

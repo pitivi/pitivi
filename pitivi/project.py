@@ -40,7 +40,7 @@ class Project(gobject.GObject, Serializable):
     """ The base class for PiTiVi projects
     Signals
 
-       string save-uri-requested()
+       boolean save-uri-requested()
             The the current project has been requested to save itself, but
             needs a URI to which to save. Handlers should first call
             setUri(), with the uri to save the file (optionally
@@ -84,6 +84,7 @@ class Project(gobject.GObject, Serializable):
         self.settings = None
         self.description = ""
         self.uri = uri
+        self.urichanged = False
         self.format = None
         self.sources = SourceList(self)
         self.timeline = None
@@ -112,9 +113,11 @@ class Project(gobject.GObject, Serializable):
         """
         gst.log("uri:%s" % self.uri)
         gst.debug("Creating timeline")
+        # FIXME : This should be discovered !
+        saveformat = "pickle"
         if self.uri and file_is_project(self.uri):
             self.timeline = Timeline(self)
-            loader = ProjectSaver.newProjectSaver("pickle")
+            loader = ProjectSaver.newProjectSaver(saveformat)
             path = gst.uri_get_location(self.uri)
             fileobj = open(path, "r")
             try:
@@ -124,6 +127,8 @@ class Project(gobject.GObject, Serializable):
                 gst.error("Error while loading the project !!!")
                 return False
             fileobj.close()
+            self.format = saveformat
+            self.urichanged = False
             return True
         return False
 
@@ -140,28 +145,40 @@ class Project(gobject.GObject, Serializable):
         if uri_is_valid(self.uri):
             path = gst.uri_get_location(self.uri)
         else:
+            gst.warning("uri '%s' is invalid, aborting save" % self.uri)
             return False
+
         #TODO: a bit more sophisticated overwite detection
-        if os.path.exists(path):
+        if os.path.exists(path) and self.urichanged:
             if not self.emit("confirm-overwrite", self.uri):
+                gst.log("aborting save because overwrite was denied")
                 return False
+
         try:
             fileobj = open(path, "w")
             loader = ProjectSaver.newProjectSaver(self.format)
             tree = self.toDataFormat()
             loader.saveToFile(tree, fileobj)
             self._dirty = False
+            self.urichanged = False
+            gst.log("Project file saved successfully !")
             return True
         except IOError:
             return False
 
     def save(self):
         """ Saves the project to the project's current file """
-        if not self.uri:
-            if self.emit("save-uri-requested"):
-                if not self.uri:
-                    return False
+        gst.log("saving...")
+        if self.uri:
+            return self._save()
+
+        gst.log("requesting for a uri to save to...")
+        if self.emit("save-uri-requested"):
+            gst.log("'save-uri-requested' returned True, self.uri:%s" % self.uri)
+            if self.uri:
                 return self._save()
+
+        gst.log("'save-uri-requested' returned False or uri wasn't set, aborting save")
         return False
 
     def saveAs(self):
@@ -177,12 +194,20 @@ class Project(gobject.GObject, Serializable):
         self.emit('settings-changed')
 
     def setUri(self, uri, format=None):
-        self.uri = uri
-        if not format:
-            path = gst.uri_get_location(uri)
-            ext = os.path.splitext(path)[1]
-            format = ProjectSaver.getFormat(ext)
-        self.format = format
+        gst.log("uri:%s, format:%s" % (uri, format))
+        if not self.uri == uri:
+            gst.log("updating self.uri, previously:%s" % self.uri)
+            self.uri = uri
+            self.urichanged = True
+
+        if not format or not self.format == format:
+            gst.log("updating save format, previously:%s" % self.format)
+            if not format:
+                path = gst.uri_get_location(uri)
+                ext = os.path.splitext(path)[1]
+                gst.log("Based on file extension, format is %s" % format)
+                format = ProjectSaver.getFormat(ext)
+            self.format = format
 
     def getSettings(self):
         """
@@ -236,6 +261,13 @@ class Project(gobject.GObject, Serializable):
 
     def hasUnsavedModifications(self):
         return self._dirty
+
+    # signals default handlers
+    def do_save_uri_requested(self):
+        return True
+
+    def do_confirm_overwrite(self, unused_uri):
+        return True
 
     # Serializable methods
 
