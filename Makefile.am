@@ -33,8 +33,7 @@ EXTRA_DIST +=                    \
 
 locale-uninstalled:
 	if test -d po; then \
-	cd po; \
-	make datadir=../$(top_builddir) install; \
+	    $(MAKE) -C po datadir=../$(top_builddir) install; \
 	fi
 
 locale-uninstalled-clean:

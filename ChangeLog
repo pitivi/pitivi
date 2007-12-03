@@ -1,3 +1,10 @@
+2007-12-02  Loïc Minier  <lool@dooz.org>
+
+	Reviewed by : Edward Hervey <bilboed@bilboed.com>
+	* Makefile.am:
+	Fix locale-uninstalled rule to use $(MAKE) instead of make.
+	Fixes #501068
+
 2007-11-30  Edward Hervey  <bilboed@bilboed.com>
 
 	* pitivi/project.py:
