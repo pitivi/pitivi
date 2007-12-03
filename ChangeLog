@@ -1,3 +1,9 @@
+2007-12-03  Edward Hervey  <bilboed@bilboed.com>
+
+	* po/POTFILES.in:
+	Added more translatable files.
+	Fixes #501028
+
 2007-12-02  Loïc Minier  <lool@dooz.org>
 
 	Reviewed by : Edward Hervey <bilboed@bilboed.com>
