@@ -4,7 +4,8 @@ elements_PYTHON = \
 	__init__.py \
 	singledecodebin.py \
 	smartscale.py	\
-	thumbnailsink.py
+	thumbnailsink.py \
+	videofade.py
 
 clean-local:
 	rm -rf *.pyc *.pyo

@@ -1,3 +1,9 @@
+2008-01-10  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/elements/Makefile.am:
+	* pitivi/elements/videofade.py:
+	New fade-in/fade-out element. Only works with cvs gst-plugins-good.
+
 2007-12-03  Edward Hervey  <bilboed@bilboed.com>
 
 	* po/POTFILES.in:
