@@ -1,21 +1,22 @@
-# GNOME French Team translation of pitivi.
-# Copyright (C) 2006-2007 THE pitivi'S COPYRIGHT HOLDER
+# French translation of Pitivi.
+# Copyright (C) 2006-2007 The Pitivi's copyright holder
 # This file is distributed under the same license as the pitivi package.
 #
 # Christophe Sauthier <christophe.sauthier@gmail.com>, 2006.
 # Vincent Untz <vuntz@gnome.org>, 2007.
 # Claude Paroz <claude@2xlibre.net>, 2007.
-# Stéphane Raimbault <stephane.raimbault@gmail.com>, 2007.
+# Stéphane Raimbault <stephane.raimbault@gmail.com>, 2007-2008
 # Christophe Benz <christophe.benz@gmail.com>, 2007.
 # Ivan Buresi <err747@free.fr>, 2007.
+# Robert-André Mauchin <zebob.m@pengzone.org>, 2007.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-24 18:39+0100\n"
-"PO-Revision-Date: 2007-11-24 18:46+0100\n"
-"Last-Translator: Claude Paroz <claude@2xlibre.net>\n"
+"POT-Creation-Date: 2008-01-21 22:58+0100\n"
+"PO-Revision-Date: 2008-01-21 23:00+0100\n"
+"Last-Translator: Robert-André Mauchin <zebob.m@pengzone.org>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -332,7 +333,7 @@ msgstr "Problème de sortie audio"
 msgid "There is a problem with your audio output device"
 msgstr "Il y a un problème avec le périphérique de sortie audio"
 
-#: ../pitivi/project.py:264
+#: ../pitivi/project.py:296
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s ne gère pas encore les projets non présents localement"
@@ -382,7 +383,7 @@ msgid "Author"
 msgstr "Auteur"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:562 ../pitivi/ui/sourcefactories.py:607
+#: ../pitivi/ui/sourcefactories.py:556 ../pitivi/ui/sourcefactories.py:601
 msgid "Description"
 msgstr "Description"
 
@@ -685,8 +686,8 @@ msgstr ""
 #: ../pitivi/ui/mainwindow.py:420
 msgid "The project has unsaved changes. Do you wish to close the project?"
 msgstr ""
-"Le projet contient des modifications non enregistrées. Voulez-vous tout "
-"de même fermer le projet ?"
+"Le projet contient des modifications non enregistrées. Voulez-vous tout de "
+"même fermer le projet ?"
 
 #: ../pitivi/ui/mainwindow.py:433
 #, python-format
@@ -706,38 +707,80 @@ msgstr "Voulez-vous écraser le fichier existant « %s » ?"
 msgid "Overwrite Existing File?"
 msgstr "Écraser le fichier existant ?"
 
-#: ../pitivi/ui/mainwindow.py:460
+#: ../pitivi/ui/mainwindow.py:461
 msgid "Save As..."
 msgstr "Enregistrer sous..."
 
-#: ../pitivi/ui/mainwindow.py:467
+#: ../pitivi/ui/mainwindow.py:468
 msgid "Untitled.pptv"
 msgstr "SansTitre.pptv"
 
-#: ../pitivi/ui/mainwindow.py:471 ../pitivi/ui/mainwindow.py:488
+#: ../pitivi/ui/mainwindow.py:471 ../pitivi/ui/mainwindow.py:489
 msgid "Detect Automatically"
 msgstr "Détecter automatiquement"
 
-#: ../pitivi/ui/mainwindow.py:528
+#: ../pitivi/ui/mainwindow.py:533
 msgid "Choose file to render to"
 msgstr "Choisissez le fichier cible du rendu"
 
-#: ../pitivi/ui/mainwindow.py:551
+#: ../pitivi/ui/mainwindow.py:556
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr "Terminé dans %d m %d s"
 
-#: ../pitivi/ui/mainwindow.py:561
+#: ../pitivi/ui/mainwindow.py:566
 msgid "Rendering"
 msgstr "Rendu en cours"
 
-#: ../pitivi/ui/mainwindow.py:564
+#: ../pitivi/ui/mainwindow.py:569
 msgid "Couldn't start rendering"
 msgstr "Impossible de démarrer le rendu"
 
-#: ../pitivi/ui/mainwindow.py:585
+#: ../pitivi/ui/mainwindow.py:590
 msgid "Rendering Complete"
 msgstr "Rendu terminé"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:1
+#: ../pitivi/ui/pluginmanagerdialog.py:173
+msgid "All categories"
+msgstr "Toutes les catégories"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:2
+msgid "Plugin manager"
+msgstr "Gestionnaire de greffons"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:3
+msgid "Search : "
+msgstr "Rechercher : "
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:4
+msgid "Show : "
+msgstr "Afficher : "
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:5
+msgid ""
+"You may drag plugin files into the list to install them,\n"
+"or type text to search for a specific plugin."
+msgstr ""
+"Vous pouvez glisser les fichiers de greffon dans la liste pour les "
+"installer,\n"
+"ou saisir du texte pour rechercher un greffon spécifique."
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:7
+msgid "gtk-about"
+msgstr "gtk-about"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:8
+msgid "gtk-close"
+msgstr "gtk-close"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:9
+msgid "gtk-delete"
+msgstr "gtk-delete"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:10
+msgid "gtk-preferences"
+msgstr "gtk-preferences"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
@@ -758,6 +801,57 @@ msgstr "Paramètres du projet"
 #: ../pitivi/ui/projectsettings.glade.h:5
 msgid "The name of your project."
 msgstr "Le nom de votre projet."
+
+#: ../pitivi/ui/pluginmanagerdialog.py:89
+msgid "Enabled"
+msgstr "Activé"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:99
+msgid "Plugin"
+msgstr "Greffon"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:109
+msgid "Category"
+msgstr "Catégorie"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:271
+msgid "Are you sure you want to remove selected plugins ?"
+msgstr "Voulez-vous vraiment enlever les greffons sélectionnés ?"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:272
+msgid "Confirm remove operation"
+msgstr "Confirmer la suppression"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:289
+#, python-format
+msgid "Cannot remove %s"
+msgstr "Impossible d'enlever %s"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:322
+msgid "Update the existent plugin ?"
+msgstr "Mettre à jour le greffon existant ?"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:325
+msgid "This plugin is already installed in your system.\n"
+msgstr "Ce greffon est déjà installé sur votre système.\n"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:326
+#, python-format
+msgid "If you agree, version %s will be replaced with version %s"
+msgstr "Si vous acceptez, la version %s sera remplacée par la version %s"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:329
+msgid "Duplicate plugin found"
+msgstr "Greffon dupliqué trouvé"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:343
+#, python-format
+msgid "Cannot install %s\n"
+msgstr "Impossible d'installer %s\n"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:344
+msgid "The file is not a valid plugin."
+msgstr "Le fichier n'est pas un greffon valide."
 
 #: ../pitivi/ui/sourcefactories.py:70
 msgid "Clips"
@@ -795,43 +889,43 @@ msgstr ""
 "<span size='x-large'>Importez vos séquences en les glissant ici ou en "
 "utilisant les boutons ci-dessous.</span>"
 
-#: ../pitivi/ui/sourcefactories.py:308
+#: ../pitivi/ui/sourcefactories.py:309
 msgid "Import a folder"
 msgstr "Importer un dossier"
 
-#: ../pitivi/ui/sourcefactories.py:311
+#: ../pitivi/ui/sourcefactories.py:312
 msgid "Import a clip"
 msgstr "Importer une séquence"
 
-#: ../pitivi/ui/sourcefactories.py:556 ../pitivi/ui/sourcefactories.py:601
+#: ../pitivi/ui/sourcefactories.py:550 ../pitivi/ui/sourcefactories.py:595
 msgid "Name"
 msgstr "Nom"
 
-#: ../pitivi/ui/sourcefactories.py:649
+#: ../pitivi/ui/sourcefactories.py:643
 msgid "Importing clips..."
 msgstr "Importation des séquences..."
 
-#: ../pitivi/ui/sourcefactories.py:650
+#: ../pitivi/ui/sourcefactories.py:644
 msgid "Error(s) occured while importing"
 msgstr "Erreur(s) survenue(s) durant l'importation"
 
-#: ../pitivi/ui/sourcefactories.py:651
+#: ../pitivi/ui/sourcefactories.py:645
 msgid "An error occured while importing"
 msgstr "Un erreur a eu lieu lors de l'importation"
 
-#: ../pitivi/ui/sourcefactories.py:736
+#: ../pitivi/ui/sourcefactories.py:730
 msgid "Error while analyzing files"
 msgstr "Erreur lors de l'analyse des fichiers"
 
-#: ../pitivi/ui/sourcefactories.py:737
+#: ../pitivi/ui/sourcefactories.py:731
 msgid "The following files can not be used with PiTiVi."
 msgstr "Les fichiers suivants ne peuvent pas être utilisés par PiTiVi."
 
-#: ../pitivi/ui/sourcefactories.py:739
+#: ../pitivi/ui/sourcefactories.py:733
 msgid "Error while analyzing a file"
 msgstr "Erreur lors de l'analyse d'un fichier"
 
-#: ../pitivi/ui/sourcefactories.py:740
+#: ../pitivi/ui/sourcefactories.py:734
 msgid "The following file can not be used with PiTiVi."
 msgstr "Le fichier suivant ne peut pas être utilisé par PiTiVi."
 
@@ -860,7 +954,7 @@ msgstr "Découper"
 msgid "End"
 msgstr "Fin"
 
-#: ../pitivi/ui/timelineobjects.py:1069
+#: ../pitivi/ui/timelineobjects.py:1069 ../pitivi/ui/tracklayer.py:93
 msgid "Remove"
 msgstr "Retirer"
 
@@ -883,3 +977,7 @@ msgid ""
 msgstr ""
 "<span size='x-large'>Ajoutez des séquences au banc de montage en les "
 "glissant ici.</span>"
+
+#: ../pitivi/ui/tracklayer.py:98
+msgid "Cut"
+msgstr "Couper"
