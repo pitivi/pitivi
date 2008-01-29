@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-03 12:24+0000\n"
-"PO-Revision-Date: 2008-01-11 18:14-0400\n"
+"POT-Creation-Date: 2008-01-13 13:50+0000\n"
+"PO-Revision-Date: 2008-01-26 11:52-0400\n"
 "Last-Translator: Jesse Aviles <jesseaviles@gmail.com>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -754,7 +754,8 @@ msgid ""
 "You may drag plugin files into the list to install them,\n"
 "or type text to search for a specific plugin."
 msgstr ""
-"Puede arrastrar los archivos de los complementos a la lista para instalarlos\n"
+"Puede arrastrar los archivos de los complementos a la lista para "
+"instalarlos\n"
 "o introducir texto para buscar un complemento específico."
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:7
@@ -794,12 +795,10 @@ msgid "The name of your project."
 msgstr "El nombre de su proyecto."
 
 #: ../pitivi/ui/pluginmanagerdialog.py:89
-#, fuzzy
 msgid "Enabled"
 msgstr "Habilitado"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:99
-#, fuzzy
 msgid "Plugin"
 msgstr "Complemento"
 
@@ -974,4 +973,3 @@ msgstr ""
 #: ../pitivi/ui/tracklayer.py:98
 msgid "Cut"
 msgstr "Cortar"
-
