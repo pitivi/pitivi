@@ -1,3 +1,8 @@
+2008-02-20  Kjartan Maraas  <kmaraas@gnome.org>
+
+	* pitivi/ui/pluginmanagerdialog.glade: Don't translate
+	widget labels.
+
 2008-01-10  Edward Hervey  <edward.hervey@collabora.co.uk>
 
 	* pitivi/elements/Makefile.am:
