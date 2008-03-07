@@ -1,6 +1,6 @@
 # Swedish messages for pitivi.
-# Copyright (C) 2006, 2007 Free Software Foundation, Inc.
-# Daniel Nylander <po@danielnylander.se>, 2006, 2007.
+# Copyright (C) 2006, 2007, 2008 Free Software Foundation, Inc.
+# Daniel Nylander <po@danielnylander.se>, 2006, 2007, 2008.
 # Christian Rose <menthos@menthos.com>, 2006.
 #
 # $Id: sv.po,v 1.9 2006/12/26 13:09:16 dnylande Exp $
@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-12-31 03:40+0100\n"
+"POT-Creation-Date: 2008-03-07 20:43+0100\n"
 "PO-Revision-Date: 2007-12-31 03:44+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -33,23 +33,33 @@ msgid "Could not find the GNonLin plugins!"
 msgstr "Kunde inte hitta GNonLin-insticksmodulerna!"
 
 #: ../pitivi/check.py:125
-msgid "Make sure the plugins were installed and are available in the GStreamer plugins path."
-msgstr "Kontrollera att insticksmodulerna blev installerade och finns tillgängliga i sökvägen för GStreamer-insticksmodulerna."
+msgid ""
+"Make sure the plugins were installed and are available in the GStreamer "
+"plugins path."
+msgstr ""
+"Kontrollera att insticksmodulerna blev installerade och finns tillgängliga i "
+"sökvägen för GStreamer-insticksmodulerna."
 
 #: ../pitivi/check.py:127
 msgid "Could not find the autodetect plugins!"
 msgstr "Kunde inte hitta insticksmodulerna för automatisk identifiering!"
 
 #: ../pitivi/check.py:128
-msgid "Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path."
-msgstr "Kontrollera att du har installerat gst-plugins-good och finns tillgänglig i sökvägen för GStreamer-insticksmodulerna."
+msgid ""
+"Make sure you have installed gst-plugins-good and is available in the "
+"GStreamer plugin path."
+msgstr ""
+"Kontrollera att du har installerat gst-plugins-good och finns tillgänglig i "
+"sökvägen för GStreamer-insticksmodulerna."
 
 #: ../pitivi/check.py:130
 msgid "PyGTK doesn't have Cairo support!"
 msgstr "PyGTK har inte stöd för Cairo!"
 
 #: ../pitivi/check.py:131
-msgid "Please use a version of the Python bindings for GTK+ built with Cairo support."
+msgid ""
+"Please use a version of the Python bindings for GTK+ built with Cairo "
+"support."
 msgstr "Använd en version av Python-bindningar för GTK+ byggda med Cairo-stöd."
 
 #: ../pitivi/check.py:133
@@ -57,16 +67,24 @@ msgid "Could not initiate the video output plugins"
 msgstr "Kunde inte initiera insticksmoduler för videoutmatning"
 
 #: ../pitivi/check.py:134
-msgid "Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)"
-msgstr "Kontrollera att du har åtminstone en giltig videoutmatningssink tillgängligt (xvimagesink eller ximagesink)"
+msgid ""
+"Make sure you have at least one valid video output sink available "
+"(xvimagesink or ximagesink)"
+msgstr ""
+"Kontrollera att du har åtminstone en giltig videoutmatningssink tillgängligt "
+"(xvimagesink eller ximagesink)"
 
 #: ../pitivi/check.py:136
 msgid "Could not initiate the audio output plugins"
 msgstr "Kunde inte initiera insticksmoduler för ljudutmatning"
 
 #: ../pitivi/check.py:137
-msgid "Make sure you have at least one valid audio output sink available (alsasink or osssink)"
-msgstr "Kontrollera att du har åtminstone en giltig ljudutmatningssink tillgängligt (alsasink eller osssink)"
+msgid ""
+"Make sure you have at least one valid audio output sink available (alsasink "
+"or osssink)"
+msgstr ""
+"Kontrollera att du har åtminstone en giltig ljudutmatningssink tillgängligt "
+"(alsasink eller osssink)"
 
 #: ../pitivi/check.py:139
 msgid "Could not import the Python bindings for cairo"
@@ -86,28 +104,45 @@ msgstr "Kontrollera att du har Python-bindningar för libglade installerat"
 
 #: ../pitivi/check.py:146
 #, python-format
-msgid "You do not have a recent enough version of the GTK+ Python Bindings (currently %s)"
-msgstr "Du har inte en tillräckligt ny version av Python-bindningar för GTK+  (för närvarande %s)"
+msgid ""
+"You do not have a recent enough version of the GTK+ Python Bindings "
+"(currently %s)"
+msgstr ""
+"Du har inte en tillräckligt ny version av Python-bindningar för GTK+  (för "
+"närvarande %s)"
 
 #: ../pitivi/check.py:150
 #, python-format
-msgid "You do not have a recent enough version of the GStreamer Python Bindings (currently %s)"
-msgstr "Du har inte en tillräckligt ny version av Python-bindningar för GStreamer (för närvarande %s)"
+msgid ""
+"You do not have a recent enough version of the GStreamer Python Bindings "
+"(currently %s)"
+msgstr ""
+"Du har inte en tillräckligt ny version av Python-bindningar för GStreamer "
+"(för närvarande %s)"
 
 #: ../pitivi/check.py:154
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
-msgstr "Du har inte en tillräckligt ny version av GStreamer (för närvarande %s)"
+msgstr ""
+"Du har inte en tillräckligt ny version av GStreamer (för närvarande %s)"
 
 #: ../pitivi/check.py:158
 #, python-format
-msgid "You do not have a recent enough version of the Cairo Python Bindings (currently %s)"
-msgstr "Du har inte en tillräckligt ny version av Python-bindningar för Cairo (för närvarande %s)"
+msgid ""
+"You do not have a recent enough version of the Cairo Python Bindings "
+"(currently %s)"
+msgstr ""
+"Du har inte en tillräckligt ny version av Python-bindningar för Cairo (för "
+"närvarande %s)"
 
 #: ../pitivi/check.py:162
 #, python-format
-msgid "You do not have a recent enough version of the GNonLin GStreamer plugin (currently %s)"
-msgstr "Du har inte en tillräckligt ny version av GStreamer-insticksmodulen GNonLin (för närvarande %s)"
+msgid ""
+"You do not have a recent enough version of the GNonLin GStreamer plugin "
+"(currently %s)"
+msgstr ""
+"Du har inte en tillräckligt ny version av GStreamer-insticksmodulen GNonLin "
+"(för närvarande %s)"
 
 #: ../pitivi/check.py:165
 msgid "Could not import the Zope Interface module"
@@ -130,16 +165,24 @@ msgid "Could not establish the duration of the file."
 msgstr "Kunde inte fastställa längden på filen."
 
 #: ../pitivi/discoverer.py:159
-msgid "This clip seems to be in a format which cannot be accessed in a random fashion."
-msgstr "Det här videoklippet verkar vara i ett format som inte kan kommas åt på ett vanligt sätt."
+msgid ""
+"This clip seems to be in a format which cannot be accessed in a random "
+"fashion."
+msgstr ""
+"Det här videoklippet verkar vara i ett format som inte kan kommas åt på ett "
+"vanligt sätt."
 
 #: ../pitivi/discoverer.py:203
 msgid "Couldn't construct pipeline."
 msgstr "Kunde inte konstruera rörledning."
 
 #: ../pitivi/discoverer.py:204
-msgid "GStreamer does not have an element to handle files coming from this type of file system."
-msgstr "GStreamer saknar ett element för att hantera filer som kommer från den här typen av filsystem."
+msgid ""
+"GStreamer does not have an element to handle files coming from this type of "
+"file system."
+msgstr ""
+"GStreamer saknar ett element för att hantera filer som kommer från den här "
+"typen av filsystem."
 
 #: ../pitivi/discoverer.py:229
 msgid "Pipeline didn't want to go to PAUSED."
@@ -167,8 +210,7 @@ msgstr "Ett internt fel inträffade vid analysering av filen : %s"
 msgid "Got unknown stream type : %s"
 msgstr "Fick okänd strömtyp : %s"
 
-#: ../pitivi/discoverer.py:400
-#: ../pitivi/discoverer.py:425
+#: ../pitivi/discoverer.py:400 ../pitivi/discoverer.py:425
 msgid "You are missing an element to handle this media type."
 msgstr "Du saknar ett element för att hantera den här mediatypen."
 
@@ -202,8 +244,7 @@ msgstr "<b>Video:</b> %d × %d <i>bildpunkter</i> med %.2f<i>bilder/s</i>"
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>Bild:</b> %d × %d <i>bildpunkter</i>"
 
-#: ../pitivi/objectfactory.py:569
-#: ../pitivi/objectfactory.py:616
+#: ../pitivi/objectfactory.py:569 ../pitivi/objectfactory.py:616
 #, python-format
 msgid " <i>(%s)</i>"
 msgstr " <i>(%s)</i>"
@@ -233,13 +274,11 @@ msgstr "<b>Text:</b> %s"
 msgid "There is already a %s instance, inform developers"
 msgstr "Det finns redan en instans av %s, informera utvecklarna"
 
-#: ../pitivi/pitivi.py:124
-#: ../pitivi/pitivi.py:180
+#: ../pitivi/pitivi.py:124 ../pitivi/pitivi.py:180
 msgid "New Project"
 msgstr "Nytt projekt"
 
-#: ../pitivi/pitivi.py:139
-#: ../pitivi/pitivi.py:146
+#: ../pitivi/pitivi.py:139 ../pitivi/pitivi.py:146
 msgid "Not a valid project file."
 msgstr "Inte en giltig projektfil."
 
@@ -252,8 +291,12 @@ msgid "Video output is busy"
 msgstr "Videoutmatning är upptagen"
 
 #: ../pitivi/playground.py:398
-msgid "Please check that your video output device isn't already used by another application"
-msgstr "Kontrollera att din videoutmatningsenhet inte redan används av ett annat program."
+msgid ""
+"Please check that your video output device isn't already used by another "
+"application"
+msgstr ""
+"Kontrollera att din videoutmatningsenhet inte redan används av ett annat "
+"program."
 
 #: ../pitivi/playground.py:400
 msgid "Video output problem"
@@ -268,8 +311,12 @@ msgid "Audio output device is busy"
 msgstr "Ljudutmatningsenheten är upptagen"
 
 #: ../pitivi/playground.py:405
-msgid "Please check that your audio output device isn't already used by another application."
-msgstr "Kontrollera att din ljudutmatningsenhet inte redan används av ett annat program."
+msgid ""
+"Please check that your audio output device isn't already used by another "
+"application."
+msgstr ""
+"Kontrollera att din ljudutmatningsenhet inte redan används av ett annat "
+"program."
 
 #: ../pitivi/playground.py:407
 msgid "Audio output problem"
@@ -330,8 +377,7 @@ msgid "Author"
 msgstr "Författare"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:556
-#: ../pitivi/ui/sourcefactories.py:601
+#: ../pitivi/ui/sourcefactories.py:556 ../pitivi/ui/sourcefactories.py:601
 msgid "Description"
 msgstr "Beskrivning"
 
@@ -539,8 +585,7 @@ msgstr "Skapa ett nytt projekt"
 msgid "Open an existing project"
 msgstr "Öppna ett existerande projekt"
 
-#: ../pitivi/ui/mainwindow.py:158
-#: ../pitivi/ui/mainwindow.py:160
+#: ../pitivi/ui/mainwindow.py:158 ../pitivi/ui/mainwindow.py:160
 msgid "Save the current project"
 msgstr "Spara aktuellt projekt"
 
@@ -664,8 +709,7 @@ msgstr "Spara som..."
 msgid "Untitled.pptv"
 msgstr "Namnlös.pptv"
 
-#: ../pitivi/ui/mainwindow.py:471
-#: ../pitivi/ui/mainwindow.py:489
+#: ../pitivi/ui/mainwindow.py:471 ../pitivi/ui/mainwindow.py:489
 msgid "Detect Automatically"
 msgstr "Identifiera automatiskt"
 
@@ -714,22 +758,6 @@ msgid ""
 msgstr ""
 "Du kan dra insticksmodulfiler till listan för att installera\n"
 "dem, eller ange text för att söka efter en specifik modul."
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:7
-msgid "gtk-about"
-msgstr "Om"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:8
-msgid "gtk-close"
-msgstr "Stäng"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:9
-msgid "gtk-delete"
-msgstr "Ta bort"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:10
-msgid "gtk-preferences"
-msgstr "Inställningar"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
@@ -831,8 +859,12 @@ msgid "Duration"
 msgstr "Speltid"
 
 #: ../pitivi/ui/sourcefactories.py:188
-msgid "<span size='x-large'>Import your clips by dragging them here or by using the buttons above.</span>"
-msgstr "<span size='x-large'>Importera dina videoklipp genom att dra dem hit eller genom att använda ovanstående knappar.</span>"
+msgid ""
+"<span size='x-large'>Import your clips by dragging them here or by using the "
+"buttons above.</span>"
+msgstr ""
+"<span size='x-large'>Importera dina videoklipp genom att dra dem hit eller "
+"genom att använda ovanstående knappar.</span>"
 
 #: ../pitivi/ui/sourcefactories.py:309
 msgid "Import a folder"
@@ -842,8 +874,7 @@ msgstr "Importera en mapp"
 msgid "Import a clip"
 msgstr "Importera ett videoklipp"
 
-#: ../pitivi/ui/sourcefactories.py:550
-#: ../pitivi/ui/sourcefactories.py:595
+#: ../pitivi/ui/sourcefactories.py:550 ../pitivi/ui/sourcefactories.py:595
 msgid "Name"
 msgstr "Namn"
 
@@ -892,8 +923,7 @@ msgstr "Avbryt"
 msgid "Start"
 msgstr "Start"
 
-#: ../pitivi/ui/timelineobjects.py:606
-#: ../pitivi/ui/timelineobjects.py:633
+#: ../pitivi/ui/timelineobjects.py:606 ../pitivi/ui/timelineobjects.py:633
 msgid "Trim"
 msgstr "Justera"
 
@@ -901,14 +931,12 @@ msgstr "Justera"
 msgid "End"
 msgstr "Slut"
 
-#: ../pitivi/ui/timelineobjects.py:1069
-#: ../pitivi/ui/tracklayer.py:93
+#: ../pitivi/ui/timelineobjects.py:1069 ../pitivi/ui/tracklayer.py:93
 msgid "Remove"
 msgstr "Ta bort"
 
 #. temporarily deactivate editing for 0.10.3 release !
-#: ../pitivi/ui/timelineobjects.py:1074
-#: ../pitivi/ui/timelineobjects.py:1117
+#: ../pitivi/ui/timelineobjects.py:1074 ../pitivi/ui/timelineobjects.py:1117
 msgid "Edit"
 msgstr "Redigera"
 
@@ -921,121 +949,190 @@ msgid "Sound"
 msgstr "Ljud"
 
 #: ../pitivi/ui/timeline.py:117
-msgid "<span size='x-large'>Add clips to the timeline by dragging them here.</span>"
-msgstr "<span size='x-large'>Lägg till videoklipp till tidsaxeln genom att dra dem hit.</span>"
+msgid ""
+"<span size='x-large'>Add clips to the timeline by dragging them here.</span>"
+msgstr ""
+"<span size='x-large'>Lägg till videoklipp till tidsaxeln genom att dra dem "
+"hit.</span>"
 
 #: ../pitivi/ui/tracklayer.py:98
 msgid "Cut"
 msgstr "Klipp ut"
 
+#~ msgid "gtk-about"
+#~ msgstr "Om"
+
+#~ msgid "gtk-close"
+#~ msgstr "Stäng"
+
+#~ msgid "gtk-delete"
+#~ msgstr "Ta bort"
+
+#~ msgid "gtk-preferences"
+#~ msgstr "Inställningar"
+
 #~ msgid "File"
 #~ msgstr "Fil"
+
 #~ msgid "Reason"
 #~ msgstr "Anledning"
+
 #~ msgid "Add Folder of Sources..."
 #~ msgstr "Lägg till mapp med källor..."
+
 #~ msgid "Remove Sources..."
 #~ msgstr "Ta bort källor..."
+
 #~ msgid "Add Folder"
 #~ msgstr "Lägg till mapp"
+
 #~ msgid "The following files weren't discovered properly."
 #~ msgstr "Följande filer blev inte identifierade korrekt."
+
 #~ msgid "Start working with your project by dragging clips here"
 #~ msgstr "Börja arbeta med ditt projekt genom att dra videoklipp hit"
+
 #~ msgid "window1"
 #~ msgstr "fönster1"
+
 #~ msgid "Settings:"
 #~ msgstr "Inställningar:"
+
 #~ msgid "Please choose an output file"
 #~ msgstr "Välj en utdatafil"
+
 #~ msgid "Author:"
 #~ msgstr "Författare:"
+
 #~ msgid "Export to"
 #~ msgstr "Exportera till"
+
 #~ msgid "Move Down"
 #~ msgstr "Flytta ned"
+
 #~ msgid "Move Up"
 #~ msgstr "Flytta upp"
+
 #~ msgid "_Copy Location"
 #~ msgstr "_Kopiera plats"
+
 #~ msgid "Next chapter or movie"
 #~ msgstr "Nästa kapitel eller film"
+
 #~ msgid "Play / Pa_use"
 #~ msgstr "Spela upp / Gör pa_us"
+
 #~ msgid "Play or pause the movie"
 #~ msgstr "Spela upp eller gör paus i filmen"
+
 #~ msgid "Previous chapter or movie"
 #~ msgstr "Föregående kapitel eller film"
+
 #~ msgid "Show _Controls"
 #~ msgstr "Visa _kontroller"
+
 #~ msgid "Show controls"
 #~ msgstr "Visa kontroller"
+
 #~ msgid "Skip _Backwards"
 #~ msgstr "Hoppa _bakåt"
+
 #~ msgid "Skip _Forward"
 #~ msgstr "Hoppa _framåt"
+
 #~ msgid "Skip backwards"
 #~ msgstr "Hoppa bakåt"
+
 #~ msgid "Skip forward"
 #~ msgstr "Hoppa framåt"
+
 #~ msgid "Volume Down"
 #~ msgstr "Volym ned"
+
 #~ msgid "Volume Up"
 #~ msgstr "Volym upp"
+
 #~ msgid "Volume up"
 #~ msgstr "Volym upp"
+
 #~ msgid "_Next Chapter/Movie"
 #~ msgstr "_Nästa kapitel/film"
+
 #~ msgid "_Previous Chapter/Movie"
 #~ msgstr "_Föregående kapitel/film"
+
 #~ msgid "    "
 #~ msgstr "    "
+
 #~ msgid "0 frames per second"
 #~ msgstr "0 ramar per sekund"
+
 #~ msgid "0 kbps"
 #~ msgstr "0 kb/s"
+
 #~ msgid "0 seconds"
 #~ msgstr "0 sekunder"
+
 #~ msgid "0 x 0"
 #~ msgstr "0 × 0"
+
 #~ msgid "<b>General</b>"
 #~ msgstr "<b>Allmänt</b>"
+
 #~ msgid "Album:"
 #~ msgstr "Album:"
+
 #~ msgid "Artist:"
 #~ msgstr "Artist:"
+
 #~ msgid "Bitrate:"
 #~ msgstr "Bitfrekvens:"
+
 #~ msgid "Codec:"
 #~ msgstr "Kodek:"
+
 #~ msgid "Dimensions:"
 #~ msgstr "Dimensioner:"
+
 #~ msgid "N/A"
 #~ msgstr "-"
+
 #~ msgid "Year:"
 #~ msgstr "År:"
+
 #~ msgid "*"
 #~ msgstr "*"
+
 #~ msgid "<b>Preview</b>"
 #~ msgstr "<b>Förhandsgranskning</b>"
+
 #~ msgid "Save Screenshot"
 #~ msgstr "Spara skärmdump"
+
 #~ msgid "Save screenshot"
 #~ msgstr "Spara skärmdump"
+
 #~ msgid "Save screenshot to _desktop"
 #~ msgstr "Spara skärmdump på _skrivbordet"
+
 #~ msgid "Save screenshot to _file:"
 #~ msgstr "Spara skärmdump i _filen:"
+
 #~ msgid "Skip to"
 #~ msgstr "Hoppa till"
+
 #~ msgid "_Skip to:"
 #~ msgstr "_Hoppa till:"
+
 #~ msgid "seconds"
 #~ msgstr "sekunder"
+
 #~ msgid "Movie Player"
 #~ msgstr "Filmuppspelare"
+
 #~ msgid "Play movies and songs"
 #~ msgstr "Spela upp filmer och låtar"
+
 #~ msgid ""
 #~ "14.4 Kbps Modem\n"
 #~ "19.2 Kbps Modem\n"
@@ -1062,12 +1159,15 @@ msgstr "Klipp ut"
 #~ "512 kbit/s DSL/kabelmodem\n"
 #~ "1,5 Mbit/s T1/Intranet/Lokalt nätverk\n"
 #~ "Intranet/Lokalt nätverk"
+
 #~ msgid "16:9 (Widescreen)"
 #~ msgstr "16:9 (widescreen)"
+
 #~ msgid "2.11:1 (DVB)"
 #~ msgstr "2,11:1 (DVB)"
+
 #~ msgid "4:3 (TV)"
 #~ msgstr "4:3 (TV)"
+
 #~ msgid "<b>Color balance</b>"
 #~ msgstr "<b>Färgbalans</b>"
-
