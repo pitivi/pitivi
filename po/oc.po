@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oc\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-19 20:27+0100\n"
+"POT-Creation-Date: 2008-03-07 10:23+0100\n"
 "PO-Revision-Date: 2007-12-29 15:35+0100\n"
 "Last-Translator: Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>\n"
 "Language-Team: Occitan <ubuntu-l10n-oci@lists.ubuntu.com>\n"
@@ -466,6 +466,8 @@ msgid ""
 "Mono (1)\n"
 "Stereo (2)"
 msgstr ""
+"Mòno (1)\n"
+"Esterèo (2)"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:31
 msgid "Muxer"
@@ -709,22 +711,6 @@ msgid ""
 "or type text to search for a specific plugin."
 msgstr ""
 
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:7
-msgid "gtk-about"
-msgstr "gtk-about"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:8
-msgid "gtk-close"
-msgstr "gtk-close"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:9
-msgid "gtk-delete"
-msgstr "gtk-delete"
-
-#: ../pitivi/ui/pluginmanagerdialog.glade.h:10
-msgid "gtk-preferences"
-msgstr "gtk-preferences"
-
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
 msgstr "Una descripcion corta de vòstre projècte."
@@ -920,3 +906,15 @@ msgstr ""
 #: ../pitivi/ui/tracklayer.py:98
 msgid "Cut"
 msgstr "Talhar"
+
+#~ msgid "gtk-about"
+#~ msgstr "gtk-about"
+
+#~ msgid "gtk-close"
+#~ msgstr "gtk-close"
+
+#~ msgid "gtk-delete"
+#~ msgstr "gtk-delete"
+
+#~ msgid "gtk-preferences"
+#~ msgstr "gtk-preferences"
