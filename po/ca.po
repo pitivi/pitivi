@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-03-04 00:34+0100\n"
-"PO-Revision-Date: 2008-02-29 22:18+0100\n"
+"PO-Revision-Date: 2008-03-10 11:34+0100\n"
 "Last-Translator: Gil Forcada <gilforcada@guifi.net>\n"
 "Language-Team: Catalan <tradgnome@softcatala.net>\n"
 "MIME-Version: 1.0\n"
@@ -912,7 +912,7 @@ msgstr "Tanca"
 #. done and cancel buttons
 #: ../pitivi/ui/timelineobjects.py:584
 msgid "Done"
-msgstr "Acabat"
+msgstr "Acaba"
 
 #: ../pitivi/ui/timelineobjects.py:586
 msgid "Cancel"
