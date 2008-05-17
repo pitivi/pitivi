@@ -1,5 +1,14 @@
 2008-05-17  Edward Hervey  <edward.hervey@collabora.co.uk>
 
+	* pitivi/bin.py:
+	lower error level for a non-fatal issue.
+	* pitivi/pitivi.py:
+	project is not a class property
+	* pitivi/timeline/objects.py:
+	Fix __repr__ and add more debugging
+
+2008-05-17  Edward Hervey  <edward.hervey@collabora.co.uk>
+
 	* pitivi/ui/sourcefactories.py:
 	Make icon selection code more generic.
 	Remove self.filepixbuf since it's no longer used.

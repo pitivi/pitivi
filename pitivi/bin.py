@@ -229,7 +229,7 @@ class SmartBin(gst.Pipeline):
     def stopRecording(self):
         """ stop the recording, removing the encoding thread """
         if self.recording == False:
-            self.error("This bin is not in recording mode !")
+            self.warning("This bin is not in recording mode !")
             return False
 
         self.set_state(gst.STATE_PAUSED)

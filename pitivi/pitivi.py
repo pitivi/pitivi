@@ -89,15 +89,13 @@ class Pitivi(gobject.GObject):
                        ( ))
         }
 
-    project = None
-
     def __init__(self, use_ui=True, *args, **kwargs):
         """
         initialize pitivi with the command line arguments
         """
         gst.log("starting up pitivi...")
         gobject.GObject.__init__(self)
-
+		self.project = None
         self._use_ui = use_ui
 
         # patch gst-python for new behaviours

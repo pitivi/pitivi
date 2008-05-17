@@ -327,7 +327,9 @@ class TimelineObject(BrotherObjects):
         self._setFactory(factory)
 
     def __repr__(self):
-        return "<%s '%s' at 0x%x>" % (type(self).__name__, self.name, id(self))
+        if hasattr(self, "name"):
+            return "<%s '%s' at 0x%x>" % (type(self).__name__, self.name, id(self))
+        return "<%s at 0x%x>" % (type(self).__name__, id(self))
 
     def _makeGnlObject(self):
         """ create and return the gnl_object """
@@ -340,8 +342,10 @@ class TimelineObject(BrotherObjects):
         gst.log("factory:%r requires factory:%r" % (factory, self.__requires_factory__))
         self.factory = factory
         if not self.__requires_factory__ or self.factory:
+            gst.log("%r Creating associated gnlobject" % self)
             self.gnlobject = self._makeGnlObject()
             self.gnlobject.connect("notify::start", self._startDurationChangedCb)
+            self.gnlobject.log("got gnlobject !")
             self.gnlobject.connect("notify::duration", self._startDurationChangedCb)
             self._setStartDurationTime(self.start, self.duration, True)
 
@@ -364,6 +368,9 @@ class TimelineObject(BrotherObjects):
 
     def _startDurationChangedCb(self, gnlobject, property):
         """ start/duration time has changed """
+        gst.log("self:%r , gnlobject:%r" % (self, gnlobject))
+        if not gnlobject == self.gnlobject:
+            gst.warning("We're receiving signals from an object we dont' control (self.gnlobject:%r, gnlobject:%r)" % (self.gnlobject, gnlobject))
         self.gnlobject.debug("property:%s" % property.name)
         start = -1
         duration = -1
