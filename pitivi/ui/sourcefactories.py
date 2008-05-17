@@ -212,17 +212,8 @@ class SourceListWidget(gtk.VBox):
             self._newProjectFailedCb)
 
         # default pixbufs
-        icontheme = gtk.icon_theme_get_default()
-        self.filepixbuf = icontheme.load_icon("misc", 32, 0)
-        pixdir = get_pixmap_dir()
-        if not self.filepixbuf:
-            self.filepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-file.png"))
-        self.audiofilepixbuf = icontheme.load_icon("audio-x-generic", 32, 0)
-        if not self.audiofilepixbuf:
-            self.audiofilepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-sound.png"))
-        self.videofilepixbuf = icontheme.load_icon("video-x-generic", 32, 0)
-        if not self.videofilepixbuf:
-            self.videofilepixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, "pitivi-video.png"))
+        self.audiofilepixbuf = self._getIcon("audio-x-generic", "pitivi-sound.png")
+        self.videofilepixbuf = self._getIcon("video-x-generic", "pitivi-video.png")
 
         # Drag and Drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
@@ -241,6 +232,17 @@ class SourceListWidget(gtk.VBox):
 
         # Error dialog box
         self.errorDialogBox = None
+
+    def _getIcon(self, iconname, alternate):
+        icontheme = gtk.icon_theme_get_default()
+        pixdir = get_pixmap_dir()
+        icon = None
+        try:
+            icon = icontheme.load_icon(iconname, 32, 0)
+        finally:
+            if not icon:
+                icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, alternate))
+        return icon
 
     def _connectToProject(self, project):
         """Connect signal handlers to a project.

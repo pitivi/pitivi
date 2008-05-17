@@ -1,3 +1,10 @@
+2008-05-17  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/sourcefactories.py:
+	Make icon selection code more generic.
+	Remove self.filepixbuf since it's no longer used.
+	Fixes #518301
+
 2008-02-20  Kjartan Maraas  <kmaraas@gnome.org>
 
 	* pitivi/ui/pluginmanagerdialog.glade: Don't translate
