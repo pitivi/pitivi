@@ -95,7 +95,7 @@ class Pitivi(gobject.GObject):
         """
         gst.log("starting up pitivi...")
         gobject.GObject.__init__(self)
-		self.project = None
+        self.project = None
         self._use_ui = use_ui
 
         # patch gst-python for new behaviours

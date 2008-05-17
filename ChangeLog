@@ -1,5 +1,10 @@
 2008-05-17  Edward Hervey  <edward.hervey@collabora.co.uk>
 
+	* pitivi/pitivi.py:
+	Fix indentation broken in last commit
+
+2008-05-17  Edward Hervey  <edward.hervey@collabora.co.uk>
+
 	* pitivi/bin.py:
 	lower error level for a non-fatal issue.
 	* pitivi/pitivi.py:
