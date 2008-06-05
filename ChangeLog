@@ -1,5 +1,10 @@
 2008-06-05  Edward Hervey  <edward.hervey@collabora.co.uk>
 
+	* pitivi/pixmaps/Makefile.am:
+	Dist the newly added file
+
+2008-06-05  Edward Hervey  <edward.hervey@collabora.co.uk>
+
 	* pitivi/pixmaps/pitivi-sound.png:
 	re-add sound icon that was accidentally removed some time ago.
 

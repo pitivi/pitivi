@@ -7,7 +7,8 @@ pixmap_DATA = \
 	pitivi-render-16.png	\
 	pitivi-render-22.png	\
 	pitivi-render-24.png	\
-	pitivi-video.png
+	pitivi-video.png	\
+	pitivi-sound.png
 
 EXTRA_DIST = \
 	$(pixmap_DATA)
