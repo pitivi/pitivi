@@ -1,3 +1,8 @@
+2008-06-05  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/pixmaps/pitivi-sound.png:
+	re-add sound icon that was accidentally removed some time ago.
+
 2008-05-17  Edward Hervey  <edward.hervey@collabora.co.uk>
 
 	* pitivi/pitivi.py:
