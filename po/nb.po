@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-02-19 10:28+0100\n"
-"PO-Revision-Date: 2008-02-19 10:28+0100\n"
+"POT-Creation-Date: 2008-06-07 17:21+0200\n"
+"PO-Revision-Date: 2008-06-07 17:24+0200\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian bokmal <i18n-nb@lister.ping.uio.no>\n"
 "MIME-Version: 1.0\n"
@@ -247,20 +247,20 @@ msgstr "<b>Ukjent lydformat:</b> %s"
 msgid "<b>Text:</b> %s"
 msgstr "<b>Tekst:</b> %s"
 
-#: ../pitivi/pitivi.py:109
+#: ../pitivi/pitivi.py:107
 #, python-format
 msgid "There is already a %s instance, inform developers"
 msgstr ""
 
-#: ../pitivi/pitivi.py:124 ../pitivi/pitivi.py:180
+#: ../pitivi/pitivi.py:122 ../pitivi/pitivi.py:178
 msgid "New Project"
 msgstr "Nytt prosjekt"
 
-#: ../pitivi/pitivi.py:139 ../pitivi/pitivi.py:146
+#: ../pitivi/pitivi.py:137 ../pitivi/pitivi.py:144
 msgid "Not a valid project file."
 msgstr "Ikke en gyldig prosjektfil."
 
-#: ../pitivi/pitivi.py:160
+#: ../pitivi/pitivi.py:158
 msgid "There was an error loading the file."
 msgstr "Det oppsto en feil ved lasting av filen."
 
@@ -350,7 +350,7 @@ msgid "Author"
 msgstr "Forfatter"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:556 ../pitivi/ui/sourcefactories.py:601
+#: ../pitivi/ui/sourcefactories.py:558 ../pitivi/ui/sourcefactories.py:603
 msgid "Description"
 msgstr "Beskrivelse"
 
@@ -372,7 +372,7 @@ msgstr "<b>Innstillinger</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:4
 msgid "<b>Video :</b>"
-msgstr ""
+msgstr "<b>Video:</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:5
 msgid "Choose File"
@@ -384,7 +384,7 @@ msgstr "Endre"
 
 #: ../pitivi/ui/encodingdialog.glade.h:7
 msgid "Output file:"
-msgstr ""
+msgstr "Utdatafil:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:1
 msgid ""
@@ -526,7 +526,7 @@ msgstr "Lydspor"
 
 #: ../pitivi/ui/infolayer.py:45
 msgid "Video Track"
-msgstr ""
+msgstr "Videospor"
 
 #: ../pitivi/ui/infolayer.py:87
 msgid "Empty"
@@ -562,7 +562,7 @@ msgstr "Importer klipp som skal brukes"
 
 #: ../pitivi/ui/mainwindow.py:166
 msgid "_Import folder of clips..."
-msgstr ""
+msgstr "_Importer en mappe med filmklipp..."
 
 #: ../pitivi/ui/mainwindow.py:167
 msgid "Import folder of clips to use"
@@ -582,12 +582,12 @@ msgstr "_Tillegg..."
 
 #: ../pitivi/ui/mainwindow.py:172
 msgid "Manage plugins"
-msgstr ""
+msgstr "Håndter tillegg"
 
 #: ../pitivi/ui/mainwindow.py:175
 #, python-format
 msgid "Information about %s"
-msgstr ""
+msgstr "Informasjon om %s"
 
 #: ../pitivi/ui/mainwindow.py:176
 msgid "_File"
@@ -607,15 +607,15 @@ msgstr "_Hjelp"
 
 #: ../pitivi/ui/mainwindow.py:183
 msgid "Advanced vie_w"
-msgstr ""
+msgstr "Avansert _visning"
 
 #: ../pitivi/ui/mainwindow.py:184
 msgid "Switch to advanced view"
-msgstr ""
+msgstr "Bytt til avansert visning"
 
 #: ../pitivi/ui/mainwindow.py:186
 msgid "View the main window on the whole screen"
-msgstr ""
+msgstr "Vis hovedvinduet på hele skjermen"
 
 #: ../pitivi/ui/mainwindow.py:317
 msgid "Open File ..."
@@ -711,7 +711,7 @@ msgstr ""
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
-msgstr ""
+msgstr "En kort beskrivelse av ditt prosjekt."
 
 #: ../pitivi/ui/projectsettings.glade.h:2
 msgid "Description:"
@@ -723,11 +723,11 @@ msgstr "Navn:"
 
 #: ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
-msgstr ""
+msgstr "Innstillinger for prosjekt"
 
 #: ../pitivi/ui/projectsettings.glade.h:5
 msgid "The name of your project."
-msgstr ""
+msgstr "Navn på ditt prosjekt."
 
 #: ../pitivi/ui/pluginmanagerdialog.py:89
 msgid "Enabled"
@@ -814,45 +814,45 @@ msgid ""
 "buttons above.</span>"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:309
+#: ../pitivi/ui/sourcefactories.py:311
 msgid "Import a folder"
 msgstr "Importer en mappe"
 
-#: ../pitivi/ui/sourcefactories.py:312
+#: ../pitivi/ui/sourcefactories.py:314
 msgid "Import a clip"
 msgstr "Importer et klipp"
 
-#: ../pitivi/ui/sourcefactories.py:550 ../pitivi/ui/sourcefactories.py:595
+#: ../pitivi/ui/sourcefactories.py:552 ../pitivi/ui/sourcefactories.py:597
 msgid "Name"
 msgstr "Navn"
 
-#: ../pitivi/ui/sourcefactories.py:643
+#: ../pitivi/ui/sourcefactories.py:645
 msgid "Importing clips..."
 msgstr "Importerer klipp..."
 
-#: ../pitivi/ui/sourcefactories.py:644
+#: ../pitivi/ui/sourcefactories.py:646
 msgid "Error(s) occured while importing"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:645
+#: ../pitivi/ui/sourcefactories.py:647
 msgid "An error occured while importing"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:730
+#: ../pitivi/ui/sourcefactories.py:732
 msgid "Error while analyzing files"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:731
+#: ../pitivi/ui/sourcefactories.py:733
 msgid "The following files can not be used with PiTiVi."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:733
+#: ../pitivi/ui/sourcefactories.py:735
 msgid "Error while analyzing a file"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:734
+#: ../pitivi/ui/sourcefactories.py:736
 msgid "The following file can not be used with PiTiVi."
-msgstr ""
+msgstr "Følgende fil kan ikke brukes med PiTiVi."
 
 #: ../pitivi/ui/timelineobjects.py:561
 msgid "Close"
@@ -873,11 +873,11 @@ msgstr "Start"
 
 #: ../pitivi/ui/timelineobjects.py:606 ../pitivi/ui/timelineobjects.py:633
 msgid "Trim"
-msgstr ""
+msgstr "Beskjær"
 
 #: ../pitivi/ui/timelineobjects.py:631
 msgid "End"
-msgstr ""
+msgstr "Avslutt"
 
 #: ../pitivi/ui/timelineobjects.py:1069 ../pitivi/ui/tracklayer.py:93
 msgid "Remove"
