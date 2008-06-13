@@ -1,3 +1,10 @@
+2008-06-13  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/elements/singledecodebin.py: (SingleDecodeBin._tryToLink1): 
+	Set state of element we're trying to link to to READY first.
+	This is because some elements will do some checking in NULL=>READY,
+	including modifying their caps.
+
 2008-06-05  Edward Hervey  <edward.hervey@collabora.co.uk>
 
 	* pitivi/pixmaps/Makefile.am:

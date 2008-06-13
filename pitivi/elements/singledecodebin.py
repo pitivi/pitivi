@@ -178,6 +178,7 @@ class SingleDecodeBin(gst.Bin):
                 continue
 
             self.add(element)
+            element.set_state(gst.STATE_READY)
             try:
                 pad.link(sinkpad)
             except:
