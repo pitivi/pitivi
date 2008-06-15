@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: oc\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-03-07 10:23+0100\n"
+"POT-Creation-Date: 2008-06-09 15:21+0200\n"
 "PO-Revision-Date: 2007-12-29 15:35+0100\n"
 "Last-Translator: Yannig Marchegay (Kokoyaya) <yannig@marchegay.org>\n"
 "Language-Team: Occitan <ubuntu-l10n-oci@lists.ubuntu.com>\n"
@@ -247,20 +247,20 @@ msgstr ""
 msgid "<b>Text:</b> %s"
 msgstr "<b>Tèxt :</b> %s"
 
-#: ../pitivi/pitivi.py:109
+#: ../pitivi/pitivi.py:107
 #, python-format
 msgid "There is already a %s instance, inform developers"
 msgstr ""
 
-#: ../pitivi/pitivi.py:124 ../pitivi/pitivi.py:180
+#: ../pitivi/pitivi.py:122 ../pitivi/pitivi.py:178
 msgid "New Project"
 msgstr "Projècte novèl"
 
-#: ../pitivi/pitivi.py:139 ../pitivi/pitivi.py:146
+#: ../pitivi/pitivi.py:137 ../pitivi/pitivi.py:144
 msgid "Not a valid project file."
 msgstr ""
 
-#: ../pitivi/pitivi.py:160
+#: ../pitivi/pitivi.py:158
 msgid "There was an error loading the file."
 msgstr ""
 
@@ -346,7 +346,7 @@ msgid "Author"
 msgstr "Autor"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:6
-#: ../pitivi/ui/sourcefactories.py:556 ../pitivi/ui/sourcefactories.py:601
+#: ../pitivi/ui/sourcefactories.py:558 ../pitivi/ui/sourcefactories.py:603
 msgid "Description"
 msgstr "Descripcion"
 
@@ -816,43 +816,43 @@ msgid ""
 "buttons above.</span>"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:309
+#: ../pitivi/ui/sourcefactories.py:311
 msgid "Import a folder"
 msgstr "Importar un repertòri"
 
-#: ../pitivi/ui/sourcefactories.py:312
+#: ../pitivi/ui/sourcefactories.py:314
 msgid "Import a clip"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:550 ../pitivi/ui/sourcefactories.py:595
+#: ../pitivi/ui/sourcefactories.py:552 ../pitivi/ui/sourcefactories.py:597
 msgid "Name"
 msgstr "Nom"
 
-#: ../pitivi/ui/sourcefactories.py:643
+#: ../pitivi/ui/sourcefactories.py:645
 msgid "Importing clips..."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:644
+#: ../pitivi/ui/sourcefactories.py:646
 msgid "Error(s) occured while importing"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:645
+#: ../pitivi/ui/sourcefactories.py:647
 msgid "An error occured while importing"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:730
+#: ../pitivi/ui/sourcefactories.py:732
 msgid "Error while analyzing files"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:731
+#: ../pitivi/ui/sourcefactories.py:733
 msgid "The following files can not be used with PiTiVi."
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:733
+#: ../pitivi/ui/sourcefactories.py:735
 msgid "Error while analyzing a file"
 msgstr ""
 
-#: ../pitivi/ui/sourcefactories.py:734
+#: ../pitivi/ui/sourcefactories.py:736
 msgid "The following file can not be used with PiTiVi."
 msgstr ""
 
