@@ -37,11 +37,19 @@ GST_REQ = '@GST_REQ@'
 GNONLIN_REQ = '@GNONLIN_REQ@'
 PYCAIRO_REQ = '@PYCAIRO_REQ@'
 
+def _get_root_dir():
+    return '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
+
+def _in_devel():
+    rd = _get_root_dir()
+    return (os.path.exists(os.path.join(rd, '.svn')) or
+            os.path.exists(os.path.join(rd, 'CVS')) or
+            os.path.exists(os.path.join(rd, '.git')))
+
 def get_pixmap_dir():
     """ Returns the directory for program-only pixmaps """
     dir = os.path.dirname(os.path.abspath(__file__))
-    if (os.path.exists(os.path.join(dir, 'CVS')) or
-        os.path.exists(os.path.join(dir, '.svn'))):
+    if _in_devel():
         root = dir
     else:
         root = PKGDATADIR
@@ -49,10 +57,8 @@ def get_pixmap_dir():
 
 def get_global_pixmap_dir():
     """ Returns the directory for global pixmaps (ex : application icon) """
-    dir = os.path.dirname(os.path.abspath(__file__))
-    if (os.path.exists(os.path.join(dir, 'CVS')) or
-        os.path.exists(os.path.join(dir, '.svn'))):
-        root = string.join(dir.split('/')[:-1], '/')
+    if _in_devel():
+        root = _get_root_dir()
     else:
         root = PIXMAPDIR
     return root
