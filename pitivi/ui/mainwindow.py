@@ -512,6 +512,8 @@ class EncodingDialog(GladeWindow):
         self.eosid = self.bus.connect("message::eos", self._eosCb)
         self.outfile = None
         self.progressbar = self.widgets["progressbar"]
+        self.filebutton = self.widgets["filebutton"]
+        self.settingsbutton = self.widgets["settingsbutton"]
         self.cancelbutton = self.widgets["cancelbutton"]
         self.recordbutton = self.widgets["recordbutton"]
         self.recordbutton.set_sensitive(False)
@@ -565,6 +567,8 @@ class EncodingDialog(GladeWindow):
                 self.cancelbutton.set_label("gtk-cancel")
                 self.progressbar.set_text(_("Rendering"))
                 self.recordbutton.set_sensitive(False)
+                self.filebutton.set_sensitive(False)
+                self.settingsbutton.set_sensitive(False)
             else:
                 self.progressbar.set_text(_("Couldn't start rendering"))
 
@@ -590,6 +594,8 @@ class EncodingDialog(GladeWindow):
         self.progressbar.set_text(_("Rendering Complete"))
         self.progressbar.set_fraction(1.0)
         self.recordbutton.set_sensitive(True)
+        self.filebutton.set_sensitive(True)
+        self.settingsbutton.set_sensitive(True)
         self.cancelbutton.set_label("gtk-close")
 
     def _cancelButtonClickedCb(self, unused_button):

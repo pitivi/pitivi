@@ -1,3 +1,9 @@
+2008-08-02  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	Patch by: Kristian Rumberg <kristianrumberg at gmail dot com>
+	* pitivi/ui/mainwindow.py:
+	Deactivate file button and modify button when rendering is started.
+
 2008-06-13  Edward Hervey  <edward.hervey@collabora.co.uk>
 
 	* pitivi/elements/singledecodebin.py: (SingleDecodeBin._tryToLink1): 
