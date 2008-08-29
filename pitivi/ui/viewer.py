@@ -34,17 +34,7 @@ import pitivi.dnd as dnd
 from pitivi.signalgroup import SignalGroup
 
 from gettext import gettext as _
-
-def time_to_string(value):
-    if value == -1:
-        return "--:--:--.---"
-    ms = value / gst.MSECOND
-    sec = ms / 1000
-    ms = ms % 1000
-    mins = sec / 60
-    sec = sec % 60
-    hours = mins / 60
-    return "%02d:%02d:%02d.%03d" % (hours, mins, sec, ms)
+from pitivi.utils import time_to_string
 
 class PitiviViewer(gtk.VBox):
     """ Pitivi's viewer widget with controls """
@@ -74,7 +64,7 @@ class PitiviViewer(gtk.VBox):
         # signal for timeline duration changes : (composition, sigid)
         self._timelineDurationChangedSigId = (None, None)
 
-        self._addTimelineToPlayground()
+
 
     def _connectToProject(self, project):
         """Connect signal handlers to a project.
@@ -87,6 +77,10 @@ class PitiviViewer(gtk.VBox):
                                      None, self._tmpIsReadyCb)
         self.project_signals.connect(project, "settings-changed",
                                      None, self._settingsChangedCb)
+        # we should add the timeline to the playground here, so
+        # that the new timeline bin will be added to the
+        # playground when the project loads
+        self._addTimelineToPlayground()
 
     def _createUi(self):
         """ Creates the Viewer GUI """
@@ -352,8 +346,14 @@ class PitiviViewer(gtk.VBox):
         self._connectToProject(project)
 
     def _addTimelineToPlayground(self):
-        instance.PiTiVi.playground.addPipeline(instance.PiTiVi.current.getBin())
-
+        # remove old timeline before proceeding
+        pg = instance.PiTiVi.playground
+        timeline = pg.getTimeline()
+        if timeline:
+            pg.switchToDefault()
+            pg.removePipeline(timeline)
+        # add current timeline
+        pg.addPipeline(instance.PiTiVi.current.getBin())
 
     ## Control gtk.Button callbacks
 
@@ -404,7 +404,7 @@ class PitiviViewer(gtk.VBox):
                 self._timelineDurationChangedSigId = (smartbin.project.timeline.videocomp,
                                                       sigid)
             else:
-                self.posadjust.upper = float(smartbin.factory.length)
+                self.posadjust.upper = float(smartbin.factory.getDuration())
                 if not self._timelineDurationChangedSigId == (None, None):
                     obj, sigid = self._timelineDurationChangedSigId
                     obj.disconnect(sigid)

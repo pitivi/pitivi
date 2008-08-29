@@ -123,3 +123,5 @@ class TestFileSourceFactory(TestObjectFactory):
         TestObjectFactory.__init__(self, *args, **kwargs)
         self.length = duration
 
+    def getDuration(self):
+        return self.length

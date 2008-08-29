@@ -396,7 +396,7 @@ class SmartFileBin(SmartBin):
                           has_video = factory.is_video,
                           has_audio = factory.is_audio,
                           width = width, height = height,
-                          length = factory.length)
+                          length = factory.getDuration())
 
     def _addSource(self):
         self.add(self.source)

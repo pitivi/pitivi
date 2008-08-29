@@ -113,6 +113,9 @@ class Timeline(gobject.GObject, Serializable):
             s.audiodepth = a.audiodepth
         return s
 
+    def getDuration(self):
+        return max(self.audiocomp.duration, self.videocomp.duration)
+
     # Serializable methods
 
     def toDataFormat(self):

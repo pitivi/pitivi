@@ -38,4 +38,6 @@
     <toolitem action="FullScreen" />
     <toolitem action="AdvancedView" />
   </toolbar>
+  <toolbar name="TimelineToolBar">
+  </toolbar>
 </ui>

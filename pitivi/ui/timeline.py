@@ -33,8 +33,10 @@ from gettext import gettext as _
 
 import pitivi.instance as instance
 import pitivi.dnd as dnd
+from pitivi.timeline.source import TimelineFileSource, TimelineBlankSource
+from pitivi.timeline.objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 
-from timelineobjects import SimpleTimeline
+from timelineobjects import SimpleTimelineWidget
 from complextimeline import ComplexTimelineWidget
 
 class TimelineWidget(gtk.VBox):
@@ -45,19 +47,18 @@ class TimelineWidget(gtk.VBox):
         gtk.VBox.__init__(self)
         self._createUi()
 
+        # drag and drop
+        self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION, 
+            [dnd.FILESOURCE_TUPLE],
+            gtk.gdk.ACTION_COPY)
+        self.connect("drag-data-received", self._dragDataReceivedCb)
+        self.connect("drag-leave", self._dragLeaveCb)
+        self.connect("drag-motion", self._dragMotionCb)
+
     def _createUi(self):
         """ draw the GUI """
-        self.hadjustment = gtk.Adjustment()
-        self.vadjustment = gtk.Adjustment()
-
-        self.simpleview = SimpleTimelineContentWidget(self)
-        self.complexview = ComplexTimelineWidget(self)
-
-        self.simpleview.connect("scroll-event", self._simpleScrollCb)
-        self.complexview.connect("scroll-event", self._simpleScrollCb)
-
-        self.hscroll = gtk.HScrollbar(self.hadjustment)
-        self.pack_end(self.hscroll, expand=False)
+        self.simpleview = SimpleTimelineWidget()
+        self.complexview = ComplexTimelineWidget()
 
     def showSimpleView(self):
         """ Show the simple timeline """
@@ -79,94 +80,56 @@ class TimelineWidget(gtk.VBox):
         gst.debug("state:%s" % event.state)
         self.hscroll.emit("scroll-event", event)
 
-class SimpleTimelineContentWidget(gtk.HBox):
-    """ Widget for Simple Timeline content display """
-    def __init__(self, twidget):
-        """ init """
-        self.twidget = twidget
-        gtk.HBox.__init__(self)
-        self._createUi()
-        self.show_all()
+## Drag and Drop callbacks
 
-    def _createUi(self):
-        """ draw the GUI """
-
-        # (A) real simple timeline
-        self.timeline = SimpleTimeline(hadjustment = self.twidget.hadjustment)
-        self.layoutframe = gtk.Frame()
-        self.layoutframe.add(self.timeline)
-
-
-        # (B) Explanatory message label
-        self.messageframe = gtk.Frame()
-        self.messageframe.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        self.messageframe.show()
-
-        self.textbox = gtk.EventBox()
-        self.textbox.modify_bg(gtk.STATE_NORMAL, gtk.gdk.color_parse('white'))
-        self.textbox.add_events(gtk.gdk.ENTER_NOTIFY_MASK)
-        self.textbox.show()
-        self.messageframe.add(self.textbox)
-
-        txtlabel = gtk.Label()
-        txtlabel.set_padding(10, 10)
-        txtlabel.set_line_wrap(True)
-        txtlabel.set_line_wrap_mode(pango.WRAP_WORD)
-        txtlabel.set_justify(gtk.JUSTIFY_CENTER)
-        txtlabel.set_markup(
-            _("<span size='x-large'>Add clips to the timeline by dragging them here.</span>"))
-        self.textbox.add(txtlabel)
-        self.txtlabel = txtlabel
-
-        self.pack_start(self.messageframe, expand=True, fill=True)
-        self.reorder_child(self.messageframe, 0)
-        self.motionSigId = self.textbox.connect("drag-motion", self._dragMotionCb)
-        self.textbox.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                                   [dnd.URI_TUPLE, dnd.FILE_TUPLE],
-                                   gtk.gdk.ACTION_COPY)
-
-        self.showingTimeline = False
-        self._displayTimeline()
-
-    def _dragMotionCb(self, unused_layout, unused_context, unused_x, unused_y,
-                      unused_timestamp):
-        gst.log("motion...")
-        self.showingTimeline = False
-        gobject.idle_add(self._displayTimeline)
-
-    def _dragLeaveCb(self, unused_layout, unused_context, unused_timestamp):
-        gst.log("leave...")
-        if len(instance.PiTiVi.current.timeline.videocomp):
+    def _gotFileFactory(self, filefactory, x, y):
+        """ got a filefactory at the given position """
+        # remove the slot
+        if not filefactory or not filefactory.is_video:
             return
-        self.showingTimeline = True
-        gobject.idle_add(self._displayTimeline, False)
+        #pos_ = self.items.point_to_index(pixel_coords(self, (x, y)))
+        pos_ = 0
+        gst.debug("_got_filefactory pos : %d" % pos_)
+        # we just add it here, the drawing will be done in the condensed_list
+        # callback
+        source = TimelineFileSource(factory=filefactory,
+            media_type=MEDIA_TYPE_VIDEO,
+            name=filefactory.name)
 
-    def _displayTimeline(self, displayed=True):
-        if displayed:
-            if self.showingTimeline:
-                return
-            gst.debug("displaying timeline")
-            self.remove(self.messageframe)
-            self.txtlabel.hide()
-            self.textbox.disconnect(self.motionSigId)
-            self.motionSigId = None
-            self.pack_start(self.layoutframe)
-            self.reorder_child(self.layoutframe, 0)
-            self.layoutframe.show_all()
-            self.dragLeaveSigId = self.timeline.connect("drag-leave", self._dragLeaveCb)
-            self.showingTimeline = True
+        # ONLY FOR SIMPLE TIMELINE : if video-only, we link a blank audio object
+        if not filefactory.is_audio:
+            audiobrother = TimelineBlankSource(factory=filefactory,
+                media_type=MEDIA_TYPE_AUDIO, name=filefactory.name)
+            source.setBrother(audiobrother)
+
+        timeline = instance.PiTiVi.current.timeline
+        if pos_ == -1:
+            timeline.videocomp.appendSource(source)
+        elif pos_:
+            timeline.videocomp.insertSourceAfter(source,
+                self.condensed[pos_ - 1])
         else:
-            if not self.showingTimeline:
-                return
-            # only hide if there's nothing left in the timeline
-            if not len(instance.PiTiVi.current.timeline.videocomp):
-                gst.debug("hiding timeline")
-                self.timeline.disconnect(self.dragLeaveSigId)
-                self.dragLeaveSigId = None
-                self.remove(self.layoutframe)
-                self.layoutframe.hide()
-                self.pack_start(self.messageframe)
-                self.reorder_child(self.messageframe, 0)
-                self.txtlabel.show()
-                self.motionSigId = self.textbox.connect("drag-motion", self._dragMotionCb)
-                self.showingTimeline = False
+            timeline.videocomp.prependSource(source)
+
+    def _dragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
+        #TODO: temporarily add source to timeline, and put it in drag mode
+        # so user can see where it will go
+        gst.info("SimpleTimeline x:%d , source would go at %d" % (x, 0))
+
+    def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
+        gst.info("SimpleTimeline")
+        #TODO: remove temp source from timeline
+
+    def _dragDataReceivedCb(self, unused_layout, context, x, y, 
+        selection, targetType, timestamp):
+        gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
+            (targetType, selection.data))
+        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
+            uri = selection.data
+        else:
+            context.finish(False, False, timestamp)
+        self._gotFileFactory(instance.PiTiVi.current.sources[uri], x, y)
+        context.finish(True, False, timestamp)
+        instance.PiTiVi.playground.switchToTimeline()
+
+

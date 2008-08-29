@@ -27,9 +27,10 @@ import gobject
 import gtk
 import gst
 import pitivi.instance as instance
-from complexinterface import ZoomableWidgetInterface
+from complexinterface import Zoomable
+from pitivi.utils import time_to_string
 
-class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
+class ScaleRuler(gtk.Layout, Zoomable):
 
     __gsignals__ = {
         "expose-event":"override",
@@ -40,12 +41,14 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         "motion-notify-event":"override",
         }
 
-    border = 5
+    border = 0
+    min_tick_spacing = 3
 
     def __init__(self, hadj):
         gst.log("Creating new ScaleRule")
         gtk.Layout.__init__(self)
-        self.add_events(gtk.gdk.POINTER_MOTION_MASK | gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
+        self.add_events(gtk.gdk.POINTER_MOTION_MASK |
+            gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
         self.set_hadjustment(hadj)
         self.pixmap = None
         # position is in nanoseconds
@@ -55,28 +58,25 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         self.currentlySeeking = False
         self.pressed = False
 
-    ## ZoomableWidgetInterface methods are handled by the container (LayerStack)
-    ## Except for ZoomChanged
+## Zoomable interface override
 
     def zoomChanged(self):
+        self.queue_resize()
         self.doPixmap()
         self.queue_draw()
 
-    def getPixelWidth(self):
-        return ZoomableWidgetInterface.getPixelWidth(self) + 2 * self.border
-
-
-    ## timeline position changed method
+## timeline position changed method
 
     def timelinePositionChanged(self, value, unused_frame):
-        previous = self.position
+        ppos = max(self.nsToPixel(self.position) - 1, 0)
         self.position = value
-        self.queue_draw_area(max(self.nsToPixel(min(value, previous)) - 5, 0),
-                             0,
-                             self.nsToPixel(max(value, previous)) + 5,
-                             self.get_allocation().height)
+        npos = max(self.nsToPixel(self.position) - 1, 0)
 
-    ## gtk.Widget overrides
+        height = self.get_allocation().height
+        self.queue_draw_area(ppos, 0, 2, height)
+        self.queue_draw_area(npos, 0, 2, height)
+
+## gtk.Widget overrides
 
     def do_size_allocate(self, allocation):
         gst.debug("ScaleRuler got %s" % list(allocation))
@@ -96,9 +96,10 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         gst.debug("exposing ScaleRuler %s" % list(event.area))
         x, y, width, height = event.area
         # double buffering power !
-        self.bin_window.draw_drawable(self.style.fg_gc[gtk.STATE_NORMAL],
-                                      self.pixmap,
-                                      x, y, x, y, width, height)
+        self.bin_window.draw_drawable(
+            self.style.fg_gc[gtk.STATE_NORMAL],
+            self.pixmap,
+            x, y, x, y, width, height)
         # draw the position
         context = self.bin_window.cairo_create()
         self.drawPosition(context, self.get_allocation())
@@ -126,13 +127,13 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
             self._doSeek(cur)
         return False
 
-    ## Seeking methods
+## Seeking methods
 
     def _seekTimeoutCb(self):
         gst.debug("timeout")
-        self.currentlySeeking = False
         if not self.position == self.requested_time:
             self._doSeek(self.requested_time)
+            self.currentlySeeking = False
 
     def _doSeek(self, value, format=gst.FORMAT_TIME):
         gst.debug("seeking to %s" % gst.TIME_ARGS (value))
@@ -144,7 +145,7 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         elif format == gst.FORMAT_TIME:
             self.requested_time = value
 
-    ## Drawing methods
+## Drawing methods
 
     def doPixmap(self):
         """ (re)create the buffered drawable for the Widget """
@@ -154,10 +155,12 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         allocation = self.get_allocation()
         lwidth, lheight = self.get_size()
         allocation.width = max(allocation.width, lwidth)
-        gst.debug("Creating pixmap(self.window, width:%d, height:%d)" % (allocation.width, allocation.height))
+        gst.debug("Creating pixmap(self.window, width:%d, height:%d)" 
+            % (allocation.width, allocation.height))
         if self.pixmap:
             del self.pixmap
-        self.pixmap = gtk.gdk.Pixmap(self.bin_window, allocation.width, allocation.height)
+        self.pixmap = gtk.gdk.Pixmap(self.bin_window, allocation.width, 
+            allocation.height)
         context = self.pixmap.cairo_create()
         self.drawBackground(context, allocation)
         self.drawRuler(context, allocation)
@@ -168,105 +171,96 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         self.drawBackground(context, rect)
         self.drawRuler(context, rect)
 
+    def getDuration(self):
+        return instance.PiTiVi.current.timeline.getDuration()
+
+    def getPixelWidth(self):
+        return self.nsToPixel(self.getDuration())
+
+    def getPixelPosition(self):
+        return 0
+
     def drawBackground(self, context, allocation):
         context.save()
 
         context.set_source_rgb(0.5, 0.5, 0.5)
-        context.rectangle(0, 0,
-                          allocation.width, allocation.height)
+        context.rectangle(0, 0, allocation.width, allocation.height)
         context.fill()
         context.stroke()
 
         if self.getDuration() > 0:
             context.set_source_rgb(0.8, 0.8, 0.8)
-            context.rectangle(0, 0,
-                              self.getPixelWidth(), allocation.height)
+            context.rectangle(0, 0, self.getPixelWidth(), allocation.height)
             context.fill()
             context.stroke()
 
         context.restore()
 
+    def startDurationChanged(self):
+        gst.info("start/duration changed")
+        self.queue_resize()
+
     def drawRuler(self, context, allocation):
-        context.save()
+        # there are 4 lengths of tick mark:
+        # full height: largest increments, 1 minute
+        # 3/4 height: 10 seconds
+        # 1/2 height: 1 second
+        # 1/4 height: 1/10 second (might later be changed to 1 frame in
+        #   project framerate)
 
-        zoomRatio = self.getZoomRatio()
+        # At the highest level of magnification, all ticmarks are visible. At
+        # the lowest, only the full height tic marks are visible. The
+        # appearance of text is dependent on the spacing between tics: text
+        # only appears when there is enough space between tics for it to be
+        # readable.
 
-        paintpos = float(self.border) + 0.5
-        seconds = 0
-        secspertic = 1
+        def textSize(text):
+            return context.text_extents(text)[2:4]
 
-        timeprint = 0
-        ticspertime = 1
-
-        # FIXME : this should be beautified (instead of all the if/elif/else)
-        if zoomRatio < 0.05:
-            #Smallest tic is 10 minutes
-            secspertic = 600
-            if zoomRatio < 0.006:
-                ticspertime = 24
-            elif zoomRatio < 0.0125:
-                ticspertime = 12
-            elif zoomRatio < 0.025:
-                ticspertime = 6
-            else:
-                ticspertime = 3
-        elif zoomRatio < 0.5:
-            #Smallest tic is 1 minute
-            secspertic = 60
-            if zoomRatio < 0.25:
-                ticspertime = 10
-            else:
-                ticspertime = 5
-        elif zoomRatio < 3:
-            #Smallest tic is 10 seconds
-            secspertic = 10
-            if zoomRatio < 1:
-                ticspertime = 12
-            else:
-                ticspertime = 6
-        else:
-            #Smallest tic is 1 second
-            if zoomRatio < 5:
-                ticspertime = 20
-            elif zoomRatio < 10:
-                ticspertime = 10
-            elif zoomRatio < 20:
-                ticspertime = 5
-            elif zoomRatio < 40:
-                ticspertime = 2
-
-        while paintpos < allocation.width:
+        def drawTick(paintpos, height):
             context.move_to(paintpos, 0)
+            context.line_to(paintpos, allocation.height * height)
 
-            if seconds % 600 == 0:
-                context.line_to(paintpos, allocation.height)
-            elif seconds % 60 == 0:
-                context.line_to(paintpos, allocation.height * 3 / 4)
-            elif seconds % 10 == 0:
-                context.line_to(paintpos, allocation.height / 2)
-            else:
-                context.line_to(paintpos, allocation.height / 4)
+        def drawText(paintpos, time, txtwidth, txtheight):
+            # draw the text position
+            time = time_to_string(time)
+            context.move_to( paintpos - txtwidth / 2.0,
+                             allocation.height - 2 )
+            context.show_text( time )
 
-            if timeprint == 0:
-                # draw the text position
-                hours = int(seconds / 3600)
-                mins = seconds % 3600 / 60
-                secs = seconds % 60
-                time = "%02d:%02d:%02d" % (hours, mins, secs)
-                txtwidth, txtheight = context.text_extents(time)[2:4]
-                context.move_to( paintpos - txtwidth / 2.0,
-                                 allocation.height - 2 )
-                context.show_text( time )
-                timeprint = ticspertime
-            timeprint -= 1
+        def drawTicks(interval, height):
+            paintpos = float(self.border) + 0.5
+            spacing = zoomRatio * interval
+            if spacing >= self.min_tick_spacing:
+                while paintpos < allocation.width:
+                    drawTick(paintpos, height)
+                    paintpos += zoomRatio * interval
 
-            paintpos += zoomRatio * secspertic
-            seconds += secspertic
+        def drawTimes(interval):
+            # figure out what the optimal offset is
+            paintpos = float(self.border) + 0.5
+            seconds = 0
+            spacing = zoomRatio * interval
+            textwidth, textheight = textSize(time_to_string(0))
+            if spacing > textwidth:
+                while paintpos < allocation.width:
+                    timevalue = long(seconds * gst.SECOND)
+                    drawText(paintpos, timevalue, textwidth, textheight)
+                    paintpos += spacing
+                    seconds += interval
 
-        #Since drawing is done in batch we can't use different styles
-        context.set_line_width(1)
-        context.set_source_rgb(0, 0, 0)
+        context.save()
+        zoomRatio = self.getZoomRatio()
+        # looks better largest tick doesn't run into the text label
+        interval_sizes = ((60, 0.80), (10, 0.75), (1, 0.5), (0.1, 0.25))
+        for interval, height in interval_sizes:
+            drawTicks(interval, height)
+            drawTimes(interval)
 
+        #set a slightly thicker line. This forces anti-aliasing, and gives the
+        #a softer appearance
+        context.set_line_width(1.1)
+        context.set_source_rgb(0.4, 0.4, 0.4)
         context.stroke()
         context.restore()
 
@@ -274,8 +268,9 @@ class ScaleRuler(gtk.Layout, ZoomableWidgetInterface):
         if self.getDuration() <= 0:
             return
         # a simple RED line will do for now
-        xpos = self.nsToPixel(self.position) + self.border + 0.5
+        xpos = self.nsToPixel(self.position) + self.border
         context.save()
+        context.set_line_width(1.5)
         context.set_source_rgb(1.0, 0, 0)
 
         context.move_to(xpos, 0)

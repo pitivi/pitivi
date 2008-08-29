@@ -313,8 +313,8 @@ class TimelineObject(BrotherObjects):
                                  (gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, ))
         }
 
-    def __init__(self, factory=None, start=-1, duration=-1,
-                 media_type=MEDIA_TYPE_NONE, name="", **kwargs):
+    def __init__(self, factory=None, start=gst.CLOCK_TIME_NONE,
+                 duration=0, media_type=MEDIA_TYPE_NONE, name="", **kwargs):
         BrotherObjects.__init__(self, **kwargs)
         self.name = name
         gst.log("new TimelineObject :%s %r" % (name, self))
@@ -349,18 +349,18 @@ class TimelineObject(BrotherObjects):
             self.gnlobject.connect("notify::duration", self._startDurationChangedCb)
             self._setStartDurationTime(self.start, self.duration, True)
 
-    def _setStartDurationTime(self, start=-1, duration=-1, force=False):
+    def _setStartDurationTime(self, start=gst.CLOCK_TIME_NONE, duration=0, force=False):
         # really modify the start/duration time
         self.gnlobject.info("start:%s , duration:%s" %( gst.TIME_ARGS(start),
                                                         gst.TIME_ARGS(duration)))
-        if not duration == -1 and (not self.duration == duration or force):
+        if duration > 0 and (not self.duration == duration or force):
             self.duration = duration
             self.gnlobject.set_property("duration", long(duration))
-        if not start == -1 and (not self.start == start or force):
+        if not start == gst.CLOCK_TIME_NONE and (not self.start == start or force):
             self.start = start
             self.gnlobject.set_property("start", long(start))
 
-    def setStartDurationTime(self, start=-1, duration=-1):
+    def setStartDurationTime(self, start=gst.CLOCK_TIME_NONE, duration=0):
         """ sets the start and/or duration time """
         self._setStartDurationTime(start, duration)
         if self.linked:
@@ -372,22 +372,25 @@ class TimelineObject(BrotherObjects):
         if not gnlobject == self.gnlobject:
             gst.warning("We're receiving signals from an object we dont' control (self.gnlobject:%r, gnlobject:%r)" % (self.gnlobject, gnlobject))
         self.gnlobject.debug("property:%s" % property.name)
-        start = -1
-        duration = -1
+        start = gst.CLOCK_TIME_NONE
+        duration = 0
         if property.name == "start":
             start = gnlobject.get_property("start")
+            gst.log("start: %s => %s" % (gst.TIME_ARGS(self.start),
+                                         gst.TIME_ARGS(start)))
             if start == self.start:
-                start = -1
+                start = gst.CLOCK_TIME_NONE
             else:
                 self.start = long(start)
         elif property.name == "duration":
             duration = gnlobject.get_property("duration")
+            gst.log("duration: %s => %s" % (gst.TIME_ARGS(self.duration),
+                                            gst.TIME_ARGS(duration)))
             if duration == self.duration:
-                duration = -1
+                duration = 0
             else:
                 self.gnlobject.debug("duration changed:%s" % gst.TIME_ARGS(duration))
                 self.duration = long(duration)
-        #if not start == -1 or not duration == -1:
         self.emit("start-duration-changed", self.start, self.duration)
 
 
@@ -425,3 +428,9 @@ class TimelineObject(BrotherObjects):
             self._setFactory(obj)
         else:
             BrotherObjects.pendingObjectCreated(self, obj, field)
+
+    def isAudio(self):
+        return self.media_type == MEDIA_TYPE_AUDIO
+
+    def isVideo(self):
+        return self.media_type == MEDIA_TYPE_VIDEO

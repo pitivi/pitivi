@@ -57,35 +57,53 @@ import pitivi.timeline.timeline
 class LayerInfo:
     """ Information on a layer for the complex timeline widgets """
 
-    def __init__(self, composition, expanded=True):
+    def __init__(self, composition, sigid, expanded=True):
         """
         If currentHeight is None, it will be set to the given minimumHeight.
         """
         self.composition = composition
         self.expanded = expanded
+        self.sigid = sigid
 
 class LayerInfoList(gobject.GObject):
     """ List, on steroids, of the LayerInfo"""
 
     __gsignals__ = {
-        'layer-added' : ( gobject.SIGNAL_RUN_LAST,
-                          gobject.TYPE_NONE,
-                          ( gobject.TYPE_INT, ) ),
-        'layer-removed' : ( gobject.SIGNAL_RUN_LAST,
-                          gobject.TYPE_NONE,
-                          ( gobject.TYPE_INT, ) ),
-        }
+        'layer-added' : (
+            gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE,
+            (gobject.TYPE_PYOBJECT, gobject.TYPE_INT, )
+        ),
+        'layer-removed' : (
+            gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE,
+            (gobject.TYPE_INT, )
+        ),
+        'start-duration-changed' : (
+            gobject.SIGNAL_RUN_LAST,
+            gobject.TYPE_NONE,
+            ()
+        )
+    }
 
-    def __init__(self, timeline):
+    def __init__(self):
         gobject.GObject.__init__(self)
-        self.timeline = timeline
+        self.timeline = None
         self._list = []
-        self._fillList()
+
+    def setTimeline(self, timeline):
+        self._clear()
+        self.timeline = timeline
+        if self.timeline:
+            self._fillList()
 
     def _fillList(self):
         gst.debug("filling up LayerInfoList")
-        self.addComposition(self.timeline.videocomp)
         self.addComposition(self.timeline.audiocomp)
+        self.addComposition(self.timeline.videocomp)
+
+    def _start_duration_changed_cb(self, timeline, start, duration):
+        self.emit("start-duration-changed")
 
     def addComposition(self, composition, pos=-1):
         """
@@ -100,12 +118,14 @@ class LayerInfoList(gobject.GObject):
             expanded = False
         else:
             expanded = True
-        layer = LayerInfo(composition, expanded)
+        sigid = composition.connect("start-duration-changed",
+            self._start_duration_changed_cb)
+        layer = LayerInfo(composition, sigid, expanded)
         if pos == -1:
             self._list.append(layer)
         else:
             self._list.insert(pos, layer)
-        self.emit('layer-added', pos)
+        self.emit('layer-added', layer, pos)
         return layer
 
     def removeComposition(self, composition):
@@ -119,7 +139,13 @@ class LayerInfoList(gobject.GObject):
             return False
         position = self._list.index(layer)
         self._list.remove(layer)
+        layer.composition.disconnect(layer.sigid)
         self.emit('layer-removed', position)
+
+    def _clear(self):
+        while len(self._list):
+            layer = self._list[0]
+            self.removeComposition(layer.composition)
 
     def findCompositionLayerInfo(self, composition):
         """ Returns the LayerInfo corresponding to the given composition """

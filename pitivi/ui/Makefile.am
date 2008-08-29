@@ -2,27 +2,28 @@ uidir = $(libdir)/pitivi/python/pitivi/ui
 
 ui_PYTHON =			\
 	__init__.py		\
+	complexinterface.py	\
 	complexlayer.py		\
 	complexsource.py	\
 	complextimeline.py	\
-	complexinterface.py	\
 	exportsettingswidget.py	\
 	filelisterrordialog.py	\
 	glade.py		\
 	gstwidget.py		\
+	infolayer.py		\
+	layerwidgets.py		\
 	mainwindow.py		\
+	pluginmanagerdialog.py	\
+	plumber.py		\
 	projectsettings.py	\
+	ruler.py		\
+	slider.py		\
 	sourcefactories.py	\
 	timeline.py		\
 	timelineobjects.py	\
-	viewer.py		\
-	ruler.py		\
-	layerwidgets.py		\
 	tracklayer.py		\
-	infolayer.py		\
-	plumber.py		\
-	slider.py	\
-	pluginmanagerdialog.py
+	util.py			\
+	viewer.py
 
 ui_DATA =				\
 	actions.xml			\

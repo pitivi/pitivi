@@ -80,7 +80,6 @@ class Discoverer(gobject.GObject):
         self.current = None
         self.currentTags = []
         self.pipeline = None
-        self.thumbnailing = False
         self.thisdone = False
         self.prerolled = False
         self.nomorepads = False
@@ -89,6 +88,7 @@ class Discoverer(gobject.GObject):
         self.error = None # reason for error
         self.extrainfo = None # extra information about the error
         self.fakesink = None
+        self.isimage = False # Used to know if the file is an image
 
     def addFile(self, filename):
         """ queue a filename to be discovered """
@@ -153,7 +153,9 @@ class Discoverer(gobject.GObject):
             self.emit('not_media_file', self.current, self.error, self.extrainfo)
         elif self.currentfactory:
             self.currentfactory.addMediaTags(self.currentTags)
-            if not self.currentfactory.length:
+            if self.isimage:
+                self.currentfactory.setThumbnail(gst.uri_get_location(self.current))
+            if not self.currentfactory.getDuration() and not self.isimage:
                 self.emit('not_media_file', self.current,
                           _("Could not establish the duration of the file."),
                           _("This clip seems to be in a format which cannot be accessed in a random fashion."))
@@ -169,6 +171,7 @@ class Discoverer(gobject.GObject):
         self.nomorepads = False
         self.error = None
         self.extrainfo = None
+        self.isimage = False
 
         # restart an analysis if there's more...
         if self.queue:
@@ -211,6 +214,8 @@ class Discoverer(gobject.GObject):
         self.signalsid.append((dbin, dbin.connect("new-decoded-pad", self._newDecodedPadCb)))
         self.signalsid.append((dbin, dbin.connect("unknown-type", self._unknownTypeCb)))
         self.signalsid.append((dbin, dbin.connect("no-more-pads", self._noMorePadsCb)))
+        tfind = dbin.get_by_name("typefind")
+        self.signalsid.append((tfind, tfind.connect("have-type", self._typefindHaveTypeCb)))
         self.pipeline.add(source, dbin)
         source.link(dbin)
         gst.info("analysis pipeline created")
@@ -237,6 +242,10 @@ class Discoverer(gobject.GObject):
         # return False so we don't get called again
         return False
 
+    def _typefindHaveTypeCb(self, typefind, perc, caps):
+        if caps.to_string().startswith("image/"):
+            self.isimage = True
+
     def _busMessageCb(self, unused_bus, message):
         if self.thisdone:
             return
@@ -250,7 +259,7 @@ class Discoverer(gobject.GObject):
                     # Let's get the information from all the pads
                     self._getPadsInfo()
                     # Only go to PLAYING if we have an video stream to thumbnail
-                    if self.currentfactory and self.currentfactory.is_video:
+                    if self.currentfactory and self.currentfactory.is_video and not self.isimage:
                         gst.log("pipeline has gone to PAUSED, now pushing to PLAYING")
                         if self.pipeline.set_state(gst.STATE_PLAYING) == gst.STATE_CHANGE_FAILURE:
                             if not self.error:
@@ -290,7 +299,7 @@ class Discoverer(gobject.GObject):
 
     def _handleError(self, gerror, detail, unused_source):
         gst.warning("got an ERROR")
-        
+
         if not self.error:
             self.error = _("An internal error occured while analyzing this file : %s") % gerror.message
             self.extrainfo = detail
@@ -319,7 +328,7 @@ class Discoverer(gobject.GObject):
                     self.currentfactory.setAudioInfo(caps)
                 elif caps.to_string().startswith("video/x-raw") and not self.currentfactory.video_info:
                     self.currentfactory.setVideoInfo(caps)
-            if not self.currentfactory.length:
+            if not self.currentfactory.getDuration():
                 try:
                     length, format = pad.query_duration(gst.FORMAT_TIME)
                 except:

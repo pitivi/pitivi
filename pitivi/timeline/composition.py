@@ -27,7 +27,7 @@ import gobject
 import gst
 
 from source import TimelineSource
-from objects import BrotherObjects, MEDIA_TYPE_AUDIO
+from objects import BrotherObjects
 from pitivi.serializable import to_object_from_data_type
 
 class Layer(BrotherObjects):
@@ -427,10 +427,10 @@ class TimelineComposition(TimelineSource):
         my_add_sorted(self.sources[position-1], source)
 
         # add it to self.gnlobject
-        self.gnlobject.info("adding %s to our composition" % source.gnlobject)
+        self.gnlobject.info("adding %s to our composition" % source.gnlobject.props.name)
         self.gnlobject.add(source.gnlobject)
 
-        self.gnlobject.info("added source %s" % source.gnlobject)
+        self.gnlobject.info("added source %s" % source.gnlobject.props.name)
         gst.info("%s" % str(self.sources))
         self.emit('source-added', source)
 
@@ -447,7 +447,7 @@ class TimelineComposition(TimelineSource):
         auto_linked : if True will add the brother (if any) of the given source
                 to the linked composition with the same parameters
         """
-        self.gnlobject.info("source %s , position:%d, self.sources:%s" %(source, position, self.sources))
+        self.gnlobject.info("source %s , position:%d, self.sources:%s" %(source.name, position, self.sources))
 
         # make sure object to add has valid start/duration
         if source.start == -1 or source.duration <= 0:
@@ -485,15 +485,15 @@ class TimelineComposition(TimelineSource):
         gst.info("start=%s, position=%d, existorder=%d, sourcelength=%s" % (gst.TIME_ARGS(start),
                                                                             position,
                                                                             existorder,
-                                                                            gst.TIME_ARGS(source.factory.length)))
+                                                                            gst.TIME_ARGS(source.factory.getDuration())))
         # set the correct start/duration time
-        duration = source.factory.length
+        duration = source.factory.getDuration()
         source.setStartDurationTime(start, duration)
 
         # pushing following
         if push_following and not position in [-1, 0]:
             #print self.gnlobject, "pushing following", existorder, len(self.sources[position - 1][2])
-            self.shiftSources(source.factory.length, existorder, len(self.sources[position - 1][2]))
+            self.shiftSources(source.factory.getDuration(), existorder, len(self.sources[position - 1][2]))
 
         self.addSource(source, position, auto_linked=auto_linked)
 
@@ -769,7 +769,7 @@ class TimelineComposition(TimelineSource):
             # return the settings of our only source
             return self.sources[0][2][0].getExportSettings()
         else:
-            if self.media_type == MEDIA_TYPE_AUDIO:
+            if self.isAudio():
                 return self._autoAudioSettings()
             else:
                 return self._autoVideoSettings()

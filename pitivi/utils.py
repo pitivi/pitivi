@@ -22,7 +22,18 @@
 
 # set of utility functions
 
-import gst
+import gst, bisect
+
+def time_to_string(value):
+    if value == gst.CLOCK_TIME_NONE:
+        return "--:--:--.---"
+    ms = value / gst.MSECOND
+    sec = ms / 1000
+    ms = ms % 1000
+    mins = sec / 60
+    sec = sec % 60
+    hours = mins / 60
+    return "%02d:%02d:%02d.%03d" % (hours, mins, sec, ms)
 
 def bin_contains(bin, element):
     """ Returns True if the bin contains the given element, the search is recursive """
@@ -36,3 +47,58 @@ def bin_contains(bin, element):
         if isinstance(elt, gst.Bin) and bin_contains(elt, element):
             return True
     return False
+
+# Python re-implementation of binary search algorithm found here:
+# http://en.wikipedia.org/wiki/Binary_search
+#
+# This is the iterative version without the early termination branch, which
+# also tells us the element of A that are nearest to Value, if the element we
+# want is not found. This is useful for implementing edge snaping in the UI,
+# where we repeatedly search through a list of control points for the one
+# closes to the cursor. Because we don't care whether the cursor position
+# matches the list, this function returns the index of the lement closest to
+# value in the array.
+
+def binary_search(A, value):
+    low = 0
+    high = len(A)
+    while (low < high): 
+        mid = (low + high)/2
+        if (A[mid] < value):
+            low = mid + 1
+        else:
+            #can't be high = mid-1: here A[mid] >= value,
+            #so high can't be < mid if A[mid] == value
+            high = mid; 
+    return low
+
+# Returns the element of seq nearest to item, and the difference between them
+
+def closest_item(seq, item):
+    index = bisect.bisect(seq, item)
+    if index >= len(seq):
+        index = len(seq) - 1
+    res = seq[index]
+    diff = abs(res - item)
+
+    # binary_search returns largest element closest to item.
+    # if there is a smaller element...
+    if index - 1 >= 0:
+        res_a = seq[index - 1]
+        # ...and it is closer to the pointer...
+        diff_a = abs(res_a - item)
+        if diff_a < diff:
+            # ...use it instead.
+            res = res_a
+            diff = diff_a
+    return res, diff
+
+def argmax(func, seq):
+    """return the element of seq that gives max(map(func, seq))"""
+    def compare(a, b):
+        if a[0] > b[0]:
+            return a
+        return b
+    # using a generator expression here should save memory
+    objs = ((func(x), x) for x in seq)
+    return reduce(compare, objs)[1]

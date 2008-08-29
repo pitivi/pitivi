@@ -33,7 +33,7 @@ from complexinterface import ZoomableWidgetInterface
 class TimelineToolBar(gtk.HBox):
 
     def __init__(self):
-        gtk.HBox.__init__(self, homogeneous=True)
+        gtk.HBox.__init__(self, homogeneous=False)
         self._addButtons()
 
     def _addButtons(self):
@@ -42,14 +42,15 @@ class TimelineToolBar(gtk.HBox):
         image = gtk.image_new_from_stock(gtk.STOCK_ZOOM_IN,
                                          gtk.ICON_SIZE_SMALL_TOOLBAR)
         self.zoomInButton.set_image(image)
-        self.pack_start(self.zoomInButton, expand=False)
+        self.pack_start(self.zoomInButton, expand=False, fill=False)
         self.zoomInButton.connect('clicked', self._zoomClickedCb)
 
         self.zoomOutButton = gtk.Button(label="")
         self.zoomOutButton.set_image(gtk.image_new_from_stock(gtk.STOCK_ZOOM_OUT,
                                                               gtk.ICON_SIZE_SMALL_TOOLBAR))
-        self.pack_start(self.zoomOutButton, expand=False)
+        self.pack_start(self.zoomOutButton, expand=False, fill=False)
         self.zoomOutButton.connect('clicked', self._zoomClickedCb)
+        self._ratio = None
 
     def _zoomClickedCb(self, button):
         if button == self.zoomInButton:
@@ -61,6 +62,12 @@ class TimelineToolBar(gtk.HBox):
         else:
             return
         self.setZoomRatio(ratio)
+
+    def getZoomRatio(self):
+        return self._ratio
+
+    def setZoomRatio(self, ratio):
+        self._ratio = ratio
 
 class TimelineLayer(gtk.HBox):
 

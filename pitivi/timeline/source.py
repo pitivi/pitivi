@@ -31,14 +31,124 @@ from objects import TimelineObject, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO, MEDIA_TY
 class TimelineSource(TimelineObject):
     """
     Base class for all sources (O input)
+
+    Save/Load properties:
+    * 'media-start' (int) : start position of the media
+    * 'media-duration' (int) : duration of the media
     """
+    __gsignals__ = {
+        "media-start-duration-changed" : ( gobject.SIGNAL_RUN_LAST,
+                                       gobject.TYPE_NONE,
+                                       (gobject.TYPE_UINT64, gobject.TYPE_UINT64))
+        }
+
 
     __data_type__ = "timeline-source"
 
-    # FIXME : media_start and media_duration should be in this class
 
-    def __init__(self, **kw):
+    def __init__(self, media_start=gst.CLOCK_TIME_NONE,
+                 media_duration=0, **kw):
+        self.media_start = media_start
+        self.media_duration = media_duration
         TimelineObject.__init__(self, **kw)
+
+    def _makeGnlObject(self):
+        gst.debug("Making a source for %r" % self)
+        if self.isAudio():
+            caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
+            postfix = "audio"
+        elif self.isVideo():
+            caps = gst.caps_from_string("video/x-raw-yuv;video/x-raw-rgb")
+            postfix = "video"
+        else:
+            raise NameError, "media type is NONE !"
+
+        if self.factory:
+            self.factory.lastbinid = self.factory.lastbinid + 1
+            sourcename =  "source-" + self.name + "-" + postfix + str(self.factory.lastbinid)
+        else:
+            sourcename = "source-" + self.name + "-" + postfix
+        gnl = gst.element_factory_make("gnlsource", sourcename)
+
+        try:
+            gst.debug("calling makeGnlSourceContents()")
+            obj = self.makeGnlSourceContents()
+        except:
+            gst.debug("Failure in calling self.makeGnlSourceContents()")
+            return None
+        gnl.add(obj)
+
+        # set properties
+        gnl.set_property("media-duration", long(self.media_duration))
+        gnl.set_property("media-start", long(self.media_start))
+        gnl.set_property("caps", caps)
+        gnl.connect("notify::media-start", self._mediaStartDurationChangedCb)
+        gnl.connect("notify::media-duration", self._mediaStartDurationChangedCb)
+        return gnl
+
+    def makeGnlSourceContents(self):
+        """
+        Return the contents of the gnlsource.
+        Should be a single element (or bin).
+
+        Sub-classes not implementing this method will need to override
+        the _makeGnlObject() method.
+        """
+        raise NotImplementedError
+
+    def _setMediaStartDurationTime(self, start=gst.CLOCK_TIME_NONE,
+                                   duration=0):
+        gst.info("TimelineFileSource %s start:%s , duration:%s" % (
+            self,
+            gst.TIME_ARGS(start),
+            gst.TIME_ARGS(duration)))
+        gst.info("TimelineFileSource %s EXISTING start:%s , duration:%s" % (
+            self,
+            gst.TIME_ARGS(self.media_start),
+            gst.TIME_ARGS(self.media_duration)))
+        if duration > 0 and not self.media_duration == duration:
+            self.gnlobject.set_property("media-duration", long(duration))
+        if not start == gst.CLOCK_TIME_NONE and not self.media_start == start:
+            self.gnlobject.set_property("media-start", long(start))
+
+    def setMediaStartDurationTime(self, start=gst.CLOCK_TIME_NONE,
+                                  duration=0):
+        """ sets the media start/duration time """
+        if not start == gst.CLOCK_TIME_NONE and start < 0:
+            gst.warning("Can't set start values < 0 !")
+            return
+        if duration < 0:
+            gst.warning("Can't set durations < 0 !")
+            return
+        self._setMediaStartDurationTime(start, duration)
+        if self.linked and isinstance(self.linked, TimelineFileSource):
+            self.linked._setMediaStartDurationTime(start, duration)
+
+    def _mediaStartDurationChangedCb(self, gnlobject, property):
+        gst.log("%r %s %s" % (gnlobject, property, property.name))
+        mstart = None
+        mduration = None
+        if property.name == "media-start":
+            mstart = gnlobject.get_property("media-start")
+            gst.log("start: %s => %s" % (gst.TIME_ARGS(self.media_start),
+                                         gst.TIME_ARGS(mstart)))
+            if self.media_start == gst.CLOCK_TIME_NONE:
+                self.media_start = mstart
+            elif mstart == self.media_start:
+                mstart = None
+            else:
+                self.media_start = mstart
+        elif property.name == "media-duration":
+            mduration = gnlobject.get_property("media-duration")
+            gst.log("duration: %s => %s" % (gst.TIME_ARGS(self.media_duration),
+                                         gst.TIME_ARGS(mduration)))
+            if mduration == self.media_duration:
+                mduration = None
+            else:
+                self.media_duration = mduration
+        if not mstart == None or not mduration == None:
+            self.emit("media-start-duration-changed",
+                      self.media_start, self.media_duration)
 
 class TimelineBlankSource(TimelineSource):
     """
@@ -49,23 +159,21 @@ class TimelineBlankSource(TimelineSource):
     __requires_factory__ = False
 
     def __init__(self, **kw):
-        TimelineObject.__init__(self, **kw)
+        TimelineSource.__init__(self, **kw)
 
-    def _makeGnlObject(self):
-        if self.media_type == MEDIA_TYPE_AUDIO:
+    def makeGnlSourceContents(self):
+        if self.isAudio():
             # silent audiotestsrc
             src = gst.element_factory_make("audiotestsrc")
             src.set_property("volume", 0)
-        elif self.media_type == MEDIA_TYPE_VIDEO:
+        elif self.isVideo():
             # black videotestsrc
             src = gst.element_factory_make("videotestsrc")
             src.props.pattern = 2
         else:
             gst.error("Can only handle Audio OR Video sources")
-            return
-        gnl = gst.element_factory_make("gnlsource")
-        gnl.add(src)
-        return gnl
+            return None
+        return src
 
     def getExportSettings(self):
         return self.factory.getExportSettings()
@@ -75,62 +183,50 @@ class TimelineFileSource(TimelineSource):
     Seekable sources (mostly files)
 
     Save/Load properties:
-    * 'media-start' (int) : start position of the media
-    * 'media-duration' (int) : duration of the media
     * (optional) 'volume' (int) : volume of the audio
     """
-    __gsignals__ = {
-        "media-start-duration-changed" : ( gobject.SIGNAL_RUN_LAST,
-                                       gobject.TYPE_NONE,
-                                       (gobject.TYPE_UINT64, gobject.TYPE_UINT64))
-        }
-
     __data_type__ = "timeline-file-source"
 
-    def __init__(self, media_start=-1, media_duration=-1, **kw):
-        self.media_start = media_start
-        self.media_duration = media_duration
+    def __init__(self, **kw):
         TimelineSource.__init__(self, **kw)
 
     def _makeGnlObject(self):
-        gst.log("creating object")
-        if self.media_type == MEDIA_TYPE_AUDIO:
+        if self.media_start == gst.CLOCK_TIME_NONE:
+            self.media_start = 0
+        if self.media_duration == 0:
+            self.media_duration = self.factory.getDuration()
+
+        gnlobject = TimelineSource._makeGnlObject(self)
+        if gnlobject == None:
+            return None
+
+        # we override start/duration
+        gnlobject.set_property("duration", long(self.factory.getDuration()))
+        gnlobject.set_property("start", long(0))
+
+        return gnlobject
+
+    def makeGnlSourceContents(self):
+        if self.isAudio():
             caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
-            postfix = "audio"
-        elif self.media_type == MEDIA_TYPE_VIDEO:
+        elif self.isVideo():
             caps = gst.caps_from_string("video/x-raw-yuv;video/x-raw-rgb")
-            postfix = "video"
         else:
             raise NameError, "media type is NONE !"
-        self.factory.lastbinid = self.factory.lastbinid + 1
-
-        gnlobject = gst.element_factory_make("gnlsource", "source-" + self.name + "-" + postfix + str(self.factory.lastbinid))
         self.decodebin = SingleDecodeBin(caps=caps, uri=self.factory.name)
-        if self.media_type == MEDIA_TYPE_AUDIO:
+        if self.isAudio():
             self.volumeElement = gst.element_factory_make("volume", "internal-volume")
-            self.audioconv = gst.element_factory_make("audioconvert", "fdsjkljf")
+            self.audioconv = gst.element_factory_make("audioconvert", "audioconv")
             self.volumeBin = gst.Bin("volumebin")
             self.volumeBin.add(self.decodebin, self.audioconv, self.volumeElement)
             self.audioconv.link(self.volumeElement)
             self.decodebin.connect('pad-added', self._decodebinPadAddedCb)
             self.decodebin.connect('pad-removed', self._decodebinPadRemovedCb)
-            gnlobject.add(self.volumeBin)
+            bin = self.volumeBin
         else:
-            gnlobject.add(self.decodebin)
-        gnlobject.set_property("caps", caps)
-        gnlobject.set_property("start", long(0))
-        gnlobject.set_property("duration", long(self.factory.length))
+            bin = self.decodebin
 
-        if self.media_start == -1:
-            self.media_start = 0
-        if self.media_duration == -1:
-            self.media_duration = self.factory.length
-        gnlobject.set_property("media-duration", long(self.media_duration))
-        gnlobject.set_property("media-start", long(self.media_start))
-        gnlobject.connect("notify::media-start", self._mediaStartDurationChangedCb)
-        gnlobject.connect("notify::media-duration", self._mediaStartDurationChangedCb)
-
-        return gnlobject
+        return bin
 
     def _decodebinPadAddedCb(self, unused_dbin, pad):
         pad.link(self.audioconv.get_pad("sink"))
@@ -154,9 +250,9 @@ class TimelineFileSource(TimelineSource):
         #FIXME: we need a volume-changed signal, so that UI updates
 
     def setVolume(self, level):
-        if self.media_type == MEDIA_TYPE_AUDIO:
+        if self.isAudio():
             self._setVolume(level)
-        else:
+        elif self.linked:
             self.linked._setVolume(level)
 
     def _makeBrother(self):
@@ -165,75 +261,28 @@ class TimelineFileSource(TimelineSource):
         # find out if the factory provides the other element type
         if self.media_type == MEDIA_TYPE_NONE:
             return None
-        if self.media_type == MEDIA_TYPE_VIDEO:
+        if self.isVideo():
             if not self.factory.is_audio:
                 return None
-            brother = TimelineFileSource(media_start=self.media_start, media_duration=self.media_duration,
-                                         factory=self.factory, start=self.start, duration=self.duration,
+            brother = TimelineFileSource(media_start=self.media_start,
+                                         media_duration=self.media_duration,
+                                         factory=self.factory, start=self.start,
+                                         duration=self.duration,
                                          media_type=MEDIA_TYPE_AUDIO,
                                          name=self.name + "-brother")
-        elif self.media_type == MEDIA_TYPE_AUDIO:
+        elif self.isAudio():
             if not self.factory.is_video:
                 return None
-            brother = TimelineFileSource(media_start=self.media_start, media_duration=self.media_duration,
-                                         factory=self.factory, start=self.start, duration=self.duration,
+            brother = TimelineFileSource(media_start=self.media_start,
+                                         media_duration=self.media_duration,
+                                         factory=self.factory, start=self.start,
+                                         duration=self.duration,
                                          media_type=MEDIA_TYPE_VIDEO,
                                          name=self.name + "-brother")
         else:
             brother = None
         return brother
 
-    def _setMediaStartDurationTime(self, start=-1, duration=-1):
-        gst.info("TimelineFileSource %s start:%s , duration:%s" % (
-            self,
-            gst.TIME_ARGS(start),
-            gst.TIME_ARGS(duration)))
-        gst.info("TimelineFileSource %s EXISTING start:%s , duration:%s" % (
-            self,
-            gst.TIME_ARGS(self.media_start),
-            gst.TIME_ARGS(self.media_duration)))
-        if not duration == -1 and not self.media_duration == duration:
-            self.gnlobject.set_property("media-duration", long(duration))
-        if not start == -1 and not self.media_start == start:
-            self.gnlobject.set_property("media-start", long(start))
-
-    def setMediaStartDurationTime(self, start=-1, duration=-1):
-        """ sets the media start/duration time """
-        if not start == -1 and start < 0:
-            gst.warning("Can't set start values < 0 !")
-            return
-        if not duration == -1 and duration <= 0:
-            gst.warning("Can't set durations <= 0 !")
-            return
-        self._setMediaStartDurationTime(start, duration)
-        if self.linked and isinstance(self.linked, TimelineFileSource):
-            self.linked._setMediaStartDurationTime(start, duration)
-
-    def _mediaStartDurationChangedCb(self, gnlobject, property):
-        gst.log("%r %s %s" % (gnlobject, property, property.name))
-        mstart = None
-        mduration = None
-        if property.name == "media-start":
-            mstart = gnlobject.get_property("media-start")
-            gst.log("%s %s" % (gst.TIME_ARGS(mstart),
-                               gst.TIME_ARGS(self.media_start)))
-            if self.media_start == -1:
-                self.media_start = mstart
-            elif mstart == self.media_start:
-                mstart = None
-            else:
-                self.media_start = mstart
-        elif property.name == "media-duration":
-            mduration = gnlobject.get_property("media-duration")
-            gst.log("%s %s" % (gst.TIME_ARGS(mduration),
-                               gst.TIME_ARGS(self.media_duration)))
-            if mduration == self.media_duration:
-                mduration = None
-            else:
-                self.media_duration = mduration
-        if not mstart == None or not mduration == None:
-            self.emit("media-start-duration-changed",
-                      self.media_start, self.media_duration)
 
     def getExportSettings(self):
         return self.factory.getExportSettings()
@@ -244,7 +293,7 @@ class TimelineFileSource(TimelineSource):
         ret = TimelineSource.toDataFormat(self)
         ret["media-start"] = self.media_start
         ret["media-duration"] = self.media_duration
-        if self.media_type == MEDIA_TYPE_AUDIO and hasattr(self, "volumeElement"):
+        if self.isAudio() and hasattr(self, "volumeElement"):
             ret["volume"] = self.volumeElement.get_property("volume")
         return ret
 
@@ -257,7 +306,6 @@ class TimelineFileSource(TimelineSource):
             self.setVolume(volume)
 
 gobject.type_register(TimelineFileSource)
-
 
 class TimelineLiveSource(TimelineSource):
     """

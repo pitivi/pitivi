@@ -141,7 +141,7 @@ class PlayGround(gobject.GObject):
 
         bus = pipeline.get_bus()
         bus.remove_signal_watch()
-        bus.set_sync_handler(None)
+        #bus.set_sync_handler(None)
 
         if pipeline.set_state(gst.STATE_READY) == gst.STATE_CHANGE_FAILURE:
             return False
@@ -206,13 +206,18 @@ class PlayGround(gobject.GObject):
         will be taken.
         """
         if isinstance(self.current, SmartTimelineBin):
-            # fast path
             return True
+        p = self.getTimeline()
+        if p:
+            self.switchToPipeline(p)
+            return True
+        return False
+
+    def getTimeline(self):
         for pipeline in self.pipelines:
             if isinstance(pipeline, SmartTimelineBin):
-                self.switchToPipeline(pipeline)
-                return True
-        return False
+                return pipeline
+        return None
 
     def setVideoSinkThread(self, vsinkthread):
         """ sets the video sink thread """

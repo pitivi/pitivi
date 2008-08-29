@@ -49,8 +49,8 @@ class ComplexTimelineSource(gtk.Image, ZoomableWidgetInterface):
         self.layerInfo = layerInfo
         self.source = source
         self.source.connect("start-duration-changed", self._startDurationChangedCb)
-        if self.source.factory.thumbnail:
-            self.thumbnailsurface = cairo.ImageSurface.create_from_png(self.source.factory.thumbnail)
+        if self.source.factory.getThumbnail():
+            self.thumbnailsurface = cairo.ImageSurface.create_from_png(self.source.factory.getThumbnail())
         else:
             self.thumbnailsurface = cairo.ImageSurface.create_from_png(os.path.join(get_pixmap_dir(), "pitivi-video.png"))
         self.pixmap = None

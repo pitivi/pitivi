@@ -270,7 +270,35 @@ class ObjectFactory(gobject.GObject, Serializable):
 
 gobject.type_register(ObjectFactory)
 
-class FileSourceFactory(ObjectFactory):
+class SourceFactory(ObjectFactory):
+    """
+    Provides sources usable in a timeline
+    """
+
+    __data_type__ = "source-factory"
+
+    def getDuration(self):
+        """
+        Returns the maximum duration of the source in nanoseconds
+
+        If the source doesn't have a maximum duration (like an image), subclasses
+        should implement this by returning 2**63 - 1 (MAX_LONG).
+        """
+        pass
+
+    def getDefaultDuration(self):
+        """
+        Returns the default duration of a file in nanoseconds,
+        this should be used when using sources initially.
+
+        Most sources will return the same as getDuration(), but can be overriden
+        for sources that have an infinite duration.
+        """
+        return self.getDuration()
+
+gobject.type_register(SourceFactory)
+
+class FileSourceFactory(SourceFactory):
     """
     Provides File sources useable in a timeline
     """
@@ -294,26 +322,33 @@ class FileSourceFactory(ObjectFactory):
 
     def __init__(self, filename="", project=None, **kwargs):
         gst.info("filename:%s , project:%s" % (filename, project))
-        ObjectFactory.__init__(self, **kwargs)
+        SourceFactory.__init__(self, **kwargs)
         self.project = project
         self.name = filename
         self.displayname = os.path.basename(unquote(self.name))
         self.lastbinid = 0
-        self.length = 0
-        self.thumbnail = ""
-        self.thumbnails = []
+        self._length = 0
+        self._thumbnail = ""
+        self._thumbnails = []
         self.settings = None
+
+    ## SourceFactory implementation
+    def getDuration(self):
+        return self._length
 
     def do_set_property(self, property, value):
         if property.name == "length":
-            if self.length and self.length != value:
+            if self._length and self._length != value:
                 gst.warning("%s : Trying to set a new length (%s) different from previous one (%s)" % (self.name,
-                                                                                                       gst.TIME_ARGS(self.length),
+                                                                                                       gst.TIME_ARGS(self._length),
                                                                                                        gst.TIME_ARGS(value)))
-            self.length = value
+            self._length = value
         elif property.name == "thumbnail":
+            gst.debug("thumbnail : %s" % value)
             if os.path.isfile(value):
-                self.thumbnail = value
+                self._thumbnail = value
+            else:
+                gst.warning("Thumbnail path is invalid !")
         else:
             ObjectFactory.do_set_property(self, property, value)
 
@@ -380,6 +415,9 @@ class FileSourceFactory(ObjectFactory):
         """ Sets the thumbnail filename of the element """
         self.set_property("thumbnail", thumbnail)
 
+    def getThumbnail(self):
+        return self._thumbnail
+
     def getExportSettings(self):
         """ Returns the ExportSettings corresponding to this source """
         if self.settings:
@@ -408,13 +446,13 @@ class FileSourceFactory(ObjectFactory):
     def toDataFormat(self):
         ret = ObjectFactory.toDataFormat(self)
         ret["filename"] = self.name
-        ret["length"] = self.length
+        ret["length"] = self._length
         return ret
 
     def fromDataFormat(self, obj):
         ObjectFactory.fromDataFormat(self, obj)
         self.name = obj["filename"]
-        self.length = obj["length"]
+        self._length = obj["length"]
 
 
 class OperationFactory(ObjectFactory):

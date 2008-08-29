@@ -1,15 +1,715 @@
-2008-08-02  Edward Hervey  <edward.hervey@collabora.co.uk>
+2008-08-25  Edward Hervey  <edward.hervey@collabora.co.uk>
 
-	Patch by: Kristian Rumberg <kristianrumberg at gmail dot com>
+	* pitivi/elements/imagefreeze.py:
+	Rewrite imagefreeze seeking/output.
+	Now uses a gst.Task for outputting and proper seeking handling.
+
+2008-08-25  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/source.py:
+	Fix description
+
+2008-08-25  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/elements/Makefile.am:
+	* pitivi/elements/imagefreeze.py:
+	New image-to-video element. Still needs more testing before being
+	usable in a timeline.
+
+2008-07-28  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	Proper cliping of labels on timeline objects.
+
+2008-07-28  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	when splitting clips, setMediaStartDuration is called before
+	setStartDuration.
+	zoom controls now use discrete zoom values specified in list
+
+2008-07-26  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/ruler.py:
+	Fix ruler redraw again :) This time redraws as little as possible by
+	only forcing the redraw of the old and new curser position instead of
+	the whole area between the two.
+
+2008-07-25  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	rewrote drawRuler() to be a bit more intelligent about how it
+	determines line spacing and where to place text. added
+	min_tick_spacing property to control when ticks should become visible.
+	Softened the appearence of the tick lines by setting their color to
+	dark gray value.
+
+2008-07-25  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	fixed subtle misalignment between ruler and timeline
+	* pitivi/ui/ruler.py:
+	set ruler border property to 0
+
+2008-07-25  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	Commit hopefully makes the timeline actually work when a new project is
+	loaded.
+	* pitivi/playground.py:
+	added getTimeline() method
+	commented line 144 in removePipeline, because it crashed with a type error
+	when trying to remove the timeline
+	* pitivi/ui/viewer.py:
+	made the viewer actually remove the old timeline bin from the playground
+	when a new project is loaded.
+
+2008-07-24  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	make sure ruler updates size properly when zoom changes
+
+2008-07-24  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	recalculate deadband when zoomChanged() is called -- fixes edge
+	snaping which was broken by the previous commit
+
+2008-07-24  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	added getDuration() method
+	* pitivi/ui/complexinterface.py:
+	ZoomableWidgetInterface has been replaced by Zoomable, which is
+	completely rewritten and based on sharing a single gtk.Adjustment()
+	with mutliple observers.
+	* pitivi/ui/complextimeline.py:
+	complex timeline has been adjusted to use the new interface. a single
+	gtk.Adjustment is created in ComplexTimelineWidget.py.
+	razor cursor is now also magnetic to the current playhead position
+	* pitivi/ui/ruler.py:
+	ruler code has been updated to use the new interface, as well as the
+	timeline's new getDuration() method.
+	* pitivi/utils.py:
+	added argmax()
+
+	Fixed zoom support after breaking it for layout changes
+
+2008-07-22  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	deleting a source also deletes the linked source...the other way
+	caused problems for trimming of sources.
+
+2008-07-22  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	it is now impossible to stretch a source beyond its actual native
+	duration.
+
+2008-07-22  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	razor tool actually trims source now.
+	* pitivi/ui/util.py:
+	it is also now possible to abort a drag operation by returning True
+	from the drag_start callback. currently, this feature is untested.
+
+2008-07-22  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/objectfactory.py:
+	Add intermediary SourceFactory class adding the getDuration() and
+	getDefaultDuration() getters.
+	Make FileSourceFactory.length and duration private.
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/source.py:
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/viewer.py:
+	* tests/common.py:
+	Update code for API update in SourceFactory and FileSourceFactory
+
+2008-07-22  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/timeline.py:
+	Fix import issue
+
+2008-07-22  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	fixed bug in broke trimming sources if no sources had been moved
+	beforehand.
+
+2008-07-21  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	layout tweaks (removed widget borders)
 	* pitivi/ui/mainwindow.py:
-	Deactivate file button and modify button when rendering is started.
+	timeline no longer embedded in a frame. I think it looks a lot better
+	this way
 
-2008-06-13  Edward Hervey  <edward.hervey@collabora.co.uk>
+2008-07-20  Brandon Lewis  <brandon_lewis@berkeley.edu>
 
-	* pitivi/elements/singledecodebin.py: (SingleDecodeBin._tryToLink1): 
-	Set state of element we're trying to link to to READY first.
-	This is because some elements will do some checking in NULL=>READY,
-	including modifying their caps.
+	* pitivi/ui/complextimeline.py:
+	started working on the razor tool. doesn't actually cut sources yet,
+	but clicking on the toolbar icon will make the line appear, and set
+	the cursor. clicking on the timeline disables the tool.
+
+2008-07-20  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	implemented deleting selected items
+
+2008-07-20  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/pitivi.py:
+	moved the uimanager instance into the Pitivi class, so that other
+	modules, and plugins, can merge in ui elements without coupling to the
+	main window.
+	* pitivi/ui/actions.xml:
+	added an entry for the timeline toolbar
+	* pitivi/ui/complextimeline.py:
+	added actions and UI definition for timeline toolbar
+	* pitivi/ui/mainwindow.py:
+	moved uimanager instance out, adjusted indentation on
+	some classes
+
+2008-07-20  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	made edge-snapping work for clip resizing. also made edge snapping
+	take all edit points into consideration, rather than just the edit-
+	points within a given track. This required moving edit-point / edgei-
+	snapping code into ComplexLayers class.
+
+2008-07-20  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	wrapped some more long lines, fixed some indentation issues.
+
+2008-07-20  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complexlayer.py:
+	layerinfolist directly connects to composition start/duration-changed
+	signals and emits its own signal, for the sake of convenience in the
+	ui.
+	automatically disconnects signal handlers
+	* pitivi/ui/complextimeline.py:
+	ComplexTimelineWidget no longer uses toplayer, but TimelineToolbar and
+	Ruler directly, as the layout has changed. The ruler is on top,
+	directly above the timeline, and the toolbar is on the bottom.
+	* pitivi/ui/layerwidgets.py:
+	TimelineToolBar packing rules changed so that buttons appear the right
+	size at the bottom of the screen. Also added getZoomRatio() and
+	setZoomRatio() methods to prevent pitivi from crashing. Haven't tested
+	whether zooming still works, but I intend to overhaul the mechanism
+	for handling zooming anyways.
+	* pitivi/ui/ruler.py:
+	wrapped a long line to 80 columns
+
+2008-07-19  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	made sources slightly translucent, even when selected
+	got rid of per-track backgrounds
+	re-arranged code in complexlayers slightly, so it makes more sense ot
+	me at least
+	changed the size_request code slightly, so the canvas is always at
+	least 800 pixels wide. this isn't really necessary without the
+	backgrounds.
+	also fixed a bug which caused sources to appear in the wrong place
+	when initially added to the timeline
+
+2008-07-19  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	edge snapping is here! \o/
+	* pitivi/ui/util.py:
+	cleaned up a bug in magnetize(), and also wrapped a really long line
+	in drag_start()
+	on the down side, i've noticed wierd freezes during pitivi startup on
+	occasion.
+
+2008-07-19  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	switched labels back to goocanvas.Text, as I am working on the Text
+	class in util.py
+	* pitivi/ui/util.py:
+	re-implementing a text object from the ground up because there are 
+	certain things that the goocanvas.Text class will not do for us, like
+	report its own size.
+
+2008-07-18  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelineobjects.py:
+	* pitivi/ui/viewer.py:
+	* pitivi/utils.py:
+	moved time_to_string into pitivi/utils.py
+
+2008-07-17  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/utils.py:
+	closest_item now uses the library function bisect.bisect() instead of
+	the homebrew binary_search, as it returns the exact same result, and
+	is an order of magnitude faster :O
+
+2008-07-17  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* tests/testmagnets.py:
+	added test for edge-snaping code: run python tests/testmangets.py
+
+2008-07-17  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/ui/sourcefactories.py:
+	Initial still image support. They now properly load in the source list,
+	but are still not usable in the timeline.
+
+2008-07-17  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/complextimeline.py:
+	Re-enable the position callback so that the ruler position gets updated
+
+2008-07-17  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* po/ar.po:
+	* po/ca.po:
+	* po/de.po:
+	* po/dz.po:
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fi.po:
+	* po/fr.po:
+	* po/it.po:
+	* po/lv.po:
+	* po/nb.po:
+	* po/oc.po:
+	* po/pa.po:
+	* po/pt.po:
+	* po/pt_BR.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	PO updates
+
+2008-07-17  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/elements/singledecodebin.py:
+	Set elements to READY before trying to link to them, this allows them
+	to initialize.
+	* pitivi/ui/timeline.py:
+	Whitespace fix.
+
+2008-07-17  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/Makefile.am:
+	* pitivi/ui/Makefile.am:
+	* tests/Makefile.am:
+	Update makefiles with new files.
+	Order the files in alphabetical order.
+
+2008-07-16  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	cosmetic tweaks for complex timeline
+	* pitivi/ui/util.py:
+	fixed typo
+
+2008-07-16  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/testHList.py:
+	beleted!
+	* pitivi/ui/testcomplex.py:
+	beleted!
+	* pitivi/ui/util.py:
+	added a function called "magnetize" which implements "edge snapping"
+	* pitivi/utils.py:
+	added a function, closest_item() which returns the element closest to
+	item in an array
+
+2008-07-16  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* tests/runtests.py:
+	changed name of ingnored test
+	* tests/test_binary_search.py:
+	added test suite for binary search
+
+2008-07-16  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/pitivi.py:
+	made the args paramerter to PiTiVi optional, since my previous commit
+	broke a lot of test cases.
+	* pitivi/utils.py:
+	added a modified binary search algorithm
+	* tests/testcomplex.py:
+	* tests/testHList.py:
+	moved here from UI
+	* tests/runtests.py:
+	ignores the UI test files, since they are not unit tests
+
+2008-07-16  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelineobjects.py:
+	UI no longer passes -1 to PiTiVi core, nor expects to see it returned
+	from pitivi core
+
+2008-07-16  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	drag handles specify cursor when being moved
+	re-enabled resize code in simple timeline
+	* pitivi/ui/util.py:
+	make_dragable now has a cursor keyword argument
+	drag_start/end now do pointer grabs
+
+2008-07-16  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	Fix issues with (media_)start/duration introduced in refactoring.
+	Add more debug statements.
+
+2008-07-15  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	complex source widgets now have visible drag handles, and the name is set
+	properly. some code to support resizing in the timeline exists, but it is
+	buggy an slow, and therefore not used in this commit.
+
+2008-07-15  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	Refactor TimelineSource to be more generic.
+	Don't use -1 for invalid (media_)start/duration but gst.CLOCK_TIME_NONE
+	for invalid start and 0 for invalid durations.
+
+2008-07-15  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/ruler.py:
+	Fix small bug which would cause the seeking timeout to always be called
+	if a seek failed.
+
+2008-07-11  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complexlayer.py:
+	reverse order in which audio and video compositions are displayed in
+	advanced timeline
+
+2008-07-11  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/settings.py:
+	File support now enabled by default, environment variable not necessary
+	* pitivi/pitivi.py:
+	rudimentary command line argument support
+	you can now pass in a path to a project file as the first argument and it
+	will be loaded automatically
+
+2008-07-11  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	File load works in advanced UI now! \0/
+	* pitivi/ui/complexlayer.py:
+	added setTimeline() method, which removes all current layers and then adds
+	a new layer for each composition in the new timeline.
+	* pitivi/ui/complextimeline.py:
+	added signal handlers for clearing and loading new projects
+	UI now proerly handles layer-added, layer-removed signals
+	some UI bug fixes to make sure new layers are properly displayed
+	temporarily broke code for ruler resizing, but this will get fixed later
+	when the timeline layout is changed.
+
+2008-07-11  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/project.py:
+	fix bug in which project timeline is recreated after new-project-loading
+	signl emitted, thereby preventing UI from catching project load signals.
+	also made sure that settings-changed, and source added signals are emitted
+	when project loads.
+	* pitivi/ui/timelineobjects.py:
+	made sure that UI does appropriate thing in response to new-project-*
+	signals. File load support works again in simple UI! \0/
+
+2008-07-10  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	fix bug created by previous commit in which files were added to old
+	timeline after new project has loaded.
+	* pitivi/ui/timelineobjects.py:
+	fixed exception being thrown on newProjectLoaded
+
+2008-07-10  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	moved dnd code into TimelineWidget, thereby enabling dnd on both
+	timelines.
+	* pitivi/ui/timelineobjects.py:
+	moved dnd code out of the simple timeline
+
+2008-07-10  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelineobjects.py:
+	fix graphic glitch in simple timeline when first clip is added.
+
+2008-07-09  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	timeline objects can be selected, and change color when selected.
+	also fixed an error preventing source widgets from being removed from the
+	complex timeline.
+
+2008-07-09  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	clicking blank as of the timleine now activates an otherwise useless
+	selection marquee.
+	* pitivi/ui/util.py:
+	had to rewrite the code somewhat to take care of some pythong scoping
+	issues.
+
+2008-07-09  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/source.py:
+	Add isAudio() and isVideo() methods for timeline objects.
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/objects.py:
+	Use API added above for code readability.
+
+2008-07-09  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/util.py:
+	check in selection managment code taken from gst-editor.py
+
+2008-07-07  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/ruler.py:
+	Fixor the ruler like a vilain. It actually works properly now without
+	redrawing too much (or too little).
+
+2008-07-07  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/complextimeline.py:
+	Fix canvas bounds settings so that we don't redraw the canvas all the
+	time.
+
+2008-06-30  brandon,,,  <Set the EMAIL_ADDRESS environment variable !>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/ui/complextimeline.py:
+	Zooming works \o/ ... now to fix the timeline alignment issue
+
+2008-06-30  brandon,,,  <Set the EMAIL_ADDRESS environment variable !>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/ui/complextimeline.py:
+	fledgeling start on a goocanvas complex timeline. You can move sources and
+	scroll, but zooming, labels and thumbnails for sources, and trimming are
+	still to come.
+
+2008-06-30  brandon,,,  <Set the EMAIL_ADDRESS environment variable !>
+
+	reviewed by: <delete if not using a buddy>
+
+	* pitivi/ui/testVList.py
+	simple test for reorderable VList()
+	* pitivi/ui/testHList.py
+	simple test for reorderable HList()
+
+2008-06-30  brandon,,,  <Set the EMAIL_ADDRESS environment variable !>
+
+	* pitivi/ui/complextimeline.py:
+	make resizing work properly again
+	* pitivi/ui/util.py:
+	make VLists actually work correctly and be reorderable by replacing HList
+	specific code with calles to List interface methods.
+
+2008-06-29  brandon,,,  <Set the EMAIL_ADDRESS environment variable !>
+
+	* pitivi/ui/complextimeline.py:
+	ComplexTrack moved out of testcomplex.py and into complextimeline.py
+	ComplexLayers now contains VList() of ComplexTrack objects.
+	* pitivi/ui/testcomplex.py:
+	ComplexTrack move out of here and into complextimeline.py
+	Code now inserts current directory into pitivi path, so that pitivi code
+	can be imported properly
+
+2008-06-26  brandon,,,  <Set the EMAIL_ADDRESS environment variable !>
+
+	* pitivi/ui/complextimeline.py:
+	switched CompositionLayers over to goocanvas. Currently, doesn't do
+	anything. This is just the first step to merging in the new
+	complextimeline code.
+	* pitivi/ui/mainwindow.py:
+	tweaked geometry hints so that the window displays comfortably on my eeepc
+	(min height is now set to 480)
+	* pitivi/ui/testcomplex.py:
+	added code borrowed from complexinterface to ComplexTrack to support
+	zooming. test window now has a slider for zooming. had to remove labels
+	from complex source wigets to make zooming work properly.
+	* pitivi/ui/timelineobjects.py:
+	changed default height of simple source widets (also to make  them fit
+	more comfortably on my eeepc screen).
+	* pitivi/ui/util.py:
+	added function "printall" to aid with debugging.
+
+2008-06-22  brandon,,,  <Set the EMAIL_ADDRESS environment variable !>
+
+	* pitivi/ui/testcomplex.py:
+	make_timeline_object now calls make_dragable with new "moved" callback
+	parameter. Fixe bug which prevented objects from being moved to the left
+	of their initial position. 
+	* pitivi/ui/util.py:
+	made make_dragable function a bit more MVC-friendly, by adding additional
+	"moved" callback parameter in addition to "transform". Defaults to
+	set_pos, so older code should still work. 
+
+2008-06-07  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complextimeline.py:
+	screwed up hadjustment code, so scrollong no longer works. Necessary
+	changes due to refactoring TimelineWidget.
+	* pitivi/ui/mainwindow.py:
+	Removed references to _displayTimeline which have become somewhat.
+	* pitivi/ui/timeline.py:
+	eliminated SimpleTimelineContentWidget, which has become redundant.
+	Informational messages will be displayed directly within
+	SimpleTimelineCanvas.
+	* pitivi/ui/timelineobjects.py:
+	Added SimpleTimelineWidget class which wraps SimpleTimeline in a
+	scrolled window. Renamed SimpleTimeline to SimpleTimelineCanvas.
+	moved editing mode code to SimpleTimelineWidget, so editing widget is
+	not contained within scrolled window or canvas. SimpleTimelineCanvas
+	passes new emits "edit-me" signal when it receives "edit-me" signal
+	from TimelineList.
+2008-06-07  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/test.py:
+	Tweaked test.py to handle changes  to util.py
+	* pitivi/ui/testcomplex.py:
+	Contains ComplexTrack, a goocanvas item which manages objects in a
+	composition. 
+	* pitivi/ui/util.py:
+	Added a "background" property to SmartGroup, which is a goocanvas item
+	that tracks the size and position of the items in the group. Can be
+	used to implement backgrounds or outlines for groups of items.
+
+2008-06-02  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelineobjects.py:
+	Timeline list class now overrides swap() to call moveSource. The list
+	object positions are updated in the callback.
+
+	TimelineList class now emits edit-me signal, so that SimpleTimeline
+	can catch the signal and switch to editing mode.
+	
+	SimpleTimeline now displays the editing widget at the correct size.
+	Hooray! PiTiVi works again!
+
+2008-06-02  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/test.py:
+	switched testing mode back to goocanvas items, rather than widgets
+	* pitivi/ui/timelineobjects.py:
+	factored out _condensedListChanged() callback into
+    _sourceAddedCb()
+	  _sourceRemoved()
+	reordreing is temporarily broken, because swap() is overridden and
+	does nothing. That's okay though, because the reordering doesn't work
+	right now anyways (it's only been working in the UI all this time).
+	* pitivi/ui/util.py:
+	tidy() now calls _set_drag_thresholds() if the list is in drag mode
+	_child_drag() now calls swap() directly to change element positions
+
+2008-06-02  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelineobjects.py:
+	factored out all the timeline signal handlers from
+	SimpleTimelineWidget into a new subclass of HList()
+
+2008-06-01  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/test.py:
+	tested dragging code with gtk.EventBox -- it doesn't work, no signals
+	* pitivi/ui/timelineobjects.py:
+	changed parent of SimpleSourceWidget to gtk.HBox, then added a
+	goocanvas.Rect object to serve as a background. Very wierd things
+	happen when two source widgets overlap.
+
+2008-06-01  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelineobjects.py:
+	External drag and drop to add files to the canvas now works minimally.
+	Internal drag-and-drop does not seem to work for widgets--the signals
+	for pointer events are not getting called. Deletion works okay. Trying
+	to edit an item hangs the python interpreter. I might have to rewrite
+	the timeline widgets after all.
+
+	SimpleSourceWidgets are no longer drag sources, since this is
+	unecessary with goocanvas.
+	* pitivi/ui/util.py:
+	Fixed a few errors in util.py that turned up once the drag-and-drop
+	code was operational.
+
+2008-06-01  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelineobjects.py:
+	removed gtk.Layout() cruft. gutted composition callbacks. partially
+	uncommeted dnd callbacks
+	* pitivi/ui/util.py:
+	added new methods to HList(): remove_all() and point_to_index()
+	added new global function pixel_coords()
+
+2008-06-01  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/test.py:
+	now tests HList rather than SimpleTimeline. now I can test the
+	timeline independently of PiTiVi, and yet still run PiTiVi.
+	* pitivi/ui/timelineobjects.py:
+	moved out list reordering code
+	* pitivi/ui/util.py:
+	movded list reordering into HList. made improvements to reordering
+	interaction. there is still a glitch you will notice if you drag the
+	end of the list. the object won't move until the mouse cursor reaches
+	the edge of the object
+
+2008-06-01  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+
+	* pitivi/ui/timelineobjects.py:
+	uncommented some code and pitivi still doesn't crash. timeline now set
+	to default width
+
+2008-06-01  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelineobjects.py:
+  merged new code into exiting SimpleTimeline class. PiTiVi doesn't crash when
+  you run it, but most of the functionality is disabled.
+
+2008-05-31  brandon lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/test.py:
+	now imports timelineobjects.py
+	* pitivi/ui/timelineobjects.py:
+	SimpleTimeline replaced with new class, basic UI interaction done
+	* pitivi/ui/util.py:
+	changes to make SimpleTimeline code work better
+
+2008-05-30  brandon lewis,,,  <Set the EMAIL_ADDRESS environment variable !>
+Early test version of simpletimeline. Don't try to run bin/pitiv -- it won't
+work. Instead, cd into pitivi/ui/testing and run test.py
+
+	* pitivi/ui/test.py:
+	tweaked code to suit new cicrumstances
+	* pitivi/ui/timelineobjects.py:
+	made sure code still works when run from within timelineobject.py
+	* pitivi/ui/util.py:
+	fixed a couple bugs
 
 2008-06-05  Edward Hervey  <edward.hervey@collabora.co.uk>
 

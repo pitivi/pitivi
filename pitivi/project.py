@@ -116,7 +116,6 @@ class Project(gobject.GObject, Serializable):
         # FIXME : This should be discovered !
         saveformat = "pickle"
         if self.uri and file_is_project(self.uri):
-            self.timeline = Timeline(self)
             loader = ProjectSaver.newProjectSaver(saveformat)
             path = gst.uri_get_location(self.uri)
             fileobj = open(path, "r")
@@ -126,7 +125,8 @@ class Project(gobject.GObject, Serializable):
             except ProjectLoadError:
                 gst.error("Error while loading the project !!!")
                 return False
-            fileobj.close()
+            finally:
+                fileobj.close()
             self.format = saveformat
             self.urichanged = False
             return True
@@ -282,9 +282,12 @@ class Project(gobject.GObject, Serializable):
     def fromDataFormat(self, obj):
         Serializable.fromDataFormat(self, obj)
         self.name = obj["name"]
-        self.settings = to_object_from_data_type(obj["settings"])
-        self.sources = to_object_from_data_type(obj["sources"])
-        self.timeline = to_object_from_data_type(obj["timeline"])
+        # calling this makes sure settigns-changed signal is emitted
+        self.setSettings(to_object_from_data_type(obj["settings"]))
+        # these objects already exist, so we initialize them from file
+        # to make sure UI catches signals
+        self.sources.fromDataFormat(obj["sources"])
+        self.timeline.fromDataFormat(obj["timeline"])
 
 def uri_is_valid(uri):
     return gst.uri_get_protocol(uri) == "file"

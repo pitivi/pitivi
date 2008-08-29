@@ -22,6 +22,7 @@
 """
 Main application
 """
+import os
 import gobject
 import gtk
 import gst
@@ -89,7 +90,7 @@ class Pitivi(gobject.GObject):
                        ( ))
         }
 
-    def __init__(self, use_ui=True, *args, **kwargs):
+    def __init__(self, args=[], use_ui=True):
         """
         initialize pitivi with the command line arguments
         """
@@ -108,7 +109,11 @@ class Pitivi(gobject.GObject):
                 % APPNAME)
         instance.PiTiVi = self
 
-        # TODO parse cmd line arguments
+        # FIXME: use gnu getopt or somethign of the sort
+        project_file = None
+        if len(args) > 1:
+            if os.path.exists(args[1]):
+                project_file = args[1]
 
         # get settings
         self.settings = GlobalSettings()
@@ -123,9 +128,12 @@ class Pitivi(gobject.GObject):
         self.effects = Magician()
 
         if self._use_ui:
+            self.uimanager = gtk.UIManager()
             # we're starting a GUI for the time being
             self.gui = mainwindow.PitiviMainWindow()
             self.gui.show()
+            if project_file:
+                self.loadProject(filepath=project_file)
 
     def do_closing_project(self, project):
         return True

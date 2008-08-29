@@ -42,11 +42,15 @@ from pitivi.ui.slider import PipelineSlider
 from sourcefactories import beautify_length
 from gettext import gettext as _
 
+import goocanvas
+from util import *
+from pitivi.utils import time_to_string
+
 # Default width / height ratio for simple elements
 DEFAULT_SIMPLE_SIZE_RATIO = 1.50 # default height / width ratio
 
 # Default simple elements size
-DEFAULT_SIMPLE_ELEMENT_WIDTH = 150
+DEFAULT_SIMPLE_ELEMENT_WIDTH = 100
 DEFAULT_SIMPLE_ELEMENT_HEIGHT = DEFAULT_SIMPLE_ELEMENT_WIDTH * DEFAULT_SIMPLE_SIZE_RATIO
 
 # Default spacing between/above elements in simple timeline
@@ -58,34 +62,23 @@ DEFAULT_WIDTH = 3 * DEFAULT_SIMPLE_SPACING # borders (2) + one holding place
 MINIMUM_HEIGHT = DEFAULT_HEIGHT
 MINIMUM_WIDTH = 3 * MINIMUM_HEIGHT
 
-def time_to_string(value):
-    if value == -1:
-        return "--:--:--.---"
-    ms = value / gst.MSECOND
-    sec = ms / 1000
-    ms = ms % 1000
-    mins = sec / 60
-    sec = sec % 60
-    hours = mins / 60
-    return "%02d:%02d:%02d.%03d" % (hours, mins, sec, ms)
+class SimpleTimelineWidget(gtk.HBox):
+    """Contains the editing widget as well as a gtk.ScrolledWindow containing
+    the simple timeline canvas. Handles showing/hiding the editing widget and
+    canvas."""
 
-class SimpleTimeline(gtk.Layout):
-    """ Simple Timeline representation """
+    __gtype_name__ = 'SimpleTimelineWidget'
 
-    def __init__(self, **kw):
-        gobject.GObject.__init__(self, **kw)
+    def __init__(self, *args, **kwargs):
+        gtk.HBox.__init__(self, *args, **kwargs)
+        timeline = SimpleTimelineCanvas()
+        timeline.connect("edit-me", self._editMeCb)
 
-        self.hadjustment = self.get_property("hadjustment")
-
-        # timeline and top level compositions
-        self.timeline = instance.PiTiVi.current.timeline
-        self.condensed = self.timeline.videocomp.condensed
-
-        # TODO : connect signals for when the timeline changes
-
-        # widgets correspondance dictionnary
-        # MAPPING timelineobject => widget
-        self.widgets = {}
+        self.content = gtk.ScrolledWindow()
+        self.content.set_policy(gtk.POLICY_ALWAYS, gtk.POLICY_NEVER)
+        self.content.add(timeline)
+        #add other objects here
+        self.add(self.content)
 
         # edit-mode
         # True when in editing mode
@@ -93,385 +86,31 @@ class SimpleTimeline(gtk.Layout):
         self.editingWidget = SimpleEditingWidget()
         self.editingWidget.connect("hide-me", self._editingWidgetHideMeCb)
 
-        # Connect to timeline.  We must remove and reset the callbacks when
-        # changing project.
-        self.project_signals = SignalGroup()
-        # FIXME: do we need this? or will the newproject sginal implicitly
-        # handle this???
-        self._connectToTimeline(instance.PiTiVi.current.timeline)
-        instance.PiTiVi.connect("new-project-loaded",
-            self._newProjectLoadedCb)
         instance.PiTiVi.connect("project-closed", self._projectClosedCb)
-        instance.PiTiVi.connect("new-project-loading",
-            self._newProjectLoadingCb)
         instance.PiTiVi.connect("new-project-failed",
             self._newProjectFailedCb)
 
-        # size
-        self.width = int(DEFAULT_WIDTH)
-        self.height = int(DEFAULT_HEIGHT)
-        self.realWidth = 0 # displayed width of the layout
-        self.childheight = int(DEFAULT_SIMPLE_ELEMENT_HEIGHT)
-        self.childwidth = int(DEFAULT_SIMPLE_ELEMENT_WIDTH)
-        self.set_size_request(int(MINIMUM_WIDTH), int(MINIMUM_HEIGHT))
-        self.set_property("width", int(DEFAULT_WIDTH))
-        self.set_property("height", int(DEFAULT_HEIGHT))
-
-        # event callbacks
-        self.connect("expose-event", self._exposeEventCb)
-        self.connect("notify::width", self._widthChangedCb)
-        self.connect("size-allocate", self._sizeAllocateCb)
-        self.connect("realize", self._realizeCb)
-
-        # drag and drop
-        self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           [dnd.FILESOURCE_TUPLE],
-                           gtk.gdk.ACTION_COPY)
-        self.connect("drag-data-received", self._dragDataReceivedCb)
-        self.connect("drag-leave", self._dragLeaveCb)
-        self.connect("drag-motion", self._dragMotionCb)
-        self.slotposition = -1
-
-        self.draggedelement = None
-
-        self.show_all()
-
-
-    ## Project callbacks
-
-    def _connectToTimeline(self, timeline):
-        self.timeline = timeline
-        self.condensed = self.timeline.videocomp.condensed
-        self.project_signals.connect(self.timeline.videocomp,
-                                     "condensed-list-changed",
-                                     None, self._condensedListChangedCb)
-
-    def _newProjectLoadingCb(self, unused_inst, unused_project):
-        gst.log("...")
-
-    def _newProjectLoadedCb(self, unused_inst, project):
-        gst.log("...")
-        assert(instance.PiTiVi.current == project)
-        # now we connect to the new project, so we can receive any
-        # signals that might be emitted while the project is loading
-        self._connectToTimeline(project.timeline)
-        # TODO: display final state of project now that loading has
-        # completed. this callback doesn't do do much else
-
-        # LOAD THE TIMELINE !!!
-        self._condensedListChangedCb(None, self.timeline.videocomp.condensed)
-
-    def _newProjectFailedCb(self, unused_inst, unused_reason, unused_uri):
-        # oops the project failed to load
-        self._clearTimeline()
-
-    def _clearTimeline(self):
-        self.switchToNormalMode()
-        self.project_signals.disconnectAll()
-        for widget in self.widgets.itervalues():
-            self.remove(widget)
-        self.widgets = {}
-
-    def _projectClosedCb(self, unused_pitivi, unused_project):
-        self._clearTimeline()
-
-    ## Timeline callbacks
-
-    def _condensedListChangedCb(self, unused_videocomp, clist):
-        """ add/remove the widgets """
-        gst.debug("condensed list changed in videocomp")
-
-        current = self.widgets.keys()
-        self.condensed = clist
-
-        new = [x for x in clist if not x in current]
-        removed = [x for x in current if not x in clist]
-
-        # new elements
-        for element in new:
-            # add the widget to self.widget
-            gst.debug("Adding new element to the layout")
-            if isinstance(element, TimelineFileSource):
-                widget = SimpleSourceWidget(element)
-                widget.connect("delete-me", self._sourceDeleteMeCb, element)
-                widget.connect("edit-me", self._sourceEditMeCb, element)
-                widget.connect("drag-begin", self._sourceDragBeginCb, element)
-                widget.connect("drag-end", self._sourceDragEndCb, element)
-            else:
-                widget = SimpleTransitionWidget(element)
-            self.widgets[element] = widget
-            self.put(widget, 0, 0)
-            widget.show()
-
-        # removed elements
-        for element in removed:
-            self.remove(self.widgets[element])
-            del self.widgets[element]
-
-        self._resizeChildrens()
-
-
-    ## Utility methods
-
-    def _getNearestSourceSlot(self, x):
-        """
-        returns the nearest file slot position available for the given position
-        Returns the value in condensed list position
-        Returns n , the element before which it should go
-        Return -1 if it's meant to go last
-        """
-        if not self.condensed or x < 0:
-            return 0
-        if x > self.width - DEFAULT_SIMPLE_SPACING:
-            return -1
-
-        pos = DEFAULT_SIMPLE_SPACING
-        order = 0
-        # TODO Need to avoid getting position between source and transition
-        for source in self.condensed:
-            if isinstance(source, TimelineSource):
-                spacing = self.childwidth
-            elif isinstance(source, TimelineTransition):
-                spacing = self.childwidth / 2
-            else:
-                # this shouldn't happen !! The condensed list only contains
-                # sources and/or transitions
-                pass
-            if x <= pos + spacing / 2:
-                return order
-            pos = pos + spacing + DEFAULT_SIMPLE_SPACING
-            order = order + 1
-        return -1
-
-    def _getNearestSourceSlotPixels(self, x):
-        """
-        returns the nearest file slot position available for the given position
-        Returns the value in pixels
-        """
-        if not self.condensed or x < 0:
-            return DEFAULT_SIMPLE_SPACING
-        if x > self.width - DEFAULT_SIMPLE_SPACING:
-            return self.width - 2 * DEFAULT_SIMPLE_SPACING
-
-        pos = DEFAULT_SIMPLE_SPACING
-        # TODO Need to avoid getting position between source and transition
-        for source in self.condensed:
-            if isinstance(source, TimelineSource):
-                spacing = self.childwidth
-            elif isinstance(source, TimelineTransition):
-                spacing = self.childwidth / 2
-            else:
-                # this shouldn't happen !! The condensed list only contains
-                # sources and/or transitions
-                pass
-            if x <= pos + spacing / 2:
-                return pos
-            pos = pos + spacing + DEFAULT_SIMPLE_SPACING
-        return pos
-
-
-    ## Drawing
-
-    def _drawDragSlot(self):
-        if self.slotposition == -1:
-            return
-        self.bin_window.draw_rectangle(self.style.black_gc, True,
-                                       self.slotposition, DEFAULT_SIMPLE_SPACING,
-                                       DEFAULT_SIMPLE_SPACING, self.childheight)
-
-    def _eraseDragSlot(self):
-        if self.slotposition == -1:
-            return
-        self.bin_window.draw_rectangle(self.style.white_gc, True,
-                                       self.slotposition, DEFAULT_SIMPLE_SPACING,
-                                       DEFAULT_SIMPLE_SPACING, self.childheight)
-
-    def _gotFileFactory(self, filefactory, x, unused_y):
-        """ got a filefactory at the given position """
-        # remove the slot
-        self._eraseDragSlot()
-        self.slotposition = -1
-        if not filefactory or not filefactory.is_video:
-            return
-        pos = self._getNearestSourceSlot(x)
-
-        gst.debug("_got_filefactory pos : %d" % pos)
-
-        # we just add it here, the drawing will be done in the condensed_list
-        # callback
-        source = TimelineFileSource(factory=filefactory,
-                                    media_type=MEDIA_TYPE_VIDEO,
-                                    name=filefactory.name)
-
-        # ONLY FOR SIMPLE TIMELINE : if video-only, we link a blank audio object
-        if not filefactory.is_audio:
-            audiobrother = TimelineBlankSource(factory=filefactory,
-                                               media_type=MEDIA_TYPE_AUDIO,
-                                               name=filefactory.name)
-            source.setBrother(audiobrother)
-
-        if pos == -1:
-            self.timeline.videocomp.appendSource(source)
-        elif pos:
-            self.timeline.videocomp.insertSourceAfter(source, self.condensed[pos - 1])
-        else:
-            self.timeline.videocomp.prependSource(source)
-
-    def _moveElement(self, element, x):
-        gst.debug("TimelineSource, move %s to x:%d" % (element, x))
-        # remove the slot
-        self._eraseDragSlot()
-        self.slotposition = -1
-        pos = self._getNearestSourceSlot(x)
-
-        self.timeline.videocomp.moveSource(element, pos)
-
-    def _widthChangedCb(self, unused_layout, property):
-        if not property.name == "width":
-            return
-        self.width = self.get_property("width")
-
-    def _motionNotifyEventCb(self, layout, event):
-        pass
-
-
-    ## Drag and Drop callbacks
-
-    def _dragMotionCb(self, unused_layout, unused_context, x, unused_y,
-                      unused_timestamp):
-        # TODO show where the dragged item would go
-        pos = self._getNearestSourceSlotPixels(x + (self.hadjustment.get_value()))
-        rpos = self._getNearestSourceSlot(x + self.hadjustment.get_value())
-        gst.log("SimpleTimeline x:%d , source would go at %d" % (x, rpos))
-        if not pos == self.slotposition:
-            if not self.slotposition == -1:
-                # erase previous slot position
-                self._eraseDragSlot()
-            # draw new slot position
-            self.slotposition = pos
-            self._drawDragSlot()
-
-    def _dragLeaveCb(self, unused_layout, unused_context, unused_timestamp):
-        gst.log("SimpleTimeline")
-        self._eraseDragSlot()
-        self.slotposition = -1
-        # TODO remove the drag emplacement
-
-    def _dragDataReceivedCb(self, unused_layout, context, x, y, selection,
-                            targetType, timestamp):
-        gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % (targetType, selection.data))
-        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
-            uri = selection.data
-        else:
-            context.finish(False, False, timestamp)
-        x = x + int(self.hadjustment.get_value())
-        if self.draggedelement:
-            self._moveElement(self.draggedelement, x)
-        else:
-            self._gotFileFactory(instance.PiTiVi.current.sources[uri], x, y)
-        context.finish(True, False, timestamp)
-        instance.PiTiVi.playground.switchToTimeline()
-
-
-    ## Drawing
-
-    def _realizeCb(self, unused_layout):
-        self.modify_bg(gtk.STATE_NORMAL, self.style.white)
-
-    def _areaIntersect(self, x, y, w, h, x2, y2, w2, h2):
-        """ returns True if the area intersects, else False """
-        # is zone to the left of zone2
-        z1 = gtk.gdk.Rectangle(x, y, w, h)
-        z2 = gtk.gdk.Rectangle(x2, y2, w2, h2)
-        r = z1.intersect(z2)
-        a, b, c, d = r
-        if a or b or c or d:
-            return True
-        return False
-
-    def _exposeEventCb(self, unused_layout, event):
-        x, y, w, h = event.area
-        # redraw the slot rectangle if there's one
-        if not self.slotposition == -1:
-            if self._areaIntersect(x, y, w, h,
-                                   self.slotposition, DEFAULT_SIMPLE_SPACING,
-                                   DEFAULT_SIMPLE_SPACING, self.childheight):
-                self.bin_window.draw_rectangle(self.style.black_gc, True,
-                                               self.slotposition, DEFAULT_SIMPLE_SPACING,
-                                               DEFAULT_SIMPLE_SPACING, self.childheight)
-
-        return False
-
-    def _sizeAllocateCb(self, unused_layout, allocation):
-        if not self.height == allocation.height:
-            self.height = allocation.height
-            self.childheight = self.height - 2 * DEFAULT_SIMPLE_SPACING
-            self.childwidth = int(self.height / DEFAULT_SIMPLE_SIZE_RATIO)
-            self._resizeChildrens()
-        self.realWidth = allocation.width
-        if self._editingMode:
-            self.editingWidget.set_size_request(self.realWidth - 20,
-                                                self.height - 20)
-
-    def _resizeChildrens(self):
-        # resize the childrens to self.height
-        # also need to move them to their correct position
-        # TODO : check if there already at the given position
-        # TODO : check if they already have the good size
-        if self._editingMode:
-            return
-        pos = 2 * DEFAULT_SIMPLE_SPACING
-        for source in self.condensed:
-            widget = self.widgets[source]
-            if isinstance(source, TimelineFileSource):
-                widget.set_size_request(self.childwidth, self.childheight)
-                self.move(widget, pos, DEFAULT_SIMPLE_SPACING)
-                pos = pos + self.childwidth + DEFAULT_SIMPLE_SPACING
-            elif isinstance(source, SimpleTransitionWidget):
-                widget.set_size_request(self.childheight / 2, self.childheight)
-                self.move(widget, pos, DEFAULT_SIMPLE_SPACING)
-                pos = pos + self.childwidth + DEFAULT_SIMPLE_SPACING
-        newwidth = pos + DEFAULT_SIMPLE_SPACING
-        self.set_property("width", newwidth)
-
-    ## Child callbacks
-
-    def _sourceDeleteMeCb(self, unused_widget, element):
-        # remove this element from the timeline
-        self.timeline.videocomp.removeSource(element, collapse_neighbours=True)
-
-    def _sourceEditMeCb(self, unused_widget, element):
-        self.switchToEditingMode(element)
-
-    def _sourceDragBeginCb(self, unused_widget, unused_context, element):
-        gst.log("Timeline drag beginning on %s" % element)
-        if self.draggedelement:
-            gst.error("We were already doing a DnD ???")
-        self.draggedelement = element
-        # this element is starting to be dragged
-
-    def _sourceDragEndCb(self, unused_widget, unused_context, element):
-        gst.log("Timeline drag ending on %s" % element)
-        if not self.draggedelement == element:
-            gst.error("The DnD that ended is not the one that started before ???")
-        self.draggedelement = None
-        # this element is no longer dragged
+    def _editMeCb(self, unused_timeline, element):
+        self._switchEditingMode(element)
 
     def _editingWidgetHideMeCb(self, unused_widget):
         self.switchToNormalMode()
         # switch back to timeline in playground !
         instance.PiTiVi.playground.switchToTimeline()
 
+    def _newProjectFailedCb(self, unused_inst, unused_reason, unused_uri):
+        self.switchToNormalMode()
 
-
-    ## Editing mode
+    def _projectClosedCb(self, unused_pitivi, unused_project):
+        self.switchToNormalMode()
 
     def _switchEditingMode(self, source, mode=True):
         """ Switch editing mode for the given TimelineSource """
         gst.log("source:%s , mode:%s" % (source, mode))
 
         if self._editingMode == mode:
-            gst.warning("We were already in the correct editing mode : %s" % mode)
+            gst.warning("We were already in correct editing mode : %s" % 
+                mode)
             return
 
         if mode and not source:
@@ -483,34 +122,27 @@ class SimpleTimeline(gtk.Layout):
             gst.log("Switching TO editing mode")
 
             # 1. Hide all sources
-            for widget in self.widgets.itervalues():
-                widget.hide()
-                self.remove(widget)
-
+            self.remove(self.content)
+            self.content.hide()
             self._editingMode = mode
 
             # 2. Show editing widget
             self.editingWidget.setSource(source)
-            self.put(self.editingWidget, 10, 10)
-            self.props.width = self.realWidth
-            self.editingWidget.set_size_request(self.realWidth - 20, self.height - 20)
-            self.editingWidget.show()
+            self.add(self.editingWidget)
+            self.editingWidget.show_all()
 
         else:
             gst.log("Switching back to normal mode")
             # switching FROM editing mode
 
             # 1. Hide editing widget
-            self.editingWidget.hide()
             self.remove(self.editingWidget)
-
+            self.editingWidget.hide()
             self._editingMode = mode
 
             # 2. Show all sources
-            for widget in self.widgets.itervalues():
-                self.put(widget, 0, 0)
-                widget.show()
-            self._resizeChildrens()
+            self.add(self.content)
+            self.content.show_all()
 
     def switchToEditingMode(self, source):
         """ Switch to Editing mode for the given TimelineSource """
@@ -520,6 +152,190 @@ class SimpleTimeline(gtk.Layout):
         """ Switch back to normal timeline mode """
         self._switchEditingMode(None, False)
 
+
+class TimelineList(HList):
+    """A dynamically re-orderable group of items which knows about pitivi
+    timeline objects. Connects only to the video composition of the
+    timeline"""
+    __gtype_name__ = 'TimelineList'
+
+    __gsignals__ = {
+        'edit-me' : (gobject.SIGNAL_RUN_LAST,
+                     gobject.TYPE_NONE,
+                     (gobject.TYPE_PYOBJECT,))
+        }
+
+    def __init__(self, timeline, *args, **kwargs):
+        HList.__init__(self, *args, **kwargs)
+        self.sig_ids = None
+        self.timeline = None
+        self.set_timeline(timeline)
+        self.reorderable = True
+        self.widgets = {}
+        self.elements = {}
+
+    def set_timeline(self, timeline):
+        self.remove_all()
+        if self.timeline:
+            for sig in self.sig_ids:
+                self.timeline.videocomp.disconnect(sig)
+            self.sig_ids = None
+        self.timeline = timeline
+        if timeline:
+            #TODO: connect transition callbacks here
+            changed = timeline.videocomp.connect("condensed-list-changed", 
+                self._condensedListChangedCb)
+            added = timeline.videocomp.connect("source-added",
+                self._sourceAddedCb)
+            removed = timeline.videocomp.connect("source-removed",
+                self._sourceRemovedCb)
+            self.sig_ids = (changed, added, removed)
+            self._condensedListChangedCb(None, timeline.videocomp.condensed)
+
+    # overriding from parent
+    def swap(self, a, b):
+        #TODO: make this code handle transitions.
+        element_a = self.elements[a]
+        element_b = self.elements[b]
+        index_a = self.index(a)
+        index_b = self.index(b)
+
+        #FIXME: are both of these calls necessary? or do we just need to be
+        # smarter about figuring which source to move in front of the other.
+        # in any case, it seems to work.
+        self.timeline.videocomp.moveSource(element_a, index_b, True, True)
+        self.timeline.videocomp.moveSource(element_b, index_a, True, True)
+
+    def _condensedListChangedCb(self, unused_videocomp, clist):
+        """ add/remove the widgets """
+        gst.debug("condensed list changed in videocomp")
+        order = [self.index(self.widgets[e]) for e in clist]
+        self.reorder(order)
+
+    def _sourceAddedCb(self, timeline, element):
+        gst.debug("Adding new element to the layout")
+        if isinstance(element, TimelineFileSource):
+            widget = SimpleSourceWidget(element)
+            widget.connect("delete-me", self._sourceDeleteMeCb, element)
+            widget.connect("edit-me", self._sourceEditMeCb, element)
+            item = goocanvas.Widget(widget=widget)
+            item.props.width = DEFAULT_SIMPLE_ELEMENT_WIDTH
+            item.props.height = DEFAULT_SIMPLE_ELEMENT_HEIGHT
+            background = goocanvas.Rect(fill_color="gray",
+                stroke_color="gray",
+                width=DEFAULT_SIMPLE_ELEMENT_WIDTH,
+                height=DEFAULT_SIMPLE_ELEMENT_HEIGHT)
+            item = group(background, item)
+        else:
+            #TODO: implement this
+            raise Exception("Not Implemented")
+        self.widgets[element] = item
+        self.elements[item] = element
+        self.add_child(self.widgets[element])
+
+    def _sourceRemovedCb(self, timeline, element):
+        gst.debug("Removing element")
+        self.remove_child(self.widgets[element])
+        del self.elements[self.widgets[element]]
+        del self.widgets[element]
+
+    def remove_all(self):
+        HList.remove_all(self)
+        self.elements = {}
+        self.widgets = {}
+
+## Child callbacks
+
+    def _sourceDeleteMeCb(self, unused_widget, element):
+        # remove this element from the timeline
+        self.timeline.videocomp.removeSource(element, 
+            collapse_neighbours=True)
+#
+    def _sourceEditMeCb(self, unused_widget, element):
+        self.emit("edit-me", element)
+
+class SimpleTimelineCanvas(goocanvas.Canvas):
+    """goocanvas.Canvas derivative which contains all the widgets used in the
+    simple timeline that should be scrolled together. It handles application event
+    like loading/saving, and external drag-and-drop events for adding objects 
+    to the canvas"""
+
+    __gtype_name__ = 'SimpleTimeline'
+
+    __gsignals__ = {
+        'edit-me' : (gobject.SIGNAL_RUN_LAST,
+                     gobject.TYPE_NONE,
+                     (gobject.TYPE_PYOBJECT,))
+        }
+
+
+    def __init__(self, *args, **kwargs):
+        goocanvas.Canvas.__init__(self, *args, **kwargs)
+        self.props.automatic_bounds = False
+
+        # timeline and top level compositions
+        self.timeline = instance.PiTiVi.current.timeline
+
+        self.root = self.get_root_item()
+        self.items = TimelineList(self.timeline, self, spacing=10)
+        self.root.add_child(self.items)
+        self.items.connect("edit-me", self._editMeCb)
+
+        self.left = None
+        self.l_thresh = None
+        self.right = None
+        self.r_thresh = None
+        self.initial = None
+
+
+        self.scale = 1.0
+        self.set_size_request(int(MINIMUM_WIDTH), int(MINIMUM_HEIGHT))
+
+        instance.PiTiVi.connect("new-project-loaded",
+            self._newProjectLoadedCb)
+        instance.PiTiVi.connect("project-closed", self._projectClosedCb)
+        instance.PiTiVi.connect("new-project-loading",
+            self._newProjectLoadingCb)
+        instance.PiTiVi.connect("new-project-failed",
+            self._newProjectFailedCb)
+
+        # set a reasonable minimum size which will avoid grahics glitch
+        self.set_bounds(0, 0, DEFAULT_SIMPLE_ELEMENT_WIDTH,
+            DEFAULT_SIMPLE_ELEMENT_HEIGHT)
+
+    def _request_size(self, item, prop):
+        # no need to set size, just set the bounds
+        self.set_bounds(0, 0, self.items.width, self.items.height)
+        return True
+
+    def _size_allocate(self, unused_layout, allocation):
+        x1, y1, x2, y2 = self.get_bounds()
+        height = y2 - y1
+
+        if height > 0:
+            self.scale = allocation.height / height
+            self.set_scale(self.scale)
+        return True
+
+## Project callbacks
+
+    def _newProjectLoadingCb(self, unused_inst, project):
+        #now we connect to the new project, so we can receive any
+        self.items.set_timeline(project.timeline)
+
+    def _newProjectLoadedCb(self, unused_inst, project):
+        assert(instance.PiTiVi.current == project)
+
+    def _newProjectFailedCb(self, unused_inst, unused_reason, unused_uri):
+        self.items.set_timeline(None)
+
+    def _projectClosedCb(self, unused_pitivi, unused_project):
+        self.items.set_timeline(None)
+
+## Editing mode
+
+    def _editMeCb(self, timeline, element):
+        self.emit("edit-me", element)
 
 class SimpleEditingWidget(gtk.EventBox):
     """
@@ -706,10 +522,10 @@ class SimpleEditingWidget(gtk.EventBox):
         else:
             gst.warning("got pixbuf for a non-handled timestamp")
 
-    def _updateTextFields(self, start=-1, duration=-1):
-        if not start == -1:
+    def _updateTextFields(self, start=gst.CLOCK_TIME_NONE, duration=0):
+        if not start == gst.CLOCK_TIME_NONE:
             self.startPos.props.label = time_to_string(start)
-        if not start == -1 and not duration == -1:
+        if not start == gst.CLOCK_TIME_NONE and not duration == 0:
             self.endPos.props.label = time_to_string(start + duration)
 
     def _updateThumbnails(self):
@@ -768,7 +584,7 @@ class SimpleEditingWidget(gtk.EventBox):
             gst.log("end frame rewind")
             duration = self._mediaDuration - gst.SECOND
 
-        duration_max = self._source.factory.length - self._mediaStart
+        duration_max = self._source.factory.getDuration() - self._mediaStart
         duration = min(duration, duration_max)
 
         self._mediaDuration = duration
@@ -788,8 +604,6 @@ class SimpleEditingWidget(gtk.EventBox):
             self._mediaDuration, gst.FORMAT_TIME)
 
     def _updateStartDuration(self):
-        print (time_to_string(self._mediaStart),
-            time_to_string(self._mediaDuration))
         self._updateThumbnails()
         self._updateTextFields(self._mediaStart, self._mediaDuration)
         self._adjustControls()
@@ -805,7 +619,7 @@ class SimpleEditingWidget(gtk.EventBox):
             self.startRewindButton.set_sensitive(True)
 
         end = self._mediaDuration + self._mediaStart
-        assert end <= self._source.factory.length 
+        assert end <= self._source.factory.getDuration()
 
         if (self._mediaStart + gst.SECOND) >= end:
             self.startAdvanceButton.set_sensitive(False)
@@ -817,7 +631,7 @@ class SimpleEditingWidget(gtk.EventBox):
         else:
             self.endRewindButton.set_sensitive(True)
 
-        if end >= self._source.factory.length:
+        if end >= self._source.factory.getDuration():
             self.endAdvanceButton.set_sensitive(False)
         else:
             self.endAdvanceButton.set_sensitive(True)
@@ -1027,7 +841,7 @@ class ScaledThumbnailViewer(gtk.DrawingArea):
         self._update = True
         self.queue_draw()
 
-class SimpleSourceWidget(gtk.EventBox):
+class SimpleSourceWidget(gtk.HBox):
     """
     Widget for representing a source in simple timeline view
     Takes a TimelineFileSource
@@ -1046,7 +860,7 @@ class SimpleSourceWidget(gtk.EventBox):
 
     def __init__(self, filesource):
         """Represents filesource in the simple timeline."""
-        gtk.EventBox.__init__(self)
+        gtk.HBox.__init__(self)
 
         #TODO: create a separate thumbnailer for previewing effects
         self.filesource = filesource
@@ -1077,16 +891,20 @@ class SimpleSourceWidget(gtk.EventBox):
         self._popupMenu.append(deleteitem)
         self._popupMenu.append(edititem)
 
+        # Don't need this anymore
+
         # drag and drop
-        self.drag_source_set(gtk.gdk.BUTTON1_MASK,
-                             [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
-                             gtk.gdk.ACTION_COPY)
-        self.connect("drag_data_get", self._dragDataGetCb)
+        #self.drag_source_set(gtk.gdk.BUTTON1_MASK,
+        #                     [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
+        #                     gtk.gdk.ACTION_COPY)
+        #self.connect("drag_data_get", self._dragDataGetCb)
 
     def _createUI(self):
         # basic widget properties
         # TODO: randomly assign this color
-        #self.color = self.get_colormap().alloc_color("green")
+        #self.csdf
+        
+        lor = self.get_colormap().alloc_color("green")
         #self.modify_bg(gtk.STATE_NORMAL, self.color)
 
         # control decorations
@@ -1120,7 +938,7 @@ class SimpleSourceWidget(gtk.EventBox):
         editing.pack_start(edit, False, True)
         self.duration = gtk.Label()
         self.duration.set_markup("<small>%s</small>" %
-                beautify_length(self.filesource.factory.length))
+                beautify_length(self.filesource.factory.getDuration()))
         editing.pack_end(self.duration, False, False)
         edit.connect("clicked", self._editMenuItemCb)
 
@@ -1176,7 +994,7 @@ class SimpleSourceWidget(gtk.EventBox):
             vi = self.filesource.factory.video_info_stream
             height = 64 * vi.dar.denom / vi.dar.num
         smallthumb = pixbuf.scale_simple(64, height, gtk.gdk.INTERP_BILINEAR)
-        self.drag_source_set_icon_pixbuf(smallthumb)
+        #self.drag_source_set_icon_pixbuf(smallthumb)
 
     def _mediaStartDurationChangedCb(self, unused_source, start, duration):
         self._updateThumbnails()

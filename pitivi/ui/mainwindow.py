@@ -109,8 +109,6 @@ class PitiviMainWindow(gtk.Window):
         if not isinstance(instance.PiTiVi.playground.current, SmartTimelineBin):
             return
         self.render_button.set_sensitive((duration > 0) and True or False)
-        if duration > 0 :
-            gobject.idle_add(self.timeline.simpleview._displayTimeline)
 
     def _currentPlaygroundChangedCb(self, playground, smartbin):
         if smartbin == playground.default:
@@ -123,7 +121,6 @@ class PitiviMainWindow(gtk.Window):
                                                             self._timelineDurationChangedCb)
                 if smartbin.project.timeline.videocomp.duration > 0:
                     self.render_button.set_sensitive(True)
-                    gobject.idle_add(self.timeline.simpleview._displayTimeline)
                 else:
                     self.render_button.set_sensitive(False)
             else:
@@ -176,7 +173,7 @@ class PitiviMainWindow(gtk.Window):
             ("File", None, _("_File")),
             ("Edit", None, _("_Edit")),
             ("View", None, _("_View")),
-            ("Help", None, _("_Help"))
+            ("Help", None, _("_Help")),
         ]
 
         self.toggleactions = [
@@ -209,18 +206,19 @@ class PitiviMainWindow(gtk.Window):
                     action.set_sensitive(False)
             else:
                 action.set_sensitive(False)
-
-        self.uimanager = gtk.UIManager()
+        
+        self.uimanager = instance.PiTiVi.uimanager
         self.add_accel_group(self.uimanager.get_accel_group())
         self.uimanager.insert_action_group(self.actiongroup, 0)
-        self.uimanager.add_ui_from_file(os.path.join(os.path.dirname(os.path.abspath(__file__)), "actions.xml"))
+        self.uimanager.add_ui_from_file(os.path.join(os.path.dirname(
+            os.path.abspath(__file__)), "actions.xml"))
 
         self.connect_after("key-press-event", self._keyPressEventCb)
 
     def _createUi(self):
         """ Create the graphical interface """
         self.set_title("%s v%s" % (APPNAME, pitivi_version))
-        self.set_geometry_hints(min_width=800, min_height=600)
+        self.set_geometry_hints(min_width=800, min_height=480)
 
         self.connect("destroy", self._destroyCb)
 
@@ -240,9 +238,10 @@ class PitiviMainWindow(gtk.Window):
 
         self.timeline = TimelineWidget()
         self.timeline.showSimpleView()
-        timelineframe = gtk.Frame()
-        timelineframe.add(self.timeline)
-        vpaned.pack2(timelineframe, resize=False, shrink=False)
+        # I honestly think it looks better without the frame
+        # timelineframe = gtk.Frame()
+        # timelineframe.add(self.timeline)
+        vpaned.pack2(self.timeline, resize=False, shrink=True)
 
         hpaned = gtk.HPaned()
         vpaned.pack1(hpaned, resize=True, shrink=False)
@@ -253,13 +252,20 @@ class PitiviMainWindow(gtk.Window):
         # Viewer
         self.viewer = PitiviViewer()
 
-        instance.PiTiVi.playground.connect("current-changed", self._currentPlaygroundChangedCb)
+        instance.PiTiVi.playground.connect("current-changed", 
+            self._currentPlaygroundChangedCb)
 
         hpaned.pack1(self.sourcefactories, resize=False, shrink=False)
         hpaned.pack2(self.viewer, resize=True, shrink=False)
+        # FIXME: remove toolbar padding and shadow. In fullscreen mode, the
+        # toolbar buttons should be clickable with the mouse cursor at the
+        # very bottom of the screen.
+        vbox.pack_start(self.uimanager.get_widget("/TimelineToolBar"),
+            False)
 
         #application icon
-        self.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")
+        self.set_icon_from_file(configure.get_global_pixmap_dir() 
+            + "/pitivi.png")
 
     def toggleFullScreen(self):
         """ Toggle the fullscreen mode of the application """
@@ -270,7 +276,7 @@ class PitiviMainWindow(gtk.Window):
             self.viewer.window.unfullscreen()
             self.isFullScreen = False
 
-    ## PlayGround callback
+## PlayGround callback
 
     def _errorMessageResponseCb(self, dialogbox, unused_response):
         dialogbox.hide()
@@ -278,27 +284,31 @@ class PitiviMainWindow(gtk.Window):
         self.errorDialogBox = None
 
     def _playGroundErrorCb(self, unused_playground, error, detail):
+        # FIXME FIXME FIXME:
+        # _need_ an onobtrusive way to present gstreamer errors, 
+        # one that doesn't steel mouse/keyboard focus, one that
+        # makes some kind of sense to the user, and one that presents
+        # some ways of actually _dealing_ with the underlying problem:
+        # install a plugin, re-conform source to some other format, or
+        # maybe even disable playback of a problematic file.
         if self.errorDialogBox:
             return
         self.errorDialogBox = gtk.MessageDialog(None, gtk.DIALOG_MODAL,
-                                                gtk.MESSAGE_ERROR,
-                                                gtk.BUTTONS_OK,
-                                                None)
+            gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, None)
         self.errorDialogBox.set_markup("<b>%s</b>" % error)
         self.errorDialogBox.connect("response", self._errorMessageResponseCb)
         if detail:
             self.errorDialogBox.format_secondary_text(detail)
         self.errorDialogBox.show()
 
-
-    ## Project source list callbacks
+## Project source list callbacks
 
     def _sourcesFileAddedCb(self, unused_sources, unused_factory):
-        if len(self.sourcefactories.sourcelist.storemodel) == 1 and not len(instance.PiTiVi.current.timeline.videocomp):
-            self.timeline.simpleview._displayTimeline(False)
+        #if (len(self.sourcefactories.sourcelist.storemodel) == 1 
+        #    and not len(instance.PiTiVi.current.timeline.videocomp):
+        pass
 
-
-    ## UI Callbacks
+## UI Callbacks
 
     def _destroyCb(self, unused_widget, data=None):
         instance.PiTiVi.shutdown()
@@ -308,7 +318,7 @@ class PitiviMainWindow(gtk.Window):
         if gtk.gdk.keyval_name(event.keyval) in ['f', 'F', 'F11']:
             self.toggleFullScreen()
 
-    ## Toolbar/Menu actions callback
+## Toolbar/Menu actions callback
 
     def _newProjectMenuCb(self, unused_action):
         instance.PiTiVi.newBlankProject()
@@ -396,7 +406,7 @@ class PitiviMainWindow(gtk.Window):
     def _pluginManagerCb(self, unused_action):
         PluginManagerDialog(instance.PiTiVi.plugin_manager)
 
-    ## PiTiVi main object callbacks
+## PiTiVi main object callbacks
 
     def _newProjectLoadedCb(self, pitivi, project):
         gst.log("A NEW project is loaded, update the UI!")
@@ -437,7 +447,7 @@ class PitiviMainWindow(gtk.Window):
         dialog.destroy()
         self.set_sensitive(True)
 
-    ## PiTiVi current project callbacks
+## PiTiVi current project callbacks
 
     def _confirmOverwriteCb(self, unused_project, uri):
         message = _("Do you wish to overwrite existing file \"%s\"?") %\

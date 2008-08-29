@@ -8,28 +8,28 @@ pitividir = $(libdir)/pitivi/python/pitivi
 
 pitivi_PYTHON = \
 	__init__.py 	\
-	configure.py 	\
-	instance.py 	\
 	bin.py 		\
 	check.py 	\
+	configure.py 	\
 	discoverer.py 	\
 	dnd.py 		\
 	effects.py	\
+	instance.py 	\
 	objectfactory.py \
 	pitivi.py 	\
-	playground.py 	\
-	project.py 	\
-	settings.py 	\
-	sourcelist.py 	\
-	utils.py 	\
 	pitivigstutils.py \
+	playground.py 	\
+	plugincore.py	\
+	pluginmanager.py \
+	project.py 	\
+	projectsaver.py	\
+	serializable.py	\
+	settings.py 	\
 	signalgroup.py	\
+	sourcelist.py 	\
 	threads.py	\
 	thumbnailer.py	\
-	serializable.py	\
-	projectsaver.py	\
-	plugincore.py	\
-	pluginmanager.py
+	utils.py
 
 BUILT_SOURCES=configure.py
 

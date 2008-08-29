@@ -27,10 +27,9 @@ Interfaces for complex view elements
 import gst
 
 #
-# Complex Timeline interfaces v1 (01 Feb 2006)
+# Complex Timeline interfaces v2 (01 Jul 2008)
 #
-#
-# ZoomableWidgetInterface
+# Zoomable
 # -----------------------
 # Interface for the Complex Timeline widgets for setting, getting,
 # distributing and modifying the zoom ratio and the size of the widget.
@@ -41,41 +40,49 @@ import gst
 # ex : 1.0 = 1 pixel for a second
 #
 # Methods:
+# . setZoomAdjustment(adj)
+# . getZoomAdjustment()
+# . setChildZoomAdjustment()
+# . zoomChanged()
 # . setZoomRatio(ratio)
 # . getZoomRatio(ratio)
 # . pixelToNs(pixels)
 # . nsToPixels(time)
-# . getPixelWidth()
-#
-#
 
-class ZoomableWidgetInterface:
+class Zoomable:
+    
+    zoomratio = 0
+    zoom_adj = None
 
-    def getPixelWidth(self):
-        """
-        Returns the width in pixels corresponding to the duration of the object
-        """
-        dur = self.getDuration()
-        width = self.nsToPixel(dur)
-        gst.log("Got time %s, returning width : %d" % (gst.TIME_ARGS(dur), width))
-        return width
+    def setZoomAdjustment(self, adjustment):
+        if self.zoom_adj:
+            self.zoom_adj.disconnect(self._zoom_changed_sigid)
+        self.zoom_adj = adjustment
+        if adjustment:
+            self._zoom_changed_sigid = adjustment.connect("value-changed",
+                self._zoom_changed_cb)
+            self.zoomratio = adjustment.get_value()
+            self.setChildZoomAdjustment(adjustment)
+            self.zoomChanged()
 
-    def getPixelPosition(self):
-        """
-        Returns the pixel offset of the widget in it's container, according to:
-        _ the start position of the object in it's timeline container,
-        _ and the set zoom ratio
-        """
-        start = self.getStartTime()
-        pos = self.nsToPixel(start)
-        gst.log("Got start time %s, returning offset %d" % (gst.TIME_ARGS(start), pos))
-        return pos
+    def getZoomAdjustment(self):
+        return self.zoom_adj
+
+    def _zoom_changed_cb(self, adjustment):
+        self.zoomratio = adjustment.get_value()
+        self.zoomChanged()
+
+    def getZoomRatio(self):
+        return self.zoomratio
+
+    def setZoomRatio(self, ratio):
+        self.zoom_adj.set_value(ratio)
 
     def pixelToNs(self, pixel):
         """
         Returns the pixel equivalent in nanoseconds according to the zoomratio
         """
-        return long(pixel * gst.SECOND / self.getZoomRatio())
+        return long(pixel * gst.SECOND / self.zoomratio)
 
     def nsToPixel(self, duration):
         """
@@ -84,53 +91,59 @@ class ZoomableWidgetInterface:
         """
         if duration == gst.CLOCK_TIME_NONE:
             return 0
-        return int((float(duration) / gst.SECOND) * self.getZoomRatio())
+        return int((float(duration) / gst.SECOND) * self.zoomratio)
 
-    ## Methods to implement in subclasses
-
-    def getDuration(self):
-        """
-        Return the duration in nanoseconds of the object
-        To be implemented by subclasses
-        """
-        raise NotImplementedError
-
-    def getStartTime(self):
-        """
-        Return the start time in nanosecond of the object
-        To be implemented by subclasses
-        """
-        raise NotImplementedError
+    # Override in subclasses
 
     def zoomChanged(self):
-        raise NotImplementedError
+        pass
 
-    def durationChanged(self):
-        self.queue_resize()
+    def setChildZoomAdjustment(self, adj):
+        pass
 
-    def startChanged(self):
-        self.queue_resize()
+# ZoomableObject(Zoomable)
+# -----------------------
+# Interface for UI widgets which wrap PiTiVi timeline objects.
+#
+# Methods:
+# . setObject
+# . getObject
+# . startDurationChanged
+# . getPixelPosition
+# . getPixelWidth
+
+class ZoomableObject(Zoomable):
+
+    object = None
+    width = None
+    position = None
+
+    def setTimelineObject(self, object):
+        if self.object:
+            self.object.disconnect(self._start_duration_changed_sigid)
+        self.object = object
+        if object:
+            self.start_duration_changed_sigid = object.connect(
+                "start-duration-changed", self._start_duration_changed_cb)
+
+    def getTimelineObject(self):
+        return self.object
+
+    def _start_duration_changed(self, object, start, duration):
+        self.width = self.nsToPixel(duration)
+        self.position = self.nsToPixel(start)
+        self.startDurationChanged()
 
     def startDurationChanged(self):
-        gst.info("start/duration changed")
-        self.queue_resize()
+        """Overriden by subclasses"""
+        pass
 
-    def getZoomRatio(self):
-        # either the current object is the top-level object that contains the zoomratio
-        if hasattr(self, 'zoomratio'):
-            return self.zoomratio
-        # chain up to the parent
-        parent = self.parent
-        while not hasattr(parent, 'getZoomRatio'):
-            parent = parent.parent
-        return parent.getZoomRatio()
+    def zoomChanged(self):
+        self._start_duration_changed(self.object, self.object.start,
+            self.object.duration)
 
-    def setZoomRatio(self, zoomratio):
-        if hasattr(self, 'zoomratio'):
-            if self.zoomratio == zoomratio:
-                return
-            gst.debug("Changing zoomratio to %f" % zoomratio)
-            self.zoomratio = zoomratio
-            self.zoomChanged()
-        else:
-            self.parent.setZoomRatio(zoomratio)
+    def getPixelPosition(self):
+        return self.position
+
+    def getPixelWidth(self):
+        return self.width
