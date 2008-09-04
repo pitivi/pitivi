@@ -1,3 +1,10 @@
+2008-09-04  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/viewer.py:
+	Call gtk.gdk.display_get_default().sync() before the initial call to
+	set_xwindow_id().
+	Fixes #334631  ... hopefully FOR EVER !
+
 2008-08-25  Edward Hervey  <edward.hervey@collabora.co.uk>
 
 	* pitivi/elements/imagefreeze.py:

@@ -429,7 +429,6 @@ class PitiviViewer(gtk.VBox):
             dav = self.drawingarea.videosink
             gst.log('%s' % dav)
             if dav and dav.realsink and dav.realsink == message.src:
-                gtk.gdk.display_get_default().sync()
                 self.drawingarea.can_set_xid = True
                 if self.drawingarea.isexposed:
                     self.drawingarea.set_xwindow_id()
@@ -457,6 +456,7 @@ class ViewerWidget(gtk.DrawingArea):
         self.isexposed = True
         if self.videosink:
             if not self.have_set_xid and self.can_set_xid:
+                gtk.gdk.display_get_default().sync()
                 self.set_xwindow_id()
             elif self.have_set_xid:
                 self.videosink.expose()
