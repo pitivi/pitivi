@@ -1,5 +1,10 @@
 2008-09-04  Edward Hervey  <edward.hervey@collabora.co.uk>
 
+	* pitivi/ui/ruler.py:
+	Fix seeking again.
+
+2008-09-04  Edward Hervey  <edward.hervey@collabora.co.uk>
+
 	* pitivi/ui/viewer.py:
 	Call gtk.gdk.display_get_default().sync() before the initial call to
 	set_xwindow_id().

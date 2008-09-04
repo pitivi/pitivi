@@ -131,12 +131,14 @@ class ScaleRuler(gtk.Layout, Zoomable):
 
     def _seekTimeoutCb(self):
         gst.debug("timeout")
+        self.currentlySeeking = False
         if not self.position == self.requested_time:
             self._doSeek(self.requested_time)
-            self.currentlySeeking = False
+        return False
 
     def _doSeek(self, value, format=gst.FORMAT_TIME):
-        gst.debug("seeking to %s" % gst.TIME_ARGS (value))
+        gst.debug("seeking to %s / currentlySeeking %r" % (gst.TIME_ARGS (value),
+                                                           self.currentlySeeking))
         if not self.currentlySeeking:
             self.currentlySeeking = True
             self.requested_time = value
