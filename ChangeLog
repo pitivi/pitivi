@@ -1,6 +1,10 @@
 2008-09-11  Brandon Lewis  <brandon_lewis@berkeley.edu>
 
-	reviewed by: <delete if not using a buddy>
+	* pitivi/ui/util.py:
+	* tests/test_proxy.py:
+	fix test suite and ProxyItem class, so that test cases actually pass
+
+2008-09-11  Brandon Lewis  <brandon_lewis@berkeley.edu>
 
 	* tests/testproxy.py:
 	* tests/test_proxy.py:

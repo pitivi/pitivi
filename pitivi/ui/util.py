@@ -390,11 +390,11 @@ class ProxyItem(goocanvas.Group):
         'height' : FLT_PSPEC,
     }
 
-    def do_get_property(self, pspec, value):
+    def do_get_property(self, pspec):
         """Returns the value of the corresponding delegate property,
         or 0 if there is no property"""
         if self.delegate:
-            return self.delegate.props[pspec.name]
+            return self.delegate.get_property(pspec.name)
         return 0
 
     def do_set_property(self, pspec, value):
@@ -404,12 +404,13 @@ class ProxyItem(goocanvas.Group):
         delegate, if it exists."""
         if pspec.name in self.functions:
             self.functions[pspec.name](value)
-        self.set_delegate(pspec.name, value)
+        else:
+            self.set_delegate_property(pspec.name, value)
 
     def set_delegate_property(self, property, value):
-        """Sets the corresponding property in the delagate, if it exists."""
+        """Sets the corresponding property in the delegate, if it exists."""
         if self.delegate:
-            self.delegate.props[property] = value
+            self.delegate.set_property(property, value)
 
     def set_delegate(self, delegate):
         """Sets the UI object for which this object is acting as a proxy"""
@@ -419,12 +420,12 @@ class ProxyItem(goocanvas.Group):
         if delegate:
             self.add_child(delegate)
 
-    def __init__(self, delegate=None, **kwargs):
+    def __init__(self, delegate=None, *args, **kwargs):
         """Creates a proxy item with the specified delegate,
            and default property setters"""
-        super(ProxyItem, self).__init__(*args)
+        super(ProxyItem, self).__init__(*args, **kwargs)
         self.delegate = None
-        self.set_delegate(delagate)
+        self.set_delegate(delegate)
         self.functions = kwargs
 
     def set_property_handler(self, property, handler):
