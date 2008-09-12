@@ -1,5 +1,13 @@
 2008-09-11  Brandon Lewis  <brandon_lewis@berkeley.edu>
 
+	reviewed by: <delete if not using a buddy>
+
+	* tests/testproxy.py:
+	* tests/test_proxy.py:
+	rename test suite so it is actually run
+
+2008-09-11  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
 	* pitivi/ui/util.py:
 	added a new type of canvas item, ProxyItem
 	* tests/testproxy.py:
