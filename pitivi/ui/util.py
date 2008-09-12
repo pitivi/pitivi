@@ -360,6 +360,76 @@ def manage_selection(canvas, marquee, overlap, changed_cb=None):
     root.connect("button_release_event", selection_end, canvas, marquee, overlap, changed_cb)
     root.connect("motion_notify_event", selection_drag, canvas, marquee)
 
+import sys
+FLT_PSPEC = (float, None, None, 0, float("Infinity"), 0, gobject.PARAM_READWRITE)
+INT_PSPEC = (int, None, None, 0, sys.maxint, 0, gobject.PARAM_READWRITE)
+STR_PSPEC = (str, None, None, '', gobject.PARAM_READWRITE)
+
+class ProxyItem(goocanvas.Group):
+    """A proxy item is an MVC helper item which wraps around a goocanvas item
+    (the delegate).  Reading a property from a ProxyItem always returns the
+    value of the delegate's prperty. By default, setting a ProxyItems
+    properties will cause the corresponding properties to be set in the
+    delegate; however, a ProxyItem also lets you install an arbitrary function
+    will be called instead of setting the property. You can always set
+    properties in the delegate by calling the set_delegate_property() method.
+    
+    This allows you to, for example, have an object for which setting the X
+    property causes a change in the application model, updating the delegate
+    only when the appropriate signal from the model has been emitted.  """
+    
+    __gtype_name__= 'ProxyItem'
+
+    # TODO make sure all useful ItemSimple properties have been defined, or do
+    # something even cookier to ensure that whatever properties appear in the
+    # delegate are automatically declared here
+    __gproperties__ = {
+        'x' : FLT_PSPEC,
+        'y' : FLT_PSPEC,
+        'width' : FLT_PSPEC,
+        'height' : FLT_PSPEC,
+    }
+
+    def do_get_property(self, pspec, value):
+        """Returns the value of the corresponding delegate property,
+        or 0 if there is no property"""
+        if self.delegate:
+            return self.delegate.props[pspec.name]
+        return 0
+
+    def do_set_property(self, pspec, value):
+        """When a property value is set, one of two things will happen: If a
+        property handler is defined for the property, the value is routed to
+        this handler. Otherwise, the property is simply passed along to the
+        delegate, if it exists."""
+        if pspec.name in self.functions:
+            self.functions[pspec.name](value)
+        self.set_delegate(pspec.name, value)
+
+    def set_delegate_property(self, property, value):
+        """Sets the corresponding property in the delagate, if it exists."""
+        if self.delegate:
+            self.delegate.props[property] = value
+
+    def set_delegate(self, delegate):
+        """Sets the UI object for which this object is acting as a proxy"""
+        if self.delegate:
+            self.delegate.remove()
+        self.delegate = delegate
+        if delegate:
+            self.add_child(delegate)
+
+    def __init__(self, delegate=None, **kwargs):
+        """Creates a proxy item with the specified delegate,
+           and default property setters"""
+        super(ProxyItem, self).__init__(*args)
+        self.delegate = None
+        self.set_delegate(delagate)
+        self.functions = kwargs
+
+    def set_property_handler(self, property, handler):
+        self.functions[property] = handler
+
 class SmartGroup(goocanvas.Group):
     """Extends goocanvas.Group() with 
     through gobject properties x, y, and width/height"""
@@ -370,35 +440,22 @@ class SmartGroup(goocanvas.Group):
     width = gobject.property(type=float, default=0)
     height = gobject.property(type=float, default=0)
 
-    def __init__(self, canvas=None, background=None, *args, **kwargs):
+    def __init__(self, canvas=None, *args, **kwargs):
         goocanvas.Group.__init__(self, *args, **kwargs)
         self.children = {}
         self.signals = {}
         self.connect("notify::x", self.move_x_children)
         self.connect("notify::y", self.move_y_children)
         self.set_canvas(canvas)
-        self.background = None
-        self.set_background(background)
-
-    def set_background(self, bg):
-        if self.background:
-            self.background.remove()
-            goocanvas.Group.add_child(self, bg, 0)
-        self.background = bg
-        #TODO: move background beneath lowest item
 
     def set_canvas(self, canvas):
         self.canvas = canvas
 
     def move_x_children(self, object, prop):
-        if self.background:
-            self.background.props.x = self.x
         for child, (x, y) in self.children.items():
             child.set_property('x', self.x + x)
 
     def move_y_children(self, object, prop):
-        if self.background:
-            self.background.props.y = self.y
         for child, (x, y) in self.children.items():
             child.set_property('y', self.y + y)
 
@@ -407,16 +464,12 @@ class SmartGroup(goocanvas.Group):
             return (c.get_property('width') + p[0])
         widths = (compute(c, p) for c, p in self.children.items())
         self.width = max(widths) if len(self.children) else float(0)
-        if self.background:
-            self.background.props.width = self.width
 
     def update_height(self, obj, prop):
         def compute(c, p):
             return (c.get_property('height') + p[1])
         heights = (compute(c, p) for c, p in self.children.items())
         self.height = max(heights) if len(self.children) else float(0)
-        if self.background:
-            self.background.props.height = self.height
 
     def set_child_pos(self, child, pos_):
         set_pos(child, point_sum(pos(self), pos_))

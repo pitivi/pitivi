@@ -1,3 +1,10 @@
+2008-09-11  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/util.py:
+	added a new type of canvas item, ProxyItem
+	* tests/testproxy.py:
+	test suite for ProxyItem
+
 2008-09-04  Edward Hervey  <edward.hervey@collabora.co.uk>
 
 	* pitivi/ui/ruler.py:
