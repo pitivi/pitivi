@@ -178,7 +178,7 @@ class PitiviMainWindow(gtk.Window):
 
         self.toggleactions = [
             ("AdvancedView", 'pitivi-advanced-mode', _("Advanced vie_w"),
-             None, _("Switch to advanced view"), self._advancedViewCb),
+             None, _("Switch to advanced view"), self._advancedViewCb, True),
             ("FullScreen", gtk.STOCK_FULLSCREEN, None, None,
              _("View the main window on the whole screen"), self._fullScreenCb)
         ]
@@ -206,7 +206,7 @@ class PitiviMainWindow(gtk.Window):
                     action.set_sensitive(False)
             else:
                 action.set_sensitive(False)
-        
+
         self.uimanager = instance.PiTiVi.uimanager
         self.add_accel_group(self.uimanager.get_accel_group())
         self.uimanager.insert_action_group(self.actiongroup, 0)
@@ -237,10 +237,8 @@ class PitiviMainWindow(gtk.Window):
         vbox.pack_start(vpaned)
 
         self.timeline = TimelineWidget()
-        self.timeline.showSimpleView()
-        # I honestly think it looks better without the frame
-        # timelineframe = gtk.Frame()
-        # timelineframe.add(self.timeline)
+        self.timeline.showComplexView()
+
         vpaned.pack2(self.timeline, resize=False, shrink=True)
 
         hpaned = gtk.HPaned()

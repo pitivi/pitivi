@@ -1,5 +1,12 @@
 2008-09-17  Edward Hervey  <edward.hervey@collabora.co.uk>
 
+	* pitivi/ui/mainwindow.py:
+	Make the advanced timeline the default one.
+	This is a trial, the code for the simple timeline is still
+	present.
+
+2008-09-17  Edward Hervey  <edward.hervey@collabora.co.uk>
+
 	* pitivi/bin.py:
 	* pitivi/settings.py:
 	* pitivi/ui/exportsettingswidget.py:
