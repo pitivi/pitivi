@@ -382,3 +382,10 @@ def encoders_muxer_compatible(encoders, muxer):
                 res.append(encoder)
                 break
     return res
+
+def muxer_can_sink_raw_audio(muxer):
+    return my_can_sink_caps(muxer, gst.Caps("audio/x-raw-float;audio/x-raw-int"))
+
+def muxer_can_sink_raw_video(muxer):
+    return my_can_sink_caps(muxer, gst.Caps("video/x-raw-yuv;video/x-raw-rgb"))
+

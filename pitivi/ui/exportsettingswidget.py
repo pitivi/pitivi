@@ -26,7 +26,7 @@ Widget for the output settings
 import gtk
 import gst
 from glade import GladeWidget
-from pitivi.settings import encoders_muxer_compatible
+from pitivi.settings import encoders_muxer_compatible, muxer_can_sink_raw_audio, muxer_can_sink_raw_video
 from gstwidget import GstElementSettingsDialog
 
 from gettext import gettext as _
@@ -225,19 +225,31 @@ class ExportSettingsWidget(GladeWidget):
         self.audiodepthcbox.set_sensitive(activate)
 
     def _muxerComboboxChangedCb(self, widget):
+        print len(self.validvencoders), self.vcodeccbox.get_active()
+        print len(self.validaencoders), self.acodeccbox.get_active()
         if self.validvencoders:
-            prevvenc = self.validvencoders[self.vcodeccbox.get_active()].get_name()
+            vidx = self.vcodeccbox.get_active()
+            if vidx < len(self.validvencoders):
+                prevvenc = self.validvencoders[vidx].get_name()
+            elif vidx == len(self.validvencoders):
+                prevvenc = None
         else:
             prevvenc = self.settings.vencoder
         if self.validaencoders:
-            prevaenc = self.validaencoders[self.acodeccbox.get_active()].get_name()
+            aidx = self.acodeccbox.get_active()
+            if aidx < len(self.validaencoders):
+                prevaenc = self.validaencoders[aidx].get_name()
+            elif aidx == len(self.validaencoders):
+                prevaenc = None
         else:
             prevaenc = self.settings.aencoder
+        print prevvenc, prevaenc
         # find the valid audio/video codec with the given muxer
+        muxer = self.muxers[widget.get_active()]
         self.validaencoders = encoders_muxer_compatible(self.settings.aencoders,
-                                                        self.muxers[widget.get_active()])
+                                                        muxer)
         self.validvencoders = encoders_muxer_compatible(self.settings.vencoders,
-                                                        self.muxers[widget.get_active()])
+                                                        muxer)
 
         venclist = self.vcodeccbox.get_model()
         venclist.clear()
@@ -248,6 +260,10 @@ class ExportSettingsWidget(GladeWidget):
             if enc.get_name() == prevvenc:
                 selected = idx
             idx = idx + 1
+        if muxer_can_sink_raw_video(muxer):
+            venclist.append(["Raw Video"])
+            if prevvenc == None:
+                selected = idx
         self.vcodeccbox.set_active(selected)
 
         aenclist = self.acodeccbox.get_model()
@@ -259,6 +275,10 @@ class ExportSettingsWidget(GladeWidget):
             if enc.get_name() == prevaenc:
                 selected = idx
             idx = idx + 1
+        if muxer_can_sink_raw_audio(muxer):
+            aenclist.append(["Raw Audio"])
+            if prevaenc == None:
+                selected = idx
         self.acodeccbox.set_active(selected)
 
     def runSettingsDialog(self, factory, settings):
@@ -312,8 +332,20 @@ class ExportSettingsWidget(GladeWidget):
 
         # Encoders
         muxer = self.settings.muxers[self.muxercombobox.get_active()].get_name()
-        vencoder = self.validvencoders[self.vcodeccbox.get_active()].get_name()
-        aencoder = self.validaencoders[self.acodeccbox.get_active()].get_name()
+        vidx = self.vcodeccbox.get_active()
+        if vidx < len(self.validvencoders):
+            vencoder = self.validvencoders[vidx].get_name()
+        elif vidx == len(self.validvencoders):
+            vencoder = None
+        else:
+            gst.warning("we don't want any video stream")
+        aidx = self.acodeccbox.get_active()
+        if aidx < len(self.validaencoders):
+            aencoder = self.validaencoders[aidx].get_name()
+        elif aidx == len(self.validaencoders):
+            aencoder = None
+        else:
+            gst.warning("we don't want any audio stream")
         self.settings.setEncoders(muxer, vencoder, aencoder)
 
         # encoder/muxer settings

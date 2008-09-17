@@ -305,10 +305,13 @@ class SmartBin(gst.Pipeline):
         aconv = gst.element_factory_make("audioconvert", "aconv")
         ares = gst.element_factory_make("audioresample", "ares")
         arate = gst.element_factory_make("audiorate", "arate")
-        aenc = gst.element_factory_make(settings.aencoder ,"aenc")
-        # set properties on the encoder
-        for prop, value in settings.acodecsettings.iteritems():
-            aenc.set_property(prop, value)
+        if settings.aencoder:
+            aenc = gst.element_factory_make(settings.aencoder ,"aenc")
+            # set properties on the encoder
+            for prop, value in settings.acodecsettings.iteritems():
+                aenc.set_property(prop, value)
+        else:
+            aenc = gst.element_factory_make("identity", "aenc")
         aoutq = gst.element_factory_make("queue", "aoutq")
 
         # add and link all required audio elements
@@ -342,10 +345,13 @@ class SmartBin(gst.Pipeline):
         csp = gst.element_factory_make("ffmpegcolorspace", "csp")
         vrate = gst.element_factory_make("videorate", "vrate")
         vscale = SmartVideoScale()
-        venc = gst.element_factory_make(settings.vencoder, "venc")
-        # set properties on the encoder
-        for prop, value in settings.vcodecsettings.iteritems():
-            venc.set_property(prop, value)
+        if settings.vencoder:
+            venc = gst.element_factory_make(settings.vencoder, "venc")
+            # set properties on the encoder
+            for prop, value in settings.vcodecsettings.iteritems():
+                venc.set_property(prop, value)
+        else:
+            venc = gst.element_factory_make("identity", "venc")
         voutq = gst.element_factory_make("queue", "voutq")
 
         # add and link all required video elements
