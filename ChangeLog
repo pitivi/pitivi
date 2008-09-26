@@ -1,3 +1,8 @@
+
+2008-06-18  Sarath Lakshman  <sarathlakshman@slynux.org>
+	* pitivi/: ui/webcam_managerdialog.py, bin.py
+	Added SmartCaptureBin and test degbug version of webcam_managerdialog (for debuging)
+
 2008-07-18  Edward Hervey  <edward.hervey@collabora.co.uk>
 
 	* pitivi/ui/viewer.py:
