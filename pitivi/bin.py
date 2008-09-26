@@ -519,3 +519,26 @@ class SmartDefaultBin(SmartBin):
         self.videotestsrc.get_pad("src").link(self.vtee.get_pad("sink"))
         self.silence.get_pad("src").link(self.atee.get_pad("sink"))
         self.debug("finished connecting sources")
+
+
+class SmartCaptureBin(SmartBin):
+    """
+    SmartBin derivative for capturing streams.
+    """
+
+    def __init__(self):
+        gst.log("Creating new smartcapturebin")
+        self.videosrc = gst.element_factory_make("videotestsrc", "vsrc")
+        
+        SmartBin.__init__(self, "smartcapturebin", has_video=True, has_audio=False,
+                          width=720, height=576)
+
+    def _addSource(self):
+        self.add(self.videosrc)
+
+    def _connectSource(self):
+        self.debug("connecting sources")
+        #vcaps = gst.caps_from_string("video/x-raw-yuv,width=320,height=240,framerate=25.0")
+        self.videosrc.get_pad("src").link(self.vtee.get_pad("sink"))
+        self.debug("finished connecting sources")
+

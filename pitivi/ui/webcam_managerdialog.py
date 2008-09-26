@@ -43,7 +43,7 @@ class WebcamManagerDialog(object):
 
 	def __init__(self):
 		
-		player = SmartDefaultBin()		
+		player = SmartCaptureBin()		
 		instance.PiTiVi.playground._playTemporaryBin(player)
 
 	
