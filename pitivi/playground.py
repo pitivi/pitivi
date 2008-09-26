@@ -31,8 +31,6 @@ from utils import bin_contains
 
 from gettext import gettext as _
 
-
-
 class PlayGround(gobject.GObject):
     """
     Holds all the applications pipelines.
@@ -499,4 +497,3 @@ class PlayGround(gobject.GObject):
             gst.TIME_ARGS(pos),
             gst.TIME_ARGS(target)))
         self.seekInCurrent(target)
-

@@ -66,11 +66,9 @@ class SmartBin(gst.Pipeline):
         # of a tee
         if self.has_video:
             self.vtee = gst.element_factory_make("tee", "vtee")
-            #self.vtee = gst.element_factory_make("identity", "vtee")
             self.add(self.vtee)
         if self.has_audio:
             self.atee = gst.element_factory_make("tee", "atee")
-            #self.atee = gst.element_factory_make("identity", "atee")
             self.add(self.atee)
         self._addSource()
         self._connectSource()
@@ -105,8 +103,6 @@ class SmartBin(gst.Pipeline):
         if self.has_audio:
             self.asinkthread = asinkthread
             self.add(self.asinkthread)
-            # identity vs tee issue
-            #self.atee.get_pad("src").link(self.asinkthread.get_pad("sink"))
 	    self.atee.get_request_pad("src%d").link(self.asinkthread.get_pad("sink"))
         return True
 
@@ -126,12 +122,7 @@ class SmartBin(gst.Pipeline):
         if self.has_video:
             self.vsinkthread = vsinkthread
             self.add(self.vsinkthread)
-            # identity vs tee issue
-            if self.width and self.height:
-                #self.vtee.get_pad("src").link(self.vsinkthread.get_pad("sink"))
-		self.vtee.get_request_pad("src%d").link(self.vsinkthread.get_pad("sink"))
-            else:
-                self.vtee.get_request_pad("src%d").link(self.vsinkthread.get_pad("sink"))
+            self.vtee.get_request_pad("src%d").link(self.vsinkthread.get_pad("sink"))
         return True
 
     def removeAudioSinkThread(self):
@@ -191,6 +182,11 @@ class SmartBin(gst.Pipeline):
             self.error("This bin is already in in recording mode !")
             return
 
+        # temporarily remove the audiosinkthread
+        self.debug("disconnecting audio sink thread")
+        self.tmpasink = self.asinkthread
+        if not self.removeAudioSinkThread():
+            return False
 
         self.debug("creating and adding encoding thread")
         self.encthread = self._makeEncThread(uri, settings)
@@ -200,8 +196,7 @@ class SmartBin(gst.Pipeline):
         self.add(self.encthread)
         self.debug("encoding thread added")
 
-        # set sync=false on the videosink
-        #self.getRealVideoSink().set_property("sync", False)
+        self.getRealVideoSink().set_property("sync", False)
 
         self.debug("linking vtee to ecnthread:vsink")
         try:
@@ -241,15 +236,17 @@ class SmartBin(gst.Pipeline):
             self.encthread.set_state(gst.STATE_NULL)
             del self.encthread
             self.encthread = None
-            self.setAudioSinkThread(self.tmpasink)
-            self.setVideoSinkThread(self.tmpvsink)
+            if self.tmpasink:
+                self.setAudioSinkThread(self.tmpasink)
+            if self.tmpvsink:
+                self.setVideoSinkThread(self.tmpvsink)
             self.tmpasink = None
             self.tmpvsink = None
 
         self.getRealVideoSink().set_property("sync", True)
 
         self.recording = False
-        self.set_state(gst.STATE_PLAYING)
+        self.set_state(gst.STATE_PAUSED)
         return True
 
     def getSettings(self):
@@ -273,7 +270,7 @@ class SmartBin(gst.Pipeline):
         # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
         # TODO : use video/audio settings !
         # TODO : Check if we really do both audio and video !
-
+        self.debug("Creating encoding thread")
         if not settings:
             settings = self.getSettings()
             if not settings:
@@ -300,6 +297,8 @@ class SmartBin(gst.Pipeline):
 
         ainq = gst.element_factory_make("queue", "ainq")
         ainq.props.max_size_time = 5 * gst.SECOND
+        ainq.props.max_size_buffers = 0
+        ainq.props.max_size_bytes = 0
         aident = gst.element_factory_make("identity", "aident")
         aident.props.single_segment = True
         aconv = gst.element_factory_make("audioconvert", "aconv")
@@ -332,14 +331,13 @@ class SmartBin(gst.Pipeline):
         aghost.set_active(True)
         thread.add_pad(aghost)
 
-##         aenc.get_pad("sink").add_data_probe(self._debugProbe, "aenc-sink")
-##         aenc.get_pad("src").add_data_probe(self._debugProbe, "aenc-src")
-
         ##
         ## Video part
         ##
 
         vinq = gst.element_factory_make("queue", "vinq")
+        vinq.props.max_size_buffers = 0
+        vinq.props.max_size_bytes = 0
         vident = gst.element_factory_make("identity", "vident")
         vident.props.single_segment = True
         csp = gst.element_factory_make("ffmpegcolorspace", "csp")
@@ -373,9 +371,6 @@ class SmartBin(gst.Pipeline):
         vghost = gst.GhostPad("vsink", vinq.get_pad("sink"))
         vghost.set_active(True)
         thread.add_pad(vghost)
-
-##         vrate.get_pad("sink").add_data_probe(self._debugProbe, "before-vrate")
-##         vrate.get_pad("src").add_data_probe(self._debugProbe, "after-vrate")
 
         thread.filesink = fsink
 
@@ -521,6 +516,7 @@ class SmartDefaultBin(SmartBin):
         self.debug("finished connecting sources")
 
 
+#FIXME : ... seriously... WHAT is this for ???
 class SinkBin:
     """
     A general purpose sink with audio and video. This can be used as sink for Capture
@@ -576,35 +572,9 @@ class SmartCaptureBin(SmartBin):
     SmartBin derivative for capturing streams.
     """
 
-    def __init__(self):
-        gst.log("Creating new smartcapturebin")
-        self.videosrc = gst.element_factory_make("v4l2src", "webcam-vsrc")
-        self.audiosrc = gst.element_factory_make("alsasrc", "webcam-asrc")
-
-        SmartBin.__init__(self, "smartcapturebin", has_video=True, has_audio=True,
-                          width=640, height=480)
-
-
-    def _addSource(self):
-	self.q1 = gst.element_factory_make("queue", "webcam-firstvqueue")
-        self.q1.props.max_size_time = 10 * gst.SECOND
-	self.q2 = gst.element_factory_make("queue", "webcam-firstaqueue")
-        self.q2.props.max_size_time = 30 * gst.SECOND
-        self.q2.props.max_size_buffers = 0
-        self.q2.props.max_size_bytes = 0
-        self.add(self.videosrc,self.audiosrc,self.q1,self.q2)
-
-    def _connectSource(self):
-        self.debug("connecting sources")
-	gst.element_link_many(self.videosrc,self.q1,self.vtee)
- 	gst.element_link_many(self.audiosrc,self.q2,self.atee)
-        self.debug("finished connecting sources")
-
-
-class SmartCaptureBin(SmartBin):
-    """
-    SmartBin derivative for capturing streams.
-    """
+    # FIXME : THESE ARE HARDCODED PLUGINS !!!
+    # We should use a system allowing you to see all available usable
+    # input HW device + plugin and use that instead
 
     def __init__(self):
         gst.log("Creating new smartcapturebin")
@@ -630,8 +600,8 @@ class SmartCaptureBin(SmartBin):
  	gst.element_link_many(self.audiosrc,self.q2,self.atee)
         self.debug("finished connecting sources")
 
-    # It makes the recording video lag
-    def record(self, uri, settings=None):
+    def _asyncReset(self, uri, setting):
+        self.set_state(gst.STATE_READY)
 
         # FIXME : This is maybe a temporary hack.
         #
@@ -642,17 +612,28 @@ class SmartCaptureBin(SmartBin):
         # The resulting behaviour (without this fix) is that v4l2src will output
         # buffers starting from 0 whereas alsasrc will output buffers starting from
         # the last outputted buffer timestamp
-
-	# Made threaded to resolve video/audio lag issue.
-
+        #
+        # This is fixed in gst-plugins-base cvs 0.10.20.1
         self.debug("Setting sources to NULL again to reset their timestamps !")
-	CallbackThread(self.videosrc.set_state,gst.STATE_NULL).start()
-	CallbackThread(self.videosrc.set_state,gst.STATE_READY).start()
-	CallbackThread(self.audiosrc.set_state,gst.STATE_NULL).start()
-	CallbackThread(self.audiosrc.set_state,gst.STATE_READY).start()
+	self.videosrc.set_state(gst.STATE_NULL)
+	self.videosrc.set_state(gst.STATE_READY)
+	self.audiosrc.set_state(gst.STATE_NULL)
+	self.audiosrc.set_state(gst.STATE_READY)
 
-	SmartBin.record(self,uri, settings)
+	SmartBin.record(self, uri, settings)
 
+    # It makes the recording video lag
+    def record(self, uri, settings=None):
+
+        if gst.version() < (0, 10, 20, 1):
+            # Made threaded to resolve video/audio lag issue.
+            self.debug("Calling record asynchronously")
+            CallbackThread(self._asyncReset, uri, settings).start()
+        else:
+            SmartBin.record(self, uri, settings)
+
+
+# FIXME : what is this and what is it doing here ??
 class Discover:
     """
 	A Pipeline which return audio/video info about the uri stream
@@ -667,7 +648,7 @@ class Discover:
 		self.pipeline = gst.parse_launch(" %s ! decodebin name=dbin ! fakesink" % uri)
 	except:
 		gst.log("Error occured with Disover, StreamBin Detector")
-		return 
+		return
 
 	self.dbin = self.pipeline.get_by_name("dbin")
 	self.no = 0
