@@ -11,6 +11,7 @@ pitivi_PYTHON = \
 	bin.py 		\
 	check.py 	\
 	configure.py 	\
+	device.py	\
 	discoverer.py 	\
 	dnd.py 		\
 	effects.py	\
