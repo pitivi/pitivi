@@ -626,41 +626,6 @@ class SmartCaptureBin(SmartBin):
             SmartBin.record(self, uri, settings)
 
 
-# FIXME : what is this and what is it doing here ??
-class Discover:
-    """
-    A Pipeline which return audio/video info about the uri stream
-    """
-
-    def __init__(self, uri):
-        self.is_audio = False
-        self.is_video = True
-
-        try:
-
-            self.pipeline = gst.parse_launch(" %s ! decodebin name=dbin ! fakesink" % uri)
-        except:
-            gst.log("Error occured with Disover, StreamBin Detector")
-            return
-
-        self.dbin = self.pipeline.get_by_name("dbin")
-        self.no = 0
-        self.dbin.connect("new-decoded-pad", self._new_decoded_pad_cb)
-
-        self.pipeline.set_state(gst.STATE_PLAYING)
-
-    def info(self):
-        CallbackThread(self.kill).start()
-        return (self.is_video, self.is_audio)
-
-    def _new_decoded_pad_cb(self, dbin, pad, is_last):
-
-        # Does the file contain got audio or video ?
-        if "audio" in pad.get_caps().to_string():
-            self.is_audio = True
-        elif "video" in pad.get_caps().to_string():
-            self.is_video = True
-
 
 class SmartStreamBin(SmartBin):
     """
