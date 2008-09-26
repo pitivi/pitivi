@@ -122,6 +122,8 @@ class ObjectFactory(gobject.GObject, Serializable):
         """ sets whether the element has video stream """
         self.set_property("is-video", is_video)
 
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self._displayname or self._name)
     def addMediaTags(self, tags=[]):
         """ Add the given gst.Tag or gst.TagList to the factory """
         gst.debug("tags:%s" % tags)

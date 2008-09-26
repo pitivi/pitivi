@@ -24,15 +24,22 @@
 Classes and Methods for Device handling and usage
 """
 
-from objectfactory import SourceFactory
+from objectfactory import ObjectFactory, SourceFactory
+
+try:
+    import dbus
+    import dbus.glib
+    HAVE_DBUS = True
+except:
+    HAVE_DBUS = False
 
 (AUDIO_DEVICE,
  VIDEO_DEVICE,
- UNKNOWN_MEDIA_DEVICE) = range(3)
+ UNKNOWN_DEVICE_MEDIA_TYPE) = range(3)
 
 (SOURCE_DEVICE,
  SINK_DEVICE,
- UNKNOWN_DIRECTION_DEVICE) = range(3)
+ UNKNOWN_DEVICE_DIRECTION) = range(3)
 
 # A device can be categorized as follows:
 # Media type handled:
@@ -44,6 +51,16 @@ from objectfactory import SourceFactory
 # * source : produces data
 # * sink : consumes data
 #
+
+def get_probe():
+    """
+    Returns the default DeviceProbe for the current system.
+
+    If no suitable DeviceProbe implementation is available, returns None.
+    """
+    if HAVE_DBUS:
+        return HalDeviceProbe()
+    return None
 
 class DeviceProbe(object):
     """
@@ -63,11 +80,24 @@ class DeviceProbe(object):
         """
         raise NotImplementedError
 
+    def getAudioSourceDevices(self):
+        return self.getSourceDevices(media_type=AUDIO_DEVICE)
+
+    def getVideoSourceDevices(self):
+        return self.getSourceDevices(media_type=VIDEO_DEVICE)
+
     def getSinkDevices(self, media_type):
         """ Returns a list of available SinkDeviceFactory for
         the given mediatype
         """
         raise NotImplementedError
+
+    def getAudioSinkDevices(self):
+        return self.getSinkDevices(media_type=AUDIO_DEVICE)
+
+    def getVideoSinkDevices(self):
+        return self.getSinkDevices(media_type=VIDEO_DEVICE)
+
 
 class HalDeviceProbe(DeviceProbe):
     """
@@ -76,17 +106,95 @@ class HalDeviceProbe(DeviceProbe):
 
     def __init__(self):
         DeviceProbe.__init__(self)
-        # install dbus listener
-        # FIXME: Finish implementing
+        # UDI : DeviceFactory
+        self.__sources = {}
+        self.__sinks = {}
+
+        self.bus = dbus.SystemBus()
+        self.managerobj = self.bus.get_object('org.freedesktop.Hal',
+                                              '/org/freedesktop/Hal/Manager')
+        self.manager = dbus.Interface(self.managerobj,
+                                      'org.freedesktop.Hal.Manager')
+
+        # we want to be warned when devices are added and removed
+        self.manager.connect_to_signal("DeviceAdded",
+                                       self.__deviceAddedCb)
+        self.manager.connect_to_signal("DeviceRemoved",
+                                       self.__deviceRemovedCb)
+
+        # Find v4l ...
+        for dev in self.manager.FindDeviceByCapability("video4linux"):
+            self.__processUDI(dev)
+        # ... and alsa devices
+        for dev in self.manager.FindDeviceByCapability("alsa"):
+            self.__processUDI(dev)
+
+
+    def getSourceDevices(self, media_type):
+        return self.__getDevs(media_type, self.__sources)
+
+    def getSinkDevices(self, media_type):
+        return self.__getDevs(media_type, self.__sinks)
+
+    # PRIVATE
+
+    def __getDevs(self, media_type, sr):
+        if media_type == AUDIO_DEVICE:
+            return [sr[x] for x in sr.keys() if sr[x].is_audio]
+        elif media_type == VIDEO_DEVICE:
+            return [sr[x] for x in sr.keys() if sr[x].is_video]
+
+    def __processUDI(self, device_udi):
+        if device_udi in self.__sources.keys() or device_udi in self.__sinks.keys():
+            # we already have this device
+            return
+
+        # Get the object
+        # FIXME : Notify !
+        dev = self.bus.get_object("org.freedesktop.Hal",
+                                        device_udi)
+        devobject = dbus.Interface(dev, 'org.freedesktop.Hal.Device')
+        if devobject.QueryCapability("video4linux"):
+            location = devobject.GetProperty("video4linux.device")
+            self.__sources[dev] = V4LSourceDeviceFactory(device=location)
+        elif devobject.QueryCapability("alsa"):
+            alsatype = devobject.GetProperty("alsa.type")
+            if alsatype in ["capture", "playback"]:
+                card = devobject.GetProperty("alsa.card")
+                device = devobject.GetProperty("alsa.device")
+                info = devobject.GetProperty("alsa.card_id")
+                if alsatype == "capture":
+                    self.__sources[dev] = AlsaSourceDeviceFactory(card=card,
+                                                                  device=device,
+                                                                  displayname=info)
+                elif alsatype == "playback":
+                    self.__sinks[dev] = AlsaSinkDeviceFactory(card=card,
+                                                              device=device,
+                                                              displayname=info)
+
+    def __deviceAddedCb(self, device_udi, *args):
+        self.__processUDI(device_udi)
+
+    def __deviceRemovedCb(self, device_udi, *args):
+        # FIXME : Notify !
+        if self.__sources.has_key(device_udi):
+            del self.__sources[device_udi]
+        elif self.__sinkss.has_key(device_udi):
+            del self.__sinkss[device_udi]
+
+
 
 class SourceDeviceFactory(SourceFactory):
     pass
 
+class SinkDeviceFactory(ObjectFactory):
+    pass
+
 class AlsaSourceDeviceFactory(SourceDeviceFactory):
 
-    def __init__(self, card, device):
-        SourceDeviceFactory.__init__(self)
-        self.setAudio(True)
+    def __init__(self, card, device, *args, **kwargs):
+        SourceDeviceFactory.__init__(self, *args, **kwargs)
+        self.is_audio = True
         self._card = card
         self._device = device
 
@@ -95,26 +203,41 @@ class AlsaSourceDeviceFactory(SourceDeviceFactory):
         alsa.set_property("device", "hw:%d,%d" % (self._card, self._device))
         return alsa
 
+    def __repr__(self):
+        return "<%s: %s [hw:%s,%s]>" % (self.__class__.__name__,
+                                        self._displayname or self._name,
+                                        self._card, self._device)
+
+class AlsaSinkDeviceFactory(SinkDeviceFactory):
+    def __init__(self, card, device, *args, **kwargs):
+        SinkDeviceFactory.__init__(self, *args, **kwargs)
+        self.is_audio = True
+        self._card = card
+        self._device = device
+
+    def makeAudioBin(self):
+        alsa = gst.element_factory_make("alsasink")
+        alsa.set_property("device", "hw:%d,%d" % (self._card, self._device))
+        return alsa
+
+    def __repr__(self):
+        return "<%s: %s [hw:%s,%s]>" % (self.__class__.__name__,
+                                        self._displayname or self._name,
+                                        self._card, self._device)
+
+
+
 class V4LSourceDeviceFactory(SourceDeviceFactory):
 
-    def __init__(self, device):
-        SourceDeviceFactory.__init__(self)
-        self.setAudio(True)
+    def __init__(self, device, *args, **kwargs):
+        SourceDeviceFactory.__init__(self, *args, **kwargs)
+        self.is_video = True
         self._device = device
 
     def makeVideoBin(self):
+        # FIXME : we need to do some probbing to figure out if we should use
+        # v4l or v4l2
         v4l = gst.element_factory_make("v4lsrc")
         v4l.set_property("device", self._device)
         return v4l
 
-class V4L2SourceDeviceFactory(SourceDeviceFactory):
-
-    def __init__(self, device):
-        SourceDeviceFactory.__init__(self)
-        self.setAudio(True)
-        self._device = device
-
-    def makeVideoBin(self):
-        v4l2 = gst.element_factory_make("v4l2src")
-        v4l2.set_property("device", self._device)
-        return v4l2
