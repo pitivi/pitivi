@@ -528,7 +528,7 @@ class SmartCaptureBin(SmartBin):
 
     def __init__(self):
         gst.log("Creating new smartcapturebin")
-        self.videosrc = gst.element_factory_make("videotestsrc", "vsrc")
+        self.videosrc = gst.element_factory_make("v4l2src", "vsrc")
         
         SmartBin.__init__(self, "smartcapturebin", has_video=True, has_audio=False,
                           width=720, height=576)

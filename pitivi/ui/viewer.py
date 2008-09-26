@@ -512,5 +512,3 @@ class PlayPauseButton(gtk.Button):
             self.set_image(gtk.image_new_from_stock(gtk.STOCK_MEDIA_PAUSE, gtk.ICON_SIZE_BUTTON))
             self.playing = True
 
-
-
