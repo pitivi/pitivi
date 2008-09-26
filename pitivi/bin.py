@@ -58,12 +58,12 @@ class SmartBin(gst.Pipeline):
         # Until  basetransform issues are fixed, we use an identity instead
         # of a tee
         if self.has_video:
-            #self.vtee = gst.element_factory_make("tee", "vtee")
-            self.vtee = gst.element_factory_make("identity", "vtee")
+            self.vtee = gst.element_factory_make("tee", "vtee")
+            #self.vtee = gst.element_factory_make("identity", "vtee")
             self.add(self.vtee)
         if self.has_audio:
-            #self.atee = gst.element_factory_make("tee", "atee")
-            self.atee = gst.element_factory_make("identity", "atee")
+            self.atee = gst.element_factory_make("tee", "atee")
+            #self.atee = gst.element_factory_make("identity", "atee")
             self.add(self.atee)
         self._addSource()
         self._connectSource()
@@ -99,7 +99,8 @@ class SmartBin(gst.Pipeline):
             self.asinkthread = asinkthread
             self.add(self.asinkthread)
             # identity vs tee issue
-            self.atee.get_pad("src").link(self.asinkthread.get_pad("sink"))
+            #self.atee.get_pad("src").link(self.asinkthread.get_pad("sink"))
+	    self.atee.get_request_pad("src%d").link(self.asinkthread.get_pad("sink"))
         return True
 
     def setVideoSinkThread(self, vsinkthread):
@@ -120,9 +121,10 @@ class SmartBin(gst.Pipeline):
             self.add(self.vsinkthread)
             # identity vs tee issue
             if self.width and self.height:
-                self.vtee.get_pad("src").link(self.vsinkthread.get_pad("sink"))
+                #self.vtee.get_pad("src").link(self.vsinkthread.get_pad("sink"))
+		self.vtee.get_request_pad("src%d").link(self.vsinkthread.get_pad("sink"))
             else:
-                self.vtee.get_pad("src").link(self.vsinkthread.get_pad("sink"))
+                self.vtee.get_request_pad("src%d").link(self.vsinkthread.get_pad("sink"))
         return True
 
     def removeAudioSinkThread(self):
@@ -182,17 +184,6 @@ class SmartBin(gst.Pipeline):
             self.error("This bin is already in in recording mode !")
             return
 
-        # temporarily remove the audiosinkthread
-        self.debug("disconnecting audio sink thread")
-        self.tmpasink = self.asinkthread
-        if not self.removeAudioSinkThread():
-            return False
-
-        # FIXME : remove this once BaseTransform is fixed
-        # Also temporarily remove the videosinkthread
-        self.tmpvsink = self.vsinkthread
-        if not self.removeVideoSinkThread():
-            return False
 
         self.debug("creating and adding encoding thread")
         self.encthread = self._makeEncThread(uri, settings)
@@ -207,13 +198,13 @@ class SmartBin(gst.Pipeline):
 
         self.debug("linking vtee to ecnthread:vsink")
         try:
-            self.vtee.get_pad("src").link(self.encthread.get_pad("vsink"))
+            self.vtee.get_request_pad("src%d").link(self.encthread.get_pad("vsink"))
         except:
             return False
 
         self.debug("linking atee to encthread:asink")
         try:
-            self.atee.get_pad("src").link(self.encthread.get_pad("asink"))
+            self.atee.get_request_pad("src%d").link(self.encthread.get_pad("asink"))
         except:
             return False
 
@@ -546,116 +537,4 @@ class SmartCaptureBin(SmartBin):
 	self.audiosrc.get_pad("src").link(self.atee.get_pad("sink"))
 
         self.debug("finished connecting sources")
-
-    def record(self, uri, settings=None):
-        """
-        Render the SmartBin to the given uri.
-        Returns : True if the encoding process could be started properly, False otherwise."""
-
-	# Created a no of tee and queues and added to self bin
-	self.vrec_tee = gst.element_factory_make("tee","vrec_tee")
-	self.arec_tee = gst.element_factory_make("tee","arec_tee")
-	self.v_q1 = gst.element_factory_make("queue","vq1")
-	self.v_q2 = gst.element_factory_make("queue","vq2")
-	self.a_q1 = gst.element_factory_make("queue","aq1")
-	self.a_q2 = gst.element_factory_make("queue","aq2")
-
-	self.add(self.v_q1,self.v_q2,self.a_q1,self.a_q2)
-
-        self.debug("setting to READY")
-        if self.set_state(gst.STATE_READY) == gst.STATE_CHANGE_FAILURE:
-            self.warning("Couldn't switch to READY !")
-            return False
-
-        if self.recording:
-            self.error("This bin is already in in recording mode !")
-            return
-
-        # temporarily remove the audiosinkthread
-        self.debug("disconnecting audio sink thread")
-        self.tmpasink = self.asinkthread
-        if not self.removeAudioSinkThread():
-            return False
-
-        # FIXME : remove this once BaseTransform is fixed
-        # Also temporarily remove the videosinkthread
-        self.tmpvsink = self.vsinkthread
-        if not self.removeVideoSinkThread():
-            return False
-
-
-	self.setVideoSinkThread(self.vrec_tee)
-	self.setAudioSinkThread(self.arec_tee)
-
-
-	self.vrec_tee.get_request_pad("src%d").link(self.v_q1.get_pad("sink"))
-	self.vrec_tee.get_request_pad("src%d").link(self.v_q2.get_pad("sink"))
-	self.arec_tee.get_request_pad("src%d").link(self.a_q1.get_pad("sink"))
-	self.arec_tee.get_request_pad("src%d").link(self.a_q2.get_pad("sink"))
-
-	print self.v_q1
-
-        self.debug("creating and adding encoding thread")
-        self.encthread = self._makeEncThread(uri, settings)
-        if not self.encthread:
-            gst.warning("Couldn't create encoding thread")
-            return False
-        self.add(self.encthread)
-        self.debug("encoding thread added")
-
-        # set sync=false on the videosink
-        #self.getRealVideoSink().set_property("sync", False)
-
-        self.debug("linking vtee to encthread:vsink")
-        try:
-            self.v_q1.get_pad("src").link(self.encthread.get_pad("vsink"))
-	    self.v_q2.get_pad("src").link(self.tmpvsink.get_pad("sink"))
-
-        except:
-	    print " \n\n\n Problem lies here \n\n\n"
-            return False
-
-        self.debug("linking atee to encthread:asink")
-        try:
-            self.a_q1.get_pad("src").link(self.encthread.get_pad("asink"))
-	    self.a_q2.get_pad("src").link(self.tmpasink.get_pad("sink"))
-	
-        except:
-            return False
-
-        self.debug("going back to PLAYING")
-        changeret = self.set_state(gst.STATE_PLAYING)
-        self.debug("now in PLAYING, set_state() returned %r" % changeret)
-        if changeret == gst.STATE_CHANGE_FAILURE:
-            return False
-
-        self.recording = True
-        return True
-
-    def stopRecording(self):
-        """ stop the recording, removing the encoding thread """
-        if self.recording == False:
-            self.warning("This bin is not in recording mode !")
-            return False
-
-        self.set_state(gst.STATE_PAUSED)
-
-        if self.encthread:
-            apad = self.encthread.get_pad("vsink")
-            apad.get_peer().unlink(apad)
-            apad = self.encthread.get_pad("asink")
-            apad.get_peer().unlink(apad)
-            self.remove(self.encthread)
-            self.encthread.set_state(gst.STATE_NULL)
-            del self.encthread
-            self.encthread = None
-            self.setAudioSinkThread(self.tmpasink)
-            self.setVideoSinkThread(self.tmpvsink)
-            self.tmpasink = None
-            self.tmpvsink = None
-
-        self.getRealVideoSink().set_property("sync", True)
-
-        self.recording = False
-        return True
 

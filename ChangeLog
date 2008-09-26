@@ -1,6 +1,7 @@
 2008-06-20  Sarath Lakshman  <sarathlakshman@slynux.org>
 	* pitivi/: bin.py
 	Added record () for SmartCaptureBin; Couldn't implement tee successfully
+	Modified self.vtee from identity to tee
 
 2008-06-20  Sarath Lakshman  <sarathlakshman@slynux.org>
 	* pitivi/: ui/webcam_managerdialog.py
