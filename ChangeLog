@@ -1,3 +1,15 @@
+2008-08-12  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/bin.py:
+	There's currently an issue with audio sources by which they do not
+	properly reset when going to READY. We workaround this by forcing the
+	sources to NULL and then back to READY before capturing.
+	Name the various queues to make debugging easier.
+	Increase the size of the queues.
+	* pitivi/ui/webcam_managerdialog.py:
+	Name the various queues to make debugging easier.
+	Increase the size of the queues.
+
 2008-08-10  Sarath Lakshman  <sarathlakshman@slynux.org>
         * pitivi/: ui/netstream_manager.py
 	Rewrote with SmartBin

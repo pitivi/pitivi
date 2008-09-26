@@ -293,6 +293,7 @@ class SmartBin(gst.Pipeline):
         ##
 
         ainq = gst.element_factory_make("queue", "ainq")
+        ainq.props.max_size_time = 5 * gst.SECOND
         aident = gst.element_factory_make("identity", "aident")
         aident.props.single_segment = True
         aconv = gst.element_factory_make("audioconvert", "aconv")
@@ -523,21 +524,26 @@ class SmartCaptureBin(SmartBin):
 
     def __init__(self):
         gst.log("Creating new smartcapturebin")
-        self.videosrc = gst.element_factory_make("v4l2src", "vsrc")
-        self.audiosrc = gst.element_factory_make("alsasrc", "asrc")
+        self.videosrc = gst.element_factory_make("v4l2src", "webcam-vsrc")
+        self.audiosrc = gst.element_factory_make("alsasrc", "webcam-asrc")
 
         SmartBin.__init__(self, "smartcapturebin", has_video=True, has_audio=True,
                           width=640, height=480)
 
     def _addSource(self):
-	self.q1 = gst.element_factory_make("queue")
-	self.q2 = gst.element_factory_make("queue")
+	self.q1 = gst.element_factory_make("queue", "webcam-firstvqueue")
+        self.q1.props.max_size_time = 10 * gst.SECOND
+	self.q2 = gst.element_factory_make("queue", "webcam-firstaqueue")
+        self.q2.props.max_size_time = 30 * gst.SECOND
+        self.q2.props.max_size_buffers = 0
+        self.q2.props.max_size_bytes = 0
         self.add(self.videosrc,self.audiosrc,self.q1,self.q2)
+
 
     def _connectSource(self):
         self.debug("connecting sources")
         #vcaps = gst.caps_from_string("video/x-raw-yuv,width=320,height=240,framerate=25.0")
-	
+
 	gst.element_link_many(self.videosrc,self.q1,self.vtee)
  	gst.element_link_many(self.audiosrc,self.q2,self.atee)
 
@@ -545,6 +551,7 @@ class SmartCaptureBin(SmartBin):
 	#self.audiosrc.get_pad("src").link(self.atee.get_pad("sink"))
 
         self.debug("finished connecting sources")
+
     def record(self, uri, settings=None):
         """
         Render the SmartBin to the given uri.
@@ -554,15 +561,31 @@ class SmartCaptureBin(SmartBin):
             self.warning("Couldn't switch to READY !")
             return False
 
+        # FIXME : This is maybe a temporary hack.
+        #
+        # EXPLANATION : The problem is that alsasrc (or any other audio source) will
+        # not reset the timestamps when going down to READY, but v4l2src (or any
+        # other element that resets itself in READY) will properly reset the
+        # timestamps.
+        # The resulting behaviour (without this fix) is that v4l2src will output
+        # buffers starting from 0 whereas alsasrc will output buffers starting from
+        # the last outputted buffer timestamp
+        self.debug("Setting sources to NULL again to reset their timestamps !")
+        self.videosrc.set_state(gst.STATE_NULL)
+        self.videosrc.set_state(gst.STATE_READY)
+
+        self.audiosrc.set_state(gst.STATE_NULL)
+        self.audiosrc.set_state(gst.STATE_READY)
+
         if self.recording:
             self.error("This bin is already in in recording mode !")
             return
 
         # temporarily remove the audiosinkthread
-        self.debug("disconnecting audio sink thread")
-        self.tmpasink = self.asinkthread
-        if not self.removeAudioSinkThread():
-            return False
+        #self.debug("disconnecting audio sink thread")
+        #self.tmpasink = self.asinkthread
+        #if not self.removeAudioSinkThread():
+        #    return False
 
         self.debug("creating and adding encoding thread")
         self.encthread = self._makeEncThread(uri, settings)
