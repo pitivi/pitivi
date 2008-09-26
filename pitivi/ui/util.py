@@ -464,13 +464,19 @@ class SmartGroup(goocanvas.Group):
         def compute(c, p):
             return (c.get_property('width') + p[0])
         widths = (compute(c, p) for c, p in self.children.items())
-        self.width = max(widths) if len(self.children) else float(0)
+        if len(self.children):
+            self.width = max(widths)
+        else:
+            self.width = float(0)
 
     def update_height(self, obj, prop):
         def compute(c, p):
             return (c.get_property('height') + p[1])
         heights = (compute(c, p) for c, p in self.children.items())
-        self.height = max(heights) if len(self.children) else float(0)
+        if len(self.children):
+            self.height = max(heights)
+        else:
+            self.height = float(0)
 
     def set_child_pos(self, child, pos_):
         set_pos(child, point_sum(pos(self), pos_))
