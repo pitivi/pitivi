@@ -596,13 +596,8 @@ class SmartCaptureBin(SmartBin):
 
     def _connectSource(self):
         self.debug("connecting sources")
-        #vcaps = gst.caps_from_string("video/x-raw-yuv,width=320,height=240,framerate=25.0")
 	gst.element_link_many(self.videosrc,self.q1,self.vtee)
  	gst.element_link_many(self.audiosrc,self.q2,self.atee)
-
-        #self.videosrc.get_pad("src").link(self.vtee.get_pad("sink"))
-	#self.audiosrc.get_pad("src").link(self.atee.get_pad("sink"))
-
         self.debug("finished connecting sources")
 
 
@@ -631,16 +626,10 @@ class SmartCaptureBin(SmartBin):
 
     def _connectSource(self):
         self.debug("connecting sources")
-        #vcaps = gst.caps_from_string("video/x-raw-yuv,width=320,height=240,framerate=25.0")
 	gst.element_link_many(self.videosrc,self.q1,self.vtee)
  	gst.element_link_many(self.audiosrc,self.q2,self.atee)
-
-        #self.videosrc.get_pad("src").link(self.vtee.get_pad("sink"))
-	#self.audiosrc.get_pad("src").link(self.atee.get_pad("sink"))
-
         self.debug("finished connecting sources")
 
-    '''
     # It makes the recording video lag
     def record(self, uri, settings=None):
 
@@ -663,7 +652,6 @@ class SmartCaptureBin(SmartBin):
 	CallbackThread(self.audiosrc.set_state,gst.STATE_READY).start()
 
 	SmartBin.record(self,uri, settings)
-        '''
 
 class Discover:
     """
@@ -671,7 +659,6 @@ class Discover:
     """
 
     def __init__(self,uri):
-
 	self.is_audio = False
 	self.is_video = True
 
@@ -687,9 +674,6 @@ class Discover:
 	self.dbin.connect("new-decoded-pad", self._new_decoded_pad_cb)
 
 	self.pipeline.set_state(gst.STATE_PLAYING)
-	
-	time.sleep(0.1)
-	
 
     def info(self):
 	CallbackThread(self.kill).start()
@@ -703,9 +687,6 @@ class Discover:
 
 	elif "video" in pad.get_caps().to_string():
 		self.is_video = True
-    def kill(self):
-	time.sleep(1)
-	del self
 
 
 class SmartStreamBin(SmartBin):
@@ -715,22 +696,20 @@ class SmartStreamBin(SmartBin):
 
     def __init__(self,uri):
         gst.log("Creating new smartcapturebin")
-	
-	
 	(self.is_video,self.is_audio) = (True,True)
-	
-
-	self.urisrc = gst.element_make_from_uri(gst.URI_SRC,uri)
-	self.decodebin = gst.element_factory_make("decodebin","decode-smartbin")
-	self.videoq = gst.element_factory_make("queue","video-queue")
-	self.audioq = gst.element_factory_make("queue","audio-queue")
-
-        SmartBin.__init__(self, "smartcapturebin", has_video=self.is_video, has_audio=self.is_audio,
-
+        self.uri = uri
+        SmartBin.__init__(self, "smartcapturebin", has_video=self.is_video,
+                          has_audio=self.is_audio,
                           width=640, height=480)
 
 
     def _addSource(self):
+	self.urisrc = gst.element_make_from_uri(gst.URI_SRC,
+                                                self.uri)
+	self.decodebin = gst.element_factory_make("decodebin","decode-smartbin")
+	self.videoq = gst.element_factory_make("queue","video-queue")
+	self.audioq = gst.element_factory_make("queue","audio-queue")
+
 	self.add(self.urisrc,self.decodebin,self.videoq,self.audioq)
 
     def _connectSource(self):
@@ -742,11 +721,14 @@ class SmartStreamBin(SmartBin):
 		gst.element_link_many(self.audioq,self.atee)
 
 
-	self.decodebin.connect("new-decoded-pad",self.on_new_decoded_pad)
+	self.decodebin.connect("new-decoded-pad",
+                               self.on_new_decoded_pad)
 
         self.debug("finished connecting sources")
 
     # DecodeBin callback
+    # FIXME : What guarantees do you have that it will have both audio
+    # and video ????
     def on_new_decoded_pad(self, element, pad, last):
         caps = pad.get_caps()
         name = caps[0].get_name()
