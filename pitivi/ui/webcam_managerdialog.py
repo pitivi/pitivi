@@ -31,6 +31,7 @@ from gettext import gettext as _
 from pitivi.settings import ExportSettings
 from sourcefactories import SourceFactoriesWidget
 from pitivi.bin import SmartCaptureBin,SinkBin
+from pitivi.threads import CallbackThread
 from pitivi.playground import PlayGround
 
 
@@ -48,7 +49,7 @@ class WebcamManagerDialog(object):
 		self.close_btn = self.cam_ui.get_widget("close_btn")
 
 		self.close_btn.connect("clicked",self.close)
-		self.record_btn.connect("clicked", self.do_recording)
+		self.record_btn.connect("clicked", self.threaded_recording)
 		self.cam_window.connect("destroy",self.close)
 		
 		self.record_btn = self.record_btn.get_children()[0]
@@ -64,6 +65,11 @@ class WebcamManagerDialog(object):
 
 
 		self.player.set_state(gst.STATE_PLAYING)
+
+	# Perform record in a seperate thread
+	def threaded_recording(self,w):
+		print "test"
+		CallbackThread(self.do_recording,w).start()
 
 
 	# Record button action callback
@@ -82,8 +88,9 @@ class WebcamManagerDialog(object):
 			gst.debug("recording stopped")
 			self.player.stopRecording()
 			self.sourcefactories.sourcelist.addFiles([self.filepath])
+			self.player.set_state(gst.STATE_PLAYING)
 			self.record_btn.set_label("Start Recording")
-
+		
 
 	# For Setting up audio,video sinks
 	def setSinks(self):
@@ -93,7 +100,6 @@ class WebcamManagerDialog(object):
 		bus.add_signal_watch()
 		bus.enable_sync_message_emission()
 		bus.connect('sync-message::element', self.on_sync_message)
-
 
 	# Close the Webcamdialog
 	def close(self,w):
