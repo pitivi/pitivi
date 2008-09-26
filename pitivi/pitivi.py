@@ -118,7 +118,7 @@ class Pitivi(gobject.GObject):
         # get settings
         self.settings = GlobalSettings()
         self.threads = ThreadMaster()
-        #self.screencast = False
+	#self.screencast = False
 
         self.plugin_manager = PluginManager(
             self.settings.get_local_plugin_path(),

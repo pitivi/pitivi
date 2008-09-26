@@ -67,13 +67,13 @@ class PluginManagerDialog(object):
     def _initialize_plugin_tree(self, tree):
         """ Perform treeview initialization """
 
-        self.model = gtk.ListStore(     gobject.TYPE_BOOLEAN, 
+        self.model = gtk.ListStore(	gobject.TYPE_BOOLEAN, 
                                     gobject.TYPE_STRING,
                                     gobject.TYPE_STRING,
                                     object)
 
         # init tree view
-        tree.set_model(self.model)      
+        tree.set_model(self.model)	
         tree.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
 
         # Enable Drag&Drop
