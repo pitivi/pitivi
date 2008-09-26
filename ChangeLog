@@ -1,4 +1,8 @@
 2008-06-20  Sarath Lakshman  <sarathlakshman@slynux.org>
+	* pitivi/: bin.py
+	Added record () for SmartCaptureBin; Couldn't implement tee successfully
+
+2008-06-20  Sarath Lakshman  <sarathlakshman@slynux.org>
 	* pitivi/: ui/webcam_managerdialog.py
 	playing pipeline through draw_window success. Trying to use record() for SmartBin
 

@@ -32,10 +32,10 @@ import gst
 import tempfile
 from gettext import gettext as _
 import plumber
+from pitivi.settings import ExportSettings
 from sourcefactories import SourceFactoriesWidget
 from pitivi.bin import SmartCaptureBin
 from pitivi.playground import PlayGround
-
 
 
 
@@ -101,12 +101,9 @@ class WebcamManagerDialog(object):
 
 
 	def do_recording(self, w):
-		global timeElapsed
-		
-
-
+	
 		if self.record_btn.get_label() == "Start Recording":
-			self.player.record("/home/slynux/cool.ogg")
+			self.player.record("file:///home/slynux/cool.ogg",ExportSettings())
 			self.record_btn.set_label("Stop Recording")
 			self.player.set_state(gst.STATE_PLAYING)
 
@@ -114,7 +111,7 @@ class WebcamManagerDialog(object):
 
 		else:
 			self.player.stopRecording()
-			self.sourcefactories.sourcelist.addFiles(["/home/slynux/cool.ogg"])
+			self.sourcefactories.sourcelist.addFiles(["file:///home/slynux/cool.ogg"])
 
 
 			self.record_btn.set_label("Start Recording")
