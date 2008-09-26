@@ -525,16 +525,22 @@ class SmartCaptureBin(SmartBin):
         self.audiosrc = gst.element_factory_make("alsasrc", "asrc")
 
         SmartBin.__init__(self, "smartcapturebin", has_video=True, has_audio=True,
-                          width=720, height=576)
+                          width=640, height=480)
 
     def _addSource(self):
-        self.add(self.videosrc,self.audiosrc)
+	self.q1 = gst.element_factory_make("queue")
+	self.q2 = gst.element_factory_make("queue")
+        self.add(self.videosrc,self.audiosrc,self.q1,self.q2)
 
     def _connectSource(self):
         self.debug("connecting sources")
         #vcaps = gst.caps_from_string("video/x-raw-yuv,width=320,height=240,framerate=25.0")
-        self.videosrc.get_pad("src").link(self.vtee.get_pad("sink"))
-	self.audiosrc.get_pad("src").link(self.atee.get_pad("sink"))
+	
+	gst.element_link_many(self.videosrc,self.q1,self.vtee)
+ 	gst.element_link_many(self.audiosrc,self.q2,self.atee)
+
+        #self.videosrc.get_pad("src").link(self.vtee.get_pad("sink"))
+	#self.audiosrc.get_pad("src").link(self.atee.get_pad("sink"))
 
         self.debug("finished connecting sources")
     def record(self, uri, settings=None):

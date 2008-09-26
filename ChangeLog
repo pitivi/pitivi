@@ -1,17 +1,21 @@
-2008-06-20  Sarath Lakshman  <sarathlakshman@slynux.org>
+2008-07-30  Sarath Lakshman  <sarathlakshman@slynux.org>
+	* pitivi/: ui/screencast_manager.glade, screencast_managerdialog.py
+	Added basic istanbul integration [Screencast Capture] using dbus interface.
+
+2008-07-20  Sarath Lakshman  <sarathlakshman@slynux.org>
 	* pitivi/: bin.py
 	Added record () for SmartCaptureBin; Couldn't implement tee successfully
 	Modified self.vtee from identity to tee
 
-2008-06-20  Sarath Lakshman  <sarathlakshman@slynux.org>
+2008-07-20  Sarath Lakshman  <sarathlakshman@slynux.org>
 	* pitivi/: ui/webcam_managerdialog.py
 	playing pipeline through draw_window success. Trying to use record() for SmartBin
 
-2008-06-20  Sarath Lakshman  <sarathlakshman@slynux.org>
+2008-07-20  Sarath Lakshman  <sarathlakshman@slynux.org>
 	* pitivi/: ui/webcam_managerdialog.py
 	Attempt to rewrite webcam_managerdialog using PlayGround and SmartCaptureBin (Problem: cannot sync video to the drawing widget)
 
-2008-06-18  Sarath Lakshman  <sarathlakshman@slynux.org>
+2008-07-18  Sarath Lakshman  <sarathlakshman@slynux.org>
 	* pitivi/: ui/webcam_managerdialog.py, bin.py
 	Added SmartCaptureBin and test degbug version of webcam_managerdialog (for debuging)
 
@@ -21,7 +25,7 @@
 	Don't update time/duration if currently playing SmartBin doesn't have
 	an associated objectfactory.
 
-2008-06-15  Sarath Lakshman  <sarathlakshman@slynux.org>
+2008-07-15  Sarath Lakshman  <sarathlakshman@slynux.org>
 	* pitivi/ui/: netstream_managerdialog.py, cam_capture.glade,
 	  net_capture.glade, webcam_managerdialog.py,
           netstream_managerdialog.py, cam_capture.glade, 
