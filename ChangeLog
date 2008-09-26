@@ -1,3 +1,9 @@
+2008-07-18  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/viewer.py:
+	Don't update time/duration if currently playing SmartBin doesn't have
+	an associated objectfactory.
+
 2008-06-15  Sarath Lakshman  <sarathlakshman@slynux.org>
 	* pitivi/ui/: netstream_managerdialog.py, cam_capture.glade,
 	  net_capture.glade, webcam_managerdialog.py,
