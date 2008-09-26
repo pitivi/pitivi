@@ -27,6 +27,8 @@ import gobject
 import gtk
 import gst
 import check
+import instance
+import device
 from ui import mainwindow
 from pitivigstutils import patch_gst_python
 from playground import PlayGround
@@ -36,7 +38,6 @@ from configure import APPNAME
 from settings import GlobalSettings
 from threads import ThreadMaster
 from pluginmanager import PluginManager
-import instance
 
 from gettext import gettext as _
 
@@ -127,6 +128,8 @@ class Pitivi(gobject.GObject):
         self.playground = PlayGround()
         self.current = Project(_("New Project"))
         self.effects = Magician()
+
+        self.deviceprobe = device.get_probe()
 
         if self._use_ui:
             self.uimanager = gtk.UIManager()
