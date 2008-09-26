@@ -52,18 +52,18 @@ class WebcamManagerDialog(object):
 		self.record_btn = self.cam_ui.get_widget("record_btn")
 		self.close_btn = self.cam_ui.get_widget("close_btn")
 
-		#self.close_btn.connect("clicked",self.close)
-		#self.record_btn.connect("clicked", self.do_recording)
-		#self.cam_window.connect("destroy",self.close)
+		self.close_btn.connect("clicked",self.close)
+		self.record_btn.connect("clicked", self.do_recording)
+		self.cam_window.connect("destroy",self.close)
 		
 		self.record_btn = self.record_btn.get_children()[0]
 		self.record_btn = self.record_btn.get_children()[0].get_children()[1]
 		self.record_btn.set_label("Start Recording")
 	
+		self.sourcefactories = SourceFactoriesWidget()
 
+		self.player = SmartCaptureBin()		
 
-		self.playground = PlayGround()
-		bin = SmartCaptureBin()		
 
 		self.videosink = plumber.get_video_sink()
 		vsinkthread = gst.Bin('vsinkthread')
@@ -77,17 +77,54 @@ class WebcamManagerDialog(object):
 		vscale.link(vqueue)
 		vsinkthread.videosink = self.videosink
 		vsinkthread.add_pad(gst.GhostPad("sink", cspace.get_pad('sink')))
+		self.player.setVideoSinkThread(vsinkthread)
 
-		self.playground.setVideoSinkThread(vsinkthread)
+        	gst.debug("Creating audio sink")
+        	self.audiosink = plumber.get_audio_sink()
+        	asinkthread = gst.Bin('asinkthread')
+        	aqueue = gst.element_factory_make('queue')
+        	aconv = gst.element_factory_make('audioconvert')
+        	asinkthread.add(self.audiosink, aqueue, aconv)
+        	aconv.link(aqueue)
+        	aqueue.link(self.audiosink)
+        	asinkthread.audiosink = self.audiosink
+        	asinkthread.add_pad(gst.GhostPad("sink", aconv.get_pad('sink')))
+		self.player.setAudioSinkThread(asinkthread)
+	
+		bus = self.player.get_bus()
+		bus.add_signal_watch()
+		bus.enable_sync_message_emission()
+		bus.connect('sync-message::element', self.on_sync_message)
+
+		self.player.set_state(gst.STATE_PLAYING)
 
 
-		self.playground.connect('element-message', self.on_sync_message)
+
+	def do_recording(self, w):
+		global timeElapsed
+		
+
+
+		if self.record_btn.get_label() == "Start Recording":
+			self.player.record("/home/slynux/cool.ogg")
+			self.record_btn.set_label("Stop Recording")
+			self.player.set_state(gst.STATE_PLAYING)
 
 
 
-		self.playground._playTemporaryBin(bin)
-        			
-        
+		else:
+			self.player.stopRecording()
+			self.sourcefactories.sourcelist.addFiles(["/home/slynux/cool.ogg"])
+
+
+			self.record_btn.set_label("Start Recording")
+
+
+	def close(self,w):
+		self.cam_window.destroy()
+		self.player.set_state(gst.STATE_NULL)
+		
+
 	def on_sync_message(self, bus, message):
 		if message.structure is None:
 			return

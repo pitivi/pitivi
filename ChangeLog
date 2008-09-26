@@ -1,5 +1,9 @@
 2008-06-20  Sarath Lakshman  <sarathlakshman@slynux.org>
 	* pitivi/: ui/webcam_managerdialog.py
+	playing pipeline through draw_window success. Trying to use record() for SmartBin
+
+2008-06-20  Sarath Lakshman  <sarathlakshman@slynux.org>
+	* pitivi/: ui/webcam_managerdialog.py
 	Attempt to rewrite webcam_managerdialog using PlayGround and SmartCaptureBin (Problem: cannot sync video to the drawing widget)
 
 2008-06-18  Sarath Lakshman  <sarathlakshman@slynux.org>

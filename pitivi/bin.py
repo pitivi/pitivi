@@ -528,17 +528,20 @@ class SmartCaptureBin(SmartBin):
 
     def __init__(self):
         gst.log("Creating new smartcapturebin")
-        self.videosrc = gst.element_factory_make("v4l2src", "vsrc")
-        
-        SmartBin.__init__(self, "smartcapturebin", has_video=True, has_audio=False,
+        self.videosrc = gst.element_factory_make("videotestsrc", "vsrc")
+        self.audiosrc = gst.element_factory_make("audiotestsrc", "asrc")
+
+        SmartBin.__init__(self, "smartcapturebin", has_video=True, has_audio=True,
                           width=720, height=576)
 
     def _addSource(self):
-        self.add(self.videosrc)
+        self.add(self.videosrc,self.audiosrc)
 
     def _connectSource(self):
         self.debug("connecting sources")
         #vcaps = gst.caps_from_string("video/x-raw-yuv,width=320,height=240,framerate=25.0")
         self.videosrc.get_pad("src").link(self.vtee.get_pad("sink"))
+	self.audiosrc.get_pad("src").link(self.atee.get_pad("sink"))
+
         self.debug("finished connecting sources")
 
