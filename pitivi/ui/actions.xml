@@ -9,6 +9,8 @@
       <separator />
       <menuitem action="ImportSources" />
       <menuitem action="ImportSourcesFolder" />
+      <menuitem action="ImportfromCam" />
+      <menuitem action="NetstreamCapture" />
       <separator />
       <menuitem action="RenderProject" />
       <separator />

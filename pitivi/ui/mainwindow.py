@@ -48,9 +48,10 @@ from viewer import PitiviViewer
 from pitivi.bin import SmartTimelineBin
 from projectsettings import ProjectSettingsDialog
 from pluginmanagerdialog import PluginManagerDialog
+from webcam_managerdialog import WebcamManagerDialog
+from netstream_managerdialog import NetstreamManagerDialog
 from pitivi.configure import pitivi_version, APPNAME
 from glade import GladeWindow
-
 from exportsettingswidget import ExportSettingsDialog
 
 if have_gconf:
@@ -167,6 +168,12 @@ class PitiviMainWindow(gtk.Window):
             ("PluginManager", gtk.STOCK_PREFERENCES ,
              _("_Plugins..."),
              None, _("Manage plugins"), self._pluginManagerCb),
+	    ("ImportfromCam", gtk.STOCK_ADD ,
+             _("_Import from Webcam.."),
+             None, _("Import Camera stream"), self._ImportWebcam),   
+	    ("NetstreamCapture", gtk.STOCK_ADD ,
+             _("_Capture Network Stream.."),
+             None, _("Capture Network Stream"), self._ImportNetstream), 
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
             ("About", gtk.STOCK_ABOUT, None, None,
              _("Information about %s") % APPNAME, self._aboutCb),
@@ -198,7 +205,7 @@ class PitiviMainWindow(gtk.Window):
             elif action.get_name() in [
                 "ProjectSettings", "Quit", "File", "Edit", "Help",
                 "About", "View", "FullScreen", "ImportSources",
-                "ImportSourcesFolder", "AdvancedView", "PluginManager"]:
+                "ImportSourcesFolder", "AdvancedView", "PluginManager","ImportfromCam","NetstreamCapture"]:
                 action.set_sensitive(True)
             elif action.get_name() in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
@@ -388,7 +395,8 @@ class PitiviMainWindow(gtk.Window):
                    "Johan Dahlin <jdahlin@async.com.br> (UI)",
                    "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)",
                    "Luca Della Santina <dellasantina@farm.unipi.it>",
-                   "Thijs Vermeir <thijsvermeir@gmail.com>"]
+                   "Thijs Vermeir <thijsvermeir@gmail.com>",
+		   "Sarath Lakshman <sarathlakshman@slynux.org>"]
         abt.set_authors(authors)
         abt.set_license(_("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details"))
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")
@@ -404,7 +412,20 @@ class PitiviMainWindow(gtk.Window):
     def _pluginManagerCb(self, unused_action):
         PluginManagerDialog(instance.PiTiVi.plugin_manager)
 
-## PiTiVi main object callbacks
+
+
+    # Import from Webcam callback
+    def _ImportWebcam(self,unused_action):
+	WebcamManagerDialog()
+	
+
+    # Capture network stream callback
+    def _ImportNetstream(self,unused_action):
+	NetstreamManagerDialog()
+
+	
+
+    ## PiTiVi main object callbacks
 
     def _newProjectLoadedCb(self, pitivi, project):
         gst.log("A NEW project is loaded, update the UI!")

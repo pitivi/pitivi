@@ -1,3 +1,9 @@
+2008-06-15  Sarath Lakshman  <sarathlakshman@slynux.org>
+	* pitivi/ui/: netstream_managerdialog.py, cam_capture.glade,
+	  net_capture.glade, webcam_managerdialog.py,
+          netstream_managerdialog.py, cam_capture.glade, 
+          net_capture.glade
+
 2008-09-17  Edward Hervey  <edward.hervey@collabora.co.uk>
 
 	* pitivi/ui/mainwindow.py:
