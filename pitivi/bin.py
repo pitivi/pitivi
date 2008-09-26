@@ -533,10 +533,12 @@ class SinkBin:
 	vqueue = gst.element_factory_make('queue')
 	timeoverlay = gst.element_factory_make('timeoverlay')
 	cspace = gst.element_factory_make('ffmpegcolorspace')
+	cspace2 = gst.element_factory_make('ffmpegcolorspace')
 	vscale = gst.element_factory_make('videoscale')
 	vscale.props.method = 1
-	self.vsinkthread.add(self.videosink,timeoverlay, vqueue, vscale, cspace)
-	vqueue.link(timeoverlay)
+	self.vsinkthread.add(self.videosink,timeoverlay, vqueue, vscale, cspace,cspace2)
+	vqueue.link(cspace2)
+	cspace2.link(timeoverlay)
 	timeoverlay.link(self.videosink)
 	timeoverlay.set_property("halign","right")
 	timeoverlay.set_property("valign","bottom")
@@ -616,7 +618,7 @@ class SmartCaptureBin(SmartBin):
         self.audiosrc = gst.element_factory_make("alsasrc", "webcam-asrc")
 
         SmartBin.__init__(self, "smartcapturebin", has_video=True, has_audio=True,
-                          width=640, height=480)
+                          width=640, height=490)
 
 
     def _addSource(self):
@@ -638,6 +640,31 @@ class SmartCaptureBin(SmartBin):
 	#self.audiosrc.get_pad("src").link(self.atee.get_pad("sink"))
 
         self.debug("finished connecting sources")
+
+    '''
+    # It makes the recording video lag
+    def record(self, uri, settings=None):
+
+        # FIXME : This is maybe a temporary hack.
+        #
+        # EXPLANATION : The problem is that alsasrc (or any other audio source) will
+        # not reset the timestamps when going down to READY, but v4l2src (or any
+        # other element that resets itself in READY) will properly reset the
+        # timestamps.
+        # The resulting behaviour (without this fix) is that v4l2src will output
+        # buffers starting from 0 whereas alsasrc will output buffers starting from
+        # the last outputted buffer timestamp
+
+	# Made threaded to resolve video/audio lag issue.
+
+        self.debug("Setting sources to NULL again to reset their timestamps !")
+	CallbackThread(self.videosrc.set_state,gst.STATE_NULL).start()
+	CallbackThread(self.videosrc.set_state,gst.STATE_READY).start()
+	CallbackThread(self.audiosrc.set_state,gst.STATE_NULL).start()
+	CallbackThread(self.audiosrc.set_state,gst.STATE_READY).start()
+
+	SmartBin.record(self,uri, settings)
+        '''
 
 class Discover:
     """

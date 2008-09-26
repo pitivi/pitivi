@@ -1,3 +1,9 @@
+2008-08-25  Sarath Lakshman  <sarathlakshman@slynux.org>
+
+        * pitivi/bin.py:
+		Wrote record() for SmartCaptureBin by setting Sources to NULL->READY # Commented since video lagging occurs
+		SinkBin class timeoverlay not linking to queue issue fixed.
+
 2008-08-23  Sarath Lakshman  <sarathlakshman@slynux.org>
 
         * pitivi/bin.py:
@@ -8,7 +14,7 @@
 2008-08-19  Sarath Lakshman  <sarathlakshman@slynux.org>
 
         * pitivi/bin.py:
-	        Added SinkBin, fixed naming for queues, increased queue size
+	        Added SinkBin, fixed naming for queues, increased queue size [partial revert of r1231]
 	* pitivi/ui/webcam_manager.py:
 		Implemented SinkBin, Added threads for recording
 

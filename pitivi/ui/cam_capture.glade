@@ -5,7 +5,7 @@
 
 <widget class="GtkDialog" id="cam_capture">
   <property name="width_request">530</property>
-  <property name="height_request">480</property>
+  <property name="height_request">500</property>
   <property name="visible">True</property>
   <property name="title" translatable="yes">Record from Webcam</property>
   <property name="type">GTK_WINDOW_TOPLEVEL</property>
