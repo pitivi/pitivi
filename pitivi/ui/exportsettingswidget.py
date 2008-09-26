@@ -225,8 +225,6 @@ class ExportSettingsWidget(GladeWidget):
         self.audiodepthcbox.set_sensitive(activate)
 
     def _muxerComboboxChangedCb(self, widget):
-        print len(self.validvencoders), self.vcodeccbox.get_active()
-        print len(self.validaencoders), self.acodeccbox.get_active()
         if self.validvencoders:
             vidx = self.vcodeccbox.get_active()
             if vidx < len(self.validvencoders):
@@ -243,7 +241,6 @@ class ExportSettingsWidget(GladeWidget):
                 prevaenc = None
         else:
             prevaenc = self.settings.aencoder
-        print prevvenc, prevaenc
         # find the valid audio/video codec with the given muxer
         muxer = self.muxers[widget.get_active()]
         self.validaencoders = encoders_muxer_compatible(self.settings.aencoders,
