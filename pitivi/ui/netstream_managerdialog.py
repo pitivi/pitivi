@@ -22,16 +22,9 @@
 import os
 import gtk
 import gtk.glade
-import pango
-import gobject
-import time
 import gst
 import tempfile
-from gettext import gettext as _
-from pitivi import instance
 from sourcefactories import SourceFactoriesWidget
-from pitivi.sourcelist import SourceList
-from pitivi.objectfactory import FileSourceFactory
 from pitivi.bin import SmartStreamBin, SinkBin
 from pitivi.settings import ExportSettings
 
@@ -58,18 +51,20 @@ class NetstreamManagerDialog(object):
         self.udp_radiobtn = self.objectpool_ui.get_widget("udp")
         self.rtsp_radiobtn = self.objectpool_ui.get_widget("rtsp")
 
-        self.http_radiobtn.connect("toggled",self.on_protocol_toggled,"http")
-        self.udp_radiobtn.connect("toggled",self.on_protocol_toggled,"udp")
-        self.rtsp_radiobtn.connect("toggled",self.on_protocol_toggled,"rtsp")
-        self.address.connect("changed",self.on_address_port_changed,"address")
-        self.port.connect("changed",self.on_address_port_changed,"port")
+        self.http_radiobtn.connect("toggled", self.on_protocol_toggled, "http")
+        self.udp_radiobtn.connect("toggled", self.on_protocol_toggled, "udp")
+        self.rtsp_radiobtn.connect("toggled", self.on_protocol_toggled, "rtsp")
+        self.address.connect("changed", self.on_address_port_changed, "address")
+        self.port.connect("changed", self.on_address_port_changed, "port")
 
 
-        self.close_btn.connect("clicked",self.close)
-        self.stream_window.connect("destroy",self.close)
+        self.close_btn.connect("clicked", self.close)
+        self.stream_window.connect("destroy", self.close)
 
 
-        dic = { "on_close_clicked" : self.close, "on_preview_btn_clicked":self.live_pipeline,"on_capture_btn_clicked":self.capture_pipeline}
+        dic = { "on_close_clicked" : self.close,
+                "on_preview_btn_clicked" : self.live_pipeline,
+                "on_capture_btn_clicked" : self.capture_pipeline }
 
         self.objectpool_ui.signal_autoconnect(dic)
 
@@ -81,11 +76,11 @@ class NetstreamManagerDialog(object):
 
 
     # For Setting up audio,video sinks
-    def setSinks(self,uri):
+    def setSinks(self, uri):
         gst.debug("SmartStreamBin player created")
-        self.player=SmartStreamBin(uri)
+        self.player = SmartStreamBin(uri)
         sink = SinkBin()
-        sink.connectSink(self.player,self.player.is_video,self.player.is_audio)
+        sink.connectSink(self.player, self.player.is_video, self.player.is_audio)
         self.player.set_state(gst.STATE_PLAYING)
 
 
@@ -96,7 +91,7 @@ class NetstreamManagerDialog(object):
 
 
     # Create live display pipeline
-    def live_pipeline(self,w=None):
+    def live_pipeline(self, w=None):
 
         if self.player:
             self.player.set_state(gst.STATE_NULL)
@@ -109,10 +104,11 @@ class NetstreamManagerDialog(object):
                 self.status.set_label("Invalid URI. Please verify.")
                 gst.debug("Invalid URI")
                 return 
-            if gst.uri_protocol_is_supported(gst.URI_SRC,uri.split('://')[0]):
+            if gst.uri_protocol_is_supported(gst.URI_SRC,
+                                             uri.split('://')[0]):
                 self.setSinks(uri)
                 self.player.set_state(gst.STATE_PLAYING)
-                self.status.push(self.status_id,"")
+                self.status.push(self.status_id, "")
             else:
                 self.status.set_label("Unsupported Protocol. Please verify the URI.")
                 gst.debug("Unsupported Protocol")
@@ -120,11 +116,11 @@ class NetstreamManagerDialog(object):
 
 
     # Stream capture pipeline
-    def capture_pipeline(self,w=None):
+    def capture_pipeline(self, w=None):
 
         uri = self.uri.get_text()
         if self.capture_btn.get_label() == "Capture":
-            if self.player is False and gst.uri_protocol_is_supported(gst.URI_SRC,uri.split('://')[0]) is False :
+            if self.player is False and gst.uri_protocol_is_supported(gst.URI_SRC, uri.split('://')[0]) is False :
                 self.status.set_label("Unsupported Protocol. Please verify the URI.")
                 return
             elif self.player is False:
@@ -134,7 +130,7 @@ class NetstreamManagerDialog(object):
 
             gst.debug("recording started")
             self.filepath = 'file://'+tempfile.mktemp()+'.ogg'
-            self.player.record(self.filepath,ExportSettings())
+            self.player.record(self.filepath, ExportSettings())
             self.capture_btn.set_label("Stop")
 
 
@@ -144,7 +140,7 @@ class NetstreamManagerDialog(object):
             self.sourcefactories.sourcelist.addFiles([self.filepath])
             self.capture_btn.set_label("Capture")
 
-    def on_message(self,bus,message):
+    def on_message(self, bus, message):
         t = message.type
         if t == gst.MESSAGE_EOS:
             if self.player:
@@ -152,32 +148,32 @@ class NetstreamManagerDialog(object):
             self.capture_btn.set_label("Capture")
 
         elif t == gst.MESSAGE_ERROR:
-            err,debug = message.parse_error()
-            print "Error: %s" %err, debug
+            err, debug = message.parse_error()
+            print "Error: %s" % err, debug
             if self.player:
                 self.player.set_state(gst.STATE_NULL)
             self.capture_btn.set_label("Capture")
 
 
-    def on_sync_message(self,bus,message):
+    def on_sync_message(self, bus, message):
         if message.structure is None :
             return
         message_name = message.structure.get_name()
         if message_name == 'prepare-xwindow-id':
             imagesink = message.src
-            imagesink.set_property('force-aspect-ratio',True)
+            imagesink.set_property('force-aspect-ratio', True)
             imagesink.set_xwindow_id(self.screen.window.xid)
 
     # radio buttons address set callback
-    def on_protocol_toggled(self,widget,data=None):
+    def on_protocol_toggled(self, widget, data=None):
         self.uri.set_text(data+"://"+self.uri.get_text().split('://')[1])
 
-    def on_address_port_changed(self,widget,data=None):
-        self.uri.set_text(self.uri.get_text().split('://')[0] + '://' + self.address.get_text() + ['',':'][self.port.get_text().isdigit()] + self.port.get_text())
+    def on_address_port_changed(self, widget, data=None):
+        self.uri.set_text(self.uri.get_text().split('://')[0] + '://' + self.address.get_text() + ['', ':'][self.port.get_text().isdigit()] + self.port.get_text())
 
 
 
-    def close(self,w):
+    def close(self, w):
         self.stream_window.destroy()
         if self.player:
             self.player.set_state(gst.STATE_NULL)

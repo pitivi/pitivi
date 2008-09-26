@@ -22,15 +22,12 @@
 import gtk
 import os
 import gtk.glade
-from pitivi import instance
 import gst
 import tempfile
-from gettext import gettext as _
 from pitivi.settings import ExportSettings
 from sourcefactories import SourceFactoriesWidget
-from pitivi.bin import SmartCaptureBin,SinkBin
+from pitivi.bin import SmartCaptureBin, SinkBin
 from pitivi.threads import CallbackThread
-from pitivi.playground import PlayGround
 
 
 class WebcamManagerDialog(object):
@@ -46,9 +43,9 @@ class WebcamManagerDialog(object):
         self.record_btn = self.cam_ui.get_widget("record_btn")
         self.close_btn = self.cam_ui.get_widget("close_btn")
 
-        self.close_btn.connect("clicked",self.close)
+        self.close_btn.connect("clicked", self.close)
         self.record_btn.connect("clicked", self.threaded_recording)
-        self.cam_window.connect("destroy",self.close)
+        self.cam_window.connect("destroy", self.close)
 
         self.record_btn = self.record_btn.get_children()[0]
         self.record_btn = self.record_btn.get_children()[0].get_children()[1]
@@ -60,13 +57,14 @@ class WebcamManagerDialog(object):
         self.player = SmartCaptureBin()
         self.setSinks()
 
+        self.filepath = None
 
-
+        # Not a good idea to do this at this point
         self.player.set_state(gst.STATE_PLAYING)
 
     # Perform record in a seperate thread
-    def threaded_recording(self,w):
-        CallbackThread(self.do_recording,w).start()
+    def threaded_recording(self, w):
+        CallbackThread(self.do_recording, w).start()
 
 
     # Record button action callback
@@ -74,7 +72,7 @@ class WebcamManagerDialog(object):
         if self.record_btn.get_label() == "Start Recording":
             gst.debug("recording started")
             self.filepath = 'file://'+tempfile.mktemp()+'.ogg'
-            self.player.record(self.filepath,ExportSettings())
+            self.player.record(self.filepath, ExportSettings())
             self.record_btn.set_label("Stop Recording")
             self.player.set_state(gst.STATE_PLAYING)
 
@@ -90,14 +88,14 @@ class WebcamManagerDialog(object):
     # For Setting up audio,video sinks
     def setSinks(self):
         sink = SinkBin()
-        sink.connectSink(self.player,True,True)
+        sink.connectSink(self.player, True, True)
         bus = self.player.get_bus()
         bus.add_signal_watch()
         bus.enable_sync_message_emission()
         bus.connect('sync-message::element', self.on_sync_message)
 
     # Close the Webcamdialog
-    def close(self,w):
+    def close(self, w):
         self.cam_window.destroy()
         self.player.set_state(gst.STATE_NULL)
 

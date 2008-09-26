@@ -24,15 +24,9 @@ import os
 import gtk.glade
 from pitivi import instance
 import gst
-import tempfile
-from gettext import gettext as _
-import plumber
-from pitivi.settings import ExportSettings
-from sourcefactories import SourceFactoriesWidget
 import dbus
 import dbus.service
 import dbus.glib
-import gobject
 import thread
 import time
 

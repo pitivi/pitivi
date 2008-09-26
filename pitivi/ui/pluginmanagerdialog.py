@@ -67,7 +67,7 @@ class PluginManagerDialog(object):
     def _initialize_plugin_tree(self, tree):
         """ Perform treeview initialization """
 
-        self.model = gtk.ListStore(gobject.TYPE_BOOLEAN, 
+        self.model = gtk.ListStore(gobject.TYPE_BOOLEAN,
                                     gobject.TYPE_STRING,
                                     gobject.TYPE_STRING,
                                     object)
@@ -77,7 +77,7 @@ class PluginManagerDialog(object):
         tree.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
 
         # Enable Drag&Drop
-        tree.enable_model_drag_dest([("text/uri-list", 0, 1)],\
+        tree.enable_model_drag_dest([("text/uri-list", 0, 1)], \
                                     gtk.gdk.ACTION_DEFAULT)
         tree.connect("drag-data-received", self.drag_data_received_cb)
 
@@ -252,7 +252,7 @@ class PluginManagerDialog(object):
 
         for plugin in self._get_selected_plugins():
             dialog = gtk.AboutDialog()
-            dialog.connect("response", lambda x,y: dialog.destroy())
+            dialog.connect("response", lambda x, y: dialog.destroy())
             dialog.set_name(plugin.name)
             dialog.set_version(plugin.version)
             dialog.set_authors(plugin.authors.split(","))

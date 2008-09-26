@@ -26,13 +26,8 @@ High-level Pipelines with plugable back-ends
 import gobject
 import gst
 from elements.smartscale import SmartVideoScale
-from objectfactory import FileSourceFactory
-from signalgroup import SignalGroup
 from ui import plumber
-import instance
-from sourcelist import SourceList
 from threads import CallbackThread
-import time
 
 class SmartBin(gst.Pipeline):
     """
@@ -93,7 +88,7 @@ class SmartBin(gst.Pipeline):
         Returns False if there was a problem.
         """
         self.debug("asinkthread : %r" % asinkthread)
-        res, state, pending = self.get_state(0)
+        state  = self.get_state(0)[1]
         if state == gst.STATE_PLAYING:
             self.warning("is in PAUSED or higher : %s" % state)
             return False
@@ -112,7 +107,7 @@ class SmartBin(gst.Pipeline):
         Returns False if there was a problem.
         """
         self.debug("vsinkthread : %r" % vsinkthread)
-        res , state , pending = self.get_state(0)
+        state = self.get_state(0)[1]
         if state == gst.STATE_PLAYING:
             self.warning("is in PAUSED or higher : %s" % state)
             return False
@@ -131,7 +126,7 @@ class SmartBin(gst.Pipeline):
         Returns False if there was a problem.
         """
         self.debug("asinkthread : %r" % self.asinkthread)
-        result, state, pending = self.get_state(0)
+        state = self.get_state(0)[1]
         if state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
             self.warning("is in PAUSED, not removing audiosink")
             return False
@@ -150,7 +145,7 @@ class SmartBin(gst.Pipeline):
         Returns False if there was a problem.
         """
         self.debug("vsinkthread : %r" % self.vsinkthread)
-        result, state, pending = self.get_state(0)
+        state = self.get_state(0)[1]
         if state in [gst.STATE_PAUSED, gst.STATE_PLAYING]:
             self.warning("is in PAUSED or higher : %s" % state)
             return False
@@ -532,13 +527,13 @@ class SinkBin:
         cspace = gst.element_factory_make('ffmpegcolorspace')
         vscale = gst.element_factory_make('videoscale')
         vscale.props.method = 1
-        self.vsinkthread.add(self.videosink,timeoverlay, vqueue, vscale, cspace)
+        self.vsinkthread.add(self.videosink, timeoverlay, vqueue, vscale, cspace)
         vqueue.link(timeoverlay)
         timeoverlay.link(self.videosink)
-        timeoverlay.set_property("halign","right")
-        timeoverlay.set_property("valign","bottom")
-        timeoverlay.set_property("deltax",65)
-        timeoverlay.set_property("deltay",20)
+        timeoverlay.set_property("halign", "right")
+        timeoverlay.set_property("valign", "bottom")
+        timeoverlay.set_property("deltax", 65)
+        timeoverlay.set_property("deltay", 20)
 
 
         cspace.link(vscale)
@@ -557,7 +552,7 @@ class SinkBin:
         self.asinkthread.audiosink = self.audiosink
         self.asinkthread.add_pad(gst.GhostPad("sink", aconv.get_pad('sink')))
 
-    def connectSink(self,player,is_video,is_audio):
+    def connectSink(self, player, is_video, is_audio):
         if is_video is True :
             player.setVideoSinkThread(self.vsinkthread)
         if is_audio is True :
@@ -590,12 +585,12 @@ class SmartCaptureBin(SmartBin):
         self.q2.props.max_size_time = 30 * gst.SECOND
         self.q2.props.max_size_buffers = 0
         self.q2.props.max_size_bytes = 0
-        self.add(self.videosrc,self.audiosrc,self.q1,self.q2)
+        self.add(self.videosrc, self.audiosrc, self.q1, self.q2)
 
     def _connectSource(self):
         self.debug("connecting sources")
-        gst.element_link_many(self.videosrc,self.q1,self.vtee)
-        gst.element_link_many(self.audiosrc,self.q2,self.atee)
+        gst.element_link_many(self.videosrc, self.q1, self.vtee)
+        gst.element_link_many(self.audiosrc, self.q2, self.atee)
         self.debug("finished connecting sources")
 
     def _asyncReset(self, uri, setting):
@@ -637,7 +632,7 @@ class Discover:
     A Pipeline which return audio/video info about the uri stream
     """
 
-    def __init__(self,uri):
+    def __init__(self, uri):
         self.is_audio = False
         self.is_video = True
 
@@ -656,7 +651,7 @@ class Discover:
 
     def info(self):
         CallbackThread(self.kill).start()
-        return (self.is_video,self.is_audio)
+        return (self.is_video, self.is_audio)
 
     def _new_decoded_pad_cb(self, dbin, pad, is_last):
 
@@ -672,9 +667,9 @@ class SmartStreamBin(SmartBin):
     SmartBin derivative for capturing streams.
     """
 
-    def __init__(self,uri):
+    def __init__(self, uri):
         gst.log("Creating new smartcapturebin")
-        (self.is_video,self.is_audio) = (True,True)
+        (self.is_video, self.is_audio) = (True, True)
         self.uri = uri
         SmartBin.__init__(self, "smartcapturebin", has_video=self.is_video,
                           has_audio=self.is_audio,
@@ -684,19 +679,19 @@ class SmartStreamBin(SmartBin):
     def _addSource(self):
         self.urisrc = gst.element_make_from_uri(gst.URI_SRC,
                                                 self.uri)
-        self.decodebin = gst.element_factory_make("decodebin","decode-smartbin")
-        self.videoq = gst.element_factory_make("queue","video-queue")
-        self.audioq = gst.element_factory_make("queue","audio-queue")
+        self.decodebin = gst.element_factory_make("decodebin", "decode-smartbin")
+        self.videoq = gst.element_factory_make("queue", "video-queue")
+        self.audioq = gst.element_factory_make("queue", "audio-queue")
 
-        self.add(self.urisrc,self.decodebin,self.videoq,self.audioq)
+        self.add(self.urisrc, self.decodebin, self.videoq, self.audioq)
 
     def _connectSource(self):
         self.debug("connecting sources")
-        gst.element_link_many(self.urisrc,self.decodebin)
+        gst.element_link_many(self.urisrc, self.decodebin)
         if self.is_video :
-            gst.element_link_many(self.videoq,self.vtee)
+            gst.element_link_many(self.videoq, self.vtee)
         if self.is_audio:
-            gst.element_link_many(self.audioq,self.atee)
+            gst.element_link_many(self.audioq, self.atee)
 
 
         self.decodebin.connect("new-decoded-pad",
