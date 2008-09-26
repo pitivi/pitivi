@@ -1,3 +1,8 @@
+2008-08-16  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/threads.py:
+	Added convenience CallbackThread class
+
 2008-08-12  Edward Hervey  <edward.hervey@collabora.co.uk>
 
 	* pitivi/bin.py:

@@ -66,6 +66,19 @@ class Thread(threading.Thread, gobject.GObject):
 
 gobject.type_register(Thread)
 
+class CallbackThread(Thread):
+
+    def __init__(self, callback, *args, **kwargs):
+        self.callback = callback
+        self.args = args
+        self.kwargs = kwargs
+        Thread.__init__(self)
+
+    def process(self):
+        self.callback(*self.args, **self.kwargs)
+
+gobject.type_register(CallbackThread)
+
 class ThreadMaster(gobject.GObject):
     """
     Controls all thread existing in pitivi
