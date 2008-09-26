@@ -71,10 +71,10 @@ class ObjectFactory(gobject.GObject, Serializable):
     # pending UID (int) => objects (list of BrotherObjects and extra field)
     __waiting_for_pending_objects__ = {}
 
-    def __init__(self, **unused_kw):
+    def __init__(self, name="", displayname="", **unused_kw):
         gobject.GObject.__init__(self)
-        self.name = ""
-        self.displayname = ""
+        self.name = name
+        self.displayname = displayname
         self.is_audio = False
         self.is_video = False
         self.is_effect = False
@@ -123,7 +123,8 @@ class ObjectFactory(gobject.GObject, Serializable):
         self.set_property("is-video", is_video)
 
     def __repr__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self._displayname or self._name)
+        return "<%s: %s>" % (self.__class__.__name__, self.displayname or self.name)
+
     def addMediaTags(self, tags=[]):
         """ Add the given gst.Tag or gst.TagList to the factory """
         gst.debug("tags:%s" % tags)

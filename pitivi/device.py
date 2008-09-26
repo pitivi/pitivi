@@ -156,7 +156,9 @@ class HalDeviceProbe(DeviceProbe):
         devobject = dbus.Interface(dev, 'org.freedesktop.Hal.Device')
         if devobject.QueryCapability("video4linux"):
             location = devobject.GetProperty("video4linux.device")
-            self.__sources[dev] = V4LSourceDeviceFactory(device=location)
+            info = devobject.GetProperty("info.product")
+            self.__sources[dev] = V4LSourceDeviceFactory(device=location,
+                                                         displayname=info)
         elif devobject.QueryCapability("alsa"):
             alsatype = devobject.GetProperty("alsa.type")
             if alsatype in ["capture", "playback"]:
@@ -205,7 +207,7 @@ class AlsaSourceDeviceFactory(SourceDeviceFactory):
 
     def __repr__(self):
         return "<%s: %s [hw:%s,%s]>" % (self.__class__.__name__,
-                                        self._displayname or self._name,
+                                        self.displayname or self.name,
                                         self._card, self._device)
 
 class AlsaSinkDeviceFactory(SinkDeviceFactory):
@@ -222,7 +224,7 @@ class AlsaSinkDeviceFactory(SinkDeviceFactory):
 
     def __repr__(self):
         return "<%s: %s [hw:%s,%s]>" % (self.__class__.__name__,
-                                        self._displayname or self._name,
+                                        self.displayname or self.name,
                                         self._card, self._device)
 
 
