@@ -1,3 +1,11 @@
+
+2008-08-28  Sarath Lakshman  <sarathlakshman@slynux.org>
+
+        * pitivi/bin.py:
+		Added some queues inside SinkBin.
+	* pitivi/ui/netstream_managerdialog.py:
+		Added Statusbar.
+
 2008-08-25  Sarath Lakshman  <sarathlakshman@slynux.org>
 
         * pitivi/bin.py:

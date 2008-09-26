@@ -56,7 +56,6 @@ class NetstreamManagerDialog(object):
 		self.address = self.objectpool_ui.get_widget("address")
 		self.uri = self.objectpool_ui.get_widget("url")
 		self.status = self.objectpool_ui.get_widget("status")
-		self.status_id = self.status.get_context_id("status")
 
 		self.http_radiobtn = self.objectpool_ui.get_widget("protocol")
 		self.udp_radiobtn = self.objectpool_ui.get_widget("udp")
@@ -114,7 +113,7 @@ class NetstreamManagerDialog(object):
 		if uri != None :
 
 			if gst.uri_is_valid (uri) is False:
-				self.status.push(self.status_id,"Invalid URI. Please verify.")
+				self.status.set_label("Invalid URI. Please verify.")
 				gst.debug("Invalid URI")
 				return 
 			if gst.uri_protocol_is_supported(gst.URI_SRC,uri.split('://')[0]):
@@ -122,7 +121,7 @@ class NetstreamManagerDialog(object):
 				self.player.set_state(gst.STATE_PLAYING)
 				self.status.push(self.status_id,"")
 			else:
-				self.status.push(self.status_id,"Unsupported Protocol. Please verify the URI.")
+				self.status.set_label("Unsupported Protocol. Please verify the URI.")
 				gst.debug("Unsupported Protocol")
 
 
@@ -134,17 +133,18 @@ class NetstreamManagerDialog(object):
 		if self.capture_btn.get_label() == "Capture":
 			
 			if self.player is False and gst.uri_protocol_is_supported(gst.URI_SRC,uri.split('://')[0]) is False :
-				self.status.push(self.status_id,"Unsupported Protocol. Please verify the URI.")
+				self.status.set_label("Unsupported Protocol. Please verify the URI.")
 				return
 			elif self.player is False:
 				self.player.set_state(gst.STATE_NULL)
 				self.setSinks(uri)
 
+
 			gst.debug("recording started")
 			self.filepath = 'file://'+tempfile.mktemp()+'.ogg'
 			self.player.record(self.filepath,ExportSettings())
 			self.capture_btn.set_label("Stop")
-			self.player.set_state(gst.STATE_PLAYING)
+
 
 		else:
 			gst.debug("recording stopped")

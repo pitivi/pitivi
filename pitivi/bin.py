@@ -249,6 +249,7 @@ class SmartBin(gst.Pipeline):
         self.getRealVideoSink().set_property("sync", True)
 
         self.recording = False
+        self.set_state(gst.STATE_PLAYING)
         return True
 
     def getSettings(self):
