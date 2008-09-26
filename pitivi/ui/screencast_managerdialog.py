@@ -22,9 +22,7 @@
 import gtk
 import os
 import gtk.glade
-import pygst
 from pitivi import instance
-pygst.require("0.10")
 import gst
 import tempfile
 from gettext import gettext as _
@@ -44,10 +42,10 @@ class ScreencastManagerDialog(object):
 	def __init__(self):
 		gst.log("Creating new ScreencastManager Dialog")
 
-		# Create gtk widget using glade model 
+		# Create gtk widget using glade model
 		glade_dir = os.path.dirname(os.path.abspath(__file__))
 		pool_ui = gtk.glade.XML(os.path.join(glade_dir, "screencast_manager.glade"))
-	
+
 		self.window = pool_ui.get_widget("screencast_window")
 		self.close_btn = pool_ui.get_widget("btn_close")
 		self.ok_btn = pool_ui.get_widget("btn_ok")
@@ -62,7 +60,7 @@ class ScreencastManagerDialog(object):
 
 		self.dbus_connect()
 
-			
+
 
 	def dbus_connect(self):
 		# Connect to istanbul dbus service
@@ -84,7 +82,7 @@ class ScreencastManagerDialog(object):
 	def ok(self,w):
 		self.screencast(None)
 		self.close(None)
-		
+
 
 	def start_thread_istanbul(self):
 		os.system("istanbul")
@@ -95,9 +93,6 @@ class ScreencastManagerDialog(object):
 		thread.start_new_thread(self.start_thread_istanbul,())
 		time.sleep(2)
 		self.dbus_connect()
-		
-		
-		
 
 	def screencast(self,w):
 		if self.screencast_btn.get_active():
@@ -106,4 +101,4 @@ class ScreencastManagerDialog(object):
 		else:
 			self.iface.savemode(False)
 			instance.PiTiVi.screencast = False
-		
+

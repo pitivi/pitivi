@@ -22,9 +22,7 @@
 import gtk
 import os
 import gtk.glade
-import pygst
 from pitivi import instance
-pygst.require("0.10")
 import gst
 import tempfile
 from gettext import gettext as _
@@ -40,7 +38,7 @@ class WebcamManagerDialog(object):
 	def __init__(self):
 		gst.log("Creating new WebcamManager Dialog")
 
-		# Create gtk widget using glade model 
+		# Create gtk widget using glade model
 		glade_dir = os.path.dirname(os.path.abspath(__file__))
 		self.cam_ui = gtk.glade.XML(os.path.join(glade_dir, "cam_capture.glade"))
 		self.cam_window = self.cam_ui.get_widget("cam_capture")
@@ -51,30 +49,28 @@ class WebcamManagerDialog(object):
 		self.close_btn.connect("clicked",self.close)
 		self.record_btn.connect("clicked", self.threaded_recording)
 		self.cam_window.connect("destroy",self.close)
-		
+
 		self.record_btn = self.record_btn.get_children()[0]
 		self.record_btn = self.record_btn.get_children()[0].get_children()[1]
 		self.record_btn.set_label("Start Recording")
-	
+
 		self.sourcefactories = SourceFactoriesWidget()
 
 		gst.debug("SmartCaptureBin player created")
-		self.player = SmartCaptureBin()		
+		self.player = SmartCaptureBin()
 		self.setSinks()
-	
+
 
 
 		self.player.set_state(gst.STATE_PLAYING)
 
 	# Perform record in a seperate thread
 	def threaded_recording(self,w):
-		
 		CallbackThread(self.do_recording,w).start()
 
 
 	# Record button action callback
 	def do_recording(self, w):
-	
 		if self.record_btn.get_label() == "Start Recording":
 			gst.debug("recording started")
 			self.filepath = 'file://'+tempfile.mktemp()+'.ogg'
@@ -90,7 +86,6 @@ class WebcamManagerDialog(object):
 			self.sourcefactories.sourcelist.addFiles([self.filepath])
 			self.player.set_state(gst.STATE_PLAYING)
 			self.record_btn.set_label("Start Recording")
-		
 
 	# For Setting up audio,video sinks
 	def setSinks(self):
@@ -105,7 +100,7 @@ class WebcamManagerDialog(object):
 	def close(self,w):
 		self.cam_window.destroy()
 		self.player.set_state(gst.STATE_NULL)
-		
+
 	# For draw_window syncs
 	def on_sync_message(self, bus, message):
 		if message.structure is None:

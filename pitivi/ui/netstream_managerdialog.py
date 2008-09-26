@@ -24,9 +24,7 @@ import gtk
 import gtk.glade
 import pango
 import gobject
-import pygst
 import time
-pygst.require("0.10")
 import gst
 import tempfile
 from gettext import gettext as _
@@ -40,7 +38,6 @@ from pitivi.settings import ExportSettings
 class NetstreamManagerDialog(object):
 
 	def __init__(self):
-		
 		self.sourcefactories = SourceFactoriesWidget()
 		self.capture_pipe = None
 		self.player = None
@@ -52,7 +49,7 @@ class NetstreamManagerDialog(object):
 		self.capture_btn = self.objectpool_ui.get_widget("capture_btn")
 		self.preview_btn = self.objectpool_ui.get_widget("preview_btn")
 		self.close_btn = self.objectpool_ui.get_widget("close_btn")
-		self.port = self.objectpool_ui.get_widget("port")	
+		self.port = self.objectpool_ui.get_widget("port")
 		self.address = self.objectpool_ui.get_widget("address")
 		self.uri = self.objectpool_ui.get_widget("url")
 		self.status = self.objectpool_ui.get_widget("status")
@@ -71,7 +68,7 @@ class NetstreamManagerDialog(object):
 		self.close_btn.connect("clicked",self.close)
 		self.stream_window.connect("destroy",self.close)
 
-	
+
 		dic = { "on_close_clicked" : self.close, "on_preview_btn_clicked":self.live_pipeline,"on_capture_btn_clicked":self.capture_pipeline}
 
 		self.objectpool_ui.signal_autoconnect(dic)
@@ -81,8 +78,6 @@ class NetstreamManagerDialog(object):
 		self.capture_btn = self.capture_btn.get_children()[0]
 		self.capture_btn = self.capture_btn.get_children()[0].get_children()[1]
 		self.capture_btn.set_label("Capture")
-	
-		
 
 
 	# For Setting up audio,video sinks
@@ -99,14 +94,12 @@ class NetstreamManagerDialog(object):
 		bus.enable_sync_message_emission()
 		bus.connect('sync-message::element', self.on_sync_message)
 
-	
-		
+
 	# Create live display pipeline
 	def live_pipeline(self,w=None):
-		
+
 		if self.player:
 			self.player.set_state(gst.STATE_NULL)
-		
 
 		uri = self.uri.get_text()
 
@@ -131,7 +124,6 @@ class NetstreamManagerDialog(object):
 
 		uri = self.uri.get_text()
 		if self.capture_btn.get_label() == "Capture":
-			
 			if self.player is False and gst.uri_protocol_is_supported(gst.URI_SRC,uri.split('://')[0]) is False :
 				self.status.set_label("Unsupported Protocol. Please verify the URI.")
 				return
@@ -151,7 +143,6 @@ class NetstreamManagerDialog(object):
 			self.player.stopRecording()
 			self.sourcefactories.sourcelist.addFiles([self.filepath])
 			self.capture_btn.set_label("Capture")
-		
 
 	def on_message(self,bus,message):
 		t = message.type
@@ -176,12 +167,11 @@ class NetstreamManagerDialog(object):
 			imagesink = message.src
 			imagesink.set_property('force-aspect-ratio',True)
 			imagesink.set_xwindow_id(self.screen.window.xid)
-			
-			
+
 	# radio buttons address set callback
 	def on_protocol_toggled(self,widget,data=None):
 		self.uri.set_text(data+"://"+self.uri.get_text().split('://')[1])
-			
+
 	def on_address_port_changed(self,widget,data=None):
 		self.uri.set_text(self.uri.get_text().split('://')[0] + '://' + self.address.get_text() + ['',':'][self.port.get_text().isdigit()] + self.port.get_text())
 
