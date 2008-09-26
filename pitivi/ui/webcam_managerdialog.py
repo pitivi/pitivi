@@ -22,14 +22,15 @@
 import gtk
 import os
 import gtk.glade
+import pygst
 from pitivi import instance
+pygst.require("0.10")
 import gst
 import tempfile
 from gettext import gettext as _
-import plumber
 from pitivi.settings import ExportSettings
 from sourcefactories import SourceFactoriesWidget
-from pitivi.bin import SmartCaptureBin
+from pitivi.bin import SmartCaptureBin,SinkBin
 from pitivi.playground import PlayGround
 
 
@@ -49,17 +50,17 @@ class WebcamManagerDialog(object):
 		self.close_btn.connect("clicked",self.close)
 		self.record_btn.connect("clicked", self.do_recording)
 		self.cam_window.connect("destroy",self.close)
-
+		
 		self.record_btn = self.record_btn.get_children()[0]
 		self.record_btn = self.record_btn.get_children()[0].get_children()[1]
 		self.record_btn.set_label("Start Recording")
-
+	
 		self.sourcefactories = SourceFactoriesWidget()
 
 		gst.debug("SmartCaptureBin player created")
-		self.player = SmartCaptureBin()
+		self.player = SmartCaptureBin()		
 		self.setSinks()
-
+	
 
 
 		self.player.set_state(gst.STATE_PLAYING)
@@ -67,14 +68,13 @@ class WebcamManagerDialog(object):
 
 	# Record button action callback
 	def do_recording(self, w):
-
+	
 		if self.record_btn.get_label() == "Start Recording":
 			gst.debug("recording started")
 			self.filepath = 'file://'+tempfile.mktemp()+'.ogg'
-
-			if not self.player.record(self.filepath,ExportSettings()):
-				print "FAILURE !"
+			self.player.record(self.filepath,ExportSettings())
 			self.record_btn.set_label("Stop Recording")
+			self.player.set_state(gst.STATE_PLAYING)
 
 
 
@@ -82,41 +82,13 @@ class WebcamManagerDialog(object):
 			gst.debug("recording stopped")
 			self.player.stopRecording()
 			self.sourcefactories.sourcelist.addFiles([self.filepath])
-
-
 			self.record_btn.set_label("Start Recording")
+
 
 	# For Setting up audio,video sinks
 	def setSinks(self):
-
-		self.videosink = plumber.get_video_sink()
-
-		vsinkthread = gst.Bin('webcam-vsinkthread')
-		vqueue = gst.element_factory_make("queue", 'webcam-vqueue')
-		cspace = gst.element_factory_make("ffmpegcolorspace", 'webcam-ffmpegcolorspace')
-		vscale = gst.element_factory_make("videoscale", 'webcam-videoscale')
-		vscale.props.method = 1
-		vsinkthread.add(self.videosink, vqueue, vscale, cspace)
-		vqueue.link(self.videosink)
-		cspace.link(vscale)
-		vscale.link(vqueue)
-		vsinkthread.videosink = self.videosink
-		vsinkthread.add_pad(gst.GhostPad("sink", cspace.get_pad('sink')))
-		self.player.setVideoSinkThread(vsinkthread)
-
-        	gst.debug("Creating audio sink")
-        	self.audiosink = plumber.get_audio_sink()
-        	asinkthread = gst.Bin('webcam-asinkthread')
-		abqueue = gst.element_factory_make("queue", "webcam-abqueue")
-        	aqueue = gst.element_factory_make('queue', 'webcam-aqueue')
-		aqueue.props.max_size_time = 5 * gst.SECOND
-        	aconv = gst.element_factory_make("audioconvert", 'webcam-audioconvert')
-        	asinkthread.add(self.audiosink, abqueue, aqueue, aconv)
-		gst.element_link_many(abqueue, aconv, aqueue, self.audiosink)
-        	asinkthread.audiosink = self.audiosink
-        	asinkthread.add_pad(gst.GhostPad("sink", abqueue.get_pad('sink')))
-		self.player.setAudioSinkThread(asinkthread)
-
+		sink = SinkBin()
+		sink.connectSink(self.player)
 		bus = self.player.get_bus()
 		bus.add_signal_watch()
 		bus.enable_sync_message_emission()
@@ -127,7 +99,7 @@ class WebcamManagerDialog(object):
 	def close(self,w):
 		self.cam_window.destroy()
 		self.player.set_state(gst.STATE_NULL)
-
+		
 	# For draw_window syncs
 	def on_sync_message(self, bus, message):
 		if message.structure is None:

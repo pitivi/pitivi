@@ -29,11 +29,10 @@ import time
 pygst.require("0.10")
 import gst
 import tempfile
-import plumber
 from gettext import gettext as _
 from pitivi import instance
 from sourcefactories import SourceFactoriesWidget
-from pitivi.bin import SmartStreamBin
+from pitivi.bin import SmartStreamBin, SinkBin
 from pitivi.settings import ExportSettings
 
 class NetstreamManagerDialog(object):
@@ -43,14 +42,6 @@ class NetstreamManagerDialog(object):
 		self.sourcefactories = SourceFactoriesWidget()
 		self.capture_pipe = None
 		self.player = None
-
-		
-		'''
-		h=SmartStreamBin("http://127.0.0.1:8080")
-		instance.PiTiVi.playground._playTemporaryBin(h)
-		
-		h.record("file:///tmp/test.ogg",ExportSettings())
-		'''
 
 		glade_dir = os.path.dirname(os.path.abspath(__file__))
 		self.objectpool_ui = gtk.glade.XML(os.path.join(glade_dir, "net_capture.glade"))
@@ -97,33 +88,8 @@ class NetstreamManagerDialog(object):
 
 		gst.debug("SmartStreamBin player created")
 		self.player = SmartStreamBin(uri)	
-		self.videosink = plumber.get_video_sink()
-
-		vsinkthread = gst.Bin('vsinkthread')
-		vqueue = gst.element_factory_make('queue')
-		cspace = gst.element_factory_make('ffmpegcolorspace')
-		vscale = gst.element_factory_make('videoscale')
-		vscale.props.method = 1
-		vsinkthread.add(self.videosink, vqueue, vscale, cspace)
-		vqueue.link(self.videosink)
-		cspace.link(vscale)
-		vscale.link(vqueue)
-		vsinkthread.videosink = self.videosink
-		vsinkthread.add_pad(gst.GhostPad("sink", cspace.get_pad('sink')))
-		self.player.setVideoSinkThread(vsinkthread)
-
-        	gst.debug("Creating audio sink")
-        	self.audiosink = plumber.get_audio_sink()
-        	asinkthread = gst.Bin('asinkthread')
-        	aqueue = gst.element_factory_make('queue')
-        	aconv = gst.element_factory_make('audioconvert')
-        	asinkthread.add(self.audiosink, aqueue, aconv)
-        	aconv.link(aqueue)
-        	aqueue.link(self.audiosink)
-        	asinkthread.audiosink = self.audiosink
-        	asinkthread.add_pad(gst.GhostPad("sink", aconv.get_pad('sink')))
-		self.player.setAudioSinkThread(asinkthread)
-	
+		sink = SinkBin()
+		sink.connectSink(self.player)
 		bus = self.player.get_bus()
 		bus.add_signal_watch()
 		bus.enable_sync_message_emission()
