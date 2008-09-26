@@ -50,9 +50,14 @@ from projectsettings import ProjectSettingsDialog
 from pluginmanagerdialog import PluginManagerDialog
 from webcam_managerdialog import WebcamManagerDialog
 from netstream_managerdialog import NetstreamManagerDialog
+from screencast_managerdialog import ScreencastManagerDialog
 from pitivi.configure import pitivi_version, APPNAME
 from glade import GladeWindow
 from exportsettingswidget import ExportSettingsDialog
+
+import dbus
+import dbus.service
+import dbus.glib
 
 if have_gconf:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -91,6 +96,11 @@ class PitiviMainWindow(gtk.Window):
         instance.PiTiVi.playground.connect("error", self._playGroundErrorCb)
         instance.PiTiVi.current.sources.connect_after("file_added", self._sourcesFileAddedCb)
 
+    	# Start dbus service
+    	session_bus = dbus.SessionBus()
+    	name = dbus.service.BusName("org.gnome.pitivi", bus=session_bus)
+    	object = pitivi_dbus(name)
+	
         self.show_all()
 
     def _encodingDialogDestroyCb(self, unused_dialog):
@@ -171,6 +181,9 @@ class PitiviMainWindow(gtk.Window):
 	    ("ImportfromCam", gtk.STOCK_ADD ,
              _("_Import from Webcam.."),
              None, _("Import Camera stream"), self._ImportWebcam),   
+	    ("Screencast", gtk.STOCK_ADD ,
+             _("_Make screencast.."),
+             None, _("Capture the desktop"), self._Screencast),   
 	    ("NetstreamCapture", gtk.STOCK_ADD ,
              _("_Capture Network Stream.."),
              None, _("Capture Network Stream"), self._ImportNetstream), 
@@ -205,7 +218,7 @@ class PitiviMainWindow(gtk.Window):
             elif action.get_name() in [
                 "ProjectSettings", "Quit", "File", "Edit", "Help",
                 "About", "View", "FullScreen", "ImportSources",
-                "ImportSourcesFolder", "AdvancedView", "PluginManager","ImportfromCam","NetstreamCapture"]:
+                "ImportSourcesFolder", "AdvancedView", "PluginManager","ImportfromCam","NetstreamCapture","Screencast"]:
                 action.set_sensitive(True)
             elif action.get_name() in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
@@ -423,6 +436,10 @@ class PitiviMainWindow(gtk.Window):
     def _ImportNetstream(self,unused_action):
 	NetstreamManagerDialog()
 
+    # screencast callback
+    def _Screencast(self,unused_action):
+	ScreencastManagerDialog()
+
 	
 
     ## PiTiVi main object callbacks
@@ -527,6 +544,17 @@ class PitiviMainWindow(gtk.Window):
         chooser.destroy()
         return ret
 
+
+# dbus object class
+class pitivi_dbus(dbus.service.Object):
+    def __init__(self, bus_name, object_path="/import"):
+        dbus.service.Object.__init__(self, bus_name, object_path)
+	self.sourcefactories = SourceFactoriesWidget()
+
+    @dbus.service.method("org.gnome.pitivi")
+    def AddFiles(self, filepath):
+	self.sourcefactories.sourcelist.addFiles(filepath)
+        return True
 
 class EncodingDialog(GladeWindow):
     """ Encoding dialog box """

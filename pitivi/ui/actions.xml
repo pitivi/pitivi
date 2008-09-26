@@ -11,6 +11,7 @@
       <menuitem action="ImportSourcesFolder" />
       <menuitem action="ImportfromCam" />
       <menuitem action="NetstreamCapture" />
+      <menuitem action="Screencast" />
       <separator />
       <menuitem action="RenderProject" />
       <separator />
