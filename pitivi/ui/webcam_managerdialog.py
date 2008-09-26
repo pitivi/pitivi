@@ -19,13 +19,10 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-import os
 import gtk
+import os
 import gtk.glade
-import pango
-import gobject
 import pygst
-import time
 from pitivi import instance
 pygst.require("0.10")
 import gst
@@ -42,7 +39,7 @@ from pitivi.playground import PlayGround
 class WebcamManagerDialog(object):
 
 	def __init__(self):
-	
+		gst.log("Creating new WebcamManager Dialog")
 
 		# Create gtk widget using glade model 
 		glade_dir = os.path.dirname(os.path.abspath(__file__))
@@ -62,10 +59,38 @@ class WebcamManagerDialog(object):
 	
 		self.sourcefactories = SourceFactoriesWidget()
 
+		gst.debug("SmartCaptureBin player created")
 		self.player = SmartCaptureBin()		
+		self.setSinks()
+	
+		self.player.set_state(gst.STATE_PLAYING)
 
+
+	# Record button action callback
+	def do_recording(self, w):
+	
+		if self.record_btn.get_label() == "Start Recording":
+			gst.debug("recording started")
+			self.filepath = 'file://'+tempfile.mktemp()+'ogg'
+			self.player.record(self.filepath,ExportSettings())
+			self.record_btn.set_label("Stop Recording")
+			self.player.set_state(gst.STATE_PLAYING)
+
+
+
+		else:
+			gst.debug("recording stopped")
+			self.player.stopRecording()
+			self.sourcefactories.sourcelist.addFiles([self.filepath])
+
+
+			self.record_btn.set_label("Start Recording")
+
+	# For Setting up audio,video sinks
+	def setSinks(self):
 
 		self.videosink = plumber.get_video_sink()
+
 		vsinkthread = gst.Bin('vsinkthread')
 		vqueue = gst.element_factory_make('queue')
 		cspace = gst.element_factory_make('ffmpegcolorspace')
@@ -96,32 +121,13 @@ class WebcamManagerDialog(object):
 		bus.enable_sync_message_emission()
 		bus.connect('sync-message::element', self.on_sync_message)
 
-		self.player.set_state(gst.STATE_PLAYING)
 
-
-
-	def do_recording(self, w):
-	
-		if self.record_btn.get_label() == "Start Recording":
-			self.player.record("file:///home/slynux/cool.ogg",ExportSettings())
-			self.record_btn.set_label("Stop Recording")
-			self.player.set_state(gst.STATE_PLAYING)
-
-
-
-		else:
-			self.player.stopRecording()
-			self.sourcefactories.sourcelist.addFiles(["file:///home/slynux/cool.ogg"])
-
-
-			self.record_btn.set_label("Start Recording")
-
-
+	# Close the Webcamdialog
 	def close(self,w):
 		self.cam_window.destroy()
 		self.player.set_state(gst.STATE_NULL)
 		
-
+	# For draw_window syncs
 	def on_sync_message(self, bus, message):
 		if message.structure is None:
 			return
