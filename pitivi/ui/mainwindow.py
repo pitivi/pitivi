@@ -96,11 +96,11 @@ class PitiviMainWindow(gtk.Window):
         instance.PiTiVi.playground.connect("error", self._playGroundErrorCb)
         instance.PiTiVi.current.sources.connect_after("file_added", self._sourcesFileAddedCb)
 
-    	# Start dbus service
-    	session_bus = dbus.SessionBus()
-    	name = dbus.service.BusName("org.gnome.pitivi", bus=session_bus)
-    	object = pitivi_dbus(name)
-	
+        # Start dbus service
+        session_bus = dbus.SessionBus()
+        name = dbus.service.BusName("org.gnome.pitivi", bus=session_bus)
+        object = pitivi_dbus(name)
+        
         self.show_all()
 
     def _encodingDialogDestroyCb(self, unused_dialog):
@@ -178,13 +178,13 @@ class PitiviMainWindow(gtk.Window):
             ("PluginManager", gtk.STOCK_PREFERENCES ,
              _("_Plugins..."),
              None, _("Manage plugins"), self._pluginManagerCb),
-	    ("ImportfromCam", gtk.STOCK_ADD ,
+            ("ImportfromCam", gtk.STOCK_ADD ,
              _("_Import from Webcam.."),
              None, _("Import Camera stream"), self._ImportWebcam),   
-	    ("Screencast", gtk.STOCK_ADD ,
+            ("Screencast", gtk.STOCK_ADD ,
              _("_Make screencast.."),
              None, _("Capture the desktop"), self._Screencast),   
-	    ("NetstreamCapture", gtk.STOCK_ADD ,
+            ("NetstreamCapture", gtk.STOCK_ADD ,
              _("_Capture Network Stream.."),
              None, _("Capture Network Stream"), self._ImportNetstream), 
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
@@ -330,14 +330,14 @@ class PitiviMainWindow(gtk.Window):
 
     def _destroyCb(self, unused_widget, data=None):
 
-	# Quit connection to istanbul/switch off savemode
-	try:
-		bus = dbus.SessionBus()
-            	remote_object = bus.get_object("org.gnome.istanbul", "/state")
-            	self.iface = dbus.Interface(remote_object, "org.gnome.istanbul")
-		self.iface.savemode(False)
-	except:
-		pass
+        # Quit connection to istanbul/switch off savemode
+        try:
+                bus = dbus.SessionBus()
+                remote_object = bus.get_object("org.gnome.istanbul", "/state")
+                self.iface = dbus.Interface(remote_object, "org.gnome.istanbul")
+                self.iface.savemode(False)
+        except:
+                pass
 
 
         instance.PiTiVi.shutdown()
@@ -420,7 +420,7 @@ class PitiviMainWindow(gtk.Window):
                    "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)",
                    "Luca Della Santina <dellasantina@farm.unipi.it>",
                    "Thijs Vermeir <thijsvermeir@gmail.com>",
-		   "Sarath Lakshman <sarathlakshman@slynux.org>"]
+                   "Sarath Lakshman <sarathlakshman@slynux.org>"]
         abt.set_authors(authors)
         abt.set_license(_("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details"))
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")
@@ -440,18 +440,18 @@ class PitiviMainWindow(gtk.Window):
 
     # Import from Webcam callback
     def _ImportWebcam(self,unused_action):
-	WebcamManagerDialog()
-	
+        WebcamManagerDialog()
+        
 
     # Capture network stream callback
     def _ImportNetstream(self,unused_action):
-	NetstreamManagerDialog()
+        NetstreamManagerDialog()
 
     # screencast callback
     def _Screencast(self,unused_action):
-	ScreencastManagerDialog()
+        ScreencastManagerDialog()
 
-	
+        
 
     ## PiTiVi main object callbacks
 
@@ -560,11 +560,11 @@ class PitiviMainWindow(gtk.Window):
 class pitivi_dbus(dbus.service.Object):
     def __init__(self, bus_name, object_path="/import"):
         dbus.service.Object.__init__(self, bus_name, object_path)
-	self.sourcefactories = SourceFactoriesWidget()
+        self.sourcefactories = SourceFactoriesWidget()
 
     @dbus.service.method("org.gnome.pitivi")
     def AddFiles(self, filepath):
-	self.sourcefactories.sourcelist.addFiles(filepath)
+        self.sourcefactories.sourcelist.addFiles(filepath)
         return True
 
 class EncodingDialog(GladeWindow):
