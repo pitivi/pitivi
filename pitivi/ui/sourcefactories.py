@@ -413,6 +413,7 @@ class SourceListWidget(gtk.VBox):
                 self.addFolders(filenames)
             else:
                 self.addFiles(filenames)
+		print filenames
         else:
             dialogbox.destroy()
             self._importDialog = None

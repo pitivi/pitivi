@@ -1,3 +1,10 @@
+2008-08-23  Sarath Lakshman  <sarathlakshman@slynux.org>
+
+        * pitivi/bin.py:
+		Added Discover, Optimised SmartStreamBin using decodebin [Tried to use playbin:failure], Added timeoverlay for SinkBin
+	* pitivi/ui/netstream_managerdialog.py:
+		Added statusbar, improved debug messages
+
 2008-08-19  Sarath Lakshman  <sarathlakshman@slynux.org>
 
         * pitivi/bin.py:

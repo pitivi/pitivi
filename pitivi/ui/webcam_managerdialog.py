@@ -68,7 +68,7 @@ class WebcamManagerDialog(object):
 
 	# Perform record in a seperate thread
 	def threaded_recording(self,w):
-		print "test"
+		
 		CallbackThread(self.do_recording,w).start()
 
 
@@ -95,7 +95,7 @@ class WebcamManagerDialog(object):
 	# For Setting up audio,video sinks
 	def setSinks(self):
 		sink = SinkBin()
-		sink.connectSink(self.player)
+		sink.connectSink(self.player,True,True)
 		bus = self.player.get_bus()
 		bus.add_signal_watch()
 		bus.enable_sync_message_emission()

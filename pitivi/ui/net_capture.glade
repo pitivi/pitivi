@@ -34,6 +34,7 @@
 	  <child>
 	    <widget class="GtkButton" id="close_btn">
 	      <property name="visible">True</property>
+	      <property name="tooltip" translatable="yes">Close</property>
 	      <property name="can_default">True</property>
 	      <property name="can_focus">True</property>
 	      <property name="label">gtk-close</property>
@@ -143,8 +144,8 @@
 
 			  <child>
 			    <widget class="GtkDrawingArea" id="screen">
-			      <property name="width_request">300</property>
-			      <property name="height_request">300</property>
+			      <property name="width_request">446</property>
+			      <property name="height_request">349</property>
 			      <property name="visible">True</property>
 			    </widget>
 			  </child>
@@ -272,7 +273,7 @@
 				    <widget class="GtkRadioButton" id="protocol">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">http / https / ftp / mms</property>
+				      <property name="label" translatable="yes">http / https</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -763,6 +764,7 @@
 		      <property name="width_request">84</property>
 		      <property name="height_request">39</property>
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Preview Stream from URI</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>
@@ -870,6 +872,7 @@
 		      <property name="width_request">118</property>
 		      <property name="height_request">39</property>
 		      <property name="visible">True</property>
+		      <property name="tooltip" translatable="yes">Capture Stream from URI</property>
 		      <property name="can_focus">True</property>
 		      <property name="relief">GTK_RELIEF_NORMAL</property>
 		      <property name="focus_on_click">True</property>
@@ -998,7 +1001,56 @@
       </child>
 
       <child>
-	<placeholder/>
+	<widget class="GtkHBox" id="hbox9">
+	  <property name="visible">True</property>
+	  <property name="homogeneous">False</property>
+	  <property name="spacing">0</property>
+
+	  <child>
+	    <widget class="GtkLabel" id="label20">
+	      <property name="width_request">316</property>
+	      <property name="height_request">19</property>
+	      <property name="visible">True</property>
+	      <property name="label" translatable="yes"></property>
+	      <property name="use_underline">False</property>
+	      <property name="use_markup">False</property>
+	      <property name="justify">GTK_JUSTIFY_LEFT</property>
+	      <property name="wrap">False</property>
+	      <property name="selectable">False</property>
+	      <property name="xalign">0.5</property>
+	      <property name="yalign">0.5</property>
+	      <property name="xpad">0</property>
+	      <property name="ypad">0</property>
+	      <property name="ellipsize">PANGO_ELLIPSIZE_NONE</property>
+	      <property name="width_chars">-1</property>
+	      <property name="single_line_mode">False</property>
+	      <property name="angle">0</property>
+	    </widget>
+	    <packing>
+	      <property name="padding">2</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+
+	  <child>
+	    <widget class="GtkStatusbar" id="status">
+	      <property name="width_request">397</property>
+	      <property name="visible">True</property>
+	      <property name="has_resize_grip">True</property>
+	    </widget>
+	    <packing>
+	      <property name="padding">2</property>
+	      <property name="expand">False</property>
+	      <property name="fill">False</property>
+	    </packing>
+	  </child>
+	</widget>
+	<packing>
+	  <property name="padding">2</property>
+	  <property name="expand">False</property>
+	  <property name="fill">False</property>
+	</packing>
       </child>
     </widget>
   </child>

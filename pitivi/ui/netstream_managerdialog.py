@@ -32,6 +32,8 @@ import tempfile
 from gettext import gettext as _
 from pitivi import instance
 from sourcefactories import SourceFactoriesWidget
+from pitivi.sourcelist import SourceList
+from pitivi.objectfactory import FileSourceFactory
 from pitivi.bin import SmartStreamBin, SinkBin
 from pitivi.settings import ExportSettings
 
@@ -53,7 +55,8 @@ class NetstreamManagerDialog(object):
 		self.port = self.objectpool_ui.get_widget("port")	
 		self.address = self.objectpool_ui.get_widget("address")
 		self.uri = self.objectpool_ui.get_widget("url")
-
+		self.status = self.objectpool_ui.get_widget("status")
+		self.status_id = self.status.get_context_id("status")
 
 		self.http_radiobtn = self.objectpool_ui.get_widget("protocol")
 		self.udp_radiobtn = self.objectpool_ui.get_widget("udp")
@@ -84,12 +87,14 @@ class NetstreamManagerDialog(object):
 
 
 	# For Setting up audio,video sinks
-	def setSinks(self,uri=None):
-
+	def setSinks(self,uri):
 		gst.debug("SmartStreamBin player created")
-		self.player = SmartStreamBin(uri)	
+		self.player=SmartStreamBin(uri)
 		sink = SinkBin()
-		sink.connectSink(self.player)
+		sink.connectSink(self.player,self.player.is_video,self.player.is_audio)
+		self.player.set_state(gst.STATE_PLAYING)
+
+
 		bus = self.player.get_bus()
 		bus.add_signal_watch()
 		bus.enable_sync_message_emission()
@@ -99,36 +104,54 @@ class NetstreamManagerDialog(object):
 		
 	# Create live display pipeline
 	def live_pipeline(self,w=None):
-
+		
 		if self.player:
 			self.player.set_state(gst.STATE_NULL)
 		
 
-		if self.uri.get_text() != None :
-			self.setSinks(self.uri.get_text())
-			self.player.set_state(gst.STATE_PLAYING)
+		uri = self.uri.get_text()
+
+		if uri != None :
+
+			if gst.uri_is_valid (uri) is False:
+				self.status.push(self.status_id,"Invalid URI. Please verify.")
+				gst.debug("Invalid URI")
+				return 
+			if gst.uri_protocol_is_supported(gst.URI_SRC,uri.split('://')[0]):
+				self.setSinks(uri)
+				self.player.set_state(gst.STATE_PLAYING)
+				self.status.push(self.status_id,"")
+			else:
+				self.status.push(self.status_id,"Unsupported Protocol. Please verify the URI.")
+				gst.debug("Unsupported Protocol")
 
 
 
 	# Stream capture pipeline
 	def capture_pipeline(self,w=None):
 
+		uri = self.uri.get_text()
 		if self.capture_btn.get_label() == "Capture":
-			self.player.set_state(gst.STATE_NULL)
-			self.setSinks(self.uri.get_text())
+			
+			if self.player is False and gst.uri_protocol_is_supported(gst.URI_SRC,uri.split('://')[0]) is False :
+				self.status.push(self.status_id,"Unsupported Protocol. Please verify the URI.")
+				return
+			elif self.player is False:
+				self.player.set_state(gst.STATE_NULL)
+				self.setSinks(uri)
+
 			gst.debug("recording started")
 			self.filepath = 'file://'+tempfile.mktemp()+'.ogg'
 			self.player.record(self.filepath,ExportSettings())
 			self.capture_btn.set_label("Stop")
 			self.player.set_state(gst.STATE_PLAYING)
 
-
-
 		else:
 			gst.debug("recording stopped")
 			self.player.stopRecording()
 			self.sourcefactories.sourcelist.addFiles([self.filepath])
 			self.capture_btn.set_label("Capture")
+		
 
 	def on_message(self,bus,message):
 		t = message.type
@@ -171,4 +194,3 @@ class NetstreamManagerDialog(object):
 		if self.capture_pipe:
 			self.capture_pipe.set_state(gst.STATE_NULL)
 
-	
