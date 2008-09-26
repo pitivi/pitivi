@@ -93,7 +93,7 @@ class ScreencastManagerDialog(object):
 	# Start istanbul using thread module
 	def start_istanbul(self,w):
 		thread.start_new_thread(self.start_thread_istanbul,())
-		time.sleep(1)
+		time.sleep(2)
 		self.dbus_connect()
 		
 		

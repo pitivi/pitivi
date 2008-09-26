@@ -1,3 +1,7 @@
+2008-08-10  Sarath Lakshman  <sarathlakshman@slynux.org>
+        * pitivi/: ui/netstream_manager.py
+	Rewrote with SmartBin
+
 2008-07-30  Sarath Lakshman  <sarathlakshman@slynux.org>
 	* pitivi/: ui/screencast_manager.glade, screencast_managerdialog.py
 	Added basic istanbul integration [Screencast Capture] using dbus interface.

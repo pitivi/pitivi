@@ -35,7 +35,6 @@ from pitivi.bin import SmartCaptureBin
 from pitivi.playground import PlayGround
 
 
-
 class WebcamManagerDialog(object):
 
 	def __init__(self):
@@ -63,6 +62,8 @@ class WebcamManagerDialog(object):
 		self.player = SmartCaptureBin()		
 		self.setSinks()
 	
+
+
 		self.player.set_state(gst.STATE_PLAYING)
 
 
@@ -71,7 +72,7 @@ class WebcamManagerDialog(object):
 	
 		if self.record_btn.get_label() == "Start Recording":
 			gst.debug("recording started")
-			self.filepath = 'file://'+tempfile.mktemp()+'ogg'
+			self.filepath = 'file://'+tempfile.mktemp()+'.ogg'
 			self.player.record(self.filepath,ExportSettings())
 			self.record_btn.set_label("Stop Recording")
 			self.player.set_state(gst.STATE_PLAYING)

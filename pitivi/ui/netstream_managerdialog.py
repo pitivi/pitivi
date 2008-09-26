@@ -29,10 +29,12 @@ import time
 pygst.require("0.10")
 import gst
 import tempfile
+import plumber
 from gettext import gettext as _
-
+from pitivi import instance
 from sourcefactories import SourceFactoriesWidget
-
+from pitivi.bin import SmartStreamBin
+from pitivi.settings import ExportSettings
 
 class NetstreamManagerDialog(object):
 
@@ -41,6 +43,14 @@ class NetstreamManagerDialog(object):
 		self.sourcefactories = SourceFactoriesWidget()
 		self.capture_pipe = None
 		self.player = None
+
+		
+		'''
+		h=SmartStreamBin("http://127.0.0.1:8080")
+		instance.PiTiVi.playground._playTemporaryBin(h)
+		
+		h.record("file:///tmp/test.ogg",ExportSettings())
+		'''
 
 		glade_dir = os.path.dirname(os.path.abspath(__file__))
 		self.objectpool_ui = gtk.glade.XML(os.path.join(glade_dir, "net_capture.glade"))
@@ -69,7 +79,7 @@ class NetstreamManagerDialog(object):
 		self.stream_window.connect("destroy",self.close)
 
 	
-		dic = { "on_close_clicked" : self.close, "on_preview_btn_clicked":self.live_pipeline,"on_capture_btn_clicked":self.capture}
+		dic = { "on_close_clicked" : self.close, "on_preview_btn_clicked":self.live_pipeline,"on_capture_btn_clicked":self.capture_pipeline}
 
 		self.objectpool_ui.signal_autoconnect(dic)
 
@@ -80,64 +90,79 @@ class NetstreamManagerDialog(object):
 		self.capture_btn.set_label("Capture")
 	
 		
+
+
+	# For Setting up audio,video sinks
+	def setSinks(self,uri=None):
+
+		gst.debug("SmartStreamBin player created")
+		self.player = SmartStreamBin(uri)	
+		self.videosink = plumber.get_video_sink()
+
+		vsinkthread = gst.Bin('vsinkthread')
+		vqueue = gst.element_factory_make('queue')
+		cspace = gst.element_factory_make('ffmpegcolorspace')
+		vscale = gst.element_factory_make('videoscale')
+		vscale.props.method = 1
+		vsinkthread.add(self.videosink, vqueue, vscale, cspace)
+		vqueue.link(self.videosink)
+		cspace.link(vscale)
+		vscale.link(vqueue)
+		vsinkthread.videosink = self.videosink
+		vsinkthread.add_pad(gst.GhostPad("sink", cspace.get_pad('sink')))
+		self.player.setVideoSinkThread(vsinkthread)
+
+        	gst.debug("Creating audio sink")
+        	self.audiosink = plumber.get_audio_sink()
+        	asinkthread = gst.Bin('asinkthread')
+        	aqueue = gst.element_factory_make('queue')
+        	aconv = gst.element_factory_make('audioconvert')
+        	asinkthread.add(self.audiosink, aqueue, aconv)
+        	aconv.link(aqueue)
+        	aqueue.link(self.audiosink)
+        	asinkthread.audiosink = self.audiosink
+        	asinkthread.add_pad(gst.GhostPad("sink", aconv.get_pad('sink')))
+		self.player.setAudioSinkThread(asinkthread)
+	
+		bus = self.player.get_bus()
+		bus.add_signal_watch()
+		bus.enable_sync_message_emission()
+		bus.connect('sync-message::element', self.on_sync_message)
+
+	
+		
 	# Create live display pipeline
 	def live_pipeline(self,w=None):
 
 		if self.player:
 			self.player.set_state(gst.STATE_NULL)
+		
 
 		if self.uri.get_text() != None :
-			self.player =  gst.parse_launch( self.uri.get_text() + " ! decodebin name=dbin dbin. ! queue ! ffmpegcolorspace ! autovideosink  dbin. ! queue ! audioconvert ! alsasink ")
-		
-			bus = self.player.get_bus()
-			bus.add_signal_watch()
-			bus.enable_sync_message_emission()
-			bus.connect('message',self.on_message)
-			bus.connect('sync-message::element',self.on_sync_message)
+			self.setSinks(self.uri.get_text())
 			self.player.set_state(gst.STATE_PLAYING)
 
 
 
 	# Stream capture pipeline
-	def capture_pipeline(self):
+	def capture_pipeline(self,w=None):
 
-		self.filepath = tempfile.mktemp()
-		self.file_uri = 'file://' + self.filepath + '.ogg'
+		if self.capture_btn.get_label() == "Capture":
+			self.player.set_state(gst.STATE_NULL)
+			self.setSinks(self.uri.get_text())
+			gst.debug("recording started")
+			self.filepath = 'file://'+tempfile.mktemp()+'.ogg'
+			self.player.record(self.filepath,ExportSettings())
+			self.capture_btn.set_label("Stop")
+			self.player.set_state(gst.STATE_PLAYING)
 
 
-		if self.uri.get_text() != None and len(self.uri.get_text().split('://')[1]) > 0 :
-			if self.player:
-				self.player.set_state(gst.STATE_NULL)
-			self.capture_pipe = gst.parse_launch(self.uri.get_text() + " ! tee name=tee ! decodebin name=dbin ! queue !  ffmpegcolorspace ! autovideosink dbin. ! queue ! audioconvert ! queue ! alsasink tee. ! queue ! filesink location="+self.filepath+".ogg")		
 
-			bus = self.capture_pipe.get_bus()
-			bus.add_signal_watch()
-			bus.enable_sync_message_emission()
-			bus.connect('message',self.on_message)
-			bus.connect('sync-message::element',self.on_sync_message)
-			self.capture_pipe.set_state(gst.STATE_PLAYING)
-
-			return True
 		else:
-			return False
-
-
-	def capture(self,w):
-			
-		
-
-		self.uri_stream = self.uri.get_text()
-
-		if self.capture_btn.get_label() == "Capture" :
-			
-			if self.capture_pipeline():
-				self.capture_btn.set_label("Stop")
-		else:
+			gst.debug("recording stopped")
+			self.player.stopRecording()
+			self.sourcefactories.sourcelist.addFiles([self.filepath])
 			self.capture_btn.set_label("Capture")
-			self.capture_pipe.set_state(gst.STATE_NULL)
-			self.live_pipeline()
-			self.sourcefactories.sourcelist.addFiles([self.file_uri])
-
 
 	def on_message(self,bus,message):
 		t = message.type

@@ -26,6 +26,8 @@ High-level Pipelines with plugable back-ends
 import gobject
 import gst
 from elements.smartscale import SmartVideoScale
+from objectfactory import FileSourceFactory
+
 
 class SmartBin(gst.Pipeline):
     """
@@ -616,3 +618,97 @@ class SmartCaptureBin(SmartBin):
 
         self.recording = False
         return True
+
+
+
+
+class SmartStreamBin(SmartFileBin):
+    """
+    SmartStreamBin with network stream from URI can be used as source.
+    """
+
+    def __init__(self, url):
+        gst.log("Creating new smartstreambin")
+
+	
+	self.factory = FileSourceFactory(url)
+        self.source = self.factory.makeBin()
+
+
+        SmartBin.__init__(self, "smartdefaultbin", has_video=True, has_audio=True)
+
+
+    def record(self, uri, settings=None):
+        """
+        Render the SmartBin to the given uri.
+        Returns : True if the encoding process could be started properly, False otherwise."""
+        self.debug("setting to READY")
+        if self.set_state(gst.STATE_READY) == gst.STATE_CHANGE_FAILURE:
+            self.warning("Couldn't switch to READY !")
+            return False
+
+        if self.recording:
+            self.error("This bin is already in in recording mode !")
+            return
+
+        # temporarily remove the audiosinkthread
+        #self.debug("disconnecting audio sink thread")
+        #self.tmpasink = self.asinkthread
+        # if not self.removeAudioSinkThread():
+        #     return False
+
+        self.debug("creating and adding encoding thread")
+        self.encthread = self._makeEncThread(uri, settings)
+        if not self.encthread:
+            gst.warning("Couldn't create encoding thread")
+            return False
+        self.add(self.encthread)
+        self.debug("encoding thread added")
+
+        # set sync=false on the videosink
+        #self.getRealVideoSink().set_property("sync", False)
+
+        self.debug("linking vtee to ecnthread:vsink")
+        try:
+            self.vtee.get_request_pad("src%d").link(self.encthread.get_pad("vsink"))
+        except:
+            return False
+
+        self.debug("linking atee to encthread:asink")
+        try:
+            self.atee.get_request_pad("src%d").link(self.encthread.get_pad("asink"))
+        except:
+            return False
+
+        self.debug("going back to PLAYING")
+        changeret = self.set_state(gst.STATE_PLAYING)
+        self.debug("now in PLAYING, set_state() returned %r" % changeret)
+        if changeret == gst.STATE_CHANGE_FAILURE:
+            return False
+
+        self.recording = True
+        return True
+
+    def stopRecording(self):
+        """ stop the recording, removing the encoding thread """
+        if self.recording == False:
+            self.warning("This bin is not in recording mode !")
+            return False
+
+        self.set_state(gst.STATE_PAUSED)
+
+        if self.encthread:
+            apad = self.encthread.get_pad("vsink")
+            apad.get_peer().unlink(apad)
+            apad = self.encthread.get_pad("asink")
+            apad.get_peer().unlink(apad)
+            self.remove(self.encthread)
+            self.encthread.set_state(gst.STATE_NULL)
+            del self.encthread
+            self.encthread = None
+            
+        self.getRealVideoSink().set_property("sync", True)
+
+        self.recording = False
+        return True
+

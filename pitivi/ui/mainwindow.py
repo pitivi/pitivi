@@ -329,6 +329,17 @@ class PitiviMainWindow(gtk.Window):
 ## UI Callbacks
 
     def _destroyCb(self, unused_widget, data=None):
+
+	# Quit connection to istanbul/switch off savemode
+	try:
+		bus = dbus.SessionBus()
+            	remote_object = bus.get_object("org.gnome.istanbul", "/state")
+            	self.iface = dbus.Interface(remote_object, "org.gnome.istanbul")
+		self.iface.savemode(False)
+	except:
+		pass
+
+
         instance.PiTiVi.shutdown()
 
 
