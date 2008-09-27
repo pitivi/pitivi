@@ -106,6 +106,8 @@ class PitiviMainWindow(gtk.Window):
         # features based on availability (or not) of webcams.
 
         # if no webcams available, hide the webcam action
+        instance.PiTiVi.deviceprobe.connect("device-added", self.__deviceChangeCb)
+        instance.PiTiVi.deviceprobe.connect("device-removed", self.__deviceChangeCb)
         if len(instance.PiTiVi.deviceprobe.getVideoSourceDevices()) < 1:
             self.webcam_button.set_sensitive(False)
 
@@ -461,7 +463,13 @@ class PitiviMainWindow(gtk.Window):
     def _Screencast(self,unused_action):
         ScreencastManagerDialog()
 
-    
+
+    ## Devices changed
+    def __deviceChangeCb(self, probe, unused_device):
+        if len(probe.getVideoSourceDevices()) < 1:
+            self.webcam_button.set_sensitive(False)
+        else:
+            self.webcam_button.set_sensitive(True)
 
     ## PiTiVi main object callbacks
 
