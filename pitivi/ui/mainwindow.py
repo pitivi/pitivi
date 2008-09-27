@@ -100,7 +100,15 @@ class PitiviMainWindow(gtk.Window):
         session_bus = dbus.SessionBus()
         name = dbus.service.BusName("org.gnome.pitivi", bus=session_bus)
         object = pitivi_dbus(name)
-    
+
+
+        # FIXME : connect to the device probe signals to toggle the webcam
+        # features based on availability (or not) of webcams.
+
+        # if no webcams available, hide the webcam action
+        if len(instance.PiTiVi.deviceprobe.getVideoSourceDevices()) < 1:
+            self.webcam_button.set_sensitive(False)
+
         self.show_all()
 
     def _encodingDialogDestroyCb(self, unused_dialog):
@@ -212,6 +220,8 @@ class PitiviMainWindow(gtk.Window):
         for action in self.actiongroup.list_actions():
             if action.get_name() == "RenderProject":
                 self.render_button = action
+            elif action.get_name() == "ImportfromCam":
+                self.webcam_button = action
             elif action.get_name() == "AdvancedView":
                 if not instance.PiTiVi.settings.advancedModeEnabled:
                     action.set_visible(False)
