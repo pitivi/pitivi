@@ -452,8 +452,8 @@ class PitiviMainWindow(gtk.Window):
 
     # Import from Webcam callback
     def _ImportWebcam(self,unused_action):
-        WebcamManagerDialog()
-    
+        w = WebcamManagerDialog(instance.PiTiVi)
+        w.show()
 
     # Capture network stream callback
     def _ImportNetstream(self,unused_action):

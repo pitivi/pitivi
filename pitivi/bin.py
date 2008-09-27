@@ -565,32 +565,39 @@ class SmartCaptureBin(SmartBin):
     SmartBin derivative for capturing streams.
     """
 
-    # FIXME : THESE ARE HARDCODED PLUGINS !!!
-    # We should use a system allowing you to see all available usable
-    # input HW device + plugin and use that instead
-
-    def __init__(self):
+    def __init__(self, audiodevice=None, videodevice=None):
         gst.log("Creating new smartcapturebin")
-        self.videosrc = gst.element_factory_make("v4l2src", "webcam-vsrc")
-        self.audiosrc = gst.element_factory_make("alsasrc", "webcam-asrc")
+        self.__audiodev = audiodevice
+        self.__videodev = videodevice
+        self.videosrc = None
+        self.audiosrc = None
 
-        SmartBin.__init__(self, "smartcapturebin", has_video=True, has_audio=True,
+        SmartBin.__init__(self, "smartcapturebin",
+                          has_video=bool(videodevice),
+                          has_audio=bool(audiodevice),
                           width=640, height=490)
 
 
     def _addSource(self):
-        self.q1 = gst.element_factory_make("queue", "webcam-firstvqueue")
-        self.q1.props.max_size_time = 10 * gst.SECOND
-        self.q2 = gst.element_factory_make("queue", "webcam-firstaqueue")
-        self.q2.props.max_size_time = 30 * gst.SECOND
-        self.q2.props.max_size_buffers = 0
-        self.q2.props.max_size_bytes = 0
-        self.add(self.videosrc, self.audiosrc, self.q1, self.q2)
+        if self.__audiodev:
+            self.audiosrc = self.__audiodev.makeAudioBin()
+            self.q2 = gst.element_factory_make("queue", "webcam-firstaqueue")
+            self.q2.props.max_size_time = 30 * gst.SECOND
+            self.q2.props.max_size_buffers = 0
+            self.q2.props.max_size_bytes = 0
+            self.add(self.audiosrc, self.q2)
+        if self.__videodev:
+            self.videosrc = self.__videodev.makeVideoBin()
+            self.q1 = gst.element_factory_make("queue", "webcam-firstvqueue")
+            self.q1.props.max_size_time = 10 * gst.SECOND
+            self.add(self.videosrc, self.q1)
 
     def _connectSource(self):
         self.debug("connecting sources")
-        gst.element_link_many(self.videosrc, self.q1, self.vtee)
-        gst.element_link_many(self.audiosrc, self.q2, self.atee)
+        if self.videosrc:
+            gst.element_link_many(self.videosrc, self.q1, self.vtee)
+        if self.audiosrc:
+            gst.element_link_many(self.audiosrc, self.q2, self.atee)
         self.debug("finished connecting sources")
 
     def _asyncReset(self, uri, setting):
@@ -608,10 +615,12 @@ class SmartCaptureBin(SmartBin):
         #
         # This is fixed in gst-plugins-base cvs 0.10.20.1
         self.debug("Setting sources to NULL again to reset their timestamps !")
-        self.videosrc.set_state(gst.STATE_NULL)
-        self.videosrc.set_state(gst.STATE_READY)
-        self.audiosrc.set_state(gst.STATE_NULL)
-        self.audiosrc.set_state(gst.STATE_READY)
+        if self.videosrc:
+            self.videosrc.set_state(gst.STATE_NULL)
+            self.videosrc.set_state(gst.STATE_READY)
+        if self.audiosrc:
+            self.audiosrc.set_state(gst.STATE_NULL)
+            self.audiosrc.set_state(gst.STATE_READY)
 
         SmartBin.record(self, uri, settings)
 
