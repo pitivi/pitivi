@@ -21,31 +21,33 @@
 
 import gtk
 import os
-import gtk.glade
 import gst
 import tempfile
 from pitivi.settings import ExportSettings
 from sourcefactories import SourceFactoriesWidget
 from pitivi.bin import SmartCaptureBin, SinkBin
 from pitivi.threads import CallbackThread
+from glade import GladeWindow
 
+class WebcamManagerDialog(GladeWindow):
+    """
+    Webcan capture dialog box
+    """
+    glade_file = "cam_capture.glade"
 
-class WebcamManagerDialog(object):
-
-    def __init__(self):
+    def __init__(self, pitivi):
         gst.log("Creating new WebcamManager Dialog")
+        self.pitivi = pitivi
+        GladeWindow.__init__(self)
 
         # Create gtk widget using glade model
-        glade_dir = os.path.dirname(os.path.abspath(__file__))
-        self.cam_ui = gtk.glade.XML(os.path.join(glade_dir, "cam_capture.glade"))
-        self.cam_window = self.cam_ui.get_widget("cam_capture")
-        self.draw_window = self.cam_ui.get_widget("draw_window")
-        self.record_btn = self.cam_ui.get_widget("record_btn")
-        self.close_btn = self.cam_ui.get_widget("close_btn")
+        self.draw_window = self.widgets["draw_window"]
+        self.record_btn = self.widgets["record_btn"]
+        self.close_btn = self.widgets["close_btn"]
 
         self.close_btn.connect("clicked", self.close)
         self.record_btn.connect("clicked", self.threaded_recording)
-        self.cam_window.connect("destroy", self.close)
+        self.window.connect("destroy", self.close)
 
         self.record_btn = self.record_btn.get_children()[0]
         self.record_btn = self.record_btn.get_children()[0].get_children()[1]
@@ -61,6 +63,9 @@ class WebcamManagerDialog(object):
 
         # Not a good idea to do this at this point
         self.player.set_state(gst.STATE_PLAYING)
+
+    def show_all(self):
+        self.window.show_all()
 
     # Perform record in a seperate thread
     def threaded_recording(self, w):
@@ -96,8 +101,8 @@ class WebcamManagerDialog(object):
 
     # Close the Webcamdialog
     def close(self, w):
-        self.cam_window.destroy()
         self.player.set_state(gst.STATE_NULL)
+        self.window.destroy()
 
     # For draw_window syncs
     def on_sync_message(self, bus, message):
@@ -108,5 +113,8 @@ class WebcamManagerDialog(object):
             # Assign the viewport
             imagesink = message.src
             imagesink.set_property('force-aspect-ratio', True)
-            imagesink.set_xwindow_id(self.draw_window.window.xid)
+            try:
+                imagesink.set_xwindow_id(self.draw_window.window.xid)
+            except:
+                print "OH OH"
 
