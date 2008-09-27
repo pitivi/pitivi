@@ -24,6 +24,7 @@
 Classes and Methods for Device handling and usage
 """
 
+import gobject
 from objectfactory import ObjectFactory, SourceFactory
 
 try:
@@ -62,7 +63,7 @@ def get_probe():
         return HalDeviceProbe()
     return None
 
-class DeviceProbe(object):
+class DeviceProbe(gobject.GObject):
     """
     Allows listing of the various devices available.
 
@@ -71,8 +72,17 @@ class DeviceProbe(object):
     This should be subclassed
     """
 
+    __gsignals__ = {
+        "device-added" : (gobject.SIGNAL_RUN_LAST,
+                          gobject.TYPE_NONE,
+                          (gobject.TYPE_PYOBJECT, )),
+        "device-removed" : (gobject.SIGNAL_RUN_LAST,
+                            gobject.TYPE_NONE,
+                            (gobject.TYPE_PYOBJECT, ))
+        }
+
     def __init__(self):
-        pass
+        gobject.GObject.__init__(self)
 
     def getSourceDevices(self, media_type):
         """ Returns a list of available SourceDeviceFactory for
@@ -157,8 +167,10 @@ class HalDeviceProbe(DeviceProbe):
         if devobject.QueryCapability("video4linux"):
             location = devobject.GetProperty("video4linux.device")
             info = devobject.GetProperty("info.product")
-            self.__sources[dev] = V4LSourceDeviceFactory(device=location,
-                                                         displayname=info)
+            srcdev = V4LSourceDeviceFactory(device=location,
+                                            displayname=info)
+            self.__sources[dev] = srcdev
+            self.emit("device-added", srcdev)
         elif devobject.QueryCapability("alsa"):
             alsatype = devobject.GetProperty("alsa.type")
             if alsatype in ["capture", "playback"]:
@@ -169,10 +181,12 @@ class HalDeviceProbe(DeviceProbe):
                     self.__sources[dev] = AlsaSourceDeviceFactory(card=card,
                                                                   device=device,
                                                                   displayname=info)
+                    self.emit("device-added", self.__sources[dev])
                 elif alsatype == "playback":
                     self.__sinks[dev] = AlsaSinkDeviceFactory(card=card,
                                                               device=device,
                                                               displayname=info)
+                    self.emit("device-added", self.__sinks[dev])
 
     def __deviceAddedCb(self, device_udi, *args):
         self.__processUDI(device_udi)
@@ -180,9 +194,11 @@ class HalDeviceProbe(DeviceProbe):
     def __deviceRemovedCb(self, device_udi, *args):
         # FIXME : Notify !
         if self.__sources.has_key(device_udi):
+            self.emit("device-removed", self.__sources[device_udi])
             del self.__sources[device_udi]
-        elif self.__sinkss.has_key(device_udi):
-            del self.__sinkss[device_udi]
+        elif self.__sinks.has_key(device_udi):
+            self.emit("device-removed", self.__sinks[device_udi])
+            del self.__sinks[device_udi]
 
 
 
