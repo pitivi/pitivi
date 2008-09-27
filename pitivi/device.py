@@ -25,6 +25,7 @@ Classes and Methods for Device handling and usage
 """
 
 import gobject
+import gst
 from objectfactory import ObjectFactory, SourceFactory
 
 try:
@@ -169,7 +170,8 @@ class HalDeviceProbe(DeviceProbe):
             info = devobject.GetProperty("info.product")
             srcdev = V4LSourceDeviceFactory(device=location,
                                             displayname=info)
-            self.__sources[dev] = srcdev
+            gst.debug("Valid source %r" % dev)
+            self.__sources[device_udi] = srcdev
             self.emit("device-added", srcdev)
         elif devobject.QueryCapability("alsa"):
             alsatype = devobject.GetProperty("alsa.type")
@@ -178,27 +180,32 @@ class HalDeviceProbe(DeviceProbe):
                 device = devobject.GetProperty("alsa.device")
                 info = devobject.GetProperty("alsa.card_id")
                 if alsatype == "capture":
-                    self.__sources[dev] = AlsaSourceDeviceFactory(card=card,
+                    gst.debug("Valid source %r" % dev)
+                    self.__sources[device_udi] = AlsaSourceDeviceFactory(card=card,
                                                                   device=device,
                                                                   displayname=info)
-                    self.emit("device-added", self.__sources[dev])
+                    self.emit("device-added", self.__sources[device_udi])
                 elif alsatype == "playback":
-                    self.__sinks[dev] = AlsaSinkDeviceFactory(card=card,
+                    gst.debug("Valid sink %r" % dev)
+                    self.__sinks[device_udi] = AlsaSinkDeviceFactory(card=card,
                                                               device=device,
                                                               displayname=info)
-                    self.emit("device-added", self.__sinks[dev])
+                    self.emit("device-added", self.__sinks[device_udi])
 
     def __deviceAddedCb(self, device_udi, *args):
+        gst.debug("udi:%r" % device_udi)
         self.__processUDI(device_udi)
 
     def __deviceRemovedCb(self, device_udi, *args):
-        # FIXME : Notify !
+        gst.debug("udi:%r" % device_udi)
         if self.__sources.has_key(device_udi):
-            self.emit("device-removed", self.__sources[device_udi])
+            dev = self.__sources[device_udi]
             del self.__sources[device_udi]
+            self.emit("device-removed", dev)
         elif self.__sinks.has_key(device_udi):
-            self.emit("device-removed", self.__sinks[device_udi])
+            dev = self.__sinks[device_udi]
             del self.__sinks[device_udi]
+            self.emit("device-removed", dev)
 
 
 
@@ -251,11 +258,44 @@ class V4LSourceDeviceFactory(SourceDeviceFactory):
         SourceDeviceFactory.__init__(self, *args, **kwargs)
         self.is_video = True
         self._device = device
+        self.__probed = False
+        self.__isv4l2 = True
 
     def makeVideoBin(self):
         # FIXME : we need to do some probbing to figure out if we should use
         # v4l or v4l2
-        v4l = gst.element_factory_make("v4lsrc")
+        if not self.__probed:
+            self.__probe()
+        v4l = gst.element_factory_make(self.__isv4l2 and "v4l2src" or "v4lsrc")
         v4l.set_property("device", self._device)
         return v4l
 
+    def __probe(self):
+        """Probes the device to figure out which v4l source to use"""
+        # first v4l
+        v = gst.Pipeline()
+        vsrc = gst.element_factory_make("v4lsrc")
+        vsrc.props.device = self._device
+        fsink = gst.element_factory_make("fakesink")
+        v.add(vsrc, fsink)
+        vsrc.link(fsink)
+        if v.set_state(gst.STATE_PAUSED) != gst.STATE_CHANGE_FAILURE:
+            self.__isv4l2 = False
+            self.__probed = True
+            v.set_state(gst.STATE_NULL)
+            return
+        v.set_state(gst.STATE_NULL)
+
+        v = gst.Pipeline()
+        vsrc = gst.element_factory_make("v4l2src")
+        vsrc.props.device = self._device
+        fsink = gst.element_factory_make("fakesink")
+        v.add(vsrc, fsink)
+        # let's still make sure that it's a v4l2 device :)
+        if v.set_state(gst.STATE_PAUSED) != gst.STATE_CHANGE_FAILURE:
+            self.__isv4l2 = True
+            self.__probed = True
+            v.set_state(gst.STATE_NULL)
+            return
+        v.set_state(gst.STATE_NULL)
+        gst.warning("Could not probe %s" % self._device)
