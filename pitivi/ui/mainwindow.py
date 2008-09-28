@@ -226,11 +226,15 @@ class PitiviMainWindow(gtk.Window):
                 self.webcam_button = action
             elif action.get_name() == "AdvancedView":
                 if not instance.PiTiVi.settings.advancedModeEnabled:
-                    action.set_visible(False)
+                    action.set_sensitive(False)
+            elif action.get_name() == "Screencast":
+                # FIXME : re-enable this action once istanbul integration is complete
+                # and upstream istanbul has applied packages for proper interaction.
+                action.set_visible(False)
             elif action.get_name() in [
                 "ProjectSettings", "Quit", "File", "Edit", "Help",
                 "About", "View", "FullScreen", "ImportSources",
-                "ImportSourcesFolder", "AdvancedView", "PluginManager","ImportfromCam","NetstreamCapture","Screencast"]:
+                "ImportSourcesFolder", "AdvancedView", "PluginManager","ImportfromCam","NetstreamCapture"]:
                 action.set_sensitive(True)
             elif action.get_name() in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
