@@ -92,9 +92,17 @@ class DeviceProbe(gobject.GObject):
         raise NotImplementedError
 
     def getAudioSourceDevices(self):
+        """
+        Returns a list of available SourceDeviceFactory of
+        type AUDIO_DEVICE
+        """
         return self.getSourceDevices(media_type=AUDIO_DEVICE)
 
     def getVideoSourceDevices(self):
+        """
+        Returns a list of available SourceDeviceFactory of
+        type VIDEO_DEVICE
+        """
         return self.getSourceDevices(media_type=VIDEO_DEVICE)
 
     def getSinkDevices(self, media_type):
@@ -104,9 +112,17 @@ class DeviceProbe(gobject.GObject):
         raise NotImplementedError
 
     def getAudioSinkDevices(self):
+        """
+        Returns a list of available SinkDeviceFactory of
+        type AUDIO_DEVICE
+        """
         return self.getSinkDevices(media_type=AUDIO_DEVICE)
 
     def getVideoSinkDevices(self):
+        """
+        Returns a list of available SinkDeviceFactory of
+        type VIDEO_DEVICE
+        """
         return self.getSinkDevices(media_type=VIDEO_DEVICE)
 
 
@@ -192,11 +208,11 @@ class HalDeviceProbe(DeviceProbe):
                                                               displayname=info)
                     self.emit("device-added", self.__sinks[device_udi])
 
-    def __deviceAddedCb(self, device_udi, *args):
+    def __deviceAddedCb(self, device_udi, *unused_args):
         gst.debug("udi:%r" % device_udi)
         self.__processUDI(device_udi)
 
-    def __deviceRemovedCb(self, device_udi, *args):
+    def __deviceRemovedCb(self, device_udi, *unused_args):
         gst.debug("udi:%r" % device_udi)
         if self.__sources.has_key(device_udi):
             dev = self.__sources[device_udi]
@@ -210,12 +226,20 @@ class HalDeviceProbe(DeviceProbe):
 
 
 class SourceDeviceFactory(SourceFactory):
-    pass
+    """
+    Base class for ObjectFactory to control source devices
+    """
+    __data_type__ = "source-device-factory"
 
 class SinkDeviceFactory(ObjectFactory):
-    pass
+    """
+    Base class for ObjectFactory to control sink devices
+    """
+    __data_type__ = "sink-device-factory"
 
 class AlsaSourceDeviceFactory(SourceDeviceFactory):
+    """ObjectFactory for Alsa source devices"""
+    __data_type__ = "alsa-source-device-factory"
 
     def __init__(self, card, device, *args, **kwargs):
         SourceDeviceFactory.__init__(self, *args, **kwargs)
@@ -234,6 +258,9 @@ class AlsaSourceDeviceFactory(SourceDeviceFactory):
                                         self._card, self._device)
 
 class AlsaSinkDeviceFactory(SinkDeviceFactory):
+    """ObjectFactory for Alsa sink devices"""
+    __data_type__ = "alsa-sink-device-factory"
+
     def __init__(self, card, device, *args, **kwargs):
         SinkDeviceFactory.__init__(self, *args, **kwargs)
         self.is_audio = True
@@ -253,6 +280,8 @@ class AlsaSinkDeviceFactory(SinkDeviceFactory):
 
 
 class V4LSourceDeviceFactory(SourceDeviceFactory):
+    """ObjectFactory for Video4Linux source devices"""
+    __data_type__ = "v4l-source-device-factory"
 
     def __init__(self, device, *args, **kwargs):
         SourceDeviceFactory.__init__(self, *args, **kwargs)
