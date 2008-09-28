@@ -36,7 +36,7 @@ class SmartBin(gst.Pipeline):
     """
 
     def __init__(self, name, displayname="", has_video=False, has_audio=False,
-                 length=0, width=0, height=0):
+                 length=0, width=0, height=0, is_seekable=False):
         """
         @type name: string
         @param name: The name of the SmartBin (for internal use)
@@ -73,6 +73,14 @@ class SmartBin(gst.Pipeline):
         self.tmpasink = None
         self.tmpvsink = None
         self.recording = False
+
+        # set this to True in subclasses if needed
+        self._seekable = is_seekable
+
+    @property
+    def seekable(self):
+        """True if the bin is seekable and has a duration"""
+        return self._seekable
 
     def _addSource(self):
         """ add the source to self """
@@ -392,7 +400,8 @@ class SmartFileBin(SmartBin):
                           has_video = factory.is_video,
                           has_audio = factory.is_audio,
                           width = width, height = height,
-                          length = factory.getDuration())
+                          length = factory.getDuration(),
+                          is_seekable = True)
 
     def _addSource(self):
         self.add(self.source)
@@ -450,7 +459,8 @@ class SmartTimelineBin(SmartBin):
                           has_video=True, has_audio=True,
                           width=settings.videowidth,
                           height=settings.videoheight,
-                          length=project.timeline.videocomp.duration)
+                          length=project.timeline.videocomp.duration,
+                          is_seekable=True)
 
     def _addSource(self):
         self.add(self.source)

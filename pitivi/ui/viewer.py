@@ -385,7 +385,9 @@ class PitiviViewer(gtk.VBox):
 
     def _currentPlaygroundChangedCb(self, playground, smartbin):
         gst.log("smartbin:%s" % smartbin)
-        if smartbin == playground.default or not hasattr(smartbin, "factory"):
+
+        if not smartbin.seekable:
+            # live sources or defaults, no duration/seeking available
             self.slider.set_sensitive(False)
             self.playpause_button.set_sensitive(False)
             self.next_button.set_sensitive(False)
