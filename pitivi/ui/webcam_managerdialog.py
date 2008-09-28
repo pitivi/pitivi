@@ -116,6 +116,7 @@ class WebcamManagerDialog(GladeWindow):
 
     # Close the Webcamdialog
     def close(self, w):
+        self.window.hide()
         self.player.set_state(gst.STATE_NULL)
         self.window.destroy()
 
