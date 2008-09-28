@@ -1,3 +1,315 @@
+2008-09-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* ChangeLog:
+	Updating ChangeLog with git-svn information
+
+2008-09-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+ui: hide the webcam dialogbox before setting pipeline to NULL
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1298 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Remove print statement
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1297 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+ui/Makefile.am : dist files from Sarath's branch
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1296 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+device : cleanup code, document methods/classes
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1295 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+SmartBin : Add a 'seekable' property to know if we can do seek/getduration on the given bin.
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1294 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+mainwindow : Don't propose screencast option until dbus features are available in Istanbul
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1293 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-27  Edward Hervey <edward.hervey@collabora.co.uk>
+
+UI : Allow selection of input devices for capture
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1292 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-27  Edward Hervey <edward.hervey@collabora.co.uk>
+
+device : Add probing for v4l sources, and sprinkled some debugging lines
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1291 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-27  Edward Hervey <edward.hervey@collabora.co.uk>
+
+webcam UI : use glade convenience class
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1290 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-27  Edward Hervey <edward.hervey@collabora.co.uk>
+
+ui/mainwindow : toggle webcam feature dynamically based on whether a webcam
+is available or not.
+
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1289 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-27  Edward Hervey <edward.hervey@collabora.co.uk>
+
+device.py : Add signals for devices being added/removed
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1288 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-27  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Don't propose webcam capture if we don't have any webcams available.
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1287 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+pitivi.py: Import the DeviceProbe
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1286 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Device : cleanups
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1285 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Device: Implement HAL DeviceProbe
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1284 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+New module (pitivi.device) for Device handling, probing and listing.
+Not complete yet.
+
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1283 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+bin: Remove unused code
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1282 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+more basic cleanups
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1281 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Properly fix tabs-instead-of-spaces
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1280 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Revert "Fix tabs-instead-of-spaces wrong indentation"
+This reverts commit 1a653a103cd878a7e0f716c781099f19394a85d8.
+
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1279 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Fix tabs-instead-of-spaces wrong indentation
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1278 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+remove broken imports and remove whitespaces
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1277 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+some cleanups/factorisation/commenting
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1276 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+bin: a bit more cleanups/comments
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1275 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Added statusbar for network stream manager, Added queues to correct SinkBin
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1274 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+SinkBin timeoverlay Bug fix, set Sources: NULL->READY
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1273 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+SinkBin timeoverlay Bug fix, set Sources: NULL->READY
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1272 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Fixed Network streaming, Added T\timeoverlay: Tested all features
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1271 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Partial Merge with rev 1231
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1270 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+* pitivi/threads.py:
+Added convenience CallbackThread class
+
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1269 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+update bin.py
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1268 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+* pitivi/bin.py:
+There's currently an issue with audio sources by which they do not
+properly reset when going to READY. We workaround this by forcing the
+sources to NULL and then back to READY before capturing.
+Name the various queues to make debugging easier.
+Increase the size of the queues.
+* pitivi/ui/webcam_managerdialog.py:
+Name the various queues to make debugging easier.
+Increase the size of the queues.
+
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1267 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Network stream capture rewrote with smartbin
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1266 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Screencast support improved
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1265 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Screencast support added
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1264 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+SmartBin: changed vtee from identity to tee
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1263 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+SmartBin: changed vtee from identity to tee
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1262 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+SmartCaptureBin, record()
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1261 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Rewrite of webcammanager
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1260 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Rewriting Webcam manager dialog
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1259 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+pitivi/bin.py:SmartCaptureBin , pitivi/ui/webcam_managerdialog.py
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1258 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+pitivi/bin.py:SmartCaptureBin , pitivi/ui/webcam_managerdialog.py
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1257 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+* pitivi/ui/viewer.py:
+Don't update time/duration if currently playing SmartBin doesn't have
+an associated objectfactory.
+
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1256 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+webcam_managerdialog.py, SmartDefaitBin problem
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1255 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Webcam capture and Network stream capture added.
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1254 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+test
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1253 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Don't use python 2.4-specific linguo
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1252 d3729300-e425-0410-8a4c-d956edccc248
+
+
+2008-09-26  Edward Hervey <edward.hervey@collabora.co.uk>
+
+Remove print statements from last commit
+git-svn-id: svn+ssh://svn.gnome.org/svn/pitivi/trunk@1251 d3729300-e425-0410-8a4c-d956edccc248
+
 
 2008-08-28  Sarath Lakshman  <sarathlakshman@slynux.org>
 
