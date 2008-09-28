@@ -13,21 +13,25 @@ ui_PYTHON =			\
 	infolayer.py		\
 	layerwidgets.py		\
 	mainwindow.py		\
+	netstream_managerdialog.py \
 	pluginmanagerdialog.py	\
 	plumber.py		\
 	projectsettings.py	\
 	ruler.py		\
+	screencast_managerdialog.py \
 	slider.py		\
 	sourcefactories.py	\
 	timeline.py		\
 	timelineobjects.py	\
 	tracklayer.py		\
 	util.py			\
-	viewer.py
+	viewer.py		\
+	webcam_managerdialog.py
 
 ui_DATA =				\
 	actions.xml			\
 	elementsettingsdialog.glade	\
+	cam_capture.glade		\
 	encodingdialog.glade		\
 	exportsettingswidget.glade	\
 	filelisterrordialog.glade	\
