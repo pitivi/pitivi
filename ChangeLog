@@ -1,3 +1,10 @@
+2008-10-01  Edward Hervey  <bilboed@gmail.com>
+
+	Patch by: Thijs Vermeir <thijsveirmer@gmail.com>
+	* pitivi/ui/Makefile.am:
+	Dist extra file
+	Fixes #554544
+
 2008-09-28  Edward Hervey <edward.hervey@collabora.co.uk>
 
 	* configure.ac:

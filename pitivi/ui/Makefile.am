@@ -35,7 +35,8 @@ ui_DATA =				\
 	encodingdialog.glade		\
 	exportsettingswidget.glade	\
 	filelisterrordialog.glade	\
-	projectsettings.glade	\
+	net_capture.glade		\
+	projectsettings.glade		\
 	pluginmanagerdialog.glade
 
 clean-local:
