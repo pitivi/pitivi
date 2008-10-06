@@ -8,6 +8,8 @@ pitivi/pitivi.py
 pitivi/playground.py
 pitivi/project.py
 pitivi/settings.py
+pitivi/ui/cam_capture.glade
+pitivi/ui/complextimeline.py
 pitivi/ui/elementsettingsdialog.glade
 pitivi/ui/encodingdialog.glade
 pitivi/ui/exportsettingswidget.glade
@@ -17,9 +19,11 @@ pitivi/ui/filelisterrordialog.py
 pitivi/ui/gstwidget.py
 pitivi/ui/infolayer.py
 pitivi/ui/mainwindow.py
+pitivi/ui/net_capture.glade
 pitivi/ui/pluginmanagerdialog.glade
 pitivi/ui/projectsettings.glade
 pitivi/ui/pluginmanagerdialog.py
+pitivi/ui/screencast_manager.glade
 pitivi/ui/sourcefactories.py
 pitivi/ui/timelineobjects.py
 pitivi/ui/timeline.py
