@@ -428,8 +428,6 @@ class PitiviViewer(gtk.VBox):
 
     def _currentStateCb(self, unused_playground, state):
         gst.info("current state changed : %s" % state)
-        if self.currentState == state:
-            return
         if state == int(gst.STATE_PLAYING):
             self.playpause_button.setPause()
         elif state == int(gst.STATE_PAUSED):
