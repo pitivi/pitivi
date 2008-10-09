@@ -141,6 +141,9 @@ def _checks():
     if not __try_import__("gtk.glade"):
         return (_("Could not import the Python bindings for libglade"),
                 _("Make sure you have the Python bindings for libglade installed"))
+    if not __try_import__("goocanvas"):
+        return (_("Could not import the Python bindings for goocanvas"),
+                _("Make sure you have the Python bindings for goocanvas installed"))
     req, inst = check_required_version("gtk")
     if req:
         return (_("You do not have a recent enough version of the GTK+ Python Bindings (currently %s)") % inst,

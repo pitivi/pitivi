@@ -1,5 +1,10 @@
 2008-10-09  Edward Hervey  <edward.hervey@collabora.co.uk>
 
+	* pitivi/check.py:
+	Add a runtime-check for pygoocanvas.
+
+2008-10-09  Edward Hervey  <edward.hervey@collabora.co.uk>
+
 	* pitivi/ui/viewer.py:
 	Fix pending-seek behaviour.
 	Fixes #554602
