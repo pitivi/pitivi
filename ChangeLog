@@ -1,5 +1,11 @@
 2008-10-09  Edward Hervey  <edward.hervey@collabora.co.uk>
 
+	* pitivi/ui/ruler.py:
+	Don't seek if we have an empty timeline.
+	Don't set timeouts if the seek failed.
+
+2008-10-09  Edward Hervey  <edward.hervey@collabora.co.uk>
+
 	* pitivi/ui/Makefile.am:
 	dist file, even if it's not used, so it doesn't break .po files.
 

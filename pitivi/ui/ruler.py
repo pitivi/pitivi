@@ -125,6 +125,8 @@ class ScaleRuler(gtk.Layout, Zoomable):
 
     def do_button_press_event(self, event):
         gst.debug("button pressed at x:%d" % event.x)
+        if self.getDuration() <= 0:
+            gst.debug("no timeline to seek on, ignoring")
         instance.PiTiVi.playground.switchToTimeline()
         self.pressed = True
         # seek at position
@@ -158,10 +160,10 @@ class ScaleRuler(gtk.Layout, Zoomable):
         gst.debug("seeking to %s / currentlySeeking %r" % (gst.TIME_ARGS (value),
                                                            self.currentlySeeking))
         if not self.currentlySeeking:
-            self.currentlySeeking = True
-            self.requested_time = value
-            gobject.timeout_add(80, self._seekTimeoutCb)
-            instance.PiTiVi.playground.seekInCurrent(value, format=format)
+            if instance.PiTiVi.playground.seekInCurrent(value, format=format):
+                self.currentlySeeking = True
+                self.requested_time = value
+                gobject.timeout_add(80, self._seekTimeoutCb)
         elif format == gst.FORMAT_TIME:
             self.requested_time = value
 
