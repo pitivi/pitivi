@@ -33,6 +33,7 @@ def time_to_string(value):
     mins = sec / 60
     sec = sec % 60
     hours = mins / 60
+    mins = mins % 60
     return "%02d:%02d:%02d.%03d" % (hours, mins, sec, ms)
 
 def bin_contains(bin, element):
