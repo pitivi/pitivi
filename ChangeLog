@@ -1,3 +1,15 @@
+2008-10-09  Edward Hervey  <bilboed@gmail.com>
+
+	* pitivi/ui/ruler.py: (ScaleRuler):
+	Don't allocate insanely big pixmaps for double-buffering. Instead,
+	allocate smaller ones and do the recalculation in a smart fashion.
+	Fixes #552777
+
+2008-10-09  Edward Hervey  <bilboed@gmail.com>
+
+	* pitivi/utils.py:
+	Fix 'minutes' values for times > 1hour.
+
 2008-10-01  Edward Hervey  <bilboed@gmail.com>
 
 	Patch by: Thijs Vermeir <thijsveirmer@gmail.com>

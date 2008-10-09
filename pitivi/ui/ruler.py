@@ -50,10 +50,19 @@ class ScaleRuler(gtk.Layout, Zoomable):
         self.add_events(gtk.gdk.POINTER_MOTION_MASK |
             gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
         self.set_hadjustment(hadj)
+
+        # double-buffering properties
         self.pixmap = None
+        # all values are in pixels
+        self.pixmap_offset = 0
+        self.pixmap_visible_width = 0
+        self.pixmap_allocated_width = 0
+        self.pixmap_old_allocated_width = -1
+        # This is the number of visible_width we allocate for the pixmap
+        self.pixmap_multiples = 2
+
         # position is in nanoseconds
         self.position = 0
-
         self.requested_time = long(0)
         self.currentlySeeking = False
         self.pressed = False
@@ -68,13 +77,13 @@ class ScaleRuler(gtk.Layout, Zoomable):
 ## timeline position changed method
 
     def timelinePositionChanged(self, value, unused_frame):
+        gst.debug("value : %r" % value)
         ppos = max(self.nsToPixel(self.position) - 1, 0)
         self.position = value
         npos = max(self.nsToPixel(self.position) - 1, 0)
-
         height = self.get_allocation().height
-        self.queue_draw_area(ppos, 0, 2, height)
-        self.queue_draw_area(npos, 0, 2, height)
+        self.bin_window.invalidate_rect((ppos, 0, 2, height), True)
+        self.bin_window.invalidate_rect((npos, 0, 2, height), True)
 
 ## gtk.Widget overrides
 
@@ -82,7 +91,8 @@ class ScaleRuler(gtk.Layout, Zoomable):
         gst.debug("ScaleRuler got %s" % list(allocation))
         gtk.Layout.do_size_allocate(self, allocation)
         width = max(self.getPixelWidth(), allocation.width)
-        gst.debug("Setting layout size to %d x %d" % (width, allocation.height))
+        gst.debug("Setting layout size to %d x %d"
+                  % (width, allocation.height))
         self.set_size(width, allocation.height)
         # the size has changed, therefore we want to redo our pixmap
         self.doPixmap()
@@ -95,11 +105,19 @@ class ScaleRuler(gtk.Layout, Zoomable):
     def do_expose_event(self, event):
         gst.debug("exposing ScaleRuler %s" % list(event.area))
         x, y, width, height = event.area
+        if (x < self.pixmap_offset) or (x+width > self.pixmap_offset + self.pixmap_allocated_width):
+            gst.debug("exposing outside boundaries !")
+            self.pixmap_offset = max(0, x + (width / 2) - (self.pixmap_allocated_width / 2))
+            gst.debug("offset is now %d" % self.pixmap_offset)
+            self.doPixmap()
+            width = self.pixmap_allocated_width
+
         # double buffering power !
         self.bin_window.draw_drawable(
             self.style.fg_gc[gtk.STATE_NORMAL],
             self.pixmap,
-            x, y, x, y, width, height)
+            x - self.pixmap_offset, y,
+            x, y, width, height)
         # draw the position
         context = self.bin_window.cairo_create()
         self.drawPosition(context, self.get_allocation())
@@ -154,15 +172,30 @@ class ScaleRuler(gtk.Layout, Zoomable):
         # we can't create the pixmap if we're not realized
         if not self.flags() & gtk.REALIZED:
             return
+
+        # We want to benefit from double-buffering (so as not to recreate the
+        # ruler graphics all the time) yet we don't want to allocate insanely
+        # big pixmaps (which would result in big memory usage, or even not being
+        # able to allocate such a big pixmap).
+        #
+        # We therefore create a pixmap with a width of 2 times the maximum viewable
+        # width (allocation.width)
+
         allocation = self.get_allocation()
         lwidth, lheight = self.get_size()
-        allocation.width = max(allocation.width, lwidth)
-        gst.debug("Creating pixmap(self.window, width:%d, height:%d)" 
-            % (allocation.width, allocation.height))
-        if self.pixmap:
-            del self.pixmap
-        self.pixmap = gtk.gdk.Pixmap(self.bin_window, allocation.width, 
-            allocation.height)
+
+        self.pixmap_visible_width = allocation.width
+        self.pixmap_allocated_width = self.pixmap_visible_width * self.pixmap_multiples
+        allocation.width = self.pixmap_allocated_width
+
+
+        if (allocation.width != self.pixmap_old_allocated_width):
+            if self.pixmap:
+                del self.pixmap
+            self.pixmap = gtk.gdk.Pixmap(self.bin_window, allocation.width,
+                                         allocation.height)
+            self.pixmap_old_allocated_width = allocation.width
+
         context = self.pixmap.cairo_create()
         self.drawBackground(context, allocation)
         self.drawRuler(context, allocation)
@@ -231,8 +264,11 @@ class ScaleRuler(gtk.Layout, Zoomable):
             context.show_text( time )
 
         def drawTicks(interval, height):
-            paintpos = float(self.border) + 0.5
             spacing = zoomRatio * interval
+            offset = self.pixmap_offset % spacing
+            paintpos = float(self.border) + 0.5
+            if offset > 0:
+                paintpos += spacing - offset
             if spacing >= self.min_tick_spacing:
                 while paintpos < allocation.width:
                     drawTick(paintpos, height)
@@ -240,16 +276,21 @@ class ScaleRuler(gtk.Layout, Zoomable):
 
         def drawTimes(interval):
             # figure out what the optimal offset is
-            paintpos = float(self.border) + 0.5
-            seconds = 0
             spacing = zoomRatio * interval
+            offset = self.pixmap_offset % spacing
+            seconds = self.pixelToNs(self.pixmap_offset)
+            paintpos = float(self.border) + 0.5
+            if offset > 0:
+                seconds += self.pixelToNs(spacing - offset)
+                paintpos += spacing - offset
             textwidth, textheight = textSize(time_to_string(0))
             if spacing > textwidth:
                 while paintpos < allocation.width:
-                    timevalue = long(seconds * gst.SECOND)
+                    timevalue = long(seconds)
                     drawText(paintpos, timevalue, textwidth, textheight)
                     paintpos += spacing
-                    seconds += interval
+                    seconds += long(interval * gst.SECOND)
+
 
         context.save()
         zoomRatio = self.getZoomRatio()
