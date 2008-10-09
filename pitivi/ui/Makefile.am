@@ -37,7 +37,8 @@ ui_DATA =				\
 	filelisterrordialog.glade	\
 	net_capture.glade		\
 	projectsettings.glade		\
-	pluginmanagerdialog.glade
+	pluginmanagerdialog.glade	\
+	screencast_manager.glade
 
 clean-local:
 	rm -rf *.pyc *.pyo

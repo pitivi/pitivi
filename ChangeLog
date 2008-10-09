@@ -1,3 +1,8 @@
+2008-10-09  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/Makefile.am:
+	dist file, even if it's not used, so it doesn't break .po files.
+
 2008-10-09  Edward Hervey  <bilboed@gmail.com>
 
 	* pitivi/ui/ruler.py: (ScaleRuler):
