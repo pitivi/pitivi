@@ -43,7 +43,7 @@ class PitiviViewer(gtk.VBox):
         gst.log("New PitiviViewer")
         gtk.VBox.__init__(self)
         self.current_time = long(0)
-        self.requested_time = long(0)
+        self.requested_time = gst.CLOCK_TIME_NONE
         self.current_frame = -1
         self.valuechangedid = 0
         self.currentlySeeking = False
@@ -273,18 +273,27 @@ class PitiviViewer(gtk.VBox):
             self._doSeek(seekvalue, gst.FORMAT_DEFAULT)
 
     def _seekTimeoutCb(self):
+        gst.debug("requested_time %s" % gst.TIME_ARGS(self.requested_time))
         self.currentlySeeking = False
-        if not self.current_time == self.requested_time:
+        if (self.requested_time != gst.CLOCK_TIME_NONE) and (self.current_time != self.requested_time):
             self._doSeek(self.requested_time)
+        return False
 
     def _doSeek(self, value, format=gst.FORMAT_TIME):
+        gst.debug("%s , currentlySeeking:%r" % (gst.TIME_ARGS(value),
+                                                self.currentlySeeking))
         if not self.currentlySeeking:
             self.currentlySeeking = True
-            gobject.timeout_add(80, self._seekTimeoutCb)
-            instance.PiTiVi.playground.seekInCurrent(value, format=format)
-            self._newTime(value)
-        if format == gst.FORMAT_TIME:
-            self.requested_time = value
+            if instance.PiTiVi.playground.seekInCurrent(value, format=format):
+                gst.debug("seek succeeded, request_time = NONE")
+                self.requested_time = gst.CLOCK_TIME_NONE
+                gobject.timeout_add(80, self._seekTimeoutCb)
+                self._newTime(value)
+            else:
+                self.currentlySeeking = False
+        else:
+            if format == gst.FORMAT_TIME:
+                self.requested_time = value
 
     def _newTime(self, value, frame=-1):
         gst.info("value:%s, frame:%d" % (gst.TIME_ARGS(value), frame))
@@ -419,6 +428,8 @@ class PitiviViewer(gtk.VBox):
 
     def _currentStateCb(self, unused_playground, state):
         gst.info("current state changed : %s" % state)
+        if self.currentState == state:
+            return
         if state == int(gst.STATE_PLAYING):
             self.playpause_button.setPause()
         elif state == int(gst.STATE_PAUSED):
