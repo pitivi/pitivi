@@ -1,3 +1,8 @@
+2008-10-10  Edward Hervey  <edward.hervey@collabora.co.uk>
+
+	* pitivi/ruler.py:
+	Fix similar pending-seek behaviour as did previously in the viewer.
+
 2008-10-09  Edward Hervey  <edward.hervey@collabora.co.uk>
 
 	* pitivi/check.py:

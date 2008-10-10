@@ -63,7 +63,7 @@ class ScaleRuler(gtk.Layout, Zoomable):
 
         # position is in nanoseconds
         self.position = 0
-        self.requested_time = long(0)
+        self.requested_time = gst.CLOCK_TIME_NONE
         self.currentlySeeking = False
         self.pressed = False
 
@@ -76,7 +76,7 @@ class ScaleRuler(gtk.Layout, Zoomable):
 
 ## timeline position changed method
 
-    def timelinePositionChanged(self, value, unused_frame):
+    def timelinePositionChanged(self, value, unused_frame=None):
         gst.debug("value : %r" % value)
         ppos = max(self.nsToPixel(self.position) - 1, 0)
         self.position = value
@@ -152,18 +152,24 @@ class ScaleRuler(gtk.Layout, Zoomable):
     def _seekTimeoutCb(self):
         gst.debug("timeout")
         self.currentlySeeking = False
-        if not self.position == self.requested_time:
+        if (self.requested_time != gst.CLOCK_TIME_NONE) and (self.position != self.requested_time):
             self._doSeek(self.requested_time)
         return False
 
     def _doSeek(self, value, format=gst.FORMAT_TIME):
         gst.debug("seeking to %s / currentlySeeking %r" % (gst.TIME_ARGS (value),
                                                            self.currentlySeeking))
+        if (format == gst.FORMAT_TIME) and (value > self.getDuration()):
+            gst.debug("you can't seek outside of the timeline")
+            return
         if not self.currentlySeeking:
+            self.currentlySeeking = True
             if instance.PiTiVi.playground.seekInCurrent(value, format=format):
-                self.currentlySeeking = True
-                self.requested_time = value
+                self.requested_time = gst.CLOCK_TIME_NONE
                 gobject.timeout_add(80, self._seekTimeoutCb)
+                self.timelinePositionChanged(value)
+            else:
+                self.currentlySeeking = False
         elif format == gst.FORMAT_TIME:
             self.requested_time = value
 
