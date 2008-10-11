@@ -17,7 +17,6 @@ pitivi/ui/exportsettingswidget.py
 pitivi/ui/filelisterrordialog.glade
 pitivi/ui/filelisterrordialog.py
 pitivi/ui/gstwidget.py
-pitivi/ui/infolayer.py
 pitivi/ui/mainwindow.py
 pitivi/ui/net_capture.glade
 pitivi/ui/pluginmanagerdialog.glade
@@ -25,7 +24,5 @@ pitivi/ui/projectsettings.glade
 pitivi/ui/pluginmanagerdialog.py
 pitivi/ui/screencast_manager.glade
 pitivi/ui/sourcefactories.py
-pitivi/ui/timelineobjects.py
 pitivi/ui/timeline.py
-pitivi/ui/tracklayer.py
 pitivi/ui/viewer.py

@@ -9,7 +9,6 @@ ui_PYTHON =			\
 	filelisterrordialog.py	\
 	glade.py		\
 	gstwidget.py		\
-	infolayer.py		\
 	mainwindow.py		\
 	netstream_managerdialog.py \
 	pluginmanagerdialog.py	\
@@ -20,7 +19,6 @@ ui_PYTHON =			\
 	slider.py		\
 	sourcefactories.py	\
 	timeline.py		\
-	timelineobjects.py	\
 	util.py			\
 	viewer.py		\
 	webcam_managerdialog.py

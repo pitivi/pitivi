@@ -1,5 +1,11 @@
 2008-10-11  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/ui/Makefile.am:
+	* po/POTFILES.in:
+	sigh... forgot some files.
+
+2008-10-11  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* configure.ac:
 	0.11.1.3 pre-release
 
