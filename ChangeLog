@@ -1,5 +1,10 @@
 2008-10-11  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* configure.ac:
+	0.11.1.3 pre-release
+
+2008-10-11  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/settings.py:
 	Filter out muxers for which we can't sink audio or video.
 	Fixes #547095
