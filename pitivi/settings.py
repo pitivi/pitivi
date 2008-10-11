@@ -164,6 +164,7 @@ class ExportSettings(gobject.GObject, Serializable):
         self.muxers = available_muxers()
         self.vencoders = available_video_encoders()
         self.aencoders = available_audio_encoders()
+        self.muxers = available_combinations(self.muxers, self.vencoders, self.aencoders)
 
     def __str__(self):
         msg = _("Export Settings\n")
@@ -389,3 +390,11 @@ def muxer_can_sink_raw_audio(muxer):
 def muxer_can_sink_raw_video(muxer):
     return my_can_sink_caps(muxer, gst.Caps("video/x-raw-yuv;video/x-raw-rgb"))
 
+def available_combinations(muxers, vencoders, aencoders):
+    res = []
+    for mux in muxers:
+        noaudio = (encoders_muxer_compatible(aencoders, mux) == []) and not muxer_can_sink_raw_audio(mux)
+        novideo = (encoders_muxer_compatible(vencoders, mux) == []) and not muxer_can_sink_raw_video(mux)
+        if (noaudio == False) and (novideo == False):
+            res.append(mux)
+    return res

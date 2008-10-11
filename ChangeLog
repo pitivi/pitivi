@@ -1,5 +1,11 @@
 2008-10-11  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/settings.py:
+	Filter out muxers for which we can't sink audio or video.
+	Fixes #547095
+
+2008-10-11  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	patch by: Michael Terry <mike@mterry.name>
 	* pitivi/bin.py:
 	Fix issue when cancelling rendering.
