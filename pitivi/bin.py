@@ -231,12 +231,12 @@ class SmartBin(gst.Pipeline):
         self.set_state(gst.STATE_PAUSED)
 
         if self.encthread:
+            self.encthread.set_state(gst.STATE_NULL)
             apad = self.encthread.get_pad("vsink")
             apad.get_peer().unlink(apad)
             apad = self.encthread.get_pad("asink")
             apad.get_peer().unlink(apad)
             self.remove(self.encthread)
-            self.encthread.set_state(gst.STATE_NULL)
             del self.encthread
             self.encthread = None
             if self.tmpasink:

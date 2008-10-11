@@ -1,5 +1,12 @@
 2008-10-11  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	patch by: Michael Terry <mike@mterry.name>
+	* pitivi/bin.py:
+	Fix issue when cancelling rendering.
+	Fixes #458944
+
+2008-10-11  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/ui/actions.xml:
 	* pitivi/ui/mainwindow.py:
 	* pitivi/ui/timeline.py:
