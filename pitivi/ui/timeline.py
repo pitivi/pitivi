@@ -36,7 +36,6 @@ import pitivi.dnd as dnd
 from pitivi.timeline.source import TimelineFileSource, TimelineBlankSource
 from pitivi.timeline.objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 
-from timelineobjects import SimpleTimelineWidget
 from complextimeline import ComplexTimelineWidget
 
 class TimelineWidget(gtk.VBox):
@@ -57,22 +56,10 @@ class TimelineWidget(gtk.VBox):
 
     def _createUi(self):
         """ draw the GUI """
-        self.simpleview = SimpleTimelineWidget()
         self.complexview = ComplexTimelineWidget()
-
-    def showSimpleView(self):
-        """ Show the simple timeline """
-        if self.complexview in self.get_children():
-            self.remove(self.complexview)
-            self.complexview.hide()
-        self.pack_start(self.simpleview, expand=True)
-        self.simpleview.show_all()
 
     def showComplexView(self):
         """ Show the advanced timeline """
-        if self.simpleview in self.get_children():
-            self.remove(self.simpleview)
-            self.simpleview.hide()
         self.pack_start(self.complexview, expand=True)
         self.complexview.show_all()
 

@@ -22,7 +22,6 @@
     </menu>
     <menu action="View">
       <menuitem action="FullScreen" />
-      <menuitem action="AdvancedView" />
     </menu>
     <menu action="Help">
       <menuitem action="About" />
@@ -39,7 +38,6 @@
     <toolitem action="RenderProject" />
     <separator />
     <toolitem action="FullScreen" />
-    <toolitem action="AdvancedView" />
   </toolbar>
   <toolbar name="TimelineToolBar">
   </toolbar>

@@ -4,14 +4,12 @@ ui_PYTHON =			\
 	__init__.py		\
 	complexinterface.py	\
 	complexlayer.py		\
-	complexsource.py	\
 	complextimeline.py	\
 	exportsettingswidget.py	\
 	filelisterrordialog.py	\
 	glade.py		\
 	gstwidget.py		\
 	infolayer.py		\
-	layerwidgets.py		\
 	mainwindow.py		\
 	netstream_managerdialog.py \
 	pluginmanagerdialog.py	\
@@ -23,7 +21,6 @@ ui_PYTHON =			\
 	sourcefactories.py	\
 	timeline.py		\
 	timelineobjects.py	\
-	tracklayer.py		\
 	util.py			\
 	viewer.py		\
 	webcam_managerdialog.py

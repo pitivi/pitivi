@@ -1,3 +1,15 @@
+2008-10-11  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/actions.xml:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/Makefile.am:
+	Remove usage of simple timeline.
+	* pitivi/ui/complexsource.py:
+	* pitivi/ui/layerwidgets.py:
+	* pitivi/ui/tracklayer.py:
+	Also remove files no longer used.
+
 2008-10-10  Edward Hervey  <edward.hervey@collabora.co.uk>
 
 	* pitivi/ruler.py:

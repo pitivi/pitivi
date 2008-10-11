@@ -150,14 +150,9 @@ class PitiviMainWindow(gtk.Window):
     def _createStockIcons(self):
         """ Creates the pitivi-only stock icons """
         gtk.stock_add([
-                ('pitivi-advanced-mode', 'Advanced Mode', 0, 0, 'pitivi'),
                 ('pitivi-render', 'Render', 0, 0, 'pitivi')
                 ])
         factory = gtk.IconFactory()
-        pixbuf = gtk.gdk.pixbuf_new_from_file(
-            configure.get_pixmap_dir() + "/pitivi-advanced-24.png")
-        iconset = gtk.IconSet(pixbuf)
-        factory.add('pitivi-advanced-mode', iconset)
         pixbuf = gtk.gdk.pixbuf_new_from_file(
             configure.get_pixmap_dir() + "/pitivi-render-24.png")
         iconset = gtk.IconSet(pixbuf)
@@ -207,8 +202,6 @@ class PitiviMainWindow(gtk.Window):
         ]
 
         self.toggleactions = [
-            ("AdvancedView", 'pitivi-advanced-mode', _("Advanced vie_w"),
-             None, _("Switch to advanced view"), self._advancedViewCb, True),
             ("FullScreen", gtk.STOCK_FULLSCREEN, None, None,
              _("View the main window on the whole screen"), self._fullScreenCb)
         ]
@@ -224,9 +217,6 @@ class PitiviMainWindow(gtk.Window):
                 self.render_button = action
             elif action.get_name() == "ImportfromCam":
                 self.webcam_button = action
-            elif action.get_name() == "AdvancedView":
-                if not instance.PiTiVi.settings.advancedModeEnabled:
-                    action.set_sensitive(False)
             elif action.get_name() == "Screencast":
                 # FIXME : re-enable this action once istanbul integration is complete
                 # and upstream istanbul has applied packages for proper interaction.
@@ -234,7 +224,7 @@ class PitiviMainWindow(gtk.Window):
             elif action.get_name() in [
                 "ProjectSettings", "Quit", "File", "Edit", "Help",
                 "About", "View", "FullScreen", "ImportSources",
-                "ImportSourcesFolder", "AdvancedView", "PluginManager","ImportfromCam","NetstreamCapture"]:
+                "ImportSourcesFolder", "PluginManager","ImportfromCam","NetstreamCapture"]:
                 action.set_sensitive(True)
             elif action.get_name() in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
@@ -410,12 +400,6 @@ class PitiviMainWindow(gtk.Window):
 
     def _fullScreenCb(self, unused_action):
         self.toggleFullScreen()
-
-    def _advancedViewCb(self, action):
-        if action.get_active():
-            self.timeline.showComplexView()
-        else:
-            self.timeline.showSimpleView()
 
     def _aboutResponseCb(self, dialog, unused_response):
         dialog.destroy()
