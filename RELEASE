@@ -1,10 +1,8 @@
-0.11.1 Release : A gentlemen game played by hooligans
+0.11.1 Release : Milanesa de Lomo
 -----------------------------------------------------
 
-The PiTiVi team is proud to announce the second release in the unstable 0.11
+The PiTiVi team is proud to announce the third release in the unstable 0.11
 PiTiVi series.
-
-Expect a new release every 3-weeks, regardless of current code status.
 
 This release series is not intended to be production-ready, but instead to allow
 users to try more often new features that will be available in the next stable
@@ -13,19 +11,38 @@ series.
 The developers will not be held accountable for any work lost, flooding or war
 caused by this unstable series.
 
+Due to its dependency on GStreamer, The PiTiVi team strongly recommends users have
+all official latest gstreamer libraries and plugins installed for the best user
+experience.
+
 
 * Features of this release
 
- * More work on project save/load, use PITIVI_FILE_SUPPORT=1 to try it.
- * Be more flexible with encoding caps, should fix more issues when encoding.
- * Fixed issues for non icon-theme-spec compliant systems
- * Misc fixes
+ * New advanced timeline interface by Brandon Lewis (SoC)
+ * Capture interface for webcams and network sources by Sarath Lakshman (SoC).
+ * Simple Timeline is gone.
+ * Project save/load now activated by default
+ * Cutting/Trimming/Removing features added to advanced timeline.
+ * Misc fixes and improvements
 
 * Bugs Fixed
 
- * 461913 : Error: Icon not present in theme
- * 486271 : crash in Pitivi Video Editor: I close the PiTiVI windo...
- * 487455 : Dragging multichannel .mov file onto timeline produce err...
+ * 552777 : [ruler.py] BadAlloc error with big sources
+ * 353870 : Save/Load project from/to file
+ * 332473 : Capture from given gstreamer input source
+ * 334631 : xvsink crash with python in pitivi
+ * 339895 : [Advanced Timeline] Zooming in too much causes X error
+ * 432678 : [discoverer] Files that report a duration of 0s is BUGGY !!!
+ * 458944 : Cancelling while rendering does not work
+ * 461738 : [Advanced Timeline] Scrollbar always comes back to beginning
+ * 498071 : [Simple Timeline] Drag and Drop puts clips in the wrong slot
+ * 498904 : incorrect indentation: some tabs are mixed with spaces in...
+ * 501028 : Missing files from POTFILES.in
+ * 501068 : Uses make instead of $(MAKE)
+ * 518301 : Pitivi won't start under KDE: &quot; Icon 'misc' not present in...
+ * 547095 : [Export Settings] Filter unusable muxers
+ * 554544 : net_capture.glade not installed
+ * 554602 : seeking is not working correctly ...
 
 * Requirements
 
@@ -35,13 +52,15 @@ caused by this unstable series.
  * pygtk >= 2.8.0
  * zope.interface (http://www.zope.org/Products/ZopeInterface)
  * setuptools (http://peak.telecommunity.com/DevCenter/setuptools)
+ * pygoocanvas (http://live.gnome.org/GooCanvas)
+ * dbus and HAL for capture support
 
 
 * Contributors
 
  * Edward Hervey
+ * Sarath Lakshman
  * Brandon Lewis
- * Tommy
 
 
 * Download
