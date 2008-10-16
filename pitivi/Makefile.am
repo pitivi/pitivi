@@ -22,6 +22,7 @@ pitivi_PYTHON = \
 	playground.py 	\
 	plugincore.py	\
 	pluginmanager.py \
+	plumber.py	\
 	project.py 	\
 	projectsaver.py	\
 	serializable.py	\

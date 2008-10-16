@@ -1,6 +1,16 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
 	* pitivi/Makefile.am:
+	* pitivi/bin.py:
+	* pitivi/plumber.py:
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/viewer.py:
+	Move plumber up one directory, since it's not ui-specific.
+	Use auto*sink instead of gconf*sink since it's now works better
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/Makefile.am:
 	* pitivi/signalinterface.py:
 	* tests/Makefile.am:
 	* tests/test_signallable.py:

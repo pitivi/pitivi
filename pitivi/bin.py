@@ -26,7 +26,7 @@ High-level Pipelines with plugable back-ends
 import gobject
 import gst
 from elements.smartscale import SmartVideoScale
-from ui import plumber
+import plumber
 from threads import CallbackThread
 
 class SmartBin(gst.Pipeline):

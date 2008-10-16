@@ -12,7 +12,6 @@ ui_PYTHON =			\
 	mainwindow.py		\
 	netstream_managerdialog.py \
 	pluginmanagerdialog.py	\
-	plumber.py		\
 	projectsettings.py	\
 	ruler.py		\
 	screencast_managerdialog.py \

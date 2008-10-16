@@ -27,7 +27,7 @@ import gst
 import gst.interfaces
 from glade import GladeWindow
 
-import plumber
+import pitivi.plumber as plumber
 import pitivi.instance as instance
 from pitivi.bin import SmartTimelineBin
 import pitivi.dnd as dnd
