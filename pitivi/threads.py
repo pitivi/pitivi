@@ -26,25 +26,24 @@ import threading
 import gobject
 import gst
 
+from signalinterface import Signallable
+
 #
 # Following code was freely adapted by code from:
 #   John Stowers <john.stowers@gmail.com>
 #
 
-class Thread(threading.Thread, gobject.GObject):
+class Thread(threading.Thread, Signallable):
     """
-    GObject-powered thread
+    Event-powered thread
     """
 
-    __gsignals__ = {
-        "done" : ( gobject.SIGNAL_RUN_LAST,
-                   gobject.TYPE_NONE,
-                   ( ))
+    __signals__ = {
+        "done" : None
         }
 
     def __init__(self):
         threading.Thread.__init__(self)
-        gobject.GObject.__init__(self)
 
     def stop(self):
         """ stop the thread, do not override """
@@ -64,8 +63,6 @@ class Thread(threading.Thread, gobject.GObject):
         """ Abort the thread. Subclass have to implement this method ! """
         pass
 
-gobject.type_register(Thread)
-
 class CallbackThread(Thread):
 
     def __init__(self, callback, *args, **kwargs):
@@ -77,23 +74,21 @@ class CallbackThread(Thread):
     def process(self):
         self.callback(*self.args, **self.kwargs)
 
-gobject.type_register(CallbackThread)
-
-class ThreadMaster(gobject.GObject):
+class ThreadMaster(object):
     """
     Controls all thread existing in pitivi
     """
 
     def __init__(self):
-        gobject.GObject.__init__(self)
         self.threads = []
 
-    def addThread(self, threadClass, *args):
+    def addThread(self, threadclass, *args):
+        """ Start the given Thread """
         # IDEA : We might need a limit of concurrent threads ?
         # ... or some priorities ?
         # FIXME : we should only accept subclasses of our Thread class
-        gst.log("Adding thread of type %r" % threadClass)
-        thread = threadClass(*args)
+        gst.log("Adding thread of type %r" % threadclass)
+        thread = threadclass(*args)
         thread.connect("done", self._threadDoneCb)
         self.threads.append(thread)
         gst.log("starting it...")
@@ -105,6 +100,7 @@ class ThreadMaster(gobject.GObject):
         self.threads.remove(thread)
 
     def stopAllThreads(self):
+        """ Stop all running Thread(s) controlled by this master """
         gst.log("stopping all threads")
         joinedthreads = 0
         while(joinedthreads < len(self.threads)):

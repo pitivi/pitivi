@@ -1,5 +1,10 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/threads.py:
+	Use new gobject-less signal system
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/Makefile.am:
 	* pitivi/bin.py:
 	* pitivi/plumber.py:
