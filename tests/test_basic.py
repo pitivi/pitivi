@@ -8,7 +8,7 @@ class BasicTest(unittest.TestCase):
     """
 
     def testBasic(self):
-        ptv = pitivi.pitivi.Pitivi(use_ui=False)
+        ptv = pitivi.pitivi.Pitivi()
         # was the pitivi object created
         self.assert_(ptv)
 

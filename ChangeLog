@@ -1,5 +1,18 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/pitivi.py:
+	Remove dependency on gtk
+	Make subclass for Interactive pitivi
+	Use pure python properties
+	Clean up code and add comments
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/mainwindow.py:
+	* tests/test_basic.py:
+	* tests/test_file_load_save.py:
+	Adapt code for modifications in pitivi.py
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/bin.py:
 	* pitivi/discoverer.py:
 	* pitivi/objectfactory.py:

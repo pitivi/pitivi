@@ -727,8 +727,9 @@ class ComplexTimelineWidget(gtk.VBox):
         self.actiongroup = gtk.ActionGroup("complextimeline")
         self.actiongroup.add_actions(actions)
         self.actiongroup.set_visible(False)
-        instance.PiTiVi.uimanager.insert_action_group(self.actiongroup, 0)
-        instance.PiTiVi.uimanager.add_ui_from_string(ui)
+        uiman = instance.PiTiVi.gui.uimanager
+        uiman.insert_action_group(self.actiongroup, 0)
+        uiman.add_ui_from_string(ui)
 
 ## Project callbacks
 

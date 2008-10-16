@@ -72,11 +72,15 @@ class PitiviMainWindow(gtk.Window):
     """
 
 
-    def __init__(self):
+    def __init__(self, instance):
         """ initialize with the Pitivi object """
         gst.log("Creating MainWindow")
         gtk.Window.__init__(self)
 
+        self.pitivi = instance
+
+    def load(self):
+        """ load the user interface """
         self._createStockIcons()
         self._setActions()
         self._createUi()
@@ -87,14 +91,14 @@ class PitiviMainWindow(gtk.Window):
         self.isFullScreen = False
         self.errorDialogBox = None
 
-        instance.PiTiVi.connect("new-project-loaded", self._newProjectLoadedCb)
-        instance.PiTiVi.connect("new-project-loading", self._newProjectLoadingCb)
-        instance.PiTiVi.connect("closing-project", self._closingProjectCb)
-        instance.PiTiVi.connect("new-project-failed", self._notProjectCb)
-        instance.PiTiVi.current.connect("save-uri-requested", self._saveAsDialogCb)
-        instance.PiTiVi.current.connect("confirm-overwrite", self._confirmOverwriteCb)
-        instance.PiTiVi.playground.connect("error", self._playGroundErrorCb)
-        instance.PiTiVi.current.sources.connect("file_added", self._sourcesFileAddedCb)
+        self.pitivi.connect("new-project-loaded", self._newProjectLoadedCb)
+        self.pitivi.connect("new-project-loading", self._newProjectLoadingCb)
+        self.pitivi.connect("closing-project", self._closingProjectCb)
+        self.pitivi.connect("new-project-failed", self._notProjectCb)
+        self.pitivi.current.connect("save-uri-requested", self._saveAsDialogCb)
+        self.pitivi.current.connect("confirm-overwrite", self._confirmOverwriteCb)
+        self.pitivi.playground.connect("error", self._playGroundErrorCb)
+        self.pitivi.current.sources.connect("file_added", self._sourcesFileAddedCb)
 
         # Start dbus service
         session_bus = dbus.SessionBus()
@@ -114,20 +118,20 @@ class PitiviMainWindow(gtk.Window):
         self.show_all()
 
     def _encodingDialogDestroyCb(self, unused_dialog):
-        instance.PiTiVi.gui.set_sensitive(True)
+        self.pitivi.gui.set_sensitive(True)
 
     def _recordCb(self, unused_button):
         # pause timeline !
-        instance.PiTiVi.playground.pause()
+        self.pitivi.playground.pause()
 
-        win = EncodingDialog(instance.PiTiVi.current)
+        win = EncodingDialog(self.pitivi.current)
         win.window.connect("destroy", self._encodingDialogDestroyCb)
-        instance.PiTiVi.gui.set_sensitive(False)
+        self.pitivi.gui.set_sensitive(False)
         win.show()
 
     def _timelineDurationChangedCb(self, unused_composition, unused_start,
                                    duration):
-        if not isinstance(instance.PiTiVi.playground.current, SmartTimelineBin):
+        if not isinstance(self.pitivi.playground.current, SmartTimelineBin):
             return
         self.render_button.set_sensitive((duration > 0) and True or False)
 
@@ -228,12 +232,12 @@ class PitiviMainWindow(gtk.Window):
                 action.set_sensitive(True)
             elif action.get_name() in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
-                if not instance.PiTiVi.settings.fileSupportEnabled:
+                if not self.pitivi.settings.fileSupportEnabled:
                     action.set_sensitive(False)
             else:
                 action.set_sensitive(False)
 
-        self.uimanager = instance.PiTiVi.uimanager
+        self.uimanager = gtk.UIManager()
         self.add_accel_group(self.uimanager.get_accel_group())
         self.uimanager.insert_action_group(self.actiongroup, 0)
         self.uimanager.add_ui_from_file(os.path.join(os.path.dirname(
@@ -276,7 +280,7 @@ class PitiviMainWindow(gtk.Window):
         # Viewer
         self.viewer = PitiviViewer()
 
-        instance.PiTiVi.playground.connect("current-changed", 
+        self.pitivi.playground.connect("current-changed", 
             self._currentPlaygroundChangedCb)
 
         hpaned.pack1(self.sourcefactories, resize=False, shrink=False)
@@ -329,7 +333,7 @@ class PitiviMainWindow(gtk.Window):
 
     def _sourcesFileAddedCb(self, unused_sources, unused_factory):
         #if (len(self.sourcefactories.sourcelist.storemodel) == 1 
-        #    and not len(instance.PiTiVi.current.timeline.videocomp):
+        #    and not len(self.pitivi.current.timeline.videocomp):
         pass
 
 ## UI Callbacks
@@ -346,7 +350,7 @@ class PitiviMainWindow(gtk.Window):
             pass
 
 
-        instance.PiTiVi.shutdown()
+        self.pitivi.shutdown()
 
 
     def _keyPressEventCb(self, unused_widget, event):
@@ -356,7 +360,7 @@ class PitiviMainWindow(gtk.Window):
 ## Toolbar/Menu actions callback
 
     def _newProjectMenuCb(self, unused_action):
-        instance.PiTiVi.newBlankProject()
+        self.pitivi.newBlankProject()
 
     def _openProjectCb(self, unused_action):
         chooser = gtk.FileChooserDialog(_("Open File ..."),
@@ -381,22 +385,22 @@ class PitiviMainWindow(gtk.Window):
 
         if response == gtk.RESPONSE_OK:
             path = chooser.get_filename()
-            instance.PiTiVi.loadProject(filepath = path)
+            self.pitivi.loadProject(filepath = path)
         chooser.destroy()
         return True
 
     def _saveProjectCb(self, unused_action):
-        instance.PiTiVi.current.save()
+        self.pitivi.current.save()
 
     def _saveProjectAsCb(self, unused_action):
-        instance.PiTiVi.current.saveAs()
+        self.pitivi.current.saveAs()
 
     def _projectSettingsCb(self, unused_action):
-        l = ProjectSettingsDialog(self, instance.PiTiVi.current)
+        l = ProjectSettingsDialog(self, self.pitivi.current)
         l.show()
 
     def _quitCb(self, unused_action):
-        instance.PiTiVi.shutdown()
+        self.pitivi.shutdown()
 
     def _fullScreenCb(self, unused_action):
         self.toggleFullScreen()
@@ -434,7 +438,7 @@ class PitiviMainWindow(gtk.Window):
         self.sourcefactories.sourcelist.showImportSourcesDialog(True)
 
     def _pluginManagerCb(self, unused_action):
-        PluginManagerDialog(instance.PiTiVi.plugin_manager)
+        PluginManagerDialog(self.pitivi.plugin_manager)
 
 
 
@@ -636,7 +640,7 @@ class EncodingDialog(GladeWindow):
         if self.outfile and not self.rendering:
             if self.bin.record(self.outfile, self.settings):
                 self.timestarted = time.time()
-                self.positionhandler = instance.PiTiVi.playground.connect('position', self._positionCb)
+                self.positionhandler = self.pitivi.playground.connect('position', self._positionCb)
                 self.rendering = True
                 self.cancelbutton.set_label("gtk-cancel")
                 self.progressbar.set_text(_("Rendering"))
@@ -663,7 +667,7 @@ class EncodingDialog(GladeWindow):
     def _eosCb(self, unused_bus, unused_message):
         self.rendering = False
         if self.positionhandler:
-            instance.PiTiVi.playground.disconnect(self.positionhandler)
+            self.pitivi.playground.disconnect(self.positionhandler)
             self.positionhandler = 0
         self.progressbar.set_text(_("Rendering Complete"))
         self.progressbar.set_fraction(1.0)
@@ -675,7 +679,7 @@ class EncodingDialog(GladeWindow):
     def _cancelButtonClickedCb(self, unused_button):
         self.bin.stopRecording()
         if self.positionhandler:
-            instance.PiTiVi.playground.disconnect(self.positionhandler)
+            self.pitivi.playground.disconnect(self.positionhandler)
             self.positionhandler = 0
-        instance.PiTiVi.playground.pause()
+        self.pitivi.playground.pause()
         self.destroy()

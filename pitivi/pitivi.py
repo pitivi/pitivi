@@ -23,7 +23,7 @@
 Main application
 """
 import os
-import gtk
+import gobject
 import gst
 import check
 import instance
@@ -48,6 +48,8 @@ from gettext import gettext as _
 # anything gst-related or that could slow down startup.
 # AND THEN load up the required parts.
 # This will result in a much better end-user experience
+
+# FIXME : maybe we should have subclasses for UI and CLI
 
 class Pitivi(object, Signallable):
     """
@@ -87,15 +89,14 @@ class Pitivi(object, Signallable):
         "shutdown" : None
         }
 
-    def __init__(self, args=[], use_ui=True):
+    def __init__(self, filepath=None):
         """
         initialize pitivi with the command line arguments
         """
         gst.log("starting up pitivi...")
-        self.project = None
-        self._use_ui = use_ui
 
         # patch gst-python for new behaviours
+        # FIXME : this shouldn't be in this class
         patch_gst_python()
 
         # store ourself in the instance global
@@ -105,14 +106,8 @@ class Pitivi(object, Signallable):
                 % APPNAME)
         instance.PiTiVi = self
 
-        # FIXME: use gnu getopt or somethign of the sort
-        project_file = None
-        if len(args) > 1:
-            if os.path.exists(args[1]):
-                project_file = args[1]
-
         # get settings
-        self.settings = GlobalSettings()
+        self._settings = GlobalSettings()
         self.threads = ThreadMaster()
         #self.screencast = False
 
@@ -121,30 +116,45 @@ class Pitivi(object, Signallable):
             self.settings.get_plugin_settings_path())
 
         self.playground = PlayGround()
-        self.current = Project(_("New Project"))
+        self._current = Project(_("New Project"))
         self.effects = Magician()
 
         self.deviceprobe = device.get_probe()
 
-        if self._use_ui:
-            self.uimanager = gtk.UIManager()
-            # we're starting a GUI for the time being
-            self.gui = mainwindow.PitiviMainWindow()
-            self.gui.show()
-            if project_file:
-                self.loadProject(filepath=project_file)
+    ## properties
 
-    def do_closing_project(self, project):
-        return True
+    def _get_settings(self):
+        return self._settings
+
+    def _set_settings(self, settings):
+        self._settings = settings
+        # FIXME : we could notify this
+    settings = property(_get_settings, _set_settings,
+                        doc="The project-wide output settings")
+
+    def _get_current(self):
+        return self._current
+
+    def _set_current(self, project):
+        self._current = project
+        # FIXME : we could notify this
+    current = property(_get_current, _set_current,
+                       doc="The currently used Project")
+
+    ## public methods
 
     def loadProject(self, uri=None, filepath=None):
         """ Load the given file through it's uri or filepath """
         gst.info("uri:%s, filepath:%s" % (uri, filepath))
         if not uri and not filepath:
-            self.emit("new-project-failed", _("Not a valid project file."),
+            self.emit("new-project-failed", _("No location given."),
                 uri)
             return
         if filepath:
+            if not os.path.exists(filepath):
+                self.emit("new-project-failed",
+                          _("File '%s' does not exist"), filepath)
+                return
             uri = "file://" + filepath
         # is the given filepath a valid pitivi project
         if not file_is_project(uri):
@@ -171,7 +181,7 @@ class Pitivi(object, Signallable):
             if self.current.hasUnsavedModifications():
                 if not self.current.save():
                     return False
-            if not self.emit("closing-project", self.current):
+            if self.emit("closing-project", self.current) == False:
                 return False
             self.playground.pause()
             self.emit("project-closed", self.current)
@@ -189,26 +199,80 @@ class Pitivi(object, Signallable):
             self.emit("new-project-loaded", self.current)
 
     def shutdown(self):
-        """ close PiTiVi """
+        """ Close PiTiVi
+        Returns True if PiTiVi was successfully closed, else False
+        """
         gst.debug("shutting down")
         # we refuse to close if we're running a user interface and the user
         # doesn't want us to close the current project.
         if not self._closeRunningProject():
             gst.warning("Not closing since running project doesn't want to close")
-            return
+            return False
         self.threads.stopAllThreads()
         self.playground.shutdown()
         instance.PiTiVi = None
         self.emit("shutdown")
+        return True
 
-def shutdownCb(pitivi):
-    """ shutdown callback used by main()"""
-    gst.debug("Exiting main loop")
-    gtk.main_quit()
+
+
+class InteractivePitivi(Pitivi):
+    """ Class for PiTiVi instances that provide user interaction """
+
+    def __init__(self, filepath=None, mainloop=None, *args, **kwargs):
+        Pitivi.__init__(self, filepath=None,
+                        *args, **kwargs)
+        self.mainloop = mainloop
+
+        # we're starting a GUI for the time being
+        self._gui = mainwindow.PitiviMainWindow(self)
+        self._gui.load()
+        self._gui.show()
+
+        if filepath:
+            self.loadProject(filepath=filepath)
+
+    # properties
+
+    def _get_mainloop(self):
+        return self._mainloop
+
+    def _set_mainloop(self, mainloop):
+        if hasattr(self, "_mainloop"):
+            if self._mainloop != None:
+                raise Exception("Mainloop already set !")
+        if mainloop == None:
+            mainloop = gobject.MainLoop()
+        self._mainloop = mainloop
+    mainloop = property(_get_mainloop, _set_mainloop,
+                        doc="The MainLoop running the program")
+
+    @property
+    def gui(self):
+        """The user interface"""
+        return self._gui
+
+
+    # PiTiVi method overrides
+    def shutdown(self):
+        if Pitivi.shutdown(self):
+            if self.mainloop:
+                self.mainloop.quit()
+            return True
+        return False
+
+    def run(self):
+        if self.mainloop:
+            self.mainloop.run()
 
 def main(argv):
     """ Start PiTiVi ! """
+    from optparse import OptionParser
     check.initial_checks()
-    ptv = Pitivi(argv)
-    ptv.connect('shutdown', shutdownCb)
-    gtk.main()
+    parser = OptionParser()
+    (unused_options, args) = parser.parse_args(argv[1:])
+    if len(args) > 0:
+        ptv = InteractivePitivi(filepath=args[0])
+    else:
+        ptv = InteractivePitivi()
+    ptv.run()

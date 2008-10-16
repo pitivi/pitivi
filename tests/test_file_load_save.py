@@ -62,7 +62,7 @@ class ApplicationLogicTest(unittest.TestCase):
     """
 
     def setUp(self):
-        self.ptv = pitivi.pitivi.Pitivi(use_ui=False)
+        self.ptv = pitivi.pitivi.Pitivi()
         # was the pitivi object created
         self.assert_(self.ptv)
 
