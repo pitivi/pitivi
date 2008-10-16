@@ -25,11 +25,11 @@ Multimedia settings
 """
 
 import os
-import gobject
 import gst
 import string
 
 from serializable import Serializable, to_object_from_data_type
+from signalinterface import Signallable
 
 from gettext import gettext as _
 
@@ -121,7 +121,7 @@ class GlobalSettings:
 
         return repository_path
 
-class ExportSettings(gobject.GObject, Serializable):
+class ExportSettings(Serializable, Signallable):
     """
     Multimedia export settings
 
@@ -130,13 +130,9 @@ class ExportSettings(gobject.GObject, Serializable):
     'settings-changed' : the settings have changed
     'encoders-changed' : The encoders or muxer have changed
     """
-    __gsignals__ = {
-        "settings-changed" : ( gobject.SIGNAL_RUN_LAST,
-                              gobject.TYPE_NONE,
-                              (  )),
-        "encoders-changed" : ( gobject.SIGNAL_RUN_LAST,
-                               gobject.TYPE_NONE,
-                               ( ))
+    __signals__ = {
+        "settings-changed" : None,
+        "encoders-changed" : None,
         }
 
     __data_type__ = "export-settings"
@@ -147,7 +143,6 @@ class ExportSettings(gobject.GObject, Serializable):
     # TODO : switch to using GstFraction internally where appliable
 
     def __init__(self, **unused_kw):
-        gobject.GObject.__init__(self)
         self.videowidth = 720
         self.videoheight = 576
         self.videorate = gst.Fraction(25,1)

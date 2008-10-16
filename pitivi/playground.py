@@ -28,10 +28,11 @@ import gobject
 import gst
 from bin import SmartBin, SmartDefaultBin, SmartFileBin, SmartTimelineBin
 from utils import bin_contains
+from signalinterface import Signallable
 
 from gettext import gettext as _
 
-class PlayGround(gobject.GObject):
+class PlayGround(object, Signallable):
     """
     Holds all the applications pipelines.
     Multimedia sinks can be shared amongst the various pipelines, to offer
@@ -51,33 +52,19 @@ class PlayGround(gobject.GObject):
       element-message : messages received of type gst.MESSAGE_ELEMENT
     """
 
-    __gsignals__ = {
-        "current-changed" : ( gobject.SIGNAL_RUN_LAST,
-                              gobject.TYPE_NONE,
-                              (gobject.TYPE_PYOBJECT, )),
-        "current-state" : ( gobject.SIGNAL_RUN_LAST,
-                            gobject.TYPE_NONE,
-                            (gobject.TYPE_PYOBJECT, )),
-        "bin-added" : ( gobject.SIGNAL_RUN_LAST,
-                       gobject.TYPE_NONE,
-                       ( gobject.TYPE_PYOBJECT, )),
-        "bin-removed" : ( gobject.SIGNAL_RUN_LAST,
-                          gobject.TYPE_NONE,
-                          ( gobject.TYPE_PYOBJECT, )),
-        "error" : ( gobject.SIGNAL_RUN_LAST,
-                    gobject.TYPE_NONE,
-                    ( gobject.TYPE_STRING, gobject.TYPE_STRING )),
-        "position" : ( gobject.SIGNAL_RUN_LAST,
-                       gobject.TYPE_NONE,
-                       ( gobject.TYPE_PYOBJECT, gobject.TYPE_UINT64 )),
-        "element-message" : ( gobject.SIGNAL_RUN_LAST,
-                              gobject.TYPE_NONE,
-                              ( gst.Message, ))
+    __signals__ = {
+        "current-changed" : ["smartbin"],
+        "current-state" : ["smartbin"],
+        "bin-added" : ["smartbin"],
+        "bin-removed" : ["smartbin"],
+        "error" : ["string1", "string2"],
+        "position" : ["bin", "position"],
+        "element-message" : ["message"]
         }
 
     def __init__(self):
         gst.log("Starting up playground")
-        gobject.GObject.__init__(self)
+
         # List of used pipelines
         self.pipelines = []
 

@@ -25,8 +25,8 @@ Project class
 """
 
 import os.path
-import gobject
 import gst
+import traceback
 from timeline.timeline import Timeline
 from sourcelist import SourceList
 from bin import SmartTimelineBin
@@ -35,8 +35,9 @@ from configure import APPNAME
 from gettext import gettext as _
 from serializable import Serializable, to_object_from_data_type
 from projectsaver import ProjectSaver, ProjectSaveError, ProjectLoadError
+from signalinterface import Signallable
 
-class Project(gobject.GObject, Serializable):
+class Project(Serializable, Signallable):
     """ The base class for PiTiVi projects
     Signals
 
@@ -59,16 +60,10 @@ class Project(gobject.GObject, Serializable):
             The project settings have changed
     """
 
-    __gsignals__ = {
-        "save-uri-requested" : ( gobject.SIGNAL_RUN_LAST,
-                                     gobject.TYPE_BOOLEAN,
-                                     ( )),
-        "confirm-overwrite" : ( gobject.SIGNAL_RUN_LAST,
-                                gobject.TYPE_BOOLEAN,
-                                (gobject.TYPE_STRING, )),
-        "settings-changed" : ( gobject.SIGNAL_RUN_LAST,
-                               gobject.TYPE_NONE,
-                               (  ))
+    __signals__ = {
+        "save-uri-requested" : None,
+        "confirm-overwrite" : ["location"],
+        "settings-changed" : None
         }
 
     __data_type__ = "project"
@@ -79,7 +74,6 @@ class Project(gobject.GObject, Serializable):
         uri : the uri of the project
         """
         gst.log("name:%s, uri:%s" % (name, uri))
-        gobject.GObject.__init__(self)
         self.name = name
         self.settings = None
         self.description = ""
@@ -104,7 +98,14 @@ class Project(gobject.GObject, Serializable):
             # should this return false?
             gst.warning("Already loaded !!!")
             return True
-        return self._load()
+        try:
+            res = self._load()
+        except:
+            gst.error("An Exception was raised during loading !")
+            traceback.print_exc()
+            res = False
+        finally:
+            return res
 
     def _load(self):
         """
@@ -129,6 +130,7 @@ class Project(gobject.GObject, Serializable):
                 fileobj.close()
             self.format = saveformat
             self.urichanged = False
+            gst.debug("Done loading !")
             return True
         return False
 
@@ -150,7 +152,8 @@ class Project(gobject.GObject, Serializable):
 
         #TODO: a bit more sophisticated overwite detection
         if os.path.exists(path) and self.urichanged:
-            if not self.emit("confirm-overwrite", self.uri):
+            overwriteres = self.emit("confirm-overwrite", self.uri)
+            if overwriteres == False:
                 gst.log("aborting save because overwrite was denied")
                 return False
 
@@ -173,7 +176,8 @@ class Project(gobject.GObject, Serializable):
             return self._save()
 
         gst.log("requesting for a uri to save to...")
-        if self.emit("save-uri-requested"):
+        saveres = self.emit("save-uri-requested")
+        if saveres == None or saveres == True:
             gst.log("'save-uri-requested' returned True, self.uri:%s" % self.uri)
             if self.uri:
                 return self._save()
@@ -261,13 +265,6 @@ class Project(gobject.GObject, Serializable):
 
     def hasUnsavedModifications(self):
         return self._dirty
-
-    # signals default handlers
-    def do_save_uri_requested(self):
-        return True
-
-    def do_confirm_overwrite(self, unused_uri):
-        return True
 
     # Serializable methods
 

@@ -30,16 +30,14 @@ from glade import GladeWindow
 
 from gettext import gettext as _
 
-class FileListErrorDialog(GladeWindow):
+from pitivi.signalinterface import Signallable
+
+class FileListErrorDialog(GladeWindow, Signallable):
     """ Dialog box for showing errors in a list of files """
     glade_file = "filelisterrordialog.glade"
-    __gsignals__ = {
-        'close': (gobject.SIGNAL_RUN_LAST,
-                  gobject.TYPE_NONE,
-                  ( )),
-        'response': (gobject.SIGNAL_RUN_LAST,
-                     gobject.TYPE_NONE,
-                     (gobject.TYPE_PYOBJECT, ))
+    __signals__ = {
+        'close': None,
+        'response': ["something"]
         }
 
     def __init__(self, title, headline):
@@ -65,7 +63,7 @@ class FileListErrorDialog(GladeWindow):
         if uri[:7] == "file://":
             uri = uri[7:]
         exp = gtk.Expander(uri.split('/')[-1])
-        
+
         textbuffer = gtk.TextBuffer()
         table = textbuffer.get_tag_table()
         boldtag = gtk.TextTag()
@@ -75,7 +73,7 @@ class FileListErrorDialog(GladeWindow):
         # <b>URI :</b> % uri
         end = textbuffer.get_end_iter()
         textbuffer.insert_with_tags(end, _("URI : "), boldtag)
- 
+
         end = textbuffer.get_end_iter()
         textbuffer.insert(end, "%s\n" % uri)
 
@@ -88,7 +86,7 @@ class FileListErrorDialog(GladeWindow):
         if extra:
             end = textbuffer.get_end_iter()
             textbuffer.insert_with_tags(end, _("Extra information : "), boldtag)
-            
+
             end = textbuffer.get_end_iter()
             textbuffer.insert(end, "%s\n" % extra)
 

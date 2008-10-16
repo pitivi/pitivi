@@ -31,12 +31,12 @@ except:
     import pickle
 import pkg_resources
 import gtk
-import gobject
-import zope.interface.verify 
+import zope.interface.verify
 
+from signalinterface import Signallable
 import plugincore
 
-class PluginManager(gobject.GObject):
+class PluginManager(object, Signallable):
     """
     Manages plugins in a centralized way.
 
@@ -59,27 +59,20 @@ class PluginManager(gobject.GObject):
 
     """
 
-    __gsignals__ = {
-        "plugin-enabled-changed" : (gobject.SIGNAL_RUN_LAST,\
-                                      gobject.TYPE_NONE,\
-                                      (gobject.TYPE_PYOBJECT,)),
-        "plugin-installed" : (gobject.SIGNAL_RUN_LAST,\
-                                      gobject.TYPE_NONE,\
-                                      (gobject.TYPE_PYOBJECT,)),
-        "plugin-uninstalled" : (gobject.SIGNAL_RUN_LAST,\
-                                      gobject.TYPE_NONE,\
-                                      (gobject.TYPE_PYOBJECT,)),
+    __signals__ = {
+        "plugin-enabled-changed" : ["plugin_names"],
+        "plugin-installed" : ["plugin_name"],
+        "plugin-uninstalled" : ["plugin_name"],
 
         }
 
     def __init__(self, local_plugin_path, settings_path):
-        """ 
-        Initialize a new plugin manager 
+        """
+        Initialize a new plugin manager
 
         @param local_plugin_path: local path where new plugins will be installed
         @param settings_path: path where all plugin settings are stored
         """
-        gobject.GObject.__init__(self)
 
         # plugins are collected in a bag (a structure relatng 1->many)
         # {"my_plugin":{"plugin":plugin_object, "filename":"/home/luca/plugins/my_plugin.py"}}

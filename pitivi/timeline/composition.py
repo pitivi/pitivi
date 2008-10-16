@@ -23,7 +23,6 @@
 Timeline Composition object
 """
 
-import gobject
 import gst
 
 from source import TimelineSource
@@ -36,9 +35,6 @@ class Layer(BrotherObjects):
     """
 
     __data_type__ = "timeline-layer"
-
-    def __init__(self):
-        gobject.GObject.__init__(self)
 
 
 class EffectsLayer(Layer):
@@ -137,40 +133,18 @@ class TimelineComposition(TimelineSource):
     * (optional) 'default-source' (TimelineSource) : Default source for the composition.
     """
 
-    __gsignals__ = {
-        'condensed-list-changed' : ( gobject.SIGNAL_RUN_LAST,
-                                     gobject.TYPE_NONE,
-                                     (gobject.TYPE_PYOBJECT, )),
-        'global-effect-added' : ( gobject.SIGNAL_RUN_LAST,
-                                  gobject.TYPE_NONE,
-                                  (gobject.TYPE_PYOBJECT, )),
-        'global-effect-removed' : ( gobject.SIGNAL_RUN_LAST,
-                                    gobject.TYPE_NONE,
-                                    (gobject.TYPE_PYOBJECT, )),
-        'simple-effect-added' : ( gobject.SIGNAL_RUN_LAST,
-                                  gobject.TYPE_NONE,
-                                  (gobject.TYPE_PYOBJECT, )),
-        'simple-effect-removed' : ( gobject.SIGNAL_RUN_LAST,
-                                    gobject.TYPE_NONE,
-                                    (gobject.TYPE_PYOBJECT, )),
-        'complex-effect-added' : ( gobject.SIGNAL_RUN_LAST,
-                                   gobject.TYPE_NONE,
-                                   (gobject.TYPE_PYOBJECT, )),
-        'complex-effect-removed' : ( gobject.SIGNAL_RUN_LAST,
-                                     gobject.TYPE_NONE,
-                                     (gobject.TYPE_PYOBJECT, )),
-        'transitions-added' : ( gobject.SIGNAL_RUN_LAST,
-                                gobject.TYPE_NONE,
-                                (gobject.TYPE_PYOBJECT, )),
-        'transition-removed' : ( gobject.SIGNAL_RUN_LAST,
-                                 gobject.TYPE_NONE,
-                                 (gobject.TYPE_PYOBJECT, )),
-        'source-added' : ( gobject.SIGNAL_RUN_LAST,
-                           gobject.TYPE_NONE,
-                           (gobject.TYPE_PYOBJECT, )),
-        'source-removed' : ( gobject.SIGNAL_RUN_LAST,
-                             gobject.TYPE_NONE,
-                             (gobject.TYPE_PYOBJECT, )),
+    __signals__ = {
+        'condensed-list-changed' : ["condensed_list"],
+        'global-effect-added' : ["effect"],
+        'global-effect-removed' : ["effect"],
+        'simple-effect-added' : ["effect"],
+        'simple-effect-removed' : ["effect"],
+        'complex-effect-added' : ["effect"],
+        'complex-effect-removed' : ["effect"],
+        'transitions-added' : ["transition"],
+        'transition-removed' : ["transition"],
+        'source-added' : ["source"],
+        'source-removed' : ["source"]
         }
 
     __data_type__ = "timeline-composition"

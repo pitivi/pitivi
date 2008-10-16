@@ -1,5 +1,16 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/playground.py:
+	* pitivi/project.py:
+	* pitivi/settings.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/timeline/timeline.py:
+	Switch more objects to gobject-less signalling and properties.
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/ui/complextimeline.py:
 	* pitivi/ui/filelisterrordialog.py:
 	* pitivi/ui/glade.py:

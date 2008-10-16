@@ -23,7 +23,6 @@
 Timeline and timeline objects
 """
 
-import gobject
 import gst
 
 from pitivi.settings import ExportSettings
@@ -32,7 +31,7 @@ from objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 from source import TimelineBlankSource
 from pitivi.serializable import Serializable
 
-class Timeline(gobject.GObject, Serializable):
+class Timeline(Serializable):
     """
     Fully fledged timeline
     """
@@ -44,7 +43,6 @@ class Timeline(gobject.GObject, Serializable):
 
     def __init__(self, project=None, **unused_kw):
         gst.log("new Timeline for project %s" % project)
-        gobject.GObject.__init__(self)
         self.project = project
 
         if self.project:

@@ -25,10 +25,10 @@ Timeline objects
 
 import weakref
 from random import randint
-import gobject
 import gst
 from pitivi.serializable import Serializable
 from pitivi.objectfactory import ObjectFactory
+from pitivi.signalinterface import Signallable
 
 MEDIA_TYPE_NONE = 0
 MEDIA_TYPE_AUDIO = 1
@@ -54,7 +54,7 @@ MEDIA_TYPE_VIDEO = 2
 ##         |
 ##         +---- Complex Effect (N->1)
 
-class BrotherObjects(gobject.GObject, Serializable):
+class BrotherObjects(Serializable, Signallable):
     """
     Base class for objects that can have a brother and be linked to something else
 
@@ -65,10 +65,8 @@ class BrotherObjects(gobject.GObject, Serializable):
 
     __data_type__ = "timeline-brother-objects"
 
-    __gsignals__ = {
-        "linked-changed" : (gobject.SIGNAL_RUN_LAST,
-                            gobject.TYPE_NONE,
-                            (gobject.TYPE_PYOBJECT, ))
+    __signals__ = {
+        "linked-changed" : ["brother"]
         }
 
     # UID (int) => object (BrotherObjects) mapping.
@@ -79,7 +77,6 @@ class BrotherObjects(gobject.GObject, Serializable):
     __waiting_for_pending_objects__ = {}
 
     def __init__(self, **unused_kw):
-        gobject.GObject.__init__(self)
         self.linked = None
         self.brother = None
         self.uid = -1
@@ -104,7 +101,6 @@ class BrotherObjects(gobject.GObject, Serializable):
             self.unlinkObject()
         self._linkObject(object)
         self.linked._linkObject(self)
-        pass
 
     def getLinkedObject(self):
         """
@@ -273,8 +269,6 @@ class BrotherObjects(gobject.GObject, Serializable):
             cls.__waiting_for_pending_objects__[uid] = []
         cls.__waiting_for_pending_objects__[uid].append((weakref.proxy(obj), extra))
 
-gobject.type_register(BrotherObjects)
-
 class TimelineObject(BrotherObjects):
     """
     Base class for all timeline objects
@@ -307,10 +301,8 @@ class TimelineObject(BrotherObjects):
     # order to create their gnlobject.
     __requires_factory__ = True
 
-    __gsignals__ = {
-        "start-duration-changed" : ( gobject.SIGNAL_RUN_LAST,
-                                 gobject.TYPE_NONE,
-                                 (gobject.TYPE_PYOBJECT, gobject.TYPE_PYOBJECT, ))
+    __signals__ = {
+        "start-duration-changed" : ["start", "duration"]
         }
 
     def __init__(self, factory=None, start=gst.CLOCK_TIME_NONE,

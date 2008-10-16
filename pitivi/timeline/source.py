@@ -36,10 +36,8 @@ class TimelineSource(TimelineObject):
     * 'media-start' (int) : start position of the media
     * 'media-duration' (int) : duration of the media
     """
-    __gsignals__ = {
-        "media-start-duration-changed" : ( gobject.SIGNAL_RUN_LAST,
-                                       gobject.TYPE_NONE,
-                                       (gobject.TYPE_UINT64, gobject.TYPE_UINT64))
+    __signals__ = {
+        "media-start-duration-changed" : ["media-start", "media-duration"]
         }
 
 
@@ -304,8 +302,6 @@ class TimelineFileSource(TimelineSource):
         if "volume" in obj:
             volume = obj["volume"]
             self.setVolume(volume)
-
-gobject.type_register(TimelineFileSource)
 
 class TimelineLiveSource(TimelineSource):
     """
