@@ -35,16 +35,16 @@ class TestTimelineObjects(unittest.TestCase):
     def testLinkedObject(self):
         # Link object1 to object2
         self.object1.linkObject(self.object2)
-        self.assertEquals(self.object1.getLinkedObject(),
+        self.assertEquals(self.object1.linked,
                           self.object2)
-        self.assertEquals(self.object2.getLinkedObject(),
+        self.assertEquals(self.object2.linked,
                           self.object1)
 
         # and now unlink them
         self.object1.unlinkObject()
-        self.assertEquals(self.object1.getLinkedObject(),
+        self.assertEquals(self.object1.linked,
                           None)
-        self.assertEquals(self.object2.getLinkedObject(),
+        self.assertEquals(self.object2.linked,
                           None)
 
     def testBrotherNotLinked(self):
@@ -56,7 +56,7 @@ class TestTimelineObjects(unittest.TestCase):
                           brother1)
 
         # the linked object should be None since it was not autolinked
-        self.assertEquals(self.object1.getLinkedObject(),
+        self.assertEquals(self.object1.linked,
                           None)
 
     def testBrotherLinked(self):
@@ -68,18 +68,18 @@ class TestTimelineObjects(unittest.TestCase):
                           brother1)
 
         # the linked object should be brother1 since it was autolinked
-        self.assertEquals(self.object1.getLinkedObject(),
+        self.assertEquals(self.object1.linked,
                           brother1)
 
         # unlink the objects
         self.object1.unlinkObject()
 
         # object1 shouldn't be linked anymore
-        self.assertEquals(self.object1.getLinkedObject(),
+        self.assertEquals(self.object1.linked,
                           None)
 
     def testSingleSerialization(self):
-        self.assertEquals(self.object1.brother, None)
+        self.assertEquals(self.object1._brother, None)
         data1 = self.object1.toDataFormat()
         del self.object1
         self.object1 = None
@@ -93,14 +93,14 @@ class TestTimelineObjects(unittest.TestCase):
         self.assertEquals(obj1.media_type, MEDIA_TYPE_VIDEO)
         self.assertEquals(obj1.name, "test1")
         self.assertEquals(obj1.linked, None)
-        self.assertEquals(obj1.brother, None)
+        self.assertEquals(obj1._brother, None)
         self.assert_(not obj1.gnlobject == None)
 
     def testLinkedBrotherSerialization(self):
         # get the brother of object1
         brother1 = self.object1.getBrother()
 
-        self.assertEquals(self.object1.brother, brother1)
+        self.assertEquals(self.object1._brother, brother1)
         self.assertEquals(self.object1.linked, brother1)
         self.assertEquals(brother1.linked, self.object1)
 
@@ -115,14 +115,14 @@ class TestTimelineObjects(unittest.TestCase):
 
         # create object...
         pobj = to_object_from_data_type(data1)
-        self.assertEquals(pobj.brother, None)
+        self.assertEquals(pobj._brother, None)
         self.assertEquals(pobj.linked, None)
 
         # ... and brother
         pbro = to_object_from_data_type(brotherdata1)
 
         # check it's really the linked brother
-        self.assertEquals(pobj.brother, pbro)
+        self.assertEquals(pobj._brother, pbro)
         self.assertEquals(pobj.linked, pbro)
         self.assertEquals(pbro.linked, pobj)
 
@@ -171,7 +171,7 @@ class TestTimelineObjects(unittest.TestCase):
 
         del brother
         self.object1.brother = None
-        self.object1.linked = None
+        self.object1.unlinkObject()
         gc.collect()
         self.assertEquals(len(BrotherObjects.__instances__), 2)
 

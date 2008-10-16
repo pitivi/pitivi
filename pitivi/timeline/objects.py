@@ -30,9 +30,9 @@ from pitivi.serializable import Serializable
 from pitivi.objectfactory import ObjectFactory
 from pitivi.signalinterface import Signallable
 
-MEDIA_TYPE_NONE = 0
-MEDIA_TYPE_AUDIO = 1
-MEDIA_TYPE_VIDEO = 2
+(MEDIA_TYPE_NONE,
+ MEDIA_TYPE_AUDIO,
+ MEDIA_TYPE_VIDEO) = range(3)
 
 ## * Object Hierarchy
 
@@ -58,6 +58,16 @@ class BrotherObjects(Serializable, Signallable):
     """
     Base class for objects that can have a brother and be linked to something else
 
+    Properties:
+      _ Linked Object
+        _ Can be None
+        _ Must have same duration
+      _ Brother object
+        _ This is the same object but with the other media_type
+
+    Signals:
+      _ 'linked-changed' : new linked object
+
     Save/Load properties:
     * (optional) 'linked' (int) : UID of linked object
     * (optional) 'brother' (int) : UID of brother object
@@ -77,43 +87,46 @@ class BrotherObjects(Serializable, Signallable):
     __waiting_for_pending_objects__ = {}
 
     def __init__(self, **unused_kw):
-        self.linked = None
-        self.brother = None
+        self._linked = None
+        self._brother = None
         self.uid = -1
 
-    def _unlinkObject(self):
-        # really unlink the objects
-        if self.linked:
-            self.linked = None
-            self.emit("linked-changed", None)
+    ## properties
 
-    def _linkObject(self, obj):
-        # really do the link
-        self.linked = obj
-        self.emit("linked-changed", self.linked)
+    def _get_brother(self):
+        return self.getBrother()
+
+    def _set_brother(self, brother):
+        self.setBrother(brother)
+    brother = property(_get_brother, _set_brother,
+                       doc="Brother object")
+
+    ## read-only properties
+
+    @property
+    def linked(self):
+        """ Linked object """
+        return self._linked
+
+
+    ## public API
 
     def linkObject(self, obj):
         """
         link another object to this one.
         If there already is a linked object ,it will unlink it
         """
-        if self.linked and not self.linked == obj:
+        if self._linked and not self._linked == obj:
             self.unlinkObject()
         self._linkObject(obj)
-        self.linked._linkObject(self)
-
-    def getLinkedObject(self):
-        """
-        Returns the object currently linked to this one.
-        This is NOT guaranteed to be the brother
-        """
-        return self.linked
+        self._linked._linkObject(self)
 
     def unlinkObject(self):
         """
         unlink from the current linked object
         """
-        self.linked._unlinkObject()
+        if self._linked:
+            self._linked._unlinkObject()
         self._unlinkObject()
 
     def relinkBrother(self):
@@ -121,39 +134,56 @@ class BrotherObjects(Serializable, Signallable):
         links the object back to it's brother
         """
         # if already linked, unlink from previous
-        if self.linked:
+        if self._linked:
             self.unlinkObject()
 
         # link to brother
-        if self.brother:
-            self.linkObject(self.brother)
+        if self._brother:
+            self.linkObject(self._brother)
 
     def getBrother(self, autolink=True):
         """
         returns the brother element if it's possible,
         if autolink, then automatically link it to this element
         """
-        if not self.brother:
-            self.brother = self._makeBrother()
-            if not self.brother:
+        if not self._brother:
+            self._brother = self._makeBrother()
+            if not self._brother:
                 return None
-        if autolink and not self.linked == self.brother:
+        if autolink and not self._linked == self._brother:
             self.relinkBrother()
-        return self.brother
+        return self._brother
 
     def setBrother(self, brother, autolink=True):
         """
         Force a brother on an object.
         This can be useful if it's the parent of the object that knows
         what his brother is.
-        Use with caution
+
+        Use with caution !!!
         """
         gst.log("brother:%r , autolink:%r" % (brother, autolink))
-        self.brother = brother
-        # set ourselves as our brother's brother
-        self.brother.brother = self
+        self._brother = brother
+        if self._brother:
+            # set ourselves as our brother's brother
+            self._brother._brother = self
         if autolink:
             self.relinkBrother()
+
+    # private methods
+
+    def _unlinkObject(self):
+        # really unlink the objects
+        if self._linked:
+            self._linked = None
+            self.emit("linked-changed", None)
+
+    def _linkObject(self, obj):
+        # really do the link
+        self._linked = obj
+        self.emit("linked-changed", self._linked)
+
+    # methods to override in subclasses
 
     def _makeBrother(self):
         """
@@ -167,10 +197,10 @@ class BrotherObjects(Serializable, Signallable):
     def toDataFormat(self):
         ret = Serializable.toDataFormat(self)
         ret["uid"] = self.getUniqueID()
-        if self.brother:
-            ret["brother-uid"] = self.brother.getUniqueID()
-        if self.linked:
-            ret["linked-uid"] = self.linked.getUniqueID()
+        if self._brother:
+            ret["brother-uid"] = self._brother.getUniqueID()
+        if self._linked:
+            ret["linked-uid"] = self._linked.getUniqueID()
         return ret
 
     def fromDataFormat(self, obj):
@@ -269,6 +299,9 @@ class BrotherObjects(Serializable, Signallable):
             cls.__waiting_for_pending_objects__[uid] = []
         cls.__waiting_for_pending_objects__[uid].append((weakref.proxy(obj), extra))
 
+
+
+
 class TimelineObject(BrotherObjects):
     """
     Base class for all timeline objects
@@ -277,15 +310,9 @@ class TimelineObject(BrotherObjects):
       _ Start/Duration Time
       _ Media Type
       _ Gnonlin Object
-      _ Linked Object
-        _ Can be None
-        _ Must have same duration
-      _ Brother object
-        _ This is the same object but with the other media_type
 
     * signals
       _ 'start-duration-changed' : start position, duration position
-      _ 'linked-changed' : new linked object
 
     Save/Load properties
     * 'start' (int) : start position in nanoseconds
@@ -310,57 +337,106 @@ class TimelineObject(BrotherObjects):
         BrotherObjects.__init__(self, **kwargs)
         self.name = name
         gst.log("new TimelineObject :%s %r" % (name, self))
-        self.start = start
-        self.duration = duration
-        self.factory = None
+        self._start = start
+        self._duration = duration
+        self._factory = None
         # Set factory and media_type and then create the gnlobject
         self.media_type = media_type
         self.gnlobject = None
+        self.factory = factory
+
+    ## properties
+
+    def _get_start(self):
+        return self._start
+
+    def _set_start(self, start):
+        self.setStartDurationTime(start=start)
+    start = property(_get_start, _set_start,
+                     doc="Start position of the object in its container (in nanoseconds)")
+
+    def _get_duration(self):
+        return self._duration
+
+    def _set_duration(self, duration):
+        self.setStartDurationTime(duration=duration)
+    duration = property(_get_duration, _set_duration,
+                        doc="Duration of the object in its container (in nanoseconds)")
+
+    def _get_factory(self):
+        return self._factory
+
+    def _set_factory(self, factory):
         self._setFactory(factory)
+    factory = property(_get_factory, _set_factory,
+                       doc="ObjectFactory used for this object")
+
+
+    ## read-only properties
+
+    @property
+    def isaudio(self):
+        """ Boolean indicating whether the object produces Audio """
+        return self.media_type == MEDIA_TYPE_AUDIO
+
+    @property
+    def isvideo(self):
+        """ Boolean indicating whether the object produces Video """
+        return self.media_type == MEDIA_TYPE_VIDEO
+
+    ## public API
+
+    def setStartDurationTime(self, start=gst.CLOCK_TIME_NONE, duration=0):
+        """
+        Sets the start and/or duration time
+
+        Only use this method when you wish to modify BOTH start and duration at once
+        """
+        self._setStartDurationTime(start, duration)
+        if self._linked:
+            self._linked._setStartDurationTime(start, duration)
+
+    ## methods to override in subclasses
+
+    def _makeGnlObject(self):
+        """ create and return the gnl_object """
+        raise NotImplementedError
+
+    ## private methods
 
     def __repr__(self):
         if hasattr(self, "name"):
             return "<%s '%s' at 0x%x>" % (type(self).__name__, self.name, id(self))
         return "<%s at 0x%x>" % (type(self).__name__, id(self))
 
-    def _makeGnlObject(self):
-        """ create and return the gnl_object """
-        raise NotImplementedError
-
     def _setFactory(self, factory):
-        if self.factory:
-            gst.warning("Can't set a factory, this object already has one : %r" % self.factory)
+        if self._factory:
+            gst.warning("Can't set a factory, this object already has one : %r" % self._factory)
             return
         gst.log("factory:%r requires factory:%r" % (factory, self.__requires_factory__))
-        self.factory = factory
-        if not self.__requires_factory__ or self.factory:
+        self._factory = factory
+        if not self.__requires_factory__ or self._factory:
             gst.log("%r Creating associated gnlobject" % self)
             self.gnlobject = self._makeGnlObject()
-            self.gnlobject.connect("notify::start", self._startDurationChangedCb)
             self.gnlobject.log("got gnlobject !")
+            self.gnlobject.connect("notify::start", self._startDurationChangedCb)
             self.gnlobject.connect("notify::duration", self._startDurationChangedCb)
-            self._setStartDurationTime(self.start, self.duration, True)
+            self._setStartDurationTime(self._start, self._duration, force=True)
 
     def _setStartDurationTime(self, start=gst.CLOCK_TIME_NONE, duration=0, force=False):
         # really modify the start/duration time
         self.gnlobject.info("start:%s , duration:%s" %( gst.TIME_ARGS(start),
                                                         gst.TIME_ARGS(duration)))
-        if duration > 0 and (not self.duration == duration or force):
-            self.duration = duration
+        if duration > 0 and (not self._duration == duration or force):
+            self._duration = duration
             self.gnlobject.set_property("duration", long(duration))
-        if not start == gst.CLOCK_TIME_NONE and (not self.start == start or force):
-            self.start = start
+        if not start == gst.CLOCK_TIME_NONE and (not self._start == start or force):
+            self._start = start
             self.gnlobject.set_property("start", long(start))
-
-    def setStartDurationTime(self, start=gst.CLOCK_TIME_NONE, duration=0):
-        """ sets the start and/or duration time """
-        self._setStartDurationTime(start, duration)
-        if self.linked:
-            self.linked._setStartDurationTime(start, duration)
 
     def _startDurationChangedCb(self, gnlobject, prop):
         """ start/duration time has changed """
-        gst.log("self:%r , gnlobject:%r" % (self, gnlobject))
+        gst.log("self:%r , gnlobject:%r %r" % (self, gnlobject, self.gnlobject))
         if not gnlobject == self.gnlobject:
             gst.warning("We're receiving signals from an object we dont' control (self.gnlobject:%r, gnlobject:%r)" % (self.gnlobject, gnlobject))
         self.gnlobject.debug("property:%s" % prop.name)
@@ -368,22 +444,22 @@ class TimelineObject(BrotherObjects):
         duration = 0
         if prop.name == "start":
             start = gnlobject.get_property("start")
-            gst.log("start: %s => %s" % (gst.TIME_ARGS(self.start),
+            gst.log("start: %s => %s" % (gst.TIME_ARGS(self._start),
                                          gst.TIME_ARGS(start)))
-            if start == self.start:
+            if start == self._start:
                 start = gst.CLOCK_TIME_NONE
             else:
-                self.start = long(start)
+                self._start = long(start)
         elif prop.name == "duration":
             duration = gnlobject.get_property("duration")
-            gst.log("duration: %s => %s" % (gst.TIME_ARGS(self.duration),
+            gst.log("duration: %s => %s" % (gst.TIME_ARGS(self._duration),
                                             gst.TIME_ARGS(duration)))
-            if duration == self.duration:
+            if duration == self._duration:
                 duration = 0
             else:
                 self.gnlobject.debug("duration changed:%s" % gst.TIME_ARGS(duration))
-                self.duration = long(duration)
-        self.emit("start-duration-changed", self.start, self.duration)
+                self._duration = long(duration)
+        self.emit("start-duration-changed", self._start, self._duration)
 
 
     # Serializable methods
@@ -391,17 +467,17 @@ class TimelineObject(BrotherObjects):
     def toDataFormat(self):
         ret = BrotherObjects.toDataFormat(self)
         ret["start"] = self.start
-        ret["duration"] = self.duration
+        ret["duration"] = self._duration
         ret["name"] = self.name
-        if self.factory:
-            ret["factory-uid"] = self.factory.getUniqueID()
+        if self._factory:
+            ret["factory-uid"] = self._factory.getUniqueID()
         ret["media_type"] = self.media_type
         return ret
 
     def fromDataFormat(self, obj):
         BrotherObjects.fromDataFormat(self, obj)
-        self.start = obj["start"]
-        self.duration = obj["duration"]
+        self._start = obj["start"]
+        self._duration = obj["duration"]
 
         self.name = obj["name"]
 
@@ -420,13 +496,3 @@ class TimelineObject(BrotherObjects):
             self._setFactory(obj)
         else:
             BrotherObjects.pendingObjectCreated(self, obj, field)
-
-    # FIXME : Should be made into properties
-
-    def isAudio(self):
-        """ Does the object provide audio """
-        return self.media_type == MEDIA_TYPE_AUDIO
-
-    def isVideo(self):
-        """ Does the object provide video """
-        return self.media_type == MEDIA_TYPE_VIDEO

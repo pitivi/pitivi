@@ -51,10 +51,10 @@ class TimelineSource(TimelineObject):
 
     def _makeGnlObject(self):
         gst.debug("Making a source for %r" % self)
-        if self.isAudio():
+        if self.isaudio:
             caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
             postfix = "audio"
-        elif self.isVideo():
+        elif self.isvideo:
             caps = gst.caps_from_string("video/x-raw-yuv;video/x-raw-rgb")
             postfix = "video"
         else:
@@ -159,11 +159,11 @@ class TimelineBlankSource(TimelineSource):
         TimelineSource.__init__(self, **kwargs)
 
     def makeGnlSourceContents(self):
-        if self.isAudio():
+        if self.isaudio:
             # silent audiotestsrc
             src = gst.element_factory_make("audiotestsrc")
             src.set_property("volume", 0)
-        elif self.isVideo():
+        elif self.isvideo:
             # black videotestsrc
             src = gst.element_factory_make("videotestsrc")
             src.props.pattern = 2
@@ -204,14 +204,14 @@ class TimelineFileSource(TimelineSource):
         return gnlobject
 
     def makeGnlSourceContents(self):
-        if self.isAudio():
+        if self.isaudio:
             caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
-        elif self.isVideo():
+        elif self.isvideo:
             caps = gst.caps_from_string("video/x-raw-yuv;video/x-raw-rgb")
         else:
             raise NameError, "media type is NONE !"
         self.decodebin = SingleDecodeBin(caps=caps, uri=self.factory.name)
-        if self.isAudio():
+        if self.isaudio:
             self.volume_element = gst.element_factory_make("volume", "internal-volume")
             self.audioconv = gst.element_factory_make("audioconvert", "audioconv")
             self.volumebin = gst.Bin("volumebin")
@@ -248,7 +248,7 @@ class TimelineFileSource(TimelineSource):
 
     def setVolume(self, level):
         """ Set the volume to the given level """
-        if self.isAudio():
+        if self.isaudio:
             self._setVolume(level)
         elif self.linked:
             self.linked._setVolume(level)
@@ -259,7 +259,7 @@ class TimelineFileSource(TimelineSource):
         # find out if the factory provides the other element type
         if self.media_type == MEDIA_TYPE_NONE:
             return None
-        if self.isVideo():
+        if self.isvideo:
             if not self.factory.is_audio:
                 return None
             brother = TimelineFileSource(media_start=self.media_start,
@@ -268,7 +268,7 @@ class TimelineFileSource(TimelineSource):
                                          duration=self.duration,
                                          media_type=MEDIA_TYPE_AUDIO,
                                          name=self.name + "-brother")
-        elif self.isAudio():
+        elif self.isaudio:
             if not self.factory.is_video:
                 return None
             brother = TimelineFileSource(media_start=self.media_start,
@@ -291,7 +291,7 @@ class TimelineFileSource(TimelineSource):
         ret = TimelineSource.toDataFormat(self)
         ret["media-start"] = self.media_start
         ret["media-duration"] = self.media_duration
-        if self.isAudio() and hasattr(self, "volume_element"):
+        if self.isaudio and hasattr(self, "volume_element"):
             ret["volume"] = self.volume_element.get_property("volume")
         return ret
 

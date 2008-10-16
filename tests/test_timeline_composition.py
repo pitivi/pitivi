@@ -19,7 +19,7 @@ class TestTimelineComposition(unittest.TestCase):
         self.assert_(self.othercomposition)
 
         self.composition.linkObject(self.othercomposition)
-        self.assertEquals(self.composition.getLinkedObject(),
+        self.assertEquals(self.composition.linked,
                           self.othercomposition)
 
         self.sigid = self.composition.connect("start-duration-changed",

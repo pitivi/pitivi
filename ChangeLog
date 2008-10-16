@@ -1,5 +1,16 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	Use python properties more.
+	* tests/test_timeline_composition.py:
+	* tests/test_timeline_objects.py:
+	* tests/test_timeline_source.py:
+	Adapt tests for changes.
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/check.py:
 	* pitivi/configure.py.in:
 	* pitivi/discoverer.py:

@@ -80,7 +80,7 @@ class TestTimelineFileSource(unittest.TestCase):
         brother = self.source.getBrother()
 
         # Make sure it's the right brother
-        self.assertEquals(self.source.brother, brother)
+        self.assertEquals(self.source._brother, brother)
         self.assertEquals(self.source.linked, brother)
         self.assertEquals(brother.media_type, MEDIA_TYPE_AUDIO)
         self.assertEquals(self.source.media_start, brother.media_start)
@@ -131,14 +131,14 @@ class TestTimelineFileSource(unittest.TestCase):
         self.assertEquals(source.factory, self.factory)
         self.assertEquals(source.media_type, MEDIA_TYPE_VIDEO)
         self.assertEquals(source.linked, None)
-        self.assertEquals(source.brother, None)
+        self.assertEquals(source._brother, None)
 
     def testBrotherSerialization(self):
         brother = self.source.getBrother()
 
         self.assertEquals(len(BrotherObjects.__instances__), 0)
 
-        self.assertEquals(self.source.brother, brother)
+        self.assertEquals(self.source._brother, brother)
         self.assertEquals(self.source.linked, brother)
         self.assertEquals(brother.linked, self.source)
 
@@ -169,7 +169,7 @@ class TestTimelineFileSource(unittest.TestCase):
     def testLinkedBrotherSerialization(self):
         # create a brother and check all values are properly set
         brother = self.source.getBrother()
-        self.assertEquals(self.source.brother, brother)
+        self.assertEquals(self.source._brother, brother)
         self.assertEquals(self.source.linked, brother)
         self.assertEquals(brother.linked, self.source)
 
@@ -188,7 +188,7 @@ class TestTimelineFileSource(unittest.TestCase):
         # recreate object
         gst.log("recreating source !")
         source = to_object_from_data_type(data1)
-        self.assertEquals(source.brother, None)
+        self.assertEquals(source._brother, None)
         self.assertEquals(source.linked, None)
 
         # recreate brother
@@ -204,7 +204,7 @@ class TestTimelineFileSource(unittest.TestCase):
         self.assertEquals(source.factory, self.factory)
         self.assertEquals(source.media_type, MEDIA_TYPE_VIDEO)
         self.assertEquals(source.linked, brothernew)
-        self.assertEquals(source.brother, brothernew)
+        self.assertEquals(source._brother, brothernew)
 
         self.assertEquals(brothernew.start, 0)
         self.assertEquals(brothernew.duration, gst.SECOND)
@@ -213,7 +213,7 @@ class TestTimelineFileSource(unittest.TestCase):
         self.assertEquals(brothernew.factory, self.factory)
         self.assertEquals(brothernew.media_type, MEDIA_TYPE_AUDIO)
         self.assertEquals(brothernew.linked, source)
-        self.assertEquals(brothernew.brother, source)
+        self.assertEquals(brothernew._brother, source)
 
     # uniqueness tests
 

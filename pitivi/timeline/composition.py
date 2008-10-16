@@ -433,7 +433,7 @@ class TimelineComposition(TimelineSource):
 
         # if auto_linked and self.linked, add brother to self.linked with same parameters
         if auto_linked and self.linked:
-            if source.getBrother():
+            if source.brother:
                 self.linked._addSource(source.brother, position)
 
     def insertSourceAfter(self, source, existingsource, push_following=True, auto_linked=True):
@@ -744,7 +744,7 @@ class TimelineComposition(TimelineSource):
             # return the settings of our only source
             return self.sources[0][2][0].getExportSettings()
         else:
-            if self.isAudio():
+            if self.isaudio:
                 return self._autoAudioSettings()
             else:
                 return self._autoVideoSettings()
