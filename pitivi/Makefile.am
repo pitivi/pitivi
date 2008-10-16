@@ -27,6 +27,7 @@ pitivi_PYTHON = \
 	serializable.py	\
 	settings.py 	\
 	signalgroup.py	\
+	signalinterface.py \
 	sourcelist.py 	\
 	threads.py	\
 	thumbnailer.py	\

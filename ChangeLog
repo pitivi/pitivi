@@ -1,5 +1,13 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/Makefile.am:
+	* pitivi/signalinterface.py:
+	* tests/Makefile.am:
+	* tests/test_signallable.py:
+	New signallable interface
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* configure.ac: 
 	And back to development cycle.
 
