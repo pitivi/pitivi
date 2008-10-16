@@ -23,23 +23,23 @@
 Handles the list of source for a project
 """
 
-import gobject
 import gst
 from discoverer import Discoverer
 from serializable import Serializable, to_object_from_data_type
+from signalinterface import Signallable
 
-class SourceList(gobject.GObject, Serializable):
+class SourceList(Serializable, Signallable):
     """
     Contains the sources for a project, stored as FileSourceFactory
 
     Signals:
-    _ file-added (FileSourceFactory) :
+    _ file_added (FileSourceFactory) :
                 A file has been completely discovered and is valid.
-    _ file-removed (string : uri) :
+    _ file_removed (string : uri) :
                 A file was removed from the SourceList
-    _ not-media-file (string : uri, string : reason)
+    _ not_media_file (string : uri, string : reason)
                 The given uri is not a media file
-    _ tmp-is-ready (FileSourceFactory) :
+    _ tmp_is_ready (FileSourceFactory) :
                 The temporary uri given to the SourceList is ready to use.
     _ ready :
                 No more files are being discovered/added
@@ -47,33 +47,19 @@ class SourceList(gobject.GObject, Serializable):
                 Some files are being discovered/added
     """
 
-    __gsignals__ = {
-        "file_added" : (gobject.SIGNAL_RUN_LAST,
-                        gobject.TYPE_NONE,
-                        (gobject.TYPE_PYOBJECT, )),
-        "file_removed" : (gobject.SIGNAL_RUN_LAST,
-                          gobject.TYPE_NONE,
-                          (gobject.TYPE_STRING, )),
-        "not_media_file" : (gobject.SIGNAL_RUN_LAST,
-                            gobject.TYPE_NONE,
-                            (gobject.TYPE_STRING, gobject.TYPE_STRING,
-                             gobject.TYPE_STRING)),
-        "tmp_is_ready": (gobject.SIGNAL_RUN_LAST,
-                         gobject.TYPE_NONE,
-                         (gobject.TYPE_PYOBJECT, )),
-        "ready" : ( gobject.SIGNAL_RUN_LAST,
-                    gobject.TYPE_NONE,
-                    ( )),
-        "starting" : ( gobject.SIGNAL_RUN_LAST,
-                       gobject.TYPE_NONE,
-                       ( ))
+    __signals__ = {
+        "file_added" : ["factory"],
+        "file_removed" : ["uri"],
+        "not_media_file" : ["uri", "reason"],
+        "tmp_is_ready": ["factory"],
+        "ready" : None,
+        "starting" : None
         }
 
     __data_type__ = "source-list"
 
-    def __init__(self, project=None, **kwargs):
+    def __init__(self, project=None):
         gst.log("new sourcelist for project %s" % project)
-        gobject.GObject.__init__(self)
         self.project = project
         self.sources = {}
         self.tempsources = {}
@@ -154,13 +140,13 @@ class SourceList(gobject.GObject, Serializable):
         if uri in self and self[uri]:
             raise Exception("We already have an objectfactory for uri %s" % uri)
         self.sources[uri] = factory
-        self.emit("file-added", factory)
+        self.emit("file_added", factory)
 
     def _finishedAnalyzingCb(self, unused_discoverer, factory):
         # callback from finishing analyzing factory
         if factory.name in self.tempsources:
             self.tempsources[factory.name] = factory
-            self.emit("tmp-is-ready", factory)
+            self.emit("tmp_is_ready", factory)
         elif factory.name in self.sources:
             self.addFactory(factory.name, factory)
 

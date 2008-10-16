@@ -37,30 +37,11 @@ from settings import ExportSettings
 
 from gettext import gettext as _
 
-class ObjectFactory(gobject.GObject, Serializable):
+class ObjectFactory(Serializable):
     """
     base class for object factories which provide elements to use
     in the timeline
     """
-    __gproperties__ = {
-        "is-audio" : ( gobject.TYPE_BOOLEAN,
-                       "Contains audio stream",
-                       "Does the element contain audio",
-                       False, gobject.PARAM_READWRITE),
-
-        "is-video" : ( gobject.TYPE_BOOLEAN,
-                       "Contains video stream",
-                       "Does the element contain video",
-                       False, gobject.PARAM_READWRITE),
-        "audio-info" : ( gobject.TYPE_PYOBJECT,
-                         "Audio Information",
-                         "GstCaps of the audio stream",
-                         gobject.PARAM_READWRITE ),
-        "video-info" : ( gobject.TYPE_PYOBJECT,
-                         "Video Information",
-                         "GstCaps of the video stream",
-                         gobject.PARAM_READWRITE )
-        }
 
     __data_type__ = "object-factory"
 
@@ -71,56 +52,70 @@ class ObjectFactory(gobject.GObject, Serializable):
     # pending UID (int) => objects (list of BrotherObjects and extra field)
     __waiting_for_pending_objects__ = {}
 
-    def __init__(self, name="", displayname="", **unused_kw):
-        gobject.GObject.__init__(self)
+    # FIXME : Use Setter/Getter for internal values !
+
+    def __init__(self, name="", displayname="",
+                 **unused_kw):
         self.name = name
         self.displayname = displayname
-        self.is_audio = False
-        self.is_video = False
+        self._is_audio = False
+        self._is_video = False
         self.is_effect = False
         self.instances = []
-        self.audio_info = None
-        self.audio_info_stream = None
-        self.video_info = None
-        self.video_info_stream = None
-        self.mediaTags = {}
+        self._audio_info = None
+        self._audio_info_stream = None
+        self._video_info = None
+        self._video_info_stream = None
+        self._mediaTags = {}
         self.title = None
         self.artist = None
         self.uid = -1
 
-    def do_set_property(self, property, value):
-        """
-        override for the "set_property" gobject virtual method
-        """
-        gst.info(property.name)
-        if property.name == "is-audio":
-            self.is_audio = value
-        elif property.name == "is-video":
-            self.is_video = value
-        elif property.name == "video-info":
-            self.video_info = value
-            self.video_info_stream = get_stream_for_caps(value)
-        elif property.name == "audio-info":
-            self.audio_info = value
-            self.audio_info_stream = get_stream_for_caps(value)
-        else:
-            raise AttributeError, 'unknown property %s' % property.name
+    ## properties
 
-    def setAudioInfo(self, caps):
-        """ sets the audio caps of the element """
-        self.set_property("audio-info", caps)
+    def _get_is_audio(self):
+        return self._is_audio
 
-    def setVideoInfo(self, caps):
-        """ set the video caps of the element """
-        self.set_property("video-info", caps)
+    def _set_is_audio(self, isaudio):
+        self._is_audio = isaudio
+    is_audio = property(_get_is_audio, _set_is_audio,
+                        doc="True if the factory provides audio")
 
-    def setAudio(self, is_audio):
-        """ sets whether the element has audio stream """
-        self.set_property("is-audio", is_audio)
+    def _get_is_video(self):
+        return self._is_video
 
-    def setVideo(self, is_video):
-        """ sets whether the element has video stream """
-        self.set_property("is-video", is_video)
+    def _set_is_video(self, isvideo):
+        self._is_video = isvideo
+    is_video = property(_get_is_video, _set_is_video,
+                        doc="True if the factory provides video")
+
+    def _get_audio_info(self):
+        return self._audio_info
+
+    def _set_audio_info(self, inf):
+        self._audio_info = inf
+        self._audio_info_stream = get_stream_for_caps(inf)
+    audio_info = property(_get_audio_info, _set_audio_info,
+                          doc="Audio information as gst.Caps")
+
+    def _get_video_info(self):
+        return self._video_info
+    def _set_video_info(self, inf):
+        self._video_info = inf
+        self._video_info_stream = get_stream_for_caps(inf)
+    video_info = property(_get_video_info, _set_video_info,
+                          doc="Video information as gst.Caps")
+
+    def _get_audio_info_stream(self):
+        return self._audio_info_stream
+    audio_info_stream = property(_get_audio_info_stream,
+                                 doc="Audio information as a Stream")
+
+    def _get_video_info_stream(self):
+        return self._video_info_stream
+    video_info_stream = property(_get_video_info_stream,
+                                 doc="Video information as a Stream")
+
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.displayname or self.name)
@@ -129,22 +124,22 @@ class ObjectFactory(gobject.GObject, Serializable):
         """ Add the given gst.Tag or gst.TagList to the factory """
         gst.debug("tags:%s" % tags)
         for tag in tags:
-            self.mediaTags.update(tag)
-        for tag in self.mediaTags.keys():
-            if isinstance(self.mediaTags[tag], str):
-                self.mediaTags[tag] = self.mediaTags[tag].replace('&', '&amp;').strip()
-            if isinstance(self.mediaTags[tag], gst.Date):
-                d = self.mediaTags[tag]
-                self.mediaTags[tag] = "%s/%s/%s" % (d.day, d.month, d.year)
-        gst.debug("tags:%s" % self.mediaTags)
+            self._mediaTags.update(tag)
+        for tag in self._mediaTags.keys():
+            if isinstance(self._mediaTags[tag], str):
+                self._mediaTags[tag] = self._mediaTags[tag].replace('&', '&amp;').strip()
+            if isinstance(self._mediaTags[tag], gst.Date):
+                d = self._mediaTags[tag]
+                self._mediaTags[tag] = "%s/%s/%s" % (d.day, d.month, d.year)
+        gst.debug("tags:%s" % self._mediaTags)
         if self.video_info_stream:
-            self.video_info_stream.set_codec(self.mediaTags.get(gst.TAG_VIDEO_CODEC))
+            self.video_info_stream.set_codec(self._mediaTags.get(gst.TAG_VIDEO_CODEC))
         if self.audio_info_stream:
-            self.audio_info_stream.set_codec(self.mediaTags.get(gst.TAG_AUDIO_CODEC))
-        self.artist = self.mediaTags.get(gst.TAG_ARTIST)
+            self.audio_info_stream.set_codec(self._mediaTags.get(gst.TAG_AUDIO_CODEC))
+        self.artist = self._mediaTags.get(gst.TAG_ARTIST)
         if self.artist:
             self.artist.strip()
-        self.title = self.mediaTags.get(gst.TAG_TITLE)
+        self.title = self._mediaTags.get(gst.TAG_TITLE)
         if self.title:
             self.title.strip()
 
@@ -271,7 +266,12 @@ class ObjectFactory(gobject.GObject, Serializable):
             cls.__waiting_for_pending_objects__[uid] = []
         cls.__waiting_for_pending_objects__[uid].append((weakref.proxy(obj), extra))
 
-gobject.type_register(ObjectFactory)
+
+
+
+# FIXME : Figure out everything which is Source specific and put it here
+# FIXME : It might not just be files (network sources ?) !
+# FIMXE : It might not even had a URI ! (audio/video generators for ex)
 
 class SourceFactory(ObjectFactory):
     """
@@ -280,16 +280,16 @@ class SourceFactory(ObjectFactory):
 
     __data_type__ = "source-factory"
 
-    def getDuration(self):
+    def _getDuration(self):
         """
         Returns the maximum duration of the source in nanoseconds
 
         If the source doesn't have a maximum duration (like an image), subclasses
         should implement this by returning 2**63 - 1 (MAX_LONG).
         """
-        pass
+        raise NotImplementedError
 
-    def getDefaultDuration(self):
+    def _getDefaultDuration(self):
         """
         Returns the default duration of a file in nanoseconds,
         this should be used when using sources initially.
@@ -297,29 +297,28 @@ class SourceFactory(ObjectFactory):
         Most sources will return the same as getDuration(), but can be overriden
         for sources that have an infinite duration.
         """
-        return self.getDuration()
+        return self.duration
 
-gobject.type_register(SourceFactory)
+    ## properties
+
+    def __getDefaultDuration(self):
+        return self._getDefaultDuration()
+    default_duration = property(__getDefaultDuration,
+                                doc = "Default duration of a source in nanoseconds")
+
+    def __getDuration(self):
+        return self._getDuration()
+    duration = property(__getDuration,
+                        doc = "Maximum duration of the source in nanoseconds")
+
+
+
+# FIXME : What about non-file sources ???
 
 class FileSourceFactory(SourceFactory):
     """
     Provides File sources useable in a timeline
     """
-
-    __gproperties__ = {
-        "length" : ( gobject.TYPE_UINT64,
-                     "Length",
-                     "Length of element",
-                     0,
-                     (2**63) - 1, # should be (1<<64)-1 but #335854
-                     0,
-                     gobject.PARAM_READWRITE ),
-        "thumbnail" :  ( gobject.TYPE_STRING,
-                         "Thumbnail filename",
-                         "Filename for the element's thumbnail",
-                         "",
-                         gobject.PARAM_READWRITE )
-        }
 
     __data_type__ = "file-source-factory"
 
@@ -335,25 +334,27 @@ class FileSourceFactory(SourceFactory):
         self._thumbnails = []
         self.settings = None
 
-    ## SourceFactory implementation
-    def getDuration(self):
+    def _get_length(self):
         return self._length
 
-    def do_set_property(self, property, value):
-        if property.name == "length":
-            if self._length and self._length != value:
-                gst.warning("%s : Trying to set a new length (%s) different from previous one (%s)" % (self.name,
-                                                                                                       gst.TIME_ARGS(self._length),
-                                                                                                       gst.TIME_ARGS(value)))
-            self._length = value
-        elif property.name == "thumbnail":
-            gst.debug("thumbnail : %s" % value)
-            if os.path.isfile(value):
-                self._thumbnail = value
-            else:
-                gst.warning("Thumbnail path is invalid !")
-        else:
-            ObjectFactory.do_set_property(self, property, value)
+    def _set_length(self, length):
+        gst.debug("length:%r" % length)
+        self._length = length
+    length = property(_get_length, _set_length,
+                      doc="Length in nanoseconds")
+
+    def _get_thumbnail(self):
+        return self._thumbnail
+
+    def _set_thumbnail(self, thumbnail):
+        self._thumbnail = thumbnail
+    thumbnail = property(_get_thumbnail, _set_thumbnail,
+                         doc="Thumbnail file location")
+
+    ## SourceFactory implementation
+    def _getDuration(self):
+        return self._length
+
 
     def makeBin(self):
         """ returns a source bin with all pads """
@@ -410,16 +411,6 @@ class FileSourceFactory(SourceFactory):
         if bin in self.instances:
             self.instances.remove(bin)
 
-    def setLength(self, length):
-        """ sets the length of the element """
-        self.set_property("length", length)
-
-    def setThumbnail(self, thumbnail):
-        """ Sets the thumbnail filename of the element """
-        self.set_property("thumbnail", thumbnail)
-
-    def getThumbnail(self):
-        return self._thumbnail
 
     def getExportSettings(self):
         """ Returns the ExportSettings corresponding to this source """

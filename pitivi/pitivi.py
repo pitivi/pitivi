@@ -23,7 +23,6 @@
 Main application
 """
 import os
-import gobject
 import gtk
 import gst
 import check
@@ -38,10 +37,19 @@ from configure import APPNAME
 from settings import GlobalSettings
 from threads import ThreadMaster
 from pluginmanager import PluginManager
+from signalinterface import Signallable
+import instance
 
 from gettext import gettext as _
 
-class Pitivi(gobject.GObject):
+# FIXME : Speedup loading time
+# Currently we load everything in one go
+# It would be better if a minimalistic UI could start up ASAP, without loading
+# anything gst-related or that could slow down startup.
+# AND THEN load up the required parts.
+# This will result in a much better end-user experience
+
+class Pitivi(object, Signallable):
     """
     Pitivi's main class
 
@@ -70,25 +78,13 @@ class Pitivi(gobject.GObject):
         shutdown
             used internally, do not catch this signals"""
 
-    __gsignals__ = {
-        "new-project-loading" : (gobject.SIGNAL_RUN_LAST,
-                          gobject.TYPE_NONE,
-                          (gobject.TYPE_PYOBJECT, )),
-        "new-project-loaded" : ( gobject.SIGNAL_RUN_LAST,
-                          gobject.TYPE_NONE,
-                          (gobject.TYPE_PYOBJECT, )),
-        "closing-project" : ( gobject.SIGNAL_RUN_LAST,
-                              gobject.TYPE_BOOLEAN,
-                              (gobject.TYPE_PYOBJECT, )),
-        "project-closed" : ( gobject.SIGNAL_RUN_LAST,
-                             gobject.TYPE_NONE,
-                             ( gobject.TYPE_PYOBJECT, )),
-        "new-project-failed" : ( gobject.SIGNAL_RUN_LAST,
-                          gobject.TYPE_NONE,
-                          (gobject.TYPE_STRING, gobject.TYPE_STRING)),
-        "shutdown" : ( gobject.SIGNAL_RUN_LAST,
-                       gobject.TYPE_NONE,
-                       ( ))
+    __signals__ = {
+        "new-project-loading" : ["project"],
+        "new-project-loaded" : ["project"],
+        "closing-project" : ["project"],
+        "project-closed" : ["project"],
+        "new-project-failed" : ["reason", "uri"],
+        "shutdown" : None
         }
 
     def __init__(self, args=[], use_ui=True):
@@ -96,7 +92,6 @@ class Pitivi(gobject.GObject):
         initialize pitivi with the command line arguments
         """
         gst.log("starting up pitivi...")
-        gobject.GObject.__init__(self)
         self.project = None
         self._use_ui = use_ui
 

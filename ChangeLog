@@ -1,5 +1,23 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/bin.py:
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	* pitivi/pitivi.py:
+	* pitivi/sourcelist.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/source.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/viewer.py:
+	* tests/common.py:
+	Convert pitivi,bin,discoverer,objectfactory to gobject-less signaling
+	and properties.
+	Modify all code using that accordingly.
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* docs/HACKING:
 	Added notes about public/private/protected attributes
 

@@ -485,15 +485,15 @@ class TimelineComposition(TimelineSource):
         gst.info("start=%s, position=%d, existorder=%d, sourcelength=%s" % (gst.TIME_ARGS(start),
                                                                             position,
                                                                             existorder,
-                                                                            gst.TIME_ARGS(source.factory.getDuration())))
+                                                                            gst.TIME_ARGS(source.factory.duration)))
         # set the correct start/duration time
-        duration = source.factory.getDuration()
+        duration = source.factory.duration
         source.setStartDurationTime(start, duration)
 
         # pushing following
         if push_following and not position in [-1, 0]:
             #print self.gnlobject, "pushing following", existorder, len(self.sources[position - 1][2])
-            self.shiftSources(source.factory.getDuration(), existorder, len(self.sources[position - 1][2]))
+            self.shiftSources(source.factory.duration, existorder, len(self.sources[position - 1][2]))
 
         self.addSource(source, position, auto_linked=auto_linked)
 

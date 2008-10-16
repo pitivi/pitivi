@@ -415,7 +415,7 @@ class PitiviViewer(gtk.VBox):
                 self._timelineDurationChangedSigId = (smartbin.project.timeline.videocomp,
                                                       sigid)
             else:
-                self.posadjust.upper = float(smartbin.factory.getDuration())
+                self.posadjust.upper = float(smartbin.factory.duration)
                 if not self._timelineDurationChangedSigId == (None, None):
                     obj, sigid = self._timelineDurationChangedSigId
                     obj.disconnect(sigid)

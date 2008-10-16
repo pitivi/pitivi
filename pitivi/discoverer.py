@@ -24,14 +24,15 @@
 Discover file multimedia information.
 """
 
-import gobject
-import gst
-import objectfactory
-
 from gettext import gettext as _
 import os.path
+import gobject
+import gst
 
-class Discoverer(gobject.GObject):
+from objectfactory import FileSourceFactory
+from signalinterface import Signallable
+
+class Discoverer(object, Signallable):
     """
     Queues requests to discover information about given files.
     The discovery is done in a very fragmented way, so that it appears to be
@@ -44,34 +45,23 @@ class Discoverer(gobject.GObject):
 
     The "finished-analyzing" signal is emitted a file is finished being analyzed
 
-    The "starting" signal isemitted when the discoverer starts analyzing some
+    The "starting" signal is emitted when the discoverer starts analyzing some
     files.
 
     The "ready" signal is emitted when the discoverer has no more files to
     analyze.
     """
 
-    __gsignals__ = {
-        "new_sourcefilefactory" : (gobject.SIGNAL_RUN_LAST,
-                                   gobject.TYPE_NONE,
-                                   (gobject.TYPE_PYOBJECT, )),
-        "not_media_file" : (gobject.SIGNAL_RUN_LAST,
-                            gobject.TYPE_NONE,
-                            (gobject.TYPE_STRING, gobject.TYPE_STRING, gobject.TYPE_STRING)),
-        "finished_analyzing" : ( gobject.SIGNAL_RUN_LAST,
-                                 gobject.TYPE_NONE,
-                                 (gobject.TYPE_PYOBJECT, )),
-        "ready" : ( gobject.SIGNAL_RUN_LAST,
-                    gobject.TYPE_NONE,
-                    ( )),
-        "starting" : ( gobject.SIGNAL_RUN_LAST,
-                       gobject.TYPE_NONE,
-                       ( ))
+    __signals__ = {
+        "new_sourcefilefactory" : ["factory"],
+        "not_media_file" : ["a", "b", "c" ],
+        "finished_analyzing" : ["factory"],
+        "ready" : None,
+        "starting" : None,
         }
 
     def __init__(self, project):
         gst.log("new discoverer for project %s" % project)
-        gobject.GObject.__init__(self)
         self.project = project
         self.queue = []
         self.working = False
@@ -154,13 +144,13 @@ class Discoverer(gobject.GObject):
         elif self.currentfactory:
             self.currentfactory.addMediaTags(self.currentTags)
             if self.isimage:
-                self.currentfactory.setThumbnail(gst.uri_get_location(self.current))
-            if not self.currentfactory.getDuration() and not self.isimage:
+                self.currentfactory.thumbnail = gst.uri_get_location(self.current)
+            if not self.currentfactory.duration and not self.isimage:
                 self.emit('not_media_file', self.current,
                           _("Could not establish the duration of the file."),
                           _("This clip seems to be in a format which cannot be accessed in a random fashion."))
             else:
-                self.emit('finished-analyzing', self.currentfactory)
+                self.emit('finished_analyzing', self.currentfactory)
         self.currentTags = []
         self.analyzing = False
         self.current = None
@@ -276,7 +266,7 @@ class Discoverer(gobject.GObject):
             self.thisdone = True
             filename = "/tmp/" + self.currentfactory.name.encode('base64').replace('\n','') + ".png"
             if os.path.isfile(filename):
-                self.currentfactory.setThumbnail(filename)
+                self.currentfactory.thumbnail = filename
             gobject.idle_add(self._finishAnalysis)
         elif message.type == gst.MESSAGE_ERROR:
             error, detail = message.parse_error()
@@ -322,34 +312,34 @@ class Discoverer(gobject.GObject):
 
             if caps and caps.is_fixed():
                 if not self.currentfactory:
-                    self.currentfactory = objectfactory.FileSourceFactory(self.current, self.project)
+                    self.currentfactory = FileSourceFactory(self.current, self.project)
                     self.emit("new_sourcefilefactory", self.currentfactory)
                 if caps.to_string().startswith("audio/x-raw") and not self.currentfactory.audio_info:
-                    self.currentfactory.setAudioInfo(caps)
+                    self.currentfactory.audio_info = caps
                 elif caps.to_string().startswith("video/x-raw") and not self.currentfactory.video_info:
-                    self.currentfactory.setVideoInfo(caps)
-            if not self.currentfactory.getDuration():
+                    self.currentfactory.video_info = caps
+            if not self.currentfactory.duration:
                 try:
                     length, format = pad.query_duration(gst.FORMAT_TIME)
                 except:
                     pad.warning("duration query failed")
                 else:
                     if format == gst.FORMAT_TIME:
-                        self.currentfactory.set_property("length", length)
+                        self.currentfactory.length = length
 
     def _vcapsNotifyCb(self, pad, unused_property):
         gst.info("pad:%s , caps:%s" % (pad, pad.get_caps().to_string()))
         if pad.get_caps().is_fixed() and (not self.currentfactory.video_info_stream or not self.currentfactory.video_info_stream.fixed):
-            self.currentfactory.setVideoInfo(pad.get_caps())
+            self.currentfactory.video_info = pad.get_caps()
 
     def _newVideoPadCb(self, element, pad):
         """ a new video pad was found """
         gst.debug("pad %s" % pad)
 
-        self.currentfactory.setVideo(True)
+        self.currentfactory.is_video = True
 
         if pad.get_caps().is_fixed():
-            self.currentfactory.setVideoInfo(pad.get_caps())
+            self.currentfactory.video_info = pad.get_caps()
 
         q = gst.element_factory_make("queue")
         q.props.max_size_bytes = 5 * 1024 * 1024
@@ -377,7 +367,7 @@ class Discoverer(gobject.GObject):
         """ a new audio pad was found """
         gst.debug("pad %s" % pad)
 
-        self.currentfactory.setAudio(True)
+        self.currentfactory.is_audio = True
 
         # if we already saw another pad, remove no-more-pads hack
         if self.currentfactory.is_video:
@@ -386,7 +376,7 @@ class Discoverer(gobject.GObject):
 
         if pad.get_caps().is_fixed():
             gst.debug("fixed caps, setting info on factory")
-            self.currentfactory.setAudioInfo(pad.get_caps())
+            self.currentfactory.audio_info = pad.get_caps()
             # if we already have fixed caps, we don't need to take this stream.
         else:
             gst.debug("non-fixed caps, adding queue and fakesink")
@@ -417,12 +407,12 @@ class Discoverer(gobject.GObject):
         gst.info("pad:%s caps:%s is_last:%s" % (pad, capsstr, is_last))
         if capsstr.startswith("video/x-raw"):
             if not self.currentfactory:
-                self.currentfactory = objectfactory.FileSourceFactory(self.current, self.project)
+                self.currentfactory = FileSourceFactory(self.current, self.project)
                 self.emit("new_sourcefilefactory", self.currentfactory)
             self._newVideoPadCb(element, pad)
         elif capsstr.startswith("audio/x-raw"):
             if not self.currentfactory:
-                self.currentfactory = objectfactory.FileSourceFactory(self.current, self.project)
+                self.currentfactory = FileSourceFactory(self.current, self.project)
                 self.emit("new_sourcefilefactory", self.currentfactory)
             self._newAudioPadCb(element, pad)
         else:

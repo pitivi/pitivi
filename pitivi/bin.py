@@ -23,11 +23,37 @@
 High-level Pipelines with plugable back-ends
 """
 
-import gobject
 import gst
 from elements.smartscale import SmartVideoScale
 import plumber
 from threads import CallbackThread
+
+# REVIEW
+# SmartBin was mostly an idea that originated in the gst-0.8 era, and was ported
+# from that to newer gstreamer (see commit 660)
+#
+# LIMITATIONS
+# It makes MANY assumptions :
+#   * only raw data
+#   * only one audio and/or one video track
+#
+# IDEA:
+# Why not have a list of stream descriptions provided by the sources, with
+# their properties, maybe could be combined with the stream properties
+# used in filesourcefactories.
+#
+# Using the list of stream descriptions above, we could combine it in a smart
+# way with SmartSinks, like Hardware sinks (screen/audiocards), but also
+# rendering, or even streaming.
+#
+# The reason above might be why we should make SmartBin a subclass of gst.Bin
+# again.
+#
+# The recording feature could also be moved to a separate class/module too for
+# the same reaons.
+#
+# FIXME : Can we finally revert to using tee (instead of identity) ?
+
 
 class SmartBin(gst.Pipeline):
     """
@@ -44,8 +70,14 @@ class SmartBin(gst.Pipeline):
         @param displayname: The user-friendly name of the SmartBin
         """
         gst.log('name : %s, displayname : %s' % (name, displayname))
-        gobject.GObject.__init__(self)
+        gst.Pipeline.__init__(self)
+
+        # FIXME : Do we REALLY need to know/have the length here ???
+        #   It only seems to be overriden by the SmartTimelineBin
+        # Also... maybe we'll have infinite length sources (like live sources)
         self.length = length
+
+        # FIXME : This should be more generic.
         self.has_video = has_video
         self.has_audio = has_audio
         self.width = width
@@ -57,8 +89,10 @@ class SmartBin(gst.Pipeline):
         self.atee = None
 
         self.set_name(name)
-        # Until  basetransform issues are fixed, we use an identity instead
+        # FIXME : Until basetransform issues are fixed, we use an identity instead
         # of a tee
+        # COMMENT : They have been fixed by now ! It would allow us to show
+        # visualisation while rendering for example.
         if self.has_video:
             self.vtee = gst.element_factory_make("tee", "vtee")
             self.add(self.vtee)
@@ -67,6 +101,8 @@ class SmartBin(gst.Pipeline):
             self.add(self.atee)
         self._addSource()
         self._connectSource()
+
+        # FIXME : naming. thread => bin
         self.asinkthread = None
         self.vsinkthread = None
         self.encthread = None
@@ -96,7 +132,7 @@ class SmartBin(gst.Pipeline):
         Returns False if there was a problem.
         """
         self.debug("asinkthread : %r" % asinkthread)
-        state  = self.get_state(0)[1]
+        state = self.get_state(0)[1]
         if state == gst.STATE_PLAYING:
             self.warning("is in PAUSED or higher : %s" % state)
             return False
@@ -166,6 +202,9 @@ class SmartBin(gst.Pipeline):
         self.log("vsinkthread removed succesfully")
         return True
 
+    # FIXME : WTF IS THIS DOING HERE ! IT HAS VIRTUALLY NOTHING TO DO
+    # WITH SmartBin's concepts
+    # It should be moved into a non-ui/plumber class/module
     def getRealVideoSink(self):
         """ returns the real video sink element or None """
         if not self.vsinkthread:
@@ -256,22 +295,9 @@ class SmartBin(gst.Pipeline):
         """ Return the ExportSettings for the bin """
         return None
 
-    def _debugProbe(self, unused_pad, data, categoryname):
-        if isinstance(data, gst.Buffer):
-            self.log("%s\tBUFFER timestamp:%s duration:%s size:%d" % (categoryname,
-                                                                      gst.TIME_ARGS(data.timestamp),
-                                                                      gst.TIME_ARGS(data.duration),
-                                                                      data.size))
-            if not data.flag_is_set(gst.BUFFER_FLAG_DELTA_UNIT):
-                self.log("%s\tKEYFRAME" % categoryname)
-        else:
-            self.log("%s\tEVENT %s" % (categoryname, data))
-        return True
-
     def _makeEncThread(self, uri, settings=None):
         """ Construct the encoding bin according to the given setting. """
         # TODO : verify if encoders take video/x-raw-yuv and audio/x-raw-int
-        # TODO : use video/audio settings !
         # TODO : Check if we really do both audio and video !
         self.debug("Creating encoding thread")
         if not settings:
@@ -303,6 +329,7 @@ class SmartBin(gst.Pipeline):
         ainq.props.max_size_buffers = 0
         ainq.props.max_size_bytes = 0
         aident = gst.element_factory_make("identity", "aident")
+        aident.props.silent = True
         aident.props.single_segment = True
         aconv = gst.element_factory_make("audioconvert", "aconv")
         ares = gst.element_factory_make("audioresample", "ares")
@@ -343,6 +370,7 @@ class SmartBin(gst.Pipeline):
         vinq.props.max_size_bytes = 0
         vident = gst.element_factory_make("identity", "vident")
         vident.props.single_segment = True
+        vident.props.silent = True
         csp = gst.element_factory_make("ffmpegcolorspace", "csp")
         vrate = gst.element_factory_make("videorate", "vrate")
         vscale = SmartVideoScale()
@@ -400,8 +428,7 @@ class SmartFileBin(SmartBin):
                           has_video = factory.is_video,
                           has_audio = factory.is_audio,
                           width = width, height = height,
-                          length = factory.getDuration(),
-                          is_seekable = True)
+                          length = factory.duration)
 
     def _addSource(self):
         self.add(self.source)

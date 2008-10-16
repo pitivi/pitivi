@@ -94,7 +94,7 @@ class PitiviMainWindow(gtk.Window):
         instance.PiTiVi.current.connect("save-uri-requested", self._saveAsDialogCb)
         instance.PiTiVi.current.connect("confirm-overwrite", self._confirmOverwriteCb)
         instance.PiTiVi.playground.connect("error", self._playGroundErrorCb)
-        instance.PiTiVi.current.sources.connect_after("file_added", self._sourcesFileAddedCb)
+        instance.PiTiVi.current.sources.connect("file_added", self._sourcesFileAddedCb)
 
         # Start dbus service
         session_bus = dbus.SessionBus()

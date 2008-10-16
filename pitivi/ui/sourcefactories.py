@@ -337,9 +337,10 @@ class SourceListWidget(gtk.VBox):
 
     def _addFactory(self, factory):
         try:
-            pixbuf = gtk.gdk.pixbuf_new_from_file(factory.getThumbnail())
+            gst.debug("attempting to open thumbnail %s" % factory.thumbnail)
+            pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
         except:
-            gst.error("Failure to create thumbnail from file %s" % factory.getThumbnail())
+            gst.error("Failure to create thumbnail from file %s" % factory.thumbnail)
             if factory.is_video:
                 thumbnail = self.videofilepixbuf
             elif factory.is_audio:
@@ -356,7 +357,7 @@ class SourceListWidget(gtk.VBox):
                                 factory.getPrettyInfo(),
                                 factory,
                                 factory.name,
-                                factory.getDuration() and "<b>%s</b>" % beautify_length(factory.getDuration()) or ""])
+                                factory.duration and "<b>%s</b>" % beautify_length(factory.duration) or ""])
         self._displayTreeView()
 
     # sourcelist callbacks

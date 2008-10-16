@@ -241,12 +241,12 @@ class ComplexTrack(SmartGroup, Zoomable):
         element = item.element
         cur_end = element.start + element.duration
         # Invariant:
-        #  max(duration) = element.factory.getDuration()
+        #  max(duration) = element.factory.duration
         #  start = end - duration
         # Therefore
-        #  min(start) = end - element.factory.getDuration()
+        #  min(start) = end - element.factory.duration
         new_start =  max(0,
-            cur_end - element.factory.getDuration(), 
+            cur_end - element.factory.duration,
             self.canvas.snap_time_to_edit(self.pixelToNs(pos[0])))
         new_duration = cur_end - new_start
         new_media_start = element.media_start + (new_start - element.media_start)
@@ -257,8 +257,8 @@ class ComplexTrack(SmartGroup, Zoomable):
     def _trim_source_end_cb(self, item, pos):
         element = item.element
         cur_start = element.start
-        new_end = min(cur_start + element.factory.getDuration(),
-            max(cur_start, 
+        new_end = min(cur_start + element.factory.duration,
+            max(cur_start,
                 self.canvas.snap_time_to_edit(
                     self.pixelToNs(pos[0] + width(item)))))
         new_duration = new_end - element.start
