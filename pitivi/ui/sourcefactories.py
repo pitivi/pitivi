@@ -337,23 +337,25 @@ class SourceListWidget(gtk.VBox):
         instance.PiTiVi.threads.addThread(PathWalker, folders, instance.PiTiVi.current.sources.addUris)
 
     def _addFactory(self, factory):
-        try:
-            gst.debug("attempting to open thumbnail %s" % factory.thumbnail)
-            pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
-        except:
-            gst.error("Failure to create thumbnail from file %s" % factory.thumbnail)
-            if factory.is_video:
-                thumbnail = self.videofilepixbuf
-            elif factory.is_audio:
-                thumbnail = self.audiofilepixbuf
-        #FIXME: should this be continue??
-        else:
-            if not factory.video_info_stream:
-                desiredheight = 64 * pixbuf.get_height() / pixbuf.get_width()
+        if factory.thumbnail:
+            try:
+                gst.debug("attempting to open thumbnail file '%s'" % factory.thumbnail)
+                pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
+            except:
+                gst.error("Failure to create thumbnail from file '%s'" % factory.thumbnail)
+                if factory.is_video:
+                    thumbnail = self.videofilepixbuf
+                elif factory.is_audio:
+                    thumbnail = self.audiofilepixbuf
             else:
-                vi = factory.video_info_stream
-                desiredheight = int(64 / float(vi.dar))
-            thumbnail = pixbuf.scale_simple(64, desiredheight, gtk.gdk.INTERP_BILINEAR)
+                if not factory.video_info_stream:
+                    desiredheight = 64 * pixbuf.get_height() / pixbuf.get_width()
+                else:
+                    vi = factory.video_info_stream
+                    desiredheight = int(64 / float(vi.dar))
+                thumbnail = pixbuf.scale_simple(64, desiredheight, gtk.gdk.INTERP_BILINEAR)
+        else:
+            thumbnail = factory.is_video and self.videofilepixbuf or self.audiofilepixbuf
         self.storemodel.append([thumbnail,
                                 factory.getPrettyInfo(),
                                 factory,

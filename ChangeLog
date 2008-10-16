@@ -1,5 +1,10 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/ui/sourcefactories.py:
+	Better thumbnailing handling for new objectfactories.
+	
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/timeline/composition.py:
 	* pitivi/timeline/objects.py:
 	* pitivi/timeline/source.py:
