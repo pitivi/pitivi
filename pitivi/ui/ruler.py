@@ -159,9 +159,14 @@ class ScaleRuler(gtk.Layout, Zoomable):
     def _doSeek(self, value, format=gst.FORMAT_TIME):
         gst.debug("seeking to %s / currentlySeeking %r" % (gst.TIME_ARGS (value),
                                                            self.currentlySeeking))
-        if (format == gst.FORMAT_TIME) and (value > self.getDuration()):
-            gst.debug("you can't seek outside of the timeline")
+        # clamping values within acceptable range
+        duration = self.getDuration()
+        if duration == gst.CLOCK_TIME_NONE:
             return
+        if value > duration:
+            value = duration
+        elif value < 0:
+            value = 0
         if not self.currentlySeeking:
             self.currentlySeeking = True
             if instance.PiTiVi.playground.seekInCurrent(value, format=format):
@@ -215,7 +220,10 @@ class ScaleRuler(gtk.Layout, Zoomable):
         self.drawRuler(context, rect)
 
     def getDuration(self):
-        return instance.PiTiVi.current.timeline.getDuration()
+        if instance.PiTiVi.current:
+            return instance.PiTiVi.current.timeline.getDuration()
+        else:
+            return gst.CLOCK_TIME_NONE
 
     def getPixelWidth(self):
         return self.nsToPixel(self.getDuration())

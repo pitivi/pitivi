@@ -1,5 +1,11 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/ui/ruler.py:
+	Fix duration query.
+	Don't seek if there's no available content.
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* .gitignore:
 	* bin/.gitignore:
 	* pitivi/.gitignore:
