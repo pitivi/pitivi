@@ -36,6 +36,11 @@ Hacking on PiTiVi
      def _padAddedCb(self, unused_element, pad):
         ...
 
+- The following naming should be used for class properties/methods:
+  * public : <name>
+  * protected : _<name>
+  * private : __<name>
+
 - Imported modules should be done in this order:
   * system modules
   * top-level pitivi modules (ex : pitivi.project)
