@@ -1,5 +1,19 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* .gitignore:
+	* bin/.gitignore:
+	* pitivi/.gitignore:
+	* pitivi/elements/.gitignore:
+	* pitivi/pixmaps/.gitignore:
+	* pitivi/ui/.gitignore:
+	* po/.gitignore:
+	* tests/.gitignore:
+	Rename .cvsignore to .gitignore because we are no longer using CVS but
+	more and more people are using GIT.
+	This doesn't affect people using svn.
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/objectfactory.py:
 	* pitivi/stream.py:
 	* pitivi/Makefile.am:
