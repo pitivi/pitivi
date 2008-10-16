@@ -158,7 +158,7 @@ class ApplicationLogicTest(unittest.TestCase):
             self._newProjectLoadingCb)
         self.ptv.connect("new-project-loaded",
             self._newProjectLoadedCb)
-        self.ptv.connect_after("closing-project",
+        self.ptv.connect("closing-project",
             self._closingProjectCb, True)
 
         # set the modification bit, create a new project
@@ -179,7 +179,7 @@ class ApplicationLogicTest(unittest.TestCase):
             self._saveUriRequestedCb, testUri, True)
         self.ptv.current.connect("confirm-overwrite",
             self._confirmOverwriteCb, True)
-        self.ptv.connect_after("closing-project",
+        self.ptv.connect("closing-project",
             self._closingProjectCb, True)
 
         # currently, overwrite detection only looks at whether file
