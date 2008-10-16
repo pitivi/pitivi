@@ -1,5 +1,11 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/dnd.py:
+	* pitivi/instance.py:
+	Comments.
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/ui/sourcefactories.py:
 	Better thumbnailing handling for new objectfactories.
 	

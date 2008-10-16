@@ -28,4 +28,6 @@ global pitivi.Pitivi instance.
 PiTiVi : current instance of pitivi top-level class.
 """
 
+# FIXME : We really need to get rid of this global singleton
+
 PiTiVi = None

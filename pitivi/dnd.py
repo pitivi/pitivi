@@ -23,6 +23,8 @@
 Drag and drop constants
 """
 
+# FIXME : ... this should be moved to pitivi.ui
+
 TYPE_TEXT_PLAIN = 24
 TYPE_URI_LIST = 25
 TYPE_PITIVI_FILESOURCE = 26
