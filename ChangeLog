@@ -1,5 +1,10 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* bin/pitivi.in:
+	Cleanups
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/pitivi.py:
 	Remove dependency on gtk
 	Make subclass for Interactive pitivi

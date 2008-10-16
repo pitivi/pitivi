@@ -36,13 +36,22 @@ localedir = ""
 # Add the path of pitivi stuff
 # TODO : change it when it's finally in cvs
 
+def _get_root_dir():
+    return '/'.join(os.path.dirname(os.path.abspath(__file__)).split('/')[:-1])
+
+def _in_devel():
+    rd = _get_root_dir()
+    return (os.path.exists(os.path.join(rd, '.svn')) or
+            os.path.exists(os.path.join(rd, 'CVS')) or
+            os.path.exists(os.path.join(rd, '.git')))
+
 def _add_pitivi_path():
     global localedir
     dir = os.path.dirname(os.path.abspath(__file__))
-    if (os.path.exists(os.path.join(dir, 'CVS')) or
-        os.path.exists(os.path.join(dir, '.svn'))):
+    root = None
+    if _in_devel():
         root = os.path.split(dir)[0]
-        localedir = os.path.join(root, 'locale')
+        localedir = os.path.join(os.path.split(dir)[0], 'locale')
     else:
         root = os.path.join(LIBDIR, 'pitivi', 'python')
         localedir = "@DATADIR@/locale"
@@ -89,11 +98,11 @@ def _init_gobject_gtk_gst():
         raise SystemExit("Can't find glade module")
 
     glade.bindtextdomain('pitivi', localedir)
-    
+
     try:
         import pygst
         pygst.require('0.10')
-        
+
         import gst
     except ImportError:
         raise SystemExit("Gst-Python couldn't be found!")
