@@ -30,8 +30,6 @@ load and store data
 
 import gst
 from cPickle import load, dump, PicklingError, UnpicklingError
-import timeline.composition
-import settings
 
 class ProjectError(Exception):
     def __init__(self, reason):

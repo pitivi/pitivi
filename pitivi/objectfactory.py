@@ -28,7 +28,6 @@ import os.path
 from urllib import unquote
 import weakref
 from random import randint
-import string
 import gobject
 import gst
 
@@ -176,7 +175,7 @@ class ObjectFactory(Serializable):
                 return "Audio Effect"
             return "Effect"
         if not self.is_video and not self.is_audio:
-            "Unknown"
+            return "Unknown"
         stl = []
         # FIXME : file is FileSourceFactory specific !
         # FIXME : and it might not be a file:// but maybe a http://
@@ -195,7 +194,7 @@ class ObjectFactory(Serializable):
             stl.append(self.video_info_stream.markup)
         if self.is_audio and self.audio_info_stream:
             stl.append(self.audio_info_stream.markup)
-        return string.join(stl, "\n") + "</small>"
+        return '\n'.join(stl) + "</small>"
 
     # FIXME : Too limited and ugly. What if we have non-AV streams ??
     def makeAudioBin(self):

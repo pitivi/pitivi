@@ -295,7 +295,8 @@ class PitiviViewer(gtk.VBox):
         gst.info("value:%s, frame:%d" % (gst.TIME_ARGS(value), frame))
         self.current_time = value
         self.current_frame = frame
-        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(value), time_to_string(instance.PiTiVi.playground.current.length)))
+        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(value),
+                                                        time_to_string(instance.PiTiVi.playground.current.length)))
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
         return False
@@ -307,7 +308,8 @@ class PitiviViewer(gtk.VBox):
         gst.debug("duration : %s" % gst.TIME_ARGS(duration))
         gst.debug("playground.current.length : %s" % gst.TIME_ARGS(instance.PiTiVi.playground.current.length))
         self.posadjust.upper = float(duration)
-        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time), time_to_string(instance.PiTiVi.playground.current.length)))
+        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time),
+                                                        time_to_string(instance.PiTiVi.playground.current.length)))
 
 
     def _backToDefaultCb(self):
@@ -403,7 +405,8 @@ class PitiviViewer(gtk.VBox):
                 self._timelineDurationChangedSigId = (None, None)
         else:
             if isinstance(smartbin, SmartTimelineBin):
-                gst.info("switching to Timeline, setting duration to %s" % (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
+                gst.info("switching to Timeline, setting duration to %s" %
+                         (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
                 self.posadjust.upper = float(smartbin.project.timeline.videocomp.duration)
                 # FIXME : we need to disconnect from this signal !
                 sigid = smartbin.project.timeline.videocomp.connect("start-duration-changed",

@@ -32,9 +32,9 @@ import gobject
 try:
     import gconf
 except:
-    have_gconf=False
+    HAVE_GCONF = False
 else:
-    have_gconf=True
+    HAVE_GCONF = True
 
 import pitivi.configure as configure
 from pitivi.projectsaver import ProjectSaver
@@ -54,15 +54,28 @@ from pitivi.configure import pitivi_version, APPNAME
 from glade import GladeWindow
 from exportsettingswidget import ExportSettingsDialog
 
-import dbus
-import dbus.service
-import dbus.glib
-
-if have_gconf:
+if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
 
-    for gconf_dir in (D_G_INTERFACE,):
+    for gconf_dir in (D_G_INTERFACE, ):
         gconf.client_get_default ().add_dir (gconf_dir, gconf.CLIENT_PRELOAD_NONE)
+
+def create_stock_icons():
+    """ Creates the pitivi-only stock icons """
+    gtk.stock_add([
+            ('pitivi-advanced-mode', 'Advanced Mode', 0, 0, 'pitivi'),
+            ('pitivi-render', 'Render', 0, 0, 'pitivi')
+            ])
+    factory = gtk.IconFactory()
+    pixbuf = gtk.gdk.pixbuf_new_from_file(
+        configure.get_pixmap_dir() + "/pitivi-advanced-24.png")
+    iconset = gtk.IconSet(pixbuf)
+    factory.add('pitivi-advanced-mode', iconset)
+    pixbuf = gtk.gdk.pixbuf_new_from_file(
+        configure.get_pixmap_dir() + "/pitivi-render-24.png")
+    iconset = gtk.IconSet(pixbuf)
+    factory.add('pitivi-render', iconset)
+    factory.add_default()
 
 
 class PitiviMainWindow(gtk.Window):
@@ -75,21 +88,18 @@ class PitiviMainWindow(gtk.Window):
         """ initialize with the Pitivi object """
         gst.log("Creating MainWindow")
         gtk.Window.__init__(self)
-
+        self.actions = None
+        self.toggleactions = None
+        self.actiongroup = None
+        self.is_fullscreen = False
+        self.error_dialogbox = None
         self.pitivi = instance
 
     def load(self):
         """ load the user interface """
-        self._createStockIcons()
+        create_stock_icons()
         self._setActions()
         self._createUi()
-        self.actions = None
-        self.toggleactions = None
-        self.actiongroup = None
-
-        self.isFullScreen = False
-        self.errorDialogBox = None
-
         self.pitivi.connect("new-project-loaded", self._newProjectLoadedCb)
         self.pitivi.connect("new-project-loading", self._newProjectLoadingCb)
         self.pitivi.connect("closing-project", self._closingProjectCb)
@@ -98,21 +108,6 @@ class PitiviMainWindow(gtk.Window):
         self.pitivi.current.connect("confirm-overwrite", self._confirmOverwriteCb)
         self.pitivi.playground.connect("error", self._playGroundErrorCb)
         self.pitivi.current.sources.connect("file_added", self._sourcesFileAddedCb)
-
-        # Start dbus service
-        session_bus = dbus.SessionBus()
-        name = dbus.service.BusName("org.gnome.pitivi", bus=session_bus)
-        object = pitivi_dbus(name)
-
-
-        # FIXME : connect to the device probe signals to toggle the webcam
-        # features based on availability (or not) of webcams.
-
-        # if no webcams available, hide the webcam action
-        instance.PiTiVi.deviceprobe.connect("device-added", self.__deviceChangeCb)
-        instance.PiTiVi.deviceprobe.connect("device-removed", self.__deviceChangeCb)
-        if len(instance.PiTiVi.deviceprobe.getVideoSourceDevices()) < 1:
-            self.webcam_button.set_sensitive(False)
 
         self.show_all()
 
@@ -123,7 +118,7 @@ class PitiviMainWindow(gtk.Window):
         # pause timeline !
         self.pitivi.playground.pause()
 
-        win = EncodingDialog(self.pitivi.current)
+        win = EncodingDialog(self.pitivi.current, self.pitivi)
         win.window.connect("destroy", self._encodingDialogDestroyCb)
         self.pitivi.gui.set_sensitive(False)
         win.show()
@@ -150,17 +145,6 @@ class PitiviMainWindow(gtk.Window):
             else:
                 self.render_button.set_sensitive(False)
 
-    def _createStockIcons(self):
-        """ Creates the pitivi-only stock icons """
-        gtk.stock_add([
-                ('pitivi-render', 'Render', 0, 0, 'pitivi')
-                ])
-        factory = gtk.IconFactory()
-        pixbuf = gtk.gdk.pixbuf_new_from_file(
-            configure.get_pixmap_dir() + "/pitivi-render-24.png")
-        iconset = gtk.IconSet(pixbuf)
-        factory.add('pitivi-render', iconset)
-        factory.add_default()
 
 
     def _setActions(self):
@@ -296,19 +280,19 @@ class PitiviMainWindow(gtk.Window):
 
     def toggleFullScreen(self):
         """ Toggle the fullscreen mode of the application """
-        if not self.isFullScreen:
+        if not self.is_fullscreen:
             self.viewer.window.fullscreen()
-            self.isFullScreen = True
+            self.is_fullscreen = True
         else:
             self.viewer.window.unfullscreen()
-            self.isFullScreen = False
+            self.is_fullscreen = False
 
 ## PlayGround callback
 
     def _errorMessageResponseCb(self, dialogbox, unused_response):
         dialogbox.hide()
         dialogbox.destroy()
-        self.errorDialogBox = None
+        self.error_dialogbox = None
 
     def _playGroundErrorCb(self, unused_playground, error, detail):
         # FIXME FIXME FIXME:
@@ -318,15 +302,15 @@ class PitiviMainWindow(gtk.Window):
         # some ways of actually _dealing_ with the underlying problem:
         # install a plugin, re-conform source to some other format, or
         # maybe even disable playback of a problematic file.
-        if self.errorDialogBox:
+        if self.error_dialogbox:
             return
-        self.errorDialogBox = gtk.MessageDialog(None, gtk.DIALOG_MODAL,
+        self.error_dialogbox = gtk.MessageDialog(None, gtk.DIALOG_MODAL,
             gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, None)
-        self.errorDialogBox.set_markup("<b>%s</b>" % error)
-        self.errorDialogBox.connect("response", self._errorMessageResponseCb)
+        self.error_dialogbox.set_markup("<b>%s</b>" % error)
+        self.error_dialogbox.connect("response", self._errorMessageResponseCb)
         if detail:
-            self.errorDialogBox.format_secondary_text(detail)
-        self.errorDialogBox.show()
+            self.error_dialogbox.format_secondary_text(detail)
+        self.error_dialogbox.show()
 
 ## Project source list callbacks
 
@@ -337,18 +321,7 @@ class PitiviMainWindow(gtk.Window):
 
 ## UI Callbacks
 
-    def _destroyCb(self, unused_widget, data=None):
-
-        # Quit connection to istanbul/switch off savemode
-        try:
-            bus = dbus.SessionBus()
-            remote_object = bus.get_object("org.gnome.istanbul", "/state")
-            self.iface = dbus.Interface(remote_object, "org.gnome.istanbul")
-            self.iface.savemode(False)
-        except:
-            pass
-
-
+    def _destroyCb(self, unused_widget, unused_data=None):
         self.pitivi.shutdown()
 
 
@@ -395,8 +368,7 @@ class PitiviMainWindow(gtk.Window):
         self.pitivi.current.saveAs()
 
     def _projectSettingsCb(self, unused_action):
-        l = ProjectSettingsDialog(self, self.pitivi.current)
-        l.show()
+        ProjectSettingsDialog(self, self.pitivi.current).show()
 
     def _quitCb(self, unused_action):
         self.pitivi.shutdown()
@@ -412,7 +384,9 @@ class PitiviMainWindow(gtk.Window):
         abt.set_name(APPNAME)
         abt.set_version("v%s" % pitivi_version)
         abt.set_website("http://www.pitivi.org/")
-        authors = ["Edward Hervey <bilboed@bilboed.com>","",_("Contributors:"),
+        authors = ["Edward Hervey <bilboed@bilboed.com>",
+                   "",
+                   _("Contributors:"),
                    "Christophe Sauthier <christophe.sauthier@gmail.com> (i18n)",
                    "Laszlo Pandy <laszlok2@gmail.com> (UI)",
                    "Ernst Persson  <ernstp@gmail.com>",
@@ -425,7 +399,8 @@ class PitiviMainWindow(gtk.Window):
                    "Thijs Vermeir <thijsvermeir@gmail.com>",
                    "Sarath Lakshman <sarathlakshman@slynux.org>"]
         abt.set_authors(authors)
-        abt.set_license(_("GNU Lesser General Public License\nSee http://www.gnu.org/copyleft/lesser.html for more details"))
+        abt.set_license(_("GNU Lesser General Public License\n"
+                          "See http://www.gnu.org/copyleft/lesser.html for more details"))
         abt.set_icon_from_file(configure.get_global_pixmap_dir() + "/pitivi.png")
         abt.connect("response", self._aboutResponseCb)
         abt.show()
@@ -464,17 +439,17 @@ class PitiviMainWindow(gtk.Window):
 
     ## PiTiVi main object callbacks
 
-    def _newProjectLoadedCb(self, pitivi, project):
+    def _newProjectLoadedCb(self, unused_pitivi, unused_project):
         gst.log("A NEW project is loaded, update the UI!")
         # ungrey UI
         self.set_sensitive(True)
 
-    def _newProjectLoadingCb(self, pitivi, project):
+    def _newProjectLoadingCb(self, unused_pitivi, unused_project):
         gst.log("A NEW project is being loaded, deactivate UI")
         # grey UI
         self.set_sensitive(False)
 
-    def _closingProjectCb(self, pitivi, project):
+    def _closingProjectCb(self, unused_pitivi, project):
         if not project.hasUnsavedModifications():
             return True
 
@@ -490,7 +465,7 @@ class PitiviMainWindow(gtk.Window):
             return True
         return False
 
-    def _notProjectCb(self, pitivi, reason, uri):
+    def _notProjectCb(self, unused_pitivi, reason, uri):
         # ungrey UI
         dialog = gtk.MessageDialog(self,
             gtk.DIALOG_MODAL,
@@ -565,23 +540,13 @@ class PitiviMainWindow(gtk.Window):
         return ret
 
 
-# dbus object class
-class pitivi_dbus(dbus.service.Object):
-    def __init__(self, bus_name, object_path="/import"):
-        dbus.service.Object.__init__(self, bus_name, object_path)
-        self.sourcefactories = SourceFactoriesWidget()
-
-    @dbus.service.method("org.gnome.pitivi")
-    def AddFiles(self, filepath):
-        self.sourcefactories.sourcelist.addFiles(filepath)
-        return True
-
 class EncodingDialog(GladeWindow):
     """ Encoding dialog box """
     glade_file = "encodingdialog.glade"
 
-    def __init__(self, project):
+    def __init__(self, project, instance):
         GladeWindow.__init__(self)
+        self.pitivi = instance
         self.project = project
         self.bin = project.getBin()
         self.bus = self.bin.get_bus()

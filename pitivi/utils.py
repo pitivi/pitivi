@@ -25,6 +25,7 @@
 import gst, bisect
 
 def time_to_string(value):
+    """ Converts the given time in nanoseconds to a human readable string """
     if value == gst.CLOCK_TIME_NONE:
         return "--:--:--.---"
     ms = value / gst.MSECOND
@@ -60,17 +61,17 @@ def bin_contains(bin, element):
 # matches the list, this function returns the index of the lement closest to
 # value in the array.
 
-def binary_search(A, value):
+def binary_search(col, value):
     low = 0
-    high = len(A)
-    while (low < high): 
+    high = len(col)
+    while (low < high):
         mid = (low + high)/2
-        if (A[mid] < value):
+        if (col[mid] < value):
             low = mid + 1
         else:
-            #can't be high = mid-1: here A[mid] >= value,
-            #so high can't be < mid if A[mid] == value
-            high = mid; 
+            #can't be high = mid-1: here col[mid] >= value,
+            #so high can't be < mid if col[mid] == value
+            high = mid;
     return low
 
 # Returns the element of seq nearest to item, and the difference between them
@@ -96,10 +97,10 @@ def closest_item(seq, item):
 
 def argmax(func, seq):
     """return the element of seq that gives max(map(func, seq))"""
-    def compare(a, b):
-        if a[0] > b[0]:
-            return a
-        return b
+    def compare(a1, b1):
+        if a1[0] > b1[0]:
+            return a1
+        return b1
     # using a generator expression here should save memory
-    objs = ((func(x), x) for x in seq)
+    objs = ((func(val), val) for val in seq)
     return reduce(compare, objs)[1]

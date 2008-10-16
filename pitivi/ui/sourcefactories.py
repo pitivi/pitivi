@@ -25,7 +25,6 @@ Source and effects list widgets
 
 import os
 import time
-import string
 import gobject
 import gtk
 import gst
@@ -44,6 +43,7 @@ from filelisterrordialog import FileListErrorDialog
 from gettext import gettext as _
 
 def beautify_length(length):
+    """ Returns a string version of a nanoseconds value """
     sec = length / gst.SECOND
     mins = sec / 60
     sec = sec % 60
@@ -104,7 +104,7 @@ class SourceListWidget(gtk.VBox):
 
         # Scrolled Window
         self.scrollwin = gtk.ScrolledWindow()
-        self.scrollwin.set_policy(gtk.POLICY_NEVER,gtk.POLICY_AUTOMATIC)
+        self.scrollwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         self.scrollwin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
 
         # Popup Menu
@@ -131,7 +131,7 @@ class SourceListWidget(gtk.VBox):
 
         # import sources dialogbox
         self._importDialog = None
-        self._lastFolder = None
+        self._lastfolder = None
 
         # TreeView
         # Displays icon, name, type, length
@@ -303,6 +303,7 @@ class SourceListWidget(gtk.VBox):
         gobject.idle_add(self._displayTreeView, True, False)
 
     def showImportSourcesDialog(self, select_folders=False):
+        """Pop up the "Import Sources" dialog box"""
         if self._importDialog:
             return
 
@@ -321,19 +322,19 @@ class SourceListWidget(gtk.VBox):
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
         self._importDialog.set_select_multiple(True)
         self._importDialog.set_modal(False)
-        if self._lastFolder:
-            self._importDialog.set_current_folder(self._lastFolder)
+        if self._lastfolder:
+            self._importDialog.set_current_folder(self._lastfolder)
         self._importDialog.connect('response', self._dialogBoxResponseCb, select_folders)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
         self._importDialog.show()
 
-    def addFiles(self, list):
+    def addFiles(self, files):
         """ Add files to the list """
-        instance.PiTiVi.current.sources.addUris(list)
+        instance.PiTiVi.current.sources.addUris(files)
 
-    def addFolders(self, list):
+    def addFolders(self, folders):
         """ walks the trees of the folders in the list and adds the files it finds """
-        instance.PiTiVi.threads.addThread(PathWalker, list, instance.PiTiVi.current.sources.addUris)
+        instance.PiTiVi.threads.addThread(PathWalker, folders, instance.PiTiVi.current.sources.addUris)
 
     def _addFactory(self, factory):
         try:
@@ -408,7 +409,7 @@ class SourceListWidget(gtk.VBox):
     def _dialogBoxResponseCb(self, dialogbox, response, select_folders):
         gst.debug("response:%r" % response)
         if response == gtk.RESPONSE_OK:
-            self._lastFolder = dialogbox.get_current_folder()
+            self._lastfolder = dialogbox.get_current_folder()
             filenames = dialogbox.get_uris()
             if select_folders:
                 self.addFolders(filenames)
@@ -479,7 +480,7 @@ class SourceListWidget(gtk.VBox):
     ## Drag and Drop
 
     def _dndDataReceivedCb(self, unused_widget, unused_context, unused_x,
-                           unused_y, selection, targetType, unused_time):
+                           unused_y, selection, targettype, unused_time):
         def isfile(path):
             if path[:7] == "file://":
                 # either it's on local system and we know if it's a directory
@@ -490,13 +491,13 @@ class SourceListWidget(gtk.VBox):
             # or it's on local system with "file://"
             return os.path.isfile(path)
 
-        gst.debug("targetType:%d, selection.data:%r" % (targetType, selection.data))
+        gst.debug("targettype:%d, selection.data:%r" % (targettype, selection.data))
         directories = []
-        if targetType == dnd.TYPE_URI_LIST:
+        if targettype == dnd.TYPE_URI_LIST:
             incoming = [unquote(x.strip('\x00')) for x in selection.data.strip().split("\r\n") if x.strip('\x00')]
             filenames = [x for x in incoming if isfile(x)]
             directories = [x for x in incoming if not isfile(x)]
-        elif targetType == dnd.TYPE_TEXT_PLAIN:
+        elif targettype == dnd.TYPE_TEXT_PLAIN:
             incoming = selection.data.strip()
             if isfile(incoming):
                 filenames = [incoming]
@@ -521,17 +522,17 @@ class SourceListWidget(gtk.VBox):
         return [model[path][COL_URI] for path in rows]
 
     def _dndDataGetCb(self, unused_widget, unused_context, selection,
-                      targetType, unused_eventTime):
-        gst.info("data get, type:%d" % targetType)
+                      targettype, unused_eventtime):
+        gst.info("data get, type:%d" % targettype)
         uris = self.getSelectedItems()
         if len(uris) < 1:
             return
-        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
+        if targettype == dnd.TYPE_PITIVI_FILESOURCE:
             selection.set(selection.target, 8,
                           uris[0])
-        elif targetType == dnd.TYPE_URI_LIST:
+        elif targettype == dnd.TYPE_URI_LIST:
             selection.set(selection.target, 8,
-                          string.join(uris, "\n"))
+                          '\n'.join(uris))
 
 class AudioFxListWidget(gtk.VBox):
     """ Widget for listing video effects """
@@ -740,7 +741,7 @@ class InfoStub(gtk.HBox):
         dbox = FileListErrorDialog(*msgs)
         dbox.connect("close", self._errorDialogBoxCloseCb)
         dbox.connect("response", self._errorDialogBoxResponseCb)
-        for uri,reason,extra in self.errors:
+        for uri, reason, extra in self.errors:
             dbox.addFailedFile(uri, reason, extra)
         dbox.show()
         # reset error list
@@ -779,11 +780,11 @@ class PathWalker(Thread):
             for path, dirs, files in os.walk(folder):
                 if self.stopme.isSet():
                     return
-                uriList = []
+                uris = []
                 for afile in files:
-                    uriList.append("file://%s" % os.path.join(path, afile))
-                if uriList:
-                    self.callback(uriList)
+                    uris.append("file://%s" % os.path.join(path, afile))
+                if uris:
+                    self.callback(uris)
 
     def abort(self):
         self.stopme.set()

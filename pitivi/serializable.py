@@ -19,6 +19,10 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+"""
+Interface for object serialization
+"""
+
 import gst
 
 class Serializable(object):
@@ -47,7 +51,8 @@ class Serializable(object):
         if not obj["datatype"]:
             raise Exception("dictionnary doesn't contain the type information !!")
         if not obj["datatype"] == self.__data_type__:
-            raise Exception("Mismatch in dictionnary data-type (%s) and class data-type (%s)" % (obj["datatype"],                                                                                                 self.__data_type__))
+            raise Exception("Mismatch in dictionnary data-type (%s) and class data-type (%s)" % (obj["datatype"],
+                                                                                                 self.__data_type__))
         return
 
 
@@ -56,17 +61,17 @@ def get_serialized_classes():
     Returns a dictionnary of serialized classes.
     Mapping is type-name (string) => class
     """
-    def get_valid_subclasses(cls):
+    def __get_valid_subclasses(cls):
         res = [(cls.__data_type__, cls)]
         for i in cls.__subclasses__():
-            res.extend(get_valid_subclasses(i))
+            res.extend(__get_valid_subclasses(i))
         return res
 
-    listclasses = get_valid_subclasses(Serializable)
+    listclasses = __get_valid_subclasses(Serializable)
 
     # add a little check for duplicates here !
     check = {}
-    for i,j in listclasses:
+    for i, j in listclasses:
         if not i in check:
             check[i] = j
         else:

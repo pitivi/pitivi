@@ -79,6 +79,7 @@ class Discoverer(object, Signallable):
         self.extrainfo = None # extra information about the error
         self.fakesink = None
         self.isimage = False # Used to know if the file is an image
+        self.bus = None
 
     def addFile(self, filename):
         """ queue a filename to be discovered """
@@ -194,7 +195,8 @@ class Discoverer(object, Signallable):
             gst.warning("This is not a media file : %s" % self.current)
             if not self.error:
                 self.error = _("Couldn't construct pipeline.")
-                self.extrainfo = _("GStreamer does not have an element to handle files coming from this type of file system.")
+                self.extrainfo = _("GStreamer does not have an element to "
+                                   "handle files coming from this type of file system.")
             gobject.idle_add(self._finishAnalysis)
             return False
         if os.getenv("USE_DECODEBIN2"):
@@ -232,7 +234,7 @@ class Discoverer(object, Signallable):
         # return False so we don't get called again
         return False
 
-    def _typefindHaveTypeCb(self, typefind, perc, caps):
+    def _typefindHaveTypeCb(self, unused_typefind, unused_perc, caps):
         if caps.to_string().startswith("image/"):
             self.isimage = True
 
@@ -342,22 +344,22 @@ class Discoverer(object, Signallable):
         if pad.get_caps().is_fixed():
             self.currentfactory.video_info = pad.get_caps()
 
-        q = gst.element_factory_make("queue")
-        q.props.max_size_bytes = 5 * 1024 * 1024
-        q.props.max_size_time = 5 * gst.SECOND
+        queue = gst.element_factory_make("queue")
+        queue.props.max_size_bytes = 5 * 1024 * 1024
+        queue.props.max_size_time = 5 * gst.SECOND
         csp = gst.element_factory_make("ffmpegcolorspace")
         pngenc = gst.element_factory_make("pngenc")
         pngsink = gst.element_factory_make("filesink")
         pngsink.set_property("location", "/tmp/" + self.currentfactory.name.encode('base64').replace('\n','') + ".png")
 
-        self.pipeline.add(q, csp, pngenc, pngsink)
-        gst.element_link_many(q, csp, pngenc, pngsink)
-        pad.link(q.get_pad("sink"))
+        self.pipeline.add(queue, csp, pngenc, pngsink)
+        gst.element_link_many(queue, csp, pngenc, pngsink)
+        pad.link(queue.get_pad("sink"))
 
         if not self.currentfactory.video_info:
             self.signalsid.append((pad, pad.connect("notify::caps", self._vcapsNotifyCb)))
 
-        for element in [q, csp, pngenc, pngsink]:
+        for element in [queue, csp, pngenc, pngsink]:
             element.set_state(gst.STATE_PAUSED)
 
         if self.currentfactory.is_audio:
@@ -383,12 +385,12 @@ class Discoverer(object, Signallable):
             gst.debug("non-fixed caps, adding queue and fakesink")
             ##         if not self.currentfactory.is_video:
             # we need to add a fakesink
-            q = gst.element_factory_make("queue")
+            queue = gst.element_factory_make("queue")
             fakesink = gst.element_factory_make("fakesink")
-            self.pipeline.add(fakesink, q)
-            pad.link(q.get_pad("sink"))
-            q.link(fakesink)
-            q.set_state(gst.STATE_PAUSED)
+            self.pipeline.add(fakesink, queue)
+            pad.link(queue.get_pad("sink"))
+            queue.link(fakesink)
+            queue.set_state(gst.STATE_PAUSED)
             fakesink.set_state(gst.STATE_PAUSED)
 
     def _unknownTypeCb(self, unused_dbin, unused_pad, caps):

@@ -92,6 +92,7 @@ class LayerInfoList(gobject.GObject):
         self._list = []
 
     def setTimeline(self, timeline):
+        """ Set the given timeline on this layer """
         self._clear()
         self.timeline = timeline
         if self.timeline:
@@ -160,5 +161,5 @@ class LayerInfoList(gobject.GObject):
     def __len__(self):
         return self._list.__len__()
 
-    def __getitem__(self, y):
-        return self._list.__getitem__(y)
+    def __getitem__(self, item):
+        return self._list.__getitem__(item)

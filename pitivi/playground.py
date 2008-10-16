@@ -194,13 +194,16 @@ class PlayGround(object, Signallable):
         """
         if isinstance(self.current, SmartTimelineBin):
             return True
-        p = self.getTimeline()
-        if p:
-            self.switchToPipeline(p)
+        tl = self.getTimeline()
+        if tl:
+            self.switchToPipeline(tl)
             return True
         return False
 
     def getTimeline(self):
+        """
+        Returns the Timeline if any is present in the playground
+        """
         for pipeline in self.pipelines:
             if isinstance(pipeline, SmartTimelineBin):
                 return pipeline
@@ -273,7 +276,7 @@ class PlayGround(object, Signallable):
         # actually being displayed currently :(
         try:
             if onlyvideo and not self.current.recording:
-                cur,format = self.vsinkthread.query_position(gst.FORMAT_TIME)
+                cur, format = self.vsinkthread.query_position(gst.FORMAT_TIME)
             else:
                 cur, format = self.current.query_position(gst.FORMAT_TIME)
         except:
@@ -307,7 +310,7 @@ class PlayGround(object, Signallable):
                           gst.SEEK_TYPE_SET, value,
                           gst.SEEK_TYPE_NONE, -1)
         if not res:
-            gst.warning ("Seeking in current failed !");
+            gst.warning ("Seeking in current failed !")
             return False
         gst.debug("Seeking to %s succeeded" % gst.TIME_ARGS (value))
 

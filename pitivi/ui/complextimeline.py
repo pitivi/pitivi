@@ -33,6 +33,7 @@ from complexlayer import LayerInfoList
 import ruler
 from complexinterface import Zoomable
 import goocanvas
+# FIXME : wildcard imports are BAD !
 from util import *
 import os.path
 from urllib import unquote
@@ -193,7 +194,7 @@ class ComplexTrack(SmartGroup, Zoomable):
                 self.object_style = AUDIO_SOURCE
                 self.height = AUDIO_TRACK_HEIGHT
 
-    def _objectAdded(self, timeline, element):
+    def _objectAdded(self, unused_timeline, element):
         w = ComplexTimelineObject(element, self.comp, self.object_style)
         make_dragable(self.canvas, w, start=self._start_drag,
             end=self._end_drag, moved=self._move_source_cb)
@@ -211,7 +212,7 @@ class ComplexTrack(SmartGroup, Zoomable):
             moved=self._trim_source_end_cb,
             cursor=RIGHT_SIDE)
 
-    def _objectRemoved(self, timeline, element):
+    def _objectRemoved(self, unused_timeline, element):
         w = self.widgets[element]
         self.remove_child(w)
         w.comp = None
@@ -228,7 +229,7 @@ class ComplexTrack(SmartGroup, Zoomable):
         #self.canvas.block_size_request(True)
         self.canvas.update_editpoints()
 
-    def _end_drag(self, item):
+    def _end_drag(self, unused_item):
         self.canvas.block_size_request(False)
 
     def _move_source_cb(self, item, pos):
@@ -307,7 +308,7 @@ class ComplexTimelineObject(goocanvas.Group):
         self.width = self.bg.props.width
         self.height = self.bg.props.height
 
-    def _set_cursor(self, item, target, event, cursor):
+    def _set_cursor(self, unused_item, unused_target, event, cursor):
         window = event.window
         # wtf ? no get_cursor?
         #self._oldcursor = window.get_cursor()
@@ -330,7 +331,7 @@ class ComplexTimelineObject(goocanvas.Group):
         self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
             self.x, self.y, w, self.height, w)
 
-    def do_set_x(self, *args):
+    def do_set_x(self, *unused_args):
         x = self.x
         self.bg.props.x = x
         self.name.props.x = x + width(self.l_handle) + 2
@@ -338,7 +339,7 @@ class ComplexTimelineObject(goocanvas.Group):
         self.r_handle.props.x = x + self.width - width(self.r_handle)
         self._size_spacer()
 
-    def do_set_y(self, *args):
+    def do_set_y(self, *unused_args):
         y = self.y
         self.bg.props.y = y
         self.name.props.y = y + 2
@@ -346,13 +347,13 @@ class ComplexTimelineObject(goocanvas.Group):
         self.r_handle.props.y = y
         self._size_spacer()
 
-    def do_set_width(self, *args):
+    def do_set_width(self, *unused_args):
         self.bg.props.width = self.width
         self.r_handle.props.x = self.x + self.width - width(self.r_handle)
         self.name.props.width = self.width - (2 * width(self.l_handle) + 4)
         self._size_spacer()
 
-    def do_set_height(self, *args):
+    def do_set_height(self, *unused_args):
         height = self.height
         self.bg.props.height = height
         self.l_handle.props.height = height
@@ -406,7 +407,7 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
     def _size_allocate(self, unused_layout, allocation):
         self._razor.props.height = allocation.height
 
-    def _request_size(self, unused_item, prop):
+    def _request_size(self, unused_item, unused_prop):
         #TODO: figure out why this doesn't work... (wtf?!?)
         if self._block_size_request:
             return True
@@ -416,7 +417,7 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
         # wider than it actually needs to be.
         w = max(800, ((int(self.layers.width + 100) / 100) + 1 ) * 100)
         h = int(self.layers.height)
-        x1,y1,x2,y2 = self.get_bounds()
+        x1, y1, x2, y2 = self.get_bounds()
         pw = abs(x2 - x1)
         ph = abs(y2 - y1)
         if not (w == pw and h == ph):
@@ -473,7 +474,7 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
 
 ## mouse callbacks
 
-    def _mouseEnterCb(self, item, target, event):
+    def _mouseEnterCb(self, unused_item, unused_target, event):
         event.window.set_cursor(self._cursor)
         return True
 
@@ -498,13 +499,13 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
         self._razor.props.visibility = goocanvas.ITEM_VISIBLE
         return True
 
-    def _razorMovedCb(self, canvas, event):
-        x, y = event_coords(self, event)
+    def _razorMovedCb(self, unused_canvas, event):
+        x = event_coords(self, event)[0]
         self._razor.props.x = self.nsToPixel(self.snap_time_to_playhead(
             self.pixelToNs(x)))
         return True
 
-    def _razorClickedCb(self, canvas, event):
+    def _razorClickedCb(self, unused_canvas, event):
         self._cursor = ARROW
         event.window.set_cursor(ARROW)
         self.disconnect(self._razor_sigid)
@@ -608,7 +609,7 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
             parent = item.get_parent()
             self._selected_sources.remove(parent)
 
-    def timelinePositionChanged(self, value, frame):
+    def timelinePositionChanged(self, value, unused_frame):
         self._timeline_position = value
 
 ## Zoomable Override
@@ -672,7 +673,7 @@ class ComplexTimelineWidget(gtk.VBox):
         self._zoom_adj.upper = self._computeZoomRatio(-1)
         self._cur_zoom = 2
         self._zoom_adj.set_value(self._computeZoomRatio(self._cur_zoom))
- 
+
         # common LayerInfoList
         self.layerInfoList = LayerInfoList()
 
@@ -740,7 +741,7 @@ class ComplexTimelineWidget(gtk.VBox):
 
 ## layer callbacks
 
-    def _layerStartDurationChanged(self, layer):
+    def _layerStartDurationChanged(self, unused_layer):
         self.ruler.startDurationChanged()
 
 ## ToolBar callbacks

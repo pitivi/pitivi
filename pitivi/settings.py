@@ -26,9 +26,8 @@ Multimedia settings
 
 import os
 import gst
-import string
 
-from serializable import Serializable, to_object_from_data_type
+from serializable import Serializable
 from signalinterface import Signallable
 
 from gettext import gettext as _
@@ -83,7 +82,6 @@ class GlobalSettings:
         #get_bool_env("PITIVI_ADVANCED_MODE")
         #self.fileSupportEnabled = get_bool_env("PITIVI_FILE_SUPPORT")
         self.fileSupportEnabled = True
-        pass
 
     def get_local_plugin_path(self, autocreate=True):
         """
@@ -145,8 +143,8 @@ class ExportSettings(Serializable, Signallable):
     def __init__(self, **unused_kw):
         self.videowidth = 720
         self.videoheight = 576
-        self.videorate = gst.Fraction(25,1)
-        self.videopar = gst.Fraction(1,1)
+        self.videorate = gst.Fraction(25, 1)
+        self.videopar = gst.Fraction(1, 1)
         self.audiochannels = 2
         self.audiorate = 44100
         self.audiodepth = 16
@@ -163,18 +161,23 @@ class ExportSettings(Serializable, Signallable):
 
     def __str__(self):
         msg = _("Export Settings\n")
-        msg += _("Video :") + str(self.videowidth) + " " + str(self.videoheight) + " " + str(self.videorate) + " " + str (self.videopar)
+        msg += _("Video :") + str(self.videowidth) + " " + str(self.videoheight) +\
+               " " + str(self.videorate) + " " + str (self.videopar)
         msg += "\n\t" + str(self.vencoder) + " " +str(self.vcodecsettings)
-        msg += _("\nAudio :") + str(self.audiochannels) + " " + str(self.audiorate) + " " + str(self.audiodepth)
+        msg += _("\nAudio :") + str(self.audiochannels) + " " + str(self.audiorate) +\
+               " " + str(self.audiodepth)
         msg += "\n\t" + str(self.aencoder) + " " + str(self.acodecsettings)
         msg += _("\nMuxer :") + str(self.muxer) + " " + str(self.containersettings)
         return msg
 
     def getVideoCaps(self):
         """ Returns the GstCaps corresponding to the video settings """
-        astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (self.videowidth, self.videoheight,
-                                                                                self.videopar.num, self.videopar.denom,
-                                                                                self.videorate.num, self.videorate.denom)
+        astr = "width=%d,height=%d,pixel-aspect-ratio=%d/%d,framerate=%d/%d" % (self.videowidth,
+                                                                                self.videoheight,
+                                                                                self.videopar.num,
+                                                                                self.videopar.denom,
+                                                                                self.videorate.num,
+                                                                                self.videorate.denom)
         vcaps = gst.caps_from_string("video/x-raw-yuv,%s;video/x-raw-rgb,%s" % (astr, astr))
         if self.vencoder:
             return get_compatible_sink_caps(self.vencoder, vcaps)
@@ -320,9 +323,9 @@ def get_compatible_sink_caps(factoryname, caps):
         return res[0]
     return None
 
-def list_compat(a, b):
-    for x in a:
-        if not x in b:
+def list_compat(a1, b1):
+    for x1 in a1:
+        if not x1 in b1:
             return False
     return True
 
@@ -341,7 +344,7 @@ def available_muxers():
     flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
     res = []
     for fact in flist:
-        if list_compat(["Codec", "Muxer"], string.split(fact.get_klass(), '/')):
+        if list_compat(["Codec", "Muxer"], fact.get_klass().split('/')):
             res.append(fact)
     gst.log(str(res))
     return res
@@ -351,9 +354,9 @@ def available_video_encoders():
     flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
     res = []
     for fact in flist:
-        if list_compat(["Codec", "Encoder", "Video"], string.split(fact.get_klass(), '/')):
+        if list_compat(["Codec", "Encoder", "Video"], fact.get_klass().split('/')):
             res.append(fact)
-        elif list_compat(["Codec", "Encoder", "Image"], string.split(fact.get_klass(), '/')):
+        elif list_compat(["Codec", "Encoder", "Image"], fact.get_klass().split('/')):
             res.append(fact)
     gst.log(str(res))
     return res
@@ -363,7 +366,7 @@ def available_audio_encoders():
     flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
     res = []
     for fact in flist:
-        if list_compat(["Codec", "Encoder", "Audio"], string.split(fact.get_klass(), '/')):
+        if list_compat(["Codec", "Encoder", "Audio"], fact.get_klass().split('/')):
             res.append(fact)
     gst.log(str(res))
     return res
@@ -380,9 +383,11 @@ def encoders_muxer_compatible(encoders, muxer):
     return res
 
 def muxer_can_sink_raw_audio(muxer):
+    """ Returns True if given muxer can accept raw audio """
     return my_can_sink_caps(muxer, gst.Caps("audio/x-raw-float;audio/x-raw-int"))
 
 def muxer_can_sink_raw_video(muxer):
+    """ Returns True if given muxer can accept raw video """
     return my_can_sink_caps(muxer, gst.Caps("video/x-raw-yuv;video/x-raw-rgb"))
 
 def available_combinations(muxers, vencoders, aencoders):

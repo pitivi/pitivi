@@ -50,7 +50,7 @@ import gst
 # . nsToPixels(time)
 
 class Zoomable:
-    
+
     zoomratio = 0
     zoom_adj = None
 

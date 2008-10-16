@@ -97,7 +97,7 @@ class SingleDecodeBin(gst.Bin):
         Returns the list of demuxers, decoders and parsers available, sorted
         by rank
         """
-        def myfilter(fact):
+        def _myfilter(fact):
             if fact.get_rank() < 64 :
                 return False
             klass = fact.get_klass()
@@ -105,7 +105,7 @@ class SingleDecodeBin(gst.Bin):
                 return False
             return True
         reg = gst.registry_get_default()
-        res = [x for x in reg.get_feature_list(gst.ElementFactory) if myfilter(x)]
+        res = [x for x in reg.get_feature_list(gst.ElementFactory) if _myfilter(x)]
         res.sort(lambda a, b: int(b.get_rank() - a.get_rank()))
         return res
 

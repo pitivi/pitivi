@@ -83,8 +83,7 @@ def __try_import__(modulename):
         return False
 
 def _version_to_string(version):
-    import string
-    return string.join([str(x) for x in version], ".")
+    return ".".join([str(x) for x in version])
 
 def _string_to_list(version):
     return [int(x) for x in version.split(".")]

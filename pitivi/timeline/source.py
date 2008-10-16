@@ -23,7 +23,6 @@
 Timeline source objects
 """
 
-import gobject
 import gst
 from pitivi.elements.singledecodebin import SingleDecodeBin
 from objects import TimelineObject, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO, MEDIA_TYPE_NONE
@@ -45,10 +44,10 @@ class TimelineSource(TimelineObject):
 
 
     def __init__(self, media_start=gst.CLOCK_TIME_NONE,
-                 media_duration=0, **kw):
+                 media_duration=0, **kwargs):
         self.media_start = media_start
         self.media_duration = media_duration
-        TimelineObject.__init__(self, **kw)
+        TimelineObject.__init__(self, **kwargs)
 
     def _makeGnlObject(self):
         gst.debug("Making a source for %r" % self)
@@ -122,11 +121,11 @@ class TimelineSource(TimelineObject):
         if self.linked and isinstance(self.linked, TimelineFileSource):
             self.linked._setMediaStartDurationTime(start, duration)
 
-    def _mediaStartDurationChangedCb(self, gnlobject, property):
-        gst.log("%r %s %s" % (gnlobject, property, property.name))
+    def _mediaStartDurationChangedCb(self, gnlobject, prop):
+        gst.log("%r %s %s" % (gnlobject, prop, prop.name))
         mstart = None
         mduration = None
-        if property.name == "media-start":
+        if prop.name == "media-start":
             mstart = gnlobject.get_property("media-start")
             gst.log("start: %s => %s" % (gst.TIME_ARGS(self.media_start),
                                          gst.TIME_ARGS(mstart)))
@@ -136,7 +135,7 @@ class TimelineSource(TimelineObject):
                 mstart = None
             else:
                 self.media_start = mstart
-        elif property.name == "media-duration":
+        elif prop.name == "media-duration":
             mduration = gnlobject.get_property("media-duration")
             gst.log("duration: %s => %s" % (gst.TIME_ARGS(self.media_duration),
                                          gst.TIME_ARGS(mduration)))
@@ -156,8 +155,8 @@ class TimelineBlankSource(TimelineSource):
     __data_type__ = "timeline-blank-source"
     __requires_factory__ = False
 
-    def __init__(self, **kw):
-        TimelineSource.__init__(self, **kw)
+    def __init__(self, **kwargs):
+        TimelineSource.__init__(self, **kwargs)
 
     def makeGnlSourceContents(self):
         if self.isAudio():
@@ -213,14 +212,14 @@ class TimelineFileSource(TimelineSource):
             raise NameError, "media type is NONE !"
         self.decodebin = SingleDecodeBin(caps=caps, uri=self.factory.name)
         if self.isAudio():
-            self.volumeElement = gst.element_factory_make("volume", "internal-volume")
+            self.volume_element = gst.element_factory_make("volume", "internal-volume")
             self.audioconv = gst.element_factory_make("audioconvert", "audioconv")
-            self.volumeBin = gst.Bin("volumebin")
-            self.volumeBin.add(self.decodebin, self.audioconv, self.volumeElement)
-            self.audioconv.link(self.volumeElement)
+            self.volumebin = gst.Bin("volumebin")
+            self.volumebin.add(self.decodebin, self.audioconv, self.volume_element)
+            self.audioconv.link(self.volume_element)
             self.decodebin.connect('pad-added', self._decodebinPadAddedCb)
             self.decodebin.connect('pad-removed', self._decodebinPadRemovedCb)
-            bin = self.volumeBin
+            bin = self.volumebin
         else:
             bin = self.decodebin
 
@@ -228,26 +227,27 @@ class TimelineFileSource(TimelineSource):
 
     def _decodebinPadAddedCb(self, unused_dbin, pad):
         pad.link(self.audioconv.get_pad("sink"))
-        ghost = gst.GhostPad("src", self.volumeElement.get_pad("src"))
+        ghost = gst.GhostPad("src", self.volume_element.get_pad("src"))
         ghost.set_active(True)
-        self.volumeBin.add_pad(ghost)
+        self.volumebin.add_pad(ghost)
 
     def _decodebinPadRemovedCb(self, unused_dbin, pad):
         gst.log("pad:%s" % pad)
         # workaround for gstreamer bug ...
-        gpad = self.volumeBin.get_pad("src")
+        gpad = self.volumebin.get_pad("src")
         target = gpad.get_target()
         peer = target.get_peer()
         target.unlink(peer)
         # ... to hereeeto here
-        self.volumeBin.remove_pad(self.volumeBin.get_pad("src"))
+        self.volumebin.remove_pad(self.volumebin.get_pad("src"))
         self.decodebin.unlink(self.audioconv)
 
     def _setVolume(self, level):
-        self.volumeElement.set_property("volume", level)
+        self.volume_element.set_property("volume", level)
         #FIXME: we need a volume-changed signal, so that UI updates
 
     def setVolume(self, level):
+        """ Set the volume to the given level """
         if self.isAudio():
             self._setVolume(level)
         elif self.linked:
@@ -291,8 +291,8 @@ class TimelineFileSource(TimelineSource):
         ret = TimelineSource.toDataFormat(self)
         ret["media-start"] = self.media_start
         ret["media-duration"] = self.media_duration
-        if self.isAudio() and hasattr(self, "volumeElement"):
-            ret["volume"] = self.volumeElement.get_property("volume")
+        if self.isAudio() and hasattr(self, "volume_element"):
+            ret["volume"] = self.volume_element.get_property("volume")
         return ret
 
     def fromDataFormat(self, obj):
@@ -310,5 +310,5 @@ class TimelineLiveSource(TimelineSource):
 
     __data_type__ = "timeline-live-source"
 
-    def __init__(self, **kw):
-        TimelineSource.__init__(self, **kw)
+    def __init__(self, **kwargs):
+        TimelineSource.__init__(self, **kwargs)

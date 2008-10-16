@@ -23,7 +23,6 @@
 Widget for gstreamer element properties viewing/setting
 """
 
-import string
 import gobject
 import gtk
 import gst
@@ -31,10 +30,10 @@ from glade import GladeWindow
 
 from gettext import gettext as _
 
-def get_widget_propvalue(property, widget):
+def get_widget_propvalue(prop, widget):
     """ returns the value of the given propertywidget """
     # FIXME : implement the case for flags
-    type_name = gobject.type_name(property.value_type.fundamental)
+    type_name = gobject.type_name(prop.value_type.fundamental)
 
     if (type_name == 'gchararray'):
         return widget.get_text()
@@ -45,19 +44,16 @@ def get_widget_propvalue(property, widget):
     if (type_name in ['gboolean']):
         return widget.get_active()
     if type_name in ['GEnum']:
-        idx = widget.get_active()
-        model = widget.get_model()
-        name, val = model[idx]
-        return val
+        return widget.get_model()[widget.get_active()][1]
     return None
 
-def make_property_widget(unused_element, property, value=None):
+def make_property_widget(unused_element, prop, value=None):
     """ Creates a Widget for the given element property """
     # FIXME : implement the case for flags
-    type_name = gobject.type_name(property.value_type.fundamental)
+    type_name = gobject.type_name(prop.value_type.fundamental)
 
     if value == None:
-        value = property.default_value
+        value = prop.default_value
     if (type_name == 'gchararray'):
         widget = gtk.Entry()
         widget.set_text(str(value))
@@ -80,14 +76,14 @@ def make_property_widget(unused_element, property, value=None):
         if value:
             widget.set_active(True)
     elif (type_name == 'GEnum'):
-        model = gtk.ListStore(gobject.TYPE_STRING, property.value_type)
+        model = gtk.ListStore(gobject.TYPE_STRING, prop.value_type)
         widget = gtk.ComboBox(model)
         cell = gtk.CellRendererText()
         widget.pack_start(cell, True)
         widget.add_attribute(cell, 'text', 0)
 
         idx = 0
-        for key, val in property.enum_class.__enum_values__.iteritems():
+        for key, val in prop.enum_class.__enum_values__.iteritems():
             gst.log("adding %s / %s" % (val.value_name, val))
             model.append([val.value_name, val])
             if val == value:
@@ -98,16 +94,23 @@ def make_property_widget(unused_element, property, value=None):
         widget = gtk.Label(type_name)
         widget.set_alignment(1.0, 0.5)
 
-    if not property.flags & gobject.PARAM_WRITABLE:
+    if not prop.flags & gobject.PARAM_WRITABLE:
         widget.set_sensitive(False)
     return widget
 
 class GstElementSettingsWidget(gtk.VBox):
+    """
+    Widget to view/modify properties of a gst.Element
+    """
 
     def __init__(self):
         gtk.VBox.__init__(self)
+        self.element = None
+        self.ignore = None
+        self.properties = None
 
     def setElement(self, element, properties={}, ignore=['name']):
+        """ Set given element on Widget, with optional properties """
         gst.info("element:%s, properties:%s" % (element, properties))
         self.element = element
         self.ignore = ignore
@@ -150,6 +153,9 @@ class GstElementSettingsWidget(gtk.VBox):
 
 
 class GstElementSettingsDialog(GladeWindow):
+    """
+    Dialog window for viewing/modifying properties of a gst.Element
+    """
     glade_file = "elementsettingsdialog.glade"
 
     def __init__(self, elementfactory, properties={}):
@@ -169,7 +175,7 @@ class GstElementSettingsDialog(GladeWindow):
         self.window.set_title(_("Properties for ") + self.factory.get_longname())
         self.widgets["infolabel"].set_markup("<b>" + self.factory.get_longname() + "</b>")
         self.desclabel.set_text(self.factory.get_description())
-        self.authlabel.set_text(string.join(self.factory.get_author().split(","), "\n"))
+        self.authlabel.set_text('\n'.join(self.factory.get_author().split(",")))
         self.authlabel.set_justify(gtk.JUSTIFY_RIGHT)
         self.widgets["elementsettings"].setElement(self.element, self.properties)
 

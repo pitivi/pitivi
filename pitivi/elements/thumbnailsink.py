@@ -69,10 +69,10 @@ class PixbufThumbnailSink(gst.BaseSink):
             return False
         return True
 
-    def do_render(self, buffer):
-        self.log("buffer %s %d" % (gst.TIME_ARGS(buffer.timestamp),
-                                   len(buffer.data)))
-        pixb = gtk.gdk.pixbuf_new_from_data(buffer.data,
+    def do_render(self, buf):
+        self.log("buffer %s %d" % (gst.TIME_ARGS(buf.timestamp),
+                                   len(buf.data)))
+        pixb = gtk.gdk.pixbuf_new_from_data(buf.data,
                                             gtk.gdk.COLORSPACE_RGB,
                                             False,
                                             8,
@@ -80,10 +80,10 @@ class PixbufThumbnailSink(gst.BaseSink):
                                             self.height,
                                             self.width * 3)
 
-        self.emit('thumbnail', pixb, buffer.timestamp)
+        self.emit('thumbnail', pixb, buf.timestamp)
         return gst.FLOW_OK
 
-    def do_preroll(self, buffer):
-        return self.do_render(buffer)
+    def do_preroll(self, buf):
+        return self.do_render(buf)
 
 gobject.type_register(PixbufThumbnailSink)

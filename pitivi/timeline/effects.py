@@ -33,9 +33,9 @@ class TimelineEffect(TimelineObject):
 
     __data_type__ = "timeline-effect"
 
-    def __init__(self, nbinputs=1, **kw):
+    def __init__(self, nbinputs=1, **kwargs):
         self.nbinputs = nbinputs
-        TimelineObject.__init__(self, **kw)
+        TimelineObject.__init__(self, **kwargs)
 
     def _makeGnlObject(self):
         gnlobject = gst.element_factory_make("gnloperation", "operation-" + self.name)
@@ -53,9 +53,9 @@ class TimelineSimpleEffect(TimelineEffect):
 
     __data_type__ = "timeline-simple-effect"
 
-    def __init__(self, factory, **kw):
+    def __init__(self, factory, **kwargs):
         self.factory = factory
-        TimelineEffect.__init__(self, **kw)
+        TimelineEffect.__init__(self, **kwargs)
 
 
 class TimelineTransition(TimelineEffect):
@@ -67,9 +67,9 @@ class TimelineTransition(TimelineEffect):
 
     __data_type__ = "timeline-transition"
 
-    def __init__(self, factory, source1=None, source2=None, **kw):
+    def __init__(self, factory, source1=None, source2=None, **kwargs):
         self.factory = factory
-        TimelineEffect.__init__(self, nbinputs=2, **kw)
+        TimelineEffect.__init__(self, nbinputs=2, **kwargs)
         self.setSources(source1, source2)
 
     def setSources(self, source1, source2):
@@ -85,8 +85,8 @@ class TimelineComplexEffect(TimelineEffect):
 
     __data_type__ = "timeline-complex-effect"
 
-    def __init__(self, factory, **kw):
+    def __init__(self, factory, **kwargs):
         self.factory = factory
         # Find out the number of inputs
         nbinputs = 2
-        TimelineEffect.__init__(self, nbinputs=nbinputs, **kw)
+        TimelineEffect.__init__(self, nbinputs=nbinputs, **kwargs)

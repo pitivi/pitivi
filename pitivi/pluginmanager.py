@@ -19,6 +19,10 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+"""
+Plugin Manager
+"""
+
 import os
 import os.path
 import stat
@@ -76,12 +80,12 @@ class PluginManager(object, Signallable):
 
         # plugins are collected in a bag (a structure relatng 1->many)
         # {"my_plugin":{"plugin":plugin_object, "filename":"/home/luca/plugins/my_plugin.py"}}
-        self.pluginbag={}
+        self.pluginbag = {}
 
         # Store plugin repositiories in the instance ensuring they are expressed
         # as absolute paths.
         self.local_plugin_path = os.path.abspath(local_plugin_path)
-        self.plugin_paths = [self.local_plugin_path,]
+        self.plugin_paths = [ self.local_plugin_path, ]
         self.settings_path = os.path.abspath(settings_path)
         self.collect()
 
@@ -120,8 +124,7 @@ class PluginManager(object, Signallable):
 
         plugin_filename = self.pluginbag[plugin.name]["filename"]
 
-        #split plugin filename in dirname + basename
-        plugin_dirname = os.path.dirname(plugin_filename)
+        #Extract plugin base_name
         plugin_basename = os.path.basename(plugin_filename)
 
         #strip file extension from plugin basename ("myplugin.py" -> "myplugin")
@@ -131,8 +134,8 @@ class PluginManager(object, Signallable):
         return os.path.join(self.settings_path, plugin_basename + ".conf")
 
     def _get_settings(self, plugin):
-        """ 
-        Get the plugin settings dictionary from disk 
+        """
+        Get the plugin settings dictionary from disk
 
         @param plugin: plugin for which to retrieve settings from disk
         @return: settings dictionary, None if not found
@@ -153,7 +156,7 @@ class PluginManager(object, Signallable):
 
     def _is_valid_plugin_class(self, plugin_class):
         """
-        Check if plugin class correctly implements the IPlugin interface 
+        Check if plugin class correctly implements the IPlugin interface
 
         @param plugin_class: class to validate
         @return: True if class is a valid plugin, False otherwise
@@ -216,10 +219,10 @@ class PluginManager(object, Signallable):
 
         elif filename.endswith(".egg"):
             # file is an egg, ask its entry point for the plugin class
-            fullName = os.path.join(directory, filename)
+            fullname = os.path.join(directory, filename)
 
-            pkg_resources.working_set.add_entry(fullName)
-            dist_generator = pkg_resources.find_distributions(fullName)
+            pkg_resources.working_set.add_entry(fullname)
+            dist_generator = pkg_resources.find_distributions(fullname)
             for dist in dist_generator:
                 try:
                     plugin_class = dist.load_entry_point("pitivi.plugins", "plugin")
@@ -323,7 +326,7 @@ class PluginManager(object, Signallable):
         if not (filename.endswith(".egg") or filename.endswith(".py")):
             print "File must be a .py or a .egg"
 
-        plugin_class = self.loadPluginClass(os.path.basename(filename),\
+        plugin_class = self.loadPluginClass(os.path.basename(filename), \
                                             os.path.dirname(filename))
 
         if not plugin_class:
@@ -335,7 +338,7 @@ class PluginManager(object, Signallable):
             shutil.copy(filename, repository_path)
 
             # insert the new plugin filename entry
-            new_filename = os.path.join(os.path.abspath(repository_path),\
+            new_filename = os.path.join(os.path.abspath(repository_path), \
                                         os.path.basename(filename))
             self.pluginbag[plugin_class.name] = {\
                 "plugin": None, "filename": new_filename}
@@ -362,7 +365,7 @@ class PluginManager(object, Signallable):
         @return: plugin if installed, None otherwise
         """
 
-        new_plugin_class = self.loadPluginClass(os.path.basename(filename),\
+        new_plugin_class = self.loadPluginClass(os.path.basename(filename), \
                                                 os.path.dirname(filename))
         old_plugin = self.alreadyLoaded(new_plugin_class)
         old_settings = self._get_settings(old_plugin)

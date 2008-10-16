@@ -49,12 +49,10 @@ class SignalGroup:
 
         if id in self.signal_handler_ids:
             old_object, handler_id = self.signal_handler_ids[id]
-            #print "Disconnecting %s" % handler_id
             old_object.disconnect(handler_id)
             del self.signal_handler_ids[id]
 
         handler_id = object.connect(signal, callback, *args)
-        #print "Connected %s to signal %s " % (handler_id, signal)
         self.signal_handler_ids[id] = (object, handler_id)
 
     def disconnect(self, id):

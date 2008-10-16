@@ -54,28 +54,28 @@ class SmartVideoScale(gst.Bin):
         self.add(self.videoscale, self.capsfilter, self.videobox)
         gst.element_link_many(self.videoscale, self.capsfilter, self.videobox)
 
-        self._sinkPad = gst.GhostPad("sink", self.videoscale.get_pad("sink"))
-        self._sinkPad.set_active(True)
-        self._srcPad = gst.GhostPad("src", self.videobox.get_pad("src"))
-        self._srcPad.set_active(True)
+        self._sinkpad = gst.GhostPad("sink", self.videoscale.get_pad("sink"))
+        self._sinkpad.set_active(True)
+        self._srcpad = gst.GhostPad("src", self.videobox.get_pad("src"))
+        self._srcpad.set_active(True)
 
-        self.add_pad(self._sinkPad)
-        self.add_pad(self._srcPad)
+        self.add_pad(self._sinkpad)
+        self.add_pad(self._srcpad)
 
-        self._sinkPad.set_setcaps_function(self._sinkSetCaps)
+        self._sinkpad.set_setcaps_function(self._sinkSetCaps)
 
 
         # input/output values
         self.capsin = None
         self.widthin = -1
         self.heightin = -1
-        self.parin = gst.Fraction(1,1)
-        self.darin = gst.Fraction(1,1)
+        self.parin = gst.Fraction(1, 1)
+        self.darin = gst.Fraction(1, 1)
         self.capsout = None
         self.widthout = -1
         self.heightout = -1
-        self.parout = gst.Fraction(1,1)
-        self.darout = gst.Fraction(1,1)
+        self.parout = gst.Fraction(1, 1)
+        self.darout = gst.Fraction(1, 1)
 
     def set_caps(self, caps):
         """ set the outgoing caps, because gst.BaseTransform is full of CRACK ! """
@@ -97,14 +97,14 @@ class SmartVideoScale(gst.Bin):
             self._computeAndSetValues()
         return res
 
-    def _sinkPadCapsNotifyCb(self, pad, unused_prop):
+    def _sinkpadCapsNotifyCb(self, pad, unused_prop):
         caps = pad.get_negotiated_caps()
         self.log("caps:%r" % caps)
         self.widthin, self.heightin, self.parin, self.darin = self._getValuesFromCaps(caps)
         self.capsin = caps
         self._computeAndSetValues()
 
-    def _srcPadCapsNotifyCb(self, pad, unused_prop):
+    def _srcpadCapsNotifyCb(self, pad, unused_prop):
         caps = pad.get_negotiated_caps()
         self.log("caps:%r" % caps)
         self.widthout, self.heightout, self.parout, self.darout = self._getValuesFromCaps(caps)
@@ -115,12 +115,12 @@ class SmartVideoScale(gst.Bin):
         """
         returns (width, height, par, dar) from given caps.
         If caps are None, or not negotiated, it will return
-        (-1, -1, gst.Fraction(1,1), gst.Fraction(1,1))
+        (-1, -1, gst.Fraction(1, 1), gst.Fraction(1, 1))
         """
         width = -1
         height = -1
-        par = gst.Fraction(1,1)
-        dar = gst.Fraction(1,1)
+        par = gst.Fraction(1, 1)
+        dar = gst.Fraction(1, 1)
         if force or (caps and caps.is_fixed()):
             struc = caps[0]
             width = struc["width"]

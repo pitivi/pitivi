@@ -41,13 +41,13 @@ class VideoFade(gst.Bin):
         self.add(self.incsp, self.alpha, self.vmix, self.outcsp)
         gst.element_link_many(self.incsp, self.alpha, self.vmix, self.outcsp)
 
-        self._sinkPad = gst.GhostPad("sink", self.incsp.get_pad("sink"))
-        self._sinkPad.set_active(True)
-        self._srcPad = gst.GhostPad("src", self.outcsp.get_pad("src"))
-        self._srcPad.set_active(True)
+        self._sinkpad = gst.GhostPad("sink", self.incsp.get_pad("sink"))
+        self._sinkpad.set_active(True)
+        self._srcpad = gst.GhostPad("src", self.outcsp.get_pad("src"))
+        self._srcpad.set_active(True)
 
-        self.add_pad(self._sinkPad)
-        self.add_pad(self._srcPad)
+        self.add_pad(self._sinkpad)
+        self.add_pad(self._srcpad)
 
         self.startposition = position
         self.duration = duration
@@ -59,18 +59,24 @@ class VideoFade(gst.Bin):
         self._resetControllerValues()
 
     def setStartPosition(self, position):
+        """ Set the position at which the fade should start """
         if position == self.startposition:
             return
         self.startposition = position
         self._resetControllerValues()
 
     def setDuration(self, duration):
+        """ Set the duration (in ns) of the fade """
         if self.duration == duration:
             return
         self.duration = duration
         self._resetControllerValues()
 
     def setFadeFromBlack(self, fromblack):
+        """ Set which directio we should use.
+        True : From Black
+        False : To Black
+        """
         if self.fadefromblack == fromblack:
             return
         self.fadefromblack = fromblack

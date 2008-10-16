@@ -24,8 +24,6 @@ Multimedia stream, used for definition of media streams
 """
 
 
-# FIXME : If theses streams stay, they should go in a different file/module
-
 ##
 ## Multimedia streams, used for definition of media streams
 ##
@@ -33,7 +31,7 @@ from gettext import gettext as _
 
 import gst
 
-class MultimediaStream:
+class MultimediaStream(object):
     """
     Defines a media stream
 
@@ -140,9 +138,9 @@ class VideoStream(MultimediaStream):
         struct = self.caps[0]
         self.videotype = struct.get_name()
         if self.videotype.startswith("video/x-raw-"):
-            self._raw=True
+            self._raw = True
         else:
-            self._raw=False
+            self._raw = False
 
         try:
             self._format = struct["format"]
@@ -160,12 +158,12 @@ class VideoStream(MultimediaStream):
             self._framerate = struct["framerate"]
         except:
             # if no framerate was given, use 1fps
-            self._framerate = gst.Fraction(1,1)
+            self._framerate = gst.Fraction(1, 1)
         try:
             self._par = struct["pixel-aspect-ratio"]
         except:
             # use a default setting, None is not valid !
-            self._par = gst.Fraction(1,1)
+            self._par = gst.Fraction(1, 1)
 
         if self.width and self.height and self.par:
             self._dar = gst.Fraction(self.width * self.par.num, self.height * self.par.denom)
@@ -192,7 +190,6 @@ class AudioStream(MultimediaStream):
     """
     Audio stream
     """
-
 
     @property
     def float(self):
@@ -275,13 +272,14 @@ def get_stream_for_caps(caps):
     Returns the appropriate MediaStream corresponding to the
     given caps.
     """
+    # FIXME : we should have an 'unknow' data stream class
+    ret = None
+
     val = caps.to_string()
     if val.startswith("video/"):
-        return VideoStream(caps)
+        ret = VideoStream(caps)
     elif val.startswith("audio/"):
-        return AudioStream(caps)
+        ret = AudioStream(caps)
     elif val.startswith("text/"):
-        return TextStream(caps)
-    else:
-        # FIXME : we should have an 'unknow' data stream class
-        return None
+        ret = TextStream(caps)
+    return ret

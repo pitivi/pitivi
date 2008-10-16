@@ -25,7 +25,6 @@ Effects global handling
 """
 
 import gst
-from objectfactory import OperationFactory, TransitionFactory, SMPTETransitionFactory
 
 # There are different types of effects available:
 #  _ Simple Audio/Video Effects

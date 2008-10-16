@@ -24,7 +24,6 @@ Enables identical use for installed and uninstalled versions.
 """
 
 import os.path
-import string
 
 LIBDIR = '@LIBDIR@'
 PKGDATADIR = '@DATADIR@/@PACKAGE@'
@@ -48,9 +47,9 @@ def _in_devel():
 
 def get_pixmap_dir():
     """ Returns the directory for program-only pixmaps """
-    dir = os.path.dirname(os.path.abspath(__file__))
+    _dir = os.path.dirname(os.path.abspath(__file__))
     if _in_devel():
-        root = dir
+        root = _dir
     else:
         root = PKGDATADIR
     return os.path.join(root, 'pixmaps')

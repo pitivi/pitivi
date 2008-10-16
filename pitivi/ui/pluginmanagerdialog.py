@@ -299,7 +299,6 @@ class PluginManagerDialog(object):
                             targetType, time):
         """ handle drag&drop of new plugins into the list by installing them"""
 
-        #print "context:%s targetType:%d, selection.data:%r" % (context.targets, targetType, selection.data)
         uri_list = selection.data.strip().split()
         installed = False
 

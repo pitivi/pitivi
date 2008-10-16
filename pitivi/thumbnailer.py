@@ -30,6 +30,9 @@ from elements.singledecodebin import SingleDecodeBin
 from elements.thumbnailsink import PixbufThumbnailSink
 
 class Thumbnailer(gst.Pipeline):
+    """
+    Convenience pipeline to quickly create thumbnails for a given uri
+    """
 
     __gsignals__ = {
         "thumbnail" : (gobject.SIGNAL_RUN_LAST,

@@ -117,7 +117,7 @@ class GladeWidget(gtk.VBox):
         wtree.signal_autoconnect(self)
 
 
-class GladeWindow(gobject.GObject):
+class GladeWindow(object):
     """
     Base class for dialogs or windows backed by glade interface definitions.
 
@@ -139,7 +139,6 @@ class GladeWindow(gobject.GObject):
     window = None
 
     def __init__(self, parent=None):
-        gobject.GObject.__init__(self)
         try:
             assert self.glade_file
             filepath = os.path.join(self.glade_dir, self.glade_file)

@@ -50,6 +50,8 @@ class Timeline(Serializable):
         else:
             name = "XXX"
         self.timeline = gst.Bin("timeline-" + name)
+        self.audiocomp = None
+        self.videocomp = None
         self._fillContents()
 
     def _fillContents(self):
@@ -93,23 +95,23 @@ class Timeline(Serializable):
         self.timeline.remove_pad(self.timeline.get_pad("vsrc"))
 
     def getAutoSettings(self):
-        v = self.videocomp._getAutoSettings()
-        a = self.audiocomp._getAutoSettings()
-        if not v and not a:
+        vs = self.videocomp._getAutoSettings()
+        as = self.audiocomp._getAutoSettings()
+        if not vs and not as:
             return None
         # return an ExportSettings containing the combination of
         # the autosettings from the audio and video composition.
-        s = ExportSettings()
-        if v:
-            s.videowidth = v.videowidth
-            s.videoheight = v.videoheight
-            s.videorate = v.videorate
-            s.videopar = v.videopar
-        if a:
-            s.audiochannels = a.audiochannels
-            s.audiorate = a.audiorate
-            s.audiodepth = a.audiodepth
-        return s
+        settings = ExportSettings()
+        if vs:
+            settings.videowidth = vs.videowidth
+            settings.videoheight = vs.videoheight
+            settings.videorate = vs.videorate
+            settings.videopar = vs.videopar
+        if as:
+            settings.audiochannels = as.audiochannels
+            settings.audiorate = as.audiorate
+            settings.audiodepth = as.audiodepth
+        return settings
 
     def getDuration(self):
         return max(self.audiocomp.duration, self.videocomp.duration)

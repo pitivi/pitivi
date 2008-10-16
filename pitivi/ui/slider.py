@@ -215,9 +215,9 @@ class PipelineSlider(gtk.VBox):
         else:
             self._duration = duration
         if self._displayEndpoints:
-            self._endpoints.setEndpoints(0, self._pipeline.length, start, 
+            self._endpoints.setEndpoints(0, self._pipeline.length, start,
                 duration)
-    
+
     def set_value(self, position):
         """Sets the position of the slider's cursor.
         """

@@ -34,7 +34,7 @@ from settings import ExportSettings
 from configure import APPNAME
 from gettext import gettext as _
 from serializable import Serializable, to_object_from_data_type
-from projectsaver import ProjectSaver, ProjectSaveError, ProjectLoadError
+from projectsaver import ProjectSaver, ProjectLoadError
 from signalinterface import Signallable
 
 class Project(Serializable, Signallable):
@@ -198,6 +198,7 @@ class Project(Serializable, Signallable):
         self.emit('settings-changed')
 
     def setUri(self, uri, format=None):
+        """ Set the location to which this project will be stored """
         gst.log("uri:%s, format:%s" % (uri, format))
         if not self.uri == uri:
             gst.log("updating self.uri, previously:%s" % self.uri)
@@ -287,6 +288,7 @@ class Project(Serializable, Signallable):
         self.timeline.fromDataFormat(obj["timeline"])
 
 def uri_is_valid(uri):
+    """ Checks if the given uri is a valid uri (of type file://) """
     return gst.uri_get_protocol(uri) == "file"
 
 def file_is_project(uri):

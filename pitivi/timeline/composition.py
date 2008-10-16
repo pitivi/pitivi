@@ -52,8 +52,8 @@ class EffectsLayer(Layer):
     def __len__(self):
         return len(self._effects)
 
-    def __getitem__(self, x):
-        return self._effects.__getitem__(x)
+    def __getitem__(self, item):
+        return self._effects.__getitem__(item)
 
 class SourcesLayer(Layer):
     """
@@ -173,7 +173,7 @@ class TimelineComposition(TimelineSource):
     #      _ maximum priority
     #      _ list of sources sorted by time
 
-    def __init__(self, **kw):
+    def __init__(self, **kwargs):
         self.global_effects = [] # list of effects starting from highest priority
         self.simple_effects = [] # list of layers of simple effects (order: priority, then time)
         self.complex_effects = [] # complex effect sorted by time
@@ -183,16 +183,16 @@ class TimelineComposition(TimelineSource):
         # each layer contains (min priority, max priority, list objects)
         #sources = [(2048, 2060, [])]
         self.sources = [(2048, 2060, [])]
-        self.defaultSource = None
-        TimelineSource.__init__(self, **kw)
-        self.setStartDurationTime(0,0)
+        self._default_source = None
+        TimelineSource.__init__(self, **kwargs)
+        self.setStartDurationTime(0, 0)
 
     def __len__(self):
         """ return the number of sources in this composition """
-        l = 0
+        le = 0
         for mn, mx, sources in self.sources:
-            l += len(sources)
-        return l
+            le += len(sources)
+        return le
 
     def __nonzero__(self):
         """ Always returns True, else bool(object) will return False if len(object) == 0 """
@@ -383,7 +383,7 @@ class TimelineComposition(TimelineSource):
 
     def _addSource(self, source, position):
         """ private version of addSource """
-        def my_add_sorted(sources, object):
+        def _my_add_sorted(sources, object):
             slist = sources[2]
             i = 0
             for item in slist:
@@ -398,7 +398,7 @@ class TimelineComposition(TimelineSource):
         position = 1
 
         # add it to the correct self.sources[position]
-        my_add_sorted(self.sources[position-1], source)
+        _my_add_sorted(self.sources[position-1], source)
 
         # add it to self.gnlobject
         self.gnlobject.info("adding %s to our composition" % source.gnlobject.props.name)
@@ -466,7 +466,6 @@ class TimelineComposition(TimelineSource):
 
         # pushing following
         if push_following and not position in [-1, 0]:
-            #print self.gnlobject, "pushing following", existorder, len(self.sources[position - 1][2])
             self.shiftSources(source.factory.duration, existorder, len(self.sources[position - 1][2]))
 
         self.addSource(source, position, auto_linked=auto_linked)
@@ -506,11 +505,11 @@ class TimelineComposition(TimelineSource):
         If push_neighbours is True, then sources located AFTER the NEW position will be shifted
         forward in time, in order to have enough free space to insert the source.
         """
-        self.gnlobject.info("source:%s , newpos:%d, move_linked:%s, push_neighbours:%s, collapse_neighbours:%s" % (source,
-                                                                                                                   newpos,
-                                                                                                                   move_linked,
-                                                                                                                   push_neighbours,
-                                                                                                                   collapse_neighbours))
+        self.gnlobject.info("source:%s , newpos:%d, move_linked:%s" % (source,
+                                                                       newpos,
+                                                                       move_linked))
+        self.gnlobject.info("push_neighbours:%s, collapse_neighbours:%s" % (push_neighbours,
+                                                                            collapse_neighbours))
         sources = self.sources[0][2]
         oldpos = sources.index(source)
 
@@ -592,7 +591,9 @@ class TimelineComposition(TimelineSource):
         """
         if collapse_neighbours and not remove_linked:
             raise Exception("You cannot use remove_linked=False and collapse_neighbourse=True")
-        self.gnlobject.info("source:%s, remove_linked:%s, collapse_neighbours:%s" % (source, remove_linked, collapse_neighbours))
+        self.gnlobject.info("source:%s, remove_linked:%s, collapse_neighbours:%s" % (source,
+                                                                                     remove_linked,
+                                                                                     collapse_neighbours))
         sources = self.sources[0]
 
         pos = sources[2].index(source)
@@ -686,17 +687,17 @@ class TimelineComposition(TimelineSource):
         Adds a default TimelineSource to the composition.
         Default sources will be used for gaps within the composition.
         """
-        if self.defaultSource:
-            self.gnlobject.remove(self.defaultSource.gnlobject)
+        if self._default_source:
+            self.gnlobject.remove(self._default_source.gnlobject)
         source.gnlobject.props.priority = 2 ** 32 - 1
         self.gnlobject.add(source.gnlobject)
-        self.defaultSource = source
+        self._default_source = source
 
     def getDefaultSource(self):
         """
         Returns the default source.
         """
-        return self.defaultSource
+        return self._default_source
 
 
     # AutoSettings methods
@@ -774,8 +775,8 @@ class TimelineComposition(TimelineSource):
         ret["sources"] = tmp
 
         # default source
-        if self.defaultSource:
-            ret["default-source"] = self.defaultSource.toDataFormat()
+        if self._default_source:
+            ret["default-source"] = self._default_source.toDataFormat()
         return ret
 
     def fromDataFormat(self, obj):
@@ -834,7 +835,7 @@ class TimelineComposition(TimelineSource):
         for layer in layers:
             for source in layer:
                 self.addSource(source, pos, auto_linked=False)
-            pos +=1
+            pos += 1
 
         # default source
         if "default-source" in obj:

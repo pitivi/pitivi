@@ -87,19 +87,19 @@ class BrotherObjects(Serializable, Signallable):
             self.linked = None
             self.emit("linked-changed", None)
 
-    def _linkObject(self, object):
+    def _linkObject(self, obj):
         # really do the link
-        self.linked = object
+        self.linked = obj
         self.emit("linked-changed", self.linked)
 
-    def linkObject(self, object):
+    def linkObject(self, obj):
         """
         link another object to this one.
         If there already is a linked object ,it will unlink it
         """
-        if self.linked and not self.linked == object:
+        if self.linked and not self.linked == obj:
             self.unlinkObject()
-        self._linkObject(object)
+        self._linkObject(obj)
         self.linked._linkObject(self)
 
     def getLinkedObject(self):
@@ -358,15 +358,15 @@ class TimelineObject(BrotherObjects):
         if self.linked:
             self.linked._setStartDurationTime(start, duration)
 
-    def _startDurationChangedCb(self, gnlobject, property):
+    def _startDurationChangedCb(self, gnlobject, prop):
         """ start/duration time has changed """
         gst.log("self:%r , gnlobject:%r" % (self, gnlobject))
         if not gnlobject == self.gnlobject:
             gst.warning("We're receiving signals from an object we dont' control (self.gnlobject:%r, gnlobject:%r)" % (self.gnlobject, gnlobject))
-        self.gnlobject.debug("property:%s" % property.name)
+        self.gnlobject.debug("property:%s" % prop.name)
         start = gst.CLOCK_TIME_NONE
         duration = 0
-        if property.name == "start":
+        if prop.name == "start":
             start = gnlobject.get_property("start")
             gst.log("start: %s => %s" % (gst.TIME_ARGS(self.start),
                                          gst.TIME_ARGS(start)))
@@ -374,7 +374,7 @@ class TimelineObject(BrotherObjects):
                 start = gst.CLOCK_TIME_NONE
             else:
                 self.start = long(start)
-        elif property.name == "duration":
+        elif prop.name == "duration":
             duration = gnlobject.get_property("duration")
             gst.log("duration: %s => %s" % (gst.TIME_ARGS(self.duration),
                                             gst.TIME_ARGS(duration)))
@@ -421,8 +421,12 @@ class TimelineObject(BrotherObjects):
         else:
             BrotherObjects.pendingObjectCreated(self, obj, field)
 
+    # FIXME : Should be made into properties
+
     def isAudio(self):
+        """ Does the object provide audio """
         return self.media_type == MEDIA_TYPE_AUDIO
 
     def isVideo(self):
+        """ Does the object provide video """
         return self.media_type == MEDIA_TYPE_VIDEO

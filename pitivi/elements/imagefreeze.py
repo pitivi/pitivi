@@ -43,6 +43,9 @@ import gst
 
 
 class ImageFreeze(gst.Element):
+    """
+    'Image to Video' element
+    """
 
     __gstdetails__ = (
         "ImageFreeze plugin",
@@ -90,7 +93,7 @@ class ImageFreeze(gst.Element):
         # this will be set by our task
         self.last_return = gst.FLOW_OK
 
-    def _sink_setcaps(self, pad, caps):
+    def _sink_setcaps(self, unused_pad, caps):
         gst.debug("caps %s" % caps.to_string())
         downcaps = self.srcpad.peer_get_caps().copy()
         gst.debug("downcaps %s" % downcaps.to_string())
@@ -128,11 +131,11 @@ class ImageFreeze(gst.Element):
         # 5. If we can't find an accepted candidate, we return False
         return False
 
-    def _src_event(self, pad, event):
+    def _src_event(self, unused_pad, event):
         # for the moment we just push it upstream
         gst.debug("event %r" % event)
         if event.type == gst.EVENT_SEEK:
-            rate,fmt,flags,startt,start,stopt,stop = event.parse_seek()
+            flags = event.parse_seek()[2]
             gst.debug("Handling seek event %r" % flags)
             if flags & gst.SEEK_FLAG_FLUSH:
                 gst.debug("sending flush_start event")
@@ -144,19 +147,16 @@ class ImageFreeze(gst.Element):
             gst.debug("pausing task")
             self.srcpad.pause_task()
             gst.debug("task paused")
-            seek = gst.event_new_seek(1.0, gst.FORMAT_TIME, flags,
-                                      gst.SEEK_TYPE_NONE, 0,
-                                      gst.SEEK_TYPE_NONE, 0)
-            #return self.sinkpad.push_event(seek)
+
             self._needsegment = True
             if flags & gst.SEEK_FLAG_FLUSH:
                 self.srcpad.push_event(gst.event_new_flush_stop())
-            self.srcpad.start_task(self.our_task)
+            self.srcpad.start_task(self._our_task)
             return True
 
         return self.sinkpad.push_event(event)
 
-    def _sink_event(self, pad, event):
+    def _sink_event(self, unused_pad, event):
         gst.debug("event %r" % event)
         if event.type == gst.EVENT_NEWSEGMENT:
             gst.debug("dropping new segment !")
@@ -165,18 +165,18 @@ class ImageFreeze(gst.Element):
             self._reset()
         return self.srcpad.push_event(event)
 
-    def _sink_chain(self, pad, buffer):
-        gst.debug("buffer %s %s" % (gst.TIME_ARGS(buffer.timestamp),
-                                    gst.TIME_ARGS(buffer.duration)))
+    def _sink_chain(self, unused_pad, buf):
+        gst.debug("buffer %s %s" % (gst.TIME_ARGS(buf.timestamp),
+                                    gst.TIME_ARGS(buf.duration)))
         if self._buffer != None:
             gst.debug("already have a buffer ! Returning GST_FLOW_WRONG_STATE")
             return gst.FLOW_WRONG_STATE
 
-        self._buffer = buffer
-        self.srcpad.start_task(self.our_task)
+        self._buffer = buf
+        self.srcpad.start_task(self._our_task)
         return gst.FLOW_WRONG_STATE
 
-    def our_task(self, something):
+    def _our_task(self, something):
         #this is where we repeatedly output our buffer
         gst.debug("self:%r, something:%r" % (self, something))
 
@@ -233,7 +233,7 @@ class ImageFreeze(gst.Element):
 
 gobject.type_register(ImageFreeze)
 
-def dataprobe(pad, data):
+def _dataprobe(unused_pad, data):
     if isinstance(data, gst.Buffer):
         print "Buffer", gst.TIME_ARGS(data.timestamp), gst.TIME_ARGS(data.duration), data.caps.to_string()
     else:
@@ -242,8 +242,8 @@ def dataprobe(pad, data):
             print data.parse_new_segment()
     return True
 
-def make_image_video_bin(location):
-    b = gst.Bin("image-video-bin-"+location)
+def _make_image_video_bin(location):
+    bin = gst.Bin("image-video-bin-"+location)
     src = gst.element_factory_make("filesrc")
     src.props.location = location
     src.props.blocksize = 1024 * 1024
@@ -252,24 +252,24 @@ def make_image_video_bin(location):
     freeze = ImageFreeze()
     cfil = gst.element_factory_make("capsfilter")
     cfil.props.caps = gst.Caps("video/x-raw-yuv,framerate=25/1")
-    p.add(src, dec, vscale, freeze, cfil)
+    bin.add(src, dec, vscale, freeze, cfil)
     gst.element_link_many(src, dec, vscale)
     vscale.link(freeze, gst.Caps("video/x-raw-yuv,width=640,height=480"))
     gst.element_link_many(freeze, cfil)
 
-    b.add_pad(gst.GhostPad("src", cfil.get_pad("src")))
+    bin.add_pad(gst.GhostPad("src", cfil.get_pad("src")))
 
-    return b
+    return bin
 
-def post_link(gnls, pad, q):
-    gnls.link(q)
+def _post_link(source, unused_pad, queue):
+    source.link(queue)
 
 # filesrc ! jpegdec ! imagefreeze ! xvimagesink
 if __name__ == "__main__":
     import sys
-    p = gst.Pipeline()
+    pipe = gst.Pipeline()
 
-    b = make_image_video_bin(sys.argv[1])
+    b = _make_image_video_bin(sys.argv[1])
     gnls = gst.element_factory_make("gnlsource")
     gnls.add(b)
 
@@ -279,20 +279,20 @@ if __name__ == "__main__":
 
     toverl = gst.element_factory_make("timeoverlay")
     sink = gst.element_factory_make("xvimagesink")
-    sink.get_pad("sink").add_data_probe(dataprobe)
+    sink.get_pad("sink").add_data_probe(_dataprobe)
 
-    q = gst.element_factory_make("queue")
+    queue = gst.element_factory_make("queue")
 
-    p.add(gnls, toverl, q, sink)
+    pipe.add(gnls, toverl, queue, sink)
 
-    gst.element_link_many(q, toverl, sink)
+    gst.element_link_many(queue, toverl, sink)
     #q.link(sink)
 
-    gnls.connect("pad-added", post_link, q)
+    gnls.connect("pad-added", _post_link, queue)
 
     ml = gobject.MainLoop()
 
-    p.set_state(gst.STATE_PLAYING)
+    pipe.set_state(gst.STATE_PLAYING)
 
     ml.run()
 

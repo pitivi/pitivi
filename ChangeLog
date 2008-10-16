@@ -1,5 +1,46 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/check.py:
+	* pitivi/configure.py.in:
+	* pitivi/discoverer.py:
+	* pitivi/effects.py:
+	* pitivi/elements/imagefreeze.py:
+	* pitivi/elements/singledecodebin.py:
+	* pitivi/elements/smartscale.py:
+	* pitivi/elements/thumbnailsink.py:
+	* pitivi/elements/videofade.py:
+	* pitivi/objectfactory.py:
+	* pitivi/playground.py:
+	* pitivi/pluginmanager.py:
+	* pitivi/project.py:
+	* pitivi/projectsaver.py:
+	* pitivi/serializable.py:
+	* pitivi/settings.py:
+	* pitivi/signalgroup.py:
+	* pitivi/stream.py:
+	* pitivi/thumbnailer.py:
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/effects.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/glade.py:
+	* pitivi/ui/gstwidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/pluginmanagerdialog.py:
+	* pitivi/ui/slider.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/viewer.py:
+	* pitivi/utils.py:
+	Complete cleanup using pylint reporting.
+	* docs/pylint.rc:
+	Pylint resource file to use when checking pitivi.
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/playground.py:
 	* pitivi/project.py:
 	* pitivi/settings.py:
