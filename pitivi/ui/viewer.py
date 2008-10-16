@@ -20,12 +20,9 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-import os.path
 import gobject
 import gtk
 import gst
-import gst.interfaces
-from glade import GladeWindow
 
 import pitivi.plumber as plumber
 import pitivi.instance as instance
@@ -33,7 +30,6 @@ from pitivi.bin import SmartTimelineBin
 import pitivi.dnd as dnd
 from pitivi.signalgroup import SignalGroup
 
-from gettext import gettext as _
 from pitivi.utils import time_to_string
 
 class PitiviViewer(gtk.VBox):

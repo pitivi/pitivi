@@ -1,5 +1,16 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/filelisterrordialog.py:
+	* pitivi/ui/glade.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/slider.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	Fix imports in pitivi/ui
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/ui/ruler.py:
 	Fix duration query.
 	Don't seek if there's no available content.

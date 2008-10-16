@@ -23,7 +23,6 @@
 Dialog box listing files which had errors, and the reasons.
 """
 
-import gobject
 import gtk
 import gst
 import pango

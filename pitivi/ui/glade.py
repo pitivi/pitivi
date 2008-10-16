@@ -29,8 +29,7 @@ import os
 import sys
 
 import gtk
-import gtk.glade
-import gobject
+from gtk.glade import XML, set_custom_handler
 
 # proc := module1.module2.moduleN.proc1().maybe_another_proc()
 #  -> eval proc1().maybe_another_proc() in module1.module2.moduleN
@@ -63,7 +62,7 @@ def flumotion_glade_custom_handler(unused_xml, proc, name, *unused_args):
     w.set_name(name)
     w.show()
     return w
-gtk.glade.set_custom_handler(flumotion_glade_custom_handler)
+set_custom_handler(flumotion_glade_custom_handler)
 
 
 class GladeWidget(gtk.VBox):
@@ -88,10 +87,10 @@ class GladeWidget(gtk.VBox):
             assert self.glade_file
             filepath = os.path.join(self.glade_dir, self.glade_file)
             if self.glade_typedict:
-                wtree = gtk.glade.XML(filepath, typedict=self.glade_typedict, domain='pitivi')
+                wtree = XML(filepath, typedict=self.glade_typedict, domain='pitivi')
             else:
                 # pygtk 2.4 doesn't like typedict={} ?
-                wtree = gtk.glade.XML(filepath, domain='pitivi')
+                wtree = XML(filepath, domain='pitivi')
         except RuntimeError, e:
             raise RuntimeError('Failed to load file %s from directory %s: %s'
                                % (self.glade_file, self.glade_dir, e))
@@ -145,10 +144,10 @@ class GladeWindow(gobject.GObject):
             assert self.glade_file
             filepath = os.path.join(self.glade_dir, self.glade_file)
             if self.glade_typedict:
-                wtree = gtk.glade.XML(filepath, typedict=self.glade_typedict, domain='pitivi')
+                wtree = XML(filepath, typedict=self.glade_typedict, domain='pitivi')
             else:
                 # pygtk 2.4 doesn't like typedict={} ?
-                wtree = gtk.glade.XML(filepath, domain='pitivi')
+                wtree = XML(filepath, domain='pitivi')
         except RuntimeError, e:
             raise RuntimeError('Failed to load file %s from directory %s: %s'
                                % (self.glade_file, self.glade_dir, e))

@@ -25,11 +25,7 @@ Main timeline widget
 """
 
 import gtk
-import gobject
 import gst
-import pango
-
-from gettext import gettext as _
 
 import pitivi.instance as instance
 import pitivi.dnd as dnd

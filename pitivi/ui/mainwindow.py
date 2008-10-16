@@ -36,7 +36,6 @@ except:
 else:
     have_gconf=True
 
-import pitivi.instance as instance
 import pitivi.configure as configure
 from pitivi.projectsaver import ProjectSaver
 

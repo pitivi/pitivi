@@ -22,7 +22,6 @@
 import gtk
 import gst
 import pitivi.instance as instance
-from pitivi.timeline.source import TimelineFileSource
 
 class PipelineSliderEndpoints(gtk.DrawingArea):
     """ Helper class which displays start and stop points within the upper and

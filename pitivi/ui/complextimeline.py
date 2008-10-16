@@ -25,7 +25,6 @@ Timeline widgets for the complex view
 
 import gtk
 import gst
-import cairo
 import pitivi.instance as instance
 
 from pitivi.bin import SmartTimelineBin
@@ -37,8 +36,8 @@ import goocanvas
 from util import *
 import os.path
 from urllib import unquote
-from pitivi.timeline.objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
-from pitivi.utils import closest_item, argmax
+from pitivi.timeline.objects import MEDIA_TYPE_VIDEO
+from pitivi.utils import closest_item
 from gettext import gettext as _
 
 
@@ -201,7 +200,7 @@ class ComplexTrack(SmartGroup, Zoomable):
         element.connect("start-duration-changed", self.start_duration_cb, w)
         self.widgets[element] = w
         self.elements[w] = element
-        element.set_data("widget", w)
+        #element.set_data("widget", w)
         self.start_duration_cb(element, element.start, element.duration, w)
         self.add_child(w)
         make_selectable(self.canvas, w.bg)
