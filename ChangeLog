@@ -1,5 +1,16 @@
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/objectfactory.py:
+	* pitivi/stream.py:
+	* pitivi/Makefile.am:
+	Use python properties.
+	Move MultimediaStream to separate module.
+	Comments and cleanups.
+	* pitivi/discoverer.py:
+	Update code for modifications in objectfactory
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* bin/pitivi.in:
 	Cleanups
 

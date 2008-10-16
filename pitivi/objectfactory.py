@@ -34,6 +34,7 @@ import gst
 
 from serializable import Serializable
 from settings import ExportSettings
+from stream import get_stream_for_caps
 
 from gettext import gettext as _
 
@@ -54,10 +55,12 @@ class ObjectFactory(Serializable):
 
     # FIXME : Use Setter/Getter for internal values !
 
-    def __init__(self, name="", displayname="",
+    def __init__(self, name="", displayname="", project=None,
                  **unused_kw):
-        self.name = name
-        self.displayname = displayname
+        gst.info("name:%s , project:%r" % (name, project))
+        self._project = project
+        self._name = name
+        self._displayname = displayname
         self._is_audio = False
         self._is_video = False
         self.is_effect = False
@@ -70,6 +73,9 @@ class ObjectFactory(Serializable):
         self.title = None
         self.artist = None
         self.uid = -1
+
+    def __repr__(self):
+        return "<%s: %s>" % (self.__class__.__name__, self._displayname or self._name)
 
     ## properties
 
@@ -106,20 +112,37 @@ class ObjectFactory(Serializable):
     video_info = property(_get_video_info, _set_video_info,
                           doc="Video information as gst.Caps")
 
-    def _get_audio_info_stream(self):
+    # read only properties
+    @property
+    def audio_info_stream(self):
+        """Audio information of a Stream"""
         return self._audio_info_stream
-    audio_info_stream = property(_get_audio_info_stream,
-                                 doc="Audio information as a Stream")
 
-    def _get_video_info_stream(self):
+    @property
+    def video_info_stream(self):
+        """Video information of a Stream"""
         return self._video_info_stream
-    video_info_stream = property(_get_video_info_stream,
-                                 doc="Video information as a Stream")
 
+    @property
+    def name(self):
+        """Name of the factory"""
+        return self._name
+
+    @property
+    def displayname(self):
+        """Name of the factory for display"""
+        return self._displayname
+
+    @property
+    def project(self):
+        """Project this factory is being used in"""
+        return self._project
 
     def __repr__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.displayname or self.name)
 
+    # FIXME : Media Tags are only Source specific (or not ?)
+    # FIXME : if so, should be moved down
     def addMediaTags(self, tags=[]):
         """ Add the given gst.Tag or gst.TagList to the factory """
         gst.debug("tags:%s" % tags)
@@ -133,9 +156,9 @@ class ObjectFactory(Serializable):
                 self._mediaTags[tag] = "%s/%s/%s" % (d.day, d.month, d.year)
         gst.debug("tags:%s" % self._mediaTags)
         if self.video_info_stream:
-            self.video_info_stream.set_codec(self._mediaTags.get(gst.TAG_VIDEO_CODEC))
+            self.video_info_stream.codec = self._mediaTags.get(gst.TAG_VIDEO_CODEC)
         if self.audio_info_stream:
-            self.audio_info_stream.set_codec(self._mediaTags.get(gst.TAG_AUDIO_CODEC))
+            self.audio_info_stream.codec = self._mediaTags.get(gst.TAG_AUDIO_CODEC)
         self.artist = self._mediaTags.get(gst.TAG_ARTIST)
         if self.artist:
             self.artist.strip()
@@ -143,6 +166,7 @@ class ObjectFactory(Serializable):
         if self.title:
             self.title.strip()
 
+    # FIXME : Method can stay here, but implementation is wrong
     def getPrettyInfo(self):
         """ Returns a prettyfied information string """
         if self.is_effect:
@@ -154,6 +178,8 @@ class ObjectFactory(Serializable):
         if not self.is_video and not self.is_audio:
             "Unknown"
         stl = []
+        # FIXME : file is FileSourceFactory specific !
+        # FIXME : and it might not be a file:// but maybe a http://
         filename = os.path.basename(unquote(self.name))
         if not self.title:
             stl.append(_("<b>%s</b><small>") % gobject.markup_escape_text(filename))
@@ -166,11 +192,12 @@ class ObjectFactory(Serializable):
                 stl.append(_("<b>%s</b>") % gobject.markup_escape_text(self.title))
             stl.append(_("<small><b>File:</b> %s") % filename)
         if self.is_video and self.video_info_stream:
-            stl.append(self.video_info_stream.getMarkup())
+            stl.append(self.video_info_stream.markup)
         if self.is_audio and self.audio_info_stream:
-            stl.append(self.audio_info_stream.getMarkup())
+            stl.append(self.audio_info_stream.markup)
         return string.join(stl, "\n") + "</small>"
 
+    # FIXME : Too limited and ugly. What if we have non-AV streams ??
     def makeAudioBin(self):
         """ returns a audio only bin """
         raise NotImplementedError
@@ -180,6 +207,8 @@ class ObjectFactory(Serializable):
         raise NotImplementedError
 
 
+    # FIXME : ALL the following methods will die once we switch to a saner
+    # FIXME : and more flexible way of doing file save/load
     # Serializable methods
 
     def toDataFormat(self):
@@ -193,10 +222,10 @@ class ObjectFactory(Serializable):
 
     def fromDataFormat(self, obj):
         Serializable.fromDataFormat(self, obj)
-        self.name = obj["name"]
-        self.displayname = obj["displayname"]
-        self.is_audio = obj["is_audio"]
-        self.is_video = obj["is_video"]
+        self._name = obj["name"]
+        self._displayname = obj["displayname"]
+        self._is_audio = obj["is_audio"]
+        self._is_video = obj["is_video"]
         self.setUniqueID(obj["uid"])
 
     # Unique ID methods
@@ -273,6 +302,13 @@ class ObjectFactory(Serializable):
 # FIXME : It might not just be files (network sources ?) !
 # FIMXE : It might not even had a URI ! (audio/video generators for ex)
 
+
+
+
+# FIXME : Figure out everything which is Source specific and put it here
+# FIXME : It might not just be files (network sources ?) !
+# FIMXE : It might not even had a URI ! (audio/video generators for ex)
+
 class SourceFactory(ObjectFactory):
     """
     Provides sources usable in a timeline
@@ -299,17 +335,22 @@ class SourceFactory(ObjectFactory):
         """
         return self.duration
 
-    ## properties
+    ## read only properties
 
-    def __getDefaultDuration(self):
+    @property
+    def default_duration(self):
+        """Default duration of the source in nanoseconds"""
         return self._getDefaultDuration()
-    default_duration = property(__getDefaultDuration,
-                                doc = "Default duration of a source in nanoseconds")
 
-    def __getDuration(self):
+    @property
+    def duration(self):
+        """Maximum duration of the source in nanoseconds"""
         return self._getDuration()
-    duration = property(__getDuration,
-                        doc = "Maximum duration of the source in nanoseconds")
+
+
+
+# FIXME : What about non-file sources ???
+
 
 
 
@@ -322,12 +363,12 @@ class FileSourceFactory(SourceFactory):
 
     __data_type__ = "file-source-factory"
 
-    def __init__(self, filename="", project=None, **kwargs):
-        gst.info("filename:%s , project:%s" % (filename, project))
-        SourceFactory.__init__(self, **kwargs)
-        self.project = project
-        self.name = filename
-        self.displayname = os.path.basename(unquote(self.name))
+    # FIXME : filename is specific to this class and should be obvious
+    def __init__(self, filename="", **kwargs):
+        name = kwargs.pop("name", filename)
+        displayname = kwargs.pop("displayname", os.path.basename(unquote(filename)))
+        SourceFactory.__init__(self, name=name, displayname=displayname,
+                               **kwargs)
         self.lastbinid = 0
         self._length = 0
         self._thumbnail = ""
@@ -341,7 +382,7 @@ class FileSourceFactory(SourceFactory):
         gst.debug("length:%r" % length)
         self._length = length
     length = property(_get_length, _set_length,
-                      doc="Length in nanoseconds")
+                      doc="Length of the file in nanoseconds")
 
     def _get_thumbnail(self):
         return self._thumbnail
@@ -354,7 +395,6 @@ class FileSourceFactory(SourceFactory):
     ## SourceFactory implementation
     def _getDuration(self):
         return self._length
-
 
     def makeBin(self):
         """ returns a source bin with all pads """
@@ -406,12 +446,14 @@ class FileSourceFactory(SourceFactory):
             return
         bin.remove_pad(mypad)
 
+    # WTF, code used nowhere ???
     def binIsDestroyed(self, bin):
         """ Remove the given bin from the list of instances """
         if bin in self.instances:
             self.instances.remove(bin)
 
 
+    # FIXME : Shouldn't this be in a parent class ???
     def getExportSettings(self):
         """ Returns the ExportSettings corresponding to this source """
         if self.settings:
@@ -439,13 +481,11 @@ class FileSourceFactory(SourceFactory):
 
     def toDataFormat(self):
         ret = ObjectFactory.toDataFormat(self)
-        ret["filename"] = self.name
         ret["length"] = self._length
         return ret
 
     def fromDataFormat(self, obj):
         ObjectFactory.fromDataFormat(self, obj)
-        self.name = obj["filename"]
         self._length = obj["length"]
 
 
@@ -471,9 +511,9 @@ class SimpleOperationFactory(OperationFactory):
 
     def __init__(self, elementfactory, **kwargs):
         """ elementfactory is the GstElementFactory """
-        OperationFactory.__init__(self, **kwargs)
-        self.name = elementfactory.get_name()
-        self.displayname = elementfactory.get_longname()
+        OperationFactory.__init__(self, name=elementfactory.get_name(),
+                                  displayname=elementfactory.get_longname(),
+                                  **kwargs)
         # check what type the output pad is (AUDIO/VIDEO)
         for padt in elementfactory.get_pad_templates():
             if padt.direction == gst.PAD_SRC:
@@ -504,177 +544,8 @@ class SMPTETransitionFactory(TransitionFactory):
     def __init__(self, **kwargs):
         TransitionFactory.__init__(self, **kwargs)
 
-##
-## Multimedia streams, used for definition of media streams
-##
 
 
-class MultimediaStream:
-    """
-    Defines a media stream
 
-    Properties:
-    * raw (boolean) : True if the stream is a raw media format
-    * fixed (boolean) : True if the stream is entirely defined
-    * codec (string) : User-friendly description of the codec used
-    * caps (gst.Caps) : Caps corresponding to the stream
-    """
 
-    def __init__(self, caps):
-        gst.log("new with caps %s" % caps.to_string())
-        self.caps = caps
-        self.raw = False
-        self.fixed = True
-        self.codec = None
-        self._analyzeCaps()
 
-    def set_codec(self, codecstring=None):
-        if codecstring and codecstring.strip():
-            self.codec = codecstring.strip()
-
-    def _analyzeCaps(self):
-        raise NotImplementedError
-
-    def getMarkup(self):
-        """
-        Returns a pango-markup string definition of the stream
-        Subclasses need to implement this
-        """
-        raise NotImplementedError
-
-class VideoStream(MultimediaStream):
-    """
-    Video Stream
-    """
-
-    def _analyzeCaps(self):
-        if len(self.caps) > 1:
-            self.fixed = False
-
-        struct = self.caps[0]
-        self.videotype = struct.get_name()
-        if self.videotype.startswith("video/x-raw-"):
-            self.raw=True
-        else:
-            self.raw=False
-
-        try:
-            self.format = struct["format"]
-        except:
-            self.format = None
-        try:
-            self.width = struct["width"]
-        except:
-            self.width = None
-        try:
-            self.height = struct["height"]
-        except:
-            self.height = None
-        try:
-            self.framerate = struct["framerate"]
-        except:
-            # if no framerate was given, use 1fps
-            self.framerate = gst.Fraction(1,1)
-        try:
-            self.par = struct["pixel-aspect-ratio"]
-        except:
-            # use a default setting, None is not valid !
-            self.par = gst.Fraction(1,1)
-
-        if self.width and self.height and self.par:
-            self.dar = gst.Fraction(self.width * self.par.num, self.height * self.par.denom)
-        else:
-            if self.width and self.height:
-                self.dar = gst.Fraction(self.width, self.height)
-            else:
-                self.dar = gst.Fraction(4, 3)
-
-    def getMarkup(self):
-        if self.raw:
-            if self.framerate.num:
-                templ = _("<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>")
-                templ = templ % (self.dar * self.height , self.height, float(self.framerate))
-            else:
-                templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
-                templ = templ % (self.dar * self.height, self.height)
-            if self.codec:
-                templ = templ + _(" <i>(%s)</i>") % self.codec
-            return templ
-        return _("<b>Unknown Video format:</b> %s") % self.videotype
-
-class AudioStream(MultimediaStream):
-    """
-    Audio stream
-    """
-
-    def _analyzeCaps(self):
-        if len(self.caps) > 1:
-            self.fixed = False
-
-        struct = self.caps[0]
-        self.audiotype = struct.get_name()
-        if self.audiotype.startswith("audio/x-raw-"):
-            self.raw = True
-        else:
-            self.raw = False
-
-        if self.audiotype == "audio/x-raw-float":
-            self.float = True
-        else:
-            self.float = False
-
-        try:
-            self.channels = struct["channels"]
-        except:
-            self.channels = None
-        try:
-            self.rate = struct["rate"]
-        except:
-            self.rate = None
-        try:
-            self.width = struct["width"]
-        except:
-            self.width = None
-        try:
-            self.depth = struct["depth"]
-        except:
-            self.depth = self.width
-
-    def getMarkup(self):
-        if self.raw:
-            templ = _("<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)")
-            templ = templ % (self.channels, self.rate, self.width)
-            if self.codec:
-                templ = templ + _(" <i>(%s)</i>") % self.codec
-            return templ
-        return _("<b>Unknown Audio format:</b> %s") % self.audiotype
-
-class TextStream(MultimediaStream):
-    """
-    Text media stream
-    """
-
-    def _analyzeCaps(self):
-        if len(self.caps) > 1:
-            self.fixed = False
-
-        self.texttype = self.caps[0].get_name()
-
-    def getMarkup(self):
-        return _("<b>Text:</b> %s") % self.texttype
-
-def get_stream_for_caps(caps):
-    """
-    Returns the appropriate MediaStream corresponding to the
-    given caps.
-    """
-    val = caps.to_string()
-    if val.startswith("video/"):
-        return VideoStream(caps)
-    elif val.startswith("audio/"):
-        return AudioStream(caps)
-    elif val.startswith("text/"):
-        return TextStream(caps)
-    else:
-        # FIXME : we should have an 'unknow' data stream class
-        return None

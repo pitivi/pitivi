@@ -312,7 +312,8 @@ class Discoverer(object, Signallable):
 
             if caps and caps.is_fixed():
                 if not self.currentfactory:
-                    self.currentfactory = FileSourceFactory(self.current, self.project)
+                    self.currentfactory = FileSourceFactory(filename=self.current,
+                                                            project=self.project)
                     self.emit("new_sourcefilefactory", self.currentfactory)
                 if caps.to_string().startswith("audio/x-raw") and not self.currentfactory.audio_info:
                     self.currentfactory.audio_info = caps
@@ -407,12 +408,14 @@ class Discoverer(object, Signallable):
         gst.info("pad:%s caps:%s is_last:%s" % (pad, capsstr, is_last))
         if capsstr.startswith("video/x-raw"):
             if not self.currentfactory:
-                self.currentfactory = FileSourceFactory(self.current, self.project)
+                self.currentfactory = FileSourceFactory(filename=self.current,
+                                                        project=self.project)
                 self.emit("new_sourcefilefactory", self.currentfactory)
             self._newVideoPadCb(element, pad)
         elif capsstr.startswith("audio/x-raw"):
             if not self.currentfactory:
-                self.currentfactory = FileSourceFactory(self.current, self.project)
+                self.currentfactory = FileSourceFactory(filename=self.current,
+                                                        project=self.project)
                 self.emit("new_sourcefilefactory", self.currentfactory)
             self._newAudioPadCb(element, pad)
         else:
