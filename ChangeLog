@@ -1,5 +1,18 @@
 2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/pitivi.py:
+	Only import pitivi.ui for Interactive subclass
+	* pitivi/Makefile.am:
+	* pitivi/ui/Makefile.am:
+	* pitivi/ui/dnd.py:
+	Move dnd module to pitivi.ui
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/viewer.py:
+	Adjust code for dnd move
+
+2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/configure.py.in:
 	Fix header
 

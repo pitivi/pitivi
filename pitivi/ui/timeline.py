@@ -28,10 +28,10 @@ import gtk
 import gst
 
 import pitivi.instance as instance
-import pitivi.dnd as dnd
 from pitivi.timeline.source import TimelineFileSource, TimelineBlankSource
 from pitivi.timeline.objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 
+import dnd
 from complextimeline import ComplexTimelineWidget
 
 class TimelineWidget(gtk.VBox):

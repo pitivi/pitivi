@@ -33,11 +33,11 @@ import threading
 from urllib import unquote
 
 import pitivi.instance as instance
-import pitivi.dnd as dnd
 from pitivi.configure import get_pixmap_dir
 from pitivi.signalgroup import SignalGroup
 from pitivi.threads import Thread
 
+import dnd
 from filelisterrordialog import FileListErrorDialog
 
 from gettext import gettext as _

@@ -13,7 +13,6 @@ pitivi_PYTHON = \
 	configure.py 	\
 	device.py	\
 	discoverer.py 	\
-	dnd.py 		\
 	effects.py	\
 	instance.py 	\
 	objectfactory.py \

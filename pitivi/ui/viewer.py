@@ -27,10 +27,10 @@ import gst
 import pitivi.plumber as plumber
 import pitivi.instance as instance
 from pitivi.bin import SmartTimelineBin
-import pitivi.dnd as dnd
 from pitivi.signalgroup import SignalGroup
 
 from pitivi.utils import time_to_string
+import dnd
 
 class PitiviViewer(gtk.VBox):
     """ Pitivi's viewer widget with controls """

@@ -5,6 +5,7 @@ ui_PYTHON =			\
 	complexinterface.py	\
 	complexlayer.py		\
 	complextimeline.py	\
+	dnd.py			\
 	exportsettingswidget.py	\
 	filelisterrordialog.py	\
 	glade.py		\

@@ -28,7 +28,6 @@ import gst
 import check
 import instance
 import device
-from ui import mainwindow
 from pitivigstutils import patch_gst_python
 from playground import PlayGround
 from project import Project, file_is_project
@@ -224,9 +223,10 @@ class InteractivePitivi(Pitivi):
                         *args, **kwargs)
         self.mainloop = mainloop
 
-        # we're starting a GUI for the time being
-        self._gui = mainwindow.PitiviMainWindow(self)
+        from ui.mainwindow import PitiviMainWindow
+        self._gui = PitiviMainWindow(self)
         self._gui.load()
+
         self._gui.show()
 
         if filepath:
