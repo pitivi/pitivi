@@ -179,6 +179,7 @@ class ObjectFactory(Serializable):
         stl = []
         # FIXME : file is FileSourceFactory specific !
         # FIXME : and it might not be a file:// but maybe a http://
+        # FIXME : we're only importing gobject for the markup ! Extract the code
         filename = os.path.basename(unquote(self.name))
         if not self.title:
             stl.append(_("<b>%s</b><small>") % gobject.markup_escape_text(filename))

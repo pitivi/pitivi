@@ -32,7 +32,6 @@ Convenience functions for creating the output media sinks
 #
 # They should be provided by a generic sink provider
 
-import gobject
 import gst
 from gst import interfaces
 
@@ -59,11 +58,12 @@ def get_video_sink():
     # FIXME : YUCK, I'm guessing most of these issues (qos/max-lateness)
     # have been solved since
     if autovideosink.realsink:
-        if "force-aspect-ratio"in [prop.name for prop in gobject.list_properties(autovideosink.realsink)]:
+        props = list(autovideosink.realsink.props)
+        if "force-aspect-ratio"in [prop.name for prop in props]:
             autovideosink.realsink.set_property("force-aspect-ratio", True)
-        if "qos"in [prop.name for prop in gobject.list_properties(autovideosink.realsink)]:
+        if "qos" in [prop.name for prop in props]:
             autovideosink.realsink.set_property("qos", False)
-        if "max-lateness"in [prop.name for prop in gobject.list_properties(autovideosink.realsink)]:
+        if "max-lateness"in [prop.name for prop in props]:
             autovideosink.realsink.set_property("max-lateness", -1)
     return autovideosink
 

@@ -1,5 +1,14 @@
 2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* pitivi/device.py:
+	* pitivi/objectfactory.py:
+	* pitivi/plumber.py:
+	* pitivi/threads.py:
+	* pitivi/thumbnailer.py:
+	Remove even more gobject usage in core
+
+2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/pitivi.py:
 	Only import pitivi.ui for Interactive subclass
 	* pitivi/Makefile.am:

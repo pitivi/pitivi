@@ -23,7 +23,6 @@ Threading support
 """
 
 import threading
-import gobject
 import gst
 
 from signalinterface import Signallable
@@ -53,7 +52,7 @@ class Thread(threading.Thread, Signallable):
     def run(self):
         """ thread processing """
         self.process()
-        gobject.idle_add(self.emit, "done")
+        self.emit("done")
 
     def process(self):
         """ Implement this in subclasses """

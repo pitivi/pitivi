@@ -24,9 +24,9 @@
 Classes and Methods for Device handling and usage
 """
 
-import gobject
 import gst
 from objectfactory import ObjectFactory, SourceFactory
+from signalinterface import Signallable
 
 try:
     import dbus
@@ -64,7 +64,7 @@ def get_probe():
         return HalDeviceProbe()
     return None
 
-class DeviceProbe(gobject.GObject):
+class DeviceProbe(object, Signallable):
     """
     Allows listing of the various devices available.
 
@@ -73,17 +73,10 @@ class DeviceProbe(gobject.GObject):
     This should be subclassed
     """
 
-    __gsignals__ = {
-        "device-added" : (gobject.SIGNAL_RUN_LAST,
-                          gobject.TYPE_NONE,
-                          (gobject.TYPE_PYOBJECT, )),
-        "device-removed" : (gobject.SIGNAL_RUN_LAST,
-                            gobject.TYPE_NONE,
-                            (gobject.TYPE_PYOBJECT, ))
+    __signals__ = {
+        "device-added" : ["device"],
+        "device-removed" : ["device"]
         }
-
-    def __init__(self):
-        gobject.GObject.__init__(self)
 
     def getSourceDevices(self, media_type):
         """ Returns a list of available SourceDeviceFactory for

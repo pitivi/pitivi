@@ -28,16 +28,15 @@ import gobject
 import gst
 from elements.singledecodebin import SingleDecodeBin
 from elements.thumbnailsink import PixbufThumbnailSink
+from signalinterface import Signallable
 
-class Thumbnailer(gst.Pipeline):
+class Thumbnailer(gst.Pipeline, Signallable):
     """
     Convenience pipeline to quickly create thumbnails for a given uri
     """
 
-    __gsignals__ = {
-        "thumbnail" : (gobject.SIGNAL_RUN_LAST,
-                       gobject.TYPE_NONE,
-                       ( gobject.TYPE_PYOBJECT, gobject.TYPE_UINT64 ))
+    __signals__ = {
+        "thumbnail" : ["pixbuf", "timestamp"]
         }
 
 
