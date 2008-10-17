@@ -1,3 +1,8 @@
+2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/mainwindow.py:
+	Fix some code that was badly merged. Re-adds proper webcam detection
+
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
 	* pitivi/dnd.py:

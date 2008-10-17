@@ -109,6 +109,11 @@ class PitiviMainWindow(gtk.Window):
         self.pitivi.playground.connect("error", self._playGroundErrorCb)
         self.pitivi.current.sources.connect("file_added", self._sourcesFileAddedCb)
 
+        # if no webcams available, hide the webcam action
+        self.pitivi.deviceprobe.connect("device-added", self.__deviceChangeCb)
+        self.pitivi.deviceprobe.connect("device-removed", self.__deviceChangeCb)
+        if len(self.pitivi.deviceprobe.getVideoSourceDevices()) < 1:
+            self.webcam_button.set_sensitive(False)
         self.show_all()
 
     def _encodingDialogDestroyCb(self, unused_dialog):
@@ -418,7 +423,7 @@ class PitiviMainWindow(gtk.Window):
 
     # Import from Webcam callback
     def _ImportWebcam(self,unused_action):
-        w = WebcamManagerDialog(instance.PiTiVi)
+        w = WebcamManagerDialog(self.pitivi)
         w.show()
 
     # Capture network stream callback
