@@ -46,6 +46,14 @@ from gettext import gettext as _
 VIDEO_TRACK_HEIGHT = 50
 AUDIO_TRACK_HEIGHT = 20
 
+# FIXME: I like the idea of separating appearnce from implementation using
+# some scheme like this, but I'm not sure this implementation is the way to
+# go. The question is what will be the best way of letting people with good
+# aesthetic sense tweak the user interface so that it has a pleasing
+# appearance. It'd be good to build that support into the UI rather than
+# having to hack it in later. Unfortunately, these "style" objects aren't
+# powerful enough for that use, and are also tricky to use.
+
 # visual styles for sources in the UI
 VIDEO_SOURCE = (
     goocanvas.Rect,
@@ -139,6 +147,12 @@ ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
 # TODO: replace this with custom cursor
 RAZOR_CURSOR = gtk.gdk.Cursor(gtk.gdk.XTERM)
 
+# FIXME: do we want this expressed in pixels or miliseconds?
+# If we express it in miliseconds, then we can have the core handle edge
+# snapping (it's really best implemented in the core). On the other hand, if
+# the dead-band is a constant unit of time, it will be too large at high zoom,
+# and too small at low zoom. So we might want to be able to adjust the
+# deadband from the UI.
 # default number of pixels to use for edge snaping
 DEADBAND = 5
 
@@ -171,12 +185,14 @@ class ComplexTrack(SmartGroup, Zoomable):
 
     def __init__(self, *args, **kwargs):
         SmartGroup.__init__(self, *args, **kwargs)
+        # FIXME: all of these should be private
         self.widgets = {}
         self.elements = {}
         self.sig_ids = None
         self.comp = None
         self.object_style = None
 
+    # FIXME: this should be set_model(), overriding BaseView
     def set_composition(self, comp):
         if self.sig_ids:
             for sig in self.sig_ids:
@@ -187,6 +203,8 @@ class ComplexTrack(SmartGroup, Zoomable):
             added = comp.connect("source-added", self._objectAdded)
             removed = comp.connect("source-removed", self._objectRemoved)
             self.sig_ids = (added, removed)
+            # FIXME: this is total crap right here. All tracks should be the
+            # same size. Maybe we have the audio track initially expanded.
             if comp.media_type == MEDIA_TYPE_VIDEO:
                 self.object_style = VIDEO_SOURCE
                 self.height = VIDEO_TRACK_HEIGHT
@@ -195,16 +213,28 @@ class ComplexTrack(SmartGroup, Zoomable):
                 self.height = AUDIO_TRACK_HEIGHT
 
     def _objectAdded(self, unused_timeline, element):
+        # FIXME: here we assume that the object added is always a
+        # TimelineFileSource
         w = ComplexTimelineObject(element, self.comp, self.object_style)
+        # FIXME: this is crack: here, we're making the item itself draggable
+        # below, we're making the resize handles draggable. 
         make_dragable(self.canvas, w, start=self._start_drag,
             end=self._end_drag, moved=self._move_source_cb)
+        # FIXME: ideally the TimelineFileSource itself would handle this
+        # callback, but we control too much positioning here. We'd have to
+        # make the timeline object's zoomable, as well, and it makes it hard
+        # to do edge snapping, because we actually keep track of the edges
+        # here. Having the timeline objects do edge snapping would mean having
+        # each timeline object maintain a pointer to all the "edges" they'd
+        # have to snap. 
         element.connect("start-duration-changed", self.start_duration_cb, w)
         self.widgets[element] = w
         self.elements[w] = element
-        #element.set_data("widget", w)
         self.start_duration_cb(element, element.start, element.duration, w)
         self.add_child(w)
+        # FIXME: see util.py
         make_selectable(self.canvas, w.bg)
+        # FIXME: see util.py
         make_dragable(self.canvas, w.l_handle, 
             start=self._start_drag, moved=self._trim_source_start_cb,
             cursor=LEFT_SIDE)
@@ -237,6 +267,11 @@ class ComplexTrack(SmartGroup, Zoomable):
         element.setStartDurationTime(max(self.canvas.snap_obj_to_edit(element,
             self.pixelToNs(pos[0])), 0))
 
+    # FIXME: these two methods should be in the ComplexTimelineObject class at least, or in
+    # their own class possibly. But they're here because they do
+    # edge-snapping. If we move edge-snapping into the core, this won't be a
+    # problem.
+
     def _trim_source_start_cb(self, item, pos):
         element = item.element
         cur_end = element.start + element.duration
@@ -267,6 +302,7 @@ class ComplexTrack(SmartGroup, Zoomable):
         #FIXME: only for sources
         element.setMediaStartDurationTime(gst.CLOCK_TIME_NONE, new_duration)
 
+    # FIXME: this is part of the zoomable interface I want to get rid of
     def zoomChanged(self):
         """Force resize if zoom ratio changes"""
         for child in self.elements:
@@ -274,6 +310,13 @@ class ComplexTrack(SmartGroup, Zoomable):
             start = element.start
             duration = element.duration
             self.start_duration_cb(self, start, duration, child)
+
+# FIXME: a huge problem with the way I've implemented this is that the
+# property interface in goocanvas is a secondary interface. You're meant to
+# use transformation matrices and bounds. This caused problems for the simple
+# UI, because I wanted to implement expanding containers in the easiest way
+# possible (i.e., using signals) and no signals are sent when you reposition
+# an item with a transformation.
 
 class ComplexTimelineObject(goocanvas.Group):
 
@@ -301,6 +344,8 @@ class ComplexTimelineObject(goocanvas.Group):
             self.spacer]
         for thing in self.children:
             self.add_child(thing)
+
+        # FIXME: this is ghetto. 
         self.connect("notify::x", self.do_set_x)
         self.connect("notify::y", self.do_set_y)
         self.connect("notify::width", self.do_set_width)
@@ -359,6 +404,8 @@ class ComplexTimelineObject(goocanvas.Group):
         self.l_handle.props.height = height
         self.r_handle.props.height = height
         self._size_spacer()
+
+# FIXME: this class should be renamed CompositionTracks, or maybe just Tracks.
 
 class CompositionLayers(goocanvas.Canvas, Zoomable):
     """ Souped-up VBox that contains the timeline's CompositionLayer """
@@ -428,6 +475,14 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
 ## nearest edit point. We do this here so we can keep track of edit points
 ## for all layers/tracks.
 
+    # FIXME: move this code into the core. The core should provide some method
+    # for being notified that updates need to happen, though in some cases
+    # we'll probably want this to update automatically. In other cases we'll
+    # want the UI to be able to disable it altogether. But what we're doing
+    # here is duplicating information that already exists in the core. As we
+    # add features to the core, like Critical Points (Keyframes), this code
+    # will have to be updated. Bad.
+
     def update_editpoints(self):
         #FIXME: this might be more efficient if we used a binary sort tree,
         # updated only when the timeline actually changes instead of before
@@ -480,6 +535,12 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
 
 ## Editing Operations
 
+    # FIXME: here once again we're doing something that would be better done
+    # in the core. As we add different types of objects in the Core, we'll
+    # have to modify this code here (maybe there are different ways of
+    # deleting different objects: you might delete() a source, but unset() a
+    # keyframe)
+
     def deleteSelected(self, unused_action):
         for obj in self._selected_sources:
             if obj.comp:
@@ -487,6 +548,11 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
                     collapse_neighbours=False)
         set_selection(self, set())
         return True
+
+
+    # FIXME: the razor is the one toolbar tool that violates the noun-verb
+    # principle. Do I really want to make an exception for this? What about
+    # just double-clicking on the source like jokosher?
 
     def activateRazor(self, unused_action):
         self._cursor = RAZOR_CURSOR
@@ -528,6 +594,10 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
                     self.pixelToNs(x)))
         return True
 
+    # FIXME: this DEFINITELY needs to be in the core. Also, do we always want
+    # to split linked sources? Should the user be forced to un-link linked
+    # sources when they only wisth to split one of them? If not, 
+
     def _splitSource(self, obj, editpoint):
         comp = obj.comp
         element = obj.element
@@ -568,6 +638,10 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
         new.setMediaStartDurationTime(b_media_start, b_dur)
         new.setStartDurationTime(b_start, b_dur)
         comp.addSource(new, 0, True)
+
+    # FIXME: should be implemented in core, if at all. Another alternative
+    # would be directly suppporting ripple edits in the core, rather than
+    # doing select after + move selection. 
 
     def selectBeforeCurrent(self, unused_action):
         pass

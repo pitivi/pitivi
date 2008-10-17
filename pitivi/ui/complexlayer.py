@@ -54,6 +54,13 @@ import pitivi.timeline.timeline
 #       A layer was removed
 #
 
+# FIXME: this code has completely the wrong semantics. It's original intent
+# was to support layer editing (as-in priority), but we can do this in other
+# ways. Currently, it's actually used to implement tracks. In either case,
+# it's a needless level of indirection. Why can't the timeline composition
+# emit track-added, track-removed signals directly?
+
+
 class LayerInfo:
     """ Information on a layer for the complex timeline widgets """
 

@@ -49,6 +49,15 @@ import gst
 # . pixelToNs(pixels)
 # . nsToPixels(time)
 
+# FIXME: this might be poor design. while sharing the adjustment 
+# does provide an easy way of ensuring that all the UI elements are
+# updated, it's a little bit kludgey when it comes to sharing the
+# adjustment among elements which have children. In general, it migh
+# be better to factor this interface out into a separate Transformation
+# class which can handle the conversion between coordinate systems, for
+# both horizontal and vertical coordinates. This interface only handles
+# the horizontal.
+
 class Zoomable:
 
     zoomratio = 0
@@ -100,50 +109,3 @@ class Zoomable:
 
     def setChildZoomAdjustment(self, adj):
         pass
-
-# ZoomableObject(Zoomable)
-# -----------------------
-# Interface for UI widgets which wrap PiTiVi timeline objects.
-#
-# Methods:
-# . setObject
-# . getObject
-# . startDurationChanged
-# . getPixelPosition
-# . getPixelWidth
-
-class ZoomableObject(Zoomable):
-
-    object = None
-    width = None
-    position = None
-
-    def setTimelineObject(self, object):
-        if self.object:
-            self.object.disconnect(self._start_duration_changed_sigid)
-        self.object = object
-        if object:
-            self.start_duration_changed_sigid = object.connect(
-                "start-duration-changed", self._start_duration_changed_cb)
-
-    def getTimelineObject(self):
-        return self.object
-
-    def _start_duration_changed(self, object, start, duration):
-        self.width = self.nsToPixel(duration)
-        self.position = self.nsToPixel(start)
-        self.startDurationChanged()
-
-    def startDurationChanged(self):
-        """Overriden by subclasses"""
-        pass
-
-    def zoomChanged(self):
-        self._start_duration_changed(self.object, self.object.start,
-            self.object.duration)
-
-    def getPixelPosition(self):
-        return self.position
-
-    def getPixelWidth(self):
-        return self.width

@@ -1,3 +1,11 @@
+2008-10-17  Brandon Lewis  <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/complexinterface.py
+	* pitivi/ui/complexlayer.py
+	* pitivi/ui/complextimeline.py
+	* pitivi/ui/timeline.py
+	Code review
+	
 2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
 
 	* pitivi/device.py:

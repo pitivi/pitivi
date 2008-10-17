@@ -27,7 +27,14 @@ Main timeline widget
 import gtk
 import gst
 
+# FIXME: this file is obsolete. we don't need this layer of indirection,
+# since we no longer need to switch between timelines. The DnD code 
+# should be moved to complex.py, and that file should be renamed
+# timeline.py
+
 import pitivi.instance as instance
+import dnd
+
 from pitivi.timeline.source import TimelineFileSource, TimelineBlankSource
 from pitivi.timeline.objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 
@@ -79,12 +86,7 @@ class TimelineWidget(gtk.VBox):
             media_type=MEDIA_TYPE_VIDEO,
             name=filefactory.name)
 
-        # ONLY FOR SIMPLE TIMELINE : if video-only, we link a blank audio object
-        if not filefactory.is_audio:
-            audiobrother = TimelineBlankSource(factory=filefactory,
-                media_type=MEDIA_TYPE_AUDIO, name=filefactory.name)
-            source.setBrother(audiobrother)
-
+        # FIXME: access of instance.PiTiVi
         timeline = instance.PiTiVi.current.timeline
         if pos_ == -1:
             timeline.videocomp.appendSource(source)
@@ -95,7 +97,8 @@ class TimelineWidget(gtk.VBox):
             timeline.videocomp.prependSource(source)
 
     def _dragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
-        #TODO: temporarily add source to timeline, and put it in drag mode
+
+        # FIXME: temporarily add source to timeline, and put it in drag mode
         # so user can see where it will go
         gst.info("SimpleTimeline x:%d , source would go at %d" % (x, 0))
 
@@ -107,12 +110,14 @@ class TimelineWidget(gtk.VBox):
         selection, targetType, timestamp):
         gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
             (targetType, selection.data))
+        # FIXME: need to handle other types
         if targetType == dnd.TYPE_PITIVI_FILESOURCE:
             uri = selection.data
         else:
             context.finish(False, False, timestamp)
         self._gotFileFactory(instance.PiTiVi.current.sources[uri], x, y)
         context.finish(True, False, timestamp)
+        # FIXME: access of instance, and playground
         instance.PiTiVi.playground.switchToTimeline()
 
 
