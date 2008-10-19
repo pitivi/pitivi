@@ -1,5 +1,10 @@
 2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
 
+	* bin/pitivi.in:
+	Fix ambiguous naming.
+
+2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* docs/pylint.rc:
 	We also accept _addSource (from SmartBin) as being a valid place for
 	create variables.
