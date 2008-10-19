@@ -1,3 +1,9 @@
+2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* docs/pylint.rc:
+	We also accept _addSource (from SmartBin) as being a valid place for
+	create variables.
+
 2008-10-17  Brandon Lewis  <brandon_lewis@berkeley.edu>
 
 	* pitivi/ui/complexinterface.py
