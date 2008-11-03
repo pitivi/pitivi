@@ -123,10 +123,12 @@ class ImageFreeze(gst.Element):
                 gst.debug("accepted !")
                 # 4. When we have an accepted caps downstream, we store the negotiated
                 #    framerate and return
+                if not candidate.has_key("framerate"):
+                    candidate["framerate"] = gst.Fraction(25,1)
                 self._outputrate = candidate["framerate"]
                 self._bufferduration = gst.SECOND * self._outputrate.denom / self._outputrate.num
-                self._srccaps = candidate
-                return self.srcpad.set_caps(candidate)
+                self._srccaps = candidate.copy()
+                return self.srcpad.set_caps(self._srccaps)
 
         # 5. If we can't find an accepted candidate, we return False
         return False
@@ -149,9 +151,12 @@ class ImageFreeze(gst.Element):
             gst.debug("task paused")
 
             self._needsegment = True
+            gst.debug("Sending FLUS_STOP event")
             if flags & gst.SEEK_FLAG_FLUSH:
                 self.srcpad.push_event(gst.event_new_flush_stop())
+            gst.debug("Restarting our task")
             self.srcpad.start_task(self._our_task)
+            gst.debug("Returning True")
             return True
 
         return self.sinkpad.push_event(event)
