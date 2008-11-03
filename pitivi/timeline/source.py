@@ -24,7 +24,6 @@ Timeline source objects
 """
 
 import gst
-from pitivi.elements.singledecodebin import SingleDecodeBin
 from objects import TimelineObject, MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO, MEDIA_TYPE_NONE
 
 class TimelineSource(TimelineObject):
@@ -91,6 +90,8 @@ class TimelineSource(TimelineObject):
         Sub-classes not implementing this method will need to override
         the _makeGnlObject() method.
         """
+        #FIXME : Maybe the default implementation should be to call
+        # the factory's make*bin() method !
         raise NotImplementedError
 
     def _setMediaStartDurationTime(self, start=gst.CLOCK_TIME_NONE,
@@ -205,12 +206,12 @@ class TimelineFileSource(TimelineSource):
 
     def makeGnlSourceContents(self):
         if self.isaudio:
-            caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
+            self.decodebin = self.factory.makeAudioBin()
         elif self.isvideo:
-            caps = gst.caps_from_string("video/x-raw-yuv;video/x-raw-rgb")
+            self.decodebin = self.factory.makeVideoBin()
         else:
             raise NameError, "media type is NONE !"
-        self.decodebin = SingleDecodeBin(caps=caps, uri=self.factory.name)
+
         if self.isaudio:
             self.volume_element = gst.element_factory_make("volume", "internal-volume")
             self.audioconv = gst.element_factory_make("audioconvert", "audioconv")
@@ -257,29 +258,33 @@ class TimelineFileSource(TimelineSource):
         """ make the brother element """
         self.gnlobject.info("making filesource brother")
         # find out if the factory provides the other element type
+
+        # FIXME : this is atrociously complicated code for such a simple
+        # thing. We should just figure out the brother stream and then ask
+        # To create the object for the same factory by the other stream
+
+        # FIXME : The factory knows which stream is the brother of another !!!
+
         if self.media_type == MEDIA_TYPE_NONE:
             return None
-        if self.isvideo:
-            if not self.factory.is_audio:
-                return None
-            brother = TimelineFileSource(media_start=self.media_start,
-                                         media_duration=self.media_duration,
-                                         factory=self.factory, start=self.start,
-                                         duration=self.duration,
-                                         media_type=MEDIA_TYPE_AUDIO,
-                                         name=self.name + "-brother")
-        elif self.isaudio:
-            if not self.factory.is_video:
-                return None
-            brother = TimelineFileSource(media_start=self.media_start,
-                                         media_duration=self.media_duration,
-                                         factory=self.factory, start=self.start,
-                                         duration=self.duration,
-                                         media_type=MEDIA_TYPE_VIDEO,
-                                         name=self.name + "-brother")
+        if not self.isaudio and not self.isvideo:
+            return None
+        # handle blank cases
+        classtype = TimelineFileSource
+        if self.isvideo and not self.factory.is_audio:
+            classtype = TimelineBlankSource
+        if self.isaudio and not self.factory.is_video:
+            classtype = TimelineBlankSource
+        if self.isaudio:
+            mtype = MEDIA_TYPE_VIDEO
         else:
-            brother = None
-        return brother
+            mtype = MEDIA_TYPE_AUDIO
+        return classtype(media_start=self.media_start,
+                         media_duration=self.media_duration,
+                         factory=self.factory, start=self.start,
+                         duration=self.duration,
+                         media_type=mtype,
+                         name=self.name + "-brother")
 
 
     def getExportSettings(self):

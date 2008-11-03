@@ -37,6 +37,8 @@ from stream import get_stream_for_caps
 
 from gettext import gettext as _
 
+from elements.singledecodebin import SingleDecodeBin
+
 class ObjectFactory(Serializable):
     """
     base class for object factories which provide elements to use
@@ -206,7 +208,6 @@ class ObjectFactory(Serializable):
         """ returns a video only bin """
         raise NotImplementedError
 
-
     # FIXME : ALL the following methods will die once we switch to a saner
     # FIXME : and more flexible way of doing file save/load
     # Serializable methods
@@ -302,13 +303,6 @@ class ObjectFactory(Serializable):
 # FIXME : It might not just be files (network sources ?) !
 # FIMXE : It might not even had a URI ! (audio/video generators for ex)
 
-
-
-
-# FIXME : Figure out everything which is Source specific and put it here
-# FIXME : It might not just be files (network sources ?) !
-# FIMXE : It might not even had a URI ! (audio/video generators for ex)
-
 class SourceFactory(ObjectFactory):
     """
     Provides sources usable in a timeline
@@ -346,12 +340,6 @@ class SourceFactory(ObjectFactory):
     def duration(self):
         """Maximum duration of the source in nanoseconds"""
         return self._getDuration()
-
-
-
-# FIXME : What about non-file sources ???
-
-
 
 
 # FIXME : What about non-file sources ???
@@ -408,13 +396,13 @@ class FileSourceFactory(SourceFactory):
         bin.add(src, dbin)
         src.link(dbin)
 
-        dbin.connect("new-decoded-pad", self._binNewDecodedPadCb, bin )
-        dbin.connect("removed-decoded-pad", self._binRemovedDecodedPadCb, bin)
+        dbin.connect("new-decoded-pad", self.__binNewDecodedPadCb, bin )
+        dbin.connect("removed-decoded-pad", self.__binRemovedDecodedPadCb, bin)
 
         self.instances.append(bin)
         return bin
 
-    def _binNewDecodedPadCb(self, unused_dbin, pad, unused_is_last, bin):
+    def __binNewDecodedPadCb(self, unused_dbin, pad, unused_is_last, bin):
         gst.info(pad.get_caps().to_string())
         # add it as ghost_pad to the bin
         if "audio" in pad.get_caps().to_string():
@@ -436,7 +424,7 @@ class FileSourceFactory(SourceFactory):
         else:
             return
 
-    def _binRemovedDecodedPadCb(self, unused_dbin, pad, bin):
+    def __binRemovedDecodedPadCb(self, unused_dbin, pad, bin):
         gst.info("pad %s was removed" % pad)
         if "audio" in pad.get_caps().to_string():
             mypad = bin.get_pad("asrc")
@@ -445,6 +433,17 @@ class FileSourceFactory(SourceFactory):
         else:
             return
         bin.remove_pad(mypad)
+
+    def makeAudioBin(self):
+        caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
+        return self.__makeSingleDecodeBin(caps)
+
+    def makeVideoBin(self):
+        caps = gst.caps_from_string("video/x-raw-yuv;video/x-raw-rgb")
+        return self.__makeSingleDecodeBin(caps)
+
+    def __makeSingleDecodeBin(self, caps):
+        return SingleDecodeBin(caps=caps, uri=self.name)
 
     # WTF, code used nowhere ???
     def binIsDestroyed(self, bin):
