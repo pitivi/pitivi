@@ -73,7 +73,7 @@ class TimelineSource(TimelineObject):
         except:
             gst.debug("Failure in calling self.makeGnlSourceContents()")
             import sys
-            print sys.exc_info()
+            sys.excepthook(*sys.exc_info())
             return None
         gnl.add(obj)
 
