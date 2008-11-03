@@ -29,8 +29,13 @@ import os.path
 import gobject
 import gst
 
-from objectfactory import FileSourceFactory
+from objectfactory import FileSourceFactory, PictureFileSourceFactory
 from signalinterface import Signallable
+
+# FIXME: We need to store more information regarding streams
+# i.e. remember the path took to get to a raw stream, and figure out
+# what encoded format it is
+# We will need that in order to create proper Stream objects.
 
 class Discoverer(object, Signallable):
     """
@@ -78,7 +83,7 @@ class Discoverer(object, Signallable):
         self.error = None # reason for error
         self.extrainfo = None # extra information about the error
         self.fakesink = None
-        self.isimage = False # Used to know if the file is an image
+        self.__is_image = False # Used to know if the file is an image
         self.bus = None
 
     def addFile(self, filename):
@@ -144,9 +149,9 @@ class Discoverer(object, Signallable):
             self.emit('not_media_file', self.current, self.error, self.extrainfo)
         elif self.currentfactory:
             self.currentfactory.addMediaTags(self.currentTags)
-            if self.isimage:
+            if self.__is_image:
                 self.currentfactory.thumbnail = gst.uri_get_location(self.current)
-            if not self.currentfactory.duration and not self.isimage:
+            if not self.currentfactory.duration and not self.__is_image:
                 self.emit('not_media_file', self.current,
                           _("Could not establish the duration of the file."),
                           _("This clip seems to be in a format which cannot be accessed in a random fashion."))
@@ -162,7 +167,7 @@ class Discoverer(object, Signallable):
         self.nomorepads = False
         self.error = None
         self.extrainfo = None
-        self.isimage = False
+        self.__is_image = False
 
         # restart an analysis if there's more...
         if self.queue:
@@ -207,7 +212,8 @@ class Discoverer(object, Signallable):
         self.signalsid.append((dbin, dbin.connect("unknown-type", self._unknownTypeCb)))
         self.signalsid.append((dbin, dbin.connect("no-more-pads", self._noMorePadsCb)))
         tfind = dbin.get_by_name("typefind")
-        self.signalsid.append((tfind, tfind.connect("have-type", self._typefindHaveTypeCb)))
+        self.signalsid.append((tfind.get_pad("src"),
+                               tfind.get_pad("src").connect("notify::caps", self.__test)))
         self.pipeline.add(source, dbin)
         source.link(dbin)
         gst.info("analysis pipeline created")
@@ -234,9 +240,9 @@ class Discoverer(object, Signallable):
         # return False so we don't get called again
         return False
 
-    def _typefindHaveTypeCb(self, unused_typefind, unused_perc, caps):
-        if caps.to_string().startswith("image/"):
-            self.isimage = True
+    def __test(self, apad, something):
+        if apad.get_caps().to_string().startswith("image/"):
+            self.__is_image = True
 
     def _busMessageCb(self, unused_bus, message):
         if self.thisdone:
@@ -251,7 +257,7 @@ class Discoverer(object, Signallable):
                     # Let's get the information from all the pads
                     self._getPadsInfo()
                     # Only go to PLAYING if we have an video stream to thumbnail
-                    if self.currentfactory and self.currentfactory.is_video and not self.isimage:
+                    if self.currentfactory and self.currentfactory.is_video and not self.__is_image:
                         gst.log("pipeline has gone to PAUSED, now pushing to PLAYING")
                         if self.pipeline.set_state(gst.STATE_PLAYING) == gst.STATE_CHANGE_FAILURE:
                             if not self.error:
@@ -314,9 +320,9 @@ class Discoverer(object, Signallable):
 
             if caps and caps.is_fixed():
                 if not self.currentfactory:
-                    self.currentfactory = FileSourceFactory(filename=self.current,
-                                                            project=self.project)
+                    self.currentfactory = self.__makefactory()
                     self.emit("new_sourcefilefactory", self.currentfactory)
+                # FIXME : we should just have to tell the factory that it contains a new stream
                 if caps.to_string().startswith("audio/x-raw") and not self.currentfactory.audio_info:
                     self.currentfactory.audio_info = caps
                 elif caps.to_string().startswith("video/x-raw") and not self.currentfactory.video_info:
@@ -410,14 +416,12 @@ class Discoverer(object, Signallable):
         gst.info("pad:%s caps:%s is_last:%s" % (pad, capsstr, is_last))
         if capsstr.startswith("video/x-raw"):
             if not self.currentfactory:
-                self.currentfactory = FileSourceFactory(filename=self.current,
-                                                        project=self.project)
+                self.currentfactory = self.__makefactory()
                 self.emit("new_sourcefilefactory", self.currentfactory)
             self._newVideoPadCb(element, pad)
         elif capsstr.startswith("audio/x-raw"):
             if not self.currentfactory:
-                self.currentfactory = FileSourceFactory(filename=self.current,
-                                                        project=self.project)
+                self.currentfactory = self.__makefactory()
                 self.emit("new_sourcefilefactory", self.currentfactory)
             self._newAudioPadCb(element, pad)
         else:
@@ -440,3 +444,11 @@ class Discoverer(object, Signallable):
             self.pipeline.remove(self.fakesink)
             self.fakesink = None
         # normally state changes should end the discovery
+
+    def __makefactory(self):
+        if self.__is_image:
+            facttype = PictureFileSourceFactory
+        else:
+            facttype = FileSourceFactory
+        return facttype(filename=self.current,
+                        project=self.project)

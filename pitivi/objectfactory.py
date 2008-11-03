@@ -38,6 +38,7 @@ from stream import get_stream_for_caps
 from gettext import gettext as _
 
 from elements.singledecodebin import SingleDecodeBin
+from elements.imagefreeze import ImageFreeze
 
 class ObjectFactory(Serializable):
     """
@@ -487,6 +488,42 @@ class FileSourceFactory(SourceFactory):
         ObjectFactory.fromDataFormat(self, obj)
         self._length = obj["length"]
 
+
+class PictureFileSourceFactory(FileSourceFactory):
+
+    def _getDuration(self):
+        return 3600 * gst.SECOND
+
+    def _getDefaultDuration(self):
+        return 5 * gst.SECOND
+
+    def makeVideoBin(self):
+        gst.debug("making picture bin for %s" % self.name)
+        res = gst.Bin("picture-%s-%d" % (self.name,
+                                         self.lastbinid))
+        self.lastbinid = self.lastbinid + 1
+        freeze = ImageFreeze()
+        # let's get a single stream provider
+        dbin = FileSourceFactory.makeVideoBin(self)
+        res.add(dbin, freeze)
+        dbin.connect("pad-added", self.__dbinPadAddedCb, freeze, res)
+        dbin.connect("pad-removed", self.__dbinPadRemovedCb, freeze, res)
+        gst.debug("Returning %r" % res)
+        return res
+
+    def __dbinPadAddedCb(self, unused_dbin, pad, freeze, container):
+        pad.link(freeze.get_pad("sink"))
+        ghost = gst.GhostPad("src", freeze.get_pad("src"))
+        ghost.set_active(True)
+        container.add_pad(ghost)
+
+    def __dbinPadRemovedCb(self, unused_dbin, pad, freeze, container):
+        ghost = container.get_pad("src")
+        target = ghost.get_target()
+        peer = target.get_peer()
+        target.unlink(peer)
+        container.remove_pad(ghost)
+        pad.unlink(freeze.get_pad("sink"))
 
 class OperationFactory(ObjectFactory):
     """
