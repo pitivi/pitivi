@@ -421,7 +421,10 @@ class TimelineObject(BrotherObjects):
         self._factory = factory
         if not self.__requires_factory__ or self._factory:
             gst.log("%r Creating associated gnlobject" % self)
-            self.gnlobject = self._makeGnlObject()
+            tmpgnl = self._makeGnlObject()
+            if tmpgnl == None:
+                raise Exception("We didn't get gnlobject for %r" % self)
+            self.gnlobject = tmpgnl
             self.gnlobject.log("got gnlobject !")
             self.gnlobject.connect("notify::start", self._startDurationChangedCb)
             self.gnlobject.connect("notify::duration", self._startDurationChangedCb)
