@@ -502,28 +502,43 @@ class PictureFileSourceFactory(FileSourceFactory):
         res = gst.Bin("picture-%s-%d" % (self.name,
                                          self.lastbinid))
         self.lastbinid = self.lastbinid + 1
+        # use ffvideoscale only if available AND width < 2048
+        if self._video_info_stream and self._video_info_stream.width < 2048:
+            try:
+                scale = gst.element_factory_make("ffvideoscale")
+                scale.props.method = 9
+            except:
+                scale = gst.element_factory_make("videoscale")
+                scale.props.method = 2
+        else:
+            scale = gst.element_factory_make("videoscale")
+            scale.props.method = 2
         freeze = ImageFreeze()
         # let's get a single stream provider
         dbin = FileSourceFactory.makeVideoBin(self)
-        res.add(dbin, freeze)
-        dbin.connect("pad-added", self.__dbinPadAddedCb, freeze, res)
-        dbin.connect("pad-removed", self.__dbinPadRemovedCb, freeze, res)
+        res.add(dbin, scale, freeze)
+        scale.link(freeze)
+
+        dbin.connect("pad-added", self.__dbinPadAddedCb,
+                     scale, freeze, res)
+        dbin.connect("pad-removed", self.__dbinPadRemovedCb,
+                     scale, freeze, res)
         gst.debug("Returning %r" % res)
         return res
 
-    def __dbinPadAddedCb(self, unused_dbin, pad, freeze, container):
-        pad.link(freeze.get_pad("sink"))
+    def __dbinPadAddedCb(self, unused_dbin, pad, scale, freeze, container):
+        pad.link(scale.get_pad("sink"))
         ghost = gst.GhostPad("src", freeze.get_pad("src"))
         ghost.set_active(True)
         container.add_pad(ghost)
 
-    def __dbinPadRemovedCb(self, unused_dbin, pad, freeze, container):
+    def __dbinPadRemovedCb(self, unused_dbin, pad, scale, freeze, container):
         ghost = container.get_pad("src")
         target = ghost.get_target()
         peer = target.get_peer()
         target.unlink(peer)
         container.remove_pad(ghost)
-        pad.unlink(freeze.get_pad("sink"))
+        pad.unlink(scale.get_pad("sink"))
 
 class OperationFactory(ObjectFactory):
     """
