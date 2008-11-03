@@ -287,7 +287,7 @@ class SingleDecodeBin(gst.Bin):
     def do_change_state(self, transition):
         self.debug("transition:%r" % transition)
         res = gst.Bin.do_change_state(self, transition)
-        if transition in [gst.STATE_CHANGE_PAUSED_TO_READY, gst.STATE_CHANGE_READY_TO_NULL]:
+        if transition == gst.STATE_CHANGE_PAUSED_TO_READY:
             self._cleanUp()
         return res
 
