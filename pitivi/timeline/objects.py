@@ -338,6 +338,8 @@ class TimelineObject(BrotherObjects):
         self.name = name
         gst.log("new TimelineObject :%s %r" % (name, self))
         self._start = start
+        if duration == 0 and factory:
+            duration = factory.default_duration
         self._duration = duration
         self._factory = None
         # Set factory and media_type and then create the gnlobject

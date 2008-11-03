@@ -459,14 +459,14 @@ class TimelineComposition(TimelineSource):
         gst.info("start=%s, position=%d, existorder=%d, sourcelength=%s" % (gst.TIME_ARGS(start),
                                                                             position,
                                                                             existorder,
-                                                                            gst.TIME_ARGS(source.factory.duration)))
+                                                                            gst.TIME_ARGS(source.duration)))
         # set the correct start/duration time
-        duration = source.factory.duration
+        duration = source.duration
         source.setStartDurationTime(start, duration)
 
         # pushing following
         if push_following and not position in [-1, 0]:
-            self.shiftSources(source.factory.duration, existorder, len(self.sources[position - 1][2]))
+            self.shiftSources(source.duration, existorder, len(self.sources[position - 1][2]))
 
         self.addSource(source, position, auto_linked=auto_linked)
 

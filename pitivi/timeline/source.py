@@ -191,14 +191,14 @@ class TimelineFileSource(TimelineSource):
         if self.media_start == gst.CLOCK_TIME_NONE:
             self.media_start = 0
         if self.media_duration == 0:
-            self.media_duration = self.factory.duration
+            self.media_duration = self.factory.default_duration
 
         gnlobject = TimelineSource._makeGnlObject(self)
         if gnlobject == None:
             return None
 
         # we override start/duration
-        gnlobject.set_property("duration", long(self.factory.duration))
+        gnlobject.set_property("duration", long(self.factory.default_duration))
         gnlobject.set_property("start", long(0))
 
         return gnlobject
