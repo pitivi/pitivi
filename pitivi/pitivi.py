@@ -152,7 +152,7 @@ class Pitivi(object, Signallable):
         if filepath:
             if not os.path.exists(filepath):
                 self.emit("new-project-failed",
-                          _("File '%s' does not exist"), filepath)
+                          _("File does not exist"), filepath)
                 return
             uri = "file://" + filepath
         # is the given filepath a valid pitivi project

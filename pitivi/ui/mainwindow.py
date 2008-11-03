@@ -476,9 +476,10 @@ class PitiviMainWindow(gtk.Window):
             gtk.DIALOG_MODAL,
             gtk.MESSAGE_ERROR,
             gtk.BUTTONS_OK,
-            _("PiTiVi is unable to load file \"%s\": %s") %
-                (uri, reason))
+            _("PiTiVi is unable to load file \"%s\"") %
+                uri)
         dialog.set_title(_("Error Loading File"))
+        dialog.set_property("secondary-text", reason)
         dialog.run()
         dialog.destroy()
         self.set_sensitive(True)
