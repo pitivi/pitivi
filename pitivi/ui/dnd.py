@@ -23,11 +23,13 @@
 Drag and drop constants
 """
 
-# FIXME : ... this should be moved to pitivi.ui
-
 TYPE_TEXT_PLAIN = 24
 TYPE_URI_LIST = 25
+
+# FileSourceFactory (or subclasses)
 TYPE_PITIVI_FILESOURCE = 26
+
+# What objects to these correspond to ???
 TYPE_PITIVI_EFFECT = 27
 TYPE_PITIVI_AUDIO_EFFECT = 28
 TYPE_PITIVI_VIDEO_EFFECT = 29

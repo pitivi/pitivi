@@ -111,6 +111,7 @@ class TimelineWidget(gtk.VBox):
         gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
             (targetType, selection.data))
         # FIXME: need to handle other types
+        # FIXME: We also need to clarify the usage of FileSource
         if targetType == dnd.TYPE_PITIVI_FILESOURCE:
             uri = selection.data
         else:

@@ -49,6 +49,7 @@ class TimelineSource(TimelineObject):
         TimelineObject.__init__(self, **kwargs)
 
     def _makeGnlObject(self):
+        # FIXME : This should all be in *Factory.make*bin
         gst.debug("Making a source for %r" % self)
         if self.isaudio:
             caps = gst.caps_from_string("audio/x-raw-int;audio/x-raw-float")
@@ -71,6 +72,8 @@ class TimelineSource(TimelineObject):
             obj = self.makeGnlSourceContents()
         except:
             gst.debug("Failure in calling self.makeGnlSourceContents()")
+            import sys
+            print sys.exc_info()
             return None
         gnl.add(obj)
 

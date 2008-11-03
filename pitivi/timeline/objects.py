@@ -415,6 +415,8 @@ class TimelineObject(BrotherObjects):
         if self._factory:
             gst.warning("Can't set a factory, this object already has one : %r" % self._factory)
             return
+        if factory !=None and not isinstance(factory, ObjectFactory):
+            raise TypeError, "factory provided is not an ObjectFactory"
         gst.log("factory:%r requires factory:%r" % (factory, self.__requires_factory__))
         self._factory = factory
         if not self.__requires_factory__ or self._factory:
