@@ -88,6 +88,7 @@ class ImageFreeze(gst.Element):
         self._segment.init(gst.FORMAT_TIME)
         self._needsegment = True
         self._bufferduration = 0
+        self._outputrate = gst.Fraction(25, 1)
         # this is the buffer we store and repeatedly output
         self._buffer = None
         # this will be set by our task
@@ -124,7 +125,7 @@ class ImageFreeze(gst.Element):
                 # 4. When we have an accepted caps downstream, we store the negotiated
                 #    framerate and return
                 if not candidate.has_key("framerate"):
-                    candidate["framerate"] = gst.Fraction(25,1)
+                    candidate["framerate"] = gst.Fraction(25, 1)
                 self._outputrate = candidate["framerate"]
                 self._bufferduration = gst.SECOND * self._outputrate.denom / self._outputrate.num
                 self._srccaps = candidate.copy()
@@ -182,6 +183,11 @@ class ImageFreeze(gst.Element):
         return gst.FLOW_WRONG_STATE
 
     def _our_task(self, something):
+        if self._buffer == None:
+            gst.warning("We were started without a buffer, exiting")
+            self.srcpad.pause_task()
+            return
+
         #this is where we repeatedly output our buffer
         gst.debug("self:%r, something:%r" % (self, something))
 
