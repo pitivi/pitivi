@@ -491,6 +491,8 @@ class FileSourceFactory(SourceFactory):
 
 class PictureFileSourceFactory(FileSourceFactory):
 
+    __data_type__ = "picture-file-source-factory"
+
     def _getDuration(self):
         return 3600 * gst.SECOND
 
