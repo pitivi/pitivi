@@ -462,18 +462,18 @@ class FileSourceFactory(SourceFactory):
         self.settings = ExportSettings()
         if self.video_info_stream:
             # Fill video properties
-            vs = self.video_info_stream
-            self.settings.videowidth = vs.width
-            self.settings.videoheight = vs.height
-            self.settings.videorate = vs.framerate
-            self.settings.videopar = vs.par
+            videostream = self.video_info_stream
+            self.settings.videowidth = videostream.width
+            self.settings.videoheight = videostream.height
+            self.settings.videorate = videostream.framerate
+            self.settings.videopar = videostream.par
 
         if self.audio_info_stream:
             # Fill audio properties
-            as = self.audio_info_stream
-            self.settings.audiochannels = as.channels
-            self.settings.audiorate = as.rate
-            self.settings.audiodepth = as.depth
+            audiostream = self.audio_info_stream
+            self.settings.audiochannels = audiostream.channels
+            self.settings.audiorate = audiostream.rate
+            self.settings.audiodepth = audiostream.depth
 
         return self.settings
 
