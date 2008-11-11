@@ -84,7 +84,8 @@ class PitiviViewer(gtk.VBox):
         self.set_spacing(5)
 
         # drawing area
-        self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.5, ratio=4.0/3.0, obey_child=False)
+        self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.5, ratio=4.0/3.0,
+                                      obey_child=False)
         self.pack_start(self.aframe, expand=True)
         self.drawingarea = ViewerWidget()
         self.drawingarea.connect_after("realize", self._drawingAreaRealizeCb)
@@ -146,28 +147,14 @@ class PitiviViewer(gtk.VBox):
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
-    def _asyncFrameRatioChange(self, ratio):
-        gst.debug("ratio:%f" % ratio)
-        self.aframe.set_property("ratio", ratio)
 
-    def _videosinkCapsNotifyCb(self, sinkpad, unused_property):
-        caps = sinkpad.get_negotiated_caps()
-        if not caps:
-            return
-        gst.log("caps:%s" % caps.to_string())
+    def setDisplayAspectRatio(self, ratio):
+        """ Sets the DAR of the Viewer to the given ratio """
+        gst.debug("Setting ratio of %f [%r]" % (float(ratio), ratio))
         try:
-            width = caps[0]["width"]
-            height = caps[0]["height"]
+            self.aframe.set_property("ratio", float(ratio))
         except:
-            gst.warning("Something went wrong when getting the video sink aspect ratio")
-        else:
-            try:
-                par = caps[0]["pixel-aspect-ratio"]
-            except:
-                # set aspect ratio
-                gobject.idle_add(self._asyncFrameRatioChange, float(width) / float(height))
-            else:
-                gobject.idle_add(self._asyncFrameRatioChange, float(width * par.num) / float(par.denom * height))
+            gst.warning("could not set ratio !")
 
     def _createSinkThreads(self):
         """ Creates the sink threads for the playground """
@@ -185,9 +172,6 @@ class PitiviViewer(gtk.VBox):
         vscale.link(vqueue)
         vsinkthread.videosink = self.videosink
         vsinkthread.add_pad(gst.GhostPad("sink", cspace.get_pad('sink')))
-
-        self.videosink.get_pad("sink").connect("notify::caps", self._videosinkCapsNotifyCb)
-
         self.drawingarea.videosink = self.videosink
 
         # audio elements
@@ -205,7 +189,8 @@ class PitiviViewer(gtk.VBox):
         # setting sinkthreads on playground
         instance.PiTiVi.playground.setVideoSinkThread(vsinkthread)
         instance.PiTiVi.playground.setAudioSinkThread(asinkthread)
-        instance.PiTiVi.playground.connect("current-changed", self._currentPlaygroundChangedCb)
+        instance.PiTiVi.playground.connect("current-changed",
+                                           self._currentPlaygroundChangedCb)
 
     def _settingsChangedCb(self, unused_project):
         gst.info("current project settings changed")
@@ -424,6 +409,14 @@ class PitiviViewer(gtk.VBox):
             self.playpause_button.set_sensitive(True)
             self.next_button.set_sensitive(True)
             self.back_button.set_sensitive(True)
+
+        if isinstance(smartbin, SmartTimelineBin):
+            seti = smartbin.project.getSettings()
+            dar = float(seti.videowidth * seti.videopar.num) / float(seti.videoheight * seti.videopar.denom)
+            self.setDisplayAspectRatio(dar)
+        else:
+            dar = smartbin.factory.video_info_stream.dar
+        self.setDisplayAspectRatio(dar)
 
     def _currentStateCb(self, unused_playground, state):
         gst.info("current state changed : %s" % state)
