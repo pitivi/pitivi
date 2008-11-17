@@ -135,7 +135,7 @@ class PitiviViewer(gtk.VBox):
 
         # current time
         self.timelabel = gtk.Label()
-        self.timelabel.set_markup("<tt>00m00s000 / --m--s---</tt>")
+        self.timelabel.set_markup("<tt>00:00:00.000 / --:--:--.---</tt>")
         self.timelabel.set_alignment(1.0, 0.5)
         self.timelabel.set_padding(5, 5)
         bbox.pack_start(self.timelabel, expand=False, padding=10)
