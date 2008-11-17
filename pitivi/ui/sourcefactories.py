@@ -184,9 +184,9 @@ class SourceListWidget(gtk.VBox):
         txtlabel.set_line_wrap(True)
         txtlabel.set_line_wrap_mode(pango.WRAP_WORD)
         txtlabel.set_justify(gtk.JUSTIFY_CENTER)
-        txtlabel.set_markup(
-            _("<span size='x-large'>Import your clips by dragging them here or "
-              "by using the buttons above.</span>"))
+        txtlabel.set_markup("<big>" +
+            _("Import your clips by dragging them here or "
+              "by using the buttons above.")+"</big>")
         textbox.add(txtlabel)
         self.txtlabel = txtlabel
 
