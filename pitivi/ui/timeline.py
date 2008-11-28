@@ -43,6 +43,8 @@ DELETE = _("Delete Selected")
 RAZOR = _("Cut clip at mouse position")
 ZOOM_IN =  _("Zoom In")
 ZOOM_OUT =  _("Zoom Out")
+UNLINK = _("Unlink audio from video")
+RELINK = _("Relink audio to original video")
 SELECT_BEFORE = ("Select all sources before selected")
 SELECT_AFTER = ("Select all after selected")
 
@@ -56,6 +58,8 @@ ui = '''
         <toolitem action="Razor" />
         <separator />
         <toolitem action="DeleteObj" />
+        <toolitem action="UnlinkObj" />
+        <toolitem action="RelinkObj" />
     </toolbar>
 </ui>
 '''
@@ -151,7 +155,11 @@ class Timeline(gtk.VBox):
             ("ZoomOut", gtk.STOCK_ZOOM_OUT, None, None, ZOOM_OUT, 
                 self._zoomOutCb),
             ("DeleteObj", gtk.STOCK_DELETE, None, None, DELETE, 
-                self.__canvas.deleteSelected),
+                self.deleteSelected),
+            ("UnlinkObj", gtk.STOCK_DISCONNECT, None, None, UNLINK,
+                self.unlinkSelected),
+            ("RelinkObj", gtk.STOCK_CONNECT, None, None, RELINK,
+                self.relinkSelected),
             ("Razor", gtk.STOCK_CUT, None, None, RAZOR,
                 self.__canvas.activateRazor)
         )
@@ -231,6 +239,15 @@ class Timeline(gtk.VBox):
     def _zoomOutCb(self, unused_action):
         self._cur_zoom = max(0, self._cur_zoom - 1)
         self._zoom_adj.set_value(self._computeZoomRatio(self._cur_zoom))
+
+    def deleteSelected(self, unused_action):
+        instance.PiTiVi.current.timeline.deleteSelection()
+
+    def unlinkSelected(self, unused_action):
+        instance.PiTiVi.current.timeline.unlinkSelection()
+
+    def relinkSelected(self, unused_action):
+        instance.PiTiVi.current.timeline.relinkSelection()
 
 ## PlayGround timeline position callback
 

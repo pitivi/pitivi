@@ -80,9 +80,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
 ## Editing Operations
 
-    def deleteSelected(self, unused_action):
-        instance.PiTiVi.current.timeline.deleteSelection()
-
     # FIXME: the razor is the one toolbar tool that violates the noun-verb
     # principle. Do I really want to make an exception for this? What about
     # just double-clicking on the source like jokosher?

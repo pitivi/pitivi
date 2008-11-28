@@ -179,11 +179,15 @@ class Timeline(Serializable):
                     collapse_neighbours=False)
         self.__selection = set()
 
-    def unlinkSelection(self, obj):
-        pass
+    def unlinkSelection(self):
+        for obj in self.__selection:
+            if obj.linked:
+                obj.unlinkObject()
 
-    def relinkSelection(self, obj):
-        pass
+    def relinkSelection(self):
+        for obj in self.__selection:
+            if not obj.linked:
+                obj.relinkBrother()
 
     def selectBefore(self):
         pass

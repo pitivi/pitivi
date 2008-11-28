@@ -9,8 +9,6 @@ import gtk
 # that explictly combines the functionality of both when custom behavior is
 # desired.
 
-#TODO: refactor to handle modifier keys
-
 class Controller(object):
 
     """A controller which implements drag-and-drop bahavior on connected view
