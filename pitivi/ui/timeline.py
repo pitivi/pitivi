@@ -49,14 +49,6 @@ class TimelineWidget(gtk.VBox):
         gtk.VBox.__init__(self)
         self._createUi()
 
-        # drag and drop
-        self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION, 
-            [dnd.FILESOURCE_TUPLE],
-            gtk.gdk.ACTION_COPY)
-        self.connect("drag-data-received", self._dragDataReceivedCb)
-        self.connect("drag-leave", self._dragLeaveCb)
-        self.connect("drag-motion", self._dragMotionCb)
-
     def _createUi(self):
         """ draw the GUI """
         self.complexview = ComplexTimelineWidget()
@@ -70,29 +62,3 @@ class TimelineWidget(gtk.VBox):
         gst.debug("state:%s" % event.state)
         self.hscroll.emit("scroll-event", event)
 
-## Drag and Drop callbacks
-    def _dragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
-
-        # FIXME: temporarily add source to timeline, and put it in drag mode
-        # so user can see where it will go
-        gst.info("SimpleTimeline x:%d , source would go at %d" % (x, 0))
-
-    def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
-        gst.info("SimpleTimeline")
-        #TODO: remove temp source from timeline
-
-    def _dragDataReceivedCb(self, unused_layout, context, x, y, 
-        selection, targetType, timestamp):
-        gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
-            (targetType, selection.data))
-        # FIXME: need to handle other types
-        # FIXME: We also need to clarify the usage of FileSource
-        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
-            uri = selection.data
-        else:
-            context.finish(False, False, timestamp)
-        # FIXME: access of instance, and playground
-        factory = instance.PiTiVi.current.sources[uri]
-        instance.PiTiVi.current.timeline.addFactory(factory)
-        context.finish(True, False, timestamp)
-        instance.PiTiVi.playground.switchToTimeline()

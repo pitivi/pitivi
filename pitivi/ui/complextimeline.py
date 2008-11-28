@@ -39,6 +39,7 @@ import os.path
 from urllib import unquote
 from pitivi.timeline.objects import MEDIA_TYPE_VIDEO
 from gettext import gettext as _
+import dnd
 
 
 # default heights for composition layer objects
@@ -698,6 +699,15 @@ class ComplexTimelineWidget(gtk.VBox):
         #FIXME: remove padding between scrollbar and scrolled window
         self.pack_start(self.scrolledWindow, expand=True)
 
+        # drag and drop
+        self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION, 
+            [dnd.FILESOURCE_TUPLE],
+            gtk.gdk.ACTION_COPY)
+        self.connect("drag-data-received", self._dragDataReceivedCb)
+        self.connect("drag-leave", self._dragLeaveCb)
+        self.connect("drag-motion", self._dragMotionCb)
+
+
         # toolbar actions
         actions = (
             ("ZoomIn", gtk.STOCK_ZOOM_IN, None, None, ZOOM_IN,
@@ -719,6 +729,33 @@ class ComplexTimelineWidget(gtk.VBox):
         uiman = instance.PiTiVi.gui.uimanager
         uiman.insert_action_group(self.actiongroup, 0)
         uiman.add_ui_from_string(ui)
+
+## Drag and Drop callbacks
+
+    def _dragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
+
+        # FIXME: temporarily add source to timeline, and put it in drag mode
+        # so user can see where it will go
+        gst.info("SimpleTimeline x:%d , source would go at %d" % (x, 0))
+
+    def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
+        gst.info("SimpleTimeline")
+        #TODO: remove temp source from timeline
+
+    def _dragDataReceivedCb(self, unused_layout, context, x, y, 
+        selection, targetType, timestamp):
+        gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
+            (targetType, selection.data))
+        # FIXME: need to handle other types
+        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
+            uri = selection.data
+        else:
+            context.finish(False, False, timestamp)
+        # FIXME: access of instance, and playground
+        factory = instance.PiTiVi.current.sources[uri]
+        instance.PiTiVi.current.timeline.addFactory(factory)
+        context.finish(True, False, timestamp)
+        instance.PiTiVi.playground.switchToTimeline()
 
 ## Project callbacks
 
