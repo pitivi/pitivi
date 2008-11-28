@@ -1,4 +1,3 @@
-from signalinterface import Signallable
 from types import MethodType
 
 class _receiver_data(object):

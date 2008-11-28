@@ -24,7 +24,7 @@ import os
 import gst
 import tempfile
 from pitivi.settings import ExportSettings
-from sourcefactories import SourceFactoriesWidget
+from sourcelist import SourceList
 from pitivi.bin import SmartCaptureBin, SinkBin
 from pitivi.threads import CallbackThread
 from glade import GladeWindow
@@ -55,7 +55,7 @@ class WebcamManagerDialog(GladeWindow):
         self.record_btn = self.record_btn.get_children()[0].get_children()[1]
         self.record_btn.set_label("Start Recording")
 
-        self.sourcefactories = SourceFactoriesWidget()
+        self.sourcefactories = SourceList()
 
         self._audiodev = None
         self._videodev = None
@@ -102,7 +102,7 @@ class WebcamManagerDialog(GladeWindow):
             gst.debug("recording stopped")
             self.player.stopRecording()
             # FIXME : use the generic way for adding a file
-            self.sourcefactories.sourcelist.addFiles([self.filepath])
+            self.sourcefactories.addFiles([self.filepath])
             self.player.set_state(gst.STATE_PLAYING)
             self.record_btn.set_label("Start Recording")
 

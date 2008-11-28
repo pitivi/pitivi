@@ -42,7 +42,7 @@ from pitivi.projectsaver import ProjectSaver
 from gettext import gettext as _
 
 from timeline import Timeline
-from sourcefactories import SourceFactoriesWidget
+from projecttabs import ProjectTabs
 from viewer import PitiviViewer
 from pitivi.bin import SmartTimelineBin
 from projectsettings import ProjectSettingsDialog
@@ -170,11 +170,6 @@ class PitiviMainWindow(gtk.Window):
              None, _("Save the current project"), self._saveProjectAsCb),
             ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project settings"),
              None, _("Edit the project settings"), self._projectSettingsCb),
-            ("ImportSources", gtk.STOCK_ADD, _("_Import clips..."),
-             None, _("Import clips to use"), self._importSourcesCb),
-            ("ImportSourcesFolder", gtk.STOCK_ADD,
-             _("_Import folder of clips..."), None,
-             _("Import folder of clips to use"), self._importSourcesFolderCb),
             ("RenderProject", 'pitivi-render' , _("_Render project"),
              None, _("Render project"), self._recordCb),
             ("PluginManager", gtk.STOCK_PREFERENCES ,
@@ -261,13 +256,13 @@ class PitiviMainWindow(gtk.Window):
 
         self.timeline = Timeline()
 
-        vpaned.pack2(self.timeline, resize=False, shrink=True)
+        vpaned.pack2(self.timeline, resize=True, shrink=False)
 
         hpaned = gtk.HPaned()
-        vpaned.pack1(hpaned, resize=True, shrink=False)
+        vpaned.pack1(hpaned, resize=False, shrink=True)
 
         # source-and-effects list
-        self.sourcefactories = SourceFactoriesWidget()
+        self.projecttabs = ProjectTabs()
 
         # Viewer
         self.viewer = PitiviViewer()
@@ -275,8 +270,9 @@ class PitiviMainWindow(gtk.Window):
         self.pitivi.playground.connect("current-changed", 
             self._currentPlaygroundChangedCb)
 
-        hpaned.pack1(self.sourcefactories, resize=False, shrink=False)
-        hpaned.pack2(self.viewer, resize=True, shrink=False)
+        hpaned.pack1(self.projecttabs, resize=True, shrink=False)
+        hpaned.pack2(self.viewer, resize=False, shrink=False)
+        vpaned.set_position(200)
         # FIXME: remove toolbar padding and shadow. In fullscreen mode, the
         # toolbar buttons should be clickable with the mouse cursor at the
         # very bottom of the screen.
@@ -414,16 +410,8 @@ class PitiviMainWindow(gtk.Window):
         abt.connect("response", self._aboutResponseCb)
         abt.show()
 
-    def _importSourcesCb(self, unused_action):
-        self.sourcefactories.sourcelist.showImportSourcesDialog()
-
-    def _importSourcesFolderCb(self, unused_action):
-        self.sourcefactories.sourcelist.showImportSourcesDialog(True)
-
     def _pluginManagerCb(self, unused_action):
         PluginManagerDialog(self.pitivi.plugin_manager)
-
-
 
     # Import from Webcam callback
     def _ImportWebcam(self,unused_action):
@@ -437,7 +425,6 @@ class PitiviMainWindow(gtk.Window):
     # screencast callback
     def _Screencast(self,unused_action):
         ScreencastManagerDialog()
-
 
     ## Devices changed
     def __deviceChangeCb(self, probe, unused_device):
