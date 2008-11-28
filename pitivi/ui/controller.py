@@ -20,11 +20,11 @@ class Controller(object):
 
     _dragging = None
     _canvas = None
-    _mouse_down = None
     _ptr_within = False
     _last_click = None
 
     def __init__(self, view=None):
+        object.__init__(self)
         self._view = view
 
 ## signal handlers
@@ -47,8 +47,6 @@ class Controller(object):
         if not self._canvas:
             self._canvas = item.get_canvas()
         self._dragging = target
-        self._mouse_down = self.pos - self.transform(Point.from_event,
-            canvas, event)
         self._drag_start(item, target, event)
         return True
 
@@ -56,8 +54,9 @@ class Controller(object):
     def motion_notify_event(self, item, target, event):
         if self._dragging:
             self.set_pos(self._dragging, 
-                self.transform(self._mouse_down + Point.from_event(canvas,
-                    event)))
+                self.transform(
+                    Point.from_event(self._canvas, event).from_item_space(
+                        self._canvas, item)))
             return True
         return False
 
@@ -69,7 +68,7 @@ class Controller(object):
 
 ## internal callbacks
 
-   def _drag_start(self, item, target, event):
+    def _drag_start(self, item, target, event):
         self._view.activate()
         self.drag_start()
 

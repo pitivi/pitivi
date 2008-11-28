@@ -24,7 +24,7 @@ class receiver(object):
             for id in self.sigids.itervalues():
                 self.sender.disconnect(id)
             self.sender = None
-            self.sigids = None
+            self.sigids = {}
         if value:
             for sig, hdlr in self.handlers.iteritems():
                 value.connect(sig, MethodType(hdlr, instance))

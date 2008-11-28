@@ -1,4 +1,4 @@
-from receiver import receiver, handler
+from pitivi.receiver import receiver, handler
 import controller
 
 class View(object):
@@ -6,6 +6,7 @@ class View(object):
     Controller = controller.Controller
     
     def __init__(self):
+        object.__init__(self)
         self._controller = self.Controller(view=self)
 
 ## public interface

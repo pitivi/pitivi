@@ -110,11 +110,7 @@ def _init_gobject_gtk_gst():
 def _run_pitivi():
     import pitivi.pitivi as ptv
 
-    try:
-        sys.exit(ptv.main(sys.argv))
-    except StandardError, e:
-        print "Error: ", e
-        sys.exit(1)
+    sys.exit(ptv.main(sys.argv))
 
 try:
     _add_pitivi_path()
