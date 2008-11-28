@@ -483,7 +483,7 @@ class TimelineObject(BrotherObjects):
         if duration > 0 and (not self.duration == duration or force):
             duration = max(duration, 0)
             if self.factory:
-                duration = min(duration, self.factory.getDuration())
+                duration = min(duration, self.factory.duration)
             self._duration = duration
             self.gnlobject.set_property("duration", long(duration))
         if not start == gst.CLOCK_TIME_NONE and (not self.start == start or force):
