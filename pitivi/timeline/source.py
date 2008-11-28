@@ -116,15 +116,6 @@ class TimelineSource(TimelineObject):
     # override setInTime and setOutTime methods to handle media-start/duration
 
     def setInTime(self, time):
-        """Sets [media]{start,duration} properties such that the hypothetical
-        start of the source, and the out-point of the source are constant"""
-        delta = self.start - time
-        duration = self.duration + delta
-        self.setStartDurationTime(time, duration)
-        self.setMediaStartDurationTime(self.media_start - delta,
-            duration)
-
-    def setInTime(self, time):
         """Sets the [media-]{start,duration} properties such that the
         out-point and hypothetical beginning of the media remain constant."""
         # { .... [ ==|=======] .... }
