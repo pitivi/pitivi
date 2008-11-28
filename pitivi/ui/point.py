@@ -40,3 +40,6 @@ class Point(tuple):
     def from_item_space(self, canvas, item):
         return Point(*canvas.convert_from_item_space(item, self[0], self[1]))
 
+    @classmethod
+    def from_item_event(cls, canvas, item, event):
+        return Point.from_event(canvas, event).from_item_space(canvas, item)

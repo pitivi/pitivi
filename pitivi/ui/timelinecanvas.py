@@ -29,7 +29,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
     def __init__(self, layerinfolist):
         goocanvas.Canvas.__init__(self)
         self._selected_sources = []
-        self._timeline_position = 0
         self.__layers = [] 
         self.__last_row = 0
 
@@ -46,9 +45,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         self._cursor = ARROW
         root = self.get_root_item()
 
-        self.tracks = goocanvas.Table(
-            homogeneous_rows=True,
-            row_spacing=5)
+        self.tracks = goocanvas.Group()
         root.add_child(self.tracks)
 
         root.connect("enter_notify_event", self._mouseEnterCb)
@@ -206,9 +203,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
             parent = item.get_parent()
             self._selected_sources.remove(parent)
 
-    def timelinePositionChanged(self, value, unused_frame):
-        self._timeline_position = value
-
 ## Zoomable Override
 
     def zoomChanged(self):
@@ -222,13 +216,11 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
     @handler(layerInfoList, "layer-added")
     def _layerAddedCb(self, unused_infolist, layer, position):
-        track = goocanvas.Rect(width=800, height=50, fill_color="gray")
+        track = Track(comp=layer.composition)
         self.__layers.append(track)
-        #track.setZoomAdjustment(self.getZoomAdjustment())
-        #track.set_composition(layer.composition)
-        #track.set_canvas(self)
+        track.setZoomAdjustment(self.getZoomAdjustment())
+        track.set_canvas(self)
         self.tracks.add_child(track)
-        self.tracks.set_child_properties(track, column=0, rows=1, columns=1)
         self._regroup_tracks()
 
     @handler(layerInfoList, "layer-removed")
@@ -240,4 +232,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
     def _regroup_tracks(self):
         for i, track in enumerate(self.__layers):
-            self.tracks.set_child_properties(track, row=i)
+            b = track.get_bounds()
+            height = b.y2 - b.y1
+            track.set_simple_transform(0, i * (height + 10), 1, 0)

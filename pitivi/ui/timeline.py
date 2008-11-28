@@ -127,11 +127,12 @@ class Timeline(gtk.VBox):
         self.pack_start(self.ruler, expand=False, fill=True)
 
         # List of TimelineCanvas
-        self.compositionLayers = TimelineCanvas(self.layerInfoList)
-        self.compositionLayers.setZoomAdjustment(self._zoom_adj)
+        self.__canvas = TimelineCanvas(self.layerInfoList)
+        self.__canvas.setZoomAdjustment(self._zoom_adj)
+
         self.scrolledWindow = gtk.ScrolledWindow(self.hadj)
         self.scrolledWindow.set_policy(gtk.POLICY_ALWAYS, gtk.POLICY_AUTOMATIC)
-        self.scrolledWindow.add(self.compositionLayers)
+        self.scrolledWindow.add(self.__canvas)
         #FIXME: remove padding between scrollbar and scrolled window
         self.pack_start(self.scrolledWindow, expand=True)
 
@@ -151,9 +152,9 @@ class Timeline(gtk.VBox):
             ("ZoomOut", gtk.STOCK_ZOOM_OUT, None, None, ZOOM_OUT, 
                 self._zoomOutCb),
             ("DeleteObj", gtk.STOCK_DELETE, None, None, DELETE, 
-                self.compositionLayers.deleteSelected),
+                self.__canvas.deleteSelected),
             ("Razor", gtk.STOCK_CUT, None, None, RAZOR,
-                self.compositionLayers.activateRazor)
+                self.__canvas.activateRazor)
         )
         self.actiongroup = gtk.ActionGroup("complextimeline")
         self.actiongroup.add_actions(actions)
@@ -196,7 +197,7 @@ class Timeline(gtk.VBox):
 
     def _newProjectLoadedCb(self, unused_inst, unused_project):
         # force set deadband when new timeline loads
-        self.compositionLayers.zoomChanged()
+        self.__canvas.zoomChanged()
 
     def _newProjectFailedCb(self, unused_inst, unused_reason, unused_uri):
         self.layerInfoList.setTimeline(None)
@@ -238,4 +239,3 @@ class Timeline(gtk.VBox):
         if isinstance(smartbin, SmartTimelineBin):
             # for the time being we only inform the ruler
             self.ruler.timelinePositionChanged(value, 0)
-            self.compositionLayers.timelinePositionChanged(value, 0)

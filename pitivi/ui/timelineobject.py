@@ -57,7 +57,6 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
     class Controller(controller.Controller):
 
         def drag_start(self):
-            item.raise_(None)
             instance.PiTiVi.current.timeline.disableEdgeUpdates()
 
         def drag_end(self):
@@ -70,7 +69,7 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
         def click(self, pos):
             self._view.select()
 
-    def __init__(self, element, composition, style):
+    def __init__(self, element, composition):
         goocanvas.Group.__init__(self)
         View.__init__(self)
 
@@ -95,7 +94,6 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
         #for thing in (self.bg, self.start_handle, self.end_handle, self.name):
         for thing in (self.bg, self.name):
             self.add_child(thing)
-
         self.normal()
 
     def select(self):
@@ -104,26 +102,16 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
     def normal(self):
         self.bg.props.fill_color_rgba = self.__NORMAL__
 
-    ## only temporary
-    x = gobject.property(type=float)
-    y = gobject.property(type=float)
-    width = gobject.property(type=float)
-    height = gobject.property(type=float, default=__HEIGHT__)
+    def zoomChanged(self):
+        self._start_duration_cb(self.element, self.element.start,
+            self.element.duration)
 
     @handler(element, "start-duration-changed")
     def _start_duration_cb(self, obj, start, duration):
-        # set our position with set_simple_transform
-        self.x = self.nsToPixel(start)
         self.set_simple_transform(self.nsToPixel(start), 0, 1, 0)
-
-        # clip text to within object bounds
         width = self.nsToPixel(duration)
-        self.width = width
         self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
-            10, 0, width, self.__HEIGHT__, width - 10)
-
-        # size background according to duration
+            0, 0, width, self.__HEIGHT__, width - 10)
         self.bg.props.width = width
-
         # place end handle at appropriate distance
         #self.end_handle.props.x = width - 10

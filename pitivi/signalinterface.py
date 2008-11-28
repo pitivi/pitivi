@@ -57,7 +57,8 @@ class Signallable:
             """ connect """
             # get a unique id
             if not signame in self.handlers.keys():
-                raise Exception("Signal %s does not exist" % signame)
+                raise Exception("Signal %s is not one of %s" % (signame,
+                ",\n\t".join(self.handlers.keys())))
             if not callable(cb):
                 raise Exception("Provided callable '%r' is not callable" % cb)
 

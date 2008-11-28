@@ -226,7 +226,6 @@ class InteractivePitivi(Pitivi):
         from ui.mainwindow import PitiviMainWindow
         self._gui = PitiviMainWindow(self)
         self._gui.load()
-
         self._gui.show()
 
         if filepath:

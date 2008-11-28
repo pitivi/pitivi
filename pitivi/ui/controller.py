@@ -22,10 +22,25 @@ class Controller(object):
     _canvas = None
     _ptr_within = False
     _last_click = None
+    _mousedown = None
 
     def __init__(self, view=None):
         object.__init__(self)
         self._view = view
+
+## convenience functions
+
+    def from_event(self, event):
+        """returns the coordinates of an event"""
+        return Point(*self._canvas.convert_from_pixels(event.x, event.y))
+
+    def from_item_event(self, item, event):
+        return Point(*self._canvas.convert_from_item_space(item,
+            *self.from_event(event)))
+
+    def pos(self, item):
+        bounds = item.get_bounds()
+        return Point(bounds.x1, bounds.y1)
 
 ## signal handlers
 
@@ -46,6 +61,8 @@ class Controller(object):
     def button_press_event(self, item, target, event):
         if not self._canvas:
             self._canvas = item.get_canvas()
+        self._mousedown = self.pos(item) - self.transform(self.from_item_event(
+            item, event))
         self._dragging = target
         self._drag_start(item, target, event)
         return True
@@ -54,9 +71,8 @@ class Controller(object):
     def motion_notify_event(self, item, target, event):
         if self._dragging:
             self.set_pos(self._dragging, 
-                self.transform(
-                    Point.from_event(self._canvas, event).from_item_space(
-                        self._canvas, item)))
+                self.transform(self._mousedown + self.from_item_event(item,
+                    event)))
             return True
         return False
 
@@ -77,9 +93,9 @@ class Controller(object):
         if self._ptr_within:
             self._view.focus()
             if self._last_click and (event.time - self._last_click < 400):
-                self.double_click(event_coords(self._canvas, event))
+                self.double_click(Point.from_event(self._canvas, event))
             else:
-                self.click(event_coords(self._canvas, event))
+                self.click(Point.from_event(self._canvas, event))
             self._last_click = event.time
         else:
             self._view.normal()
@@ -100,9 +116,6 @@ class Controller(object):
 
     def set_pos(self, obj, pos):
         obj.props.x, obj.props.y = pos
-
-    def pos(self, obj):
-        return obj.props.x, obj.props.y
 
     def transform(self, pos):
         return pos
