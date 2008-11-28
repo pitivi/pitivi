@@ -12,7 +12,7 @@ class TestTimelineFileSource(unittest.TestCase):
         gst.log("setting up")
         gc.collect()
         self.assertEquals(len(BrotherObjects.__instances__), 0)
-        self.factory = common.TestFileSourceFactory()
+        self.factory = common.TestFileSourceFactory(duration=2 * gst.SECOND)
         self.source = common.TestTimelineFileSource(factory=self.factory,
                                                     start = 0,
                                                     duration = gst.SECOND,
