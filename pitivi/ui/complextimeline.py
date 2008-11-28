@@ -271,34 +271,11 @@ class ComplexTrack(SmartGroup, Zoomable):
     # problem.
 
     def _trim_source_start_cb(self, item, pos):
-        element = item.element
-        cur_end = element.start + element.duration
-        # Invariant:
-        #  max(duration) = element.factory.duration
-        #  start = end - duration
-        # Therefore
-        #  min(start) = end - element.factory.duration
-        new_start =  max(0,
-            cur_end - element.factory.duration,
-            self.pixelToNs(pos[0]))
-        new_duration = cur_end - new_start
-        new_media_start = element.media_start + (new_start - element.media_start)
-        element.setStartDurationTime(new_start, new_duration)
-        #FIXME: only for sources
-        element.setMediaStartDurationTime(new_media_start, new_duration)
+        item.element.snapInTime(self.pixelToNs(pos[0]))
 
     def _trim_source_end_cb(self, item, pos):
-        element = item.element
-        cur_start = element.start
-        new_end = min(cur_start + element.factory.duration,
-            max(cur_start, self.pixelToNs(pos[0] + width(item))))
-        new_duration = new_end - element.start
+        item.element.snapOutTime(self.pixelToNs(pos[0]))
 
-        element.setStartDurationTime(gst.CLOCK_TIME_NONE, new_duration)
-        #FIXME: only for sources
-        element.setMediaStartDurationTime(gst.CLOCK_TIME_NONE, new_duration)
-
-    # FIXME: this is part of the zoomable interface I want to get rid of
     def zoomChanged(self):
         """Force resize if zoom ratio changes"""
         for child in self.elements:

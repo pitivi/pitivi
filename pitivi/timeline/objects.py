@@ -347,6 +347,7 @@ class TimelineObject(BrotherObjects):
     __edges = []
     __deadband = 0
     __do_updates = True
+    __instances = []
 
     def __init__(self, factory=None, start=gst.CLOCK_TIME_NONE,
                  duration=0, media_type=MEDIA_TYPE_NONE, name="", **kwargs):
@@ -362,6 +363,10 @@ class TimelineObject(BrotherObjects):
         self.media_type = media_type
         self.gnlobject = None
         self.factory = factory
+        TimelineObject.registerInstance(self)
+
+    def __del__(self):
+        TimelineObject.unregisterInstance(self)
 
     ## properties
 
@@ -450,10 +455,14 @@ class TimelineObject(BrotherObjects):
         # really modify the start/duration time
         self.gnlobject.info("start:%s , duration:%s" %( gst.TIME_ARGS(start),
                                                         gst.TIME_ARGS(duration)))
-        if duration > 0 and (not self._duration == duration or force):
+        if duration > 0 and (not self.duration == duration or force):
+            duration = max(duration, 0)
+            if self.factory:
+                duration = min(duration, self.factory.getDuration())
             self._duration = duration
             self.gnlobject.set_property("duration", long(duration))
-        if not start == gst.CLOCK_TIME_NONE and (not self._start == start or force):
+        if not start == gst.CLOCK_TIME_NONE and (not self.start == start or force):
+            start = max(0, start)
             self._start = start
             self.gnlobject.set_property("start", long(start))
 
@@ -467,6 +476,23 @@ class TimelineObject(BrotherObjects):
         """ sets the start and/or duration time, with edge snapping """
         self.setStartDurationTime(TimelineObject.snapObjToEdge(self, start),
             duration)
+
+    def setInTime(self, time):
+        """Sets the timeline object's in point in the timeline, keeping its
+        out-point constant."""
+        delta = self.start - time 
+        self.setStartDurationTime(time, self.duration + delta)
+
+    def setOutTime(self, time):
+        """Set's the timeline object's out point in the timeline, keeping its
+        in-point constant."""
+        self.setStartDurationTime(self.start, time - self.start)
+
+    def snapInTime(self, time):
+        self.setInTime(TimelineObject.snapTimeToEdge(time))
+
+    def snapOutTime(self, time):
+        self.setOutTime(TimelineObject.snapTimeToEdge(time))
 
     def _startDurationChangedCb(self, gnlobject, property):
         """ start/duration time has changed """
@@ -545,6 +571,16 @@ class TimelineObject(BrotherObjects):
     ## for all layers/tracks.
 
     @classmethod
+    def registerInstance(cls, instance):
+        cls.__instances.append(weakref.ref(instance))
+
+    @classmethod
+    def unregisterInstance(cls, instance):
+        ref = weakref.ref(instance)
+        assert ref in self.__instances
+        self.__instances.remove(ref)
+
+    @classmethod
     def setDeadband(cls, db):
         cls.__deadband = db
 
@@ -564,13 +600,15 @@ class TimelineObject(BrotherObjects):
         #FIXME: this might be more efficient if we used a binary sort tree,
         # filter out duplicate edges in linear time
         edges = {}
-        for obj in cls.__instances__.itervalues():
-                # start/end of object both considered "edit points"
-                edges[obj.start] = None
-                edges[obj.start + obj.duration] = None
-                # TODO: add other critical object points when these are
-                # implemented
-                # TODO: filtering mechanism
+        for obj in cls.__instances:
+            assert obj()
+            obj = obj()
+            # start/end of object both considered "edit points"
+            edges[obj.start] = None
+            edges[obj.start + obj.duration] = None
+            # TODO: add other critical object points when these are
+            # implemented
+            # TODO: filtering mechanism
         cls.__edges = edges.keys()
         cls.__edges.sort()
 

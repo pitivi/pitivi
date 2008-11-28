@@ -38,7 +38,6 @@ class TimelineSource(TimelineObject):
         "media-start-duration-changed" : ["media-start", "media-duration"]
         }
 
-
     __data_type__ = "timeline-source"
 
 
@@ -108,19 +107,52 @@ class TimelineSource(TimelineObject):
             gst.TIME_ARGS(self.media_start),
             gst.TIME_ARGS(self.media_duration)))
         if duration > 0 and not self.media_duration == duration:
+            duration = max(0, min(duration, self.factory.getDuration()))
             self.gnlobject.set_property("media-duration", long(duration))
         if not start == gst.CLOCK_TIME_NONE and not self.media_start == start:
+            start = max(0, start)
             self.gnlobject.set_property("media-start", long(start))
+
+    # override setInTime and setOutTime methods to handle media-start/duration
+
+    def setInTime(self, time):
+        """Sets [media]{start,duration} properties such that the hypothetical
+        start of the source, and the out-point of the source are constant"""
+        delta = self.start - time
+        duration = self.duration + delta
+        self.setStartDurationTime(time, duration)
+        self.setMediaStartDurationTime(self.media_start - delta,
+            duration)
+
+    def setInTime(self, time):
+        """Sets the [media-]{start,duration} properties such that the
+        out-point and hypothetical beginning of the media remain constant."""
+        # { .... [ ==|=======] .... }
+        # A      B   t       C      D
+        # or
+        # { ..|. [ ==========] .... }
+        # A   t  B           C      D
+        # 
+        # A = hypothetical start of media file
+        # B = in-point in timeline
+        # C = out-point in timeline
+        # D = hypothetical end of media file
+        # t = input time, where we want point B
+        delta = time - self.start
+        duration = self.duration - delta
+        media_start = self.media_start + delta
+        self.setStartDurationTime(time, duration)
+        self.setMediaStartDurationTime(media_start, duration)
+
+    def setOutTime(self, time):
+        """Sets the [media-]{start,duration} properties such that the in-point
+        of the source remain constant."""
+        self.setStartDurationTime(gst.CLOCK_TIME_NONE, time - self.start)
+        self.setMediaStartDurationTime(gst.CLOCK_TIME_NONE, time - self.start)
 
     def setMediaStartDurationTime(self, start=gst.CLOCK_TIME_NONE,
                                   duration=0):
         """ sets the media start/duration time """
-        if not start == gst.CLOCK_TIME_NONE and start < 0:
-            gst.warning("Can't set start values < 0 !")
-            return
-        if duration < 0:
-            gst.warning("Can't set durations < 0 !")
-            return
         self._setMediaStartDurationTime(start, duration)
         if self.linked and isinstance(self.linked, TimelineFileSource):
             self.linked._setMediaStartDurationTime(start, duration)
