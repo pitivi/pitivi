@@ -63,19 +63,24 @@ if HAVE_GCONF:
 def create_stock_icons():
     """ Creates the pitivi-only stock icons """
     gtk.stock_add([
-            ('pitivi-advanced-mode', 'Advanced Mode', 0, 0, 'pitivi'),
-            ('pitivi-render', 'Render', 0, 0, 'pitivi')
+            ('pitivi-render', 'Render', 0, 0, 'pitivi'),
+            ('pitivi-split', 'Split', 0, 0, 'pitivi'),
+            ('pitivi-unlink', 'Unlink', 0, 0, 'pitivi'),
+            ('pitivi-relink', 'Relink', 0, 0, 'pitivi'),
             ])
+    pixmaps = {
+        "pitivi-render" : "pitivi-render-24.png",
+        "pitivi-split" : "pitivi-split.svg",
+        "pitivi-unlink" : "pitivi-unlink.svg",
+        "pitivi-relink" : "pitivi-relink.svg",
+    }
     factory = gtk.IconFactory()
-    pixbuf = gtk.gdk.pixbuf_new_from_file(
-        configure.get_pixmap_dir() + "/pitivi-advanced-24.png")
-    iconset = gtk.IconSet(pixbuf)
-    factory.add('pitivi-advanced-mode', iconset)
-    pixbuf = gtk.gdk.pixbuf_new_from_file(
-        configure.get_pixmap_dir() + "/pitivi-render-24.png")
-    iconset = gtk.IconSet(pixbuf)
-    factory.add('pitivi-render', iconset)
-    factory.add_default()
+    pmdir = configure.get_pixmap_dir()
+    for stockid, path in pixmaps.iteritems():
+        pixbuf = gtk.gdk.pixbuf_new_from_file(os.path.join(pmdir, path))
+        iconset = gtk.IconSet(pixbuf)
+        factory.add(stockid, iconset)
+        factory.add_default()
 
 
 class PitiviMainWindow(gtk.Window):

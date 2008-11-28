@@ -135,11 +135,11 @@ class Timeline(gtk.VBox):
                 self._zoomOutCb),
             ("DeleteObj", gtk.STOCK_DELETE, None, None, DELETE, 
                 self.deleteSelected),
-            ("UnlinkObj", gtk.STOCK_DISCONNECT, None, None, UNLINK,
+            ("UnlinkObj", "pitivi-unlink", None, None, UNLINK,
                 self.unlinkSelected),
-            ("RelinkObj", gtk.STOCK_CONNECT, None, None, RELINK,
+            ("RelinkObj", "pitivi-relink", None, None, RELINK,
                 self.relinkSelected),
-            ("Razor", gtk.STOCK_CUT, None, None, RAZOR,
+            ("Razor", "pitivi-split", None, None, RAZOR,
                 self.__canvas.activateRazor)
         )
         self.actiongroup = gtk.ActionGroup("complextimeline")

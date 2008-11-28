@@ -51,7 +51,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         self.__razor = goocanvas.Rect(
             line_width=0,
             fill_color="orange",
-            width=0,
+            width=1,
             visibility=goocanvas.ITEM_INVISIBLE)
         root.add_child(self.__marquee)
         root.add_child(self.__razor)
@@ -139,12 +139,12 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         self.__razor.props.visibility = goocanvas.ITEM_VISIBLE
         return True
 
-    def _razorMovedCb(self, canvas, event):
+    def __razorMovedCb(self, canvas, event):
         x, y = self.convert_from_pixels(event.x, event.y)
         self.__razor.props.x = self.nsToPixel(self.pixelToNs(x))
         return True
 
-    def _razorReleasedCb(self, unused_canvas, event):
+    def __razorReleasedCb(self, unused_canvas, event):
         self._cursor = ARROW
         event.window.set_cursor(ARROW)
         self.disconnect(self.__razor_sigid)
@@ -161,7 +161,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
                     self.timeline.splitObject(item.element, self.pixelToNs(x))
         return True
 
-    def _razorClickedCb(self, unused_canvas, unused_event):
+    def __razorClickedCb(self, unused_canvas, unused_event):
         return True
 
 ## Zoomable Override
