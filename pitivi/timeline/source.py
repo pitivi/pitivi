@@ -220,6 +220,10 @@ class TimelineFileSource(TimelineSource):
     """
     __data_type__ = "timeline-file-source"
 
+    __editable_properties__ = (
+        ("volume", float, (-1, 1), True),
+    )
+
     def __init__(self, **kw):
         TimelineSource.__init__(self, **kw)
 
@@ -278,16 +282,20 @@ class TimelineFileSource(TimelineSource):
         self.volumebin.remove_pad(self.volumebin.get_pad("src"))
         self.decodebin.unlink(self.audioconv)
 
-    def _setVolume(self, level):
-        self.volume_element.set_property("volume", level)
-        #FIXME: we need a volume-changed signal, so that UI updates
+    def getVolume(self):
+        return self.volume_element.props.level
+
+    def __setVolume(self, level):
+        self.volume_element.props.volume = level
 
     def setVolume(self, level):
         """ Set the volume to the given level """
         if self.isaudio:
-            self._setVolume(level)
+            self.__setVolume(level)
         elif self.linked:
-            self.linked._setVolume(level)
+            self.linked.__setVolume(level)
+
+    volume = property(getVolume, setVolume)
 
     def _makeBrother(self):
         """ make the brother element """

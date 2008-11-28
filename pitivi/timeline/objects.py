@@ -344,6 +344,10 @@ class TimelineObject(BrotherObjects):
         "selected-changed" : [],
         }
 
+    __editable_properties__ = (
+        # (str: name, type: type, bool: is_controllable)
+    )
+
     def __init__(self, factory=None, start=gst.CLOCK_TIME_NONE,
                  duration=0, media_type=MEDIA_TYPE_NONE, name="", **kwargs):
         BrotherObjects.__init__(self, **kwargs)

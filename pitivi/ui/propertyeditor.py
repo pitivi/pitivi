@@ -28,6 +28,7 @@ import pitivi.instance as instance
 from gettext import gettext as _
 from pitivi.receiver import receiver, handler
 from pitivi.utils import same
+from defaultpropertyeditor import DefaultPropertyEditor
 
 class PropertyEditor(gtk.ScrolledWindow):
 
@@ -114,20 +115,4 @@ class PropertyEditor(gtk.ScrolledWindow):
         else:
             widget = self.__no_objs
         self.__set_contents(widget)
-
-class DefaultPropertyEditor(gtk.Viewport):
-
-    def __init__(self, *args, **kwargs):
-        gtk.Viewport.__init__(self, *args, **kwargs)
-        self.__createUi()
-
-    def __createUi(self):
-        self.text = gtk.Label()
-        self.add(self.text)
-
-    def setObjects(self, objs):
-        text = "Properties For: "
-        for obj in objs:
-            text += "\n" + obj.factory.name
-        self.text.set_text(text)
 
