@@ -60,7 +60,7 @@ class Timeline(Serializable, Signallable):
 
     @property
     def tracks(self):
-        return (self.audiocomp, self.videocomp)
+        return (self.videocomp, self.audiocomp)
 
     def __init__(self, project=None, **unused_kw):
         gst.log("new Timeline for project %s" % project)
