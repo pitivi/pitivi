@@ -104,3 +104,12 @@ def argmax(func, seq):
     # using a generator expression here should save memory
     objs = ((func(val), val) for val in seq)
     return reduce(compare, objs)[1]
+
+def same(seq):
+    i = iter(seq)
+    first = i.next()
+    for item in i:
+        if first != item:
+            return None
+    return first
+

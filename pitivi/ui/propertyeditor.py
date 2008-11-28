@@ -27,27 +27,61 @@ import gtk
 import pitivi.instance as instance
 from gettext import gettext as _
 from pitivi.receiver import receiver, handler
+from pitivi.utils import same
 
-class PropertyEditor(gtk.VBox):
+class PropertyEditor(gtk.ScrolledWindow):
+
+    __MODULES__ = {
+        
+    }
 
     def __init__(self, *args, **kwargs):
-        gtk.VBox.__init__(self, *args, **kwargs)
+        gtk.ScrolledWindow.__init__(self, *args, **kwargs)
         self.instance = instance.PiTiVi
         self.timeline = instance.PiTiVi.current.timeline
         self.__createUi()
+        self.__selectionChangedCb(self.timeline)
+        self.__module_instances = {}
+        self.__default_editor = DefaultPropertyEditor()
 
     def __createUi(self):
         # basic initialization
         self.set_border_width(5)
-        self.set_spacing(6)
 
         # scrolled window
-        scrolled = gtk.ScrolledWindow()
-        scrolled.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        self.label = gtk.Label()
-        scrolled.add_with_viewport(self.label)
-        self.add(scrolled)
-        self.__selectionChangedCb(self.timeline)
+        self.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        self.__no_objs = gtk.Viewport()
+        self.__no_objs.add(gtk.Label(_("No Objects Selected")))
+        self.__contents = self.__no_objs
+        self.add(self.__no_objs)
+
+## Public API
+
+    @classmethod
+    def addModule(cls, core_class, widget_class):
+        cls.__MODULES__[core_class] = widget_class
+
+    @classmethod
+    def delModule(cls, core_class):
+        del cls.__MODULES__[core_class]
+
+## Internal Methods
+
+    def __get_widget_for_type(self, t):
+        w = self.__default_editor
+        if t in self.__module_instances:
+            w = self.__module_instances[t]
+        elif t in self.__MODULES__:
+            w = self.__MODULES[t]()
+            self.__module_instances[t] = w
+        return w
+
+    def __set_contents(self, widget):
+        if widget != self.__contents:
+            self.remove(self.__contents)
+            self.__contents = widget
+            self.add(widget)
+            self.show_all()
 
 ## Instance Callbacks
 
@@ -69,12 +103,31 @@ class PropertyEditor(gtk.VBox):
     def __selectionChangedCb(self, timeline):
         if not self.timeline:
             return
-
         objs = self.timeline.getSelection()
         if objs:
-            text = "Properties For: "
-            for obj in self.timeline.getSelection():
-                text += "\n" + obj.factory.name
+            t = same(map(type, objs))
+            if t:
+                widget = self.__get_widget_for_type(t)
+            else:
+                widget = DefaultPropertyEditor(objs)
+            widget.setObjects(objs)
         else:
-            text = "No Objects Selected"
-        self.label.set_text(text)
+            widget = self.__no_objs
+        self.__set_contents(widget)
+
+class DefaultPropertyEditor(gtk.Viewport):
+
+    def __init__(self, *args, **kwargs):
+        gtk.Viewport.__init__(self, *args, **kwargs)
+        self.__createUi()
+
+    def __createUi(self):
+        self.text = gtk.Label()
+        self.add(self.text)
+
+    def setObjects(self, objs):
+        text = "Properties For: "
+        for obj in objs:
+            text += "\n" + obj.factory.name
+        self.text.set_text(text)
+
