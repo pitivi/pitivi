@@ -228,13 +228,16 @@ class Timeline(gtk.VBox):
         Zoomable.zoomOut()
 
     def deleteSelected(self, unused_action):
-        instance.PiTiVi.current.timeline.deleteSelection()
+        if self.timeline:
+            self.timeline.deleteSelection()
 
     def unlinkSelected(self, unused_action):
-        instance.PiTiVi.current.timeline.unlinkSelection()
+        if self.timeline:
+            self.timeline.unlinkSelection()
 
     def relinkSelected(self, unused_action):
-        instance.PiTiVi.current.timeline.relinkSelection()
+        if self.timeline:
+            self.timeline.relinkSelection()
 
 ## PlayGround timeline position callback
 

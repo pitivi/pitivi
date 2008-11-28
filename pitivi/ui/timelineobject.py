@@ -3,7 +3,6 @@ import gobject
 import gtk
 import os.path
 import pango
-import pitivi.instance as instance
 from urllib import unquote
 from pitivi.receiver import receiver, handler
 from view import View
@@ -19,10 +18,10 @@ class TimelineController(controller.Controller):
     _cursor = ARROW
 
     def drag_start(self):
-        instance.PiTiVi.current.timeline.disableEdgeUpdates()
+        self._view.timeline.disableEdgeUpdates()
 
     def drag_end(self):
-        instance.PiTiVi.current.timeline.enableEdgeUpdates()
+        self._view.timeline.enableEdgeUpdates()
 
     def set_pos(self, item, pos):
         self._view.element.snapStartDurationTime(max(
@@ -35,8 +34,9 @@ class TrimHandle(View, goocanvas.Rect, Zoomable):
 
     element = receiver()
 
-    def __init__(self, element, **kwargs):
+    def __init__(self, element, timeline, **kwargs):
         self.element = element
+        self.timeline = timeline
         goocanvas.Rect.__init__(self,
             width=5,
             fill_color_rgba=0x00000022,
@@ -86,16 +86,17 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
                 mode = 1
             elif self._last_event.get_state() & gtk.gdk.CONTROL_MASK:
                 mode = 2
-            instance.PiTiVi.current.timeline.setSelectionToObj(
+            self._view.timeline.setSelectionToObj(
                 self._view.element, mode)
 
-    def __init__(self, element, composition):
+    def __init__(self, element, composition, timeline):
         goocanvas.Group.__init__(self)
         View.__init__(self)
         Zoomable.__init__(self)
 
         self.element = element
         self.comp = composition
+        self.timeline = timeline
 
         self.bg = goocanvas.Rect(
             height=self.__HEIGHT__, 
@@ -110,9 +111,9 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
             fill_color_rgba=0x000000FF,
             alignment=pango.ALIGN_LEFT)
  
-        self.start_handle = StartHandle(element,
+        self.start_handle = StartHandle(element, timeline,
             height=self.__HEIGHT__)
-        self.end_handle = EndHandle(element,
+        self.end_handle = EndHandle(element, timeline,
             height=self.__HEIGHT__)
 
         for thing in (self.bg, self.start_handle, self.end_handle, self.name):

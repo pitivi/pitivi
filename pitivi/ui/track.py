@@ -2,7 +2,6 @@ from zoominterface import Zoomable
 from timelineobject import TimelineObject
 from pitivi.timeline.objects import MEDIA_TYPE_VIDEO
 from pitivi.receiver import receiver, handler
-import pitivi.instance as instance
 import goocanvas
 
 # TODO: layer managment controls
@@ -12,15 +11,16 @@ class Track(goocanvas.Group, Zoomable):
 
     comp = receiver()
 
-    def __init__(self, comp=None):
+    def __init__(self, comp=None, timeline=None):
         goocanvas.Group.__init__(self)
         Zoomable.__init__(self)
         self.widgets = {}
         self.comp = comp
+        self.timeline = timeline
 
     @handler(comp, "source-added")
     def _objectAdded(self, unused_timeline, element):
-        w = TimelineObject(element, self.comp)
+        w = TimelineObject(element, self.comp, self.timeline)
         self.widgets[element] = w
         self.add_child(w)
 
