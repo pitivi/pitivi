@@ -31,3 +31,12 @@ class Point(tuple):
         """Returns the 2-dvector difference p1 - p2"""
         return Point(*(a - b for a, b in izip(p1, p2)))
 
+    @classmethod
+    def from_item_bounds(self, item):
+        bounds = item.get_bounds()
+        return Point(bounds.x1, bounds.y1), Point(bounds.x2, bounds.y2)
+
+    @classmethod
+    def from_widget_bounds(self, widget):
+        x1, y1, x2, y2 = widget.get_bounds()
+        return Point(x1, y1), Point(x2, y2)

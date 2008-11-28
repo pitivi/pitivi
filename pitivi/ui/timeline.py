@@ -144,7 +144,6 @@ class Timeline(gtk.VBox):
         self.connect("drag-leave", self._dragLeaveCb)
         self.connect("drag-motion", self._dragMotionCb)
 
-
         # toolbar actions
         actions = (
             ("ZoomIn", gtk.STOCK_ZOOM_IN, None, None, ZOOM_IN,
@@ -158,7 +157,7 @@ class Timeline(gtk.VBox):
         )
         self.actiongroup = gtk.ActionGroup("complextimeline")
         self.actiongroup.add_actions(actions)
-        self.actiongroup.set_visible(False)
+        #self.actiongroup.set_visible(False)
         uiman = instance.PiTiVi.gui.uimanager
         uiman.insert_action_group(self.actiongroup, 0)
         uiman.add_ui_from_string(ui)

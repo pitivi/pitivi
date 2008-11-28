@@ -1,5 +1,5 @@
 from track import Track
-from pitivi.utils import closest_item
+from point import Point
 import goocanvas
 from complexinterface import Zoomable
 import pitivi.instance as instance
@@ -30,13 +30,10 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         goocanvas.Canvas.__init__(self)
         self._selected_sources = []
         self.__layers = [] 
-        self.__last_row = 0
 
         self._block_size_request = False
         self.props.integer_layout = True
-        # FIXME: don't forget to change me back 
-        #self.props.automatic_bounds = False
-
+        self.props.automatic_bounds = False
         self.layerInfoList = layerinfolist
 
         self._createUI()
@@ -60,26 +57,20 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
             fill_color_rgba=0x33CCFF66)
         self._razor.props.visibility = goocanvas.ITEM_INVISIBLE
         root.add_child(self._razor)
-        self.set_bounds(0, 0, 800, 120)
 
 ## methods for dealing with updating the canvas size
 
     def block_size_request(self, status):
         self._block_size_request = status
 
-    def _request_size(self, unused_item, unused_prop):
-        # we only update the bounds of the canvas by chunks of 100 pixels
-        # in width, otherwise we would always be redrawing the whole canvas.
-        # Make sure canvas is at least 800 pixels wide, and at least 100 pixels 
-        # wider than it actually needs to be.
-        w = max(800, ((int(self.tracks.width + 100) / 100) + 1 ) * 100)
-        h = int(self.tracks.height)
-        x1, y1, x2, y2 = self.get_bounds()
-        pw = abs(x2 - x1)
-        ph = abs(y2 - y1)
-        if not (w == pw and h == ph):
-            self.set_bounds(0, 0, w, h)
-        return True
+    @handler(layerInfoList, "start-duration-changed")
+    def _request_size(self, unused_item):
+        tl, br = Point.from_widget_bounds(self)
+        pw, ph = br - tl
+        tl, br = Point.from_item_bounds(self.tracks)
+        w, h = br - tl
+        if (w > pw) or (h > ph):
+            self.set_bounds(0, 0, w + 200, h)
 
 ## mouse callbacks
 
@@ -232,6 +223,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
     def _regroup_tracks(self):
         for i, track in enumerate(self.__layers):
-            b = track.get_bounds()
-            height = b.y2 - b.y1
+            height = Point.__sub__(*Point.from_item_bounds(track))[1]
+            # FIXME: hard-coding track height, because goocanvas is kinda
+            # ghetto
+            height = 50
             track.set_simple_transform(0, i * (height + 10), 1, 0)

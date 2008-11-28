@@ -14,12 +14,6 @@ class Track(goocanvas.Group, Zoomable):
 
     def __init__(self, comp=None):
         goocanvas.Group.__init__(self)
-        self.bg = goocanvas.Rect(
-            line_width=0,
-            width=800,
-            height=50,
-            fill_color="gray")
-        self.add_child(self.bg)
         self.widgets = {}
         self.comp = comp
 
