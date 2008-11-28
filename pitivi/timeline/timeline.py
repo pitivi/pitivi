@@ -31,16 +31,31 @@ from objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 from source import TimelineBlankSource, TimelineFileSource
 from pitivi.serializable import Serializable
 from pitivi.utils import closest_item
+from pitivi.signalinterface import Signallable
 
-class Timeline(Serializable):
+class Timeline(Serializable, Signallable):
     """
     Fully fledged timeline
     """
 
     __data_type__ = "timeline"
 
+    __signals__ = {
+        "track-added" : ("track"),
+        "track-removed" : ("track"),
+        "start-durtation-changed" : ("start", "duration"),
+    }
+
     # TODO make the compositions more versatile
     # for the time being we hardcode an audio and a video composition
+
+    @property
+    def start(self):
+        return min(self.audiocomp.start, self.videocomp.start)
+
+    @property
+    def duration(self):
+        return max(self.audiocomp.duration, self.videocomp.duration)
 
     def __init__(self, project=None, **unused_kw):
         gst.log("new Timeline for project %s" % project)
@@ -84,6 +99,16 @@ class Timeline(Serializable):
         self.__instances = []
         self.videocomp.connect("source-added", self._sourceAddedCb)
         self.videocomp.connect("source-removed", self._sourceRemovedCb)
+        # need to keep track of timeline duration
+        self.audiocomp.connect("start-duration-changed",
+            self._startDurationChangedCb)
+        self.videocomp.connect("start-duration-changed",
+            self._startDurationChangedCb)
+        
+        # pretend we support more than two tracks
+        self.emit("track-added", self.videocomp)
+        self.emit("track-added", self.audiocomp)
+
 
     def addFactory(self, factory, time=gst.CLOCK_TIME_NONE, shift=False):
         """Add a factory to the timeline using the the specified time as the
@@ -123,6 +148,9 @@ class Timeline(Serializable):
 
     def _removedVideoPadCb(self, unused_audiocomp, unused_pad):
         self.timeline.remove_pad(self.timeline.get_pad("vsrc"))
+
+    def _startDurationChangedCb(self, comp, start, duration):
+        self.emit("start-duration-changed", self.start, self.duration)
 
     def getAutoSettings(self):
         vs = self.videocomp._getAutoSettings()
