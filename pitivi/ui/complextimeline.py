@@ -36,61 +36,14 @@ import goocanvas
 # FIXME : wildcard imports are BAD !
 from util import *
 
-from pitivi.timeline.objects import MEDIA_TYPE_VIDEO
+from pitivi.utils import closest_item
 from gettext import gettext as _
 
 # ui imports
 import dnd
-from timelineobject import TimelineObject
+from track import Track
 
 # default heights for composition layer objects
-VIDEO_TRACK_HEIGHT = 50
-AUDIO_TRACK_HEIGHT = 20
-
-# FIXME: I like the idea of separating appearnce from implementation using
-# some scheme like this, but I'm not sure this implementation is the way to
-# go. The question is what will be the best way of letting people with good
-# aesthetic sense tweak the user interface so that it has a pleasing
-# appearance. It'd be good to build that support into the UI rather than
-# having to hack it in later. Unfortunately, these "style" objects aren't
-# powerful enough for that use, and are also tricky to use.
-
-# visual styles for sources in the UI
-VIDEO_SOURCE = (
-    goocanvas.Rect,
-    {
-        "height" : VIDEO_TRACK_HEIGHT, 
-        "fill_color_rgba" : 0x709fb899,
-        "line_width" : 0
-    },
-    {
-        "normal_color" : 0x709fb899,
-        "selected_color" : 0xa6cee3AA, 
-    }
-)
-AUDIO_SOURCE = (
-    goocanvas.Rect,
-    {
-        "height" : AUDIO_TRACK_HEIGHT, 
-        "fill_color_rgba" : 0x709fb899,
-        "line_width" : 0
-    },
-    {
-        "normal_color" : 0x709fb899,
-        "selected_color" : 0xa6cee3AA, 
-    }
-)
-
-
-
-BACKGROUND = (
-    goocanvas.Rect,
-    {
-        "stroke_color" : "gray",
-        "fill_color" : "gray",
-    },
-    {}
-)
 
 RAZOR_LINE = (
     goocanvas.Rect,
@@ -102,7 +55,6 @@ RAZOR_LINE = (
     {}
 )
 
-
 # the vsiual appearance for the selection marquee
 MARQUEE = (
     goocanvas.Rect,
@@ -112,10 +64,6 @@ MARQUEE = (
     },
     {}
 )
-
-LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
-RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
-
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
@@ -154,111 +102,6 @@ ui = '''
     </toolbar>
 </ui>
 '''
-
-class ComplexTrack(SmartGroup, Zoomable):
-    __gtype_name__ = 'ComplexTrack'
-
-    def __init__(self, *args, **kwargs):
-        SmartGroup.__init__(self, *args, **kwargs)
-        # FIXME: all of these should be private
-        self.widgets = {}
-        self.elements = {}
-        self.sig_ids = None
-        self.comp = None
-        self.object_style = None
-
-    # FIXME: this should be set_model(), overriding BaseView
-    def set_composition(self, comp):
-        if self.sig_ids:
-            for sig in self.sig_ids:
-                comp.disconnect(sig)
-        self.comp = comp
-        self.object_style = VIDEO_SOURCE
-        if comp:
-            added = comp.connect("source-added", self._objectAdded)
-            removed = comp.connect("source-removed", self._objectRemoved)
-            self.sig_ids = (added, removed)
-            # FIXME: this is total crap right here. All tracks should be the
-            # same size. Maybe we have the audio track initially expanded.
-            if comp.media_type == MEDIA_TYPE_VIDEO:
-                self.object_style = VIDEO_SOURCE
-                self.height = VIDEO_TRACK_HEIGHT
-            else:
-                self.object_style = AUDIO_SOURCE
-                self.height = AUDIO_TRACK_HEIGHT
-
-    def _objectAdded(self, unused_timeline, element):
-        # FIXME: here we assume that the object added is always a
-        # TimelineFileSource
-        w = TimelineObject(element, self.comp, self.object_style)
-        # FIXME: this is crack: here, we're making the item itself draggable
-        # below, we're making the resize handles draggable. 
-        make_dragable(self.canvas, w, start=self._start_drag,
-            end=self._end_drag, moved=self._move_source_cb)
-        # FIXME: ideally the TimelineFileSource itself would handle this
-        # callback, but we control too much positioning here. We'd have to
-        # make the timeline object's zoomable, as well, and it makes it hard
-        # to do edge snapping, because we actually keep track of the edges
-        # here. Having the timeline objects do edge snapping would mean having
-        # each timeline object maintain a pointer to all the "edges" they'd
-        # have to snap. 
-        element.connect("start-duration-changed", self.start_duration_cb, w)
-        self.widgets[element] = w
-        self.elements[w] = element
-        self.start_duration_cb(element, element.start, element.duration, w)
-        self.add_child(w)
-        # FIXME: see util.py
-        make_selectable(self.canvas, w.bg)
-        # FIXME: see util.py
-        make_dragable(self.canvas, w.l_handle, 
-            start=self._start_drag, moved=self._trim_source_start_cb,
-            cursor=LEFT_SIDE)
-        make_dragable(self.canvas, w.r_handle, start=self._start_drag,
-            moved=self._trim_source_end_cb,
-            cursor=RIGHT_SIDE)
-
-    def _objectRemoved(self, unused_timeline, element):
-        w = self.widgets[element]
-        self.remove_child(w)
-        w.comp = None
-        del self.widgets[element]
-        del self.elements[w]
-
-    def start_duration_cb(self, obj, start, duration, widget):
-        widget.props.width =  self.nsToPixel(duration)
-        self.set_child_pos(widget, (self.nsToPixel(start), 0))
-
-    def _start_drag(self, item):
-        item.raise_(None)
-        self._draging = True
-        instance.PiTiVi.current.timeline.disableEdgeUpdates()
-
-    def _end_drag(self, unused_item):
-        self.canvas.block_size_request(False)
-        instance.PiTiVi.current.timeline.enableEdgeUpdates()
-
-    def _move_source_cb(self, item, pos):
-        element = item.element
-        element.snapStartDurationTime(max(self.pixelToNs(pos[0]), 0))
-
-    # FIXME: these two methods should be in the TimelineObject class at least, or in
-    # their own class possibly. But they're here because they do
-    # edge-snapping. If we move edge-snapping into the core, this won't be a
-    # problem.
-
-    def _trim_source_start_cb(self, item, pos):
-        item.element.snapInTime(self.pixelToNs(pos[0]))
-
-    def _trim_source_end_cb(self, item, pos):
-        item.element.snapOutTime(self.pixelToNs(pos[0]))
-
-    def zoomChanged(self):
-        """Force resize if zoom ratio changes"""
-        for child in self.elements:
-            element = self.elements[child]
-            start = element.start
-            duration = element.duration
-            self.start_duration_cb(self, start, duration, child)
 
 # FIXME: this class should be renamed CompositionTracks, or maybe just Tracks.
 
@@ -493,7 +336,7 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
 ## LayerInfoList callbacks
 
     def _layerAddedCb(self, unused_infolist, layer, position):
-        track = ComplexTrack()
+        track = Track()
         track.setZoomAdjustment(self.getZoomAdjustment())
         track.set_composition(layer.composition)
         track.set_canvas(self)
@@ -520,7 +363,7 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
 #    |
 #    +--CompositionLayers(goocanas.Canvas)
 #    |  |
-#    |  +--ComplexTrack(SmartGroup)
+#    |  +--Track(SmartGroup)
 #    |
 #    +--Status Bar ??
 #
