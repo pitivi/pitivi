@@ -106,11 +106,9 @@ class TimelineSource(TimelineObject):
             self,
             gst.TIME_ARGS(self.media_start),
             gst.TIME_ARGS(self.media_duration)))
-        if duration > 0 and not self.media_duration == duration:
-            duration = max(0, min(duration, self.factory.duration))
+        if (duration > 0) and (not self.media_duration == duration) and (duration <= self.factory.duration):
             self.gnlobject.set_property("media-duration", long(duration))
-        if not start == gst.CLOCK_TIME_NONE and not self.media_start == start:
-            start = max(0, start)
+        if (not start == gst.CLOCK_TIME_NONE) and (not self.media_start == start) and (start >= 0):
             self.gnlobject.set_property("media-start", long(start))
 
     # override setInTime and setOutTime methods to handle media-start/duration
