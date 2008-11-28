@@ -37,6 +37,7 @@ import dnd
 
 from gettext import gettext as _
 from timelinecanvas import TimelineCanvas
+from pitivi.receiver import receiver, handler
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
@@ -102,24 +103,13 @@ class Timeline(gtk.VBox):
         self._cur_zoom = 2
         self._zoom_adj.set_value(self._computeZoomRatio(self._cur_zoom))
 
-        # common LayerInfoList
         self.layerInfoList = LayerInfoList()
-
-        instance.PiTiVi.playground.connect('position',
-           self._playgroundPositionCb)
-        # project signals
-        instance.PiTiVi.connect("new-project-loading",
-            self._newProjectLoadingCb)
-        instance.PiTiVi.connect("new-project-loaded",
-            self._newProjectLoadedCb)
-        instance.PiTiVi.connect("new-project-failed",
-            self._newProjectFailedCb)
+        self.instance = instance.PiTiVi
+        self.playground = instance.PiTiVi.playground
         self._createUI()
 
         # force update of UI
         self.layerInfoList.setTimeline(instance.PiTiVi.current.timeline)
-        self.layerInfoList.connect("start-duration-changed",
-            self._layerStartDurationChanged)
 
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
@@ -197,20 +187,28 @@ class Timeline(gtk.VBox):
         context.finish(True, False, timestamp)
         instance.PiTiVi.playground.switchToTimeline()
 
-## Project callbacks
+## Instance callbacks
 
+    instance = receiver()
+
+    @handler(instance, "new-project-loading")
     def _newProjectLoadingCb(self, unused_inst, project):
         self.layerInfoList.setTimeline(project.timeline)
 
+    @handler(instance, "new-project-loaded")
     def _newProjectLoadedCb(self, unused_inst, unused_project):
         # force set deadband when new timeline loads
         self.__canvas.zoomChanged()
 
+    @handler(instance, "new-project-failed")
     def _newProjectFailedCb(self, unused_inst, unused_reason, unused_uri):
         self.layerInfoList.setTimeline(None)
 
 ## layer callbacks
 
+    layerInfoList = receiver()
+
+    @handler(layerInfoList, "start-duration-changed")
     def _layerStartDurationChanged(self, unused_layer):
         self.ruler.startDurationChanged()
 
@@ -251,7 +249,10 @@ class Timeline(gtk.VBox):
 
 ## PlayGround timeline position callback
 
-    def _playgroundPositionCb(self, unused_playground, smartbin, value):
+    playground = receiver()
+
+    @handler(playground, "position")
+    def _positionCb(self, unused_playground, smartbin, value):
         if isinstance(smartbin, SmartTimelineBin):
             # for the time being we only inform the ruler
             self.ruler.timelinePositionChanged(value, 0)

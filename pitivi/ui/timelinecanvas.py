@@ -22,8 +22,6 @@ DEADBAND = 5
 
 class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
-    layerInfoList = receiver()
-
     __layers = None
 
     def __init__(self, layerinfolist):
@@ -57,20 +55,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
             fill_color_rgba=0x33CCFF66)
         self._razor.props.visibility = goocanvas.ITEM_INVISIBLE
         root.add_child(self._razor)
-
-## methods for dealing with updating the canvas size
-
-    def block_size_request(self, status):
-        self._block_size_request = status
-
-    @handler(layerInfoList, "start-duration-changed")
-    def _request_size(self, unused_item):
-        tl, br = Point.from_widget_bounds(self)
-        pw, ph = br - tl
-        tl, br = Point.from_item_bounds(self.tracks)
-        w, h = br - tl
-        if (w > pw) or (h > ph):
-            self.set_bounds(0, 0, w + 200, h)
 
 ## mouse callbacks
 
@@ -189,6 +173,17 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
             layer.setZoomAdjustment(adj)
 
 ## LayerInfoList callbacks
+
+    layerInfoList = receiver()
+
+    @handler(layerInfoList, "start-duration-changed")
+    def _request_size(self, unused_item):
+        tl, br = Point.from_widget_bounds(self)
+        pw, ph = br - tl
+        tl, br = Point.from_item_bounds(self.tracks)
+        w, h = br - tl
+        if (w > pw) or (h > ph):
+            self.set_bounds(0, 0, w + 200, h)
 
     @handler(layerInfoList, "layer-added")
     def _layerAddedCb(self, unused_infolist, layer, position):
