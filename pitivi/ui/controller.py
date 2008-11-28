@@ -92,10 +92,11 @@ class Controller(object):
         self.drag_end()
         if self._ptr_within:
             self._view.focus()
+            point = self.from_item_event(item, event)
             if self._last_click and (event.time - self._last_click < 400):
-                self.double_click(Point.from_event(self._canvas, event))
+                self.double_click(point)
             else:
-                self.click(Point.from_event(self._canvas, event))
+                self.click(point)
             self._last_click = event.time
         else:
             self._view.normal()

@@ -33,6 +33,9 @@ class receiver(object):
             for sig, hdlr in self.handlers.iteritems():
                 value.connect(sig, MethodType(hdlr, instance))
             self.sender = value
+        notify = "after_set_" + self.__name__
+        if hasattr(instance, notify):
+            getattr(instance, notify)()
 
     def __del__(self, instance):
         raise NotImplementedError
