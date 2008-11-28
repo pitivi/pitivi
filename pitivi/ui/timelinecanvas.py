@@ -169,6 +169,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
     def zoomChanged(self):
         if self.timeline:
             self.timeline.setDeadband(self.pixelToNs(DEADBAND))
+            self._request_size()
 
 ## Timeline callbacks
 
@@ -182,7 +183,10 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
     timeline = receiver(__set_timeline)
 
     @handler(timeline, "start-duration-changed")
-    def _request_size(self, unused_item, start, duration):
+    def _start_duration_cb(self, unused_item, unused_start, unused_dur):
+        self._request_size()
+
+    def _request_size(self):
         tl, br = Point.from_widget_bounds(self)
         pw, ph = br - tl
         tl, br = Point.from_item_bounds(self.tracks)
