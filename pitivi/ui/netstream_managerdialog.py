@@ -24,14 +24,14 @@ import gtk
 import gtk.glade
 import gst
 import tempfile
-from sourcefactories import SourceFactoriesWidget
+from sourcelist import SourceList
 from pitivi.bin import SmartStreamBin, SinkBin
 from pitivi.settings import ExportSettings
 
 class NetstreamManagerDialog(object):
 
     def __init__(self):
-        self.sourcefactories = SourceFactoriesWidget()
+        self.sourcefactories = SourceList()
         self.capture_pipe = None
         self.player = None
 
