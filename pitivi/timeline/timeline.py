@@ -44,6 +44,7 @@ class Timeline(Serializable, Signallable):
         "track-added" : ("track"),
         "track-removed" : ("track"),
         "start-duration-changed" : ("start", "duration"),
+        "selection-changed" : (),
     }
 
     # TODO make the compositions more versatile
@@ -218,6 +219,9 @@ class Timeline(Serializable, Signallable):
 
     __selection = None
 
+    def getSelection(self):
+        return self.__selection
+
     def setSelectionTo(self, objs, mode=0):
         if mode == 1:
             objs |= self.__selection
@@ -229,6 +233,7 @@ class Timeline(Serializable, Signallable):
         for obj in objs:
             obj.selected = True
         self.__selection = objs
+        self.emit("selection-changed")
 
     def setSelectionToObj(self, obj, mode=0):
         #TODO: range selection

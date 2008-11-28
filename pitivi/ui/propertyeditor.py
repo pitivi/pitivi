@@ -24,10 +24,57 @@ Editor for aribtrary properties of timeline objects
 """
 
 import gtk
+import pitivi.instance as instance
 from gettext import gettext as _
+from pitivi.receiver import receiver, handler
 
 class PropertyEditor(gtk.VBox):
 
     def __init__(self, *args, **kwargs):
         gtk.VBox.__init__(self, *args, **kwargs)
-        self.add(gtk.Label(_("Not Implemented")))
+        self.instance = instance.PiTiVi
+        self.timeline = instance.PiTiVi.current.timeline
+        self.__createUi()
+
+    def __createUi(self):
+        # basic initialization
+        self.set_border_width(5)
+        self.set_spacing(6)
+
+        # scrolled window
+        scrolled = gtk.ScrolledWindow()
+        scrolled.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        self.label = gtk.Label()
+        scrolled.add_with_viewport(self.label)
+        self.add(scrolled)
+        self.__selectionChangedCb(self.timeline)
+
+## Instance Callbacks
+
+    instance = receiver()
+
+    @handler(instance, "new-project-loading")
+    def __newProjectLoading(self, unused_inst, project):
+        self.timeline = project.timeline
+
+    @handler(instance, "new-project-failed")
+    def __newProjectFailed(self, unused_inst, unused_reason, unused_uri):
+        self.timeline = None
+
+## Timeline Callbacks
+
+    timeline = receiver()
+
+    @handler(timeline, "selection-changed")
+    def __selectionChangedCb(self, timeline):
+        if not self.timeline:
+            return
+
+        objs = self.timeline.getSelection()
+        if objs:
+            text = "Properties For: "
+            for obj in self.timeline.getSelection():
+                text += "\n" + obj.factory.name
+        else:
+            text = "No Objects Selected"
+        self.label.set_text(text)
