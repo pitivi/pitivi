@@ -28,6 +28,10 @@ class TimelineController(controller.Controller):
         self._view.element.snapStartDurationTime(max(
             self._view.pixelToNs(pos[0]), 0))
 
+    def click(self, pos):
+        instance.PiTiVi.current.timeline.setSelectionToObj(
+            self._view.element)
+
 class TrimHandle(View, goocanvas.Rect, Zoomable):
 
     """A component of a TimelineObject which manage's the source's edit
@@ -88,6 +92,7 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
 
         self.bg = goocanvas.Rect(
             height=self.__HEIGHT__, 
+            fill_color_rgba=self.__NORMAL__,
             line_width=0)
 
         self.name = goocanvas.Text(
@@ -109,12 +114,6 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
             self.add_child(thing)
         self.normal()
 
-    def select(self):
-        self.bg.props.fill_color_rgba = self.__SELECTED__
-
-    def normal(self):
-        self.bg.props.fill_color_rgba = self.__NORMAL__
-
     def zoomChanged(self):
         self._start_duration_cb(self.element, self.element.start,
             self.element.duration)
@@ -133,3 +132,10 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
         self.bg.props.width = width
         # place end handle at appropriate distance
         self.end_handle.props.x = w
+
+    @handler(element, "selected-changed")
+    def _selected_changed(self, element):
+        if element.selected:
+            self.bg.props.fill_color_rgba = self.__SELECTED__
+        else:
+            self.bg.props.fill_color_rgba = self.__NORMAL__

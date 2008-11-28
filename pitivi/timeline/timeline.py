@@ -53,6 +53,7 @@ class Timeline(Serializable):
         self.timeline = gst.Bin("timeline-" + name)
         self.audiocomp = None
         self.videocomp = None
+        self.__selection = set()
         self._fillContents()
 
     def _fillContents(self):
@@ -144,6 +145,52 @@ class Timeline(Serializable):
 
     def getDuration(self):
         return max(self.audiocomp.duration, self.videocomp.duration)
+
+## code for managing the selection
+
+    __selection = None
+
+    def addToSelection(self, objs):
+        self.__selection.update(objs)
+        for obj in objs:
+            obj.selected = True
+
+    def removeFromSelection(self, objs):
+        self.__selection.difference_update(objs)
+        for obj in objs:
+            obj.selected = False
+
+    def setSelectionTo(self, objs):
+        for obj in self.__selection:
+            obj.selected = False
+        for obj in objs:
+            obj.selected = True
+        self.__selection = objs
+
+    def setSelectionToObj(self, obj):
+        self.setSelectionTo(set((obj,)))
+
+    def deleteSelection(self):
+        for obj in self.__selection:
+            if obj.isaudio:
+                self.audiocomp.removeSource(obj, remove_linked=True,
+                    collapse_neighbours=False)
+            else:
+                self.videocomp.removeSource(obj, remove_linked=True,
+                    collapse_neighbours=False)
+        self.__selection = set()
+
+    def unlinkSelection(self, obj):
+        pass
+
+    def relinkSelection(self, obj):
+        pass
+
+    def selectBefore(self):
+        pass
+
+    def selectAfter(self):
+        pass
 
 ## code for keeping track of edit points, and snapping timestamps to the
 ## nearest edit point. We do this here so we can keep track of edit points

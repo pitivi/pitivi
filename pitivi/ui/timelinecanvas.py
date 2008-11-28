@@ -80,20 +80,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
 ## Editing Operations
 
-    # FIXME: here once again we're doing something that would be better done
-    # in the core. As we add different types of objects in the Core, we'll
-    # have to modify this code here (maybe there are different ways of
-    # deleting different objects: you might delete() a source, but unset() a
-    # keyframe)
-
     def deleteSelected(self, unused_action):
-        for obj in self._selected_sources:
-            if obj.comp:
-                obj.comp.removeSource(obj.element, remove_linked=True, 
-                    collapse_neighbours=False)
-        set_selection(self, set())
-        return True
-
+        instance.PiTiVi.current.timeline.deleteSelection()
 
     # FIXME: the razor is the one toolbar tool that violates the noun-verb
     # principle. Do I really want to make an exception for this? What about

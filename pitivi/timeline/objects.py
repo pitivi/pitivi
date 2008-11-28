@@ -340,7 +340,8 @@ class TimelineObject(BrotherObjects):
     __requires_factory__ = True
 
     __signals__ = {
-        "start-duration-changed" : ["start", "duration"]
+        "start-duration-changed" : ["start", "duration"],
+        "selected-changed" : [],
         }
 
     def __init__(self, factory=None, start=gst.CLOCK_TIME_NONE,
@@ -384,6 +385,13 @@ class TimelineObject(BrotherObjects):
     factory = property(_get_factory, _set_factory,
                        doc="ObjectFactory used for this object")
 
+    def __get_selected(self):
+        return self._selected
+
+    def __set_selected(self, value):
+        self._selected = value
+        self.emit("selected-changed")
+    selected = property(__get_selected, __set_selected)
 
     ## read-only properties
 
