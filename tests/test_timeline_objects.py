@@ -12,7 +12,11 @@ class TestTimelineObjects(unittest.TestCase):
     """
 
     def setUp(self):
-        self.factory1 = common.TestObjectFactory()
+        # FIXME : Change this back to the commented line once we've
+        # fixed the code that assumes that any ObjectFactory has a
+        # duration.
+        #self.factory1 = common.TestObjectFactory()
+        self.factory1 = common.TestFileSourceFactory()
         self.object1 = common.TestTimelineObject(factory=self.factory1,
                                                  start = 0,
                                                  duration = gst.SECOND,
