@@ -38,7 +38,6 @@ from util import *
 import os.path
 from urllib import unquote
 from pitivi.timeline.objects import MEDIA_TYPE_VIDEO
-from pitivi.utils import closest_item
 from gettext import gettext as _
 
 
@@ -256,13 +255,15 @@ class ComplexTrack(SmartGroup, Zoomable):
     def _start_drag(self, item):
         item.raise_(None)
         self._draging = True
+        objects.TimelineObject.disableEdgeUpdates()
 
     def _end_drag(self, unused_item):
         self.canvas.block_size_request(False)
+        objects.TimelineObject.enableEdgeUpdates()
 
     def _move_source_cb(self, item, pos):
         element = item.element
-        element.setStartDurationTime(max(self.pixelToNs(pos[0]), 0))
+        element.snapStartDurationTime(max(self.pixelToNs(pos[0]), 0))
 
     # FIXME: these two methods should be in the ComplexTimelineObject class at least, or in
     # their own class possibly. But they're here because they do
@@ -624,7 +625,7 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
 ## Zoomable Override
 
     def zoomChanged(self):
-        self._deadband = self.pixelToNs(DEADBAND)
+        objects.TimelineObject.setDeadband(self.pixelToNs(DEADBAND))
 
     def setChildZoomAdjustment(self, adj):
         for layer in self.layers:

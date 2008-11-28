@@ -29,6 +29,7 @@ import gst
 from pitivi.serializable import Serializable
 from pitivi.objectfactory import ObjectFactory
 from pitivi.signalinterface import Signallable
+from pitivi.utils import closest_item
 
 (MEDIA_TYPE_NONE,
  MEDIA_TYPE_AUDIO,
@@ -547,10 +548,12 @@ class TimelineObject(BrotherObjects):
     def setDeadband(cls, db):
         cls.__deadband = db
 
+    @classmethod
     def enableEdgeUpdates(cls):
         cls.__do_updates = True
         cls.updateEdges()
 
+    @classmethod
     def disableEdgeUpdates(cls):
         cls.__do_updates = False
 
@@ -561,7 +564,7 @@ class TimelineObject(BrotherObjects):
         #FIXME: this might be more efficient if we used a binary sort tree,
         # filter out duplicate edges in linear time
         edges = {}
-        for obj in cls. __instances__:
+        for obj in cls.__instances__.itervalues():
                 # start/end of object both considered "edit points"
                 edges[obj.start] = None
                 edges[obj.start + obj.duration] = None
@@ -574,14 +577,13 @@ class TimelineObject(BrotherObjects):
     @classmethod
     def snapTimeToEdge(cls, time):
         """Returns the input time or the nearest edge"""
-
         res, diff = closest_item(cls.__edges, time)
         if diff <= cls.__deadband:
             return res
         return time
 
     @classmethod
-    def snapObjToEdit(cls, obj, time):
+    def snapObjToEdge(cls, obj, time):
         """Returns the input time or the edge which is closest to either the
         start or finish time. The input time is interpreted as the start time
         of obj."""
