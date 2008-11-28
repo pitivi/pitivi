@@ -31,7 +31,7 @@ from pitivi.bin import SmartTimelineBin
 from pitivi.timeline.source import TimelineFileSource
 from pitivi.timeline import objects
 import ruler
-from complexinterface import Zoomable
+from zoominterface import Zoomable
 import dnd
 
 from gettext import gettext as _

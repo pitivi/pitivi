@@ -1,4 +1,4 @@
-from complexinterface import Zoomable
+from zoominterface import Zoomable
 from timelineobject import TimelineObject
 from pitivi.timeline.objects import MEDIA_TYPE_VIDEO
 from pitivi.receiver import receiver, handler

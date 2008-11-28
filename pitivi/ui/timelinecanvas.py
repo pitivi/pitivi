@@ -1,7 +1,7 @@
 from track import Track
 from point import Point
 import goocanvas
-from complexinterface import Zoomable
+from zoominterface import Zoomable
 import pitivi.instance as instance
 from pitivi.receiver import receiver, handler
 import gtk

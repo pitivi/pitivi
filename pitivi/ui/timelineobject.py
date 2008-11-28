@@ -8,7 +8,7 @@ from urllib import unquote
 from pitivi.receiver import receiver, handler
 from view import View
 import controller
-from complexinterface import Zoomable
+from zoominterface import Zoomable
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
