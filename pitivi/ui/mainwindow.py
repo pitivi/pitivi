@@ -41,7 +41,7 @@ from pitivi.projectsaver import ProjectSaver
 
 from gettext import gettext as _
 
-from timeline import TimelineWidget
+from timeline import Timeline
 from sourcefactories import SourceFactoriesWidget
 from viewer import PitiviViewer
 from pitivi.bin import SmartTimelineBin
@@ -254,8 +254,7 @@ class PitiviMainWindow(gtk.Window):
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
 
-        self.timeline = TimelineWidget()
-        self.timeline.showComplexView()
+        self.timeline = Timeline()
 
         vpaned.pack2(self.timeline, resize=False, shrink=True)
 
