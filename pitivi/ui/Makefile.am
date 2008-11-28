@@ -2,26 +2,35 @@ uidir = $(libdir)/pitivi/python/pitivi/ui
 
 ui_PYTHON =			\
 	__init__.py		\
-	complexinterface.py	\
-	complexlayer.py		\
-	complextimeline.py	\
+	audiofxlist.py		\
+	controller.py		\
+	defaultpropertyeditor.py\
 	dnd.py			\
 	exportsettingswidget.py	\
 	filelisterrordialog.py	\
 	glade.py		\
 	gstwidget.py		\
+	list.py			\
 	mainwindow.py		\
 	netstream_managerdialog.py \
+	pathwalker.py		\
 	pluginmanagerdialog.py	\
+	point.py		\
 	projectsettings.py	\
+	projecttabs.py		\
+	propertyeditor.py	\
 	ruler.py		\
 	screencast_managerdialog.py \
-	slider.py		\
-	sourcefactories.py	\
+	sourcelist.py		\
+	timelinecanvas.py	\
+	timelineobject.py	\
 	timeline.py		\
-	util.py			\
+	track.py		\
+	transitionlist.py	\
 	viewer.py		\
-	webcam_managerdialog.py
+	videofxlist.py		\
+	webcam_managerdialog.py	\
+	zoominterface.py
 
 ui_DATA =				\
 	actions.xml			\

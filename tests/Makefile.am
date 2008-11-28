@@ -8,7 +8,8 @@ tests = \
 	test_serializable.py		\
 	test_signallable.py		\
 	test_timeline_source.py		\
-	testcomplex.py
+	testcomplex.py			\
+	testmagnets.py
 
 EXTRA_DIST = $(tests) runtests.py common.py
 
