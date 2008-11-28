@@ -9,11 +9,12 @@ class receiver(object):
     connected when the property value is set. Prior to connecting new signal
     handlers, old handlers are disconnected."""
 
-    def __init__(self):
+    def __init__(self, setter=None):
         object.__init__(self)
         self.sender = None
         self.handlers = {}
         self.sigids = {}
+        self.setter = setter
         self._first_connect = True
 
     def __get__(self, instance, blah):
@@ -33,9 +34,8 @@ class receiver(object):
             for sig, hdlr in self.handlers.iteritems():
                 value.connect(sig, MethodType(hdlr, instance))
             self.sender = value
-        notify = "after_set_" + self.__name__
-        if hasattr(instance, notify):
-            getattr(instance, notify)()
+        if self.setter:
+            self.setter(instance)
 
     def __del__(self, instance):
         raise NotImplementedError
