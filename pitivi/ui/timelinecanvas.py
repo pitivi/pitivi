@@ -71,6 +71,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 ## implements selection marquee
 
     __selecting = False
+    __mousedown = None
+    __marquee = None
 
     def __normalize(self, p1, p2):
         w, h = p2 - p1

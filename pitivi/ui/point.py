@@ -31,6 +31,9 @@ class Point(tuple):
         """Returns the 2-dvector difference p1 - p2"""
         return Point(*(a - b for a, b in izip(p1, p2)))
 
+    def __abs__(self):
+        return Point(*(abs(a) for a in self))
+
     @classmethod
     def from_item_bounds(self, item):
         bounds = item.get_bounds()
