@@ -255,11 +255,11 @@ class ComplexTrack(SmartGroup, Zoomable):
     def _start_drag(self, item):
         item.raise_(None)
         self._draging = True
-        objects.TimelineObject.disableEdgeUpdates()
+        instance.PiTiVi.current.timeline.disableEdgeUpdates()
 
     def _end_drag(self, unused_item):
         self.canvas.block_size_request(False)
-        objects.TimelineObject.enableEdgeUpdates()
+        instance.PiTiVi.current.timeline.enableEdgeUpdates()
 
     def _move_source_cb(self, item, pos):
         element = item.element
@@ -602,7 +602,7 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
 ## Zoomable Override
 
     def zoomChanged(self):
-        objects.TimelineObject.setDeadband(self.pixelToNs(DEADBAND))
+        instance.PiTiVi.current.timeline.setDeadband(self.pixelToNs(DEADBAND))
 
     def setChildZoomAdjustment(self, adj):
         for layer in self.layers:

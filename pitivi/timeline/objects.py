@@ -29,7 +29,7 @@ import gst
 from pitivi.serializable import Serializable
 from pitivi.objectfactory import ObjectFactory
 from pitivi.signalinterface import Signallable
-from pitivi.utils import closest_item
+import pitivi.instance as instance
 
 (MEDIA_TYPE_NONE,
  MEDIA_TYPE_AUDIO,
@@ -343,12 +343,6 @@ class TimelineObject(BrotherObjects):
         "start-duration-changed" : ["start", "duration"]
         }
 
-    # for edge snapping
-    __edges = []
-    __deadband = 0
-    __do_updates = True
-    __instances = []
-
     def __init__(self, factory=None, start=gst.CLOCK_TIME_NONE,
                  duration=0, media_type=MEDIA_TYPE_NONE, name="", **kwargs):
         BrotherObjects.__init__(self, **kwargs)
@@ -363,10 +357,6 @@ class TimelineObject(BrotherObjects):
         self.media_type = media_type
         self.gnlobject = None
         self.factory = factory
-        TimelineObject.registerInstance(self)
-
-    def __del__(self):
-        TimelineObject.unregisterInstance(self)
 
     ## properties
 
@@ -419,13 +409,36 @@ class TimelineObject(BrotherObjects):
         if self._linked:
             self._linked._setStartDurationTime(start, duration)
 
+    def snapStartDurationTime(self, start=gst.CLOCK_TIME_NONE, duration=0):
+        """ sets the start and/or duration time, with edge snapping """
+        self.setStartDurationTime(
+            instance.PiTiVi.current.timeline.snapObjToEdge(self, start),
+            duration)
+
+    def setInTime(self, time):
+        """Sets the timeline object's in point in the timeline, keeping its
+        out-point constant."""
+        delta = self.start - time 
+        self.setStartDurationTime(time, self.duration + delta)
+
+    def setOutTime(self, time):
+        """Set's the timeline object's out point in the timeline, keeping its
+        in-point constant."""
+        self.setStartDurationTime(self.start, time - self.start)
+
+    def snapInTime(self, time):
+        self.setInTime(instance.PiTiVi.current.timeline.snapTimeToEdge(time))
+
+    def snapOutTime(self, time):
+        self.setOutTime(instance.PiTiVi.current.timeline.snapTimeToEdge(time))
+
     ## methods to override in subclasses
 
     def _makeGnlObject(self):
         """ create and return the gnl_object """
         raise NotImplementedError
 
-    ## private methods
+## private methods
 
     def __repr__(self):
         if hasattr(self, "name"):
@@ -520,12 +533,9 @@ class TimelineObject(BrotherObjects):
             else:
                 self.gnlobject.debug("duration changed:%s" % gst.TIME_ARGS(duration))
                 self._duration = long(duration)
-        # be sure to update edges
-        TimelineObject.updateEdges()
         self.emit("start-duration-changed", self._start, self._duration)
 
-
-    # Serializable methods
+## Serializable methods
 
     def toDataFormat(self):
         ret = BrotherObjects.toDataFormat(self)
@@ -565,79 +575,4 @@ class TimelineObject(BrotherObjects):
 
     def isVideo(self):
         return self.media_type == MEDIA_TYPE_VIDEO
-
-     ## code for keeping track of edit points, and snapping timestamps to the
-    ## nearest edit point. We do this here so we can keep track of edit points
-    ## for all layers/tracks.
-
-    @classmethod
-    def registerInstance(cls, instance):
-        cls.__instances.append(weakref.ref(instance))
-
-    @classmethod
-    def unregisterInstance(cls, instance):
-        ref = weakref.ref(instance)
-        assert ref in self.__instances
-        self.__instances.remove(ref)
-
-    @classmethod
-    def setDeadband(cls, db):
-        cls.__deadband = db
-
-    @classmethod
-    def enableEdgeUpdates(cls):
-        cls.__do_updates = True
-        cls.updateEdges()
-
-    @classmethod
-    def disableEdgeUpdates(cls):
-        cls.__do_updates = False
-
-    @classmethod
-    def updateEdges(cls):
-        if not cls.__do_updates:
-            return
-        #FIXME: this might be more efficient if we used a binary sort tree,
-        # filter out duplicate edges in linear time
-        edges = {}
-        for obj in cls.__instances:
-            assert obj()
-            obj = obj()
-            # start/end of object both considered "edit points"
-            edges[obj.start] = None
-            edges[obj.start + obj.duration] = None
-            # TODO: add other critical object points when these are
-            # implemented
-            # TODO: filtering mechanism
-        cls.__edges = edges.keys()
-        cls.__edges.sort()
-
-    @classmethod
-    def snapTimeToEdge(cls, time):
-        """Returns the input time or the nearest edge"""
-        res, diff = closest_item(cls.__edges, time)
-        if diff <= cls.__deadband:
-            return res
-        return time
-
-    @classmethod
-    def snapObjToEdge(cls, obj, time):
-        """Returns the input time or the edge which is closest to either the
-        start or finish time. The input time is interpreted as the start time
-        of obj."""
-
-        # need to find the closest edge to both the left and right sides of
-        # the object we are draging.
-        duration = obj.duration
-        left_res, left_diff = closest_item(cls.__edges, time)
-        right_res, right_diff = closest_item(cls.__edges, time + duration)
-        if left_diff <= right_diff:
-            res = left_res
-            diff = left_diff
-        else:
-            res = right_res - duration
-            diff = right_diff
-        if diff <= cls.__deadband:
-            return res
-        return time
 

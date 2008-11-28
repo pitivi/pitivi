@@ -30,6 +30,7 @@ from composition import TimelineComposition
 from objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
 from source import TimelineBlankSource, TimelineFileSource
 from pitivi.serializable import Serializable
+from pitivi.utils import closest_item
 
 class Timeline(Serializable):
     """
@@ -78,6 +79,10 @@ class Timeline(Serializable):
         self.audiocomp.gnlobject.connect("pad-removed", self._removedAudioPadCb)
         self.videocomp.gnlobject.connect("pad-removed", self._removedVideoPadCb)
 
+        # we need to keep track of every object added to the timeline
+        self.videocomp.connect("source-added", self._sourceAddedCb)
+        self.videocomp.connect("source-removed", self._sourceRemovedCb)
+
     def addFactory(self, factory, time=gst.CLOCK_TIME_NONE, shift=False):
         """Add a factory to the timeline using the the specified time as the
         start time. If shift is true, then move overlapping sources out of the
@@ -92,12 +97,6 @@ class Timeline(Serializable):
             video_source = TimelineFileSource(factory=factory,
                 media_type=MEDIA_TYPE_VIDEO,
                 name=factory.name)
-            # WARNING: this won't actually catch the linked source, so if the
-            # source is ever unlinked its edges will not be seen. On the other
-            # hand, this won't matter once we switch to the parent-child
-            # model.
-            #self.register_instance(video_source)
-            # TODO: insert source in proper location
             self.videocomp.appendSource(video_source)
         # must be elif because of auto-linking, this just catches case where
         # factory is only audio
@@ -105,8 +104,6 @@ class Timeline(Serializable):
             audio_source = TimelineFileSource(factory=factory,
                 media_type=MEDIA_TYPE_VIDEO,
                 name=factory.name)
-            #self.register_instance(audio_source)
-            # TODO: insert source in proper location
             self.audiocomp.appendSource(audio_source)
 
     def _newAudioPadCb(self, unused_audiocomp, pad):
@@ -147,7 +144,78 @@ class Timeline(Serializable):
     def getDuration(self):
         return max(self.audiocomp.duration, self.videocomp.duration)
 
-    # Serializable methods
+## code for keeping track of edit points, and snapping timestamps to the
+## nearest edit point. We do this here so we can keep track of edit points
+## for all layers/tracks.
+
+    __instances = []
+    __deadband = 0
+    __do_updates = True
+    __edges = None
+
+    def _sourceAddedCb(self, composition, inst):
+        self.__instances.append(inst)
+        self.updateEdges()
+
+    def _sourceRemovedCb(self, composition, inst):
+        assert inst in self.__instances
+        self.__instances.remove(inst)
+
+    def setDeadband(self, db):
+        self.__deadband = db
+
+    def enableEdgeUpdates(self):
+        self.__do_updates = True
+        self.updateEdges()
+
+    def disableEdgeUpdates(self):
+        self.__do_updates = False
+
+    def updateEdges(self):
+        if not self.__do_updates:
+            return
+        #FIXME: this might be more efficient if we used a binary sort tree,
+        # filter out duplicate edges in linear time
+        edges = {}
+        for obj in self.__instances:
+            # start/end of object both considered "edit points"
+            edges[obj.start] = None
+            edges[obj.start + obj.duration] = None
+            # TODO: add other critical object points when these are
+            # implemented
+            # TODO: filtering mechanism
+        self.__edges = edges.keys()
+        self.__edges.sort()
+
+    def snapTimeToEdge(self, time):
+        """Returns the input time or the nearest edge"""
+        res, diff = closest_item(self.__edges, time)
+        if diff <= self.__deadband:
+            return res
+        return time
+
+    def snapObjToEdge(self, obj, time):
+        """Returns the input time or the edge which is closest to either the
+        start or finish time. The input time is interpreted as the start time
+        of obj."""
+
+        # need to find the closest edge to both the left and right sides of
+        # the object we are draging.
+        duration = obj.duration
+        left_res, left_diff = closest_item(self.__edges, time)
+        right_res, right_diff = closest_item(self.__edges, time + duration)
+        if left_diff <= right_diff:
+            res = left_res
+            diff = left_diff
+        else:
+            res = right_res - duration
+            diff = right_diff
+        if diff <= self.__deadband:
+            return res
+        return time
+
+## Serializable interfacemethods
+
     def toDataFormat(self):
         ret = Serializable.toDataFormat(self)
         ret["compositions"] = dict((\
