@@ -93,21 +93,17 @@ class Controller(object):
 ## internal callbacks
 
     def _drag_start(self, item, target, event):
-        self._view.activate()
         self.drag_start()
 
     def _drag_end(self, item, target, event):
         self.drag_end()
         if self._ptr_within:
-            self._view.focus()
             point = self.from_item_event(item, event)
             if self._last_click and (event.time - self._last_click < 400):
                 self.double_click(point)
             else:
                 self.click(point)
             self._last_click = event.time
-        else:
-            self._view.normal()
 
 ## protected interface for subclasses
 
@@ -130,9 +126,7 @@ class Controller(object):
         return pos
 
     def enter(self, item, target):
-        if not self._dragging:
-            self._view.focus()
+        pass
 
     def leave(self, item, target):
-        if not self._dragging:
-            self._view.normal()
+        pass
