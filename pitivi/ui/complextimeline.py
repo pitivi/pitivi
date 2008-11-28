@@ -35,12 +35,13 @@ from complexinterface import Zoomable
 import goocanvas
 # FIXME : wildcard imports are BAD !
 from util import *
-import os.path
-from urllib import unquote
+
 from pitivi.timeline.objects import MEDIA_TYPE_VIDEO
 from gettext import gettext as _
-import dnd
 
+# ui imports
+import dnd
+from timelineobject import TimelineObject
 
 # default heights for composition layer objects
 VIDEO_TRACK_HEIGHT = 50
@@ -80,16 +81,7 @@ AUDIO_SOURCE = (
     }
 )
 
-# defines visual appearance for source resize handle
-DRAG_HANDLE = (
-    goocanvas.Rect,
-    {
-        "width" : 5,
-        "fill_color_rgba" : 0x00000022,
-        "line-width" : 0
-    },
-    {}
-)
+
 
 BACKGROUND = (
     goocanvas.Rect,
@@ -110,25 +102,6 @@ RAZOR_LINE = (
     {}
 )
 
-SPACER = (
-    goocanvas.Polyline,
-    {
-        "stroke_color_rgba" : 0xFFFFFFFF,
-        "line_width" : 1,
-    },
-    {}
-)
-
-LABEL = (
-    goocanvas.Text,
-    {
-        "font" : "Sans 9",
-        "text" : "will be replaced",
-        "fill_color_rgba" : 0x000000FF,
-        "alignment" : pango.ALIGN_LEFT
-    },
-    {}
-)
 
 # the vsiual appearance for the selection marquee
 MARQUEE = (
@@ -140,9 +113,11 @@ MARQUEE = (
     {}
 )
 
-# cursors to be used for resizing objects
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
+
+
+# cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
 # TODO: replace this with custom cursor
 RAZOR_CURSOR = gtk.gdk.Cursor(gtk.gdk.XTERM)
@@ -215,7 +190,7 @@ class ComplexTrack(SmartGroup, Zoomable):
     def _objectAdded(self, unused_timeline, element):
         # FIXME: here we assume that the object added is always a
         # TimelineFileSource
-        w = ComplexTimelineObject(element, self.comp, self.object_style)
+        w = TimelineObject(element, self.comp, self.object_style)
         # FIXME: this is crack: here, we're making the item itself draggable
         # below, we're making the resize handles draggable. 
         make_dragable(self.canvas, w, start=self._start_drag,
@@ -266,7 +241,7 @@ class ComplexTrack(SmartGroup, Zoomable):
         element = item.element
         element.snapStartDurationTime(max(self.pixelToNs(pos[0]), 0))
 
-    # FIXME: these two methods should be in the ComplexTimelineObject class at least, or in
+    # FIXME: these two methods should be in the TimelineObject class at least, or in
     # their own class possibly. But they're here because they do
     # edge-snapping. If we move edge-snapping into the core, this won't be a
     # problem.
@@ -284,100 +259,6 @@ class ComplexTrack(SmartGroup, Zoomable):
             start = element.start
             duration = element.duration
             self.start_duration_cb(self, start, duration, child)
-
-# FIXME: a huge problem with the way I've implemented this is that the
-# property interface in goocanvas is a secondary interface. You're meant to
-# use transformation matrices and bounds. This caused problems for the simple
-# UI, because I wanted to implement expanding containers in the easiest way
-# possible (i.e., using signals) and no signals are sent when you reposition
-# an item with a transformation.
-
-class ComplexTimelineObject(goocanvas.Group):
-
-    __gtype_name__ = 'ComplexTimelineObject'
-
-    x = gobject.property(type=float)
-    y = gobject.property(type=float)
-    height = gobject.property(type=float)
-    width = gobject.property(type=float)
-
-    def __init__(self, element, composition, style):
-        goocanvas.Group.__init__(self)
-        self.element = element
-        self.comp = composition
-        self.bg = make_item(style)
-        self.bg.element = element
-        self.bg.comp = composition
-        self.name = make_item(LABEL)
-        self.name.props.text = os.path.basename(unquote(
-            element.factory.name))
-        self.l_handle = self._make_handle(LEFT_SIDE)
-        self.r_handle = self._make_handle(RIGHT_SIDE)
-        self.spacer = make_item(SPACER)
-        self.children = [self.bg, self.name, self.l_handle, self.r_handle,
-            self.spacer]
-        for thing in self.children:
-            self.add_child(thing)
-
-        # FIXME: this is ghetto. 
-        self.connect("notify::x", self.do_set_x)
-        self.connect("notify::y", self.do_set_y)
-        self.connect("notify::width", self.do_set_width)
-        self.connect("notify::height", self.do_set_height)
-        self.width = self.bg.props.width
-        self.height = self.bg.props.height
-
-    def _set_cursor(self, unused_item, unused_target, event, cursor):
-        window = event.window
-        # wtf ? no get_cursor?
-        #self._oldcursor = window.get_cursor()
-        window.set_cursor(cursor)
-        return True
-
-    def _make_handle(self, cursor):
-        ret = make_item(DRAG_HANDLE)
-        ret.element = self.element
-        ret.connect("enter-notify-event", self._set_cursor, cursor)
-        #ret.connect("leave-notify-event", self._set_cursor, ARROW)
-        return ret
-
-    def _size_spacer(self):
-        x = self.x + self.width
-        y = self.y + self.height
-        self.spacer.points = goocanvas.Points([(x, 0), (x, y)])
-        # clip text to object width
-        w = self.width - width(self.r_handle)
-        self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
-            self.x, self.y, w, self.height, w)
-
-    def do_set_x(self, *unused_args):
-        x = self.x
-        self.bg.props.x = x
-        self.name.props.x = x + width(self.l_handle) + 2
-        self.l_handle.props.x = x
-        self.r_handle.props.x = x + self.width - width(self.r_handle)
-        self._size_spacer()
-
-    def do_set_y(self, *unused_args):
-        y = self.y
-        self.bg.props.y = y
-        self.name.props.y = y + 2
-        self.l_handle.props.y = y
-        self.r_handle.props.y = y
-        self._size_spacer()
-
-    def do_set_width(self, *unused_args):
-        self.bg.props.width = self.width
-        self.r_handle.props.x = self.x + self.width - width(self.r_handle)
-        self.name.props.width = self.width - (2 * width(self.l_handle) + 4)
-        self._size_spacer()
-
-    def do_set_height(self, *unused_args):
-        height = self.height
-        self.bg.props.height = height
-        self.l_handle.props.height = height
-        self.r_handle.props.height = height
-        self._size_spacer()
 
 # FIXME: this class should be renamed CompositionTracks, or maybe just Tracks.
 
@@ -494,7 +375,7 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
         self._razor.props.visibility = goocanvas.ITEM_INVISIBLE
 
         # Find the topmost source under the mouse. This is tricky because not
-        # all objects in the timeline are ComplexTimelineObjects. Some of them
+        # all objects in the timeline are TimelineObjects. Some of them
         # are drag handles, for example. For now, only objects marked as
         # selectable should be sources
         x, y = event_coords(self, event)
