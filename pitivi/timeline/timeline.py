@@ -28,7 +28,7 @@ import gst
 from pitivi.settings import ExportSettings
 from composition import TimelineComposition
 from objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
-from source import TimelineBlankSource
+from source import TimelineBlankSource, TimelineFileSource
 from pitivi.serializable import Serializable
 
 class Timeline(Serializable):
@@ -78,6 +78,37 @@ class Timeline(Serializable):
         self.audiocomp.gnlobject.connect("pad-removed", self._removedAudioPadCb)
         self.videocomp.gnlobject.connect("pad-removed", self._removedVideoPadCb)
 
+    def addFactory(self, factory, time=gst.CLOCK_TIME_NONE, shift=False):
+        """Add a factory to the timeline using the the specified time as the
+        start time. If shift is true, then move overlapping sources out of the
+        way."""
+
+        if not factory:
+            return
+
+        #FIXME: need simple, generic, createFromFactory() type thing so we
+        # have to care about all of this...
+        if factory.is_video:
+            video_source = TimelineFileSource(factory=factory,
+                media_type=MEDIA_TYPE_VIDEO,
+                name=factory.name)
+            # WARNING: this won't actually catch the linked source, so if the
+            # source is ever unlinked its edges will not be seen. On the other
+            # hand, this won't matter once we switch to the parent-child
+            # model.
+            #self.register_instance(video_source)
+            # TODO: insert source in proper location
+            self.videocomp.appendSource(video_source)
+        # must be elif because of auto-linking, this just catches case where
+        # factory is only audio
+        elif factory.is_audio:
+            audio_source = TimelineFileSource(factory=factory,
+                media_type=MEDIA_TYPE_VIDEO,
+                name=factory.name)
+            #self.register_instance(audio_source)
+            # TODO: insert source in proper location
+            self.audiocomp.appendSource(audio_source)
+
     def _newAudioPadCb(self, unused_audiocomp, pad):
         asrc = gst.GhostPad("asrc", pad)
         asrc.set_active(True)
@@ -117,7 +148,6 @@ class Timeline(Serializable):
         return max(self.audiocomp.duration, self.videocomp.duration)
 
     # Serializable methods
-
     def toDataFormat(self):
         ret = Serializable.toDataFormat(self)
         ret["compositions"] = dict((\

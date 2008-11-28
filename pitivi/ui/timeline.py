@@ -71,31 +71,6 @@ class TimelineWidget(gtk.VBox):
         self.hscroll.emit("scroll-event", event)
 
 ## Drag and Drop callbacks
-
-    def _gotFileFactory(self, filefactory, x, y):
-        """ got a filefactory at the given position """
-        # remove the slot
-        if not filefactory or not filefactory.is_video:
-            return
-        #pos_ = self.items.point_to_index(pixel_coords(self, (x, y)))
-        pos_ = 0
-        gst.debug("_got_filefactory pos : %d" % pos_)
-        # we just add it here, the drawing will be done in the condensed_list
-        # callback
-        source = TimelineFileSource(factory=filefactory,
-            media_type=MEDIA_TYPE_VIDEO,
-            name=filefactory.name)
-
-        # FIXME: access of instance.PiTiVi
-        timeline = instance.PiTiVi.current.timeline
-        if pos_ == -1:
-            timeline.videocomp.appendSource(source)
-        elif pos_:
-            timeline.videocomp.insertSourceAfter(source,
-                self.condensed[pos_ - 1])
-        else:
-            timeline.videocomp.prependSource(source)
-
     def _dragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
 
         # FIXME: temporarily add source to timeline, and put it in drag mode
@@ -116,9 +91,8 @@ class TimelineWidget(gtk.VBox):
             uri = selection.data
         else:
             context.finish(False, False, timestamp)
-        self._gotFileFactory(instance.PiTiVi.current.sources[uri], x, y)
-        context.finish(True, False, timestamp)
         # FIXME: access of instance, and playground
+        factory = instance.PiTiVi.current.sources[uri]
+        instance.PiTiVi.current.timeline.addFactory(factory)
+        context.finish(True, False, timestamp)
         instance.PiTiVi.playground.switchToTimeline()
-
-
