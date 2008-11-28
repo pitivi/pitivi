@@ -114,7 +114,7 @@ class Timeline(Serializable, Signallable):
         self.emit("track-added", self.audiocomp)
 
 
-    def addFactory(self, factory, time=gst.CLOCK_TIME_NONE, shift=False):
+    def addFactory(self, factory):
         """Add a factory to the timeline using the the specified time as the
         start time. If shift is true, then move overlapping sources out of the
         way."""
@@ -122,20 +122,56 @@ class Timeline(Serializable, Signallable):
         if not factory:
             return
 
+        comp = None
         #FIXME: need simple, generic, createFromFactory() type thing so we
         # have to care about all of this...
         if factory.is_video:
-            video_source = TimelineFileSource(factory=factory,
+            source = TimelineFileSource(factory=factory,
                 media_type=MEDIA_TYPE_VIDEO,
                 name=factory.name)
-            self.videocomp.appendSource(video_source)
+            comp = self.videocomp
         # must be elif because of auto-linking, this just catches case where
         # factory is only audio
         elif factory.is_audio:
             audio_source = TimelineFileSource(factory=factory,
                 media_type=MEDIA_TYPE_VIDEO,
                 name=factory.name)
-            self.audiocomp.appendSource(audio_source)
+            comp = self.audiocomp
+        comp.appendSource(source)
+        return source
+
+    def splitObject(self, obj, editpoint):
+        # we want to divide obj in to objects A and B at edit point.
+        #     [obj         |            ]
+        #     [A           ][B          ]
+        # Sanity check:
+        start = obj.start
+        end = obj.start + obj.duration
+        assert (start < editpoint) and (editpoint < end)
+
+        # add source b
+        # FIXME: replace this with some kind of copyObject or cloneObject
+        # command
+        new = self.addFactory(obj.factory)
+        new.setStartDurationTime(obj.start, obj.duration)
+        new.setMediaStartDurationTime(obj.media_start, obj.media_duration)
+
+        # trim source b
+        new.setInTime(editpoint)
+        # trim source a
+        obj.setOutTime(editpoint)
+
+    def _selection_changed_cb(self, selected, deselected):
+        # TODO: filter this list for things other than sources, and put them
+        # into appropriate lists
+        for item in selected:
+            item.props.fill_color_rgba = item.get_data("selected_color")
+            parent = item.get_parent()
+            self._selected_sources.append(parent)
+        for item in deselected:
+            item.props.fill_color_rgba = item.get_data("normal_color")
+            parent = item.get_parent()
+            self._selected_sources.remove(parent)
 
     def _newAudioPadCb(self, unused_audiocomp, pad):
         asrc = gst.GhostPad("asrc", pad)
