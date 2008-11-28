@@ -1,15 +1,12 @@
-from receiver import Receiver, handler
+from receiver import receiver, handler
 import controller
 
-class View(Receiver):
+class View(object):
     
-    _controller = None
-
     Controller = controller.Controller
     
     def __init__(self):
         self._controller = self.Controller(view=self)
-        self.normal()
 
 ## public interface
 

@@ -1,4 +1,4 @@
-from pitivi.receiver import Receiver, handler
+from pitivi.receiver import receiver, handler
 from point import Point
 
 # Controllers are reusable and implement specific behaviors. Currently this
@@ -10,18 +10,13 @@ from point import Point
 
 #TODO: refactor to handle cursors
 
-class BaseController(Receiver):
-
-    def __init__(self, model=None, view=None):
-        Receiver.__init__(self)
-        self.model = model
-        self.view = view
-
-class Controller(BaseController):
+class Controller(object):
 
     """A controller which implements drag-and-drop bahavior on connected view
     objects. Subclasses may override the drag_start, drag_end, pos, and
     set_pos methods"""
+    
+    _view = receiver()
 
     _dragging = None
     _canvas = None
@@ -29,25 +24,25 @@ class Controller(BaseController):
     _ptr_within = False
     _last_click = None
 
-    def __init__(self, model=None, view=None):
-        BaseController.__init__(self, model, view)
+    def __init__(self, view=None):
+        self._view = view
 
 ## signal handlers
 
-    @handler("view", "enter_notify_event")
+    @handler(_view, "enter_notify_event")
     def enter_notify_event(self, item, target, event):
         self.enter(item, target)
         self._ptr_within = True
         return True
 
-    @handler("view", "leave_notify_event")
+    @handler(_view, "leave_notify_event")
     def leave_notify_event(self, item, target, event):
         self._ptr_within = False
         if not self._dragging:
             self.leave(item, target)
         return True
 
-    @handler("view", "button_press_event")
+    @handler(_view, "button_press_event")
     def button_press_event(self, item, target, event):
         if not self._canvas:
             self._canvas = item.get_canvas()
@@ -57,7 +52,7 @@ class Controller(BaseController):
         self._drag_start(item, target, event)
         return True
 
-    @handler("view", "motion_notify_event")
+    @handler(_view, "motion_notify_event")
     def motion_notify_event(self, item, target, event):
         if self._dragging:
             self.set_pos(self._dragging, 
@@ -66,7 +61,7 @@ class Controller(BaseController):
             return True
         return False
 
-    @handler("view", "button_release_event")
+    @handler(_view, "button_release_event")
     def button_release_event(self, item, target, event):
         self._drag_end(item, self._dragging, event)
         self._dragging = None
@@ -120,9 +115,3 @@ class Controller(BaseController):
     def leave(self, item, target):
         if not self._dragging:
             self._view.normal()
-
-class ClickController(Controller):
-
-    def set_pos(self, obj, pos):
-        pass
-
