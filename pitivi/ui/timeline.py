@@ -90,7 +90,7 @@ class Timeline(gtk.VBox):
     unit_width = 10 
     # specific levels of zoom, in (multiplier, unit) pairs which 
     # from zoomed out to zoomed in
-    zoom_levels = (1, 5, 10, 20, 50, 100, 150) 
+
 
     def __init__(self):
         gst.log("Creating Timeline")
@@ -99,13 +99,6 @@ class Timeline(gtk.VBox):
         self.timeline = instance.PiTiVi.current.timeline
         self.instance = instance.PiTiVi
         self.playground = instance.PiTiVi.playground
-
-        self._zoom_adj = gtk.Adjustment()
-        self._zoom_adj.lower = self._computeZoomRatio(0)
-        self._zoom_adj.upper = self._computeZoomRatio(-1)
-        self._cur_zoom = 2
-        Zoomable.setZoomAdjustment(self._zoom_adj)
-        Zoomable.setZoomRatio(self._computeZoomRatio(self._cur_zoom))
 
         self._createUI()
 
@@ -229,12 +222,10 @@ class Timeline(gtk.VBox):
         return self.zoom_levels[index]
 
     def _zoomInCb(self, unused_action):
-        self._cur_zoom = min(len(self.zoom_levels) - 1, self._cur_zoom + 1)
-        self._zoom_adj.set_value(self._computeZoomRatio(self._cur_zoom))
+        Zoomable.zoomIn()
 
     def _zoomOutCb(self, unused_action):
-        self._cur_zoom = max(0, self._cur_zoom - 1)
-        self._zoom_adj.set_value(self._computeZoomRatio(self._cur_zoom))
+        Zoomable.zoomOut()
 
     def deleteSelected(self, unused_action):
         instance.PiTiVi.current.timeline.deleteSelection()

@@ -26,7 +26,6 @@ pixels.
 """
 
 import gst
-from pitivi.receiver import receiver, handler
 
 #
 # Complex Timeline interfaces v2 (01 Jul 2008)
@@ -42,9 +41,6 @@ from pitivi.receiver import receiver, handler
 # ex : 1.0 = 1 pixel for a second
 #
 # Class Methods
-# . setZoomAdjustment(adj)
-# . getZoomAdjustment()
-# . getZoomRatio
 # . pixelToNs(pixels)
 # . nsToPixels(time)
 # . setZoomRatio
@@ -54,9 +50,11 @@ from pitivi.receiver import receiver, handler
 class Zoomable(object):
 
     zoomratio = 10
-    zoom_adjustment = None
     sigid = None
     __instances = []
+    zoom_levels = (1, 5, 10, 20, 50, 100, 150) 
+    __cur_zoom = 2
+
 
     def __init__(self):
         object.__init__(self)
@@ -67,28 +65,23 @@ class Zoomable(object):
             self.__instances.remove(self)
 
     @classmethod
-    def _zoom_changed_cb(cls, adjustment):
-        cls.zoomratio = adjustment.get_value()
+    def setZoomRatio(cls, ratio):
+        cls.zoomratio = ratio
         cls.__zoomChanged()
 
     @classmethod
-    def setZoomAdjustment(cls, adjustment):
-        if cls.zoom_adjustment:
-            cls.zoom_adjustment.disconnect(cls.sigid)
-            cls.zoom_adjustment = None
-        if adjustment:
-            cls.sigid = adjustment.connect("value-changed", 
-                cls._zoom_changed_cb)
-            cls.zoom_adjustment = adjustment
-            cls._zoom_changed_cb(adjustment)
+    def zoomIn(cls):
+        cls.__cur_zoom = min(len(cls.zoom_levels) - 1, cls.__cur_zoom + 1)
+        cls.setZoomRatio(cls._computeZoomRatio(cls.__cur_zoom))
 
     @classmethod
-    def getZoomAdjustment(cls):
-        return cls.zoom_adjustment
+    def zoomOut(cls):
+        cls.__cur_zoom = max(0, cls.__cur_zoom - 1)
+        cls.setZoomRatio(cls._computeZoomRatio(cls.__cur_zoom))
 
     @classmethod
-    def setZoomRatio(cls, ratio):
-        cls.zoom_adjustment.set_value(ratio)
+    def _computeZoomRatio(cls, index):
+        return cls.zoom_levels[index]
 
     @classmethod
     def pixelToNs(cls, pixel):
