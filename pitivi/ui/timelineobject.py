@@ -13,20 +13,22 @@ from complexinterface import Zoomable
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
 
-class TrimHandle(goocanvas.Rect):
+class TrimHandle(View, goocanvas.Rect, Zoomable):
 
     """A component of a TimelineObject which manage's the source's edit
     points"""
 
     element = receiver()
 
-    def __init__(self, element):
+    def __init__(self, element, **kwargs):
         self.element = element
         goocanvas.Rect.__init__(self,
             width=5,
             fill_color_rgba=0x00000022,
-            line_width=0
+            line_width=0,
+            **kwargs
         )
+        View.__init__(self)
 
 class StartHandle(TrimHandle):
 
@@ -35,16 +37,18 @@ class StartHandle(TrimHandle):
     class Controller(controller.Controller):
 
         def set_pos(self, obj, pos):
-            self._view.element.snapInTime(self.pixelToNs(pos[0]))
+            self._view.element.snapInTime(
+                self._view.pixelToNs(pos[0]))
 
-class EndHandle(controller.Controller):
+class EndHandle(TrimHandle):
 
     """Subclass of TrimHandle which sets the objects's end time"""
 
     class Controller(controller.Controller):
 
         def set_pos(self, obj, pos):
-            self._view.element.snapOutTime(self.pixelToNs(pos[0]))
+            self._view.element.snapOutTime(
+                self._view.pixelToNs(pos[0]))
 
 class TimelineObject(View, goocanvas.Group, Zoomable):
 
@@ -66,9 +70,6 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
             self._view.element.snapStartDurationTime(max(
                 self._view.pixelToNs(pos[0]), 0))
 
-        def click(self, pos):
-            self._view.select()
-
     def __init__(self, element, composition):
         goocanvas.Group.__init__(self)
         View.__init__(self)
@@ -88,11 +89,14 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
             fill_color_rgba=0x000000FF,
             alignment=pango.ALIGN_LEFT)
  
-        #self.start_handle = StartHandle(element)
-        #self.end_handle = EndHandle(element)
+        self.start_handle = StartHandle(element,
+            height=self.__HEIGHT__)
+        self.start_handle.setZoomAdjustment(self.getZoomAdjustment())
+        self.end_handle = EndHandle(element,
+            height=self.__HEIGHT__)
+        self.end_handle.setZoomAdjustment(self.getZoomAdjustment())
 
-        #for thing in (self.bg, self.start_handle, self.end_handle, self.name):
-        for thing in (self.bg, self.name):
+        for thing in (self.bg, self.start_handle, self.end_handle, self.name):
             self.add_child(thing)
         self.normal()
 
@@ -106,12 +110,17 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
         self._start_duration_cb(self.element, self.element.start,
             self.element.duration)
 
+    def setChildZoomAdjustment(self, adj):
+        self.start_handle.setZoomAdjustment(adj)
+        self.end_handle.setZoomAdjustment(adj)
+
     @handler(element, "start-duration-changed")
     def _start_duration_cb(self, obj, start, duration):
         self.set_simple_transform(self.nsToPixel(start), 0, 1, 0)
         width = self.nsToPixel(duration)
+        w = width - self.end_handle.props.width
         self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
-            0, 0, width, self.__HEIGHT__, width - 10)
+            0, 0, w, self.__HEIGHT__, w)
         self.bg.props.width = width
         # place end handle at appropriate distance
-        #self.end_handle.props.x = width - 10
+        self.end_handle.props.x = w
