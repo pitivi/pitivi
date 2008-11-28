@@ -123,6 +123,21 @@ class TestFileSourceFactory(TestObjectFactory):
         TestObjectFactory.__init__(self, *args, **kwargs)
         self.length = duration
 
+    def _getDefaultDuration(self):
+        """
+        Returns the default duration of a file in nanoseconds,
+        this should be used when using sources initially.
+
+        Most sources will return the same as getDuration(), but can be overriden
+        for sources that have an infinite duration.
+        """
+        return self.duration
+
+    @property
+    def default_duration(self):
+        """Default duration of the source in nanoseconds"""
+        return self._getDefaultDuration()
+
     def _getDuration(self):
         return self.length
     duration = property(_getDuration)
