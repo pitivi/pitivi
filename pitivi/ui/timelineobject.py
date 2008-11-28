@@ -12,6 +12,21 @@ from complexinterface import Zoomable
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
+ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
+
+class TimelineController(controller.Controller):
+
+    _cursor = ARROW
+
+    def drag_start(self):
+        instance.PiTiVi.current.timeline.disableEdgeUpdates()
+
+    def drag_end(self):
+        instance.PiTiVi.current.timeline.enableEdgeUpdates()
+
+    def set_pos(self, item, pos):
+        self._view.element.snapStartDurationTime(max(
+            self._view.pixelToNs(pos[0]), 0))
 
 class TrimHandle(View, goocanvas.Rect, Zoomable):
 
@@ -34,7 +49,9 @@ class StartHandle(TrimHandle):
 
     """Subclass of TrimHandle wich sets the object's start time"""
 
-    class Controller(controller.Controller):
+    class Controller(TimelineController):
+
+        _cursor = LEFT_SIDE
 
         def set_pos(self, obj, pos):
             self._view.element.snapInTime(
@@ -44,7 +61,9 @@ class EndHandle(TrimHandle):
 
     """Subclass of TrimHandle which sets the objects's end time"""
 
-    class Controller(controller.Controller):
+    class Controller(TimelineController):
+
+        _cursor = RIGHT_SIDE
 
         def set_pos(self, obj, pos):
             self._view.element.snapOutTime(
@@ -58,17 +77,7 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
     __NORMAL__ = 0x709fb899
     __SELECTED__ = 0xa6cee3AA
 
-    class Controller(controller.Controller):
-
-        def drag_start(self):
-            instance.PiTiVi.current.timeline.disableEdgeUpdates()
-
-        def drag_end(self):
-            instance.PiTiVi.current.timeline.enableEdgeUpdates()
-
-        def set_pos(self, item, pos):
-            self._view.element.snapStartDurationTime(max(
-                self._view.pixelToNs(pos[0]), 0))
+    Controller = TimelineController
 
     def __init__(self, element, composition):
         goocanvas.Group.__init__(self)

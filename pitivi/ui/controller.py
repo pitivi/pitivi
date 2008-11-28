@@ -1,5 +1,6 @@
 from pitivi.receiver import receiver, handler
 from point import Point
+import gtk
 
 # Controllers are reusable and implement specific behaviors. Currently this
 # Includes only click, and drag. Multiple controllers could be attached to a
@@ -8,7 +9,7 @@ from point import Point
 # that explictly combines the functionality of both when custom behavior is
 # desired.
 
-#TODO: refactor to handle cursors
+#TODO: refactor to handle modifier keys
 
 class Controller(object):
 
@@ -20,6 +21,7 @@ class Controller(object):
 
     _dragging = None
     _canvas = None
+    _cursor = None
     _ptr_within = False
     _last_click = None
     _mousedown = None
@@ -46,6 +48,8 @@ class Controller(object):
 
     @handler(_view, "enter_notify_event")
     def enter_notify_event(self, item, target, event):
+        if self._cursor:
+            event.window.set_cursor(self._cursor)
         self.enter(item, target)
         self._ptr_within = True
         return True
