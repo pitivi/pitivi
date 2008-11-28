@@ -104,7 +104,6 @@ class Controller(BaseController):
     def drag_end(self):
         pass
 
-
     def set_pos(self, obj, pos):
         obj.props.x, obj.props.y = pos
 

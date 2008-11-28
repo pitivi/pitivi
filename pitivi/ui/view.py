@@ -7,9 +7,8 @@ class View(Receiver):
 
     Controller = controller.Controller
     
-    def __init__(self, model=None):
+    def __init__(self):
         self._controller = self.Controller(view=self)
-        self.model = model
         self.normal()
 
 ## public interface
