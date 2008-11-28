@@ -80,6 +80,7 @@ class Timeline(Serializable):
         self.videocomp.gnlobject.connect("pad-removed", self._removedVideoPadCb)
 
         # we need to keep track of every object added to the timeline
+        self.__instances = []
         self.videocomp.connect("source-added", self._sourceAddedCb)
         self.videocomp.connect("source-removed", self._sourceRemovedCb)
 
@@ -148,7 +149,7 @@ class Timeline(Serializable):
 ## nearest edit point. We do this here so we can keep track of edit points
 ## for all layers/tracks.
 
-    __instances = []
+    __instances = None
     __deadband = 0
     __do_updates = True
     __edges = None
@@ -160,6 +161,7 @@ class Timeline(Serializable):
     def _sourceRemovedCb(self, composition, inst):
         assert inst in self.__instances
         self.__instances.remove(inst)
+        self.updateEdges()
 
     def setDeadband(self, db):
         self.__deadband = db
@@ -186,6 +188,8 @@ class Timeline(Serializable):
             # TODO: filtering mechanism
         self.__edges = edges.keys()
         self.__edges.sort()
+        print self.__edges
+        print self.__deadband
 
     def snapTimeToEdge(self, time):
         """Returns the input time or the nearest edge"""

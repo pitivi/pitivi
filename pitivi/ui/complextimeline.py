@@ -669,6 +669,8 @@ class ComplexTimelineWidget(gtk.VBox):
         # project signals
         instance.PiTiVi.connect("new-project-loading",
             self._newProjectLoadingCb)
+        instance.PiTiVi.connect("new-project-loaded",
+            self._newProjectLoadedCb)
         instance.PiTiVi.connect("new-project-failed",
             self._newProjectFailedCb)
         self._createUI()
@@ -722,6 +724,10 @@ class ComplexTimelineWidget(gtk.VBox):
 
     def _newProjectLoadingCb(self, unused_inst, project):
         self.layerInfoList.setTimeline(project.timeline)
+
+    def _newProjectLoadedCb(self, unused_inst, unused_project):
+        # force set deadband when new timeline loads
+        self.compositionLayers.zoomChanged()
 
     def _newProjectFailedCb(self, unused_inst, unused_reason, unused_uri):
         self.layerInfoList.setTimeline(None)
