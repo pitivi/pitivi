@@ -1,6 +1,11 @@
 from signalinterface import Signallable
 from types import MethodType
 
+class _receiver_data(object):
+
+    sender = None
+    sigids = None
+
 class receiver(object):
 
     """A descriptor which wrapps signal connect and disconnect for a single
@@ -11,34 +16,37 @@ class receiver(object):
 
     def __init__(self, setter=None):
         object.__init__(self)
-        self.sender = None
         self.handlers = {}
-        self.sigids = {}
         self.setter = setter
-        self._first_connect = True
 
     def __get__(self, instance, blah):
-        return self.sender
+        if hasattr(instance, "_receiver_data"):
+            return instance._receiver_data[self].sender
+        return None
 
     def __set__(self, instance, value):
+        if not hasattr(instance, "_receiver_data"):
+            instance._receiver_data = {}
+        if not instance._receiver_data.has_key(self):
+            instance._receiver_data[self] = _receiver_data()
+        rd = instance._receiver_data[self]
+
         # explicitly check for None, because sometimes valid instances have a
         # False truth value. We don't want to forget to disconnect any signals,
         # and at the same time we don't want to fail to connect a valid
         # instance of, say, an empty container.
-        if self.sender != None:
-            for id in self.sigids.itervalues():
-                self.sender.disconnect(id)
-            self.sender = None
-            self.sigids = {}
+        if rd.sender != None:
+            for id in rd.sigids.itervalues():
+                instance._receiver_data[self].disconnect(id)
+            rd.sender = None
+            rd.sigids = {}
         if value != None:
             for sig, hdlr in self.handlers.iteritems():
-                value.connect(sig, MethodType(hdlr, instance))
-            self.sender = value
+                rd.sigids = value.connect(sig, MethodType(hdlr, 
+                    instance))
+            rd.sender = value
         if self.setter:
             self.setter(instance)
-
-    def __del__(self, instance):
-        raise NotImplementedError
 
     def add_handler(self, signal, handler):
         self.handlers[signal] = handler
