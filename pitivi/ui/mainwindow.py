@@ -237,42 +237,38 @@ class PitiviMainWindow(gtk.Window):
         """ Create the graphical interface """
         self.set_title("%s v%s" % (APPNAME, pitivi_version))
         self.set_geometry_hints(min_width=800, min_height=480)
-
         self.connect("destroy", self._destroyCb)
 
+        # main menu & toolbar
         vbox = gtk.VBox(False)
         self.add(vbox)
-
         self.menu = self.uimanager.get_widget("/MainMenuBar")
         vbox.pack_start(self.menu, expand=False)
-
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
-
         vbox.pack_start(self.toolbar, expand=False)
 
-
+        # timeline and project tabs
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
-
         self.timeline = Timeline()
-
         vpaned.pack2(self.timeline, resize=True, shrink=False)
-
         hpaned = gtk.HPaned()
         vpaned.pack1(hpaned, resize=False, shrink=True)
-
-        # source-and-effects list
         self.projecttabs = ProjectTabs()
+        hpaned.pack1(self.projecttabs, resize=True, shrink=False)
 
         # Viewer
         self.viewer = PitiviViewer()
-
         self.pitivi.playground.connect("current-changed", 
             self._currentPlaygroundChangedCb)
-
-        hpaned.pack1(self.projecttabs, resize=True, shrink=False)
         hpaned.pack2(self.viewer, resize=False, shrink=False)
+        #self.viewer.detach_button.connect("clicked", self.__windowizeViewer, 
+        #    hpaned)
+
+        # set a reasonable default
         vpaned.set_position(200)
+
+        # timeline toolbar
         # FIXME: remove toolbar padding and shadow. In fullscreen mode, the
         # toolbar buttons should be clickable with the mouse cursor at the
         # very bottom of the screen.
@@ -293,6 +289,20 @@ class PitiviMainWindow(gtk.Window):
             self.is_fullscreen = False
 
 ## PlayGround callback
+
+    def __windowizeViewer(self, button, pane):
+        # FIXME: the viewer can't seem to handle being unparented/reparented
+        pane.remove(self.viewer)
+        window = gtk.Window()
+        window.add(self.viewer)
+        window.connect("destroy", self.__reparentViewer, pane)
+        window.resize(200, 200)
+        window.show_all()
+
+    def __reparentViewer(self, window, pane):
+        window.remove(self.viewer)
+        pane.pack2(self.viewer, resize=False, shrink=False)
+        self.viewer.show()
 
     def _errorMessageResponseCb(self, dialogbox, unused_response):
         dialogbox.hide()

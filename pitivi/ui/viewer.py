@@ -140,6 +140,12 @@ class PitiviViewer(gtk.VBox):
         self.timelabel.set_padding(5, 5)
         bbox.pack_start(self.timelabel, expand=False, padding=10)
 
+        # self.detach_button = gtk.Button()
+        # image = gtk.Image()
+        # image.set_from_stock(gtk.STOCK_LEAVE_FULLSCREEN,
+        #     gtk.ICON_SIZE_SMALL_TOOLBAR)
+        # self.detach_button.set_image(image)
+        # bbox.pack_end(self.detach_button, expand=False, fill=False)
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
@@ -368,7 +374,6 @@ class PitiviViewer(gtk.VBox):
 
     def _forwardCb(self, unused_button):
         pass
-
 
     ## Playground callbacks
 
