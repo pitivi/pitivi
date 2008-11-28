@@ -30,7 +30,6 @@ import pitivi.instance as instance
 from pitivi.bin import SmartTimelineBin
 from pitivi.timeline.source import TimelineFileSource
 from pitivi.timeline import objects
-from complexlayer import LayerInfoList
 import ruler
 from complexinterface import Zoomable
 import dnd
@@ -103,13 +102,10 @@ class Timeline(gtk.VBox):
         self._cur_zoom = 2
         self._zoom_adj.set_value(self._computeZoomRatio(self._cur_zoom))
 
-        self.layerInfoList = LayerInfoList()
+        self.timeline = instance.PiTiVi.current.timeline
         self.instance = instance.PiTiVi
         self.playground = instance.PiTiVi.playground
         self._createUI()
-
-        # force update of UI
-        self.layerInfoList.setTimeline(instance.PiTiVi.current.timeline)
 
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
@@ -121,7 +117,7 @@ class Timeline(gtk.VBox):
         self.pack_start(self.ruler, expand=False, fill=True)
 
         # List of TimelineCanvas
-        self.__canvas = TimelineCanvas(self.layerInfoList)
+        self.__canvas = TimelineCanvas(self.timeline)
         self.__canvas.setZoomAdjustment(self._zoom_adj)
 
         self.scrolledWindow = gtk.ScrolledWindow(self.hadj)
@@ -193,7 +189,8 @@ class Timeline(gtk.VBox):
 
     @handler(instance, "new-project-loading")
     def _newProjectLoadingCb(self, unused_inst, project):
-        self.layerInfoList.setTimeline(project.timeline)
+        self.timeline = project.timeline
+        self.__canvas.timeline = self.timeline
 
     @handler(instance, "new-project-loaded")
     def _newProjectLoadedCb(self, unused_inst, unused_project):
@@ -202,14 +199,15 @@ class Timeline(gtk.VBox):
 
     @handler(instance, "new-project-failed")
     def _newProjectFailedCb(self, unused_inst, unused_reason, unused_uri):
-        self.layerInfoList.setTimeline(None)
+        self.timeline = None
+        self.__canvas.timeline = None
 
-## layer callbacks
+## Timeline callbacks
 
-    layerInfoList = receiver()
+    timeline = receiver()
 
-    @handler(layerInfoList, "start-duration-changed")
-    def _layerStartDurationChanged(self, unused_layer):
+    @handler(timeline, "start-duration-changed")
+    def _timelineStartDurationChanged(self, unused_timeline, start, duration):
         self.ruler.startDurationChanged()
 
 ## ToolBar callbacks

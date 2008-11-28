@@ -43,7 +43,7 @@ class Timeline(Serializable, Signallable):
     __signals__ = {
         "track-added" : ("track"),
         "track-removed" : ("track"),
-        "start-durtation-changed" : ("start", "duration"),
+        "start-duration-changed" : ("start", "duration"),
     }
 
     # TODO make the compositions more versatile
@@ -51,11 +51,15 @@ class Timeline(Serializable, Signallable):
 
     @property
     def start(self):
-        return min(self.audiocomp.start, self.videocomp.start)
+        return min((track.start for track in self.tracks))
 
     @property
     def duration(self):
-        return max(self.audiocomp.duration, self.videocomp.duration)
+        return max((track.duration for track in self.tracks))
+
+    @property
+    def tracks(self):
+        return (self.audiocomp, self.videocomp)
 
     def __init__(self, project=None, **unused_kw):
         gst.log("new Timeline for project %s" % project)

@@ -29,6 +29,7 @@ class receiver(object):
             instance._receiver_data = {}
         if not instance._receiver_data.has_key(self):
             instance._receiver_data[self] = _receiver_data()
+            instance._receiver_data[self].sigids = {}
         rd = instance._receiver_data[self]
 
         # explicitly check for None, because sometimes valid instances have a
@@ -37,12 +38,12 @@ class receiver(object):
         # instance of, say, an empty container.
         if rd.sender != None:
             for id in rd.sigids.itervalues():
-                instance._receiver_data[self].disconnect(id)
+                instance._receiver_data[self].sender.disconnect(id)
             rd.sender = None
             rd.sigids = {}
         if value != None:
             for sig, hdlr in self.handlers.iteritems():
-                rd.sigids = value.connect(sig, MethodType(hdlr, 
+                rd.sigids[sig] = value.connect(sig, MethodType(hdlr, 
                     instance))
             rd.sender = value
         if self.setter:

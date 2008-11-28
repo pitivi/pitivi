@@ -22,19 +22,19 @@ DEADBAND = 5
 
 class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
-    __layers = None
+    __tracks = None
 
-    def __init__(self, layerinfolist):
+    def __init__(self, timeline):
         goocanvas.Canvas.__init__(self)
         self._selected_sources = []
-        self.__layers = [] 
+        self.__tracks = [] 
 
         self._block_size_request = False
         self.props.integer_layout = True
         self.props.automatic_bounds = False
-        self.layerInfoList = layerinfolist
 
         self._createUI()
+        self.timeline = timeline
        
     def _createUI(self):
         self._cursor = ARROW
@@ -169,15 +169,22 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         instance.PiTiVi.current.timeline.setDeadband(self.pixelToNs(DEADBAND))
 
     def setChildZoomAdjustment(self, adj):
-        for layer in self.__layers:
-            layer.setZoomAdjustment(adj)
+        for track in self.__tracks:
+            track.setZoomAdjustment(adj)
 
-## LayerInfoList callbacks
+## Timeline callbacks
 
-    layerInfoList = receiver()
+    def __set_timeline(self):
+        while self.__tracks:
+            self._trackRemoved(None, 0)
+        if self.timeline:
+            for track in self.timeline.tracks:
+                self._trackAdded(None, track, -1)
 
-    @handler(layerInfoList, "start-duration-changed")
-    def _request_size(self, unused_item):
+    timeline = receiver(__set_timeline)
+
+    @handler(timeline, "start-duration-changed")
+    def _request_size(self, unused_item, start, duration):
         tl, br = Point.from_widget_bounds(self)
         pw, ph = br - tl
         tl, br = Point.from_item_bounds(self.tracks)
@@ -185,26 +192,25 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         if (w > pw) or (h > ph):
             self.set_bounds(0, 0, w + 200, h)
 
-    @handler(layerInfoList, "layer-added")
-    def _layerAddedCb(self, unused_infolist, layer, position):
-        track = Track(comp=layer.composition)
-        self.__layers.append(track)
+    @handler(timeline, "track-added")
+    def _trackAdded(self, unused_timeline, comp, position):
+        track = Track(comp=comp)
+        self.__tracks.append(track)
         track.setZoomAdjustment(self.getZoomAdjustment())
         track.set_canvas(self)
         self.tracks.add_child(track)
         self._regroup_tracks()
 
-    @handler(layerInfoList, "layer-removed")
-    def _layerRemovedCb(self, unused_layerInfoList, position):
-        track = self.__layers[position]
-        del self.__layers[position]
+    @handler(timeline, "track-removed")
+    def _trackRemoved(self, unused_timeline, position):
+        track = self.__tracks[position]
+        del self.__tracks[position]
         track.remove()
         self._regroup_tracks()
 
     def _regroup_tracks(self):
-        for i, track in enumerate(self.__layers):
-            height = Point.__sub__(*Point.from_item_bounds(track))[1]
-            # FIXME: hard-coding track height, because goocanvas is kinda
-            # ghetto
+        for i, track in enumerate(self.__tracks):
+            # FIXME: hard-coding track height, because this won't be updated
+            # later
             height = 50
             track.set_simple_transform(0, i * (height + 10), 1, 0)
