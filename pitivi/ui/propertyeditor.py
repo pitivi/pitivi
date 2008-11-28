@@ -106,7 +106,7 @@ class PropertyEditor(gtk.ScrolledWindow):
             return
         objs = self.timeline.getSelection()
         if objs:
-            t = same(map(type, objs))
+            t = same((type(obj.factory) for obj in objs))
             if t:
                 widget = self.__get_widget_for_type(t)
             else:
