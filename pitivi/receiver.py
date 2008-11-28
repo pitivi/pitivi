@@ -1,56 +1,49 @@
-def handler(attribute, signal):
-    """Registers a method in a subclass of receiver as a handler"""
-    def decorator(method):
-        method.__sender__ = attribute
-        method.__signal__ = signal
-        return method
-    return decorator
+from signalinterface import Signallable
+from types import MethodType
 
-def set_sender(attrname):
+class receiver(object):
 
-    def inner(self, new_instance):
-        # get the attribute
-        attr = self.__senders__[attrname]
-        if attr:
-            # disconnect all the previous signal handlers
-            for sigid in self.__sigids__[attrname].itervalues():
-                attr.disconnect(sigid)
-            setattr(self, attr, None)
-        if new_instance:
-            # save the instance
-            self.__senders__[attrname]
-            for signal, handler in self.__handlers__[attrname].iteritems():
-                self.__sigids__[attrname][signal] = new_instance.connect(signal, 
-                    handler)
-    inner.__name__ = "set_" + attrname
-    return inner
+    """A descriptor which wrapps signal connect and disconnect for a single
+    object (the sender). Signal handlers may be registered with the
+    add_handler() method, after which point the handler will be automatically
+    connected when the property value is set. Prior to connecting new signal
+    handlers, old handlers are disconnected."""
 
-def get_sender(attrname):
-    def inner(self):
-        return self.__senders__[attrname]
-    inner.__name__ = "get_" + attrname
-    return inner
+    def __init__(self):
+        object.__init__(self)
+        self.sender = None
+        self.handlers = {}
+        self.sigids = {}
+        self._first_connect = True
 
-class ReceiverMeta(type):
+    def __get__(self, instance, blah):
+        return self.sender
 
-    def __new__(meta, classname, bases, attributes):
-        handlers = {}
-        out = dict(attributes)
-        for attrname, value in attributes.iteritems():
-            if hasattr(value, "__sender__") and hasattr(value, "__signal__"):
-                sender = value.__sender__
-                signal = value.__signal__
-                handlers.setdefault(sender, {})[signal] = value
-                out[sender] = property(get_sender(sender),
-                    set_sender(sender))
-        out["__handlers__"] = handlers
-        out["__sigids__"] = {}
-        return type.__new__(meta, classname, bases, out)
+    def __set__(self, instance, value):
+        if self.sender:
+            for id in self.sigids.itervalues():
+                self.sender.disconnect(id)
+            self.sender = None
+            self.sigids = None
+        if value:
+            for sig, hdlr in self.handlers.iteritems():
+                value.connect(sig, MethodType(hdlr, instance))
+            self.sender = value
 
-class Receiver(object):
+    def __del__(self, instance):
+        raise NotImplementedError
 
-    """Automatically connects appropriate signal handler methods to attributes
-    designated as "senders". Subclasses simply declare signal handler methods
-    with the @receiver.handler(<attribute>, <signal>)"""
+    def add_handler(self, signal, handler):
+        self.handlers[signal] = handler
 
-    __metaclass__ = ReceiverMeta
+def handler(property, signal):
+
+    """A decorator which registers a given function as a signal handler for
+    the signal <signal> of object <property>. Property should be a receiver
+    object created with receiver().""" 
+
+    def __handler__(func):
+        property.add_handler(signal, func)
+        return func
+
+    return __handler__
