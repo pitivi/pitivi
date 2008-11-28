@@ -37,8 +37,8 @@ class ProjectTabs(gtk.Notebook):
 
     __DEFAULT_COMPONENTS__ = (
         (SourceList, _("Clip Library")),
-        (AudioFxList, _("Audio Effects")),
-        (VideoFxList, _("Video Effects")),
+        # (AudioFxList, _("Audio Effects")),
+        # (VideoFxList, _("Video Effects")),
         (PropertyEditor, _("Properties")),
     )
 
