@@ -13,7 +13,7 @@ tests = \
 EXTRA_DIST = $(tests) runtests.py common.py
 
 clean-local:
-	rm testProject.ptv
+	rm -f testProject.ptv
 
 check-local:
 	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) $(PYTHON) $(srcdir)/runtests.py
