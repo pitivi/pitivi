@@ -188,8 +188,6 @@ class Timeline(Serializable):
             # TODO: filtering mechanism
         self.__edges = edges.keys()
         self.__edges.sort()
-        print self.__edges
-        print self.__deadband
 
     def snapTimeToEdge(self, time):
         """Returns the input time or the nearest edge"""
