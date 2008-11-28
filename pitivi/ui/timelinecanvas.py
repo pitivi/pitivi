@@ -1,30 +1,10 @@
-from util import *
 from track import Track
 from pitivi.utils import closest_item
 import goocanvas
 from complexinterface import Zoomable
 import pitivi.instance as instance
-
-
-RAZOR_LINE = (
-    goocanvas.Rect,
-    {
-        "line_width" : 0,
-        "fill_color" : "orange",
-        "width" : 1,
-    },
-    {}
-)
-
-# the vsiual appearance for the selection marquee
-MARQUEE = (
-    goocanvas.Rect,
-    {
-        "stroke_color_rgba" : 0x33CCFF66,
-        "fill_color_rgba" : 0x33CCFF66,
-    },
-    {}
-)
+from pitivi.receiver import receiver, handler
+import gtk
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
@@ -41,60 +21,62 @@ RAZOR_CURSOR = gtk.gdk.Cursor(gtk.gdk.XTERM)
 DEADBAND = 5
 
 class TimelineCanvas(goocanvas.Canvas, Zoomable):
-    """ Souped-up VBox that contains the timeline's CompositionLayer """
+
+    layerInfoList = receiver()
+
+    __layers = None
 
     def __init__(self, layerinfolist):
         goocanvas.Canvas.__init__(self)
         self._selected_sources = []
         self._timeline_position = 0
+        self.__layers = [] 
+        self.__last_row = 0
 
         self._block_size_request = False
         self.props.integer_layout = True
-        self.props.automatic_bounds = False
+        # FIXME: don't forget to change me back 
+        #self.props.automatic_bounds = False
 
         self.layerInfoList = layerinfolist
-        self.layerInfoList.connect('layer-added', self._layerAddedCb)
-        self.layerInfoList.connect('layer-removed', self._layerRemovedCb)
 
         self._createUI()
-        self.connect("size_allocate", self._size_allocate)
        
     def _createUI(self):
         self._cursor = ARROW
-
-        self.layers = VList(canvas=self)
-        self.layers.connect("notify::width", self._request_size)
-        self.layers.connect("notify::height", self._request_size)
-
         root = self.get_root_item()
-        root.add_child(self.layers)
+
+        self.tracks = goocanvas.Table(
+            homogeneous_rows=True,
+            row_spacing=5)
+        root.add_child(self.tracks)
 
         root.connect("enter_notify_event", self._mouseEnterCb)
-        self._marquee = make_item(MARQUEE)
-        manage_selection(self, self._marquee, True, self._selection_changed_cb)
+        self._marquee = goocanvas.Rect(
+            line_width=0,
+            fill_color="orange",
+            width=1)
+        #manage_selection(self, self._marquee, True, self._selection_changed_cb)
 
-        self._razor = make_item(RAZOR_LINE)
+        self._razor = goocanvas.Rect(
+            stroke_color_rgba=0x33CCFF66,
+            fill_color_rgba=0x33CCFF66)
         self._razor.props.visibility = goocanvas.ITEM_INVISIBLE
         root.add_child(self._razor)
+        self.set_bounds(0, 0, 800, 120)
 
 ## methods for dealing with updating the canvas size
 
     def block_size_request(self, status):
         self._block_size_request = status
 
-    def _size_allocate(self, unused_layout, allocation):
-        self._razor.props.height = allocation.height
-
     def _request_size(self, unused_item, unused_prop):
-        #TODO: figure out why this doesn't work... (wtf?!?)
-        if self._block_size_request:
-            return True
         # we only update the bounds of the canvas by chunks of 100 pixels
         # in width, otherwise we would always be redrawing the whole canvas.
         # Make sure canvas is at least 800 pixels wide, and at least 100 pixels 
         # wider than it actually needs to be.
-        w = max(800, ((int(self.layers.width + 100) / 100) + 1 ) * 100)
-        h = int(self.layers.height)
+        w = max(800, ((int(self.tracks.width + 100) / 100) + 1 ) * 100)
+        h = int(self.tracks.height)
         x1, y1, x2, y2 = self.get_bounds()
         pw = abs(x2 - x1)
         ph = abs(y2 - y1)
@@ -212,38 +194,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         new.setStartDurationTime(b_start, b_dur)
         comp.addSource(new, 0, True)
 
-    # FIXME: should be implemented in core, if at all. Another alternative
-    # would be directly suppporting ripple edits in the core, rather than
-    # doing select after + move selection. 
-
-    def selectBeforeCurrent(self, unused_action):
-        pass
-
-    def selectAfterCurrent(self, unused_action):
-        ## helper function
-        #def source_pos(ui_obj):
-        #    return ui_obj.comp.getSimpleSourcePosition(ui_obj.element)
-
-        ## mapping from composition -> (source1, ... sourceN)
-        #comps = dict()
-        #for source in self._selected_sources:
-        #    if not source.comp in comps:
-        #        comps[source.comp] = []
-        #    comps[source.comp].append(source)
-
-        ## find the latest source in each compostion, and all sources which
-        ## occur after it. then select them.
-        #to_select = set()
-        #for comp, sources in comps.items():
-        #    # source positions start at 1, not 0.
-        #    latest = max((source_pos(source) for source in sources)) - 1
-        #    # widget is available in "widget" data member of object.
-        #    # we add the background of the widget, not the widget itself.
-        #    objs = [obj.get_data("widget").bg for obj in comp.condensed[latest:]]
-        #    to_select.update(set(objs))
-        #set_selection(self, to_select)
-        pass
-
     def _selection_changed_cb(self, selected, deselected):
         # TODO: filter this list for things other than sources, and put them
         # into appropriate lists
@@ -265,21 +215,29 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         instance.PiTiVi.current.timeline.setDeadband(self.pixelToNs(DEADBAND))
 
     def setChildZoomAdjustment(self, adj):
-        for layer in self.layers:
+        for layer in self.__layers:
             layer.setZoomAdjustment(adj)
 
 ## LayerInfoList callbacks
 
+    @handler(layerInfoList, "layer-added")
     def _layerAddedCb(self, unused_infolist, layer, position):
-        track = Track()
-        track.setZoomAdjustment(self.getZoomAdjustment())
-        track.set_composition(layer.composition)
-        track.set_canvas(self)
-        self.layers.insert_child(track, position)
-        self.set_bounds(0, 0, self.layers.width, self.layers.height)
-        self.set_size_request(int(self.layers.width), int(self.layers.height))
+        track = goocanvas.Rect(width=800, height=50, fill_color="gray")
+        self.__layers.append(track)
+        #track.setZoomAdjustment(self.getZoomAdjustment())
+        #track.set_composition(layer.composition)
+        #track.set_canvas(self)
+        self.tracks.add_child(track)
+        self.tracks.set_child_properties(track, column=0, rows=1, columns=1)
+        self._regroup_tracks()
 
+    @handler(layerInfoList, "layer-removed")
     def _layerRemovedCb(self, unused_layerInfoList, position):
-        child = self.layers.item_at(position)
-        self.layers.remove_child(child)
-#
+        track = self.__layers[position]
+        del self.__layers[position]
+        track.remove()
+        self._regroup_tracks()
+
+    def _regroup_tracks(self):
+        for i, track in enumerate(self.__layers):
+            self.tracks.set_child_properties(track, row=i)

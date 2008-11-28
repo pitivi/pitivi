@@ -56,8 +56,6 @@ ui = '''
         <toolitem action="Razor" />
         <separator />
         <toolitem action="DeleteObj" />
-        <toolitem action="SelectBefore" />
-        <toolitem action="SelectAfter" />
     </toolbar>
 </ui>
 '''
@@ -154,10 +152,6 @@ class Timeline(gtk.VBox):
                 self._zoomOutCb),
             ("DeleteObj", gtk.STOCK_DELETE, None, None, DELETE, 
                 self.compositionLayers.deleteSelected),
-            ("SelectBefore", gtk.STOCK_GOTO_FIRST, None, None, SELECT_BEFORE, 
-                self.compositionLayers.selectBeforeCurrent),
-            ("SelectAfter", gtk.STOCK_GOTO_LAST, None, None, SELECT_AFTER,
-                self.compositionLayers.selectAfterCurrent),
             ("Razor", gtk.STOCK_CUT, None, None, RAZOR,
                 self.compositionLayers.activateRazor)
         )

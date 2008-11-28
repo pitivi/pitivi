@@ -20,12 +20,16 @@ class receiver(object):
         return self.sender
 
     def __set__(self, instance, value):
-        if self.sender:
+        # explicitly check for None, because sometimes valid instances have a
+        # False truth value. We don't want to forget to disconnect any signals,
+        # and at the same time we don't want to fail to connect a valid
+        # instance of, say, an empty container.
+        if self.sender != None:
             for id in self.sigids.itervalues():
                 self.sender.disconnect(id)
             self.sender = None
             self.sigids = {}
-        if value:
+        if value != None:
             for sig, hdlr in self.handlers.iteritems():
                 value.connect(sig, MethodType(hdlr, instance))
             self.sender = value

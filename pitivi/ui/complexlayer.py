@@ -134,6 +134,7 @@ class LayerInfoList(gobject.GObject):
         else:
             self._list.insert(pos, layer)
         self.emit('layer-added', layer, pos)
+        print 'added layer'
         return layer
 
     def removeComposition(self, composition):
@@ -164,9 +165,6 @@ class LayerInfoList(gobject.GObject):
 
     def __iter__(self):
         return self._list.__iter__()
-
-    def __len__(self):
-        return self._list.__len__()
 
     def __getitem__(self, item):
         return self._list.__getitem__(item)
