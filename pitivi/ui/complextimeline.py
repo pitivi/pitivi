@@ -256,16 +256,13 @@ class ComplexTrack(SmartGroup, Zoomable):
     def _start_drag(self, item):
         item.raise_(None)
         self._draging = True
-        #self.canvas.block_size_request(True)
-        self.canvas.update_editpoints()
 
     def _end_drag(self, unused_item):
         self.canvas.block_size_request(False)
 
     def _move_source_cb(self, item, pos):
         element = item.element
-        element.setStartDurationTime(max(self.canvas.snap_obj_to_edit(element,
-            self.pixelToNs(pos[0])), 0))
+        element.setStartDurationTime(max(self.pixelToNs(pos[0]), 0))
 
     # FIXME: these two methods should be in the ComplexTimelineObject class at least, or in
     # their own class possibly. But they're here because they do
@@ -282,7 +279,7 @@ class ComplexTrack(SmartGroup, Zoomable):
         #  min(start) = end - element.factory.duration
         new_start =  max(0,
             cur_end - element.factory.duration,
-            self.canvas.snap_time_to_edit(self.pixelToNs(pos[0])))
+            self.pixelToNs(pos[0]))
         new_duration = cur_end - new_start
         new_media_start = element.media_start + (new_start - element.media_start)
         element.setStartDurationTime(new_start, new_duration)
@@ -293,9 +290,7 @@ class ComplexTrack(SmartGroup, Zoomable):
         element = item.element
         cur_start = element.start
         new_end = min(cur_start + element.factory.duration,
-            max(cur_start,
-                self.canvas.snap_time_to_edit(
-                    self.pixelToNs(pos[0] + width(item)))))
+            max(cur_start, self.pixelToNs(pos[0] + width(item))))
         new_duration = new_end - element.start
 
         element.setStartDurationTime(gst.CLOCK_TIME_NONE, new_duration)
@@ -413,8 +408,6 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
     def __init__(self, layerinfolist):
         goocanvas.Canvas.__init__(self)
         self._selected_sources = []
-        self._editpoints = []
-        self._deadband = 0
         self._timeline_position = 0
 
         self._block_size_request = False
@@ -471,62 +464,6 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
             self.set_bounds(0, 0, w, h)
         return True
 
-## code for keeping track of edit points, and snapping timestamps to the
-## nearest edit point. We do this here so we can keep track of edit points
-## for all layers/tracks.
-
-    # FIXME: move this code into the core. The core should provide some method
-    # for being notified that updates need to happen, though in some cases
-    # we'll probably want this to update automatically. In other cases we'll
-    # want the UI to be able to disable it altogether. But what we're doing
-    # here is duplicating information that already exists in the core. As we
-    # add features to the core, like Critical Points (Keyframes), this code
-    # will have to be updated. Bad.
-
-    def update_editpoints(self):
-        #FIXME: this might be more efficient if we used a binary sort tree,
-        # updated only when the timeline actually changes instead of before
-        # every drag operation. possibly concerned this could lead to a
-        # noticible lag on large timelines
-
-        # using a dictionary to silently filter out duplicate entries
-        # this list: it will screw up the edge-snaping algorithm
-        edges = {}
-        for layer in self.layerInfoList:
-            for obj in layer.composition.condensed:
-                # start/end of object both considered "edit points"
-                edges[obj.start] = None
-                edges[obj.start + obj.duration] = None
-        self._editpoints = edges.keys()
-        self._editpoints.sort()
-
-    def snap_time_to_edit(self, time):
-        res, diff = closest_item(self._editpoints, time)
-        if diff <= self._deadband:
-            return res
-        return time
-
-    def snap_time_to_playhead(self, time):
-        if abs(time - self._timeline_position)  <= self._deadband:
-            return self._timeline_position
-        return time
-
-    def snap_obj_to_edit(self, obj, time):
-        # need to find the closest edge to both the left and right sides of
-        # the object we are draging.
-        duration = obj.duration
-        left_res, left_diff = closest_item(self._editpoints, time)
-        right_res, right_diff = closest_item(self._editpoints, time + duration)
-        if left_diff <= right_diff:
-            res = left_res
-            diff = left_diff
-        else:
-            res = right_res - duration
-            diff = right_diff
-        if diff <= self._deadband:
-            return res
-        return time
-
 ## mouse callbacks
 
     def _mouseEnterCb(self, unused_item, unused_target, event):
@@ -565,10 +502,9 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
         self._razor.props.visibility = goocanvas.ITEM_VISIBLE
         return True
 
-    def _razorMovedCb(self, unused_canvas, event):
+    def _razorMovedCb(self, canvas, event):
         x = event_coords(self, event)[0]
-        self._razor.props.x = self.nsToPixel(self.snap_time_to_playhead(
-            self.pixelToNs(x)))
+        self._razor.props.x = self.nsToPixel(self.pixelToNs(x))
         return True
 
     def _razorClickedCb(self, unused_canvas, event):
@@ -590,8 +526,7 @@ class CompositionLayers(goocanvas.Canvas, Zoomable):
             if item.get_data("selectable"):
                 parent = item.get_parent()
                 gst.log("attempting to split source at position %d" %  x)
-                self._splitSource(parent, self.snap_time_to_playhead(
-                    self.pixelToNs(x)))
+                self._splitSource(parent, self.pixelToNs(x))
         return True
 
     # FIXME: this DEFINITELY needs to be in the core. Also, do we always want

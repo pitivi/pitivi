@@ -86,6 +86,9 @@ class BrotherObjects(Serializable, Signallable):
     # pending UID (int) => objects (list of BrotherObjects and extra field)
     __waiting_for_pending_objects__ = {}
 
+    __deadband = 0
+    __edges = []
+
     def __init__(self, **unused_kw):
         self._linked = None
         self._brother = None
@@ -120,6 +123,13 @@ class BrotherObjects(Serializable, Signallable):
             self.unlinkObject()
         self._linkObject(obj)
         self._linked._linkObject(self)
+
+    def getLinkedObject(self):
+        """
+        Returns the object currently linked to this one.
+        This is NOT guaranteed to be the brother
+        """
+        return self.linked
 
     def unlinkObject(self):
         """
@@ -332,6 +342,11 @@ class TimelineObject(BrotherObjects):
         "start-duration-changed" : ["start", "duration"]
         }
 
+    # for edge snapping
+    __edges = []
+    __deadband = 0
+    __do_updates = True
+
     def __init__(self, factory=None, start=gst.CLOCK_TIME_NONE,
                  duration=0, media_type=MEDIA_TYPE_NONE, name="", **kwargs):
         BrotherObjects.__init__(self, **kwargs)
@@ -441,15 +456,27 @@ class TimelineObject(BrotherObjects):
             self._start = start
             self.gnlobject.set_property("start", long(start))
 
-    def _startDurationChangedCb(self, gnlobject, prop):
+    def setStartDurationTime(self, start=gst.CLOCK_TIME_NONE, duration=0):
+        """ sets the start and/or duration time """
+        self._setStartDurationTime(start, duration)
+        if self.linked:
+            self.linked._setStartDurationTime(start, duration)
+
+    def snapStartDurationTime(self, start=gst.CLOCK_TIME_NONE, duration=0):
+        """ sets the start and/or duration time, with edge snapping """
+        self.setStartDurationTime(TimelineObject.snapObjToEdge(self, start),
+            duration)
+
+    def _startDurationChangedCb(self, gnlobject, property):
         """ start/duration time has changed """
         gst.log("self:%r , gnlobject:%r %r" % (self, gnlobject, self.gnlobject))
         if not gnlobject == self.gnlobject:
-            gst.warning("We're receiving signals from an object we dont' control (self.gnlobject:%r, gnlobject:%r)" % (self.gnlobject, gnlobject))
-        self.gnlobject.debug("property:%s" % prop.name)
+            gst.warning("Receiving signals from object we don't control (ours:%r,sender:%r)"
+                % (self.gnlobject, gnlobject))
+        self.gnlobject.debug("property:%s" % property.name)
         start = gst.CLOCK_TIME_NONE
         duration = 0
-        if prop.name == "start":
+        if property.name == "start":
             start = gnlobject.get_property("start")
             gst.log("start: %s => %s" % (gst.TIME_ARGS(self._start),
                                          gst.TIME_ARGS(start)))
@@ -457,7 +484,7 @@ class TimelineObject(BrotherObjects):
                 start = gst.CLOCK_TIME_NONE
             else:
                 self._start = long(start)
-        elif prop.name == "duration":
+        elif property.name == "duration":
             duration = gnlobject.get_property("duration")
             gst.log("duration: %s => %s" % (gst.TIME_ARGS(self._duration),
                                             gst.TIME_ARGS(duration)))
@@ -466,6 +493,8 @@ class TimelineObject(BrotherObjects):
             else:
                 self.gnlobject.debug("duration changed:%s" % gst.TIME_ARGS(duration))
                 self._duration = long(duration)
+        # be sure to update edges
+        TimelineObject.updateEdges()
         self.emit("start-duration-changed", self._start, self._duration)
 
 
@@ -503,3 +532,72 @@ class TimelineObject(BrotherObjects):
             self._setFactory(obj)
         else:
             BrotherObjects.pendingObjectCreated(self, obj, field)
+
+    def isAudio(self):
+        return self.media_type == MEDIA_TYPE_AUDIO
+
+    def isVideo(self):
+        return self.media_type == MEDIA_TYPE_VIDEO
+
+     ## code for keeping track of edit points, and snapping timestamps to the
+    ## nearest edit point. We do this here so we can keep track of edit points
+    ## for all layers/tracks.
+
+    @classmethod
+    def setDeadband(cls, db):
+        cls.__deadband = db
+
+    def enableEdgeUpdates(cls):
+        cls.__do_updates = True
+        cls.updateEdges()
+
+    def disableEdgeUpdates(cls):
+        cls.__do_updates = False
+
+    @classmethod
+    def updateEdges(cls):
+        if not cls.__do_updates:
+            return
+        #FIXME: this might be more efficient if we used a binary sort tree,
+        # filter out duplicate edges in linear time
+        edges = {}
+        for obj in cls. __instances__:
+                # start/end of object both considered "edit points"
+                edges[obj.start] = None
+                edges[obj.start + obj.duration] = None
+                # TODO: add other critical object points when these are
+                # implemented
+                # TODO: filtering mechanism
+        cls.__edges = edges.keys()
+        cls.__edges.sort()
+
+    @classmethod
+    def snapTimeToEdge(cls, time):
+        """Returns the input time or the nearest edge"""
+
+        res, diff = closest_item(cls.__edges, time)
+        if diff <= cls.__deadband:
+            return res
+        return time
+
+    @classmethod
+    def snapObjToEdit(cls, obj, time):
+        """Returns the input time or the edge which is closest to either the
+        start or finish time. The input time is interpreted as the start time
+        of obj."""
+
+        # need to find the closest edge to both the left and right sides of
+        # the object we are draging.
+        duration = obj.duration
+        left_res, left_diff = closest_item(cls.__edges, time)
+        right_res, right_diff = closest_item(cls.__edges, time + duration)
+        if left_diff <= right_diff:
+            res = left_res
+            diff = left_diff
+        else:
+            res = right_res - duration
+            diff = right_diff
+        if diff <= cls.__deadband:
+            return res
+        return time
+
