@@ -28,10 +28,6 @@ class TimelineController(controller.Controller):
         self._view.element.snapStartDurationTime(max(
             self._view.pixelToNs(pos[0]), 0))
 
-    def click(self, pos):
-        instance.PiTiVi.current.timeline.setSelectionToObj(
-            self._view.element)
-
 class TrimHandle(View, goocanvas.Rect, Zoomable):
 
     """A component of a TimelineObject which manage's the source's edit
@@ -81,7 +77,16 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
     __NORMAL__ = 0x709fb899
     __SELECTED__ = 0xa6cee3AA
 
-    Controller = TimelineController
+    class Controller(TimelineController):
+
+        def click(self, pos):
+            mode = 0
+            if self._last_event.get_state() & gtk.gdk.SHIFT_MASK:
+                mode = 1
+            elif self._last_event.get_state() & gtk.gdk.CONTROL_MASK:
+                mode = 2
+            instance.PiTiVi.current.timeline.setSelectionToObj(
+                self._view.element, mode)
 
     def __init__(self, element, composition):
         goocanvas.Group.__init__(self)

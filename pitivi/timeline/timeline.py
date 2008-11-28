@@ -150,25 +150,24 @@ class Timeline(Serializable):
 
     __selection = None
 
-    def addToSelection(self, objs):
-        self.__selection.update(objs)
-        for obj in objs:
-            obj.selected = True
+    def setSelectionTo(self, objs, mode=0):
+        if mode == 1:
+            objs |= self.__selection
+        if mode == 2:
+            objs ^= self.__selection
 
-    def removeFromSelection(self, objs):
-        self.__selection.difference_update(objs)
-        for obj in objs:
-            obj.selected = False
-
-    def setSelectionTo(self, objs):
         for obj in self.__selection:
             obj.selected = False
         for obj in objs:
             obj.selected = True
         self.__selection = objs
 
-    def setSelectionToObj(self, obj):
-        self.setSelectionTo(set((obj,)))
+    def setSelectionToObj(self, obj, mode=0):
+        #TODO: range selection
+        # sort all objects by increasing (start, end)
+        # choose the slice from [last(selection) : obj]
+        # or [obj: first(selection]
+        self.setSelectionTo(set((obj,)), mode)
 
     def deleteSelection(self):
         for obj in self.__selection:

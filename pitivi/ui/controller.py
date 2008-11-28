@@ -25,6 +25,7 @@ class Controller(object):
     _ptr_within = False
     _last_click = None
     _mousedown = None
+    _last_event = None
 
     def __init__(self, view=None):
         object.__init__(self)
@@ -48,6 +49,7 @@ class Controller(object):
 
     @handler(_view, "enter_notify_event")
     def enter_notify_event(self, item, target, event):
+        self._last_event = event
         if self._cursor:
             event.window.set_cursor(self._cursor)
         self.enter(item, target)
@@ -56,6 +58,7 @@ class Controller(object):
 
     @handler(_view, "leave_notify_event")
     def leave_notify_event(self, item, target, event):
+        self._last_event = event
         self._ptr_within = False
         if not self._dragging:
             self.leave(item, target)
@@ -63,6 +66,7 @@ class Controller(object):
 
     @handler(_view, "button_press_event")
     def button_press_event(self, item, target, event):
+        self._last_event = event
         if not self._canvas:
             self._canvas = item.get_canvas()
         self._mousedown = self.pos(item) - self.transform(self.from_item_event(
@@ -73,6 +77,7 @@ class Controller(object):
 
     @handler(_view, "motion_notify_event")
     def motion_notify_event(self, item, target, event):
+        self._last_event = event
         if self._dragging:
             self.set_pos(self._dragging, 
                 self.transform(self._mousedown + self.from_item_event(item,
@@ -82,6 +87,7 @@ class Controller(object):
 
     @handler(_view, "button_release_event")
     def button_release_event(self, item, target, event):
+        self._last_event = event
         self._drag_end(item, self._dragging, event)
         self._dragging = None
         return True
