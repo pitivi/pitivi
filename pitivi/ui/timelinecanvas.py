@@ -2,7 +2,6 @@ from track import Track
 from point import Point
 import goocanvas
 from zoominterface import Zoomable
-import pitivi.instance as instance
 from pitivi.receiver import receiver, handler
 import gtk
 
@@ -26,6 +25,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
     def __init__(self, timeline):
         goocanvas.Canvas.__init__(self)
+        Zoomable.__init__(self)
         self._selected_sources = []
         self.__tracks = [] 
 
@@ -166,11 +166,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 ## Zoomable Override
 
     def zoomChanged(self):
-        instance.PiTiVi.current.timeline.setDeadband(self.pixelToNs(DEADBAND))
-
-    def setChildZoomAdjustment(self, adj):
-        for track in self.__tracks:
-            track.setZoomAdjustment(adj)
+        if self.timeline:
+            self.timeline.setDeadband(self.pixelToNs(DEADBAND))
 
 ## Timeline callbacks
 
@@ -196,7 +193,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
     def _trackAdded(self, unused_timeline, comp, position):
         track = Track(comp=comp)
         self.__tracks.append(track)
-        track.setZoomAdjustment(self.getZoomAdjustment())
         track.set_canvas(self)
         self.tracks.add_child(track)
         self._regroup_tracks()

@@ -44,6 +44,7 @@ class TrimHandle(View, goocanvas.Rect, Zoomable):
             **kwargs
         )
         View.__init__(self)
+        Zoomable.__init__(self)
 
 class StartHandle(TrimHandle):
 
@@ -91,6 +92,7 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
     def __init__(self, element, composition):
         goocanvas.Group.__init__(self)
         View.__init__(self)
+        Zoomable.__init__(self)
 
         self.element = element
         self.comp = composition
@@ -110,22 +112,19 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
  
         self.start_handle = StartHandle(element,
             height=self.__HEIGHT__)
-        self.start_handle.setZoomAdjustment(self.getZoomAdjustment())
         self.end_handle = EndHandle(element,
             height=self.__HEIGHT__)
-        self.end_handle.setZoomAdjustment(self.getZoomAdjustment())
 
         for thing in (self.bg, self.start_handle, self.end_handle, self.name):
             self.add_child(thing)
+
+        if element:
+            self.zoomChanged()
         self.normal()
 
     def zoomChanged(self):
         self._start_duration_cb(self.element, self.element.start,
             self.element.duration)
-
-    def setChildZoomAdjustment(self, adj):
-        self.start_handle.setZoomAdjustment(adj)
-        self.end_handle.setZoomAdjustment(adj)
 
     @handler(element, "start-duration-changed")
     def _start_duration_cb(self, obj, start, duration):

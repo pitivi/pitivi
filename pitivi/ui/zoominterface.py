@@ -21,10 +21,12 @@
 # Boston, MA 02111-1307, USA.
 
 """
-Interfaces for complex view elements
+Interface for managing tranformation between timeline timestamps and UI
+pixels.
 """
 
 import gst
+from pitivi.receiver import receiver, handler
 
 #
 # Complex Timeline interfaces v2 (01 Jul 2008)
@@ -39,73 +41,77 @@ import gst
 # ex : 0.1 = 1 pixel for 10 seconds
 # ex : 1.0 = 1 pixel for a second
 #
-# Methods:
+# Class Methods
 # . setZoomAdjustment(adj)
 # . getZoomAdjustment()
-# . setChildZoomAdjustment()
-# . zoomChanged()
-# . setZoomRatio(ratio)
-# . getZoomRatio(ratio)
+# . getZoomRatio
 # . pixelToNs(pixels)
 # . nsToPixels(time)
+# . setZoomRatio
+# Instance Methods
+# . zoomChanged()
 
-# FIXME: this might be poor design. while sharing the adjustment 
-# does provide an easy way of ensuring that all the UI elements are
-# updated, it's a little bit kludgey when it comes to sharing the
-# adjustment among elements which have children. In general, it migh
-# be better to factor this interface out into a separate Transformation
-# class which can handle the conversion between coordinate systems, for
-# both horizontal and vertical coordinates. This interface only handles
-# the horizontal.
+class Zoomable(object):
 
-class Zoomable:
+    zoomratio = 10
+    zoom_adjustment = None
+    sigid = None
+    __instances = []
 
-    zoomratio = 0
-    zoom_adj = None
+    def __init__(self):
+        object.__init__(self)
+        self.__instances.append(self)
 
-    def setZoomAdjustment(self, adjustment):
-        if self.zoom_adj:
-            self.zoom_adj.disconnect(self._zoom_changed_sigid)
-        self.zoom_adj = adjustment
+    def __del__(self):
+        if self in Zoomable.__instances:
+            self.__instances.remove(self)
+
+    @classmethod
+    def _zoom_changed_cb(cls, adjustment):
+        cls.zoomratio = adjustment.get_value()
+        cls.__zoomChanged()
+
+    @classmethod
+    def setZoomAdjustment(cls, adjustment):
+        if cls.zoom_adjustment:
+            cls.zoom_adjustment.disconnect(cls.sigid)
+            cls.zoom_adjustment = None
         if adjustment:
-            self._zoom_changed_sigid = adjustment.connect("value-changed",
-                self._zoom_changed_cb)
-            self.zoomratio = adjustment.get_value()
-            self.setChildZoomAdjustment(adjustment)
-            self.zoomChanged()
+            cls.sigid = adjustment.connect("value-changed", 
+                cls._zoom_changed_cb)
+            cls.zoom_adjustment = adjustment
+            cls._zoom_changed_cb(adjustment)
 
-    def getZoomAdjustment(self):
-        return self.zoom_adj
+    @classmethod
+    def getZoomAdjustment(cls):
+        return cls.zoom_adjustment
 
-    def _zoom_changed_cb(self, adjustment):
-        self.zoomratio = adjustment.get_value()
-        self.zoomChanged()
+    @classmethod
+    def setZoomRatio(cls, ratio):
+        cls.zoom_adjustment.set_value(ratio)
 
-    def getZoomRatio(self):
-        return self.zoomratio
-
-    def setZoomRatio(self, ratio):
-        self.zoom_adj.set_value(ratio)
-
-    def pixelToNs(self, pixel):
+    @classmethod
+    def pixelToNs(cls, pixel):
         """
         Returns the pixel equivalent in nanoseconds according to the zoomratio
         """
-        return long(pixel * gst.SECOND / self.zoomratio)
+        return long(pixel * gst.SECOND / cls.zoomratio)
 
-    def nsToPixel(self, duration):
+    @classmethod
+    def nsToPixel(cls, duration):
         """
         Returns the pixel equivalent of the given duration, according to the
         set zoom ratio
         """
         if duration == gst.CLOCK_TIME_NONE:
             return 0
-        return int((float(duration) / gst.SECOND) * self.zoomratio)
+        return int((float(duration) / gst.SECOND) * cls.zoomratio)
 
-    # Override in subclasses
+    @classmethod
+    def __zoomChanged(cls):
+        for inst in cls.__instances:
+            inst.zoomChanged()
 
     def zoomChanged(self):
         pass
 
-    def setChildZoomAdjustment(self, adj):
-        pass

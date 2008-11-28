@@ -27,7 +27,7 @@ import gobject
 import gtk
 import gst
 import pitivi.instance as instance
-from complexinterface import Zoomable
+from zoominterface import Zoomable
 from pitivi.utils import time_to_string
 
 class ScaleRuler(gtk.Layout, Zoomable):
@@ -47,6 +47,7 @@ class ScaleRuler(gtk.Layout, Zoomable):
     def __init__(self, hadj):
         gst.log("Creating new ScaleRule")
         gtk.Layout.__init__(self)
+        Zoomable.__init__(self)
         self.add_events(gtk.gdk.POINTER_MOTION_MASK |
             gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
         self.set_hadjustment(hadj)
@@ -309,7 +310,7 @@ class ScaleRuler(gtk.Layout, Zoomable):
 
 
         context.save()
-        zoomRatio = self.getZoomRatio()
+        zoomRatio = self.zoomratio
         # looks better largest tick doesn't run into the text label
         interval_sizes = ((60, 0.80), (10, 0.75), (1, 0.5), (0.1, 0.25))
         for interval, height in interval_sizes:

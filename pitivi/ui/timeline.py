@@ -31,12 +31,12 @@ from pitivi.bin import SmartTimelineBin
 from pitivi.timeline.source import TimelineFileSource
 from pitivi.timeline import objects
 import ruler
-from zoominterface import Zoomable
 import dnd
 
 from gettext import gettext as _
 from timelinecanvas import TimelineCanvas
 from pitivi.receiver import receiver, handler
+from zoominterface import Zoomable
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
@@ -96,29 +96,29 @@ class Timeline(gtk.VBox):
         gst.log("Creating Timeline")
         gtk.VBox.__init__(self)
 
+        self.timeline = instance.PiTiVi.current.timeline
+        self.instance = instance.PiTiVi
+        self.playground = instance.PiTiVi.playground
+
         self._zoom_adj = gtk.Adjustment()
         self._zoom_adj.lower = self._computeZoomRatio(0)
         self._zoom_adj.upper = self._computeZoomRatio(-1)
         self._cur_zoom = 2
-        self._zoom_adj.set_value(self._computeZoomRatio(self._cur_zoom))
+        Zoomable.setZoomAdjustment(self._zoom_adj)
+        Zoomable.setZoomRatio(self._computeZoomRatio(self._cur_zoom))
 
-        self.timeline = instance.PiTiVi.current.timeline
-        self.instance = instance.PiTiVi
-        self.playground = instance.PiTiVi.playground
         self._createUI()
 
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
         self.hadj = gtk.Adjustment()
         self.ruler = ruler.ScaleRuler(self.hadj)
-        self.ruler.setZoomAdjustment(self._zoom_adj)
         self.ruler.set_size_request(0, 35)
         self.ruler.set_border_width(2)
         self.pack_start(self.ruler, expand=False, fill=True)
 
         # List of TimelineCanvas
         self.__canvas = TimelineCanvas(self.timeline)
-        self.__canvas.setZoomAdjustment(self._zoom_adj)
 
         self.scrolledWindow = gtk.ScrolledWindow(self.hadj)
         self.scrolledWindow.set_policy(gtk.POLICY_ALWAYS, gtk.POLICY_AUTOMATIC)

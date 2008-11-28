@@ -14,13 +14,13 @@ class Track(goocanvas.Group, Zoomable):
 
     def __init__(self, comp=None):
         goocanvas.Group.__init__(self)
+        Zoomable.__init__(self)
         self.widgets = {}
         self.comp = comp
 
     @handler(comp, "source-added")
     def _objectAdded(self, unused_timeline, element):
         w = TimelineObject(element, self.comp)
-        w.setZoomAdjustment(self.getZoomAdjustment())
         self.widgets[element] = w
         self.add_child(w)
 
@@ -30,6 +30,3 @@ class Track(goocanvas.Group, Zoomable):
         self.remove_child(w)
         del self.widgets[element]
 
-    def setChildZoomAdjustment(self, adj):
-        for widget in self.widgets.itervalues():
-            widget.setZoomAdjustment(adj)
