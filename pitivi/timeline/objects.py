@@ -499,7 +499,8 @@ class TimelineObject(BrotherObjects):
 
     def snapStartDurationTime(self, start=gst.CLOCK_TIME_NONE, duration=0):
         """ sets the start and/or duration time, with edge snapping """
-        self.setStartDurationTime(TimelineObject.snapObjToEdge(self, start),
+        self.setStartDurationTime(
+            instance.PiTiVi.current.timeline.snapObjToEdge(self, start),
             duration)
 
     def setInTime(self, time):
@@ -514,10 +515,10 @@ class TimelineObject(BrotherObjects):
         self.setStartDurationTime(self.start, time - self.start)
 
     def snapInTime(self, time):
-        self.setInTime(TimelineObject.snapTimeToEdge(time))
+        self.setInTime(instance.PiTiVi.current.timeline.snapTimeToEdge(time))
 
     def snapOutTime(self, time):
-        self.setOutTime(TimelineObject.snapTimeToEdge(time))
+        self.setOutTime(instance.PiTiVi.current.timeline.snapTimeToEdge(time))
 
     def _startDurationChangedCb(self, gnlobject, property):
         """ start/duration time has changed """
