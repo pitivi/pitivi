@@ -31,6 +31,7 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.signalgroup import SignalGroup
 from gettext import gettext as _
 from urllib import unquote
+import os
 
 (COL_ICON,
  COL_INFOTEXT,
@@ -235,7 +236,9 @@ class SourceList(gtk.VBox):
         icon = None
         try:
             icon = icontheme.load_icon(iconname, 32, 0)
-        finally:
+        except:
+            # empty except clause is bad but load_icon raises gio.Error.
+            # Right, *gio*.
             if not icon:
                 icon = gtk.gdk.pixbuf_new_from_file(os.path.join(pixdir, alternate))
         return icon
