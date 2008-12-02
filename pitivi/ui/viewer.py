@@ -418,9 +418,10 @@ class PitiviViewer(gtk.VBox):
         if isinstance(smartbin, SmartTimelineBin):
             seti = smartbin.project.getSettings()
             dar = float(seti.videowidth * seti.videopar.num) / float(seti.videoheight * seti.videopar.denom)
-            self.setDisplayAspectRatio(dar)
-        else:
+        elif hasattr(smartbin, 'factory'):
             dar = smartbin.factory.video_info_stream.dar
+        else:
+            dar = smartbin.width / smartbin.height
         self.setDisplayAspectRatio(dar)
 
     def _currentStateCb(self, unused_playground, state):
