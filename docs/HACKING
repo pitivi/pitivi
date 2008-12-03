@@ -14,20 +14,27 @@ Hacking on PiTiVi
 
 - for callbacks, the name of the methods used should:
   - follow same conventions as normal method names
-  - be prepended with an underscore
+  - be prepended with two underscores since it's private
   - be appended with Cb
   Ex :
 
   class MyClass:
 
      def someMethod(self):
-         self.someobject.connect('event', self._someObjectEventCb)
+         self.someobject.connect('event', self.__someObjectEventCb)
 
-     def _someObjectEventCb(self, object, arg):
+     def __someObjectEventCb(self, object, arg):
          print "our callback was called"
 
 - for function names, we use the small_caps_with_underscore style.
   This enables clear separation between functions and methods.
+
+- for other class attributes we use the same calling convention as
+  for functions:
+  Ex : @property
+       def water_level(self):
+          """ The level of the water in meters"""
+          return self.__water_level
 
 - unused arguments in method should be prefixed by 'unused_'.
   The most common place where this would happen is in callbacks from gobject
