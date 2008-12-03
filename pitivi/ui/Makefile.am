@@ -27,6 +27,7 @@ ui_PYTHON =			\
 	timeline.py		\
 	track.py		\
 	transitionlist.py	\
+	view.py			\
 	viewer.py		\
 	videofxlist.py		\
 	webcam_managerdialog.py	\

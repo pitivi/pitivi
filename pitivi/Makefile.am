@@ -24,6 +24,7 @@ pitivi_PYTHON = \
 	plumber.py	\
 	project.py 	\
 	projectsaver.py	\
+	receiver.py	\
 	serializable.py	\
 	settings.py 	\
 	signalgroup.py	\
