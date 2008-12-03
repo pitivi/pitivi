@@ -373,7 +373,6 @@ def available_audio_encoders():
 
 def encoders_muxer_compatible(encoders, muxer):
     """ returns the list of encoders compatible with the given muxer """
-    gst.info("")
     res = []
     for encoder in encoders:
         for caps in [x.get_caps() for x in encoder.get_static_pad_templates() if x.direction == gst.PAD_SRC]:
