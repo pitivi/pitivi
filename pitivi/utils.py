@@ -113,3 +113,27 @@ def same(seq):
             return None
     return first
 
+def data_probe(pad, data, section=""):
+    """Callback to use for gst.Pad.add_*_probe.
+
+    The extra argument will be used to prefix the debug messages
+    """
+    if isinstance(data, gst.Buffer):
+        gst.debug("%s BUFFER timestamp:%s , duration:%s , size:%d , offset:%d , offset_end:%d" % (section,
+                                                                                                  gst.TIME_ARGS(data.timestamp),
+                                                                                                  gst.TIME_ARGS(data.duration),
+                                                                                                  data.size,
+                                                                                                  data.offset, data.offset_end))
+        if data.flags & gst.BUFFER_FLAG_DELTA_UNIT:
+            gst.debug("%s DELTA_UNIT" % section)
+        if data.flags & gst.BUFFER_FLAG_DISCONT:
+            gst.debug("%s DISCONT" % section)
+        if data.flags & gst.BUFFER_FLAG_GAP:
+            gst.debug("%s GAP" % section)
+        gst.debug("%s flags:%r" % (section, data.flags))
+    else:
+        gst.debug("%s EVENT %s" % (section, data.type))
+        if data.type == gst.EVENT_NEWSEGMENT:
+            gst.debug("%s %r" % (section, list(data.parse_new_segment())))
+    return True
+
