@@ -88,7 +88,7 @@ class PitiviViewer(gtk.VBox):
                                       obey_child=False)
         self.pack_start(self.aframe, expand=True)
         self.drawingarea = ViewerWidget()
-        self.drawingarea.connect_after("realize", self._drawingAreaRealizeCb)
+        self.drawingarea.connect_after("expose-event", self._drawingAreaExposeCb)
         self.aframe.add(self.drawingarea)
 
         # Slider
@@ -204,11 +204,14 @@ class PitiviViewer(gtk.VBox):
         # FIXME : do we really need to modify the ratio ??
         pass
 
-    def _drawingAreaRealizeCb(self, drawingarea):
+    def _drawingAreaExposeCb(self, drawingarea, event):
+        drawingarea.disconnect_by_func(self._drawingAreaExposeCb)
         drawingarea.modify_bg(gtk.STATE_NORMAL, drawingarea.style.black)
         self._createSinkThreads()
         if not instance.PiTiVi.playground.play() == gst.STATE_CHANGE_FAILURE:
             self.currentState = gst.STATE_PLAYING
+
+        return False
 
     ## gtk.HScale callbacks for self.slider
 
@@ -438,9 +441,7 @@ class PitiviViewer(gtk.VBox):
             dav = self.drawingarea.videosink
             gst.log('%s' % dav)
             if dav and dav.realsink and dav.realsink == message.src:
-                self.drawingarea.can_set_xid = True
-                if self.drawingarea.isexposed:
-                    self.drawingarea.set_xwindow_id()
+                self.drawingarea.set_xwindow_id()
 
 
 class ViewerWidget(gtk.DrawingArea):
@@ -454,22 +455,8 @@ class ViewerWidget(gtk.DrawingArea):
         gtk.DrawingArea.__init__(self)
         self.videosink = None
         self.have_set_xid = False
-        self.can_set_xid = False
         self.unset_flags(gtk.DOUBLE_BUFFERED)
         self.unset_flags(gtk.SENSITIVE)
-        self.isexposed = False
-
-    def do_expose_event(self, unused_event):
-        """ 'expose-event' override """
-        gst.log("expose have_set_xid:%d can_set_xid:%d" % (self.have_set_xid, self.can_set_xid))
-        self.isexposed = True
-        if self.videosink:
-            if not self.have_set_xid and self.can_set_xid:
-                gtk.gdk.display_get_default().sync()
-                self.set_xwindow_id()
-            elif self.have_set_xid:
-                self.videosink.expose()
-        return False
 
     def set_xwindow_id(self):
         """ set the widget's XID on the configured videosink. """
