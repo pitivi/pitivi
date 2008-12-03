@@ -42,10 +42,12 @@ import os
 ui = '''
 <ui>
     <menubar name="MainMenuBar">
-        <placeholder name="SourceList" >
-            <menuitem action="ImportSources" />
-            <menuitem action="ImportSourcesFolder" />
-        </placeholder>
+        <menu action="File">
+            <placeholder name="SourceList" >
+                <menuitem action="ImportSources" />
+                <menuitem action="ImportSourcesFolder" />
+            </placeholder>
+        </menu>
     </menubar>
     <toolbar name="MainToolBar">
         <placeholder name="SourceList">

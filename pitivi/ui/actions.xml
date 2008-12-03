@@ -6,13 +6,13 @@
       <menuitem action="SaveProject" />
       <menuitem action="SaveProjectAs" />
       <menuitem action="ProjectSettings" />
-      <separator />
-      <placeholder name="SourceList"/>
-      <menuitem action="ImportfromCam" />
       <menuitem action="NetstreamCapture" />
       <menuitem action="Screencast" />
       <separator />
       <menuitem action="RenderProject" />
+      <separator />
+      <menuitem action="ImportfromCam" />
+      <placeholder name="SourceList"/>
       <separator />
       <menuitem action="Quit" />
     </menu>
