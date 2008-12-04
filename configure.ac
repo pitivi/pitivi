@@ -53,7 +53,7 @@ AS_AC_EXPAND(LOCALSTATEDIR, $localstatedir)
 AC_MSG_NOTICE(Using localstatedir $LOCALSTATEDIR)
 
 dnl check for python
-AS_PATH_PYTHON(2.3)
+AS_PATH_PYTHON(2.5)
 
 dnl ALL_LINGUAS="fr"
 GETTEXT_PACKAGE="pitivi"
