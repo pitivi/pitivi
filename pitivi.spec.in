@@ -3,14 +3,14 @@ Name:		@PACKAGE@
 Version:	@VERSION@
 Release:	@PACKAGE_VERSION_RELEASE@
 
-Source:		http://download.sf.net/pitivi/%{name}-%{version}.tar.gz
-Packager:	bilboed@bilboed.com
+Source:		http://ftp.acc.umu.se/pub/gnome/sources/pitivi/0.11/%{name}-%{version}.tar.gz
+Packager:	bilboed@gmail.com
 License:	LGPL
 Group:		Applications/Multimedia
 URL:		http://www.pitivi.org/
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires:	python >= 2.3
+Requires:	python >= 2.5
 Requires:	gstreamer >= @GST_REQ@
 Requires:	gstreamer-python >= @PYGST_REQ@
 Requires:	pygtk2 >= @PYGTK_REQ@
@@ -18,6 +18,7 @@ Requires:	gnonlin >= @GNONLIN_REQ@
 Requires:	gnome-python2 >= @PYGNOME_REQ@
 Requires:	gnome-python2-gconf
 Requires:	pycairo >= @PYCAIRO_REQ@
+Requires:	pygoocanvas
 
 BuildRequires:	gstreamer-devel >= @GST_REQ@
 BuildRequires:	gstreamer-python >= @PYGST_REQ@
