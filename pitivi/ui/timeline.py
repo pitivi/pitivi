@@ -201,7 +201,7 @@ class Timeline(gtk.VBox):
 
     @handler(timeline, "start-duration-changed")
     def _timelineStartDurationChanged(self, unused_timeline, start, duration):
-        self.ruler.startDurationChanged()
+        self.ruler.startDurationChanged(start, duration)
 
 ## ToolBar callbacks
 

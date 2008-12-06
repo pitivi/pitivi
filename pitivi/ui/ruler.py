@@ -67,6 +67,9 @@ class ScaleRuler(gtk.Layout, Zoomable):
         self.requested_time = gst.CLOCK_TIME_NONE
         self.currentlySeeking = False
         self.pressed = False
+        self.pending_seek_id = None
+        self.duration = gst.CLOCK_TIME_NONE
+        self.seek_delay = 80
 
 ## Zoomable interface override
 
@@ -151,33 +154,33 @@ class ScaleRuler(gtk.Layout, Zoomable):
 ## Seeking methods
 
     def _seekTimeoutCb(self):
-        gst.debug("timeout")
-        self.currentlySeeking = False
-        if (self.requested_time != gst.CLOCK_TIME_NONE) and (self.position != self.requested_time):
-            self._doSeek(self.requested_time)
-        return False
+        self.pending_seek_id = None
 
-    def _doSeek(self, value, format=gst.FORMAT_TIME):
-        gst.debug("seeking to %s / currentlySeeking %r" % (gst.TIME_ARGS (value),
-                                                           self.currentlySeeking))
+        gst.debug("delayed seek timeout %s %s" %
+                (gst.TIME_ARGS(self.seek_position), self.seek_format))
+        
         # clamping values within acceptable range
         duration = self.getDuration()
         if duration == gst.CLOCK_TIME_NONE:
             return
-        if value > duration:
-            value = duration
-        elif value < 0:
-            value = 0
-        if not self.currentlySeeking:
-            self.currentlySeeking = True
-            if instance.PiTiVi.playground.seekInCurrent(value, format=format):
-                self.requested_time = gst.CLOCK_TIME_NONE
-                gobject.timeout_add(80, self._seekTimeoutCb)
-                self.timelinePositionChanged(value)
-            else:
-                self.currentlySeeking = False
-        elif format == gst.FORMAT_TIME:
-            self.requested_time = value
+        if self.seek_position > duration:
+            self.seek_position = duration
+        elif self.seek_position < 0:
+            self.seek_position = 0
+            
+        if instance.PiTiVi.playground.seekInCurrent(self.seek_position,
+                format=self.seek_format):
+            self.timelinePositionChanged(self.seek_position)
+
+        return False
+
+    def _doSeek(self, value, format=gst.FORMAT_TIME):
+        if self.pending_seek_id is None:
+            self.pending_seek_id = gobject.timeout_add(self.seek_delay,
+                    self._seekTimeoutCb)
+
+        self.seek_position = value
+        self.seek_format = format
 
 ## Drawing methods
 
@@ -221,10 +224,10 @@ class ScaleRuler(gtk.Layout, Zoomable):
         self.drawRuler(context, rect)
 
     def getDuration(self):
-        if instance.PiTiVi.current:
-            return instance.PiTiVi.current.timeline.getDuration()
-        else:
-            return gst.CLOCK_TIME_NONE
+        if self.duration == gst.CLOCK_TIME_NONE and instance.PiTiVi.current:
+            self.duration = instance.PiTiVi.current.timeline.getDuration()
+
+        return self.duration
 
     def getPixelWidth(self):
         return self.nsToPixel(self.getDuration())
@@ -248,9 +251,19 @@ class ScaleRuler(gtk.Layout, Zoomable):
 
         context.restore()
 
-    def startDurationChanged(self):
+    def startDurationChanged(self, start, duration):
         gst.info("start/duration changed")
         self.queue_resize()
+
+        self.start = start
+        self.duration = duration
+
+        if duration < self.position:
+            position = duration - gst.NSECOND
+        else:
+            position = self.position
+
+        self._doSeek(position, gst.FORMAT_TIME)
 
     def drawRuler(self, context, allocation):
         # there are 4 lengths of tick mark:

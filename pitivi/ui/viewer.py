@@ -301,7 +301,11 @@ class PitiviViewer(gtk.VBox):
     def _asyncTimelineDurationChanged(self, duration):
         gst.debug("duration : %s" % gst.TIME_ARGS(duration))
         gst.debug("playground.current.length : %s" % gst.TIME_ARGS(instance.PiTiVi.playground.current.length))
+        position = self.posadjust.get_value()
+        if duration < position:
+            self.posadjust.set_value(float(duration))
         self.posadjust.upper = float(duration)
+
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time),
                                                         time_to_string(instance.PiTiVi.playground.current.length)))
 
