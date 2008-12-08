@@ -583,8 +583,8 @@ class EncodingDialog(GladeWindow):
 
         dialog = gtk.FileChooserDialog(title=_("Choose file to render to"),
                                        parent=self.window,
-                                       buttons=(gtk.STOCK_OK, gtk.RESPONSE_ACCEPT,
-                                                gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT),
+                                       buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
+                                                gtk.STOCK_OK, gtk.RESPONSE_ACCEPT),
                                        action=gtk.FILE_CHOOSER_ACTION_SAVE)
         if self.outfile:
             dialog.set_current_name(self.outfile)
