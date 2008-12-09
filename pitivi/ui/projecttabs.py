@@ -65,7 +65,8 @@ class ProjectTabs(gtk.Notebook):
         (SourceList, _("Clip Library")),
         # (AudioFxList, _("Audio Effects")),
         # (VideoFxList, _("Video Effects")),
-        (PropertyEditor, _("Properties")),
+        # FIXME : Property editor disabled for 0.11.3 release, re-enable after
+        # (PropertyEditor, _("Properties")),
     )
 
     def __init__(self):
