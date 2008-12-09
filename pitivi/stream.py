@@ -23,14 +23,10 @@
 Multimedia stream, used for definition of media streams
 """
 
-
-##
-## Multimedia streams, used for definition of media streams
-##
 from gettext import gettext as _
-
 import gst
-
+    
+# FIXME: use epydoc/whatever formatting for docstrings
 class MultimediaStream(object):
     """
     Defines a media stream
@@ -38,63 +34,27 @@ class MultimediaStream(object):
     Properties:
     * raw (boolean) : True if the stream is a raw media format
     * fixed (boolean) : True if the stream is entirely defined
-    * codec (string) : User-friendly description of the codec used
     * caps (gst.Caps) : Caps corresponding to the stream
-    """
 
+    """
+    
     def __init__(self, caps):
         gst.log("new with caps %s" % caps.to_string())
-        self._caps = caps
-        self._raw = False
-        if len(self._caps) > 1:
-            self._fixed = False
-        else:
-            self._fixed = True
-        self._codec = None
+        self.caps = caps
+        self.fixed = caps.is_fixed()
+        self.raw = None
+
         self._analyzeCaps()
 
-    ## read-only properties
-    def _get_caps(self):
-        return self._caps
-    caps = property(_get_caps,
-                    doc="Original gst.Caps")
-
-    def _get_raw(self):
-        return self._raw
-    raw = property(_get_raw,
-                   doc="True if the stream is a raw stream")
-
-    def _get_fixed(self):
-        return self._fixed
-    fixed = property(_get_fixed,
-                     doc="True if the stream has fixed caps")
-
-
-    def _get_codec(self):
-        return self._codec
-
-    def _set_codec(self, codecstring=None):
-        if codecstring and codecstring.strip():
-            self._codec = codecstring.strip()
-    codec = property(_get_codec, _set_codec,
-                     doc="Codec used in the stream")
-
-    @property
-    def markup(self):
-        """Pango-markup string definition"""
-        return self._getMarkup()
-
     def _analyzeCaps(self):
-        raise NotImplementedError
-
-    def _getMarkup(self):
         """
-        Returns a pango-markup string definition of the stream
-        Subclasses need to implement this
+        Override to extract properties from caps.
         """
-        raise NotImplementedError
-
-    def __repr__(self):
+        # NOTE: current implementations only parse the first structure. It could
+        # be a bit limited but on the other hand, Streams are just a thin layer
+        # on top of caps. For more complex things caps should be used.
+        
+    def __str__(self):
         return "%s" % self.caps
 
 class VideoStream(MultimediaStream):
@@ -102,159 +62,72 @@ class VideoStream(MultimediaStream):
     Video Stream
     """
 
-    # read-only properties
-    @property
-    def format(self):
-        """YUV format of the raw video stream"""
-        return self._format
+    def __init__(self, caps):
+        self.width = None
+        self.height = None
+        self.framerate = None
+        self.format = None
 
-    @property
-    def width(self):
-        """Width of the video stream in pixels"""
-        return self._width
-
-    @property
-    def height(self):
-        """Height of the video stream in pixels"""
-        return self._height
-
-    @property
-    def framerate(self):
-        """Framerate"""
-        return self._framerate
-
-    @property
-    def par(self):
-        """Pixel Aspect Ratio in fraction"""
-        return self._par
-
-    @property
-    def dar(self):
-        """Display Aspect Ratio in fraction"""
-        return self._dar
+        MultimediaStream.__init__(self, caps)
 
     def _analyzeCaps(self):
-        # WARNING/FIXME : Only analyses first structure !
         struct = self.caps[0]
         self.videotype = struct.get_name()
-        if self.videotype.startswith("video/x-raw-"):
-            self._raw = True
-        else:
-            self._raw = False
+        self.raw = self.videotype.startswith("video/x-raw-")
+
+        for property_name in ('width', 'height', 'framerate', 'format'):
+            try:
+                setattr(self, property_name, struct[property_name])
+            except KeyError:
+                # property not in caps
+                pass
+       
+        if self.framerate is None:
+            self.framerate = gst.Fraction(1, 1)
 
         try:
-            self._format = struct["format"]
+            self.par = struct['pixel-aspect-ratio']
         except:
-            self._format = None
-        try:
-            self._width = struct["width"]
-        except:
-            self._width = None
-        try:
-            self._height = struct["height"]
-        except:
-            self._height = None
-        try:
-            self._framerate = struct["framerate"]
-        except:
-            # if no framerate was given, use 1fps
-            self._framerate = gst.Fraction(1, 1)
-        try:
-            self._par = struct["pixel-aspect-ratio"]
-        except:
-            # use a default setting, None is not valid !
-            self._par = gst.Fraction(1, 1)
+            self.par = gst.Fraction(1, 1)
 
+        # compute display aspect ratio
         if self.width and self.height and self.par:
-            self._dar = gst.Fraction(self.width * self.par.num, self.height * self.par.denom)
+            self.dar = gst.Fraction(self.width * self.par.num,
+                    self.height * self.par.denom)
+        elif self.width and self.height:
+            self.dar = gst.Fraction(self.width, self.height)
         else:
-            if self.width and self.height:
-                self._dar = gst.Fraction(self.width, self.height)
-            else:
-                self._dar = gst.Fraction(4, 3)
-
-    def _getMarkup(self):
-        if self._raw:
-            if self._framerate.num:
-                templ = _("<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>")
-                templ = templ % (self.dar * self.height , self.height, float(self.framerate))
-            else:
-                templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
-                templ = templ % (self.dar * self.height, self.height)
-            if self._codec:
-                templ = templ + _(" <i>(%s)</i>") % self.codec
-            return templ
-        return _("<b>Unknown Video format:</b> %s") % self.videotype
+            self.dar = gst.Fraction(4, 3)
 
 class AudioStream(MultimediaStream):
     """
     Audio stream
     """
-
-    @property
-    def float(self):
-        """True if the audio stream contains raw float data"""
-        return self._float
-
-    @property
-    def channels(self):
-        """Number of channels"""
-        return self._channels
-
-    @property
-    def rate(self):
-        """Rate in samples/seconds"""
-        return self._rate
-
-    @property
-    def width(self):
-        """Width of an individual sample (in bits)"""
-        return self._width
-
-    @property
-    def depth(self):
-        """Depth of an individual sample (in bits)"""
-        return self._depth
+    def __init__(self, caps):
+        # initialize properties here for clarity
+        self.audiotype = None
+        self.channels = None
+        self.rate = None
+        self.width = None
+        self.height = None
+        self.depth = None
+        
+        MultimediaStream.__init__(self, caps)
 
     def _analyzeCaps(self):
-        # WARNING/FIXME : Only analyses first structure !
         struct = self.caps[0]
         self.audiotype = struct.get_name()
-        if self.audiotype.startswith("audio/x-raw-"):
-            self._raw = True
-        else:
-            self._raw = False
+        self.raw = self.audiotype.startswith('audio/x-raw-')
 
-        if self.audiotype == "audio/x-raw-float":
-            self._float = True
-        else:
-            self._float = False
+        for property_name in ('channels', 'rate', 'width', 'height', 'depth'):
+            try:
+                setattr(self, property_name, struct[property_name])
+            except KeyError:
+                # property not in the caps
+                pass
 
-        try:
-            self._channels = struct["channels"]
-        except:
-            self._channels = None
-        try:
-            self._rate = struct["rate"]
-        except:
-            self._rate = None
-        try:
-            self._width = struct["width"]
-        except:
-            self._width = None
-        try:
-            self._depth = struct["depth"]
-        except:
-            self._depth = self.width
-
-    def _getMarkup(self):
-        if self.raw:
-            templ = _("<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)")
-            templ = templ % (self.channels, self.rate, self.width)
-            if self.codec:
-                templ = templ + _(" <i>(%s)</i>") % self.codec
-            return templ
-        return _("<b>Unknown Audio format:</b> %s") % self.audiotype
+        if self.width and not self.depth:
+            self.depth = self.width
 
 class TextStream(MultimediaStream):
     """
@@ -272,7 +145,7 @@ def get_stream_for_caps(caps):
     Returns the appropriate MediaStream corresponding to the
     given caps.
     """
-    # FIXME : we should have an 'unknow' data stream class
+    # FIXME : we should have an 'unknown' data stream class
     ret = None
 
     val = caps.to_string()
