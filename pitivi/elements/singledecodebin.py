@@ -53,11 +53,13 @@ class SingleDecodeBin(gst.Bin):
                          gst.PAD_SOMETIMES,
                          gst.caps_new_any())
         )
-    def __init__(self, caps=None, uri=None, *args, **kwargs):
+    def __init__(self, caps=None, uri=None, stream=None, *args, **kwargs):
         gst.Bin.__init__(self, *args, **kwargs)
+
         if not caps:
             caps = gst.caps_new_any()
         self.caps = caps
+        self.stream = stream
         self.typefind = gst.element_factory_make("typefind", "internal-typefind")
         self.add(self.typefind)
 
@@ -209,7 +211,8 @@ class SingleDecodeBin(gst.Bin):
         if caps.is_any():
             self.log("type is not know yet, waiting")
             return
-        if caps.intersect(self.caps):
+        if caps.intersect(self.caps) and (self.stream is None or
+                self.stream.pad_name == pad.get_name()):
             # This is the desired caps
             if not self._srcpad:
                 self._wrapUp(element, pad)

@@ -38,9 +38,10 @@ class MultimediaStream(object):
 
     """
     
-    def __init__(self, caps):
+    def __init__(self, caps, pad_name=None):
         gst.log("new with caps %s" % caps.to_string())
         self.caps = caps
+        self.pad_name = pad_name
         self.fixed = caps.is_fixed()
         self.raw = None
 
@@ -62,13 +63,13 @@ class VideoStream(MultimediaStream):
     Video Stream
     """
 
-    def __init__(self, caps):
+    def __init__(self, caps, pad_name=None):
         self.width = None
         self.height = None
         self.framerate = None
         self.format = None
 
-        MultimediaStream.__init__(self, caps)
+        MultimediaStream.__init__(self, caps, pad_name)
 
     def _analyzeCaps(self):
         struct = self.caps[0]
@@ -103,7 +104,7 @@ class AudioStream(MultimediaStream):
     """
     Audio stream
     """
-    def __init__(self, caps):
+    def __init__(self, caps, pad_name=None):
         # initialize properties here for clarity
         self.audiotype = None
         self.channels = None
@@ -112,7 +113,7 @@ class AudioStream(MultimediaStream):
         self.height = None
         self.depth = None
         
-        MultimediaStream.__init__(self, caps)
+        MultimediaStream.__init__(self, caps, pad_name)
 
     def _analyzeCaps(self):
         struct = self.caps[0]
