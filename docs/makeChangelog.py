@@ -27,9 +27,9 @@ def process_commit(lines, files):
     print
     if not fileincommit:
         for f in files:
-            print '\t*', f
+            print '\t* %s:' % f
     for l in lines[1:]:
-        print '\t', l
+        print '\t ', l
     print
 
 if __name__ == "__main__":
