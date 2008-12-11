@@ -1,7 +1,7 @@
-0.11.1 Release : Milanesa de Lomo
+0.11.3 Release : Paella Cubana
 -----------------------------------------------------
 
-The PiTiVi team is proud to announce the third release in the unstable 0.11
+The PiTiVi team is proud to announce the fourth release in the unstable 0.11
 PiTiVi series.
 
 This release series is not intended to be production-ready, but instead to allow
@@ -18,38 +18,34 @@ experience.
 
 * Features of this release
 
- * New advanced timeline interface by Brandon Lewis (SoC)
- * Capture interface for webcams and network sources by Sarath Lakshman (SoC).
- * Simple Timeline is gone.
- * Project save/load now activated by default
- * Cutting/Trimming/Removing features added to advanced timeline.
- * Misc fixes and improvements
+ * Remove usage of gobject as much as possible from non-ui components
+ * Make smarter choices about audio/video sinks 
+ * Fix issues with seeking in ruler/viewer
+ * general pylint cleanup
+ * Picture support in the timeline
+ * Improve viewer for proper Display Aspect Ratio
+ * Timeline : Unlink-ing sources is now possible
+ * Fix some issues when using very long sources
+ * SourceList now detachable from main window
+ * Now requires GNonLin 0.10.10 and python >= 2.5
 
 * Bugs Fixed
 
- * 552777 : [ruler.py] BadAlloc error with big sources
- * 353870 : Save/Load project from/to file
- * 332473 : Capture from given gstreamer input source
- * 334631 : xvsink crash with python in pitivi
- * 339895 : [Advanced Timeline] Zooming in too much causes X error
- * 432678 : [discoverer] Files that report a duration of 0s is BUGGY !!!
- * 458944 : Cancelling while rendering does not work
- * 461738 : [Advanced Timeline] Scrollbar always comes back to beginning
- * 498071 : [Simple Timeline] Drag and Drop puts clips in the wrong slot
- * 498904 : incorrect indentation: some tabs are mixed with spaces in...
- * 501028 : Missing files from POTFILES.in
- * 501068 : Uses make instead of $(MAKE)
- * 518301 : Pitivi won't start under KDE: &quot; Icon 'misc' not present in...
- * 547095 : [Export Settings] Filter unusable muxers
- * 554544 : net_capture.glade not installed
- * 554602 : seeking is not working correctly ...
+ * 535374 : missing pitivi-sound.png
+ * 557998 : Runtime checks for goocanvas done too late
+ * 560150 : Error when clicking on nothing
+ * 560330 : Pitivi dont import any video (python trouble)
+ * 560844 : timecode is incorrectly displayed
+ * 560850 : font homogeneity
+ * 563444 : Render dialog's filename request dialog has buttons reversed 
 
 * Requirements
 
  * gstreamer >= 0.10.14
  * gst-python >= 0.10.6
- * gnonlin >= 0.10.9
+ * gnonlin >= 0.10.10
  * pygtk >= 2.8.0
+ * Python >= 2.5
  * zope.interface (http://www.zope.org/Products/ZopeInterface)
  * setuptools (http://peak.telecommunity.com/DevCenter/setuptools)
  * pygoocanvas (http://live.gnome.org/GooCanvas)
@@ -59,9 +55,8 @@ experience.
 * Contributors
 
  * Edward Hervey
- * Sarath Lakshman
  * Brandon Lewis
-
+ * Alessandro Decina
 
 * Download
 

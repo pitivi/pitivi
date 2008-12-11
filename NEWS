@@ -1,3 +1,16 @@
+2008 Dec 11 - PiTiVi 0.11.3
+
+ * Remove usage of gobject as much as possible from non-ui components
+ * Make smarter choices about audio/video sinks 
+ * Fix issues with seeking in ruler/viewer
+ * general pylint cleanup
+ * Picture support in the timeline
+ * Improve viewer for proper Display Aspect Ratio
+ * Timeline : Unlink-ing sources is now possible
+ * Fix some issues when using very long sources
+ * SourceList now detachable from main window
+ * Now requires GNonLin 0.10.10 and python >= 2.5
+
 2008 Oct 15 - PiTiVi 0.11.2
 
  * New advanced timeline interface by Brandon Lewis (SoC)

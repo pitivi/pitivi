@@ -1,238 +1,989 @@
-2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+2008-12-11  Edward Hervey <edward.hervey@collabora.co.uk>
 
-	* bin/pitivi.in:
-	Fix ambiguous naming.
+	* ChangeLog:
+	* NEWS:
+	* RELEASE:
+	* configure.ac:
+	Releasing 0.11.3 "Paella Cubana"
+	ChangeLog is now generated only at (pre-)release time !
 
-2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+2008-12-11  Edward Hervey <bilboed@bilboed.com>
 
-	* docs/pylint.rc:
-	We also accept _addSource (from SmartBin) as being a valid place for
-	create variables.
+	* docs/makeChangelog.py:
+	  Fix ChangeLog generator for proper formatting
 
-2008-10-17  Brandon Lewis  <brandon_lewis@berkeley.edu>
+2008-12-11  Edward Hervey <bilboed@bilboed.com>
 
-	* pitivi/ui/complexinterface.py
-	* pitivi/ui/complexlayer.py
-	* pitivi/ui/complextimeline.py
-	* pitivi/ui/timeline.py
-	Code review
-	
-2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+	* docs/release:
+	  docs: New file documenting (pre-)releasing
 
-	* pitivi/device.py:
-	* pitivi/objectfactory.py:
-	* pitivi/plumber.py:
-	* pitivi/threads.py:
-	* pitivi/thumbnailer.py:
-	Remove even more gobject usage in core
+2008-12-11  Edward Hervey <bilboed@bilboed.com>
 
-2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+	* docs/pitivi-Authors:
+	  docs/pitivi-Authors : Fix Christian's email adress
 
-	* pitivi/pitivi.py:
-	Only import pitivi.ui for Interactive subclass
-	* pitivi/Makefile.am:
-	* pitivi/ui/Makefile.am:
-	* pitivi/ui/dnd.py:
-	Move dnd module to pitivi.ui
-	* pitivi/ui/sourcefactories.py:
-	* pitivi/ui/timeline.py:
-	* pitivi/ui/viewer.py:
-	Adjust code for dnd move
+2008-12-09  Edward Hervey <edward.hervey@collabora.co.uk>
 
-2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+	* docs/makeChangelog.py:
+	  docs/makeChangelog : New GNU-Style ChangeLog generator from git log
+	  This can be used to generate clean GNU-Style ChangeLog history based
+	  on the information stored in git.
+	  It can handle git-svn repositories also.
+	  WARNING : Since this generates as-perfect-as-possible ChangeLog, there is
+	  a good chance that it will be very different from the hand-crafted ChangeLog.
+	  Therefore you shouldn't use this script to replace the ChangeLog file, but
+	  instead create (at (pre-)release time) CHANGES files (don't commit those !).
 
-	* pitivi/configure.py.in:
-	Fix header
+2008-12-09  Edward Hervey <edward.hervey@collabora.co.uk>
 
-2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+	* docs/pitivi-Authors:
+	  New Authors mapping file for use with git-svn.
+	  This file can be used so that the svn-id <=> User/Email mapping is consistent
+	  and more useful to read.
+	  You can set this as a local git config by using:
+	  git config svn.authorsfile docs/pitivi-Authors
+	  And then you can re-fetch the svn history and the authors will be properly fixed.
+
+2008-12-09  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/projecttabs.py:
+	  Temporarily disable property editor for 0.11.3 release since it doesn't do anything.
+
+2008-12-08  Edward Hervey <edward.hervey@collabora.co.uk>
 
 	* pitivi/ui/mainwindow.py:
-	Fix some code that was badly merged. Re-adds proper webcam detection
+	  Swap OK and CANCEL buttons in the choose file to render to dialog.
+	  Patch by Alessandro Decina <alessandro dot d at gmail dot con>
+	  Fixes #563444
 
-2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+2008-12-05  Mario Blättermann <mariobl@svn.gnome.org>
 
-	* pitivi/dnd.py:
-	* pitivi/instance.py:
-	Comments.
+	* po/de.po:
+	  Some fixes in German translation
 
-2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+2008-12-05  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* po/ChangeLog:
+	* po/ar.po:
+	* po/ca.po:
+	* po/dz.po:
+	* po/el.po:
+	* po/en_GB.po:
+	* po/es.po:
+	* po/fi.po:
+	* po/fr.po:
+	* po/it.po:
+	* po/lv.po:
+	* po/nb.po:
+	* po/oc.po:
+	* po/pa.po:
+	* po/pt.po:
+	* po/pt_BR.po:
+	* po/sv.po:
+	* po/zh_CN.po:
+	  po/: Fixed French translation, and ran other files through "make update-po"
+
+2008-12-05  Mario Blättermann <mariobl@svn.gnome.org>
+
+	* po/ChangeLog:
+	* po/de.po:
+	  Updated German translation
+
+2008-12-04  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* configure.ac:
+	  configure.ac : pitivi 0.11.2.2 pre-release
+
+2008-12-04  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi.spec.in:
+	  pitivi.spec.in : various updates
+
+2008-12-04  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* configure.ac:
+	  configure.ac: We require python >= 2.5
+
+2008-12-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/utils.py:
+	  utils: Add a callback for pad probes
+
+2008-12-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/settings.py:
+	  settings: Remove useless debug statement
+
+2008-12-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* docs/HACKING:
+	  docs/HACKING: add more information on coding style
+
+2008-12-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/Makefile.am:
+	* pitivi/pixmaps/Makefile.am:
+	* pitivi/ui/Makefile.am:
+	  Makefile.am : Add more files to distribute/install
+
+2008-12-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/projecttabs.py:
+	  disable detach buttons on all but the activer tab
+
+2008-12-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/actions.xml:
+	* pitivi/ui/sourcelist.py:
+	  fix menu layout
+
+2008-12-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/projecttabs.py:
+	  don't forget to unhide tabs
+
+2008-12-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/viewer.py:
+	  On startup do playground.play() only after ViewerWidget has been exposed.
+	  Fixes the bug that sometimes caused the videosink to appear in its own
+	  window.
+	  Patch by Alessandro Decina <alessandro dot d at gmail dot con>
+
+2008-12-02  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* po/POTFILES.in:
+	  POTFILES: add missing pitivi/ui/propertyeditor.py file
+
+2008-12-02  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/sourcelist.py:
+	  Fix SourceList._getIcon so that it does load fallbacks.
+	  Fixes #535374.
+	  Patch by Alessandro Decina <alessandro dot d at gmail dot con>
+
+2008-12-02  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/viewer.py:
+	  Compute DAR as width / height for the default pipeline.
+	  Fixes a traceback introduced in 36162c452cdf9f637658e1e92484d66dcd19536b
+	  when removing all the objects from the timeline.
+	  Patch by Alessandro Decina <alessandro dot d at gmail dot con>
+
+2008-12-01  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/objects.py:
+	  Move two snapTimeToEdge calls from TimelineObject to Timeline.
+	  Call snapObjToEdge from Timeline as well.
+	  Patch by Alessandro Decina <alessandro dot d at gmail dot con>
+
+2008-11-28  Claude Paroz <claude@2xlibre.net>
+
+	  2008-11-28  Claude Paroz  <claude@2xlibre.net>
+	  * fr.po: Updated French translation.
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/Makefile.am:
+	* tests/Makefile.am:
+	  Makefile.am : Fix files to dist
+	  It would be great if this could be done as soon as a file is :
+	  * added
+	  * removed
+	  * renamed
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* configure.ac:
+	  configure.ac: Require gnonlin 0.10.10
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/source.py:
+	  timeline/source: Fix checks for valid media-start and media-duration
+	  We can't *fixup* values once we know we're going to set them.
+	  If values need to be fixed-up (like making sure start is positive) and actually
+	  set, then the conversion needs to be done in the calling functions.
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* tests/test_timeline_source.py:
+	  tests/timeline_source : We need to give a greater factory duration for the test to succeed.
+	  This is especially true if we try to set the media_duration to 2s and it fails because the
+	  factory we provided is only 1s long.
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* tests/test_timeline_objects.py:
+	  test_timeline_objects: Currently too much code assumes any ObjectFactory has a duration
+	  We should revert the commented line back and fix this !
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* tests/Makefile.am:
+	  tests/: small fix for removal of temporary file
+	  Adding the '-f' argument to 'rm' doesn't make it fail if the file is not
+	  present.
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	  pitivi/timeline : use .duration to get the duration of a factory, and not getDuration() which doesn't exist anymore
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* po/POTFILES.in:
+	  POTFILES.in : update for added/removed translatable files
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* tests/test_proxy.py:
+	  tests: remove proxy test. It doesn't seem to be used anymore.
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* bin/pitivi.in:
+	* pitivi/timeline/source.py:
+	* pitivi/ui/timeline.py:
+	  Fixes for rebasing of brandon's master branch
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/timelinecanvas.py:
+	  make sure canvas bounds are set after zoom change
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/sourcelist.py:
+	  added sourclist.py -- oops
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/netstream_managerdialog.py:
+	  fixed error unnoticed due to compiled .pyc files
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/propertyeditor.py:
+	  property editor chooses module to load based on object factory, not its type
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/timeline.py:
+	  swapped order of tracks to avoid confusion
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/ui/defaultpropertyeditor.py:
+	* pitivi/ui/propertyeditor.py:
+	  started working on generic property editor
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/propertyeditor.py:
+	* pitivi/utils.py:
+	  more sophisticated architecture for loading property editor modules when the selection changes
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/propertyeditor.py:
+	  make property browser do something
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/projecttabs.py:
+	* pitivi/ui/viewer.py:
+	  adding code which detaches/reattaches viewer, but it is inactive for now since doing this crashes pitivi
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/projecttabs.py:
+	  projecttabs components can now be split into separate windows
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/projecttabs.py:
+	  disable ui components we don't yet support
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/receiver.py:
+	* pitivi/ui/actions.xml:
+	* pitivi/ui/audiofxlist.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/pathwalker.py:
+	* pitivi/ui/projecttabs.py:
+	* pitivi/ui/propertyeditor.py:
+	* pitivi/ui/sourcefactories.py:
+	* pitivi/ui/transitionlist.py:
+	* pitivi/ui/videofxlist.py:
+	* pitivi/ui/webcam_managerdialog.py:
+	  major module split-up in the non-timeline UI classes. Also set some better defaults for pane positions on startup
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/pixmaps/pitivi-relink.svg:
+	* pitivi/pixmaps/pitivi-split.svg:
+	* pitivi/pixmaps/pitivi-unlink.svg:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	  added new toolbar icons, some bug fixes in timelinecanvas
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/point.py:
+	* pitivi/ui/selection.py:
+	* pitivi/ui/timelinecanvas.py:
+	  couple of minor tweaks
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/timelinecanvas.py:
+	  re-impmemented the selection marquee...now it supports shift and control click modifieres
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelineobject.py:
+	* pitivi/ui/track.py:
+	  Got rid of some instance.PiTiVi accesses
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	  moved splitting of sources into core
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/controller.py:
+	  removed calls to view methods from default implementation to make controller more reusable
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/zoominterface.py:
+	  moved zoom ratio calculation methods of Timeline to classmethods of zoominterface. removed dependency from gtk.Adjustment
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/ruler.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	* pitivi/ui/timelineobject.py:
+	* pitivi/ui/track.py:
+	* pitivi/ui/zoominterface.py:
+	  refactored zoom interface so that it is much easier to use
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/complexinterface.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	* pitivi/ui/timelineobject.py:
+	* pitivi/ui/track.py:
+	* pitivi/ui/transform.py:
+	* pitivi/ui/zoominterface.py:
+	  all zooming and transformation code will be in pitivi/ui/zoominterface.py
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/slider.py:
+	  removed obsolete colored slider for simple ui
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/complexlayer.py:
+	  removed layerInfoList
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/receiver.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	  fixed bugs in receiver. added 'tracks' property to timeline, in ui Timeline and TimelineCanvas no longer use layerInfoList
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	  timeline and timelinecanvas now use receiver object to handle instance and layerInfoList signals
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/timeline.py:
+	  move track-managment stuff from LayerInfoList to Timeline
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/controller.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	  added link/unlink code to the UI, and fixed some bugs in the core implementation. visually does the right thing, but core is kinda screwed up
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/controller.py:
+	* pitivi/ui/timelineobject.py:
+	  simplified selection interface, added multi-selection, controllers have access to modifier keys, and TimelineController specifies selection mode with modifier keys
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	* pitivi/ui/timelineobject.py:
+	  moved selection code to core (timeline/timeline.py), TimelineController now selects objects on click
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/list.py:
+	* pitivi/ui/selection.py:
+	* pitivi/ui/util.py:
+	  pulled out useful code from ui/util.py and removed module
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/point.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	* pitivi/ui/track.py:
+	  better bounds calculation...fixed height calculation bug, but at some point will need to write a custom container
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/controller.py:
+	* pitivi/ui/timelineobject.py:
+	  added cursor handling code to controller, TrimHandle objects now set appropraite cursors
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/receiver.py:
+	  receivers have to keep track of senders and sigids per-instance
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/receiver.py:
+	  added setter parameter to receiver descriptor
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/receiver.py:
+	* pitivi/ui/controller.py:
+	  fixed big in high-level click code
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/point.py:
+	* pitivi/ui/timelineobject.py:
+	  reimplemented trimming handles in new ui
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* bin/pitivi.in:
+	* pitivi/pitivi.py:
+	* pitivi/signalinterface.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/controller.py:
+	* pitivi/ui/point.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	* pitivi/ui/timelineobject.py:
+	* pitivi/ui/track.py:
+	  point-event code into Controller, bug-fixes in drag-and-drop code
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/receiver.py:
+	* pitivi/ui/complexlayer.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecanvas.py:
+	  fixed subtle bug in receiver. TimelineCanvas no longer uses old UI library. Debugged goocanvas.Table
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* bin/pitivi.in:
+	* pitivi/receiver.py:
+	* pitivi/ui/controller.py:
+	* pitivi/ui/point.py:
+	* pitivi/ui/timelinecanvas.py:
+	* pitivi/ui/timelineobject.py:
+	* pitivi/ui/track.py:
+	* pitivi/ui/view.py:
+	  checkign in stuff i forgot to commit before, incremental progress towards getting new version of TimelineObject to actually work
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/controller.py:
+	* pitivi/ui/view.py:
+	  updated view and controller to match new receiver implementation
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/receiver.py:
+	  revised receiver
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/controller.py:
+	* pitivi/ui/view.py:
+	  re-implementation of TimelineObject using new receiver framework
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	  ComplexTimelineWidget now simply Timeline. TimelineWidget is no more
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/complextimeline.py:
+	  refactored CompositionLayers into TimelineCanvas and split into separate module
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/complextimeline.py:
+	  split ui.Track into separate module
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/complextimeline.py:
+	  factory timelineobject into separate module
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/complextimeline.py:
+	* pitivi/ui/timeline.py:
+	  move dnd code from pitivi.ui.timeline to pitivi.ui.complextimeline
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/complextimeline.py:
+	  fix issues with deadband not being set after changing project
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/complextimeline.py:
+	  move edge snapping code from static methods of TimelineObject to instance methods of Timeline
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/timeline.py:
+	  moved TimelineObject instantiation from pitivi.ui.timeline.Timeline to pitivi.timeline.timeline.Timeline
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/point.py:
+	  added point class
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/controller.py:
+	* pitivi/ui/transform.py:
+	* pitivi/ui/view.py:
+	  added new ui classes based on receiver
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/receiver.py:
+	  added receiver module
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	* pitivi/ui/complextimeline.py:
+	  moved source trimming and edge-snapping into core, special cased for TimelineSources
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/objects.py:
+	* pitivi/ui/complextimeline.py:
+	  re-activate edge snapping for dragging
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/objects.py:
+	* pitivi/ui/complextimeline.py:
+	  moved edge snapping code into core (edge snapping is effectively disabled with this commit
+
+2008-11-28  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* tests/common.py:
+	  tests/common : Fix FileSourceFactory for default_duration modifications
+
+2008-11-25  Daniel Nylander <po@danielnylander.se>
+
+	* po/ChangeLog:
+	* po/sv.po:
+	  sv.po: Updated Swedish translation
+
+2008-11-17  Edward Hervey <edward.hervey@collabora.co.uk>
 
 	* pitivi/ui/sourcefactories.py:
-	Better thumbnailing handling for new objectfactories.
-	
-2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+	  ui/sourcefactories: Make font usage more homogeneous. Patch by Jeff Fortin.
 
-	* pitivi/timeline/composition.py:
-	* pitivi/timeline/objects.py:
-	* pitivi/timeline/source.py:
-	Use python properties more.
-	* tests/test_timeline_composition.py:
-	* tests/test_timeline_objects.py:
-	* tests/test_timeline_source.py:
-	Adapt tests for changes.
+2008-11-17  Edward Hervey <edward.hervey@collabora.co.uk>
 
-2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+	* pitivi/ui/viewer.py:
+	  ui/viewer: Fix default time label values. Patch by Jeff Fortin
 
-	* pitivi/check.py:
-	* pitivi/configure.py.in:
-	* pitivi/discoverer.py:
-	* pitivi/effects.py:
-	* pitivi/elements/imagefreeze.py:
-	* pitivi/elements/singledecodebin.py:
-	* pitivi/elements/smartscale.py:
-	* pitivi/elements/thumbnailsink.py:
-	* pitivi/elements/videofade.py:
+2008-11-11  Duarte Loreto <happyguy_pt@hotmail.com>
+
+	  2008-11-11  Duarte Loreto <happyguy_pt@hotmail.com>
+	  * pt.po: Updated Portuguese translation by António Lima
+	  <amrlima@gmail.com>.
+
+2008-11-11  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/viewer.py:
+	  Viewer: Be more sensible about how we figure out when to update the viewer DAR.
+	  It was previously done using the caps changing on the videosink's pad... which
+	  lead to bogus ratios some times.
+
+2008-11-10  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/objectfactory.py:
-	* pitivi/playground.py:
-	* pitivi/pluginmanager.py:
-	* pitivi/project.py:
-	* pitivi/projectsaver.py:
-	* pitivi/serializable.py:
-	* pitivi/settings.py:
-	* pitivi/signalgroup.py:
-	* pitivi/stream.py:
-	* pitivi/thumbnailer.py:
-	* pitivi/timeline/composition.py:
-	* pitivi/timeline/effects.py:
+	  Fix PiTiVi to not use python-2.6 restricted keywords.
+	  Signed-off-by: Edward Hervey <bilboed@bilboed.com>
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/elements/singledecodebin.py:
+	  SingleDecodeBin: Only cleanup when going from PAUSED to READY
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/source.py:
+	  TimelineSource: Handle exceptions in a smarter fashion
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/objects.py:
+	  TimelineObject: make sure the subclasses have provided a GnlObject
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/objectfactory.py:
+	  Add data type for picture source
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/pitivi.py:
+	* pitivi/ui/mainwindow.py:
+	  Make the error dialogbox for failed project loads a bit nicer
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/objectfactory.py:
+	  PictureFileSourceFactory: Add a video scaler.
+	  For pictures with width smaller than 2048, try using the more visually pleasing ffvideoscale,
+	  else revert to the 'poor' videoscale
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/elements/imagefreeze.py:
+	  ImageFreeze: Stop task if we don't have a buffer
+	  Plus other fixes
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/elements/imagefreeze.py:
+	  ImageFreeze: more fixups
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/ui/exportsettingswidget.glade:
+	  exportsettingswidget.glade : Fix gtk.SpinButton issue with non-zero pages
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* pitivi/timeline/objects.py:
 	* pitivi/timeline/source.py:
-	* pitivi/timeline/timeline.py:
+	* pitivi/ui/dnd.py:
+	* pitivi/ui/timeline.py:
+	  various comments and minor fixes
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/discoverer.py:
+	* pitivi/objectfactory.py:
+	  ObjectFactory/Discoverer : Add new PictureFileSourceFactory, use it from the discoverer
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/objectfactory.py:
+	* pitivi/timeline/source.py:
+	  sources : Make TimelineFileSource properly use ObjectFactory information
+
+2008-11-03  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* pitivi/timeline/composition.py:
+	* pitivi/timeline/objects.py:
+	* pitivi/timeline/source.py:
+	  pitivi/timeline/ Fix usage of factory.duration and factory.default_duration
+
+2008-10-19  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * bin/pitivi.in:
+	  Fix ambiguous naming.
+
+2008-10-19  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * docs/pylint.rc:
+	  We also accept _addSource (from SmartBin) as being a valid place for
+	  create variables.
+
+2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	* ChangeLog:
 	* pitivi/ui/complexinterface.py:
 	* pitivi/ui/complexlayer.py:
 	* pitivi/ui/complextimeline.py:
-	* pitivi/ui/glade.py:
-	* pitivi/ui/gstwidget.py:
-	* pitivi/ui/mainwindow.py:
-	* pitivi/ui/pluginmanagerdialog.py:
-	* pitivi/ui/slider.py:
-	* pitivi/ui/sourcefactories.py:
-	* pitivi/ui/viewer.py:
-	* pitivi/utils.py:
-	Complete cleanup using pylint reporting.
-	* docs/pylint.rc:
-	Pylint resource file to use when checking pitivi.
-
-2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
-
-	* pitivi/playground.py:
-	* pitivi/project.py:
-	* pitivi/settings.py:
-	* pitivi/timeline/composition.py:
-	* pitivi/timeline/objects.py:
-	* pitivi/timeline/source.py:
-	* pitivi/timeline/timeline.py:
-	Switch more objects to gobject-less signalling and properties.
-
-2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
-
-	* pitivi/ui/complextimeline.py:
-	* pitivi/ui/filelisterrordialog.py:
-	* pitivi/ui/glade.py:
-	* pitivi/ui/mainwindow.py:
-	* pitivi/ui/slider.py:
 	* pitivi/ui/timeline.py:
-	* pitivi/ui/viewer.py:
-	Fix imports in pitivi/ui
+	  * pitivi/ui/complexinterface.py
+	  * pitivi/ui/complexlayer.py
+	  * pitivi/ui/complextimeline.py
+	  * pitivi/ui/timeline.py
+	  Code review
+
+2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * pitivi/device.py:
+	  * pitivi/objectfactory.py:
+	  * pitivi/plumber.py:
+	  * pitivi/threads.py:
+	  * pitivi/thumbnailer.py:
+	  Remove even more gobject usage in core
+
+2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * pitivi/pitivi.py:
+	  Only import pitivi.ui for Interactive subclass
+	  * pitivi/Makefile.am:
+	  * pitivi/ui/Makefile.am:
+	  * pitivi/ui/dnd.py:
+	  Move dnd module to pitivi.ui
+	  * pitivi/ui/sourcefactories.py:
+	  * pitivi/ui/timeline.py:
+	  * pitivi/ui/viewer.py:
+	  Adjust code for dnd move
+
+2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * pitivi/configure.py.in:
+	  Fix header
+
+2008-10-17  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * pitivi/ui/mainwindow.py:
+	  Fix some code that was badly merged. Re-adds proper webcam detection
 
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
-	* pitivi/ui/ruler.py:
-	Fix duration query.
-	Don't seek if there's no available content.
+	  * pitivi/dnd.py:
+	  * pitivi/instance.py:
+	  Comments.
 
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
-	* .gitignore:
-	* bin/.gitignore:
-	* pitivi/.gitignore:
-	* pitivi/elements/.gitignore:
-	* pitivi/pixmaps/.gitignore:
-	* pitivi/ui/.gitignore:
-	* po/.gitignore:
-	* tests/.gitignore:
-	Rename .cvsignore to .gitignore because we are no longer using CVS but
-	more and more people are using GIT.
-	This doesn't affect people using svn.
+	  * pitivi/ui/sourcefactories.py:
+	  Better thumbnailing handling for new objectfactories.
 
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
-	* pitivi/objectfactory.py:
-	* pitivi/stream.py:
-	* pitivi/Makefile.am:
-	Use python properties.
-	Move MultimediaStream to separate module.
-	Comments and cleanups.
-	* pitivi/discoverer.py:
-	Update code for modifications in objectfactory
+	  * pitivi/timeline/composition.py:
+	  * pitivi/timeline/objects.py:
+	  * pitivi/timeline/source.py:
+	  Use python properties more.
+	  * tests/test_timeline_composition.py:
+	  * tests/test_timeline_objects.py:
+	  * tests/test_timeline_source.py:
+	  Adapt tests for changes.
 
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
-	* bin/pitivi.in:
-	Cleanups
+	  * pitivi/check.py:
+	  * pitivi/configure.py.in:
+	  * pitivi/discoverer.py:
+	  * pitivi/effects.py:
+	  * pitivi/elements/imagefreeze.py:
+	  * pitivi/elements/singledecodebin.py:
+	  * pitivi/elements/smartscale.py:
+	  * pitivi/elements/thumbnailsink.py:
+	  * pitivi/elements/videofade.py:
+	  * pitivi/objectfactory.py:
+	  * pitivi/playground.py:
+	  * pitivi/pluginmanager.py:
+	  * pitivi/project.py:
+	  * pitivi/projectsaver.py:
+	  * pitivi/serializable.py:
+	  * pitivi/settings.py:
+	  * pitivi/signalgroup.py:
+	  * pitivi/stream.py:
+	  * pitivi/thumbnailer.py:
+	  * pitivi/timeline/composition.py:
+	  * pitivi/timeline/effects.py:
+	  * pitivi/timeline/objects.py:
+	  * pitivi/timeline/source.py:
+	  * pitivi/timeline/timeline.py:
+	  * pitivi/ui/complexinterface.py:
+	  * pitivi/ui/complexlayer.py:
+	  * pitivi/ui/complextimeline.py:
+	  * pitivi/ui/glade.py:
+	  * pitivi/ui/gstwidget.py:
+	  * pitivi/ui/mainwindow.py:
+	  * pitivi/ui/pluginmanagerdialog.py:
+	  * pitivi/ui/slider.py:
+	  * pitivi/ui/sourcefactories.py:
+	  * pitivi/ui/viewer.py:
+	  * pitivi/utils.py:
+	  Complete cleanup using pylint reporting.
+	  * docs/pylint.rc:
+	  Pylint resource file to use when checking pitivi.
 
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
-	* pitivi/pitivi.py:
-	Remove dependency on gtk
-	Make subclass for Interactive pitivi
-	Use pure python properties
-	Clean up code and add comments
-	* pitivi/ui/complextimeline.py:
-	* pitivi/ui/mainwindow.py:
-	* tests/test_basic.py:
+	  * pitivi/playground.py:
+	  * pitivi/project.py:
+	  * pitivi/settings.py:
+	  * pitivi/timeline/composition.py:
+	  * pitivi/timeline/objects.py:
+	  * pitivi/timeline/source.py:
+	  * pitivi/timeline/timeline.py:
+	  Switch more objects to gobject-less signalling and properties.
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * pitivi/ui/complextimeline.py:
+	  * pitivi/ui/filelisterrordialog.py:
+	  * pitivi/ui/glade.py:
+	  * pitivi/ui/mainwindow.py:
+	  * pitivi/ui/slider.py:
+	  * pitivi/ui/timeline.py:
+	  * pitivi/ui/viewer.py:
+	  Fix imports in pitivi/ui
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * pitivi/ui/ruler.py:
+	  Fix duration query.
+	  Don't seek if there's no available content.
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * .gitignore:
+	  * bin/.gitignore:
+	  * pitivi/.gitignore:
+	  * pitivi/elements/.gitignore:
+	  * pitivi/pixmaps/.gitignore:
+	  * pitivi/ui/.gitignore:
+	  * po/.gitignore:
+	  * tests/.gitignore:
+	  Rename .cvsignore to .gitignore because we are no longer using CVS but
+	  more and more people are using GIT.
+	  This doesn't affect people using svn.
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * pitivi/objectfactory.py:
+	  * pitivi/stream.py:
+	  * pitivi/Makefile.am:
+	  Use python properties.
+	  Move MultimediaStream to separate module.
+	  Comments and cleanups.
+	  * pitivi/discoverer.py:
+	  Update code for modifications in objectfactory
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * bin/pitivi.in:
+	  Cleanups
+	  bin/pitivi : cleanups
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * pitivi/pitivi.py:
+	  Remove dependency on gtk
+	  Make subclass for Interactive pitivi
+	  Use pure python properties
+	  Clean up code and add comments
+	  * pitivi/ui/complextimeline.py:
+	  * pitivi/ui/mainwindow.py:
+	  * tests/test_basic.py:
+	  * tests/test_file_load_save.py:
+	  Adapt code for modifications in pitivi.py
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
+	  * pitivi/bin.py:
+	  * pitivi/discoverer.py:
+	  * pitivi/objectfactory.py:
+	  * pitivi/pitivi.py:
+	  * pitivi/sourcelist.py:
+	  * pitivi/timeline/composition.py:
+	  * pitivi/timeline/source.py:
+	  * pitivi/ui/complextimeline.py:
+	  * pitivi/ui/mainwindow.py:
+	  * pitivi/ui/sourcefactories.py:
+	  * pitivi/ui/viewer.py:
+	  * tests/common.py:
+	  Convert pitivi,bin,discoverer,objectfactory to gobject-less signaling
+	  and properties.
+	  Modify all code using that accordingly.
+
+2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
+
 	* tests/test_file_load_save.py:
-	Adapt code for modifications in pitivi.py
+	  tests: connect_after does not exist anymore
 
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
-	* pitivi/bin.py:
-	* pitivi/discoverer.py:
-	* pitivi/objectfactory.py:
-	* pitivi/pitivi.py:
-	* pitivi/sourcelist.py:
-	* pitivi/timeline/composition.py:
-	* pitivi/timeline/source.py:
-	* pitivi/ui/complextimeline.py:
-	* pitivi/ui/mainwindow.py:
-	* pitivi/ui/sourcefactories.py:
-	* pitivi/ui/viewer.py:
-	* tests/common.py:
-	Convert pitivi,bin,discoverer,objectfactory to gobject-less signaling
-	and properties.
-	Modify all code using that accordingly.
+	  * docs/HACKING:
+	  Added notes about public/private/protected attributes
 
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
-	* docs/HACKING:
-	Added notes about public/private/protected attributes
+	  * pitivi/threads.py:
+	  Use new gobject-less signal system
 
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
-	* pitivi/threads.py:
-	Use new gobject-less signal system
+	  * pitivi/Makefile.am:
+	  * pitivi/bin.py:
+	  * pitivi/plumber.py:
+	  * pitivi/ui/Makefile.am:
+	  * pitivi/ui/viewer.py:
+	  Move plumber up one directory, since it's not ui-specific.
+	  Use auto*sink instead of gconf*sink since it's now works better
 
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
-	* pitivi/Makefile.am:
-	* pitivi/bin.py:
-	* pitivi/plumber.py:
-	* pitivi/ui/Makefile.am:
-	* pitivi/ui/viewer.py:
-	Move plumber up one directory, since it's not ui-specific.
-	Use auto*sink instead of gconf*sink since it's now works better
+	  * pitivi/Makefile.am:
+	  * pitivi/signalinterface.py:
+	  * tests/Makefile.am:
+	  * tests/test_signallable.py:
+	  New signallable interface
 
 2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
 
-	* pitivi/Makefile.am:
-	* pitivi/signalinterface.py:
-	* tests/Makefile.am:
-	* tests/test_signallable.py:
-	New signallable interface
-
-2008-10-16  Edward Hervey <edward.hervey@collabora.co.uk>
-
-	* configure.ac: 
-	And back to development cycle.
+	  * configure.ac:
+	  And back to development cycle.
 
 2008-10-15  Edward Hervey <edward.hervey@collabora.co.uk>
 
