@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # PiTiVi , Non-linear video editor
 #
-#       objectfactory.py
+#       base.py
 #
 # Copyright (c) 2005-2008, Edward Hervey <bilboed@bilboed.com>
 #               2008, Alessandro Decina <alessandro.decina@collabora.co.uk>
@@ -21,10 +21,6 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-"""
-Providers of elements to use in a timeline
-"""
-
 import os.path
 from urllib import unquote
 import weakref
@@ -32,14 +28,13 @@ from random import randint
 import gobject
 import gst
 
-from serializable import Serializable
-from settings import ExportSettings
-from stream import get_stream_for_caps
+from pitivi.serializable import Serializable
+from pitivi.settings import ExportSettings
+from pitivi.stream import get_stream_for_caps
 
 from gettext import gettext as _
 
-from elements.singledecodebin import SingleDecodeBin
-from elements.imagefreeze import ImageFreeze
+from pitivi.elements.singledecodebin import SingleDecodeBin
 
 class ObjectFactoryError(Exception):
     # FIXME: define a proper hierarchy
@@ -302,72 +297,3 @@ class LiveURISourceFactory(URISourceFactoryMixin, LiveSourceFactory):
     def __init__(self, uri, name='', displayname='', default_duration=None):
         URISourceFactoryMixin.__init__(self, uri)
         LiveSourceFactory.__init__(self, name, displayname, default_duration)
-
-class FileSourceFactory(URISourceFactoryMixin, RandomAccessSourceFactory):
-    """
-    Factory for local files.
-
-    @see: L{RandomAccessSourceFactory}.
-    """
-
-    def __init__(self, filename, name='', displayname=''):
-        name = name or filename
-        displayname = displayname or os.path.basename(filename)
-        self.filename = filename
-        URISourceFactoryMixin.__init__(self, filename)
-        RandomAccessSourceFactory.__init__(self, name, displayname)
-
-class PictureFileSourceFactory(FileSourceFactory):
-    """
-    Factory for image sources.
-
-    @see: L{FileSourceFactory}, L{RandomAccessSourceFactory}.
-    """
-
-    duration = 3600 * gst.SECOND
-
-    # make this overridable in tests
-    ffscale_factory = 'ffvideoscale'
-
-    def _makeStreamBin(self, output_stream):
-        gst.debug("making picture bin for %s" % self.name)
-        res = gst.Bin("picture-%s" % self.name)
-        # use ffvideoscale only if available AND width < 2048
-        if output_stream.width < 2048:
-            try:
-                scale = gst.element_factory_make(self.ffscale_factory, "scale")
-                scale.props.method = 9
-            except gst.ElementNotFoundError:
-                scale = gst.element_factory_make("videoscale", "scale")
-                scale.props.method = 2
-        else:
-            scale = gst.element_factory_make("videoscale", "scale")
-            scale.props.method = 2
-        
-        freeze = ImageFreeze()
-        # let's get a single stream provider
-        dbin = FileSourceFactory._makeStreamBin(self, output_stream)
-        res.add(dbin, scale, freeze)
-        scale.link(freeze)
-
-        dbin.connect("pad-added", self._dbinPadAddedCb,
-                     scale, freeze, res)
-        dbin.connect("pad-removed", self._dbinPadRemovedCb,
-                     scale, freeze, res)
-        gst.debug("Returning %r" % res)
-        
-        return res
-
-    def _dbinPadAddedCb(self, unused_dbin, pad, scale, freeze, container):
-        pad.link(scale.get_pad("sink"))
-        ghost = gst.GhostPad("src", freeze.get_pad("src"))
-        ghost.set_active(True)
-        container.add_pad(ghost)
-
-    def _dbinPadRemovedCb(self, unused_dbin, pad, scale, freeze, container):
-        ghost = container.get_pad("src")
-        target = ghost.get_target()
-        peer = target.get_peer()
-        target.unlink(peer)
-        container.remove_pad(ghost)
-        pad.unlink(scale.get_pad("sink"))
