@@ -104,6 +104,59 @@ class TestLiveSourceFactory(TestCase):
         self.failUnlessEqual(factory.duration, gst.CLOCK_TIME_NONE)
         self.failUnlessEqual(factory.default_duration, 5 * gst.SECOND)
 
+class TestRandomAccessSourceFactory(TestCase):
+    def testOffsetAndLength(self):
+        # no offset and length
+        factory = RandomAccessSourceFactory('name', 'displayname')
+        self.failUnlessEqual(factory.offset, 0)
+        self.failUnlessEqual(factory.offset_length, gst.CLOCK_TIME_NONE)
+        self.failUnlessEqual(factory.abs_offset, 0)
+        self.failUnlessEqual(factory.abs_offset_length, gst.CLOCK_TIME_NONE)
+
+        # offset and length without parent
+        factory.offset = 5 * gst.SECOND
+        factory.offset_length = 10 * gst.SECOND
+        self.failUnlessEqual(factory.offset, 5 * gst.SECOND)
+        self.failUnlessEqual(factory.abs_offset, 5 * gst.SECOND)
+        self.failUnlessEqual(factory.offset_length, 10 * gst.SECOND)
+        self.failUnlessEqual(factory.abs_offset_length, 10 * gst.SECOND)
+
+        # parent offset
+        relative = RandomAccessSourceFactory('name1', 'displayname1')
+        relative.parent = factory
+        self.failUnlessEqual(relative.offset, 0)
+        self.failUnlessEqual(relative.offset_length, gst.CLOCK_TIME_NONE)
+        self.failUnlessEqual(relative.abs_offset, 5 * gst.SECOND)
+        self.failUnlessEqual(relative.abs_offset_length, 10 * gst.SECOND)
+
+        # parent + local
+        relative.offset = 1 * gst.SECOND
+        relative.offset_length = 2 * gst.SECOND
+        self.failUnlessEqual(relative.offset, 1 * gst.SECOND)
+        self.failUnlessEqual(relative.offset_length, 2 * gst.SECOND)
+        self.failUnlessEqual(relative.abs_offset, 6 * gst.SECOND)
+        self.failUnlessEqual(relative.abs_offset_length, 2 * gst.SECOND)
+        # unparent
+        relative.parent = None
+        self.failUnlessEqual(relative.abs_offset, 1 * gst.SECOND)
+        self.failUnlessEqual(relative.abs_offset_length, 2 * gst.SECOND)
+        relative.parent = factory
+
+        # offset out of boundary
+        relative.offset = 11 * gst.SECOND
+        self.failUnlessEqual(relative.abs_offset, 15 * gst.SECOND)
+        self.failUnlessEqual(relative.abs_offset_length, 0)
+
+        # length out
+        relative.offset = 5 * gst.SECOND
+        relative.offset_length = 6 * gst.SECOND
+        self.failUnlessEqual(relative.abs_offset, 10 * gst.SECOND)
+        self.failUnlessEqual(relative.abs_offset_length, 5 * gst.SECOND)
+        # move offset back
+        relative.offset = 4 * gst.SECOND
+        self.failUnlessEqual(relative.abs_offset, 9 * gst.SECOND)
+        self.failUnlessEqual(relative.abs_offset_length, 6 * gst.SECOND)
+
 class StubSingleDecodeBin(gst.Bin):
     def __init__(self, uri, caps, stream):
         self.uri = uri

@@ -197,15 +197,50 @@ class RandomAccessSourceFactory(SourceFactory):
     """
     Base class for source factories that support random access.
 
-    @ivar offset: Offset from the beginning in nanoseconds. If the source has a
-    parent, offset is relative to the parent's offset.
+    @ivar offset: Offset in nanoseconds from the beginning of the stream.
     @type offset: C{int}
-    @ivar offset_length: Length in nanoseconds. If the source has a parent,
-    length can potentially be clipped.
+    @ivar offset_length: Length in nanoseconds.
     @type offset_length: C{int}
+    @ivar abs_offset: Absolute offset from the beginning of the stream.
+    @type abs_offset: C{int}
+    @ivar abs_offset_length: Length in nanoseconds, clamped to avoid overflowing
+    the parent's length if any.
+    @type abs_offset_length: C{int}
     """
-    offset = 0
-    offset_length = -1
+
+    def __init__(self, name='', displayname='',
+            offset=0, offset_length=gst.CLOCK_TIME_NONE):
+        self.offset = offset
+        self.offset_length = offset_length
+
+        SourceFactory.__init__(self, name, displayname)
+
+    def _getAbsOffset(self):
+        if self.parent is None:
+            offset = self.offset
+        else:
+            parent_offset = self.parent.offset
+            parent_length = self.parent.offset_length
+
+            offset = min(self.parent.offset + self.offset,
+                    self.parent.offset + self.parent.offset_length)
+
+        return offset
+
+    abs_offset = property(_getAbsOffset)
+
+    def _getAbsOffsetLength(self):
+        if self.parent is None:
+            offset_length = self.offset_length
+        else:
+            parent_end = self.parent.abs_offset + self.parent.abs_offset_length
+            end = self.abs_offset + self.offset_length
+            abs_end = min(end, parent_end)
+            offset_length = abs_end - self.abs_offset
+        
+        return offset_length
+
+    abs_offset_length = property(_getAbsOffsetLength)
 
 class URISourceFactoryMixin(object):
     """
