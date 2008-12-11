@@ -27,7 +27,7 @@ import weakref
 from random import randint
 import gst
 from pitivi.serializable import Serializable
-from pitivi.objectfactory import ObjectFactory
+from pitivi.factories.base import ObjectFactory
 from pitivi.signalinterface import Signallable
 import pitivi.instance as instance
 

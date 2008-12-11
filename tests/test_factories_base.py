@@ -71,7 +71,7 @@ class TestSourceFactory(TestCase):
         
         factory = StubSourceFactory('name', 'displayname')
         caps = gst.Caps('video/x-raw-rgb')
-        stream = VideoStream(caps)
+        stream = VideoStream(caps, pad_name='src0')
         # source factories can't have input streams
         self.failUnlessRaises(AssertionError, factory.addInputStream, stream)
         factory.addOutputStream(stream)

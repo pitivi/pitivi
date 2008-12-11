@@ -25,8 +25,8 @@ Classes and Methods for Device handling and usage
 """
 
 import gst
-from objectfactory import ObjectFactory, SourceFactory
-from signalinterface import Signallable
+from pitivi.factories.base import ObjectFactory, SourceFactory
+from pitivi.signalinterface import Signallable
 
 try:
     import dbus

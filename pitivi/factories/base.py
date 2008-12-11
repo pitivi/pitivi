@@ -36,8 +36,11 @@ from gettext import gettext as _
 
 from pitivi.elements.singledecodebin import SingleDecodeBin
 
+# FIXME: define a proper hierarchy
 class ObjectFactoryError(Exception):
-    # FIXME: define a proper hierarchy
+    pass
+
+class ObjectFactoryStreamError(ObjectFactoryError):
     pass
 
 class ObjectFactory(object):
@@ -106,6 +109,16 @@ class ObjectFactory(object):
 
     icon = property(_getIcon, _setIcon)
 
+    def _addStream(self, stream, stream_list):
+        if stream.pad_name is None:
+            raise ObjectFactoryStreamError('no pad_name set on stream')
+
+        for s in stream_list:
+            if s.pad_name == stream.pad_name:
+                raise ObjectFactoryStreamError('stream already added')
+
+        stream_list.append(stream)
+
     def addInputStream(self, stream):
         """
         Add a stream to the list of inputs the factory can consume.
@@ -113,7 +126,7 @@ class ObjectFactory(object):
         @param stream: Stream
         @type stream: Instance of a L{MultimediaStream} derived class
         """
-        self.input_streams.append(stream)
+        self._addStream(stream, self.input_streams)
 
     def removeInputStream(self, stream):
         """
@@ -131,7 +144,7 @@ class ObjectFactory(object):
         @param stream: Stream
         @type stream: Instance of a L{MultimediaStream} derived class
         """
-        self.output_streams.append(stream)
+        self._addStream(stream, self.output_streams)
 
     def removeOutputStream(self, stream):
         """
@@ -147,7 +160,7 @@ class ObjectFactory(object):
                 if stream_classes is None or isinstance(stream, stream_classes)]
     
     def __str__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self._displayname or self._name)
+        return "<%s: %s>" % (self.__class__.__name__, self.displayname or self.name)
 
 class SourceFactory(ObjectFactory):
     """

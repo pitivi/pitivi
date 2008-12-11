@@ -63,11 +63,13 @@ class VideoStream(MultimediaStream):
     Video Stream
     """
 
-    def __init__(self, caps, pad_name=None):
+    def __init__(self, caps, pad_name=None, is_image=False):
         self.width = None
         self.height = None
         self.framerate = None
         self.format = None
+        self.is_image = is_image
+        self.thumbnail = None
 
         MultimediaStream.__init__(self, caps, pad_name)
 
@@ -140,8 +142,37 @@ class TextStream(MultimediaStream):
 
     def _getMarkup(self):
         return _("<b>Text:</b> %s") % self.texttype
+    
+def find_decoder(pad):
+    if isinstance(pad, gst.GhostPad):
+        target = pad.get_target()
+    else:
+        target = pad
+    element = target.get_parent()
+    if element is None:
+        return None
 
-def get_stream_for_caps(caps):
+    klass = element.get_factory().get_klass()
+    if 'Decoder' in klass:
+        return element
+    return None
+
+def get_type_from_decoder(decoder):
+    klass = decoder.get_factory().get_klass()
+    parts = klass.split('/', 2)
+    if len(parts) != 3:
+        return None
+
+    return parts[2].lower()
+
+def get_pad_type(pad):
+    decoder = find_decoder(pad)
+    if decoder:
+        return get_type_from_decoder(decoder)
+    
+    return pad.get_caps()[0].get_name().split('/', 1)[0]
+
+def get_stream_for_caps(caps, pad=None):
     """
     Returns the appropriate MediaStream corresponding to the
     given caps.
@@ -149,11 +180,17 @@ def get_stream_for_caps(caps):
     # FIXME : we should have an 'unknown' data stream class
     ret = None
 
-    val = caps.to_string()
-    if val.startswith("video/"):
-        ret = VideoStream(caps)
-    elif val.startswith("audio/"):
-        ret = AudioStream(caps)
-    elif val.startswith("text/"):
-        ret = TextStream(caps)
+    if pad is not None:
+        pad_name = pad.get_name()
+        stream_type = get_pad_type(pad)
+    else:
+        val = caps.to_string()
+        stream_type = pad.get_caps()[0].get_name().spit('/', 1)[0]
+
+    if stream_type in ('video', 'image'):
+        ret = VideoStream(caps, pad_name, stream_type == 'image')
+    elif stream_type == 'audio':
+        ret = AudioStream(caps, pad_name)
+    elif stream_type == 'text':
+        ret = TextStream(caps, pad_name)
     return ret

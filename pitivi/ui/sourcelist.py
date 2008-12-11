@@ -25,10 +25,11 @@ import gst
 import pango
 import pitivi.instance as instance
 import dnd
-from pathwalker import PathWalker
-from filelisterrordialog import FileListErrorDialog
+from pitivi.ui.pathwalker import PathWalker
+from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.configure import get_pixmap_dir
 from pitivi.signalgroup import SignalGroup
+from pitivi.stream import VideoStream, AudioStream
 from gettext import gettext as _
 from urllib import unquote
 import os
@@ -338,27 +339,30 @@ class SourceList(gtk.VBox):
         instance.PiTiVi.threads.addThread(PathWalker, folders, instance.PiTiVi.current.sources.addUris)
 
     def _addFactory(self, factory):
-        if factory.thumbnail:
+        video = factory.getOutputStreams(VideoStream)
+        if video and video[0].thumbnail:
+            thumbnail_file = video[0].thumbnail
             try:
-                gst.debug("attempting to open thumbnail file '%s'" % factory.thumbnail)
-                pixbuf = gtk.gdk.pixbuf_new_from_file(factory.thumbnail)
+                gst.debug("attempting to open thumbnail file '%s'" %
+                        thumbnail_file)
+                pixbuf = gtk.gdk.pixbuf_new_from_file(thumbnail_file)
             except:
-                gst.error("Failure to create thumbnail from file '%s'" % factory.thumbnail)
-                if factory.is_video:
-                    thumbnail = self.videofilepixbuf
-                elif factory.is_audio:
-                    thumbnail = self.audiofilepixbuf
+                gst.error("Failure to create thumbnail from file '%s'" %
+                        thumbnail_file)
+                thumbnail = self.videofilepixbuf
             else:
-                if not factory.video_info_stream:
-                    desiredheight = 64 * pixbuf.get_height() / pixbuf.get_width()
-                else:
-                    vi = factory.video_info_stream
-                    desiredheight = int(64 / float(vi.dar))
-                thumbnail = pixbuf.scale_simple(64, desiredheight, gtk.gdk.INTERP_BILINEAR)
+                
+                desiredheight = int(64 / float(video[0].dar))
+                thumbnail = pixbuf.scale_simple(64,
+                        desiredheight, gtk.gdk.INTERP_BILINEAR)
         else:
-            thumbnail = factory.is_video and self.videofilepixbuf or self.audiofilepixbuf
+            if video:
+                thumbnail = self.videofilepixbuf
+            else:
+                thumbnail = self.audiofilepixbuf
+
         self.storemodel.append([thumbnail,
-                                factory.getPrettyInfo(),
+                                'call prettyInfoHere()',
                                 factory,
                                 factory.name,
                                 factory.duration and "<b>%s</b>" % beautify_length(factory.duration) or ""])
