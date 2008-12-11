@@ -108,7 +108,7 @@ def _init_gobject_gtk_gst():
         raise SystemExit("Gst-Python couldn't be found!")
 
 def _run_pitivi():
-    import pitivi.pitivi as ptv
+    import pitivi.application as ptv
 
     try:
         sys.exit(ptv.main(sys.argv))
