@@ -1,0 +1,42 @@
+Checklist for (pre)-releases
+----------------------------
+
+Pre-requisites:
+ * 'make check' passes
+ * 'make distcheck' passes
+ * Do a test installation and make sure all files are properly dist-ed/install-ed
+ * No 'blocker' bugs against the upcoming release in bugzilla
+
+pre-releases:
+ * Bump nano number up in configure.ac (since cvs is .1, pre-releases start at .2)
+ * re-autogen
+ * Make sure pre-requisites are still valid
+ * commit
+ * generate CHANGES file against previous release
+   * docs/makeChangelog.py svn/RELEASE-0_11_X.. > CHANGES
+ * 'make distcheck' to get the pre-release tarballs
+ * 'scp pitivi-0.XX.YY.ZZ.tar.bz2 window.gnome.org:'
+ * On window.gnome.org, run 'install-module pitivi-0.XX.YY.ZZ.tar.bz2' to make the tarballs
+   available on http://ftp.gnome.org/pub/gnome/sources/pitivi/0.11/
+ * Send out an announcement mail for the pre-release to:
+  * pitivi-pitivi@lists.sourceforge.net
+  * gstreamer-devel@lists.sourceforge.net
+  * gnome-i18n@gnome.org (requesting translations update)
+
+release:
+ * Bump minor number up in configure.ac and remove the nano (ex: 0.11.5)
+ * re-autogen
+ * Make sure pre-requisites are still valid
+ * Update the following files:
+  * RELEASE
+  * NEWS (Using the changes from RELEASE)
+  * AUTHORS (if there are new contributors)
+  * CHANGES (using the docs/makeChangelog.py utility, only changes against previous release)
+ * 'make distcheck'
+ * 'scp pitivi-0.XX.YY.ZZ.tar.bz2 window.gnome.org:'
+ * On window.gnome.org, run 'install-module pitivi-0.XX.YY.ZZ.tar.bz2' to make the tarballs
+   available on http://ftp.gnome.org/pub/gnome/sources/pitivi/0.11/
+ * Send out an announcement mail for the pre-release to:
+  * pitivi-pitivi@lists.sourceforge.net
+  * gstreamer-devel@lists.sourceforge.net
+  * gnome-i18n@gnome.org (requesting translations update)
