@@ -427,11 +427,9 @@ class PitiviViewer(gtk.VBox):
             seti = smartbin.project.getSettings()
             dar = float(seti.videowidth * seti.videopar.num) / float(seti.videoheight * seti.videopar.denom)
         elif hasattr(smartbin, 'factory'):
-            video = smartbin.factory.getOutputStreams(VideoStream)[0]
-            dar = video.dar
-        else:
-            dar = smartbin.width / smartbin.height
-        self.setDisplayAspectRatio(dar)
+            video = smartbin.factory.getOutputStreams(VideoStream)
+            if video:
+                self.setDisplayAspectRatio(video[0].dar)
 
     def _currentStateCb(self, unused_playground, state):
         gst.info("current state changed : %s" % state)
