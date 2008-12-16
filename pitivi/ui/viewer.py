@@ -28,6 +28,7 @@ import pitivi.plumber as plumber
 import pitivi.instance as instance
 from pitivi.bin import SmartTimelineBin
 from pitivi.signalgroup import SignalGroup
+from pitivi.stream import VideoStream, AudioStream
 
 from pitivi.utils import time_to_string
 import dnd
@@ -426,7 +427,8 @@ class PitiviViewer(gtk.VBox):
             seti = smartbin.project.getSettings()
             dar = float(seti.videowidth * seti.videopar.num) / float(seti.videoheight * seti.videopar.denom)
         elif hasattr(smartbin, 'factory'):
-            dar = smartbin.factory.video_info_stream.dar
+            video = smartbin.factory.getOutputStreams(VideoStream)[0]
+            dar = video.dar
         else:
             dar = smartbin.width / smartbin.height
         self.setDisplayAspectRatio(dar)

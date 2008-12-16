@@ -24,9 +24,10 @@ High-level Pipelines with plugable back-ends
 """
 
 import gst
-from elements.smartscale import SmartVideoScale
-import plumber
-from threads import CallbackThread
+from pitivi.elements.smartscale import SmartVideoScale
+import pitivi.plumber
+from pitivi.threads import CallbackThread
+from pitivi.stream import VideoStream, AudioStream
 
 # REVIEW
 # SmartBin was mostly an idea that originated in the gst-0.8 era, and was ported
@@ -413,20 +414,22 @@ class SmartFileBin(SmartBin):
     """
 
     def __init__(self, factory):
-        gst.log("new SmartFileBin for factory:%s, audio:%s, video:%s" % (factory, factory.is_audio, factory.is_video))
+        gst.log("new SmartFileBin for factory:%s" % factory)
         self.factory = factory
-        if self.factory.video_info:
-            struct = self.factory.video_info[0]
-            height = struct["height"]
-            width = struct["width"]
+
+        audio = factory.getOutputStreams(AudioStream)
+        video = factory.getOutputStreams(VideoStream)
+        if video:
+            height = video[0].height
+            width = video[0].width
         else:
             height = 0
             width = 0
         self.source = self.factory.makeBin()
         SmartBin.__init__(self, "smartfilebin-" + factory.name,
                           displayname=factory.displayname,
-                          has_video = factory.is_video,
-                          has_audio = factory.is_audio,
+                          has_video = bool(video),
+                          has_audio = bool(audio),
                           width = width, height = height,
                           length = factory.duration)
 

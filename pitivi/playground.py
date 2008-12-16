@@ -258,9 +258,11 @@ class PlayGround(object, Signallable):
         playit to False
         """
         gst.debug("factory : %s" % factory)
-        if isinstance(self.current, SmartFileBin) and self.current.factory == factory:
+        if isinstance(self.current, SmartFileBin) and \
+                self.current.factory == factory:
             gst.info("Already playing factory : %s" % factory)
             return True
+
         tempbin = SmartFileBin(factory)
         return self._playTemporaryBin(tempbin, playit)
 

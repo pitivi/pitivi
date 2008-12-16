@@ -24,9 +24,9 @@ Handles the list of source for a project
 """
 
 import gst
-from discoverer import Discoverer
-from serializable import Serializable, to_object_from_data_type
-from signalinterface import Signallable
+from pitivi.discoverer import Discoverer
+from pitivi.serializable import Serializable, to_object_from_data_type
+from pitivi.signalinterface import Signallable
 
 class SourceList(Serializable, Signallable):
     """
@@ -63,7 +63,7 @@ class SourceList(Serializable, Signallable):
         self.project = project
         self.sources = {}
         self.tempsources = {}
-        self.discoverer = Discoverer(self.project)
+        self.discoverer = Discoverer()
         self.discoverer.connect("not_media_file", self._notMediaFileCb)
         self.discoverer.connect("finished_analyzing", self._finishedAnalyzingCb)
         self.discoverer.connect("starting", self._discovererStartingCb)
