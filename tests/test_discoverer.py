@@ -142,12 +142,19 @@ class TestAnalysis(TestCase):
         """
         Check that a timeout is set when analyzing a file.
         """
+        bag = {'error': None}
+        def not_media_file_cb(disc, uri, error, error_debug):
+            bag['error'] = error
+
+        self.discoverer.connect('not_media_file', not_media_file_cb)
         self.discoverer.addFile('foo')
+        self.failUnlessEqual(bag['error'], None)
         self.discoverer._analyze()
         # check that a timeout is scheduled once we start analyzing so we don't
         # hang on one single file
         self.failUnless(self.discoverer.timeout_scheduled)
         self.failIf(self.discoverer.working)
+        self.failUnless(bag['error'])
 
         self.discoverer.timeout_expired = False
         self.discoverer.addFile('foo')
@@ -320,6 +327,7 @@ class TestStateChange(TestCase):
         self.discoverer.current_uri = 'file:///foo/bar'
         self.src = gst.Bin()
         self.discoverer.pipeline = self.src
+        self.discoverer.current_duration = 10 * gst.SECOND
         self.factories = []
         self.error = None
         self.error_debug = None
@@ -333,6 +341,7 @@ class TestStateChange(TestCase):
         self.error_debug = debug
 
     def newSourcefilefactoryCb(self, disc, factory):
+        self.failUnlessEqual(factory.duration, 10 * gst.SECOND)
         self.factories.append(factory)
     
     def testBusStateChangedIgnored(self):

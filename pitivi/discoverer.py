@@ -184,6 +184,9 @@ class Discoverer(object, Signallable):
     def _timeoutCb(self):
         gst.debug("timeout")
         self.timeout_id = 0
+        if not self.error:
+            self.error = 'timeout'
+            self.error_debug = 'timeout debug'
         self._finishAnalysis()
 
         return False
