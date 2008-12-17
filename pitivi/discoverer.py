@@ -223,7 +223,8 @@ class Discoverer(object, Signallable):
         return source
 
     def _useDecodeBinTwo(self):
-        return os.getenv('USE_DECODEBIN2')
+        ret = os.getenv('USE_DECODEBIN2', '1') == '1'
+        return ret
 
     def _analyze(self):
         """
