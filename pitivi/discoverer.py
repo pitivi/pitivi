@@ -3,7 +3,8 @@
 #
 #       discoverer.py
 #
-# Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2005-2008, Edward Hervey <bilboed@bilboed.com>
+#               2008, Alessandro Decina <alessandro.decina@collabora.co.uk>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -83,7 +84,8 @@ class Discoverer(object, Signallable):
         self.bus = None
         self.error = None
         self.error_debug = None
-        
+        self.unfixed_pads = 0
+
     def _resetPipeline(self):
         # finish current, cleanup
         if self.bus is not None:
@@ -314,10 +316,12 @@ class Discoverer(object, Signallable):
         if prev == gst.STATE_READY and new == gst.STATE_PAUSED and \
                 pending == gst.STATE_VOID_PENDING:
             have_video, have_audio, have_image = self._getCurrentStreamTypes()
-            if have_video or have_image:
+            if self.unfixed_pads or have_video or have_image:
                 # go to PLAYING to generate the thumbnails
                 self.pipeline.set_state(gst.STATE_PLAYING)
-            else:
+            elif self.unfixed_pads == 0:
+                # check for unfixed_pads until elements are fixed to do
+                # negotiation before pushing in band data
                 self._finishAnalysis()
 
     def _busMessageTagCb(Self, unused_bus, message):
@@ -365,7 +369,10 @@ class Discoverer(object, Signallable):
         caps = pad.props.caps
         if caps is None or not caps.is_fixed():
             return
+        
+        pad.disconnect_by_func(self._capsNotifyCb)
 
+        self.unfixed_pads -= 1
         stream = self._addStreamFromPad(pad)
         caps_str = str(pad.get_caps())
         if caps_str.startswith("video/x-raw"):
@@ -388,6 +395,8 @@ class Discoverer(object, Signallable):
         else:
             # add the stream once the caps are fixed
             pad.connect("notify::caps", self._capsNotifyCb)
+            self.unfixed_pads += 1
+
 
     def _addStreamFromPad(self, pad):
         stream = get_stream_for_caps(pad.get_caps(), pad)
