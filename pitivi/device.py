@@ -127,8 +127,8 @@ class HalDeviceProbe(DeviceProbe):
     def __init__(self):
         DeviceProbe.__init__(self)
         # UDI : DeviceFactory
-        self.__sources = {}
-        self.__sinks = {}
+        self._sources = {'video': {}, 'audio': {}}
+        self._sinks = {'video': {}, 'audio': {}}
 
         self.bus = dbus.SystemBus()
         self.managerobj = self.bus.get_object('org.freedesktop.Hal',
@@ -138,34 +138,34 @@ class HalDeviceProbe(DeviceProbe):
 
         # we want to be warned when devices are added and removed
         self.manager.connect_to_signal("DeviceAdded",
-                                       self.__deviceAddedCb)
+                                       self._deviceAddedCb)
         self.manager.connect_to_signal("DeviceRemoved",
-                                       self.__deviceRemovedCb)
+                                       self._deviceRemovedCb)
 
         # Find v4l ...
         for dev in self.manager.FindDeviceByCapability("video4linux"):
-            self.__processUDI(dev)
+            self._processUDI(dev)
         # ... and alsa devices
         for dev in self.manager.FindDeviceByCapability("alsa"):
-            self.__processUDI(dev)
+            self._processUDI(dev)
 
 
     def getSourceDevices(self, media_type):
-        return self.__getDevs(media_type, self.__sources)
+        return self._getDevs(media_type, self._sources)
 
     def getSinkDevices(self, media_type):
-        return self.__getDevs(media_type, self.__sinks)
+        return self._getDevs(media_type, self._sinks)
 
     # PRIVATE
 
-    def __getDevs(self, media_type, sr):
+    def _getDevs(self, media_type, sr):
         if media_type == AUDIO_DEVICE:
-            return [sr[x] for x in sr.keys() if sr[x].is_audio]
+            return sr['audio'].values()
         elif media_type == VIDEO_DEVICE:
-            return [sr[x] for x in sr.keys() if sr[x].is_video]
+            return sr['video'].values()
 
-    def __processUDI(self, device_udi):
-        if device_udi in self.__sources.keys() or device_udi in self.__sinks.keys():
+    def _processUDI(self, device_udi):
+        if device_udi in self._sources.keys() or device_udi in self._sinks.keys():
             # we already have this device
             return
 
@@ -180,7 +180,7 @@ class HalDeviceProbe(DeviceProbe):
             srcdev = V4LSourceDeviceFactory(device=location,
                                             displayname=info)
             gst.debug("Valid source %r" % dev)
-            self.__sources[device_udi] = srcdev
+            self._sources['video'][device_udi] = srcdev
             self.emit("device-added", srcdev)
         elif devobject.QueryCapability("alsa"):
             alsatype = devobject.GetProperty("alsa.type")
@@ -190,33 +190,34 @@ class HalDeviceProbe(DeviceProbe):
                 info = devobject.GetProperty("alsa.card_id")
                 if alsatype == "capture":
                     gst.debug("Valid source %r" % dev)
-                    self.__sources[device_udi] = AlsaSourceDeviceFactory(card=card,
+                    self._sources['audio'][device_udi] = AlsaSourceDeviceFactory(card=card,
                                                                   device=device,
                                                                   displayname=info)
-                    self.emit("device-added", self.__sources[device_udi])
+                    self.emit("device-added", self._sources['audio'][device_udi])
                 elif alsatype == "playback":
                     gst.debug("Valid sink %r" % dev)
-                    self.__sinks[device_udi] = AlsaSinkDeviceFactory(card=card,
+                    self._sinks[device_udi] = AlsaSinkDeviceFactory(card=card,
                                                               device=device,
                                                               displayname=info)
-                    self.emit("device-added", self.__sinks[device_udi])
+                    self.emit("device-added", self._sinks[device_udi])
 
-    def __deviceAddedCb(self, device_udi, *unused_args):
+    def _deviceAddedCb(self, device_udi, *unused_args):
         gst.debug("udi:%r" % device_udi)
-        self.__processUDI(device_udi)
+        self._processUDI(device_udi)
 
-    def __deviceRemovedCb(self, device_udi, *unused_args):
+    def _deviceRemovedCb(self, device_udi, *unused_args):
         gst.debug("udi:%r" % device_udi)
-        if self.__sources.has_key(device_udi):
-            dev = self.__sources[device_udi]
-            del self.__sources[device_udi]
-            self.emit("device-removed", dev)
-        elif self.__sinks.has_key(device_udi):
-            dev = self.__sinks[device_udi]
-            del self.__sinks[device_udi]
-            self.emit("device-removed", dev)
-
-
+        for k in ('audio', 'video'):
+            if self._sources[k].has_key(device_udi):
+                dev = self._sources[k][device_udi]
+                del self._sources[k][device_udi]
+                self.emit("device-removed", dev)
+                break
+            elif self._sinks.has_key(device_udi):
+                dev = self._sinks[k][device_udi]
+                del self._sinks[k][device_udi]
+                self.emit("device-removed", dev)
+                break
 
 class SourceDeviceFactory(SourceFactory):
     """

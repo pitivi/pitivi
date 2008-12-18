@@ -25,7 +25,7 @@ High-level Pipelines with plugable back-ends
 
 import gst
 from pitivi.elements.smartscale import SmartVideoScale
-import pitivi.plumber
+from pitivi import plumber
 from pitivi.threads import CallbackThread
 from pitivi.stream import VideoStream, AudioStream
 
