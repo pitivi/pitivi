@@ -20,6 +20,7 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
+import os
 import threading
 from pitivi.threads import Thread
 
