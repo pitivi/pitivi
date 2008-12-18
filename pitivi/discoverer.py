@@ -214,7 +214,7 @@ class Discoverer(object, Signallable):
         return have_video, have_audio, have_image
 
     def _scheduleTimeout(self):
-        self.timeout_id = gobject.timeout_add(1000000, self._timeoutCb)
+        self.timeout_id = gobject.timeout_add_seconds(10, self._timeoutCb)
 
     def _createSource(self):
         source = gst.element_make_from_uri(gst.URI_SRC,
