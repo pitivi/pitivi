@@ -1,0 +1,1037 @@
+# Chinese (Hong Kong) translation for pitivi
+#
+# Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>, 2008.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: pitivi 0.11.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2008-12-18 19:55+0800\n"
+"PO-Revision-Date: 2008-12-18 19:58+0800\n"
+"Last-Translator: Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>\n"
+"Language-Team: Chinese (Hong Kong) <community@linuxhall.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../pitivi/check.py:120
+#, python-format
+msgid "%s is already running!"
+msgstr "%s 已經在執行中！"
+
+#: ../pitivi/check.py:121
+#, python-format
+msgid "An instance of %s is already running in this script."
+msgstr "%s 的實體已在這個命令稿中執行。"
+
+#: ../pitivi/check.py:123
+msgid "Could not find the GNonLin plugins!"
+msgstr "找不到 GNonLin 外掛程式！"
+
+#: ../pitivi/check.py:124
+msgid ""
+"Make sure the plugins were installed and are available in the GStreamer "
+"plugins path."
+msgstr "請確定此外掛程式已安裝並且可以在 GStreamer 外掛程式路徑中使用。"
+
+#: ../pitivi/check.py:126
+msgid "Could not find the autodetect plugins!"
+msgstr "找不到 autodetect 外掛程式！"
+
+#: ../pitivi/check.py:127
+msgid ""
+"Make sure you have installed gst-plugins-good and is available in the "
+"GStreamer plugin path."
+msgstr "請確定 gst-plugins-good 已安裝並且可以在 GStreamer 外掛程式路徑中使用。"
+
+#: ../pitivi/check.py:129
+msgid "PyGTK doesn't have Cairo support!"
+msgstr "PyGTK 不支援 Cairo！"
+
+#: ../pitivi/check.py:130
+msgid ""
+"Please use a version of the Python bindings for GTK+ built with Cairo "
+"support."
+msgstr "請使用有編譯 Cairo 支援功能的 Python─GTK+ 繫結版本。"
+
+#: ../pitivi/check.py:132
+msgid "Could not initiate the video output plugins"
+msgstr "無法初始化視像輸出外掛程式"
+
+#: ../pitivi/check.py:133
+msgid ""
+"Make sure you have at least one valid video output sink available "
+"(xvimagesink or ximagesink)"
+msgstr ""
+
+#: ../pitivi/check.py:135
+msgid "Could not initiate the audio output plugins"
+msgstr "無法初始化音效輸出外掛程式"
+
+#: ../pitivi/check.py:136
+msgid ""
+"Make sure you have at least one valid audio output sink available (alsasink "
+"or osssink)"
+msgstr ""
+
+#: ../pitivi/check.py:138
+msgid "Could not import the Python bindings for cairo"
+msgstr "無法匯入 Python 的 cairo 繫結"
+
+#: ../pitivi/check.py:139
+msgid "Make sure you have the Python bindings for cairo installed"
+msgstr "請確定你已安裝了 cairo 的 Python 繫結"
+
+#: ../pitivi/check.py:141
+msgid "Could not import the Python bindings for libglade"
+msgstr "無法匯入 Python 的 libglade 繫結"
+
+#: ../pitivi/check.py:142
+msgid "Make sure you have the Python bindings for libglade installed"
+msgstr "請確定你已安裝了 libglade 的 Python 繫結"
+
+#: ../pitivi/check.py:144
+msgid "Could not import the Python bindings for goocanvas"
+msgstr "無法匯入 Python 的 goocanvas 繫結"
+
+#: ../pitivi/check.py:145
+msgid "Make sure you have the Python bindings for goocanvas installed"
+msgstr "請確定你已安裝了 goocanvas 的 Python 繫結"
+
+#: ../pitivi/check.py:148
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GTK+ Python Bindings "
+"(currently %s)"
+msgstr "你的 GTK+ Python 繫結版本不夠新（目前為 %s）"
+
+#: ../pitivi/check.py:152
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GStreamer Python Bindings "
+"(currently %s)"
+msgstr "你的 GStreamer Python 繫結版本不夠新（目前為 %s）"
+
+#: ../pitivi/check.py:156
+#, python-format
+msgid "You do not have a recent enough version of GStreamer (currently %s)"
+msgstr "你的 GStreamer 版本不夠新（目前為 %s）"
+
+#: ../pitivi/check.py:160
+#, python-format
+msgid ""
+"You do not have a recent enough version of the Cairo Python Bindings "
+"(currently %s)"
+msgstr "你的 Cairo Python 繫結版本不夠新（目前為 %s）"
+
+#: ../pitivi/check.py:164
+#, python-format
+msgid ""
+"You do not have a recent enough version of the GNonLin GStreamer plugin "
+"(currently %s)"
+msgstr "你的 GNonLin GStreamer外掛程式版本不夠新（目前為 %s）"
+
+#: ../pitivi/check.py:167
+msgid "Could not import the Zope Interface module"
+msgstr "無法匯入 Zope 介面模組"
+
+#: ../pitivi/check.py:168
+msgid "Make sure you have the zope.interface module installed"
+msgstr "請確定你已安裝了 zope.interface 模組"
+
+#: ../pitivi/check.py:170
+msgid "Could not import the distutils modules"
+msgstr "無法匯入 distutils 模組"
+
+#: ../pitivi/check.py:171
+msgid "Make sure you have the distutils python module installed"
+msgstr "請確定你已安裝了 distutils python 模組"
+
+#: ../pitivi/discoverer.py:156
+#, fuzzy
+msgid "Could not establish the duration of the file."
+msgstr "無法開啟自動儲存檔案"
+
+#: ../pitivi/discoverer.py:157
+msgid ""
+"This clip seems to be in a format which cannot be accessed in a random "
+"fashion."
+msgstr ""
+
+#: ../pitivi/discoverer.py:202
+msgid "Couldn't construct pipeline."
+msgstr "無法建立管線。"
+
+#: ../pitivi/discoverer.py:203
+msgid ""
+"GStreamer does not have an element to handle files coming from this type of "
+"file system."
+msgstr "Gstreamer 沒有能處理在這類檔案系統中的檔案的元件。"
+
+#: ../pitivi/discoverer.py:232
+msgid "Pipeline didn't want to go to PAUSED."
+msgstr "導管無法暫停。"
+
+#: ../pitivi/discoverer.py:264
+msgid "Pipeline didn't want to go to PLAYING."
+msgstr "導管無法播放。"
+
+#: ../pitivi/discoverer.py:289
+msgid "File contains a redirection to another clip."
+msgstr "檔案包含重新導向至其他剪輯。"
+
+#: ../pitivi/discoverer.py:290
+msgid "PiTiVi does not currently does not handle redirection files."
+msgstr "PiTiVi 目前無法處理重新導向式的檔案。"
+
+#: ../pitivi/discoverer.py:302
+#, python-format
+msgid "An internal error occured while analyzing this file : %s"
+msgstr "分析這個檔案時發生內部的錯誤：%s"
+
+#: ../pitivi/discoverer.py:407
+#, python-format
+msgid "Got unknown stream type : %s"
+msgstr "得到未知的串流類型：%s"
+
+#: ../pitivi/discoverer.py:408 ../pitivi/discoverer.py:433
+msgid "You are missing an element to handle this media type."
+msgstr "你缺少了可以處理這個媒體類型的元件。"
+
+#: ../pitivi/objectfactory.py:188
+#, python-format
+msgid "<b>%s</b><small>"
+msgstr "<b>%s</b><small>"
+
+#: ../pitivi/objectfactory.py:192
+#, python-format
+msgid "<b>%s</b> (%s)"
+msgstr "<b>%s</b> (%s)"
+
+#: ../pitivi/objectfactory.py:195
+#, python-format
+msgid "<b>%s</b>"
+msgstr "<b>%s</b>"
+
+#: ../pitivi/objectfactory.py:196
+#, python-format
+msgid "<small><b>File:</b> %s"
+msgstr "<small><b>檔案:</b> %s"
+
+#: ../pitivi/pitivi.py:104
+#, python-format
+msgid "There is already a %s instance, inform developers"
+msgstr "已經存在 %s 實體，請通知開發者"
+
+#: ../pitivi/pitivi.py:118 ../pitivi/pitivi.py:194
+msgid "New Project"
+msgstr "新專案"
+
+#: ../pitivi/pitivi.py:149
+msgid "No location given."
+msgstr "沒有提供位置"
+
+#: ../pitivi/pitivi.py:155
+msgid "File does not exist"
+msgstr "檔案不存在"
+
+#: ../pitivi/pitivi.py:160
+msgid "Not a valid project file."
+msgstr "不是有效的專案檔案。"
+
+#: ../pitivi/pitivi.py:174
+msgid "There was an error loading the file."
+msgstr "載入此檔案時發生錯誤。"
+
+#: ../pitivi/playground.py:392
+msgid "Video output is busy"
+msgstr "視像輸出忙碌中"
+
+#: ../pitivi/playground.py:393
+msgid ""
+"Please check that your video output device isn't already used by another "
+"application"
+msgstr "請確定你的視像輸出裝置沒有被其他的應用程式使用"
+
+#: ../pitivi/playground.py:395
+msgid "Video output problem"
+msgstr "視像輸出問題"
+
+#: ../pitivi/playground.py:396
+msgid "There is a problem with your video output device"
+msgstr "你的視像輸出裝置有問題"
+
+#: ../pitivi/playground.py:399
+msgid "Audio output device is busy"
+msgstr "音效輸出裝置忙碌中"
+
+#: ../pitivi/playground.py:400
+msgid ""
+"Please check that your audio output device isn't already used by another "
+"application."
+msgstr "請確定你的音訊輸出裝置沒有被其他的應用程式使用"
+
+#: ../pitivi/playground.py:402
+msgid "Audio output problem"
+msgstr "音效輸出問題"
+
+#: ../pitivi/playground.py:403
+msgid "There is a problem with your audio output device"
+msgstr "你的音訊輸出裝置有問題"
+
+#: ../pitivi/project.py:298
+#, python-format
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s 尚無法處理非本地端專案"
+
+#: ../pitivi/settings.py:163
+msgid "Export Settings\n"
+msgstr "匯出設定值\n"
+
+#: ../pitivi/settings.py:164
+msgid "Video :"
+msgstr "視像:"
+
+#: ../pitivi/settings.py:167
+msgid ""
+"\n"
+"Audio :"
+msgstr ""
+"\n"
+"音訊:"
+
+#: ../pitivi/settings.py:170
+msgid ""
+"\n"
+"Muxer :"
+msgstr ""
+
+#: ../pitivi/stream.py:179
+#, python-format
+msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+msgstr "<b>視像:</b> %d x %d <i>像素</i> 於 %.2f<i>fps</i>"
+
+#: ../pitivi/stream.py:182
+#, python-format
+msgid "<b>Image:</b> %d x %d <i>pixels</i>"
+msgstr "<b>圖片:</b> %d x %d <i>像素</i>"
+
+#: ../pitivi/stream.py:185 ../pitivi/stream.py:255
+#, python-format
+msgid " <i>(%s)</i>"
+msgstr " <i>(%s)</i>"
+
+#: ../pitivi/stream.py:187
+#, python-format
+msgid "<b>Unknown Video format:</b> %s"
+msgstr "<b>未知的視像格式:</b> %s"
+
+#: ../pitivi/stream.py:252
+#, python-format
+msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr "<b>音訊:</b> %d 聲道 於 %d <i>Hz</i> (%d <i>bits</i>)"
+
+#: ../pitivi/stream.py:257
+#, python-format
+msgid "<b>Unknown Audio format:</b> %s"
+msgstr "<b>未知的音訊格式:</b> %s"
+
+#: ../pitivi/stream.py:268
+#, python-format
+msgid "<b>Text:</b> %s"
+msgstr "<b>文字:</b> %s"
+
+#: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/videofxlist.py:53
+msgid "Name"
+msgstr "名稱"
+
+#: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/elementsettingsdialog.glade.h:6
+#: ../pitivi/ui/videofxlist.py:59
+msgid "Description"
+msgstr "描述"
+
+#: ../pitivi/ui/cam_capture.glade.h:1
+msgid "Audio Capture Device :"
+msgstr "音效擷取裝置:"
+
+#: ../pitivi/ui/cam_capture.glade.h:2
+msgid "No device available"
+msgstr "沒有可用的裝置"
+
+#: ../pitivi/ui/cam_capture.glade.h:3
+msgid "No device available\t"
+msgstr "沒有可用的裝置\t"
+
+#: ../pitivi/ui/cam_capture.glade.h:4
+msgid "Video Capture Device :"
+msgstr "視像擷取裝置:"
+
+#: ../pitivi/ui/cam_capture.glade.h:5
+msgid "gtk-close"
+msgstr "gtk-close"
+
+#: ../pitivi/ui/cam_capture.glade.h:6
+msgid "gtk-media-record"
+msgstr "gtk-media-record"
+
+#: ../pitivi/ui/defaultpropertyeditor.py:103
+#, python-format
+msgid "Properties For: %d objects"
+msgstr "屬性：%d 物件"
+
+#: ../pitivi/ui/defaultpropertyeditor.py:116
+msgid "No properties..."
+msgstr "沒有屬性..."
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:1
+msgid "<b>Author:</b>"
+msgstr "<b>作者:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:2
+msgid "<b>Description:</b>"
+msgstr "<b>描述:</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:3
+msgid "<b>Plugin Name</b>"
+msgstr "<b>外掛程式名稱</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:4
+msgid "<b>Properties</b>"
+msgstr "<b>屬性</b>"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:5
+msgid "Author"
+msgstr "作者"
+
+#: ../pitivi/ui/elementsettingsdialog.glade.h:7
+msgid "Properties for <element>"
+msgstr "<element> 的屬性"
+
+#: ../pitivi/ui/encodingdialog.glade.h:1
+msgid "<b>Audio :</b>"
+msgstr "<b>音訊:</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:2
+msgid "<b>Nothing yet</b>"
+msgstr "<b>尚無</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:3
+msgid "<b>Settings</b>"
+msgstr "<b>設定值</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:4
+msgid "<b>Video :</b>"
+msgstr "<b>視像:</b>"
+
+#: ../pitivi/ui/encodingdialog.glade.h:5
+msgid "Choose File"
+msgstr "選擇檔案"
+
+#: ../pitivi/ui/encodingdialog.glade.h:6
+msgid "Modify"
+msgstr "修改"
+
+#: ../pitivi/ui/encodingdialog.glade.h:7
+msgid "Output file:"
+msgstr "輸出檔案:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:1
+msgid ""
+"12 fps\n"
+"23,97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29,97 fps\n"
+"30 fps\n"
+"60 fps"
+msgstr ""
+"12 fps\n"
+"23,97 fps\n"
+"24 fps\n"
+"25 fps\n"
+"29,97 fps\n"
+"30 fps\n"
+"60 fps"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:8
+msgid ""
+"8 bit\n"
+"16 bit\n"
+"24 bit\n"
+"32 bit"
+msgstr ""
+"8 位元\n"
+"16 位元\n"
+"24 位元\n"
+"32 位元"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:12
+msgid ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+msgstr ""
+"8000 Hz\n"
+"11025 Hz\n"
+"22050 Hz\n"
+"44100 Hz\n"
+"48000 Hz\n"
+"96000 Hz"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:18
+msgid "<b>Audio Output</b>"
+msgstr "<b>音效輸出</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:19
+msgid "<b>Export to</b>"
+msgstr "<b>匯出到</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:20
+msgid "<b>Video Output</b>"
+msgstr "<b>視像輸出</b>"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:21
+msgid "Audio Codec"
+msgstr "音訊 Codec"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:22
+msgid "Audio Codec:"
+msgstr "音訊 Codec:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:23
+msgid "Audio Preset"
+msgstr "音訊預先設定"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:24
+msgid "Channels:"
+msgstr "聲道:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:25
+msgid "Container:"
+msgstr "容器:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:26
+msgid "Depth:"
+msgstr "深度:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:27
+msgid "Frame rate:"
+msgstr "框速率:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:28
+msgid "Height:"
+msgstr "高度:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:29
+msgid ""
+"Mono (1)\n"
+"Stereo (2)"
+msgstr ""
+"單聲道 (1)\n"
+"雙聲道 (2)"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:31
+msgid "Muxer"
+msgstr ""
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:32
+msgid "Rate:"
+msgstr "頻率:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:33
+msgid "Settings"
+msgstr "設定值"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:34
+msgid "Video Codec"
+msgstr "視像 Codec"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:35
+msgid "Video Codec:"
+msgstr "視像 Codec:"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:36
+msgid "Video Preset"
+msgstr "視像預先設定"
+
+#: ../pitivi/ui/exportsettingswidget.glade.h:37
+msgid "Width:"
+msgstr "闊度:"
+
+#: ../pitivi/ui/exportsettingswidget.py:360
+msgid "Export settings"
+msgstr "匯出設定值"
+
+#: ../pitivi/ui/filelisterrordialog.py:51
+msgid "Unknown reason"
+msgstr "不明的原因"
+
+#: ../pitivi/ui/filelisterrordialog.py:75
+msgid "URI : "
+msgstr "URI : "
+
+#: ../pitivi/ui/filelisterrordialog.py:81
+msgid "Problem : "
+msgstr "問題:"
+
+#: ../pitivi/ui/filelisterrordialog.py:88
+msgid "Extra information : "
+msgstr "額外資訊:"
+
+#. set title and frame label
+#: ../pitivi/ui/gstwidget.py:175
+msgid "Properties for "
+msgstr "屬性："
+
+#: ../pitivi/ui/mainwindow.py:164
+msgid "Create a new project"
+msgstr "建立一個新的專案"
+
+#: ../pitivi/ui/mainwindow.py:166
+msgid "Open an existing project"
+msgstr "開啟一個既存的專案"
+
+#: ../pitivi/ui/mainwindow.py:168 ../pitivi/ui/mainwindow.py:170
+msgid "Save the current project"
+msgstr "儲存目前的專案"
+
+#: ../pitivi/ui/mainwindow.py:171
+msgid "Project settings"
+msgstr "專案設定值"
+
+#: ../pitivi/ui/mainwindow.py:172
+msgid "Edit the project settings"
+msgstr "編輯專案設定值"
+
+#: ../pitivi/ui/mainwindow.py:173
+msgid "_Render project"
+msgstr "壓製專案(_R)"
+
+#: ../pitivi/ui/mainwindow.py:174
+msgid "Render project"
+msgstr "壓製專案"
+
+#: ../pitivi/ui/mainwindow.py:176
+msgid "_Plugins..."
+msgstr "外掛程式(_P)..."
+
+#: ../pitivi/ui/mainwindow.py:177
+msgid "Manage plugins"
+msgstr "管理外掛程式"
+
+#: ../pitivi/ui/mainwindow.py:179
+msgid "_Import from Webcam.."
+msgstr "從網絡攝影機匯入(_I).."
+
+#: ../pitivi/ui/mainwindow.py:180
+msgid "Import Camera stream"
+msgstr "匯入攝影機串流"
+
+#: ../pitivi/ui/mainwindow.py:182
+#, fuzzy
+msgid "_Make screencast.."
+msgstr "成為預設值(_D)"
+
+#: ../pitivi/ui/mainwindow.py:183
+msgid "Capture the desktop"
+msgstr "擷取桌面"
+
+#: ../pitivi/ui/mainwindow.py:185
+msgid "_Capture Network Stream.."
+msgstr "擷取網絡串流(_C).."
+
+#: ../pitivi/ui/mainwindow.py:186
+msgid "Capture Network Stream"
+msgstr "擷取網絡串流"
+
+#: ../pitivi/ui/mainwindow.py:189
+#, python-format
+msgid "Information about %s"
+msgstr "%s 的相關資訊"
+
+#: ../pitivi/ui/mainwindow.py:190
+msgid "_File"
+msgstr "檔案(_F)"
+
+#: ../pitivi/ui/mainwindow.py:191
+msgid "_Edit"
+msgstr "編輯(_E)"
+
+#: ../pitivi/ui/mainwindow.py:192
+msgid "_View"
+msgstr "檢視(_V)"
+
+#: ../pitivi/ui/mainwindow.py:193
+msgid "_Help"
+msgstr "求助(_H)"
+
+#: ../pitivi/ui/mainwindow.py:198
+msgid "View the main window on the whole screen"
+msgstr "以全螢幕檢視主視窗"
+
+#: ../pitivi/ui/mainwindow.py:353
+msgid "Open File ..."
+msgstr "開啟檔案..."
+
+#: ../pitivi/ui/mainwindow.py:404
+msgid "Contributors:"
+msgstr "貢獻者:"
+
+#: ../pitivi/ui/mainwindow.py:417
+msgid ""
+"GNU Lesser General Public License\n"
+"See http://www.gnu.org/copyleft/lesser.html for more details"
+msgstr ""
+"GNU Lesser General Public License\n"
+"請查閱 http://www.gnu.org/copyleft/lesser.html 以獲取更多資訊"
+
+#: ../pitivi/ui/mainwindow.py:467
+msgid "The project has unsaved changes. Do you wish to close the project?"
+msgstr "此專案有未儲存的更改。是否要關閉這個專案？"
+
+#: ../pitivi/ui/mainwindow.py:480
+#, python-format
+msgid "PiTiVi is unable to load file \"%s\""
+msgstr "PiTiVi 無法載入檔案「%s」"
+
+#: ../pitivi/ui/mainwindow.py:482
+msgid "Error Loading File"
+msgstr "讀取檔案時發生錯誤"
+
+#: ../pitivi/ui/mainwindow.py:491
+#, python-format
+msgid "Do you wish to overwrite existing file \"%s\"?"
+msgstr "是否要覆蓋既存的檔案「%s」？"
+
+#: ../pitivi/ui/mainwindow.py:500
+msgid "Overwrite Existing File?"
+msgstr "是否覆蓋既存的檔案？"
+
+#: ../pitivi/ui/mainwindow.py:509
+msgid "Save As..."
+msgstr "另存新檔..."
+
+#: ../pitivi/ui/mainwindow.py:516
+msgid "Untitled.pptv"
+msgstr "未命名.pptv"
+
+#: ../pitivi/ui/mainwindow.py:519 ../pitivi/ui/mainwindow.py:537
+msgid "Detect Automatically"
+msgstr "自動偵測"
+
+#: ../pitivi/ui/mainwindow.py:584
+msgid "Choose file to render to"
+msgstr "選擇要壓製的檔案"
+
+#: ../pitivi/ui/mainwindow.py:607
+#, python-format
+msgid "Finished in %dm%ds"
+msgstr "在 %dm%ds 完成"
+
+#: ../pitivi/ui/mainwindow.py:617
+msgid "Rendering"
+msgstr "壓製中"
+
+#: ../pitivi/ui/mainwindow.py:622
+msgid "Couldn't start rendering"
+msgstr "無法開始壓製"
+
+#: ../pitivi/ui/mainwindow.py:643
+msgid "Rendering Complete"
+msgstr "壓製完成"
+
+#: ../pitivi/ui/net_capture.glade.h:1
+msgid " Protocol"
+msgstr " 通訊協定"
+
+#: ../pitivi/ui/net_capture.glade.h:2
+msgid "Address "
+msgstr "位址"
+
+#: ../pitivi/ui/net_capture.glade.h:3
+msgid "Capture"
+msgstr "擷取"
+
+#: ../pitivi/ui/net_capture.glade.h:4
+msgid "Capture Stream from URI"
+msgstr "從 URI 擷取串流"
+
+#: ../pitivi/ui/net_capture.glade.h:5
+msgid "Capture network stream"
+msgstr "擷取網絡串流"
+
+#: ../pitivi/ui/net_capture.glade.h:6
+msgid "Close"
+msgstr "關閉"
+
+#: ../pitivi/ui/net_capture.glade.h:7
+msgid "Customize :"
+msgstr "自選:"
+
+#: ../pitivi/ui/net_capture.glade.h:8
+msgid "Network stream video"
+msgstr "網絡串流影片"
+
+#: ../pitivi/ui/net_capture.glade.h:9
+msgid "Port "
+msgstr "連接埠"
+
+#: ../pitivi/ui/net_capture.glade.h:10
+msgid "Preview"
+msgstr "預覽"
+
+#: ../pitivi/ui/net_capture.glade.h:11
+msgid "Preview Stream from URI"
+msgstr "從 URI 預覽串流"
+
+#: ../pitivi/ui/net_capture.glade.h:12
+msgid "http / https"
+msgstr "http / https"
+
+#: ../pitivi/ui/net_capture.glade.h:13
+msgid "http://"
+msgstr "http://"
+
+#: ../pitivi/ui/net_capture.glade.h:14
+msgid "other protocol"
+msgstr "其他通訊協定"
+
+#: ../pitivi/ui/net_capture.glade.h:15
+msgid "rtsp"
+msgstr "rtsp"
+
+#: ../pitivi/ui/net_capture.glade.h:16
+msgid "udp / rtp"
+msgstr "udp / rtp"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:1
+#: ../pitivi/ui/pluginmanagerdialog.py:173
+msgid "All categories"
+msgstr "所有分類"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:2
+msgid "Plugin manager"
+msgstr "外掛管理程式"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:3
+msgid "Search : "
+msgstr "搜尋:"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:4
+msgid "Show : "
+msgstr "顯示:"
+
+#: ../pitivi/ui/pluginmanagerdialog.glade.h:5
+msgid ""
+"You may drag plugin files into the list to install them,\n"
+"or type text to search for a specific plugin."
+msgstr ""
+"你可以拖放檔案到清單中以安裝它們，\n"
+"或輸入文字以搜尋特定的外掛程式。"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:89
+msgid "Enabled"
+msgstr "已啟用"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:99
+msgid "Plugin"
+msgstr "外掛程式"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:109
+msgid "Category"
+msgstr "分類"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:271
+msgid "Are you sure you want to remove selected plugins ?"
+msgstr "確定要移除選取的外掛程式？"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:272
+msgid "Confirm remove operation"
+msgstr "確認移除的動作"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:289
+#, python-format
+msgid "Cannot remove %s"
+msgstr "不能移除 %s"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:321
+msgid "Update the existent plugin ?"
+msgstr "是否更新現有的外掛程式？"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:324
+msgid "This plugin is already installed in your system.\n"
+msgstr "這個外掛程式已經安裝在你的系統中。\n"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:325
+#, python-format
+msgid "If you agree, version %s will be replaced with version %s"
+msgstr "如果你同意，版本 %s 會以版本 %s 取代"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:328
+msgid "Duplicate plugin found"
+msgstr "找到重複的外掛程式"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:342
+#, python-format
+msgid "Cannot install %s\n"
+msgstr "不能安裝 %s\n"
+
+#: ../pitivi/ui/pluginmanagerdialog.py:343
+msgid "The file is not a valid plugin."
+msgstr "此檔案不是有效的外掛程式。"
+
+#: ../pitivi/ui/projecttabs.py:65
+msgid "Clip Library"
+msgstr "剪輯庫"
+
+#: ../pitivi/ui/projectsettings.glade.h:1
+msgid "A short description of your project."
+msgstr "你的專案的簡短描述。"
+
+#: ../pitivi/ui/projectsettings.glade.h:2
+msgid "Description:"
+msgstr "描述:"
+
+#: ../pitivi/ui/projectsettings.glade.h:3
+msgid "Name:"
+msgstr "名稱:"
+
+#: ../pitivi/ui/projectsettings.glade.h:4
+msgid "Project Settings"
+msgstr "專案設定值"
+
+#: ../pitivi/ui/projectsettings.glade.h:5
+msgid "The name of your project."
+msgstr "專案的名稱。"
+
+#: ../pitivi/ui/propertyeditor.py:55
+msgid "No Objects Selected"
+msgstr "尚未選取物件"
+
+#: ../pitivi/ui/screencast_manager.glade.h:1
+#, fuzzy
+msgid "Screen Cast"
+msgstr "鎖定螢幕"
+
+#: ../pitivi/ui/screencast_manager.glade.h:2
+#, fuzzy
+msgid "Screencast Desktop"
+msgstr "桌面偏好設定"
+
+#: ../pitivi/ui/screencast_manager.glade.h:3
+#, fuzzy
+msgid "Start Istanbul"
+msgstr "äºæ´²/ä¼æ¯å¦å ¡"
+
+#: ../pitivi/ui/sourcelist.py:91
+msgid "Add Clips..."
+msgstr "新增剪輯..."
+
+#: ../pitivi/ui/sourcelist.py:96
+msgid "Remove Clip"
+msgstr "移除剪輯"
+
+#: ../pitivi/ui/sourcelist.py:100
+msgid "Play Clip"
+msgstr "播放剪輯"
+
+#: ../pitivi/ui/sourcelist.py:125
+msgid "Icon"
+msgstr "圖示"
+
+#: ../pitivi/ui/sourcelist.py:134
+msgid "Information"
+msgstr "資訊"
+
+#: ../pitivi/ui/sourcelist.py:145
+msgid "Duration"
+msgstr "持續時間"
+
+#: ../pitivi/ui/sourcelist.py:167
+msgid ""
+"<span size='x-large'>Import your clips by dragging them here or by using the "
+"buttons above.</span>"
+msgstr "<span size='x-large'>要匯入你的剪輯只要將它們拖曳到這裏或使用上列按鈕即可。</span>"
+
+#: ../pitivi/ui/sourcelist.py:217
+msgid "_Import clips..."
+msgstr "匯入剪輯(_I)..."
+
+#: ../pitivi/ui/sourcelist.py:218
+msgid "Import clips to use"
+msgstr "匯入要使用的剪輯"
+
+#: ../pitivi/ui/sourcelist.py:220
+msgid "_Import folder of clips..."
+msgstr "匯入剪輯的資料夾(_I)..."
+
+#: ../pitivi/ui/sourcelist.py:221
+msgid "Import folder of clips to use"
+msgstr "匯入要使用剪輯的資料夾"
+
+#: ../pitivi/ui/sourcelist.py:313
+msgid "Import a folder"
+msgstr "匯入資料夾"
+
+#: ../pitivi/ui/sourcelist.py:316
+msgid "Import a clip"
+msgstr "匯入一段剪輯"
+
+#: ../pitivi/ui/sourcelist.py:554
+msgid "Importing clips..."
+msgstr "正在匯入剪輯..."
+
+#: ../pitivi/ui/sourcelist.py:555
+msgid "Error(s) occured while importing"
+msgstr "匯入時發生錯誤"
+
+#: ../pitivi/ui/sourcelist.py:556
+msgid "An error occured while importing"
+msgstr "匯入時發生錯誤"
+
+#: ../pitivi/ui/sourcelist.py:641
+msgid "Error while analyzing files"
+msgstr "解析檔案時發生錯誤"
+
+#: ../pitivi/ui/sourcelist.py:642
+msgid "The following files can not be used with PiTiVi."
+msgstr "下列檔案不能與 PiTiVi 一起使用。"
+
+#: ../pitivi/ui/sourcelist.py:644
+msgid "Error while analyzing a file"
+msgstr "解析檔案時發生錯誤"
+
+#: ../pitivi/ui/sourcelist.py:645
+msgid "The following file can not be used with PiTiVi."
+msgstr "下列檔案不能與 PiTiVi 一起使用。"
+
+#. tooltip text for toolbar
+#: ../pitivi/ui/timeline.py:42
+msgid "Delete Selected"
+msgstr "刪除選取項"
+
+#: ../pitivi/ui/timeline.py:43
+msgid "Cut clip at mouse position"
+msgstr "在滑鼠位置剪下剪輯"
+
+#: ../pitivi/ui/timeline.py:44
+msgid "Zoom In"
+msgstr "拉近"
+
+#: ../pitivi/ui/timeline.py:45
+msgid "Zoom Out"
+msgstr "拉遠"
+
+#: ../pitivi/ui/timeline.py:46
+msgid "Unlink audio from video"
+msgstr "視像中有未連結的音訊"
+
+#: ../pitivi/ui/timeline.py:47
+msgid "Relink audio to original video"
+msgstr "重新連結到原始視像"
+
+#~ msgid "Properties"
+#~ msgstr "屬性"

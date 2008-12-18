@@ -1,3 +1,9 @@
+2008-12-18  Chao-Hsiung Liao  <j_h_liau@yahoo.com.tw>
+
+	* LINGUAS: Added zh_HK zh_TW
+	* zh_HK.po: Added Traditional Chinese translation(Hong Kong).
+	* zh_TW.po: Added Traditional Chinese translation(Taiwan).
+
 2008-12-05  Edward Hervey <edward.hervey@collabora.co.uk>
 
 	* fr.po: Updated French translation.
