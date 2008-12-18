@@ -2,7 +2,7 @@
 
 DIE=0
 package=pitivi
-srcfile=pitivi/pitivi.py
+srcfile=pitivi/application.py
 
 if test ! -f common/Makefile.am;
 then

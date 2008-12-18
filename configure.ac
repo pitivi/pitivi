@@ -17,7 +17,7 @@ dnl check if this is a release version
 AS_NANO(PITIVI_CVS="no", PITIVI_CVS="yes")
 
 dnl can autoconf find the source ?
-AC_CONFIG_SRCDIR([pitivi/pitivi.py])
+AC_CONFIG_SRCDIR([pitivi/application.py])
 
 
 AC_SUBST_FILE(AUTHORS)
