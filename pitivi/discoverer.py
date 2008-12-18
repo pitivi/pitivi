@@ -35,6 +35,7 @@ from pitivi.factories.base import ObjectFactoryStreamError
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
 from pitivi.stream import get_stream_for_caps
 from pitivi.signalinterface import Signallable
+from pitivi.stream import VideoStream
 
 # FIXME: We need to store more information regarding streams
 # i.e. remember the path took to get to a raw stream, and figure out
@@ -141,10 +142,16 @@ class Discoverer(object, Signallable):
             # EOS and no decodable streams?
             self.error = 'FIXME: no output streams'
             self.error_debug = 'see above'
+        
+        if len(self.current_streams) == 1:
+            stream = self.current_streams[0]
+            is_image = isinstance(stream, VideoStream) and stream.is_image
+        else:
+            is_image = False
 
         if self.error:
             self.emit('not_media_file', self.current_uri, self.error, self.error_debug)
-        elif self.current_duration == gst.CLOCK_TIME_NONE:
+        elif self.current_duration == gst.CLOCK_TIME_NONE and not is_image:
             self.emit('not_media_file', self.current_uri,
                       _("Could not establish the duration of the file."),
                       _("This clip seems to be in a format which cannot"
