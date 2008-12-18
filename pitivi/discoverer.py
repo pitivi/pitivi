@@ -163,7 +163,7 @@ class Discoverer(object, Signallable):
             
             if factory is not None:
                 factory.duration = self.current_duration
-                
+               
                 for stream in self.current_streams:
                     factory.addOutputStream(stream)
 
@@ -365,8 +365,10 @@ class Discoverer(object, Signallable):
         for element in [queue, csp, pngenc, pngsink]:
             element.set_state(gst.STATE_PAUSED)
 
-    def _capsNotifyCb(self, pad, unused_property):
-        gst.info("pad:%s , caps:%s" % (pad, pad.get_caps().to_string()))
+    def _capsNotifyCb(self, pad, unused_property, ghost):
+        # when using gst >= 0.10.21.1, pad and ghost are the same pad, otherwise
+        # ghost is the ghost src pad created by decodebin and pad is its target
+
         caps = pad.props.caps
         if caps is None or not caps.is_fixed():
             return
@@ -374,10 +376,10 @@ class Discoverer(object, Signallable):
         pad.disconnect_by_func(self._capsNotifyCb)
 
         self.unfixed_pads -= 1
-        stream = self._addStreamFromPad(pad)
-        caps_str = str(pad.get_caps())
+        stream = self._addStreamFromPad(ghost)
+        caps_str = str(ghost.get_caps())
         if caps_str.startswith("video/x-raw"):
-            self._newVideoPadCb(pad, stream)
+            self._newVideoPadCb(ghost, stream)
 
     def _newDecodedPadCb(self, unused_element, pad, is_last):
         gst.info("pad:%s caps:%s is_last:%s" % (pad, pad.get_caps(), is_last))
@@ -395,7 +397,15 @@ class Discoverer(object, Signallable):
                 self._newVideoPadCb(pad, stream)
         else:
             # add the stream once the caps are fixed
-            pad.connect("notify::caps", self._capsNotifyCb)
+            if gst.version() < (0, 10, 21, 1) and \
+                    isinstance(pad, gst.GhostPad):
+                # see #564863 for the version check
+                # the isinstance check is there so that we don't have to create
+                # ghost pads in the tests
+                pad.get_target().connect("notify::caps",
+                        self._capsNotifyCb, pad)
+            else:
+                pad.connect("notify::caps", self._capsNotifyCb, pad)
             self.unfixed_pads += 1
 
 
