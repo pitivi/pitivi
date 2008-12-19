@@ -211,10 +211,6 @@ class Discoverer(object, Signallable):
                     have_image = True
                 else:
                     have_video = True
-
-                if stream.thumbnail is not None and \
-                        not os.path.exists(stream.thumbnail):
-                    stream.thumbnail = None
             elif caps_str.startswith('audio'):
                 have_audio = True
 
