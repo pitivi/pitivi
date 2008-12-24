@@ -29,9 +29,10 @@ import gst
 import cairo
 import goocanvas
 import os
+import utils
 from configure import get_pixmap_dir
 from elements.singledecodebin import SingleDecodeBin
-from elements.thumbnailsink import PixbufThumbnailSink
+from elements.thumbnailsink import CairoSurfaceThumbnailSink
 from elements.arraysink import ArraySink
 from signalinterface import Signallable
 from ui.zoominterface import Zoomable
@@ -40,13 +41,18 @@ from ui.zoominterface import Zoomable
  MEDIA_TYPE_AUDIO,
  MEDIA_TYPE_VIDEO) = range(3)
 
-class Previewer(gst.Pipeline):
+class Previewer(object, Signallable):
 
-    __gsignals__ = {
-        "update" : (gobject.SIGNAL_RUN_LAST,
-            gobject.TYPE_NONE,
-            (gobject.TYPE_PYOBJECT, long, long)),
+    __signals__ = {
+        "update" : ("timestamp",),
     }
+
+    # TODO: use actual aspect ratio of source
+    # TODO: parameterize height, instead of assuming 50 pixels.
+    # NOTE: dymamically changing thumbnail height would involve flushing the
+    # thumbnail cache.
+
+    __TWIDTH__ = 4.0 / 3.0 * 50
 
     """
     Handles loading, caching, and drawing preview data for segments of
@@ -60,33 +66,45 @@ class Previewer(gst.Pipeline):
     audio waveform."""
 
     def __init__(self, factory):
-        gst.Pipeline.__init__(self)
         # queue of timestamps
         self.queue = []
 
         # true only if we are prerolled
-        #self._ready = False
-        #self.sbin = SingleDecodeBin(caps=gst.Caps("video/x-raw-rgb;video/x-raw-yuv"),
-        #self.csp = gst.element_factory_make("ffmpegcolorspace")
-        #self.sink = PixbufThumbnailSink()
-        #self.sink.connect('thumbnail', self._thumbnailCb)
+        self._ready = False
 
-        #self.add(self.sbin, self.csp, self.sink)
-        #self.csp.link(self.sink)
+        # create pipeline for thumbnail previews
+        sbin = SingleDecodeBin(caps=gst.Caps("video/x-raw-rgb;video/x-raw-yuv"),
+            uri=factory.name)
+        csp = gst.element_factory_make("ffmpegcolorspace")
+        sink = CairoSurfaceThumbnailSink()
+        scale = gst.element_factory_make("videoscale")
+        filter = utils.filter("video/x-raw-rgb,height=(int) 50, width=(int) %d"
+            % self.__TWIDTH__)
+        self.pipeline = utils.pipeline({
+            sbin : csp,
+            csp : scale,
+            scale : filter,
+            filter : sink,
+            sink : None
+        })
+        sink.connect('thumbnail', self._thumbnailCb)
+        self.pipeline.set_state(gst.STATE_PAUSED)
 
-        #self.sbin.connect('pad-added', self._sbinPadAddedCb)
-        #self.set_state(gst.STATE_PAUSED)
+        # initialize thumbnail cache
+        self.thumbcache = {}
+
+        # create default thumbnail
         path = os.path.join(get_pixmap_dir(), "pitivi-video.png")
         self.default_thumb = cairo.ImageSurface.create_from_png(path)
 
-        #self.thumbcache = {}
         #self.samplecache = {}
 
 ## public interface
 
     def render_cairo(self, cr, bounds, element):
         if element.media_type == MEDIA_TYPE_AUDIO:
-            self.__render_waveform(cr, bounds, element)
+           # self.__render_waveform(cr, bounds, element)
+           pass
         elif element.media_type == MEDIA_TYPE_VIDEO:
             self.__render_thumbseq(cr, bounds, element)
 
@@ -103,38 +121,43 @@ class Previewer(gst.Pipeline):
         cr.rectangle(bounds.x1, bounds.y1, width, height)
         cr.clip()
 
-        #TODO: replace with actual aspect ratio
-        twidth = 4.0/3.0 * height
-        tdur = Zoomable.pixelToNs(twidth)
+        tdur = Zoomable.pixelToNs(self.__TWIDTH__)
         x = Zoomable.nsToPixel(element.start)
         x1 = bounds.x1
 
         # i = offset of first thumbnail
-        i = (-(Zoomable.nsToPixel(element.media_start) + x1 - x) % twidth) + x1
-        cr.set_source_surface(self.default_thumb, i - twidth, 0)
-        cr.rectangle(x1, 0, i - x1 - 2, height)
+        i = (-(Zoomable.nsToPixel(element.media_start) + x1 - x) %
+            self.__TWIDTH__) + x1
+        j = element.media_start - (element.media_start % tdur)
+        cr.set_source_surface(self.thumb_for_time(j), i - self.__TWIDTH__, 0)
+        cr.rectangle(x1, 0, i - x1 - 2, 50)
         cr.fill()
         while i < bounds.x2:
-            cr.set_source_surface(self.default_thumb, i, 0)
-            cr.rectangle(i + 1, 0, twidth - 2, height)
-            i += twidth
+            cr.set_source_surface(self.thumb_for_time(j), i, 0)
+            cr.rectangle(i, 0, self.__TWIDTH__, 50)
+            i += self.__TWIDTH__
+            j += tdur
             cr.fill()
+
+    def thumb_for_time(self, time):
+        if time in self.thumbcache:
+            return self.thumbcache[time]
+        self.makeThumbnail(time)
+        return self.default_thumb
 
 ## thumbmailsequence generator
 
-    def _sbinPadAddedCb(self, unused_sbin, pad):
-        self.log("pad : %s" % pad)
-        pad.link(self.csp.get_pad("sink"))
-
     def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
-        self.log("pixbuf:%s, timestamp:%s" % (pixbuf, gst.TIME_ARGS(timestamp)))
+        #self.log("pixbuf:%s, timestamp:%s" % (pixbuf, gst.TIME_ARGS(timestamp)))
         if not self._ready:
             # we know we're prerolled when we get the initial thumbnail
             self._ready = True
 
+        # TODO: store a pattern instead of a pixbuf
+        # TODO: implement actual caching strategy, instead of slowly consuming all
+        # available memory
         self.thumbcache[timestamp] = pixbuf
         self.emit("update", MEDIA_TYPE_VIDEO)
-
         if timestamp in self.queue:
             self.queue.remove(timestamp)
 
@@ -144,22 +167,25 @@ class Previewer(gst.Pipeline):
 
     def makeThumbnail(self, timestamp):
         """ Queue a thumbnail request for the given timestamp """
-        self.log("timestamp %s" % gst.TIME_ARGS(timestamp))
-        if self.queue or not self._ready:
-            self.queue.append(timestamp)
-        else:
-            self.queue.append(timestamp)
-            self._makeThumbnail(timestamp)
+        #self.log( "timestamp %s" % gst.TIME_ARGS(timestamp))
+        assert timestamp > 0
+        # TODO: need some sort of timeout so the queue doesn't fill up if the
+        # thumbnail never arrives.
+        if timestamp not in self.queue:
+            if self.queue or not self._ready:
+                self.queue.append(timestamp)
+            else:
+                self.queue.append(timestamp)
+                self._makeThumbnail(timestamp)
 
     def _makeThumbnail(self, timestamp):
         if not self._ready:
             return
         gst.log("timestamp : %s" % gst.TIME_ARGS(timestamp))
-        self.seek(1.0, gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
+        self.pipeline.seek(1.0, gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
                   gst.SEEK_TYPE_SET, timestamp,
                   gst.SEEK_TYPE_NONE, -1)
         return False
-
 
  ## Waveform peaks generator 
 

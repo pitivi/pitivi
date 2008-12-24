@@ -56,6 +56,7 @@ class TrimHandle(View, goocanvas.Image, Zoomable):
         goocanvas.Image.__init__(self,
             pixbuf = TRIMBAR_PIXBUF,
             line_width=0,
+            operator=cairo.OPERATOR_ADD,
             **kwargs
         )
         View.__init__(self)
@@ -136,7 +137,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             x=10,
             text=os.path.basename(unquote(element.factory.name)),
             font="Sans 9",
-            fill_color_rgba=0x000000FF,
+            fill_color_rgba=0xFFFFFFAA,
+            operator = cairo.OPERATOR_ADD,
             alignment=pango.ALIGN_LEFT)
  
         self.start_handle = StartHandle(element, timeline,

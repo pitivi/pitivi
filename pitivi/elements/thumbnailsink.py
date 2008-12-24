@@ -24,9 +24,10 @@ GdkPixbuf thumbnail sink
 
 import gobject
 import gst
-import gtk
+import cairo
+import array
 
-class PixbufThumbnailSink(gst.BaseSink):
+class CairoSurfaceThumbnailSink(gst.BaseSink):
     """
     GStreamer thumbnailing sink element.
 
@@ -44,11 +45,11 @@ class PixbufThumbnailSink(gst.BaseSink):
                          gst.PAD_SINK,
                          gst.PAD_ALWAYS,
                          gst.Caps("video/x-raw-rgb,"
-                                  "bpp = (int) 24, depth = (int) 24,"
+                                  "bpp = (int) 32, depth = (int) 32,"
                                   "endianness = (int) BIG_ENDIAN,"
-                                  "red_mask = (int) 0x00FF0000, "
-                                  "green_mask = (int) 0x0000FF00, "
-                                  "blue_mask = (int) 0x000000FF, "
+                                  "blue_mask = (int)  0xFF000000, "
+                                  "green_mask = (int) 0x00FF0000, "
+                                  "red_mask = (int)   0x0000FF00, "
                                   "width = (int) [ 1, max ], "
                                   "height = (int) [ 1, max ], "
                                   "framerate = (fraction) [ 0, max ]"))
@@ -72,13 +73,13 @@ class PixbufThumbnailSink(gst.BaseSink):
     def do_render(self, buf):
         self.log("buffer %s %d" % (gst.TIME_ARGS(buf.timestamp),
                                    len(buf.data)))
-        pixb = gtk.gdk.pixbuf_new_from_data(buf.data,
-                                            gtk.gdk.COLORSPACE_RGB,
-                                            False,
-                                            8,
-                                            self.width,
-                                            self.height,
-                                            self.width * 3)
+        b = array.array("B")
+        b.fromstring(buf)
+        pixb = cairo.ImageSurface.create_for_data(b,
+            cairo.FORMAT_ARGB32,
+            self.width,
+            self.height,
+            self.width * 4)
 
         self.emit('thumbnail', pixb, buf.timestamp)
         return gst.FLOW_OK
@@ -86,4 +87,4 @@ class PixbufThumbnailSink(gst.BaseSink):
     def do_preroll(self, buf):
         return self.do_render(buf)
 
-gobject.type_register(PixbufThumbnailSink)
+gobject.type_register(CairoSurfaceThumbnailSink)

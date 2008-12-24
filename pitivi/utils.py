@@ -163,3 +163,7 @@ def pipeline(graph):
                 linkDynamic(u, v)
     return p
 
+def filter(caps):
+    f = gst.element_factory_make("capsfilter")
+    f.props.caps = gst.caps_from_string(caps)
+    return f
