@@ -4,7 +4,6 @@ DIE=0
 package=pitivi
 srcfile=pitivi/pitivi.py
 
-# a quick cvs co to ease the transition
 if test ! -f common/Makefile.am;
 then
   rm -R common/
