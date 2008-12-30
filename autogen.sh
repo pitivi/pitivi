@@ -8,13 +8,10 @@ srcfile=pitivi/pitivi.py
 if test ! -f common/Makefile.am;
 then
   rm -R common/
-  echo "+ getting common/ from cvs"
-  if test -e CVS/Tag
-  then
-    TAG="-r `tail -c +2 CVS/Tag`"
-  fi
-  cvs -d:pserver:anoncvs@anoncvs.freedesktop.org:/cvs/gstreamer co $TAG common
+  echo "+ Setting up common submodule"
+  git submodule init
 fi
+git submodule update
 
 # source helper functions
 if test ! -f common/gst-autogen.sh;
