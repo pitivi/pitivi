@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.22\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-30 11:58+0100\n"
-"PO-Revision-Date: 2008-10-29 23:07-0100\n"
+"POT-Creation-Date: 2008-12-28 17:26+0000\n"
+"PO-Revision-Date: 2008-12-15 20:17-0100\n"
 "Last-Translator: António Lima <amrlima@gmail.com>\n"
 "Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -406,13 +406,13 @@ msgid "gtk-media-record"
 msgstr "gtk-media-record"
 
 #: ../pitivi/ui/defaultpropertyeditor.py:103
-#, fuzzy, python-format
+#, python-format
 msgid "Properties For: %d objects"
-msgstr "Propriedades para "
+msgstr "Propriedades Para: %d objectos"
 
 #: ../pitivi/ui/defaultpropertyeditor.py:116
 msgid "No properties..."
-msgstr ""
+msgstr "Sem propriedades..."
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 msgid "<b>Author:</b>"
@@ -915,7 +915,7 @@ msgstr "Este ficheiro não é um plugin válido."
 
 #: ../pitivi/ui/projecttabs.py:65
 msgid "Clip Library"
-msgstr ""
+msgstr "Biblioteca de media"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
@@ -938,9 +938,8 @@ msgid "The name of your project."
 msgstr "O nome do seu projecto."
 
 #: ../pitivi/ui/propertyeditor.py:55
-#, fuzzy
 msgid "No Objects Selected"
-msgstr "Apagar Seleccionado"
+msgstr "Nenhum Objecto Seleccionado"
 
 #: ../pitivi/ui/screencast_manager.glade.h:1
 msgid "Screen Cast"
@@ -1057,11 +1056,14 @@ msgstr "Diminuir Zoom"
 
 #: ../pitivi/ui/timeline.py:46
 msgid "Unlink audio from video"
-msgstr ""
+msgstr "Desassociar áudio do vídeo"
 
 #: ../pitivi/ui/timeline.py:47
 msgid "Relink audio to original video"
-msgstr ""
+msgstr "Associar áudio ao vídeo original"
+
+#~ msgid "Properties"
+#~ msgstr "Propriedades"
 
 #, fuzzy
 #~ msgid "Properties"
