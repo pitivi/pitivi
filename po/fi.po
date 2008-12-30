@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-05 15:57+0100\n"
+"POT-Creation-Date: 2008-12-30 11:58+0100\n"
 "PO-Revision-Date: 2007-02-26 22:44+0300\n"
 "Last-Translator: Ilkka Tuohela <hile@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
@@ -907,13 +907,6 @@ msgstr "Tiedosto ei ole kelvollinen liitännäinen."
 msgid "Clip Library"
 msgstr ""
 
-#. (AudioFxList, _("Audio Effects")),
-#. (VideoFxList, _("Video Effects")),
-#: ../pitivi/ui/projecttabs.py:68
-#, fuzzy
-msgid "Properties"
-msgstr "Omaisuudet kohteelle "
-
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
 msgstr "Lyhyt kuvaus projektista"
@@ -1058,6 +1051,10 @@ msgstr ""
 #: ../pitivi/ui/timeline.py:47
 msgid "Relink audio to original video"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Properties"
+#~ msgstr "Omaisuudet kohteelle "
 
 #~ msgid "Audio Track"
 #~ msgstr "Ääniraita"

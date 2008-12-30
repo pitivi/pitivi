@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-torrent\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-05 15:57+0100\n"
+"POT-Creation-Date: 2008-12-30 11:58+0100\n"
 "PO-Revision-Date: 2007-05-16 08:50-0000\n"
 "Last-Translator: David Lodge <dave@cirt.net>\n"
 "Language-Team: en_GB <en@li.org>\n"
@@ -923,13 +923,6 @@ msgstr ""
 msgid "Clip Library"
 msgstr ""
 
-#. (AudioFxList, _("Audio Effects")),
-#. (VideoFxList, _("Video Effects")),
-#: ../pitivi/ui/projecttabs.py:68
-#, fuzzy
-msgid "Properties"
-msgstr "Properties for "
-
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
 msgstr "A short description of your project."
@@ -1076,6 +1069,10 @@ msgstr ""
 #: ../pitivi/ui/timeline.py:47
 msgid "Relink audio to original video"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Properties"
+#~ msgstr "Properties for "
 
 #~ msgid "Audio Track"
 #~ msgstr "Audio Track"

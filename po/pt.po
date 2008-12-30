@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 2.22\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-05 15:57+0100\n"
+"POT-Creation-Date: 2008-12-30 11:58+0100\n"
 "PO-Revision-Date: 2008-10-29 23:07-0100\n"
 "Last-Translator: António Lima <amrlima@gmail.com>\n"
 "Language-Team: Portuguese <gnome_pt@yahoogroups.com>\n"
@@ -917,13 +917,6 @@ msgstr "Este ficheiro não é um plugin válido."
 msgid "Clip Library"
 msgstr ""
 
-#. (AudioFxList, _("Audio Effects")),
-#. (VideoFxList, _("Video Effects")),
-#: ../pitivi/ui/projecttabs.py:68
-#, fuzzy
-msgid "Properties"
-msgstr "Propriedades para "
-
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
 msgstr "Uma curta descrição do seu projecto."
@@ -1069,6 +1062,10 @@ msgstr ""
 #: ../pitivi/ui/timeline.py:47
 msgid "Relink audio to original video"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Properties"
+#~ msgstr "Propriedades para "
 
 #~ msgid "Clips"
 #~ msgstr "Clips"

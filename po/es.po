@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi.HEAD.es\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-05 15:57+0100\n"
+"POT-Creation-Date: 2008-12-30 11:58+0100\n"
 "PO-Revision-Date: 2008-01-26 11:52-0400\n"
 "Last-Translator: Jesse Aviles <jesseaviles@gmail.com>\n"
 "Language-Team: Spanish <traductores@es.gnome.org>\n"
@@ -922,13 +922,6 @@ msgstr "El archivo no es un complemento válido."
 msgid "Clip Library"
 msgstr ""
 
-#. (AudioFxList, _("Audio Effects")),
-#. (VideoFxList, _("Video Effects")),
-#: ../pitivi/ui/projecttabs.py:68
-#, fuzzy
-msgid "Properties"
-msgstr "Propiedades para"
-
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
 msgstr "Una breve descripción de su proyecto."
@@ -1073,6 +1066,10 @@ msgstr ""
 #: ../pitivi/ui/timeline.py:47
 msgid "Relink audio to original video"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Properties"
+#~ msgstr "Propiedades para"
 
 #~ msgid "Audio Track"
 #~ msgstr "Pista de audio"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi 0.10.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-05 15:57+0100\n"
+"POT-Creation-Date: 2008-12-30 11:58+0100\n"
 "PO-Revision-Date: 2007-02-12 21:58+0100\n"
 "Last-Translator: Francesco Minà <girardengo@gmail.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -925,13 +925,6 @@ msgstr ""
 msgid "Clip Library"
 msgstr ""
 
-#. (AudioFxList, _("Audio Effects")),
-#. (VideoFxList, _("Video Effects")),
-#: ../pitivi/ui/projecttabs.py:68
-#, fuzzy
-msgid "Properties"
-msgstr "Proprietà per "
-
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
 msgstr "Una breve descrizione del progetto."
@@ -1085,6 +1078,10 @@ msgstr ""
 #: ../pitivi/ui/timeline.py:47
 msgid "Relink audio to original video"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Properties"
+#~ msgstr "Proprietà per "
 
 #~ msgid "Audio Track"
 #~ msgstr "Traccia audio"

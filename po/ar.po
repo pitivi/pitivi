@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Arabic\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-05 15:57+0100\n"
+"POT-Creation-Date: 2008-12-30 11:58+0100\n"
 "PO-Revision-Date: 2007-04-14 18:49+0100\n"
 "Last-Translator: Djihed Afifi <djihed@gmail.com>\n"
 "Language-Team: Arabeyes <doc@arabeyes.org>\n"
@@ -932,13 +932,6 @@ msgstr ""
 msgid "Clip Library"
 msgstr ""
 
-#. (AudioFxList, _("Audio Effects")),
-#. (VideoFxList, _("Video Effects")),
-#: ../pitivi/ui/projecttabs.py:68
-#, fuzzy
-msgid "Properties"
-msgstr "خصائص"
-
 #: ../pitivi/ui/projectsettings.glade.h:1
 #, fuzzy
 msgid "A short description of your project."
@@ -1100,6 +1093,10 @@ msgstr ""
 #: ../pitivi/ui/timeline.py:47
 msgid "Relink audio to original video"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Properties"
+#~ msgstr "خصائص"
 
 #, fuzzy
 #~ msgid "Audio Track"

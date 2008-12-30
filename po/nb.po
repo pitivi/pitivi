@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-05 15:57+0100\n"
+"POT-Creation-Date: 2008-12-30 11:58+0100\n"
 "PO-Revision-Date: 2008-10-10 09:27+0200\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian bokmal <i18n-nb@lister.ping.uio.no>\n"
@@ -869,13 +869,6 @@ msgstr "Filen er ikke et gyldig tillegg."
 msgid "Clip Library"
 msgstr ""
 
-#. (AudioFxList, _("Audio Effects")),
-#. (VideoFxList, _("Video Effects")),
-#: ../pitivi/ui/projecttabs.py:68
-#, fuzzy
-msgid "Properties"
-msgstr "Egenskaper for "
-
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
 msgstr "En kort beskrivelse av ditt prosjekt."
@@ -1018,6 +1011,10 @@ msgstr ""
 #: ../pitivi/ui/timeline.py:47
 msgid "Relink audio to original video"
 msgstr ""
+
+#, fuzzy
+#~ msgid "Properties"
+#~ msgstr "Egenskaper for "
 
 #~ msgid "Audio Track"
 #~ msgstr "Lydspor"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-05 13:09+0100\n"
+"POT-Creation-Date: 2008-12-30 11:58+0100\n"
 "PO-Revision-Date: 2008-12-05 17:29+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
@@ -38,8 +38,8 @@ msgid ""
 "Make sure the plugins were installed and are available in the GStreamer "
 "plugins path."
 msgstr ""
-"Stellen Sie sicher, dass die Plugins installiert wurden und im GStreamer-Pfad "
-"verfügbar sind."
+"Stellen Sie sicher, dass die Plugins installiert wurden und im GStreamer-"
+"Pfad verfügbar sind."
 
 #: ../pitivi/check.py:126
 msgid "Could not find the autodetect plugins!"
@@ -50,8 +50,8 @@ msgid ""
 "Make sure you have installed gst-plugins-good and is available in the "
 "GStreamer plugin path."
 msgstr ""
-"Stellen sie sicher, dass das Paket »gst-plugins-good« installiert wurde und im "
-"Plugin-Pfad von GStreamer verfügbar ist."
+"Stellen sie sicher, dass das Paket »gst-plugins-good« installiert wurde und "
+"im Plugin-Pfad von GStreamer verfügbar ist."
 
 #: ../pitivi/check.py:129
 msgid "PyGTK doesn't have Cairo support!"
@@ -59,10 +59,11 @@ msgstr "PyGTK verfügt nicht über Cairo-Unterstützung!"
 
 #: ../pitivi/check.py:130
 msgid ""
-"Please use a version of the Python bindings for GTK+ built with Cairo support."
+"Please use a version of the Python bindings for GTK+ built with Cairo "
+"support."
 msgstr ""
-"Bitte verwenden Sie eine Version der GTK+-Python-Bindings, die "
-"Cairo-Unterstützung bietet."
+"Bitte verwenden Sie eine Version der GTK+-Python-Bindings, die Cairo-"
+"Unterstützung bietet."
 
 #: ../pitivi/check.py:132
 msgid "Could not initiate the video output plugins"
@@ -121,7 +122,8 @@ msgid ""
 "You do not have a recent enough version of the GTK+ Python Bindings "
 "(currently %s)"
 msgstr ""
-"Die installierte Version der GTK+-Python-Bindings ist zu alt (gegenwärtig %s)."
+"Die installierte Version der GTK+-Python-Bindings ist zu alt (gegenwärtig %"
+"s)."
 
 #: ../pitivi/check.py:152
 #, python-format
@@ -207,7 +209,8 @@ msgstr "Die Datei enthält einen Verknüpfung zu einem anderen Clip."
 
 #: ../pitivi/discoverer.py:290
 msgid "PiTiVi does not currently does not handle redirection files."
-msgstr "PiTiVi kann derzeit nicht mit Verknüpfungen zu anderen Dateien umgehen."
+msgstr ""
+"PiTiVi kann derzeit nicht mit Verknüpfungen zu anderen Dateien umgehen."
 
 #: ../pitivi/discoverer.py:302
 #, python-format
@@ -922,12 +925,6 @@ msgstr "Diese Datei ist kein gültiges Plugin."
 msgid "Clip Library"
 msgstr "Clip-Bibliothek"
 
-#. (AudioFxList, _("Audio Effects")),
-#. (VideoFxList, _("Video Effects")),
-#: ../pitivi/ui/projecttabs.py:68
-msgid "Properties"
-msgstr "Eigenschaften"
-
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
 msgstr "Eine Kurzbeschreibung für dein Projekt."
@@ -1072,6 +1069,9 @@ msgstr "Audio von Video trennen"
 #: ../pitivi/ui/timeline.py:47
 msgid "Relink audio to original video"
 msgstr "Audio und Video wieder zusammenführen"
+
+#~ msgid "Properties"
+#~ msgstr "Eigenschaften"
 
 #~ msgid "Audio Track"
 #~ msgstr "Audiospur"
