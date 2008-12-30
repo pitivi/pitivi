@@ -9,6 +9,7 @@ config.sub
 configure
 install-sh
 libtool
+locale/
 ltmain.sh
 m4
 missing
@@ -21,3 +22,5 @@ prepare-ChangeLog.pl
 autom4te.cache
 aclocal.m4
 INSTALL
+*.pyc
+*~
