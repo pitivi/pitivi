@@ -122,4 +122,32 @@ class TestTrackObject(TestCase):
 
 class TestTrackAddRemoveObjects(TestCase):
     def testAddRemoveObjects(self):
-        pass
+        factory = StubFactory()
+        stream = VideoStream(gst.Caps('video/x-raw-rgb'))
+        track = Track(stream)
+        
+        # add an object
+        obj1 = SourceTrackObject(factory)
+        self.failUnlessEqual(obj1.track, None)
+        track.addObject(obj1)
+        self.failIfEqual(obj1.track, None)
+
+        # can't add twice
+        self.failUnlessRaises(TrackError, track.addObject, obj1)
+
+        # add a second object
+        obj2 = SourceTrackObject(factory)
+        self.failUnlessEqual(obj2.track, None)
+        track.addObject(obj2)
+        self.failIfEqual(obj2.track, None)
+
+        # remove
+        track.removeObject(obj1)
+        self.failUnlessEqual(obj1.track, None)
+        
+        # can't remove twice
+        self.failUnlessRaises(TrackError, track.removeObject, obj1)
+        
+        track.removeObject(obj2)
+        self.failUnlessEqual(obj2.track, None)
+

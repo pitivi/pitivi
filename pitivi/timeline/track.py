@@ -20,6 +20,7 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
+import weakref
 
 from pitivi.signalinterface import Signallable
 from pitivi.utils import UNKNOWN_DURATION
@@ -39,6 +40,7 @@ class TrackObject(Signallable):
             duration=UNKNOWN_DURATION, in_point=gst.CLOCK_TIME_NONE,
             out_point=UNKNOWN_DURATION, priority=0):
         self.factory = factory
+        self.track = None
         self.track_objects = []
         self.gnl_object = obj = self._makeGnlObject()
         obj.props.start = start
@@ -112,9 +114,10 @@ class SourceTrackObject(TrackObject):
 # FIXME: effects?
 
 class Track(Signallable):
-    def __init__(self):
+    def __init__(self, stream):
+        self.stream = stream
         self.composition = gst.element_factory_make('gnlcomposition')
-        self.objects = set([])
+        self.track_objects = []
 
     def addObject(self, track_object):
         try:
@@ -122,6 +125,7 @@ class Track(Signallable):
         except gst.AddError:
             raise TrackError()
 
+        track_object.track = weakref.proxy(self)
         self.track_objects.append(track_object)
 
     def removeObject(self, track_object):
@@ -131,3 +135,4 @@ class Track(Signallable):
             raise TrackError()
 
         self.track_objects.remove(track_object)
+        track_object.track = None
