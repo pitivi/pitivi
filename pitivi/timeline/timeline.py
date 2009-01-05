@@ -1,8 +1,9 @@
 # PiTiVi , Non-linear video editor
 #
-#       pitivi/timeline.py
+#       pitivi/timeline/timeline.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2009, Alessandro Decina <alessandro.decina@collabora.co.uk>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,339 +20,147 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-"""
-Timeline and timeline objects
-"""
+#(05:43:09 PM) twi_: a timeline object can span multiple tracks
+#(05:43:14 PM) twi_: say you group a/v
+#(05:43:22 PM) twi_: can you do that?
+#(05:43:58 PM) twi_: or you can only group contiguous objects in the same track?
+#(05:44:50 PM) bilboed-tp: since we don't have any 'duplicates' in the Timeline, when you group TimelineObjects, you end up in each track with groups containing the corresponding TrackObjects of the grouped TimelineObjects
+#(05:45:27 PM) twi_: aha, right
+#(05:45:59 PM) bilboed-tp: for ex : say you group 5 TimelineObjects, of which only 3 have both A/V and the others only A, then you would end up with the audio group containing 5 TrackObjects, and the video group containing only 3 TrackObjects
+#(05:47:24 PM) twi_: but then how do you make the two groups be a single group?
+#(05:48:13 PM) bilboed-tp: because you created a new TimelineObject for the group (at the Timeline level) and a TrackObject for the corresponding gorup in each Track
+#(05:48:26 PM) bilboed-tp: ergo... you keep the TimelineObject => TrackObject(s) relationship
+#(05:48:28 PM) twi_: right, so you're left with only one group (timelineobject) in the timeline
+#(05:48:31 PM) bilboed-tp: it's a single group in the Timeline
+#(05:48:32 PM) twi_: not two
+#(05:48:38 PM) bilboed-tp: correct
+#(05:48:59 PM) twi_: so it does span two tracks
+#(05:49:03 PM) twi_: (or more)
+#(05:49:06 PM) bilboed-tp: yes
+#(05:49:24 PM) twi_: ok
+#(05:49:38 PM) bilboed-tp: in the same way that a FileTimelineObject can have FileTrackObjects in many Tracks
+#(05:50:11 PM) bilboed-tp: there's a lot of hierarchy similitude between ObjectFactory, TimelineObject and TrackObject
+#(05:50:49 PM) bilboed-tp: damn, still haven't updated the wiki with the new stuff we talked about
+#(05:51:30 PM) twi_: so for example timelineobject.tracks is a synthesized property, and is [trackObject.track for trackObject in self.track_objects]
+#(05:51:44 PM) bilboed-tp: yep
+#(05:52:01 PM) twi_: ok
+#(05:53:53 PM) bilboed-tp: erf... I hate gstreamer
+#(05:54:11 PM) bilboed-tp: I finally figured out what thomas's problem is with gnloperation
+#(05:54:24 PM) bilboed-tp: hmm.. maybe not
+#(05:54:48 PM) twi_: i see a principle of madness in your words
+#(05:55:46 PM) twi_: gah there's always something left to define
+#(05:55:47 PM) twi_: like
+#(05:55:58 PM) twi_: what if you have three or more tracks in the timeline
+#(05:56:12 PM) twi_: and you drop a factory with 1 audio and 1 video streams
+#(05:56:20 PM) twi_: where do the streams go?
+#(05:56:32 PM) twi_: one goes in the track you dragged onto
+#(05:56:33 PM) twi_: the other?
+#(05:56:43 PM) bilboed-tp: that requires user interactoin
+#(05:57:09 PM) twi_: ok, so i'm going to leave this as something for the ui
+#(05:57:11 PM) twi_: good
+#(05:57:13 PM) bilboed-tp: or make a *smart* choice for him => stick it in the first Track compatible with the other stream
+#(05:57:15 PM) bilboed-tp: yeah, definitely
+#(05:58:36 PM) twi_: then the program flow to add an object t o the timeline can be summed up like this: you drag something (let's assume 1 stream only for now) in a track; a TrackObject is created; a TimelineObject is created that encapsulates the TrackObject; the TimelineObject is added to the timeline
+#(05:58:43 PM) twi_: sounds ok?
+#(06:00:04 PM) jdm [i=cf3dcfc4@gateway/web/ajax/mibbit.com/x-41c08c5025b40fe7] entered the room.
+#(06:00:36 PM) bilboed-tp: that's if you know a specific track you want to target, but we mustn't forget the possibility that the ui might not care (for some reason or another) about which track it lands into and just asks the Timeline to add the given objectfactory
+#(06:01:35 PM) bilboed-tp: in which case, it would be : add objectfactory to timeline, Timeline figures out compatible Streams/Tracks, creates relevant TrackObject, puts them in corresponding Tracks, Creates TimelineObject, links TrackObjects to TimelineObject, adds TimelineObject to Timeline
+#(06:01:49 PM) twi_: alright
+#(06:02:15 PM) bilboed-tp: that smartness (figuring out in which tracks to put which trackobjects) is definitely in core and not the UI
+#(06:02:56 PM) twi_: i was looking at it from the other perspective, ie that that level of "sloppyness" is better left to higher layers
+#(06:03:05 PM) twi_: but given that the common case is not to care
+#(06:03:08 PM) twi_: at least for normal users
+#(06:03:10 PM) twi_: you're probably right
 
 import gst
+import weakref
 
-from pitivi.settings import ExportSettings
-from composition import TimelineComposition
-from objects import MEDIA_TYPE_AUDIO, MEDIA_TYPE_VIDEO
-from source import TimelineBlankSource, TimelineFileSource
-from pitivi.serializable import Serializable
-from pitivi.utils import closest_item
 from pitivi.signalinterface import Signallable
 
-class Timeline(Serializable, Signallable):
-    """
-    Fully fledged timeline
-    """
+class TimelineError(Exception):
+    pass
 
-    __data_type__ = "timeline"
+class TimelineObject(Signallable):
+    def __init__(self, factory, start=0, 
+            duration=gst.CLOCK_TIME_NONE, in_point=gst.CLOCK_TIME_NONE,
+            out_point=gst.CLOCK_TIME_NONE, priority=0):
+        self.factory = factory
+        self.start = start
+        self.duration = duration
+        self.in_point = in_point
+        self.out_point = out_point
+        self.priority = priority
+        self.track_objects = []
 
-    __signals__ = {
-        "track-added" : ("track"),
-        "track-removed" : ("track"),
-        "start-duration-changed" : ("start", "duration"),
-        "selection-changed" : (),
-    }
+    def addTrackObject(self, obj):
+        if obj.track is None or obj.timeline_object is not None:
+            raise TimelineError()
 
-    # TODO make the compositions more versatile
-    # for the time being we hardcode an audio and a video composition
+        if obj in self.track_objects:
+            raise TimelineError()
 
-    @property
-    def start(self):
-        return min((track.start for track in self.tracks))
+        obj.timeline_object = weakref.proxy(self)
+        self.track_objects.append(obj)
 
-    @property
-    def duration(self):
-        return max((track.duration for track in self.tracks))
+    def removeTrackObject(self, obj):
+        if obj.track is None:
+            raise TimelineError()
 
-    @property
-    def tracks(self):
-        return (self.videocomp, self.audiocomp)
+        try:
+            self.track_objects.remove(obj)
+            obj.timeline_object = None
+        except ValueError:
+            raise TimelineError()
 
-    def __init__(self, project=None, **unused_kw):
-        gst.log("new Timeline for project %s" % project)
-        self.project = project
+class Timeline(Signallable):
+    def __init__(self):
+        self.tracks = []
+        self.selections = []
+        self.timeline_objects = []
 
-        if self.project:
-            name = project.name
-        else:
-            name = "XXX"
-        self.timeline = gst.Bin("timeline-" + name)
-        self.audiocomp = None
-        self.videocomp = None
-        self.__selection = set()
-        self._fillContents()
+    def addTrack(self, track):
+        if track in self.tracks:
+            raise TimelineError()
 
-    def _fillContents(self):
-        # TODO create the initial timeline according to the project settings
-        self.audiocomp = TimelineComposition(media_type = MEDIA_TYPE_AUDIO,
-                                             name="audiocomp")
-        self.videocomp = TimelineComposition(media_type = MEDIA_TYPE_VIDEO,
-                                             name="videocomp")
-        self.videocomp.linkObject(self.audiocomp)
+        self.tracks.append(track)
 
-        # add default audio/video sources
-        defaultaudiosource = TimelineBlankSource(media_type=MEDIA_TYPE_AUDIO,
-                                                 name="default-audio")
-        self.audiocomp.setDefaultSource(defaultaudiosource)
+    def removeTrack(self, track):
+        try:
+            self.tracks.remove(track)
+        except ValueError:
+            raise TimelineError()
 
-        defaultvideosource = TimelineBlankSource(media_type=MEDIA_TYPE_VIDEO,
-                                                 name="default-video")
-        self.videocomp.setDefaultSource(defaultvideosource)
+    def addTimelineObject(self, obj):
+        if obj in self.timeline_objects:
+            raise TimelineError()
 
-        self.timeline.add(self.audiocomp.gnlobject,
-                          self.videocomp.gnlobject)
-        self.audiocomp.gnlobject.connect("pad-added", self._newAudioPadCb)
-        self.videocomp.gnlobject.connect("pad-added", self._newVideoPadCb)
-        self.audiocomp.gnlobject.connect("pad-removed", self._removedAudioPadCb)
-        self.videocomp.gnlobject.connect("pad-removed", self._removedVideoPadCb)
+        if not obj.track_objects:
+            raise TimelineError()
 
-        # we need to keep track of every object added to the timeline
-        self.__instances = []
-        self.videocomp.connect("source-added", self._sourceAddedCb)
-        self.videocomp.connect("source-removed", self._sourceRemovedCb)
-        # need to keep track of timeline duration
-        self.audiocomp.connect("start-duration-changed",
-            self._startDurationChangedCb)
-        self.videocomp.connect("start-duration-changed",
-            self._startDurationChangedCb)
-        
-        # pretend we support more than two tracks
-        self.emit("track-added", self.videocomp)
-        self.emit("track-added", self.audiocomp)
+        self.timeline_objects.append(obj)
 
+    def removeTimelineObject(self, obj):
+        try:
+            self.timeline_objects.remove(obj)
+        except ValueError:
+            raise TimelineError()
 
-    def addFactory(self, factory):
-        """Add a factory to the timeline using the the specified time as the
-        start time. If shift is true, then move overlapping sources out of the
-        way."""
-
-        if not factory:
-            return
-
-        comp = None
-        #FIXME: need simple, generic, createFromFactory() type thing so we
-        # have to care about all of this...
-        if factory.is_video:
-            source = TimelineFileSource(factory=factory,
-                media_type=MEDIA_TYPE_VIDEO,
-                name=factory.name)
-            comp = self.videocomp
-        # must be elif because of auto-linking, this just catches case where
-        # factory is only audio
-        elif factory.is_audio:
-            audio_source = TimelineFileSource(factory=factory,
-                media_type=MEDIA_TYPE_VIDEO,
-                name=factory.name)
-            comp = self.audiocomp
-        comp.appendSource(source)
-        return source
-
-    def splitObject(self, obj, editpoint):
-        # we want to divide obj in to objects A and B at edit point.
-        #     [obj         |            ]
-        #     [A           ][B          ]
-        # Sanity check:
-        start = obj.start
-        end = obj.start + obj.duration
-        assert (start < editpoint) and (editpoint < end)
-
-        # add source b
-        # FIXME: replace this with some kind of copyObject or cloneObject
-        # command
-        new = self.addFactory(obj.factory)
-        new.setStartDurationTime(obj.start, obj.duration)
-        new.setMediaStartDurationTime(obj.media_start, obj.media_duration)
-
-        # trim source b
-        new.setInTime(editpoint)
-        # trim source a
-        obj.setOutTime(editpoint)
-
-    def _selection_changed_cb(self, selected, deselected):
-        # TODO: filter this list for things other than sources, and put them
-        # into appropriate lists
-        for item in selected:
-            item.props.fill_color_rgba = item.get_data("selected_color")
-            parent = item.get_parent()
-            self._selected_sources.append(parent)
-        for item in deselected:
-            item.props.fill_color_rgba = item.get_data("normal_color")
-            parent = item.get_parent()
-            self._selected_sources.remove(parent)
-
-    def _newAudioPadCb(self, unused_audiocomp, pad):
-        asrc = gst.GhostPad("asrc", pad)
-        asrc.set_active(True)
-        self.timeline.add_pad(asrc)
-
-    def _newVideoPadCb(self, unused_videocomp, pad):
-        vsrc = gst.GhostPad("vsrc", pad)
-        vsrc.set_active(True)
-        self.timeline.add_pad(vsrc)
-
-    def _removedAudioPadCb(self, unused_audiocomp, unused_pad):
-        self.timeline.remove_pad(self.timeline.get_pad("asrc"))
-
-    def _removedVideoPadCb(self, unused_audiocomp, unused_pad):
-        self.timeline.remove_pad(self.timeline.get_pad("vsrc"))
-
-    def _startDurationChangedCb(self, comp, start, duration):
-        self.emit("start-duration-changed", self.start, self.duration)
-
-    def getAutoSettings(self):
-        vs = self.videocomp._getAutoSettings()
-        as = self.audiocomp._getAutoSettings()
-        if not vs and not as:
-            return None
-        # return an ExportSettings containing the combination of
-        # the autosettings from the audio and video composition.
-        settings = ExportSettings()
-        if vs:
-            settings.videowidth = vs.videowidth
-            settings.videoheight = vs.videoheight
-            settings.videorate = vs.videorate
-            settings.videopar = vs.videopar
-        if as:
-            settings.audiochannels = as.audiochannels
-            settings.audiorate = as.audiorate
-            settings.audiodepth = as.audiodepth
-        return settings
-
-    def getDuration(self):
-        return max(self.audiocomp.duration, self.videocomp.duration)
-
-## code for managing the selection
-
-    __selection = None
-
-    def getSelection(self):
-        return self.__selection
-
-    def setSelectionTo(self, objs, mode=0):
-        if mode == 1:
-            objs |= self.__selection
-        if mode == 2:
-            objs ^= self.__selection
-
-        for obj in self.__selection:
-            obj.selected = False
-        for obj in objs:
-            obj.selected = True
-        self.__selection = objs
-        self.emit("selection-changed")
-
-    def setSelectionToObj(self, obj, mode=0):
-        #TODO: range selection
-        # sort all objects by increasing (start, end)
-        # choose the slice from [last(selection) : obj]
-        # or [obj: first(selection]
-        self.setSelectionTo(set((obj,)), mode)
-
-    def deleteSelection(self):
-        for obj in self.__selection:
-            if obj.isaudio:
-                self.audiocomp.removeSource(obj, remove_linked=True,
-                    collapse_neighbours=False)
-            else:
-                self.videocomp.removeSource(obj, remove_linked=True,
-                    collapse_neighbours=False)
-        self.__selection = set()
-
-    def unlinkSelection(self):
-        for obj in self.__selection:
-            if obj.linked:
-                obj.unlinkObject()
-
-    def relinkSelection(self):
-        for obj in self.__selection:
-            if not obj.linked:
-                obj.relinkBrother()
-
-    def selectBefore(self):
+    def linkObjects(self, *objects):
         pass
 
-    def selectAfter(self):
+    def unlinkObjects(self, *objects):
         pass
 
-## code for keeping track of edit points, and snapping timestamps to the
-## nearest edit point. We do this here so we can keep track of edit points
-## for all layers/tracks.
+    def groupObjects(self, *objects):
+        pass
 
-    __instances = None
-    __deadband = 0
-    __do_updates = True
-    __edges = None
+    def ungroupObjects(self, *objects):
+        pass
 
-    def _sourceAddedCb(self, composition, inst):
-        self.__instances.append(inst)
-        self.updateEdges()
+    def addSelection(self, selection):
+        pass
 
-    def _sourceRemovedCb(self, composition, inst):
-        assert inst in self.__instances
-        self.__instances.remove(inst)
-        self.updateEdges()
+    def removeSelection(self, selection):
+        pass
 
-    def setDeadband(self, db):
-        self.__deadband = db
-
-    def enableEdgeUpdates(self):
-        self.__do_updates = True
-        self.updateEdges()
-
-    def disableEdgeUpdates(self):
-        self.__do_updates = False
-
-    def updateEdges(self):
-        if not self.__do_updates:
-            return
-        #FIXME: this might be more efficient if we used a binary sort tree,
-        # filter out duplicate edges in linear time
-        edges = {}
-        for obj in self.__instances:
-            # start/end of object both considered "edit points"
-            edges[obj.start] = None
-            edges[obj.start + obj.duration] = None
-            # TODO: add other critical object points when these are
-            # implemented
-            # TODO: filtering mechanism
-        self.__edges = edges.keys()
-        self.__edges.sort()
-
-    def snapTimeToEdge(self, time):
-        """Returns the input time or the nearest edge"""
-        res, diff = closest_item(self.__edges, time)
-        if diff <= self.__deadband:
-            return res
-        return time
-
-    def snapObjToEdge(self, obj, time):
-        """Returns the input time or the edge which is closest to either the
-        start or finish time. The input time is interpreted as the start time
-        of obj."""
-
-        # need to find the closest edge to both the left and right sides of
-        # the object we are draging.
-        duration = obj.duration
-        left_res, left_diff = closest_item(self.__edges, time)
-        right_res, right_diff = closest_item(self.__edges, time + duration)
-        if left_diff <= right_diff:
-            res = left_res
-            diff = left_diff
-        else:
-            res = right_res - duration
-            diff = right_diff
-        if diff <= self.__deadband:
-            return res
-        return time
-
-## Serializable interfacemethods
-
-    def toDataFormat(self):
-        ret = Serializable.toDataFormat(self)
-        ret["compositions"] = dict((\
-            (self.audiocomp.name, self.audiocomp.toDataFormat()),
-            (self.videocomp.name, self.videocomp.toDataFormat())))
-        return ret
-
-    def fromDataFormat(self, obj):
-        Serializable.fromDataFormat(self, obj)
-        audio = obj["compositions"]["audiocomp"]
-        video = obj["compositions"]["videocomp"]
-        self.audiocomp.fromDataFormat(audio)
-        self.videocomp.fromDataFormat(video)
 

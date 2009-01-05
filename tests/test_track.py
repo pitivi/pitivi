@@ -130,28 +130,28 @@ class TestTrackAddRemoveObjects(TestCase):
         # add an object
         obj1 = SourceTrackObject(factory)
         self.failUnlessEqual(obj1.track, None)
-        track1.addObject(obj1)
+        track1.addTrackObject(obj1)
         self.failIfEqual(obj1.track, None)
 
         # can't add twice
-        self.failUnlessRaises(TrackError, track1.addObject, obj1)
+        self.failUnlessRaises(TrackError, track1.addTrackObject, obj1)
 
         # can't add to two different tracks
-        self.failUnlessRaises(TrackError, track2.addObject, obj1)
+        self.failUnlessRaises(TrackError, track2.addTrackObject, obj1)
 
         # add a second object
         obj2 = SourceTrackObject(factory)
         self.failUnlessEqual(obj2.track, None)
-        track1.addObject(obj2)
+        track1.addTrackObject(obj2)
         self.failIfEqual(obj2.track, None)
 
         # remove
-        track1.removeObject(obj1)
+        track1.removeTrackObject(obj1)
         self.failUnlessEqual(obj1.track, None)
         
         # can't remove twice
-        self.failUnlessRaises(TrackError, track1.removeObject, obj1)
+        self.failUnlessRaises(TrackError, track1.removeTrackObject, obj1)
         
-        track1.removeObject(obj2)
+        track1.removeTrackObject(obj2)
         self.failUnlessEqual(obj2.track, None)
 

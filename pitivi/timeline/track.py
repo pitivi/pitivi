@@ -41,7 +41,7 @@ class TrackObject(Signallable):
             out_point=UNKNOWN_DURATION, priority=0):
         self.factory = factory
         self.track = None
-        self.track_objects = []
+        self.timeline_object = None
         self.gnl_object = obj = self._makeGnlObject()
         obj.props.start = start
         obj.props.duration = duration
@@ -119,7 +119,7 @@ class Track(Signallable):
         self.composition = gst.element_factory_make('gnlcomposition')
         self.track_objects = []
 
-    def addObject(self, track_object):
+    def addTrackObject(self, track_object):
         if track_object.track is not None:
             raise TrackError()
 
@@ -131,7 +131,7 @@ class Track(Signallable):
         track_object.track = weakref.proxy(self)
         self.track_objects.append(track_object)
 
-    def removeObject(self, track_object):
+    def removeTrackObject(self, track_object):
         if track_object.track is None:
             raise TrackError()
         
