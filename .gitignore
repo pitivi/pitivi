@@ -24,3 +24,4 @@ aclocal.m4
 INSTALL
 *.pyc
 *~
+.*.swp
