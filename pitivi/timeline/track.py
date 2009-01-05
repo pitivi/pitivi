@@ -120,6 +120,9 @@ class Track(Signallable):
         self.track_objects = []
 
     def addObject(self, track_object):
+        if track_object.track is not None:
+            raise TrackError()
+
         try:
             self.composition.add(track_object.gnl_object)
         except gst.AddError:
@@ -129,6 +132,9 @@ class Track(Signallable):
         self.track_objects.append(track_object)
 
     def removeObject(self, track_object):
+        if track_object.track is None:
+            raise TrackError()
+        
         try:
             self.composition.remove(track_object.gnl_object)
         except gst.RemoveError:
