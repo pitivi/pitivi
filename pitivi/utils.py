@@ -24,6 +24,8 @@
 
 import gst, bisect
 
+UNKNOWN_DURATION = 2 ** 63 - 1
+
 def time_to_string(value):
     """ Converts the given time in nanoseconds to a human readable string """
     if value == gst.CLOCK_TIME_NONE:
