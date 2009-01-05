@@ -81,7 +81,7 @@ class TimelineError(Exception):
     pass
 
 class TimelineObject(Signallable):
-    def __init__(self, factory, start=0, 
+    def __init__(self, factory, start=0,
             duration=gst.CLOCK_TIME_NONE, in_point=gst.CLOCK_TIME_NONE,
             out_point=gst.CLOCK_TIME_NONE, priority=0):
         self.factory = factory
@@ -111,6 +111,63 @@ class TimelineObject(Signallable):
             obj.timeline_object = None
         except ValueError:
             raise TimelineError()
+
+
+class Selection(object):
+    def __init__(self):
+        self.timeline_objects = set([])
+
+    def addTimelineObject(self, timeline_object):
+        if timeline_object in self.timeline_objects:
+            raise TimelineError()
+
+        self.timeline_objects.add(timeline_object)
+
+    def removeTimelineObject(self, timeline_object):
+        try:
+            self.timeline_objects.remove(timeline_object)
+        except KeyError:
+            raise TimelineError()
+
+class Link(Selection):
+    def __init__(self):
+        Selection.__init__(self)
+        self.objects_start_duration = {}
+        self.waiting_update = []
+
+    def addTimelineObject(self, timeline_object):
+        Selection.addTimelineObject(self, timeline_object)
+
+        # get the initial start and duration
+        self.objects_start_duration[timeline_object] = \
+            {'start': timeline_object.start,
+             'duration': timeline_object.duration}
+
+        # keep start and duration up to date with signals
+        timeline_object.connect('start-changed', self._startChangedCb)
+        timeline_object.connect('duration-changed', self._durationChangedCb)
+
+    def removeTimelineObject(self, timeline_object):
+        Selection.removeTimelineObject(timeline_object)
+
+        del self.objects_start_duration[timeline_object]
+
+    def _startChangedCb(self, timeline_object, start):
+        if not self.waiting_update:
+            old_start = self.objects_start_duration[timeline_object]['start']
+            delta = start - old_start
+
+            self.waiting_update = self.timeline_objects
+            for linked_object in self.waiting_update:
+                linked_object.start += delta
+
+            assert not self.waiting_notification
+
+        self.waiting_notification.remove(timeline_object)
+        self.objects_start_duration[timeline_object]['start'] = start
+
+    def _durationChangedCb(self, timeline_object, duration):
+        self.objects_start_duration[timeline_object]['duration'] = duration
 
 class Timeline(Signallable):
     def __init__(self):

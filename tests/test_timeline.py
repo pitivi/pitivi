@@ -22,7 +22,8 @@
 from unittest import TestCase
 import gst
 
-from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError
+from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
+        Selection
 from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.stream import AudioStream, VideoStream
 
@@ -116,3 +117,22 @@ class TestTimelineAddRemoveTimelineObjects(TestCase):
                 timeline.removeTimelineObject, timeline_object1)
 
         timeline.removeTimelineObject(timeline_object2)
+
+class TestSelectionAddRemoveTimelineObjects(TestCase):
+    def testAddRemoveTimelineObjects(self):
+        factory = StubFactory()
+        timeline_object1 = TimelineObject(factory)
+        timeline_object2 = TimelineObject(factory)
+
+        selection = Selection()
+        selection.addTimelineObject(timeline_object1)
+        self.failUnlessRaises(TimelineError,
+                selection.addTimelineObject, timeline_object1)
+
+        selection.addTimelineObject(timeline_object2)
+        
+        selection.removeTimelineObject(timeline_object1)
+        self.failUnlessRaises(TimelineError,
+                selection.removeTimelineObject, timeline_object1)
+
+        selection.removeTimelineObject(timeline_object2)
