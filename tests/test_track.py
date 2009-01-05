@@ -29,14 +29,14 @@ from pitivi.utils import UNKNOWN_DURATION
 class StubFactory(object):
     pass
 
-class TrackObjectSignalMonitor(object):
-    def __init__(self, track_object):
-        self.track_object = track_object
+class TimePropertiesSignalMonitor(object):
+    def __init__(self, obj):
+        self.obj = obj
         
-        track_object.connect('start-changed', self._signal_cb, 'start_changed')
-        track_object.connect('duration-changed', self._signal_cb, 'duration_changed')
-        track_object.connect('in-point-changed', self._signal_cb, 'in_point_changed')
-        track_object.connect('out-point-changed', self._signal_cb, 'out_point_changed')
+        obj.connect('start-changed', self._signal_cb, 'start_changed')
+        obj.connect('duration-changed', self._signal_cb, 'duration_changed')
+        obj.connect('in-point-changed', self._signal_cb, 'in_point_changed')
+        obj.connect('out-point-changed', self._signal_cb, 'out_point_changed')
 
         self.start_changed_count = 0
         self.duration_changed_count = 0
@@ -51,20 +51,20 @@ class TestTrackObject(TestCase):
     def setUp(self):
         factory = StubFactory()
         self.track_object = SourceTrackObject(factory)
-        self.monitor = TrackObjectSignalMonitor(self.track_object)
+        self.monitor = TimePropertiesSignalMonitor(self.track_object)
 
     def testDefaultProperties(self):
         obj = self.track_object
         self.failUnlessEqual(obj.start, 0)
         self.failUnlessEqual(obj.duration, UNKNOWN_DURATION)
-        self.failUnlessEqual(obj.in_point, gst.CLOCK_TIME_NONE)
+        self.failUnlessEqual(obj.in_point, 0)
         self.failUnlessEqual(obj.out_point, UNKNOWN_DURATION)
 
         gnl_object = obj.gnl_object
         self.failUnlessEqual(gnl_object.props.start, 0)
         self.failUnlessEqual(gnl_object.props.duration, UNKNOWN_DURATION)
         self.failUnlessEqual(gnl_object.props.media_start,
-                gst.CLOCK_TIME_NONE)
+                0)
         self.failUnlessEqual(gnl_object.props.media_duration,
                 UNKNOWN_DURATION)
 

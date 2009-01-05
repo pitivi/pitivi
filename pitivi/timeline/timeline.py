@@ -76,21 +76,85 @@ import gst
 import weakref
 
 from pitivi.signalinterface import Signallable
+from pitivi.utils import UNKNOWN_DURATION
 
 class TimelineError(Exception):
     pass
 
 class TimelineObject(Signallable):
-    def __init__(self, factory, start=0,
-            duration=gst.CLOCK_TIME_NONE, in_point=gst.CLOCK_TIME_NONE,
-            out_point=gst.CLOCK_TIME_NONE, priority=0):
+    __signals__ = {
+        'start-changed': ['start'],
+        'duration-changed': ['duration'],
+        'in-point-changed': ['in-point'],
+        'out-point-changed': ['out-point']
+    }
+
+    DEFAULT_START = 0
+    DEFAULT_DURATION = UNKNOWN_DURATION
+    DEFAULT_IN_POINT = 0
+    DEFAULT_OUT_POINT = UNKNOWN_DURATION
+
+    def __init__(self, factory):
         self.factory = factory
-        self.start = start
-        self.duration = duration
-        self.in_point = in_point
-        self.out_point = out_point
-        self.priority = priority
         self.track_objects = []
+        self._master_track_object = None
+        self._start_duration_changed_sig_id = None
+        self._duration_changed_sig_id = None
+    
+    def _getStart(self):
+        if self._master_track_object is None:
+            return self.DEFAULT_START
+
+        return self._master_track_object.start
+    
+    def _setStart(self, value):
+        if self._master_track_object is None:
+            raise TimelineError()
+
+        self._master_track_object.start = value
+
+    start = property(_getStart, _setStart)
+
+    def _getDuration(self):
+        if self._master_track_object is None:
+            return self.DEFAULT_DURATION
+        
+        return self._master_track_object.duration
+    
+    def _setDuration(self, value):
+        if self._master_track_object is None:
+            raise TimelineError()
+        
+        self._master_track_object.duration = value
+    
+    duration = property(_getDuration, _setDuration)
+
+    def _getInPoint(self):
+        if self._master_track_object is None:
+            return self.DEFAULT_IN_POINT
+        
+        return self._master_track_object.in_point
+    
+    def _setInPoint(self, value):
+        if self._master_track_object is None:
+            raise TimelineError()
+        self._master_track_object.in_point = value
+    
+    in_point = property(_getInPoint, _setInPoint)
+
+    def _getOutPoint(self):
+        if self._master_track_object is None:
+            return self.DEFAULT_OUT_POINT
+        
+        return self._master_track_object.out_point
+    
+    def _setOutPoint(self, value):
+        if self._master_track_object is None:
+            raise TimelineError()
+        
+        self._master_track_object.out_point = value
+
+    out_point = property(_getOutPoint, _setOutPoint)
 
     def addTrackObject(self, obj):
         if obj.track is None or obj.timeline_object is not None:
@@ -99,8 +163,29 @@ class TimelineObject(Signallable):
         if obj in self.track_objects:
             raise TimelineError()
 
+        if self.track_objects:
+            # multiple track objects are used for groups.
+            # For example if you have the timeline:
+            #
+            # |sourceA|gap|sourceB|
+            # | sourceC |gap
+            #
+            # If you group A B and C the group will create two gnl compositions,
+            # one [A, B] with start A.start and duration B.duration and another
+            # [C] with start C.start and duration B.duration (with silence used
+            # as padding).
+            # The compositions will always be aligned with the same start and
+            # duration.
+            existing_track_object = self.track_objects[0]
+            if obj.start != existing_track_object.start or \
+                    obj.duration != existing_track_object.duration:
+                raise TimelineError()
+
         obj.timeline_object = weakref.proxy(self)
         self.track_objects.append(obj)
+
+        if self._master_track_object == None:
+            self._setMasterTrackObject(obj)
 
     def removeTrackObject(self, obj):
         if obj.track is None:
@@ -112,6 +197,41 @@ class TimelineObject(Signallable):
         except ValueError:
             raise TimelineError()
 
+        if obj is self._master_track_object:
+            self._unsetMasterTrackObject()
+            
+            if self.track_objects:
+                self._setMasterTrackObject(self.track_objects[0])
+
+    def _setMasterTrackObject(self, obj):
+        self._master_track_object = obj
+        self._start_changed_sig_id = \
+                obj.connect('start-changed', self._startChangedCb)
+        self._duration_changed_sig_id = \
+                obj.connect('duration-changed', self._durationChangedCb)
+        self._in_point_changed_sig_id = \
+                obj.connect('in-point-changed', self._inPointChangedCb)
+        self._out_point_changed_sig_id = \
+                obj.connect('out-point-changed', self._outPointChangedCb)
+
+    def _unsetMasterTrackObject(self):
+        obj = self._master_track_object
+        self._master_track_object = None
+
+        obj.disconnect(self._start_changed_sig_id)
+        obj.disconnect(self._duration_changed_sig_id)
+
+    def _startChangedCb(self, track_object, start):
+        self.emit('start-changed', start)
+
+    def _durationChangedCb(self, track_object, duration):
+        self.emit('duration-changed', duration)
+
+    def _inPointChangedCb(self, track_object, in_point):
+        self.emit('in-point-changed', in_point)
+    
+    def _outPointChangedCb(self, track_object, out_point):
+        self.emit('out-point-changed', out_point)
 
 class Selection(object):
     def __init__(self):

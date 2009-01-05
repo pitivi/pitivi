@@ -36,8 +36,8 @@ class TrackObject(Signallable):
         'out-point-changed': ['out-point']
     }
 
-    def __init__(self, factory, start=0, 
-            duration=UNKNOWN_DURATION, in_point=gst.CLOCK_TIME_NONE,
+    def __init__(self, factory, start=0,
+            duration=UNKNOWN_DURATION, in_point=0,
             out_point=UNKNOWN_DURATION, priority=0):
         self.factory = factory
         self.track = None
@@ -49,8 +49,8 @@ class TrackObject(Signallable):
         obj.props.media_duration = out_point
         self._connectToSignals(obj)
 
-    # FIXME: there's a lot of boilerplate here that could be factored in a metaclass.
-    # Do we like metaclasses in pitivi?
+    # FIXME: there's a lot of boilerplate here that could be factored in a
+    # metaclass.  Do we like metaclasses in pitivi?
     def _getStart(self):
         return self.gnl_object.props.start
     

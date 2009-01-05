@@ -26,6 +26,10 @@ from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
         Selection
 from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.stream import AudioStream, VideoStream
+from pitivi.utils import UNKNOWN_DURATION
+
+# FIXME: put this somewhere else
+from tests.test_track import TimePropertiesSignalMonitor
 
 class StubFactory(object):
     pass
@@ -66,6 +70,79 @@ class TestTimelineObjectAddRemoveTrackObjects(TestCase):
                 timeline_object1.removeTrackObject, track_object1)
 
         timeline_object1.removeTrackObject(track_object2)
+
+class TestTimelineObjectProperties(TestCase):
+    def setUp(self):
+        factory = StubFactory()
+        self.timeline_object = TimelineObject(factory)
+        self.monitor = TimePropertiesSignalMonitor(self.timeline_object)
+        stream = AudioStream(gst.Caps('audio/x-raw-int'))
+        self.track = Track(stream)
+        self.track_object1 = SourceTrackObject(factory)
+        self.track_object2 = SourceTrackObject(factory)
+        self.track.addTrackObject(self.track_object1)
+        self.track.addTrackObject(self.track_object2)
+
+    def testDefaultProperties(self):
+        obj = self.timeline_object
+        self.failUnlessEqual(obj.start, 0)
+        self.failUnlessEqual(obj.duration, UNKNOWN_DURATION)
+        self.failUnlessEqual(obj.in_point, 0)
+        self.failUnlessEqual(obj.out_point, UNKNOWN_DURATION)
+
+    def testChangePropertiesFromTimelineObject(self):
+        timeline_object = self.timeline_object
+        track_object = self.track_object1
+        timeline_object.addTrackObject(track_object)
+        
+        start = 1 * gst.SECOND
+        timeline_object.start = start
+        self.failUnlessEqual(timeline_object.start, start)
+        self.failUnlessEqual(track_object.start, start)
+        self.failUnlessEqual(self.monitor.start_changed_count, 1)
+
+        duration = 10 * gst.SECOND
+        timeline_object.duration = duration
+        self.failUnlessEqual(timeline_object.duration, duration)
+        self.failUnlessEqual(track_object.duration, duration)
+        self.failUnlessEqual(self.monitor.duration_changed_count, 1)
+
+        in_point = 5 * gst.SECOND
+        timeline_object.in_point = in_point
+        self.failUnlessEqual(timeline_object.in_point, in_point)
+        self.failUnlessEqual(track_object.in_point, in_point)
+        self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
+        
+        out_point = 5 * gst.SECOND
+        timeline_object.out_point = out_point
+        self.failUnlessEqual(timeline_object.out_point, out_point)
+        self.failUnlessEqual(track_object.out_point, out_point)
+        self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
+    
+    def testChangePropertiesFromTrackObject(self):
+        timeline_object = self.timeline_object
+        track_object = self.track_object1
+        timeline_object.addTrackObject(track_object)
+       
+        start = 1 * gst.SECOND
+        track_object.start = start
+        self.failUnlessEqual(timeline_object.start, start)
+        self.failUnlessEqual(self.monitor.start_changed_count, 1)
+
+        duration = 10 * gst.SECOND
+        track_object.duration = duration
+        self.failUnlessEqual(timeline_object.duration, duration)
+        self.failUnlessEqual(self.monitor.duration_changed_count, 1)
+
+        in_point = 5 * gst.SECOND
+        track_object.in_point = in_point
+        self.failUnlessEqual(timeline_object.in_point, in_point)
+        self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
+        
+        out_point = 5 * gst.SECOND
+        track_object.out_point = out_point
+        self.failUnlessEqual(timeline_object.out_point, out_point)
+        self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
 
 class TestTimelineAddRemoveTracks(TestCase):
     def testAddRemoveTracks(self):
