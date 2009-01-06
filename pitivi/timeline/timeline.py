@@ -277,15 +277,18 @@ class Link(Selection):
             old_start = self.objects_start_duration[timeline_object]['start']
             delta = start - old_start
 
-            self.waiting_update = self.timeline_objects
+            self.waiting_update = list(self.timeline_objects)
+            # we aren't waiting
+            self.waiting_update.remove(timeline_object)
             for linked_object in list(self.waiting_update):
                 # this will trigger signals that modify self.waiting_update so
                 # we iterate over a copy
                 linked_object.start += delta
 
-            assert not self.waiting_notification
-
-        self.waiting_notification.remove(timeline_object)
+            assert not self.waiting_update
+        else:
+            self.waiting_update.remove(timeline_object)
+        
         self.objects_start_duration[timeline_object]['start'] = start
 
     def _durationChangedCb(self, timeline_object, duration):

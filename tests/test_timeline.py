@@ -23,7 +23,7 @@ from unittest import TestCase
 import gst
 
 from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
-        Selection
+        Selection, Link
 from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
@@ -213,3 +213,44 @@ class TestSelectionAddRemoveTimelineObjects(TestCase):
                 selection.removeTimelineObject, timeline_object1)
 
         selection.removeTimelineObject(timeline_object2)
+
+class TestLink(TestCase):
+    def testChangeStart(self):
+        factory = StubFactory()
+        stream = AudioStream(gst.Caps('audio/x-raw-int'))
+        track = Track(stream)
+        track_object1 = SourceTrackObject(factory)
+        track_object2 = SourceTrackObject(factory)
+        track.addTrackObject(track_object1)
+        track.addTrackObject(track_object2)
+
+        timeline_object1 = TimelineObject(factory)
+        timeline_object1.addTrackObject(track_object1)
+        timeline_object2 = TimelineObject(factory)
+        timeline_object2.addTrackObject(track_object2)
+
+        link = Link()
+        link.addTimelineObject(timeline_object1)
+        link.addTimelineObject(timeline_object2)
+
+        self.failUnlessEqual(timeline_object1.start, 0)
+        self.failUnlessEqual(timeline_object2.start, 0)
+
+        # move start forward
+        start = 3 * gst.SECOND
+        timeline_object1.start = start
+        self.failUnlessEqual(timeline_object1.start, start)
+        self.failUnlessEqual(timeline_object2.start, start)
+
+        # move start back
+        start = 2 * gst.SECOND
+        timeline_object2.start = start
+        self.failUnlessEqual(timeline_object1.start, start)
+        self.failUnlessEqual(timeline_object2.start, start)
+
+        # reset to 0
+        start = 0
+        timeline_object2.start = start
+        self.failUnlessEqual(timeline_object1.start, start)
+        self.failUnlessEqual(timeline_object2.start, start)
+
