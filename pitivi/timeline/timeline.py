@@ -347,12 +347,6 @@ class Timeline(Signallable):
         except ValueError:
             raise TimelineError()
 
-    def linkObjects(self, *objects):
-        pass
-
-    def unlinkObjects(self, *objects):
-        pass
-
     def groupObjects(self, *objects):
         pass
 
