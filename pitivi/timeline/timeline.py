@@ -323,11 +323,14 @@ class Timeline(Signallable):
 
         self.tracks.append(track)
 
-    def removeTrack(self, track):
+    def removeTrack(self, track, removeTrackObjects=True):
         try:
             self.tracks.remove(track)
         except ValueError:
             raise TimelineError()
+
+        if removeTrackObjects:
+            track.removeAllTrackObjects()
 
     def addTimelineObject(self, obj):
         if obj in self.timeline_objects:
