@@ -142,3 +142,7 @@ class Track(Signallable):
 
         self.track_objects.remove(track_object)
         track_object.track = None
+
+    def removeAllTrackObjects(self):
+        for track_object in list(self.track_objects):
+            self.removeTrackObject(track_object)

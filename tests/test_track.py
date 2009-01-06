@@ -121,12 +121,18 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
 
 class TestTrackAddRemoveObjects(TestCase):
+    def setUp(self):
+        self.factory = StubFactory()
+        self.stream = VideoStream(gst.Caps('video/x-raw-rgb'))
+        self.track1 = Track(self.stream)
+        self.track2 = Track(self.stream)
+    
     def testAddRemoveObjects(self):
-        factory = StubFactory()
-        stream = VideoStream(gst.Caps('video/x-raw-rgb'))
-        track1 = Track(stream)
-        track2 = Track(stream)
-        
+        factory = self.factory
+        stream = self.stream
+        track1 = self.track1
+        track2 = self.track2
+
         # add an object
         obj1 = SourceTrackObject(factory)
         self.failUnlessEqual(obj1.track, None)
@@ -154,4 +160,25 @@ class TestTrackAddRemoveObjects(TestCase):
         
         track1.removeTrackObject(obj2)
         self.failUnlessEqual(obj2.track, None)
+
+    def testRemoveAllTrackObjects(self):
+        track = self.track1
+        factory = self.factory
+
+        # check that can be called on an empty track
+        track.removeAllTrackObjects()
+
+        objs = []
+        for i in xrange(10):
+            obj = SourceTrackObject(factory)
+            objs.append(obj)
+            track.addTrackObject(obj)
+
+        for obj in objs:
+            self.failIfEqual(obj.track, None)
+        
+        track.removeAllTrackObjects()
+        
+        for obj in objs:
+            self.failUnlessEqual(obj.track, None)
 
