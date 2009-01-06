@@ -278,7 +278,9 @@ class Link(Selection):
             delta = start - old_start
 
             self.waiting_update = self.timeline_objects
-            for linked_object in self.waiting_update:
+            for linked_object in list(self.waiting_update):
+                # this will trigger signals that modify self.waiting_update so
+                # we iterate over a copy
                 linked_object.start += delta
 
             assert not self.waiting_notification
