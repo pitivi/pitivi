@@ -249,32 +249,48 @@ class Selection(object):
         except KeyError:
             raise TimelineError()
 
+class LinkEntry(object):
+    def __init__(self, start, duration,
+            start_changed_sig_id, duration_changed_sig_id):
+        self.start = start
+        self.duration = duration
+        self.start_changed_sig_id = start_changed_sig_id
+        self.duration_changed_sig_id = duration_changed_sig_id
+
 class Link(Selection):
     def __init__(self):
         Selection.__init__(self)
-        self.objects_start_duration = {}
+        self.link_entries = {}
         self.waiting_update = []
 
     def addTimelineObject(self, timeline_object):
         Selection.addTimelineObject(self, timeline_object)
 
-        # get the initial start and duration
-        self.objects_start_duration[timeline_object] = \
-            {'start': timeline_object.start,
-             'duration': timeline_object.duration}
+        # connect to signals to update link entries
+        start_changed_sig_id = timeline_object.connect('start-changed',
+                self._startChangedCb)
+        duration_changed_sig_id = timeline_object.connect('duration-changed',
+                self._durationChangedCb)
 
-        # keep start and duration up to date with signals
-        timeline_object.connect('start-changed', self._startChangedCb)
-        timeline_object.connect('duration-changed', self._durationChangedCb)
+        # create a link entry, saving the initial start and duration
+        link_entry = LinkEntry(timeline_object.start, timeline_object.duration,
+                start_changed_sig_id, duration_changed_sig_id)
+
+        self.link_entries[timeline_object] = link_entry
 
     def removeTimelineObject(self, timeline_object):
-        Selection.removeTimelineObject(timeline_object)
+        Selection.removeTimelineObject(self, timeline_object)
 
-        del self.objects_start_duration[timeline_object]
+        # remove link entry
+        link_entry = self.link_entries[timeline_object]
+        timeline_object.disconnect(link_entry.start_changed_sig_id)
+        timeline_object.disconnect(link_entry.duration_changed_sig_id)
 
     def _startChangedCb(self, timeline_object, start):
+        link_entry = self.link_entries[timeline_object]
+        
         if not self.waiting_update:
-            old_start = self.objects_start_duration[timeline_object]['start']
+            old_start = link_entry.start
             delta = start - old_start
 
             self.waiting_update = list(self.timeline_objects)
@@ -289,10 +305,11 @@ class Link(Selection):
         else:
             self.waiting_update.remove(timeline_object)
         
-        self.objects_start_duration[timeline_object]['start'] = start
+        link_entry.start = start
 
     def _durationChangedCb(self, timeline_object, duration):
-        self.objects_start_duration[timeline_object]['duration'] = duration
+        link_entry = self.link_entries[timeline_object]
+        link_entry.duration = duration
 
 class Timeline(Signallable):
     def __init__(self):

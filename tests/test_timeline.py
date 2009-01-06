@@ -218,16 +218,21 @@ class TestLink(TestCase):
     def testChangeStart(self):
         factory = StubFactory()
         stream = AudioStream(gst.Caps('audio/x-raw-int'))
-        track = Track(stream)
+        track1 = Track(stream)
+        track2 = Track(stream)
         track_object1 = SourceTrackObject(factory)
         track_object2 = SourceTrackObject(factory)
-        track.addTrackObject(track_object1)
-        track.addTrackObject(track_object2)
+        track_object3 = SourceTrackObject(factory)
+        track1.addTrackObject(track_object1)
+        track1.addTrackObject(track_object2)
+        track2.addTrackObject(track_object3)
 
         timeline_object1 = TimelineObject(factory)
         timeline_object1.addTrackObject(track_object1)
         timeline_object2 = TimelineObject(factory)
         timeline_object2.addTrackObject(track_object2)
+        timeline_object3 = TimelineObject(factory)
+        timeline_object3.addTrackObject(track_object3)
 
         link = Link()
         link.addTimelineObject(timeline_object1)
@@ -248,9 +253,23 @@ class TestLink(TestCase):
         self.failUnlessEqual(timeline_object1.start, start)
         self.failUnlessEqual(timeline_object2.start, start)
 
-        # reset to 0
-        start = 0
+        # add a third object (on a different track)
+        timeline_object3.start = 10 * gst.SECOND
+        link.addTimelineObject(timeline_object3)
+
+        # move start from 2 to 4, this should shift timeline_object3 from 10 to
+        # 12
+        start = 4 * gst.SECOND
         timeline_object2.start = start
         self.failUnlessEqual(timeline_object1.start, start)
         self.failUnlessEqual(timeline_object2.start, start)
+        self.failUnlessEqual(timeline_object3.start, 12 * gst.SECOND)
 
+        # unlink timeline_object1 and move it back to start = 1
+        link.removeTimelineObject(timeline_object1)
+        timeline_object1.start = 1 * gst.SECOND
+        self.failUnlessEqual(timeline_object1.start, 1 * gst.SECOND)
+        self.failUnlessEqual(timeline_object2.start, 4 * gst.SECOND)
+        self.failUnlessEqual(timeline_object3.start, 12 * gst.SECOND)
+
+        
