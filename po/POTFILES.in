@@ -3,12 +3,13 @@
 # [encoding: UTF-8]
 pitivi/check.py
 pitivi/discoverer.py
-pitivi/objectfactory.py
-pitivi/pitivi.py
+pitivi/application.py
 pitivi/playground.py
 pitivi/project.py
 pitivi/settings.py
 pitivi/stream.py
+pitivi/factories/base.py
+pitivi/factories/file.py
 pitivi/ui/audiofxlist.py
 pitivi/ui/cam_capture.glade
 pitivi/ui/defaultpropertyeditor.py
