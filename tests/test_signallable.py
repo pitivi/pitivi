@@ -23,6 +23,9 @@ class mysubobject(myobject):
     def emit_sub_signal_no_args(self):
         self.emit("subobject-noargs")
 
+def function_cb(testcase):
+    testcase.fail("this should not be reached")
+
 class TestSignalisation(unittest.TestCase):
     """
     Test the proper behaviour of pitivi.signalinterface.Signallable
@@ -122,6 +125,37 @@ class TestSignalisation(unittest.TestCase):
         self.assertRaises(Exception,
                           self.object.disconnect,
                           42)
+
+    def test_disconnect_by_function_method(self):
+        def my_cb1(self, firstarg):
+            self.fail("this should not be called")
+
+        sigid = self.object.connect("signal-oneargs", my_cb1)
+        self.object.disconnect_by_function(my_cb1)
+        # disconnecting something already disconnected should
+        # trigger an exception
+        self.assertRaises(Exception,
+                          self.object.disconnect,
+                          sigid)
+
+        self.object.emit("signal-oneargs", 42)
+
+    def test_disconnect_by_function(self):
+        sigid = self.object.connect("signal-oneargs", function_cb, self)
+        self.object.disconnect_by_function(function_cb)
+        # disconnecting something already disconnected should
+        # trigger an exception
+        self.assertRaises(Exception,
+                          self.object.disconnect,
+                          sigid)
+
+        # disconnecting a disconnected function should raise
+        self.assertRaises(Exception,
+                          self.object.disconnect_by_function,
+                          function_cb)
+
+        self.object.emit("signal-oneargs", 42)
+        
 
     def test04_emit01(self):
         # signal : no arguments

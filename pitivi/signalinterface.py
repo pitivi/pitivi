@@ -47,6 +47,7 @@ class Signallable:
             #     args (list),
             #     kwargs (dictionnary))
             self.ids = {}
+            self.callback_ids = {}
             # self.handlers is a dictionnary of callback ids per
             # signals.
             self.handlers = {}
@@ -67,17 +68,36 @@ class Signallable:
                 uuid = randint(0, 2**64)
 
             self.ids[uuid] = (cb, args, kwargs)
+            self.callback_ids.setdefault(cb, []).append(uuid)
             self.handlers[signame].append(uuid)
             return uuid
 
         def disconnect(self, sigid):
             """ disconnect """
-            if not sigid in self.ids:
+            try:
+                cb = self.ids[sigid][0]
+                del self.ids[sigid]
+            except KeyError:
                 raise Exception("unknown signal id")
-            del self.ids[sigid]
+
             for lists in self.handlers.itervalues():
-                if sigid in lists:
+                try:
                     lists.remove(sigid)
+                except ValueError:
+                    continue
+
+                self.callback_ids.get(cb, []).remove(sigid)
+
+        def disconnect_by_function(self, function):
+            try:
+                sig_ids = self.callback_ids[function]
+            except KeyError:
+                raise Exception("function is not a known callback")
+
+            for sigid in list(sig_ids):
+                self.disconnect(sigid)
+
+            del self.callback_ids[function]
 
         def emit(self, signame, *args, **kwargs):
             """ emit """
@@ -142,7 +162,15 @@ class Signallable:
             raise Exception("This class doesn't have any signals !")
 
         self._signal_group.disconnect(sigid)
+    
+    def disconnect_by_function(self, function):
+        """
+        Disconnect signal using give signal id
+        """
+        if not hasattr(self, "_signal_group"):
+            raise Exception("This class doesn't have any signals !")
 
+        self._signal_group.disconnect_by_function(function)
 
     @classmethod
     def get_signals(cls):
