@@ -98,8 +98,6 @@ class TimelineObject(object, Signallable):
         self.factory = factory
         self.track_objects = []
         self._master_track_object = None
-        self._start_duration_changed_sig_id = None
-        self._duration_changed_sig_id = None
     
     def _getStart(self):
         if self._master_track_object is None:
@@ -183,6 +181,7 @@ class TimelineObject(object, Signallable):
 
         obj.timeline_object = weakref.proxy(self)
         self.track_objects.append(obj)
+        self._connectToTrackObject(obj)
 
         if self._master_track_object == None:
             self._setMasterTrackObject(obj)
@@ -197,6 +196,8 @@ class TimelineObject(object, Signallable):
         except ValueError:
             raise TimelineError()
 
+        self._disconnectFromTrackObject(obj)
+
         if obj is self._master_track_object:
             self._unsetMasterTrackObject()
             
@@ -205,21 +206,21 @@ class TimelineObject(object, Signallable):
 
     def _setMasterTrackObject(self, obj):
         self._master_track_object = obj
-        self._start_changed_sig_id = \
-                obj.connect('start-changed', self._startChangedCb)
-        self._duration_changed_sig_id = \
-                obj.connect('duration-changed', self._durationChangedCb)
-        self._in_point_changed_sig_id = \
-                obj.connect('in-point-changed', self._inPointChangedCb)
-        self._out_point_changed_sig_id = \
-                obj.connect('out-point-changed', self._outPointChangedCb)
 
     def _unsetMasterTrackObject(self):
-        obj = self._master_track_object
         self._master_track_object = None
 
-        obj.disconnect(self._start_changed_sig_id)
-        obj.disconnect(self._duration_changed_sig_id)
+    def _connectToTrackObject(self, obj):
+        obj.connect('start-changed', self._startChangedCb)
+        obj.connect('duration-changed', self._durationChangedCb)
+        obj.connect('in-point-changed', self._inPointChangedCb)
+        obj.connect('out-point-changed', self._outPointChangedCb)
+
+    def _disconnectFromTrackObject(self, obj):
+        obj.disconnect_by_function(self._startChangedCb)
+        obj.disconnect_by_function(self._durationChangedCb)
+        obj.disconnect_by_function(self._inPointChangedCb)
+        obj.disconnect_by_function(self._outPointChangedCb)
 
     def _startChangedCb(self, track_object, start):
         self.emit('start-changed', start)
@@ -283,8 +284,10 @@ class Link(Selection):
 
         # remove link entry
         link_entry = self.link_entries[timeline_object]
-        timeline_object.disconnect(link_entry.start_changed_sig_id)
-        timeline_object.disconnect(link_entry.duration_changed_sig_id)
+        #timeline_object.disconnect(link_entry.start_changed_sig_id)
+        #timeline_object.disconnect(link_entry.duration_changed_sig_id)
+        timeline_object.disconnect_by_function(self._startChangedCb)
+        timeline_object.disconnect_by_function(self._durationChangedCb)
 
     def _startChangedCb(self, timeline_object, start):
         link_entry = self.link_entries[timeline_object]

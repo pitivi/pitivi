@@ -92,33 +92,68 @@ class TestTimelineObjectProperties(TestCase):
 
     def testChangePropertiesFromTimelineObject(self):
         timeline_object = self.timeline_object
-        track_object = self.track_object1
-        timeline_object.addTrackObject(track_object)
+        self.track_object1 = self.track_object1
+        timeline_object.addTrackObject(self.track_object1)
         
         start = 1 * gst.SECOND
         timeline_object.start = start
         self.failUnlessEqual(timeline_object.start, start)
-        self.failUnlessEqual(track_object.start, start)
+        self.failUnlessEqual(self.track_object1.start, start)
         self.failUnlessEqual(self.monitor.start_changed_count, 1)
 
         duration = 10 * gst.SECOND
         timeline_object.duration = duration
         self.failUnlessEqual(timeline_object.duration, duration)
-        self.failUnlessEqual(track_object.duration, duration)
+        self.failUnlessEqual(self.track_object1.duration, duration)
         self.failUnlessEqual(self.monitor.duration_changed_count, 1)
 
         in_point = 5 * gst.SECOND
         timeline_object.in_point = in_point
         self.failUnlessEqual(timeline_object.in_point, in_point)
-        self.failUnlessEqual(track_object.in_point, in_point)
+        self.failUnlessEqual(self.track_object1.in_point, in_point)
         self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
         
         out_point = 5 * gst.SECOND
         timeline_object.out_point = out_point
         self.failUnlessEqual(timeline_object.out_point, out_point)
-        self.failUnlessEqual(track_object.out_point, out_point)
+        self.failUnlessEqual(self.track_object1.out_point, out_point)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
     
+    def testChangePropertiesFromTimelineObject2(self):
+        timeline_object = self.timeline_object
+        self.track_object1 = self.track_object1
+        timeline_object.addTrackObject(self.track_object1)
+        timeline_object.addTrackObject(self.track_object2)
+        
+        start = 1 * gst.SECOND
+        timeline_object.start = start
+        self.failUnlessEqual(timeline_object.start, start)
+        self.failUnlessEqual(self.track_object1.start, start)
+        self.failUnlessEqual(self.track_object2.start, start)
+        self.failUnlessEqual(self.monitor.start_changed_count, 1)
+
+        duration = 10 * gst.SECOND
+        timeline_object.duration = duration
+        self.failUnlessEqual(timeline_object.duration, duration)
+        self.failUnlessEqual(self.track_object1.duration, duration)
+        self.failUnlessEqual(self.track_object2.duration, duration)
+        self.failUnlessEqual(self.monitor.duration_changed_count, 1)
+
+        in_point = 5 * gst.SECOND
+        timeline_object.in_point = in_point
+        self.failUnlessEqual(timeline_object.in_point, in_point)
+        self.failUnlessEqual(self.track_object1.in_point, in_point)
+        self.failUnlessEqual(self.track_object2.in_point, in_point)
+        self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
+        
+        out_point = 5 * gst.SECOND
+        timeline_object.out_point = out_point
+        self.failUnlessEqual(timeline_object.out_point, out_point)
+        self.failUnlessEqual(self.track_object1.out_point, out_point)
+        self.failUnlessEqual(self.track_object2.out_point, out_point)
+        self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
+    
+
     def testChangePropertiesFromTrackObject(self):
         timeline_object = self.timeline_object
         track_object = self.track_object1
@@ -142,7 +177,7 @@ class TestTimelineObjectProperties(TestCase):
         out_point = 5 * gst.SECOND
         track_object.out_point = out_point
         self.failUnlessEqual(timeline_object.out_point, out_point)
-        self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
+        self.failUnlessEqual(self.monitor.out_point_changed_count, 1) 
 
 class TestTimelineAddRemoveTracks(TestCase):
     def testAddRemoveTracks(self):
