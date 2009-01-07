@@ -1062,9 +1062,6 @@ msgstr "Desassociar áudio do vídeo"
 msgid "Relink audio to original video"
 msgstr "Associar áudio ao vídeo original"
 
-#~ msgid "Properties"
-#~ msgstr "Propriedades"
-
 #, fuzzy
 #~ msgid "Properties"
 #~ msgstr "Propriedades para "
