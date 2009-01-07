@@ -81,7 +81,7 @@ from pitivi.utils import UNKNOWN_DURATION
 class TimelineError(Exception):
     pass
 
-class TimelineObject(Signallable):
+class TimelineObject(object, Signallable):
     __signals__ = {
         'start-changed': ['start'],
         'duration-changed': ['duration'],
@@ -311,7 +311,7 @@ class Link(Selection):
         link_entry = self.link_entries[timeline_object]
         link_entry.duration = duration
 
-class Timeline(Signallable):
+class Timeline(object ,Signallable):
     def __init__(self):
         self.tracks = []
         self.selections = []

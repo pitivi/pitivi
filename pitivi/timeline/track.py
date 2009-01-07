@@ -28,7 +28,7 @@ from pitivi.utils import UNKNOWN_DURATION
 class TrackError(Exception):
     pass
 
-class TrackObject(Signallable):
+class TrackObject(object, Signallable):
     __signals__ = {
         'start-changed': ['start'],
         'duration-changed': ['duration'],
@@ -113,7 +113,7 @@ class SourceTrackObject(TrackObject):
 
 # FIXME: effects?
 
-class Track(Signallable):
+class Track(object, Signallable):
     def __init__(self, stream):
         self.stream = stream
         self.composition = gst.element_factory_make('gnlcomposition')
