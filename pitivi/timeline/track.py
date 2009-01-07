@@ -51,10 +51,10 @@ class TrackObject(object, Signallable):
         if duration != UNKNOWN_DURATION or obj.props.duration == 0:
             obj.props.duration = duration
 
-        if in_point != gst.CLOCK_TIME_NONE:
+       if in_point != 0:
             obj.props.media_start = in_point
 
-        if out_point != 0:
+        if out_point != UNKNOWN_DURATION:
             obj.props.media_duration = out_point
         
         self.priority = priority
