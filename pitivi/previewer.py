@@ -41,6 +41,20 @@ from ui.zoominterface import Zoomable
  MEDIA_TYPE_AUDIO,
  MEDIA_TYPE_VIDEO) = range(3)
 
+# TODO: refactor this mess into hierarchy of classes along these lines, to aid
+# with refactoring effort. Individual factories can name the preview class
+# they want to use for each stream they output, which leaves the door open for
+# plugins which define new kinds of object factories.  
+
+# Previewer                      -- abstract base class with public interface for UI
+# |_DefaultPreviewer             -- draws a default thumbnail for UI
+# |_LivePreviewer                -- draws a continuously updated preview
+# | |_LiveAudioPreviwer          -- a continously updating level meter
+# | |_LiveVideoPreviewer         -- a continously updating video monitor
+# |_RandomAccessPreviewer        -- asynchronous fetching and caching
+#   |_RandomAccessAudioPreviewer -- audio-specific pipeline and rendering code
+#   |_RandomAccessVideoPreviewer -- video-specific caching and rendering
+
 class Previewer(object, Signallable):
 
     __signals__ = {
@@ -66,21 +80,35 @@ class Previewer(object, Signallable):
     audio waveform."""
 
     def __init__(self, factory):
-        # queue of timestamps
-        self.queue = []
 
-        # true only if we are prerolled
-        self._ready = False
+        # create default thumbnail
+        path = os.path.join(get_pixmap_dir(), "pitivi-video.png")
+        self.default_thumb = cairo.ImageSurface.create_from_png(path) 
 
-        # create pipeline for thumbnail previews
-        sbin = SingleDecodeBin(caps=gst.Caps("video/x-raw-rgb;video/x-raw-yuv"),
-            uri=factory.name)
+        if factory.is_video:
+            self.__init_video(factory)
+        if factory.is_audio:
+            self.__init_audio(factory)
+
+## public interface
+
+    def render_cairo(self, cr, bounds, element):
+        if element.media_type == MEDIA_TYPE_AUDIO:
+           self.__render_waveform(cr, bounds, element)
+        elif element.media_type == MEDIA_TYPE_VIDEO:
+           self.__render_thumbseq(cr, bounds, element)
+
+## thumbmailsequence generator
+
+    def __init_video(self, factory):
+        self.__video_ready = False
+        sbin = factory.makeVideoBin() 
         csp = gst.element_factory_make("ffmpegcolorspace")
         sink = CairoSurfaceThumbnailSink()
         scale = gst.element_factory_make("videoscale")
         filter = utils.filter("video/x-raw-rgb,height=(int) 50, width=(int) %d"
             % self.__TWIDTH__)
-        self.pipeline = utils.pipeline({
+        self.videopipeline = utils.pipeline({
             sbin : csp,
             csp : scale,
             scale : filter,
@@ -88,210 +116,228 @@ class Previewer(object, Signallable):
             sink : None
         })
         sink.connect('thumbnail', self._thumbnailCb)
-        self.pipeline.set_state(gst.STATE_PAUSED)
-
-        # initialize thumbnail cache
         self.thumbcache = {}
-
-        # create default thumbnail
-        path = os.path.join(get_pixmap_dir(), "pitivi-video.png")
-        self.default_thumb = cairo.ImageSurface.create_from_png(path)
-
-        #self.samplecache = {}
-
-## public interface
-
-    def render_cairo(self, cr, bounds, element):
-        if element.media_type == MEDIA_TYPE_AUDIO:
-           # self.__render_waveform(cr, bounds, element)
-           pass
-        elif element.media_type == MEDIA_TYPE_VIDEO:
-            self.__render_thumbseq(cr, bounds, element)
-
-    def __render_waveform(self, cr, bounds, element):
-        height = bounds.y2 - bounds.y1
-        y1 = bounds.y1 + height / 4
-        y2 = (3 * height) / 4
-        cr.rectangle(bounds.x1 + 3, y1, bounds.x2 - bounds.x1 - 6, y2)
-        cr.stroke()
+        self.videoqueue = []
+        self.videopipeline.set_state(gst.STATE_PAUSED)
 
     def __render_thumbseq(self, cr, bounds, element):
+        # The idea is to conceptually divide the clip into a sequence of
+        # rectangles beginning at the start of the file, and
+        # pixelsToNs(twidth) nanoseconds long. The thumbnail within the
+        # rectangle is the frame produced from the timestamp of the
+        # rectangle's left edge. This sequence of rectangles is anchored in
+        # the timeline at the start of the file in timeline space. We speed
+        # things up by only drawing the rectangles which intersect the given
+        # bounds.
+        # FIXME: how would we handle timestretch?
+
+        height = bounds.y2 - bounds.y1
+        width = bounds.x2 - bounds.x1
+
+        # we actually draw the rectangles just to the left of the clip's in
+        # point and just to the right of the clip's out-point, so we need to
+        # mask off the actual bounds.
+        cr.rectangle(bounds.x1, bounds.y1, width, height)
+        cr.clip()
+
+        # tdur = duration in ns of thumbnail
+        tdur = Zoomable.pixelToNs(self.__TWIDTH__)
+        x1 = bounds.x1; y1 = bounds.y1
+        # start of file in pixel coordinates
+        sof = Zoomable.nsToPixel(element.start - element.media_start)
+
+        # i = left edge of thumbnail to be drawn. We start with x1 and
+        # subtract the distance to the nearest leftward rectangle. v it's worth
+        # noting that % is defined for floats in python, and works for our
+        # purposes. justification of the following: 
+        # since i = sof + k * twidth, and i = x1 - delta,
+        # sof + k * twidth = x1 - delta => i * tw = (x1 - sof) - delta
+        # therefore delta = x1 - sof (mod twidth)
+        i = x1 - ((x1 - sof) % self.__TWIDTH__)
+
+        # j = timestamp *within the element* of thumbnail to be drawn. we want
+        # timestamps to be numerically stable, but in practice this seems to
+        # give good enough results. It might be possible to improve this
+        # further, which would result in fewer thumbnails needing to be
+        # generated.
+        j = Zoomable.pixelToNs(i - sof)
+
+        while i < bounds.x2:
+            cr.set_source_surface(self.video_thumb_for_time(j), i, y1)
+            cr.rectangle(i, y1, self.__TWIDTH__, height)
+            i += self.__TWIDTH__
+            j += tdur
+            cr.fill()
+
+    def video_thumb_for_time(self, time):
+        if time in self.thumbcache:
+            return self.thumbcache[time]
+        self.makeThumbnail(time)
+        return self.default_thumb
+
+    def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
+        #self.log("pixbuf:%s, timestamp:%s" % (pixbuf, gst.TIME_ARGS(timestamp)))
+        if not self.__video_ready:
+            # we know we're prerolled when we get the initial thumbnail
+            self.__video_ready = True
+
+        # TODO: implement actual caching strategy, instead of slowly consuming all
+        # available memory
+        self.thumbcache[timestamp] = pixbuf
+        self.emit("update", MEDIA_TYPE_VIDEO)
+        if timestamp in self.videoqueue:
+            self.videoqueue.remove(timestamp)
+
+        if self.videoqueue:
+            gobject.idle_add(self._makeThumbnail, self.videoqueue.pop(0))
+
+    def makeThumbnail(self, timestamp):
+        """ Queue a thumbnail request for the given timestamp """
+        #self.log( "timestamp %s" % gst.TIME_ARGS(timestamp))
+        assert timestamp >= 0
+        # TODO: need some sort of timeout so the queue doesn't fill up if the
+        # thumbnail never arrives.
+        if timestamp not in self.videoqueue:
+            if self.videoqueue or not self.__video_ready:
+                self.videoqueue.append(timestamp)
+            else:
+                self.videoqueue.append(timestamp)
+                self._makeThumbnail(timestamp)
+
+    def _makeThumbnail(self, timestamp):
+        if not self.__video_ready:
+            return
+        gst.log("timestamp : %s" % gst.TIME_ARGS(timestamp))
+        self.videopipeline.seek(1.0, 
+            gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
+            gst.SEEK_TYPE_SET, timestamp,
+            gst.SEEK_TYPE_NONE, -1)
+        return False
+
+ ## Waveform peaks generator 
+
+    def __init_audio(self, factory):
+        self.__audio_ready = False
+        sbin = factory.makeAudioBin()
+        conv = gst.element_factory_make("audioconvert")
+        self.audioSink = ArraySink()
+        self.audioPipeline = utils.pipeline({ 
+            sbin : conv, 
+            conv : self.audioSink,
+            self.audioSink : None})
+        self.bus = self.audioPipeline.get_bus()
+        self.bus.add_signal_watch()
+        self.bus.connect("message", self.__bus_message)
+        self.__audio_cur = None
+        self.wavecache = {}
+        self.audioqueue = []
+        self.audioPipeline.set_state(gst.STATE_PAUSED)
+
+    def __render_waveform(self, cr, bounds, element):
         height = bounds.y2 - bounds.y1
         width = bounds.x2 - bounds.x1
         cr.rectangle(bounds.x1, bounds.y1, width, height)
         cr.clip()
 
         tdur = Zoomable.pixelToNs(self.__TWIDTH__)
-        x = Zoomable.nsToPixel(element.start)
-        x1 = bounds.x1
+        x1 = bounds.x1; y1 = bounds.y1
+        sof = Zoomable.nsToPixel(element.start - element.media_start)
 
-        # i = offset of first thumbnail
-        i = (-(Zoomable.nsToPixel(element.media_start) + x1 - x) %
-            self.__TWIDTH__) + x1
-        j = element.media_start - (element.media_start % tdur)
-        cr.set_source_surface(self.thumb_for_time(j), i - self.__TWIDTH__, 0)
-        cr.rectangle(x1, 0, i - x1 - 2, 50)
-        cr.fill()
+        i = x1 - ((x1 - sof) % self.__TWIDTH__)
+        j = Zoomable.pixelToNs(i - sof)
+
         while i < bounds.x2:
-            cr.set_source_surface(self.thumb_for_time(j), i, 0)
-            cr.rectangle(i, 0, self.__TWIDTH__, 50)
+            cr.set_source_surface(self.audio_thumb_for_time_duration(j, tdur),
+                i, y1)
+            cr.rectangle(i, y1, self.__TWIDTH__, height)
             i += self.__TWIDTH__
             j += tdur
             cr.fill()
 
-    def thumb_for_time(self, time):
-        if time in self.thumbcache:
-            return self.thumbcache[time]
-        self.makeThumbnail(time)
+    def audio_thumb_for_time_duration(self, time, duration):
+        if (time, duration) in self.wavecache:
+            return self.wavecache[(time, duration)]
+        self.__requestWaveform(time, duration)
         return self.default_thumb
 
-## thumbmailsequence generator
+    def __bus_message(self, bus, message):	
+        if message.type == gst.MESSAGE_SEGMENT_DONE:
+            self.__finishWaveform()
 
-    def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
-        #self.log("pixbuf:%s, timestamp:%s" % (pixbuf, gst.TIME_ARGS(timestamp)))
-        if not self._ready:
-            # we know we're prerolled when we get the initial thumbnail
-            self._ready = True
+        elif message.type == gst.MESSAGE_STATE_CHANGED:
+            self.__audio_ready = True
 
-        # TODO: store a pattern instead of a pixbuf
-        # TODO: implement actual caching strategy, instead of slowly consuming all
-        # available memory
-        self.thumbcache[timestamp] = pixbuf
-        self.emit("update", MEDIA_TYPE_VIDEO)
-        if timestamp in self.queue:
-            self.queue.remove(timestamp)
+        # true only if we are prerolled
+        elif message.type == gst.MESSAGE_ERROR:
+            error, debug = message.parse_error()
+            print "Event bus error:", str(error), str(debug)
 
-        if self.queue:
-            # still some more thumbnails to process
-            gobject.idle_add(self._makeThumbnail, self.queue.pop(0))
-
-    def makeThumbnail(self, timestamp):
-        """ Queue a thumbnail request for the given timestamp """
-        #self.log( "timestamp %s" % gst.TIME_ARGS(timestamp))
-        assert timestamp > 0
+    def __requestWaveform(self, timestamp, duration):
+        """
+        Queue a waveform request for the given timestamp and duration.
+        """
+        assert (timestamp >= 0) and (duration > 0)
         # TODO: need some sort of timeout so the queue doesn't fill up if the
         # thumbnail never arrives.
-        if timestamp not in self.queue:
-            if self.queue or not self._ready:
-                self.queue.append(timestamp)
+        if (timestamp, duration) not in self.audioqueue:
+            if self.audioqueue or not self.__audio_ready:
+                self.audioqueue.append((timestamp, duration))
             else:
-                self.queue.append(timestamp)
-                self._makeThumbnail(timestamp)
+                self.audioqueue.append((timestamp, duration))
+                self.__makeWaveform((timestamp, duration))
 
-    def _makeThumbnail(self, timestamp):
-        if not self._ready:
+    def __makeWaveform(self, (timestamp, duration)):
+        if not self.__audio_ready:
             return
-        gst.log("timestamp : %s" % gst.TIME_ARGS(timestamp))
-        self.pipeline.seek(1.0, gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
-                  gst.SEEK_TYPE_SET, timestamp,
-                  gst.SEEK_TYPE_NONE, -1)
+        # TODO: read up on segment seeks, which will do what we want as far as
+        # playing over jsut a portion of a file.
+        # 02:22 < bilboed-pi> so, preroll, wait for confirmed state change to PAUSED, 
+        # send seek (flushing, start, stop), set to PLAYING
+        # 02:22 < twi_> morning
+        # 02:22 < bilboed-pi> you'll receive EOS when the pipeline
+        # has reached the end 
+        # position
+        self.__audio_cur = timestamp, duration
+        self.audioPipeline.seek(1.0, 
+            gst.FORMAT_TIME, 
+            gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE | gst.SEEK_FLAG_SEGMENT,
+            gst.SEEK_TYPE_SET, timestamp,
+            gst.SEEK_TYPE_SET, timestamp + duration)
+        self.audioPipeline.set_state(gst.STATE_PLAYING)
         return False
 
- ## Waveform peaks generator 
+    def __finishWaveform(self):
+        surface = cairo.ImageSurface(cairo.FORMAT_A8, int(self.__TWIDTH__), 50)
+        cr = cairo.Context(surface)
+        self.__plotWaveform(cr, self.audioSink.samples)
+        self.audioSink.reset()
+        self.wavecache[self.__audio_cur] = surface
+        surface.write_to_png("test.png")
 
-    def bus_eos(self, bus, message):	
-        """
-        Handler for the GStreamer End Of Stream message. Currently
-        used when the file is loading and is being rendered. This
-        function is called at the end of the file loading process and
-        finalises the rendering.
+        self.emit("update", MEDIA_TYPE_AUDIO)
+        self.audioqueue.pop(0)
 
-        @param bus: GStreamer bus sending the message.
-        @param message: GStreamer message.
-
-        @return: False therefore stops the signal propagation. *CHECK*
-        """
-        if message.type == gst.MESSAGE_EOS:
-
-            # We're done with the bin so release it
-            self.stopGenerateWaveform(True)
-
-            # Signal to interested objects that we've changed
-            self.emit("audiopeaks-eos")
-
-            return False
-
-    def bus_error(self, bus, message):
-        """
-        Handler for when things go completely wrong with GStreamer.
-
-        @param bus: GStreamer bus sending the message.
-        @param message: GStreamer message.
-        """
-        error, debug = message.parse_error()
-
-        print "Event bus error:", str(error), str(debug)
-        self.stopGenerateWaveform(False)
-
-    isLoading = False      # True if the event is loading level data
-    loadingLength = 0      # The length of the file in seconds as its being rendered
-    loadingPipeline = None # The Gstreamer pipeline used to load the waveform
-    loadingSink = None
-
-    @property
-    def levels(self):
-        if self.loadingSink:
-            return self.loadingSink.samples
-        return []
-
-    @property
-    def waveformduration(self):
-        if self.loadingSink:
-            return self.loadingSink.duration
-        return 0
-
-    def generateWaveform(self):
-        """
-        Renders the level information for the GUI.
-        """
-        #TODO use core uri functions to convert uri to filename instead of [7:]
-        sbin = SingleDecodeBin(caps=gst.Caps("audio/x-raw-float;"
-            "audio/x-raw-int"), uri=self.name)
-        conv = gst.element_factory_make("audioconvert")
-        self.loadingSink = ArraySink()
-        self.loadingPipeline = pipeline({ 
-            sbin : conv, conv : self.loadingSink,
-            self.loadingSink : None})
-
-        self.bus = self.loadingPipeline.get_bus()
-        self.bus.add_signal_watch()
-        self.bus.connect("message::eos", self.bus_eos)
-        self.bus.connect("message::error", self.bus_error)
-
-        self.isLoading = True
-        self.emit("audiopeaks-loading")
-
-        self.loadingPipeline.set_state(gst.STATE_PLAYING)
-
-    def stopGenerateWaveform(self, finishedLoading=True):
-        """
-        Stops the internal pipeline that loads the waveform from this event's file.
-
-        Parameters:
-            finishedLoading -- True if the event has finished loading the waveform,
-                    False if the loading is being cancelled.
-        """
-
-        if self.bus:
-            self.bus.remove_signal_watch()
-            self.bus = None
-        if self.loadingPipeline:
-            self.loadingPipeline.set_state(gst.STATE_NULL)
-            self.isLoading = not finishedLoading
-            self.loadingPipeline = None
-            self.loadingLength = 0
+        if self.audioqueue:
+            gobject.idle_add(self.__makeWaveform, self.audioqueue[0])
 
     def nsToSample(self, time):
         return (time * 3000) / gst.SECOND
 
     def __plotWaveform(self, cr, levels):
-        # figure out our scaling
-        hscale = self.height / 2
-        scale = self.width / len(levels)
-
-        # upper portion of waveform
+        hscale = 25
+        if not levels:
+            cr.move_to(0, hscale)
+            cr.line_to(self.__TWIDTH__, hscale)
+            cr.stroke()
+            return
+        scale = self.__TWIDTH__ / len(levels)
+        cr.set_source_rgba(1, 1, 1, 0.0)
+        cr.rectangle(0, 0, self.__TWIDTH__, 50)
+        cr.fill()
+        cr.set_source_rgba(0, 0, 0, 1.0)
         points = ((x * scale, hscale - (y * hscale)) for x, y in enumerate(levels))
         self.__plot_points(cr, 0, hscale, points)
+        cr.stroke()
 
     def __plot_points(self, cr, x0, y0, points):
         cr.move_to(x0, y0)

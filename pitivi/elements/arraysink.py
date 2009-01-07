@@ -54,6 +54,9 @@ class ArraySink(gst.BaseSink):
         self.props.sync = False
         self.rate = 0
         self.duration = 0L
+        self.reset()
+
+    def reset(self):
         self.samples = array.array('f')
 
     def do_set_caps(self, caps):

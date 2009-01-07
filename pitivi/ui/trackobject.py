@@ -56,7 +56,6 @@ class TrimHandle(View, goocanvas.Image, Zoomable):
         goocanvas.Image.__init__(self,
             pixbuf = TRIMBAR_PIXBUF,
             line_width=0,
-            operator=cairo.OPERATOR_ADD,
             **kwargs
         )
         View.__init__(self)

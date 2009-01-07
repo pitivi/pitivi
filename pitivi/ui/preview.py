@@ -89,7 +89,7 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 ## goocanvas item methods
 
     def do_simple_update(self,cr):
-        # TODO: bounds intersection
+        cr.identity_matrix()
         self.bounds = goocanvas.Bounds(0, 0,
             Zoomable.nsToPixel(self.element.duration), self.height)
 
