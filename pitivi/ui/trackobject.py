@@ -3,6 +3,8 @@ import gobject
 import gtk
 import os.path
 import pango
+import cairo
+import pitivi.configure as configure
 from urllib import unquote
 from pitivi.receiver import receiver, handler
 from view import View
@@ -13,6 +15,8 @@ from pitivi.timeline.track import TrackError
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
+TRIMBAR_PIXBUF = gtk.gdk.pixbuf_new_from_file(
+    os.path.join(configure.get_pixmap_dir(), "trimbar.png"))
 
 import gst
 
@@ -30,7 +34,7 @@ class TimelineController(controller.Controller):
         self._view.element.setStart(max(self._view.pixelToNs(pos[0]), 0),
                 snap=True)
 
-class TrimHandle(View, goocanvas.Rect, Zoomable):
+class TrimHandle(View, goocanvas.Image, Zoomable):
 
     """A component of a TrackObject which manage's the source's edit
     points"""
@@ -40,9 +44,8 @@ class TrimHandle(View, goocanvas.Rect, Zoomable):
     def __init__(self, element, timeline, **kwargs):
         self.element = element
         self.timeline = timeline
-        goocanvas.Rect.__init__(self,
-            width=5,
-            fill_color_rgba=0x00000022,
+        goocanvas.Image.__init__(self,
+            pixbuf = TRIMBAR_PIXBUF,
             line_width=0,
             **kwargs
         )
