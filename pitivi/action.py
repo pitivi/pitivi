@@ -75,7 +75,16 @@ class Action(object, Signallable):
 
         @return: Whether the C{Action} was activated (True) or not.
         @rtype: L{bool}
+        @raise ActionError: If the C{Action} isn't set to a C{Pipeline}
         """
+        if self.pipeline == None:
+            raise ActionError("Action isn't set to a Pipeline")
+        if self.state == STATE_ACTIVE:
+            gst.debug("Action already activated, returning")
+            return
+        # TODO : Create bins (if needed), tees, queues, link
+        self.state = STATE_ACTIVE
+        self.emit('state-changed', self.state)
         raise NotImplementedError
 
     def deactivate(self):
@@ -85,7 +94,27 @@ class Action(object, Signallable):
         @return: Whether the C{Action} was de-activated (True) or not.
         @rtype: L{bool}
         """
+        if self.state == STATE_NOT_ACTIVE:
+            gst.debug("Action already deactivated, returning")
+        if self.pipeline == None:
+            gst.warning("Attempting to deactivate Action without a Pipeline")
+            # yes, gracefully return
+            return
+        # TODO : unlink
+        # TODO : remove queues
+        # TODO : remove tees
+        self.state = STATE_NOT_ACTIVE
+        self.emit('state-changed', self.state)
         raise NotImplementedError
+
+    def isActive(self):
+        """
+        Whether the Action is active or not
+
+        @return: True if the Action is active.
+        @rtype: L{bool}
+        """
+        return self.state == STATE_ACTIVE
 
     #{ Pipeline methods
 
@@ -132,7 +161,21 @@ class Action(object, Signallable):
         Set the given C{ObjectFactories} as producers of the C{Action}.
 
         @type producers: List of C{ObjectFactory}
+        @raise ActionError: If the C{Action} is active.
         """
+        if self.state != STATE_NOT_ACTIVE:
+            raise ActionError("Action is active, can't add Producers")
+        raise NotImplementedError
+
+    def removeProducers(self, *producers):
+        """
+        Remove the given C{ObjectFactories} as producers of the C{Action}.
+
+        @type producers: List of C{ObjectFactory}
+        @raise ActionError: If the C{Action} is active.
+        """
+        if self.state != STATE_NOT_ACTIVE:
+            raise ActionError("Action is active, can't remove Producers")
         raise NotImplementedError
 
     def setConsumers(self, *consumers):
@@ -140,5 +183,19 @@ class Action(object, Signallable):
         Set the given C{ObjectFactories} as consumers of the C{Action}.
 
         @type consumers: List of C{ObjectFactory}
+        @raise ActionError: If the C{Action} is active.
         """
+        if self.state != STATE_NOT_ACTIVE:
+            raise ActionError("Action is active, can't add Producers")
+        raise NotImplementedError
+
+    def removeConsumers(self, *consumers):
+        """
+        Remove the given C{ObjectFactories} as consumers of the C{Action}.
+
+        @type consumers: List of C{ObjectFactory}
+        @raise ActionError: If the C{Action} is active.
+        """
+        if self.state != STATE_NOT_ACTIVE:
+            raise ActionError("Action is active, can't remove Consumers")
         raise NotImplementedError
