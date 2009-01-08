@@ -32,7 +32,10 @@ from pitivi.utils import UNKNOWN_DURATION
 from tests.test_track import TimePropertiesSignalMonitor
 
 class StubFactory(object):
-    pass
+    duration = 42
+
+    def makeBin(self):
+        return gst.element_factory_make('identity')
 
 class TestTimelineObjectAddRemoveTrackObjects(TestCase):
     def testAddRemoveTrackObjects(self):

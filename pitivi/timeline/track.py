@@ -118,6 +118,10 @@ class TrackObject(object, Signallable):
 class SourceTrackObject(TrackObject):
     def _makeGnlObject(self):
         source = gst.element_factory_make('gnlsource')
+        # FIXME: set in-point and out-point
+        source.props.duration = self.factory.duration
+        bin = self.factory.makeBin()
+        source.add(bin)
         return source
 
 # FIXME: effects?

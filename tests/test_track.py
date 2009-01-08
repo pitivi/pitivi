@@ -27,7 +27,9 @@ from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
 
 class StubFactory(object):
-    pass
+    duration = 42
+    def makeBin(self):
+        return gst.element_factory_make('audiotestsrc')
 
 class TimePropertiesSignalMonitor(object):
     def __init__(self, obj):
