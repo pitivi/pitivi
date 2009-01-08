@@ -116,10 +116,12 @@ class TestPictureFileSourceFactory(TestCase):
         self.factory.addOutputStream(video2)
         self.factory.addOutputStream(audio)
        
-        bin = self.factory.makeBin(video2)
-        # for width < 2048 we should use ffvideoscale
-        scale = bin.get_by_name("scale")
-        self.failUnlessEqual(scale.get_factory().get_name(), 'ffvideoscale')
+        if gst.registry_get_default().find_feature('ffvideoscale',
+                gst.ElementFactory):
+            bin = self.factory.makeBin(video2)
+            # for width < 2048 we should use ffvideoscale
+            scale = bin.get_by_name("scale")
+            self.failUnlessEqual(scale.get_factory().get_name(), 'ffvideoscale')
 
         # if ffvideoscale isn't available we should still fallback to videoscale
         self.factory.ffscale_factory = 'meh'
