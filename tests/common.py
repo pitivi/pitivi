@@ -145,16 +145,23 @@ class TestFileSourceFactory(TestObjectFactory):
 class SignalMonitor(object):
     def __init__(self, obj, *signals):
         self.obj = obj
-        
+
         for signal in signals:
             obj.connect(signal, self._signalCb, signal)
             setattr(self, self._getSignalCounterName(signal), 0)
+            setattr(self, self._getSignalCollectName(signal), [])
 
     def _getSignalCounterName(self, signal):
         field = '%s_count' % signal.replace('-', '_')
+        return field
+
+    def _getSignalCollectName(self, signal):
+        field = '%s_collect' % signal.replace('-', '_')
         return field
 
     def _signalCb(self, obj, *args):
         name = args[-1]
         field = self._getSignalCounterName(name)
         setattr(self, field, getattr(self, field, 0) + 1)
+        field = self._getSignalCollectName(name)
+        setattr(self, field, getattr(self, field, []) + [args[:-1]])
