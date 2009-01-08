@@ -49,24 +49,23 @@ class TimePropertiesSignalMonitor(object):
 
 class TestTrackObject(TestCase):
     def setUp(self):
-        factory = StubFactory()
-        self.track_object = SourceTrackObject(factory)
+        self.factory = StubFactory()
+        self.track_object = SourceTrackObject(self.factory)
         self.monitor = TimePropertiesSignalMonitor(self.track_object)
 
     def testDefaultProperties(self):
         obj = self.track_object
         self.failUnlessEqual(obj.start, 0)
-        self.failUnlessEqual(obj.duration, UNKNOWN_DURATION)
-        self.failUnlessEqual(obj.in_point, 0)
-        self.failUnlessEqual(obj.out_point, UNKNOWN_DURATION)
+        self.failUnlessEqual(obj.duration, self.factory.duration)
+        self.failUnlessEqual(obj.in_point, gst.CLOCK_TIME_NONE)
+        self.failUnlessEqual(obj.out_point, 0)
 
         gnl_object = obj.gnl_object
         self.failUnlessEqual(gnl_object.props.start, 0)
-        self.failUnlessEqual(gnl_object.props.duration, UNKNOWN_DURATION)
+        self.failUnlessEqual(gnl_object.props.duration, self.factory.duration)
         self.failUnlessEqual(gnl_object.props.media_start,
-                0)
-        self.failUnlessEqual(gnl_object.props.media_duration,
-                UNKNOWN_DURATION)
+                gst.CLOCK_TIME_NONE)
+        self.failUnlessEqual(gnl_object.props.media_duration, 0)
 
     def testChangePropertiesFromTrackObject(self):
         obj = self.track_object

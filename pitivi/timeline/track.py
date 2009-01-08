@@ -37,16 +37,25 @@ class TrackObject(object, Signallable):
     }
 
     def __init__(self, factory, start=0,
-            duration=UNKNOWN_DURATION, in_point=0,
-            out_point=UNKNOWN_DURATION, priority=0):
+            duration=UNKNOWN_DURATION, in_point=gst.CLOCK_TIME_NONE,
+            out_point=0, priority=0):
         self.factory = factory
         self.track = None
         self.timeline_object = None
         self.gnl_object = obj = self._makeGnlObject()
-        obj.props.start = start
-        obj.props.duration = duration
-        obj.props.media_start = in_point
-        obj.props.media_duration = out_point
+        
+        if start != 0:
+            obj.props.start = start
+
+        if duration != UNKNOWN_DURATION or obj.props.duration == 0:
+            obj.props.duration = duration
+
+        if in_point != gst.CLOCK_TIME_NONE:
+            obj.props.media_start = in_point
+
+        if out_point != 0:
+            obj.props.media_duration = out_point
+        
         self._connectToSignals(obj)
 
     # FIXME: there's a lot of boilerplate here that could be factored in a
