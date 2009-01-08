@@ -55,6 +55,14 @@ class Pipeline(object, Signallable):
     @type state: C{gst.State}
     @ivar actions: The Action(s) currently used.
     @type actions: List of C{Action}
+    @ivar factories: The ObjectFactories handled by the Pipeline.
+    @type factories: List of C{ObjectFactory}
+    @ivar bins: The gst.Bins used, FOR ACTION USAGE ONLY
+    @type bins: Dictionnary of C{ObjectFactory} to C{gst.Bin}
+    @ivar tees: The tees used after producers, FOR ACTION USAGE ONLY
+    @type tees: Dictionnary of (C{SourceFactory},C{Stream}) to C{gst.Element}
+    @ivar queues: The queues used before consumers, FOR ACTION USAGE ONLY
+    @type queues: Dictionnary of (C{SinkFactory},C{Stream}) to C{gst.Element}
     """
 
     __signals__ = {
@@ -73,11 +81,14 @@ class Pipeline(object, Signallable):
         self._bus = self._pipeline.get_bus()
         self._bus.add_signal_watch()
         self._bus.connect("message", self._busMessageCb)
-        self._factories = {} # factory => gst.Bin
-        self._tees = {} # (producerfactory, stream) => gst.Element ("tee")
-        self._queues = {} # (consumerfactory, stream) => gst.Element ("queue")
+        self.factories = []
+        self.bins = {} # factory => gst.Bin
+        self.tees = {} # (producerfactory, stream) => gst.Element ("tee")
+        self.queues = {} # (consumerfactory, stream) => gst.Element ("queue")
         self.actions = []
         self._state = STATE_NULL
+
+    #{ Action-related methods
 
     def addAction(self, action):
         """
@@ -151,6 +162,8 @@ class Pipeline(object, Signallable):
         self.actions.remove(action)
         self.emit('action-removed', action)
 
+    #{ State-related methods
+
     def setState(self, state):
         """
         Set the C{Pipeline} to the given state.
@@ -177,25 +190,85 @@ class Pipeline(object, Signallable):
         gst.debug("Returning state %r" % self._state)
         return self._state
 
+    def play(self):
+        """
+        Sets the C{Pipeline} to PLAYING
+        """
+        self.setState(STATE_PLAYING)
+
+    def pause(self):
+        """
+        Sets the C{Pipeline} to PAUSED
+        """
+        self.setState(STATE_PAUSED)
+
+    #{ ObjectFactory-related methods
+
     def addFactory(self, *factories):
         """
         Adds the given C{ObjectFactory} to be used in the C{Pipeline}.
 
+        @precondition: The C{Pipeline} state must be READY or NULL.
+
         @param factories: The C{ObjectFactory}s to add
         @type factories: C{ObjectFactory}
+        @raise PipelineError: If the C{Pipeline} isn't in READY or NULL.
         """
-        raise NotImplementedError
+        if self._state in [STATE_PAUSED, STATE_PLAYING]:
+            raise PipelineError("Can't add factories, Pipeline is not READY or NULL")
+        for fact in factories:
+            if not fact in self.factories:
+                self.factories.append(fact)
+                self.emit('factory-added', fact)
 
     def removeFactory(self, *factories):
         """
         Removes the given C{ObjectFactory}s from the C{Pipeline}.
 
-        @precondition: The C{Pipeline} state must be READY or NULL.
+        @precondition: The C{Pipeline} state must be READY or NULL and the
+        C{Action}s controlling those factories must all be deactivated.
 
         @param factories: The C{ObjectFactory}s to remove.
         @type factories: C{ObjectFactory}
+        @raise PipelineError: If the C{Pipeline} isn't in READY or NULL or if
+        some of the factories are still used by active C{Action}s.
         """
-        raise NotImplementedError
+        gst.debug("factories %r" % factories)
+        if self._state in [STATE_PAUSED, STATE_PLAYING]:
+            raise PipelineError("Can't remove factories, Pipeline is not READY or NULL")
+        rfact = [f for f in factories if f in self.factories]
+        # we can only remove factories that are used in inactive actions
+        for act in [x for x in self.actions if x.isActive()]:
+            for f in rfact:
+                if f in act.producers or f in act.consumers:
+                    raise PipelineError("Some factories belong to still active Action")
+        # at this point we can remove the factories
+        for f in rfact:
+            self._removeFactory(self, f)
+
+    def _removeFactory(self, factory):
+        gst.debug("factory %r" % factory)
+        # internal method
+        # We should first remove the factory from all used Actions
+        for a in self.actions:
+            if factory in a.producers:
+                a.removeProducers(factory)
+            elif factory in a.consumers:
+                a.removeConsumers(factory)
+
+        # Then the bin (and not forget to release that bin from the
+        # objectfactory)
+        gst.debug("Getting corresponding gst.Bin")
+        b = self.bins.pop(factory, None)
+        if b:
+            gst.debug("Really removing %r from gst.Pipeline" % b)
+            self._pipeline.remove(b)
+            factory.releaseBin(b)
+
+        # And finally remove the factory itself from our list
+        self.emit("factory-removed", factory)
+
+    #{ Position and Seeking methods
 
     def getPosition(self, format=gst.FORMAT_TIME):
         """
@@ -238,18 +311,6 @@ class Pipeline(object, Signallable):
         @type format: C{gst.Format}
         @return: Whether the seek succeeded or not
         @rtype: L{bool}
-        """
-        raise NotImplementedError
-
-    def play(self):
-        """
-        Sets the C{Pipeline} to PLAYING
-        """
-        raise NotImplementedError
-
-    def pause(self):
-        """
-        Sets the C{Pipeline} to PAUSED
         """
         raise NotImplementedError
 
