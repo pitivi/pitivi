@@ -176,7 +176,7 @@ class SourceFactory(ObjectFactory):
         'bin-released': ['bin']
     }
 
-    def __init__(self, name, displayname=''):
+    def __init__(self, name='', displayname=''):
         ObjectFactory.__init__(self, name, displayname)
         self.max_bins = -1
         self.current_bins = 0
