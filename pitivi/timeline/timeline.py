@@ -315,16 +315,40 @@ class Link(Selection):
         link_entry.duration = duration
 
 class Timeline(object ,Signallable):
+    __signals__ = {
+        'duration-changed': ['duration'],
+        'track-added': ['track'],
+        'track-removed': ['track']
+    }
+
     def __init__(self):
         self.tracks = []
         self.selections = []
         self.timeline_objects = []
+        self.duration = 0
+
+    def _durationChangedCb(self, timeline, pspec):
+        duration = self.props.duration
+        self.emit('duration-changed', duration)
 
     def addTrack(self, track):
         if track in self.tracks:
             raise TimelineError()
 
         self.tracks.append(track)
+        self._maybeSetDuration(track.duration)
+        track.connect('duration-changed', self._trackDurationChangedCb)
+
+        self.emit('track-added', track)
+
+    def _trackDurationChangedCb(self, track, duration):
+        self._maybeSetDuration(duration)
+
+    def _maybeSetDuration(self, duration):
+        if duration > self.duration:
+            self.duration = duration
+            self.emit('duration-changed', duration)
+        
 
     def removeTrack(self, track, removeTrackObjects=True):
         try:
@@ -334,6 +358,8 @@ class Timeline(object ,Signallable):
 
         if removeTrackObjects:
             track.removeAllTrackObjects()
+
+        self.emit('track-removed', track)
 
     def addTimelineObject(self, obj):
         if obj in self.timeline_objects:
