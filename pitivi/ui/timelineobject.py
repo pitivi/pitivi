@@ -124,11 +124,20 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
         self.normal()
 
     def zoomChanged(self):
-        self._start_duration_cb(self.element, self.element.start,
+        self._startDurationChangedCb(self.element, self.element.start,
             self.element.duration)
 
-    @handler(element, "start-duration-changed")
-    def _start_duration_cb(self, obj, start, duration):
+    @handler(element, "start-changed")
+    def _startChangedCb(self, timeline_object, start):
+        self._startDurationChangedCb(timeline_object,
+                timeline_object.start, timeline_object.duration)
+
+    @handler(element, "duration-changed")
+    def _startChangedCb(self, timeline_object, start):
+        self._startDurationChangedCb(timeline_object,
+                timeline_object.start, timeline_object.duration)
+    
+    def _startDurationChangedCb(self, obj, start, duration):
         self.set_simple_transform(self.nsToPixel(start), 0, 1, 0)
         width = self.nsToPixel(duration)
         w = width - self.end_handle.props.width
@@ -138,9 +147,10 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
         # place end handle at appropriate distance
         self.end_handle.props.x = w
 
-    @handler(element, "selected-changed")
-    def _selected_changed(self, element):
-        if element.selected:
-            self.bg.props.fill_color_rgba = self.__SELECTED__
-        else:
-            self.bg.props.fill_color_rgba = self.__NORMAL__
+    # FIXME: selection needs to be readded
+    # @handler(element, "selected-changed")
+    # def _selected_changed(self, element):
+    #     if element.selected:
+    #         self.bg.props.fill_color_rgba = self.__SELECTED__
+    #     else:
+    #         self.bg.props.fill_color_rgba = self.__NORMAL__

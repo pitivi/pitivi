@@ -172,6 +172,9 @@ class Timeline(gtk.VBox):
             context.finish(False, False, timestamp)
         # FIXME: access of instance, and playground
         factory = instance.PiTiVi.current.sources[uri]
+
+        # FIXME: the UI should be smart here and figure out which track the
+        # source was dragged onto
         instance.PiTiVi.current.timeline.addFactory(factory)
         context.finish(True, False, timestamp)
         instance.PiTiVi.playground.switchToTimeline()
@@ -199,9 +202,9 @@ class Timeline(gtk.VBox):
 
     timeline = receiver()
 
-    @handler(timeline, "start-duration-changed")
-    def _timelineStartDurationChanged(self, unused_timeline, start, duration):
-        self.ruler.startDurationChanged(start, duration)
+    @handler(timeline, "duration-changed")
+    def _timelineStartDurationChanged(self, unused_timeline, duration):
+        self.ruler.setDuration(duration)
 
 ## ToolBar callbacks
 

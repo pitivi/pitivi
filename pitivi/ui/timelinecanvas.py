@@ -1,5 +1,5 @@
-from track import Track
-from timelineobject import TimelineObject
+from pitivi.ui.track import Track
+from pitivi.timeline.timeline import TimelineObject
 import controller
 import view
 from point import Point
@@ -182,8 +182,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
     timeline = receiver(__set_timeline)
 
-    @handler(timeline, "start-duration-changed")
-    def _start_duration_cb(self, unused_item, unused_start, unused_dur):
+    @handler(timeline, "duration-changed")
+    def _start_duration_cb(self, unused_item, unused_dur):
         self._request_size()
 
     def _request_size(self):

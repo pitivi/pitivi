@@ -77,6 +77,7 @@ import weakref
 
 from pitivi.signalinterface import Signallable
 from pitivi.utils import UNKNOWN_DURATION
+from pitivi.timeline.track import Track, SourceTrackObject
 
 class TimelineError(Exception):
     pass
@@ -376,16 +377,13 @@ class Timeline(object ,Signallable):
         except ValueError:
             raise TimelineError()
 
-    def groupObjects(self, *objects):
-        pass
+    # FIXME: find a better name?
+    def addFactory(self, factory):
+        track_object = SourceTrackObject(factory)
 
-    def ungroupObjects(self, *objects):
-        pass
+        track = self.tracks[0]
+        duration = track.duration
+        # FIXME: figure out where to put the object
+        self.tracks[0].addTrackObject(track_object)
 
-    def addSelection(self, selection):
-        pass
-
-    def removeSelection(self, selection):
-        pass
-
-
+        track_object.start = duration

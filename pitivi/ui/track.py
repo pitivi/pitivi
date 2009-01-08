@@ -1,5 +1,5 @@
-from zoominterface import Zoomable
-from timelineobject import TimelineObject
+from pitivi.ui.zoominterface import Zoomable
+from pitivi.ui.timelineobject import TimelineObject
 from pitivi.timeline.objects import MEDIA_TYPE_VIDEO
 from pitivi.receiver import receiver, handler
 import goocanvas
@@ -9,22 +9,22 @@ import goocanvas
 class Track(goocanvas.Group, Zoomable):
     __gtype_name__ = 'Track'
 
-    comp = receiver()
+    timeline_track = receiver()
 
-    def __init__(self, comp=None, timeline=None):
+    def __init__(self, timeline_track, timeline=None):
         goocanvas.Group.__init__(self)
         Zoomable.__init__(self)
         self.widgets = {}
-        self.comp = comp
+        self.timeline_track = timeline_track
         self.timeline = timeline
 
-    @handler(comp, "source-added")
+    @handler(timeline_track, "track-object-added")
     def _objectAdded(self, unused_timeline, element):
-        w = TimelineObject(element, self.comp, self.timeline)
+        w = TimelineObject(element, self.timeline_track, self.timeline)
         self.widgets[element] = w
         self.add_child(w)
 
-    @handler(comp, "source-removed")
+    @handler(timeline_track, "track-object-removed")
     def _objectRemoved(self, unused_timeline, element):
         w = self.widgets[element]
         self.remove_child(w)

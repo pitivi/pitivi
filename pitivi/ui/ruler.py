@@ -225,7 +225,7 @@ class ScaleRuler(gtk.Layout, Zoomable):
 
     def getDuration(self):
         if self.duration == gst.CLOCK_TIME_NONE and instance.PiTiVi.current:
-            self.duration = instance.PiTiVi.current.timeline.getDuration()
+            self.duration = instance.PiTiVi.current.timeline.duration
 
         return self.duration
 
@@ -251,11 +251,10 @@ class ScaleRuler(gtk.Layout, Zoomable):
 
         context.restore()
 
-    def startDurationChanged(self, start, duration):
+    def setDuration(self, duration):
         gst.info("start/duration changed")
         self.queue_resize()
 
-        self.start = start
         self.duration = duration
 
         if duration < self.position:

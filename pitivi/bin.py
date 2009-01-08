@@ -478,10 +478,15 @@ class SmartTimelineBin(SmartBin):
         self.project = project
 
         settings = project.getSettings()
-        self.log("source is %r" % project.timeline.timeline)
-        self.source = project.timeline.timeline
         self.project.connect("settings-changed", self._settingsChangedCb)
-        project.timeline.videocomp.connect("start-duration-changed", self._startDurationChangedCb)
+        
+        project.timeline.connect("duration-changed", self._durationChangedCb)
+        
+        self.source = gst.Bin()
+        for track in project.timeline.tracks:
+            self.source.add(track.composition)
+        project.timeline.connect('track-added', self._trackAddedCb)
+        project.timeline.connect('track-removed', self._trackRemovedCb)
 
         # TODO : change has_audio/has_video to project settings value
         SmartBin.__init__(self, "project-" + project.name,
@@ -489,8 +494,16 @@ class SmartTimelineBin(SmartBin):
                           has_video=True, has_audio=True,
                           width=settings.videowidth,
                           height=settings.videoheight,
-                          length=project.timeline.videocomp.duration,
+                          length=project.timeline.duration,
                           is_seekable=True)
+
+    def _trackAddedCb(self, track):
+        # FIXME: implement me
+        pass
+
+    def _trackRemovedCb(self, track):
+        # FIXME: implement me
+        pass
 
     def _addSource(self):
         self.add(self.source)
@@ -518,8 +531,8 @@ class SmartTimelineBin(SmartBin):
             pad.unlink(self.vtee.get_pad("sink"))
 
 
-    def _startDurationChangedCb(self, unused_videocomp, start, duration):
-        self.info("smart timeline bin: start duration changed %d %d" %( start, duration ))
+    def _durationChangedCb(self, timeline, duration):
+        self.info("smart timeline bin: duration changed %d" % duration)
         self.length = duration
 
     def getSettings(self):

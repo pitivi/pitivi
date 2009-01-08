@@ -133,10 +133,10 @@ class PitiviMainWindow(gtk.Window):
         self.pitivi.gui.set_sensitive(False)
         win.show()
 
-    def _timelineDurationChangedCb(self, unused_composition, unused_start,
-                                   duration):
+    def _timelineDurationChangedCb(self, timeline, duration):
         if not isinstance(self.pitivi.playground.current, SmartTimelineBin):
             return
+
         self.render_button.set_sensitive((duration > 0) and True or False)
 
     def _currentPlaygroundChangedCb(self, playground, smartbin):
@@ -145,10 +145,10 @@ class PitiviMainWindow(gtk.Window):
         else:
             if isinstance(smartbin, SmartTimelineBin):
                 gst.info("switching to Timeline, setting duration to %s" %
-                         (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
-                smartbin.project.timeline.videocomp.connect("start-duration-changed",
-                                                            self._timelineDurationChangedCb)
-                if smartbin.project.timeline.videocomp.duration > 0:
+                         (gst.TIME_ARGS(smartbin.project.timeline.duration)))
+                smartbin.project.timeline.connect("duration-changed", 
+                        self._timelineDurationChangedCb)
+                if smartbin.project.timeline.duration > 0:
                     self.render_button.set_sensitive(True)
                 else:
                     self.render_button.set_sensitive(False)

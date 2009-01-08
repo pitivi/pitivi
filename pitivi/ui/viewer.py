@@ -316,11 +316,16 @@ class PitiviViewer(gtk.VBox):
         instance.PiTiVi.playground.play()
         self._newTime(0)
 
-    def _timelineDurationChangedCb(self, unused_composition, unused_start,
-                                   duration):
+    def _timelineDurationChangedCb(self, unused_composition, duration):
         gst.debug("duration : %s" % gst.TIME_ARGS(duration))
         if duration == 0:
             gobject.idle_add(self._backToDefaultCb)
+        else:
+            self.slider.set_sensitive(True)
+            self.playpause_button.set_sensitive(True)
+            self.next_button.set_sensitive(True)
+            self.back_button.set_sensitive(True)
+
         gobject.idle_add(self._asyncTimelineDurationChanged, duration)
 
     def _dndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
@@ -404,13 +409,13 @@ class PitiviViewer(gtk.VBox):
         else:
             if isinstance(smartbin, SmartTimelineBin):
                 gst.info("switching to Timeline, setting duration to %s" %
-                         (gst.TIME_ARGS(smartbin.project.timeline.videocomp.duration)))
-                self.posadjust.upper = float(smartbin.project.timeline.videocomp.duration)
+                         (gst.TIME_ARGS(smartbin.project.timeline.duration)))
+                self.posadjust.upper = float(smartbin.project.timeline.duration)
                 # FIXME : we need to disconnect from this signal !
-                sigid = smartbin.project.timeline.videocomp.connect("start-duration-changed",
-                                                                    self._timelineDurationChangedCb)
-                self._timelineDurationChangedSigId = (smartbin.project.timeline.videocomp,
-                                                      sigid)
+                sigid = smartbin.project.timeline.connect("duration-changed",
+                    self._timelineDurationChangedCb)
+                self._timelineDurationChangedSigId = \
+                        (smartbin.project.timeline, sigid)
             else:
                 self.posadjust.upper = float(smartbin.factory.duration)
                 if not self._timelineDurationChangedSigId == (None, None):
@@ -418,10 +423,11 @@ class PitiviViewer(gtk.VBox):
                     obj.disconnect(sigid)
                     self._timelineDurationChangedSigId = (None, None)
             self._newTime(0)
-            self.slider.set_sensitive(True)
-            self.playpause_button.set_sensitive(True)
-            self.next_button.set_sensitive(True)
-            self.back_button.set_sensitive(True)
+            if smartbin.project.timeline.duration > 0:
+                self.slider.set_sensitive(True)
+                self.playpause_button.set_sensitive(True)
+                self.next_button.set_sensitive(True)
+                self.back_button.set_sensitive(True)
 
         if isinstance(smartbin, SmartTimelineBin):
             seti = smartbin.project.getSettings()

@@ -27,7 +27,9 @@ Project class
 import os.path
 import gst
 import traceback
-from timeline.timeline import Timeline
+from pitivi.timeline.timeline import Timeline
+from pitivi.timeline.track import Track
+from pitivi.stream import AudioStream, VideoStream
 from sourcelist import SourceList
 from bin import SmartTimelineBin
 from settings import ExportSettings
@@ -85,7 +87,17 @@ class Project(Serializable, Signallable):
         self.timelinebin = None
         self.settingssigid = 0
         self._dirty = False
-        self.timeline = Timeline(self)
+
+        self.timeline = Timeline()
+        # FIXME: the tracks should be loaded from the project file
+        # FIXME: streams are not used at all by a track: api wart?
+        audio = AudioStream(gst.Caps('audio/x-raw-int'))
+        track = Track(audio)
+        self.timeline.addTrack(track)
+        video = VideoStream(gst.Caps('audio/x-raw-rgb'))
+        track = Track(video)
+        self.timeline.addTrack(track)
+
         # don't want to make calling load() necessary for blank projects
         if self.uri == None:
             self._loaded = True
@@ -249,7 +261,8 @@ class Project(Serializable, Signallable):
         if not self.timeline:
             gst.warning("project doesn't have a timeline, returning default settings")
             return ExportSettings()
-        settings = self.timeline.getAutoSettings()
+        #settings = self.timeline.getAutoSettings()
+        settings = None
         if not settings:
             gst.warning("Timeline didn't return any auto settings, return default settings")
             return ExportSettings()
