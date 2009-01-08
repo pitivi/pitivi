@@ -123,10 +123,29 @@ class SourceTrackObject(TrackObject):
 # FIXME: effects?
 
 class Track(object, Signallable):
+    __signals__ = {
+        'duration-changed': ['duration'],
+        'track-object-added': ['track_object'],
+        'track-object-removed': ['track_object']
+    }
+
     def __init__(self, stream):
         self.stream = stream
         self.composition = gst.element_factory_make('gnlcomposition')
+        self.composition.connect('notify::duration', self._durationChangedCb)
         self.track_objects = []
+
+    def _getDuration(self):
+        return self.composition.props.duration
+    
+    def _setDuration(self, value):
+        self.composition.props.duration = value
+    
+    duration = property(_getDuration, _setDuration)
+
+    def _durationChangedCb(self, composition, pspec):
+        duration = composition.props.duration
+        self.emit('duration-changed', duration)
 
     def addTrackObject(self, track_object):
         if track_object.track is not None:
@@ -139,6 +158,7 @@ class Track(object, Signallable):
 
         track_object.track = weakref.proxy(self)
         self.track_objects.append(track_object)
+        self.emit('track-object-added', track_object)
 
     def removeTrackObject(self, track_object):
         if track_object.track is None:
@@ -151,6 +171,7 @@ class Track(object, Signallable):
 
         self.track_objects.remove(track_object)
         track_object.track = None
+        self.emit('track-object-removed', track_object)
 
     def removeAllTrackObjects(self):
         for track_object in list(self.track_objects):
