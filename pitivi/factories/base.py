@@ -27,14 +27,13 @@ import weakref
 from random import randint
 import gobject
 import gst
+from gettext import gettext as _
 
 from pitivi.serializable import Serializable
 from pitivi.settings import ExportSettings
 from pitivi.stream import get_stream_for_caps
-
-from gettext import gettext as _
-
 from pitivi.elements.singledecodebin import SingleDecodeBin
+from pitivi.signalinterface import Signallable
 
 # FIXME: define a proper hierarchy
 class ObjectFactoryError(Exception):
@@ -43,7 +42,7 @@ class ObjectFactoryError(Exception):
 class ObjectFactoryStreamError(ObjectFactoryError):
     pass
 
-class ObjectFactory(object):
+class ObjectFactory(object, Signallable):
     """
     Base class for all factory implementations.
 
@@ -165,8 +164,23 @@ class ObjectFactory(object):
 class SourceFactory(ObjectFactory):
     """
     Base class for factories that produce output and have no input.
+
+    @ivar max_bins: Max number of bins the factory can create.
+    @type max_bins: C{int}
+    @ivar current_bins: Number of bin instances created and not released.
+    @type current_bins: C{int}
     """
-    
+
+    __signals__ = {
+        'bin-created': ['bin'],
+        'bin-released': ['bin']
+    }
+
+    def __init__(self, name, displayname=''):
+        ObjectFactory.__init__(self, name, displayname)
+        self.max_bins = -1
+        self.current_bins = 0
+
     def makeBin(self, output_stream=None):
         """
         Create a bin that outputs the stream described by C{output_stream}.
@@ -175,16 +189,37 @@ class SourceFactory(ObjectFactory):
         suitable "default" bin.
 
         @param output_stream: A L{MultimediaStream}
+
+        @see: L{releaseBin}
         """
         
         if output_stream is not None and \
                 output_stream not in self.output_streams:
             raise ObjectFactoryError('unknown stream')
 
-        return self._makeBin(output_stream)
+        bin = self._makeBin(output_stream)
+        self.current_bins += 1
+        self.emit('bin-created', bin)
+
+        return bin
 
     def _makeBin(self, output_stream=None):
         raise NotImplementedError()
+
+    def releaseBin(self, bin):
+        """
+        Release a bin created with L{makeBin}.
+
+        Some factories can create a limited number of bins or implement caching.
+        You should call C{releaseBin} once you are done using a bin.
+        """
+        self._releaseBin(bin)
+        self.current_bins -= 1
+        self.emit('bin-released', bin)
+
+    def _releaseBin(self, bin):
+        # default implementation does nothing
+        pass
 
     def addInputStream(self, stream):
         raise AssertionError("source factories can't have input streams")

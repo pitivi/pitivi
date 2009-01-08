@@ -27,6 +27,8 @@ from pitivi.factories.base import ObjectFactory, ObjectFactoryError, \
         SourceFactory, RandomAccessSourceFactory, LiveSourceFactory
 from pitivi.stream import AudioStream, VideoStream
 
+from tests.common import SignalMonitor
+
 class TestObjectFactory(TestCase):
     def setUp(self):
         self.factory = ObjectFactory('name', 'displayname')
@@ -63,32 +65,48 @@ class TestObjectFactory(TestCase):
         self.failUnlessEqual(self.factory.default_duration, 10 * gst.SECOND)
         self.failUnlessEqual(self.factory.duration, 60 * gst.SECOND)
 
+class StubSourceFactory(SourceFactory):
+    def _makeBin(self, output_stream=None):
+        return gst.Bin()
+
 class TestSourceFactory(TestCase):
-    def testSourceFactory(self):
-        class StubSourceFactory(SourceFactory):
-            def _makeBin(self, output_stream=None):
-                return gst.Bin()
-        
-        factory = StubSourceFactory('name', 'displayname')
+    def setUp(self):
+        self.factory = StubSourceFactory('name', 'displayname')
         caps = gst.Caps('video/x-raw-rgb')
-        stream = VideoStream(caps, pad_name='src0')
+        self.stream = VideoStream(caps, pad_name='src0')
         # source factories can't have input streams
-        self.failUnlessRaises(AssertionError, factory.addInputStream, stream)
-        factory.addOutputStream(stream)
-        
+        self.failUnlessRaises(AssertionError,
+                self.factory.addInputStream, self.stream)
+        self.factory.addOutputStream(self.stream)
+        self.monitor = SignalMonitor(self.factory, 'bin-created', 'bin-released')
+
+    def testMakeAndReleaseBin(self):
         caps = gst.Caps('video/x-raw-yuv')
         stream1 = VideoStream(caps)
         # calling factory.makeBin(stream) with a stream that doesn't belong to a
         # factory should result in an error
         self.failUnlessRaises(ObjectFactoryError,
-                factory.makeBin, stream1)
-       
+                self.factory.makeBin, stream1)
+
+        self.failUnlessEqual(self.factory.current_bins, 0)
+        self.failUnlessEqual(self.monitor.bin_created_count, 0)
         # check makeBin with a specific stream
-        bin = factory.makeBin(stream)
-        self.failUnless(isinstance(bin, gst.Bin))
+        bin1 = self.factory.makeBin(self.stream)
+        self.failUnlessEqual(self.factory.current_bins, 1)
+        self.failUnlessEqual(self.monitor.bin_created_count, 1)
+        self.failUnless(isinstance(bin1, gst.Bin))
         # now check the "default" bin case
-        bin = factory.makeBin()
-        self.failUnless(isinstance(bin, gst.Bin))
+        bin2 = self.factory.makeBin()
+        self.failUnlessEqual(self.factory.current_bins, 2)
+        self.failUnlessEqual(self.monitor.bin_created_count, 2)
+        self.failUnless(isinstance(bin2, gst.Bin))
+
+        self.factory.releaseBin(bin1)
+        self.failUnlessEqual(self.factory.current_bins, 1)
+        self.failUnlessEqual(self.monitor.bin_released_count, 1)
+        self.factory.releaseBin(bin2)
+        self.failUnlessEqual(self.factory.current_bins, 0)
+        self.failUnlessEqual(self.monitor.bin_released_count, 2)
 
 class TestLiveSourceFactory(TestCase):
     def testDefaultDuration(self):
