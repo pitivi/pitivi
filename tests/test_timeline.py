@@ -28,8 +28,7 @@ from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
 
-# FIXME: put this somewhere else
-from tests.test_track import TimePropertiesSignalMonitor
+from tests.common import SignalMonitor
 
 class StubFactory(object):
     duration = 42
@@ -78,7 +77,8 @@ class TestTimelineObjectProperties(TestCase):
     def setUp(self):
         factory = StubFactory()
         self.timeline_object = TimelineObject(factory)
-        self.monitor = TimePropertiesSignalMonitor(self.timeline_object)
+        self.monitor = SignalMonitor(self.timeline_object, 'start-changed',
+                'duration-changed', 'in-point-changed', 'out-point-changed')
         stream = AudioStream(gst.Caps('audio/x-raw-int'))
         self.track = Track(stream)
         self.track_object1 = SourceTrackObject(factory)

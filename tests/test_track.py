@@ -25,35 +25,19 @@ import gst
 from pitivi.timeline.track import Track, SourceTrackObject, TrackError
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
+from tests.common import SignalMonitor
 
 class StubFactory(object):
     duration = 42
     def makeBin(self):
         return gst.element_factory_make('audiotestsrc')
 
-class TimePropertiesSignalMonitor(object):
-    def __init__(self, obj):
-        self.obj = obj
-        
-        obj.connect('start-changed', self._signal_cb, 'start_changed')
-        obj.connect('duration-changed', self._signal_cb, 'duration_changed')
-        obj.connect('in-point-changed', self._signal_cb, 'in_point_changed')
-        obj.connect('out-point-changed', self._signal_cb, 'out_point_changed')
-
-        self.start_changed_count = 0
-        self.duration_changed_count = 0
-        self.in_point_changed_count = 0
-        self.out_point_changed_count = 0
-
-    def _signal_cb(self, obj, value, name):
-        field = '%s_count' % name
-        setattr(self, field, getattr(self, field, 0) + 1)
-
 class TestTrackObject(TestCase):
     def setUp(self):
         self.factory = StubFactory()
         self.track_object = SourceTrackObject(self.factory)
-        self.monitor = TimePropertiesSignalMonitor(self.track_object)
+        self.monitor = SignalMonitor(self.track_object, 'start-changed',
+                'duration-changed', 'in-point-changed', 'out-point-changed')
 
     def testDefaultProperties(self):
         obj = self.track_object

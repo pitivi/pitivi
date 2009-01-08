@@ -4,7 +4,7 @@ A collection of objects to use for testing
 
 from pitivi.timeline.objects import TimelineObject, MEDIA_TYPE_NONE, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
 from pitivi.timeline.source import TimelineSource, TimelineFileSource
-from pitivi.objectfactory import ObjectFactory
+from pitivi.factories.base import ObjectFactory
 import gst
 
 class TestTimelineObject(TimelineObject):
@@ -141,3 +141,20 @@ class TestFileSourceFactory(TestObjectFactory):
     def _getDuration(self):
         return self.length
     duration = property(_getDuration)
+
+class SignalMonitor(object):
+    def __init__(self, obj, *signals):
+        self.obj = obj
+        
+        for signal in signals:
+            obj.connect(signal, self._signalCb, signal)
+            setattr(self, self._getSignalCounterName(signal), 0)
+
+    def _getSignalCounterName(self, signal):
+        field = '%s_count' % signal.replace('-', '_')
+        return field
+
+    def _signalCb(self, obj, *args):
+        name = args[-1]
+        field = self._getSignalCounterName(name)
+        setattr(self, field, getattr(self, field, 0) + 1)
