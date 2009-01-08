@@ -29,6 +29,11 @@ states = (STATE_NOT_ACTIVE,
           STATE_ACTIVE) = range(2)
 
 from pitivi.signalinterface import Signallable
+import gst
+
+# FIXME : define/document a proper hierarchy
+class ActionError(Exception):
+    pass
 
 class Action(object, Signallable):
     """
@@ -88,19 +93,37 @@ class Action(object, Signallable):
         """
         Set the C{Action} on the given C{Pipeline}.
 
+        @param pipeline: The C{Pipeline} to set the C{Action} onto.
+        @type pipeline: C{Pipeline}
+        @warning: This method should only be used by C{Pipeline}s when the given
+        C{Action} is set on them.
         @precondition: The C{Action} must not be set to any other C{Pipeline}
         when this method is called.
+        @raise ActionError: If the C{Action} is active or the pipeline is set to
+        a different C{Pipeline}.
         """
-        raise NotImplementedError
+        if self.pipeline == pipeline:
+            gst.debug("New pipeline is the same as the currently set one")
+            return
+        if self.pipeline != None:
+            raise ActionError("Action already set to a Pipeline")
+        if self.state != STATE_NOT_ACTIVE:
+            raise ActionError("Action is active, can't change Pipeline")
+        self.pipeline = pipeline
 
     def unsetPipeline(self):
         """
         Remove the C{Action} from the currently set C{Pipeline}.
 
+        @warning: This method should only be used by C{Pipeline}s when the given
+        C{Action} is removed from them.
         @precondition: The C{Action} must be deactivated before it can be removed from a
         C{Pipeline}.
+        @raise ActionError: If the C{Action} is active.
         """
-        raise NotImplementedError
+        if self.state != STATE_NOT_ACTIVE:
+            raise ActionError("Action is active, can't unset Pipeline")
+        self.pipeline = None
 
     #{ ObjectFactory methods
 
