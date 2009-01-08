@@ -23,11 +23,17 @@
 High-level pipelines
 """
 from pitivi.signalinterface import Signallable
+from pitivi.action import ActionError
 import gst
-(NULL,
- READY,
- PAUSED,
- PLAYING) = (gst.STATE_NULL, gst.STATE_READY, gst.STATE_PAUSED, gst.STATE_PLAYING)
+
+(STATE_NULL,
+ STATE_READY,
+ STATE_PAUSED,
+ STATE_PLAYING) = (gst.STATE_NULL, gst.STATE_READY, gst.STATE_PAUSED, gst.STATE_PLAYING)
+
+# FIXME : define/document a proper hierarchy
+class PipelineError(Exception):
+    pass
 
 # TODO : Add a convenience method to automatically do the following process:
 #  * Creating a Pipeline
@@ -51,7 +57,7 @@ class Pipeline(object, Signallable):
     @type actions: List of C{Action}
     """
 
-    __signal__ = {
+    __signals__ = {
         "action-added" : ["action"],
         "action-removed" : ["action"],
         "factory-added" : ["factory"],
@@ -64,12 +70,14 @@ class Pipeline(object, Signallable):
 
     def __init__(self):
         self._pipeline = gst.Pipeline()
-        # TODO : Listen to the pipeline bus for state changes
+        self._bus = self._pipeline.get_bus()
+        self._bus.add_signal_watch()
+        self._bus.connect("message", self._busMessageCb)
         self._factories = {} # factory => gst.Bin
         self._tees = {} # (producerfactory, stream) => gst.Element ("tee")
         self._queues = {} # (consumerfactory, stream) => gst.Element ("queue")
         self.actions = []
-        self._state = None
+        self._state = STATE_NULL
 
     def addAction(self, action):
         """
@@ -77,8 +85,24 @@ class Pipeline(object, Signallable):
 
         @return: The C{Action} that was set
         @rtype: C{Action}
+        @raise PipelineError: If the given C{Action} is already set to another
+        Pipeline
         """
-        raise NotImplementedError
+        gst.debug("action:%r" % action)
+        if action in self.actions:
+            gst.debug("Action is already used by this Pipeline, returning")
+            return action
+
+        if action.pipeline != None:
+            raise PipelineError("Action is set to another pipeline (%r)" % action.pipeline)
+
+        action.setPipeline(self)
+        gst.debug("Adding action to list of actions")
+        self.actions.append(action)
+        gst.debug("Emitting 'action-added' signal")
+        self.emit("action-added", action)
+        gst.debug("Returning")
+        return action
 
     def setAction(self, action):
         """
@@ -92,7 +116,12 @@ class Pipeline(object, Signallable):
         @return: The C{Action} used. Might be different from the one given as
         input.
         """
-        raise NotImplementedError
+        gst.debug("action:%r" % action)
+        for ac in self.actions:
+            if type(action) == type(ac):
+                gst.debug("We already have a %r Action : %r" % (type(action), ac))
+                return ac
+        return self.addAction(action)
 
     def removeAction(self, action):
         """
@@ -106,26 +135,47 @@ class Pipeline(object, Signallable):
         @type action: C{Action}
         @rtype: L{bool}
         @return: Whether the C{Action} was removed from the C{Pipeline} or not.
+        @raise PipelineError: If C{Action} is activated or C{Pipeline} is not
+        READY or NULL
         """
-        raise NotImplementedError
+        gst.debug("action:%r" % action)
+        if not action in self.actions:
+            gst.debug("action not controlled by this Pipeline, returning")
+            return
+        if self._state in [STATE_PAUSED, STATE_PLAYING]:
+            raise PipelineError("Actions can not be in a PLAYING or PAUSED Pipeline")
+        try:
+            action.unsetPipeline()
+        except ActionError:
+            raise PipelineError("Can't unset Action from Pipeline")
+        self.actions.remove(action)
+        self.emit('action-removed', action)
 
-    def _setState(self, state):
+    def setState(self, state):
         """
         Set the C{Pipeline} to the given state.
-        """
-        raise NotImplementedError
 
-    def _getState(self):
+        @raises PipelineError: If the C{gst.Pipeline} could not be changed to
+        the requested state.
         """
-        Returns the state of the C{Pipeline}.
+        gst.debug("state:%r" % state)
+        if self._state == state:
+            gst.debug("Already at the required state, returning")
+            return
+        res = self._pipeline.set_state(state)
+        if res == gst.STATE_CHANGE_FAILURE:
+            raise PipelineError("Failure changing state of the gst.Pipeline")
 
-        This doesn't query the underlying C{gst.Pipeline} but returns the cached
+    @property
+    def state(self):
+        """
+        The state of the C{Pipeline}.
+
+        @warning: This doesn't query the underlying C{gst.Pipeline} but returns the cached
         state.
         """
+        gst.debug("Returning state %r" % self._state)
         return self._state
-
-    state = property(_getState, _setState,
-                     doc="""The C{gst.State} of the C{Pipeline}""")
 
     def addFactory(self, *factories):
         """
@@ -214,3 +264,19 @@ class Pipeline(object, Signallable):
         @postcondition: The C{Pipeline} will no longer be usable.
         """
         raise NotImplementedError
+
+    ## Private methods
+
+    def _busMessageCb(self, unused_bus, message):
+        gst.info("%s [%r]" % (message.type, message.src))
+        if message.type == gst.MESSAGE_EOS:
+            self.emit('eos')
+        elif message.type == gst.MESSAGE_STATE_CHANGED and message.src == self._pipeline:
+            prev, new, pending = message.parse_state_changed()
+            gst.debug("Pipeline change state prev:%r, new:%r, pending:%r" % (prev, new, pending))
+            if self._state != new:
+                self._state = new
+                self.emit('state-changed', self._state)
+        elif message.type == gst.MESSAGE_ERROR:
+            error, detail = message.parse_error()
+            self._handleErrorMessage(error, detail, message.src)
