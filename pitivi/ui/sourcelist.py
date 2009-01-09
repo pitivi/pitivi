@@ -33,6 +33,7 @@ from pitivi.stream import VideoStream, AudioStream
 from gettext import gettext as _
 from urllib import unquote
 import os
+import time
 
 (COL_ICON,
  COL_INFOTEXT,

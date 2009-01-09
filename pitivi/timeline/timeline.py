@@ -123,6 +123,16 @@ class TimelineObject(object, Signallable):
 
     out_point = property(_getOutPoint, setOutPoint)
 
+    def trimStart(self, time, snap=False):
+        if not self.track_objects:
+            raise TimelineError()
+
+        for track_object in self.track_objects:
+            track_object.trimObjectStart(time)
+
+        self.emit('start-changed', self.start)
+        self.emit('in-point-changed', self.in_point)
+
     def addTrackObject(self, obj):
         if obj.timeline_object is not None:
             raise TimelineError()

@@ -43,7 +43,7 @@ class TrackObject(object, Signallable):
         self.track = None
         self.timeline_object = None
         self.gnl_object = obj = self._makeGnlObject()
-        
+
         if start != 0:
             obj.props.start = start
 
@@ -55,7 +55,7 @@ class TrackObject(object, Signallable):
 
         if out_point != 0:
             obj.props.media_duration = out_point
-        
+
         self._connectToSignals(obj)
 
     def snapStartDurationTime(self, *args):
@@ -65,7 +65,7 @@ class TrackObject(object, Signallable):
     # metaclass.  Do we like metaclasses in pitivi?
     def _getStart(self):
         return self.gnl_object.props.start
-    
+
     def setStart(self, time, snap=False):
         if self.timeline_object is not None:
             self.timeline_object.setStart(time, snap)
@@ -82,7 +82,7 @@ class TrackObject(object, Signallable):
 
     def _getDuration(self):
         return self.gnl_object.props.duration
-    
+
     def setDuration(self, time, snap=False):
         if self.timeline_object is not None:
             self.timeline_object.setDuration(time, snap)
@@ -94,32 +94,52 @@ class TrackObject(object, Signallable):
 
     def setObjectDuration(self, time):
         self.gnl_object.props.duration = time
-    
+
     duration = property(_getDuration, setDuration)
 
     def _getInPoint(self):
         return self.gnl_object.props.media_start
-        
+
     def setInPoint(self, time, snap=False):
         if self.timeline_object is not None:
             self.timeline_object.setInPoint(time, snap)
         else:
             self.setObjectInPoint(time)
-    
+
     def setObjectInPoint(self, value):
         self.gnl_object.props.media_start = value
-    
+
     in_point = property(_getInPoint, setInPoint)
 
     def _getOutPoint(self):
         return self.gnl_object.props.media_duration
-    
+
     def setOutPoint(self, time, snap=False):
         if self.timeline_object is not None:
             self.timeline_object.setOutPoint(time, snap)
         else:
             self.setObjectOutPoint(time)
-    
+
+    def trimStart(self, time, snap=False):
+        if self.timeline_object is not None:
+            self.timeline_object.trimStart(time, snap)
+        else:
+            self.trimObjectStart(time)
+
+    def trimObjectStart(self, time):
+        new_duration = self.start + self.duration - time
+        new_duration = max(new_duration, 0)
+        delta = time - self.start
+        self.setObjectStart(time)
+        self.setObjectDuration(new_duration)
+        old_in_point = self.in_point
+        if old_in_point == gst.CLOCK_TIME_NONE:
+            old_in_point = 0
+
+        new_in_point = max(old_in_point, old_in_point + delta)
+
+        self.setObjectInPoint(new_in_point)
+
     def setObjectOutPoint(self, time):
         self.gnl_object.props.media_duration = time
 
@@ -127,13 +147,13 @@ class TrackObject(object, Signallable):
 
     def _notifyStartCb(self, obj, pspec):
         self.emit('start-changed', obj.props.start)
-    
+
     def _notifyDurationCb(self, obj, pspec):
         self.emit('duration-changed', obj.props.duration)
-    
+
     def _notifyMediaStartCb(self, obj, pspec):
         self.emit('in-point-changed', obj.props.media_start)
-    
+
     def _notifyMediaDurationCb(self, obj, pspec):
         self.emit('out-point-changed', obj.props.media_duration)
 
@@ -176,12 +196,12 @@ class Track(object, Signallable):
 
     def _getStart(self):
         return self.composition.props.start
-    
+
     start = property(_getStart)
 
     def _getDuration(self):
         return self.composition.props.duration
-    
+
     duration = property(_getDuration)
 
     def _startChangedCb(self, composition, pspec):
@@ -208,7 +228,7 @@ class Track(object, Signallable):
     def removeTrackObject(self, track_object):
         if track_object.track is None:
             raise TrackError()
-        
+
         try:
             self.composition.remove(track_object.gnl_object)
         except gst.RemoveError:

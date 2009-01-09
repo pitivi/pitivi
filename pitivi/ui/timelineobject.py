@@ -13,6 +13,8 @@ LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
 
+import gst
+
 class TimelineController(controller.Controller):
 
     _cursor = ARROW
@@ -57,7 +59,8 @@ class StartHandle(TrimHandle):
         _cursor = LEFT_SIDE
 
         def set_pos(self, obj, pos):
-            self._view.element.setInPoint(self._view.pixelToNs(pos[0]), snap=True)
+            new_start = max(self._view.pixelToNs(pos[0]), 0)
+            self._view.element.trimStart(new_start)
 
 class EndHandle(TrimHandle):
 
@@ -70,7 +73,7 @@ class EndHandle(TrimHandle):
         def set_pos(self, obj, pos):
             start = self._view.element.start
             abs_pos = self._view.pixelToNs(pos[0])
-            duration = abs_pos - start
+            duration = max(abs_pos - start, 0)
             self._view.element.setDuration(duration, snap=True)
 
 class TimelineObject(View, goocanvas.Group, Zoomable):
