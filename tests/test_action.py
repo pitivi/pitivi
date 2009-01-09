@@ -19,7 +19,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from unittest import TestCase
+from unittest import TestCase, main
 from pitivi.pipeline import Pipeline
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE, ActionError
 
@@ -34,6 +34,7 @@ class TestAction(TestCase):
         self.assertEquals(ac.pipeline, None)
 
     def testPipeline(self):
+        """ Test setPipeline and unsetPipeline """
         ac = Action()
         p = Pipeline()
         p2 = Pipeline()
@@ -56,3 +57,38 @@ class TestAction(TestCase):
         ac.setPipeline(p2)
         self.assertEquals(ac.pipeline, p2)
 
+        # remove the Pipeline again
+        ac.unsetPipeline()
+        self.assertEquals(ac.pipeline, None)
+
+        # internally set the state to ACTIVE
+        ac.state = STATE_ACTIVE
+        # now setting any Pipeline should fail !
+        self.failUnlessRaises(ActionError, ac.setPipeline, p)
+
+        # internally set the state to NOT_ACTIVE
+        ac.state = STATE_NOT_ACTIVE
+        self.assertEquals(ac.isActive(), False)
+
+        # Set a pipeline
+        ac.setPipeline(p)
+        self.assertEquals(ac.pipeline, p)
+
+        # interally set the state to ACTIVE
+        ac.state = STATE_ACTIVE
+        # we shouldn't be able to unset a pipeline from an active Action
+        self.failUnlessRaises(ActionError, ac.unsetPipeline)
+
+    def test_isActive(self):
+        """ Test isActive() """
+        ac = Action()
+
+        self.assertEquals(ac.isActive(), False)
+
+        # Here we cheat, setting manually the state !
+        ac.state = STATE_ACTIVE
+
+        self.assertEquals(ac.isActive(), True)
+
+if __name__ == "__main__":
+    main()

@@ -19,7 +19,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from unittest import TestCase
+from unittest import TestCase, main
 from pitivi.pipeline import Pipeline, STATE_NULL, STATE_PLAYING
 from pitivi.action import Action
 from common import SignalMonitor
@@ -58,6 +58,16 @@ class TestPipeline(TestCase):
         # And it contained our action
         self.assertEquals(self.monitor.action_added_collect, [(ac1, )])
 
+        # if we try to add that action again, it should be silently ignored
+        res = self.pipeline.addAction(ac1)
+        self.assertEquals(res, ac1)
+        # the list of actions shouldn't have changed
+        self.failUnlessEqual(self.pipeline.actions, [ac1])
+        # it shouldn't have changed the pipeline set on action
+        self.failUnlessEqual(ac1.pipeline, self.pipeline)
+        # the 'action-added' signal should NOT have been triggered again
+        self.assertEquals(self.monitor.action_added_count, 1)
+
         # And now to remove it
         self.pipeline.removeAction(ac1)
         # the 'action-removed' signal should have been triggered once..
@@ -72,3 +82,7 @@ class TestPipeline(TestCase):
         # change should have happened instantly... except not, because
         # the bus is asynchronous. Not sure how to check that efficiently.
         #self.assertEquals(self.pipeline.state, STATE_PLAYING)
+
+if __name__ == "__main__":
+    main()
+

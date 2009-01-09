@@ -39,8 +39,13 @@ class Action(object, Signallable):
     """
     Pipeline action.
 
-    Controls the linking of Producers and Consumers in a
-    Pipeline.
+    Controls the elements of a C{Pipeline}, including their creation,
+    activation, and linking.
+
+    Subclasses can also offer higher-level actions that automatically create
+    the Producers(s)/Consumer(s), thereby simplifying the work required to do
+    a certain multimedia 'Action' (Ex: Automatically create the appropriate
+    Consumer for rendering a producer stream to a file).
 
     @ivar state: Whether the action is active or not
     @type state: C{ActionState}
@@ -50,7 +55,16 @@ class Action(object, Signallable):
     @type consumers: List of C{ObjectFactory}
     @ivar pipeline: The C{Pipeline} controlled by this C{Action}.
     @type pipeline: C{Pipeline}
+    @cvar compatible_producers: The list of compatible factories that
+    this C{Action} can handle as producers.
+    @type compatible_producers: List of C{ObjectFactory}
+    @cvar compatible_consumers: The list of compatible factories that
+    this C{Action} can handle as consumers.
+    @type compatible_consumers: List of C{ObjectFactory}
     """
+
+    compatible_producers = []
+    compatible_consumers = []
 
     __signals__ = {
         "state-changed" : ["state"]
@@ -71,17 +85,27 @@ class Action(object, Signallable):
         For each of the consumers/producers it will create the relevant
         GStreamer objects for the Pipeline (if they don't already exist).
 
-        @precondition: Must be set to a C{Pipeline}
+        @precondition: Must be set to a C{Pipeline}.
+        @precondition: All consumers/producers must be set on the C{Pipeline}.
 
         @return: Whether the C{Action} was activated (True) or not.
         @rtype: L{bool}
-        @raise ActionError: If the C{Action} isn't set to a C{Pipeline}
+        @raise ActionError: If the C{Action} isn't set to a C{Pipeline}, or one
+        of the consumers/producers isn't set on the Pipeline.
         """
         if self.pipeline == None:
             raise ActionError("Action isn't set to a Pipeline")
         if self.state == STATE_ACTIVE:
             gst.debug("Action already activated, returning")
             return
+        # FIXME : Add an overrideable method for subclasses to add some
+        # consumers or producers, or modify/set the properties of those.
+        for p in self.producers:
+            if not p in self.pipeline.factories:
+                raise ActionError("One of the Producers isn't set on the Pipeline")
+        for p in self.consumers:
+            if not p in self.pipeline.factories:
+                raise ActionError("One of the Consumers isn't set on the Pipeline")
         # TODO : Create bins (if needed), tees, queues, link
         self.state = STATE_ACTIVE
         self.emit('state-changed', self.state)

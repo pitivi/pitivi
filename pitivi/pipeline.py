@@ -49,7 +49,14 @@ class Pipeline(object, Signallable):
     """
     A container for all multimedia processing.
 
-    You can set C{Action}s on it.
+    The Pipeline is only responsible for:
+     - State changes
+     - Position seeking
+     - Position Querying
+       - Along with an periodic callback (optional)
+
+    You can set C{Action}s on it, which are responsible for choosing which
+    C{ObjectFactories} should be used, and how they should be linked.
 
     @ivar state: The current state.
     @type state: C{gst.State}
