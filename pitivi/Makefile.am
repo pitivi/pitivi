@@ -8,6 +8,7 @@ pitividir = $(libdir)/pitivi/python/pitivi
 
 pitivi_PYTHON = \
 	__init__.py 	\
+	action.py	\
 	bin.py 		\
 	check.py 	\
 	configure.py 	\
@@ -16,6 +17,7 @@ pitivi_PYTHON = \
 	effects.py	\
 	instance.py 	\
 	objectfactory.py \
+	pipeline.py	\
 	pitivi.py 	\
 	pitivigstutils.py \
 	playground.py 	\
