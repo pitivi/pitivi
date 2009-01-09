@@ -80,8 +80,13 @@ class TestPipeline(TestCase):
     def testStateChange(self):
         self.pipeline.setState(STATE_PLAYING)
         # change should have happened instantly... except not, because
-        # the bus is asynchronous. Not sure how to check that efficiently.
-        #self.assertEquals(self.pipeline.state, STATE_PLAYING)
+        # the bus is asynchronous. We are therefore not guaranteed when
+        # the message will be received on the mainloop bus.
+        # Not sure how to check that efficiently.
+        self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
+
+        self.pipeline.setState(STATE_NULL)
+        self.assertEquals(self.pipeline.getState(), STATE_NULL)
 
 if __name__ == "__main__":
     main()

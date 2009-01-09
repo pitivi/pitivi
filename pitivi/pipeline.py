@@ -58,7 +58,8 @@ class Pipeline(object, Signallable):
     You can set C{Action}s on it, which are responsible for choosing which
     C{ObjectFactories} should be used, and how they should be linked.
 
-    @ivar state: The current state.
+    @ivar state: The current state. This is a cached value, use getState() for
+    the exact actual C{gst.State} of the C{Pipeline}.
     @type state: C{gst.State}
     @ivar actions: The Action(s) currently used.
     @type actions: List of C{Action}
@@ -185,6 +186,21 @@ class Pipeline(object, Signallable):
         res = self._pipeline.set_state(state)
         if res == gst.STATE_CHANGE_FAILURE:
             raise PipelineError("Failure changing state of the gst.Pipeline")
+
+    def getState(self):
+        """
+        Query the C{Pipeline} for the current state.
+
+        This will do an actual query to the underlying GStreamer Pipeline.
+        @return: The current state.
+        @rtype: C{State}
+        """
+        change, state, pending = self._pipeline.get_state(0)
+        gst.debug("change:%r, state:%r, pending:%r" % (change, state, pending))
+        if change != gst.STATE_CHANGE_FAILURE:
+            self._state = state
+        gst.debug("Returning %r" % self._state)
+        return self._state
 
     @property
     def state(self):
