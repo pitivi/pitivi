@@ -34,6 +34,11 @@ from random import randint
 class Signallable:
     """
     Signallable interface
+
+    @cvar __signals__: The signals the class can emit as a dictionnary of
+     - Key : signal name
+     - Value : List of arguments (can be None)
+    @type __signals__: Dictionnary of L{str} : List of L{str}
     """
 
     class SignalGroup:
@@ -129,7 +134,7 @@ class Signallable:
         The object emitting the signal will be provided as the first
         argument of the callback
 
-        Returns the first non-None return value given by the callbacks if they
+        @return: The first non-None return value given by the callbacks if they
         provide any non-None return value.
         """
         if not hasattr(self, "_signal_group"):
