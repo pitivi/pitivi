@@ -186,6 +186,10 @@ class Pipeline(object, Signallable):
         res = self._pipeline.set_state(state)
         if res == gst.STATE_CHANGE_FAILURE:
             raise PipelineError("Failure changing state of the gst.Pipeline")
+        if res == gst.STATE_CHANGE_SUCCESS:
+            # the change to the request state was successful and not asynchronous
+            self._state = state
+            self.emit('state-changed', self._state)
 
     def getState(self):
         """
@@ -197,8 +201,9 @@ class Pipeline(object, Signallable):
         """
         change, state, pending = self._pipeline.get_state(0)
         gst.debug("change:%r, state:%r, pending:%r" % (change, state, pending))
-        if change != gst.STATE_CHANGE_FAILURE:
+        if change != gst.STATE_CHANGE_FAILURE and pending == gst.STATE_VOID_PENDING and state != self._state:
             self._state = state
+            self.emit('state-changed', self._state)
         gst.debug("Returning %r" % self._state)
         return self._state
 
@@ -273,7 +278,7 @@ class Pipeline(object, Signallable):
                     raise PipelineError("Some factories belong to still active Action")
         # at this point we can remove the factories
         for f in rfact:
-            self._removeFactory(self, f)
+            self._removeFactory(f)
 
     def _removeFactory(self, factory):
         gst.debug("factory %r" % factory)
@@ -295,6 +300,7 @@ class Pipeline(object, Signallable):
             factory.releaseBin(b)
 
         # And finally remove the factory itself from our list
+        self.factories.remove(factory)
         self.emit("factory-removed", factory)
 
     #{ Position and Seeking methods

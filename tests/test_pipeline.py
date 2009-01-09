@@ -20,9 +20,9 @@
 # Boston, MA 02111-1307, USA.
 
 from unittest import TestCase, main
-from pitivi.pipeline import Pipeline, STATE_NULL, STATE_READY, STATE_PAUSED, STATE_PLAYING
+from pitivi.pipeline import Pipeline, STATE_NULL, STATE_READY, STATE_PAUSED, STATE_PLAYING, PipelineError
 from pitivi.action import Action
-from common import SignalMonitor
+from common import SignalMonitor, FakeSourceFactory, FakeSinkFactory
 
 class BogusAction(Action):
     pass
@@ -35,7 +35,8 @@ class TestPipeline(TestCase):
     def setUp(self):
         self.pipeline = Pipeline()
         self.monitor = SignalMonitor(self.pipeline, 'action-added',
-                                     'action-removed')
+                                     'action-removed', 'factory-added',
+                                     'factory-removed', 'state-changed')
         self.assertEquals(self.monitor.action_added_count, 0)
         self.assertEquals(self.monitor.action_added_collect, [])
 
@@ -85,18 +86,72 @@ class TestPipeline(TestCase):
         # the message will be received on the mainloop bus.
         # Not sure how to check that efficiently.
         self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
+        self.assertEquals(self.pipeline.state, STATE_PLAYING)
 
         self.pipeline.setState(STATE_NULL)
         self.assertEquals(self.pipeline.getState(), STATE_NULL)
+        self.assertEquals(self.pipeline.state, STATE_NULL)
 
         self.pipeline.play()
         self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
+        self.assertEquals(self.pipeline.state, STATE_PLAYING)
 
         self.pipeline.pause()
         self.assertEquals(self.pipeline.getState(), STATE_PAUSED)
+        self.assertEquals(self.pipeline.state, STATE_PAUSED)
 
         self.pipeline.stop()
         self.assertEquals(self.pipeline.getState(), STATE_READY)
+        self.assertEquals(self.pipeline.state, STATE_READY)
+
+    def testAddRemoveFactoriesSimple(self):
+        """ Test adding and removing factories without any
+        Actions involved"""
+        src = FakeSourceFactory()
+        sink = FakeSinkFactory()
+
+        ## ADDING FACTORIES
+        # We can't set factories on pipelines that are in
+        # PAUSED or PLAYING
+        self.pipeline.setState(STATE_PAUSED)
+        self.assertEquals(self.pipeline.getState(), STATE_PAUSED)
+        self.failUnlessRaises(PipelineError, self.pipeline.addFactory, src)
+        self.pipeline.setState(STATE_PLAYING)
+        self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
+        self.failUnlessRaises(PipelineError, self.pipeline.addFactory, src)
+
+        # let's add some factories
+        self.pipeline.setState(STATE_NULL)
+        self.assertEquals(self.pipeline.getState(), STATE_NULL)
+        self.pipeline.addFactory(src)
+        self.assertEquals(self.pipeline.factories, [src])
+        self.pipeline.addFactory(sink)
+        self.assertEquals(self.pipeline.factories, [src, sink])
+
+        # adding the same factory again doesn't do anything
+        # FIXME : Does that make sense ???
+        self.pipeline.addFactory(sink)
+        self.assertEquals(self.pipeline.factories, [src, sink])
+
+        ## REMOVE FACTORIES
+        # can't remove factories in PAUSED or PLAYING
+        self.pipeline.setState(STATE_PAUSED)
+        self.assertEquals(self.pipeline.getState(), STATE_PAUSED)
+        self.failUnlessRaises(PipelineError, self.pipeline.removeFactory, src)
+        self.pipeline.setState(STATE_PLAYING)
+        self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
+        self.failUnlessRaises(PipelineError, self.pipeline.removeFactory, src)
+
+        self.pipeline.setState(STATE_NULL)
+        self.assertEquals(self.pipeline.getState(), STATE_NULL)
+        self.pipeline.removeFactory(src)
+        self.assertEquals(self.pipeline.factories, [sink])
+        # removing the same factory twice shouldn't do anything
+        self.pipeline.removeFactory(src)
+        self.assertEquals(self.pipeline.factories, [sink])
+
+        self.pipeline.removeFactory(sink)
+        self.assertEquals(self.pipeline.factories, [])
 
 if __name__ == "__main__":
     main()
