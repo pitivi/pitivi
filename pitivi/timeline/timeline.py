@@ -306,10 +306,18 @@ class Timeline(object ,Signallable):
     # FIXME: find a better name?
     def addFactory(self, factory):
         track_object = SourceTrackObject(factory)
+        timeline_object = TimelineObject(factory)
+        timeline_object.addTrackObject(track_object)
+        self.addTimelineObject(timeline_object)
 
         track = self.tracks[0]
         duration = track.duration
-        # FIXME: figure out where to put the object
         self.tracks[0].addTrackObject(track_object)
 
-        track_object.start = duration
+        timeline_object.setStart(duration)
+
+    def setSelectionTo(self, selection, *args):
+        pass
+    
+    def setSelectionToObj(self, selection, *args):
+        pass

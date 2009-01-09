@@ -18,14 +18,16 @@ class TimelineController(controller.Controller):
     _cursor = ARROW
 
     def drag_start(self):
-        self._view.timeline.disableEdgeUpdates()
+        #FIXME: self._view.timeline.disableEdgeUpdates()
+        pass
 
     def drag_end(self):
-        self._view.timeline.enableEdgeUpdates()
+        #FIXME: self._view.timeline.enableEdgeUpdates()
+        pass
 
     def set_pos(self, item, pos):
-        self._view.element.snapStartDurationTime(max(
-            self._view.pixelToNs(pos[0]), 0))
+        self._view.element.setStart(max(self._view.pixelToNs(pos[0]), 0),
+                snap=True)
 
 class TrimHandle(View, goocanvas.Rect, Zoomable):
 
@@ -55,8 +57,7 @@ class StartHandle(TrimHandle):
         _cursor = LEFT_SIDE
 
         def set_pos(self, obj, pos):
-            self._view.element.snapInTime(
-                self._view.pixelToNs(pos[0]))
+            self._view.element.setInPoint(self._view.pixelToNs(pos[0]), snap=True)
 
 class EndHandle(TrimHandle):
 
@@ -67,8 +68,10 @@ class EndHandle(TrimHandle):
         _cursor = RIGHT_SIDE
 
         def set_pos(self, obj, pos):
-            self._view.element.snapOutTime(
-                self._view.pixelToNs(pos[0]))
+            start = self._view.element.start
+            abs_pos = self._view.pixelToNs(pos[0])
+            duration = abs_pos - start
+            self._view.element.setDuration(duration, snap=True)
 
 class TimelineObject(View, goocanvas.Group, Zoomable):
 
@@ -128,14 +131,14 @@ class TimelineObject(View, goocanvas.Group, Zoomable):
             self.element.duration)
 
     @handler(element, "start-changed")
-    def _startChangedCb(self, timeline_object, start):
-        self._startDurationChangedCb(timeline_object,
-                timeline_object.start, timeline_object.duration)
+    def _startChangedCb(self, track_object, start):
+        self._startDurationChangedCb(track_object,
+                track_object.start, track_object.duration)
 
     @handler(element, "duration-changed")
-    def _startChangedCb(self, timeline_object, start):
-        self._startDurationChangedCb(timeline_object,
-                timeline_object.start, timeline_object.duration)
+    def _startChangedCb(self, track_object, start):
+        self._startDurationChangedCb(track_object,
+                track_object.start, track_object.duration)
     
     def _startDurationChangedCb(self, obj, start, duration):
         self.set_simple_transform(self.nsToPixel(start), 0, 1, 0)

@@ -1,5 +1,5 @@
 from pitivi.ui.track import Track
-from pitivi.timeline.timeline import TimelineObject
+from pitivi.ui.timelineobject import TimelineObject
 import controller
 import view
 from point import Point
