@@ -88,21 +88,55 @@ class TestPipeline(TestCase):
         self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
         self.assertEquals(self.pipeline.state, STATE_PLAYING)
 
+        # the 'state-changed' signal should have been emitted with the
+        # correct state
+        self.assertEquals(self.monitor.state_changed_count, 1)
+        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, )])
+
+        # Setting to the same state again shouldn't change anything
+        self.pipeline.setState(STATE_PLAYING)
+        self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
+        self.assertEquals(self.pipeline.state, STATE_PLAYING)
+        self.assertEquals(self.monitor.state_changed_count, 1)
+        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, )])
+
+        # back to NULL
         self.pipeline.setState(STATE_NULL)
         self.assertEquals(self.pipeline.getState(), STATE_NULL)
         self.assertEquals(self.pipeline.state, STATE_NULL)
+        self.assertEquals(self.monitor.state_changed_count, 2)
+        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, ),
+                                                               (STATE_NULL, )])
 
+        # .play()
         self.pipeline.play()
         self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
         self.assertEquals(self.pipeline.state, STATE_PLAYING)
+        self.assertEquals(self.monitor.state_changed_count, 3)
+        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, ),
+                                                               (STATE_NULL, ),
+                                                               (STATE_PLAYING, )])
 
+        # .pause()
         self.pipeline.pause()
         self.assertEquals(self.pipeline.getState(), STATE_PAUSED)
         self.assertEquals(self.pipeline.state, STATE_PAUSED)
+        self.assertEquals(self.monitor.state_changed_count, 4)
+        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, ),
+                                                               (STATE_NULL, ),
+                                                               (STATE_PLAYING, ),
+                                                               (STATE_PAUSED, )])
 
+        # .stop()
         self.pipeline.stop()
         self.assertEquals(self.pipeline.getState(), STATE_READY)
         self.assertEquals(self.pipeline.state, STATE_READY)
+        self.assertEquals(self.monitor.state_changed_count, 5)
+        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, ),
+                                                               (STATE_NULL, ),
+                                                               (STATE_PLAYING, ),
+                                                               (STATE_PAUSED, ),
+                                                               (STATE_READY, )])
 
     def testAddRemoveFactoriesSimple(self):
         """ Test adding and removing factories without any
