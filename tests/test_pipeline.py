@@ -20,7 +20,7 @@
 # Boston, MA 02111-1307, USA.
 
 from unittest import TestCase, main
-from pitivi.pipeline import Pipeline, STATE_NULL, STATE_PLAYING
+from pitivi.pipeline import Pipeline, STATE_NULL, STATE_READY, STATE_PAUSED, STATE_PLAYING
 from pitivi.action import Action
 from common import SignalMonitor
 
@@ -40,6 +40,7 @@ class TestPipeline(TestCase):
         self.assertEquals(self.monitor.action_added_collect, [])
 
     def cleanUp(self):
+        self.pipeline.setState(STATE_NULL)
         del self.pipeline
 
     def testAddRemoveActionSimple(self):
@@ -87,6 +88,15 @@ class TestPipeline(TestCase):
 
         self.pipeline.setState(STATE_NULL)
         self.assertEquals(self.pipeline.getState(), STATE_NULL)
+
+        self.pipeline.play()
+        self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
+
+        self.pipeline.pause()
+        self.assertEquals(self.pipeline.getState(), STATE_PAUSED)
+
+        self.pipeline.stop()
+        self.assertEquals(self.pipeline.getState(), STATE_READY)
 
 if __name__ == "__main__":
     main()

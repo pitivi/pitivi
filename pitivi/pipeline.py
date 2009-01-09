@@ -225,6 +225,12 @@ class Pipeline(object, Signallable):
         """
         self.setState(STATE_PAUSED)
 
+    def stop(self):
+        """
+        Sets the C{Pipeline} to READY
+        """
+        self.setState(STATE_READY)
+
     #{ ObjectFactory-related methods
 
     def addFactory(self, *factories):
