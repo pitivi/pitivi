@@ -4,7 +4,7 @@ A collection of objects to use for testing
 
 from pitivi.timeline.objects import TimelineObject, MEDIA_TYPE_NONE, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
 from pitivi.timeline.source import TimelineSource, TimelineFileSource
-from pitivi.factories.base import ObjectFactory
+from pitivi.factories.base import ObjectFactory, SourceFactory, SinkFactory
 import gst
 
 class TestTimelineObject(TimelineObject):
@@ -86,61 +86,71 @@ class TestTimelineFileSource(TimelineFileSource):
             brother = None
         return brother
 
+class FakeSourceFactory(SourceFactory):
 
-class TestObjectFactory(ObjectFactory):
-    """
-    Test ObjectFactory
-    """
+    def _makeBin(self, output_stream=None):
+        return gst.element_factory_make("fakesrc")
 
-    __data_type__ = "test-object-factory"
+class FakeSinkFactory(SinkFactory):
 
-    def __init__(self, audio=True, video=False, **kwargs):
-        self.__audio = audio
-        self.__video = video
-        self.__id = 0
-        ObjectFactory.__init__(self, **kwargs)
-        self.is_video = video
-        self.is_audio = audio
-        self.lastbinid = 0
+    def _makeBin(self, output_stream=None):
+        return gst.element_factory_make("fakesink")
 
-    def makeAudioBin(self):
-        gnlobj = gst.element_factory_make("gnlsource", "test-audio-%d" % self.__id)
-        self.__id = self.__id + 1
-        gnlobj.add(gst.element_factory_make("audiotestsrc"))
-        return gnlobj
+# REMOVE THESE old-style FACTORIES !!!
+# class TestObjectFactory(ObjectFactory):
+#     """
+#     Test ObjectFactory
+#     """
 
-    def makeVideoBin(self):
-        gnlobj = gst.element_factory_make("gnlsource", "test-video-%d" % self.__id)
-        self.__id = self.__id + 1
-        gnlobj.add(gst.element_factory_make("videotestsrc"))
-        return gnlobj
+#     __data_type__ = "test-object-factory"
 
-class TestFileSourceFactory(TestObjectFactory):
+#     def __init__(self, audio=True, video=False, **kwargs):
+#         self.__audio = audio
+#         self.__video = video
+#         self.__id = 0
+#         ObjectFactory.__init__(self, **kwargs)
+#         self.is_video = video
+#         self.is_audio = audio
+#         self.lastbinid = 0
 
-    __data_type__ = "test-file-source-factory"
+#     def makeAudioBin(self):
+#         gnlobj = gst.element_factory_make("gnlsource", "test-audio-%d" % self.__id)
+#         self.__id = self.__id + 1
+#         gnlobj.add(gst.element_factory_make("audiotestsrc"))
+#         return gnlobj
 
-    def __init__(self, duration=gst.SECOND, *args, **kwargs):
-        TestObjectFactory.__init__(self, *args, **kwargs)
-        self.length = duration
+#     def makeVideoBin(self):
+#         gnlobj = gst.element_factory_make("gnlsource", "test-video-%d" % self.__id)
+#         self.__id = self.__id + 1
+#         gnlobj.add(gst.element_factory_make("videotestsrc"))
+#         return gnlobj
 
-    def _getDefaultDuration(self):
-        """
-        Returns the default duration of a file in nanoseconds,
-        this should be used when using sources initially.
+# class TestFileSourceFactory(TestObjectFactory):
 
-        Most sources will return the same as getDuration(), but can be overriden
-        for sources that have an infinite duration.
-        """
-        return self.duration
+#     __data_type__ = "test-file-source-factory"
 
-    @property
-    def default_duration(self):
-        """Default duration of the source in nanoseconds"""
-        return self._getDefaultDuration()
+#     def __init__(self, duration=gst.SECOND, *args, **kwargs):
+#         TestObjectFactory.__init__(self, *args, **kwargs)
+#         self.length = duration
 
-    def _getDuration(self):
-        return self.length
-    duration = property(_getDuration)
+#     def _getDefaultDuration(self):
+#         """
+#         Returns the default duration of a file in nanoseconds,
+#         this should be used when using sources initially.
+
+#         Most sources will return the same as getDuration(), but can be overriden
+#         for sources that have an infinite duration.
+#         """
+#         return self.duration
+
+#     @property
+#     def default_duration(self):
+#         """Default duration of the source in nanoseconds"""
+#         return self._getDefaultDuration()
+
+#     def _getDuration(self):
+#         return self.length
+#     duration = property(_getDuration)
 
 class SignalMonitor(object):
     def __init__(self, obj, *signals):
