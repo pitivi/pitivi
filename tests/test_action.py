@@ -22,6 +22,7 @@
 from unittest import TestCase, main
 from pitivi.pipeline import Pipeline
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE, ActionError
+import common
 
 class TestAction(TestCase):
 
@@ -89,6 +90,56 @@ class TestAction(TestCase):
         ac.state = STATE_ACTIVE
 
         self.assertEquals(ac.isActive(), True)
+
+    def testSettingFactoriesSimple(self):
+        ac = Action()
+        p = Pipeline()
+
+        src = common.FakeSourceFactory()
+        sink = common.FakeSinkFactory()
+
+        # you can't set a Sink element as a producer
+        self.failUnlessRaises(ActionError, ac.addProducers, sink)
+        # you can't set a Source element as a consumer
+        self.failUnlessRaises(ActionError, ac.addConsumers, src)
+
+        # if the action is active, you can't add anything
+        ac.state = STATE_ACTIVE
+        self.failUnlessRaises(ActionError, ac.addProducers, src)
+        self.failUnlessRaises(ActionError, ac.addConsumers, sink)
+        ac.state = STATE_NOT_ACTIVE
+
+        # Set a producer and consumer on the action
+        ac.addProducers(src)
+        ac.addConsumers(sink)
+
+        self.assertEquals(ac.producers, [src])
+        self.assertEquals(ac.consumers, [sink])
+
+        # remove a sink from producers should not do anything
+        ac.removeProducers(sink)
+        self.assertEquals(ac.producers, [src])
+        self.assertEquals(ac.consumers, [sink])
+
+        # remove a source from consumers should not do anything
+        ac.removeConsumers(src)
+        self.assertEquals(ac.producers, [src])
+        self.assertEquals(ac.consumers, [sink])
+
+        # you can't remove anything from an active action
+        ac.state = STATE_ACTIVE
+        self.failUnlessRaises(ActionError, ac.removeProducers, src)
+        self.failUnlessRaises(ActionError, ac.removeConsumers, sink)
+        ac.state = STATE_NOT_ACTIVE
+
+        # finally, attempt correct removal
+        ac.removeProducers(src)
+        self.assertEquals(ac.producers, [])
+        self.assertEquals(ac.consumers, [sink])
+
+        ac.removeConsumers(sink)
+        self.assertEquals(ac.producers, [])
+        self.assertEquals(ac.consumers, [])
 
 if __name__ == "__main__":
     main()

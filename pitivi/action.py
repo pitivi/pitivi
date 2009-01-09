@@ -29,6 +29,7 @@ states = (STATE_NOT_ACTIVE,
           STATE_ACTIVE) = range(2)
 
 from pitivi.signalinterface import Signallable
+from pitivi.factories.base import SourceFactory, SinkFactory
 import gst
 
 # FIXME : define/document a proper hierarchy
@@ -63,8 +64,8 @@ class Action(object, Signallable):
     @type compatible_consumers: List of C{ObjectFactory}
     """
 
-    compatible_producers = []
-    compatible_consumers = []
+    compatible_producers = [ SourceFactory ]
+    compatible_consumers = [ SinkFactory ]
 
     __signals__ = {
         "state-changed" : ["state"]
@@ -181,16 +182,30 @@ class Action(object, Signallable):
 
     #{ ObjectFactory methods
 
-    def setProducers(self, *producers):
+    def addProducers(self, *producers):
         """
-        Set the given C{ObjectFactories} as producers of the C{Action}.
+        Add the given C{ObjectFactories} as producers of the C{Action}.
 
         @type producers: List of C{ObjectFactory}
         @raise ActionError: If the C{Action} is active.
         """
+        gst.debug("producers:%r" % producers)
         if self.state != STATE_NOT_ACTIVE:
             raise ActionError("Action is active, can't add Producers")
-        raise NotImplementedError
+        # make sure producers are of the valid type
+        if self.compatible_producers != []:
+            for p in producers:
+                val = False
+                for t in self.compatible_producers:
+                    if isinstance(p, t):
+                        val = True
+                        continue
+                if val == False:
+                    raise ActionError("Some producers are not of the compatible type")
+        for p in producers:
+            if not p in self.producers:
+                gst.debug("really adding %r to our producers" % p)
+                self.producers.append(p)
 
     def removeProducers(self, *producers):
         """
@@ -201,18 +216,35 @@ class Action(object, Signallable):
         """
         if self.state != STATE_NOT_ACTIVE:
             raise ActionError("Action is active, can't remove Producers")
-        raise NotImplementedError
+        # FIXME : figure out what to do in regards with links
+        for p in producers:
+            if p in self.producers:
+                self.producers.remove(p)
 
-    def setConsumers(self, *consumers):
+    def addConsumers(self, *consumers):
         """
         Set the given C{ObjectFactories} as consumers of the C{Action}.
 
         @type consumers: List of C{ObjectFactory}
         @raise ActionError: If the C{Action} is active.
         """
+        gst.debug("consumers: %r" % consumers)
         if self.state != STATE_NOT_ACTIVE:
             raise ActionError("Action is active, can't add Producers")
-        raise NotImplementedError
+        # make sure consumers are of the valid type
+        if self.compatible_consumers != []:
+            for p in consumers:
+                val = False
+                for t in self.compatible_consumers:
+                    if isinstance(p, t):
+                        val = True
+                        continue
+                if val == False:
+                    raise ActionError("Some consumers are not of the compatible type")
+        for p in consumers:
+            if not p in self.consumers:
+                gst.debug("really adding %r to our consumers" % p)
+                self.consumers.append(p)
 
     def removeConsumers(self, *consumers):
         """
@@ -223,7 +255,10 @@ class Action(object, Signallable):
         """
         if self.state != STATE_NOT_ACTIVE:
             raise ActionError("Action is active, can't remove Consumers")
-        raise NotImplementedError
+        # FIXME : figure out what to do in regards with links
+        for p in consumers:
+            if p in self.consumers:
+                self.consumers.remove(p)
 
     #{ Link methods
 
