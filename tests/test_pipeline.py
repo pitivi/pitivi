@@ -45,6 +45,7 @@ class TestPipeline(TestCase):
         del self.pipeline
 
     def testAddRemoveActionSimple(self):
+        """ Simple add/remove of Actions """
         ac1 = BogusAction()
 
         # add the action to the pipeline
@@ -79,7 +80,42 @@ class TestPipeline(TestCase):
         # And there should be no actions left on the pipeline
         self.assertEquals(self.pipeline.actions, [])
 
+    def testAddRemoveActionAdvanced(self):
+        """ Advanced add/remove of Actions """
+        ac1 = BogusAction()
+        ac2 = BogusAction()
+        p2 = Pipeline()
+
+        res = self.pipeline.addAction(ac1)
+        self.assertEquals(self.pipeline.actions, [ac1])
+
+        # we can't add an action to two pipelines at the same time
+        self.failUnlessRaises(PipelineError, p2.addAction, ac1)
+
+        self.pipeline.removeAction(ac1)
+        self.assertEquals(self.pipeline.actions, [])
+
+        res = self.pipeline.setAction(ac1)
+        self.assertEquals(res, ac1)
+        self.assertEquals(self.pipeline.actions, [ac1])
+        # calling setAction while a similar action is already set should
+        # return the existing action and not change anything else
+        res = self.pipeline.setAction(ac2)
+        self.assertEquals(res, ac1)
+        self.assertEquals(self.pipeline.actions, [ac1])
+
+        # we can't remove actions while in PAUSED/PLAYING
+        self.pipeline.setState(STATE_PAUSED)
+        self.assertEquals(self.pipeline.state, STATE_PAUSED)
+        self.failUnlessRaises(PipelineError, self.pipeline.removeAction, ac1)
+
+        # but we can add some
+        res = self.pipeline.addAction(ac2)
+        self.assertEquals(res, ac2)
+        self.assertEquals(self.pipeline.actions, [ac1, ac2])
+
     def testStateChange(self):
+        """ State Changes """
         self.pipeline.setState(STATE_PLAYING)
         # change should have happened instantly... except not, because
         # the bus is asynchronous. We are therefore not guaranteed when
