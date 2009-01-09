@@ -47,10 +47,6 @@ class TestTimelineObjectAddRemoveTrackObjects(TestCase):
         track_object1 = SourceTrackObject(factory)
         track_object2 = SourceTrackObject(factory)
 
-        # track_object1 doesn't belong to any track
-        self.failUnlessRaises(TimelineError,
-                timeline_object1.addTrackObject, track_object1)
-
         track.addTrackObject(track_object1)
         timeline_object1.addTrackObject(track_object1)
 
