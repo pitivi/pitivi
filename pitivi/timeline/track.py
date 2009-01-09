@@ -58,39 +58,72 @@ class TrackObject(object, Signallable):
         
         self._connectToSignals(obj)
 
+    def snapStartDurationTime(self, *args):
+        return
+
     # FIXME: there's a lot of boilerplate here that could be factored in a
     # metaclass.  Do we like metaclasses in pitivi?
     def _getStart(self):
         return self.gnl_object.props.start
     
-    def _setStart(self, value):
-        self.gnl_object.props.start = value
+    def setStart(self, time, snap=False):
+        if self.timeline_object is not None:
+            self.timeline_object.setStart(time, snap)
+        else:
+            if snap:
+                raise TrackError()
 
-    start = property(_getStart, _setStart)
+            self.setObjectStart(time)
+
+    def setObjectStart(self, time):
+        self.gnl_object.props.start = time
+
+    start = property(_getStart, setStart)
 
     def _getDuration(self):
         return self.gnl_object.props.duration
     
-    def _setDuration(self, value):
-        self.gnl_object.props.duration = value
+    def setDuration(self, time, snap=False):
+        if self.timeline_object is not None:
+            self.timeline_object.setDuration(time, snap)
+        else:
+            if snap:
+                raise TrackError()
+
+            self.setObjectDuration(time)
+
+    def setObjectDuration(self, time):
+        self.gnl_object.props.duration = time
     
-    duration = property(_getDuration, _setDuration)
+    duration = property(_getDuration, setDuration)
 
     def _getInPoint(self):
         return self.gnl_object.props.media_start
+        
+    def setInPoint(self, time):
+        if self.timeline_object is not None:
+            self.timeline_object.setInPoint(time)
+        else:
+            self.setObjectInPoint(time)
     
-    def _setInPoint(self, value):
+    def setObjectInPoint(self, value):
         self.gnl_object.props.media_start = value
     
-    in_point = property(_getInPoint, _setInPoint)
+    in_point = property(_getInPoint, setInPoint)
 
     def _getOutPoint(self):
         return self.gnl_object.props.media_duration
     
-    def _setOutPoint(self, value):
-        self.gnl_object.props.media_duration = value
+    def setOutPoint(self, time):
+        if self.timeline_object is not None:
+            self.timeline_object.setOutPoint(time)
+        else:
+            self.setObjectOutPoint(time)
+    
+    def setObjectOutPoint(self, time):
+        self.gnl_object.props.media_duration = time
 
-    out_point = property(_getOutPoint, _setOutPoint)
+    out_point = property(_getOutPoint, setOutPoint)
 
     def _notifyStartCb(self, obj, pspec):
         self.emit('start-changed', obj.props.start)

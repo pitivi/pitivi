@@ -46,62 +46,82 @@ class TimelineObject(object, Signallable):
     def __init__(self, factory):
         self.factory = factory
         self.track_objects = []
-        self._master_track_object = None
     
     def _getStart(self):
-        if self._master_track_object is None:
+        if not self.track_objects:
             return self.DEFAULT_START
 
-        return self._master_track_object.start
-    
-    def _setStart(self, value):
-        if self._master_track_object is None:
+        return self.track_objects[0].start
+
+    def setStart(self, time, snap=False):
+        if not self.track_objects:
             raise TimelineError()
+        
+        if snap:
+            # FIXME: implement me
+            pass
 
-        self._master_track_object.start = value
+        for track_object in self.track_objects:
+            track_object.setObjectStart(time)
+        
+        self.emit('start-changed', time)
 
-    start = property(_getStart, _setStart)
+    start = property(_getStart, setStart)
 
     def _getDuration(self):
-        if self._master_track_object is None:
+        if not self.track_objects:
             return self.DEFAULT_DURATION
         
-        return self._master_track_object.duration
+        return self.track_objects[0].duration
     
-    def _setDuration(self, value):
-        if self._master_track_object is None:
+    def setDuration(self, time, snap=False):
+        if not self.track_objects:
             raise TimelineError()
         
-        self._master_track_object.duration = value
+        if snap:
+            # FIXME: implement me
+            pass
+        
+        for track_object in self.track_objects:
+            track_object.setObjectDuration(time)
+
+        self.emit('duration-changed', time)
     
-    duration = property(_getDuration, _setDuration)
+    duration = property(_getDuration, setDuration)
 
     def _getInPoint(self):
-        if self._master_track_object is None:
+        if not self.track_objects:
             return self.DEFAULT_IN_POINT
         
-        return self._master_track_object.in_point
+        return self.track_objects[0].in_point
     
-    def _setInPoint(self, value):
-        if self._master_track_object is None:
+    def setInPoint(self, time):
+        if not self.track_objects:
             raise TimelineError()
-        self._master_track_object.in_point = value
-    
-    in_point = property(_getInPoint, _setInPoint)
+        
+        for track_object in self.track_objects:
+            track_object.setObjectInPoint(time)
+        
+        self.emit('in-point-changed', time)
+
+    in_point = property(_getInPoint, setInPoint)
 
     def _getOutPoint(self):
-        if self._master_track_object is None:
+        if not self.track_objects:
             return self.DEFAULT_OUT_POINT
         
-        return self._master_track_object.out_point
+        return self.track_objects[0].out_point
     
-    def _setOutPoint(self, value):
-        if self._master_track_object is None:
+    def setOutPoint(self, time):
+        if not self.track_objects:
             raise TimelineError()
         
-        self._master_track_object.out_point = value
+        for track_object in self.track_objects:
+            track_object.setObjectOutPoint(time)
+        
+        self.emit('out-point-changed', time)
 
-    out_point = property(_getOutPoint, _setOutPoint)
+    out_point = property(_getOutPoint, setOutPoint)
 
     def addTrackObject(self, obj):
         if obj.timeline_object is not None:
@@ -130,10 +150,6 @@ class TimelineObject(object, Signallable):
 
         obj.timeline_object = weakref.proxy(self)
         self.track_objects.append(obj)
-        self._connectToTrackObject(obj)
-
-        if self._master_track_object == None:
-            self._setMasterTrackObject(obj)
 
     def removeTrackObject(self, obj):
         if obj.track is None:
@@ -144,44 +160,6 @@ class TimelineObject(object, Signallable):
             obj.timeline_object = None
         except ValueError:
             raise TimelineError()
-
-        self._disconnectFromTrackObject(obj)
-
-        if obj is self._master_track_object:
-            self._unsetMasterTrackObject()
-            
-            if self.track_objects:
-                self._setMasterTrackObject(self.track_objects[0])
-
-    def _setMasterTrackObject(self, obj):
-        self._master_track_object = obj
-
-    def _unsetMasterTrackObject(self):
-        self._master_track_object = None
-
-    def _connectToTrackObject(self, obj):
-        obj.connect('start-changed', self._startChangedCb)
-        obj.connect('duration-changed', self._durationChangedCb)
-        obj.connect('in-point-changed', self._inPointChangedCb)
-        obj.connect('out-point-changed', self._outPointChangedCb)
-
-    def _disconnectFromTrackObject(self, obj):
-        obj.disconnect_by_function(self._startChangedCb)
-        obj.disconnect_by_function(self._durationChangedCb)
-        obj.disconnect_by_function(self._inPointChangedCb)
-        obj.disconnect_by_function(self._outPointChangedCb)
-
-    def _startChangedCb(self, track_object, start):
-        self.emit('start-changed', start)
-
-    def _durationChangedCb(self, track_object, duration):
-        self.emit('duration-changed', duration)
-
-    def _inPointChangedCb(self, track_object, in_point):
-        self.emit('in-point-changed', in_point)
-    
-    def _outPointChangedCb(self, track_object, out_point):
-        self.emit('out-point-changed', out_point)
 
 class Selection(object):
     def __init__(self):
