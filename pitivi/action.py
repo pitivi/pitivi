@@ -75,8 +75,9 @@ class Action(object, Signallable):
         self.producers = []
         self.consumers = []
         self.pipeline = None
+        self._links = [] # list of (producer, consumer, prodstream, consstream)
 
-    #{ state methods
+    #{ Activation methods
 
     def activate(self):
         """
@@ -222,4 +223,66 @@ class Action(object, Signallable):
         """
         if self.state != STATE_NOT_ACTIVE:
             raise ActionError("Action is active, can't remove Consumers")
+        raise NotImplementedError
+
+    #{ Link methods
+
+    def setLink(self, producer, consumer, producerstream=None,
+                consumerstream=None):
+        """
+        Set a relationship (link) between producer and consumer.
+
+        If the Producer and/or Consumer isn't already set to this C{Action},
+        this method will attempt to add them.
+
+        @param producer: The producer we wish to link.
+        @type producer: C{ObjectFactory}
+        @param consumer: The consumer we wish to link.
+        @type consumer: C{ObjectFactory}
+        @param producerstream: The C{Stream} to use from the producer. If not
+        specified, the C{Action} will figure out a compatible C{Stream} between
+        the producer and consumer.
+        @type producerstream: C{Stream}
+        @param consumerstream: The C{Stream} to use from the consumer. If not
+        specified, the C{Action} will figure out a compatible C{Stream} between
+        the consumer and consumer.
+        @type consumerstream: C{Stream}
+        @raise ActionError: If the C{Action} is active.
+        @raise ActionError: If the producerstream isn't available on the
+        producer.
+        @raise ActionError: If the consumerstream isn't available on the
+        consumer.
+        @raise ActionError: If the producer and consumer are incompatible.
+        """
+        # If streams are specified, make sure they exist in their respective factories
+        # Make sure producer and consumer are compatible
+        # If needed, add producer and consumer to ourselves
+        # store the link
+        raise NotImplementedError
+
+    def removeLink(self, producer, consumer, producerstream=None,
+                   consumerstream=None):
+        """
+        Remove a relationship (link) between producer and consumer.
+
+        @param producer: The producer we wish to unlink.
+        @type producer: C{ObjectFactory}
+        @param consumer: The consumer we wish to unlink.
+        @type consumer: C{ObjectFactory}
+        @param producerstream: The C{Stream} to use from the producer. If not
+        specified, the C{Action} will figure out a compatible C{Stream} between
+        the producer and consumer.
+        @type producerstream: C{Stream}.
+        @param consumerstream: The C{Stream} to use from the consumer. If not
+        specified, the C{Action} will figure out a compatible C{Stream} between
+        the consumer and consumer.
+        @type consumerstream: C{Stream}.
+        @raise ActionError: If the C{Action} is active.
+        @raise ActionError: If the producerstream wasn't used in any links.
+        @raise ActionError: If the consumerstream wasn't used in any links.
+        """
+        # If producer and consumer are not available, raise error
+        # Search for the given link
+        # If there are multiple compatible links, raise an Error
+        # finally, remove link
         raise NotImplementedError
