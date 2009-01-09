@@ -128,7 +128,9 @@ class TrackObject(object, Signallable):
 
     def trimObjectStart(self, time):
         new_duration = self.start + self.duration - time
-        new_duration = max(new_duration, 0)
+        if time < 0 or new_duration < 0:
+            raise TrackError('invalid start %s' % gst.TIME_ARGS(time))
+
         delta = time - self.start
         self.setObjectStart(time)
         self.setObjectDuration(new_duration)
@@ -136,8 +138,7 @@ class TrackObject(object, Signallable):
         if old_in_point == gst.CLOCK_TIME_NONE:
             old_in_point = 0
 
-        new_in_point = max(old_in_point, old_in_point + delta)
-
+        new_in_point = old_in_point + delta
         self.setObjectInPoint(new_in_point)
 
     def setObjectOutPoint(self, time):

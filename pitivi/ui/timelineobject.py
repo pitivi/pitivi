@@ -8,6 +8,7 @@ from pitivi.receiver import receiver, handler
 from view import View
 import controller
 from zoominterface import Zoomable
+from pitivi.timeline.track import TrackError
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
@@ -60,7 +61,12 @@ class StartHandle(TrimHandle):
 
         def set_pos(self, obj, pos):
             new_start = max(self._view.pixelToNs(pos[0]), 0)
-            self._view.element.trimStart(new_start)
+            try:
+                self._view.element.trimStart(new_start)
+            except TrackError:
+                # invalid start
+                # FIXME: define an exception hierarchy
+                pass
 
 class EndHandle(TrimHandle):
 

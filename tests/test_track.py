@@ -32,12 +32,16 @@ class StubFactory(object):
     def makeBin(self):
         return gst.element_factory_make('audiotestsrc')
 
+class TrackSignalMonitor(SignalMonitor):
+    def __init__(self, track_object):
+        SignalMonitor.__init__(self, track_object, 'start-changed',
+                'duration-changed', 'in-point-changed', 'out-point-changed')
+
 class TestTrackObject(TestCase):
     def setUp(self):
         self.factory = StubFactory()
         self.track_object = SourceTrackObject(self.factory)
-        self.monitor = SignalMonitor(self.track_object, 'start-changed',
-                'duration-changed', 'in-point-changed', 'out-point-changed')
+        self.monitor = TrackSignalMonitor(self.track_object)
 
     def testDefaultProperties(self):
         obj = self.track_object
@@ -104,6 +108,52 @@ class TestTrackObject(TestCase):
         gnl_object.props.media_duration = out_point
         self.failUnlessEqual(obj.out_point, out_point)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
+
+    def testTrimStart(self):
+        obj = self.track_object
+
+        obj.duration = 10 * gst.SECOND
+
+        self.failUnlessEqual(self.monitor.duration_changed_count, 1)
+
+        # trim at lower edge
+        monitor = TrackSignalMonitor(obj)
+        time = 0
+        obj.trimStart(time)
+        self.failUnlessEqual(obj.start, time)
+        self.failUnlessEqual(obj.in_point, time)
+        self.failUnlessEqual(obj.duration, 10 * gst.SECOND)
+        self.failUnlessEqual(monitor.start_changed_count, 1)
+        self.failUnlessEqual(monitor.in_point_changed_count, 1)
+        self.failUnlessEqual(monitor.duration_changed_count, 1)
+       
+        # can't trim before 0
+        self.failUnlessRaises(TrackError, obj.trimStart, -1)
+
+        # trim at upper edge
+        monitor = TrackSignalMonitor(obj)
+        time = 10 * gst.SECOND
+        obj.trimStart(time)
+        self.failUnlessEqual(obj.start, time)
+        self.failUnlessEqual(obj.in_point, time)
+        self.failUnlessEqual(obj.duration, 0)
+        self.failUnlessEqual(monitor.start_changed_count, 1)
+        self.failUnlessEqual(monitor.in_point_changed_count, 1)
+        self.failUnlessEqual(monitor.duration_changed_count, 1)
+        
+        # can't trim past end
+        self.failUnlessRaises(TrackError, obj.trimStart, 11 * gst.SECOND)
+
+        # trim somewhere in the middle
+        monitor = TrackSignalMonitor(obj)
+        time = 4 * gst.SECOND
+        obj.trimStart(time)
+        self.failUnlessEqual(obj.start, time)
+        self.failUnlessEqual(obj.in_point, time)
+        self.failUnlessEqual(obj.duration, 6 * gst.SECOND)
+        self.failUnlessEqual(monitor.start_changed_count, 1)
+        self.failUnlessEqual(monitor.in_point_changed_count, 1)
+        self.failUnlessEqual(monitor.duration_changed_count, 1)
 
 class TestTrackAddRemoveObjects(TestCase):
     def setUp(self):
