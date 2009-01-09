@@ -95,7 +95,7 @@ class TimelineObject(object, Signallable):
         
         return self.track_objects[0].in_point
     
-    def setInPoint(self, time):
+    def setInPoint(self, time, snap=False):
         if not self.track_objects:
             raise TimelineError()
         
@@ -112,7 +112,7 @@ class TimelineObject(object, Signallable):
         
         return self.track_objects[0].out_point
     
-    def setOutPoint(self, time):
+    def setOutPoint(self, time, snap=False):
         if not self.track_objects:
             raise TimelineError()
         
@@ -254,28 +254,28 @@ class Timeline(object ,Signallable):
         self.timeline_objects = []
         self.duration = 0
 
-    def _durationChangedCb(self, timeline, pspec):
-        duration = self.props.duration
-        self.emit('duration-changed', duration)
-
     def addTrack(self, track):
         if track in self.tracks:
             raise TimelineError()
 
         self.tracks.append(track)
-        self._maybeSetDuration(track.duration)
+        self._updateDuration()
+        track.connect('start-changed', self._trackDurationChangedCb)
         track.connect('duration-changed', self._trackDurationChangedCb)
 
         self.emit('track-added', track)
 
+    def _trackStartChangedCb(self, track, duration):
+        self._updateDuration()
+    
     def _trackDurationChangedCb(self, track, duration):
-        self._maybeSetDuration(duration)
-
-    def _maybeSetDuration(self, duration):
-        if duration > self.duration:
+        self._updateDuration()
+    
+    def _updateDuration(self):
+        duration = max([track.start + track.duration for track in self.tracks])
+        if duration != self.duration:
             self.duration = duration
             self.emit('duration-changed', duration)
-        
 
     def removeTrack(self, track, removeTrackObjects=True):
         try:

@@ -100,9 +100,9 @@ class TrackObject(object, Signallable):
     def _getInPoint(self):
         return self.gnl_object.props.media_start
         
-    def setInPoint(self, time):
+    def setInPoint(self, time, snap=False):
         if self.timeline_object is not None:
-            self.timeline_object.setInPoint(time)
+            self.timeline_object.setInPoint(time, snap)
         else:
             self.setObjectInPoint(time)
     
@@ -114,9 +114,9 @@ class TrackObject(object, Signallable):
     def _getOutPoint(self):
         return self.gnl_object.props.media_duration
     
-    def setOutPoint(self, time):
+    def setOutPoint(self, time, snap=False):
         if self.timeline_object is not None:
-            self.timeline_object.setOutPoint(time)
+            self.timeline_object.setOutPoint(time, snap)
         else:
             self.setObjectOutPoint(time)
     
@@ -161,6 +161,7 @@ class SourceTrackObject(TrackObject):
 
 class Track(object, Signallable):
     __signals__ = {
+        'start-changed': ['start'],
         'duration-changed': ['duration'],
         'track-object-added': ['track_object'],
         'track-object-removed': ['track_object']
@@ -169,16 +170,23 @@ class Track(object, Signallable):
     def __init__(self, stream):
         self.stream = stream
         self.composition = gst.element_factory_make('gnlcomposition')
+        self.composition.connect('notify::start', self._startChangedCb)
         self.composition.connect('notify::duration', self._durationChangedCb)
         self.track_objects = []
+
+    def _getStart(self):
+        return self.composition.props.start
+    
+    start = property(_getStart)
 
     def _getDuration(self):
         return self.composition.props.duration
     
-    def _setDuration(self, value):
-        self.composition.props.duration = value
-    
-    duration = property(_getDuration, _setDuration)
+    duration = property(_getDuration)
+
+    def _startChangedCb(self, composition, pspec):
+        start = composition.props.start
+        self.emit('start-changed', start)
 
     def _durationChangedCb(self, composition, pspec):
         duration = composition.props.duration
