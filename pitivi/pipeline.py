@@ -23,7 +23,10 @@
 High-level pipelines
 """
 from pitivi.signalinterface import Signallable
+from pitivi.factories.base import SourceFactory, SinkFactory
 from pitivi.action import ActionError
+from pitivi.stream import pad_compatible_stream, get_src_pads_for_stream, \
+     get_sink_pads_for_stream
 import gst
 
 (STATE_NULL,
@@ -95,6 +98,8 @@ class Pipeline(object, Signallable):
         self.queues = {} # (consumerfactory, stream) => gst.Element ("queue")
         self.actions = []
         self._state = STATE_NULL
+        self._padSigIds = {} # (factory) => (paddaddedsigid,padremovedsigid)
+        self._pendingStreams = {} # (factory,stream) => tee
 
     #{ Action-related methods
 
@@ -361,6 +366,127 @@ class Pipeline(object, Signallable):
         """
         raise NotImplementedError
 
+
+    #{ GStreamer object methods
+
+    def getBinForFactory(self, factory, automake=False):
+        """
+        Fetches the C{gst.Bin} currently used in the C{gst.Pipeline} for the
+        given C{ObjectFactory}.
+
+        @param factory: The factory to search.
+        @type factory: C{ObjectFactory}
+        @param automake: If set to True, then if there is not a C{gst.Bin}
+        already created for the given factory, one will be created.
+        @raise PipelineError: If the factory isn't used in this pipeline.
+        @raise PipelineError: If a C{gst.Bin} needed to be created and the
+        C{Pipeline} was not in the READY or NULL state.
+        @raise PipelineError: If a C{gst.Bin} needed to be created but the
+        creation of that c{gst.Bin} failed.
+        @return: The bin corresponding to the given factory or None if there
+        are none for the given factory.
+        @rtype: C{gst.Bin}
+        """
+        gst.debug("factory:%r , automake:%r" % (factory, automake))
+        if not factory in self.factories:
+            raise PipelineError("Given ObjectFactory isn't handled by this Pipeline")
+        res = self.bins.get(factory, None)
+        if (res != None) or (automake == False):
+            gst.debug("Returning %r" % res)
+            return res
+        # we need to create one
+        if self._state not in [STATE_NULL, STATE_READY]:
+            raise PipelineError("Pipeline not in NULL/READY, can not create bin")
+        # create the bin (will raise exceptions if it fails
+        return self._makeBin(factory)
+
+    def getTeeForFactoryStream(self, factory, stream=None, automake=False):
+        """
+        Fetches the C{Tee} currently used in the C{gst.Pipeline} for the given
+        L{SourceFactory}.
+
+        @param factory: The factory to search.
+        @type factory: L{SourceFactory}
+        @param stream: The stream of the factory to use. If not specified, then
+        a random stream from that factory will be used.
+        @type stream: L{MultimediaStream}
+        @param automake: If set to True, then if there is not a C{Tee}
+        already created for the given factory/stream, one will be created, added
+        to the list of controlled tees and added to the C{gst.Pipeline}.
+        @raise PipelineError: If the factory isn't used in this pipeline.
+        @raise PipelineError: If the factory isn't a L{SourceFactory}.
+        @raise PipelineError: If a C{Tee} needed to be created and the
+        L{Pipeline} was not in the READY or NULL state.
+        @raise PipelineError: If a C{Tee} needed to be created but the
+        creation of that C{Tee} failed.
+        @return: The C{Tee} corresponding to the given factory/stream or None if
+        there are none for the given factory.
+        @rtype: C{gst.Element}
+        """
+        gst.debug("factory:%r , stream:%r, automake:%r" % (factory, stream, automake))
+        if not factory in self.factories:
+            raise PipelineError("Given ObjectFactory isn't handled by this Pipeline")
+        if not isinstance(factory, SourceFactory):
+            raise PipelineError("Given ObjectFactory isn't a SourceFactory")
+        res = self.tees.get((factory,stream), None)
+        if (res != None) or (automake == False):
+            gst.debug("Returning %r" % res)
+            return res
+        # we need to create one
+        if self._state not in [STATE_NULL, STATE_READY]:
+            raise PipelineError("Pipeline not in NULL/READY, can not create tee")
+        # create the tee
+        return self._makeTee(factory, stream)
+
+    def releaseTeeForFactoryStream(self, factory, stream):
+        # release the tee for the given factory/stream
+        # When nobody is using the tee => remove/free it
+        raise NotImplementedError
+
+    def getQueueForFactoryStream(self, factory, stream=None, automake=False):
+        """
+        Fetches the C{Queue} currently used in the C{gst.Pipeline} for the given
+        L{SinkFactory}.
+
+        @param factory: The factory to search.
+        @type factory: L{SinkFactory}
+        @param stream: The stream of the factory to use. If not specified, then
+        a random stream from that factory will be used.
+        @type stream: L{MultimediaStream}
+        @param automake: If set to True, then if there is not a C{Queue}
+        already created for the given factory/stream, one will be created, added
+        to the list of controlled queues and added to the C{gst.Pipeline}.
+        @raise PipelineError: If the factory isn't used in this pipeline.
+        @raise PipelineError: If the factory isn't a L{SinkFactory}.
+        @raise PipelineError: If a C{Queue} needed to be created and the
+        L{Pipeline} was not in the READY or NULL state.
+        @raise PipelineError: If a C{Queue} needed to be created but the
+        creation of that C{Queue} failed.
+        @return: The C{Queue} corresponding to the given factory/stream or None if
+        there are none for the given factory.
+        @rtype: C{gst.Element}
+        """
+        gst.debug("factory:%r , stream:%r, automake:%r" % (factory, stream, automake))
+        if not factory in self.factories:
+            raise PipelineError("Given ObjectFactory isn't handled by this Pipeline")
+        if not isinstance(factory, SinkFactory):
+            raise PipelineError("Given ObjectFactory isn't a SinkFactory")
+        res = self.queues.get((factory,stream), None)
+        if (res != None) or (automake == False):
+            gst.debug("Returning %r" % res)
+            return res
+        # we need to create one
+        if self._state not in [STATE_NULL, STATE_READY]:
+            raise PipelineError("Pipeline not in NULL/READY, can not create queue")
+        # create the queue
+        return self._makeQueue(factory, stream)
+
+    def releaseQueueForFactoryStream(self, factory, stream):
+        # release the queue for the given factory/stream
+        # When nobody is using the queue => remove/free it
+        raise NotImplementedError
+
+    #}
     ## Private methods
 
     def _busMessageCb(self, unused_bus, message):
@@ -376,3 +502,114 @@ class Pipeline(object, Signallable):
         elif message.type == gst.MESSAGE_ERROR:
             error, detail = message.parse_error()
             self._handleErrorMessage(error, detail, message.src)
+
+    def _makeBin(self, factory):
+        """
+        Creates a C{gst.Bin} from the given factory and puts it in the pipeline.
+
+        @precondition: checks for the factory to be valid should be done before.
+        """
+        # FIXME : How do we figure out for which streams we need to create the
+        # Bin.
+        # Ex : There could be one action wanting one stream from a given bin, and
+        # another action wanting another stream.
+        # ==> It should figure out from all Actions what streams are being used
+        gst.debug("factory %r" % factory)
+        b = factory.makeBin()
+        gst.debug("adding newly created bin [%r] to gst.Pipeline" % b)
+        self._pipeline.add(b)
+        gst.debug("Adding newly created bin to list of controlled bins")
+        self.bins[factory] = b
+        return b
+
+    def _binPadAddedCb(self, bin, pad, factory):
+        gst.debug("bin:%r, pad:%r" % (bin, pad))
+        # try to find an existing tee for the given pad
+        for fact, stream in self._pendingStreams.keys():
+            if fact == factory and pad_compatible_stream(pad, stream):
+                tee = self._pendingStreams
+                gst.debug("Linking to the pending tee")
+                pad.link(tee.get_pad("sink"))
+                del self._pendingStreams[(fact,stream)]
+                return
+        gst.debug("Ignored pad since we don't seem to use it")
+
+    def _binPadRemovedCb(self, bin, pad, factory):
+        gst.debug("bin:%r, pad:%r" % (bin, pad))
+        raise NotImplementedError
+
+    def _listenToPads(self, bin, tee, factory,stream):
+        # Listen on the given bin for pads being added/removed
+        if not bin is self._padSigIds.keys():
+            padaddedsigid = bin.connect('pad-added', self._teePadAddedCb,
+                                        factory)
+            padremovedsigid = bin.connect('pad-removed', self._teePadAddedCb,
+                                          factory)
+            self._padSigIds[bin] = (padaddedsigid, padremovedsigid)
+        # add the stream to the list of pending streams
+        self._pendingStreams[(factory,stream)] = tee
+
+    def _makeTee(self, factory, stream):
+        """
+        - Create a C{Tee} for the given factory and stream
+        - Add it to the list of controlled tees,
+        - Add it to the gst.Pipeline,
+        - Link the bin to the tee
+          - If the bin doesn't have the corresponding pad yet, put a async
+          handler.
+
+        @precondition: checks for the factory and stream to be valid should be
+        done before, including it's existence in the list of controlled tees.
+        @raise PipelineError: If we can't figure out which pad to use from the
+        source bin.
+        """
+        gst.debug("factory: %r, stream: %r" % (factory, stream))
+        t = gst.element_factory_make("tee")
+        self._pipeline.add(t)
+        b = self.bins[factory]
+        # find the source pads compatible with the given stream
+        pads = get_src_pads_for_stream(b, stream)
+        if len(pads) > 1:
+            raise PipelineError("Can't figure out which source pad to use !")
+        if pads == []:
+            # if the pad isn't available yet, connect a 'pad-added' and
+            # 'pad-removed' handler.
+            gst.debug("No available pads, we assume it will produce a pad later on")
+        else:
+            gst.debug("Linking pad %r to tee" % pads[0])
+            pads[0].link(t.get_pad("sink"))
+        gst.debug("Adding newly created bin to list of controlled tees")
+        self.tees[(factory, stream)] = t
+        return t
+
+    def _makeQueue(self, factory, stream):
+        """
+        - Create a C{Queue} for the given factory and stream
+        - Add it to the list of controlled queues,
+        - Add it to the gst.Pipeline,
+        - Link the bin to the queue
+          - If the bin doesn't have the corresponding pad yet, put a async
+          handler.
+
+        @precondition: checks for the factory and stream to be valid should be
+        done before, including it's existence in the list of controlled queues.
+        @raise PipelineError: If we can't figure out which pad to use from the
+        source bin.
+        """
+        gst.debug("factory: %r, stream: %r" % (factory, stream))
+        q = gst.element_factory_make("queue")
+        self._pipeline.add(q)
+        b = self.bins[factory]
+        # find the source pads compatible with the given stream
+        pads = get_sink_pads_for_stream(b, stream)
+        if len(pads) > 1:
+            raise PipelineError("Can't figure out which sink pad to use !")
+        if pads == []:
+            # FIXME : Maybe it's a request pad ?
+            raise PipelineError("No compatible sink pads !")
+        else:
+            gst.debug("Linking pad %r to queue" % pads[0])
+            q.get_pad("src").link(pads[0])
+        gst.debug("Adding newly created bin to list of controlled queues")
+        self.queues[(factory, stream)] = q
+        return q
