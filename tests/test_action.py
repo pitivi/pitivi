@@ -20,9 +20,11 @@
 # Boston, MA 02111-1307, USA.
 
 from unittest import TestCase, main
-from pitivi.pipeline import Pipeline
+from pitivi.pipeline import Pipeline, STATE_READY, STATE_PLAYING
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE, ActionError
+from pitivi.stream import MultimediaStream
 import common
+import gst
 
 class TestAction(TestCase):
 
@@ -34,7 +36,7 @@ class TestAction(TestCase):
         self.assertEquals(ac.consumers, [])
         self.assertEquals(ac.pipeline, None)
 
-    def testPipeline(self):
+    def testPipelineSimple(self):
         """ Test setPipeline and unsetPipeline """
         ac = Action()
         p = Pipeline()
@@ -80,6 +82,78 @@ class TestAction(TestCase):
         # we shouldn't be able to unset a pipeline from an active Action
         self.failUnlessRaises(ActionError, ac.unsetPipeline)
 
+    def testPipelineAction(self):
+        """Testing pipeline state interaction"""
+        p = Pipeline()
+        a = Action()
+        src = common.FakeSourceFactory()
+        src.addOutputStream(MultimediaStream(gst.Caps("any"), pad_name="src"))
+        sink = common.FakeSinkFactory()
+        sink.addInputStream(MultimediaStream(gst.Caps("any"), pad_name="sink"))
+
+        # set the Action on the Pipeline
+        p.setAction(a)
+        self.assertEquals(p.actions, [a])
+
+        # set the Producer and Consumer
+        a.addProducers(src)
+        a.addConsumers(sink)
+
+        # set the factories on the Pipeline
+        p.addFactory(src, sink)
+
+        # activate the Action
+        a.activate()
+
+        # check that all internal objects are created
+        # TODO : Add more extensive testing of gst-specific Pipeline
+        # methods in test_pipeline.py
+        self.assert_(src in p.bins.keys())
+        self.assert_(isinstance(p.bins[src], gst.Element))
+        self.assert_(sink in p.bins.keys())
+        self.assert_(isinstance(p.bins[sink], gst.Element))
+
+        # check that the tees were properly created
+        def has_tee(pipeline, factories):
+            left = factories[:]
+            for f in factories:
+                for ps, t in pipeline.tees.iteritems():
+                    fact, st = ps
+                    if fact in left:
+                        left.remove(fact)
+            return left
+        self.assertEquals(has_tee(p, [src]), [])
+
+        # check that the queues were properly created
+        def has_queue(pipeline, factories):
+            left = factories[:]
+            for f in factories:
+                for ps, t in pipeline.queues.iteritems():
+                    fact, st = ps
+                    if fact in left:
+                        left.remove(fact)
+            return left
+        self.assertEquals(has_queue(p, [sink]), [])
+
+        # check that the tees are linked to the proper queues
+
+        # switch to PLAYING
+        p.setState(STATE_PLAYING)
+
+        # wait half a second
+
+        # switch to READY
+        p.setState(STATE_READY)
+
+        # deactivate action
+        a.deactivate()
+
+        # remove the action from the pipeline
+        p.removeAction(a)
+
+        # remove factories from Pipeline
+        p.removeFactory(src, sink)
+
     def test_isActive(self):
         """ Test isActive() """
         ac = Action()
@@ -92,6 +166,7 @@ class TestAction(TestCase):
         self.assertEquals(ac.isActive(), True)
 
     def testSettingFactoriesSimple(self):
+        """Simple add/remove Factory tests"""
         ac = Action()
         p = Pipeline()
 
