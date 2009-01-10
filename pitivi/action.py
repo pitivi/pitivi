@@ -125,6 +125,8 @@ class Action(object, Signallable):
         @precondition: The associated L{Pipeline} must be in the NULL or READY
         state.
 
+        @see: L{activate}
+
         @return: Whether the L{Action} was de-activated (True) or not.
         @rtype: L{bool}
         @raise PipelineError: If the L{Pipeline} is not in the NULL or READY
@@ -143,6 +145,8 @@ class Action(object, Signallable):
     def isActive(self):
         """
         Whether the Action is active or not
+
+        @see: L{activate}, L{deactivate}
 
         @return: True if the Action is active.
         @rtype: L{bool}
@@ -176,6 +180,8 @@ class Action(object, Signallable):
     def unsetPipeline(self):
         """
         Remove the L{Action} from the currently set L{Pipeline}.
+
+        @see: L{setPipeline}
 
         @warning: This method should only be used by L{Pipeline}s when the given
         L{Action} is removed from them.
@@ -218,6 +224,8 @@ class Action(object, Signallable):
         """
         Remove the given L{ObjectFactory}s as producers of the L{Action}.
 
+        @see: L{addProducers}
+
         @type producers: List of L{ObjectFactory}
         @raise ActionError: If the L{Action} is active.
         """
@@ -257,6 +265,7 @@ class Action(object, Signallable):
         """
         Remove the given L{ObjectFactory}s as consumers of the L{Action}.
 
+        @see: L{addConsumers}
         @type consumers: List of L{ObjectFactory}
         @raise ActionError: If the L{Action} is active.
         """
@@ -306,6 +315,8 @@ class Action(object, Signallable):
                    consumerstream=None):
         """
         Remove a relationship (link) between producer and consumer.
+
+        @see: L{setLink}
 
         @param producer: The producer we wish to unlink.
         @type producer: L{ObjectFactory}
@@ -364,6 +375,7 @@ class Action(object, Signallable):
         own auto-linking algorithm, although it is more recommended to
         implement getLinks().
 
+        @see: L{getLinks}
         @raise ActionError: If there is any ambiguity as to which producerstream
         should be linked to which consumerstream.
         @return: List of compatible Links.

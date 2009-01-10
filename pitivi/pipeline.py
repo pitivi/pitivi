@@ -134,6 +134,8 @@ class Pipeline(object, Signallable):
         If an L{Action} of the same type already exists in the L{Pipeline} the
         L{Action} will not be set.
 
+        @see: L{addAction}, L{removeAction}
+
         @param action: The L{Action} to set on the L{Pipeline}
         @type action: L{Action}
         @rtype: L{Action}
@@ -154,6 +156,8 @@ class Pipeline(object, Signallable):
         @precondition: Can only be done if both:
          - The L{Pipeline} is in READY or NULL
          - The L{Action} is de-activated
+
+        @see: L{addAction}, L{setAction}
 
         @param action: The L{Action} to remove from the L{Pipeline}
         @type action: L{Action}
@@ -199,6 +203,8 @@ class Pipeline(object, Signallable):
     def getState(self):
         """
         Query the L{Pipeline} for the current state.
+
+        @see: L{setState}
 
         This will do an actual query to the underlying GStreamer Pipeline.
         @return: The current state.
@@ -268,6 +274,8 @@ class Pipeline(object, Signallable):
         @precondition: The L{Pipeline} state must be READY or NULL and the
         L{Action}s controlling those factories must all be deactivated.
 
+        @see: L{addFactory}
+
         @param factories: The L{ObjectFactory}s to remove.
         @type factories: L{ObjectFactory}
         @raise PipelineError: If the L{Pipeline} isn't in READY or NULL or if
@@ -330,6 +338,7 @@ class Pipeline(object, Signallable):
         When activated, the Pipeline will emit the 'position' signal at the
         specified interval when it is the PLAYING or PAUSED state.
 
+        @see: L{deactivatePositionListener}
         @param interval: Interval between position queries in milliseconds
         @type interval: L{int} milliseconds
         @return: Whether the position listener was activated or not
@@ -340,6 +349,8 @@ class Pipeline(object, Signallable):
     def deactivatePositionListener(self):
         """
         De-activates the position listener.
+
+        @see: L{activatePositionListener}
         """
         raise NotImplementedError
 
@@ -450,6 +461,8 @@ class Pipeline(object, Signallable):
         This should be called by Actions when they deactivate, after having called
         releaseQueueForFactoryStream() for the consumers.
 
+        @see: L{getTeeForFactoryStream}
+
         @param factory: The factory
         @type factory: L{SinkFactory}
         @param stream: The stream
@@ -534,6 +547,8 @@ class Pipeline(object, Signallable):
         with the link with tee.
 
         This should be called by Actions when they deactivate.
+
+        @see: L{getQueueForFactoryStream}
 
         @param factory: The factory
         @type factory: L{SinkFactory}
