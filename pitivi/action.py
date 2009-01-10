@@ -100,15 +100,13 @@ class Action(object, Signallable):
         if self.state == STATE_ACTIVE:
             gst.debug("Action already activated, returning")
             return
-        # FIXME : Add an overrideable method for subclasses to add some
-        # consumers or producers, or modify/set the properties of those.
         for p in self.producers:
             if not p in self.pipeline.factories:
                 raise ActionError("One of the Producers isn't set on the Pipeline")
         for p in self.consumers:
             if not p in self.pipeline.factories:
                 raise ActionError("One of the Consumers isn't set on the Pipeline")
-        # TODO : Create bins (if needed), tees, queues, link
+        self._ensurePipelineObjects()
         self.state = STATE_ACTIVE
         self.emit('state-changed', self.state)
         raise NotImplementedError
@@ -321,3 +319,103 @@ class Action(object, Signallable):
         # If there are multiple compatible links, raise an Error
         # finally, remove link
         raise NotImplementedError
+
+    def getLinks(self, autolink=True):
+        """
+        Returns the Links setup for this Action.
+
+        Sub-classes can override this to fine-tune the linking:
+         - Specify streams of producers
+         - Specify streams of consumers
+         - Add Extra links
+
+        Sub-classes should chain-up to the parent class method BEFORE doing
+        anything with the link list.
+
+        @param autolink: If True and there were no links specified previously by
+        setLink(), then a list of Links will be automatically created based on
+        the available producers, consumers and their respective streams.
+        @type autolink: C{bool}
+        @return: A list of Links
+        @rtype: List of (C{Producer}, C{Consumer}, C{ProducerStream}, C{ConsumerStream})
+        """
+        links = self._links[:]
+        if links == [] and autolink == True:
+            links = self.autoLink()
+        gst.debug("Returning %d links" % len(links))
+        return links
+
+
+    def autoLink(self):
+        """
+        Based on the available consumers and producers, returns a list of
+        compatibles C{Link}s.
+
+        Sub-classes can override this method (without chaining up) to do their
+        own auto-linking algorithm, although it is more recommended to
+        implement getLinks().
+
+        @raise ActionError: If there is any ambiguity as to which producerstream
+        should be linked to which consumerstream.
+        @return: List of compatible Links.
+        """
+        gst.debug("Creating automatic links")
+        links = []
+        # iterate producers and their output streams
+        for p in self.producers:
+            gst.debug("producer %r" % p)
+            for ps in p.getOutputStreams():
+                gst.debug(" stream %r" % ps)
+                # for each, figure out a compatible (consumer, stream)
+                for c in self.consumers:
+                    compat = c.getInputStreams(type(ps))
+                    # in case of ambiguity, raise an exception
+                    if len(compat) > 1:
+                        raise ActionError("Too many compatible streams in consumer")
+                    if len(compat) == 1:
+                        gst.debug("Got a compatible stream !")
+                        links.append((p, c, ps, compat[0]))
+        return links
+    #}
+
+    def _ensurePipelineObjects(self):
+        """
+        Makes sure all objects needed in the pipeline are properly created.
+
+        @precondition: All checks relative to pipeline/action/factory validity
+        must be done.
+        @raise ActionError: If some producers or consumers remain unused.
+        """
+        # Get the links
+        links = self.getLinks()
+        # ensure all links are used
+        p = self.producers[:]
+        c = self.consumers[:]
+        for prod, cons , ps, cs in links:
+            if prod in p:
+                p.remove(prod)
+            if cons in c:
+                c.remove(cons)
+        if p != [] or c != []:
+            raise ActionError("Some producers or consumers are not used !")
+
+        gst.debug("make sure we have bins")
+        # Make sure we have bins for our producers and consumers
+        for p in self.producers:
+            self.pipeline.getBinForFactory(p, automake=True)
+        for p in self.consumers:
+            self.pipeline.getBinForFactory(p, automake=True)
+
+        gst.debug("iterating links")
+
+        for producer, consumer, prodstream, consstream in links:
+            gst.debug("producer:%r, consumer:%r, prodstream:%r, consstream:%r" % (\
+                producer, consumer, prodstream, consstream))
+            # Make sure we have tees for our (producer,stream)s
+            t = self.pipeline.getTeeForFactoryStream(producer, prodstream,
+                                                     automake=True)
+            # Make sure we have queues for our (consumer, stream)s
+            q = self.pipeline.getQueueForFactoryStream(consumer, consstream,
+                                                       automake=True)
+            # Link tees to queues
+            t.link(q)
