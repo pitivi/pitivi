@@ -219,3 +219,66 @@ def get_stream_for_caps(caps, pad=None):
     elif stream_type == 'text':
         ret = TextStream(caps, pad_name)
     return ret
+
+def pad_compatible_stream(pad, stream):
+    """
+    Checks whether the given pad is compatible with the given stream.
+
+    @param pad: The pad
+    @type pad: C{gst.Pad}
+    @param stream: The stream to match against.
+    @type stream: L{MultimediaStream}
+    @return: Whether the pad is compatible with the given stream
+    @rtype: C{bool}
+    """
+    # compatible caps
+    if stream.caps:
+        return not stream.caps.intersect(pad.get_caps()).is_empty()
+    raise Exception("Can't figure out compatibility since the stream doesn't have any caps")
+
+def get_pads_for_stream(element, stream):
+    """
+    Fetches the pads of the given element which are compatible with the given
+    stream.
+
+    @param element: The element to search on.
+    @type element: C{gst.Element}
+    @param stream: The stream to match against.
+    @type stream: L{MultimediaStream}
+    @return: The compatible pads
+    @rtype: List of C{gst.Pad}
+    """
+    ls = [x for x in element.pads() if pad_compatible_stream(x, stream)]
+    # FIXME : I'm not 100% certain that checking against the stream pad_name
+    # is a good idea ....
+    if stream.pad_name:
+        return [x for x in ls if x.get_name() == stream.pad_name]
+    return ls
+
+def get_src_pads_for_stream(element, stream):
+    """
+    Fetches the source pads of the given element which are compatible with the
+    given stream.
+
+    @param element: The element to search on.
+    @type element: C{gst.Element}
+    @param stream: The stream to match against.
+    @type stream: L{MultimediaStream}
+    @return: The compatible source pads
+    @rtype: List of C{gst.Pad}
+    """
+    return [x for x in get_pads_for_stream(element,stream) if x.get_direction() == gst.PAD_SRC]
+
+def get_sink_pads_for_stream(element, stream):
+    """
+    Fetches the sink pads of the given element which are compatible with the
+    given stream.
+
+    @param element: The element to search on.
+    @type element: C{gst.Element}
+    @param stream: The stream to match against.
+    @type stream: L{MultimediaStream}
+    @return: The compatible sink pads
+    @rtype: List of C{gst.Pad}
+    """
+    return [x for x in get_pads_for_stream(element,stream) if x.get_direction() == gst.PAD_SINK]
