@@ -148,11 +148,19 @@ class TestAction(TestCase):
         # deactivate action
         a.deactivate()
 
+        # since we're the last Action to be release, the tees
+        # and queues should have gone
+        self.assertEquals(p.tees, {})
+        self.assertEquals(p.queues, {})
+
         # remove the action from the pipeline
         p.removeAction(a)
 
         # remove factories from Pipeline
         p.removeFactory(src, sink)
+
+        # the gst.Pipeline should be empty !
+        self.assertEquals(list(p._pipeline.elements()), [])
 
     def test_isActive(self):
         """ Test isActive() """

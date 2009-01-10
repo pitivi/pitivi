@@ -442,9 +442,50 @@ class Pipeline(object, Signallable):
         return self._makeTee(factory, stream)
 
     def releaseTeeForFactoryStream(self, factory, stream):
+        """
+        Release the tee associated with the given source factory and stream.
+        If this was the last action to release the given (factory,stream), then the
+        tee will be removed.
+
+        This should be called by Actions when they deactivate.
+
+        @param factory: The factory
+        @type factory: L{SinkFactory}
+        @param stream: The stream
+        @type stream: L{MultimediaStream}
+        @raise PipelineError: If the Pipeline isn't in NULL or READY.
+        """
+        gst.debug("factory:%r, stream:%r" % (factory, stream))
+        if self._state not in [STATE_NULL, STATE_READY]:
+            raise PipelineError("Pipeline not in NULL/READY, can not release queue")
         # release the tee for the given factory/stream
         # When nobody is using the tee => remove/free it
-        raise NotImplementedError
+        # if no more tees are connected for a given factory/stream, remove
+        # the signal handlers
+        t = self.tees.get((factory,stream), None)
+        gst.debug("Found tee %r" % t)
+        if t:
+            #figure out if people are still using it (i.e. srcpads != [])
+            if list(t.src_pads()) == []:
+                gst.debug("Nobody is using the tee anymore, releasing it")
+                src = self.bins[factory]
+                # FIXME : This might fail if it's not linked
+                src.unlink(t)
+                self._pipeline.remove(t)
+                # remove pendingStreams if any
+                if (factory,stream) in self._pendingStreams.keys():
+                    self._pendingStreams[(factory,stream)]
+                # remove that tee from ourselves
+                del self.tees[(factory,stream)]
+
+                # figure out if there are remaining tees for that factory
+                if factory in self._padSigIds.keys() and [f for f,s in self.tees.keys() if f == factory] == []:
+                    gst.debug("Nobody is using %s anymore, removing signal handlers" % src)
+                    addsig, removesig = self._padSigIds.pop(factory)
+                    src.disconnect(addsig)
+                    src.disconnect(removesig)
+            else:
+                gst.debug("Tee is still being used %r" % list(t.src_pads()))
 
     def getQueueForFactoryStream(self, factory, stream=None, automake=False):
         """
@@ -485,9 +526,30 @@ class Pipeline(object, Signallable):
         return self._makeQueue(factory, stream)
 
     def releaseQueueForFactoryStream(self, factory, stream):
+        """
+        Release the queue associated with the given source factory and stream.
+
+        The queue object will be internally removed from the gst.Pipeline.
+
+        This should be called by Actions when they deactivate.
+
+        @param factory: The factory
+        @type factory: L{SinkFactory}
+        @param stream: The stream
+        @type stream: L{MultimediaStream}
+        @raise PipelineError: If the Pipeline isn't in NULL or READY.
+        """
+        gst.debug("factory:%r, stream:%r" % (factory, stream))
+        if self._state not in [STATE_NULL, STATE_READY]:
+            raise PipelineError("Pipeline not in NULL/READY, can not release queue")
         # release the queue for the given factory/stream
-        # When nobody is using the queue => remove/free it
-        raise NotImplementedError
+        q = self.queues.pop((factory,stream), None)
+        if q:
+            # unlink it from the sink bin
+            sink = self.bins[factory]
+            q.unlink(sink)
+            self._pipeline.remove(q)
+
 
     #}
     ## Private methods

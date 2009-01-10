@@ -128,9 +128,7 @@ class Action(object, Signallable):
             gst.warning("Attempting to deactivate Action without a Pipeline")
             # yes, gracefully return
             return
-        # TODO : unlink
-        # TODO : remove queues
-        # TODO : remove tees
+        self._releasePipelineObjects()
         self.state = STATE_NOT_ACTIVE
         self.emit('state-changed', self.state)
 
@@ -422,3 +420,24 @@ class Action(object, Signallable):
                                                        automake=True)
             # Link tees to queues
             t.link(q)
+
+    def _releasePipelineObjects(self):
+        gst.debug("Releasing pipeline objects")
+        # get the links
+        links = self.getLinks()
+        for producer, consumer, prodstream, consstream in links:
+            t = self.pipeline.getTeeForFactoryStream(producer, prodstream)
+            q = self.pipeline.getQueueForFactoryStream(consumer, consstream)
+
+            # figure out to which tee pad the queue is connected
+            queuepad = q.get_pad("sink")
+            teepad = queuepad.get_peer()
+
+            # unlink
+            teepad.unlink(queuepad)
+            gst.debug("Releasing tee's request pad for that link")
+            t.release_request_pad(teepad)
+
+            # release tee/queue usage for that stream
+            self.pipeline.releaseTeeForFactoryStream(producer, prodstream)
+            self.pipeline.releaseQueueForFactoryStream(consumer, consstream)
