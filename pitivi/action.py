@@ -89,7 +89,8 @@ class Action(object, Signallable):
         For each of the consumers/producers it will create the relevant
         GStreamer objects for the Pipeline (if they don't already exist).
 
-        @precondition: Must be set to a L{Pipeline}.
+        @precondition: Must be set to a L{Pipeline}
+        @precondition: The Pipeline must be in the NULL/READY state.
         @precondition: All consumers/producers must be set on the L{Pipeline}.
 
         @return: Whether the L{Action} was activated (True) or not.
@@ -97,6 +98,8 @@ class Action(object, Signallable):
         @raise ActionError: If the L{Action} isn't set to a L{Pipeline}, or one
         of the consumers/producers isn't set on the Pipeline.
         @raise ActionError: If some producers or consumers remain unused.
+        @raise PipelineError: If the L{Pipeline} is not in the NULL or READY
+        state.
         """
         if self.pipeline == None:
             raise ActionError("Action isn't set to a Pipeline")
@@ -119,8 +122,13 @@ class Action(object, Signallable):
         """
         De-activate the Action.
 
+        @precondition: The associated L{Pipeline} must be in the NULL or READY
+        state.
+
         @return: Whether the L{Action} was de-activated (True) or not.
         @rtype: L{bool}
+        @raise PipelineError: If the L{Pipeline} is not in the NULL or READY
+        state.
         """
         if self.state == STATE_NOT_ACTIVE:
             gst.debug("Action already deactivated, returning")
@@ -369,12 +377,13 @@ class Action(object, Signallable):
                 gst.debug(" stream %r" % ps)
                 # for each, figure out a compatible (consumer, stream)
                 for c in self.consumers:
+                    gst.debug("  consumer %r" % c)
                     compat = c.getInputStreams(type(ps))
                     # in case of ambiguity, raise an exception
                     if len(compat) > 1:
                         raise ActionError("Too many compatible streams in consumer")
                     if len(compat) == 1:
-                        gst.debug("Got a compatible stream !")
+                        gst.debug("    Got a compatible stream !")
                         links.append((p, c, ps, compat[0]))
         return links
     #}
@@ -426,18 +435,6 @@ class Action(object, Signallable):
         # get the links
         links = self.getLinks()
         for producer, consumer, prodstream, consstream in links:
-            t = self.pipeline.getTeeForFactoryStream(producer, prodstream)
-            q = self.pipeline.getQueueForFactoryStream(consumer, consstream)
-
-            # figure out to which tee pad the queue is connected
-            queuepad = q.get_pad("sink")
-            teepad = queuepad.get_peer()
-
-            # unlink
-            teepad.unlink(queuepad)
-            gst.debug("Releasing tee's request pad for that link")
-            t.release_request_pad(teepad)
-
             # release tee/queue usage for that stream
-            self.pipeline.releaseTeeForFactoryStream(producer, prodstream)
             self.pipeline.releaseQueueForFactoryStream(consumer, consstream)
+            self.pipeline.releaseTeeForFactoryStream(producer, prodstream)

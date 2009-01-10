@@ -447,7 +447,8 @@ class Pipeline(object, Signallable):
         If this was the last action to release the given (factory,stream), then the
         tee will be removed.
 
-        This should be called by Actions when they deactivate.
+        This should be called by Actions when they deactivate, after having called
+        releaseQueueForFactoryStream() for the consumers.
 
         @param factory: The factory
         @type factory: L{SinkFactory}
@@ -529,7 +530,8 @@ class Pipeline(object, Signallable):
         """
         Release the queue associated with the given source factory and stream.
 
-        The queue object will be internally removed from the gst.Pipeline.
+        The queue object will be internally removed from the gst.Pipeline, along
+        with the link with tee.
 
         This should be called by Actions when they deactivate.
 
@@ -545,9 +547,20 @@ class Pipeline(object, Signallable):
         # release the queue for the given factory/stream
         q = self.queues.pop((factory,stream), None)
         if q:
+            gst.debug("Found a corresponding queue, unlink it from the consumer")
             # unlink it from the sink bin
             sink = self.bins[factory]
             q.unlink(sink)
+
+            gst.debug("Unlinking it from the tee, if present")
+            qpad = q.get_pad("sink")
+            # figure out the peerpad
+            tpad = qpad.get_peer()
+            if tpad:
+                tee = tpad.get_parent()
+                tpad.unlink(qpad)
+                tee.release_request_pad(tpad)
+            gst.debug("Removing from gst.Pipeline")
             self._pipeline.remove(q)
 
 
