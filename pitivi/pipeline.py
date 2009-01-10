@@ -58,22 +58,22 @@ class Pipeline(object, Signallable):
      - Position Querying
        - Along with an periodic callback (optional)
 
-    You can set C{Action}s on it, which are responsible for choosing which
+    You can set L{Action}s on it, which are responsible for choosing which
     C{ObjectFactories} should be used, and how they should be linked.
 
     @ivar state: The current state. This is a cached value, use getState() for
-    the exact actual C{gst.State} of the C{Pipeline}.
+    the exact actual C{gst.State} of the L{Pipeline}.
     @type state: C{gst.State}
     @ivar actions: The Action(s) currently used.
-    @type actions: List of C{Action}
+    @type actions: List of L{Action}
     @ivar factories: The ObjectFactories handled by the Pipeline.
-    @type factories: List of C{ObjectFactory}
+    @type factories: List of L{ObjectFactory}
     @ivar bins: The gst.Bins used, FOR ACTION USAGE ONLY
-    @type bins: Dictionnary of C{ObjectFactory} to C{gst.Bin}
+    @type bins: Dictionnary of L{ObjectFactory} to L{gst.Bin}
     @ivar tees: The tees used after producers, FOR ACTION USAGE ONLY
-    @type tees: Dictionnary of (C{SourceFactory},C{Stream}) to C{gst.Element}
+    @type tees: Dictionnary of (L{SourceFactory},L{MultimediaStream}) to C{gst.Element}
     @ivar queues: The queues used before consumers, FOR ACTION USAGE ONLY
-    @type queues: Dictionnary of (C{SinkFactory},C{Stream}) to C{gst.Element}
+    @type queues: Dictionnary of (L{SinkFactory},L{MultimediaStream}) to C{gst.Element}
     """
 
     __signals__ = {
@@ -105,11 +105,11 @@ class Pipeline(object, Signallable):
 
     def addAction(self, action):
         """
-        Add the given C{Action} to the Pipeline.
+        Add the given L{Action} to the Pipeline.
 
-        @return: The C{Action} that was set
-        @rtype: C{Action}
-        @raise PipelineError: If the given C{Action} is already set to another
+        @return: The L{Action} that was set
+        @rtype: L{Action}
+        @raise PipelineError: If the given L{Action} is already set to another
         Pipeline
         """
         gst.debug("action:%r" % action)
@@ -130,14 +130,14 @@ class Pipeline(object, Signallable):
 
     def setAction(self, action):
         """
-        Set the given C{Action} on the C{Pipeline}.
-        If an C{Action} of the same type already exists in the C{Pipeline} the
-        C{Action} will not be set.
+        Set the given L{Action} on the L{Pipeline}.
+        If an L{Action} of the same type already exists in the L{Pipeline} the
+        L{Action} will not be set.
 
-        @param action: The C{Action} to set on the C{Pipeline}
-        @type action: C{Action}
-        @rtype: C{Action}
-        @return: The C{Action} used. Might be different from the one given as
+        @param action: The L{Action} to set on the L{Pipeline}
+        @type action: L{Action}
+        @rtype: L{Action}
+        @return: The L{Action} used. Might be different from the one given as
         input.
         """
         gst.debug("action:%r" % action)
@@ -149,17 +149,17 @@ class Pipeline(object, Signallable):
 
     def removeAction(self, action):
         """
-        Remove the given C{Action} from the C{Pipeline}.
+        Remove the given L{Action} from the L{Pipeline}.
 
         @precondition: Can only be done if both:
-         - The C{Pipeline} is in READY or NULL
-         - The C{Action} is de-activated
+         - The L{Pipeline} is in READY or NULL
+         - The L{Action} is de-activated
 
-        @param action: The C{Action} to remove from the C{Pipeline}
-        @type action: C{Action}
+        @param action: The L{Action} to remove from the L{Pipeline}
+        @type action: L{Action}
         @rtype: L{bool}
-        @return: Whether the C{Action} was removed from the C{Pipeline} or not.
-        @raise PipelineError: If C{Action} is activated or C{Pipeline} is not
+        @return: Whether the L{Action} was removed from the L{Pipeline} or not.
+        @raise PipelineError: If L{Action} is activated or L{Pipeline} is not
         READY or NULL
         """
         gst.debug("action:%r" % action)
@@ -171,7 +171,7 @@ class Pipeline(object, Signallable):
         try:
             action.unsetPipeline()
         except ActionError:
-            raise PipelineError("Can't unset Action from Pipeline")
+            raise PipelineError("Can't unset Pipeline from Action")
         self.actions.remove(action)
         self.emit('action-removed', action)
 
@@ -179,7 +179,7 @@ class Pipeline(object, Signallable):
 
     def setState(self, state):
         """
-        Set the C{Pipeline} to the given state.
+        Set the L{Pipeline} to the given state.
 
         @raises PipelineError: If the C{gst.Pipeline} could not be changed to
         the requested state.
@@ -198,7 +198,7 @@ class Pipeline(object, Signallable):
 
     def getState(self):
         """
-        Query the C{Pipeline} for the current state.
+        Query the L{Pipeline} for the current state.
 
         This will do an actual query to the underlying GStreamer Pipeline.
         @return: The current state.
@@ -215,7 +215,7 @@ class Pipeline(object, Signallable):
     @property
     def state(self):
         """
-        The state of the C{Pipeline}.
+        The state of the L{Pipeline}.
 
         @warning: This doesn't query the underlying C{gst.Pipeline} but returns the cached
         state.
@@ -225,19 +225,19 @@ class Pipeline(object, Signallable):
 
     def play(self):
         """
-        Sets the C{Pipeline} to PLAYING
+        Sets the L{Pipeline} to PLAYING
         """
         self.setState(STATE_PLAYING)
 
     def pause(self):
         """
-        Sets the C{Pipeline} to PAUSED
+        Sets the L{Pipeline} to PAUSED
         """
         self.setState(STATE_PAUSED)
 
     def stop(self):
         """
-        Sets the C{Pipeline} to READY
+        Sets the L{Pipeline} to READY
         """
         self.setState(STATE_READY)
 
@@ -245,14 +245,15 @@ class Pipeline(object, Signallable):
 
     def addFactory(self, *factories):
         """
-        Adds the given C{ObjectFactory} to be used in the C{Pipeline}.
+        Adds the given L{ObjectFactory} to be used in the L{Pipeline}.
 
-        @precondition: The C{Pipeline} state must be READY or NULL.
+        @precondition: The L{Pipeline} state must be READY or NULL.
 
-        @param factories: The C{ObjectFactory}s to add
-        @type factories: C{ObjectFactory}
-        @raise PipelineError: If the C{Pipeline} isn't in READY or NULL.
+        @param factories: The L{ObjectFactory}s to add
+        @type factories: L{ObjectFactory}
+        @raise PipelineError: If the L{Pipeline} isn't in READY or NULL.
         """
+        gst.debug("factories %r" % list(factories))
         if self._state in [STATE_PAUSED, STATE_PLAYING]:
             raise PipelineError("Can't add factories, Pipeline is not READY or NULL")
         for fact in factories:
@@ -262,17 +263,17 @@ class Pipeline(object, Signallable):
 
     def removeFactory(self, *factories):
         """
-        Removes the given C{ObjectFactory}s from the C{Pipeline}.
+        Removes the given L{ObjectFactory}s from the L{Pipeline}.
 
-        @precondition: The C{Pipeline} state must be READY or NULL and the
-        C{Action}s controlling those factories must all be deactivated.
+        @precondition: The L{Pipeline} state must be READY or NULL and the
+        L{Action}s controlling those factories must all be deactivated.
 
-        @param factories: The C{ObjectFactory}s to remove.
-        @type factories: C{ObjectFactory}
-        @raise PipelineError: If the C{Pipeline} isn't in READY or NULL or if
-        some of the factories are still used by active C{Action}s.
+        @param factories: The L{ObjectFactory}s to remove.
+        @type factories: L{ObjectFactory}
+        @raise PipelineError: If the L{Pipeline} isn't in READY or NULL or if
+        some of the factories are still used by active L{Action}s.
         """
-        gst.debug("factories %r" % factories)
+        gst.debug("factories %r" % list(factories))
         if self._state in [STATE_PAUSED, STATE_PLAYING]:
             raise PipelineError("Can't remove factories, Pipeline is not READY or NULL")
         rfact = [f for f in factories if f in self.factories]
@@ -312,12 +313,13 @@ class Pipeline(object, Signallable):
 
     def getPosition(self, format=gst.FORMAT_TIME):
         """
-        Get the current position of the C{Pipeline}.
+        Get the current position of the L{Pipeline}.
 
         @param format: The format to return the current position in
         @type format: C{gst.Format}
         @return: The current position or gst.CLOCK_TIME_NONE
         @rtype: L{long}
+        @raise PipelineError: If the position couldn't be obtained.
         """
         raise NotImplementedError
 
@@ -343,7 +345,7 @@ class Pipeline(object, Signallable):
 
     def seek(self, position, format=gst.FORMAT_TIME):
         """
-        Seeks in the C{Pipeline} to the given position.
+        Seeks in the L{Pipeline} to the given position.
 
         @param position: Position to seek to
         @type position: L{long}
@@ -356,36 +358,37 @@ class Pipeline(object, Signallable):
 
     def release(self):
         """
-        Release the C{Pipeline} and all used C{ObjectFactory} and
-        C{Action}s.
+        Release the L{Pipeline} and all used L{ObjectFactory} and
+        L{Action}s.
 
-        Call this method when the C{Pipeline} is no longer used. Forgetting to do
+        Call this method when the L{Pipeline} is no longer used. Forgetting to do
         so will result in memory loss.
 
-        @postcondition: The C{Pipeline} will no longer be usable.
+        @postcondition: The L{Pipeline} will no longer be usable.
         """
         raise NotImplementedError
 
 
-    #{ GStreamer object methods
+    #{ GStreamer object methods (For Action usage only)
 
     def getBinForFactory(self, factory, automake=False):
         """
-        Fetches the C{gst.Bin} currently used in the C{gst.Pipeline} for the
-        given C{ObjectFactory}.
+        Fetches the L{gst.Bin} currently used in the C{gst.Pipeline} for the
+        given L{ObjectFactory}.
 
         @param factory: The factory to search.
-        @type factory: C{ObjectFactory}
-        @param automake: If set to True, then if there is not a C{gst.Bin}
-        already created for the given factory, one will be created.
+        @type factory: L{ObjectFactory}
+        @param automake: If set to True, then if there is not a L{gst.Bin}
+        already created for the given factory, one will be created, added to the
+        list of controlled bins and added to the C{gst.Pipeline}.
         @raise PipelineError: If the factory isn't used in this pipeline.
-        @raise PipelineError: If a C{gst.Bin} needed to be created and the
-        C{Pipeline} was not in the READY or NULL state.
-        @raise PipelineError: If a C{gst.Bin} needed to be created but the
+        @raise PipelineError: If a L{gst.Bin} needed to be created and the
+        L{Pipeline} was not in the READY or NULL state.
+        @raise PipelineError: If a L{gst.Bin} needed to be created but the
         creation of that c{gst.Bin} failed.
         @return: The bin corresponding to the given factory or None if there
         are none for the given factory.
-        @rtype: C{gst.Bin}
+        @rtype: L{gst.Bin}
         """
         gst.debug("factory:%r , automake:%r" % (factory, automake))
         if not factory in self.factories:
@@ -397,7 +400,7 @@ class Pipeline(object, Signallable):
         # we need to create one
         if self._state not in [STATE_NULL, STATE_READY]:
             raise PipelineError("Pipeline not in NULL/READY, can not create bin")
-        # create the bin (will raise exceptions if it fails
+        # create the bin (will raise exceptions if it fails)
         return self._makeBin(factory)
 
     def getTeeForFactoryStream(self, factory, stream=None, automake=False):
@@ -505,7 +508,9 @@ class Pipeline(object, Signallable):
 
     def _makeBin(self, factory):
         """
-        Creates a C{gst.Bin} from the given factory and puts it in the pipeline.
+        - Create a L{gst.Bin} from the given factory,
+        - Add it to the list of controlled bins,
+        - Put it in the gst.Pipeline.
 
         @precondition: checks for the factory to be valid should be done before.
         """

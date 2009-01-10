@@ -32,6 +32,8 @@ from pitivi.signalinterface import Signallable
 from pitivi.factories.base import SourceFactory, SinkFactory
 import gst
 
+# TODO : Create a convenience class for Links
+
 # FIXME : define/document a proper hierarchy
 class ActionError(Exception):
     pass
@@ -40,7 +42,7 @@ class Action(object, Signallable):
     """
     Pipeline action.
 
-    Controls the elements of a C{Pipeline}, including their creation,
+    Controls the elements of a L{Pipeline}, including their creation,
     activation, and linking.
 
     Subclasses can also offer higher-level actions that automatically create
@@ -50,18 +52,18 @@ class Action(object, Signallable):
 
     @ivar state: Whether the action is active or not
     @type state: C{ActionState}
-    @ivar producers: The producers controlled by this C{Action}.
-    @type producers: List of C{ObjectFactory}
-    @ivar consumers: The consumers controlled by this C{Action}.
-    @type consumers: List of C{ObjectFactory}
-    @ivar pipeline: The C{Pipeline} controlled by this C{Action}.
-    @type pipeline: C{Pipeline}
+    @ivar producers: The producers controlled by this L{Action}.
+    @type producers: List of L{ObjectFactory}
+    @ivar consumers: The consumers controlled by this L{Action}.
+    @type consumers: List of L{ObjectFactory}
+    @ivar pipeline: The L{Pipeline} controlled by this L{Action}.
+    @type pipeline: L{Pipeline}
     @cvar compatible_producers: The list of compatible factories that
-    this C{Action} can handle as producers.
-    @type compatible_producers: List of C{ObjectFactory}
+    this L{Action} can handle as producers.
+    @type compatible_producers: List of L{ObjectFactory}
     @cvar compatible_consumers: The list of compatible factories that
-    this C{Action} can handle as consumers.
-    @type compatible_consumers: List of C{ObjectFactory}
+    this L{Action} can handle as consumers.
+    @type compatible_consumers: List of L{ObjectFactory}
     """
 
     compatible_producers = [ SourceFactory ]
@@ -87,19 +89,22 @@ class Action(object, Signallable):
         For each of the consumers/producers it will create the relevant
         GStreamer objects for the Pipeline (if they don't already exist).
 
-        @precondition: Must be set to a C{Pipeline}.
-        @precondition: All consumers/producers must be set on the C{Pipeline}.
+        @precondition: Must be set to a L{Pipeline}.
+        @precondition: All consumers/producers must be set on the L{Pipeline}.
 
-        @return: Whether the C{Action} was activated (True) or not.
+        @return: Whether the L{Action} was activated (True) or not.
         @rtype: L{bool}
-        @raise ActionError: If the C{Action} isn't set to a C{Pipeline}, or one
+        @raise ActionError: If the L{Action} isn't set to a L{Pipeline}, or one
         of the consumers/producers isn't set on the Pipeline.
+        @raise ActionError: If some producers or consumers remain unused.
         """
         if self.pipeline == None:
             raise ActionError("Action isn't set to a Pipeline")
         if self.state == STATE_ACTIVE:
             gst.debug("Action already activated, returning")
             return
+        # FIXME : Maybe add an option to automatically add producer/consumer
+        # to the pipeline
         for p in self.producers:
             if not p in self.pipeline.factories:
                 raise ActionError("One of the Producers isn't set on the Pipeline")
@@ -109,13 +114,12 @@ class Action(object, Signallable):
         self._ensurePipelineObjects()
         self.state = STATE_ACTIVE
         self.emit('state-changed', self.state)
-        raise NotImplementedError
 
     def deactivate(self):
         """
         De-activate the Action.
 
-        @return: Whether the C{Action} was de-activated (True) or not.
+        @return: Whether the L{Action} was de-activated (True) or not.
         @rtype: L{bool}
         """
         if self.state == STATE_NOT_ACTIVE:
@@ -129,7 +133,6 @@ class Action(object, Signallable):
         # TODO : remove tees
         self.state = STATE_NOT_ACTIVE
         self.emit('state-changed', self.state)
-        raise NotImplementedError
 
     def isActive(self):
         """
@@ -144,16 +147,16 @@ class Action(object, Signallable):
 
     def setPipeline(self, pipeline):
         """
-        Set the C{Action} on the given C{Pipeline}.
+        Set the L{Action} on the given L{Pipeline}.
 
-        @param pipeline: The C{Pipeline} to set the C{Action} onto.
-        @type pipeline: C{Pipeline}
-        @warning: This method should only be used by C{Pipeline}s when the given
-        C{Action} is set on them.
-        @precondition: The C{Action} must not be set to any other C{Pipeline}
+        @param pipeline: The L{Pipeline} to set the L{Action} onto.
+        @type pipeline: L{Pipeline}
+        @warning: This method should only be used by L{Pipeline}s when the given
+        L{Action} is set on them.
+        @precondition: The L{Action} must not be set to any other L{Pipeline}
         when this method is called.
-        @raise ActionError: If the C{Action} is active or the pipeline is set to
-        a different C{Pipeline}.
+        @raise ActionError: If the L{Action} is active or the pipeline is set to
+        a different L{Pipeline}.
         """
         if self.pipeline == pipeline:
             gst.debug("New pipeline is the same as the currently set one")
@@ -166,13 +169,13 @@ class Action(object, Signallable):
 
     def unsetPipeline(self):
         """
-        Remove the C{Action} from the currently set C{Pipeline}.
+        Remove the L{Action} from the currently set L{Pipeline}.
 
-        @warning: This method should only be used by C{Pipeline}s when the given
-        C{Action} is removed from them.
-        @precondition: The C{Action} must be deactivated before it can be removed from a
-        C{Pipeline}.
-        @raise ActionError: If the C{Action} is active.
+        @warning: This method should only be used by L{Pipeline}s when the given
+        L{Action} is removed from them.
+        @precondition: The L{Action} must be deactivated before it can be removed from a
+        L{Pipeline}.
+        @raise ActionError: If the L{Action} is active.
         """
         if self.state != STATE_NOT_ACTIVE:
             raise ActionError("Action is active, can't unset Pipeline")
@@ -182,10 +185,10 @@ class Action(object, Signallable):
 
     def addProducers(self, *producers):
         """
-        Add the given C{ObjectFactories} as producers of the C{Action}.
+        Add the given L{ObjectFactory}s as producers of the L{Action}.
 
-        @type producers: List of C{ObjectFactory}
-        @raise ActionError: If the C{Action} is active.
+        @type producers: List of L{ObjectFactory}
+        @raise ActionError: If the L{Action} is active.
         """
         gst.debug("producers:%r" % producers)
         if self.state != STATE_NOT_ACTIVE:
@@ -207,10 +210,10 @@ class Action(object, Signallable):
 
     def removeProducers(self, *producers):
         """
-        Remove the given C{ObjectFactories} as producers of the C{Action}.
+        Remove the given L{ObjectFactory}s as producers of the L{Action}.
 
-        @type producers: List of C{ObjectFactory}
-        @raise ActionError: If the C{Action} is active.
+        @type producers: List of L{ObjectFactory}
+        @raise ActionError: If the L{Action} is active.
         """
         if self.state != STATE_NOT_ACTIVE:
             raise ActionError("Action is active, can't remove Producers")
@@ -221,10 +224,10 @@ class Action(object, Signallable):
 
     def addConsumers(self, *consumers):
         """
-        Set the given C{ObjectFactories} as consumers of the C{Action}.
+        Set the given L{ObjectFactory}s as consumers of the L{Action}.
 
-        @type consumers: List of C{ObjectFactory}
-        @raise ActionError: If the C{Action} is active.
+        @type consumers: List of L{ObjectFactory}
+        @raise ActionError: If the L{Action} is active.
         """
         gst.debug("consumers: %r" % consumers)
         if self.state != STATE_NOT_ACTIVE:
@@ -246,10 +249,10 @@ class Action(object, Signallable):
 
     def removeConsumers(self, *consumers):
         """
-        Remove the given C{ObjectFactories} as consumers of the C{Action}.
+        Remove the given L{ObjectFactory}s as consumers of the L{Action}.
 
-        @type consumers: List of C{ObjectFactory}
-        @raise ActionError: If the C{Action} is active.
+        @type consumers: List of L{ObjectFactory}
+        @raise ActionError: If the L{Action} is active.
         """
         if self.state != STATE_NOT_ACTIVE:
             raise ActionError("Action is active, can't remove Consumers")
@@ -265,22 +268,22 @@ class Action(object, Signallable):
         """
         Set a relationship (link) between producer and consumer.
 
-        If the Producer and/or Consumer isn't already set to this C{Action},
+        If the Producer and/or Consumer isn't already set to this L{Action},
         this method will attempt to add them.
 
         @param producer: The producer we wish to link.
-        @type producer: C{ObjectFactory}
+        @type producer: L{ObjectFactory}
         @param consumer: The consumer we wish to link.
-        @type consumer: C{ObjectFactory}
-        @param producerstream: The C{Stream} to use from the producer. If not
-        specified, the C{Action} will figure out a compatible C{Stream} between
+        @type consumer: L{ObjectFactory}
+        @param producerstream: The L{MultimediaStream} to use from the producer. If not
+        specified, the L{Action} will figure out a compatible L{MultimediaStream} between
         the producer and consumer.
-        @type producerstream: C{Stream}
-        @param consumerstream: The C{Stream} to use from the consumer. If not
-        specified, the C{Action} will figure out a compatible C{Stream} between
+        @type producerstream: L{MultimediaStream}
+        @param consumerstream: The L{MultimediaStream} to use from the consumer. If not
+        specified, the L{Action} will figure out a compatible L{MultimediaStream} between
         the consumer and consumer.
-        @type consumerstream: C{Stream}
-        @raise ActionError: If the C{Action} is active.
+        @type consumerstream: L{MultimediaStream}
+        @raise ActionError: If the L{Action} is active.
         @raise ActionError: If the producerstream isn't available on the
         producer.
         @raise ActionError: If the consumerstream isn't available on the
@@ -299,18 +302,18 @@ class Action(object, Signallable):
         Remove a relationship (link) between producer and consumer.
 
         @param producer: The producer we wish to unlink.
-        @type producer: C{ObjectFactory}
+        @type producer: L{ObjectFactory}
         @param consumer: The consumer we wish to unlink.
-        @type consumer: C{ObjectFactory}
-        @param producerstream: The C{Stream} to use from the producer. If not
-        specified, the C{Action} will figure out a compatible C{Stream} between
+        @type consumer: L{ObjectFactory}
+        @param producerstream: The L{MultimediaStream} to use from the producer. If not
+        specified, the L{Action} will figure out a compatible L{MultimediaStream} between
         the producer and consumer.
-        @type producerstream: C{Stream}.
-        @param consumerstream: The C{Stream} to use from the consumer. If not
-        specified, the C{Action} will figure out a compatible C{Stream} between
+        @type producerstream: L{MultimediaStream}.
+        @param consumerstream: The L{MultimediaStream} to use from the consumer. If not
+        specified, the L{Action} will figure out a compatible L{MultimediaStream} between
         the consumer and consumer.
-        @type consumerstream: C{Stream}.
-        @raise ActionError: If the C{Action} is active.
+        @type consumerstream: L{MultimediaStream}.
+        @raise ActionError: If the L{Action} is active.
         @raise ActionError: If the producerstream wasn't used in any links.
         @raise ActionError: If the consumerstream wasn't used in any links.
         """
