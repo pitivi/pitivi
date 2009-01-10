@@ -157,7 +157,11 @@ class ObjectFactory(object, Signallable):
     def getOutputStreams(self, stream_classes=None):
         return [stream for stream in self.output_streams
                 if stream_classes is None or isinstance(stream, stream_classes)]
-    
+
+    def getInputStreams(self, stream_classes=None):
+        return [stream for stream in self.input_streams
+                if stream_classes is None or isinstance(stream, stream_classes)]
+
     def __str__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.displayname or self.name)
 
