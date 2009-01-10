@@ -25,19 +25,21 @@ Multimedia stream, used for definition of media streams
 
 from gettext import gettext as _
 import gst
-    
-# FIXME: use epydoc/whatever formatting for docstrings
+
 class MultimediaStream(object):
     """
     Defines a media stream
 
-    Properties:
-    * raw (boolean) : True if the stream is a raw media format
-    * fixed (boolean) : True if the stream is entirely defined
-    * caps (gst.Caps) : Caps corresponding to the stream
-
+    @cvar raw: The stream is a raw media format.
+    @type raw: C{bool}
+    @cvar fixed: The stream is entirely defined.
+    @type fixed: C{bool}
+    @cvar caps: The caps corresponding to the stream
+    @type caps: C{gst.Caps}
+    @cvar pad_name: The name of the pad from which this stream originated.
+    @type pad_name: C{str}
     """
-    
+
     def __init__(self, caps, pad_name=None):
         gst.log("new with caps %s" % caps.to_string())
         self.caps = caps
@@ -54,13 +56,24 @@ class MultimediaStream(object):
         # NOTE: current implementations only parse the first structure. It could
         # be a bit limited but on the other hand, Streams are just a thin layer
         # on top of caps. For more complex things caps should be used.
-        
+
     def __str__(self):
         return "%s" % self.caps
 
 class VideoStream(MultimediaStream):
     """
     Video Stream
+
+    @cvar width: Width of the video in pixels.
+    @type width: C{int}
+    @cvar height: Height of the video in pixels.
+    @type height: C{int}
+    @cvar framerate: Framerate of the video.
+    @type framerate: C{gst.Fraction}
+    @cvar format: The subtype of video type
+    @cvar is_image: If the stream is an image.
+    @type is_image: C{bool}
+    @cvar thumbnail: The thumbnail associated with this stream
     """
 
     def __init__(self, caps, pad_name=None, is_image=False):
@@ -84,7 +97,7 @@ class VideoStream(MultimediaStream):
             except KeyError:
                 # property not in caps
                 pass
-       
+
         if self.framerate is None:
             self.framerate = gst.Fraction(1, 1)
 
@@ -105,6 +118,17 @@ class VideoStream(MultimediaStream):
 class AudioStream(MultimediaStream):
     """
     Audio stream
+
+    @cvar audiotype: Type of the audio stream (Ex: audio/x-raw-int)
+    @type audiotype: C{str}
+    @cvar channels: The number of channels handled by this Stream
+    @type channels: C{int}
+    @cvar rate: The sample rate
+    @type rate: C{int}
+    @cvar width: The number of bits taken by an individual sample.
+    @type width: C{int}
+    @cvar depth: The number of useful bits used by an individual sample.
+    @type depth: C{int}
     """
     def __init__(self, caps, pad_name=None):
         # initialize properties here for clarity
@@ -112,9 +136,10 @@ class AudioStream(MultimediaStream):
         self.channels = None
         self.rate = None
         self.width = None
+        # FIXME : height ?????
         self.height = None
         self.depth = None
-        
+
         MultimediaStream.__init__(self, caps, pad_name)
 
     def _analyzeCaps(self):
@@ -142,7 +167,7 @@ class TextStream(MultimediaStream):
 
     def _getMarkup(self):
         return _("<b>Text:</b> %s") % self.texttype
-    
+
 def find_decoder(pad):
     if isinstance(pad, gst.GhostPad):
         target = pad.get_target()
@@ -169,7 +194,7 @@ def get_pad_type(pad):
     decoder = find_decoder(pad)
     if decoder:
         return get_type_from_decoder(decoder)
-    
+
     return pad.get_caps()[0].get_name().split('/', 1)[0]
 
 def get_stream_for_caps(caps, pad=None):
