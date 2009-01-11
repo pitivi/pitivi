@@ -33,19 +33,42 @@ from pitivi.stream import VideoStream, AudioStream
 from pitivi.utils import time_to_string
 import dnd
 
-class PitiviViewer(gtk.VBox):
-    """ Pitivi's viewer widget with controls """
+class ViewerError(Exception):
+    pass
 
-    def __init__(self):
+# TODO : Switch to using Pipeline and Action
+
+class PitiviViewer(gtk.VBox):
+    """
+    A Widget to control and visualize a Pipeline
+
+    @cvar pipeline: The current pipeline
+    @type pipeline: L{Pipeline}
+    @cvar action: The action controlled by this Pipeline
+    @type action: L{ViewAction}
+    """
+
+    def __init__(self, action=None, pipeline=None):
+        """
+        @param action: Specific action to use instead of auto-created one
+        @type action: L{ViewAction}
+        """
         gst.log("New PitiviViewer")
         gtk.VBox.__init__(self)
+
+        self.action = action
+        self.pipeline = pipeline
+
         self.current_time = long(0)
         self.requested_time = gst.CLOCK_TIME_NONE
         self.current_frame = -1
-        self.valuechangedid = 0
         self.currentlySeeking = False
+
         self.currentState = gst.STATE_PAUSED
+
         self._createUi()
+        self.setAction(action)
+        self.setPipeline(pipeline)
 
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
@@ -58,10 +81,84 @@ class PitiviViewer(gtk.VBox):
         # callback to know when to set the XID on our viewer widget
         instance.PiTiVi.playground.connect("element-message", self._playgroundElementMessageCb)
 
-        # signal for timeline duration changes : (composition, sigid)
-        self._timelineDurationChangedSigId = (None, None)
+    def setPipeline(self, pipeline):
+        """
+        Set the Viewer to the given Pipeline.
 
+        Properly switches the currently set action to that new Pipeline.
 
+        @param pipeline: The Pipeline to switch to.
+        @type pipeline: L{Pipeline}.
+        """
+        if self.pipeline != None:
+            # remove previously set Pipeline
+            self._disconnectFromPipeline(self.pipeline)
+            # make ui inactive
+            self._setUiActive(False)
+            # finally remove previous pipeline
+            self.pipeline = None
+        # TODO : Connect to position handler (where ?)
+        self._connectToPipeline(pipeline)
+        self._setUiActive()
+        self.pipeline = pipeline
+
+    def setAction(self, action):
+        """
+        Set the controlled action.
+
+        @param action: The Action to set. If C{None}, a default L{ViewAction}
+        will be used.
+        @type action: L{ViewAction} or C{None}
+        """
+        if self.action != None:
+            # if there was one previously, remove it
+            self._disconnectFromAction(self)
+        if action == None:
+            # get the default action
+            action = self._getDefaultAction(self)
+        self._connectToAction(action)
+
+    def _connectToPipeline(self, pipeline):
+        if self.pipeline != None:
+            raise ViewerError("previous pipeline wasn't disconnected")
+
+        self.pipeline = pipeline
+        self.pipeline.connect('position', self._posCb)
+        self.pipeline.activatePositionListener()
+        # if we have an action set it to that new pipeline
+        if self.action:
+            self.pipeline.setAction(self.action)
+
+    def _disconnectFromPipeline(self):
+        if self.pipeline == None:
+            # silently return, there's nothing to disconnect from
+            return
+        if self.action and (self.action in self.pipeline.actions):
+            # if we have an action, properly remove it from pipeline
+            if self.action.isActive():
+                self.pipeline.stop()
+                self.action.deactivate()
+            self.pipeline.removeAction(self.action)
+
+        self.pipeline.disconnect_by_func(self._posCb)
+        self.deactivatePositionListener()
+
+        self.pipeline = None
+
+    def _connectToAction(self, action):
+        # not sure what we need to do ...
+        self.action = action
+        raise NotImplementedError
+
+    def _disconnectFromAction(self):
+        self.action = None
+        raise NotImplementedError
+
+    def _setUiActive(self, active=True):
+        raise NotImplementedError
+
+    def _getDefaultAction(self):
+        raise NotImplementedError
 
     def _connectToProject(self, project):
         """Connect signal handlers to a project.
