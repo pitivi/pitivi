@@ -104,6 +104,19 @@ class Pipeline(object, Signallable):
         self._listeningInterval = 300 # default 300ms
         self._listeningSigId = 0
 
+    def release(self):
+        """
+        Release the L{Pipeline} and all used L{ObjectFactory} and
+        L{Action}s.
+
+        Call this method when the L{Pipeline} is no longer used. Forgetting to do
+        so will result in memory loss.
+
+        @postcondition: The L{Pipeline} will no longer be usable.
+        """
+        self._pipeline.set_state(STATE_NULL)
+        self._listenToPosition(False)
+        raise NotImplementedError
 
     #{ Action-related methods
 
@@ -399,23 +412,22 @@ class Pipeline(object, Signallable):
         @type position: L{long}
         @param format: The C{Format} of the seek position
         @type format: C{gst.Format}
-        @return: Whether the seek succeeded or not
-        @rtype: L{bool}
+        @raise PipelineError: If seek failed
         """
-        raise NotImplementedError
+        if format == gst.FORMAT_TIME:
+            gst.debug("position : %s" % gst.TIME_ARGS (position))
+        else:
+            gst.debug("position : %d , format:%d" % (position, format))
+        # FIXME : temporarily deactivate position listener
+        self._listenToPosition(False)
 
-    def release(self):
-        """
-        Release the L{Pipeline} and all used L{ObjectFactory} and
-        L{Action}s.
-
-        Call this method when the L{Pipeline} is no longer used. Forgetting to do
-        so will result in memory loss.
-
-        @postcondition: The L{Pipeline} will no longer be usable.
-        """
-        raise NotImplementedError
-
+        res = self._pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
+                                  gst.SEEK_TYPE_SET, position,
+                                  gst.SEEK_TYPE_NONE, -1)
+        if not res:
+            raise PipelineError("seek failed")
+        gst.debug("seeking succesfull")
+        self.emit('position', position)
 
     #{ GStreamer object methods (For Action usage only)
 
