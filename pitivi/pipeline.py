@@ -193,15 +193,15 @@ class Pipeline(object, Signallable):
         @type action: L{Action}
         @rtype: L{bool}
         @return: Whether the L{Action} was removed from the L{Pipeline} or not.
-        @raise PipelineError: If L{Action} is activated or L{Pipeline} is not
+        @raise PipelineError: If L{Action} is activated and L{Pipeline} is not
         READY or NULL
         """
         gst.debug("action:%r" % action)
         if not action in self.actions:
             gst.debug("action not controlled by this Pipeline, returning")
             return
-        if self._state in [STATE_PAUSED, STATE_PLAYING]:
-            raise PipelineError("Actions can not be in a PLAYING or PAUSED Pipeline")
+        if action.isActive() and self._state in [STATE_PAUSED, STATE_PLAYING]:
+            raise PipelineError("Active actions can't be removed from PLAYING or PAUSED Pipeline")
         try:
             action.unsetPipeline()
         except ActionError:
@@ -664,39 +664,51 @@ class Pipeline(object, Signallable):
         - Create a L{gst.Bin} from the given factory,
         - Add it to the list of controlled bins,
         - Put it in the gst.Pipeline.
+        - Listen for newly created pads.
 
         @precondition: checks for the factory to be valid should be done before.
         """
+        # FIXME : Who brings the newly created elements to the current pipeline
+        # state ?
         # FIXME : How do we figure out for which streams we need to create the
         # Bin.
         # Ex : There could be one action wanting one stream from a given bin, and
         # another action wanting another stream.
         # ==> It should figure out from all Actions what streams are being used
+        if factory in self.bins.keys():
+            raise PipelineError("Bin for factory already exists !")
         gst.debug("factory %r" % factory)
         b = factory.makeBin()
+        # listen to newly created pads
+        self._listenToPads(b)
         gst.debug("adding newly created bin [%r] to gst.Pipeline" % b)
         self._pipeline.add(b)
         gst.debug("Adding newly created bin to list of controlled bins")
         self.bins[factory] = b
         return b
 
-    def _binPadAddedCb(self, bin, pad, factory):
+    def _binPadAddedCb(self, bin, pad):
         gst.debug("bin:%r, pad:%r" % (bin, pad))
-        # try to find an existing tee for the given pad
-        for fact, stream in self._pendingStreams.keys():
-            if fact == factory and pad_compatible_stream(pad, stream):
-                tee = self._pendingStreams
-                gst.debug("Linking to the pending tee")
-                pad.link(tee.get_pad("sink"))
-                del self._pendingStreams[(fact,stream)]
-                return
-        gst.debug("Ignored pad since we don't seem to use it")
+        f = None
+        for fact, b in self.bins.iteritems:
+            if b == bin:
+                f = fact
+        if f == None:
+            return
+        stream = get_stream_for_caps(pad.get_caps(), pad)
+        # ask all actions using this producer if they handle it
+        handled = False
+        for action in [x for x in self.actions if f in x.producers]:
+            handled |= action.handleNewStream(f, stream)
+        if handled == False:
+            gst.debug("No action handled this Stream")
+            self.emit('unhandled-stream', stream)
 
     def _binPadRemovedCb(self, bin, pad, factory):
         gst.debug("bin:%r, pad:%r" % (bin, pad))
         raise NotImplementedError
 
-    def _listenToPads(self, bin, tee, factory,stream):
+    def _listenToPads(self, bin):
         # Listen on the given bin for pads being added/removed
         if not bin is self._padSigIds.keys():
             padaddedsigid = bin.connect('pad-added', self._teePadAddedCb,
@@ -704,8 +716,8 @@ class Pipeline(object, Signallable):
             padremovedsigid = bin.connect('pad-removed', self._teePadAddedCb,
                                           factory)
             self._padSigIds[bin] = (padaddedsigid, padremovedsigid)
-        # add the stream to the list of pending streams
-        self._pendingStreams[(factory,stream)] = tee
+        # add the action to the list of pending streams
+        self._pendingStreams[(factory,stream)] = action
 
     def _makeTee(self, factory, stream):
         """

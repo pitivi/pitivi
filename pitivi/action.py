@@ -79,6 +79,9 @@ class Action(object, Signallable):
         self.consumers = []
         self.pipeline = None
         self._links = [] # list of (producer, consumer, prodstream, consstream)
+        self._pendinglinks = [] # list of links that still need to be connected
+        self._dynlinks = [] # list of links added at RunTime, will be removed when deactivated
+        self._dynconsumers = [] # consumers that we added at RunTime
 
     #{ Activation methods
 
@@ -398,6 +401,45 @@ class Action(object, Signallable):
                         gst.debug("    Got a compatible stream !")
                         links.append((p, c, ps, compat[0]))
         return links
+
+    def handleNewStream(self, producer, stream):
+        """
+        Handle the given stream of the given producer.
+
+        Called by the Pipeline when one of the producers controlled by this
+        action produces a new Stream
+
+        Subclasses can override this method and chain-up to the parent class
+        method *before* doing their own processing.
+
+        @param producer: The producer of the stream
+        @type producer: L{SourceFactory}
+        @param stream: The new stream
+        @type stream: L{MultimediaStream}
+        @return: C{True} if the Stream is/was handled by the Action, else C{False}
+        @rtype: C{bool}
+        """
+        gst.debug("producer:%r, stream:%r" % (producer, stream))
+        # 1. Check if it's one of our pendings pads
+        for prod, cons, prodstream, consstream in self._pendingLinks:
+            # FIXME : check compatibiliy of streams in another way
+            if prod == producer and prodstream.isCompatibleWithName(stream):
+                self._activateLink(prod, cons, prodstream, consstream)
+        # 2. It could also be one of the links we've *already* handled
+        for prod, cons, ps, cs in self.getLinks():
+            if prod == producer and ps.isCompatibleWithName(stream):
+                return True
+
+    def streamRemoved(self, producer, stream):
+        """
+        A stream has been removed from one of the producers controlled by this
+        action.
+
+        Called by the Pipeline.
+        """
+        gst.debug("producer:%r, stream:%r" % (producer, stream))
+        raise NotImplementedError
+
     #}
 
     def _ensurePipelineObjects(self):
@@ -422,34 +464,53 @@ class Action(object, Signallable):
             raise ActionError("Some producers or consumers are not used !")
 
         gst.debug("make sure we have bins")
-        # Make sure we have bins for our producers and consumers
+        # Make sure we have bins for all our producers
         for p in self.producers:
             self.pipeline.getBinForFactory(p, automake=True)
-        for p in self.consumers:
-            self.pipeline.getBinForFactory(p, automake=True)
 
-        gst.debug("iterating links")
+        # clear dynamic-stream variables
+        self._dynlinks = []
+        self._pendinglinks = []
+        self._dynconsumers = []
 
-        for producer, consumer, prodstream, consstream in links:
-            gst.debug("producer:%r, consumer:%r, prodstream:%r, consstream:%r" % (\
+        for link in links:
+            self._activate_links(*link)
+
+    def _activateLink(self, producer, consumer, prodstream, consstream, init=True):
+        # activate the given Link, returns True if it was (already) activated
+        # if init is True, then remember the pending link
+        gst.debug("producer:%r, consumer:%r, prodstream:%r, consstream:%r" % (\
                 producer, consumer, prodstream, consstream))
-            # Make sure we have tees for our (producer,stream)s
-            t = self.pipeline.getTeeForFactoryStream(producer, prodstream,
-                                                     automake=True)
+        # Make sure we have tees for our (producer,stream)s
+        t = self.pipeline.getTeeForFactoryStream(producer, prodstream,
+                                                 automake=True)
+        if t:
+            # Make sure we have a bin for our consumer
+            self.pipeline.getBinForFactory(consumer, automake=True)
             # Make sure we have queues for our (consumer, stream)s
             q = self.pipeline.getQueueForFactoryStream(consumer, consstream,
                                                        automake=True)
             # Link tees to queues
             t.link(q)
+        else:
+            if init != True:
+                return False
+            gst.debug("Stream will be created dynamically")
+            self._pendinglinks.append((producer, consumer, prodstream, consstream))
+        return True
 
     def _releasePipelineObjects(self):
         gst.debug("Releasing pipeline objects")
-        # get the links
-        links = self.getLinks()
-        for producer, consumer, prodstream, consstream in links:
+        for producer, consumer, prodstream, consstream in self.getLinks():
             # release tee/queue usage for that stream
             self.pipeline.releaseQueueForFactoryStream(consumer, consstream)
             self.pipeline.releaseTeeForFactoryStream(producer, prodstream)
+        # release links created at runtime
+        for producer, consumer, prodstream, consstream in self._dynlinks:
+            # release tee/queue usage for that stream
+            self.pipeline.releaseQueueForFactoryStream(consumer, consstream)
+            self.pipeline.releaseTeeForFactoryStream(producer, prodstream)
+        self._dynlinks = []
 
 class ViewAction(Action):
     """
