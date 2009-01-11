@@ -61,6 +61,18 @@ class Pipeline(object, Signallable):
     You can set L{Action}s on it, which are responsible for choosing which
     C{ObjectFactories} should be used, and how they should be linked.
 
+    Signals:
+     - C{action-added} : A new L{Action} was added.
+     - C{action-removed} : An L{Action} was removed.
+     - C{factory-added} : An L{ObjectFactory} was added.
+     - C{factory-removed} : An L{ObjectFactory} was removed.
+     - C{state-changed} : The state of the pipeline changed.
+     - C{position} : The current position of the pipeline changed.
+     - C{unhandled-stream} : A factory produced a stream which wasn't handled
+       by any of the L{Action}s.
+     - C{eos} : The Pipeline has finished playing.
+     - C{error} : An error happened.
+
     @ivar state: The current state. This is a cached value, use getState() for
     the exact actual C{gst.State} of the L{Pipeline}.
     @type state: C{gst.State}
@@ -83,6 +95,7 @@ class Pipeline(object, Signallable):
         "factory-removed" : ["factory"],
         "state-changed" : ["state"],
         "position" : ["position"],
+        "unhandled-stream" : ["factory", "stream"],
         "eos" : [],
         "error" : ["message", "details"]
         }
