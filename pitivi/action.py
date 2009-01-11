@@ -450,3 +450,9 @@ class Action(object, Signallable):
             # release tee/queue usage for that stream
             self.pipeline.releaseQueueForFactoryStream(consumer, consstream)
             self.pipeline.releaseTeeForFactoryStream(producer, prodstream)
+
+class ViewAction(Action):
+    """
+    An action used to view sources.
+    """
+    pass
