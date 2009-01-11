@@ -100,6 +100,10 @@ class Pipeline(object, Signallable):
         self._state = STATE_NULL
         self._padSigIds = {} # (factory) => (paddaddedsigid,padremovedsigid)
         self._pendingStreams = {} # (factory,stream) => tee
+        self._listening = False # for the position handler
+        self._listeningInterval = 300 # default 300ms
+        self._listeningSigId = 0
+
 
     #{ Action-related methods
 
@@ -199,6 +203,8 @@ class Pipeline(object, Signallable):
             # the change to the request state was successful and not asynchronous
             self._state = state
             self.emit('state-changed', self._state)
+            # update position listener status
+            self._listenToPosition(state in [STATE_PAUSED, STATE_PLAYING])
 
     def getState(self):
         """
@@ -215,6 +221,8 @@ class Pipeline(object, Signallable):
         if change != gst.STATE_CHANGE_FAILURE and pending == gst.STATE_VOID_PENDING and state != self._state:
             self._state = state
             self.emit('state-changed', self._state)
+            # update position listener status
+            self._listenToPosition(state in [STATE_PAUSED, STATE_PLAYING])
         gst.debug("Returning %r" % self._state)
         return self._state
 
@@ -329,7 +337,13 @@ class Pipeline(object, Signallable):
         @rtype: L{long}
         @raise PipelineError: If the position couldn't be obtained.
         """
-        raise NotImplementedError
+        gst.log("format %r" % format)
+        try:
+            cur, format = self._pipeline.query_position(format)
+        except:
+            raise PipelineError("Couldn't get position")
+        gst.log("Got position %s" % gst.TIME_ARGS(cur))
+        return cur
 
     def activatePositionListener(self, interval=300):
         """
@@ -344,7 +358,12 @@ class Pipeline(object, Signallable):
         @return: Whether the position listener was activated or not
         @rtype: L{bool}
         """
-        raise NotImplementedError
+        if self._listening == True:
+            return True
+        self._listening = True
+        # if we're in paused or playing, switch it on
+        self._listenToPosition(self.getState() in [STATE_PAUSED, STATE_PLAYING])
+        return True
 
     def deactivatePositionListener(self):
         """
@@ -352,7 +371,25 @@ class Pipeline(object, Signallable):
 
         @see: L{activatePositionListener}
         """
-        raise NotImplementedError
+        self._listenToPosition(False)
+        self._listening = False
+
+    def _positionListenerCb(self):
+        cur = self.getPosition()
+        if cur != gst.CLOCK_TIME_NONE:
+            self.emit('position', cur)
+        return True
+
+    def _listenToPosition(self, listen=True):
+        # stupid and dumm method, not many checks done
+        # i.e. it does NOT check for current state
+        if listen == True:
+            if self._listening == True and self._listeningSigId == 0:
+                self._listeningSigId = gobject.timeout_add(self._listeningInterval,
+                                                           self._positionListenerCb)
+        elif self._listeningSigId != 0:
+            gobject.source_remove(self._listeningSigId)
+            self._listeningSigId = 0
 
     def seek(self, position, format=gst.FORMAT_TIME):
         """
@@ -589,8 +626,9 @@ class Pipeline(object, Signallable):
         elif message.type == gst.MESSAGE_STATE_CHANGED and message.src == self._pipeline:
             prev, new, pending = message.parse_state_changed()
             gst.debug("Pipeline change state prev:%r, new:%r, pending:%r" % (prev, new, pending))
-            if self._state != new:
+            if pending == gst.STATE_VOID_PENDING and self._state != new:
                 self._state = new
+                self._listenToPosition(self._state in [STATE_PAUSED, STATE_PLAYING])
                 self.emit('state-changed', self._state)
         elif message.type == gst.MESSAGE_ERROR:
             error, detail = message.parse_error()
