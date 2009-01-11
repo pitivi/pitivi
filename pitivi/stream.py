@@ -57,6 +57,31 @@ class MultimediaStream(object):
         # be a bit limited but on the other hand, Streams are just a thin layer
         # on top of caps. For more complex things caps should be used.
 
+    def isCompatible(self, other):
+        """
+        Checks whether the stream is compatible with the other streams.
+
+        That means they have compatible caps
+
+        @param other: another stream
+        @type other: L{MultimediaStream}
+        @return: C{True} if the stream is compatible.
+        @rtype: C{bool}
+        """
+        return not self.caps.intersect(other.caps).is_empty()
+
+    def isCompatibleWithName(self, other):
+        """
+        Checks whether the stream is compatible with the other streams caps
+        and pad name.
+
+        @param other: another stream
+        @type other: L{MultimediaStream}
+        @return: C{True} if the stream is compatible.
+        @rtype: C{bool}
+        """
+        return self.pad_name == other.pad_name and self.isCompatible(other)
+
     def __str__(self):
         return "%s" % self.caps
 
