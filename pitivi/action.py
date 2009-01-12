@@ -53,17 +53,17 @@ class Action(object, Signallable):
     @ivar state: Whether the action is active or not
     @type state: C{ActionState}
     @ivar producers: The producers controlled by this L{Action}.
-    @type producers: List of L{ObjectFactory}
+    @type producers: List of L{SourceFactory}
     @ivar consumers: The consumers controlled by this L{Action}.
-    @type consumers: List of L{ObjectFactory}
+    @type consumers: List of L{SinkFactory}
     @ivar pipeline: The L{Pipeline} controlled by this L{Action}.
     @type pipeline: L{Pipeline}
     @cvar compatible_producers: The list of compatible factories that
     this L{Action} can handle as producers.
-    @type compatible_producers: List of L{ObjectFactory}
+    @type compatible_producers: List of L{ObjectFactory} classes
     @cvar compatible_consumers: The list of compatible factories that
     this L{Action} can handle as consumers.
-    @type compatible_consumers: List of L{ObjectFactory}
+    @type compatible_consumers: List of L{ObjectFactory} classes
     """
 
     compatible_producers = [ SourceFactory ]
@@ -432,6 +432,8 @@ class Action(object, Signallable):
                         links.append((p, c, ps, compat[0]))
         return links
 
+    #{ Dynamic Stream handling
+
     def handleNewStream(self, producer, stream):
         """
         Handle the given stream of the given producer.
@@ -545,5 +547,9 @@ class Action(object, Signallable):
 class ViewAction(Action):
     """
     An action used to view sources.
+
+    Will automatically connect stream from the controlled producer to the given
+    sinks.
     """
+    # FIXME : implement auto-plugging
     pass
