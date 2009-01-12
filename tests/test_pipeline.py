@@ -21,7 +21,7 @@
 
 from unittest import TestCase, main
 from pitivi.pipeline import Pipeline, STATE_NULL, STATE_READY, STATE_PAUSED, STATE_PLAYING, PipelineError
-from pitivi.action import Action
+from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE
 from common import SignalMonitor, FakeSourceFactory, FakeSinkFactory
 
 class BogusAction(Action):
@@ -104,15 +104,22 @@ class TestPipeline(TestCase):
         self.assertEquals(res, ac1)
         self.assertEquals(self.pipeline.actions, [ac1])
 
-        # we can't remove actions while in PAUSED/PLAYING
+        # we can't remove active actions while in PAUSED/PLAYING
         self.pipeline.setState(STATE_PAUSED)
+        ac1.state = STATE_ACTIVE
         self.assertEquals(self.pipeline.state, STATE_PAUSED)
         self.failUnlessRaises(PipelineError, self.pipeline.removeAction, ac1)
 
-        # but we can add some
+        # but we can remove deactivated actions while in PAUSED/PLAYING
+        self.pipeline.setState(STATE_PAUSED)
+        ac1.state = STATE_NOT_ACTIVE
+        self.assertEquals(self.pipeline.state, STATE_PAUSED)
+        self.pipeline.removeAction(ac1)
+
+        # we can add actions while in PAUSED/PLAYING
         res = self.pipeline.addAction(ac2)
         self.assertEquals(res, ac2)
-        self.assertEquals(self.pipeline.actions, [ac1, ac2])
+        self.assertEquals(self.pipeline.actions, [ac2])
 
     def testStateChange(self):
         """ State Changes """
