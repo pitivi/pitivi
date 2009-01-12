@@ -307,12 +307,40 @@ class Action(object, Signallable):
         @raise ActionError: If the consumerstream isn't available on the
         consumer.
         @raise ActionError: If the producer and consumer are incompatible.
+        @raise ActionError: If the link is already set.
         """
         # If streams are specified, make sure they exist in their respective factories
         # Make sure producer and consumer are compatible
         # If needed, add producer and consumer to ourselves
         # store the link
-        raise NotImplementedError
+        if self.isActive():
+            raise ActionError("Can't add link when active")
+        if not isinstance(producer, SourceFactory):
+            raise ActionError("Producer isn't a SourceFactory")
+        if not isinstance(consumer, SinkFactory):
+            raise ActionError("Producer isn't a SourceFactory")
+
+        if producerstream and not producerstream in producer.getOutputStreams():
+            raise ActionError("Stream specified isn't available in producer")
+        if consumerstream and not consumerstream in consumer.getInputStreams():
+            raise ActionError("Stream specified isn't available in consumer")
+
+        # check if the streams are compatible
+        if producerstream != None and consumerstream != None:
+            if not producerstream.isCompatible(consumerstream):
+                raise ActionError("Specified streams are not compatible")
+
+        # finally check if that link isn't already set
+        linktoadd = (producer, consumer, producerstream, consumerstream)
+        if linktoadd in self._links:
+            raise ActionError("Link already present")
+
+        # now, lets' see if we are already controlling the consumer and producer
+        if producer not in self.producers:
+            self.addProducers(producer)
+        if consumer not in self.consumers:
+            self.addConsumers(consumer)
+        self._links.append(linktoadd)
 
     def removeLink(self, producer, consumer, producerstream=None,
                    consumerstream=None):
@@ -334,14 +362,16 @@ class Action(object, Signallable):
         the consumer and consumer.
         @type consumerstream: L{MultimediaStream}.
         @raise ActionError: If the L{Action} is active.
-        @raise ActionError: If the producerstream wasn't used in any links.
-        @raise ActionError: If the consumerstream wasn't used in any links.
+        @raise ActionError: If the link didn't exist
         """
-        # If producer and consumer are not available, raise error
-        # Search for the given link
-        # If there are multiple compatible links, raise an Error
-        # finally, remove link
-        raise NotImplementedError
+        if self.isActive():
+            raise ActionError("Action active")
+
+        alink = (producer, consumer, producerstream, consumerstream)
+        if not alink in self._links:
+            raise ActionError("Link doesn't exist !")
+
+        self._links.remove(alink)
 
     def getLinks(self, autolink=True):
         """

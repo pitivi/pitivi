@@ -162,6 +162,30 @@ class TestAction(TestCase):
         # the gst.Pipeline should be empty !
         self.assertEquals(list(p._pipeline.elements()), [])
 
+    def testLinksSimple(self):
+        """ Testing simple usage of Links """
+        a = Action()
+        src = common.FakeSourceFactory()
+        src.addOutputStream(MultimediaStream(gst.Caps("any"), pad_name="src"))
+        sink = common.FakeSinkFactory()
+        sink.addInputStream(MultimediaStream(gst.Caps("any"), pad_name="sink"))
+
+        a.setLink(src, sink)
+        # Let's see if the link is present
+        self.assertEquals(a._links, [(src, sink, None, None)])
+
+        # It should have added both the producer and consumer
+        self.assertEquals(a.producers, [src])
+        self.assertEquals(a.consumers, [sink])
+
+        # adding it again  should raise an exception
+        self.failUnlessRaises(ActionError, a.setLink, src, sink)
+
+        # remove the link
+        a.removeLink(src, sink)
+        self.assertEquals(a._links, [])
+
+
     def test_isActive(self):
         """ Test isActive() """
         ac = Action()
