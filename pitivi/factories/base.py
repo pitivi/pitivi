@@ -155,10 +155,34 @@ class ObjectFactory(object, Signallable):
         self.output_streams.remove(stream)
 
     def getOutputStreams(self, stream_classes=None):
+        """
+        Return the output streams.
+
+        If specified, only the stream of the provided steam classes will be
+        returned.
+
+        @param stream_classes: If specified, the L{MultimediaStream} classes to
+        filter with.
+        @type stream_classes: one or many L{MultimediaStream} classes
+        @return: The output streams.
+        @rtype: List of L{MultimediaStream}
+        """
         return [stream for stream in self.output_streams
                 if stream_classes is None or isinstance(stream, stream_classes)]
 
     def getInputStreams(self, stream_classes=None):
+        """
+        Return the input streams.
+
+        If specified, only the stream of the provided steam classes will be
+        returned.
+
+        @param stream_classes: If specified, the L{MultimediaStream} classes to
+        filter with.
+        @type stream_classes: one or many L{MultimediaStream} classes
+        @return: The input streams.
+        @rtype: List of L{MultimediaStream}
+        """
         return [stream for stream in self.input_streams
                 if stream_classes is None or isinstance(stream, stream_classes)]
 
