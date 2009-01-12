@@ -158,7 +158,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         if items:
             for item in items:
                 if isinstance(item, TimelineObject):
-                    self.timeline.splitObject(item.element, self.pixelToNs(x))
+                    item.element.split(self.pixelToNs(x))
+
         return True
 
     def __razorClickedCb(self, unused_canvas, unused_event):

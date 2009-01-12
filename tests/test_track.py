@@ -60,7 +60,7 @@ class TestTrackObject(TestCase):
     def testChangePropertiesFromTrackObject(self):
         obj = self.track_object
         gnl_object = obj.gnl_object
-       
+
         start = 1 * gst.SECOND
         obj.start = start
         self.failUnlessEqual(obj.start, start)
@@ -78,7 +78,7 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.in_point, in_point)
         self.failUnlessEqual(gnl_object.props.media_start, in_point)
         self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
-        
+
         out_point = 5 * gst.SECOND
         obj.out_point = out_point
         self.failUnlessEqual(obj.out_point, out_point)
@@ -88,7 +88,7 @@ class TestTrackObject(TestCase):
     def testChangePropertiesFromGnlObject(self):
         obj = self.track_object
         gnl_object = obj.gnl_object
-       
+
         start = 1 * gst.SECOND
         gnl_object.props.start = start
         self.failUnlessEqual(obj.start, start)
@@ -103,7 +103,7 @@ class TestTrackObject(TestCase):
         gnl_object.props.media_start = in_point
         self.failUnlessEqual(obj.in_point, in_point)
         self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
-        
+
         out_point = 5 * gst.SECOND
         gnl_object.props.media_duration = out_point
         self.failUnlessEqual(obj.out_point, out_point)
@@ -139,7 +139,7 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(monitor.start_changed_count, 1)
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
-        
+
         # trim before lower edge, should clamp
         monitor = TrackSignalMonitor(obj)
         time = 2 * gst.SECOND
@@ -173,13 +173,54 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
 
+    def testSplitObject(self):
+        obj = self.track_object
+
+        obj.start = 3 * gst.SECOND
+        obj.duration = 10 * gst.SECOND
+
+        monitor = TrackSignalMonitor(obj)
+
+        self.failUnlessRaises(TrackError, obj.splitObject, 2 * gst.SECOND)
+        self.failUnlessRaises(TrackError, obj.splitObject, 14 * gst.SECOND)
+
+        # should these be possible (ie create empty objects) ?
+        self.failUnlessRaises(TrackError, obj.splitObject, 3 * gst.SECOND)
+        self.failUnlessRaises(TrackError, obj.splitObject, 13 * gst.SECOND)
+
+        # splitObject at 4s should result in:
+        # obj (start 3, end 4) other1 (start 4, end 13)
+        other1 = obj.splitObject(4 * gst.SECOND)
+
+        self.failUnlessEqual(obj.start, 3 * gst.SECOND)
+        self.failUnlessEqual(obj.duration, 1 * gst.SECOND)
+
+        self.failUnlessEqual(other1.start, 4 * gst.SECOND)
+        self.failUnlessEqual(other1.duration, 9 * gst.SECOND)
+
+        self.failUnlessEqual(monitor.start_changed_count, 0)
+        self.failUnlessEqual(monitor.duration_changed_count, 1)
+
+        # splitObject again other1
+        monitor = TrackSignalMonitor(other1)
+
+        other2 = other1.splitObject(11 * gst.SECOND)
+        self.failUnlessEqual(other1.start, 4 * gst.SECOND)
+        self.failUnlessEqual(other1.duration, 7 * gst.SECOND)
+
+        self.failUnlessEqual(other2.start, 11 * gst.SECOND)
+        self.failUnlessEqual(other2.duration, 2 * gst.SECOND)
+
+        self.failUnlessEqual(monitor.start_changed_count, 0)
+        self.failUnlessEqual(monitor.duration_changed_count, 1)
+
 class TestTrackAddRemoveObjects(TestCase):
     def setUp(self):
         self.factory = StubFactory()
         self.stream = VideoStream(gst.Caps('video/x-raw-rgb'))
         self.track1 = Track(self.stream)
         self.track2 = Track(self.stream)
-    
+
     def testAddRemoveObjects(self):
         factory = self.factory
         stream = self.stream
@@ -207,10 +248,10 @@ class TestTrackAddRemoveObjects(TestCase):
         # remove
         track1.removeTrackObject(obj1)
         self.failUnlessEqual(obj1.track, None)
-        
+
         # can't remove twice
         self.failUnlessRaises(TrackError, track1.removeTrackObject, obj1)
-        
+
         track1.removeTrackObject(obj2)
         self.failUnlessEqual(obj2.track, None)
 
@@ -229,9 +270,9 @@ class TestTrackAddRemoveObjects(TestCase):
 
         for obj in objs:
             self.failIfEqual(obj.track, None)
-        
+
         track.removeAllTrackObjects()
-        
+
         for obj in objs:
             self.failUnlessEqual(obj.track, None)
 

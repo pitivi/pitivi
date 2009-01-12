@@ -56,8 +56,18 @@ class TrackObject(object, Signallable):
 
         if out_point != 0:
             obj.props.media_duration = out_point
+        
+        self.priority = priority
 
         self._connectToSignals(obj)
+        
+    def copy(self):
+        cls = self.__class__
+        other = cls(self.factory, start=self.start,
+            duration=self.duration, in_point=self.in_point,
+            out_point=self.out_point, priority=self.priority)
+
+        return other
 
     def snapStartDurationTime(self, *args):
         return
@@ -143,6 +153,22 @@ class TrackObject(object, Signallable):
 
         new_in_point = max(old_in_point + delta, 0)
         self.setObjectInPoint(new_in_point)
+
+    def split(self, time, snap=False):
+        if self.timeline_object is not None:
+            return self.timeline_object.split(time, snap)
+        else:
+            return self.splitObject(time)
+
+    def splitObject(self, time):
+        if time <= self.start or time >= self.start + self.duration:
+            raise TrackError("can't split at time %s" % gst.TIME_ARGS(time))
+
+        other = self.copy()
+        other.trimStart(time)
+        self.setDuration(time - self.start)
+
+        return other
 
     def setObjectOutPoint(self, time):
         self.gnl_object.props.media_duration = time

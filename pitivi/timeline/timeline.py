@@ -25,7 +25,7 @@ import weakref
 
 from pitivi.signalinterface import Signallable
 from pitivi.utils import UNKNOWN_DURATION
-from pitivi.timeline.track import Track, SourceTrackObject
+from pitivi.timeline.track import Track, SourceTrackObject, TrackError
 
 class TimelineError(Exception):
     pass
@@ -46,7 +46,16 @@ class TimelineObject(object, Signallable):
     def __init__(self, factory):
         self.factory = factory
         self.track_objects = []
-    
+        self.timeline = None
+
+    def copy(self):
+        cls = self.__class__
+        other = cls(self.factory)
+        other.track_objects = [track_object.copy() for track_object in
+                self.track_objects]
+
+        return other
+
     def _getStart(self):
         if not self.track_objects:
             return self.DEFAULT_START
@@ -132,6 +141,32 @@ class TimelineObject(object, Signallable):
 
         self.emit('start-changed', self.start)
         self.emit('in-point-changed', self.in_point)
+    
+    def split(self, time, snap=False):
+        if not self.track_objects:
+            raise TimelineError()
+
+        other = self.copy()
+        # ditch track objects. This is a bit weird, will be more clear when we
+        # use other uses of TimelineObject.copy
+        other.track_objects = []
+
+        for track_object in self.track_objects:
+            try:
+                other_track_object = track_object.splitObject(time)
+            except TrackError, e:
+                # FIXME: hallo exception hierarchy?
+                raise TimelineError(str(e))
+
+            other.addTrackObject(other_track_object)
+            track_object.track.addTrackObject(other_track_object)
+
+        if self.timeline is not None:
+            # if self is not yet in a timeline, the caller needs to add "other"
+            # as well when it adds self
+            self.timeline.addTimelineObject(other)
+
+        return other
 
     def addTrackObject(self, obj):
         if obj.timeline_object is not None:
@@ -299,19 +334,22 @@ class Timeline(object ,Signallable):
         self.emit('track-removed', track)
 
     def addTimelineObject(self, obj):
-        if obj in self.timeline_objects:
+        if obj.timeline is not None:
             raise TimelineError()
 
         if not obj.track_objects:
             raise TimelineError()
 
         self.timeline_objects.append(obj)
+        obj.timeline = self
 
     def removeTimelineObject(self, obj):
         try:
             self.timeline_objects.remove(obj)
         except ValueError:
             raise TimelineError()
+
+        obj.timeline = None
 
     # FIXME: find a better name?
     def addFactory(self, factory):

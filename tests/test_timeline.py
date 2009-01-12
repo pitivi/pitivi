@@ -30,6 +30,11 @@ from pitivi.utils import UNKNOWN_DURATION
 
 from tests.common import SignalMonitor
 
+class TimelineSignalMonitor(SignalMonitor):
+    def __init__(self, track_object):
+        SignalMonitor.__init__(self, track_object, 'start-changed',
+                'duration-changed', 'in-point-changed', 'out-point-changed')
+
 class StubFactory(object):
     duration = 42
 
@@ -178,6 +183,49 @@ class TestTimelineObjectProperties(TestCase):
         self.failUnlessEqual(timeline_object.out_point, out_point)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1) 
 
+    def testSplit(self):
+        obj = self.timeline_object
+        track_object = self.track_object1
+        obj.addTrackObject(track_object)
+        
+        obj.start = 3 * gst.SECOND
+        obj.duration = 10 * gst.SECOND
+
+        monitor = TimelineSignalMonitor(obj)
+
+        self.failUnlessRaises(TimelineError, obj.split, 2 * gst.SECOND)
+        self.failUnlessRaises(TimelineError, obj.split, 14 * gst.SECOND)
+
+        # should these be possible (ie create empty objects) ?
+        self.failUnlessRaises(TimelineError, obj.split, 3 * gst.SECOND)
+        self.failUnlessRaises(TimelineError, obj.split, 13 * gst.SECOND)
+
+        # split at 4s should result in:
+        # obj (start 3, end 4) other1 (start 4, end 13)
+        other1 = obj.split(4 * gst.SECOND)
+
+        self.failUnlessEqual(obj.start, 3 * gst.SECOND)
+        self.failUnlessEqual(obj.duration, 1 * gst.SECOND)
+
+        self.failUnlessEqual(other1.start, 4 * gst.SECOND)
+        self.failUnlessEqual(other1.duration, 9 * gst.SECOND)
+
+        self.failUnlessEqual(monitor.start_changed_count, 0)
+        self.failUnlessEqual(monitor.duration_changed_count, 1)
+
+        # split again other1
+        monitor = TimelineSignalMonitor(other1)
+
+        other2 = other1.split(11 * gst.SECOND)
+        self.failUnlessEqual(other1.start, 4 * gst.SECOND)
+        self.failUnlessEqual(other1.duration, 7 * gst.SECOND)
+
+        self.failUnlessEqual(other2.start, 11 * gst.SECOND)
+        self.failUnlessEqual(other2.duration, 2 * gst.SECOND)
+
+        self.failUnlessEqual(monitor.start_changed_count, 0)
+        self.failUnlessEqual(monitor.duration_changed_count, 1)
+
 class TestTimelineAddRemoveTracks(TestCase):
     def testAddRemoveTracks(self):
         stream = AudioStream(gst.Caps('video/x-raw-rgb'))
@@ -305,5 +353,3 @@ class TestLink(TestCase):
         self.failUnlessEqual(timeline_object1.start, 1 * gst.SECOND)
         self.failUnlessEqual(timeline_object2.start, 4 * gst.SECOND)
         self.failUnlessEqual(timeline_object3.start, 12 * gst.SECOND)
-
-        
