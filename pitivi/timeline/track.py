@@ -43,6 +43,7 @@ class TrackObject(object, Signallable):
         self.track = None
         self.timeline_object = None
         self.gnl_object = obj = self._makeGnlObject()
+        self.trimmed_start = 0
 
         if start != 0:
             obj.props.start = start
@@ -127,18 +128,20 @@ class TrackObject(object, Signallable):
             self.trimObjectStart(time)
 
     def trimObjectStart(self, time):
-        new_duration = self.start + self.duration - time
-        if time < 0 or new_duration < 0:
-            raise TrackError('invalid start %s' % gst.TIME_ARGS(time))
+        # clamp time to be inside the object
+        time = max(self.start - self.trimmed_start, time)
+        time = min(time, self.start + self.duration)
+        new_duration = max(0, self.start + self.duration - time)
 
         delta = time - self.start
+        self.trimmed_start += delta
         self.setObjectStart(time)
         self.setObjectDuration(new_duration)
         old_in_point = self.in_point
         if old_in_point == gst.CLOCK_TIME_NONE:
             old_in_point = 0
 
-        new_in_point = old_in_point + delta
+        new_in_point = max(old_in_point + delta, 0)
         self.setObjectInPoint(new_in_point)
 
     def setObjectOutPoint(self, time):

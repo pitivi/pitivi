@@ -61,12 +61,7 @@ class StartHandle(TrimHandle):
 
         def set_pos(self, obj, pos):
             new_start = max(self._view.pixelToNs(pos[0]), 0)
-            try:
-                self._view.element.trimStart(new_start)
-            except TrackError:
-                # invalid start
-                # FIXME: define an exception hierarchy
-                pass
+            self._view.element.trimStart(new_start)
 
 class EndHandle(TrimHandle):
 

@@ -112,45 +112,63 @@ class TestTrackObject(TestCase):
     def testTrimStart(self):
         obj = self.track_object
 
+        # start at 2 seconds with length 10 seconds
+        obj.start = 2 * gst.SECOND
         obj.duration = 10 * gst.SECOND
 
         self.failUnlessEqual(self.monitor.duration_changed_count, 1)
 
         # trim at lower edge
         monitor = TrackSignalMonitor(obj)
-        time = 0
+        time = 2 * gst.SECOND
         obj.trimStart(time)
         self.failUnlessEqual(obj.start, time)
-        self.failUnlessEqual(obj.in_point, time)
+        self.failUnlessEqual(obj.in_point, 0)
         self.failUnlessEqual(obj.duration, 10 * gst.SECOND)
         self.failUnlessEqual(monitor.start_changed_count, 1)
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
-       
-        # can't trim before 0
-        self.failUnlessRaises(TrackError, obj.trimStart, -1)
 
         # trim at upper edge
         monitor = TrackSignalMonitor(obj)
-        time = 10 * gst.SECOND
+        time = 12 * gst.SECOND
         obj.trimStart(time)
         self.failUnlessEqual(obj.start, time)
-        self.failUnlessEqual(obj.in_point, time)
+        self.failUnlessEqual(obj.in_point, 10 * gst.SECOND)
         self.failUnlessEqual(obj.duration, 0)
         self.failUnlessEqual(monitor.start_changed_count, 1)
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
         
-        # can't trim past end
-        self.failUnlessRaises(TrackError, obj.trimStart, 11 * gst.SECOND)
+        # trim before lower edge, should clamp
+        monitor = TrackSignalMonitor(obj)
+        time = 2 * gst.SECOND
+        obj.trimStart(time)
+        self.failUnlessEqual(obj.start, time)
+        self.failUnlessEqual(obj.in_point, 0)
+        self.failUnlessEqual(obj.duration, 10 * gst.SECOND)
+        self.failUnlessEqual(monitor.start_changed_count, 1)
+        self.failUnlessEqual(monitor.in_point_changed_count, 1)
+        self.failUnlessEqual(monitor.duration_changed_count, 1)
+
+        # trimp past upper edge, should clamp
+        monitor = TrackSignalMonitor(obj)
+        time = 12 * gst.SECOND
+        obj.trimStart(time)
+        self.failUnlessEqual(obj.start, time)
+        self.failUnlessEqual(obj.in_point, 10 * gst.SECOND)
+        self.failUnlessEqual(obj.duration, 0)
+        self.failUnlessEqual(monitor.start_changed_count, 1)
+        self.failUnlessEqual(monitor.in_point_changed_count, 1)
+        self.failUnlessEqual(monitor.duration_changed_count, 1)
 
         # trim somewhere in the middle
         monitor = TrackSignalMonitor(obj)
         time = 4 * gst.SECOND
         obj.trimStart(time)
         self.failUnlessEqual(obj.start, time)
-        self.failUnlessEqual(obj.in_point, time)
-        self.failUnlessEqual(obj.duration, 6 * gst.SECOND)
+        self.failUnlessEqual(obj.in_point, 2 * gst.SECOND)
+        self.failUnlessEqual(obj.duration, 8 * gst.SECOND)
         self.failUnlessEqual(monitor.start_changed_count, 1)
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
