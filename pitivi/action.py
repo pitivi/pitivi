@@ -452,15 +452,37 @@ class Action(object, Signallable):
         @rtype: C{bool}
         """
         gst.debug("producer:%r, stream:%r" % (producer, stream))
+
+        waspending = False
+
         # 1. Check if it's one of our pendings pads
-        for prod, cons, prodstream, consstream in self._pendingLinks:
-            # FIXME : check compatibiliy of streams in another way
+        pl = self._pendingLinks[:]
+        for prod, cons, prodstream, consstream in pl:
             if prod == producer and prodstream.isCompatibleWithName(stream):
-                self._activateLink(prod, cons, prodstream, consstream)
-        # 2. It could also be one of the links we've *already* handled
-        for prod, cons, ps, cs in self.getLinks():
-            if prod == producer and ps.isCompatibleWithName(stream):
-                return True
+                if self._activateLink(prod, cons, prodstream, consstream):
+                    waspending = True
+                    gst.debug("Successfully linked pending stream, removing it from temp list")
+                    self._pendingLinks.remove((prod, cons, prodstream, consstream))
+
+        if waspending == False:
+            # 2. If it's not one of the pending links, It could also be one of the
+            # links we've *already* handled
+            for prod, cons, ps, cs in self.getLinks():
+                if prod == producer and ps.isCompatibleWithName(stream):
+                    return True
+
+        # 3. Dynamic linking, ask if someone can handle this if nothing else did
+        # up to now.
+        if res == False:
+            for prod, cons, prodstream, consstream in self.getDynamicLinks():
+                if not cons in self.consumers and not cons in self._dynconsumers:
+                    # we need to add that new consumer
+                    self._dynconsumers.append(cons)
+                    self.pipeline.addFactory(cons)
+                res != self._activateLink(prod, cons, prodstream, consstream, init=False)
+
+        gst.debug("returning %r" % res)
+        return res
 
     def streamRemoved(self, producer, stream):
         """
@@ -506,7 +528,7 @@ class Action(object, Signallable):
         self._dynconsumers = []
 
         for link in links:
-            self._activate_links(*link)
+            self._activateLink(*link)
 
     def _activateLink(self, producer, consumer, prodstream, consstream, init=True):
         # activate the given Link, returns True if it was (already) activated

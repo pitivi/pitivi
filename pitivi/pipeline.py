@@ -111,8 +111,7 @@ class Pipeline(object, Signallable):
         self.queues = {} # (consumerfactory, stream) => gst.Element ("queue")
         self.actions = []
         self._state = STATE_NULL
-        self._padSigIds = {} # (factory) => (paddaddedsigid,padremovedsigid)
-        self._pendingStreams = {} # (factory,stream) => tee
+        self._padSigIds = {} # (factory) => (bin,paddaddedsigid,padremovedsigid)
         self._listening = False # for the position handler
         self._listeningInterval = 300 # default 300ms
         self._listeningSigId = 0
@@ -287,15 +286,18 @@ class Pipeline(object, Signallable):
         """
         Adds the given L{ObjectFactory} to be used in the L{Pipeline}.
 
-        @precondition: The L{Pipeline} state must be READY or NULL.
+        @precondition: The L{Pipeline} state must be READY or NULL if you wish to
+        add L{SourceFactory} elements.
 
         @param factories: The L{ObjectFactory}s to add
         @type factories: L{ObjectFactory}
-        @raise PipelineError: If the L{Pipeline} isn't in READY or NULL.
+        @raise PipelineError: If the L{Pipeline} isn't in READY or NULL and one
+        of the factories is not a L{SinkFactory}
         """
         gst.debug("factories %r" % list(factories))
         if self._state in [STATE_PAUSED, STATE_PLAYING]:
-            raise PipelineError("Can't add factories, Pipeline is not READY or NULL")
+            if [f for f in factories if not isinstance(f, SinkFactory)] != []:
+                raise PipelineError("Can't add source factories, Pipeline is not READY or NULL")
         for fact in factories:
             if not fact in self.factories:
                 self.factories.append(fact)
@@ -455,7 +457,7 @@ class Pipeline(object, Signallable):
         already created for the given factory, one will be created, added to the
         list of controlled bins and added to the C{gst.Pipeline}.
         @raise PipelineError: If the factory isn't used in this pipeline.
-        @raise PipelineError: If a L{gst.Bin} needed to be created and the
+        @raise PipelineError: If a source L{gst.Bin} needed to be created and the
         L{Pipeline} was not in the READY or NULL state.
         @raise PipelineError: If a L{gst.Bin} needed to be created but the
         creation of that c{gst.Bin} failed.
@@ -471,8 +473,8 @@ class Pipeline(object, Signallable):
             gst.debug("Returning %r" % res)
             return res
         # we need to create one
-        if self._state not in [STATE_NULL, STATE_READY]:
-            raise PipelineError("Pipeline not in NULL/READY, can not create bin")
+        if self._state not in [STATE_NULL, STATE_READY] and isinstance(factory, SourceFactory):
+            raise PipelineError("Pipeline not in NULL/READY, can not create source bin")
         # create the bin (will raise exceptions if it fails)
         return self._makeBin(factory)
 
@@ -548,16 +550,13 @@ class Pipeline(object, Signallable):
                 # FIXME : This might fail if it's not linked
                 src.unlink(t)
                 self._pipeline.remove(t)
-                # remove pendingStreams if any
-                if (factory,stream) in self._pendingStreams.keys():
-                    self._pendingStreams[(factory,stream)]
                 # remove that tee from ourselves
                 del self.tees[(factory,stream)]
 
                 # figure out if there are remaining tees for that factory
                 if factory in self._padSigIds.keys() and [f for f,s in self.tees.keys() if f == factory] == []:
                     gst.debug("Nobody is using %s anymore, removing signal handlers" % src)
-                    addsig, removesig = self._padSigIds.pop(factory)
+                    bin, addsig, removesig = self._padSigIds.pop(factory)
                     src.disconnect(addsig)
                     src.disconnect(removesig)
             else:
@@ -680,17 +679,17 @@ class Pipeline(object, Signallable):
         gst.debug("factory %r" % factory)
         b = factory.makeBin()
         # listen to newly created pads
-        self._listenToPads(b)
+        self._listenToPads(b, factory)
         gst.debug("adding newly created bin [%r] to gst.Pipeline" % b)
         self._pipeline.add(b)
         gst.debug("Adding newly created bin to list of controlled bins")
         self.bins[factory] = b
         return b
 
-    def _binPadAddedCb(self, bin, pad):
+    def _binPadAddedCb(self, bin, pad, factory):
         gst.debug("bin:%r, pad:%r" % (bin, pad))
         f = None
-        for fact, b in self.bins.iteritems:
+        for fact, b in self.bins.iteritems():
             if b == bin:
                 f = fact
         if f == None:
@@ -708,16 +707,15 @@ class Pipeline(object, Signallable):
         gst.debug("bin:%r, pad:%r" % (bin, pad))
         raise NotImplementedError
 
-    def _listenToPads(self, bin):
+    def _listenToPads(self, bin, factory):
+        gst.debug("bin:%r, factory:%r" % (bin, factory))
         # Listen on the given bin for pads being added/removed
-        if not bin is self._padSigIds.keys():
-            padaddedsigid = bin.connect('pad-added', self._teePadAddedCb,
+        if not factory is self._padSigIds.keys():
+            padaddedsigid = bin.connect('pad-added', self._binPadAddedCb,
                                         factory)
-            padremovedsigid = bin.connect('pad-removed', self._teePadAddedCb,
+            padremovedsigid = bin.connect('pad-removed', self._binPadAddedCb,
                                           factory)
-            self._padSigIds[bin] = (padaddedsigid, padremovedsigid)
-        # add the action to the list of pending streams
-        self._pendingStreams[(factory,stream)] = action
+            self._padSigIds[factory] = (bin, padaddedsigid, padremovedsigid)
 
     def _makeTee(self, factory, stream):
         """
