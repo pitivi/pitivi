@@ -47,6 +47,7 @@ class TimelineObject(object, Signallable):
         self.factory = factory
         self.track_objects = []
         self.timeline = None
+        self.link = None
 
     def copy(self):
         cls = self.__class__
@@ -223,12 +224,9 @@ class Selection(object):
             raise TimelineError()
 
 class LinkEntry(object):
-    def __init__(self, start, duration,
-            start_changed_sig_id, duration_changed_sig_id):
+    def __init__(self, start, duration):
         self.start = start
         self.duration = duration
-        self.start_changed_sig_id = start_changed_sig_id
-        self.duration_changed_sig_id = duration_changed_sig_id
 
 class Link(Selection):
     def __init__(self):
@@ -237,29 +235,43 @@ class Link(Selection):
         self.waiting_update = []
 
     def addTimelineObject(self, timeline_object):
+        if timeline_object.link is not None:
+            raise TimelineError()
+
         Selection.addTimelineObject(self, timeline_object)
 
         # connect to signals to update link entries
-        start_changed_sig_id = timeline_object.connect('start-changed',
-                self._startChangedCb)
-        duration_changed_sig_id = timeline_object.connect('duration-changed',
-                self._durationChangedCb)
+        timeline_object.connect('start-changed', self._startChangedCb)
+        timeline_object.connect('duration-changed', self._durationChangedCb)
 
         # create a link entry, saving the initial start and duration
-        link_entry = LinkEntry(timeline_object.start, timeline_object.duration,
-                start_changed_sig_id, duration_changed_sig_id)
-
+        link_entry = LinkEntry(timeline_object.start, timeline_object.duration)
         self.link_entries[timeline_object] = link_entry
+
+        timeline_object.link = weakref.proxy(self)
 
     def removeTimelineObject(self, timeline_object):
         Selection.removeTimelineObject(self, timeline_object)
 
         # remove link entry
         link_entry = self.link_entries[timeline_object]
-        #timeline_object.disconnect(link_entry.start_changed_sig_id)
-        #timeline_object.disconnect(link_entry.duration_changed_sig_id)
         timeline_object.disconnect_by_function(self._startChangedCb)
         timeline_object.disconnect_by_function(self._durationChangedCb)
+
+        timeline_object.link = None
+
+    def join(self, other_link):
+        new_link = Link()
+        timeline_objects = set(self.timeline_objects)
+        timeline_objects.update(other_link.timeline_objects)
+        link_entries = dict(self.link_entries).update(other_link.link_entries)
+        new_link.timeline_objects = timeline_objects
+        new_link.link_entries = link_entries
+
+        for timeline_object in timeline_objects:
+            timeline_object.link = weakref.proxy(new_link)
+
+        return new_link
 
     def _startChangedCb(self, timeline_object, start):
         link_entry = self.link_entries[timeline_object]

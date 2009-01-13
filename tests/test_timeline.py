@@ -21,6 +21,7 @@
 
 from unittest import TestCase
 import gst
+import weakref
 
 from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
         Selection, Link
@@ -67,7 +68,7 @@ class TestTimelineObjectAddRemoveTrackObjects(TestCase):
         timeline_object1.addTrackObject(track_object2)
 
         timeline_object1.removeTrackObject(track_object1)
-        
+
         # can't remove twice
         self.failUnlessRaises(TimelineError,
                 timeline_object1.removeTrackObject, track_object1)
@@ -98,7 +99,7 @@ class TestTimelineObjectProperties(TestCase):
         timeline_object = self.timeline_object
         self.track_object1 = self.track_object1
         timeline_object.addTrackObject(self.track_object1)
-        
+
         start = 1 * gst.SECOND
         timeline_object.start = start
         self.failUnlessEqual(timeline_object.start, start)
@@ -116,19 +117,19 @@ class TestTimelineObjectProperties(TestCase):
         self.failUnlessEqual(timeline_object.in_point, in_point)
         self.failUnlessEqual(self.track_object1.in_point, in_point)
         self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
-        
+
         out_point = 5 * gst.SECOND
         timeline_object.out_point = out_point
         self.failUnlessEqual(timeline_object.out_point, out_point)
         self.failUnlessEqual(self.track_object1.out_point, out_point)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
-    
+
     def testChangePropertiesFromTimelineObject2(self):
         timeline_object = self.timeline_object
         self.track_object1 = self.track_object1
         timeline_object.addTrackObject(self.track_object1)
         timeline_object.addTrackObject(self.track_object2)
-        
+
         start = 1 * gst.SECOND
         timeline_object.start = start
         self.failUnlessEqual(timeline_object.start, start)
@@ -149,20 +150,20 @@ class TestTimelineObjectProperties(TestCase):
         self.failUnlessEqual(self.track_object1.in_point, in_point)
         self.failUnlessEqual(self.track_object2.in_point, in_point)
         self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
-        
+
         out_point = 5 * gst.SECOND
         timeline_object.out_point = out_point
         self.failUnlessEqual(timeline_object.out_point, out_point)
         self.failUnlessEqual(self.track_object1.out_point, out_point)
         self.failUnlessEqual(self.track_object2.out_point, out_point)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
-    
+
 
     def testChangePropertiesFromTrackObject(self):
         timeline_object = self.timeline_object
         track_object = self.track_object1
         timeline_object.addTrackObject(track_object)
-       
+
         start = 1 * gst.SECOND
         track_object.start = start
         self.failUnlessEqual(timeline_object.start, start)
@@ -177,17 +178,17 @@ class TestTimelineObjectProperties(TestCase):
         track_object.in_point = in_point
         self.failUnlessEqual(timeline_object.in_point, in_point)
         self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
-        
+
         out_point = 5 * gst.SECOND
         track_object.out_point = out_point
         self.failUnlessEqual(timeline_object.out_point, out_point)
-        self.failUnlessEqual(self.monitor.out_point_changed_count, 1) 
+        self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
 
     def testSplit(self):
         obj = self.timeline_object
         track_object = self.track_object1
         obj.addTrackObject(track_object)
-        
+
         obj.start = 3 * gst.SECOND
         obj.duration = 10 * gst.SECOND
 
@@ -289,7 +290,7 @@ class TestSelectionAddRemoveTimelineObjects(TestCase):
                 selection.addTimelineObject, timeline_object1)
 
         selection.addTimelineObject(timeline_object2)
-        
+
         selection.removeTimelineObject(timeline_object1)
         self.failUnlessRaises(TimelineError,
                 selection.removeTimelineObject, timeline_object1)
@@ -297,24 +298,88 @@ class TestSelectionAddRemoveTimelineObjects(TestCase):
         selection.removeTimelineObject(timeline_object2)
 
 class TestLink(TestCase):
-    def testChangeStart(self):
-        factory = StubFactory()
-        stream = AudioStream(gst.Caps('audio/x-raw-int'))
-        track1 = Track(stream)
-        track2 = Track(stream)
-        track_object1 = SourceTrackObject(factory)
-        track_object2 = SourceTrackObject(factory)
-        track_object3 = SourceTrackObject(factory)
-        track1.addTrackObject(track_object1)
-        track1.addTrackObject(track_object2)
-        track2.addTrackObject(track_object3)
+    def setUp(self):
+        self.factory = StubFactory()
+        self.stream = AudioStream(gst.Caps('audio/x-raw-int'))
+        self.track1 = Track(self.stream)
+        self.track2 = Track(self.stream)
+        self.track_object1 = SourceTrackObject(self.factory)
+        self.track_object2 = SourceTrackObject(self.factory)
+        self.track_object3 = SourceTrackObject(self.factory)
+        self.track1.addTrackObject(self.track_object1)
+        self.track1.addTrackObject(self.track_object2)
+        self.track2.addTrackObject(self.track_object3)
+        self.timeline_object1 = TimelineObject(self.factory)
+        self.timeline_object1.addTrackObject(self.track_object1)
+        self.timeline_object2 = TimelineObject(self.factory)
+        self.timeline_object2.addTrackObject(self.track_object2)
+        self.timeline_object3 = TimelineObject(self.factory)
+        self.timeline_object3.addTrackObject(self.track_object3)
 
-        timeline_object1 = TimelineObject(factory)
-        timeline_object1.addTrackObject(track_object1)
-        timeline_object2 = TimelineObject(factory)
-        timeline_object2.addTrackObject(track_object2)
-        timeline_object3 = TimelineObject(factory)
-        timeline_object3.addTrackObject(track_object3)
+    def testLinkAttribute(self):
+        timeline_object1 = self.timeline_object1
+        timeline_object2 = self.timeline_object2
+        timeline_object3 = self.timeline_object3
+
+        self.failUnlessEqual(timeline_object1.link, None)
+        self.failUnlessEqual(timeline_object2.link, None)
+        self.failUnlessEqual(timeline_object3.link, None)
+
+        link = Link()
+        link.addTimelineObject(timeline_object1)
+        link.addTimelineObject(timeline_object2)
+        link.addTimelineObject(timeline_object3)
+
+        link2 = Link()
+        self.failUnlessRaises(TimelineError,
+                link2.addTimelineObject, timeline_object1)
+
+        self.failIfEqual(timeline_object1.link, None)
+        self.failIfEqual(timeline_object2.link, None)
+        self.failIfEqual(timeline_object3.link, None)
+
+        link.removeTimelineObject(timeline_object1)
+        self.failUnlessEqual(timeline_object1.link, None)
+
+        link.removeTimelineObject(timeline_object2)
+        self.failUnlessEqual(timeline_object2.link, None)
+
+        link.removeTimelineObject(timeline_object3)
+        self.failUnlessEqual(timeline_object3.link, None)
+
+    def testLinkJoin(self):
+        timeline_object1 = self.timeline_object1
+        timeline_object2 = self.timeline_object2
+        timeline_object3 = self.timeline_object3
+
+        link1 = Link()
+        link1.addTimelineObject(timeline_object1)
+        link1.addTimelineObject(timeline_object2)
+        
+        link2 = Link()
+        link2.addTimelineObject(timeline_object3)
+
+        self.failUnlessEqual(timeline_object1.link, weakref.proxy(link1))
+        self.failUnlessEqual(timeline_object2.link, weakref.proxy(link1))
+        self.failUnlessEqual(timeline_object3.link, weakref.proxy(link2))
+
+        link3 = link1.join(link2)
+        self.failUnlessEqual(timeline_object1.link, weakref.proxy(link3))
+        self.failUnlessEqual(timeline_object2.link, weakref.proxy(link3))
+        self.failUnlessEqual(timeline_object3.link, weakref.proxy(link3))
+
+    def testChangeStart(self):
+        factory = self.factory
+        stream = self.stream
+        track1 = self.track1
+        track2 = self.track2
+        track_object1 = self.track_object1
+        track_object2 = self.track_object2
+        track_object3 = self.track_object3
+
+        timeline_object1 = self.timeline_object1
+        timeline_object2 = self.timeline_object2
+        timeline_object3 = self.timeline_object3
 
         link = Link()
         link.addTimelineObject(timeline_object1)
