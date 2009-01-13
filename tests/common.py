@@ -2,6 +2,8 @@
 A collection of objects to use for testing
 """
 
+import gobject
+gobject.threads_init()
 from pitivi.timeline.objects import TimelineObject, MEDIA_TYPE_NONE, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
 from pitivi.timeline.source import TimelineSource, TimelineFileSource
 from pitivi.factories.base import ObjectFactory, SourceFactory, SinkFactory
@@ -86,15 +88,40 @@ class TestTimelineFileSource(TimelineFileSource):
             brother = None
         return brother
 
+
+# Some fake factories
 class FakeSourceFactory(SourceFactory):
+    def __init__(self, factoryname="fakesrc", *args, **kwargs):
+        SourceFactory.__init__(self, *args, **kwargs)
+        self.__factoryname=factoryname
 
     def _makeBin(self, output_stream=None):
-        return gst.element_factory_make("fakesrc")
+        return gst.element_factory_make(self.__factoryname)
 
 class FakeSinkFactory(SinkFactory):
+    def __init__(self, factoryname="fakesink", *args, **kwargs):
+        SinkFactory.__init__(self, *args, **kwargs)
+        self.__factoryname=factoryname
 
     def _makeBin(self, output_stream=None):
-        return gst.element_factory_make("fakesink")
+        return gst.element_factory_make(self.__factoryname)
+
+class FakeGnlFactory(SourceFactory):
+
+    def __init__(self, duration=10*gst.SECOND, media_duration=10*gst.SECOND,
+                 *args, **kwargs):
+        self.__duration = duration
+        self.__media_duration = media_duration
+        SourceFactory.__init__(self, *args, **kwargs)
+
+    def _makeBin(self, output_stream=None):
+        # let's make a gnlsource with videotestsrc inside of it
+        gnl = gst.element_factory_make("gnlsource")
+        vs = gst.element_factory_make("videotestsrc")
+        gnl.add(vs)
+        gnl.props.duration=self.__duration
+        gnl.props.media_duration=self.__media_duration
+        return gnl
 
 # REMOVE THESE old-style FACTORIES !!!
 # class TestObjectFactory(ObjectFactory):
