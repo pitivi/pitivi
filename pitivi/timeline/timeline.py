@@ -436,3 +436,14 @@ class Timeline(object ,Signallable):
 
         for link in empty_links:
             self.links.remove(link)
+
+    def deleteSelection(self):
+        self.unlinkSelection()
+        for timeline_object in self.timeline_selection:
+            self.removeTimelineObject(timeline_object)
+
+            for track_object in timeline_object.track_objects:
+                track = track_object.track
+                track.removeTrackObject(track_object)
+
+        self.timeline_selection = set()
