@@ -26,7 +26,7 @@ from pitivi.signalinterface import Signallable
 from pitivi.factories.base import SourceFactory, SinkFactory
 from pitivi.action import ActionError
 from pitivi.stream import pad_compatible_stream, get_src_pads_for_stream, \
-     get_sink_pads_for_stream
+     get_sink_pads_for_stream, get_stream_for_caps
 import gst
 
 (STATE_NULL,
@@ -493,8 +493,6 @@ class Pipeline(object, Signallable):
         to the list of controlled tees and added to the C{gst.Pipeline}.
         @raise PipelineError: If the factory isn't used in this pipeline.
         @raise PipelineError: If the factory isn't a L{SourceFactory}.
-        @raise PipelineError: If a C{Tee} needed to be created and the
-        L{Pipeline} was not in the READY or NULL state.
         @raise PipelineError: If a C{Tee} needed to be created but the
         creation of that C{Tee} failed.
         @return: The C{Tee} corresponding to the given factory/stream or None if
@@ -510,9 +508,6 @@ class Pipeline(object, Signallable):
         if (res != None) or (automake == False):
             gst.debug("Returning %r" % res)
             return res
-        # we need to create one
-        if self._state not in [STATE_NULL, STATE_READY]:
-            raise PipelineError("Pipeline not in NULL/READY, can not create tee")
         # create the tee
         return self._makeTee(factory, stream)
 
@@ -577,8 +572,6 @@ class Pipeline(object, Signallable):
         to the list of controlled queues and added to the C{gst.Pipeline}.
         @raise PipelineError: If the factory isn't used in this pipeline.
         @raise PipelineError: If the factory isn't a L{SinkFactory}.
-        @raise PipelineError: If a C{Queue} needed to be created and the
-        L{Pipeline} was not in the READY or NULL state.
         @raise PipelineError: If a C{Queue} needed to be created but the
         creation of that C{Queue} failed.
         @return: The C{Queue} corresponding to the given factory/stream or None if
@@ -594,9 +587,6 @@ class Pipeline(object, Signallable):
         if (res != None) or (automake == False):
             gst.debug("Returning %r" % res)
             return res
-        # we need to create one
-        if self._state not in [STATE_NULL, STATE_READY]:
-            raise PipelineError("Pipeline not in NULL/READY, can not create queue")
         # create the queue
         return self._makeQueue(factory, stream)
 
@@ -693,7 +683,7 @@ class Pipeline(object, Signallable):
             if b == bin:
                 f = fact
         if f == None:
-            return
+            raise PipelineError("New pad on an element we don't control ??")
         stream = get_stream_for_caps(pad.get_caps(), pad)
         # ask all actions using this producer if they handle it
         handled = False
@@ -732,8 +722,6 @@ class Pipeline(object, Signallable):
         source bin.
         """
         gst.debug("factory: %r, stream: %r" % (factory, stream))
-        t = gst.element_factory_make("tee")
-        self._pipeline.add(t)
         b = self.bins[factory]
         # find the source pads compatible with the given stream
         pads = get_src_pads_for_stream(b, stream)
@@ -743,9 +731,12 @@ class Pipeline(object, Signallable):
             # if the pad isn't available yet, connect a 'pad-added' and
             # 'pad-removed' handler.
             gst.debug("No available pads, we assume it will produce a pad later on")
-        else:
-            gst.debug("Linking pad %r to tee" % pads[0])
-            pads[0].link(t.get_pad("sink"))
+            return None
+
+        t = gst.element_factory_make("tee")
+        self._pipeline.add(t)
+        gst.debug("Linking pad %r to tee" % pads[0])
+        pads[0].link(t.get_pad("sink"))
         gst.debug("Adding newly created bin to list of controlled tees")
         self.tees[(factory, stream)] = t
         return t
@@ -765,19 +756,22 @@ class Pipeline(object, Signallable):
         source bin.
         """
         gst.debug("factory: %r, stream: %r" % (factory, stream))
-        q = gst.element_factory_make("queue")
-        self._pipeline.add(q)
+
         b = self.bins[factory]
         # find the source pads compatible with the given stream
         pads = get_sink_pads_for_stream(b, stream)
+        gst.debug("Got pads %r" % pads)
         if len(pads) > 1:
             raise PipelineError("Can't figure out which sink pad to use !")
         if pads == []:
             # FIXME : Maybe it's a request pad ?
             raise PipelineError("No compatible sink pads !")
-        else:
-            gst.debug("Linking pad %r to queue" % pads[0])
-            q.get_pad("src").link(pads[0])
+
+        q = gst.element_factory_make("queue")
+        self._pipeline.add(q)
+
+        gst.debug("Linking pad %r to queue" % pads[0])
+        q.get_pad("src").link(pads[0])
         gst.debug("Adding newly created bin to list of controlled queues")
         self.queues[(factory, stream)] = q
         return q

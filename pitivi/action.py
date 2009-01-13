@@ -456,13 +456,13 @@ class Action(object, Signallable):
         waspending = False
 
         # 1. Check if it's one of our pendings pads
-        pl = self._pendingLinks[:]
+        pl = self._pendinglinks[:]
         for prod, cons, prodstream, consstream in pl:
-            if prod == producer and prodstream.isCompatibleWithName(stream):
+            if prod == producer and (prodstream == None or prodstream.isCompatibleWithName(stream)):
                 if self._activateLink(prod, cons, prodstream, consstream):
                     waspending = True
                     gst.debug("Successfully linked pending stream, removing it from temp list")
-                    self._pendingLinks.remove((prod, cons, prodstream, consstream))
+                    self._pendinglinks.remove((prod, cons, prodstream, consstream))
 
         if waspending == False:
             # 2. If it's not one of the pending links, It could also be one of the
@@ -473,16 +473,18 @@ class Action(object, Signallable):
 
         # 3. Dynamic linking, ask if someone can handle this if nothing else did
         # up to now.
-        if res == False:
-            for prod, cons, prodstream, consstream in self.getDynamicLinks():
-                if not cons in self.consumers and not cons in self._dynconsumers:
-                    # we need to add that new consumer
-                    self._dynconsumers.append(cons)
-                    self.pipeline.addFactory(cons)
-                res != self._activateLink(prod, cons, prodstream, consstream, init=False)
+        for prod, cons, prodstream, consstream in self.getDynamicLinks():
+            if not cons in self.consumers and not cons in self._dynconsumers:
+                # we need to add that new consumer
+                self._dynconsumers.append(cons)
+                self.pipeline.addFactory(cons)
+            waspending != self._activateLink(prod, cons, prodstream, consstream, init=False)
 
-        gst.debug("returning %r" % res)
-        return res
+        gst.debug("returning %r" % waspending)
+        return waspending
+
+    def getDynamicLinks(self):
+        return []
 
     def streamRemoved(self, producer, stream):
         """
@@ -574,4 +576,5 @@ class ViewAction(Action):
     sinks.
     """
     # FIXME : implement auto-plugging
+    # FIXME : how to get default handlers ?
     pass
