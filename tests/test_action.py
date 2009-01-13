@@ -28,6 +28,9 @@ import gst
 
 class TestAction(TestCase):
 
+    def setUp(self):
+        gst.debug("Test starting")
+
     def testBasic(self):
         # let's make sure Actions are properly created
         ac = Action()
@@ -82,85 +85,6 @@ class TestAction(TestCase):
         # we shouldn't be able to unset a pipeline from an active Action
         self.failUnlessRaises(ActionError, ac.unsetPipeline)
 
-    def testPipelineAction(self):
-        """Testing pipeline state interaction"""
-        p = Pipeline()
-        a = Action()
-        src = common.FakeSourceFactory()
-        src.addOutputStream(MultimediaStream(gst.Caps("any"), pad_name="src"))
-        sink = common.FakeSinkFactory()
-        sink.addInputStream(MultimediaStream(gst.Caps("any"), pad_name="sink"))
-
-        # set the Action on the Pipeline
-        p.setAction(a)
-        self.assertEquals(p.actions, [a])
-
-        # set the Producer and Consumer
-        a.addProducers(src)
-        a.addConsumers(sink)
-
-        # set the factories on the Pipeline
-        p.addFactory(src, sink)
-
-        # activate the Action
-        a.activate()
-
-        # check that all internal objects are created
-        # TODO : Add more extensive testing of gst-specific Pipeline
-        # methods in test_pipeline.py
-        self.assert_(src in p.bins.keys())
-        self.assert_(isinstance(p.bins[src], gst.Element))
-        self.assert_(sink in p.bins.keys())
-        self.assert_(isinstance(p.bins[sink], gst.Element))
-
-        # check that the tees were properly created
-        def has_tee(pipeline, factories):
-            left = factories[:]
-            for f in factories:
-                for ps, t in pipeline.tees.iteritems():
-                    fact, st = ps
-                    if fact in left:
-                        left.remove(fact)
-            return left
-        self.assertEquals(has_tee(p, [src]), [])
-
-        # check that the queues were properly created
-        def has_queue(pipeline, factories):
-            left = factories[:]
-            for f in factories:
-                for ps, t in pipeline.queues.iteritems():
-                    fact, st = ps
-                    if fact in left:
-                        left.remove(fact)
-            return left
-        self.assertEquals(has_queue(p, [sink]), [])
-
-        # check that the tees are linked to the proper queues
-
-        # switch to PLAYING
-        p.setState(STATE_PLAYING)
-
-        # wait half a second
-
-        # switch to READY
-        p.setState(STATE_READY)
-
-        # deactivate action
-        a.deactivate()
-
-        # since we're the last Action to be release, the tees
-        # and queues should have gone
-        self.assertEquals(p.tees, {})
-        self.assertEquals(p.queues, {})
-
-        # remove the action from the pipeline
-        p.removeAction(a)
-
-        # remove factories from Pipeline
-        p.removeFactory(src, sink)
-
-        # the gst.Pipeline should be empty !
-        self.assertEquals(list(p._pipeline.elements()), [])
 
     def testLinksSimple(self):
         """ Testing simple usage of Links """
