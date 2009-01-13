@@ -132,11 +132,14 @@ class VideoStream(MultimediaStream):
             self.par = gst.Fraction(1, 1)
 
         # compute display aspect ratio
-        if self.width and self.height and self.par:
-            self.dar = gst.Fraction(self.width * self.par.num,
-                    self.height * self.par.denom)
-        elif self.width and self.height:
-            self.dar = gst.Fraction(self.width, self.height)
+        try:
+            if self.width and self.height and self.par:
+                self.dar = gst.Fraction(self.width * self.par.num,
+                                        self.height * self.par.denom)
+            elif self.width and self.height:
+                self.dar = gst.Fraction(self.width, self.height)
+        except:
+            self.dar = gst.Fraction(4, 3)
         else:
             self.dar = gst.Fraction(4, 3)
 
@@ -251,6 +254,10 @@ def pad_compatible_stream(pad, stream):
     @return: Whether the pad is compatible with the given stream
     @rtype: C{bool}
     """
+    gst.debug("pad:%r, stream:%r" % (pad, stream))
+    if stream == None:
+        # yes, None is the magical stream that takes everything
+        return True
     # compatible caps
     if stream.caps:
         return not stream.caps.intersect(pad.get_caps()).is_empty()
@@ -268,10 +275,11 @@ def get_pads_for_stream(element, stream):
     @return: The compatible pads
     @rtype: List of C{gst.Pad}
     """
+    gst.debug("element:%r, stream:%r" % (element, stream))
     ls = [x for x in element.pads() if pad_compatible_stream(x, stream)]
     # FIXME : I'm not 100% certain that checking against the stream pad_name
     # is a good idea ....
-    if stream.pad_name:
+    if stream and stream.pad_name:
         return [x for x in ls if x.get_name() == stream.pad_name]
     return ls
 
