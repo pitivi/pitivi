@@ -44,7 +44,7 @@ class TrackObject(object, Signallable):
         self.timeline_object = None
         self.gnl_object = obj = self._makeGnlObject()
         self.trimmed_start = 0
-
+        
         if start != 0:
             obj.props.start = start
 
@@ -63,8 +63,8 @@ class TrackObject(object, Signallable):
         
     def copy(self):
         cls = self.__class__
-        other = cls(self.factory, start=self.start,
-            duration=self.duration, in_point=self.in_point,
+        other = cls(self.factory, start=self.start - self.trimmed_start,
+            duration=self.duration + self.trimmed_start, in_point=self.in_point,
             out_point=self.out_point, priority=self.priority)
 
         return other
