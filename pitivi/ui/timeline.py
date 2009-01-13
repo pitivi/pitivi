@@ -240,7 +240,7 @@ class Timeline(gtk.VBox):
 
     def relinkSelected(self, unused_action):
         if self.timeline:
-            self.timeline.relinkSelection()
+            self.timeline.linkSelection()
 
 ## PlayGround timeline position callback
 

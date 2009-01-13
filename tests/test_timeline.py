@@ -21,7 +21,6 @@
 
 from unittest import TestCase
 import gst
-import weakref
 
 from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
         Selection, Link
@@ -359,14 +358,14 @@ class TestLink(TestCase):
         link2 = Link()
         link2.addTimelineObject(timeline_object3)
 
-        self.failUnlessEqual(timeline_object1.link, weakref.proxy(link1))
-        self.failUnlessEqual(timeline_object2.link, weakref.proxy(link1))
-        self.failUnlessEqual(timeline_object3.link, weakref.proxy(link2))
+        self.failUnlessEqual(timeline_object1.link, link1)
+        self.failUnlessEqual(timeline_object2.link, link1)
+        self.failUnlessEqual(timeline_object3.link, link2)
 
         link3 = link1.join(link2)
-        self.failUnlessEqual(timeline_object1.link, weakref.proxy(link3))
-        self.failUnlessEqual(timeline_object2.link, weakref.proxy(link3))
-        self.failUnlessEqual(timeline_object3.link, weakref.proxy(link3))
+        self.failUnlessEqual(timeline_object1.link, link3)
+        self.failUnlessEqual(timeline_object2.link, link3)
+        self.failUnlessEqual(timeline_object3.link, link3)
 
     def testChangeStart(self):
         factory = self.factory

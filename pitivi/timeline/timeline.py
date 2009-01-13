@@ -21,11 +21,14 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
-import weakref
 
 from pitivi.signalinterface import Signallable
 from pitivi.utils import UNKNOWN_DURATION
 from pitivi.timeline.track import Track, SourceTrackObject, TrackError
+
+SELECT = 0
+SELECT_ADD = 2
+UNSELECT = 1
 
 class TimelineError(Exception):
     pass
@@ -194,7 +197,8 @@ class TimelineObject(object, Signallable):
                     obj.duration != existing_track_object.duration:
                 raise TimelineError()
 
-        obj.timeline_object = weakref.proxy(self)
+        # FIXME: cycle
+        obj.timeline_object = self
         self.track_objects.append(obj)
 
     def removeTrackObject(self, obj):
@@ -248,7 +252,8 @@ class Link(Selection):
         link_entry = LinkEntry(timeline_object.start, timeline_object.duration)
         self.link_entries[timeline_object] = link_entry
 
-        timeline_object.link = weakref.proxy(self)
+        # FIXME: cycle
+        timeline_object.link = self
 
     def removeTimelineObject(self, timeline_object):
         Selection.removeTimelineObject(self, timeline_object)
@@ -262,14 +267,14 @@ class Link(Selection):
 
     def join(self, other_link):
         new_link = Link()
-        timeline_objects = set(self.timeline_objects)
-        timeline_objects.update(other_link.timeline_objects)
-        link_entries = dict(self.link_entries).update(other_link.link_entries)
-        new_link.timeline_objects = timeline_objects
-        new_link.link_entries = link_entries
 
-        for timeline_object in timeline_objects:
-            timeline_object.link = weakref.proxy(new_link)
+        for timeline_object in list(self.timeline_objects):
+            self.removeTimelineObject(timeline_object)
+            new_link.addTimelineObject(timeline_object)
+        
+        for timeline_object in list(other_link.timeline_objects):
+            other_link.removeTimelineObject(timeline_object)
+            new_link.addTimelineObject(timeline_object)
 
         return new_link
 
@@ -310,6 +315,8 @@ class Timeline(object ,Signallable):
         self.selections = []
         self.timeline_objects = []
         self.duration = 0
+        self.timeline_selection = set()
+        self.links = []
 
     def addTrack(self, track):
         if track in self.tracks:
@@ -370,14 +377,62 @@ class Timeline(object ,Signallable):
         timeline_object.addTrackObject(track_object)
         self.addTimelineObject(timeline_object)
 
-        track = self.tracks[0]
+        if len(self.tracks[0].track_objects) < \
+                len(self.tracks[1].track_objects):
+            track = self.tracks[0]
+        else:
+            track = self.tracks[1]
+
         duration = track.duration
-        self.tracks[0].addTrackObject(track_object)
+        track.addTrackObject(track_object)
 
         timeline_object.setStart(duration)
 
-    def setSelectionTo(self, selection, *args):
-        pass
-    
-    def setSelectionToObj(self, selection, *args):
-        pass
+    def setSelectionToObj(self, obj, mode):
+        self.setSelectionTo(set([obj]), mode)
+
+    def setSelectionTo(self, selection, mode):
+        selection = set([obj.timeline_object for obj in selection])
+        if mode == SELECT:
+            self.timeline_selection = selection
+        elif mode == SELECT_ADD:
+            self.timeline_selection.update(selection)
+        elif mode == UNSELECT:
+            self.timeline_selection.difference(selection)
+
+    def linkSelection(self):
+        if len(self.timeline_selection) < 2:
+            return
+
+        # list of links that we joined and so need to be removed
+        old_links = []
+
+        # we start with a new empty link and we expand it as we find new objects
+        # and links
+        link = Link()
+        for timeline_object in self.timeline_selection:
+            if timeline_object.link is not None:
+                old_links.append(timeline_object.link)
+
+                link = link.join(timeline_object.link)
+            else:
+                link.addTimelineObject(timeline_object)
+
+        for old_link in old_links:
+            self.links.remove(old_link)
+
+        self.links.append(link)
+
+    def unlinkSelection(self):
+        empty_links = set()
+        for timeline_object in self.timeline_selection:
+            if timeline_object.link is None:
+                continue
+
+            link = timeline_object.link
+            link.removeTimelineObject(timeline_object)
+            if not link.timeline_objects:
+                empty_links.add(link)
+
+        for link in empty_links:
+            self.links.remove(link)
