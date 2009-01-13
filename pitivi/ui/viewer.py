@@ -24,6 +24,7 @@ import gobject
 import gtk
 import gst
 
+from pitivi.action import ViewAction
 import pitivi.plumber as plumber
 import pitivi.instance as instance
 from pitivi.bin import SmartTimelineBin
@@ -72,14 +73,14 @@ class PitiviViewer(gtk.VBox):
 
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
-        self.project_signals = SignalGroup()
-        self._connectToProject(instance.PiTiVi.current)
-        instance.PiTiVi.connect("new-project-loaded", self._newProjectCb)
-        instance.PiTiVi.playground.connect("current-state", self._currentStateCb)
-        instance.PiTiVi.playground.connect("position", self._playgroundPositionCb)
+        #self.project_signals = SignalGroup()
+        #self._connectToProject(instance.PiTiVi.current)
+        #instance.PiTiVi.connect("new-project-loaded", self._newProjectCb)
+        #instance.PiTiVi.playground.connect("current-state", self._currentStateCb)
+        #instance.PiTiVi.playground.connect("position", self._playgroundPositionCb)
 
         # callback to know when to set the XID on our viewer widget
-        instance.PiTiVi.playground.connect("element-message", self._playgroundElementMessageCb)
+        #instance.PiTiVi.playground.connect("element-message", self._playgroundElementMessageCb)
 
     def setPipeline(self, pipeline):
         """
@@ -115,14 +116,15 @@ class PitiviViewer(gtk.VBox):
             self._disconnectFromAction(self)
         if action == None:
             # get the default action
-            action = self._getDefaultAction(self)
+            action = self._getDefaultAction()
         self._connectToAction(action)
 
     def _connectToPipeline(self, pipeline):
         if self.pipeline != None:
             raise ViewerError("previous pipeline wasn't disconnected")
-
         self.pipeline = pipeline
+        if self.pipeline == None:
+            return
         self.pipeline.connect('position', self._posCb)
         self.pipeline.activatePositionListener()
         # if we have an action set it to that new pipeline
@@ -148,33 +150,15 @@ class PitiviViewer(gtk.VBox):
     def _connectToAction(self, action):
         # not sure what we need to do ...
         self.action = action
-        raise NotImplementedError
 
     def _disconnectFromAction(self):
         self.action = None
-        raise NotImplementedError
 
     def _setUiActive(self, active=True):
-        raise NotImplementedError
+        self.set_sensitive(active)
 
     def _getDefaultAction(self):
-        raise NotImplementedError
-
-    def _connectToProject(self, project):
-        """Connect signal handlers to a project.
-
-        This first disconnects any handlers connected to an old project.
-        If project is None, this just disconnects any connected handlers.
-
-        """
-        self.project_signals.connect(project.sources, "tmp_is_ready",
-                                     None, self._tmpIsReadyCb)
-        self.project_signals.connect(project, "settings-changed",
-                                     None, self._settingsChangedCb)
-        # we should add the timeline to the playground here, so
-        # that the new timeline bin will be added to the
-        # playground when the project loads
-        self._addTimelineToPlayground()
+        return ViewAction()
 
     def _createUi(self):
         """ Creates the Viewer GUI """
@@ -263,6 +247,8 @@ class PitiviViewer(gtk.VBox):
     def _createSinkThreads(self):
         """ Creates the sink threads for the playground """
         # video elements
+        # FIXME : THIS SHOULD DIE !!!!
+        raise NotImplementedError
         gst.debug("Creating video sink")
         self.videosink = plumber.get_video_sink()
         vsinkthread = gst.Bin('vsinkthread')
@@ -442,26 +428,6 @@ class PitiviViewer(gtk.VBox):
             instance.PiTiVi.current.sources.addTmpUri(uri)
         context.finish(True, False, ctime)
         gst.info("end")
-
-    def _tmpIsReadyCb(self, unused_sourcelist, factory):
-        """ the temporary factory is ready, we can know set it to play """
-        gst.info("%s" % factory)
-        instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
-
-    def _newProjectCb(self, unused_pitivi, project):
-        """ the current project has changed """
-        assert(instance.PiTiVi.current == project)
-        self._connectToProject(project)
-
-    def _addTimelineToPlayground(self):
-        # remove old timeline before proceeding
-        pg = instance.PiTiVi.playground
-        timeline = pg.getTimeline()
-        if timeline:
-            pg.switchToDefault()
-            pg.removePipeline(timeline)
-        # add current timeline
-        pg.addPipeline(instance.PiTiVi.current.getBin())
 
     ## Control gtk.Button callbacks
 
