@@ -367,10 +367,10 @@ class SourceList(gtk.VBox):
                 for stream in factory.getOutputStreams())))
 
         self.storemodel.append([thumbnail,
-                                info,
-                                factory,
-                                factory.name,
-                                factory.duration and "<b>%s</b>" % beautify_length(factory.duration) or ""])
+            info,
+            factory,
+            factory.name,
+            factory.duration and "<b>%s</b>" % beautify_length(factory.duration) or ""])
         self._displayTreeView()
 
     # sourcelist callbacks
