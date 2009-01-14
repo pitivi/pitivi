@@ -162,11 +162,14 @@ class ObjectFactory(object, Signallable):
         return [stream for stream in self.input_streams
                 if stream_classes is None or isinstance(stream, stream_classes)]
 
+    def getPrettyDisplayName(self):
+        return "<b>%s</b>\n" % self.displayname
+
     def getPrettyInfo(self):
-        return (("<b>%s</b>\n" % self.displayname) + 
-            "\n".join("<b>Input </b>" + (stream.getPrettyInfo() for stream in
+        return (self.getPrettyDisplayName() + 
+            "\n".join(("<b>Input </b>" + stream.getPrettyInfo() for stream in
                 self.getInputStreams())) +
-            "\n".join("<b>Output </b>" + (stream.getPrettyInfo() for stream in
+            "\n".join(("<b>Output </b>" + stream.getPrettyInfo() for stream in
                 self.getOutputStreams())))
 
     def __str__(self):
@@ -373,6 +376,7 @@ class URISourceFactoryMixin(object):
 
     def __init__(self, uri):
         self.uri = uri
+        self.displayname = os.path.basename(unquote(uri))
 
     def _makeBin(self, output_stream):
         if output_stream is None:

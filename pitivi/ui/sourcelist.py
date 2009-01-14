@@ -363,7 +363,7 @@ class SourceList(gtk.VBox):
                 thumbnail = self.audiofilepixbuf
 
         self.storemodel.append([thumbnail,
-                                'call prettyInfoHere()',
+                                factory.getPrettyInfo(),
                                 factory,
                                 factory.name,
                                 factory.duration and "<b>%s</b>" % beautify_length(factory.duration) or ""])

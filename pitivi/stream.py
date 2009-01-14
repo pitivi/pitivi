@@ -126,7 +126,6 @@ class VideoStream(MultimediaStream):
             else:
                 templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
                 templ = templ % (self.dar * self.height, self.height)
-            templ = templ + _(" <i>(%s)</i>") % self.format
             return templ
         return _("<b>Unknown Video format:</b> %s") % self.videotype
 
@@ -174,7 +173,6 @@ class AudioStream(MultimediaStream):
         if self.raw:
             templ = _("<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)")
             templ = templ % (self.channels, self.rate, self.width)
-            templ = templ + _(" <i>(%s)</i>") % self.format
             return templ
         return _("<b>Unknown Audio format:</b> %s") % self.audiotype
 
