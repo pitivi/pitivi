@@ -362,8 +362,12 @@ class SourceList(gtk.VBox):
             else:
                 thumbnail = self.audiofilepixbuf
 
+        info = ("<b>" + factory.displayname + "</b>\n" +
+            "\n".join((stream.getPrettyInfo() 
+                for stream in factory.getOutputStreams())))
+
         self.storemodel.append([thumbnail,
-                                factory.getPrettyInfo(),
+                                info,
                                 factory,
                                 factory.name,
                                 factory.duration and "<b>%s</b>" % beautify_length(factory.duration) or ""])

@@ -162,16 +162,6 @@ class ObjectFactory(object, Signallable):
         return [stream for stream in self.input_streams
                 if stream_classes is None or isinstance(stream, stream_classes)]
 
-    def getPrettyDisplayName(self):
-        return "<b>%s</b>\n" % self.displayname
-
-    def getPrettyInfo(self):
-        return (self.getPrettyDisplayName() + 
-            "\n".join(("<b>Input </b>" + stream.getPrettyInfo() for stream in
-                self.getInputStreams())) +
-            "\n".join(("<b>Output </b>" + stream.getPrettyInfo() for stream in
-                self.getOutputStreams())))
-
     def __str__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.displayname or self.name)
 
