@@ -51,7 +51,7 @@ class TrackObject(object, Signallable):
         if duration != UNKNOWN_DURATION or obj.props.duration == 0:
             obj.props.duration = duration
 
-       if in_point != 0:
+        if in_point != 0:
             obj.props.media_start = in_point
 
         if out_point != UNKNOWN_DURATION:
