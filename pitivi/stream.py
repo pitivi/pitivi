@@ -60,6 +60,9 @@ class MultimediaStream(object):
     def __str__(self):
         return "%s" % self.caps
 
+    def getPrettyInfo(self):
+        raise NotImplementedError
+
 class VideoStream(MultimediaStream):
     """
     Video Stream
@@ -115,6 +118,18 @@ class VideoStream(MultimediaStream):
         else:
             self.dar = gst.Fraction(4, 3)
 
+    def getPrettyInfo(self):
+        if self.raw:
+            if self.framerate.num:
+                templ = _("<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>")
+                templ = templ % (self.dar * self.height , self.height, float(self.framerate))
+            else:
+                templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
+                templ = templ % (self.dar * self.height, self.height)
+            templ = templ + _(" <i>(%s)</i>") % self.format
+            return templ
+        return _("<b>Unknown Video format:</b> %s") % self.videotype
+
 class AudioStream(MultimediaStream):
     """
     Audio stream
@@ -155,6 +170,14 @@ class AudioStream(MultimediaStream):
         if self.width and not self.depth:
             self.depth = self.width
 
+    def getPrettyInfo(self):
+        if self.raw:
+            templ = _("<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)")
+            templ = templ % (self.channels, self.rate, self.width)
+            templ = templ + _(" <i>(%s)</i>") % self.format
+            return templ
+        return _("<b>Unknown Audio format:</b> %s") % self.audiotype
+
 class TextStream(MultimediaStream):
     """
     Text media stream
@@ -163,7 +186,7 @@ class TextStream(MultimediaStream):
     def _analyzeCaps(self):
         self.texttype = self.caps[0].get_name()
 
-    def _getMarkup(self):
+    def getPrettyInfo(self):
         return _("<b>Text:</b> %s") % self.texttype
 
 def find_decoder(pad):
