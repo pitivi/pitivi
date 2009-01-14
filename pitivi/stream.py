@@ -136,8 +136,6 @@ class AudioStream(MultimediaStream):
         self.channels = None
         self.rate = None
         self.width = None
-        # FIXME : height ?????
-        self.height = None
         self.depth = None
 
         MultimediaStream.__init__(self, caps, pad_name)
