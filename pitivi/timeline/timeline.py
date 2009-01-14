@@ -104,6 +104,8 @@ class TimelineObject(object, Signallable):
             # FIXME: implement me
             pass
         
+        time = min(time, self.factory.duration)
+        
         for track_object in self.track_objects:
             track_object.setObjectDuration(time)
 

@@ -36,7 +36,7 @@ class TimelineSignalMonitor(SignalMonitor):
                 'duration-changed', 'in-point-changed', 'out-point-changed')
 
 class StubFactory(object):
-    duration = 42
+    duration = 42 * gst.SECOND
 
     def makeBin(self):
         return gst.element_factory_make('identity')

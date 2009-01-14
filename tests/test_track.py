@@ -28,7 +28,7 @@ from pitivi.utils import UNKNOWN_DURATION
 from tests.common import SignalMonitor
 
 class StubFactory(object):
-    duration = 42
+    duration = 42 * gst.SECOND
     def makeBin(self):
         return gst.element_factory_make('audiotestsrc')
 
