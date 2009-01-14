@@ -74,6 +74,15 @@ class TimelineObject(object, Signallable):
             # FIXME: implement me
             pass
 
+        if self.link is not None:
+            # if we're part of a link, we need to check if it's necessary to
+            # clamp time so that we don't push the earliest element before 0s
+            delta = time - self.start
+            off = self.link.earliest_start + delta
+            if off < 0:
+                # clamp so that the earliest element is shifted to 0s
+                time -= off
+
         for track_object in self.track_objects:
             track_object.setObjectStart(time)
         
@@ -237,6 +246,8 @@ class Link(Selection):
         Selection.__init__(self)
         self.link_entries = {}
         self.waiting_update = []
+        self.earliest_object = None
+        self.earliest_start = None
 
     def addTimelineObject(self, timeline_object):
         if timeline_object.link is not None:
@@ -254,6 +265,11 @@ class Link(Selection):
 
         # FIXME: cycle
         timeline_object.link = self
+
+        if self.earliest_start is None or \
+                timeline_object.start < self.earliest_start:
+            self.earliest_object = timeline_object
+            self.earliest_start = timeline_object.start
 
     def removeTimelineObject(self, timeline_object):
         Selection.removeTimelineObject(self, timeline_object)
@@ -280,10 +296,11 @@ class Link(Selection):
 
     def _startChangedCb(self, timeline_object, start):
         link_entry = self.link_entries[timeline_object]
-        
+
         if not self.waiting_update:
             old_start = link_entry.start
             delta = start - old_start
+            earliest = timeline_object
 
             self.waiting_update = list(self.timeline_objects)
             # we aren't waiting
@@ -293,7 +310,14 @@ class Link(Selection):
                 # we iterate over a copy
                 linked_object.start += delta
 
+                if linked_object.start < earliest.start:
+                    earliest = linked_object
+
             assert not self.waiting_update
+
+            self.earliest_object = earliest
+            self.earliest_start = earliest.start
+
         else:
             self.waiting_update.remove(timeline_object)
         

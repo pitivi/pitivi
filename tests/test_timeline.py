@@ -411,9 +411,18 @@ class TestLink(TestCase):
         self.failUnlessEqual(timeline_object2.start, start)
         self.failUnlessEqual(timeline_object3.start, 12 * gst.SECOND)
 
+        # try to move timeline_object3 5 seconds back (to 7s). It should
+        # actually stop the move to 8s so that timeline_object1 and
+        # timeline_object2 don't go < 0s.
+        start = 7 * gst.SECOND
+        timeline_object3.start = start
+        self.failUnlessEqual(timeline_object1.start, 0)
+        self.failUnlessEqual(timeline_object2.start, 0)
+        self.failUnlessEqual(timeline_object3.start, 8 * gst.SECOND)
+
         # unlink timeline_object1 and move it back to start = 1
         link.removeTimelineObject(timeline_object1)
         timeline_object1.start = 1 * gst.SECOND
         self.failUnlessEqual(timeline_object1.start, 1 * gst.SECOND)
-        self.failUnlessEqual(timeline_object2.start, 4 * gst.SECOND)
-        self.failUnlessEqual(timeline_object3.start, 12 * gst.SECOND)
+        self.failUnlessEqual(timeline_object2.start, 0)
+        self.failUnlessEqual(timeline_object3.start, 8 * gst.SECOND)
