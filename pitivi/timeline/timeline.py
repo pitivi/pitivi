@@ -103,9 +103,10 @@ class TimelineObject(object, Signallable):
         if snap:
             # FIXME: implement me
             pass
-        
-        time = min(time, self.factory.duration)
-        
+
+        trimmed_start = self.track_objects[0].trimmed_start
+        time = min(time, self.factory.duration - trimmed_start)
+
         for track_object in self.track_objects:
             track_object.setObjectDuration(time)
 
