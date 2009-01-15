@@ -23,8 +23,9 @@
 import gst
 
 from pitivi.signalinterface import Signallable
-from pitivi.utils import UNKNOWN_DURATION
+from pitivi.utils import UNKNOWN_DURATION, closest_item
 from pitivi.timeline.track import Track, SourceTrackObject, TrackError
+from bisect import bisect_right
 
 SELECT = 0
 SELECT_ADD = 2
@@ -72,8 +73,7 @@ class TimelineObject(object, Signallable):
             raise TimelineError()
         
         if snap:
-            # FIXME: implement me
-            pass
+            time = self.timeline.snapToEdge(time, time + self.duration)
 
         if self.link is not None:
             # if we're part of a link, we need to check if it's necessary to
@@ -102,8 +102,7 @@ class TimelineObject(object, Signallable):
             raise TimelineError()
         
         if snap:
-            # FIXME: implement me
-            pass
+            time = self.timeline.snapToEdge(time)
 
         trimmed_start = self.track_objects[0].trimmed_start
         time = min(time, self.factory.duration - trimmed_start)
@@ -175,6 +174,7 @@ class TimelineObject(object, Signallable):
             track_object.trimObjectStart(time)
 
         self.emit('start-changed', self.start)
+        self.emit('duration-changed', self.duration)
         self.emit('in-point-changed', self.in_point)
     
     def split(self, time, snap=False):
@@ -260,6 +260,28 @@ class Selection(object):
         except KeyError:
             raise TimelineError()
 
+class PropertyChangeTracker(object, Signallable):
+    __signals__ = {
+        'start-changed': ['old', 'new'],
+        'duration-changed': ['old', 'new']
+    }
+
+    def __init__(self, timeline_object):
+        self.properties = {}
+
+        for property_name in ('start', 'duration'):
+            self.properties[property_name] = \
+                    getattr(timeline_object, property_name)
+
+            timeline_object.connect(property_name + '-changed',
+                    self._propertyChangedCb, property_name)
+
+    def _propertyChangedCb(self, timeline_object, value, property_name):
+        old_value = self.properties[property_name]
+        self.properties[property_name] = value
+
+        self.emit(property_name + '-changed', timeline_object, old_value, value)
+
 class LinkEntry(object):
     def __init__(self, start, duration):
         self.start = start
@@ -268,7 +290,7 @@ class LinkEntry(object):
 class Link(Selection):
     def __init__(self):
         Selection.__init__(self)
-        self.link_entries = {}
+        self.property_trackers = {}
         self.waiting_update = []
         self.earliest_object = None
         self.earliest_start = None
@@ -279,13 +301,10 @@ class Link(Selection):
 
         Selection.addTimelineObject(self, timeline_object)
 
-        # connect to signals to update link entries
-        timeline_object.connect('start-changed', self._startChangedCb)
-        timeline_object.connect('duration-changed', self._durationChangedCb)
+        tracker = PropertyChangeTracker(timeline_object)
+        self.property_trackers[timeline_object] = tracker
 
-        # create a link entry, saving the initial start and duration
-        link_entry = LinkEntry(timeline_object.start, timeline_object.duration)
-        self.link_entries[timeline_object] = link_entry
+        tracker.connect('start-changed', self._startChangedCb)
 
         # FIXME: cycle
         timeline_object.link = self
@@ -298,10 +317,8 @@ class Link(Selection):
     def removeTimelineObject(self, timeline_object):
         Selection.removeTimelineObject(self, timeline_object)
 
-        # remove link entry
-        link_entry = self.link_entries[timeline_object]
-        timeline_object.disconnect_by_function(self._startChangedCb)
-        timeline_object.disconnect_by_function(self._durationChangedCb)
+        tracker = self.property_trackers.pop(timeline_object)
+        tracker.disconnect_by_function(self._startChangedCb)
 
         timeline_object.link = None
 
@@ -318,11 +335,8 @@ class Link(Selection):
 
         return new_link
 
-    def _startChangedCb(self, timeline_object, start):
-        link_entry = self.link_entries[timeline_object]
-
+    def _startChangedCb(self, tracker, timeline_object, old_start, start):
         if not self.waiting_update:
-            old_start = link_entry.start
             delta = start - old_start
             earliest = timeline_object
 
@@ -344,12 +358,64 @@ class Link(Selection):
 
         else:
             self.waiting_update.remove(timeline_object)
-        
-        link_entry.start = start
 
-    def _durationChangedCb(self, timeline_object, duration):
-        link_entry = self.link_entries[timeline_object]
-        link_entry.duration = duration
+
+class TimelineEdges(object):
+    def __init__(self):
+        self.edges = []
+
+    def addTimelineObject(self, timeline_object):
+        self.addStartEnd(timeline_object.start,
+                timeline_object.start + timeline_object.duration)
+
+    def removeTimelineObject(self, timeline_object):
+        self.removeStartEnd(timeline_object.start,
+                timeline_object.start + timeline_object.duration)
+
+    def addStartEnd(self, start, end=None):
+        index = bisect_right(self.edges, start)
+        self.edges.insert(index, start)
+        if end is not None:
+            index = bisect_right(self.edges, end, index)
+            self.edges.insert(index, end)
+
+    def removeStartEnd(self, start, end=None):
+        if len(self.edges) == 0:
+            raise TimelineError()
+
+        val, diff, start_index = closest_item(self.edges, start)
+        if val != start:
+            raise TimelineError()
+        
+        if end is not None and len(self.edges) > 1:
+            val, diff, end_index = closest_item(self.edges, end, start_index)
+            if val != end:
+                raise TimelineError()
+        else:
+            end_index = None
+
+        del self.edges[start_index]
+        if end_index is not None:
+            del self.edges[end_index-1]
+
+    def snapToEdge(self, start, end=None):
+        if len(self.edges) == 0:
+            return start, 0
+
+        start_closest, start_diff, start_index = \
+                closest_item(self.edges, start)
+
+        if end is None or len(self.edges) == 1:
+            return start_closest, start_diff,
+
+        end_closest, end_diff, end_index = \
+                closest_item(self.edges, end, start_index)
+
+        if start_diff <= end_diff:
+            return start_closest, start_diff
+
+        return start + end_diff, end_diff
+
 
 class Timeline(object ,Signallable):
     __signals__ = {
@@ -365,6 +431,9 @@ class Timeline(object ,Signallable):
         self.duration = 0
         self.timeline_selection = set()
         self.links = []
+        self.dead_band = 10
+        self.edges = TimelineEdges()
+        self.property_trackers = {}
 
     def addTrack(self, track):
         if track in self.tracks:
@@ -410,6 +479,8 @@ class Timeline(object ,Signallable):
         self.timeline_objects.append(obj)
         obj.timeline = self
 
+        self.edges.addTimelineObject(obj)
+
     def removeTimelineObject(self, obj):
         try:
             self.timeline_objects.remove(obj)
@@ -417,6 +488,8 @@ class Timeline(object ,Signallable):
             raise TimelineError()
 
         obj.timeline = None
+        
+        self.edges.removeTimelineObject(obj)
 
     # FIXME: find a better name?
     def addFactory(self, factory):
@@ -519,3 +592,16 @@ class Timeline(object ,Signallable):
                 track.removeTrackObject(track_object)
 
         self.timeline_selection = set()
+
+    def rebuildEdges(self):
+        self.edges = TimelineEdges()
+        for timeline_object in self.timeline_objects:
+            self.edges.addTimelineObject(timeline_object)
+
+    def snapToEdge(self, start, end=None):
+        edge, diff = self.edges.snapToEdge(start, end)
+
+        if self.dead_band != -1 and diff <= self.dead_band:
+            return edge
+
+        return start

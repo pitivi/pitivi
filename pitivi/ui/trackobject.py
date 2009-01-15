@@ -21,12 +21,10 @@ class TimelineController(controller.Controller):
     _cursor = ARROW
 
     def drag_start(self):
-        #FIXME: self._view.timeline.disableEdgeUpdates()
         pass
 
     def drag_end(self):
-        #FIXME: self._view.timeline.enableEdgeUpdates()
-        pass
+        self._view.timeline.rebuildEdges()
 
     def set_pos(self, item, pos):
         self._view.element.setStart(max(self._view.pixelToNs(pos[0]), 0),

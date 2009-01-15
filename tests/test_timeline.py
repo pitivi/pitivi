@@ -23,7 +23,7 @@ from unittest import TestCase
 import gst
 
 from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
-        Selection, Link
+        Selection, Link, TimelineEdges
 from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
@@ -156,7 +156,6 @@ class TestTimelineObjectProperties(TestCase):
         self.failUnlessEqual(self.track_object1.out_point, out_point)
         self.failUnlessEqual(self.track_object2.out_point, out_point)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
-
 
     def testChangePropertiesFromTrackObject(self):
         timeline_object = self.timeline_object
@@ -426,3 +425,89 @@ class TestLink(TestCase):
         self.failUnlessEqual(timeline_object1.start, 1 * gst.SECOND)
         self.failUnlessEqual(timeline_object2.start, 0)
         self.failUnlessEqual(timeline_object3.start, 8 * gst.SECOND)
+
+class TestTimelineEdges(TestCase):
+    def setUp(self):
+        self.timeline_edges = TimelineEdges()
+
+    def testRemove(self):
+        self.timeline_edges.addStartEnd(0, 2000)
+        self.timeline_edges.removeStartEnd(0, 2000)
+
+    def testRemoveNotExisting(self):
+        self.failUnlessRaises(TimelineError,
+                self.timeline_edges.removeStartEnd, 1, 2000)
+        
+        self.timeline_edges.addStartEnd(0, 2000)
+        self.failUnlessRaises(TimelineError,
+                self.timeline_edges.removeStartEnd, 1, 2000)
+        self.failUnlessRaises(TimelineError,
+                self.timeline_edges.removeStartEnd, 0, 2001)
+
+    def testNoEdges(self):
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (500, 0))
+
+    def testSimple(self):
+        self.timeline_edges.addStartEnd(0, 2000)
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (0, 500))
+
+        self.timeline_edges.removeStartEnd(0, 2000)
+
+    def testSamePosition(self):
+        self.timeline_edges.addStartEnd(0, 2000)
+        self.timeline_edges.addStartEnd(0, 2000)
+        
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (0, 500))
+
+        self.timeline_edges.removeStartEnd(0, 2000)
+        
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (0, 500))
+        
+        self.timeline_edges.removeStartEnd(0, 2000)
+
+    def testSnapStart(self):
+        self.timeline_edges = TimelineEdges()
+
+        self.timeline_edges.addStartEnd(1000, 2000)
+       
+        # match start-left
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(900, 1400), (1000, 100))
+        
+        # match start
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(1000, 1999), (1000, 0))
+
+        # match start-right
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(1200, 1400), (1000, 200))
+
+        # match end-left
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(1600, 1999), (1601, 1))
+
+        # match end
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(1001, 2000), (1001, 0))
+        
+        # match end-right
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(2100, 3000), (2000, 100))
+
+        # match both start and end, start is returned
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(1000, 2000), (1000, 0))
+
+    def testSnapDuration(self):
+        self.timeline_edges.addStartEnd(1000, 2000)
+       
+        # match start-left
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(900), (1000, 100))
+        
+        # match start
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(1000), (1000, 0))
+
+        # match start-right
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(1200), (1000, 200))
+
+        # match end-left
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(1999), (2000, 1))
+
+        # match end
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(2000), (2000, 0))
+        
+        # match end-right
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(3000), (2000, 1000))

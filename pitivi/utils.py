@@ -78,8 +78,8 @@ def binary_search(col, value):
 
 # Returns the element of seq nearest to item, and the difference between them
 
-def closest_item(seq, item):
-    index = bisect.bisect(seq, item)
+def closest_item(seq, item, lo=0):
+    index = bisect.bisect(seq, item, lo)
     if index >= len(seq):
         index = len(seq) - 1
     res = seq[index]
@@ -95,7 +95,9 @@ def closest_item(seq, item):
             # ...use it instead.
             res = res_a
             diff = diff_a
-    return res, diff
+            index = index - 1
+
+    return res, diff, index
 
 def argmax(func, seq):
     """return the element of seq that gives max(map(func, seq))"""

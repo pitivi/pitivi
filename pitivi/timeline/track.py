@@ -235,7 +235,6 @@ class SourceTrackObject(TrackObject):
         source.add(bin)
         return source
 
-# FIXME: effects?
 
 class Track(object, Signallable):
     __signals__ = {
@@ -281,6 +280,7 @@ class Track(object, Signallable):
 
         track_object.track = weakref.proxy(self)
         self.track_objects.append(track_object)
+        
         self.emit('track-object-added', track_object)
 
     def removeTrackObject(self, track_object):
@@ -294,6 +294,7 @@ class Track(object, Signallable):
 
         self.track_objects.remove(track_object)
         track_object.track = None
+        
         self.emit('track-object-removed', track_object)
 
     def removeAllTrackObjects(self):

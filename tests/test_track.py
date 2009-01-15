@@ -275,4 +275,3 @@ class TestTrackAddRemoveObjects(TestCase):
 
         for obj in objs:
             self.failUnlessEqual(obj.track, None)
-
