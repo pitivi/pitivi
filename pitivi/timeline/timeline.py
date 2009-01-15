@@ -399,21 +399,39 @@ class Timeline(object ,Signallable):
 
     # FIXME: find a better name?
     def addFactory(self, factory):
-        track_object = SourceTrackObject(factory)
+        input = factory.getInputStreams()
+        output = factory.getOutputStreams()
+        # mapping from streams -> tracks
+        # FIXME: should this be an instance variable?
+        # FIXME: this will break when we have multiple tracks of the same
+        # type. 
+        tracks = dict(((type(track.stream), track) for track in self.tracks))
+        print tracks
+
+        if not input:
+            track_object_klass = SourceTrackObject
+        else:
+            raise NotImplementedError
+
         timeline_object = TimelineObject(factory)
-        timeline_object.addTrackObject(track_object)
+
+        for stream in output:
+            stream_klass = type(stream)
+            track_object = track_object_klass(factory)
+            timeline_object.addTrackObject(track_object)
+
+            if stream_klass not in tracks:
+                track = Track(stream)
+                tracks[stream_klass] = track
+                self.addTrack(track)
+            else:
+                track = tracks[stream_klass]
+            track.addTrackObject(track_object)
+
         self.addTimelineObject(timeline_object)
 
-        if len(self.tracks[0].track_objects) < \
-                len(self.tracks[1].track_objects):
-            track = self.tracks[0]
-        else:
-            track = self.tracks[1]
-
-        duration = track.duration
-        track.addTrackObject(track_object)
-
-        timeline_object.setStart(duration)
+        # in case the caller wants it
+        return timeline_object
 
     def setSelectionToObj(self, obj, mode):
         self.setSelectionTo(set([obj]), mode)

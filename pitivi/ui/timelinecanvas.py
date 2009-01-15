@@ -179,7 +179,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
             self._trackRemoved(None, 0)
         if self.timeline:
             for track in self.timeline.tracks:
-                self._trackAdded(None, track, -1)
+                self._trackAdded(None, track)
 
     timeline = receiver(__set_timeline)
 
@@ -197,8 +197,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         self.__razor.props.height = h
 
     @handler(timeline, "track-added")
-    def _trackAdded(self, timeline, comp, position):
-        track = Track(comp, self.timeline)
+    def _trackAdded(self, timeline, track):
+        track = Track(track, self.timeline)
         self.__tracks.append(track)
         track.set_canvas(self)
         self.tracks.add_child(track)

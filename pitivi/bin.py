@@ -497,11 +497,11 @@ class SmartTimelineBin(SmartBin):
                           length=project.timeline.duration,
                           is_seekable=True)
 
-    def _trackAddedCb(self, track):
+    def _trackAddedCb(self, timeline, track):
         # FIXME: implement me
         pass
 
-    def _trackRemovedCb(self, track):
+    def _trackRemovedCb(self, timeline, track):
         # FIXME: implement me
         pass
 
