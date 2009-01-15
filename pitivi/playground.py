@@ -352,11 +352,11 @@ class PlayGround(object, Signallable):
     #
     def _busMessageCb(self, unused_bus, message, unused_pipeline):
         """ handler for messages from the pipelines' buses """
-        gst.info("%s [%r]" % (message.type, message.src))
+        gst.log("%s [%r]" % (message.type, message.src))
         if message.type == gst.MESSAGE_STATE_CHANGED:
             oldstate, newstate, pending = message.parse_state_changed()
-            message.src.debug("old:%s, new:%s, pending:%s" %
-                               (oldstate, newstate, pending))
+            message.src.log("old:%s, new:%s, pending:%s" %
+                            (oldstate, newstate, pending))
             if (not self.current == self.default) and message.src == self.current:
                 if pending == gst.STATE_VOID_PENDING:
                     if (not self._positiontimeoutid) and newstate in [gst.STATE_PLAYING]:
