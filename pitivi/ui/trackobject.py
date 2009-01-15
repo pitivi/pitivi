@@ -34,7 +34,7 @@ class TimelineController(controller.Controller):
 
 class TrimHandle(View, goocanvas.Rect, Zoomable):
 
-    """A component of a TimelineObject which manage's the source's edit
+    """A component of a TrackObject which manage's the source's edit
     points"""
 
     element = receiver()
@@ -77,7 +77,7 @@ class EndHandle(TrimHandle):
             duration = max(abs_pos - start, 0)
             self._view.element.setDuration(duration, snap=True)
 
-class TimelineObject(View, goocanvas.Group, Zoomable):
+class TrackObject(View, goocanvas.Group, Zoomable):
 
     element = receiver()
 

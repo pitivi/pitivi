@@ -1,5 +1,5 @@
 from pitivi.ui.zoominterface import Zoomable
-from pitivi.ui.timelineobject import TimelineObject
+from pitivi.ui.trackobject import TrackObject
 from pitivi.timeline.objects import MEDIA_TYPE_VIDEO
 from pitivi.receiver import receiver, handler
 import goocanvas
@@ -20,7 +20,7 @@ class Track(goocanvas.Group, Zoomable):
 
     @handler(track, "track-object-added")
     def _objectAdded(self, unused_timeline, track_object):
-        w = TimelineObject(track_object, self.track, self.timeline)
+        w = TrackObject(track_object, self.track, self.timeline)
         self.widgets[track_object] = w
         self.add_child(w)
 

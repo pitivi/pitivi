@@ -1,5 +1,5 @@
 from pitivi.ui.track import Track
-from pitivi.ui.timelineobject import TimelineObject
+from pitivi.ui.trackobject import TrackObject
 import controller
 import view
 from point import Point
@@ -123,7 +123,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
             True)
         if items:
             return set((item.element for item in items if isinstance(item,
-                TimelineObject)))
+                TrackObject)))
         return set()
 
 ## Razor Tool Implementation
@@ -157,7 +157,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         items = self.get_items_in_area(bounds, True, True, True)
         if items:
             for item in items:
-                if isinstance(item, TimelineObject):
+                if isinstance(item, TrackObject):
                     item.element.split(self.pixelToNs(x))
 
         return True
