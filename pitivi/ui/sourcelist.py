@@ -29,7 +29,7 @@ from pitivi.ui.pathwalker import PathWalker
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.configure import get_pixmap_dir
 from pitivi.signalgroup import SignalGroup
-from pitivi.stream import VideoStream, AudioStream
+from pitivi.stream import VideoStream, AudioStream, TextStream
 from gettext import gettext as _
 from urllib import unquote
 import os
@@ -69,6 +69,37 @@ def beautify_length(length):
     hours = mins / 60
     mins = mins % 60
     return "%02dh%02dm%02ds" % (hours, mins, sec)
+
+def beautify_stream(stream):
+
+    if type(stream) == AudioStream:
+       if stream.raw:
+           templ = _("<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)")
+           templ = templ % (stream.channels, stream.rate, stream.width)
+           return templ
+       return _("<b>Unknown Audio format:</b> %s") % stream.audiotype
+
+    elif type(stream) == VideoStream:
+       if stream.raw:
+           if stream.framerate.num:
+               templ = _("<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>")
+               templ = templ % (stream.dar * stream.height , stream.height, 
+                   float(stream.framerate))
+           else:
+               templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
+               templ = templ % (stream.dar * stream.height, stream.height)
+           return templ
+       return _("<b>Unknown Video format:</b> %s") % stream.videotype
+
+    elif type(stream) == TextStream:
+        return _("<b>Text:</b> %s") % stream.texttype
+
+    raise NotImplementedError
+
+def beautify_factory(factory):
+    return ("<b>" + factory.displayname + "</b>\n" +
+        "\n".join((beautify_stream(stream) 
+            for stream in factory.getOutputStreams())))
 
 class SourceList(gtk.VBox):
     """ Widget for listing sources """
@@ -362,12 +393,8 @@ class SourceList(gtk.VBox):
             else:
                 thumbnail = self.audiofilepixbuf
 
-        info = ("<b>" + factory.displayname + "</b>\n" +
-            "\n".join((stream.getPrettyInfo() 
-                for stream in factory.getOutputStreams())))
-
         self.storemodel.append([thumbnail,
-            info,
+            beautify_factory(factory),
             factory,
             factory.name,
             factory.duration and "<b>%s</b>" % beautify_length(factory.duration) or ""])
