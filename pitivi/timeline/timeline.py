@@ -406,7 +406,6 @@ class Timeline(object ,Signallable):
         # FIXME: this will break when we have multiple tracks of the same
         # type. 
         tracks = dict(((type(track.stream), track) for track in self.tracks))
-        print tracks
 
         if not input:
             track_object_klass = SourceTrackObject
