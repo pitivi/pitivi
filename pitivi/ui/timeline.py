@@ -43,8 +43,8 @@ DELETE = _("Delete Selected")
 RAZOR = _("Cut clip at mouse position")
 ZOOM_IN =  _("Zoom In")
 ZOOM_OUT =  _("Zoom Out")
-UNLINK = _("Unlink audio from video")
-RELINK = _("Relink audio to original video")
+UNLINK = _("Break links between clips")
+LINK = _("Link together arbitrary clips")
 SELECT_BEFORE = ("Select all sources before selected")
 SELECT_AFTER = ("Select all after selected")
 
@@ -59,7 +59,7 @@ ui = '''
         <separator />
         <toolitem action="DeleteObj" />
         <toolitem action="UnlinkObj" />
-        <toolitem action="RelinkObj" />
+        <toolitem action="LinkObj" />
     </toolbar>
 </ui>
 '''
@@ -137,8 +137,8 @@ class Timeline(gtk.VBox):
                 self.deleteSelected),
             ("UnlinkObj", "pitivi-unlink", None, None, UNLINK,
                 self.unlinkSelected),
-            ("RelinkObj", "pitivi-relink", None, None, RELINK,
-                self.relinkSelected),
+            ("LinkObj", "pitivi-link", None, None, LINK,
+                self.linkSelected),
             ("Razor", "pitivi-split", None, None, RAZOR,
                 self.__canvas.activateRazor)
         )
@@ -238,7 +238,7 @@ class Timeline(gtk.VBox):
         if self.timeline:
             self.timeline.unlinkSelection()
 
-    def relinkSelected(self, unused_action):
+    def linkSelected(self, unused_action):
         if self.timeline:
             self.timeline.linkSelection()
 
