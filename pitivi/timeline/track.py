@@ -34,7 +34,7 @@ class TrackObject(object, Signallable):
         'duration-changed': ['duration'],
         'in-point-changed': ['in-point'],
         'out-point-changed': ['out-point'],
-        'selected-changed' : [],
+        'selected-changed' : ['state'],
     }
 
     def __init__(self, factory, start=0,
@@ -189,16 +189,17 @@ class TrackObject(object, Signallable):
 
     out_point = property(_getOutPoint, setOutPoint)
 
+    # True when the track object is part of the timeline's current selection
     __selected = False
 
     def _getSelected(self):
         return self.__selected
 
-    def setObjectSelected(self, value):
+    def setObjectSelected(self, state):
         """Sets the object's selected property to the specified value. This
         should only be called by the track object's parent timeline object."""
         self.__selected = value
-        self.emit("selected-changed")
+        self.emit("selected-changed", state)
 
     selected = property(_getSelected)
 
