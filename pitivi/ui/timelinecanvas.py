@@ -163,7 +163,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
     def zoomChanged(self):
         if self.timeline:
-            self.timeline.setDeadband(self.pixelToNs(DEADBAND))
+            # FIXME: re-enable this when edge snapping works
+            # self.timeline.setDeadband(self.pixelToNs(DEADBAND))
             self._request_size()
 
 ## Timeline callbacks
