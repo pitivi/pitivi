@@ -38,7 +38,8 @@ class TimelineObject(object, Signallable):
         'start-changed': ['start'],
         'duration-changed': ['duration'],
         'in-point-changed': ['in-point'],
-        'out-point-changed': ['out-point']
+        'out-point-changed': ['out-point'],
+        'selected-changed' : ['state'],
     }
 
     DEFAULT_START = 0
@@ -147,6 +148,22 @@ class TimelineObject(object, Signallable):
         self.emit('out-point-changed', time)
 
     out_point = property(_getOutPoint, setOutPoint)
+
+    # True when the timeline object is part of the track object's current
+    # selection.
+
+    __selected = False
+
+    def _getSelected(self):
+        return self.__selected
+
+    def setSelected(self, state):
+        self.__selected = state
+
+        for obj in self.track_objects:
+            obj.setObjectSelected(state)
+
+        self.emit("selected-changed", state)
 
     def trimStart(self, time, snap=False):
         if not self.track_objects:
