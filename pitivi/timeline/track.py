@@ -33,7 +33,8 @@ class TrackObject(object, Signallable):
         'start-changed': ['start'],
         'duration-changed': ['duration'],
         'in-point-changed': ['in-point'],
-        'out-point-changed': ['out-point']
+        'out-point-changed': ['out-point'],
+        'selected-changed' : [],
     }
 
     def __init__(self, factory, start=0,
@@ -187,6 +188,19 @@ class TrackObject(object, Signallable):
         self.gnl_object.props.media_duration = time
 
     out_point = property(_getOutPoint, setOutPoint)
+
+    __selected = False
+
+    def _getSelected(self):
+        return self.__selected
+
+    def setObjectSelected(self, value):
+        """Sets the object's selected property to the specified value. This
+        should only be called by the track object's parent timeline object."""
+        self.__selected = value
+        self.emit("selected-changed")
+
+    selected = property(_getSelected)
 
     def _notifyStartCb(self, obj, pspec):
         self.emit('start-changed', obj.props.start)

@@ -154,10 +154,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         # place end handle at appropriate distance
         self.end_handle.props.x = w
 
-    # FIXME: selection needs to be readded
-    # @handler(element, "selected-changed")
-    # def _selected_changed(self, element):
-    #     if element.selected:
-    #         self.bg.props.fill_color_rgba = self.__SELECTED__
-    #     else:
-    #         self.bg.props.fill_color_rgba = self.__NORMAL__
+    @handler(element, "selected-changed")
+    def _selected_changed(self, element):
+        if element.selected:
+            self.bg.props.fill_color_rgba = self.__SELECTED__
+        else:
+            self.bg.props.fill_color_rgba = self.__NORMAL__
