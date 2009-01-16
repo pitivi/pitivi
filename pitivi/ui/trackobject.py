@@ -155,7 +155,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.end_handle.props.x = w
 
     @handler(element, "selected-changed")
-    def _selected_changed(self, element):
+    def _selected_changed(self, element, state):
         if element.selected:
             self.bg.props.fill_color_rgba = self.__SELECTED__
         else:
