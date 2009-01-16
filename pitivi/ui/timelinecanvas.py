@@ -13,13 +13,7 @@ ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
 # TODO: replace this with custom cursor
 RAZOR_CURSOR = gtk.gdk.Cursor(gtk.gdk.XTERM)
 
-# FIXME: do we want this expressed in pixels or miliseconds?
-# If we express it in miliseconds, then we can have the core handle edge
-# snapping (it's really best implemented in the core). On the other hand, if
-# the dead-band is a constant unit of time, it will be too large at high zoom,
-# and too small at low zoom. So we might want to be able to adjust the
-# deadband from the UI.
-# default number of pixels to use for edge snaping
+# In pixels
 DEADBAND = 5
 
 class TimelineCanvas(goocanvas.Canvas, Zoomable):

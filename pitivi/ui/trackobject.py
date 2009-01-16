@@ -96,13 +96,13 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             self._view.timeline.setSelectionToObj(
                 self._view.element, mode)
 
-    def __init__(self, element, composition, timeline):
+    def __init__(self, element, track, timeline):
         goocanvas.Group.__init__(self)
         View.__init__(self)
         Zoomable.__init__(self)
 
         self.element = element
-        self.comp = composition
+        self.track = track
         self.timeline = timeline
 
         self.bg = goocanvas.Rect(
