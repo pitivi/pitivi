@@ -83,8 +83,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
     element = receiver()
 
     __HEIGHT__ = 50
-    __NORMAL__ = 0x709fb899
-    __SELECTED__ = 0xa6cee3AA
+    __BACKROUND__ = 0x709fb899
+    __BORDER__ = 0xffea00FF
 
     class Controller(TimelineController):
 
@@ -108,7 +108,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         self.bg = goocanvas.Rect(
             height=self.__HEIGHT__, 
-            fill_color_rgba=self.__NORMAL__,
+            fill_color_rgba=self.__BACKROUND__,
+            stroke_color_rgba=self.__BORDER__,
             line_width=0)
 
         self.name = goocanvas.Text(
@@ -158,6 +159,6 @@ class TrackObject(View, goocanvas.Group, Zoomable):
     @handler(element, "selected-changed")
     def _selected_changed(self, element, state):
         if element.selected:
-            self.bg.props.fill_color_rgba = self.__SELECTED__
+            self.bg.props.line_width = 2.0
         else:
-            self.bg.props.fill_color_rgba = self.__NORMAL__
+            self.bg.props.line_width = 0
