@@ -201,6 +201,8 @@ class TimelineObject(object, Signallable):
             # as well when it adds self
             self.timeline.addTimelineObject(other)
 
+        self.emit('duration-changed', self.duration)
+
         return other
 
     def addTrackObject(self, obj):
