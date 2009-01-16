@@ -198,7 +198,7 @@ class TrackObject(object, Signallable):
     def setObjectSelected(self, state):
         """Sets the object's selected property to the specified value. This
         should only be called by the track object's parent timeline object."""
-        self.__selected = value
+        self.__selected = state
         self.emit("selected-changed", state)
 
     selected = property(_getSelected)

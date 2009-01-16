@@ -165,6 +165,8 @@ class TimelineObject(object, Signallable):
 
         self.emit("selected-changed", state)
 
+    selected = property(_getSelected, setSelected)
+
     def trimStart(self, time, snap=False):
         if not self.track_objects:
             raise TimelineError()
@@ -454,12 +456,19 @@ class Timeline(object ,Signallable):
 
     def setSelectionTo(self, selection, mode):
         selection = set([obj.timeline_object for obj in selection])
+        old_selection = self.timeline_selection
         if mode == SELECT:
             self.timeline_selection = selection
         elif mode == SELECT_ADD:
             self.timeline_selection.update(selection)
         elif mode == UNSELECT:
             self.timeline_selection.difference(selection)
+
+        for obj in self.timeline_selection:
+            obj.selected = True
+        for obj in old_selection - self.timeline_selection:
+            obj.selected = False
+
 
     def linkSelection(self):
         if len(self.timeline_selection) < 2:
