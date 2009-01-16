@@ -61,6 +61,7 @@ ui = '''
         <toolitem action="UnlinkObj" />
         <toolitem action="LinkObj" />
     </toolbar>
+    <accelerator action="DeleteObj" />
 </ui>
 '''
 
@@ -133,7 +134,7 @@ class Timeline(gtk.VBox):
                 self._zoomInCb),
             ("ZoomOut", gtk.STOCK_ZOOM_OUT, None, None, ZOOM_OUT, 
                 self._zoomOutCb),
-            ("DeleteObj", gtk.STOCK_DELETE, None, None, DELETE, 
+            ("DeleteObj", gtk.STOCK_DELETE, None, "Delete", DELETE, 
                 self.deleteSelected),
             ("UnlinkObj", "pitivi-unlink", None, None, UNLINK,
                 self.unlinkSelected),
