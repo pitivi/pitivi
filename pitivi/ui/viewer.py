@@ -25,11 +25,8 @@ import gtk
 import gst
 
 from pitivi.action import ViewAction
-import pitivi.plumber as plumber
-import pitivi.instance as instance
-from pitivi.bin import SmartTimelineBin
-from pitivi.signalgroup import SignalGroup
 from pitivi.stream import VideoStream, AudioStream
+from pitivi.pipeline import Pipeline
 
 from pitivi.utils import time_to_string
 import dnd
@@ -66,21 +63,12 @@ class PitiviViewer(gtk.VBox):
         self.currentlySeeking = False
 
         self.currentState = gst.STATE_PAUSED
+        self._haveUI = False
 
-        self._createUi()
         self.setAction(action)
         self.setPipeline(pipeline)
 
-        # Connect to project.  We must remove and reset the callbacks when
-        # changing project.
-        #self.project_signals = SignalGroup()
-        #self._connectToProject(instance.PiTiVi.current)
-        #instance.PiTiVi.connect("new-project-loaded", self._newProjectCb)
-        #instance.PiTiVi.playground.connect("current-state", self._currentStateCb)
-        #instance.PiTiVi.playground.connect("position", self._playgroundPositionCb)
-
-        # callback to know when to set the XID on our viewer widget
-        #instance.PiTiVi.playground.connect("element-message", self._playgroundElementMessageCb)
+        self._createUi()
 
     def setPipeline(self, pipeline):
         """
@@ -91,6 +79,7 @@ class PitiviViewer(gtk.VBox):
         @param pipeline: The Pipeline to switch to.
         @type pipeline: L{Pipeline}.
         """
+        gst.debug("self.pipeline:%r, pipeline:%r" % (self.pipeline, pipeline))
         if self.pipeline != None:
             # remove previously set Pipeline
             self._disconnectFromPipeline(self.pipeline)
@@ -98,7 +87,6 @@ class PitiviViewer(gtk.VBox):
             self._setUiActive(False)
             # finally remove previous pipeline
             self.pipeline = None
-        # TODO : Connect to position handler (where ?)
         self._connectToPipeline(pipeline)
         self._setUiActive()
         self.pipeline = pipeline
@@ -111,6 +99,7 @@ class PitiviViewer(gtk.VBox):
         will be used.
         @type action: L{ViewAction} or C{None}
         """
+        gst.debug("self.action:%r, action:%r" % (self.action, action))
         if self.action != None:
             # if there was one previously, remove it
             self._disconnectFromAction(self)
@@ -120,6 +109,7 @@ class PitiviViewer(gtk.VBox):
         self._connectToAction(action)
 
     def _connectToPipeline(self, pipeline):
+        gst.debug("pipeline:%r" % pipeline)
         if self.pipeline != None:
             raise ViewerError("previous pipeline wasn't disconnected")
         self.pipeline = pipeline
@@ -127,11 +117,16 @@ class PitiviViewer(gtk.VBox):
             return
         self.pipeline.connect('position', self._posCb)
         self.pipeline.activatePositionListener()
+        self.pipeline.connect('state-changed', self._currentStateCb)
+        self.pipeline.connect('element-message', self._elementMessageCb)
+        self.pipeline.connect('duration-changed', self._durationChangedCb)
         # if we have an action set it to that new pipeline
         if self.action:
             self.pipeline.setAction(self.action)
+            self.action.activate()
 
     def _disconnectFromPipeline(self):
+        gst.debug("pipeline:%r" % pipeline)
         if self.pipeline == None:
             # silently return, there's nothing to disconnect from
             return
@@ -143,19 +138,29 @@ class PitiviViewer(gtk.VBox):
             self.pipeline.removeAction(self.action)
 
         self.pipeline.disconnect_by_func(self._posCb)
+        self.pipeline.disconnect_by_func(self._elementMessageCb)
         self.deactivatePositionListener()
+        self.pipeline.stop()
 
         self.pipeline = None
 
     def _connectToAction(self, action):
+        gst.debug("action: %r" % action)
         # not sure what we need to do ...
         self.action = action
 
     def _disconnectFromAction(self):
+        gst.debug("action: %r" % action)
         self.action = None
 
     def _setUiActive(self, active=True):
+        gst.debug("active %r" % active)
         self.set_sensitive(active)
+        if self._haveUI:
+            for item in [self.slider, self.rewind_button, self.back_button,
+                         self.playpause_button, self.next_button,
+                         self.forward_button, self.timelabel]:
+                item.set_sensitive(active)
 
     def _getDefaultAction(self):
         return ViewAction()
@@ -169,7 +174,7 @@ class PitiviViewer(gtk.VBox):
         self.aframe = gtk.AspectFrame(xalign=0.5, yalign=0.5, ratio=4.0/3.0,
                                       obey_child=False)
         self.pack_start(self.aframe, expand=True)
-        self.drawingarea = ViewerWidget()
+        self.drawingarea = ViewerWidget(self.action)
         self.drawingarea.connect_after("expose-event", self._drawingAreaExposeCb)
         self.aframe.add(self.drawingarea)
 
@@ -235,6 +240,7 @@ class PitiviViewer(gtk.VBox):
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
+        self._haveUI = True
 
     def setDisplayAspectRatio(self, ratio):
         """ Sets the DAR of the Viewer to the given ratio """
@@ -243,44 +249,6 @@ class PitiviViewer(gtk.VBox):
             self.aframe.set_property("ratio", float(ratio))
         except:
             gst.warning("could not set ratio !")
-
-    def _createSinkThreads(self):
-        """ Creates the sink threads for the playground """
-        # video elements
-        # FIXME : THIS SHOULD DIE !!!!
-        raise NotImplementedError
-        gst.debug("Creating video sink")
-        self.videosink = plumber.get_video_sink()
-        vsinkthread = gst.Bin('vsinkthread')
-        vqueue = gst.element_factory_make('queue')
-        cspace = gst.element_factory_make('ffmpegcolorspace')
-        vscale = gst.element_factory_make('videoscale')
-        vscale.props.method = 1
-        vsinkthread.add(self.videosink, vqueue, vscale, cspace)
-        vqueue.link(self.videosink)
-        cspace.link(vscale)
-        vscale.link(vqueue)
-        vsinkthread.videosink = self.videosink
-        vsinkthread.add_pad(gst.GhostPad("sink", cspace.get_pad('sink')))
-        self.drawingarea.videosink = self.videosink
-
-        # audio elements
-        gst.debug("Creating audio sink")
-        self.audiosink = plumber.get_audio_sink()
-        asinkthread = gst.Bin('asinkthread')
-        aqueue = gst.element_factory_make('queue')
-        aconv = gst.element_factory_make('audioconvert')
-        asinkthread.add(self.audiosink, aqueue, aconv)
-        aconv.link(aqueue)
-        aqueue.link(self.audiosink)
-        asinkthread.audiosink = self.audiosink
-        asinkthread.add_pad(gst.GhostPad("sink", aconv.get_pad('sink')))
-
-        # setting sinkthreads on playground
-        instance.PiTiVi.playground.setVideoSinkThread(vsinkthread)
-        instance.PiTiVi.playground.setAudioSinkThread(asinkthread)
-        instance.PiTiVi.playground.connect("current-changed",
-                                           self._currentPlaygroundChangedCb)
 
     def _settingsChangedCb(self, unused_project):
         gst.info("current project settings changed")
@@ -291,10 +259,14 @@ class PitiviViewer(gtk.VBox):
     def _drawingAreaExposeCb(self, drawingarea, event):
         drawingarea.disconnect_by_func(self._drawingAreaExposeCb)
         drawingarea.modify_bg(gtk.STATE_NORMAL, drawingarea.style.black)
-        self._createSinkThreads()
-        if not instance.PiTiVi.playground.play() == gst.STATE_CHANGE_FAILURE:
-            self.currentState = gst.STATE_PLAYING
-
+        gst.debug("yay, we are exposed !")
+        if self.pipeline:
+            try:
+                self.pipeline.paused()
+            except:
+                self.currentState = gst.STATE_NULL
+            else:
+                self.currentState = gst.STATE_PAUSED
         return False
 
     ## gtk.HScale callbacks for self.slider
@@ -303,7 +275,7 @@ class PitiviViewer(gtk.VBox):
         gst.info("button pressed")
         self.moving_slider = True
         self.valuechangedid = slider.connect("value-changed", self._sliderValueChangedCb)
-        instance.PiTiVi.playground.pause()
+        self.pipeline.pause()
         return False
 
     def _sliderButtonReleaseCb(self, slider, unused_event):
@@ -314,9 +286,9 @@ class PitiviViewer(gtk.VBox):
             self.valuechangedid = 0
         # revert to previous state
         if self.currentState == gst.STATE_PAUSED:
-            instance.PiTiVi.playground.pause()
+            self.pipeline.pause()
         else:
-            instance.PiTiVi.playground.play()
+            self.pipeline.play()
         return False
 
     def _sliderValueChangedCb(self, slider):
@@ -333,7 +305,7 @@ class PitiviViewer(gtk.VBox):
             if event.direction in [gtk.gdk.SCROLL_LEFT, gtk.gdk.SCROLL_DOWN]:
                 seekvalue = max(self.current_time - gst.SECOND / 2, 0)
             else:
-                seekvalue = min(self.current_time + gst.SECOND / 2, instance.PiTiVi.playground.current.length)
+                seekvalue = min(self.current_time + gst.SECOND / 2, self.pipeline.getDuration())
             self._doSeek(seekvalue)
         else:
             # frame scrolling, frame by frame
@@ -343,7 +315,7 @@ class PitiviViewer(gtk.VBox):
                 seekvalue = max(self.current_frame - 1, 0)
             else:
                 gst.info("scrolling forward")
-                seekvalue = min(self.current_frame + 1, instance.PiTiVi.playground.current.length)
+                seekvalue = min(self.current_frame + 1, self.pipeline.getDuration())
             self._doSeek(seekvalue, gst.FORMAT_DEFAULT)
 
     def _seekTimeoutCb(self):
@@ -358,7 +330,7 @@ class PitiviViewer(gtk.VBox):
                                                 self.currentlySeeking))
         if not self.currentlySeeking:
             self.currentlySeeking = True
-            if instance.PiTiVi.playground.seekInCurrent(value, format=format):
+            if self.pipeline.seek(value, format=format):
                 gst.debug("seek succeeded, request_time = NONE")
                 self.requested_time = gst.CLOCK_TIME_NONE
                 gobject.timeout_add(80, self._seekTimeoutCb)
@@ -374,7 +346,7 @@ class PitiviViewer(gtk.VBox):
         self.current_time = value
         self.current_frame = frame
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(value),
-                                                        time_to_string(instance.PiTiVi.playground.current.length)))
+                                                        time_to_string(self.pipeline.getDuration())))
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
         return False
@@ -382,28 +354,20 @@ class PitiviViewer(gtk.VBox):
 
     ## active Timeline calllbacks
 
-    def _asyncTimelineDurationChanged(self, duration):
+    def _durationChangedCb(self, unused_pipeline, duration):
         gst.debug("duration : %s" % gst.TIME_ARGS(duration))
-        gst.debug("playground.current.length : %s" % gst.TIME_ARGS(instance.PiTiVi.playground.current.length))
         position = self.posadjust.get_value()
         if duration < position:
             self.posadjust.set_value(float(duration))
         self.posadjust.upper = float(duration)
 
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time),
-                                                        time_to_string(instance.PiTiVi.playground.current.length)))
+                                                        time_to_string(duration)))
 
-
-    def _backToDefaultCb(self):
-        instance.PiTiVi.playground.switchToDefault()
-        instance.PiTiVi.playground.play()
-        self._newTime(0)
 
     def _timelineDurationChangedCb(self, unused_composition, duration):
         gst.debug("duration : %s" % gst.TIME_ARGS(duration))
-        if duration == 0:
-            gobject.idle_add(self._backToDefaultCb)
-        else:
+        if duration:
             self.slider.set_sensitive(True)
             self.playpause_button.set_sensitive(True)
             self.next_button.set_sensitive(True)
@@ -413,6 +377,8 @@ class PitiviViewer(gtk.VBox):
 
     def _dndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
                            selection, targetType, ctime):
+        # FIXME : This should be handled by the main application who knows how
+        # to switch between pipelines.
         gst.info("context:%s, targetType:%s" % (context, targetType))
         if targetType == dnd.TYPE_URI_LIST:
             uri = selection.data.strip().split("\n")[0].strip()
@@ -422,10 +388,15 @@ class PitiviViewer(gtk.VBox):
             context.finish(False, False, ctime)
             return
         gst.info("got file:%s" % uri)
-        if uri in instance.PiTiVi.current.sources:
-            instance.PiTiVi.playground.playTemporaryFilesourcefactory(instance.PiTiVi.current.sources[uri])
-        else:
-            instance.PiTiVi.current.sources.addTmpUri(uri)
+        from pitivi.factories.file import FileSourceFactory
+        # we need a pipeline for playback
+        p = Pipeline()
+        f = FileSourceFactory(uri)
+        p.addFactory(f)
+        # FIXME : Clear the action
+        self.action.addProducers(f)
+        self.setPipeline(p)
+        self.pipeline.pause()
         context.finish(True, False, ctime)
         gst.info("end")
 
@@ -435,25 +406,25 @@ class PitiviViewer(gtk.VBox):
         pass
 
     def _backCb(self, unused_button):
-        instance.PiTiVi.playground.backward_one()
+        raise NotImplementedError
 
     def _playButtonCb(self, unused_button, isplaying):
         if isplaying:
-            if not instance.PiTiVi.playground.play() == gst.STATE_CHANGE_FAILURE:
+            if not self.pipeline.play() == gst.STATE_CHANGE_FAILURE:
                 self.currentState = gst.STATE_PLAYING
         else:
-            if not instance.PiTiVi.playground.pause() == gst.STATE_CHANGE_FAILURE:
+            if not self.pipeline.pause() == gst.STATE_CHANGE_FAILURE:
                 self.currentState = gst.STATE_PAUSED
 
     def _nextCb(self, unused_button):
-        instance.PiTiVi.playground.forward_one()
+        raise NotImplementedError
 
     def _forwardCb(self, unused_button):
         pass
 
     ## Playground callbacks
 
-    def _playgroundPositionCb(self, unused_playground, unused_smartbin, pos):
+    def _posCb(self, unused_pipeline, pos):
         self._newTime(pos)
 
     def _currentPlaygroundChangedCb(self, playground, smartbin):
@@ -500,21 +471,18 @@ class PitiviViewer(gtk.VBox):
             if video:
                 self.setDisplayAspectRatio(video[0].dar)
 
-    def _currentStateCb(self, unused_playground, state):
+    def _currentStateCb(self, unused_pipeline, state):
         gst.info("current state changed : %s" % state)
         if state == int(gst.STATE_PLAYING):
             self.playpause_button.setPause()
         elif state == int(gst.STATE_PAUSED):
             self.playpause_button.setPlay()
 
-    def _playgroundElementMessageCb(self, unused_playground, message):
+    def _elementMessageCb(self, unused_pipeline, message):
         name = message.structure.get_name()
         gst.log('message:%s / %s' % (message, name))
         if name == 'prepare-xwindow-id':
-            dav = self.drawingarea.videosink
-            gst.log('%s' % dav)
-            if dav and dav.realsink and dav.realsink == message.src:
-                self.drawingarea.set_xwindow_id()
+            self.drawingarea.set_xwindow_id()
 
 
 class ViewerWidget(gtk.DrawingArea):
@@ -524,9 +492,9 @@ class ViewerWidget(gtk.DrawingArea):
 
     __gsignals__ = {}
 
-    def __init__(self):
+    def __init__(self, action):
         gtk.DrawingArea.__init__(self)
-        self.videosink = None
+        self.action = action # FIXME : Check if it's a view action
         self.have_set_xid = False
         self.unset_flags(gtk.DOUBLE_BUFFERED)
         self.unset_flags(gtk.SENSITIVE)
@@ -534,15 +502,10 @@ class ViewerWidget(gtk.DrawingArea):
     def set_xwindow_id(self):
         """ set the widget's XID on the configured videosink. """
         gst.log("...")
-        if not self.videosink:
-            return
         if self.have_set_xid:
             return
-        gst.log("About to set %s's xid to %d" % (self.videosink,
-                                                 self.window.xid))
-        self.videosink.set_xwindow_id(self.window.xid)
+        self.action.set_window_xid(self.window.xid)
         self.have_set_xid = True
-        #self.videosink.expose()
 
 
 class PlayPauseButton(gtk.Button):
