@@ -192,12 +192,13 @@ class TextStream(MultimediaStream):
         self.texttype = self.caps[0].get_name()
 
 def find_decoder(pad):
+    gst.debug("%r" % pad)
     if isinstance(pad, gst.GhostPad):
         target = pad.get_target()
     else:
         target = pad
     element = target.get_parent()
-    if element is None:
+    if element is None or isinstance(element, gst.Bin):
         return None
 
     klass = element.get_factory().get_klass()
@@ -206,6 +207,7 @@ def find_decoder(pad):
     return None
 
 def get_type_from_decoder(decoder):
+    gst.debug("%r" % decoder)
     klass = decoder.get_factory().get_klass()
     parts = klass.split('/', 2)
     if len(parts) != 3:
@@ -225,6 +227,7 @@ def get_stream_for_caps(caps, pad=None):
     Returns the appropriate MediaStream corresponding to the
     given caps.
     """
+    gst.debug("caps:%s, pad:%r" % (caps.to_string(), pad))
     # FIXME : we should have an 'unknown' data stream class
     ret = None
 
@@ -235,6 +238,7 @@ def get_stream_for_caps(caps, pad=None):
         val = caps.to_string()
         stream_type = pad.get_caps()[0].get_name().spit('/', 1)[0]
 
+    gst.debug("stream_type:%s" % stream_type)
     if stream_type in ('video', 'image'):
         ret = VideoStream(caps, pad_name, stream_type == 'image')
     elif stream_type == 'audio':
