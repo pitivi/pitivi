@@ -600,4 +600,38 @@ class ViewAction(Action):
     """
     # FIXME : implement auto-plugging
     # FIXME : how to get default handlers ?
-    pass
+    # ==> Use plumber in the meantime
+
+    def __init__(self, *args, **kwargs):
+        gst.debug("Creating new ViewAction")
+        Action.__init__(self, *args, **kwargs)
+        self.videosink = None
+        self.xid = 0
+
+    def getDynamicLinks(self, producer, stream):
+        gst.debug("producer:%r, stream:%r" % (producer, stream))
+        import plumber
+        from pitivi.stream import AudioStream, VideoStream
+        res = Action.getDynamicLinks(self, producer, stream)
+        if isinstance(stream, VideoStream):
+            consumer = plumber.DefaultVideoSink()
+            res.append((producer, consumer, stream, None))
+            if self.videosink == None:
+                self.videosink = consumer
+                if self.xid != 0:
+                    self.videosink.set_window_xid(self.xid)
+        elif isinstance(stream, AudioStream):
+            consumer = plumber.DefaultAudioSink()
+            res.append((producer, consumer, stream, None))
+        return res
+
+    def set_window_xid(self, xid):
+        """
+        Set the XID where the video consumer should display.
+        """
+        gst.debug("xid:%r" % xid)
+        # FIXME : What if we have several video sinks ???
+        self.xid = xid
+        if self.videosink:
+            self.videosink.set_window_xid(self.xid)
+
