@@ -104,6 +104,7 @@ class Action(object, Signallable):
         @raise PipelineError: If the L{Pipeline} is not in the NULL or READY
         state.
         """
+        gst.debug("Activating...")
         if self.pipeline == None:
             raise ActionError("Action isn't set to a Pipeline")
         if self.state == STATE_ACTIVE:
@@ -120,6 +121,7 @@ class Action(object, Signallable):
         self._ensurePipelineObjects()
         self.state = STATE_ACTIVE
         self.emit('state-changed', self.state)
+        gst.debug("... done activating")
 
     def deactivate(self):
         """
@@ -135,6 +137,7 @@ class Action(object, Signallable):
         @raise PipelineError: If the L{Pipeline} is not in the NULL or READY
         state.
         """
+        gst.debug("De-Activating...")
         if self.state == STATE_NOT_ACTIVE:
             gst.debug("Action already deactivated, returning")
         if self.pipeline == None:
@@ -144,6 +147,7 @@ class Action(object, Signallable):
         self._releasePipelineObjects()
         self.state = STATE_NOT_ACTIVE
         self.emit('state-changed', self.state)
+        gst.debug("... done de-activating")
 
     def isActive(self):
         """
@@ -483,7 +487,22 @@ class Action(object, Signallable):
         gst.debug("returning %r" % waspending)
         return waspending
 
-    def getDynamicLinks(self):
+    def getDynamicLinks(self, producer, stream):
+        """
+        Return a list of links to handle the given producer/stream.
+
+        Subclasses can override this to give links for streams that appear
+        dynamically and should chain up to the parent-class implementation
+        BEFORE their own implementation (i.e. adding to the list they get).
+        If new producers are given, they will be dynamically added to the
+        C{Action} and the controlled C{Pipeline}.
+
+        @param producer: A producer.
+        @type producer: C{SourceFactory}
+        @param stream: The stream to handle
+        @type stream: C{MultimediaStream}
+        @return: a list of links
+        """
         return []
 
     def streamRemoved(self, producer, stream):
@@ -550,9 +569,11 @@ class Action(object, Signallable):
             t.link(q)
         else:
             if init != True:
+                gst.debug("Could not create link")
                 return False
             gst.debug("Stream will be created dynamically")
             self._pendinglinks.append((producer, consumer, prodstream, consstream))
+        gst.debug("Link successfully activated")
         return True
 
     def _releasePipelineObjects(self):
