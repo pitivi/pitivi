@@ -27,6 +27,7 @@ from pitivi.factories.base import SourceFactory, SinkFactory
 from pitivi.action import ActionError
 from pitivi.stream import pad_compatible_stream, get_src_pads_for_stream, \
      get_sink_pads_for_stream, get_stream_for_caps
+import gobject
 import gst
 
 (STATE_NULL,
@@ -95,9 +96,11 @@ class Pipeline(object, Signallable):
         "factory-removed" : ["factory"],
         "state-changed" : ["state"],
         "position" : ["position"],
+        "duration-changed" : ["duration"],
         "unhandled-stream" : ["factory", "stream"],
         "eos" : [],
-        "error" : ["message", "details"]
+        "error" : ["message", "details"],
+        "element-message": ["message"]
         }
 
     def __init__(self):
@@ -105,6 +108,7 @@ class Pipeline(object, Signallable):
         self._bus = self._pipeline.get_bus()
         self._bus.add_signal_watch()
         self._bus.connect("message", self._busMessageCb)
+        self._bus.set_sync_handler(self._busSyncMessageHandler)
         self.factories = []
         self.bins = {} # factory => gst.Bin
         self.tees = {} # (producerfactory, stream) => gst.Element ("tee")
@@ -243,7 +247,7 @@ class Pipeline(object, Signallable):
         """
         change, state, pending = self._pipeline.get_state(0)
         gst.debug("change:%r, state:%r, pending:%r" % (change, state, pending))
-        if change != gst.STATE_CHANGE_FAILURE and pending == gst.STATE_VOID_PENDING and state != self._state:
+        if change != gst.STATE_CHANGE_FAILURE and state != self._state:
             self._state = state
             self.emit('state-changed', self._state)
             # update position listener status
@@ -373,6 +377,19 @@ class Pipeline(object, Signallable):
         gst.log("Got position %s" % gst.TIME_ARGS(cur))
         return cur
 
+    def getDuration(self, format=gst.FORMAT_TIME):
+        """
+        Get the duration of the C{Pipeline}.
+        """
+        gst.log("format %r" % format)
+        try:
+            dur, format = self._pipeline.query_duration(format)
+        except:
+            raise PipelineError("Couldn't get duration")
+        gst.log("Got duration %s" % gst.TIME_ARGS(dur))
+        self.emit("duration-changed", dur)
+        return dur
+
     def activatePositionListener(self, interval=300):
         """
         Activate the position listener.
@@ -403,10 +420,12 @@ class Pipeline(object, Signallable):
         self._listening = False
 
     def _positionListenerCb(self):
-        cur = self.getPosition()
-        if cur != gst.CLOCK_TIME_NONE:
-            self.emit('position', cur)
-        return True
+        try:
+            cur = self.getPosition()
+            if cur != gst.CLOCK_TIME_NONE:
+                self.emit('position', cur)
+        finally:
+            return True
 
     def _listenToPosition(self, listen=True):
         # stupid and dumm method, not many checks done
@@ -642,11 +661,20 @@ class Pipeline(object, Signallable):
             gst.debug("Pipeline change state prev:%r, new:%r, pending:%r" % (prev, new, pending))
             if pending == gst.STATE_VOID_PENDING and self._state != new:
                 self._state = new
+                if self.state in [STATE_PAUSED, STATE_PLAYING]:
+                    # trigger duration-changed
+                    self.getDuration()
                 self._listenToPosition(self._state in [STATE_PAUSED, STATE_PLAYING])
                 self.emit('state-changed', self._state)
         elif message.type == gst.MESSAGE_ERROR:
             error, detail = message.parse_error()
             self._handleErrorMessage(error, detail, message.src)
+
+    def _busSyncMessageHandler(self, unused_bus, message):
+        if message.type == gst.MESSAGE_ELEMENT:
+            # handle element message synchronously
+            self.emit('element-message', message)
+        return gst.BUS_PASS
 
     def _makeBin(self, factory):
         """
@@ -672,12 +700,14 @@ class Pipeline(object, Signallable):
         self._listenToPads(b, factory)
         gst.debug("adding newly created bin [%r] to gst.Pipeline" % b)
         self._pipeline.add(b)
+        gst.debug("Setting bin to current state")
+        b.set_state(self.getState())
         gst.debug("Adding newly created bin to list of controlled bins")
         self.bins[factory] = b
         return b
 
     def _binPadAddedCb(self, bin, pad, factory):
-        gst.debug("bin:%r, pad:%r" % (bin, pad))
+        gst.debug("bin:%r, pad:%r (%s)" % (bin, pad, pad.get_caps().to_string()))
         f = None
         for fact, b in self.bins.iteritems():
             if b == bin:
@@ -735,6 +765,7 @@ class Pipeline(object, Signallable):
 
         t = gst.element_factory_make("tee")
         self._pipeline.add(t)
+        t.set_state(STATE_PAUSED)
         gst.debug("Linking pad %r to tee" % pads[0])
         pads[0].link(t.get_pad("sink"))
         gst.debug("Adding newly created bin to list of controlled tees")
@@ -769,9 +800,11 @@ class Pipeline(object, Signallable):
 
         q = gst.element_factory_make("queue")
         self._pipeline.add(q)
+        q.set_state(STATE_PAUSED)
 
         gst.debug("Linking pad %r to queue" % pads[0])
         q.get_pad("src").link(pads[0])
         gst.debug("Adding newly created bin to list of controlled queues")
         self.queues[(factory, stream)] = q
         return q
+
