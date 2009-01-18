@@ -477,12 +477,13 @@ class Action(object, Signallable):
 
         # 3. Dynamic linking, ask if someone can handle this if nothing else did
         # up to now.
-        for prod, cons, prodstream, consstream in self.getDynamicLinks():
+        for prod, cons, prodstream, consstream in self.getDynamicLinks(producer, stream):
             if not cons in self.consumers and not cons in self._dynconsumers:
                 # we need to add that new consumer
                 self._dynconsumers.append(cons)
                 self.pipeline.addFactory(cons)
-            waspending != self._activateLink(prod, cons, prodstream, consstream, init=False)
+            waspending != self._activateLink(prod, cons, prodstream, consstream,
+                                             init=False)
 
         gst.debug("returning %r" % waspending)
         return waspending
@@ -528,15 +529,12 @@ class Action(object, Signallable):
         # Get the links
         links = self.getLinks()
         # ensure all links are used
-        p = self.producers[:]
-        c = self.consumers[:]
+        cplinks = links[:]
         for prod, cons , ps, cs in links:
-            if prod in p:
-                p.remove(prod)
-            if cons in c:
-                c.remove(cons)
-        if p != [] or c != []:
-            raise ActionError("Some producers or consumers are not used !")
+            if prod in self.producers and cons in self.consumers:
+                cplinks.remove((prod, cons, ps, cs))
+        if cplinks != []:
+            raise ActionError("Some links are not used !")
 
         gst.debug("make sure we have bins")
         # Make sure we have bins for all our producers
@@ -561,7 +559,11 @@ class Action(object, Signallable):
                                                  automake=True)
         if t:
             # Make sure we have a bin for our consumer
-            self.pipeline.getBinForFactory(consumer, automake=True)
+            b = self.pipeline.getBinForFactory(consumer, automake=True)
+            if init != True:
+                # we set the sink to paused, since we are adding this link during
+                # auto-plugging
+                b.set_state(gst.STATE_PAUSED)
             # Make sure we have queues for our (consumer, stream)s
             q = self.pipeline.getQueueForFactoryStream(consumer, consstream,
                                                        automake=True)
