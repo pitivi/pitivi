@@ -34,55 +34,79 @@ Convenience functions for creating the output media sinks
 
 import gst
 from gst import interfaces
+from pitivi.factories.base import SinkFactory
 
-def get_video_sink():
-    """ Returns a video sink bin that can be used in the Discoverer """
-    autovideosink = gst.element_factory_make("autovideosink")
-    autovideosink.realsink = None
+class DefaultVideoSink(SinkFactory):
 
-    autovideosink.set_state(gst.STATE_READY)
+    def __init__(self, *args, **kwargs):
+        SinkFactory.__init__(self, *args, **kwargs)
+        self.max_bins = 1
+        self._xid = 0
+        self._cachedsink = None
+        self._realsink = None
 
-    if not autovideosink.implements_interface(interfaces.XOverlay):
-        autovideosink.info("doesn't implement XOverlay interface")
-        realsink = autovideosink.get_by_interface(interfaces.XOverlay)
-        if not realsink:
-            gst.info("%s" % list(autovideosink.elements()))
-            autovideosink.warning("couldn't even find an XOverlay within!!!")
+    def _makeBin(self, input_stream=None):
+        """ Returns a video sink bin that can be used in the Discoverer """
+        if self._cachedsink != None:
+            return self._cachedsink
+
+        autovideosink = gst.element_factory_make("autovideosink")
+        autovideosink.set_state(gst.STATE_READY)
+
+        if not autovideosink.implements_interface(interfaces.XOverlay):
+            autovideosink.info("doesn't implement XOverlay interface")
+            self._realsink = autovideosink.get_by_interface(interfaces.XOverlay)
+            if not self._realsink:
+                gst.info("%s" % list(autovideosink.elements()))
+                autovideosink.warning("couldn't even find an XOverlay within!!!")
+            else:
+                self._realsink.info("implements XOverlay interface")
+                autovideosink.set_xwindow_id = self._realsink.set_xwindow_id
+                autovideosink.expose = self._realsink.expose
         else:
-            realsink.info("implements XOverlay interface")
-            autovideosink.set_xwindow_id = realsink.set_xwindow_id
-            autovideosink.expose = realsink.expose
-            autovideosink.realsink = realsink
-    else:
-        autovideosink.realsink = autovideosink
-    # FIXME : YUCK, I'm guessing most of these issues (qos/max-lateness)
-    # have been solved since
-    if autovideosink.realsink:
-        props = list(autovideosink.realsink.props)
-        if "force-aspect-ratio"in [prop.name for prop in props]:
-            autovideosink.realsink.set_property("force-aspect-ratio", True)
-        if "qos" in [prop.name for prop in props]:
-            autovideosink.realsink.set_property("qos", False)
-        if "max-lateness"in [prop.name for prop in props]:
-            autovideosink.realsink.set_property("max-lateness", -1)
-    return autovideosink
+            self._realsink = autovideosink
+        # FIXME : YUCK, I'm guessing most of these issues (qos/max-lateness)
+        # have been solved since
+        if self._realsink:
+            props = list(self._realsink.props)
+            if "force-aspect-ratio"in [prop.name for prop in props]:
+                self._realsink.set_property("force-aspect-ratio", True)
+            if "qos" in [prop.name for prop in props]:
+                self._realsink.set_property("qos", False)
+            if "max-lateness"in [prop.name for prop in props]:
+                self._realsink.set_property("max-lateness", -1)
 
-def get_audio_sink():
-    """ Returns an audio sink bin that can be used in the Discoverer """
-    autoaudiosink = gst.element_factory_make("autoaudiosink")
+        if self._xid != 0:
+            self._realsink.set_xwindow_id(self._xid)
 
-    audiosink = gst.Bin("pitivi-audiosink")
-    aconv = gst.element_factory_make("audioconvert","audiobin-convert")
-    ares = gst.element_factory_make("audioresample", "audiobin-resample")
+        self._cachedsink = autovideosink
+        return autovideosink
 
-    audiosink.add(aconv, ares, autoaudiosink)
-    aconv.link(ares)
-    # FIXME : This is really bad
-    # For starters... it means we can't edit/preview multi-channel audio
-    # Also, most hardware cards do internal resampling much better
-    audiocaps = "audio/x-raw-int,channels=2,rate=44100,depth=16;audio/x-raw-float,channels=2,rate=44100"
-    ares.link(autoaudiosink, gst.Caps(audiocaps))
+    def set_window_xid(self, xid):
+        if self._xid != 0:
+            return
+        self._xid = xid
+        if self._cachedsink:
+            self._cachedsink.set_xwindow_id(self._xid)
 
-    audiosink.add_pad(gst.GhostPad("sink", aconv.get_pad("sink")))
+class DefaultAudioSink(SinkFactory):
 
-    return audiosink
+    def _makeBin(self, input_stream=None):
+        """ Returns an audio sink bin that can be used in the Discoverer """
+        autoaudiosink = gst.element_factory_make("autoaudiosink")
+
+        audiosink = gst.Bin("pitivi-audiosink")
+        aconv = gst.element_factory_make("audioconvert","audiobin-convert")
+        ares = gst.element_factory_make("audioresample", "audiobin-resample")
+
+        audiosink.add(aconv, ares, autoaudiosink)
+        aconv.link(ares)
+        # FIXME : This is really bad
+        # For starters... it means we can't edit/preview multi-channel audio
+        # Also, most hardware cards do internal resampling much better
+        audiocaps = "audio/x-raw-int,channels=2,rate=44100,depth=16;audio/x-raw-float,channels=2,rate=44100"
+        ares.link(autoaudiosink, gst.Caps(audiocaps))
+
+        audiosink.add_pad(gst.GhostPad("sink", aconv.get_pad("sink")))
+
+        return audiosink
