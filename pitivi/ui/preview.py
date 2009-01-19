@@ -33,6 +33,7 @@ from gettext import gettext as _
 from pitivi.receiver import receiver, handler
 from pitivi.objectfactory import FileSourceFactory
 from zoominterface import Zoomable
+import pitivi.previewer as previewer
 
 def between(a, b, c):
     return (a <= b) and (b <= c)
@@ -64,7 +65,7 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 ## element callbacks
 
     def __set_element(self):
-        self.previewer = self.element.factory.preview
+        self.previewer = previewer.get_preview_for_object(self.element)
     element = receiver(setter=__set_element)
 
     @handler(element, "media-start-duration-changed")
@@ -76,10 +77,8 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
     previewer = receiver()
 
     @handler(previewer, "update")
-    def __update_preview(self, previewer, stream):
-        if self.element.media_type == stream:
-            #TODO: check timestamps and stream info to prevent unecessary updates
-            self.changed(False)
+    def __update_preview(self, previewer, segment):
+        self.changed(False)
 
 ## Zoomable interface overries
 

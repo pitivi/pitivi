@@ -41,11 +41,6 @@ from ui.zoominterface import Zoomable
  MEDIA_TYPE_AUDIO,
  MEDIA_TYPE_VIDEO) = range(3)
 
-# TODO: refactor this mess into hierarchy of classes along these lines, to aid
-# with refactoring effort. Individual factories can name the preview class
-# they want to use for each stream they output, which leaves the door open for
-# plugins which define new kinds of object factories.  
-
 # Previewer                      -- abstract base class with public interface for UI
 # |_DefaultPreviewer             -- draws a default thumbnail for UI
 # |_LivePreviewer                -- draws a continuously updated preview
@@ -53,12 +48,30 @@ from ui.zoominterface import Zoomable
 # | |_LiveVideoPreviewer         -- a continously updating video monitor
 # |_RandomAccessPreviewer        -- asynchronous fetching and caching
 #   |_RandomAccessAudioPreviewer -- audio-specific pipeline and rendering code
-#   |_RandomAccessVideoPreviewer -- video-specific caching and rendering
+#   |_RandomAccessVideoPreviewer -- video-specific pipeline and rendering
+
+previewers = {}
+
+def get_preview_for_object(timelineobject):
+    factory = timelineobject.factory
+    stream = timelineobject.media_type
+    key = factory, stream
+    if not key in previewers:
+        # TODO: handle still images
+        # TODO: handle non-random access factories
+        # TODO: handle non-source factories
+        if stream == MEDIA_TYPE_AUDIO:
+            previewers[key] = RandomAccessAudioPreviewer(factory)
+        elif stream == MEDIA_TYPE_VIDEO:
+            previewers[key] = RandomAccessVideoPreviewer(factory)
+        else:
+            previewers[key] = DefaultPreviewer(factory)
+    return previewers[key]
 
 class Previewer(object, Signallable):
 
     __signals__ = {
-        "update" : ("timestamp",),
+        "update" : ("segment",),
     }
 
     # TODO: use actual aspect ratio of source
@@ -67,69 +80,60 @@ class Previewer(object, Signallable):
     # thumbnail cache.
 
     __TWIDTH__ = 4.0 / 3.0 * 50
-
-    """
-    Handles loading, caching, and drawing preview data for segments of
-    timeline object streams. There is one Previewer per ObjectFactory. 
-    Preview data is read from an instance of an ObjectFactory's Object, and
-    when requested, drawn into a given cairo context. If the requested data is
-    not cached, an appropriate filler will be substituted, and an asyncrhonous
-    request for the data will be issued. When the data becomes available, the
-    update signal is emitted, along with the stream, and time segments. This
-    allows the UI to re-draw the affected portion of a thumbnail sequence or
-    audio waveform."""
+    __DEFAULT_THUMB__ = "pitivi-video.png"
 
     def __init__(self, factory):
-
         # create default thumbnail
-        path = os.path.join(get_pixmap_dir(), "pitivi-video.png")
+        path = os.path.join(get_pixmap_dir(), self.__DEFAULT_THUMB__)
         self.default_thumb = cairo.ImageSurface.create_from_png(path) 
 
-        if factory.is_video:
-            self.__init_video(factory)
-        if factory.is_audio:
-            self.__init_audio(factory)
+    def render_cairo(self, cr, bounds, element):
+        """Render a preview of element onto a cairo context within the current
+        bounds, which may or may not be the entire object and which may or may
+        not intersect the visible portion of the object"""
+        raise NotImplementedError
+
+class DefaultPreviewer(Previewer):
+
+    def render_cairo(self, cr, bounds, element):
+        # TODO: draw a single thumbnail
+        pass
+
+class RandomAccessPreviewer(Previewer):
+
+    """ Handles loading, caching, and drawing preview data for segments of
+    random-access streams.  There is one Previewer per stream per
+    ObjectFactory.  Preview data is read from an instance of an
+    ObjectFactory's Object, and when requested, drawn into a given cairo
+    context. If the requested data is not cached, an appropriate filler will
+    be substituted, and an asyncrhonous request for the data will be issued.
+    When the data becomes available, the update signal is emitted, along with
+    the stream, and time segments. This allows the UI to re-draw the affected
+    portion of a thumbnail sequence or audio waveform."""
+
+    def __init__(self, factory):
+        Previewer.__init__(self, factory)
+        self._ready = False
+        self._queue = []
+        self._cache = {}
+        self._pipelineInit(factory)
+
+    def _pipelineInit(self, factory):
+        """Create the pipeline for the preview process. Subclasses should
+        override this method and create a pipeline, connecting to callbacks to
+        the appropriate signals, and prerolling the pipeline if necessary."""
+        raise NotImplementedError
 
 ## public interface
 
     def render_cairo(self, cr, bounds, element):
-        if element.media_type == MEDIA_TYPE_AUDIO:
-           self.__render_waveform(cr, bounds, element)
-        elif element.media_type == MEDIA_TYPE_VIDEO:
-           self.__render_thumbseq(cr, bounds, element)
-
-## thumbmailsequence generator
-
-    def __init_video(self, factory):
-        self.__video_ready = False
-        sbin = factory.makeVideoBin() 
-        csp = gst.element_factory_make("ffmpegcolorspace")
-        sink = CairoSurfaceThumbnailSink()
-        scale = gst.element_factory_make("videoscale")
-        filter = utils.filter("video/x-raw-rgb,height=(int) 50, width=(int) %d"
-            % self.__TWIDTH__)
-        self.videopipeline = utils.pipeline({
-            sbin : csp,
-            csp : scale,
-            scale : filter,
-            filter : sink,
-            sink : None
-        })
-        sink.connect('thumbnail', self._thumbnailCb)
-        self.thumbcache = {}
-        self.videoqueue = []
-        self.videopipeline.set_state(gst.STATE_PAUSED)
-
-    def __render_thumbseq(self, cr, bounds, element):
         # The idea is to conceptually divide the clip into a sequence of
         # rectangles beginning at the start of the file, and
         # pixelsToNs(twidth) nanoseconds long. The thumbnail within the
-        # rectangle is the frame produced from the timestamp of the
-        # rectangle's left edge. This sequence of rectangles is anchored in
-        # the timeline at the start of the file in timeline space. We speed
-        # things up by only drawing the rectangles which intersect the given
-        # bounds.
-        # FIXME: how would we handle timestretch?
+        # rectangle is the frame produced from the timestamp corresponding to
+        # rectangle's left edge. We speed things up by only drawing the
+        # rectangles which intersect the given bounds.  FIXME: how would we
+        # handle timestretch?
 
         height = bounds.y2 - bounds.y1
         width = bounds.x2 - bounds.x1
@@ -141,18 +145,21 @@ class Previewer(object, Signallable):
         cr.clip()
 
         # tdur = duration in ns of thumbnail
+        # sof  = start of file in pixel coordinates
         tdur = Zoomable.pixelToNs(self.__TWIDTH__)
         x1 = bounds.x1; y1 = bounds.y1
-        # start of file in pixel coordinates
         sof = Zoomable.nsToPixel(element.start - element.media_start)
 
         # i = left edge of thumbnail to be drawn. We start with x1 and
-        # subtract the distance to the nearest leftward rectangle. v it's worth
-        # noting that % is defined for floats in python, and works for our
-        # purposes. justification of the following: 
-        # since i = sof + k * twidth, and i = x1 - delta,
-        # sof + k * twidth = x1 - delta => i * tw = (x1 - sof) - delta
-        # therefore delta = x1 - sof (mod twidth)
+        # subtract the distance to the nearest leftward rectangle.
+        # Justification of the following: 
+        #                i = sof + k * twidth
+        #                i = x1 - delta
+        # sof + k * twidth = x1 - delta 
+        #           i * tw = (x1 - sof) - delta
+        #    <=>     delta = x1 - sof (mod twidth).
+        # Fortunately for us, % works on floats in python. 
+
         i = x1 - ((x1 - sof) % self.__TWIDTH__)
 
         # j = timestamp *within the element* of thumbnail to be drawn. we want
@@ -163,49 +170,98 @@ class Previewer(object, Signallable):
         j = Zoomable.pixelToNs(i - sof)
 
         while i < bounds.x2:
-            cr.set_source_surface(self.video_thumb_for_time(j), i, y1)
-            cr.rectangle(i, y1, self.__TWIDTH__, height)
+            cr.set_source_surface(self._thumbForTime(j), i, y1)
+            cr.rectangle(i - 1, y1, self.__TWIDTH__ + 2, height)
             i += self.__TWIDTH__
             j += tdur
             cr.fill()
 
-    def video_thumb_for_time(self, time):
-        if time in self.thumbcache:
-            return self.thumbcache[time]
-        self.makeThumbnail(time)
+    def _segmentForTime(self, time):
+        """Return the segment for the specified time stamp. For some stream
+        types, the segment duration will depend on the current zoom ratio,
+        while others may only care about the timestamp. The value returned
+        here will be used as the key which identifies the thumbnail in the
+        thumbnail cache""" 
+        
+        raise NotImplementedError
+
+    def _thumbForTime(self, time):
+        segment = self._segment_for_time(time)
+        if segment in self._cache:
+            return self._cache[segment]
+        self.makeThumbnail(segment)
         return self.default_thumb
 
-    def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
-        #self.log("pixbuf:%s, timestamp:%s" % (pixbuf, gst.TIME_ARGS(timestamp)))
-        if not self.__video_ready:
+    def _nextThumbnail(self, surface, segment):
+        """Notifies the preview object that the a new thumbnail is ready to be
+        displayed. This should be called by subclasses when they have finished
+        processing the thumbnail for the current segment."""
+
+        if not self._ready:
             # we know we're prerolled when we get the initial thumbnail
-            self.__video_ready = True
+            self._ready = True
 
-        # TODO: implement actual caching strategy, instead of slowly consuming all
-        # available memory
-        self.thumbcache[timestamp] = pixbuf
-        self.emit("update", MEDIA_TYPE_VIDEO)
-        if timestamp in self.videoqueue:
-            self.videoqueue.remove(timestamp)
+        self._cache[segment] = surface 
+        self.emit("update", segment)
 
-        if self.videoqueue:
-            gobject.idle_add(self._makeThumbnail, self.videoqueue.pop(0))
+        if segment in self._queue:
+            self._queue.remove(segment)
 
-    def makeThumbnail(self, timestamp):
-        """ Queue a thumbnail request for the given timestamp """
-        #self.log( "timestamp %s" % gst.TIME_ARGS(timestamp))
-        assert timestamp >= 0
+        if self._queue:
+            gobject.idle_add(self._pipelineAction, self._queue.pop(0))
+
+    def makeThumbnail(self, segment):
+        """Queue a thumbnail request for the given segment"""
+
         # TODO: need some sort of timeout so the queue doesn't fill up if the
         # thumbnail never arrives.
-        if timestamp not in self.videoqueue:
-            if self.videoqueue or not self.__video_ready:
-                self.videoqueue.append(timestamp)
-            else:
-                self.videoqueue.append(timestamp)
-                self._makeThumbnail(timestamp)
 
-    def _makeThumbnail(self, timestamp):
-        if not self.__video_ready:
+        if segment not in self._queue:
+            if self._queue or not self._ready:
+                self._queue.append(segment)
+            else:
+                self._queue.append(segment)
+                self._pipelineAction(segment)
+
+    def _pipelineAction(self, segment):
+        """Start processing segment. Subclasses should override
+        this method to perform whatever action on the pipeline is necessary.
+        Typically this will be a flushing seek(). When the
+        current segment has finished processing, subclasses should call
+        _nextThumbnail() with the resulting cairo surface. Since seeking and
+        playback are asyncrhonous, you may have to call _nextThumbnail() in a
+        message handler or other callback.""" 
+    
+        raise NotImplementedError
+
+class RandomAccessVideoPreviewer(RandomAccessPreviewer):
+
+    def _pipelineInit(self, factory):
+        sbin = factory.makeVideoBin() 
+        csp = gst.element_factory_make("ffmpegcolorspace")
+        sink = CairoSurfaceThumbnailSink()
+        scale = gst.element_factory_make("videoscale")
+        filter = utils.filter("video/x-raw-rgb,height=(int) 50, width=(int) %d"
+            % (self.__TWIDTH__ + 2))
+        self.videopipeline = utils.pipeline({
+            sbin : csp,
+            csp : scale,
+            scale : filter,
+            filter : sink,
+            sink : None
+        })
+        sink.connect('thumbnail', self._thumbnailCb)
+        self.videopipeline.set_state(gst.STATE_PAUSED)
+
+    def _segment_for_time(self, time):
+        # for video thumbnails, the duration doesn't matter
+        return time
+
+    def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
+        self._nextThumbnail(pixbuf, timestamp)
+
+    def _pipelineAction(self, timestamp):
+        if not self._ready:
             return
         gst.log("timestamp : %s" % gst.TIME_ARGS(timestamp))
         self.videopipeline.seek(1.0, 
@@ -214,10 +270,9 @@ class Previewer(object, Signallable):
             gst.SEEK_TYPE_NONE, -1)
         return False
 
- ## Waveform peaks generator 
+class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
-    def __init_audio(self, factory):
-        self.__audio_ready = False
+    def _pipelineInit(self, factory):
         sbin = factory.makeAudioBin()
         conv = gst.element_factory_make("audioconvert")
         self.audioSink = ArraySink()
@@ -229,74 +284,26 @@ class Previewer(object, Signallable):
         self.bus.add_signal_watch()
         self.bus.connect("message", self.__bus_message)
         self.__audio_cur = None
-        self.wavecache = {}
-        self.audioqueue = []
         self.audioPipeline.set_state(gst.STATE_PAUSED)
 
-    def __render_waveform(self, cr, bounds, element):
-        height = bounds.y2 - bounds.y1
-        width = bounds.x2 - bounds.x1
-        cr.rectangle(bounds.x1, bounds.y1, width, height)
-        cr.clip()
-
-        tdur = Zoomable.pixelToNs(self.__TWIDTH__)
-        x1 = bounds.x1; y1 = bounds.y1
-        sof = Zoomable.nsToPixel(element.start - element.media_start)
-
-        i = x1 - ((x1 - sof) % self.__TWIDTH__)
-        j = Zoomable.pixelToNs(i - sof)
-
-        while i < bounds.x2:
-            cr.set_source_surface(self.audio_thumb_for_time_duration(j, tdur),
-                i, y1)
-            cr.rectangle(i, y1, self.__TWIDTH__, height)
-            i += self.__TWIDTH__
-            j += tdur
-            cr.fill()
-
-    def audio_thumb_for_time_duration(self, time, duration):
-        if (time, duration) in self.wavecache:
-            return self.wavecache[(time, duration)]
-        self.__requestWaveform(time, duration)
-        return self.default_thumb
+    def _segment_for_time(self, time):
+        # for audio files, we need to know the duration the segment spans
+        return time, Zoomable.pixelToNs(self.__TWIDTH__)
 
     def __bus_message(self, bus, message):	
         if message.type == gst.MESSAGE_SEGMENT_DONE:
             self.__finishWaveform()
 
         elif message.type == gst.MESSAGE_STATE_CHANGED:
-            self.__audio_ready = True
+            self._ready = True
 
-        # true only if we are prerolled
         elif message.type == gst.MESSAGE_ERROR:
             error, debug = message.parse_error()
             print "Event bus error:", str(error), str(debug)
 
-    def __requestWaveform(self, timestamp, duration):
-        """
-        Queue a waveform request for the given timestamp and duration.
-        """
-        assert (timestamp >= 0) and (duration > 0)
-        # TODO: need some sort of timeout so the queue doesn't fill up if the
-        # thumbnail never arrives.
-        if (timestamp, duration) not in self.audioqueue:
-            if self.audioqueue or not self.__audio_ready:
-                self.audioqueue.append((timestamp, duration))
-            else:
-                self.audioqueue.append((timestamp, duration))
-                self.__makeWaveform((timestamp, duration))
-
-    def __makeWaveform(self, (timestamp, duration)):
-        if not self.__audio_ready:
+    def _pipelineAction(self, (timestamp, duration)):
+        if not self._ready:
             return
-        # TODO: read up on segment seeks, which will do what we want as far as
-        # playing over jsut a portion of a file.
-        # 02:22 < bilboed-pi> so, preroll, wait for confirmed state change to PAUSED, 
-        # send seek (flushing, start, stop), set to PLAYING
-        # 02:22 < twi_> morning
-        # 02:22 < bilboed-pi> you'll receive EOS when the pipeline
-        # has reached the end 
-        # position
         self.__audio_cur = timestamp, duration
         self.audioPipeline.seek(1.0, 
             gst.FORMAT_TIME, 
@@ -307,21 +314,12 @@ class Previewer(object, Signallable):
         return False
 
     def __finishWaveform(self):
-        surface = cairo.ImageSurface(cairo.FORMAT_A8, int(self.__TWIDTH__), 50)
+        surface = cairo.ImageSurface(cairo.FORMAT_A8, 
+            int(self.__TWIDTH__) + 2, 50)
         cr = cairo.Context(surface)
         self.__plotWaveform(cr, self.audioSink.samples)
         self.audioSink.reset()
-        self.wavecache[self.__audio_cur] = surface
-        surface.write_to_png("test.png")
-
-        self.emit("update", MEDIA_TYPE_AUDIO)
-        self.audioqueue.pop(0)
-
-        if self.audioqueue:
-            gobject.idle_add(self.__makeWaveform, self.audioqueue[0])
-
-    def nsToSample(self, time):
-        return (time * 3000) / gst.SECOND
+        self._nextThumbnail(surface, self.__audio_cur)
 
     def __plotWaveform(self, cr, levels):
         hscale = 25
@@ -343,5 +341,4 @@ class Previewer(object, Signallable):
         cr.move_to(x0, y0)
         for x, y in points:
             cr.line_to(x, y)
-
 
