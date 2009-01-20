@@ -11,6 +11,7 @@ from view import View
 import controller
 from zoominterface import Zoomable
 from pitivi.timeline.track import TrackError
+from preview import Preview
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
@@ -130,9 +131,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             stroke_color_rgba=self.__BORDER__,
             line_width=0)
 
+        self.content = Preview(self.element)
         self.name = goocanvas.Text(
             x=10,
-            y=10,
             text=os.path.basename(unquote(element.factory.name)),
             font="Sans 9",
             fill_color_rgba=0x000000FF,
@@ -143,7 +144,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.end_handle = EndHandle(element, timeline,
             height=self.__HEIGHT__)
 
-        for thing in (self.bg, self.start_handle, self.end_handle, self.name):
+        for thing in (self.bg, self.content, self.start_handle, self.end_handle, self.name):
             self.add_child(thing)
 
         if element:

@@ -140,4 +140,26 @@ def data_probe(pad, data, section=""):
         if data.type == gst.EVENT_NEWSEGMENT:
             gst.debug("%s %r" % (section, list(data.parse_new_segment())))
     return True
+def linkDynamic(element, target):
+
+    def pad_added(bin, pad, target):
+        if target.get_compatible_pad(pad):
+            element.link(target)
+    element.connect("pad-added", pad_added, target)
+
+def element_make_many(*args):
+    return tuple((gst.element_factory_make(arg) for arg in args))
+
+def pipeline(graph):
+    E = graph.iteritems()
+    V = graph.iterkeys()
+    p = gst.Pipeline()
+    p.add(*V)
+    for u, v in E:
+        if v:
+            try:
+                u.link(v)
+            except gst.LinkError:
+                linkDynamic(u, v)
+    return p
 
