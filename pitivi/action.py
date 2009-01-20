@@ -566,6 +566,12 @@ class Action(object, Signallable):
             # Make sure we have queues for our (consumer, stream)s
             q = self.pipeline.getQueueForFactoryStream(consumer, consstream,
                                                        automake=True)
+
+            # FIXME: where should this be unlinked?
+            sinkpad = q.get_pad('sink')
+            if sinkpad.is_linked():
+                sinkpad.get_peer().unlink(sinkpad)
+
             # Link tees to queues
             t.link(q)
         else:
@@ -605,6 +611,7 @@ class ViewAction(Action):
         gst.debug("Creating new ViewAction")
         Action.__init__(self, *args, **kwargs)
         self.videosink = None
+        self.audiosink = None
         self.xid = 0
 
     def getDynamicLinks(self, producer, stream):
@@ -613,14 +620,20 @@ class ViewAction(Action):
         from pitivi.stream import AudioStream, VideoStream
         res = Action.getDynamicLinks(self, producer, stream)
         if isinstance(stream, VideoStream):
-            consumer = plumber.DefaultVideoSink()
-            res.append((producer, consumer, stream, None))
-            if self.videosink == None:
+            if self.videosink is None:
+                consumer = plumber.DefaultVideoSink()
                 self.videosink = consumer
-                if self.xid != 0:
-                    self.videosink.set_window_xid(self.xid)
+                #if self.xid != 0:
+                self.videosink.set_window_xid(self.xid)
+            else:
+                consumer = self.videosink
+            res.append((producer, consumer, stream, None))
         elif isinstance(stream, AudioStream):
-            consumer = plumber.DefaultAudioSink()
+            if self.audiosink is None:
+                consumer = plumber.DefaultAudioSink()
+                self.audiosink = consumer
+            else:
+                consumer = self.audiosink
             res.append((producer, consumer, stream, None))
         return res
 

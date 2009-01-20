@@ -82,7 +82,7 @@ class PitiviViewer(gtk.VBox):
         gst.debug("self.pipeline:%r, pipeline:%r" % (self.pipeline, pipeline))
         if self.pipeline != None:
             # remove previously set Pipeline
-            self._disconnectFromPipeline(self.pipeline)
+            self._disconnectFromPipeline()
             # make ui inactive
             self._setUiActive(False)
             # finally remove previous pipeline
@@ -126,7 +126,7 @@ class PitiviViewer(gtk.VBox):
             self.action.activate()
 
     def _disconnectFromPipeline(self):
-        gst.debug("pipeline:%r" % pipeline)
+        gst.debug("pipeline:%r" % self.pipeline)
         if self.pipeline == None:
             # silently return, there's nothing to disconnect from
             return
@@ -137,9 +137,9 @@ class PitiviViewer(gtk.VBox):
                 self.action.deactivate()
             self.pipeline.removeAction(self.action)
 
-        self.pipeline.disconnect_by_func(self._posCb)
-        self.pipeline.disconnect_by_func(self._elementMessageCb)
-        self.deactivatePositionListener()
+        self.pipeline.disconnect_by_function(self._posCb)
+        self.pipeline.disconnect_by_function(self._elementMessageCb)
+        #self.deactivatePositionListener()
         self.pipeline.stop()
 
         self.pipeline = None
@@ -390,12 +390,21 @@ class PitiviViewer(gtk.VBox):
         gst.info("got file:%s" % uri)
         from pitivi.factories.file import FileSourceFactory
         # we need a pipeline for playback
-        p = Pipeline()
-        f = FileSourceFactory(uri)
-        p.addFactory(f)
+        if self.pipeline is not None:
+            self.pipeline.stop()
+            self.action.deactivate()
+            self.pipeline.removeFactory(self.factory)
+            self.action.unsetPipeline()
+            pipeline = self.pipeline
+        else:
+            pipeline = Pipeline()
+
+        factory = self.factory = FileSourceFactory(uri)
+
+        pipeline.addFactory(factory)
         # FIXME : Clear the action
-        self.action.addProducers(f)
-        self.setPipeline(p)
+        self.action.addProducers(factory)
+        self.setPipeline(pipeline)
         self.pipeline.pause()
         context.finish(True, False, ctime)
         gst.info("end")
