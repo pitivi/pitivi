@@ -240,8 +240,7 @@ class Action(object, Signallable):
             raise ActionError("Action is active, can't remove Producers")
         # FIXME : figure out what to do in regards with links
         for p in producers:
-            if p in self.producers:
-                self.producers.remove(p)
+            self.producers.remove(p)
 
     def addConsumers(self, *consumers):
         """
