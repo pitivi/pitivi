@@ -56,9 +56,11 @@ class PitiviViewer(gtk.VBox):
 
         self.action = action
         self.pipeline = pipeline
+        self.producer = None
 
         self.current_time = long(0)
         self.requested_time = gst.CLOCK_TIME_NONE
+        self._initial_seek = None
         self.current_frame = -1
         self.currentlySeeking = False
 
@@ -364,6 +366,9 @@ class PitiviViewer(gtk.VBox):
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time),
                                                         time_to_string(duration)))
 
+        if self._initial_seek is not None:
+            seek, self._initial_seek = self._initial_seek, None
+            self.pipeline.seek(seek)
 
     def _timelineDurationChangedCb(self, unused_composition, duration):
         gst.debug("duration : %s" % gst.TIME_ARGS(duration))
@@ -390,24 +395,35 @@ class PitiviViewer(gtk.VBox):
         gst.info("got file:%s" % uri)
         from pitivi.factories.file import FileSourceFactory
         # we need a pipeline for playback
-        if self.pipeline is not None:
-            self.pipeline.stop()
-            self.action.deactivate()
-            self.pipeline.removeFactory(self.factory)
-            self.action.unsetPipeline()
-            pipeline = self.pipeline
-        else:
-            pipeline = Pipeline()
-
-        factory = self.factory = FileSourceFactory(uri)
-
-        pipeline.addFactory(factory)
-        # FIXME : Clear the action
-        self.action.addProducers(factory)
-        self.setPipeline(pipeline)
-        self.pipeline.pause()
+        factory = FileSourceFactory(uri)
+        self.view(factory)
         context.finish(True, False, ctime)
         gst.info("end")
+
+    def view(self, factory, position=0):
+        if factory != self.producer:
+            if self.pipeline is not None:
+                self.pipeline.stop()
+                self.action.deactivate()
+                self.pipeline.removeFactory(self.producer)
+                self.action.unsetPipeline()
+                pipeline = self.pipeline
+            else:
+                pipeline = Pipeline()
+
+            self.producer = factory
+
+            pipeline.addFactory(factory)
+            self.action.addProducers(factory)
+            self.setPipeline(pipeline)
+            self.pipeline.pause()
+
+        if position:
+            if self.pipeline.getState() < gst.STATE_PAUSED:
+                # the seek will be done once we reach PAUSED
+                self._initial_seek = position
+            else:
+                self.pipeline.seek(position)
 
     ## Control gtk.Button callbacks
 

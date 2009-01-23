@@ -71,6 +71,16 @@ class ScaleRuler(gtk.Layout, Zoomable):
         self.duration = gst.CLOCK_TIME_NONE
         self.seek_delay = 80
 
+    def getTimelineFactory(self):
+        # FIXME: this should be implemented properly and moved somewhere else
+        try:
+            return self._timeline_factory
+        except AttributeError:
+            pass
+        
+
+        return self._timeline_factory
+
 ## Zoomable interface override
 
     def zoomChanged(self):
@@ -167,10 +177,12 @@ class ScaleRuler(gtk.Layout, Zoomable):
             self.seek_position = duration
         elif self.seek_position < 0:
             self.seek_position = 0
-            
-        if instance.PiTiVi.playground.seekInCurrent(self.seek_position,
-                format=self.seek_format):
-            self.timelinePositionChanged(self.seek_position)
+
+        #if instance.PiTiVi.playground.seekInCurrent(self.seek_position,
+        #        format=self.seek_format):
+        factory = self.getTimelineFactory()
+        instance.PiTiVi.gui.viewer.view(factory, self.seek_position)
+        self.timelinePositionChanged(self.seek_position)
 
         return False
 
