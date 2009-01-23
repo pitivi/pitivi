@@ -225,6 +225,9 @@ class SourceFactory(ObjectFactory):
                 output_stream not in self.output_streams:
             raise ObjectFactoryError('unknown stream')
 
+        if self.max_bins != -1 and self.current_bins == self.max_bins:
+            raise ObjectFactoryError('no bins available')
+
         bin = self._makeBin(output_stream)
         self.current_bins += 1
         self.emit('bin-created', bin)

@@ -1,0 +1,75 @@
+#!/usr/bin/python
+# PiTiVi , Non-linear video editor
+#
+#       base.py
+#
+# Copyright (c) 2005-2008, Edward Hervey <bilboed@bilboed.com>
+#               2008, Alessandro Decina <alessandro.decina@collabora.co.uk>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
+import gst
+from pitivi.factories.base import SourceFactory
+
+class VideoTestSourceFactory(SourceFactory):
+    def __init__(self, pattern=0):
+        SourceFactory.__init__(self)
+        self.pattern = pattern
+
+    def _makeBin(self, output_stream=None):
+        if output_stream is None:
+            output_stream = self.output_streams[0]
+
+        bin = gst.Bin()
+        videotestsrc = gst.element_factory_make('videotestsrc')
+        videotestsrc.props.pattern = self.pattern
+        capsfilter = gst.element_factory_make('capsfilter')
+        capsfilter.props.caps = output_stream.caps.copy()
+
+        bin.add(videotestsrc)
+        bin.add(capsfilter)
+        videotestsrc.link(capsfilter)
+
+        target = capsfilter.get_pad('src')
+        ghost = gst.GhostPad('src', target)
+        bin.add_pad(ghost)
+
+        return bin
+
+class AudioTestSourceFactory(SourceFactory):
+    def __init__(self, wave=0):
+        SourceFactory.__init__(self)
+        self.wave = wave
+
+    def _makeBin(self, output_stream=None):
+        if output_stream is None:
+            output_stream = self.output_streams[0]
+
+        bin = gst.Bin()
+        videotestsrc = gst.element_factory_make('audiotestsrc')
+        videotestsrc.props.wave = self.wave
+        capsfilter = gst.element_factory_make('capsfilter')
+        capsfilter.props.caps = output_stream.caps.copy()
+
+        bin.add(videotestsrc)
+        bin.add(capsfilter)
+        videotestsrc.link(capsfilter)
+
+        target = capsfilter.get_pad('src')
+        ghost = gst.GhostPad('src', target)
+        bin.add_pad(ghost)
+
+        return bin
