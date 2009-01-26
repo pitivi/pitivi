@@ -40,6 +40,8 @@ class TestTimelineSourceFactory(TestCase):
 
         self.failUnlessEqual(len(list(bin)), 0)
 
+        factory.clean()
+
     def testTracks(self):
         timeline = Timeline()
         stream1 = VideoStream(gst.Caps('video/x-rgb'), 'src0')
@@ -70,6 +72,41 @@ class TestTimelineSourceFactory(TestCase):
         self.failUnlessEqual(len(list(bin)), 2)
         self.failUnlessEqual(set(factory.getOutputStreams()),
                 set([stream1, stream2]))
+
+        factory.clean()
+
+    def testPads(self):
+        timeline = Timeline()
+        stream1 = VideoStream(gst.Caps('video/x-rgb'), 'src0')
+        stream2 = AudioStream(gst.Caps('audio/x-raw-int'), 'src1')
+        track1 = Track(stream1)
+        track2 = Track(stream2)
+
+        timeline.addTrack(track1)
+        timeline.addTrack(track2)
+
+        factory = TimelineSourceFactory(timeline)
+        bin = factory.makeBin()
+
+        self.failUnlessEqual(len(list(bin.src_pads())), 0)
+
+        pad1 = gst.Pad('src0', gst.PAD_SRC)
+        pad1.set_caps(gst.Caps('asd'))
+        pad1.set_active(True)
+        track1.composition.add_pad(pad1)
+
+        pad2 = gst.Pad('src0', gst.PAD_SRC)
+        pad2.set_caps(gst.Caps('asd'))
+        pad2.set_active(True)
+        track2.composition.add_pad(pad2)
+
+        self.failUnlessEqual(len(list(bin.src_pads())), 2)
+        track1.composition.remove_pad(pad1)
+        self.failUnlessEqual(len(list(bin.src_pads())), 1)
+        track2.composition.remove_pad(pad2)
+        self.failUnlessEqual(len(list(bin.src_pads())), 0)
+
+        factory.clean()
 
 class MainLoopTestCaseMeta(type):
     def __new__(cls, name, bases, dic):
@@ -168,6 +205,8 @@ class TestTimelineSourceFactoryPipeline(MainLoopTestCase):
         self.loop.run()
         pipeline.set_state(gst.STATE_NULL)
 
+        factory.clean()
+
     def testAudioOnly(self):
         audio_factory1 = AudioTestSourceFactory(3)
         audio_factory1.duration = 10 * gst.SECOND
@@ -212,7 +251,9 @@ class TestTimelineSourceFactoryPipeline(MainLoopTestCase):
         pipeline.set_state(gst.STATE_PLAYING)
         self.loop.run()
         pipeline.set_state(gst.STATE_NULL)
-    
+
+        factory.clean()
+
     def testAudioVideo(self):
         audio_factory1 = AudioTestSourceFactory(3)
         audio_factory1.duration = 10 * gst.SECOND
@@ -227,12 +268,12 @@ class TestTimelineSourceFactoryPipeline(MainLoopTestCase):
         timeline = Timeline()
         video_track = Track(video_stream)
         audio_track = Track(audio_stream)
-        
+
         track_object1 = SourceTrackObject(audio_factory1)
         track_object1.start = 2 * gst.SECOND
         audio_track.addTrackObject(track_object1)
         timeline.addTrack(audio_track)
-        
+
         track_object2 = SourceTrackObject(video_factory1)
         track_object2.start = 2 * gst.SECOND
         video_track.addTrackObject(track_object2)
@@ -272,4 +313,6 @@ class TestTimelineSourceFactoryPipeline(MainLoopTestCase):
         pipeline.set_state(gst.STATE_PLAYING)
         self.loop.run()
         pipeline.set_state(gst.STATE_NULL)
+
+        factory.clean()
 
