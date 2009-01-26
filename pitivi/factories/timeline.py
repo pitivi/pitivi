@@ -38,6 +38,12 @@ class TimelineSourceFactory(SourceFactory):
 
         self._connectTimeline()
 
+    def clean(self):
+        for track in self.timeline.tracks:
+            self._removeTrack(track)
+
+        self._disconnectTimeline()
+
     def _makeBin(self, output_stream=None):
         if output_stream is not None:
             raise ObjectFactoryError('not implemented yet')
@@ -61,7 +67,7 @@ class TimelineSourceFactory(SourceFactory):
                 self._trackCompositionPadAddedCb, track)
         composition.connect('pad-removed',
                 self._trackCompositionPadRemovedCb, track)
-        
+
         self.bin.add(composition)
 
         self.addOutputStream(track.stream)
@@ -70,7 +76,7 @@ class TimelineSourceFactory(SourceFactory):
         composition = track.composition
         composition.disconnect_by_func(self._trackCompositionPadAddedCb)
         composition.disconnect_by_func(self._trackCompositionPadRemovedCb)
-        
+
         self.bin.remove(composition)
 
         self.removeOutputStream(track.stream)
@@ -92,14 +98,14 @@ class TimelineSourceFactory(SourceFactory):
 
     def _timelineTrackAddedCb(self, timeline, track):
         self._addTrack(track)
-    
+
     def _timelineTrackRemovedCb(self, timeline, track):
         self._removeTrack(track)
 
     def _trackCompositionPadAddedCb(self, composition, pad, track):
         ghost = self._newGhostPad(pad)
         self.bin.add_pad(ghost)
-    
+
     def _trackCompositionPadRemovedCb(self, composition, pad, track):
         self._removeGhostPad(pad)
 

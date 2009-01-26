@@ -67,7 +67,7 @@ class ObjectFactory(object, Signallable):
     @ivar icon: Icon associated with the factory.
     @type icon: C{str}
     """
-    
+
     def __init__(self, name="", displayname=""):
         gst.info("name:%s" % name)
         self.parent = None
@@ -185,6 +185,15 @@ class ObjectFactory(object, Signallable):
         """
         return [stream for stream in self.input_streams
                 if stream_classes is None or isinstance(stream, stream_classes)]
+
+    def clean(self):
+        """
+        Clean up a factory.
+
+        Some factories allocate resources that have to be cleaned when a factory
+        is not needed anymore.
+        This should be the last method called on a factory before its disposed.
+        """
 
     def __str__(self):
         return "<%s: %s>" % (self.__class__.__name__, self.displayname or self.name)
@@ -326,7 +335,7 @@ class LiveSourceFactory(SourceFactory):
     default duration is set to 5 seconds to a live source can be managed in a
     timeline.
     """
-    
+
     def __init__(self, name, displayname, default_duration=None):
         SourceFactory.__init__(self, name, displayname)
         if default_duration is None:
@@ -378,7 +387,7 @@ class RandomAccessSourceFactory(SourceFactory):
             end = self.abs_offset + self.offset_length
             abs_end = min(end, parent_end)
             offset_length = abs_end - self.abs_offset
-        
+
         return offset_length
 
     abs_offset_length = property(_getAbsOffsetLength)
