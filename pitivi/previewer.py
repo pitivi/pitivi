@@ -120,10 +120,13 @@ class RandomAccessPreviewer(Previewer):
         self._ready = False
         self._queue = []
         self._cache = {}
+        # FIXME:
+        # why doesn't this work?
+        # bin = factory.makeBin(stream_)
         uri = factory.uri
         caps = stream_.caps
         bin = SingleDecodeBin(uri=uri, caps=caps)
-        self._pipelineInit(factory,bin)
+        self._pipelineInit(factory, bin)
 
     def _pipelineInit(self, factory, bin):
         """Create the pipeline for the preview process. Subclasses should
