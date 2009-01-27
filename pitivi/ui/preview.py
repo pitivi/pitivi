@@ -31,7 +31,6 @@ import gobject
 import gst
 from gettext import gettext as _
 from pitivi.receiver import receiver, handler
-from pitivi.objectfactory import FileSourceFactory
 from zoominterface import Zoomable
 import pitivi.previewer as previewer
 
@@ -68,8 +67,9 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
         self.previewer = previewer.get_preview_for_object(self.element)
     element = receiver(setter=__set_element)
 
-    @handler(element, "media-start-duration-changed")
-    def __media_props_changed(self, obj, start, duration):
+    @handler(element, "in-point-changed")
+    @handler(element, "out-point-changed")
+    def __media_props_changed(self, obj, unused_start_duration):
         self.changed(True)
 
 ## previewer callbacks
