@@ -36,6 +36,7 @@ from elements.thumbnailsink import CairoSurfaceThumbnailSink
 from elements.arraysink import ArraySink
 from signalinterface import Signallable
 from ui.zoominterface import Zoomable
+import stream
 
 (MEDIA_TYPE_NONE,
  MEDIA_TYPE_AUDIO,
@@ -52,20 +53,23 @@ from ui.zoominterface import Zoomable
 
 previewers = {}
 
-def get_preview_for_object(timelineobject):
-    factory = timelineobject.factory
-    stream = timelineobject.media_type
-    key = factory, stream
+def get_preview_for_object(trackobject):
+    factory = trackobject.factory
+    stream_ = trackobject.stream
+    stream_type = type(stream_)
+    key = factory, stream_
     if not key in previewers:
         # TODO: handle still images
         # TODO: handle non-random access factories
         # TODO: handle non-source factories
-        if stream == MEDIA_TYPE_AUDIO:
-            previewers[key] = RandomAccessAudioPreviewer(factory)
-        elif stream == MEDIA_TYPE_VIDEO:
-            previewers[key] = RandomAccessVideoPreviewer(factory)
+        # note that we switch on the stream_type, but we hash on the stream
+        # itself. 
+        if stream_type == stream.AudioStream:
+            previewers[key] = RandomAccessAudioPreviewer(factory, stream_)
+        elif stream_type == stream.VideoStream:
+            previewers[key] = RandomAccessVideoPreviewer(factory, stream_)
         else:
-            previewers[key] = DefaultPreviewer(factory)
+            previewers[key] = DefaultPreviewer(factory, stream_)
     return previewers[key]
 
 class Previewer(object, Signallable):
@@ -82,7 +86,7 @@ class Previewer(object, Signallable):
     __TWIDTH__ = 4.0 / 3.0 * 50
     __DEFAULT_THUMB__ = "pitivi-video.png"
 
-    def __init__(self, factory):
+    def __init__(self, factory, stream_):
         # create default thumbnail
         path = os.path.join(get_pixmap_dir(), self.__DEFAULT_THUMB__)
         self.default_thumb = cairo.ImageSurface.create_from_png(path) 
@@ -111,14 +115,17 @@ class RandomAccessPreviewer(Previewer):
     the stream, and time segments. This allows the UI to re-draw the affected
     portion of a thumbnail sequence or audio waveform."""
 
-    def __init__(self, factory):
-        Previewer.__init__(self, factory)
+    def __init__(self, factory, stream_):
+        Previewer.__init__(self, factory, stream_)
         self._ready = False
         self._queue = []
         self._cache = {}
-        self._pipelineInit(factory)
+        uri = factory.uri
+        caps = stream_.caps
+        bin = SingleDecodeBin(uri=uri, caps=caps)
+        self._pipelineInit(factory,bin)
 
-    def _pipelineInit(self, factory):
+    def _pipelineInit(self, factory, bin):
         """Create the pipeline for the preview process. Subclasses should
         override this method and create a pipeline, connecting to callbacks to
         the appropriate signals, and prerolling the pipeline if necessary."""
@@ -148,7 +155,7 @@ class RandomAccessPreviewer(Previewer):
         # sof  = start of file in pixel coordinates
         tdur = Zoomable.pixelToNs(self.__TWIDTH__)
         x1 = bounds.x1; y1 = bounds.y1
-        sof = Zoomable.nsToPixel(element.start - element.media_start)
+        sof = Zoomable.nsToPixel(element.start - element.in_point)
 
         # i = left edge of thumbnail to be drawn. We start with x1 and
         # subtract the distance to the nearest leftward rectangle.
@@ -236,8 +243,7 @@ class RandomAccessPreviewer(Previewer):
 
 class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
-    def _pipelineInit(self, factory):
-        sbin = factory.makeVideoBin() 
+    def _pipelineInit(self, factory, sbin):
         csp = gst.element_factory_make("ffmpegcolorspace")
         sink = CairoSurfaceThumbnailSink()
         scale = gst.element_factory_make("videoscale")
@@ -272,10 +278,9 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
-    def _pipelineInit(self, factory):
-        sbin = factory.makeAudioBin()
-        conv = gst.element_factory_make("audioconvert")
+    def _pipelineInit(self, factory, sbin):
         self.audioSink = ArraySink()
+        conv = gst.element_factory_make("audioconvert")
         self.audioPipeline = utils.pipeline({ 
             sbin : conv, 
             conv : self.audioSink,
