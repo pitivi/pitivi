@@ -357,16 +357,16 @@ class PitiviMainWindow(gtk.Window):
                 gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         chooser.set_select_multiple(False)
         formats = ProjectSaver.listFormats()
-        default = gtk.FileFilter()
-        default.set_name("All")
-        default.add_pattern("*")
-        chooser.add_filter(default)
         for format in formats:
             filt = gtk.FileFilter()
             filt.set_name(format[0])
             for ext in format[1]:
                 filt.add_pattern("*%s" % ext)
             chooser.add_filter(filt)
+        default = gtk.FileFilter()
+        default.set_name("All")
+        default.add_pattern("*")
+        chooser.add_filter(default)
 
         response = chooser.run()
 
