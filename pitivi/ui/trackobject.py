@@ -16,13 +16,21 @@ LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
 TRIMBAR_PIXBUF = gtk.gdk.pixbuf_new_from_file(
-    os.path.join(configure.get_pixmap_dir(), "trimbar.png"))
+    os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
+TRIMBAR_PIXBUF_FOCUS = gtk.gdk.pixbuf_new_from_file(
+    os.path.join(configure.get_pixmap_dir(), "trimbar-focused.png"))
 
 import gst
 
 class TimelineController(controller.Controller):
 
     _cursor = ARROW
+
+    def enter(self, unused, unused2):
+        self._view.focus()
+
+    def leave(self, unused, unused2):
+        self._view.unfocus()
 
     def drag_start(self):
         pass
@@ -51,6 +59,12 @@ class TrimHandle(View, goocanvas.Image, Zoomable):
         )
         View.__init__(self)
         Zoomable.__init__(self)
+
+    def focus(self):
+        self.props.pixbuf = TRIMBAR_PIXBUF_FOCUS
+
+    def unfocus(self):
+        self.props.pixbuf = TRIMBAR_PIXBUF
 
 class StartHandle(TrimHandle):
 
@@ -83,7 +97,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
     element = receiver()
 
     __HEIGHT__ = 50
-    __BACKROUND__ = 0x709fb899
+    __BACKGROUND__ = 0x3182bdC0
     __BORDER__ = 0xffea00FF
 
     class Controller(TimelineController):
@@ -108,7 +122,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         self.bg = goocanvas.Rect(
             height=self.__HEIGHT__, 
-            fill_color_rgba=self.__BACKROUND__,
+            fill_color_rgba=self.__BACKGROUND__,
             stroke_color_rgba=self.__BORDER__,
             line_width=0)
 
@@ -131,6 +145,14 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         if element:
             self.zoomChanged()
         self.normal()
+
+    def focus(self):
+        self.start_handle.focus()
+        self.end_handle.focus()
+
+    def unfocus(self):
+        self.start_handle.unfocus()
+        self.end_handle.unfocus()
 
     def zoomChanged(self):
         self._startDurationChangedCb(self.element, self.element.start,
