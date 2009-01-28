@@ -515,16 +515,16 @@ class PitiviMainWindow(gtk.Window):
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled.pptv"))
         formats = ProjectSaver.listFormats()
-        default = gtk.FileFilter()
-        default.set_name(_("Detect Automatically"))
-        default.add_pattern("*")
-        chooser.add_filter(default)
         for format in formats:
             filt = gtk.FileFilter()
             filt.set_name(format[0])
             for ext in format[1]:
                 filt.add_pattern("*.%s" % ext)
             chooser.add_filter(filt)
+        default = gtk.FileFilter()
+        default.set_name(_("Detect Automatically"))
+        default.add_pattern("*")
+        chooser.add_filter(default)
 
         response = chooser.run()
 
