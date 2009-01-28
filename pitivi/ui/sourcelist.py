@@ -142,8 +142,10 @@ class SourceList(gtk.VBox):
         self.popup.append(playmenuitem)
 
         # import sources dialogbox
+        # FIXME: these values should be read from/saved to user preferences
         self._importDialog = None
         self._lastfolder = None
+        self._close_dialog = True
 
         # TreeView
         # Displays icon, name, type, length
@@ -347,17 +349,20 @@ class SourceList(gtk.VBox):
         else:
             chooser_action = gtk.FILE_CHOOSER_ACTION_OPEN
             dialogtitle = _("Import a clip")
+        close_after = gtk.CheckButton(_("Close after importing files"))
+        close_after.set_active(self._close_dialog)
 
         self._importDialog = gtk.FileChooserDialog(dialogtitle, None,
                                                    chooser_action,
                                                    (gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE,
                                                     gtk.STOCK_ADD, gtk.RESPONSE_OK))
-
+        self._importDialog.props.extra_widget = close_after
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
         self._importDialog.set_select_multiple(True)
         self._importDialog.set_modal(False)
         if self._lastfolder:
             self._importDialog.set_current_folder(self._lastfolder)
+
         self._importDialog.connect('response', self._dialogBoxResponseCb, select_folders)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
         self._importDialog.show()
@@ -442,18 +447,21 @@ class SourceList(gtk.VBox):
         self.errorDialogBox.destroy()
         self.errorDialogBox = None
 
-
     ## Import Sources Dialog Box callbacks
 
     def _dialogBoxResponseCb(self, dialogbox, response, select_folders):
         gst.debug("response:%r" % response)
         if response == gtk.RESPONSE_OK:
             self._lastfolder = dialogbox.get_current_folder()
+            self._close_dialog = dialogbox.props.extra_widget.get_active()
             filenames = dialogbox.get_uris()
             if select_folders:
                 self.addFolders(filenames)
             else:
                 self.addFiles(filenames)
+            if self._close_dialog:
+                dialogbox.destroy()
+                self._importDialog = None
         else:
             dialogbox.destroy()
             self._importDialog = None
