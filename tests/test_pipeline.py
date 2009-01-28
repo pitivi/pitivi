@@ -19,9 +19,11 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import gst
 from unittest import TestCase, main
 from pitivi.pipeline import Pipeline, STATE_NULL, STATE_READY, STATE_PAUSED, STATE_PLAYING, PipelineError
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE
+from pitivi.stream import AudioStream, VideoStream
 from common import SignalMonitor, FakeSourceFactory, FakeSinkFactory
 
 class BogusAction(Action):
@@ -181,54 +183,131 @@ class TestPipeline(TestCase):
                                                                (STATE_PAUSED, ),
                                                                (STATE_READY, )])
 
-    def testAddRemoveFactoriesSimple(self):
-        """ Test adding and removing factories without any
-        Actions involved"""
-        src = FakeSourceFactory()
-        sink = FakeSinkFactory()
+    def testGetReleaseBinForFactoryStream(self):
+        factory = FakeSourceFactory()
+        stream = VideoStream(gst.Caps('any'), 'src0')
+        factory.addOutputStream(stream)
 
-        ## ADDING FACTORIES
-        # We can't set factories on pipelines that are in
-        # PAUSED or PLAYING
-        self.pipeline.setState(STATE_PAUSED)
-        self.assertEquals(self.pipeline.getState(), STATE_PAUSED)
-        self.failUnlessRaises(PipelineError, self.pipeline.addFactory, src)
-        self.pipeline.setState(STATE_PLAYING)
-        self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
-        self.failUnlessRaises(PipelineError, self.pipeline.addFactory, src)
+        # try to get a cached instance
+        self.failUnlessRaises(PipelineError,
+                self.pipeline.getBinForFactoryStream, factory, stream, False)
 
-        # let's add some factories
-        self.pipeline.setState(STATE_NULL)
-        self.assertEquals(self.pipeline.getState(), STATE_NULL)
-        self.pipeline.addFactory(src)
-        self.assertEquals(self.pipeline.factories, [src])
-        self.pipeline.addFactory(sink)
-        self.assertEquals(self.pipeline.factories, [src, sink])
+        # create a bin
+        bin1 = self.pipeline.getBinForFactoryStream(factory, stream, True)
+        self.failUnless(isinstance(bin1, gst.Element))
+        # return the cached instance
+        bin2 = self.pipeline.getBinForFactoryStream(factory, stream, True)
+        self.failUnlessEqual(id(bin1), id(bin2))
 
-        # adding the same factory again doesn't do anything
-        # FIXME : Does that make sense ???
-        self.pipeline.addFactory(sink)
-        self.assertEquals(self.pipeline.factories, [src, sink])
+        self.pipeline.releaseBinForFactoryStream(factory, stream)
+        self.pipeline.releaseBinForFactoryStream(factory, stream)
 
-        ## REMOVE FACTORIES
-        # can't remove factories in PAUSED or PLAYING
-        self.pipeline.setState(STATE_PAUSED)
-        self.assertEquals(self.pipeline.getState(), STATE_PAUSED)
-        self.failUnlessRaises(PipelineError, self.pipeline.removeFactory, src)
-        self.pipeline.setState(STATE_PLAYING)
-        self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
-        self.failUnlessRaises(PipelineError, self.pipeline.removeFactory, src)
+        # the bin has been destroyed at this point
+        self.failUnlessRaises(PipelineError,
+                self.pipeline.releaseBinForFactoryStream, factory, stream)
 
-        self.pipeline.setState(STATE_NULL)
-        self.assertEquals(self.pipeline.getState(), STATE_NULL)
-        self.pipeline.removeFactory(src)
-        self.assertEquals(self.pipeline.factories, [sink])
-        # removing the same factory twice shouldn't do anything
-        self.pipeline.removeFactory(src)
-        self.assertEquals(self.pipeline.factories, [sink])
+        # we should get a new instance
+        bin2 = self.pipeline.getBinForFactoryStream(factory, stream, True)
+        self.failIfEqual(bin1, bin2)
 
-        self.pipeline.removeFactory(sink)
-        self.assertEquals(self.pipeline.factories, [])
+    def testGetReleaseTeeForFactoryStream(self):
+        factory = FakeSourceFactory()
+        stream = VideoStream(gst.Caps('any'), 'src')
+        factory.addOutputStream(stream)
+
+        self.failUnlessRaises(PipelineError,
+            self.pipeline.getTeeForFactoryStream, factory, stream, True)
+
+        # getBinForFactoryStream(factory, stream) must be called before
+        self.failUnlessRaises(PipelineError,
+            self.pipeline.getTeeForFactoryStream, factory, stream, True)
+
+        # create the bin
+        bin1 = self.pipeline.getBinForFactoryStream(factory, stream, True)
+
+        # try to get a cached tee
+        self.failUnlessRaises(PipelineError,
+            self.pipeline.getTeeForFactoryStream, factory, stream, False)
+
+        # create tee
+        tee1 = self.pipeline.getTeeForFactoryStream(factory, stream, True)
+        self.failUnless(isinstance(tee1, gst.Element))
+
+        # get the cached instance
+        tee2 = self.pipeline.getTeeForFactoryStream(factory, stream, True)
+        self.failUnlessEqual(id(tee1), id(tee2))
+
+        # release
+        self.pipeline.releaseTeeForFactoryStream(factory, stream)
+
+        # there's still a tee alive, so we can't release the bin
+        self.failUnlessRaises(PipelineError,
+                self.pipeline.releaseBinForFactoryStream, factory, stream)
+
+        self.pipeline.releaseTeeForFactoryStream(factory, stream)
+        self.failUnlessRaises(PipelineError,
+                self.pipeline.releaseTeeForFactoryStream, factory, stream)
+
+        # should always fail with a sink bin
+        factory = FakeSinkFactory()
+        stream = VideoStream(gst.Caps('any'), 'src')
+        factory.addInputStream(stream)
+
+        bin1 = self.pipeline.getBinForFactoryStream(factory, stream, True)
+        self.failUnlessRaises(PipelineError,
+            self.pipeline.getTeeForFactoryStream, factory, stream, True)
+
+        self.pipeline.releaseBinForFactoryStream(factory, stream)
+
+    def testGetReleaseQueueForFactoryStream(self):
+        factory = FakeSinkFactory()
+        stream = VideoStream(gst.Caps('any'), 'sink')
+        factory.addInputStream(stream)
+
+        self.failUnlessRaises(PipelineError,
+            self.pipeline.getQueueForFactoryStream, factory, stream, True)
+
+        # getBinForFactoryStream(factory, stream) must be called before
+        self.failUnlessRaises(PipelineError,
+            self.pipeline.getQueueForFactoryStream, factory, stream, True)
+
+        # create the bin
+        bin1 = self.pipeline.getBinForFactoryStream(factory, stream, True)
+
+        # try to get a cached queue
+        self.failUnlessRaises(PipelineError,
+            self.pipeline.getQueueForFactoryStream, factory, stream, False)
+
+        # create queue
+        queue1 = self.pipeline.getQueueForFactoryStream(factory, stream, True)
+        self.failUnless(isinstance(queue1, gst.Element))
+
+        # get the cached instance
+        queue2 = self.pipeline.getQueueForFactoryStream(factory, stream, True)
+        self.failUnlessEqual(id(queue1), id(queue2))
+
+        # release
+        self.pipeline.releaseQueueForFactoryStream(factory, stream)
+
+        # there's still a queue alive, so we can't release the bin
+        self.failUnlessRaises(PipelineError,
+                self.pipeline.releaseBinForFactoryStream, factory, stream)
+
+        self.pipeline.releaseQueueForFactoryStream(factory, stream)
+        self.failUnlessRaises(PipelineError,
+                self.pipeline.releaseQueueForFactoryStream, factory, stream)
+
+        # should always fail with a src bin
+        factory = FakeSourceFactory()
+        stream = VideoStream(gst.Caps('any'), 'src')
+        factory.addOutputStream(stream)
+
+        bin1 = self.pipeline.getBinForFactoryStream(factory, stream, True)
+        self.failUnlessRaises(PipelineError,
+            self.pipeline.getQueueForFactoryStream, factory, stream, True)
+
+        self.pipeline.releaseBinForFactoryStream(factory, stream)
+
 
 if __name__ == "__main__":
     main()

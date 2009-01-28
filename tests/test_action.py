@@ -23,8 +23,13 @@ from unittest import TestCase, main
 from pitivi.pipeline import Pipeline, STATE_READY, STATE_PLAYING
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE, ActionError
 from pitivi.stream import MultimediaStream
+from pitivi.factories.base import SourceFactory
 import common
 import gst
+
+class BinSourceFactory(SourceFactory):
+    def _makeBin(self, output_stream=None):
+        return gst.element_factory_make('bin')
 
 class TestAction(TestCase):
 
@@ -147,13 +152,8 @@ class TestAction(TestCase):
         self.assertEquals(ac.producers, [src])
         self.assertEquals(ac.consumers, [sink])
 
-        # remove a sink from producers should not do anything
-        ac.removeProducers(sink)
-        self.assertEquals(ac.producers, [src])
-        self.assertEquals(ac.consumers, [sink])
-
-        # remove a source from consumers should not do anything
-        ac.removeConsumers(src)
+        self.failUnlessRaises(ActionError, ac.removeProducers, sink)
+        self.failUnlessRaises(ActionError, ac.removeConsumers, src)
         self.assertEquals(ac.producers, [src])
         self.assertEquals(ac.consumers, [sink])
 

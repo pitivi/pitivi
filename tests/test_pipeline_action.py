@@ -31,6 +31,14 @@ from pitivi.stream import MultimediaStream, VideoStream
 import common
 import gst
 
+class DynamicAction(Action):
+    def getDynamicLinks(self, producer, stream):
+        links = Action.getDynamicLinks(self, producer, stream)
+        consumer = common.FakeSinkFactory()
+
+        links.append((producer, consumer, stream, None))
+        return links
+
 class TestPipelineAction(TestCase):
 
     def setUp(self):
@@ -53,43 +61,30 @@ class TestPipelineAction(TestCase):
         a.addProducers(src)
         a.addConsumers(sink)
 
-        # set the factories on the Pipeline
-        p.addFactory(src, sink)
+        a.setLink(src, sink)
 
         # activate the Action
         a.activate()
 
-        # check that all internal objects are created
-        # TODO : Add more extensive testing of gst-specific Pipeline
-        # methods in test_pipeline.py
-        self.assert_(src in p.bins.keys())
-        self.assert_(isinstance(p.bins[src], gst.Element))
-        self.assert_(sink in p.bins.keys())
-        self.assert_(isinstance(p.bins[sink], gst.Element))
+        self.failUnlessEqual(src.current_bins, 1)
+        self.failUnlessEqual(sink.current_bins, 1)
 
-        # check that the tees were properly created
-        def has_tee(pipeline, factories):
-            left = factories[:]
-            for f in factories:
-                for ps, t in pipeline.tees.iteritems():
-                    fact, st = ps
-                    if fact in left:
-                        left.remove(fact)
-            return left
-        self.assertEquals(has_tee(p, [src]), [])
+        # call get*ForFactoryStream(..., automake=False). They will raise
+        # exceptions if the action didn't create the elements.
+        bin = p.getBinForFactoryStream(src, automake=False)
+        p.releaseBinForFactoryStream(src)
 
-        # check that the queues were properly created
-        def has_queue(pipeline, factories):
-            left = factories[:]
-            for f in factories:
-                for ps, t in pipeline.queues.iteritems():
-                    fact, st = ps
-                    if fact in left:
-                        left.remove(fact)
-            return left
-        self.assertEquals(has_queue(p, [sink]), [])
+        tee = p.getTeeForFactoryStream(src, automake=False)
+        p.releaseTeeForFactoryStream(src)
 
-        # check that the tees are linked to the proper queues
+        bin = p.getBinForFactoryStream(sink, automake=False)
+
+        queue = p.getQueueForFactoryStream(sink, automake=False)
+
+        self.failUnlessEqual(queue.get_pad('src').get_peer().get_parent(), bin)
+
+        p.releaseBinForFactoryStream(sink)
+        p.releaseQueueForFactoryStream(sink)
 
         # switch to PLAYING
         p.setState(STATE_PLAYING)
@@ -104,19 +99,16 @@ class TestPipelineAction(TestCase):
 
         # since we're the last Action to be release, the tees
         # and queues should have gone
-        self.assertEquals(p.tees, {})
-        self.assertEquals(p.queues, {})
+        self.failUnlessEqual(src.current_bins, 0)
+        self.failUnlessEqual(sink.current_bins, 0)
 
         # remove the action from the pipeline
         p.removeAction(a)
 
-        # remove factories from Pipeline
-        p.removeFactory(src, sink)
-
         # the gst.Pipeline should be empty !
         self.assertEquals(list(p._pipeline.elements()), [])
 
-    def testDynamicProducer(self):
+    def testPendingLink(self):
         a = Action()
         p = Pipeline()
         src = common.FakeGnlFactory()
@@ -125,28 +117,60 @@ class TestPipelineAction(TestCase):
         sink = common.FakeSinkFactory()
         sink.addInputStream(MultimediaStream(gst.Caps("any"),
                                              pad_name="sink"))
+
+        # set the link, it will be activated once the pad is added
         a.setLink(src, sink)
         # Let's see if the link is present
         self.assertEquals(a._links, [(src, sink, None, None)])
 
         p.setAction(a)
-        p.addFactory(src, sink)
 
         gst.debug("about to activate action")
         a.activate()
         # theoretically... there shouldn't only be the source, since
         # the pad for the source hasn't been created yet (and therefore not
         # requiring a consumer
-        self.assert_(src in p.bins.keys())
-        self.assert_(sink not in p.bins.keys())
+        self.assertEquals(len(list(p._pipeline.elements())), 1)
 
         p.setState(STATE_PLAYING)
-        time.sleep(0.5)
+        time.sleep(1)
         p.getState()
-        self.assert_(src in p.bins.keys())
-        self.assert_(sink in p.bins.keys())
         # and make sure that all other elements were created (4)
         self.assertEquals(len(list(p._pipeline.elements())), 4)
+
+    def testDynamicLink(self):
+        a = DynamicAction()
+        p = Pipeline()
+        src = common.FakeGnlFactory()
+        src.addOutputStream(VideoStream(gst.Caps("video/x-raw-yuv"),
+                                        pad_name="src"))
+
+        # the link will be added dynamically
+        self.assertEquals(a._links, [])
+
+        p.setAction(a)
+        a.addProducers(src)
+
+        self.assertEquals(len(list(p._pipeline.elements())), 0)
+
+        a.activate()
+        # theoretically... there shouldn't only be the source, since
+        # the pad for the source hasn't been created yet (and therefore not
+        # requiring a consumer
+        self.assertEquals(len(list(p._pipeline.elements())), 1)
+
+        p.setState(STATE_PLAYING)
+        time.sleep(1)
+        p.getState()
+
+        # and make sure that all other elements were created (4)
+        self.assertEquals(len(list(p._pipeline.elements())), 4)
+
+        p.setState(STATE_READY)
+        time.sleep(1)
+        a.deactivate()
+
+        self.assertEquals(len(list(p._pipeline.elements())), 0)
 
 if __name__ == "__main__":
     main()

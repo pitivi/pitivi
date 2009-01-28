@@ -403,6 +403,7 @@ class PitiviViewer(gtk.VBox):
     def view(self, factory, position=0):
         if factory != self.producer:
             if self.pipeline is not None:
+                import pdb; pdb.set_trace()
                 self.pipeline.stop()
                 self.action.deactivate()
                 self.pipeline.removeFactory(self.producer)
@@ -413,7 +414,6 @@ class PitiviViewer(gtk.VBox):
 
             self.producer = factory
 
-            pipeline.addFactory(factory)
             self.action.addProducers(factory)
             self.setPipeline(pipeline)
             self.pipeline.pause()

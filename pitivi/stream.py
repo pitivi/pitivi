@@ -197,6 +197,10 @@ def find_decoder(pad):
         target = pad.get_target()
     else:
         target = pad
+
+    if target is None:
+        return None
+
     element = target.get_parent()
     if element is None or isinstance(element, gst.Bin):
         return None

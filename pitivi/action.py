@@ -79,8 +79,8 @@ class Action(object, Signallable):
         self.consumers = []
         self.pipeline = None
         self._links = [] # list of (producer, consumer, prodstream, consstream)
-        self._pendinglinks = [] # list of links that still need to be connected
-        self._dynlinks = [] # list of links added at RunTime, will be removed when deactivated
+        self._pending_links = [] # list of links that still need to be connected
+        self._dyn_links = [] # list of links added at RunTime, will be removed when deactivated
         self._dynconsumers = [] # consumers that we added at RunTime
 
     #{ Activation methods
@@ -105,19 +105,11 @@ class Action(object, Signallable):
         state.
         """
         gst.debug("Activating...")
-        if self.pipeline == None:
+        if self.pipeline is None:
             raise ActionError("Action isn't set to a Pipeline")
         if self.state == STATE_ACTIVE:
             gst.debug("Action already activated, returning")
             return
-        # FIXME : Maybe add an option to automatically add producer/consumer
-        # to the pipeline
-        for p in self.producers:
-            if not p in self.pipeline.factories:
-                raise ActionError("One of the Producers isn't set on the Pipeline")
-        for p in self.consumers:
-            if not p in self.pipeline.factories:
-                raise ActionError("One of the Consumers isn't set on the Pipeline")
         self._ensurePipelineObjects()
         self.state = STATE_ACTIVE
         self.emit('state-changed', self.state)
@@ -139,7 +131,8 @@ class Action(object, Signallable):
         """
         gst.debug("De-Activating...")
         if self.state == STATE_NOT_ACTIVE:
-            gst.debug("Action already deactivated, returning")
+            raise ActionError()
+
         if self.pipeline == None:
             gst.warning("Attempting to deactivate Action without a Pipeline")
             # yes, gracefully return
@@ -240,7 +233,10 @@ class Action(object, Signallable):
             raise ActionError("Action is active, can't remove Producers")
         # FIXME : figure out what to do in regards with links
         for p in producers:
-            self.producers.remove(p)
+            try:
+                self.producers.remove(p)
+            except ValueError:
+                raise ActionError()
 
     def addConsumers(self, *consumers):
         """
@@ -279,8 +275,10 @@ class Action(object, Signallable):
             raise ActionError("Action is active, can't remove Consumers")
         # FIXME : figure out what to do in regards with links
         for p in consumers:
-            if p in self.consumers:
+            try:
                 self.consumers.remove(p)
+            except ValueError:
+                raise ActionError()
 
     #{ Link methods
 
@@ -318,18 +316,16 @@ class Action(object, Signallable):
         # store the link
         if self.isActive():
             raise ActionError("Can't add link when active")
-        if not isinstance(producer, SourceFactory):
-            raise ActionError("Producer isn't a SourceFactory")
-        if not isinstance(consumer, SinkFactory):
-            raise ActionError("Producer isn't a SourceFactory")
 
-        if producerstream and not producerstream in producer.getOutputStreams():
+        if producerstream is not None \
+                and not producerstream in producer.getOutputStreams():
             raise ActionError("Stream specified isn't available in producer")
-        if consumerstream and not consumerstream in consumer.getInputStreams():
+        if consumerstream is not None \
+                and not consumerstream in consumer.getInputStreams():
             raise ActionError("Stream specified isn't available in consumer")
 
         # check if the streams are compatible
-        if producerstream != None and consumerstream != None:
+        if producerstream is not None and consumerstream is not None:
             if not producerstream.isCompatible(consumerstream):
                 raise ActionError("Specified streams are not compatible")
 
@@ -419,20 +415,21 @@ class Action(object, Signallable):
         gst.debug("Creating automatic links")
         links = []
         # iterate producers and their output streams
-        for p in self.producers:
-            gst.debug("producer %r" % p)
-            for ps in p.getOutputStreams():
-                gst.debug(" stream %r" % ps)
+        for producer in self.producers:
+            gst.debug("producer %r" % producer)
+            for producer_stream in producer.getOutputStreams():
+                gst.debug(" stream %r" % producer_stream)
                 # for each, figure out a compatible (consumer, stream)
-                for c in self.consumers:
-                    gst.debug("  consumer %r" % c)
-                    compat = c.getInputStreams(type(ps))
+                for consumer in self.consumers:
+                    gst.debug("  consumer %r" % consumer)
+                    compat = consumer.getInputStreams(type(producer_stream))
                     # in case of ambiguity, raise an exception
                     if len(compat) > 1:
                         raise ActionError("Too many compatible streams in consumer")
                     if len(compat) == 1:
                         gst.debug("    Got a compatible stream !")
-                        links.append((p, c, ps, compat[0]))
+                        links.append((producer, consumer,
+                                producer_stream, compat[0]))
         return links
 
     #{ Dynamic Stream handling
@@ -459,13 +456,16 @@ class Action(object, Signallable):
         waspending = False
 
         # 1. Check if it's one of our pendings pads
-        pl = self._pendinglinks[:]
+        pl = self._pending_links[:]
         for prod, cons, prodstream, consstream in pl:
-            if prod == producer and (prodstream == None or prodstream.isCompatibleWithName(stream)):
+            if prod == producer and (prodstream == None or \
+                    prodstream.isCompatibleWithName(stream)):
                 if self._activateLink(prod, cons, prodstream, consstream):
                     waspending = True
-                    gst.debug("Successfully linked pending stream, removing it from temp list")
-                    self._pendinglinks.remove((prod, cons, prodstream, consstream))
+                    gst.debug("Successfully linked pending stream, removing "
+                            "it from temp list")
+                    self._pending_links.remove((prod, cons,
+                            prodstream, consstream))
 
         if waspending == False:
             # 2. If it's not one of the pending links, It could also be one of the
@@ -480,12 +480,40 @@ class Action(object, Signallable):
             if not cons in self.consumers and not cons in self._dynconsumers:
                 # we need to add that new consumer
                 self._dynconsumers.append(cons)
-                self.pipeline.addFactory(cons)
-            waspending != self._activateLink(prod, cons, prodstream, consstream,
-                                             init=False)
+            self._dyn_links.append((prod, cons, prodstream, consstream))
+            waspending |= self._activateLink(prod, cons,
+                    prodstream, consstream, init=False)
 
         gst.debug("returning %r" % waspending)
         return waspending
+
+    def streamRemoved(self, producer, stream):
+        """
+        A stream has been removed from one of the producers controlled by this
+        action.
+
+        Called by the Pipeline.
+        """
+        link = None
+        gst.debug("producer:%r, stream:%r" % (producer, stream))
+        for dyn_producer, dyn_consumer, \
+                dyn_producer_stream, dyn_consumer_stream in list(self._dyn_links):
+            if producer != dyn_producer or stream != dyn_producer_stream:
+                continue
+
+            # release tee/queue usage for that stream
+            self.pipeline.releaseQueueForFactoryStream(dyn_consumer,
+                    dyn_consumer_stream)
+            self.pipeline.releaseBinForFactoryStream(dyn_consumer,
+                    dyn_consumer_stream)
+            self.pipeline.releaseTeeForFactoryStream(dyn_producer,
+                    dyn_producer_stream)
+            self.pipeline.releaseBinForFactoryStream(dyn_producer,
+                    dyn_producer_stream)
+
+            self._dyn_links.remove((dyn_producer, dyn_consumer,
+                    dyn_producer_stream, dyn_consumer_stream))
+            break
 
     def getDynamicLinks(self, producer, stream):
         """
@@ -504,17 +532,6 @@ class Action(object, Signallable):
         @return: a list of links
         """
         return []
-
-    def streamRemoved(self, producer, stream):
-        """
-        A stream has been removed from one of the producers controlled by this
-        action.
-
-        Called by the Pipeline.
-        """
-        gst.debug("producer:%r, stream:%r" % (producer, stream))
-        raise NotImplementedError
-
     #}
 
     def _ensurePipelineObjects(self):
@@ -525,76 +542,101 @@ class Action(object, Signallable):
         must be done.
         @raise ActionError: If some producers or consumers remain unused.
         """
+        for producer in self.producers:
+            self.pipeline.getBinForFactoryStream(producer, automake=True)
+
         # Get the links
         links = self.getLinks()
         # ensure all links are used
         cplinks = links[:]
-        for prod, cons , ps, cs in links:
-            if prod in self.producers and cons in self.consumers:
-                cplinks.remove((prod, cons, ps, cs))
+        for producer, consumer, producer_stream, consumer_stream in links:
+            if producer in self.producers and consumer in self.consumers:
+                cplinks.remove((producer, consumer,
+                        producer_stream, consumer_stream))
+
         if cplinks != []:
             raise ActionError("Some links are not used !")
 
-        gst.debug("make sure we have bins")
-        # Make sure we have bins for all our producers
-        for p in self.producers:
-            self.pipeline.getBinForFactory(p, automake=True)
-
         # clear dynamic-stream variables
-        self._dynlinks = []
-        self._pendinglinks = []
+        self._dyn_links = []
+        self._pending_links = []
         self._dynconsumers = []
 
         for link in links:
             self._activateLink(*link)
 
     def _activateLink(self, producer, consumer, prodstream, consstream, init=True):
+        # FIXME: we import PipelineError here to avoid a circular import
+        from pitivi.pipeline import PipelineError
+
         # activate the given Link, returns True if it was (already) activated
         # if init is True, then remember the pending link
         gst.debug("producer:%r, consumer:%r, prodstream:%r, consstream:%r" % (\
                 producer, consumer, prodstream, consstream))
         # Make sure we have tees for our (producer,stream)s
-        t = self.pipeline.getTeeForFactoryStream(producer, prodstream,
-                                                 automake=True)
-        if t:
-            # Make sure we have a bin for our consumer
-            b = self.pipeline.getBinForFactory(consumer, automake=True)
-            if init != True:
-                # we set the sink to paused, since we are adding this link during
-                # auto-plugging
-                b.set_state(gst.STATE_PAUSED)
-            # Make sure we have queues for our (consumer, stream)s
-            q = self.pipeline.getQueueForFactoryStream(consumer, consstream,
-                                                       automake=True)
-
-            # FIXME: where should this be unlinked?
-            sinkpad = q.get_pad('sink')
-            if sinkpad.is_linked():
-                sinkpad.get_peer().unlink(sinkpad)
-
-            # Link tees to queues
-            t.link(q)
-        else:
+        try:
+            tee = self.pipeline.getTeeForFactoryStream(producer, prodstream,
+                                                     automake=True)
+        except PipelineError:
             if init != True:
                 gst.debug("Could not create link")
                 return False
+
             gst.debug("Stream will be created dynamically")
-            self._pendinglinks.append((producer, consumer, prodstream, consstream))
-        gst.debug("Link successfully activated")
+            self._pending_links.append((producer, consumer, prodstream, consstream))
+            return True
+
+        # Make sure we have a bin for our consumer
+        bin = self.pipeline.getBinForFactoryStream(consumer,
+                consstream, automake=True)
+
+        if init != True:
+            # we set the sink to paused, since we are adding this link during
+            # auto-plugging
+            bin.set_state(gst.STATE_PAUSED)
+
+        # Make sure we have queues for our (consumer, stream)s
+        queue = self.pipeline.getQueueForFactoryStream(consumer, consstream,
+                                                   automake=True)
+
+        # FIXME: where should this be unlinked?
+        """
+        sinkpad = q.get_pad('sink')
+        if sinkpad.is_linked():
+            sinkpad.get_peer().unlink(sinkpad)
+        """
+
+        # Link tees to queues
+        tee.link(queue)
+
         return True
 
     def _releasePipelineObjects(self):
+        from pitivi.pipeline import PipelineError
         gst.debug("Releasing pipeline objects")
         for producer, consumer, prodstream, consstream in self.getLinks():
             # release tee/queue usage for that stream
             self.pipeline.releaseQueueForFactoryStream(consumer, consstream)
+            self.pipeline.releaseBinForFactoryStream(consumer, consstream)
             self.pipeline.releaseTeeForFactoryStream(producer, prodstream)
-        # release links created at runtime
-        for producer, consumer, prodstream, consstream in self._dynlinks:
+            self.pipeline.releaseBinForFactoryStream(producer, prodstream)
+
+        # release dynamic links
+        for producer, consumer, prodstream, consstream in self._dyn_links:
             # release tee/queue usage for that stream
             self.pipeline.releaseQueueForFactoryStream(consumer, consstream)
+            self.pipeline.releaseBinForFactoryStream(consumer, consstream)
             self.pipeline.releaseTeeForFactoryStream(producer, prodstream)
-        self._dynlinks = []
+            self.pipeline.releaseBinForFactoryStream(producer, prodstream)
+        self._dyn_links = []
+
+        # try to clean producers that were never linked, if any
+        for producer in self.producers:
+            try:
+                self.pipeline.releaseBinForFactoryStream(producer)
+            except PipelineError:
+                # FIXME: use a strictier exception hierarchy
+                pass
 
 class ViewAction(Action):
     """
