@@ -665,20 +665,15 @@ class ViewAction(Action):
         from pitivi.stream import AudioStream, VideoStream
         res = Action.getDynamicLinks(self, producer, stream)
         if isinstance(stream, VideoStream):
-            if self.videosink is None:
-                consumer = plumber.DefaultVideoSink()
-                self.videosink = consumer
-                #if self.xid != 0:
+            consumer = plumber.DefaultVideoSink()
+            self.videosink = consumer
+            if self.xid != 0:
                 self.videosink.set_window_xid(self.xid)
-            else:
-                consumer = self.videosink
+
             res.append((producer, consumer, stream, None))
         elif isinstance(stream, AudioStream):
-            if self.audiosink is None:
-                consumer = plumber.DefaultAudioSink()
-                self.audiosink = consumer
-            else:
-                consumer = self.audiosink
+            consumer = plumber.DefaultAudioSink()
+            self.audiosink = consumer
             res.append((producer, consumer, stream, None))
         return res
 
