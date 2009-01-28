@@ -102,6 +102,10 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
     class Controller(TimelineController):
 
+        def drag_start(self):
+            TimelineController.drag_start(self)
+            self._view.raise_(None)
+
         def click(self, pos):
             mode = 0
             if self._last_event.get_state() & gtk.gdk.SHIFT_MASK:
