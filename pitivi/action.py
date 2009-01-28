@@ -573,6 +573,9 @@ class Action(object, Signallable):
         # if init is True, then remember the pending link
         gst.debug("producer:%r, consumer:%r, prodstream:%r, consstream:%r" % (\
                 producer, consumer, prodstream, consstream))
+
+        self.pipeline.getBinForFactoryStream(producer, prodstream)
+
         # Make sure we have tees for our (producer,stream)s
         try:
             tee = self.pipeline.getTeeForFactoryStream(producer, prodstream,

@@ -517,6 +517,9 @@ class Pipeline(object, Signallable):
 
             # ask the factory to finish cleanup
             factory_entry.factory.releaseBin(bin_stream_entry.bin)
+            bin_stream_entry.bin = None
+            if not factory_entry.streams:
+                del self.factories[factory_entry.factory]
 
     def getTeeForFactoryStream(self, factory, stream=None, automake=False):
         """
@@ -744,7 +747,8 @@ class Pipeline(object, Signallable):
                     factory = factory_entry.factory
                     stream = stream_entry.stream
                     break
-            break
+            if factory is not None:
+                break
 
         if factory is None:
             raise PipelineError("New pad on an element we don't control ??")
