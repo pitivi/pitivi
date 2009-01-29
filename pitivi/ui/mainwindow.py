@@ -53,6 +53,9 @@ from screencast_managerdialog import ScreencastManagerDialog
 from pitivi.configure import pitivi_version, APPNAME
 from glade import GladeWindow
 from exportsettingswidget import ExportSettingsDialog
+from pitivi.ui import dnd
+from pitivi.pipeline import Pipeline
+from pitivi.action import ViewAction
 
 if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -259,8 +262,11 @@ class PitiviMainWindow(gtk.Window):
 
         # Viewer
         self.viewer = PitiviViewer()
-        self.pitivi.playground.connect("current-changed", 
-            self._currentPlaygroundChangedCb)
+        # drag and drop
+        self.viewer.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
+                           [dnd.FILESOURCE_TUPLE, dnd.URI_TUPLE],
+                           gtk.gdk.ACTION_COPY)
+        self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         hpaned.pack2(self.viewer, resize=False, shrink=False)
         #self.viewer.detach_button.connect("clicked", self.__windowizeViewer, 
         #    hpaned)
@@ -545,7 +551,34 @@ class PitiviMainWindow(gtk.Window):
 
         chooser.destroy()
         return ret
+    
+    def _viewerDndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
+                           selection, targetType, ctime):
+        # FIXME : This should be handled by the main application who knows how
+        # to switch between pipelines.
+        gst.info("context:%s, targetType:%s" % (context, targetType))
+        if targetType == dnd.TYPE_URI_LIST:
+            uri = selection.data.strip().split("\n")[0].strip()
+        elif targetType == dnd.TYPE_PITIVI_FILESOURCE:
+            uri = selection.data
+        else:
+            context.finish(False, False, ctime)
+            return
 
+        # FIXME: we change the viewer pipeline unconditionally for now
+
+        from pitivi.factories.file import FileSourceFactory
+        # we need a pipeline for playback
+        pipeline = Pipeline()
+        factory = FileSourceFactory(uri)
+        action = ViewAction()
+        action.addProducers(factory)
+        # FIXME: why do I have to call viewer.setAction ?
+        self.viewer.setAction(action)
+        self.viewer.setPipeline(pipeline)
+        pipeline.pause()
+
+        context.finish(True, False, ctime)
 
 class EncodingDialog(GladeWindow):
     """ Encoding dialog box """

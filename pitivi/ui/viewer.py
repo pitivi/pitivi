@@ -67,10 +67,9 @@ class PitiviViewer(gtk.VBox):
         self.currentState = gst.STATE_PAUSED
         self._haveUI = False
 
+        self._createUi()
         self.setAction(action)
         self.setPipeline(pipeline)
-
-        self._createUi()
 
     def setPipeline(self, pipeline):
         """
@@ -104,7 +103,7 @@ class PitiviViewer(gtk.VBox):
         gst.debug("self.action:%r, action:%r" % (self.action, action))
         if self.action != None:
             # if there was one previously, remove it
-            self._disconnectFromAction(self)
+            self._disconnectFromAction()
         if action == None:
             # get the default action
             action = self._getDefaultAction()
@@ -150,9 +149,11 @@ class PitiviViewer(gtk.VBox):
         gst.debug("action: %r" % action)
         # not sure what we need to do ...
         self.action = action
+        # FIXME: fix this properly?
+        self.drawingarea.action = action
+        self.drawingarea.have_set_xid = False
 
     def _disconnectFromAction(self):
-        gst.debug("action: %r" % action)
         self.action = None
 
     def _setUiActive(self, active=True):
@@ -235,12 +236,6 @@ class PitiviViewer(gtk.VBox):
         #     gtk.ICON_SIZE_SMALL_TOOLBAR)
         # self.detach_button.set_image(image)
         # bbox.pack_end(self.detach_button, expand=False, fill=False)
-
-        # drag and drop
-        self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION,
-                           [dnd.FILESOURCE_TUPLE, dnd.URI_TUPLE],
-                           gtk.gdk.ACTION_COPY)
-        self.connect("drag_data_received", self._dndDataReceivedCb)
 
         self._haveUI = True
 
@@ -379,50 +374,6 @@ class PitiviViewer(gtk.VBox):
             self.back_button.set_sensitive(True)
 
         gobject.idle_add(self._asyncTimelineDurationChanged, duration)
-
-    def _dndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
-                           selection, targetType, ctime):
-        # FIXME : This should be handled by the main application who knows how
-        # to switch between pipelines.
-        gst.info("context:%s, targetType:%s" % (context, targetType))
-        if targetType == dnd.TYPE_URI_LIST:
-            uri = selection.data.strip().split("\n")[0].strip()
-        elif targetType == dnd.TYPE_PITIVI_FILESOURCE:
-            uri = selection.data
-        else:
-            context.finish(False, False, ctime)
-            return
-        gst.info("got file:%s" % uri)
-        from pitivi.factories.file import FileSourceFactory
-        # we need a pipeline for playback
-        factory = FileSourceFactory(uri)
-        self.view(factory)
-        context.finish(True, False, ctime)
-        gst.info("end")
-
-    def view(self, factory, position=0):
-        if factory != self.producer:
-            if self.pipeline is not None:
-                self.pipeline.stop()
-                self.action.deactivate()
-                self.action.removeProducers(self.producer)
-                self.action.unsetPipeline()
-                pipeline = self.pipeline
-            else:
-                pipeline = Pipeline()
-
-            self.producer = factory
-
-            self.action.addProducers(factory)
-            self.setPipeline(pipeline)
-            self.pipeline.pause()
-
-        if position:
-            if self.pipeline.getState() < gst.STATE_PAUSED:
-                # the seek will be done once we reach PAUSED
-                self._initial_seek = position
-            else:
-                self.pipeline.seek(position)
 
     ## Control gtk.Button callbacks
 
