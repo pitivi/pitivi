@@ -271,7 +271,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
     def _pipelineAction(self, timestamp):
         if not self._ready:
-            return
+            return False
         gst.log("timestamp : %s" % gst.TIME_ARGS(timestamp))
         self.videopipeline.seek(1.0, 
             gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
@@ -311,7 +311,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def _pipelineAction(self, (timestamp, duration)):
         if not self._ready:
-            return
+            return False
         self.__audio_cur = timestamp, duration
         self.audioPipeline.seek(1.0, 
             gst.FORMAT_TIME, 
