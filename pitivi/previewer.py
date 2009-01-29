@@ -136,7 +136,7 @@ class RandomAccessPreviewer(Previewer):
 
 ## public interface
 
-    def render_cairo(self, cr, bounds, element):
+    def render_cairo(self, cr, bounds, element, y1):
         # The idea is to conceptually divide the clip into a sequence of
         # rectangles beginning at the start of the file, and
         # pixelsToNs(twidth) nanoseconds long. The thumbnail within the
@@ -157,7 +157,7 @@ class RandomAccessPreviewer(Previewer):
         # tdur = duration in ns of thumbnail
         # sof  = start of file in pixel coordinates
         tdur = Zoomable.pixelToNs(self.__TWIDTH__)
-        x1 = bounds.x1; y1 = bounds.y1
+        x1 = bounds.x1;
         sof = Zoomable.nsToPixel(element.start - element.in_point)
 
         # i = left edge of thumbnail to be drawn. We start with x1 and
@@ -181,7 +181,7 @@ class RandomAccessPreviewer(Previewer):
 
         while i < bounds.x2:
             cr.set_source_surface(self._thumbForTime(j), i, y1)
-            cr.rectangle(i - 1, y1, self.__TWIDTH__ + 2, height)
+            cr.rectangle(i - 1, y1, self.__TWIDTH__ + 2, 50)
             i += self.__TWIDTH__
             j += tdur
             cr.fill()

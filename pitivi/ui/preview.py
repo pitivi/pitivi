@@ -95,7 +95,7 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
     def do_simple_paint(self, cr, bounds):
         cr.identity_matrix()
         self.previewer.render_cairo(cr, intersect(self.bounds, bounds),
-            self.element)
+            self.element, self.bounds.y1)
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
         return (between(0, x, self.nsToPixel(self.element.duration)) and
