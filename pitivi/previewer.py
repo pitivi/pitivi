@@ -78,12 +78,10 @@ class Previewer(object, Signallable):
         "update" : ("segment",),
     }
 
-    # TODO: use actual aspect ratio of source
-    # TODO: parameterize height, instead of assuming 50 pixels.
+    # TODO: parameterize height, instead of assuming self.theight pixels.
     # NOTE: dymamically changing thumbnail height would involve flushing the
     # thumbnail cache.
 
-    __TWIDTH__ = 4.0 / 3.0 * 50
     __DEFAULT_THUMB__ = "pitivi-video.png"
 
     def __init__(self, factory, stream_):
@@ -91,7 +89,7 @@ class Previewer(object, Signallable):
         path = os.path.join(get_pixmap_dir(), self.__DEFAULT_THUMB__)
         self.default_thumb = cairo.ImageSurface.create_from_png(path) 
 
-    def render_cairo(self, cr, bounds, element):
+    def render_cairo(self, cr, bounds, element, y1):
         """Render a preview of element onto a cairo context within the current
         bounds, which may or may not be the entire object and which may or may
         not intersect the visible portion of the object"""
@@ -99,7 +97,7 @@ class Previewer(object, Signallable):
 
 class DefaultPreviewer(Previewer):
 
-    def render_cairo(self, cr, bounds, element):
+    def render_cairo(self, cr, bounds, element, y1):
         # TODO: draw a single thumbnail
         pass
 
@@ -120,12 +118,19 @@ class RandomAccessPreviewer(Previewer):
         self._ready = False
         self._queue = []
         self._cache = {}
+
         # FIXME:
         # why doesn't this work?
         # bin = factory.makeBin(stream_)
         uri = factory.uri
         caps = stream_.caps
         bin = SingleDecodeBin(uri=uri, caps=caps)
+
+        # assume 4:3 default aspect ratio, 50 pixel height
+        self.theight = 50
+        self.aspect = 4.0 / 3.0
+        self.twidth = int(self.aspect * self.theight)
+
         self._pipelineInit(factory, bin)
 
     def _pipelineInit(self, factory, bin):
@@ -144,7 +149,6 @@ class RandomAccessPreviewer(Previewer):
         # rectangle's left edge. We speed things up by only drawing the
         # rectangles which intersect the given bounds.  FIXME: how would we
         # handle timestretch?
-
         height = bounds.y2 - bounds.y1
         width = bounds.x2 - bounds.x1
 
@@ -156,7 +160,7 @@ class RandomAccessPreviewer(Previewer):
 
         # tdur = duration in ns of thumbnail
         # sof  = start of file in pixel coordinates
-        tdur = Zoomable.pixelToNs(self.__TWIDTH__)
+        tdur = Zoomable.pixelToNs(self.twidth)
         x1 = bounds.x1;
         sof = Zoomable.nsToPixel(element.start - element.in_point)
 
@@ -170,7 +174,7 @@ class RandomAccessPreviewer(Previewer):
         #    <=>     delta = x1 - sof (mod twidth).
         # Fortunately for us, % works on floats in python. 
 
-        i = x1 - ((x1 - sof) % self.__TWIDTH__)
+        i = x1 - ((x1 - sof) % self.twidth)
 
         # j = timestamp *within the element* of thumbnail to be drawn. we want
         # timestamps to be numerically stable, but in practice this seems to
@@ -181,8 +185,8 @@ class RandomAccessPreviewer(Previewer):
 
         while i < bounds.x2:
             cr.set_source_surface(self._thumbForTime(j), i, y1)
-            cr.rectangle(i - 1, y1, self.__TWIDTH__ + 2, 50)
-            i += self.__TWIDTH__
+            cr.rectangle(i - 1, y1, self.twidth + 2, self.theight)
+            i += self.twidth
             j += tdur
             cr.fill()
 
@@ -246,12 +250,18 @@ class RandomAccessPreviewer(Previewer):
 
 class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
+    def __init__(self, factory, stream_):
+        RandomAccessPreviewer.__init__(self, factory, stream_)
+        # use aspect ratio from stream
+        self.aspect = stream_.width / stream_.height
+
     def _pipelineInit(self, factory, sbin):
         csp = gst.element_factory_make("ffmpegcolorspace")
         sink = CairoSurfaceThumbnailSink()
         scale = gst.element_factory_make("videoscale")
-        filter = utils.filter("video/x-raw-rgb,height=(int) 50, width=(int) %d"
-            % (self.__TWIDTH__ + 2))
+        caps = ("video/x-raw-rgb,height=(int) %d,width=(int) %d" % 
+            (self.theight, self.twidth + 2))
+        filter = utils.filter(caps)
         self.videopipeline = utils.pipeline({
             sbin : csp,
             csp : scale,
@@ -296,7 +306,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def _segment_for_time(self, time):
         # for audio files, we need to know the duration the segment spans
-        return time, Zoomable.pixelToNs(self.__TWIDTH__)
+        return time, Zoomable.pixelToNs(self.twidth)
 
     def __bus_message(self, bus, message):	
         if message.type == gst.MESSAGE_SEGMENT_DONE:
@@ -323,7 +333,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def __finishWaveform(self):
         surface = cairo.ImageSurface(cairo.FORMAT_A8, 
-            int(self.__TWIDTH__) + 2, 50)
+            int(self.twidth) + 2, self.theight)
         cr = cairo.Context(surface)
         self.__plotWaveform(cr, self.audioSink.samples)
         self.audioSink.reset()
@@ -333,12 +343,12 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         hscale = 25
         if not levels:
             cr.move_to(0, hscale)
-            cr.line_to(self.__TWIDTH__, hscale)
+            cr.line_to(self.twidth, hscale)
             cr.stroke()
             return
-        scale = self.__TWIDTH__ / len(levels)
+        scale = float(self.twidth) / len(levels)
         cr.set_source_rgba(1, 1, 1, 0.0)
-        cr.rectangle(0, 0, self.__TWIDTH__, 50)
+        cr.rectangle(0, 0, self.twidth, self.theight)
         cr.fill()
         cr.set_source_rgba(0, 0, 0, 1.0)
         points = ((x * scale, hscale - (y * hscale)) for x, y in enumerate(levels))
