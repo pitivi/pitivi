@@ -38,8 +38,8 @@ class TrackObject(object, Signallable):
     }
 
     def __init__(self, factory, start=0,
-            duration=UNKNOWN_DURATION, in_point=gst.CLOCK_TIME_NONE,
-            out_point=0, priority=0):
+            duration=UNKNOWN_DURATION, in_point=0,
+            out_point=UNKNOWN_DURATION, priority=0):
         self.factory = factory
         self.track = None
         self.timeline_object = None
@@ -52,6 +52,7 @@ class TrackObject(object, Signallable):
         if duration != UNKNOWN_DURATION or obj.props.duration == 0:
             obj.props.duration = duration
 
+        obj.props.media_start = 0
         if in_point != 0:
             obj.props.media_start = in_point
 
