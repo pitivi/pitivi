@@ -29,7 +29,7 @@ from tests.common import SignalMonitor
 
 class StubFactory(object):
     duration = 42 * gst.SECOND
-    def makeBin(self):
+    def makeBin(self, stream=None):
         return gst.element_factory_make('audiotestsrc')
 
 class TrackSignalMonitor(SignalMonitor):

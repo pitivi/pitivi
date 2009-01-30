@@ -24,6 +24,9 @@ import weakref
 
 from pitivi.signalinterface import Signallable
 from pitivi.utils import UNKNOWN_DURATION
+from pitivi.stream import VideoStream, AudioStream
+from pitivi.factories.test import VideoTestSourceFactory, \
+        AudioTestSourceFactory
 
 class TrackError(Exception):
     pass
@@ -207,6 +210,13 @@ class TrackObject(object, Signallable):
 
     selected = property(_getSelected)
 
+    def makeBin(self):
+        if self.track is None:
+            raise TrackError()
+
+        bin = self.factory.makeBin(self.track.stream)
+        self.gnl_object.add(bin)
+
     def _notifyStartCb(self, obj, pspec):
         self.emit('start-changed', obj.props.start)
 
@@ -233,10 +243,6 @@ class TrackObject(object, Signallable):
 class SourceTrackObject(TrackObject):
     def _makeGnlObject(self):
         source = gst.element_factory_make('gnlsource')
-        # FIXME: set in-point and out-point
-        source.props.duration = self.factory.duration
-        bin = self.factory.makeBin()
-        source.add(bin)
         return source
 
 
@@ -254,9 +260,44 @@ class Track(object, Signallable):
         self.composition.connect('notify::start', self._startChangedCb)
         self.composition.connect('notify::duration', self._durationChangedCb)
         self.track_objects = []
+        self.default_track_object = None
+
+        default_track_object = self._getDefaultTrackObjectForStream(stream)
+        if default_track_object:
+            self.setDefaultTrackObject(default_track_object)
+
+    def _getDefaultTrackObjectForStream(self, stream):
+        if isinstance(stream, VideoStream):
+            return self._getDefaultVideoTrackObject()
+        elif isinstance(stream, AudioStream):
+            return self._getDefaultAudioTrackObject()
+
+        return None
+
+    def _getDefaultVideoTrackObject(self):
+        factory = VideoTestSourceFactory(pattern='black')
+        track_object = SourceTrackObject(factory)
+
+        return track_object
+
+    def _getDefaultAudioTrackObject(self):
+        factory = AudioTestSourceFactory(wave='silence')
+        track_object = SourceTrackObject(factory)
+
+        return track_object
 
     def _getStart(self):
         return self.composition.props.start
+
+    def setDefaultTrackObject(self, track_object):
+        if self.default_track_object is not None:
+            self.removeTrackObject(self.default_track_object)
+
+        self.default_track_object = None
+        # FIXME: implement TrackObject.priority
+        track_object.gnl_object.props.priority = 2**32-1
+        self.addTrackObject(track_object)
+        self.default_track_object = track_object
 
     start = property(_getStart)
 
@@ -284,7 +325,10 @@ class Track(object, Signallable):
 
         track_object.track = weakref.proxy(self)
         self.track_objects.append(track_object)
-        
+
+        # FIXME: should be released in removeTrackObject()
+        track_object.makeBin()
+
         self.emit('track-object-added', track_object)
 
     def removeTrackObject(self, track_object):
