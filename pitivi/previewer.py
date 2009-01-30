@@ -319,7 +319,6 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
         return gst.BUS_PASS
 
-
     def _startThumbnail(self, (timestamp, duration)):
         self.__audio_cur = timestamp, duration
         self.audioPipeline.seek(1.0, 
@@ -337,19 +336,29 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         self.audioSink.reset()
         gobject.idle_add(self._finishThumbnail, surface, self.__audio_cur)
 
-    def __plotWaveform(self, cr, levels):
+    def __plotWaveform(self, cr, samples):
         hscale = 25
-        if not levels:
+        if not samples:
             cr.move_to(0, hscale)
             cr.line_to(self.twidth, hscale)
             cr.stroke()
             return
-        scale = float(self.twidth) / len(levels)
+
+        # clear background
         cr.set_source_rgba(1, 1, 1, 0.0)
         cr.rectangle(0, 0, self.twidth, self.theight)
         cr.fill()
+
+        # resample for improved speed
+        stride = 100
+        samples = [max(samples[i:i + stride]) for i in
+            xrange(0, len(samples), stride)]
+        scale = float(self.twidth) / len(samples)
+
+        # generate points
         cr.set_source_rgba(0, 0, 0, 1.0)
-        points = ((x * scale, hscale - (y * hscale)) for x, y in enumerate(levels))
+        points = ((x * scale, hscale - (y * hscale)) for x, y in enumerate(samples))
+
         self.__plot_points(cr, 0, hscale, points)
         cr.stroke()
 
