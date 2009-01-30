@@ -56,6 +56,7 @@ from exportsettingswidget import ExportSettingsDialog
 from pitivi.ui import dnd
 from pitivi.pipeline import Pipeline
 from pitivi.action import ViewAction
+from pitivi.factories.timeline import TimelineSourceFactory
 
 if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -259,6 +260,8 @@ class PitiviMainWindow(gtk.Window):
         vpaned.pack1(hpaned, resize=False, shrink=True)
         self.projecttabs = ProjectTabs()
         hpaned.pack1(self.projecttabs, resize=True, shrink=False)
+
+        self.timeline.ruler.connect('seek', self._timelineRulerSeekCb)
 
         # Viewer
         self.viewer = PitiviViewer()
@@ -579,6 +582,36 @@ class PitiviMainWindow(gtk.Window):
         pipeline.pause()
 
         context.finish(True, False, ctime)
+
+    def _getTimelinePipeline(self):
+        # FIXME: the timeline pipeline should probably be moved in project
+        try:
+            return self._timeline_pipeline, self._timeline_view_action
+        except AttributeError:
+            pass
+
+        timeline = self.pitivi.current.timeline
+        factory = TimelineSourceFactory(timeline)
+        pipeline = Pipeline()
+        pipeline.activatePositionListener()
+        pipeline.connect('position', self._timelinePipelinePositionChangedCb)
+        action = ViewAction()
+        action.addProducers(factory)
+
+        self._timeline_pipeline = pipeline
+        self._timeline_view_action = action
+
+        return self._timeline_pipeline, self._timeline_view_action
+
+    def _timelineRulerSeekCb(self, ruler, position):
+        pipeline, action = self._getTimelinePipeline()
+        self.viewer.setAction(action)
+        self.viewer.setPipeline(pipeline)
+        pipeline.pause()
+        pipeline.seek(position)
+
+    def _timelinePipelinePositionChangedCb(self, pipeline, position):
+        self.timeline.ruler.timelinePositionChanged(position)
 
 class EncodingDialog(GladeWindow):
     """ Encoding dialog box """

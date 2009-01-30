@@ -52,7 +52,7 @@ class TestAnalysisQueue(TestCase):
         discoverer._finishAnalysis()
         self.failIf(discoverer.working)
         self.failUnlessEqual(discoverer.analysis_scheduled, 0)
-        
+
         # add another file, should start working
         discoverer.addFile('meh1')
         self.failUnless(discoverer.working)
@@ -130,7 +130,7 @@ class TestAnalysis(TestCase):
         bag = {'error': None}
         def no_media_file_cb(disc, uri, error, error_debug):
             bag['error'] = error
-        
+
         self.discoverer.addFile('file://i/cant/possibly/exist/and/if/you/'
             'really/have/a/file/named/like/this/you/deserve/a/faillure')
         self.discoverer.connect('not_media_file', no_media_file_cb)
@@ -190,7 +190,7 @@ class TestAnalysis(TestCase):
         pad = gst.Pad('src', gst.PAD_SRC)
         self.failUnlessEqual(self.discoverer.current_duration,
                 gst.CLOCK_TIME_NONE)
-       
+
         pad.set_query_function(pad_query_fail)
         self.discoverer._maybeQueryDuration(pad)
         self.failUnlessEqual(self.discoverer.current_duration,
@@ -201,7 +201,7 @@ class TestAnalysis(TestCase):
         self.discoverer._maybeQueryDuration(pad)
         self.failUnlessEqual(self.discoverer.current_duration,
                 10 * gst.SECOND)
-        
+
         # duration should be cached
         pad.set_query_function(pad_query_succeed2)
         self.discoverer._maybeQueryDuration(pad)
@@ -232,7 +232,7 @@ class TestAnalysis(TestCase):
         bag = {'called': False}
         def finish_analysis():
             bag['called'] = True
-        
+
         self.discoverer._finishAnalysis = finish_analysis
         self.failUnlessEqual(self.discoverer.error, None)
         src = gst.Pad('src', gst.PAD_SRC)
@@ -258,13 +258,13 @@ class TestAnalysis(TestCase):
         self.failUnlessEqual(self.discoverer.error, None)
         self.discoverer._busMessageErrorCb(None, message)
         self.failUnlessEqual(self.discoverer.error_debug, 'debug1')
-        
+
         # errors shouldn't be overridden
         gerror = gst.GError(gst.STREAM_ERROR, gst.STREAM_ERROR_FAILED, 'muh')
         message = gst.message_new_error(src, gerror, 'debug2')
         self.discoverer._busMessageErrorCb(None, message)
         self.failUnlessEqual(self.discoverer.error_debug, 'debug1')
-    
+
     def testNewDecodedPadFixed(self):
         bag = {'called': 0}
         def new_video_pad_cb(pad, stream):
@@ -284,7 +284,7 @@ class TestAnalysis(TestCase):
         self.discoverer._newDecodedPadCb(None, audio, False)
         self.failUnlessEqual(len(self.discoverer.current_streams), 2)
         self.failUnlessEqual(bag['called'], 1)
-    
+
     def testNewDecodedPadNotFixed(self):
         bag = {'called': 0}
         def new_video_pad_cb(pad, stream):
@@ -331,7 +331,7 @@ class TestStateChange(TestCase):
         self.factories = []
         self.error = None
         self.error_debug = None
-        
+
         self.discoverer.connect('not_media_file', self.notMediaFileCb)
         self.discoverer.connect('new_sourcefilefactory',
                 self.newSourcefilefactoryCb)
@@ -343,10 +343,10 @@ class TestStateChange(TestCase):
     def newSourcefilefactoryCb(self, disc, factory):
         self.failUnlessEqual(factory.duration, 10 * gst.SECOND)
         self.factories.append(factory)
-    
+
     def testBusStateChangedIgnored(self):
         ignore_src = gst.Bin()
-        
+
         # ignore element
         ignored = gst.message_new_state_changed(ignore_src,
                gst.STATE_READY, gst.STATE_PAUSED, gst.STATE_VOID_PENDING)
@@ -389,7 +389,7 @@ class TestStateChange(TestCase):
         factory = self.factories[0]
         self.failUnless(isinstance(factory, FileSourceFactory))
         self.failUnlessEqual(len(factory.output_streams), 1)
-    
+
     def testBusStateChangedAudioOnly(self):
         # only audio
         pad = gst.Pad('src', gst.PAD_SRC)
@@ -406,7 +406,7 @@ class TestStateChange(TestCase):
         factory = self.factories[0]
         self.failUnless(isinstance(factory, FileSourceFactory))
         self.failUnlessEqual(len(factory.output_streams), 1)
-    
+
     def testBusStateChangedImageOnly(self):
         # only image
         pngdec = gst.element_factory_make('pngdec')

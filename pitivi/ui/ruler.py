@@ -39,6 +39,8 @@ class ScaleRuler(gtk.Layout, Zoomable):
         "button-press-event":"override",
         "button-release-event":"override",
         "motion-notify-event":"override",
+        "seek": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+                [gobject.TYPE_UINT64])
         }
 
     border = 0
@@ -70,16 +72,6 @@ class ScaleRuler(gtk.Layout, Zoomable):
         self.pending_seek_id = None
         self.duration = gst.CLOCK_TIME_NONE
         self.seek_delay = 80
-
-    def getTimelineFactory(self):
-        # FIXME: this should be implemented properly and moved somewhere else
-        try:
-            return self._timeline_factory
-        except AttributeError:
-            pass
-        
-
-        return self._timeline_factory
 
 ## Zoomable interface override
 
@@ -168,21 +160,17 @@ class ScaleRuler(gtk.Layout, Zoomable):
 
         gst.debug("delayed seek timeout %s %s" %
                 (gst.TIME_ARGS(self.seek_position), self.seek_format))
-        
+
         # clamping values within acceptable range
         duration = self.getDuration()
         if duration == gst.CLOCK_TIME_NONE:
             return
         if self.seek_position > duration:
-            self.seek_position = duration
+            self.seek_position = duration - (1 * gst.MSECOND)
         elif self.seek_position < 0:
             self.seek_position = 0
 
-        #if instance.PiTiVi.playground.seekInCurrent(self.seek_position,
-        #        format=self.seek_format):
-        factory = self.getTimelineFactory()
-        instance.PiTiVi.gui.viewer.view(factory, self.seek_position)
-        self.timelinePositionChanged(self.seek_position)
+        self.emit('seek', self.seek_position)
 
         return False
 

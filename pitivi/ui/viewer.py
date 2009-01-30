@@ -81,6 +81,10 @@ class PitiviViewer(gtk.VBox):
         @type pipeline: L{Pipeline}.
         """
         gst.debug("self.pipeline:%r, pipeline:%r" % (self.pipeline, pipeline))
+
+        if pipeline is not None and pipeline == self.pipeline:
+            return
+
         if self.pipeline != None:
             # remove previously set Pipeline
             self._disconnectFromPipeline()
@@ -101,6 +105,9 @@ class PitiviViewer(gtk.VBox):
         @type action: L{ViewAction} or C{None}
         """
         gst.debug("self.action:%r, action:%r" % (self.action, action))
+        if action is not None and action == self.action:
+            return
+
         if self.action != None:
             # if there was one previously, remove it
             self._disconnectFromAction()

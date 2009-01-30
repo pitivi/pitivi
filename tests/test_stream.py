@@ -28,7 +28,7 @@ class TestMultimediaStream(object):
     """
     Base mixin for stream tests.
     """
-    
+
     streamClass = None
     unfixed_caps = None
     fixed_caps = None
@@ -45,11 +45,11 @@ class TestMultimediaStream(object):
 
         stream = self.streamClass(self.non_raw_caps)
         self.failIf(stream.raw)
-    
+
     def checkProperties(self, stream, expected):
         for name, expected in expected.iteritems():
             value = getattr(stream, name)
-            
+
             if isinstance(value, gst.Fourcc) and \
                     gst.pygst_version < (0, 10, 13, 1):
                 # gst.Fourcc didn't implement __eq__
@@ -62,7 +62,7 @@ class TestMultimediaStream(object):
 
 class TestAudioStream(TestMultimediaStream, TestCase):
     streamClass = AudioStream
-    unfixed_caps = gst.Caps('audio/x-raw-float, rate=48000, channels=2,' 
+    unfixed_caps = gst.Caps('audio/x-raw-float, rate=48000, channels=2,'
             'width=32, depth=32, endianness=4321; '
             'audio/x-raw-int, rate=44100, channels=2, width=32, depth=32, '
             'endianness=4321')
@@ -77,7 +77,7 @@ class TestAudioStream(TestMultimediaStream, TestCase):
                 'rate': 48000, 'channels': 2, 'width': 32, 'depth': 32}
         stream = AudioStream(self.unfixed_caps)
         self.checkProperties(stream, expected)
-        
+
         expected = {'audiotype': 'audio/x-raw-int',
                 'rate': 44100, 'channels': 2, 'width': 32, 'depth': 32}
         stream = AudioStream(self.fixed_caps)
