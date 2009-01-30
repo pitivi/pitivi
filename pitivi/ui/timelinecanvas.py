@@ -184,11 +184,12 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
     def _request_size(self):
         tl, br = Point.from_widget_bounds(self)
         pw, ph = br - tl
-        tl, br = Point.from_item_bounds(self.tracks)
-        w, h = br - tl
+        w = Zoomable.nsToPixel(self.timeline.duration)
+        h = 60 * len(self.__tracks)
         if (w > pw) or (h > ph):
-            self.set_bounds(0, 0, w + 200, h)
+            self.set_bounds(0, 0, w, h)
         self.__razor.props.height = h
+        self.get_root_item().changed(True)
 
     @handler(timeline, "track-added")
     def _trackAdded(self, timeline, track):
@@ -211,3 +212,4 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
             # later
             height = 50
             track.set_simple_transform(0, i * (height + 10), 1, 0)
+        self._request_size()
