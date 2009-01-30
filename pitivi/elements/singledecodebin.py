@@ -25,6 +25,7 @@ Single-stream queue-less decodebin
 
 import gobject
 import gst
+from pitivi.stream import get_pad_id
 
 def is_raw(caps):
     """ returns True if the caps are RAW """
@@ -211,8 +212,10 @@ class SingleDecodeBin(gst.Bin):
         if caps.is_any():
             self.log("type is not know yet, waiting")
             return
+
         if caps.intersect(self.caps) and (self.stream is None or
-                self.stream.pad_name == pad.get_name()):
+                (self.stream.pad_id and \
+                self.stream.pad_id == get_pad_id(pad))):
             # This is the desired caps
             if not self._srcpad:
                 self._wrapUp(element, pad)

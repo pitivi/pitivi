@@ -210,6 +210,46 @@ def find_decoder(pad):
         return element
     return None
 
+def find_upstream_demuxer_and_pad(pad):
+    while pad:
+        if pad.props.direction == gst.PAD_SRC \
+                and isinstance(pad, gst.GhostPad):
+            pad = pad.get_target()
+            continue
+
+        if pad.props.direction == gst.PAD_SINK:
+            pad = pad.get_peer()
+            continue
+
+        element = pad.get_parent()
+        if isinstance(element, gst.Pad):
+            # pad is a proxy pad
+            element = element.get_parent()
+
+        if element is None:
+            pad = None
+            continue
+
+        element_factory = element.get_factory()
+        element_klass = element_factory.get_klass()
+
+        if 'Demuxer' in element_klass:
+            return element, pad
+
+        sink_pads = list(element.sink_pads())
+        if len(sink_pads) > 1:
+            if element_factory.get_name() == 'multiqueue':
+                pad = element.get_pad(pad.get_name().replace('src', 'sink'))
+            else:
+                raise Exception('boom!')
+
+        elif len(sink_pads) == 0:
+            pad = None
+        else:
+            pad = sink_pads[0]
+
+    return None, None
+
 def get_type_from_decoder(decoder):
     gst.debug("%r" % decoder)
     klass = decoder.get_factory().get_klass()
@@ -226,6 +266,21 @@ def get_pad_type(pad):
 
     return pad.get_caps()[0].get_name().split('/', 1)[0]
 
+def get_pad_id(pad):
+    lst = []
+    while pad:
+        demuxer, pad = find_upstream_demuxer_and_pad(pad)
+        if (demuxer, pad) != (None, None):
+            lst.append([demuxer.get_factory().get_name(), pad.get_name()])
+
+            # FIXME: we always follow back the first sink
+            try:
+                pad = list(demuxer.sink_pads())[0]
+            except IndexError:
+                pad = None
+
+    return lst
+
 def get_stream_for_caps(caps, pad=None):
     """
     Returns the appropriate MediaStream corresponding to the
@@ -239,8 +294,9 @@ def get_stream_for_caps(caps, pad=None):
         pad_name = pad.get_name()
         stream_type = get_pad_type(pad)
     else:
+        pad_name = None
         val = caps.to_string()
-        stream_type = pad.get_caps()[0].get_name().spit('/', 1)[0]
+        stream_type = caps[0].get_name().split('/', 1)[0]
 
     gst.debug("stream_type:%s" % stream_type)
     if stream_type in ('video', 'image'):
@@ -250,6 +306,14 @@ def get_stream_for_caps(caps, pad=None):
     elif stream_type == 'text':
         ret = TextStream(caps, pad_name)
     return ret
+
+def get_stream_for_pad(pad):
+    caps = pad.get_caps()
+    pad_id = get_pad_id(pad)
+    stream = get_stream_for_caps(caps, pad)
+    stream.pad_id = pad_id
+
+    return stream
 
 def pad_compatible_stream(pad, stream):
     """

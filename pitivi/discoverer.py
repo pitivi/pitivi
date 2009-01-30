@@ -33,7 +33,7 @@ import tempfile
 
 from pitivi.factories.base import ObjectFactoryStreamError
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
-from pitivi.stream import get_stream_for_caps
+from pitivi.stream import get_stream_for_caps, get_stream_for_pad
 from pitivi.signalinterface import Signallable
 from pitivi.stream import VideoStream
 
@@ -413,7 +413,7 @@ class Discoverer(object, Signallable):
 
 
     def _addStreamFromPad(self, pad):
-        stream = get_stream_for_caps(pad.get_caps(), pad)
+        stream  = get_stream_for_pad(pad)
         self.current_streams.append(stream)
 
         return stream

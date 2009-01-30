@@ -23,11 +23,15 @@
 
 import gst
 from pitivi.factories.base import SourceFactory
+from pitivi.stream import VideoStream, AudioStream
 
 class VideoTestSourceFactory(SourceFactory):
     def __init__(self, pattern=0):
         SourceFactory.__init__(self)
         self.pattern = pattern
+
+        self.addOutputStream(VideoStream(gst.Caps('video/x-raw-yuv')))
+        self.addOutputStream(VideoStream(gst.Caps('video/x-raw-rgb')))
 
     def _makeBin(self, output_stream=None):
         if output_stream is None:
@@ -53,6 +57,9 @@ class AudioTestSourceFactory(SourceFactory):
     def __init__(self, wave=0):
         SourceFactory.__init__(self)
         self.wave = wave
+
+        self.addOutputStream(AudioStream(gst.Caps('audio/x-raw-int')))
+        self.addOutputStream(AudioStream(gst.Caps('audio/x-raw-float')))
 
     def _makeBin(self, output_stream=None):
         if output_stream is None:

@@ -109,12 +109,8 @@ class ObjectFactory(object, Signallable):
     icon = property(_getIcon, _setIcon)
 
     def _addStream(self, stream, stream_list):
-        if stream.pad_name is None:
-            raise ObjectFactoryStreamError('no pad_name set on stream')
-
-        for s in stream_list:
-            if s.pad_name == stream.pad_name:
-                raise ObjectFactoryStreamError('stream already added')
+        if stream in stream_list:
+            raise ObjectFactoryStreamError('stream already added')
 
         stream_list.append(stream)
 
@@ -230,14 +226,20 @@ class SourceFactory(ObjectFactory):
         @see: L{releaseBin}
         """
 
-        if output_stream is not None and \
-                output_stream not in self.output_streams:
-            raise ObjectFactoryError('unknown stream')
+        compatible_stream = None
+        if output_stream is not None:
+            for stream in self.output_streams:
+                if output_stream.isCompatible(stream):
+                    compatible_stream = stream
+                    break
+
+            if compatible_stream is None:
+                raise ObjectFactoryError('can not create stream')
 
         if self.max_bins != -1 and self.current_bins == self.max_bins:
             raise ObjectFactoryError('no bins available')
 
-        bin = self._makeBin(output_stream)
+        bin = self._makeBin(compatible_stream)
         self.current_bins += 1
         self.emit('bin-created', bin)
 

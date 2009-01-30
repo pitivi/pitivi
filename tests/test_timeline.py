@@ -38,7 +38,7 @@ class TimelineSignalMonitor(SignalMonitor):
 class StubFactory(object):
     duration = 42 * gst.SECOND
 
-    def makeBin(self):
+    def makeBin(self, stream=None):
         return gst.element_factory_make('identity')
 
 class TestTimelineObjectAddRemoveTrackObjects(TestCase):
@@ -47,7 +47,7 @@ class TestTimelineObjectAddRemoveTrackObjects(TestCase):
         timeline_object1 = TimelineObject(factory)
         timeline_object2 = TimelineObject(factory)
 
-        stream = AudioStream(gst.Caps('video/x-raw-rgb'))
+        stream = AudioStream(gst.Caps('audio/x-raw-int'))
         track = Track(stream)
         track_object1 = SourceTrackObject(factory)
         track_object2 = SourceTrackObject(factory)
@@ -227,7 +227,7 @@ class TestTimelineObjectProperties(TestCase):
 
 class TestTimelineAddRemoveTracks(TestCase):
     def testAddRemoveTracks(self):
-        stream = AudioStream(gst.Caps('video/x-raw-rgb'))
+        stream = AudioStream(gst.Caps('audio/x-raw-int'))
         track1 = Track(stream)
         track2 = Track(stream)
 
@@ -353,7 +353,7 @@ class TestLink(TestCase):
         link1 = Link()
         link1.addTimelineObject(timeline_object1)
         link1.addTimelineObject(timeline_object2)
-        
+
         link2 = Link()
         link2.addTimelineObject(timeline_object3)
 
@@ -437,7 +437,7 @@ class TestTimelineEdges(TestCase):
     def testRemoveNotExisting(self):
         self.failUnlessRaises(TimelineError,
                 self.timeline_edges.removeStartEnd, 1, 2000)
-        
+
         self.timeline_edges.addStartEnd(0, 2000)
         self.failUnlessRaises(TimelineError,
                 self.timeline_edges.removeStartEnd, 1, 2000)
@@ -456,23 +456,23 @@ class TestTimelineEdges(TestCase):
     def testSamePosition(self):
         self.timeline_edges.addStartEnd(0, 2000)
         self.timeline_edges.addStartEnd(0, 2000)
-        
+
         self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (0, 500))
 
         self.timeline_edges.removeStartEnd(0, 2000)
-        
+
         self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (0, 500))
-        
+
         self.timeline_edges.removeStartEnd(0, 2000)
 
     def testSnapStart(self):
         self.timeline_edges = TimelineEdges()
 
         self.timeline_edges.addStartEnd(1000, 2000)
-       
+
         # match start-left
         self.failUnlessEqual(self.timeline_edges.snapToEdge(900, 1400), (1000, 100))
-        
+
         # match start
         self.failUnlessEqual(self.timeline_edges.snapToEdge(1000, 1999), (1000, 0))
 
@@ -484,7 +484,7 @@ class TestTimelineEdges(TestCase):
 
         # match end
         self.failUnlessEqual(self.timeline_edges.snapToEdge(1001, 2000), (1001, 0))
-        
+
         # match end-right
         self.failUnlessEqual(self.timeline_edges.snapToEdge(2100, 3000), (2000, 100))
 
@@ -493,10 +493,10 @@ class TestTimelineEdges(TestCase):
 
     def testSnapDuration(self):
         self.timeline_edges.addStartEnd(1000, 2000)
-       
+
         # match start-left
         self.failUnlessEqual(self.timeline_edges.snapToEdge(900), (1000, 100))
-        
+
         # match start
         self.failUnlessEqual(self.timeline_edges.snapToEdge(1000), (1000, 0))
 
@@ -508,6 +508,6 @@ class TestTimelineEdges(TestCase):
 
         # match end
         self.failUnlessEqual(self.timeline_edges.snapToEdge(2000), (2000, 0))
-        
+
         # match end-right
         self.failUnlessEqual(self.timeline_edges.snapToEdge(3000), (2000, 1000))

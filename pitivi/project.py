@@ -91,10 +91,10 @@ class Project(Serializable, Signallable):
         self.timeline = Timeline()
         # FIXME: the tracks should be loaded from the project file
         # FIXME: streams are not used at all by a track: api wart?
-        audio = AudioStream(gst.Caps('audio/x-raw-int'))
+        audio = AudioStream(gst.Caps('audio/x-raw-int; audio/x-raw-float'))
         track = Track(audio)
         self.timeline.addTrack(track)
-        video = VideoStream(gst.Caps('audio/x-raw-rgb'))
+        video = VideoStream(gst.Caps('video/x-raw-rgb; video/x-raw-yuv'))
         track = Track(video)
         self.timeline.addTrack(track)
 
