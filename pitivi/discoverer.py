@@ -368,9 +368,9 @@ class Discoverer(object, Signallable):
         for element in [queue, csp, pngenc, pngsink]:
             element.set_state(gst.STATE_PAUSED)
 
-    def _capsNotifyCb(self, pad, unused_property, ghost):
-        # when using gst >= 0.10.21.1, pad and ghost are the same pad, otherwise
-        # ghost is the ghost src pad created by decodebin and pad is its target
+    def _capsNotifyCb(self, pad, unused_property, ghost=None):
+        if ghost is None:
+            ghost = pad
 
         caps = pad.props.caps
         if caps is None or not caps.is_fixed():
@@ -408,7 +408,7 @@ class Discoverer(object, Signallable):
                 pad.get_target().connect("notify::caps",
                         self._capsNotifyCb, pad)
             else:
-                pad.connect("notify::caps", self._capsNotifyCb, pad)
+                pad.connect("notify::caps", self._capsNotifyCb)
             self.unfixed_pads += 1
 
 
