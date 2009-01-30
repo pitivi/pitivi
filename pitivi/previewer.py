@@ -115,7 +115,6 @@ class RandomAccessPreviewer(Previewer):
 
     def __init__(self, factory, stream_):
         Previewer.__init__(self, factory, stream_)
-        self._ready = False
         self._queue = []
         self._cache = {}
 
@@ -203,41 +202,47 @@ class RandomAccessPreviewer(Previewer):
         segment = self._segment_for_time(time)
         if segment in self._cache:
             return self._cache[segment]
-        self.makeThumbnail(segment)
+        self._requestThumbnail(segment)
         return self.default_thumb
 
-    def _nextThumbnail(self, surface, segment):
+    def _finishThumbnail(self, surface, segment):
         """Notifies the preview object that the a new thumbnail is ready to be
-        displayed. This should be called by subclasses when they have finished
-        processing the thumbnail for the current segment."""
-
-        if not self._ready:
-            # we know we're prerolled when we get the initial thumbnail
-            self._ready = True
+        cached. This should be called by subclasses when they have finished
+        processing the thumbnail for the current segment. This function should
+        always be called from the main thread of the application."""
 
         self._cache[segment] = surface 
         self.emit("update", segment)
+        self._nextThumbnail()
 
         if segment in self._queue:
             self._queue.remove(segment)
+        self._nextThumbnail()
+        return False
 
+    def _nextThumbnail(self):
+        """Notifies the preview object that the pipeline is ready to process
+        the next thumbnail in the queue. This should always be called from the
+        main application thread."""
+        print "next thumbnail"
         if self._queue:
-            gobject.idle_add(self._pipelineAction, self._queue.pop(0))
+            self._startThumbnail(self._queue.pop(0))
+        return False
 
-    def makeThumbnail(self, segment):
+    def _requestThumbnail(self, segment):
         """Queue a thumbnail request for the given segment"""
 
         # TODO: need some sort of timeout so the queue doesn't fill up if the
         # thumbnail never arrives.
 
         if segment not in self._queue:
-            if self._queue or not self._ready:
+            if self._queue:
                 self._queue.append(segment)
             else:
                 self._queue.append(segment)
-                self._pipelineAction(segment)
+                self._nextThumbnail()
 
-    def _pipelineAction(self, segment):
+    def _startThumbnail(self, segment):
         """Start processing segment. Subclasses should override
         this method to perform whatever action on the pipeline is necessary.
         Typically this will be a flushing seek(). When the
@@ -277,17 +282,14 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         return time
 
     def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
-        self._nextThumbnail(pixbuf, timestamp)
+        gobject.idle_add(self._finishThumbnail, pixbuf, timestamp)
 
-    def _pipelineAction(self, timestamp):
-        if not self._ready:
-            return False
+    def _startThumbnail(self, timestamp):
         gst.log("timestamp : %s" % gst.TIME_ARGS(timestamp))
         self.videopipeline.seek(1.0, 
             gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
             gst.SEEK_TYPE_SET, timestamp,
             gst.SEEK_TYPE_NONE, -1)
-        return False
 
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
@@ -312,16 +314,11 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         if message.type == gst.MESSAGE_SEGMENT_DONE:
             self.__finishWaveform()
 
-        elif message.type == gst.MESSAGE_STATE_CHANGED:
-            self._ready = True
-
         elif message.type == gst.MESSAGE_ERROR:
             error, debug = message.parse_error()
             print "Event bus error:", str(error), str(debug)
 
-    def _pipelineAction(self, (timestamp, duration)):
-        if not self._ready:
-            return False
+    def _startThumbnail(self, (timestamp, duration)):
         self.__audio_cur = timestamp, duration
         self.audioPipeline.seek(1.0, 
             gst.FORMAT_TIME, 
@@ -329,7 +326,6 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
             gst.SEEK_TYPE_SET, timestamp,
             gst.SEEK_TYPE_SET, timestamp + duration)
         self.audioPipeline.set_state(gst.STATE_PLAYING)
-        return False
 
     def __finishWaveform(self):
         surface = cairo.ImageSurface(cairo.FORMAT_A8, 
@@ -337,7 +333,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         cr = cairo.Context(surface)
         self.__plotWaveform(cr, self.audioSink.samples)
         self.audioSink.reset()
-        self._nextThumbnail(surface, self.__audio_cur)
+        self._finishThumbnail(surface, self.__audio_cur)
 
     def __plotWaveform(self, cr, levels):
         hscale = 25
