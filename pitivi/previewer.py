@@ -224,7 +224,6 @@ class RandomAccessPreviewer(Previewer):
         """Notifies the preview object that the pipeline is ready to process
         the next thumbnail in the queue. This should always be called from the
         main application thread."""
-        print "next thumbnail"
         if self._queue:
             self._startThumbnail(self._queue.pop(0))
         return False
@@ -300,9 +299,8 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
             sbin : conv, 
             conv : self.audioSink,
             self.audioSink : None})
-        self.bus = self.audioPipeline.get_bus()
-        self.bus.add_signal_watch()
-        self.bus.connect("message", self.__bus_message)
+        bus = self.audioPipeline.get_bus()
+        bus.set_sync_handler(self.__bus_message)
         self.__audio_cur = None
         self.audioPipeline.set_state(gst.STATE_PAUSED)
 
@@ -316,7 +314,11 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
         elif message.type == gst.MESSAGE_ERROR:
             error, debug = message.parse_error()
+            # FIXME: do something intelligent here
             print "Event bus error:", str(error), str(debug)
+
+        return gst.BUS_PASS
+
 
     def _startThumbnail(self, (timestamp, duration)):
         self.__audio_cur = timestamp, duration
@@ -333,7 +335,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         cr = cairo.Context(surface)
         self.__plotWaveform(cr, self.audioSink.samples)
         self.audioSink.reset()
-        self._finishThumbnail(surface, self.__audio_cur)
+        gobject.idle_add(self._finishThumbnail, surface, self.__audio_cur)
 
     def __plotWaveform(self, cr, levels):
         hscale = 25
