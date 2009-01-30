@@ -511,7 +511,7 @@ class Timeline(object ,Signallable):
         for stream_ in output:
             stream_klass = type(stream_)
             # wait wait wait...why does this even work???
-            track_object = track_object_klass(factory, stream_)
+            track_object = track_object_klass(factory)
             timeline_object.addTrackObject(track_object)
 
             if stream_klass not in tracks:

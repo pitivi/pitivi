@@ -55,7 +55,7 @@ previewers = {}
 
 def get_preview_for_object(trackobject):
     factory = trackobject.factory
-    stream_ = trackobject.stream
+    stream_ = trackobject.track.stream
     stream_type = type(stream_)
     key = factory, stream_
     if not key in previewers:
@@ -257,7 +257,9 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
     def __init__(self, factory, stream_):
         RandomAccessPreviewer.__init__(self, factory, stream_)
         # use aspect ratio from stream
-        self.aspect = stream_.width / stream_.height
+        # FIXME : We might get a non-fixed stream
+        if stream_.width and stream_.height:
+            self.aspect = stream_.width / stream_.height
 
     def _pipelineInit(self, factory, sbin):
         csp = gst.element_factory_make("ffmpegcolorspace")
