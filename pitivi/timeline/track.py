@@ -38,31 +38,33 @@ class TrackObject(object, Signallable):
     }
 
     def __init__(self, factory, start=0,
-            duration=UNKNOWN_DURATION, in_point=0,
-            out_point=UNKNOWN_DURATION, priority=0):
+            duration=0, in_point=0,
+            out_point=0, priority=0):
         self.factory = factory
         self.track = None
         self.timeline_object = None
         self.gnl_object = obj = self._makeGnlObject()
         self.trimmed_start = 0
-        
+
         if start != 0:
             obj.props.start = start
 
-        if duration != UNKNOWN_DURATION or obj.props.duration == 0:
-            obj.props.duration = duration
+        if duration == 0:
+            if factory.duration != gst.CLOCK_TIME_NONE:
+                duration = factory.duration
 
-        obj.props.media_start = 0
-        if in_point != 0:
-            obj.props.media_start = in_point
+        obj.props.duration = duration
 
-        if out_point != UNKNOWN_DURATION:
+        obj.props.media_start = in_point
+        if out_point != 0:
             obj.props.media_duration = out_point
-        
+        else:
+            obj.props.media_duration = duration
+
         self.priority = priority
 
         self._connectToSignals(obj)
-        
+
     def copy(self):
         cls = self.__class__
         other = cls(self.factory, start=self.start - self.trimmed_start,
@@ -155,6 +157,7 @@ class TrackObject(object, Signallable):
 
         new_in_point = max(old_in_point + delta, 0)
         self.setObjectInPoint(new_in_point)
+        self.setObjectOutPoint(new_duration)
 
     def split(self, time, snap=False):
         if self.timeline_object is not None:
@@ -295,7 +298,7 @@ class Track(object, Signallable):
 
         self.track_objects.remove(track_object)
         track_object.track = None
-        
+
         self.emit('track-object-removed', track_object)
 
     def removeAllTrackObjects(self):

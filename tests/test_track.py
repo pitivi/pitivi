@@ -47,15 +47,15 @@ class TestTrackObject(TestCase):
         obj = self.track_object
         self.failUnlessEqual(obj.start, 0)
         self.failUnlessEqual(obj.duration, self.factory.duration)
-        self.failUnlessEqual(obj.in_point, gst.CLOCK_TIME_NONE)
-        self.failUnlessEqual(obj.out_point, 0)
+        self.failUnlessEqual(obj.in_point, 0)
+        self.failUnlessEqual(obj.out_point, self.factory.duration)
 
         gnl_object = obj.gnl_object
         self.failUnlessEqual(gnl_object.props.start, 0)
         self.failUnlessEqual(gnl_object.props.duration, self.factory.duration)
-        self.failUnlessEqual(gnl_object.props.media_start,
-                gst.CLOCK_TIME_NONE)
-        self.failUnlessEqual(gnl_object.props.media_duration, 0)
+        self.failUnlessEqual(gnl_object.props.media_start, 0)
+        self.failUnlessEqual(gnl_object.props.media_duration,
+                self.factory.duration)
 
     def testChangePropertiesFromTrackObject(self):
         obj = self.track_object
