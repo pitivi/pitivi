@@ -37,7 +37,7 @@ class ArraySink(gst.BaseSink):
         "audio/x-raw-float, width=(int) 32, "
         "endianness = (int) LITTLE_ENDIAN, "
         "channels = (int) 1, "
-        "rate = (int) [8000, 96000]"
+        "rate = (int) [1, 96000]"
     )
 
     __gsttemplates__ = (
