@@ -52,32 +52,28 @@ from gettext import gettext as _
 
 class Pitivi(object, Signallable):
     """
-    Pitivi's main class
+    Pitivi's main application class.
 
-    Signals
-        void new-project-loading()
-            Pitivi is attempting to load a new project
-        void new-project-loaded (project)
-            a new project has been loaded, and the UI should refresh it's views
-            * project - the project which has been loaded
-        void new-project-failed(reason, uri)
-            a new project could not be created
-            * reason - the reason for failure
-            * uri - the uri which failed to load (or None)
-        boolean closing-project(project)
-            pitivi would like to close a project. handlers should return false
-            if they do not want this project to close. by default, assumes
-            true.
-            This signal should only be used by classes that might want to abort
-            the closing of a project.
-            * project - the project Pitivi would like to close
-        void project-closed(project)
-            The project is closed, it will be freed when the callback returns.
-            Classes should connect to this instance when they want to know that
-            data related to that project is no longer going to be used.
-            * project - the project closed
-        shutdown
-            used internally, do not catch this signals"""
+    Signals:
+     - C{new-project-loading} : Pitivi is attempting to load a new project.
+     - C{new-project-loaded} : A new L{Project} has been loaded, and the UI should refresh it's view.
+     - C{new-project-failed} : A new L{Project} failed to load.
+     - C{closing-project} :  pitivi would like to close a project. handlers should return false
+     if they do not want this project to close. by default, assumes
+     true. This signal should only be used by classes that might want to abort
+     the closing of a project.
+     - C{project-closed} : The project is closed, it will be freed when the callback returns.
+     Classes should connect to this instance when they want to know that
+     data related to that project is no longer going to be used.
+     - C{shutdown} : Used internally, do not use this signal.`
+
+    @ivar settings: Application-wide settings.
+    @type settings: L{GlobalSettings}.
+    @ivar projects: List of used projects
+    @type projects: List of L{Project}.
+    @ivar current: Currently loaded project.
+    @type current: L{Project}.
+    """
 
     __signals__ = {
         "new-project-loading" : ["project"],
@@ -198,8 +194,11 @@ class Pitivi(object, Signallable):
             self.emit("new-project-loaded", self.current)
 
     def shutdown(self):
-        """ Close PiTiVi
-        Returns True if PiTiVi was successfully closed, else False
+        """
+        Close PiTiVi.
+
+        @return: C{True} if PiTiVi was successfully closed, else C{False}.
+        @rtype: C{bool}
         """
         gst.debug("shutting down")
         # we refuse to close if we're running a user interface and the user
