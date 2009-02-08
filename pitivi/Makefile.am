@@ -1,6 +1,7 @@
 SUBDIRS = \
 	ui 		\
 	elements 	\
+	factories	\
 	pixmaps		\
 	timeline
 
@@ -9,6 +10,7 @@ pitividir = $(libdir)/pitivi/python/pitivi
 pitivi_PYTHON = \
 	__init__.py 	\
 	action.py	\
+	application.py	\
 	bin.py 		\
 	check.py 	\
 	configure.py 	\
@@ -16,9 +18,7 @@ pitivi_PYTHON = \
 	discoverer.py 	\
 	effects.py	\
 	instance.py 	\
-	objectfactory.py \
 	pipeline.py	\
-	pitivi.py 	\
 	pitivigstutils.py \
 	playground.py 	\
 	plugincore.py	\

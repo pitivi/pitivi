@@ -23,9 +23,9 @@ ui_PYTHON =			\
 	screencast_managerdialog.py \
 	sourcelist.py		\
 	timelinecanvas.py	\
-	timelineobject.py	\
 	timeline.py		\
 	track.py		\
+	trackobject.py		\
 	transitionlist.py	\
 	view.py			\
 	viewer.py		\

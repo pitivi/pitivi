@@ -77,6 +77,7 @@ pitivi/Makefile
 pitivi/configure.py
 pitivi/ui/Makefile
 pitivi/elements/Makefile
+pitivi/factories/Makefile
 pitivi/pixmaps/Makefile
 pitivi/timeline/Makefile
 pitivi.spec

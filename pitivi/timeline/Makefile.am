@@ -6,6 +6,7 @@ timeline_PYTHON = \
 	effects.py	\
 	objects.py	\
 	source.py	\
+	track.py	\
 	timeline.py
 
 clean-local:
