@@ -1,6 +1,6 @@
 import unittest
 import pitivi
-from pitivi.pitivi import Pitivi
+from pitivi.application import Pitivi
 
 class BasicTest(unittest.TestCase):
     """
@@ -8,7 +8,7 @@ class BasicTest(unittest.TestCase):
     """
 
     def testBasic(self):
-        ptv = pitivi.pitivi.Pitivi()
+        ptv = Pitivi()
         # was the pitivi object created
         self.assert_(ptv)
 

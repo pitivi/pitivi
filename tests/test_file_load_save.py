@@ -2,7 +2,7 @@ import unittest
 import pitivi
 import os
 import os.path
-from pitivi.pitivi import Pitivi
+from pitivi.application import Pitivi
 import pitivi.projectsaver as projectsaver
 import gst
 from time import sleep
@@ -62,7 +62,7 @@ class ApplicationLogicTest(unittest.TestCase):
     """
 
     def setUp(self):
-        self.ptv = pitivi.pitivi.Pitivi()
+        self.ptv = Pitivi()
         # was the pitivi object created
         self.assert_(self.ptv)
 

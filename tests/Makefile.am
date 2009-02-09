@@ -5,7 +5,6 @@ tests = \
 	test_factories_base.py		\
 	test_factories_file.py		\
 	test_file_load_save.py		\
-	test_timeline_composition.py	\
 	test_timeline_objects.py	\
 	test_serializable.py		\
 	test_signallable.py		\

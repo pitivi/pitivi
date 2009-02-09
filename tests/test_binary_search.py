@@ -1,6 +1,6 @@
 import unittest
 import pitivi
-from pitivi.pitivi import Pitivi
+from pitivi.application import Pitivi
 from pitivi.utils import binary_search
 
 class BasicTest(unittest.TestCase):
