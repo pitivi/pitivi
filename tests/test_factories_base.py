@@ -27,7 +27,7 @@ from pitivi.factories.base import ObjectFactory, ObjectFactoryError, \
         SourceFactory, RandomAccessSourceFactory, LiveSourceFactory
 from pitivi.stream import AudioStream, VideoStream
 
-from tests.common import SignalMonitor
+from common import SignalMonitor
 
 class TestObjectFactory(TestCase):
     def setUp(self):
@@ -36,7 +36,7 @@ class TestObjectFactory(TestCase):
     def testIcon(self):
         # by default icon is None
         self.failUnlessEqual(self.factory.icon, None)
-        
+
         # assign and check the result. This may seem stupid but icon is a
         # property so it has a setter method that we want to exercise.
         self.factory.icon = 'icon'

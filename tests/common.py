@@ -123,61 +123,6 @@ class FakeGnlFactory(SourceFactory):
         gnl.props.media_duration=self.__media_duration
         return gnl
 
-# REMOVE THESE old-style FACTORIES !!!
-# class TestObjectFactory(ObjectFactory):
-#     """
-#     Test ObjectFactory
-#     """
-
-#     __data_type__ = "test-object-factory"
-
-#     def __init__(self, audio=True, video=False, **kwargs):
-#         self.__audio = audio
-#         self.__video = video
-#         self.__id = 0
-#         ObjectFactory.__init__(self, **kwargs)
-#         self.is_video = video
-#         self.is_audio = audio
-#         self.lastbinid = 0
-
-#     def makeAudioBin(self):
-#         gnlobj = gst.element_factory_make("gnlsource", "test-audio-%d" % self.__id)
-#         self.__id = self.__id + 1
-#         gnlobj.add(gst.element_factory_make("audiotestsrc"))
-#         return gnlobj
-
-#     def makeVideoBin(self):
-#         gnlobj = gst.element_factory_make("gnlsource", "test-video-%d" % self.__id)
-#         self.__id = self.__id + 1
-#         gnlobj.add(gst.element_factory_make("videotestsrc"))
-#         return gnlobj
-
-# class TestFileSourceFactory(TestObjectFactory):
-
-#     __data_type__ = "test-file-source-factory"
-
-#     def __init__(self, duration=gst.SECOND, *args, **kwargs):
-#         TestObjectFactory.__init__(self, *args, **kwargs)
-#         self.length = duration
-
-#     def _getDefaultDuration(self):
-#         """
-#         Returns the default duration of a file in nanoseconds,
-#         this should be used when using sources initially.
-
-#         Most sources will return the same as getDuration(), but can be overriden
-#         for sources that have an infinite duration.
-#         """
-#         return self.duration
-
-#     @property
-#     def default_duration(self):
-#         """Default duration of the source in nanoseconds"""
-#         return self._getDefaultDuration()
-
-#     def _getDuration(self):
-#         return self.length
-#     duration = property(_getDuration)
 
 class SignalMonitor(object):
     def __init__(self, obj, *signals):

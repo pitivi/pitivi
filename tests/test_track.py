@@ -25,7 +25,7 @@ import gst
 from pitivi.timeline.track import Track, SourceTrackObject, TrackError
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
-from tests.common import SignalMonitor
+from common import SignalMonitor
 
 class StubFactory(object):
     duration = 42 * gst.SECOND

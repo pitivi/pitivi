@@ -28,7 +28,7 @@ from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
 
-from tests.common import SignalMonitor
+from common import SignalMonitor
 
 class TimelineSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
