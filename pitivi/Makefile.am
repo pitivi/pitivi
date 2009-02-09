@@ -24,6 +24,7 @@ pitivi_PYTHON = \
 	plugincore.py	\
 	pluginmanager.py \
 	plumber.py	\
+	previewer.py	\
 	project.py 	\
 	projectsaver.py	\
 	receiver.py	\

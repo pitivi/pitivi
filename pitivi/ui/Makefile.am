@@ -16,6 +16,7 @@ ui_PYTHON =			\
 	pathwalker.py		\
 	pluginmanagerdialog.py	\
 	point.py		\
+	preview.py		\
 	projectsettings.py	\
 	projecttabs.py		\
 	propertyeditor.py	\

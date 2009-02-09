@@ -11,7 +11,9 @@ pixmap_DATA = \
 	pitivi-sound.png	\
 	pitivi-split.svg	\
 	pitivi-unlink.svg	\
-	pitivi-video.png
+	pitivi-video.png	\
+	trimbar-focused.png	\
+	trimbar-normal.png
 
 EXTRA_DIST = \
 	$(pixmap_DATA)
