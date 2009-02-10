@@ -23,6 +23,7 @@
 # set of utility functions
 
 import gst, bisect
+from pitivi.signalinterface import Signallable
 
 UNKNOWN_DURATION = 2 ** 63 - 1
 
@@ -167,3 +168,21 @@ def filter(caps):
     f = gst.element_factory_make("capsfilter")
     f.props.caps = gst.caps_from_string(caps)
     return f
+
+class PropertyChangeTracker(object, Signallable):
+    def __init__(self, timeline_object):
+        self.properties = {}
+
+        for property_name in self.property_names:
+            self.properties[property_name] = \
+                    getattr(timeline_object, property_name)
+
+            timeline_object.connect(property_name + '-changed',
+                    self._propertyChangedCb, property_name)
+
+    def _propertyChangedCb(self, timeline_object, value, property_name):
+        old_value = self.properties[property_name]
+        self.properties[property_name] = value
+
+        self.emit(property_name + '-changed', timeline_object, old_value, value)
+

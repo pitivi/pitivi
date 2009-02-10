@@ -23,7 +23,7 @@
 import gst
 
 from pitivi.signalinterface import Signallable
-from pitivi.utils import UNKNOWN_DURATION, closest_item
+from pitivi.utils import UNKNOWN_DURATION, closest_item, PropertyChangeTracker
 from pitivi.timeline.track import Track, SourceTrackObject, TrackError
 from bisect import bisect_right
 
@@ -271,32 +271,18 @@ class Selection(object):
         except KeyError:
             raise TimelineError()
 
-class PropertyChangeTracker(object, Signallable):
+class LinkEntry(object):
+    def __init__(self, start, duration):
+        self.start = start
+        self.duration = duration
+
+class LinkPropertyChangeTracker(PropertyChangeTracker):
     __signals__ = {
         'start-changed': ['old', 'new'],
         'duration-changed': ['old', 'new']
     }
 
-    def __init__(self, timeline_object):
-        self.properties = {}
-
-        for property_name in ('start', 'duration'):
-            self.properties[property_name] = \
-                    getattr(timeline_object, property_name)
-
-            timeline_object.connect(property_name + '-changed',
-                    self._propertyChangedCb, property_name)
-
-    def _propertyChangedCb(self, timeline_object, value, property_name):
-        old_value = self.properties[property_name]
-        self.properties[property_name] = value
-
-        self.emit(property_name + '-changed', timeline_object, old_value, value)
-
-class LinkEntry(object):
-    def __init__(self, start, duration):
-        self.start = start
-        self.duration = duration
+    property_names = ('start', 'duration')
 
 class Link(Selection):
     def __init__(self):
@@ -312,7 +298,7 @@ class Link(Selection):
 
         Selection.addTimelineObject(self, timeline_object)
 
-        tracker = PropertyChangeTracker(timeline_object)
+        tracker = LinkPropertyChangeTracker(timeline_object)
         self.property_trackers[timeline_object] = tracker
 
         tracker.connect('start-changed', self._startChangedCb)
