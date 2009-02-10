@@ -33,18 +33,12 @@ class SourceList(Serializable, Signallable):
     Contains the sources for a project, stored as FileSourceFactory
 
     Signals:
-    _ file_added (FileSourceFactory) :
-                A file has been completely discovered and is valid.
-    _ file_removed (string : uri) :
-                A file was removed from the SourceList
-    _ not_media_file (string : uri, string : reason)
-                The given uri is not a media file
-    _ tmp_is_ready (FileSourceFactory) :
-                The temporary uri given to the SourceList is ready to use.
-    _ ready :
-                No more files are being discovered/added
-    _ starting :
-                Some files are being discovered/added
+     - C{file_added} : A file has been completely discovered and is valid.
+     - C{file_removed} : A file was removed from the SourceList.
+     - C{not_media_file} : The given uri is not a media file.
+     - C{tmp_is_ready} : The temporary uri given to the SourceList is ready to use.
+     - C{ready} : No more files are being discovered/added.
+     - C{starting} : Some files are being discovered/added.
     """
 
     __signals__ = {
