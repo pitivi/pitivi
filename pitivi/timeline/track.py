@@ -208,6 +208,11 @@ class TrackObject(object, Signallable):
         bin = self.factory.makeBin(self.track.stream)
         self.gnl_object.add(bin)
 
+    def releaseBin(self):
+        bin = list(self.gnl_object)[0]
+        self.gnl_object.remove(bin)
+        self.factory.releaseBin(bin)
+
     def _notifyStartCb(self, obj, pspec):
         self.emit('start-changed', obj.props.start)
 
@@ -317,7 +322,6 @@ class Track(object, Signallable):
         track_object.track = weakref.proxy(self)
         self.track_objects.append(track_object)
 
-        # FIXME: should be released in removeTrackObject()
         track_object.makeBin()
 
         self.emit('track-object-added', track_object)
@@ -330,6 +334,8 @@ class Track(object, Signallable):
             self.composition.remove(track_object.gnl_object)
         except gst.RemoveError:
             raise TrackError()
+
+        track_object.releaseBin()
 
         self.track_objects.remove(track_object)
         track_object.track = None
