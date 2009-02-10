@@ -72,7 +72,7 @@ class TimelineObject(object, Signallable):
     def setStart(self, time, snap=False):
         if not self.track_objects:
             raise TimelineError()
-        
+
         if snap:
             time = self.timeline.snapToEdge(time, time + self.duration)
 
@@ -87,7 +87,7 @@ class TimelineObject(object, Signallable):
 
         for track_object in self.track_objects:
             track_object.setObjectStart(time)
-        
+
         self.emit('start-changed', time)
 
     start = property(_getStart, setStart)
@@ -95,13 +95,13 @@ class TimelineObject(object, Signallable):
     def _getDuration(self):
         if not self.track_objects:
             return self.DEFAULT_DURATION
-        
+
         return self.track_objects[0].duration
-    
+
     def setDuration(self, time, snap=False, set_media_stop=True):
         if not self.track_objects:
             raise TimelineError()
-        
+
         if snap:
             time = self.timeline.snapToEdge(time)
 
@@ -114,30 +114,30 @@ class TimelineObject(object, Signallable):
                 track_object.setObjectMediaDuration(time)
 
         self.emit('duration-changed', time)
-    
+
     duration = property(_getDuration, setDuration)
 
     def _getInPoint(self):
         if not self.track_objects:
             return self.DEFAULT_IN_POINT
-        
+
         return self.track_objects[0].in_point
-    
+
     def setInPoint(self, time, snap=False):
         if not self.track_objects:
             raise TimelineError()
-        
+
         for track_object in self.track_objects:
             track_object.setObjectInPoint(time)
-        
+
         self.emit('in-point-changed', time)
 
     in_point = property(_getInPoint, setInPoint)
-    
+
     def _getOutPoint(self):
         if not self.track_objects:
             return self.DEFAULT_IN_POINT
-        
+
         return self.track_objects[0].out_point
 
     out_point = property(_getOutPoint)
@@ -145,16 +145,16 @@ class TimelineObject(object, Signallable):
     def _getMediaDuration(self):
         if not self.track_objects:
             return self.DEFAULT_OUT_POINT
-        
+
         return self.track_objects[0].media_duration
-    
+
     def setMediaDuration(self, time, snap=False):
         if not self.track_objects:
             raise TimelineError()
-        
+
         for track_object in self.track_objects:
             track_object.setObjectMediaDuration(time)
-        
+
         self.emit('media-duration-changed', time)
 
     media_duration = property(_getMediaDuration, setMediaDuration)
@@ -187,7 +187,7 @@ class TimelineObject(object, Signallable):
         self.emit('start-changed', self.start)
         self.emit('duration-changed', self.duration)
         self.emit('in-point-changed', self.in_point)
-    
+
     def split(self, time, snap=False):
         if not self.track_objects:
             raise TimelineError()
@@ -325,7 +325,7 @@ class Link(Selection):
         for timeline_object in list(self.timeline_objects):
             self.removeTimelineObject(timeline_object)
             new_link.addTimelineObject(timeline_object)
-        
+
         for timeline_object in list(other_link.timeline_objects):
             other_link.removeTimelineObject(timeline_object)
             new_link.addTimelineObject(timeline_object)
@@ -383,7 +383,7 @@ class TimelineEdges(object):
         val, diff, start_index = closest_item(self.edges, start)
         if val != start:
             raise TimelineError()
-        
+
         if end is not None and len(self.edges) > 1:
             val, diff, end_index = closest_item(self.edges, end, start_index)
             if val != end:
@@ -445,10 +445,10 @@ class Timeline(object ,Signallable):
 
     def _trackStartChangedCb(self, track, duration):
         self._updateDuration()
-    
+
     def _trackDurationChangedCb(self, track, duration):
         self._updateDuration()
-    
+
     def _updateDuration(self):
         duration = max([track.start + track.duration for track in self.tracks])
         if duration != self.duration:
@@ -485,7 +485,7 @@ class Timeline(object ,Signallable):
             raise TimelineError()
 
         obj.timeline = None
-        
+
         self.edges.removeTimelineObject(obj)
 
     # FIXME: find a better name?
@@ -495,7 +495,7 @@ class Timeline(object ,Signallable):
         # mapping from streams -> tracks
         # FIXME: should this be an instance variable?
         # FIXME: this will break when we have multiple tracks of the same
-        # type. 
+        # type.
         tracks = dict(((type(track.stream), track) for track in self.tracks))
 
         if not input:
