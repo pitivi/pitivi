@@ -32,10 +32,14 @@ class StubFactory(object):
     def makeBin(self, stream=None):
         return gst.element_factory_make('audiotestsrc')
 
+    def releaseBin(self, bin):
+        bin.set_state(gst.STATE_NULL)
+
 class TrackSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
         SignalMonitor.__init__(self, track_object, 'start-changed',
-                'duration-changed', 'in-point-changed', 'out-point-changed')
+                'duration-changed', 'in-point-changed', 'out-point-changed',
+                'media-duration-changed')
 
 class TestTrackObject(TestCase):
     def setUp(self):
@@ -49,11 +53,14 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.duration, self.factory.duration)
         self.failUnlessEqual(obj.in_point, 0)
         self.failUnlessEqual(obj.out_point, self.factory.duration)
+        self.failUnlessEqual(obj.media_duration, self.factory.duration)
 
         gnl_object = obj.gnl_object
         self.failUnlessEqual(gnl_object.props.start, 0)
         self.failUnlessEqual(gnl_object.props.duration, self.factory.duration)
         self.failUnlessEqual(gnl_object.props.media_start, 0)
+        self.failUnlessEqual(gnl_object.props.media_stop,
+                self.factory.duration)
         self.failUnlessEqual(gnl_object.props.media_duration,
                 self.factory.duration)
 
@@ -79,10 +86,14 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(gnl_object.props.media_start, in_point)
         self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
 
-        out_point = 5 * gst.SECOND
-        obj.out_point = out_point
-        self.failUnlessEqual(obj.out_point, out_point)
-        self.failUnlessEqual(gnl_object.props.media_duration, out_point)
+        media_duration = 5 * gst.SECOND
+        obj.media_duration = media_duration
+        self.failUnlessEqual(obj.media_duration, media_duration)
+        self.failUnlessEqual(gnl_object.props.media_duration, media_duration)
+        self.failUnlessEqual(obj.out_point, in_point + media_duration)
+        self.failUnlessEqual(gnl_object.props.media_stop,
+                in_point + media_duration)
+        self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
 
     def testChangePropertiesFromGnlObject(self):
@@ -104,9 +115,12 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.in_point, in_point)
         self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
 
-        out_point = 5 * gst.SECOND
-        gnl_object.props.media_duration = out_point
-        self.failUnlessEqual(obj.out_point, out_point)
+        media_duration = 5 * gst.SECOND
+        gnl_object.props.media_duration = media_duration
+        self.failUnlessEqual(obj.media_duration, media_duration)
+        self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
+        self.failUnlessEqual(obj.out_point, in_point + media_duration)
+        self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
 
     def testTrimStart(self):

@@ -37,12 +37,13 @@ class TrackObject(object, Signallable):
         'duration-changed': ['duration'],
         'in-point-changed': ['in-point'],
         'out-point-changed': ['out-point'],
+        'media-duration-changed': ['media-duration'],
         'selected-changed' : ['state'],
     }
 
     def __init__(self, factory, start=0,
             duration=0, in_point=0,
-            out_point=0, priority=0):
+            media_duration=0, priority=0):
         self.factory = factory
         self.track = None
         self.timeline_object = None
@@ -59,8 +60,8 @@ class TrackObject(object, Signallable):
         obj.props.duration = duration
 
         obj.props.media_start = in_point
-        if out_point != 0:
-            obj.props.media_duration = out_point
+        if media_duration != 0:
+            obj.props.media_duration = media_duration
         else:
             obj.props.media_duration = duration
 
@@ -72,7 +73,7 @@ class TrackObject(object, Signallable):
         cls = self.__class__
         other = cls(self.factory, start=self.start - self.trimmed_start,
             duration=self.duration + self.trimmed_start, in_point=self.in_point,
-            out_point=self.out_point, priority=self.priority)
+            media_duration=self.media_duration, priority=self.priority)
 
         return other
 
@@ -130,13 +131,18 @@ class TrackObject(object, Signallable):
     in_point = property(_getInPoint, setInPoint)
 
     def _getOutPoint(self):
+        return self.gnl_object.props.media_stop
+
+    out_point = property(_getOutPoint)
+
+    def _getMediaDuration(self):
         return self.gnl_object.props.media_duration
 
-    def setOutPoint(self, time, snap=False):
+    def setMediaDuration(self, time, snap=False):
         if self.timeline_object is not None:
-            self.timeline_object.setOutPoint(time, snap)
+            self.timeline_object.setMediaDuration(time, snap)
         else:
-            self.setObjectOutPoint(time)
+            self.setObjectMediaDuration(time)
 
     def trimStart(self, time, snap=False):
         if self.timeline_object is not None:
@@ -160,7 +166,7 @@ class TrackObject(object, Signallable):
 
         new_in_point = max(old_in_point + delta, 0)
         self.setObjectInPoint(new_in_point)
-        self.setObjectOutPoint(new_duration)
+        self.setObjectMediaDuration(new_duration)
 
     def split(self, time, snap=False):
         if self.timeline_object is not None:
@@ -178,14 +184,14 @@ class TrackObject(object, Signallable):
 
         other.trimObjectStart(time)
         self.setObjectDuration(time - start)
-        self.setObjectOutPoint(time - start)
+        self.setObjectMediaDuration(time - start)
 
         return other
 
-    def setObjectOutPoint(self, time):
+    def setObjectMediaDuration(self, time):
         self.gnl_object.props.media_duration = time
 
-    out_point = property(_getOutPoint, setOutPoint)
+    media_duration = property(_getMediaDuration, setMediaDuration)
 
     # True when the track object is part of the timeline's current selection
     __selected = False
@@ -223,7 +229,10 @@ class TrackObject(object, Signallable):
         self.emit('in-point-changed', obj.props.media_start)
 
     def _notifyMediaDurationCb(self, obj, pspec):
-        self.emit('out-point-changed', obj.props.media_duration)
+        self.emit('media-duration-changed', obj.props.media_duration)
+    
+    def _notifyMediaStopCb(self, obj, pspec):
+        self.emit('out-point-changed', obj.props.media_stop)
 
     def _connectToSignals(self, gnl_object):
         gnl_object.connect('notify::start', self._notifyStartCb)
@@ -231,6 +240,8 @@ class TrackObject(object, Signallable):
         gnl_object.connect('notify::media-start', self._notifyMediaStartCb)
         gnl_object.connect('notify::media-duration',
                 self._notifyMediaDurationCb)
+        gnl_object.connect('notify::media-stop',
+                self._notifyMediaStopCb)
 
     def _makeGnlObject(self):
         raise NotImplementedError()

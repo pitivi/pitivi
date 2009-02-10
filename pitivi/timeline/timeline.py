@@ -39,7 +39,8 @@ class TimelineObject(object, Signallable):
         'start-changed': ['start'],
         'duration-changed': ['duration'],
         'in-point-changed': ['in-point'],
-        'out-point-changed': ['out-point'],
+        'out-point-changed': ['in-point'],
+        'media-duration-changed': ['media-duration'],
         'selected-changed' : ['state'],
     }
 
@@ -110,7 +111,7 @@ class TimelineObject(object, Signallable):
         for track_object in self.track_objects:
             track_object.setObjectDuration(time)
             if set_media_stop:
-                track_object.setObjectOutPoint(time)
+                track_object.setObjectMediaDuration(time)
 
         self.emit('duration-changed', time)
     
@@ -132,23 +133,31 @@ class TimelineObject(object, Signallable):
         self.emit('in-point-changed', time)
 
     in_point = property(_getInPoint, setInPoint)
-
+    
     def _getOutPoint(self):
+        if not self.track_objects:
+            return self.DEFAULT_IN_POINT
+        
+        return self.track_objects[0].out_point
+
+    out_point = property(_getOutPoint)
+
+    def _getMediaDuration(self):
         if not self.track_objects:
             return self.DEFAULT_OUT_POINT
         
-        return self.track_objects[0].out_point
+        return self.track_objects[0].media_duration
     
-    def setOutPoint(self, time, snap=False):
+    def setMediaDuration(self, time, snap=False):
         if not self.track_objects:
             raise TimelineError()
         
         for track_object in self.track_objects:
-            track_object.setObjectOutPoint(time)
+            track_object.setObjectMediaDuration(time)
         
-        self.emit('out-point-changed', time)
+        self.emit('media-duration-changed', time)
 
-    out_point = property(_getOutPoint, setOutPoint)
+    media_duration = property(_getMediaDuration, setMediaDuration)
 
     # True when the timeline object is part of the track object's current
     # selection.

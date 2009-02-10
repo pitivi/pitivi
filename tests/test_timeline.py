@@ -33,7 +33,7 @@ from common import SignalMonitor
 class TimelineSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
         SignalMonitor.__init__(self, track_object, 'start-changed',
-                'duration-changed', 'in-point-changed', 'out-point-changed')
+                'duration-changed', 'in-point-changed', 'media-duration-changed')
 
 class StubFactory(object):
     duration = 42 * gst.SECOND
@@ -79,7 +79,8 @@ class TestTimelineObjectProperties(TestCase):
         factory = StubFactory()
         self.timeline_object = TimelineObject(factory)
         self.monitor = SignalMonitor(self.timeline_object, 'start-changed',
-                'duration-changed', 'in-point-changed', 'out-point-changed')
+                'duration-changed', 'in-point-changed', 'out-point-changed',
+                'media-duration-changed')
         stream = AudioStream(gst.Caps('audio/x-raw-int'))
         self.track = Track(stream)
         self.track_object1 = SourceTrackObject(factory)
@@ -92,7 +93,8 @@ class TestTimelineObjectProperties(TestCase):
         self.failUnlessEqual(obj.start, 0)
         self.failUnlessEqual(obj.duration, UNKNOWN_DURATION)
         self.failUnlessEqual(obj.in_point, 0)
-        self.failUnlessEqual(obj.out_point, UNKNOWN_DURATION)
+        self.failUnlessEqual(obj.out_point, 0)
+        self.failUnlessEqual(obj.media_duration, UNKNOWN_DURATION)
 
     def testChangePropertiesFromTimelineObject(self):
         timeline_object = self.timeline_object
@@ -117,11 +119,16 @@ class TestTimelineObjectProperties(TestCase):
         self.failUnlessEqual(self.track_object1.in_point, in_point)
         self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
 
-        out_point = 5 * gst.SECOND
-        timeline_object.out_point = out_point
-        self.failUnlessEqual(timeline_object.out_point, out_point)
-        self.failUnlessEqual(self.track_object1.out_point, out_point)
-        self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
+        media_duration = 5 * gst.SECOND
+        timeline_object.media_duration = media_duration
+        self.failUnlessEqual(timeline_object.media_duration, media_duration)
+        self.failUnlessEqual(self.track_object1.media_duration, media_duration)
+        self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
+        self.failUnlessEqual(timeline_object.out_point,
+                in_point + media_duration)
+        self.failUnlessEqual(self.track_object1.out_point,
+                in_point + media_duration)
+        #self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
 
     def testChangePropertiesFromTimelineObject2(self):
         timeline_object = self.timeline_object
@@ -150,12 +157,12 @@ class TestTimelineObjectProperties(TestCase):
         self.failUnlessEqual(self.track_object2.in_point, in_point)
         self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
 
-        out_point = 5 * gst.SECOND
-        timeline_object.out_point = out_point
-        self.failUnlessEqual(timeline_object.out_point, out_point)
-        self.failUnlessEqual(self.track_object1.out_point, out_point)
-        self.failUnlessEqual(self.track_object2.out_point, out_point)
-        self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
+        media_duration = 5 * gst.SECOND
+        timeline_object.media_duration = media_duration
+        self.failUnlessEqual(timeline_object.media_duration, media_duration)
+        self.failUnlessEqual(self.track_object1.media_duration, media_duration)
+        self.failUnlessEqual(self.track_object2.media_duration, media_duration)
+        self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
 
     def testChangePropertiesFromTrackObject(self):
         timeline_object = self.timeline_object
@@ -177,10 +184,10 @@ class TestTimelineObjectProperties(TestCase):
         self.failUnlessEqual(timeline_object.in_point, in_point)
         self.failUnlessEqual(self.monitor.in_point_changed_count, 1)
 
-        out_point = 5 * gst.SECOND
-        track_object.out_point = out_point
-        self.failUnlessEqual(timeline_object.out_point, out_point)
-        self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
+        media_duration = 5 * gst.SECOND
+        track_object.media_duration = media_duration
+        self.failUnlessEqual(timeline_object.media_duration, media_duration)
+        self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
 
     def testSplit(self):
         obj = self.timeline_object
