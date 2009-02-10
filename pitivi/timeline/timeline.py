@@ -97,7 +97,7 @@ class TimelineObject(object, Signallable):
         
         return self.track_objects[0].duration
     
-    def setDuration(self, time, snap=False):
+    def setDuration(self, time, snap=False, set_media_stop=True):
         if not self.track_objects:
             raise TimelineError()
         
@@ -109,6 +109,8 @@ class TimelineObject(object, Signallable):
 
         for track_object in self.track_objects:
             track_object.setObjectDuration(time)
+            if set_media_stop:
+                track_object.setObjectOutPoint(time)
 
         self.emit('duration-changed', time)
     

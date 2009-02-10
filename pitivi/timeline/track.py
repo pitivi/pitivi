@@ -169,13 +169,6 @@ class TrackObject(object, Signallable):
             return self.splitObject(time)
 
     def splitObject(self, time):
-        # This fails after the first track object is split because self.start
-        # returns the value of the parent timeline object if there is one
-
-        # if time <= self.start or time >= self.start + self.duration:
-        #   raise TrackError("can't split at time %s" % gst.TIME_ARGS(time))
-
-        # So we have to get the start/duration from our child gnlobject
         start = self.gnl_object.props.start
         duration = self.gnl_object.props.duration
         if time <= start or time >= start + duration:
@@ -183,11 +176,9 @@ class TrackObject(object, Signallable):
 
         other = self.copy()
 
-        # here we want to use the *Object* methods
-        # other.trimStart(time)
-        # self.setDuration(time - self.start)
         other.trimObjectStart(time)
         self.setObjectDuration(time - start)
+        self.setObjectOutPoint(time - start)
 
         return other
 
