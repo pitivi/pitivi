@@ -23,14 +23,14 @@
 High-level tools for using Formatters
 """
 
-def load_project(location, formatter=None):
+def load_project(uri, formatter=None):
     """
     Load the project from the given location.
 
     If specified, use the given formatter.
 
-    @type location: L{str}
-    @param location: The location of the project. Needs to be an
+    @type uri: L{str}
+    @param uri: The location of the project. Needs to be an
     absolute URI.
     @type formatter: C{Formatter}
     @param formatter: If specified, try loading the project with that
@@ -38,9 +38,9 @@ def load_project(location, formatter=None):
     @raise FormatterLoadError: If the location couldn't be properly loaded.
     @return: The loaded C{Project}
     """
-    pass
+    raise NotImplementedError
 
-def save_project(project, location, formatter=None):
+def save_project(project, uri, formatter=None):
     """
     Save the C{Project} to the given location.
 
@@ -48,8 +48,8 @@ def save_project(project, location, formatter=None):
 
     @type project: C{Project}
     @param project: The C{Project} to save.
-    @type location: L{str}
-    @param location: The location to store the project to. Needs to
+    @type uri: L{str}
+    @param uri: The location to store the project to. Needs to
     be an absolute URI.
     @type formatter: C{Formatter}
     @param formatter: The C{Formatter} to use to store the project if specified.
@@ -58,16 +58,16 @@ def save_project(project, location, formatter=None):
     @return: Whether the file was successfully stored
     @rtype: L{bool}
     """
-    pass
+    raise NotImplementedError
 
-def can_handle_location(location):
+def can_handle_location(uri):
     """
     Detects whether the project at the given location can be loaded.
 
-    @type location: L{str}
-    @param location: The location of the project. Needs to be an
+    @type uri: L{str}
+    @param uri: The location of the project. Needs to be an
     absolute URI.
     @return: Whether the location contains a valid C{Project}.
     @rtype: L{bool}
     """
-    pass
+    raise NotImplementedError

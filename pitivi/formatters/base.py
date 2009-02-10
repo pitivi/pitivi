@@ -31,7 +31,7 @@ class FormatterError(Exception):
 class FormatterLoadError(FormatterError):
     pass
 
-class FormatterSaveError(FormatterError):
+class FormatterStoreError(FormatterError):
     pass
 
 # FIXME : How do we handle interaction with the UI ??
@@ -42,7 +42,12 @@ class Formatter(object):
     """
     Provides convenience methods for storing and loading
     Project files.
+
+    @cvar description: Description of the formatter.
+    @type description: C{str}
     """
+
+    description = "Base formatter"
 
     def loadProject(self, location):
         """
@@ -82,5 +87,7 @@ class Formatter(object):
         raise NotImplementedError
 
 class DefaultFormatter(Formatter):
+
+    description = "Default Formatter"
 
     pass
