@@ -193,6 +193,11 @@ class TrackObject(object, Signallable):
 
     media_duration = property(_getMediaDuration, setMediaDuration)
 
+    def _getRate(self):
+        return self.gnl_object.props.rate
+
+    rate = property(_getRate)
+
     # True when the track object is part of the timeline's current selection
     __selected = False
 
@@ -230,7 +235,7 @@ class TrackObject(object, Signallable):
 
     def _notifyMediaDurationCb(self, obj, pspec):
         self.emit('media-duration-changed', obj.props.media_duration)
-    
+
     def _notifyMediaStopCb(self, obj, pspec):
         self.emit('out-point-changed', obj.props.media_stop)
 

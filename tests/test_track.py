@@ -54,6 +54,7 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.in_point, 0)
         self.failUnlessEqual(obj.out_point, self.factory.duration)
         self.failUnlessEqual(obj.media_duration, self.factory.duration)
+        self.failUnlessEqual(obj.rate, 1)
 
         gnl_object = obj.gnl_object
         self.failUnlessEqual(gnl_object.props.start, 0)
@@ -63,6 +64,7 @@ class TestTrackObject(TestCase):
                 self.factory.duration)
         self.failUnlessEqual(gnl_object.props.media_duration,
                 self.factory.duration)
+        self.failUnlessEqual(gnl_object.props.rate, 1)
 
     def testChangePropertiesFromTrackObject(self):
         obj = self.track_object
@@ -139,6 +141,7 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.start, time)
         self.failUnlessEqual(obj.in_point, 0)
         self.failUnlessEqual(obj.duration, 10 * gst.SECOND)
+        self.failUnlessEqual(obj.rate, 1)
         self.failUnlessEqual(monitor.start_changed_count, 1)
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
@@ -150,6 +153,7 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.start, time)
         self.failUnlessEqual(obj.in_point, 10 * gst.SECOND)
         self.failUnlessEqual(obj.duration, 0)
+        self.failUnlessEqual(obj.rate, 1)
         self.failUnlessEqual(monitor.start_changed_count, 1)
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
@@ -161,6 +165,7 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.start, time)
         self.failUnlessEqual(obj.in_point, 0)
         self.failUnlessEqual(obj.duration, 10 * gst.SECOND)
+        self.failUnlessEqual(obj.rate, 1)
         self.failUnlessEqual(monitor.start_changed_count, 1)
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
@@ -172,6 +177,7 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.start, time)
         self.failUnlessEqual(obj.in_point, 10 * gst.SECOND)
         self.failUnlessEqual(obj.duration, 0)
+        self.failUnlessEqual(obj.rate, 1)
         self.failUnlessEqual(monitor.start_changed_count, 1)
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
@@ -183,6 +189,7 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.start, time)
         self.failUnlessEqual(obj.in_point, 2 * gst.SECOND)
         self.failUnlessEqual(obj.duration, 8 * gst.SECOND)
+        self.failUnlessEqual(obj.rate, 1)
         self.failUnlessEqual(monitor.start_changed_count, 1)
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
@@ -208,9 +215,11 @@ class TestTrackObject(TestCase):
 
         self.failUnlessEqual(obj.start, 3 * gst.SECOND)
         self.failUnlessEqual(obj.duration, 1 * gst.SECOND)
+        self.failUnlessEqual(obj.rate, 1)
 
         self.failUnlessEqual(other1.start, 4 * gst.SECOND)
         self.failUnlessEqual(other1.duration, 9 * gst.SECOND)
+        self.failUnlessEqual(other1.rate, 1)
 
         self.failUnlessEqual(monitor.start_changed_count, 0)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
@@ -221,12 +230,15 @@ class TestTrackObject(TestCase):
         other2 = other1.splitObject(11 * gst.SECOND)
         self.failUnlessEqual(other1.start, 4 * gst.SECOND)
         self.failUnlessEqual(other1.duration, 7 * gst.SECOND)
+        self.failUnlessEqual(other1.rate, 1)
 
         self.failUnlessEqual(other2.start, 11 * gst.SECOND)
         self.failUnlessEqual(other2.duration, 2 * gst.SECOND)
+        self.failUnlessEqual(other2.rate, 1)
 
         self.failUnlessEqual(monitor.start_changed_count, 0)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
+
 
 class TestTrackAddRemoveObjects(TestCase):
     def setUp(self):
