@@ -41,6 +41,7 @@ class TimelineObject(object, Signallable):
         'in-point-changed': ['in-point'],
         'out-point-changed': ['in-point'],
         'media-duration-changed': ['media-duration'],
+        'priority-changed': ['priority'],
         'selected-changed' : ['state'],
     }
 
@@ -48,6 +49,7 @@ class TimelineObject(object, Signallable):
     DEFAULT_DURATION = UNKNOWN_DURATION
     DEFAULT_IN_POINT = 0
     DEFAULT_OUT_POINT = UNKNOWN_DURATION
+    DEFAULT_PRIORITY = 0
 
     def __init__(self, factory):
         self.factory = factory
@@ -158,6 +160,23 @@ class TimelineObject(object, Signallable):
         self.emit('media-duration-changed', time)
 
     media_duration = property(_getMediaDuration, setMediaDuration)
+
+    def _getPriority(self):
+        if not self.track_objects:
+            return self.DEFAULT_PRIORITY
+
+        return self.track_objects[0].priority
+
+    def setPriority(self, priority):
+        if not self.track_objects:
+            raise TimelineError()
+
+        for track_object in self.track_objects:
+            track_object.setObjectPriority(priority)
+
+        self.emit('priority-changed', priority)
+
+    priority = property(_getPriority, setPriority)
 
     # True when the timeline object is part of the track object's current
     # selection.

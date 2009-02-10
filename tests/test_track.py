@@ -39,7 +39,7 @@ class TrackSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
         SignalMonitor.__init__(self, track_object, 'start-changed',
                 'duration-changed', 'in-point-changed', 'out-point-changed',
-                'media-duration-changed')
+                'media-duration-changed', 'priority-changed')
 
 class TestTrackObject(TestCase):
     def setUp(self):
@@ -55,6 +55,7 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.out_point, self.factory.duration)
         self.failUnlessEqual(obj.media_duration, self.factory.duration)
         self.failUnlessEqual(obj.rate, 1)
+        self.failUnlessEqual(obj.priority, 0)
 
         gnl_object = obj.gnl_object
         self.failUnlessEqual(gnl_object.props.start, 0)
@@ -65,6 +66,7 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(gnl_object.props.media_duration,
                 self.factory.duration)
         self.failUnlessEqual(gnl_object.props.rate, 1)
+        self.failUnlessEqual(obj.priority, 0)
 
     def testChangePropertiesFromTrackObject(self):
         obj = self.track_object
@@ -98,6 +100,12 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
 
+        priority = 100
+        obj.priority = priority
+        self.failUnlessEqual(obj.priority, priority)
+        self.failUnlessEqual(gnl_object.props.priority, priority)
+        self.failUnlessEqual(self.monitor.priority_changed_count, 1)
+
     def testChangePropertiesFromGnlObject(self):
         obj = self.track_object
         gnl_object = obj.gnl_object
@@ -124,6 +132,12 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.out_point, in_point + media_duration)
         self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
         self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
+
+        priority = 100
+        gnl_object.props.priority = priority
+        self.failUnlessEqual(obj.priority, priority)
+        self.failUnlessEqual(gnl_object.props.priority, priority)
+        self.failUnlessEqual(self.monitor.priority_changed_count, 1)
 
     def testTrimStart(self):
         obj = self.track_object

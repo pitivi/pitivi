@@ -80,7 +80,7 @@ class TestTimelineObjectProperties(TestCase):
         self.timeline_object = TimelineObject(factory)
         self.monitor = SignalMonitor(self.timeline_object, 'start-changed',
                 'duration-changed', 'in-point-changed', 'out-point-changed',
-                'media-duration-changed')
+                'media-duration-changed', 'priority-changed')
         stream = AudioStream(gst.Caps('audio/x-raw-int'))
         self.track = Track(stream)
         self.track_object1 = SourceTrackObject(factory)
@@ -95,6 +95,7 @@ class TestTimelineObjectProperties(TestCase):
         self.failUnlessEqual(obj.in_point, 0)
         self.failUnlessEqual(obj.out_point, 0)
         self.failUnlessEqual(obj.media_duration, UNKNOWN_DURATION)
+        self.failUnlessEqual(obj.priority, 0)
 
     def testChangePropertiesFromTimelineObject(self):
         timeline_object = self.timeline_object
@@ -128,7 +129,14 @@ class TestTimelineObjectProperties(TestCase):
                 in_point + media_duration)
         self.failUnlessEqual(self.track_object1.out_point,
                 in_point + media_duration)
+        # FIXME
         #self.failUnlessEqual(self.monitor.out_point_changed_count, 1)
+
+        priority = 100
+        timeline_object.priority = priority
+        self.failUnlessEqual(timeline_object.priority, priority)
+        self.failUnlessEqual(self.track_object1.priority, priority)
+        self.failUnlessEqual(self.monitor.priority_changed_count, 1)
 
     def testChangePropertiesFromTimelineObject2(self):
         timeline_object = self.timeline_object
@@ -164,6 +172,13 @@ class TestTimelineObjectProperties(TestCase):
         self.failUnlessEqual(self.track_object2.media_duration, media_duration)
         self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
 
+        priority = 100
+        timeline_object.priority = priority
+        self.failUnlessEqual(timeline_object.priority, priority)
+        self.failUnlessEqual(self.track_object1.priority, priority)
+        self.failUnlessEqual(self.track_object2.priority, priority)
+        self.failUnlessEqual(self.monitor.priority_changed_count, 1)
+
     def testChangePropertiesFromTrackObject(self):
         timeline_object = self.timeline_object
         track_object = self.track_object1
@@ -188,6 +203,11 @@ class TestTimelineObjectProperties(TestCase):
         track_object.media_duration = media_duration
         self.failUnlessEqual(timeline_object.media_duration, media_duration)
         self.failUnlessEqual(self.monitor.media_duration_changed_count, 1)
+
+        priority = 100
+        track_object.priority = priority
+        self.failUnlessEqual(timeline_object.priority, priority)
+        self.failUnlessEqual(self.monitor.priority_changed_count, 1)
 
     def testSplit(self):
         obj = self.timeline_object

@@ -38,6 +38,7 @@ class TrackObject(object, Signallable):
         'in-point-changed': ['in-point'],
         'out-point-changed': ['out-point'],
         'media-duration-changed': ['media-duration'],
+        'priority-changed': ['priority'],
         'selected-changed' : ['state'],
     }
 
@@ -65,7 +66,7 @@ class TrackObject(object, Signallable):
         else:
             obj.props.media_duration = duration
 
-        self.priority = priority
+        obj.props.priority = priority
 
         self._connectToSignals(obj)
 
@@ -144,6 +145,30 @@ class TrackObject(object, Signallable):
         else:
             self.setObjectMediaDuration(time)
 
+    def setObjectMediaDuration(self, time):
+        self.gnl_object.props.media_duration = time
+
+    media_duration = property(_getMediaDuration, setMediaDuration)
+
+    def _getRate(self):
+        return self.gnl_object.props.rate
+
+    rate = property(_getRate)
+
+    def _getPriority(self):
+        return self.gnl_object.props.priority
+
+    def setPriority(self, priority):
+        if self.timeline_object is not None:
+            self.timeline_object.setPriority(priority)
+        else:
+            self.setObjectPriority(priority)
+
+    def setObjectPriority(self, priority):
+        self.gnl_object.props.priority = priority
+
+    priority = property(_getPriority, setPriority)
+
     def trimStart(self, time, snap=False):
         if self.timeline_object is not None:
             self.timeline_object.trimStart(time, snap)
@@ -188,16 +213,6 @@ class TrackObject(object, Signallable):
 
         return other
 
-    def setObjectMediaDuration(self, time):
-        self.gnl_object.props.media_duration = time
-
-    media_duration = property(_getMediaDuration, setMediaDuration)
-
-    def _getRate(self):
-        return self.gnl_object.props.rate
-
-    rate = property(_getRate)
-
     # True when the track object is part of the timeline's current selection
     __selected = False
 
@@ -239,6 +254,9 @@ class TrackObject(object, Signallable):
     def _notifyMediaStopCb(self, obj, pspec):
         self.emit('out-point-changed', obj.props.media_stop)
 
+    def _notifyPriorityCb(self, obj, pspec):
+        self.emit('priority-changed', obj.props.priority)
+
     def _connectToSignals(self, gnl_object):
         gnl_object.connect('notify::start', self._notifyStartCb)
         gnl_object.connect('notify::duration', self._notifyDurationCb)
@@ -247,6 +265,8 @@ class TrackObject(object, Signallable):
                 self._notifyMediaDurationCb)
         gnl_object.connect('notify::media-stop',
                 self._notifyMediaStopCb)
+        gnl_object.connect('notify::priority',
+                self._notifyPriorityCb)
 
     def _makeGnlObject(self):
         raise NotImplementedError()
