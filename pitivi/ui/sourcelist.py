@@ -97,7 +97,7 @@ def beautify_stream(stream):
     raise NotImplementedError
 
 def beautify_factory(factory):
-    return ("<b>" + factory.displayname + "</b>\n" +
+    return ("<b>" + unquote(factory.displayname) + "</b>\n" +
         "\n".join((beautify_stream(stream) 
             for stream in factory.getOutputStreams())))
 
