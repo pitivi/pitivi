@@ -65,12 +65,32 @@ if HAVE_GCONF:
     for gconf_dir in (D_G_INTERFACE, ):
         gconf.client_get_default ().add_dir (gconf_dir, gconf.CLIENT_PRELOAD_NONE)
 
-## Configuration attributes
 GlobalSettings.addConfigOption("fileSupportEnabled",
     environment="PITIVI_FILE_SUPPORT",
     default=True)
 
 GlobalSettings.addConfigSection("main-window")
+GlobalSettings.addConfigOption('mainWindowFullScreen',
+    section="main-window",
+    key="full-screen",
+    default=False)
+GlobalSettings.addConfigOption('mainWindowHPanePosition',
+    section="main-window",
+    key="hpane-position",
+    type_=int)
+GlobalSettings.addConfigOption('mainWindowVPanePosition',
+    section="main-window",
+    key="vpane-position",
+    default=200)
+GlobalSettings.addConfigOption('mainWindowWidth',
+        section="main-window",
+    key="width",
+    type_=int)
+GlobalSettings.addConfigOption('mainWindowHeight',
+    section="main-window",
+    key="height",
+    type_=int)
+
 GlobalSettings.addConfigSection("user-interface")
 
 def create_stock_icons():
@@ -109,9 +129,10 @@ class PitiviMainWindow(gtk.Window):
         self.actions = None
         self.toggleactions = None
         self.actiongroup = None
-        self.is_fullscreen = False
         self.error_dialogbox = None
         self.pitivi = instance
+        self.settings = instance.settings
+        self.is_fullscreen = self.settings.mainWindowFullScreen
 
     def load(self):
         """ load the user interface """
@@ -167,8 +188,6 @@ class PitiviMainWindow(gtk.Window):
                     self.render_button.set_sensitive(False)
             else:
                 self.render_button.set_sensitive(False)
-
-
 
     def _setActions(self):
         """ sets up the GtkActions """
@@ -251,6 +270,7 @@ class PitiviMainWindow(gtk.Window):
         self.set_title("%s v%s" % (APPNAME, pitivi_version))
         self.set_geometry_hints(min_width=800, min_height=480)
         self.connect("destroy", self._destroyCb)
+        self.connect("configure-event", self._configureCb)
 
         # main menu & toolbar
         vbox = gtk.VBox(False)
@@ -283,8 +303,21 @@ class PitiviMainWindow(gtk.Window):
         #self.viewer.detach_button.connect("clicked", self.__windowizeViewer, 
         #    hpaned)
 
-        # set a reasonable default
-        vpaned.set_position(200)
+        # window and pane position defaults
+        self.hpaned = hpaned
+        self.vpaned = vpaned
+        height = -1
+        width = -1
+        if self.settings.mainWindowHPanePosition:
+            self.hpaned.set_position(self.settings.mainWindowHPanePosition)
+        if self.settings.mainWindowVPanePosition:
+            self.vpaned.set_position(self.settings.mainWindowVPanePosition)
+        if self.settings.mainWindowWidth:
+            width = self.settings.mainWindowWidth
+        if self.settings.mainWindowHeight:
+            height = self.settings.mainWindowHeight
+        self.set_default_size(width, height)
+            
 
         # timeline toolbar
         # FIXME: remove toolbar padding and shadow. In fullscreen mode, the
@@ -354,9 +387,19 @@ class PitiviMainWindow(gtk.Window):
 
 ## UI Callbacks
 
+    def _configureCb(self, unused_widget, event):
+        self.settings.mainWindowWidth = event.width
+        self.settings.mainWindowHeight = event.height
+
     def _destroyCb(self, unused_widget, unused_data=None):
+        self._saveWindowSettings()
         self.pitivi.shutdown()
 
+    def _saveWindowSettings(self):
+        self.settings.mainWindowFullscreen = self.is_fullscreen
+        self.settings.mainWindowHPanePosition = self.hpaned.get_position()
+        self.settings.mainWindowVPanePosition = self.vpaned.get_position()
+        width, height = self.get_size()
 
     def _keyPressEventCb(self, unused_widget, event):
         if gtk.gdk.keyval_name(event.keyval) in ['f', 'F', 'F11']:
@@ -404,6 +447,7 @@ class PitiviMainWindow(gtk.Window):
         ProjectSettingsDialog(self, self.pitivi.current).show()
 
     def _quitCb(self, unused_action):
+        self._saveWindowSettings()
         self.pitivi.shutdown()
 
     def _fullScreenCb(self, unused_action):
