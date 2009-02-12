@@ -209,6 +209,7 @@ class Pitivi(object, Signallable):
             return False
         self.threads.stopAllThreads()
         self.playground.shutdown()
+        self._settings.storeSettings()
         instance.PiTiVi = None
         self.emit("shutdown")
         return True
@@ -219,11 +220,11 @@ class InteractivePitivi(Pitivi):
     """ Class for PiTiVi instances that provide user interaction """
 
     def __init__(self, filepath=None, mainloop=None, *args, **kwargs):
+        from ui.mainwindow import PitiviMainWindow
         Pitivi.__init__(self, filepath=None,
                         *args, **kwargs)
         self.mainloop = mainloop
 
-        from ui.mainwindow import PitiviMainWindow
         self._gui = PitiviMainWindow(self)
         self._gui.load()
         self._gui.show()

@@ -26,46 +26,50 @@ Multimedia settings
 
 import os
 import gst
+import string
+from ConfigParser import SafeConfigParser
 
 from serializable import Serializable
 from signalinterface import Signallable
 
 from gettext import gettext as _
 
-def get_bool_env(name):
-    """
-    Checks the given env variable name and returns a boolean answer.
-    If it exists AND contains something different from '' or 0, then this
-    function will return True. Else it will return False.
-    """
-    var = os.getenv(name)
-    if not var:
+def get_bool_env(var):
+    value = os.getenv(var)
+    if not value:
         return False
-    if var == '0':
+    value = value.lower()
+    if value == 'False':
         return False
-    return True
+    if value == '0':
+        return False
+    else:
+        return bool(value)
+
+def get_env_by_type(type_, var):
+    if type_ == None:
+        return None
+    elif type_ == bool:
+        return get_bool_env(var)
+    else:
+        return type_(os.getenv(var))
+
+class ConfigError(Exception):
+    pass
 
 class GlobalSettings:
     """
     Global PiTiVi settings
     """
 
-    # TODO : Improve this class to make it more flexible
-    # * The settings should be discover-able by UI for ex
-    # * plugins should be able to add some settings
+    options = {}
+    environment = set()
 
-    def __init__(self, **unused_kw):
-        self._setDefaults()
-        self._readSettings()
+    def __init__(self, **kwargs):
+        self._config = SafeConfigParser()
 
-    def _setDefaults(self):
-        self.advancedModeEnabled = True
-        self.fileSupportEnabled = False
-
-    def _readSettings(self):
         self._readSettingsFromGlobalConfiguration()
         self._readSettingsFromConfigurationFile()
-        # env variables have the highest priority
         self._readSettingsFromEnvironmentVariables()
 
     def _readSettingsFromGlobalConfiguration(self):
@@ -74,14 +78,63 @@ class GlobalSettings:
 
     def _readSettingsFromConfigurationFile(self):
         # This reads the configuration from the user configuration file
-        pass
+
+        try:
+            pitivi_path = self.get_local_settings_path()
+            pitivi_conf_file_path = os.path.join(pitivi_path, "pitivi.conf")
+            self._config.read(pitivi_conf_file_path)
+
+        except ParsingError:
+            return
+
+        for section, attrname, key, env, value in self.iterAllOptions(): 
+            if not self._config.has_section(section):
+                continue
+            if key and self._config.has_option(section, key):
+                setattr(self, attrname, self._config.get(section, key))
 
     def _readSettingsFromEnvironmentVariables(self):
-        # reads some settings from environment variable
-        #self.advancedModeEnabled =
-        #get_bool_env("PITIVI_ADVANCED_MODE")
-        #self.fileSupportEnabled = get_bool_env("PITIVI_FILE_SUPPORT")
-        self.fileSupportEnabled = True
+        print list(self.iterAllOptions())
+        for section, attrname, key, env, value in self.iterAllOptions():
+            print "got here"
+            valuetype = type(value)
+
+            var = get_env_by_type(type(value), env)
+            if var is not None:
+                setattr(self, attrname, value)
+
+    def _writeSettingsToConfigurationFile(self):
+        pitivi_path = self.get_local_settings_path()
+        pitivi_conf_file_path = os.path.join(pitivi_path, "pitivi.conf")
+        
+        for section, attrname, key, env_var, value in self.iterAllOptions():
+            if not self._config.has_section(section):
+                self._config.add_section(section)
+            if key:
+                self._config.set(section, key, str(value))
+        try:
+            file = open(pitivi_conf_file_path, 'w')
+        except IOError, OSError:
+            return
+        self._config.write(file)
+        file.close()
+
+    def storeSettings(self):
+        self._writeSettingsToConfigurationFile()
+
+    def get_local_settings_path(self, autocreate=True):
+        """
+        Compute the absolute path to local settings directory
+        
+        @param autocreate: create the path if missing
+        @return: the plugin repository path
+        """
+        
+        pitivi_path = os.path.expanduser("~/.pitivi")
+        if autocreate and not os.path.exists(pitivi_path):
+            os.mkdir(pitivi_path)
+        
+        return pitivi_path
 
     def get_local_plugin_path(self, autocreate=True):
         """
@@ -118,6 +171,38 @@ class GlobalSettings:
             os.mkdir(repository_path)
 
         return repository_path
+
+    def iterAllOptions(self):
+        for section, options in self.options.iteritems():
+            for attrname, (key, environment) in self.options[section].iteritems():
+                yield section, attrname, key, environment, getattr(self, attrname)
+
+    def iterSection(self, section):
+        for attrname, (key, environment) in self.options[section].iteritems():
+            yield section, attrname, key, environment, getattr(self, attrname)
+
+    @classmethod
+    def addConfigOption(cls, section,  attrname, key=None, environment=None, default=None):
+        print "add option"
+        if not section in cls.options:
+            raise ConfigError("You must add the section \"%s\" first." %
+                section)
+        if key in cls.options[section]:
+            raise ConfigError("Option \"%s\" is already in use.")
+        if hasattr(cls, attrname):
+            raise ConfigError("Settings attribute \"%s\" is already in use.")
+        if environment and environment in cls.environment:
+            raise ConfigError("Settings environment varaible \"%s\" is"
+                "already in use.")
+        setattr(cls, attrname, default)
+        cls.options[section][attrname] = key, environment 
+        cls.environment.add(environment)
+
+    @classmethod
+    def addConfigSection(cls, section):
+        if section in cls.options:
+            raise ConfigError("Duplicate Section \"%s\"." % section)
+        cls.options[section] = {}
 
 class ExportSettings(Serializable, Signallable):
     """
