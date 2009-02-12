@@ -65,19 +65,12 @@ if HAVE_GCONF:
     for gconf_dir in (D_G_INTERFACE, ):
         gconf.client_get_default ().add_dir (gconf_dir, gconf.CLIENT_PRELOAD_NONE)
 
-GlobalSettings.addConfigSection("main")
-GlobalSettings.addConfigOption("main", 
-    "fileSupportEnabled", 
-    environment="PITIVI_FILE_SUPPORT", 
+## Configuration attributes
+GlobalSettings.addConfigOption("fileSupportEnabled",
+    environment="PITIVI_FILE_SUPPORT",
     default=True)
 
-# settings specific to main-window
 GlobalSettings.addConfigSection("main-window")
-GlobalSettings.addConfigOption("main-window", 
-    "panePositions",
-    key="pane-positions")
-
-# settings which should show up in user preferences dialog
 GlobalSettings.addConfigSection("user-interface")
 
 def create_stock_icons():

@@ -30,10 +30,22 @@ from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.configure import get_pixmap_dir
 from pitivi.signalgroup import SignalGroup
 from pitivi.stream import VideoStream, AudioStream, TextStream
+from pitivi.settings import GlobalSettings
 from gettext import gettext as _
 from urllib import unquote
 import os
 import time
+
+GlobalSettings.addConfigSection('clip-library')
+GlobalSettings.addConfigOption('lastImportFolder',
+    section='clip-library',
+    key='last-folder',
+    environment='PITIVI_IMPORT_FOLDER',
+    default=os.path.expanduser("~"))
+GlobalSettings.addConfigOption('closeImportDialog',
+    section='clip-library',
+    key='close-import-dialog-after-import',
+    default=True)
 
 (COL_ICON,
  COL_INFOTEXT,
@@ -142,10 +154,7 @@ class SourceList(gtk.VBox):
         self.popup.append(playmenuitem)
 
         # import sources dialogbox
-        # FIXME: these values should be read from/saved to user preferences
         self._importDialog = None
-        self._lastfolder = None
-        self._close_dialog = True
 
         # TreeView
         # Displays icon, name, type, length
@@ -350,7 +359,7 @@ class SourceList(gtk.VBox):
             chooser_action = gtk.FILE_CHOOSER_ACTION_OPEN
             dialogtitle = _("Import a clip")
         close_after = gtk.CheckButton(_("Close after importing files"))
-        close_after.set_active(self._close_dialog)
+        close_after.set_active(instance.PiTiVi.settings.closeImportDialog)
 
         self._importDialog = gtk.FileChooserDialog(dialogtitle, None,
                                                    chooser_action,
@@ -360,8 +369,7 @@ class SourceList(gtk.VBox):
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
         self._importDialog.set_select_multiple(True)
         self._importDialog.set_modal(False)
-        if self._lastfolder:
-            self._importDialog.set_current_folder(self._lastfolder)
+        self._importDialog.set_current_folder(instance.PiTiVi.settings.lastImportFolder)
 
         self._importDialog.connect('response', self._dialogBoxResponseCb, select_folders)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
@@ -452,14 +460,16 @@ class SourceList(gtk.VBox):
     def _dialogBoxResponseCb(self, dialogbox, response, select_folders):
         gst.debug("response:%r" % response)
         if response == gtk.RESPONSE_OK:
-            self._lastfolder = dialogbox.get_current_folder()
-            self._close_dialog = dialogbox.props.extra_widget.get_active()
+            lastfolder = dialogbox.get_current_folder()
+            instance.PiTiVi.settings.lastImportFolder = lastfolder
+            instance.PiTiVi.settings.closeImportDialog = \
+                dialogbox.props.extra_widget.get_active()
             filenames = dialogbox.get_uris()
             if select_folders:
                 self.addFolders(filenames)
             else:
                 self.addFiles(filenames)
-            if self._close_dialog:
+            if instance.PiTiVi.settings.closeImportDialog:
                 dialogbox.destroy()
                 self._importDialog = None
         else:
