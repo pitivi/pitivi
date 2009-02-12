@@ -83,7 +83,7 @@ GlobalSettings.addConfigOption('mainWindowVPanePosition',
     key="vpane-position",
     default=200)
 GlobalSettings.addConfigOption('mainWindowWidth',
-        section="main-window",
+    section="main-window",
     key="width",
     type_=int)
 GlobalSettings.addConfigOption('mainWindowHeight',
