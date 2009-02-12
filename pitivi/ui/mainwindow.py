@@ -93,6 +93,7 @@ GlobalSettings.addConfigOption('mainWindowHeight',
 GlobalSettings.addConfigOption('lastProjectFolder',
     section="main-window",
     key="last-folder",
+    environment="PITIVI_PROJECT_FOLDER",
     default=os.path.expanduser("~"))
 GlobalSettings.addConfigSection("user-interface")
 
