@@ -292,9 +292,8 @@ class PitiviMainWindow(gtk.Window):
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
         
-        self.timeline = Timeline(self.pitivi.current, self.uimanager)
-        self.timeline.connect("drag-data-received", self._timelineDragDataReceivedCb)
-        self.timeline.connect("drag-motion", self._timelineDragMotionCb)
+        self.timeline = Timeline(self.uimanager)
+        self.timeline.setProject(self.pitivi.current)
         
         vpaned.pack2(self.timeline, resize=True, shrink=False)
         hpaned = gtk.HPaned()
@@ -544,7 +543,7 @@ class PitiviMainWindow(gtk.Window):
 
     def _newProjectLoadedCb(self, unused_pitivi, project):
         gst.log("A NEW project is loaded, update the UI!")
-        self.timeline.setTimeline(project.timeline)
+        self.timeline.setProject(project)
         # ungrey UI
         self.set_sensitive(True)
 

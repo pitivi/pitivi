@@ -92,13 +92,16 @@ class Timeline(gtk.VBox):
     # from zoomed out to zoomed in
 
 
-    def __init__(self, project, ui_manager):
+    def __init__(self, ui_manager):
         gst.log("Creating Timeline")
         gtk.VBox.__init__(self)
 
-        self.project = project
-        self.timeline = project.timeline
+        self.project = None
+        self.timeline = None
         self.ui_manager = ui_manager
+        self.__temp_object = None
+        self.__factory = None
+        self.__finish_drag = False
 
         self._createUI()
 
@@ -120,9 +123,14 @@ class Timeline(gtk.VBox):
         self.pack_start(self.scrolledWindow, expand=True)
 
         # drag and drop
-        self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION, 
+        self.drag_dest_set(gtk.DEST_DEFAULT_MOTION, 
             [dnd.FILESOURCE_TUPLE],
             gtk.gdk.ACTION_COPY)
+
+        self.connect("drag-data-received", self._dragDataReceivedCb)
+        self.connect("drag-leave", self._dragLeaveCb)
+        self.connect("drag-drop", self._dragDropCb)
+        self.connect("drag-motion", self._dragMotionCb)
 
         # toolbar actions
         actions = (
@@ -146,8 +154,64 @@ class Timeline(gtk.VBox):
         self.ui_manager.insert_action_group(self.actiongroup, 0)
         self.ui_manager.add_ui_from_string(ui)
 
-    def setTimeline(self, timeline):
-        self.timeline = timeline
+## Drag and Drop callbacks
+
+    def _dragMotionCb(self, unused, context, x, y, timestamp):
+        if not self.__factory:
+            atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
+            self.drag_get_data(context, atom, timestamp)
+            self.drag_highlight()
+        else:
+            if not self.__temp_object:
+                self.__add_temp_source()
+            self.__move_temp_source(x, y)
+        return True
+
+    def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
+        if self.__temp_object:
+            try:
+                self.timeline.removeTimelineObjectCompletely(self.__temp_object)
+            finally:
+                self.__temp_object = None
+        self.drag_unhighlight()
+
+    def _dragDropCb(self, widget, context, x, y, timestamp):
+        self.__add_temp_source()
+        self.__move_temp_source(x, y)
+        context.drop_finish(True, timestamp)
+        self.__factory = None
+        self.__temp_object = None
+        return True
+
+    def _dragDataReceivedCb(self, unused_layout, context, x, y, 
+        selection, targetType, timestamp):
+        gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
+            (targetType, selection.data))
+        # FIXME: let's have just one target type, call it
+        # TYPE_PITIVI_OBJECTFACTORY.
+        # TODO: handle uri targets by doign an import-add. This would look
+        # something like this:
+        # tell current project to import the uri
+        # wait for source-added signal, meanwhile ignore dragMotion signals
+        # when ready, add factory to the timeline.
+        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
+            uri = selection.data
+        else:
+            context.finish(False, False, timestamp)
+        self.__factory = self.project.sources[uri]
+        context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
+        return True
+
+    def __add_temp_source(self):
+        self.__temp_object = self.timeline.addSourceFactory(self.__factory)
+
+    def __move_temp_source(self, x, y):
+        x, y = self.__canvas.convert_from_pixels(x - 10, y)
+        return self.__temp_object.setStart(Zoomable.pixelToNs(x), snap=True)
+
+    def setProject(self, project):
+        self.project = project
+        self.timeline = project.timeline
         self.__canvas.timeline = self.timeline
         self.__canvas.zoomChanged()
 
