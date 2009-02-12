@@ -90,7 +90,10 @@ GlobalSettings.addConfigOption('mainWindowHeight',
     section="main-window",
     key="height",
     type_=int)
-
+GlobalSettings.addConfigOption('lastProjectFolder',
+    section="main-window",
+    key="last-folder",
+    default=os.path.expanduser("~"))
 GlobalSettings.addConfigSection("user-interface")
 
 def create_stock_icons():
@@ -417,6 +420,7 @@ class PitiviMainWindow(gtk.Window):
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                 gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         chooser.set_select_multiple(False)
+        chooser.set_current_folder(self.settings.lastProjectFolder)
         formats = ProjectSaver.listFormats()
         for format in formats:
             filt = gtk.FileFilter()
@@ -430,10 +434,11 @@ class PitiviMainWindow(gtk.Window):
         chooser.add_filter(default)
 
         response = chooser.run()
-
+        self.settings.lastProjectFolder = chooser.get_current_folder()
         if response == gtk.RESPONSE_OK:
             path = chooser.get_filename()
             self.pitivi.loadProject(filepath = path)
+
         chooser.destroy()
         return True
 
@@ -576,6 +581,7 @@ class PitiviMainWindow(gtk.Window):
 
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled.pptv"))
+        chooser.set_current_folder(self.settings.lastProjectFolder)
         formats = ProjectSaver.listFormats()
         for format in formats:
             filt = gtk.FileFilter()
@@ -589,6 +595,7 @@ class PitiviMainWindow(gtk.Window):
         chooser.add_filter(default)
 
         response = chooser.run()
+        self.settings.lastProjectFolder = chooser.get_current_folder()
 
         if response == gtk.RESPONSE_OK:
             gst.log("User chose a URI to save project to")
