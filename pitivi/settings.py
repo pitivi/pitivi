@@ -60,7 +60,12 @@ class ConfigError(Exception):
 
 class GlobalSettings:
     """
-    Global PiTiVi settings
+    Global PiTiVi settings.
+
+    The settings object loads settings from three different sources: the
+    global configuration, the local configuration file, and the environment.
+    Modules declare which settings they wish to access by calling the
+    addConfigOption() class method during initialization.
     """
 
     options = {}
@@ -131,6 +136,11 @@ class GlobalSettings:
         file.close()
 
     def storeSettings(self):
+        """
+        Write settings to the user's local configuration file. Note that only
+        those settings which were added with a section and a key value are
+        stored.
+        """
         self._writeSettingsToConfigurationFile()
 
     def get_local_settings_path(self, autocreate=True):
@@ -184,17 +194,53 @@ class GlobalSettings:
         return repository_path
 
     def iterAllOptions(self):
+        """
+        Iterate over all registered options
+
+        @return: an iterator which yields a tuple of (attrname, type, key,
+        environment, value for each option)
+        """
         for section, options in self.options.iteritems():
             for attrname, (type, key, environment) in self.options[section].iteritems():
                 yield section, attrname, type, key, environment, getattr(self, attrname)
 
     def iterSection(self, section):
+        """
+        Iterate over all registerd options within the given section
+
+        @param section:
+        @type section: C{str}
+        @return: an iterator which yields a tuple of (attrname, type, key,
+        environment, value) for each option
+        """
         for attrname, (type, key, environment) in self.options[section].iteritems():
             yield section, attrname, type, key, environment, getattr(self, attrname)
 
     @classmethod
     def addConfigOption(cls, attrname, type_=None, section=None, key=None, 
         environment=None, default=None):
+        """
+        Add a configuration option. 
+        
+        This function should be called during module initialization, before
+        the config file is read. Only options registered before the config
+        file is read will be loaded. 
+
+        see pitivi/ui/mainwindow.py, pitivi/ui/sourcelist.py for examples of
+        usage.
+
+        @param attrname: the attribute of this class which represents the option
+        @type attrname: C{str}
+        @param type_: the type of the attribute. not necessary if default is
+        given.
+        @type type_: a builtin or class
+        @param section: The section of the config file under which this option is
+        saved. This section must have been added with addConfigSection(). Not
+        necessary if key is not given.
+        @param key: the key under which this option is to be saved. Can be none if
+        this option should not be saved.
+        @type key: C{str}
+        """
         if section and not section in cls.options:
             raise ConfigError("You must add the section \"%s\" first." %
                 section)
@@ -220,6 +266,12 @@ class GlobalSettings:
 
     @classmethod
     def addConfigSection(cls, section):
+        """
+        Add a section to the local config file.
+
+        @param section: The section name. This section must not already exist.
+        @type section: C{str}
+        """
         if section in cls.options:
             raise ConfigError("Duplicate Section \"%s\"." % section)
         cls.options[section] = {}
