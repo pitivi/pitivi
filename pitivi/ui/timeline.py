@@ -140,11 +140,12 @@ class Timeline(gtk.VBox):
                 self.unlinkSelected),
             ("LinkObj", "pitivi-link", None, None, LINK,
                 self.linkSelected),
-            ("Razor", "pitivi-split", None, None, RAZOR,
-                self.__canvas.activateRazor)
         )
+        razor = gtk.ToggleAction("Razor", None, RAZOR, "pitivi-split")
+        razor.connect("toggled", self.toggleRazor)
         self.actiongroup = gtk.ActionGroup("complextimeline")
         self.actiongroup.add_actions(actions)
+        self.actiongroup.add_action(razor)
         #self.actiongroup.set_visible(False)
         uiman = instance.PiTiVi.gui.uimanager
         uiman.insert_action_group(self.actiongroup, 0)
@@ -242,6 +243,12 @@ class Timeline(gtk.VBox):
     def linkSelected(self, unused_action):
         if self.timeline:
             self.timeline.linkSelection()
+
+    def toggleRazor(self, action):
+        if action.props.active:
+            self.__canvas.activateRazor(action)
+        else:
+            self.__canvas.deactivateRazor()
 
 ## PlayGround timeline position callback
 

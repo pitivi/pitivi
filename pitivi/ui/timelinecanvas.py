@@ -122,8 +122,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
 ## Razor Tool Implementation
 
-    def activateRazor(self, unused_action):
-        self._cursor = RAZOR_CURSOR
+    def activateRazor(self, action):
         self.__razor_sigid = self.connect("button_press_event", 
             self.__razorClickedCb)
         self.__razor_release_sigid = self.connect("button_release_event",
@@ -131,7 +130,14 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         self.__razor_motion_sigid = self.connect("motion_notify_event",
             self.__razorMovedCb)
         self.__razor.props.visibility = goocanvas.ITEM_VISIBLE
+        self.__action = action
         return True
+
+    def deactivateRazor(self):
+        self.disconnect(self.__razor_sigid)
+        self.disconnect(self.__razor_motion_sigid)
+        self.disconnect(self.__razor_release_sigid)
+        self.__razor.props.visibility = goocanvas.ITEM_INVISIBLE
 
     def __razorMovedCb(self, canvas, event):
         x, y = self.convert_from_pixels(event.x, event.y)
@@ -139,12 +145,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         return True
 
     def __razorReleasedCb(self, unused_canvas, event):
-        self._cursor = ARROW
-        event.window.set_cursor(ARROW)
-        self.disconnect(self.__razor_sigid)
-        self.disconnect(self.__razor_motion_sigid)
-        self.disconnect(self.__razor_release_sigid)
-        self.__razor.props.visibility = goocanvas.ITEM_INVISIBLE
+        self.__action.props.active = False
 
         x, y = self.convert_from_pixels(event.x, event.y)
         bounds = goocanvas.Bounds(x, y, x, y)
