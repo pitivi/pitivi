@@ -37,6 +37,7 @@ from elements.arraysink import ArraySink
 from signalinterface import Signallable
 from ui.zoominterface import Zoomable
 import stream
+from pitivi.settings import GlobalSettings
 
 (MEDIA_TYPE_NONE,
  MEDIA_TYPE_AUDIO,

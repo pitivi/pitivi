@@ -95,7 +95,6 @@ GlobalSettings.addConfigOption('lastProjectFolder',
     key="last-folder",
     environment="PITIVI_PROJECT_FOLDER",
     default=os.path.expanduser("~"))
-GlobalSettings.addConfigSection("user-interface")
 
 def create_stock_icons():
     """ Creates the pitivi-only stock icons """
