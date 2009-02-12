@@ -50,7 +50,10 @@ def get_env_by_type(type_, var):
     if type_ == bool:
         return get_bool_env(var)
     else:
-        return type_(os.getenv(var))
+        value = os.getenv(var)
+        if value:
+            return type_(os.getenv(var))
+        return None
 
 class ConfigError(Exception):
     pass
@@ -116,7 +119,10 @@ class GlobalSettings:
             if not self._config.has_section(section):
                 self._config.add_section(section)
             if key:
-                self._config.set(section, key, str(value))
+                if value is not None:
+                    self._config.set(section, key, str(value))
+                else:
+                    self._config.remove_option(section, key)
         try:
             file = open(pitivi_conf_file_path, 'w')
         except IOError, OSError:
@@ -202,7 +208,7 @@ class GlobalSettings:
         if environment and environment in cls.environment:
             raise ConfigError("Settings environment varaible \"%s\" is"
                 "already in use.")
-        if not (type_ or default):
+        if not type_ and default == None:
             raise ConfigError("Settings attribute \"%s\" has must have a"
                 " type or a default." % attrname)
         if not type_:
