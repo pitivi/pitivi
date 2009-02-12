@@ -47,9 +47,7 @@ def get_bool_env(var):
         return bool(value)
 
 def get_env_by_type(type_, var):
-    if type_ == None:
-        return None
-    elif type_ == bool:
+    if type_ == bool:
         return get_bool_env(var)
     else:
         return type_(os.getenv(var))
@@ -87,19 +85,25 @@ class GlobalSettings:
         except ParsingError:
             return
 
-        for section, attrname, key, env, value in self.iterAllOptions(): 
+        for (section, attrname, type, key, env, 
+            value) in self.iterAllOptions(): 
             if not self._config.has_section(section):
                 continue
             if key and self._config.has_option(section, key):
-                setattr(self, attrname, self._config.get(section, key))
+                if type == int:
+                    value = self._config.getint(section, key)
+                elif type == float:
+                    value = self._config.getfloat(section, key)
+                elif type == bool:
+                    value = self._config.getboolean(section, key)
+                else:
+                    value = self._config.get(section, key)
+                setattr(self, attrname, value)
 
     def _readSettingsFromEnvironmentVariables(self):
-        print list(self.iterAllOptions())
-        for section, attrname, key, env, value in self.iterAllOptions():
-            print "got here"
-            valuetype = type(value)
-
-            var = get_env_by_type(type(value), env)
+        for (section, attrname, type, key, env, 
+            value) in self.iterAllOptions():
+            var = get_env_by_type(type, env)
             if var is not None:
                 setattr(self, attrname, value)
 
@@ -107,7 +111,8 @@ class GlobalSettings:
         pitivi_path = self.get_local_settings_path()
         pitivi_conf_file_path = os.path.join(pitivi_path, "pitivi.conf")
         
-        for section, attrname, key, env_var, value in self.iterAllOptions():
+        for (section, attrname, type, key, env_var, 
+            value) in self.iterAllOptions():
             if not self._config.has_section(section):
                 self._config.add_section(section)
             if key:
@@ -174,28 +179,37 @@ class GlobalSettings:
 
     def iterAllOptions(self):
         for section, options in self.options.iteritems():
-            for attrname, (key, environment) in self.options[section].iteritems():
-                yield section, attrname, key, environment, getattr(self, attrname)
+            for attrname, (type, key, environment) in self.options[section].iteritems():
+                yield section, attrname, type, key, environment, getattr(self, attrname)
 
     def iterSection(self, section):
-        for attrname, (key, environment) in self.options[section].iteritems():
-            yield section, attrname, key, environment, getattr(self, attrname)
+        for attrname, (type, key, environment) in self.options[section].iteritems():
+            yield section, attrname, type, key, environment, getattr(self, attrname)
 
     @classmethod
-    def addConfigOption(cls, section,  attrname, key=None, environment=None, default=None):
-        print "add option"
-        if not section in cls.options:
+    def addConfigOption(cls, attrname, type_=None, section=None, key=None, 
+        environment=None, default=None):
+        if section and not section in cls.options:
             raise ConfigError("You must add the section \"%s\" first." %
                 section)
-        if key in cls.options[section]:
+        if key and not section:
+            raise ConfigError("You must specify a section for key \"%s\"" %
+                key)
+        if section and key in cls.options[section]:
             raise ConfigError("Option \"%s\" is already in use.")
         if hasattr(cls, attrname):
             raise ConfigError("Settings attribute \"%s\" is already in use.")
         if environment and environment in cls.environment:
             raise ConfigError("Settings environment varaible \"%s\" is"
                 "already in use.")
+        if not (type_ or default):
+            raise ConfigError("Settings attribute \"%s\" has must have a"
+                " type or a default." % attrname)
+        if not type_:
+            type_ = type(default)
         setattr(cls, attrname, default)
-        cls.options[section][attrname] = key, environment 
+        if section and key:
+            cls.options[section][attrname] = type_, key, environment 
         cls.environment.add(environment)
 
     @classmethod
