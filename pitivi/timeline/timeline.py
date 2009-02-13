@@ -507,41 +507,56 @@ class Timeline(object ,Signallable):
 
         self.edges.removeTimelineObject(obj)
 
-    # FIXME: find a better name?
-    def addFactory(self, factory):
-        input = factory.getInputStreams()
-        output = factory.getOutputStreams()
-        # mapping from streams -> tracks
-        # FIXME: should this be an instance variable?
-        # FIXME: this will break when we have multiple tracks of the same
-        # type.
-        tracks = dict(((type(track.stream), track) for track in self.tracks))
+    def addSourceFactory(self, factory, stream_map=None):
+        output_streams = factory.getOutputStreams()
+        if not output_streams:
+            raise TimelineError()
 
-        if not input:
-            track_object_klass = SourceTrackObject
-        else:
-            raise NotImplementedError
+        if stream_map is None:
+            stream_map = self.getSourceFactoryStreamMap(factory)
+            if len(stream_map) < len(output_streams):
+                # we couldn't assign each stream to a track automatically,
+                # error out and require the caller to pass a stream_map
+                raise TimelineError()
 
         timeline_object = TimelineObject(factory)
-
-        for stream_ in output:
-            stream_klass = type(stream_)
-            # wait wait wait...why does this even work???
-            track_object = track_object_klass(factory)
+        start = 0
+        for stream, track in stream_map.iteritems():
+            start = max(start, track.duration)
+            track_object = SourceTrackObject(factory)
+            track.addTrackObject(track_object)
             timeline_object.addTrackObject(track_object)
 
-            if stream_klass not in tracks:
-                track = Track(stream_)
-                tracks[stream_klass] = track
-                self.addTrack(track)
-            else:
-                track = tracks[stream_klass]
-            track.addTrackObject(track_object)
-
+        timeline_object.start = start
         self.addTimelineObject(timeline_object)
 
-        # in case the caller wants it
-        return timeline_object
+    def getSourceFactoryStreamMap(self, factory):
+        mapped_tracks = []
+        timeline_object = TimelineObject(factory)
+
+        stream_map = {}
+        output_streams = factory.getOutputStreams()
+        for output_stream in output_streams:
+            track = self._getTrackForFactoryStream(factory,
+                    output_stream, mapped_tracks)
+            if track is None:
+                # couldn't find a track for this stream
+                continue
+
+            stream_map[output_stream] = track
+
+            # we don't want to reuse the same track for different streams coming
+            # from the same source
+            mapped_tracks.append(track)
+
+        return stream_map
+
+    def _getTrackForFactoryStream(self, factory, stream, mapped_tracks):
+        for track in self.tracks:
+            if track not in mapped_tracks and track.stream.isCompatible(stream):
+                return track
+
+        return None
 
     def setSelectionToObj(self, obj, mode):
         self.setSelectionTo(set([obj]), mode)

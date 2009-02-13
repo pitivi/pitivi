@@ -27,6 +27,7 @@ from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
 from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
+from pitivi.factories.base import SourceFactory
 
 from common import SignalMonitor
 
@@ -35,7 +36,7 @@ class TimelineSignalMonitor(SignalMonitor):
         SignalMonitor.__init__(self, track_object, 'start-changed',
                 'duration-changed', 'in-point-changed', 'media-duration-changed')
 
-class StubFactory(object):
+class StubFactory(SourceFactory):
     duration = 42 * gst.SECOND
 
     def makeBin(self, stream=None):
@@ -538,3 +539,61 @@ class TestTimelineEdges(TestCase):
 
         # match end-right
         self.failUnlessEqual(self.timeline_edges.snapToEdge(3000), (2000, 1000))
+
+class TestTimelineAddFactory(TestCase):
+    def setUp(self):
+        self.audio_stream1 = AudioStream(gst.Caps('audio/x-raw-int'))
+        self.audio_stream2 = AudioStream(gst.Caps('audio/x-raw-int'))
+        self.audio_stream3 = AudioStream(gst.Caps('audio/x-raw-int'))
+        self.video_stream1 = VideoStream(gst.Caps('video/x-raw-rgb'))
+        self.audio_track1 = Track(self.audio_stream1)
+        self.audio_track2 = Track(self.audio_stream1)
+        self.video_track1 = Track(self.video_stream1)
+        self.video_track2 = Track(self.video_stream1)
+        self.timeline = Timeline()
+        self.timeline.addTrack(self.audio_track1)
+        self.timeline.addTrack(self.audio_track2)
+        self.timeline.addTrack(self.video_track1)
+        self.timeline.addTrack(self.video_track2)
+
+        self.factory = StubFactory()
+
+    def testNoStreams(self):
+        self.failUnlessRaises(TimelineError, self.timeline.addSourceFactory, self.factory)
+
+    def testAudioOnly(self):
+        self.factory.addOutputStream(self.audio_stream1)
+        self.timeline.addSourceFactory(self.factory)
+        self.failUnlessEqual(len(self.audio_track1.track_objects), 2)
+        self.failUnlessEqual(len(self.audio_track2.track_objects), 1)
+        self.failUnlessEqual(len(self.video_track1.track_objects), 1)
+        self.failUnlessEqual(len(self.video_track2.track_objects), 1)
+
+    def testVideoOnly(self):
+        self.factory.addOutputStream(self.video_stream1)
+        self.timeline.addSourceFactory(self.factory)
+        self.failUnlessEqual(len(self.audio_track1.track_objects), 1)
+        self.failUnlessEqual(len(self.audio_track2.track_objects), 1)
+        self.failUnlessEqual(len(self.video_track1.track_objects), 2)
+        self.failUnlessEqual(len(self.video_track2.track_objects), 1)
+
+    def test1Audio1Video(self):
+        self.factory.addOutputStream(self.audio_stream1)
+        self.factory.addOutputStream(self.video_stream1)
+        self.timeline.addSourceFactory(self.factory)
+        self.failUnlessEqual(len(self.audio_track1.track_objects), 2)
+        self.failUnlessEqual(len(self.audio_track2.track_objects), 1)
+        self.failUnlessEqual(len(self.video_track1.track_objects), 2)
+        self.failUnlessEqual(len(self.video_track2.track_objects), 1)
+
+    def testConflictNotEnoughTracks(self):
+        # 3 audio streams, only 2 audio tracks in the timeline
+        self.factory.addOutputStream(self.audio_stream1)
+        self.factory.addOutputStream(self.audio_stream2)
+        self.factory.addOutputStream(self.audio_stream3)
+        self.failUnlessRaises(TimelineError, self.timeline.addSourceFactory,
+                self.factory)
+        self.failUnlessEqual(len(self.audio_track1.track_objects), 1)
+        self.failUnlessEqual(len(self.audio_track2.track_objects), 1)
+        self.failUnlessEqual(len(self.video_track1.track_objects), 1)
+        self.failUnlessEqual(len(self.video_track2.track_objects), 1)

@@ -167,7 +167,7 @@ class Timeline(gtk.VBox):
         selection, targetType, timestamp):
         gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
             (targetType, selection.data))
-        # FIXME: need to handle other types
+        # FIXME: need to handle other typeSources
         if targetType == dnd.TYPE_PITIVI_FILESOURCE:
             uri = selection.data
         else:
@@ -177,7 +177,7 @@ class Timeline(gtk.VBox):
 
         # FIXME: the UI should be smart here and figure out which track the
         # source was dragged onto
-        instance.PiTiVi.current.timeline.addFactory(factory)
+        instance.PiTiVi.current.timeline.addSourceFactory(factory)
         context.finish(True, False, timestamp)
         instance.PiTiVi.playground.switchToTimeline()
 
