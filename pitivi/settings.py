@@ -21,7 +21,7 @@
 # Boston, MA 02111-1307, USA.
 
 """
-Multimedia settings
+Settings
 """
 
 import os
@@ -47,6 +47,16 @@ def get_bool_env(var):
         return bool(value)
 
 def get_env_by_type(type_, var):
+    """
+    Returns the environement variable.
+
+    @arg type_: The type of the variable
+    @type type_: C{type}
+    @arg var: The name of the environment variable.
+    @type var: C{str}
+    @returns: The content of the environment variable, or C{None} if it doesn't
+    exist.
+    """
     if type_ == bool:
         return get_bool_env(var)
     else:
@@ -66,6 +76,9 @@ class GlobalSettings:
     global configuration, the local configuration file, and the environment.
     Modules declare which settings they wish to access by calling the
     addConfigOption() class method during initialization.
+
+    @cvar options: A dictionnary of available settings.
+    @cvar environment: A list of the controlled environment variables.
     """
 
     options = {}
@@ -93,8 +106,8 @@ class GlobalSettings:
         except ParsingError:
             return
 
-        for (section, attrname, type, key, env, 
-            value) in self.iterAllOptions(): 
+        for (section, attrname, type, key, env,
+            value) in self.iterAllOptions():
             if not self._config.has_section(section):
                 continue
             if key and self._config.has_option(section, key):
@@ -109,7 +122,7 @@ class GlobalSettings:
                 setattr(self, attrname, value)
 
     def _readSettingsFromEnvironmentVariables(self):
-        for (section, attrname, type, key, env, 
+        for (section, attrname, type, key, env,
             value) in self.iterAllOptions():
             var = get_env_by_type(type, env)
             if var is not None:
@@ -118,8 +131,8 @@ class GlobalSettings:
     def _writeSettingsToConfigurationFile(self):
         pitivi_path = self.get_local_settings_path()
         pitivi_conf_file_path = os.path.join(pitivi_path, "pitivi.conf")
-        
-        for (section, attrname, type, key, env_var, 
+
+        for (section, attrname, type, key, env_var,
             value) in self.iterAllOptions():
             if not self._config.has_section(section):
                 self._config.add_section(section)
@@ -146,15 +159,15 @@ class GlobalSettings:
     def get_local_settings_path(self, autocreate=True):
         """
         Compute the absolute path to local settings directory
-        
+
         @param autocreate: create the path if missing
         @return: the plugin repository path
         """
-        
+
         pitivi_path = os.path.expanduser("~/.pitivi")
         if autocreate and not os.path.exists(pitivi_path):
             os.mkdir(pitivi_path)
-        
+
         return pitivi_path
 
     def get_local_plugin_path(self, autocreate=True):
@@ -217,14 +230,14 @@ class GlobalSettings:
             yield section, attrname, type, key, environment, getattr(self, attrname)
 
     @classmethod
-    def addConfigOption(cls, attrname, type_=None, section=None, key=None, 
+    def addConfigOption(cls, attrname, type_=None, section=None, key=None,
         environment=None, default=None):
         """
-        Add a configuration option. 
-        
+        Add a configuration option.
+
         This function should be called during module initialization, before
         the config file is read. Only options registered before the config
-        file is read will be loaded. 
+        file is read will be loaded.
 
         see pitivi/ui/mainwindow.py, pitivi/ui/sourcelist.py for examples of
         usage.
@@ -261,7 +274,7 @@ class GlobalSettings:
             type_ = type(default)
         setattr(cls, attrname, default)
         if section and key:
-            cls.options[section][attrname] = type_, key, environment 
+            cls.options[section][attrname] = type_, key, environment
         cls.environment.add(environment)
 
     @classmethod
