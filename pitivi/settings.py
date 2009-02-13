@@ -68,7 +68,7 @@ def get_env_by_type(type_, var):
 class ConfigError(Exception):
     pass
 
-class GlobalSettings:
+class GlobalSettings(object):
     """
     Global PiTiVi settings.
 
