@@ -35,7 +35,6 @@ pitivi_PYTHON = \
 	sourcelist.py 	\
 	stream.py	\
 	threads.py	\
-	thumbnailer.py	\
 	utils.py
 
 BUILT_SOURCES=configure.py

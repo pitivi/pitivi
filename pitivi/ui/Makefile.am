@@ -10,7 +10,6 @@ ui_PYTHON =			\
 	filelisterrordialog.py	\
 	glade.py		\
 	gstwidget.py		\
-	list.py			\
 	mainwindow.py		\
 	netstream_managerdialog.py \
 	pathwalker.py		\
@@ -27,7 +26,6 @@ ui_PYTHON =			\
 	timeline.py		\
 	track.py		\
 	trackobject.py		\
-	transitionlist.py	\
 	view.py			\
 	viewer.py		\
 	videofxlist.py		\
