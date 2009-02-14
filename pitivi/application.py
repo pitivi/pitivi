@@ -59,6 +59,8 @@ class Pitivi(object, Loggable, Signallable):
     Pitivi's main application class.
 
     Signals:
+     - C{new-project} : A new C{Project} is loaded and ready to use.
+
      - C{new-project-loading} : Pitivi is attempting to load a new project.
      - C{new-project-loaded} : A new L{Project} has been loaded, and the UI should refresh it's view.
      - C{new-project-failed} : A new L{Project} failed to load.
@@ -80,6 +82,8 @@ class Pitivi(object, Loggable, Signallable):
     """
 
     __signals__ = {
+        "new-project" : ["project"],
+
         "new-project-loading" : ["project"],
         "new-project-loaded" : ["project"],
         "closing-project" : ["project"],
@@ -125,10 +129,32 @@ class Pitivi(object, Loggable, Signallable):
 
     #{ Project-related methods
 
+    def addProject(self, project=None, uri=None):
+        """ Add the given L{Project} to the list of projects controlled
+        by the application.
 
+        If no project is given, then the application will attempt to load
+        the project contained at the given C{URI}.
 
+        The 'C{new-project}' signal will be emitted if the project is properly
+        added.
 
+        @arg project: The project to add.
+        @type project: L{Project}
+        @arg uri: The location of the project to load.
+        @type uri: C{URI}
+        """
+        if project == None and uri == None:
+            raise Exception("No project or URI given")
+        if uri != None:
+            if project != None:
+                raise Exception("Only provide either a project OR a URI")
+            project = load_project(uri)
 
+        if project in self.projects:
+            raise Exception("Project already controlled")
+        self.projects.append(project)
+        self.emit("new-project", project)
 
     ## old implementations
 
