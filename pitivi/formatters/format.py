@@ -23,6 +23,8 @@
 High-level tools for using Formatters
 """
 
+# FIXME : We need a registry of all available formatters
+
 def load_project(uri, formatter=None):
     """
     Load the project from the given location.
@@ -54,7 +56,7 @@ def save_project(project, uri, formatter=None):
     @type formatter: C{Formatter}
     @param formatter: The C{Formatter} to use to store the project if specified.
     If it is not specified, then it will be saved at its original format.
-    @raise FormatterStoreError: If the file couldn't be properly stored.
+    @raise FormatterSaveError: If the file couldn't be properly stored.
     @return: Whether the file was successfully stored
     @rtype: L{bool}
     """

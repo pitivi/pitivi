@@ -31,7 +31,7 @@ class FormatterError(Exception):
 class FormatterLoadError(FormatterError):
     pass
 
-class FormatterStoreError(FormatterError):
+class FormatterSaveError(FormatterError):
     pass
 
 # FIXME : How do we handle interaction with the UI ??
@@ -43,11 +43,11 @@ class Formatter(object):
     Provides convenience methods for storing and loading
     Project files.
 
-    @cvar description: Description of the formatter.
+    @cvar description: Description of the format.
     @type description: C{str}
     """
 
-    description = "Base formatter"
+    description = "Description of the format"
 
     def loadProject(self, location):
         """
@@ -71,7 +71,7 @@ class Formatter(object):
         @type location: L{str}
         @param location: The location where to store the project. Needs to be
         an absolute URI.
-        @raise FormatterStoreError: If the file couldn't be properly stored.
+        @raise FormatterSaveError: If the file couldn't be properly stored.
         """
         raise FormatterSaveError("No Saving feature")
 
@@ -86,8 +86,18 @@ class Formatter(object):
         """
         raise NotImplementedError
 
+class LoadOnlyFormatter(Formatter):
+    def saveProject(self, project, location):
+        raise FormatterSaveError("No Saving feature")
+
+
+class SaveOnlyFormatter(Formatter):
+    def saveProject(self, project, location):
+        raise FormatterSaveError("No Saving feature")
+
+
 class DefaultFormatter(Formatter):
 
-    description = "Default Formatter"
+    description = "PiTiVi default file format"
 
     pass
