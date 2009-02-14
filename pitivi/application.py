@@ -24,11 +24,13 @@ Main application
 """
 import os
 import gobject
+gobject.threads_init()
 import gst
+from pitivigstutils import patch_gst_python
+patch_gst_python()
 import check
 import instance
 import device
-from pitivigstutils import patch_gst_python
 from playground import PlayGround
 from project import Project, file_is_project
 from effects import Magician
@@ -71,7 +73,7 @@ class Pitivi(object, Signallable):
     @type settings: L{GlobalSettings}.
     @ivar projects: List of used projects
     @type projects: List of L{Project}.
-    @ivar current: Currently loaded project.
+    @ivar current: Currently used project.
     @type current: L{Project}.
     """
 
@@ -90,10 +92,6 @@ class Pitivi(object, Signallable):
         """
         gst.log("starting up pitivi...")
 
-        # patch gst-python for new behaviours
-        # FIXME : this shouldn't be in this class
-        patch_gst_python()
-
         # store ourself in the instance global
         if instance.PiTiVi:
             raise RuntimeWarning(
@@ -101,8 +99,10 @@ class Pitivi(object, Signallable):
                 % APPNAME)
         instance.PiTiVi = self
 
+        self.projects = []
+
         # get settings
-        self._settings = GlobalSettings()
+        self.settings = GlobalSettings()
         self.threads = ThreadMaster()
         #self.screencast = False
 
@@ -111,32 +111,19 @@ class Pitivi(object, Signallable):
             self.settings.get_plugin_settings_path())
 
         self.playground = PlayGround()
-        self._current = Project(_("New Project"))
+        self.current = Project(_("New Project"))
         self.effects = Magician()
 
         self.deviceprobe = device.get_probe()
 
-    ## properties
+    #{ Project-related methods
 
-    def _get_settings(self):
-        return self._settings
 
-    def _set_settings(self, settings):
-        self._settings = settings
-        # FIXME : we could notify this
-    settings = property(_get_settings, _set_settings,
-                        doc="The project-wide output settings")
 
-    def _get_current(self):
-        return self._current
 
-    def _set_current(self, project):
-        self._current = project
-        # FIXME : we could notify this
-    current = property(_get_current, _set_current,
-                       doc="The currently used Project")
 
-    ## public methods
+
+    ## old implementations
 
     def loadProject(self, uri=None, filepath=None):
         """ Load the given file through it's uri or filepath """
@@ -193,6 +180,8 @@ class Pitivi(object, Signallable):
             self.current = project
             self.emit("new-project-loaded", self.current)
 
+    #{ Shutdown methods
+
     def shutdown(self):
         """
         Close PiTiVi.
@@ -208,11 +197,12 @@ class Pitivi(object, Signallable):
             return False
         self.threads.stopAllThreads()
         self.playground.shutdown()
-        self._settings.storeSettings()
+        self.settings.storeSettings()
         instance.PiTiVi = None
         self.emit("shutdown")
         return True
 
+    #}
 
 
 class InteractivePitivi(Pitivi):
