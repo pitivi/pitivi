@@ -109,7 +109,7 @@ class Pipeline(object, Signallable):
     @ivar factories: The ObjectFactories handled by the Pipeline.
     @type factories: List of L{ObjectFactory}
     @ivar bins: The gst.Bins used, FOR ACTION USAGE ONLY
-    @type bins: Dictionnary of L{ObjectFactory} to L{gst.Bin}
+    @type bins: Dictionnary of L{ObjectFactory} to C{gst.Bin}
     @ivar tees: The tees used after producers, FOR ACTION USAGE ONLY
     @type tees: Dictionnary of (L{SourceFactory},L{MultimediaStream}) to C{gst.Element}
     @ivar queues: The queues used before consumers, FOR ACTION USAGE ONLY
@@ -448,7 +448,7 @@ class Pipeline(object, Signallable):
 
     def getBinForFactoryStream(self, factory, stream=None, automake=False):
         """
-        Fetches the L{gst.Bin} currently used in the C{gst.Pipeline} for the
+        Fetches the C{gst.Bin} currently used in the C{gst.Pipeline} for the
         given L{ObjectFactory}. If no bin exists for the given factory and
         automake is True, one is created.
 
@@ -456,17 +456,17 @@ class Pipeline(object, Signallable):
         @type factory: L{ObjectFactory}
         @param stream: stream to create a bin for
         @type stream: L{MultimediaStream} derived instance
-        @param automake: If set to True, then if there is not a L{gst.Bin}
+        @param automake: If set to True, then if there is not a C{gst.Bin}
         already created for the given factory, one will be created, added to the
         list of controlled bins and added to the C{gst.Pipeline}.
         @raise PipelineError: If the factory isn't used in this pipeline.
-        @raise PipelineError: If a source L{gst.Bin} needed to be created and the
+        @raise PipelineError: If a source C{gst.Bin} needed to be created and the
         L{Pipeline} was not in the READY or NULL state.
-        @raise PipelineError: If a L{gst.Bin} needed to be created but the
-        creation of that c{gst.Bin} failed.
+        @raise PipelineError: If a C{gst.Bin} needed to be created but the
+        creation of that C{gst.Bin} failed.
         @return: The bin corresponding to the given factory or None if there
         are none for the given factory.
-        @rtype: L{gst.Bin}
+        @rtype: C{gst.Bin}
         """
         gst.debug("factory:%r , automake:%r" % (factory, automake))
         stream_entry = self._getStreamEntryForFactoryStream(factory,
