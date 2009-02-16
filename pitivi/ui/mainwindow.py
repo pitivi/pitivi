@@ -291,7 +291,11 @@ class PitiviMainWindow(gtk.Window):
         # timeline and project tabs
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
-        self.timeline = Timeline()
+        
+        self.timeline = Timeline(self.pitivi.current, self.uimanager)
+        self.timeline.connect("drag-data-received", self._timelineDragDataReceivedCb)
+        self.timeline.connect("drag-motion", self._timelineDragMotionCb)
+        
         vpaned.pack2(self.timeline, resize=True, shrink=False)
         hpaned = gtk.HPaned()
         vpaned.pack1(hpaned, resize=False, shrink=True)
@@ -538,8 +542,9 @@ class PitiviMainWindow(gtk.Window):
 
     ## PiTiVi main object callbacks
 
-    def _newProjectLoadedCb(self, unused_pitivi, unused_project):
+    def _newProjectLoadedCb(self, unused_pitivi, project):
         gst.log("A NEW project is loaded, update the UI!")
+        self.timeline.setTimeline(project.timeline)
         # ungrey UI
         self.set_sensitive(True)
 
@@ -668,6 +673,27 @@ class PitiviMainWindow(gtk.Window):
         pipeline.pause()
 
         context.finish(True, False, ctime)
+    
+    def _timelineDragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
+        # FIXME: temporarily add source to timeline, and put it in drag mode
+        # so user can see where it will go
+        gst.info("SimpleTimeline x:%d , source would go at %d" % (x, 0))
+
+    def _timelineDragDataReceivedCb(self, unused_layout, context, x, y, 
+        selection, targetType, timestamp):
+        gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
+            (targetType, selection.data))
+        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
+            uri = selection.data
+        else:
+            context.finish(False, False, timestamp)
+        factory = self.pitivi.current.sources[uri]
+
+        # FIXME: the UI should be smart here and figure out which track the
+        # source was dragged onto
+        self.pitivi.current.timeline.addSourceFactory(factory)
+        context.finish(True, False, timestamp)
+
 
     def _getTimelinePipeline(self):
         # FIXME: the timeline pipeline should probably be moved in project

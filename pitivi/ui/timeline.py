@@ -25,7 +25,6 @@ Timeline widgets for the complex view
 
 import gtk
 import gst
-import pitivi.instance as instance
 
 from pitivi.bin import SmartTimelineBin
 from pitivi.timeline.source import TimelineFileSource
@@ -93,13 +92,13 @@ class Timeline(gtk.VBox):
     # from zoomed out to zoomed in
 
 
-    def __init__(self):
+    def __init__(self, project, ui_manager):
         gst.log("Creating Timeline")
         gtk.VBox.__init__(self)
 
-        self.timeline = instance.PiTiVi.current.timeline
-        self.instance = instance.PiTiVi
-        self.playground = instance.PiTiVi.playground
+        self.project = project
+        self.timeline = project.timeline
+        self.ui_manager = ui_manager
 
         self._createUI()
 
@@ -124,9 +123,6 @@ class Timeline(gtk.VBox):
         self.drag_dest_set(gtk.DEST_DEFAULT_DROP | gtk.DEST_DEFAULT_MOTION, 
             [dnd.FILESOURCE_TUPLE],
             gtk.gdk.ACTION_COPY)
-        self.connect("drag-data-received", self._dragDataReceivedCb)
-        self.connect("drag-leave", self._dragLeaveCb)
-        self.connect("drag-motion", self._dragMotionCb)
 
         # toolbar actions
         actions = (
@@ -147,58 +143,13 @@ class Timeline(gtk.VBox):
         self.actiongroup.add_actions(actions)
         self.actiongroup.add_action(razor)
         #self.actiongroup.set_visible(False)
-        uiman = instance.PiTiVi.gui.uimanager
-        uiman.insert_action_group(self.actiongroup, 0)
-        uiman.add_ui_from_string(ui)
+        self.ui_manager.insert_action_group(self.actiongroup, 0)
+        self.ui_manager.add_ui_from_string(ui)
 
-## Drag and Drop callbacks
-
-    def _dragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
-
-        # FIXME: temporarily add source to timeline, and put it in drag mode
-        # so user can see where it will go
-        gst.info("SimpleTimeline x:%d , source would go at %d" % (x, 0))
-
-    def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
-        gst.info("SimpleTimeline")
-        #TODO: remove temp source from timeline
-
-    def _dragDataReceivedCb(self, unused_layout, context, x, y, 
-        selection, targetType, timestamp):
-        gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
-            (targetType, selection.data))
-        # FIXME: need to handle other typeSources
-        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
-            uri = selection.data
-        else:
-            context.finish(False, False, timestamp)
-        # FIXME: access of instance, and playground
-        factory = instance.PiTiVi.current.sources[uri]
-
-        # FIXME: the UI should be smart here and figure out which track the
-        # source was dragged onto
-        instance.PiTiVi.current.timeline.addSourceFactory(factory)
-        context.finish(True, False, timestamp)
-        instance.PiTiVi.playground.switchToTimeline()
-
-## Instance callbacks
-
-    instance = receiver()
-
-    @handler(instance, "new-project-loading")
-    def _newProjectLoadingCb(self, unused_inst, project):
-        self.timeline = project.timeline
+    def setTimeline(self, timeline):
+        self.timeline = timeline
         self.__canvas.timeline = self.timeline
-
-    @handler(instance, "new-project-loaded")
-    def _newProjectLoadedCb(self, unused_inst, unused_project):
-        # force set deadband when new timeline loads
         self.__canvas.zoomChanged()
-
-    @handler(instance, "new-project-failed")
-    def _newProjectFailedCb(self, unused_inst, unused_reason, unused_uri):
-        self.timeline = None
-        self.__canvas.timeline = None
 
 ## Timeline callbacks
 
@@ -250,12 +201,3 @@ class Timeline(gtk.VBox):
         else:
             self.__canvas.deactivateRazor()
 
-## PlayGround timeline position callback
-
-    playground = receiver()
-
-    @handler(playground, "position")
-    def _positionCb(self, unused_playground, smartbin, value):
-        if isinstance(smartbin, SmartTimelineBin):
-            # for the time being we only inform the ruler
-            self.ruler.timelinePositionChanged(value, 0)
