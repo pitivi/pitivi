@@ -17,6 +17,7 @@ pitivi_PYTHON = \
 	configure.py 	\
 	device.py	\
 	discoverer.py 	\
+	encode.py	\
 	effects.py	\
 	instance.py 	\
 	pipeline.py	\

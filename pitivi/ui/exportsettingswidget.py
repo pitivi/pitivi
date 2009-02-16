@@ -26,7 +26,7 @@ Widget for the output settings
 import gtk
 import gst
 from glade import GladeWidget
-from pitivi.settings import encoders_muxer_compatible, muxer_can_sink_raw_audio, muxer_can_sink_raw_video
+from pitivi.encode import encoders_muxer_compatible, muxer_can_sink_raw_audio, muxer_can_sink_raw_video
 from gstwidget import GstElementSettingsDialog
 
 from gettext import gettext as _
