@@ -299,6 +299,7 @@ class SinkFactory(ObjectFactory):
             raise ObjectFactoryError('unknown stream')
 
         bin = self._makeBin(input_stream)
+        bin.factory = self
         self.current_bins += 1
         self.emit('bin-created', bin)
 
@@ -306,6 +307,26 @@ class SinkFactory(ObjectFactory):
 
     def _makeBin(self, input_stream=None):
         raise NotImplementedError()
+
+    def requestNewInputStream(self, bin, input_stream):
+        """
+        Request a new input stream on a bin.
+
+        @param bin: The L{gst.Bin} on which we request a new stream.
+        @param input_stream: The new input C{MultimediaStream} we're requesting.
+        @raise ObjectFactoryStreamError: If the L{input_stream} isn't compatible
+        with one of the factory's L{input_streams}.
+        @return: The L{gst.Pad} corresponding to the newly created input stream.
+        """
+        if not hasattr(bin, 'factory') or bin.factory != self:
+            raise ObjectFactoryError("The provided bin isn't handled by this Factory")
+        for ins in self.input_streams:
+            if ins.isCompatible(input_stream):
+                return self._requestNewInputStream(bin, input_stream)
+        raise ObjectFactoryError("Incompatible stream")
+
+    def _requestNewInputStream(self, bin, input_stream):
+        raise NotImplementedError
 
     def releaseBin(self, bin):
         """
@@ -362,6 +383,7 @@ class OperationFactory(ObjectFactory):
             raise ObjectFactoryError('unknown stream')
 
         bin = self._makeBin(input_stream)
+        bin.factory = self
         self.current_bins += 1
         self.emit('bin-created', bin)
 
@@ -369,6 +391,26 @@ class OperationFactory(ObjectFactory):
 
     def _makeBin(self, input_stream=None, output_stream=None):
         raise NotImplementedError()
+
+    def requestNewInputStream(self, bin, input_stream):
+        """
+        Request a new input stream on a bin.
+
+        @param bin: The L{gst.Bin} on which we request a new stream.
+        @param input_stream: The new input C{MultimediaStream} we're requesting.
+        @raise ObjectFactoryStreamError: If the L{input_stream} isn't compatible
+        with one of the factory's L{input_streams}.
+        @return: The L{gst.Pad} corresponding to the newly created input stream.
+        """
+        if not hasattr(bin, 'factory') or bin.factory != self:
+            raise ObjectFactoryError("The provided bin isn't handled by this Factory")
+        for ins in self.input_streams:
+            if ins.isCompatible(input_stream):
+                return self._requestNewInputStream(bin, input_stream)
+        raise ObjectFactoryError("Incompatible stream")
+
+    def _requestNewInputStream(self, bin, input_stream):
+        raise NotImplementedError
 
     def releaseBin(self, bin):
         """
