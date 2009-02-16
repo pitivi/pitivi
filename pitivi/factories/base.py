@@ -325,6 +325,67 @@ class SinkFactory(ObjectFactory):
     def addOutputStream(self, stream):
         raise AssertionError("sink factories can't have output streams")
 
+class OperationFactory(ObjectFactory):
+    """
+    Base class for factories that process data (inputs data AND outputs data).
+    @ivar max_bins: Max number of bins the factory can create.
+    @type max_bins: C{int}
+    @ivar current_bins: Number of bin instances created and not released.
+    @type current_bins: C{int}
+    """
+
+    __signals__ = {
+        'bin-created': ['bin'],
+        'bin-released': ['bin']
+    }
+
+    def __init__(self, name='', displayname=''):
+        ObjectFactory.__init__(self, name, displayname)
+        self.max_bins = -1
+        self.current_bins = 0
+
+    def makeBin(self, input_stream=None, output_stream=None):
+        """
+        Create a bin that consumes the stream described by C{input_stream}.
+
+        If C{input_stream} and/or C{output_stream} are None, it's up to the
+        implementations to return a suitable "default" bin.
+
+        @param input_stream: A L{MultimediaStream}
+        @param output_stream: A L{MultimediaStream}
+
+        @see: L{releaseBin}
+        """
+
+        if input_stream is not None and \
+                input_stream not in self.input_streams:
+            raise ObjectFactoryError('unknown stream')
+
+        bin = self._makeBin(input_stream)
+        self.current_bins += 1
+        self.emit('bin-created', bin)
+
+        return bin
+
+    def _makeBin(self, input_stream=None, output_stream=None):
+        raise NotImplementedError()
+
+    def releaseBin(self, bin):
+        """
+        Release a bin created with L{makeBin}.
+
+        Some factories can create a limited number of bins or implement caching.
+        You should call C{releaseBin} once you are done using a bin.
+        """
+        self._releaseBin(bin)
+        self.current_bins -= 1
+        self.emit('bin-released', bin)
+
+    def _releaseBin(self, bin):
+        # default implementation does nothing
+        pass
+
+
 class LiveSourceFactory(SourceFactory):
     """
     Base class for factories that produce live streams.
