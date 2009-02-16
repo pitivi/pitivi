@@ -26,7 +26,6 @@ Widget for the complex view ruler
 import gobject
 import gtk
 import gst
-import pitivi.instance as instance
 from zoominterface import Zoomable
 from pitivi.utils import time_to_string
 
@@ -133,7 +132,6 @@ class ScaleRuler(gtk.Layout, Zoomable):
         gst.debug("button pressed at x:%d" % event.x)
         if self.getDuration() <= 0:
             gst.debug("no timeline to seek on, ignoring")
-        instance.PiTiVi.playground.switchToTimeline()
         self.pressed = True
         # seek at position
         cur = self.pixelToNs(event.x)
@@ -223,10 +221,20 @@ class ScaleRuler(gtk.Layout, Zoomable):
         self.drawBackground(context, rect)
         self.drawRuler(context, rect)
 
-    def getDuration(self):
-        if self.duration == gst.CLOCK_TIME_NONE and instance.PiTiVi.current:
-            self.duration = instance.PiTiVi.current.timeline.duration
+    def setDuration(self, duration):
+        gst.info("start/duration changed")
+        self.queue_resize()
 
+        self.duration = duration
+
+        if duration < self.position:
+            position = duration - gst.NSECOND
+        else:
+            position = self.position
+
+        self._doSeek(position, gst.FORMAT_TIME)
+
+    def getDuration(self):
         return self.duration
 
     def getPixelWidth(self):
@@ -250,19 +258,6 @@ class ScaleRuler(gtk.Layout, Zoomable):
             context.stroke()
 
         context.restore()
-
-    def setDuration(self, duration):
-        gst.info("start/duration changed")
-        self.queue_resize()
-
-        self.duration = duration
-
-        if duration < self.position:
-            position = duration - gst.NSECOND
-        else:
-            position = self.position
-
-        self._doSeek(position, gst.FORMAT_TIME)
 
     def drawRuler(self, context, allocation):
         # there are 4 lengths of tick mark:
