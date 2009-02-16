@@ -29,6 +29,7 @@ from gettext import gettext as _
 import os.path
 import gobject
 import gst
+import gst.pbutils
 import tempfile
 
 from pitivi.factories.base import ObjectFactoryStreamError
@@ -68,6 +69,7 @@ class Discoverer(object, Signallable):
         "finished_analyzing" : ["factory"],
         "ready" : None,
         "starting" : None,
+        "missing-plugins": ["uri", "detail", "description"]
         }
 
     def __init__(self):
@@ -86,6 +88,7 @@ class Discoverer(object, Signallable):
         self.error = None
         self.error_debug = None
         self.unfixed_pads = 0
+        self.missing_plugin_messages = []
 
     def _resetPipeline(self):
         # finish current, cleanup
@@ -128,6 +131,37 @@ class Discoverer(object, Signallable):
         gobject.source_remove(self.timeout_id)
         self.timeout_id = 0
     
+    def _checkMissingPlugins(self):
+        if not self.missing_plugin_messages:
+            return False
+
+        missing_plugin_details = []
+        missing_plugin_descriptions = []
+        for message in self.missing_plugin_messages:
+            detail = \
+                    gst.pbutils.missing_plugin_message_get_installer_detail(message)
+            description = \
+                    gst.pbutils.missing_plugin_message_get_description(message)
+
+            missing_plugin_details.append(detail)
+            missing_plugin_descriptions.append(description)
+
+        result = self.emit('missing-plugins', self.current_uri, 
+                missing_plugin_details, missing_plugin_descriptions)
+
+        if result == gst.pbutils.INSTALL_PLUGINS_STARTED_OK:
+            # don't emit an error yet
+            self.error = None
+            res = True
+        else:
+            if self.error is None:
+                self.error = 'Missing plugins:\n%s' % \
+                        '\n'.join(missing_plugin_descriptions)
+                self.error_debug = ''
+            res = False
+
+        return res
+
     def _finishAnalysis(self):
         """
         Call this method when the current file is analyzed
@@ -137,7 +171,7 @@ class Discoverer(object, Signallable):
             self._removeTimeout()
         
         self._resetPipeline()
-        
+        missing_plugins = self._checkMissingPlugins()
         if not self.current_streams and self.error is None:
             # EOS and no decodable streams?
             self.error = 'FIXME: no output streams'
@@ -308,7 +342,14 @@ class Discoverer(object, Signallable):
                         "redirection files.")
             
             self._finishAnalysis()
-    
+            return
+
+        if gst.pbutils.is_missing_plugin_message(message):
+            self._busMessageMissingPlugins(message)
+
+    def _busMessageMissingPlugins(self, message):
+        self.missing_plugin_messages.append(message)
+
     def _busMessageStateChangedCb(self, unused_bus, message):
         if message.src != self.pipeline:
             return

@@ -47,7 +47,8 @@ class SourceList(Serializable, Signallable):
         "not_media_file" : ["uri", "reason"],
         "tmp_is_ready": ["factory"],
         "ready" : None,
-        "starting" : None
+        "starting" : None,
+        "missing-plugins": ["uri", "detail", "description"]
         }
 
     __data_type__ = "source-list"
@@ -62,6 +63,9 @@ class SourceList(Serializable, Signallable):
         self.discoverer.connect("finished_analyzing", self._finishedAnalyzingCb)
         self.discoverer.connect("starting", self._discovererStartingCb)
         self.discoverer.connect("ready", self._discovererReadyCb)
+        self.discoverer.connect("missing-plugins",
+                self._discovererMissingPluginsCb)
+        self.missing_plugins = {}
 
     def __contains__(self, uri):
         return self.sources.__contains__(uri)
@@ -145,9 +149,11 @@ class SourceList(Serializable, Signallable):
             self.addFactory(factory.name, factory)
 
     def _notMediaFileCb(self, unused_discoverer, uri, reason, extra):
-        # callback from the discoverer's 'not_media_file' signal
-        # remove it from the list
-        self.emit("not_media_file", uri, reason, extra)
+        if self.missing_plugins.pop(uri, None) is None:
+            # callback from the discoverer's 'not_media_file' signal
+            # remove it from the list
+            self.emit("not_media_file", uri, reason, extra)
+        
         if uri in self.sources and not self.sources[uri]:
             del self.sources[uri]
         elif uri in self.tempsources:
@@ -158,6 +164,10 @@ class SourceList(Serializable, Signallable):
 
     def _discovererReadyCb(self, unused_discoverer):
         self.emit("ready")
+
+    def _discovererMissingPluginsCb(self, discoverer, uri, detail, description):
+        self.missing_plugins[uri] = True
+        return self.emit('missing-plugins', uri, detail, description)
 
     ## Serializable methods
 

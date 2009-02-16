@@ -303,6 +303,8 @@ class SourceList(gtk.VBox):
         self.project_signals.connect(
             project.sources, "not_media_file", None, self._notMediaFileCb)
         self.project_signals.connect(
+            project.sources, "missing-plugins", None, self._missingPluginsCb)
+        self.project_signals.connect(
             project.sources, "ready", None, self._sourcesStoppedImportingCb)
         self.project_signals.connect(
             project.sources, "starting", None, self._sourcesStartedImportingCb)
@@ -433,6 +435,10 @@ class SourceList(gtk.VBox):
     def _notMediaFileCb(self, unused_sourcelist, uri, reason, extra):
         """ The given uri isn't a media file """
         self.infostub.addErrors(uri, reason, extra)
+
+    def _missingPluginsCb(self, sourcelist, uri, details, descriptions):
+        #self.infostub.addErrors(uri, "Missing plugins", "\n".join(descriptions))
+        pass
 
     def _sourcesStartedImportingCb(self, unused_sourcelist):
         if not self.infostub.showing:

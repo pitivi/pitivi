@@ -26,6 +26,7 @@ Main GTK+ window
 import os
 import gtk
 import gst
+import gst.pbutils
 import time
 import gobject
 
@@ -136,6 +137,7 @@ class PitiviMainWindow(gtk.Window):
         self.pitivi = instance
         self.settings = instance.settings
         self.is_fullscreen = self.settings.mainWindowFullScreen
+        self.missing_plugins = []
 
     def load(self):
         """ load the user interface """
@@ -150,6 +152,9 @@ class PitiviMainWindow(gtk.Window):
         self.pitivi.current.connect("confirm-overwrite", self._confirmOverwriteCb)
         self.pitivi.playground.connect("error", self._playGroundErrorCb)
         self.pitivi.current.sources.connect("file_added", self._sourcesFileAddedCb)
+
+        self.pitivi.current.connect('missing-plugins',
+                self._projectMissingPluginsCb)
 
         # if no webcams available, hide the webcam action
         self.pitivi.deviceprobe.connect("device-added", self.__deviceChangeCb)
@@ -387,6 +392,27 @@ class PitiviMainWindow(gtk.Window):
         #if (len(self.sourcefactories.sourcelist.storemodel) == 1 
         #    and not len(self.pitivi.current.timeline.videocomp):
         pass
+    
+    def _projectMissingPluginsCb(self, project, uri, detail, message):
+        self.missing_plugins.append(uri)
+        return self._installPlugins(detail)
+
+    def _installPlugins(self, details):
+        context = gst.pbutils.InstallPluginsContext()
+        context.set_xid(self.window.xid)
+
+        res = gst.pbutils.install_plugins_async(details, context,
+                self._installPluginsAsyncCb)
+        return res
+
+    def _installPluginsAsyncCb(self, result):
+        missing_plugins, self.missing_plugins = self.missing_plugins, []
+        
+        if result != gst.pbutils.INSTALL_PLUGINS_SUCCESS:
+            return
+
+        gst.update_registry()
+        self.pitivi.current.sources.addUris(missing_plugins)
 
 ## UI Callbacks
 

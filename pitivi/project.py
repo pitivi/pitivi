@@ -65,7 +65,8 @@ class Project(Serializable, Signallable):
     __signals__ = {
         "save-uri-requested" : None,
         "confirm-overwrite" : ["location"],
-        "settings-changed" : None
+        "settings-changed" : None,
+        "missing-plugins": ["uri", "detail", "description"]
         }
 
     __data_type__ = "project"
@@ -87,10 +88,11 @@ class Project(Serializable, Signallable):
         self.timelinebin = None
         self.settingssigid = 0
         self._dirty = False
+        
+        self.sources.connect('missing-plugins', self._sourceListMissingPluginsCb)
 
         self.timeline = Timeline()
         # FIXME: the tracks should be loaded from the project file
-        # FIXME: streams are not used at all by a track: api wart?
         audio = AudioStream(gst.Caps('audio/x-raw-int; audio/x-raw-float'))
         track = Track(audio)
         self.timeline.addTrack(track)
@@ -279,6 +281,9 @@ class Project(Serializable, Signallable):
 
     def hasUnsavedModifications(self):
         return self._dirty
+
+    def _sourceListMissingPluginsCb(self, source_list, uri, detail, description):
+        return self.emit('missing-plugins', uri, detail, description)
 
     # Serializable methods
 
