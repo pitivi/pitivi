@@ -291,6 +291,60 @@ class GlobalSettings(object):
             raise ConfigError("Duplicate Section \"%s\"." % section)
         cls.options[section] = {}
 
+class StreamEncodeSettings(object):
+    """
+    Settings for encoding a L{MultimediaStream}.
+
+    @ivar encoder: Name of the encoder used to encode this stream. If None, no
+    encoder is used and the incoming stream will be outputted directly.
+    @type encoder: C{str}
+    @ivar input_stream: The type of streams accepted by this settings. If
+    None are specified, the stream type will be extracted from the encoder.
+    @type input_stream: L{MultimediaStream}
+    @ivar output_stream: The type of streams accepted by this settings. If
+    None are specified, the stream type will be extracted from the encoder.
+    @type output_stream: L{MultimediaStream}
+    @ivar encodersettings: Encoder-specific settings.
+    @type encodersettings: C{dict}
+    """
+
+    def __init__(self, encoder=None, input_stream=None, output_stream=None,
+                 encodersettings={}):
+        """
+        @param encoder: The encoder to use. If None, no encoder is used and the
+        incoming stream will be outputted directly.
+        @type encoder: C{str}.
+        @param input_stream: The type of streams accepted by this settings. If
+        None are specified, the stream type will be extracted from the encoder.
+        @type input_stream: L{MultimediaStream}
+        @param output_stream: The type of streams accepted by this settings. If
+        None are specified, the stream type will be extracted from the encoder.
+        @type output_stream: L{MultimediaStream}
+        @param encodersettings: Encoder-specific settings.
+        @type encodersettings: C{dict}
+        """
+        self.encoder = encoder
+        self.input_stream = input_stream
+        self.output_stream = output_stream
+        self.encodersettings = encodersettings
+
+class RenderSettings(object):
+    """
+    Settings for rendering and multiplexing one or multiple streams.
+
+    @cvar settings: Ordered list of encoding stream settings.
+    @type settings: List of L{StreamEncodeSettings}
+    @cvar muxer: Name of the muxer to use.
+    @type muxer: C{str}
+    @cvar muxersettings: Muxer-specific settings.
+    @type muxersettings: C{dict}
+    """
+
+    def __init__(self, settings=[], muxer=None, muxersettings={}):
+        self.settings = settings
+        self.muxer = muxer
+        self.muxersettings = muxersettings
+
 class ExportSettings(Serializable, Signallable):
     """
     Multimedia export settings
