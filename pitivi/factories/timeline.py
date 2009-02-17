@@ -20,7 +20,7 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
-from pitivi.factories.base import SourceFactory
+from pitivi.factories.base import SourceFactory, ObjectFactoryError
 
 class TimelineSourceFactory(SourceFactory):
     def __init__(self, timeline):

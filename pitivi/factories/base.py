@@ -23,11 +23,7 @@
 
 import os.path
 from urllib import unquote
-import weakref
-from random import randint
-import gobject
 import gst
-from gettext import gettext as _
 
 from pitivi.serializable import Serializable
 from pitivi.settings import ExportSettings
