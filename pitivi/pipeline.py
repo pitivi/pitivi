@@ -608,7 +608,8 @@ class Pipeline(object, Signallable):
             stream_entry.tee.set_state(gst.STATE_NULL)
             stream_entry.tee = None
 
-    def getQueueForFactoryStream(self, factory, stream=None, automake=False):
+    def getQueueForFactoryStream(self, factory, stream=None, automake=False,
+                                 queuesize=5):
         """
         Fetches the C{Queue} currently used in the C{gst.Pipeline} for the given
         L{SinkFactory}.
@@ -621,6 +622,7 @@ class Pipeline(object, Signallable):
         @param automake: If set to True, then if there is not a C{Queue}
         already created for the given factory/stream, one will be created, added
         to the list of controlled queues and added to the C{gst.Pipeline}.
+        @param queuesize: The size of the queue in seconds.
         @raise PipelineError: If the factory isn't used in this pipeline.
         @raise PipelineError: If the factory isn't a L{SinkFactory}.
         @raise PipelineError: If a C{Queue} needed to be created but the
@@ -652,6 +654,9 @@ class Pipeline(object, Signallable):
             raise PipelineError("No compatible sink pads !")
 
         stream_entry.queue = gst.element_factory_make("queue")
+        stream_entry.queue.props.max_size_time = queuesize * gst.SECOND
+        stream_entry.queue.props.max_size_buffers = 0
+        stream_entry.queue.props.max_size_bytes = 0
         self._pipeline.add(stream_entry.queue)
         stream_entry.queue.set_state(STATE_PAUSED)
 
