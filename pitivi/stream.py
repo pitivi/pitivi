@@ -96,6 +96,10 @@ class VideoStream(MultimediaStream):
     @cvar framerate: Framerate of the video.
     @type framerate: C{gst.Fraction}
     @cvar format: The subtype of video type
+    @cvar par: The pixel-aspect-ratio of the video stream.
+    @type par: C{gst.Fraction}
+    @cvar dar: The display-aspect-ratio of the video stream.
+    @type dar: C{gst.Fraction}
     @cvar is_image: If the stream is an image.
     @type is_image: C{bool}
     @cvar thumbnail: The thumbnail associated with this stream
@@ -108,6 +112,8 @@ class VideoStream(MultimediaStream):
         self.format = None
         self.is_image = is_image
         self.thumbnail = None
+        self.par = None
+        self.dar = None
 
         MultimediaStream.__init__(self, caps, pad_name)
 
@@ -139,8 +145,6 @@ class VideoStream(MultimediaStream):
             elif self.width and self.height:
                 self.dar = gst.Fraction(self.width, self.height)
         except:
-            self.dar = gst.Fraction(4, 3)
-        else:
             self.dar = gst.Fraction(4, 3)
 
 class AudioStream(MultimediaStream):
