@@ -95,11 +95,11 @@ def beautify_stream(stream):
        if stream.raw:
            if stream.framerate.num:
                templ = _("<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>")
-               templ = templ % (stream.dar * stream.height , stream.height, 
+               templ = templ % (stream.par * stream.width , stream.height, 
                    float(stream.framerate))
            else:
                templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
-               templ = templ % (stream.dar * stream.height, stream.height)
+               templ = templ % (stream.par * stream.width, stream.height)
            return templ
        return _("<b>Unknown Video format:</b> %s") % stream.videotype
 
