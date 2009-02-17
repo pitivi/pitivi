@@ -25,6 +25,19 @@ Encoding-related utilities and classes
 
 import gst
 
+class RenderFactory(OperationFactory):
+    """
+    Handles factories that consume streams and output one (and only one
+    output stream according to the given encoding settings.
+    """
+
+    def __init__(self, settings=None, *args, **kwargs):
+        self.settings = settings
+
+    def _makeBin(self, input_stream=None, output_stream=None):
+        # create encoding bin for provided stream
+        raise NotImplementedError
+
 def get_compatible_sink_caps(factoryname, caps):
     """
     Returns the compatible caps between 'caps' and the sink pad caps of 'factoryname'
