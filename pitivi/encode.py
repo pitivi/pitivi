@@ -24,6 +24,7 @@ Encoding-related utilities and classes
 """
 
 import gst
+from pitivi.factories.base import OperationFactory
 
 class RenderFactory(OperationFactory):
     """

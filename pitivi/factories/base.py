@@ -25,9 +25,6 @@ import os.path
 from urllib import unquote
 import gst
 
-from pitivi.serializable import Serializable
-from pitivi.settings import ExportSettings
-from pitivi.stream import get_stream_for_caps
 from pitivi.elements.singledecodebin import SingleDecodeBin
 from pitivi.signalinterface import Signallable
 

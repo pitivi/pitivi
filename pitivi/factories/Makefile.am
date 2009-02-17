@@ -4,6 +4,7 @@ factories_PYTHON = 	\
 	__init__.py	\
 	base.py		\
 	file.py		\
+    operation.py \
 	test.py		\
 	timeline.py
 
