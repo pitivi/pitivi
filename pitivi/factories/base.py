@@ -218,6 +218,8 @@ class SourceFactory(ObjectFactory):
         suitable "default" bin.
 
         @param output_stream: A L{MultimediaStream}
+        @return: The bin.
+        @rtype: C{gst.Bin}
 
         @see: L{releaseBin}
         """
@@ -290,6 +292,8 @@ class SinkFactory(ObjectFactory):
         suitable "default" bin.
 
         @param input_stream: A L{MultimediaStream}
+        @return: The bin.
+        @rtype: C{gst.Bin}
 
         @see: L{releaseBin}
         """
@@ -312,11 +316,12 @@ class SinkFactory(ObjectFactory):
         """
         Request a new input stream on a bin.
 
-        @param bin: The L{gst.Bin} on which we request a new stream.
+        @param bin: The C{gst.Bin} on which we request a new stream.
         @param input_stream: The new input C{MultimediaStream} we're requesting.
         @raise ObjectFactoryStreamError: If the L{input_stream} isn't compatible
         with one of the factory's L{input_streams}.
-        @return: The L{gst.Pad} corresponding to the newly created input stream.
+        @return: The pad corresponding to the newly created input stream.
+        @rtype: C{gst.Pad}
         """
         if not hasattr(bin, 'factory') or bin.factory != self:
             raise ObjectFactoryError("The provided bin isn't handled by this Factory")
@@ -374,6 +379,8 @@ class OperationFactory(ObjectFactory):
 
         @param input_stream: A L{MultimediaStream}
         @param output_stream: A L{MultimediaStream}
+        @return: The bin.
+        @rtype: C{gst.Bin}
 
         @see: L{releaseBin}
         """
@@ -396,11 +403,12 @@ class OperationFactory(ObjectFactory):
         """
         Request a new input stream on a bin.
 
-        @param bin: The L{gst.Bin} on which we request a new stream.
+        @param bin: The C{gst.Bin} on which we request a new stream.
         @param input_stream: The new input C{MultimediaStream} we're requesting.
         @raise ObjectFactoryStreamError: If the L{input_stream} isn't compatible
         with one of the factory's L{input_streams}.
-        @return: The L{gst.Pad} corresponding to the newly created input stream.
+        @return: The pad corresponding to the newly created input stream.
+        @rtype: C{gst.Pad}
         """
         if not hasattr(bin, 'factory') or bin.factory != self:
             raise ObjectFactoryError("The provided bin isn't handled by this Factory")
