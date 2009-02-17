@@ -497,7 +497,7 @@ class Timeline(object ,Signallable):
 
         self.edges.addTimelineObject(obj)
 
-    def removeTimelineObject(self, obj):
+    def removeTimelineObject(self, obj, deep=False):
         try:
             self.timeline_objects.remove(obj)
         except ValueError:
@@ -506,6 +506,11 @@ class Timeline(object ,Signallable):
         obj.timeline = None
         self.rebuildEdges()
         #self.edges.removeTimelineObject(obj)
+
+        if deep:
+            for track_object in obj.track_objects:
+                track = track_object.track
+                track.removeTrackObject(track_object)
 
     def addSourceFactory(self, factory, stream_map=None):
         output_streams = factory.getOutputStreams()
@@ -558,12 +563,6 @@ class Timeline(object ,Signallable):
                 return track
 
         return None
-
-    def removeTimelineObjectCompletely(self, obj):
-        for track_object in obj.track_objects:
-            track = track_object.track
-            track.removeTrackObject(track_object)
-        self.removeTimelineObject(obj)
 
     def setSelectionToObj(self, obj, mode):
         self.setSelectionTo(set([obj]), mode)
@@ -623,7 +622,7 @@ class Timeline(object ,Signallable):
     def deleteSelection(self):
         self.unlinkSelection()
         for timeline_object in self.timeline_selection:
-            self.removeTimelineObjectCompletely(timeline_object)
+            self.removeTimelineObject(timeline_object, deep=True)
         self.timeline_selection = set()
 
     def rebuildEdges(self):

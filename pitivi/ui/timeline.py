@@ -170,7 +170,8 @@ class Timeline(gtk.VBox):
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
         if self.__temp_object:
             try:
-                self.timeline.removeTimelineObjectCompletely(self.__temp_object)
+                self.timeline.removeTimelineObject(self.__temp_object,
+                        deep=True)
             finally:
                 self.__temp_object = None
         self.drag_unhighlight()
