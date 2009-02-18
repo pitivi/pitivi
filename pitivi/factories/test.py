@@ -30,8 +30,8 @@ class VideoTestSourceFactory(SourceFactory):
         SourceFactory.__init__(self)
         self.pattern = pattern
 
-        self.addOutputStream(VideoStream(gst.Caps('video/x-raw-yuv')))
-        self.addOutputStream(VideoStream(gst.Caps('video/x-raw-rgb')))
+        caps = gst.Caps('video/x-raw-yuv; video/x-raw-rgb')
+        self.addOutputStream(VideoStream(caps))
 
     def _makeBin(self, output_stream=None):
         if output_stream is None:
@@ -58,8 +58,8 @@ class AudioTestSourceFactory(SourceFactory):
         SourceFactory.__init__(self)
         self.wave = wave
 
-        self.addOutputStream(AudioStream(gst.Caps('audio/x-raw-int')))
-        self.addOutputStream(AudioStream(gst.Caps('audio/x-raw-float')))
+        caps = gst.Caps('audio/x-raw-int; audio/x-raw-float')
+        self.addOutputStream(AudioStream(caps))
 
     def _makeBin(self, output_stream=None):
         if output_stream is None:
