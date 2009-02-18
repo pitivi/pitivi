@@ -185,12 +185,7 @@ class TrackObject(object, Signallable):
         self.trimmed_start += delta
         self.setObjectStart(time)
         self.setObjectDuration(new_duration)
-        old_in_point = self.in_point
-        if old_in_point == gst.CLOCK_TIME_NONE:
-            old_in_point = 0
-
-        new_in_point = max(old_in_point + delta, 0)
-        self.setObjectInPoint(new_in_point)
+        self.setObjectInPoint(self.trimmed_start)
         self.setObjectMediaDuration(new_duration)
 
     def split(self, time, snap=False):
