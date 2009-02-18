@@ -729,6 +729,9 @@ class Pipeline(object, Signallable):
             error, detail = message.parse_error()
             self._handleErrorMessage(error, detail, message.src)
 
+    def _handleErrorMessage(self, error, detail, source):
+        self.emit('error', error, detail)
+
     def _busSyncMessageHandler(self, unused_bus, message):
         if message.type == gst.MESSAGE_ELEMENT:
             # handle element message synchronously
