@@ -25,6 +25,54 @@ Encoding-related utilities and classes
 
 import gst
 from pitivi.factories.base import OperationFactory
+from pitivi.factories.operation import TransformFactory
+
+class EncoderFactory(TransformFactory):
+    """
+    Creates one-to-one encoding bins based on provided L{StreamEncodeSettings}.
+
+    @cvar settings: The encoding settings.
+    @type settings: L{StreamEncodeSettings}
+    """
+    def __init__(self, settings, *args, **kwargs):
+        self.settings = settings
+        TransformFactory.__init__(self, *args, **kwargs)
+
+    def _makeBin(self, *args):
+        s = self.settings
+        b = gst.Bin()
+
+        # encoder
+        enc = gst.element_factory_make(s.encoder)
+        for k, v in s.encodersettings.iteritems():
+            enc.set_property(k, v)
+        b.add(enc)
+
+        # optional input stream
+        if s.input_stream:
+            infilt = gst.element_factory_make("capsfilter")
+            infilt.props.caps = s.input_stream.caps
+            b.add(infilt)
+            infilt.link(enc)
+            gsink = gst.GhostPad("sink", infilt.get_pad("sink"))
+        else:
+            gsink = gst.GhostPad("sink", enc.get_pad("sink"))
+        gsink.set_active(True)
+        b.add_pad(gsink)
+
+        # optional output stream
+        if s.output_stream:
+            outfilt = gst.element_factory_make("capsfilter")
+            outfilt.props.caps = s.output_stream.caps
+            b.add(outfilt)
+            enc.link(outfilt)
+            gsrc = gst.GhostPad("src", outfilt.get_pad("src"))
+        else:
+            gsrc = gst.GhostPad("src", enc.get_pad("src"))
+        gsrc.set_active(True)
+        b.add_pad(gsrc)
+
+        return b
 
 class RenderFactory(OperationFactory):
     """
@@ -37,10 +85,71 @@ class RenderFactory(OperationFactory):
 
     def __init__(self, settings, *args, **kwargs):
         self.settings = settings
+        OperationFactory.__init__(self, *args, **kwargs)
 
-    def _makeBin(self, input_stream=None, output_stream=None):
-        # create encoding bin for provided stream
+    def _makeBin(self, *args):
+        s = self.settings
+
+        b = gst.Bin()
+
+        mux = gst.element_factory_make(s.muxer)
+        for k, v in s.muxersettings.iteritems():
+            mux.set_property(k, v)
+
+        gsrc = gst.GhostPad("src", mux.get_pad("src"))
+        gsrc.set_active(True)
+        b.add_pad(gsrc)
+
+        i = 0
+        # add all the encoders
+        for setting in s.settings:
+            b2 = EncoderFactory(setting).makeBin()
+            b.add(b2)
+
+            src2 = b2.get_pad("src")
+
+            # request a compatible pad from the muxer
+            n2 = get_compatible_sink_pad(s.muxer, src2.get_caps())
+            if n2 == None:
+                raise Exception("can't find a compatible pad")
+            # FIXME : We're assuming it's a request pad
+            p2 = mux.get_request_pad(n2)
+            b2.link(p2)
+
+            # expose encoder sink pad
+            gsink = gst.GhotPad("sink_%d" % i,
+                                b2.get_pad("sink"))
+            gsink.set_active(True)
+            b.add_pad(gsink)
+            i += 1
+
+        return b
+
+    def _requestNewInputStream(self, bin, input_stream):
         raise NotImplementedError
+
+def get_compatible_sink_pad(factoryname, caps):
+    """
+    Returns the pad name of a (request) pad from factoryname which is
+    compatible with the given caps.
+    """
+    factory = gst.registry_get_default().lookup_feature(factoryname)
+    if factory == None:
+        gst.warning("%s is not a valid factoryname" % factoryname)
+        return None
+
+    res = []
+    sinkpads = [x for x in factory.get_static_pad_templates() if x.direction == gst.PAD_SINK]
+    for p in sinkpads:
+        c = p.get_caps()
+        gst.log("sinkcaps %s" % c.to_string())
+        inter = caps.intersect(c)
+        gst.log("intersection %s" % inter.to_string())
+        if inter:
+            res.append(p.get_name())
+    if len(res) > 0:
+        return res[0]
+    return None
 
 def get_compatible_sink_caps(factoryname, caps):
     """
