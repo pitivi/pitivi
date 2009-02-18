@@ -503,6 +503,9 @@ class Timeline(object ,Signallable):
         except ValueError:
             raise TimelineError()
 
+        if obj.link is not None:
+            obj.link.removeTimelineObject(obj)
+
         obj.timeline = None
         self.rebuildEdges()
         #self.edges.removeTimelineObject(obj)
@@ -618,6 +621,43 @@ class Timeline(object ,Signallable):
 
         for link in empty_links:
             self.links.remove(link)
+
+    def groupSelection(self):
+        if len(self.timeline_selection) < 2:
+            return
+
+        # FIXME: pass a proper factory
+        new_timeline_object = TimelineObject(factory=None)
+
+        tracks = []
+        for timeline_object in self.timeline_selection:
+            for track_object in timeline_object.track_objects:
+                new_track_object = track_object.copy()
+                tracks.append(track_object.track)
+                new_timeline_object.addTrackObject(new_track_object)
+        
+        for i, track_object in enumerate(new_timeline_object.track_objects):
+            tracks[i].addTrackObject(track_object)
+
+        self.addTimelineObject(new_timeline_object)
+
+        for timeline_object in list(self.timeline_selection):
+            timeline_object.selected = False
+            self.removeTimelineObject(timeline_object, deep=True)
+
+    def ungroupSelection(self):
+        for timeline_object in list(self.timeline_selection):
+            if len(timeline_object.track_objects) == 1:
+                continue
+
+            for track_object in list(timeline_object.track_objects):
+                timeline_object.removeTrackObject(track_object)
+                new_timeline_object = TimelineObject(track_object.factory)
+                new_timeline_object.addTrackObject(track_object)
+                self.addTimelineObject(new_timeline_object)
+
+            timeline_object.selected = False
+            self.removeTimelineObject(timeline_object)
 
     def deleteSelection(self):
         self.unlinkSelection()

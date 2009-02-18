@@ -44,6 +44,8 @@ ZOOM_IN =  _("Zoom In")
 ZOOM_OUT =  _("Zoom Out")
 UNLINK = _("Break links between clips")
 LINK = _("Link together arbitrary clips")
+UNGROUP = _("Ungroup clips")
+GROUP = _("Group clips")
 SELECT_BEFORE = ("Select all sources before selected")
 SELECT_AFTER = ("Select all after selected")
 
@@ -59,6 +61,8 @@ ui = '''
         <toolitem action="DeleteObj" />
         <toolitem action="UnlinkObj" />
         <toolitem action="LinkObj" />
+        <toolitem action="UngroupObj" />
+        <toolitem action="GroupObj" />
     </toolbar>
     <accelerator action="DeleteObj" />
 </ui>
@@ -144,6 +148,10 @@ class Timeline(gtk.VBox):
                 self.unlinkSelected),
             ("LinkObj", "pitivi-link", None, None, LINK,
                 self.linkSelected),
+            ("UngroupObj", "pitivi-ungroup", None, None, UNGROUP,
+                self.ungroupSelected),
+            ("GroupObj", "pitivi-group", None, None, GROUP,
+                self.groupSelected),
         )
         razor = gtk.ToggleAction("Razor", None, RAZOR, "pitivi-split")
         razor.connect("toggled", self.toggleRazor)
@@ -259,6 +267,14 @@ class Timeline(gtk.VBox):
     def linkSelected(self, unused_action):
         if self.timeline:
             self.timeline.linkSelection()
+    
+    def ungroupSelected(self, unused_action):
+        if self.timeline:
+            self.timeline.ungroupSelection()
+
+    def groupSelected(self, unused_action):
+        if self.timeline:
+            self.timeline.groupSelection()
 
     def toggleRazor(self, action):
         if action.props.active:
