@@ -113,7 +113,7 @@ class VideoStream(MultimediaStream):
         self.is_image = is_image
         self.thumbnail = None
         self.par = None
-        self.dar = None
+        self.dar = gst.Fraction(4, 3)
 
         MultimediaStream.__init__(self, caps, pad_name)
 
