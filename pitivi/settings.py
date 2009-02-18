@@ -323,6 +323,7 @@ class StreamEncodeSettings(object):
         @param encodersettings: Encoder-specific settings.
         @type encodersettings: C{dict}
         """
+        # FIXME : What if we need parsers after the encoder ??
         self.encoder = encoder
         self.input_stream = input_stream
         self.output_stream = output_stream
