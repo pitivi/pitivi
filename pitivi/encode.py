@@ -30,9 +30,12 @@ class RenderFactory(OperationFactory):
     """
     Handles factories that consume streams and output one (and only one
     output stream according to the given encoding settings.
+
+    @cvar settings: The rendering settings
+    @type settings: L{RenderSettings}
     """
 
-    def __init__(self, settings=None, *args, **kwargs):
+    def __init__(self, settings, *args, **kwargs):
         self.settings = settings
 
     def _makeBin(self, input_stream=None, output_stream=None):
