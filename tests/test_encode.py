@@ -21,8 +21,8 @@
 
 import gst
 from unittest import TestCase, main
-from pitivi.encode import EncoderFactory
-from pitivi.settings import StreamEncodeSettings
+from pitivi.encode import EncoderFactory, RenderFactory
+from pitivi.settings import StreamEncodeSettings, RenderSettings
 
 class TestEncoderFactory(TestCase):
 
@@ -64,3 +64,41 @@ class TestEncoderFactory(TestCase):
         encoder = list(bin.elements())[0]
         for k, v in encsettings.iteritems():
             self.assertEquals(encoder.get_property(k), v)
+
+class TestRenderFactory(TestCase):
+
+    def setUp(self):
+        self.audiosettings = StreamEncodeSettings(encoder="vorbisenc")
+        self.videosettings = StreamEncodeSettings(encoder="theoraenc")
+
+    def testSimple(self):
+        rset = RenderSettings(settings=[self.audiosettings,
+                                        self.videosettings],
+                              muxer="oggmux")
+        f = RenderFactory(settings=rset)
+        self.assertEquals(f.settings, rset)
+
+    def testMakeBin(self):
+        rset = RenderSettings(settings=[self.audiosettings,
+                                        self.videosettings],
+                              muxer="oggmux")
+        f = RenderFactory(settings=rset)
+
+        bin = f.makeBin()
+        self.assertEquals(bin.factory, f)
+
+        # it should be a bin...
+        self.assertEquals(type(bin), gst.Bin)
+
+        # containing 2 bins (encoders) and the muxer
+        elements = list(bin.elements())
+        self.assertEquals(len(elements), 3)
+
+        for elt in elements:
+            if type(elt) == gst.Bin:
+                # it's one of our encoders
+                self.assertEquals(len(list(elt.elements())), 1)
+            else:
+                # it's our muxer !
+                self.assertEquals(elt.get_factory().get_name(),
+                                  "oggmux")

@@ -96,6 +96,8 @@ class RenderFactory(OperationFactory):
         for k, v in s.muxersettings.iteritems():
             mux.set_property(k, v)
 
+        b.add(mux)
+
         gsrc = gst.GhostPad("src", mux.get_pad("src"))
         gsrc.set_active(True)
         b.add_pad(gsrc)
@@ -114,11 +116,11 @@ class RenderFactory(OperationFactory):
                 raise Exception("can't find a compatible pad")
             # FIXME : We're assuming it's a request pad
             p2 = mux.get_request_pad(n2)
-            b2.link(p2)
+            src2.link(p2)
 
             # expose encoder sink pad
-            gsink = gst.GhotPad("sink_%d" % i,
-                                b2.get_pad("sink"))
+            gsink = gst.GhostPad("sink_%d" % i,
+                                 b2.get_pad("sink"))
             gsink.set_active(True)
             b.add_pad(gsink)
             i += 1
@@ -146,7 +148,7 @@ def get_compatible_sink_pad(factoryname, caps):
         inter = caps.intersect(c)
         gst.log("intersection %s" % inter.to_string())
         if inter:
-            res.append(p.get_name())
+            res.append(p.name_template)
     if len(res) > 0:
         return res[0]
     return None
