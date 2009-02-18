@@ -37,6 +37,7 @@ class TestEncoderFactory(TestCase):
         b = EncoderFactory(settings=set)
 
         bin = b.makeBin()
+        self.assertEquals(bin.factory, b)
 
         # it should just be a bin containing theoraenc
         self.assertEquals(type(bin), gst.Bin)
@@ -47,4 +48,19 @@ class TestEncoderFactory(TestCase):
         elfact = elements[0].get_factory()
         self.assertEquals(elfact.get_name(), "theoraenc")
 
+    # FIXME : Add a test for input_stream/output_stream
 
+    def testEncoderSettings(self):
+        encsettings = {
+            "bitrate":40000,
+            "quick":False,
+            "border":2
+            }
+        set = StreamEncodeSettings(encoder="theoraenc",
+                                   encodersettings=encsettings)
+        b = EncoderFactory(settings=set)
+
+        bin = b.makeBin()
+        encoder = list(bin.elements())[0]
+        for k, v in encsettings.iteritems():
+            self.assertEquals(encoder.get_property(k), v)
