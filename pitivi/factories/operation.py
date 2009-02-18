@@ -48,6 +48,9 @@ class TransformFactory(OperationFactory):
             raise OperationFactoryError("Can't handle more than one stream")
         return OperationFactory.addOutputStream(self, stream)
 
+    def _requestNewInputStream(self, *args):
+        raise OperationFactoryError("TransformFactory doesn't allow request pads")
+
 class StreamModifierFactory(TransformFactory):
     """
     Factories that modify the nature/type of a stream.
