@@ -40,6 +40,8 @@ from threads import ThreadMaster
 from pluginmanager import PluginManager
 from signalinterface import Signallable
 import instance
+from pitivi.log.loggable import Loggable
+from pitivi.log import log
 
 from gettext import gettext as _
 
@@ -52,7 +54,7 @@ from gettext import gettext as _
 
 # FIXME : maybe we should have subclasses for UI and CLI
 
-class Pitivi(object, Signallable):
+class Pitivi(object, Loggable, Signallable):
     """
     Pitivi's main application class.
 
@@ -90,7 +92,13 @@ class Pitivi(object, Signallable):
         """
         initialize pitivi with the command line arguments
         """
-        gst.log("starting up pitivi...")
+        Loggable.__init__(self)
+
+        # init logging as early as possible so we can log startup code
+        color_log = os.environ.get('PITIVI_DEBUG_NO_COLOR', '1') not in ('', '0')
+        log.init('PITIVI_DEBUG', color_log)
+
+        self.info('starting up')
 
         # store ourself in the instance global
         if instance.PiTiVi:
