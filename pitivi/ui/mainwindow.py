@@ -109,11 +109,11 @@ def create_stock_icons():
             ])
     pixmaps = {
         "pitivi-render" : "pitivi-render-24.png",
-        "pitivi-split" : "pitivi-split.svg",
-        "pitivi-unlink" : "pitivi-unlink.svg",
-        "pitivi-link" : "pitivi-relink.svg",
-        "pitivi-ungroup" : "pitivi-unlink.svg",
-        "pitivi-group" : "pitivi-relink.svg",
+        "pitivi-split" : "pitivi-split-24.svg",
+        "pitivi-unlink" : "pitivi-unlink-24.svg",
+        "pitivi-link" : "pitivi-relink-24.svg",
+        "pitivi-ungroup" : "pitivi-unlink-24.svg",
+        "pitivi-group" : "pitivi-relink-24.svg",
     }
     factory = gtk.IconFactory()
     pmdir = configure.get_pixmap_dir()
