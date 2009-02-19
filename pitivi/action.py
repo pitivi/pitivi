@@ -651,9 +651,9 @@ class ViewAction(Action):
     Will automatically connect stream from the controlled producer to the given
     sinks.
     """
-    # FIXME : implement auto-plugging
     # FIXME : how to get default handlers ?
     # ==> Use plumber in the meantime
+    # FIXME : How to handle multiple video sinks (and XID) ?
 
     def __init__(self, *args, **kwargs):
         gst.debug("Creating new ViewAction")
@@ -690,3 +690,15 @@ class ViewAction(Action):
         if self.videosink:
             self.videosink.set_window_xid(self.xid)
 
+
+class RenderAction(Action):
+    """
+    An Action to render sources.
+
+    Handles both a L{RenderFactory} and a L{SinkFactory}.
+    """
+
+    def __init__(self, *args, **kwargs):
+        Action.__init__(self, *args, **kwargs)
+        self.renderfactory = None
+        self.sinkfactory = None
