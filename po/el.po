@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: el\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-12-30 11:58+0100\n"
+"POT-Creation-Date: 2009-02-19 13:43+0000\n"
 "PO-Revision-Date: 2006-07-03 19:56+0100\n"
 "Last-Translator: Simos Xenitellis <simos@gnome.org>\n"
 "Language-Team: Greek <team@gnome.gr>\n"
@@ -20,7 +20,7 @@ msgstr ""
 #: ../pitivi/check.py:120
 #, python-format
 msgid "%s is already running!"
-msgstr ""
+msgstr "Το %s εκτελείται ήδη!"
 
 #: ../pitivi/check.py:121
 #, python-format
@@ -150,204 +150,136 @@ msgstr ""
 msgid "Make sure you have the distutils python module installed"
 msgstr ""
 
-#: ../pitivi/discoverer.py:156
+#: ../pitivi/discoverer.py:190
 msgid "Could not establish the duration of the file."
 msgstr ""
 
-#: ../pitivi/discoverer.py:157
+#: ../pitivi/discoverer.py:191
 msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
 msgstr ""
 
-#: ../pitivi/discoverer.py:202
+#: ../pitivi/discoverer.py:279
 msgid "Couldn't construct pipeline."
 msgstr ""
 
-#: ../pitivi/discoverer.py:203
+#: ../pitivi/discoverer.py:280
 msgid ""
 "GStreamer does not have an element to handle files coming from this type of "
 "file system."
 msgstr ""
 
-#: ../pitivi/discoverer.py:232
+#: ../pitivi/discoverer.py:308
 msgid "Pipeline didn't want to go to PAUSED."
 msgstr ""
 
-#: ../pitivi/discoverer.py:264
-msgid "Pipeline didn't want to go to PLAYING."
-msgstr ""
-
-#: ../pitivi/discoverer.py:289
-msgid "File contains a redirection to another clip."
-msgstr ""
-
-#: ../pitivi/discoverer.py:290
-msgid "PiTiVi does not currently does not handle redirection files."
-msgstr ""
-
-#: ../pitivi/discoverer.py:302
+#: ../pitivi/discoverer.py:331
 #, fuzzy, python-format
 msgid "An internal error occured while analyzing this file : %s"
 msgstr "Σφάλμα κατά την ανάλυση των αρχείων"
 
-#: ../pitivi/discoverer.py:407
-#, python-format
-msgid "Got unknown stream type : %s"
+#: ../pitivi/discoverer.py:340
+msgid "File contains a redirection to another clip."
 msgstr ""
 
-#: ../pitivi/discoverer.py:408 ../pitivi/discoverer.py:433
-msgid "You are missing an element to handle this media type."
+#: ../pitivi/discoverer.py:341
+msgid "PiTiVi currently does not handle redirection files."
 msgstr ""
 
-#: ../pitivi/objectfactory.py:188
-#, python-format
-msgid "<b>%s</b><small>"
-msgstr ""
-
-#: ../pitivi/objectfactory.py:192
-#, python-format
-msgid "<b>%s</b> (%s)"
-msgstr ""
-
-#: ../pitivi/objectfactory.py:195
-#, fuzzy, python-format
-msgid "<b>%s</b>"
-msgstr "<b>Ιδιότητες</b>"
-
-#: ../pitivi/objectfactory.py:196
-#, python-format
-msgid "<small><b>File:</b> %s"
-msgstr ""
-
-#: ../pitivi/pitivi.py:104
+#: ../pitivi/application.py:98
 #, python-format
 msgid "There is already a %s instance, inform developers"
 msgstr ""
 
-#: ../pitivi/pitivi.py:118 ../pitivi/pitivi.py:194
+#: ../pitivi/application.py:114 ../pitivi/application.py:177
 #, fuzzy
 msgid "New Project"
 msgstr "Εκτέλεση έργου"
 
-#: ../pitivi/pitivi.py:149
+#: ../pitivi/application.py:132
 msgid "No location given."
 msgstr ""
 
-#: ../pitivi/pitivi.py:155
+#: ../pitivi/application.py:138
 msgid "File does not exist"
 msgstr ""
 
-#: ../pitivi/pitivi.py:160
+#: ../pitivi/application.py:143
 msgid "Not a valid project file."
 msgstr ""
 
-#: ../pitivi/pitivi.py:174
+#: ../pitivi/application.py:157
 msgid "There was an error loading the file."
 msgstr ""
 
-#: ../pitivi/playground.py:392
+#: ../pitivi/playground.py:394
 #, fuzzy
 msgid "Video output is busy"
 msgstr "<b>Έξοδος Βίντεο</b>"
 
-#: ../pitivi/playground.py:393
+#: ../pitivi/playground.py:395
 msgid ""
 "Please check that your video output device isn't already used by another "
 "application"
 msgstr ""
 
-#: ../pitivi/playground.py:395
+#: ../pitivi/playground.py:397
 #, fuzzy
 msgid "Video output problem"
 msgstr "<b>Έξοδος Βίντεο</b>"
 
-#: ../pitivi/playground.py:396
+#: ../pitivi/playground.py:398
 msgid "There is a problem with your video output device"
 msgstr ""
 
-#: ../pitivi/playground.py:399
+#: ../pitivi/playground.py:401
 msgid "Audio output device is busy"
 msgstr ""
 
-#: ../pitivi/playground.py:400
+#: ../pitivi/playground.py:402
 msgid ""
 "Please check that your audio output device isn't already used by another "
 "application."
 msgstr ""
 
-#: ../pitivi/playground.py:402
+#: ../pitivi/playground.py:404
 #, fuzzy
 msgid "Audio output problem"
 msgstr "<b>Έξοδος Ήχου</b>"
 
-#: ../pitivi/playground.py:403
+#: ../pitivi/playground.py:405
 msgid "There is a problem with your audio output device"
 msgstr ""
 
-#: ../pitivi/project.py:298
+#: ../pitivi/project.py:316
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr ""
 
-#: ../pitivi/settings.py:163
+#: ../pitivi/settings.py:333
 #, fuzzy
 msgid "Export Settings\n"
 msgstr "Ρυθμίσεις έργου"
 
-#: ../pitivi/settings.py:164
+#: ../pitivi/settings.py:334
 #, fuzzy
 msgid "Video :"
 msgstr "Κόντεκ βίντεο:"
 
-#: ../pitivi/settings.py:167
+#: ../pitivi/settings.py:337
 #, fuzzy
 msgid ""
 "\n"
 "Audio :"
 msgstr "Κόντεκ ήχου:"
 
-#: ../pitivi/settings.py:170
+#: ../pitivi/settings.py:340
 #, fuzzy
 msgid ""
 "\n"
 "Muxer :"
 msgstr "Muxer"
-
-#: ../pitivi/stream.py:179
-#, python-format
-msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
-msgstr ""
-
-#: ../pitivi/stream.py:182
-#, python-format
-msgid "<b>Image:</b> %d x %d <i>pixels</i>"
-msgstr ""
-
-#: ../pitivi/stream.py:185 ../pitivi/stream.py:255
-#, python-format
-msgid " <i>(%s)</i>"
-msgstr ""
-
-#: ../pitivi/stream.py:187
-#, python-format
-msgid "<b>Unknown Video format:</b> %s"
-msgstr ""
-
-#: ../pitivi/stream.py:252
-#, python-format
-msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr ""
-
-#: ../pitivi/stream.py:257
-#, python-format
-msgid "<b>Unknown Audio format:</b> %s"
-msgstr ""
-
-#: ../pitivi/stream.py:268
-#, fuzzy, python-format
-msgid "<b>Text:</b> %s"
-msgstr "<b>Συγγραφέας:</b>"
 
 # #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
 #
@@ -438,9 +370,8 @@ msgid "<b>Nothing yet</b>"
 msgstr "<b>Εξαγωγή σε</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:3
-#, fuzzy
 msgid "<b>Settings</b>"
-msgstr "Ρυθμίσεις"
+msgstr "<b>Ρυθμίσεις</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:4
 #, fuzzy
@@ -523,7 +454,6 @@ msgid "Audio Codec"
 msgstr "Κόντεκ ήχου"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:22
-#, fuzzy
 msgid "Audio Codec:"
 msgstr "Κόντεκ ήχου:"
 
@@ -532,17 +462,14 @@ msgid "Audio Preset"
 msgstr "Προφίλ ήχου"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:24
-#, fuzzy
 msgid "Channels:"
 msgstr "Κανάλια:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:25
-#, fuzzy
 msgid "Container:"
 msgstr "Συσκευασία:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:26
-#, fuzzy
 msgid "Depth:"
 msgstr "Βάθος:"
 
@@ -551,7 +478,6 @@ msgid "Frame rate:"
 msgstr "Ρυθμός καρέ:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:28
-#, fuzzy
 msgid "Height:"
 msgstr "Ύψος:"
 
@@ -568,7 +494,6 @@ msgid "Muxer"
 msgstr "Muxer"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:32
-#, fuzzy
 msgid "Rate:"
 msgstr "Ρυθμός:"
 
@@ -581,7 +506,6 @@ msgid "Video Codec"
 msgstr "Κόντεκ βίντεο"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:35
-#, fuzzy
 msgid "Video Codec:"
 msgstr "Κόντεκ βίντεο:"
 
@@ -590,7 +514,6 @@ msgid "Video Preset"
 msgstr "Προφίλ βίντεο"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:37
-#, fuzzy
 msgid "Width:"
 msgstr "Πλάτος:"
 
@@ -605,7 +528,7 @@ msgstr ""
 
 #: ../pitivi/ui/filelisterrordialog.py:75
 msgid "URI : "
-msgstr ""
+msgstr "URI : "
 
 #: ../pitivi/ui/filelisterrordialog.py:81
 msgid "Problem : "
@@ -617,167 +540,164 @@ msgstr ""
 
 #. set title and frame label
 #: ../pitivi/ui/gstwidget.py:175
-#, fuzzy
 msgid "Properties for "
-msgstr "Ιδιότητες για <element>"
+msgstr "Ιδιότητες για "
 
-#: ../pitivi/ui/mainwindow.py:164
+#: ../pitivi/ui/mainwindow.py:208
 msgid "Create a new project"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:166
+#: ../pitivi/ui/mainwindow.py:210
 msgid "Open an existing project"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:168 ../pitivi/ui/mainwindow.py:170
+#: ../pitivi/ui/mainwindow.py:212 ../pitivi/ui/mainwindow.py:214
 msgid "Save the current project"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:171
-#, fuzzy
+#: ../pitivi/ui/mainwindow.py:215
 msgid "Project settings"
 msgstr "Ρυθμίσεις έργου"
 
-#: ../pitivi/ui/mainwindow.py:172
+#: ../pitivi/ui/mainwindow.py:216
 #, fuzzy
 msgid "Edit the project settings"
 msgstr "Ρυθμίσεις έργου"
 
-#: ../pitivi/ui/mainwindow.py:173
+#: ../pitivi/ui/mainwindow.py:217
 #, fuzzy
 msgid "_Render project"
 msgstr "Εκτέλεση έργου"
 
-#: ../pitivi/ui/mainwindow.py:174
-#, fuzzy
+#: ../pitivi/ui/mainwindow.py:218
 msgid "Render project"
 msgstr "Εκτέλεση έργου"
 
-#: ../pitivi/ui/mainwindow.py:176
+#: ../pitivi/ui/mainwindow.py:220
 msgid "_Plugins..."
-msgstr ""
+msgstr "_Πρόσθετα..."
 
-#: ../pitivi/ui/mainwindow.py:177
+#: ../pitivi/ui/mainwindow.py:221
 msgid "Manage plugins"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:179
+#: ../pitivi/ui/mainwindow.py:223
 msgid "_Import from Webcam.."
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:180
+#: ../pitivi/ui/mainwindow.py:224
 msgid "Import Camera stream"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:182
+#: ../pitivi/ui/mainwindow.py:226
 msgid "_Make screencast.."
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:183
+#: ../pitivi/ui/mainwindow.py:227
 msgid "Capture the desktop"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:185
+#: ../pitivi/ui/mainwindow.py:229
 msgid "_Capture Network Stream.."
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:186
+#: ../pitivi/ui/mainwindow.py:230
 msgid "Capture Network Stream"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:189
+#: ../pitivi/ui/mainwindow.py:233
 #, python-format
 msgid "Information about %s"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:190
+#: ../pitivi/ui/mainwindow.py:234
 msgid "_File"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:191
+#: ../pitivi/ui/mainwindow.py:235
 msgid "_Edit"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:192
+#: ../pitivi/ui/mainwindow.py:236
 msgid "_View"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:193
+#: ../pitivi/ui/mainwindow.py:237
 msgid "_Help"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:198
+#: ../pitivi/ui/mainwindow.py:242
 msgid "View the main window on the whole screen"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:353
+#: ../pitivi/ui/mainwindow.py:450
 msgid "Open File ..."
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:404
+#: ../pitivi/ui/mainwindow.py:504
 #, fuzzy
 msgid "Contributors:"
 msgstr "Συσκευασία:"
 
-#: ../pitivi/ui/mainwindow.py:417
+#: ../pitivi/ui/mainwindow.py:517
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:467
+#: ../pitivi/ui/mainwindow.py:568
 msgid "The project has unsaved changes. Do you wish to close the project?"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:480
+#: ../pitivi/ui/mainwindow.py:581
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:482
+#: ../pitivi/ui/mainwindow.py:583
 #, fuzzy
 msgid "Error Loading File"
 msgstr "Σφάλμα κατά την ανάλυση των αρχείων"
 
-#: ../pitivi/ui/mainwindow.py:491
+#: ../pitivi/ui/mainwindow.py:592
 #, python-format
 msgid "Do you wish to overwrite existing file \"%s\"?"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:500
+#: ../pitivi/ui/mainwindow.py:601
 msgid "Overwrite Existing File?"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:509
+#: ../pitivi/ui/mainwindow.py:610
 msgid "Save As..."
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:516
+#: ../pitivi/ui/mainwindow.py:617
 msgid "Untitled.pptv"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:519 ../pitivi/ui/mainwindow.py:537
+#: ../pitivi/ui/mainwindow.py:627 ../pitivi/ui/mainwindow.py:640
 msgid "Detect Automatically"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:584
+#: ../pitivi/ui/mainwindow.py:765
 msgid "Choose file to render to"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:607
+#: ../pitivi/ui/mainwindow.py:788
 #, python-format
 msgid "Finished in %dm%ds"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:617
+#: ../pitivi/ui/mainwindow.py:798
 msgid "Rendering"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:622
+#: ../pitivi/ui/mainwindow.py:803
 msgid "Couldn't start rendering"
 msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:643
+#: ../pitivi/ui/mainwindow.py:824
 #, fuzzy
 msgid "Rendering Complete"
 msgstr "Εκτέλεση έργου"
@@ -968,116 +888,162 @@ msgstr ""
 msgid "Start Istanbul"
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:91
+#: ../pitivi/ui/sourcelist.py:89
+#, python-format
+msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr ""
+
+#: ../pitivi/ui/sourcelist.py:92
+#, python-format
+msgid "<b>Unknown Audio format:</b> %s"
+msgstr ""
+
+#: ../pitivi/ui/sourcelist.py:97
+#, python-format
+msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+msgstr ""
+
+#: ../pitivi/ui/sourcelist.py:101
+#, python-format
+msgid "<b>Image:</b> %d x %d <i>pixels</i>"
+msgstr ""
+
+#: ../pitivi/ui/sourcelist.py:104
+#, python-format
+msgid "<b>Unknown Video format:</b> %s"
+msgstr ""
+
+#: ../pitivi/ui/sourcelist.py:107
+#, fuzzy, python-format
+msgid "<b>Text:</b> %s"
+msgstr "<b>Συγγραφέας:</b>"
+
+#: ../pitivi/ui/sourcelist.py:136
 msgid "Add Clips..."
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:96
+#: ../pitivi/ui/sourcelist.py:141
 msgid "Remove Clip"
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:100
+#: ../pitivi/ui/sourcelist.py:145
 msgid "Play Clip"
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:125
+#: ../pitivi/ui/sourcelist.py:169
 msgid "Icon"
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:134
+#: ../pitivi/ui/sourcelist.py:178
 msgid "Information"
 msgstr ""
 
 # #-#-#-#-#  bug-buddy.gnome-2-14.el.po (el)  #-#-#-#-#
 #
-#: ../pitivi/ui/sourcelist.py:145
+#: ../pitivi/ui/sourcelist.py:189
 #, fuzzy
 msgid "Duration"
 msgstr "Περιγραφή"
 
-#: ../pitivi/ui/sourcelist.py:167
+#: ../pitivi/ui/sourcelist.py:211
 msgid ""
 "<span size='x-large'>Import your clips by dragging them here or by using the "
 "buttons above.</span>"
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:217
+#: ../pitivi/ui/sourcelist.py:261
 msgid "_Import clips..."
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:218
+#: ../pitivi/ui/sourcelist.py:262
 msgid "Import clips to use"
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:220
+#: ../pitivi/ui/sourcelist.py:264
 msgid "_Import folder of clips..."
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:221
+#: ../pitivi/ui/sourcelist.py:265
 msgid "Import folder of clips to use"
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:313
+#: ../pitivi/ui/sourcelist.py:359
 msgid "Import a folder"
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:316
+#: ../pitivi/ui/sourcelist.py:362
 msgid "Import a clip"
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:554
+#: ../pitivi/ui/sourcelist.py:363
+msgid "Close after importing files"
+msgstr ""
+
+#: ../pitivi/ui/sourcelist.py:614
 msgid "Importing clips..."
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:555
+#: ../pitivi/ui/sourcelist.py:615
 msgid "Error(s) occured while importing"
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:556
+#: ../pitivi/ui/sourcelist.py:616
 msgid "An error occured while importing"
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:641
+#: ../pitivi/ui/sourcelist.py:701
 msgid "Error while analyzing files"
 msgstr "Σφάλμα κατά την ανάλυση των αρχείων"
 
-#: ../pitivi/ui/sourcelist.py:642
+#: ../pitivi/ui/sourcelist.py:702
 msgid "The following files can not be used with PiTiVi."
 msgstr ""
 
-#: ../pitivi/ui/sourcelist.py:644
+#: ../pitivi/ui/sourcelist.py:704
 #, fuzzy
 msgid "Error while analyzing a file"
 msgstr "Σφάλμα κατά την ανάλυση των αρχείων"
 
-#: ../pitivi/ui/sourcelist.py:645
+#: ../pitivi/ui/sourcelist.py:705
 msgid "The following file can not be used with PiTiVi."
 msgstr ""
 
 #. tooltip text for toolbar
-#: ../pitivi/ui/timeline.py:42
+#: ../pitivi/ui/timeline.py:41
 msgid "Delete Selected"
 msgstr ""
 
-#: ../pitivi/ui/timeline.py:43
+#: ../pitivi/ui/timeline.py:42
 msgid "Cut clip at mouse position"
 msgstr ""
 
-#: ../pitivi/ui/timeline.py:44
+#: ../pitivi/ui/timeline.py:43
 msgid "Zoom In"
 msgstr ""
 
-#: ../pitivi/ui/timeline.py:45
+#: ../pitivi/ui/timeline.py:44
 msgid "Zoom Out"
 msgstr ""
 
+#: ../pitivi/ui/timeline.py:45
+msgid "Break links between clips"
+msgstr ""
+
 #: ../pitivi/ui/timeline.py:46
-msgid "Unlink audio from video"
+msgid "Link together arbitrary clips"
 msgstr ""
 
 #: ../pitivi/ui/timeline.py:47
-msgid "Relink audio to original video"
+msgid "Ungroup clips"
 msgstr ""
+
+#: ../pitivi/ui/timeline.py:48
+msgid "Group clips"
+msgstr ""
+
+#, fuzzy
+#~ msgid "<b>%s</b>"
+#~ msgstr "<b>Ιδιότητες</b>"
 
 #, fuzzy
 #~ msgid "Properties"
