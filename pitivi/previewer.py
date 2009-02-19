@@ -38,10 +38,13 @@ from signalinterface import Signallable
 from ui.zoominterface import Zoomable
 import stream
 from pitivi.settings import GlobalSettings
+import pitivi.instance as instance
 
-(MEDIA_TYPE_NONE,
- MEDIA_TYPE_AUDIO,
- MEDIA_TYPE_VIDEO) = range(3)
+GlobalSettings.addConfigSection("thumbnailing")
+GlobalSettings.addConfigOption("thumbnailSpacingHint",
+    section="thumbnailing",
+    key="spacing-hint",
+    default=2.0)
 
 # Previewer                      -- abstract base class with public interface for UI
 # |_DefaultPreviewer             -- draws a default thumbnail for UI
@@ -130,6 +133,7 @@ class RandomAccessPreviewer(Previewer):
         self.theight = 50
         self.aspect = 4.0 / 3.0
         self.twidth = int(self.aspect * self.theight)
+        self.spacing = instance.PiTiVi.settings.thumbnailSpacingHint
 
         self._pipelineInit(factory, bin)
 
@@ -160,7 +164,7 @@ class RandomAccessPreviewer(Previewer):
 
         # tdur = duration in ns of thumbnail
         # sof  = start of file in pixel coordinates
-        tdur = Zoomable.pixelToNs(self.twidth)
+        tdur = Zoomable.pixelToNs(self.twidth + self.spacing)
         x1 = bounds.x1;
         sof = Zoomable.nsToPixel(element.start - element.in_point)
 
@@ -186,7 +190,7 @@ class RandomAccessPreviewer(Previewer):
         while i < bounds.x2:
             cr.set_source_surface(self._thumbForTime(j), i, y1)
             cr.rectangle(i - 1, y1, self.twidth + 2, self.theight)
-            i += self.twidth
+            i += self.twidth + self.spacing
             j += tdur
             cr.fill()
 
@@ -257,12 +261,11 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
     def __init__(self, factory, stream_):
         RandomAccessPreviewer.__init__(self, factory, stream_)
-        # use aspect ratio from stream
-        # FIXME : We might get a non-fixed stream
         if stream_.width and stream_.height:
             self.aspect = stream_.width / stream_.height
 
     def _pipelineInit(self, factory, sbin):
+
         csp = gst.element_factory_make("ffmpegcolorspace")
         sink = CairoSurfaceThumbnailSink()
         scale = gst.element_factory_make("videoscale")
@@ -296,6 +299,8 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def _pipelineInit(self, factory, sbin):
+        self.spacing = 0
+
         self.audioSink = ArraySink()
         conv = gst.element_factory_make("audioconvert")
         self.audioPipeline = utils.pipeline({ 
