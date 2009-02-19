@@ -95,8 +95,8 @@ class Pitivi(object, Loggable, Signallable):
         Loggable.__init__(self)
 
         # init logging as early as possible so we can log startup code
-        color_log = os.environ.get('PITIVI_DEBUG_NO_COLOR', '1') not in ('', '0')
-        log.init('PITIVI_DEBUG', color_log)
+        enable_color = os.environ.get('PITIVI_DEBUG_NO_COLOR', '0') in ('', '0')
+        log.init('PITIVI_DEBUG', enable_color)
 
         self.info('starting up')
 
