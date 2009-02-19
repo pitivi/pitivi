@@ -83,7 +83,7 @@ class Previewer(object, Signallable):
     # NOTE: dymamically changing thumbnail height would involve flushing the
     # thumbnail cache.
 
-    __DEFAULT_THUMB__ = "pitivi-video.png"
+    __DEFAULT_THUMB__ = "processing-clip.png"
 
     def __init__(self, factory, stream_):
         # create default thumbnail
