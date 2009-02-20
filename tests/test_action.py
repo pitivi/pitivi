@@ -178,14 +178,15 @@ class TestRenderAction(TestCase):
         self.vsrc.addOutputStream(MultimediaStream(gst.Caps("video/x-raw-yuv"),
                                                    pad_name="src"))
         self.asrc = common.FakeSourceFactory("audiotestsrc")
-        self.vsrc.addOutputStream(MultimediaStream(gst.Caps("audio/x-raw-float"),
+        self.asrc.addOutputStream(MultimediaStream(gst.Caps("audio/x-raw-float"),
                                                    pad_name="src"))
         self.vsettings = StreamEncodeSettings(encoder="theoraenc")
         self.asettings = StreamEncodeSettings(encoder="vorbisenc")
 
     def testSimple(self):
         """Tests a simple one stream encoding"""
-        settings = RenderSettings(settings=[self.vsettings], muxer="oggmux")
+        settings = RenderSettings(settings=[self.vsettings],
+                                  muxer="oggmux")
         sf = RenderSinkFactory(RenderFactory(settings=settings),
                                common.FakeSinkFactory())
         a = RenderAction()
