@@ -25,7 +25,7 @@ Encoding-related utilities and classes
 
 import gst
 from pitivi.stream import VideoStream, AudioStream
-from pitivi.factories.base import OperationFactory
+from pitivi.factories.base import OperationFactory, SinkFactory
 from pitivi.factories.operation import TransformFactory, get_modifier_for_stream
 
 class EncoderFactory(TransformFactory):
@@ -38,6 +38,10 @@ class EncoderFactory(TransformFactory):
     def __init__(self, settings, *args, **kwargs):
         self.settings = settings
         TransformFactory.__init__(self, *args, **kwargs)
+        if self.settings.input_stream:
+            self.addInputStream(self.settings.input_stream)
+        if self.settings.output_stream:
+            self.addOutputStream(self.settings.output_stream)
 
     def _makeBin(self, *args):
         s = self.settings
@@ -87,6 +91,10 @@ class RenderFactory(OperationFactory):
     def __init__(self, settings, *args, **kwargs):
         self.settings = settings
         OperationFactory.__init__(self, *args, **kwargs)
+        # add input streams according to the settings
+        for i in range(len(settings.settings)):
+            gst.debug("Adding stream %d %r" % (i, settings.settings[i]))
+            self.addInputStream(settings.settings[i].input_stream)
 
     def _makeBin(self, *args):
         s = self.settings
@@ -130,6 +138,37 @@ class RenderFactory(OperationFactory):
 
     def _requestNewInputStream(self, bin, input_stream):
         raise NotImplementedError
+
+class RenderSinkFactory(SinkFactory):
+    """
+    Convenience class combining a L{RenderFactory} and a L{SinkFactory}.
+
+    @cvar renderfactory: The render factory
+    @type renderfactory: L{RenderFactory}
+    @cvar sinkfactory: The sink factory
+    @type sinkfactory: L{SinkFactory}
+    """
+
+    def __init__(self, renderfactory, sinkfactory, *args, **kwargs):
+        self.renderfactory = renderfactory
+        self.sinkfactory = sinkfactory
+        SinkFactory.__init__(self, *args, **kwargs)
+        for os in self.renderfactory.input_streams:
+            self.addInputStream(os)
+
+    def _makeBin(self, *args):
+        b = gst.Bin()
+        rb = self.renderfactory.makeBin()
+        sf = self.sinkfactory.makeBin()
+        b.add(rb, sf)
+        rb.link(sf)
+        for sinkp in rb.sink_pads():
+            name = sinkp.get_name()
+            gsink = gst.GhostPad(name, sinkp)
+            gsink.set_active(True)
+            b.add_pad(gsink)
+
+        return b
 
 def get_compatible_sink_pad(factoryname, caps):
     """
