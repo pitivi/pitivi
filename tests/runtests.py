@@ -27,6 +27,8 @@ verbosity = 1
 if os.environ.has_key('VERBOSE'):
     descriptions = 2
     verbosity = 2
+from pitivi.log import log
+log.init('PITIVI_DEBUG', 1)
 
 testRunner = unittest.TextTestRunner(descriptions=descriptions,
     verbosity=verbosity)
