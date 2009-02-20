@@ -93,11 +93,11 @@ class Project(Serializable, Signallable):
 
         self.timeline = Timeline()
         # FIXME: the tracks should be loaded from the project file
-        audio = AudioStream(gst.Caps('audio/x-raw-int; audio/x-raw-float'))
-        track = Track(audio)
-        self.timeline.addTrack(track)
         video = VideoStream(gst.Caps('video/x-raw-rgb; video/x-raw-yuv'))
         track = Track(video)
+        self.timeline.addTrack(track)
+        audio = AudioStream(gst.Caps('audio/x-raw-int; audio/x-raw-float'))
+        track = Track(audio)
         self.timeline.addTrack(track)
 
         # don't want to make calling load() necessary for blank projects
