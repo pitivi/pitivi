@@ -21,9 +21,11 @@
 
 from unittest import TestCase, main
 from pitivi.pipeline import Pipeline, STATE_READY, STATE_PLAYING
-from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE, ActionError
+from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE, ActionError, RenderAction
 from pitivi.stream import MultimediaStream
 from pitivi.factories.base import SourceFactory
+from pitivi.encode import RenderSinkFactory, RenderFactory
+from pitivi.settings import StreamEncodeSettings, RenderSettings
 import common
 import gst
 
@@ -32,9 +34,6 @@ class BinSourceFactory(SourceFactory):
         return gst.element_factory_make('bin')
 
 class TestAction(TestCase):
-
-    def setUp(self):
-        gst.debug("Test starting")
 
     def testBasic(self):
         # let's make sure Actions are properly created
@@ -171,6 +170,34 @@ class TestAction(TestCase):
         ac.removeConsumers(sink)
         self.assertEquals(ac.producers, [])
         self.assertEquals(ac.consumers, [])
+
+class TestRenderAction(TestCase):
+
+    def setUp(self):
+        self.vsrc = common.FakeSourceFactory("videotestsrc")
+        self.vsrc.addOutputStream(MultimediaStream(gst.Caps("video/x-raw-yuv"),
+                                                   pad_name="src"))
+        self.asrc = common.FakeSourceFactory("audiotestsrc")
+        self.vsrc.addOutputStream(MultimediaStream(gst.Caps("audio/x-raw-float"),
+                                                   pad_name="src"))
+        self.vsettings = StreamEncodeSettings(encoder="theoraenc")
+        self.asettings = StreamEncodeSettings(encoder="vorbisenc")
+
+    def testSimple(self):
+        """Tests a simple one stream encoding"""
+        settings = RenderSettings(settings=[self.vsettings], muxer="oggmux")
+        sf = RenderSinkFactory(RenderFactory(settings=settings),
+                               common.FakeSinkFactory())
+        a = RenderAction()
+        a.addConsumers(sf)
+        a.addProducers(self.vsrc)
+
+        p = Pipeline()
+        a.setPipeline(p)
+
+        a.activate()
+
+
 
 if __name__ == "__main__":
     main()
