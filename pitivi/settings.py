@@ -335,10 +335,10 @@ class StreamEncodeSettings(object):
             # extract stream from factory
             for p in gst.registry_get_default().lookup_feature(self.encoder).get_static_pad_templates():
                 if p.direction == gst.PAD_SINK and not self.input_stream:
-                    self.input_stream = get_stream_for_caps(p.get_caps())
+                    self.input_stream = get_stream_for_caps(p.get_caps().copy())
                     self.input_stream.pad_name = p.name_template
                 elif p.direction == gst.PAD_SRC and not self.output_stream:
-                    self.output_stream = get_stream_for_caps(p.get_caps())
+                    self.output_stream = get_stream_for_caps(p.get_caps().copy())
                     self.output_stream.pad_name = p.name_template
 
     def __repr__(self):
