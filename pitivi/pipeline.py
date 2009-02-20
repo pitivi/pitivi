@@ -27,6 +27,7 @@ from pitivi.factories.base import SourceFactory, SinkFactory
 from pitivi.action import ActionError
 from pitivi.stream import pad_compatible_stream, get_src_pads_for_stream, \
      get_sink_pads_for_stream, get_stream_for_caps
+from pitivi.log.loggable import Loggable
 import gobject
 import gst
 
@@ -54,6 +55,9 @@ class FactoryEntry(object):
         self.factory = factory
         self.streams = {}
 
+    def __repr__(self):
+        return "<FactoryEntry %r>" % self.factory
+
 class StreamEntry(object):
     def __init__(self, factory_entry, stream, parent=None):
         self.factory_entry = factory_entry
@@ -76,7 +80,10 @@ class StreamEntry(object):
 
         return entry
 
-class Pipeline(object, Signallable):
+    def __repr__(self):
+        return "<StreamEntry %r %r>" % (self.factory_entry, self.stream)
+
+class Pipeline(object, Signallable, Loggable):
     """
     A container for all multimedia processing.
 
@@ -131,6 +138,7 @@ class Pipeline(object, Signallable):
         }
 
     def __init__(self):
+        Loggable.__init__(self)
         self._pipeline = gst.Pipeline()
         self._bus = self._pipeline.get_bus()
         self._bus.add_signal_watch()
@@ -417,6 +425,7 @@ class Pipeline(object, Signallable):
     #{ GStreamer object methods (For Action usage only)
 
     def _getFactoryEntryForStream(self, factory, stream, create=False):
+        gst.debug("factory %r, stream %s" % (factory, stream))
         try:
             factory_entry = self.factories[factory]
         except KeyError:
@@ -430,20 +439,25 @@ class Pipeline(object, Signallable):
             factory_entry = FactoryEntry(factory)
             self.factories[factory] = factory_entry
 
+        gst.debug("Returning %s" % factory_entry)
         return factory_entry
 
     def _getStreamEntryForFactoryStream(self, factory, stream=None, create=False):
+        gst.debug("factory %r, stream %r, create:%r" % (factory, stream, create))
         factory_entry = self._getFactoryEntryForStream(factory, stream, create)
-
+        gst.debug("streams %r" % factory_entry.streams)
         try:
             stream_entry = factory_entry.streams[stream]
         except KeyError:
             if not create:
+                gst.debug("Failure getting stream %s" % stream)
                 raise PipelineError()
 
+            gst.debug("Creating StreamEntry")
             stream_entry = StreamEntry(factory_entry, stream)
             factory_entry.streams[stream] = stream_entry
 
+        gst.debug("Returning %r" % stream_entry)
         return stream_entry
 
     def getBinForFactoryStream(self, factory, stream=None, automake=False):
@@ -468,7 +482,8 @@ class Pipeline(object, Signallable):
         are none for the given factory.
         @rtype: C{gst.Bin}
         """
-        gst.debug("factory:%r , automake:%r" % (factory, automake))
+        gst.debug("factory:%r , stream:%r , automake:%r" % (factory, stream, automake))
+
         stream_entry = self._getStreamEntryForFactoryStream(factory,
                 stream, automake)
 
