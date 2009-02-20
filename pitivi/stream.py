@@ -299,7 +299,6 @@ def get_stream_for_caps(caps, pad=None):
         stream_type = get_pad_type(pad)
     else:
         pad_name = None
-        val = caps.to_string()
         stream_type = caps[0].get_name().split('/', 1)[0]
 
     gst.debug("stream_type:%s" % stream_type)
