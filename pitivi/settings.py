@@ -33,6 +33,7 @@ from serializable import Serializable
 from signalinterface import Signallable
 from encode import available_muxers, available_video_encoders, \
      available_audio_encoders, available_combinations
+from stream import get_stream_for_caps
 
 from gettext import gettext as _
 
@@ -330,6 +331,18 @@ class StreamEncodeSettings(object):
         self.input_stream = input_stream
         self.output_stream = output_stream
         self.encodersettings = encodersettings
+        if not self.input_stream or not self.output_stream:
+            # extract stream from factory
+            for p in gst.registry_get_default().lookup_feature(self.encoder).get_static_pad_templates():
+                if p.direction == gst.PAD_SINK and not self.input_stream:
+                    self.input_stream = get_stream_for_caps(p.get_caps())
+                    self.input_stream.pad_name = p.name_template
+                elif p.direction == gst.PAD_SRC and not self.output_stream:
+                    self.output_stream = get_stream_for_caps(p.get_caps())
+                    self.output_stream.pad_name = p.name_template
+
+    def __repr__(self):
+        return "<StreamEncodeSettings %s>" % self.encoder
 
 class RenderSettings(object):
     """
@@ -347,6 +360,9 @@ class RenderSettings(object):
         self.settings = settings
         self.muxer = muxer
         self.muxersettings = muxersettings
+
+    def __repr__(self):
+        return "<RenderSettings %s [%d streams]>" % (self.muxer, len(self.settings))
 
 class ExportSettings(Serializable, Signallable):
     """
