@@ -485,6 +485,13 @@ class Pipeline(object, Signallable):
         self._connectToPadSignals(bin)
         self._pipeline.add(bin)
 
+        if stream is None:
+            factory_entry = self._getFactoryEntryForStream(factory, stream)
+
+            for stream in factory.output_streams:
+                factory_entry.streams[stream] = StreamEntry(factory_entry,
+                        stream, parent=stream_entry)
+
         gst.debug("Setting bin to current state")
         bin.set_state(self.getState())
 
@@ -768,6 +775,7 @@ class Pipeline(object, Signallable):
             stream_entry = factory_entry.streams[stream]
 
         self._stream_entry_from_pad[pad] = stream_entry
+
         # ask all actions using this producer if they handle it
         handled = False
         for action in [action for action in self.actions
