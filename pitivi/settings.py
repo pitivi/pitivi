@@ -316,6 +316,8 @@ class StreamEncodeSettings(object):
         @type encoder: C{str}.
         @param input_stream: The type of streams accepted by this settings. If
         None are specified, the stream type will be extracted from the encoder.
+        If one is specified, then a L{StreamModifierFactory} will be use to
+        conform the incoming stream to the specified L{Stream}.
         @type input_stream: L{MultimediaStream}
         @param output_stream: The type of streams accepted by this settings. If
         None are specified, the stream type will be extracted from the encoder.

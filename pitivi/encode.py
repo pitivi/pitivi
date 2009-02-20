@@ -24,8 +24,9 @@ Encoding-related utilities and classes
 """
 
 import gst
+from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.base import OperationFactory
-from pitivi.factories.operation import TransformFactory
+from pitivi.factories.operation import TransformFactory, get_modifier_for_stream
 
 class EncoderFactory(TransformFactory):
     """
@@ -50,11 +51,11 @@ class EncoderFactory(TransformFactory):
 
         # optional input stream
         if s.input_stream:
-            infilt = gst.element_factory_make("capsfilter")
-            infilt.props.caps = s.input_stream.caps
-            b.add(infilt)
-            infilt.link(enc)
-            gsink = gst.GhostPad("sink", infilt.get_pad("sink"))
+            filt = get_modifier_for_stream(output_stream=s.input_stream)
+            mod = filt.makeBin()
+            b.add(mod)
+            mod.link(enc)
+            gsink = gst.GhostPad("sink", mod.get_pad("sink"))
         else:
             gsink = gst.GhostPad("sink", enc.get_pad("sink"))
         gsink.set_active(True)

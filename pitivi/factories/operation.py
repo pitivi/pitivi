@@ -23,9 +23,13 @@
 import gst
 from pitivi.factories.base import OperationFactory
 from pitivi.elements.smartscale import SmartVideoScale
+from pitivi.stream import AudioStream, VideoStream
 
 # FIXME: define a proper hierarchy
 class OperationFactoryError(Exception):
+    pass
+
+class ModifierFactoryError(OperationFactoryError):
     pass
 
 class TransformFactory(OperationFactory):
@@ -115,3 +119,25 @@ class VideoModifierFactory(StreamModifierFactory):
         b.add_pad(gsrc)
         return b
 
+def get_modifier_for_stream(input_stream=None, output_stream=None):
+    """
+    Returns a L{StreamModifierFactory} for the given streams.
+
+    @raises ModifierFactoryError: If no modifier factory is available
+    for the given streams.
+    """
+    if input_stream == None and output_stream == None:
+        raise ModifierFactoryError("No streams provided")
+    if (isinstance(input_stream, AudioStream) or input_stream == None) and \
+           (isinstance(output_stream, AudioStream) or output_stream == None):
+        res = AudioModifierFactory()
+    elif (isinstance(input_stream, VideoStream) or input_stream == None) and \
+             (isinstance(output_stream, VideoStream) or output_stream == None):
+        res = VideoModifierFactory()
+    else:
+        raise ModifierFactoryError("No modifier for given stream type")
+    if input_stream:
+        res.addInputStream(input_stream)
+    if output_stream:
+        res.addOutputStream(output_stream)
+    return res

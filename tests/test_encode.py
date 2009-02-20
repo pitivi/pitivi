@@ -21,6 +21,7 @@
 
 import gst
 from unittest import TestCase, main
+from pitivi.stream import VideoStream
 from pitivi.encode import EncoderFactory, RenderFactory
 from pitivi.settings import StreamEncodeSettings, RenderSettings
 
@@ -48,7 +49,25 @@ class TestEncoderFactory(TestCase):
         elfact = elements[0].get_factory()
         self.assertEquals(elfact.get_name(), "theoraenc")
 
-    # FIXME : Add a test for input_stream/output_stream
+    def testMakeBinFiltered(self):
+        filtstream = VideoStream(caps=gst.Caps("video/x-raw-yuv,width=320,height=240"))
+        set = StreamEncodeSettings(encoder="theoraenc",
+                                   input_stream=filtstream)
+        b = EncoderFactory(settings=set)
+
+        bin = b.makeBin()
+        self.assertEquals(bin.factory, b)
+
+        # it should just be a bin containing the modifierbin and theoraenc
+        self.assertEquals(type(bin), gst.Bin)
+
+        elements = list(bin.elements())
+        self.assertEquals(len(elements), 2)
+
+        for elt in elements:
+            if not isinstance(elt, gst.Bin):
+                self.assertEquals(elt.get_factory().get_name(),
+                                  "theoraenc")
 
     def testEncoderSettings(self):
         encsettings = {
