@@ -30,6 +30,8 @@ states = (STATE_NOT_ACTIVE,
 
 from pitivi.signalinterface import Signallable
 from pitivi.factories.base import SourceFactory, SinkFactory
+from pitivi.encode import RenderSinkFactory
+from pitivi.log.loggable import Loggable
 import gst
 
 # TODO : Create a convenience class for Links
@@ -38,7 +40,7 @@ import gst
 class ActionError(Exception):
     pass
 
-class Action(object, Signallable):
+class Action(object, Signallable, Loggable):
     """
     Pipeline action.
 
@@ -77,6 +79,7 @@ class Action(object, Signallable):
         }
 
     def __init__(self):
+        Loggable.__init__(self)
         self.state = STATE_NOT_ACTIVE
         self.producers = []
         self.consumers = []
@@ -695,10 +698,8 @@ class RenderAction(Action):
     """
     An Action to render sources.
 
-    Handles both a L{RenderFactory} and a L{SinkFactory}.
+    Handles a L{RenderSinkFactory}.
     """
 
-    def __init__(self, *args, **kwargs):
-        Action.__init__(self, *args, **kwargs)
-        self.renderfactory = None
-        self.sinkfactory = None
+    compatible_consumers = [RenderSinkFactory]
+
