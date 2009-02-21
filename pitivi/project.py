@@ -30,8 +30,9 @@ import traceback
 from pitivi.timeline.timeline import Timeline
 from pitivi.timeline.track import Track
 from pitivi.stream import AudioStream, VideoStream
+from pitivi.pipeline import Pipeline
+from pitivi.factories.timeline import TimelineSourceFactory
 from sourcelist import SourceList
-from bin import SmartTimelineBin
 from settings import ExportSettings
 from configure import APPNAME
 from gettext import gettext as _
@@ -60,6 +61,13 @@ class Project(Serializable, Signallable):
 
         void settings-changed()
             The project settings have changed
+
+    @cvar timeline: The timeline
+    @type timeline: L{Timeline}
+    @cvar pipeline: The timeline's pipeline
+    @type pipeline: L{Pipeline}
+    @cvar factory: The timeline factory
+    @type factory: L{TimelineSourceFactory}
     """
 
     __signals__ = {
@@ -84,21 +92,23 @@ class Project(Serializable, Signallable):
         self.urichanged = False
         self.format = None
         self.sources = SourceList(self)
-        self.timeline = None
-        self.timelinebin = None
         self.settingssigid = 0
         self._dirty = False
-        
+
         self.sources.connect('missing-plugins', self._sourceListMissingPluginsCb)
 
         self.timeline = Timeline()
-        # FIXME: the tracks should be loaded from the project file
+
+        # FIXME: the tracks should be loaded from the settings
         video = VideoStream(gst.Caps('video/x-raw-rgb; video/x-raw-yuv'))
         track = Track(video)
         self.timeline.addTrack(track)
         audio = AudioStream(gst.Caps('audio/x-raw-int; audio/x-raw-float'))
         track = Track(audio)
         self.timeline.addTrack(track)
+
+        self.factory = TimelineSourceFactory(self.timeline)
+        self.pipeline = Pipeline()
 
         # don't want to make calling load() necessary for blank projects
         if self.uri == None:
@@ -147,14 +157,6 @@ class Project(Serializable, Signallable):
             gst.debug("Done loading !")
             return True
         return False
-
-    def getBin(self):
-        """ returns the SmartTimelineBin of the project """
-        if not self.timeline:
-            return None
-        if not self.timelinebin:
-            self.timelinebin = SmartTimelineBin(self)
-        return self.timelinebin
 
     def _save(self):
         """ internal save function """
