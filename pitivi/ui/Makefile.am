@@ -7,6 +7,7 @@ ui_PYTHON =			\
 	defaultpropertyeditor.py\
 	dnd.py			\
 	exportsettingswidget.py	\
+	encodingdialog.py	\
 	filelisterrordialog.py	\
 	glade.py		\
 	gstwidget.py		\
