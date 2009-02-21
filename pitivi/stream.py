@@ -354,7 +354,8 @@ def get_pads_for_stream(element, stream):
     ls = [x for x in element.pads() if pad_compatible_stream(x, stream)]
     # FIXME : I'm not 100% certain that checking against the stream pad_name
     # is a good idea ....
-    if stream and stream.pad_name:
+    # only filter the list if there's more than one choice
+    if stream and len(ls) > 1 and stream.pad_name:
         return [x for x in ls if x.get_name() == stream.pad_name]
     return ls
 
