@@ -208,7 +208,7 @@ class Action(object, Signallable, Loggable):
         @type producers: List of L{ObjectFactory}
         @raise ActionError: If the L{Action} is active.
         """
-        gst.debug("producers:%r" % producers)
+        gst.debug("producers:%r" % (producers, ))
         if self.state != STATE_NOT_ACTIVE:
             raise ActionError("Action is active, can't add Producers")
         # make sure producers are of the valid type
