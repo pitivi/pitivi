@@ -399,7 +399,7 @@ class Action(object, Signallable, Loggable):
         """
         links = self._links[:]
         if links == [] and autolink == True:
-            links = self.autoLink()
+            links = self._links = self.autoLink()
         gst.debug("Returning %d links" % len(links))
         return links
 
@@ -431,6 +431,7 @@ class Action(object, Signallable, Loggable):
                     compat = consumer.getInputStreams(type(producer_stream))
                     # in case of ambiguity, raise an exception
                     if len(compat) > 1:
+                        gst.warning("%r" % compat)
                         raise ActionError("Too many compatible streams in consumer")
                     if len(compat) == 1:
                         gst.debug("    Got a compatible stream !")
