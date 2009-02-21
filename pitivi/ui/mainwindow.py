@@ -123,7 +123,12 @@ def create_stock_icons():
 
 class PitiviMainWindow(gtk.Window):
     """
-    Pitivi's main window
+    Pitivi's main window.
+
+    @cvar app: The application object
+    @type app: L{Application}
+    @cvar project: The current project
+    @type project: L{Project}
     """
 
 
@@ -131,11 +136,12 @@ class PitiviMainWindow(gtk.Window):
         """ initialize with the Pitivi object """
         gst.log("Creating MainWindow")
         gtk.Window.__init__(self)
+        self.app = instance
+        self.project = self.app.current
         self.actions = None
         self.toggleactions = None
         self.actiongroup = None
         self.error_dialogbox = None
-        self.pitivi = instance
         self.settings = instance.settings
         self.is_fullscreen = self.settings.mainWindowFullScreen
         self.missing_plugins = []
@@ -145,39 +151,52 @@ class PitiviMainWindow(gtk.Window):
         create_stock_icons()
         self._setActions()
         self._createUi()
-        self.pitivi.connect("new-project-loaded", self._newProjectLoadedCb)
-        self.pitivi.connect("new-project-loading", self._newProjectLoadingCb)
-        self.pitivi.connect("closing-project", self._closingProjectCb)
-        self.pitivi.connect("new-project-failed", self._notProjectCb)
-        self.pitivi.current.connect("save-uri-requested", self._saveAsDialogCb)
-        self.pitivi.current.connect("confirm-overwrite", self._confirmOverwriteCb)
-        self.pitivi.playground.connect("error", self._playGroundErrorCb)
-        self.pitivi.current.sources.connect("file_added", self._sourcesFileAddedCb)
+        self.app.connect("new-project-loaded", self._newProjectLoadedCb)
+        self.app.connect("new-project-loading", self._newProjectLoadingCb)
+        self.app.connect("closing-project", self._closingProjectCb)
+        self.app.connect("new-project-failed", self._notProjectCb)
+        self.app.current.connect("save-uri-requested", self._saveAsDialogCb)
+        self.app.current.connect("confirm-overwrite", self._confirmOverwriteCb)
+        self.app.playground.connect("error", self._playGroundErrorCb)
+        self.app.current.sources.connect("file_added", self._sourcesFileAddedCb)
 
-        self.pitivi.current.connect('missing-plugins',
+        self.app.current.connect('missing-plugins',
                 self._projectMissingPluginsCb)
 
         # if no webcams available, hide the webcam action
-        self.pitivi.deviceprobe.connect("device-added", self.__deviceChangeCb)
-        self.pitivi.deviceprobe.connect("device-removed", self.__deviceChangeCb)
-        if len(self.pitivi.deviceprobe.getVideoSourceDevices()) < 1:
+        self.app.deviceprobe.connect("device-added", self.__deviceChangeCb)
+        self.app.deviceprobe.connect("device-removed", self.__deviceChangeCb)
+        if len(self.app.deviceprobe.getVideoSourceDevices()) < 1:
             self.webcam_button.set_sensitive(False)
         self.show_all()
 
-    def _encodingDialogDestroyCb(self, unused_dialog):
-        self.pitivi.gui.set_sensitive(True)
+    def showEncodingDialog(self, project, pause=True):
+        """
+        Shows the L{EncodingDialog} for the given project Timeline.
 
-    def _recordCb(self, unused_button):
-        # pause timeline !
-        self.pitivi.playground.pause()
+        @param project: The project
+        @type project: L{Project}
+        @param pause: If C{True}, pause the timeline before displaying the dialog.
+        @type pause: C{bool}
+        """
 
-        win = EncodingDialog(self.pitivi.current, self.pitivi)
+        if pause:
+            project.pipeline.pause()
+        win = EncodingDialog(project)
         win.window.connect("destroy", self._encodingDialogDestroyCb)
-        self.pitivi.gui.set_sensitive(False)
+        self.set_sensitive(False)
         win.show()
 
+    def _encodingDialogDestroyCb(self, unused_dialog):
+        self.set_sensitive(True)
+
+    def _recordCb(self, unused_button):
+        self.showEncodingDialog(self.project)
+        # pause timeline !
+        self.app.playground.pause()
+
     def _timelineDurationChangedCb(self, timeline, duration):
-        if not isinstance(self.pitivi.playground.current, SmartTimelineBin):
+        if not isinstance(self.app.playground.current, SmartTimelineBin):
             return
 
         self.render_button.set_sensitive((duration > 0) and True or False)
@@ -189,7 +208,7 @@ class PitiviMainWindow(gtk.Window):
             if isinstance(smartbin, SmartTimelineBin):
                 gst.info("switching to Timeline, setting duration to %s" %
                          (gst.TIME_ARGS(smartbin.project.timeline.duration)))
-                smartbin.project.timeline.connect("duration-changed", 
+                smartbin.project.timeline.connect("duration-changed",
                         self._timelineDurationChangedCb)
                 if smartbin.project.timeline.duration > 0:
                     self.render_button.set_sensitive(True)
@@ -218,13 +237,13 @@ class PitiviMainWindow(gtk.Window):
              None, _("Manage plugins"), self._pluginManagerCb),
             ("ImportfromCam", gtk.STOCK_ADD ,
              _("_Import from Webcam.."),
-             None, _("Import Camera stream"), self._ImportWebcam),   
+             None, _("Import Camera stream"), self._ImportWebcam),
             ("Screencast", gtk.STOCK_ADD ,
              _("_Make screencast.."),
-             None, _("Capture the desktop"), self._Screencast),   
+             None, _("Capture the desktop"), self._Screencast),
             ("NetstreamCapture", gtk.STOCK_ADD ,
              _("_Capture Network Stream.."),
-             None, _("Capture Network Stream"), self._ImportNetstream), 
+             None, _("Capture Network Stream"), self._ImportNetstream),
             ("Quit", gtk.STOCK_QUIT, None, None, None, self._quitCb),
             ("About", gtk.STOCK_ABOUT, None, None,
              _("Information about %s") % APPNAME, self._aboutCb),
@@ -261,7 +280,7 @@ class PitiviMainWindow(gtk.Window):
                 action.set_sensitive(True)
             elif action.get_name() in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
-                if not self.pitivi.settings.fileSupportEnabled:
+                if not self.app.settings.fileSupportEnabled:
                     action.set_sensitive(False)
             else:
                 action.set_sensitive(False)
@@ -292,10 +311,10 @@ class PitiviMainWindow(gtk.Window):
         # timeline and project tabs
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
-        
+
         self.timeline = Timeline(self.uimanager)
-        self.timeline.setProject(self.pitivi.current)
-        
+        self.timeline.setProject(self.app.current)
+
         vpaned.pack2(self.timeline, resize=True, shrink=False)
         hpaned = gtk.HPaned()
         vpaned.pack1(hpaned, resize=False, shrink=True)
@@ -312,8 +331,6 @@ class PitiviMainWindow(gtk.Window):
                            gtk.gdk.ACTION_COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         hpaned.pack2(self.viewer, resize=False, shrink=False)
-        #self.viewer.detach_button.connect("clicked", self.__windowizeViewer, 
-        #    hpaned)
 
         # window and pane position defaults
         self.hpaned = hpaned
@@ -329,7 +346,6 @@ class PitiviMainWindow(gtk.Window):
         if self.settings.mainWindowHeight:
             height = self.settings.mainWindowHeight
         self.set_default_size(width, height)
-            
 
         # timeline toolbar
         # FIXME: remove toolbar padding and shadow. In fullscreen mode, the
@@ -339,7 +355,7 @@ class PitiviMainWindow(gtk.Window):
             False)
 
         #application icon
-        self.set_icon_from_file(get_global_pixmap_dir() 
+        self.set_icon_from_file(get_global_pixmap_dir()
             + "/pitivi.png")
 
     def toggleFullScreen(self):
@@ -374,7 +390,7 @@ class PitiviMainWindow(gtk.Window):
 
     def _playGroundErrorCb(self, unused_playground, error, detail):
         # FIXME FIXME FIXME:
-        # _need_ an onobtrusive way to present gstreamer errors, 
+        # _need_ an onobtrusive way to present gstreamer errors,
         # one that doesn't steel mouse/keyboard focus, one that
         # makes some kind of sense to the user, and one that presents
         # some ways of actually _dealing_ with the underlying problem:
@@ -393,10 +409,10 @@ class PitiviMainWindow(gtk.Window):
 ## Project source list callbacks
 
     def _sourcesFileAddedCb(self, unused_sources, unused_factory):
-        #if (len(self.sourcefactories.sourcelist.storemodel) == 1 
-        #    and not len(self.pitivi.current.timeline.videocomp):
+        #if (len(self.sourcefactories.sourcelist.storemodel) == 1
+        #    and not len(self.app.current.timeline.videocomp):
         pass
-    
+
     def _projectMissingPluginsCb(self, project, uri, detail, message):
         self.missing_plugins.append(uri)
         return self._installPlugins(detail)
@@ -411,12 +427,12 @@ class PitiviMainWindow(gtk.Window):
 
     def _installPluginsAsyncCb(self, result):
         missing_plugins, self.missing_plugins = self.missing_plugins, []
-        
+
         if result != gst.pbutils.INSTALL_PLUGINS_SUCCESS:
             return
 
         gst.update_registry()
-        self.pitivi.current.sources.addUris(missing_plugins)
+        self.app.current.sources.addUris(missing_plugins)
 
 ## UI Callbacks
 
@@ -426,7 +442,7 @@ class PitiviMainWindow(gtk.Window):
 
     def _destroyCb(self, unused_widget, unused_data=None):
         self._saveWindowSettings()
-        self.pitivi.shutdown()
+        self.app.shutdown()
 
     def _saveWindowSettings(self):
         self.settings.mainWindowFullscreen = self.is_fullscreen
@@ -441,7 +457,7 @@ class PitiviMainWindow(gtk.Window):
 ## Toolbar/Menu actions callback
 
     def _newProjectMenuCb(self, unused_action):
-        self.pitivi.newBlankProject()
+        self.app.newBlankProject()
 
     def _openProjectCb(self, unused_action):
         chooser = gtk.FileChooserDialog(_("Open File ..."),
@@ -467,23 +483,23 @@ class PitiviMainWindow(gtk.Window):
         self.settings.lastProjectFolder = chooser.get_current_folder()
         if response == gtk.RESPONSE_OK:
             path = chooser.get_filename()
-            self.pitivi.loadProject(filepath = path)
+            self.app.loadProject(filepath = path)
 
         chooser.destroy()
         return True
 
     def _saveProjectCb(self, unused_action):
-        self.pitivi.current.save()
+        self.app.current.save()
 
     def _saveProjectAsCb(self, unused_action):
-        self.pitivi.current.saveAs()
+        self.app.current.saveAs()
 
     def _projectSettingsCb(self, unused_action):
-        ProjectSettingsDialog(self, self.pitivi.current).show()
+        ProjectSettingsDialog(self, self.app.current).show()
 
     def _quitCb(self, unused_action):
         self._saveWindowSettings()
-        self.pitivi.shutdown()
+        self.app.shutdown()
 
     def _fullScreenCb(self, unused_action):
         self.toggleFullScreen()
@@ -518,11 +534,11 @@ class PitiviMainWindow(gtk.Window):
         abt.show()
 
     def _pluginManagerCb(self, unused_action):
-        PluginManagerDialog(self.pitivi.plugin_manager)
+        PluginManagerDialog(self.app.plugin_manager)
 
     # Import from Webcam callback
     def _ImportWebcam(self,unused_action):
-        w = WebcamManagerDialog(self.pitivi)
+        w = WebcamManagerDialog(self.app)
         w.show()
 
     # Capture network stream callback
@@ -645,7 +661,7 @@ class PitiviMainWindow(gtk.Window):
 
         chooser.destroy()
         return ret
-    
+
     def _viewerDndDataReceivedCb(self, unused_widget, context, unused_x, unused_y,
                            selection, targetType, ctime):
         # FIXME : This should be handled by the main application who knows how
@@ -673,25 +689,25 @@ class PitiviMainWindow(gtk.Window):
         pipeline.pause()
 
         context.finish(True, False, ctime)
-    
+
     def _timelineDragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
         # FIXME: temporarily add source to timeline, and put it in drag mode
         # so user can see where it will go
         gst.info("SimpleTimeline x:%d , source would go at %d" % (x, 0))
 
-    def _timelineDragDataReceivedCb(self, unused_layout, context, x, y, 
+    def _timelineDragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
-        gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
+        gst.log("SimpleTimeline, targetType:%d, selection.data:%s" %
             (targetType, selection.data))
         if targetType == dnd.TYPE_PITIVI_FILESOURCE:
             uri = selection.data
         else:
             context.finish(False, False, timestamp)
-        factory = self.pitivi.current.sources[uri]
+        factory = self.app.current.sources[uri]
 
         # FIXME: the UI should be smart here and figure out which track the
         # source was dragged onto
-        self.pitivi.current.timeline.addSourceFactory(factory)
+        self.app.current.timeline.addSourceFactory(factory)
         context.finish(True, False, timestamp)
 
 
@@ -700,7 +716,7 @@ class PitiviMainWindow(gtk.Window):
         if hasattr(self, '_timeline_pipeline') and hasattr(self, '_timeline_view_action'):
             return self._timeline_pipeline, self._timeline_view_action
 
-        timeline = self.pitivi.current.timeline
+        timeline = self.app.current.timeline
         factory = TimelineSourceFactory(timeline)
         pipeline = Pipeline()
         pipeline.activatePositionListener()
