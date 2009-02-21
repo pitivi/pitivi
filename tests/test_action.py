@@ -19,10 +19,11 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import time
 from unittest import TestCase, main
 from pitivi.pipeline import Pipeline, STATE_READY, STATE_PLAYING
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE, ActionError, RenderAction
-from pitivi.stream import MultimediaStream
+from pitivi.stream import MultimediaStream, VideoStream, AudioStream
 from pitivi.factories.base import SourceFactory
 from pitivi.encode import RenderSinkFactory, RenderFactory
 from pitivi.settings import StreamEncodeSettings, RenderSettings
@@ -175,11 +176,11 @@ class TestRenderAction(TestCase):
 
     def setUp(self):
         self.vsrc = common.FakeSourceFactory("videotestsrc")
-        self.vsrc.addOutputStream(MultimediaStream(gst.Caps("video/x-raw-yuv"),
-                                                   pad_name="src"))
+        self.vsrc.addOutputStream(VideoStream(gst.Caps("video/x-raw-yuv"),
+                                              pad_name="src"))
         self.asrc = common.FakeSourceFactory("audiotestsrc")
-        self.asrc.addOutputStream(MultimediaStream(gst.Caps("audio/x-raw-float"),
-                                                   pad_name="src"))
+        self.asrc.addOutputStream(AudioStream(gst.Caps("audio/x-raw-float"),
+                                              pad_name="src"))
         self.vsettings = StreamEncodeSettings(encoder="theoraenc")
         self.asettings = StreamEncodeSettings(encoder="vorbisenc")
 
@@ -197,8 +198,60 @@ class TestRenderAction(TestCase):
         a.setPipeline(p)
 
         a.activate()
+        self.assertEquals(len(a._links), 1)
 
+        p.play()
+        time.sleep(3)
+        p.getState()
+        p.stop()
+        a.deactivate()
 
+    def testSimpleStreams(self):
+        """Test a RenderSettings with exact stream settings"""
+        # let's force the video to some unusual size
+        outs = VideoStream(gst.Caps("video/x-raw-yuv,width=624,height=230,framerate=10/1"))
+        fset = StreamEncodeSettings(encoder="theoraenc", input_stream=outs)
+        settings = RenderSettings(settings=[fset], muxer="oggmux")
+        sf = RenderSinkFactory(RenderFactory(settings=settings),
+                               common.FakeSinkFactory())
+
+        a = RenderAction()
+        a.addConsumers(sf)
+        a.addProducers(self.vsrc)
+
+        p = Pipeline()
+        a.setPipeline(p)
+
+        a.activate()
+        self.assertEquals(len(a._links), 1)
+
+        p.play()
+        time.sleep(3)
+        p.getState()
+        p.stop()
+        a.deactivate()
+
+    def testMultiple(self):
+        """Test a dual stream encoding with separates sources"""
+        settings = RenderSettings(settings=[self.asettings, self.vsettings],
+                                  muxer="oggmux")
+        sf = RenderSinkFactory(RenderFactory(settings=settings),
+                               common.FakeSinkFactory())
+        a = RenderAction()
+        a.addConsumers(sf)
+        a.addProducers(self.vsrc, self.asrc)
+
+        p = Pipeline()
+        a.setPipeline(p)
+
+        a.activate()
+        self.assertEquals(len(a._links), 2)
+
+        p.play()
+        time.sleep(3)
+        p.getState()
+        p.stop()
+        a.deactivate()
 
 if __name__ == "__main__":
     main()
