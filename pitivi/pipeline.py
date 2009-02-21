@@ -532,8 +532,8 @@ class Pipeline(object, Signallable, Loggable):
 
             # do cleanup on our side
             self._disconnectFromPadSignals(bin_stream_entry.bin)
-            self._pipeline.remove(bin_stream_entry.bin)
             bin_stream_entry.bin.set_state(gst.STATE_NULL)
+            self._pipeline.remove(bin_stream_entry.bin)
             factory_entry = bin_stream_entry.factory_entry
             del factory_entry.streams[bin_stream_entry.stream]
 
@@ -715,11 +715,16 @@ class Pipeline(object, Signallable, Loggable):
         stream_entry.queue_use_count -= 1
         if stream_entry.queue_use_count == 0:
             gst.debug("Found a corresponding queue, unlink it from the consumer")
+
+            # first set the bin to NULL
+            stream_entry.bin.set_state(gst.STATE_NULL)
+
             # unlink it from the sink bin
             stream_entry.queue.unlink(stream_entry.bin)
 
             gst.debug("Unlinking it from the tee, if present")
             queue_sinkpad = stream_entry.queue.get_pad("sink")
+            stream_entry.queue.set_state(gst.STATE_NULL)
             # figure out the peerpad
             tee_srcpad = queue_sinkpad.get_peer()
             if tee_srcpad:
@@ -728,7 +733,6 @@ class Pipeline(object, Signallable, Loggable):
                 tee.release_request_pad(tee_srcpad)
             gst.debug("Removing from gst.Pipeline")
             self._pipeline.remove(stream_entry.queue)
-            stream_entry.queue.set_state(gst.STATE_NULL)
             stream_entry.queue = None
 
     #}
