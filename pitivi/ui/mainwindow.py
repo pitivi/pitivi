@@ -54,7 +54,6 @@ from pitivi.configure import pitivi_version, APPNAME, get_pixmap_dir, \
 from pitivi.ui import dnd
 from pitivi.pipeline import Pipeline
 from pitivi.action import ViewAction
-from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.settings import GlobalSettings
 
 if HAVE_GCONF:
@@ -711,30 +710,14 @@ class PitiviMainWindow(gtk.Window):
         context.finish(True, False, timestamp)
 
 
-    def _getTimelinePipeline(self):
-        # FIXME: the timeline pipeline should probably be moved in project
-        if hasattr(self, '_timeline_pipeline') and hasattr(self, '_timeline_view_action'):
-            return self._timeline_pipeline, self._timeline_view_action
-
-        timeline = self.app.current.timeline
-        factory = TimelineSourceFactory(timeline)
-        pipeline = Pipeline()
-        pipeline.activatePositionListener()
-        pipeline.connect('position', self._timelinePipelinePositionChangedCb)
-        action = ViewAction()
-        action.addProducers(factory)
-
-        self._timeline_pipeline = pipeline
-        self._timeline_view_action = action
-
-        return self._timeline_pipeline, self._timeline_view_action
-
     def _timelineRulerSeekCb(self, ruler, position):
-        pipeline, action = self._getTimelinePipeline()
-        self.viewer.setAction(action)
-        self.viewer.setPipeline(pipeline)
-        pipeline.pause()
-        pipeline.seek(position)
+        if not hasattr(self.project, 'view_action'):
+            self.project.view_action = ViewAction()
+            self.project.view_action.addProducers(self.project.factory)
+        self.viewer.setAction(self.project.view_action)
+        self.viewer.setPipeline(self.project.pipeline)
+        self.project.pipeline.pause()
+        self.project.pipeline.seek(position)
 
     def _timelinePipelinePositionChangedCb(self, pipeline, position):
         self.timeline.ruler.timelinePositionChanged(position)
