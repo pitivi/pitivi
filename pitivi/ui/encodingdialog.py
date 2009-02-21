@@ -27,38 +27,37 @@ import os
 import time
 import gobject
 import gtk
-import gst
 from gettext import gettext as _
 import pitivi.configure as configure
+from pitivi.log.loggable import Loggable
 from pitivi.ui.exportsettingswidget import ExportSettingsDialog
 from pitivi.ui.glade import GladeWindow
 
-class EncodingDialog(GladeWindow):
+class EncodingDialog(GladeWindow, Loggable):
     """ Encoding dialog box """
     glade_file = "encodingdialog.glade"
 
-    def __init__(self, project, instance):
+    def __init__(self, project):
         GladeWindow.__init__(self)
-        self.pitivi = instance
-        self.project = project
-        self.bin = project.getBin()
-        self.bus = self.bin.get_bus()
-        self.bus.add_signal_watch()
-        self.eosid = self.bus.connect("message::eos", self._eosCb)
-        self.outfile = None
+        Loggable.__init__(self)
+
+        # UI widgets
         self.progressbar = self.widgets["progressbar"]
         self.filebutton = self.widgets["filebutton"]
         self.settingsbutton = self.widgets["settingsbutton"]
         self.cancelbutton = self.widgets["cancelbutton"]
         self.recordbutton = self.widgets["recordbutton"]
         self.recordbutton.set_sensitive(False)
-        self.positionhandler = 0
-        self.rendering = False
-        self.settings = project.getSettings()
-        self.timestarted = 0
         self.vinfo = self.widgets["videoinfolabel"]
         self.ainfo = self.widgets["audioinfolabel"]
         self.window.set_icon_from_file(configure.get_pixmap_dir() + "/pitivi-render-16.png")
+
+        # grab the Pipeline and settings
+        self.project = project
+        self.outfile = None
+        self.rendering = False
+        self.settings = project.getSettings()
+        self.timestarted = 0
         self._displaySettings()
 
     def _displaySettings(self):
@@ -66,7 +65,6 @@ class EncodingDialog(GladeWindow):
         self.ainfo.set_markup(self.settings.getAudioDescription())
 
     def _fileButtonClickedCb(self, button):
-
         dialog = gtk.FileChooserDialog(title=_("Choose file to render to"),
                                        parent=self.window,
                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
@@ -134,9 +132,7 @@ class EncodingDialog(GladeWindow):
         self.cancelbutton.set_label("gtk-close")
 
     def _cancelButtonClickedCb(self, unused_button):
-        self.bin.stopRecording()
-        if self.positionhandler:
-            self.pitivi.playground.disconnect(self.positionhandler)
-            self.positionhandler = 0
-        self.pitivi.playground.pause()
+        # Abort recording
+        # remove position handler
+        # put default actions back to synchronous
         self.destroy()
