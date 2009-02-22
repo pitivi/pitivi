@@ -162,6 +162,10 @@ class PitiviMainWindow(gtk.Window):
         self.pitivi.deviceprobe.connect("device-removed", self.__deviceChangeCb)
         if len(self.pitivi.deviceprobe.getVideoSourceDevices()) < 1:
             self.webcam_button.set_sensitive(False)
+
+        # connect to timeline
+        self.app.current.pipeline.activatePositionListener()
+        self.app.current.pipeline.connect('position', self._timelinePipelinePositionChangedCb)
         self.show_all()
 
     def _encodingDialogDestroyCb(self, unused_dialog):
