@@ -4,10 +4,45 @@ A collection of objects to use for testing
 
 import gobject
 gobject.threads_init()
+import gst
+import gc
+import unittest
 from pitivi.timeline.objects import TimelineObject, MEDIA_TYPE_NONE, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
 from pitivi.timeline.source import TimelineSource, TimelineFileSource
 from pitivi.factories.base import ObjectFactory, SourceFactory, SinkFactory
-import gst
+from pitivi.pipeline import Pipeline
+
+class TestCase(unittest.TestCase):
+
+    def tearDown(self):
+        while True:
+            if gc.collect() == 0:
+                break
+        factories = [x for x in gc.get_objects() if isinstance(x, ObjectFactory)]
+        pipelines = [x for x in gc.get_objects() if isinstance(x, Pipeline)]
+
+        for f in factories:
+            print f
+            for a in  gc.get_referrers(f):
+                print "  ", a
+            print
+        self.assertEquals(factories, [])
+        gstt = [gst.MiniObject, gst.Element, gst.Pad, gst.Caps]
+        gstobj = []
+        for tt in gstt:
+            gstobj.extend([x for x in gc.get_objects() if isinstance(x, tt)])
+        for f in gstobj:
+            print f
+            for a in  gc.get_referrers(f):
+                print "  ", a
+            print
+        self.assertEquals(gstobj, [])
+#         for f in pipelines:
+#             print f
+#             for a in  gc.get_referrers(f):
+#                 print "  ", a
+#             print
+#         self.assertEquals(pipelines, [])
 
 class TestTimelineObject(TimelineObject):
 
@@ -147,3 +182,4 @@ class SignalMonitor(object):
         setattr(self, field, getattr(self, field, 0) + 1)
         field = self._getSignalCollectName(name)
         setattr(self, field, getattr(self, field, []) + [args[:-1]])
+
