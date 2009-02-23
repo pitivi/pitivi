@@ -4,11 +4,7 @@ tests = \
 	test_binary_search.py		\
 	test_factories_base.py		\
 	test_factories_file.py		\
-	test_file_load_save.py		\
-	test_timeline_objects.py	\
-	test_serializable.py		\
 	test_signallable.py		\
-	test_timeline_source.py		\
 	testcomplex.py			\
 	testmagnets.py			\
 	test_pipeline.py		\
