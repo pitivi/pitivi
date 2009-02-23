@@ -64,7 +64,6 @@ class PlayGround(object, Signallable):
 
     def __init__(self):
         gst.log("Starting up playground")
-
         # List of used pipelines
         self.pipelines = []
 
@@ -127,6 +126,7 @@ class PlayGround(object, Signallable):
             return True
 
         bus = pipeline.get_bus()
+        bus.disconnect_by_func(self._buMessageCb)
         bus.remove_signal_watch()
         #bus.set_sync_handler(None)
 
@@ -322,14 +322,23 @@ class PlayGround(object, Signallable):
 
     def shutdown(self):
         """ shutdown the playground and all pipelines """
-        for pipeline in self.pipelines:
+        for pipeline in self.pipelines[:]:
+            self.removePipeline(pipeline)
             gst.debug("Setting pipeline to NULL : %r" % pipeline)
+            bus = pipeline.get_bus()
+            bus.disconnect_by_func(self._busMessageCb)
+            bus.remove_signal_watch()
             pipeline.set_state(gst.STATE_NULL)
         if self._positiontimeoutid:
             gobject.source_remove(self._positiontimeoutid)
             self._positiontimeoutid = 0
         gst.debug("Setting DefaultBin to NULL")
+        bus = self.default.get_bus()
+        bus.disconnect_by_func(self._busMessageCb)
+        bus.remove_signal_watch()
         self.default.set_state(gst.STATE_NULL)
+        self.default = None
+        self.current = None
 
     #
     # Position callback
