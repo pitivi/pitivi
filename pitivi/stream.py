@@ -218,8 +218,8 @@ def find_decoder(pad):
     if element is None or isinstance(element, gst.Bin):
         return None
 
-    klass = element.get_factory().get_klass()
-    if 'Decoder' in klass:
+    factory = element.get_factory()
+    if factory is not None and 'Decoder' in factory.get_klass():
         return element
     return None
 

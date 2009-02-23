@@ -19,8 +19,44 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import gobject
 import gst
 from pitivi.factories.base import SourceFactory, ObjectFactoryError
+
+class FixSeekStart(gst.BaseTransform):
+    __gstdetails__ = (
+        "Description",
+        "Klass",
+        "Description",
+        "Author")
+
+    sink_template = gst.PadTemplate("sink",
+            gst.PAD_SINK, gst.PAD_ALWAYS,
+            gst.Caps('ANY'))
+    src_template = gst.PadTemplate("src",
+            gst.PAD_SRC, gst.PAD_ALWAYS,
+            gst.Caps('ANY'))
+
+    __gsttemplates__ = (sink_template, src_template)
+
+    def __init__(self, track):
+        gst.BaseTransform.__init__(self)
+        self.track = track
+
+    def do_src_event(self, event):
+        if event.type == gst.EVENT_SEEK:
+            rate, format, flags, cur_type, cur, stop_type, stop = \
+                    event.parse_seek()
+            if cur_type == gst.SEEK_TYPE_SET and cur >= self.track.duration:
+                cur = self.track.duration - 1 * gst.NSECOND
+
+                new_event = gst.event_new_seek(rate, format, flags, cur_type, cur,
+                        stop_type, stop)
+                event = new_event
+
+        return gst.BaseTransform.do_src_event(self, event)
+
+gobject.type_register(FixSeekStart)
 
 class TimelineSourceFactory(SourceFactory):
     def __init__(self, timeline):
@@ -30,6 +66,7 @@ class TimelineSourceFactory(SourceFactory):
         self.timeline = timeline
         self.pad_num = 0
         self.ghosts = {}
+        self.seek_checkers = {}
 
         self.duration = timeline.duration
 
@@ -81,21 +118,31 @@ class TimelineSourceFactory(SourceFactory):
 
         self.removeOutputStream(track.stream)
 
-    def _newGhostPad(self, pad):
+    def _newGhostPad(self, pad, track):
         pad_id = str(pad)
-        ghost = gst.GhostPad('src%d' % self.pad_num, pad)
+        seek = FixSeekStart(track)
+        self.bin.add(seek)
+        seek.set_state(gst.STATE_PLAYING)
+        pad.link(seek.get_pad('sink'))
+        ghost = gst.GhostPad('src%d' % self.pad_num, seek.get_pad('src'))
         ghost.set_active(True)
         self.ghosts[pad_id] = ghost
+        self.seek_checkers[pad_id] = seek
         self.pad_num += 1
 
         return ghost
 
     def _removeGhostPad(self, pad):
         pad_id = str(pad)
-        if pad_id in self.ghosts:
-            ghost = self.ghosts.pop(pad_id)
-            self.bin.remove_pad(ghost)
-            ghost.set_active(False)
+        if pad_id not in self.ghosts:
+            return
+        
+        ghost = self.ghosts.pop(pad_id)
+        seek = self.seek_checkers.pop(pad_id)
+        self.bin.remove_pad(ghost)
+        ghost.set_active(False)
+        self.bin.remove(seek)
+        seek.set_state(gst.STATE_NULL)
 
     def _timelineTrackAddedCb(self, timeline, track):
         self._addTrack(track)
@@ -104,7 +151,7 @@ class TimelineSourceFactory(SourceFactory):
         self._removeTrack(track)
 
     def _trackCompositionPadAddedCb(self, composition, pad, track):
-        ghost = self._newGhostPad(pad)
+        ghost = self._newGhostPad(pad, track)
         self.bin.add_pad(ghost)
 
     def _trackCompositionPadRemovedCb(self, composition, pad, track):
