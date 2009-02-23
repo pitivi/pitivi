@@ -164,7 +164,18 @@ class Pipeline(object, Signallable, Loggable):
         """
         self._pipeline.set_state(STATE_NULL)
         self._listenToPosition(False)
-        raise NotImplementedError
+        self._bus.disconnect_by_func(self._busMessageCb)
+        try:
+            self._bus.set_sync_handler(None)
+        except:
+            gst.debug("ignore me")
+        self._bus.remove_signal_watch()
+        self._asyncsidig = None
+        self._bus = None
+        self._pipeline = None
+        self.factories = {}
+        for i in self.actions:
+            self.removeAction(i)
 
     #{ Action-related methods
 
@@ -466,6 +477,9 @@ class Pipeline(object, Signallable, Loggable):
         given L{ObjectFactory}. If no bin exists for the given factory and
         automake is True, one is created.
 
+        The returned bin will have its reference count incremented. When you are
+        done with the bin, you must call L{releaseBinForFactoryStream}.
+
         @param factory: The factory to search.
         @type factory: L{ObjectFactory}
         @param stream: stream to create a bin for
@@ -528,9 +542,8 @@ class Pipeline(object, Signallable, Loggable):
 
         bin_stream_entry.bin_use_count -= 1
         if bin_stream_entry.bin_use_count == 0:
-            # FIXME: does the order matter?
-
             # do cleanup on our side
+            gst.debug("cleaning up")
             self._disconnectFromPadSignals(bin_stream_entry.bin)
             bin_stream_entry.bin.set_state(gst.STATE_NULL)
             self._pipeline.remove(bin_stream_entry.bin)
@@ -624,11 +637,12 @@ class Pipeline(object, Signallable, Loggable):
         stream_entry.tee_use_count -= 1
         if stream_entry.tee_use_count == 0:
             bin = self.getBinForFactoryStream(factory, stream, automake=False)
-            bin.unlink(stream_entry.tee)
             self.releaseBinForFactoryStream(factory, stream)
+            bin.unlink(stream_entry.tee)
             self._pipeline.remove(stream_entry.tee)
             stream_entry.tee.set_state(gst.STATE_NULL)
             stream_entry.tee = None
+            self.releaseBinForFactoryStream(factory, stream)
 
     def getQueueForFactoryStream(self, factory, stream=None, automake=False,
                                  queuesize=1):
@@ -663,8 +677,6 @@ class Pipeline(object, Signallable, Loggable):
 
         if not automake:
             raise PipelineError()
-
-        gst.debug("factory: %r, stream: %r" % (factory, stream))
 
         bin = stream_entry.bin
         # find the source pads compatible with the given stream
