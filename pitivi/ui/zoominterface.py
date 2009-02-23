@@ -96,7 +96,7 @@ class Zoomable(object):
         Returns the pixel equivalent of the given duration, according to the
         set zoom ratio
         """
-        if duration == gst.CLOCK_TIME_NONE:
+        if long(duration) == long(gst.CLOCK_TIME_NONE):
             return 0
         return int((float(duration) / gst.SECOND) * cls.zoomratio)
 
