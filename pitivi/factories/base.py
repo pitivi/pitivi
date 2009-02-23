@@ -258,6 +258,7 @@ class SourceFactory(ObjectFactory):
         Some factories can create a limited number of bins or implement caching.
         You should call C{releaseBin} once you are done using a bin.
         """
+        bin.set_state(gst.STATE_NULL)
         self._releaseBin(bin)
         self.current_bins -= 1
         if bin in self.bins:
