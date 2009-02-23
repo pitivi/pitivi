@@ -535,6 +535,10 @@ class Pipeline(object, Signallable, Loggable):
         stream_entry = self._getStreamEntryForFactoryStream(factory, stream)
         bin_stream_entry = stream_entry.findBinEntry()
 
+        if bin_stream_entry == None:
+            gst.warning("couldn't find stream entry")
+            return
+
         if bin_stream_entry.bin_use_count == 1 and \
                 (stream_entry.tee_use_count > 0 or \
                 stream_entry.queue_use_count > 0):
