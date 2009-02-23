@@ -20,11 +20,11 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
-from unittest import TestCase, main
+from unittest import main
 from pitivi.pipeline import Pipeline, STATE_NULL, STATE_READY, STATE_PAUSED, STATE_PLAYING, PipelineError
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE
 from pitivi.stream import AudioStream, VideoStream
-from common import SignalMonitor, FakeSourceFactory, FakeSinkFactory
+from common import TestCase, SignalMonitor, FakeSourceFactory, FakeSinkFactory
 
 class BogusAction(Action):
     pass
@@ -34,7 +34,11 @@ class WeirdAction(Action):
 
 class TestPipeline(TestCase):
 
+    def test(self):
+        pass
+
     def setUp(self):
+        gst.debug("start")
         self.pipeline = Pipeline()
         self.monitor = SignalMonitor(self.pipeline, 'action-added',
                                      'action-removed', 'factory-added',
@@ -42,9 +46,13 @@ class TestPipeline(TestCase):
         self.assertEquals(self.monitor.action_added_count, 0)
         self.assertEquals(self.monitor.action_added_collect, [])
 
-    def cleanUp(self):
+    def tearDown(self):
         self.pipeline.setState(STATE_NULL)
+        self.pipeline.release()
         del self.pipeline
+        del self.monitor.obj
+        del self.monitor
+        TestCase.tearDown(self)
 
     def testAddRemoveActionSimple(self):
         """ Simple add/remove of Actions """
@@ -122,6 +130,8 @@ class TestPipeline(TestCase):
         res = self.pipeline.addAction(ac2)
         self.assertEquals(res, ac2)
         self.assertEquals(self.pipeline.actions, [ac2])
+
+        p2.release()
 
     def testStateChange(self):
         """ State Changes """
@@ -208,7 +218,7 @@ class TestPipeline(TestCase):
 
         # we should get a new instance
         bin2 = self.pipeline.getBinForFactoryStream(factory, stream, True)
-        self.failIfEqual(bin1, bin2)
+        self.pipeline.releaseBinForFactoryStream(factory, stream)
 
     def testGetReleaseTeeForFactoryStream(self):
         factory = FakeSourceFactory()
@@ -249,14 +259,13 @@ class TestPipeline(TestCase):
                 self.pipeline.releaseTeeForFactoryStream, factory, stream)
 
         # should always fail with a sink bin
-        factory = FakeSinkFactory()
-        stream = VideoStream(gst.Caps('any'), 'src')
-        factory.addInputStream(stream)
+        factory2 = FakeSinkFactory()
+        stream2= VideoStream(gst.Caps('any'), 'src')
+        factory2.addInputStream(stream2)
 
         bin1 = self.pipeline.getBinForFactoryStream(factory, stream, True)
         self.failUnlessRaises(PipelineError,
-            self.pipeline.getTeeForFactoryStream, factory, stream, True)
-
+            self.pipeline.getTeeForFactoryStream, factory2, stream2, True)
         self.pipeline.releaseBinForFactoryStream(factory, stream)
 
     def testGetReleaseQueueForFactoryStream(self):
@@ -282,6 +291,8 @@ class TestPipeline(TestCase):
         queue1 = self.pipeline.getQueueForFactoryStream(factory, stream, True)
         self.failUnless(isinstance(queue1, gst.Element))
 
+        gst.debug("pouet")
+
         # get the cached instance
         queue2 = self.pipeline.getQueueForFactoryStream(factory, stream, True)
         self.failUnlessEqual(id(queue1), id(queue2))
@@ -289,24 +300,30 @@ class TestPipeline(TestCase):
         # release
         self.pipeline.releaseQueueForFactoryStream(factory, stream)
 
+        gst.debug("pouet")
+
         # there's still a queue alive, so we can't release the bin
         self.failUnlessRaises(PipelineError,
                 self.pipeline.releaseBinForFactoryStream, factory, stream)
 
         self.pipeline.releaseQueueForFactoryStream(factory, stream)
+
+        gst.debug("pouet2")
         self.failUnlessRaises(PipelineError,
                 self.pipeline.releaseQueueForFactoryStream, factory, stream)
 
         # should always fail with a src bin
-        factory = FakeSourceFactory()
-        stream = VideoStream(gst.Caps('any'), 'src')
-        factory.addOutputStream(stream)
+        factory2 = FakeSourceFactory()
+        stream2 = VideoStream(gst.Caps('any'), 'src')
+        factory2.addOutputStream(stream2)
 
         bin1 = self.pipeline.getBinForFactoryStream(factory, stream, True)
         self.failUnlessRaises(PipelineError,
-            self.pipeline.getQueueForFactoryStream, factory, stream, True)
+            self.pipeline.getQueueForFactoryStream, factory2, stream2, True)
+        self.pipeline.releaseBinForFactoryStream(factory, stream)
 
         self.pipeline.releaseBinForFactoryStream(factory, stream)
+        self.assertEquals(factory.current_bins, 0)
 
 
 if __name__ == "__main__":

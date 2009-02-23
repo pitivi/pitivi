@@ -20,21 +20,22 @@
 # Boston, MA 02111-1307, USA.
 
 import time
-from unittest import TestCase, main
+import common
+import gst
+import gc
+from unittest import main
 from pitivi.pipeline import Pipeline, STATE_READY, STATE_PLAYING
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE, ActionError, RenderAction
 from pitivi.stream import MultimediaStream, VideoStream, AudioStream
-from pitivi.factories.base import SourceFactory
+from pitivi.factories.base import ObjectFactory, SourceFactory
 from pitivi.encode import RenderSinkFactory, RenderFactory
 from pitivi.settings import StreamEncodeSettings, RenderSettings
-import common
-import gst
 
 class BinSourceFactory(SourceFactory):
     def _makeBin(self, output_stream=None):
         return gst.element_factory_make('bin')
 
-class TestAction(TestCase):
+class TestAction(common.TestCase):
 
     def testBasic(self):
         # let's make sure Actions are properly created
@@ -90,6 +91,12 @@ class TestAction(TestCase):
         # we shouldn't be able to unset a pipeline from an active Action
         self.failUnlessRaises(ActionError, ac.unsetPipeline)
 
+        # cleanup
+        ac.state = STATE_NOT_ACTIVE
+        ac.unsetPipeline()
+
+        p.release()
+        p2.release()
 
     def testLinksSimple(self):
         """ Testing simple usage of Links """
@@ -172,7 +179,9 @@ class TestAction(TestCase):
         self.assertEquals(ac.producers, [])
         self.assertEquals(ac.consumers, [])
 
-class TestRenderAction(TestCase):
+        p.release()
+
+class TestRenderAction(common.TestCase):
 
     def setUp(self):
         self.vsrc = common.FakeSourceFactory("videotestsrc")
@@ -183,6 +192,13 @@ class TestRenderAction(TestCase):
                                               pad_name="src"))
         self.vsettings = StreamEncodeSettings(encoder="theoraenc")
         self.asettings = StreamEncodeSettings(encoder="vorbisenc")
+
+    def tearDown(self):
+        del self.vsrc
+        del self.asrc
+        del self.vsettings
+        del self.asettings
+        common.TestCase.tearDown(self)
 
     def testSimple(self):
         """Tests a simple one stream encoding"""
@@ -205,6 +221,9 @@ class TestRenderAction(TestCase):
         p.getState()
         p.stop()
         a.deactivate()
+
+        a.unsetPipeline()
+        p.release()
 
     def testSimpleStreams(self):
         """Test a RenderSettings with exact stream settings"""
@@ -231,6 +250,8 @@ class TestRenderAction(TestCase):
         p.stop()
         a.deactivate()
 
+        p.release()
+
     def testMultiple(self):
         """Test a dual stream encoding with separates sources"""
         settings = RenderSettings(settings=[self.asettings, self.vsettings],
@@ -252,6 +273,10 @@ class TestRenderAction(TestCase):
         p.getState()
         p.stop()
         a.deactivate()
+
+        a.unsetPipeline()
+
+        p.release()
 
 if __name__ == "__main__":
     main()

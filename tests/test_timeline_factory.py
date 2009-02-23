@@ -22,7 +22,7 @@
 import gobject
 gobject.threads_init()
 import gst
-from unittest import TestCase
+from common import TestCase
 from pitivi.factories.base import ObjectFactoryError
 from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.factories.test import VideoTestSourceFactory, \
@@ -44,7 +44,7 @@ class TestTimelineSourceFactory(TestCase):
 
     def testTracks(self):
         timeline = Timeline()
-        stream1 = VideoStream(gst.Caps('video/x-rgb'), 'src0')
+        stream1 = VideoStream(gst.Caps('video/x-raw-rgb'), 'src0')
         stream2 = AudioStream(gst.Caps('audio/x-raw-int'), 'src1')
         track1 = Track(stream1)
         track2 = Track(stream2)
@@ -77,7 +77,7 @@ class TestTimelineSourceFactory(TestCase):
 
     def testPads(self):
         timeline = Timeline()
-        stream1 = VideoStream(gst.Caps('video/x-rgb'), 'src0')
+        stream1 = VideoStream(gst.Caps('video/x-raw-rgb'), 'src0')
         stream2 = AudioStream(gst.Caps('audio/x-raw-int'), 'src1')
         track1 = Track(stream1)
         track2 = Track(stream2)

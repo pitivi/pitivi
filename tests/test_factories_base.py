@@ -21,17 +21,20 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
-from unittest import TestCase
 
 from pitivi.factories.base import ObjectFactory, ObjectFactoryError, \
         SourceFactory, RandomAccessSourceFactory, LiveSourceFactory
 from pitivi.stream import AudioStream, VideoStream
 
-from common import SignalMonitor
+from common import SignalMonitor, TestCase
 
 class TestObjectFactory(TestCase):
     def setUp(self):
         self.factory = ObjectFactory('name', 'displayname')
+
+    def tearDown(self):
+        self.factory = None
+        TestCase.tearDown(self)
 
     def testIcon(self):
         # by default icon is None
@@ -79,6 +82,12 @@ class TestSourceFactory(TestCase):
                 self.factory.addInputStream, self.stream)
         self.factory.addOutputStream(self.stream)
         self.monitor = SignalMonitor(self.factory, 'bin-created', 'bin-released')
+
+    def tearDown(self):
+        self.stream = None
+        self.factory = None
+        self.monitor = None
+        TestCase.tearDown(self)
 
     def testMakeAndReleaseBin(self):
         caps = gst.Caps('video/x-raw-yuv')

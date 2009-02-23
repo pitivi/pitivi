@@ -19,21 +19,22 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from unittest import TestCase
+from common import TestCase
 import gst
 
 from pitivi.timeline.track import Track, SourceTrackObject, TrackError
+from pitivi.factories.base import SourceFactory
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
 from common import SignalMonitor
 
-class StubFactory(object):
-    duration = 42 * gst.SECOND
-    def makeBin(self, stream=None):
-        return gst.element_factory_make('audiotestsrc')
+class StubFactory(SourceFactory):
+    def __init__(self, *args, **kwargs):
+        SourceFactory.__init__(self, *args, **kwargs)
+        self.duration = 42 * gst.SECOND
 
-    def releaseBin(self, bin):
-        bin.set_state(gst.STATE_NULL)
+    def _makeBin(self, stream=None):
+        return gst.element_factory_make('audiotestsrc')
 
 class TrackSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
@@ -43,9 +44,22 @@ class TrackSignalMonitor(SignalMonitor):
 
 class TestTrackObject(TestCase):
     def setUp(self):
+        stream = AudioStream(gst.Caps("audio/x-raw-int"))
         self.factory = StubFactory()
+        gst.debug("%r" % self.factory.duration)
+        self.factory.addOutputStream(stream)
         self.track_object = SourceTrackObject(self.factory)
         self.monitor = TrackSignalMonitor(self.track_object)
+
+    def tearDown(self):
+        self.monitor = None
+        self.track_object.release()
+        self.track_oject = None
+        self.factory = None
+        TestCase.tearDown(self)
+
+    def test(self):
+        pass
 
     def testDefaultProperties(self):
         obj = self.track_object
@@ -258,8 +272,16 @@ class TestTrackAddRemoveObjects(TestCase):
     def setUp(self):
         self.factory = StubFactory()
         self.stream = VideoStream(gst.Caps('video/x-raw-rgb'))
+        self.factory.addOutputStream(self.stream)
         self.track1 = Track(self.stream)
         self.track2 = Track(self.stream)
+
+    def tearDown(self):
+        self.factory = None
+        self.stream = None
+        self.track1 = None
+        self.track2 = None
+        TestCase.tearDown(self)
 
     def testAddRemoveObjects(self):
         factory = self.factory

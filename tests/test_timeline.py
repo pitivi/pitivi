@@ -19,7 +19,6 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from unittest import TestCase
 import gst
 
 from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
@@ -29,7 +28,7 @@ from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
 from pitivi.factories.base import SourceFactory
 
-from common import SignalMonitor
+from common import SignalMonitor, TestCase
 
 class TimelineSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
@@ -39,8 +38,8 @@ class TimelineSignalMonitor(SignalMonitor):
 class StubFactory(SourceFactory):
     duration = 42 * gst.SECOND
 
-    def makeBin(self, stream=None):
-        return gst.element_factory_make('identity')
+    def _makeBin(self, stream=None):
+        return gst.element_factory_make('fakesrc')
 
 class TestTimelineObjectAddRemoveTrackObjects(TestCase):
     def testAddRemoveTrackObjects(self):
@@ -49,6 +48,7 @@ class TestTimelineObjectAddRemoveTrackObjects(TestCase):
         timeline_object2 = TimelineObject(factory)
 
         stream = AudioStream(gst.Caps('audio/x-raw-int'))
+        factory.addOutputStream(stream)
         track = Track(stream)
         track_object1 = SourceTrackObject(factory)
         track_object2 = SourceTrackObject(factory)
@@ -83,11 +83,22 @@ class TestTimelineObjectProperties(TestCase):
                 'duration-changed', 'in-point-changed', 'out-point-changed',
                 'media-duration-changed', 'priority-changed')
         stream = AudioStream(gst.Caps('audio/x-raw-int'))
+        factory.addOutputStream(stream)
         self.track = Track(stream)
         self.track_object1 = SourceTrackObject(factory)
         self.track_object2 = SourceTrackObject(factory)
         self.track.addTrackObject(self.track_object1)
         self.track.addTrackObject(self.track_object2)
+
+    def tearDown(self):
+        self.track.removeTrackObject(self.track_object1)
+        self.track.removeTrackObject(self.track_object2)
+        del self.track
+        del self.track_object1
+        del self.track_object2
+        del self.monitor
+        del self.timeline_object
+        TestCase.tearDown(self)
 
     def testDefaultProperties(self):
         obj = self.timeline_object
@@ -274,9 +285,10 @@ class TestTimelineAddRemoveTracks(TestCase):
 class TestTimelineAddRemoveTimelineObjects(TestCase):
     def testAddRemoveTimelineObjects(self):
         factory = StubFactory()
-        stream = AudioStream(gst.Caps('video/x-raw-rgb'))
+        stream = AudioStream(gst.Caps('audio/x-raw-int'))
+        factory.addOutputStream(stream)
         timeline = Timeline()
-        track = Track(factory)
+        track = Track(stream)
 
         track_object1 = SourceTrackObject(factory)
         track_object2 = SourceTrackObject(factory)
@@ -307,6 +319,7 @@ class TestTimelineAddRemoveTimelineObjects(TestCase):
 class TestSelectionAddRemoveTimelineObjects(TestCase):
     def testAddRemoveTimelineObjects(self):
         factory = StubFactory()
+        factory.addOutputStream(VideoStream(gst.Caps("video/x-raw-yuv")))
         timeline_object1 = TimelineObject(factory)
         timeline_object2 = TimelineObject(factory)
 
@@ -324,9 +337,14 @@ class TestSelectionAddRemoveTimelineObjects(TestCase):
         selection.removeTimelineObject(timeline_object2)
 
 class TestLink(TestCase):
+
+    def test(self):
+        pass
+
     def setUp(self):
         self.factory = StubFactory()
         self.stream = AudioStream(gst.Caps('audio/x-raw-int'))
+        self.factory.addOutputStream(self.stream)
         self.track1 = Track(self.stream)
         self.track2 = Track(self.stream)
         self.track_object1 = SourceTrackObject(self.factory)
@@ -341,6 +359,25 @@ class TestLink(TestCase):
         self.timeline_object2.addTrackObject(self.track_object2)
         self.timeline_object3 = TimelineObject(self.factory)
         self.timeline_object3.addTrackObject(self.track_object3)
+
+    def tearDown(self):
+        self.timeline_object3.removeTrackObject(self.track_object3)
+        self.timeline_object2.removeTrackObject(self.track_object2)
+        self.timeline_object1.removeTrackObject(self.track_object1)
+        self.track1.removeTrackObject(self.track_object1)
+        self.track1.removeTrackObject(self.track_object2)
+        self.track2.removeTrackObject(self.track_object3)
+        del self.timeline_object3
+        del self.timeline_object2
+        del self.timeline_object1
+        del self.track_object1
+        del self.track_object2
+        del self.track_object3
+        del self.track1
+        del self.track2
+        del self.stream
+        del self.factory
+        TestCase.tearDown(self)
 
     def testLinkAttribute(self):
         timeline_object1 = self.timeline_object1
@@ -557,6 +594,19 @@ class TestTimelineAddFactory(TestCase):
         self.timeline.addTrack(self.video_track2)
 
         self.factory = StubFactory()
+
+    def tearDown(self):
+        del self.audio_stream1
+        del self.audio_stream2
+        del self.audio_stream3
+        del self.video_stream1
+        del self.audio_track1
+        del self.audio_track2
+        del self.video_track1
+        del self.video_track2
+        del self.timeline
+        del self.factory
+        TestCase.tearDown(self)
 
     def testNoStreams(self):
         self.failUnlessRaises(TimelineError, self.timeline.addSourceFactory, self.factory)

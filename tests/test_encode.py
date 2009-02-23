@@ -20,7 +20,8 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
-from unittest import TestCase, main
+from unittest import main
+from common import TestCase
 from pitivi.stream import VideoStream
 from pitivi.encode import EncoderFactory, RenderFactory
 from pitivi.settings import StreamEncodeSettings, RenderSettings

@@ -20,7 +20,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from unittest import TestCase
+from common import TestCase
 from pitivi.stream import AudioStream, VideoStream, TextStream
 import gst
 

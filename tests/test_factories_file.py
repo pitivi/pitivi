@@ -21,7 +21,7 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
-from unittest import TestCase
+from common import TestCase
 
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
 from pitivi.stream import AudioStream, VideoStream
@@ -41,6 +41,10 @@ class TestFileSourceFactory(TestCase):
     def setUp(self):
         self.factory = StubFileSourceFactory('file:///path/to/file')
 
+    def tearDown(self):
+        self.factory = None
+        TestCase.tearDown(self)
+
     def testFileSourceFilename(self):
         self.failUnlessEqual(self.factory.filename, 'file:///path/to/file')
         self.failUnlessEqual(self.factory.displayname, 'file')
@@ -51,6 +55,7 @@ class TestFileSourceFactory(TestCase):
         # doesn't rise exceptions. We're NOT changing the state of the bin.
         bin = self.factory.makeBin()
         self.failUnless(isinstance(bin, gst.Bin))
+        self.factory.releaseBin(bin)
 
     def testDefaultBinGhostPads(self):
         bin = gst.Bin()
@@ -68,12 +73,13 @@ class TestFileSourceFactory(TestCase):
         audio = AudioStream(gst.Caps('audio/x-raw-int'), pad_name='src1')
         self.factory.addOutputStream(video)
         self.factory.addOutputStream(audio)
-       
+
         bin = self.factory.makeBin(video)
         self.failUnless(isinstance(bin, StubSingleDecodeBin))
         self.failUnlessEqual(bin.uri, 'file:///path/to/file')
         self.failUnlessEqual(video.caps, bin.caps)
         self.failUnlessEqual(video, bin.stream)
+        self.factory.releaseBin(bin)
 
 class StubPictureFileSourceFactory(PictureFileSourceFactory):
     singleDecodeBinClass = StubSingleDecodeBin
@@ -81,6 +87,13 @@ class StubPictureFileSourceFactory(PictureFileSourceFactory):
 class TestPictureFileSourceFactory(TestCase):
     def setUp(self):
         self.factory = StubPictureFileSourceFactory('file:///path/to/file')
+
+    def tearDown(self):
+        self.factory = None
+        TestCase.tearDown(self)
+
+    def test(self):
+        pass
 
     def testFileSourceFilename(self):
         self.failUnlessEqual(self.factory.filename, 'file:///path/to/file')
@@ -92,6 +105,7 @@ class TestPictureFileSourceFactory(TestCase):
         # doesn't rise exceptions. We're NOT changing the state of the bin.
         bin = self.factory.makeBin()
         self.failUnless(isinstance(bin, gst.Bin))
+        self.factory.releaseBin(bin)
 
     def testDefaultBinGhostPads(self):
         bin = gst.Bin()
@@ -115,21 +129,24 @@ class TestPictureFileSourceFactory(TestCase):
         self.factory.addOutputStream(video1)
         self.factory.addOutputStream(video2)
         self.factory.addOutputStream(audio)
-       
+
         if gst.registry_get_default().find_feature('ffvideoscale',
                 gst.ElementFactory):
             bin = self.factory.makeBin(video2)
             # for width < 2048 we should use ffvideoscale
             scale = bin.get_by_name("scale")
             self.failUnlessEqual(scale.get_factory().get_name(), 'ffvideoscale')
+            self.factory.releaseBin(bin)
 
         # if ffvideoscale isn't available we should still fallback to videoscale
         self.factory.ffscale_factory = 'meh'
         bin = self.factory.makeBin(video2)
         scale = bin.get_by_name("scale")
         self.failUnlessEqual(scale.get_factory().get_name(), 'videoscale')
-       
+        self.factory.releaseBin(bin)
+
         bin = self.factory.makeBin(video1)
         # here we expect videoscale instead
         scale = bin.get_by_name("scale")
         self.failUnlessEqual(scale.get_factory().get_name(), 'videoscale')
+        self.factory.releaseBin(bin)

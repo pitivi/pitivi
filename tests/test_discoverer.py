@@ -24,7 +24,7 @@ import gobject
 gobject.threads_init()
 import gst
 
-from unittest import TestCase
+from common import TestCase
 from pitivi.discoverer import Discoverer
 from pitivi.stream import get_stream_for_caps
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
@@ -109,6 +109,10 @@ class Discoverer1(Discoverer):
 class TestAnalysis(TestCase):
     def setUp(self):
         self.discoverer = Discoverer1()
+
+    def tearDown(self):
+        self.discoverer = None
+        TestCase.tearDown(self)
 
     def testNoSource(self):
         """
@@ -335,6 +339,15 @@ class TestStateChange(TestCase):
         self.discoverer.connect('not_media_file', self.notMediaFileCb)
         self.discoverer.connect('new_sourcefilefactory',
                 self.newSourcefilefactoryCb)
+
+    def tearDown(self):
+        self.discoverer.disconnect_by_function(self.notMediaFileCb)
+        self.discoverer.disconnect_by_function(self.newSourcefilefactoryCb)
+        self.discoverer = None
+        self.factories = None
+        self.error = None
+        self.src = None
+        TestCase.tearDown(self)
 
     def notMediaFileCb(self, disc, uri, error, debug):
         self.error = error

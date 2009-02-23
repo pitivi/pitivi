@@ -25,7 +25,7 @@ Tests for interaction between action and pipeline
 
 import time
 from unittest import TestCase, main
-from pitivi.pipeline import Pipeline, STATE_READY, STATE_PLAYING
+from pitivi.pipeline import Pipeline, STATE_READY, STATE_PLAYING, STATE_NULL
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE, ActionError
 from pitivi.stream import MultimediaStream, VideoStream
 import common
@@ -37,6 +37,7 @@ class DynamicAction(Action):
         consumer = common.FakeSinkFactory()
 
         links.append((producer, consumer, stream, None))
+        gst.debug("Returning link")
         return links
 
 class TestPipelineAction(TestCase):
@@ -108,6 +109,8 @@ class TestPipelineAction(TestCase):
         # the gst.Pipeline should be empty !
         self.assertEquals(list(p._pipeline.elements()), [])
 
+        p.release()
+
     def testPendingLink(self):
         a = Action()
         p = Pipeline()
@@ -137,6 +140,11 @@ class TestPipelineAction(TestCase):
         p.getState()
         # and make sure that all other elements were created (4)
         self.assertEquals(len(list(p._pipeline.elements())), 4)
+
+        a.deactivate()
+        p.setState(STATE_NULL)
+
+        p.release()
 
     def testDynamicLink(self):
         a = DynamicAction()
@@ -171,6 +179,9 @@ class TestPipelineAction(TestCase):
         a.deactivate()
 
         self.assertEquals(len(list(p._pipeline.elements())), 0)
+        p.setState(STATE_NULL)
+
+        p.release()
 
 if __name__ == "__main__":
     main()
