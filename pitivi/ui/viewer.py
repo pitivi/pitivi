@@ -349,8 +349,11 @@ class PitiviViewer(gtk.VBox):
         gst.info("value:%s, frame:%d" % (gst.TIME_ARGS(value), frame))
         self.current_time = value
         self.current_frame = frame
-        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(value),
-                                                        time_to_string(self.pipeline.getDuration())))
+        try:
+            duration = self.pipeline.getDuration()
+        except:
+            duration = gst.CLOCK_TIME_NONE
+        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(value),time_to_string(duration)))
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
         return False
