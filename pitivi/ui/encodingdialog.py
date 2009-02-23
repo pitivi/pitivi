@@ -32,12 +32,15 @@ import pitivi.configure as configure
 from pitivi.log.loggable import Loggable
 from pitivi.ui.exportsettingswidget import ExportSettingsDialog
 from pitivi.ui.glade import GladeWindow
+from pitivi.action import render_action_for_uri
+from pitivi.factories.base import SourceFactory
+from pitivi.settings import export_settings_to_render_settings
 
 class EncodingDialog(GladeWindow, Loggable):
     """ Encoding dialog box """
     glade_file = "encodingdialog.glade"
 
-    def __init__(self, project):
+    def __init__(self, project, pipeline=None):
         GladeWindow.__init__(self)
         Loggable.__init__(self)
 
@@ -54,11 +57,25 @@ class EncodingDialog(GladeWindow, Loggable):
 
         # grab the Pipeline and settings
         self.project = project
+        if pipeline != None:
+            self.pipeline = pipeline
+        else:
+            self.pipeline = self.project.pipeline
+        self.pipeline.connect('position', self._positionCb)
         self.outfile = None
         self.rendering = False
+        self.renderaction = None
         self.settings = project.getSettings()
         self.timestarted = 0
         self._displaySettings()
+
+    def _shutDown(self):
+        # Abort recording
+        # remove position handler
+        # put default actions back to synchronous
+        self.pipeline.disconnect_by_function(self._positionCb)
+        self.removeRecordAction()
+        self.destroy()
 
     def _displaySettings(self):
         self.vinfo.set_markup(self.settings.getVideoDescription())
@@ -81,7 +98,7 @@ class EncodingDialog(GladeWindow, Loggable):
             self.progressbar.set_text("")
         dialog.destroy()
 
-    def _positionCb(self, unused_playground, unused_smartbin, position):
+    def _positionCb(self, unused_pipeline, position):
         timediff = time.time() - self.timestarted
         self.progressbar.set_fraction(float(min(position, self.bin.length)) / float(self.bin.length))
         if timediff > 5.0 and position:
@@ -93,17 +110,15 @@ class EncodingDialog(GladeWindow, Loggable):
 
     def _recordButtonClickedCb(self, unused_button):
         if self.outfile and not self.rendering:
-            if self.bin.record(self.outfile, self.settings):
-                self.timestarted = time.time()
-                self.positionhandler = self.pitivi.playground.connect('position', self._positionCb)
-                self.rendering = True
-                self.cancelbutton.set_label("gtk-cancel")
-                self.progressbar.set_text(_("Rendering"))
-                self.recordbutton.set_sensitive(False)
-                self.filebutton.set_sensitive(False)
-                self.settingsbutton.set_sensitive(False)
-            else:
-                self.progressbar.set_text(_("Couldn't start rendering"))
+            self.addRecordAction()
+            self.pipeline.play()
+            self.timestarted = time.time()
+            self.rendering = True
+            self.cancelbutton.set_label("gtk-cancel")
+            self.progressbar.set_text(_("Rendering"))
+            self.recordbutton.set_sensitive(False)
+            self.filebutton.set_sensitive(False)
+            self.settingsbutton.set_sensitive(False)
 
     def _settingsButtonClickedCb(self, unused_button):
         dialog = ExportSettingsDialog(self.settings)
@@ -114,16 +129,8 @@ class EncodingDialog(GladeWindow, Loggable):
             self._displaySettings()
         dialog.destroy()
 
-    def do_destroy(self):
-        gst.debug("cleaning up...")
-        self.bus.remove_signal_watch()
-        gobject.source_remove(self.eosid)
-
     def _eosCb(self, unused_bus, unused_message):
         self.rendering = False
-        if self.positionhandler:
-            self.pitivi.playground.disconnect(self.positionhandler)
-            self.positionhandler = 0
         self.progressbar.set_text(_("Rendering Complete"))
         self.progressbar.set_fraction(1.0)
         self.recordbutton.set_sensitive(True)
@@ -132,7 +139,19 @@ class EncodingDialog(GladeWindow, Loggable):
         self.cancelbutton.set_label("gtk-close")
 
     def _cancelButtonClickedCb(self, unused_button):
-        # Abort recording
-        # remove position handler
-        # put default actions back to synchronous
-        self.destroy()
+        self._shutDown()
+
+    def addRecordAction(self):
+        if self.renderaction == None:
+            self.pipeline.stop()
+            settings = export_settings_to_render_settings(self.settings)
+            sources = [x for x in self.pipeline.factories if isinstance(x, SourceFactory)]
+            self.renderaction = render_action_for_uri(self.outfile, settings, *sources)
+            self.renderaction.setPipeline(self.pipeline)
+            self.pipeline.pause()
+
+    def removeRecordAction(self):
+        if self.renderaction:
+            self.pipeline.stop()
+            self.renderaction.unsetPipeline(self.pipeline)
+            self.pipeline.pause()
