@@ -54,7 +54,7 @@ class EncoderFactory(TransformFactory):
         b.add(enc)
 
         # optional input stream
-        if s.input_stream:
+        if s.input_stream and s.modifyinput:
             filt = get_modifier_for_stream(output_stream=s.input_stream)
             mod = filt.makeBin()
             b.add(mod)
@@ -66,7 +66,7 @@ class EncoderFactory(TransformFactory):
         b.add_pad(gsink)
 
         # optional output stream
-        if s.output_stream:
+        if s.output_stream and s.modifyoutput:
             outfilt = gst.element_factory_make("capsfilter")
             outfilt.props.caps = s.output_stream.caps
             b.add(outfilt)
@@ -78,6 +78,11 @@ class EncoderFactory(TransformFactory):
         b.add_pad(gsrc)
 
         return b
+
+    def _releaseBin(self, bin):
+        for b in bin.elements():
+            if isinstance(b, gst.Bin):
+                b.factory.releaseBin(b)
 
 class RenderFactory(OperationFactory):
     """
@@ -136,6 +141,11 @@ class RenderFactory(OperationFactory):
 
         return b
 
+    def _releaseBin(self, bin):
+        for b in bin.elements():
+            if isinstance(b, gst.Bin):
+                b.factory.releaseBin(b)
+
     def _requestNewInputStream(self, bin, input_stream):
         raise NotImplementedError
 
@@ -169,6 +179,11 @@ class RenderSinkFactory(SinkFactory):
             b.add_pad(gsink)
 
         return b
+
+    def _releaseBin(self, bin):
+        for b in bin.elements():
+            b.factory.releaseBin(b)
+
 
 def get_compatible_sink_pad(factoryname, caps):
     """
