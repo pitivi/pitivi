@@ -92,9 +92,10 @@ class TimelineSourceFactory(SourceFactory):
 
     def _removeGhostPad(self, pad):
         pad_id = str(pad)
-        ghost = self.ghosts.pop(pad_id)
-        self.bin.remove_pad(ghost)
-        ghost.set_active(False)
+        if pad_id in self.ghosts:
+            ghost = self.ghosts.pop(pad_id)
+            self.bin.remove_pad(ghost)
+            ghost.set_active(False)
 
     def _timelineTrackAddedCb(self, timeline, track):
         self._addTrack(track)
