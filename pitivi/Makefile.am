@@ -3,7 +3,8 @@ SUBDIRS = \
 	elements 	\
 	factories	\
 	pixmaps		\
-	timeline
+	timeline	\
+	log
 
 pitividir = $(libdir)/pitivi/python/pitivi
 
