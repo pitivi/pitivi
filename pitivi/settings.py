@@ -332,6 +332,8 @@ class StreamEncodeSettings(object):
         self.input_stream = input_stream
         self.output_stream = output_stream
         self.encodersettings = encodersettings
+        self.modifyinput = (input_stream != None)
+        self.modifyoutput = (output_stream != None)
         if not self.input_stream or not self.output_stream:
             # extract stream from factory
             for p in gst.registry_get_default().lookup_feature(self.encoder).get_static_pad_templates():
