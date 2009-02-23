@@ -665,6 +665,7 @@ class ViewAction(Action):
         Action.__init__(self, *args, **kwargs)
         self.videosink = None
         self.audiosink = None
+        self.sync = True
         self.xid = 0
 
     def getDynamicLinks(self, producer, stream):
@@ -695,6 +696,16 @@ class ViewAction(Action):
         if self.videosink:
             self.videosink.set_window_xid(self.xid)
 
+
+    def setSync(self, sync=True):
+        """
+        Whether the sinks should sync against the running clock
+        """
+        self.sync = sync
+        if self.videosink:
+            self.videosink.props.sync = self.sync
+        if self.audiosink:
+            self.audiosink.props.sync = self.sync
 
 class RenderAction(Action):
     """

@@ -46,7 +46,7 @@ class DefaultVideoSink(SinkFactory):
         self._realsink = None
 
     def _makeBin(self, input_stream=None):
-        """ Returns a video sink bin that can be used in the Discoverer """
+        """ Returns a video sink bin"""
         if self._cachedsink != None:
             return self._cachedsink
 
@@ -89,6 +89,13 @@ class DefaultVideoSink(SinkFactory):
         if self._cachedsink:
             self._cachedsink.set_xwindow_id(self._xid)
 
+    def setSync(self, sync=True):
+        if self.sync == sync:
+            return
+        self.sync = sync
+        if self._realsink:
+            self._realsink.props.sync = self.sync
+
 class DefaultAudioSink(SinkFactory):
 
     def _makeBin(self, input_stream=None):
@@ -110,3 +117,17 @@ class DefaultAudioSink(SinkFactory):
         audiosink.add_pad(gst.GhostPad("sink", aconv.get_pad("sink")))
 
         return audiosink
+
+def find_recursive_element(bin, typ):
+    if not isinstance(bin, gst.Bin):
+        if isinstance(bin, typ):
+            return bin
+        return None
+    for elt in bin.elements():
+        if isinstance(elt, typ):
+            return elt
+        if isinstance(elt, gst.Bin):
+            r = find_recursive_elements(elt, typ)
+            if r:
+                return r
+    return None
