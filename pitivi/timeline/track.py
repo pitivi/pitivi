@@ -70,6 +70,12 @@ class TrackObject(object, Signallable):
 
         self._connectToSignals(obj)
 
+    def release(self):
+        self._disconnectFromSignals()
+        self.releaseBin()
+        self.gnl_object = None
+        self.factory = None
+
     def copy(self):
         cls = self.__class__
         other = cls(self.factory, start=self.start - self.trimmed_start,
@@ -230,9 +236,11 @@ class TrackObject(object, Signallable):
         self.gnl_object.add(bin)
 
     def releaseBin(self):
-        bin = list(self.gnl_object)[0]
-        self.gnl_object.remove(bin)
-        self.factory.releaseBin(bin)
+        elts = list(self.gnl_object.elements())
+        if elts:
+            bin = elts[0]
+            self.gnl_object.remove(bin)
+            self.factory.releaseBin(bin)
 
     def _notifyStartCb(self, obj, pspec):
         self.emit('start-changed', obj.props.start)
@@ -262,6 +270,15 @@ class TrackObject(object, Signallable):
                 self._notifyMediaStopCb)
         gnl_object.connect('notify::priority',
                 self._notifyPriorityCb)
+
+    def _disconnectFromSignals(self):
+        if self.gnl_object:
+            self.gnl_object.disconnect_by_func(self._notifyStartCb)
+            self.gnl_object.disconnect_by_func(self._notifyDurationCb)
+            self.gnl_object.disconnect_by_func(self._notifyMediaStartCb)
+            self.gnl_object.disconnect_by_func(self._notifyMediaDurationCb)
+            self.gnl_object.disconnect_by_func(self._notifyMediaStopCb)
+            self.gnl_object.disconnect_by_func(self._notifyPriorityCb)
 
     def _makeGnlObject(self):
         raise NotImplementedError()
@@ -366,7 +383,7 @@ class Track(object, Signallable):
         except gst.RemoveError:
             raise TrackError()
 
-        track_object.releaseBin()
+        track_object.release()
 
         self.track_objects.remove(track_object)
         track_object.track = None
