@@ -175,6 +175,7 @@ class Pitivi(object, Loggable, Signallable):
                 return False
             self.playground.pause()
             self.emit("project-closed", self.current)
+            self.current.release()
             self.current = None
         return True
 
@@ -205,7 +206,11 @@ class Pitivi(object, Loggable, Signallable):
             return False
         self.threads.stopAllThreads()
         self.playground.shutdown()
+        self.playground = None
         self.settings.storeSettings()
+        self.deviceprobe.release()
+        self.deviceprobe = None
+        self.current = None
         instance.PiTiVi = None
         self.emit("shutdown")
         return True
