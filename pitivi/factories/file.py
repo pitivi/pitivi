@@ -27,6 +27,7 @@ import os
 from pitivi.factories.base import RandomAccessSourceFactory, \
         URISourceFactoryMixin
 from pitivi.elements.imagefreeze import ImageFreeze
+from pitivi.stream import MultimediaStream
 
 class FileSourceFactory(URISourceFactoryMixin, RandomAccessSourceFactory):
     """
@@ -41,6 +42,16 @@ class FileSourceFactory(URISourceFactoryMixin, RandomAccessSourceFactory):
         self.filename = filename
         URISourceFactoryMixin.__init__(self, filename)
         RandomAccessSourceFactory.__init__(self, name, displayname)
+
+    def _releaseBin(self, bin):
+        gst.debug("releasing %r" % bin)
+        if hasattr(bin, 'decodebin'):
+            try:
+                bin.decodebin.disconnect_by_func(self._dbinPadAddedCb)
+                bin.decodebin.disconnect_by_func(self._dbinPadRemovedCb)
+            except:
+                pass
+        RandomAccessSourceFactory._releaseBin(self, bin)
 
 class PictureFileSourceFactory(FileSourceFactory):
     """
@@ -68,7 +79,7 @@ class PictureFileSourceFactory(FileSourceFactory):
         else:
             scale = gst.element_factory_make("videoscale", "scale")
             scale.props.method = 2
-        
+
         freeze = ImageFreeze()
         # let's get a single stream provider
         dbin = FileSourceFactory._makeStreamBin(self, output_stream)
@@ -80,7 +91,8 @@ class PictureFileSourceFactory(FileSourceFactory):
         dbin.connect("pad-removed", self._dbinPadRemovedCb,
                      scale, freeze, res)
         gst.debug("Returning %r" % res)
-        
+
+        res.decodebin = dbin
         return res
 
     def _dbinPadAddedCb(self, unused_dbin, pad, scale, freeze, container):
