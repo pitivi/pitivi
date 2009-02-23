@@ -149,6 +149,10 @@ class HalDeviceProbe(DeviceProbe):
         for dev in self.manager.FindDeviceByCapability("alsa"):
             self._processUDI(dev)
 
+    def release(self):
+        gst.debug("release")
+        self._sources = {'video': {}, 'audio': {}}
+        self._sinks = {'video': {}, 'audio': {}}
 
     def getSourceDevices(self, media_type):
         return self._getDevs(media_type, self._sources)
