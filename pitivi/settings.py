@@ -32,7 +32,8 @@ from ConfigParser import SafeConfigParser
 from serializable import Serializable
 from signalinterface import Signallable
 from encode import available_muxers, available_video_encoders, \
-     available_audio_encoders, available_combinations
+     available_audio_encoders, available_combinations, \
+     get_compatible_sink_caps
 from stream import get_stream_for_caps
 
 from gettext import gettext as _
@@ -545,3 +546,19 @@ class ExportSettings(Serializable, Signallable):
         if "video-encoder-settings" in obj:
             self.vcodecsettings = obj["video-encoder-settings"]
 
+
+def export_settings_to_render_settings(export):
+    # Get the audio and video caps/encoder/settings
+    astream = get_stream_for_caps(export.getAudioCaps())
+    vstream = get_stream_for_caps(export.getVideoCaps())
+
+    vset = StreamEncodeSettings(encoder=export.vencoder,
+                                input_stream=vstream,
+                                encodersettings=export.vcodecsettings)
+    aset = StreamEncodeSettings(encoder=export.aencoder,
+                                input_stream=astream,
+                                encodersettings=export.acodecsettings)
+    settings = RenderSettings(settings=[vset, aset],
+                              muxer=export.muxer,
+                              muxersettings=export.containersettings)
+    return settings
