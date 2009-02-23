@@ -25,7 +25,7 @@ import gst
 import os
 
 from pitivi.factories.base import RandomAccessSourceFactory, \
-        URISourceFactoryMixin
+        URISourceFactoryMixin, SinkFactory
 from pitivi.elements.imagefreeze import ImageFreeze
 from pitivi.stream import MultimediaStream
 
@@ -108,3 +108,14 @@ class PictureFileSourceFactory(FileSourceFactory):
         target.unlink(peer)
         container.remove_pad(ghost)
         pad.unlink(scale.get_pad("sink"))
+
+class URISinkFactory(SinkFactory):
+    """ A simple sink factory """
+
+    def __init__(self, uri, *args, **kwargs):
+        self.uri = uri
+        SinkFactory.__init__(self, *args, **kwargs)
+        self.addInputStream(MultimediaStream(caps=gst.caps_new_any()))
+
+    def makeBin(self, *args, **kwargs):
+        return gst.element_make_from_uri(gst.URI_SINK, self.uri)
