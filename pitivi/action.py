@@ -30,7 +30,8 @@ states = (STATE_NOT_ACTIVE,
 
 from pitivi.signalinterface import Signallable
 from pitivi.factories.base import SourceFactory, SinkFactory
-from pitivi.encode import RenderSinkFactory
+from pitivi.factories.file import URISinkFactory
+from pitivi.encode import RenderSinkFactory, RenderFactory
 from pitivi.log.loggable import Loggable
 import gst
 
@@ -704,3 +705,22 @@ class RenderAction(Action):
 
     compatible_consumers = [RenderSinkFactory]
 
+def render_action_for_uri(uri, settings, *factories):
+    """Creates a L{RenderAction}.
+
+    @param uri: The destination uri
+    @type uri: C{URI}
+    @param settings: The settings
+    @type settings: L{RenderSettings}
+    @param factories: The source factories
+    @type factories: L{SourceFactory}
+    @returns: The action
+    @rtype: L{RenderAction}
+    """
+    sf = RenderSinkFactory(RenderFactory(settings=settings),
+                           URISinkFactory(uri=uri))
+    a = RenderAction()
+    a.addProducers(*factories)
+    a.addConsumers(sf)
+
+    return a
