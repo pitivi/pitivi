@@ -59,6 +59,8 @@ class ObjectFactory(object, Signallable):
     @type default_duration: C{int}
     @ivar icon: Icon associated with the factory.
     @type icon: C{str}
+    @ivar bins: Bins controlled by the factory.
+    @type bins: List of C{gst.Bin}
     """
 
     def __init__(self, name="", displayname=""):
@@ -71,6 +73,7 @@ class ObjectFactory(object, Signallable):
         self.duration = gst.CLOCK_TIME_NONE
         self._default_duration = gst.CLOCK_TIME_NONE
         self._icon = None
+        self.bins = []
 
     def _getDefaultDuration(self):
         if self._default_duration != gst.CLOCK_TIME_NONE:
@@ -222,7 +225,9 @@ class SourceFactory(ObjectFactory):
         """
 
         compatible_stream = None
+        gst.debug("stream %r" % output_stream)
         if output_stream is not None:
+            gst.debug("streams %r" % self.output_streams)
             for stream in self.output_streams:
                 if output_stream.isCompatible(stream):
                     compatible_stream = stream
@@ -235,6 +240,9 @@ class SourceFactory(ObjectFactory):
             raise ObjectFactoryError('no bins available')
 
         bin = self._makeBin(compatible_stream)
+        bin.factory = self
+        if not bin in self.bins:
+            self.bins.append(bin)
         self.current_bins += 1
         self.emit('bin-created', bin)
 
@@ -252,7 +260,10 @@ class SourceFactory(ObjectFactory):
         """
         self._releaseBin(bin)
         self.current_bins -= 1
+        if bin in self.bins:
+            self.bins.remove(bin)
         self.emit('bin-released', bin)
+        del bin.factory
 
     def _releaseBin(self, bin):
         # default implementation does nothing
@@ -301,6 +312,8 @@ class SinkFactory(ObjectFactory):
 
         bin = self._makeBin(input_stream)
         bin.factory = self
+        if not bin in self.bins:
+            self.bins.append(bin)
         self.current_bins += 1
         self.emit('bin-created', bin)
 
@@ -338,7 +351,10 @@ class SinkFactory(ObjectFactory):
         You should call C{releaseBin} once you are done using a bin.
         """
         self._releaseBin(bin)
+        if bin in self.bins:
+            self.bins.remove(bin)
         self.current_bins -= 1
+        del bin.factory
         self.emit('bin-released', bin)
 
     def _releaseBin(self, bin):
@@ -388,6 +404,8 @@ class OperationFactory(ObjectFactory):
 
         bin = self._makeBin(input_stream)
         bin.factory = self
+        if not bin in self.bins:
+            self.bins.append(bin)
         self.current_bins += 1
         self.emit('bin-created', bin)
 
@@ -425,7 +443,10 @@ class OperationFactory(ObjectFactory):
         You should call C{releaseBin} once you are done using a bin.
         """
         self._releaseBin(bin)
+        if bin in self.bins:
+            self.bins.remove(bin)
         self.current_bins -= 1
+        del bin.factory
         self.emit('bin-released', bin)
 
     def _releaseBin(self, bin):
@@ -535,6 +556,7 @@ class URISourceFactoryMixin(object):
         dbin.connect("new-decoded-pad", self._binNewDecodedPadCb, bin)
         dbin.connect("removed-decoded-pad", self._binRemovedDecodedPadCb, bin)
 
+        bin.decodebin = dbin
         return bin
 
     def _binNewDecodedPadCb(self, unused_dbin, pad, unused_is_last, bin):
