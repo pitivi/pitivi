@@ -642,7 +642,6 @@ class Pipeline(object, Signallable, Loggable):
             self._pipeline.remove(stream_entry.tee)
             stream_entry.tee.set_state(gst.STATE_NULL)
             stream_entry.tee = None
-            self.releaseBinForFactoryStream(factory, stream)
 
     def getQueueForFactoryStream(self, factory, stream=None, automake=False,
                                  queuesize=1):
