@@ -84,7 +84,7 @@ class MultimediaStream(object):
 
     def __repr__(self):
         return "<%s(%s) %s>" % (type(self).__name__,
-                                self.pad_name, self.caps)
+                                self.pad_name, self.caps.to_string()[:50])
 
     def __str__(self):
         return "%s" % self.caps
