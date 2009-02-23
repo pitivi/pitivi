@@ -239,6 +239,7 @@ class TrackObject(object, Signallable):
         elts = list(self.gnl_object.elements())
         if elts:
             bin = elts[0]
+            bin.set_state(gst.STATE_NULL)
             self.gnl_object.remove(bin)
             self.factory.releaseBin(bin)
 
@@ -379,6 +380,7 @@ class Track(object, Signallable):
             raise TrackError()
 
         try:
+            track_object.gnl_object.set_state(gst.STATE_NULL)
             self.composition.remove(track_object.gnl_object)
         except gst.RemoveError:
             raise TrackError()
