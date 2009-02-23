@@ -116,6 +116,10 @@ class Project(Serializable, Signallable):
         else:
             self._loaded = False
 
+    def release(self):
+        self.pipeline.release()
+        self.pipeline = None
+
     def load(self):
         """ call this to load a project from a file (once) """
         if self._loaded:
