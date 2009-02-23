@@ -70,6 +70,7 @@ class EncodingDialog(GladeWindow, Loggable):
         self._displaySettings()
 
     def _shutDown(self):
+        self.debug("shutting down")
         # Abort recording
         # remove position handler
         # put default actions back to synchronous
@@ -109,6 +110,7 @@ class EncodingDialog(GladeWindow, Loggable):
                                                               int(totaltime) % 60))
 
     def _recordButtonClickedCb(self, unused_button):
+        self.debug("Rendering")
         if self.outfile and not self.rendering:
             self.addRecordAction()
             self.pipeline.play()
@@ -142,16 +144,26 @@ class EncodingDialog(GladeWindow, Loggable):
         self._shutDown()
 
     def addRecordAction(self):
+        self.debug("renderaction %r", self.renderaction)
         if self.renderaction == None:
+            self.debug("Setting pipeline to STOP")
             self.pipeline.stop()
             settings = export_settings_to_render_settings(self.settings)
             sources = [x for x in self.pipeline.factories if isinstance(x, SourceFactory)]
+            self.debug("Creating RenderAction")
             self.renderaction = render_action_for_uri(self.outfile, settings, *sources)
+            self.debug("setting action on pipeline")
             self.renderaction.setPipeline(self.pipeline)
+            self.debug("Activating render action")
+            self.renderaction.activate()
+            self.debug("setting pipeline to PAUSE")
             self.pipeline.pause()
+            self.debug("done")
 
     def removeRecordAction(self):
+        self.debug("renderaction %r", self.renderaction)
         if self.renderaction:
             self.pipeline.stop()
+            self.renderaction.deactivate()
             self.renderaction.unsetPipeline(self.pipeline)
             self.pipeline.pause()
