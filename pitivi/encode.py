@@ -24,6 +24,7 @@ Encoding-related utilities and classes
 """
 
 import gst
+import pitivi.log.log as log
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.base import OperationFactory, SinkFactory
 from pitivi.factories.operation import TransformFactory, get_modifier_for_stream
@@ -98,20 +99,23 @@ class RenderFactory(OperationFactory):
         OperationFactory.__init__(self, *args, **kwargs)
         # add input streams according to the settings
         for i in range(len(settings.settings)):
-            gst.debug("Adding stream %d %r" % (i, settings.settings[i]))
+            self.debug("Adding stream %d %r" % (i, settings.settings[i].input_stream))
             self.addInputStream(settings.settings[i].input_stream)
 
     def _makeBin(self, *args):
+        self.debug("Creating bin")
         s = self.settings
 
         b = gst.Bin()
 
+        self.debug("Creating muxer")
         mux = gst.element_factory_make(s.muxer)
         for k, v in s.muxersettings.iteritems():
             mux.set_property(k, v)
 
         b.add(mux)
 
+        self.debug("Ghosting source pad")
         gsrc = gst.GhostPad("src", mux.get_pad("src"))
         gsrc.set_active(True)
         b.add_pad(gsrc)
@@ -119,6 +123,7 @@ class RenderFactory(OperationFactory):
         i = 0
         # add all the encoders
         for setting in s.settings:
+            self.debug("Creating encoders %d", i)
             b2 = EncoderFactory(setting).makeBin()
             b.add(b2)
 
@@ -139,6 +144,7 @@ class RenderFactory(OperationFactory):
             b.add_pad(gsink)
             i += 1
 
+        self.debug("Done")
         return b
 
     def _releaseBin(self, bin):
@@ -167,10 +173,14 @@ class RenderSinkFactory(SinkFactory):
             self.addInputStream(os)
 
     def _makeBin(self, *args):
+        self.debug("Creating bin")
         b = gst.Bin()
+        self.debug("Creating renderbin")
         rb = self.renderfactory.makeBin()
+        self.debug("Creating sinkbin")
         sf = self.sinkfactory.makeBin()
         b.add(rb, sf)
+        self.debug("linking bins")
         rb.link(sf)
         for sinkp in rb.sink_pads():
             name = sinkp.get_name()
@@ -178,6 +188,7 @@ class RenderSinkFactory(SinkFactory):
             gsink.set_active(True)
             b.add_pad(gsink)
 
+        self.debug("Done")
         return b
 
     def _releaseBin(self, bin):
