@@ -111,16 +111,16 @@ class Action(object, Signallable, Loggable):
         @raise PipelineError: If the L{Pipeline} is not in the NULL or READY
         state.
         """
-        gst.debug("Activating...")
+        self.debug("Activating...")
         if self.pipeline is None:
             raise ActionError("Action isn't set to a Pipeline")
         if self.state == STATE_ACTIVE:
-            gst.debug("Action already activated, returning")
+            self.debug("Action already activated, returning")
             return
         self._ensurePipelineObjects()
         self.state = STATE_ACTIVE
         self.emit('state-changed', self.state)
-        gst.debug("... done activating")
+        self.debug("... done activating")
 
     def deactivate(self):
         """
@@ -136,18 +136,18 @@ class Action(object, Signallable, Loggable):
         @raise PipelineError: If the L{Pipeline} is not in the NULL or READY
         state.
         """
-        gst.debug("De-Activating...")
+        self.debug("De-Activating...")
         if self.state == STATE_NOT_ACTIVE:
             raise ActionError()
 
         if self.pipeline == None:
-            gst.warning("Attempting to deactivate Action without a Pipeline")
+            self.warning("Attempting to deactivate Action without a Pipeline")
             # yes, gracefully return
             return
         self._releasePipelineObjects()
         self.state = STATE_NOT_ACTIVE
         self.emit('state-changed', self.state)
-        gst.debug("... done de-activating")
+        self.debug("... done de-activating")
 
     def isActive(self):
         """
@@ -176,7 +176,7 @@ class Action(object, Signallable, Loggable):
         a different L{Pipeline}.
         """
         if self.pipeline == pipeline:
-            gst.debug("New pipeline is the same as the currently set one")
+            self.debug("New pipeline is the same as the currently set one")
             return
         if self.pipeline != None:
             raise ActionError("Action already set to a Pipeline")
@@ -209,7 +209,7 @@ class Action(object, Signallable, Loggable):
         @type producers: List of L{ObjectFactory}
         @raise ActionError: If the L{Action} is active.
         """
-        gst.debug("producers:%r" % (producers, ))
+        self.debug("producers:%r", (producers, ))
         if self.state != STATE_NOT_ACTIVE:
             raise ActionError("Action is active, can't add Producers")
         # make sure producers are of the valid type
@@ -224,7 +224,7 @@ class Action(object, Signallable, Loggable):
                     raise ActionError("Some producers are not of the compatible type")
         for p in producers:
             if not p in self.producers:
-                gst.debug("really adding %r to our producers" % p)
+                self.debug("really adding %r to our producers", p)
                 self.producers.append(p)
 
     def removeProducers(self, *producers):
@@ -252,7 +252,7 @@ class Action(object, Signallable, Loggable):
         @type consumers: List of L{ObjectFactory}
         @raise ActionError: If the L{Action} is active.
         """
-        gst.debug("consumers: %r" % consumers)
+        self.debug("consumers: %r", consumers)
         if self.state != STATE_NOT_ACTIVE:
             raise ActionError("Action is active, can't add Producers")
         # make sure consumers are of the valid type
@@ -267,7 +267,7 @@ class Action(object, Signallable, Loggable):
                     raise ActionError("Some consumers are not of the compatible type")
         for p in consumers:
             if not p in self.consumers:
-                gst.debug("really adding %r to our consumers" % p)
+                self.debug("really adding %r to our consumers", p)
                 self.consumers.append(p)
 
     def removeConsumers(self, *consumers):
@@ -401,7 +401,7 @@ class Action(object, Signallable, Loggable):
         links = self._links[:]
         if links == [] and autolink == True:
             links = self._links = self.autoLink()
-        gst.debug("Returning %d links" % len(links))
+        self.debug("Returning %d links", len(links))
         return links
 
 
@@ -419,23 +419,23 @@ class Action(object, Signallable, Loggable):
         should be linked to which consumerstream.
         @return: List of compatible Links.
         """
-        gst.debug("Creating automatic links")
+        self.debug("Creating automatic links")
         links = []
         # iterate producers and their output streams
         for producer in self.producers:
-            gst.debug("producer %r" % producer)
+            self.debug("producer %r", producer)
             for producer_stream in producer.getOutputStreams():
-                gst.debug(" stream %r" % producer_stream)
+                self.debug(" stream %r", producer_stream)
                 # for each, figure out a compatible (consumer, stream)
                 for consumer in self.consumers:
-                    gst.debug("  consumer %r" % consumer)
+                    self.debug("  consumer %r", consumer)
                     compat = consumer.getInputStreams(type(producer_stream))
                     # in case of ambiguity, raise an exception
                     if len(compat) > 1:
-                        gst.warning("%r" % compat)
+                        self.warning("%r" % compat)
                         raise ActionError("Too many compatible streams in consumer")
                     if len(compat) == 1:
-                        gst.debug("    Got a compatible stream !")
+                        self.debug("    Got a compatible stream !")
                         links.append((producer, consumer,
                                 producer_stream, compat[0]))
         return links
@@ -459,31 +459,37 @@ class Action(object, Signallable, Loggable):
         @return: C{True} if the Stream is/was handled by the Action, else C{False}
         @rtype: C{bool}
         """
-        gst.debug("producer:%r, stream:%r" % (producer, stream))
+        self.debug("producer:%r, stream:%s" , producer, stream.caps)
 
         waspending = False
 
         # 1. Check if it's one of our pendings pads
+        self.debug("First trying pending links (%d)", len(self._pending_links))
         pl = self._pending_links[:]
         for prod, cons, prodstream, consstream in pl:
+            self.debug("  producer:%r, stream:%s", prod, prodstream.caps)
+            self.debug("  consumer:%r, stream:%s", cons, consstream.caps)
             if prod == producer and (prodstream == None or \
                     prodstream.isCompatibleWithName(stream)):
-                if self._activateLink(prod, cons, prodstream, consstream):
+                if self._activateLink(prod, cons, stream, consstream):
                     waspending = True
-                    gst.debug("Successfully linked pending stream, removing "
+                    self.debug("Successfully linked pending stream, removing "
                             "it from temp list")
                     self._pending_links.remove((prod, cons,
                             prodstream, consstream))
 
         if waspending == False:
+            self.debug("Checking to see if we haven't already handled it")
             # 2. If it's not one of the pending links, It could also be one of the
             # links we've *already* handled
             for prod, cons, ps, cs in self.getLinks():
                 if prod == producer and ps.isCompatibleWithName(stream):
+                    self.debug("Already handled that link, returning True")
                     return True
 
         # 3. Dynamic linking, ask if someone can handle this if nothing else did
         # up to now.
+        self.debug("Asking subclasses if they want to add any links for given link")
         for prod, cons, prodstream, consstream in self.getDynamicLinks(producer, stream):
             if not cons in self.consumers and not cons in self._dynconsumers:
                 # we need to add that new consumer
@@ -492,7 +498,7 @@ class Action(object, Signallable, Loggable):
             waspending |= self._activateLink(prod, cons,
                     prodstream, consstream, init=False)
 
-        gst.debug("returning %r" % waspending)
+        self.debug("returning %r", waspending)
         return waspending
 
     def streamRemoved(self, producer, stream):
@@ -503,7 +509,7 @@ class Action(object, Signallable, Loggable):
         Called by the Pipeline.
         """
         link = None
-        gst.debug("producer:%r, stream:%r" % (producer, stream))
+        self.debug("producer:%r, stream:%r", producer, stream)
         for dyn_producer, dyn_consumer, \
                 dyn_producer_stream, dyn_consumer_stream in list(self._dyn_links):
             if producer != dyn_producer or stream != dyn_producer_stream:
@@ -579,8 +585,8 @@ class Action(object, Signallable, Loggable):
 
         # activate the given Link, returns True if it was (already) activated
         # if init is True, then remember the pending link
-        gst.debug("producer:%r, consumer:%r, prodstream:%r, consstream:%r" % (\
-                producer, consumer, prodstream, consstream))
+        self.debug("producer:%r, consumer:%r, prodstream:%r, consstream:%r" , \
+                producer, consumer, prodstream, consstream)
 
         self.pipeline.getBinForFactoryStream(producer, prodstream)
 
@@ -590,10 +596,10 @@ class Action(object, Signallable, Loggable):
                                                      automake=True)
         except PipelineError:
             if init != True:
-                gst.debug("Could not create link")
+                self.debug("Could not create link")
                 return False
 
-            gst.debug("Stream will be created dynamically")
+            self.debug("Stream will be created dynamically")
             self._pending_links.append((producer, consumer, prodstream, consstream))
             return True
 
@@ -624,7 +630,7 @@ class Action(object, Signallable, Loggable):
 
     def _releasePipelineObjects(self):
         from pitivi.pipeline import PipelineError
-        gst.debug("Releasing pipeline objects")
+        self.debug("Releasing pipeline objects")
         for producer, consumer, prodstream, consstream in self.getLinks():
             # release tee/queue usage for that stream
             self.pipeline.releaseQueueForFactoryStream(consumer, consstream)
@@ -661,15 +667,15 @@ class ViewAction(Action):
     # FIXME : How to handle multiple video sinks (and XID) ?
 
     def __init__(self, *args, **kwargs):
-        gst.debug("Creating new ViewAction")
         Action.__init__(self, *args, **kwargs)
+        self.debug("Creating new ViewAction")
         self.videosink = None
         self.audiosink = None
         self.sync = True
         self.xid = 0
 
     def getDynamicLinks(self, producer, stream):
-        gst.debug("producer:%r, stream:%r" % (producer, stream))
+        self.debug("producer:%r, stream:%r", producer, stream)
         import plumber
         from pitivi.stream import AudioStream, VideoStream
         res = Action.getDynamicLinks(self, producer, stream)
@@ -690,7 +696,7 @@ class ViewAction(Action):
         """
         Set the XID where the video consumer should display.
         """
-        gst.debug("xid:%r" % xid)
+        self.debug("xid:%r", xid)
         # FIXME : What if we have several video sinks ???
         self.xid = xid
         if self.videosink:

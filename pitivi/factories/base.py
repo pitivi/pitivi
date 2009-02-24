@@ -25,6 +25,7 @@ import os.path
 from urllib import unquote
 import gst
 
+from pitivi.log.loggable import Loggable
 from pitivi.elements.singledecodebin import SingleDecodeBin
 from pitivi.signalinterface import Signallable
 
@@ -35,7 +36,7 @@ class ObjectFactoryError(Exception):
 class ObjectFactoryStreamError(ObjectFactoryError):
     pass
 
-class ObjectFactory(object, Signallable):
+class ObjectFactory(object, Signallable, Loggable):
     """
     Base class for all factory implementations.
 
@@ -64,6 +65,7 @@ class ObjectFactory(object, Signallable):
     """
 
     def __init__(self, name="", displayname=""):
+        Loggable.__init__(self)
         gst.info("name:%s" % name)
         self.parent = None
         self.name = name

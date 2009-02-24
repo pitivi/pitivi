@@ -168,7 +168,7 @@ class Pipeline(object, Signallable, Loggable):
         try:
             self._bus.set_sync_handler(None)
         except:
-            gst.debug("ignore me")
+            self.debug("ignore me")
         self._bus.remove_signal_watch()
         self._asyncsidig = None
         self._bus = None
@@ -188,20 +188,20 @@ class Pipeline(object, Signallable, Loggable):
         @raise PipelineError: If the given L{Action} is already set to another
         Pipeline
         """
-        gst.debug("action:%r" % action)
+        self.debug("action:%r", action)
         if action in self.actions:
-            gst.debug("Action is already used by this Pipeline, returning")
+            self.debug("Action is already used by this Pipeline, returning")
             return action
 
         if action.pipeline != None:
             raise PipelineError("Action is set to another pipeline (%r)" % action.pipeline)
 
         action.setPipeline(self)
-        gst.debug("Adding action to list of actions")
+        self.debug("Adding action to list of actions")
         self.actions.append(action)
-        gst.debug("Emitting 'action-added' signal")
+        self.debug("Emitting 'action-added' signal")
         self.emit("action-added", action)
-        gst.debug("Returning")
+        self.debug("Returning")
         return action
 
     def setAction(self, action):
@@ -218,10 +218,10 @@ class Pipeline(object, Signallable, Loggable):
         @return: The L{Action} used. Might be different from the one given as
         input.
         """
-        gst.debug("action:%r" % action)
+        self.debug("action:%r", action)
         for ac in self.actions:
             if type(action) == type(ac):
-                gst.debug("We already have a %r Action : %r" % (type(action), ac))
+                self.debug("We already have a %r Action : %r", type(action), ac)
                 return ac
         return self.addAction(action)
 
@@ -242,9 +242,9 @@ class Pipeline(object, Signallable, Loggable):
         @raise PipelineError: If L{Action} is activated and L{Pipeline} is not
         READY or NULL
         """
-        gst.debug("action:%r" % action)
+        self.debug("action:%r", action)
         if not action in self.actions:
-            gst.debug("action not controlled by this Pipeline, returning")
+            self.debug("action not controlled by this Pipeline, returning")
             return
         if action.isActive() and self._state in [STATE_PAUSED, STATE_PLAYING]:
             raise PipelineError("Active actions can't be removed from PLAYING or PAUSED Pipeline")
@@ -264,9 +264,9 @@ class Pipeline(object, Signallable, Loggable):
         @raises PipelineError: If the C{gst.Pipeline} could not be changed to
         the requested state.
         """
-        gst.debug("state:%r" % state)
+        self.debug("state:%r", state)
         if self._state == state:
-            gst.debug("Already at the required state, returning")
+            self.debug("Already at the required state, returning")
             return
         res = self._pipeline.set_state(state)
         if res == gst.STATE_CHANGE_FAILURE:
@@ -289,13 +289,13 @@ class Pipeline(object, Signallable, Loggable):
         @rtype: C{State}
         """
         change, state, pending = self._pipeline.get_state(0)
-        gst.debug("change:%r, state:%r, pending:%r" % (change, state, pending))
+        self.debug("change:%r, state:%r, pending:%r", change, state, pending)
         if change != gst.STATE_CHANGE_FAILURE and state != self._state:
             self._state = state
             self.emit('state-changed', self._state)
             # update position listener status
             self._listenToPosition(state in [STATE_PAUSED, STATE_PLAYING])
-        gst.debug("Returning %r" % self._state)
+        self.debug("Returning %r", self._state)
         return self._state
 
     @property
@@ -306,7 +306,7 @@ class Pipeline(object, Signallable, Loggable):
         @warning: This doesn't query the underlying C{gst.Pipeline} but returns the cached
         state.
         """
-        gst.debug("Returning state %r" % self._state)
+        self.debug("Returning state %r", self._state)
         return self._state
 
     def play(self):
@@ -419,9 +419,9 @@ class Pipeline(object, Signallable, Loggable):
         @raise PipelineError: If seek failed
         """
         if format == gst.FORMAT_TIME:
-            gst.debug("position : %s" % gst.TIME_ARGS (position))
+            self.debug("position : %s", gst.TIME_ARGS (position))
         else:
-            gst.debug("position : %d , format:%d" % (position, format))
+            self.debug("position : %d , format:%d", position, format)
         # FIXME : temporarily deactivate position listener
         self._listenToPosition(False)
 
@@ -430,13 +430,13 @@ class Pipeline(object, Signallable, Loggable):
                                   gst.SEEK_TYPE_NONE, -1)
         if not res:
             raise PipelineError("seek failed")
-        gst.debug("seeking succesfull")
+        self.debug("seeking succesfull")
         self.emit('position', position)
 
     #{ GStreamer object methods (For Action usage only)
 
     def _getFactoryEntryForStream(self, factory, stream, create=False):
-        gst.debug("factory %r, stream %s" % (factory, stream))
+        self.debug("factory %r, stream %s" , factory, stream)
         try:
             factory_entry = self.factories[factory]
         except KeyError:
@@ -450,25 +450,25 @@ class Pipeline(object, Signallable, Loggable):
             factory_entry = FactoryEntry(factory)
             self.factories[factory] = factory_entry
 
-        gst.debug("Returning %s" % factory_entry)
+        self.debug("Returning %s", factory_entry)
         return factory_entry
 
     def _getStreamEntryForFactoryStream(self, factory, stream=None, create=False):
-        gst.debug("factory %r, stream %r, create:%r" % (factory, stream, create))
+        self.debug("factory %r, stream %r, create:%r", factory, stream, create)
         factory_entry = self._getFactoryEntryForStream(factory, stream, create)
-        gst.debug("streams %r" % factory_entry.streams)
+        self.debug("streams %r", factory_entry.streams)
         try:
             stream_entry = factory_entry.streams[stream]
         except KeyError:
             if not create:
-                gst.debug("Failure getting stream %s" % stream)
+                self.debug("Failure getting stream %s", stream)
                 raise PipelineError()
 
-            gst.debug("Creating StreamEntry")
+            self.debug("Creating StreamEntry")
             stream_entry = StreamEntry(factory_entry, stream)
             factory_entry.streams[stream] = stream_entry
 
-        gst.debug("Returning %r" % stream_entry)
+        self.debug("Returning %r", stream_entry)
         return stream_entry
 
     def getBinForFactoryStream(self, factory, stream=None, automake=False):
@@ -496,7 +496,7 @@ class Pipeline(object, Signallable, Loggable):
         are none for the given factory.
         @rtype: C{gst.Bin}
         """
-        gst.debug("factory:%r , stream:%r , automake:%r" % (factory, stream, automake))
+        self.debug("factory:%r , stream:%r , automake:%r", factory, stream, automake)
 
         stream_entry = self._getStreamEntryForFactoryStream(factory,
                 stream, automake)
@@ -521,7 +521,7 @@ class Pipeline(object, Signallable, Loggable):
                 factory_entry.streams[stream] = StreamEntry(factory_entry,
                         stream, parent=stream_entry)
 
-        gst.debug("Setting bin to current state")
+        self.debug("Setting bin to current state")
         bin.set_state(self.getState())
 
         return bin
@@ -536,7 +536,7 @@ class Pipeline(object, Signallable, Loggable):
         bin_stream_entry = stream_entry.findBinEntry()
 
         if bin_stream_entry == None:
-            gst.warning("couldn't find stream entry")
+            self.warning("couldn't find stream entry")
             return
 
         if bin_stream_entry.bin_use_count == 1 and \
@@ -547,7 +547,7 @@ class Pipeline(object, Signallable, Loggable):
         bin_stream_entry.bin_use_count -= 1
         if bin_stream_entry.bin_use_count == 0:
             # do cleanup on our side
-            gst.debug("cleaning up")
+            self.debug("cleaning up")
             self._disconnectFromPadSignals(bin_stream_entry.bin)
             bin_stream_entry.bin.set_state(gst.STATE_NULL)
             self._pipeline.remove(bin_stream_entry.bin)
@@ -581,7 +581,7 @@ class Pipeline(object, Signallable, Loggable):
         there are none for the given factory.
         @rtype: C{gst.Element}
         """
-        gst.debug("factory:%r , stream:%r, automake:%r" % (factory, stream, automake))
+        self.debug("factory:%r , stream:%r, automake:%r", factory, stream, automake)
         if not isinstance(factory, SourceFactory):
             raise PipelineError("Given ObjectFactory isn't a SourceFactory")
 
@@ -600,16 +600,18 @@ class Pipeline(object, Signallable, Loggable):
         if not automake:
             raise PipelineError()
 
+        self.debug("Really creating a tee")
         pads = get_src_pads_for_stream(bin, stream)
         if not pads or len(pads) > 1:
             raise PipelineError("Can't figure out which source pad to use !")
 
         srcpad = pads[0]
+        self.debug("Using pad %r", srcpad)
 
         stream_entry.tee = gst.element_factory_make("tee")
         self._pipeline.add(stream_entry.tee)
         stream_entry.tee.set_state(STATE_PAUSED)
-        gst.debug("Linking pad %r to tee" % pads[0])
+        self.debug("Linking pad %r to tee", pads[0])
         srcpad.link(stream_entry.tee.get_pad("sink"))
         stream_entry.tee_use_count += 1
 
@@ -632,7 +634,7 @@ class Pipeline(object, Signallable, Loggable):
         @type stream: L{MultimediaStream}
         @raise PipelineError: If the Pipeline isn't in NULL or READY.
         """
-        gst.debug("factory:%r, stream:%r" % (factory, stream))
+        self.debug("factory:%r, stream:%r", factory, stream)
         stream_entry = self._getStreamEntryForFactoryStream(factory, stream)
 
         if stream_entry.tee is None:
@@ -697,7 +699,7 @@ class Pipeline(object, Signallable, Loggable):
         self._pipeline.add(stream_entry.queue)
         stream_entry.queue.set_state(STATE_PAUSED)
 
-        gst.debug("Linking pad %r to queue" % pads[0])
+        self.debug("Linking pad %r to queue", pads[0])
         stream_entry.queue.get_pad("src").link(pads[0])
 
         stream_entry.queue_use_count += 1
@@ -729,7 +731,7 @@ class Pipeline(object, Signallable, Loggable):
 
         stream_entry.queue_use_count -= 1
         if stream_entry.queue_use_count == 0:
-            gst.debug("Found a corresponding queue, unlink it from the consumer")
+            self.debug("Found a corresponding queue, unlink it from the consumer")
 
             # first set the bin to NULL
             stream_entry.bin.set_state(gst.STATE_NULL)
@@ -737,7 +739,7 @@ class Pipeline(object, Signallable, Loggable):
             # unlink it from the sink bin
             stream_entry.queue.unlink(stream_entry.bin)
 
-            gst.debug("Unlinking it from the tee, if present")
+            self.debug("Unlinking it from the tee, if present")
             queue_sinkpad = stream_entry.queue.get_pad("sink")
             stream_entry.queue.set_state(gst.STATE_NULL)
             # figure out the peerpad
@@ -746,7 +748,7 @@ class Pipeline(object, Signallable, Loggable):
                 tee = tee_srcpad.get_parent()
                 tee_srcpad.unlink(queue_sinkpad)
                 tee.release_request_pad(tee_srcpad)
-            gst.debug("Removing from gst.Pipeline")
+            self.debug("Removing from gst.Pipeline")
             self._pipeline.remove(stream_entry.queue)
             stream_entry.queue = None
 
@@ -759,7 +761,7 @@ class Pipeline(object, Signallable, Loggable):
             self.emit('eos')
         elif message.type == gst.MESSAGE_STATE_CHANGED and message.src == self._pipeline:
             prev, new, pending = message.parse_state_changed()
-            gst.debug("Pipeline change state prev:%r, new:%r, pending:%r" % (prev, new, pending))
+            self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
             if pending == gst.STATE_VOID_PENDING and self._state != new:
                 self._state = new
                 if self.state in [STATE_PAUSED, STATE_PLAYING]:
@@ -785,7 +787,7 @@ class Pipeline(object, Signallable, Loggable):
         return gst.BUS_PASS
 
     def _binPadAddedCb(self, bin, pad):
-        gst.debug("bin:%r, pad:%r (%s)" % (bin, pad, pad.get_caps().to_string()))
+        self.debug("bin:%r, pad:%r (%s)", bin, pad, pad.get_caps().to_string())
 
         factory = None
         stream = None
@@ -811,17 +813,22 @@ class Pipeline(object, Signallable, Loggable):
         self._stream_entry_from_pad[pad] = stream_entry
 
         # ask all actions using this producer if they handle it
+        compatactions = [action for action in self.actions
+                         if factory in action.producers]
+        self.debug("Asking all actions (%d/%d) using that producer [%r] if they can handle it",
+                  len(compatactions), len(self.actions), factory)
+        for a in self.actions:
+            self.debug("Action %r, producers %r", a, a.producers)
         handled = False
-        for action in [action for action in self.actions
-                if factory in action.producers]:
+        for action in compatactions:
             handled |= action.handleNewStream(factory, stream)
 
         if handled == False:
-            gst.debug("No action handled this Stream")
+            self.debug("No action handled this Stream")
             self.emit('unhandled-stream', stream)
 
     def _binPadRemovedCb(self, bin, pad):
-        gst.debug("bin:%r, pad:%r" % (bin, pad))
+        self.debug("bin:%r, pad:%r", bin, pad)
         stream_entry = self._stream_entry_from_pad.pop(pad)
         factory = stream_entry.factory_entry.factory
         stream = stream_entry.stream
