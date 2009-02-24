@@ -156,7 +156,7 @@ class PitiviMainWindow(gtk.Window):
         self.app.connect("new-project-failed", self._notProjectCb)
         self.app.current.connect("save-uri-requested", self._saveAsDialogCb)
         self.app.current.connect("confirm-overwrite", self._confirmOverwriteCb)
-        self.app.playground.connect("error", self._playGroundErrorCb)
+        self.project.pipeline.connect("error", self._playGroundErrorCb)
         self.app.current.sources.connect("file_added", self._sourcesFileAddedCb)
 
         self.app.current.connect('missing-plugins',
