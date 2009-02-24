@@ -222,13 +222,16 @@ def getFileLine(where=-1):
     """
     co = None
     lineno = None
+    name = None
 
     if isinstance(where, types.FunctionType):
         co = where.func_code
         lineno = co.co_firstlineno
+        name = co.co_name
     elif isinstance(where, types.MethodType):
         co = where.im_func.func_code
         lineno = co.co_firstlineno
+        name = co.co_name
     else:
         stackFrame = sys._getframe()
         while stackFrame:
@@ -240,13 +243,14 @@ def getFileLine(where=-1):
                     where += 1
                 co = stackFrame.f_code
                 lineno = stackFrame.f_lineno
+                name = co.co_name
                 break
             stackFrame = stackFrame.f_back
 
     if not co:
         return "<unknown file>", 0
 
-    return scrubFilename(co.co_filename), lineno
+    return scrubFilename(co.co_filename), lineno, name
 
 
 def ellipsize(o):
@@ -310,9 +314,11 @@ def doLog(level, object, category, format, args, where=-1,
     # first all the unlimited ones
     if _log_handlers:
         if filePath is None and line is None:
-            (filePath, line) = getFileLine(where=where)
+            (filePath, line, funcname) = getFileLine(where=where)
         ret['filePath'] = filePath
         ret['line'] = line
+        if funcname:
+            message = "\033[00m\033[32;01m%s:\033[00m %s" % (funcname, message)
         for handler in _log_handlers:
             try:
                 handler(level, object, category, file, line, message)
@@ -325,9 +331,11 @@ def doLog(level, object, category, format, args, where=-1,
 
     if _log_handlers_limited:
         if filePath is None and line is None:
-            (filePath, line) = getFileLine(where=where)
+            (filePath, line, funcname) = getFileLine(where=where)
         ret['filePath'] = filePath
         ret['line'] = line
+        if funcname:
+            message = "\033[00m\033[32;01m%s:\033[00m %s" % (funcname, message)
         for handler in _log_handlers_limited:
             # set this a second time, just in case there weren't unlimited
             # loggers there before
@@ -418,7 +426,7 @@ def stderrHandler(level, object, category, file, line, message):
 
     # level   pid     object   cat      time
     # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
-    safeprintf(sys.stderr, '%s [%5d] %-32s %-17s %-15s ',
+    safeprintf(sys.stderr, '%s [%5d] %-24s %-17s %-15s ',
                getFormattedLevelName(level), os.getpid(), o, category,
                time.strftime("%b %d %H:%M:%S"))
     safeprintf(sys.stderr, '%-4s %s %s\n', "", message, where)
@@ -713,7 +721,6 @@ class Loggable:
        messages under.
     """
 
-    logCategory = 'default'
 
     def writeMarker(self, marker, level):
         """
