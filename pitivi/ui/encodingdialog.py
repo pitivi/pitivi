@@ -153,7 +153,7 @@ class EncodingDialog(GladeWindow, Loggable):
             self.debug("Creating RenderAction")
             self.renderaction = render_action_for_uri(self.outfile, settings, *sources)
             self.debug("setting action on pipeline")
-            self.renderaction.setPipeline(self.pipeline)
+            self.pipeline.addAction(self.renderaction)
             self.debug("Activating render action")
             self.renderaction.activate()
             self.debug("setting pipeline to PAUSE")
@@ -165,5 +165,5 @@ class EncodingDialog(GladeWindow, Loggable):
         if self.renderaction:
             self.pipeline.stop()
             self.renderaction.deactivate()
-            self.renderaction.unsetPipeline(self.pipeline)
+            self.pipeline.removeAction(self.renderaction)
             self.pipeline.pause()
