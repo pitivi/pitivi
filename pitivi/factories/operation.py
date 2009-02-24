@@ -65,13 +65,15 @@ class AudioModifierFactory(StreamModifierFactory):
 
     def _makeBin(self, *args):
         b = gst.Bin()
+        idt = gst.element_factory_make("identity", "single-segment")
+        idt.props.single_segment = True
         aconv = gst.element_factory_make("audioconvert", "aconv")
         ares = gst.element_factory_make("audioresample", "ares")
         arate = gst.element_factory_make("audiorate", "arate")
-        b.add(aconv, ares, arate)
-        gst.element_link_many(aconv, ares, arate)
+        b.add(idt, aconv, ares, arate)
+        gst.element_link_many(idt, aconv, ares, arate)
 
-        gsink = gst.GhostPad("sink", aconv.get_pad("sink"))
+        gsink = gst.GhostPad("sink", id.get_pad("sink"))
         gsink.set_active(True)
         b.add_pad(gsink)
 
@@ -94,13 +96,15 @@ class VideoModifierFactory(StreamModifierFactory):
 
     def _makeBin(self, *args):
         b = gst.Bin()
+        idt = gst.element_factory_make("identity", "single-segment")
+        idt.props.single_segment = True
         csp = gst.element_factory_make("ffmpegcolorspace", "csp")
         vrate = gst.element_factory_make("videorate", "vrate")
 
-        b.add(csp, vrate)
-        csp.link(vrate)
+        b.add(idt, csp, vrate)
+        gst.element_link_many(id, csp, vrate)
 
-        gsink = gst.GhostPad("sink", csp.get_pad("sink"))
+        gsink = gst.GhostPad("sink", idt.get_pad("sink"))
         gsink.set_active(True)
         b.add_pad(gsink)
 
