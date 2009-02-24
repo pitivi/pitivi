@@ -24,9 +24,10 @@ Multimedia stream, used for definition of media streams
 """
 
 from gettext import gettext as _
+from pitivi.log.loggable import Loggable
 import gst
 
-class MultimediaStream(object):
+class MultimediaStream(object, Loggable):
     """
     Defines a media stream
 
@@ -41,7 +42,8 @@ class MultimediaStream(object):
     """
 
     def __init__(self, caps, pad_name=None):
-        gst.log("new with caps %s" % caps.to_string())
+        Loggable.__init__(self)
+        self.log("new with caps %s" % caps.to_string())
         self.caps = caps
         self.pad_name = pad_name
         self.fixed = caps.is_fixed()
@@ -80,11 +82,15 @@ class MultimediaStream(object):
         @return: C{True} if the stream is compatible.
         @rtype: C{bool}
         """
-        return self.pad_name == other.pad_name and self.isCompatible(other)
+        if self.pad_name and other.pad_name:
+            self.log("self.pad_name:%r, other.pad_name:%r",
+                     self.pad_name, other.pad_name)
+            return self.pad_name == other.pad_name and self.isCompatible(other)
+        return self.isCompatible(other)
 
     def __repr__(self):
-        return "<%s(%s) %s>" % (type(self).__name__,
-                                self.pad_name, self.caps.to_string()[:50])
+        return "<%s(%s) '%s'>" % (type(self).__name__,
+                                  self.pad_name, self.caps.to_string()[:30])
 
     def __str__(self):
         return "%s" % self.caps
