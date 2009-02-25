@@ -78,9 +78,10 @@ class TrackObject(object, Signallable):
 
     def copy(self):
         cls = self.__class__
-        other = cls(self.factory, start=self.start - self.trimmed_start,
-            duration=self.duration + self.trimmed_start, in_point=self.in_point,
+        other = cls(self.factory, start=self.start,
+            duration=self.duration, in_point=self.in_point,
             media_duration=self.media_duration, priority=self.priority)
+        other.trimmed_start = self.trimmed_start
 
         return other
 
@@ -209,8 +210,8 @@ class TrackObject(object, Signallable):
         other = self.copy()
 
         other.trimObjectStart(time)
-        self.setObjectDuration(time - start)
-        self.setObjectMediaDuration(time - start)
+        self.setObjectDuration(time - self.gnl_object.props.start)
+        self.setObjectMediaDuration(time - self.gnl_object.props.start)
 
         return other
 

@@ -242,26 +242,33 @@ class TestTrackObject(TestCase):
         other1 = obj.splitObject(4 * gst.SECOND)
 
         self.failUnlessEqual(obj.start, 3 * gst.SECOND)
+        self.failUnlessEqual(obj.in_point, 0 * gst.SECOND)
         self.failUnlessEqual(obj.duration, 1 * gst.SECOND)
         self.failUnlessEqual(obj.rate, 1)
 
         self.failUnlessEqual(other1.start, 4 * gst.SECOND)
+        self.failUnlessEqual(other1.in_point, 1 * gst.SECOND)
         self.failUnlessEqual(other1.duration, 9 * gst.SECOND)
         self.failUnlessEqual(other1.rate, 1)
 
         self.failUnlessEqual(monitor.start_changed_count, 0)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
 
+        # move other1 back to start = 1
+        other1.start = 1 * gst.SECOND
+
         # splitObject again other1
         monitor = TrackSignalMonitor(other1)
 
-        other2 = other1.splitObject(11 * gst.SECOND)
-        self.failUnlessEqual(other1.start, 4 * gst.SECOND)
-        self.failUnlessEqual(other1.duration, 7 * gst.SECOND)
+        other2 = other1.splitObject(6 * gst.SECOND)
+        self.failUnlessEqual(other1.start, 1 * gst.SECOND)
+        self.failUnlessEqual(other1.in_point, 1 * gst.SECOND)
+        self.failUnlessEqual(other1.duration, 5 * gst.SECOND)
         self.failUnlessEqual(other1.rate, 1)
 
-        self.failUnlessEqual(other2.start, 11 * gst.SECOND)
-        self.failUnlessEqual(other2.duration, 2 * gst.SECOND)
+        self.failUnlessEqual(other2.start, 6 * gst.SECOND)
+        self.failUnlessEqual(other2.in_point, 6 * gst.SECOND)
+        self.failUnlessEqual(other2.duration, 4 * gst.SECOND)
         self.failUnlessEqual(other2.rate, 1)
 
         self.failUnlessEqual(monitor.start_changed_count, 0)
