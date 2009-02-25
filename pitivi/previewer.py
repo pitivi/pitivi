@@ -178,7 +178,7 @@ class RandomAccessPreviewer(Previewer):
         #    <=>     delta = x1 - sof (mod twidth).
         # Fortunately for us, % works on floats in python. 
 
-        i = x1 - ((x1 - sof) % self.twidth)
+        i = x1 - ((x1 - sof) % (self.twidth + self.spacing))
 
         # j = timestamp *within the element* of thumbnail to be drawn. we want
         # timestamps to be numerically stable, but in practice this seems to
