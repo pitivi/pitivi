@@ -829,6 +829,9 @@ class Pipeline(object, Signallable, Loggable):
 
     def _binPadRemovedCb(self, bin, pad):
         self.debug("bin:%r, pad:%r", bin, pad)
+        if not pad in self._stream_entry_from_pad:
+            self.warning("Pad not controlled by this pipeline")
+            return
         stream_entry = self._stream_entry_from_pad.pop(pad)
         factory = stream_entry.factory_entry.factory
         stream = stream_entry.stream
