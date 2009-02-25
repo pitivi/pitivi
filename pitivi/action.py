@@ -64,10 +64,13 @@ class Action(object, Signallable):
     @cvar compatible_consumers: The list of compatible factories that
     this L{Action} can handle as consumers.
     @type compatible_consumers: List of L{ObjectFactory} classes
+    @cvar queue_size: Default queueing size (in seconds) to use for links.
     """
 
     compatible_producers = [ SourceFactory ]
     compatible_consumers = [ SinkFactory ]
+
+    queue_size = 1
 
     __signals__ = {
         "state-changed" : ["state"]
@@ -600,7 +603,7 @@ class Action(object, Signallable):
 
         # Make sure we have queues for our (consumer, stream)s
         queue = self.pipeline.getQueueForFactoryStream(consumer, consstream,
-                                                   automake=True)
+                                                       automake=True, queuesize=self.queue_size)
 
         # FIXME: where should this be unlinked?
         """

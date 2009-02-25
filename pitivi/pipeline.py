@@ -609,7 +609,7 @@ class Pipeline(object, Signallable):
             stream_entry.tee = None
 
     def getQueueForFactoryStream(self, factory, stream=None, automake=False,
-                                 queuesize=5):
+                                 queuesize=1):
         """
         Fetches the C{Queue} currently used in the C{gst.Pipeline} for the given
         L{SinkFactory}.
