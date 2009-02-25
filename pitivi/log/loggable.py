@@ -25,3 +25,9 @@ class Loggable(log.Loggable):
     def __init__(self):
         if not hasattr(self, 'logCategory'):
             self.logCategory = self.__class__.__name__.lower()
+
+    def logObjectName(self):
+        res = log.Loggable.logObjectName(self)
+        if not res:
+            return "<%s at 0x%x>" % (self.__class__.__name__, id(self))
+        return res
