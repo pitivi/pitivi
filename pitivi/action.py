@@ -467,8 +467,8 @@ class Action(object, Signallable, Loggable):
         self.debug("First trying pending links (%d)", len(self._pending_links))
         pl = self._pending_links[:]
         for prod, cons, prodstream, consstream in pl:
-            self.debug("  producer:%r, stream:%s", prod, prodstream.caps)
-            self.debug("  consumer:%r, stream:%s", cons, consstream.caps)
+            self.debug("  producer:%r, stream:%s", prod, prodstream)
+            self.debug("  consumer:%r, stream:%s", cons, consstream)
             if prod == producer and (prodstream == None or \
                     prodstream.isCompatibleWithName(stream)):
                 if self._activateLink(prod, cons, stream, consstream):
