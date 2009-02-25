@@ -162,19 +162,20 @@ class Pipeline(object, Signallable, Loggable):
 
         @postcondition: The L{Pipeline} will no longer be usable.
         """
-        self._pipeline.set_state(STATE_NULL)
         self._listenToPosition(False)
         self._bus.disconnect_by_func(self._busMessageCb)
+        self._bus.remove_signal_watch()
+        self._asyncsidig = None
         try:
             self._bus.set_sync_handler(None)
         except:
             self.debug("ignore me")
-        self._bus.remove_signal_watch()
-        self._asyncsidig = None
+        self.setState(STATE_NULL)
         self._bus = None
         self._pipeline = None
         self.factories = {}
         for i in self.actions:
+            i.deactivate()
             self.removeAction(i)
 
     #{ Action-related methods
