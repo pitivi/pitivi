@@ -426,11 +426,10 @@ def stderrHandler(level, object, category, file, line, message):
 
     # level   pid     object   cat      time
     # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
-    safeprintf(sys.stderr, '%s [%5d] %-24s %-17s %-15s ',
+    safeprintf(sys.stderr, '%s [%5d] %-24s %-17s %-15s %-4s %s %s\n',
                getFormattedLevelName(level), os.getpid(), o, category,
-               time.strftime("%b %d %H:%M:%S"))
-    safeprintf(sys.stderr, '%-4s %s %s\n', "", message, where)
-
+               time.strftime("%b %d %H:%M:%S")
+               , "", message, where)
     sys.stderr.flush()
 
 
