@@ -43,13 +43,12 @@ class MultimediaStream(object, Loggable):
 
     def __init__(self, caps, pad_name=None):
         Loggable.__init__(self)
-        self.log("new with caps %s" % caps.to_string())
         self.caps = caps
         self.pad_name = pad_name
         self.fixed = caps.is_fixed()
         self.raw = None
-
         self._analyzeCaps()
+        self.log("new with caps %s" % self.caps.to_string())
 
     def _analyzeCaps(self):
         """
@@ -89,7 +88,7 @@ class MultimediaStream(object, Loggable):
         return self.isCompatible(other)
 
     def __repr__(self):
-        return "<%s(%s) '%s'>" % (type(self).__name__,
+        return "<%s(%s) '%s'>" % (self.__class__.__name__,
                                   self.pad_name, self.caps.to_string()[:30])
 
     def __str__(self):
