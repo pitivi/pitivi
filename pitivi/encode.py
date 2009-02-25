@@ -103,7 +103,6 @@ class RenderFactory(OperationFactory):
             self.addInputStream(settings.settings[i].input_stream)
 
     def _makeBin(self, *args):
-        self.debug("Creating bin")
         s = self.settings
 
         b = gst.Bin()
@@ -123,7 +122,7 @@ class RenderFactory(OperationFactory):
         i = 0
         # add all the encoders
         for setting in s.settings:
-            self.debug("Creating encoders %d", i)
+            self.debug("Creating encoder %d", i)
             b2 = EncoderFactory(setting).makeBin()
             b.add(b2)
 
