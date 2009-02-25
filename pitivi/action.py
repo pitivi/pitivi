@@ -721,6 +721,8 @@ class RenderAction(Action):
     """
 
     compatible_consumers = [RenderSinkFactory]
+    # Use a queue of 5s to allow for big interleave
+    queue_size = 5
 
 def render_action_for_uri(uri, settings, *factories):
     """Creates a L{RenderAction}.
