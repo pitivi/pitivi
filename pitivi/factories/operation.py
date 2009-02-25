@@ -73,7 +73,7 @@ class AudioModifierFactory(StreamModifierFactory):
         b.add(idt, aconv, ares, arate)
         gst.element_link_many(idt, aconv, ares, arate)
 
-        gsink = gst.GhostPad("sink", id.get_pad("sink"))
+        gsink = gst.GhostPad("sink", idt.get_pad("sink"))
         gsink.set_active(True)
         b.add_pad(gsink)
 
@@ -102,7 +102,7 @@ class VideoModifierFactory(StreamModifierFactory):
         vrate = gst.element_factory_make("videorate", "vrate")
 
         b.add(idt, csp, vrate)
-        gst.element_link_many(id, csp, vrate)
+        gst.element_link_many(idt, csp, vrate)
 
         gsink = gst.GhostPad("sink", idt.get_pad("sink"))
         gsink.set_active(True)
