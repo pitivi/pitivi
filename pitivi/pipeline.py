@@ -863,10 +863,12 @@ class Pipeline(object, Signallable, Loggable):
             self.debug("bin:%r, pad:%r", bin, pad)
             if not pad in self._stream_entry_from_pad:
                 self.warning("Pad not controlled by this pipeline")
+                self._lock.release()
                 return
             stream_entry = self._stream_entry_from_pad.pop(pad)
             factory = stream_entry.factory_entry.factory
             stream = stream_entry.stream
+
             for action in [action for action in self.actions
                     if factory in action.producers]:
                 action.streamRemoved(factory, stream)
