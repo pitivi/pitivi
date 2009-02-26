@@ -134,6 +134,7 @@ class RandomAccessPreviewer(Previewer):
         self.aspect = 4.0 / 3.0
         self.twidth = int(self.aspect * self.theight)
         self.spacing = instance.PiTiVi.settings.thumbnailSpacingHint
+        self.waiting_timestamp = None
 
         self._pipelineInit(factory, bin)
 
@@ -207,6 +208,7 @@ class RandomAccessPreviewer(Previewer):
         segment = self._segment_for_time(time)
         if segment in self._cache:
             return self._cache[segment]
+
         self._requestThumbnail(segment)
         return self.default_thumb
 
@@ -215,6 +217,11 @@ class RandomAccessPreviewer(Previewer):
         cached. This should be called by subclasses when they have finished
         processing the thumbnail for the current segment. This function should
         always be called from the main thread of the application."""
+        waiting = self.waiting_timestamp
+        self.waiting_timestamp = None
+
+        if segment != waiting:
+            segment = waiting
 
         self._cache[segment] = surface 
         self.emit("update", segment)
@@ -254,8 +261,10 @@ class RandomAccessPreviewer(Previewer):
         _nextThumbnail() with the resulting cairo surface. Since seeking and
         playback are asyncrhonous, you may have to call _nextThumbnail() in a
         message handler or other callback.""" 
-    
-        raise NotImplementedError
+
+        if segment == gst.CLOCK_TIME_NONE:
+            import pdb; pdb.set_trace()
+        self.waiting_timestamp = segment
 
 class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
@@ -290,6 +299,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         gobject.idle_add(self._finishThumbnail, pixbuf, timestamp)
 
     def _startThumbnail(self, timestamp):
+        RandomAccessPreviewer._startThumbnail(self, timestamp)
         gst.log("timestamp : %s" % gst.TIME_ARGS(timestamp))
         self.videopipeline.seek(1.0, 
             gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
@@ -328,6 +338,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         return gst.BUS_PASS
 
     def _startThumbnail(self, (timestamp, duration)):
+        RandomAccessPreviewer._startThumbnail(self, (timestamp, duration))
         self.__audio_cur = timestamp, duration
         self.audioPipeline.seek(1.0, 
             gst.FORMAT_TIME, 
