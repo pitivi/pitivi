@@ -86,6 +86,12 @@ class DefaultVideoSink(SinkFactory):
         self._cachedsink = autovideosink
         return autovideosink
 
+    def _releaseBin(self, bin, *args):
+        if bin == self._cachedsink:
+            self._realsink = None
+            self._cachedsink = None
+            self._xid = 0
+
     def set_window_xid(self, xid):
         if self._xid != 0:
             return
@@ -138,6 +144,11 @@ class DefaultAudioSink(SinkFactory):
 
         self._cachedsink = audiosink
         return audiosink
+
+    def _releaseBin(self, bin, *args):
+        if bin == self._cachedsink:
+            self._realsink = None
+            self._cachedsink = None
 
     def setSync(self, sync=True):
         self.debug("sync:%r", sync)
