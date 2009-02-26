@@ -25,13 +25,14 @@ Widget for the output settings
 
 import gtk
 import gst
-from glade import GladeWidget
+from pitivi.log.loggable import Loggable
 from pitivi.encode import encoders_muxer_compatible, muxer_can_sink_raw_audio, muxer_can_sink_raw_video
+from glade import GladeWidget
 from gstwidget import GstElementSettingsDialog
 
 from gettext import gettext as _
 
-class ExportSettingsWidget(GladeWidget):
+class ExportSettingsWidget(GladeWidget, Loggable):
     glade_file = "exportsettingswidget.glade"
     video_presets = ( ("DVD PAL",  720,    576,    25.0,        1.0),
                       ("320x240 @ 30fps", 320,  240,    30.0,        1.0) )
@@ -57,6 +58,7 @@ class ExportSettingsWidget(GladeWidget):
 
     def __init__(self):
         GladeWidget.__init__(self)
+        Loggable.__init__(self)
         self.settings = None
         self.validaencoders = []
         self.validvencoders = []
@@ -335,14 +337,14 @@ class ExportSettingsWidget(GladeWidget):
         elif vidx == len(self.validvencoders):
             vencoder = None
         else:
-            gst.warning("we don't want any video stream")
+            self.warning("we don't want any video stream")
         aidx = self.acodeccbox.get_active()
         if aidx < len(self.validaencoders):
             aencoder = self.validaencoders[aidx].get_name()
         elif aidx == len(self.validaencoders):
             aencoder = None
         else:
-            gst.warning("we don't want any audio stream")
+            self.warning("we don't want any audio stream")
         self.settings.setEncoders(muxer, vencoder, aencoder)
 
         # encoder/muxer settings

@@ -24,15 +24,15 @@ Dialog box listing files which had errors, and the reasons.
 """
 
 import gtk
-import gst
 import pango
 from glade import GladeWindow
 
 from gettext import gettext as _
 
 from pitivi.signalinterface import Signallable
+from pitivi.log.loggable import Loggable
 
-class FileListErrorDialog(GladeWindow, Signallable):
+class FileListErrorDialog(GladeWindow, Signallable, Loggable):
     """ Dialog box for showing errors in a list of files """
     glade_file = "filelisterrordialog.glade"
     __signals__ = {
@@ -42,6 +42,7 @@ class FileListErrorDialog(GladeWindow, Signallable):
 
     def __init__(self, title, headline):
         GladeWindow.__init__(self)
+        Loggable.__init__(self)
         self.window.set_modal(False)
         self.widgets["headline"].set_text(headline)
         self.window.set_title(title)
@@ -53,7 +54,7 @@ class FileListErrorDialog(GladeWindow, Signallable):
         give a string identifying the reason why the file failed to be
         discovered
         """
-        gst.debug("Uri:%s, reason:%s, extra:%s" % (uri, reason, extra))
+        self.debug("Uri:%s, reason:%s, extra:%s" % (uri, reason, extra))
         exp = self._createFileExpander(uri, reason, extra)
         self.errorvbox.pack_start(exp)
         exp.show_all()

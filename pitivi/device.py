@@ -27,6 +27,7 @@ Classes and Methods for Device handling and usage
 import gst
 from pitivi.factories.base import ObjectFactory, SourceFactory
 from pitivi.signalinterface import Signallable
+from pitivi.log.loggable import Loggable
 
 try:
     import dbus
@@ -64,7 +65,7 @@ def get_probe():
         return HalDeviceProbe()
     return None
 
-class DeviceProbe(object, Signallable):
+class DeviceProbe(object, Signallable, Loggable):
     """
     Allows listing of the various devices available.
 
@@ -72,6 +73,9 @@ class DeviceProbe(object, Signallable):
 
     This should be subclassed
     """
+
+    def __init__(self):
+        Loggable.__init__(self)
 
     __signals__ = {
         "device-added" : ["device"],
@@ -150,7 +154,7 @@ class HalDeviceProbe(DeviceProbe):
             self._processUDI(dev)
 
     def release(self):
-        gst.debug("release")
+        self.debug("release")
         self._sources = {'video': {}, 'audio': {}}
         self._sinks = {'video': {}, 'audio': {}}
 
@@ -183,7 +187,7 @@ class HalDeviceProbe(DeviceProbe):
             info = devobject.GetProperty("info.product")
             srcdev = V4LSourceDeviceFactory(device=location,
                                             displayname=info)
-            gst.debug("Valid source %r" % dev)
+            self.debug("Valid source %r" % dev)
             self._sources['video'][device_udi] = srcdev
             self.emit("device-added", srcdev)
         elif devobject.QueryCapability("alsa"):
@@ -193,24 +197,24 @@ class HalDeviceProbe(DeviceProbe):
                 device = devobject.GetProperty("alsa.device")
                 info = devobject.GetProperty("alsa.card_id")
                 if alsatype == "capture":
-                    gst.debug("Valid source %r" % dev)
+                    self.debug("Valid source %r" % dev)
                     self._sources['audio'][device_udi] = AlsaSourceDeviceFactory(card=card,
                                                                   device=device,
                                                                   displayname=info)
                     self.emit("device-added", self._sources['audio'][device_udi])
                 elif alsatype == "playback":
-                    gst.debug("Valid sink %r" % dev)
+                    self.debug("Valid sink %r" % dev)
                     self._sinks[device_udi] = AlsaSinkDeviceFactory(card=card,
                                                               device=device,
                                                               displayname=info)
                     self.emit("device-added", self._sinks[device_udi])
 
     def _deviceAddedCb(self, device_udi, *unused_args):
-        gst.debug("udi:%r" % device_udi)
+        self.debug("udi:%r" % device_udi)
         self._processUDI(device_udi)
 
     def _deviceRemovedCb(self, device_udi, *unused_args):
-        gst.debug("udi:%r" % device_udi)
+        self.debug("udi:%r" % device_udi)
         for k in ('audio', 'video'):
             if self._sources[k].has_key(device_udi):
                 dev = self._sources[k][device_udi]
@@ -325,4 +329,4 @@ class V4LSourceDeviceFactory(SourceDeviceFactory):
             v.set_state(gst.STATE_NULL)
             return
         v.set_state(gst.STATE_NULL)
-        gst.warning("Could not probe %s" % self._device)
+        self.warning("Could not probe %s" % self._device)

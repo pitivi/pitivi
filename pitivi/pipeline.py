@@ -341,24 +341,24 @@ class Pipeline(object, Signallable, Loggable):
         @rtype: L{long}
         @raise PipelineError: If the position couldn't be obtained.
         """
-        gst.log("format %r" % format)
+        self.log("format %r" % format)
         try:
             cur, format = self._pipeline.query_position(format)
         except:
             raise PipelineError("Couldn't get position")
-        gst.log("Got position %s" % gst.TIME_ARGS(cur))
+        self.log("Got position %s" % gst.TIME_ARGS(cur))
         return cur
 
     def getDuration(self, format=gst.FORMAT_TIME):
         """
         Get the duration of the C{Pipeline}.
         """
-        gst.log("format %r" % format)
+        self.log("format %r" % format)
         try:
             dur, format = self._pipeline.query_duration(format)
         except:
             raise PipelineError("Couldn't get duration")
-        gst.log("Got duration %s" % gst.TIME_ARGS(dur))
+        self.log("Got duration %s" % gst.TIME_ARGS(dur))
         self.emit("duration-changed", dur)
         return dur
 
@@ -776,7 +776,7 @@ class Pipeline(object, Signallable, Loggable):
     ## Private methods
 
     def _busMessageCb(self, unused_bus, message):
-        gst.info("%s [%r]" % (message.type, message.src))
+        self.info("%s [%r]" % (message.type, message.src))
         if message.type == gst.MESSAGE_EOS:
             self.emit('eos')
         elif message.type == gst.MESSAGE_STATE_CHANGED and message.src == self._pipeline:

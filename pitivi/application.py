@@ -25,7 +25,6 @@ Main application
 import os
 import gobject
 gobject.threads_init()
-import gst
 from pitivigstutils import patch_gst_python
 patch_gst_python()
 import check
@@ -135,7 +134,7 @@ class Pitivi(object, Loggable, Signallable):
 
     def loadProject(self, uri=None, filepath=None):
         """ Load the given file through it's uri or filepath """
-        gst.info("uri:%s, filepath:%s" % (uri, filepath))
+        self.info("uri:%s, filepath:%s" % (uri, filepath))
         if not uri and not filepath:
             self.emit("new-project-failed", _("No location given."),
                 uri)
@@ -166,7 +165,7 @@ class Pitivi(object, Loggable, Signallable):
 
     def _closeRunningProject(self):
         """ close the current project """
-        gst.info("closing running project")
+        self.info("closing running project")
         if self.current:
             if self.current.hasUnsavedModifications():
                 if not self.current.save():
@@ -198,11 +197,11 @@ class Pitivi(object, Loggable, Signallable):
         @return: C{True} if PiTiVi was successfully closed, else C{False}.
         @rtype: C{bool}
         """
-        gst.debug("shutting down")
+        self.debug("shutting down")
         # we refuse to close if we're running a user interface and the user
         # doesn't want us to close the current project.
         if not self._closeRunningProject():
-            gst.warning("Not closing since running project doesn't want to close")
+            self.warning("Not closing since running project doesn't want to close")
             return False
         self.threads.stopAllThreads()
         self.playground.shutdown()

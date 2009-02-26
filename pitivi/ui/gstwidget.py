@@ -29,6 +29,8 @@ import gst
 from glade import GladeWindow
 
 from gettext import gettext as _
+import pitivi.log.log as log
+from pitivi.log.loggable import Loggable
 
 def get_widget_propvalue(prop, widget):
     """ returns the value of the given propertywidget """
@@ -84,7 +86,7 @@ def make_property_widget(unused_element, prop, value=None):
 
         idx = 0
         for key, val in prop.enum_class.__enum_values__.iteritems():
-            gst.log("adding %s / %s" % (val.value_name, val))
+            log.log("gstwidget", "adding %s / %s" % (val.value_name, val))
             model.append([val.value_name, val])
             if val == value:
                 selected = idx
@@ -98,20 +100,21 @@ def make_property_widget(unused_element, prop, value=None):
         widget.set_sensitive(False)
     return widget
 
-class GstElementSettingsWidget(gtk.VBox):
+class GstElementSettingsWidget(gtk.VBox, Loggable):
     """
     Widget to view/modify properties of a gst.Element
     """
 
     def __init__(self):
         gtk.VBox.__init__(self)
+        Loggable.__init__(self)
         self.element = None
         self.ignore = None
         self.properties = None
 
     def setElement(self, element, properties={}, ignore=['name']):
         """ Set given element on Widget, with optional properties """
-        gst.info("element:%s, properties:%s" % (element, properties))
+        self.info("element:%s, properties:%s" % (element, properties))
         self.element = element
         self.ignore = ignore
         self.properties = {} #key:name, value:widget
@@ -152,7 +155,7 @@ class GstElementSettingsWidget(gtk.VBox):
 
 
 
-class GstElementSettingsDialog(GladeWindow):
+class GstElementSettingsDialog(GladeWindow, Loggable):
     """
     Dialog window for viewing/modifying properties of a gst.Element
     """
@@ -160,11 +163,12 @@ class GstElementSettingsDialog(GladeWindow):
 
     def __init__(self, elementfactory, properties={}):
         GladeWindow.__init__(self)
-        gst.debug("factory:%s, properties:%s" % (elementfactory, properties))
+        Loggable.__init__(self)
+        self.debug("factory:%s, properties:%s" % (elementfactory, properties))
         self.factory = elementfactory
         self.element = self.factory.create("elementsettings")
         if not self.element:
-            gst.warning("Couldn't create element from factory %s" % self.factory)
+            self.warning("Couldn't create element from factory %s" % self.factory)
         self.desclabel = self.widgets["descriptionlabel"]
         self.authlabel = self.widgets["authorlabel"]
         self.properties = properties

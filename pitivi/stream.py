@@ -25,6 +25,7 @@ Multimedia stream, used for definition of media streams
 
 from gettext import gettext as _
 from pitivi.log.loggable import Loggable
+import pitivi.log.log as log
 import gst
 
 class MultimediaStream(object, Loggable):
@@ -205,7 +206,7 @@ class TextStream(MultimediaStream):
         self.texttype = self.caps[0].get_name()
 
 def find_decoder(pad):
-    gst.debug("%r" % pad)
+    log.debug("stream","%r" % pad)
     if isinstance(pad, gst.GhostPad):
         target = pad.get_target()
     else:
@@ -264,7 +265,7 @@ def find_upstream_demuxer_and_pad(pad):
     return None, None
 
 def get_type_from_decoder(decoder):
-    gst.debug("%r" % decoder)
+    log.debug("stream","%r" % decoder)
     klass = decoder.get_factory().get_klass()
     parts = klass.split('/', 2)
     if len(parts) != 3:
@@ -299,7 +300,7 @@ def get_stream_for_caps(caps, pad=None):
     Returns the appropriate MediaStream corresponding to the
     given caps.
     """
-    gst.debug("caps:%s, pad:%r" % (caps.to_string(), pad))
+    log.debug("stream","caps:%s, pad:%r" % (caps.to_string(), pad))
     # FIXME : we should have an 'unknown' data stream class
     ret = None
 
@@ -310,7 +311,7 @@ def get_stream_for_caps(caps, pad=None):
         pad_name = None
         stream_type = caps[0].get_name().split('/', 1)[0]
 
-    gst.debug("stream_type:%s" % stream_type)
+    log.debug("stream","stream_type:%s" % stream_type)
     if stream_type in ('video', 'image'):
         ret = VideoStream(caps, pad_name, stream_type == 'image')
     elif stream_type == 'audio':
@@ -338,7 +339,7 @@ def pad_compatible_stream(pad, stream):
     @return: Whether the pad is compatible with the given stream
     @rtype: C{bool}
     """
-    gst.debug("pad:%r, stream:%r" % (pad, stream))
+    log.debug("stream","pad:%r, stream:%r" % (pad, stream))
     if stream == None:
         # yes, None is the magical stream that takes everything
         return True
@@ -359,7 +360,7 @@ def get_pads_for_stream(element, stream):
     @return: The compatible pads
     @rtype: List of C{gst.Pad}
     """
-    gst.debug("element:%r, stream:%r" % (element, stream))
+    log.debug("stream","element:%r, stream:%r" % (element, stream))
     while True:
         try:
             ls = [x for x in element.pads() if pad_compatible_stream(x, stream)]

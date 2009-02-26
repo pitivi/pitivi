@@ -21,7 +21,6 @@
 
 import gobject
 import gtk
-import gst
 import pango
 import pitivi.instance as instance
 import dnd
@@ -31,6 +30,8 @@ from pitivi.configure import get_pixmap_dir
 from pitivi.signalgroup import SignalGroup
 from pitivi.stream import VideoStream, AudioStream, TextStream
 from pitivi.settings import GlobalSettings
+from pitivi.utils import beautify_length
+from pitivi.log.loggable import Loggable
 from gettext import gettext as _
 from urllib import unquote
 import os
@@ -71,17 +72,6 @@ ui = '''
 </ui>
 '''
 
-def beautify_length(length):
-    """ Returns a string version of a nanoseconds value """
-    sec = length / gst.SECOND
-    mins = sec / 60
-    sec = sec % 60
-    if mins < 60:
-        return "%02dm%02ds" % (mins, sec)
-    hours = mins / 60
-    mins = mins % 60
-    return "%02dh%02dm%02ds" % (hours, mins, sec)
-
 def beautify_stream(stream):
 
     if type(stream) == AudioStream:
@@ -110,14 +100,15 @@ def beautify_stream(stream):
 
 def beautify_factory(factory):
     return ("<b>" + unquote(factory.displayname) + "</b>\n" +
-        "\n".join((beautify_stream(stream) 
+        "\n".join((beautify_stream(stream)
             for stream in factory.getOutputStreams())))
 
-class SourceList(gtk.VBox):
+class SourceList(gtk.VBox, Loggable):
     """ Widget for listing sources """
 
     def __init__(self):
         gtk.VBox.__init__(self)
+        Loggable.__init__(self)
 
         # Store
         # icon, infotext, objectfactory, uri, length
@@ -322,7 +313,7 @@ class SourceList(gtk.VBox):
         if displayed:
             if self.showingTreeView:
                 return
-            gst.debug("displaying tree view")
+            self.debug("displaying tree view")
             self.remove(self.textbox)
             self.txtlabel.hide()
             if usesignals:
@@ -336,7 +327,7 @@ class SourceList(gtk.VBox):
         else:
             if not self.showingTreeView:
                 return
-            gst.debug("hiding tree view")
+            self.debug("hiding tree view")
             self.remove(self.scrollwin)
             self.scrollwin.hide()
             self.pack_start(self.textbox)
@@ -346,7 +337,7 @@ class SourceList(gtk.VBox):
 
     def _dragMotionCb(self, unused_layout, unused_context, unused_x, unused_y,
                       unused_timestamp):
-        gst.log("motion")
+        self.log("motion")
         gobject.idle_add(self._displayTreeView, True, False)
 
     def showImportSourcesDialog(self, select_folders=False):
@@ -390,15 +381,14 @@ class SourceList(gtk.VBox):
         if video and video[0].thumbnail:
             thumbnail_file = video[0].thumbnail
             try:
-                gst.debug("attempting to open thumbnail file '%s'" %
+                self.debug("attempting to open thumbnail file '%s'" %
                         thumbnail_file)
                 pixbuf = gtk.gdk.pixbuf_new_from_file(thumbnail_file)
             except:
-                gst.error("Failure to create thumbnail from file '%s'" %
+                self.error("Failure to create thumbnail from file '%s'" %
                         thumbnail_file)
                 thumbnail = self.videofilepixbuf
             else:
-                
                 desiredheight = int(64 / float(video[0].dar))
                 thumbnail = pixbuf.scale_simple(64,
                         desiredheight, gtk.gdk.INTERP_BILINEAR)
@@ -464,7 +454,7 @@ class SourceList(gtk.VBox):
     ## Import Sources Dialog Box callbacks
 
     def _dialogBoxResponseCb(self, dialogbox, response, select_folders):
-        gst.debug("response:%r" % response)
+        self.debug("response:%r" % response)
         if response == gtk.RESPONSE_OK:
             lastfolder = dialogbox.get_current_folder()
             instance.PiTiVi.settings.lastImportFolder = lastfolder
@@ -483,7 +473,7 @@ class SourceList(gtk.VBox):
             self._importDialog = None
 
     def _dialogBoxCloseCb(self, unused_dialogbox):
-        gst.debug("closing")
+        self.debug("closing")
         self._importDialog = None
 
 
@@ -514,7 +504,7 @@ class SourceList(gtk.VBox):
             return
         path = paths[0]
         factory = model[path][COL_FACTORY]
-        gst.debug("Let's play %s" % factory.name)
+        self.debug("Let's play %s" % factory.name)
         instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
 
     def _treeViewButtonPressEventCb(self, unused_treeview, event):
@@ -531,7 +521,7 @@ class SourceList(gtk.VBox):
         self._connectToProject(project)
         # synchronize the storemodel with the new project's sourcelist
         for uri, factory in project.sources:
-            gst.log("loading uri %s" % uri)
+            self.log("loading uri %s" % uri)
             self._addFactory(factory)
 
     def _newProjectFailedCb(self, unused_pitivi, unused_reason,
@@ -554,7 +544,7 @@ class SourceList(gtk.VBox):
             # or it's on local system with "file://"
             return os.path.isfile(path)
 
-        gst.debug("targettype:%d, selection.data:%r" % (targettype, selection.data))
+        self.debug("targettype:%d, selection.data:%r" % (targettype, selection.data))
         directories = []
         if targettype == dnd.TYPE_URI_LIST:
             incoming = [unquote(x.strip('\x00')) for x in selection.data.strip().split("\r\n") if x.strip('\x00')]
@@ -571,7 +561,7 @@ class SourceList(gtk.VBox):
         self.addFiles(filenames)
 
     def _dndTreeBeginCb(self, unused_widget, context):
-        gst.info("tree drag_begin")
+        self.info("tree drag_begin")
         model, paths = self.treeview.get_selection().get_selected_rows()
         if len(paths) < 1:
             context.drag_abort(int(time.time()))
@@ -586,7 +576,7 @@ class SourceList(gtk.VBox):
 
     def _dndDataGetCb(self, unused_widget, unused_context, selection,
                       targettype, unused_eventtime):
-        gst.info("data get, type:%d" % targettype)
+        self.info("data get, type:%d" % targettype)
         uris = self.getSelectedItems()
         if len(uris) < 1:
             return
@@ -596,7 +586,7 @@ class SourceList(gtk.VBox):
         elif targettype == dnd.TYPE_URI_LIST:
             selection.set(selection.target, 8,
                           '\n'.join(uris))
-class InfoStub(gtk.HBox):
+class InfoStub(gtk.HBox, Loggable):
     """
     Box used to display information on the current state of the lists
     """
@@ -609,6 +599,7 @@ class InfoStub(gtk.HBox):
 
     def __init__(self):
         gtk.HBox.__init__(self)
+        Loggable.__init__(self)
         self.errors = []
         self.showing = False
         self._importingmessage = _("Importing clips...")
@@ -716,12 +707,12 @@ class InfoStub(gtk.HBox):
         self.emit("remove-me")
 
     def show(self):
-        gst.log("showing")
+        self.log("showing")
         self.show_all()
         self.showing = True
 
     def hide(self):
-        gst.log("hiding")
+        self.log("hiding")
         gtk.VBox.hide(self)
         self.showing = False
 

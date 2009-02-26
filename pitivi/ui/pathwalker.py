@@ -19,7 +19,6 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-import gst
 import os
 import threading
 from pitivi.threads import Thread
@@ -31,14 +30,14 @@ class PathWalker(Thread):
 
     def __init__(self, paths, callback):
         Thread.__init__(self)
-        gst.log("New PathWalker for %s" % paths)
+        self.log("New PathWalker for %s" % paths)
         self.paths = paths
         self.callback = callback
         self.stopme = threading.Event()
 
     def process(self):
         for folder in self.paths:
-            gst.log("folder %s" % folder)
+            self.log("folder %s" % folder)
             if folder.startswith("file://"):
                 folder = folder[len("file://"):]
             for path, dirs, files in os.walk(folder):

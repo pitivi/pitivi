@@ -39,6 +39,8 @@ from pitivi.projectsaver import ProjectSaver
 
 from gettext import gettext as _
 
+from pitivi.log.loggable import Loggable
+
 from timeline import Timeline
 from projecttabs import ProjectTabs
 from viewer import PitiviViewer
@@ -120,7 +122,7 @@ def create_stock_icons():
         factory.add_default()
 
 
-class PitiviMainWindow(gtk.Window):
+class PitiviMainWindow(gtk.Window, Loggable):
     """
     Pitivi's main window.
 
@@ -133,8 +135,9 @@ class PitiviMainWindow(gtk.Window):
 
     def __init__(self, instance):
         """ initialize with the Pitivi object """
-        gst.log("Creating MainWindow")
         gtk.Window.__init__(self)
+        Loggable.__init__(self)
+        self.log("Creating MainWindow")
         self.app = instance
         self.project = self.app.current
         self.actions = None
@@ -209,7 +212,7 @@ class PitiviMainWindow(gtk.Window):
             self.render_button.set_sensitive(False)
         else:
             if isinstance(smartbin, SmartTimelineBin):
-                gst.info("switching to Timeline, setting duration to %s" %
+                self.info("switching to Timeline, setting duration to %s" %
                          (gst.TIME_ARGS(smartbin.project.timeline.duration)))
                 smartbin.project.timeline.connect("duration-changed",
                         self._timelineDurationChangedCb)
@@ -562,13 +565,13 @@ class PitiviMainWindow(gtk.Window):
     ## PiTiVi main object callbacks
 
     def _newProjectLoadedCb(self, unused_pitivi, project):
-        gst.log("A NEW project is loaded, update the UI!")
+        self.log("A NEW project is loaded, update the UI!")
         self.timeline.setProject(project)
         # ungrey UI
         self.set_sensitive(True)
 
     def _newProjectLoadingCb(self, unused_pitivi, unused_project):
-        gst.log("A NEW project is being loaded, deactivate UI")
+        self.log("A NEW project is being loaded, deactivate UI")
         # grey UI
         self.set_sensitive(False)
 
@@ -622,7 +625,7 @@ class PitiviMainWindow(gtk.Window):
         return False
 
     def _saveAsDialogCb(self, project):
-        gst.log("Save URI requested")
+        self.log("Save URI requested")
         chooser = gtk.FileChooserDialog(_("Save As..."),
             self,
             action=gtk.FILE_CHOOSER_ACTION_SAVE,
@@ -648,18 +651,18 @@ class PitiviMainWindow(gtk.Window):
         self.settings.lastProjectFolder = chooser.get_current_folder()
 
         if response == gtk.RESPONSE_OK:
-            gst.log("User chose a URI to save project to")
+            self.log("User chose a URI to save project to")
             # need to do this to work around bug in gst.uri_construct
             # which escapes all /'s in path!
             uri = "file://" + chooser.get_filename()
             format = chooser.get_filter().get_name()
             if format == _("Detect Automatically"):
                 format = None
-            gst.log("uri:%s , format:%s" % (uri, format))
+            self.log("uri:%s , format:%s" % (uri, format))
             project.setUri(uri, format)
             ret = True
         else:
-            gst.log("User didn't choose a URI to save project to")
+            self.log("User didn't choose a URI to save project to")
             ret = False
 
         chooser.destroy()
@@ -669,7 +672,7 @@ class PitiviMainWindow(gtk.Window):
                            selection, targetType, ctime):
         # FIXME : This should be handled by the main application who knows how
         # to switch between pipelines.
-        gst.info("context:%s, targetType:%s" % (context, targetType))
+        self.info("context:%s, targetType:%s" % (context, targetType))
         if targetType == dnd.TYPE_URI_LIST:
             uri = selection.data.strip().split("\n")[0].strip()
         elif targetType == dnd.TYPE_PITIVI_FILESOURCE:
@@ -696,11 +699,11 @@ class PitiviMainWindow(gtk.Window):
     def _timelineDragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
         # FIXME: temporarily add source to timeline, and put it in drag mode
         # so user can see where it will go
-        gst.info("SimpleTimeline x:%d , source would go at %d" % (x, 0))
+        self.info("SimpleTimeline x:%d , source would go at %d" % (x, 0))
 
     def _timelineDragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
-        gst.log("SimpleTimeline, targetType:%d, selection.data:%s" %
+        self.log("SimpleTimeline, targetType:%d, selection.data:%s" %
             (targetType, selection.data))
         if targetType == dnd.TYPE_PITIVI_FILESOURCE:
             uri = selection.data

@@ -202,16 +202,16 @@ def get_compatible_sink_pad(factoryname, caps):
     """
     factory = gst.registry_get_default().lookup_feature(factoryname)
     if factory == None:
-        gst.warning("%s is not a valid factoryname" % factoryname)
+        log.warning("encode","%s is not a valid factoryname" % factoryname)
         return None
 
     res = []
     sinkpads = [x for x in factory.get_static_pad_templates() if x.direction == gst.PAD_SINK]
     for p in sinkpads:
         c = p.get_caps()
-        gst.log("sinkcaps %s" % c.to_string())
+        log.log("encode","sinkcaps %s" % c.to_string())
         inter = caps.intersect(c)
-        gst.log("intersection %s" % inter.to_string())
+        log.log("encode","intersection %s" % inter.to_string())
         if inter:
             res.append(p.name_template)
     if len(res) > 0:
@@ -222,18 +222,18 @@ def get_compatible_sink_caps(factoryname, caps):
     """
     Returns the compatible caps between 'caps' and the sink pad caps of 'factoryname'
     """
-    gst.log("factoryname : %s , caps : %s" % (factoryname, caps.to_string()))
+    log.log("encode","factoryname : %s , caps : %s" % (factoryname, caps.to_string()))
     factory = gst.registry_get_default().lookup_feature(factoryname)
     if factory == None:
-        gst.warning("%s is not a valid factoryname" % factoryname)
+        log.warning("encode","%s is not a valid factoryname" % factoryname)
         return None
 
     res = []
     sinkcaps = [x.get_caps() for x in factory.get_static_pad_templates() if x.direction == gst.PAD_SINK]
     for c in sinkcaps:
-        gst.log("sinkcaps %s" % c.to_string())
+        log.log("encode","sinkcaps %s" % c.to_string())
         inter = caps.intersect(c)
-        gst.log("intersection %s" % inter.to_string())
+        log.log("encode","intersection %s" % inter.to_string())
         if inter:
             res.append(inter)
 
@@ -264,7 +264,7 @@ def available_muxers():
     for fact in flist:
         if list_compat(["Codec", "Muxer"], fact.get_klass().split('/')):
             res.append(fact)
-    gst.log(str(res))
+    log.log("encode",str(res))
     return res
 
 def available_video_encoders():
@@ -276,7 +276,7 @@ def available_video_encoders():
             res.append(fact)
         elif list_compat(["Codec", "Encoder", "Image"], fact.get_klass().split('/')):
             res.append(fact)
-    gst.log(str(res))
+    log.log("encode",str(res))
     return res
 
 def available_audio_encoders():
@@ -286,7 +286,7 @@ def available_audio_encoders():
     for fact in flist:
         if list_compat(["Codec", "Encoder", "Audio"], fact.get_klass().split('/')):
             res.append(fact)
-    gst.log(str(res))
+    log.log("encode",str(res))
     return res
 
 def encoders_muxer_compatible(encoders, muxer):

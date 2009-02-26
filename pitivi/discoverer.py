@@ -32,6 +32,7 @@ import gst
 import gst.pbutils
 import tempfile
 
+from pitivi.log.loggable import Loggable
 from pitivi.factories.base import ObjectFactoryStreamError
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
 from pitivi.stream import get_stream_for_caps, get_stream_for_pad
@@ -43,7 +44,7 @@ from pitivi.stream import VideoStream
 # what encoded format it is
 # We will need that in order to create proper Stream objects.
 
-class Discoverer(object, Signallable):
+class Discoverer(object, Signallable, Loggable):
     """
     Queues requests to discover information about given files.
     The discovery is done in a very fragmented way, so that it appears to be
@@ -73,6 +74,7 @@ class Discoverer(object, Signallable):
         }
 
     def __init__(self):
+        Loggable.__init__(self)
         self.queue = []
         self.working = False
         self.timeout_id = 0
@@ -95,22 +97,22 @@ class Discoverer(object, Signallable):
         if self.bus is not None:
             self.bus.remove_signal_watch()
             self.bus = None
-        
+
         if self.pipeline is not None:
-            gst.info("before setting to NULL")
+            self.info("before setting to NULL")
             res = self.pipeline.set_state(gst.STATE_NULL)
-            gst.info("after setting to NULL : %s" % res)
+            self.info("after setting to NULL : %s" % res)
 
     def addFile(self, filename):
         """ queue a filename to be discovered """
-        gst.info("filename: %s" % filename)
+        self.info("filename: %s" % filename)
         self.queue.append(filename)
         if not self.working:
             self._startAnalysis()
 
     def addFiles(self, filenames):
         """ queue a list of filenames to be discovered """
-        gst.info("filenames : %s" % filenames)
+        self.info("filenames : %s" % filenames)
         self.queue.extend(filenames)
         if self.queue and not self.working:
             self._startAnalysis()
@@ -121,7 +123,7 @@ class Discoverer(object, Signallable):
         """
         self.working = True
         self.emit("starting")
-        
+
         self._scheduleAnalysis()
 
     def _scheduleAnalysis(self):
@@ -130,7 +132,7 @@ class Discoverer(object, Signallable):
     def _removeTimeout(self):
         gobject.source_remove(self.timeout_id)
         self.timeout_id = 0
-    
+
     def _checkMissingPlugins(self):
         if not self.missing_plugin_messages:
             return False
@@ -146,7 +148,7 @@ class Discoverer(object, Signallable):
             missing_plugin_details.append(detail)
             missing_plugin_descriptions.append(description)
 
-        result = self.emit('missing-plugins', self.current_uri, 
+        result = self.emit('missing-plugins', self.current_uri,
                 missing_plugin_details, missing_plugin_descriptions)
 
         if result == gst.pbutils.INSTALL_PLUGINS_STARTED_OK:
@@ -169,14 +171,14 @@ class Discoverer(object, Signallable):
         """
         if self.timeout_id:
             self._removeTimeout()
-        
+
         self._resetPipeline()
         missing_plugins = self._checkMissingPlugins()
         if not self.current_streams and self.error is None:
             # EOS and no decodable streams?
             self.error = 'FIXME: no output streams'
             self.error_debug = 'see above'
-        
+
         if len(self.current_streams) == 1:
             stream = self.current_streams[0]
             is_image = isinstance(stream, VideoStream) and stream.is_image
@@ -201,10 +203,10 @@ class Discoverer(object, Signallable):
                 self.error = 'FIXME: make me translatable: can not decode file'
                 self.error_debug = 'see above'
                 factory = None
-            
+
             if factory is not None:
                 factory.duration = self.current_duration
-               
+
                 for stream in self.current_streams:
                     factory.addOutputStream(stream)
 
@@ -212,7 +214,7 @@ class Discoverer(object, Signallable):
 
             self.emit('finished_analyzing', factory)
 
-        gst.info("Cleaning up after finished analyzing %s" % self.current_uri)
+        self.info("Cleaning up after finished analyzing %s" % self.current_uri)
         self._resetState()
 
         self.queue.pop(0)
@@ -221,11 +223,11 @@ class Discoverer(object, Signallable):
             self._scheduleAnalysis()
         else:
             self.working = False
-            gst.info("discoverer is now ready again")
+            self.info("discoverer is now ready again")
             self.emit("ready")
 
     def _timeoutCb(self):
-        gst.debug("timeout")
+        self.debug("timeout")
         self.timeout_id = 0
         if not self.error:
             self.error = 'timeout'
@@ -268,14 +270,14 @@ class Discoverer(object, Signallable):
         Sets up a pipeline to analyze the given uri
         """
         self.current_uri = self.queue[0]
-        gst.info("Analyzing %s" % self.current_uri)
+        self.info("Analyzing %s" % self.current_uri)
 
         # setup graph and start analyzing
         self.pipeline = gst.Pipeline("Discoverer-%s" % self.current_uri)
-       
+
         source = self._createSource()
         if not source:
-            gst.warning("This is not a media file : %s" % self.current_uri)
+            self.warning("This is not a media file : %s" % self.current_uri)
             self.error = _("Couldn't construct pipeline.")
             self.error_debug = _("GStreamer does not have an element to "
                     "handle files coming from this type of file system.")
@@ -287,12 +289,12 @@ class Discoverer(object, Signallable):
             dbin = gst.element_factory_make("decodebin2", "dbin")
         else:
             dbin = gst.element_factory_make("decodebin", "dbin")
-        
+
         dbin.connect("new-decoded-pad", self._newDecodedPadCb)
-        
+
         self.pipeline.add(source, dbin)
         source.link(dbin)
-        gst.info("analysis pipeline created")
+        self.info("analysis pipeline created")
 
         self.bus = self.pipeline.get_bus()
         self.bus.add_signal_watch()
@@ -302,13 +304,13 @@ class Discoverer(object, Signallable):
         self.bus.connect("message::state-changed",
                 self._busMessageStateChangedCb)
 
-        gst.info("setting pipeline to PAUSED")
+        self.info("setting pipeline to PAUSED")
         if self.pipeline.set_state(gst.STATE_PAUSED) == gst.STATE_CHANGE_FAILURE:
             if not self.error:
                 self.error = _("Pipeline didn't want to go to PAUSED.")
-            gst.info("pipeline didn't want to go to PAUSED")
+            self.info("pipeline didn't want to go to PAUSED")
             self._finishAnalysis()
-            
+
             return False
 
         self._scheduleTimeout()
@@ -333,14 +335,14 @@ class Discoverer(object, Signallable):
         self.error_debug = detail
 
     def _busMessageElementCb(self, unused_bus, message):
-        gst.debug("Element message %s" % message.structure.to_string())
+        self.debug("Element message %s" % message.structure.to_string())
         if message.structure.get_name() == "redirect":
-            gst.warning("We don't implement redirections currently, ignoring file")
+            self.warning("We don't implement redirections currently, ignoring file")
             if self.error is None:
                 self.error = _("File contains a redirection to another clip.")
                 self.error_debug = _("PiTiVi currently does not handle "
                         "redirection files.")
-            
+
             self._finishAnalysis()
             return
 
@@ -370,7 +372,7 @@ class Discoverer(object, Signallable):
                 self._finishAnalysis()
 
     def _busMessageTagCb(Self, unused_bus, message):
-        gst.debug("Got tags %s" % message.structure.to_string())
+        self.debug("Got tags %s" % message.structure.to_string())
         self.current_tags.append(message.parse_tag())
 
     def _maybeQueryDuration(self, pad):
@@ -391,7 +393,7 @@ class Discoverer(object, Signallable):
 
     def _newVideoPadCb(self, pad, stream):
         """ a new video pad was found """
-        gst.debug("pad %s" % pad)
+        self.debug("pad %s" % pad)
 
         queue = gst.element_factory_make("queue")
         queue.props.max_size_bytes = 5 * 1024 * 1024
@@ -416,7 +418,7 @@ class Discoverer(object, Signallable):
         caps = pad.props.caps
         if caps is None or not caps.is_fixed():
             return
-        
+
         pad.disconnect_by_func(self._capsNotifyCb)
 
         self.unfixed_pads -= 1
@@ -426,16 +428,16 @@ class Discoverer(object, Signallable):
             self._newVideoPadCb(ghost, stream)
 
     def _newDecodedPadCb(self, unused_element, pad, is_last):
-        gst.info("pad:%s caps:%s is_last:%s" % (pad, pad.get_caps(), is_last))
+        self.info("pad:%s caps:%s is_last:%s" % (pad, pad.get_caps(), is_last))
 
         # try to get the duration
         # NOTE: this gets the duration only once, usually for the first stream.
         # Demuxers don't seem to implement per stream duration queries anyway.
         self._maybeQueryDuration(pad)
-        
+
         if pad.get_caps().is_fixed():
             stream = self._addStreamFromPad(pad)
-        
+
             caps_str = str(pad.get_caps())
             if caps_str.startswith("video/x-raw"):
                 self._newVideoPadCb(pad, stream)

@@ -24,8 +24,8 @@ Timeline widgets for the complex view
 """
 
 import gtk
-import gst
 
+from pitivi.log.loggable import Loggable
 from pitivi.bin import SmartTimelineBin
 from pitivi.timeline.source import TimelineFileSource
 from pitivi.timeline import objects
@@ -88,7 +88,7 @@ ui = '''
 #    +--Status Bar ??
 #
 
-class Timeline(gtk.VBox):
+class Timeline(gtk.VBox, Loggable):
 
     # the screen width of the current unit
     unit_width = 10 
@@ -97,8 +97,9 @@ class Timeline(gtk.VBox):
 
 
     def __init__(self, ui_manager):
-        gst.log("Creating Timeline")
         gtk.VBox.__init__(self)
+        Loggable.__init__(self)
+        self.log("Creating Timeline")
 
         self.project = None
         self.timeline = None
@@ -194,7 +195,7 @@ class Timeline(gtk.VBox):
 
     def _dragDataReceivedCb(self, unused_layout, context, x, y, 
         selection, targetType, timestamp):
-        gst.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
+        self.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
             (targetType, selection.data))
         # FIXME: let's have just one target type, call it
         # TYPE_PITIVI_OBJECTFACTORY.
@@ -267,7 +268,7 @@ class Timeline(gtk.VBox):
     def linkSelected(self, unused_action):
         if self.timeline:
             self.timeline.linkSelection()
-    
+
     def ungroupSelected(self, unused_action):
         if self.timeline:
             self.timeline.ungroupSelection()

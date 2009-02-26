@@ -57,7 +57,7 @@ class DefaultVideoSink(SinkFactory):
             autovideosink.info("doesn't implement XOverlay interface")
             self._realsink = autovideosink.get_by_interface(interfaces.XOverlay)
             if not self._realsink:
-                gst.info("%s" % list(autovideosink.elements()))
+                self.info("%s" % list(autovideosink.elements()))
                 autovideosink.warning("couldn't even find an XOverlay within!!!")
             else:
                 self._realsink.info("implements XOverlay interface")

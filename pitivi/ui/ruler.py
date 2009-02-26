@@ -27,9 +27,10 @@ import gobject
 import gtk
 import gst
 from zoominterface import Zoomable
+from pitivi.log.loggable import Loggable
 from pitivi.utils import time_to_string
 
-class ScaleRuler(gtk.Layout, Zoomable):
+class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
     __gsignals__ = {
         "expose-event":"override",
@@ -46,9 +47,10 @@ class ScaleRuler(gtk.Layout, Zoomable):
     min_tick_spacing = 3
 
     def __init__(self, hadj):
-        gst.log("Creating new ScaleRule")
         gtk.Layout.__init__(self)
         Zoomable.__init__(self)
+        Loggable.__init__(self)
+        self.log("Creating new ScaleRule")
         self.add_events(gtk.gdk.POINTER_MOTION_MASK |
             gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
         self.set_hadjustment(hadj)
@@ -82,7 +84,7 @@ class ScaleRuler(gtk.Layout, Zoomable):
 ## timeline position changed method
 
     def timelinePositionChanged(self, value, unused_frame=None):
-        gst.debug("value : %r" % value)
+        self.debug("value : %r" % value)
         ppos = max(self.nsToPixel(self.position) - 1, 0)
         self.position = value
         npos = max(self.nsToPixel(self.position) - 1, 0)
@@ -93,11 +95,11 @@ class ScaleRuler(gtk.Layout, Zoomable):
 ## gtk.Widget overrides
 
     def do_size_allocate(self, allocation):
-        gst.debug("ScaleRuler got %s" % list(allocation))
+        self.debug("ScaleRuler got %s", list(allocation))
         gtk.Layout.do_size_allocate(self, allocation)
         width = max(self.getPixelWidth(), allocation.width)
-        gst.debug("Setting layout size to %d x %d"
-                  % (width, allocation.height))
+        self.debug("Setting layout size to %d x %d",
+                   width, allocation.height)
         self.set_size(width, allocation.height)
         # the size has changed, therefore we want to redo our pixmap
         self.doPixmap()
@@ -108,12 +110,12 @@ class ScaleRuler(gtk.Layout, Zoomable):
         self.doPixmap()
 
     def do_expose_event(self, event):
-        gst.debug("exposing ScaleRuler %s" % list(event.area))
+        self.debug("exposing ScaleRuler %s", list(event.area))
         x, y, width, height = event.area
         if (x < self.pixmap_offset) or (x+width > self.pixmap_offset + self.pixmap_allocated_width):
-            gst.debug("exposing outside boundaries !")
+            self.debug("exposing outside boundaries !")
             self.pixmap_offset = max(0, x + (width / 2) - (self.pixmap_allocated_width / 2))
-            gst.debug("offset is now %d" % self.pixmap_offset)
+            self.debug("offset is now %d", self.pixmap_offset)
             self.doPixmap()
             width = self.pixmap_allocated_width
 
@@ -129,9 +131,9 @@ class ScaleRuler(gtk.Layout, Zoomable):
         return False
 
     def do_button_press_event(self, event):
-        gst.debug("button pressed at x:%d" % event.x)
+        self.debug("button pressed at x:%d", event.x)
         if self.getDuration() <= 0:
-            gst.debug("no timeline to seek on, ignoring")
+            self.debug("no timeline to seek on, ignoring")
         self.pressed = True
         # seek at position
         cur = self.pixelToNs(event.x)
@@ -139,12 +141,12 @@ class ScaleRuler(gtk.Layout, Zoomable):
         return True
 
     def do_button_release_event(self, event):
-        gst.debug("button released at x:%d" % event.x)
+        self.debug("button released at x:%d", event.x)
         self.pressed = False
         return False
 
     def do_motion_notify_event(self, event):
-        gst.debug("motion at event.x %d" % event.x)
+        self.debug("motion at event.x %d", event.x)
         if self.pressed:
             # seek at position
             cur = self.pixelToNs(event.x)
@@ -156,8 +158,8 @@ class ScaleRuler(gtk.Layout, Zoomable):
     def _seekTimeoutCb(self):
         self.pending_seek_id = None
 
-        gst.debug("delayed seek timeout %s %s" %
-                (gst.TIME_ARGS(self.seek_position), self.seek_format))
+        self.debug("delayed seek timeout %s %s",
+                   gst.TIME_ARGS(self.seek_position), self.seek_format)
 
         # clamping values within acceptable range
         duration = self.getDuration()
@@ -217,12 +219,12 @@ class ScaleRuler(gtk.Layout, Zoomable):
 
     def draw(self, context):
         rect = self.get_allocation()
-        gst.debug("Ruler draw %s" % list(rect))
+        self.debug("Ruler draw %s", list(rect))
         self.drawBackground(context, rect)
         self.drawRuler(context, rect)
 
     def setDuration(self, duration):
-        gst.info("start/duration changed")
+        self.info("start/duration changed")
         self.queue_resize()
 
         self.duration = duration

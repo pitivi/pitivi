@@ -23,16 +23,15 @@ Threading support
 """
 
 import threading
-import gst
-
-from signalinterface import Signallable
+from pitivi.signalinterface import Signallable
+from pitivi.log.loggable import Loggable
 
 #
 # Following code was freely adapted by code from:
 #   John Stowers <john.stowers@gmail.com>
 #
 
-class Thread(threading.Thread, Signallable):
+class Thread(threading.Thread, Signallable, Loggable):
     """
     Event-powered thread
     """
@@ -43,6 +42,7 @@ class Thread(threading.Thread, Signallable):
 
     def __init__(self):
         threading.Thread.__init__(self)
+        Loggable.__init__(self)
 
     def stop(self):
         """ stop the thread, do not override """
@@ -73,12 +73,13 @@ class CallbackThread(Thread):
     def process(self):
         self.callback(*self.args, **self.kwargs)
 
-class ThreadMaster(object):
+class ThreadMaster(object, Loggable):
     """
     Controls all thread existing in pitivi
     """
 
     def __init__(self):
+        Loggable.__init__(self)
         self.threads = []
 
     def addThread(self, threadclass, *args):
@@ -86,29 +87,29 @@ class ThreadMaster(object):
         # IDEA : We might need a limit of concurrent threads ?
         # ... or some priorities ?
         # FIXME : we should only accept subclasses of our Thread class
-        gst.log("Adding thread of type %r" % threadclass)
+        self.log("Adding thread of type %r" % threadclass)
         thread = threadclass(*args)
         thread.connect("done", self._threadDoneCb)
         self.threads.append(thread)
-        gst.log("starting it...")
+        self.log("starting it...")
         thread.start()
-        gst.log("started !")
+        self.log("started !")
 
     def _threadDoneCb(self, thread):
-        gst.log("thread %r is done" % thread)
+        self.log("thread %r is done" % thread)
         self.threads.remove(thread)
 
     def stopAllThreads(self):
         """ Stop all running Thread(s) controlled by this master """
-        gst.log("stopping all threads")
+        self.log("stopping all threads")
         joinedthreads = 0
         while(joinedthreads < len(self.threads)):
             for thread in self.threads:
-                gst.log("Trying to stop thread %r" % thread)
+                self.log("Trying to stop thread %r" % thread)
                 try:
                     thread.join()
                     joinedthreads += 1
                 except:
-                    gst.warning("what happened ??")
+                    self.warning("what happened ??")
 
 

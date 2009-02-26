@@ -27,6 +27,7 @@ Project class
 import os.path
 import gst
 import traceback
+from pitivi.log.loggable import Loggable
 from pitivi.timeline.timeline import Timeline
 from pitivi.timeline.track import Track
 from pitivi.stream import AudioStream, VideoStream
@@ -40,7 +41,7 @@ from serializable import Serializable, to_object_from_data_type
 from projectsaver import ProjectSaver, ProjectLoadError
 from signalinterface import Signallable
 
-class Project(Serializable, Signallable):
+class Project(Serializable, Signallable, Loggable):
     """ The base class for PiTiVi projects
     Signals
 
@@ -84,7 +85,8 @@ class Project(Serializable, Signallable):
         name : the name of the project
         uri : the uri of the project
         """
-        gst.log("name:%s, uri:%s" % (name, uri))
+        Loggable.__init__(self)
+        self.log("name:%s, uri:%s" % (name, uri))
         self.name = name
         self.settings = None
         self.description = ""
@@ -124,12 +126,12 @@ class Project(Serializable, Signallable):
         """ call this to load a project from a file (once) """
         if self._loaded:
             # should this return false?
-            gst.warning("Already loaded !!!")
+            self.warning("Already loaded !!!")
             return True
         try:
             res = self._load()
         except:
-            gst.error("An Exception was raised during loading !")
+            self.error("An Exception was raised during loading !")
             traceback.print_exc()
             res = False
         finally:
@@ -140,8 +142,8 @@ class Project(Serializable, Signallable):
         loads the project from a file
         Private method, use load() instead
         """
-        gst.log("uri:%s" % self.uri)
-        gst.debug("Creating timeline")
+        self.log("uri:%s" % self.uri)
+        self.debug("Creating timeline")
         # FIXME : This should be discovered !
         saveformat = "pickle"
         if self.uri and file_is_project(self.uri):
@@ -152,13 +154,13 @@ class Project(Serializable, Signallable):
                 tree = loader.openFromFile(fileobj)
                 self.fromDataFormat(tree)
             except ProjectLoadError:
-                gst.error("Error while loading the project !!!")
+                self.error("Error while loading the project !!!")
                 return False
             finally:
                 fileobj.close()
             self.format = saveformat
             self.urichanged = False
-            gst.debug("Done loading !")
+            self.debug("Done loading !")
             return True
         return False
 
@@ -167,14 +169,14 @@ class Project(Serializable, Signallable):
         if uri_is_valid(self.uri):
             path = gst.uri_get_location(self.uri)
         else:
-            gst.warning("uri '%s' is invalid, aborting save" % self.uri)
+            self.warning("uri '%s' is invalid, aborting save" % self.uri)
             return False
 
         #TODO: a bit more sophisticated overwite detection
         if os.path.exists(path) and self.urichanged:
             overwriteres = self.emit("confirm-overwrite", self.uri)
             if overwriteres == False:
-                gst.log("aborting save because overwrite was denied")
+                self.log("aborting save because overwrite was denied")
                 return False
 
         try:
@@ -184,25 +186,25 @@ class Project(Serializable, Signallable):
             loader.saveToFile(tree, fileobj)
             self._dirty = False
             self.urichanged = False
-            gst.log("Project file saved successfully !")
+            self.log("Project file saved successfully !")
             return True
         except IOError:
             return False
 
     def save(self):
         """ Saves the project to the project's current file """
-        gst.log("saving...")
+        self.log("saving...")
         if self.uri:
             return self._save()
 
-        gst.log("requesting for a uri to save to...")
+        self.log("requesting for a uri to save to...")
         saveres = self.emit("save-uri-requested")
         if saveres == None or saveres == True:
-            gst.log("'save-uri-requested' returned True, self.uri:%s" % self.uri)
+            self.log("'save-uri-requested' returned True, self.uri:%s" % self.uri)
             if self.uri:
                 return self._save()
 
-        gst.log("'save-uri-requested' returned False or uri wasn't set, aborting save")
+        self.log("'save-uri-requested' returned False or uri wasn't set, aborting save")
         return False
 
     def saveAs(self):
@@ -219,18 +221,18 @@ class Project(Serializable, Signallable):
 
     def setUri(self, uri, format=None):
         """ Set the location to which this project will be stored """
-        gst.log("uri:%s, format:%s" % (uri, format))
+        self.log("uri:%s, format:%s" % (uri, format))
         if not self.uri == uri:
-            gst.log("updating self.uri, previously:%s" % self.uri)
+            self.log("updating self.uri, previously:%s" % self.uri)
             self.uri = uri
             self.urichanged = True
 
         if not format or not self.format == format:
-            gst.log("updating save format, previously:%s" % self.format)
+            self.log("updating save format, previously:%s" % self.format)
             if not format:
                 path = gst.uri_get_location(uri)
                 ext = os.path.splitext(path)[1]
-                gst.log("Based on file extension, format is %s" % format)
+                self.log("Based on file extension, format is %s" % format)
                 format = ProjectSaver.getFormat(ext)
             self.format = format
 
@@ -247,7 +249,7 @@ class Project(Serializable, Signallable):
         Sets the given settings as the project's settings.
         If settings is None, the current settings will be unset
         """
-        gst.log("Setting %s as the project's settings" % settings)
+        self.log("Setting %s as the project's settings" % settings)
         if self.settings:
             self.settings.disconnect(self.settingssigid)
         self.settings = settings
@@ -267,12 +269,12 @@ class Project(Serializable, Signallable):
         all contained sources.
         """
         if not self.timeline:
-            gst.warning("project doesn't have a timeline, returning default settings")
+            self.warning("project doesn't have a timeline, returning default settings")
             return ExportSettings()
         #settings = self.timeline.getAutoSettings()
         settings = None
         if not settings:
-            gst.warning("Timeline didn't return any auto settings, return default settings")
+            self.warning("Timeline didn't return any auto settings, return default settings")
             return ExportSettings()
 
         # add the encoders and muxer of the default settings
