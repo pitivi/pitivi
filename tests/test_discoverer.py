@@ -108,6 +108,7 @@ class Discoverer1(Discoverer):
 
 class TestAnalysis(TestCase):
     def setUp(self):
+        TestCase.setUp(self)
         self.discoverer = Discoverer1()
 
     def tearDown(self):
@@ -325,6 +326,7 @@ class TestAnalysis(TestCase):
 
 class TestStateChange(TestCase):
     def setUp(self):
+        TestCase.setUp(self)
         self.discoverer = Discoverer1()
         # don't plug the thumbnailing branch
         self.discoverer._newVideoPadCb = lambda pad, stream: None

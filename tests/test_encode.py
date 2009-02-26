@@ -88,8 +88,14 @@ class TestEncoderFactory(TestCase):
 class TestRenderFactory(TestCase):
 
     def setUp(self):
+        TestCase.setUp(self)
         self.audiosettings = StreamEncodeSettings(encoder="vorbisenc")
         self.videosettings = StreamEncodeSettings(encoder="theoraenc")
+
+    def tearDown(self):
+        self.audiosettings = None
+        self.videosettings = None
+        TestCase.tearDown(self)
 
     def testSimple(self):
         rset = RenderSettings(settings=[self.audiosettings,

@@ -30,6 +30,7 @@ from common import SignalMonitor, TestCase
 
 class TestObjectFactory(TestCase):
     def setUp(self):
+        TestCase.setUp(self)
         self.factory = ObjectFactory('name', 'displayname')
 
     def tearDown(self):
@@ -74,6 +75,7 @@ class StubSourceFactory(SourceFactory):
 
 class TestSourceFactory(TestCase):
     def setUp(self):
+        TestCase.setUp(self)
         self.factory = StubSourceFactory('name', 'displayname')
         caps = gst.Caps('video/x-raw-rgb')
         self.stream = VideoStream(caps, pad_name='src0')

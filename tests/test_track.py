@@ -44,6 +44,7 @@ class TrackSignalMonitor(SignalMonitor):
 
 class TestTrackObject(TestCase):
     def setUp(self):
+        TestCase.setUp(self)
         stream = AudioStream(gst.Caps("audio/x-raw-int"))
         self.factory = StubFactory()
         gst.debug("%r" % self.factory.duration)
@@ -57,9 +58,6 @@ class TestTrackObject(TestCase):
         self.track_oject = None
         self.factory = None
         TestCase.tearDown(self)
-
-    def test(self):
-        pass
 
     def testDefaultProperties(self):
         obj = self.track_object
@@ -277,6 +275,7 @@ class TestTrackObject(TestCase):
 
 class TestTrackAddRemoveObjects(TestCase):
     def setUp(self):
+        TestCase.setUp(self)
         self.factory = StubFactory()
         self.stream = VideoStream(gst.Caps('video/x-raw-rgb'))
         self.factory.addOutputStream(self.stream)

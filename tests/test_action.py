@@ -184,6 +184,7 @@ class TestAction(common.TestCase):
 class TestRenderAction(common.TestCase):
 
     def setUp(self):
+        common.TestCase.setUp(self)
         self.vsrc = common.FakeSourceFactory("videotestsrc")
         self.vsrc.addOutputStream(VideoStream(gst.Caps("video/x-raw-yuv"),
                                               pad_name="src"))

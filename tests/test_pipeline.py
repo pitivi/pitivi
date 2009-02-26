@@ -34,10 +34,8 @@ class WeirdAction(Action):
 
 class TestPipeline(TestCase):
 
-    def test(self):
-        pass
-
     def setUp(self):
+        TestCase.setUp(self)
         gst.debug("start")
         self.pipeline = Pipeline()
         self.monitor = SignalMonitor(self.pipeline, 'action-added',
@@ -131,6 +129,7 @@ class TestPipeline(TestCase):
         self.assertEquals(res, ac2)
         self.assertEquals(self.pipeline.actions, [ac2])
 
+        self.pipeline.removeAction(ac2)
         p2.release()
 
     def testStateChange(self):

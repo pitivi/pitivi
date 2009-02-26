@@ -14,35 +14,38 @@ from pitivi.pipeline import Pipeline
 
 class TestCase(unittest.TestCase):
 
-    def tearDown(self):
-        while True:
-            if gc.collect() == 0:
-                break
-        factories = [x for x in gc.get_objects() if isinstance(x, ObjectFactory)]
-        pipelines = [x for x in gc.get_objects() if isinstance(x, Pipeline)]
+    _tracked_types = [gst.MiniObject, gst.Element, gst.Pad, gst.Caps, ObjectFactory, Pipeline]
 
-        for f in factories:
-            print f
-            for a in  gc.get_referrers(f):
-                print "  ", a
-            print
-        self.assertEquals(factories, [])
-        gstt = [gst.MiniObject, gst.Element, gst.Pad, gst.Caps]
-        gstobj = []
-        for tt in gstt:
-            gstobj.extend([x for x in gc.get_objects() if isinstance(x, tt)])
-        for f in gstobj:
-            print f
-            for a in  gc.get_referrers(f):
-                print "  ", a
-            print
-        self.assertEquals(gstobj, [])
-#         for f in pipelines:
-#             print f
-#             for a in  gc.get_referrers(f):
-#                 print "  ", a
-#             print
-#         self.assertEquals(pipelines, [])
+    def gctrack(self):
+        self.gccollect()
+        self._tracked = {}
+        for c in self._tracked_types:
+            self._tracked[c] = [o for o in gc.get_objects() if isinstance(o, c)]
+
+    def gccollect(self):
+        ret = 0
+        while True:
+            c = gc.collect()
+            ret += c
+            if c == 0:
+                break
+        return ret
+
+    def gcverify(self):
+        new = []
+        objs = gc.get_objects()
+        for c in self._tracked_types:
+            new.extend([o for o in objs if isinstance(o, c) and not o in self._tracked[c]])
+
+        self.failIf(new, new)
+        del self._tracked
+
+    def setUp(self):
+        self.gctrack()
+
+    def tearDown(self):
+        self.gccollect()
+        self.gcverify()
 
 class TestTimelineObject(TimelineObject):
 

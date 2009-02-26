@@ -39,6 +39,7 @@ class StubFileSourceFactory(FileSourceFactory):
 
 class TestFileSourceFactory(TestCase):
     def setUp(self):
+        TestCase.setUp(self)
         self.factory = StubFileSourceFactory('file:///path/to/file')
 
     def tearDown(self):
@@ -86,6 +87,7 @@ class StubPictureFileSourceFactory(PictureFileSourceFactory):
 
 class TestPictureFileSourceFactory(TestCase):
     def setUp(self):
+        TestCase.setUp(self)
         self.factory = StubPictureFileSourceFactory('file:///path/to/file')
 
     def tearDown(self):

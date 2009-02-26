@@ -44,6 +44,7 @@ class TestPipelineAction(TestCase):
 
     def setUp(self):
         gst.debug("Test starting")
+        TestCase.setUp(self)
 
     def testPipelineAction(self):
         """Testing pipeline state interaction"""

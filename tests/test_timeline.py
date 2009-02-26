@@ -77,6 +77,7 @@ class TestTimelineObjectAddRemoveTrackObjects(TestCase):
 
 class TestTimelineObjectProperties(TestCase):
     def setUp(self):
+        TestCase.setUp(self)
         factory = StubFactory()
         self.timeline_object = TimelineObject(factory)
         self.monitor = SignalMonitor(self.timeline_object, 'start-changed',
@@ -342,6 +343,7 @@ class TestLink(TestCase):
         pass
 
     def setUp(self):
+        TestCase.setUp(self)
         self.factory = StubFactory()
         self.stream = AudioStream(gst.Caps('audio/x-raw-int'))
         self.factory.addOutputStream(self.stream)
@@ -493,6 +495,7 @@ class TestLink(TestCase):
 
 class TestTimelineEdges(TestCase):
     def setUp(self):
+        TestCase.setUp(self)
         self.timeline_edges = TimelineEdges()
 
     def testRemove(self):
@@ -579,6 +582,7 @@ class TestTimelineEdges(TestCase):
 
 class TestTimelineAddFactory(TestCase):
     def setUp(self):
+        TestCase.setUp(self)
         self.audio_stream1 = AudioStream(gst.Caps('audio/x-raw-int'))
         self.audio_stream2 = AudioStream(gst.Caps('audio/x-raw-int'))
         self.audio_stream3 = AudioStream(gst.Caps('audio/x-raw-int'))
