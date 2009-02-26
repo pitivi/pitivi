@@ -457,10 +457,21 @@ class Pipeline(object, Signallable, Loggable):
     def _getStreamEntryForFactoryStream(self, factory, stream=None, create=False):
         self.debug("factory %r, stream %r, create:%r", factory, stream, create)
         factory_entry = self._getFactoryEntryForStream(factory, stream, create)
-        self.debug("streams %r", factory_entry.streams)
-        try:
-            stream_entry = factory_entry.streams[stream]
-        except KeyError:
+        for k, v in factory_entry.streams.iteritems():
+            self.debug("Stream:%r  ==>  %s", k, v)
+
+        if stream is None:
+            stream_entry = factory_entry.streams.get(stream, None)
+        else:
+            for factory_stream, entry in factory_entry.streams.iteritems():
+                if factory_stream is None:
+                    continue
+
+                if stream.isCompatibleWithName(factory_stream):
+                    stream_entry = entry
+                    break
+
+        if stream_entry is None:
             if not create:
                 self.debug("Failure getting stream %s", stream)
                 raise PipelineError()
@@ -519,6 +530,9 @@ class Pipeline(object, Signallable, Loggable):
             factory_entry = self._getFactoryEntryForStream(factory, stream)
 
             for stream in factory.output_streams:
+                factory_entry.streams[stream] = StreamEntry(factory_entry,
+                        stream, parent=stream_entry)
+            for stream in factory.input_streams:
                 factory_entry.streams[stream] = StreamEntry(factory_entry,
                         stream, parent=stream_entry)
 
@@ -685,7 +699,10 @@ class Pipeline(object, Signallable, Loggable):
         if not automake:
             raise PipelineError()
 
-        bin = stream_entry.bin
+        self.debug("Really creating a queue")
+
+        bin_entry = stream_entry.findBinEntry()
+        bin = bin_entry.bin
         # find the source pads compatible with the given stream
         pads = get_sink_pads_for_stream(bin, stream)
         if len(pads) > 1:
@@ -840,6 +857,7 @@ class Pipeline(object, Signallable, Loggable):
         for action in [action for action in self.actions
                 if factory in action.producers]:
             action.streamRemoved(factory, stream)
+        del stream_entry.factory_entry.streams[stream]
 
     def _connectToPadSignals(self, bin):
         # Listen on the given bin for pads being added/removed
