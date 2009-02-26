@@ -162,9 +162,9 @@ class EncodingDialog(GladeWindow, Loggable):
             self.pipeline.addAction(self.renderaction)
             self.debug("Activating render action")
             self.renderaction.activate()
-            self.debug("Setting all ViewAction to sync=False")
+            self.debug("Setting all active ViewAction to sync=False")
             for ac in self.pipeline.actions:
-                if isinstance(ac, ViewAction):
+                if isinstance(ac, ViewAction) and ac.isActive():
                     ac.setSync(False)
             self.debug("setting pipeline to PAUSE")
             self.pipeline.pause()
@@ -176,9 +176,9 @@ class EncodingDialog(GladeWindow, Loggable):
             self.pipeline.stop()
             self.renderaction.deactivate()
             self.pipeline.removeAction(self.renderaction)
-            self.debug("putting all ViewActions back to sync=True")
+            self.debug("putting all active ViewActions back to sync=True")
             for ac in self.pipeline.actions:
-                if isinstance(ac, ViewAction):
+                if isinstance(ac, ViewAction) and ac.isActive():
                     ac.setSync(True)
             self.pipeline.pause()
             self.renderaction = None
