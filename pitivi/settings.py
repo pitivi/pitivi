@@ -27,7 +27,7 @@ Settings
 import os
 import gst
 import string
-from ConfigParser import SafeConfigParser
+from ConfigParser import SafeConfigParser, ParsingError
 
 from serializable import Serializable
 from signalinterface import Signallable
@@ -68,6 +68,42 @@ def get_env_by_type(type_, var):
         if value:
             return type_(os.getenv(var))
         return None
+
+def get_env_default(var, default):
+    value = os.getenv(var)
+    if value:
+        return value
+    return default
+
+def get_dir(path, autocreate=True):
+    if autocreate and not os.path.exists(path):
+        os.mkdir(path)
+    return path
+
+def get_dirs(glob):
+    return [dir for dir in glob.split(os.path.pathsep) if os.path.exists(dir)]
+
+def get_env_dir(var, default, autocreate=True):
+    return get_dir(get_env_default(var, default))
+
+def get_env_dirs(var, default):
+    return get_dirs(get_env_default(var, default))
+
+def xdg_config_home(autocreate=True):
+    return get_dir(get_env_default("XDG_CONFIG_HOME", 
+        os.path.join(os.getenv("HOME"), ".config")), autocreate)
+
+def xdg_data_home(autocreate=True):
+    return get_dir(get_env_default("XDG_DATA_HOME", 
+        os.path.join(os.getenv("HOME"), ".local", "share")), autocreate)
+
+def xdg_data_dirs():
+    return get_env_dirs("XDG_DATA_DIRS", 
+        os.path.pathsep.join((os.path.join("usr", "local", "share"),
+            os.path.join("usr", "share"))))
+
+def xdg_config_dirs():
+    return get_env_dirs("XDG_CONFIG_DIRS", "/etc/xdg")
 
 class ConfigError(Exception):
     pass
@@ -168,11 +204,8 @@ class GlobalSettings(object):
         @return: the plugin repository path
         """
 
-        pitivi_path = os.path.expanduser("~/.pitivi")
-        if autocreate and not os.path.exists(pitivi_path):
-            os.mkdir(pitivi_path)
-
-        return pitivi_path
+        return get_dir(os.path.join(xdg_config_home(autocreate), "pitivi"), 
+            autocreate)
 
     def get_local_plugin_path(self, autocreate=True):
         """
@@ -182,15 +215,15 @@ class GlobalSettings(object):
         @return: the plugin repository path
         """
 
-        pitivi_path = os.path.expanduser("~/.pitivi")
-        if not os.path.exists(pitivi_path) and autocreate:
-            os.mkdir(pitivi_path)
-
-        repository_path = os.path.expanduser("~/.pitivi/plugins")
-        if not os.path.exists(repository_path) and autocreate:
-            os.mkdir(repository_path)
-
-        return repository_path
+        return get_dir(
+            os.path.join(
+                get_dir(
+                    os.path.join(
+                        xdg_data_home(autocreate),
+                        "pitivi"),
+                    autocreate),
+                "plugins"), 
+            autocreate)
 
     def get_plugin_settings_path(self, autocreate=True):
         """
@@ -200,15 +233,8 @@ class GlobalSettings(object):
         @return: the plugin settings path
         """
 
-        pitivi_path = os.path.expanduser("~/.pitivi")
-        if not os.path.exists(pitivi_path) and autocreate:
-            os.mkdir(pitivi_path)
-
-        repository_path = os.path.expanduser("~/.pitivi/plugins-settings")
-        if not os.path.exists(repository_path) and autocreate:
-            os.mkdir(repository_path)
-
-        return repository_path
+        return get_dir(os.path.join(self.get_local_settings_path(autocreate),
+            "plugin-settings"), autocreate)
 
     def iterAllOptions(self):
         """
