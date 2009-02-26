@@ -32,7 +32,7 @@ import pitivi.configure as configure
 from pitivi.log.loggable import Loggable
 from pitivi.ui.exportsettingswidget import ExportSettingsDialog
 from pitivi.ui.glade import GladeWindow
-from pitivi.action import render_action_for_uri
+from pitivi.action import render_action_for_uri, ViewAction
 from pitivi.factories.base import SourceFactory
 from pitivi.settings import export_settings_to_render_settings
 
@@ -135,6 +135,7 @@ class EncodingDialog(GladeWindow, Loggable):
         dialog.destroy()
 
     def _eosCb(self, unused_pipeline):
+        self.debug("EOS !")
         self.rendering = False
         self.progressbar.set_text(_("Rendering Complete"))
         self.progressbar.set_fraction(1.0)
@@ -145,6 +146,7 @@ class EncodingDialog(GladeWindow, Loggable):
         self.removeRecordAction()
 
     def _cancelButtonClickedCb(self, unused_button):
+        self.debug("Cancelling !")
         self._shutDown()
 
     def addRecordAction(self):
@@ -160,6 +162,10 @@ class EncodingDialog(GladeWindow, Loggable):
             self.pipeline.addAction(self.renderaction)
             self.debug("Activating render action")
             self.renderaction.activate()
+            self.debug("Setting all ViewAction to sync=False")
+            for ac in self.pipeline.actions:
+                if isinstance(ac, ViewAction):
+                    ac.setSync(False)
             self.debug("setting pipeline to PAUSE")
             self.pipeline.pause()
             self.debug("done")
@@ -170,5 +176,9 @@ class EncodingDialog(GladeWindow, Loggable):
             self.pipeline.stop()
             self.renderaction.deactivate()
             self.pipeline.removeAction(self.renderaction)
+            self.debug("putting all ViewActions back to sync=True")
+            for ac in self.pipeline.actions:
+                if isinstance(ac, ViewAction):
+                    ac.setSync(True)
             self.pipeline.pause()
             self.renderaction = None
