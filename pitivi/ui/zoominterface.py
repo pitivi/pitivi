@@ -57,12 +57,21 @@ class Zoomable(object):
 
 
     def __init__(self):
-        object.__init__(self)
-        self.__instances.append(self)
+        # FIXME: ideally we should deprecate this
+        Zoomable.addInstance(self)
 
     def __del__(self):
         if self in Zoomable.__instances:
+            # FIXME: ideally we should deprecate this and spit a warning here
             self.__instances.remove(self)
+
+    @classmethod
+    def addInstance(cls, instance):
+        cls.__instances.append(instance)
+
+    @classmethod
+    def removeInstance(cls, instance):
+        cls.__instances.remove(instance)
 
     @classmethod
     def setZoomRatio(cls, ratio):
