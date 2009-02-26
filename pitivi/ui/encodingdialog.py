@@ -62,6 +62,7 @@ class EncodingDialog(GladeWindow, Loggable):
         else:
             self.pipeline = self.project.pipeline
         self.pipeline.connect('position', self._positionCb)
+        self.pipeline.connect('eos', self._eosCb)
         self.outfile = None
         self.rendering = False
         self.renderaction = None
@@ -100,12 +101,14 @@ class EncodingDialog(GladeWindow, Loggable):
         dialog.destroy()
 
     def _positionCb(self, unused_pipeline, position):
+        self.debug("%r %r", unused_pipeline, position)
         timediff = time.time() - self.timestarted
-        self.progressbar.set_fraction(float(min(position, self.bin.length)) / float(self.bin.length))
+        length = self.project.timeline.duration
+        self.progressbar.set_fraction(float(min(position, length)) / float(length))
         if timediff > 5.0 and position:
             # only display ETA after 5s in order to have enough averaging and
             # if the position is non-null
-            totaltime = (timediff * float(self.bin.length) / float(position)) - timediff
+            totaltime = (timediff * float(length) / float(position)) - timediff
             self.progressbar.set_text(_("Finished in %dm%ds") % (int(totaltime) / 60,
                                                               int(totaltime) % 60))
 
@@ -131,14 +134,15 @@ class EncodingDialog(GladeWindow, Loggable):
             self._displaySettings()
         dialog.destroy()
 
-    def _eosCb(self, unused_bus, unused_message):
+    def _eosCb(self, unused_pipeline):
         self.rendering = False
         self.progressbar.set_text(_("Rendering Complete"))
         self.progressbar.set_fraction(1.0)
-        self.recordbutton.set_sensitive(True)
+        self.recordbutton.set_sensitive(False)
         self.filebutton.set_sensitive(True)
         self.settingsbutton.set_sensitive(True)
         self.cancelbutton.set_label("gtk-close")
+        self.removeRecordAction()
 
     def _cancelButtonClickedCb(self, unused_button):
         self._shutDown()
@@ -167,3 +171,4 @@ class EncodingDialog(GladeWindow, Loggable):
             self.renderaction.deactivate()
             self.pipeline.removeAction(self.renderaction)
             self.pipeline.pause()
+            self.renderaction = None
