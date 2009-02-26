@@ -23,6 +23,7 @@ import fnmatch
 import time
 import types
 import traceback
+import thread
 
 # environment variables controlling levels for each category
 _DEBUG = "*:1"
@@ -426,8 +427,8 @@ def stderrHandler(level, object, category, file, line, message):
 
     # level   pid     object   cat      time
     # 5 + 1 + 7 + 1 + 32 + 1 + 17 + 1 + 15 == 80
-    safeprintf(sys.stderr, '%s [%5d] %-32s %-17s %-15s %-4s %s %s\n',
-               getFormattedLevelName(level), os.getpid(),
+    safeprintf(sys.stderr, '%s [%5d] [0x%12x] %-32s %-17s %-15s %-4s %s %s\n',
+               getFormattedLevelName(level), os.getpid(), thread.get_ident(),
                o[:32], category,
                time.strftime("%b %d %H:%M:%S")
                , "", message, where)
