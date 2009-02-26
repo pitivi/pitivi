@@ -33,7 +33,6 @@ from pitivi.factories.base import SourceFactory, SinkFactory
 from pitivi.factories.file import URISinkFactory
 from pitivi.encode import RenderSinkFactory, RenderFactory
 from pitivi.log.loggable import Loggable
-import gst
 
 # TODO : Create a convenience class for Links
 
@@ -508,7 +507,6 @@ class Action(object, Signallable, Loggable):
 
         Called by the Pipeline.
         """
-        link = None
         self.debug("producer:%r, stream:%r", producer, stream)
         for dyn_producer, dyn_consumer, \
                 dyn_producer_stream, dyn_consumer_stream in list(self._dyn_links):
