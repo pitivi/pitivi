@@ -654,17 +654,15 @@ class Pipeline(object, Signallable, Loggable):
         self.debug("factory:%r, stream:%r", factory, stream)
         stream_entry = self._getStreamEntryForFactoryStream(factory, stream)
 
-        if stream_entry.tee is None:
-            raise PipelineError()
-
         stream_entry.tee_use_count -= 1
         if stream_entry.tee_use_count == 0:
             bin = self.getBinForFactoryStream(factory, stream, automake=False)
             self.releaseBinForFactoryStream(factory, stream)
-            bin.unlink(stream_entry.tee)
-            self._pipeline.remove(stream_entry.tee)
-            stream_entry.tee.set_state(gst.STATE_NULL)
-            stream_entry.tee = None
+            if stream_entry.tee is not None:
+                bin.unlink(stream_entry.tee)
+                stream_entry.tee.set_state(gst.STATE_NULL)
+                self._pipeline.remove(stream_entry.tee)
+                stream_entry.tee = None
 
     def getQueueForFactoryStream(self, factory, stream=None, automake=False,
                                  queuesize=1):
