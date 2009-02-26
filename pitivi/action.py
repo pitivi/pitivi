@@ -556,7 +556,12 @@ class Action(object, Signallable, Loggable):
         must be done.
         @raise ActionError: If some producers or consumers remain unused.
         """
+        # make sure all producers we control have a bin (for dynamic streams)
         for producer in self.producers:
+            self.pipeline.getBinForFactoryStream(producer, automake=True)
+
+        # also inform the pipeline about the consumers we're gonna use
+        for producer in self.consumers:
             self.pipeline.getBinForFactoryStream(producer, automake=True)
 
         # Get the links
@@ -613,7 +618,7 @@ class Action(object, Signallable, Loggable):
         if init != True:
             # we set the sink to paused, since we are adding this link during
             # auto-plugging
-            bin.set_state(gst.STATE_PAUSED)
+            bin.sync_state_with_parent()
 
         self.info("Getting the Queue for that consumer/stream")
         # Make sure we have queues for our (consumer, stream)s
