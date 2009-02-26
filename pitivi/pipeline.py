@@ -26,7 +26,7 @@ from threading import Lock
 from pitivi.signalinterface import Signallable
 from pitivi.factories.base import SourceFactory, SinkFactory
 from pitivi.action import ActionError
-from pitivi.stream import pad_compatible_stream, get_src_pads_for_stream, \
+from pitivi.stream import get_src_pads_for_stream, \
      get_sink_pads_for_stream, get_stream_for_caps
 from pitivi.log.loggable import Loggable
 import gobject
@@ -167,7 +167,6 @@ class Pipeline(object, Signallable, Loggable):
         self._listenToPosition(False)
         self._bus.disconnect_by_func(self._busMessageCb)
         self._bus.remove_signal_watch()
-        self._asyncsidig = None
         try:
             self._bus.set_sync_handler(None)
         except:
@@ -379,6 +378,7 @@ class Pipeline(object, Signallable, Loggable):
         if self._listening == True:
             return True
         self._listening = True
+        self._listeningInterval = interval
         # if we're in paused or playing, switch it on
         self._listenToPosition(self.getState() in [STATE_PAUSED, STATE_PLAYING])
         return True
