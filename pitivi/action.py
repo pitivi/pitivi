@@ -588,6 +588,7 @@ class Action(object, Signallable, Loggable):
         self.debug("producer:%r, consumer:%r, prodstream:%r, consstream:%r" , \
                 producer, consumer, prodstream, consstream)
 
+        self.info("Ensuring a bin exists for our producer")
         self.pipeline.getBinForFactoryStream(producer, prodstream)
 
         # Make sure we have tees for our (producer,stream)s
@@ -603,15 +604,18 @@ class Action(object, Signallable, Loggable):
             self._pending_links.append((producer, consumer, prodstream, consstream))
             return True
 
+        self.info("Getting a bin for our consumer")
         # Make sure we have a bin for our consumer
         bin = self.pipeline.getBinForFactoryStream(consumer,
                 consstream, automake=True)
 
+        self.info("Got our bin for our consumer: %r", bin)
         if init != True:
             # we set the sink to paused, since we are adding this link during
             # auto-plugging
             bin.set_state(gst.STATE_PAUSED)
 
+        self.info("Getting the Queue for that consumer/stream")
         # Make sure we have queues for our (consumer, stream)s
         queue = self.pipeline.getQueueForFactoryStream(consumer, consstream,
                                                        automake=True, queuesize=self.queue_size)
@@ -623,9 +627,10 @@ class Action(object, Signallable, Loggable):
             sinkpad.get_peer().unlink(sinkpad)
         """
 
+        self.info("linking the tee to the queue")
         # Link tees to queues
         tee.link(queue)
-
+        self.info("done")
         return True
 
     def _releasePipelineObjects(self):

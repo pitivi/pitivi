@@ -56,7 +56,7 @@ class FactoryEntry(object):
         self.streams = {}
 
     def __repr__(self):
-        return "<FactoryEntry %r>" % self.factory
+        return "<FactoryEntry %s>" % self.factory
 
 class StreamEntry(object):
     def __init__(self, factory_entry, stream, parent=None):
@@ -81,7 +81,7 @@ class StreamEntry(object):
         return entry
 
     def __repr__(self):
-        return "<StreamEntry %r %r>" % (self.factory_entry, self.stream)
+        return "<StreamEntry %s '%s'>" % (self.factory_entry.factory, self.stream)
 
 class Pipeline(object, Signallable, Loggable):
     """
@@ -437,7 +437,7 @@ class Pipeline(object, Signallable, Loggable):
     #{ GStreamer object methods (For Action usage only)
 
     def _getFactoryEntryForStream(self, factory, stream, create=False):
-        self.debug("factory %r, stream %s" , factory, stream)
+        self.debug("factory %r, stream %r" , factory, stream)
         try:
             factory_entry = self.factories[factory]
         except KeyError:
@@ -500,7 +500,7 @@ class Pipeline(object, Signallable, Loggable):
         self.debug("factory:%r , stream:%r , automake:%r", factory, stream, automake)
 
         stream_entry = self._getStreamEntryForFactoryStream(factory,
-                stream, automake)
+                                                            stream, automake)
 
         bin_entry = stream_entry.findBinEntry()
         if bin_entry is not None and bin_entry.bin is not None:
@@ -673,6 +673,7 @@ class Pipeline(object, Signallable, Loggable):
         there are none for the given factory.
         @rtype: C{gst.Element}
         """
+        self.debug("factory %r, stream %r" , factory, stream)
         if not isinstance(factory, SinkFactory):
             raise PipelineError("Given ObjectFactory isn't a SinkFactory")
 
