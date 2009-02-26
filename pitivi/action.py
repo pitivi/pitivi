@@ -683,7 +683,8 @@ class ViewAction(Action):
         self.xid = 0
 
     def getDynamicLinks(self, producer, stream):
-        self.debug("producer:%r, stream:%r", producer, stream)
+        self.debug("producer:%r, stream:%r, sync:%r",
+                   producer, stream, self.sync)
         import plumber
         from pitivi.stream import AudioStream, VideoStream
         res = Action.getDynamicLinks(self, producer, stream)
@@ -695,7 +696,8 @@ class ViewAction(Action):
                 self.videosink.set_window_xid(self.xid)
 
             res.append((producer, consumer, stream, None))
-        elif isinstance(stream, AudioStream):
+        # only link audio streams if we're synchronized
+        elif isinstance(stream, AudioStream) and self.sync:
             consumer = plumber.DefaultAudioSink()
             self.audiosink = consumer
             self.audiosink.setSync(self.sync)
