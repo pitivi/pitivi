@@ -39,6 +39,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         "button-press-event":"override",
         "button-release-event":"override",
         "motion-notify-event":"override",
+        "scroll-event" : "override",
         "seek": (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
                 [gobject.TYPE_UINT64])
         }
@@ -152,6 +153,17 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
             cur = self.pixelToNs(event.x)
             self._doSeek(cur)
         return False
+
+    def do_scroll_event(self, event):
+        if event.direction == gtk.gdk.SCROLL_UP:
+            Zoomable.zoomIn()
+        elif event.direction == gtk.gdk.SCROLL_DOWN:
+            Zoomable.zoomOut()
+        # TODO: seek timeline back/forward
+        elif event.direction == gtk.gdk.SCROLL_LEFT:
+            pass
+        elif event.direction == gtk.gdk.SCROLL_RIGHT:
+            pass
 
 ## Seeking methods
 
