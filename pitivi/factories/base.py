@@ -66,7 +66,7 @@ class ObjectFactory(object, Signallable, Loggable):
 
     def __init__(self, name="", displayname=""):
         Loggable.__init__(self)
-        gst.info("name:%s" % name)
+        self.info("name:%s" % name)
         self.parent = None
         self.name = name
         self.displayname = displayname
@@ -227,9 +227,9 @@ class SourceFactory(ObjectFactory):
         """
 
         compatible_stream = None
-        gst.debug("stream %r" % output_stream)
+        self.debug("stream %r" % output_stream)
         if output_stream is not None:
-            gst.debug("streams %r" % self.output_streams)
+            self.debug("streams %r" % self.output_streams)
             for stream in self.output_streams:
                 if output_stream.isCompatible(stream):
                     compatible_stream = stream

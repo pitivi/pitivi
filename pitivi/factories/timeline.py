@@ -136,7 +136,7 @@ class TimelineSourceFactory(SourceFactory):
         pad_id = str(pad)
         if pad_id not in self.ghosts:
             return
-        
+
         ghost = self.ghosts.pop(pad_id)
         seek = self.seek_checkers.pop(pad_id)
         self.bin.remove_pad(ghost)
