@@ -690,6 +690,7 @@ class ViewAction(Action):
         if isinstance(stream, VideoStream):
             consumer = plumber.DefaultVideoSink()
             self.videosink = consumer
+            self.videosink.setSync(self.sync)
             if self.xid != 0:
                 self.videosink.set_window_xid(self.xid)
 
@@ -697,6 +698,7 @@ class ViewAction(Action):
         elif isinstance(stream, AudioStream):
             consumer = plumber.DefaultAudioSink()
             self.audiosink = consumer
+            self.audiosink.setSync(self.sync)
             res.append((producer, consumer, stream, None))
         return res
 
@@ -717,9 +719,9 @@ class ViewAction(Action):
         """
         self.sync = sync
         if self.videosink:
-            self.videosink.props.sync = self.sync
+            self.videosink.setSync(sync)
         if self.audiosink:
-            self.audiosink.props.sync = self.sync
+            self.audiosink.setSync(sync)
 
 class RenderAction(Action):
     """

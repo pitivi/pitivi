@@ -44,10 +44,12 @@ class DefaultVideoSink(SinkFactory):
         self._xid = 0
         self._cachedsink = None
         self._realsink = None
+        self.sync = True
 
     def _makeBin(self, input_stream=None):
         """ Returns a video sink bin"""
         if self._cachedsink != None:
+            self.debug("Returning cached sink")
             return self._cachedsink
 
         autovideosink = gst.element_factory_make("autovideosink")
@@ -76,6 +78,8 @@ class DefaultVideoSink(SinkFactory):
             if "max-lateness"in [prop.name for prop in props]:
                 self._realsink.set_property("max-lateness", -1)
 
+            self._realsink.props.sync = self.sync
+
         if self._xid != 0:
             self._realsink.set_xwindow_id(self._xid)
 
@@ -90,17 +94,33 @@ class DefaultVideoSink(SinkFactory):
             self._cachedsink.set_xwindow_id(self._xid)
 
     def setSync(self, sync=True):
+        self.debug("sync:%r", sync)
         if self.sync == sync:
             return
         self.sync = sync
+        self.debug("_realsink:%r", self._realsink)
         if self._realsink:
             self._realsink.props.sync = self.sync
 
 class DefaultAudioSink(SinkFactory):
 
+    def __init__(self, *args, **kwargs):
+        SinkFactory.__init__(self, *args, **kwargs)
+        self.max_bins = 1
+        self._cachedsink = None
+        self._realsink = None
+        self.sync = True
+
     def _makeBin(self, input_stream=None):
         """ Returns an audio sink bin that can be used in the Discoverer """
+        if self._cachedsink != None:
+            self.debug("Returning cached sink")
+            return self._cachedsink
         autoaudiosink = gst.element_factory_make("autoaudiosink")
+
+        autoaudiosink.set_state(gst.STATE_READY)
+        self._realsink = find_recursive_element(autoaudiosink, gst.BaseSink)
+        self._realsink.props.sync = self.sync
 
         audiosink = gst.Bin("pitivi-audiosink")
         aconv = gst.element_factory_make("audioconvert","audiobin-convert")
@@ -116,7 +136,17 @@ class DefaultAudioSink(SinkFactory):
 
         audiosink.add_pad(gst.GhostPad("sink", aconv.get_pad("sink")))
 
+        self._cachedsink = audiosink
         return audiosink
+
+    def setSync(self, sync=True):
+        self.debug("sync:%r", sync)
+        if self.sync == sync:
+            return
+        self.sync = sync
+        self.debug("_realsink:%r", self._realsink)
+        if self._realsink:
+            self._realsink.props.sync = self.sync
 
 def find_recursive_element(bin, typ):
     if not isinstance(bin, gst.Bin):
