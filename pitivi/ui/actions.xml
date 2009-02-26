@@ -30,7 +30,6 @@
     <toolitem action="NewProject" />
     <toolitem action="OpenProject" />
     <toolitem action="SaveProject" />
-    <toolitem action="SaveProjectAs" />
     <separator />
     <placeholder name="SourceList" />
     <separator />
