@@ -261,9 +261,6 @@ class RandomAccessPreviewer(Previewer):
         _nextThumbnail() with the resulting cairo surface. Since seeking and
         playback are asyncrhonous, you may have to call _nextThumbnail() in a
         message handler or other callback.""" 
-
-        if segment == gst.CLOCK_TIME_NONE:
-            import pdb; pdb.set_trace()
         self.waiting_timestamp = segment
 
 class RandomAccessVideoPreviewer(RandomAccessPreviewer):
