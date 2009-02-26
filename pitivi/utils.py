@@ -29,7 +29,11 @@ import pitivi.log.log as log
 UNKNOWN_DURATION = 2 ** 63 - 1
 
 def time_to_string(value):
-    """ Converts the given time in nanoseconds to a human readable string """
+    """
+    Converts the given time in nanoseconds to a human readable string
+
+    Format HH:MM:SS.XXX
+    """
     if value == gst.CLOCK_TIME_NONE:
         return "--:--:--.---"
     ms = value / gst.MSECOND
@@ -40,6 +44,21 @@ def time_to_string(value):
     hours = mins / 60
     mins = mins % 60
     return "%02d:%02d:%02d.%03d" % (hours, mins, sec, ms)
+
+def beautify_length(length):
+    """
+    Converts the given time in nanoseconds to a human readable string
+
+    Format HHhMMmSSs
+    """
+    sec = length / gst.SECOND
+    mins = sec / 60
+    sec = sec % 60
+    if mins < 60:
+        return "%02dm%02ds" % (mins, sec)
+    hours = mins / 60
+    mins = mins % 60
+    return "%02dh%02dm%02ds" % (hours, mins, sec)
 
 def bin_contains(bin, element):
     """ Returns True if the bin contains the given element, the search is recursive """
