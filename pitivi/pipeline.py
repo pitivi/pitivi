@@ -22,6 +22,7 @@
 """
 High-level pipelines
 """
+from threading import Lock
 from pitivi.signalinterface import Signallable
 from pitivi.factories.base import SourceFactory, SinkFactory
 from pitivi.action import ActionError
@@ -139,6 +140,7 @@ class Pipeline(object, Signallable, Loggable):
 
     def __init__(self):
         Loggable.__init__(self)
+        self._lock = Lock()
         self._pipeline = gst.Pipeline()
         self._bus = self._pipeline.get_bus()
         self._bus.add_signal_watch()
@@ -752,11 +754,12 @@ class Pipeline(object, Signallable, Loggable):
         if stream_entry.queue_use_count == 0:
             self.debug("Found a corresponding queue, unlink it from the consumer")
 
-            # first set the bin to NULL
-            stream_entry.bin.set_state(gst.STATE_NULL)
+            if stream_entry.bin:
+                # first set the bin to NULL
+                stream_entry.bin.set_state(gst.STATE_NULL)
 
-            # unlink it from the sink bin
-            stream_entry.queue.unlink(stream_entry.bin)
+                # unlink it from the sink bin
+                stream_entry.queue.unlink(stream_entry.bin)
 
             self.debug("Unlinking it from the tee, if present")
             queue_sinkpad = stream_entry.queue.get_pad("sink")
@@ -807,57 +810,70 @@ class Pipeline(object, Signallable, Loggable):
 
     def _binPadAddedCb(self, bin, pad):
         self.debug("bin:%r, pad:%r (%s)", bin, pad, pad.get_caps().to_string())
+        self._lock.acquire()
 
-        factory = None
-        stream = None
-        stream_entry = None
-        for factory_entry in self.factories.itervalues():
-            for stream_entry in factory_entry.streams.itervalues():
-                if stream_entry.bin == bin:
-                    factory = factory_entry.factory
-                    stream = stream_entry.stream
+        try:
+            factory = None
+            stream = None
+            stream_entry = None
+            for factory_entry in self.factories.itervalues():
+                for stream_entry in factory_entry.streams.itervalues():
+                    if stream_entry.bin == bin:
+                        factory = factory_entry.factory
+                        stream = stream_entry.stream
+                        break
+                if factory is not None:
                     break
-            if factory is not None:
-                break
 
-        if factory is None:
-            raise PipelineError("New pad on an element we don't control ??")
+            if factory is None:
+                raise PipelineError("New pad on an element we don't control ??")
 
-        stream = get_stream_for_caps(pad.get_caps(), pad)
-        if stream not in factory_entry.streams:
-            factory_entry.streams[stream] = StreamEntry(factory_entry,
-                    stream, parent=stream_entry)
-            stream_entry = factory_entry.streams[stream]
+            stream = get_stream_for_caps(pad.get_caps(), pad)
+            if stream not in factory_entry.streams:
+                factory_entry.streams[stream] = StreamEntry(factory_entry,
+                        stream, parent=stream_entry)
+                stream_entry = factory_entry.streams[stream]
 
-        self._stream_entry_from_pad[pad] = stream_entry
+            self._stream_entry_from_pad[pad] = stream_entry
 
-        # ask all actions using this producer if they handle it
-        compatactions = [action for action in self.actions
-                         if factory in action.producers]
-        self.debug("Asking all actions (%d/%d) using that producer [%r] if they can handle it",
-                  len(compatactions), len(self.actions), factory)
-        for a in self.actions:
-            self.debug("Action %r, producers %r", a, a.producers)
-        handled = False
-        for action in compatactions:
-            handled |= action.handleNewStream(factory, stream)
+            # ask all actions using this producer if they handle it
+            compatactions = [action for action in self.actions
+                             if factory in action.producers]
+            self.debug("Asking all actions (%d/%d) using that producer [%r] if they can handle it",
+                      len(compatactions), len(self.actions), factory)
+            for a in self.actions:
+                self.debug("Action %r, producers %r", a, a.producers)
+            handled = False
+            for action in compatactions:
+                handled |= action.handleNewStream(factory, stream)
 
-        if handled == False:
-            self.debug("No action handled this Stream")
-            self.emit('unhandled-stream', stream)
+            if handled == False:
+                self.debug("No action handled this Stream")
+                self.emit('unhandled-stream', stream)
+        except:
+            self.debug("Releasing lock due to exception")
+            self._lock.release()
+            raise
+        self.debug("Done handling new pad")
+        self._lock.release()
 
     def _binPadRemovedCb(self, bin, pad):
-        self.debug("bin:%r, pad:%r", bin, pad)
-        if not pad in self._stream_entry_from_pad:
-            self.warning("Pad not controlled by this pipeline")
-            return
-        stream_entry = self._stream_entry_from_pad.pop(pad)
-        factory = stream_entry.factory_entry.factory
-        stream = stream_entry.stream
-        for action in [action for action in self.actions
-                if factory in action.producers]:
-            action.streamRemoved(factory, stream)
-        del stream_entry.factory_entry.streams[stream]
+        self._lock.acquire()
+        try:
+            self.debug("bin:%r, pad:%r", bin, pad)
+            if not pad in self._stream_entry_from_pad:
+                self.warning("Pad not controlled by this pipeline")
+                return
+            stream_entry = self._stream_entry_from_pad.pop(pad)
+            factory = stream_entry.factory_entry.factory
+            stream = stream_entry.stream
+            for action in [action for action in self.actions
+                    if factory in action.producers]:
+                action.streamRemoved(factory, stream)
+            del stream_entry.factory_entry.streams[stream]
+        except:
+            self._lock.release()
+        self._lock.release()
 
     def _connectToPadSignals(self, bin):
         # Listen on the given bin for pads being added/removed
