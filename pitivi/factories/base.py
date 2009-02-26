@@ -309,9 +309,20 @@ class SinkFactory(ObjectFactory):
         @see: L{releaseBin}
         """
 
-        if input_stream is not None and \
-                input_stream not in self.input_streams:
-            raise ObjectFactoryError('unknown stream')
+        self.debug("stream %r" % input_stream)
+        compatible_stream = None
+        if input_stream is not None:
+            self.debug("Streams %r", self.input_streams)
+            for stream in self.input_streams:
+                if input_stream.isCompatible(stream):
+                    compatible_stream = stream
+                    break
+
+            if compatible_stream is None:
+                raise ObjectFactoryError('unknown stream')
+
+        if self.max_bins != -1 and self.current_bins == self.max_bins:
+            raise ObjectFactoryError('no bins available')
 
         bin = self._makeBin(input_stream)
         bin.factory = self
