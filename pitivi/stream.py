@@ -360,7 +360,12 @@ def get_pads_for_stream(element, stream):
     @rtype: List of C{gst.Pad}
     """
     gst.debug("element:%r, stream:%r" % (element, stream))
-    ls = [x for x in element.pads() if pad_compatible_stream(x, stream)]
+    while True:
+        try:
+            ls = [x for x in element.pads() if pad_compatible_stream(x, stream)]
+            break
+        except:
+            continue
     # FIXME : I'm not 100% certain that checking against the stream pad_name
     # is a good idea ....
     # only filter the list if there's more than one choice
