@@ -175,7 +175,7 @@ class Pipeline(object, Signallable, Loggable):
         self._bus = None
         self._pipeline = None
         self.factories = {}
-        for i in self.actions:
+        for i in [x for x in self.actions if x.isActive()]:
             i.deactivate()
             self.removeAction(i)
 
@@ -462,6 +462,7 @@ class Pipeline(object, Signallable, Loggable):
         for k, v in factory_entry.streams.iteritems():
             self.debug("Stream:%r  ==>  %s", k, v)
 
+        stream_entry = None
         if stream is None:
             stream_entry = factory_entry.streams.get(stream, None)
         else:
