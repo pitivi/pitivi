@@ -1,6 +1,26 @@
+# PiTiVi , Non-linear video editor
+#
+#       pitivi/ui/controller.py
+#
+# Copyright (c) 2009, Brandon Lewis <brandon_lewis@berkeley.edu>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
 from pitivi.receiver import receiver, handler
-from point import Point
-import gtk
+from pitivi.ui.point import Point
 
 # Controllers are reusable and implement specific behaviors. Currently this
 # Includes only click, and drag. Multiple controllers could be attached to a
@@ -14,7 +34,7 @@ class Controller(object):
     """A controller which implements drag-and-drop bahavior on connected view
     objects. Subclasses may override the drag_start, drag_end, pos, and
     set_pos methods"""
-    
+
     _view = receiver()
 
     _dragging = None

@@ -25,12 +25,9 @@ import gtk
 import gst
 
 from pitivi.action import ViewAction
-from pitivi.stream import VideoStream, AudioStream
-from pitivi.pipeline import Pipeline
 
 from pitivi.utils import time_to_string
 from pitivi.log.loggable import Loggable
-import pitivi.ui.dnd as dnd
 
 class ViewerError(Exception):
     pass
@@ -355,7 +352,8 @@ class PitiviViewer(gtk.VBox, Loggable):
             duration = self.pipeline.getDuration()
         except:
             duration = gst.CLOCK_TIME_NONE
-        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(value),time_to_string(duration)))
+        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(value),
+                                                        time_to_string(duration)))
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
         return False

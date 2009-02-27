@@ -25,9 +25,10 @@ Encoding dialog
 
 import os
 import time
-import gobject
 import gtk
+
 from gettext import gettext as _
+
 import pitivi.configure as configure
 from pitivi.log.loggable import Loggable
 from pitivi.ui.exportsettingswidget import ExportSettingsDialog

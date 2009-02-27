@@ -20,14 +20,13 @@
 # Boston, MA 02111-1307, USA.
 
 import gtk
-import os
 import gst
 import tempfile
 from pitivi.settings import ExportSettings
-from sourcelist import SourceList
+from pitivi.sourcelist import SourceList
 from pitivi.bin import SmartCaptureBin, SinkBin
 from pitivi.threads import CallbackThread
-from glade import GladeWindow
+from pitivi.ui.glade import GladeWindow
 
 class WebcamManagerDialog(GladeWindow):
     """

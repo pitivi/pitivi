@@ -22,8 +22,14 @@
 import gobject
 import gtk
 import pango
+import os
+import time
+
+from urllib import unquote
+from gettext import gettext as _
+
 import pitivi.instance as instance
-import dnd
+import pitivi.ui.dnd as dnd
 from pitivi.ui.pathwalker import PathWalker
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.configure import get_pixmap_dir
@@ -32,10 +38,6 @@ from pitivi.stream import VideoStream, AudioStream, TextStream
 from pitivi.settings import GlobalSettings
 from pitivi.utils import beautify_length
 from pitivi.log.loggable import Loggable
-from gettext import gettext as _
-from urllib import unquote
-import os
-import time
 
 GlobalSettings.addConfigSection('clip-library')
 GlobalSettings.addConfigOption('lastImportFolder',

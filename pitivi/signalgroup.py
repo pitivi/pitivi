@@ -29,7 +29,7 @@ class SignalGroup:
     def __init__(self):
         self.signal_handler_ids = {}
 
-    def connect(self, object, signal, id, callback, *args):
+    def connect(self, object, signal, sid, callback, *args):
         """Connect a signal.
 
          _ `object` is the object which defines the signal.
@@ -44,25 +44,25 @@ class SignalGroup:
         unique identifier, this signal will first be disconnected.
 
         """
-        if id is None:
-            id = signal
+        if sid is None:
+            sid = signal
 
-        if id in self.signal_handler_ids:
-            old_object, handler_id = self.signal_handler_ids[id]
+        if sid in self.signal_handler_ids:
+            old_object, handler_id = self.signal_handler_ids[sid]
             old_object.disconnect(handler_id)
-            del self.signal_handler_ids[id]
+            del self.signal_handler_ids[sid]
 
         handler_id = object.connect(signal, callback, *args)
         self.signal_handler_ids[id] = (object, handler_id)
 
-    def disconnect(self, id):
+    def disconnect(self, sid):
         """Disconnect the signal with the specified unique identifier.
 
         If there is no such signal, this returns without having any effect.
 
         """
         if id in self.signal_handler_ids:
-            old_object, handler_id = self.signal_handler_ids.pop(id)
+            old_object, handler_id = self.signal_handler_ids.pop(sid)
             old_object.disconnect(handler_id)
 
     def disconnectAll(self):
@@ -79,7 +79,7 @@ class SignalGroup:
         Disconnects all signal in the group connect on the given object
         """
         assert obj != None
-        objids = [id for id in self.signal_handler_ids.keys() if self.signal_handler_ids[id][0] == obj]
-        for id in objids:
+        objids = [sid for sid in self.signal_handler_ids.keys() if self.signal_handler_ids[sid][0] == obj]
+        for sid in objids:
             old_object, handler_id = self.signal_handler_ids.pop(id)
             old_object.disconnect(handler_id)

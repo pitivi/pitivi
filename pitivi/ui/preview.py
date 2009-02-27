@@ -24,14 +24,11 @@ Custom canvas item for timeline object previews. This code is just a thin
 canvas-item wrapper which ensures that the preview is updated appropriately.
 The actual drawing is done by the pitivi.previewer.Previewer class.  """
 
-import gtk
-import cairo
 import goocanvas
 import gobject
-import gst
-from gettext import gettext as _
+
 from pitivi.receiver import receiver, handler
-from zoominterface import Zoomable
+from pitivi.ui.zoominterface import Zoomable
 import pitivi.previewer as previewer
 
 def between(a, b, c):
@@ -87,7 +84,7 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 
 ## goocanvas item methods
 
-    def do_simple_update(self,cr):
+    def do_simple_update(self, cr):
         cr.identity_matrix()
         self.bounds = goocanvas.Bounds(0, 0,
             Zoomable.nsToPixel(self.element.duration), self.height)

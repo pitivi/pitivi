@@ -23,7 +23,6 @@
 Multimedia stream, used for definition of media streams
 """
 
-from gettext import gettext as _
 from pitivi.log.loggable import Loggable
 import pitivi.log.log as log
 import gst
@@ -386,7 +385,7 @@ def get_src_pads_for_stream(element, stream):
     @return: The compatible source pads
     @rtype: List of C{gst.Pad}
     """
-    return [x for x in get_pads_for_stream(element,stream) if x.get_direction() == gst.PAD_SRC]
+    return [x for x in get_pads_for_stream(element, stream) if x.get_direction() == gst.PAD_SRC]
 
 def get_sink_pads_for_stream(element, stream):
     """
@@ -400,4 +399,4 @@ def get_sink_pads_for_stream(element, stream):
     @return: The compatible sink pads
     @rtype: List of C{gst.Pad}
     """
-    return [x for x in get_pads_for_stream(element,stream) if x.get_direction() == gst.PAD_SINK]
+    return [x for x in get_pads_for_stream(element, stream) if x.get_direction() == gst.PAD_SINK]

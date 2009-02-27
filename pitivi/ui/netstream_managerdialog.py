@@ -24,7 +24,7 @@ import gtk
 import gtk.glade
 import gst
 import tempfile
-from sourcelist import SourceList
+from pitivi.sourcelist import SourceList
 from pitivi.bin import SmartStreamBin, SinkBin
 from pitivi.settings import ExportSettings
 

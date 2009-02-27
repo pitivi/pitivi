@@ -26,7 +26,7 @@ import os
 import gobject
 gobject.threads_init()
 
-from pitivigstutils import patch_gst_python
+from pitivi.pitivigstutils import patch_gst_python
 patch_gst_python()
 
 from gettext import gettext as _
@@ -217,7 +217,7 @@ class InteractivePitivi(Pitivi):
     """ Class for PiTiVi instances that provide user interaction """
 
     def __init__(self, filepath=None, mainloop=None, *args, **kwargs):
-        from ui.mainwindow import PitiviMainWindow
+        from pitivi.ui.mainwindow import PitiviMainWindow
         Pitivi.__init__(self, filepath=None,
                         *args, **kwargs)
         self._mainloop = None

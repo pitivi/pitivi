@@ -27,18 +27,17 @@ Utility tools and classes for easy generation of previews
 import gobject
 import gst
 import cairo
-import goocanvas
 import os
-import utils
-from configure import get_pixmap_dir
-from elements.singledecodebin import SingleDecodeBin
-from elements.thumbnailsink import CairoSurfaceThumbnailSink
-from elements.arraysink import ArraySink
-from signalinterface import Signallable
-from ui.zoominterface import Zoomable
-import stream
+import pitivi.utils as utils
+from pitivi.configure import get_pixmap_dir
+from pitivi.elements.singledecodebin import SingleDecodeBin
+from pitivi.elements.thumbnailsink import CairoSurfaceThumbnailSink
+from pitivi.elements.arraysink import ArraySink
+from pitivi.signalinterface import Signallable
+import pitivi.stream as stream
 from pitivi.settings import GlobalSettings
 import pitivi.instance as instance
+from pitivi.ui.zoominterface import Zoomable
 
 GlobalSettings.addConfigSection("thumbnailing")
 GlobalSettings.addConfigOption("thumbnailSpacingHint",
@@ -277,12 +276,12 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         scale = gst.element_factory_make("videoscale")
         caps = ("video/x-raw-rgb,height=(int) %d,width=(int) %d" % 
             (self.theight, self.twidth + 2))
-        filter = utils.filter(caps)
+        filter_ = utils.filter_(caps)
         self.videopipeline = utils.pipeline({
             sbin : csp,
             csp : scale,
-            scale : filter,
-            filter : sink,
+            scale : filter_,
+            filter_ : sink,
             sink : None
         })
         sink.connect('thumbnail', self._thumbnailCb)

@@ -36,29 +36,29 @@ class receiver(object):
         # and at the same time we don't want to fail to connect a valid
         # instance of, say, an empty container.
         if rd.sender != None:
-            for id in rd.sigids.itervalues():
-                instance._receiver_data[self].sender.disconnect(id)
+            for sid in rd.sigids.itervalues():
+                instance._receiver_data[self].sender.disconnect(sid)
             rd.sender = None
             rd.sigids = {}
         if value != None:
             for sig, hdlr in self.handlers.iteritems():
-                rd.sigids[sig] = value.connect(sig, MethodType(hdlr, 
+                rd.sigids[sig] = value.connect(sig, MethodType(hdlr,
                     instance))
             rd.sender = value
         if self.setter:
             self.setter(instance)
 
-    def add_handler(self, signal, handler):
-        self.handlers[signal] = handler
+    def add_handler(self, signal, hdlr):
+        self.handlers[signal] = hdlr
 
-def handler(property, signal):
+def handler(prop, signal):
 
     """A decorator which registers a given function as a signal handler for
     the signal <signal> of object <property>. Property should be a receiver
-    object created with receiver().""" 
+    object created with receiver()."""
 
     def __handler__(func):
-        property.add_handler(signal, func)
+        prop.add_handler(signal, func)
         return func
 
     return __handler__

@@ -25,8 +25,7 @@ Widget for gstreamer element properties viewing/setting
 
 import gobject
 import gtk
-import gst
-from glade import GladeWindow
+from pitivi.ui.glade import GladeWindow
 
 from gettext import gettext as _
 import pitivi.log.log as log

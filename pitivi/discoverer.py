@@ -33,9 +33,8 @@ import gst.pbutils
 import tempfile
 
 from pitivi.log.loggable import Loggable
-from pitivi.factories.base import ObjectFactoryStreamError
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
-from pitivi.stream import get_stream_for_caps, get_stream_for_pad
+from pitivi.stream import get_stream_for_pad
 from pitivi.signalinterface import Signallable
 from pitivi.stream import VideoStream
 
@@ -368,7 +367,7 @@ class Discoverer(object, Signallable, Loggable):
                 # negotiation before pushing in band data
                 self._finishAnalysis()
 
-    def _busMessageTagCb(Self, unused_bus, message):
+    def _busMessageTagCb(self, unused_bus, message):
         self.debug("Got tags %s" % message.structure.to_string())
         self.current_tags.append(message.parse_tag())
 

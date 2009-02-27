@@ -25,7 +25,6 @@ Encoding-related utilities and classes
 
 import gst
 import pitivi.log.log as log
-from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.base import OperationFactory, SinkFactory
 from pitivi.factories.operation import TransformFactory, get_modifier_for_stream
 
@@ -264,7 +263,7 @@ def available_muxers():
     for fact in flist:
         if list_compat(["Codec", "Muxer"], fact.get_klass().split('/')):
             res.append(fact)
-    log.log("encode",str(res))
+    log.log("encode", str(res))
     return res
 
 def available_video_encoders():
@@ -276,7 +275,7 @@ def available_video_encoders():
             res.append(fact)
         elif list_compat(["Codec", "Encoder", "Image"], fact.get_klass().split('/')):
             res.append(fact)
-    log.log("encode",str(res))
+    log.log("encode", str(res))
     return res
 
 def available_audio_encoders():
@@ -286,7 +285,7 @@ def available_audio_encoders():
     for fact in flist:
         if list_compat(["Codec", "Encoder", "Audio"], fact.get_klass().split('/')):
             res.append(fact)
-    log.log("encode",str(res))
+    log.log("encode", str(res))
     return res
 
 def encoders_muxer_compatible(encoders, muxer):

@@ -26,7 +26,7 @@ Widget for the complex view ruler
 import gobject
 import gtk
 import gst
-from zoominterface import Zoomable
+from pitivi.ui.zoominterface import Zoomable
 from pitivi.log.loggable import Loggable
 from pitivi.utils import time_to_string
 

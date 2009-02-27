@@ -1,12 +1,32 @@
+# PiTiVi , Non-linear video editor
+#
+#       pitivi/ui/timelinecanvas.py
+#
+# Copyright (c) 2009, Brandon Lewis <brandon_lewis@berkeley.edu>
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, write to the
+# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+# Boston, MA 02111-1307, USA.
+
+import gtk
+import goocanvas
+
+from pitivi.receiver import receiver, handler
 from pitivi.ui.track import Track
 from pitivi.ui.trackobject import TrackObject
-import controller
-import view
-from point import Point
-import goocanvas
-from zoominterface import Zoomable
-from pitivi.receiver import receiver, handler
-import gtk
+from pitivi.ui.point import Point
+from pitivi.ui.zoominterface import Zoomable
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)

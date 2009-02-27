@@ -338,7 +338,7 @@ class PluginManagerDialog(object):
                     flags = gtk.DIALOG_MODAL,
                     type = gtk.MESSAGE_ERROR, 
                     buttons = gtk.BUTTONS_CLOSE,
-                    message_format = _("Cannot install %s\nThe file is not a valid plugin") % e.filename
+                    message_format = _("Cannot install %s\nThe file is not a valid plugin") % e.filename)
                 error_dialog.run()
                 error_dialog.destroy()
 

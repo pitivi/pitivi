@@ -27,19 +27,19 @@ Project class
 import os.path
 import gst
 import traceback
+from gettext import gettext as _
 from pitivi.log.loggable import Loggable
 from pitivi.timeline.timeline import Timeline
 from pitivi.timeline.track import Track
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.pipeline import Pipeline
 from pitivi.factories.timeline import TimelineSourceFactory
-from sourcelist import SourceList
-from settings import ExportSettings
-from configure import APPNAME
-from gettext import gettext as _
-from serializable import Serializable, to_object_from_data_type
-from projectsaver import ProjectSaver, ProjectLoadError
-from signalinterface import Signallable
+from pitivi.sourcelist import SourceList
+from pitivi.settings import ExportSettings
+from pitivi.configure import APPNAME
+from pitivi.serializable import Serializable, to_object_from_data_type
+from pitivi.projectsaver import ProjectSaver, ProjectLoadError
+from pitivi.signalinterface import Signallable
 
 class Project(Serializable, Signallable, Loggable):
     """ The base class for PiTiVi projects

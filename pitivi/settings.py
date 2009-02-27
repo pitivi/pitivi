@@ -26,18 +26,17 @@ Settings
 
 import os
 import gst
-import string
 from ConfigParser import SafeConfigParser, ParsingError
 
-from serializable import Serializable
-from signalinterface import Signallable
-from encode import available_muxers, available_video_encoders, \
+from gettext import gettext as _
+
+from pitivi.serializable import Serializable
+from pitivi.signalinterface import Signallable
+from pitivi.encode import available_muxers, available_video_encoders, \
      available_audio_encoders, available_combinations, \
      get_compatible_sink_caps
-from stream import get_stream_for_caps
+from pitivi.stream import get_stream_for_caps
 from pitivi.log.loggable import Loggable
-
-from gettext import gettext as _
 
 def get_bool_env(var):
     value = os.getenv(var)
@@ -82,7 +81,7 @@ def get_dir(path, autocreate=True):
     return path
 
 def get_dirs(glob):
-    return [dir for dir in glob.split(os.path.pathsep) if os.path.exists(dir)]
+    return [d for d in glob.split(os.path.pathsep) if os.path.exists(dir)]
 
 def get_env_dir(var, default, autocreate=True):
     return get_dir(get_env_default(var, default))
@@ -147,25 +146,25 @@ class GlobalSettings(object):
         except ParsingError:
             return
 
-        for (section, attrname, type, key, env,
+        for (section, attrname, typ, key, env,
             value) in self.iterAllOptions():
             if not self._config.has_section(section):
                 continue
             if key and self._config.has_option(section, key):
-                if type == int:
+                if typ == int:
                     value = self._config.getint(section, key)
-                elif type == float:
+                elif typ == float:
                     value = self._config.getfloat(section, key)
-                elif type == bool:
+                elif typ == bool:
                     value = self._config.getboolean(section, key)
                 else:
                     value = self._config.get(section, key)
                 setattr(self, attrname, value)
 
     def _readSettingsFromEnvironmentVariables(self):
-        for (section, attrname, type, key, env,
+        for (section, attrname, typ, key, env,
             value) in self.iterAllOptions():
-            var = get_env_by_type(type, env)
+            var = get_env_by_type(typ, env)
             if var is not None:
                 setattr(self, attrname, value)
 
@@ -173,7 +172,7 @@ class GlobalSettings(object):
         pitivi_path = self.get_local_settings_path()
         pitivi_conf_file_path = os.path.join(pitivi_path, "pitivi.conf")
 
-        for (section, attrname, type, key, env_var,
+        for (section, attrname, typ, key, env_var,
             value) in self.iterAllOptions():
             if not self._config.has_section(section):
                 self._config.add_section(section)
@@ -245,8 +244,8 @@ class GlobalSettings(object):
         environment, value for each option)
         """
         for section, options in self.options.iteritems():
-            for attrname, (type, key, environment) in self.options[section].iteritems():
-                yield section, attrname, type, key, environment, getattr(self, attrname)
+            for attrname, (typ, key, environment) in self.options[section].iteritems():
+                yield section, attrname, typ, key, environment, getattr(self, attrname)
 
     def iterSection(self, section):
         """
@@ -257,8 +256,8 @@ class GlobalSettings(object):
         @return: an iterator which yields a tuple of (attrname, type, key,
         environment, value) for each option
         """
-        for attrname, (type, key, environment) in self.options[section].iteritems():
-            yield section, attrname, type, key, environment, getattr(self, attrname)
+        for attrname, (typ, key, environment) in self.options[section].iteritems():
+            yield section, attrname, typ, key, environment, getattr(self, attrname)
 
     @classmethod
     def addConfigOption(cls, attrname, type_=None, section=None, key=None,

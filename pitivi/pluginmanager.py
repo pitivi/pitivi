@@ -37,8 +37,8 @@ import pkg_resources
 import gtk
 import zope.interface.verify
 
-from signalinterface import Signallable
-import plugincore
+from pitivi.signalinterface import Signallable
+import pitivi.plugincore as plugincore
 
 class PluginManager(object, Signallable):
     """

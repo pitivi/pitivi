@@ -25,10 +25,10 @@ Dialog box listing files which had errors, and the reasons.
 
 import gtk
 import pango
-from glade import GladeWindow
 
 from gettext import gettext as _
 
+from pitivi.ui.glade import GladeWindow
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 
