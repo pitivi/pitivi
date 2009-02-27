@@ -126,7 +126,7 @@ class TestAnalysis(TestCase):
         self.discoverer.addFile('buh://asd')
         self.discoverer.connect('not_media_file', no_media_file_cb)
         self.discoverer._analyze()
-        self.failUnlessEqual(bag['error'], 'Couldn\'t construct pipeline.')
+        self.failUnlessEqual(bag['error'], 'No available source handler.')
 
     def testErrorSettingPaused(self):
         """
