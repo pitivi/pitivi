@@ -59,19 +59,32 @@ def make_property_widget(unused_element, prop, value=None):
     if (type_name == 'gchararray'):
         widget = gtk.Entry()
         widget.set_text(str(value))
-    elif (type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat', 'gulong']):
+    elif (type_name in ['guint64', 'gint64', 'guint', 'gint', 'gfloat',
+        'gdouble', 'gulong']):
         widget = gtk.SpinButton()
         if type_name == 'gint':
-            widget.set_range(-(2**31), 2**31 - 1)
+            minimum, maximum = (-(2**31), 2**31 - 1)
+            widget.set_increments(1.0, 10.0)
         elif type_name == 'guint':
-            widget.set_range(0, 2**32 - 1)
+            minimum, maximum = (0, 2**32 - 1)
+            widget.set_increments(1.0, 10.0)
         elif type_name == 'gint64':
-            widget.set_range(-(2**63), 2**63 - 1)
+            minimum, maximum = (-(2**63), 2**63 - 1)
+            widget.set_increments(1.0, 10.0)
         elif type_name in ['gulong', 'guint64']:
-            widget.set_range(0, 2**64 - 1)
-        elif type_name == 'gfloat':
-            widget.set_range(0.0, 2**64 - 1)
+            minimum, maximum = (0, 2**64 - 1)
+            widget.set_increments(1.0, 10.0)
+        elif type_name == 'gfloat' or type_name == 'gdouble':
+            minimum, maximum = (float("-Infinity"), float("Infinity"))
+            widget.set_increments(0.00001, 0.01)
             widget.set_digits(5)
+        if hasattr(prop, "minimum"):
+            minimum = prop.minimum
+        if hasattr(prop, "maximum"):
+            maximum = prop.maximum
+        widget.set_range(minimum, maximum)
+        widget.props.climb_rate = 0.01 * abs(min(maximum, 1000) -
+            max(minimum, -1000))
         widget.set_value(float(value))
     elif (type_name == 'gboolean'):
         widget = gtk.CheckButton()
