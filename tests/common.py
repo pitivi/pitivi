@@ -7,7 +7,6 @@ gobject.threads_init()
 import gst
 import gc
 import unittest
-from pitivi.timeline.objects import TimelineObject, MEDIA_TYPE_NONE, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
 from pitivi.factories.base import ObjectFactory, SourceFactory, SinkFactory
 from pitivi.pipeline import Pipeline
 
@@ -45,30 +44,6 @@ class TestCase(unittest.TestCase):
     def tearDown(self):
         self.gccollect()
         self.gcverify()
-
-class TestTimelineObject(TimelineObject):
-
-    __data_type__ = "test-timeline-object"
-
-    def _makeBrother(self):
-        if self.media_type == MEDIA_TYPE_AUDIO:
-            return TestTimelineObject(factory=self.factory,
-                                      start=self.start,
-                                      duration=self.duration,
-                                      media_type=MEDIA_TYPE_VIDEO,
-                                      name=self.name)
-        if self.media_type == MEDIA_TYPE_VIDEO:
-            return TestTimelineObject(factory=self.factory,
-                                      start=self.start,
-                                      duration=self.duration,
-                                      media_type=MEDIA_TYPE_AUDIO,
-                                      name=self.name)
-
-    def _makeGnlObject(self):
-        if self.media_type == MEDIA_TYPE_AUDIO:
-            return self.factory.makeAudioBin()
-        if self.media_type == MEDIA_TYPE_VIDEO:
-            return self.factory.makeVideoBin()
 
 # Some fake factories
 class FakeSourceFactory(SourceFactory):

@@ -1,6 +1,5 @@
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.trackobject import TrackObject
-from pitivi.timeline.objects import MEDIA_TYPE_VIDEO
 from pitivi.receiver import receiver, handler
 import goocanvas
 

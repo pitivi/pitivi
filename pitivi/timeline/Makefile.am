@@ -2,8 +2,6 @@ timelinedir = $(libdir)/pitivi/python/pitivi/timeline
 
 timeline_PYTHON = \
 	__init__.py	\
-	effects.py	\
-	objects.py	\
 	track.py	\
 	timeline.py
 
