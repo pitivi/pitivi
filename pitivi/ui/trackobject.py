@@ -23,6 +23,11 @@ TRIMBAR_PIXBUF_FOCUS = gtk.gdk.pixbuf_new_from_file(
 
 import gst
 
+def text_size(text):
+    ink, logical = text.get_natural_extents()
+    x1, y1, x2, y2 = [pango.PIXELS(x) for x in logical]
+    return x2 - x1, y2 - y1
+
 class TimelineController(controller.Controller):
 
     _cursor = ARROW
@@ -132,20 +137,34 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             line_width=0)
 
         self.content = Preview(self.element)
+
         self.name = goocanvas.Text(
             x=10,
+            y=5,
             text=os.path.basename(unquote(element.factory.name)),
             font="Sans 9",
             fill_color_rgba=0xFFFFFFAA,
             operator = cairo.OPERATOR_ADD,
             alignment=pango.ALIGN_LEFT)
+        twidth, theight = text_size(self.name)
+        self.namebg = goocanvas.Rect(
+            radius_x = 2,
+            radius_y = 2,
+            x = 8,
+            y = 3,
+            width = twidth + 4,
+            height = theight + 4,
+            line_width = 0,
+            fill_color_rgba = self.__BACKGROUND__)
+        self.namewidth = twidth
  
         self.start_handle = StartHandle(element, timeline,
             height=self.__HEIGHT__)
         self.end_handle = EndHandle(element, timeline,
             height=self.__HEIGHT__)
 
-        for thing in (self.bg, self.content, self.start_handle, self.end_handle, self.name):
+        for thing in (self.bg, self.content, self.start_handle,
+            self.end_handle, self.namebg, self.name):
             self.add_child(thing)
 
         if element:
@@ -180,6 +199,11 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         w = width - self.end_handle.props.width
         self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
             0, 0, w, self.__HEIGHT__, w)
+        if w - 10 > 0:
+            self.namebg.props.width = min(w - 8, self.namewidth)
+            self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
+        else:
+            self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
         self.bg.props.width = width
         # place end handle at appropriate distance
         self.end_handle.props.x = w
