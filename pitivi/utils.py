@@ -143,6 +143,8 @@ def data_probe(pad, data, section=""):
 
     The extra argument will be used to prefix the debug messages
     """
+    if section == "":
+        section = "%s:%s" % (pad.get_parent().get_name(), pad.get_name())
     if isinstance(data, gst.Buffer):
         log.debug("probe","%s BUFFER timestamp:%s , duration:%s , size:%d , offset:%d , offset_end:%d",
                   section, gst.TIME_ARGS(data.timestamp), gst.TIME_ARGS(data.duration),
