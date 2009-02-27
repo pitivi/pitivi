@@ -8,7 +8,6 @@ import gst
 import gc
 import unittest
 from pitivi.timeline.objects import TimelineObject, MEDIA_TYPE_NONE, MEDIA_TYPE_VIDEO, MEDIA_TYPE_AUDIO
-from pitivi.timeline.source import TimelineSource, TimelineFileSource
 from pitivi.factories.base import ObjectFactory, SourceFactory, SinkFactory
 from pitivi.pipeline import Pipeline
 
@@ -70,11 +69,6 @@ class TestTimelineObject(TimelineObject):
             return self.factory.makeAudioBin()
         if self.media_type == MEDIA_TYPE_VIDEO:
             return self.factory.makeVideoBin()
-
-class TestTimelineSource(TimelineSource):
-    __data_type__ = "test-timeline-source"
-
-    pass
 
 # Some fake factories
 class FakeSourceFactory(SourceFactory):
