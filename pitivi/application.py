@@ -25,23 +25,25 @@ Main application
 import os
 import gobject
 gobject.threads_init()
+
 from pitivigstutils import patch_gst_python
 patch_gst_python()
-import check
-import instance
-import device
-from project import Project, file_is_project
-from effects import Magician
-from configure import APPNAME
-from settings import GlobalSettings
-from threads import ThreadMaster
-from pluginmanager import PluginManager
-from signalinterface import Signallable
-import instance
-from pitivi.log.loggable import Loggable
-from pitivi.log import log
 
 from gettext import gettext as _
+
+import pitivi.instance as instance
+
+from pitivi.check import initial_checks
+from pitivi.device import get_probe
+from pitivi.project import Project, file_is_project
+from pitivi.effects import Magician
+from pitivi.configure import APPNAME
+from pitivi.settings import GlobalSettings
+from pitivi.threads import ThreadMaster
+from pitivi.pluginmanager import PluginManager
+from pitivi.signalinterface import Signallable
+from pitivi.log.loggable import Loggable
+from pitivi.log import log
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
@@ -119,7 +121,7 @@ class Pitivi(object, Loggable, Signallable):
         self.current = Project(_("New Project"))
         self.effects = Magician()
 
-        self.deviceprobe = device.get_probe()
+        self.deviceprobe = get_probe()
 
     #{ Project-related methods
 
@@ -218,6 +220,7 @@ class InteractivePitivi(Pitivi):
         from ui.mainwindow import PitiviMainWindow
         Pitivi.__init__(self, filepath=None,
                         *args, **kwargs)
+        self._mainloop = None
         self.mainloop = mainloop
 
         self._gui = PitiviMainWindow(self)
@@ -233,9 +236,8 @@ class InteractivePitivi(Pitivi):
         return self._mainloop
 
     def _set_mainloop(self, mainloop):
-        if hasattr(self, "_mainloop"):
-            if self._mainloop != None:
-                raise Exception("Mainloop already set !")
+        if self._mainloop != None:
+            raise Exception("Mainloop already set !")
         if mainloop == None:
             mainloop = gobject.MainLoop()
         self._mainloop = mainloop
@@ -263,7 +265,7 @@ class InteractivePitivi(Pitivi):
 def main(argv):
     """ Start PiTiVi ! """
     from optparse import OptionParser
-    check.initial_checks()
+    initial_checks()
     parser = OptionParser()
     (unused_options, args) = parser.parse_args(argv[1:])
     if len(args) > 0:
