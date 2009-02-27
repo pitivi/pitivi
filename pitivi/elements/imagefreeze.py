@@ -79,7 +79,7 @@ class ImageFreeze(gst.Element):
         self._reset()
 
     def _reset(self):
-        gst.debug("resetting ourselves")
+        self.debug("resetting ourselves")
         self._outputrate = None
         self._srccaps = None
         # number of outputted buffers
@@ -95,9 +95,9 @@ class ImageFreeze(gst.Element):
         self.last_return = gst.FLOW_OK
 
     def _sink_setcaps(self, unused_pad, caps):
-        gst.debug("caps %s" % caps.to_string())
+        self.debug("caps %s" % caps.to_string())
         downcaps = self.srcpad.peer_get_caps().copy()
-        gst.debug("downcaps %s" % downcaps.to_string())
+        self.debug("downcaps %s" % downcaps.to_string())
 
         # methodology
         # 1. We override any incoming framerate
@@ -107,21 +107,21 @@ class ImageFreeze(gst.Element):
                 try:
                     del struct["framerate"]
                 except:
-                    gst.warning("Couldn't remove 'framerate' from %s" % struct.to_string())
+                    self.warning("Couldn't remove 'framerate' from %s" % struct.to_string())
 
         # 2. we do the intersection of our incoming stripped caps
         #    and the downstream caps
         intersect = ccaps.intersect(downcaps)
         if intersect.is_empty():
-            gst.warning("no negotiation possible !")
+            self.warning("no negotiation possible !")
             return False
 
         # 3. for each candidate in the intersection, we try to set that
         #    candidate downstream
         for candidate in intersect:
-            gst.debug("Trying %s" % candidate.to_string())
+            self.debug("Trying %s" % candidate.to_string())
             if self.srcpad.peer_accept_caps(candidate):
-                gst.debug("accepted !")
+                self.debug("accepted !")
                 # 4. When we have an accepted caps downstream, we store the negotiated
                 #    framerate and return
                 if not candidate.has_key("framerate"):
@@ -136,46 +136,46 @@ class ImageFreeze(gst.Element):
 
     def _src_event(self, unused_pad, event):
         # for the moment we just push it upstream
-        gst.debug("event %r" % event)
+        self.debug("event %r" % event)
         if event.type == gst.EVENT_SEEK:
             flags = event.parse_seek()[2]
-            gst.debug("Handling seek event %r" % flags)
+            self.debug("Handling seek event %r" % flags)
             if flags & gst.SEEK_FLAG_FLUSH:
-                gst.debug("sending flush_start event")
+                self.debug("sending flush_start event")
                 self.srcpad.push_event(gst.event_new_flush_start())
             self._segment.set_seek(*event.parse_seek())
-            gst.debug("_segment start:%s stop:%s" % (gst.TIME_ARGS(self._segment.start),
+            self.debug("_segment start:%s stop:%s" % (gst.TIME_ARGS(self._segment.start),
                                                      gst.TIME_ARGS(self._segment.stop)))
             # create a new initial seek
-            gst.debug("pausing task")
+            self.debug("pausing task")
             self.srcpad.pause_task()
-            gst.debug("task paused")
+            self.debug("task paused")
 
             self._needsegment = True
-            gst.debug("Sending FLUS_STOP event")
+            self.debug("Sending FLUS_STOP event")
             if flags & gst.SEEK_FLAG_FLUSH:
                 self.srcpad.push_event(gst.event_new_flush_stop())
-            gst.debug("Restarting our task")
+            self.debug("Restarting our task")
             self.srcpad.start_task(self._our_task)
-            gst.debug("Returning True")
+            self.debug("Returning True")
             return True
 
         return self.sinkpad.push_event(event)
 
     def _sink_event(self, unused_pad, event):
-        gst.debug("event %r" % event)
+        self.debug("event %r" % event)
         if event.type == gst.EVENT_NEWSEGMENT:
-            gst.debug("dropping new segment !")
+            self.debug("dropping new segment !")
             return True
         elif event.type == gst.EVENT_FLUSH_START:
             self._reset()
         return self.srcpad.push_event(event)
 
     def _sink_chain(self, unused_pad, buf):
-        gst.debug("buffer %s %s" % (gst.TIME_ARGS(buf.timestamp),
+        self.debug("buffer %s %s" % (gst.TIME_ARGS(buf.timestamp),
                                     gst.TIME_ARGS(buf.duration)))
         if self._buffer != None:
-            gst.debug("already have a buffer ! Returning GST_FLOW_WRONG_STATE")
+            self.debug("already have a buffer ! Returning GST_FLOW_WRONG_STATE")
             return gst.FLOW_WRONG_STATE
 
         self._buffer = buf
@@ -184,16 +184,16 @@ class ImageFreeze(gst.Element):
 
     def _our_task(self, something):
         if self._buffer == None:
-            gst.warning("We were started without a buffer, exiting")
+            self.warning("We were started without a buffer, exiting")
             self.srcpad.pause_task()
             return
 
         #this is where we repeatedly output our buffer
-        gst.debug("self:%r, something:%r" % (self, something))
+        self.debug("self:%r, something:%r" % (self, something))
 
-        gst.debug("needsegment: %r" % self._needsegment)
+        self.debug("needsegment: %r" % self._needsegment)
         if self._needsegment:
-            gst.debug("Need to output a new segment")
+            self.debug("Need to output a new segment")
             segment = gst.event_new_new_segment(False,
                                                 self._segment.rate,
                                                 self._segment.format,
@@ -205,12 +205,12 @@ class ImageFreeze(gst.Element):
             # offset is int(segment.start / outputrate)
             self._offset = int(self._segment.start * self._outputrate.num / self._outputrate.denom / gst.SECOND)
             self._needsegment = False
-            gst.debug("Newsegment event pushed")
+            self.debug("Newsegment event pushed")
 
         # new position
         position = self._offset * gst.SECOND * self._outputrate.denom / self._outputrate.num
         if self._segment.stop != -1 and position > self._segment.stop:
-            gst.debug("end of configured segment (position:%s / segment_stop:%s)" % (gst.TIME_ARGS(position),
+            self.debug("end of configured segment (position:%s / segment_stop:%s)" % (gst.TIME_ARGS(position),
                                                                                      gst.TIME_ARGS(self._segment.stop)))
             # end of stream/segment handling
             if self._segment.flags & gst.SEEK_FLAG_SEGMENT:
@@ -229,12 +229,12 @@ class ImageFreeze(gst.Element):
             obuf.timestamp = nstart
             obuf.duration = nstop - nstart
             obuf.caps = self._srccaps
-            gst.debug("Pushing out buffer %s" % gst.TIME_ARGS(obuf.timestamp))
+            self.debug("Pushing out buffer %s" % gst.TIME_ARGS(obuf.timestamp))
             self.last_return = self.srcpad.push(obuf)
         self._offset += 1
 
         if self.last_return != gst.FLOW_OK:
-            gst.debug("Pausing ourself, last_return : %s" % gst.flow_get_name(self.last_return))
+            self.debug("Pausing ourself, last_return : %s" % gst.flow_get_name(self.last_return))
             self.srcpad.pause_task()
 
     def do_change_state(self, transition):
