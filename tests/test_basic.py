@@ -14,7 +14,6 @@ class BasicTest(TestCase):
         self.assert_(ptv)
 
         # were the contents of pitivi properly created
-        self.assert_(ptv.playground)
         self.assert_(ptv.current)
         self.assert_(ptv.effects)
 

@@ -30,7 +30,6 @@ patch_gst_python()
 import check
 import instance
 import device
-from playground import PlayGround
 from project import Project, file_is_project
 from effects import Magician
 from configure import APPNAME
@@ -117,7 +116,6 @@ class Pitivi(object, Loggable, Signallable):
             self.settings.get_local_plugin_path(),
             self.settings.get_plugin_settings_path())
 
-        self.playground = PlayGround()
         self.current = Project(_("New Project"))
         self.effects = Magician()
 
@@ -172,7 +170,6 @@ class Pitivi(object, Loggable, Signallable):
                     return False
             if self.emit("closing-project", self.current) == False:
                 return False
-            self.playground.pause()
             self.emit("project-closed", self.current)
             self.current.release()
             self.current = None
@@ -183,7 +180,6 @@ class Pitivi(object, Loggable, Signallable):
         # if there's a running project we must close it
         if self._closeRunningProject():
             project = Project(_("New Project"))
-            self.playground.pause()
             self.emit("new-project-loading", project)
             self.current = project
             self.emit("new-project-loaded", self.current)
@@ -204,8 +200,6 @@ class Pitivi(object, Loggable, Signallable):
             self.warning("Not closing since running project doesn't want to close")
             return False
         self.threads.stopAllThreads()
-        self.playground.shutdown()
-        self.playground = None
         self.settings.storeSettings()
         self.deviceprobe.release()
         self.deviceprobe = None

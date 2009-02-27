@@ -4,7 +4,6 @@
 pitivi/check.py
 pitivi/discoverer.py
 pitivi/application.py
-pitivi/playground.py
 pitivi/project.py
 pitivi/settings.py
 pitivi/stream.py

@@ -76,57 +76,6 @@ class TestTimelineSource(TimelineSource):
 
     pass
 
-class TestTimelineFileSource(TimelineFileSource):
-    """
-    Dummy TimelineFileSource
-    """
-
-    __data_type__ = "test-timeline-file-source"
-
-    # we only override the gnlobject creation since we want to test all
-    # other behaviour.
-
-    def _makeGnlObject(self):
-        gnlobject = gst.element_factory_make("gnlsource")
-        fakesrc = gst.element_factory_make("fakesrc")
-        gnlobject.add(fakesrc)
-        if self.media_start == -1:
-            self.media_start = 0
-        if self.media_duration == -1:
-            self.media_duration = self.factory.length
-        if not self.start == -1:
-            gnlobject.set_property("start", long(self.start))
-        if not self.duration == -1:
-            gnlobject.set_property("duration", long(self.duration))
-        gnlobject.set_property("media-duration", long(self.media_duration))
-        gnlobject.set_property("media-start", long(self.media_start))
-        gnlobject.connect("notify::media-start", self._mediaStartDurationChangedCb)
-        gnlobject.connect("notify::media-duration", self._mediaStartDurationChangedCb)
-        return gnlobject
-
-    def _makeBrother(self):
-        # find out if the factory provides the other element type
-        if self.media_type == MEDIA_TYPE_NONE:
-            return None
-        if self.media_type == MEDIA_TYPE_VIDEO:
-            if not self.factory.is_audio:
-                return None
-            brother = TestTimelineFileSource(media_start=self.media_start, media_duration=self.media_duration,
-                                         factory=self.factory, start=self.start, duration=self.duration,
-                                         media_type=MEDIA_TYPE_AUDIO,
-                                         name=self.name + "-brother")
-        elif self.media_type == MEDIA_TYPE_AUDIO:
-            if not self.factory.is_video:
-                return None
-            brother = TestTimelineFileSource(media_start=self.media_start, media_duration=self.media_duration,
-                                         factory=self.factory, start=self.start, duration=self.duration,
-                                         media_type=MEDIA_TYPE_VIDEO,
-                                         name=self.name + "-brother")
-        else:
-            brother = None
-        return brother
-
-
 # Some fake factories
 class FakeSourceFactory(SourceFactory):
     def __init__(self, factoryname="fakesrc", *args, **kwargs):

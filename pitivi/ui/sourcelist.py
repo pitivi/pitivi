@@ -505,7 +505,7 @@ class SourceList(gtk.VBox, Loggable):
         path = paths[0]
         factory = model[path][COL_FACTORY]
         self.debug("Let's play %s" % factory.name)
-        instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
+        self.error("FIXME : IMPLEMENT PROPER TEMPORARY PLAYBACK USING PIPELINE/ACTION")
 
     def _treeViewButtonPressEventCb(self, unused_treeview, event):
         if event.button == 3:
@@ -513,7 +513,7 @@ class SourceList(gtk.VBox, Loggable):
 
     def _rowActivatedCb(self, unused_treeview, path, unused_column):
         factory = self.storemodel[path][COL_FACTORY]
-        instance.PiTiVi.playground.playTemporaryFilesourcefactory(factory)
+        self.error("FIXME : IMPLEMENT PROPER TEMPORARY PLAYBACK USING PIPELINE/ACTION")
 
     def _newProjectLoadedCb(self, unused_pitivi, project):
         # clear the storemodel

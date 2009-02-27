@@ -377,16 +377,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             seek, self._initial_seek = self._initial_seek, None
             self.pipeline.seek(seek)
 
-    def _timelineDurationChangedCb(self, unused_composition, duration):
-        self.debug("duration : %s" % gst.TIME_ARGS(duration))
-        if duration:
-            self.slider.set_sensitive(True)
-            self.playpause_button.set_sensitive(True)
-            self.next_button.set_sensitive(True)
-            self.back_button.set_sensitive(True)
-
-        gobject.idle_add(self._asyncTimelineDurationChanged, duration)
-
     ## Control gtk.Button callbacks
 
     def _rewindCb(self, unused_button):
@@ -409,54 +399,8 @@ class PitiviViewer(gtk.VBox, Loggable):
     def _forwardCb(self, unused_button):
         pass
 
-    ## Playground callbacks
-
     def _posCb(self, unused_pipeline, pos):
         self._newTime(pos)
-
-    def _currentPlaygroundChangedCb(self, playground, smartbin):
-        self.log("smartbin:%s" % smartbin)
-
-        if not smartbin.seekable:
-            # live sources or defaults, no duration/seeking available
-            self.slider.set_sensitive(False)
-            self.playpause_button.set_sensitive(False)
-            self.next_button.set_sensitive(False)
-            self.back_button.set_sensitive(False)
-            if not self._timelineDurationChangedSigId == (None, None):
-                obj, sigid = self._timelineDurationChangedSigId
-                obj.disconnect(sigid)
-                self._timelineDurationChangedSigId = (None, None)
-        else:
-            if isinstance(smartbin, SmartTimelineBin):
-                self.info("switching to Timeline, setting duration to %s" %
-                         (gst.TIME_ARGS(smartbin.project.timeline.duration)))
-                self.posadjust.upper = float(smartbin.project.timeline.duration)
-                # FIXME : we need to disconnect from this signal !
-                sigid = smartbin.project.timeline.connect("duration-changed",
-                    self._timelineDurationChangedCb)
-                self._timelineDurationChangedSigId = \
-                        (smartbin.project.timeline, sigid)
-            else:
-                self.posadjust.upper = float(smartbin.factory.duration)
-                if not self._timelineDurationChangedSigId == (None, None):
-                    obj, sigid = self._timelineDurationChangedSigId
-                    obj.disconnect(sigid)
-                    self._timelineDurationChangedSigId = (None, None)
-            self._newTime(0)
-            if smartbin.project.timeline.duration > 0:
-                self.slider.set_sensitive(True)
-                self.playpause_button.set_sensitive(True)
-                self.next_button.set_sensitive(True)
-                self.back_button.set_sensitive(True)
-
-        if isinstance(smartbin, SmartTimelineBin):
-            seti = smartbin.project.getSettings()
-            dar = float(seti.videowidth * seti.videopar.num) / float(seti.videoheight * seti.videopar.denom)
-        elif hasattr(smartbin, 'factory'):
-            video = smartbin.factory.getOutputStreams(VideoStream)
-            if video:
-                self.setDisplayAspectRatio(video[0].dar)
 
     def _currentStateCb(self, unused_pipeline, state):
         self.info("current state changed : %s" % state)

@@ -44,13 +44,6 @@ from pitivi.log.loggable import Loggable
 from timeline import Timeline
 from projecttabs import ProjectTabs
 from viewer import PitiviViewer
-from pitivi.bin import SmartTimelineBin
-from projectsettings import ProjectSettingsDialog
-from pluginmanagerdialog import PluginManagerDialog
-from webcam_managerdialog import WebcamManagerDialog
-from netstream_managerdialog import NetstreamManagerDialog
-from screencast_managerdialog import ScreencastManagerDialog
-from encodingdialog import EncodingDialog
 from pitivi.configure import pitivi_version, APPNAME, get_pixmap_dir, \
      get_global_pixmap_dir
 from pitivi.ui import dnd
@@ -159,7 +152,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.connect("new-project-failed", self._notProjectCb)
         self.app.current.connect("save-uri-requested", self._saveAsDialogCb)
         self.app.current.connect("confirm-overwrite", self._confirmOverwriteCb)
-        self.project.pipeline.connect("error", self._playGroundErrorCb)
+        self.project.pipeline.connect("error", self._pipelineErrorCb)
         self.app.current.sources.connect("file_added", self._sourcesFileAddedCb)
 
         self.app.current.connect('missing-plugins',
@@ -185,6 +178,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         @param pause: If C{True}, pause the timeline before displaying the dialog.
         @type pause: C{bool}
         """
+        from encodingdialog import EncodingDialog
 
         if pause:
             project.pipeline.pause()
@@ -198,30 +192,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _recordCb(self, unused_button):
         self.showEncodingDialog(self.project)
-        # pause timeline !
-        self.app.playground.pause()
 
     def _timelineDurationChangedCb(self, timeline, duration):
-        if not isinstance(self.app.playground.current, SmartTimelineBin):
-            return
-
         self.render_button.set_sensitive((duration > 0) and True or False)
-
-    def _currentPlaygroundChangedCb(self, playground, smartbin):
-        if smartbin == playground.default:
-            self.render_button.set_sensitive(False)
-        else:
-            if isinstance(smartbin, SmartTimelineBin):
-                self.info("switching to Timeline, setting duration to %s" %
-                         (gst.TIME_ARGS(smartbin.project.timeline.duration)))
-                smartbin.project.timeline.connect("duration-changed",
-                        self._timelineDurationChangedCb)
-                if smartbin.project.timeline.duration > 0:
-                    self.render_button.set_sensitive(True)
-                else:
-                    self.render_button.set_sensitive(False)
-            else:
-                self.render_button.set_sensitive(False)
 
     def _setActions(self):
         """ sets up the GtkActions """
@@ -394,7 +367,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialogbox.destroy()
         self.error_dialogbox = None
 
-    def _playGroundErrorCb(self, unused_playground, error, detail):
+    def _pipelineErrorCb(self, unused_pipeline, error, detail):
         # FIXME FIXME FIXME:
         # _need_ an onobtrusive way to present gstreamer errors,
         # one that doesn't steel mouse/keyboard focus, one that
@@ -501,6 +474,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.current.saveAs()
 
     def _projectSettingsCb(self, unused_action):
+        from projectsettings import ProjectSettingsDialog
         ProjectSettingsDialog(self, self.app.current).show()
 
     def _quitCb(self, unused_action):
@@ -540,19 +514,23 @@ class PitiviMainWindow(gtk.Window, Loggable):
         abt.show()
 
     def _pluginManagerCb(self, unused_action):
+        from pluginmanagerdialog import PluginManagerDialog
         PluginManagerDialog(self.app.plugin_manager)
 
     # Import from Webcam callback
     def _ImportWebcam(self,unused_action):
+        from webcam_managerdialog import WebcamManagerDialog
         w = WebcamManagerDialog(self.app)
         w.show()
 
     # Capture network stream callback
     def _ImportNetstream(self,unused_action):
+        from netstream_managerdialog import NetstreamManagerDialog
         NetstreamManagerDialog()
 
     # screencast callback
     def _Screencast(self,unused_action):
+        from screencast_managerdialog import ScreencastManagerDialog
         ScreencastManagerDialog()
 
     ## Devices changed

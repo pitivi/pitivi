@@ -26,7 +26,6 @@ Timeline widgets for the complex view
 import gtk
 
 from pitivi.log.loggable import Loggable
-from pitivi.bin import SmartTimelineBin
 from pitivi.timeline.source import TimelineFileSource
 from pitivi.timeline import objects
 import ruler

@@ -12,7 +12,6 @@ pitivi_PYTHON = \
 	__init__.py 	\
 	action.py	\
 	application.py	\
-	bin.py 		\
 	check.py 	\
 	configure.py 	\
 	device.py	\
@@ -22,7 +21,6 @@ pitivi_PYTHON = \
 	instance.py 	\
 	pipeline.py	\
 	pitivigstutils.py \
-	playground.py 	\
 	plugincore.py	\
 	pluginmanager.py \
 	plumber.py	\
