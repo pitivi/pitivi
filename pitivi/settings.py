@@ -35,6 +35,7 @@ from encode import available_muxers, available_video_encoders, \
      available_audio_encoders, available_combinations, \
      get_compatible_sink_caps
 from stream import get_stream_for_caps
+from pitivi.log.loggable import Loggable
 
 from gettext import gettext as _
 
@@ -393,7 +394,7 @@ class RenderSettings(object):
     def __repr__(self):
         return "<RenderSettings %s [%d streams]>" % (self.muxer, len(self.settings))
 
-class ExportSettings(Serializable, Signallable):
+class ExportSettings(Serializable, Signallable, Loggable):
     """
     Multimedia export settings
 
@@ -415,6 +416,7 @@ class ExportSettings(Serializable, Signallable):
     # TODO : switch to using GstFraction internally where appliable
 
     def __init__(self, **unused_kw):
+        Loggable.__init__(self)
         self.videowidth = 720
         self.videoheight = 576
         self.videorate = gst.Fraction(25, 1)
@@ -480,7 +482,7 @@ class ExportSettings(Serializable, Signallable):
 
     def setVideoProperties(self, width=-1, height=-1, framerate=-1, par=-1):
         """ Set the video width, height and framerate """
-        gst.info("set_video_props %d x %d @ %r fps" % (width, height, framerate))
+        self.info("set_video_props %d x %d @ %r fps" % (width, height, framerate))
         changed = False
         if not width == -1 and not width == self.videowidth:
             self.videowidth = width
@@ -499,7 +501,7 @@ class ExportSettings(Serializable, Signallable):
 
     def setAudioProperties(self, nbchanns=-1, rate=-1, depth=-1):
         """ Set the number of audio channels, rate and depth """
-        gst.info("%d x %dHz %dbits" % (nbchanns, rate, depth))
+        self.info("%d x %dHz %dbits" % (nbchanns, rate, depth))
         changed = False
         if not nbchanns == -1 and not nbchanns == self.audiochannels:
             self.audiochannels = nbchanns

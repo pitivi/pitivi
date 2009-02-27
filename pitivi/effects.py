@@ -41,7 +41,6 @@ class Magician:
     """
 
     def __init__(self):
-        gst.log("New Magician")
         self.simple_video = []
         self.simple_audio = []
         self.transitions = []

@@ -318,7 +318,7 @@ class Discoverer(object, Signallable, Loggable):
         return False
 
     def _busMessageEosCb(self, unused_bus, message):
-        gst.log("got EOS")
+        self.log("got EOS")
 
         self._finishAnalysis()
 
@@ -354,7 +354,7 @@ class Discoverer(object, Signallable, Loggable):
             return
 
         state_change = message.parse_state_changed()
-        gst.log("%s:%s" % ( message.src, state_change))
+        self.log("%s:%s" % ( message.src, state_change))
         prev, new, pending = state_change
 
         if prev == gst.STATE_READY and new == gst.STATE_PAUSED and \

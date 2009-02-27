@@ -23,12 +23,12 @@
 Handles the list of source for a project
 """
 
-import gst
 from pitivi.discoverer import Discoverer
 from pitivi.serializable import Serializable, to_object_from_data_type
 from pitivi.signalinterface import Signallable
+from pitivi.log.loggable import Loggable
 
-class SourceList(Serializable, Signallable):
+class SourceList(Serializable, Signallable, Loggable):
     """
     Contains the sources for a project, stored as FileSourceFactory
 
@@ -54,7 +54,8 @@ class SourceList(Serializable, Signallable):
     __data_type__ = "source-list"
 
     def __init__(self, project=None):
-        gst.log("new sourcelist for project %s" % project)
+        Loggable.__init__(self)
+        self.log("new sourcelist for project %s" % project)
         self.project = project
         self.sources = {}
         self.tempsources = {}
