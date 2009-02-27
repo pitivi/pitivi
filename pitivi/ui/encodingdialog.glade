@@ -199,7 +199,7 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="can_default">True</property>
-                <property name="label">gtk-media-record</property>
+                <property name="label">pitivi-render</property>
                 <property name="use_stock">True</property>
                 <property name="response_id">-5</property>
                 <signal name="clicked" handler="_recordButtonClickedCb"/>
