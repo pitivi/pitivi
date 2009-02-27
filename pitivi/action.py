@@ -30,7 +30,6 @@ states = (STATE_NOT_ACTIVE,
 
 from pitivi.signalinterface import Signallable
 from pitivi.factories.base import SourceFactory, SinkFactory
-from pitivi.factories.file import URISinkFactory
 from pitivi.encode import RenderSinkFactory, RenderFactory
 from pitivi.log.loggable import Loggable
 
@@ -685,11 +684,11 @@ class ViewAction(Action):
     def getDynamicLinks(self, producer, stream):
         self.debug("producer:%r, stream:%r, sync:%r",
                    producer, stream, self.sync)
-        import plumber
+        from pitivi.plumber import DefaultAudioSink, DefaultVideoSink
         from pitivi.stream import AudioStream, VideoStream
         res = Action.getDynamicLinks(self, producer, stream)
         if isinstance(stream, VideoStream):
-            consumer = plumber.DefaultVideoSink()
+            consumer = DefaultVideoSink()
             self.videosink = consumer
             self.videosink.setSync(self.sync)
             if self.xid != 0:
@@ -698,7 +697,7 @@ class ViewAction(Action):
             res.append((producer, consumer, stream, None))
         # only link audio streams if we're synchronized
         elif isinstance(stream, AudioStream) and self.sync:
-            consumer = plumber.DefaultAudioSink()
+            consumer = DefaultAudioSink()
             self.audiosink = consumer
             self.audiosink.setSync(self.sync)
             res.append((producer, consumer, stream, None))
@@ -748,6 +747,7 @@ def render_action_for_uri(uri, settings, *factories):
     @returns: The action
     @rtype: L{RenderAction}
     """
+    from pitivi.factories.file import URISinkFactory
     sf = RenderSinkFactory(RenderFactory(settings=settings),
                            URISinkFactory(uri=uri))
     a = RenderAction()

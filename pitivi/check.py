@@ -26,10 +26,11 @@ Runtime checks.
 import gtk
 import gst
 import sys
-import instance
-from configure import APPNAME, PYGTK_REQ, PYGST_REQ, GST_REQ, GNONLIN_REQ, PYCAIRO_REQ
 
 from gettext import gettext as _
+
+from pitivi.instance import PiTiVi
+from pitivi.configure import APPNAME, PYGTK_REQ, PYGST_REQ, GST_REQ, GNONLIN_REQ, PYCAIRO_REQ
 
 def initial_checks():
     """
@@ -116,7 +117,7 @@ def check_required_version(modulename):
 
 def _checks():
     reg = gst.registry_get_default()
-    if instance.PiTiVi:
+    if PiTiVi:
         return (_("%s is already running!") % APPNAME,
                 _("An instance of %s is already running in this script.") % APPNAME)
     if not reg.find_plugin("gnonlin"):
