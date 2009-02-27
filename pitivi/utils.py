@@ -206,4 +206,3 @@ class PropertyChangeTracker(object, Signallable):
         self.properties[property_name] = value
 
         self.emit(property_name + '-changed', timeline_object, old_value, value)
-

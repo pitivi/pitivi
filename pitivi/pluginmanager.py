@@ -46,7 +46,7 @@ class PluginManager(object, Signallable):
 
     Assolves the duties of installing, uninstalling and updating plugins.
 
-    Keeps a repository of categorized plugins, that can be queried by the main 
+    Keeps a repository of categorized plugins, that can be queried by the main
     application (or by plugins themself) in order to find items compatible with
     their extension points.
 
@@ -269,7 +269,7 @@ class PluginManager(object, Signallable):
                     gtk.main_iteration()
 
     def getPlugins(self, name=None, interface=plugincore.IPlugin, category=None, only_enabled=False):
-        """ 
+        """
         Return the list of plugins matching the search criteria
 
         @param name: the exact name of the plugin (case sensitive)
@@ -281,7 +281,7 @@ class PluginManager(object, Signallable):
         """
         return [item["plugin"] for item in self.pluginbag.itervalues() if \
                 self._match(item["plugin"], name, interface, category, only_enabled)]
-    
+
     def enablePlugins(self, name=None, interface=plugincore.IPlugin, category=None):
         """
         Enable plugins matching all the search criteria
@@ -411,7 +411,7 @@ class PluginManager(object, Signallable):
 
 
     def canUninstall(self, plugin):
-        """ 
+        """
         Check if current user has permission to uninstall plugin
         by ensuring that file owner's user_id is equal to current one.
 
@@ -423,7 +423,7 @@ class PluginManager(object, Signallable):
         return os.stat(item["filename"])[stat.ST_UID] == os.getuid()
 
     def loadSettings(self, plugin):
-        """ 
+        """
         Loads plugin settings dictionary from disk using pickle
 
         @param plugin: plugin for which you want settings to be loaded
@@ -451,4 +451,3 @@ class PluginManager(object, Signallable):
             pickle.dump(plugin.settings, settings_file)
         finally:
             settings_file.close()
-

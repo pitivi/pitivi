@@ -635,7 +635,7 @@ class Timeline(object ,Signallable):
                 new_track_object = track_object.copy()
                 tracks.append(track_object.track)
                 new_timeline_object.addTrackObject(new_track_object)
-        
+
         for i, track_object in enumerate(new_timeline_object.track_objects):
             tracks[i].addTrackObject(track_object)
 

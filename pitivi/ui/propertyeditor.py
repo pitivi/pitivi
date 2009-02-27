@@ -33,7 +33,7 @@ from defaultpropertyeditor import DefaultPropertyEditor
 class PropertyEditor(gtk.ScrolledWindow):
 
     __MODULES__ = {
-        
+
     }
 
     def __init__(self, *args, **kwargs):
@@ -115,4 +115,3 @@ class PropertyEditor(gtk.ScrolledWindow):
         else:
             widget = self.__no_objs
         self.__set_contents(widget)
-

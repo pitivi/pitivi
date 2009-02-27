@@ -103,7 +103,7 @@ class NetstreamManagerDialog(object):
             if gst.uri_is_valid (uri) is False:
                 self.status.set_label("Invalid URI. Please verify.")
                 gst.debug("Invalid URI")
-                return 
+                return
             if gst.uri_protocol_is_supported(gst.URI_SRC,
                                              uri.split('://')[0]):
                 self.setSinks(uri)
@@ -179,4 +179,3 @@ class NetstreamManagerDialog(object):
             self.player.set_state(gst.STATE_NULL)
         if self.capture_pipe:
             self.capture_pipe.set_state(gst.STATE_NULL)
-

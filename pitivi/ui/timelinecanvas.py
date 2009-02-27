@@ -44,7 +44,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         goocanvas.Canvas.__init__(self)
         Zoomable.__init__(self)
         self._selected_sources = []
-        self.__tracks = [] 
+        self.__tracks = []
 
         self._block_size_request = False
         self.props.integer_layout = True
@@ -52,7 +52,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
         self._createUI()
         self.timeline = timeline
-       
+
     def _createUI(self):
         self._cursor = ARROW
         root = self.get_root_item()
@@ -143,7 +143,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 ## Razor Tool Implementation
 
     def activateRazor(self, action):
-        self.__razor_sigid = self.connect("button_press_event", 
+        self.__razor_sigid = self.connect("button_press_event",
             self.__razorClickedCb)
         self.__razor_release_sigid = self.connect("button_release_event",
             self.__razorReleasedCb)

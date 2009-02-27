@@ -74,4 +74,3 @@ class ArraySink(gst.BaseSink):
         return self.do_render(buf)
 
 gobject.type_register(ArraySink)
-

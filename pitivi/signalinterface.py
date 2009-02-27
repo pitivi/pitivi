@@ -167,7 +167,7 @@ class Signallable:
             raise Exception("This class doesn't have any signals !")
 
         self._signal_group.disconnect(sigid)
-    
+
     def disconnect_by_function(self, function):
         """
         Disconnect signal using give signal id

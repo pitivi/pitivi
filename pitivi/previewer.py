@@ -66,7 +66,7 @@ def get_preview_for_object(trackobject):
         # TODO: handle non-random access factories
         # TODO: handle non-source factories
         # note that we switch on the stream_type, but we hash on the stream
-        # itself. 
+        # itself.
         if stream_type == stream.AudioStream:
             previewers[key] = RandomAccessAudioPreviewer(factory, stream_)
         elif stream_type == stream.VideoStream:
@@ -90,7 +90,7 @@ class Previewer(object, Signallable):
     def __init__(self, factory, stream_):
         # create default thumbnail
         path = os.path.join(get_pixmap_dir(), self.__DEFAULT_THUMB__)
-        self.default_thumb = cairo.ImageSurface.create_from_png(path) 
+        self.default_thumb = cairo.ImageSurface.create_from_png(path)
 
     def render_cairo(self, cr, bounds, element, y1):
         """Render a preview of element onto a cairo context within the current
@@ -170,13 +170,13 @@ class RandomAccessPreviewer(Previewer):
 
         # i = left edge of thumbnail to be drawn. We start with x1 and
         # subtract the distance to the nearest leftward rectangle.
-        # Justification of the following: 
+        # Justification of the following:
         #                i = sof + k * twidth
         #                i = x1 - delta
-        # sof + k * twidth = x1 - delta 
+        # sof + k * twidth = x1 - delta
         #           i * tw = (x1 - sof) - delta
         #    <=>     delta = x1 - sof (mod twidth).
-        # Fortunately for us, % works on floats in python. 
+        # Fortunately for us, % works on floats in python.
 
         i = x1 - ((x1 - sof) % (self.twidth + self.spacing))
 
@@ -199,8 +199,8 @@ class RandomAccessPreviewer(Previewer):
         types, the segment duration will depend on the current zoom ratio,
         while others may only care about the timestamp. The value returned
         here will be used as the key which identifies the thumbnail in the
-        thumbnail cache""" 
-        
+        thumbnail cache"""
+
         raise NotImplementedError
 
     def _thumbForTime(self, time):
@@ -222,7 +222,7 @@ class RandomAccessPreviewer(Previewer):
         if segment != waiting:
             segment = waiting
 
-        self._cache[segment] = surface 
+        self._cache[segment] = surface
         self.emit("update", segment)
         self._nextThumbnail()
 
@@ -259,7 +259,7 @@ class RandomAccessPreviewer(Previewer):
         current segment has finished processing, subclasses should call
         _nextThumbnail() with the resulting cairo surface. Since seeking and
         playback are asyncrhonous, you may have to call _nextThumbnail() in a
-        message handler or other callback.""" 
+        message handler or other callback."""
         self.waiting_timestamp = segment
 
 class RandomAccessVideoPreviewer(RandomAccessPreviewer):
@@ -274,7 +274,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         csp = gst.element_factory_make("ffmpegcolorspace")
         sink = CairoSurfaceThumbnailSink()
         scale = gst.element_factory_make("videoscale")
-        caps = ("video/x-raw-rgb,height=(int) %d,width=(int) %d" % 
+        caps = ("video/x-raw-rgb,height=(int) %d,width=(int) %d" %
             (self.theight, self.twidth + 2))
         filter_ = utils.filter_(caps)
         self.videopipeline = utils.pipeline({
@@ -297,7 +297,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
     def _startThumbnail(self, timestamp):
         RandomAccessPreviewer._startThumbnail(self, timestamp)
         gst.log("timestamp : %s" % gst.TIME_ARGS(timestamp))
-        self.videopipeline.seek(1.0, 
+        self.videopipeline.seek(1.0,
             gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
             gst.SEEK_TYPE_SET, timestamp,
             gst.SEEK_TYPE_NONE, -1)
@@ -309,8 +309,8 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
         self.audioSink = ArraySink()
         conv = gst.element_factory_make("audioconvert")
-        self.audioPipeline = utils.pipeline({ 
-            sbin : conv, 
+        self.audioPipeline = utils.pipeline({
+            sbin : conv,
             conv : self.audioSink,
             self.audioSink : None})
         bus = self.audioPipeline.get_bus()
@@ -322,7 +322,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         # for audio files, we need to know the duration the segment spans
         return time, Zoomable.pixelToNs(self.twidth)
 
-    def __bus_message(self, bus, message):	
+    def __bus_message(self, bus, message):
         if message.type == gst.MESSAGE_SEGMENT_DONE:
             self.__finishWaveform()
 
@@ -336,15 +336,15 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
     def _startThumbnail(self, (timestamp, duration)):
         RandomAccessPreviewer._startThumbnail(self, (timestamp, duration))
         self.__audio_cur = timestamp, duration
-        self.audioPipeline.seek(1.0, 
-            gst.FORMAT_TIME, 
+        self.audioPipeline.seek(1.0,
+            gst.FORMAT_TIME,
             gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE | gst.SEEK_FLAG_SEGMENT,
             gst.SEEK_TYPE_SET, timestamp,
             gst.SEEK_TYPE_SET, timestamp + duration)
         self.audioPipeline.set_state(gst.STATE_PLAYING)
 
     def __finishWaveform(self):
-        surface = cairo.ImageSurface(cairo.FORMAT_A8, 
+        surface = cairo.ImageSurface(cairo.FORMAT_A8,
             int(self.twidth) + 2, self.theight)
         cr = cairo.Context(surface)
         self.__plotWaveform(cr, self.audioSink.samples)
@@ -381,4 +381,3 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         cr.move_to(x0, y0)
         for x, y in points:
             cr.line_to(x, y)
-

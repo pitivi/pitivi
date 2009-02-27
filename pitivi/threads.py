@@ -111,5 +111,3 @@ class ThreadMaster(object, Loggable):
                     joinedthreads += 1
                 except:
                     self.warning("what happened ??")
-
-

@@ -98,7 +98,7 @@ class ProjectTabs(gtk.Notebook):
 
     def __replaceComponent(self, window, component, label):
         window.remove(component)
-        self.set_current_page(self.insert_page(component, label, 
+        self.set_current_page(self.insert_page(component, label,
             self.__full_list.index(component)))
         self.show()
 

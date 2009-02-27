@@ -258,4 +258,3 @@ class WebcamManagerDialog(GladeWindow):
         if not hasattr(self, "player"):
             return
         CallbackThread(self.__resetPlayer).start()
-

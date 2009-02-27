@@ -126,4 +126,3 @@ class DefaultPropertyEditor(gtk.Viewport):
             self.table.attach(widget, 1, 2, y, y+1, yoptions=gtk.FILL)
             self.__properties[name] = widget
         self.show_all()
-

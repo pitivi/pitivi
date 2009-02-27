@@ -87,7 +87,7 @@ def beautify_stream(stream):
        if stream.raw:
            if stream.framerate.num:
                templ = _("<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>")
-               templ = templ % (stream.par * stream.width , stream.height, 
+               templ = templ % (stream.par * stream.width , stream.height,
                    float(stream.framerate))
            else:
                templ = _("<b>Image:</b> %d x %d <i>pixels</i>")
@@ -717,6 +717,3 @@ class InfoStub(gtk.HBox, Loggable):
         self.log("hiding")
         gtk.VBox.hide(self)
         self.showing = False
-
-
-

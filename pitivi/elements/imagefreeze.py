@@ -306,4 +306,3 @@ if __name__ == "__main__":
     pipe.set_state(gst.STATE_PLAYING)
 
     ml.run()
-

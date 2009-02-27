@@ -1,4 +1,3 @@
-
 # PiTiVi , Non-linear video editor
 #
 #       pitivi/projectsaver.py

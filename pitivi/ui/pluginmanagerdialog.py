@@ -135,8 +135,8 @@ class PluginManagerDialog(object):
         self.refresh_tree(self.search_entry.get_text())
 
     def refresh_tree(self, filter_text = None):
-        """ 
-        Refresh the list of plugins according to filter_text 
+        """
+        Refresh the list of plugins according to filter_text
 
         @param filter_text: plugin name must have this substring (case insensitive)
         """
@@ -222,17 +222,17 @@ class PluginManagerDialog(object):
         elif selection.count_selected_rows() > 1:
             self.about_btn.set_sensitive(False)
             self.configure_btn.set_sensitive(False)
-            self.delete_btn.set_sensitive(True)            
+            self.delete_btn.set_sensitive(True)
         else:
             self.about_btn.set_sensitive(False)
             self.configure_btn.set_sensitive(False)
             self.delete_btn.set_sensitive(False)
 
     def _get_selected_plugins(self):
-        """ 
+        """
         Retrieve from treeview widget those plugins selected by the use
 
-        @return: the list of plugins selected by the user 
+        @return: the list of plugins selected by the user
         """
 
         selection = self.plugin_tree.get_selection()
@@ -264,9 +264,9 @@ class PluginManagerDialog(object):
 
         # ensure the user really wants this operation to be performed
         dialog = gtk.MessageDialog(
-            parent = self.window, 
+            parent = self.window,
             flags = gtk.DIALOG_MODAL,
-            type = gtk.MESSAGE_WARNING, 
+            type = gtk.MESSAGE_WARNING,
             buttons = gtk.BUTTONS_OK_CANCEL,
             message_format = _("Are you sure you want to remove selected plugins?"))
         dialog.set_title(_("Confirm remove operation"))
@@ -282,9 +282,9 @@ class PluginManagerDialog(object):
                 self.pm.uninstall(plugin)
             except Exception, e:
                 error_dialog = gtk.MessageDialog(
-                    parent = self.window, 
+                    parent = self.window,
                     flags = gtk.DIALOG_MODAL,
-                    type = gtk.MESSAGE_ERROR, 
+                    type = gtk.MESSAGE_ERROR,
                     buttons = gtk.BUTTONS_CLOSE,
                     message_format = _("Cannot remove %s") % (plugin.name))
                 error_dialog.run()
@@ -295,7 +295,7 @@ class PluginManagerDialog(object):
         self.refresh_tree()
         self.refresh_category()
 
-    def drag_data_received_cb(self, widget, context, x, y, selection, 
+    def drag_data_received_cb(self, widget, context, x, y, selection,
                             targetType, time):
         """ handle drag&drop of new plugins into the list by installing them"""
 
@@ -314,9 +314,9 @@ class PluginManagerDialog(object):
             except plugincore.DuplicatePluginError, e:
                 # Plugin already exists, ask the user if he wants to update
                 dialog = gtk.MessageDialog(
-                    parent = self.window, 
+                    parent = self.window,
                     flags = gtk.DIALOG_MODAL,
-                    type = gtk.MESSAGE_WARNING, 
+                    type = gtk.MESSAGE_WARNING,
                     buttons = gtk.BUTTONS_OK_CANCEL,
                     message_format = _("Update the existent plugin?"))
 
@@ -334,9 +334,9 @@ class PluginManagerDialog(object):
             except plugincore.InvalidPluginError, e:
                 # The file user is trying to install is not a valid plugin
                 error_dialog = gtk.MessageDialog(
-                    parent = self.window, 
+                    parent = self.window,
                     flags = gtk.DIALOG_MODAL,
-                    type = gtk.MESSAGE_ERROR, 
+                    type = gtk.MESSAGE_ERROR,
                     buttons = gtk.BUTTONS_CLOSE,
                     message_format = _("Cannot install %s\nThe file is not a valid plugin") % e.filename)
                 error_dialog.run()

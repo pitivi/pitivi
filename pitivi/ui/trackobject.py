@@ -131,7 +131,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.timeline = timeline
 
         self.bg = goocanvas.Rect(
-            height=self.__HEIGHT__, 
+            height=self.__HEIGHT__,
             fill_color_rgba=self.__BACKGROUND__,
             stroke_color_rgba=self.__BORDER__,
             line_width=0)
@@ -157,7 +157,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             line_width = 0,
             fill_color_rgba = self.__BACKGROUND__)
         self.namewidth = twidth
- 
+
         self.start_handle = StartHandle(element, timeline,
             height=self.__HEIGHT__)
         self.end_handle = EndHandle(element, timeline,
@@ -192,7 +192,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
     def _startChangedCb(self, track_object, start):
         self._startDurationChangedCb(track_object,
                 track_object.start, track_object.duration)
-    
+
     def _startDurationChangedCb(self, obj, start, duration):
         self.set_simple_transform(self.nsToPixel(start), 0, 1, 0)
         width = self.nsToPixel(duration)

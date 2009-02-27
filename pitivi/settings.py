@@ -90,15 +90,15 @@ def get_env_dirs(var, default):
     return get_dirs(get_env_default(var, default))
 
 def xdg_config_home(autocreate=True):
-    return get_dir(get_env_default("XDG_CONFIG_HOME", 
+    return get_dir(get_env_default("XDG_CONFIG_HOME",
         os.path.join(os.getenv("HOME"), ".config")), autocreate)
 
 def xdg_data_home(autocreate=True):
-    return get_dir(get_env_default("XDG_DATA_HOME", 
+    return get_dir(get_env_default("XDG_DATA_HOME",
         os.path.join(os.getenv("HOME"), ".local", "share")), autocreate)
 
 def xdg_data_dirs():
-    return get_env_dirs("XDG_DATA_DIRS", 
+    return get_env_dirs("XDG_DATA_DIRS",
         os.path.pathsep.join((os.path.join("usr", "local", "share"),
             os.path.join("usr", "share"))))
 
@@ -204,7 +204,7 @@ class GlobalSettings(object):
         @return: the plugin repository path
         """
 
-        return get_dir(os.path.join(xdg_config_home(autocreate), "pitivi"), 
+        return get_dir(os.path.join(xdg_config_home(autocreate), "pitivi"),
             autocreate)
 
     def get_local_plugin_path(self, autocreate=True):
@@ -222,7 +222,7 @@ class GlobalSettings(object):
                         xdg_data_home(autocreate),
                         "pitivi"),
                     autocreate),
-                "plugins"), 
+                "plugins"),
             autocreate)
 
     def get_plugin_settings_path(self, autocreate=True):

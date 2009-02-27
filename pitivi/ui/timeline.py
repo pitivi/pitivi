@@ -88,8 +88,8 @@ ui = '''
 class Timeline(gtk.VBox, Loggable):
 
     # the screen width of the current unit
-    unit_width = 10 
-    # specific levels of zoom, in (multiplier, unit) pairs which 
+    unit_width = 10
+    # specific levels of zoom, in (multiplier, unit) pairs which
     # from zoomed out to zoomed in
 
 
@@ -125,7 +125,7 @@ class Timeline(gtk.VBox, Loggable):
         self.pack_start(self.scrolledWindow, expand=True)
 
         # drag and drop
-        self.drag_dest_set(gtk.DEST_DEFAULT_MOTION, 
+        self.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
             [dnd.FILESOURCE_TUPLE],
             gtk.gdk.ACTION_COPY)
 
@@ -138,9 +138,9 @@ class Timeline(gtk.VBox, Loggable):
         actions = (
             ("ZoomIn", gtk.STOCK_ZOOM_IN, None, None, ZOOM_IN,
                 self._zoomInCb),
-            ("ZoomOut", gtk.STOCK_ZOOM_OUT, None, None, ZOOM_OUT, 
+            ("ZoomOut", gtk.STOCK_ZOOM_OUT, None, None, ZOOM_OUT,
                 self._zoomOutCb),
-            ("DeleteObj", gtk.STOCK_DELETE, None, "Delete", DELETE, 
+            ("DeleteObj", gtk.STOCK_DELETE, None, "Delete", DELETE,
                 self.deleteSelected),
             ("UnlinkObj", "pitivi-unlink", None, None, UNLINK,
                 self.unlinkSelected),
@@ -190,9 +190,9 @@ class Timeline(gtk.VBox, Loggable):
         self.__temp_object = None
         return True
 
-    def _dragDataReceivedCb(self, unused_layout, context, x, y, 
+    def _dragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
-        self.log("SimpleTimeline, targetType:%d, selection.data:%s" % 
+        self.log("SimpleTimeline, targetType:%d, selection.data:%s" %
             (targetType, selection.data))
         # FIXME: let's have just one target type, call it
         # TYPE_PITIVI_OBJECTFACTORY.
@@ -279,4 +279,3 @@ class Timeline(gtk.VBox, Loggable):
             self.__canvas.activateRazor(action)
         else:
             self.__canvas.deactivateRazor()
-

@@ -97,7 +97,7 @@ class Controller(object):
     def motion_notify_event(self, item, target, event):
         self._last_event = event
         if self._dragging:
-            self.set_pos(self._dragging, 
+            self.set_pos(self._dragging,
                 self.transform(self._mousedown + self.from_item_event(item,
                     event)))
             return True
@@ -132,7 +132,7 @@ class Controller(object):
 
     def double_click(self, pos):
         pass
- 
+
     def drag_start(self):
         pass
 

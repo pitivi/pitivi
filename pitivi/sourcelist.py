@@ -154,7 +154,7 @@ class SourceList(Serializable, Signallable, Loggable):
             # callback from the discoverer's 'not_media_file' signal
             # remove it from the list
             self.emit("not_media_file", uri, reason, extra)
-        
+
         if uri in self.sources and not self.sources[uri]:
             del self.sources[uri]
         elif uri in self.tempsources:
@@ -187,4 +187,3 @@ class SourceList(Serializable, Signallable, Loggable):
         if "sources-factories" in obj:
             for uri, factory in obj["sources-factories"].iteritems():
                 self.addFactory(uri, to_object_from_data_type(factory))
-

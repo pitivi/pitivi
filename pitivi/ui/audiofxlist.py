@@ -68,5 +68,3 @@ class AudioFxList(gtk.VBox):
             self.storemodel.append([factory.get_longname(),
                                     factory.get_description(),
                                     factory])
-
-

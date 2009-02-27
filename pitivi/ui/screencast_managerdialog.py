@@ -95,4 +95,3 @@ class ScreencastManagerDialog(object):
         else:
             self.iface.savemode(False)
             instance.PiTiVi.screencast = False
-

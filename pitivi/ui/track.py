@@ -29,4 +29,3 @@ class Track(goocanvas.Group, Zoomable):
         self.remove_child(w)
         del self.widgets[track_object]
         Zoomable.removeInstance(w)
-

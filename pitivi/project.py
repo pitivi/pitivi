@@ -254,7 +254,7 @@ class Project(Serializable, Signallable, Loggable):
             self.settings.disconnect(self.settingssigid)
         self.settings = settings
         self.emit('settings-changed')
-        self.settingssigid = self.settings.connect('settings-changed', 
+        self.settingssigid = self.settings.connect('settings-changed',
             self._settingsChangedCb)
 
     def unsetSettings(self, unused_settings):
