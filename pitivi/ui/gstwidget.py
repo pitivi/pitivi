@@ -189,7 +189,7 @@ class GstElementSettingsDialog(GladeWindow, Loggable):
 
     def _fillWindow(self):
         # set title and frame label
-        self.window.set_title(_("Properties for ") + self.factory.get_longname())
+        self.window.set_title(_("Properties for %s") % self.factory.get_longname())
         self.widgets["infolabel"].set_markup("<b>" + self.factory.get_longname() + "</b>")
         self.desclabel.set_text(self.factory.get_description())
         self.authlabel.set_text('\n'.join(self.factory.get_author().split(",")))

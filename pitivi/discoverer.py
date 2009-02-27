@@ -154,11 +154,12 @@ class Discoverer(object, Signallable, Loggable):
         if result == gst.pbutils.INSTALL_PLUGINS_STARTED_OK:
             # don't emit an error yet
             self.error = None
+            self.error_debug = None
             res = True
         else:
             if self.error is None:
-                self.error = 'Missing plugins:\n%s' % \
-                        '\n'.join(missing_plugin_descriptions)
+                self.error = _('Missing plugins:\n%s') % \
+                             '\n'.join(missing_plugin_descriptions)
                 self.error_debug = ''
             res = False
 
@@ -176,8 +177,8 @@ class Discoverer(object, Signallable, Loggable):
         missing_plugins = self._checkMissingPlugins()
         if not self.current_streams and self.error is None:
             # EOS and no decodable streams?
-            self.error = 'FIXME: no output streams'
-            self.error_debug = 'see above'
+            self.error = _('FIXME: no output streams')
+            self.error_debug = _('see above')
 
         if len(self.current_streams) == 1:
             stream = self.current_streams[0]
@@ -190,8 +191,7 @@ class Discoverer(object, Signallable, Loggable):
         elif self.current_duration == gst.CLOCK_TIME_NONE and not is_image:
             self.emit('not_media_file', self.current_uri,
                       _("Could not establish the duration of the file."),
-                      _("This clip seems to be in a format which cannot"
-                            " be accessed in a random fashion."))
+                      _("This clip seems to be in a format which cannot be accessed in a random fashion."))
         else:
             have_video, have_audio, have_image = self._getCurrentStreamTypes()
             if have_video or have_audio:
@@ -200,8 +200,8 @@ class Discoverer(object, Signallable, Loggable):
                 factory = PictureFileSourceFactory(self.current_uri)
             else:
                 # woot, nothing decodable
-                self.error = 'FIXME: make me translatable: can not decode file'
-                self.error_debug = 'see above'
+                self.error = _('Can not decode file.')
+                self.error_debug = _('The given file does not contain audio, video or picture streams.')
                 factory = None
 
             if factory is not None:
@@ -230,8 +230,8 @@ class Discoverer(object, Signallable, Loggable):
         self.debug("timeout")
         self.timeout_id = 0
         if not self.error:
-            self.error = 'timeout'
-            self.error_debug = 'timeout debug'
+            self.error = _('Timeout while analyzing file.')
+            self.error_debug = _('Analyzing the file took too long.')
         self._finishAnalysis()
 
         return False
@@ -277,10 +277,9 @@ class Discoverer(object, Signallable, Loggable):
 
         source = self._createSource()
         if not source:
-            self.warning("This is not a media file : %s" % self.current_uri)
-            self.error = _("Couldn't construct pipeline.")
-            self.error_debug = _("GStreamer does not have an element to "
-                    "handle files coming from this type of file system.")
+            self.warning("This is not a media file: %s" % self.current_uri)
+            self.error = _("No available source handler.")
+            self.error_debug = _("You do not have a GStreamer source element to handle protocol '%s'") % gst.uri_get_protocol(self.current_uri)
             self._finishAnalysis()
 
             return False
@@ -308,7 +307,7 @@ class Discoverer(object, Signallable, Loggable):
         if self.pipeline.set_state(gst.STATE_PAUSED) == gst.STATE_CHANGE_FAILURE:
             if not self.error:
                 self.error = _("Pipeline didn't want to go to PAUSED.")
-            self.info("pipeline didn't want to go to PAUSED")
+            self.info("Pipeline didn't want to go to PAUSED")
             self._finishAnalysis()
 
             return False
@@ -330,8 +329,7 @@ class Discoverer(object, Signallable, Loggable):
             # don't clobber existing errors
             return
 
-        self.error = _("An internal error occured while analyzing "
-                "this file : %s") % gerror.message
+        self.error = _("An internal error occured while analyzing this file: %s") % gerror.message
         self.error_debug = detail
 
     def _busMessageElementCb(self, unused_bus, message):
@@ -340,8 +338,7 @@ class Discoverer(object, Signallable, Loggable):
             self.warning("We don't implement redirections currently, ignoring file")
             if self.error is None:
                 self.error = _("File contains a redirection to another clip.")
-                self.error_debug = _("PiTiVi currently does not handle "
-                        "redirection files.")
+                self.error_debug = _("PiTiVi currently does not handle redirection files.")
 
             self._finishAnalysis()
             return

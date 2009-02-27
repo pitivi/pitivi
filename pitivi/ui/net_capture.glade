@@ -355,7 +355,7 @@
 			  <child>
 			    <widget class="GtkLabel" id="label4">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes"> Protocol</property>
+			      <property name="label" translatable="yes">Protocol</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">True</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -416,7 +416,7 @@
 			  <child>
 			    <widget class="GtkLabel" id="label8">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Address </property>
+			      <property name="label" translatable="yes">Address</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -445,7 +445,7 @@
 			  <child>
 			    <widget class="GtkLabel" id="label9">
 			      <property name="visible">True</property>
-			      <property name="label" translatable="yes">Port </property>
+			      <property name="label" translatable="yes">Port</property>
 			      <property name="use_underline">False</property>
 			      <property name="use_markup">False</property>
 			      <property name="justify">GTK_JUSTIFY_LEFT</property>
@@ -612,7 +612,7 @@
 				  <child>
 				    <widget class="GtkLabel" id="label11">
 				      <property name="visible">True</property>
-				      <property name="label" translatable="yes">Customize :</property>
+				      <property name="label" translatable="yes">Customize:</property>
 				      <property name="use_underline">False</property>
 				      <property name="use_markup">False</property>
 				      <property name="justify">GTK_JUSTIFY_LEFT</property>

@@ -73,20 +73,20 @@ class FileListErrorDialog(GladeWindow, Signallable, Loggable):
 
         # <b>URI :</b> % uri
         end = textbuffer.get_end_iter()
-        textbuffer.insert_with_tags(end, _("URI : "), boldtag)
+        textbuffer.insert_with_tags(end, _("URI:"), boldtag)
 
         end = textbuffer.get_end_iter()
         textbuffer.insert(end, "%s\n" % uri)
 
         end = textbuffer.get_end_iter()
-        textbuffer.insert_with_tags(end, _("Problem : "), boldtag)
+        textbuffer.insert_with_tags(end, _("Problem:"), boldtag)
 
         end = textbuffer.get_end_iter()
         textbuffer.insert(end, "%s\n" % reason)
 
         if extra:
             end = textbuffer.get_end_iter()
-            textbuffer.insert_with_tags(end, _("Extra information : "), boldtag)
+            textbuffer.insert_with_tags(end, _("Extra information:"), boldtag)
 
             end = textbuffer.get_end_iter()
             textbuffer.insert(end, "%s\n" % extra)

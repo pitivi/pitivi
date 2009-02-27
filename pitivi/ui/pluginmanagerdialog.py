@@ -268,7 +268,7 @@ class PluginManagerDialog(object):
             flags = gtk.DIALOG_MODAL,
             type = gtk.MESSAGE_WARNING, 
             buttons = gtk.BUTTONS_OK_CANCEL,
-            message_format = _("Are you sure you want to remove selected plugins ?"))
+            message_format = _("Are you sure you want to remove selected plugins?"))
         dialog.set_title(_("Confirm remove operation"))
         try:
             if dialog.run() == gtk.RESPONSE_CANCEL:
@@ -286,7 +286,7 @@ class PluginManagerDialog(object):
                     flags = gtk.DIALOG_MODAL,
                     type = gtk.MESSAGE_ERROR, 
                     buttons = gtk.BUTTONS_CLOSE,
-                    message_format = _("Cannot remove %s") %(plugin.name))
+                    message_format = _("Cannot remove %s") % (plugin.name))
                 error_dialog.run()
                 error_dialog.destroy()
 
@@ -318,11 +318,10 @@ class PluginManagerDialog(object):
                     flags = gtk.DIALOG_MODAL,
                     type = gtk.MESSAGE_WARNING, 
                     buttons = gtk.BUTTONS_OK_CANCEL,
-                    message_format = _("Update the existent plugin ?"))
+                    message_format = _("Update the existent plugin?"))
 
                 dialog.format_secondary_text(
-                _("This plugin is already installed in your system.\n") +\
-                _("If you agree, version %s will be replaced with version %s")\
+                    _("This plugin is already installed in your system.\nIf you agree, version %s will be replaced with version %s")\
                     %(e.old_plugin.version, e.new_plugin.version))
 
                 dialog.set_title(_("Duplicate plugin found"))
@@ -339,8 +338,7 @@ class PluginManagerDialog(object):
                     flags = gtk.DIALOG_MODAL,
                     type = gtk.MESSAGE_ERROR, 
                     buttons = gtk.BUTTONS_CLOSE,
-                    message_format = _("Cannot install %s\n") %(e.filename) +\
-                                     _("The file is not a valid plugin."))
+                    message_format = _("Cannot install %s\nThe file is not a valid plugin") % e.filename
                 error_dialog.run()
                 error_dialog.destroy()
 

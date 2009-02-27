@@ -435,13 +435,13 @@ class ExportSettings(Serializable, Signallable):
 
     def __str__(self):
         msg = _("Export Settings\n")
-        msg += _("Video :") + str(self.videowidth) + " " + str(self.videoheight) +\
+        msg += _("Video: ") + str(self.videowidth) + " " + str(self.videoheight) +\
                " " + str(self.videorate) + " " + str (self.videopar)
         msg += "\n\t" + str(self.vencoder) + " " +str(self.vcodecsettings)
-        msg += _("\nAudio :") + str(self.audiochannels) + " " + str(self.audiorate) +\
+        msg += _("\nAudio: ") + str(self.audiochannels) + " " + str(self.audiorate) +\
                " " + str(self.audiodepth)
         msg += "\n\t" + str(self.aencoder) + " " + str(self.acodecsettings)
-        msg += _("\nMuxer :") + str(self.muxer) + " " + str(self.containersettings)
+        msg += _("\nMuxer: ") + str(self.muxer) + " " + str(self.containersettings)
         return msg
 
     def getVideoCaps(self):
