@@ -38,19 +38,19 @@ class IPlugin(Interface):
     settings = Attribute(""" Plugin settings """)
     enabled = Attribute(""" Retrieve or toggle plugin status """)
 
-    def __call__(manager):
+    def __call__(self):
         """ Initialize the plugin passing a reference to the plugin manager """
 
 class IConfigurable(Interface):
     """Allow user customization of plugin settings """
 
-    def configure():
+    def configure(self):
         """ Display preferences dialog """
 
 class IUpdateSettings(Interface):
     """ Allow importing settings from different versions of the plugin """
 
-    def update_settings(settings):
+    def update_settings(self):
         """ import settings from a different version """
 
 # Exceptions

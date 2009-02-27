@@ -168,7 +168,7 @@ def find_recursive_element(bin, typ):
         if isinstance(elt, typ):
             return elt
         if isinstance(elt, gst.Bin):
-            r = find_recursive_elements(elt, typ)
+            r = find_recursive_element(elt, typ)
             if r:
                 return r
     return None

@@ -76,7 +76,7 @@ def make_property_widget(t, value=None):
     #        idx = idx + 1
     #    widget.set_active(selected)
     else:
-        widget = gtk.Label(type_name)
+        widget = gtk.Label(repr(t))
         widget.set_alignment(1.0, 0.5)
 
     return widget

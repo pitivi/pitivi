@@ -24,7 +24,7 @@ Dialog box for project settings
 """
 
 import gtk
-from pitivi.glade import GladeWindow
+from pitivi.ui.glade import GladeWindow
 
 class ProjectSettingsDialog(GladeWindow):
     glade_file = "projectsettings.glade"
