@@ -27,6 +27,8 @@ from pitivi.ui.track import Track
 from pitivi.ui.trackobject import TrackObject
 from pitivi.ui.point import Point
 from pitivi.ui.zoominterface import Zoomable
+from common import TRACK_SPACING
+import gtk
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
@@ -227,9 +229,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         self._regroup_tracks()
 
     def _regroup_tracks(self):
+        height = 0
         for i, track in enumerate(self._tracks):
-            # FIXME: hard-coding track height, because this won't be updated
-            # later
-            height = 50
-            track.set_simple_transform(0, i * (height + 10), 1, 0)
+            track.set_simple_transform(0, height, 1, 0)
+            height += track.height + TRACK_SPACING
         self._request_size()

@@ -12,6 +12,9 @@ import controller
 from zoominterface import Zoomable
 from pitivi.timeline.track import TrackError
 from preview import Preview
+import gst
+from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
+from common import LAYER_SPACING
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
@@ -43,10 +46,6 @@ class TimelineController(controller.Controller):
 
     def drag_end(self):
         self._view.timeline.rebuildEdges()
-
-    def set_pos(self, item, pos):
-        self._view.element.setStart(max(self._view.pixelToNs(pos[0]), 0),
-                snap=True)
 
 class TrimHandle(View, goocanvas.Image, Zoomable):
 
@@ -100,9 +99,6 @@ class EndHandle(TrimHandle):
 
 class TrackObject(View, goocanvas.Group, Zoomable):
 
-    element = receiver()
-
-    __HEIGHT__ = 50
     __BACKGROUND__ = 0x3182bdC0
     __BORDER__ = 0xffea00FF
 
@@ -121,6 +117,13 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             self._view.timeline.setSelectionToObj(
                 self._view.element, mode)
 
+        def set_pos(self, item, pos):
+            x, y = pos
+            self._view.element.setStart(max(self._view.pixelToNs(x), 0),
+                    snap=True)
+            #priority = int(max(0, y // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
+            #self._view.element.priority = priority
+
     def __init__(self, element, track, timeline):
         goocanvas.Group.__init__(self)
         View.__init__(self)
@@ -131,7 +134,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.timeline = timeline
 
         self.bg = goocanvas.Rect(
-            height=self.__HEIGHT__,
+            height=self.height, 
             fill_color_rgba=self.__BACKGROUND__,
             stroke_color_rgba=self.__BORDER__,
             line_width=0)
@@ -159,9 +162,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.namewidth = twidth
 
         self.start_handle = StartHandle(element, timeline,
-            height=self.__HEIGHT__)
+            height=self.height)
         self.end_handle = EndHandle(element, timeline,
-            height=self.__HEIGHT__)
+            height=self.height)
 
         for thing in (self.bg, self.content, self.start_handle,
             self.end_handle, self.namebg, self.name):
@@ -170,6 +173,23 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         if element:
             self.zoomChanged()
         self.normal()
+
+## Properties
+
+    __height = LAYER_HEIGHT_EXPANDED
+
+    def setHeight(self, height):
+        self.__height
+        self.start_handle.props.height = height
+        self.end_handle.props.height = height
+        self.__update()
+
+    def getHeight(self):
+        return self.__height
+
+    height = property(getHeight, setHeight)
+
+## Public API
 
     def focus(self):
         self.start_handle.focus()
@@ -180,37 +200,49 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.end_handle.unfocus()
 
     def zoomChanged(self):
-        self._startDurationChangedCb(self.element, self.element.start,
-            self.element.duration)
+        self.__update()
+
+    def expand(self):
+        self.content.props.visibility = goocanvas.ITEM_VISIBLE
+        self.height = LAYER_HEIGHT
+
+    def collapse(self):
+        self.content.props.visibility = goocanvas.ITEM_INVISIBLE
+
+## element signals
+
+    element = receiver()
 
     @handler(element, "start-changed")
-    def _startChangedCb(self, track_object, start):
-        self._startDurationChangedCb(track_object,
-                track_object.start, track_object.duration)
-
     @handler(element, "duration-changed")
-    def _startChangedCb(self, track_object, start):
-        self._startDurationChangedCb(track_object,
-                track_object.start, track_object.duration)
+    def startChangedCb(self, track_object, start):
+        self.__update()
 
-    def _startDurationChangedCb(self, obj, start, duration):
-        self.set_simple_transform(self.nsToPixel(start), 0, 1, 0)
-        width = self.nsToPixel(duration)
+    @handler(element, "selected-changed")
+    def selected_changed(self, element, state):
+        if element.selected:
+            self.bg.props.line_width = 2.0
+        else:
+            self.bg.props.line_width = 0
+
+    @handler(element, "priority-changed")
+    def priority_changed(self, element, priority):
+        self.__update()
+
+    def __update(self):
+        x = self.nsToPixel(self.element.start)
+        y = (LAYER_HEIGHT_EXPANDED + LAYER_SPACING) * self.element.priority
+        self.set_simple_transform(x, y, 1, 0)
+
+        width = self.nsToPixel(self.element.duration)
         w = width - self.end_handle.props.width
         self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
-            0, 0, w, self.__HEIGHT__, w)
+            0, 0, w, self.height, w)
         if w - 10 > 0:
             self.namebg.props.width = min(w - 8, self.namewidth)
             self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
         else:
             self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
         self.bg.props.width = width
-        # place end handle at appropriate distance
         self.end_handle.props.x = w
 
-    @handler(element, "selected-changed")
-    def _selected_changed(self, element, state):
-        if element.selected:
-            self.bg.props.line_width = 2.0
-        else:
-            self.bg.props.line_width = 0

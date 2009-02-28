@@ -33,6 +33,7 @@ import gobject
 
 from gettext import gettext as _
 from timelinecanvas import TimelineCanvas
+from timelinecontrols import TimelineControls
 from pitivi.receiver import receiver, handler
 from zoominterface import Zoomable
 
@@ -85,9 +86,8 @@ ui = '''
 #    |  +--Track(SmartGroup)
 #    |
 #    +--Status Bar ??
-#
 
-class Timeline(gtk.VBox, Loggable, Zoomable):
+class Timeline(gtk.Table, Loggable, Zoomable):
 
     # the screen width of the current unit
     unit_width = 10
@@ -96,7 +96,7 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
 
 
     def __init__(self, ui_manager):
-        gtk.VBox.__init__(self)
+        gtk.Table.__init__(self, rows=2, columns=1, homogeneous=False)
         Loggable.__init__(self)
         Zoomable.__init__(self)
         self.log("Creating Timeline")
@@ -114,19 +114,28 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
         self.hadj = gtk.Adjustment()
+        self.vadj = gtk.Adjustment()
+
+        # controls for tracks and layers
+        self._controls = TimelineControls(self.timeline)
+        controlwindow = gtk.ScrolledWindow(None, self.vadj)
+        controlwindow.set_policy(gtk.POLICY_NEVER, gtk.POLICY_NEVER)
+        controlwindow.add_with_viewport(self._controls)
+        self.attach(controlwindow, 0, 1, 1, 2, xoptions=0)
+
+        # timeline ruler
         self.ruler = ruler.ScaleRuler(self.hadj)
         self.ruler.set_size_request(0, 35)
         self.ruler.set_border_width(2)
-        self.pack_start(self.ruler, expand=False, fill=True)
+        self.attach(self.ruler, 1, 2, 0, 1, yoptions=0)
 
-        # List of TimelineCanvas
+        # proportional timeline
         self._canvas = TimelineCanvas(self.timeline)
-
-        self.scrolledWindow = gtk.ScrolledWindow(self.hadj)
-        self.scrolledWindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.scrolledWindow.add(self._canvas)
+        timelinewindow = gtk.ScrolledWindow(self.hadj)
+        timelinewindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+        timelinewindow.add(self._canvas)
         #FIXME: remove padding between scrollbar and scrolled window
-        self.pack_start(self.scrolledWindow, expand=True)
+        self.attach(timelinewindow, 1, 2, 1, 2)
 
         # drag and drop
         self.drag_dest_set(gtk.DEST_DEFAULT_MOTION,
@@ -163,6 +172,17 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
         #self.actiongroup.set_visible(False)
         self.ui_manager.insert_action_group(self.actiongroup, 0)
         self.ui_manager.add_ui_from_string(ui)
+
+        # drag and drop
+        self.drag_dest_set(gtk.DEST_DEFAULT_MOTION, 
+            [dnd.FILESOURCE_TUPLE],
+            gtk.gdk.ACTION_COPY)
+
+        self.connect("drag-data-received", self._dragDataReceivedCb)
+        self.connect("drag-leave", self._dragLeaveCb)
+        self.connect("drag-drop", self._dragDropCb)
+        self.connect("drag-motion", self._dragMotionCb)
+
 
 ## Drag and Drop callbacks
 
@@ -218,7 +238,9 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
             for factory in self._factories]
 
     def _move_temp_source(self, x, y):
-        x, y = self._canvas.convert_from_pixels(x - 10, y)
+        x1, y1, x2, y2 = self._controls.get_allocation()
+        offset = 10 + (x2 - x1)
+        x, y = self._canvas.convert_from_pixels(x - offset, y)
         delta = Zoomable.pixelToNs(x)
         for obj in self._temp_objects:
             obj.setStart(max(0, delta), snap=True)

@@ -365,6 +365,24 @@ class Track(object, Signallable):
 
     max_priority = property(_getMaxPriority)
 
+    __max_priority = 0
+
+    @property
+    def max_priority(self):
+        return self.__max_priority
+
+    def _trackObjectPriorityCb(self, trackobject, priority):
+        op = self.__max_priority
+        self.__max_priority = max(self.__max_priority, priority)
+        if op != self.__max_priority:
+            self.emit("max-priority-changed")
+
+    def _connectToTrackObjectSignals(self, track_object):
+        track_object.connect("priority-changed", self._trackObjectPriorityCb)
+
+    def _disconnectTrackObjectSignals(self, track_object):
+        track_object.disconnect_by_function(self._trackObjectPriorityCb)
+
     def addTrackObject(self, track_object):
         if track_object.track is not None:
             raise TrackError()
@@ -378,6 +396,7 @@ class Track(object, Signallable):
         self.track_objects.append(track_object)
 
         track_object.makeBin()
+        self._connectToTrackObjectSignals(track_object)
 
         self._updateMaxPriority()
         self._connectToTrackObject(track_object)
@@ -399,6 +418,7 @@ class Track(object, Signallable):
 
         self.track_objects.remove(track_object)
         track_object.track = None
+        self._disconnectTrackObjectSignals(track_object)
 
         self._updateMaxPriority()
 

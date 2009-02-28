@@ -1,14 +1,11 @@
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.trackobject import TrackObject
 from pitivi.receiver import receiver, handler
+from common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 import goocanvas
-
-# TODO: layer managment controls
 
 class Track(goocanvas.Group, Zoomable):
     __gtype_name__ = 'Track'
-
-    track = receiver()
 
     def __init__(self, track, timeline=None):
         goocanvas.Group.__init__(self)
@@ -16,6 +13,20 @@ class Track(goocanvas.Group, Zoomable):
         self.widgets = {}
         self.track = track
         self.timeline = timeline
+        self.max_priority = 0
+
+## Properties
+
+    def getHeight(self):
+        return (1 + self.max_priority) * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
+
+    height = property(getHeight)
+
+## Public API
+
+## track signals
+
+    track = receiver()
 
     @handler(track, "track-object-added")
     def _objectAdded(self, unused_timeline, track_object):
