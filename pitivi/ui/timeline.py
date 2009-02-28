@@ -214,7 +214,7 @@ class Timeline(gtk.VBox, Loggable):
 
     def __move_temp_source(self, x, y):
         x, y = self.__canvas.convert_from_pixels(x - 10, y)
-        return self.__temp_object.setStart(Zoomable.pixelToNs(x), snap=True)
+        return self.__temp_object.setStart(max(0, Zoomable.pixelToNs(x)), snap=True)
 
     def setProject(self, project):
         self.project = project
