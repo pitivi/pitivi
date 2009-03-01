@@ -238,7 +238,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
     def setShadedDuration(self, duration):
         self.info("start/duration changed")
-        self.queue_draw()
+        self.queue_resize()
 
         self.shaded_duration = duration
 
