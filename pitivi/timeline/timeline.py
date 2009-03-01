@@ -443,7 +443,6 @@ class Timeline(object ,Signallable):
     def __init__(self):
         self.tracks = []
         self.selections = []
-        self.selection_link = Link()
         self.timeline_objects = []
         self.duration = 0
         self.timeline_selection = set()
@@ -581,12 +580,10 @@ class Timeline(object ,Signallable):
         elif mode == UNSELECT:
             self.timeline_selection.difference(selection)
 
-        for obj in self.timeline_selection - old_selection:
+        for obj in self.timeline_selection:
             obj.selected = True
-            self.selection_link.addTimelineObject(obj)
         for obj in old_selection - self.timeline_selection:
             obj.selected = False
-            self.selection_link.removeTimelineObject(obj)
 
     def linkSelection(self):
         if len(self.timeline_selection) < 2:
