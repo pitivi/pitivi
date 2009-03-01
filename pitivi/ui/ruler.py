@@ -72,7 +72,8 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         self.currentlySeeking = False
         self.pressed = False
         self.pending_seek_id = None
-        self.duration = gst.CLOCK_TIME_NONE
+        self.shaded_duration = gst.CLOCK_TIME_NONE
+        self.max_duration = gst.CLOCK_TIME_NONE
         self.seek_delay = 80
 
 ## Zoomable interface override
@@ -98,7 +99,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
     def do_size_allocate(self, allocation):
         self.debug("ScaleRuler got %s", list(allocation))
         gtk.Layout.do_size_allocate(self, allocation)
-        width = max(self.getPixelWidth(), allocation.width)
+        width = max(self.getMaxDurationWidth(), allocation.width)
         self.debug("Setting layout size to %d x %d",
                    width, allocation.height)
         self.set_size(width, allocation.height)
@@ -133,7 +134,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
     def do_button_press_event(self, event):
         self.debug("button pressed at x:%d", event.x)
-        if self.getDuration() <= 0:
+        if self.getShadedDuration() <= 0:
             self.debug("no timeline to seek on, ignoring")
         self.pressed = True
         # seek at position
@@ -174,7 +175,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                    gst.TIME_ARGS(self.seek_position), self.seek_format)
 
         # clamping values within acceptable range
-        duration = self.getDuration()
+        duration = self.getShadedDuration()
         if duration == gst.CLOCK_TIME_NONE:
             return
         if self.seek_position > duration:
@@ -235,11 +236,11 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         self.drawBackground(context, rect)
         self.drawRuler(context, rect)
 
-    def setDuration(self, duration):
+    def setShadedDuration(self, duration):
         self.info("start/duration changed")
-        self.queue_resize()
+        self.queue_draw()
 
-        self.duration = duration
+        self.shaded_duration = duration
 
         if duration < self.position:
             position = duration - gst.NSECOND
@@ -248,11 +249,21 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
         self._doSeek(position, gst.FORMAT_TIME)
 
-    def getDuration(self):
-        return self.duration
+    def getShadedDuration(self):
+        return self.shaded_duration
 
-    def getPixelWidth(self):
-        return self.nsToPixel(self.getDuration())
+    def getShadedDurationWidth(self):
+        return self.nsToPixel(self.getShadedDuration())
+
+    def setMaxDuration(self, duration):
+        self.queue_resize()
+        self.max_duration = duration
+
+    def getMaxDuration(self):
+        return self.max_duration
+
+    def getMaxDurationWidth(self):
+        return self.nsToPixel(self.getMaxDuration())
 
     def getPixelPosition(self):
         return 0
@@ -265,9 +276,9 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         context.fill()
         context.stroke()
 
-        if self.getDuration() > 0:
+        if self.getShadedDuration() > 0:
             context.set_source_rgb(0.8, 0.8, 0.8)
-            context.rectangle(0, 0, self.getPixelWidth(), allocation.height)
+            context.rectangle(0, 0, self.getShadedDurationWidth(), allocation.height)
             context.fill()
             context.stroke()
 
@@ -346,7 +357,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         context.restore()
 
     def drawPosition(self, context, allocation):
-        if self.getDuration() <= 0:
+        if self.getShadedDuration() <= 0:
             return
         # a simple RED line will do for now
         xpos = self.nsToPixel(self.position) + self.border

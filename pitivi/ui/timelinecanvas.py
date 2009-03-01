@@ -180,6 +180,19 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
     def __razorClickedCb(self, unused_canvas, unused_event):
         return True
 
+    max_duration = 0
+
+    def setMaxDuration(self, duration):
+        self.max_duration = duration
+        self._request_size()
+
+    def _request_size(self):
+        w = Zoomable.nsToPixel(self.max_duration)
+        h = 60 * len(self.__tracks)
+        self.set_bounds(0, 0, w, h)
+        self.__razor.props.height = h
+        self.get_root_item().changed(True)
+
 ## Zoomable Override
 
     def zoomChanged(self):
@@ -197,20 +210,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
                 self._trackAdded(None, track)
 
     timeline = receiver(__set_timeline)
-
-    @handler(timeline, "duration-changed")
-    def _start_duration_cb(self, unused_item, unused_dur):
-        self._request_size()
-
-    def _request_size(self):
-        tl, br = Point.from_widget_bounds(self)
-        pw, ph = br - tl
-        w = Zoomable.nsToPixel(self.timeline.duration)
-        h = 60 * len(self.__tracks)
-        if (w > pw) or (h > ph):
-            self.set_bounds(0, 0, w, h)
-        self.__razor.props.height = h
-        self.get_root_item().changed(True)
 
     @handler(timeline, "track-added")
     def _trackAdded(self, timeline, track):

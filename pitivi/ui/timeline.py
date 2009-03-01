@@ -28,6 +28,7 @@ import gtk
 from pitivi.log.loggable import Loggable
 import ruler
 import dnd
+import gst
 
 from gettext import gettext as _
 from timelinecanvas import TimelineCanvas
@@ -226,9 +227,15 @@ class Timeline(gtk.VBox, Loggable):
 
     timeline = receiver()
 
+    prev_duration = 0
+
     @handler(timeline, "duration-changed")
     def _timelineStartDurationChanged(self, unused_timeline, duration):
-        self.ruler.setDuration(duration)
+        if duration > self.prev_duration:
+            self.prev_duration = duration
+            self.ruler.setMaxDuration(self.prev_duration)
+            self.__canvas.setMaxDuration(self.prev_duration)
+        self.ruler.setShadedDuration(duration)
 
 ## ToolBar callbacks
 
