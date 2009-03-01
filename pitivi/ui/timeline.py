@@ -105,6 +105,7 @@ class Timeline(gtk.VBox, Loggable):
         self.__temp_object = None
         self.__factory = None
         self.__finish_drag = False
+        self.__position = 0
 
         self._createUI()
 
@@ -222,6 +223,19 @@ class Timeline(gtk.VBox, Loggable):
         self.timeline = project.timeline
         self.__canvas.timeline = self.timeline
         self.__canvas.zoomChanged()
+
+    def timelinePositionChanged(self, position):
+        self.__position = position
+        self.ruler.timelinePositionChanged(position)
+        self.scrollToPlayhead()
+
+    def scrollToPlayhead(self):
+        width = self.get_allocation().width
+        new_pos = Zoomable.nsToPixel(self.__position)
+        scroll_pos = self.hadj.get_value()
+        if (new_pos < scroll_pos) or (new_pos > scroll_pos + width):
+            self.hadj.set_value(new_pos - width / 2)
+
 
 ## Timeline callbacks
 

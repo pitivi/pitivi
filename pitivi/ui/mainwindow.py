@@ -705,4 +705,4 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.project.pipeline.seek(position)
 
     def _timelinePipelinePositionChangedCb(self, pipeline, position):
-        self.timeline.ruler.timelinePositionChanged(position)
+        self.timeline.timelinePositionChanged(position)
