@@ -582,12 +582,8 @@ class SourceList(gtk.VBox, Loggable):
         uris = self.getSelectedItems()
         if len(uris) < 1:
             return
-        if targettype == dnd.TYPE_PITIVI_FILESOURCE:
-            selection.set(selection.target, 8,
-                          uris[0])
-        elif targettype == dnd.TYPE_URI_LIST:
-            selection.set(selection.target, 8,
-                          '\n'.join(uris))
+        selection.set(selection.target, 8, '\n'.join(uris))
+
 class InfoStub(gtk.HBox, Loggable):
     """
     Box used to display information on the current state of the lists
