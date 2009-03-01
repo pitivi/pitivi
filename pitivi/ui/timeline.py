@@ -29,6 +29,7 @@ from pitivi.log.loggable import Loggable
 import ruler
 import dnd
 import gst
+import gobject
 
 from gettext import gettext as _
 from timelinecanvas import TimelineCanvas
@@ -86,7 +87,7 @@ ui = '''
 #    +--Status Bar ??
 #
 
-class Timeline(gtk.VBox, Loggable):
+class Timeline(gtk.VBox, Loggable, Zoomable):
 
     # the screen width of the current unit
     unit_width = 10
@@ -97,6 +98,7 @@ class Timeline(gtk.VBox, Loggable):
     def __init__(self, ui_manager):
         gtk.VBox.__init__(self)
         Loggable.__init__(self)
+        Zoomable.__init__(self)
         self.log("Creating Timeline")
 
         self.project = None
@@ -224,6 +226,13 @@ class Timeline(gtk.VBox, Loggable):
         self.__canvas.timeline = self.timeline
         self.__canvas.zoomChanged()
 
+## Zooming and Scrolling
+
+    def zoomChanged(self):
+        # this has to be in a timeout, because the resize hasn't actually
+        # completed yet, and so the canvas can't actually complete the scroll
+        gobject.timeout_add(100, self.scrollToPlayhead)
+
     def timelinePositionChanged(self, position):
         self.__position = position
         self.ruler.timelinePositionChanged(position)
@@ -235,6 +244,7 @@ class Timeline(gtk.VBox, Loggable):
         scroll_pos = self.hadj.get_value()
         if (new_pos < scroll_pos) or (new_pos > scroll_pos + width):
             self.hadj.set_value(new_pos - width / 2)
+        return False
 
 
 ## Timeline callbacks
