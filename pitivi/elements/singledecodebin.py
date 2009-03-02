@@ -214,8 +214,7 @@ class SingleDecodeBin(gst.Bin):
             return
 
         if caps.intersect(self.caps) and (self.stream is None or
-                (self.stream.pad_id and \
-                self.stream.pad_id == get_pad_id(pad))):
+                (self.stream.pad_id == get_pad_id(pad))):
             # This is the desired caps
             if not self._srcpad:
                 self._wrapUp(element, pad)
