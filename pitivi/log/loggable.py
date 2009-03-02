@@ -19,7 +19,15 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+from pitivi.log.log import _canShortcutLogging, doLog, ERROR
 from pitivi.log import log
+
+def _errorObject(object, cat, format, *args):
+    """
+    Log a fatal error message in the given category.
+    This will also raise a L{SystemExit}.
+    """
+    doLog(ERROR, object, cat, format, args)
 
 class Loggable(log.Loggable):
     def __init__(self):
@@ -31,3 +39,9 @@ class Loggable(log.Loggable):
         if not res:
             return "<%s at 0x%x>" % (self.__class__.__name__, id(self))
         return res
+
+    def error(self, *args):
+        if _canShortcutLogging(self.logCategory, ERROR):
+            return
+        _errorObject(self.logObjectName(), self.logCategory,
+            *self.logFunction(*args))
