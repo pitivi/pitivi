@@ -127,6 +127,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.pipeline.connect('state-changed', self._currentStateCb)
         self.pipeline.connect('element-message', self._elementMessageCb)
         self.pipeline.connect('duration-changed', self._durationChangedCb)
+        self.pipeline.connect('eos', self._eosCb)
         # if we have an action set it to that new pipeline
         if self.action:
             self.pipeline.setAction(self.action)
@@ -407,6 +408,9 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.playpause_button.setPause()
         elif state == int(gst.STATE_PAUSED):
             self.playpause_button.setPlay()
+
+    def _eosCb(self, unused_pipeline):
+        self.playpause_button.setPlay()
 
     def _elementMessageCb(self, unused_pipeline, message):
         name = message.structure.get_name()
