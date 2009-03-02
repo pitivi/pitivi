@@ -300,7 +300,7 @@ class Discoverer(object, Signallable, Loggable):
         self.bus.connect("message::error", self._busMessageErrorCb)
         self.bus.connect("message::element", self._busMessageElementCb)
         self.bus.connect("message::state-changed",
-                self._busMessageStateChangedCb)
+                         self._busMessageStateChangedCb)
 
         self.info("setting pipeline to PAUSED")
         if self.pipeline.set_state(gst.STATE_PAUSED) == gst.STATE_CHANGE_FAILURE:
@@ -330,6 +330,8 @@ class Discoverer(object, Signallable, Loggable):
 
         self.error = _("An internal error occured while analyzing this file: %s") % gerror.message
         self.error_debug = detail
+
+        self._finishAnalysis()
 
     def _busMessageElementCb(self, unused_bus, message):
         self.debug("Element message %s" % message.structure.to_string())
