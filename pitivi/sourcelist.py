@@ -22,7 +22,7 @@
 """
 Handles the list of source for a project
 """
-
+import urllib
 from pitivi.discoverer import Discoverer
 from pitivi.serializable import Serializable, to_object_from_data_type
 from pitivi.signalinterface import Signallable
@@ -107,13 +107,16 @@ class SourceList(Serializable, Signallable, Loggable):
         # same as above but for a list
         rlist = []
         for uri in uris:
+            uri = urllib.unquote(uri)
             if not uri in self.sources.keys():
                 self.sources[uri] = None
                 rlist.append(uri)
+
         self.discoverer.addFiles(rlist)
 
     def addTmpUri(self, uri):
         """ Adds a temporary uri, will not be saved """
+        uri = urllib.unquote(uri)
         if uri in self.sources.keys():
             return
         self.tempsources[uri] = None
