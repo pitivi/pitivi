@@ -797,6 +797,16 @@ class Pipeline(object, Signallable, Loggable):
         elif message.type == gst.MESSAGE_ERROR:
             error, detail = message.parse_error()
             self._handleErrorMessage(error, detail, message.src)
+        elif message.type == gst.MESSAGE_DURATION:
+            self.debug("Duration might have changed, querying it")
+            gobject.idle_add(self._queryDurationAsync)
+
+    def _queryDurationAsync(self, *args, **kwargs):
+        try:
+            self.getDuration()
+        except:
+            self.log("Duration failed... but we don't care")
+        return False
 
     def _handleErrorMessage(self, error, detail, source):
         self.emit('error', error, detail)
