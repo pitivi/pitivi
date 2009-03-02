@@ -62,8 +62,6 @@ class EncodingDialog(GladeWindow, Loggable):
             self.pipeline = pipeline
         else:
             self.pipeline = self.project.pipeline
-        self.pipeline.connect('position', self._positionCb)
-        self.pipeline.connect('eos', self._eosCb)
         self.outfile = None
         self.rendering = False
         self.renderaction = None
@@ -74,9 +72,6 @@ class EncodingDialog(GladeWindow, Loggable):
     def _shutDown(self):
         self.debug("shutting down")
         # Abort recording
-        # remove position handler
-        # put default actions back to synchronous
-        self.pipeline.disconnect_by_function(self._positionCb)
         self.removeRecordAction()
         self.destroy()
 
@@ -153,6 +148,8 @@ class EncodingDialog(GladeWindow, Loggable):
     def addRecordAction(self):
         self.debug("renderaction %r", self.renderaction)
         if self.renderaction == None:
+            self.pipeline.connect('position', self._positionCb)
+            self.pipeline.connect('eos', self._eosCb)
             self.debug("Setting pipeline to STOP")
             self.pipeline.stop()
             settings = export_settings_to_render_settings(self.settings)
@@ -182,4 +179,6 @@ class EncodingDialog(GladeWindow, Loggable):
                 if isinstance(ac, ViewAction) and ac.isActive():
                     ac.setSync(True)
             self.pipeline.pause()
+            self.pipeline.disconnect_by_function(self._positionCb)
+            self.pipeline.disconnect_by_function(self._eosCb)
             self.renderaction = None
