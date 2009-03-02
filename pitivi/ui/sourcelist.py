@@ -20,6 +20,7 @@
 # Boston, MA 02111-1307, USA.
 
 import gobject
+import gst
 import gtk
 import pango
 import os
@@ -403,11 +404,16 @@ class SourceList(gtk.VBox, Loggable):
             else:
                 thumbnail = self.audiofilepixbuf
 
+        if not factory.duration or factory.duration == gst.CLOCK_TIME_NONE:
+            duration = ''
+        else:
+            duration = beautify_length(factory.duration)
+
         self.storemodel.append([thumbnail,
             beautify_factory(factory),
             factory,
             factory.name,
-            factory.duration and "<b>%s</b>" % beautify_length(factory.duration) or ""])
+            duration])
         self._displayTreeView()
 
     # sourcelist callbacks
