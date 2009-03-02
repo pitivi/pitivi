@@ -333,12 +333,13 @@ class PitiviViewer(gtk.VBox, Loggable):
                                                 self.currentlySeeking))
         if not self.currentlySeeking:
             self.currentlySeeking = True
-            if self.pipeline.seek(value, format=format):
+            try:
+                self.pipeline.seek(value, format=format)
                 self.debug("seek succeeded, request_time = NONE")
                 self.requested_time = gst.CLOCK_TIME_NONE
                 gobject.timeout_add(80, self._seekTimeoutCb)
                 self._newTime(value)
-            else:
+            except:
                 self.currentlySeeking = False
         else:
             if format == gst.FORMAT_TIME:

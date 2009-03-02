@@ -702,7 +702,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.viewer.setAction(self.project.view_action)
         self.viewer.setPipeline(self.project.pipeline)
         self.project.pipeline.pause()
-        self.project.pipeline.seek(position)
+        try:
+            self.project.pipeline.seek(position)
+        except:
+            self.debug("Seeking failed")
 
     def _timelinePipelinePositionChangedCb(self, pipeline, position):
         self.timeline.timelinePositionChanged(position)
