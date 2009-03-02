@@ -439,7 +439,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.newBlankProject()
 
     def _openProjectCb(self, unused_action):
-        chooser = gtk.FileChooserDialog(_("Open File ..."),
+        chooser = gtk.FileChooserDialog(_("Open File..."),
             self,
             action=gtk.FILE_CHOOSER_ACTION_OPEN,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,

@@ -27,6 +27,7 @@ import time
 
 from urllib import unquote
 from gettext import gettext as _
+from gettext import ngettext
 
 import pitivi.instance as instance
 import pitivi.ui.dnd as dnd
@@ -78,7 +79,9 @@ def beautify_stream(stream):
 
     if type(stream) == AudioStream:
        if stream.raw:
-           templ = _("<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)")
+           templ = ngettext("<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
+                            "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",
+                            stream.channels)
            templ = templ % (stream.channels, stream.rate, stream.width)
            return templ
        return _("<b>Unknown Audio format:</b> %s") % stream.audiotype

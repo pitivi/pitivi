@@ -25,6 +25,7 @@ Editor for aribtrary properties of timeline objects
 
 import gtk
 from gettext import gettext as _
+from gettext import ngettext
 
 def get_widget_propvalue(widget):
 
@@ -100,7 +101,9 @@ class DefaultPropertyEditor(gtk.Viewport):
         self.show_all()
 
     def setObjects(self, objs):
-        self.text.set_text(_("Properties For: %d objects") % len(objs))
+        self.text.set_text(ngettext("Properties For: %d object",
+                                    "Properties For: %d objects",
+                                    len(objs)) % len(objs))
 
         # we may have a non-homogeneous set of objects selected
         # so take the intersection of the properties they have in common
