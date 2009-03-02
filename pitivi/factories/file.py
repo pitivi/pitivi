@@ -60,7 +60,8 @@ class PictureFileSourceFactory(FileSourceFactory):
     @see: L{FileSourceFactory}, L{RandomAccessSourceFactory}.
     """
 
-    default_duration = 3600 * gst.SECOND
+    duration = 3600 * gst.SECOND
+    default_duration = 5 * gst.SECOND
 
     # make this overridable in tests
     ffscale_factory = 'ffvideoscale'
