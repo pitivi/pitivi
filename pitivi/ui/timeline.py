@@ -235,7 +235,7 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
     def zoomChanged(self):
         # this has to be in a timeout, because the resize hasn't actually
         # completed yet, and so the canvas can't actually complete the scroll
-        gobject.timeout_add(100, self.scrollToPlayhead)
+        gobject.idle_add(self.scrollToPlayhead)
 
     def timelinePositionChanged(self, position):
         self.__position = position
@@ -247,7 +247,19 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
         new_pos = Zoomable.nsToPixel(self.__position)
         scroll_pos = self.hadj.get_value()
         if (new_pos < scroll_pos) or (new_pos > scroll_pos + width):
-            self.hadj.set_value(new_pos - width / 2)
+            self.scrollToPosition(new_pos - width / 2)
+        return False
+
+    def scrollToPosition(self, position):
+        if position > self.hadj.upper:
+            # we can't perform the scroll because the canvas needs to be
+            # updated
+            gobject.idle_add(self.__scrollToPosition, position)
+        else:
+            self.__scrollToPosition(position)
+
+    def __scrollToPosition(self, position):
+        self.hadj.set_value(position)
         return False
 
 
