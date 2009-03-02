@@ -57,6 +57,8 @@ class TrackObject(object, Signallable):
         if duration == 0:
             if factory.duration != gst.CLOCK_TIME_NONE:
                 duration = factory.duration
+            elif factory.default_duration != gst.CLOCK_TIME_NONE:
+                duration = factory.default_duration
 
         obj.props.duration = duration
 
