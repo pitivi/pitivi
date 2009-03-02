@@ -407,7 +407,7 @@ class Discoverer(object, Signallable, Loggable):
         pad.link(queue.get_pad("sink"))
 
         for element in [queue, csp, pngenc, pngsink]:
-            element.set_state(gst.STATE_PAUSED)
+            element.sync_state_with_parent()
 
     def _capsNotifyCb(self, pad, unused_property, ghost=None):
         if ghost is None:
