@@ -52,7 +52,7 @@ class Zoomable(object):
     zoomratio = 10
     sigid = None
     __instances = []
-    zoom_levels = (1, 5, 10, 20, 50, 100, 150)
+    zoom_levels = range(1, 150, 10)
     __cur_zoom = 2
 
 
