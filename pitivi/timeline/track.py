@@ -242,8 +242,8 @@ class TrackObject(object, Signallable):
         elts = list(self.gnl_object.elements())
         if elts:
             bin = elts[0]
-            bin.set_state(gst.STATE_NULL)
             self.gnl_object.remove(bin)
+            bin.set_state(gst.STATE_NULL)
             self.factory.releaseBin(bin)
 
     def _notifyStartCb(self, obj, pspec):
@@ -383,8 +383,8 @@ class Track(object, Signallable):
             raise TrackError()
 
         try:
-            track_object.gnl_object.set_state(gst.STATE_NULL)
             self.composition.remove(track_object.gnl_object)
+            track_object.gnl_object.set_state(gst.STATE_NULL)
         except gst.RemoveError:
             raise TrackError()
 
