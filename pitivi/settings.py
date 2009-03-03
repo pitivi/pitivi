@@ -581,13 +581,20 @@ def export_settings_to_render_settings(export):
     astream = get_stream_for_caps(export.getAudioCaps())
     vstream = get_stream_for_caps(export.getVideoCaps())
 
-    vset = StreamEncodeSettings(encoder=export.vencoder,
-                                input_stream=vstream,
-                                encodersettings=export.vcodecsettings)
-    aset = StreamEncodeSettings(encoder=export.aencoder,
-                                input_stream=astream,
-                                encodersettings=export.acodecsettings)
-    settings = RenderSettings(settings=[vset, aset],
+    encoder_settings = []
+    if export.vencoder is not None:
+        vset = StreamEncodeSettings(encoder=export.vencoder,
+                                    input_stream=vstream,
+                                    encodersettings=export.vcodecsettings)
+        encoder_settings.append(vset)
+
+    if export.aencoder is not None:
+        aset = StreamEncodeSettings(encoder=export.aencoder,
+                                    input_stream=astream,
+                                    encodersettings=export.acodecsettings)
+        encoder_settings.append(aset)
+
+    settings = RenderSettings(settings=encoder_settings,
                               muxer=export.muxer,
                               muxersettings=export.containersettings)
     return settings

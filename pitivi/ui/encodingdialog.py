@@ -36,6 +36,7 @@ from pitivi.ui.glade import GladeWindow
 from pitivi.action import render_action_for_uri, ViewAction
 from pitivi.factories.base import SourceFactory
 from pitivi.settings import export_settings_to_render_settings
+from pitivi.stream import AudioStream, VideoStream
 
 class EncodingDialog(GladeWindow, Loggable):
     """ Encoding dialog box """
@@ -76,8 +77,11 @@ class EncodingDialog(GladeWindow, Loggable):
         self.destroy()
 
     def _displaySettings(self):
-        self.vinfo.set_markup(self.settings.getVideoDescription())
-        self.ainfo.set_markup(self.settings.getAudioDescription())
+        if self.settings.vencoder:
+            self.vinfo.set_markup(self.settings.getVideoDescription())
+
+        if self.settings.aencoder:
+            self.ainfo.set_markup(self.settings.getAudioDescription())
 
     def _fileButtonClickedCb(self, button):
         dialog = gtk.FileChooserDialog(title=_("Choose file to render to"),

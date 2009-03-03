@@ -271,20 +271,26 @@ class Project(Serializable, Signallable, Loggable):
         If it has more than one, it will return the largest setting that suits
         all contained sources.
         """
+        settings = ExportSettings()
         if not self.timeline:
             self.warning("project doesn't have a timeline, returning default settings")
-            return ExportSettings()
-        #settings = self.timeline.getAutoSettings()
-        settings = None
-        if not settings:
-            self.warning("Timeline didn't return any auto settings, return default settings")
-            return ExportSettings()
+            return settings
 
-        # add the encoders and muxer of the default settings
-        curset = self.settings or ExportSettings()
-        settings.vencoder = curset.vencoder
-        settings.aencoder = curset.aencoder
-        settings.muxer = curset.muxer
+        # FIXME: this is ugly, but rendering for now assumes at most one audio
+        # and one video tracks
+        have_audio = have_video = False
+        for track in self.timeline.tracks:
+            if isinstance(track.stream, VideoStream) and track.duration != 0:
+                have_video = True
+            elif isinstance(track.stream, AudioStream) and track.duration != 0:
+                have_audio = True
+
+        if not have_audio:
+            settings.aencoder = None
+
+        if not have_video:
+            settings.vencoder = None
+
         return settings
 
     def setModificationState(self, state):
