@@ -298,6 +298,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         hpaned = gtk.HPaned()
         vpaned.pack1(hpaned, resize=False, shrink=True)
         self.projecttabs = ProjectTabs()
+        self._connectToSourceList()
+
         hpaned.pack1(self.projecttabs, resize=True, shrink=False)
 
         self.timeline.ruler.connect('seek', self._timelineRulerSeekCb)
@@ -336,6 +338,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
         #application icon
         self.set_icon_from_file(get_global_pixmap_dir()
             + "/pitivi.png")
+
+    def _connectToSourceList(self):
+        # FIXME: projecttabs creates the "components" but then has no API to get
+        # them back
+        sourcelist = self.projecttabs._full_list[0]
+        sourcelist.connect('play', self._sourceListPlayCb)
 
     def toggleFullScreen(self):
         """ Toggle the fullscreen mode of the application """
@@ -432,6 +440,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _keyPressEventCb(self, unused_widget, event):
         if gtk.gdk.keyval_name(event.keyval) in ['f', 'F', 'F11']:
             self.toggleFullScreen()
+
+    def _sourceListPlayCb(self, sourcelist, factory):
+        self._viewFactory(factory)
 
 ## Toolbar/Menu actions callback
 
@@ -659,20 +670,20 @@ class PitiviMainWindow(gtk.Window, Loggable):
             context.finish(False, False, ctime)
             return
 
-        # FIXME: we change the viewer pipeline unconditionally for now
-
         from pitivi.factories.file import FileSourceFactory
+        self._viewFactory(FileSourceFactory(uri))
+        context.finish(True, False, ctime)
+
+    def _viewFactory(self, factory):
+        # FIXME: we change the viewer pipeline unconditionally for now
         # we need a pipeline for playback
         pipeline = Pipeline()
-        factory = FileSourceFactory(uri)
         action = ViewAction()
         action.addProducers(factory)
         # FIXME: why do I have to call viewer.setAction ?
         self.viewer.setAction(action)
         self.viewer.setPipeline(pipeline)
-        pipeline.pause()
-
-        context.finish(True, False, ctime)
+        pipeline.play()
 
     def _timelineDragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
         # FIXME: temporarily add source to timeline, and put it in drag mode
@@ -694,12 +705,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.current.timeline.addSourceFactory(factory)
         context.finish(True, False, timestamp)
 
-
     def _timelineRulerSeekCb(self, ruler, position):
         self.debug("position:%s", gst.TIME_ARGS (position))
-        if not hasattr(self.project, 'view_action'):
-            self.project.view_action = ViewAction()
-            self.project.view_action.addProducers(self.project.factory)
         self.viewer.setAction(self.project.view_action)
         self.viewer.setPipeline(self.project.pipeline)
         # everything above only needs to be done if the viewer isn't already

@@ -40,6 +40,7 @@ from pitivi.configure import APPNAME
 from pitivi.serializable import Serializable, to_object_from_data_type
 from pitivi.projectsaver import ProjectSaver, ProjectLoadError
 from pitivi.signalinterface import Signallable
+from pitivi.action import ViewAction
 
 class Project(Serializable, Signallable, Loggable):
     """ The base class for PiTiVi projects
@@ -111,6 +112,8 @@ class Project(Serializable, Signallable, Loggable):
 
         self.factory = TimelineSourceFactory(self.timeline)
         self.pipeline = Pipeline()
+        self.view_action = ViewAction()
+        self.view_action.addProducers(self.factory)
 
         # don't want to make calling load() necessary for blank projects
         if self.uri == None:

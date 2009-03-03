@@ -112,6 +112,11 @@ def beautify_factory(factory):
 class SourceList(gtk.VBox, Loggable):
     """ Widget for listing sources """
 
+    __gsignals__ = {
+        'play': (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+                (gobject.TYPE_PYOBJECT,))
+        }
+
     def __init__(self):
         gtk.VBox.__init__(self)
         Loggable.__init__(self)
@@ -516,7 +521,7 @@ class SourceList(gtk.VBox, Loggable):
         path = paths[0]
         factory = model[path][COL_FACTORY]
         self.debug("Let's play %s", factory.name)
-        self.error("FIXME : IMPLEMENT PROPER TEMPORARY PLAYBACK USING PIPELINE/ACTION")
+        self.emit('play', factory)
 
     def _treeViewButtonPressEventCb(self, unused_treeview, event):
         if event.button == 3:
@@ -524,7 +529,7 @@ class SourceList(gtk.VBox, Loggable):
 
     def _rowActivatedCb(self, unused_treeview, path, unused_column):
         factory = self.storemodel[path][COL_FACTORY]
-        self.error("FIXME : IMPLEMENT PROPER TEMPORARY PLAYBACK USING PIPELINE/ACTION")
+        self.emit('play', factory)
 
     def _newProjectLoadedCb(self, unused_pitivi, project):
         # clear the storemodel
@@ -722,3 +727,4 @@ class InfoStub(gtk.HBox, Loggable):
         self.log("hiding")
         gtk.VBox.hide(self)
         self.showing = False
+gobject.type_register(SourceList)

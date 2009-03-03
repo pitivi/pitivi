@@ -72,7 +72,7 @@ class ProjectTabs(gtk.Notebook):
     def __init__(self):
         """ initialize """
         gtk.Notebook.__init__(self)
-        self.__full_list = []
+        self._full_list = []
         self.connect("switch-page", self.__switchPage)
         self._createUi()
 
@@ -84,7 +84,7 @@ class ProjectTabs(gtk.Notebook):
 
     def addComponent(self, component, label):
         self.append_page(component, DetachLabel(self, component, label))
-        self.__full_list.append(component)
+        self._full_list.append(component)
 
     def windowizeComponent(self, component, label):
         self.remove_page(self.page_num(component))
@@ -99,7 +99,7 @@ class ProjectTabs(gtk.Notebook):
     def __replaceComponent(self, window, component, label):
         window.remove(component)
         self.set_current_page(self.insert_page(component, label,
-            self.__full_list.index(component)))
+            self._full_list.index(component)))
         self.show()
 
     def __switchPage(self, unused_widget, unused_page, num):
