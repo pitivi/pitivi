@@ -28,6 +28,7 @@ from pitivi.action import ViewAction
 
 from pitivi.utils import time_to_string, Seeker
 from pitivi.log.loggable import Loggable
+from pitivi.pipeline import PipelineError
 
 class ViewerError(Exception):
     pass
@@ -326,8 +327,10 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.seeker.seek(position, format)
 
     def _seekerSeekCb(self, seeker, position, format):
-        self.pipeline.seek(position, format)
-        self._newTime(position)
+        try:
+            self.pipeline.seek(position, format)
+        except PipelineError:
+            self.error("seek failed %s %s", gst.TIME_ARGS(position), format)
 
     def _newTime(self, value, frame=-1):
         self.info("value:%s, frame:%d", gst.TIME_ARGS(value), frame)
