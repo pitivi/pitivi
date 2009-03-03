@@ -255,14 +255,10 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
 
     timeline = receiver()
 
-    prev_duration = 0
-
     @handler(timeline, "duration-changed")
     def _timelineStartDurationChanged(self, unused_timeline, duration):
-        if duration > self.prev_duration:
-            self.prev_duration = duration
-            self.ruler.setMaxDuration(self.prev_duration)
-            self.__canvas.setMaxDuration(self.prev_duration)
+        self.ruler.setMaxDuration(duration)
+        self.__canvas.setMaxDuration(duration)
         self.ruler.setShadedDuration(duration)
 
 ## ToolBar callbacks
