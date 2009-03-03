@@ -70,6 +70,8 @@ class EncodingDialog(GladeWindow, Loggable):
         self.timestarted = 0
         self._displaySettings()
 
+        self.window.connect("delete-event", self._deleteEventCb)
+
     def _shutDown(self):
         self.debug("shutting down")
         # Abort recording
@@ -91,6 +93,7 @@ class EncodingDialog(GladeWindow, Loggable):
                                        action=gtk.FILE_CHOOSER_ACTION_SAVE)
         if self.outfile:
             dialog.set_current_name(self.outfile)
+
         res = dialog.run()
         dialog.hide()
         if res == gtk.RESPONSE_ACCEPT:
@@ -147,6 +150,10 @@ class EncodingDialog(GladeWindow, Loggable):
 
     def _cancelButtonClickedCb(self, unused_button):
         self.debug("Cancelling !")
+        self._shutDown()
+
+    def _deleteEventCb(self, *args):
+        self.debug("delete event")
         self._shutDown()
 
     def addRecordAction(self):
