@@ -263,7 +263,8 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _drawingAreaExposeCb(self, drawingarea, event):
         drawingarea.disconnect_by_func(self._drawingAreaExposeCb)
-        drawingarea.modify_bg(gtk.STATE_NORMAL, drawingarea.style.black)
+        for state in range(gtk.STATE_INSENSITIVE + 1):
+            drawingarea.modify_bg(state, drawingarea.style.black)
         self.debug("yay, we are exposed !")
         if self.pipeline:
             try:
@@ -417,7 +418,6 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         Loggable.__init__(self)
         self.action = action # FIXME : Check if it's a view action
         self.have_set_xid = False
-        self.unset_flags(gtk.DOUBLE_BUFFERED)
         self.unset_flags(gtk.SENSITIVE)
 
     def set_xwindow_id(self):
@@ -426,6 +426,7 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         if self.have_set_xid:
             return
         self.action.set_window_xid(self.window.xid)
+        self.unset_flags(gtk.DOUBLE_BUFFERED)
         self.have_set_xid = True
 
 
