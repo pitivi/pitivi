@@ -152,7 +152,7 @@ class EncodingDialog(GladeWindow, Loggable):
         self.debug("Cancelling !")
         self._shutDown()
 
-    def _deleteEventCb(self, *args):
+    def _deleteEventCb(self, window, event):
         self.debug("delete event")
         self._shutDown()
 
