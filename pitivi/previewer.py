@@ -38,8 +38,8 @@ import pitivi.stream as stream
 from pitivi.settings import GlobalSettings
 import pitivi.instance as instance
 from pitivi.ui.zoominterface import Zoomable
-
 from pitivi.log.loggable import Loggable
+from pitivi.factories.file import PictureFileSourceFactory
 
 GlobalSettings.addConfigSection("thumbnailing")
 GlobalSettings.addConfigOption("thumbnailSpacingHint",
@@ -55,6 +55,7 @@ GlobalSettings.addConfigOption("thumbnailSpacingHint",
 # |_RandomAccessPreviewer        -- asynchronous fetching and caching
 #   |_RandomAccessAudioPreviewer -- audio-specific pipeline and rendering code
 #   |_RandomAccessVideoPreviewer -- video-specific pipeline and rendering
+#     |_StillImagePreviewer      -- only uses one segment
 
 previewers = {}
 
@@ -64,7 +65,6 @@ def get_preview_for_object(trackobject):
     stream_type = type(stream_)
     key = factory, stream_
     if not key in previewers:
-        # TODO: handle still images
         # TODO: handle non-random access factories
         # TODO: handle non-source factories
         # note that we switch on the stream_type, but we hash on the stream
@@ -72,7 +72,10 @@ def get_preview_for_object(trackobject):
         if stream_type == stream.AudioStream:
             previewers[key] = RandomAccessAudioPreviewer(factory, stream_)
         elif stream_type == stream.VideoStream:
-            previewers[key] = RandomAccessVideoPreviewer(factory, stream_)
+            if type(factory) == PictureFileSourceFactory:
+                previewers[key] = StillImagePreviewer(factory, stream_)
+            else:
+                previewers[key] = RandomAccessVideoPreviewer(factory, stream_)
         else:
             previewers[key] = DefaultPreviewer(factory, stream_)
     return previewers[key]
@@ -303,6 +306,11 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
             gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
             gst.SEEK_TYPE_SET, timestamp,
             gst.SEEK_TYPE_NONE, -1)
+
+class StillImagePreviewer(RandomAccessVideoPreviewer):
+
+    def _thumbForTime(self, time):
+        return RandomAccessVideoPreviewer._thumbForTime(self, 0L)
 
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
