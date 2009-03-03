@@ -22,6 +22,7 @@
 
 # set of utility functions
 
+import gobject
 import gst, bisect
 from pitivi.signalinterface import Signallable
 import pitivi.log.log as log
@@ -206,3 +207,29 @@ class PropertyChangeTracker(object, Signallable):
         self.properties[property_name] = value
 
         self.emit(property_name + '-changed', timeline_object, old_value, value)
+
+class Seeker(object, Signallable):
+    __signals__ = {'seek': ['position', 'format']}
+
+    def __init__(self, timeout):
+        self.timeout = timeout
+        self.pending_seek_id = None
+        self.position = None
+        self.format = None
+
+    def seek(self, position, format=gst.FORMAT_TIME):
+        if self.pending_seek_id is None:
+            self.pending_seek_id = self._scheduleSeek(self.timeout,
+                    self._seekTimeoutCb)
+
+        self.position = position
+        self.format = format
+
+    def _scheduleSeek(self, timeout, callback):
+        return gobject.timeout_add(timeout, callback)
+
+    def _seekTimeoutCb(self):
+        self.pending_seek_id = None
+        position, self.position = self.position, None
+        format, self.format = self.format, None
+        self.emit('seek', position, format)

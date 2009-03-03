@@ -28,7 +28,7 @@ import gtk
 import gst
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.log.loggable import Loggable
-from pitivi.utils import time_to_string
+from pitivi.utils import time_to_string, Seeker
 
 class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
@@ -68,13 +68,11 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
         # position is in nanoseconds
         self.position = 0
-        self.requested_time = gst.CLOCK_TIME_NONE
-        self.currentlySeeking = False
         self.pressed = False
-        self.pending_seek_id = None
         self.shaded_duration = gst.CLOCK_TIME_NONE
         self.max_duration = gst.CLOCK_TIME_NONE
-        self.seek_delay = 80
+        self.seeker = Seeker(80)
+        self.seeker.connect('seek', self._seekerSeekCb)
 
 ## Zoomable interface override
 
@@ -168,32 +166,22 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
 ## Seeking methods
 
-    def _seekTimeoutCb(self):
-        self.pending_seek_id = None
-
-        self.debug("delayed seek timeout %s %s",
-                   gst.TIME_ARGS(self.seek_position), self.seek_format)
-
+    def _seekerSeekCb(self, seeker, position, format):
         # clamping values within acceptable range
         duration = self.getShadedDuration()
         if duration == gst.CLOCK_TIME_NONE:
             return
-        if self.seek_position > duration:
-            self.seek_position = duration - (1 * gst.MSECOND)
-        elif self.seek_position < 0:
-            self.seek_position = 0
+        if position > duration:
+            position = duration - (1 * gst.MSECOND)
+        elif position < 0:
+            position = 0
 
-        self.emit('seek', self.seek_position)
+        self.emit('seek', position)
 
         return False
 
     def _doSeek(self, value, format=gst.FORMAT_TIME):
-        if self.pending_seek_id is None:
-            self.pending_seek_id = gobject.timeout_add(self.seek_delay,
-                    self._seekTimeoutCb)
-
-        self.seek_position = value
-        self.seek_format = format
+        self.seeker.seek(value, format)
 
 ## Drawing methods
 

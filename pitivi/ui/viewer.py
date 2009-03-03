@@ -26,7 +26,7 @@ import gst
 
 from pitivi.action import ViewAction
 
-from pitivi.utils import time_to_string
+from pitivi.utils import time_to_string, Seeker
 from pitivi.log.loggable import Loggable
 
 class ViewerError(Exception):
@@ -53,15 +53,15 @@ class PitiviViewer(gtk.VBox, Loggable):
         Loggable.__init__(self)
         self.log("New PitiviViewer")
 
+        self.seeker = Seeker(80)
+        self.seeker.connect('seek', self._seekerSeekCb)
         self.action = action
         self.pipeline = pipeline
         self.producer = None
 
         self.current_time = long(0)
-        self.requested_time = gst.CLOCK_TIME_NONE
         self._initial_seek = None
         self.current_frame = -1
-        self.currentlySeeking = False
 
         self.currentState = gst.STATE_PAUSED
         self._haveUI = False
@@ -322,29 +322,12 @@ class PitiviViewer(gtk.VBox, Loggable):
                 seekvalue = min(self.current_frame + 1, self.pipeline.getDuration())
             self._doSeek(seekvalue, gst.FORMAT_DEFAULT)
 
-    def _seekTimeoutCb(self):
-        self.debug("requested_time %s", gst.TIME_ARGS(self.requested_time))
-        self.currentlySeeking = False
-        if (self.requested_time != gst.CLOCK_TIME_NONE) and (self.current_time != self.requested_time):
-            self._doSeek(self.requested_time)
-        return False
+    def _doSeek(self, position, format=gst.FORMAT_TIME):
+        self.seeker.seek(position, format)
 
-    def _doSeek(self, value, format=gst.FORMAT_TIME):
-        self.debug("%s , currentlySeeking:%r", gst.TIME_ARGS(value),
-                   self.currentlySeeking)
-        if not self.currentlySeeking:
-            self.currentlySeeking = True
-            try:
-                self.pipeline.seek(value, format=format)
-                self.debug("seek succeeded, request_time = NONE")
-                self.requested_time = gst.CLOCK_TIME_NONE
-                gobject.timeout_add(80, self._seekTimeoutCb)
-                self._newTime(value)
-            except:
-                self.currentlySeeking = False
-        else:
-            if format == gst.FORMAT_TIME:
-                self.requested_time = value
+    def _seekerSeekCb(self, seeker, position, format):
+        self.pipeline.seek(position, format)
+        self._newTime(position)
 
     def _newTime(self, value, frame=-1):
         self.info("value:%s, frame:%d", gst.TIME_ARGS(value), frame)
