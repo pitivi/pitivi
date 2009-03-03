@@ -86,7 +86,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 ## timeline position changed method
 
     def timelinePositionChanged(self, value, unused_frame=None):
-        self.debug("value : %r" % value)
+        self.debug("value : %r", value)
         ppos = max(self.nsToPixel(self.position) - 1, 0)
         self.position = value
         npos = max(self.nsToPixel(self.position) - 1, 0)

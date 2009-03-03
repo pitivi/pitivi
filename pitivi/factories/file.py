@@ -44,7 +44,7 @@ class FileSourceFactory(URISourceFactoryMixin, RandomAccessSourceFactory):
         RandomAccessSourceFactory.__init__(self, name, displayname)
 
     def _releaseBin(self, bin):
-        self.debug("releasing %r" % bin)
+        self.debug("releasing %r", bin)
         if hasattr(bin, 'decodebin'):
             try:
                 bin.decodebin.disconnect_by_func(self._dbinPadAddedCb)
@@ -67,7 +67,7 @@ class PictureFileSourceFactory(FileSourceFactory):
     ffscale_factory = 'ffvideoscale'
 
     def _makeStreamBin(self, output_stream):
-        self.debug("making picture bin for %s" % self.name)
+        self.debug("making picture bin for %s", self.name)
         res = gst.Bin("picture-%s" % self.name)
         # use ffvideoscale only if available AND width < 2048
         if output_stream.width < 2048:
@@ -91,7 +91,7 @@ class PictureFileSourceFactory(FileSourceFactory):
                      scale, freeze, res)
         dbin.connect("pad-removed", self._dbinPadRemovedCb,
                      scale, freeze, res)
-        self.debug("Returning %r" % res)
+        self.debug("Returning %r", res)
 
         res.decodebin = dbin
         return res

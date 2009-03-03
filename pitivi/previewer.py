@@ -39,6 +39,8 @@ from pitivi.settings import GlobalSettings
 import pitivi.instance as instance
 from pitivi.ui.zoominterface import Zoomable
 
+from pitivi.log.loggable import Loggable
+
 GlobalSettings.addConfigSection("thumbnailing")
 GlobalSettings.addConfigOption("thumbnailSpacingHint",
     section="thumbnailing",
@@ -75,7 +77,7 @@ def get_preview_for_object(trackobject):
             previewers[key] = DefaultPreviewer(factory, stream_)
     return previewers[key]
 
-class Previewer(object, Signallable):
+class Previewer(object, Signallable, Loggable):
 
     __signals__ = {
         "update" : ("segment",),
@@ -88,6 +90,7 @@ class Previewer(object, Signallable):
     __DEFAULT_THUMB__ = "processing-clip.png"
 
     def __init__(self, factory, stream_):
+        Loggable.__init__(self)
         # create default thumbnail
         path = os.path.join(get_pixmap_dir(), self.__DEFAULT_THUMB__)
         self.default_thumb = cairo.ImageSurface.create_from_png(path)
@@ -295,7 +298,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
     def _startThumbnail(self, timestamp):
         RandomAccessPreviewer._startThumbnail(self, timestamp)
-        gst.log("timestamp : %s" % gst.TIME_ARGS(timestamp))
+        self.log("timestamp : %s", gst.TIME_ARGS(timestamp))
         self.videopipeline.seek(1.0,
             gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
             gst.SEEK_TYPE_SET, timestamp,

@@ -79,7 +79,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         @param pipeline: The Pipeline to switch to.
         @type pipeline: L{Pipeline}.
         """
-        self.debug("self.pipeline:%r, pipeline:%r" % (self.pipeline, pipeline))
+        self.debug("self.pipeline:%r, pipeline:%r", self.pipeline, pipeline)
 
         if pipeline is not None and pipeline == self.pipeline:
             return
@@ -103,7 +103,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         will be used.
         @type action: L{ViewAction} or C{None}
         """
-        self.debug("self.action:%r, action:%r" % (self.action, action))
+        self.debug("self.action:%r, action:%r", self.action, action)
         if action is not None and action == self.action:
             return
 
@@ -116,7 +116,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self._connectToAction(action)
 
     def _connectToPipeline(self, pipeline):
-        self.debug("pipeline:%r" % pipeline)
+        self.debug("pipeline:%r", pipeline)
         if self.pipeline != None:
             raise ViewerError("previous pipeline wasn't disconnected")
         self.pipeline = pipeline
@@ -134,7 +134,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.action.activate()
 
     def _disconnectFromPipeline(self):
-        self.debug("pipeline:%r" % self.pipeline)
+        self.debug("pipeline:%r", self.pipeline)
         if self.pipeline == None:
             # silently return, there's nothing to disconnect from
             return
@@ -153,7 +153,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.pipeline = None
 
     def _connectToAction(self, action):
-        self.debug("action: %r" % action)
+        self.debug("action: %r", action)
         # not sure what we need to do ...
         self.action = action
         # FIXME: fix this properly?
@@ -164,7 +164,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.action = None
 
     def _setUiActive(self, active=True):
-        self.debug("active %r" % active)
+        self.debug("active %r", active)
         self.set_sensitive(active)
         if self._haveUI:
             for item in [self.slider, self.rewind_button, self.back_button,
@@ -248,7 +248,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def setDisplayAspectRatio(self, ratio):
         """ Sets the DAR of the Viewer to the given ratio """
-        self.debug("Setting ratio of %f [%r]" % (float(ratio), ratio))
+        self.debug("Setting ratio of %f [%r]", float(ratio), ratio)
         try:
             self.aframe.set_property("ratio", float(ratio))
         except:
@@ -283,7 +283,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         return False
 
     def _sliderButtonReleaseCb(self, slider, unused_event):
-        self.info("slider button release at %s" % time_to_string(long(slider.get_value())))
+        self.info("slider button release at %s", time_to_string(long(slider.get_value())))
         self.moving_slider = False
         if self.valuechangedid:
             slider.disconnect(self.valuechangedid)
@@ -313,7 +313,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             self._doSeek(seekvalue)
         else:
             # frame scrolling, frame by frame
-            self.info("scroll direction:%s" % event.direction)
+            self.info("scroll direction:%s", event.direction)
             if event.direction in [gtk.gdk.SCROLL_LEFT, gtk.gdk.SCROLL_DOWN]:
                 self.info("scrolling backward")
                 seekvalue = max(self.current_frame - 1, 0)
@@ -323,15 +323,15 @@ class PitiviViewer(gtk.VBox, Loggable):
             self._doSeek(seekvalue, gst.FORMAT_DEFAULT)
 
     def _seekTimeoutCb(self):
-        self.debug("requested_time %s" % gst.TIME_ARGS(self.requested_time))
+        self.debug("requested_time %s", gst.TIME_ARGS(self.requested_time))
         self.currentlySeeking = False
         if (self.requested_time != gst.CLOCK_TIME_NONE) and (self.current_time != self.requested_time):
             self._doSeek(self.requested_time)
         return False
 
     def _doSeek(self, value, format=gst.FORMAT_TIME):
-        self.debug("%s , currentlySeeking:%r" % (gst.TIME_ARGS(value),
-                                                self.currentlySeeking))
+        self.debug("%s , currentlySeeking:%r", gst.TIME_ARGS(value),
+                   self.currentlySeeking)
         if not self.currentlySeeking:
             self.currentlySeeking = True
             try:
@@ -347,7 +347,7 @@ class PitiviViewer(gtk.VBox, Loggable):
                 self.requested_time = value
 
     def _newTime(self, value, frame=-1):
-        self.info("value:%s, frame:%d" % (gst.TIME_ARGS(value), frame))
+        self.info("value:%s, frame:%d", gst.TIME_ARGS(value), frame)
         self.current_time = value
         self.current_frame = frame
         try:
@@ -364,7 +364,7 @@ class PitiviViewer(gtk.VBox, Loggable):
     ## active Timeline calllbacks
 
     def _durationChangedCb(self, unused_pipeline, duration):
-        self.debug("duration : %s" % gst.TIME_ARGS(duration))
+        self.debug("duration : %s", gst.TIME_ARGS(duration))
         position = self.posadjust.get_value()
         if duration < position:
             self.posadjust.set_value(float(duration))
@@ -403,7 +403,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self._newTime(pos)
 
     def _currentStateCb(self, unused_pipeline, state):
-        self.info("current state changed : %s" % state)
+        self.info("current state changed : %s", state)
         if state == int(gst.STATE_PLAYING):
             self.playpause_button.setPause()
         elif state == int(gst.STATE_PAUSED):
@@ -414,7 +414,7 @@ class PitiviViewer(gtk.VBox, Loggable):
 
     def _elementMessageCb(self, unused_pipeline, message):
         name = message.structure.get_name()
-        self.log('message:%s / %s' % (message, name))
+        self.log('message:%s / %s', message, name)
         if name == 'prepare-xwindow-id':
             self.drawingarea.set_xwindow_id()
 

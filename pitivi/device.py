@@ -187,7 +187,7 @@ class HalDeviceProbe(DeviceProbe):
             info = devobject.GetProperty("info.product")
             srcdev = V4LSourceDeviceFactory(device=location,
                                             displayname=info)
-            self.debug("Valid source %r" % dev)
+            self.debug("Valid source %r", dev)
             self._sources['video'][device_udi] = srcdev
             self.emit("device-added", srcdev)
         elif devobject.QueryCapability("alsa"):
@@ -197,24 +197,24 @@ class HalDeviceProbe(DeviceProbe):
                 device = devobject.GetProperty("alsa.device")
                 info = devobject.GetProperty("alsa.card_id")
                 if alsatype == "capture":
-                    self.debug("Valid source %r" % dev)
+                    self.debug("Valid source %r", dev)
                     self._sources['audio'][device_udi] = AlsaSourceDeviceFactory(card=card,
                                                                   device=device,
                                                                   displayname=info)
                     self.emit("device-added", self._sources['audio'][device_udi])
                 elif alsatype == "playback":
-                    self.debug("Valid sink %r" % dev)
+                    self.debug("Valid sink %r", dev)
                     self._sinks[device_udi] = AlsaSinkDeviceFactory(card=card,
                                                               device=device,
                                                               displayname=info)
                     self.emit("device-added", self._sinks[device_udi])
 
     def _deviceAddedCb(self, device_udi, *unused_args):
-        self.debug("udi:%r" % device_udi)
+        self.debug("udi:%r", device_udi)
         self._processUDI(device_udi)
 
     def _deviceRemovedCb(self, device_udi, *unused_args):
-        self.debug("udi:%r" % device_udi)
+        self.debug("udi:%r", device_udi)
         for k in ('audio', 'video'):
             if self._sources[k].has_key(device_udi):
                 dev = self._sources[k][device_udi]
@@ -329,4 +329,4 @@ class V4LSourceDeviceFactory(SourceDeviceFactory):
             v.set_state(gst.STATE_NULL)
             return
         v.set_state(gst.STATE_NULL)
-        self.warning("Could not probe %s" % self._device)
+        self.warning("Could not probe %s", self._device)

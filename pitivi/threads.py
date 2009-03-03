@@ -87,7 +87,7 @@ class ThreadMaster(object, Loggable):
         # IDEA : We might need a limit of concurrent threads ?
         # ... or some priorities ?
         # FIXME : we should only accept subclasses of our Thread class
-        self.log("Adding thread of type %r" % threadclass)
+        self.log("Adding thread of type %r", threadclass)
         thread = threadclass(*args)
         thread.connect("done", self._threadDoneCb)
         self.threads.append(thread)
@@ -96,7 +96,7 @@ class ThreadMaster(object, Loggable):
         self.log("started !")
 
     def _threadDoneCb(self, thread):
-        self.log("thread %r is done" % thread)
+        self.log("thread %r is done", thread)
         self.threads.remove(thread)
 
     def stopAllThreads(self):
@@ -105,7 +105,7 @@ class ThreadMaster(object, Loggable):
         joinedthreads = 0
         while(joinedthreads < len(self.threads)):
             for thread in self.threads:
-                self.log("Trying to stop thread %r" % thread)
+                self.log("Trying to stop thread %r", thread)
                 try:
                     thread.join()
                     joinedthreads += 1

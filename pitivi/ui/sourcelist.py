@@ -387,11 +387,11 @@ class SourceList(gtk.VBox, Loggable):
         if video and video[0].thumbnail:
             thumbnail_file = video[0].thumbnail
             try:
-                self.debug("attempting to open thumbnail file '%s'" %
+                self.debug("attempting to open thumbnail file '%s'",
                         thumbnail_file)
                 pixbuf = gtk.gdk.pixbuf_new_from_file(thumbnail_file)
             except:
-                self.error("Failure to create thumbnail from file '%s'" %
+                self.error("Failure to create thumbnail from file '%s'",
                         thumbnail_file)
                 thumbnail = self.videofilepixbuf
             else:
@@ -465,7 +465,7 @@ class SourceList(gtk.VBox, Loggable):
     ## Import Sources Dialog Box callbacks
 
     def _dialogBoxResponseCb(self, dialogbox, response, select_folders):
-        self.debug("response:%r" % response)
+        self.debug("response:%r", response)
         if response == gtk.RESPONSE_OK:
             lastfolder = dialogbox.get_current_folder()
             instance.PiTiVi.settings.lastImportFolder = lastfolder
@@ -515,7 +515,7 @@ class SourceList(gtk.VBox, Loggable):
             return
         path = paths[0]
         factory = model[path][COL_FACTORY]
-        self.debug("Let's play %s" % factory.name)
+        self.debug("Let's play %s", factory.name)
         self.error("FIXME : IMPLEMENT PROPER TEMPORARY PLAYBACK USING PIPELINE/ACTION")
 
     def _treeViewButtonPressEventCb(self, unused_treeview, event):
@@ -532,7 +532,7 @@ class SourceList(gtk.VBox, Loggable):
         self._connectToProject(project)
         # synchronize the storemodel with the new project's sourcelist
         for uri, factory in project.sources:
-            self.log("loading uri %s" % uri)
+            self.log("loading uri %s", uri)
             self._addFactory(factory)
 
     def _newProjectFailedCb(self, unused_pitivi, unused_reason,
@@ -555,7 +555,7 @@ class SourceList(gtk.VBox, Loggable):
             # or it's on local system with "file://"
             return os.path.isfile(path)
 
-        self.debug("targettype:%d, selection.data:%r" % (targettype, selection.data))
+        self.debug("targettype:%d, selection.data:%r", targettype, selection.data)
         directories = []
         if targettype == dnd.TYPE_URI_LIST:
             incoming = [unquote(x.strip('\x00')) for x in selection.data.strip().split("\r\n") if x.strip('\x00')]
@@ -587,7 +587,7 @@ class SourceList(gtk.VBox, Loggable):
 
     def _dndDataGetCb(self, unused_widget, unused_context, selection,
                       targettype, unused_eventtime):
-        self.info("data get, type:%d" % targettype)
+        self.info("data get, type:%d", targettype)
         uris = self.getSelectedItems()
         if len(uris) < 1:
             return

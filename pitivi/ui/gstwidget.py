@@ -98,7 +98,7 @@ def make_property_widget(unused_element, prop, value=None):
 
         idx = 0
         for key, val in prop.enum_class.__enum_values__.iteritems():
-            log.log("gstwidget", "adding %s / %s" % (val.value_name, val))
+            log.log("gstwidget", "adding %s / %s", val.value_name, val)
             model.append([val.value_name, val])
             if val == value:
                 selected = idx
@@ -126,7 +126,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
 
     def setElement(self, element, properties={}, ignore=['name']):
         """ Set given element on Widget, with optional properties """
-        self.info("element:%s, properties:%s" % (element, properties))
+        self.info("element:%s, properties:%s", element, properties)
         self.element = element
         self.ignore = ignore
         self.properties = {} #key:name, value:widget
@@ -176,11 +176,11 @@ class GstElementSettingsDialog(GladeWindow, Loggable):
     def __init__(self, elementfactory, properties={}):
         GladeWindow.__init__(self)
         Loggable.__init__(self)
-        self.debug("factory:%s, properties:%s" % (elementfactory, properties))
+        self.debug("factory:%s, properties:%s", elementfactory, properties)
         self.factory = elementfactory
         self.element = self.factory.create("elementsettings")
         if not self.element:
-            self.warning("Couldn't create element from factory %s" % self.factory)
+            self.warning("Couldn't create element from factory %s", self.factory)
         self.desclabel = self.widgets["descriptionlabel"]
         self.authlabel = self.widgets["authorlabel"]
         self.properties = properties

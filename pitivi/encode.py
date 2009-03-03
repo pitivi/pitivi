@@ -98,7 +98,7 @@ class RenderFactory(OperationFactory):
         OperationFactory.__init__(self, *args, **kwargs)
         # add input streams according to the settings
         for i in range(len(settings.settings)):
-            self.debug("Adding stream %d %r" % (i, settings.settings[i].input_stream))
+            self.debug("Adding stream %d %r", i, settings.settings[i].input_stream)
             self.addInputStream(settings.settings[i].input_stream)
 
     def _makeBin(self, *args):
@@ -201,16 +201,16 @@ def get_compatible_sink_pad(factoryname, caps):
     """
     factory = gst.registry_get_default().lookup_feature(factoryname)
     if factory == None:
-        log.warning("encode","%s is not a valid factoryname" % factoryname)
+        log.warning("encode","%s is not a valid factoryname", factoryname)
         return None
 
     res = []
     sinkpads = [x for x in factory.get_static_pad_templates() if x.direction == gst.PAD_SINK]
     for p in sinkpads:
         c = p.get_caps()
-        log.log("encode","sinkcaps %s" % c.to_string())
+        log.log("encode","sinkcaps %s", c.to_string())
         inter = caps.intersect(c)
-        log.log("encode","intersection %s" % inter.to_string())
+        log.log("encode","intersection %s", inter.to_string())
         if inter:
             res.append(p.name_template)
     if len(res) > 0:
@@ -221,18 +221,18 @@ def get_compatible_sink_caps(factoryname, caps):
     """
     Returns the compatible caps between 'caps' and the sink pad caps of 'factoryname'
     """
-    log.log("encode","factoryname : %s , caps : %s" % (factoryname, caps.to_string()))
+    log.log("encode","factoryname : %s , caps : %s", factoryname, caps.to_string())
     factory = gst.registry_get_default().lookup_feature(factoryname)
     if factory == None:
-        log.warning("encode","%s is not a valid factoryname" % factoryname)
+        log.warning("encode","%s is not a valid factoryname", factoryname)
         return None
 
     res = []
     sinkcaps = [x.get_caps() for x in factory.get_static_pad_templates() if x.direction == gst.PAD_SINK]
     for c in sinkcaps:
-        log.log("encode","sinkcaps %s" % c.to_string())
+        log.log("encode","sinkcaps %s", c.to_string())
         inter = caps.intersect(c)
-        log.log("encode","intersection %s" % inter.to_string())
+        log.log("encode","intersection %s", inter.to_string())
         if inter:
             res.append(inter)
 

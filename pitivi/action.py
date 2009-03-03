@@ -430,7 +430,7 @@ class Action(object, Signallable, Loggable):
                     compat = consumer.getInputStreams(type(producer_stream))
                     # in case of ambiguity, raise an exception
                     if len(compat) > 1:
-                        self.warning("%r" % compat)
+                        self.warning("%r", compat)
                         raise ActionError("Too many compatible streams in consumer")
                     if len(compat) == 1:
                         self.debug("    Got a compatible stream !")

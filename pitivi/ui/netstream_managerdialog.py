@@ -149,7 +149,6 @@ class NetstreamManagerDialog(object):
 
         elif t == gst.MESSAGE_ERROR:
             err, debug = message.parse_error()
-            print "Error: %s" % err, debug
             if self.player:
                 self.player.set_state(gst.STATE_NULL)
             self.capture_btn.set_label("Capture")

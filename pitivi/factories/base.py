@@ -66,7 +66,7 @@ class ObjectFactory(object, Signallable, Loggable):
 
     def __init__(self, name="", displayname=""):
         Loggable.__init__(self)
-        self.info("name:%s" % name)
+        self.info("name:%s", name)
         self.parent = None
         self.name = name
         self.displayname = displayname
@@ -227,9 +227,9 @@ class SourceFactory(ObjectFactory):
         """
 
         compatible_stream = None
-        self.debug("stream %r" % output_stream)
+        self.debug("stream %r", output_stream)
         if output_stream is not None:
-            self.debug("streams %r" % self.output_streams)
+            self.debug("streams %r", self.output_streams)
             for stream in self.output_streams:
                 if output_stream.isCompatible(stream):
                     compatible_stream = stream
@@ -309,7 +309,7 @@ class SinkFactory(ObjectFactory):
         @see: L{releaseBin}
         """
 
-        self.debug("stream %r" % input_stream)
+        self.debug("stream %r", input_stream)
         compatible_stream = None
         if input_stream is not None:
             self.debug("Streams %r", self.input_streams)

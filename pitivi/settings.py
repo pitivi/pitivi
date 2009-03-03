@@ -481,7 +481,7 @@ class ExportSettings(Serializable, Signallable, Loggable):
 
     def setVideoProperties(self, width=-1, height=-1, framerate=-1, par=-1):
         """ Set the video width, height and framerate """
-        self.info("set_video_props %d x %d @ %r fps" % (width, height, framerate))
+        self.info("set_video_props %d x %d @ %r fps", width, height, framerate)
         changed = False
         if not width == -1 and not width == self.videowidth:
             self.videowidth = width
@@ -500,7 +500,7 @@ class ExportSettings(Serializable, Signallable, Loggable):
 
     def setAudioProperties(self, nbchanns=-1, rate=-1, depth=-1):
         """ Set the number of audio channels, rate and depth """
-        self.info("%d x %dHz %dbits" % (nbchanns, rate, depth))
+        self.info("%d x %dHz %dbits", nbchanns, rate, depth)
         changed = False
         if not nbchanns == -1 and not nbchanns == self.audiochannels:
             self.audiochannels = nbchanns

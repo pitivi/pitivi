@@ -100,18 +100,18 @@ class Discoverer(object, Signallable, Loggable):
         if self.pipeline is not None:
             self.info("before setting to NULL")
             res = self.pipeline.set_state(gst.STATE_NULL)
-            self.info("after setting to NULL : %s" % res)
+            self.info("after setting to NULL : %s", res)
 
     def addFile(self, filename):
         """ queue a filename to be discovered """
-        self.info("filename: %s" % filename)
+        self.info("filename: %s", filename)
         self.queue.append(filename)
         if not self.working:
             self._startAnalysis()
 
     def addFiles(self, filenames):
         """ queue a list of filenames to be discovered """
-        self.info("filenames : %s" % filenames)
+        self.info("filenames : %s", filenames)
         self.queue.extend(filenames)
         if self.queue and not self.working:
             self._startAnalysis()
@@ -213,7 +213,7 @@ class Discoverer(object, Signallable, Loggable):
 
             self.emit('finished_analyzing', factory)
 
-        self.info("Cleaning up after finished analyzing %s" % self.current_uri)
+        self.info("Cleaning up after finished analyzing %s", self.current_uri)
         self._resetState()
 
         self.queue.pop(0)
@@ -269,14 +269,14 @@ class Discoverer(object, Signallable, Loggable):
         Sets up a pipeline to analyze the given uri
         """
         self.current_uri = self.queue[0]
-        self.info("Analyzing %s" % self.current_uri)
+        self.info("Analyzing %s", self.current_uri)
 
         # setup graph and start analyzing
         self.pipeline = gst.Pipeline("Discoverer-%s" % self.current_uri)
 
         source = self._createSource()
         if not source:
-            self.warning("This is not a media file: %s" % self.current_uri)
+            self.warning("This is not a media file: %s", self.current_uri)
             self.error = _("No available source handler.")
             self.error_debug = _("You do not have a GStreamer source element to handle protocol '%s'") % gst.uri_get_protocol(self.current_uri)
             self._finishAnalysis()
@@ -334,7 +334,7 @@ class Discoverer(object, Signallable, Loggable):
         self._finishAnalysis()
 
     def _busMessageElementCb(self, unused_bus, message):
-        self.debug("Element message %s" % message.structure.to_string())
+        self.debug("Element message %s", message.structure.to_string())
         if message.structure.get_name() == "redirect":
             self.warning("We don't implement redirections currently, ignoring file")
             if self.error is None:
@@ -355,7 +355,7 @@ class Discoverer(object, Signallable, Loggable):
             return
 
         state_change = message.parse_state_changed()
-        self.log("%s:%s" % ( message.src, state_change))
+        self.log("%s:%s", message.src, state_change)
         prev, new, pending = state_change
 
         if prev == gst.STATE_READY and new == gst.STATE_PAUSED and \
@@ -370,7 +370,7 @@ class Discoverer(object, Signallable, Loggable):
                 self._finishAnalysis()
 
     def _busMessageTagCb(self, unused_bus, message):
-        self.debug("Got tags %s" % message.structure.to_string())
+        self.debug("Got tags %s", message.structure.to_string())
         self.current_tags.append(message.parse_tag())
 
     def _maybeQueryDuration(self, pad):
@@ -391,7 +391,7 @@ class Discoverer(object, Signallable, Loggable):
 
     def _newVideoPadCb(self, pad, stream):
         """ a new video pad was found """
-        self.debug("pad %s" % pad)
+        self.debug("pad %s", pad)
 
         queue = gst.element_factory_make("queue")
         queue.props.max_size_bytes = 5 * 1024 * 1024
@@ -426,7 +426,7 @@ class Discoverer(object, Signallable, Loggable):
             self._newVideoPadCb(ghost, stream)
 
     def _newDecodedPadCb(self, unused_element, pad, is_last):
-        self.info("pad:%s caps:%s is_last:%s" % (pad, pad.get_caps(), is_last))
+        self.info("pad:%s caps:%s is_last:%s", pad, pad.get_caps(), is_last)
 
         # try to get the duration
         # NOTE: this gets the duration only once, usually for the first stream.

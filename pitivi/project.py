@@ -86,7 +86,7 @@ class Project(Serializable, Signallable, Loggable):
         uri : the uri of the project
         """
         Loggable.__init__(self)
-        self.log("name:%s, uri:%s" % (name, uri))
+        self.log("name:%s, uri:%s", name, uri)
         self.name = name
         self.settings = None
         self.description = ""
@@ -142,7 +142,7 @@ class Project(Serializable, Signallable, Loggable):
         loads the project from a file
         Private method, use load() instead
         """
-        self.log("uri:%s" % self.uri)
+        self.log("uri:%s", self.uri)
         self.debug("Creating timeline")
         # FIXME : This should be discovered !
         saveformat = "pickle"
@@ -169,7 +169,7 @@ class Project(Serializable, Signallable, Loggable):
         if uri_is_valid(self.uri):
             path = gst.uri_get_location(self.uri)
         else:
-            self.warning("uri '%s' is invalid, aborting save" % self.uri)
+            self.warning("uri '%s' is invalid, aborting save", self.uri)
             return False
 
         #TODO: a bit more sophisticated overwite detection
@@ -200,7 +200,7 @@ class Project(Serializable, Signallable, Loggable):
         self.log("requesting for a uri to save to...")
         saveres = self.emit("save-uri-requested")
         if saveres == None or saveres == True:
-            self.log("'save-uri-requested' returned True, self.uri:%s" % self.uri)
+            self.log("'save-uri-requested' returned True, self.uri:%s", self.uri)
             if self.uri:
                 return self._save()
 
@@ -221,18 +221,18 @@ class Project(Serializable, Signallable, Loggable):
 
     def setUri(self, uri, format=None):
         """ Set the location to which this project will be stored """
-        self.log("uri:%s, format:%s" % (uri, format))
+        self.log("uri:%s, format:%s", uri, format)
         if not self.uri == uri:
-            self.log("updating self.uri, previously:%s" % self.uri)
+            self.log("updating self.uri, previously:%s", self.uri)
             self.uri = uri
             self.urichanged = True
 
         if not format or not self.format == format:
-            self.log("updating save format, previously:%s" % self.format)
+            self.log("updating save format, previously:%s", self.format)
             if not format:
                 path = gst.uri_get_location(uri)
                 ext = os.path.splitext(path)[1]
-                self.log("Based on file extension, format is %s" % format)
+                self.log("Based on file extension, format is %s", format)
                 format = ProjectSaver.getFormat(ext)
             self.format = format
 
@@ -249,7 +249,7 @@ class Project(Serializable, Signallable, Loggable):
         Sets the given settings as the project's settings.
         If settings is None, the current settings will be unset
         """
-        self.log("Setting %s as the project's settings" % settings)
+        self.log("Setting %s as the project's settings", settings)
         if self.settings:
             self.settings.disconnect(self.settingssigid)
         self.settings = settings

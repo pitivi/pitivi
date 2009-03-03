@@ -636,7 +636,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             format = chooser.get_filter().get_name()
             if format == _("Detect Automatically"):
                 format = None
-            self.log("uri:%s , format:%s" % (uri, format))
+            self.log("uri:%s , format:%s", uri, format)
             project.setUri(uri, format)
             ret = True
         else:
@@ -650,7 +650,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                            selection, targetType, ctime):
         # FIXME : This should be handled by the main application who knows how
         # to switch between pipelines.
-        self.info("context:%s, targetType:%s" % (context, targetType))
+        self.info("context:%s, targetType:%s", context, targetType)
         if targetType == dnd.TYPE_URI_LIST:
             uri = selection.data.strip().split("\n")[0].strip()
         elif targetType == dnd.TYPE_PITIVI_FILESOURCE:
@@ -677,7 +677,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _timelineDragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
         # FIXME: temporarily add source to timeline, and put it in drag mode
         # so user can see where it will go
-        self.info("SimpleTimeline x:%d , source would go at %d" % (x, 0))
+        self.info("SimpleTimeline x:%d , source would go at %d", x, 0)
 
     def _timelineDragDataReceivedCb(self, unused_layout, context, x, y,
         selection, targetType, timestamp):
@@ -696,11 +696,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
 
     def _timelineRulerSeekCb(self, ruler, position):
+        self.debug("position:%s", gst.TIME_ARGS (position))
         if not hasattr(self.project, 'view_action'):
             self.project.view_action = ViewAction()
             self.project.view_action.addProducers(self.project.factory)
         self.viewer.setAction(self.project.view_action)
         self.viewer.setPipeline(self.project.pipeline)
+        # everything above only needs to be done if the viewer isn't already
+        # set to the pipeline.
         self.project.pipeline.pause()
         try:
             self.project.pipeline.seek(position)

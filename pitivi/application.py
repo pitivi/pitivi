@@ -134,7 +134,7 @@ class Pitivi(object, Loggable, Signallable):
 
     def loadProject(self, uri=None, filepath=None):
         """ Load the given file through it's uri or filepath """
-        self.info("uri:%s, filepath:%s" % (uri, filepath))
+        self.info("uri:%s, filepath:%s", uri, filepath)
         if not uri and not filepath:
             self.emit("new-project-failed", _("No location given."),
                 uri)

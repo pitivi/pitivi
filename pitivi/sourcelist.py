@@ -55,7 +55,7 @@ class SourceList(Serializable, Signallable, Loggable):
 
     def __init__(self, project=None):
         Loggable.__init__(self)
-        self.log("new sourcelist for project %s" % project)
+        self.log("new sourcelist for project %s", project)
         self.project = project
         self.sources = {}
         self.tempsources = {}
@@ -140,7 +140,7 @@ class SourceList(Serializable, Signallable, Loggable):
         Add an objectfactory for the given uri.
         """
         if uri in self and self[uri]:
-            raise Exception("We already have an objectfactory for uri %s" % uri)
+            raise Exception("We already have an objectfactory for uri %s", uri)
         self.sources[uri] = factory
         self.emit("file_added", factory)
 
