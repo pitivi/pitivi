@@ -662,6 +662,13 @@ class Action(object, Signallable, Loggable):
                 # FIXME: use a strictier exception hierarchy
                 pass
 
+        for consumer in self.consumers:
+            try:
+                self.pipeline.releaseBinForFactoryStream(consumer)
+            except PipelineError:
+                # FIXME: use a strictier exception hierarchy
+                pass
+
 class ViewAction(Action):
     """
     An action used to view sources.

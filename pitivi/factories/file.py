@@ -118,5 +118,5 @@ class URISinkFactory(SinkFactory):
         SinkFactory.__init__(self, *args, **kwargs)
         self.addInputStream(MultimediaStream(caps=gst.caps_new_any()))
 
-    def makeBin(self, *args, **kwargs):
+    def _makeBin(self, input_stream=None):
         return gst.element_make_from_uri(gst.URI_SINK, self.uri)
