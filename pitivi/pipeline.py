@@ -859,12 +859,10 @@ class Pipeline(object, Signallable, Loggable):
             if handled == False:
                 self.debug("No action handled this Stream")
                 self.emit('unhandled-stream', stream)
-        except:
-            self.debug("Releasing lock due to exception")
+        finally:
+            self.debug("Done handling new pad")
             self._lock.release()
-            raise
-        self.debug("Done handling new pad")
-        self._lock.release()
+
 
     def _binPadRemovedCb(self, bin, pad):
         self._lock.acquire()

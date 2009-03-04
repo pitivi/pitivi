@@ -117,16 +117,24 @@ class VideoStream(MultimediaStream):
     def __init__(self, caps, pad_name=None, is_image=False):
         self.width = None
         self.height = None
-        self.framerate = None
+        self.framerate = gst.Fraction(1, 1)
         self.format = None
         self.is_image = is_image
         self.thumbnail = None
-        self.par = None
+        self.par = gst.Fraction(1, 1)
         self.dar = gst.Fraction(4, 3)
 
         MultimediaStream.__init__(self, caps, pad_name)
 
     def _analyzeCaps(self):
+        if len(self.caps) == 0:
+            # FIXME: rendering still images triggers this as we aren't using
+            # decodebin2 and caps are still not negotiated when this happens. We
+            # should fix this, but for the moment just returning makes rendering
+            # work
+            self.error("can't analyze %s", self.caps)
+            return
+
         struct = self.caps[0]
         self.videotype = struct.get_name()
         self.raw = self.videotype.startswith("video/x-raw-")
@@ -138,13 +146,10 @@ class VideoStream(MultimediaStream):
                 # property not in caps
                 pass
 
-        if self.framerate is None:
-            self.framerate = gst.Fraction(1, 1)
-
         try:
             self.par = struct['pixel-aspect-ratio']
-        except:
-            self.par = gst.Fraction(1, 1)
+        except KeyError:
+            pass
 
         # compute display aspect ratio
         try:
@@ -205,23 +210,28 @@ class TextStream(MultimediaStream):
         self.texttype = self.caps[0].get_name()
 
 def find_decoder(pad):
-    log.debug("stream","%r" % pad)
-    if isinstance(pad, gst.GhostPad):
-        target = pad.get_target()
-    else:
-        target = pad
+    decoder = None
+    while pad is not None:
+        if pad.props.direction == gst.PAD_SINK:
+            pad = pad.get_peer()
+            continue
 
-    if target is None:
-        return None
+        if isinstance(pad, gst.GhostPad):
+            pad = pad.get_target()
+            continue
 
-    element = target.get_parent()
-    if element is None or isinstance(element, gst.Bin):
-        return None
+        element = pad.get_parent()
+        if element is None or isinstance(element, gst.Bin):
+            return None
 
-    factory = element.get_factory()
-    if factory is not None and 'Decoder' in factory.get_klass():
-        return element
-    return None
+        factory = element.get_factory()
+        if factory is not None and 'Decoder' in factory.get_klass():
+            decoder = element
+            break
+
+        pad = element.get_pad('sink')
+
+    return decoder
 
 def find_upstream_demuxer_and_pad(pad):
     while pad:
