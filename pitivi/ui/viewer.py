@@ -93,8 +93,9 @@ class PitiviViewer(gtk.VBox, Loggable):
             # finally remove previous pipeline
             self.pipeline = None
         self._connectToPipeline(pipeline)
-        self._setUiActive()
         self.pipeline = pipeline
+        if self.pipeline is not None:
+            self._setUiActive()
 
     def setAction(self, action):
         """
@@ -360,6 +361,11 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time),
                                                         time_to_string(duration)))
 
+        if duration == 0:
+            self._setUiActive(False)
+        else:
+            self._setUiActive(True)
+
         if self._initial_seek is not None:
             seek, self._initial_seek = self._initial_seek, None
             self.pipeline.seek(seek)
@@ -373,6 +379,9 @@ class PitiviViewer(gtk.VBox, Loggable):
         raise NotImplementedError
 
     def _playButtonCb(self, unused_button, isplaying):
+        if self.pipeline is None:
+            return
+
         if isplaying:
             if not self.pipeline.play() == gst.STATE_CHANGE_FAILURE:
                 self.currentState = gst.STATE_PLAYING
@@ -445,6 +454,9 @@ class PlayPauseButton(gtk.Button, Loggable):
         self.playing = True
         self.setPlay()
         self.connect('clicked', self._clickedCb)
+
+    def set_sensitive(self, value):
+        gtk.Button.set_sensitive(self, value)
 
     def _clickedCb(self, unused):
         if not self.playing:
