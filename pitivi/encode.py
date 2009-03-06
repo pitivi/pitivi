@@ -23,6 +23,7 @@
 Encoding-related utilities and classes
 """
 
+import gobject
 import gst
 import pitivi.log.log as log
 from pitivi.factories.base import OperationFactory, SinkFactory
@@ -133,6 +134,13 @@ class RenderFactory(OperationFactory):
                 raise Exception("can't find a compatible pad")
             # FIXME : We're assuming it's a request pad
             p2 = mux.get_request_pad(n2)
+
+            if gst.version() < (0, 10, 22, 1):
+                segment_eater = NewsegmentEater()
+                b.add(segment_eater)
+                segment_eater.get_pad('src').link(p2)
+                p2 = segment_eater.get_pad('sink')
+
             src2.link(p2)
 
             # expose encoder sink pad
@@ -192,6 +200,36 @@ class RenderSinkFactory(SinkFactory):
     def _releaseBin(self, bin):
         for b in bin.elements():
             b.factory.releaseBin(b)
+
+
+class NewsegmentEater(gst.BaseTransform):
+    __gstdetails__ = (
+        "Description",
+        "Klass",
+        "Description",
+        "Author")
+
+    sink_template = gst.PadTemplate("sink",
+            gst.PAD_SINK, gst.PAD_ALWAYS,
+            gst.Caps('ANY'))
+    src_template = gst.PadTemplate("src",
+            gst.PAD_SRC, gst.PAD_ALWAYS,
+            gst.Caps('ANY'))
+
+    __gsttemplates__ = (sink_template, src_template)
+
+    def __init__(self):
+        gst.BaseTransform.__init__(self)
+
+    def do_event(self, event):
+        res = gst.BaseTransform.do_event(self, event)
+        if event.type == gst.EVENT_NEWSEGMENT:
+            # don't forward the event downstream
+            return False
+
+        return res
+
+gobject.type_register(NewsegmentEater)
 
 
 def get_compatible_sink_pad(factoryname, caps):
