@@ -47,6 +47,14 @@ GlobalSettings.addConfigOption("thumbnailSpacingHint",
     section="thumbnailing",
     key="spacing-hint",
     default=2.0)
+# this default works out to a maximum of ~ 1.78 MiB per factory, assuming:
+# 4:3 aspect ratio
+# 4 bytes per pixel
+# 50 pixel height
+GlobalSettings.addConfigOption("thumbnailCacheSize",
+    section="thumbnailing",
+    key="cache-size",
+    default=250)
 
 # Previewer                      -- abstract base class with public interface for UI
 # |_DefaultPreviewer             -- draws a default thumbnail for UI
@@ -126,7 +134,8 @@ class RandomAccessPreviewer(Previewer):
     def __init__(self, factory, stream_):
         Previewer.__init__(self, factory, stream_)
         self._queue = []
-        self._cache = ThumbnailCache(size=100)
+        self._cache = ThumbnailCache(size=
+            instance.PiTiVi.settings.thumbnailCacheSize)
 
         # FIXME:
         # why doesn't this work?
