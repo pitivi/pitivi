@@ -88,7 +88,7 @@ class Pitivi(object, Loggable, Signallable):
         "shutdown" : None
         }
 
-    def __init__(self, filepath=None):
+    def __init__(self):
         """
         initialize pitivi with the command line arguments
         """
@@ -216,10 +216,11 @@ class Pitivi(object, Loggable, Signallable):
 class InteractivePitivi(Pitivi):
     """ Class for PiTiVi instances that provide user interaction """
 
-    def __init__(self, filepath=None, mainloop=None, *args, **kwargs):
+    def __init__(self, project=None, sources=[], add_to_timeline=False,
+        mainloop=None, *args, **kwargs):
         from pitivi.ui.mainwindow import PitiviMainWindow
-        Pitivi.__init__(self, filepath=None,
-                        *args, **kwargs)
+        from urllib import quote
+        Pitivi.__init__(self, *args, **kwargs)
         self._mainloop = None
         self.mainloop = mainloop
 
@@ -227,8 +228,27 @@ class InteractivePitivi(Pitivi):
         self._gui.load()
         self._gui.show()
 
-        if filepath:
-            self.loadProject(filepath=filepath)
+        if project:
+            self.loadProject(filepath=project)
+
+        uris = ["file://" + path for path in sources]
+        if add_to_timeline:
+            self._uris = uris
+            self._duration = self.current.timeline.duration
+            self.current.sources.connect("file_added", self._addSourceCb, True)
+            self.current.sources.connect("not_media_file", self._addSourceCb,
+                False)
+        self.current.sources.addUris(uris)
+
+    def _addSourceCb(self, unused_sourcelist, factory, add):
+        if factory.name in self._uris:
+            self._uris.remove(factory.name)
+            if not self._uris:
+                self.current.sources.disconnect_by_function(self._addSourceCb)
+        if add:
+            t = self.current.timeline.addSourceFactory(factory)
+            t.start = self._duration
+            self._duration += t.duration
 
     # properties
 
@@ -249,7 +269,6 @@ class InteractivePitivi(Pitivi):
         """The user interface"""
         return self._gui
 
-
     # PiTiVi method overrides
     def shutdown(self):
         if Pitivi.shutdown(self):
@@ -262,14 +281,27 @@ class InteractivePitivi(Pitivi):
         if self.mainloop:
             self.mainloop.run()
 
+usage = _("%prog [-p PROJECT_FILE] [-a] [MEDIA_FILE]...")
+
+description = _("""Starts the video editor, optionally loading PROJECT_FILE. If no
+project is given, %prog creates a new project. Remaining arguments are treated
+as clips to be imported into the project. If -a is specified, these clips will
+also be added to the end of the project timeline.""")
+
+project_help = _("""Open project file specified by PROJECT instead of creating a
+new project.""")
+
+add_help = _("""Add each MEDIA_FILE to timeline after importing.""")
+
 def main(argv):
     """ Start PiTiVi ! """
     from optparse import OptionParser
     initial_checks()
-    parser = OptionParser()
-    (unused_options, args) = parser.parse_args(argv[1:])
-    if len(args) > 0:
-        ptv = InteractivePitivi(filepath=args[0])
-    else:
-        ptv = InteractivePitivi()
+    parser = OptionParser(usage, description=description)
+    parser.add_option("-p", "--project", help=project_help)
+    parser.add_option("-a", "--add-to-timeline", help=add_help, 
+        action="store_true")
+    options, args = parser.parse_args(argv)
+    ptv = InteractivePitivi(project=options.project, sources=args[1:],
+        add_to_timeline=options.add_to_timeline)
     ptv.run()
