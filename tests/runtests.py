@@ -3,7 +3,7 @@ import os
 import sys
 import unittest
 
-SKIP_FILES = ['common', 'runtests', 'testcomplex', 'testHList', 'testmagets']
+SKIP_FILES = ['common', 'runtests']
 
 def gettestnames(which):
     if not which:
