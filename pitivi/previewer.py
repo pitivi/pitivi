@@ -40,6 +40,7 @@ import pitivi.instance as instance
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.log.loggable import Loggable
 from pitivi.factories.file import PictureFileSourceFactory
+from pitivi.thumbnailcache import ThumbnailCache
 
 GlobalSettings.addConfigSection("thumbnailing")
 GlobalSettings.addConfigOption("thumbnailSpacingHint",
@@ -125,7 +126,7 @@ class RandomAccessPreviewer(Previewer):
     def __init__(self, factory, stream_):
         Previewer.__init__(self, factory, stream_)
         self._queue = []
-        self._cache = {}
+        self._cache = ThumbnailCache(size=100)
 
         # FIXME:
         # why doesn't this work?
