@@ -1,12 +1,10 @@
 tests = \
-	testHList.py			\
 	test_basic.py			\
 	test_binary_search.py		\
 	test_factories_base.py		\
 	test_factories_file.py		\
 	test_signallable.py		\
 	testcomplex.py			\
-	testmagnets.py			\
 	test_pipeline.py		\
 	test_action.py
 
