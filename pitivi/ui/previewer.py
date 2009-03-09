@@ -56,6 +56,13 @@ GlobalSettings.addConfigOption("thumbnailCacheSize",
     key="cache-size",
     default=250)
 
+# the maximum number of thumbnails to enqueue at a given time. setting this to 
+# a larger value will increase latency after large operations, such as zooming
+GlobalSettings.addConfigOption("thumbnailMaxRequests",
+    section="thumbnailing",
+    key="max-requests",
+    default = 10)
+
 # Previewer                      -- abstract base class with public interface for UI
 # |_DefaultPreviewer             -- draws a default thumbnail for UI
 # |_LivePreviewer                -- draws a continuously updated preview
@@ -136,6 +143,7 @@ class RandomAccessPreviewer(Previewer):
         self._queue = []
         self._cache = ThumbnailCache(size=
             instance.PiTiVi.settings.thumbnailCacheSize)
+        self.max_requests = instance.PiTiVi.settings.thumbnailMaxRequests
 
         # FIXME:
         # why doesn't this work?
@@ -257,10 +265,8 @@ class RandomAccessPreviewer(Previewer):
     def _requestThumbnail(self, segment):
         """Queue a thumbnail request for the given segment"""
 
-        # TODO: need some sort of timeout so the queue doesn't fill up if the
-        # thumbnail never arrives.
-
-        if segment not in self._queue:
+        if (segment not in self._queue) and (len(self._queue) <=
+            self.max_requests):
             if self._queue:
                 self._queue.append(segment)
             else:
