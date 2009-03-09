@@ -87,10 +87,10 @@ class DefaultPropertyEditor(gtk.Viewport):
 
     def __init__(self, *args, **kwargs):
         gtk.Viewport.__init__(self, *args, **kwargs)
-        self.__properties = {}
-        self.__createUi()
+        self._properties = {}
+        self._createUi()
 
-    def __createUi(self):
+    def _createUi(self):
         self.text = gtk.Label()
         self.table = gtk.Table(rows=1, columns=2)
         self.table.attach(self.text, 0, 2, 0, 1)
@@ -112,12 +112,12 @@ class DefaultPropertyEditor(gtk.Viewport):
         properties = set(i.next().__editable_properties__)
         for obj in i:
             properties &= set(obj.__editable_properties__)
-        self.__addWidgets(properties)
+        self._addWidgets(properties)
 
-    def __addWidgets(self, props):
+    def _addWidgets(self, props):
         if not props:
             self.text.set_text(_("No properties..."))
-        for widget in self.__properties.values():
+        for widget in self._properties.values():
             self.table.remove(widget)
         self.table.resize(len(props) + 1, 2)
         y = 1
@@ -127,5 +127,5 @@ class DefaultPropertyEditor(gtk.Viewport):
             widget = make_property_widget(type)
             self.table.attach(label, 0, 1, y, y+1, xoptions=gtk.FILL, yoptions=gtk.FILL)
             self.table.attach(widget, 1, 2, y, y+1, yoptions=gtk.FILL)
-            self.__properties[name] = widget
+            self._properties[name] = widget
         self.show_all()

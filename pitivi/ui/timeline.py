@@ -104,10 +104,10 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
         self.project = None
         self.timeline = None
         self.ui_manager = ui_manager
-        self.__temp_objects = None
-        self.__factories = None
-        self.__finish_drag = False
-        self.__position = 0
+        self._temp_objects = None
+        self._factories = None
+        self._finish_drag = False
+        self._position = 0
 
         self._createUI()
 
@@ -120,11 +120,11 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
         self.pack_start(self.ruler, expand=False, fill=True)
 
         # List of TimelineCanvas
-        self.__canvas = TimelineCanvas(self.timeline)
+        self._canvas = TimelineCanvas(self.timeline)
 
         self.scrolledWindow = gtk.ScrolledWindow(self.hadj)
         self.scrolledWindow.set_policy(gtk.POLICY_ALWAYS, gtk.POLICY_AUTOMATIC)
-        self.scrolledWindow.add(self.__canvas)
+        self.scrolledWindow.add(self._canvas)
         #FIXME: remove padding between scrollbar and scrolled window
         self.pack_start(self.scrolledWindow, expand=True)
 
@@ -167,31 +167,31 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
 ## Drag and Drop callbacks
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
-        if not self.__factories:
+        if not self._factories:
             atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
             self.drag_get_data(context, atom, timestamp)
             self.drag_highlight()
         else:
-            if not self.__temp_objects:
-                self.__add_temp_source()
-            self.__move_temp_source(x, y)
+            if not self._temp_objects:
+                self._add_temp_source()
+            self._move_temp_source(x, y)
         return True
 
     def _dragLeaveCb(self, unused_layout, unused_context, unused_tstamp):
-        if self.__temp_objects:
+        if self._temp_objects:
             try:
-                for obj in self.__temp_objects:
+                for obj in self._temp_objects:
                     self.timeline.removeTimelineObject(obj, deep=True)
             finally:
-                self.__temp_objects = None
+                self._temp_objects = None
         self.drag_unhighlight()
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
-        self.__add_temp_source()
-        self.__move_temp_source(x, y)
+        self._add_temp_source()
+        self._move_temp_source(x, y)
         context.drop_finish(True, timestamp)
-        self.__factories = None
-        self.__temp_objects = None
+        self._factories = None
+        self._temp_objects = None
         return True
 
     def _dragDataReceivedCb(self, unused_layout, context, x, y,
@@ -209,26 +209,26 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
             uris = selection.data.split("\n")
         else:
             context.finish(False, False, timestamp)
-        self.__factories = [self.project.sources[uri] for uri in uris]
+        self._factories = [self.project.sources[uri] for uri in uris]
         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
         return True
 
-    def __add_temp_source(self):
-        self.__temp_objects = [self.timeline.addSourceFactory(factory)
-            for factory in self.__factories]
+    def _add_temp_source(self):
+        self._temp_objects = [self.timeline.addSourceFactory(factory)
+            for factory in self._factories]
 
-    def __move_temp_source(self, x, y):
-        x, y = self.__canvas.convert_from_pixels(x - 10, y)
+    def _move_temp_source(self, x, y):
+        x, y = self._canvas.convert_from_pixels(x - 10, y)
         delta = Zoomable.pixelToNs(x)
-        for obj in self.__temp_objects:
+        for obj in self._temp_objects:
             obj.setStart(max(0, delta), snap=True)
             delta += obj.duration
 
     def setProject(self, project):
         self.project = project
         self.timeline = project.timeline
-        self.__canvas.timeline = self.timeline
-        self.__canvas.zoomChanged()
+        self._canvas.timeline = self.timeline
+        self._canvas.zoomChanged()
 
 ## Zooming and Scrolling
 
@@ -238,13 +238,13 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
         gobject.idle_add(self.scrollToPlayhead)
 
     def timelinePositionChanged(self, position):
-        self.__position = position
+        self._position = position
         self.ruler.timelinePositionChanged(position)
         self.scrollToPlayhead()
 
     def scrollToPlayhead(self):
         width = self.get_allocation().width
-        new_pos = Zoomable.nsToPixel(self.__position)
+        new_pos = Zoomable.nsToPixel(self._position)
         scroll_pos = self.hadj.get_value()
         if (new_pos < scroll_pos) or (new_pos > scroll_pos + width):
             self.scrollToPosition(new_pos - width / 2)
@@ -254,11 +254,11 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
         if position > self.hadj.upper:
             # we can't perform the scroll because the canvas needs to be
             # updated
-            gobject.idle_add(self.__scrollToPosition, position)
+            gobject.idle_add(self._scrollToPosition, position)
         else:
-            self.__scrollToPosition(position)
+            self._scrollToPosition(position)
 
-    def __scrollToPosition(self, position):
+    def _scrollToPosition(self, position):
         self.hadj.set_value(position)
         return False
 
@@ -270,7 +270,7 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
     @handler(timeline, "duration-changed")
     def _timelineStartDurationChanged(self, unused_timeline, duration):
         self.ruler.setMaxDuration(duration)
-        self.__canvas.setMaxDuration(duration)
+        self._canvas.setMaxDuration(duration)
         self.ruler.setShadedDuration(duration)
 
 ## ToolBar callbacks
@@ -319,6 +319,6 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
 
     def toggleRazor(self, action):
         if action.props.active:
-            self.__canvas.activateRazor(action)
+            self._canvas.activateRazor(action)
         else:
-            self.__canvas.deactivateRazor()
+            self._canvas.deactivateRazor()

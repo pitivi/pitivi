@@ -69,13 +69,13 @@ class WebcamManagerDialog(GladeWindow):
         self._adevcombo.set_model(gtk.ListStore(str, object))
         self._adevcombo.set_attributes(self._adevcombo.child.get_cell_renderers()[0],
                                        text=0)
-        self.__updateVideoCombo()
-        self.__updateAudioCombo()
+        self._updateVideoCombo()
+        self._updateAudioCombo()
 
         self.filepath = None
 
         self.sink = SinkBin()
-        CallbackThread(self.__setupPlayer).start()
+        CallbackThread(self._setupPlayer).start()
 
     def show_all(self):
         self.window.show_all()
@@ -133,7 +133,7 @@ class WebcamManagerDialog(GladeWindow):
             except:
                 gst.warning("Couldn't set the XID on our video sink !")
 
-    def __setupPlayer(self):
+    def _setupPlayer(self):
         gst.debug("Creating initial SmartCaptureBin")
         # figure out adev
         probe = self.pitivi.deviceprobe
@@ -141,16 +141,16 @@ class WebcamManagerDialog(GladeWindow):
             adev = probe.getAudioSourceDevices()[0]
         else:
             adev = None
-        self.__changeSelectedAudio(adev)
+        self._changeSelectedAudio(adev)
 
         if len(probe.getVideoSourceDevices()):
             vdev = probe.getVideoSourceDevices()[0]
         else:
             vdev = None
-        self.__changeSelectedVideo(vdev)
+        self._changeSelectedVideo(vdev)
 
-        probe.connect("device-added", self.__deviceAddedCb)
-        probe.connect("device-removed", self.__deviceRemovedCb)
+        probe.connect("device-added", self._deviceAddedCb)
+        probe.connect("device-removed", self._deviceRemovedCb)
 
         if hasattr(self, "player"):
             self.player.set_state(gst.STATE_NULL)
@@ -160,7 +160,7 @@ class WebcamManagerDialog(GladeWindow):
         # FIXME : check for state change failures
         self.player.set_state(gst.STATE_PLAYING)
 
-    def __resetPlayer(self):
+    def _resetPlayer(self):
         ## call me in another thread !
         gst.debug("Setting previous to NULL")
         self.player.set_state(gst.STATE_NULL)
@@ -173,7 +173,7 @@ class WebcamManagerDialog(GladeWindow):
         res = self.player.set_state(gst.STATE_PLAYING)
         gst.debug("... which returned %r" % res)
 
-    def __changeSelectedCombo(self, combo, device):
+    def _changeSelectedCombo(self, combo, device):
         gst.debug("device %r" % device)
         model = combo.get_model()
         idx = 0
@@ -183,37 +183,37 @@ class WebcamManagerDialog(GladeWindow):
             idx += 1
         combo.set_active(idx)
 
-    def __changeSelectedAudio(self, device):
+    def _changeSelectedAudio(self, device):
         self._audiodev = device
-        self.__changeSelectedCombo(self._adevcombo, device)
+        self._changeSelectedCombo(self._adevcombo, device)
 
-    def __changeSelectedVideo(self, device):
+    def _changeSelectedVideo(self, device):
         self._videodev = device
-        self.__changeSelectedCombo(self._vdevcombo, device)
+        self._changeSelectedCombo(self._vdevcombo, device)
 
-    def __deviceAddedCb(self, probe, device):
+    def _deviceAddedCb(self, probe, device):
         gst.debug("device %r appeared" % device)
-        self.__updateAudioCombo()
-        self.__updateVideoCombo()
+        self._updateAudioCombo()
+        self._updateVideoCombo()
 
-    def __deviceRemovedCb(self, probe, device):
+    def _deviceRemovedCb(self, probe, device):
         gst.debug("device %r went away" % device)
         if self._audiodev == device:
             devs = self.pitivi.deviceprobe.getAudioSourceDevices()
             if len(devs):
-                self.__changeSelectedAudio(devs[0])
+                self._changeSelectedAudio(devs[0])
             else:
                 self._audiodev = None
         elif self._videodev == device:
             devs = self.pitivi.deviceprobe.getVideoSourceDevices()
             if len(devs):
-                self.__changeSelectedVideo(devs[0])
+                self._changeSelectedVideo(devs[0])
             else:
                 self._videodev = None
-        self.__updateAudioCombo()
-        self.__updateVideoCombo()
+        self._updateAudioCombo()
+        self._updateVideoCombo()
 
-    def __updateCombo(self, combo, devices):
+    def _updateCombo(self, combo, devices):
         model = combo.get_model()
         if len(devices) == len(model):
             # nothing changed
@@ -222,15 +222,15 @@ class WebcamManagerDialog(GladeWindow):
         for dev in devices:
             model.append([dev.displayname, dev])
 
-    def __updateAudioCombo(self):
-        self.__updateCombo(self._adevcombo,
+    def _updateAudioCombo(self):
+        self._updateCombo(self._adevcombo,
                            self.pitivi.deviceprobe.getAudioSourceDevices())
-        self.__changeSelectedAudio(self._audiodev)
+        self._changeSelectedAudio(self._audiodev)
 
-    def __updateVideoCombo(self):
-        self.__updateCombo(self._vdevcombo,
+    def _updateVideoCombo(self):
+        self._updateCombo(self._vdevcombo,
                            self.pitivi.deviceprobe.getVideoSourceDevices())
-        self.__changeSelectedVideo(self._videodev)
+        self._changeSelectedVideo(self._videodev)
 
     def _adevComboChangedCb(self, widget):
         # get the active device
@@ -241,10 +241,10 @@ class WebcamManagerDialog(GladeWindow):
         gst.debug("device %r" % dev)
         if dev == self._audiodev:
             return
-        self.__changeSelectedAudio(dev)
+        self._changeSelectedAudio(dev)
         if not hasattr(self, "player"):
             return
-        CallbackThread(self.__resetPlayer).start()
+        CallbackThread(self._resetPlayer).start()
 
     def _vdevComboChangedCb(self, widget):
         row = widget.get_model()[widget.get_active()]
@@ -254,7 +254,7 @@ class WebcamManagerDialog(GladeWindow):
         gst.debug("device %r" % dev)
         if dev == self._videodev:
             return
-        self.__changeSelectedVideo(dev)
+        self._changeSelectedVideo(dev)
         if not hasattr(self, "player"):
             return
-        CallbackThread(self.__resetPlayer).start()
+        CallbackThread(self._resetPlayer).start()

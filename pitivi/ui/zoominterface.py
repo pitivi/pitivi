@@ -51,9 +51,9 @@ class Zoomable(object):
 
     zoomratio = 10
     sigid = None
-    __instances = []
+    _instances = []
     zoom_levels = range(1, 150, 10)
-    __cur_zoom = 2
+    _cur_zoom = 2
 
 
     def __init__(self):
@@ -61,32 +61,32 @@ class Zoomable(object):
         Zoomable.addInstance(self)
 
     def __del__(self):
-        if self in Zoomable.__instances:
+        if self in Zoomable._instances:
             # FIXME: ideally we should deprecate this and spit a warning here
-            self.__instances.remove(self)
+            self._instances.remove(self)
 
     @classmethod
     def addInstance(cls, instance):
-        cls.__instances.append(instance)
+        cls._instances.append(instance)
 
     @classmethod
     def removeInstance(cls, instance):
-        cls.__instances.remove(instance)
+        cls._instances.remove(instance)
 
     @classmethod
     def setZoomRatio(cls, ratio):
         cls.zoomratio = ratio
-        cls.__zoomChanged()
+        cls._zoomChanged()
 
     @classmethod
     def zoomIn(cls):
-        cls.__cur_zoom = min(len(cls.zoom_levels) - 1, cls.__cur_zoom + 1)
-        cls.setZoomRatio(cls._computeZoomRatio(cls.__cur_zoom))
+        cls._cur_zoom = min(len(cls.zoom_levels) - 1, cls._cur_zoom + 1)
+        cls.setZoomRatio(cls._computeZoomRatio(cls._cur_zoom))
 
     @classmethod
     def zoomOut(cls):
-        cls.__cur_zoom = max(0, cls.__cur_zoom - 1)
-        cls.setZoomRatio(cls._computeZoomRatio(cls.__cur_zoom))
+        cls._cur_zoom = max(0, cls._cur_zoom - 1)
+        cls.setZoomRatio(cls._computeZoomRatio(cls._cur_zoom))
 
     @classmethod
     def _computeZoomRatio(cls, index):
@@ -110,8 +110,8 @@ class Zoomable(object):
         return int((float(duration) / gst.SECOND) * cls.zoomratio)
 
     @classmethod
-    def __zoomChanged(cls):
-        for inst in cls.__instances:
+    def _zoomChanged(cls):
+        for inst in cls._instances:
             inst.zoomChanged()
 
     def zoomChanged(self):

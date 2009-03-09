@@ -39,21 +39,21 @@ class PropertyEditor(gtk.ScrolledWindow):
         gtk.ScrolledWindow.__init__(self, *args, **kwargs)
         self.instance = instance
         self.timeline = instance.current.timeline
-        self.__createUi()
-        self.__selectionChangedCb(self.timeline)
-        self.__module_instances = {}
-        self.__default_editor = DefaultPropertyEditor()
+        self._createUi()
+        self._selectionChangedCb(self.timeline)
+        self._module_instances = {}
+        self._default_editor = DefaultPropertyEditor()
 
-    def __createUi(self):
+    def _createUi(self):
         # basic initialization
         self.set_border_width(5)
 
         # scrolled window
         self.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        self.__no_objs = gtk.Viewport()
-        self.__no_objs.add(gtk.Label(_("No Objects Selected")))
-        self.__contents = self.__no_objs
-        self.add(self.__no_objs)
+        self._no_objs = gtk.Viewport()
+        self._no_objs.add(gtk.Label(_("No Objects Selected")))
+        self._contents = self._no_objs
+        self.add(self._no_objs)
 
 ## Public API
 
@@ -67,19 +67,19 @@ class PropertyEditor(gtk.ScrolledWindow):
 
 ## Internal Methods
 
-    def __get_widget_for_type(self, t):
-        w = self.__default_editor
-        if t in self.__module_instances:
-            w = self.__module_instances[t]
+    def _get_widget_for_type(self, t):
+        w = self._default_editor
+        if t in self._module_instances:
+            w = self._module_instances[t]
         elif t in self.__MODULES__:
-            w = self.__MODULES[t]()
-            self.__module_instances[t] = w
+            w = self.__MODULES__[t]()
+            self._module_instances[t] = w
         return w
 
-    def __set_contents(self, widget):
-        if widget != self.__contents:
-            self.remove(self.__contents)
-            self.__contents = widget
+    def _set_contents(self, widget):
+        if widget != self._contents:
+            self.remove(self._contents)
+            self._contents = widget
             self.add(widget)
             self.show_all()
 
@@ -88,11 +88,11 @@ class PropertyEditor(gtk.ScrolledWindow):
     instance = receiver()
 
     @handler(instance, "new-project-loading")
-    def __newProjectLoading(self, unused_inst, project):
+    def _newProjectLoading(self, unused_inst, project):
         self.timeline = project.timeline
 
     @handler(instance, "new-project-failed")
-    def __newProjectFailed(self, unused_inst, unused_reason, unused_uri):
+    def _newProjectFailed(self, unused_inst, unused_reason, unused_uri):
         self.timeline = None
 
 ## Timeline Callbacks
@@ -100,17 +100,17 @@ class PropertyEditor(gtk.ScrolledWindow):
     timeline = receiver()
 
     @handler(timeline, "selection-changed")
-    def __selectionChangedCb(self, timeline):
+    def _selectionChangedCb(self, timeline):
         if not self.timeline:
             return
         objs = self.timeline.getSelection()
         if objs:
             t = same((type(obj.factory) for obj in objs))
             if t:
-                widget = self.__get_widget_for_type(t)
+                widget = self._get_widget_for_type(t)
             else:
                 widget = DefaultPropertyEditor(objs)
             widget.setObjects(objs)
         else:
-            widget = self.__no_objs
-        self.__set_contents(widget)
+            widget = self._no_objs
+        self._set_contents(widget)

@@ -159,8 +159,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 self._projectMissingPluginsCb)
 
         # if no webcams available, hide the webcam action
-        self.app.deviceprobe.connect("device-added", self.__deviceChangeCb)
-        self.app.deviceprobe.connect("device-removed", self.__deviceChangeCb)
+        self.app.deviceprobe.connect("device-added", self._deviceChangeCb)
+        self.app.deviceprobe.connect("device-removed", self._deviceChangeCb)
         if len(self.app.deviceprobe.getVideoSourceDevices()) < 1:
             self.webcam_button.set_sensitive(False)
 
@@ -356,16 +356,16 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
 ## PlayGround callback
 
-    def __windowizeViewer(self, button, pane):
+    def _windowizeViewer(self, button, pane):
         # FIXME: the viewer can't seem to handle being unparented/reparented
         pane.remove(self.viewer)
         window = gtk.Window()
         window.add(self.viewer)
-        window.connect("destroy", self.__reparentViewer, pane)
+        window.connect("destroy", self._reparentViewer, pane)
         window.resize(200, 200)
         window.show_all()
 
-    def __reparentViewer(self, window, pane):
+    def _reparentViewer(self, window, pane):
         window.remove(self.viewer)
         pane.pack2(self.viewer, resize=False, shrink=False)
         self.viewer.show()
@@ -545,7 +545,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         ScreencastManagerDialog(self.app)
 
     ## Devices changed
-    def __deviceChangeCb(self, probe, unused_device):
+    def _deviceChangeCb(self, probe, unused_device):
         if len(probe.getVideoSourceDevices()) < 1:
             self.webcam_button.set_sensitive(False)
         else:

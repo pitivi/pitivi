@@ -51,22 +51,22 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 
 ## properties
 
-    def __get_height(self):
-        return self.__height
-    def __set_height (self, value):
-        self.__height = value
+    def _get_height(self):
+        return self._height
+    def _set_height (self, value):
+        self._height = value
         self.changed(True)
-    height = gobject.property(__get_height, __set_height, type=float)
+    height = gobject.property(_get_height, _set_height, type=float)
 
 ## element callbacks
 
-    def __set_element(self):
+    def _set_element(self):
         self.previewer = previewer.get_preview_for_object(self.element)
-    element = receiver(setter=__set_element)
+    element = receiver(setter=_set_element)
 
     @handler(element, "in-point-changed")
     @handler(element, "media-duration-changed")
-    def __media_props_changed(self, obj, unused_start_duration):
+    def _media_props_changed(self, obj, unused_start_duration):
         self.changed(True)
 
 ## previewer callbacks
@@ -74,7 +74,7 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
     previewer = receiver()
 
     @handler(previewer, "update")
-    def __update_preview(self, previewer, segment):
+    def _update_preview(self, previewer, segment):
         self.changed(False)
 
 ## Zoomable interface overries

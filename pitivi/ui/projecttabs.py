@@ -42,7 +42,7 @@ class DetachLabel(gtk.HBox):
         image.set_from_stock(gtk.STOCK_LEAVE_FULLSCREEN,
             gtk.ICON_SIZE_SMALL_TOOLBAR)
         self.button.set_image(image)
-        self.button.connect("clicked", self.__windowize)
+        self.button.connect("clicked", self._windowize)
         self.pack_start(self.button, False, False)
         self.pack_start(self.label)
         self.show_all()
@@ -53,7 +53,7 @@ class DetachLabel(gtk.HBox):
     def deselect(self):
         self.button.set_sensitive(False)
 
-    def __windowize(self, unused_button):
+    def _windowize(self, unused_button):
         self.parent.windowizeComponent(self.child, self)
 
 class ProjectTabs(gtk.Notebook):
@@ -74,7 +74,7 @@ class ProjectTabs(gtk.Notebook):
         gtk.Notebook.__init__(self)
         self.app = instance
         self._full_list = []
-        self.connect("switch-page", self.__switchPage)
+        self.connect("switch-page", self._switchPage)
         self._createUi()
 
     def _createUi(self):
@@ -92,18 +92,18 @@ class ProjectTabs(gtk.Notebook):
         window = gtk.Window()
         window.add(component)
         window.show_all()
-        window.connect("destroy", self.__replaceComponent, component, label)
+        window.connect("destroy", self._replaceComponent, component, label)
         window.resize(200, 200)
         if not self.get_n_pages():
             self.hide()
 
-    def __replaceComponent(self, window, component, label):
+    def _replaceComponent(self, window, component, label):
         window.remove(component)
         self.set_current_page(self.insert_page(component, label,
             self._full_list.index(component)))
         self.show()
 
-    def __switchPage(self, unused_widget, unused_page, num):
+    def _switchPage(self, unused_widget, unused_page, num):
         for child in (self.get_nth_page(i) for i in xrange(self.get_n_pages())):
             self.get_tab_label(child).deselect()
         cur = self.get_tab_label(self.get_nth_page(num))

@@ -334,17 +334,17 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
             conv : self.audioSink,
             self.audioSink : None})
         bus = self.audioPipeline.get_bus()
-        bus.set_sync_handler(self.__bus_message)
-        self.__audio_cur = None
+        bus.set_sync_handler(self._bus_message)
+        self._audio_cur = None
         self.audioPipeline.set_state(gst.STATE_PAUSED)
 
     def _segment_for_time(self, time):
         # for audio files, we need to know the duration the segment spans
         return time, Zoomable.pixelToNs(self.twidth)
 
-    def __bus_message(self, bus, message):
+    def _bus_message(self, bus, message):
         if message.type == gst.MESSAGE_SEGMENT_DONE:
-            self.__finishWaveform()
+            self._finishWaveform()
 
         elif message.type == gst.MESSAGE_ERROR:
             error, debug = message.parse_error()
@@ -355,7 +355,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def _startThumbnail(self, (timestamp, duration)):
         RandomAccessPreviewer._startThumbnail(self, (timestamp, duration))
-        self.__audio_cur = timestamp, duration
+        self._audio_cur = timestamp, duration
         self.audioPipeline.seek(1.0,
             gst.FORMAT_TIME,
             gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE | gst.SEEK_FLAG_SEGMENT,
@@ -363,15 +363,15 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
             gst.SEEK_TYPE_SET, timestamp + duration)
         self.audioPipeline.set_state(gst.STATE_PLAYING)
 
-    def __finishWaveform(self):
+    def _finishWaveform(self):
         surface = cairo.ImageSurface(cairo.FORMAT_A8,
             int(self.twidth) + 2, self.theight)
         cr = cairo.Context(surface)
-        self.__plotWaveform(cr, self.audioSink.samples)
+        self._plotWaveform(cr, self.audioSink.samples)
         self.audioSink.reset()
-        gobject.idle_add(self._finishThumbnail, surface, self.__audio_cur)
+        gobject.idle_add(self._finishThumbnail, surface, self._audio_cur)
 
-    def __plotWaveform(self, cr, samples):
+    def _plotWaveform(self, cr, samples):
         hscale = 25
         if not samples:
             cr.move_to(0, hscale)
@@ -394,10 +394,10 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         cr.set_source_rgba(0, 0, 0, 1.0)
         points = ((x * scale, hscale - (y * hscale)) for x, y in enumerate(samples))
 
-        self.__plot_points(cr, 0, hscale, points)
+        self._plot_points(cr, 0, hscale, points)
         cr.stroke()
 
-    def __plot_points(self, cr, x0, y0, points):
+    def _plot_points(self, cr, x0, y0, points):
         cr.move_to(x0, y0)
         for x, y in points:
             cr.line_to(x, y)
