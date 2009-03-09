@@ -29,7 +29,7 @@ import gobject
 
 from pitivi.receiver import receiver, handler
 from pitivi.ui.zoominterface import Zoomable
-import pitivi.previewer as previewer
+import pitivi.ui.previewer as previewer
 
 def between(a, b, c):
     return (a <= b) and (b <= c)
