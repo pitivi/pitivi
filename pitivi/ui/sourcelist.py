@@ -30,7 +30,6 @@ from urllib import unquote
 from gettext import gettext as _
 from gettext import ngettext
 
-import pitivi.instance as instance
 import pitivi.ui.dnd as dnd
 from pitivi.ui.pathwalker import PathWalker
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
@@ -117,9 +116,11 @@ class SourceList(gtk.VBox, Loggable):
                 (gobject.TYPE_PYOBJECT,))
         }
 
-    def __init__(self):
+    def __init__(self, instance):
         gtk.VBox.__init__(self)
         Loggable.__init__(self)
+
+        self.app = instance
 
         # Store
         # icon, infotext, objectfactory, uri, length
@@ -230,10 +231,10 @@ class SourceList(gtk.VBox, Loggable):
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
         self.project_signals = SignalGroup()
-        self._connectToProject(instance.PiTiVi.current)
-        instance.PiTiVi.connect("new-project-loaded",
+        self._connectToProject(self.app.current)
+        self.app.connect("new-project-loaded",
             self._newProjectLoadedCb)
-        instance.PiTiVi.connect("new-project-failed",
+        self.app.connect("new-project-failed",
             self._newProjectFailedCb)
 
         # default pixbufs
@@ -268,7 +269,7 @@ class SourceList(gtk.VBox, Loggable):
         )
         self.actiongroup = gtk.ActionGroup("sourcelist")
         self.actiongroup.add_actions(actions)
-        uiman = instance.PiTiVi.gui.uimanager
+        uiman = self.app.gui.uimanager
         uiman.insert_action_group(self.actiongroup, 0)
         uiman.add_ui_from_string(ui)
 
@@ -363,7 +364,7 @@ class SourceList(gtk.VBox, Loggable):
             chooser_action = gtk.FILE_CHOOSER_ACTION_OPEN
             dialogtitle = _("Import a clip")
         close_after = gtk.CheckButton(_("Close after importing files"))
-        close_after.set_active(instance.PiTiVi.settings.closeImportDialog)
+        close_after.set_active(self.app.settings.closeImportDialog)
 
         self._importDialog = gtk.FileChooserDialog(dialogtitle, None,
                                                    chooser_action,
@@ -373,7 +374,7 @@ class SourceList(gtk.VBox, Loggable):
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
         self._importDialog.set_select_multiple(True)
         self._importDialog.set_modal(False)
-        self._importDialog.set_current_folder(instance.PiTiVi.settings.lastImportFolder)
+        self._importDialog.set_current_folder(self.app.settings.lastImportFolder)
 
         self._importDialog.connect('response', self._dialogBoxResponseCb, select_folders)
         self._importDialog.connect('close', self._dialogBoxCloseCb)
@@ -381,11 +382,11 @@ class SourceList(gtk.VBox, Loggable):
 
     def addFiles(self, files):
         """ Add files to the list """
-        instance.PiTiVi.current.sources.addUris(files)
+        self.app.current.sources.addUris(files)
 
     def addFolders(self, folders):
         """ walks the trees of the folders in the list and adds the files it finds """
-        instance.PiTiVi.threads.addThread(PathWalker, folders, instance.PiTiVi.current.sources.addUris)
+        self.app.threads.addThread(PathWalker, folders, self.app.current.sources.addUris)
 
     def _addFactory(self, factory):
         video = factory.getOutputStreams(VideoStream)
@@ -473,15 +474,15 @@ class SourceList(gtk.VBox, Loggable):
         self.debug("response:%r", response)
         if response == gtk.RESPONSE_OK:
             lastfolder = dialogbox.get_current_folder()
-            instance.PiTiVi.settings.lastImportFolder = lastfolder
-            instance.PiTiVi.settings.closeImportDialog = \
+            self.app.settings.lastImportFolder = lastfolder
+            self.app.settings.closeImportDialog = \
                 dialogbox.props.extra_widget.get_active()
             filenames = dialogbox.get_uris()
             if select_folders:
                 self.addFolders(filenames)
             else:
                 self.addFiles(filenames)
-            if instance.PiTiVi.settings.closeImportDialog:
+            if self.app.settings.closeImportDialog:
                 dialogbox.destroy()
                 self._importDialog = None
         else:
@@ -510,7 +511,7 @@ class SourceList(gtk.VBox, Loggable):
         selected.sort(reverse=True)
         for path in selected:
             uri = model[path][COL_URI]
-            del instance.PiTiVi.current.sources[uri]
+            del self.app.current.sources[uri]
 
     def _playButtonClickedCb(self, unused_widget):
         """ Called when a user clicks on the play button """

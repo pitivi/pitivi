@@ -21,7 +21,6 @@
 
 import gtk
 import pango
-import pitivi.instance as instance
 from gettext import gettext as _
 
 """
@@ -31,9 +30,10 @@ Audio FX list widgets
 class AudioFxList(gtk.VBox):
     """ Widget for listing video effects """
 
-    def __init__(self):
+    def __init__(self, instance):
         gtk.VBox.__init__(self)
         self.set_border_width(5)
+        self.app = instance
 
         # model
         self.storemodel = gtk.ListStore(str, str, object)
@@ -64,7 +64,7 @@ class AudioFxList(gtk.VBox):
         self._fillUpModel()
 
     def _fillUpModel(self):
-        for factory in instance.PiTiVi.effects.simple_audio:
+        for factory in self.app.effects.simple_audio:
             self.storemodel.append([factory.get_longname(),
                                     factory.get_description(),
                                     factory])

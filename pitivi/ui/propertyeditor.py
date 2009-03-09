@@ -24,7 +24,6 @@ Editor for aribtrary properties of timeline objects
 """
 
 import gtk
-import pitivi.instance as instance
 from gettext import gettext as _
 from pitivi.receiver import receiver, handler
 from pitivi.utils import same
@@ -36,10 +35,10 @@ class PropertyEditor(gtk.ScrolledWindow):
 
     }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, instance, *args, **kwargs):
         gtk.ScrolledWindow.__init__(self, *args, **kwargs)
-        self.instance = instance.PiTiVi
-        self.timeline = instance.PiTiVi.current.timeline
+        self.instance = instance
+        self.timeline = instance.current.timeline
         self.__createUi()
         self.__selectionChangedCb(self.timeline)
         self.__module_instances = {}

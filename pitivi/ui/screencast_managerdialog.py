@@ -22,7 +22,6 @@
 import gtk
 import os
 import gtk.glade
-from pitivi import instance
 import gst
 import dbus
 import dbus.service
@@ -33,8 +32,9 @@ import time
 
 class ScreencastManagerDialog(object):
 
-    def __init__(self):
+    def __init__(self, instance):
         gst.log("Creating new ScreencastManager Dialog")
+        self.app = instance
 
         # Create gtk widget using glade model
         glade_dir = os.path.dirname(os.path.abspath(__file__))
@@ -49,7 +49,7 @@ class ScreencastManagerDialog(object):
         self.close_btn.connect("clicked",self.close)
         self.ok_btn.connect("clicked",self.ok)
         self.istanbul_btn.connect("clicked",self.start_istanbul)
-        self.screencast_btn.set_active(instance.PiTiVi.screencast)
+        self.screencast_btn.set_active(self.app.screencast)
 
 
         self.dbus_connect()
@@ -91,7 +91,7 @@ class ScreencastManagerDialog(object):
     def screencast(self,w):
         if self.screencast_btn.get_active():
             self.iface.savemode(True)
-            instance.PiTiVi.screencast = True
+            self.app.screencast = True
         else:
             self.iface.savemode(False)
-            instance.PiTiVi.screencast = False
+            self.app.screencast = False

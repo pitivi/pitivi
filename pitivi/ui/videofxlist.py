@@ -25,7 +25,6 @@ Video effects list widget
 
 import gtk
 import pango
-import pitivi.instance as instance
 from gettext import gettext as _
 
 (COL_NAME,
@@ -35,9 +34,10 @@ from gettext import gettext as _
 class VideoFxList(gtk.VBox):
     """ Widget for listing video effects """
 
-    def __init__(self):
+    def __init__(self, instance):
         gtk.VBox.__init__(self)
         self.set_border_width(5)
+        self.app = instance
 
         # model
         self.storemodel = gtk.ListStore(str, str, object)
@@ -68,7 +68,7 @@ class VideoFxList(gtk.VBox):
         self._fillUpModel()
 
     def _fillUpModel(self):
-        for factory in instance.PiTiVi.effects.simple_video:
+        for factory in self.app.effects.simple_video:
             self.storemodel.append([factory.get_longname(),
                                     factory.get_description(),
                                     factory])

@@ -297,7 +297,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vpaned.pack2(self.timeline, resize=True, shrink=False)
         hpaned = gtk.HPaned()
         vpaned.pack1(hpaned, resize=False, shrink=True)
-        self.projecttabs = ProjectTabs()
+        self.projecttabs = ProjectTabs(self.app)
         self._connectToSourceList()
 
         hpaned.pack1(self.projecttabs, resize=True, shrink=False)
@@ -542,7 +542,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     # screencast callback
     def _Screencast(self,unused_action):
         from screencast_managerdialog import ScreencastManagerDialog
-        ScreencastManagerDialog()
+        ScreencastManagerDialog(self.app)
 
     ## Devices changed
     def __deviceChangeCb(self, probe, unused_device):
