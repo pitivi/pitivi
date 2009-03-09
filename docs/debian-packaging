@@ -1,0 +1,80 @@
+This is the procedure to build custom packages that we upload on the
+gstreamer-developers launchpad PPA.
+
+GStreamer and Pitivi packages are maintained in the pkg-gstreamer repository on
+alioth. The first step to build a custom version of the pitivi package is to
+check out the source package from alioth:
+
+~/packages$ svn co svn://svn.debian.org/pkg-gstreamer/experimental/pitivi
+
+This will checkout the pitivi debian source package in ~/packages/pitivi.
+
+Do the modifications you need to do to debian/control (change dependencies for
+example), debian/rules etc and then add a changelog entry to debian/changelog
+eg:
+
+
+pitivi (0.13.0.1~git20090309-1) intrepid; urgency=low
+
+  * New git snapshot (f0a8e27f03dc6c7d31a81c1b653272d55f89431b).
+
+ -- Alessandro Decina <alessandro.decina@collabora.co.uk>  Mon, 09 Mar 2009 12:04:50 +0100
+
+pitivi (0.11.3-1) experimental; urgency=low
+  ....
+
+Here we're doing a build for intrepid (current stable). As you can see in the
+first line of the changelog entry you need to specify a package version.
+Say that the latest version in the changelog is 0.11.3-1 and that you're
+packaging 0.13.0.1 (unreleased git snapshot as of 09/03/2009). Considering that
+the next official package version pushed by the distro is going to be 0.13.1-1,
+you want to create your package version so that 0.11.3-1 < $your_version <
+0.13.1-1. In this case the version would be 0.13.0.1~git20090309-1. You can use
+dpkg to compare versions:
+
+~/packages$ dpkg --compare-versions "0.11.3-1" \< "0.13.0.1~git20090309-1"; echo $?
+0
+
+~/packages$ dpkg --compare-versions "0.13.0.1~git20090309-1" \< "0.13.1-1"; echo $?
+0
+
+(0 means that the expression is true, 1 is false)
+
+Next get the pitivi tarball and put it in
+~/packages/pitivi_$version.orig.tar.gz. In this case
+~/packages/pitivi_0.13.0.1~git20090309-1.orig.tar.gz.
+
+At this point build the source package with:
+
+debuild -S
+
+If everything worked correctly, now you should have
+pitivi_0.13.0.1~git20090309-1.dsc and pitivi_0.13.0.1~git20090309-1_source.changes
+in ~/packages and you're ready to upload to the PPA.
+
+To upload the source package so that it gets build on launchpad you use dput.
+This is the content of my ~/.dput.cf file:
+
+[my-ppa]
+fqdn = ppa.launchpad.net
+method = ftp
+incoming = ~alessandro.decina/ubuntu/
+login = anonymous
+allow_unsigned_uploads = 0
+
+[gstreamer-developers]
+fqdn = ppa.launchpad.net
+method = ftp
+incoming = ~gstreamer-developers/ubuntu/
+login = anonymous
+allow_unsigned_uploads = 0
+
+
+Finally run:
+
+~/packages$ dput gstreamer-developers pitivi_0.13.0.1~git20090309-1_source.changes
+
+You will get notified by launchpad about the build status. It usually takes a
+few minutes before launchopad accepts the upload. After that you can also
+monitor the build at https://launchpad.net/~gstreamer-developers/+archive/ppa/
+
