@@ -53,16 +53,16 @@ SELECT_AFTER = ("Select all after selected")
 ui = '''
 <ui>
     <toolbar name="TimelineToolBar">
-        <toolitem action="ZoomOut" />
-        <toolitem action="ZoomIn" />
-        <separator />
-        <toolitem action="Razor" />
-        <separator />
-        <toolitem action="DeleteObj" />
-        <toolitem action="UnlinkObj" />
-        <toolitem action="LinkObj" />
-        <toolitem action="UngroupObj" />
-        <toolitem action="GroupObj" />
+        <placeholder name="Timeline">
+            <toolitem action="ZoomOut" />
+            <toolitem action="ZoomIn" />
+            <separator />
+            <toolitem action="Razor" />
+            <separator />
+            <toolitem action="DeleteObj" />
+            <toolitem action="UnlinkObj" />
+            <toolitem action="LinkObj" />
+        </placeholder>
     </toolbar>
     <accelerator action="DeleteObj" />
 </ui>

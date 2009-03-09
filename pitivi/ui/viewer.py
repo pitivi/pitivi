@@ -36,6 +36,13 @@ class ViewerError(Exception):
 # TODO : Switch to using Pipeline and Action
 
 class PitiviViewer(gtk.VBox, Loggable):
+
+    __gtype_name__ = 'PitiviViewer'
+    __gsignals__ = {
+        "activate-playback-controls" : (gobject.SIGNAL_RUN_LAST, 
+            gobject.TYPE_NONE, (gobject.TYPE_BOOLEAN,)),
+    }
+
     """
     A Widget to control and visualize a Pipeline
 
@@ -116,6 +123,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             # get the default action
             action = self._getDefaultAction()
         self._connectToAction(action)
+        self.showControls()
 
     def _connectToPipeline(self, pipeline):
         self.debug("pipeline:%r", pipeline)
@@ -161,6 +169,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         # FIXME: fix this properly?
         self.drawingarea.action = action
         self.drawingarea.have_set_xid = False
+        self.showControls()
 
     def _disconnectFromAction(self):
         self.action = None
@@ -173,6 +182,8 @@ class PitiviViewer(gtk.VBox, Loggable):
                          self.playpause_button, self.next_button,
                          self.forward_button, self.timelabel]:
                 item.set_sensitive(active)
+        if active:
+            self.emit("activate-playback-controls", True)
 
     def _getDefaultAction(self):
         return ViewAction()
@@ -238,15 +249,25 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.timelabel.set_alignment(1.0, 0.5)
         self.timelabel.set_padding(5, 5)
         bbox.pack_start(self.timelabel, expand=False, padding=10)
-
-        # self.detach_button = gtk.Button()
-        # image = gtk.Image()
-        # image.set_from_stock(gtk.STOCK_LEAVE_FULLSCREEN,
-        #     gtk.ICON_SIZE_SMALL_TOOLBAR)
-        # self.detach_button.set_image(image)
-        # bbox.pack_end(self.detach_button, expand=False, fill=False)
-
         self._haveUI = True
+
+    def showControls(self):
+        if not self.action:
+            return
+        if True:
+            self.rewind_button.show()
+            self.back_button.show()
+            self.playpause_button.show()
+            self.next_button.show()
+            self.forward_button.show()
+            self.slider.show()
+        else:
+            self.rewind_button.hide()
+            self.back_button.hide()
+            self.playpause_button.hide()
+            self.next_button.hide()
+            self.forward_button.hide()
+            self.slider.hide()
 
     def setDisplayAspectRatio(self, ratio):
         """ Sets the DAR of the Viewer to the given ratio """
@@ -373,27 +394,47 @@ class PitiviViewer(gtk.VBox, Loggable):
     ## Control gtk.Button callbacks
 
     def _rewindCb(self, unused_button):
-        pass
+        self.rewind()
 
     def _backCb(self, unused_button):
-        raise NotImplementedError
+        self.back()
 
     def _playButtonCb(self, unused_button, isplaying):
         if self.pipeline is None:
             return
 
         if isplaying:
-            if not self.pipeline.play() == gst.STATE_CHANGE_FAILURE:
-                self.currentState = gst.STATE_PLAYING
+            self.pause()
         else:
-            if not self.pipeline.pause() == gst.STATE_CHANGE_FAILURE:
-                self.currentState = gst.STATE_PAUSED
+            self.play()
 
     def _nextCb(self, unused_button):
-        raise NotImplementedError
+        self.next()
 
     def _forwardCb(self, unused_button):
-        pass
+        self.forward()
+
+    ## public methods for controlling playback
+
+    def play(self):
+        if not self.pipeline.play() == gst.STATE_CHANGE_FAILURE:
+            self.currentState = gst.STATE_PLAYING
+
+    def pause(self):
+        if not self.pipeline.pause() == gst.STATE_CHANGE_FAILURE:
+            self.currentState = gst.STATE_PAUSED
+
+    def rewind(self):
+        raise NotImplementedError
+
+    def back(self):
+        raise NotImplementedError
+
+    def next(self):
+        raise NotImplementedError
+
+    def forward(self):
+        raise NotImplementedError
 
     def _posCb(self, unused_pipeline, pos):
         self._newTime(pos)

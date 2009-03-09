@@ -38,5 +38,7 @@
     <toolitem action="FullScreen" />
   </toolbar>
   <toolbar name="TimelineToolBar">
+        <placeholder name="Timeline" />
+        <separator />
   </toolbar>
 </ui>

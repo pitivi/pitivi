@@ -204,6 +204,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.render_button.set_sensitive(sensitive)
 
     def _setActions(self):
+        PLAY = _("Start Playback")
+        PAUSE = _("Stop Playback")
+        FRAME_FORWARD = _("Forward one frame")
+        FAST_FORWARD = _("Fast Forward")
+        LOOP = _("Loop over selected area")
+        REWIND = _("Rewind")
+        FRAME_BACK = _("Back one frame")
+
         """ sets up the GtkActions """
         self.actions = [
             ("NewProject", gtk.STOCK_NEW, None,
@@ -236,6 +244,20 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("File", None, _("_File")),
             ("Edit", None, _("_Edit")),
             ("View", None, _("_View")),
+            ("Rewind", gtk.STOCK_MEDIA_REWIND, None, None, REWIND,
+                self.rewind),
+            ("FrameBack", gtk.STOCK_MEDIA_PREVIOUS, None, None, FRAME_BACK,
+                self.frameBack),
+            ("Play", gtk.STOCK_MEDIA_PLAY, None, None, PLAY,
+                self.play),
+            ("Pause", gtk.STOCK_MEDIA_PAUSE, None, None, PAUSE,
+                self.pause),
+            ("FrameForward", gtk.STOCK_MEDIA_NEXT, None, None, FRAME_FORWARD,
+                self.frameForward),
+            ("FastForward", gtk.STOCK_MEDIA_FORWARD, None, None, FAST_FORWARD,
+                self.fastForward),
+            ("Loop", gtk.STOCK_REFRESH, _("Loop"), None, LOOP,
+                self.loop),
             ("Help", None, _("_Help")),
         ]
 
@@ -265,7 +287,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
             elif action_name in [
                 "ProjectSettings", "Quit", "File", "Edit", "Help",
                 "About", "View", "FullScreen", "ImportSources",
-                "ImportSourcesFolder", "PluginManager"]:
+                "ImportSourcesFolder", "PluginManager",
+                "Play", "Pause"]:
                 action.set_sensitive(True)
             elif action_name in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
@@ -562,6 +585,27 @@ class PitiviMainWindow(gtk.Window, Loggable):
         else:
             self.webcam_button.set_sensitive(True)
 
+    def rewind(self, unused_action):
+        pass
+
+    def frameBack(self, unused_action):
+        pass
+
+    def play(self, unused_action):
+        self.viewer.play()
+
+    def pause(self, unused_action):
+        self.viewer.pause()
+
+    def frameForward(self, unused_action):
+        pass
+
+    def fastForward(self, unused_action):
+        pass
+
+    def loop(self, unused_action):
+        pass
+
     ## PiTiVi main object callbacks
 
     def _newProjectLoadedCb(self, unused_pitivi, project):
@@ -715,6 +759,26 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # source was dragged onto
         self.app.current.timeline.addSourceFactory(factory)
         context.finish(True, False, timestamp)
+
+    def _getTimelinePipeline(self):
+        # FIXME: the timeline pipeline should probably be moved in project
+        try:
+            return self._timeline_pipeline, self._timeline_view_action
+        except AttributeError:
+            pass
+
+        timeline = self.pitivi.current.timeline
+        factory = TimelineSourceFactory(timeline)
+        pipeline = Pipeline()
+        pipeline.activatePositionListener()
+        pipeline.connect('position', self._timelinePipelinePositionChangedCb)
+        action = ViewAction()
+        action.addProducers(factory)
+
+        self._timeline_pipeline = pipeline
+        self._timeline_view_action = action
+
+        return self._timeline_pipeline, self._timeline_view_action
 
     def _timelineRulerSeekCb(self, ruler, position):
         self.debug("position:%s", gst.TIME_ARGS (position))
