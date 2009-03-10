@@ -142,7 +142,10 @@ class SmartVideoScale(gst.Bin):
         self.log("outgoing width/height/PAR/DAR : %d/%d/%r/%r" % (self.widthout, self.heightout,
                                                                   self.parout, self.darout))
 
-        if self.darin == self.darout:
+
+        # for core <= 0.10.22 we always set caps != any, see 574805 for the
+        # details
+        if self.darin == self.darout and gst.version() >= (0, 10, 23):
             self.log("We have same input and output caps, resetting capsfilter and videobox settings")
             # same DAR, set inputcaps on capsfilter, reset videobox values
             caps = gst.caps_new_any()
