@@ -17,6 +17,7 @@ ui_PYTHON =			\
 	pluginmanagerdialog.py	\
 	point.py		\
 	preview.py		\
+	previewer.py		\
 	projectsettings.py	\
 	projecttabs.py		\
 	propertyeditor.py	\
