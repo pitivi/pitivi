@@ -231,7 +231,7 @@ class InteractivePitivi(Pitivi):
         if project:
             self.loadProject(filepath=project)
 
-        uris = ["file://" + path for path in sources]
+        uris = ["file://" + os.path.abspath(path) for path in sources]
         if add_to_timeline:
             self._uris = uris
             self._duration = self.current.timeline.duration
