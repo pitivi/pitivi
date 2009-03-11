@@ -484,9 +484,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.actiongroup.set_visible(False)
         gtk.Vbox.hide(self)
 
-    def _computeZoomRatio(self, index):
-        return self.zoom_levels[index]
-
     def _zoomInCb(self, unused_action):
         Zoomable.zoomIn()
 

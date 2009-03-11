@@ -51,15 +51,18 @@ class Zoomable(object):
 
     sigid = None
     _instances = []
-    zoom_levels = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5] + range(5, 10, 1) + \
-        range(10, 150, 10)
+    max_zoom = 1000.0
+    min_zoom = 0.25
+    zoom_steps = 100
+    zoom_range = max_zoom - min_zoom
     _cur_zoom = 2
-    zoomratio = zoom_levels[_cur_zoom]
-
+    zoomratio = None
 
     def __init__(self):
         # FIXME: ideally we should deprecate this
         Zoomable.addInstance(self)
+        if Zoomable.zoomratio is None:
+            Zoomable.zoomratio = self.computeZoomRatio(self._cur_zoom)
 
     def __del__(self):
         if self in Zoomable._instances:
@@ -76,9 +79,16 @@ class Zoomable(object):
 
     @classmethod
     def setZoomRatio(cls, ratio):
-        cls.zoomratio = ratio
-        cls._cur_zoom = cls.zoom_levels.index(ratio)
-        cls._zoomChanged()
+        if cls.zoomratio != ratio:
+            cls.zoomratio = min(cls.max_zoom, max(cls.min_zoom, ratio))
+            cls._zoomChanged()
+
+    @classmethod
+    def setZoomLevel(cls, level):
+        level = min(cls.zoom_steps, max(0, level))
+        if level != cls._cur_zoom:
+            cls._cur_zoom = level
+            cls.setZoomRatio(cls.computeZoomRatio(level))
 
     @classmethod
     def getCurrentZoomLevel(cls):
@@ -86,17 +96,21 @@ class Zoomable(object):
 
     @classmethod
     def zoomIn(cls):
-        cls._cur_zoom = min(len(cls.zoom_levels) - 1, cls._cur_zoom + 1)
-        cls.setZoomRatio(cls._computeZoomRatio(cls._cur_zoom))
+        cls.setZoomLevel(cls._cur_zoom + 1)
 
     @classmethod
     def zoomOut(cls):
-        cls._cur_zoom = max(0, cls._cur_zoom - 1)
-        cls.setZoomRatio(cls._computeZoomRatio(cls._cur_zoom))
+        cls.setZoomLevel(cls._cur_zoom - 1)
 
     @classmethod
-    def _computeZoomRatio(cls, index):
-        return cls.zoom_levels[index]
+    def computeZoomRatio(cls, x):
+        return ((((float(x) / cls.zoom_steps) ** 3) * cls.zoom_range) +
+            cls.min_zoom)
+
+    @classmethod
+    def computeZoomLevel(cls, ratio):
+        return int((((ratio - cls.min_zoom) / cls.zoom_range) ** (1.0/3.0)) *
+            cls.zoom_steps)
 
     @classmethod
     def pixelToNs(cls, pixel):
