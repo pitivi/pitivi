@@ -286,7 +286,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         # grey out unimplemented actions
         for item in ('OpenProject', 'SaveProject',
-            'SaveProjectAs', 'Screencast'):
+            'SaveProjectAs', 'Screencast', 'NetstreamCapture'):
             for prefix in ('/MainMenuBar/File/', '/MainToolBar/'):
                 widget = self.uimanager.get_widget(prefix + item)
                 if widget is None:
