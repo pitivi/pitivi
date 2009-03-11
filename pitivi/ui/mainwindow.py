@@ -59,7 +59,7 @@ if HAVE_GCONF:
 
 GlobalSettings.addConfigOption("fileSupportEnabled",
     environment="PITIVI_FILE_SUPPORT",
-    default=True)
+    default=False)
 
 GlobalSettings.addConfigSection("main-window")
 GlobalSettings.addConfigOption('mainWindowFullScreen',
@@ -169,6 +169,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.current.pipeline.connect('position', self._timelinePipelinePositionChangedCb)
         self.show_all()
 
+        self.app.current.timeline.connect('duration-changed',
+                self._timelineDurationChangedCb)
+
     def showEncodingDialog(self, project, pause=True):
         """
         Shows the L{EncodingDialog} for the given project Timeline.
@@ -194,7 +197,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.showEncodingDialog(self.project)
 
     def _timelineDurationChangedCb(self, timeline, duration):
-        self.render_button.set_sensitive((duration > 0) and True or False)
+        if duration > 0:
+            sensitive = True
+        else:
+            sensitive = False
+        self.render_button.set_sensitive(sensitive)
 
     def _setActions(self):
         """ sets up the GtkActions """
@@ -244,20 +251,23 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # deactivating non-functional actions
         # FIXME : reactivate them
         for action in self.actiongroup.list_actions():
-            if action.get_name() == "RenderProject":
+            action_name = action.get_name()
+            if action_name == "RenderProject":
                 self.render_button = action
-            elif action.get_name() == "ImportfromCam":
+                # this will be set sensitive when the timeline duration changes
+                action.set_sensitive(False)
+            elif action_name == "ImportfromCam":
                 self.webcam_button = action
-            elif action.get_name() == "Screencast":
+            elif action_name == "Screencast":
                 # FIXME : re-enable this action once istanbul integration is complete
                 # and upstream istanbul has applied packages for proper interaction.
                 action.set_visible(False)
-            elif action.get_name() in [
+            elif action_name in [
                 "ProjectSettings", "Quit", "File", "Edit", "Help",
                 "About", "View", "FullScreen", "ImportSources",
-                "ImportSourcesFolder", "PluginManager","ImportfromCam","NetstreamCapture"]:
+                "ImportSourcesFolder", "PluginManager"]:
                 action.set_sensitive(True)
-            elif action.get_name() in ["SaveProject", "SaveProjectAs",
+            elif action_name in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
                 if not self.app.settings.fileSupportEnabled:
                     action.set_sensitive(False)
@@ -283,16 +293,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vbox = gtk.VBox(False)
         self.add(vbox)
         self.menu = self.uimanager.get_widget("/MainMenuBar")
-
-        # grey out unimplemented actions
-        for item in ('OpenProject', 'SaveProject',
-            'SaveProjectAs', 'Screencast', 'NetstreamCapture'):
-            for prefix in ('/MainMenuBar/File/', '/MainToolBar/'):
-                widget = self.uimanager.get_widget(prefix + item)
-                if widget is None:
-                    continue
-                widget.set_sensitive(False)
-
         vbox.pack_start(self.menu, expand=False)
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
         vbox.pack_start(self.toolbar, expand=False)
