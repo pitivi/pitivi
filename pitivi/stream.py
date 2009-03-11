@@ -330,7 +330,9 @@ def get_stream_for_caps(caps, pad=None):
     return ret
 
 def get_stream_for_pad(pad):
-    caps = pad.get_caps()
+    caps = pad.props.caps
+    if caps is None:
+        caps = pad.get_caps()
     pad_id = get_pad_id(pad)
     stream = get_stream_for_caps(caps, pad)
     stream.pad_id = pad_id

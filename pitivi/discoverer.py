@@ -413,6 +413,7 @@ class Discoverer(object, Signallable, Loggable):
     def _capsNotifyCb(self, pad, unused_property, ghost=None):
         if ghost is None:
             ghost = pad
+
         caps = pad.props.caps
         if caps is None or not caps.is_fixed():
             return
@@ -421,8 +422,7 @@ class Discoverer(object, Signallable, Loggable):
 
         self.unfixed_pads -= 1
         stream = self._addStreamFromPad(ghost)
-        caps_str = str(ghost.get_caps())
-        if caps_str.startswith("video/x-raw"):
+        if caps[0].get_name().startswith("video/x-raw"):
             self._newVideoPadCb(ghost, stream)
 
     def _newDecodedPadCb(self, unused_element, pad, is_last):
@@ -433,7 +433,9 @@ class Discoverer(object, Signallable, Loggable):
         # Demuxers don't seem to implement per stream duration queries anyway.
         self._maybeQueryDuration(pad)
 
-        if pad.get_caps().is_fixed():
+        caps = pad.props.caps
+
+        if caps is not None and caps.is_fixed():
             stream = self._addStreamFromPad(pad)
 
             caps_str = str(pad.get_caps())
