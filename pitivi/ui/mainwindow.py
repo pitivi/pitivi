@@ -283,6 +283,16 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vbox = gtk.VBox(False)
         self.add(vbox)
         self.menu = self.uimanager.get_widget("/MainMenuBar")
+
+        # grey out unimplemented actions
+        for item in ('OpenProject', 'SaveProject',
+            'SaveProjectAs', 'Screencast'):
+            for prefix in ('/MainMenuBar/File/', '/MainToolBar/'):
+                widget = self.uimanager.get_widget(prefix + item)
+                if widget is None:
+                    continue
+                widget.set_sensitive(False)
+
         vbox.pack_start(self.menu, expand=False)
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
         vbox.pack_start(self.toolbar, expand=False)
