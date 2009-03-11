@@ -123,7 +123,7 @@ class Timeline(gtk.VBox, Loggable, Zoomable):
         self._canvas = TimelineCanvas(self.timeline)
 
         self.scrolledWindow = gtk.ScrolledWindow(self.hadj)
-        self.scrolledWindow.set_policy(gtk.POLICY_ALWAYS, gtk.POLICY_AUTOMATIC)
+        self.scrolledWindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.scrolledWindow.add(self._canvas)
         #FIXME: remove padding between scrollbar and scrolled window
         self.pack_start(self.scrolledWindow, expand=True)
