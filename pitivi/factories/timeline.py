@@ -49,7 +49,6 @@ class FixSeekStart(gst.BaseTransform):
                     event.parse_seek()
             if cur_type == gst.SEEK_TYPE_SET and cur >= self.track.duration:
                 cur = self.track.duration - 1 * gst.NSECOND
-
                 new_event = gst.event_new_seek(rate, format, flags, cur_type, cur,
                         stop_type, stop)
                 event = new_event
@@ -120,7 +119,12 @@ class TimelineSourceFactory(SourceFactory):
 
     def _newGhostPad(self, pad, track):
         pad_id = str(pad)
-        seek = FixSeekStart(track)
+        if gst.get_pygst_version() < (0, 10, 14, 1):
+            # in <= 0.10.14 there was a bug in basetransform (commit
+            # 83f31c7194b96ec857d6695746dd8b3fcba1846a in gst-python)
+            seek = gst.element_factory_make('identity')
+        else:
+            seek = FixSeekStart(track)
         self.bin.add(seek)
         seek.set_state(gst.STATE_PLAYING)
         pad.link(seek.get_pad('sink'))
