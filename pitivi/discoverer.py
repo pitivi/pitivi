@@ -28,6 +28,7 @@ Discover file multimedia information.
 from gettext import gettext as _
 import os.path
 import gobject
+gobject.threads_init()
 import gst
 import gst.pbutils
 import tempfile
@@ -412,7 +413,6 @@ class Discoverer(object, Signallable, Loggable):
     def _capsNotifyCb(self, pad, unused_property, ghost=None):
         if ghost is None:
             ghost = pad
-
         caps = pad.props.caps
         if caps is None or not caps.is_fixed():
             return
@@ -458,3 +458,12 @@ class Discoverer(object, Signallable, Loggable):
         self.current_streams.append(stream)
 
         return stream
+
+if __name__ == '__main__':
+    import sys
+    import gobject
+
+    discoverer = Discoverer()
+    discoverer.addFiles(sys.argv[1:])
+    loop = gobject.MainLoop()
+    loop.run()
