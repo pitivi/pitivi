@@ -256,19 +256,29 @@ class TestAnalysis(TestCase):
         self.failUnlessEqual(bag['called'], True)
 
     def testBusError(self):
+        def not_media_file_cb(discoverer, uri, error, debug, dic):
+            dic['uri'] = uri
+            dic['error'] = error
+            dic['debug'] = debug
+
+        dic = {}
+        self.discoverer.connect('not_media_file', not_media_file_cb, dic)
+
         src = gst.Pad('src', gst.PAD_SRC)
         gerror = gst.GError(gst.STREAM_ERROR, gst.STREAM_ERROR_FAILED, 'meh')
         message = gst.message_new_error(src, gerror, 'debug1')
 
         self.failUnlessEqual(self.discoverer.error, None)
+        self.discoverer.addFile('popme')
         self.discoverer._busMessageErrorCb(None, message)
-        self.failUnlessEqual(self.discoverer.error_debug, 'debug1')
+        self.failUnlessEqual(dic['debug'], 'debug1')
 
         # errors shouldn't be overridden
         gerror = gst.GError(gst.STREAM_ERROR, gst.STREAM_ERROR_FAILED, 'muh')
         message = gst.message_new_error(src, gerror, 'debug2')
+        self.discoverer.addFile('popme')
         self.discoverer._busMessageErrorCb(None, message)
-        self.failUnlessEqual(self.discoverer.error_debug, 'debug1')
+        self.failUnlessEqual(dic['debug'], 'debug2')
 
     def testNewDecodedPadFixed(self):
         bag = {'called': 0}
