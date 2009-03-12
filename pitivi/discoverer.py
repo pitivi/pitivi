@@ -431,16 +431,8 @@ class Discoverer(object, Signallable, Loggable):
         fakesink.sync_state_with_parent()
 
     def _capsNotifyCb(self, pad, unused_property, ghost=None):
-        import pdb
         if ghost is None:
             ghost = pad
-
-        if not ghost.is_linked():
-            caps_str = str(pad.get_caps())
-            if caps_str.startswith("video/x-raw"):
-                self._newVideoPadCb(ghost)
-            else:
-                self._newPadCb(ghost)
 
         caps = pad.props.caps
         if caps is None or not caps.is_fixed():
@@ -455,6 +447,13 @@ class Discoverer(object, Signallable, Loggable):
 
     def _newDecodedPadCb(self, unused_element, pad, is_last):
         self.info("pad:%s caps:%s is_last:%s", pad, pad.get_caps(), is_last)
+
+        caps_str = str(pad.get_caps())
+        if caps_str.startswith("video/x-raw"):
+            self._newVideoPadCb(pad)
+        else:
+            self._newPadCb(pad)
+
         # try to get the duration
         # NOTE: this gets the duration only once, usually for the first stream.
         # Demuxers don't seem to implement per stream duration queries anyway.
@@ -464,10 +463,7 @@ class Discoverer(object, Signallable, Loggable):
 
         if caps is not None and caps.is_fixed():
             stream = self._addStreamFromPad(pad)
-
-            caps_str = str(pad.get_caps())
-            if caps_str.startswith("video/x-raw"):
-                self._newVideoPadCb(pad)
+            if isinstance(stream, VideoStream):
                 stream.thumbnail = self.thumbnails[pad]
         else:
             # add the stream once the caps are fixed
@@ -493,6 +489,6 @@ if __name__ == '__main__':
     import gobject
 
     discoverer = Discoverer()
-    discoverer.addFiles(sys.argv[1:])
+    discoverer.addFiles(['file://%s' % i  for i in sys.argv[1:]])
     loop = gobject.MainLoop()
     loop.run()

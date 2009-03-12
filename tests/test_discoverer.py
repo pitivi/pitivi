@@ -320,11 +320,11 @@ class TestAnalysis(TestCase):
         self.failUnlessEqual(self.discoverer.current_streams, [])
         self.discoverer._newDecodedPadCb(None, video, False)
         self.failUnlessEqual(len(self.discoverer.current_streams), 0)
-        self.failUnlessEqual(self.discoverer.new_video_pad_cb, 0)
+        self.failUnlessEqual(self.discoverer.new_video_pad_cb, 1)
 
         self.discoverer._newDecodedPadCb(None, audio, False)
         self.failUnlessEqual(len(self.discoverer.current_streams), 0)
-        self.failUnlessEqual(self.discoverer.new_video_pad_cb, 0)
+        self.failUnlessEqual(self.discoverer.new_video_pad_cb, 1)
 
         # fix the caps
         video.set_caps(gst.Caps('video/x-raw-rgb, framerate=25/1'))
