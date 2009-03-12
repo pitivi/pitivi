@@ -91,6 +91,8 @@ class Discoverer(object, Signallable, Loggable):
         self.error_debug = None
         self.unfixed_pads = 0
         self.missing_plugin_messages = []
+        self.dynamic_elements = []
+        self.thumbnails = {}
 
     def _resetPipeline(self):
         # finish current, cleanup
@@ -102,6 +104,9 @@ class Discoverer(object, Signallable, Loggable):
             self.info("before setting to NULL")
             res = self.pipeline.set_state(gst.STATE_NULL)
             self.info("after setting to NULL : %s", res)
+
+        for element in self.dynamic_elements:
+            self.pipeline.remove(element)
 
     def addFile(self, filename):
         """ queue a filename to be discovered """
@@ -390,7 +395,7 @@ class Discoverer(object, Signallable, Loggable):
 
         return filename
 
-    def _newVideoPadCb(self, pad, stream):
+    def _newVideoPadCb(self, pad):
         """ a new video pad was found """
         self.debug("pad %s", pad)
 
@@ -400,8 +405,10 @@ class Discoverer(object, Signallable, Loggable):
         csp = gst.element_factory_make("ffmpegcolorspace")
         pngenc = gst.element_factory_make("pngenc")
         pngsink = gst.element_factory_make("filesink")
-        stream.thumbnail = self._getThumbnailFilenameFromPad(pad)
-        pngsink.props.location = stream.thumbnail
+        self.thumbnails[pad] = thumbnail = self._getThumbnailFilenameFromPad(pad)
+        pngsink.props.location = thumbnail
+
+        self.dynamic_elements.extend([queue, csp, pngenc, pngsink])
 
         self.pipeline.add(queue, csp, pngenc, pngsink)
         gst.element_link_many(queue, csp, pngenc, pngsink)
@@ -410,9 +417,30 @@ class Discoverer(object, Signallable, Loggable):
         for element in [queue, csp, pngenc, pngsink]:
             element.sync_state_with_parent()
 
+    def _newPadCb(self, pad):
+        queue = gst.element_factory_make('queue')
+        fakesink = gst.element_factory_make('fakesink')
+        self.dynamic_elements.append(queue)
+        self.dynamic_elements.append(fakesink)
+
+        self.pipeline.add(queue, fakesink)
+        pad.link(queue.get_pad('sink'))
+        queue.link(fakesink)
+
+        queue.sync_state_with_parent()
+        fakesink.sync_state_with_parent()
+
     def _capsNotifyCb(self, pad, unused_property, ghost=None):
+        import pdb
         if ghost is None:
             ghost = pad
+
+        if not ghost.is_linked():
+            caps_str = str(pad.get_caps())
+            if caps_str.startswith("video/x-raw"):
+                self._newVideoPadCb(ghost)
+            else:
+                self._newPadCb(ghost)
 
         caps = pad.props.caps
         if caps is None or not caps.is_fixed():
@@ -422,12 +450,11 @@ class Discoverer(object, Signallable, Loggable):
 
         self.unfixed_pads -= 1
         stream = self._addStreamFromPad(ghost)
-        if caps[0].get_name().startswith("video/x-raw"):
-            self._newVideoPadCb(ghost, stream)
+        if isinstance(stream, VideoStream):
+            stream.thumbnail = self.thumbnails[ghost]
 
     def _newDecodedPadCb(self, unused_element, pad, is_last):
         self.info("pad:%s caps:%s is_last:%s", pad, pad.get_caps(), is_last)
-
         # try to get the duration
         # NOTE: this gets the duration only once, usually for the first stream.
         # Demuxers don't seem to implement per stream duration queries anyway.
@@ -440,7 +467,8 @@ class Discoverer(object, Signallable, Loggable):
 
             caps_str = str(pad.get_caps())
             if caps_str.startswith("video/x-raw"):
-                self._newVideoPadCb(pad, stream)
+                self._newVideoPadCb(pad)
+                stream.thumbnail = self.thumbnails[pad]
         else:
             # add the stream once the caps are fixed
             if gst.version() < (0, 10, 21, 1) and \
@@ -453,7 +481,6 @@ class Discoverer(object, Signallable, Loggable):
             else:
                 pad.connect("notify::caps", self._capsNotifyCb)
             self.unfixed_pads += 1
-
 
     def _addStreamFromPad(self, pad):
         stream  = get_stream_for_pad(pad)

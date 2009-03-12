@@ -77,6 +77,8 @@ class Discoverer1(Discoverer):
     timeout_scheduled = False
     timeout_expired = True
     timeout_cancelled = False
+    new_video_pad_cb = 0
+    new_pad_cb = 0
 
     def _scheduleAnalysis(self):
         # we call _analyze manually so we don't have to do tricks to keep test
@@ -106,10 +108,19 @@ class Discoverer1(Discoverer):
 
         return source
 
+    def _newVideoPadCb(self, pad):
+        Discoverer._newVideoPadCb(self, pad)
+        self.new_video_pad_cb += 1
+
+    def _newPadCb(self, pad):
+        Discoverer._newPadCb(self, pad)
+        self.new_pad_cb += 1
+
 class TestAnalysis(TestCase):
     def setUp(self):
         TestCase.setUp(self)
         self.discoverer = Discoverer1()
+        self.discoverer.pipeline = gst.Bin()
 
     def tearDown(self):
         self.discoverer = None
@@ -281,11 +292,6 @@ class TestAnalysis(TestCase):
         self.failUnlessEqual(dic['debug'], 'debug2')
 
     def testNewDecodedPadFixed(self):
-        bag = {'called': 0}
-        def new_video_pad_cb(pad, stream):
-            bag['called'] += 1
-
-        self.discoverer._newVideoPadCb = new_video_pad_cb
         video = gst.Pad('video_00', gst.PAD_SRC)
         video.set_caps(gst.Caps('video/x-raw-rgb'))
         audio = gst.Pad('audio_00', gst.PAD_SRC)
@@ -294,18 +300,13 @@ class TestAnalysis(TestCase):
         self.failUnlessEqual(self.discoverer.current_streams, [])
         self.discoverer._newDecodedPadCb(None, video, False)
         self.failUnlessEqual(len(self.discoverer.current_streams), 1)
-        self.failUnlessEqual(bag['called'], 1)
+        self.failUnlessEqual(self.discoverer.new_video_pad_cb, 1)
 
         self.discoverer._newDecodedPadCb(None, audio, False)
         self.failUnlessEqual(len(self.discoverer.current_streams), 2)
-        self.failUnlessEqual(bag['called'], 1)
+        self.failUnlessEqual(self.discoverer.new_video_pad_cb, 1)
 
     def testNewDecodedPadNotFixed(self):
-        bag = {'called': 0}
-        def new_video_pad_cb(pad, stream):
-            bag['called'] += 1
-
-        self.discoverer._newVideoPadCb = new_video_pad_cb
         video_template = gst.PadTemplate('video_00', gst.PAD_SRC,
                 gst.PAD_ALWAYS, gst.Caps('video/x-raw-rgb, '
                         'framerate=[0/1, %d/1]' % ((2 ** 31) - 1)))
@@ -319,27 +320,26 @@ class TestAnalysis(TestCase):
         self.failUnlessEqual(self.discoverer.current_streams, [])
         self.discoverer._newDecodedPadCb(None, video, False)
         self.failUnlessEqual(len(self.discoverer.current_streams), 0)
-        self.failUnlessEqual(bag['called'], 0)
+        self.failUnlessEqual(self.discoverer.new_video_pad_cb, 0)
 
         self.discoverer._newDecodedPadCb(None, audio, False)
         self.failUnlessEqual(len(self.discoverer.current_streams), 0)
-        self.failUnlessEqual(bag['called'], 0)
+        self.failUnlessEqual(self.discoverer.new_video_pad_cb, 0)
 
         # fix the caps
         video.set_caps(gst.Caps('video/x-raw-rgb, framerate=25/1'))
         self.failUnlessEqual(len(self.discoverer.current_streams), 1)
-        self.failUnlessEqual(bag['called'], 1)
+        self.failUnlessEqual(self.discoverer.new_video_pad_cb, 1)
 
         audio.set_caps(gst.Caps('audio/x-raw-int, rate=44100'))
         self.failUnlessEqual(len(self.discoverer.current_streams), 2)
-        self.failUnlessEqual(bag['called'], 1)
+        self.failUnlessEqual(self.discoverer.new_video_pad_cb, 1)
 
 class TestStateChange(TestCase):
     def setUp(self):
         TestCase.setUp(self)
         self.discoverer = Discoverer1()
         # don't plug the thumbnailing branch
-        self.discoverer._newVideoPadCb = lambda pad, stream: None
         self.discoverer.current_uri = 'file:///foo/bar'
         self.src = gst.Bin()
         self.discoverer.pipeline = self.src
@@ -408,7 +408,7 @@ class TestStateChange(TestCase):
         self.failUnlessEqual(self.error, None)
         self.discoverer._busMessageStateChangedCb(None, message)
         # should go to PLAYING to do thumbnails
-        self.failUnlessEqual(self.src.get_state()[1], gst.STATE_PLAYING)
+        self.failUnlessEqual(self.src.get_state(0)[2], gst.STATE_PLAYING)
         self.discoverer._finishAnalysis()
         self.failUnlessEqual(len(self.factories), 1)
         factory = self.factories[0]
@@ -435,6 +435,7 @@ class TestStateChange(TestCase):
     def testBusStateChangedImageOnly(self):
         # only image
         pngdec = gst.element_factory_make('pngdec')
+        self.discoverer.pipeline.add(pngdec)
         pad = pngdec.get_pad('src')
         caps = gst.Caps(pad.get_caps()[0])
         caps[0]['width'] = 320
@@ -450,7 +451,7 @@ class TestStateChange(TestCase):
         self.failUnlessEqual(self.error, None)
         self.discoverer._busMessageStateChangedCb(None, message)
         # should go to PLAYING to do thumbnails
-        self.failUnlessEqual(self.src.get_state()[1], gst.STATE_PLAYING)
+        self.failUnlessEqual(self.src.get_state(0)[2], gst.STATE_PLAYING)
         self.discoverer._finishAnalysis()
         self.failUnlessEqual(len(self.factories), 1)
         factory = self.factories[0]
