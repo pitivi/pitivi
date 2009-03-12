@@ -225,7 +225,8 @@ def find_decoder(pad):
             return None
 
         factory = element.get_factory()
-        if factory is not None and 'Decoder' in factory.get_klass():
+        if factory is not None and ('Decoder' in factory.get_klass() or \
+                'Codec/Demuxer/Audio' == factory.get_klass()):
             decoder = element
             break
 
