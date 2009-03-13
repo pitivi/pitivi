@@ -256,9 +256,11 @@ class SourceList(gtk.VBox, Loggable):
                            gtk.gdk.ACTION_COPY)
         self.connect("drag_data_received", self._dndDataReceivedCb)
 
-        self.treeview.drag_source_set(gtk.gdk.BUTTON1_MASK,
-                                      [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
-                                      gtk.gdk.ACTION_COPY)
+        self.treeview.drag_source_set(0,[], gtk.gdk.ACTION_COPY)
+        self.treeview.connect("motion-notify-event",
+            self._treeViewMotionNotifyEventCb)
+        self.treeview.connect("button-release-event",
+            self._treeViewButtonReleaseCb)
         self.treeview.connect("drag_begin", self._dndTreeBeginCb)
         self.treeview.connect("drag_data_get", self._dndDataGetCb)
 
@@ -533,9 +535,61 @@ class SourceList(gtk.VBox, Loggable):
         self.debug("Let's play %s", factory.name)
         self.emit('play', factory)
 
-    def _treeViewButtonPressEventCb(self, unused_treeview, event):
+    _dragStarted = False
+    _dragButton = None
+    _dragX = 0
+    _dragY = 0
+    _ignoreRelease = False
+
+    def _treeViewButtonPressEventCb(self, treeview, event):
+        chain_up = True
+
         if event.button == 3:
             self.popup.popup(None, None, None, event.button, event.time)
+            chain_up = False
+
+        else:
+
+            if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
+                chain_up = False
+
+            self._dragStarted = False
+            self._dragButton = event.button 
+            self._dragX = int(event.x)
+            self._dragY = int(event.y)
+
+        if chain_up:
+            gtk.TreeView.do_button_press_event(treeview, event)
+        else:
+            treeview.grab_focus()
+
+        self._ignoreRelease = chain_up
+
+        return True
+
+    def _treeViewMotionNotifyEventCb(self, treeview, event):
+        if self._dragButton:
+            if treeview.drag_check_threshold(self._dragX, self._dragY,
+                int(event.x), int(event.y)):
+                context = treeview.drag_begin(
+                    [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
+                    gtk.gdk.ACTION_COPY,
+                    self._dragButton,
+                    event)
+                self._dragStarted = True
+            return True
+        return False
+
+    def _treeViewButtonReleaseCb(self, treeview, event):
+        if event.button == self._dragButton:
+            self._dragButton = None
+            if (not self._ignoreRelease) and (not self._dragStarted):
+                treeview.get_selection().unselect_all()
+                result = treeview.get_path_at_pos(int(event.x), int(event.y))
+                if result:
+                    path = result[0]
+                    treeview.get_selection().select_path(path)
+        return False
 
     def _rowActivatedCb(self, unused_treeview, path, unused_column):
         factory = self.storemodel[path][COL_FACTORY]
@@ -593,7 +647,7 @@ class SourceList(gtk.VBox, Loggable):
             context.drag_abort(int(time.time()))
         else:
             row = model[paths[0]]
-            self.treeview.drag_source_set_icon_pixbuf(row[COL_ICON])
+            context.set_icon_pixbuf(row[COL_ICON], 0, 0)
 
     def getSelectedItems(self):
         """ returns a list of selected items uri """
