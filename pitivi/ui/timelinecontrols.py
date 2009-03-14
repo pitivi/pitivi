@@ -20,6 +20,8 @@ class TrackControls(gtk.Expander):
     def __init__(self, track):
         gtk.Expander.__init__(self, track_name(track))
         self.props.use_markup = True
+        self.props.expanded = True
+        self.props.sensitive = False
         self.track = track
         self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
 
