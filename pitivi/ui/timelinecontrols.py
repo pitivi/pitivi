@@ -19,28 +19,37 @@ class TrackControls(gtk.Expander):
 
     def __init__(self, track):
         gtk.Expander.__init__(self, track_name(track))
+        self.props.use_markup = True
         self.track = track
         self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
-        self.tracks = {}
 
-class TimelineControls(gtk.HBox):
+class TimelineControls(gtk.VBox):
 
     def __init__(self, timeline):
-        gtk.HBox.__init__(self)
-        self.timeline = timeline
-        self.set_size_request(TRACK_CONTROL_WIDTH, 50)
+        gtk.VBox.__init__(self)
+        self._tracks = []
         self.set_spacing(LAYER_SPACING)
+        self.timeline = timeline
 
-    timeline = receiver()
+## Timeline callbacks
+
+    def _set_timeline(self):
+        while self._tracks:
+            self._trackRemoved(None, 0)
+        if self.timeline:
+            for track in self.timeline.tracks:
+                self._trackAdded(None, track)
+
+    timeline = receiver(_set_timeline)
 
     @handler(timeline, "track-added")
     def _trackAdded(self, timeline, track):
-        tc = TrackControls(track)
-        self.pack_start(tc)
-        tc.show()
-        self.tracks[track] = tc
+        track = TrackControls(track)
+        self._tracks.append(track)
+        self.pack_start(track, False, False)
 
     @handler(timeline, "track-removed")
-    def _trackRemoved(self, timeline, track):
-        self.remove(self.tracks[track])
-
+    def _trackRemoved(self, unused_timeline, position):
+        track = self._tracks[position]
+        del self._tracks[position]
+        self.remove(track)

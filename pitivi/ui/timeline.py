@@ -249,6 +249,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def setProject(self, project):
         self.project = project
         self.timeline = project.timeline
+        self._controls.timeline = self.timeline
         self._canvas.timeline = self.timeline
         self._canvas.zoomChanged()
 
