@@ -541,6 +541,16 @@ class SourceList(gtk.VBox, Loggable):
     _dragY = 0
     _ignoreRelease = False
 
+    def _rowUnderMouseSelected(self, treeview, event):
+        result = treeview.get_path_at_pos(int(event.x), int(event.y))
+        if result:
+            path = result[0]
+            return treeview.get_selection().path_is_selected(path)
+        return False
+
+    def _nothingUnderMouse(self, treeview, event):
+        return not bool(treeview.get_path_at_pos(int(event.x), int(event.y)))
+
     def _treeViewButtonPressEventCb(self, treeview, event):
         chain_up = True
 
@@ -551,7 +561,7 @@ class SourceList(gtk.VBox, Loggable):
         else:
 
             if not event.state & (gtk.gdk.CONTROL_MASK | gtk.gdk.SHIFT_MASK):
-                chain_up = False
+                chain_up = not self._rowUnderMouseSelected(treeview, event)
 
             self._dragStarted = False
             self._dragButton = event.button 
@@ -568,16 +578,20 @@ class SourceList(gtk.VBox, Loggable):
         return True
 
     def _treeViewMotionNotifyEventCb(self, treeview, event):
-        if self._dragButton:
-            if treeview.drag_check_threshold(self._dragX, self._dragY,
-                int(event.x), int(event.y)):
-                context = treeview.drag_begin(
-                    [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
-                    gtk.gdk.ACTION_COPY,
-                    self._dragButton,
-                    event)
-                self._dragStarted = True
+        if not self._dragButton:
             return True
+
+        if self._nothingUnderMouse(treeview, event):
+            return True
+
+        if treeview.drag_check_threshold(self._dragX, self._dragY,
+            int(event.x), int(event.y)):
+            context = treeview.drag_begin(
+                [dnd.URI_TUPLE, dnd.FILESOURCE_TUPLE],
+                gtk.gdk.ACTION_COPY,
+                self._dragButton,
+                event)
+            self._dragStarted = True
         return False
 
     def _treeViewButtonReleaseCb(self, treeview, event):
