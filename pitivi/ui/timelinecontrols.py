@@ -2,7 +2,7 @@ import gtk
 from pitivi.receiver import receiver, handler
 import pitivi.stream as stream
 from gettext import gettext as _
-from common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
+from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
 
 TRACK_CONTROL_WIDTH = 75
 
@@ -17,13 +17,31 @@ def track_name(track):
 
 class TrackControls(gtk.Expander):
 
+    __gtype_name__ = 'TrackControls'
+
+    __gsignals__ = {
+        "activate" : "override",
+    }
+
     def __init__(self, track):
         gtk.Expander.__init__(self, track_name(track))
         self.props.use_markup = True
-        self.props.expanded = True
-        self.props.sensitive = False
+        self.set_expanded(track.expanded)
         self.track = track
         self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
+
+    def do_activate(self):
+        self.track.expanded = not self.track.expanded 
+
+    track = receiver()
+
+    @handler(track, "expanded-changed")
+    def _expandedChanged(self, track):
+        if self.track.expanded:
+            self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
+        else:
+            self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_COLLAPSED)
+        self.set_expanded(self.track.expanded)
 
 class TimelineControls(gtk.VBox):
 

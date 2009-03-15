@@ -43,3 +43,9 @@ class Track(goocanvas.Group, Zoomable):
         self.remove_child(w)
         del self.widgets[track_object]
         Zoomable.removeInstance(w)
+
+    @handler(track, "expanded-changed")
+    def _expandedChanged(self, track):
+        for widget in self.widgets.itervalues():
+            widget.expanded = track.expanded
+        self.get_canvas().regroupTracks()

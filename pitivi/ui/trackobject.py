@@ -176,18 +176,41 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
 ## Properties
 
-    __height = LAYER_HEIGHT_EXPANDED
+    _height = LAYER_HEIGHT_EXPANDED
 
     def setHeight(self, height):
-        self.__height
+        self._height = height
         self.start_handle.props.height = height
         self.end_handle.props.height = height
-        self.__update()
+        self._update()
 
     def getHeight(self):
-        return self.__height
+        return self._height
 
     height = property(getHeight, setHeight)
+
+    _expanded = True
+
+    def setExpanded(self, expanded):
+        self._expanded = expanded
+        if not self._expanded:
+            self.height = LAYER_HEIGHT_COLLAPSED
+            self.content.props.visibility = goocanvas.ITEM_INVISIBLE
+            self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
+            self.bg.props.height = LAYER_HEIGHT_COLLAPSED
+            self.name.props.y = 0
+        else:
+            self.height = LAYER_HEIGHT_EXPANDED
+            self.content.props.visibility = goocanvas.ITEM_VISIBLE
+            self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
+            self.bg.props.height = LAYER_HEIGHT_EXPANDED
+            self.height = LAYER_HEIGHT_EXPANDED
+            self.name.props.y = 5
+
+    def getExpanded(self):
+        return self._expanded
+
+    expanded = property(getExpanded, setExpanded)
 
 ## Public API
 
@@ -200,14 +223,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.end_handle.unfocus()
 
     def zoomChanged(self):
-        self.__update()
-
-    def expand(self):
-        self.content.props.visibility = goocanvas.ITEM_VISIBLE
-        self.height = LAYER_HEIGHT
-
-    def collapse(self):
-        self.content.props.visibility = goocanvas.ITEM_INVISIBLE
+        self._update()
 
 ## element signals
 
@@ -216,7 +232,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
     @handler(element, "start-changed")
     @handler(element, "duration-changed")
     def startChangedCb(self, track_object, start):
-        self.__update()
+        self._update()
 
     @handler(element, "selected-changed")
     def selected_changed(self, element, state):
@@ -227,22 +243,22 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
     @handler(element, "priority-changed")
     def priority_changed(self, element, priority):
-        self.__update()
+        self._update()
 
-    def __update(self):
+    def _update(self):
         x = self.nsToPixel(self.element.start)
-        y = (LAYER_HEIGHT_EXPANDED + LAYER_SPACING) * self.element.priority
+        y = (self.height + LAYER_SPACING) * self.element.priority
         self.set_simple_transform(x, y, 1, 0)
-
         width = self.nsToPixel(self.element.duration)
         w = width - self.end_handle.props.width
         self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
             0, 0, w, self.height, w)
-        if w - 10 > 0:
-            self.namebg.props.width = min(w - 8, self.namewidth)
-            self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
-        else:
-            self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
         self.bg.props.width = width
         self.end_handle.props.x = w
+        if self.expanded:
+            if w - 10 > 0:
+                self.namebg.props.width = min(w - 8, self.namewidth)
+                self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
+            else:
+                self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
 

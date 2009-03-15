@@ -219,16 +219,16 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         self._tracks.append(track)
         track.set_canvas(self)
         self.tracks.add_child(track)
-        self._regroup_tracks()
+        self.regroupTracks()
 
     @handler(timeline, "track-removed")
     def _trackRemoved(self, unused_timeline, position):
         track = self._tracks[position]
         del self._tracks[position]
         track.remove()
-        self._regroup_tracks()
+        self.regroupTracks()
 
-    def _regroup_tracks(self):
+    def regroupTracks(self):
         height = 0
         for i, track in enumerate(self._tracks):
             track.set_simple_transform(0, height, 1, 0)
