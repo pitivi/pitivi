@@ -26,3 +26,6 @@ INSTALL
 *~
 .*.swp
 *.tar.*
+.coverage
+*,cover
+log
