@@ -59,6 +59,9 @@ class Controller(object):
         return Point(*self._canvas.convert_from_item_space(item,
             *self.from_event(event)))
 
+    def to_item_space(self, item, point):
+        return Point(*self._canvas.convert_to_item_space(item, *point))
+
     def pos(self, item):
         bounds = item.get_bounds()
         return Point(bounds.x1, bounds.y1)

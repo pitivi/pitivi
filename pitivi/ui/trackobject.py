@@ -15,6 +15,7 @@ from preview import Preview
 import gst
 from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
 from common import LAYER_SPACING
+from pitivi.ui.point import Point
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
@@ -107,6 +108,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         def drag_start(self):
             TimelineController.drag_start(self)
             self._view.raise_(None)
+            tx = self._view.props.parent.get_transform()
+            self._y_offset = tx[5]
 
         def click(self, pos):
             mode = 0
@@ -121,8 +124,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             x, y = pos
             self._view.element.setStart(max(self._view.pixelToNs(x), 0),
                     snap=True)
-            priority = int(max(0, 1 + (y // (LAYER_HEIGHT_EXPANDED +
-                LAYER_SPACING))))
+            priority = int(max(0, (y - self._y_offset) // (LAYER_HEIGHT_EXPANDED +
+                LAYER_SPACING)))
             self._view.element.priority = priority
 
     def __init__(self, element, track, timeline):
