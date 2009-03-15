@@ -121,8 +121,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             x, y = pos
             self._view.element.setStart(max(self._view.pixelToNs(x), 0),
                     snap=True)
-            #priority = int(max(0, y // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
-            #self._view.element.priority = priority
+            priority = int(max(0, y // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
+            self._view.element.priority = priority
 
     def __init__(self, element, track, timeline):
         goocanvas.Group.__init__(self)

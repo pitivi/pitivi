@@ -47,6 +47,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         Zoomable.__init__(self)
         self._selected_sources = []
         self._tracks = []
+        self._height = 0
 
         self._block_size_request = False
         self.props.integer_layout = True
@@ -190,9 +191,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
     def _request_size(self):
         w = Zoomable.nsToPixel(self.max_duration)
-        h = 60 * len(self._tracks)
-        self.set_bounds(0, 0, w, h)
-        self._razor.props.height = h
+        self.set_bounds(0, 0, w, self._height)
+        self._razor.props.height = self._height
         self.get_root_item().changed(True)
 
 ## Zoomable Override
@@ -233,4 +233,5 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         for i, track in enumerate(self._tracks):
             track.set_simple_transform(0, height, 1, 0)
             height += track.height + TRACK_SPACING
+        self._height = height
         self._request_size()

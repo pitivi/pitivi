@@ -19,7 +19,7 @@ class Track(goocanvas.Group, Zoomable):
 
     def getHeight(self):
         if self.track.expanded:
-            return (1 + self.max_priority) * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
+            return (1 + self.track.max_priority) * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
         else:
             return LAYER_HEIGHT_COLLAPSED + LAYER_SPACING
 
@@ -48,4 +48,8 @@ class Track(goocanvas.Group, Zoomable):
     def _expandedChanged(self, track):
         for widget in self.widgets.itervalues():
             widget.expanded = track.expanded
+        self.get_canvas().regroupTracks()
+
+    @handler(track, "max-priority-changed")
+    def _maxPriorityChanged(self, track):
         self.get_canvas().regroupTracks()
