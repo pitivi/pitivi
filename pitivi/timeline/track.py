@@ -168,10 +168,11 @@ class TrackObject(object, Signallable):
         return self.gnl_object.props.priority
 
     def setPriority(self, priority):
-        if self.timeline_object is not None:
-            self.timeline_object.setPriority(priority)
-        else:
-            self.setObjectPriority(priority)
+        #if self.timeline_object is not None:
+        #    self.timeline_object.setPriority(priority)
+        #else:
+        #    self.setObjectPriority(priority)
+        self.setObjectPriority(priority)
 
     def setObjectPriority(self, priority):
         self.gnl_object.props.priority = priority

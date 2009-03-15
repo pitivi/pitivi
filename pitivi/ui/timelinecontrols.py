@@ -27,6 +27,7 @@ class TrackControls(gtk.Expander):
         gtk.Expander.__init__(self, track_name(track))
         self.props.use_markup = True
         self.set_expanded(track.expanded)
+        self.set_sensitive(False)
         self.track = track
         self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
 
@@ -34,6 +35,12 @@ class TrackControls(gtk.Expander):
         self.track.expanded = not self.track.expanded 
 
     track = receiver()
+
+    @handler(track, "max-priority-changed")
+    def _maxPriorityChanged(self, track):
+        self.set_size_request(TRACK_CONTROL_WIDTH, (1 +
+            self.track.max_priority) * (LAYER_HEIGHT_EXPANDED +
+            LAYER_SPACING))
 
     @handler(track, "expanded-changed")
     def _expandedChanged(self, track):
