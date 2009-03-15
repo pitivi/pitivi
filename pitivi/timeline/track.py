@@ -379,16 +379,17 @@ class Track(object, Signallable):
 
     expanded = property(getExpanded, setExpanded)
 
-    __max_priority = 0
+    _max_priority = 0
 
     @property
     def max_priority(self):
-        return self.__max_priority
+        return self._max_priority
 
     def _trackObjectPriorityCb(self, trackobject, priority):
-        op = self.__max_priority
-        self.__max_priority = max(self.__max_priority, priority)
-        if op != self.__max_priority:
+        op = self._max_priority
+        self._max_priority = max((obj.priority for obj in self.track_objects
+            if obj is not self.default_track_object))
+        if op != self._max_priority:
             self.emit("max-priority-changed")
 
     def _connectToTrackObjectSignals(self, track_object):
