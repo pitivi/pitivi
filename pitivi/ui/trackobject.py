@@ -110,6 +110,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             self._view.raise_(None)
             tx = self._view.props.parent.get_transform()
             self._y_offset = tx[5]
+            self._mousedown = Point(self._mousedown[0], 0)
 
         def click(self, pos):
             mode = 0
