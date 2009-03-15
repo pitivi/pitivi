@@ -301,6 +301,7 @@ class Track(object, Signallable):
         'track-object-added': ['track_object'],
         'track-object-removed': ['track_object'],
         'max-priority-changed': ['track_object']
+        'expanded-changed': [],
     }
 
     def __init__(self, stream):
@@ -364,6 +365,18 @@ class Track(object, Signallable):
         return self._max_priority
 
     max_priority = property(_getMaxPriority)
+
+    _expanded = True
+
+    def setExpanded(self, expanded):
+        if self._expanded != expanded:
+            self._expanded = expanded
+            self.emit("expanded-changed")
+
+    def getExpanded(self):
+        return self._expanded
+
+    expanded = property(getExpanded, setExpanded)
 
     __max_priority = 0
 

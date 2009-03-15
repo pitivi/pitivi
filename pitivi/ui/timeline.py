@@ -285,7 +285,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.hadj.set_value(position)
         return False
 
-
 ## Timeline callbacks
 
     timeline = receiver()

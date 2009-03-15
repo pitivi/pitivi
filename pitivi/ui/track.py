@@ -1,7 +1,7 @@
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.ui.trackobject import TrackObject
 from pitivi.receiver import receiver, handler
-from common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
+from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED, LAYER_SPACING
 import goocanvas
 
 class Track(goocanvas.Group, Zoomable):
@@ -18,7 +18,10 @@ class Track(goocanvas.Group, Zoomable):
 ## Properties
 
     def getHeight(self):
-        return (1 + self.max_priority) * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
+        if self.track.expanded:
+            return (1 + self.max_priority) * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
+        else:
+            return LAYER_HEIGHT_COLLAPSED + LAYER_SPACING
 
     height = property(getHeight)
 
