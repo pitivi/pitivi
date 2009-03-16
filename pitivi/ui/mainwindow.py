@@ -328,7 +328,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             elif action_name in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
                 if not self.app.settings.fileSupportEnabled:
-                    action.set_sensitive(False)
+                    action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
 
