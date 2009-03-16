@@ -37,12 +37,11 @@ from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.sourcelist import SourceList
 from pitivi.settings import ExportSettings
 from pitivi.configure import APPNAME
-from pitivi.serializable import Serializable, to_object_from_data_type
 from pitivi.projectsaver import ProjectSaver, ProjectLoadError
 from pitivi.signalinterface import Signallable
 from pitivi.action import ViewAction
 
-class Project(Serializable, Signallable, Loggable):
+class Project(object, Signallable, Loggable):
     """ The base class for PiTiVi projects
     Signals
 
@@ -78,8 +77,6 @@ class Project(Serializable, Signallable, Loggable):
         "settings-changed" : None,
         "missing-plugins": ["uri", "detail", "description"]
         }
-
-    __data_type__ = "project"
 
     def __init__(self, name="", uri=None, **kwargs):
         """
@@ -301,26 +298,6 @@ class Project(Serializable, Signallable, Loggable):
 
     def _sourceListMissingPluginsCb(self, source_list, uri, detail, description):
         return self.emit('missing-plugins', uri, detail, description)
-
-    # Serializable methods
-
-    def toDataFormat(self):
-        ret = Serializable.toDataFormat(self)
-        ret["name"] = self.name
-        ret["settings"] = self.getSettings().toDataFormat()
-        ret["sources"] = self.sources.toDataFormat()
-        ret["timeline"] = self.timeline.toDataFormat()
-        return ret
-
-    def fromDataFormat(self, obj):
-        Serializable.fromDataFormat(self, obj)
-        self.name = obj["name"]
-        # calling this makes sure settigns-changed signal is emitted
-        self.setSettings(to_object_from_data_type(obj["settings"]))
-        # these objects already exist, so we initialize them from file
-        # to make sure UI catches signals
-        self.sources.fromDataFormat(obj["sources"])
-        self.timeline.fromDataFormat(obj["timeline"])
 
 def uri_is_valid(uri):
     """ Checks if the given uri is a valid uri (of type file://) """

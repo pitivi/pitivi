@@ -28,7 +28,6 @@ pitivi_PYTHON = \
 	project.py 	\
 	projectsaver.py	\
 	receiver.py	\
-	serializable.py	\
 	settings.py 	\
 	signalgroup.py	\
 	signalinterface.py \

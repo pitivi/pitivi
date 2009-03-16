@@ -231,17 +231,16 @@ class SourceDeviceFactory(SourceFactory):
     """
     Base class for ObjectFactory to control source devices
     """
-    __data_type__ = "source-device-factory"
+    pass
 
 class SinkDeviceFactory(ObjectFactory):
     """
     Base class for ObjectFactory to control sink devices
     """
-    __data_type__ = "sink-device-factory"
+    pass
 
 class AlsaSourceDeviceFactory(SourceDeviceFactory):
     """ObjectFactory for Alsa source devices"""
-    __data_type__ = "alsa-source-device-factory"
 
     def __init__(self, card, device, *args, **kwargs):
         SourceDeviceFactory.__init__(self, *args, **kwargs)
@@ -261,7 +260,6 @@ class AlsaSourceDeviceFactory(SourceDeviceFactory):
 
 class AlsaSinkDeviceFactory(SinkDeviceFactory):
     """ObjectFactory for Alsa sink devices"""
-    __data_type__ = "alsa-sink-device-factory"
 
     def __init__(self, card, device, *args, **kwargs):
         SinkDeviceFactory.__init__(self, *args, **kwargs)
@@ -283,7 +281,6 @@ class AlsaSinkDeviceFactory(SinkDeviceFactory):
 
 class V4LSourceDeviceFactory(SourceDeviceFactory):
     """ObjectFactory for Video4Linux source devices"""
-    __data_type__ = "v4l-source-device-factory"
 
     def __init__(self, device, *args, **kwargs):
         SourceDeviceFactory.__init__(self, *args, **kwargs)

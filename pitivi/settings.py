@@ -30,7 +30,6 @@ from ConfigParser import SafeConfigParser, ParsingError
 
 from gettext import gettext as _
 
-from pitivi.serializable import Serializable
 from pitivi.signalinterface import Signallable
 from pitivi.encode import available_muxers, available_video_encoders, \
      available_audio_encoders, available_combinations, \
@@ -393,7 +392,7 @@ class RenderSettings(object):
     def __repr__(self):
         return "<RenderSettings %s [%d streams]>" % (self.muxer, len(self.settings))
 
-class ExportSettings(Serializable, Signallable, Loggable):
+class ExportSettings(object, Signallable, Loggable):
     """
     Multimedia export settings
 
@@ -406,8 +405,6 @@ class ExportSettings(Serializable, Signallable, Loggable):
         "settings-changed" : None,
         "encoders-changed" : None,
         }
-
-    __data_type__ = "export-settings"
 
     # Audio/Video settings for processing/export
 
@@ -528,53 +525,6 @@ class ExportSettings(Serializable, Signallable, Loggable):
             changed = True
         if changed:
             self.emit("encoders-changed")
-
-    ## Serializable methods
-
-    def toDataFormat(self):
-        ret = Serializable.toDataFormat(self)
-        ret["video-width"] = self.videowidth
-        ret["video-height"] = self.videoheight
-        ret["video-rate"] = [ self.videorate.num,
-                             self.videorate.denom ]
-        ret["video-par"] = [ self.videopar.num,
-                            self.videopar.denom ]
-        ret["audio-channels"] = self.audiochannels
-        ret["audio-rate"] = self.audiorate
-        ret["audio-depth"] = self.audiodepth
-        ret["video-encoder"] = self.vencoder
-        ret["audio-encoder"] = self.aencoder
-        ret["muxer"] = self.muxer
-        if self.containersettings:
-            ret["container-settings"] = self.containersettings
-        if self.acodecsettings:
-            ret["audio-encoder-settings"] = self.acodecsettings
-        if self.vcodecsettings:
-            ret["video-encoder-settings"] = self.vcodecsettings
-        return ret
-
-    def fromDataFormat(self, obj):
-        Serializable.fromDataFormat(self, obj)
-        self.videowidth = obj["video-width"]
-        self.videoheight = obj["video-height"]
-        self.videorate = gst.Fraction(*obj["video-rate"])
-        self.videopar = gst.Fraction(*obj["video-par"])
-
-        self.audiochannels = obj["audio-channels"]
-        self.audiorate = obj["audio-rate"]
-        self.audiodepth = obj["audio-depth"]
-
-        # FIXME : check if the given encoder/muxer are available
-        self.vencoder = obj["video-encoder"]
-        self.aencoder = obj["audio-encoder"]
-        self.muxer = obj["muxer"]
-        if "container-settings" in obj:
-            self.containersettings = obj["container-settings"]
-        if "audio-encoder-settings" in obj:
-            self.acodecsettings = obj["audio-encoder-settings"]
-        if "video-encoder-settings" in obj:
-            self.vcodecsettings = obj["video-encoder-settings"]
-
 
 def export_settings_to_render_settings(export):
     # Get the audio and video caps/encoder/settings

@@ -24,11 +24,10 @@ Handles the list of source for a project
 """
 import urllib
 from pitivi.discoverer import Discoverer
-from pitivi.serializable import Serializable, to_object_from_data_type
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 
-class SourceList(Serializable, Signallable, Loggable):
+class SourceList(object, Signallable, Loggable):
     """
     Contains the sources for a project, stored as FileSourceFactory
 
@@ -50,8 +49,6 @@ class SourceList(Serializable, Signallable, Loggable):
         "starting" : None,
         "missing-plugins": ["uri", "detail", "description"]
         }
-
-    __data_type__ = "source-list"
 
     def __init__(self, project=None):
         Loggable.__init__(self)
@@ -172,21 +169,3 @@ class SourceList(Serializable, Signallable, Loggable):
     def _discovererMissingPluginsCb(self, discoverer, uri, detail, description):
         self.missing_plugins[uri] = True
         return self.emit('missing-plugins', uri, detail, description)
-
-    ## Serializable methods
-
-    def toDataFormat(self):
-        ret = Serializable.toDataFormat(self)
-        d = {}
-        for uri, factory in self:
-            d[uri] = factory.toDataFormat()
-        ret["sources-factories"] = d
-        return ret
-
-    def fromDataFormat(self, obj):
-        Serializable.fromDataFormat(self, obj)
-        # FIXME : We're supposing we have complete objectfactories
-        # with all information !!!
-        if "sources-factories" in obj:
-            for uri, factory in obj["sources-factories"].iteritems():
-                self.addFactory(uri, to_object_from_data_type(factory))
