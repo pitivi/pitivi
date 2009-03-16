@@ -273,7 +273,7 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(monitor.duration_changed_count, 1)
 
 
-class TestTrackAddRemoveObjects(TestCase):
+class TestTrack(TestCase):
     def setUp(self):
         TestCase.setUp(self)
         self.factory = StubFactory()
@@ -343,3 +343,39 @@ class TestTrackAddRemoveObjects(TestCase):
 
         for obj in objs:
             self.failUnlessEqual(obj.track, None)
+
+    def testMaxPriority(self):
+        track = self.track1
+        factory = self.factory
+
+        obj1 = SourceTrackObject(factory)
+        obj1.priority = 10
+
+        self.failUnlessEqual(track.max_priority, 0)
+        track.addTrackObject(obj1)
+        self.failUnlessEqual(track.max_priority, 10)
+
+        obj2 = SourceTrackObject(factory)
+        obj2.priority = 5
+        track.addTrackObject(obj2)
+        self.failUnlessEqual(track.max_priority, 10)
+
+        obj3 = SourceTrackObject(factory)
+        obj3.priority = 14
+        track.addTrackObject(obj3)
+        self.failUnlessEqual(track.max_priority, 14)
+
+        obj3.priority = 9
+        self.failUnlessEqual(track.max_priority, 10)
+
+        obj2.priority = 11
+        self.failUnlessEqual(track.max_priority, 11)
+
+        track.removeTrackObject(obj1)
+        self.failUnlessEqual(track.max_priority, 11)
+
+        track.removeTrackObject(obj2)
+        self.failUnlessEqual(track.max_priority, 9)
+
+        track.removeTrackObject(obj3)
+        self.failUnlessEqual(track.max_priority, 0)

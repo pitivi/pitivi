@@ -299,16 +299,18 @@ class Track(object, Signallable):
         'start-changed': ['start'],
         'duration-changed': ['duration'],
         'track-object-added': ['track_object'],
-        'track-object-removed': ['track_object']
+        'track-object-removed': ['track_object'],
+        'max-priority-changed': ['track_object']
     }
 
     def __init__(self, stream):
         self.stream = stream
         self.composition = gst.element_factory_make('gnlcomposition')
-        self.composition.connect('notify::start', self._startChangedCb)
-        self.composition.connect('notify::duration', self._durationChangedCb)
+        self.composition.connect('notify::start', self._compositionStartChangedCb)
+        self.composition.connect('notify::duration', self._compositionDurationChangedCb)
         self.track_objects = []
         self.default_track_object = None
+        self._max_priority = 0
 
         default_track_object = self._getDefaultTrackObjectForStream(stream)
         if default_track_object:
@@ -344,8 +346,12 @@ class Track(object, Signallable):
         self.default_track_object = None
         # FIXME: implement TrackObject.priority
         track_object.gnl_object.props.priority = 2**32-1
-        self.addTrackObject(track_object)
         self.default_track_object = track_object
+        try:
+            self.addTrackObject(track_object)
+        except:
+            self.default_track_object = None
+            raise
 
     start = property(_getStart)
 
@@ -354,13 +360,10 @@ class Track(object, Signallable):
 
     duration = property(_getDuration)
 
-    def _startChangedCb(self, composition, pspec):
-        start = composition.props.start
-        self.emit('start-changed', start)
+    def _getMaxPriority(self):
+        return self._max_priority
 
-    def _durationChangedCb(self, composition, pspec):
-        duration = composition.props.duration
-        self.emit('duration-changed', duration)
+    max_priority = property(_getMaxPriority)
 
     def addTrackObject(self, track_object):
         if track_object.track is not None:
@@ -376,6 +379,9 @@ class Track(object, Signallable):
 
         track_object.makeBin()
 
+        self._updateMaxPriority()
+        self._connectToTrackObject(track_object)
+
         self.emit('track-object-added', track_object)
 
     def removeTrackObject(self, track_object):
@@ -388,13 +394,45 @@ class Track(object, Signallable):
         except gst.RemoveError:
             raise TrackError()
 
+        self._disconnectFromTrackObject(track_object)
         track_object.release()
 
         self.track_objects.remove(track_object)
         track_object.track = None
+
+        self._updateMaxPriority()
 
         self.emit('track-object-removed', track_object)
 
     def removeAllTrackObjects(self):
         for track_object in list(self.track_objects):
             self.removeTrackObject(track_object)
+
+    def _updateMaxPriority(self):
+        priorities = [track_object.priority for track_object in
+            self.track_objects if track_object is not self.default_track_object]
+        if not priorities:
+            max_priority = 0
+        else:
+            max_priority = max(priorities)
+        if max_priority != self._max_priority:
+            self._max_priority = max_priority
+            self.emit('max-priority-changed', self._max_priority)
+
+    def _compositionStartChangedCb(self, composition, pspec):
+        start = composition.props.start
+        self.emit('start-changed', start)
+
+    def _compositionDurationChangedCb(self, composition, pspec):
+        duration = composition.props.duration
+        self.emit('duration-changed', duration)
+
+    def _trackObjectPriorityChangedCb(self, track_object, priority):
+        self._updateMaxPriority()
+
+    def _connectToTrackObject(self, track_object):
+        track_object.connect('priority-changed',
+                self._trackObjectPriorityChangedCb)
+
+    def _disconnectFromTrackObject(self, track_object):
+        track_object.disconnect_by_function(self._trackObjectPriorityChangedCb)
