@@ -514,6 +514,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         abt.set_version("v%s" % pitivi_version)
         abt.set_website("http://www.pitivi.org/")
         authors = ["Edward Hervey <bilboed@bilboed.com>",
+                   "Alessandro Decina <alessandro.decina@collabora.co.uk>",
+                   "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)",
                    "",
                    _("Contributors:"),
                    "Christophe Sauthier <christophe.sauthier@gmail.com> (i18n)",
@@ -523,7 +525,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
                    "Thibaut Girka <thibaut.girka@free.fr> (UI)",
                    "Jeff Fortin <nekohayo@gmail.com> (UI)",
                    "Johan Dahlin <jdahlin@async.com.br> (UI)",
-                   "Brandon Lewis <brandon_lewis@berkeley.edu> (UI)",
                    "Luca Della Santina <dellasantina@farm.unipi.it>",
                    "Thijs Vermeir <thijsvermeir@gmail.com>",
                    "Sarath Lakshman <sarathlakshman@slynux.org>"]
