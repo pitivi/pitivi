@@ -37,7 +37,6 @@ from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.sourcelist import SourceList
 from pitivi.settings import ExportSettings
 from pitivi.configure import APPNAME
-from pitivi.projectsaver import ProjectSaver, ProjectLoadError
 from pitivi.signalinterface import Signallable
 from pitivi.action import ViewAction
 

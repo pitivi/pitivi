@@ -36,8 +36,6 @@ except:
 else:
     HAVE_GCONF = True
 
-from pitivi.projectsaver import ProjectSaver
-
 from gettext import gettext as _
 
 from pitivi.log.loggable import Loggable
