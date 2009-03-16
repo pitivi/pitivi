@@ -14,11 +14,20 @@ class Track(goocanvas.Group, Zoomable):
         self.track = track
         self.timeline = timeline
         self.max_priority = 0
+        self._expanded = True
 
 ## Properties
 
+    def setExpanded(self, expanded):
+        if expanded != self._expanded:
+            self._expanded = expanded
+
+            for widget in self.widgets.itervalues():
+                widget.expanded = expanded
+            self.get_canvas().regroupTracks()
+
     def getHeight(self):
-        if self.track.expanded:
+        if self._expanded:
             return (1 + self.track.max_priority) * (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)
         else:
             return LAYER_HEIGHT_COLLAPSED + LAYER_SPACING
@@ -43,12 +52,6 @@ class Track(goocanvas.Group, Zoomable):
         self.remove_child(w)
         del self.widgets[track_object]
         Zoomable.removeInstance(w)
-
-    @handler(track, "expanded-changed")
-    def _expandedChanged(self, track):
-        for widget in self.widgets.itervalues():
-            widget.expanded = track.expanded
-        self.get_canvas().regroupTracks()
 
     @handler(track, "max-priority-changed")
     def _maxPriorityChanged(self, track):

@@ -118,6 +118,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # controls for tracks and layers
         self._controls = TimelineControls(self.timeline)
+        self._controls.connect('track-expanded',
+                self._timelineControlsTrackExpandedCb)
         controlwindow = gtk.ScrolledWindow(None, self.vadj)
         controlwindow.set_policy(gtk.POLICY_NEVER, gtk.POLICY_NEVER)
         controlwindow.add_with_viewport(self._controls)
@@ -183,6 +185,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.connect("drag-drop", self._dragDropCb)
         self.connect("drag-motion", self._dragMotionCb)
 
+
+    def _timelineControlsTrackExpandedCb(self, timeline_controls,
+            track, expanded):
+        self._canvas.setExpanded(track, expanded)
 
 ## Drag and Drop callbacks
 

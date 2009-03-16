@@ -79,6 +79,15 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
     def from_event(self, event):
         return Point(*self.convert_from_pixels(event.x, event.y))
 
+    def setExpanded(self, track_object, expanded):
+        track_ui = None
+        for track in self._tracks:
+            if track.track == track_object:
+                track_ui = track
+                break
+
+        track_ui.setExpanded(expanded)
+
 ## sets the cursor as appropriate
 
     def _mouseEnterCb(self, unused_item, unused_target, event):

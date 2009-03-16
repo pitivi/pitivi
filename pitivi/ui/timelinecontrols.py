@@ -1,4 +1,5 @@
 import gtk
+import gobject
 from pitivi.receiver import receiver, handler
 import pitivi.stream as stream
 from gettext import gettext as _
@@ -26,13 +27,22 @@ class TrackControls(gtk.Expander):
     def __init__(self, track):
         gtk.Expander.__init__(self, track_name(track))
         self.props.use_markup = True
-        self.set_expanded(track.expanded)
+        self.set_expanded(True)
         self.set_sensitive(False)
         self.track = track
         self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
 
+    def set_expanded(self, expanded):
+        if expanded != self.props.expanded:
+            if expanded:
+                self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
+            else:
+                self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_COLLAPSED)
+
+        gtk.Expander.set_expanded(self, expanded)
+
     def do_activate(self):
-        self.track.expanded = not self.track.expanded 
+        self.props.expanded = not self.props.expanded
 
     track = receiver()
 
@@ -42,15 +52,11 @@ class TrackControls(gtk.Expander):
             self.track.max_priority) * (LAYER_HEIGHT_EXPANDED +
             LAYER_SPACING))
 
-    @handler(track, "expanded-changed")
-    def _expandedChanged(self, track):
-        if self.track.expanded:
-            self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
-        else:
-            self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_COLLAPSED)
-        self.set_expanded(self.track.expanded)
-
 class TimelineControls(gtk.VBox):
+    __gsignals__ = {
+        "track-expanded" : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
+                (gobject.TYPE_PYOBJECT, gobject.TYPE_BOOLEAN))
+    }
 
     def __init__(self, timeline):
         gtk.VBox.__init__(self)
@@ -72,11 +78,24 @@ class TimelineControls(gtk.VBox):
     @handler(timeline, "track-added")
     def _trackAdded(self, timeline, track):
         track = TrackControls(track)
+        self._connectToTrackControls(track)
         self._tracks.append(track)
         self.pack_start(track, False, False)
 
     @handler(timeline, "track-removed")
     def _trackRemoved(self, unused_timeline, position):
         track = self._tracks[position]
+        self._disconnectFromTrackControls(track)
         del self._tracks[position]
         self.remove(track)
+
+    def _connectToTrackControls(self, track_controls):
+        track_controls.connect("notify::expanded",
+                self._trackControlsExpandedCb)
+
+    def _disconnectFromTrackControls(self, track_controls):
+        track_controls.disconnect_by_func(self._trackControlsExpandedCb)
+
+    def _trackControlsExpandedCb(self, track_controls, pspec):
+        self.emit('track-expanded', track_controls.track,
+                track_controls.props.expanded)
