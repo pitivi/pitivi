@@ -29,3 +29,5 @@ INSTALL
 .coverage
 *,cover
 log
+*.orig
+*.rej
