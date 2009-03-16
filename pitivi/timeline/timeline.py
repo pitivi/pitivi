@@ -171,8 +171,8 @@ class TimelineObject(object, Signallable):
         if not self.track_objects:
             raise TimelineError()
 
-        #for track_object in self.track_objects:
-        #    track_object.setObjectPriority(priority)
+        for track_object in self.track_objects:
+            track_object.setObjectPriority(priority)
 
         self.emit('priority-changed', priority)
 
