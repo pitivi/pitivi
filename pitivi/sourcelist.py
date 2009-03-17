@@ -31,6 +31,11 @@ class SourceList(object, Signallable, Loggable):
     """
     Contains the sources for a project, stored as FileSourceFactory
 
+    @ivar project: The owner project
+    @type project: L{Project}
+    @ivar discoverer: The discoverer used
+    @type discoverer: L{Discoverer}
+
     Signals:
      - C{file_added} : A file has been completely discovered and is valid.
      - C{file_removed} : A file was removed from the SourceList.

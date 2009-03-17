@@ -24,6 +24,7 @@
 
 import gobject
 import gst, bisect
+import os
 from pitivi.signalinterface import Signallable
 import pitivi.log.log as log
 
@@ -190,6 +191,35 @@ def filter_(caps):
     f = gst.element_factory_make("capsfilter")
     f.props.caps = gst.caps_from_string(caps)
     return f
+
+
+## URI functions
+
+
+def uri_is_valid(uri):
+    """Checks if the given uri is a valid uri (of type file://)
+
+    @param uri: The location to check
+    @type uri: C{URI}
+    """
+    res = gst.uri_is_valid(uri) and gst.uri_get_protocol(uri) == "file"
+    if res:
+        return len(os.path.basename(gst.uri_get_location(uri))) > 0
+    return res
+
+def uri_is_reachable(uri):
+    """ Check whether the given uri is reachable and we can read/write
+    to it.
+
+    @param uri: The location to check
+    @type uri: C{URI}
+    @return: C{True} if the uri is reachable.
+    @rtype: C{bool}
+    """
+    if not uri_is_valid(uri):
+        raise NotImplementedError(
+            _("%s doesn't yet handle non local projects") % APPNAME)
+    return os.path.isfile(gst.uri_get_location(uri))
 
 class PropertyChangeTracker(object, Signallable):
     def __init__(self, timeline_object):

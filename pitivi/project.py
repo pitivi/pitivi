@@ -40,41 +40,45 @@ from pitivi.configure import APPNAME
 from pitivi.signalinterface import Signallable
 from pitivi.action import ViewAction
 
+class ProjectError(Exception):
+    """Project error"""
+    pass
+
+class ProjectSaveLoadError(ProjectError):
+    """Error while loading/saving project"""
+    pass
+
 class Project(object, Signallable, Loggable):
-    """ The base class for PiTiVi projects
-    Signals
+    """The base class for PiTiVi projects
 
-       boolean save-uri-requested()
-            The the current project has been requested to save itself, but
-            needs a URI to which to save. Handlers should first call
-            setUri(), with the uri to save the file (optionally
-            specifying the file format) and return True, or simply
-            return False to cancel the file save operation.
-
-        boolean confirm-overwrite()
-            The project has been requested to save itself, but the file on
-            disk either already exists, or has been changed since the previous
-            load/ save operation. In this case, the project wants permition to
-            overwrite before continuing. handlers should return True if it is
-            ok to overwrit the file, or False otherwise. By default, this
-            signal handler assumes True.
-
-        void settings-changed()
-            The project settings have changed
-
-    @cvar timeline: The timeline
+    @ivar name: The name of the project
+    @type name: C{str}
+    @ivar description: A description of the project
+    @type description: C{str}
+    @ivar sources: The sources used by this project
+    @type sources: L{SourceList}
+    @ivar timeline: The timeline
     @type timeline: L{Timeline}
-    @cvar pipeline: The timeline's pipeline
+    @ivar pipeline: The timeline's pipeline
     @type pipeline: L{Pipeline}
-    @cvar factory: The timeline factory
+    @ivar factory: The timeline factory
     @type factory: L{TimelineSourceFactory}
+    @ivar format: The format under which the project is currently stored.
+    @type format: L{FormatterClass}
+    @ivar loaded: Whether the project is fully loaded or not.
+    @type loaded: C{bool}
+
+    Signals:
+     - C{missing-plugins} : A plugin is missing for the given uri
+     - C{loaded} : The project is now fully loaded.
     """
 
     __signals__ = {
         "save-uri-requested" : None,
         "confirm-overwrite" : ["location"],
         "settings-changed" : None,
-        "missing-plugins": ["uri", "detail", "description"]
+        "missing-plugins": ["uri", "detail", "description"],
+        "loaded" : None
         }
 
     def __init__(self, name="", uri=None, **kwargs):
@@ -91,8 +95,12 @@ class Project(object, Signallable, Loggable):
         self.urichanged = False
         self.format = None
         self.sources = SourceList(self)
+
         self.settingssigid = 0
         self._dirty = False
+
+        # formatter instance used for loading project.
+        self._formatter = None
 
         self.sources.connect('missing-plugins', self._sourceListMissingPluginsCb)
 
@@ -111,110 +119,15 @@ class Project(object, Signallable, Loggable):
         self.view_action = ViewAction()
         self.view_action.addProducers(self.factory)
 
-        # don't want to make calling load() necessary for blank projects
-        if self.uri == None:
-            self._loaded = True
-        else:
-            self._loaded = False
+        # the loading formatter will set this accordingly
+        self.loaded = True
 
     def release(self):
         self.pipeline.release()
         self.pipeline = None
 
-    def load(self):
-        """ call this to load a project from a file (once) """
-        if self._loaded:
-            # should this return false?
-            self.warning("Already loaded !!!")
-            return True
-        try:
-            res = self._load()
-        except:
-            self.error("An Exception was raised during loading !")
-            traceback.print_exc()
-            res = False
-        finally:
-            return res
+    #{ Settings methods
 
-    def _load(self):
-        """
-        loads the project from a file
-        Private method, use load() instead
-        """
-        self.log("uri:%s", self.uri)
-        self.debug("Creating timeline")
-        # FIXME : This should be discovered !
-        saveformat = "pickle"
-        if self.uri and file_is_project(self.uri):
-            loader = ProjectSaver.newProjectSaver(saveformat)
-            path = gst.uri_get_location(self.uri)
-            fileobj = open(path, "r")
-            try:
-                tree = loader.openFromFile(fileobj)
-                self.fromDataFormat(tree)
-            except ProjectLoadError:
-                self.error("Error while loading the project !!!")
-                return False
-            finally:
-                fileobj.close()
-            self.format = saveformat
-            self.urichanged = False
-            self.debug("Done loading !")
-            return True
-        return False
-
-    def _save(self):
-        """ internal save function """
-        if uri_is_valid(self.uri):
-            path = gst.uri_get_location(self.uri)
-        else:
-            self.warning("uri '%s' is invalid, aborting save", self.uri)
-            return False
-
-        #TODO: a bit more sophisticated overwite detection
-        if os.path.exists(path) and self.urichanged:
-            overwriteres = self.emit("confirm-overwrite", self.uri)
-            if overwriteres == False:
-                self.log("aborting save because overwrite was denied")
-                return False
-
-        try:
-            fileobj = open(path, "w")
-            loader = ProjectSaver.newProjectSaver(self.format)
-            tree = self.toDataFormat()
-            loader.saveToFile(tree, fileobj)
-            self._dirty = False
-            self.urichanged = False
-            self.log("Project file saved successfully !")
-            return True
-        except IOError:
-            return False
-
-    def save(self):
-        """ Saves the project to the project's current file """
-        self.log("saving...")
-        if self.uri:
-            return self._save()
-
-        self.log("requesting for a uri to save to...")
-        saveres = self.emit("save-uri-requested")
-        if saveres == None or saveres == True:
-            self.log("'save-uri-requested' returned True, self.uri:%s", self.uri)
-            if self.uri:
-                return self._save()
-
-        self.log("'save-uri-requested' returned False or uri wasn't set, aborting save")
-        return False
-
-    def saveAs(self):
-        """ Saves the project to the given file name """
-        if not self.emit("save-uri-requested"):
-            return False
-        if not self.uri:
-            return False
-        return self._save()
-
-    # setting methods
     def _settingsChangedCb(self, unused_settings):
         self.emit('settings-changed')
 
@@ -289,22 +202,49 @@ class Project(object, Signallable, Loggable):
 
         return settings
 
+    #}
+
+    def _sourceListMissingPluginsCb(self, source_list, uri, detail, description):
+        return self.emit('missing-plugins', uri, detail, description)
+
+    #{ Save and Load features
+
+    def save(self, location=None, overwrite=False):
+        """
+        Save the project to the given location.
+
+        @param location: The location to write to. If not specified, the
+        current project location will be used (if set).
+        @type location: C{URI}
+        @param overwrite: Whether to overwrite existing location.
+        @type overwrite: C{bool}
+
+        @raises ProjectSaveLoadError: If no uri was provided and none was set
+        previously.
+        """
+        self.log("saving...")
+        location = location or self.uri
+
+        if location == None:
+            raise ProjectSaveLoadError("Location unknown")
+
+        save_project(self, location or self.uri, self.format,
+                     overwrite)
+
+        self.uri = location
+
     def setModificationState(self, state):
         self._dirty = state
 
     def hasUnsavedModifications(self):
         return self._dirty
 
-    def _sourceListMissingPluginsCb(self, source_list, uri, detail, description):
-        return self.emit('missing-plugins', uri, detail, description)
+    def markLoaded(self):
+        """
+        Mark the project as loaded.
 
-def uri_is_valid(uri):
-    """ Checks if the given uri is a valid uri (of type file://) """
-    return gst.uri_get_protocol(uri) == "file"
-
-def file_is_project(uri):
-    """ returns True if the given uri is a PitiviProject file"""
-    if not uri_is_valid(uri):
-        raise NotImplementedError(
-            _("%s doesn't yet handle non local projects") % APPNAME)
-    return os.path.isfile(gst.uri_get_location(uri))
+        Will emit the 'loaded' signal. Only meant to be used by
+        L{Formatter}s.
+        """
+        self.loaded = True
+        self.emit('loaded')

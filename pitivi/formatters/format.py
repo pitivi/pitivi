@@ -25,7 +25,7 @@ High-level tools for using Formatters
 
 # FIXME : We need a registry of all available formatters
 
-def load_project(uri, formatter=None):
+def load_project(uri, formatter=None, missinguricallback=None):
     """
     Load the project from the given location.
 
@@ -34,31 +34,40 @@ def load_project(uri, formatter=None):
     @type uri: L{str}
     @param uri: The location of the project. Needs to be an
     absolute URI.
-    @type formatter: C{Formatter}
+    @type formatter: L{Formatter}
     @param formatter: If specified, try loading the project with that
-    C{Formatter}. If not specified, will try all available C{Formatter}s.
+    L{Formatter}. If not specified, will try all available L{Formatter}s.
     @raise FormatterLoadError: If the location couldn't be properly loaded.
-    @return: The loaded C{Project}
+    @param missinguricallback: A callback that will be used if some
+    files to load can't be found anymore. The callback shall call the
+    formatter's addMapping() method with the moved location.
+    @type missinguricallback: C{callable}
+    @return: The project. The caller needs to ensure the loading is
+    finished before using it. See the 'loaded' property and signal of
+    L{Project}.
+    @rtype: L{Project}.
     """
     raise NotImplementedError
 
-def save_project(project, uri, formatter=None):
+def save_project(project, uri, formatter=None, overwrite=False):
     """
-    Save the C{Project} to the given location.
+    Save the L{Project} to the given location.
 
     If specified, use the given formatter.
 
-    @type project: C{Project}
-    @param project: The C{Project} to save.
+    @type project: L{Project}
+    @param project: The L{Project} to save.
     @type uri: L{str}
     @param uri: The location to store the project to. Needs to
     be an absolute URI.
-    @type formatter: C{Formatter}
-    @param formatter: The C{Formatter} to use to store the project if specified.
+    @type formatter: L{Formatter}
+    @param formatter: The L{Formatter} to use to store the project if specified.
     If it is not specified, then it will be saved at its original format.
+    @param overwrite: Whether to overwrite existing location.
+    @type overwrite: C{bool}
     @raise FormatterSaveError: If the file couldn't be properly stored.
-    @return: Whether the file was successfully stored
-    @rtype: L{bool}
+
+    @see: L{Formatter.saveProject}
     """
     raise NotImplementedError
 
@@ -69,7 +78,7 @@ def can_handle_location(uri):
     @type uri: L{str}
     @param uri: The location of the project. Needs to be an
     absolute URI.
-    @return: Whether the location contains a valid C{Project}.
+    @return: Whether the location contains a valid L{Project}.
     @rtype: L{bool}
     """
     raise NotImplementedError
