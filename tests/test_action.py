@@ -226,6 +226,7 @@ class TestRenderAction(common.TestCase):
         a.unsetPipeline()
         p.release()
 
+
     def testSimpleStreams(self):
         """Test a RenderSettings with exact stream settings"""
         # let's force the video to some unusual size

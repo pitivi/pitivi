@@ -34,6 +34,8 @@ class TestCase(unittest.TestCase):
         objs = gc.get_objects()
         for c in self._tracked_types:
             new.extend([o for o in objs if isinstance(o, c) and not o in self._tracked[c]])
+        del objs
+        gc.collect()
 
         self.failIf(new, new)
         del self._tracked

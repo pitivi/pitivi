@@ -19,6 +19,8 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import gobject
+gobject.threads_init()
 import gst
 from unittest import main
 from pitivi.pipeline import Pipeline, STATE_NULL, STATE_READY, STATE_PAUSED, STATE_PLAYING, PipelineError
@@ -115,13 +117,13 @@ class TestPipeline(TestCase):
         # we can't remove active actions while in PAUSED/PLAYING
         self.pipeline.setState(STATE_PAUSED)
         ac1.state = STATE_ACTIVE
-        self.assertEquals(self.pipeline.state, STATE_PAUSED)
+        self.assertEquals(self.pipeline.getState(), STATE_PAUSED)
         self.failUnlessRaises(PipelineError, self.pipeline.removeAction, ac1)
 
         # but we can remove deactivated actions while in PAUSED/PLAYING
         self.pipeline.setState(STATE_PAUSED)
         ac1.state = STATE_NOT_ACTIVE
-        self.assertEquals(self.pipeline.state, STATE_PAUSED)
+        self.assertEquals(self.pipeline.getState(), STATE_PAUSED)
         self.pipeline.removeAction(ac1)
 
         # we can add actions while in PAUSED/PLAYING
@@ -133,64 +135,52 @@ class TestPipeline(TestCase):
         p2.release()
 
     def testStateChange(self):
-        """ State Changes """
+        loop = gobject.MainLoop()
+
+        bag = {"last_state": None}
+        def state_changed_cb(pipeline, state, bag, loop):
+            bag["last_state"] = state
+            loop.quit()
+
+        self.pipeline.connect('state-changed', state_changed_cb, bag, loop)
+
+        # playing
         self.pipeline.setState(STATE_PLAYING)
-        # change should have happened instantly... except not, because
-        # the bus is asynchronous. We are therefore not guaranteed when
-        # the message will be received on the mainloop bus.
-        # Not sure how to check that efficiently.
-        self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
-        self.assertEquals(self.pipeline.state, STATE_PLAYING)
-
-        # the 'state-changed' signal should have been emitted with the
-        # correct state
+        loop.run()
+        self.failUnlessEqual(bag["last_state"], STATE_PLAYING)
+        self.failUnlessEqual(self.pipeline.getState(), STATE_PLAYING)
         self.assertEquals(self.monitor.state_changed_count, 1)
-        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, )])
 
-        # Setting to the same state again shouldn't change anything
+        # playing again
         self.pipeline.setState(STATE_PLAYING)
-        self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
-        self.assertEquals(self.pipeline.state, STATE_PLAYING)
         self.assertEquals(self.monitor.state_changed_count, 1)
-        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, )])
 
-        # back to NULL
-        self.pipeline.setState(STATE_NULL)
-        self.assertEquals(self.pipeline.getState(), STATE_NULL)
-        self.assertEquals(self.pipeline.state, STATE_NULL)
+        # ready
+        self.pipeline.setState(STATE_READY)
+        loop.run()
+        self.failUnlessEqual(bag["last_state"], STATE_READY)
+        self.failUnlessEqual(self.pipeline.getState(), STATE_READY)
         self.assertEquals(self.monitor.state_changed_count, 2)
-        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, ),
-                                                               (STATE_NULL, )])
 
-        # .play()
+        # PLAYING
         self.pipeline.play()
-        self.assertEquals(self.pipeline.getState(), STATE_PLAYING)
-        self.assertEquals(self.pipeline.state, STATE_PLAYING)
+        loop.run()
+        self.failUnlessEqual(bag["last_state"], STATE_PLAYING)
+        self.failUnlessEqual(self.pipeline.getState(), STATE_PLAYING)
         self.assertEquals(self.monitor.state_changed_count, 3)
-        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, ),
-                                                               (STATE_NULL, ),
-                                                               (STATE_PLAYING, )])
 
-        # .pause()
+        # PAUSE
         self.pipeline.pause()
-        self.assertEquals(self.pipeline.getState(), STATE_PAUSED)
-        self.assertEquals(self.pipeline.state, STATE_PAUSED)
+        loop.run()
+        self.failUnlessEqual(bag["last_state"], STATE_PAUSED)
+        self.failUnlessEqual(self.pipeline.getState(), STATE_PAUSED)
         self.assertEquals(self.monitor.state_changed_count, 4)
-        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, ),
-                                                               (STATE_NULL, ),
-                                                               (STATE_PLAYING, ),
-                                                               (STATE_PAUSED, )])
 
-        # .stop()
         self.pipeline.stop()
-        self.assertEquals(self.pipeline.getState(), STATE_READY)
-        self.assertEquals(self.pipeline.state, STATE_READY)
+        loop.run()
+        self.failUnlessEqual(bag["last_state"], STATE_READY)
+        self.failUnlessEqual(self.pipeline.getState(), STATE_READY)
         self.assertEquals(self.monitor.state_changed_count, 5)
-        self.assertEquals(self.monitor.state_changed_collect, [(STATE_PLAYING, ),
-                                                               (STATE_NULL, ),
-                                                               (STATE_PLAYING, ),
-                                                               (STATE_PAUSED, ),
-                                                               (STATE_READY, )])
 
     def testGetReleaseBinForFactoryStream(self):
         factory = FakeSourceFactory()

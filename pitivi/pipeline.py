@@ -109,9 +109,6 @@ class Pipeline(object, Signallable, Loggable):
      - C{eos} : The Pipeline has finished playing.
      - C{error} : An error happened.
 
-    @ivar state: The current state. This is a cached value, use getState() for
-    the exact actual C{gst.State} of the L{Pipeline}.
-    @type state: C{gst.State}
     @ivar actions: The Action(s) currently used.
     @type actions: List of L{Action}
     @ivar factories: The ObjectFactories handled by the Pipeline.
@@ -148,7 +145,6 @@ class Pipeline(object, Signallable, Loggable):
         self._bus.set_sync_handler(self._busSyncMessageHandler)
         self.factories = {}
         self.actions = []
-        self._state = STATE_NULL
         self._listening = False # for the position handler
         self._listeningInterval = 300 # default 300ms
         self._listeningSigId = 0
@@ -245,8 +241,10 @@ class Pipeline(object, Signallable, Loggable):
         if not action in self.actions:
             self.debug("action not controlled by this Pipeline, returning")
             return
-        if action.isActive() and self._state in [STATE_PAUSED, STATE_PLAYING]:
-            raise PipelineError("Active actions can't be removed from PLAYING or PAUSED Pipeline")
+        if action.isActive():
+            res, current, pending = self._pipeline.get_state(0)
+            if current > STATE_READY or pending > STATE_READY:
+                raise PipelineError("Active actions can't be removed from PLAYING or PAUSED Pipeline")
         try:
             action.unsetPipeline()
         except ActionError:
@@ -264,18 +262,9 @@ class Pipeline(object, Signallable, Loggable):
         the requested state.
         """
         self.debug("state:%r", state)
-        if self._state == state:
-            self.debug("Already at the required state, returning")
-            return
         res = self._pipeline.set_state(state)
         if res == gst.STATE_CHANGE_FAILURE:
             raise PipelineError("Failure changing state of the gst.Pipeline")
-        if res == gst.STATE_CHANGE_SUCCESS:
-            # the change to the request state was successful and not asynchronous
-            self._state = state
-            self.emit('state-changed', self._state)
-            # update position listener status
-            self._listenToPosition(state in [STATE_PAUSED, STATE_PLAYING])
 
     def getState(self):
         """
@@ -289,24 +278,7 @@ class Pipeline(object, Signallable, Loggable):
         """
         change, state, pending = self._pipeline.get_state(0)
         self.debug("change:%r, state:%r, pending:%r", change, state, pending)
-        if change != gst.STATE_CHANGE_FAILURE and state != self._state:
-            self._state = state
-            self.emit('state-changed', self._state)
-            # update position listener status
-            self._listenToPosition(state in [STATE_PAUSED, STATE_PLAYING])
-        self.debug("Returning %r", self._state)
-        return self._state
-
-    @property
-    def state(self):
-        """
-        The state of the L{Pipeline}.
-
-        @warning: This doesn't query the underlying C{gst.Pipeline} but returns the cached
-        state.
-        """
-        self.debug("Returning state %r", self._state)
-        return self._state
+        return state
 
     def play(self):
         """
@@ -377,7 +349,7 @@ class Pipeline(object, Signallable, Loggable):
         self._listening = True
         self._listeningInterval = interval
         # if we're in paused or playing, switch it on
-        self._listenToPosition(self.getState() in [STATE_PAUSED, STATE_PLAYING])
+        self._listenToPosition(self.getState() == STATE_PLAYING)
         return True
 
     def deactivatePositionListener(self):
@@ -423,7 +395,7 @@ class Pipeline(object, Signallable, Loggable):
         else:
             self.debug("position : %d , format:%d", position, format)
         # FIXME : temporarily deactivate position listener
-        self._listenToPosition(False)
+        #self._listenToPosition(False)
 
         res = self._pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
                                   gst.SEEK_TYPE_SET, position,
@@ -443,7 +415,10 @@ class Pipeline(object, Signallable, Loggable):
             if not create:
                 raise PipelineError()
 
-            if self._state > STATE_READY and isinstance(factory, SourceFactory):
+            change, current, pending = self._pipeline.get_state(0)
+
+            if (current > STATE_READY or pending > STATE_READY) and \
+                    isinstance(factory, SourceFactory):
                 raise PipelineError("Pipeline not in NULL/READY,"
                         " can not create source bin")
 
@@ -574,6 +549,7 @@ class Pipeline(object, Signallable, Loggable):
 
             # ask the factory to finish cleanup
             factory_entry.factory.releaseBin(bin_stream_entry.bin)
+
             bin_stream_entry.bin = None
             if not factory_entry.streams:
                 del self.factories[factory_entry.factory]
@@ -786,17 +762,23 @@ class Pipeline(object, Signallable, Loggable):
         elif message.type == gst.MESSAGE_STATE_CHANGED and message.src == self._pipeline:
             prev, new, pending = message.parse_state_changed()
             self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
-            if pending == gst.STATE_VOID_PENDING and self._state != new:
-                self._state = new
-                if self.state in [STATE_PAUSED, STATE_PLAYING]:
-                    # trigger duration-changed
-                    try:
-                        self.getDuration()
-                    except PipelineError:
-                        # no sinks??
-                        pass
-                self._listenToPosition(self._state in [STATE_PAUSED, STATE_PLAYING])
-                self.emit('state-changed', self._state)
+
+            emit_state_change = pending == gst.STATE_VOID_PENDING
+            if prev == STATE_READY and new == STATE_PAUSED:
+                # trigger duration-changed
+                try:
+                    self.getDuration()
+                except PipelineError:
+                    # no sinks??
+                    pass
+            elif prev == STATE_PAUSED and new == STATE_PLAYING:
+                self._listenToPosition(True)
+            elif prev == STATE_PLAYING and new == STATE_PAUSED:
+                self._listenToPosition(False)
+
+            if emit_state_change:
+                self.emit('state-changed', new)
+
         elif message.type == gst.MESSAGE_ERROR:
             error, detail = message.parse_error()
             self._handleErrorMessage(error, detail, message.src)

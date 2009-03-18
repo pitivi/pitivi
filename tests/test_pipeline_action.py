@@ -138,7 +138,6 @@ class TestPipelineAction(TestCase):
 
         p.setState(STATE_PLAYING)
         time.sleep(1)
-        p.getState()
         # and make sure that all other elements were created (4)
         # FIXME  if it's failing here, run the test a few times trying to raise
         # the time.sleep() above, it may just be racy...
