@@ -438,7 +438,6 @@ class Timeline(object ,Signallable):
         'duration-changed': ['duration'],
         'track-added': ['track'],
         'track-removed': ['track'],
-        'track-order-changed' :[],
     }
 
     def __init__(self):
