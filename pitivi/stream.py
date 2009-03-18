@@ -81,11 +81,11 @@ class MultimediaStream(object, Loggable):
         @return: C{True} if the stream is compatible.
         @rtype: C{bool}
         """
-        if self.pad_name and other.pad_name:
-            self.log("self.pad_name:%r, other.pad_name:%r",
-                     self.pad_name, other.pad_name)
-            return self.pad_name == other.pad_name and self.isCompatible(other)
-        return self.isCompatible(other)
+        #if self.pad_name and other.pad_name:
+        self.log("self.pad_name:%r, other.pad_name:%r",
+                 self.pad_name, other.pad_name)
+        return self.pad_name == other.pad_name and self.isCompatible(other)
+        #return self.isCompatible(other)
 
     def __repr__(self):
         return "<%s(%s) '%s'>" % (self.__class__.__name__,

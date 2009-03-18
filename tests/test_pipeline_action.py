@@ -28,6 +28,7 @@ from unittest import TestCase, main
 from pitivi.pipeline import Pipeline, STATE_READY, STATE_PLAYING, STATE_NULL
 from pitivi.action import Action, STATE_ACTIVE, STATE_NOT_ACTIVE, ActionError
 from pitivi.stream import MultimediaStream, VideoStream
+from common import TestCase
 import common
 import gst
 
@@ -131,21 +132,23 @@ class TestPipelineAction(TestCase):
 
         gst.debug("about to activate action")
         a.activate()
-        # theoretically... there shouldn't only be the source, since
-        # the pad for the source hasn't been created yet (and therefore not
-        # requiring a consumer
-        self.assertEquals(len(list(p._pipeline.elements())), 1)
+        # only the producer and the consumer are created, the other elements are
+        # created dinamically
+        self.assertEquals(len(list(p._pipeline.elements())), 2)
 
         p.setState(STATE_PLAYING)
         time.sleep(1)
         p.getState()
         # and make sure that all other elements were created (4)
+        # FIXME  if it's failing here, run the test a few times trying to raise
+        # the time.sleep() above, it may just be racy...
         self.assertEquals(len(list(p._pipeline.elements())), 4)
 
         a.deactivate()
         p.setState(STATE_NULL)
-
+        self.assertEquals(len(list(p._pipeline.elements())), 0)
         p.release()
+
 
     def testDynamicLink(self):
         a = DynamicAction()

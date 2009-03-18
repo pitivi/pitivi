@@ -85,6 +85,7 @@ class Action(object, Signallable, Loggable):
         self.pipeline = None
         self._links = [] # list of (producer, consumer, prodstream, consstream)
         self._pending_links = [] # list of links that still need to be connected
+        self._pending_links_elements = []
         self._dyn_links = [] # list of links added at RunTime, will be removed when deactivated
         self._dynconsumers = [] # consumers that we added at RunTime
 
@@ -468,20 +469,24 @@ class Action(object, Signallable, Loggable):
             self.debug("  producer:%r, stream:%s", prod, prodstream)
             self.debug("  consumer:%r, stream:%s", cons, consstream)
             if prod == producer and (prodstream == None or \
-                    prodstream.isCompatibleWithName(stream)):
+                    prodstream.isCompatible(stream)):
                 if self._activateLink(prod, cons, stream, consstream):
+                    self._pending_links_elements.append((prod, stream))
                     waspending = True
                     self.debug("Successfully linked pending stream, removing "
                             "it from temp list")
                     self._pending_links.remove((prod, cons,
                             prodstream, consstream))
+                    self._pd = getattr(self, '_pd', [])
+                    self._pd.append((producer, stream))
+
 
         if waspending == False:
             self.debug("Checking to see if we haven't already handled it")
             # 2. If it's not one of the pending links, It could also be one of the
             # links we've *already* handled
             for prod, cons, ps, cs in self.getLinks():
-                if prod == producer and ps.isCompatibleWithName(stream):
+                if prod == producer and ps.isCompatible(stream):
                     self.debug("Already handled that link, returning True")
                     return True
 
@@ -597,6 +602,7 @@ class Action(object, Signallable, Loggable):
         try:
             tee = self.pipeline.getTeeForFactoryStream(producer, prodstream,
                                                      automake=True)
+
         except PipelineError:
             if init != True:
                 self.debug("Could not create link")
@@ -632,6 +638,7 @@ class Action(object, Signallable, Loggable):
         self.info("linking the tee to the queue")
         # Link tees to queues
         tee.link(queue)
+
         self.info("done")
         return True
 
@@ -642,8 +649,20 @@ class Action(object, Signallable, Loggable):
             # release tee/queue usage for that stream
             self.pipeline.releaseQueueForFactoryStream(consumer, consstream)
             self.pipeline.releaseBinForFactoryStream(consumer, consstream)
+            try:
+                self.pipeline.releaseTeeForFactoryStream(producer, prodstream)
+            except PipelineError:
+                # FIXME: _really_ create an exception hierarchy
+
+                # this happens if the producer is part of a pending link that
+                # has not been activated yet
+                self.debug("producer has no tee.. pending link?")
+            self.pipeline.releaseBinForFactoryStream(producer, prodstream)
+
+        for producer, prodstream in self._pending_links_elements:
             self.pipeline.releaseTeeForFactoryStream(producer, prodstream)
             self.pipeline.releaseBinForFactoryStream(producer, prodstream)
+        self._pending_links_elements = []
 
         # release dynamic links
         for producer, consumer, prodstream, consstream in self._dyn_links:

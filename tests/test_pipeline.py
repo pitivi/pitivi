@@ -47,8 +47,8 @@ class TestPipeline(TestCase):
     def tearDown(self):
         self.pipeline.setState(STATE_NULL)
         self.pipeline.release()
+        self.monitor.disconnectFromObj(self.pipeline)
         del self.pipeline
-        del self.monitor.obj
         del self.monitor
         TestCase.tearDown(self)
 
@@ -262,7 +262,6 @@ class TestPipeline(TestCase):
         stream2= VideoStream(gst.Caps('any'), 'src')
         factory2.addInputStream(stream2)
 
-        bin1 = self.pipeline.getBinForFactoryStream(factory, stream, True)
         self.failUnlessRaises(PipelineError,
             self.pipeline.getTeeForFactoryStream, factory2, stream2, True)
         self.pipeline.releaseBinForFactoryStream(factory, stream)

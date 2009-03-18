@@ -167,10 +167,7 @@ class Pipeline(object, Signallable, Loggable):
         self._listenToPosition(False)
         self._bus.disconnect_by_func(self._busMessageCb)
         self._bus.remove_signal_watch()
-        try:
-            self._bus.set_sync_handler(None)
-        except:
-            self.debug("ignore me")
+        self._bus.set_sync_handler(None)
         self.setState(STATE_NULL)
         self._bus = None
         self._pipeline = None
@@ -471,8 +468,11 @@ class Pipeline(object, Signallable, Loggable):
                     continue
 
                 if stream.isCompatibleWithName(factory_stream):
-                    stream_entry = entry
-                    break
+                    if stream_entry is None:
+                        stream_entry = entry
+                    elif stream is factory_stream:
+                        stream_entry = entry
+                        break
 
         if stream_entry is None:
             if not create:
@@ -628,10 +628,10 @@ class Pipeline(object, Signallable, Loggable):
 
         stream_entry.tee = gst.element_factory_make("tee")
         self._pipeline.add(stream_entry.tee)
+        stream_entry.tee_use_count += 1
         stream_entry.tee.set_state(STATE_PAUSED)
         self.debug("Linking pad %r to tee", pads[0])
         srcpad.link(stream_entry.tee.get_pad("sink"))
-        stream_entry.tee_use_count += 1
 
         return stream_entry.tee
 
@@ -655,15 +655,18 @@ class Pipeline(object, Signallable, Loggable):
         self.debug("factory:%r, stream:%r", factory, stream)
         stream_entry = self._getStreamEntryForFactoryStream(factory, stream)
 
+        if stream_entry.tee_use_count == 0:
+            raise PipelineError()
+
         stream_entry.tee_use_count -= 1
         if stream_entry.tee_use_count == 0:
             bin = self.getBinForFactoryStream(factory, stream, automake=False)
-            self.releaseBinForFactoryStream(factory, stream)
             if stream_entry.tee is not None:
                 bin.unlink(stream_entry.tee)
                 stream_entry.tee.set_state(gst.STATE_NULL)
                 self._pipeline.remove(stream_entry.tee)
                 stream_entry.tee = None
+            self.releaseBinForFactoryStream(factory, stream)
 
     def getQueueForFactoryStream(self, factory, stream=None, automake=False,
                                  queuesize=1):
@@ -879,7 +882,6 @@ class Pipeline(object, Signallable, Loggable):
             for action in [action for action in self.actions
                     if factory in action.producers]:
                 action.streamRemoved(factory, stream)
-            del stream_entry.factory_entry.streams[stream]
         except:
             self._lock.release()
         self._lock.release()

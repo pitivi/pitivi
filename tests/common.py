@@ -82,12 +82,19 @@ class FakeGnlFactory(SourceFactory):
 
 class SignalMonitor(object):
     def __init__(self, obj, *signals):
-        self.obj = obj
+        self.signals = signals
+        self.connectToObj(obj)
 
-        for signal in signals:
+    def connectToObj(self, obj):
+        self.obj = obj
+        for signal in self.signals:
             obj.connect(signal, self._signalCb, signal)
             setattr(self, self._getSignalCounterName(signal), 0)
             setattr(self, self._getSignalCollectName(signal), [])
+
+    def disconnectFromObj(self, obj):
+        obj.disconnect_by_func(self._signalCb)
+        del self.obj
 
     def _getSignalCounterName(self, signal):
         field = '%s_count' % signal.replace('-', '_')

@@ -177,6 +177,8 @@ class Signallable:
 
         self._signal_group.disconnect_by_function(function)
 
+    disconnect_by_func = disconnect_by_function
+
     @classmethod
     def get_signals(cls):
         """ Get the full list of signals implemented by this class """
