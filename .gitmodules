@@ -1,3 +1,3 @@
 [submodule "common"]
 	path = common
-	url = git://git.pitivi.org/git/common.git
+	url = git://anongit.freedesktop.org/gstreamer/common
