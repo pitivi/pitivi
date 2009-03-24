@@ -3,7 +3,7 @@ uidir = $(libdir)/pitivi/python/pitivi/ui
 ui_PYTHON =			\
 	__init__.py		\
 	audiofxlist.py		\
-	commo.py		\
+	common.py		\
 	controller.py		\
 	defaultpropertyeditor.py\
 	dnd.py			\
