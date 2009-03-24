@@ -3,11 +3,12 @@ uidir = $(libdir)/pitivi/python/pitivi/ui
 ui_PYTHON =			\
 	__init__.py		\
 	audiofxlist.py		\
+	commo.py		\
 	controller.py		\
 	defaultpropertyeditor.py\
 	dnd.py			\
-	exportsettingswidget.py	\
 	encodingdialog.py	\
+	exportsettingswidget.py	\
 	filelisterrordialog.py	\
 	glade.py		\
 	gstwidget.py		\
@@ -16,8 +17,8 @@ ui_PYTHON =			\
 	pathwalker.py		\
 	pluginmanagerdialog.py	\
 	point.py		\
-	preview.py		\
 	previewer.py		\
+	preview.py		\
 	projectsettings.py	\
 	projecttabs.py		\
 	propertyeditor.py	\
@@ -25,12 +26,13 @@ ui_PYTHON =			\
 	screencast_managerdialog.py \
 	sourcelist.py		\
 	timelinecanvas.py	\
+	timelinecontrols.py	\
 	timeline.py		\
-	track.py		\
 	trackobject.py		\
-	view.py			\
-	viewer.py		\
+	track.py		\
 	videofxlist.py		\
+	viewer.py		\
+	view.py			\
 	webcam_managerdialog.py	\
 	zoominterface.py
 
