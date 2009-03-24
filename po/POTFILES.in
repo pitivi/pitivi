@@ -30,5 +30,6 @@ pitivi/ui/propertyeditor.py
 pitivi/ui/screencast_manager.glade
 pitivi/ui/sourcelist.py
 pitivi/ui/timeline.py
+pitivi/ui/timelinecontrols.py
 pitivi/ui/viewer.py
 pitivi/ui/videofxlist.py
