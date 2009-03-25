@@ -54,5 +54,5 @@ class Track(goocanvas.Group, Zoomable):
         Zoomable.removeInstance(w)
 
     @handler(track, "max-priority-changed")
-    def _maxPriorityChanged(self, track):
+    def _maxPriorityChanged(self, track, max_priority):
         self.get_canvas().regroupTracks()

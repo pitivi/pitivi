@@ -47,7 +47,7 @@ class TrackControls(gtk.Expander):
     track = receiver()
 
     @handler(track, "max-priority-changed")
-    def _maxPriorityChanged(self, track):
+    def _maxPriorityChanged(self, track, max_priority):
         self.set_size_request(TRACK_CONTROL_WIDTH, (1 +
             self.track.max_priority) * (LAYER_HEIGHT_EXPANDED +
             LAYER_SPACING))
