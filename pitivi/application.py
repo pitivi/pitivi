@@ -235,20 +235,25 @@ class InteractivePitivi(Pitivi):
         if add_to_timeline:
             self._uris = uris
             self._duration = self.current.timeline.duration
-            self.current.sources.connect("file_added", self._addSourceCb, True)
-            self.current.sources.connect("not_media_file", self._addSourceCb,
-                False)
+            self.current.sources.connect("file_added", self._addSourceCb)
+            self.current.sources.connect("not_media_file", self._notMediaFileCb)
         self.current.sources.addUris(uris)
 
-    def _addSourceCb(self, unused_sourcelist, factory, add):
+    def _addSourceCb(self, unused_sourcelist, factory):
         if factory.name in self._uris:
             self._uris.remove(factory.name)
             if not self._uris:
                 self.current.sources.disconnect_by_function(self._addSourceCb)
-        if add:
+
             t = self.current.timeline.addSourceFactory(factory)
             t.start = self._duration
             self._duration += t.duration
+
+    def _notMediaFileCb(self, sourcelist, uri, error, debug):
+        if uri in self._uris:
+            self._uris.remove(uri)
+            if not self._uris:
+                self.current.sources.disconnect_by_function(self._notMediaFileCb)
 
     # properties
 
