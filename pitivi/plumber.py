@@ -73,10 +73,6 @@ class DefaultVideoSink(SinkFactory):
             props = list(self._realsink.props)
             if "force-aspect-ratio"in [prop.name for prop in props]:
                 self._realsink.set_property("force-aspect-ratio", True)
-            if "qos" in [prop.name for prop in props]:
-                self._realsink.set_property("qos", False)
-            if "max-lateness"in [prop.name for prop in props]:
-                self._realsink.set_property("max-lateness", -1)
 
             self._realsink.props.sync = self.sync
 
