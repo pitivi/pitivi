@@ -108,9 +108,14 @@ def beautify_stream(stream):
     raise NotImplementedError
 
 def beautify_factory(factory):
+    ranks = {VideoStream: 0, AudioStream: 1}
+    def stream_sort_key(stream):
+        return ranks[type(stream)]
+
+    streams = factory.getOutputStreams()
+    streams.sort(key=stream_sort_key)
     return ("<b>" + unquote(factory.displayname) + "</b>\n" +
-        "\n".join((beautify_stream(stream)
-            for stream in factory.getOutputStreams())))
+        "\n".join((beautify_stream(stream) for stream in streams)))
 
 class SourceList(gtk.VBox, Loggable):
     """ Widget for listing sources """
