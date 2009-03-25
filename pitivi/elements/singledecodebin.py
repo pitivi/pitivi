@@ -44,6 +44,8 @@ class SingleDecodeBin(gst.Bin):
     * Doesn't contain any internal queue
     """
 
+    QUEUE_SIZE = 1 * gst.SECOND
+
     __gsttemplates__ = (
         gst.PadTemplate ("sinkpadtemplate",
                          gst.PAD_SINK,
@@ -160,6 +162,34 @@ class SingleDecodeBin(gst.Bin):
         for pad in to_connect:
             self._closePadLink(element, pad, pad.get_caps())
 
+    def _isDemuxer(self, element):
+        if not 'Demux' in element.get_factory().get_klass():
+            return False
+
+        potential_src_pads = 0
+        for template in element.get_pad_template_list():
+            if template.direction != gst.PAD_SRC:
+                continue
+
+            if template.presence == gst.PAD_REQUEST or \
+                    "%" in template.name_template:
+                potential_src_pads += 2
+                break
+            else:
+                potential_src_pads += 1
+
+        return potential_src_pads > 1
+
+    def _plugDecodingQueue(self, pad):
+        queue = gst.element_factory_make("queue")
+        queue.props.max_size_time = self.QUEUE_SIZE
+        self.add(queue)
+        queue.sync_state_with_parent()
+        pad.link(queue.get_pad("sink"))
+        pad = queue.get_pad("src")
+
+        return pad
+
     def _tryToLink1(self, source, pad, factories):
         """
         Tries to link one of the factories' element to the given pad.
@@ -169,6 +199,10 @@ class SingleDecodeBin(gst.Bin):
         self.debug("source:%s, pad:%s , factories:%r" % (source.get_name(),
                                                          pad.get_name(),
                                                          factories))
+
+        if self._isDemuxer(source):
+            pad = self._plugDecodingQueue(pad)
+
         result = None
         for factory in factories:
             element = factory.create()
