@@ -100,8 +100,8 @@ def check_required_version(modulename):
         if list(gtk.pygtk_version) < _string_to_list(PYGTK_REQ):
             return [PYGTK_REQ, _version_to_string(gtk.pygtk_version)]
     if modulename == "pygst":
-        if list(gst.pygst_version) < _string_to_list(PYGST_REQ):
-            return [PYGST_REQ, _version_to_string(gst.pygst_version)]
+        if list(gst.get_pygst_version()) < _string_to_list(PYGST_REQ):
+            return [PYGST_REQ, _version_to_string(gst.get_pygst_version())]
     if modulename == "cairo":
         import cairo
         if _string_to_list(cairo.cairo_version_string()) < _string_to_list(PYCAIRO_REQ):
