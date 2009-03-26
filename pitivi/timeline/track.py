@@ -42,10 +42,11 @@ class TrackObject(object, Signallable):
         'selected-changed' : ['state'],
     }
 
-    def __init__(self, factory, start=0,
+    def __init__(self, factory, stream, start=0,
             duration=0, in_point=0,
             media_duration=0, priority=0):
         self.factory = factory
+        self.stream = stream
         self.track = None
         self.timeline_object = None
         self.gnl_object = obj = self._makeGnlObject()
@@ -80,7 +81,7 @@ class TrackObject(object, Signallable):
 
     def copy(self):
         cls = self.__class__
-        other = cls(self.factory, start=self.start,
+        other = cls(self.factory, self.stream, start=self.start,
             duration=self.duration, in_point=self.in_point,
             media_duration=self.media_duration, priority=self.priority)
         other.trimmed_start = self.trimmed_start
@@ -235,7 +236,7 @@ class TrackObject(object, Signallable):
         if self.track is None:
             raise TrackError()
 
-        bin = self.factory.makeBin(self.track.stream)
+        bin = self.factory.makeBin(self.stream)
         self.gnl_object.add(bin)
 
     def releaseBin(self):
@@ -318,21 +319,21 @@ class Track(object, Signallable):
 
     def _getDefaultTrackObjectForStream(self, stream):
         if isinstance(stream, VideoStream):
-            return self._getDefaultVideoTrackObject()
+            return self._getDefaultVideoTrackObject(stream)
         elif isinstance(stream, AudioStream):
-            return self._getDefaultAudioTrackObject()
+            return self._getDefaultAudioTrackObject(stream)
 
         return None
 
-    def _getDefaultVideoTrackObject(self):
+    def _getDefaultVideoTrackObject(self, stream):
         factory = VideoTestSourceFactory(pattern='black')
-        track_object = SourceTrackObject(factory)
+        track_object = SourceTrackObject(factory, stream)
 
         return track_object
 
-    def _getDefaultAudioTrackObject(self):
+    def _getDefaultAudioTrackObject(self, stream):
         factory = AudioTestSourceFactory(wave='silence')
-        track_object = SourceTrackObject(factory)
+        track_object = SourceTrackObject(factory, stream)
 
         return track_object
 

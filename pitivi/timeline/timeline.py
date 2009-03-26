@@ -537,7 +537,7 @@ class Timeline(object ,Signallable):
         start = 0
         for stream, track in stream_map.iteritems():
             start = max(start, track.duration)
-            track_object = SourceTrackObject(factory)
+            track_object = SourceTrackObject(factory, stream)
             track.addTrackObject(track_object)
             timeline_object.addTrackObject(track_object)
 

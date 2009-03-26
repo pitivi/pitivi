@@ -168,7 +168,7 @@ class TestTimelineSourceFactoryPipeline(MainLoopTestCase):
 
         timeline = Timeline()
         track = Track(stream)
-        track_object1 = SourceTrackObject(video_factory1)
+        track_object1 = SourceTrackObject(video_factory1, stream)
         track_object1.start = 1 * gst.SECOND
         track.addTrackObject(track_object1)
         timeline.addTrack(track)
@@ -215,7 +215,7 @@ class TestTimelineSourceFactoryPipeline(MainLoopTestCase):
 
         timeline = Timeline()
         track = Track(stream)
-        track_object1 = SourceTrackObject(audio_factory1)
+        track_object1 = SourceTrackObject(audio_factory1, stream)
         track_object1.start = 2 * gst.SECOND
         track.addTrackObject(track_object1)
         timeline.addTrack(track)
@@ -269,12 +269,12 @@ class TestTimelineSourceFactoryPipeline(MainLoopTestCase):
         video_track = Track(video_stream)
         audio_track = Track(audio_stream)
 
-        track_object1 = SourceTrackObject(audio_factory1)
+        track_object1 = SourceTrackObject(audio_factory1, audio_stream)
         track_object1.start = 2 * gst.SECOND
         audio_track.addTrackObject(track_object1)
         timeline.addTrack(audio_track)
 
-        track_object2 = SourceTrackObject(video_factory1)
+        track_object2 = SourceTrackObject(video_factory1, video_stream)
         track_object2.start = 2 * gst.SECOND
         video_track.addTrackObject(track_object2)
         timeline.addTrack(video_track)

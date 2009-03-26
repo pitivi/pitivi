@@ -49,7 +49,7 @@ class TestTrackObject(TestCase):
         self.factory = StubFactory()
         gst.debug("%r" % self.factory.duration)
         self.factory.addOutputStream(stream)
-        self.track_object = SourceTrackObject(self.factory)
+        self.track_object = SourceTrackObject(self.factory, stream)
         self.monitor = TrackSignalMonitor(self.track_object)
 
     def tearDown(self):
@@ -296,7 +296,7 @@ class TestTrack(TestCase):
         track2 = self.track2
 
         # add an object
-        obj1 = SourceTrackObject(factory)
+        obj1 = SourceTrackObject(factory, stream)
         self.failUnlessEqual(obj1.track, None)
         track1.addTrackObject(obj1)
         self.failIfEqual(obj1.track, None)
@@ -308,7 +308,7 @@ class TestTrack(TestCase):
         self.failUnlessRaises(TrackError, track2.addTrackObject, obj1)
 
         # add a second object
-        obj2 = SourceTrackObject(factory)
+        obj2 = SourceTrackObject(factory, stream)
         self.failUnlessEqual(obj2.track, None)
         track1.addTrackObject(obj2)
         self.failIfEqual(obj2.track, None)
@@ -332,7 +332,7 @@ class TestTrack(TestCase):
 
         objs = []
         for i in xrange(10):
-            obj = SourceTrackObject(factory)
+            obj = SourceTrackObject(factory, self.stream)
             objs.append(obj)
             track.addTrackObject(obj)
 
@@ -348,19 +348,19 @@ class TestTrack(TestCase):
         track = self.track1
         factory = self.factory
 
-        obj1 = SourceTrackObject(factory)
+        obj1 = SourceTrackObject(factory, self.stream)
         obj1.priority = 10
 
         self.failUnlessEqual(track.max_priority, 0)
         track.addTrackObject(obj1)
         self.failUnlessEqual(track.max_priority, 10)
 
-        obj2 = SourceTrackObject(factory)
+        obj2 = SourceTrackObject(factory, self.stream)
         obj2.priority = 5
         track.addTrackObject(obj2)
         self.failUnlessEqual(track.max_priority, 10)
 
-        obj3 = SourceTrackObject(factory)
+        obj3 = SourceTrackObject(factory, self.stream)
         obj3.priority = 14
         track.addTrackObject(obj3)
         self.failUnlessEqual(track.max_priority, 14)
