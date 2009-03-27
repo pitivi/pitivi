@@ -22,10 +22,12 @@
 from unittest import TestCase
 from StringIO import StringIO
 import gst
+from xml.etree.ElementTree import Element, SubElement, tostring
 
 from pitivi.reflect import qual, namedAny
-from pitivi.formatters.etree import ElementTreeFormatter, \
-        ElementTreeFormatterContext, version
+from pitivi.formatters.etree import ElementTreeFormatter, version, \
+        ElementTreeFormatterSaveContext, ElementTreeFormatterLoadContext, \
+        indent, tostring
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.file import FileSourceFactory
 from pitivi.factories.test import VideoTestSourceFactory
@@ -36,10 +38,13 @@ from pitivi.project import Project
 class FakeElementTreeFormatter(ElementTreeFormatter):
     pass
 
+def ts(time):
+    return "(gint64)%s" % time
+
 class TestFormatterSave(TestCase):
     def setUp(self):
         self.formatter = FakeElementTreeFormatter()
-        self.context = ElementTreeFormatterContext()
+        self.context = ElementTreeFormatterSaveContext()
 
     def testSaveStream(self):
         stream = VideoStream(gst.Caps("video/x-raw-rgb, blah=meh"))
@@ -122,12 +127,12 @@ class TestFormatterSave(TestCase):
         self.failUnlessEqual(element.tag, "track-object")
         self.failUnlessEqual(element.attrib["type"],
                 qual(track_object.__class__))
-        self.failUnlessEqual(element.attrib["start"], str(10 * gst.SECOND))
-        self.failUnlessEqual(element.attrib["duration"], str(20 * gst.SECOND))
-        self.failUnlessEqual(element.attrib["in_point"], str(5 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["start"], ts(10 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["duration"], ts(20 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["in_point"], ts(5 * gst.SECOND))
         self.failUnlessEqual(element.attrib["media_duration"],
-                str(15 * gst.SECOND))
-        self.failUnlessEqual(element.attrib["priority"], str(10))
+                ts(15 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["priority"], "(int)10")
 
         self.failIfEqual(element.find("factory-ref"), None)
         self.failIfEqual(element.find("stream-ref"), None)
@@ -201,6 +206,30 @@ class TestFormatterSave(TestCase):
         self.failIfEqual(element.find("factory-ref"), None)
         track_object_refs = element.find("track-object-refs")
         self.failUnlessEqual(len(track_object_refs), 1)
+
+    def testSavetimelineObjects(self):
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        source1 = FileSourceFactory("file1.ogg")
+
+        # these two calls are needed to populate the context for the -ref
+        # elements
+        self.formatter._saveSource(source1, self.context)
+        self.formatter._saveStream(video_stream, self.context)
+
+        track_object = SourceTrackObject(source1, video_stream,
+                start=10 * gst.SECOND, duration=20 * gst.SECOND,
+                in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
+                priority=10)
+
+        self.formatter._saveTrackObject(track_object, self.context)
+
+        timeline_object = TimelineObject(source1)
+        timeline_object.addTrackObject(track_object)
+
+        element = self.formatter._saveTimelineObjects([timeline_object],
+                self.context)
+        self.failUnlessEqual(len(element), 1)
 
     def testSaveTimeline(self):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
@@ -276,3 +305,210 @@ class TestFormatterSave(TestCase):
         self.failUnlessEqual(element.tag, "pitivi")
         self.failIfEqual(element.find("factories"), None)
         self.failIfEqual(element.find("timeline"), None)
+
+
+class TestFormatterLoad(TestCase):
+    def setUp(self):
+        self.formatter = FakeElementTreeFormatter()
+        self.context = ElementTreeFormatterLoadContext()
+
+    def testLoadStream(self):
+        caps = gst.Caps("video/x-raw-yuv")
+        element = Element("stream")
+        element.attrib["id"] = "1"
+        element.attrib["type"] = "pitivi.stream.VideoStream"
+        element.attrib["caps"] = str(caps)
+
+        stream = self.formatter._loadStream(element, self.context)
+        self.failUnlessEqual(qual(stream.__class__), element.attrib["type"])
+        self.failUnlessEqual(str(stream.caps), str(caps))
+        self.failUnlessEqual(stream, self.context.streams["1"])
+
+    def testLoadStreamRef(self):
+        stream = VideoStream(gst.Caps("meh"))
+        self.context.streams["1"] = stream
+        element = Element("stream-ref")
+        element.attrib["id"] = "1"
+        stream1 = self.formatter._loadStreamRef(element, self.context)
+        self.failUnlessEqual(stream, stream1)
+
+    def testLoadFactory(self):
+        element = Element("source")
+        element.attrib["id"] = "1"
+        element.attrib["type"] = "pitivi.factories.test.VideoTestSourceFactory"
+        output_streams = SubElement(element, "output-streams")
+        output_stream = SubElement(output_streams, "stream")
+        caps = gst.Caps("video/x-raw-yuv")
+        output_stream.attrib["id"] = "1"
+        output_stream.attrib["type"] = "pitivi.stream.VideoStream"
+        output_stream.attrib["caps"] = str(caps)
+
+        factory = self.formatter._loadFactory(element, self.context)
+        self.failUnless(isinstance(factory, VideoTestSourceFactory))
+        self.failUnlessEqual(len(factory.output_streams), 2)
+
+        self.failUnlessEqual(self.context.factories["1"], factory)
+
+    def testLoadFactoryRef(self):
+        class Tag(object): pass
+        tag = Tag()
+        self.context.factories["1"] = tag
+        element = Element("factory-ref", id="1")
+        ret = self.formatter._loadFactoryRef(element, self.context)
+        self.failUnless(ret is tag)
+
+    def testLoadTrackObject(self):
+        element = Element("track-object",
+                type="pitivi.timeline.track.SourceTrackObject",
+                start=ts(1 * gst.SECOND), duration=ts(10 * gst.SECOND),
+                in_point=ts(5 * gst.SECOND),
+                media_duration=ts(15 * gst.SECOND), priority=ts(5))
+        factory = VideoTestSourceFactory()
+        self.context.factories["1"] = factory
+        stream = VideoStream(gst.Caps("meh"))
+        self.context.streams["1"] = stream
+        factory_ref = SubElement(element, "factory-ref", id="1")
+        stream_ref = SubElement(element, "stream-ref", id="1")
+
+        track_object = self.formatter._loadTrackObject(element, self.context)
+        self.failUnless(isinstance(track_object, SourceTrackObject))
+        self.failUnlessEqual(track_object.factory, factory)
+        self.failUnlessEqual(track_object.stream, stream)
+
+        self.failUnlessEqual(track_object.start, 1 * gst.SECOND)
+        self.failUnlessEqual(track_object.duration, 10 * gst.SECOND)
+        self.failUnlessEqual(track_object.in_point, 5 * gst.SECOND)
+        self.failUnlessEqual(track_object.media_duration, 15 * gst.SECOND)
+        self.failUnlessEqual(track_object.priority, 5)
+
+    def testLoadTrackObjectRef(self):
+        class Tag(object):
+            pass
+        tag = Tag()
+        self.context.track_objects["1"] = tag
+        element = Element("track-object-ref", id="1")
+        ret = self.formatter._loadTrackObjectRef(element, self.context)
+        self.failUnless(ret is tag)
+
+    def testLoadTrack(self):
+        element = Element("track")
+        stream_element = SubElement(element, "stream", id="1",
+                type="pitivi.stream.VideoStream", caps="video/x-raw-rgb")
+
+        track_objects_element = SubElement(element, "track-objects")
+        track_object = SubElement(track_objects_element, "track-object",
+                type="pitivi.timeline.track.SourceTrackObject",
+                start=ts(1 * gst.SECOND), duration=ts(10 * gst.SECOND),
+                in_point=ts(5 * gst.SECOND),
+                media_duration=ts(15 * gst.SECOND), priority=ts(5))
+        factory = VideoTestSourceFactory()
+        self.context.factories["1"] = factory
+        stream = VideoStream(gst.Caps("video/x-raw-rgb"))
+        self.context.streams["1"] = stream
+        factory_ref = SubElement(track_object, "factory-ref", id="1")
+        stream_ref = SubElement(track_object, "stream-ref", id="1")
+
+        track = self.formatter._loadTrack(element, self.context)
+
+        self.failUnlessEqual(len(track.track_objects), 2)
+        # FIXME: this is an hack
+        self.failUnlessEqual(str(track.stream), str(stream))
+
+    def testLoadTimelineObject(self):
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        source1 = VideoTestSourceFactory()
+        self.context.factories["1"] = source1
+        self.context.track_objects["1"] = SourceTrackObject(source1, video_stream)
+
+        element = Element("timeline-object")
+        factory_ref = SubElement(element, "factory-ref", id="1")
+        stream_ref = SubElement(element, "stream-ref", id="1")
+        track_object_refs = SubElement(element, "track-object-refs")
+        track_object_ref = SubElement(track_object_refs,
+                "track-object-ref", id="1")
+
+        timeline_object = \
+                self.formatter._loadTimelineObject(element, self.context)
+
+        self.failUnlessEqual(timeline_object.factory, source1)
+        self.failUnlessEqual(len(timeline_object.track_objects), 1)
+
+    def testLoadTimeline(self):
+        timeline_element = Element("timeline")
+        tracks_element = SubElement(timeline_element, "tracks")
+        track_element = SubElement(tracks_element, "track")
+        stream_element = SubElement(track_element, "stream", id="1",
+                type="pitivi.stream.VideoStream", caps="video/x-raw-rgb")
+
+        track_objects_element = SubElement(track_element, "track-objects")
+        track_object = SubElement(track_objects_element, "track-object",
+                type="pitivi.timeline.track.SourceTrackObject",
+                start=ts(1 * gst.SECOND), duration=ts(10 * gst.SECOND),
+                in_point=ts(5 * gst.SECOND),
+                media_duration=ts(15 * gst.SECOND), priority=ts(5))
+        factory = VideoTestSourceFactory()
+        self.context.factories["1"] = factory
+        stream = VideoStream(gst.Caps("video/x-raw-rgb"))
+        self.context.streams["1"] = stream
+        factory_ref = SubElement(track_object, "factory-ref", id="1")
+        stream_ref = SubElement(track_object, "stream-ref", id="1")
+
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        source1 = VideoTestSourceFactory()
+        self.context.factories["2"] = source1
+        self.context.track_objects["1"] = SourceTrackObject(source1, video_stream)
+
+        timeline_objects_element = SubElement(timeline_element,
+                "timeline-objects")
+        timeline_object_element = \
+                SubElement(timeline_objects_element, "timeline-object")
+        factory_ref = SubElement(timeline_object_element, "factory-ref", id="1")
+        stream_ref = SubElement(timeline_object_element, "stream-ref", id="1")
+        track_object_refs = SubElement(timeline_object_element, "track-object-refs")
+        track_object_ref = SubElement(track_object_refs,
+                "track-object-ref", id="1")
+        timeline = self.formatter._loadTimeline(timeline_element, self.context)
+        self.failUnlessEqual(len(timeline.tracks), 1)
+
+    def testLoadProject(self):
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        source1 = VideoTestSourceFactory()
+
+        self.formatter._saveSource(source1, self.context)
+        self.formatter._saveStream(video_stream, self.context)
+
+        track_object = SourceTrackObject(source1, video_stream,
+                start=10 * gst.SECOND, duration=20 * gst.SECOND,
+                in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
+                priority=10)
+
+        self.formatter._saveTrackObject(track_object, self.context)
+
+        track = Track(video_stream)
+        track.addTrackObject(track_object)
+
+        timeline_object = TimelineObject(source1)
+        timeline_object.addTrackObject(track_object)
+
+        self.formatter._saveTimelineObject(timeline_object, self.context)
+
+        timeline = Timeline()
+        timeline.addTrack(track)
+
+        self.formatter._saveTimeline(timeline, self.context)
+
+        project = Project()
+        project.timeline = timeline
+        project.sources.addFactory("meh", source1)
+
+        element = self.formatter._saveProject(project, self.context)
+
+        self.failUnlessEqual(element.tag, "pitivi")
+        self.failIfEqual(element.find("factories"), None)
+        self.failIfEqual(element.find("timeline"), None)
+
+        indent(element)
+        f = file("/tmp/untitled.pptv", "w")
+        f.write(tostring(element))
+        f.close()
