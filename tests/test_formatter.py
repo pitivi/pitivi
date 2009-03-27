@@ -24,9 +24,14 @@ from StringIO import StringIO
 import gst
 
 from pitivi.reflect import qual, namedAny
-from pitivi.formatters.etree import ElementTreeFormatter
+from pitivi.formatters.etree import ElementTreeFormatter, \
+        ElementTreeFormatterContext, version
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.file import FileSourceFactory
+from pitivi.factories.test import VideoTestSourceFactory
+from pitivi.timeline.track import Track, SourceTrackObject
+from pitivi.timeline.timeline import Timeline, TimelineObject
+from pitivi.project import Project
 
 class FakeElementTreeFormatter(ElementTreeFormatter):
     pass
@@ -34,38 +39,240 @@ class FakeElementTreeFormatter(ElementTreeFormatter):
 class TestFormatterSave(TestCase):
     def setUp(self):
         self.formatter = FakeElementTreeFormatter()
+        self.context = ElementTreeFormatterContext()
 
     def testSaveStream(self):
         stream = VideoStream(gst.Caps("video/x-raw-rgb, blah=meh"))
-        element = self.formatter._saveStream(stream)
+        element = self.formatter._saveStream(stream, self.context)
         self.failUnlessEqual(element.tag, "stream")
         self.failUnless("id" in element.attrib)
         self.failUnlessEqual(element.attrib["type"], qual(stream.__class__))
         self.failUnlessEqual(element.attrib["caps"], str(stream.caps))
 
+    def testSaveStreamRef(self):
+        # save a stream so that a mapping is created in the context
+        stream = VideoStream(gst.Caps("video/x-raw-rgb, blah=meh"))
+        element = self.formatter._saveStream(stream, self.context)
+        element_ref = self.formatter._saveStreamRef(stream, self.context)
+        self.failUnlessEqual(element_ref.tag, "stream-ref")
+        self.failUnlessEqual(element_ref.attrib["id"], element.attrib["id"])
+
     def testSaveSource(self):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
         audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
-        source = FileSourceFactory("file.ogg")
-        source.addOutputStream(video_stream)
-        source.addOutputStream(audio_stream)
-
-        element = self.formatter._saveSource(source)
+        source1 = FileSourceFactory("file1.ogg")
+        source1.addOutputStream(video_stream)
+        source1.addOutputStream(audio_stream)
+        element = self.formatter._saveSource(source1, self.context)
         self.failUnlessEqual(element.tag, "source")
-        self.failUnlessEqual(element.attrib["type"], qual(source.__class__))
-        self.failUnlessEqual(element.attrib["filename"], "file.ogg")
+        self.failUnlessEqual(element.attrib["type"], qual(source1.__class__))
+        self.failUnlessEqual(element.attrib["filename"], "file1.ogg")
 
         streams = element.find("output-streams")
         self.failUnlessEqual(len(streams), 2)
 
     def testSaveFactories(self):
-        raise NotImplementedError()
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
+
+        source1 = FileSourceFactory("file1.ogg")
+        source1.addOutputStream(video_stream)
+        source1.addOutputStream(audio_stream)
+
+        source2 = FileSourceFactory("file2.ogg")
+        source2.addOutputStream(video_stream)
+        source2.addOutputStream(audio_stream)
+
+        factories = [source1, source2]
+        element = self.formatter._saveFactories(factories, self.context)
+        self.failUnlessEqual(element.tag, "factories")
+
+        sources = element.find("sources")
+        self.failUnlessEqual(len(sources), 2)
+        # source tags are tested in testSaveSource
+
+    def testSaveFactoryRef(self):
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        source1 = FileSourceFactory("file1.ogg")
+        source1.addOutputStream(video_stream)
+        source1.addOutputStream(audio_stream)
+        element = self.formatter._saveSource(source1, self.context)
+
+        element_ref = self.formatter._saveFactoryRef(source1, self.context)
+        self.failUnlessEqual(element_ref.tag, "factory-ref")
+        self.failUnlessEqual(element_ref.attrib["id"], element.attrib["id"])
 
     def testSaveTrackObject(self):
-        raise NotImplementedError()
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        source1 = FileSourceFactory("file1.ogg")
+
+        # these two calls are needed to populate the context for the -ref
+        # elements
+        self.formatter._saveSource(source1, self.context)
+        self.formatter._saveStream(video_stream, self.context)
+
+        track_object = SourceTrackObject(source1, video_stream,
+                start=10 * gst.SECOND, duration=20 * gst.SECOND,
+                in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
+                priority=10)
+
+        element = self.formatter._saveTrackObject(track_object, self.context)
+        self.failUnlessEqual(element.tag, "track-object")
+        self.failUnlessEqual(element.attrib["type"],
+                qual(track_object.__class__))
+        self.failUnlessEqual(element.attrib["start"], str(10 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["duration"], str(20 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["in_point"], str(5 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["media_duration"],
+                str(15 * gst.SECOND))
+        self.failUnlessEqual(element.attrib["priority"], str(10))
+
+        self.failIfEqual(element.find("factory-ref"), None)
+        self.failIfEqual(element.find("stream-ref"), None)
+
+    def testSaveTrackObjectRef(self):
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        source1 = FileSourceFactory("file1.ogg")
+
+        # these two calls are needed to populate the context for the -ref
+        # elements
+        self.formatter._saveSource(source1, self.context)
+        self.formatter._saveStream(video_stream, self.context)
+
+        track_object = SourceTrackObject(source1, video_stream,
+                start=10 * gst.SECOND, duration=20 * gst.SECOND,
+                in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
+                priority=10)
+
+        element = self.formatter._saveTrackObject(track_object, self.context)
+        element_ref = self.formatter._saveTrackObjectRef(track_object,
+                self.context)
+        self.failUnlessEqual(element_ref.tag, "track-object-ref")
+        self.failUnlessEqual(element.attrib["id"], element.attrib["id"])
 
     def testSaveTrack(self):
-        raise NotImplementedError()
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        source1 = VideoTestSourceFactory()
+
+        # these two calls are needed to populate the context for the -ref
+        # elements
+        self.formatter._saveSource(source1, self.context)
+        self.formatter._saveStream(video_stream, self.context)
+
+        track_object = SourceTrackObject(source1, video_stream,
+                start=10 * gst.SECOND, duration=20 * gst.SECOND,
+                in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
+                priority=10)
+
+        track = Track(video_stream)
+        track.addTrackObject(track_object)
+
+        element = self.formatter._saveTrack(track, self.context)
+        self.failUnlessEqual(element.tag, "track")
+        track_objects_element = element.find("track-objects")
+        self.failUnlessEqual(len(track_objects_element), 1)
+
+    def testSaveTimelineObject(self):
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        source1 = FileSourceFactory("file1.ogg")
+
+        # these two calls are needed to populate the context for the -ref
+        # elements
+        self.formatter._saveSource(source1, self.context)
+        self.formatter._saveStream(video_stream, self.context)
+
+        track_object = SourceTrackObject(source1, video_stream,
+                start=10 * gst.SECOND, duration=20 * gst.SECOND,
+                in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
+                priority=10)
+
+        self.formatter._saveTrackObject(track_object, self.context)
+
+        timeline_object = TimelineObject(source1)
+        timeline_object.addTrackObject(track_object)
+
+        element = self.formatter._saveTimelineObject(timeline_object, self.context)
+        self.failUnlessEqual(element.tag, "timeline-object")
+        self.failIfEqual(element.find("factory-ref"), None)
+        track_object_refs = element.find("track-object-refs")
+        self.failUnlessEqual(len(track_object_refs), 1)
 
     def testSaveTimeline(self):
-        raise NotImplementedError()
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        source1 = VideoTestSourceFactory()
+
+        self.formatter._saveSource(source1, self.context)
+        self.formatter._saveStream(video_stream, self.context)
+
+        track_object = SourceTrackObject(source1, video_stream,
+                start=10 * gst.SECOND, duration=20 * gst.SECOND,
+                in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
+                priority=10)
+
+        self.formatter._saveTrackObject(track_object, self.context)
+
+        track = Track(video_stream)
+        track.addTrackObject(track_object)
+
+        timeline_object = TimelineObject(source1)
+        timeline_object.addTrackObject(track_object)
+
+        self.formatter._saveTimelineObject(timeline_object, self.context)
+
+        timeline = Timeline()
+        timeline.addTrack(track)
+
+        element = self.formatter._saveTimeline(timeline, self.context)
+        self.failUnlessEqual(element.tag, "timeline")
+        tracks = element.find("tracks")
+        self.failUnlessEqual(len(tracks), 1)
+
+    def testSaveMainTag(self):
+        element = self.formatter._saveMainTag(self.context)
+        self.failUnlessEqual(element.tag, "pitivi")
+        self.failUnlessEqual(element.attrib["formatter"], "etree")
+        self.failUnlessEqual(element.attrib["version"], version)
+
+    def testSaveProject(self):
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        source1 = VideoTestSourceFactory()
+
+        self.formatter._saveSource(source1, self.context)
+        self.formatter._saveStream(video_stream, self.context)
+
+        track_object = SourceTrackObject(source1, video_stream,
+                start=10 * gst.SECOND, duration=20 * gst.SECOND,
+                in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
+                priority=10)
+
+        self.formatter._saveTrackObject(track_object, self.context)
+
+        track = Track(video_stream)
+        track.addTrackObject(track_object)
+
+        timeline_object = TimelineObject(source1)
+        timeline_object.addTrackObject(track_object)
+
+        self.formatter._saveTimelineObject(timeline_object, self.context)
+
+        timeline = Timeline()
+        timeline.addTrack(track)
+
+        self.formatter._saveTimeline(timeline, self.context)
+
+        project = Project()
+        project.timeline = timeline
+        project.sources.addFactory("meh", source1)
+
+        element = self.formatter._saveProject(project, self.context)
+
+        self.failUnlessEqual(element.tag, "pitivi")
+        self.failIfEqual(element.find("factories"), None)
+        self.failIfEqual(element.find("timeline"), None)
