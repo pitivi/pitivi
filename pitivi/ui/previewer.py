@@ -77,7 +77,12 @@ previewers = {}
 
 def get_preview_for_object(trackobject):
     factory = trackobject.factory
-    stream_ = trackobject.track.stream
+    for stream_ in factory.getOutputStreams():
+        if stream_.isCompatible(trackobject.track.stream):
+            break
+        stream_ = None
+    if not stream_:
+        raise NotImplementedError
     stream_type = type(stream_)
     key = factory, stream_
     if not key in previewers:
@@ -107,6 +112,8 @@ class Previewer(object, Signallable, Loggable):
     # thumbnail cache.
 
     __DEFAULT_THUMB__ = "processing-clip.png"
+
+    aspect = 4.0 / 3.0
 
     def __init__(self, factory, stream_):
         Loggable.__init__(self)
@@ -152,9 +159,8 @@ class RandomAccessPreviewer(Previewer):
         caps = stream_.caps
         bin = SingleDecodeBin(uri=uri, caps=caps)
 
-        # assume 4:3 default aspect ratio, 50 pixel height
+        # assume 50 pixel height
         self.theight = 50
-        self.aspect = 4.0 / 3.0
         self.twidth = int(self.aspect * self.theight)
         self.spacing = instance.PiTiVi.settings.thumbnailSpacingHint
         self.waiting_timestamp = None
@@ -286,12 +292,11 @@ class RandomAccessPreviewer(Previewer):
 class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
     def __init__(self, factory, stream_):
+        if stream_.dar and stream_.par:
+            self.aspect = float(stream_.dar)
         RandomAccessPreviewer.__init__(self, factory, stream_)
-        if stream_.width and stream_.height:
-            self.aspect = stream_.width / stream_.height
 
     def _pipelineInit(self, factory, sbin):
-
         csp = gst.element_factory_make("ffmpegcolorspace")
         sink = CairoSurfaceThumbnailSink()
         scale = gst.element_factory_make("videoscale")
