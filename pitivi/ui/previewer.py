@@ -293,7 +293,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
     def __init__(self, factory, stream_):
         if stream_.dar and stream_.par:
-            self.aspect = float(stream_.dar)
+            self.aspect = float(stream_.dar / stream_.par)
         RandomAccessPreviewer.__init__(self, factory, stream_)
 
     def _pipelineInit(self, factory, sbin):
