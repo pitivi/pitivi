@@ -99,6 +99,8 @@ class PitiviViewer(gtk.VBox, Loggable):
             self._setUiActive(False)
             # finally remove previous pipeline
             self.pipeline = None
+            self.currentState = gst.STATE_PAUSED
+            self.playpause_button.setPause()
         self._connectToPipeline(pipeline)
         self.pipeline = pipeline
         if self.pipeline is not None:
@@ -400,13 +402,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.back()
 
     def _playButtonCb(self, unused_button, isplaying):
-        if self.pipeline is None:
-            return
-
-        if isplaying:
-            self.pause()
-        else:
-            self.play()
+        self.togglePlayback()
 
     def _nextCb(self, unused_button):
         self.next()
@@ -419,10 +415,21 @@ class PitiviViewer(gtk.VBox, Loggable):
     def play(self):
         if not self.pipeline.play() == gst.STATE_CHANGE_FAILURE:
             self.currentState = gst.STATE_PLAYING
+            self.playpause_button.setPause()
 
     def pause(self):
         if not self.pipeline.pause() == gst.STATE_CHANGE_FAILURE:
             self.currentState = gst.STATE_PAUSED
+            self.playpause_button.setPlay()
+
+    def togglePlayback(self):
+        if self.pipeline is None:
+            return
+
+        if self.currentState == gst.STATE_PLAYING:
+            self.pause()
+        else:
+            self.play()
 
     def rewind(self):
         raise NotImplementedError
@@ -500,10 +507,6 @@ class PlayPauseButton(gtk.Button, Loggable):
         gtk.Button.set_sensitive(self, value)
 
     def _clickedCb(self, unused):
-        if not self.playing:
-            self.setPause()
-        else:
-            self.setPlay()
         self.emit("play", self.playing)
 
     def setPlay(self):
