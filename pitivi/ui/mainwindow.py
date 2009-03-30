@@ -248,10 +248,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 self.rewind),
             ("FrameBack", gtk.STOCK_MEDIA_PREVIOUS, None, None, FRAME_BACK,
                 self.frameBack),
-            ("Play", gtk.STOCK_MEDIA_PLAY, None, None, PLAY,
-                self.play),
-            ("Pause", gtk.STOCK_MEDIA_PAUSE, None, None, PAUSE,
-                self.pause),
+            ("PlayPause", gtk.STOCK_MEDIA_PLAY, None, "space", PLAY,
+                self.playPause),
             ("FrameForward", gtk.STOCK_MEDIA_NEXT, None, None, FRAME_FORWARD,
                 self.frameForward),
             ("FastForward", gtk.STOCK_MEDIA_FORWARD, None, None, FAST_FORWARD,
@@ -262,8 +260,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
         ]
 
         self.toggleactions = [
-            ("FullScreen", gtk.STOCK_FULLSCREEN, None, None,
-             _("View the main window on the whole screen"), self._fullScreenCb)
+            ("FullScreen", gtk.STOCK_FULLSCREEN, None, "f",
+             _("View the main window on the whole screen"),
+                 self._fullScreenCb),
+            ("FullScreenAlternate", gtk.STOCK_FULLSCREEN, None, "F11", None,
+                self._fullScreenAlternateCb)
         ]
 
         self.actiongroup = gtk.ActionGroup("mainwindow")
@@ -285,10 +286,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 # and upstream istanbul has applied packages for proper interaction.
                 action.set_visible(False)
             elif action_name in [
-                "ProjectSettings", "Quit", "File", "Edit", "Help",
-                "About", "View", "FullScreen", "ImportSources",
-                "ImportSourcesFolder", "PluginManager",
-                "Play", "Pause"]:
+                "ProjectSettings", "Quit", "File", "Edit", "Help", "About",
+                "View", "FullScreen", "FullScreenAlternate", "ImportSources",
+                "ImportSourcesFolder", "PluginManager", "PlayPause",
+                "Project"]:
                 action.set_sensitive(True)
             elif action_name in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
@@ -302,8 +303,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.uimanager.insert_action_group(self.actiongroup, 0)
         self.uimanager.add_ui_from_file(os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "actions.xml"))
-
-        self.connect_after("key-press-event", self._keyPressEventCb)
 
     def _createUi(self):
         """ Create the graphical interface """
@@ -470,10 +469,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.settings.mainWindowVPanePosition = self.vpaned.get_position()
         width, height = self.get_size()
 
-    def _keyPressEventCb(self, unused_widget, event):
-        if gtk.gdk.keyval_name(event.keyval) in ['f', 'F', 'F11']:
-            self.toggleFullScreen()
-
     def _sourceListPlayCb(self, sourcelist, factory):
         self._viewFactory(factory)
 
@@ -527,6 +522,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _fullScreenCb(self, unused_action):
         self.toggleFullScreen()
+
+    def _fullScreenAlternateCb(self, unused_action):
+        self.actiongroup.get_action("FullScreen").activate()
 
     def _aboutResponseCb(self, dialog, unused_response):
         dialog.destroy()
@@ -591,8 +589,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def frameBack(self, unused_action):
         pass
 
-    def play(self, unused_action):
-        self.viewer.play()
+    def playPause(self, unused_action):
+        self.viewer.togglePlayback()
 
     def pause(self, unused_action):
         self.viewer.pause()
@@ -738,7 +736,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # FIXME: why do I have to call viewer.setAction ?
         self.viewer.setAction(action)
         self.viewer.setPipeline(pipeline)
-        pipeline.play()
+        self.viewer.play()
 
     def _timelineDragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
         # FIXME: temporarily add source to timeline, and put it in drag mode
