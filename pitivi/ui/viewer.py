@@ -326,29 +326,16 @@ class PitiviViewer(gtk.VBox, Loggable):
         value = long(slider.get_value())
         self.info(gst.TIME_ARGS(value))
         if self.moving_slider:
-            self._doSeek(value)
+            self.seek(value)
 
     def _sliderScrollCb(self, unused_slider, event):
-        # calculate new seek position
-        if self.current_frame == -1:
-            # time scrolling, 0.5s forward/backward
-            if event.direction in [gtk.gdk.SCROLL_LEFT, gtk.gdk.SCROLL_DOWN]:
-                seekvalue = max(self.current_time - gst.SECOND / 2, 0)
-            else:
-                seekvalue = min(self.current_time + gst.SECOND / 2, self.pipeline.getDuration())
-            self._doSeek(seekvalue)
+        if event.direction == gtk.gdk.SCROLL_LEFT:
+            amount = -gst.SECOND
         else:
-            # frame scrolling, frame by frame
-            self.info("scroll direction:%s", event.direction)
-            if event.direction in [gtk.gdk.SCROLL_LEFT, gtk.gdk.SCROLL_DOWN]:
-                self.info("scrolling backward")
-                seekvalue = max(self.current_frame - 1, 0)
-            else:
-                self.info("scrolling forward")
-                seekvalue = min(self.current_frame + 1, self.pipeline.getDuration())
-            self._doSeek(seekvalue, gst.FORMAT_DEFAULT)
+            amount = gst.SECOND
+        self.seekRelative(self, amount)
 
-    def _doSeek(self, position, format=gst.FORMAT_TIME):
+    def seek(self, position, format=gst.FORMAT_TIME):
         self.seeker.seek(position, format)
 
     def _seekerSeekCb(self, seeker, position, format):
@@ -396,19 +383,19 @@ class PitiviViewer(gtk.VBox, Loggable):
     ## Control gtk.Button callbacks
 
     def _rewindCb(self, unused_button):
-        self.rewind()
+        raise NotImplementedError
 
     def _backCb(self, unused_button):
-        self.back()
+        self.seekRelative(-gst.SECOND)
 
     def _playButtonCb(self, unused_button, isplaying):
         self.togglePlayback()
 
     def _nextCb(self, unused_button):
-        self.next()
+        self.seekRelative(gst.SECOND)
 
     def _forwardCb(self, unused_button):
-        self.forward()
+        raise NotImplementedError
 
     ## public methods for controlling playback
 
@@ -431,17 +418,21 @@ class PitiviViewer(gtk.VBox, Loggable):
         else:
             self.play()
 
-    def rewind(self):
-        raise NotImplementedError
+    def seekRelative(self, time):
+        seekvalue = max(0, min(self.current_time + time,
+            self.pipeline.getDuration()))
+        self.seek(seekvalue)
 
-    def back(self):
-        raise NotImplementedError
-
-    def next(self):
-        raise NotImplementedError
-
-    def forward(self):
-        raise NotImplementedError
+    def frameSeekRelative(self, frame):
+        # FIXME: untested
+        self.info("scroll direction:%s", event.direction)
+        if direction in [gtk.gdk.SCROLL_LEFT, gtk.gdk.SCROLL_DOWN]:
+            self.info("scrolling backward")
+            seekvalue = max(self.current_frame - 1, 0)
+        else:
+            self.info("scrolling forward")
+            seekvalue = min(self.current_frame + 1, self.pipeline.getDuration())
+        self.seek(seekvalue, gst.FORMAT_DEFAULT)
 
     def _posCb(self, unused_pipeline, pos):
         self._newTime(pos)

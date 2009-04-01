@@ -44,8 +44,5 @@
   <accelerator action="FullScreenAlternate" />
   <accelerator action="PlayPause" />
   <accelerator action="RenderProject" />
-  <accelerator action="FrameBack" />
-  <accelerator action="FrameForward" />
-  <accelerator action="FastForward" />
   <accelerator action="Loop" />
 </ui>

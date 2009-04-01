@@ -432,6 +432,11 @@ class TimelineEdges(object):
 
         return start + end_diff, end_diff
 
+    def closest(self, time):
+        closest, diff, index = closest_item(self.edges, time)
+        return self.edges[max(0, index - 2)], self.edges[min(
+            len(self.edges) - 1, index + 1)]
+
 
 class Timeline(object ,Signallable):
     __signals__ = {

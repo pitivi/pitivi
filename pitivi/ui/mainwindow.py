@@ -140,6 +140,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.settings = instance.settings
         self.is_fullscreen = self.settings.mainWindowFullScreen
         self.missing_plugins = []
+        self.timelinepos = 0
 
     def load(self):
         """ load the user interface """
@@ -154,6 +155,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.current.connect("confirm-overwrite", self._confirmOverwriteCb)
         self.project.pipeline.connect("error", self._pipelineErrorCb)
         self.app.current.sources.connect("file_added", self._sourcesFileAddedCb)
+        self.app.current.connect("settings-changed", self._settingsChangedCb)
 
         self.app.current.connect('missing-plugins',
                 self._projectMissingPluginsCb)
@@ -171,6 +173,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         self.app.current.timeline.connect('duration-changed',
                 self._timelineDurationChangedCb)
+
+        self.rate = float(1 / self.project.getSettings().videorate)
 
     def showEncodingDialog(self, project, pause=True):
         """
@@ -246,12 +250,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("View", None, _("_View")),
             ("Rewind", gtk.STOCK_MEDIA_REWIND, None, None, REWIND,
                 self.rewind),
-            ("FrameBack", gtk.STOCK_MEDIA_PREVIOUS, None, None, FRAME_BACK,
-                self.frameBack),
             ("PlayPause", gtk.STOCK_MEDIA_PLAY, None, "space", PLAY,
                 self.playPause),
-            ("FrameForward", gtk.STOCK_MEDIA_NEXT, None, None, FRAME_FORWARD,
-                self.frameForward),
             ("FastForward", gtk.STOCK_MEDIA_FORWARD, None, None, FAST_FORWARD,
                 self.fastForward),
             ("Loop", gtk.STOCK_REFRESH, _("Loop"), None, LOOP,
@@ -289,7 +289,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 "ProjectSettings", "Quit", "File", "Edit", "Help", "About",
                 "View", "FullScreen", "FullScreenAlternate", "ImportSources",
                 "ImportSourcesFolder", "PluginManager", "PlayPause",
-                "Project"]:
+                "Project", "FrameForward", "FrameBackward"]:
                 action.set_sensitive(True)
             elif action_name in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
@@ -310,6 +310,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.set_geometry_hints(min_width=800, min_height=480)
         self.connect("destroy", self._destroyCb)
         self.connect("configure-event", self._configureCb)
+        self.connect("key-press-event", self._keyPressEventCb)
 
         # main menu & toolbar
         vbox = gtk.VBox(False)
@@ -432,6 +433,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         #    and not len(self.app.current.timeline.videocomp):
         pass
 
+    def _settingsChangedCb(self, project, settings):
+        self.rate = float(1 / self.project.getSettings().videorate)
+
     def _projectMissingPluginsCb(self, project, uri, detail, message):
         self.missing_plugins.append(uri)
         return self._installPlugins(detail)
@@ -462,6 +466,32 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _destroyCb(self, unused_widget, unused_data=None):
         self._saveWindowSettings()
         self.app.shutdown()
+
+    def _keyPressEventCb(self, unused_widget, event):
+        kv = event.keyval
+        mod = event.get_state()
+        frame = long(self.rate * gst.SECOND)
+        now = self.timelinepos
+
+        if kv == gtk.keysyms.Left:
+            if mod & gtk.gdk.SHIFT_MASK:
+                self.viewer.seekRelative(-gst.SECOND)
+            elif mod & gtk.gdk.CONTROL_MASK:
+                ltime, rtime = self.project.timeline.edges.closest(now)
+                self.viewer.seek(ltime)
+            else:
+                self.viewer.seekRelative(-frame)
+            return True
+        elif kv == gtk.keysyms.Right:
+            if mod & gtk.gdk.SHIFT_MASK:
+                self.viewer.seekRelative(gst.SECOND)
+            elif mod & gtk.gdk.CONTROL_MASK:
+                ltime, rtime = self.project.timeline.edges.closest(now)
+                self.viewer.seek(rtime)
+            else:
+                self.viewer.seekRelative(frame)
+            return True
+        return False
 
     def _saveWindowSettings(self):
         self.settings.mainWindowFullscreen = self.is_fullscreen
@@ -586,17 +616,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def rewind(self, unused_action):
         pass
 
-    def frameBack(self, unused_action):
-        pass
-
     def playPause(self, unused_action):
         self.viewer.togglePlayback()
 
     def pause(self, unused_action):
         self.viewer.pause()
-
-    def frameForward(self, unused_action):
-        pass
 
     def fastForward(self, unused_action):
         pass
@@ -792,3 +816,4 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _timelinePipelinePositionChangedCb(self, pipeline, position):
         self.timeline.timelinePositionChanged(position)
+        self.timelinepos = position
