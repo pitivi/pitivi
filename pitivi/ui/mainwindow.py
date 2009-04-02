@@ -256,7 +256,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("File", None, _("_File")),
             ("Edit", None, _("_Edit")),
             ("View", None, _("_View")),
-            ("Library", None, _("_Library")),
+            ("Library", None, _("_Project")),
             ("Timeline", None, _("_Timeline")),
             ("Rewind", gtk.STOCK_MEDIA_REWIND, None, None, REWIND,
                 self.rewind),
