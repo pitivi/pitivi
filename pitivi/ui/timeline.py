@@ -61,10 +61,10 @@ ui = '''
         <menu action="Timeline">
             <placeholder name="Timeline">
                 <menuitem action="Razor" />
-                <menuitem action="DeleteObj" />
                 <separator />
-                <menuitem action="UnlinkObj" />
+                <menuitem action="DeleteObj" />
                 <menuitem action="LinkObj" />
+                <menuitem action="UnlinkObj" />
             </placeholder>
         </menu>
     </menubar>
@@ -171,15 +171,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 self._zoomInCb),
             ("ZoomOut", gtk.STOCK_ZOOM_OUT, None, None, ZOOM_OUT,
                 self._zoomOutCb),
+        )
+
+        selection_actions = (
             ("DeleteObj", gtk.STOCK_DELETE, None, "Delete", DELETE,
                 self.deleteSelected),
-            ("UnlinkObj", "pitivi-unlink", None, None, UNLINK,
+            ("UnlinkObj", "pitivi-unlink", None, "<Shift><Control>L", UNLINK,
                 self.unlinkSelected),
-            ("LinkObj", "pitivi-link", None, None, LINK,
+            ("LinkObj", "pitivi-link", None, "<Control>L", LINK,
                 self.linkSelected),
-            ("UngroupObj", "pitivi-ungroup", None, None, UNGROUP,
+            ("UngroupObj", "pitivi-ungroup", "<Shift><Control>G", None, UNGROUP,
                 self.ungroupSelected),
-            ("GroupObj", "pitivi-group", None, None, GROUP,
+            ("GroupObj", "pitivi-group", None, "<Control>G", GROUP,
                 self.groupSelected),
         )
 
@@ -187,11 +190,20 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             ("Razor", "pitivi-split", _("Razor"), "<Ctrl>R", RAZOR,
                 self.toggleRazor),
         )
-        self.actiongroup = gtk.ActionGroup("complextimeline")
-        self.actiongroup.add_actions(actions)
-        self.actiongroup.add_toggle_actions(toggle_actions)
-        #self.actiongroup.set_visible(False)
-        self.ui_manager.insert_action_group(self.actiongroup, 0)
+
+        actiongroup = gtk.ActionGroup("timelinepermanent")
+        actiongroup.add_actions(actions)
+        actiongroup.add_toggle_actions(toggle_actions)
+        self.ui_manager.insert_action_group(actiongroup, 0)
+
+        actiongroup = gtk.ActionGroup("timelineselection")
+        actiongroup.add_actions(selection_actions)
+        self.link_action = actiongroup.get_action("LinkObj")
+        self.unlink_action = actiongroup.get_action("UnlinkObj")
+        self.delete_action = actiongroup.get_action("DeleteObj")
+
+        self.ui_manager.insert_action_group(actiongroup)
+
         self.ui_manager.add_ui_from_string(ui)
 
         # drag and drop
@@ -312,7 +324,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
 ## Timeline callbacks
 
-    timeline = receiver()
+    def _set_timeline(self):
+        if self.timeline:
+            self._timelineSelectionChanged(self.timeline)
+
+    timeline = receiver(_set_timeline)
 
     @handler(timeline, "duration-changed")
     def _timelineStartDurationChanged(self, unused_timeline, duration):
@@ -320,16 +336,24 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._canvas.setMaxDuration(duration)
         self.ruler.setShadedDuration(duration)
 
+    @handler(timeline, "selection-changed")
+    def _timelineSelectionChanged(self, timeline):
+        delete = False
+        link = False
+        unlink = False
+        if timeline.timeline_selection:
+            delete = True
+            if len(timeline.timeline_selection) > 1:
+                link = True
+            for obj in self.timeline.timeline_selection:
+                if obj.link:
+                    unlink = True
+                    break
+        self.delete_action.set_sensitive(delete)
+        self.link_action.set_sensitive(link)
+        self.unlink_action.set_sensitive(unlink)
+
 ## ToolBar callbacks
-
-    ## override show()/hide() methods to take care of actions
-    def show(self):
-        gtk.VBox.show(self)
-        self.actiongroup.set_visible(True)
-
-    def show_all(self):
-        gtk.VBox.show_all(self)
-        self.actiongroup.set_visible(True)
 
     def hide(self):
         self.actiongroup.set_visible(False)
