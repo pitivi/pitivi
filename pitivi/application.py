@@ -44,6 +44,7 @@ from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.log import log
 from pitivi.project import Project
+from pitivi.formatters.format import get_formatter_for_uri
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
