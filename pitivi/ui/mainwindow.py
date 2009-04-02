@@ -25,6 +25,7 @@ Main GTK+ window
 
 import os
 import gtk
+import gobject
 import gst
 import gst.pbutils
 
@@ -87,6 +88,14 @@ GlobalSettings.addConfigOption('lastProjectFolder',
     key="last-folder",
     environment="PITIVI_PROJECT_FOLDER",
     default=os.path.expanduser("~"))
+GlobalSettings.addConfigOption('mainWindowShowMainToolbar',
+    section="main-window",
+    key="show-main-toolbar",
+    default=True)
+GlobalSettings.addConfigOption('mainWindowShowTimelineToolbar',
+    section="main-window",
+    key="show-timeline-toolbar",
+    default=True)
 
 def create_stock_icons():
     """ Creates the pitivi-only stock icons """
@@ -169,7 +178,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # connect to timeline
         self.app.current.pipeline.activatePositionListener()
         self.app.current.pipeline.connect('position', self._timelinePipelinePositionChangedCb)
-        self.show_all()
 
         self.app.current.timeline.connect('duration-changed',
                 self._timelineDurationChangedCb)
@@ -268,9 +276,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("FullScreenAlternate", gtk.STOCK_FULLSCREEN, None, "F11", None,
                 self._fullScreenAlternateCb),
             ("ShowHideMainToolbar", None, _("Main Toolbar"), None, None,
-                self._showHideMainToolBar, True),
+                self._showHideMainToolBar,
+                self.settings.mainWindowShowMainToolbar),
             ("ShowHideTimelineToolbar", None, _("Timeline Toolbar"), None,
-                None, self._showHideTimelineToolbar, True),
+                None, self._showHideTimelineToolbar,
+                self.settings.mainWindowShowTimelineToolbar),
         ]
 
         self.actiongroup = gtk.ActionGroup("mainwindow")
@@ -321,6 +331,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.connect("configure-event", self._configureCb)
         self.connect("key-press-event", self._keyPressEventCb)
 
+
         # main menu & toolbar
         vbox = gtk.VBox(False)
         self.add(vbox)
@@ -328,7 +339,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vbox.pack_start(self.menu, expand=False)
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
         vbox.pack_start(self.toolbar, expand=False)
-
         # timeline and project tabs
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
@@ -354,6 +364,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                            gtk.gdk.ACTION_COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         hpaned.pack2(self.viewer, resize=False, shrink=False)
+        self.viewer.connect("expose-event", self._exposeEventCb)
 
         # window and pane position defaults
         self.hpaned = hpaned
@@ -369,13 +380,25 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if self.settings.mainWindowHeight:
             height = self.settings.mainWindowHeight
         self.set_default_size(width, height)
+        self._do_pending_fullscreen = False
+        # FIXME: don't know why this doesn't work
+        #if self.settings.mainWindowFullScreen:
+        #    self._do_pending_fullscreen = True
 
         # timeline toolbar
         # FIXME: remove toolbar padding and shadow. In fullscreen mode, the
         # toolbar buttons should be clickable with the mouse cursor at the
         # very bottom of the screen.
-        vbox.pack_start(self.uimanager.get_widget("/TimelineToolBar"),
-            False)
+        ttb = self.uimanager.get_widget("/TimelineToolBar")
+        vbox.pack_start(ttb, False)
+
+        self.show_all()
+
+        if not self.settings.mainWindowShowMainToolbar:
+            self.toolbar.props.visible = False
+
+        if not self.settings.mainWindowShowTimelineToolbar:
+            ttb.props.visible = False
 
         #application icon
         self.set_icon_from_file(get_global_pixmap_dir()
@@ -469,8 +492,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
 ## UI Callbacks
 
     def _configureCb(self, unused_widget, event):
-        self.settings.mainWindowWidth = event.width
-        self.settings.mainWindowHeight = event.height
+        if not self.is_fullscreen:
+            self.settings.mainWindowWidth = event.width
+            self.settings.mainWindowHeight = event.height
 
     def _destroyCb(self, unused_widget, unused_data=None):
         self._saveWindowSettings()
@@ -502,11 +526,20 @@ class PitiviMainWindow(gtk.Window, Loggable):
             return True
         return False
 
+    def _exposeEventCb(self, unused_widget, event):
+        if self._do_pending_fullscreen:
+            self._fullScreenAlternateCb(None)
+            self._do_pending_fullscreen = False
+
     def _saveWindowSettings(self):
-        self.settings.mainWindowFullscreen = self.is_fullscreen
+        self.settings.mainWindowFullScreen = self.is_fullscreen
         self.settings.mainWindowHPanePosition = self.hpaned.get_position()
         self.settings.mainWindowVPanePosition = self.vpaned.get_position()
-        width, height = self.get_size()
+        mtb = self.actiongroup.get_action("ShowHideMainToolbar")
+        ttb = self.actiongroup.get_action("ShowHideTimelineToolbar")
+        self.settings.mainWindowShowMainToolbar = mtb.props.active
+        self.settings.mainWindowShowTimelineToolbar = ttb.props.active
+
 
     def _sourceListPlayCb(self, sourcelist, factory):
         self._viewFactory(factory)
