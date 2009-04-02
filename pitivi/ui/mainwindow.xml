@@ -32,7 +32,20 @@
       <menuitem action="ProjectSettings" />
     </menu>
     <menu action="Timeline">
-        <placeholder name="Timeline" />
+      <placeholder name="Timeline" />
+    </menu>
+    <menu action="Viewer">
+      <menuitem action="PlayPause" />
+      <menuitem action="Loop" />
+      <separator />
+      <menuitem action="FrameForward" />
+      <menuitem action="FrameBackward" />
+      <separator />
+      <menuitem action="SecondForward" />
+      <menuitem action="SecondBackward" />
+      <separator />
+      <menuitem action="EdgeForward" />
+      <menuitem action="EdgeBackward" />
     </menu>
     <menu action="Help">
       <menuitem action="About" />
