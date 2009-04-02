@@ -49,9 +49,25 @@ GROUP = _("Group clips")
 SELECT_BEFORE = ("Select all sources before selected")
 SELECT_AFTER = ("Select all after selected")
 
-# ui string for the complex timeline toolbar
 ui = '''
 <ui>
+    <menubar name="MainMenuBar">
+        <menu action="View">
+            <placeholder name="Timeline">
+                <menuitem action="ZoomIn" />
+                <menuitem action="ZoomOut" />
+            </placeholder>
+        </menu>
+        <menu action="Timeline">
+            <placeholder name="Timeline">
+                <menuitem action="Razor" />
+                <menuitem action="DeleteObj" />
+                <separator />
+                <menuitem action="UnlinkObj" />
+                <menuitem action="LinkObj" />
+            </placeholder>
+        </menu>
+    </menubar>
     <toolbar name="TimelineToolBar">
         <placeholder name="Timeline">
             <toolitem action="ZoomOut" />
@@ -166,11 +182,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             ("GroupObj", "pitivi-group", None, None, GROUP,
                 self.groupSelected),
         )
-        razor = gtk.ToggleAction("Razor", None, RAZOR, "pitivi-split")
-        razor.connect("toggled", self.toggleRazor)
+
+        toggle_actions = (
+            ("Razor", "pitivi-split", _("Razor"), "<Ctrl>R", RAZOR,
+                self.toggleRazor),
+        )
         self.actiongroup = gtk.ActionGroup("complextimeline")
         self.actiongroup.add_actions(actions)
-        self.actiongroup.add_action(razor)
+        self.actiongroup.add_toggle_actions(toggle_actions)
         #self.actiongroup.set_visible(False)
         self.ui_manager.insert_action_group(self.actiongroup, 0)
         self.ui_manager.add_ui_from_string(ui)

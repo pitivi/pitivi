@@ -226,7 +226,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
              None, _("Save the current project"), self._saveProjectCb),
             ("SaveProjectAs", gtk.STOCK_SAVE_AS, None,
              None, _("Save the current project"), self._saveProjectAsCb),
-            ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project settings"),
+            ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"),
              None, _("Edit the project settings"), self._projectSettingsCb),
             ("RenderProject", 'pitivi-render' , _("_Render project"),
              None, _("Render project"), self._recordCb),
@@ -234,7 +234,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
              _("_Plugins..."),
              None, _("Manage plugins"), self._pluginManagerCb),
             ("ImportfromCam", gtk.STOCK_ADD ,
-             _("_Import from Webcam..."),
+             _("Import from _Webcam..."),
              None, _("Import Camera stream"), self._ImportWebcam),
             ("Screencast", gtk.STOCK_ADD ,
              _("_Make screencast..."),
@@ -248,6 +248,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("File", None, _("_File")),
             ("Edit", None, _("_Edit")),
             ("View", None, _("_View")),
+            ("Library", None, _("_Library")),
+            ("Timeline", None, _("_Timeline")),
             ("Rewind", gtk.STOCK_MEDIA_REWIND, None, None, REWIND,
                 self.rewind),
             ("PlayPause", gtk.STOCK_MEDIA_PLAY, None, "space", PLAY,
@@ -264,7 +266,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
              _("View the main window on the whole screen"),
                  self._fullScreenCb),
             ("FullScreenAlternate", gtk.STOCK_FULLSCREEN, None, "F11", None,
-                self._fullScreenAlternateCb)
+                self._fullScreenAlternateCb),
+            ("ShowHideMainToolbar", None, _("Main Toolbar"), None, None,
+                self._showHideMainToolBar, True),
+            ("ShowHideTimelineToolbar", None, _("Timeline Toolbar"), None,
+                None, self._showHideTimelineToolbar, True),
         ]
 
         self.actiongroup = gtk.ActionGroup("mainwindow")
@@ -281,6 +287,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 action.set_sensitive(False)
             elif action_name == "ImportfromCam":
                 self.webcam_button = action
+                action.set_sensitive(False)
             elif action_name == "Screencast":
                 # FIXME : re-enable this action once istanbul integration is complete
                 # and upstream istanbul has applied packages for proper interaction.
@@ -289,7 +296,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 "ProjectSettings", "Quit", "File", "Edit", "Help", "About",
                 "View", "FullScreen", "FullScreenAlternate", "ImportSources",
                 "ImportSourcesFolder", "PluginManager", "PlayPause",
-                "Project", "FrameForward", "FrameBackward"]:
+                "Project", "FrameForward", "FrameBackward",
+                "ShowHideMainToolbar", "ShowHideTimelineToolbar", "Library",
+                "Timeline"]:
                 action.set_sensitive(True)
             elif action_name in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
@@ -302,7 +311,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.add_accel_group(self.uimanager.get_accel_group())
         self.uimanager.insert_action_group(self.actiongroup, 0)
         self.uimanager.add_ui_from_file(os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), "actions.xml"))
+            os.path.abspath(__file__)), "mainwindow.xml"))
 
     def _createUi(self):
         """ Create the graphical interface """
@@ -555,6 +564,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _fullScreenAlternateCb(self, unused_action):
         self.actiongroup.get_action("FullScreen").activate()
+
+    def _showHideMainToolBar(self, action):
+        self.uimanager.get_widget("/MainToolBar").props.visible = \
+            action.props.active
+
+    def _showHideTimelineToolbar(self, action):
+        self.uimanager.get_widget("/TimelineToolBar").props.visible = \
+            action.props.active
 
     def _aboutResponseCb(self, dialog, unused_response):
         dialog.destroy()
