@@ -35,7 +35,6 @@ import pitivi.instance as instance
 
 from pitivi.check import initial_checks
 from pitivi.device import get_probe
-from pitivi.project import Project, file_is_project
 from pitivi.effects import Magician
 from pitivi.configure import APPNAME
 from pitivi.settings import GlobalSettings
@@ -44,6 +43,7 @@ from pitivi.pluginmanager import PluginManager
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.log import log
+from pitivi.project import Project
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
@@ -122,6 +122,8 @@ class Pitivi(object, Loggable, Signallable):
             self.settings.get_local_plugin_path(),
             self.settings.get_plugin_settings_path())
 
+        # FIXME: don't assume the user wishes to create  the default project
+        # class
         self.current = Project(_("New Project"))
         self.effects = Magician()
 
@@ -172,16 +174,17 @@ class Pitivi(object, Loggable, Signallable):
                 return
             uri = "file://" + filepath
         # is the given filepath a valid pitivi project
-        if not file_is_project(uri):
+        formatter = get_formatter_for_uri(uri)
+        if not formatter:
             self.emit("new-project-failed", _("Not a valid project file."),
                 uri)
             return
         # if current project, try to close it
         if self._closeRunningProject():
-            project = Project(uri=uri)
+            project = formatter.newProject()
             self.emit("new-project-loading", project)
             try:
-                project.load()
+                formater.load_project(uri, project)
                 self.current = project
                 self.emit("new-project-loaded", self.current)
             except:

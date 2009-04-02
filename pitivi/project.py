@@ -39,6 +39,7 @@ from pitivi.settings import ExportSettings
 from pitivi.configure import APPNAME
 from pitivi.signalinterface import Signallable
 from pitivi.action import ViewAction
+from pitivi.formatters.format import save_project
 
 class ProjectError(Exception):
     """Project error"""
@@ -74,8 +75,6 @@ class Project(object, Signallable, Loggable):
     """
 
     __signals__ = {
-        "save-uri-requested" : None,
-        "confirm-overwrite" : ["location"],
         "settings-changed" : None,
         "missing-plugins": ["uri", "detail", "description"],
         "loaded" : None
@@ -98,9 +97,6 @@ class Project(object, Signallable, Loggable):
 
         self.settingssigid = 0
         self._dirty = False
-
-        # formatter instance used for loading project.
-        self._formatter = None
 
         self.sources.connect('missing-plugins', self._sourceListMissingPluginsCb)
 
@@ -130,23 +126,6 @@ class Project(object, Signallable, Loggable):
 
     def _settingsChangedCb(self, unused_settings):
         self.emit('settings-changed')
-
-    def setUri(self, uri, format=None):
-        """ Set the location to which this project will be stored """
-        self.log("uri:%s, format:%s", uri, format)
-        if not self.uri == uri:
-            self.log("updating self.uri, previously:%s", self.uri)
-            self.uri = uri
-            self.urichanged = True
-
-        if not format or not self.format == format:
-            self.log("updating save format, previously:%s", self.format)
-            if not format:
-                path = gst.uri_get_location(uri)
-                ext = os.path.splitext(path)[1]
-                self.log("Based on file extension, format is %s", format)
-                format = ProjectSaver.getFormat(ext)
-            self.format = format
 
     def getSettings(self):
         """

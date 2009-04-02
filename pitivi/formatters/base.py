@@ -45,10 +45,6 @@ class FormatterSaveError(FormatterError):
 class FormatterOverwriteError(FormatterSaveError):
     """A project can't be saved because it will be overwritten"""
 
-# FIXME : How do we handle interaction with the UI ??
-# Do we blindly load everything and let the UI figure out what's missing from
-# the loaded project ?
-
 class Formatter(object, Signallable):
     """
     Provides convenience methods for storing and loading
@@ -68,6 +64,7 @@ class Formatter(object, Signallable):
         }
 
     description = "Description of the format"
+    ProjectClass = Project
 
     def __init__(self):
         # mapping of directory changes
@@ -79,7 +76,10 @@ class Formatter(object, Signallable):
 
     #{ Load/Save methods
 
-    def loadProject(self, location):
+    def newProject(self):
+        return self.ProjectClass()
+
+    def loadProject(self, location, project=None):
         """
         Loads the project from the given location.
 
@@ -104,9 +104,8 @@ class Formatter(object, Signallable):
         # FIXME : maybe have a convenience method for opening a location
         self.parse(location)
 
-        # create a NewProject
-        # FIXME : allow subclasses to create their own Project subclass
-        project = Project()
+        if not project:
+            project = self.newProject()
 
         # ask for all sources being used
         uris = []

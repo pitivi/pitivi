@@ -49,6 +49,7 @@ from pitivi.ui import dnd
 from pitivi.pipeline import Pipeline
 from pitivi.action import ViewAction
 from pitivi.settings import GlobalSettings
+import pitivi.formatters.format as formatter
 
 if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -94,6 +95,9 @@ GlobalSettings.addConfigOption('mainWindowShowTimelineToolbar',
     section="main-window",
     key="show-timeline-toolbar",
     default=True)
+
+def supported(info):
+    return formatter.can_handle_location(info[1])
 
 def create_stock_icons():
     """ Creates the pitivi-only stock icons """
@@ -158,8 +162,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.connect("new-project-loading", self._newProjectLoadingCb)
         self.app.connect("closing-project", self._closingProjectCb)
         self.app.connect("new-project-failed", self._notProjectCb)
-        self.app.current.connect("save-uri-requested", self._saveAsDialogCb)
-        self.app.current.connect("confirm-overwrite", self._confirmOverwriteCb)
         self.project.pipeline.connect("error", self._pipelineErrorCb)
         self.app.current.sources.connect("file_added", self._sourcesFileAddedCb)
         self.app.current.connect("settings-changed", self._settingsChangedCb)
@@ -325,7 +327,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 action.set_sensitive(True)
             elif action_name in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
-                if not self.app.settings.fileSupportEnabled:
+                if self.app.settings.fileSupportEnabled:
                     action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
@@ -566,6 +568,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.newBlankProject()
 
     def _openProjectCb(self, unused_action):
+
         chooser = gtk.FileChooserDialog(_("Open File..."),
             self,
             action=gtk.FILE_CHOOSER_ACTION_OPEN,
@@ -573,7 +576,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         chooser.set_select_multiple(False)
         chooser.set_current_folder(self.settings.lastProjectFolder)
-        formats = ProjectSaver.listFormats()
+        formats = formatter.list_formats()
         for format in formats:
             filt = gtk.FileFilter()
             filt.set_name(format[0])
@@ -581,24 +584,29 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 filt.add_pattern("*%s" % ext)
             chooser.add_filter(filt)
         default = gtk.FileFilter()
-        default.set_name("All")
-        default.add_pattern("*")
+        default.set_name(_("All Supported Formats"))
+        default.add_custom(gtk.FILE_FILTER_URI, supported)
         chooser.add_filter(default)
 
         response = chooser.run()
         self.settings.lastProjectFolder = chooser.get_current_folder()
         if response == gtk.RESPONSE_OK:
-            path = chooser.get_filename()
-            self.app.loadProject(filepath = path)
+            uri = chooser.get_uri()
+            self.app.loadProject(uri = uri)
 
         chooser.destroy()
         return True
 
     def _saveProjectCb(self, unused_action):
-        self.app.current.save()
+        if not self.app.current.uri:
+            self._saveProjectAsCb(unused_action)
+        else:
+            self.app.current.save()
 
     def _saveProjectAsCb(self, unused_action):
-        self.app.current.saveAs()
+        uri = self._showSaveAsDialog(self.app.current)
+        if uri:
+            self.app.current.save(uri)
 
     def _projectSettingsCb(self, unused_action):
         from projectsettings import ProjectSettingsDialog
@@ -768,7 +776,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             return True
         return False
 
-    def _saveAsDialogCb(self, project):
+    def _showSaveAsDialog(self, project):
         self.log("Save URI requested")
         chooser = gtk.FileChooserDialog(_("Save As..."),
             self,
@@ -779,7 +787,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled.pptv"))
         chooser.set_current_folder(self.settings.lastProjectFolder)
-        formats = ProjectSaver.listFormats()
+        chooser.props.do_overwrite_confirmation = True
+        formats = formatter.list_formats()
         for format in formats:
             filt = gtk.FileFilter()
             filt.set_name(format[0])
@@ -803,11 +812,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
             if format == _("Detect Automatically"):
                 format = None
             self.log("uri:%s , format:%s", uri, format)
-            project.setUri(uri, format)
-            ret = True
+            ret = uri
         else:
             self.log("User didn't choose a URI to save project to")
-            ret = False
+            ret = None
 
         chooser.destroy()
         return ret

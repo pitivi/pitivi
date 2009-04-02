@@ -81,4 +81,24 @@ def can_handle_location(uri):
     @return: Whether the location contains a valid L{Project}.
     @rtype: L{bool}
     """
+    return False
+
+def list_formats():
+    """
+    Returns a sequence of available project file formats
+
+    @return: a sequence of 2-tuples (name, extensions) representing available
+    file formats, where name is a user-readable name, and extensions is a
+    sequence of extensions for this format ('.' omitted).
+    """
+    return []
+
+def get_formatter_for_uri(uri):
+    """
+    Returns an Formatter object that can parse the given project file
+
+    @type uri:L{str}
+    @param uri: The location of the project file
+    @return: an instance of a Formatter, or None
+    """
     raise NotImplementedError
