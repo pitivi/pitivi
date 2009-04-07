@@ -417,3 +417,7 @@ class ElementTreeFormatter(Formatter):
                 raise NotImplementedError()
 
         return project
+
+    @classmethod
+    def canHandle(cls, uri):
+        return uri.endswith(".xptv")

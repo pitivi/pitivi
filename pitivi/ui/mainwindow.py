@@ -525,8 +525,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         formats = formatter.list_formats()
         for format in formats:
             filt = gtk.FileFilter()
-            filt.set_name(format[0])
-            for ext in format[1]:
+            filt.set_name(format[1])
+            for ext in format[2]:
                 filt.add_pattern("*%s" % ext)
             chooser.add_filter(filt)
         default = gtk.FileFilter()
@@ -798,14 +798,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
             gtk.STOCK_SAVE, gtk.RESPONSE_OK))
 
         chooser.set_select_multiple(False)
-        chooser.set_current_name(_("Untitled.pptv"))
+        chooser.set_current_name(_("Untitled.xptv"))
         chooser.set_current_folder(self.settings.lastProjectFolder)
         chooser.props.do_overwrite_confirmation = True
         formats = formatter.list_formats()
         for format in formats:
             filt = gtk.FileFilter()
-            filt.set_name(format[0])
-            for ext in format[1]:
+            filt.set_name(format[1])
+            for ext in format[2]:
                 filt.add_pattern("*.%s" % ext)
             chooser.add_filter(filt)
         default = gtk.FileFilter()

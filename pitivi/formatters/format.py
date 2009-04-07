@@ -87,17 +87,21 @@ def can_handle_location(uri):
     @return: Whether the location contains a valid L{Project}.
     @rtype: L{bool}
     """
-    return False
+
+    for klass, name, exts in list_formats():
+        if klass.canHandle(uri):
+            return True
 
 def list_formats():
     """
     Returns a sequence of available project file formats
 
-    @return: a sequence of 2-tuples (name, extensions) representing available
+    @return: a sequence of 3-tuples (class, name, extensions) representing available
     file formats, where name is a user-readable name, and extensions is a
     sequence of extensions for this format ('.' omitted).
     """
-    return []
+    from pitivi.formatters.etree import ElementTreeFormatter
+    return [(ElementTreeFormatter, "PiTiVi Native (XML)", ('xptv',))]
 
 def get_formatter_for_uri(uri):
     """
@@ -107,4 +111,8 @@ def get_formatter_for_uri(uri):
     @param uri: The location of the project file
     @return: an instance of a Formatter, or None
     """
-    raise NotImplementedError
+    from pitivi.formatters.etree import ElementTreeFormatter
+
+    for klass, name, exts in list_formats():
+        if klass.canHandle(uri):
+            return klass()
