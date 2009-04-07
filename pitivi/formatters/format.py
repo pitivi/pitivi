@@ -69,7 +69,13 @@ def save_project(project, uri, formatter=None, overwrite=False):
 
     @see: L{Formatter.saveProject}
     """
-    raise NotImplementedError
+    if formatter == None:
+        if project.format:
+            formatter == project.format
+        else:
+            from pitivi.formatters.etree import ElementTreeFormatter
+            formatter = ElementTreeFormatter()
+    formatter.saveProject(project, uri, overwrite)
 
 def can_handle_location(uri):
     """
