@@ -44,11 +44,10 @@ def ts(time):
 class TestFormatterSave(TestCase):
     def setUp(self):
         self.formatter = FakeElementTreeFormatter()
-        self.context = ElementTreeFormatterSaveContext()
 
     def testSaveStream(self):
         stream = VideoStream(gst.Caps("video/x-raw-rgb, blah=meh"))
-        element = self.formatter._saveStream(stream, self.context)
+        element = self.formatter._saveStream(stream)
         self.failUnlessEqual(element.tag, "stream")
         self.failUnless("id" in element.attrib)
         self.failUnlessEqual(element.attrib["type"], qual(stream.__class__))
@@ -57,8 +56,8 @@ class TestFormatterSave(TestCase):
     def testSaveStreamRef(self):
         # save a stream so that a mapping is created in the context
         stream = VideoStream(gst.Caps("video/x-raw-rgb, blah=meh"))
-        element = self.formatter._saveStream(stream, self.context)
-        element_ref = self.formatter._saveStreamRef(stream, self.context)
+        element = self.formatter._saveStream(stream)
+        element_ref = self.formatter._saveStreamRef(stream)
         self.failUnlessEqual(element_ref.tag, "stream-ref")
         self.failUnlessEqual(element_ref.attrib["id"], element.attrib["id"])
 
@@ -68,7 +67,7 @@ class TestFormatterSave(TestCase):
         source1 = FileSourceFactory("file1.ogg")
         source1.addOutputStream(video_stream)
         source1.addOutputStream(audio_stream)
-        element = self.formatter._saveSource(source1, self.context)
+        element = self.formatter._saveSource(source1)
         self.failUnlessEqual(element.tag, "source")
         self.failUnlessEqual(element.attrib["type"], qual(source1.__class__))
         self.failUnlessEqual(element.attrib["filename"], "file1.ogg")
@@ -89,7 +88,7 @@ class TestFormatterSave(TestCase):
         source2.addOutputStream(audio_stream)
 
         factories = [source1, source2]
-        element = self.formatter._saveFactories(factories, self.context)
+        element = self.formatter._saveFactories(factories)
         self.failUnlessEqual(element.tag, "factories")
 
         sources = element.find("sources")
@@ -102,9 +101,9 @@ class TestFormatterSave(TestCase):
         source1 = FileSourceFactory("file1.ogg")
         source1.addOutputStream(video_stream)
         source1.addOutputStream(audio_stream)
-        element = self.formatter._saveSource(source1, self.context)
+        element = self.formatter._saveSource(source1)
 
-        element_ref = self.formatter._saveFactoryRef(source1, self.context)
+        element_ref = self.formatter._saveFactoryRef(source1)
         self.failUnlessEqual(element_ref.tag, "factory-ref")
         self.failUnlessEqual(element_ref.attrib["id"], element.attrib["id"])
 
@@ -115,15 +114,15 @@ class TestFormatterSave(TestCase):
 
         # these two calls are needed to populate the context for the -ref
         # elements
-        self.formatter._saveSource(source1, self.context)
-        self.formatter._saveStream(video_stream, self.context)
+        self.formatter._saveSource(source1)
+        self.formatter._saveStream(video_stream)
 
         track_object = SourceTrackObject(source1, video_stream,
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
 
-        element = self.formatter._saveTrackObject(track_object, self.context)
+        element = self.formatter._saveTrackObject(track_object)
         self.failUnlessEqual(element.tag, "track-object")
         self.failUnlessEqual(element.attrib["type"],
                 qual(track_object.__class__))
@@ -144,17 +143,16 @@ class TestFormatterSave(TestCase):
 
         # these two calls are needed to populate the context for the -ref
         # elements
-        self.formatter._saveSource(source1, self.context)
-        self.formatter._saveStream(video_stream, self.context)
+        self.formatter._saveSource(source1)
+        self.formatter._saveStream(video_stream)
 
         track_object = SourceTrackObject(source1, video_stream,
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
 
-        element = self.formatter._saveTrackObject(track_object, self.context)
-        element_ref = self.formatter._saveTrackObjectRef(track_object,
-                self.context)
+        element = self.formatter._saveTrackObject(track_object)
+        element_ref = self.formatter._saveTrackObjectRef(track_object)
         self.failUnlessEqual(element_ref.tag, "track-object-ref")
         self.failUnlessEqual(element.attrib["id"], element.attrib["id"])
 
@@ -165,8 +163,8 @@ class TestFormatterSave(TestCase):
 
         # these two calls are needed to populate the context for the -ref
         # elements
-        self.formatter._saveSource(source1, self.context)
-        self.formatter._saveStream(video_stream, self.context)
+        self.formatter._saveSource(source1)
+        self.formatter._saveStream(video_stream)
 
         track_object = SourceTrackObject(source1, video_stream,
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
@@ -176,7 +174,7 @@ class TestFormatterSave(TestCase):
         track = Track(video_stream)
         track.addTrackObject(track_object)
 
-        element = self.formatter._saveTrack(track, self.context)
+        element = self.formatter._saveTrack(track)
         self.failUnlessEqual(element.tag, "track")
         track_objects_element = element.find("track-objects")
         self.failUnlessEqual(len(track_objects_element), 1)
@@ -188,20 +186,20 @@ class TestFormatterSave(TestCase):
 
         # these two calls are needed to populate the context for the -ref
         # elements
-        self.formatter._saveSource(source1, self.context)
-        self.formatter._saveStream(video_stream, self.context)
+        self.formatter._saveSource(source1)
+        self.formatter._saveStream(video_stream)
 
         track_object = SourceTrackObject(source1, video_stream,
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
 
-        self.formatter._saveTrackObject(track_object, self.context)
+        self.formatter._saveTrackObject(track_object)
 
         timeline_object = TimelineObject(source1)
         timeline_object.addTrackObject(track_object)
 
-        element = self.formatter._saveTimelineObject(timeline_object, self.context)
+        element = self.formatter._saveTimelineObject(timeline_object)
         self.failUnlessEqual(element.tag, "timeline-object")
         self.failIfEqual(element.find("factory-ref"), None)
         track_object_refs = element.find("track-object-refs")
@@ -214,21 +212,20 @@ class TestFormatterSave(TestCase):
 
         # these two calls are needed to populate the context for the -ref
         # elements
-        self.formatter._saveSource(source1, self.context)
-        self.formatter._saveStream(video_stream, self.context)
+        self.formatter._saveSource(source1)
+        self.formatter._saveStream(video_stream)
 
         track_object = SourceTrackObject(source1, video_stream,
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
 
-        self.formatter._saveTrackObject(track_object, self.context)
+        self.formatter._saveTrackObject(track_object)
 
         timeline_object = TimelineObject(source1)
         timeline_object.addTrackObject(track_object)
 
-        element = self.formatter._saveTimelineObjects([timeline_object],
-                self.context)
+        element = self.formatter._saveTimelineObjects([timeline_object])
         self.failUnlessEqual(len(element), 1)
 
     def testSaveTimeline(self):
@@ -236,15 +233,15 @@ class TestFormatterSave(TestCase):
         audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
         source1 = VideoTestSourceFactory()
 
-        self.formatter._saveSource(source1, self.context)
-        self.formatter._saveStream(video_stream, self.context)
+        self.formatter._saveSource(source1)
+        self.formatter._saveStream(video_stream)
 
         track_object = SourceTrackObject(source1, video_stream,
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
 
-        self.formatter._saveTrackObject(track_object, self.context)
+        self.formatter._saveTrackObject(track_object)
 
         track = Track(video_stream)
         track.addTrackObject(track_object)
@@ -252,18 +249,18 @@ class TestFormatterSave(TestCase):
         timeline_object = TimelineObject(source1)
         timeline_object.addTrackObject(track_object)
 
-        self.formatter._saveTimelineObject(timeline_object, self.context)
+        self.formatter._saveTimelineObject(timeline_object)
 
         timeline = Timeline()
         timeline.addTrack(track)
 
-        element = self.formatter._saveTimeline(timeline, self.context)
+        element = self.formatter._saveTimeline(timeline)
         self.failUnlessEqual(element.tag, "timeline")
         tracks = element.find("tracks")
         self.failUnlessEqual(len(tracks), 1)
 
     def testSaveMainTag(self):
-        element = self.formatter._saveMainTag(self.context)
+        element = self.formatter._saveMainTag()
         self.failUnlessEqual(element.tag, "pitivi")
         self.failUnlessEqual(element.attrib["formatter"], "etree")
         self.failUnlessEqual(element.attrib["version"], version)
@@ -273,15 +270,15 @@ class TestFormatterSave(TestCase):
         audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
         source1 = VideoTestSourceFactory()
 
-        self.formatter._saveSource(source1, self.context)
-        self.formatter._saveStream(video_stream, self.context)
+        self.formatter._saveSource(source1)
+        self.formatter._saveStream(video_stream)
 
         track_object = SourceTrackObject(source1, video_stream,
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
 
-        self.formatter._saveTrackObject(track_object, self.context)
+        self.formatter._saveTrackObject(track_object)
 
         track = Track(video_stream)
         track.addTrackObject(track_object)
@@ -289,18 +286,18 @@ class TestFormatterSave(TestCase):
         timeline_object = TimelineObject(source1)
         timeline_object.addTrackObject(track_object)
 
-        self.formatter._saveTimelineObject(timeline_object, self.context)
+        self.formatter._saveTimelineObject(timeline_object)
 
         timeline = Timeline()
         timeline.addTrack(track)
 
-        self.formatter._saveTimeline(timeline, self.context)
+        self.formatter._saveTimeline(timeline)
 
         project = Project()
         project.timeline = timeline
         project.sources.addFactory("meh", source1)
 
-        element = self.formatter._saveProject(project, self.context)
+        element = self.formatter._saveProject(project)
 
         self.failUnlessEqual(element.tag, "pitivi")
         self.failIfEqual(element.find("factories"), None)
@@ -310,7 +307,6 @@ class TestFormatterSave(TestCase):
 class TestFormatterLoad(TestCase):
     def setUp(self):
         self.formatter = FakeElementTreeFormatter()
-        self.context = ElementTreeFormatterLoadContext()
 
     def testLoadStream(self):
         caps = gst.Caps("video/x-raw-yuv")
@@ -319,17 +315,17 @@ class TestFormatterLoad(TestCase):
         element.attrib["type"] = "pitivi.stream.VideoStream"
         element.attrib["caps"] = str(caps)
 
-        stream = self.formatter._loadStream(element, self.context)
+        stream = self.formatter._loadStream(element)
         self.failUnlessEqual(qual(stream.__class__), element.attrib["type"])
         self.failUnlessEqual(str(stream.caps), str(caps))
-        self.failUnlessEqual(stream, self.context.streams["1"])
+        self.failUnlessEqual(stream, self.formatter._context.streams["1"])
 
     def testLoadStreamRef(self):
         stream = VideoStream(gst.Caps("meh"))
-        self.context.streams["1"] = stream
+        self.formatter._context.streams["1"] = stream
         element = Element("stream-ref")
         element.attrib["id"] = "1"
-        stream1 = self.formatter._loadStreamRef(element, self.context)
+        stream1 = self.formatter._loadStreamRef(element)
         self.failUnlessEqual(stream, stream1)
 
     def testLoadFactory(self):
@@ -343,18 +339,18 @@ class TestFormatterLoad(TestCase):
         output_stream.attrib["type"] = "pitivi.stream.VideoStream"
         output_stream.attrib["caps"] = str(caps)
 
-        factory = self.formatter._loadFactory(element, self.context)
+        factory = self.formatter._loadFactory(element)
         self.failUnless(isinstance(factory, VideoTestSourceFactory))
         self.failUnlessEqual(len(factory.output_streams), 2)
 
-        self.failUnlessEqual(self.context.factories["1"], factory)
+        self.failUnlessEqual(self.formatter._context.factories["1"], factory)
 
     def testLoadFactoryRef(self):
         class Tag(object): pass
         tag = Tag()
-        self.context.factories["1"] = tag
+        self.formatter._context.factories["1"] = tag
         element = Element("factory-ref", id="1")
-        ret = self.formatter._loadFactoryRef(element, self.context)
+        ret = self.formatter._loadFactoryRef(element)
         self.failUnless(ret is tag)
 
     def testLoadTrackObject(self):
@@ -364,13 +360,13 @@ class TestFormatterLoad(TestCase):
                 in_point=ts(5 * gst.SECOND),
                 media_duration=ts(15 * gst.SECOND), priority=ts(5))
         factory = VideoTestSourceFactory()
-        self.context.factories["1"] = factory
+        self.formatter._context.factories["1"] = factory
         stream = VideoStream(gst.Caps("meh"))
-        self.context.streams["1"] = stream
+        self.formatter._context.streams["1"] = stream
         factory_ref = SubElement(element, "factory-ref", id="1")
         stream_ref = SubElement(element, "stream-ref", id="1")
 
-        track_object = self.formatter._loadTrackObject(element, self.context)
+        track_object = self.formatter._loadTrackObject(element)
         self.failUnless(isinstance(track_object, SourceTrackObject))
         self.failUnlessEqual(track_object.factory, factory)
         self.failUnlessEqual(track_object.stream, stream)
@@ -385,9 +381,9 @@ class TestFormatterLoad(TestCase):
         class Tag(object):
             pass
         tag = Tag()
-        self.context.track_objects["1"] = tag
+        self.formatter._context.track_objects["1"] = tag
         element = Element("track-object-ref", id="1")
-        ret = self.formatter._loadTrackObjectRef(element, self.context)
+        ret = self.formatter._loadTrackObjectRef(element)
         self.failUnless(ret is tag)
 
     def testLoadTrack(self):
@@ -402,13 +398,13 @@ class TestFormatterLoad(TestCase):
                 in_point=ts(5 * gst.SECOND),
                 media_duration=ts(15 * gst.SECOND), priority=ts(5))
         factory = VideoTestSourceFactory()
-        self.context.factories["1"] = factory
+        self.formatter._context.factories["1"] = factory
         stream = VideoStream(gst.Caps("video/x-raw-rgb"))
-        self.context.streams["1"] = stream
+        self.formatter._context.streams["1"] = stream
         factory_ref = SubElement(track_object, "factory-ref", id="1")
         stream_ref = SubElement(track_object, "stream-ref", id="1")
 
-        track = self.formatter._loadTrack(element, self.context)
+        track = self.formatter._loadTrack(element)
 
         self.failUnlessEqual(len(track.track_objects), 2)
         # FIXME: this is an hack
@@ -417,8 +413,8 @@ class TestFormatterLoad(TestCase):
     def testLoadTimelineObject(self):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
         source1 = VideoTestSourceFactory()
-        self.context.factories["1"] = source1
-        self.context.track_objects["1"] = SourceTrackObject(source1, video_stream)
+        self.formatter._context.factories["1"] = source1
+        self.formatter._context.track_objects["1"] = SourceTrackObject(source1, video_stream)
 
         element = Element("timeline-object")
         factory_ref = SubElement(element, "factory-ref", id="1")
@@ -428,7 +424,7 @@ class TestFormatterLoad(TestCase):
                 "track-object-ref", id="1")
 
         timeline_object = \
-                self.formatter._loadTimelineObject(element, self.context)
+                self.formatter._loadTimelineObject(element)
 
         self.failUnlessEqual(timeline_object.factory, source1)
         self.failUnlessEqual(len(timeline_object.track_objects), 1)
@@ -447,16 +443,16 @@ class TestFormatterLoad(TestCase):
                 in_point=ts(5 * gst.SECOND),
                 media_duration=ts(15 * gst.SECOND), priority=ts(5))
         factory = VideoTestSourceFactory()
-        self.context.factories["1"] = factory
+        self.formatter._context.factories["1"] = factory
         stream = VideoStream(gst.Caps("video/x-raw-rgb"))
-        self.context.streams["1"] = stream
+        self.formatter._context.streams["1"] = stream
         factory_ref = SubElement(track_object, "factory-ref", id="1")
         stream_ref = SubElement(track_object, "stream-ref", id="1")
 
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
         source1 = VideoTestSourceFactory()
-        self.context.factories["2"] = source1
-        self.context.track_objects["1"] = SourceTrackObject(source1, video_stream)
+        self.formatter._context.factories["2"] = source1
+        self.formatter._context.track_objects["1"] = SourceTrackObject(source1, video_stream)
 
         timeline_objects_element = SubElement(timeline_element,
                 "timeline-objects")
@@ -467,7 +463,7 @@ class TestFormatterLoad(TestCase):
         track_object_refs = SubElement(timeline_object_element, "track-object-refs")
         track_object_ref = SubElement(track_object_refs,
                 "track-object-ref", id="1")
-        timeline = self.formatter._loadTimeline(timeline_element, self.context)
+        timeline = self.formatter._loadTimeline(timeline_element)
         self.failUnlessEqual(len(timeline.tracks), 1)
 
     def testLoadProject(self):
@@ -475,15 +471,15 @@ class TestFormatterLoad(TestCase):
         audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
         source1 = VideoTestSourceFactory()
 
-        self.formatter._saveSource(source1, self.context)
-        self.formatter._saveStream(video_stream, self.context)
+        self.formatter._saveSource(source1)
+        self.formatter._saveStream(video_stream)
 
         track_object = SourceTrackObject(source1, video_stream,
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
 
-        self.formatter._saveTrackObject(track_object, self.context)
+        self.formatter._saveTrackObject(track_object)
 
         track = Track(video_stream)
         track.addTrackObject(track_object)
@@ -491,18 +487,18 @@ class TestFormatterLoad(TestCase):
         timeline_object = TimelineObject(source1)
         timeline_object.addTrackObject(track_object)
 
-        self.formatter._saveTimelineObject(timeline_object, self.context)
+        self.formatter._saveTimelineObject(timeline_object)
 
         timeline = Timeline()
         timeline.addTrack(track)
 
-        self.formatter._saveTimeline(timeline, self.context)
+        self.formatter._saveTimeline(timeline)
 
         project = Project()
         project.timeline = timeline
         project.sources.addFactory("meh", source1)
 
-        element = self.formatter._saveProject(project, self.context)
+        element = self.formatter._saveProject(project)
 
         self.failUnlessEqual(element.tag, "pitivi")
         self.failIfEqual(element.find("factories"), None)

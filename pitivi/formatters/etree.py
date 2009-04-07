@@ -65,6 +65,10 @@ class ElementTreeFormatter(Formatter):
     _element_id = 0
     _our_properties = ["id", "type"]
 
+    def __init__(self, *args, **kwargs):
+        Formatter.__init__(self, *args, **kwargs)
+        self._context = ElementTreeFormatterContext()
+
     def _new_element_id(self):
         element_id = self._element_id
         self._element_id += 1
@@ -82,50 +86,50 @@ class ElementTreeFormatter(Formatter):
         # nothing to read here, move along
         return gst.Caps("meh, name=%s" % value)[0]["name"]
 
-    def _saveStream(self, stream, context):
+    def _saveStream(self, stream):
         element = Element("stream")
         element.attrib["id"] = self._new_element_id()
         element.attrib["type"] = qual(stream.__class__)
         element.attrib["caps"] = str(stream.caps)
 
-        context.streams[stream] = element
+        self._context.streams[stream] = element
 
         return element
 
-    def _loadStream(self, element, context):
+    def _loadStream(self, element):
         id_ = element.attrib["id"]
         klass = namedAny(element.attrib["type"])
         caps = gst.Caps(element.attrib["caps"])
 
         stream = klass(caps)
 
-        context.streams[id_] = stream
+        self._context.streams[id_] = stream
 
         return stream
 
-    def _saveStreamRef(self, stream, context):
-        stream_element = context.streams[stream]
+    def _saveStreamRef(self, stream):
+        stream_element = self._context.streams[stream]
         element = Element("stream-ref")
         element.attrib["id"] = stream_element.attrib["id"]
 
         return element
 
-    def _loadStreamRef(self, element, context):
-        return context.streams[element.attrib["id"]]
+    def _loadStreamRef(self, element):
+        return self._context.streams[element.attrib["id"]]
 
-    def _saveSource(self, source, context):
-        element = self._saveObjectFactory(source, context)
+    def _saveSource(self, source):
+        element = self._saveObjectFactory(source)
         if isinstance(source, FileSourceFactory):
-            return self._saveFileSourceFactory(element, source, context)
+            return self._saveFileSourceFactory(element, source)
 
         return element
 
-    def _loadFactory(self, element, context):
+    def _loadFactory(self, element):
         klass = namedAny(element.attrib["type"])
 
-        return self._loadObjectFactory(klass, element, context)
+        return self._loadObjectFactory(klass, element)
 
-    def _saveObjectFactory(self, factory, context):
+    def _saveObjectFactory(self, factory):
         element = Element("source")
         element.attrib["id"] = self._new_element_id()
         element.attrib["type"] = qual(factory.__class__)
@@ -133,20 +137,20 @@ class ElementTreeFormatter(Formatter):
         input_streams_element = SubElement(element, "input-streams")
         input_streams = factory.getInputStreams()
         for stream in input_streams:
-            stream_element = self._saveStream(stream, context)
+            stream_element = self._saveStream(stream)
             input_streams_element.append(stream_element)
 
         output_streams_element = SubElement(element, "output-streams")
         output_streams = factory.getOutputStreams()
         for stream in output_streams:
-            stream_element = self._saveStream(stream, context)
+            stream_element = self._saveStream(stream)
             output_streams_element.append(stream_element)
 
-        context.factories[factory] = element
+        self._context.factories[factory] = element
 
         return element
 
-    def _loadObjectFactory(self, klass, element, context):
+    def _loadObjectFactory(self, klass, element):
         # FIXME
         if isinstance(klass, FileSourceFactory):
             factory = FileSourceFactory(element.attrib["filename"])
@@ -155,43 +159,43 @@ class ElementTreeFormatter(Formatter):
 
         input_streams = element.find("input-streams") or []
         for stream_element in input_streams:
-            stream = self._loadStream(stream_element, context)
+            stream = self._loadStream(stream_element)
             factory.addInputStream(stream)
 
         output_streams = element.find("output-streams")
         for stream_element in output_streams:
-            stream = self._loadStream(stream_element, context)
+            stream = self._loadStream(stream_element)
             factory.addOutputStream(stream)
 
-        context.factories[element.attrib["id"]] = factory
+        self._context.factories[element.attrib["id"]] = factory
 
         return factory
 
-    def _saveFileSourceFactory(self, element, source, context):
+    def _saveFileSourceFactory(self, element, source):
         element.attrib["filename"] = source.filename
 
         return element
 
-    def _saveFactoryRef(self, factory, context):
+    def _saveFactoryRef(self, factory):
         element = Element("factory-ref")
-        element.attrib["id"] = context.factories[factory].attrib["id"]
+        element.attrib["id"] = self._context.factories[factory].attrib["id"]
 
         return element
 
-    def _loadFactoryRef(self, element, context):
-        return context.factories[element.attrib["id"]]
+    def _loadFactoryRef(self, element):
+        return self._context.factories[element.attrib["id"]]
 
-    def _saveFactories(self, factories, context):
+    def _saveFactories(self, factories):
         element = Element("factories")
         sources = SubElement(element, "sources")
         for factory in factories:
             if isinstance(factory, SourceFactory):
-                source_element = self._saveSource(factory, context)
+                source_element = self._saveSource(factory)
                 sources.append(source_element)
 
         return element
 
-    def _saveTrackObject(self, track_object, context):
+    def _saveTrackObject(self, track_object):
         element = Element("track-object")
         element.attrib["id"] = self._new_element_id()
         element.attrib["type"] = qual(track_object.__class__)
@@ -203,24 +207,24 @@ class ElementTreeFormatter(Formatter):
         element.attrib["priority"] = "(int)%s" % track_object.priority
 
         factory_ref = \
-                self._saveFactoryRef(track_object.factory, context)
-        stream_ref = self._saveStreamRef(track_object.stream, context)
+                self._saveFactoryRef(track_object.factory)
+        stream_ref = self._saveStreamRef(track_object.stream)
 
         element.append(factory_ref)
         element.append(stream_ref)
 
-        context.track_objects[track_object] = element
+        self._context.track_objects[track_object] = element
 
         return element
 
-    def _loadTrackObject(self, element, context):
+    def _loadTrackObject(self, element):
         klass = namedAny(element.attrib["type"])
 
         factory_ref = element.find("factory-ref")
-        factory = self._loadFactoryRef(factory_ref, context)
+        factory = self._loadFactoryRef(factory_ref)
 
         stream_ref = element.find("stream-ref")
-        stream = self._loadStreamRef(stream_ref, context)
+        stream = self._loadStreamRef(stream_ref)
 
         track_object = klass(factory, stream)
         for name, value_string in self._filterElementProperties(element):
@@ -229,35 +233,35 @@ class ElementTreeFormatter(Formatter):
 
         return track_object
 
-    def _saveTrackObjectRef(self, track_object, context):
+    def _saveTrackObjectRef(self, track_object):
         element = Element("track-object-ref")
-        element.attrib["id"] = context.track_objects[track_object].attrib["id"]
+        element.attrib["id"] = self._context.track_objects[track_object].attrib["id"]
 
         return element
 
-    def _loadTrackObjectRef(self, element, context):
-        return context.track_objects[element.attrib["id"]]
+    def _loadTrackObjectRef(self, element):
+        return self._context.track_objects[element.attrib["id"]]
 
-    def _saveTrackObjectRefs(self, track_objects, context):
+    def _saveTrackObjectRefs(self, track_objects):
         element = Element("track-object-refs")
 
         for track_object in track_objects:
-            track_object_ref = self._saveTrackObjectRef(track_object, context)
+            track_object_ref = self._saveTrackObjectRef(track_object)
             element.append(track_object_ref)
 
         return element
 
-    def _loadTrackObjectRefs(self, element, context):
+    def _loadTrackObjectRefs(self, element):
         track_objects = []
         for track_object_element in element:
-            track_object = self._loadTrackObjectRef(track_object_element, context)
+            track_object = self._loadTrackObjectRef(track_object_element)
             track_objects.append(track_object)
 
         return track_objects
 
-    def _saveTrack(self, track, context):
+    def _saveTrack(self, track):
         element = Element("track")
-        stream_element = self._saveStream(track.stream, context)
+        stream_element = self._saveStream(track.stream)
         element.append(stream_element)
         track_objects = SubElement(element, "track-objects")
 
@@ -265,102 +269,100 @@ class ElementTreeFormatter(Formatter):
             if track_object is track.default_track_object:
                 continue
 
-            track_object_element = self._saveTrackObject(track_object, context)
+            track_object_element = self._saveTrackObject(track_object)
             track_objects.append(track_object_element)
 
         return element
 
-    def _loadTrack(self, element, context):
+    def _loadTrack(self, element):
         stream_element = element.find("stream")
-        stream = self._loadStream(stream_element, context)
+        stream = self._loadStream(stream_element)
 
         track = Track(stream)
 
         track_objects_element  = element.find("track-objects")
         for track_object_element in track_objects_element:
-            track_object = self._loadTrackObject(track_object_element, context)
+            track_object = self._loadTrackObject(track_object_element)
             track.addTrackObject(track_object)
 
         return track
 
-    def _saveTracks(self, tracks, context):
+    def _saveTracks(self, tracks):
         element = Element("tracks")
         for track in tracks:
-            track_element = self._saveTrack(track, context)
+            track_element = self._saveTrack(track)
             element.append(track_element)
 
         return element
 
-    def _loadTracks(self, element, context):
+    def _loadTracks(self, element):
         tracks = []
         for track_element in element:
-            track = self._loadTrack(track_element, context)
+            track = self._loadTrack(track_element)
             tracks.append(track)
 
         return tracks
 
-    def _saveTimelineObject(self, timeline_object, context):
+    def _saveTimelineObject(self, timeline_object):
         element = Element("timeline-object")
-        factory_ref = self._saveFactoryRef(timeline_object.factory, context)
+        factory_ref = self._saveFactoryRef(timeline_object.factory)
         element.append(factory_ref)
         track_object_refs = \
-                self._saveTrackObjectRefs(timeline_object.track_objects,
-                        context)
+                self._saveTrackObjectRefs(timeline_object.track_objects)
         element.append(track_object_refs)
-        
+
         return element
 
-    def _loadTimelineObject(self, element, context):
+    def _loadTimelineObject(self, element):
         factory_ref = element.find("factory-ref")
-        factory = self._loadFactoryRef(factory_ref, context)
+        factory = self._loadFactoryRef(factory_ref)
 
         timeline_object = TimelineObject(factory)
         track_object_refs_element = element.find("track-object-refs")
         track_objects = \
-                self._loadTrackObjectRefs(track_object_refs_element, context)
+                self._loadTrackObjectRefs(track_object_refs_element)
 
         for track_object in track_objects:
             timeline_object.addTrackObject(track_object)
 
         return timeline_object
 
-    def _saveTimelineObjects(self, timeline_objects, context):
+    def _saveTimelineObjects(self, timeline_objects):
         element = Element("timeline-objects")
         for timeline_object in timeline_objects:
-            timeline_object_element = self._saveTimelineObject(timeline_object,
-                    context)
+            timeline_object_element = self._saveTimelineObject(timeline_object)
             element.append(timeline_object_element)
 
         return element
 
-    def _loadTimelineObjects(self, element, context):
+    def _loadTimelineObjects(self, element):
         timeline_objects = []
         for timeline_object_element in element:
             timeline_object = \
-                    self._loadTimelineObject(timeline_object_element, context)
+                    self._loadTimelineObject(timeline_object_element)
             timeline_objects.append(timeline_object)
 
         return timeline_objects
 
-    def _saveTimeline(self, timeline, context):
+    def _saveTimeline(self, timeline):
         element = Element("timeline")
 
-        tracks = self._saveTracks(timeline.tracks, context)
+        tracks = self._saveTracks(timeline.tracks)
         element.append(tracks)
 
         timeline_objects = \
-                self._saveTimelineObjects(timeline.timeline_objects, context)
+                self._saveTimelineObjects(timeline.timeline_objects)
         element.append(timeline_objects)
 
         return element
 
-    def _loadTimeline(self, element, context):
+    def _loadTimeline(self, element):
         tracks_element = element.find("tracks")
-        tracks = self._loadTracks(tracks_element, context)
+        tracks = self._loadTracks(tracks_element)
 
         timeline_objects_element = element.find("timeline-objects")
         timeline_objects = \
-                self._loadTimelineObjects(timeline_objects_element, context)
+                self._loadTimelineObjects(timeline_objects_element)
 
         timeline = Timeline()
         for track in tracks:
@@ -371,31 +373,31 @@ class ElementTreeFormatter(Formatter):
 
         return timeline
 
-    def _saveMainTag(self, context):
+    def _saveMainTag(self):
         element = Element("pitivi")
         element.attrib["formatter"] = "etree"
         element.attrib["version"] = version
 
         return element
 
-    def _saveProject(self, project, context):
-        root = self._saveMainTag(context)
+    def _saveProject(self, project):
+        root = self._saveMainTag()
 
         factories = project.sources.sources.values()
-        factories_element = self._saveFactories(factories, context)
+        factories_element = self._saveFactories(factories)
         root.append(factories_element)
 
-        timeline_element = self._saveTimeline(project.timeline, context)
+        timeline_element = self._saveTimeline(project.timeline)
         root.append(timeline_element)
 
         return root
 
-    def _loadProject(self, element, context):
+    def _loadProject(self, element):
         factories_element = element.find("factories")
-        factories = self._loadFactories(factories_element, context)
+        factories = self._loadFactories(factories_element)
 
         timeline_element = element.find("timeline")
-        timeline = self._loadTimeline(timeline_element, context)
+        timeline = self._loadTimeline(timeline_element)
 
         project = Project()
         project.timeline = timeline
