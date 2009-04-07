@@ -49,17 +49,17 @@ def indent(elem, level=0):
         if level and (not elem.tail or not elem.tail.strip()):
             elem.tail = i
 
-class ElementTreeFormatterSaveContext(object):
+class ElementTreeFormatterContext(object):
     def __init__(self):
         self.streams = {}
         self.factories = {}
         self.track_objects = {}
 
-class ElementTreeFormatterLoadContext(object):
-    def __init__(self):
-        self.streams = {}
-        self.factories = {}
-        self.track_objects = {}
+class ElementTreeFormatterSaveContext(ElementTreeFormatterContext):
+    pass
+
+class ElementTreeFormatterLoadContext(ElementTreeFormatterContext):
+    pass
 
 class ElementTreeFormatter(Formatter):
     _element_id = 0
