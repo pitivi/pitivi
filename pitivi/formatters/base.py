@@ -164,7 +164,7 @@ class Formatter(object, Signallable):
             raise FormatterURIError()
         if overwrite == False and uri_is_reachable(location):
             raise FormatterOverwriteError()
-        return self._saveProject(project, location)
+        self._saveProject(project, location)
 
     #}
 
