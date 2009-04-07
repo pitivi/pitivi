@@ -69,10 +69,11 @@ class ProjectTabs(gtk.Notebook):
         # (PropertyEditor, _("Properties")),
     )
 
-    def __init__(self, instance):
+    def __init__(self, instance, uiman):
         """ initialize """
         gtk.Notebook.__init__(self)
         self.app = instance
+        self.uiman = uiman
         self._full_list = []
         self.connect("switch-page", self._switchPage)
         self._createUi()
@@ -81,7 +82,7 @@ class ProjectTabs(gtk.Notebook):
         """ set up the gui """
         self.set_tab_pos(gtk.POS_TOP)
         for component, label in self.__DEFAULT_COMPONENTS__:
-            self.addComponent(component(self.app), label)
+            self.addComponent(component(self.app, self.uiman), label)
 
     def addComponent(self, component, label):
         self.append_page(component, DetachLabel(self, component, label))

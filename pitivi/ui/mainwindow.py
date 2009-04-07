@@ -49,6 +49,7 @@ from pitivi.ui import dnd
 from pitivi.pipeline import Pipeline
 from pitivi.action import ViewAction
 from pitivi.settings import GlobalSettings
+from pitivi.receiver import receiver, handler
 import pitivi.formatters.format as formatter
 
 if HAVE_GCONF:
@@ -142,8 +143,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         gtk.Window.__init__(self)
         Loggable.__init__(self)
         self.log("Creating MainWindow")
-        self.app = instance
-        self.project = self.app.current
         self.actions = None
         self.toggleactions = None
         self.actiongroup = None
@@ -152,22 +151,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.is_fullscreen = self.settings.mainWindowFullScreen
         self.missing_plugins = []
         self.timelinepos = 0
-
-    def load(self):
-        """ load the user interface """
         create_stock_icons()
-        self._setActions()
-        self._createUi()
-        self.app.connect("new-project-loaded", self._newProjectLoadedCb)
-        self.app.connect("new-project-loading", self._newProjectLoadingCb)
-        self.app.connect("closing-project", self._closingProjectCb)
-        self.app.connect("new-project-failed", self._notProjectCb)
-        self.project.pipeline.connect("error", self._pipelineErrorCb)
-        self.app.current.sources.connect("file_added", self._sourcesFileAddedCb)
-        self.app.current.connect("settings-changed", self._settingsChangedCb)
-
-        self.app.current.connect('missing-plugins',
-                self._projectMissingPluginsCb)
+        self._setActions(instance)
+        self._createUi(instance)
+        self.app = instance
 
         # if no webcams available, hide the webcam action
         self.app.deviceprobe.connect("device-added", self._deviceChangeCb)
@@ -178,11 +165,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # connect to timeline
         self.app.current.pipeline.activatePositionListener()
         self.app.current.pipeline.connect('position', self._timelinePipelinePositionChangedCb)
-
-        self.app.current.timeline.connect('duration-changed',
-                self._timelineDurationChangedCb)
-
-        self.rate = float(1 / self.project.getSettings().videorate)
+        self.show_all()
 
     def showEncodingDialog(self, project, pause=True):
         """
@@ -208,14 +191,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _recordCb(self, unused_button):
         self.showEncodingDialog(self.project)
 
-    def _timelineDurationChangedCb(self, timeline, duration):
-        if duration > 0:
-            sensitive = True
-        else:
-            sensitive = False
-        self.render_button.set_sensitive(sensitive)
-
-    def _setActions(self):
+    def _setActions(self, instance):
         PLAY = _("Start Playback")
         PAUSE = _("Stop Playback")
         FRAME_FORWARD = _("Forward one frame")
@@ -327,7 +303,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 action.set_sensitive(True)
             elif action_name in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
-                if self.app.settings.fileSupportEnabled:
+                if instance.settings.fileSupportEnabled:
                     action.set_sensitive(True)
             else:
                 action.set_sensitive(False)
@@ -338,7 +314,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.uimanager.add_ui_from_file(os.path.join(os.path.dirname(
             os.path.abspath(__file__)), "mainwindow.xml"))
 
-    def _createUi(self):
+    def _createUi(self, instance):
         """ Create the graphical interface """
         self.set_title("%s v%s" % (APPNAME, pitivi_version))
         self.set_geometry_hints(min_width=800, min_height=480)
@@ -359,12 +335,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vbox.pack_start(vpaned)
 
         self.timeline = Timeline(self.uimanager)
-        self.timeline.setProject(self.app.current)
+        self.timeline.project = self.project
 
         vpaned.pack2(self.timeline, resize=True, shrink=False)
         hpaned = gtk.HPaned()
         vpaned.pack1(hpaned, resize=False, shrink=True)
-        self.projecttabs = ProjectTabs(self.app)
+        self.projecttabs = ProjectTabs(instance, self.uimanager)
         self._connectToSourceList()
 
         hpaned.pack1(self.projecttabs, resize=True, shrink=False)
@@ -455,37 +431,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialogbox.destroy()
         self.error_dialogbox = None
 
-    def _pipelineErrorCb(self, unused_pipeline, error, detail):
-        # FIXME FIXME FIXME:
-        # _need_ an onobtrusive way to present gstreamer errors,
-        # one that doesn't steel mouse/keyboard focus, one that
-        # makes some kind of sense to the user, and one that presents
-        # some ways of actually _dealing_ with the underlying problem:
-        # install a plugin, re-conform source to some other format, or
-        # maybe even disable playback of a problematic file.
-        if self.error_dialogbox:
-            return
-        self.error_dialogbox = gtk.MessageDialog(None, gtk.DIALOG_MODAL,
-            gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, None)
-        self.error_dialogbox.set_markup("<b>%s</b>" % error)
-        self.error_dialogbox.connect("response", self._errorMessageResponseCb)
-        if detail:
-            self.error_dialogbox.format_secondary_text(detail)
-        self.error_dialogbox.show()
-
-## Project source list callbacks
-
-    def _sourcesFileAddedCb(self, unused_sources, unused_factory):
-        #if (len(self.sourcefactories.sourcelist.storemodel) == 1
-        #    and not len(self.app.current.timeline.videocomp):
-        pass
-
-    def _settingsChangedCb(self, project, settings):
-        self.rate = float(1 / self.project.getSettings().videorate)
-
-    def _projectMissingPluginsCb(self, project, uri, detail, message):
-        self.missing_plugins.append(uri)
-        return self._installPlugins(detail)
+## Missing Plugin Support
 
     def _installPlugins(self, details):
         context = gst.pbutils.InstallPluginsContext()
@@ -714,19 +660,28 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def loop(self, unused_action):
         pass
 
-    ## PiTiVi main object callbacks
+## PiTiVi main object callbacks
 
+    def _setApplication(self):
+        if self.app:
+            self.project = self.app.current
+
+    app = receiver(_setApplication)
+
+    @handler(app, "new-project-loaded")
     def _newProjectLoadedCb(self, unused_pitivi, project):
         self.log("A NEW project is loaded, update the UI!")
-        self.timeline.setProject(project)
+        self.project = project
         # ungrey UI
         self.set_sensitive(True)
 
+    @handler(app, "new-project-loading")
     def _newProjectLoadingCb(self, unused_pitivi, unused_project):
         self.log("A NEW project is being loaded, deactivate UI")
         # grey UI
         self.set_sensitive(False)
 
+    @handler(app, "closing-project")
     def _closingProjectCb(self, unused_pitivi, project):
         if not project.hasUnsavedModifications():
             return True
@@ -743,6 +698,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
             return True
         return False
 
+    @handler(app, "project-closed")
+    def _projectClosedCb(self, unused_pitivi, project):
+        # we must disconnect from the project pipeline before it is released
+        self.viewer.setAction(None)
+        self.viewer.setPipeline(None)
+        return False
+
+    @handler(app, "new-project-failed")
     def _notProjectCb(self, unused_pitivi, reason, uri):
         # ungrey UI
         dialog = gtk.MessageDialog(self,
@@ -759,22 +722,72 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
 ## PiTiVi current project callbacks
 
-    def _confirmOverwriteCb(self, unused_project, uri):
-        message = _("Do you wish to overwrite existing file \"%s\"?") %\
-                 gst.uri_get_location(uri)
+    def _setProject(self):
+        if self.project:
+            self.rate = float(1 / self.project.getSettings().videorate)
+            self.project_pipeline = self.project.pipeline
+            self.project_timeline = self.project.timeline
+            if self.timeline:
+                self.timeline.project = self.project
 
-        dialog = gtk.MessageDialog(self,
-            gtk.DIALOG_MODAL,
-            gtk.MESSAGE_WARNING,
-            gtk.BUTTONS_YES_NO,
-            message)
+    project = receiver(_setProject)
 
-        dialog.set_title(_("Overwrite Existing File?"))
-        response = dialog.run()
-        dialog.destroy()
-        if response == gtk.RESPONSE_YES:
-            return True
-        return False
+    @handler(project, "settings-changed")
+    def _settingsChangedCb(self, project, settings):
+        self.rate = float(1 / self.project.getSettings().videorate)
+
+    @handler(project, "missing-plugins")
+    def _projectMissingPluginsCb(self, project, uri, detail, message):
+        self.missing_plugins.append(uri)
+        return self._installPlugins(detail)
+
+## Current Project Pipeline
+
+    def _setProjectPipeline(self):
+        if self.project_pipeline:
+            # connect to timeline
+            self.project_pipeline.activatePositionListener()
+            self._timelinePipelinePositionChangedCb(self.project_pipeline, 0)
+
+    project_pipeline = receiver()
+
+    @handler(project_pipeline, "error")
+    def _pipelineErrorCb(self, unused_pipeline, error, detail):
+        # FIXME FIXME FIXME:
+        # _need_ an onobtrusive way to present gstreamer errors,
+        # one that doesn't steel mouse/keyboard focus, one that
+        # makes some kind of sense to the user, and one that presents
+        # some ways of actually _dealing_ with the underlying problem:
+        # install a plugin, re-conform source to some other format, or
+        # maybe even disable playback of a problematic file.
+        if self.error_dialogbox:
+            return
+        self.error_dialogbox = gtk.MessageDialog(None, gtk.DIALOG_MODAL,
+            gtk.MESSAGE_ERROR, gtk.BUTTONS_OK, None)
+        self.error_dialogbox.set_markup("<b>%s</b>" % error)
+        self.error_dialogbox.connect("response", self._errorMessageResponseCb)
+        if detail:
+            self.error_dialogbox.format_secondary_text(detail)
+        self.error_dialogbox.show()
+
+    @handler(project_pipeline, "position")
+    def _timelinePipelinePositionChangedCb(self, pipeline, position):
+        self.timeline.timelinePositionChanged(position)
+        self.timelinepos = position
+
+## Project Timeline (not to be confused with UI timeline)
+
+    project_timeline = receiver()
+
+    @handler(project_timeline, "duration-changed")
+    def _timelineDurationChangedCb(self, timeline, duration):
+        if duration > 0:
+            sensitive = True
+        else:
+            sensitive = False
+        self.render_button.set_sensitive(sensitive)
+
+## other
 
     def _showSaveAsDialog(self, project):
         self.log("Save URI requested")
@@ -848,46 +861,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.viewer.setPipeline(pipeline)
         self.viewer.play()
 
-    def _timelineDragMotionCb(self, unused_layout, unused_context, x, y, timestamp):
-        # FIXME: temporarily add source to timeline, and put it in drag mode
-        # so user can see where it will go
-        self.info("SimpleTimeline x:%d , source would go at %d", x, 0)
-
-    def _timelineDragDataReceivedCb(self, unused_layout, context, x, y,
-        selection, targetType, timestamp):
-        self.log("SimpleTimeline, targetType:%d, selection.data:%s" %
-            (targetType, selection.data))
-        if targetType == dnd.TYPE_PITIVI_FILESOURCE:
-            uri = selection.data
-        else:
-            context.finish(False, False, timestamp)
-        factory = self.app.current.sources[uri]
-
-        # FIXME: the UI should be smart here and figure out which track the
-        # source was dragged onto
-        self.app.current.timeline.addSourceFactory(factory)
-        context.finish(True, False, timestamp)
-
-    def _getTimelinePipeline(self):
-        # FIXME: the timeline pipeline should probably be moved in project
-        try:
-            return self._timeline_pipeline, self._timeline_view_action
-        except AttributeError:
-            pass
-
-        timeline = self.pitivi.current.timeline
-        factory = TimelineSourceFactory(timeline)
-        pipeline = Pipeline()
-        pipeline.activatePositionListener()
-        pipeline.connect('position', self._timelinePipelinePositionChangedCb)
-        action = ViewAction()
-        action.addProducers(factory)
-
-        self._timeline_pipeline = pipeline
-        self._timeline_view_action = action
-
-        return self._timeline_pipeline, self._timeline_view_action
-
     def _timelineRulerSeekCb(self, ruler, position):
         self.debug("position:%s", gst.TIME_ARGS (position))
         self.viewer.setAction(self.project.view_action)
@@ -900,6 +873,3 @@ class PitiviMainWindow(gtk.Window, Loggable):
         except:
             self.debug("Seeking failed")
 
-    def _timelinePipelinePositionChangedCb(self, pipeline, position):
-        self.timeline.timelinePositionChanged(position)
-        self.timelinepos = position

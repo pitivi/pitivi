@@ -42,7 +42,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
     _tracks = None
 
-    def __init__(self, timeline):
+    def __init__(self, timeline=None):
         goocanvas.Canvas.__init__(self)
         Zoomable.__init__(self)
         self._selected_sources = []

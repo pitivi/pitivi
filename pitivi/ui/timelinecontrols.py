@@ -58,11 +58,10 @@ class TimelineControls(gtk.VBox):
                 (gobject.TYPE_PYOBJECT, gobject.TYPE_BOOLEAN))
     }
 
-    def __init__(self, timeline):
+    def __init__(self):
         gtk.VBox.__init__(self)
         self._tracks = []
         self.set_spacing(LAYER_SPACING)
-        self.timeline = timeline
         self.set_size_request(TRACK_CONTROL_WIDTH, -1)
 
 ## Timeline callbacks

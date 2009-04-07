@@ -255,7 +255,6 @@ class InteractivePitivi(Pitivi):
         self.mainloop = mainloop
 
         self._gui = PitiviMainWindow(self)
-        self._gui.load()
         self._gui.show()
 
         if project:

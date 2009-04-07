@@ -118,13 +118,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.log("Creating Timeline")
 
         self.project = None
-        self.timeline = None
         self.ui_manager = ui_manager
         self._temp_objects = None
         self._factories = None
         self._finish_drag = False
         self._position = 0
-
         self._createUI()
 
     def _createUI(self):
@@ -133,7 +131,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.vadj = gtk.Adjustment()
 
         # controls for tracks and layers
-        self._controls = TimelineControls(self.timeline)
+        self._controls = TimelineControls()
         self._controls.connect('track-expanded',
                 self._timelineControlsTrackExpandedCb)
         controlwindow = gtk.ScrolledWindow(None, self.vadj)
@@ -148,7 +146,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.attach(self.ruler, 1, 2, 0, 1, yoptions=0)
 
         # proportional timeline
-        self._canvas = TimelineCanvas(self.timeline)
+        self._canvas = TimelineCanvas()
         timelinewindow = gtk.ScrolledWindow(self.hadj, self.vadj)
         timelinewindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         timelinewindow.add(self._canvas)
@@ -282,12 +280,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             obj.setStart(max(0, delta), snap=True)
             delta += obj.duration
 
-    def setProject(self, project):
-        self.project = project
-        self.timeline = project.timeline
-        self._controls.timeline = self.timeline
-        self._canvas.timeline = self.timeline
-        self._canvas.zoomChanged()
 
 ## Zooming and Scrolling
 
@@ -322,13 +314,27 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.hadj.set_value(position)
         return False
 
+## Project callbacks
+
+    def _setProject(self):
+        if self.project:
+            self.timeline = self.project.timeline
+            self._controls.timeline = self.timeline
+            self._canvas.timeline = self.timeline
+            self._canvas.zoomChanged()
+            self.ruler.zoomChanged()
+
+    project = receiver(_setProject)
+
 ## Timeline callbacks
 
-    def _set_timeline(self):
+    def _setTimeline(self):
         if self.timeline:
             self._timelineSelectionChanged(self.timeline)
 
-    timeline = receiver(_set_timeline)
+        self._controls.timeline = self.timeline
+
+    timeline = receiver(_setTimeline)
 
     @handler(timeline, "duration-changed")
     def _timelineStartDurationChanged(self, unused_timeline, duration):

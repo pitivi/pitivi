@@ -131,7 +131,7 @@ class SourceList(gtk.VBox, Loggable):
                 (gobject.TYPE_PYOBJECT,))
         }
 
-    def __init__(self, instance):
+    def __init__(self, instance, uiman):
         gtk.VBox.__init__(self)
         Loggable.__init__(self)
 
@@ -296,7 +296,6 @@ class SourceList(gtk.VBox, Loggable):
                 self._insertEndCb),
         )
 
-        uiman = self.app.gui.uimanager
         actiongroup = gtk.ActionGroup("sourcelistpermanent")
         actiongroup.add_actions(actions)
         uiman.insert_action_group(actiongroup, 0)
@@ -305,7 +304,6 @@ class SourceList(gtk.VBox, Loggable):
         self.selection_actions.add_actions(selection_actions)
         self.selection_actions.set_sensitive(False)
         uiman.insert_action_group(self.selection_actions, 0)
-
         uiman.add_ui_from_string(ui)
 
     def _importSourcesCb(self, unused_action):
