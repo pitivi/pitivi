@@ -380,7 +380,14 @@ class ElementTreeFormatter(Formatter):
 
         return element
 
-    def _saveProject(self, project):
+    def _saveProject(self, project, location):
+        root = self._serializeProject(project)
+        f = file(location.split('file://')[1], "w")
+        indent(root)
+        f.write(tostring(root))
+        f.close()
+
+    def _serializeProject(self, project):
         root = self._saveMainTag()
 
         factories = project.sources.sources.values()
@@ -389,7 +396,6 @@ class ElementTreeFormatter(Formatter):
 
         timeline_element = self._saveTimeline(project.timeline)
         root.append(timeline_element)
-
         return root
 
     def _loadProject(self, element):

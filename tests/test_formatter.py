@@ -22,12 +22,11 @@
 from unittest import TestCase
 from StringIO import StringIO
 import gst
-from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.etree.ElementTree import Element, SubElement
 
 from pitivi.reflect import qual, namedAny
 from pitivi.formatters.etree import ElementTreeFormatter, version, \
-        ElementTreeFormatterSaveContext, ElementTreeFormatterLoadContext, \
-        indent, tostring
+     ElementTreeFormatterContext, indent, tostring
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.file import FileSourceFactory
 from pitivi.factories.test import VideoTestSourceFactory
@@ -297,7 +296,7 @@ class TestFormatterSave(TestCase):
         project.timeline = timeline
         project.sources.addFactory("meh", source1)
 
-        element = self.formatter._saveProject(project)
+        element = self.formatter._serializeProject(project)
 
         self.failUnlessEqual(element.tag, "pitivi")
         self.failIfEqual(element.find("factories"), None)
@@ -498,7 +497,7 @@ class TestFormatterLoad(TestCase):
         project.timeline = timeline
         project.sources.addFactory("meh", source1)
 
-        element = self.formatter._saveProject(project)
+        element = self.formatter._serializeProject(project)
 
         self.failUnlessEqual(element.tag, "pitivi")
         self.failIfEqual(element.find("factories"), None)
