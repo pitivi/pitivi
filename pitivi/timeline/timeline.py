@@ -443,6 +443,7 @@ class Timeline(object ,Signallable):
         'duration-changed': ['duration'],
         'track-added': ['track'],
         'track-removed': ['track'],
+        'selection-changed': [],
     }
 
     def __init__(self):
@@ -590,6 +591,8 @@ class Timeline(object ,Signallable):
         for obj in old_selection - self.timeline_selection:
             obj.selected = False
 
+        self.emit("selection-changed")
+
     def linkSelection(self):
         if len(self.timeline_selection) < 2:
             return
@@ -612,6 +615,7 @@ class Timeline(object ,Signallable):
             self.links.remove(old_link)
 
         self.links.append(link)
+        self.emit("selection-changed")
 
     def unlinkSelection(self):
         empty_links = set()
@@ -626,6 +630,7 @@ class Timeline(object ,Signallable):
 
         for link in empty_links:
             self.links.remove(link)
+        self.emit("selection-changed")
 
     def groupSelection(self):
         if len(self.timeline_selection) < 2:

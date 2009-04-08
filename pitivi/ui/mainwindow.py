@@ -25,6 +25,7 @@ Main GTK+ window
 
 import os
 import gtk
+import gobject
 import gst
 import gst.pbutils
 
@@ -87,6 +88,14 @@ GlobalSettings.addConfigOption('lastProjectFolder',
     key="last-folder",
     environment="PITIVI_PROJECT_FOLDER",
     default=os.path.expanduser("~"))
+GlobalSettings.addConfigOption('mainWindowShowMainToolbar',
+    section="main-window",
+    key="show-main-toolbar",
+    default=True)
+GlobalSettings.addConfigOption('mainWindowShowTimelineToolbar',
+    section="main-window",
+    key="show-timeline-toolbar",
+    default=True)
 
 def create_stock_icons():
     """ Creates the pitivi-only stock icons """
@@ -169,7 +178,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # connect to timeline
         self.app.current.pipeline.activatePositionListener()
         self.app.current.pipeline.connect('position', self._timelinePipelinePositionChangedCb)
-        self.show_all()
 
         self.app.current.timeline.connect('duration-changed',
                 self._timelineDurationChangedCb)
@@ -226,7 +234,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
              None, _("Save the current project"), self._saveProjectCb),
             ("SaveProjectAs", gtk.STOCK_SAVE_AS, None,
              None, _("Save the current project"), self._saveProjectAsCb),
-            ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project settings"),
+            ("ProjectSettings", gtk.STOCK_PROPERTIES, _("Project Settings"),
              None, _("Edit the project settings"), self._projectSettingsCb),
             ("RenderProject", 'pitivi-render' , _("_Render project"),
              None, _("Render project"), self._recordCb),
@@ -234,7 +242,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
              _("_Plugins..."),
              None, _("Manage plugins"), self._pluginManagerCb),
             ("ImportfromCam", gtk.STOCK_ADD ,
-             _("_Import from Webcam..."),
+             _("Import from _Webcam..."),
              None, _("Import Camera stream"), self._ImportWebcam),
             ("Screencast", gtk.STOCK_ADD ,
              _("_Make screencast..."),
@@ -248,13 +256,28 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("File", None, _("_File")),
             ("Edit", None, _("_Edit")),
             ("View", None, _("_View")),
+            ("Library", None, _("_Project")),
+            ("Timeline", None, _("_Timeline")),
+            ("Viewer", None, _("Previe_w")),
             ("Rewind", gtk.STOCK_MEDIA_REWIND, None, None, REWIND,
                 self.rewind),
             ("PlayPause", gtk.STOCK_MEDIA_PLAY, None, "space", PLAY,
                 self.playPause),
             ("FastForward", gtk.STOCK_MEDIA_FORWARD, None, None, FAST_FORWARD,
                 self.fastForward),
-            ("Loop", gtk.STOCK_REFRESH, _("Loop"), None, LOOP,
+            ("FrameForward", gtk.STOCK_MEDIA_FORWARD, _("Frame Forward"),
+                "Right", None, self._seekAction),
+            ("FrameBackward", gtk.STOCK_MEDIA_REWIND, _("Frame Backward"),
+                "Left", None, self._seekAction),
+            ("SecondForward", gtk.STOCK_MEDIA_FORWARD, _("1 Second Forward"),
+                "<Shift>Right", None, self._seekAction),
+            ("SecondBackward", gtk.STOCK_MEDIA_REWIND, _("1 Second Backward"),
+                "<Shift>Left", None, self._seekAction),
+            ("EdgeForward", gtk.STOCK_MEDIA_FORWARD, _("End of Clip"),
+                "<Control>Right", None, self._seekAction),
+            ("EdgeBackward", gtk.STOCK_MEDIA_REWIND, _("Start of Clip"),
+                "<Control>Left", None, self._seekAction),
+             ("Loop", gtk.STOCK_REFRESH, _("Loop"), None, LOOP,
                 self.loop),
             ("Help", None, _("_Help")),
         ]
@@ -264,7 +287,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
              _("View the main window on the whole screen"),
                  self._fullScreenCb),
             ("FullScreenAlternate", gtk.STOCK_FULLSCREEN, None, "F11", None,
-                self._fullScreenAlternateCb)
+                self._fullScreenAlternateCb),
+            ("ShowHideMainToolbar", None, _("Main Toolbar"), None, None,
+                self._showHideMainToolBar,
+                self.settings.mainWindowShowMainToolbar),
+            ("ShowHideTimelineToolbar", None, _("Timeline Toolbar"), None,
+                None, self._showHideTimelineToolbar,
+                self.settings.mainWindowShowTimelineToolbar),
         ]
 
         self.actiongroup = gtk.ActionGroup("mainwindow")
@@ -281,6 +310,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 action.set_sensitive(False)
             elif action_name == "ImportfromCam":
                 self.webcam_button = action
+                action.set_sensitive(False)
             elif action_name == "Screencast":
                 # FIXME : re-enable this action once istanbul integration is complete
                 # and upstream istanbul has applied packages for proper interaction.
@@ -289,7 +319,11 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 "ProjectSettings", "Quit", "File", "Edit", "Help", "About",
                 "View", "FullScreen", "FullScreenAlternate", "ImportSources",
                 "ImportSourcesFolder", "PluginManager", "PlayPause",
-                "Project", "FrameForward", "FrameBackward"]:
+                "Project", "FrameForward", "FrameBackward",
+                "ShowHideMainToolbar", "ShowHideTimelineToolbar", "Library",
+                "Timeline", "Viewer", "FrameForward", "FrameBackward",
+                "SecondForward", "SecondBackward", "EdgeForward",
+                "EdgeBackward"]:
                 action.set_sensitive(True)
             elif action_name in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
@@ -302,7 +336,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.add_accel_group(self.uimanager.get_accel_group())
         self.uimanager.insert_action_group(self.actiongroup, 0)
         self.uimanager.add_ui_from_file(os.path.join(os.path.dirname(
-            os.path.abspath(__file__)), "actions.xml"))
+            os.path.abspath(__file__)), "mainwindow.xml"))
 
     def _createUi(self):
         """ Create the graphical interface """
@@ -312,6 +346,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.connect("configure-event", self._configureCb)
         self.connect("key-press-event", self._keyPressEventCb)
 
+
         # main menu & toolbar
         vbox = gtk.VBox(False)
         self.add(vbox)
@@ -319,7 +354,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vbox.pack_start(self.menu, expand=False)
         self.toolbar = self.uimanager.get_widget("/MainToolBar")
         vbox.pack_start(self.toolbar, expand=False)
-
         # timeline and project tabs
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
@@ -345,6 +379,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                            gtk.gdk.ACTION_COPY)
         self.viewer.connect("drag_data_received", self._viewerDndDataReceivedCb)
         hpaned.pack2(self.viewer, resize=False, shrink=False)
+        self.viewer.connect("expose-event", self._exposeEventCb)
 
         # window and pane position defaults
         self.hpaned = hpaned
@@ -360,13 +395,25 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if self.settings.mainWindowHeight:
             height = self.settings.mainWindowHeight
         self.set_default_size(width, height)
+        self._do_pending_fullscreen = False
+        # FIXME: don't know why this doesn't work
+        #if self.settings.mainWindowFullScreen:
+        #    self._do_pending_fullscreen = True
 
         # timeline toolbar
         # FIXME: remove toolbar padding and shadow. In fullscreen mode, the
         # toolbar buttons should be clickable with the mouse cursor at the
         # very bottom of the screen.
-        vbox.pack_start(self.uimanager.get_widget("/TimelineToolBar"),
-            False)
+        ttb = self.uimanager.get_widget("/TimelineToolBar")
+        vbox.pack_start(ttb, False)
+
+        self.show_all()
+
+        if not self.settings.mainWindowShowMainToolbar:
+            self.toolbar.props.visible = False
+
+        if not self.settings.mainWindowShowTimelineToolbar:
+            ttb.props.visible = False
 
         #application icon
         self.set_icon_from_file(get_global_pixmap_dir()
@@ -460,8 +507,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
 ## UI Callbacks
 
     def _configureCb(self, unused_widget, event):
-        self.settings.mainWindowWidth = event.width
-        self.settings.mainWindowHeight = event.height
+        if not self.is_fullscreen:
+            self.settings.mainWindowWidth = event.width
+            self.settings.mainWindowHeight = event.height
 
     def _destroyCb(self, unused_widget, unused_data=None):
         self._saveWindowSettings()
@@ -470,6 +518,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _keyPressEventCb(self, unused_widget, event):
         kv = event.keyval
         mod = event.get_state()
+        self._keyPress(kv, mod)
+
+    def _keyPress(self, kv, mod):
         frame = long(self.rate * gst.SECOND)
         now = self.timelinepos
 
@@ -493,11 +544,20 @@ class PitiviMainWindow(gtk.Window, Loggable):
             return True
         return False
 
+    def _exposeEventCb(self, unused_widget, event):
+        if self._do_pending_fullscreen:
+            self._fullScreenAlternateCb(None)
+            self._do_pending_fullscreen = False
+
     def _saveWindowSettings(self):
-        self.settings.mainWindowFullscreen = self.is_fullscreen
+        self.settings.mainWindowFullScreen = self.is_fullscreen
         self.settings.mainWindowHPanePosition = self.hpaned.get_position()
         self.settings.mainWindowVPanePosition = self.vpaned.get_position()
-        width, height = self.get_size()
+        mtb = self.actiongroup.get_action("ShowHideMainToolbar")
+        ttb = self.actiongroup.get_action("ShowHideTimelineToolbar")
+        self.settings.mainWindowShowMainToolbar = mtb.props.active
+        self.settings.mainWindowShowTimelineToolbar = ttb.props.active
+
 
     def _sourceListPlayCb(self, sourcelist, factory):
         self._viewFactory(factory)
@@ -555,6 +615,26 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _fullScreenAlternateCb(self, unused_action):
         self.actiongroup.get_action("FullScreen").activate()
+
+    def _showHideMainToolBar(self, action):
+        self.uimanager.get_widget("/MainToolBar").props.visible = \
+            action.props.active
+
+    def _showHideTimelineToolbar(self, action):
+        self.uimanager.get_widget("/TimelineToolBar").props.visible = \
+            action.props.active
+
+    def _seekAction(self, action):
+        values = {
+            "FrameForward" : (gtk.keysyms.Right, 0),
+            "FrameBackward" : (gtk.keysyms.Left, 0),
+            "SecondForward" : (gtk.keysyms.Right, gtk.gdk.SHIFT_MASK),
+            "SecondBackward" : (gtk.keysyms.Left, gtk.gdk.SHIFT_MASK),
+            "EdgeForward" : (gtk.keysyms.Right, gtk.gdk.CONTROL_MASK),
+            "EdgeBackward" : (gtk.keysyms.Left, gtk.gdk.CONTROL_MASK),
+        }
+
+        self._keyPress(*values[action.get_name()])
 
     def _aboutResponseCb(self, dialog, unused_response):
         dialog.destroy()

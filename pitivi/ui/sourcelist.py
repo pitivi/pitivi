@@ -60,10 +60,13 @@ GlobalSettings.addConfigOption('closeImportDialog',
 ui = '''
 <ui>
     <menubar name="MainMenuBar">
-        <menu action="File">
+        <menu action="Library">
             <placeholder name="SourceList" >
                 <menuitem action="ImportSources" />
                 <menuitem action="ImportSourcesFolder" />
+                <menuitem action="RemoveSources" />
+                <separator />
+                <menuitem action="InsertEnd" />
             </placeholder>
         </menu>
     </menubar>
@@ -177,6 +180,7 @@ class SourceList(gtk.VBox, Loggable):
         self.treeview.set_headers_visible(False)
         tsel = self.treeview.get_selection()
         tsel.set_mode(gtk.SELECTION_MULTIPLE)
+        tsel.connect("changed", self._treeSelectionChanged)
 
         pixbufcol = gtk.TreeViewColumn(_("Icon"))
         pixbufcol.set_expand(False)
@@ -270,18 +274,35 @@ class SourceList(gtk.VBox, Loggable):
         # Error dialog box
         self.errorDialogBox = None
 
-        # our actions
+        # always available
         actions = (
             ("ImportSources", gtk.STOCK_ADD, _("_Import clips..."),
                 None, _("Import clips to use"), self._importSourcesCb),
             ("ImportSourcesFolder", gtk.STOCK_ADD,
-                _("_Import folder of clips..."), None,
+                _("Import _folder of clips..."), None,
                 _("Import folder of clips to use"), self._importSourcesFolderCb),
         )
-        self.actiongroup = gtk.ActionGroup("sourcelist")
-        self.actiongroup.add_actions(actions)
+
+        # only available when selection is non-empty 
+        selection_actions = (
+            ("RemoveSources", gtk.STOCK_DELETE,
+                _("_Remove from project"), None, None,
+                self._removeSourcesCb),
+            ("InsertEnd", gtk.STOCK_COPY,
+                _("Insert at _end of timeline"), "Insert", None,
+                self._insertEndCb),
+        )
+
         uiman = self.app.gui.uimanager
-        uiman.insert_action_group(self.actiongroup, 0)
+        actiongroup = gtk.ActionGroup("sourcelistpermanent")
+        actiongroup.add_actions(actions)
+        uiman.insert_action_group(actiongroup, 0)
+
+        self.selection_actions = gtk.ActionGroup("sourcelistselection")
+        self.selection_actions.add_actions(selection_actions)
+        self.selection_actions.set_sensitive(False)
+        uiman.insert_action_group(self.selection_actions, 0)
+
         uiman.add_ui_from_string(ui)
 
     def _importSourcesCb(self, unused_action):
@@ -289,6 +310,19 @@ class SourceList(gtk.VBox, Loggable):
 
     def _importSourcesFolderCb(self, unused_action):
         self.showImportSourcesDialog(True)
+
+    def _removeSourcesCb(self, unused_action):
+        self._removeSources()
+
+    def _insertEndCb(self, unused_action):
+        timeline = self.app.current.timeline
+        sources = self.app.current.sources
+        start = timeline.duration
+        for uri in self.getSelectedItems():
+            factory = sources[uri]
+            source = timeline.addSourceFactory(factory)
+            source.setStart(start)
+            start += source.duration
 
     def _getIcon(self, iconname, alternate):
         icontheme = gtk.icon_theme_get_default()
@@ -504,15 +538,7 @@ class SourceList(gtk.VBox, Loggable):
         self.debug("closing")
         self._importDialog = None
 
-
-    ## UI Button callbacks
-
-    def _addButtonClickedCb(self, unused_widget=None):
-        """ called when a user clicks on the add button """
-        self.showImportSourcesDialog()
-
-    def _removeButtonClickedCb(self, unused_widget=None):
-        """ Called when a user clicks on the remove button """
+    def _removeSources(self):
         tsel = self.treeview.get_selection()
         if tsel.count_selected_rows() < 1:
             return
@@ -523,6 +549,16 @@ class SourceList(gtk.VBox, Loggable):
         for path in selected:
             uri = model[path][COL_URI]
             del self.app.current.sources[uri]
+
+    ## UI Button callbacks
+
+    def _addButtonClickedCb(self, unused_widget=None):
+        """ called when a user clicks on the add button """
+        self.showImportSourcesDialog()
+
+    def _removeButtonClickedCb(self, unused_widget=None):
+        """ Called when a user clicks on the remove button """
+        self._removeSources()
 
     def _playButtonClickedCb(self, unused_widget):
         """ Called when a user clicks on the play button """
@@ -604,6 +640,12 @@ class SourceList(gtk.VBox, Loggable):
                     path = result[0]
                     treeview.get_selection().select_path(path)
         return False
+
+    def _treeSelectionChanged(self, tsel):
+        if self.getSelectedItems():
+            self.selection_actions.set_sensitive(True)
+        else:
+            self.selection_actions.set_sensitive(False)
 
     def _rowActivatedCb(self, unused_treeview, path, unused_column):
         factory = self.storemodel[path][COL_FACTORY]

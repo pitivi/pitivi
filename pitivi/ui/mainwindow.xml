@@ -5,14 +5,6 @@
       <menuitem action="OpenProject" />
       <menuitem action="SaveProject" />
       <menuitem action="SaveProjectAs" />
-      <menuitem action="ProjectSettings" />
-      <menuitem action="NetstreamCapture" />
-      <menuitem action="Screencast" />
-      <separator />
-      <menuitem action="RenderProject" />
-      <separator />
-      <menuitem action="ImportfromCam" />
-      <placeholder name="SourceList"/>
       <separator />
       <menuitem action="Quit" />
     </menu>
@@ -20,7 +12,40 @@
       <menuitem action="PluginManager" />
     </menu>
     <menu action="View">
+      <menuitem action="ShowHideMainToolbar" />
+      <menuitem action="ShowHideTimelineToolbar" />
+      <separator />
+      <placeholder name="Timeline" />
+      <separator />
       <menuitem action="FullScreen" />
+    </menu>
+    <menu action="Library">
+      <menuitem action="RenderProject" />
+      <separator />
+      <menuitem action="ImportfromCam" />
+      <menuitem action="NetstreamCapture" />
+      <menuitem action="Screencast" />
+      <placeholder name="SourceList" />
+      <separator />
+      <placeholder name="Timeline" />
+      <separator />
+      <menuitem action="ProjectSettings" />
+    </menu>
+    <menu action="Timeline">
+      <placeholder name="Timeline" />
+    </menu>
+    <menu action="Viewer">
+      <menuitem action="PlayPause" />
+      <menuitem action="Loop" />
+      <separator />
+      <menuitem action="FrameForward" />
+      <menuitem action="FrameBackward" />
+      <separator />
+      <menuitem action="SecondForward" />
+      <menuitem action="SecondBackward" />
+      <separator />
+      <menuitem action="EdgeForward" />
+      <menuitem action="EdgeBackward" />
     </menu>
     <menu action="Help">
       <menuitem action="About" />
