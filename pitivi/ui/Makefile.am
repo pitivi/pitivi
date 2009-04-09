@@ -37,12 +37,12 @@ ui_PYTHON =			\
 	zoominterface.py
 
 ui_DATA =				\
-	actions.xml			\
 	elementsettingsdialog.glade	\
 	cam_capture.glade		\
 	encodingdialog.glade		\
 	exportsettingswidget.glade	\
 	filelisterrordialog.glade	\
+	mainwindow.xml			\
 	net_capture.glade		\
 	projectsettings.glade		\
 	pluginmanagerdialog.glade	\
