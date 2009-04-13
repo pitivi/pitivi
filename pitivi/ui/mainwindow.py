@@ -164,7 +164,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         # connect to timeline
         self.app.current.pipeline.activatePositionListener()
-        self.app.current.pipeline.connect('position', self._timelinePipelinePositionChangedCb)
         self.show_all()
 
     def showEncodingDialog(self, project, pause=True):
