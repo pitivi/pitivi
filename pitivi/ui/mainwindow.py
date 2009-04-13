@@ -320,7 +320,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.connect("configure-event", self._configureCb)
         self.connect("key-press-event", self._keyPressEventCb)
 
-
         # main menu & toolbar
         vbox = gtk.VBox(False)
         self.add(vbox)

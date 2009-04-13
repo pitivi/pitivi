@@ -107,7 +107,22 @@ def xdg_config_dirs():
 class ConfigError(Exception):
     pass
 
-class GlobalSettings(object):
+class Notification(object):
+
+    """A descriptor to help with the implementation of signals"""
+
+    def __init__(self, attrname):
+        self.attrname = "_" + attrname
+        self.signame = attrname + "Changed"
+
+    def __get__(self, instance, unused):
+        return getattr(instance, self.attrname)
+
+    def __set__(self, instance, value):
+        setattr(instance, self.attrname, value)
+        instance.emit(self.signame)
+
+class GlobalSettings(object, Signallable):
     """
     Global PiTiVi settings.
 
@@ -260,7 +275,7 @@ class GlobalSettings(object):
 
     @classmethod
     def addConfigOption(cls, attrname, type_=None, section=None, key=None,
-        environment=None, default=None):
+        environment=None, default=None, notify=False, prefs_group=None):
         """
         Add a configuration option.
 
@@ -282,6 +297,11 @@ class GlobalSettings(object):
         @param key: the key under which this option is to be saved. Can be none if
         this option should not be saved.
         @type key: C{str}
+        @param notify: whether or not this attribute should emit notification
+        signals when modified (default is False).
+        @type notify: C{boolean}
+        @param prefs_group: use this if you would like a widget to change this
+        option to be automatically created in the user preferences panel
         """
         if section and not section in cls.options:
             raise ConfigError("You must add the section \"%s\" first." %
@@ -301,7 +321,12 @@ class GlobalSettings(object):
                 " type or a default." % attrname)
         if not type_:
             type_ = type(default)
-        setattr(cls, attrname, default)
+        if notify:
+            setattr(cls, attrname, Notification(attrname))
+            setattr(cls, "_" + attrname, default)
+            cls.__signals__[attrname + 'Changed'] = []
+        else:
+            setattr(cls, attrname, default)
         if section and key:
             cls.options[section][attrname] = type_, key, environment
         cls.environment.add(environment)
