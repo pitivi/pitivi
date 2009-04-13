@@ -151,6 +151,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.is_fullscreen = self.settings.mainWindowFullScreen
         self.missing_plugins = []
         self.timelinepos = 0
+        self.prefsdialog = None
         create_stock_icons()
         self._setActions(instance)
         self._createUi(instance)
@@ -215,6 +216,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("PluginManager", gtk.STOCK_PREFERENCES ,
              _("_Plugins..."),
              None, _("Manage plugins"), self._pluginManagerCb),
+            ("Preferences", gtk.STOCK_PREFERENCES, _("_Preferences"),
+              None, None, self._prefsCb),
             ("ImportfromCam", gtk.STOCK_ADD ,
              _("Import from _Webcam..."),
              None, _("Import Camera stream"), self._ImportWebcam),
@@ -276,6 +279,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         # deactivating non-functional actions
         # FIXME : reactivate them
+
         for action in self.actiongroup.list_actions():
             action_name = action.get_name()
             if action_name == "RenderProject":
@@ -297,7 +301,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 "ShowHideMainToolbar", "ShowHideTimelineToolbar", "Library",
                 "Timeline", "Viewer", "FrameForward", "FrameBackward",
                 "SecondForward", "SecondBackward", "EdgeForward",
-                "EdgeBackward"]:
+                "EdgeBackward", "Preferences"]:
                 action.set_sensitive(True)
             elif action_name in ["SaveProject", "SaveProjectAs",
                     "NewProject", "OpenProject"]:
@@ -642,6 +646,19 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.webcam_button.set_sensitive(False)
         else:
             self.webcam_button.set_sensitive(True)
+
+    def _hideChildWindow(self, window, event):
+        window.hide()
+        return True
+
+    def _prefsCb(self, unused_action):
+        if not self.prefsdialog:
+            from pitivi.ui.prefs import PreferencesDialog
+            self.prefsdialog = PreferencesDialog(self.app)
+            self.prefsdialog.set_transient_for(self)
+            self.prefsdialog.connect("delete-event", self._hideChildWindow)
+            self.prefsdialog.set_default_size(400, 300)
+        self.prefsdialog.show_all()
 
     def rewind(self, unused_action):
         pass

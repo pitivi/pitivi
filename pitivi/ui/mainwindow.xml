@@ -10,6 +10,7 @@
     </menu>
     <menu action="Edit">
       <menuitem action="PluginManager" />
+      <menuitem action="Preferences" />
     </menu>
     <menu action="View">
       <menuitem action="ShowHideMainToolbar" />
