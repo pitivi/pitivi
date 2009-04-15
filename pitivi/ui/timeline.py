@@ -216,7 +216,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.connect("drag-drop", self._dragDropCb)
         self.connect("drag-motion", self._dragMotionCb)
 
-
     def _timelineControlsTrackExpandedCb(self, timeline_controls,
             track, expanded):
         self._canvas.setExpanded(track, expanded)

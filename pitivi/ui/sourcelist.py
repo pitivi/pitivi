@@ -78,6 +78,9 @@ ui = '''
 </ui>
 '''
 
+INVISIBLE = gtk.gdk.pixbuf_new_from_file(os.path.join(get_pixmap_dir(), 
+    "invisible.png"))
+
 def beautify_stream(stream):
 
     if type(stream) == AudioStream:
@@ -710,13 +713,14 @@ class SourceList(gtk.VBox, Loggable):
         model, rows = self.treeview.get_selection().get_selected_rows()
         return [model[path][COL_URI] for path in rows]
 
-    def _dndDataGetCb(self, unused_widget, unused_context, selection,
+    def _dndDataGetCb(self, unused_widget, context, selection,
                       targettype, unused_eventtime):
         self.info("data get, type:%d", targettype)
         uris = self.getSelectedItems()
         if len(uris) < 1:
             return
         selection.set(selection.target, 8, '\n'.join(uris))
+        context.set_icon_pixbuf(INVISIBLE, 0, 0)
 
 class InfoStub(gtk.HBox, Loggable):
     """
