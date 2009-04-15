@@ -35,6 +35,10 @@ class Controller(object):
     objects. Subclasses may override the drag_start, drag_end, pos, and
     set_pos methods"""
 
+    # note we SHOULD be using the gtk function for this, but it doesn't appear
+    # to be exposed in pygtk
+    __DRAG_THRESHOLD__ = Point(0, 0)
+
     _view = receiver()
 
     _dragging = None
@@ -42,6 +46,7 @@ class Controller(object):
     _cursor = None
     _ptr_within = False
     _last_click = None
+    _initial = None
     _mousedown = None
     _last_event = None
 
@@ -93,6 +98,7 @@ class Controller(object):
         self._mousedown = self.pos(item) - self.transform(self.from_item_event(
             item, event))
         self._dragging = target
+        self._initial = self.pos(target)
         self._drag_start(item, target, event)
         return True
 
@@ -120,13 +126,20 @@ class Controller(object):
 
     def _drag_end(self, item, target, event):
         self.drag_end()
-        if self._ptr_within:
+        if self._ptr_within and self._drag_threshold():
             point = self.from_item_event(item, event)
             if self._last_click and (event.time - self._last_click < 400):
                 self.double_click(point)
             else:
                 self.click(point)
             self._last_click = event.time
+
+    def _drag_threshold(self):
+        last = self.pos(self._dragging)
+        difference = abs(self._initial - last)
+        if abs(self._initial - last) > self.__DRAG_THRESHOLD__:
+            return False
+        return True
 
 ## protected interface for subclasses
 
