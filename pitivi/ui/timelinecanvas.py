@@ -48,6 +48,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         self._selected_sources = []
         self._tracks = []
         self._height = 0
+        self._position = 0
 
         self._block_size_request = False
         self.props.integer_layout = True
@@ -172,8 +173,13 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         self._razor.props.visibility = goocanvas.ITEM_INVISIBLE
 
     def _razorMovedCb(self, canvas, event):
+        def snap(x):
+            pos = self.nsToPixel(self._position)
+            if abs(x - pos) <= DEADBAND:
+                return pos
+            return x
         x, y = self.convert_from_pixels(event.x, event.y)
-        self._razor.props.x = self.nsToPixel(self.pixelToNs(x))
+        self._razor.props.x = snap(self.nsToPixel(self.pixelToNs(x)))
         return True
 
     def _razorReleasedCb(self, unused_canvas, event):
