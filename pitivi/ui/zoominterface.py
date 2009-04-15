@@ -49,11 +49,12 @@ import gst
 
 class Zoomable(object):
 
-    zoomratio = 10
     sigid = None
     _instances = []
-    zoom_levels = range(1, 150, 10)
+    zoom_levels = [1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5] + range(5, 10, 1) + \
+        range(10, 150, 10)
     _cur_zoom = 2
+    zoomratio = zoom_levels[_cur_zoom]
 
 
     def __init__(self):
