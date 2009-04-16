@@ -87,8 +87,8 @@ class TextWidget(gtk.HBox):
         self.image.set_from_stock(gtk.STOCK_DIALOG_WARNING, 
             gtk.ICON_SIZE_BUTTON)
         self.pack_start(self.image)
+        self.text.connect("changed", self._filter)
         if matches:
-            self.text.connect("changed", self._filter)
             self.matches = re.compile(matches)
             self._filter(None)
 

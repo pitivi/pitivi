@@ -30,6 +30,8 @@ import pitivi.ui.dynamic as dynamic
 class PreferencesDialog(gtk.Window):
 
     prefs = {}
+    original_values = {}
+    widgets = {}
 
     def __init__(self, instance):
         gtk.Window.__init__(self)
@@ -87,17 +89,24 @@ class PreferencesDialog(gtk.Window):
         factory_settings.connect("clicked", self._factorySettingsButtonCb)
         factory_settings.set_sensitive(False)
         factory_settings.show()
-        revert_button = gtk.Button(_("Revert"))
-        revert_button.connect("clicked", self._revertButtonCb)
-        revert_button.set_sensitive(False)
-        revert_button.show()
+        self.revert_button = gtk.Button(_("Revert"))
+        self.revert_button.connect("clicked", self._revertButtonCb)
+        self.revert_button.show()
+        self.revert_button.set_sensitive(False)
         accept_button = gtk.Button(stock=gtk.STOCK_CLOSE)
         accept_button.connect("clicked", self._acceptButtonCb)
         accept_button.show()
         button_box.pack_start(factory_settings, False, True)
         button_box.pack_end(accept_button, False, True)
-        button_box.pack_end(revert_button, False, True)
+        button_box.pack_end(self.revert_button, False, True)
         button_box.show()
+
+        # restart warning
+        self.restart_warning = gtk.Label()
+        self.restart_warning.set_markup(
+            _("<b>Some changes will not take effect until you restart "
+            "PiTiVi</b>"))
+        vbox.pack_end(self.restart_warning, False, False)
 
 ## Public API
 
@@ -249,6 +258,7 @@ class PreferencesDialog(gtk.Window):
                 widget.setWidgetValue(getattr(self.settings, attrname))
                 widget.connectValueChanged(self._valueChanged, widget,
                     attrname)
+                self.widgets[attrname] = widget
                 label.show()
                 widget.show()
             self.contents.pack_start(widgets, True, True)
@@ -264,19 +274,27 @@ class PreferencesDialog(gtk.Window):
             self._current = new
 
     def _clearHistory(self):
-        pass
+        self.original_values = {}
+        self.revert_button.set_sensitive(False)
 
     def _factorySettingsButtonCb(self, unused_button):
         pass
 
     def _revertButtonCb(self, unused_button):
-        pass
+        for attrname, value in self.original_values.iteritems():
+            self.widgets[attrname].setWidgetValue(value)
+        self._clearHistory()
 
     def _acceptButtonCb(self, unused_button):
         self._clearHistory()
         self.hide()
 
     def _valueChanged(self, fake_widget, real_widget, attrname):
+        if attrname not in self.original_values:
+            self.original_values[attrname] = getattr(self.settings, attrname)
+            if attrname + "Changed" not in GlobalSettings.get_signals():
+                self.restart_warning.show()
+            self.revert_button.set_sensitive(True)
         setattr(self.settings, attrname, real_widget.getWidgetValue())
 
 ## Preference Test Cases
