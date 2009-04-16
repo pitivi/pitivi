@@ -26,6 +26,7 @@ Base Formatter classes
 from pitivi.project import Project
 from pitivi.utils import uri_is_reachable, uri_is_valid
 from pitivi.signalinterface import Signallable
+from pitivi.log.loggable import Loggable
 
 class FormatterError(Exception):
     pass
@@ -45,7 +46,7 @@ class FormatterSaveError(FormatterError):
 class FormatterOverwriteError(FormatterSaveError):
     """A project can't be saved because it will be overwritten"""
 
-class Formatter(object, Signallable):
+class Formatter(object, Signallable, Loggable):
     """
     Provides convenience methods for storing and loading
     Project files.
@@ -67,6 +68,7 @@ class Formatter(object, Signallable):
     ProjectClass = Project
 
     def __init__(self):
+        Loggable.__init__(self)
         # mapping of directory changes
         # key : old path
         # value : new path
@@ -92,6 +94,7 @@ class Formatter(object, Signallable):
         @return: The L{Project}
         @raise FormatterLoadError: If the file couldn't be properly loaded.
         """
+        self.log("location:%s, project:%r", location, project)
         # check if the location is
         # .. a uri
         # .. a valid uri
