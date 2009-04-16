@@ -63,7 +63,8 @@ class DefaultWidget(gtk.Label):
 class TextWidget(gtk.HBox):
 
     """A gtk.Entry which emits a value-changed signal only when its input is
-    valid (matches the provided regex)"""
+    valid (matches the provided regex). If the input is invalid, a warning
+    icon is displayed."""
 
     __gtype_name__ = 'TextWidget'
     __gsignals__ = {
@@ -122,6 +123,10 @@ class TextWidget(gtk.HBox):
 
 class NumericWidget(gtk.HBox):
 
+    """A gtk.HScale and a gtk.SpinButton which share an adjustment. The
+    SpinButton is always displayed, while the HScale only appears if both
+    lower and upper bounds are defined"""
+
     def __init__(self, upper = None, lower = None):
         gtk.HBox.__init__(self)
 
@@ -170,6 +175,8 @@ class NumericWidget(gtk.HBox):
 
 class ToggleWidget(gtk.CheckButton):
 
+    """A gtk.CheckButton which supports the DynamicWidget interface."""
+
     def __init__(self):
         gtk.CheckButton.__init__(self)
 
@@ -183,6 +190,10 @@ class ToggleWidget(gtk.CheckButton):
         return self.get_active()
 
 class ChoiceWidget(gtk.VBox):
+
+    """Abstractly, represents a choice between a list of named values. The
+    association between value names and values is arbitrary. The current
+    implementation uses a gtk.ComboBox."""
 
     def __init__(self, choices):
         gtk.VBox.__init__(self)
@@ -204,6 +215,8 @@ class ChoiceWidget(gtk.VBox):
         return self.values[self.contents.get_active()]
 
 class PathWidget(gtk.FileChooserButton):
+
+    """A gtk.FileChooserButton which supports the DynamicWidget interface."""
 
     __gtype_name__ = 'PathWidget'
 
@@ -240,6 +253,51 @@ class PathWidget(gtk.FileChooserButton):
             self.emit("value-changed")
             self.dialog.hide()
 
+class ColorWidget(gtk.ColorButton):
+
+    def __init__(self, value_type=str):
+        gtk.ColorButton.__init__(self)
+        self.value_type = value_type
+        self.set_use_alpha(True)
+
+    def connectValueChanged(self, callback, *args):
+        self.connect("color-set", callback, *args)
+
+    def setWidgetValue(self, value):
+        type_ = type(value)
+        alpha = 0xFFFF
+        if type_ is str:
+            color = gtk.Color(value)
+        elif type_ is int:
+            # FIXME: only handles 32-bit case
+            red = (value >> 24); red = red | red << 8
+            green = (value >> 16) & 0xFF; green = green | green << 8
+            blue = (value >> 8) & 0xFF; blue = blue | blue << 8
+            alpha = value & 0xFF; alpha = alpha | alpha << 8
+            color = gtk.gdk.Color(red, green, blue)
+        elif type_ is gtk.gdk.Color:
+            color = value
+        else:
+            raise TypeError("%r is not something we can convert to a color" %
+                value)
+        self.set_color(color)
+        self.set_alpha(alpha)
+
+    def getWidgetValue(self):
+        color = self.get_color()
+        alpha = self.get_alpha()
+        if self.value_type is int:
+            # FIXME: only handles 32-bit case
+            red = color.red >> 8
+            green = color.green >> 8
+            blue = color.blue >> 8
+            alpha = alpha >> 8
+            ret = (red << 24 | green << 16 | blue << 8 | alpha)
+            return ret
+        elif self.value_type is gtk.gdk.Color:
+            return color
+        return color.to_string()
+
 if __name__ == '__main__':
 
     def valueChanged(unused_widget, widget, target):
@@ -255,6 +313,7 @@ if __name__ == '__main__':
             ("banana", "banana"),
             ("apple", "apple"),
             ("pear", "pear")),)),
+        (ColorWidget, 0x336699FF, (int,)),
     )
 
     W = gtk.Window()
