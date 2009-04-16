@@ -275,7 +275,7 @@ class GlobalSettings(object, Signallable):
 
     @classmethod
     def addConfigOption(cls, attrname, type_=None, section=None, key=None,
-        environment=None, default=None, notify=False, prefs_group=None):
+        environment=None, default=None, notify=False,):
         """
         Add a configuration option.
 
@@ -300,8 +300,6 @@ class GlobalSettings(object, Signallable):
         @param notify: whether or not this attribute should emit notification
         signals when modified (default is False).
         @type notify: C{boolean}
-        @param prefs_group: use this if you would like a widget to change this
-        option to be automatically created in the user preferences panel
         """
         if section and not section in cls.options:
             raise ConfigError("You must add the section \"%s\" first." %

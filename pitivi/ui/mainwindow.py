@@ -163,8 +163,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if len(self.app.deviceprobe.getVideoSourceDevices()) < 1:
             self.webcam_button.set_sensitive(False)
 
-        # connect to timeline
-        self.show_all()
+        self.show()
 
     def showEncodingDialog(self, project, pause=True):
         """
@@ -658,7 +657,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.prefsdialog.set_transient_for(self)
             self.prefsdialog.connect("delete-event", self._hideChildWindow)
             self.prefsdialog.set_default_size(400, 300)
-        self.prefsdialog.show_all()
+        self.prefsdialog.show()
 
     def rewind(self, unused_action):
         pass

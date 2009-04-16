@@ -41,12 +41,14 @@ from pitivi.ui.zoominterface import Zoomable
 from pitivi.log.loggable import Loggable
 from pitivi.factories.file import PictureFileSourceFactory
 from pitivi.thumbnailcache import ThumbnailCache
+from pitivi.ui.prefs import PreferencesDialog
 
 GlobalSettings.addConfigSection("thumbnailing")
 GlobalSettings.addConfigOption("thumbnailSpacingHint",
     section="thumbnailing",
     key="spacing-hint",
     default=2.0)
+
 # this default works out to a maximum of ~ 1.78 MiB per factory, assuming:
 # 4:3 aspect ratio
 # 4 bytes per pixel
