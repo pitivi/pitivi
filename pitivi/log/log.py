@@ -831,6 +831,9 @@ class Loggable:
 
         return None
 
+    def handleException(self, exc):
+        self.warning(getExceptionMessage(exc))
+
 # Twisted helper stuff
 
 # private stuff
