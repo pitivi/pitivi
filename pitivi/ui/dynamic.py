@@ -26,6 +26,7 @@ interfaces
 import gobject
 import gtk
 import re
+import sys
 from gettext import gettext as _
 
 class DynamicWidget(object):
@@ -125,6 +126,8 @@ class NumericWidget(gtk.HBox):
         gtk.HBox.__init__(self)
 
         self.adjustment = gtk.Adjustment()
+        self.upper = upper
+        self.lower = lower
         if (upper != None) and (lower != None):
             self.slider = gtk.HScale(self.adjustment)
             self.pack_end(self.slider)
@@ -148,7 +151,22 @@ class NumericWidget(gtk.HBox):
         return self.adjustment.get_value()
 
     def setWidgetValue(self, value):
-        return self.adjustment.set_value(value)
+        type_ = type(value)
+        if type_ == int:
+            minimum, maximum = (-sys.maxint, sys.maxint)
+            step = 1.0
+            page = 10.0
+        elif type_ == float:
+            minimum, maximum = (float("-Infinity"), float("Infinity"))
+            step = 0.00001
+            page = 0.01
+        if self.lower:
+            minimum = self.lower
+        if self.upper:
+            maximum = self.upper
+        self.adjustment.set_all(value, minimum, maximum, step, page, 0)
+        self.spinner.props.climb_rate = 0.01 * abs(min(maximum, 1000) -
+            max(minimum, -1000))
 
 class ToggleWidget(gtk.CheckButton):
 
