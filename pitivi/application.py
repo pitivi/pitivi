@@ -184,11 +184,14 @@ class Pitivi(object, Loggable, Signallable):
         if self._closeRunningProject():
             project = formatter.newProject()
             self.emit("new-project-loading", project)
+            self.info("Got a new project %r, calling loadProject", project)
             try:
-                formater.load_project(uri, project)
+                formatter.loadProject(uri, project)
                 self.current = project
                 self.emit("new-project-loaded", self.current)
-            except:
+            except Exception, e:
+                self.handleException(e)
+                self.warning("error loading the project")
                 self.current = None
                 self.emit("new-project-failed",
                     _("There was an error loading the file."), uri)
