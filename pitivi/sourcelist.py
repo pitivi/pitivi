@@ -26,6 +26,7 @@ import urllib
 from pitivi.discoverer import Discoverer
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
+from pitivi.factories.base import URISourceFactoryMixin
 
 class SourceList(object, Signallable, Loggable):
     """
@@ -137,10 +138,14 @@ class SourceList(object, Signallable, Loggable):
         for uri in rmuri:
             del self[uri]
 
-    def addFactory(self, uri, factory):
+    # FIXME : Invert the order of the arguments so we can just have:
+    # addFactory(self, factory, uri=None)
+    def addFactory(self, uri=None, factory=None):
         """
         Add an objectfactory for the given uri.
         """
+        if uri==None and isinstance(factory, URISourceFactoryMixin):
+            uri = factory.uri
         if uri in self and self[uri]:
             raise Exception("We already have an objectfactory for uri %s", uri)
         self.sources[uri] = factory
