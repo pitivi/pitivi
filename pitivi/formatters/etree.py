@@ -23,7 +23,7 @@ import gobject
 gobject.threads_init()
 import gst
 
-from xml.etree.ElementTree import Element, SubElement, tostring
+from xml.etree.ElementTree import Element, SubElement, tostring, parse
 
 from pitivi.reflect import qual, namedAny
 from pitivi.factories.base import SourceFactory
@@ -54,6 +54,7 @@ class ElementTreeFormatterContext(object):
         self.streams = {}
         self.factories = {}
         self.track_objects = {}
+        self.rootelement = None
 
 class ElementTreeFormatterSaveContext(ElementTreeFormatterContext):
     pass
@@ -67,6 +68,8 @@ class ElementTreeFormatter(Formatter):
 
     def __init__(self, *args, **kwargs):
         Formatter.__init__(self, *args, **kwargs)
+        self.factoriesnode = None
+        self.timelinenode = None
         self._context = ElementTreeFormatterContext()
 
     def _new_element_id(self):
@@ -151,8 +154,9 @@ class ElementTreeFormatter(Formatter):
         return element
 
     def _loadObjectFactory(self, klass, element):
+        self.debug("klass:%r, element:%r", klass, element)
         # FIXME
-        if isinstance(klass, FileSourceFactory):
+        if issubclass(klass, FileSourceFactory):
             factory = FileSourceFactory(element.attrib["filename"])
         else:
             factory = klass()
@@ -168,7 +172,6 @@ class ElementTreeFormatter(Formatter):
             factory.addOutputStream(stream)
 
         self._context.factories[element.attrib["id"]] = factory
-
         return factory
 
     def _saveFileSourceFactory(self, element, source):
@@ -195,6 +198,16 @@ class ElementTreeFormatter(Formatter):
 
         return element
 
+    def _loadFactories(self, factories, klass):
+        res = []
+        for fact in factories:
+            res.append(self._loadObjectFactory(klass, fact))
+        return res
+
+    def _loadSources(self):
+        sources = self.factoriesnode.find("sources")
+        return self._loadFactories(sources, FileSourceFactory)
+
     def _saveTrackObject(self, track_object):
         element = Element("track-object")
         element.attrib["id"] = self._new_element_id()
@@ -218,6 +231,7 @@ class ElementTreeFormatter(Formatter):
         return element
 
     def _loadTrackObject(self, element):
+        self.debug("%r", element)
         klass = namedAny(element.attrib["type"])
 
         factory_ref = element.find("factory-ref")
@@ -231,6 +245,7 @@ class ElementTreeFormatter(Formatter):
             value = self._parsePropertyValue(value_string)
             setattr(track_object, name, value)
 
+        self._context.track_objects[element.attrib["id"]] = track_object
         return track_object
 
     def _saveTrackObjectRef(self, track_object):
@@ -240,6 +255,7 @@ class ElementTreeFormatter(Formatter):
         return element
 
     def _loadTrackObjectRef(self, element):
+        self.debug("%r", element)
         return self._context.track_objects[element.attrib["id"]]
 
     def _saveTrackObjectRefs(self, track_objects):
@@ -252,6 +268,7 @@ class ElementTreeFormatter(Formatter):
         return element
 
     def _loadTrackObjectRefs(self, element):
+        self.debug("%r", element)
         track_objects = []
         for track_object_element in element:
             track_object = self._loadTrackObjectRef(track_object_element)
@@ -275,6 +292,7 @@ class ElementTreeFormatter(Formatter):
         return element
 
     def _loadTrack(self, element):
+        self.debug("%r", element)
         stream_element = element.find("stream")
         stream = self._loadStream(stream_element)
 
@@ -296,12 +314,15 @@ class ElementTreeFormatter(Formatter):
         return element
 
     def _loadTracks(self, element):
+        self.debug("element:%r", element)
         tracks = []
         for track_element in element:
             track = self._loadTrack(track_element)
             tracks.append(track)
 
         return tracks
+
+    ## TimelineObjects
 
     def _saveTimelineObject(self, timeline_object):
         element = Element("timeline-object")
@@ -344,6 +365,8 @@ class ElementTreeFormatter(Formatter):
 
         return timeline_objects
 
+    ## Timeline
+
     def _saveTimeline(self, timeline):
         element = Element("timeline")
 
@@ -357,21 +380,29 @@ class ElementTreeFormatter(Formatter):
         return element
 
     def _loadTimeline(self, element):
+        self.debug("element:%r", element)
+
+        # Tracks
         tracks_element = element.find("tracks")
         tracks = self._loadTracks(tracks_element)
 
+        # Timeline Object
         timeline_objects_element = element.find("timeline-objects")
         timeline_objects = \
                 self._loadTimelineObjects(timeline_objects_element)
 
+        # add the tracks
         timeline = Timeline()
         for track in tracks:
             timeline.addTrack(track)
 
+        # add the timeline objects
         for timeline_object in timeline_objects:
             timeline.addTimelineObject(timeline_object)
 
         return timeline
+
+    ## Main methods
 
     def _saveMainTag(self):
         element = Element("pitivi")
@@ -379,13 +410,6 @@ class ElementTreeFormatter(Formatter):
         element.attrib["version"] = version
 
         return element
-
-    def _saveProject(self, project, location):
-        root = self._serializeProject(project)
-        f = file(location.split('file://')[1], "w")
-        indent(root)
-        f.write(tostring(root))
-        f.close()
 
     def _serializeProject(self, project):
         root = self._saveMainTag()
@@ -417,6 +441,30 @@ class ElementTreeFormatter(Formatter):
                 raise NotImplementedError()
 
         return project
+
+    ## Formatter method implementations
+
+    def _saveProject(self, project, location):
+        root = self._serializeProject(project)
+        f = file(location.split('file://')[1], "w")
+        indent(root)
+        f.write(tostring(root))
+        f.close()
+
+    def _parse(self, location):
+        self.debug("location:%s", location)
+        # open the given location
+        self._context.rootelement = parse(location.split('://', 1)[1])
+        self.factoriesnode = self._context.rootelement.find("factories")
+        self.timelinenode = self._context.rootelement.find("timeline")
+
+    def _getSources(self):
+        self.debug("%r", self)
+        return self._loadSources()
+
+    def _fillTimeline(self):
+        # fill up self.project
+        self.project.timeline = self._loadTimeline(self.timelinenode)
 
     @classmethod
     def canHandle(cls, uri):
