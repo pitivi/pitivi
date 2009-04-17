@@ -27,6 +27,7 @@ from pitivi.project import Project
 from pitivi.utils import uri_is_reachable, uri_is_valid
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
+from pitivi.factories.base import SourceFactory
 
 class FormatterError(Exception):
     pass
@@ -105,11 +106,12 @@ class Formatter(object, Signallable, Loggable):
 
         # parse the format (subclasses)
         # FIXME : maybe have a convenience method for opening a location
-        self.parse(location)
+        self._parse(location)
 
         if not project:
             project = self.newProject()
 
+        self.debug("About to get used sources")
         # ask for all sources being used
         uris = []
         factories = []
@@ -122,22 +124,25 @@ class Formatter(object, Signallable, Loggable):
             else:
                 raise FormatterLoadError("Got invalid sources !")
 
+        self.debug("Got sources")
         # from this point on we're safe !
         self.project = project
         project._formatter = self
 
         # add all factories to the project sourcelist
         for fact in factories:
-            project.sources.addFactory(fact)
+            project.sources.addFactory(factory=fact)
 
         # if all sources were discovered, or don't require discovering,
         if uris == []:
+            self.debug("Got discovered sources, filling timeline")
             # then
             # .. Fill in the timeline
-            self._fillTimeline(self)
+            self._fillTimeline()
             # .. make the project as loaded
             self.project.loaded = True
         else:
+            self.debug("Got undiscovered sources, calling discoverer")
             # else
             # .. connect to the sourcelist 'ready' signal
             self.project.sources.connect("ready", self._sourcesReadyCb)
@@ -217,6 +222,7 @@ class Formatter(object, Signallable, Loggable):
         @precondition: L{_parse} will be called before, so subclasses can
         use any information they extracted during that call.
         @returns: A list of sources used in the given project.
+        @precondition: self.project is not available at this point.
         """
         raise NotImplementedError
 
@@ -228,6 +234,19 @@ class Formatter(object, Signallable, Loggable):
 
         If any error occurs during this step, subclasses should raise the
         FormatterParseError exception.
+        """
+        raise NotImplementedError
+
+    def _fillTimeline(self):
+        """
+        Fill the project's TimelineObject.
+
+        To be implemented by subclasses.
+
+        @precondition: L{_parse} and L{_getSources} will have been called
+        before, and all the sources will have been discovered.
+        @precondition: self.project is valid and exists when this method
+        is called.
         """
         raise NotImplementedError
 
@@ -292,7 +311,7 @@ class Formatter(object, Signallable, Loggable):
     #}
 
     def _sourcesReadyCb(self, sources):
-        self._fillTimeline(self)
+        self._fillTimeline()
         self.project.loaded = True
         Project.emit(self.project, 'loaded')
 
