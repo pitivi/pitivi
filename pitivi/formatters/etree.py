@@ -391,13 +391,17 @@ class ElementTreeFormatter(Formatter):
         timeline_objects = \
                 self._loadTimelineObjects(timeline_objects_element)
 
-        # add the tracks
+        # NOTE: the tracks here are already populated with track objects.
+        # the UI does not get any track-object-added signals
         timeline = Timeline()
         for track in tracks:
             timeline.addTrack(track)
 
         # add the timeline objects
         for timeline_object in timeline_objects:
+            # NOTE: this is a low-level routine that simply appends the
+            # timeline object to the timeline list. It doesn't ensure all the
+            # child track objects have been added to their respective tracks.
             timeline.addTimelineObject(timeline_object)
 
         return timeline
@@ -432,13 +436,18 @@ class ElementTreeFormatter(Formatter):
         project = Project()
         project.timeline = timeline
 
-        # FIXME: add factories to the sources list
+        # FIXME: the default- and max- duration properties of factories are
+        # *not* restored here, so adding objects to the timeline after loading
+        # a files produces objects of 0 duration
 
         for factory in factories:
             if isinstance(factory, SourceFactory):
                 timeline.addSourceFactory(factory)
             else:
                 raise NotImplementedError()
+
+        # TODO: restore project settings
+        # TODO: restore scroll, playhead, and zoom ratio
 
         return project
 

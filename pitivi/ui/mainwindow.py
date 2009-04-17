@@ -163,7 +163,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.webcam_button.set_sensitive(False)
 
         # connect to timeline
-        self.app.current.pipeline.activatePositionListener()
         self.show_all()
 
     def showEncodingDialog(self, project, pause=True):
@@ -543,10 +542,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         return True
 
     def _saveProjectCb(self, unused_action):
-        if not self.app.current.uri:
+        if not self.project.uri:
             self._saveProjectAsCb(unused_action)
         else:
-            self.app.current.save()
+            self.project.save(overwrite=True)
 
     def _saveProjectAsCb(self, unused_action):
         uri = self._showSaveAsDialog(self.app.current)
@@ -670,13 +669,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
     @handler(app, "new-project-loaded")
     def _newProjectLoadedCb(self, unused_pitivi, project):
         self.log("A NEW project is loaded, update the UI!")
-        self.project = project
         # ungrey UI
         self.set_sensitive(True)
 
     @handler(app, "new-project-loading")
-    def _newProjectLoadingCb(self, unused_pitivi, unused_project):
+    def _newProjectLoadingCb(self, unused_instance, project):
         self.log("A NEW project is being loaded, deactivate UI")
+        self.project = project
         # grey UI
         self.set_sensitive(False)
 

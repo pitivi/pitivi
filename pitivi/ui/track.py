@@ -11,8 +11,8 @@ class Track(goocanvas.Group, Zoomable):
         goocanvas.Group.__init__(self)
         Zoomable.__init__(self)
         self.widgets = {}
-        self.track = track
         self.timeline = timeline
+        self.track = track
         self.max_priority = 0
         self._expanded = True
 
@@ -38,7 +38,14 @@ class Track(goocanvas.Group, Zoomable):
 
 ## track signals
 
-    track = receiver()
+    def _setTrack(self):
+        if self.track:
+            for trackobj in self.track.track_objects:
+                if trackobj is self.track.default_track_object:
+                    continue
+                self._objectAdded(None, trackobj)
+
+    track = receiver(_setTrack)
 
     @handler(track, "track-object-added")
     def _objectAdded(self, unused_timeline, track_object):
