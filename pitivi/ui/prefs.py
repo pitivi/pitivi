@@ -275,7 +275,7 @@ class PreferencesDialog(gtk.Window):
             prefs = {}
             for attrname in options:
                 label, description, klass, args = options[attrname]
-                label_widget = gtk.Label(_(label))
+                label_widget = gtk.Label(_(label) + ":")
                 widget = klass(**args)
                 widget.setWidgetValue(getattr(self.settings, attrname))
                 widget.connectValueChanged(self._valueChanged, widget,
