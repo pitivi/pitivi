@@ -30,7 +30,6 @@ class TrackControls(gtk.Expander):
         self.set_expanded(True)
         self.set_sensitive(False)
         self.track = track
-        self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
 
     def set_expanded(self, expanded):
         if expanded != self.props.expanded:
@@ -44,12 +43,16 @@ class TrackControls(gtk.Expander):
     def do_activate(self):
         self.props.expanded = not self.props.expanded
 
-    track = receiver()
+    def _setTrack(self):
+        if self.track:
+            self._maxPriorityChanged(None, self.track.max_priority)
+
+    track = receiver(_setTrack)
 
     @handler(track, "max-priority-changed")
     def _maxPriorityChanged(self, track, max_priority):
         self.set_size_request(TRACK_CONTROL_WIDTH, (1 +
-            self.track.max_priority) * (LAYER_HEIGHT_EXPANDED +
+            max_priority) * (LAYER_HEIGHT_EXPANDED +
             LAYER_SPACING))
 
 class TimelineControls(gtk.VBox):
@@ -81,6 +84,7 @@ class TimelineControls(gtk.VBox):
         self._connectToTrackControls(track)
         self._tracks.append(track)
         self.pack_start(track, False, False)
+        track.show()
 
     @handler(timeline, "track-removed")
     def _trackRemoved(self, unused_timeline, position):
