@@ -38,7 +38,7 @@ GlobalSettings.addConfigOption('videoClipBg',
 
 PreferencesDialog.addColorPreference('videoClipBg',
     section = "Appearance",
-    label = "Video Clip Background Color",
+    label = "Clip Background (Video)",
     description = "The background color for clips in video tracks.")
 
 GlobalSettings.addConfigOption('audioClipBg',
@@ -49,7 +49,7 @@ GlobalSettings.addConfigOption('audioClipBg',
 
 PreferencesDialog.addColorPreference('audioClipBg',
     section = "Appearance",
-    label = "Audio Clip Baground Color",
+    label = "Clip Background (Audio)",
     description = "The background color for clips in audio tracks.")
 
 GlobalSettings.addConfigOption('selectedBorderColor',
@@ -60,7 +60,7 @@ GlobalSettings.addConfigOption('selectedBorderColor',
 
 PreferencesDialog.addColorPreference('selectedBorderColor',
     section = "Appearance",
-    label = "Selection Border Color",
+    label = "Clip Selection Border Color",
     description = "The color of the clip's border when it is selected")
 
 GlobalSettings.addConfigOption('clipFontDesc',

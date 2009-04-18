@@ -263,27 +263,40 @@ class PreferencesDialog(gtk.Window):
 
     def _fillContents(self):
         self.sections = {}
-        for section, options in self.prefs.iteritems():
+        for section in sorted(self.prefs):
+            options = self.prefs[section]
             self.model.append((_(section), section))
             widgets = gtk.Table()
             widgets.set_border_width(6)
             widgets.props.column_spacing = 6
             widgets.props.row_spacing = 3
             self.sections[section] = widgets
-            for y, (attrname, (label, description, klass, args)) in enumerate(
-                options.iteritems()):
-                label = gtk.Label(_(label))
-                label.set_justify(gtk.JUSTIFY_RIGHT)
+
+            prefs = {}
+            for attrname in options:
+                label, description, klass, args = options[attrname]
+                label_widget = gtk.Label(_(label))
                 widget = klass(**args)
-                widgets.attach(label, 0, 1, y, y + 1, xoptions=0, yoptions=0)
-                widgets.attach(widget, 1, 2, y, y + 1, yoptions=0)
                 widget.setWidgetValue(getattr(self.settings, attrname))
                 widget.connectValueChanged(self._valueChanged, widget,
                     attrname)
                 self.widgets[attrname] = widget
+                prefs[label] = (label_widget, widget)
+
+            # Sort widgets: I think we only want to sort by the non-localized
+            # names, so options appear in the same place across locales ...
+            # but then I may be wrong
+
+            for y, unlocalized in enumerate(sorted(prefs)):
+                label, widget = prefs[unlocalized]
+                label.set_alignment(1.0, 0.5)
+                widgets.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=0)
+                widgets.attach(widget, 1, 2, y, y + 1, yoptions=0)
                 label.show()
                 widget.show()
+
             self.contents.pack_start(widgets, True, True)
+
         self.treeview.get_selection().select_path((0,))
 
     def _treeSelectionChangedCb(self, selection):
