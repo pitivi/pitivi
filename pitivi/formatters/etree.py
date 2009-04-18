@@ -426,31 +426,6 @@ class ElementTreeFormatter(Formatter):
         root.append(timeline_element)
         return root
 
-    def _loadProject(self, element):
-        factories_element = element.find("factories")
-        factories = self._loadFactories(factories_element)
-
-        timeline_element = element.find("timeline")
-        timeline = self._loadTimeline(timeline_element)
-
-        project = Project()
-        project.timeline = timeline
-
-        # FIXME: the default- and max- duration properties of factories are
-        # *not* restored here, so adding objects to the timeline after loading
-        # a files produces objects of 0 duration
-
-        for factory in factories:
-            if isinstance(factory, SourceFactory):
-                timeline.addSourceFactory(factory)
-            else:
-                raise NotImplementedError()
-
-        # TODO: restore project settings
-        # TODO: restore scroll, playhead, and zoom ratio
-
-        return project
-
     ## Formatter method implementations
 
     def _saveProject(self, project, location):
