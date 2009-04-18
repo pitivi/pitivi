@@ -113,6 +113,7 @@ class Pitivi(object, Loggable, Signallable):
         instance.PiTiVi = self
 
         self.projects = []
+        self.current = None
 
         # get settings
         self.settings = GlobalSettings()
@@ -122,13 +123,9 @@ class Pitivi(object, Loggable, Signallable):
         self.plugin_manager = PluginManager(
             self.settings.get_local_plugin_path(),
             self.settings.get_plugin_settings_path())
-
-        # FIXME: don't assume the user wishes to create  the default project
-        # class
-        self.current = Project(_("New Project"))
         self.effects = Magician()
-
         self.deviceprobe = get_probe()
+        self.newBlankProject()
 
     #{ Project-related methods
 
@@ -217,6 +214,20 @@ class Pitivi(object, Loggable, Signallable):
             project = Project(_("New Project"))
             self.emit("new-project-loading", project)
             self.current = project
+
+            from pitivi.stream import AudioStream, VideoStream
+            import gst
+            from pitivi.timeline.track import Track
+
+            # FIXME: this should not be hard-coded
+            # add default tracks for a new project
+            video = VideoStream(gst.Caps('video/x-raw-rgb; video/x-raw-yuv'))
+            track = Track(video)
+            project.timeline.addTrack(track)
+            audio = AudioStream(gst.Caps('audio/x-raw-int; audio/x-raw-float'))
+            track = Track(audio)
+            project.timeline.addTrack(track)
+
             self.emit("new-project-loaded", self.current)
 
     #{ Shutdown methods

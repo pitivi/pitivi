@@ -102,14 +102,7 @@ class Project(object, Signallable, Loggable):
 
         self.timeline = Timeline()
 
-        # FIXME: the tracks should be loaded from the settings
-        video = VideoStream(gst.Caps('video/x-raw-rgb; video/x-raw-yuv'))
-        track = Track(video)
-        self.timeline.addTrack(track)
-        audio = AudioStream(gst.Caps('audio/x-raw-int; audio/x-raw-float'))
-        track = Track(audio)
-        self.timeline.addTrack(track)
-
+        
         self.factory = TimelineSourceFactory(self.timeline)
         self.pipeline = Pipeline()
         self.view_action = ViewAction()
