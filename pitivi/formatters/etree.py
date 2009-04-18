@@ -136,6 +136,8 @@ class ElementTreeFormatter(Formatter):
         element = Element("source")
         element.attrib["id"] = self._new_element_id()
         element.attrib["type"] = qual(factory.__class__)
+        element.attrib["default_duration"] = str(factory.default_duration)
+        element.attrib["duration"] = str(factory.duration)
 
         input_streams_element = SubElement(element, "input-streams")
         input_streams = factory.getInputStreams()
@@ -160,6 +162,9 @@ class ElementTreeFormatter(Formatter):
             factory = FileSourceFactory(element.attrib["filename"])
         else:
             factory = klass()
+
+        factory.duration = long(element.attrib["duration"])
+        factory.default_duration = long(element.attrib["default_duration"])
 
         input_streams = element.find("input-streams") or []
         for stream_element in input_streams:
