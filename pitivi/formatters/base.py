@@ -151,6 +151,7 @@ class Formatter(object, Signallable, Loggable):
             self.project.sources.addUris(uris)
 
         # finally return the project.
+        self.project.uri = location
         return self.project
 
     def saveProject(self, project, location, overwrite=False):

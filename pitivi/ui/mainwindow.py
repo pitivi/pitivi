@@ -550,7 +550,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _saveProjectAsCb(self, unused_action):
         uri = self._showSaveAsDialog(self.app.current)
         if uri:
-            self.app.current.save(uri)
+            self.project.save(uri, overwrite=True)
+            self.project.uri = uri
 
     def _projectSettingsCb(self, unused_action):
         from projectsettings import ProjectSettingsDialog
