@@ -382,6 +382,8 @@ class ElementTreeFormatter(Formatter):
     def _loadTimeline(self, element):
         self.debug("element:%r", element)
 
+        timeline = self.project.timeline
+
         # Tracks
         tracks_element = element.find("tracks")
         tracks = self._loadTracks(tracks_element)
@@ -391,9 +393,6 @@ class ElementTreeFormatter(Formatter):
         timeline_objects = \
                 self._loadTimelineObjects(timeline_objects_element)
 
-        # NOTE: the tracks here are already populated with track objects.
-        # the UI does not get any track-object-added signals
-        timeline = Timeline()
         for track in tracks:
             timeline.addTrack(track)
 
@@ -448,7 +447,7 @@ class ElementTreeFormatter(Formatter):
 
     def _fillTimeline(self):
         # fill up self.project
-        self.project.timeline = self._loadTimeline(self.timelinenode)
+        self._loadTimeline(self.timelinenode)
 
     @classmethod
     def canHandle(cls, uri):
