@@ -353,18 +353,24 @@ class TestFormatterLoad(TestCase):
         self.failUnless(ret is tag)
 
     def testLoadTrackObject(self):
+        # create fake document tree
         element = Element("track-object",
                 type="pitivi.timeline.track.SourceTrackObject",
                 start=ts(1 * gst.SECOND), duration=ts(10 * gst.SECOND),
                 in_point=ts(5 * gst.SECOND),
-                media_duration=ts(15 * gst.SECOND), priority=ts(5))
-        factory = VideoTestSourceFactory()
-        self.formatter._context.factories["1"] = factory
-        stream = VideoStream(gst.Caps("meh"))
-        self.formatter._context.streams["1"] = stream
+                media_duration=ts(15 * gst.SECOND), priority=ts(5), id="1")
         factory_ref = SubElement(element, "factory-ref", id="1")
         stream_ref = SubElement(element, "stream-ref", id="1")
 
+        # insert our fake factory into the context
+        factory = VideoTestSourceFactory()
+        self.formatter._context.factories["1"] = factory
+
+        # insert fake stream into the context
+        stream = VideoStream(gst.Caps("meh"))
+        self.formatter._context.streams["1"] = stream
+
+        # point gun at foot; pull trigger
         track_object = self.formatter._loadTrackObject(element)
         self.failUnless(isinstance(track_object, SourceTrackObject))
         self.failUnlessEqual(track_object.factory, factory)
@@ -386,6 +392,7 @@ class TestFormatterLoad(TestCase):
         self.failUnless(ret is tag)
 
     def testLoadTrack(self):
+        # create fake document tree
         element = Element("track")
         stream_element = SubElement(element, "stream", id="1",
                 type="pitivi.stream.VideoStream", caps="video/x-raw-rgb")
@@ -395,14 +402,17 @@ class TestFormatterLoad(TestCase):
                 type="pitivi.timeline.track.SourceTrackObject",
                 start=ts(1 * gst.SECOND), duration=ts(10 * gst.SECOND),
                 in_point=ts(5 * gst.SECOND),
-                media_duration=ts(15 * gst.SECOND), priority=ts(5))
+                media_duration=ts(15 * gst.SECOND), priority=ts(5), id="1")
+        factory_ref = SubElement(track_object, "factory-ref", id="1")
+        stream_ref = SubElement(track_object, "stream-ref", id="1")
+
+        # insert fake factories and streams into current context
         factory = VideoTestSourceFactory()
         self.formatter._context.factories["1"] = factory
         stream = VideoStream(gst.Caps("video/x-raw-rgb"))
         self.formatter._context.streams["1"] = stream
-        factory_ref = SubElement(track_object, "factory-ref", id="1")
-        stream_ref = SubElement(track_object, "stream-ref", id="1")
 
+        # point gun at foot; pull trigger
         track = self.formatter._loadTrack(element)
 
         self.failUnlessEqual(len(track.track_objects), 2)
@@ -429,30 +439,24 @@ class TestFormatterLoad(TestCase):
         self.failUnlessEqual(len(timeline_object.track_objects), 1)
 
     def testLoadTimeline(self):
+        # we need a project for this to work
+        self.formatter.project = Project()
+
+        # create fake document tree
         timeline_element = Element("timeline")
+
         tracks_element = SubElement(timeline_element, "tracks")
         track_element = SubElement(tracks_element, "track")
         stream_element = SubElement(track_element, "stream", id="1",
                 type="pitivi.stream.VideoStream", caps="video/x-raw-rgb")
-
         track_objects_element = SubElement(track_element, "track-objects")
         track_object = SubElement(track_objects_element, "track-object",
                 type="pitivi.timeline.track.SourceTrackObject",
                 start=ts(1 * gst.SECOND), duration=ts(10 * gst.SECOND),
                 in_point=ts(5 * gst.SECOND),
-                media_duration=ts(15 * gst.SECOND), priority=ts(5))
-        factory = VideoTestSourceFactory()
-        self.formatter._context.factories["1"] = factory
-        stream = VideoStream(gst.Caps("video/x-raw-rgb"))
-        self.formatter._context.streams["1"] = stream
+                media_duration=ts(15 * gst.SECOND), priority=ts(5), id="1")
         factory_ref = SubElement(track_object, "factory-ref", id="1")
         stream_ref = SubElement(track_object, "stream-ref", id="1")
-
-        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
-        source1 = VideoTestSourceFactory()
-        self.formatter._context.factories["2"] = source1
-        self.formatter._context.track_objects["1"] = SourceTrackObject(source1, video_stream)
-
         timeline_objects_element = SubElement(timeline_element,
                 "timeline-objects")
         timeline_object_element = \
@@ -462,8 +466,21 @@ class TestFormatterLoad(TestCase):
         track_object_refs = SubElement(timeline_object_element, "track-object-refs")
         track_object_ref = SubElement(track_object_refs,
                 "track-object-ref", id="1")
-        timeline = self.formatter._loadTimeline(timeline_element)
-        self.failUnlessEqual(len(timeline.tracks), 1)
+
+        # insert fake streams and factories into context
+        factory = VideoTestSourceFactory()
+        self.formatter._context.factories["1"] = factory
+        stream = VideoStream(gst.Caps("video/x-raw-rgb"))
+        self.formatter._context.streams["1"] = stream
+        video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        source1 = VideoTestSourceFactory()
+        self.formatter._context.factories["2"] = source1
+        self.formatter._context.track_objects["1"] = SourceTrackObject(source1, video_stream)
+
+
+        # point gun at foot; pull trigger
+        self.formatter._loadTimeline(timeline_element)
+        self.failUnlessEqual(len(self.formatter.project.timeline.tracks), 1)
 
     def testLoadProject(self):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
