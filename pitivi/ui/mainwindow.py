@@ -656,7 +656,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.prefsdialog = PreferencesDialog(self.app)
             self.prefsdialog.set_transient_for(self)
             self.prefsdialog.connect("delete-event", self._hideChildWindow)
-            self.prefsdialog.set_default_size(400, 300)
         self.prefsdialog.show()
 
     def rewind(self, unused_action):

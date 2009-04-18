@@ -28,6 +28,16 @@ from gettext import gettext as _
 import pitivi.ui.dynamic as dynamic
 from pitivi.settings import GlobalSettings
 
+GlobalSettings.addConfigOption('prefsDialogWidth',
+    section = "user-interface",
+    key = "prefs-dialog-width",
+    default = 400)
+
+GlobalSettings.addConfigOption('prefsDialogHeight',
+    section = "user-interface",
+    key = "prefs-dialog-height",
+    default = 300)
+
 class PreferencesDialog(gtk.Window):
 
     prefs = {}
@@ -42,11 +52,13 @@ class PreferencesDialog(gtk.Window):
         self._createUi()
         self._fillContents()
 
-
     def _createUi(self):
         self.set_title(_("Preferences"))
         self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
         self.set_border_width(12)
+        self.connect("configure-event", self._configureCb)
+        self.set_default_size(self.settings.prefsDialogWidth,
+            self.settings.prefsDialogHeight)
 
         # basic layout
         vbox = gtk.VBox()
@@ -72,6 +84,8 @@ class PreferencesDialog(gtk.Window):
         scrolled = gtk.ScrolledWindow()
         scrolled.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
         scrolled.add(self.treeview)
+        scrolled.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        self.treeview.props.headers_visible = False
         self.treeview.show()
         pane.pack1(scrolled)
         scrolled.show()
@@ -336,6 +350,10 @@ class PreferencesDialog(gtk.Window):
         if value is not None:
             value = type(value)(real_widget.getWidgetValue())
         setattr(self.settings, attrname, value)
+
+    def _configureCb(self, unused_widget, event):
+        self.settings.prefsDialogWidth = event.width
+        self.settings.prefsDialogHeight = event.height
 
 ## Preference Test Cases
 
