@@ -157,7 +157,7 @@ class RandomAccessPreviewer(Previewer):
         # bin = factory.makeBin(stream_)
         uri = factory.uri
         caps = stream_.caps
-        bin = SingleDecodeBin(uri=uri, caps=caps)
+        bin = SingleDecodeBin(uri=uri, caps=caps, stream=stream_)
 
         # assume 50 pixel height
         self.theight = 50
