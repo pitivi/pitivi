@@ -94,6 +94,7 @@ class ElementTreeFormatter(Formatter):
         element.attrib["id"] = self._new_element_id()
         element.attrib["type"] = qual(stream.__class__)
         element.attrib["caps"] = str(stream.caps)
+        element.attrib["name"] = str(stream.pad_name)
 
         self._context.streams[stream] = element
 
@@ -104,7 +105,7 @@ class ElementTreeFormatter(Formatter):
         klass = namedAny(element.attrib["type"])
         caps = gst.Caps(element.attrib["caps"])
 
-        stream = klass(caps)
+        stream = klass(caps, element.attrib.get("name", None))
 
         self._context.streams[id_] = stream
 
