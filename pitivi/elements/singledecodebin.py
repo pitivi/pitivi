@@ -25,7 +25,7 @@ Single-stream queue-less decodebin
 
 import gobject
 import gst
-from pitivi.stream import get_pad_id
+from pitivi.stream import get_pad_id, pad_compatible_stream
 
 def is_raw(caps):
     """ returns True if the caps are RAW """
@@ -58,7 +58,6 @@ class SingleDecodeBin(gst.Bin):
         )
     def __init__(self, caps=None, uri=None, stream=None, *args, **kwargs):
         gst.Bin.__init__(self, *args, **kwargs)
-
         if not caps:
             caps = gst.caps_new_any()
         self.caps = caps
@@ -87,6 +86,8 @@ class SingleDecodeBin(gst.Bin):
         self._validelements = [] #added elements
 
         self._factories = self._getSortedFactoryList()
+
+        self.debug("stream:%r" % self.stream)
 
 
     ## internal methods
@@ -247,9 +248,14 @@ class SingleDecodeBin(gst.Bin):
             self.log("type is not know yet, waiting")
             return
 
+        self.debug("stream %r" % (self.stream))
         if caps.intersect(self.caps) and (self.stream is None or
-                (self.stream.pad_id == get_pad_id(pad))):
+                (self.stream.pad_name == get_pad_id(pad))):
             # This is the desired caps
+            if not self._srcpad:
+                self._wrapUp(element, pad)
+        elif is_raw(caps) and pad_compatible_stream(pad, self.stream):
+            self.log ("not the target stream, but compatible")
             if not self._srcpad:
                 self._wrapUp(element, pad)
         elif is_raw(caps):
