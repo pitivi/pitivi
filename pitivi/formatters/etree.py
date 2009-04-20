@@ -423,7 +423,7 @@ class ElementTreeFormatter(Formatter):
     def _serializeProject(self, project):
         root = self._saveMainTag()
 
-        factories = project.sources.sources.values()
+        factories = project.sources.getSources()
         factories_element = self._saveFactories(factories)
         root.append(factories_element)
 
