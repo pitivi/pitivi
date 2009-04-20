@@ -331,6 +331,8 @@ class TestFormatterLoad(TestCase):
         element = Element("source")
         element.attrib["id"] = "1"
         element.attrib["type"] = "pitivi.factories.test.VideoTestSourceFactory"
+        element.attrib["duration"] = 5 * gst.SECOND
+        element.attrib["default_duration"] = 5 * gst.SECOND
         output_streams = SubElement(element, "output-streams")
         output_stream = SubElement(output_streams, "stream")
         caps = gst.Caps("video/x-raw-yuv")
@@ -343,6 +345,8 @@ class TestFormatterLoad(TestCase):
         self.failUnlessEqual(len(factory.output_streams), 2)
 
         self.failUnlessEqual(self.formatter._context.factories["1"], factory)
+        self.failUnlessEqual(factory.duration, 5 * gst.SECOND)
+        self.failUnlessEqual(factory.default_duration, 5 * gst.SECOND)
 
     def testLoadFactoryRef(self):
         class Tag(object): pass
