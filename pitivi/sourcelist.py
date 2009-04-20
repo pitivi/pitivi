@@ -36,6 +36,8 @@ class SourceList(object, Signallable, Loggable):
     @type project: L{Project}
     @ivar discoverer: The discoverer used
     @type discoverer: L{Discoverer}
+    @ivar sources: The sources
+    @type sources: Dictionnary of uri => factory
 
     Signals:
      - C{file_added} : A file has been completely discovered and is valid.
@@ -61,6 +63,7 @@ class SourceList(object, Signallable, Loggable):
         self.log("new sourcelist for project %s", project)
         self.project = project
         self.sources = {}
+        self._sourceindex = []
         self.tempsources = {}
         self.discoverer = Discoverer()
         self.discoverer.connect("not_media_file", self._notMediaFileCb)
@@ -77,6 +80,7 @@ class SourceList(object, Signallable, Loggable):
     def __delitem__(self, uri):
         try:
             self.sources.__delitem__(uri)
+            self._sourceindex.__delitem__(uri)
         except KeyError:
             pass
         else:
@@ -149,7 +153,18 @@ class SourceList(object, Signallable, Loggable):
         if uri in self and self[uri]:
             raise Exception("We already have an objectfactory for uri %s", uri)
         self.sources[uri] = factory
+        self._sourceindex.append(uri)
         self.emit("file_added", factory)
+
+    def getSources(self):
+        """ Returns the list of sources used.
+
+        The list will be ordered by the order in which they were added
+        """
+        res = []
+        for i in self._sourceindex:
+            res.append(self[i])
+        return res
 
     def _finishedAnalyzingCb(self, unused_discoverer, factory):
         # callback from finishing analyzing factory
