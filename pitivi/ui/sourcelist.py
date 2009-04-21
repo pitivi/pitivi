@@ -657,9 +657,14 @@ class SourceList(gtk.VBox, Loggable):
         self.storemodel.clear()
         self._connectToProject(project)
         # synchronize the storemodel with the new project's sourcelist
-        for uri, factory in project.sources:
-            self.log("loading uri %s", uri)
-            self._addFactory(factory)
+        if project.loaded:
+            for uri, factory in project.sources:
+                self.log("loading uri %s", uri)
+                self._addFactory(factory)
+        else:
+            if not self.infostub.showing:
+                self.pack_start(self.infostub, expand=False)
+                self.infostub.startingImport()
 
     def _newProjectFailedCb(self, unused_pitivi, unused_reason,
         unused_uri):
