@@ -658,7 +658,7 @@ class TimelineEdges(object):
         self.edges = []
         self.by_start = {}
         self.by_end = {}
-        self.by_either = {}
+        self.by_time = {}
 
     def addTimelineObject(self, timeline_object):
         """
@@ -688,8 +688,8 @@ class TimelineEdges(object):
         self.addEnd(end)
         self.by_start[start].append(track_object)
         self.by_end[end].append(track_object)
-        self.by_either[start].append(track_object)
-        self.by_either[end].append(track_object)
+        self.by_time[start].append(track_object)
+        self.by_time[end].append(track_object)
 
     def removeTrackObject(self, track_object):
         start = track_object.start
@@ -714,10 +714,10 @@ class TimelineEdges(object):
             self.by_end[end] = []
 
     def addEdge(self, edge):
-         if edge not in self.by_either:
+         if edge not in self.by_time:
             index = bisect_right(self.edges, edge)
             self.edges.insert(index, edge)
-            self.by_either[edge] = []
+            self.by_time[edge] = []
 
     def removeStartEnd(self, start, end=None):
         """
@@ -781,6 +781,28 @@ class TimelineEdges(object):
         closest, diff, index = closest_item(self.edges, position)
         return self.edges[max(0, index - 2)], self.edges[min(
             len(self.edges) - 1, index + 1)]
+
+    def getObjsIncidentOnTime(self, time):
+        """Return a list of all track objects whose start or end (start +
+        duration) are exactly equal to a given time"""
+        if time in self.by_time:
+            return self.by_time[time]
+        return []
+
+    def getObjsAdjacentToStart(self, trackobj):
+        """Return a list of all track objects whose ends (start + duration)
+        are equal to the given track object's start"""
+        end = trackobj.start + trackobj.duration
+        if end in self.by_end:
+            return self.by_end[end]
+        return []
+
+    def getObjsAdjacentToEnd(self, trackobj):
+        """Return a list of all track objects whose start property are
+        adjacent to the given track object's end (start + duration)"""
+        if trackobj.start in self.by_start:
+            return self.by_start[trackobj.start]
+        return []
 
 
 class Timeline(Signallable, Loggable):
