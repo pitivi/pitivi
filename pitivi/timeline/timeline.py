@@ -536,6 +536,8 @@ class Timeline(object ,Signallable, Loggable):
             if len(stream_map) < len(output_streams):
                 # we couldn't assign each stream to a track automatically,
                 # error out and require the caller to pass a stream_map
+                self.error("Couldn't find a complete stream mapping (self:%d < factory:%d)",
+                           len(stream_map), len(output_streams))
                 raise TimelineError()
 
         timeline_object = TimelineObject(factory)
@@ -561,6 +563,7 @@ class Timeline(object ,Signallable, Loggable):
             track = self._getTrackForFactoryStream(factory,
                     output_stream, mapped_tracks)
             if track is None:
+                self.debug("no track found for stream %s", output_stream)
                 # couldn't find a track for this stream
                 continue
 
@@ -573,9 +576,16 @@ class Timeline(object ,Signallable, Loggable):
         return stream_map
 
     def _getTrackForFactoryStream(self, factory, stream, mapped_tracks):
+        self.debug("factory:%r, stream:%s", factory, stream)
         for track in self.tracks:
-            if track not in mapped_tracks and track.stream.isCompatible(stream):
-                return track
+            if track not in mapped_tracks:
+                self.debug("track.stream:%s", track.stream)
+                if track.stream.isCompatible(stream):
+                    return track
+                else:
+                    self.debug("Stream not compatible")
+            else:
+                self.debug("Track already present in mapped_tracks")
 
         return None
 
