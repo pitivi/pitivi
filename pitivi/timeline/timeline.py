@@ -23,6 +23,7 @@
 import gst
 
 from pitivi.signalinterface import Signallable
+from pitivi.log.loggable import Loggable
 from pitivi.utils import UNKNOWN_DURATION, closest_item, PropertyChangeTracker
 from pitivi.timeline.track import Track, SourceTrackObject, TrackError
 from bisect import bisect_right
@@ -34,7 +35,7 @@ UNSELECT = 1
 class TimelineError(Exception):
     pass
 
-class TimelineObject(object, Signallable):
+class TimelineObject(object, Signallable, Loggable):
     __signals__ = {
         'start-changed': ['start'],
         'duration-changed': ['duration'],
@@ -52,6 +53,7 @@ class TimelineObject(object, Signallable):
     DEFAULT_PRIORITY = 0
 
     def __init__(self, factory):
+        Loggable.__init__(self)
         self.factory = factory
         self.track_objects = []
         self.timeline = None
@@ -438,7 +440,7 @@ class TimelineEdges(object):
             len(self.edges) - 1, index + 1)]
 
 
-class Timeline(object ,Signallable):
+class Timeline(object ,Signallable, Loggable):
     __signals__ = {
         'duration-changed': ['duration'],
         'track-added': ['track'],
@@ -447,6 +449,7 @@ class Timeline(object ,Signallable):
     }
 
     def __init__(self):
+        Loggable.__init__(self)
         self.tracks = []
         self.selections = []
         self.timeline_objects = []
@@ -492,6 +495,7 @@ class Timeline(object ,Signallable):
         self.emit('track-removed', track)
 
     def addTimelineObject(self, obj):
+        self.debug("obj:%r", obj)
         if obj.timeline is not None:
             raise TimelineError()
 
@@ -522,6 +526,7 @@ class Timeline(object ,Signallable):
                 track.removeTrackObject(track_object)
 
     def addSourceFactory(self, factory, stream_map=None):
+        self.debug("factory:%r", factory)
         output_streams = factory.getOutputStreams()
         if not output_streams:
             raise TimelineError()
@@ -546,6 +551,7 @@ class Timeline(object ,Signallable):
         return timeline_object
 
     def getSourceFactoryStreamMap(self, factory):
+        self.debug("factory:%r", factory)
         mapped_tracks = []
         timeline_object = TimelineObject(factory)
 
