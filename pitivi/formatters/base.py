@@ -312,6 +312,7 @@ class Formatter(object, Signallable, Loggable):
     #}
 
     def _sourcesReadyCb(self, sources):
+        self.debug("Sources inspected, calling fillTimeline")
         self._fillTimeline()
         self.project.loaded = True
         Project.emit(self.project, 'loaded')
