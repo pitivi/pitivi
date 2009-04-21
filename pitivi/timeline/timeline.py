@@ -361,6 +361,7 @@ class TimelineObject(Signallable, Loggable):
             # if self is not yet in a timeline, the caller needs to add "other"
             # as well when it adds self
             self.timeline.addTimelineObject(other)
+            self.timeline.rebuildEdges()
 
         self.emit('duration-changed', self.duration)
 
@@ -655,6 +656,9 @@ class TimelineEdges(object):
     """
     def __init__(self):
         self.edges = []
+        self.by_start = {}
+        self.by_end = {}
+        self.by_either = {}
 
     def addTimelineObject(self, timeline_object):
         """
@@ -678,34 +682,43 @@ class TimelineEdges(object):
              self.removeTrackObject(obj)
 
     def addTrackObject(self, track_object):
-        self.addStartEnd(track_object.start,
-            track_object.start + track_object.duration)
+        start = track_object.start
+        end = track_object.start + track_object.duration
+        self.addStart(start)
+        self.addEnd(end)
+        self.by_start[start].append(track_object)
+        self.by_end[end].append(track_object)
+        self.by_either[start].append(track_object)
+        self.by_either[end].append(track_object)
 
     def removeTrackObject(self, track_object):
-        self.removeStartEnd(track_object.start,
-            track_object.start + track_object.duration)
+        start = track_object.start
+        end = track_object.start + track_object.duration
 
-    def addStartEnd(self, start, end=None):
-        """
-        Add the given start/end values to the list of edges being tracked.
+        self.by_start[start].remove(track_object)
+        self.by_end[end].remove(track_object)
+        if not self.by_start[start]:
+            if not self.by_end[end]:
+                self.removeStartEnd(start, end)
+            else:
+                self.removeStartEnd(start)
 
-        @param start: A start position to track.
-        @type start: L{long}
-        @param end: A stop position to track.
-        @type end: L{long}
-        """
-        # Only allow one instance of any particular edge.  Since bisect right
-        # returns the index *after* any previous element in the list, we check
-        # to see whether the previous index already contains the item we are
-        # looking for. 
-        index = bisect_right(self.edges, start)
-        if (len(self.edges) == 0) or (self.edges[index - 1] != start):
-            self.edges.insert(index, start)
-        if end is not None:
-            index = bisect_right(self.edges, end, index)
-            if (len(self.edges) == 0) or (self.edges[index - 1] != end):
-                self.edges.insert(index, end)
- 
+    def addStart(self, start):
+        self.addEdge(start)
+        if start not in self.by_start:
+            self.by_start[start] = []
+
+    def addEnd(self, end):
+        if end not in self.by_end:
+            self.addEdge(end)
+            self.by_end[end] = []
+
+    def addEdge(self, edge):
+         if edge not in self.by_either:
+            index = bisect_right(self.edges, edge)
+            self.edges.insert(index, edge)
+            self.by_either[edge] = []
+
     def removeStartEnd(self, start, end=None):
         """
         Remove the given start/end values from the list of edges being tracked.
@@ -907,7 +920,6 @@ class Timeline(Signallable, Loggable):
 
         obj.timeline = None
         self.rebuildEdges()
-        #self.edges.removeTimelineObject(obj)
 
         self.emit("timeline-object-removed", obj)
 
