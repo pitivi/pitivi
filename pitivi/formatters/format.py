@@ -101,7 +101,11 @@ def list_formats():
     sequence of extensions for this format ('.' omitted).
     """
     from pitivi.formatters.etree import ElementTreeFormatter
-    return [(ElementTreeFormatter, "PiTiVi Native (XML)", ('xptv',))]
+    from pitivi.formatters.playlist import PlaylistFormatter
+    return [
+        (ElementTreeFormatter, "PiTiVi Native (XML)", ('xptv',)),
+        (PlaylistFormatter, "Playlist format", ('pls', ))
+        ]
 
 def get_formatter_for_uri(uri):
     """
