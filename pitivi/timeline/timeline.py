@@ -686,12 +686,19 @@ class TimelineEdges(object):
         @param end: A stop position to track.
         @type end: L{long}
         """
+        # Only allow one instance of any particular edge.  Since bisect right
+        # returns the index *after* any previous element in the list, we check
+        # to see whether the previous index already contains the item we are
+        # looking for. 
         index = bisect_right(self.edges, start)
-        self.edges.insert(index, start)
+        if (len(self.edges) == 0) or (self.edges[index - 1] != start):
+            self.edges.insert(index, start)
         if end is not None:
             index = bisect_right(self.edges, end, index)
-            self.edges.insert(index, end)
-
+            if (len(self.edges) == 0) or (self.edges[index - 1] != end):
+                self.edges.insert(index, end)
+        print self.edges, start, end
+ 
     def removeStartEnd(self, start, end=None):
         """
         Remove the given start/end values from the list of edges being tracked.
