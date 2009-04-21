@@ -280,23 +280,29 @@ class Formatter(object, Signallable, Loggable):
         returned.
         @rtype: C{URI} or C{None}
         """
+        self.debug("uri:%s", uri)
         if not uri_is_valid(uri):
+            self.warning("invalid URI")
             return None
 
         # skip non local uri
         if not uri.split('://', 1)[0] in ["file"]:
+            self.warning("We can only handle file:// URI")
             return uri
 
         # first check the good old way
-        if not uri_is_valid(uri) or not uri_is_reachable(uri):
-            return None
+        if uri_is_valid(uri) and uri_is_reachable(uri):
+            self.debug("URI is reachable")
+            return uri
+
+        self.debug("URI might have moved...")
 
         localpath = uri.split('://', 1)[1]
 
         # else let's figure out if we have a compatible mapping
         for k, v in self.directorymapping.iteritems():
             if localpath.startswith(k):
-                return localpath.replace(k, v, 1)
+                return uri.replace(k, v, 1)
 
         # else, let's fire the signal...
         self.emit('missing-uri', uri)
@@ -304,7 +310,7 @@ class Formatter(object, Signallable, Loggable):
         # and check again
         for k, v in self.directorymapping.iteritems():
             if localpath.startswith(k):
-                return localpath.replace(k, v, 1)
+                return uri.replace(k, v, 1)
 
         # Houston, we have lost contact with mission://fail
         return None

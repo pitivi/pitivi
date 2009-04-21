@@ -199,6 +199,8 @@ def filter_(caps):
 def uri_is_valid(uri):
     """Checks if the given uri is a valid uri (of type file://)
 
+    Will also check if the size is valid (> 0).
+
     @param uri: The location to check
     @type uri: C{URI}
     """

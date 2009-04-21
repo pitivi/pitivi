@@ -159,10 +159,13 @@ class ElementTreeFormatter(Formatter):
     def _loadObjectFactory(self, klass, element):
         self.debug("klass:%r, element:%r", klass, element)
         # FIXME
+        filename = self.validateSourceURI(element.attrib.get("filename", None))
+        if not filename:
+            return None
         if issubclass(klass, FileSourceFactory):
-            factory = FileSourceFactory(element.attrib["filename"])
+            factory = FileSourceFactory(filename)
         else:
-            factory = klass()
+            factory = klass(filename)
 
         factory.duration = long(element.attrib["duration"])
         factory.default_duration = long(element.attrib["default_duration"])
@@ -207,7 +210,9 @@ class ElementTreeFormatter(Formatter):
     def _loadFactories(self, factories, klass):
         res = []
         for fact in factories:
-            res.append(self._loadObjectFactory(klass, fact))
+            obj = self._loadObjectFactory(klass, fact)
+            if obj:
+                res.append(obj)
         return res
 
     def _loadSources(self):

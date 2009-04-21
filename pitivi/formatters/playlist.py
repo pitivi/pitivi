@@ -48,7 +48,10 @@ class PlaylistFormatter(LoadOnlyFormatter):
         # simple list of location/uri
         f = file(path)
         for ln in f.readlines():
-            res.append(self._parseLine(ln))
+            val = self.validateSourceURI(self._parseLine(ln))
+            # FIXME : if the loading failed, we should insert a blank source
+            if val:
+                res.append(val)
         self._uris = res
 
     def _getSources(self):
