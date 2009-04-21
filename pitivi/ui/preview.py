@@ -86,12 +86,14 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 
     def do_simple_update(self, cr):
         cr.identity_matrix()
-        self.bounds = goocanvas.Bounds(0, 0,
+        if self.element.factory:
+            self.bounds = goocanvas.Bounds(0, 0,
             Zoomable.nsToPixel(self.element.duration), self.height)
 
     def do_simple_paint(self, cr, bounds):
         cr.identity_matrix()
-        self.previewer.render_cairo(cr, intersect(self.bounds, bounds),
+        if self.element.factory:
+            self.previewer.render_cairo(cr, intersect(self.bounds, bounds),
             self.element, self.bounds.y1)
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
