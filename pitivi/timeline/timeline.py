@@ -663,8 +663,8 @@ class TimelineEdges(object):
         @param timeline_object: The object whose start/stop we want to track.
         @type timeline_object: L{TimelineObject}
         """
-        self.addStartEnd(timeline_object.start,
-                timeline_object.start + timeline_object.duration)
+        for obj in timeline_object.track_objects:
+            self.addTrackObject(obj)
 
     def removeTimelineObject(self, timeline_object):
         """
@@ -674,8 +674,16 @@ class TimelineEdges(object):
         to track.
         @type timeline_object: L{TimelineObject}
         """
-        self.removeStartEnd(timeline_object.start,
-                timeline_object.start + timeline_object.duration)
+        for obj in timeline_object.track_objects:
+             self.removeTrackObject(obj)
+
+    def addTrackObject(self, track_object):
+        self.addStartEnd(track_object.start,
+            track_object.start + track_object.duration)
+
+    def removeTrackObject(self, track_object):
+        self.removeStartEnd(track_object.start,
+            track_object.start + track_object.duration)
 
     def addStartEnd(self, start, end=None):
         """
@@ -697,7 +705,6 @@ class TimelineEdges(object):
             index = bisect_right(self.edges, end, index)
             if (len(self.edges) == 0) or (self.edges[index - 1] != end):
                 self.edges.insert(index, end)
-        print self.edges, start, end
  
     def removeStartEnd(self, start, end=None):
         """
