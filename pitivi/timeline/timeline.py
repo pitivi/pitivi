@@ -280,20 +280,8 @@ class TimelineObject(object, Signallable, Loggable):
             raise TimelineError()
 
 class Selection(object):
-    def __init__(self):
-        self.timeline_objects = set([])
 
-    def addTimelineObject(self, timeline_object):
-        if timeline_object in self.timeline_objects:
-            raise TimelineError()
-
-        self.timeline_objects.add(timeline_object)
-
-    def removeTimelineObject(self, timeline_object):
-        try:
-            self.timeline_objects.remove(timeline_object)
-        except KeyError:
-            raise TimelineError()
+    pass
 
 class LinkEntry(object):
     def __init__(self, start, duration):
@@ -308,9 +296,10 @@ class LinkPropertyChangeTracker(PropertyChangeTracker):
 
     property_names = ('start', 'duration')
 
-class Link(Selection):
+class Link(object):
+
     def __init__(self):
-        Selection.__init__(self)
+        self.timeline_objects = set([])
         self.property_trackers = {}
         self.waiting_update = []
         self.earliest_object = None
@@ -320,7 +309,10 @@ class Link(Selection):
         if timeline_object.link is not None:
             raise TimelineError()
 
-        Selection.addTimelineObject(self, timeline_object)
+        if timeline_object in self.timeline_objects:
+            raise TimelineError()
+
+        self.timeline_objects.add(timeline_object)
 
         tracker = LinkPropertyChangeTracker(timeline_object)
         self.property_trackers[timeline_object] = tracker
@@ -336,7 +328,10 @@ class Link(Selection):
             self.earliest_start = timeline_object.start
 
     def removeTimelineObject(self, timeline_object):
-        Selection.removeTimelineObject(self, timeline_object)
+        try:
+            self.timeline_objects.remove(timeline_object)
+        except KeyError:
+            raise TimelineError()
 
         tracker = self.property_trackers.pop(timeline_object)
         tracker.disconnect_by_function(self._startChangedCb)
@@ -379,7 +374,6 @@ class Link(Selection):
 
         else:
             self.waiting_update.remove(timeline_object)
-
 
 class TimelineEdges(object):
     def __init__(self):
