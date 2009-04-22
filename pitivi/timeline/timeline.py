@@ -289,14 +289,13 @@ class Selection(object, Signallable):
 
     def setTo(self, selection, mode):
         old_selection = self.selected
-        if mode == SELECT:
-            self.selected = selection
-        elif mode == SELECT_ADD:
-            self.selected.update(selection)
+        if mode == SELECT_ADD:
+            selection = self.selected | selection
         elif mode == UNSELECT:
-            self.selected.difference(selection)
+            selection = self.selected - selection
+        self.selected = selection
 
-        for obj in self.selected:
+        for obj in self.selected - old_selection:
             obj.selected = True
         for obj in old_selection - self.selected:
             obj.selected = False

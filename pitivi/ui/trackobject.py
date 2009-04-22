@@ -11,6 +11,7 @@ from view import View
 import controller
 from zoominterface import Zoomable
 from pitivi.timeline.track import TrackError
+from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT
 from preview import Preview
 import gst
 from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
@@ -164,11 +165,11 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             self._mousedown = Point(self._mousedown[0], 0)
 
         def click(self, pos):
-            mode = 0
+            mode = SELECT
             if self._last_event.get_state() & gtk.gdk.SHIFT_MASK:
-                mode = 1
+                mode = SELECT_ADD
             elif self._last_event.get_state() & gtk.gdk.CONTROL_MASK:
-                mode = 2
+                mode = UNSELECT
             self._view.timeline.setSelectionToObj(
                 self._view.element, mode)
 
