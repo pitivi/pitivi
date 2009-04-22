@@ -183,14 +183,10 @@ class TimelineObject(object, Signallable, Loggable):
     # True when the timeline object is part of the track object's current
     # selection.
 
-    __selected = False
-
     def _getSelected(self):
-        return self.__selected
+        return boolean([obj for obj in self.track_objects if obj.selected])
 
     def setSelected(self, state):
-        self.__selected = state
-
         for obj in self.track_objects:
             obj.setObjectSelected(state)
 
@@ -292,7 +288,6 @@ class Selection(object, Signallable):
         self.setTo(set([obj]), mode)
 
     def setTo(self, selection, mode):
-        selection = set([obj.timeline_object for obj in selection])
         old_selection = self.selected
         if mode == SELECT:
             self.selected = selection
@@ -308,11 +303,17 @@ class Selection(object, Signallable):
 
         self.emit("selection-changed")
 
+    def getSelectedTimelineObjs(self):
+        return set([obj.timeline_object for obj in self.selected])
+
+    def getSelectedTrackObjs(self):
+        return self.selected
+
     def __len__(self):
         return len(self.selected)
 
     def __iter__(self):
-        return iter(self.selected)
+        return iter(self.getSelectedTimelineObjs())
 
 class LinkEntry(object):
     def __init__(self, start, duration):
