@@ -377,11 +377,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         delete = False
         link = False
         unlink = False
-        if timeline.timeline_selection:
+        if timeline.selection:
             delete = True
-            if len(timeline.timeline_selection) > 1:
+            if len(timeline.selection) > 1:
                 link = True
-            for obj in self.timeline.timeline_selection:
+            for obj in self.timeline.selection:
                 if obj.link:
                     unlink = True
                     break

@@ -279,9 +279,40 @@ class TimelineObject(object, Signallable, Loggable):
         except ValueError:
             raise TimelineError()
 
-class Selection(object):
+class Selection(object, Signallable):
 
-    pass
+    __signals__ = {
+        "selection-changed" : []
+    }
+
+    def __init__(self):
+        self.selected = set([])
+
+    def setToObj(self, obj, mode):
+        self.setTo(set([obj]), mode)
+
+    def setTo(self, selection, mode):
+        selection = set([obj.timeline_object for obj in selection])
+        old_selection = self.selected
+        if mode == SELECT:
+            self.selected = selection
+        elif mode == SELECT_ADD:
+            self.selected.update(selection)
+        elif mode == UNSELECT:
+            self.selected.difference(selection)
+
+        for obj in self.selected:
+            obj.selected = True
+        for obj in old_selection - self.selected:
+            obj.selected = False
+
+        self.emit("selection-changed")
+
+    def __len__(self):
+        return len(self.selected)
+
+    def __iter__(self):
+        return iter(self.selected)
 
 class LinkEntry(object):
     def __init__(self, start, duration):
@@ -448,7 +479,8 @@ class Timeline(object ,Signallable, Loggable):
     def __init__(self):
         Loggable.__init__(self)
         self.tracks = []
-        self.selections = []
+        self.selection = Selection()
+        self.selection.connect("selection-changed", self._selectionChanged)
         self.timeline_objects = []
         self.duration = 0
         self.timeline_selection = set()
@@ -467,6 +499,9 @@ class Timeline(object ,Signallable, Loggable):
         track.connect('duration-changed', self._trackDurationChangedCb)
 
         self.emit('track-added', track)
+
+    def _selectionChanged(self, selection):
+        self.emit("selection-changed")
 
     def _trackStartChangedCb(self, track, duration):
         self._updateDuration()
@@ -587,27 +622,13 @@ class Timeline(object ,Signallable, Loggable):
         return None
 
     def setSelectionToObj(self, obj, mode):
-        self.setSelectionTo(set([obj]), mode)
+        self.selection.setToObj(obj, mode)
 
     def setSelectionTo(self, selection, mode):
-        selection = set([obj.timeline_object for obj in selection])
-        old_selection = self.timeline_selection
-        if mode == SELECT:
-            self.timeline_selection = selection
-        elif mode == SELECT_ADD:
-            self.timeline_selection.update(selection)
-        elif mode == UNSELECT:
-            self.timeline_selection.difference(selection)
-
-        for obj in self.timeline_selection:
-            obj.selected = True
-        for obj in old_selection - self.timeline_selection:
-            obj.selected = False
-
-        self.emit("selection-changed")
+        self.selection.setTo(selection, mode)
 
     def linkSelection(self):
-        if len(self.timeline_selection) < 2:
+        if len(self.selection) < 2:
             return
 
         # list of links that we joined and so need to be removed
@@ -616,7 +637,7 @@ class Timeline(object ,Signallable, Loggable):
         # we start with a new empty link and we expand it as we find new objects
         # and links
         link = Link()
-        for timeline_object in self.timeline_selection:
+        for timeline_object in self.selection:
             if timeline_object.link is not None:
                 old_links.append(timeline_object.link)
 
@@ -632,7 +653,7 @@ class Timeline(object ,Signallable, Loggable):
 
     def unlinkSelection(self):
         empty_links = set()
-        for timeline_object in self.timeline_selection:
+        for timeline_object in self.selection:
             if timeline_object.link is None:
                 continue
 
@@ -684,9 +705,9 @@ class Timeline(object ,Signallable, Loggable):
 
     def deleteSelection(self):
         self.unlinkSelection()
-        for timeline_object in self.timeline_selection:
+        for timeline_object in self.selection:
             self.removeTimelineObject(timeline_object, deep=True)
-        self.timeline_selection = set()
+        self.selection.setTo(set([]), SELECT)
 
     def rebuildEdges(self):
         self.edges = TimelineEdges()
