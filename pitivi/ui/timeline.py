@@ -124,6 +124,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._finish_drag = False
         self._position = 0
         self._createUI()
+        self._prev_duration = 0
+        self.shrink = True
 
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
@@ -213,10 +215,23 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.connect("drag-leave", self._dragLeaveCb)
         self.connect("drag-drop", self._dragDropCb)
         self.connect("drag-motion", self._dragMotionCb)
+        self._canvas.connect("button-press-event", self._buttonPress)
+        self._canvas.connect("button-release-event", self._buttonRelease)
 
     def _timelineControlsTrackExpandedCb(self, timeline_controls,
             track, expanded):
         self._canvas.setExpanded(track, expanded)
+
+
+## Event callbacks
+
+    def _buttonPress(self, window, event):
+        self.shrink = False
+
+    def _buttonRelease(self, window, event):
+        self.shrink = True
+        self._timelineStartDurationChanged(self.timeline,
+            self.timeline.duration)
 
 ## Drag and Drop callbacks
 
@@ -331,6 +346,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _setTimeline(self):
         if self.timeline:
             self._timelineSelectionChanged(self.timeline)
+            self._timelineStartDurationChanged(self.timeline,
+                self.timeline.duration)
 
         self._controls.timeline = self.timeline
 
@@ -338,9 +355,18 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     @handler(timeline, "duration-changed")
     def _timelineStartDurationChanged(self, unused_timeline, duration):
-        self.ruler.setMaxDuration(duration)
-        self._canvas.setMaxDuration(duration)
-        self.ruler.setShadedDuration(duration)
+        if self.shrink:
+            self._prev_duration = duration
+            self.ruler.setMaxDuration(duration)
+            self._canvas.setMaxDuration(duration)
+            self.ruler.setShadedDuration(duration)
+        else:
+            # only resize if new size is larger
+            if duration > self._prev_duration:
+                self._prev_duration = duration
+                self.ruler.setMaxDuration(duration)
+                self._canvas.setMaxDuration(duration)
+                #self.ruler.setShadedDuration(duration)
 
     @handler(timeline, "selection-changed")
     def _timelineSelectionChanged(self, timeline):
