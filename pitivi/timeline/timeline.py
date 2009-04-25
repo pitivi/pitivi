@@ -58,6 +58,7 @@ class TimelineObject(Signallable, Loggable):
         self.track_objects = []
         self.timeline = None
         self.link = None
+        self._selected = False
 
     def copy(self):
         cls = self.__class__
@@ -183,13 +184,17 @@ class TimelineObject(Signallable, Loggable):
     # True when the timeline object is part of the track object's current
     # selection.
 
-    __selected = False
-
     def _getSelected(self):
-        return self.__selected
+        return self._selected
 
     def setSelected(self, state):
-        self.__selected = state
+        """
+        Sets the selected state of the object.
+
+        @param state: L{True} if the object should be selected.
+        @type state: L{bool}
+        """
+        self._selected = state
 
         for obj in self.track_objects:
             obj.setObjectSelected(state)
