@@ -36,6 +36,39 @@ class TimelineError(Exception):
     pass
 
 class TimelineObject(Signallable, Loggable):
+    """
+    Base class for contents of a C{Timeline}.
+
+    A L{TimelineObject} controls one or many L{TrackObject}.
+
+    Signals:
+     - C{start-changed} : The position changed.
+     - C{duration-changed} : The duration changed.
+     - C{in-point-changed} : The in-point changed.
+     - C{out-point-changed} : The out-point changed.
+     - C{media-duration-changed} : The used media duration changed.
+     - C{priority-changed} : The priority changed.
+     - C{selected-changed} : The selected status changed.
+
+    @ivar start: The position of the object in a timeline (nanoseconds)
+    @type start: L{long}
+    @ivar duration: The duration of the object in a timeline (nanoseconds)
+    @type duration: L{long}
+    @ivar in_point: The in-point of the object (nanoseconds)
+    @type in_point: L{long}
+    @ivar out_point: The out-point of the object (nanoseconds)
+    @type out_point: L{long}
+    @ivar media_duration: The duration to use from the object (nanoseconds)
+    @type media_duration: L{long}
+    @ivar priority: The priority of the object in a timeline. 0 is top-priority.
+    @type priority: L{int}
+    @ivar selected: Whether the object is selected or not.
+    @type selected: L{bool}
+    @ivar track_objects: The Track objects controlled.
+    @type track_objects: list of L{TrackObject}
+    @ivar timeline: The L{Timeline} to which this object belongs
+    @type timeline: L{Timeline}
+    """
     __signals__ = {
         'start-changed': ['start'],
         'duration-changed': ['duration'],
@@ -68,6 +101,8 @@ class TimelineObject(Signallable, Loggable):
 
         return other
 
+    #{ Property methods
+
     def _getStart(self):
         if not self.track_objects:
             return self.DEFAULT_START
@@ -75,6 +110,18 @@ class TimelineObject(Signallable, Loggable):
         return self.track_objects[0].start
 
     def setStart(self, position, snap=False):
+        """
+        Set the start position of the object.
+
+        If snap is L{True}, then L{position} will be modified if it is close
+        to a timeline edge.
+
+        @param position: The position in nanoseconds.
+        @type position: L{long}
+        @param snap: Whether to snap to the nearest edge or not.
+        @type snap: L{bool}
+        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
+        """
         if not self.track_objects:
             raise TimelineError()
 
@@ -95,8 +142,6 @@ class TimelineObject(Signallable, Loggable):
 
         self.emit('start-changed', position)
 
-    start = property(_getStart, setStart)
-
     def _getDuration(self):
         if not self.track_objects:
             return self.DEFAULT_DURATION
@@ -104,6 +149,23 @@ class TimelineObject(Signallable, Loggable):
         return self.track_objects[0].duration
 
     def setDuration(self, position, snap=False, set_media_stop=True):
+        """
+        Sets the duration of the object.
+
+        If snap is L{True}, then L{position} will be modified if it is close
+        to a timeline edge.
+
+        If set_media_stop is L{False} then the change will not be propagated
+        to the C{TrackObject}s this object controls.
+
+        @param position: The duration in nanoseconds.
+        @type position: L{long}
+        @param snap: Whether to snap to the nearest edge or not.
+        @type snap: L{bool}
+        @param set_media_stop: propagate changes to track objects.
+        @type set_media_stop: L{bool}
+        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
+        """
         if not self.track_objects:
             raise TimelineError()
 
@@ -120,15 +182,21 @@ class TimelineObject(Signallable, Loggable):
 
         self.emit('duration-changed', position)
 
-    duration = property(_getDuration, setDuration)
-
     def _getInPoint(self):
         if not self.track_objects:
             return self.DEFAULT_IN_POINT
 
         return self.track_objects[0].in_point
 
+    # FIXME: 'snap' is a bogus argument here !
     def setInPoint(self, position, snap=False):
+        """
+        Sets the in-point of the object.
+
+        @param position: The position in nanoseconds.
+        @type position: L{long}
+        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
+        """
         if not self.track_objects:
             raise TimelineError()
 
@@ -137,15 +205,11 @@ class TimelineObject(Signallable, Loggable):
 
         self.emit('in-point-changed', position)
 
-    in_point = property(_getInPoint, setInPoint)
-
     def _getOutPoint(self):
         if not self.track_objects:
             return self.DEFAULT_IN_POINT
 
         return self.track_objects[0].out_point
-
-    out_point = property(_getOutPoint)
 
     def _getMediaDuration(self):
         if not self.track_objects:
@@ -153,7 +217,15 @@ class TimelineObject(Signallable, Loggable):
 
         return self.track_objects[0].media_duration
 
+    # FIXME: 'snaps' is a bogus argument here !
     def setMediaDuration(self, position, snap=False):
+        """
+        Sets the media-duration of the object.
+
+        @param position: The position in nanoseconds.
+        @type position: L{long}
+        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
+        """
         if not self.track_objects:
             raise TimelineError()
 
@@ -162,8 +234,6 @@ class TimelineObject(Signallable, Loggable):
 
         self.emit('media-duration-changed', position)
 
-    media_duration = property(_getMediaDuration, setMediaDuration)
-
     def _getPriority(self):
         if not self.track_objects:
             return self.DEFAULT_PRIORITY
@@ -171,6 +241,13 @@ class TimelineObject(Signallable, Loggable):
         return self.track_objects[0].priority
 
     def setPriority(self, priority):
+        """
+        Sets the priority of the object. 0 is the highest priority.
+
+        @param priority: The priority (0 : highest)
+        @type priority: L{int}
+        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
+        """
         if not self.track_objects:
             raise TimelineError()
 
@@ -178,8 +255,6 @@ class TimelineObject(Signallable, Loggable):
             track_object.setObjectPriority(priority)
 
         self.emit('priority-changed', priority)
-
-    priority = property(_getPriority, setPriority)
 
     # True when the timeline object is part of the track object's current
     # selection.
@@ -201,9 +276,31 @@ class TimelineObject(Signallable, Loggable):
 
         self.emit("selected-changed", state)
 
+    #}
+
     selected = property(_getSelected, setSelected)
+    start = property(_getStart, setStart)
+    duration = property(_getDuration, setDuration)
+    in_point = property(_getInPoint, setInPoint)
+    out_point = property(_getOutPoint)
+    media_duration = property(_getMediaDuration, setMediaDuration)
+    priority = property(_getPriority, setPriority)
+
+    #{ Time-related methods
 
     def trimStart(self, position, snap=False):
+        """
+        Trim the beginning of the object to the given L{position} in nanoseconds.
+
+        If snap is L{True}, then L{position} will be modified if it is close
+        to a timeline edge.
+
+        @param position: The position in nanoseconds.
+        @type position: L{long}
+        @param snap: Whether to snap to the nearest edge or not.
+        @type snap: L{bool}
+        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
+        """
         if not self.track_objects:
             raise TimelineError()
 
@@ -218,6 +315,25 @@ class TimelineObject(Signallable, Loggable):
         self.emit('in-point-changed', self.in_point)
 
     def split(self, position, snap=False):
+        """
+        Split the given object at the given position in nanoseconds.
+
+        The object will be resized to the given position, and another object will
+        be created which starts just after and ends at the initial end position.
+
+        If snap is L{True}, then L{position} will be modified if it is close
+        to a timeline edge.
+
+        @param position: The position in nanoseconds.
+        @type position: L{long}
+        @param snap: Whether to snap to the nearest edge or not.
+        @type snap: L{bool}
+        @returns: The object corresponding to the other half.
+        @rtype: L{TimelineObject}
+        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
+        @postcondition: If the originating object was not yet in a C{Timeline}, then
+        it is up to the caller to add the returned 'half' object to a C{Timeline}.
+        """
         if not self.track_objects:
             raise TimelineError()
 
@@ -245,11 +361,27 @@ class TimelineObject(Signallable, Loggable):
 
         return other
 
+    #{ TrackObject methods
+
     def addTrackObject(self, obj):
+        """
+        Add the given C{TrackObject} to the list of controlled track objects.
+
+        @param obj: The track object to add
+        @type obj: C{TrackObject}
+        @raises TimelineError: If the object doesn't control any C{TrackObject}s.
+        @raises TimelineError: If the provided C{TrackObject} is already controlled
+        by this L{TimelineObject}
+        @raises TimelineError: If the newly provided C{TrackObject} doesn't have the
+        same start position as the other objects controlled.
+        @raises TimelineError: If the newly provided C{TrackObject} doesn't have the
+        same duration as the other objects controlled.
+        """
         if obj.timeline_object is not None:
             raise TimelineError()
 
         if obj in self.track_objects:
+            # FIXME : couldn't we just silently return ?
             raise TimelineError()
 
         if self.track_objects:
@@ -265,6 +397,9 @@ class TimelineObject(Signallable, Loggable):
             # as padding).
             # The compositions will always be aligned with the same start and
             # duration.
+
+            # FIXME : We really should be able to support controlling more than
+            # one trackobject with offseted start/duration/in-/out-point/priorities
             existing_track_object = self.track_objects[0]
             if obj.start != existing_track_object.start or \
                     obj.duration != existing_track_object.duration:
@@ -275,6 +410,13 @@ class TimelineObject(Signallable, Loggable):
         self.track_objects.append(obj)
 
     def removeTrackObject(self, obj):
+        """
+        Remove the given object from the list of controlled C{TrackObject}.
+
+        @param obj: The Track Object to remove.
+        @type obj: C{TrackObject}
+        @raises TimelineError: If the Track object isn't controlled by this TimelineObject.
+        """
         if obj.track is None:
             raise TimelineError()
 
@@ -285,6 +427,9 @@ class TimelineObject(Signallable, Loggable):
             raise TimelineError()
 
 class Selection(Signallable):
+    """
+    A collection of L{TimelineObject}.
+    """
 
     __signals__ = {
         "selection-changed" : []
@@ -295,6 +440,18 @@ class Selection(Signallable):
 
     def setToObj(self, obj, mode):
         self.setTo(set([obj]), mode)
+
+    def addTimelineObject(self, timeline_object):
+        """
+        Add the given timeline_object to the selection.
+
+        @param timeline_object: The object to add
+        @type timeline_object: L{TimelineObject}
+        @raises TimelineError: If the object is already controlled by this
+        Selection.
+        """
+        if timeline_object in self.timeline_objects:
+            raise TimelineError()
 
     def setTo(self, selection, mode):
         selection = set([obj.timeline_object for obj in selection])
@@ -325,10 +482,14 @@ class Selection(Signallable):
     def __iter__(self):
         return iter(self.selected)
 
+
+# FIXME : What is this for ? It's not used anywhere AFAICS (Edward)
 class LinkEntry(object):
     def __init__(self, start, duration):
         self.start = start
         self.duration = duration
+
+
 
 class LinkPropertyChangeTracker(PropertyChangeTracker):
     __signals__ = {
