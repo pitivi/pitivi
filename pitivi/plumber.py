@@ -52,8 +52,17 @@ class DefaultVideoSink(SinkFactory):
             self.debug("Returning cached sink")
             return self._cachedsink
 
+        bin = gst.Bin()
+        ffmpegcolorspace = gst.element_factory_make("ffmpegcolorspace")
+
         autovideosink = gst.element_factory_make("autovideosink")
         autovideosink.set_state(gst.STATE_READY)
+
+        bin.add(ffmpegcolorspace, autovideosink)
+        ffmpegcolorspace.link(autovideosink)
+        pad = ffmpegcolorspace.get_pad("sink")
+        ghost = gst.GhostPad("sink", pad)
+        bin.add_pad(ghost)
 
         if not autovideosink.implements_interface(interfaces.XOverlay):
             autovideosink.info("doesn't implement XOverlay interface")
@@ -80,7 +89,7 @@ class DefaultVideoSink(SinkFactory):
             self._realsink.set_xwindow_id(self._xid)
 
         self._cachedsink = autovideosink
-        return autovideosink
+        return bin
 
     def _releaseBin(self, bin, *args):
         if bin == self._cachedsink:
