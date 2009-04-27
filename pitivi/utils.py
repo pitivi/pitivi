@@ -22,6 +22,7 @@
 
 # set of utility functions
 
+import sys
 import gobject
 import gst, bisect
 import os
@@ -265,3 +266,6 @@ class Seeker(object, Signallable):
         position, self.position = self.position, None
         format, self.format = self.format, None
         self.emit('seek', position, format)
+
+def get_filesystem_encoding():
+    return sys.getfilesystemencoding() or "utf-8"

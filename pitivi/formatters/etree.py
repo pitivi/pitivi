@@ -31,6 +31,7 @@ from pitivi.factories.file import FileSourceFactory
 from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.timeline.timeline import Timeline, TimelineObject
 from pitivi.formatters.base import Formatter
+from pitivi.utils import get_filesystem_encoding
 
 version = "0.1"
 
@@ -184,7 +185,14 @@ class ElementTreeFormatter(Formatter):
         return factory
 
     def _saveFileSourceFactory(self, element, source):
-        element.attrib["filename"] = source.filename
+        # FIXME: we should probably have a rule that we only deal with unicode
+        # strings in pitivi
+        if not isinstance(source.filename, unicode):
+            fs_encoding = get_filesystem_encoding()
+            filename = source.filename.decode(fs_encoding)
+        else:
+            filename = source.filename
+        element.attrib["filename"] = filename
 
         return element
 
