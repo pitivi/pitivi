@@ -1,6 +1,7 @@
 pixmapdir = $(pkgdatadir)/pixmaps
 pixmap_DATA = \
 	busy.gif		\
+	invisible.png \
 	pitivi-advanced-16.png	\
 	pitivi-advanced-22.png	\
 	pitivi-advanced-24.png	\
@@ -19,7 +20,6 @@ pixmap_DATA = \
 	processing-clip.svg	\
 	trimbar-focused.png	\
 	trimbar-normal.png
-
 
 EXTRA_DIST = \
 	$(pixmap_DATA)
