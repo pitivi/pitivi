@@ -32,6 +32,7 @@ gobject.threads_init()
 import gst
 import gst.pbutils
 import tempfile
+from base64 import urlsafe_b64encode
 
 from pitivi.log.loggable import Loggable
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
@@ -390,7 +391,7 @@ class Discoverer(object, Signallable, Loggable):
     def _getThumbnailFilenameFromPad(self, pad):
         tmp = tempfile.gettempdir()
         name = '%s.%s' % (self.current_uri, pad.get_name())
-        name = name.encode('base64').replace('\n', '') + '.png'
+        name = urlsafe_b64encode(name) + '.png'
         filename = os.path.join(tmp, name)
 
         return filename
