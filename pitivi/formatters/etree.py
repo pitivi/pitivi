@@ -159,9 +159,13 @@ class ElementTreeFormatter(Formatter):
 
     def _loadObjectFactory(self, klass, element):
         self.debug("klass:%r, element:%r", klass, element)
-        # FIXME
-        filename = self.validateSourceURI(element.attrib.get("filename", None))
-        if not filename:
+        filename = element.attrib.get("filename", None)
+        if filename is None:
+            return
+        if isinstance(filename, unicode):
+            filename = filename.encode("utf-8")
+        filename = self.validateSourceURI(filename)
+        if filename is None:
             return None
         if issubclass(klass, FileSourceFactory):
             factory = FileSourceFactory(filename)
