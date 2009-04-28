@@ -82,7 +82,7 @@ class StartHandle(TrimHandle):
 
         def set_pos(self, obj, pos):
             new_start = max(self._view.pixelToNs(pos[0]), 0)
-            self._view.element.trimStart(new_start)
+            self._view.element.trimStart(new_start, snap=True)
 
 class EndHandle(TrimHandle):
 

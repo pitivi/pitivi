@@ -202,6 +202,9 @@ class TimelineObject(object, Signallable, Loggable):
         if not self.track_objects:
             raise TimelineError()
 
+        if snap:
+            time = self.timeline.snapToEdge(time)
+
         for track_object in self.track_objects:
             track_object.trimObjectStart(time)
 
