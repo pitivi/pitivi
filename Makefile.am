@@ -8,6 +8,9 @@ desktop_DATA = pitivi.desktop
 icondir = $(datadir)/pixmaps
 icon_DATA = pitivi.png
 
+mimedir = $(datadir)/mime/packages
+mime_DATA = pitivi.xml
+
 EXTRA_DIST = \
 	pitivi.spec \
 	pitivi.spec.in \

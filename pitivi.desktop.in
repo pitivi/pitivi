@@ -7,6 +7,7 @@ Exec=pitivi
 Terminal=false
 Type=Application
 Icon=pitivi.png
+MimeType=text/x-xptv
 Categories=GNOME;GTK;Application;AudioVideo;X-Ximian-Main;X-Red-Hat-Base;
 StartupNotify=true
 X-GNOME-Bugzilla-Bugzilla=GNOME
