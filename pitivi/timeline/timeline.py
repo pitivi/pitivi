@@ -347,6 +347,8 @@ class Link(object):
         self.earliest_object = None
         self.earliest_start = None
 
+    # Selection implementations
+
     def addTimelineObject(self, timeline_object):
         if timeline_object.link is not None:
             raise TimelineError()
@@ -381,6 +383,13 @@ class Link(object):
         timeline_object.link = None
 
     def join(self, other_link):
+        """
+        Joins this Link with another and returns the resulting link.
+
+        @type other_link: C{Link}
+        @postcondition: L{self} and L{other_link} must not be used after
+        calling this method !!
+        """
         new_link = Link()
 
         for timeline_object in list(self.timeline_objects):
