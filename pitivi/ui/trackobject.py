@@ -69,6 +69,11 @@ GlobalSettings.addConfigOption('clipFontDesc',
     default = "Sans 9",
     notify = True)
 
+PreferencesDialog.addFontPreference('clipFontDesc',
+    section = 'Appearance',
+    description = "The font to use for clip titles",
+    label = "Clip Font")
+
 GlobalSettings.addConfigOption('clipFontColor',
     section = 'user-interface',
     key = 'clip-font-color',
@@ -278,6 +283,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
     @handler(settings, "audioClipBgChanged")
     @handler(settings, "videoClipBgChanged")
     @handler(settings, "selectedBorderColorChanged")
+    @handler(settings, "clipFontDescChanged")
     def clipAppearanceSettingsChanged(self, *args):
         if isinstance(self.element.stream, VideoStream):
             color = self.settings.videoClipBg
