@@ -42,12 +42,20 @@ from pitivi.log.loggable import Loggable
 from pitivi.factories.file import PictureFileSourceFactory
 from pitivi.thumbnailcache import ThumbnailCache
 from pitivi.ui.prefs import PreferencesDialog
+from pitivi.receiver import receiver, handler
 
 GlobalSettings.addConfigSection("thumbnailing")
 GlobalSettings.addConfigOption("thumbnailSpacingHint",
     section="thumbnailing",
     key="spacing-hint",
-    default=2.0)
+    default=2,
+    notify=True)
+
+PreferencesDialog.addNumericPreference("thumbnailSpacingHint",
+    section="Appearance",
+    label="Thumbnail Gap (pixels)",
+    lower=0,
+    description="The gap between thumbnails")
 
 # this default works out to a maximum of ~ 1.78 MiB per factory, assuming:
 # 4:3 aspect ratio
@@ -150,21 +158,18 @@ class RandomAccessPreviewer(Previewer):
     def __init__(self, factory, stream_):
         Previewer.__init__(self, factory, stream_)
         self._queue = []
-        self._cache = ThumbnailCache(size=
-            instance.PiTiVi.settings.thumbnailCacheSize)
-        self.max_requests = instance.PiTiVi.settings.thumbnailMaxRequests
 
         # FIXME:
         # why doesn't this work?
         # bin = factory.makeBin(stream_)
         uri = factory.uri
         caps = stream_.caps
+        self.settings = instance.PiTiVi.settings
         bin = SingleDecodeBin(uri=uri, caps=caps, stream=stream_)
 
         # assume 50 pixel height
         self.theight = 50
         self.twidth = int(self.aspect * self.theight)
-        self.spacing = instance.PiTiVi.settings.thumbnailSpacingHint
         self.waiting_timestamp = None
 
         self._pipelineInit(factory, bin)
@@ -196,7 +201,7 @@ class RandomAccessPreviewer(Previewer):
 
         # tdur = duration in ns of thumbnail
         # sof  = start of file in pixel coordinates
-        tdur = Zoomable.pixelToNs(self.twidth + self.spacing)
+        tdur = Zoomable.pixelToNs(self.twidth + self._spacing())
         x1 = bounds.x1;
         sof = Zoomable.nsToPixel(element.start - element.in_point)
 
@@ -210,7 +215,7 @@ class RandomAccessPreviewer(Previewer):
         #    <=>     delta = x1 - sof (mod twidth).
         # Fortunately for us, % works on floats in python.
 
-        i = x1 - ((x1 - sof) % (self.twidth + self.spacing))
+        i = x1 - ((x1 - sof) % (self.twidth + self._spacing()))
 
         # j = timestamp *within the element* of thumbnail to be drawn. we want
         # timestamps to be numerically stable, but in practice this seems to
@@ -222,9 +227,12 @@ class RandomAccessPreviewer(Previewer):
         while i < bounds.x2:
             cr.set_source_surface(self._thumbForTime(j), i, y1)
             cr.rectangle(i - 1, y1, self.twidth + 2, self.theight)
-            i += self.twidth + self.spacing
+            i += self.twidth + self._spacing()
             j += tdur
             cr.fill()
+
+    def _spacing(self):
+        return self.spacing
 
     def _segmentForTime(self, time):
         """Return the segment for the specified time stamp. For some stream
@@ -291,6 +299,20 @@ class RandomAccessPreviewer(Previewer):
         message handler or other callback."""
         self.waiting_timestamp = segment
 
+    def _setSettings(self):
+        if self.settings:
+            self.spacing = self.settings.thumbnailSpacingHint
+            self._cache = ThumbnailCache(size=self.settings.thumbnailCacheSize)
+            self.max_requests = self.settings.thumbnailMaxRequests
+            self._settingsChanged(self.settings)
+
+    settings = receiver(_setSettings)
+
+    @handler(settings, "thumbnailSpacingHintChanged")
+    def _settingsChanged(self, settings):
+        self.spacing = self.settings.thumbnailSpacingHint
+        self.emit("update", None)
+
 class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
     def __init__(self, factory, stream_):
@@ -351,6 +373,9 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         bus.set_sync_handler(self._bus_message)
         self._audio_cur = None
         self.audioPipeline.set_state(gst.STATE_PAUSED)
+
+    def _spacing(self):
+        return 0
 
     def _segment_for_time(self, time):
         # for audio files, we need to know the duration the segment spans
