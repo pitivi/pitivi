@@ -42,16 +42,17 @@ class PreferencesDialog(gtk.Window):
 
     prefs = {}
     original_values = {}
-    widgets = {}
 
     def __init__(self, instance):
         gtk.Window.__init__(self)
         self.app = instance
         self.settings = instance.settings
+        self.widgets = {}
+        self.resets = {}
         self._current = None
         self._createUi()
         self._fillContents()
-
+    
     def _createUi(self):
         self.set_title(_("Preferences"))
         self.set_type_hint(gtk.gdk.WINDOW_TYPE_HINT_DIALOG)
@@ -100,10 +101,10 @@ class PreferencesDialog(gtk.Window):
         self.contents.show()
 
         # revert, close buttons
-        factory_settings = gtk.Button(label=_("Restore Factory Settings"))
-        factory_settings.connect("clicked", self._factorySettingsButtonCb)
-        factory_settings.set_sensitive(False)
-        factory_settings.show()
+        self.factory_settings = gtk.Button(label=_("Reset to Factory Settings"))
+        self.factory_settings.connect("clicked", self._factorySettingsButtonCb)
+        self.factory_settings.set_sensitive(self._canReset())
+        self.factory_settings.show()
         self.revert_button = gtk.Button(_("Revert"))
         self.revert_button.connect("clicked", self._revertButtonCb)
         self.revert_button.show()
@@ -111,7 +112,7 @@ class PreferencesDialog(gtk.Window):
         accept_button = gtk.Button(stock=gtk.STOCK_CLOSE)
         accept_button.connect("clicked", self._acceptButtonCb)
         accept_button.show()
-        button_box.pack_start(factory_settings, False, True)
+        button_box.pack_start(self.factory_settings, False, True)
         button_box.pack_end(accept_button, False, True)
         button_box.pack_end(self.revert_button, False, True)
         button_box.show()
@@ -295,19 +296,25 @@ class PreferencesDialog(gtk.Window):
                 widget.connectValueChanged(self._valueChanged, widget,
                     attrname)
                 self.widgets[attrname] = widget
-                prefs[label] = (label_widget, widget)
+                revert = gtk.Button(_("Reset"))
+                revert.set_sensitive(not self.settings.isDefault(attrname))
+                revert.connect("clicked",  self._resetOptionCb, attrname)
+                self.resets[attrname] = revert
+                prefs[label] = (label_widget, widget, revert)
 
             # Sort widgets: I think we only want to sort by the non-localized
             # names, so options appear in the same place across locales ...
             # but then I may be wrong
 
             for y, unlocalized in enumerate(sorted(prefs)):
-                label, widget = prefs[unlocalized]
+                label, widget, revert = prefs[unlocalized]
                 label.set_alignment(1.0, 0.5)
                 widgets.attach(label, 0, 1, y, y + 1, xoptions=gtk.FILL, yoptions=0)
                 widgets.attach(widget, 1, 2, y, y + 1, yoptions=0)
+                widgets.attach(revert, 2, 3, y, y + 1, xoptions=0, yoptions=0)
                 label.show()
                 widget.show()
+                revert.show()
 
             self.contents.pack_start(widgets, True, True)
 
@@ -327,13 +334,24 @@ class PreferencesDialog(gtk.Window):
         self.revert_button.set_sensitive(False)
 
     def _factorySettingsButtonCb(self, unused_button):
-        pass
+        for section in self.prefs.itervalues():
+            for attrname in section:
+                self._resetOptionCb(self.resets[attrname], attrname)
 
     def _revertButtonCb(self, unused_button):
         for attrname, value in self.original_values.iteritems():
             self.widgets[attrname].setWidgetValue(value)
             setattr(self.settings, attrname, value)
         self._clearHistory()
+        self.factory_settings.set_sensitive(self._canReset())
+
+    def _resetOptionCb(self, button, attrname):
+        if not self.settings.isDefault(attrname):
+            self.settings.setDefault(attrname)
+        self.widgets[attrname].setWidgetValue(getattr(self.settings,
+            attrname))
+        button.set_sensitive(False)
+        self.factory_settings.set_sensitive(self._canReset())
 
     def _acceptButtonCb(self, unused_button):
         self._clearHistory()
@@ -346,14 +364,27 @@ class PreferencesDialog(gtk.Window):
             if attrname + "Changed" not in GlobalSettings.get_signals():
                 self.restart_warning.show()
             self.revert_button.set_sensitive(True)
+
         # convert the value of the widget to whatever type it is currently
         if value is not None:
             value = type(value)(real_widget.getWidgetValue())
         setattr(self.settings, attrname, value)
 
+        # adjust controls as appropriate
+        self.resets[attrname].set_sensitive(not self.settings.isDefault(
+            attrname))
+        self.factory_settings.set_sensitive(True)
+
     def _configureCb(self, unused_widget, event):
         self.settings.prefsDialogWidth = event.width
         self.settings.prefsDialogHeight = event.height
+
+    def _canReset(self):
+        for section in self.prefs.itervalues():
+            for attrname in section:
+                if not self.settings.isDefault(attrname):
+                    return True
+        return False
 
 ## Preference Test Cases
 

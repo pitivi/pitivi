@@ -137,10 +137,10 @@ class GlobalSettings(object, Signallable):
 
     options = {}
     environment = set()
+    defaults = {}
 
     def __init__(self, **kwargs):
         self._config = SafeConfigParser()
-
         self._readSettingsFromGlobalConfiguration()
         self._readSettingsFromConfigurationFile()
         self._readSettingsFromEnvironmentVariables()
@@ -273,6 +273,12 @@ class GlobalSettings(object, Signallable):
         for attrname, (typ, key, environment) in self.options[section].iteritems():
             yield section, attrname, typ, key, environment, getattr(self, attrname)
 
+    def isDefault(self, attrname):
+        return getattr(self, attrname) == self.defaults[attrname]
+
+    def setDefault(self, attrname):
+        setattr(self, attrname, self.defaults[attrname])
+
     @classmethod
     def addConfigOption(cls, attrname, type_=None, section=None, key=None,
         environment=None, default=None, notify=False,):
@@ -322,6 +328,7 @@ class GlobalSettings(object, Signallable):
         if notify:
             setattr(cls, attrname, Notification(attrname))
             setattr(cls, "_" + attrname, default)
+            cls.defaults[attrname] = default
             cls.__signals__[attrname + 'Changed'] = []
         else:
             setattr(cls, attrname, default)
