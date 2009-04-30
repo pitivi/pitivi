@@ -28,6 +28,7 @@ import gtk
 import re
 import sys
 from gettext import gettext as _
+from pitivi.ui.common import unpack_color, pack_color_32, pack_color_64
 
 class DynamicWidget(object):
 
@@ -138,10 +139,10 @@ class NumericWidget(gtk.HBox):
             self.pack_end(self.slider)
             self.slider.show()
 
-        if not upper:
-            upper = float("Infinity")
-        if not lower:
-            lower = float("-Infinity")
+        if upper is None:
+            upper = gobject.G_MAXDOUBLE
+        if lower is None:
+            lower = gobject.G_MINDOUBLE
         self.adjustment.props.lower = lower
         self.adjustment.props.upper = upper
         self.spinner = gtk.SpinButton(self.adjustment)
@@ -162,12 +163,12 @@ class NumericWidget(gtk.HBox):
             step = 1.0
             page = 10.0
         elif type_ == float:
-            minimum, maximum = (float("-Infinity"), float("Infinity"))
+            minimum, maximum = (gobject.G_MINDOUBLE, gobject.G_MAXDOUBLE)
             step = 0.00001
             page = 0.01
-        if self.lower:
+        if self.lower is not None:
             minimum = self.lower
-        if self.upper:
+        if self.upper is not None:
             maximum = self.upper
         self.adjustment.set_all(value, minimum, maximum, step, page, 0)
         self.spinner.props.climb_rate = 0.01 * abs(min(maximum, 1000) -
@@ -266,14 +267,11 @@ class ColorWidget(gtk.ColorButton):
     def setWidgetValue(self, value):
         type_ = type(value)
         alpha = 0xFFFF
+
         if type_ is str:
-            color = gtk.Color(value)
-        elif type_ is int:
-            # FIXME: only handles 32-bit case
-            red = (value >> 24); red = red | red << 8
-            green = (value >> 16) & 0xFF; green = green | green << 8
-            blue = (value >> 8) & 0xFF; blue = blue | blue << 8
-            alpha = value & 0xFF; alpha = alpha | alpha << 8
+            color = gtk.gdk.Color(value)
+        elif (type_ is int) or (type_ is long):
+            red, green, blue, alpha = unpack_color(value)
             color = gtk.gdk.Color(red, green, blue)
         elif type_ is gtk.gdk.Color:
             color = value
@@ -287,13 +285,9 @@ class ColorWidget(gtk.ColorButton):
         color = self.get_color()
         alpha = self.get_alpha()
         if self.value_type is int:
-            # FIXME: only handles 32-bit case
-            red = color.red >> 8
-            green = color.green >> 8
-            blue = color.blue >> 8
-            alpha = alpha >> 8
-            ret = (red << 24 | green << 16 | blue << 8 | alpha)
-            return ret
+            return pack_color_32(color.red, color.green, color.blue, alpha)
+        if self.value_type is long:
+            return pack_color_64(color.red, color.green, color.blue, alpha)
         elif self.value_type is gtk.gdk.Color:
             return color
         return color.to_string()

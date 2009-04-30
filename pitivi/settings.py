@@ -165,7 +165,7 @@ class GlobalSettings(object, Signallable):
             if not self._config.has_section(section):
                 continue
             if key and self._config.has_option(section, key):
-                if typ == int:
+                if typ == int or typ == long:
                     value = self._config.getint(section, key)
                 elif typ == float:
                     value = self._config.getfloat(section, key)
