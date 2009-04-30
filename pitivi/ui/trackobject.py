@@ -163,6 +163,22 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             tx = self._view.props.parent.get_transform()
             self._y_offset = tx[5]
             self._mousedown = Point(self._mousedown[0], 0)
+            element = self._view.element
+            timeline = self._view.timeline
+            self._offsets = {}
+            self._min_start = 0
+            self._min_pri = 0
+            # calculate offsets to selected clips
+            if element.selected:
+                for obj in timeline.selection.getSelectedTrackObjs():
+                    start = obj.start - element.start
+                    if start < 0:
+                        self._min_start = max(self._min_start, -start)
+                    priority = obj.priority - element.priority
+                    if priority < 0:
+                        self._min_pri = max(self._min_pri, -priority)
+                    self._offsets[obj] = start, priority
+                del self._offsets[element]
 
         def click(self, pos):
             mode = SELECT
@@ -175,11 +191,15 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         def set_pos(self, item, pos):
             x, y = pos
-            self._view.element.setStart(max(self._view.pixelToNs(x), 0),
-                    snap=True)
-            priority = int(max(0, (y - self._y_offset) // (LAYER_HEIGHT_EXPANDED +
-                LAYER_SPACING)))
+            self._view.element.setStart(max(self._view.pixelToNs(x),
+                self._min_start), snap=True)
+            start = self._view.element.start
+            priority = int(max(self._min_pri, (y - self._y_offset) // 
+                (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
             self._view.element.setObjectPriority(priority)
+            for obj, (s, p) in self._offsets.iteritems():
+                obj.setStart(start + s)
+                obj.setPriority(priority + p)
 
     def __init__(self, instance, element, track, timeline):
         goocanvas.Group.__init__(self)
