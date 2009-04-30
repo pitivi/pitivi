@@ -26,6 +26,7 @@ Dialog box for user preferences.
 import gtk
 from gettext import gettext as _
 import pitivi.ui.dynamic as dynamic
+from pitivi.settings import GlobalSettings
 
 class PreferencesDialog(gtk.Window):
 
@@ -237,6 +238,27 @@ class PreferencesDialog(gtk.Window):
         cls.addPreference(attrname, label, description, section,
             dynamic.ToggleWidget)
 
+    @classmethod
+    def addColorPreference(cls, attrname, label, description, section=None,
+        value_type=int):
+        """
+        Add an auto-generated user preference for specifying colors. The
+        colors can be returned as either int, a string colorspec, or a
+        gtk.gdk.Color object. See the gtk.gdk.color_parse() function for info
+        on colorspecs.
+
+        @param label: user-visible name for this option
+        @type label: C{str}
+        @param desc: a user-visible description documenting this option
+        (ignored unless prefs_label is non-null)
+        @type desc: C{str}
+        @param section: user-visible category to which this option
+        belongs (ignored unless prefs_label is non-null)
+        @type section: C{str}
+        """
+        cls.addPreference(attrname, label, description, section,
+            dynamic.ColorWidget, value_type=value_type)
+
 ## Implementation
 
     def _fillContents(self):
@@ -283,6 +305,7 @@ class PreferencesDialog(gtk.Window):
     def _revertButtonCb(self, unused_button):
         for attrname, value in self.original_values.iteritems():
             self.widgets[attrname].setWidgetValue(value)
+            setattr(self.settings, attrname, value)
         self._clearHistory()
 
     def _acceptButtonCb(self, unused_button):
@@ -290,16 +313,20 @@ class PreferencesDialog(gtk.Window):
         self.hide()
 
     def _valueChanged(self, fake_widget, real_widget, attrname):
+        value = getattr(self.settings, attrname)
         if attrname not in self.original_values:
-            self.original_values[attrname] = getattr(self.settings, attrname)
+            self.original_values[attrname] = value
             if attrname + "Changed" not in GlobalSettings.get_signals():
                 self.restart_warning.show()
             self.revert_button.set_sensitive(True)
-        setattr(self.settings, attrname, real_widget.getWidgetValue())
+        # convert the value of the widget to whatever type it is currently
+        if value is not None:
+            value = type(value)(real_widget.getWidgetValue())
+        setattr(self.settings, attrname, value)
 
 ## Preference Test Cases
 
-if True:
+if False:
 
     from pitivi.settings import GlobalSettings
 
