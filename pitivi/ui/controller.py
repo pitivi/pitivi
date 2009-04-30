@@ -19,6 +19,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import gtk.gdk
 from pitivi.receiver import receiver, handler
 from pitivi.ui.point import Point
 
@@ -28,6 +29,8 @@ from pitivi.ui.point import Point
 # the same set of signals. It is probably better to define a new controller
 # that explictly combines the functionality of both when custom behavior is
 # desired.
+
+ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
 
 class Controller(object):
 
@@ -86,6 +89,7 @@ class Controller(object):
     def leave_notify_event(self, item, target, event):
         self._last_event = event
         self._ptr_within = False
+        event.window.set_cursor(ARROW)
         if not self._dragging:
             self.leave(item, target)
         return True
