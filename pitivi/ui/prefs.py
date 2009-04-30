@@ -274,6 +274,25 @@ class PreferencesDialog(gtk.Window):
         cls.addPreference(attrname, label, description, section,
             dynamic.ColorWidget, value_type=value_type)
 
+    @classmethod
+    def addFontPreference(cls, attrname, label, description, section=None):
+        """
+        Add an auto-generated user preference that will show up as a
+        font selector.
+
+        @param label: user-visible name for this option
+        @type label: C{str}
+        @param desc: a user-visible description documenting this option
+        (ignored unless prefs_label is non-null)
+        @type desc: C{str}
+        @param section: user-visible category to which this option
+        belongs (ignored unless prefs_label is non-null)
+        @type section: C{str}
+        """
+        cls.addPreference(attrname, label, description, section,
+            dynamic.FontWidget)
+
+
 ## Implementation
 
     def _fillContents(self):
@@ -401,6 +420,7 @@ if False:
         ('aChoicePreference', 42),
         ('aLongChoicePreference', "Mauve"),
         ('aTogglePreference', True),
+        ('aFontPreference', "Sans 9"),
     )
 
     for attrname, default in options:
@@ -468,3 +488,8 @@ if False:
         label = "Test Toggle",
         section = "Test",
         description = "Test the toggle widget")
+
+    PreferencesDialog.addFontPreference('aFontPreference',
+        label = "Foo Font",
+        section = "Test",
+        description = "Test the font widget")

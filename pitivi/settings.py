@@ -328,13 +328,13 @@ class GlobalSettings(object, Signallable):
         if notify:
             setattr(cls, attrname, Notification(attrname))
             setattr(cls, "_" + attrname, default)
-            cls.defaults[attrname] = default
             cls.__signals__[attrname + 'Changed'] = []
         else:
             setattr(cls, attrname, default)
         if section and key:
             cls.options[section][attrname] = type_, key, environment
         cls.environment.add(environment)
+        cls.defaults[attrname] = default
 
     @classmethod
     def addConfigSection(cls, section):
