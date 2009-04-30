@@ -80,7 +80,7 @@ class SourceList(object, Signallable, Loggable):
     def __delitem__(self, uri):
         try:
             self.sources.__delitem__(uri)
-            self._sourceindex.__delitem__(uri)
+            self._sourceindex.remove(uri)
         except KeyError:
             pass
         else:
