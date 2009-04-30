@@ -52,16 +52,16 @@ PreferencesDialog.addColorPreference('audioClipBg',
     label = "Clip Background (Audio)",
     description = "The background color for clips in audio tracks.")
 
-GlobalSettings.addConfigOption('selectedBorderColor',
+GlobalSettings.addConfigOption('selectedColor',
     section = 'user-interface',
-    key = 'selectedBorderColor',
-    default = 0xffea00FF,
+    key = 'selected-color',
+    default = 0x00000077,
     notify = True)
 
-PreferencesDialog.addColorPreference('selectedBorderColor',
+PreferencesDialog.addColorPreference('selectedColor',
     section = "Appearance",
-    label = "Clip Selection Border Color",
-    description = "The color of the clip's border when it is selected")
+    label = "Selection Color",
+    description = "Selected clips will be tinted with this color.")
 
 GlobalSettings.addConfigOption('clipFontDesc',
     section = 'user-interface',
@@ -213,8 +213,13 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.end_handle = EndHandle(element, timeline,
             height=self.height)
 
-        for thing in (self.bg, self.content, self.start_handle,
-            self.end_handle, self.namebg, self.name):
+        self.selection_indicator = goocanvas.Rect(
+            visibility=goocanvas.ITEM_INVISIBLE,
+            line_width = 0.0,
+            height=self.height)
+
+        for thing in (self.bg, self.content, self.selection_indicator, 
+            self.start_handle, self.end_handle, self.namebg, self.name):
             self.add_child(thing)
 
         self.element = element
@@ -282,7 +287,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
     @handler(settings, "audioClipBgChanged")
     @handler(settings, "videoClipBgChanged")
-    @handler(settings, "selectedBorderColorChanged")
+    @handler(settings, "selectedColorChanged")
     @handler(settings, "clipFontDescChanged")
     def clipAppearanceSettingsChanged(self, *args):
         if isinstance(self.element.stream, VideoStream):
@@ -294,8 +299,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         self.namebg.props.fill_pattern = pattern
 
-        self.bg.props.stroke_pattern = unpack_cairo_pattern(
-            self.settings.selectedBorderColor)
+        self.selection_indicator.props.fill_pattern = unpack_cairo_pattern(
+            self.settings.selectedColor)
 
         self.name.props.font = self.settings.clipFontDesc
         self.name.props.fill_pattern = unpack_cairo_pattern(
@@ -323,9 +328,10 @@ class TrackObject(View, goocanvas.Group, Zoomable):
     @handler(element, "selected-changed")
     def selected_changed(self, element, state):
         if element.selected:
-            self.bg.props.line_width = 2.0
+            self.selection_indicator.props.visibility = goocanvas.ITEM_VISIBLE
         else:
-            self.bg.props.line_width = 0
+            self.selection_indicator.props.visibility = \
+                goocanvas.ITEM_INVISIBLE
 
     @handler(element, "priority-changed")
     def priority_changed(self, element, priority):
@@ -340,6 +346,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
             0, 0, w, self.height, w)
         self.bg.props.width = width
+        self.selection_indicator.props.width = width
         self.end_handle.props.x = w
         if self.expanded:
             if w - 10 > 0:
