@@ -292,6 +292,21 @@ class ColorWidget(gtk.ColorButton):
             return color
         return color.to_string()
 
+class FontWidget(gtk.FontButton):
+
+    def __init__(self):
+        gtk.FontButton.__init__(self)
+        self.set_use_font(True)
+
+    def connectValueChanged(self, callback, *args):
+        self.connect("font-set", callback, *args)
+
+    def setWidgetValue(self, font_name):
+        self.set_font_name(font_name)
+
+    def getWidgetValue(self):
+        return self.get_font_name()
+
 if __name__ == '__main__':
 
     def valueChanged(unused_widget, widget, target):
@@ -308,6 +323,7 @@ if __name__ == '__main__':
             ("apple", "apple"),
             ("pear", "pear")),)),
         (ColorWidget, 0x336699FF, (int,)),
+        (FontWidget, "Sans 9", ()),
     )
 
     W = gtk.Window()
