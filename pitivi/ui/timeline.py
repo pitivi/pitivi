@@ -111,7 +111,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     # from zoomed out to zoomed in
 
 
-    def __init__(self, ui_manager):
+    def __init__(self, instance, ui_manager):
         gtk.Table.__init__(self, rows=2, columns=1, homogeneous=False)
         Loggable.__init__(self)
         Zoomable.__init__(self)
@@ -119,6 +119,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         self.project = None
         self.ui_manager = ui_manager
+        self.app = instance
         self._temp_objects = None
         self._factories = None
         self._finish_drag = False
@@ -148,7 +149,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.attach(self.ruler, 1, 2, 0, 1, yoptions=0)
 
         # proportional timeline
-        self._canvas = TimelineCanvas()
+        self._canvas = TimelineCanvas(self.app)
         timelinewindow = gtk.ScrolledWindow(self.hadj, self.vadj)
         timelinewindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         timelinewindow.add(self._canvas)

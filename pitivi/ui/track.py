@@ -7,9 +7,10 @@ import goocanvas
 class Track(goocanvas.Group, Zoomable):
     __gtype_name__ = 'Track'
 
-    def __init__(self, track, timeline=None):
+    def __init__(self, instance, track, timeline=None):
         goocanvas.Group.__init__(self)
         Zoomable.__init__(self)
+        self.app = instance
         self.widgets = {}
         self.timeline = timeline
         self.track = track
@@ -49,7 +50,7 @@ class Track(goocanvas.Group, Zoomable):
 
     @handler(track, "track-object-added")
     def _objectAdded(self, unused_timeline, track_object):
-        w = TrackObject(track_object, self.track, self.timeline)
+        w = TrackObject(self.app, track_object, self.track, self.timeline)
         self.widgets[track_object] = w
         self.add_child(w)
 

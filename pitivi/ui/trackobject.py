@@ -14,8 +14,11 @@ from pitivi.timeline.track import TrackError
 from preview import Preview
 import gst
 from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
-from common import LAYER_SPACING
+from common import LAYER_SPACING, unpack_cairo_pattern
 from pitivi.ui.point import Point
+from pitivi.ui.prefs import PreferencesDialog
+from pitivi.settings import GlobalSettings
+from pitivi.stream import AudioStream, VideoStream
 
 LEFT_SIDE = gtk.gdk.Cursor(gtk.gdk.LEFT_SIDE)
 RIGHT_SIDE = gtk.gdk.Cursor(gtk.gdk.RIGHT_SIDE)
@@ -26,6 +29,51 @@ TRIMBAR_PIXBUF_FOCUS = gtk.gdk.pixbuf_new_from_file(
     os.path.join(configure.get_pixmap_dir(), "trimbar-focused.png"))
 
 import gst
+
+GlobalSettings.addConfigOption('videoClipBg',
+    section = 'user-interface',
+    key = 'videoclip-background',
+    default = 0x3182bdC0,
+    notify = True)
+
+PreferencesDialog.addColorPreference('videoClipBg',
+    section = "Appearance",
+    label = "Video Clip Background Color",
+    description = "The background color for clips in video tracks.")
+
+GlobalSettings.addConfigOption('audioClipBg',
+    section = 'user-interface',
+    key = 'audioclip-background',
+    default = 0x3182bdC0,
+    notify = True)
+
+PreferencesDialog.addColorPreference('audioClipBg',
+    section = "Appearance",
+    label = "Audio Clip Baground Color",
+    description = "The background color for clips in audio tracks.")
+
+GlobalSettings.addConfigOption('selectedBorderColor',
+    section = 'user-interface',
+    key = 'selectedBorderColor',
+    default = 0xffea00FF,
+    notify = True)
+
+PreferencesDialog.addColorPreference('selectedBorderColor',
+    section = "Appearance",
+    label = "Selection Border Color",
+    description = "The color of the clip's border when it is selected")
+
+GlobalSettings.addConfigOption('clipFontDesc',
+    section = 'user-interface',
+    key = 'clip-font-name',
+    default = "Sans 9",
+    notify = True)
+
+GlobalSettings.addConfigOption('clipFontColor',
+    section = 'user-interface',
+    key = 'clip-font-color',
+    default = 0xFFFFFFAA,
+    notify = True)
 
 def text_size(text):
     ink, logical = text.get_natural_extents()
@@ -100,8 +148,6 @@ class EndHandle(TrimHandle):
 
 class TrackObject(View, goocanvas.Group, Zoomable):
 
-    __BACKGROUND__ = 0x3182bdC0
-    __BORDER__ = 0xffea00FF
 
     class Controller(TimelineController):
 
@@ -129,42 +175,33 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 LAYER_SPACING)))
             self._view.element.setObjectPriority(priority)
 
-    def __init__(self, element, track, timeline):
+    def __init__(self, instance, element, track, timeline):
         goocanvas.Group.__init__(self)
         View.__init__(self)
         Zoomable.__init__(self)
-
-        self.element = element
+        self.app = instance
         self.track = track
         self.timeline = timeline
+        self.namewidth = 0
 
         self.bg = goocanvas.Rect(
             height=self.height, 
-            fill_color_rgba=self.__BACKGROUND__,
-            stroke_color_rgba=self.__BORDER__,
             line_width=0)
 
-        self.content = Preview(self.element)
+        self.content = Preview(element)
 
         self.name = goocanvas.Text(
             x=10,
             y=5,
-            text=os.path.basename(unquote(element.factory.name)),
-            font="Sans 9",
-            fill_color_rgba=0xFFFFFFAA,
+            
             operator = cairo.OPERATOR_ADD,
             alignment=pango.ALIGN_LEFT)
-        twidth, theight = text_size(self.name)
         self.namebg = goocanvas.Rect(
             radius_x = 2,
             radius_y = 2,
             x = 8,
             y = 3,
-            width = twidth + 4,
-            height = theight + 4,
-            line_width = 0,
-            fill_color_rgba = self.__BACKGROUND__)
-        self.namewidth = twidth
+            line_width = 0)
 
         self.start_handle = StartHandle(element, timeline,
             height=self.height)
@@ -175,8 +212,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             self.end_handle, self.namebg, self.name):
             self.add_child(thing)
 
-        if element:
-            self.zoomChanged()
+        self.element = element
+        self.settings = instance.settings
         self.normal()
 
 ## Properties
@@ -230,9 +267,47 @@ class TrackObject(View, goocanvas.Group, Zoomable):
     def zoomChanged(self):
         self._update()
 
+## settings signals
+
+    def _setSettings(self):
+        if self.settings:
+            self.clipAppearanceSettingsChanged()
+
+    settings = receiver(_setSettings)
+
+    @handler(settings, "audioClipBgChanged")
+    @handler(settings, "videoClipBgChanged")
+    @handler(settings, "selectedBorderColorChanged")
+    def clipAppearanceSettingsChanged(self, *args):
+        if isinstance(self.element.stream, VideoStream):
+            color = self.settings.videoClipBg
+        elif isinstance(self.element.stream, AudioStream):
+            color = self.settings.audioClipBg
+        pattern = unpack_cairo_pattern(color)
+        self.bg.props.fill_pattern = pattern
+
+        self.namebg.props.fill_pattern = pattern
+
+        self.bg.props.stroke_pattern = unpack_cairo_pattern(
+            self.settings.selectedBorderColor)
+
+        self.name.props.font = self.settings.clipFontDesc
+        self.name.props.fill_pattern = unpack_cairo_pattern(
+            self.settings.clipFontColor)
+
 ## element signals
 
-    element = receiver()
+    def _setElement(self):
+        if self.element:
+            self.name.props.text = os.path.basename(unquote(
+                self.element.factory.name))
+            twidth, theight = text_size(self.name)
+            self.namewidth = twidth
+            self.namebg.props.width = twidth + 6.0
+            self.namebg.props.height = theight + 4.0
+            self._update()
+
+    element = receiver(_setElement)
 
     @handler(element, "start-changed")
     @handler(element, "duration-changed")
@@ -266,4 +341,3 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
             else:
                 self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
-

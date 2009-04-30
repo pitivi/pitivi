@@ -27,7 +27,9 @@ from pitivi.ui.track import Track
 from pitivi.ui.trackobject import TrackObject
 from pitivi.ui.point import Point
 from pitivi.ui.zoominterface import Zoomable
-from common import TRACK_SPACING
+from pitivi.settings import GlobalSettings
+from pitivi.ui.prefs import PreferencesDialog
+from pitivi.ui.common import TRACK_SPACING, unpack_cairo_pattern
 import gtk
 
 # cursors to be used for resizing objects
@@ -35,16 +37,27 @@ ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
 # TODO: replace this with custom cursor
 RAZOR_CURSOR = gtk.gdk.Cursor(gtk.gdk.XTERM)
 
-# In pixels
-DEADBAND = 5
+GlobalSettings.addConfigOption('edgeSnapDeadband',
+    section = "user-interface",
+    key = "edge-snap-deadband",
+    default = 5,
+    notify = True)
+
+PreferencesDialog.addNumericPreference('edgeSnapDeadband',
+    section = "Behavior",
+    label = "Snap Distance (pixels)",
+    description = "Threshold distance (in pixels) used for all snapping"
+        "operations",
+    lower = 0)
 
 class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
     _tracks = None
 
-    def __init__(self, timeline=None):
+    def __init__(self, instance, timeline=None):
         goocanvas.Canvas.__init__(self)
         Zoomable.__init__(self)
+        self.app = instance
         self._selected_sources = []
         self._tracks = []
         self._height = 0
@@ -56,6 +69,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
         self._createUI()
         self.timeline = timeline
+        self.settings = instance.settings
 
     def _createUI(self):
         self._cursor = ARROW
@@ -63,8 +77,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         self.tracks = goocanvas.Group()
         root.add_child(self.tracks)
         self._marquee = goocanvas.Rect(
-            stroke_color_rgba=0x33CCFF66,
-            fill_color_rgba=0x33CCFF66,
+            stroke_pattern = unpack_cairo_pattern(0x33CCFF66),
+            fill_pattern = unpack_cairo_pattern(0x33CCFF66),
             visibility = goocanvas.ITEM_INVISIBLE)
         self._razor = goocanvas.Rect(
             line_width=0,
@@ -175,7 +189,7 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
     def _razorMovedCb(self, canvas, event):
         def snap(x):
             pos = self.nsToPixel(self._position)
-            if abs(x - pos) <= DEADBAND:
+            if abs(x - pos) <= self.settings.edgeSnapDeadband:
                 return pos
             return x
         x, y = self.convert_from_pixels(event.x, event.y)
@@ -214,8 +228,21 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
 
     def zoomChanged(self):
         if self.timeline:
-            self.timeline.dead_band = self.pixelToNs(DEADBAND)
+            self.timeline.dead_band = self.pixelToNs(
+                self.settings.edgeSnapDeadband)
             self._request_size()
+
+
+## settings callbacks
+
+    def _setSettings(self):
+        self.zoomChanged()
+
+    settings = receiver(_setSettings)
+
+    @handler(settings, "edgeSnapDeadbandChanged")
+    def _edgeSnapDeadbandChangedCb(self, settings):
+        self.zoomChanged()
 
 ## Timeline callbacks
 
@@ -225,12 +252,13 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
         if self.timeline:
             for track in self.timeline.tracks:
                 self._trackAdded(None, track)
+        self.zoomChanged()
 
     timeline = receiver(_set_timeline)
 
     @handler(timeline, "track-added")
     def _trackAdded(self, timeline, track):
-        track = Track(track, self.timeline)
+        track = Track(self.app, track, self.timeline)
         self._tracks.append(track)
         track.set_canvas(self)
         self.tracks.add_child(track)

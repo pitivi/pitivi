@@ -334,7 +334,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vpaned = gtk.VPaned()
         vbox.pack_start(vpaned)
 
-        self.timeline = Timeline(self.uimanager)
+        self.timeline = Timeline(instance, self.uimanager)
         self.timeline.project = self.project
 
         vpaned.pack2(self.timeline, resize=True, shrink=False)
