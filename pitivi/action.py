@@ -742,7 +742,8 @@ class ViewAction(Action):
 
     def setSync(self, sync=True):
         """
-        Whether the sinks should sync against the running clock
+        Whether the sinks should sync against the running clock and
+        emit QoS events upstream.
         """
         self.sync = sync
         if self.videosink:

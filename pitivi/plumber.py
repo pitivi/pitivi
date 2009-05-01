@@ -45,6 +45,7 @@ class DefaultVideoSink(SinkFactory):
         self._cachedsink = None
         self._realsink = None
         self.sync = True
+        self.qos = True
 
     def _makeBin(self, input_stream=None):
         """ Returns a video sink bin"""
@@ -84,6 +85,7 @@ class DefaultVideoSink(SinkFactory):
                 self._realsink.set_property("force-aspect-ratio", True)
 
             self._realsink.props.sync = self.sync
+            self._realsink.props.qos = self.sync
 
         if self._xid != 0:
             self._realsink.set_xwindow_id(self._xid)
@@ -109,9 +111,11 @@ class DefaultVideoSink(SinkFactory):
         if self.sync == sync:
             return
         self.sync = sync
+        self.qos = sync
         self.debug("_realsink:%r", self._realsink)
         if self._realsink:
             self._realsink.props.sync = self.sync
+            self._realsink.props.qos = self.sync
 
 class DefaultAudioSink(SinkFactory):
 
