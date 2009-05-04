@@ -28,6 +28,7 @@ import gtk
 import gobject
 import gst
 import gst.pbutils
+from urllib import unquote
 
 try:
     import gconf
@@ -538,6 +539,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.settings.lastProjectFolder = chooser.get_current_folder()
         if response == gtk.RESPONSE_OK:
             uri = chooser.get_uri()
+            uri = unquote(uri)
             self.app.loadProject(uri = uri)
 
         chooser.destroy()
