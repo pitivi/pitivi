@@ -443,6 +443,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.playpause_button.setPause()
         elif state == int(gst.STATE_PAUSED):
             self.playpause_button.setPlay()
+        self.currentState = state
 
     def _eosCb(self, unused_pipeline):
         self.playpause_button.setPlay()
