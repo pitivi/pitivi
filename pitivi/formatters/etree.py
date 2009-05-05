@@ -159,6 +159,8 @@ class ElementTreeFormatter(Formatter):
 
     def _loadObjectFactory(self, klass, element):
         self.debug("klass:%r, element:%r", klass, element)
+        # FIXME : we should check if the given ObjectFactory
+        # requires a filename !
         filename = element.attrib.get("filename", None)
         if filename is None:
             return
