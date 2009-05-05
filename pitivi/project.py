@@ -102,7 +102,6 @@ class Project(Signallable, Loggable):
 
         self.timeline = Timeline()
 
-        
         self.factory = TimelineSourceFactory(self.timeline)
         self.pipeline = Pipeline()
         self.view_action = ViewAction()
@@ -126,6 +125,7 @@ class Project(Signallable, Loggable):
         If no setting have been explicitely set, some smart settings will be
         chosen.
         """
+        self.debug("self.settings %s", self.settings)
         return self.settings or self.getAutoSettings()
 
     def setSettings(self, settings):

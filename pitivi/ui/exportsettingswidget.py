@@ -65,8 +65,10 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         self.containersettings = {}
         self.vcodecsettings = {}
         self.acodecsettings = {}
+        self._loading = False
 
     def setSettings(self, settings):
+        self.debug("settings:%s", settings)
         self.settings = settings
         self._fillSettings()
 
@@ -159,6 +161,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         self.acodeccbox.set_active(selected)
 
         # Muxer
+        self._loading = True
         self.muxers = self.settings.muxers
         muxs = self.muxercombobox.get_model()
         muxs.clear()
@@ -169,6 +172,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
             if mux.get_name() == self.settings.muxer:
                 selected = idx
             idx = idx + 1
+        self._loading = False
         self.muxercombobox.set_active(selected)
 
         # Encoder/Muxer settings
@@ -202,9 +206,11 @@ class ExportSettingsWidget(GladeWidget, Loggable):
 
     def _videoComboboxChangedCb(self, widget):
         idx = widget.get_active()
-        if idx == len(self.video_presets):
+        if idx == -1 or idx == len(self.video_presets):
+            # not a preset
             activate = True
         else:
+            # valid preset
             activate = False
             self.videowidthspin.set_value(self.video_presets[idx][1])
             self.videoheightspin.set_value(self.video_presets[idx][2])
@@ -215,9 +221,11 @@ class ExportSettingsWidget(GladeWidget, Loggable):
 
     def _audioComboboxChangedCb(self, widget):
         idx = widget.get_active()
-        if idx == len(self.audio_presets):
+        if idx == -1 or idx == len(self.audio_presets):
+            # not a preset
             activate = True
         else:
+            # valid preset
             activate = False
             self.audiochanncbox.set_active(self.audio_presets[idx][1] - 1)
             self._putGoodAudiorate(self.audio_presets[idx][2])
@@ -227,6 +235,9 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         self.audiodepthcbox.set_sensitive(activate)
 
     def _muxerComboboxChangedCb(self, widget):
+        if self._loading:
+            return
+        # get previous video encoder name
         if self.validvencoders:
             vidx = self.vcodeccbox.get_active()
             if vidx < len(self.validvencoders):
@@ -235,6 +246,8 @@ class ExportSettingsWidget(GladeWidget, Loggable):
                 prevvenc = None
         else:
             prevvenc = self.settings.vencoder
+
+        # get previous audio encoder name
         if self.validaencoders:
             aidx = self.acodeccbox.get_active()
             if aidx < len(self.validaencoders):
@@ -352,6 +365,8 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         self.settings.acodecsettings = self.acodecsettings
         self.settings.vcodecsettings = self.vcodecsettings
 
+        self.debug("Returning %s", self.settings)
+
         return self.settings
 
 
@@ -369,5 +384,4 @@ class ExportSettingsDialog(gtk.Dialog):
         self.setwidget.show_all()
 
     def getSettings(self):
-        self.setwidget.updateSettings()
-        return self.setwidget.settings
+        return self.setwidget.updateSettings()
