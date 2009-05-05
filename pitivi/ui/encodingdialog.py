@@ -92,7 +92,8 @@ class EncodingDialog(GladeWindow, Loggable):
                                                 gtk.STOCK_OK, gtk.RESPONSE_ACCEPT),
                                        action=gtk.FILE_CHOOSER_ACTION_SAVE)
         if self.outfile:
-            dialog.set_current_name(self.outfile)
+            dialog.set_uri(self.outfile)
+            dialog.set_current_name(os.path.basename(self.outfile))
 
         res = dialog.run()
         dialog.hide()
