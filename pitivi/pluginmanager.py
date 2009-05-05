@@ -40,7 +40,7 @@ import zope.interface.verify
 from pitivi.signalinterface import Signallable
 import pitivi.plugincore as plugincore
 
-class PluginManager(object, Signallable):
+class PluginManager(Signallable):
     """
     Manages plugins in a centralized way.
 

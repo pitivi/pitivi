@@ -73,7 +73,7 @@ class CallbackThread(Thread):
     def process(self):
         self.callback(*self.args, **self.kwargs)
 
-class ThreadMaster(object, Loggable):
+class ThreadMaster(Loggable):
     """
     Controls all thread existing in pitivi
     """

@@ -28,7 +28,7 @@ from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.factories.base import URISourceFactoryMixin
 
-class SourceList(object, Signallable, Loggable):
+class SourceList(Signallable, Loggable):
     """
     Contains the sources for a project, stored as FileSourceFactory
 

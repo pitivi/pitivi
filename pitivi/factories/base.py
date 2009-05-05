@@ -36,7 +36,7 @@ class ObjectFactoryError(Exception):
 class ObjectFactoryStreamError(ObjectFactoryError):
     pass
 
-class ObjectFactory(object, Signallable, Loggable):
+class ObjectFactory(Signallable, Loggable):
     """
     Base class for all factory implementations.
 

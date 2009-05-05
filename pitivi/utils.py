@@ -224,7 +224,7 @@ def uri_is_reachable(uri):
             _("%s doesn't yet handle non local projects") % APPNAME)
     return os.path.isfile(gst.uri_get_location(uri))
 
-class PropertyChangeTracker(object, Signallable):
+class PropertyChangeTracker(Signallable):
     def __init__(self, timeline_object):
         self.properties = {}
 
@@ -241,7 +241,7 @@ class PropertyChangeTracker(object, Signallable):
 
         self.emit(property_name + '-changed', timeline_object, old_value, value)
 
-class Seeker(object, Signallable):
+class Seeker(Signallable):
     __signals__ = {'seek': ['position', 'format']}
 
     def __init__(self, timeout):

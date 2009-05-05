@@ -47,7 +47,7 @@ class FormatterSaveError(FormatterError):
 class FormatterOverwriteError(FormatterSaveError):
     """A project can't be saved because it will be overwritten"""
 
-class Formatter(object, Signallable, Loggable):
+class Formatter(Signallable, Loggable):
     """
     Provides convenience methods for storing and loading
     Project files.

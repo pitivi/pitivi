@@ -49,7 +49,7 @@ class ProjectSaveLoadError(ProjectError):
     """Error while loading/saving project"""
     pass
 
-class Project(object, Signallable, Loggable):
+class Project(Signallable, Loggable):
     """The base class for PiTiVi projects
 
     @ivar name: The name of the project

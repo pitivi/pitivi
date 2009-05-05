@@ -65,7 +65,7 @@ def get_probe():
         return HalDeviceProbe()
     return None
 
-class DeviceProbe(object, Signallable, Loggable):
+class DeviceProbe(Signallable, Loggable):
     """
     Allows listing of the various devices available.
 

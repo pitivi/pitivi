@@ -55,7 +55,7 @@ from pitivi.formatters.format import get_formatter_for_uri
 
 # FIXME : maybe we should have subclasses for UI and CLI
 
-class Pitivi(object, Loggable, Signallable):
+class Pitivi(Loggable, Signallable):
     """
     Pitivi's main application class.
 

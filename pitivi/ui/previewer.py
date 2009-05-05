@@ -111,7 +111,7 @@ def get_preview_for_object(trackobject):
             previewers[key] = DefaultPreviewer(factory, stream_)
     return previewers[key]
 
-class Previewer(object, Signallable, Loggable):
+class Previewer(Signallable, Loggable):
 
     __signals__ = {
         "update" : ("segment",),

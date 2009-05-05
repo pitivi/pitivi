@@ -1,7 +1,7 @@
 import unittest
 from pitivi.signalinterface import Signallable
 
-class myobject(object, Signallable):
+class myobject(Signallable):
 
     __signals__ = {
         "signal-oneargs" : ["firstarg"],

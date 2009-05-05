@@ -31,7 +31,7 @@ from pitivi.factories.test import VideoTestSourceFactory, \
 class TrackError(Exception):
     pass
 
-class TrackObject(object, Signallable):
+class TrackObject(Signallable):
     __signals__ = {
         'start-changed': ['start'],
         'duration-changed': ['duration'],
@@ -296,7 +296,7 @@ class SourceTrackObject(TrackObject):
         return source
 
 
-class Track(object, Signallable):
+class Track(Signallable):
     __signals__ = {
         'start-changed': ['start'],
         'duration-changed': ['duration'],

@@ -31,7 +31,7 @@ Interfaces for event-based programming
 
 from random import randint
 
-class Signallable:
+class Signallable(object):
     """
     Signallable interface
 

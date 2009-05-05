@@ -45,7 +45,7 @@ from pitivi.stream import VideoStream
 # what encoded format it is
 # We will need that in order to create proper Stream objects.
 
-class Discoverer(object, Signallable, Loggable):
+class Discoverer(Signallable, Loggable):
     """
     Queues requests to discover information about given files.
     The discovery is done in a very fragmented way, so that it appears to be

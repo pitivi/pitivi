@@ -84,7 +84,7 @@ class StreamEntry(object):
     def __repr__(self):
         return "<StreamEntry %s '%s'>" % (self.factory_entry.factory, self.stream)
 
-class Pipeline(object, Signallable, Loggable):
+class Pipeline(Signallable, Loggable):
     """
     A container for all multimedia processing.
 

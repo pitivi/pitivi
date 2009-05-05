@@ -39,7 +39,7 @@ from pitivi.log.loggable import Loggable
 class ActionError(Exception):
     pass
 
-class Action(object, Signallable, Loggable):
+class Action(Signallable, Loggable):
     """
     Pipeline action.
 

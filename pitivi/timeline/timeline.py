@@ -35,7 +35,7 @@ UNSELECT = 1
 class TimelineError(Exception):
     pass
 
-class TimelineObject(object, Signallable, Loggable):
+class TimelineObject(Signallable, Loggable):
     __signals__ = {
         'start-changed': ['start'],
         'duration-changed': ['duration'],
@@ -275,7 +275,7 @@ class TimelineObject(object, Signallable, Loggable):
         except ValueError:
             raise TimelineError()
 
-class Selection(object, Signallable):
+class Selection(Signallable):
 
     __signals__ = {
         "selection-changed" : []
@@ -468,7 +468,7 @@ class TimelineEdges(object):
             len(self.edges) - 1, index + 1)]
 
 
-class Timeline(object ,Signallable, Loggable):
+class Timeline(Signallable, Loggable):
     __signals__ = {
         'duration-changed': ['duration'],
         'track-added': ['track'],

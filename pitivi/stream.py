@@ -27,7 +27,7 @@ from pitivi.log.loggable import Loggable
 import pitivi.log.log as log
 import gst
 
-class MultimediaStream(object, Loggable):
+class MultimediaStream(Loggable):
     """
     Defines a media stream
 

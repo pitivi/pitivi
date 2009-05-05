@@ -122,7 +122,7 @@ class Notification(object):
         setattr(instance, self.attrname, value)
         instance.emit(self.signame)
 
-class GlobalSettings(object, Signallable):
+class GlobalSettings(Signallable):
     """
     Global PiTiVi settings.
 
@@ -428,7 +428,7 @@ class RenderSettings(object):
     def __repr__(self):
         return "<RenderSettings %s [%d streams]>" % (self.muxer, len(self.settings))
 
-class ExportSettings(object, Signallable, Loggable):
+class ExportSettings(Signallable, Loggable):
     """
     Multimedia export settings
 
