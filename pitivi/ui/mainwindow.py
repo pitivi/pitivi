@@ -748,8 +748,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
     project = receiver(_setProject)
 
     @handler(project, "settings-changed")
-    def _settingsChangedCb(self, project, settings):
-        self.rate = float(1 / self.project.getSettings().videorate)
+    def _settingsChangedCb(self, project):
+        self.rate = float(1 / self.project.settings.videorate)
 
     @handler(project, "missing-plugins")
     def _projectMissingPluginsCb(self, project, uri, detail, message):
