@@ -42,7 +42,7 @@ class SourceList(Signallable, Loggable):
     Signals:
      - C{file_added} : A file has been completely discovered and is valid.
      - C{file_removed} : A file was removed from the SourceList.
-     - C{not_media_file} : The given uri is not a media file.
+     - C{discovery-error} : The given uri is not a media file.
      - C{tmp_is_ready} : The temporary uri given to the SourceList is ready to use.
      - C{ready} : No more files are being discovered/added.
      - C{starting} : Some files are being discovered/added.
@@ -51,7 +51,7 @@ class SourceList(Signallable, Loggable):
     __signals__ = {
         "file_added" : ["factory"],
         "file_removed" : ["uri"],
-        "not_media_file" : ["uri", "reason"],
+        "discovery-error" : ["uri", "reason"],
         "tmp_is_ready": ["factory"],
         "ready" : None,
         "starting" : None,
@@ -66,8 +66,8 @@ class SourceList(Signallable, Loggable):
         self._sourceindex = []
         self.tempsources = {}
         self.discoverer = Discoverer()
-        self.discoverer.connect("not_media_file", self._notMediaFileCb)
-        self.discoverer.connect("finished_analyzing", self._finishedAnalyzingCb)
+        self.discoverer.connect("discovery-error", self._discoveryErrorCb)
+        self.discoverer.connect("discovery-done", self._discoveryDoneCb)
         self.discoverer.connect("starting", self._discovererStartingCb)
         self.discoverer.connect("ready", self._discovererReadyCb)
         self.discoverer.connect("missing-plugins",
@@ -166,7 +166,7 @@ class SourceList(Signallable, Loggable):
             res.append(self[i])
         return res
 
-    def _finishedAnalyzingCb(self, unused_discoverer, factory):
+    def _discoveryDoneCb(self, unused_discoverer, factory):
         # callback from finishing analyzing factory
         if factory.name in self.tempsources:
             self.tempsources[factory.name] = factory
@@ -174,11 +174,11 @@ class SourceList(Signallable, Loggable):
         elif factory.name in self.sources:
             self.addFactory(factory.name, factory)
 
-    def _notMediaFileCb(self, unused_discoverer, uri, reason, extra):
+    def _discoveryErrorCb(self, unused_discoverer, uri, reason, extra):
         if self.missing_plugins.pop(uri, None) is None:
-            # callback from the discoverer's 'not_media_file' signal
+            # callback from the discoverer's 'discovery-error' signal
             # remove it from the list
-            self.emit("not_media_file", uri, reason, extra)
+            self.emit("discovery-error", uri, reason, extra)
 
         if uri in self.sources and not self.sources[uri]:
             del self.sources[uri]

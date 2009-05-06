@@ -350,7 +350,7 @@ class SourceList(gtk.VBox, Loggable):
         self.project_signals.connect(
             project.sources, "file_removed", None, self._fileRemovedCb)
         self.project_signals.connect(
-            project.sources, "not_media_file", None, self._notMediaFileCb)
+            project.sources, "discovery-error", None, self._discoveryErrorCb)
         self.project_signals.connect(
             project.sources, "missing-plugins", None, self._missingPluginsCb)
         self.project_signals.connect(
@@ -485,7 +485,7 @@ class SourceList(gtk.VBox, Loggable):
         if not len(model):
             self._displayTreeView(False)
 
-    def _notMediaFileCb(self, unused_sourcelist, uri, reason, extra):
+    def _discoveryErrorCb(self, unused_sourcelist, uri, reason, extra):
         """ The given uri isn't a media file """
         self.infostub.addErrors(uri, reason, extra)
 

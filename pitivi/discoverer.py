@@ -51,24 +51,20 @@ class Discoverer(Signallable, Loggable):
     The discovery is done in a very fragmented way, so that it appears to be
     running in a separate thread.
 
-    The "new_sourcefilefactory" signal is emitted when a file is established
-    to be a media_file and the FileSourceFactory() is included in the signal.
-
-    The "not_media_file" signal is emitted if a file is not a media_file.
-
-    The "finished-analyzing" signal is emitted a file is finished being analyzed
-
     The "starting" signal is emitted when the discoverer starts analyzing some
     files.
 
     The "ready" signal is emitted when the discoverer has no more files to
     analyze.
+
+    The "discovery-done" signal is emitted an uri is finished being analyzed.
+    The "discovery-error" signal is emitted if an error is encountered while
+    analyzing an uri.
     """
 
     __signals__ = {
-        "new_sourcefilefactory" : ["factory"],
-        "not_media_file" : ["a", "b", "c" ],
-        "finished_analyzing" : ["factory"],
+        "discovery-error" : ["a", "b", "c" ],
+        "discovery-done" : ["factory"],
         "ready" : None,
         "starting" : None,
         "missing-plugins": ["uri", "detail", "description"]
@@ -193,9 +189,9 @@ class Discoverer(Signallable, Loggable):
             is_image = False
 
         if self.error:
-            self.emit('not_media_file', self.current_uri, self.error, self.error_debug)
+            self.emit('discovery-error', self.current_uri, self.error, self.error_debug)
         elif self.current_duration == gst.CLOCK_TIME_NONE and not is_image:
-            self.emit('not_media_file', self.current_uri,
+            self.emit('discovery-error', self.current_uri,
                       _("Could not establish the duration of the file."),
                       _("This clip seems to be in a format which cannot be accessed in a random fashion."))
         else:
@@ -216,9 +212,7 @@ class Discoverer(Signallable, Loggable):
                 for stream in self.current_streams:
                     factory.addOutputStream(stream)
 
-                self.emit('new_sourcefilefactory', factory)
-
-            self.emit('finished_analyzing', factory)
+            self.emit('discovery-done', factory)
 
         self.info("Cleaning up after finished analyzing %s", self.current_uri)
         self._resetState()

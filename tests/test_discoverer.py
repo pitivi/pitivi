@@ -134,7 +134,7 @@ class TestAnalysis(TestCase):
             bag['error'] = error
 
         self.discoverer.addFile('buh://asd')
-        self.discoverer.connect('not_media_file', no_media_file_cb)
+        self.discoverer.connect('discovery-error', no_media_file_cb)
         self.discoverer._analyze()
         self.failUnlessEqual(bag['error'], 'No available source handler.')
 
@@ -148,7 +148,7 @@ class TestAnalysis(TestCase):
 
         self.discoverer.addFile('file://i/cant/possibly/exist/and/if/you/'
             'really/have/a/file/named/like/this/you/deserve/a/faillure')
-        self.discoverer.connect('not_media_file', no_media_file_cb)
+        self.discoverer.connect('discovery-error', no_media_file_cb)
         self.discoverer._analyze()
         self.failUnlessEqual(bag['error'], 'Pipeline didn\'t want '
                 'to go to PAUSED.')
@@ -158,10 +158,10 @@ class TestAnalysis(TestCase):
         Check that a timeout is set when analyzing a file.
         """
         bag = {'error': None}
-        def not_media_file_cb(disc, uri, error, error_debug):
+        def discovery_error_cb(disc, uri, error, error_debug):
             bag['error'] = error
 
-        self.discoverer.connect('not_media_file', not_media_file_cb)
+        self.discoverer.connect('discovery-error', discovery_error_cb)
         self.discoverer.addFile('foo')
         self.failUnlessEqual(bag['error'], None)
         self.discoverer._analyze()
@@ -266,13 +266,13 @@ class TestAnalysis(TestCase):
         self.failUnlessEqual(bag['called'], True)
 
     def testBusError(self):
-        def not_media_file_cb(discoverer, uri, error, debug, dic):
+        def discovery_error_cb(discoverer, uri, error, debug, dic):
             dic['uri'] = uri
             dic['error'] = error
             dic['debug'] = debug
 
         dic = {}
-        self.discoverer.connect('not_media_file', not_media_file_cb, dic)
+        self.discoverer.connect('discovery-error', discovery_error_cb, dic)
 
         src = gst.Pad('src', gst.PAD_SRC)
         gerror = gst.GError(gst.STREAM_ERROR, gst.STREAM_ERROR_FAILED, 'meh')
@@ -347,24 +347,24 @@ class TestStateChange(TestCase):
         self.error = None
         self.error_debug = None
 
-        self.discoverer.connect('not_media_file', self.notMediaFileCb)
-        self.discoverer.connect('new_sourcefilefactory',
-                self.newSourcefilefactoryCb)
+        self.discoverer.connect('discovery-error', self.discoveryErrorCb)
+        self.discoverer.connect('discovery-done',
+                self.discoveryDoneCb)
 
     def tearDown(self):
-        self.discoverer.disconnect_by_function(self.notMediaFileCb)
-        self.discoverer.disconnect_by_function(self.newSourcefilefactoryCb)
+        self.discoverer.disconnect_by_function(self.discoveryErrorCb)
+        self.discoverer.disconnect_by_function(self.discoveryDoneCb)
         self.discoverer = None
         self.factories = None
         self.error = None
         self.src = None
         TestCase.tearDown(self)
 
-    def notMediaFileCb(self, disc, uri, error, debug):
+    def discoveryErrorCb(self, disc, uri, error, debug):
         self.error = error
         self.error_debug = debug
 
-    def newSourcefilefactoryCb(self, disc, factory):
+    def discoveryDoneCb(self, disc, factory):
         self.failUnlessEqual(factory.duration, 10 * gst.SECOND)
         self.factories.append(factory)
 

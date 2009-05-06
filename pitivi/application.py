@@ -279,7 +279,7 @@ class InteractivePitivi(Pitivi):
             self._uris = uris
             self._duration = self.current.timeline.duration
             self.current.sources.connect("file_added", self._addSourceCb)
-            self.current.sources.connect("not_media_file", self._notMediaFileCb)
+            self.current.sources.connect("discovery-error", self._discoveryErrorCb)
         self.current.sources.addUris(uris)
 
     def _addSourceCb(self, unused_sourcelist, factory):
@@ -292,11 +292,11 @@ class InteractivePitivi(Pitivi):
             t.start = self._duration
             self._duration += t.duration
 
-    def _notMediaFileCb(self, sourcelist, uri, error, debug):
+    def _discoveryErrorCb(self, sourcelist, uri, error, debug):
         if uri in self._uris:
             self._uris.remove(uri)
             if not self._uris:
-                self.current.sources.disconnect_by_function(self._notMediaFileCb)
+                self.current.sources.disconnect_by_function(self._discoveryErrorCb)
 
     # properties
 
