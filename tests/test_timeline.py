@@ -317,30 +317,29 @@ class TestTimelineAddRemoveTimelineObjects(TestCase):
 
         timeline.removeTimelineObject(timeline_object2)
 
-class TestSelectionAddRemoveTimelineObjects(TestCase):
+class TestLink(TestCase):
+
+    def test(self):
+        pass
+
     def testAddRemoveTimelineObjects(self):
         factory = StubFactory()
         factory.addOutputStream(VideoStream(gst.Caps("video/x-raw-yuv")))
         timeline_object1 = TimelineObject(factory)
         timeline_object2 = TimelineObject(factory)
 
-        selection = Selection()
-        selection.addTimelineObject(timeline_object1)
+        link = Link()
+        link.addTimelineObject(timeline_object1)
         self.failUnlessRaises(TimelineError,
-                selection.addTimelineObject, timeline_object1)
+                link.addTimelineObject, timeline_object1)
 
-        selection.addTimelineObject(timeline_object2)
+        link.addTimelineObject(timeline_object2)
 
-        selection.removeTimelineObject(timeline_object1)
+        link.removeTimelineObject(timeline_object1)
         self.failUnlessRaises(TimelineError,
-                selection.removeTimelineObject, timeline_object1)
+                link.removeTimelineObject, timeline_object1)
 
-        selection.removeTimelineObject(timeline_object2)
-
-class TestLink(TestCase):
-
-    def test(self):
-        pass
+        link.removeTimelineObject(timeline_object2)
 
     def setUp(self):
         TestCase.setUp(self)
