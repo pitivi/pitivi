@@ -85,7 +85,7 @@ class Discoverer(Signallable, Loggable):
         self.pipeline = None
         self.bus = None
         self.error = None
-        self.error_debug = None
+        self.error_detail = None
         self.unfixed_pads = 0
         self.missing_plugin_messages = []
         self.dynamic_elements = []
@@ -156,13 +156,13 @@ class Discoverer(Signallable, Loggable):
         if result == gst.pbutils.INSTALL_PLUGINS_STARTED_OK:
             # don't emit an error yet
             self.error = None
-            self.error_debug = None
+            self.error_detail = None
             res = True
         else:
             if self.error is None:
                 self.error = _('Missing plugins:\n%s') % \
                              '\n'.join(missing_plugin_descriptions)
-                self.error_debug = ''
+                self.error_detail = ''
             res = False
 
         return res
@@ -180,7 +180,7 @@ class Discoverer(Signallable, Loggable):
         if not self.current_streams and self.error is None:
             # EOS and no decodable streams?
             self.error = _('FIXME: no output streams')
-            self.error_debug = _('see above')
+            self.error_detail = _('see above')
 
         if len(self.current_streams) == 1:
             stream = self.current_streams[0]
@@ -189,7 +189,7 @@ class Discoverer(Signallable, Loggable):
             is_image = False
 
         if self.error:
-            self.emit('discovery-error', self.current_uri, self.error, self.error_debug)
+            self.emit('discovery-error', self.current_uri, self.error, self.error_detail)
         elif self.current_duration == gst.CLOCK_TIME_NONE and not is_image:
             self.emit('discovery-error', self.current_uri,
                       _("Could not establish the duration of the file."),
@@ -203,7 +203,7 @@ class Discoverer(Signallable, Loggable):
             else:
                 # woot, nothing decodable
                 self.error = _('Can not decode file.')
-                self.error_debug = _('The given file does not contain audio, video or picture streams.')
+                self.error_detail = _('The given file does not contain audio, video or picture streams.')
                 factory = None
 
             if factory is not None:
@@ -231,7 +231,7 @@ class Discoverer(Signallable, Loggable):
         self.timeout_id = 0
         if not self.error:
             self.error = _('Timeout while analyzing file.')
-            self.error_debug = _('Analyzing the file took too long.')
+            self.error_detail = _('Analyzing the file took too long.')
         self._finishAnalysis()
 
         return False
@@ -261,7 +261,7 @@ class Discoverer(Signallable, Loggable):
         if not source:
             self.warning("This is not a media file: %s", self.current_uri)
             self.error = _("No available source handler.")
-            self.error_debug = _("You do not have a GStreamer source element to handle protocol '%s'") % gst.uri_get_protocol(self.current_uri)
+            self.error_detail = _("You do not have a GStreamer source element to handle protocol '%s'") % gst.uri_get_protocol(self.current_uri)
 
             return None
 
@@ -345,7 +345,7 @@ class Discoverer(Signallable, Loggable):
             return
 
         self.error = _("An internal error occured while analyzing this file: %s") % gerror.message
-        self.error_debug = detail
+        self.error_detail = detail
 
         self._finishAnalysis()
 
@@ -355,7 +355,7 @@ class Discoverer(Signallable, Loggable):
             self.warning("We don't implement redirections currently, ignoring file")
             if self.error is None:
                 self.error = _("File contains a redirection to another clip.")
-                self.error_debug = _("PiTiVi currently does not handle redirection files.")
+                self.error_detail = _("PiTiVi currently does not handle redirection files.")
 
             self._finishAnalysis()
             return

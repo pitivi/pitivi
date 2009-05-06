@@ -130,7 +130,7 @@ class TestAnalysis(TestCase):
         Check that discoverer errors out if it can't create a source element.
         """
         bag = {'error': None}
-        def no_media_file_cb(disc, uri, error, error_debug):
+        def no_media_file_cb(disc, uri, error, error_detail):
             bag['error'] = error
 
         self.discoverer.addUri('buh://asd')
@@ -143,7 +143,7 @@ class TestAnalysis(TestCase):
         Check for errors setting the state of the pipeline to PAUSED.
         """
         bag = {'error': None}
-        def no_media_file_cb(disc, uri, error, error_debug):
+        def no_media_file_cb(disc, uri, error, error_detail):
             bag['error'] = error
 
         self.discoverer.addUri('file://i/cant/possibly/exist/and/if/you/'
@@ -158,7 +158,7 @@ class TestAnalysis(TestCase):
         Check that a timeout is set when analyzing a file.
         """
         bag = {'error': None}
-        def discovery_error_cb(disc, uri, error, error_debug):
+        def discovery_error_cb(disc, uri, error, error_detail):
             bag['error'] = error
 
         self.discoverer.connect('discovery-error', discovery_error_cb)
@@ -345,7 +345,7 @@ class TestStateChange(TestCase):
         self.discoverer.current_duration = 10 * gst.SECOND
         self.factories = []
         self.error = None
-        self.error_debug = None
+        self.error_detail = None
 
         self.discoverer.connect('discovery-error', self.discoveryErrorCb)
         self.discoverer.connect('discovery-done',
@@ -362,7 +362,7 @@ class TestStateChange(TestCase):
 
     def discoveryErrorCb(self, disc, uri, error, debug):
         self.error = error
-        self.error_debug = debug
+        self.error_detail = debug
 
     def discoveryDoneCb(self, disc, factory):
         self.failUnlessEqual(factory.duration, 10 * gst.SECOND)
