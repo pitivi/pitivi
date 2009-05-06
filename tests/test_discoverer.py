@@ -26,7 +26,6 @@ import gst
 
 from common import TestCase
 from pitivi.discoverer import Discoverer
-from pitivi.stream import get_stream_for_caps
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
 
 class AddFilesStubDiscoverer(Discoverer):
