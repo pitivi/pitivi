@@ -29,7 +29,7 @@ msgstr ""
 
 #: ../pitivi/check.py:124
 msgid "Could not find the GNonLin plugins!"
-msgstr ""
+msgstr "Could not find the GNonLin plugins"
 
 #: ../pitivi/check.py:125
 msgid ""
