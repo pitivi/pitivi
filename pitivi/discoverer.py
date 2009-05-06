@@ -64,7 +64,7 @@ class Discoverer(Signallable, Loggable):
 
     __signals__ = {
         "discovery-error" : ["a", "b", "c" ],
-        "discovery-done" : ["factory"],
+        "discovery-done" : ["uri", "factory"],
         "ready" : None,
         "starting" : None,
         "missing-plugins": ["uri", "detail", "description"]
@@ -212,7 +212,7 @@ class Discoverer(Signallable, Loggable):
                 for stream in self.current_streams:
                     factory.addOutputStream(stream)
 
-            self.emit('discovery-done', factory)
+            self.emit('discovery-done', self.current_uri, factory)
 
         self.info("Cleaning up after finished analyzing %s", self.current_uri)
         self._resetState()

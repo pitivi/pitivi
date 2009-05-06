@@ -166,7 +166,7 @@ class SourceList(Signallable, Loggable):
             res.append(self[i])
         return res
 
-    def _discoveryDoneCb(self, unused_discoverer, factory):
+    def _discoveryDoneCb(self, unused_discoverer, uri, factory):
         # callback from finishing analyzing factory
         if factory.name in self.tempsources:
             self.tempsources[factory.name] = factory

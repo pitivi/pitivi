@@ -364,7 +364,7 @@ class TestStateChange(TestCase):
         self.error = error
         self.error_detail = debug
 
-    def discoveryDoneCb(self, disc, factory):
+    def discoveryDoneCb(self, disc, uri, factory):
         self.failUnlessEqual(factory.duration, 10 * gst.SECOND)
         self.factories.append(factory)
 
