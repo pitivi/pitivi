@@ -426,7 +426,7 @@ class SourceList(gtk.VBox, Loggable):
         self._importDialog.connect('close', self._dialogBoxCloseCb)
         self._importDialog.show()
 
-    def addFiles(self, files):
+    def addUris(self, files):
         """ Add files to the list """
         self.app.current.sources.addUris(files)
 
@@ -527,7 +527,7 @@ class SourceList(gtk.VBox, Loggable):
             if select_folders:
                 self.addFolders(filenames)
             else:
-                self.addFiles(filenames)
+                self.addUris(filenames)
             if self.app.settings.closeImportDialog:
                 dialogbox.destroy()
                 self._importDialog = None
@@ -700,7 +700,7 @@ class SourceList(gtk.VBox, Loggable):
                 directories = [incoming]
         if directories:
             self.addFolders(directories)
-        self.addFiles(filenames)
+        self.addUris(filenames)
 
     def _dndTreeBeginCb(self, unused_widget, context):
         self.info("tree drag_begin")

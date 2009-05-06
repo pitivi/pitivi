@@ -105,17 +105,17 @@ class Discoverer(Signallable, Loggable):
         for element in self.dynamic_elements:
             self.pipeline.remove(element)
 
-    def addFile(self, filename):
+    def addUri(self, uri):
         """ queue a filename to be discovered """
-        self.info("filename: %s", filename)
-        self.queue.append(filename)
+        self.info("filename: %s", uri)
+        self.queue.append(uri)
         if not self.working:
             self._startAnalysis()
 
-    def addFiles(self, filenames):
+    def addUris(self, uris):
         """ queue a list of filenames to be discovered """
-        self.info("filenames : %s", filenames)
-        self.queue.extend(filenames)
+        self.info("filenames : %s", uris)
+        self.queue.extend(uris)
         if self.queue and not self.working:
             self._startAnalysis()
 
@@ -499,6 +499,6 @@ if __name__ == '__main__':
     import gobject
 
     discoverer = Discoverer()
-    discoverer.addFiles(['file://%s' % i  for i in sys.argv[1:]])
+    discoverer.addUris(['file://%s' % i  for i in sys.argv[1:]])
     loop = gobject.MainLoop()
     loop.run()

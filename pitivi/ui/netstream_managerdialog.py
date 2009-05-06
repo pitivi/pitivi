@@ -137,7 +137,7 @@ class NetstreamManagerDialog(object):
         else:
             gst.debug("recording stopped")
             self.player.stopRecording()
-            self.sourcefactories.sourcelist.addFiles([self.filepath])
+            self.sourcefactories.sourcelist.addUris([self.filepath])
             self.capture_btn.set_label("Capture")
 
     def on_message(self, bus, message):

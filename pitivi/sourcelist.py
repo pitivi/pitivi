@@ -107,7 +107,7 @@ class SourceList(Signallable, Loggable):
         if uri in self.sources.keys():
             return
         self.sources[uri] = None
-        self.discoverer.addFile(uri)
+        self.discoverer.addUri(uri)
 
     def addUris(self, uris):
         """ Add the list of uris to the list of sources, they will be discovered """
@@ -119,7 +119,7 @@ class SourceList(Signallable, Loggable):
                 self.sources[uri] = None
                 rlist.append(uri)
 
-        self.discoverer.addFiles(rlist)
+        self.discoverer.addUris(rlist)
 
     def addTmpUri(self, uri):
         """ Adds a temporary uri, will not be saved """
@@ -127,7 +127,7 @@ class SourceList(Signallable, Loggable):
         if uri in self.sources.keys():
             return
         self.tempsources[uri] = None
-        self.discoverer.addFile(uri)
+        self.discoverer.addUri(uri)
 
     def removeFactory(self, factory):
         """ Remove a file using it's objectfactory """

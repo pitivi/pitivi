@@ -101,7 +101,7 @@ class WebcamManagerDialog(GladeWindow):
             gst.debug("recording stopped")
             self.player.stopRecording()
             # FIXME : use the generic way for adding a file
-            self.sourcefactories.addFiles([self.filepath])
+            self.sourcefactories.addUris([self.filepath])
             self.player.set_state(gst.STATE_PLAYING)
             self.record_btn.set_label("Start Recording")
 

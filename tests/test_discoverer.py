@@ -28,7 +28,7 @@ from common import TestCase
 from pitivi.discoverer import Discoverer
 from pitivi.factories.file import FileSourceFactory, PictureFileSourceFactory
 
-class AddFilesStubDiscoverer(Discoverer):
+class AddUrisStubDiscoverer(Discoverer):
     analysis_scheduled = 0
 
     def _scheduleAnalysis(self):
@@ -39,11 +39,11 @@ class AddFilesStubDiscoverer(Discoverer):
         return Discoverer._finishAnalysis(self)
 
 class TestAnalysisQueue(TestCase):
-    def testAddFile(self):
-        discoverer = AddFilesStubDiscoverer()
+    def testAddUri(self):
+        discoverer = AddUrisStubDiscoverer()
         self.failIf(discoverer.working)
         # add a file, should start working
-        discoverer.addFile('meh')
+        discoverer.addUri('meh')
         self.failUnless(discoverer.working)
         self.failUnlessEqual(discoverer.analysis_scheduled, 1)
 
@@ -53,12 +53,12 @@ class TestAnalysisQueue(TestCase):
         self.failUnlessEqual(discoverer.analysis_scheduled, 0)
 
         # add another file, should start working
-        discoverer.addFile('meh1')
+        discoverer.addUri('meh1')
         self.failUnless(discoverer.working)
         self.failUnlessEqual(discoverer.analysis_scheduled, 1)
 
         # queue another while the first isn't finished yet
-        discoverer.addFile('meh2')
+        discoverer.addUri('meh2')
         # this shouldn't trigger a new analysis until the previous is done
         self.failUnless(discoverer.analysis_scheduled, 1)
 
@@ -133,7 +133,7 @@ class TestAnalysis(TestCase):
         def no_media_file_cb(disc, uri, error, error_debug):
             bag['error'] = error
 
-        self.discoverer.addFile('buh://asd')
+        self.discoverer.addUri('buh://asd')
         self.discoverer.connect('discovery-error', no_media_file_cb)
         self.discoverer._analyze()
         self.failUnlessEqual(bag['error'], 'No available source handler.')
@@ -146,7 +146,7 @@ class TestAnalysis(TestCase):
         def no_media_file_cb(disc, uri, error, error_debug):
             bag['error'] = error
 
-        self.discoverer.addFile('file://i/cant/possibly/exist/and/if/you/'
+        self.discoverer.addUri('file://i/cant/possibly/exist/and/if/you/'
             'really/have/a/file/named/like/this/you/deserve/a/faillure')
         self.discoverer.connect('discovery-error', no_media_file_cb)
         self.discoverer._analyze()
@@ -162,7 +162,7 @@ class TestAnalysis(TestCase):
             bag['error'] = error
 
         self.discoverer.connect('discovery-error', discovery_error_cb)
-        self.discoverer.addFile('foo')
+        self.discoverer.addUri('foo')
         self.failUnlessEqual(bag['error'], None)
         self.discoverer._analyze()
         # check that a timeout is scheduled once we start analyzing so we don't
@@ -172,7 +172,7 @@ class TestAnalysis(TestCase):
         self.failUnless(bag['error'])
 
         self.discoverer.timeout_expired = False
-        self.discoverer.addFile('foo')
+        self.discoverer.addUri('foo')
         self.discoverer._analyze()
         # at this point the timeout is scheduled but not expired, so the
         # discoverer should still be working
@@ -279,14 +279,14 @@ class TestAnalysis(TestCase):
         message = gst.message_new_error(src, gerror, 'debug1')
 
         self.failUnlessEqual(self.discoverer.error, None)
-        self.discoverer.addFile('popme')
+        self.discoverer.addUri('popme')
         self.discoverer._busMessageErrorCb(None, message)
         self.failUnlessEqual(dic['debug'], 'debug1')
 
         # errors shouldn't be overridden
         gerror = gst.GError(gst.STREAM_ERROR, gst.STREAM_ERROR_FAILED, 'muh')
         message = gst.message_new_error(src, gerror, 'debug2')
-        self.discoverer.addFile('popme')
+        self.discoverer.addUri('popme')
         self.discoverer._busMessageErrorCb(None, message)
         self.failUnlessEqual(dic['debug'], 'debug2')
 
@@ -387,7 +387,7 @@ class TestStateChange(TestCase):
         # no streams found
         message = gst.message_new_state_changed(self.src,
                 gst.STATE_READY, gst.STATE_PAUSED, gst.STATE_VOID_PENDING)
-        self.discoverer.addFile('illbepopped')
+        self.discoverer.addUri('illbepopped')
         self.failUnlessEqual(self.error, None)
         self.discoverer._busMessageStateChangedCb(None, message)
         self.failUnlessEqual(self.factories, [])
@@ -403,7 +403,7 @@ class TestStateChange(TestCase):
         self.failUnlessEqual(self.error, None)
         message = gst.message_new_state_changed(self.src,
                 gst.STATE_READY, gst.STATE_PAUSED, gst.STATE_VOID_PENDING)
-        self.discoverer.addFile('illbepopped')
+        self.discoverer.addUri('illbepopped')
         self.failUnlessEqual(self.error, None)
         self.discoverer._busMessageStateChangedCb(None, message)
         # should go to PLAYING to do thumbnails
@@ -423,7 +423,7 @@ class TestStateChange(TestCase):
         self.failUnlessEqual(self.error, None)
         message = gst.message_new_state_changed(self.src,
                 gst.STATE_READY, gst.STATE_PAUSED, gst.STATE_VOID_PENDING)
-        self.discoverer.addFile('illbepopped')
+        self.discoverer.addUri('illbepopped')
         self.failUnlessEqual(self.error, None)
         self.discoverer._busMessageStateChangedCb(None, message)
         self.failUnlessEqual(len(self.factories), 1)
@@ -446,7 +446,7 @@ class TestStateChange(TestCase):
         self.failUnlessEqual(self.error, None)
         message = gst.message_new_state_changed(self.src,
                 gst.STATE_READY, gst.STATE_PAUSED, gst.STATE_VOID_PENDING)
-        self.discoverer.addFile('illbepopped')
+        self.discoverer.addUri('illbepopped')
         self.failUnlessEqual(self.error, None)
         self.discoverer._busMessageStateChangedCb(None, message)
         # should go to PLAYING to do thumbnails
