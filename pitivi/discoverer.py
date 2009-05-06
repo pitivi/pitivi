@@ -179,8 +179,8 @@ class Discoverer(Signallable, Loggable):
         missing_plugins = self._checkMissingPlugins()
         if not self.current_streams and self.error is None:
             # EOS and no decodable streams?
-            self.error = _('FIXME: no output streams')
-            self.error_detail = _('see above')
+            self.error = _('No streams found')
+            self.error_detail = ""
 
         if len(self.current_streams) == 1:
             stream = self.current_streams[0]
