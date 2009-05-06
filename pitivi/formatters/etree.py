@@ -1,7 +1,8 @@
 # PiTiVi , Non-linear video editor
 #
-#       test_formatter.py
+#       etree.py
 #
+# Copyright (c) 2009, Alessandro Decina <alessandrod.@gmail.com>
 # Copyright (c) 2009, Edward Hervey <bilboed@bilboed.com>
 #
 # This program is free software; you can redistribute it and/or
@@ -28,8 +29,8 @@ from xml.etree.ElementTree import Element, SubElement, tostring, parse
 from pitivi.reflect import qual, namedAny
 from pitivi.factories.base import SourceFactory
 from pitivi.factories.file import FileSourceFactory
-from pitivi.timeline.track import Track, SourceTrackObject
-from pitivi.timeline.timeline import Timeline, TimelineObject
+from pitivi.timeline.track import Track
+from pitivi.timeline.timeline import TimelineObject
 from pitivi.formatters.base import Formatter
 from pitivi.utils import get_filesystem_encoding
 
