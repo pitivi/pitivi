@@ -264,12 +264,37 @@ class Discoverer(Signallable, Loggable):
     def _createSource(self):
         source = gst.element_make_from_uri(gst.URI_SRC,
                 self.current_uri, "src-%s" % self.current_uri)
+        if not source:
+            self.warning("This is not a media file: %s", self.current_uri)
+            self.error = _("No available source handler.")
+            self.error_debug = _("You do not have a GStreamer source element to handle protocol '%s'") % gst.uri_get_protocol(self.current_uri)
+
+            return None
 
         return source
 
     def _useDecodeBinTwo(self):
         ret = os.getenv('USE_DECODEBIN2', '1') == '1'
         return ret
+
+    def _createDecodeBin(self):
+        if self._useDecodeBinTwo():
+            dbin = gst.element_factory_make("decodebin2", "dbin")
+        else:
+            dbin = gst.element_factory_make("decodebin", "dbin")
+
+        dbin.connect("new-decoded-pad", self._newDecodedPadCb)
+
+        return dbin
+
+    def _connectToBus(self):
+        self.bus = self.pipeline.get_bus()
+        self.bus.add_signal_watch()
+        self.bus.connect("message::eos", self._busMessageEosCb)
+        self.bus.connect("message::error", self._busMessageErrorCb)
+        self.bus.connect("message::element", self._busMessageElementCb)
+        self.bus.connect("message::state-changed",
+                         self._busMessageStateChangedCb)
 
     def _analyze(self):
         """
@@ -281,35 +306,25 @@ class Discoverer(Signallable, Loggable):
         # setup graph and start analyzing
         self.pipeline = gst.Pipeline("Discoverer-%s" % self.current_uri)
 
+        # create the source element
         source = self._createSource()
-        if not source:
-            self.warning("This is not a media file: %s", self.current_uri)
-            self.error = _("No available source handler.")
-            self.error_debug = _("You do not have a GStreamer source element to handle protocol '%s'") % gst.uri_get_protocol(self.current_uri)
+        if source is None:
             self._finishAnalysis()
-
             return False
 
-        if self._useDecodeBinTwo():
-            dbin = gst.element_factory_make("decodebin2", "dbin")
-        else:
-            dbin = gst.element_factory_make("decodebin", "dbin")
-
-        dbin.connect("new-decoded-pad", self._newDecodedPadCb)
+        # create decodebin(2)
+        dbin = self._createDecodeBin()
 
         self.pipeline.add(source, dbin)
         source.link(dbin)
         self.info("analysis pipeline created")
 
-        self.bus = self.pipeline.get_bus()
-        self.bus.add_signal_watch()
-        self.bus.connect("message::eos", self._busMessageEosCb)
-        self.bus.connect("message::error", self._busMessageErrorCb)
-        self.bus.connect("message::element", self._busMessageElementCb)
-        self.bus.connect("message::state-changed",
-                         self._busMessageStateChangedCb)
+        # connect to bus messages
+        self._connectToBus()
 
         self.info("setting pipeline to PAUSED")
+
+        # go to PAUSED
         if self.pipeline.set_state(gst.STATE_PAUSED) == gst.STATE_CHANGE_FAILURE:
             if not self.error:
                 self.error = _("Pipeline didn't want to go to PAUSED.")
