@@ -20,7 +20,8 @@ EXTRA_DIST = \
 	AUTHORS \
 	RELEASE \
 	ABOUT-NLS \
-	pitivi.png
+	pitivi.png \
+    pitivi.xml
 
 
 DISTCLEANFILES =                \
