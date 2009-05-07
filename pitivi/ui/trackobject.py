@@ -15,7 +15,7 @@ from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT
 from preview import Preview
 import gst
 from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
-from common import LAYER_SPACING, unpack_cairo_pattern
+from common import LAYER_SPACING, unpack_cairo_pattern, unpack_cairo_gradient
 from pitivi.ui.point import Point
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.settings import GlobalSettings
@@ -320,7 +320,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             color = self.settings.videoClipBg
         elif isinstance(self.element.stream, AudioStream):
             color = self.settings.audioClipBg
-        pattern = unpack_cairo_pattern(color)
+        pattern = unpack_cairo_gradient(color)
         self.bg.props.fill_pattern = pattern
 
         self.namebg.props.fill_pattern = pattern

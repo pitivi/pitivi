@@ -44,3 +44,18 @@ def unpack_cairo_pattern(value):
         green / 65535.0,
         blue / 65535.0,
         alpha / 65535.0)
+
+def unpack_cairo_gradient(value):
+    red, green, blue, alpha = unpack_color(value)
+    ret = cairo.LinearGradient(0,0, 0, 50)
+    ret.add_color_stop_rgba(50,
+        red / 65535.0,
+        green / 65535.0,
+        blue / 65535.0,
+        alpha / 65535.0)
+    ret.add_color_stop_rgba(0,
+        (red / 65535.0) * 1.5,
+        (green / 65535.0) * 1.5,
+        (blue / 65535.0) * 1.5,
+        alpha / 65535.0)
+    return ret
