@@ -65,6 +65,8 @@ ui = '''
                 <menuitem action="DeleteObj" />
                 <menuitem action="LinkObj" />
                 <menuitem action="UnlinkObj" />
+                <menuitem action="GroupObj" />
+                <menuitem action="UngroupObj" />
             </placeholder>
         </menu>
     </menubar>
@@ -78,6 +80,8 @@ ui = '''
             <toolitem action="DeleteObj" />
             <toolitem action="UnlinkObj" />
             <toolitem action="LinkObj" />
+            <toolitem action="GroupObj" />
+            <toolitem action="UngroupObj" />
         </placeholder>
     </toolbar>
     <accelerator action="DeleteObj" />
@@ -181,7 +185,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 self.unlinkSelected),
             ("LinkObj", "pitivi-link", None, "<Control>L", LINK,
                 self.linkSelected),
-            ("UngroupObj", "pitivi-ungroup", "<Shift><Control>G", None, UNGROUP,
+            ("UngroupObj", "pitivi-ungroup", None, "<Shift><Control>G", UNGROUP,
                 self.ungroupSelected),
             ("GroupObj", "pitivi-group", None, "<Control>G", GROUP,
                 self.groupSelected),
