@@ -219,18 +219,18 @@ class TrackObject(Signallable):
         return other
 
     # True when the track object is part of the timeline's current selection
-    _selected = False
+    __selected = False
 
     def _getSelected(self):
-        return self._selected
+        return self.__selected
 
-    def setSelected(self, state):
+    def setObjectSelected(self, state):
         """Sets the object's selected property to the specified value. This
         should only be called by the track object's parent timeline object."""
-        self._selected = state
+        self.__selected = state
         self.emit("selected-changed", state)
 
-    selected = property(_getSelected, setSelected)
+    selected = property(_getSelected)
 
     def makeBin(self):
         if self.track is None:
@@ -246,7 +246,6 @@ class TrackObject(Signallable):
             self.gnl_object.remove(bin)
             bin.set_state(gst.STATE_NULL)
             self.factory.releaseBin(bin)
-
 
     def _notifyStartCb(self, obj, pspec):
         self.emit('start-changed', obj.props.start)
