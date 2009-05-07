@@ -690,23 +690,32 @@ class Timeline(Signallable, Loggable):
 
         self.addTimelineObject(new_timeline_object)
 
+        old_track_objects = []
         for timeline_object in list(self.selection.selected):
-            timeline_object.selected = False
+            old_track_objects.extend(timeline_object.track_objects)
             self.removeTimelineObject(timeline_object, deep=True)
 
+        self.selection.setTo(old_track_objects, UNSELECT)
+        self.selection.setTo(new_timeline_object.track_objects, SELECT_ADD)
+
     def ungroupSelection(self):
+        new_track_objects = []
         for timeline_object in list(self.selection.selected):
             if len(timeline_object.track_objects) == 1:
                 continue
+
+            self.selection.setTo(timeline_object.track_objects, UNSELECT)
 
             for track_object in list(timeline_object.track_objects):
                 timeline_object.removeTrackObject(track_object)
                 new_timeline_object = TimelineObject(track_object.factory)
                 new_timeline_object.addTrackObject(track_object)
                 self.addTimelineObject(new_timeline_object)
+                new_track_objects.extend(new_timeline_object.track_objects)
 
-            timeline_object.selected = False
             self.removeTimelineObject(timeline_object)
+
+        self.selection.setTo(new_track_objects, SELECT_ADD)
 
     def deleteSelection(self):
         self.unlinkSelection()
