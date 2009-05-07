@@ -205,6 +205,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         actiongroup.add_actions(selection_actions)
         self.link_action = actiongroup.get_action("LinkObj")
         self.unlink_action = actiongroup.get_action("UnlinkObj")
+        self.group_action = actiongroup.get_action("GroupObj")
+        self.ungroup_action = actiongroup.get_action("UngroupObj")
         self.delete_action = actiongroup.get_action("DeleteObj")
 
         self.ui_manager.insert_action_group(actiongroup)
@@ -378,17 +380,36 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         delete = False
         link = False
         unlink = False
+        group = False
+        ungroup = False
+        timeline_objects = {}
         if timeline.selection:
             delete = True
             if len(timeline.selection) > 1:
                 link = True
+                group = True
+
+            start = None
+            duration = None
             for obj in self.timeline.selection:
                 if obj.link:
                     unlink = True
-                    break
+
+                if len(obj.track_objects) > 1:
+                    ungroup = True
+
+                if start is not None and duration is not None:
+                    if obj.start != start or obj.duration != duration:
+                        group = False
+                else:
+                    start = obj.start
+                    duration = obj.duration
+
         self.delete_action.set_sensitive(delete)
         self.link_action.set_sensitive(link)
         self.unlink_action.set_sensitive(unlink)
+        self.group_action.set_sensitive(group)
+        self.ungroup_action.set_sensitive(ungroup)
 
 ## ToolBar callbacks
 
