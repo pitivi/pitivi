@@ -159,6 +159,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         def drag_start(self):
             TimelineController.drag_start(self)
+            self._view.timeline.disableUpdates()
             self._view.raise_(None)
             tx = self._view.props.parent.get_transform()
             self._y_offset = tx[5]
@@ -179,6 +180,10 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                         self._min_pri = max(self._min_pri, -priority)
                     self._offsets[obj] = start, priority
                 del self._offsets[element]
+
+        def drag_end(self):
+            TimelineController.drag_end(self)
+            self._view.timeline.enableUpdates()
 
         def click(self, pos):
             mode = SELECT

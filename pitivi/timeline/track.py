@@ -458,3 +458,9 @@ class Track(Signallable):
 
     def _disconnectFromTrackObject(self, track_object):
         track_object.disconnect_by_function(self._trackObjectPriorityChangedCb)
+
+    def enableUpdates(self):
+        self.composition.props.update = True
+
+    def disableUpdates(self):
+        self.composition.props.update = False

@@ -243,12 +243,17 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 ## Drag and Drop callbacks
 
     def _dragMotionCb(self, unused, context, x, y, timestamp):
+        self.warning("self._factories:%r, self._temp_objects:%r",
+                     not not self._factories,
+                     not not self._temp_objects)
         if not self._factories:
             atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
             self.drag_get_data(context, atom, timestamp)
             self.drag_highlight()
         else:
+            # actual drag-and-drop
             if not self._temp_objects:
+                self.timeline.disableUpdates()
                 self._add_temp_source()
             self._move_temp_source(x, y)
         return True
@@ -261,6 +266,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             finally:
                 self._temp_objects = None
         self.drag_unhighlight()
+        self.timeline.enableUpdates()
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
         self._add_temp_source()

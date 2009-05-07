@@ -735,3 +735,11 @@ class Timeline(Signallable, Loggable):
             return edge
 
         return start
+
+    def disableUpdates(self):
+        for track in self.tracks:
+            track.disableUpdates()
+
+    def enableUpdates(self):
+        for track in self.tracks:
+            track.enableUpdates()
