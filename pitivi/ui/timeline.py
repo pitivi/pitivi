@@ -233,9 +233,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.shrink = True
         self._timelineStartDurationChanged(self.timeline,
             self.timeline.duration)
-        # move the playhead to the point of the mouse-up
-        self.ruler.do_button_press_event(event)
-        self.ruler.do_button_release_event(event)
 
 ## Drag and Drop callbacks
 
