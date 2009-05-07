@@ -307,6 +307,13 @@ class Selection(Signallable):
 
         self.emit("selection-changed")
 
+    def getSelectedTrackObjs(self):
+        objects = []
+        for timeline_object in self.selected:
+            objects.extend(timeline_object.track_objects)
+
+        return set(objects)
+
     def __len__(self):
         return len(self.selected)
 
@@ -482,7 +489,6 @@ class Timeline(Signallable, Loggable):
         self.selection.connect("selection-changed", self._selectionChanged)
         self.timeline_objects = []
         self.duration = 0
-        self.timeline_selection = set()
         self.links = []
         self.dead_band = 10
         self.edges = TimelineEdges()
@@ -666,14 +672,14 @@ class Timeline(Signallable, Loggable):
         self.emit("selection-changed")
 
     def groupSelection(self):
-        if len(self.timeline_selection) < 2:
+        if len(self.selection.selected) < 2:
             return
 
         # FIXME: pass a proper factory
         new_timeline_object = TimelineObject(factory=None)
 
         tracks = []
-        for timeline_object in self.timeline_selection:
+        for timeline_object in self.selection.selected:
             for track_object in timeline_object.track_objects:
                 new_track_object = track_object.copy()
                 tracks.append(track_object.track)
@@ -684,12 +690,12 @@ class Timeline(Signallable, Loggable):
 
         self.addTimelineObject(new_timeline_object)
 
-        for timeline_object in list(self.timeline_selection):
+        for timeline_object in list(self.selection.selected):
             timeline_object.selected = False
             self.removeTimelineObject(timeline_object, deep=True)
 
     def ungroupSelection(self):
-        for timeline_object in list(self.timeline_selection):
+        for timeline_object in list(self.selection.selected):
             if len(timeline_object.track_objects) == 1:
                 continue
 
