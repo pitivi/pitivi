@@ -73,6 +73,28 @@ GlobalSettings.addConfigOption("thumbnailMaxRequests",
     key="max-requests",
     default = 10)
 
+GlobalSettings.addConfigOption('showThumbnails',
+    section = 'user-interface',
+    key = 'show-thumbnails',
+    default = True,
+    notify = True)
+
+PreferencesDialog.addTogglePreference('showThumbnails',
+    section = "Appearance",
+    label = "Show Thumbnails (Video)",
+    description = "Show Thumbnails on Video Clips")
+
+GlobalSettings.addConfigOption('showWaveforms',
+    section = 'user-interface',
+    key = 'show-waveforms',
+    default = True,
+    notify = True)
+
+PreferencesDialog.addTogglePreference('showWaveforms',
+    section = "Appearance",
+    label = "Show Waveforms (Audio)",
+    description = "Show Waveforms on Audio Clips")
+
 # Previewer                      -- abstract base class with public interface for UI
 # |_DefaultPreviewer             -- draws a default thumbnail for UI
 # |_LivePreviewer                -- draws a continuously updated preview
@@ -130,12 +152,16 @@ class Previewer(Signallable, Loggable):
         # create default thumbnail
         path = os.path.join(get_pixmap_dir(), self.__DEFAULT_THUMB__)
         self.default_thumb = cairo.ImageSurface.create_from_png(path)
+        self._connectSettings(instance.PiTiVi.settings)
 
     def render_cairo(self, cr, bounds, element, y1):
         """Render a preview of element onto a cairo context within the current
         bounds, which may or may not be the entire object and which may or may
         not intersect the visible portion of the object"""
         raise NotImplementedError
+
+    def _connectSettings(self, settings):
+        self._settings = settings
 
 class DefaultPreviewer(Previewer):
 
@@ -156,6 +182,7 @@ class RandomAccessPreviewer(Previewer):
     portion of a thumbnail sequence or audio waveform."""
 
     def __init__(self, factory, stream_):
+        self._view = True
         Previewer.__init__(self, factory, stream_)
         self._queue = []
 
@@ -164,7 +191,6 @@ class RandomAccessPreviewer(Previewer):
         # bin = factory.makeBin(stream_)
         uri = factory.uri
         caps = stream_.caps
-        self.settings = instance.PiTiVi.settings
         bin = SingleDecodeBin(uri=uri, caps=caps, stream=stream_)
 
         # assume 50 pixel height
@@ -183,6 +209,8 @@ class RandomAccessPreviewer(Previewer):
 ## public interface
 
     def render_cairo(self, cr, bounds, element, y1):
+        if not self._view:
+            return
         # The idea is to conceptually divide the clip into a sequence of
         # rectangles beginning at the start of the file, and
         # pixelsToNs(twidth) nanoseconds long. The thumbnail within the
@@ -299,18 +327,16 @@ class RandomAccessPreviewer(Previewer):
         message handler or other callback."""
         self.waiting_timestamp = segment
 
-    def _setSettings(self):
-        if self.settings:
-            self.spacing = self.settings.thumbnailSpacingHint
-            self._cache = ThumbnailCache(size=self.settings.thumbnailCacheSize)
-            self.max_requests = self.settings.thumbnailMaxRequests
-            self._settingsChanged(self.settings)
+    def _connectSettings(self, settings):
+        Previewer._connectSettings(self, settings)
+        self.spacing = settings.thumbnailSpacingHint
+        self._cache = ThumbnailCache(size=settings.thumbnailCacheSize)
+        self.max_requests = settings.thumbnailMaxRequests
+        settings.connect("thumbnailSpacingHintChanged",
+            self._thumbnailSpacingHintChanged)
 
-    settings = receiver(_setSettings)
-
-    @handler(settings, "thumbnailSpacingHintChanged")
-    def _settingsChanged(self, settings):
-        self.spacing = self.settings.thumbnailSpacingHint
+    def _thumbnailSpacingHintChanged(self, settings):
+        self.spacing = settings.thumbnailSpacingHint
         self.emit("update", None)
 
 class RandomAccessVideoPreviewer(RandomAccessPreviewer):
@@ -352,6 +378,15 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
             gst.FORMAT_TIME, gst.SEEK_FLAG_FLUSH | gst.SEEK_FLAG_ACCURATE,
             gst.SEEK_TYPE_SET, timestamp,
             gst.SEEK_TYPE_NONE, -1)
+
+    def _connectSettings(self, settings):
+        RandomAccessPreviewer._connectSettings(self, settings)
+        settings.connect("showThumbnailsChanged", self._showThumbsChanged)
+        self._view = settings.showThumbnails
+
+    def _showThumbsChanged(self, settings):
+        self._view = settings.showThumbnails
+        self.emit("update", None)
 
 class StillImagePreviewer(RandomAccessVideoPreviewer):
 
@@ -440,3 +475,13 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         cr.move_to(x0, y0)
         for x, y in points:
             cr.line_to(x, y)
+
+    def _connectSettings(self, settings):
+        RandomAccessPreviewer._connectSettings(self, settings)
+        self._view = settings.showWaveforms
+        settings.connect("showWaveformsChanged", self._showWaveformsChanged)
+
+    def _showWaveformsChanged(self, settings):
+        self._view = settings.showWaveforms
+        self.emit("update", None)
+
