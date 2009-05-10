@@ -333,7 +333,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             amount = -gst.SECOND
         else:
             amount = gst.SECOND
-        self.seekRelative(self, amount)
+        self.seekRelative(amount)
 
     def seek(self, position, format=gst.FORMAT_TIME):
         self.seeker.seek(position, format)
