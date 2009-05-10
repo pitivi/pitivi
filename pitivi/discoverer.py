@@ -407,24 +407,28 @@ class Discoverer(Signallable, Loggable):
 
     def _newVideoPadCb(self, pad):
         """ a new video pad was found """
-        self.debug("pad %s", pad)
+        self.debug("pad %r", pad)
 
         queue = gst.element_factory_make("queue")
         queue.props.max_size_bytes = 5 * 1024 * 1024
         queue.props.max_size_time = 5 * gst.SECOND
+        vscale = gst.element_factory_make("videoscale")
+        vscale.props.method = 0
         csp = gst.element_factory_make("ffmpegcolorspace")
         pngenc = gst.element_factory_make("pngenc")
         pngsink = gst.element_factory_make("filesink")
         self.thumbnails[pad] = thumbnail = self._getThumbnailFilenameFromPad(pad)
         pngsink.props.location = thumbnail
 
-        self.dynamic_elements.extend([queue, csp, pngenc, pngsink])
+        self.dynamic_elements.extend([queue, vscale, csp, pngenc, pngsink])
 
-        self.pipeline.add(queue, csp, pngenc, pngsink)
-        gst.element_link_many(queue, csp, pngenc, pngsink)
+        self.pipeline.add(queue, vscale, csp, pngenc, pngsink)
+        queue.link(vscale)
+        vscale.link(csp, gst.Caps("video/x-raw-rgb,width=[1,720],height=[1,720];video/x-raw-yuv,width=[1,720],height=[1,720]"))
+        gst.element_link_many(csp, pngenc, pngsink)
         pad.link(queue.get_pad("sink"))
 
-        for element in [queue, csp, pngenc, pngsink]:
+        for element in [queue, vscale, csp, pngenc, pngsink]:
             element.sync_state_with_parent()
 
     def _newPadCb(self, pad):
