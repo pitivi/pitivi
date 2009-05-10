@@ -265,6 +265,10 @@ class Discoverer(Signallable, Loggable):
 
             return None
 
+        # increment source blocksize to 128kbytes, this should speed up
+        # push-mode scenarios (like pictures).
+        if hasattr(source.props, 'blocksize'):
+            source.props.blocksize = 131072
         return source
 
     def _useDecodeBinTwo(self):
