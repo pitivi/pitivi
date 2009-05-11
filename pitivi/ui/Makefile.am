@@ -7,6 +7,7 @@ ui_PYTHON =			\
 	controller.py		\
 	defaultpropertyeditor.py\
 	dnd.py			\
+	dynamic.py		\
 	encodingdialog.py	\
 	exportsettingswidget.py	\
 	filelisterrordialog.py	\
@@ -17,6 +18,7 @@ ui_PYTHON =			\
 	pathwalker.py		\
 	pluginmanagerdialog.py	\
 	point.py		\
+	prefs.py		\
 	previewer.py		\
 	preview.py		\
 	projectsettings.py	\
