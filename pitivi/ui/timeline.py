@@ -209,7 +209,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ungroup_action = actiongroup.get_action("UngroupObj")
         self.delete_action = actiongroup.get_action("DeleteObj")
 
-        self.ui_manager.insert_action_group(actiongroup)
+        self.ui_manager.insert_action_group(actiongroup, -1)
 
         self.ui_manager.add_ui_from_string(ui)
 
