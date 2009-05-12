@@ -35,7 +35,7 @@ from gettext import gettext as _
 class ExportSettingsWidget(GladeWidget, Loggable):
     glade_file = "exportsettingswidget.glade"
     video_presets = ((_("576p (PAL DV/DVD)"), 720, 576, 25.0, 1.0),
-                    (_("480p (NTSC DV/DVD)"), 720, 480, 29.97, 1.0),
+                    (_("480p (NTSC DV/DVD)"), 720, 480, 30000.0, 1001.0),
                     (_("720p HD"), 1280, 720, 30000.0, 1001.0),
                     (_("1080p full HD"), 1920, 1080, 30000.0, 1001.0),
                     (_("QVGA (320x240)"), 320, 240, 30.0, 1.0),
