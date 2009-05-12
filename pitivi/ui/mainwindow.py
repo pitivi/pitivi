@@ -883,8 +883,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _timelineRulerSeekCb(self, ruler, position):
         self.debug("position:%s", gst.TIME_ARGS (position))
-        self.viewer.setAction(self.project.view_action)
-        self.viewer.setPipeline(self.project.pipeline)
+        if self.viewer.action != self.project.view_action:
+            self.viewer.setAction(self.project.view_action)
+            self.viewer.setPipeline(self.project.pipeline)
+            # get the pipeline settings and set the DAR of the viewer
+            sett = self.project.getSettings()
+            self.viewer.setDisplayAspectRatio(float(sett.videopar * sett.videowidth) / float(sett.videoheight))
         # everything above only needs to be done if the viewer isn't already
         # set to the pipeline.
         self.project.pipeline.pause()
