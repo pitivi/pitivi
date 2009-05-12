@@ -879,6 +879,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         pipeline = Pipeline()
         action = ViewAction()
         action.addProducers(factory)
+        self.viewer.setPipeline(None)
         # FIXME: why do I have to call viewer.setAction ?
         self.viewer.setAction(action)
         self.viewer.setPipeline(pipeline)
@@ -887,6 +888,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _timelineRulerSeekCb(self, ruler, position):
         self.debug("position:%s", gst.TIME_ARGS (position))
         if self.viewer.action != self.project.view_action:
+            self.viewer.setPipeline(None)
             self.viewer.setAction(self.project.view_action)
             self.viewer.setPipeline(self.project.pipeline)
             # get the pipeline settings and set the DAR of the viewer
