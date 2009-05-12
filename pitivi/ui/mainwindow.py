@@ -750,6 +750,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
     @handler(project, "settings-changed")
     def _settingsChangedCb(self, project):
         self.rate = float(1 / self.project.settings.videorate)
+        if self.viewer.action == self.project.view_action:
+            sett = self.project.getSettings()
+            self.viewer.setDisplayAspectRatio(float(sett.videopar * sett.videowidth) / float(sett.videoheight))
 
     @handler(project, "missing-plugins")
     def _projectMissingPluginsCb(self, project, uri, detail, message):
