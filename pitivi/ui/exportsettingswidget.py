@@ -97,8 +97,12 @@ class ExportSettingsWidget(GladeWidget, Loggable):
 
         videolist = self.videocombobox.get_model()
         videolist.clear()
+        fps_map = dict(((num, denom), desc)
+                for desc, num, denom in self.video_rates)
         for preset in self.video_presets:
-            videolist.append([preset[0]])
+            fps = preset[3:5]
+            videolist.append(["%s - %s" % (preset[0], fps_map[fps])])
+
         videolist.append(["Custom"])
 
         # find out from the project settings which combo to take
