@@ -26,6 +26,7 @@ Encoding dialog
 import os
 import time
 import gtk
+import gst
 
 from gettext import gettext as _
 
@@ -37,6 +38,7 @@ from pitivi.action import render_action_for_uri, ViewAction
 from pitivi.factories.base import SourceFactory
 from pitivi.settings import export_settings_to_render_settings
 from pitivi.stream import AudioStream, VideoStream
+from pitivi.utils import beautify_length
 
 class EncodingDialog(GladeWindow, Loggable):
     """ Encoding dialog box """
@@ -113,8 +115,9 @@ class EncodingDialog(GladeWindow, Loggable):
             # only display ETA after 5s in order to have enough averaging and
             # if the position is non-null
             totaltime = (timediff * float(length) / float(position)) - timediff
-            self.progressbar.set_text(_("Finished in %dm%ds") % (int(totaltime) / 60,
-                                                              int(totaltime) % 60))
+            length = beautify_length(int(totaltime * gst.SECOND))
+            if length:
+                self.progressbar.set_text(_("About %s left") % length)
 
     def _recordButtonClickedCb(self, unused_button):
         self.debug("Rendering")

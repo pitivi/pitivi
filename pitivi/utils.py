@@ -28,6 +28,7 @@ import gst, bisect
 import os
 from pitivi.signalinterface import Signallable
 import pitivi.log.log as log
+from gettext import ngettext
 
 UNKNOWN_DURATION = 2 ** 63 - 1
 
@@ -57,11 +58,20 @@ def beautify_length(length):
     sec = length / gst.SECOND
     mins = sec / 60
     sec = sec % 60
-    if mins < 60:
-        return "%02dm%02ds" % (mins, sec)
     hours = mins / 60
     mins = mins % 60
-    return "%02dh%02dm%02ds" % (hours, mins, sec)
+
+    parts = []
+    if hours:
+        parts.append(ngettext("%d hour", "%d hours", hours) % hours)
+
+    if mins:
+        parts.append(ngettext("%d minute", "%d minutes", mins) % mins)
+
+    if not hours and sec:
+        parts.append(ngettext("%d second", "%d seconds", sec) % sec)
+
+    return ", ".join(parts)
 
 def bin_contains(bin, element):
     """ Returns True if the bin contains the given element, the search is recursive """
