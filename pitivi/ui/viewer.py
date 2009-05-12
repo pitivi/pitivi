@@ -66,7 +66,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.seeker.connect('seek', self._seekerSeekCb)
         self.action = action
         self.pipeline = pipeline
-        self.producer = None
 
         self.current_time = long(0)
         self._initial_seek = None
@@ -298,12 +297,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.aframe.set_property("ratio", float(ratio))
         except:
             self.warning("could not set ratio !")
-
-    def _settingsChangedCb(self, unused_project):
-        self.info("current project settings changed")
-        # modify the ratio if it's the timeline that's playing
-        # FIXME : do we really need to modify the ratio ??
-        pass
 
     def _drawingAreaExposeCb(self, drawingarea, event):
         drawingarea.disconnect_by_func(self._drawingAreaExposeCb)
