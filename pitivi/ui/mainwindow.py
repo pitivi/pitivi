@@ -861,8 +861,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
             context.finish(False, False, ctime)
             return
 
-        from pitivi.factories.file import FileSourceFactory
-        self._viewFactory(FileSourceFactory(uri))
+        # Use factory from our source list if we have the given uri
+        if uri in self.project.sources:
+            fact = self.project.sources[uri]
+        else:
+            from pitivi.factories.file import FileSourceFactory
+            fact = FileSourceFactory(uri)
+        self._viewFactory(fact)
         context.finish(True, False, ctime)
 
     def _viewFactory(self, factory):
