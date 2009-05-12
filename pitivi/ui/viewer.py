@@ -26,6 +26,7 @@ import gst
 
 from pitivi.action import ViewAction
 
+from pitivi.stream import VideoStream
 from pitivi.utils import time_to_string, Seeker
 from pitivi.log.loggable import Loggable
 from pitivi.pipeline import PipelineError
@@ -171,6 +172,20 @@ class PitiviViewer(gtk.VBox, Loggable):
         # FIXME: fix this properly?
         self.drawingarea.action = action
         self.drawingarea.have_set_xid = False
+        dar = float(4/3)
+        try:
+            producer = action.producers[0]
+            self.debug("producer:%r", producer)
+            for stream in producer.output_streams:
+                self.warning("stream:%r", stream)
+            for stream in producer.getOutputStreams(VideoStream):
+                self.debug("stream:%r", stream)
+                if stream.dar:
+                    dar = stream.dar
+                    continue
+        except:
+            dar = float(4/3)
+        self.setDisplayAspectRatio(dar)
         self.showControls()
 
     def _disconnectFromAction(self):
@@ -272,7 +287,12 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.slider.hide()
 
     def setDisplayAspectRatio(self, ratio):
-        """ Sets the DAR of the Viewer to the given ratio """
+        """
+        Sets the DAR of the Viewer to the given ratio.
+
+        @arg ratio: The aspect ratio to set on the viewer
+        @type ratio: L{float}
+        """
         self.debug("Setting ratio of %f [%r]", float(ratio), ratio)
         try:
             self.aframe.set_property("ratio", float(ratio))
