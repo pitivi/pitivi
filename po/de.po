@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-10 13:00+0200\n"
-"PO-Revision-Date: 2009-05-10 13:13+0100\n"
+"POT-Creation-Date: 2009-05-12 22:15+0200\n"
+"PO-Revision-Date: 2009-05-12 22:16+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -39,8 +39,8 @@ msgid ""
 "Make sure the plugins were installed and are available in the GStreamer "
 "plugins path."
 msgstr ""
-"Stellen Sie sicher, dass die Plugins installiert wurden und im GStreamer-"
-"Pfad verfügbar sind."
+"Stellen Sie sicher, dass die Plugins installiert wurden und im GStreamer-Pfad "
+"verfügbar sind."
 
 #: ../pitivi/check.py:127
 msgid "Could not find the autodetect plugins!"
@@ -51,8 +51,8 @@ msgid ""
 "Make sure you have installed gst-plugins-good and is available in the "
 "GStreamer plugin path."
 msgstr ""
-"Stellen sie sicher, dass das Paket »gst-plugins-good« installiert wurde und "
-"im Plugin-Pfad von GStreamer verfügbar ist."
+"Stellen sie sicher, dass das Paket »gst-plugins-good« installiert wurde und im "
+"Plugin-Pfad von GStreamer verfügbar ist."
 
 #: ../pitivi/check.py:130
 msgid "PyGTK doesn't have Cairo support!"
@@ -122,8 +122,7 @@ msgid ""
 "You do not have a recent enough version of the GTK+ Python Bindings "
 "(currently %s)"
 msgstr ""
-"Die installierte Version der GTK+-Python-Bindings ist zu alt (gegenwärtig %"
-"s)."
+"Die installierte Version der GTK+-Python-Bindings ist zu alt (gegenwärtig %s)."
 
 #: ../pitivi/check.py:153
 #, python-format
@@ -238,8 +237,7 @@ msgstr "Die Datei enthält einen Verknüpfung zu einem anderen Clip."
 
 #: ../pitivi/discoverer.py:362
 msgid "PiTiVi currently does not handle redirection files."
-msgstr ""
-"PiTiVi kann derzeit nicht mit Verknüpfungen zu anderen Dateien umgehen."
+msgstr "PiTiVi kann derzeit nicht mit Verknüpfungen zu anderen Dateien umgehen."
 
 #: ../pitivi/application.py:111
 #, python-format
@@ -410,20 +408,20 @@ msgstr "Verändern"
 msgid "Output file:"
 msgstr "Ausgabedatei:"
 
-#: ../pitivi/ui/encodingdialog.py:89
+#: ../pitivi/ui/encodingdialog.py:91
 msgid "Choose file to render to"
 msgstr "Eine Datei für das zu erzeugende Video auswählen"
 
-#: ../pitivi/ui/encodingdialog.py:116
+#: ../pitivi/ui/encodingdialog.py:120
 #, python-format
-msgid "Finished in %dm%ds"
-msgstr "Beendet in %dm%ds"
+msgid "About %s left"
+msgstr "Mehr als %s vergangen"
 
-#: ../pitivi/ui/encodingdialog.py:127
+#: ../pitivi/ui/encodingdialog.py:130
 msgid "Rendering"
 msgstr "Erzeugen"
 
-#: ../pitivi/ui/encodingdialog.py:144
+#: ../pitivi/ui/encodingdialog.py:147
 msgid "Rendering Complete"
 msgstr "Videoerzeugung beendet"
 
@@ -553,7 +551,39 @@ msgstr "Video-Voreinstellung"
 msgid "Width:"
 msgstr "Breite:"
 
-#: ../pitivi/ui/exportsettingswidget.py:377
+#: ../pitivi/ui/exportsettingswidget.py:37
+msgid "576p (PAL DV/DVD)"
+msgstr "576p (PAL DV/DVD)"
+
+#: ../pitivi/ui/exportsettingswidget.py:38
+msgid "480p (NTSC DV/DVD)"
+msgstr "480p (NTSC DV/DVD)"
+
+#: ../pitivi/ui/exportsettingswidget.py:39
+msgid "720p HD"
+msgstr "720p HD"
+
+#: ../pitivi/ui/exportsettingswidget.py:40
+msgid "1080p full HD"
+msgstr "1080p full HD"
+
+#: ../pitivi/ui/exportsettingswidget.py:41
+msgid "QVGA (320x240)"
+msgstr "QVGA (320x240)"
+
+#: ../pitivi/ui/exportsettingswidget.py:42
+msgid "VGA (640x480)"
+msgstr "VGA (640x480)"
+
+#: ../pitivi/ui/exportsettingswidget.py:43
+msgid "SVGA (800x600)"
+msgstr "SVGA (800x600)"
+
+#: ../pitivi/ui/exportsettingswidget.py:44
+msgid "WXGA (1024x768)"
+msgstr "WXGA (1024x768)"
+
+#: ../pitivi/ui/exportsettingswidget.py:388
 msgid "Export settings"
 msgstr "Exporteinstellungen"
 
@@ -779,15 +809,15 @@ msgstr "PiTiVi  kann die Datei »%s« nicht laden"
 msgid "Error Loading File"
 msgstr "Fehler beim Laden einer Datei"
 
-#: ../pitivi/ui/mainwindow.py:809
+#: ../pitivi/ui/mainwindow.py:812
 msgid "Save As..."
 msgstr "Speichern unter …"
 
-#: ../pitivi/ui/mainwindow.py:816
+#: ../pitivi/ui/mainwindow.py:819
 msgid "Untitled.xptv"
 msgstr "Unbenannt.xptv"
 
-#: ../pitivi/ui/mainwindow.py:827 ../pitivi/ui/mainwindow.py:840
+#: ../pitivi/ui/mainwindow.py:830 ../pitivi/ui/mainwindow.py:843
 msgid "Detect Automatically"
 msgstr "Automatisch erkennen"
 
@@ -1136,6 +1166,9 @@ msgstr "Schnitt"
 msgid "<b>Text:</b>"
 msgstr "<b>Text:</b>"
 
+#~ msgid "Finished in %dm%ds"
+#~ msgstr "Beendet in %dm%ds"
+
 #~ msgid "FIXME: no output streams"
 #~ msgstr "FIXME: Keine Ausgabeströme"
 
@@ -1147,8 +1180,7 @@ msgstr "<b>Text:</b>"
 
 #~ msgid "Make sure you have the Python bindings for libglade installed"
 #~ msgstr ""
-#~ "Stellen Sie sicher, dass die Python-Bindings für libglade installiert "
-#~ "sind."
+#~ "Stellen Sie sicher, dass die Python-Bindings für libglade installiert sind."
 
 #~ msgid "Could not import the Python bindings for goocanvas"
 #~ msgstr "Python-Bindings für goocanvas konnten nicht importiert werden."
@@ -1165,8 +1197,8 @@ msgstr "<b>Text:</b>"
 #~ "GStreamer does not have an element to handle files coming from this type "
 #~ "of file system."
 #~ msgstr ""
-#~ "GStreamer kann nicht mit Dateien umgehen, die von einem Dateisystem "
-#~ "dieses Typs bereitgestellt werden."
+#~ "GStreamer kann nicht mit Dateien umgehen, die von einem Dateisystem dieses "
+#~ "Typs bereitgestellt werden."
 
 #~ msgid "Pipeline didn't want to go to PLAYING."
 #~ msgstr "Die Pipeline kann nicht auf PLAYING gesetzt werden."
