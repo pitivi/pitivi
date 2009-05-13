@@ -350,6 +350,7 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         csp = gst.element_factory_make("ffmpegcolorspace")
         sink = CairoSurfaceThumbnailSink()
         scale = gst.element_factory_make("videoscale")
+        scale.props.method = 0
         caps = ("video/x-raw-rgb,height=(int) %d,width=(int) %d" %
             (self.theight, self.twidth + 2))
         filter_ = utils.filter_(caps)
