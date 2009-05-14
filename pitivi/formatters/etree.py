@@ -506,8 +506,8 @@ class ElementTreeFormatter(Formatter):
         self.factoriesnode = self._context.rootelement.find("factories")
         self.timelinenode = self._context.rootelement.find("timeline")
         self._settingsnode = self._context.rootelement.find("export-settings")
-        if project:
-            project.settings = self._loadProjectSettings(self._settingsnode)
+        if project and self._settingsnode:
+            project.setSettings(self._loadProjectSettings(self._settingsnode))
 
     def newProject(self):
         project = Formatter.newProject(self)
