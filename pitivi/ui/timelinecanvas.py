@@ -22,6 +22,7 @@
 import gtk
 import goocanvas
 
+from pitivi.log.loggable import Loggable
 from pitivi.receiver import receiver, handler
 from pitivi.ui.track import Track
 from pitivi.ui.trackobject import TrackObject
@@ -50,13 +51,18 @@ PreferencesDialog.addNumericPreference('edgeSnapDeadband',
         "operations",
     lower = 0)
 
-class TimelineCanvas(goocanvas.Canvas, Zoomable):
+class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
+
+    __gsignals__ = {
+        "scroll-event":"override"
+        }
 
     _tracks = None
 
     def __init__(self, instance, timeline=None):
         goocanvas.Canvas.__init__(self)
         Zoomable.__init__(self)
+        Loggable.__init__(self)
         self.app = instance
         self._selected_sources = []
         self._tracks = []
@@ -102,6 +108,30 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable):
                 break
 
         track_ui.setExpanded(expanded)
+
+    def do_scroll_event(self, event):
+        if event.state & gtk.gdk.SHIFT_MASK:
+            # shift + scroll => vertical (up/down) scroll
+            if event.direction == gtk.gdk.SCROLL_LEFT:
+                event.direction = gtk.gdk.SCROLL_UP
+            elif event.direction == gtk.gdk.SCROLL_RIGHT:
+                event.direction = gtk.gdk.SCROLL_DOWN
+            event.state &= ~gtk.gdk.SHIFT_MASK
+        elif event.state & gtk.gdk.CONTROL_MASK:
+            # zoom + scroll => zooming (up: zoom in)
+            if event.direction == gtk.gdk.SCROLL_UP:
+                Zoomable.zoomIn()
+                return True
+            elif event.direction == gtk.gdk.SCROLL_DOWN:
+                Zoomable.zoomOut()
+                return True
+            return False
+        else:
+            if event.direction == gtk.gdk.SCROLL_UP:
+                event.direction = gtk.gdk.SCROLL_LEFT
+            elif event.direction == gtk.gdk.SCROLL_DOWN:
+                event.direction = gtk.gdk.SCROLL_RIGHT
+        return goocanvas.Canvas.do_scroll_event(self, event)
 
 ## sets the cursor as appropriate
 
