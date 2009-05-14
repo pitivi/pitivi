@@ -33,6 +33,7 @@ from pitivi.timeline.track import Track
 from pitivi.timeline.timeline import TimelineObject
 from pitivi.formatters.base import Formatter
 from pitivi.utils import get_filesystem_encoding
+from pitivi.settings import ExportSettings
 
 version = "0.1"
 
@@ -72,6 +73,7 @@ class ElementTreeFormatter(Formatter):
         Formatter.__init__(self, *args, **kwargs)
         self.factoriesnode = None
         self.timelinenode = None
+        self._settingsnode = None
         self._context = ElementTreeFormatterContext()
 
     def _new_element_id(self):
@@ -233,6 +235,40 @@ class ElementTreeFormatter(Formatter):
     def _loadSources(self):
         sources = self.factoriesnode.find("sources")
         return self._loadFactories(sources, FileSourceFactory)
+
+    def _saveProjectSettings(self, settings):
+        element = Element('export-settings')
+        element.attrib["videowidth"] = str(int(settings.videowidth))
+        element.attrib["videoheight"] = str(int(settings.videoheight))
+        element.attrib["videorate-num"] = str(int(settings.videorate.num))
+        element.attrib["videorate-denom"] = str(int(settings.videorate.denom))
+        element.attrib["videopar-num"] = str(int(settings.videopar.num))
+        element.attrib["videopar-denom"] = str(int(settings.videopar.denom))
+        element.attrib["audiochannels"] = str(int(settings.audiochannels))
+        element.attrib["audiorate"] = str(int(settings.audiorate))
+        element.attrib["audiodepth"] = str(int(settings.audiodepth))
+        element.attrib["vencoder"] = settings.vencoder
+        element.attrib["aencoder"] = settings.aencoder
+        element.attrib["muxer"] = settings.muxer
+
+        return element
+
+    def _loadProjectSettings(self, element):
+        settings = ExportSettings()
+        settings.videowidth = int(element.attrib["videowidth"])
+        settings.videoheight = int(element.attrib["videoheight"])
+        settings.videorate = gst.Fraction(int(element.attrib["videorate-num"]),
+                                         int(element.attrib["videorate-denom"]))
+        settings.videopar = gst.Fraction(int(element.attrib["videopar-num"]),
+                                         int(element.attrib["videopar-denom"]))
+        settings.audiochannels = int(element.attrib["audiochannels"])
+        settings.audiorate = int(element.attrib["audiorate"])
+        settings.audiodepth = int(element.attrib["audiodepth"])
+        settings.aencoder = element.attrib["aencoder"]
+        settings.vencoder = element.attrib["vencoder"]
+        settings.muxer = element.attrib["muxer"]
+
+        return settings
 
     def _saveTrackObject(self, track_object):
         element = Element("track-object")
@@ -443,12 +479,15 @@ class ElementTreeFormatter(Formatter):
     def _serializeProject(self, project):
         root = self._saveMainTag()
 
-        factories = project.sources.getSources()
-        factories_element = self._saveFactories(factories)
-        root.append(factories_element)
+        # settings
+        if project.settings:
+            root.append(self._saveProjectSettings(project.settings))
 
-        timeline_element = self._saveTimeline(project.timeline)
-        root.append(timeline_element)
+        # sources
+        root.append(self._saveFactories(project.sources.getSources()))
+
+        # timeline
+        root.append(self._saveTimeline(project.timeline))
         return root
 
     ## Formatter method implementations
@@ -466,6 +505,16 @@ class ElementTreeFormatter(Formatter):
         self._context.rootelement = parse(location.split('://', 1)[1])
         self.factoriesnode = self._context.rootelement.find("factories")
         self.timelinenode = self._context.rootelement.find("timeline")
+        self._settingsnode = self._context.rootelement.find("export-settings")
+        if project:
+            project.settings = self._loadProjectSettings(self._settingsnode)
+
+    def newProject(self):
+        project = Formatter.newProject(self)
+        # add the settings
+        if self._settingsnode:
+            project.settings = self._loadProjectSettings(self._settingsnode)
+        return project
 
     def _getSources(self):
         self.debug("%r", self)
