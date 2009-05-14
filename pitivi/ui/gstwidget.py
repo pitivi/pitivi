@@ -155,13 +155,15 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
         self.show_all()
 
     def getSettings(self):
-        """ returns the dictionnary of propertyname/propertyvalue """
+        """
+        returns the dictionnary of propertyname/propertyvalue
+        """
         d = {}
         for prop, widget in self.properties.iteritems():
             if not prop.flags & gobject.PARAM_WRITABLE:
                 continue
             value = get_widget_propvalue(prop, widget)
-            if not value == None:
+            if value != None and value != prop.default_value:
                 d[prop.name] = value
         return d
 
