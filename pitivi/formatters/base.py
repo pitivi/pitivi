@@ -106,7 +106,7 @@ class Formatter(Signallable, Loggable):
 
         # parse the format (subclasses)
         # FIXME : maybe have a convenience method for opening a location
-        self._parse(location)
+        self._parse(location, project)
 
         if not project:
             project = self.newProject()
@@ -227,11 +227,17 @@ class Formatter(Signallable, Loggable):
         """
         raise NotImplementedError
 
-    def _parse(self, location):
+    def _parse(self, location, project=None):
         """
         Open and parse the given location.
 
+        If provided, implementation can fill in some global L{Project} properties.
+
         To be implemented by subclasses.
+
+        @arg location: The location to open/parse
+        @type location: C{URI}
+        @type project: L{Project}
 
         If any error occurs during this step, subclasses should raise the
         FormatterParseError exception.
