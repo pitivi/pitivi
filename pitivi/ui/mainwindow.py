@@ -97,6 +97,12 @@ GlobalSettings.addConfigOption('mainWindowShowTimelineToolbar',
     section="main-window",
     key="show-timeline-toolbar",
     default=True)
+GlobalSettings.addConfigSection('export')
+GlobalSettings.addConfigOption('lastExportFolder',
+                                section='export',
+                                key="last-export-folder",
+                                environment="PITIVI_EXPORT_FOLDER",
+                                default=os.path.expanduser("~"))
 
 def supported(info):
     return formatter.can_handle_location(info[1])
@@ -179,7 +185,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         if pause:
             project.pipeline.pause()
-        win = EncodingDialog(project)
+        win = EncodingDialog(self, project)
         win.window.connect("destroy", self._encodingDialogDestroyCb)
         self.set_sensitive(False)
         win.show()

@@ -44,9 +44,11 @@ class EncodingDialog(GladeWindow, Loggable):
     """ Encoding dialog box """
     glade_file = "encodingdialog.glade"
 
-    def __init__(self, project, pipeline=None):
+    def __init__(self, app, project, pipeline=None):
         GladeWindow.__init__(self)
         Loggable.__init__(self)
+
+        self.app = app
 
         # UI widgets
         self.progressbar = self.widgets["progressbar"]
@@ -96,6 +98,8 @@ class EncodingDialog(GladeWindow, Loggable):
         if self.outfile:
             dialog.set_uri(self.outfile)
             dialog.set_current_name(os.path.basename(self.outfile))
+        else:
+            dialog.set_current_folder(self.app.settings.lastExportFolder)
 
         res = dialog.run()
         dialog.hide()
@@ -104,6 +108,7 @@ class EncodingDialog(GladeWindow, Loggable):
             button.set_label(os.path.basename(self.outfile))
             self.recordbutton.set_sensitive(True)
             self.progressbar.set_text("")
+            self.app.settings.lastExportFolder = dialog.get_current_folder()
         dialog.destroy()
 
     def _positionCb(self, unused_pipeline, position):
