@@ -45,7 +45,9 @@ def get_widget_propvalue(prop, widget):
     if (type_name in ['gboolean']):
         return widget.get_active()
     if type_name in ['GEnum']:
-        return widget.get_model()[widget.get_active()][1]
+        # we don't want to have typed enums wondering around,
+        # we therefore convert it to it's numerical equivalent
+        return int(widget.get_model()[widget.get_active()][1])
     return None
 
 def make_property_widget(unused_element, prop, value=None):
@@ -100,7 +102,7 @@ def make_property_widget(unused_element, prop, value=None):
         for key, val in prop.enum_class.__enum_values__.iteritems():
             log.log("gstwidget", "adding %s / %s", val.value_name, val)
             model.append([val.value_name, val])
-            if val == value:
+            if val == value or key == value:
                 selected = idx
             idx = idx + 1
         widget.set_active(selected)
