@@ -284,6 +284,7 @@ class ElementTreeFormatter(Formatter):
         return element
 
     def _loadProjectSettings(self, element):
+        self.debug("element:%r", element)
         settings = ExportSettings()
         settings.videowidth = int(element.attrib["videowidth"])
         settings.videoheight = int(element.attrib["videoheight"])
@@ -540,19 +541,19 @@ class ElementTreeFormatter(Formatter):
         f.close()
 
     def _parse(self, location, project=None):
-        self.debug("location:%s", location)
+        self.debug("location:%s, project:%r", location, project)
         # open the given location
         self._context.rootelement = parse(location.split('://', 1)[1])
         self.factoriesnode = self._context.rootelement.find("factories")
         self.timelinenode = self._context.rootelement.find("timeline")
         self._settingsnode = self._context.rootelement.find("export-settings")
-        if project and self._settingsnode:
+        if project and self._settingsnode != None:
             project.setSettings(self._loadProjectSettings(self._settingsnode))
 
     def newProject(self):
         project = Formatter.newProject(self)
         # add the settings
-        if self._settingsnode:
+        if self._settingsnode != None:
             project.setSettings(self._loadProjectSettings(self._settingsnode))
         return project
 
