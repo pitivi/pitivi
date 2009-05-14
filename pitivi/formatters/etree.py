@@ -91,6 +91,7 @@ class ElementTreeFormatter(Formatter):
 
     def _parsePropertyValue(self, value):
         # nothing to read here, move along
+        # edward: argh, I went past there, what shall I do now ?
         return gst.Caps("meh, name=%s" % value)[0]["name"]
 
     def _saveStream(self, stream):
@@ -236,6 +237,25 @@ class ElementTreeFormatter(Formatter):
         sources = self.factoriesnode.find("sources")
         return self._loadFactories(sources, FileSourceFactory)
 
+    def _serializeDict(self, element, dict):
+        for a, b in dict.iteritems():
+            print a, b, type(b)
+            if isinstance(b, str):
+                element.attrib[a] = b
+            elif isinstance(b, bool):
+                element.attrib[a] = "(boolean) %r" % b
+            elif isinstance(b, float):
+                element.attrib[a] = "(float) %r" % b
+            else:
+                element.attrib[a] = "(guint64) %r" % b
+
+
+    def _deserializeDict(self, element):
+        d = {}
+        for a, b in element.attrib.iteritems():
+            d[a] = self._parsePropertyValue(b)
+        return d
+
     def _saveProjectSettings(self, settings):
         element = Element('export-settings')
         element.attrib["videowidth"] = str(int(settings.videowidth))
@@ -251,6 +271,16 @@ class ElementTreeFormatter(Formatter):
         element.attrib["aencoder"] = settings.aencoder
         element.attrib["muxer"] = settings.muxer
 
+        # container/encoder settings
+        if settings.containersettings != {}:
+            ss = SubElement(element, "container-settings")
+            self._serializeDict(ss, settings.containersettings)
+        if settings.vcodecsettings != {}:
+            ss = SubElement(element, "vcodec-settings")
+            self._serializeDict(ss, settings.vcodecsettings)
+        if settings.acodecsettings != {}:
+            ss = SubElement(element, "acodec-settings")
+            self._serializeDict(ss, settings.acodecsettings)
         return element
 
     def _loadProjectSettings(self, element):
@@ -267,6 +297,16 @@ class ElementTreeFormatter(Formatter):
         settings.aencoder = element.attrib["aencoder"]
         settings.vencoder = element.attrib["vencoder"]
         settings.muxer = element.attrib["muxer"]
+
+        sett = element.find("container-settings")
+        if sett != None:
+            settings.containersettings = self._deserializeDict(sett)
+        sett = element.find("vcodec-settings")
+        if sett != None:
+            settings.vcodecsettings = self._deserializeDict(sett)
+        sett = element.find("acodec-settings")
+        if sett != None:
+            settings.acodecsettings = self._deserializeDict(sett)
 
         return settings
 
@@ -513,7 +553,7 @@ class ElementTreeFormatter(Formatter):
         project = Formatter.newProject(self)
         # add the settings
         if self._settingsnode:
-            project.settings = self._loadProjectSettings(self._settingsnode)
+            project.setSettings(self._loadProjectSettings(self._settingsnode))
         return project
 
     def _getSources(self):
