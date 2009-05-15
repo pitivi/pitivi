@@ -199,11 +199,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _setActions(self, instance):
         PLAY = _("Start Playback")
         PAUSE = _("Stop Playback")
-        FRAME_FORWARD = _("Forward one frame")
-        FAST_FORWARD = _("Fast Forward")
         LOOP = _("Loop over selected area")
-        REWIND = _("Rewind")
-        FRAME_BACK = _("Back one frame")
 
         """ sets up the GtkActions """
         self.actions = [
@@ -242,25 +238,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ("Library", None, _("_Project")),
             ("Timeline", None, _("_Timeline")),
             ("Viewer", None, _("Previe_w")),
-            ("Rewind", gtk.STOCK_MEDIA_REWIND, None, None, REWIND,
-                self.rewind),
             ("PlayPause", gtk.STOCK_MEDIA_PLAY, None, "space", PLAY,
                 self.playPause),
-            ("FastForward", gtk.STOCK_MEDIA_FORWARD, None, None, FAST_FORWARD,
-                self.fastForward),
-            ("FrameForward", gtk.STOCK_MEDIA_FORWARD, _("Frame Forward"),
-                "Right", None, self._seekAction),
-            ("FrameBackward", gtk.STOCK_MEDIA_REWIND, _("Frame Backward"),
-                "Left", None, self._seekAction),
-            ("SecondForward", gtk.STOCK_MEDIA_FORWARD, _("1 Second Forward"),
-                "<Shift>Right", None, self._seekAction),
-            ("SecondBackward", gtk.STOCK_MEDIA_REWIND, _("1 Second Backward"),
-                "<Shift>Left", None, self._seekAction),
-            ("EdgeForward", gtk.STOCK_MEDIA_FORWARD, _("End of Clip"),
-                "<Control>Right", None, self._seekAction),
-            ("EdgeBackward", gtk.STOCK_MEDIA_REWIND, _("Start of Clip"),
-                "<Control>Left", None, self._seekAction),
-             ("Loop", gtk.STOCK_REFRESH, _("Loop"), None, LOOP,
+            ("Loop", gtk.STOCK_REFRESH, _("Loop"), None, LOOP,
                 self.loop),
             ("Help", None, _("_Help")),
         ]
@@ -585,18 +565,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.uimanager.get_widget("/TimelineToolBar").props.visible = \
             action.props.active
 
-    def _seekAction(self, action):
-        values = {
-            "FrameForward" : (gtk.keysyms.Right, 0),
-            "FrameBackward" : (gtk.keysyms.Left, 0),
-            "SecondForward" : (gtk.keysyms.Right, gtk.gdk.SHIFT_MASK),
-            "SecondBackward" : (gtk.keysyms.Left, gtk.gdk.SHIFT_MASK),
-            "EdgeForward" : (gtk.keysyms.Right, gtk.gdk.CONTROL_MASK),
-            "EdgeBackward" : (gtk.keysyms.Left, gtk.gdk.CONTROL_MASK),
-        }
-
-        self._keyPress(*values[action.get_name()])
-
     def _aboutResponseCb(self, dialog, unused_response):
         dialog.destroy()
 
@@ -745,7 +713,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _setProject(self):
         if self.project:
-            self.rate = float(1 / self.project.getSettings().videorate)
             self.project_pipeline = self.project.pipeline
             self.project_timeline = self.project.timeline
             if self.timeline:
