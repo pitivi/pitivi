@@ -31,3 +31,4 @@ INSTALL
 log
 *.orig
 *.rej
+*.xptv
