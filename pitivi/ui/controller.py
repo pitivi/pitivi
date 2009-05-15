@@ -78,7 +78,8 @@ class Controller(object):
 
     @handler(_view, "enter_notify_event")
     def enter_notify_event(self, item, target, event):
-        self._last_event = event
+        self._event_common(item, target, event)
+        self._canvas.grab_focus(item)
         if self._cursor:
             event.window.set_cursor(self._cursor)
         self.enter(item, target)
@@ -87,7 +88,8 @@ class Controller(object):
 
     @handler(_view, "leave_notify_event")
     def leave_notify_event(self, item, target, event):
-        self._last_event = event
+        self._event_common(item, target, event)
+        self._canvas.keyboard_ungrab(item, event.time)
         self._ptr_within = False
         event.window.set_cursor(ARROW)
         if not self._dragging:
@@ -96,7 +98,7 @@ class Controller(object):
 
     @handler(_view, "button_press_event")
     def button_press_event(self, item, target, event):
-        self._last_event = event
+        self._event_common(item, target, event)
         if not self._canvas:
             self._canvas = item.get_canvas()
         self._mousedown = self.pos(item) - self.transform(self.from_item_event(
@@ -108,7 +110,7 @@ class Controller(object):
 
     @handler(_view, "motion_notify_event")
     def motion_notify_event(self, item, target, event):
-        self._last_event = event
+        self._event_common(item, target, event)
         if self._dragging:
             self.set_pos(self._dragging,
                 self.transform(self._mousedown + self.from_item_event(item,
@@ -118,12 +120,17 @@ class Controller(object):
 
     @handler(_view, "button_release_event")
     def button_release_event(self, item, target, event):
-        self._last_event = event
+        self._event_common(item, target, event)
         self._drag_end(item, self._dragging, event)
         self._dragging = None
         return True
 
 ## internal callbacks
+
+    def _event_common(self, item, target, event):
+        if not self._canvas:
+            self._canvas = item.get_canvas()
+        self._last_event = event
 
     def _drag_start(self, item, target, event):
         self.drag_start()
