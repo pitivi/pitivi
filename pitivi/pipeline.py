@@ -298,6 +298,12 @@ class Pipeline(Signallable, Loggable):
         """
         self.setState(STATE_READY)
 
+    def togglePlayback(self):
+        if self.getState() == gst.STATE_PLAYING:
+            self.pause()
+        else:
+            self.play()
+
     #{ Position and Seeking methods
 
     def getPosition(self, format=gst.FORMAT_TIME):
@@ -404,6 +410,11 @@ class Pipeline(Signallable, Loggable):
             raise PipelineError("seek failed")
         self.debug("seeking succesfull")
         self.emit('position', position)
+
+    def seekRelative(self, time):
+        seekvalue = max(0, min(self.getPosition() + time,
+            self.getDuration()))
+        self.seek(seekvalue)
 
     #{ GStreamer object methods (For Action usage only)
 

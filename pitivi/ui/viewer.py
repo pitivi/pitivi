@@ -413,39 +413,18 @@ class PitiviViewer(gtk.VBox, Loggable):
     ## public methods for controlling playback
 
     def play(self):
-        if not self.pipeline.play() == gst.STATE_CHANGE_FAILURE:
-            self.currentState = gst.STATE_PLAYING
-            self.playpause_button.setPause()
+        self.pipeline.play()
 
     def pause(self):
-        if not self.pipeline.pause() == gst.STATE_CHANGE_FAILURE:
-            self.currentState = gst.STATE_PAUSED
-            self.playpause_button.setPlay()
+        self.pipeline.pause()
 
     def togglePlayback(self):
         if self.pipeline is None:
             return
-
-        if self.currentState == gst.STATE_PLAYING:
-            self.pause()
-        else:
-            self.play()
+        self.pipeline.togglePlayback()
 
     def seekRelative(self, time):
-        seekvalue = max(0, min(self.current_time + time,
-            self.pipeline.getDuration()))
-        self.seek(seekvalue)
-
-    def frameSeekRelative(self, frame):
-        # FIXME: untested
-        self.info("scroll direction:%s", event.direction)
-        if direction in [gtk.gdk.SCROLL_LEFT, gtk.gdk.SCROLL_DOWN]:
-            self.info("scrolling backward")
-            seekvalue = max(self.current_frame - 1, 0)
-        else:
-            self.info("scrolling forward")
-            seekvalue = min(self.current_frame + 1, self.pipeline.getDuration())
-        self.seek(seekvalue, gst.FORMAT_DEFAULT)
+        self.pipeline.seekRelative(time)
 
     def _posCb(self, unused_pipeline, pos):
         self._newTime(pos)
