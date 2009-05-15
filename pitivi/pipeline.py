@@ -403,6 +403,10 @@ class Pipeline(Signallable, Loggable):
         # FIXME : temporarily deactivate position listener
         #self._listenToPosition(False)
 
+        # clamp between [0, duration]
+        if format==gst.FORMAT_TIME:
+            position = max(0, min(position, self.getDuration()))
+
         res = self._pipeline.seek(1.0, format, gst.SEEK_FLAG_FLUSH,
                                   gst.SEEK_TYPE_SET, position,
                                   gst.SEEK_TYPE_NONE, -1)
