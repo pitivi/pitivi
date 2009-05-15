@@ -262,20 +262,25 @@ class Seeker(Signallable):
 
     def seek(self, position, format=gst.FORMAT_TIME):
         if self.pending_seek_id is None:
+            self.position = position
+            self.format = format
+            self._seekTimeoutCb()
             self.pending_seek_id = self._scheduleSeek(self.timeout,
                     self._seekTimeoutCb)
-
-        self.position = position
-        self.format = format
+        else:
+            self.position = position
+            self.format = format
 
     def _scheduleSeek(self, timeout, callback):
         return gobject.timeout_add(timeout, callback)
 
     def _seekTimeoutCb(self):
         self.pending_seek_id = None
-        position, self.position = self.position, None
-        format, self.format = self.format, None
-        self.emit('seek', position, format)
+        if self.position != None and self.format != None:
+            position, self.position = self.position, None
+            format, self.format = self.format, None
+            self.emit('seek', position, format)
+        return False
 
 def get_filesystem_encoding():
     return sys.getfilesystemencoding() or "utf-8"
