@@ -308,7 +308,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.set_geometry_hints(min_width=800, min_height=480)
         self.connect("destroy", self._destroyCb)
         self.connect("configure-event", self._configureCb)
-        self.connect("key-press-event", self._keyPressEventCb)
 
         # main menu & toolbar
         vbox = gtk.VBox(False)
@@ -447,35 +446,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _destroyCb(self, unused_widget, unused_data=None):
         self._saveWindowSettings()
         self.app.shutdown()
-
-    def _keyPressEventCb(self, unused_widget, event):
-        kv = event.keyval
-        mod = event.get_state()
-        self._keyPress(kv, mod)
-
-    def _keyPress(self, kv, mod):
-        frame = long(self.rate * gst.SECOND)
-        now = self.timelinepos
-
-        if kv == gtk.keysyms.Left:
-            if mod & gtk.gdk.SHIFT_MASK:
-                self.viewer.seekRelative(-gst.SECOND)
-            elif mod & gtk.gdk.CONTROL_MASK:
-                ltime, rtime = self.project.timeline.edges.closest(now)
-                self.viewer.seek(ltime)
-            else:
-                self.viewer.seekRelative(-frame)
-            return True
-        elif kv == gtk.keysyms.Right:
-            if mod & gtk.gdk.SHIFT_MASK:
-                self.viewer.seekRelative(gst.SECOND)
-            elif mod & gtk.gdk.CONTROL_MASK:
-                ltime, rtime = self.project.timeline.edges.closest(now)
-                self.viewer.seek(rtime)
-            else:
-                self.viewer.seekRelative(frame)
-            return True
-        return False
 
     def _exposeEventCb(self, unused_widget, event):
         if self._do_pending_fullscreen:
@@ -722,7 +692,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     @handler(project, "settings-changed")
     def _settingsChangedCb(self, project):
-        self.rate = float(1 / self.project.settings.videorate)
         if self.viewer.action == self.project.view_action:
             sett = self.project.getSettings()
             self.viewer.setDisplayAspectRatio(float(sett.videopar * sett.videowidth) / float(sett.videoheight))

@@ -150,6 +150,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ruler = ruler.ScaleRuler(self.hadj)
         self.ruler.set_size_request(0, 35)
         self.ruler.set_border_width(2)
+        self.ruler.connect("key-press-event", self._keyPressEventCb)
         self.attach(self.ruler, 1, 2, 0, 1, yoptions=0)
 
         # proportional timeline
@@ -224,6 +225,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.connect("drag-motion", self._dragMotionCb)
         self._canvas.connect("button-press-event", self._buttonPress)
         self._canvas.connect("button-release-event", self._buttonRelease)
+        self._canvas.connect("key-press-event", self._keyPressEventCb)
 
     def _timelineControlsTrackExpandedCb(self, timeline_controls,
             track, expanded):
@@ -231,6 +233,32 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
 
 ## Event callbacks
+
+    def _keyPressEventCb(self, unused_widget, event):
+        kv = event.keyval
+        mod = event.get_state()
+        frame = long(self.rate * gst.SECOND)
+        now = self.project.pipeline.getPosition()
+
+        if kv == gtk.keysyms.Left:
+            if mod & gtk.gdk.SHIFT_MASK:
+                self.project.pipeline.seekRelative(-gst.SECOND)
+            elif mod & gtk.gdk.CONTROL_MASK:
+                ltime, rtime = self.project.timeline.edges.closest(now)
+                self.project.pipeline.seek(ltime)
+            else:
+                self.project.pipeline.seekRelative(-frame)
+            return True
+        elif kv == gtk.keysyms.Right:
+            if mod & gtk.gdk.SHIFT_MASK:
+                self.project.pipeline.seekRelative(gst.SECOND)
+            elif mod & gtk.gdk.CONTROL_MASK:
+                ltime, rtime = self.project.timeline.edges.closest(now)
+                self.project.pipeline.seek(rtime)
+            else:
+                self.project.pipeline.seekRelative(frame)
+            return True
+        return False
 
     def _buttonPress(self, window, event):
         self.shrink = False
@@ -351,8 +379,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._canvas.timeline = self.timeline
             self._canvas.zoomChanged()
             self.ruler.zoomChanged()
+            self._settingsChangedCb(self.project)
 
     project = receiver(_setProject)
+
+    @handler(project, "settings-changed")
+    def _settingsChangedCb(self, project):
+        self.rate = float(1 / self.project.getSettings().videorate)
 
 ## Timeline callbacks
 
