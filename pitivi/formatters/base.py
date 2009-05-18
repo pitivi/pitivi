@@ -23,6 +23,7 @@
 Base Formatter classes
 """
 
+import os
 from pitivi.project import Project
 from pitivi.utils import uri_is_reachable, uri_is_valid
 from pitivi.signalinterface import Signallable
@@ -270,7 +271,29 @@ class Formatter(Signallable, Loggable):
         @param newpath: The new location corresponding to oldpath.
         @type newpath: C{URI}
         """
-        raise NotImplementedError
+        self.debug("oldpath:%r, newpath:%r", oldpath, newpath)
+        # FIXME dumbest of dumbest implementation, whoever comes up
+        # with a less ugly code is welcome to change this :)
+        a = oldpath.split(os.sep)
+        b = newpath.split(os.sep)
+
+        # search backwards for when the mapping starts
+        ia = len(a)
+        ib = len(b)
+        while ia > 0 and ib > 0:
+            self.debug("ia:%d, ib:%d", ia, ib)
+            if a[ia - 1] != b[ib - 1]:
+                break
+            ia -= 1
+            ib -= 1
+
+        oldprefix = os.sep.join(a[:ia])
+        newprefix = os.sep.join(b[:ib])
+        self.debug("oldprefix:%r, newprefix:%r", oldprefix, newprefix)
+        if oldprefix in self.directorymapping.keys():
+            raise FormatterException
+
+        self.directorymapping[oldprefix] = newprefix
 
     def validateSourceURI(self, uri):
         """
@@ -315,7 +338,8 @@ class Formatter(Signallable, Loggable):
 
         # and check again
         for k, v in self.directorymapping.iteritems():
-            if localpath.startswith(k):
+            self.debug("localpath:%r, k:%r, v:%r", localpath, k, v)
+            if uri.startswith(k):
                 return uri.replace(k, v, 1)
 
         # Houston, we have lost contact with mission://fail

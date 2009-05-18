@@ -528,3 +528,11 @@ class TestFormatterLoad(TestCase):
         f = file("/tmp/untitled.pptv", "w")
         f.write(tostring(element))
         f.close()
+
+    def testDirectoryMapping(self):
+        pa = "file:///if/you/have/this/file/you/are/on/crack.avi"
+        pb = "file:///I/really/mean/it/you/crack.avi"
+
+        self.formatter.addMapping(pa,pb)
+        self.assertEquals(self.formatter.validateSourceURI(pa),
+                          pb)
