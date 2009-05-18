@@ -48,25 +48,37 @@ class TestSeeker(TestCase):
         seeker = StubSeeker(timeout=10)
         seeker.connect('seek', seek_cb)
 
+        # first seek should happen immediately
         seeker.seek(1)
+        self.failUnlessEqual(self.seek_count, 1)
+        self.failUnlessEqual(self.seek_position, 1)
+        self.failUnlessEqual(self.seek_format, gst.FORMAT_TIME)
         self.failUnlessEqual(seeker.pending_seek_id, 0)
-        self.failUnlessEqual(seeker.position, 1)
-        self.failUnlessEqual(seeker.format, gst.FORMAT_TIME)
+        self.failUnlessEqual(seeker.position, None)
+        self.failUnlessEqual(seeker.format, None)
 
+        # second seek is queued
         seeker.seek(2, gst.FORMAT_BYTES)
         self.failUnlessEqual(seeker.pending_seek_id, 0)
         self.failUnlessEqual(seeker.position, 2)
         self.failUnlessEqual(seeker.format, gst.FORMAT_BYTES)
 
+        # ... until the timeout triggers
         seeker._seekTimeoutCb()
-        self.failUnlessEqual(self.seek_count, 1)
+        self.failUnlessEqual(self.seek_count, 2)
         self.failUnlessEqual(self.seek_position, 2)
         self.failUnlessEqual(self.seek_format, gst.FORMAT_BYTES)
         self.failUnlessEqual(seeker.pending_seek_id, None)
         self.failUnlessEqual(seeker.position, None)
         self.failUnlessEqual(seeker.format, None)
 
+        # do another first-seek
         seeker.seek(3)
         self.failUnlessEqual(seeker.pending_seek_id, 1)
-        self.failUnlessEqual(seeker.position, 3)
-        self.failUnlessEqual(seeker.format, gst.FORMAT_TIME)
+        self.failUnlessEqual(self.seek_count, 3)
+        self.failUnlessEqual(seeker.position, None)
+        self.failUnlessEqual(seeker.format, None)
+
+        # timeout with None position
+        seeker._seekTimeoutCb()
+
