@@ -32,6 +32,7 @@ pitivi_PYTHON = \
 	signalinterface.py \
 	sourcelist.py 	\
 	stream.py	\
+	reflect.py  \
 	threads.py	\
 	thumbnailcache.py \
 	utils.py
