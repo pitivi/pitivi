@@ -703,7 +703,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         if response == gtk.RESPONSE_OK:
             self.log("User chose a URI to save project to")
-            new = chooser.get_uri()
+            new = unquote(chooser.get_uri())
             formatter.addMapping(uri, new)
         else:
             self.log("User didn't choose a URI to save project to")
