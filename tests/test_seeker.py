@@ -26,6 +26,9 @@ import gst
 class StubSeeker(Seeker):
     seek_id = 0
 
+    def _doFirstSeek(self):
+        self._seekTimeoutCb()
+
     def _scheduleSeek(self, position, format):
         # mock Seeker._scheduleSeek so that we don't need a mainloop
         seek_id = self.seek_id
