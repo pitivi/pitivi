@@ -166,17 +166,17 @@ class ElementTreeFormatter(Formatter):
         # FIXME : we should check if the given ObjectFactory
         # requires a filename !
         filename = element.attrib.get("filename", None)
-        if filename is None:
-            return
-        if isinstance(filename, unicode):
-            filename = filename.encode("utf-8")
-        filename = self.validateSourceURI(filename)
-        if filename is None:
-            return None
-        if issubclass(klass, FileSourceFactory):
-            factory = FileSourceFactory(filename)
-        else:
+        if filename is not None:
+            if isinstance(filename, unicode):
+                filename = filename.encode("utf-8")
+            filename = self.validateSourceURI(filename)
+            if filename is None:
+                return None
+
+        if filename is not None:
             factory = klass(filename)
+        else:
+            factory = klass()
 
         factory.duration = long(element.attrib["duration"])
         factory.default_duration = long(element.attrib["default_duration"])
