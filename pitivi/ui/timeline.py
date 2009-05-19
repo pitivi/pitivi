@@ -236,29 +236,31 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _keyPressEventCb(self, unused_widget, event):
         kv = event.keyval
+        self.debug("kv:%r", kv)
+        if kv not in [gtk.keysyms.Left, gtk.keysyms.Right]:
+            return False
         mod = event.get_state()
-        frame = long(self.rate * gst.SECOND)
-        now = self.project.pipeline.getPosition()
+        try:
+            if mod & gtk.gdk.CONTROL_MASK:
+                now = self.project.pipeline.getPosition()
+                ltime, rtime = self.project.timeline.edges.closest(now)
 
-        if kv == gtk.keysyms.Left:
-            if mod & gtk.gdk.SHIFT_MASK:
-                self.project.pipeline.seekRelative(-gst.SECOND)
-            elif mod & gtk.gdk.CONTROL_MASK:
-                ltime, rtime = self.project.timeline.edges.closest(now)
-                self.project.pipeline.seek(ltime)
-            else:
-                self.project.pipeline.seekRelative(-frame)
+            if kv == gtk.keysyms.Left:
+                if mod & gtk.gdk.SHIFT_MASK:
+                    self.project.pipeline.seekRelative(-gst.SECOND)
+                elif mod & gtk.gdk.CONTROL_MASK:
+                    self.project.pipeline.seek(ltime+1)
+                else:
+                    self.project.pipeline.seekRelative(-long(self.rate * gst.SECOND))
+            elif kv == gtk.keysyms.Right:
+                if mod & gtk.gdk.SHIFT_MASK:
+                    self.project.pipeline.seekRelative(gst.SECOND)
+                elif mod & gtk.gdk.CONTROL_MASK:
+                    self.project.pipeline.seek(rtime+1)
+                else:
+                    self.project.pipeline.seekRelative(long(self.rate * gst.SECOND))
+        finally:
             return True
-        elif kv == gtk.keysyms.Right:
-            if mod & gtk.gdk.SHIFT_MASK:
-                self.project.pipeline.seekRelative(gst.SECOND)
-            elif mod & gtk.gdk.CONTROL_MASK:
-                ltime, rtime = self.project.timeline.edges.closest(now)
-                self.project.pipeline.seek(rtime)
-            else:
-                self.project.pipeline.seekRelative(frame)
-            return True
-        return False
 
     def _buttonPress(self, window, event):
         self.shrink = False
