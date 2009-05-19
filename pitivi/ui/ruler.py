@@ -180,7 +180,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
         return False
 
-    def _doSeek(self, value, format=gst.FORMAT_TIME):
+    def _doSeek(self, value, format=gst.FORMAT_TIME, on_idle=False):
         self.seeker.seek(value, format)
 
 ## Drawing methods
@@ -235,7 +235,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         else:
             position = self.position
 
-        self._doSeek(position, gst.FORMAT_TIME)
+        self._doSeek(position, gst.FORMAT_TIME, on_idle=True)
 
     def getShadedDuration(self):
         return self.shaded_duration
