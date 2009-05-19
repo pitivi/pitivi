@@ -45,6 +45,7 @@ from pitivi.log.loggable import Loggable
 from pitivi.log import log
 from pitivi.project import Project
 from pitivi.formatters.format import get_formatter_for_uri
+from pitivi.formatters.base import FormatterError
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
@@ -90,6 +91,7 @@ class Pitivi(Loggable, Signallable):
         "closing-project" : ["project"],
         "project-closed" : ["project"],
         "new-project-failed" : ["reason", "uri"],
+        "missing-uri" : ["formatter", "uri"],
         "shutdown" : None
         }
 
@@ -180,18 +182,24 @@ class Pitivi(Loggable, Signallable):
         # if current project, try to close it
         if self._closeRunningProject():
             project = formatter.newProject()
+            formatter.connect("missing-uri", self._missingURICb)
             self.emit("new-project-loading", project)
             self.info("Got a new project %r, calling loadProject", project)
             try:
                 formatter.loadProject(uri, project)
                 self.current = project
                 self.emit("new-project-loaded", self.current)
-            except Exception, e:
+            except FormatterError, e:
                 self.handleException(e)
                 self.warning("error loading the project")
                 self.current = None
                 self.emit("new-project-failed",
                     _("There was an error loading the file."), uri)
+            finally:
+                formatter.disconnect_by_function(self._missingURICb)
+
+    def _missingURICb(self, formatter, uri):
+        self.emit("missing-uri", formatter, uri)
 
     def _closeRunningProject(self):
         """ close the current project """

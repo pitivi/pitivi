@@ -679,6 +679,42 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.destroy()
         self.set_sensitive(True)
 
+    @handler(app, "missing-uri")
+    def _missingUriCb(self, instance, formatter, uri):
+        dialog = gtk.Dialog(_("Locate missing file..."), 
+            self,
+            gtk.DIALOG_MODAL,
+            buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+            gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        dialog.set_border_width(12)
+        dialog.get_content_area().set_spacing(6)
+
+        label = gtk.Label(_("Please locate the missing file, '%s'" % uri))
+        dialog.get_content_area().pack_start(label, False, False)
+        label.show()
+
+        chooser = gtk.FileChooserWidget(action=gtk.FILE_CHOOSER_ACTION_OPEN)
+        chooser.set_select_multiple(False)
+        chooser.set_current_folder(self.settings.lastProjectFolder)
+        dialog.get_content_area().pack_start(chooser, True, True)
+        chooser.show()
+
+        response = dialog.run()
+
+        if response == gtk.RESPONSE_OK:
+            self.log("User chose a URI to save project to")
+            new = chooser.get_uri()
+            formatter.addMapping(uri, new)
+        else:
+            self.log("User didn't choose a URI to save project to")
+            # FIXME: not calling addMapping doesn't keep the formatter from
+            # re-emitting the same signal. How do we get out of this
+            # situation?
+            pass
+
+        dialog.destroy()
+
+
 ## PiTiVi current project callbacks
 
     def _setProject(self):
