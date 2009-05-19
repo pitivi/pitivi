@@ -69,9 +69,13 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         self.settings = None
         self.validaencoders = []
         self.validvencoders = []
+        # cached values
         self.containersettings = {}
         self.vcodecsettings = {}
         self.acodecsettings = {}
+        self.muxer = None
+        self.vencoder = None
+        self.aencoder = None
         self._loading = False
 
     def setSettings(self, settings):
@@ -187,6 +191,9 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         self.muxercombobox.set_active(selected)
 
         # Encoder/Muxer settings
+        self.muxer = self.settings.muxer
+        self.vencoder = self.settings.vencoder
+        self.aencoder = self.settings.aencoder
         self.containersettings = self.settings.containersettings
         self.acodecsettings = self.settings.acodecsettings
         self.vcodecsettings = self.settings.vcodecsettings
@@ -304,7 +311,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
                 selected = idx
         self.acodeccbox.set_active(selected)
 
-    def runSettingsDialog(self, factory, settings):
+    def runSettingsDialog(self, factory, settings={}):
         dialog = GstElementSettingsDialog(factory, settings)
         if dialog.run() == gtk.RESPONSE_OK:
             dialog.hide()
@@ -318,25 +325,37 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         factory = self.settings.muxers[self.muxercombobox.get_active()]
         if not factory:
             return
-        set = self.runSettingsDialog(factory, self.containersettings)
+        if factory.get_name() == self.settings.muxer:
+            set = self.runSettingsDialog(factory, self.containersettings)
+        else:
+            set = self.runSettingsDialog(factory)
         if set:
             self.containersettings = set
+            self.muxer = factory.get_name()
 
     def _acodecSettingsButtonClickedCb(self, button):
         factory = self.validaencoders[self.acodeccbox.get_active()]
         if not factory:
             return
-        set = self.runSettingsDialog(factory, self.acodecsettings)
+        if factory.get_name() == self.aencoder:
+            set = self.runSettingsDialog(factory, self.acodecsettings)
+        else:
+            set = self.runSettingsDialog(factory)
         if set:
             self.acodecsettings = set
+            self.aencoder = factory.get_name()
 
     def _vcodecSettingsButtonClickedCb(self, button):
         factory = self.validvencoders[self.vcodeccbox.get_active()]
         if not factory:
             return
-        settings = self.runSettingsDialog(factory, self.vcodecsettings)
+        if factory.get_name() == self.vencoder:
+            settings = self.runSettingsDialog(factory, self.vcodecsettings)
+        else:
+            settings = self.runSettingsDialog(factory)
         if settings:
             self.vcodecsettings = settings
+            self.vencoder = factory.get_name()
 
 
     def updateSettings(self):
@@ -372,9 +391,19 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         self.settings.setEncoders(muxer, vencoder, aencoder)
 
         # encoder/muxer settings
-        self.settings.containersettings = self.containersettings
-        self.settings.acodecsettings = self.acodecsettings
-        self.settings.vcodecsettings = self.vcodecsettings
+        # only store cached values if no different factory was chosen.
+        if muxer == self.muxer:
+            self.settings.containersettings = self.containersettings
+        else:
+            self.settings.containersettings = {}
+        if aencoder == self.aencoder:
+            self.settings.acodecsettings = self.acodecsettings
+        else:
+            self.settings.acodecsettings = {}
+        if vencoder == self.vencoder:
+            self.settings.vcodecsettings = self.vcodecsettings
+        else:
+            self.settings.vcodecsettings = {}
 
         self.debug("Returning %s", self.settings)
 
