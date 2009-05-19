@@ -55,10 +55,7 @@ class DefaultVideoSink(SinkFactory):
 
         bin = gst.Bin()
         ffmpegcolorspace = gst.element_factory_make("ffmpegcolorspace")
-        try:
-            videoscale = gst.element_factory_make("ffvideoscale")
-        except gst.ElementNotFoundError:
-            videoscale = gst.element_factory_make("videoscale")
+        videoscale = gst.element_factory_make("videoscale")
 
         autovideosink = gst.element_factory_make("autovideosink")
         autovideosink.set_state(gst.STATE_READY)
