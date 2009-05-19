@@ -319,7 +319,8 @@ class Pipeline(Signallable, Loggable):
         self.log("format %r", format)
         try:
             cur, format = self._pipeline.query_position(format)
-        except:
+        except Exception, e:
+            self.handleException(e)
             raise PipelineError("Couldn't get position")
         self.log("Got position %s", gst.TIME_ARGS(cur))
         return cur
@@ -331,7 +332,8 @@ class Pipeline(Signallable, Loggable):
         self.log("format %r", format)
         try:
             dur, format = self._pipeline.query_duration(format)
-        except:
+        except Exception, e:
+            self.handleException(e)
             raise PipelineError("Couldn't get duration")
         self.log("Got duration %s", gst.TIME_ARGS(dur))
         self.emit("duration-changed", dur)
