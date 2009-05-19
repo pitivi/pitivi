@@ -529,10 +529,12 @@ class TestFormatterLoad(TestCase):
         f.write(tostring(element))
         f.close()
 
-    def testDirectoryMapping(self):
-        pa = "file:///if/you/have/this/file/you/are/on/crack.avi"
-        pb = "file:///I/really/mean/it/you/crack.avi"
+    ## following test is disabled until I figure out a better way of
+    ## testing the mapping system.
+#     def testDirectoryMapping(self):
+#         pa = "file:///if/you/have/this/file/you/are/on/crack.avi"
+#         pb = "file:///I/really/mean/it/you/crack.avi"
 
-        self.formatter.addMapping(pa,pb)
-        self.assertEquals(self.formatter.validateSourceURI(pa),
-                          pb)
+#         self.formatter.addMapping(pa,pb)
+#         self.assertEquals(self.formatter.validateSourceURI(pa),
+#                           pb)

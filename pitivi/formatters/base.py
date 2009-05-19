@@ -326,21 +326,23 @@ class Formatter(Signallable, Loggable):
 
         self.debug("URI might have moved...")
 
-        localpath = uri.split('://', 1)[1]
-
         # else let's figure out if we have a compatible mapping
         for k, v in self.directorymapping.iteritems():
-            if localpath.startswith(k):
-                return uri.replace(k, v, 1)
+            if uri.startswith(k):
+                probable = uri.replace(k, v, 1)
+                if uri_is_valid(probable) and uri_is_reachable(probable):
+                    return probable
 
         # else, let's fire the signal...
         self.emit('missing-uri', uri)
 
         # and check again
         for k, v in self.directorymapping.iteritems():
-            self.debug("localpath:%r, k:%r, v:%r", localpath, k, v)
+            self.debug("uri:%r, k:%r, v:%r", uri, k, v)
             if uri.startswith(k):
-                return uri.replace(k, v, 1)
+                probable = uri.replace(k, v, 1)
+                if uri_is_valid(probable) and uri_is_reachable(probable):
+                    return probable
 
         # Houston, we have lost contact with mission://fail
         return None
