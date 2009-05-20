@@ -349,7 +349,10 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.seekRelative(amount)
 
     def seek(self, position, format=gst.FORMAT_TIME):
-        self.seeker.seek(position, format)
+        try:
+            self.seeker.seek(position, format)
+        except:
+            self.warning("seek failed")
 
     def _seekerSeekCb(self, seeker, position, format):
         try:
@@ -408,7 +411,11 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.seekRelative(gst.SECOND)
 
     def _forwardCb(self, unused_button):
-        self.seek(self.pipeline.getDuration() - 1)
+        try:
+            dur = self.pipeline.getDuration()
+            self.seek(dur - 1)
+        except:
+            self.warning("couldn't get duration")
 
     ## public methods for controlling playback
 
@@ -424,7 +431,10 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.pipeline.togglePlayback()
 
     def seekRelative(self, time):
-        self.pipeline.seekRelative(time)
+        try:
+            self.pipeline.seekRelative(time)
+        except:
+            self.warning("seek failed")
 
     def _posCb(self, unused_pipeline, pos):
         self._newTime(pos)
