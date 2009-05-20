@@ -16,13 +16,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
 "POT-Creation-Date: 2009-04-10 03:30+0000\n"
-"PO-Revision-Date: 2009-04-16 09:18+0200\n"
+"PO-Revision-Date: 2009-05-20 19:27+0200\n"
 "Last-Translator: Claude Paroz <claude@2xlibre.net>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n>1;\n"
+"Plural-Forms: nplurals=2; plural=n>1;"
 
 #: ../pitivi/check.py:121
 #, python-format
@@ -188,7 +188,7 @@ msgstr ""
 #. EOS and no decodable streams?
 #: ../pitivi/discoverer.py:185
 msgid "FIXME: no output streams"
-msgstr ""
+msgstr "FIXME:·Aucun flux de sortie"
 
 #: ../pitivi/discoverer.py:186
 msgid "see above"
@@ -280,7 +280,7 @@ msgstr "Il y a eu une erreur au chargement du fichier."
 
 #: ../pitivi/application.py:289
 msgid "%prog [-p PROJECT_FILE] [-a] [MEDIA_FILE]..."
-msgstr ""
+msgstr "%prog·[-p·FICHIER_DE_PROJET]·[-a]·[FICHIER_MULTIMEDIA]..."
 
 #: ../pitivi/application.py:291
 msgid ""
@@ -388,7 +388,6 @@ msgid "Properties for <element>"
 msgstr "Propriétés de <element>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:1 ../pitivi/ui/timelinecontrols.py:13
-#, fuzzy
 #| msgid "<b>Audio :</b>"
 msgid "<b>Audio:</b>"
 msgstr "<b>Audio :</b>"
@@ -402,7 +401,6 @@ msgid "<b>Settings</b>"
 msgstr "<b>Paramètres</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:4 ../pitivi/ui/timelinecontrols.py:15
-#, fuzzy
 #| msgid "<b>Video :</b>"
 msgid "<b>Video:</b>"
 msgstr "<b>Vidéo :</b>"
@@ -571,45 +569,42 @@ msgid "Unknown reason"
 msgstr "Cause inconnue"
 
 #: ../pitivi/ui/filelisterrordialog.py:76
-#, fuzzy
 #| msgid "URI : "
 msgid "URI:"
 msgstr "URI :"
 
 #: ../pitivi/ui/filelisterrordialog.py:82
-#, fuzzy
 #| msgid "Problem : "
 msgid "Problem:"
 msgstr "Problème :"
 
 #: ../pitivi/ui/filelisterrordialog.py:89
-#, fuzzy
 #| msgid "Extra information : "
 msgid "Extra information:"
 msgstr "Informations supplémentaires :"
 
 #. set title and frame label
 #: ../pitivi/ui/gstwidget.py:191
-#, fuzzy, python-format
+#, python-format
 #| msgid "Properties for "
 msgid "Properties for %s"
-msgstr "Propriétés de "
+msgstr "Propriétés de %s"
 
 #: ../pitivi/ui/mainwindow.py:219
 msgid "Start Playback"
-msgstr ""
+msgstr "Démarrer la lecture"
 
 #: ../pitivi/ui/mainwindow.py:220
 msgid "Stop Playback"
-msgstr ""
+msgstr "Arréter la lecture"
 
 #: ../pitivi/ui/mainwindow.py:221
 msgid "Forward one frame"
-msgstr ""
+msgstr "Avancer d'une image"
 
 #: ../pitivi/ui/mainwindow.py:222
 msgid "Fast Forward"
-msgstr ""
+msgstr "Avance Rapide"
 
 #: ../pitivi/ui/mainwindow.py:223
 msgid "Loop over selected area"
@@ -617,7 +612,7 @@ msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:224
 msgid "Rewind"
-msgstr ""
+msgstr "Rembobiner"
 
 #: ../pitivi/ui/mainwindow.py:225
 msgid "Back one frame"
@@ -660,7 +655,6 @@ msgid "Manage plugins"
 msgstr "Gérer les greffons"
 
 #: ../pitivi/ui/mainwindow.py:245
-#, fuzzy
 #| msgid "_Import from Webcam.."
 msgid "Import from _Webcam..."
 msgstr "_Importer depuis une webcam..."
@@ -670,17 +664,15 @@ msgid "Import Camera stream"
 msgstr "Importe le flux d'une caméra"
 
 #: ../pitivi/ui/mainwindow.py:248
-#, fuzzy
 #| msgid "_Make screencast.."
 msgid "_Make screencast..."
-msgstr "_Effectuer une capture vidéo"
+msgstr "_Effectuer une capture d'écran"
 
 #: ../pitivi/ui/mainwindow.py:249
 msgid "Capture the desktop"
 msgstr "Capture l'écran"
 
 #: ../pitivi/ui/mainwindow.py:251
-#, fuzzy
 #| msgid "_Capture Network Stream.."
 msgid "_Capture Network Stream..."
 msgstr "_Capturer un flux réseau..."
@@ -707,46 +699,43 @@ msgid "_View"
 msgstr "_Affichage"
 
 #: ../pitivi/ui/mainwindow.py:259
-#, fuzzy
 #| msgid "New Project"
 msgid "_Project"
-msgstr "Nouveau projet"
+msgstr "_Projet"
 
 #: ../pitivi/ui/mainwindow.py:260
 msgid "_Timeline"
-msgstr ""
+msgstr "_Timeline"
 
 #: ../pitivi/ui/mainwindow.py:261
-#, fuzzy
 #| msgid "Preview"
 msgid "Previe_w"
 msgstr "Aperçu"
 
 #: ../pitivi/ui/mainwindow.py:268
-#, fuzzy
 #| msgid "Frame rate:"
 msgid "Frame Forward"
-msgstr "Cadence des images :"
+msgstr "Avancer d'une Image"
 
 #: ../pitivi/ui/mainwindow.py:270
 msgid "Frame Backward"
-msgstr ""
+msgstr "Reculer d'une image"
 
 #: ../pitivi/ui/mainwindow.py:272
 msgid "1 Second Forward"
-msgstr ""
+msgstr "Avancer d'une seconde"
 
 #: ../pitivi/ui/mainwindow.py:274
 msgid "1 Second Backward"
-msgstr ""
+msgstr "Reculer d'une seconde"
 
 #: ../pitivi/ui/mainwindow.py:276
 msgid "End of Clip"
-msgstr ""
+msgstr "Fin du Clip"
 
 #: ../pitivi/ui/mainwindow.py:278
 msgid "Start of Clip"
-msgstr ""
+msgstr "Début du Clip"
 
 #: ../pitivi/ui/mainwindow.py:280
 msgid "Loop"
@@ -769,7 +758,6 @@ msgid "Timeline Toolbar"
 msgstr ""
 
 #: ../pitivi/ui/mainwindow.py:571
-#, fuzzy
 #| msgid "Open File ..."
 msgid "Open File..."
 msgstr "Ouvrir un fichier..."
@@ -823,7 +811,6 @@ msgid "Detect Automatically"
 msgstr "Détecter automatiquement"
 
 #: ../pitivi/ui/net_capture.glade.h:1
-#, fuzzy
 #| msgid "Address "
 msgid "Address"
 msgstr "Adresse "
@@ -845,7 +832,6 @@ msgid "Close"
 msgstr "Fermer"
 
 #: ../pitivi/ui/net_capture.glade.h:6
-#, fuzzy
 #| msgid "Customize :"
 msgid "Customize:"
 msgstr "Personnaliser :"
@@ -855,7 +841,6 @@ msgid "Network stream video"
 msgstr "Vidéo de flux réseau"
 
 #: ../pitivi/ui/net_capture.glade.h:8
-#, fuzzy
 #| msgid "Port "
 msgid "Port"
 msgstr "Port "
@@ -869,10 +854,9 @@ msgid "Preview Stream from URI"
 msgstr "Affiche un aperçu du flux de l'URI"
 
 #: ../pitivi/ui/net_capture.glade.h:11
-#, fuzzy
 #| msgid " Protocol"
 msgid "Protocol"
-msgstr " Protocole"
+msgstr "Protocole"
 
 #: ../pitivi/ui/net_capture.glade.h:12
 msgid "http / https"
@@ -904,13 +888,11 @@ msgid "Plugin manager"
 msgstr "Gestionnaire de greffons"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:3
-#, fuzzy
 #| msgid "Search : "
 msgid "Search:"
 msgstr "Rechercher : "
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:4
-#, fuzzy
 #| msgid "Show : "
 msgid "Show:"
 msgstr "Afficher : "
@@ -937,7 +919,6 @@ msgid "Category"
 msgstr "Catégorie"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:271
-#, fuzzy
 #| msgid "Are you sure you want to remove selected plugins ?"
 msgid "Are you sure you want to remove selected plugins?"
 msgstr "Voulez-vous vraiment enlever les greffons sélectionnés ?"
@@ -952,13 +933,12 @@ msgid "Cannot remove %s"
 msgstr "Impossible d'enlever %s"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:321
-#, fuzzy
 #| msgid "Update the existent plugin ?"
 msgid "Update the existent plugin?"
 msgstr "Mettre à jour le greffon existant ?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:324
-#, fuzzy, python-format
+#, python-format
 #| msgid "If you agree, version %s will be replaced with version %s"
 msgid ""
 "This plugin is already installed in your system.\n"
@@ -970,12 +950,13 @@ msgid "Duplicate plugin found"
 msgstr "Greffon dupliqué trouvé"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:341
-#, fuzzy, python-format
+#, python-format
 #| msgid "The file is not a valid plugin."
 msgid ""
 "Cannot install %s\n"
 "The file is not a valid plugin"
-msgstr "Le fichier n'est pas un greffon valide."
+msgstr "Impossible d'installer %s\n"
+"Le fichier n'est pas un greffon valide."
 
 #: ../pitivi/ui/projecttabs.py:65
 msgid "Clip Library"
@@ -1014,11 +995,11 @@ msgid "Start Istanbul"
 msgstr "Lancer Istanbul"
 
 #: ../pitivi/ui/sourcelist.py:85
-#, fuzzy, python-format
+#, python-format
 #| msgid "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] "<b>Audio :</b> %d canaux à %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[0] "<b>Audio :</b> %d canal à %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[1] "<b>Audio :</b> %d canaux à %d <i>Hz</i> (%d <i>bits</i>)"
 
 #: ../pitivi/ui/sourcelist.py:94
@@ -1087,7 +1068,6 @@ msgid "Import clips to use"
 msgstr "Importe des séquences pour les utiliser"
 
 #: ../pitivi/ui/sourcelist.py:282
-#, fuzzy
 #| msgid "_Import folder of clips..."
 msgid "Import _folder of clips..."
 msgstr "_Importer un dossier de séquences..."
@@ -1097,10 +1077,9 @@ msgid "Import folder of clips to use"
 msgstr "Importe un dossier de séquences pour les utiliser"
 
 #: ../pitivi/ui/sourcelist.py:289
-#, fuzzy
 #| msgid "_Render project"
 msgid "_Remove from project"
-msgstr "_Rendu du projet"
+msgstr "_Retirer du projet"
 
 #: ../pitivi/ui/sourcelist.py:292
 msgid "Insert at _end of timeline"
@@ -1181,7 +1160,7 @@ msgstr "Grouper les séquences"
 
 #: ../pitivi/ui/timeline.py:190
 msgid "Razor"
-msgstr ""
+msgstr "Rasoir"
 
 #: ../pitivi/ui/timelinecontrols.py:17
 msgid "<b>Text:</b>"
