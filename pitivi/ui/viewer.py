@@ -396,7 +396,7 @@ class PitiviViewer(gtk.VBox, Loggable):
     ## Control gtk.Button callbacks
 
     def _rewindCb(self, unused_button):
-        raise NotImplementedError
+        self.seek(0)
 
     def _backCb(self, unused_button):
         self.seekRelative(-gst.SECOND)
@@ -408,7 +408,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.seekRelative(gst.SECOND)
 
     def _forwardCb(self, unused_button):
-        raise NotImplementedError
+        self.seek(self.pipeline.getDuration() - 1)
 
     ## public methods for controlling playback
 
