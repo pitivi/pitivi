@@ -7,11 +7,13 @@ pitivi/application.py
 pitivi/project.py
 pitivi/settings.py
 pitivi/stream.py
+pitivi/utils.py
 pitivi/factories/base.py
 pitivi/factories/file.py
 pitivi/ui/audiofxlist.py
 pitivi/ui/cam_capture.glade
 pitivi/ui/defaultpropertyeditor.py
+pitivi/ui/dynamic.py
 pitivi/ui/elementsettingsdialog.glade
 pitivi/ui/encodingdialog.glade
 pitivi/ui/encodingdialog.py
@@ -24,6 +26,7 @@ pitivi/ui/mainwindow.py
 pitivi/ui/net_capture.glade
 pitivi/ui/pluginmanagerdialog.glade
 pitivi/ui/pluginmanagerdialog.py
+pitivi/ui/prefs.py
 pitivi/ui/projecttabs.py
 pitivi/ui/projectsettings.glade
 pitivi/ui/propertyeditor.py
