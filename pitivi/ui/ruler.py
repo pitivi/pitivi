@@ -181,7 +181,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         return False
 
     def _doSeek(self, value, format=gst.FORMAT_TIME, on_idle=False):
-        self.seeker.seek(value, format)
+        self.seeker.seek(value, format, on_idle)
 
 ## Drawing methods
 
