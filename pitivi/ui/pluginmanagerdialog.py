@@ -321,8 +321,8 @@ class PluginManagerDialog(object):
                     message_format = _("Update the existing plugin?"))
 
                 dialog.format_secondary_text(
-                    _("This plugin is already installed in your system.\nIf you agree, version %s will be replaced with version %s")\
-                    %(e.old_plugin.version, e.new_plugin.version))
+                    _("This plugin is already installed in your system.\nIf you agree, version %(v1)s will be replaced with version %(v2)s")\
+                    %{'v1': e.old_plugin.version, 'v2': e.new_plugin.version})
 
                 dialog.set_title(_("Duplicate plugin found"))
                 try:
