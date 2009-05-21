@@ -1,10 +1,10 @@
 formattersdir = $(libdir)/pitivi/python/pitivi/formatters
 
-formatters_PYTHON = \
+formatters_PYTHON = 	\
 	__init__.py	\
 	base.py		\
-	format.py	\
 	etree.py	\
+	format.py	\
 	playlist.py
 
 clean-local:

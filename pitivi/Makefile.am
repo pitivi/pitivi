@@ -17,8 +17,8 @@ pitivi_PYTHON = \
 	configure.py 	\
 	device.py	\
 	discoverer.py 	\
-	encode.py	\
 	effects.py	\
+	encode.py	\
 	instance.py 	\
 	pipeline.py	\
 	pitivigstutils.py \
@@ -27,12 +27,12 @@ pitivi_PYTHON = \
 	plumber.py	\
 	project.py 	\
 	receiver.py	\
+	reflect.py	\
 	settings.py 	\
 	signalgroup.py	\
 	signalinterface.py \
 	sourcelist.py 	\
 	stream.py	\
-	reflect.py  \
 	threads.py	\
 	thumbnailcache.py \
 	utils.py
