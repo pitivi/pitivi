@@ -719,33 +719,6 @@ class TimelineEdges(object):
             self.edges.insert(index, edge)
             self.by_time[edge] = []
 
-    def removeStartEnd(self, start, end=None):
-        """
-        Remove the given start/end values from the list of edges being tracked.
-
-        @param start: A start position to stop tracking.
-        @type start: L{long}
-        @param end: A stop position to stop tracking.
-        @type end: L{long}
-        """
-        if len(self.edges) == 0:
-            raise TimelineError()
-
-        val, diff, start_index = closest_item(self.edges, start)
-        if val != start:
-            raise TimelineError()
-
-        if end is not None and len(self.edges) > 1:
-            val, diff, end_index = closest_item(self.edges, end, start_index)
-            if val != end:
-                raise TimelineError()
-        else:
-            end_index = None
-
-        del self.edges[start_index]
-        if end_index is not None:
-            del self.edges[end_index-1]
-
     def snapToEdge(self, start, end=None):
         """
         Returns:
