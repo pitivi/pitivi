@@ -765,16 +765,16 @@ class TimelineEdges(object):
     def getObjsAdjacentToStart(self, trackobj):
         """Return a list of all track objects whose ends (start + duration)
         are equal to the given track object's start"""
-        end = trackobj.start + trackobj.duration
-        if end in self.by_end:
-            return self.by_end[end]
+        if trackobj.start in self.by_end:
+            return self.by_end[trackobj.start]
         return []
 
     def getObjsAdjacentToEnd(self, trackobj):
         """Return a list of all track objects whose start property are
         adjacent to the given track object's end (start + duration)"""
-        if trackobj.start in self.by_start:
-            return self.by_start[trackobj.start]
+        end = trackobj.start + trackobj.duration
+        if end in self.by_start:
+            return self.by_start[end]
         return []
 
 

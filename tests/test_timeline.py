@@ -558,6 +558,20 @@ class TestTimelineEdges(TestCase):
         self.timeline_edges.addTrackObject(self.t2)
         self.testSingleEdge()
 
+    def testGetAdjacenctObjs(self):
+        self.t1.start = 500 
+        self.t1.duration = 500
+        self.t2.start = 1000
+        self.t2.duration = 500
+        self.timeline_edges.addTrackObject(self.t1)
+        self.timeline_edges.addTrackObject(self.t2)
+        self.assertEquals(set(self.timeline_edges.getObjsIncidentOnTime(1000)),
+            set([self.t1, self.t2]))
+        self.assertEquals(set(self.timeline_edges.getObjsAdjacentToStart(self.t2)),
+            set([self.t1]))
+        self.assertEquals(set(self.timeline_edges.getObjsAdjacentToEnd(self.t1)),
+            set([self.t2]))
+
 
 class TestTimelineAddFactory(TestCase):
     def setUp(self):
