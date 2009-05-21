@@ -220,7 +220,7 @@ def find_decoder(pad):
             pad = pad.get_target()
             continue
 
-        element = pad.get_parent()
+        element = pad.get_parent_element()
         if element is None or isinstance(element, gst.Bin):
             return None
 

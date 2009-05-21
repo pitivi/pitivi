@@ -562,7 +562,7 @@ class Timeline(Signallable, Loggable):
                 track = track_object.track
                 track.removeTrackObject(track_object)
 
-    def addSourceFactory(self, factory, stream_map=None):
+    def addSourceFactory(self, factory, stream_map=None, strict=False):
         self.debug("factory:%r", factory)
         output_streams = factory.getOutputStreams()
         if not output_streams:
@@ -575,7 +575,8 @@ class Timeline(Signallable, Loggable):
                 # error out and require the caller to pass a stream_map
                 self.error("Couldn't find a complete stream mapping (self:%d < factory:%d)",
                            len(stream_map), len(output_streams))
-                raise TimelineError()
+                if strict:
+                    raise TimelineError()
 
         timeline_object = TimelineObject(factory)
         start = 0

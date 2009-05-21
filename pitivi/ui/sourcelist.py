@@ -35,7 +35,8 @@ from pitivi.ui.pathwalker import PathWalker
 from pitivi.ui.filelisterrordialog import FileListErrorDialog
 from pitivi.configure import get_pixmap_dir
 from pitivi.signalgroup import SignalGroup
-from pitivi.stream import VideoStream, AudioStream, TextStream
+from pitivi.stream import VideoStream, AudioStream, TextStream, \
+        MultimediaStream
 from pitivi.settings import GlobalSettings
 from pitivi.utils import beautify_length
 from pitivi.log.loggable import Loggable
@@ -114,7 +115,7 @@ def beautify_stream(stream):
     raise NotImplementedError
 
 def beautify_factory(factory):
-    ranks = {VideoStream: 0, AudioStream: 1}
+    ranks = {VideoStream: 0, AudioStream: 1, TextStream: 2, MultimediaStream: 3}
     def stream_sort_key(stream):
         return ranks[type(stream)]
 

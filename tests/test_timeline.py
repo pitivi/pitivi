@@ -645,7 +645,7 @@ class TestTimelineAddFactory(TestCase):
         self.factory.addOutputStream(self.audio_stream2)
         self.factory.addOutputStream(self.audio_stream3)
         self.failUnlessRaises(TimelineError, self.timeline.addSourceFactory,
-                self.factory)
+                self.factory, strict=True)
         self.failUnlessEqual(len(self.audio_track1.track_objects), 1)
         self.failUnlessEqual(len(self.audio_track2.track_objects), 1)
         self.failUnlessEqual(len(self.video_track1.track_objects), 1)
