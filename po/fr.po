@@ -19,8 +19,8 @@ msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-05-20 17:25+0000\n"
-"PO-Revision-Date: 2009-05-21 13:36+0200\n"
+"POT-Creation-Date: 2009-05-22 16:43+0000\n"
+"PO-Revision-Date: 2009-05-22 19:09+0200\n"
 "Last-Translator: Claude Paroz <claude@2xlibre.net>\n"
 "Language-Team: GNOME French Team <gnomefr@traduc.org>\n"
 "MIME-Version: 1.0\n"
@@ -231,8 +231,8 @@ msgstr "Aucun gestionnaire disponible pour la source."
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr ""
-"Vous ne disposez pas d'un élément GStreamer source pour gérer le protocole "
-"« %s »"
+"Vous ne disposez pas d'un élément GStreamer source pour gérer le protocole « %"
+"s »"
 
 #: ../pitivi/discoverer.py:328
 msgid "Pipeline didn't want to go to PAUSED."
@@ -295,8 +295,10 @@ msgid ""
 msgstr ""
 "Lance l'éditeur vidéo, avec FICHIER_DE_PROJET si indiqué. Si aucun\n"
 "projet n'est indiqué, %prog crée un nouveau projet. Les autres paramètres\n"
-"sont traités comme des séquences à importer dans le projet. Si -a est indiqué,\n"
-"ces séquences seront aussi ajoutées à la fin de la table de montage du projet."
+"sont traités comme des séquences à importer dans le projet. Si -a est "
+"indiqué,\n"
+"ces séquences seront aussi ajoutées à la fin de la table de montage du "
+"projet."
 
 #: ../pitivi/application.py:347
 msgid ""
@@ -308,7 +310,8 @@ msgstr ""
 
 #: ../pitivi/application.py:350
 msgid "Add each MEDIA_FILE to timeline after importing."
-msgstr "Ajoute chaque FICHIER_MULTIMÉDIA à la table de montage après l'importation."
+msgstr ""
+"Ajoute chaque FICHIER_MULTIMÉDIA à la table de montage après l'importation."
 
 #: ../pitivi/settings.py:471
 msgid "Export Settings\n"
@@ -624,8 +627,8 @@ msgid "SVGA (800x600)"
 msgstr "SVGA (800x600)"
 
 #: ../pitivi/ui/exportsettingswidget.py:44
-msgid "WXGA (1024x768)"
-msgstr "WXGA (1024x768)"
+msgid "XGA (1024x768)"
+msgstr "XGA (1024x768)"
 
 #: ../pitivi/ui/exportsettingswidget.py:417
 msgid "Export settings"
@@ -994,7 +997,8 @@ msgstr "Annuler"
 
 #: ../pitivi/ui/prefs.py:123
 msgid "<b>Some changes will not take effect until you restart PiTiVi</b>"
-msgstr "<b>Certaines modifications ne prendront effet qu'au redémarrage de Pitivi</b>"
+msgstr ""
+"<b>Certaines modifications ne prendront effet qu'au redémarrage de Pitivi</b>"
 
 #: ../pitivi/ui/prefs.py:318
 msgid "Reset"
@@ -1036,131 +1040,131 @@ msgstr "Capture vidéo de l'écran"
 msgid "Start Istanbul"
 msgstr "Lancer Istanbul"
 
-#: ../pitivi/ui/sourcelist.py:88
+#: ../pitivi/ui/sourcelist.py:89
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[0] "<b>Audio :</b> %d canal à %d <i>Hz</i> (%d <i>bits</i>)"
 msgstr[1] "<b>Audio :</b> %d canaux à %d <i>Hz</i> (%d <i>bits</i>)"
 
-#: ../pitivi/ui/sourcelist.py:97
+#: ../pitivi/ui/sourcelist.py:98
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
 msgstr "<b>Format audio inconnu :</b> %s"
 
-#: ../pitivi/ui/sourcelist.py:102
+#: ../pitivi/ui/sourcelist.py:103
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
 msgstr "<b>Vidéo :</b> %d x %d <i>pixels</i> à %.2f <i>fps</i>"
 
-#: ../pitivi/ui/sourcelist.py:106
+#: ../pitivi/ui/sourcelist.py:107
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
 msgstr "<b>Image :</b> %d x %d <i>pixels</i>"
 
-#: ../pitivi/ui/sourcelist.py:109
+#: ../pitivi/ui/sourcelist.py:110
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
 msgstr "<b>Format vidéo inconnu :</b> %s"
 
-#: ../pitivi/ui/sourcelist.py:112
+#: ../pitivi/ui/sourcelist.py:113
 #, python-format
 msgid "<b>Text:</b> %s"
 msgstr "<b>Texte :</b> %s"
 
-#: ../pitivi/ui/sourcelist.py:154
+#: ../pitivi/ui/sourcelist.py:155
 msgid "Add Clips..."
 msgstr "Ajouter des séquences..."
 
-#: ../pitivi/ui/sourcelist.py:159
+#: ../pitivi/ui/sourcelist.py:160
 msgid "Remove Clip"
 msgstr "Retirer une séquence"
 
-#: ../pitivi/ui/sourcelist.py:163
+#: ../pitivi/ui/sourcelist.py:164
 msgid "Play Clip"
 msgstr "Lire une séquence"
 
-#: ../pitivi/ui/sourcelist.py:188
+#: ../pitivi/ui/sourcelist.py:189
 msgid "Icon"
 msgstr "Icône"
 
-#: ../pitivi/ui/sourcelist.py:197
+#: ../pitivi/ui/sourcelist.py:198
 msgid "Information"
 msgstr "Informations"
 
-#: ../pitivi/ui/sourcelist.py:208
+#: ../pitivi/ui/sourcelist.py:209
 msgid "Duration"
 msgstr "Durée"
 
-#: ../pitivi/ui/sourcelist.py:230
+#: ../pitivi/ui/sourcelist.py:231
 msgid ""
 "<span size='x-large'>Import your clips by dragging them here or by using the "
 "buttons above.</span>"
 msgstr ""
 "<span size='x-large'>Importez vos séquences en les glissant ici ou en "
-"utilisant les boutons ci-dessous.</span>"
+"utilisant les boutons ci-dessus.</span>"
 
-#: ../pitivi/ui/sourcelist.py:282
+#: ../pitivi/ui/sourcelist.py:283
 msgid "_Import clips..."
 msgstr "_Importer des séquences..."
 
-#: ../pitivi/ui/sourcelist.py:283
+#: ../pitivi/ui/sourcelist.py:284
 msgid "Import clips to use"
 msgstr "Importe des séquences pour les utiliser"
 
-#: ../pitivi/ui/sourcelist.py:285
+#: ../pitivi/ui/sourcelist.py:286
 msgid "Import _folder of clips..."
 msgstr "_Importer un dossier de séquences..."
 
-#: ../pitivi/ui/sourcelist.py:286
+#: ../pitivi/ui/sourcelist.py:287
 msgid "Import folder of clips to use"
 msgstr "Importe un dossier de séquences pour les utiliser"
 
-#: ../pitivi/ui/sourcelist.py:292
+#: ../pitivi/ui/sourcelist.py:293
 msgid "_Remove from project"
 msgstr "_Retirer du projet"
 
-#: ../pitivi/ui/sourcelist.py:295
+#: ../pitivi/ui/sourcelist.py:296
 msgid "Insert at _end of timeline"
 msgstr "Insérer à la _fin de la table de montage"
 
-#: ../pitivi/ui/sourcelist.py:408
+#: ../pitivi/ui/sourcelist.py:409
 msgid "Import a folder"
 msgstr "Importer un dossier"
 
-#: ../pitivi/ui/sourcelist.py:411
+#: ../pitivi/ui/sourcelist.py:412
 msgid "Import a clip"
 msgstr "Importer une séquence"
 
-#: ../pitivi/ui/sourcelist.py:412
+#: ../pitivi/ui/sourcelist.py:413
 msgid "Close after importing files"
 msgstr "Fermer après l'importation des fichiers"
 
-#: ../pitivi/ui/sourcelist.py:744
+#: ../pitivi/ui/sourcelist.py:745
 msgid "Importing clips..."
 msgstr "Importation des séquences..."
 
-#: ../pitivi/ui/sourcelist.py:745
+#: ../pitivi/ui/sourcelist.py:746
 msgid "Error(s) occured while importing"
 msgstr "Erreur(s) survenue(s) durant l'importation"
 
-#: ../pitivi/ui/sourcelist.py:746
+#: ../pitivi/ui/sourcelist.py:747
 msgid "An error occured while importing"
 msgstr "Un erreur a eu lieu lors de l'importation"
 
-#: ../pitivi/ui/sourcelist.py:831
+#: ../pitivi/ui/sourcelist.py:832
 msgid "Error while analyzing files"
 msgstr "Erreur lors de l'analyse des fichiers"
 
-#: ../pitivi/ui/sourcelist.py:832
+#: ../pitivi/ui/sourcelist.py:833
 msgid "The following files can not be used with PiTiVi."
 msgstr "Les fichiers suivants ne peuvent pas être utilisés par PiTiVi."
 
-#: ../pitivi/ui/sourcelist.py:834
+#: ../pitivi/ui/sourcelist.py:835
 msgid "Error while analyzing a file"
 msgstr "Erreur lors de l'analyse d'un fichier"
 
-#: ../pitivi/ui/sourcelist.py:835
+#: ../pitivi/ui/sourcelist.py:836
 msgid "The following file can not be used with PiTiVi."
 msgstr "Le fichier suivant ne peut pas être utilisé par PiTiVi."
 
