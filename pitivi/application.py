@@ -268,10 +268,9 @@ class Pitivi(Loggable, Signallable):
 class InteractivePitivi(Pitivi):
     """ Class for PiTiVi instances that provide user interaction """
 
-    def __init__(self, project=None, sources=[], add_to_timeline=False,
-        mainloop=None, *args, **kwargs):
+    def __init__(self, sources=[], import_sources=False,
+            add_to_timeline=False, mainloop=None, *args, **kwargs):
         from pitivi.ui.mainwindow import PitiviMainWindow
-        from urllib import quote
         Pitivi.__init__(self, *args, **kwargs)
         self._mainloop = None
         self.mainloop = mainloop
@@ -279,16 +278,17 @@ class InteractivePitivi(Pitivi):
         self._gui = PitiviMainWindow(self)
         self._gui.show()
 
-        if project:
+        if not import_sources and sources:
+            project = sources[0]
             self.loadProject(filepath=project)
-
-        uris = ["file://" + os.path.abspath(path) for path in sources]
-        if add_to_timeline:
-            self._uris = uris
-            self._duration = self.current.timeline.duration
-            self.current.sources.connect("file_added", self._addSourceCb)
-            self.current.sources.connect("discovery-error", self._discoveryErrorCb)
-        self.current.sources.addUris(uris)
+        else:
+            uris = ["file://" + os.path.abspath(path) for path in sources]
+            if add_to_timeline:
+                self._uris = uris
+                self._duration = self.current.timeline.duration
+                self.current.sources.connect("file_added", self._addSourceCb)
+                self.current.sources.connect("discovery-error", self._discoveryErrorCb)
+            self.current.sources.addUris(uris)
 
     def _addSourceCb(self, unused_sourcelist, factory):
         if factory.name in self._uris:
@@ -337,15 +337,17 @@ class InteractivePitivi(Pitivi):
         if self.mainloop:
             self.mainloop.run()
 
-usage = _("%prog [-p PROJECT_FILE] [-a] [MEDIA_FILE]...")
+usage = _("""
+  %prog [PROJECT_FILE]
+  %prog -i [-a] [MEDIA_FILE]...""")
 
-description = _("""Starts the video editor, optionally loading PROJECT_FILE. If no
-project is given, %prog creates a new project. Remaining arguments are treated
-as clips to be imported into the project. If -a is specified, these clips will
-also be added to the end of the project timeline.""")
+description = _("""Starts the video editor, optionally loading PROJECT_FILE. If
+no project is given, %prog creates a new project.
+Alternatively, when -i is specified, arguments are treated as clips to be
+imported into the project. If -a is specified, these clips will also be added to
+the end of the project timeline.""")
 
-project_help = _("""Open project file specified by PROJECT instead of creating a
-new project.""")
+import_help = _("""Import each MEDIA_FILE into the project.""")
 
 add_help = _("""Add each MEDIA_FILE to timeline after importing.""")
 
@@ -354,10 +356,12 @@ def main(argv):
     from optparse import OptionParser
     initial_checks()
     parser = OptionParser(usage, description=description)
-    parser.add_option("-p", "--project", help=project_help)
+    parser.add_option("-i", "--import", help=import_help,
+            dest="import_sources", action="store_true", default=False)
     parser.add_option("-a", "--add-to-timeline", help=add_help, 
-        action="store_true")
+            action="store_true", default=False)
     options, args = parser.parse_args(argv)
-    ptv = InteractivePitivi(project=options.project, sources=args[1:],
-        add_to_timeline=options.add_to_timeline)
+    ptv = InteractivePitivi(sources=args[1:],
+            import_sources=options.import_sources,
+            add_to_timeline=options.add_to_timeline)
     ptv.run()
