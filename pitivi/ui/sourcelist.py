@@ -27,6 +27,7 @@ import os
 import time
 
 from urllib import unquote
+from xml.sax.saxutils import escape
 from gettext import gettext as _
 from gettext import ngettext
 
@@ -121,7 +122,7 @@ def beautify_factory(factory):
 
     streams = factory.getOutputStreams()
     streams.sort(key=stream_sort_key)
-    return ("<b>" + unquote(factory.displayname) + "</b>\n" +
+    return ("<b>" + escape(unquote(factory.displayname)) + "</b>\n" +
         "\n".join((beautify_stream(stream) for stream in streams)))
 
 class SourceList(gtk.VBox, Loggable):
