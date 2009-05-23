@@ -26,6 +26,9 @@ that we don't have to depend on too recent versions of gst-python.
 """
 
 import gst
+import gst.interfaces
+import gst.audio
+import gst.video
 
 def fraction_float(frac):
     """ override for gst.Fraction.__float__ """
