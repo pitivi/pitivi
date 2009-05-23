@@ -136,6 +136,19 @@ class Discoverer(Signallable, Loggable):
         self.timeout_id = 0
 
     def _checkMissingPlugins(self):
+        if self.bus is not None:
+            # This method is usually called when decodebin(2) reaches PAUSED and
+            # we stop analyzing the current source.
+            # decodebin2 commits its state change to PAUSED _before_ posting
+            # missing-plugin messages, so we manually pop ELEMENT messages
+            # looking for queued missing-plugin messages.
+            while True:
+                message = self.bus.pop_filtered(gst.MESSAGE_ELEMENT)
+                if message is None:
+                    break
+
+                self._busMessageElementCb(self.bus, message)
+
         if not self.missing_plugin_messages:
             return False
 
@@ -175,8 +188,8 @@ class Discoverer(Signallable, Loggable):
         if self.timeout_id:
             self._removeTimeout()
 
-        self._resetPipeline()
         missing_plugins = self._checkMissingPlugins()
+        self._resetPipeline()
         if not self.current_streams and self.error is None:
             # EOS and no decodable streams?
             self.error = _('No streams found')
