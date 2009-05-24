@@ -539,10 +539,15 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _aboutResponseCb(self, dialog, unused_response):
         dialog.destroy()
 
+    def _showWebsiteCb(self, dialog, uri):
+        import webbrowser
+        webbrowser.open_new(uri)
+
     def _aboutCb(self, unused_action):
         abt = gtk.AboutDialog()
         abt.set_name(APPNAME)
         abt.set_version("v%s" % pitivi_version)
+        gtk.about_dialog_set_url_hook(self._showWebsiteCb)
         abt.set_website("http://www.pitivi.org/")
         authors = ["Edward Hervey <bilboed@bilboed.com>",
                    "Alessandro Decina <alessandro.decina@collabora.co.uk>",
