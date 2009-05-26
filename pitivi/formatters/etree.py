@@ -225,17 +225,12 @@ class ElementTreeFormatter(Formatter):
 
         return element
 
-    def _loadFactories(self, factories, klass):
-        res = []
-        for fact in factories:
-            obj = self._loadObjectFactory(klass, fact)
-            if obj:
-                res.append(obj)
-        return res
-
     def _loadSources(self):
         sources = self.factoriesnode.find("sources")
-        return self._loadFactories(sources, FileSourceFactory)
+        res = []
+        for src in sources:
+            res.append(self._loadFactory(src))
+        return res
 
     def _serializeDict(self, element, dict):
         for a, b in dict.iteritems():
