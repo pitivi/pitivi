@@ -361,7 +361,7 @@ class Discoverer(Signallable, Loggable):
             # don't clobber existing errors
             return
 
-        self.error = _("An internal error occured while analyzing this file: %s") % gerror.message
+        self.error = _("An internal error occurred while analyzing this file: %s") % gerror.message
         self.error_detail = detail
 
         self._finishAnalysis()

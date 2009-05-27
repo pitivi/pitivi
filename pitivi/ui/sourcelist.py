@@ -744,8 +744,8 @@ class InfoStub(gtk.HBox, Loggable):
         self.errors = []
         self.showing = False
         self._importingmessage = _("Importing clips...")
-        self._errorsmessage = _("Error(s) occured while importing")
-        self._errormessage = _("An error occured while importing")
+        self._errorsmessage = _("Error(s) occurred while importing")
+        self._errormessage = _("An error occurred while importing")
         self._makeUI()
 
     def _makeUI(self):

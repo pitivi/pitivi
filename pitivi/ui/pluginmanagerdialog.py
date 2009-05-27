@@ -268,7 +268,7 @@ class PluginManagerDialog(object):
             flags = gtk.DIALOG_MODAL,
             type = gtk.MESSAGE_WARNING,
             buttons = gtk.BUTTONS_OK_CANCEL,
-            message_format = _("Are you sure you want to remove selected plugins?"))
+            message_format = _("Are you sure you want to remove the selected plugins?"))
         dialog.set_title(_("Confirm remove operation"))
         try:
             if dialog.run() == gtk.RESPONSE_CANCEL:
@@ -318,7 +318,7 @@ class PluginManagerDialog(object):
                     flags = gtk.DIALOG_MODAL,
                     type = gtk.MESSAGE_WARNING,
                     buttons = gtk.BUTTONS_OK_CANCEL,
-                    message_format = _("Update the existent plugin?"))
+                    message_format = _("Update the existing plugin?"))
 
                 dialog.format_secondary_text(
                     _("This plugin is already installed in your system.\nIf you agree, version %s will be replaced with version %s")\

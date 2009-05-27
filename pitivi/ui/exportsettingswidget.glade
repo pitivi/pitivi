@@ -30,10 +30,10 @@
                       <widget class="GtkComboBox" id="videoratecbox">
                         <property name="visible">True</property>
                         <property name="items" translatable="yes">12 fps
-23,97 fps
+23.97 fps
 24 fps
 25 fps
-29,97 fps
+29.97 fps
 30 fps
 60 fps</property>
                       </widget>

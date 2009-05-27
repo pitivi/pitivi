@@ -110,7 +110,7 @@ class Pitivi(Loggable, Signallable):
         # store ourself in the instance global
         if instance.PiTiVi:
             raise RuntimeWarning(
-                _("There is already a %s instance, please inform developers by filing a bug at http://bugzilla.gnome.org/")
+                _("There is already a %s instance, please inform the developers by filing a bug at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi")
                 % APPNAME)
         instance.PiTiVi = self
 

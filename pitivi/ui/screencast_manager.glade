@@ -189,7 +189,7 @@
 			      <child>
 				<widget class="GtkLabel" id="label1">
 				  <property name="visible">True</property>
-				  <property name="label" translatable="yes">Screen Cast</property>
+				  <property name="label" translatable="yes">Screencast</property>
 				  <property name="use_underline">True</property>
 				  <property name="use_markup">False</property>
 				  <property name="justify">GTK_JUSTIFY_LEFT</property>

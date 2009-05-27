@@ -127,8 +127,8 @@ def _checks():
         return (_("Could not find the autodetect plugins!"),
                 _("Make sure you have installed gst-plugins-good and is available in the GStreamer plugin path."))
     if not hasattr(gtk.gdk.Window, 'cairo_create'):
-        return (_("PyGTK doesn't have Cairo support!"),
-                _("Please use a version of the GTK+ Python Bindings built with Cairo support."))
+        return (_("PyGTK doesn't have cairo support!"),
+                _("Please use a version of the GTK+ Python bindings built with cairo support."))
     if not initiate_videosinks():
         return (_("Could not initiate the video output plugins"),
                 _("Make sure you have at least one valid video output sink available (xvimagesink or ximagesink)"))
@@ -136,21 +136,21 @@ def _checks():
         return (_("Could not initiate the audio output plugins"),
                 _("Make sure you have at least one valid audio output sink available (alsasink or osssink)"))
     if not __try_import__("cairo"):
-        return (_("Could not import the Cairo Python Bindings"),
-                _("Make sure you have the Cairo Python Bindings installed"))
+        return (_("Could not import the cairo Python bindings"),
+                _("Make sure you have the cairo Python bindings installed"))
     if not __try_import__("gtk.glade"):
-        return (_("Could not import the libglade Python Bindings"),
+        return (_("Could not import the libglade Python bindings"),
                 _("Make sure you have the libglade Python bindings installed"))
     if not __try_import__("goocanvas"):
-        return (_("Could not import the goocanvas Python Bindings"),
-                _("Make sure you have the goocanvas Python Bindings installed"))
+        return (_("Could not import the goocanvas Python bindings"),
+                _("Make sure you have the goocanvas Python bindings installed"))
     req, inst = check_required_version("gtk")
     if req:
-        return (_("You do not have a recent enough version of the GTK+ Python Bindings (currently %s)") % inst,
+        return (_("You do not have a recent enough version of the GTK+ Python bindings (currently %s)") % inst,
                 ("Install a version of the GTK+ Python bindings greater or equal to %s") % req)
     req, inst = check_required_version("pygst")
     if req:
-        return (_("You do not have a recent enough version of the GStreamer Python Bindings (currently %s)") % inst,
+        return (_("You do not have a recent enough version of the GStreamer Python bindings (currently %s)") % inst,
                 ("Install a version of the GStreamer Python bindings greater or equal to %s") % req)
     req, inst = check_required_version("gst")
     if req:
@@ -158,14 +158,14 @@ def _checks():
                 ("Install a version of the GStreamer greater or equal to %s") % req)
     req, inst = check_required_version("cairo")
     if req:
-        return (_("You do not have a recent enough version of the Cairo Python Bindings (currently %s)") % inst,
+        return (_("You do not have a recent enough version of the Cairo Python bindings (currently %s)") % inst,
                 ("Install a version of the Cairo Python bindings greater or equal to %s") % req)
     req, inst = check_required_version("gnonlin")
     if req:
         return (_("You do not have a recent enough version of the GNonLin GStreamer plugin (currently %s)") % inst,
                 ("Install a version of the GNonLin GStreamer plugin greater or equal to %s") % req)
     if not __try_import__("zope.interface"):
-        return (_("Could not import the Zope Interface module"),
+        return (_("Could not import the Zope interface module"),
                 _("Make sure you have the zope.interface module installed"))
     if not __try_import__("pkg_resources"):
         return (_("Could not import the distutils modules"),

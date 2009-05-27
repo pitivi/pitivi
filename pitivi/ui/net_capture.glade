@@ -273,7 +273,7 @@
 				    <widget class="GtkRadioButton" id="protocol">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">http / https</property>
+				      <property name="label" translatable="yes">HTTP / HTTPS</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -292,7 +292,7 @@
 				    <widget class="GtkRadioButton" id="udp">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">udp / rtp</property>
+				      <property name="label" translatable="yes">UDP / RDP</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -312,7 +312,7 @@
 				    <widget class="GtkRadioButton" id="rtsp">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">rtsp</property>
+				      <property name="label" translatable="yes">RTSP</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
@@ -332,7 +332,7 @@
 				    <widget class="GtkRadioButton" id="radiobutton4">
 				      <property name="visible">True</property>
 				      <property name="can_focus">True</property>
-				      <property name="label" translatable="yes">other protocol</property>
+				      <property name="label" translatable="yes">Other protocol</property>
 				      <property name="use_underline">True</property>
 				      <property name="relief">GTK_RELIEF_NORMAL</property>
 				      <property name="focus_on_click">True</property>
