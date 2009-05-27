@@ -1,3 +1,12 @@
+2009 May 27 - PiTiVi 0.13.1
+
+ * core rewrite
+ * multi-layered timeline
+ * trimming features
+ * audio waveforms and video thumbnails in timeline
+ * picture support
+ * New project file format support
+
 2008 Dec 11 - PiTiVi 0.11.3
 
  * Remove usage of gobject as much as possible from non-ui components

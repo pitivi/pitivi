@@ -4,6 +4,8 @@ Redone from scratch in Python (pygtk/gst-python)
 March 2005 - ...
 
 Edward     HERVEY    <bilboed@bilboed.com>
+Alessandro Decina <alessandro.decina@collabora.co.uk>
+Brandon Lewis <brandon_lewis@berkeley.edu> (UI)
 
 Contributors:
 Christophe Sauthier <christophe.sauthier@gmail.com> (i18n)
@@ -13,10 +15,8 @@ Richard Boulton <richard@tartarus.org>
 Thibaut Girka <thibaut.girka@free.fr> (UI)
 Jeff Fortin <nekohayo@gmail.com> (UI)
 Johan Dahlin <jdahlin@async.com.br> (UI)
-Brandon Lewis <brandon_lewis@berkeley.edu> (UI)
 Luca Della Santina <dellasantina@farm.unipi.it>
 Thijs Vermeir <thijsvermeir@gmail.com>
-Alessandro Decina <alessandro.decina@collabora.co.uk>
 
 ==================================================
 

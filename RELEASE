@@ -1,15 +1,11 @@
-0.11.3 Release : Paella Cubana
------------------------------------------------------
+0.13.1 Release "L'Aquila Immota Manet : The eagle remains unmoved"
+------------------------------------------------------------------
 
-The PiTiVi team is proud to announce the fourth release in the unstable 0.11
+The PiTiVi team is proud to announce the first release in the unstable 0.13
 PiTiVi series.
 
-This release series is not intended to be production-ready, but instead to allow
-users to try more often new features that will be available in the next stable
-series.
-
-The developers will not be held accountable for any work lost, flooding or war
-caused by this unstable series.
+This release is in memory of those who have lost their lives, friends, houses
+in the April 6th 2009 earthquake in l'Aquila, Italy.
 
 Due to its dependency on GStreamer, The PiTiVi team strongly recommends users have
 all official latest gstreamer libraries and plugins installed for the best user
@@ -18,33 +14,20 @@ experience.
 
 * Features of this release
 
- * Remove usage of gobject as much as possible from non-ui components
- * Make smarter choices about audio/video sinks 
- * Fix issues with seeking in ruler/viewer
- * general pylint cleanup
- * Picture support in the timeline
- * Improve viewer for proper Display Aspect Ratio
- * Timeline : Unlink-ing sources is now possible
- * Fix some issues when using very long sources
- * SourceList now detachable from main window
- * Now requires GNonLin 0.10.10 and python >= 2.5
+ * core rewrite
+ * multi-layered timeline
+ * trimming features
+ * audio waveforms and video thumbnails in timeline
+ * picture support
+ * New project file format support
 
-* Bugs Fixed
-
- * 535374 : missing pitivi-sound.png
- * 557998 : Runtime checks for goocanvas done too late
- * 560150 : Error when clicking on nothing
- * 560330 : Pitivi dont import any video (python trouble)
- * 560844 : timecode is incorrectly displayed
- * 560850 : font homogeneity
- * 563444 : Render dialog's filename request dialog has buttons reversed 
 
 * Requirements
 
- * gstreamer >= 0.10.14
- * gst-python >= 0.10.6
- * gnonlin >= 0.10.10
- * pygtk >= 2.8.0
+ * gstreamer >= 0.10.23
+ * gst-python >= 0.10.15
+ * gnonlin >= 0.10.11
+ * pygtk >= 2.12.0
  * Python >= 2.5
  * zope.interface (http://www.zope.org/Products/ZopeInterface)
  * setuptools (http://peak.telecommunity.com/DevCenter/setuptools)
@@ -54,14 +37,31 @@ experience.
 
 * Contributors
 
- * Edward Hervey
- * Brandon Lewis
- * Alessandro Decina
+   327  Edward Hervey
+   203  Alessandro Decina
+   164  Brandon Lewis
+     6  Claude Paroz
+     6  Mario Blättermann
+     3  Sandeep Shedmake
+     2  Ankitkumar Patel
+     2  Chao-Hsiung Liao
+     2  Daniel Nylander
+     2  Jean-François Fortin Tam
+     1  Antón Méixome
+     1  Bruce Cowan
+     1  Chris Ball
+     1  Dmitriy Kodanev
+     1  Gianvito Cavasoli
+     1  Jorge Gonzalez
+     1  Nathan Samson
+     1  Simos Xenitellis
+     1  Stéphane Maniaci
+     1  Timo Jyrinki
 
 * Download
 
   PiTiVi source tarballs are available on gnome FTP:
-   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.11/
+   http://ftp.gnome.org/pub/GNOME/sources/pitivi/0.13/
 
   See the website for distribution-specific packages.
 
@@ -72,3 +72,104 @@ experience.
  * Comments and feedback are welcome.
   * Mailing-list : pitivi-pitivi@lists.sourceforge.net
   * PiTiVi bug-tracker : http://bugzilla.gnome.org/browse.cgi?product=pitivi
+
+* Bugs Fixed
+
+ * 572099 : [Viewer] Doesn't take project settings into account
+ * 430694 : Cannot play a timeline with only audio or only video
+ * 434614 : [Timeline] don't display scrollbar if timeline is empty
+ * 456147 : Image support
+ * 541038 : Add missing-plugins support
+ * 569732 : QOS is deactivated in video sinks, causing slow playback
+ * 573772 : MP3 file import fails
+ * 573884 : Seeking is different from Viewer or Ruler
+ * 573887 : Source list: Re-enable playback from the sourcelist
+ * 573890 : Viewer: Don't forget to reset the limits
+ * 573892 : Timeline: Don't forget to reset the scroll limits
+ * 573894 : Viewer: Ugly when nothing is displayed
+ * 573897 : Single-stream encoding doesn't work
+ * 573898 : EncodingDialog: Closing the dialog box doesn't properly s...
+ * 573899 : Can't use the timeline/pipeline after rendering
+ * 574595 : sourcelist: Exception raised in beautify_stream
+ * 574655 : command_line branch
+ * 575022 : problems with audio-only files
+ * 575123 : Problems pausing timeline
+ * 576568 : more varied list of default project presets
+ * 576577 : removing clips does not work with multiple tracks
+ * 577106 : DV file causes hang when seeked
+ * 578665 : [LGM2009] ability to mass-unlink
+ * 580191 : [usability] mouse cursor not reset when exiting clip hand...
+ * 580192 : removing a clip from the project doesn't work
+ * 580657 : stream not linked error on project load in a jaunty virtu...
+ * 580915 : PiTiVi segfaults on 64-bit ubuntu 9.04
+ * 581042 : speex files cannot be imported
+ * 583432 : importer hangs when importing a clip with subtitles
+ * 335547 : [configuration] Use XDG (freedesktop) locations
+ * 336348 : [Advanced Timeline] Zoom should be possible with scroll w...
+ * 503842 : Audio waveform display when in complex timeline
+ * 557575 : Doesn't load relative filenames
+ * 563351 : translation issues
+ * 563443 : Render dialog action button should say 'Render', not 'Rec...
+ * 569896 : special entities in file paths are not converted
+ * 569941 : padding around thumbnail items
+ * 569975 : the &quot; thumbnailing in progress &quot; icon is not pretty
+ * 569981 : kill fuzzy icons
+ * 569988 : [ui/gstwidget] Can't modify element properties.
+ * 570116 : dragging a clip onto the timeline should take into accoun...
+ * 572098 : [LGM2009] dragging a clip should move all selected clips
+ * 572328 : do not pre-emptively generate thumbnails and waveforms wh...
+ * 396804 : Write unit tests
+ * 403880 : Importing high resolution content is slow
+ * 458943 : Rendering a project twice don't work
+ * 554603 : not exposing video-widget while in paused state
+ * 559463 : Video freeze on inter-clip border
+ * 560148 : Handle audio-only or video-only files
+ * 563458 : Pitivi a bit buggy in playing back
+ * 569974 : audio and video tracks order is reversed
+ * 573775 : FLAC files cannot be seeked
+ * 573997 : no svg sources for the icons
+ * 575970 : first zoom level stepping is too drastic
+ * 575982 : pitivi has syntax errors when using Python 2.6
+ * 576212 : full screen checkbox isn't signaled when using F11 for to...
+ * 577759 : UI support for file load and save (formatter)
+ * 578676 : [LGM2009] render codec settings are ignored
+ * 579288 : dragging audio clips fails
+ * 579321 : saving again does not work
+ * 579324 : loading a saved project does not allow manipulating the t...
+ * 579534 : source list sorting is messed up on project load
+ * 579537 : cannot insert new clips in the timeline after loading a s...
+ * 580172 : dragging a clip's in/end point should snap to other clips
+ * 580671 : [LGM2009] subtle gradients for clips
+ * 580673 : [LGM2009] ability to disable/enable thumbnailing and wave...
+ * 580884 : clips do not snap by the ends
+ * 581112 : cannot separate audio from video (broken unlink)
+ * 583041 : GStreamer error pops-up
+ * 583147 : unmatched encoder settings prevent rendering
+ * 583310 : Forward/Rewind buttons not implemented
+ * 583472 : 1024x768 is XGA, not WXGA
+ * 583487 : automatic missing codec search
+ * 575955 : human-readable duration times in the media library
+ * 575957 : some clips have reverse metadata ordering in the media li...
+ * 576872 : crash when importing a clip with an esoteric file name
+ * 579410 : formatter doesn't like unicode
+ * 579541 : [LGM2009] seeking images doesn't work
+ * 580646 : trimming endpoint edge snapping overlaps the next clip
+ * 580962 : restarting playback requires 2 activations after scrubbing
+ * 580972 : refuses to load a project file with unicode path
+ * 558823 :  &quot; save as &quot; button is useless
+ * 569834 : render settings are constantly reset
+ * 572327 : dragging multiple clips to the timeline should be possible
+ * 572346 : clips can be duplicated in the media library
+ * 573531 : pitivi does not start
+ * 576326 : better timeline mouse scroll wheel usage
+ * 579238 : [LGM2009] slow / laggy dragging : do not update the previ...
+ * 579319 : global keyboard shortcuts should apply only when the time...
+ * 579638 : remember the last used folder for rendering
+ * 579666 : [LGM2009] saved timeline renders incorrectly
+ * 580654 : don't die on missing project media, allow locating it
+ * 582419 : images don't seek and cause desynch when rendering
+ * 583242 : PiTiVi GUI freezes
+ * 583514 : clickable URL in the About dialog
+ * 583592 : strange error importing filenames with markups
+ * 583595 : cannot load a saved project with multiple streams
+
