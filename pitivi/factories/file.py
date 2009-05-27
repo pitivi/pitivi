@@ -42,6 +42,14 @@ class FileSourceFactory(RandomAccessSourceFactory):
         # FIXME: backward compatibility
         self.filename = uri
 
+    def getInterpolatedProperties(self, stream):
+        # FIXME: dummy implementation
+        props = RandomAccessSourceFactory.getInterpolatedProperties()
+        if isinstance(stream, AudioStream):
+            return props.update({"volume" : (float, 0.5)})
+        elif isinstance(stream, VideoStream):
+            return props.update({"alpha" : (float, 0.5))
+
 class PictureFileSourceFactory(FileSourceFactory):
     """
     Factory for image sources.
