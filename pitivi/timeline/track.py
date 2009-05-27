@@ -32,7 +32,172 @@ from pitivi.elements.mixer import SmartAdderBin
 class TrackError(Exception):
     pass
 
+class Keyframe(Signallable):
+
+    """Represents a single point on an interpolation curve"""
+
+    __signals__ = {
+        "value-changed" : ['value'],
+        "time-changed" : ['time'],
+        "mode-changed" : ['mode'],
+    }
+
+    def __init__(self, parent):
+        self.parent = self
+
+## Properties
+
+    _mode = gst.INTERPOLATE_LINEAR
+
+    def setMode(self, mode):
+        if self.parent:
+            self.parent.setKeyframeMode(self, mode)
+        else:
+            self.setObjectMode(mode)
+
+    def setObjectMode(self, mode):
+        self._mode = mode
+        self.emit("mode-changed", mode)
+
+    def getMode(self, mode):
+        return self._mode
+
+    mode = property(getMode, setMode)
+
+    _time = 0
+
+    def setTime(self, time):
+        if self.parent:
+            self.parent.setKeyframeTime(self, time)
+        else:
+            self.setObjectMode(mode)
+
+    def setObjectTime(self, time):
+        self._time = time
+        self.emit("time-changed", time)
+
+    def getTime(self, time):
+        return self._time
+
+    time = property(getTime, setTime)
+
+    _value = None
+
+    def setValue(self, value):
+        if self.parent:
+            self.parent.setKeyframeValue(self, value)
+        else:
+            self.setObjectMode(mode)
+
+    def setObjectValue(self, value):
+        self._value = value
+        self.emit("value-changed", value)
+
+    def getValue(self, value):
+        return self._value
+
+    value = property(getValue, setValue)
+
+class FixedKeyframe(Keyframe):
+
+    def setTime(self, time):
+        pass
+
+class Interpolator(Signallable):
+
+    """The bridge between the gstreamer dynamic property API and pitivi track
+    objects.
+
+    * binds a controllable property of a track object's bin
+    * allows client code to manipulate the interpolation curve by adding,
+      removing, and mutating discrete keyframe objects
+    * translates timestamps from trackobject-time to timeline time
+    
+    There are two special control points: the start and end points, which are
+    "fixed" to the start and end of the clip in the timeline and cannot be
+    removed. This ensures the clip propery always has a defined curve.
+    """
+
+    __signals__ = {
+        'keyframe-added' : ['keyframe'],
+        'keyframe-removed' : ['keyframe'],
+    }
+
+    def __init__(self, trackobject, property):
+        self._element = trackobject.gnl_object
+        self._default = self._element.get_property(property)
+        self._property = property
+        self._keyframes = []
+
+        # FIXME: don't create separate controllers for each Interpolator
+        self._controller = gst.Controller(self._element, property)
+
+        self._start = FixedKeyframe(self)
+        self._end = FixedKeyframe(self)
+        self._start.value = self._default
+        self._start.time = 0
+        self._end.value = self._default
+        self._end.time = trackobject.duration
+
+        data = [(self._start.time, self._start.value), (self._end.time,
+            self._end.value)]
+        self._controller.set_from_list(property, data)
+
+    def newKeyFrame(self, time, value=None, mode=None):
+        """add a new keyframe at the specified time, optionally with specified
+        value and specified mode. If not specified, these will be computed so
+        that the new keyframe likes on the existing curve at that timestampi
+        
+        returns: the keyframe object"""
+
+        #TODO: calculate value
+        if not value:
+            value = self._default
+        if not mode:
+            mode = self._control_source.get_interpolation_mode()
+
+        kf = Keyframe(self)
+        self._keyframes.append(kf)
+
+        kf.time = time
+        kf.value = value
+        kf.mode = mode
+
+        return kf
+
+    def removeKeyFrame(self, keyframe):
+        self._controller.unset(keyframe.time)
+        self._keyframes.remove(kf)
+
+    def setKeyframeMode(self, kf, mode):
+        # FIXME: currently InterpolationSourceControllers only support a
+        # single mode. Suporting per-keyframe modes would require implementing
+        # a custom interplation source controller.
+        for keyframe in self.keyframes:
+            keyframe.setObjectMode(mode)
+        self._controller.set_interpolation_mode(mode)
+
+    def setKeyframeTime(self, kf, time):
+        self._keyframeTimeValueChanged(kf, time, kf.value)
+        kf.setObjectTime(time)
+
+    def setKeyframeValue(self, kf, value):
+        self._keyframeTimeValueChanged(kf, kf.time, value)
+        kf.setObjectValue(value)
+
+    def _keyframeTimeValueChanged(self, kf, time, value):
+        self._controller.unset(kf.time)
+        self._controller.set(kf.time, value)
+
+    def startChanged(self, trackobj, start):
+        self._start.setObjectTime(start)
+        self._end.setObjectTime(start + end)
+
+    def durationChanged(self, trackobj, duration):
+        self._end.setObjectTime(start + end)
+
 class TrackObject(Signallable):
+
     __signals__ = {
         'start-changed': ['start'],
         'duration-changed': ['duration'],
@@ -52,6 +217,7 @@ class TrackObject(Signallable):
         self.timeline_object = None
         self.gnl_object = obj = self._makeGnlObject()
         self.trimmed_start = 0
+        self.keyframes = []
 
         if start != 0:
             obj.props.start = start
@@ -73,6 +239,10 @@ class TrackObject(Signallable):
         obj.props.priority = priority
 
         self._connectToSignals(obj)
+
+        self._interpolators = {}
+        for prop in factory.getInterpolatedProperties(stream):
+            sef._interpolators[prop] = Interpolator(self, prop)
 
     def release(self):
         self._disconnectFromSignals()
