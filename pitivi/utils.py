@@ -231,6 +231,8 @@ def uri_is_reachable(uri):
     """
     if not uri_is_valid(uri):
         raise NotImplementedError(
+            # Translators: "non local" means the project is not stored
+            # on a local filesystem
             _("%s doesn't yet handle non local projects") % APPNAME)
     return os.path.isfile(gst.uri_get_location(uri))
 
