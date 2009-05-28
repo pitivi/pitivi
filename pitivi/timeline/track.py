@@ -246,8 +246,9 @@ class TrackObject(Signallable):
         self._connectToSignals(obj)
 
         self._interpolators = {}
-        for prop in factory.getInterpolatedProperties(stream):
-            sef._interpolators[prop] = Interpolator(self, prop)
+        if stream:
+            for prop in factory.getInterpolatedProperties(stream):
+                sef._interpolators[prop] = Interpolator(self, prop)
 
     def release(self):
         self._disconnectFromSignals()

@@ -27,7 +27,7 @@ import os
 from pitivi.factories.base import RandomAccessSourceFactory, \
         SinkFactory
 from pitivi.elements.imagefreeze import ImageFreeze
-from pitivi.stream import MultimediaStream
+from pitivi.stream import MultimediaStream, AudioStream, VideoStream
 
 class FileSourceFactory(RandomAccessSourceFactory):
     """
@@ -44,11 +44,13 @@ class FileSourceFactory(RandomAccessSourceFactory):
 
     def getInterpolatedProperties(self, stream):
         # FIXME: dummy implementation
-        props = RandomAccessSourceFactory.getInterpolatedProperties()
+        props = RandomAccessSourceFactory.getInterpolatedProperties(self, 
+            stream)
         if isinstance(stream, AudioStream):
-            return props.update({"volume" : (float, 0.5)})
+            props.update({"volume" : (float, 0.5)})
         elif isinstance(stream, VideoStream):
-            return props.update({"alpha" : (float, 0.5))
+            props.update({"alpha" : (float, 0.5)})
+        return props
 
 class PictureFileSourceFactory(FileSourceFactory):
     """
