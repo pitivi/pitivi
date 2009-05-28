@@ -108,14 +108,17 @@ class Interpolator(Signallable):
     """The bridge between the gstreamer dynamic property API and pitivi track
     objects.
 
-    * binds a controllable property of a track object's bin
+    * creates gnl.Controller() objects
+    * binds controller to track object's gnlobject
     * allows client code to manipulate the interpolation curve by adding,
       removing, and mutating discrete keyframe objects
-    * translates timestamps from trackobject-time to timeline time
     
     There are two special control points: the start and end points, which are
-    "fixed" to the start and end of the clip in the timeline and cannot be
-    removed. This ensures the clip propery always has a defined curve.
+    "fixed" to the start and end of the clip in the timeline. 
+
+    Timestamps given are assumed to be relative to the start of the clip. This
+    seems to be the normal behavior when the element being controlled is
+    internal to the gnlsource or gnloperation.
     """
 
     __signals__ = {
@@ -130,18 +133,19 @@ class Interpolator(Signallable):
         self._keyframes = []
 
         # FIXME: don't create separate controllers for each Interpolator
-        self._controller = gst.Controller(self._element, property)
+        # FIXME: uncomment this when back-end support works
+        #self._controller = gst.Controller(self._element, property)
 
         self._start = FixedKeyframe(self)
         self._end = FixedKeyframe(self)
         self._start.value = self._default
         self._start.time = 0
         self._end.value = self._default
-        self._end.time = trackobject.duration
+        self._end.time = trackobject.factory.duration
 
         data = [(self._start.time, self._start.value), (self._end.time,
             self._end.value)]
-        self._controller.set_from_list(property, data)
+        #self._controller.set_from_list(property, data)
 
     def newKeyFrame(self, time, value=None, mode=None):
         """add a new keyframe at the specified time, optionally with specified
@@ -163,16 +167,22 @@ class Interpolator(Signallable):
         kf.value = value
         kf.mode = mode
 
+        self.emit("keyframe-added", kf)
+
         return kf
 
     def removeKeyFrame(self, keyframe):
-        self._controller.unset(keyframe.time)
+        # FIXME: uncomment this when back-end support works
+        # self._controller.unset(keyframe.time)
         self._keyframes.remove(kf)
+        self.emit("keyframe-removed", kf)
 
     def setKeyframeMode(self, kf, mode):
         # FIXME: currently InterpolationSourceControllers only support a
         # single mode. Suporting per-keyframe modes would require implementing
         # a custom interplation source controller.
+        # For now, whenever one keyframe's mode changes, we'll set the mode
+        # globally
         for keyframe in self.keyframes:
             keyframe.setObjectMode(mode)
         self._controller.set_interpolation_mode(mode)
@@ -186,14 +196,9 @@ class Interpolator(Signallable):
         kf.setObjectValue(value)
 
     def _keyframeTimeValueChanged(self, kf, time, value):
-        self._controller.unset(kf.time)
-        self._controller.set(kf.time, value)
-
-    def startChanged(self, trackobj, start):
-        self._start.setObjectTime(start)
-        self._end.setObjectTime(start + end)
-
-    def durationChanged(self, trackobj, duration):
+        # FIXME: uncomment this when back-end support works
+        #self._controller.unset(kf.time)
+        #self._controller.set(kf.time, value)
         self._end.setObjectTime(start + end)
 
 class TrackObject(Signallable):
