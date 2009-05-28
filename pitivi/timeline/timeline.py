@@ -28,11 +28,16 @@ from pitivi.utils import UNKNOWN_DURATION, closest_item, PropertyChangeTracker
 from pitivi.timeline.track import Track, SourceTrackObject, TrackError
 from bisect import bisect_right
 
+# Selection modes
 SELECT = 0
-SELECT_ADD = 2
+"""Set the selection to the given set."""
 UNSELECT = 1
+"""Remove the given set from the selection."""
+SELECT_ADD = 1
+"""Extend the selection with the given set"""
 
 class TimelineError(Exception):
+    """Base Exception for errors happening in L{Timeline}s or L{TimelineObject}s"""
     pass
 
 class TimelineObject(Signallable, Loggable):
@@ -429,6 +434,12 @@ class TimelineObject(Signallable, Loggable):
 class Selection(Signallable):
     """
     A collection of L{TimelineObject}.
+
+    Signals:
+     - C{selection-changed} : The contents of the L{Selection} changed.
+
+    @ivar selected: Set of selected L{TrackObject}
+    @type selected: C{list}
     """
 
     __signals__ = {
@@ -439,6 +450,11 @@ class Selection(Signallable):
         self.selected = set([])
 
     def setToObj(self, obj, mode):
+        """
+        Convenience method for calling L{setTo} with a single L{TimelineObject}
+
+        @see: L{setTo}
+        """
         self.setTo(set([obj]), mode)
 
     def addTimelineObject(self, timeline_object):
@@ -453,7 +469,23 @@ class Selection(Signallable):
         if timeline_object in self.timeline_objects:
             raise TimelineError()
 
+    # FIXME : it took me 10 mins to understand what this method does... a more obvious
+    # name would be better :)
     def setTo(self, selection, mode):
+        """
+        Update the current selection.
+
+        Depending on the value of C{mode}, the selection will be:
+         - L{SELECT} : set to the provided selection.
+         - L{UNSELECT} : the same minus the provided selection.
+         - L{SELECT_ADD} : extended with the provided selection.
+
+        @param selection: The list of timeline objects to update the selection with.
+        @param mode: The type of update to apply. Can be C{SELECT},C{UNSELECT} or C{SELECT_ADD}
+
+        @see: L{setToObj}
+        """
+        # get the L{TrackObject}s for the given TimelineObjects
         selection = set([obj.timeline_object for obj in selection])
         old_selection = self.selected
         if mode == SELECT_ADD:
@@ -467,9 +499,13 @@ class Selection(Signallable):
         for obj in old_selection - self.selected:
             obj.selected = False
 
+        # FIXME : shouldn't we ONLY emit this IFF the selection has changed ?
         self.emit("selection-changed")
 
     def getSelectedTrackObjs(self):
+        """
+        Returns the list of L{TrackObject} contained in this selection.
+        """
         objects = []
         for timeline_object in self.selected:
             objects.extend(timeline_object.track_objects)
@@ -492,6 +528,11 @@ class LinkEntry(object):
 
 
 class LinkPropertyChangeTracker(PropertyChangeTracker):
+    """
+    Tracker for private usage by L{Link}
+
+    @see: L{Link}
+    """
     __signals__ = {
         'start-changed': ['old', 'new'],
         'duration-changed': ['old', 'new']
@@ -508,8 +549,6 @@ class Link(object):
         self.earliest_object = None
         self.earliest_start = None
 
-    # Selection implementations
-
     def addTimelineObject(self, timeline_object):
         if timeline_object.link is not None:
             raise TimelineError()
@@ -525,6 +564,7 @@ class Link(object):
         tracker.connect('start-changed', self._startChangedCb)
 
         # FIXME: cycle
+        # Edward : maybe use a weak reference instead ? pydoc weakref
         timeline_object.link = self
 
         if self.earliest_start is None or \
@@ -587,19 +627,51 @@ class Link(object):
         else:
             self.waiting_update.remove(timeline_object)
 
+# FIXME: This seems overly complicated and (therefore) a potential speed bottleneck.
+# It would be much simpler to just track objects, and specify for each object
+# which property we would like to track (start, end, both). We could then have
+# two lists of those objects, one sorted by start values, and another sorted by
+# end values.
+# Bonus : GnlComposition already has all this information, we could maybe add
+# an action signal to it to drastically speed up this process.
 class TimelineEdges(object):
+    """
+    Tracks start/stop values and offers convenience methods to find the
+    closest value for a given position.
+    """
     def __init__(self):
         self.edges = []
 
     def addTimelineObject(self, timeline_object):
+        """
+        Add this object's start/stop values to the edges.
+
+        @param timeline_object: The object whose start/stop we want to track.
+        @type timeline_object: L{TimelineObject}
+        """
         self.addStartEnd(timeline_object.start,
                 timeline_object.start + timeline_object.duration)
 
     def removeTimelineObject(self, timeline_object):
+        """
+        Remove this object's start/stop values from the edges.
+
+        @param timeline_object: The object whose start/stop we no longer want
+        to track.
+        @type timeline_object: L{TimelineObject}
+        """
         self.removeStartEnd(timeline_object.start,
                 timeline_object.start + timeline_object.duration)
 
     def addStartEnd(self, start, end=None):
+        """
+        Add the given start/end values to the list of edges being tracked.
+
+        @param start: A start position to track.
+        @type start: L{long}
+        @param end: A stop position to track.
+        @type end: L{long}
+        """
         index = bisect_right(self.edges, start)
         self.edges.insert(index, start)
         if end is not None:
@@ -607,6 +679,14 @@ class TimelineEdges(object):
             self.edges.insert(index, end)
 
     def removeStartEnd(self, start, end=None):
+        """
+        Remove the given start/end values from the list of edges being tracked.
+
+        @param start: A start position to stop tracking.
+        @type start: L{long}
+        @param end: A stop position to stop tracking.
+        @type end: L{long}
+        """
         if len(self.edges) == 0:
             raise TimelineError()
 
@@ -626,6 +706,11 @@ class TimelineEdges(object):
             del self.edges[end_index-1]
 
     def snapToEdge(self, start, end=None):
+        """
+        Returns:
+         - the closest edge to the given start/stop position.
+         - the difference between the provided position and the returned edge.
+        """
         if len(self.edges) == 0:
             return start, 0
 
@@ -644,12 +729,36 @@ class TimelineEdges(object):
         return start + end_diff, end_diff
 
     def closest(self, position):
+        """
+        Returns two values:
+         - The closest value just *before* the given position.
+         - The closest value just *after* the given position.
+
+        @param position: The position to search for.
+        @type position: L{long}
+        """
         closest, diff, index = closest_item(self.edges, position)
         return self.edges[max(0, index - 2)], self.edges[min(
             len(self.edges) - 1, index + 1)]
 
 
 class Timeline(Signallable, Loggable):
+    """
+    Top-level container for L{TimelineObject}s.
+
+    Signals:
+     - C{duration-changed} : The duration changed.
+     - C{track-added} : A L{timeline.Track} was added.
+     - C{track-removed} : A L{timeline.Track} was removed.
+     - C{selection-changed} : The current selection changed.
+
+    @ivar tracks: list of Tracks controlled by the Timeline
+    @type tracks: List of L{timeline.Track}
+    @ivar duration: Duration of the Timeline in nanoseconds.
+    @type duration: C{long}
+    @ivar selection: The currently selected TimelineObjects
+    @type selection: L{Selection}
+    """
     __signals__ = {
         'duration-changed': ['duration'],
         'track-added': ['track'],
@@ -665,13 +774,21 @@ class Timeline(Signallable, Loggable):
         self.timeline_objects = []
         self.duration = 0
         self.links = []
+        # FIXME : What's the unit of dead_band ?
         self.dead_band = 10
         self.edges = TimelineEdges()
         self.property_trackers = {}
 
     def addTrack(self, track):
+        """
+        Add the track to the timeline.
+
+        @param track: The track to add
+        @type track: L{timeline.Track}
+        @raises TimelineError: If the track is already in the timeline.
+        """
         if track in self.tracks:
-            raise TimelineError()
+            raise TimelineError("Provided track already controlled by the timeline")
 
         self.tracks.append(track)
         self._updateDuration()
@@ -679,6 +796,26 @@ class Timeline(Signallable, Loggable):
         track.connect('duration-changed', self._trackDurationChangedCb)
 
         self.emit('track-added', track)
+
+    def removeTrack(self, track, removeTrackObjects=True):
+        """
+        Remove the track from the timeline.
+
+        @param track: The track to remove.
+        @type track: L{timeline.Track}
+        @param removeTrackObjects: If C{True}, clear the Track from its objects.
+        @type removeTrackObjects: C{bool}
+        @raises TimelineError: If the track isn't in the timeline.
+        """
+        try:
+            self.tracks.remove(track)
+        except ValueError:
+            raise TimelineError()
+
+        if removeTrackObjects:
+            track.removeAllTrackObjects()
+
+        self.emit('track-removed', track)
 
     def _selectionChanged(self, selection):
         self.emit("selection-changed")
@@ -695,22 +832,20 @@ class Timeline(Signallable, Loggable):
             self.duration = duration
             self.emit('duration-changed', duration)
 
-    def removeTrack(self, track, removeTrackObjects=True):
-        try:
-            self.tracks.remove(track)
-        except ValueError:
-            raise TimelineError()
-
-        if removeTrackObjects:
-            track.removeAllTrackObjects()
-
-        self.emit('track-removed', track)
-
     def addTimelineObject(self, obj):
+        """
+        Add the TimelineObject to the Timeline.
+
+        @param obj: The object to add
+        @type obj: L{TimelineObject}
+        @raises TimelineError: if the object is used in another Timeline.
+        """
         self.debug("obj:%r", obj)
         if obj.timeline is not None:
             raise TimelineError()
 
+        # FIXME : wait... what's wrong with having empty timeline objects ??
+        # And even if it was.. this shouldn't be checked here imho.
         if not obj.track_objects:
             raise TimelineError()
 
@@ -720,6 +855,15 @@ class Timeline(Signallable, Loggable):
         self.edges.addTimelineObject(obj)
 
     def removeTimelineObject(self, obj, deep=False):
+        """
+        Remove the given object from the Timeline.
+
+        @param obj: The object to remove
+        @type obj: L{TimelineObject}
+        @param deep: If C{True}, remove the L{TrackObject}s associated to the object.
+        @type deep: C{bool}
+        @raises TimelineError: If the object doesn't belong to the timeline.
+        """
         try:
             self.timeline_objects.remove(obj)
         except ValueError:
@@ -737,7 +881,20 @@ class Timeline(Signallable, Loggable):
                 track = track_object.track
                 track.removeTrackObject(track_object)
 
+    # FIXME : shouldn't this be made more generic (i.e. not specific to source facotires) ?
     def addSourceFactory(self, factory, stream_map=None, strict=False):
+        """
+        Creates a TimelineObject for the given SourceFactory and adds it to the timeline.
+
+        @param factory: The factory to add.
+        @type factory: L{SourceFactory}
+        @param stream_map: A mapping of factory streams to track streams.
+        @type stream_map: C{dict} of MultimediaStream => MultimediaStream
+        @param strict: If C{True} only add the factory if an exact stream mapping can be
+        calculated.
+        @type strict: C{bool}
+        @raises TimelineError: if C{strict} is True and no exact mapping could be calculated.
+        """
         self.debug("factory:%r", factory)
         output_streams = factory.getOutputStreams()
         if not output_streams:
@@ -765,6 +922,7 @@ class Timeline(Signallable, Loggable):
         self.addTimelineObject(timeline_object)
         return timeline_object
 
+    # FIXME : Shouldn't this be a private method ??
     def getSourceFactoryStreamMap(self, factory):
         self.debug("factory:%r", factory)
         mapped_tracks = []
@@ -803,12 +961,25 @@ class Timeline(Signallable, Loggable):
         return None
 
     def setSelectionToObj(self, obj, mode):
+        """
+        Update the timeline's selection with the given object and mode.
+
+        @see: L{Selection.setToObj}
+        """
         self.selection.setToObj(obj, mode)
 
     def setSelectionTo(self, selection, mode):
+        """
+        Update the timeline's selection with the given selection and mode.
+
+        @see: L{Selection.setTo}
+        """
         self.selection.setTo(selection, mode)
 
     def linkSelection(self):
+        """
+        Link the currently selected timeline objects.
+        """
         if len(self.selection) < 2:
             return
 
@@ -833,6 +1004,9 @@ class Timeline(Signallable, Loggable):
         self.emit("selection-changed")
 
     def unlinkSelection(self):
+        """
+        Unlink the currently selected timeline objects.
+        """
         empty_links = set()
         for timeline_object in self.selection:
             if timeline_object.link is None:
@@ -894,6 +1068,9 @@ class Timeline(Signallable, Loggable):
         self.selection.setTo(new_track_objects, SELECT_ADD)
 
     def deleteSelection(self):
+        """
+        Removes all the currently selected L{TimelineObject}s from the Timeline.
+        """
         self.unlinkSelection()
         for timeline_object in self.selection:
             self.removeTimelineObject(timeline_object, deep=True)
@@ -905,6 +1082,14 @@ class Timeline(Signallable, Loggable):
             self.edges.addTimelineObject(timeline_object)
 
     def snapToEdge(self, start, end=None):
+        """
+        Snaps the given start/end value to the closest edge if it is within
+        the timeline's dead_band.
+
+        @param start: The start position to snap.
+        @param end: The stop position to snap.
+        @returns: The snapped value if within the dead_band.
+        """
         edge, diff = self.edges.snapToEdge(start, end)
 
         if self.dead_band != -1 and diff <= self.dead_band:
@@ -913,9 +1098,16 @@ class Timeline(Signallable, Loggable):
         return start
 
     def disableUpdates(self):
+        """
+        Block internal updates. Use this when doing more than one consecutive
+        modification in the pipeline.
+        """
         for track in self.tracks:
             track.disableUpdates()
 
     def enableUpdates(self):
+        """
+        Unblock internal updates. Use this after calling L{disableUpdates}.
+        """
         for track in self.tracks:
             track.enableUpdates()
