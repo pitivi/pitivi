@@ -43,7 +43,7 @@ class Keyframe(Signallable):
     }
 
     def __init__(self, parent):
-        self.parent = self
+        self.parent = parent
 
 ## Properties
 
@@ -59,7 +59,7 @@ class Keyframe(Signallable):
         self._mode = mode
         self.emit("mode-changed", mode)
 
-    def getMode(self, mode):
+    def getMode(self):
         return self._mode
 
     mode = property(getMode, setMode)
@@ -76,7 +76,7 @@ class Keyframe(Signallable):
         self._time = time
         self.emit("time-changed", time)
 
-    def getTime(self, time):
+    def getTime(self):
         return self._time
 
     time = property(getTime, setTime)
@@ -93,7 +93,7 @@ class Keyframe(Signallable):
         self._value = value
         self.emit("value-changed", value)
 
-    def getValue(self, value):
+    def getValue(self):
         return self._value
 
     value = property(getValue, setValue)
@@ -128,7 +128,8 @@ class Interpolator(Signallable):
 
     def __init__(self, trackobject, property):
         self._element = trackobject.gnl_object
-        self._default = self._element.get_property(property)
+        #self._default = self._element.get_property(property)
+        self._default = 0
         self._property = property
         self._keyframes = []
 
@@ -199,7 +200,7 @@ class Interpolator(Signallable):
         # FIXME: uncomment this when back-end support works
         #self._controller.unset(kf.time)
         #self._controller.set(kf.time, value)
-        self._end.setObjectTime(start + end)
+        pass
 
 class TrackObject(Signallable):
 
@@ -248,7 +249,7 @@ class TrackObject(Signallable):
         self._interpolators = {}
         if stream:
             for prop in factory.getInterpolatedProperties(stream):
-                sef._interpolators[prop] = Interpolator(self, prop)
+                self._interpolators[prop] = Interpolator(self, prop)
 
     def release(self):
         self._disconnectFromSignals()
