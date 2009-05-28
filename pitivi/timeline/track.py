@@ -137,15 +137,15 @@ class Interpolator(Signallable):
         # FIXME: uncomment this when back-end support works
         #self._controller = gst.Controller(self._element, property)
 
-        self._start = FixedKeyframe(self)
-        self._end = FixedKeyframe(self)
-        self._start.value = self._default
-        self._start.time = 0
-        self._end.value = self._default
-        self._end.time = trackobject.factory.duration
+        self.start = FixedKeyframe(self)
+        self.end = FixedKeyframe(self)
+        self.start.value = self._default
+        self.start.time = 0
+        self.end.value = self._default
+        self.end.time = trackobject.factory.duration
 
-        data = [(self._start.time, self._start.value), (self._end.time,
-            self._end.value)]
+        data = [(self.start.time, self.start.value), (self.end.time,
+            self.end.value)]
         #self._controller.set_from_list(property, data)
 
     def newKeyFrame(self, time, value=None, mode=None):
@@ -246,10 +246,10 @@ class TrackObject(Signallable):
 
         self._connectToSignals(obj)
 
-        self._interpolators = {}
+        self.interpolators = {}
         if stream:
             for prop in factory.getInterpolatedProperties(stream):
-                self._interpolators[prop] = Interpolator(self, prop)
+                self.interpolators[prop] = Interpolator(self, prop)
 
     def release(self):
         self._disconnectFromSignals()
