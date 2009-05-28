@@ -73,26 +73,26 @@ class TimelineObject(Signallable, Loggable):
 
         return self.track_objects[0].start
 
-    def setStart(self, time, snap=False):
+    def setStart(self, position, snap=False):
         if not self.track_objects:
             raise TimelineError()
 
         if snap:
-            time = self.timeline.snapToEdge(time, time + self.duration)
+            position = self.timeline.snapToEdge(position, position + self.duration)
 
         if self.link is not None:
             # if we're part of a link, we need to check if it's necessary to
-            # clamp time so that we don't push the earliest element before 0s
-            delta = time - self.start
+            # clamp position so that we don't push the earliest element before 0s
+            delta = position - self.start
             off = self.link.earliest_start + delta
             if off < 0:
                 # clamp so that the earliest element is shifted to 0s
-                time -= off
+                position -= off
 
         for track_object in self.track_objects:
-            track_object.setObjectStart(time)
+            track_object.setObjectStart(position)
 
-        self.emit('start-changed', time)
+        self.emit('start-changed', position)
 
     start = property(_getStart, setStart)
 
@@ -102,22 +102,22 @@ class TimelineObject(Signallable, Loggable):
 
         return self.track_objects[0].duration
 
-    def setDuration(self, time, snap=False, set_media_stop=True):
+    def setDuration(self, position, snap=False, set_media_stop=True):
         if not self.track_objects:
             raise TimelineError()
 
         if snap:
-            time = self.timeline.snapToEdge(time)
+            position = self.timeline.snapToEdge(position)
 
         trimmed_start = self.track_objects[0].trimmed_start
-        time = min(time, self.factory.duration - trimmed_start)
+        position = min(position, self.factory.duration - trimmed_start)
 
         for track_object in self.track_objects:
-            track_object.setObjectDuration(time)
+            track_object.setObjectDuration(position)
             if set_media_stop:
-                track_object.setObjectMediaDuration(time)
+                track_object.setObjectMediaDuration(position)
 
-        self.emit('duration-changed', time)
+        self.emit('duration-changed', position)
 
     duration = property(_getDuration, setDuration)
 
@@ -127,14 +127,14 @@ class TimelineObject(Signallable, Loggable):
 
         return self.track_objects[0].in_point
 
-    def setInPoint(self, time, snap=False):
+    def setInPoint(self, position, snap=False):
         if not self.track_objects:
             raise TimelineError()
 
         for track_object in self.track_objects:
-            track_object.setObjectInPoint(time)
+            track_object.setObjectInPoint(position)
 
-        self.emit('in-point-changed', time)
+        self.emit('in-point-changed', position)
 
     in_point = property(_getInPoint, setInPoint)
 
@@ -152,14 +152,14 @@ class TimelineObject(Signallable, Loggable):
 
         return self.track_objects[0].media_duration
 
-    def setMediaDuration(self, time, snap=False):
+    def setMediaDuration(self, position, snap=False):
         if not self.track_objects:
             raise TimelineError()
 
         for track_object in self.track_objects:
-            track_object.setObjectMediaDuration(time)
+            track_object.setObjectMediaDuration(position)
 
-        self.emit('media-duration-changed', time)
+        self.emit('media-duration-changed', position)
 
     media_duration = property(_getMediaDuration, setMediaDuration)
 
@@ -198,21 +198,21 @@ class TimelineObject(Signallable, Loggable):
 
     selected = property(_getSelected, setSelected)
 
-    def trimStart(self, time, snap=False):
+    def trimStart(self, position, snap=False):
         if not self.track_objects:
             raise TimelineError()
 
         if snap:
-            time = self.timeline.snapToEdge(time)
+            position = self.timeline.snapToEdge(position)
 
         for track_object in self.track_objects:
-            track_object.trimObjectStart(time)
+            track_object.trimObjectStart(position)
 
         self.emit('start-changed', self.start)
         self.emit('duration-changed', self.duration)
         self.emit('in-point-changed', self.in_point)
 
-    def split(self, time, snap=False):
+    def split(self, position, snap=False):
         if not self.track_objects:
             raise TimelineError()
 
@@ -223,7 +223,7 @@ class TimelineObject(Signallable, Loggable):
 
         for track_object in self.track_objects:
             try:
-                other_track_object = track_object.splitObject(time)
+                other_track_object = track_object.splitObject(position)
             except TrackError, e:
                 # FIXME: hallo exception hierarchy?
                 raise TimelineError(str(e))
@@ -468,8 +468,8 @@ class TimelineEdges(object):
 
         return start + end_diff, end_diff
 
-    def closest(self, time):
-        closest, diff, index = closest_item(self.edges, time)
+    def closest(self, position):
+        closest, diff, index = closest_item(self.edges, position)
         return self.edges[max(0, index - 2)], self.edges[min(
             len(self.edges) - 1, index + 1)]
 

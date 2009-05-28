@@ -96,45 +96,45 @@ class TrackObject(Signallable):
     def _getStart(self):
         return self.gnl_object.props.start
 
-    def setStart(self, time, snap=False):
+    def setStart(self, position, snap=False):
         if self.timeline_object is not None:
-            self.timeline_object.setStart(time, snap)
+            self.timeline_object.setStart(position, snap)
         else:
             if snap:
                 raise TrackError()
 
-            self.setObjectStart(time)
+            self.setObjectStart(position)
 
-    def setObjectStart(self, time):
-        self.gnl_object.props.start = time
+    def setObjectStart(self, position):
+        self.gnl_object.props.start = position
 
     start = property(_getStart, setStart)
 
     def _getDuration(self):
         return self.gnl_object.props.duration
 
-    def setDuration(self, time, snap=False):
+    def setDuration(self, position, snap=False):
         if self.timeline_object is not None:
-            self.timeline_object.setDuration(time, snap)
+            self.timeline_object.setDuration(position, snap)
         else:
             if snap:
                 raise TrackError()
 
-            self.setObjectDuration(time)
+            self.setObjectDuration(position)
 
-    def setObjectDuration(self, time):
-        self.gnl_object.props.duration = time
+    def setObjectDuration(self, position):
+        self.gnl_object.props.duration = position
 
     duration = property(_getDuration, setDuration)
 
     def _getInPoint(self):
         return self.gnl_object.props.media_start
 
-    def setInPoint(self, time, snap=False):
+    def setInPoint(self, position, snap=False):
         if self.timeline_object is not None:
-            self.timeline_object.setInPoint(time, snap)
+            self.timeline_object.setInPoint(position, snap)
         else:
-            self.setObjectInPoint(time)
+            self.setObjectInPoint(position)
 
     def setObjectInPoint(self, value):
         self.gnl_object.props.media_start = value
@@ -149,14 +149,14 @@ class TrackObject(Signallable):
     def _getMediaDuration(self):
         return self.gnl_object.props.media_duration
 
-    def setMediaDuration(self, time, snap=False):
+    def setMediaDuration(self, position, snap=False):
         if self.timeline_object is not None:
-            self.timeline_object.setMediaDuration(time, snap)
+            self.timeline_object.setMediaDuration(position, snap)
         else:
-            self.setObjectMediaDuration(time)
+            self.setObjectMediaDuration(position)
 
-    def setObjectMediaDuration(self, time):
-        self.gnl_object.props.media_duration = time
+    def setObjectMediaDuration(self, position):
+        self.gnl_object.props.media_duration = position
 
     media_duration = property(_getMediaDuration, setMediaDuration)
 
@@ -179,42 +179,42 @@ class TrackObject(Signallable):
 
     priority = property(_getPriority, setPriority)
 
-    def trimStart(self, time, snap=False):
+    def trimStart(self, position, snap=False):
         if self.timeline_object is not None:
-            self.timeline_object.trimStart(time, snap)
+            self.timeline_object.trimStart(position, snap)
         else:
-            self.trimObjectStart(time)
+            self.trimObjectStart(position)
 
-    def trimObjectStart(self, time):
-        # clamp time to be inside the object
-        time = max(self.start - self.trimmed_start, time)
-        time = min(time, self.start + self.duration)
-        new_duration = max(0, self.start + self.duration - time)
+    def trimObjectStart(self, position):
+        # clamp position to be inside the object
+        position = max(self.start - self.trimmed_start, position)
+        position = min(position, self.start + self.duration)
+        new_duration = max(0, self.start + self.duration - position)
 
-        delta = time - self.start
+        delta = position - self.start
         self.trimmed_start += delta
-        self.setObjectStart(time)
+        self.setObjectStart(position)
         self.setObjectDuration(new_duration)
         self.setObjectInPoint(self.trimmed_start)
         self.setObjectMediaDuration(new_duration)
 
-    def split(self, time, snap=False):
+    def split(self, position, snap=False):
         if self.timeline_object is not None:
-            return self.timeline_object.split(time, snap)
+            return self.timeline_object.split(position, snap)
         else:
-            return self.splitObject(time)
+            return self.splitObject(position)
 
-    def splitObject(self, time):
+    def splitObject(self, position):
         start = self.gnl_object.props.start
         duration = self.gnl_object.props.duration
-        if time <= start or time >= start + duration:
-            raise TrackError("can't split at time %s" % gst.TIME_ARGS(time))
+        if position <= start or position >= start + duration:
+            raise TrackError("can't split at position %s" % gst.TIME_ARGS(position))
 
         other = self.copy()
 
-        other.trimObjectStart(time)
-        self.setObjectDuration(time - self.gnl_object.props.start)
-        self.setObjectMediaDuration(time - self.gnl_object.props.start)
+        other.trimObjectStart(position)
+        self.setObjectDuration(position - self.gnl_object.props.start)
+        self.setObjectMediaDuration(position - self.gnl_object.props.start)
 
         return other
 
