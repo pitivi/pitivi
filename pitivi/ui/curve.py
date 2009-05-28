@@ -36,7 +36,7 @@ def intersect(b1, b2):
     return goocanvas.Bounds(max(b1.x1, b2.x1), max(b1.y1, b2.y1),
         min(b1.x2, b2.x2), min(b1.y2, b2.y2))
 
-class Curve(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
+class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
     __gtype_name__ = 'Curve'
 
@@ -72,6 +72,12 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 
     interpolator = receiver()
 
+    @handler(interpolator, "keyframe-added")
+    @handler(interpolator, "keyframe-removed")
+    @handler(interpolator, "keyframe-moved")
+    def keyframeAdded(self, keyframe):
+        self.changed(False)
+
 ## Zoomable interface overries
 
     def zoomChanged(self):
@@ -96,14 +102,21 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
         height = bounds.y2 - bounds.y1
         width = bounds.x2 - bounds.x1
         if self.element.factory:
-            cr.rectangle(bounds.x1, bounds.x2, width, height)
+            cr.rectangle(bounds.x1, bounds.y1, width, height)
             cr.clip()
             cr.move_to(*self._getKeyframeXY(self.interpolator.start))
             if self.interpolator:
-                for kf in self.interpolator.getPoints():
+                for kf in self.interpolator.keyframes:
                     cr.line_to(*self._getKeyframeXY(kf))
-            cr.line_to(self.interpolator.end)
+            cr.line_to(*self._getKeyframeXY(self.interpolator.end))
             cr.stroke()
+            for kf in self.interpolator.keyframes:
+                x, y = self._getKeyframeXY(kf)
+                cr.rectangle(x - 5, y - 5, x + 5, y + 5)
+                cr.set_source_rgb(1, 1, 1)
+                cr.fill()
+                cr.set_source_rgba(0, 0, 0)
+                cr.stroke()
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
         return (between(0, x, self.nsToPixel(self.element.duration)) and
