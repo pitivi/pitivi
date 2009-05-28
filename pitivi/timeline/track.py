@@ -98,6 +98,9 @@ class Keyframe(Signallable):
 
     value = property(getValue, setValue)
 
+    def __cmp__(self, other):
+        return cmp(self.time, other.time)
+
 class FixedKeyframe(Keyframe):
 
     def setTime(self, time):
@@ -124,6 +127,7 @@ class Interpolator(Signallable):
     __signals__ = {
         'keyframe-added' : ['keyframe'],
         'keyframe-removed' : ['keyframe'],
+        'keyframe-moved' : ['keyframe'],
     }
 
     def __init__(self, trackobject, property):
@@ -200,7 +204,14 @@ class Interpolator(Signallable):
         # FIXME: uncomment this when back-end support works
         #self._controller.unset(kf.time)
         #self._controller.set(kf.time, value)
-        pass
+        self.emit("keyframe-moved", kf)
+
+    def getKeyframes(self):
+        # FIXME: make this more efficient
+        for kf in sorted(self._keyframes):
+            yield kf
+
+    keyframes = property(getKeyframes)
 
 class TrackObject(Signallable):
 
