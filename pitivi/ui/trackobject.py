@@ -14,6 +14,7 @@ from zoominterface import Zoomable
 from pitivi.timeline.track import TrackError
 from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT
 from preview import Preview
+from pitivi.ui.curve import Curve
 import gst
 from common import LAYER_HEIGHT_EXPANDED, LAYER_HEIGHT_COLLAPSED
 from common import LAYER_SPACING, unpack_cairo_pattern, unpack_cairo_gradient
@@ -267,6 +268,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         for thing in (self.bg, self.content, self.selection_indicator, 
             self.start_handle, self.end_handle, self.namebg, self.name):
             self.add_child(thing)
+
+        for interpolator in element.interpolators.itervalues():
+            self.add_child(Curve(element, interpolator, 50))
 
         self.element = element
         self.settings = instance.settings
