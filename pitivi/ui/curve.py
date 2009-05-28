@@ -36,7 +36,7 @@ def intersect(b1, b2):
     return goocanvas.Bounds(max(b1.x1, b2.x1), max(b1.y1, b2.y1),
         min(b1.x2, b2.x2), min(b1.y2, b2.y2))
 
-class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
+class Curve(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 
     __gtype_name__ = 'Curve'
 
@@ -96,12 +96,21 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         y = kf.value * self._height
         return x, y
 
+    def _drawKeyframe(self, cr, kf):
+        x, y = self._getKeyframeXY(kf)
+        cr.rectangle(x - 5, y - 5, 10, 10)
+        cr.set_source_rgb(1, 1, 1)
+        cr.fill()
+        cr.set_source_rgb(0, 0, 0)
+        cr.stroke()
+
     def do_simple_paint(self, cr, bounds):
         bounds = intersect(self.bounds, bounds)
         cr.identity_matrix()
         height = bounds.y2 - bounds.y1
         width = bounds.x2 - bounds.x1
-        if self.element.factory:
+        cr.set_line_width(2.0)
+        if self.interpolator:
             cr.rectangle(bounds.x1, bounds.y1, width, height)
             cr.clip()
             cr.move_to(*self._getKeyframeXY(self.interpolator.start))
@@ -110,13 +119,10 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                     cr.line_to(*self._getKeyframeXY(kf))
             cr.line_to(*self._getKeyframeXY(self.interpolator.end))
             cr.stroke()
+            self._drawKeyframe(cr, self.interpolator.start)
             for kf in self.interpolator.keyframes:
-                x, y = self._getKeyframeXY(kf)
-                cr.rectangle(x - 5, y - 5, x + 5, y + 5)
-                cr.set_source_rgb(1, 1, 1)
-                cr.fill()
-                cr.set_source_rgba(0, 0, 0)
-                cr.stroke()
+                self._drawKeyframe(cr, kf)
+            self._drawKeyframe(cr, self.interpolator.end)
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
         return (between(0, x, self.nsToPixel(self.element.duration)) and
