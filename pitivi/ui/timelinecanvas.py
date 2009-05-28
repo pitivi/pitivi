@@ -21,6 +21,7 @@
 
 import gtk
 import goocanvas
+from gettext import gettext as _
 
 from pitivi.log.loggable import Loggable
 from pitivi.receiver import receiver, handler
@@ -31,7 +32,6 @@ from pitivi.ui.zoominterface import Zoomable
 from pitivi.settings import GlobalSettings
 from pitivi.ui.prefs import PreferencesDialog
 from pitivi.ui.common import TRACK_SPACING, unpack_cairo_pattern
-import gtk
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
@@ -45,10 +45,10 @@ GlobalSettings.addConfigOption('edgeSnapDeadband',
     notify = True)
 
 PreferencesDialog.addNumericPreference('edgeSnapDeadband',
-    section = "Behavior",
-    label = "Snap Distance (pixels)",
-    description = "Threshold distance (in pixels) used for all snapping"
-        "operations",
+    section = _("Behavior"),
+    label = _("Snap Distance (pixels)"),
+    description = _("Threshold distance (in pixels) used for all snapping "
+        "operations"),
     lower = 0)
 
 class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):

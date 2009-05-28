@@ -120,8 +120,8 @@ class PreferencesDialog(gtk.Window):
         # restart warning
         self.restart_warning = gtk.Label()
         self.restart_warning.set_markup(
-            _("<b>Some changes will not take effect until you restart "
-            "PiTiVi</b>"))
+            "<b>%s</b>" % _("Some changes will not take effect until you "
+            "restart PiTiVi"))
         vbox.pack_end(self.restart_warning, False, False)
 
 ## Public API

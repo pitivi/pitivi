@@ -27,12 +27,15 @@ pitivi/ui/net_capture.glade
 pitivi/ui/pluginmanagerdialog.glade
 pitivi/ui/pluginmanagerdialog.py
 pitivi/ui/prefs.py
+pitivi/ui/previewer.py
 pitivi/ui/projecttabs.py
 pitivi/ui/projectsettings.glade
 pitivi/ui/propertyeditor.py
 pitivi/ui/screencast_manager.glade
 pitivi/ui/sourcelist.py
 pitivi/ui/timeline.py
+pitivi/ui/timelinecanvas.py
 pitivi/ui/timelinecontrols.py
+pitivi/ui/trackobject.py
 pitivi/ui/viewer.py
 pitivi/ui/videofxlist.py

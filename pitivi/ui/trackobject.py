@@ -6,6 +6,7 @@ import pango
 import cairo
 import pitivi.configure as configure
 from urllib import unquote
+from gettext import gettext as _
 from pitivi.receiver import receiver, handler
 from view import View
 import controller
@@ -38,9 +39,9 @@ GlobalSettings.addConfigOption('videoClipBg',
     notify = True)
 
 PreferencesDialog.addColorPreference('videoClipBg',
-    section = "Appearance",
-    label = "Clip Background (Video)",
-    description = "The background color for clips in video tracks.")
+    section = _("Appearance"),
+    label = _("Clip Background (Video)"),
+    description = _("The background color for clips in video tracks."))
 
 GlobalSettings.addConfigOption('audioClipBg',
     section = 'user-interface',
@@ -49,9 +50,9 @@ GlobalSettings.addConfigOption('audioClipBg',
     notify = True)
 
 PreferencesDialog.addColorPreference('audioClipBg',
-    section = "Appearance",
-    label = "Clip Background (Audio)",
-    description = "The background color for clips in audio tracks.")
+    section = _("Appearance"),
+    label = _("Clip Background (Audio)"),
+    description = _("The background color for clips in audio tracks."))
 
 GlobalSettings.addConfigOption('selectedColor',
     section = 'user-interface',
@@ -60,9 +61,9 @@ GlobalSettings.addConfigOption('selectedColor',
     notify = True)
 
 PreferencesDialog.addColorPreference('selectedColor',
-    section = "Appearance",
-    label = "Selection Color",
-    description = "Selected clips will be tinted with this color.")
+    section = _("Appearance"),
+    label = _("Selection Color"),
+    description = _("Selected clips will be tinted with this color."))
 
 GlobalSettings.addConfigOption('clipFontDesc',
     section = 'user-interface',
@@ -71,9 +72,9 @@ GlobalSettings.addConfigOption('clipFontDesc',
     notify = True)
 
 PreferencesDialog.addFontPreference('clipFontDesc',
-    section = 'Appearance',
-    description = "The font to use for clip titles",
-    label = "Clip Font")
+    section = _('Appearance'),
+    label = _("Clip Font"),
+    description = _("The font to use for clip titles"))
 
 GlobalSettings.addConfigOption('clipFontColor',
     section = 'user-interface',

@@ -28,6 +28,7 @@ import gobject
 import gst
 import cairo
 import os
+from gettext import gettext as _
 import pitivi.utils as utils
 from pitivi.configure import get_pixmap_dir
 from pitivi.elements.singledecodebin import SingleDecodeBin
@@ -52,10 +53,10 @@ GlobalSettings.addConfigOption("thumbnailSpacingHint",
     notify=True)
 
 PreferencesDialog.addNumericPreference("thumbnailSpacingHint",
-    section="Appearance",
-    label="Thumbnail Gap (pixels)",
+    section=_("Appearance"),
+    label=_("Thumbnail Gap (pixels)"),
     lower=0,
-    description="The gap between thumbnails")
+    description=_("The gap between thumbnails"))
 
 # this default works out to a maximum of ~ 1.78 MiB per factory, assuming:
 # 4:3 aspect ratio
@@ -80,9 +81,9 @@ GlobalSettings.addConfigOption('showThumbnails',
     notify = True)
 
 PreferencesDialog.addTogglePreference('showThumbnails',
-    section = "Appearance",
-    label = "Show Thumbnails (Video)",
-    description = "Show Thumbnails on Video Clips")
+    section = _("Appearance"),
+    label = _("Show Thumbnails (Video)"),
+    description = _("Show Thumbnails on Video Clips"))
 
 GlobalSettings.addConfigOption('showWaveforms',
     section = 'user-interface',
@@ -91,9 +92,9 @@ GlobalSettings.addConfigOption('showWaveforms',
     notify = True)
 
 PreferencesDialog.addTogglePreference('showWaveforms',
-    section = "Appearance",
-    label = "Show Waveforms (Audio)",
-    description = "Show Waveforms on Audio Clips")
+    section = _("Appearance"),
+    label = _("Show Waveforms (Audio)"),
+    description = _("Show Waveforms on Audio Clips"))
 
 # Previewer                      -- abstract base class with public interface for UI
 # |_DefaultPreviewer             -- draws a default thumbnail for UI
