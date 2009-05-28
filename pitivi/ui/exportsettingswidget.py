@@ -107,7 +107,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
             fps = preset[3:5]
             videolist.append(["%s - %s" % (preset[0], fps_map[fps])])
 
-        videolist.append(["Custom"])
+        videolist.append([_("Custom")])
 
         # find out from the project settings which combo to take
         idx = 0
@@ -140,7 +140,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         audiolist.clear()
         for preset in self.audio_presets:
             audiolist.append([preset[0]])
-        audiolist.append(["Custom"])
+        audiolist.append([_("Custom")])
 
         idx = 0
         for preset in self.audio_presets:
@@ -291,7 +291,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
                 selected = idx
             idx = idx + 1
         if muxer_can_sink_raw_video(muxer):
-            venclist.append(["Raw Video"])
+            venclist.append([_("Raw Video")])
             if prevvenc == None:
                 selected = idx
         self.vcodeccbox.set_active(selected)
@@ -306,7 +306,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
                 selected = idx
             idx = idx + 1
         if muxer_can_sink_raw_audio(muxer):
-            aenclist.append(["Raw Audio"])
+            aenclist.append([_("Raw Audio")])
             if prevaenc == None:
                 selected = idx
         self.acodeccbox.set_active(selected)

@@ -10,7 +10,7 @@
   <widget class="GtkDialog" id="encodingdialog">
     <property name="visible">True</property>
     <property name="border_width">5</property>
-    <property name="title">Render project</property>
+    <property name="title" translatable="yes">Render project</property>
     <property name="modal">True</property>
     <property name="type_hint">GDK_WINDOW_TYPE_HINT_DIALOG</property>
     <child internal-child="vbox">
@@ -166,7 +166,7 @@
               <widget class="GtkProgressBar" id="progressbar">
                 <property name="visible">True</property>
                 <property name="pulse_step">0.1</property>
-                <property name="text">Please choose an output file</property>
+                <property name="text" translatable="yes">Please choose an output file</property>
               </widget>
               <packing>
                 <property name="expand">False</property>

@@ -137,7 +137,7 @@ class GstElementSettingsWidget(gtk.VBox, Loggable):
     def _addWidgets(self, properties):
         props = [x for x in gobject.list_properties(self.element) if not x.name in self.ignore]
         if not props:
-            self.pack_start(gtk.Label("No properties..."))
+            self.pack_start(gtk.Label(_("No properties...")))
             self.show_all()
             return
         table = gtk.Table(rows=len(props), columns=2)
