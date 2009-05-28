@@ -10,6 +10,7 @@ pitivi/stream.py
 pitivi/utils.py
 pitivi/factories/base.py
 pitivi/factories/file.py
+pitivi/formatters/format.py
 pitivi/ui/audiofxlist.py
 pitivi/ui/cam_capture.glade
 pitivi/ui/defaultpropertyeditor.py

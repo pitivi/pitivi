@@ -23,6 +23,8 @@
 High-level tools for using Formatters
 """
 
+from gettext import gettext as _
+
 # FIXME : We need a registry of all available formatters
 
 def load_project(uri, formatter=None, missinguricallback=None):
@@ -103,8 +105,8 @@ def list_formats():
     from pitivi.formatters.etree import ElementTreeFormatter
     from pitivi.formatters.playlist import PlaylistFormatter
     return [
-        (ElementTreeFormatter, "PiTiVi Native (XML)", ('xptv',)),
-        (PlaylistFormatter, "Playlist format", ('pls', ))
+        (ElementTreeFormatter, _("PiTiVi Native (XML)"), ('xptv',)),
+        (PlaylistFormatter, _("Playlist format"), ('pls', ))
         ]
 
 def get_formatter_for_uri(uri):
