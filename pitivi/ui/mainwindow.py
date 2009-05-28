@@ -110,12 +110,14 @@ def supported(info):
 def create_stock_icons():
     """ Creates the pitivi-only stock icons """
     gtk.stock_add([
-            ('pitivi-render', 'Render', 0, 0, 'pitivi'),
-            ('pitivi-split', 'Split', 0, 0, 'pitivi'),
-            ('pitivi-unlink', 'Unlink', 0, 0, 'pitivi'),
-            ('pitivi-link', 'Link', 0, 0, 'pitivi'),
-            ('pitivi-ungroup', 'Ungroup', 0, 0, 'pitivi'),
-            ('pitivi-group', 'Group', 0, 0, 'pitivi'),
+            ('pitivi-render', _('Render'), 0, 0, 'pitivi'),
+            ('pitivi-split', _('Split'), 0, 0, 'pitivi'),
+            ('pitivi-unlink', _('Unlink'), 0, 0, 'pitivi'),
+            # Translators: This is an action, the title of a button
+            ('pitivi-link', _('Link'), 0, 0, 'pitivi'),
+            ('pitivi-ungroup', _('Ungroup'), 0, 0, 'pitivi'),
+            # Translators: This is an action, the title of a button
+            ('pitivi-group', _('Group'), 0, 0, 'pitivi'),
             ])
     pixmaps = {
         "pitivi-render" : "pitivi-render-24.png",
