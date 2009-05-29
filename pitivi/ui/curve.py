@@ -59,6 +59,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         super(Curve, self).__init__(**kwargs)
         View.__init__(self)
         Zoomable.__init__(self)
+        self.keyframes = {}
         self.height = float(height)
         self.element = element
         self.props.pointer_events = goocanvas.EVENTS_STROKE
@@ -113,6 +114,11 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         y = kf.value * self._height
         return x, y
 
+    def _controlPoint(self, cr, kf):
+        x, y = self._getKeyframeXY(kf)
+        cr.rectangle(x - 5, y - 5, 10, 10)
+        self.keyframes[kf] = x, y
+
     def do_simple_paint(self, cr, bounds):
         bounds = intersect(self.bounds, bounds)
         cr.identity_matrix()
@@ -121,6 +127,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             cr.set_source_rgb(1, 0, 0)
             self.make_path(cr, bounds)
             cr.stroke()
+            cr.set_source_rgb(1, 1, 1)
+            cr.fill()
 
     def make_path(self, cr,  bounds):
         height = bounds.y2 - bounds.y1
@@ -128,9 +136,12 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         cr.rectangle(bounds.x1, bounds.y1, width, height)
         cr.clip()
         cr.move_to(*self._getKeyframeXY(self.interpolator.start))
+        self._controlPoint(cr, self.interpolator.start)
         if self.interpolator:
             for kf in self.interpolator.keyframes:
                 cr.line_to(*self._getKeyframeXY(kf))
+                self._controlPoint(cr, kf)
+        self._controlPoint(cr, self.interpolator.end)
         cr.line_to(*self._getKeyframeXY(self.interpolator.end))
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
