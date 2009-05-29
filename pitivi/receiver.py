@@ -40,7 +40,7 @@ class receiver(object):
                 instance._receiver_data[self].sender.disconnect(sid)
             rd.sender = None
             rd.sigids = {}
-        if value != None:
+        if not (value is None):
             for sig, hdlr in self.handlers.iteritems():
                 rd.sigids[sig] = value.connect(sig, MethodType(hdlr,
                     instance))
