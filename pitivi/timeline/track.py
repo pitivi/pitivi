@@ -218,8 +218,10 @@ class Interpolator(Signallable):
 
     def getKeyframes(self):
         # FIXME: make this more efficient
+        yield self.start
         for kf in sorted(self._keyframes):
             yield kf
+        yield self.end
 
     keyframes = property(getKeyframes)
 
