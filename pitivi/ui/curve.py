@@ -31,6 +31,7 @@ import pitivi.ui.previewer as previewer
 from pitivi.ui.view import View
 from pitivi.ui.controller import Controller
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED
+import pitivi.ui.point as point
 
 def between(a, b, c):
     return (a <= b) and (b <= c)
@@ -46,24 +47,41 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     class Controller(Controller):
 
         def _drag_start(self, item, target, event):
-            self._kf = self._view.findKeyframe(self.from_item_event(item,
-                event))
+            initial = self.from_item_event(item, event)
+            self._kf = self._view.findKeyframe(initial)
+            if not self._kf:
+                # we are moving the entire curve, so we need to know the
+                # inital position of each keyframe
+                self._offsets = dict(self._view.keyframes)
             Controller._drag_start(self, item, target, event)
 
         def _drag_end(self, item, target, event):
-            self._kf = None
             Controller._drag_end(self, item, target, event)
+            self._kf = None
 
         def set_pos(self, obj, pos):
-            time, value = self.xyToTimeValue(*pos)
+            interpolator = self._view.interpolator
             if self._kf:
+                time, value = self.xyToTimeValue(*pos)
                 self._kf.time = time
                 self._kf.value = value
+            else:
+                for kf in interpolator.keyframes:
+                    time, value = self.xyToTimeValue(*(pos -
+                        self._offsets[kf]))
+                    kf.value = value
+
+        def double_click(self, pos):
+            interpolator = self._view.interpolator
+            if not self._kf:
+                time, value = self.xyToTimeValue(*pos)
+                interpolator.newKeyFrame(time, value)
+            else:
+                self._view.interpolator.removeKeyFrame(self._kf)
 
         def xyToTimeValue(self, x, y):
             time = Zoomable.pixelToNs(x)
-            value = (max(0, min(y, LAYER_HEIGHT_EXPANDED)) /
-                LAYER_HEIGHT_EXPANDED)
+            value = y /  LAYER_HEIGHT_EXPANDED
             return time, value
 
         def enter(self, item ,target):
@@ -108,10 +126,15 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
     interpolator = receiver()
 
-    @handler(interpolator, "keyframe-added")
     @handler(interpolator, "keyframe-removed")
+    def keyframeRemoved(self, unused_interpolator, keyframe):
+        if keyframe in self.keyframes:
+            del self.keyframes[keyframe]
+        self.changed(False)
+
+    @handler(interpolator, "keyframe-added")
     @handler(interpolator, "keyframe-moved")
-    def curveChanged(self, keyframe, unused):
+    def curveChanged(self, unused_interpolator, unused_keyframe):
         self.changed(False)
 
 ## Zoomable interface overries
@@ -142,34 +165,38 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         cr.identity_matrix()
         cr.set_line_width(self.line_width)
         if self.interpolator:
+            height = bounds.y2 - bounds.y1
+            width = bounds.x2 - bounds.x1
+            cr.rectangle(bounds.x1, bounds.y1, width, height)
+            cr.clip()
+            self.make_curve(cr)
             cr.set_source_rgb(1, 0, 0)
-            self.make_path(cr, bounds)
             cr.stroke()
+            self.make_keyframes(cr)
             cr.set_source_rgb(1, 1, 1)
-            cr.fill()
+            cr.fill_preserve()
+            cr.set_source_rgb(1, 0, 0)
+            cr.stroke()
 
-    def make_path(self, cr,  bounds):
+    def make_curve(self, cr):
         if not self.interpolator:
             return
-        height = bounds.y2 - bounds.y1
-        width = bounds.x2 - bounds.x1
-        cr.rectangle(bounds.x1, bounds.y1, width, height)
-        cr.clip()
-        cr.move_to(*self._getKeyframeXY(self.interpolator.start))
-        for kf in self.interpolator.keyframes:
+        iterator = self.interpolator.keyframes
+        cr.move_to(*self._getKeyframeXY(iterator.next()))
+        for kf in iterator:
             cr.line_to(*self._getKeyframeXY(kf))
         cr.line_to(*self._getKeyframeXY(self.interpolator.end))
-        self._controlPoint(cr, self.interpolator.start)
+
+    def make_keyframes(self, cr):
         for kf in self.interpolator.keyframes:
             self._controlPoint(cr, kf)
-        self._controlPoint(cr, self.interpolator.end)
+
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
         if (between(0, x, self.nsToPixel(self.element.duration)) and
             between(0, y, self.height)):
-            cr.set_line_width(self.line_width)
-            self.make_path(cr, self.get_bounds())
-            return cr.in_stroke(x, y)
+            self.make_curve(cr)
+            return cr.in_stroke(x, y) or bool(self.findKeyframe((x, y)))
         return False
 
 ## public
