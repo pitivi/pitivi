@@ -171,7 +171,9 @@ class Interpolator(Signallable):
         if not value:
             value = self._default
         if not mode:
-            mode = self._control_source.get_interpolation_mode()
+            # FIXME: uncomment this when back-end support works
+            # mode = self._controller.get_interpolation_mode()
+            mode = gst.INTERPOLATE_LINEAR
 
         kf = Keyframe(self)
         self._keyframes.append(kf)
@@ -187,8 +189,9 @@ class Interpolator(Signallable):
     def removeKeyFrame(self, keyframe):
         # FIXME: uncomment this when back-end support works
         # self._controller.unset(keyframe.time)
-        self._keyframes.remove(kf)
-        self.emit("keyframe-removed", kf)
+        if keyframe is not self.start and keyframe is not self.end:
+            self._keyframes.remove(keyframe)
+            self.emit("keyframe-removed", keyframe)
 
     def setKeyframeMode(self, kf, mode):
         # FIXME: currently InterpolationSourceControllers only support a
@@ -198,7 +201,8 @@ class Interpolator(Signallable):
         # globally
         for keyframe in self.keyframes:
             keyframe.setObjectMode(mode)
-        self._controller.set_interpolation_mode(mode)
+        # FIXME: uncomment when backend works
+        # self._controller.set_interpolation_mode(mode)
 
     def setKeyframeTime(self, kf, time):
         time = max(self.start.time, min(self.end.time, time))
