@@ -99,12 +99,16 @@ class Keyframe(Signallable):
     value = property(getValue, setValue)
 
     def __cmp__(self, other):
-        return cmp(self.time, other.time)
+        if other:
+            return cmp(self.time, other.time)
+        return self
 
 class FixedKeyframe(Keyframe):
 
     def setTime(self, time):
         pass
+
+    time = property(Keyframe.getTime, setTime)
 
 class Interpolator(Signallable):
 
@@ -144,9 +148,9 @@ class Interpolator(Signallable):
         self.start = FixedKeyframe(self)
         self.end = FixedKeyframe(self)
         self.start.value = self._default
-        self.start.time = 0
+        self.start.setObjectTime(0)
         self.end.value = self._default
-        self.end.time = trackobject.factory.duration
+        self.end.setObjectTime(trackobject.factory.duration)
 
         data = [(self.start.time, self.start.value), (self.end.time,
             self.end.value)]
