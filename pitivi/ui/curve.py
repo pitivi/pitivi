@@ -45,8 +45,26 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
     class Controller(Controller):
 
+        def _drag_start(self, item, target, event):
+            self._kf = self._view.findKeyframe(self.from_item_event(item,
+                event))
+            Controller._drag_start(self, item, target, event)
+
+        def _drag_end(self, item, target, event):
+            self._kf = None
+            Controller._drag_end(self, item, target, event)
+
         def set_pos(self, obj, pos):
-            pass
+            time, value = self.xyToTimeValue(*pos)
+            if self._kf:
+                self._kf.time = time
+                self._kf.value = value
+
+        def xyToTimeValue(self, x, y):
+            time = Zoomable.pixelToNs(x)
+            value = (max(0, min(y, LAYER_HEIGHT_EXPANDED)) /
+                LAYER_HEIGHT_EXPANDED)
+            return time, value
 
         def enter(self, item ,target):
             self._view.focus()
@@ -131,18 +149,20 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             cr.fill()
 
     def make_path(self, cr,  bounds):
+        if not self.interpolator:
+            return
         height = bounds.y2 - bounds.y1
         width = bounds.x2 - bounds.x1
         cr.rectangle(bounds.x1, bounds.y1, width, height)
         cr.clip()
         cr.move_to(*self._getKeyframeXY(self.interpolator.start))
-        self._controlPoint(cr, self.interpolator.start)
-        if self.interpolator:
-            for kf in self.interpolator.keyframes:
-                cr.line_to(*self._getKeyframeXY(kf))
-                self._controlPoint(cr, kf)
-        self._controlPoint(cr, self.interpolator.end)
+        for kf in self.interpolator.keyframes:
+            cr.line_to(*self._getKeyframeXY(kf))
         cr.line_to(*self._getKeyframeXY(self.interpolator.end))
+        self._controlPoint(cr, self.interpolator.start)
+        for kf in self.interpolator.keyframes:
+            self._controlPoint(cr, kf)
+        self._controlPoint(cr, self.interpolator.end)
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
         if (between(0, x, self.nsToPixel(self.element.duration)) and
@@ -152,6 +172,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             return cr.in_stroke(x, y)
         return False
 
+## public
+
     def focus(self):
         self.line_width = 3.0
         self.changed(False)
@@ -160,3 +182,11 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         self.line_width = 2.0
         self.changed(False)
 
+    def findKeyframe(self, pos):
+        x, y = pos
+        for keyframe, value in self.keyframes.iteritems():
+            kx, ky = value
+            if (between(kx - 5, x, kx + 5) and
+                between(ky - 5, y, ky + 5)):
+                return keyframe
+        return None
