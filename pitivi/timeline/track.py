@@ -140,6 +140,10 @@ class Interpolator(Signallable):
         self._default = 0
         self._property = property
         self._keyframes = []
+        # FIXME: get this from the property's param spec
+        # NOTE: keyframes necessarily work only on a closed range
+        self.lower = 0
+        self.upper = 1
 
         # FIXME: don't create separate controllers for each Interpolator
         # FIXME: uncomment this when back-end support works
@@ -197,10 +201,12 @@ class Interpolator(Signallable):
         self._controller.set_interpolation_mode(mode)
 
     def setKeyframeTime(self, kf, time):
+        time = max(self.start.time, min(self.end.time, time))
         self._keyframeTimeValueChanged(kf, time, kf.value)
         kf.setObjectTime(time)
 
     def setKeyframeValue(self, kf, value):
+        value = max(self.lower, min(self.upper, value))
         self._keyframeTimeValueChanged(kf, kf.time, value)
         kf.setObjectValue(value)
 
