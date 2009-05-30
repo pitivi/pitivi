@@ -49,6 +49,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         def _drag_start(self, item, target, event):
             initial = self.from_item_event(item, event)
             self._kf = self._view.findKeyframe(initial)
+            if self._kf:
+                self._mousedown = self._view.keyframes[self._kf] - initial
             if not self._kf:
                 # we are moving the entire curve, so we need to know the
                 # inital position of each keyframe
@@ -62,26 +64,27 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         def set_pos(self, obj, pos):
             interpolator = self._view.interpolator
             if self._kf:
-                time, value = self.xyToTimeValue(*pos)
+                time, value = self.xyToTimeValue(pos)
                 self._kf.time = time
                 self._kf.value = value
             else:
                 for kf in interpolator.keyframes:
-                    time, value = self.xyToTimeValue(*(pos -
-                        self._offsets[kf]))
+                    time, value = self.xyToTimeValue(self._offsets[kf] + pos
+                        - self.pos(self._view))
                     kf.value = value
 
         def double_click(self, pos):
             interpolator = self._view.interpolator
             if not self._kf:
-                time, value = self.xyToTimeValue(*pos)
+                time, value = self.xyToTimeValue(pos)
                 interpolator.newKeyFrame(time, value)
             else:
                 self._view.interpolator.removeKeyFrame(self._kf)
 
-        def xyToTimeValue(self, x, y):
-            time = Zoomable.pixelToNs(x)
-            value = y /  LAYER_HEIGHT_EXPANDED
+        def xyToTimeValue(self, pos):
+            bounds = self._view.bounds
+            time = Zoomable.pixelToNs(pos[0] - bounds.x1)
+            value = (pos[1] - bounds.y1) /  LAYER_HEIGHT_EXPANDED
             return time, value
 
         def enter(self, item ,target):
@@ -153,12 +156,13 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     def _getKeyframeXY(self, kf):
         x = self.nsToPixel(kf.time)
         y = kf.value * self._height
-        return x self.bounds.x1, y + self.bounds.y1
+        return point.Point(x + self.bounds.x1, y + self.bounds.y1)
 
     def _controlPoint(self, cr, kf):
-        x, y = self._getKeyframeXY(kf)
+        pos = self._getKeyframeXY(kf)
+        x, y = pos
         cr.rectangle(x - 5, y - 5, 10, 10)
-        self.keyframes[kf] = x, y
+        self.keyframes[kf] = pos
 
     def do_simple_paint(self, cr, bounds):
         bounds = intersect(self.bounds, bounds)
@@ -190,7 +194,6 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     def make_keyframes(self, cr):
         for kf in self.interpolator.keyframes:
             self._controlPoint(cr, kf)
-
 
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
         if (between(0, x, self.nsToPixel(self.element.duration)) and
