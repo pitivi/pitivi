@@ -393,7 +393,11 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self._update()
 
     def _update(self):
-        x = self.nsToPixel(self.element.start)
+        try:
+            x = self.nsToPixel(self.element.start)
+        except Exception, e:
+            print self.element.start
+            raise Exception(e)
         y = (self.height + LAYER_SPACING) * self.element.priority
         self.set_simple_transform(x, y, 1, 0)
         width = self.nsToPixel(self.element.duration)
