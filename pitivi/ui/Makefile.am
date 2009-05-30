@@ -5,6 +5,7 @@ ui_PYTHON =			\
 	audiofxlist.py		\
 	common.py		\
 	controller.py		\
+	curve.py		\
 	defaultpropertyeditor.py\
 	dnd.py			\
 	dynamic.py		\
