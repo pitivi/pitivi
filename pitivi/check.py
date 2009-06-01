@@ -158,8 +158,8 @@ def _checks():
                 ("Install a version of the GStreamer greater or equal to %s") % req)
     req, inst = check_required_version("cairo")
     if req:
-        return (_("You do not have a recent enough version of the Cairo Python bindings (currently %s)") % inst,
-                ("Install a version of the Cairo Python bindings greater or equal to %s") % req)
+        return (_("You do not have a recent enough version of the cairo Python bindings (currently %s)") % inst,
+                ("Install a version of the cairo Python bindings greater or equal to %s") % req)
     req, inst = check_required_version("gnonlin")
     if req:
         return (_("You do not have a recent enough version of the GNonLin GStreamer plugin (currently %s)") % inst,
