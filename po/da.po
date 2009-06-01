@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-01 11:25+0200\n"
-"PO-Revision-Date: 2009-05-31 20:01+0100\n"
+"POT-Creation-Date: 2009-06-01 16:08+0200\n"
+"PO-Revision-Date: 2009-06-01 11:51+0100\n"
 "Last-Translator: Per Kongstad <p_kongstad@op.pl>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "MIME-Version: 1.0\n"
@@ -135,12 +135,12 @@ msgid "You do not have a recent enough version of GStreamer (currently %s)"
 msgstr "Du har en for gammel version af GStreamer (nuværende %s)"
 
 #: ../pitivi/check.py:161
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "You do not have a recent enough version of the cairo Python bindings "
 "(currently %s)"
 msgstr ""
-"Du har en for gammel version af Pythonsbindingerne til Cairo (nuværende %s)"
+"Du har en for gammel version af Pythonsbindingerne til cairo (nuværende %s)"
 
 #: ../pitivi/check.py:165
 #, python-format
