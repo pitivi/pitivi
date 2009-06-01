@@ -27,6 +27,12 @@ from pitivi.log.loggable import Loggable
 import pitivi.log.log as log
 import gst
 
+STREAM_MATCH_MAXIMUM = 100
+STREAM_MATCH_SAME_CAPS = 60
+STREAM_MATCH_SAME_PAD_NAME = 40
+STREAM_MATCH_COMPATIBLE_CAPS = 30
+STREAM_MATCH_NONE = 0
+
 class MultimediaStream(Loggable):
     """
     Defines a media stream
@@ -413,3 +419,122 @@ def get_sink_pads_for_stream(element, stream):
     @rtype: List of C{gst.Pad}
     """
     return [x for x in get_pads_for_stream(element, stream) if x.get_direction() == gst.PAD_SINK]
+
+def stream_compare(stream_a, stream_b):
+    """
+    Compare two streams.
+    """
+    current_rank = STREAM_MATCH_NONE
+
+    if stream_a.pad_name is not None and (stream_a.pad_name ==
+            stream_b.pad_name):
+        current_rank += STREAM_MATCH_SAME_PAD_NAME
+
+    if stream_a.caps is not None:
+        if stream_a.caps == stream_b.caps:
+            current_rank += STREAM_MATCH_SAME_CAPS
+        elif stream_a.caps.intersect(stream_b.caps):
+            current_rank += STREAM_MATCH_COMPATIBLE_CAPS
+
+    return current_rank
+
+def match_stream(stream, stream_list):
+    """
+    Get the stream contained in stream_list that best matches the given stream.
+    """
+    best_stream = None
+    best_rank = STREAM_MATCH_NONE
+
+    for current_stream in stream_list:
+        current_rank = stream_compare(stream, current_stream)
+        if current_rank > best_rank:
+            best_rank = current_rank
+            best_stream = current_stream
+
+    return best_stream, best_rank
+
+class StreamGroupWalker(object):
+    """
+    Utility class used to match two groups of streams.
+
+    This class implements a greedy algorithm to compare two sets of streams. See
+    match_stream_groups for an example of usage.
+    """
+    def __init__(self, group_a, group_b,
+            stream_a=None, stream_b=None, parent=None):
+        self.group_a = list(group_a)
+        self.group_b = list(group_b)
+        self.stream_a = stream_a
+        self.stream_b = stream_b
+        if stream_a is not None and stream_b is not None:
+            match = stream_compare(stream_a, stream_b)
+            self.match = ((stream_a, stream_b), match)
+        else:
+            self.match = None
+        self.parent = parent
+
+    def advance(self):
+        walkers = []
+
+        for stream_a in self.group_a:
+            for stream_b in self.group_b:
+                group_a = list(self.group_a)
+                group_a.remove(stream_a)
+
+                group_b = list(self.group_b)
+                group_b.remove(stream_b)
+
+                walker = StreamGroupWalker(group_a, group_b,
+                        stream_a, stream_b, self)
+
+                walkers.append(walker)
+
+        return walkers
+
+    def getMatches(self):
+        matches = {}
+        walker = self
+        while walker is not None:
+            if walker.match is not None:
+                if matches.get(walker.match[0],
+                            STREAM_MATCH_NONE) < walker.match[1]:
+                    matches[walker.match[0]] = walker.match[1]
+
+            walker = walker.parent
+
+        return matches
+
+def match_stream_groups(group_a, group_b):
+    """
+    Match two groups of streams.
+
+    The function takes two sequences group_a and group_b of streams and returns
+    a dictionary of (stream_a, stream_b) -> rank, where stream_a belongs to
+    group_a, stream_b belongs to group_b and rank is stream_compare(stream_a,
+    stream_b).
+    The algorithm tries all the possible combinations of group_a and group_b and
+    returns the "best" match between group_a and group_b, ie the dictionary
+    having the sum of the ranks maximized.
+    """
+    walker = StreamGroupWalker(group_a, group_b)
+    walkers = [walker]
+    best_rank = 0
+    best_map = {}
+    while walkers:
+        walker = walkers.pop(0)
+        child_walkers = walker.advance()
+        if child_walkers:
+            walkers.extend(child_walkers)
+            continue
+
+        current_map = walker.getMatches()
+        current_rank = sum(current_map.values())
+        if current_rank > best_rank:
+            best_rank = current_rank
+            best_map = current_map
+
+    return best_map
+
+def match_stream_groups_map(group_a, group_b):
+    stream_map = match_stream_groups(group_a, group_b)
+    return dict(stream_map.keys())
