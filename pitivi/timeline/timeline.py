@@ -21,12 +21,13 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
+from bisect import bisect_right
 
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.utils import UNKNOWN_DURATION, closest_item, PropertyChangeTracker
 from pitivi.timeline.track import Track, SourceTrackObject, TrackError
-from bisect import bisect_right
+from pitivi.stream import match_stream_groups_map
 
 # Selection modes
 SELECT = 0
@@ -924,41 +925,22 @@ class Timeline(Signallable, Loggable):
 
     # FIXME : Shouldn't this be a private method ??
     def getSourceFactoryStreamMap(self, factory):
-        self.debug("factory:%r", factory)
-        mapped_tracks = []
-        timeline_object = TimelineObject(factory)
+        # track.stream -> track
+        track_stream_to_track_map = dict((track.stream, track)
+                for track in self.tracks)
 
-        stream_map = {}
-        output_streams = factory.getOutputStreams()
-        for output_stream in output_streams:
-            track = self._getTrackForFactoryStream(factory,
-                    output_stream, mapped_tracks)
-            if track is None:
-                self.debug("no track found for stream %s", output_stream)
-                # couldn't find a track for this stream
-                continue
+        # output_stream -> track.stream
+        output_stream_to_track_stream_map = \
+                match_stream_groups_map(factory.output_streams,
+                        [track.stream for track in self.tracks])
 
-            stream_map[output_stream] = track
+        # output_stream -> track (result)
+        output_stream_to_track_map = {}
+        for stream, track_stream in output_stream_to_track_stream_map.iteritems():
+            output_stream_to_track_map[stream] = \
+                    track_stream_to_track_map[track_stream]
 
-            # we don't want to reuse the same track for different streams coming
-            # from the same source
-            mapped_tracks.append(track)
-
-        return stream_map
-
-    def _getTrackForFactoryStream(self, factory, stream, mapped_tracks):
-        self.debug("factory:%r, stream:%s", factory, stream)
-        for track in self.tracks:
-            if track not in mapped_tracks:
-                self.debug("track.stream:%s", track.stream)
-                if track.stream.isCompatible(stream):
-                    return track
-                else:
-                    self.debug("Stream not compatible")
-            else:
-                self.debug("Track already present in mapped_tracks")
-
-        return None
+        return output_stream_to_track_map
 
     def setSelectionToObj(self, obj, mode):
         """

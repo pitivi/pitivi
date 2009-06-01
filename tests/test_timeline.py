@@ -586,10 +586,11 @@ class TestTimelineAddFactory(TestCase):
         self.audio_stream2 = AudioStream(gst.Caps('audio/x-raw-int'))
         self.audio_stream3 = AudioStream(gst.Caps('audio/x-raw-int'))
         self.video_stream1 = VideoStream(gst.Caps('video/x-raw-rgb'))
+        self.video_stream2 = VideoStream(gst.Caps('video/x-raw-rgb'))
         self.audio_track1 = Track(self.audio_stream1)
-        self.audio_track2 = Track(self.audio_stream1)
+        self.audio_track2 = Track(self.audio_stream2)
         self.video_track1 = Track(self.video_stream1)
-        self.video_track2 = Track(self.video_stream1)
+        self.video_track2 = Track(self.video_stream2)
         self.timeline = Timeline()
         self.timeline.addTrack(self.audio_track1)
         self.timeline.addTrack(self.audio_track2)
@@ -603,6 +604,7 @@ class TestTimelineAddFactory(TestCase):
         del self.audio_stream2
         del self.audio_stream3
         del self.video_stream1
+        del self.video_stream2
         del self.audio_track1
         del self.audio_track2
         del self.video_track1
