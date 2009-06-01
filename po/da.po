@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-05-31 13:19+0200\n"
-"PO-Revision-Date: 2009-05-21 21:29+0100\n"
+"POT-Creation-Date: 2009-06-01 11:25+0200\n"
+"PO-Revision-Date: 2009-05-31 20:01+0100\n"
 "Last-Translator: Per Kongstad <p_kongstad@op.pl>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "MIME-Version: 1.0\n"
@@ -54,17 +54,15 @@ msgstr ""
 "udvidelsesmoduler til GStreamer."
 
 #: ../pitivi/check.py:130
-#, fuzzy
 msgid "PyGTK doesn't have cairo support!"
-msgstr "PyGTK har ikke understøttelse til Cairo!"
+msgstr "PyGTK har ikke understøttelse til cairo!"
 
 #: ../pitivi/check.py:131
-#, fuzzy
 msgid ""
 "Please use a version of the GTK+ Python bindings built with cairo support."
 msgstr ""
 "Brug venligst en af Pythonbindingerne til GTK+ bygget med understøttelse til "
-"Cairo."
+"cairo."
 
 #: ../pitivi/check.py:133
 msgid "Could not initiate the video output plugins"
@@ -91,17 +89,14 @@ msgstr ""
 "or osssink)"
 
 #: ../pitivi/check.py:139
-#, fuzzy
 msgid "Could not import the cairo Python bindings"
-msgstr "Kunne ikke importere Pythonbindingerne til Cairo"
+msgstr "Kunne ikke importere Pythonbindingerne til cairo"
 
 #: ../pitivi/check.py:140
-#, fuzzy
 msgid "Make sure you have the cairo Python bindings installed"
-msgstr "Kontrollér at du har Pythonbindingerne til Cairo installeret"
+msgstr "Kontrollér at du har Pythonbindingerne til cairo installeret"
 
 #: ../pitivi/check.py:142
-#, fuzzy
 msgid "Could not import the libglade Python bindings"
 msgstr "Kunne ikke importere Pythonbindingerne til libglade"
 
@@ -110,17 +105,15 @@ msgid "Make sure you have the libglade Python bindings installed"
 msgstr "Kontrollér at du har Pythonbindingerne til lidglade installeret"
 
 #: ../pitivi/check.py:145
-#, fuzzy
 msgid "Could not import the goocanvas Python bindings"
 msgstr "Kunne ikke importere Pythonbindingerne til goocanvas"
 
 #: ../pitivi/check.py:146
-#, fuzzy
 msgid "Make sure you have the goocanvas Python bindings installed"
 msgstr "Kontrollér at du har Pythonbindingerne til goocanvas installeret"
 
 #: ../pitivi/check.py:149
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "You do not have a recent enough version of the GTK+ Python bindings "
 "(currently %s)"
@@ -128,7 +121,7 @@ msgstr ""
 "Du har en for gammel version af Pythonsbindingerne til GTK+ (nuværende %s)"
 
 #: ../pitivi/check.py:153
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "You do not have a recent enough version of the GStreamer Python bindings "
 "(currently %s)"
@@ -144,7 +137,7 @@ msgstr "Du har en for gammel version af GStreamer (nuværende %s)"
 #: ../pitivi/check.py:161
 #, fuzzy, python-format
 msgid ""
-"You do not have a recent enough version of the Cairo Python bindings "
+"You do not have a recent enough version of the cairo Python bindings "
 "(currently %s)"
 msgstr ""
 "Du har en for gammel version af Pythonsbindingerne til Cairo (nuværende %s)"
@@ -159,7 +152,6 @@ msgstr ""
 "(nuværende %s)"
 
 #: ../pitivi/check.py:168
-#, fuzzy
 msgid "Could not import the Zope interface module"
 msgstr "Kunne ikke importere grænseflademodulet til Zope"
 
@@ -233,7 +225,7 @@ msgid "Pipeline didn't want to go to PAUSED."
 msgstr "Kanalen ville ikke skifte til PAUSE."
 
 #: ../pitivi/discoverer.py:364
-#, fuzzy, python-format
+#, python-format
 msgid "An internal error occurred while analyzing this file: %s"
 msgstr "En intern fejl opstod ved analyse af denne fil: %s"
 
@@ -246,13 +238,14 @@ msgid "PiTiVi currently does not handle redirection files."
 msgstr "PiTiVi understøtter for nuværende ikke henvisningsfiler."
 
 #: ../pitivi/application.py:113
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
 "at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 msgstr ""
 "Der findes allerede en %s instans. Informér venligst udviklerne ved at "
-"udfylde en fejlrapport på http://bugzilla.gnome.org/"
+"udfylde en fejlrapport på http://bugzilla.gnome.org/enter_bug.cgi?"
+"product=pitivi"
 
 #: ../pitivi/application.py:167
 msgid "No location given."
@@ -275,15 +268,16 @@ msgid "New Project"
 msgstr "Nyt project"
 
 #: ../pitivi/application.py:340
-#, fuzzy
 msgid ""
 "\n"
 "  %prog [PROJECT_FILE]\n"
 "  %prog -i [-a] [MEDIA_FILE]..."
-msgstr "%prog [-p PROJEKT_FIL] [-a] [MEDIE_FIL]..."
+msgstr ""
+"\n"
+"  %prog [PROJEKT_FIL]\n"
+"  %prog -i [-a] [MEDIE_FIL]..."
 
 #: ../pitivi/application.py:344
-#, fuzzy
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
 "no project is given, %prog creates a new project.\n"
@@ -293,16 +287,15 @@ msgid ""
 "the end of the project timeline."
 msgstr ""
 "Starter videoredigeringen, valgfrit indlæser PROJEKT_FIL. Hvis intet\n"
-"projekt er angivet vil %prog oprette et nyt projekt. Yderligere argumenter "
-"bliver behandlet\n"
+"projekt er angivet vil %prog oprette et nyt projekt.\n"
+"Alternativt når -i er angivet bliver argumenter behandlet\n"
 "som klip til at blive importeret til projektet. Hvis -a er specificeret, vil "
 "disse klip\n"
 "også blive tilføjet til afslutningen af projektets tidslinje."
 
 #: ../pitivi/application.py:350
-#, fuzzy
 msgid "Import each MEDIA_FILE into the project."
-msgstr "Tilføj enhver MEDIE_FIL til tidslinje efter importen."
+msgstr "Tilføj enhver MEDIE_FIL til projektet."
 
 #: ../pitivi/application.py:352
 msgid "Add each MEDIA_FILE to timeline after importing."
@@ -362,11 +355,11 @@ msgstr "%s kan endnu ikke håndtere ikke lokale projekter"
 
 #: ../pitivi/formatters/format.py:108
 msgid "PiTiVi Native (XML)"
-msgstr ""
+msgstr "PiTiVi ren (XML)"
 
 #: ../pitivi/formatters/format.py:109
 msgid "Playlist format"
-msgstr ""
+msgstr "Afspillisteformat"
 
 #: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/videofxlist.py:53
 msgid "Name"
@@ -462,7 +455,7 @@ msgstr "Uddatafil:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:8
 msgid "Please choose an output file"
-msgstr ""
+msgstr "Vælg venligst en uddatafil"
 
 #: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:219
 msgid "Render project"
@@ -486,7 +479,6 @@ msgid "Rendering Complete"
 msgstr "Rendering gennemført"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:1
-#, fuzzy
 msgid ""
 "12 fps\n"
 "23.97 fps\n"
@@ -497,10 +489,10 @@ msgid ""
 "60 fps"
 msgstr ""
 "12 fps\n"
-"23,97 fps\n"
+"23.97 fps\n"
 "24 fps\n"
 "25 fps\n"
-"29,97 fps\n"
+"29.97 fps\n"
 "30 fps\n"
 "60 fps"
 
@@ -641,26 +633,25 @@ msgid "SVGA (800x600)"
 msgstr "SVGA (800x600)"
 
 #: ../pitivi/ui/exportsettingswidget.py:44
-#, fuzzy
 msgid "XGA (1024x768)"
-msgstr "WXGA (1024x768)"
+msgstr "XGA (1024x768)"
 
-#: ../pitivi/ui/exportsettingswidget.py:110
-#: ../pitivi/ui/exportsettingswidget.py:143
-#, fuzzy
+#. i18n: string for custom video width/height/framerate settings
+#. i18n: string for custom audio rate/depth/channels settings
+#: ../pitivi/ui/exportsettingswidget.py:111
+#: ../pitivi/ui/exportsettingswidget.py:145
 msgid "Custom"
-msgstr "Tilpas:"
+msgstr "Tilpas"
 
-#: ../pitivi/ui/exportsettingswidget.py:294
-#, fuzzy
+#: ../pitivi/ui/exportsettingswidget.py:296
 msgid "Raw Video"
-msgstr "Video: "
+msgstr "Rå video"
 
-#: ../pitivi/ui/exportsettingswidget.py:309
+#: ../pitivi/ui/exportsettingswidget.py:311
 msgid "Raw Audio"
-msgstr ""
+msgstr "Rå lyd"
 
-#: ../pitivi/ui/exportsettingswidget.py:417
+#: ../pitivi/ui/exportsettingswidget.py:419
 msgid "Export settings"
 msgstr "Eksportér indstillinger"
 
@@ -687,33 +678,30 @@ msgid "Properties for %s"
 msgstr "Egenskaber for %s"
 
 #: ../pitivi/ui/mainwindow.py:113
-#, fuzzy
 msgid "Render"
-msgstr "Rendering"
+msgstr "Rendér"
 
 #: ../pitivi/ui/mainwindow.py:114
 msgid "Split"
-msgstr ""
+msgstr "Split"
 
 #: ../pitivi/ui/mainwindow.py:115
 msgid "Unlink"
-msgstr ""
+msgstr "Aflink"
 
 #. Translators: This is an action, the title of a button
 #: ../pitivi/ui/mainwindow.py:117
 msgid "Link"
-msgstr ""
+msgstr "Link"
 
 #: ../pitivi/ui/mainwindow.py:118
-#, fuzzy
 msgid "Ungroup"
-msgstr "Afgruppér klip"
+msgstr "Afgruppér"
 
 #. Translators: This is an action, the title of a button
 #: ../pitivi/ui/mainwindow.py:120
-#, fuzzy
 msgid "Group"
-msgstr "Gruppér klip"
+msgstr "Gruppér"
 
 #: ../pitivi/ui/mainwindow.py:202
 msgid "Start Playback"
@@ -916,16 +904,15 @@ msgstr "Tilpas:"
 
 #: ../pitivi/ui/net_capture.glade.h:7
 msgid "HTTP / HTTPS"
-msgstr ""
+msgstr "HTTP / HTTPS"
 
 #: ../pitivi/ui/net_capture.glade.h:8
 msgid "Network stream video"
 msgstr "Netværkvideostream"
 
 #: ../pitivi/ui/net_capture.glade.h:9
-#, fuzzy
 msgid "Other protocol"
-msgstr "anden protokol"
+msgstr "Anden protokol"
 
 #: ../pitivi/ui/net_capture.glade.h:10
 msgid "Port"
@@ -945,11 +932,11 @@ msgstr "Protokol"
 
 #: ../pitivi/ui/net_capture.glade.h:14
 msgid "RTSP"
-msgstr ""
+msgstr "RTSP"
 
 #: ../pitivi/ui/net_capture.glade.h:15
 msgid "UDP / RDP"
-msgstr ""
+msgstr "UDP / RDP"
 
 #: ../pitivi/ui/net_capture.glade.h:16
 msgid "http://"
@@ -993,7 +980,6 @@ msgid "Category"
 msgstr "Kategori"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:271
-#, fuzzy
 msgid "Are you sure you want to remove the selected plugins?"
 msgstr "Er du sikker på, at du vil fjerne de valgte udvidelsesmoduler?"
 
@@ -1007,18 +993,17 @@ msgid "Cannot remove %s"
 msgstr "Kan ikke fjerne %s"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:321
-#, fuzzy
 msgid "Update the existing plugin?"
 msgstr "Opdatér det eksisterende udvidelsesmodul?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:324
-#, fuzzy, python-format
+#, python-format
 msgid ""
 "This plugin is already installed in your system.\n"
 "If you agree, version %(v1)s will be replaced with version %(v2)s"
 msgstr ""
 "Dette udvidelsesmodul er allerede installeret på dit system.\n"
-"Hvis du accepterer vil version %s blive erstattet med version %s"
+"Hvis du accepterer, vil version %(v1)s blive erstattet med version %(v2)s"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:327
 msgid "Duplicate plugin found"
@@ -1051,9 +1036,8 @@ msgid "Revert"
 msgstr "Fortryd"
 
 #: ../pitivi/ui/prefs.py:123
-#, fuzzy
 msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "<b>Nogle ændringer vil ikke være aktive, før du genstarter PiTiVi</b>"
+msgstr "Nogle ændringer vil ikke være aktive, før du genstarter PiTiVi"
 
 #: ../pitivi/ui/prefs.py:318
 msgid "Reset"
@@ -1064,31 +1048,31 @@ msgstr "Nulstil"
 #: ../pitivi/ui/trackobject.py:53 ../pitivi/ui/trackobject.py:64
 #: ../pitivi/ui/trackobject.py:75
 msgid "Appearance"
-msgstr ""
+msgstr "Udseende"
 
 #: ../pitivi/ui/previewer.py:57
 msgid "Thumbnail Gap (pixels)"
-msgstr ""
+msgstr "Mellemrum mellem miniaturer (pixel)"
 
 #: ../pitivi/ui/previewer.py:59
 msgid "The gap between thumbnails"
-msgstr ""
+msgstr "Mellemrummet mellem miniaturer"
 
 #: ../pitivi/ui/previewer.py:85
 msgid "Show Thumbnails (Video)"
-msgstr ""
+msgstr "Vis miniaturer (Video)"
 
 #: ../pitivi/ui/previewer.py:86
 msgid "Show Thumbnails on Video Clips"
-msgstr ""
+msgstr "Vis miniaturer på videoklip"
 
 #: ../pitivi/ui/previewer.py:96
 msgid "Show Waveforms (Audio)"
-msgstr ""
+msgstr "Vis bølgeformer (Lyd)"
 
 #: ../pitivi/ui/previewer.py:97
 msgid "Show Waveforms on Audio Clips"
-msgstr ""
+msgstr "Vis bølgeformer på lydklip"
 
 #: ../pitivi/ui/projecttabs.py:65
 msgid "Clip Library"
@@ -1115,7 +1099,6 @@ msgid "No Objects Selected"
 msgstr "Intet objekt valgt"
 
 #: ../pitivi/ui/screencast_manager.glade.h:1
-#, fuzzy
 msgid "Screencast"
 msgstr "Skærmoptagelse"
 
@@ -1232,12 +1215,10 @@ msgid "Importing clips..."
 msgstr "Importerer klippene..."
 
 #: ../pitivi/ui/sourcelist.py:747
-#, fuzzy
 msgid "Error(s) occurred while importing"
 msgstr "Der opstod fejl under import"
 
 #: ../pitivi/ui/sourcelist.py:748
-#, fuzzy
 msgid "An error occurred while importing"
 msgstr "En fejl opstod under import"
 
@@ -1296,15 +1277,16 @@ msgstr "Razor"
 
 #: ../pitivi/ui/timelinecanvas.py:48
 msgid "Behavior"
-msgstr ""
+msgstr "Opførsel"
 
 #: ../pitivi/ui/timelinecanvas.py:49
 msgid "Snap Distance (pixels)"
-msgstr ""
+msgstr "Retindafstand (snap) (pixel)"
 
 #: ../pitivi/ui/timelinecanvas.py:50
 msgid "Threshold distance (in pixels) used for all snapping operations"
 msgstr ""
+"Grænseværdi til afstand (i pixel) som bruges til alle retindhandlinger (snap)"
 
 #: ../pitivi/ui/timelinecontrols.py:17
 msgid "<b>Text:</b>"
@@ -1312,36 +1294,35 @@ msgstr "<b>Tekst:</b>"
 
 #: ../pitivi/ui/trackobject.py:43
 msgid "Clip Background (Video)"
-msgstr ""
+msgstr "Klipbaggrund (Video)"
 
 #: ../pitivi/ui/trackobject.py:44
 msgid "The background color for clips in video tracks."
-msgstr ""
+msgstr "Baggrundsfarven for klip i videospor."
 
 #: ../pitivi/ui/trackobject.py:54
 msgid "Clip Background (Audio)"
-msgstr ""
+msgstr "Klipbaggrund (Lyd)"
 
 #: ../pitivi/ui/trackobject.py:55
 msgid "The background color for clips in audio tracks."
-msgstr ""
+msgstr "Baggrundsfarven for klip i lydspor."
 
 #: ../pitivi/ui/trackobject.py:65
-#, fuzzy
 msgid "Selection Color"
-msgstr "Sektion"
+msgstr "Farvelægning af valgte"
 
 #: ../pitivi/ui/trackobject.py:66
 msgid "Selected clips will be tinted with this color."
-msgstr ""
+msgstr "Valgte klip vil blive farvelagt med denne farve."
 
 #: ../pitivi/ui/trackobject.py:76
 msgid "Clip Font"
-msgstr ""
+msgstr "Skrifttype til klip"
 
 #: ../pitivi/ui/trackobject.py:77
 msgid "The font to use for clip titles"
-msgstr ""
+msgstr "Skrifttype som bruges til kliptitler"
 
 #~ msgid ""
 #~ "Open project file specified by PROJECT instead of creating a\n"
