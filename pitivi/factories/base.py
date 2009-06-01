@@ -28,6 +28,7 @@ import gst
 from pitivi.log.loggable import Loggable
 from pitivi.elements.singledecodebin import SingleDecodeBin
 from pitivi.signalinterface import Signallable
+from pitivi.stream import match_stream_groups_map
 
 # FIXME: define a proper hierarchy
 class ObjectFactoryError(Exception):
@@ -228,15 +229,13 @@ class SourceFactory(ObjectFactory):
 
         compatible_stream = None
         self.debug("stream %r", output_stream)
-        if output_stream is not None:
-            self.debug("streams %r", self.output_streams)
-            for stream in self.output_streams:
-                if output_stream.isCompatible(stream):
-                    compatible_stream = stream
-                    break
 
-            if compatible_stream is None:
-                raise ObjectFactoryError('can not create stream')
+        if output_stream is not None:
+            stream_map = match_stream_groups_map([output_stream], self.output_streams)
+            if output_stream not in stream_map:
+                raise ObjectFactoryError("can not create stream")
+
+            compatible_stream = stream_map[output_stream]
 
         if self.max_bins != -1 and self.current_bins == self.max_bins:
             raise ObjectFactoryError('no bins available')
