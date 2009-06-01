@@ -107,6 +107,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
             fps = preset[3:5]
             videolist.append(["%s - %s" % (preset[0], fps_map[fps])])
 
+        # i18n: string for custom video width/height/framerate settings
         videolist.append([_("Custom")])
 
         # find out from the project settings which combo to take
@@ -140,6 +141,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         audiolist.clear()
         for preset in self.audio_presets:
             audiolist.append([preset[0]])
+        # i18n: string for custom audio rate/depth/channels settings
         audiolist.append([_("Custom")])
 
         idx = 0
