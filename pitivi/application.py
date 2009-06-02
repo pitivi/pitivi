@@ -92,9 +92,9 @@ class Pitivi(Loggable, Signallable):
 
         "new-project-loading" : ["project"],
         "new-project-loaded" : ["project"],
+        "new-project-failed" : ["uri", "exception"],
         "closing-project" : ["project"],
         "project-closed" : ["project"],
-        "new-project-failed" : ["reason", "uri"],
         "missing-uri" : ["formatter", "uri"],
         "shutdown" : None
         }
@@ -166,50 +166,74 @@ class Pitivi(Loggable, Signallable):
 
     def loadProject(self, uri):
         """ Load the given project file"""
-        # is the given filepath a valid pitivi project
         formatter = get_formatter_for_uri(uri)
         if not formatter:
-            self.emit("new-project-failed",
-                    _("Not a valid project file."), uri)
+            self.emit("new-project-failed", uri,
+                    Exception(_("Not a valid project file.")))
             return
 
         if not self._closeRunningProject():
-            self.emit("new-project-failed",
-                    _("Couldn't close current project"), uri)
+            self.emit("new-project-failed", uri,
+                    Exception(_("Couldn't close current project")))
             return
 
         project = formatter.newProject()
-        formatter.connect("missing-uri", self._missingURICb)
-        self.emit("new-project-loading", project)
-        self.info("Got a new project %r, calling loadProject", project)
-        try:
-            formatter.loadProject(uri, project)
-            self.current = project
-            self.emit("new-project-loaded", self.current)
-        except FormatterError, e:
-            self.handleException(e)
-            self.warning("error loading the project")
-            self.current = None
-            self.emit("new-project-failed",
-                _("There was an error loading the file."), uri)
-        finally:
-            formatter.disconnect_by_function(self._missingURICb)
+        self._connectToFormatter(formatter)
+        # start loading the project, from now on everything is async
+        formatter.loadProject(uri, project)
 
-    def _missingURICb(self, formatter, uri):
+    def _connectToFormatter(self, formatter):
+        formatter.connect("missing-uri", self._formatterMissingURICb)
+        formatter.connect("new-project-loading",
+                self._formatterNewProjectLoading)
+        formatter.connect("new-project-loaded",
+                self._formatterNewProjectLoaded)
+        formatter.connect("new-project-failed",
+                self._formatterNewProjectFailed)
+
+    def _disconnectFromFormatter(self, formatter):
+        formatter.disconnect_by_function(self._formatterMissingURICb)
+        formatter.disconnect_by_function(self._formatterNewProjectLoading)
+        formatter.disconnect_by_function(self._formatterNewProjectLoaded)
+        formatter.disconnect_by_function(self._formatterNewProjectFailed)
+
+    def _formatterNewProjectLoading(self, formatter, project):
+        self.emit("new-project-loading", project)
+
+    def _formatterNewProjectLoaded(self, formatter, project):
+        self._disconnectFromFormatter(formatter)
+
+        self.current = project
+        self.emit("new-project-loaded", project)
+
+    def _formatterNewProjectFailed(self, formatter, uri, exception):
+        self._disconnectFromFormatter(formatter)
+
+        self.handleException(exception)
+        self.warning("error loading the project")
+        self.current = None
+        self.emit("new-project-failed", uri, exception)
+
+    def _formatterMissingURICb(self, formatter, uri):
         self.emit("missing-uri", formatter, uri)
 
     def _closeRunningProject(self):
         """ close the current project """
         self.info("closing running project")
-        if self.current:
-            if self.current.hasUnsavedModifications():
-                if not self.current.save():
-                    return False
-            if self.emit("closing-project", self.current) == False:
+        if not self.current:
+            return True
+
+        if self.current.hasUnsavedModifications():
+            if not self.current.save():
                 return False
-            self.emit("project-closed", self.current)
-            self.current.release()
-            self.current = None
+
+        if self.emit("closing-project", self.current) == False:
+            return False
+
+        self.emit("project-closed", self.current)
+        self.current.release()
+        self.current = None
+
         return True
 
     def newBlankProject(self):

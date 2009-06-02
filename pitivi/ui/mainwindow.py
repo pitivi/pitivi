@@ -673,7 +673,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         return False
 
     @handler(app, "new-project-failed")
-    def _notProjectCb(self, unused_pitivi, reason, uri):
+    def _notProjectCb(self, unused_pitivi, uri, exception):
         # ungrey UI
         dialog = gtk.MessageDialog(self,
             gtk.DIALOG_MODAL,
@@ -682,7 +682,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             _("PiTiVi is unable to load file \"%s\"") %
                 uri)
         dialog.set_title(_("Error Loading File"))
-        dialog.set_property("secondary-text", reason)
+        dialog.set_property("secondary-text", str(exception))
         dialog.run()
         dialog.destroy()
         self.set_sensitive(True)

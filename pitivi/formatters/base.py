@@ -63,6 +63,9 @@ class Formatter(Signallable, Loggable):
     """
 
     __signals__ = {
+        "new-project-loading": ["project"],
+        "new-project-loaded": ["project"],
+        "new-project-failed": ["uri", "exception"],
         "missing-uri" : ["uri"]
         }
 
@@ -84,6 +87,12 @@ class Formatter(Signallable, Loggable):
         return self.ProjectClass()
 
     def loadProject(self, location, project=None):
+        try:
+            self._loadProjectUnchecked(location, project)
+        except FormatterError, e:
+            self.emit("new-project-failed", location, e)
+
+    def _loadProjectUnchecked(self, location, project=None):
         """
         Loads the project from the given location.
 
@@ -96,7 +105,14 @@ class Formatter(Signallable, Loggable):
         @return: The L{Project}
         @raise FormatterLoadError: If the file couldn't be properly loaded.
         """
+        if not project:
+            project = self.newProject()
+
+        project.uri = location
+
         self.log("location:%s, project:%r", location, project)
+        self.emit("new-project-loading", project)
+
         # check if the location is
         # .. a uri
         # .. a valid uri
@@ -108,9 +124,6 @@ class Formatter(Signallable, Loggable):
         # parse the format (subclasses)
         # FIXME : maybe have a convenience method for opening a location
         self._parse(location, project)
-
-        if not project:
-            project = self.newProject()
 
         self.debug("About to get used sources")
         # ask for all sources being used
@@ -151,8 +164,9 @@ class Formatter(Signallable, Loggable):
             self.project.loaded = False
             self.project.sources.addUris(uris)
 
+        self.emit("new-project-loaded", self.project)
+
         # finally return the project.
-        self.project.uri = location
         return self.project
 
     def saveProject(self, project, location, overwrite=False):
