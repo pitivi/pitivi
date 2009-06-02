@@ -164,43 +164,36 @@ class Pitivi(Loggable, Signallable):
 
     ## old implementations
 
-    def loadProject(self, uri=None, filepath=None):
-        """ Load the given file through it's uri or filepath """
-        self.info("uri:%s, filepath:%s", uri, filepath)
-        if not uri and not filepath:
-            self.emit("new-project-failed", _("No location given."),
-                uri)
-            return
-        if filepath:
-            if not os.path.exists(filepath):
-                self.emit("new-project-failed",
-                          _("File does not exist"), filepath)
-                return
-            uri = "file://" + filepath
+    def loadProject(self, uri):
+        """ Load the given project file"""
         # is the given filepath a valid pitivi project
         formatter = get_formatter_for_uri(uri)
         if not formatter:
-            self.emit("new-project-failed", _("Not a valid project file."),
-                uri)
+            self.emit("new-project-failed",
+                    _("Not a valid project file."), uri)
             return
-        # if current project, try to close it
-        if self._closeRunningProject():
-            project = formatter.newProject()
-            formatter.connect("missing-uri", self._missingURICb)
-            self.emit("new-project-loading", project)
-            self.info("Got a new project %r, calling loadProject", project)
-            try:
-                formatter.loadProject(uri, project)
-                self.current = project
-                self.emit("new-project-loaded", self.current)
-            except FormatterError, e:
-                self.handleException(e)
-                self.warning("error loading the project")
-                self.current = None
-                self.emit("new-project-failed",
-                    _("There was an error loading the file."), uri)
-            finally:
-                formatter.disconnect_by_function(self._missingURICb)
+
+        if not self._closeRunningProject():
+            self.emit("new-project-failed",
+                    _("Couldn't close current project"), uri)
+            return
+
+        project = formatter.newProject()
+        formatter.connect("missing-uri", self._missingURICb)
+        self.emit("new-project-loading", project)
+        self.info("Got a new project %r, calling loadProject", project)
+        try:
+            formatter.loadProject(uri, project)
+            self.current = project
+            self.emit("new-project-loaded", self.current)
+        except FormatterError, e:
+            self.handleException(e)
+            self.warning("error loading the project")
+            self.current = None
+            self.emit("new-project-failed",
+                _("There was an error loading the file."), uri)
+        finally:
+            formatter.disconnect_by_function(self._missingURICb)
 
     def _missingURICb(self, formatter, uri):
         self.emit("missing-uri", formatter, uri)
@@ -309,8 +302,8 @@ class InteractivePitivi(Pitivi):
 
         if not options.import_sources and args:
             # load a project file
-            project = args[0]
-            self.loadProject(filepath=project)
+            project = "file://%s" % os.path.abspath(args[0])
+            self.loadProject(project)
         else:
             # load the passed filenames, optionally adding them to the timeline
             # (useful during development)

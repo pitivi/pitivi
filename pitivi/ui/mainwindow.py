@@ -499,7 +499,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if response == gtk.RESPONSE_OK:
             uri = chooser.get_uri()
             uri = unquote(uri)
-            self.app.loadProject(uri = uri)
+            self.app.loadProject(uri)
 
         chooser.destroy()
         return True
