@@ -25,30 +25,11 @@ Runtime checks.
 
 import gtk
 import gst
-import sys
 
 from gettext import gettext as _
 
 from pitivi.instance import PiTiVi
 from pitivi.configure import APPNAME, PYGTK_REQ, PYGST_REQ, GST_REQ, GNONLIN_REQ, PYCAIRO_REQ
-
-def initial_checks():
-    """
-    do some basic check
-    If there is a problem, will display the error and exit.
-    """
-    res = _checks()
-    if not res:
-        return
-    message, detail = res
-    # TODO check if we're running graphically
-    dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
-                               buttons=gtk.BUTTONS_OK)
-    dialog.set_markup("<b>"+message+"</b>")
-    dialog.format_secondary_text(detail)
-    dialog.run()
-
-    sys.exit()
 
 def initiate_videosinks():
     """
@@ -115,7 +96,7 @@ def check_required_version(modulename):
             return [GNONLIN_REQ, gnlver]
     return [None, None]
 
-def _checks():
+def initial_checks():
     reg = gst.registry_get_default()
     if PiTiVi:
         return (_("%s is already running!") % APPNAME,

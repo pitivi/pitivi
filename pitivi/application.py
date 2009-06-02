@@ -22,9 +22,12 @@
 """
 Main application
 """
-import os
 import gobject
 gobject.threads_init()
+import gtk
+from optparse import OptionParser
+import os
+import sys
 
 from pitivi.pitivigstutils import patch_gst_python
 patch_gst_python()
@@ -46,6 +49,7 @@ from pitivi.log import log
 from pitivi.project import Project
 from pitivi.formatters.format import get_formatter_for_uri
 from pitivi.formatters.base import FormatterError
+from pitivi.ui.mainwindow import PitiviMainWindow
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
@@ -266,102 +270,114 @@ class Pitivi(Loggable, Signallable):
 
 
 class InteractivePitivi(Pitivi):
-    """ Class for PiTiVi instances that provide user interaction """
+    usage = _("""
+      %prog [PROJECT_FILE]
+      %prog -i [-a] [MEDIA_FILE]...""")
 
-    def __init__(self, sources=[], import_sources=False,
-            add_to_timeline=False, mainloop=None, *args, **kwargs):
-        from pitivi.ui.mainwindow import PitiviMainWindow
-        Pitivi.__init__(self, *args, **kwargs)
-        self._mainloop = None
-        self.mainloop = mainloop
+    description = _("""Starts the video editor, optionally loading PROJECT_FILE. If
+    no project is given, %prog creates a new project.
+    Alternatively, when -i is specified, arguments are treated as clips to be
+    imported into the project. If -a is specified, these clips will also be added to
+    the end of the project timeline.""")
 
-        self._gui = PitiviMainWindow(self)
-        self._gui.show()
+    import_help = _("""Import each MEDIA_FILE into the project.""")
 
-        if not import_sources and sources:
-            project = sources[0]
+    add_help = _("""Add each MEDIA_FILE to timeline after importing.""")
+
+    def run(self, argv):
+        # check for dependencies
+        if not self._checkDependencies():
+            return
+
+        # create the ui
+        self.mainloop = gobject.MainLoop()
+        self.gui = PitiviMainWindow(self)
+        self.gui.show()
+
+        # parse cmdline options
+        parser = self._createOptionParser()
+        options, args = parser.parse_args(argv)
+
+        # validate options
+        if not options.import_sources and options.add_to_timeline:
+            parser.error("-a requires -i")
+            return
+
+        if not options.import_sources and len(args) > 1:
+            parser.error("invalid arguments")
+            return
+
+        if not options.import_sources and args:
+            # load a project file
+            project = args[0]
             self.loadProject(filepath=project)
         else:
-            uris = ["file://" + os.path.abspath(path) for path in sources]
-            if add_to_timeline:
-                self._uris = uris
-                self._duration = self.current.timeline.duration
-                self.current.sources.connect("file_added", self._addSourceCb)
-                self.current.sources.connect("discovery-error", self._discoveryErrorCb)
+            # load the passed filenames, optionally adding them to the timeline
+            # (useful during development)
+            uris = ["file://" + os.path.abspath(path) for path in args]
+            if options.add_to_timeline:
+                self.current.sources.connect("file_added",
+                        self._addSourceCb, uris)
+                self.current.sources.connect("discovery-error",
+                        self._discoveryErrorCb, uris)
             self.current.sources.addUris(uris)
 
-    def _addSourceCb(self, unused_sourcelist, factory):
-        if factory.name in self._uris:
-            self._uris.remove(factory.name)
-            if not self._uris:
-                self.current.sources.disconnect_by_function(self._addSourceCb)
+        # run the mainloop
+        self.mainloop.run()
 
-            t = self.current.timeline.addSourceFactory(factory)
-            t.start = self._duration
-            self._duration += t.duration
-
-    def _discoveryErrorCb(self, sourcelist, uri, error, debug):
-        if uri in self._uris:
-            self._uris.remove(uri)
-            if not self._uris:
-                self.current.sources.disconnect_by_function(self._discoveryErrorCb)
-
-    # properties
-
-    def _get_mainloop(self):
-        return self._mainloop
-
-    def _set_mainloop(self, mainloop):
-        if self._mainloop != None:
-            raise Exception("Mainloop already set !")
-        if mainloop == None:
-            mainloop = gobject.MainLoop()
-        self._mainloop = mainloop
-    mainloop = property(_get_mainloop, _set_mainloop,
-                        doc="The MainLoop running the program")
-
-    @property
-    def gui(self):
-        """The user interface"""
-        return self._gui
-
-    # PiTiVi method overrides
     def shutdown(self):
         if Pitivi.shutdown(self):
-            if self.mainloop:
-                self.mainloop.quit()
+            self.mainloop.quit()
             return True
+
         return False
 
-    def run(self):
-        if self.mainloop:
-            self.mainloop.run()
+    def _createOptionParser(self):
+        parser = OptionParser(self.usage, description=self.description)
+        parser.add_option("-i", "--import", help=self.import_help,
+                dest="import_sources", action="store_true", default=False)
+        parser.add_option("-a", "--add-to-timeline", help=self.add_help,
+                action="store_true", default=False)
 
-usage = _("""
-  %prog [PROJECT_FILE]
-  %prog -i [-a] [MEDIA_FILE]...""")
+        return parser
 
-description = _("""Starts the video editor, optionally loading PROJECT_FILE. If
-no project is given, %prog creates a new project.
-Alternatively, when -i is specified, arguments are treated as clips to be
-imported into the project. If -a is specified, these clips will also be added to
-the end of the project timeline.""")
 
-import_help = _("""Import each MEDIA_FILE into the project.""")
+    def _checkDependencies(self):
+        missing_deps = initial_checks()
+        if missing_deps:
+            message, detail = missing_deps
+            dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
+                                       buttons=gtk.BUTTONS_OK)
+            dialog.set_markup("<b>"+message+"</b>")
+            dialog.format_secondary_text(detail)
+            dialog.run()
 
-add_help = _("""Add each MEDIA_FILE to timeline after importing.""")
+            return False
+
+        return True
+
+    def _addSourceCb(self, unused_sourcelist, factory, startup_uris):
+        if self._maybePopStartupUri(startup_uris, factory.uri):
+            self.current.timeline.addSourceFactory(factory)
+
+    def _discoveryErrorCb(self, sourcelist, uri, error, debug, startup_uris):
+        self._maybePopStartupUri(startup_uris, uri)
+
+    def _maybePopStartupUri(self, startup_uris, uri):
+        try:
+            startup_uris.remove(uri)
+        except ValueError:
+            # uri is not a startup uri. This can happen if the user starts
+            # importing sources while sources specified at startup are still
+            # being processed. In practice this will never happen.
+            return False
+
+        if not startup_uris:
+            self.current.sources.disconnect_by_function(self._addSourceCb)
+            self.current.sources.disconnect_by_function(self._discoveryErrorCb)
+
+        return True
 
 def main(argv):
-    """ Start PiTiVi ! """
-    from optparse import OptionParser
-    initial_checks()
-    parser = OptionParser(usage, description=description)
-    parser.add_option("-i", "--import", help=import_help,
-            dest="import_sources", action="store_true", default=False)
-    parser.add_option("-a", "--add-to-timeline", help=add_help, 
-            action="store_true", default=False)
-    options, args = parser.parse_args(argv)
-    ptv = InteractivePitivi(sources=args[1:],
-            import_sources=options.import_sources,
-            add_to_timeline=options.add_to_timeline)
-    ptv.run()
+    ptv = InteractivePitivi()
+    ptv.run(sys.argv[1:])
