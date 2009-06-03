@@ -471,7 +471,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 ## Toolbar/Menu actions callback
 
     def _newProjectMenuCb(self, unused_action):
-        self.app.newBlankProject()
+        self.app.projectManager.newBlankProject()
 
     def _openProjectCb(self, unused_action):
 
@@ -499,7 +499,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if response == gtk.RESPONSE_OK:
             uri = chooser.get_uri()
             uri = unquote(uri)
-            self.app.loadProject(uri)
+            self.app.projectManager.loadProject(uri)
 
         chooser.destroy()
         return True

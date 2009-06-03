@@ -46,10 +46,8 @@ from pitivi.pluginmanager import PluginManager
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.log import log
-from pitivi.project import Project
-from pitivi.formatters.format import get_formatter_for_uri
-from pitivi.formatters.base import FormatterError
 from pitivi.ui.mainwindow import PitiviMainWindow
+from pitivi.projectmanager import ProjectManager
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
@@ -131,104 +129,10 @@ class Pitivi(Loggable, Signallable):
             self.settings.get_plugin_settings_path())
         self.effects = Magician()
         self.deviceprobe = get_probe()
-        self.newBlankProject()
 
-    #{ Project-related methods
-
-    def loadProject(self, uri):
-        """ Load the given project file"""
-        formatter = get_formatter_for_uri(uri)
-        if not formatter:
-            self.emit("new-project-failed", uri,
-                    Exception(_("Not a valid project file.")))
-            return
-
-        if not self._closeRunningProject():
-            self.emit("new-project-failed", uri,
-                    Exception(_("Couldn't close current project")))
-            return
-
-        project = formatter.newProject()
-        self._connectToFormatter(formatter)
-        # start loading the project, from now on everything is async
-        formatter.loadProject(uri, project)
-
-    def _connectToFormatter(self, formatter):
-        formatter.connect("missing-uri", self._formatterMissingURICb)
-        formatter.connect("new-project-loading",
-                self._formatterNewProjectLoading)
-        formatter.connect("new-project-loaded",
-                self._formatterNewProjectLoaded)
-        formatter.connect("new-project-failed",
-                self._formatterNewProjectFailed)
-
-    def _disconnectFromFormatter(self, formatter):
-        formatter.disconnect_by_function(self._formatterMissingURICb)
-        formatter.disconnect_by_function(self._formatterNewProjectLoading)
-        formatter.disconnect_by_function(self._formatterNewProjectLoaded)
-        formatter.disconnect_by_function(self._formatterNewProjectFailed)
-
-    def _formatterNewProjectLoading(self, formatter, project):
-        self.emit("new-project-loading", project)
-
-    def _formatterNewProjectLoaded(self, formatter, project):
-        self._disconnectFromFormatter(formatter)
-
-        self.current = project
-        self.emit("new-project-loaded", project)
-
-    def _formatterNewProjectFailed(self, formatter, uri, exception):
-        self._disconnectFromFormatter(formatter)
-
-        self.handleException(exception)
-        self.warning("error loading the project")
-        self.current = None
-        self.emit("new-project-failed", uri, exception)
-
-    def _formatterMissingURICb(self, formatter, uri):
-        self.emit("missing-uri", formatter, uri)
-
-    def _closeRunningProject(self):
-        """ close the current project """
-        self.info("closing running project")
-        if not self.current:
-            return True
-
-        if self.current.hasUnsavedModifications():
-            if not self.current.save():
-                return False
-
-        if self.emit("closing-project", self.current) == False:
-            return False
-
-        self.emit("project-closed", self.current)
-        self.current.release()
-        self.current = None
-
-        return True
-
-    def newBlankProject(self):
-        """ start up a new blank project """
-        # if there's a running project we must close it
-        if self._closeRunningProject():
-            project = Project(_("New Project"))
-            self.emit("new-project-loading", project)
-            self.current = project
-
-            from pitivi.stream import AudioStream, VideoStream
-            import gst
-            from pitivi.timeline.track import Track
-
-            # FIXME: this should not be hard-coded
-            # add default tracks for a new project
-            video = VideoStream(gst.Caps('video/x-raw-rgb; video/x-raw-yuv'))
-            track = Track(video)
-            project.timeline.addTrack(track)
-            audio = AudioStream(gst.Caps('audio/x-raw-int; audio/x-raw-float'))
-            track = Track(audio)
-            project.timeline.addTrack(track)
-
-            self.emit("new-project-loaded", self.current)
+        self.projectManager = ProjectManager()
+        self._connectToProjectManager(self.projectManager)
+        self.projectManager.newBlankProject()
 
     #{ Shutdown methods
 
@@ -242,7 +146,7 @@ class Pitivi(Loggable, Signallable):
         self.debug("shutting down")
         # we refuse to close if we're running a user interface and the user
         # doesn't want us to close the current project.
-        if not self._closeRunningProject():
+        if self.projectManager.current and not self.projectManager.closeRunningProject():
             self.warning("Not closing since running project doesn't want to close")
             return False
         self.threads.stopAllThreads()
@@ -255,6 +159,35 @@ class Pitivi(Loggable, Signallable):
         return True
 
     #}
+
+    def _connectToProjectManager(self, projectManager):
+        projectManager.connect("new-project-loading",
+                self._projectManagerNewProjectLoading)
+        projectManager.connect("new-project-loaded",
+                self._projectManagerNewProjectLoaded)
+        projectManager.connect("new-project-failed",
+                self._projectManagerNewProjectFailed)
+        projectManager.connect("closing-project",
+                self._projectManagerClosingProject)
+        projectManager.connect("project-closed",
+                self._projectManagerProjectClosed)
+
+    def _projectManagerNewProjectLoading(self, projectManager, project):
+        self.emit("new-project-loading", project)
+
+    def _projectManagerNewProjectLoaded(self, projectManager, project):
+        self.current = project
+        self.emit("new-project-loaded", project)
+
+    def _projectManagerNewProjectFailed(self, projectManager, uri, exception):
+        self.emit("new-project-failed", uri, exception)
+
+    def _projectManagerClosingProject(self, projectManager, project):
+        return self.emit("closing-project", project)
+
+    def _projectManagerProjectClosed(self, projectManager, project):
+        self.current = None
+        self.emit("project-closed", project)
 
 
 class InteractivePitivi(Pitivi):
@@ -298,7 +231,7 @@ class InteractivePitivi(Pitivi):
         if not options.import_sources and args:
             # load a project file
             project = "file://%s" % os.path.abspath(args[0])
-            self.loadProject(project)
+            self.projectManager.loadProject(project)
         else:
             # load the passed filenames, optionally adding them to the timeline
             # (useful during development)
