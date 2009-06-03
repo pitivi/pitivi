@@ -135,35 +135,6 @@ class Pitivi(Loggable, Signallable):
 
     #{ Project-related methods
 
-    def addProject(self, project=None, uri=None):
-        """ Add the given L{Project} to the list of projects controlled
-        by the application.
-
-        If no project is given, then the application will attempt to load
-        the project contained at the given C{URI}.
-
-        The 'C{new-project}' signal will be emitted if the project is properly
-        added.
-
-        @arg project: The project to add.
-        @type project: L{Project}
-        @arg uri: The location of the project to load.
-        @type uri: C{URI}
-        """
-        if project == None and uri == None:
-            raise Exception("No project or URI given")
-        if uri != None:
-            if project != None:
-                raise Exception("Only provide either a project OR a URI")
-            project = load_project(uri)
-
-        if project in self.projects:
-            raise Exception("Project already controlled")
-        self.projects.append(project)
-        self.emit("new-project", project)
-
-    ## old implementations
-
     def loadProject(self, uri):
         """ Load the given project file"""
         formatter = get_formatter_for_uri(uri)
