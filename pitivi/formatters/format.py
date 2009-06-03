@@ -117,8 +117,6 @@ def get_formatter_for_uri(uri):
     @param uri: The location of the project file
     @return: an instance of a Formatter, or None
     """
-    from pitivi.formatters.etree import ElementTreeFormatter
-
     for klass, name, exts in list_formats():
         if klass.canHandle(uri):
             return klass()
