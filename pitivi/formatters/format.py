@@ -27,29 +27,7 @@ from gettext import gettext as _
 
 # FIXME : We need a registry of all available formatters
 
-def load_project(uri, formatter=None, missinguricallback=None):
-    """
-    Load the project from the given location.
-
-    If specified, use the given formatter.
-
-    @type uri: L{str}
-    @param uri: The location of the project. Needs to be an
-    absolute URI.
-    @type formatter: L{Formatter}
-    @param formatter: If specified, try loading the project with that
-    L{Formatter}. If not specified, will try all available L{Formatter}s.
-    @raise FormatterLoadError: If the location couldn't be properly loaded.
-    @param missinguricallback: A callback that will be used if some
-    files to load can't be found anymore. The callback shall call the
-    formatter's addMapping() method with the moved location.
-    @type missinguricallback: C{callable}
-    @return: The project. The caller needs to ensure the loading is
-    finished before using it. See the 'loaded' property and signal of
-    L{Project}.
-    @rtype: L{Project}.
-    """
-    raise NotImplementedError
+_formatters = []
 
 def save_project(project, uri, formatter=None, overwrite=False):
     """
@@ -90,7 +68,7 @@ def can_handle_location(uri):
     @rtype: L{bool}
     """
 
-    for klass, name, exts in list_formats():
+    for klass, name, exts in _formatters:
         if klass.canHandle(uri):
             return True
 
@@ -102,12 +80,7 @@ def list_formats():
     file formats, where name is a user-readable name, and extensions is a
     sequence of extensions for this format ('.' omitted).
     """
-    from pitivi.formatters.etree import ElementTreeFormatter
-    from pitivi.formatters.playlist import PlaylistFormatter
-    return [
-        (ElementTreeFormatter, _("PiTiVi Native (XML)"), ('xptv',)),
-        (PlaylistFormatter, _("Playlist format"), ('pls', ))
-        ]
+    return _formatters
 
 def get_formatter_for_uri(uri):
     """
@@ -117,6 +90,17 @@ def get_formatter_for_uri(uri):
     @param uri: The location of the project file
     @return: an instance of a Formatter, or None
     """
-    for klass, name, exts in list_formats():
+    for klass, name, exts in _formatters:
         if klass.canHandle(uri):
             return klass()
+
+def register_formatter(klass, name, extensions):
+    _formatters.append((klass, name, extensions))
+
+# register known formatters
+
+from pitivi.formatters.etree import ElementTreeFormatter
+from pitivi.formatters.playlist import PlaylistFormatter
+
+register_formatter(ElementTreeFormatter, _("PiTiVi Native (XML)"), ('xptv',))
+register_formatter(PlaylistFormatter, _("Playlist format"), ('pls', ))

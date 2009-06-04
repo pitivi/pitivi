@@ -39,7 +39,6 @@ from pitivi.settings import ExportSettings
 from pitivi.configure import APPNAME
 from pitivi.signalinterface import Signallable
 from pitivi.action import ViewAction
-from pitivi.formatters.format import save_project
 
 class ProjectError(Exception):
     """Project error"""
@@ -194,6 +193,9 @@ class Project(Signallable, Loggable):
         @raises ProjectSaveLoadError: If no uri was provided and none was set
         previously.
         """
+        # import here to break circular import
+        from pitivi.formatters.format import save_project
+
         self.log("saving...")
         location = location or self.uri
 
