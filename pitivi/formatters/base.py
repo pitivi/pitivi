@@ -33,7 +33,7 @@ from pitivi.factories.base import SourceFactory
 class FormatterError(Exception):
     pass
 
-class FormatterURIError(Exception):
+class FormatterURIError(FormatterError):
     """An error occured with a URI"""
 
 class FormatterLoadError(FormatterError):
@@ -63,7 +63,6 @@ class Formatter(Signallable, Loggable):
     """
 
     __signals__ = {
-        "new-project-loading": ["project"],
         "new-project-loaded": ["project"],
         "new-project-failed": ["uri", "exception"],
         "missing-uri" : ["uri"]
@@ -92,6 +91,15 @@ class Formatter(Signallable, Loggable):
         except FormatterError, e:
             self.emit("new-project-failed", location, e)
 
+    def _validateUri(self, uri):
+        # check if the location is
+        # .. a uri
+        # .. a valid uri
+        # .. a reachable valid uri
+        # FIXME : Allow subclasses to handle this for 'online' (non-file://) URI
+        if not uri_is_valid(uri) or not uri_is_reachable(uri):
+            raise FormatterURIError()
+
     def _loadProjectUnchecked(self, location, project=None):
         """
         Loads the project from the given location.
@@ -111,15 +119,7 @@ class Formatter(Signallable, Loggable):
         project.uri = location
 
         self.log("location:%s, project:%r", location, project)
-        self.emit("new-project-loading", project)
-
-        # check if the location is
-        # .. a uri
-        # .. a valid uri
-        # .. a reachable valid uri
-        # FIXME : Allow subclasses to handle this for 'online' (non-file://) URI
-        if not uri_is_valid(location) or not uri_is_reachable(location):
-            raise FormatterURIError()
+        self._validateUri(location)
 
         # parse the format (subclasses)
         # FIXME : maybe have a convenience method for opening a location

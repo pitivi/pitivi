@@ -88,7 +88,7 @@ class Pitivi(Loggable, Signallable):
     __signals__ = {
         "new-project" : ["project"],
 
-        "new-project-loading" : ["project"],
+        "new-project-loading" : ["uri"],
         "new-project-loaded" : ["project"],
         "new-project-failed" : ["uri", "exception"],
         "closing-project" : ["project"],
@@ -172,8 +172,8 @@ class Pitivi(Loggable, Signallable):
         projectManager.connect("project-closed",
                 self._projectManagerProjectClosed)
 
-    def _projectManagerNewProjectLoading(self, projectManager, project):
-        self.emit("new-project-loading", project)
+    def _projectManagerNewProjectLoading(self, projectManager, uri):
+        self.emit("new-project-loading", uri)
 
     def _projectManagerNewProjectLoaded(self, projectManager, project):
         self.current = project

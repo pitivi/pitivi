@@ -26,19 +26,21 @@ import gst
 
 from pitivi.project import Project
 from pitivi.formatters.format import get_formatter_for_uri
+from pitivi.formatters.base import FormatterLoadError
+
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.timeline.track import Track
 
-
 class ProjectManager(Signallable, Loggable):
     __signals__ = {
-        "new-project-loading": ["project"],
-        "new-project-loaded": ["project"],
+        "new-project-loading": ["uri"],
         "new-project-failed": ["uri", "exception"],
+        "new-project-loaded": ["project"],
         "closing-project": ["project"],
         "project-closed": ["project"],
+        "missing-uri": ["formatter", "uri"],
     }
 
     def __init__(self):
@@ -49,15 +51,17 @@ class ProjectManager(Signallable, Loggable):
 
     def loadProject(self, uri):
         """ Load the given project file"""
-        formatter = get_formatter_for_uri(uri)
+        self.emit("new-project-loading", uri)
+
+        formatter = self._getFormatterForUri(uri)
         if not formatter:
             self.emit("new-project-failed", uri,
-                    Exception(_("Not a valid project file.")))
+                    FormatterLoadError(_("Not a valid project file.")))
             return
 
         if not self.closeRunningProject():
             self.emit("new-project-failed", uri,
-                    Exception(_("Couldn't close current project")))
+                    FormatterLoadError(_("Couldn't close current project")))
             return
 
         project = formatter.newProject()
@@ -68,6 +72,9 @@ class ProjectManager(Signallable, Loggable):
     def closeRunningProject(self):
         """ close the current project """
         self.info("closing running project")
+
+        if self.current is None:
+            return True
 
         if self.current.hasUnsavedModifications():
             if not self.current.save():
@@ -88,8 +95,9 @@ class ProjectManager(Signallable, Loggable):
         if self.current is not None and not self.closeRunningProject():
             return
 
+        # we don't have an URI here, None means we're loading a new project
+        self.emit("new-project-loading", None)
         project = Project(_("New Project"))
-        self.emit("new-project-loading", project)
         self.current = project
 
         # FIXME: this should not be hard-coded
@@ -104,10 +112,11 @@ class ProjectManager(Signallable, Loggable):
         self.emit("new-project-loaded", self.current)
 
 
+    def _getFormatterForUri(self, uri):
+        return get_formatter_for_uri(uri)
+
     def _connectToFormatter(self, formatter):
         formatter.connect("missing-uri", self._formatterMissingURICb)
-        formatter.connect("new-project-loading",
-                self._formatterNewProjectLoading)
         formatter.connect("new-project-loaded",
                 self._formatterNewProjectLoaded)
         formatter.connect("new-project-failed",
@@ -115,12 +124,8 @@ class ProjectManager(Signallable, Loggable):
 
     def _disconnectFromFormatter(self, formatter):
         formatter.disconnect_by_function(self._formatterMissingURICb)
-        formatter.disconnect_by_function(self._formatterNewProjectLoading)
         formatter.disconnect_by_function(self._formatterNewProjectLoaded)
         formatter.disconnect_by_function(self._formatterNewProjectFailed)
-
-    def _formatterNewProjectLoading(self, formatter, project):
-        self.emit("new-project-loading", project)
 
     def _formatterNewProjectLoaded(self, formatter, project):
         self._disconnectFromFormatter(formatter)
@@ -137,4 +142,4 @@ class ProjectManager(Signallable, Loggable):
         self.emit("new-project-failed", uri, exception)
 
     def _formatterMissingURICb(self, formatter, uri):
-        self.emit("missing-uri", formatter, uri)
+        return self.emit("missing-uri", formatter, uri)

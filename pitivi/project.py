@@ -24,28 +24,18 @@
 Project class
 """
 
-import os.path
-import gst
-import traceback
-from gettext import gettext as _
 from pitivi.log.loggable import Loggable
 from pitivi.timeline.timeline import Timeline
-from pitivi.timeline.track import Track
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.pipeline import Pipeline
 from pitivi.factories.timeline import TimelineSourceFactory
 from pitivi.sourcelist import SourceList
 from pitivi.settings import ExportSettings
-from pitivi.configure import APPNAME
 from pitivi.signalinterface import Signallable
 from pitivi.action import ViewAction
 
 class ProjectError(Exception):
     """Project error"""
-    pass
-
-class ProjectSaveLoadError(ProjectError):
-    """Error while loading/saving project"""
     pass
 
 class Project(Signallable, Loggable):
@@ -189,18 +179,16 @@ class Project(Signallable, Loggable):
         @type location: C{URI}
         @param overwrite: Whether to overwrite existing location.
         @type overwrite: C{bool}
-
-        @raises ProjectSaveLoadError: If no uri was provided and none was set
-        previously.
         """
         # import here to break circular import
         from pitivi.formatters.format import save_project
+        from pitivi.formatters.base import FormatterError
 
         self.log("saving...")
         location = location or self.uri
 
         if location == None:
-            raise ProjectSaveLoadError("Location unknown")
+            raise FormatterError("Location unknown")
 
         save_project(self, location or self.uri, self.format,
                      overwrite)

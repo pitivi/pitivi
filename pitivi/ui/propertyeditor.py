@@ -87,7 +87,7 @@ class PropertyEditor(gtk.ScrolledWindow):
 
     instance = receiver()
 
-    @handler(instance, "new-project-loading")
+    @handler(instance, "new-project-loaded")
     def _newProjectLoading(self, unused_inst, project):
         self.timeline = project.timeline
 
