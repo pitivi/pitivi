@@ -140,7 +140,7 @@ class TestProjectManager(TestCase):
 
             def _fillTimeline(self):
                 pass
-        self.manager._getFormatterForUri = lambda uri: FailFormatter()
+        self.manager._getFormatterForUri = lambda uri: MissingUriFormatter()
 
         uri = "file:///Untitled.xptv"
         self.manager.loadProject(uri)
@@ -170,7 +170,7 @@ class TestProjectManager(TestCase):
 
             def _fillTimeline(self):
                 pass
-        self.manager._getFormatterForUri = lambda uri: FailFormatter()
+        self.manager._getFormatterForUri = lambda uri: EmptyFormatter()
 
         uri = "file:///Untitled.xptv"
         self.manager.loadProject(uri)
@@ -185,4 +185,8 @@ class TestProjectManager(TestCase):
         self.failUnlessEqual(name, "new-project-loaded")
         project = args[0]
         self.failUnlessEqual(uri, project.uri)
+
+    def testCloseRunningProjectNoProject(self):
+        self.failUnless(self.manager.closeRunningProject())
+        self.failIf(self.signals)
 
