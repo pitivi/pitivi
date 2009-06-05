@@ -126,7 +126,7 @@ class TestProjectManager(TestCase):
         self.failUnless(isinstance(exception, FormatterError))
 
     def testLoadProjectMissingUri(self):
-        class FailFormatter(Formatter):
+        class MissingUriFormatter(Formatter):
             def _validateUri(self, uri):
                 pass
 
@@ -158,7 +158,7 @@ class TestProjectManager(TestCase):
 
 
     def testLoadProjectLoaded(self):
-        class FailFormatter(Formatter):
+        class EmptyFormatter(Formatter):
             def _validateUri(self, uri):
                 pass
 
