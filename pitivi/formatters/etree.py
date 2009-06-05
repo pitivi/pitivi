@@ -535,7 +535,7 @@ class ElementTreeFormatter(Formatter):
         f.write(tostring(root))
         f.close()
 
-    def _parse(self, location, project=None):
+    def _loadProject(self, location, project=None):
         self.debug("location:%s, project:%r", location, project)
         # open the given location
         self._context.rootelement = parse(location.split('://', 1)[1])

@@ -119,7 +119,7 @@ class TestProjectManager(TestCase):
             def _validateUri(self, uri):
                 pass
 
-            def _parse(self, location, project=None):
+            def _loadProject(self, location, project=None):
                 raise FormatterError()
         self.manager._getFormatterForUri = lambda uri: FailFormatter()
 
@@ -143,7 +143,7 @@ class TestProjectManager(TestCase):
             def _validateUri(self, uri):
                 pass
 
-            def _parse(self, location, project=None):
+            def _loadProject(self, location, project=None):
                 pass
 
             def _getSources(self):
@@ -175,7 +175,7 @@ class TestProjectManager(TestCase):
             def _validateUri(self, uri):
                 pass
 
-            def _parse(self, location, project=None):
+            def _loadProject(self, location, project=None):
                 pass
 
             def _getSources(self):

@@ -41,7 +41,7 @@ class PlaylistFormatter(LoadOnlyFormatter):
             return 'file://' + ln.strip()
         return 'file://' + os.path.join(self._basedir, ln.strip())
 
-    def _parse(self, location, project=None):
+    def _loadProject(self, location, project=None):
         path = location.split('file://', 1)[1]
         self._basedir = os.path.dirname(path)
         res = []

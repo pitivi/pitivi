@@ -123,7 +123,7 @@ class Formatter(Signallable, Loggable):
 
         # parse the format (subclasses)
         # FIXME : maybe have a convenience method for opening a location
-        self._parse(location, project)
+        self._loadProject(location, project)
 
         self.debug("About to get used sources")
         # ask for all sources being used
@@ -235,14 +235,14 @@ class Formatter(Signallable, Loggable):
         The returned locations (C{URI}) must be valid uri. Subclasses can
         call L{validateSourceURI} to make sure the C{URI} is valid.
 
-        @precondition: L{_parse} will be called before, so subclasses can
+        @precondition: L{_loadProject} will be called before, so subclasses can
         use any information they extracted during that call.
         @returns: A list of sources used in the given project.
         @precondition: self.project is not available at this point.
         """
         raise NotImplementedError
 
-    def _parse(self, location, project=None):
+    def _loadProject(self, location, project=None):
         """
         Open and parse the given location.
 
@@ -265,7 +265,7 @@ class Formatter(Signallable, Loggable):
 
         To be implemented by subclasses.
 
-        @precondition: L{_parse} and L{_getSources} will have been called
+        @precondition: L{_loadProject} and L{_getSources} will have been called
         before, and all the sources will have been discovered.
         @precondition: self.project is valid and exists when this method
         is called.

@@ -64,10 +64,9 @@ class ProjectManager(Signallable, Loggable):
                     FormatterLoadError(_("Couldn't close current project")))
             return
 
-        project = formatter.newProject()
         self._connectToFormatter(formatter)
         # start loading the project, from now on everything is async
-        formatter.loadProject(uri, project)
+        formatter.loadProject(uri)
 
     def closeRunningProject(self):
         """ close the current project """
