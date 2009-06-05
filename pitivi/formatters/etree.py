@@ -31,9 +31,10 @@ from pitivi.factories.base import SourceFactory
 from pitivi.factories.file import FileSourceFactory
 from pitivi.timeline.track import Track
 from pitivi.timeline.timeline import TimelineObject
-from pitivi.formatters.base import Formatter
+from pitivi.formatters.base import Formatter, FormatterError
 from pitivi.utils import get_filesystem_encoding
 from pitivi.settings import ExportSettings
+from pitivi.stream import match_stream_groups_map
 
 version = "0.1"
 
@@ -226,10 +227,17 @@ class ElementTreeFormatter(Formatter):
         return element
 
     def _loadSources(self):
+        try:
+            return self._sources
+        except AttributeError:
+            pass
+
         sources = self.factoriesnode.find("sources")
         res = []
         for src in sources:
             res.append(self._loadFactory(src))
+
+        self._sources = res
         return res
 
     def _serializeDict(self, element, dict):
@@ -535,7 +543,7 @@ class ElementTreeFormatter(Formatter):
         f.write(tostring(root))
         f.close()
 
-    def _loadProject(self, location, project=None):
+    def _loadProject(self, location, project):
         self.debug("location:%s, project:%r", location, project)
         # open the given location
         self._context.rootelement = parse(location.split('://', 1)[1])
@@ -544,6 +552,90 @@ class ElementTreeFormatter(Formatter):
         self._settingsnode = self._context.rootelement.find("export-settings")
         if project and self._settingsnode != None:
             project.setSettings(self._loadProjectSettings(self._settingsnode))
+
+        # rediscover the factories
+        closure = {"rediscovered": 0}
+        sources = self._loadSources()
+        uris = [source.uri for source in sources]
+        discoverer = project.sources.discoverer
+        discoverer.connect("discovery-done", self._discovererDiscoveryDoneCb,
+                project, sources, uris, closure)
+        discoverer.connect("discovery-error", self._discovererDiscoveryErrorCb,
+                project, sources, uris, closure)
+
+        # start the rediscovering from the first source
+        source = sources[0]
+        discoverer.addUri(source.uri)
+
+    def _discovererDiscoveryDoneCb(self, discoverer, uri, factory,
+            project, sources, uris, closure):
+        if factory.uri not in uris:
+            # someone else is using discoverer, this signal isn't for us
+            return
+
+        match = None
+        for i, source in enumerate(sources):
+            if source.uri == factory.uri:
+                match = i
+                break
+
+        assert match is not None
+
+        # replace the old source with the new one
+        old_factory = sources[match]
+        sources[match] = factory
+        closure["rediscovered"] += 1
+
+        key = None
+        for k, old_factory1 in self._context.factories.iteritems():
+            if old_factory is old_factory1:
+                key = k
+                break
+
+        assert key is not None
+
+        self._context.factories[key] = factory
+
+        # now replace the streams
+        old_streams = old_factory.getOutputStreams()
+        streams = factory.getOutputStreams()
+        if len(old_streams) != len(streams):
+            self.emit("new-project-failed", uri,
+                    FormatterError("cant find all streams"))
+            return
+
+        stream_map = match_stream_groups_map(old_streams, streams)
+        if len(stream_map) != len(old_streams):
+            self.emit("new-project-failed", uri,
+                    FormatterError("streams don't match"))
+            return
+
+        new_streams = {}
+        for stream_id, old_stream in self._context.streams.iteritems():
+            try:
+                new_stream = stream_map[old_stream]
+            except KeyError:
+                new_stream = old_stream
+
+            new_streams[stream_id] = new_stream
+        self._context.streams = new_streams
+
+        if closure["rediscovered"] == len(sources):
+            self._finishLoadingProject(project)
+            return
+
+        # schedule the next source
+        next = sources[closure["rediscovered"]]
+        discoverer.addUri(next.uri)
+
+    def _discovererDiscoveryErrorCb(self, discoverer, uri, error, detail,
+            project, sources, uris, closure):
+        if factory.uri not in uris:
+            # someone else is using discoverer, this signal isn't for us
+            return
+
+        self.emit("new-project-failed", uri,
+                FormatterError("%s: %s" % (error, detail)))
 
     def newProject(self):
         project = Formatter.newProject(self)

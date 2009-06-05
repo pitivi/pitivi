@@ -143,8 +143,8 @@ class TestProjectManager(TestCase):
             def _validateUri(self, uri):
                 pass
 
-            def _loadProject(self, location, project=None):
-                pass
+            def _loadProject(self, location, project):
+                self._finishLoadingProject(project)
 
             def _getSources(self):
                 # this will emit missing-uri
@@ -175,8 +175,8 @@ class TestProjectManager(TestCase):
             def _validateUri(self, uri):
                 pass
 
-            def _loadProject(self, location, project=None):
-                pass
+            def _loadProject(self, location, project):
+                self._finishLoadingProject(project)
 
             def _getSources(self):
                 return []

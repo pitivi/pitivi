@@ -41,7 +41,7 @@ class PlaylistFormatter(LoadOnlyFormatter):
             return 'file://' + ln.strip()
         return 'file://' + os.path.join(self._basedir, ln.strip())
 
-    def _loadProject(self, location, project=None):
+    def _loadProject(self, location, project):
         path = location.split('file://', 1)[1]
         self._basedir = os.path.dirname(path)
         res = []
@@ -53,6 +53,8 @@ class PlaylistFormatter(LoadOnlyFormatter):
             if val:
                 res.append(val)
         self._uris = res
+
+        self._finishLoadingProject(project)
 
     def _getSources(self):
         return self._uris

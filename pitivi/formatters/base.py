@@ -125,6 +125,7 @@ class Formatter(Signallable, Loggable):
         # FIXME : maybe have a convenience method for opening a location
         self._loadProject(location, project)
 
+    def _finishLoadingProject(self, project):
         self.debug("About to get used sources")
         # ask for all sources being used
         uris = []
