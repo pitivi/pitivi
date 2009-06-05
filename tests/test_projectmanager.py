@@ -25,6 +25,16 @@ from pitivi.projectmanager import ProjectManager
 from pitivi.formatters.base import Formatter, \
         FormatterError, FormatterLoadError
 
+class MockProject(object):
+    def hasUnsavedModifications(self):
+        return True
+
+    def save(self):
+        return True
+
+    def release(self):
+        pass
+
 class ProjectManagerListener(object):
     def __init__(self, manager):
         self.manager = manager
@@ -36,13 +46,16 @@ class ProjectManagerListener(object):
 
     def connectToProjectManager(self, manager):
         for signal in ("new-project-loading", "new-project-loaded",
-            "new-project-failed", "missing-uri"):
+                "new-project-failed", "missing-uri", "closing-project",
+                "project-closed"):
             self.manager.connect(signal, self._recordSignal, signal)
 
     def _recordSignal(self, *args):
         signal = args[-1]
         args = args[1:-1]
         self.signals.append((signal, args))
+
+        return True
 
 
 class TestProjectManager(TestCase):
@@ -190,3 +203,42 @@ class TestProjectManager(TestCase):
         self.failUnless(self.manager.closeRunningProject())
         self.failIf(self.signals)
 
+    def testCloseRunningProjectCantSaveModifications(self):
+        self.manager.current = MockProject()
+        self.manager.current.save = lambda: False
+        self.failIf(self.manager.closeRunningProject())
+        self.failIf(self.signals)
+
+    def testCloseRunningProjectRefuseFromSignal(self):
+        def closing(manager, project):
+            return False
+
+        self.manager.current = MockProject()
+        self.manager.connect("closing-project", closing)
+
+        self.failIf(self.manager.closeRunningProject())
+        self.failUnlessEqual(len(self.signals), 1)
+        name, args = self.signals[0]
+        self.failUnlessEqual(name, "closing-project")
+        project = args[0]
+        self.failUnlessEqual(True, True)
+        self.failUnless(project is self.manager.current)
+
+    def testCloseRunningProject(self):
+        current = self.manager.current = MockProject()
+        self.failUnless(self.manager.closeRunningProject())
+        self.failUnlessEqual(len(self.signals), 2)
+
+        name, args = self.signals[0]
+        self.failUnlessEqual(name, "closing-project")
+        project = args[0]
+        self.failUnlessEqual(True, True)
+        self.failUnless(project is current)
+
+        name, args = self.signals[1]
+        self.failUnlessEqual(name, "project-closed")
+        project = args[0]
+        self.failUnlessEqual(True, True)
+        self.failUnless(project is current)
+
+        self.failUnlessEqual(self.manager.current, None)
