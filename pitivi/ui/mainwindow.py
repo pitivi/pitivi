@@ -26,6 +26,7 @@ Main GTK+ window
 import os
 import gtk
 import gobject
+gobject.threads_init()
 import gst
 import gst.pbutils
 from urllib import unquote
@@ -165,6 +166,19 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._setActions(instance)
         self._createUi(instance)
         self.app = instance
+
+        self.app.projectManager.connect("new-project-loading",
+                self._projectManagerNewProjectLoadingCb)
+        self.app.projectManager.connect("new-project-loaded",
+                self._projectManagerNewProjectLoadedCb)
+        self.app.projectManager.connect("new-project-failed",
+                self._projectManagerNewProjectFailedCb)
+        self.app.projectManager.connect("closing-project",
+                self._projectManagerClosingProjectCb)
+        self.app.projectManager.connect("project-closed",
+                self._projectManagerProjectClosedCb)
+        self.app.projectManager.connect("missing-uri",
+                self._projectManagerMissingUriCb)
 
         # if no webcams available, hide the webcam action
         self.app.deviceprobe.connect("device-added", self._deviceChangeCb)
@@ -627,29 +641,19 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def loop(self, unused_action):
         pass
 
-## PiTiVi main object callbacks
-
-    def _setApplication(self):
-        if self.app:
-            self.project = self.app.current
-
-    app = receiver(_setApplication)
-
-    @handler(app, "new-project-loaded")
-    def _newProjectLoadedCb(self, unused_pitivi, project):
+    
+    def _projectManagerNewProjectLoadedCb(self, projectManager, project):
         self.log("A NEW project is loaded, update the UI!")
         self.project = project
         # ungrey UI
         self.set_sensitive(True)
 
-    @handler(app, "new-project-loading")
-    def _newProjectLoadingCb(self, unused_instance, project):
+    def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
         self.log("A NEW project is being loaded, deactivate UI")
         # grey UI
         self.set_sensitive(False)
 
-    @handler(app, "closing-project")
-    def _closingProjectCb(self, unused_pitivi, project):
+    def _projectManagerClosingProjectCb(self, projectManager, project):
         if not project.hasUnsavedModifications():
             return True
 
@@ -665,15 +669,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
             return True
         return False
 
-    @handler(app, "project-closed")
-    def _projectClosedCb(self, unused_pitivi, project):
+    def _projectManagerProjectClosedCb(self, projectManager, project):
         # we must disconnect from the project pipeline before it is released
         self.viewer.setAction(None)
         self.viewer.setPipeline(None)
         return False
 
-    @handler(app, "new-project-failed")
-    def _notProjectCb(self, unused_pitivi, uri, exception):
+    def _projectManagerNewProjectFailedCb(self, projectManager, uri, exception):
         # ungrey UI
         dialog = gtk.MessageDialog(self,
             gtk.DIALOG_MODAL,
@@ -687,9 +689,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.destroy()
         self.set_sensitive(True)
 
-    @handler(app, "missing-uri")
-    def _missingUriCb(self, instance, formatter, uri):
-        dialog = gtk.Dialog(_("Locate missing file..."), 
+    def _projectManagerMissingUriCb(self, instance, formatter, uri):
+        dialog = gtk.Dialog(_("Locate missing file..."),
             self,
             gtk.DIALOG_MODAL,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,

@@ -171,8 +171,6 @@ class ElementTreeFormatter(Formatter):
             if isinstance(filename, unicode):
                 filename = filename.encode("utf-8")
             filename = self.validateSourceURI(filename)
-            if filename is None:
-                return None
 
         if filename is not None:
             factory = klass(filename)
@@ -555,7 +553,12 @@ class ElementTreeFormatter(Formatter):
 
         # rediscover the factories
         closure = {"rediscovered": 0}
-        sources = self._loadSources()
+        try:
+            sources = self._loadSources()
+        except FormatterError, e:
+            self.emit("new-project-failed", location, e)
+            return
+
         uris = [source.uri for source in sources]
         discoverer = project.sources.discoverer
         discoverer.connect("discovery-done", self._discovererDiscoveryDoneCb,

@@ -136,9 +136,6 @@ class ProjectManager(Signallable, Loggable):
 
     def _formatterNewProjectFailed(self, formatter, uri, exception):
         self._disconnectFromFormatter(formatter)
-
-        self.handleException(exception)
-        self.warning("error loading the project")
         self.current = None
         self.emit("new-project-failed", uri, exception)
 

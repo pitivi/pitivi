@@ -327,7 +327,7 @@ class Formatter(Signallable, Loggable):
         self.debug("uri:%s", uri)
         if not uri_is_valid(uri):
             self.warning("invalid URI")
-            return None
+            raise FormatterError("invalid URI")
 
         # skip non local uri
         if not uri.split('://', 1)[0] in ["file"]:
@@ -360,7 +360,7 @@ class Formatter(Signallable, Loggable):
                     return probable
 
         # Houston, we have lost contact with mission://fail
-        return None
+        raise FormatterError("Couldn't find %s" % uri)
 
     #}
 
