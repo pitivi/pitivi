@@ -221,7 +221,6 @@ class TestProjectManager(TestCase):
         name, args = self.signals[0]
         self.failUnlessEqual(name, "closing-project")
         project = args[0]
-        self.failUnlessEqual(True, True)
         self.failUnless(project is self.manager.current)
 
     def testCloseRunningProject(self):
@@ -232,13 +231,32 @@ class TestProjectManager(TestCase):
         name, args = self.signals[0]
         self.failUnlessEqual(name, "closing-project")
         project = args[0]
-        self.failUnlessEqual(True, True)
         self.failUnless(project is current)
 
         name, args = self.signals[1]
         self.failUnlessEqual(name, "project-closed")
         project = args[0]
-        self.failUnlessEqual(True, True)
         self.failUnless(project is current)
 
         self.failUnlessEqual(self.manager.current, None)
+
+    def testNewBlankProjectCantCloseCurrent(self):
+        current = self.manager.current = MockProject()
+        current.save = lambda: False
+
+        self.failIf(self.manager.newBlankProject())
+        self.failIf(self.signals)
+
+    def testNewBlankProject(self):
+        self.failUnless(self.manager.newBlankProject())
+        self.failUnlessEqual(len(self.signals), 2)
+
+        name, args = self.signals[0]
+        self.failUnlessEqual(name, "new-project-loading")
+        uri = args[0]
+        self.failUnlessEqual(uri, None)
+
+        name, args = self.signals[1]
+        self.failUnlessEqual(name, "new-project-loaded")
+        project = args[0]
+        self.failUnless(project is self.manager.current)

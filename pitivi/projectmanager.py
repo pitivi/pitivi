@@ -93,7 +93,7 @@ class ProjectManager(Signallable, Loggable):
         """ start up a new blank project """
         # if there's a running project we must close it
         if self.current is not None and not self.closeRunningProject():
-            return
+            return False
 
         # we don't have an URI here, None means we're loading a new project
         self.emit("new-project-loading", None)
@@ -110,6 +110,8 @@ class ProjectManager(Signallable, Loggable):
         project.timeline.addTrack(track)
 
         self.emit("new-project-loaded", self.current)
+
+        return True
 
 
     def _getFormatterForUri(self, uri):
