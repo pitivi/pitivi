@@ -630,7 +630,7 @@ class ElementTreeFormatter(Formatter):
 
     def _discovererDiscoveryErrorCb(self, discoverer, uri, error, detail,
             project, sources, uris, closure):
-        if factory.uri not in uris:
+        if uri not in uris:
             # someone else is using discoverer, this signal isn't for us
             return
 
