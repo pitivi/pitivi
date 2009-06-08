@@ -249,7 +249,6 @@ class SourceList(gtk.VBox, Loggable):
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
         self.project_signals = SignalGroup()
-        self._connectToProject(self.app.current)
         self.app.connect("new-project-loaded",
             self._newProjectLoadedCb)
         self.app.connect("new-project-failed",

@@ -132,7 +132,6 @@ class Pitivi(Loggable, Signallable):
 
         self.projectManager = ProjectManager()
         self._connectToProjectManager(self.projectManager)
-        self.projectManager.newBlankProject()
 
     #{ Shutdown methods
 
@@ -235,6 +234,7 @@ class InteractivePitivi(Pitivi):
         else:
             # load the passed filenames, optionally adding them to the timeline
             # (useful during development)
+            self.projectManager.newBlankProject()
             uris = ["file://" + os.path.abspath(path) for path in args]
             if options.add_to_timeline:
                 self.current.sources.connect("file_added",
