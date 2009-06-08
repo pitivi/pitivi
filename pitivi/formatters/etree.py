@@ -570,67 +570,78 @@ class ElementTreeFormatter(Formatter):
         source = sources[0]
         discoverer.addUri(source.uri)
 
-    def _discovererDiscoveryDoneCb(self, discoverer, uri, factory,
-            project, sources, uris, closure):
-        if factory.uri not in uris:
-            # someone else is using discoverer, this signal isn't for us
-            return
-
-        match = None
-        for i, source in enumerate(sources):
-            if source.uri == factory.uri:
-                match = i
-                break
-
-        assert match is not None
-
-        # replace the old source with the new one
-        old_factory = sources[match]
-        sources[match] = factory
-        closure["rediscovered"] += 1
-
+    def _findFactoryContextKey(self, old_factory):
         key = None
         for k, old_factory1 in self._context.factories.iteritems():
             if old_factory is old_factory1:
                 key = k
                 break
 
-        assert key is not None
+        return key
 
-        self._context.factories[key] = factory
-
-        # now replace the streams
+    def _matchFactoryStreams(self, factory, old_factory):
         old_streams = old_factory.getOutputStreams()
         streams = factory.getOutputStreams()
         if len(old_streams) != len(streams):
-            self.emit("new-project-failed", uri,
-                    FormatterError("cant find all streams"))
-            return
+            raise FormatterError("cant find all streams")
 
         stream_map = match_stream_groups_map(old_streams, streams)
         if len(stream_map) != len(old_streams):
-            self.emit("new-project-failed", uri,
-                    FormatterError("streams don't match"))
-            return
+            raise FormatterError("streams don't match")
 
+        return stream_map
+
+    def _replaceOldFactoryStreams(self, factory, old_factory):
+        old_stream_to_new_stream = self._matchFactoryStreams(factory,
+                old_factory)
+
+        old_streams = old_factory.getOutputStreams()
         new_streams = {}
         for stream_id, old_stream in self._context.streams.iteritems():
-            try:
-                new_stream = stream_map[old_stream]
-            except KeyError:
-                new_stream = old_stream
+            if old_stream not in old_streams:
+                continue
 
-            new_streams[stream_id] = new_stream
-        self._context.streams = new_streams
+            new_stream = old_stream_to_new_stream[old_stream]
 
+        self._context.streams.update(new_streams)
+
+    def _replaceMatchingOldFactory(self, factory, old_factories):
+        old_factory = None
+        old_factory_index = None
+        for index, old_factory1 in enumerate(old_factories):
+            if old_factory1.uri == factory.uri:
+                old_factory = old_factory1
+                old_factory_index = index
+                break
+
+        # this should never happen
+        assert old_factory is not None
+
+        # replace the old factory with the new rediscovered one
+        old_factories[old_factory_index] = factory
+
+        # make self._context.factories[key] point to the new factory
+        context_key = self._findFactoryContextKey(old_factory)
+        self._context.factories[context_key] = factory
+
+        self._replaceOldFactoryStreams(factory, old_factory)
+
+    def _discovererDiscoveryDoneCb(self, discoverer, uri, factory,
+            project, old_factories, uris, closure):
+        if factory.uri not in uris:
+            # someone else is using discoverer, this signal isn't for us
+            return
+
+        self._replaceMatchingOldFactory(factory, old_factories)
         project.sources.addFactory(factory=factory)
 
-        if closure["rediscovered"] == len(sources):
+        closure["rediscovered"] += 1
+        if closure["rediscovered"] == len(old_factories):
             self._finishLoadingProject(project)
             return
 
         # schedule the next source
-        next = sources[closure["rediscovered"]]
+        next = old_factories[closure["rediscovered"]]
         discoverer.addUri(next.uri)
 
     def _discovererDiscoveryErrorCb(self, discoverer, uri, error, detail,
