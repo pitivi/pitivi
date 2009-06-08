@@ -89,6 +89,7 @@ class Pitivi(Loggable, Signallable):
         "new-project" : ["project"],
 
         "new-project-loading" : ["uri"],
+        "new-project-created" : ["project"],
         "new-project-loaded" : ["project"],
         "new-project-failed" : ["uri", "exception"],
         "closing-project" : ["project"],
@@ -162,6 +163,8 @@ class Pitivi(Loggable, Signallable):
     def _connectToProjectManager(self, projectManager):
         projectManager.connect("new-project-loading",
                 self._projectManagerNewProjectLoading)
+        projectManager.connect("new-project-created",
+                self._projectManagerNewProjectCreated)
         projectManager.connect("new-project-loaded",
                 self._projectManagerNewProjectLoaded)
         projectManager.connect("new-project-failed",
@@ -173,6 +176,10 @@ class Pitivi(Loggable, Signallable):
 
     def _projectManagerNewProjectLoading(self, projectManager, uri):
         self.emit("new-project-loading", uri)
+
+    def _projectManagerNewProjectCreated(self, projectManager, project):
+        self.current = project
+        self.emit("new-project-created", project)
 
     def _projectManagerNewProjectLoaded(self, projectManager, project):
         self.current = project

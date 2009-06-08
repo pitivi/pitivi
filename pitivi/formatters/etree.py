@@ -623,6 +623,8 @@ class ElementTreeFormatter(Formatter):
             new_streams[stream_id] = new_stream
         self._context.streams = new_streams
 
+        project.sources.addFactory(factory=factory)
+
         if closure["rediscovered"] == len(sources):
             self._finishLoadingProject(project)
             return

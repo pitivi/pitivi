@@ -645,13 +645,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _projectManagerNewProjectLoadedCb(self, projectManager, project):
         self.log("A NEW project is loaded, update the UI!")
         self.project = project
-        # ungrey UI
-        self.set_sensitive(True)
 
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
         self.log("A NEW project is being loaded, deactivate UI")
-        # grey UI
-        self.set_sensitive(False)
 
     def _projectManagerClosingProjectCb(self, projectManager, project):
         if not project.hasUnsavedModifications():

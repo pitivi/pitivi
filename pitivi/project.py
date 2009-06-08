@@ -66,7 +66,6 @@ class Project(Signallable, Loggable):
     __signals__ = {
         "settings-changed" : None,
         "missing-plugins": ["uri", "detail", "description"],
-        "loaded" : None
         }
 
     def __init__(self, name="", uri=None, **kwargs):
@@ -95,9 +94,6 @@ class Project(Signallable, Loggable):
         self.pipeline = Pipeline()
         self.view_action = ViewAction()
         self.view_action.addProducers(self.factory)
-
-        # the loading formatter will set this accordingly
-        self.loaded = True
 
     def release(self):
         self.pipeline.release()
@@ -200,13 +196,3 @@ class Project(Signallable, Loggable):
 
     def hasUnsavedModifications(self):
         return self._dirty
-
-    def markLoaded(self):
-        """
-        Mark the project as loaded.
-
-        Will emit the 'loaded' signal. Only meant to be used by
-        L{Formatter}s.
-        """
-        self.loaded = True
-        self.emit('loaded')

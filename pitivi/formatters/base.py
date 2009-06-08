@@ -63,6 +63,7 @@ class Formatter(Signallable, Loggable):
     """
 
     __signals__ = {
+        "new-project-created": ["project"],
         "new-project-loaded": ["project"],
         "new-project-failed": ["uri", "exception"],
         "missing-uri" : ["uri"]
@@ -85,9 +86,9 @@ class Formatter(Signallable, Loggable):
     def newProject(self):
         return self.ProjectClass()
 
-    def loadProject(self, location, project=None):
+    def loadProject(self, location):
         try:
-            self._loadProjectUnchecked(location, project)
+            self._loadProjectUnchecked(location)
         except FormatterError, e:
             self.emit("new-project-failed", location, e)
 
@@ -100,7 +101,7 @@ class Formatter(Signallable, Loggable):
         if not uri_is_valid(uri) or not uri_is_reachable(uri):
             raise FormatterURIError()
 
-    def _loadProjectUnchecked(self, location, project=None):
+    def _loadProjectUnchecked(self, location):
         """
         Loads the project from the given location.
 
@@ -113,8 +114,8 @@ class Formatter(Signallable, Loggable):
         @return: The L{Project}
         @raise FormatterLoadError: If the file couldn't be properly loaded.
         """
-        if not project:
-            project = self.newProject()
+        project = self.newProject()
+        self.emit("new-project-created", project)
 
         project.uri = location
 
@@ -145,8 +146,8 @@ class Formatter(Signallable, Loggable):
         project._formatter = self
 
         # add all factories to the project sourcelist
-        for fact in factories:
-            project.sources.addFactory(factory=fact)
+        #for fact in factories:
+        #    project.sources.addFactory(factory=fact)
 
         # if all sources were discovered, or don't require discovering,
         if uris == []:
@@ -154,18 +155,13 @@ class Formatter(Signallable, Loggable):
             # then
             # .. Fill in the timeline
             self._fillTimeline()
-            # .. make the project as loaded
-            self.project.loaded = True
+            self.emit("new-project-loaded", self.project)
         else:
             self.debug("Got undiscovered sources, calling discoverer")
             # else
             # .. connect to the sourcelist 'ready' signal
             self.project.sources.connect("ready", self._sourcesReadyCb)
-            # .. Add all uris to be discovered to the project sourcelist
-            self.project.loaded = False
             self.project.sources.addUris(uris)
-
-        self.emit("new-project-loaded", self.project)
 
         # finally return the project.
         return self.project
@@ -367,8 +363,7 @@ class Formatter(Signallable, Loggable):
     def _sourcesReadyCb(self, sources):
         self.debug("Sources inspected, calling fillTimeline")
         self._fillTimeline()
-        self.project.loaded = True
-        Project.emit(self.project, 'loaded')
+        self.emit("new-project-loaded", self.project)
 
 
 class LoadOnlyFormatter(Formatter):

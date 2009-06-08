@@ -36,6 +36,7 @@ from pitivi.timeline.track import Track
 class ProjectManager(Signallable, Loggable):
     __signals__ = {
         "new-project-loading": ["uri"],
+        "new-project-created": ["project"],
         "new-project-failed": ["uri", "exception"],
         "new-project-loaded": ["project"],
         "closing-project": ["project"],
@@ -118,6 +119,8 @@ class ProjectManager(Signallable, Loggable):
 
     def _connectToFormatter(self, formatter):
         formatter.connect("missing-uri", self._formatterMissingURICb)
+        formatter.connect("new-project-created",
+                self._formatterNewProjectCreated)
         formatter.connect("new-project-loaded",
                 self._formatterNewProjectLoaded)
         formatter.connect("new-project-failed",
@@ -125,8 +128,12 @@ class ProjectManager(Signallable, Loggable):
 
     def _disconnectFromFormatter(self, formatter):
         formatter.disconnect_by_function(self._formatterMissingURICb)
+        formatter.disconnect_by_function(self._formatterNewProjectCreated)
         formatter.disconnect_by_function(self._formatterNewProjectLoaded)
         formatter.disconnect_by_function(self._formatterNewProjectFailed)
+
+    def _formatterNewProjectCreated(self, formatter, project):
+        self.emit("new-project-created", project)
 
     def _formatterNewProjectLoaded(self, formatter, project):
         self._disconnectFromFormatter(formatter)

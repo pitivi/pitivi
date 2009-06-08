@@ -14,7 +14,7 @@ class BasicTest(TestCase):
         self.assert_(ptv)
 
         # were the contents of pitivi properly created
-        self.assert_(ptv.current)
+        self.assertEqual(ptv.current, None)
         self.assert_(ptv.effects)
 
         # was the unique instance object properly set

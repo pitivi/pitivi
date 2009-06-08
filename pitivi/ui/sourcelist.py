@@ -90,10 +90,7 @@ def beautify_stream(stream):
             templ = ngettext("<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)",
                     "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)",
                     stream.channels)
-            try:
-                templ = templ % (stream.channels, stream.rate, stream.width)
-            except TypeError:
-                import pdb; pdb.set_trace()
+            templ = templ % (stream.channels, stream.rate, stream.width)
             return templ
 
         return _("<b>Unknown Audio format:</b> %s") % stream.audiotype
@@ -249,6 +246,8 @@ class SourceList(gtk.VBox, Loggable):
         # Connect to project.  We must remove and reset the callbacks when
         # changing project.
         self.project_signals = SignalGroup()
+        self.app.connect("new-project-created",
+            self._newProjectCreatedCb)
         self.app.connect("new-project-loaded",
             self._newProjectLoadedCb)
         self.app.connect("new-project-failed",
@@ -653,19 +652,19 @@ class SourceList(gtk.VBox, Loggable):
         factory = self.storemodel[path][COL_FACTORY]
         self.emit('play', factory)
 
-    def _newProjectLoadedCb(self, unused_pitivi, project):
+    def _newProjectCreatedCb(self, app, project):
         # clear the storemodel
         self.storemodel.clear()
         self._connectToProject(project)
-        # synchronize the storemodel with the new project's sourcelist
-        if project.loaded:
-            for uri, factory in project.sources:
-                self.log("loading uri %s", uri)
-                self._addFactory(factory)
-        else:
-            if not self.infostub.showing:
-                self.pack_start(self.infostub, expand=False)
-                self.infostub.startingImport()
+
+
+    def _newProjectLoadingCb(self, unused_pitivi, uri):
+        if not self.infostub.showing:
+            self.pack_start(self.infostub, expand=False)
+            self.infostub.startingImport()
+
+    def _newProjectLoadedCb(self, unused_pitivi, project):
+        pass
 
     def _newProjectFailedCb(self, unused_pitivi, unused_reason,
         unused_uri):
