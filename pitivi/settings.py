@@ -138,8 +138,10 @@ class GlobalSettings(Signallable):
     options = {}
     environment = set()
     defaults = {}
+    __signals__ = {}
 
     def __init__(self, **kwargs):
+        Signallable.__init__(self)
         self._config = SafeConfigParser()
         self._readSettingsFromGlobalConfiguration()
         self._readSettingsFromConfigurationFile()
