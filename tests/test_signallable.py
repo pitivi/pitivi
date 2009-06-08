@@ -83,7 +83,7 @@ class TestSignalisation(unittest.TestCase):
     def test01_get_signals(self):
         self.assertEquals(self.object.get_signals(),
                           myobject.__signals__)
-        expected = myobject.__signals__
+        expected = dict(myobject.__signals__)
         expected.update(mysubobject.__signals__)
         self.assertEquals(self.subobject.get_signals(),
                           expected)
