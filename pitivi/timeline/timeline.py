@@ -26,7 +26,7 @@ from bisect import bisect_right
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.utils import UNKNOWN_DURATION, closest_item, PropertyChangeTracker
-from pitivi.timeline.track import Track, SourceTrackObject, TrackError
+from pitivi.timeline.track import SourceTrackObject, TrackError
 from pitivi.stream import match_stream_groups_map
 
 # Selection modes
