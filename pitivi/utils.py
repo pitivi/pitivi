@@ -237,21 +237,26 @@ def uri_is_reachable(uri):
     return os.path.isfile(gst.uri_get_location(uri))
 
 class PropertyChangeTracker(Signallable):
-    def __init__(self, timeline_object):
+    def __init__(self):
         self.properties = {}
 
+    def connectToObject(self, obj):
         for property_name in self.property_names:
             self.properties[property_name] = \
-                    getattr(timeline_object, property_name)
+                    getattr(obj, property_name)
 
-            timeline_object.connect(property_name + '-changed',
+            obj.connect(property_name + '-changed',
                     self._propertyChangedCb, property_name)
 
-    def _propertyChangedCb(self, timeline_object, value, property_name):
+
+    def disconnectFromObject(self, obj):
+        obj.disconnect_by_func(self._propertyChangedCb)
+
+    def _propertyChangedCb(self, object, value, property_name):
         old_value = self.properties[property_name]
         self.properties[property_name] = value
 
-        self.emit(property_name + '-changed', timeline_object, old_value, value)
+        self.emit(property_name + '-changed', object, old_value, value)
 
 class Seeker(Signallable):
     __signals__ = {'seek': ['position', 'format']}

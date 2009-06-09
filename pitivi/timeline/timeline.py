@@ -558,7 +558,8 @@ class Link(object):
 
         self.timeline_objects.add(timeline_object)
 
-        tracker = LinkPropertyChangeTracker(timeline_object)
+        tracker = LinkPropertyChangeTracker()
+        tracker.connectToObject(timeline_object)
         self.property_trackers[timeline_object] = tracker
 
         tracker.connect('start-changed', self._startChangedCb)
@@ -579,6 +580,7 @@ class Link(object):
             raise TimelineError()
 
         tracker = self.property_trackers.pop(timeline_object)
+        tracker.disconnectFromObject(timeline_object)
         tracker.disconnect_by_function(self._startChangedCb)
 
         timeline_object.link = None
