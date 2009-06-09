@@ -46,8 +46,8 @@ class ProjectManagerListener(object):
 
     def connectToProjectManager(self, manager):
         for signal in ("new-project-loading", "new-project-loaded",
-                "new-project-failed", "missing-uri", "closing-project",
-                "project-closed"):
+                "new-project-created", "new-project-failed", "missing-uri",
+                "closing-project", "project-closed"):
             self.manager.connect(signal, self._recordSignal, signal)
 
     def _recordSignal(self, *args):
@@ -125,14 +125,19 @@ class TestProjectManager(TestCase):
 
         uri = "file:///Untitled.xptv"
         self.manager.loadProject(uri)
-        self.failUnlessEqual(len(self.signals), 2)
+        self.failUnlessEqual(len(self.signals), 3)
 
         # loading
         name, args = self.signals[0]
+        self.failUnlessEqual(name, "new-project-loading")
         self.failUnlessEqual(args[0], uri)
 
-        # failed
+        # created
         name, args = self.signals[1]
+        self.failUnlessEqual(name, "new-project-created")
+
+        # failed
+        name, args = self.signals[2]
         self.failUnlessEqual(name, "new-project-failed")
         signalUri, exception = args
         self.failUnlessEqual(uri, signalUri)
@@ -157,14 +162,19 @@ class TestProjectManager(TestCase):
 
         uri = "file:///Untitled.xptv"
         self.manager.loadProject(uri)
-        self.failUnlessEqual(len(self.signals), 3)
+        self.failUnlessEqual(len(self.signals), 4)
 
         # loading
         name, args = self.signals[0]
+        self.failUnlessEqual(name, "new-project-loading")
         self.failUnlessEqual(args[0], uri)
 
-        # failed
         name, args = self.signals[1]
+        self.failUnlessEqual(name, "new-project-created")
+        self.failUnlessEqual(args[0].uri, uri)
+
+        # failed
+        name, args = self.signals[2]
         self.failUnlessEqual(name, "missing-uri")
         formatter, signalUri = args
         self.failUnlessEqual(signalUri, "file:///icantpossiblyexist")
@@ -187,14 +197,18 @@ class TestProjectManager(TestCase):
 
         uri = "file:///Untitled.xptv"
         self.manager.loadProject(uri)
-        self.failUnlessEqual(len(self.signals), 2)
+        self.failUnlessEqual(len(self.signals), 3)
 
         # loading
         name, args = self.signals[0]
         self.failUnlessEqual(args[0], uri)
 
-        # failed
         name, args = self.signals[1]
+        self.failUnlessEqual(name, "new-project-created")
+        project = args[0]
+        self.failUnlessEqual(uri, project.uri)
+
+        name, args = self.signals[2]
         self.failUnlessEqual(name, "new-project-loaded")
         project = args[0]
         self.failUnlessEqual(uri, project.uri)
@@ -249,7 +263,7 @@ class TestProjectManager(TestCase):
 
     def testNewBlankProject(self):
         self.failUnless(self.manager.newBlankProject())
-        self.failUnlessEqual(len(self.signals), 2)
+        self.failUnlessEqual(len(self.signals), 3)
 
         name, args = self.signals[0]
         self.failUnlessEqual(name, "new-project-loading")
@@ -257,6 +271,11 @@ class TestProjectManager(TestCase):
         self.failUnlessEqual(uri, None)
 
         name, args = self.signals[1]
+        self.failUnlessEqual(name, "new-project-created")
+        project = args[0]
+        self.failUnlessEqual(uri, project.uri)
+
+        name, args = self.signals[2]
         self.failUnlessEqual(name, "new-project-loaded")
         project = args[0]
         self.failUnless(project is self.manager.current)

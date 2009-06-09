@@ -98,6 +98,7 @@ class ProjectManager(Signallable, Loggable):
         # we don't have an URI here, None means we're loading a new project
         self.emit("new-project-loading", None)
         project = Project(_("New Project"))
+        self.emit("new-project-created", project)
         self.current = project
 
         # FIXME: this should not be hard-coded
