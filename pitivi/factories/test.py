@@ -66,14 +66,15 @@ class AudioTestSourceFactory(SourceFactory):
             output_stream = self.output_streams[0]
 
         bin = gst.Bin()
-        videotestsrc = gst.element_factory_make('audiotestsrc')
-        videotestsrc.props.wave = self.wave
+        audiotestsrc = gst.element_factory_make('audiotestsrc', "real-audiotestsrc")
+        audiotestsrc.props.wave = self.wave
+        ares = gst.element_factory_make("audioresample", "default-audioresample")
+        aconv = gst.element_factory_make("audioconvert", "default-audioconvert")
         capsfilter = gst.element_factory_make('capsfilter')
         capsfilter.props.caps = output_stream.caps.copy()
 
-        bin.add(videotestsrc)
-        bin.add(capsfilter)
-        videotestsrc.link(capsfilter)
+        bin.add(audiotestsrc, ares, aconv, capsfilter)
+        gst.element_link_many(audiotestsrc, aconv, ares, capsfilter)
 
         target = capsfilter.get_pad('src')
         ghost = gst.GhostPad('src', target)

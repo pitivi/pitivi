@@ -27,6 +27,7 @@ from pitivi.utils import UNKNOWN_DURATION
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.test import VideoTestSourceFactory, \
         AudioTestSourceFactory
+from pitivi.elements.mixer import SmartAdderBin
 
 class TrackError(Exception):
     pass
@@ -317,6 +318,10 @@ class Track(Signallable):
         if default_track_object:
             self.setDefaultTrackObject(default_track_object)
 
+        self.mixer = self._getMixerForStream(stream)
+        if self.mixer:
+            self.composition.add(self.mixer)
+
     def _getDefaultTrackObjectForStream(self, stream):
         if isinstance(stream, VideoStream):
             return self._getDefaultVideoTrackObject(stream)
@@ -336,6 +341,16 @@ class Track(Signallable):
         track_object = SourceTrackObject(factory, stream)
 
         return track_object
+
+    def _getMixerForStream(self, stream):
+        if isinstance(stream, AudioStream):
+            gnl = gst.element_factory_make("gnloperation", "top-level-audio-mixer")
+            m = SmartAdderBin()
+            gnl.add(m)
+            gnl.props.expandable = True
+            gnl.props.priority = 0
+            return gnl
+        return None
 
     def _getStart(self):
         return self.composition.props.start
