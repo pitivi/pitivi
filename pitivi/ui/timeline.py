@@ -299,8 +299,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.timeline.enableUpdates()
 
     def _dragDropCb(self, widget, context, x, y, timestamp):
+        self.app.action_log.begin("add clip")
         self._add_temp_source()
         self._move_temp_source(x, y)
+        self.app.action_log.commit()
         context.drop_finish(True, timestamp)
         self._factories = None
         self._temp_objects = None
@@ -469,7 +471,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def deleteSelected(self, unused_action):
         if self.timeline:
+            self.app.action_log.begin("delete clip")
             self.timeline.deleteSelection()
+            self.app.action_log.commit()
 
     def unlinkSelected(self, unused_action):
         if self.timeline:

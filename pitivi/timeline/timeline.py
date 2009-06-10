@@ -882,12 +882,12 @@ class Timeline(Signallable, Loggable):
         self.rebuildEdges()
         #self.edges.removeTimelineObject(obj)
 
+        self.emit("object-removed", obj)
+
         if deep:
             for track_object in obj.track_objects:
                 track = track_object.track
                 track.removeTrackObject(track_object)
-
-        self.emit("object-removed", obj)
 
     # FIXME : shouldn't this be made more generic (i.e. not specific to source facotires) ?
     def addSourceFactory(self, factory, stream_map=None, strict=False):

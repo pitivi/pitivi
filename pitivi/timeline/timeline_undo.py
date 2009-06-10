@@ -43,6 +43,46 @@ class TimelineObjectPropertyChanged(UndoableAction):
                 self.property_name.replace("-", "_"), self.old_value)
         self._undone()
 
+class TimelineObjectAdded(UndoableAction):
+    def __init__(self, timeline, timeline_object):
+        self.timeline = timeline
+        self.timeline_object = timeline_object
+
+    def do(self):
+        self.timeline.addTimelineObject(self.timeline_object)
+        self._done()
+
+    def undo(self):
+        self.timeline.removeTimelineObject(self.timeline_object)
+        self._undone()
+
+class TimelineObjectRemoved(UndoableAction):
+    def __init__(self, timeline, timeline_object):
+        self.timeline = timeline
+        self.timeline_object_copy = self._copyTimelineObject(timeline_object)
+        self.timeline_object = timeline_object
+
+    def do(self):
+        self.timeline.removeTimelineObject(self.timeline_object, deep=True)
+        self._done()
+
+    def undo(self):
+        self.timeline_object = self.timeline_object_copy
+        for track_object in self.timeline_object.track_objects:
+            track, track_object.track = track_object.track, None
+            track.addTrackObject(track_object)
+        self.timeline_object_copy = self._copyTimelineObject(self.timeline_object)
+        self.timeline.addTimelineObject(self.timeline_object)
+        self._undone()
+
+    def _copyTimelineObject(self, timeline_object):
+        copy = timeline_object.copy()
+        for (track_object_copy, track_object) in \
+                    zip(copy.track_objects, timeline_object.track_objects):
+            track_object_copy.track = track_object.track
+
+        return copy
+
 class TimelineLogObserver(object):
     def __init__(self, log):
         self.log = log
@@ -81,9 +121,13 @@ class TimelineLogObserver(object):
 
     def _timelineObjectAddedCb(self, timeline, timeline_object):
         self._connectToTimelineObject(timeline_object)
+        action = TimelineObjectAdded(timeline, timeline_object)
+        self.log.push(action)
 
     def _timelineObjectRemovedCb(self, timeline, timeline_object):
         self._disconnectFromTimelineObject(timeline_object)
+        action = TimelineObjectRemoved(timeline, timeline_object)
+        self.log.push(action)
 
     def _timelineObjectPropertyChangedCb(self, tracker, timeline_object,
             old_value, new_value, property_name):

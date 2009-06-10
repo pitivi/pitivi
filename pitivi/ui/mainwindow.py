@@ -180,8 +180,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.projectManager.connect("missing-uri",
                 self._projectManagerMissingUriCb)
 
-        self.app.action_log.connect("can-undo", self._actionLogCanUndo)
-        self.app.action_log.connect("can-redo", self._actionLogCanRedo)
+        self.app.action_log.connect("commit", self._actionLogCommit)
+        self.app.action_log.connect("undo", self._actionLogUndo)
+        self.app.action_log.connect("redo", self._actionLogRedo)
 
         # if no webcams available, hide the webcam action
         self.app.deviceprobe.connect("device-added", self._deviceChangeCb)
@@ -656,7 +657,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def loop(self, unused_action):
         pass
 
-    
+
     def _projectManagerNewProjectLoadedCb(self, projectManager, project):
         self.log("A NEW project is loaded, update the UI!")
         self.project = project
@@ -735,17 +736,36 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         dialog.destroy()
 
-    def _actionLogCanUndo(self, action_log, can_undo, action_group_name):
-        action = self.actiongroup.get_action("Undo")
-        action.set_sensitive(can_undo)
-        if can_undo:
-            action.props.label = _("Undo %s") % action_group_name
+    def _actionLogCommit(self, action_log, stack, nested):
+        if nested:
+            return
 
-    def _actionLogCanRedo(self, action_log, can_redo, action_group_name):
-        action = self.actiongroup.get_action("Redo")
-        action.set_sensitive(can_redo)
+        self._syncDoUndo(action_log)
+
+    def _actionLogUndo(self, action_log, stack):
+        self._syncDoUndo(action_log)
+
+    def _actionLogRedo(self, action_log, stack):
+        self._syncDoUndo(action_log)
+
+    def _syncDoUndo(self, action_log):
+        undo_action = self.actiongroup.get_action("Undo")
+        can_undo = bool(action_log.undo_stacks)
+        undo_action.set_sensitive(can_undo)
+        if can_undo:
+            stack = action_log.undo_stacks[-1]
+            undo_action.props.label = _("Undo %s") % stack.action_group_name
+        else:
+            undo_action.props.label = _("Undo")
+
+        redo_action = self.actiongroup.get_action("Redo")
+        can_redo = bool(action_log.redo_stacks)
+        redo_action.set_sensitive(can_redo)
         if can_redo:
-            action.props.label = _("Redo %s") % action_group_name
+            stack = action_log.redo_stacks[-1]
+            redo_action.props.label = _("Redo %s") % stack.action_group_name
+        else:
+            redo_action.props.label = _("Redo")
 
 ## PiTiVi current project callbacks
 
