@@ -59,19 +59,21 @@ class TimelineObjectAdded(UndoableAction):
 class TimelineObjectRemoved(UndoableAction):
     def __init__(self, timeline, timeline_object):
         self.timeline = timeline
-        self.timeline_object_copy = self._copyTimelineObject(timeline_object)
         self.timeline_object = timeline_object
+        self.timeline_object_copy = self._copyTimelineObject(timeline_object)
 
     def do(self):
         self.timeline.removeTimelineObject(self.timeline_object, deep=True)
         self._done()
 
     def undo(self):
-        self.timeline_object = self.timeline_object_copy
-        for track_object in self.timeline_object.track_objects:
+        temporary_timeline_object = \
+                self._copyTimelineObject(self.timeline_object_copy)
+        for track_object in temporary_timeline_object.track_objects:
             track, track_object.track = track_object.track, None
             track.addTrackObject(track_object)
-        self.timeline_object_copy = self._copyTimelineObject(self.timeline_object)
+
+        self.timeline_object.track_objects = temporary_timeline_object.track_objects
         self.timeline.addTimelineObject(self.timeline_object)
         self._undone()
 
