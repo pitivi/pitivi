@@ -156,6 +156,14 @@ class EndHandle(TrimHandle):
 
         _cursor = RIGHT_SIDE
 
+        def drag_start(self):
+            TimelineController.drag_start(self)
+            self._view.app.action_log.begin("trim object")
+
+        def drag_end(self):
+            TimelineController.drag_end(self)
+            self._view.app.action_log.commit()
+
         def set_pos(self, obj, pos):
             start = self._view.element.start
             abs_pos = self._view.pixelToNs(pos[0])
