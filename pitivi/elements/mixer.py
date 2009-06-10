@@ -81,7 +81,7 @@ class SmartAdderBin(gst.Bin):
         return pad
 
     def do_release_pad(self, pad):
-        self.warning("pad:%r", pad)
+        self.warning("pad:%r" % pad)
         name = pad.get_name()
         if name in self.inputs.keys():
             sinkpad, aconv, aresample, adderpad = self.inputs.pop(name)
@@ -89,7 +89,10 @@ class SmartAdderBin(gst.Bin):
             aconv.unlink(aresample)
             aresample.get_pad("src").unlink(adderpad)
             self.adder.release_request_pad(adderpad)
+            aconv.set_state(gst.STATE_NULL)
+            aresample.set_state(gst.STATE_NULL)
             self.remove(aconv, aresample)
+        self.warning("done")
 
 
 gobject.type_register(SmartAdderBin)

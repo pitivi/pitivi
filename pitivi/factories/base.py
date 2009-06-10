@@ -28,7 +28,7 @@ import gst
 from pitivi.log.loggable import Loggable
 from pitivi.elements.singledecodebin import SingleDecodeBin
 from pitivi.signalinterface import Signallable
-from pitivi.stream import match_stream_groups_map
+from pitivi.stream import match_stream_groups_map, AudioStream
 
 # FIXME: define a proper hierarchy
 class ObjectFactoryError(Exception):
@@ -584,8 +584,38 @@ class URISourceFactoryMixin(object):
         bin.remove_pad(ghost_pad)
 
     def _makeStreamBin(self, output_stream):
-        return self.singleDecodeBinClass(uri=self.uri, caps=output_stream.caps,
-                stream=output_stream)
+        self.debug("output_stream:%r", output_stream)
+        b = gst.Bin()
+        b.dbin = self.singleDecodeBinClass(uri=self.uri, caps=output_stream.caps,
+                                           stream=output_stream)
+        b.dbin.connect("pad-added", self._singlePadAddedCb, b)
+        b.dbin.connect("pad-removed", self._singlePadRemovedCb, b)
+
+        if isinstance(output_stream, AudioStream):
+            self.debug("Adding volume element")
+            # add a volume element
+            b.volume = gst.element_factory_make("volume", "internal-volume")
+            b.add(b.volume)
+
+        b.add(b.dbin)
+        return b
+
+    def _singlePadAddedCb(self, dbin, pad, topbin):
+        self.debug("dbin:%r, pad:%r, topbin:%r", dbin, pad, topbin)
+        if hasattr(topbin, "volume"):
+            pad.link(topbin.volume.get_pad("sink"))
+            topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
+        else:
+            topbin.ghostpad = gst.GhostPad("src", pad)
+        topbin.ghostpad.set_active(True)
+        topbin.add_pad(topbin.ghostpad)
+
+    def _singlePadRemovedCb(self, dbin, pad, topbin):
+        self.debug("dbin:%r, pad:%r, topbin:%r", dbin, pad, topbin)
+        topbin.remove_pad(topbin.ghostpad)
+        topbin.ghostpad = None
+        if hasattr(topbin, "volume"):
+            pad.unlink(topbin.volume.get_pad("sink"))
 
 class LiveURISourceFactory(URISourceFactoryMixin, LiveSourceFactory):
     """
