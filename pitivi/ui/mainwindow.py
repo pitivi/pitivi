@@ -180,6 +180,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.projectManager.connect("missing-uri",
                 self._projectManagerMissingUriCb)
 
+        self.app.action_log.connect("can-undo", self._actionLogCanUndo)
+        self.app.action_log.connect("can-redo", self._actionLogCanRedo)
+
         # if no webcams available, hide the webcam action
         self.app.deviceprobe.connect("device-added", self._deviceChangeCb)
         self.app.deviceprobe.connect("device-removed", self._deviceChangeCb)
@@ -231,6 +234,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
              None, _("Edit the project settings"), self._projectSettingsCb),
             ("RenderProject", 'pitivi-render' , _("_Render project"),
              None, _("Render project"), self._recordCb),
+            ("Undo", gtk.STOCK_UNDO,
+             _("_Undo"),
+             None, _("Undo the last operation"), self._undoCb),
+            ("Redo", gtk.STOCK_REDO,
+             _("_Redo"),
+             None, _("Redo the last operation that was undone"), self._redoCb),
             ("PluginManager", gtk.STOCK_PREFERENCES ,
              _("_Plugins..."),
              None, _("Manage plugins"), self._pluginManagerCb),
@@ -587,6 +596,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
         abt.connect("response", self._aboutResponseCb)
         abt.show()
 
+    def _undoCb(self, action):
+        self.app.action_log.undo()
+
+    def _redoCb(self, action):
+        self.app.action_log.redo()
+
     def _pluginManagerCb(self, unused_action):
         from pluginmanagerdialog import PluginManagerDialog
         PluginManagerDialog(self.app.plugin_manager)
@@ -719,6 +734,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
             pass
 
         dialog.destroy()
+
+    def _actionLogCanUndo(self, action_log, can_undo):
+        self.actiongroup.get_action("Undo").set_sensitive(can_undo)
+
+    def _actionLogCanRedo(self, action_log, can_redo):
+        self.actiongroup.get_action("Redo").set_sensitive(can_redo)
 
 
 ## PiTiVi current project callbacks
