@@ -735,12 +735,17 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         dialog.destroy()
 
-    def _actionLogCanUndo(self, action_log, can_undo):
-        self.actiongroup.get_action("Undo").set_sensitive(can_undo)
+    def _actionLogCanUndo(self, action_log, can_undo, action_group_name):
+        action = self.actiongroup.get_action("Undo")
+        action.set_sensitive(can_undo)
+        if can_undo:
+            action.props.label = _("Undo %s") % action_group_name
 
-    def _actionLogCanRedo(self, action_log, can_redo):
-        self.actiongroup.get_action("Redo").set_sensitive(can_redo)
-
+    def _actionLogCanRedo(self, action_log, can_redo, action_group_name):
+        action = self.actiongroup.get_action("Redo")
+        action.set_sensitive(can_redo)
+        if can_redo:
+            action.props.label = _("Redo %s") % action_group_name
 
 ## PiTiVi current project callbacks
 

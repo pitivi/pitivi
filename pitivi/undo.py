@@ -189,7 +189,7 @@ class UndoableActionLog(Signallable):
         nested = self._stackIsNested(stack)
         if not self.stacks:
             self.undo_stacks.append(stack)
-            self.emit("can-undo", True)
+            self.emit("can-undo", True, stack.action_group_name)
         else:
             self.stacks[-1].push(stack)
 
@@ -202,13 +202,13 @@ class UndoableActionLog(Signallable):
 
         stack = self.undo_stacks.pop(-1)
         if not self.undo_stacks:
-            self.emit("can-undo", False)
+            self.emit("can-undo", False, None)
 
         self._runStack(stack, stack.undo)
 
         self.redo_stacks.append(stack)
         self.emit("undo", stack)
-        self.emit("can-redo", True)
+        self.emit("can-redo", True, stack.action_group_name)
 
     def redo(self):
         if self.stacks or not self.redo_stacks:
@@ -216,12 +216,12 @@ class UndoableActionLog(Signallable):
 
         stack = self.redo_stacks.pop(-1)
         if not self.redo_stacks:
-            self.emit("can-redo", False)
+            self.emit("can-redo", False, None)
 
         self._runStack(stack, stack.do)
         self.undo_stacks.append(stack)
         self.emit("redo", stack)
-        self.emit("can-undo", True)
+        self.emit("can-undo", True, stack.action_group_name)
 
     def _runStack(self, stack, run):
         self._connectToRunningStack(stack)
