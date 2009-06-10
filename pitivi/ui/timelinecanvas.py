@@ -235,7 +235,9 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         if items:
             for item in items:
                 if isinstance(item, TrackObject):
+                    self.app.action_log.begin("split object")
                     item.element.split(self.pixelToNs(x))
+                    self.app.action_log.commit()
 
         return True
 

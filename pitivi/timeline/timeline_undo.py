@@ -47,14 +47,30 @@ class TimelineObjectAdded(UndoableAction):
     def __init__(self, timeline, timeline_object):
         self.timeline = timeline
         self.timeline_object = timeline_object
+        self.timeline_object_copy = self._copyTimelineObject(timeline_object)
 
     def do(self):
+        temporary_timeline_object = \
+                self._copyTimelineObject(self.timeline_object_copy)
+        for track_object in temporary_timeline_object.track_objects:
+            track, track_object.track = track_object.track, None
+            track.addTrackObject(track_object)
+
+        self.timeline_object.track_objects = temporary_timeline_object.track_objects
         self.timeline.addTimelineObject(self.timeline_object)
-        self._done()
+        self._undone()
 
     def undo(self):
-        self.timeline.removeTimelineObject(self.timeline_object)
-        self._undone()
+        self.timeline.removeTimelineObject(self.timeline_object, deep=True)
+        self._done()
+
+    def _copyTimelineObject(self, timeline_object):
+        copy = timeline_object.copy()
+        for (track_object_copy, track_object) in \
+                    zip(copy.track_objects, timeline_object.track_objects):
+            track_object_copy.track = track_object.track
+
+        return copy
 
 class TimelineObjectRemoved(UndoableAction):
     def __init__(self, timeline, timeline_object):
