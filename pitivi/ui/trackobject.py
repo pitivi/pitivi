@@ -110,7 +110,8 @@ class TrimHandle(View, goocanvas.Image, Zoomable):
 
     element = receiver()
 
-    def __init__(self, element, timeline, **kwargs):
+    def __init__(self, instance, element, timeline, **kwargs):
+        self.app = instance
         self.element = element
         self.timeline = timeline
         goocanvas.Image.__init__(self,
@@ -134,6 +135,14 @@ class StartHandle(TrimHandle):
     class Controller(TimelineController):
 
         _cursor = LEFT_SIDE
+
+        def drag_start(self):
+            TimelineController.drag_start(self)
+            self._view.app.action_log.begin("trim object")
+
+        def drag_end(self):
+            TimelineController.drag_end(self)
+            self._view.app.action_log.commit()
 
         def set_pos(self, obj, pos):
             new_start = max(self._view.pixelToNs(pos[0]), 0)
@@ -237,9 +246,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             y = 3,
             line_width = 0)
 
-        self.start_handle = StartHandle(element, timeline,
+        self.start_handle = StartHandle(self.app, element, timeline,
             height=self.height)
-        self.end_handle = EndHandle(element, timeline,
+        self.end_handle = EndHandle(self.app, element, timeline,
             height=self.height)
 
         self.selection_indicator = goocanvas.Rect(
