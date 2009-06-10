@@ -243,9 +243,11 @@ class PropertyChangeTracker(Signallable):
     def connectToObject(self, obj):
         for property_name in self.property_names:
             self.properties[property_name] = \
-                    getattr(obj, property_name)
+                    getattr(obj, property_name.replace("-", "_"))
 
-            obj.connect(property_name + '-changed',
+            signal_name = property_name + '-changed'
+            self.__signals__[signal_name] = []
+            obj.connect(signal_name,
                     self._propertyChangedCb, property_name)
 
 
