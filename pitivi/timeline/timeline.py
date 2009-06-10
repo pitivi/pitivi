@@ -763,6 +763,8 @@ class Timeline(Signallable, Loggable):
     """
     __signals__ = {
         'duration-changed': ['duration'],
+        'object-added': ['timeline_object'],
+        'object-removed': ['timeline_object'],
         'track-added': ['track'],
         'track-removed': ['track'],
         'selection-changed': [],
@@ -856,6 +858,8 @@ class Timeline(Signallable, Loggable):
 
         self.edges.addTimelineObject(obj)
 
+        self.emit("object-added", obj)
+
     def removeTimelineObject(self, obj, deep=False):
         """
         Remove the given object from the Timeline.
@@ -882,6 +886,8 @@ class Timeline(Signallable, Loggable):
             for track_object in obj.track_objects:
                 track = track_object.track
                 track.removeTrackObject(track_object)
+
+        self.emit("object-removed", obj)
 
     # FIXME : shouldn't this be made more generic (i.e. not specific to source facotires) ?
     def addSourceFactory(self, factory, stream_map=None, strict=False):
