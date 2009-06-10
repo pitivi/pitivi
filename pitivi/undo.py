@@ -139,20 +139,29 @@ class UndoableActionLog(Signallable):
         "commit": ["stack", "nested"],
         "undo": ["stack"],
         "redo": ["stack"],
+        "can-undo": ["bool"],
+        "can-redo": ["bool"],
         "error": ["exception"]
     }
     def __init__(self):
         self.undo_stacks = []
         self.redo_stacks = []
         self.stacks = []
+        self.running = False
 
     def begin(self, action_group_name):
+        if self.running:
+            return
+
         stack = UndoableActionStack(action_group_name)
         nested = self._stackIsNested(stack)
         self.stacks.append(stack)
         self.emit("begin", stack, nested)
 
     def push(self, action):
+        if self.running:
+            return
+
         stack = self._getTopmostStack()
         if stack is None:
             return
@@ -160,6 +169,9 @@ class UndoableActionLog(Signallable):
         self.emit("push", stack, action)
 
     def rollback(self):
+        if self.running:
+            return
+
         stack = self._getTopmostStack(pop=True)
         if stack is None:
             return
@@ -168,12 +180,16 @@ class UndoableActionLog(Signallable):
         stack.undo()
 
     def commit(self):
+        if self.running:
+            return
+
         stack = self._getTopmostStack(pop=True)
         if stack is None:
             return
         nested = self._stackIsNested(stack)
         if not self.stacks:
             self.undo_stacks.append(stack)
+            self.emit("can-undo", True)
         else:
             self.stacks[-1].push(stack)
 
@@ -185,19 +201,56 @@ class UndoableActionLog(Signallable):
             return
 
         stack = self.undo_stacks.pop(-1)
-        stack.undo()
+        if not self.undo_stacks:
+            self.emit("can-undo", False)
+
+        self._runStack(stack, stack.undo)
 
         self.redo_stacks.append(stack)
         self.emit("undo", stack)
+        self.emit("can-redo", True)
 
     def redo(self):
         if self.stacks or not self.redo_stacks:
             return self._error(UndoWrongStateError())
 
         stack = self.redo_stacks.pop(-1)
-        stack.do()
+        if not self.redo_stacks:
+            self.emit("can-redo", False)
+
+        self._runStack(stack, stack.do)
         self.undo_stacks.append(stack)
         self.emit("redo", stack)
+        self.emit("can-undo", True)
+
+    def _runStack(self, stack, run):
+        self._connectToRunningStack(stack)
+        self.running = True
+        run()
+
+    def _connectToRunningStack(self, stack):
+        stack.connect("done", self._stackDoneCb)
+        stack.connect("undone", self._stackUndoneCb)
+        stack.connect("error", self._stackErrorCb)
+
+    def _disconnectFromRunningStack(self, stack):
+        for method in (self._stackDoneCb, self._stackUndoneCb,
+                self._stackErrorCb):
+            stack.disconnect_by_func(method)
+
+    def _stackDoneCb(self, stack):
+        self.running = False
+        self._disconnectFromRunningStack(stack)
+
+    def _stackUndoneCb(self, stack):
+        self.running = False
+        self._disconnectFromRunningStack(stack)
+
+    def _stackErrorCb(self, stack, exception):
+        self.running = False
+        self._disconnectFromRunningStack(stack)
+
+        self.emit("error", exception)
 
     def _getTopmostStack(self, pop=False):
         stack = None
@@ -229,6 +282,7 @@ class DebugActionLogObserver(Loggable):
         log.connect("commit", self._actionLogCommitCb)
         log.connect("rollback", self._actionLogRollbackCb)
         log.connect("push", self._actionLogPushCb)
+        log.connect("error", self._actionLogErrorCb)
 
     def _disconnectFromActionLog(self, log):
         for method in (self._actionLogBeginCb, self._actionLogCommitCb,
@@ -236,13 +290,19 @@ class DebugActionLogObserver(Loggable):
             log.disconnect_by_func(method)
 
     def _actionLogBeginCb(self, log, stack, nested):
-        self.debug("begin action nested: %s", nested)
+        self.debug("begin action %s nested %s",
+                stack.action_group_name, nested)
 
     def _actionLogCommitCb(self, log, stack, nested):
-        self.debug("commit action nested: %s", nested)
+        self.debug("commit action %s nested %s",
+                stack.action_group_name, nested)
 
     def _actionLogRollbackCb(self, log, stack, nested):
-        self.debug("rollback action nested: %s", nested)
+        self.debug("rollback action %s nested %s",
+                stack.action_group_name, nested)
 
-    def _actionLogPushCb(self, log, action):
-        self.debug("push %s", action)
+    def _actionLogPushCb(self, log, stack, action):
+        self.debug("push %s in %s", action, stack.action_group_name)
+
+    def _actionLogErrorCb(self, log, exception):
+        self.warning("error %r: %s", exception, exception)
