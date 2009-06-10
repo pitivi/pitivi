@@ -64,7 +64,7 @@ class TestUndoableActionStack(TestCase):
         def doneCb(action, value):
             state["done"] = value
 
-        stack = UndoableActionStack()
+        stack = UndoableActionStack("meh")
         stack.connect("done", doneCb, True)
         stack.connect("undone", doneCb, False)
 
@@ -92,7 +92,7 @@ class TestUndoableActionStack(TestCase):
                 state["actions"] -= 1
                 self._undone()
 
-        stack = UndoableActionStack()
+        stack = UndoableActionStack("meh")
         stack.connect("done", doneCb, True)
         stack.connect("undone", doneCb, False)
         action1 = Action()
@@ -131,7 +131,7 @@ class TestUndoableActionStack(TestCase):
             def undo_fail(self):
                 self._error(UndoError("boom"))
 
-        stack = UndoableActionStack()
+        stack = UndoableActionStack("meh")
         stack.connect("done", doneCb)
         stack.connect("error", errorCb)
         action1 = Action()
@@ -168,7 +168,7 @@ class TestUndoableActionStack(TestCase):
             def undo_fail(self):
                 raise Exception("boom")
 
-        stack = UndoableActionStack()
+        stack = UndoableActionStack("meh")
         stack.connect("undone", doneCb, False)
         stack.connect("error", errorCb)
         action1 = Action()
@@ -245,7 +245,7 @@ class TestUndoableActionLog(TestCase):
         """
         self.failUnlessEqual(len(self.log.undo_stacks), 0)
         self.failUnlessEqual(len(self.log.redo_stacks), 0)
-        self.log.begin()
+        self.log.begin("meh")
         self.failUnlessEqual(len(self.signals), 1)
         name, (stack, nested) = self.signals[0]
         self.failUnlessEqual(name, "begin")
@@ -266,7 +266,7 @@ class TestUndoableActionLog(TestCase):
         """
         self.failUnlessEqual(len(self.log.undo_stacks), 0)
         self.failUnlessEqual(len(self.log.redo_stacks), 0)
-        self.log.begin()
+        self.log.begin("meh")
         self.failUnlessEqual(len(self.signals), 1)
         name, (stack, nested) = self.signals[0]
         self.failUnlessEqual(name, "begin")
@@ -274,7 +274,7 @@ class TestUndoableActionLog(TestCase):
 
         self.failUnlessEqual(len(self.log.undo_stacks), 0)
         self.failUnlessEqual(len(self.log.redo_stacks), 0)
-        self.log.begin()
+        self.log.begin("nested")
         self.failUnlessEqual(len(self.signals), 2)
         name, (stack, nested) = self.signals[1]
         self.failUnlessEqual(name, "begin")
@@ -304,7 +304,7 @@ class TestUndoableActionLog(TestCase):
         """
         self.failUnlessEqual(len(self.log.undo_stacks), 0)
         self.failUnlessEqual(len(self.log.redo_stacks), 0)
-        self.log.begin()
+        self.log.begin("meh")
         self.failUnlessEqual(len(self.signals), 1)
         name, (stack, nested) = self.signals[0]
         self.failUnlessEqual(name, "begin")
@@ -324,7 +324,7 @@ class TestUndoableActionLog(TestCase):
         """
         self.failUnlessEqual(len(self.log.undo_stacks), 0)
         self.failUnlessEqual(len(self.log.redo_stacks), 0)
-        self.log.begin()
+        self.log.begin("meh")
         self.failUnlessEqual(len(self.signals), 1)
         name, (stack, nested) = self.signals[0]
         self.failUnlessEqual(name, "begin")
@@ -332,7 +332,7 @@ class TestUndoableActionLog(TestCase):
 
         self.failUnlessEqual(len(self.log.undo_stacks), 0)
         self.failUnlessEqual(len(self.log.redo_stacks), 0)
-        self.log.begin()
+        self.log.begin("nested")
         self.failUnlessEqual(len(self.signals), 2)
         name, (stack, nested) = self.signals[1]
         self.failUnlessEqual(name, "begin")
@@ -359,7 +359,7 @@ class TestUndoableActionLog(TestCase):
         Try an undo() redo() sequence.
         """
         # begin
-        self.log.begin()
+        self.log.begin("meh")
         self.failUnlessEqual(len(self.signals), 1)
         name, (stack, nested) = self.signals[0]
         self.failUnlessEqual(name, "begin")
@@ -437,9 +437,9 @@ class TestUndoableActionLog(TestCase):
         action2 = Action(2)
         action3 = Action(3)
 
-        self.log.begin()
+        self.log.begin("meh")
         self.log.push(action1)
-        self.log.begin()
+        self.log.begin("nested")
         self.log.push(action2)
         self.log.commit()
         self.log.push(action3)

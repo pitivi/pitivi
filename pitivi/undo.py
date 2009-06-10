@@ -20,6 +20,7 @@
 # Boston, MA 02111-1307, USA.
 
 from pitivi.signalinterface import Signallable
+from pitivi.log.loggable import Loggable
 
 class UndoError(Exception):
     pass
@@ -57,7 +58,8 @@ class UndoableActionStack(UndoableAction):
         "error": ["exception"],
     }
 
-    def __init__(self):
+    def __init__(self, action_group_name):
+        self.action_group_name = action_group_name
         self.done_actions = []
         self.undone_actions = []
         self.actions = []
@@ -144,8 +146,8 @@ class UndoableActionLog(Signallable):
         self.redo_stacks = []
         self.stacks = []
 
-    def begin(self):
-        stack = UndoableActionStack()
+    def begin(self, action_group_name):
+        stack = UndoableActionStack(action_group_name)
         nested = self._stackIsNested(stack)
         self.stacks.append(stack)
         self.emit("begin", stack, nested)
@@ -214,3 +216,33 @@ class UndoableActionLog(Signallable):
 
     def _error(self, exception):
         self.emit("error", exception)
+
+class DebugActionLogObserver(Loggable):
+    def startObserving(self, log):
+        self._connectToActionLog(log)
+
+    def stopObserving(self, log):
+        self._disconnectFromActionLog(log)
+
+    def _connectToActionLog(self, log):
+        log.connect("begin", self._actionLogBeginCb)
+        log.connect("commit", self._actionLogCommitCb)
+        log.connect("rollback", self._actionLogRollbackCb)
+        log.connect("push", self._actionLogPushCb)
+
+    def _disconnectFromActionLog(self, log):
+        for method in (self._actionLogBeginCb, self._actionLogCommitCb,
+                self._actionLogrollbackCb, self._actionLogPushCb):
+            log.disconnect_by_func(method)
+
+    def _actionLogBeginCb(self, log, stack, nested):
+        self.debug("begin action nested: %s", nested)
+
+    def _actionLogCommitCb(self, log, stack, nested):
+        self.debug("commit action nested: %s", nested)
+
+    def _actionLogRollbackCb(self, log, stack, nested):
+        self.debug("rollback action nested: %s", nested)
+
+    def _actionLogPushCb(self, log, action):
+        self.debug("push %s", action)
