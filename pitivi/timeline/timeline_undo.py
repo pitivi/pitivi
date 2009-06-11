@@ -122,8 +122,8 @@ class TimelineLogObserver(object):
             self._disconnectFromTimelineObject(timeline_object)
 
     def _connectToTimeline(self, timeline):
-        timeline.connect("object-added", self._timelineObjectAddedCb)
-        timeline.connect("object-removed", self._timelineObjectRemovedCb)
+        timeline.connect("timeline-object-added", self._timelineObjectAddedCb)
+        timeline.connect("timeline-object-removed", self._timelineObjectRemovedCb)
 
     def _disconnectFromTimeline(self, timeline):
         timeline.disconnect_by_func(self._timelineObjectAddedCb)

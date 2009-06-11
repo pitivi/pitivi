@@ -763,8 +763,8 @@ class Timeline(Signallable, Loggable):
     """
     __signals__ = {
         'duration-changed': ['duration'],
-        'object-added': ['timeline_object'],
-        'object-removed': ['timeline_object'],
+        'timeline-object-added': ['timeline_object'],
+        'timeline-object-removed': ['timeline_object'],
         'track-added': ['track'],
         'track-removed': ['track'],
         'selection-changed': [],
@@ -858,7 +858,7 @@ class Timeline(Signallable, Loggable):
 
         self.edges.addTimelineObject(obj)
 
-        self.emit("object-added", obj)
+        self.emit("timeline-object-added", obj)
 
     def removeTimelineObject(self, obj, deep=False):
         """
@@ -882,7 +882,7 @@ class Timeline(Signallable, Loggable):
         self.rebuildEdges()
         #self.edges.removeTimelineObject(obj)
 
-        self.emit("object-removed", obj)
+        self.emit("timeline-object-removed", obj)
 
         if deep:
             for track_object in obj.track_objects:
