@@ -52,17 +52,18 @@ class TimelineObjectAdded(UndoableAction):
     def do(self):
         temporary_timeline_object = \
                 self._copyTimelineObject(self.timeline_object_copy)
+        self.timeline_object.track_objects = []
         for track_object in temporary_timeline_object.track_objects:
             track, track_object.track = track_object.track, None
             track.addTrackObject(track_object)
+            self.timeline_object.addTrackObject(track_object)
 
-        self.timeline_object.track_objects = temporary_timeline_object.track_objects
         self.timeline.addTimelineObject(self.timeline_object)
-        self._undone()
+        self._done()
 
     def undo(self):
         self.timeline.removeTimelineObject(self.timeline_object, deep=True)
-        self._done()
+        self._undone()
 
     def _copyTimelineObject(self, timeline_object):
         copy = timeline_object.copy()
@@ -102,6 +103,10 @@ class TimelineObjectRemoved(UndoableAction):
         return copy
 
 class TimelineLogObserver(object):
+    propertyChangedAction = TimelineObjectPropertyChanged
+    timelineObjectAddedAction = TimelineObjectAdded
+    timelineObjectRemovedAction = TimelineObjectRemoved
+
     def __init__(self, log):
         self.log = log
         self.property_trackers = {}
@@ -139,16 +144,16 @@ class TimelineLogObserver(object):
 
     def _timelineObjectAddedCb(self, timeline, timeline_object):
         self._connectToTimelineObject(timeline_object)
-        action = TimelineObjectAdded(timeline, timeline_object)
+        action = self.timelineObjectAddedAction(timeline, timeline_object)
         self.log.push(action)
 
     def _timelineObjectRemovedCb(self, timeline, timeline_object):
         self._disconnectFromTimelineObject(timeline_object)
-        action = TimelineObjectRemoved(timeline, timeline_object)
+        action = self.timelineObjectRemovedAction(timeline, timeline_object)
         self.log.push(action)
 
     def _timelineObjectPropertyChangedCb(self, tracker, timeline_object,
             old_value, new_value, property_name):
-        action = TimelineObjectPropertyChanged(timeline_object,
+        action = self.propertyChangedAction(timeline_object,
                 property_name, old_value, new_value)
         self.log.push(action)
