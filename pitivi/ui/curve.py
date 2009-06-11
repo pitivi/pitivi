@@ -198,6 +198,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     def do_simple_is_item_at(self, x, y, cr, pointer_event):
         if (between(0, x, self.nsToPixel(self.element.duration)) and
             between(0, y, self.height)):
+            x += self.bounds.x1
+            y += self.bounds.y1
             self.make_curve(cr)
             return cr.in_stroke(x, y) or bool(self.findKeyframe((x, y)))
         return False
