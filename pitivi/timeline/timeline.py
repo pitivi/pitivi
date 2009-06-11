@@ -81,7 +81,7 @@ class TimelineObject(Signallable, Loggable):
         'out-point-changed': ['in-point'],
         'media-duration-changed': ['media-duration'],
         'priority-changed': ['priority'],
-        'selected-changed' : ['state'],
+        'selected-changed' : ['state']
     }
 
     DEFAULT_START = 0
@@ -768,6 +768,7 @@ class Timeline(Signallable, Loggable):
         'track-added': ['track'],
         'track-removed': ['track'],
         'selection-changed': [],
+        'disable-updates': ['bool']
     }
 
     def __init__(self):
@@ -1094,9 +1095,13 @@ class Timeline(Signallable, Loggable):
         for track in self.tracks:
             track.disableUpdates()
 
+        self.emit("disable-updates", True)
+
     def enableUpdates(self):
         """
         Unblock internal updates. Use this after calling L{disableUpdates}.
         """
         for track in self.tracks:
             track.enableUpdates()
+
+        self.emit("disable-updates", False)

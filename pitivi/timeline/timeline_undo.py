@@ -23,8 +23,36 @@ from pitivi.utils import PropertyChangeTracker
 from pitivi.undo import UndoableAction
 
 class TimelineObjectPropertyChangeTracker(PropertyChangeTracker):
-    property_names = ["start", "duration", "in-point", "out-point",
+    # no out-point
+    property_names = ["start", "duration", "in-point",
             "media-duration", "priority", "selected"]
+
+    _disabled = False
+
+    def connectToObject(self, obj):
+        PropertyChangeTracker.connectToObject(self, obj)
+        self.timeline = obj.timeline
+        self.timeline.connect("disable-updates", self._timelineDisableUpdatesCb)
+
+    def disconnectFromObject(self, obj):
+        self.timeline.disconnect_by_func(self._timelineDisableUpdatesCb)
+        PropertyChangeTracker.disconnectFromObject(self, obj)
+
+    def _timelineDisableUpdatesCb(self, timeline, disabled):
+        if self._disabled and not disabled:
+            self._disabled = disabled
+            properties = self._takeCurrentSnapshot(self.obj)
+            for property_name, property_value in properties.iteritems():
+                old_value = self.properties[property_name]
+                if old_value != property_value:
+                    self._propertyChangedCb(self.obj, property_value, property_name)
+        else:
+            self._disabled = disabled
+
+    def _propertyChangedCb(self, timeline_object, value, property_name):
+        if not self._disabled:
+            PropertyChangeTracker._propertyChangedCb(self,
+                    timeline_object, value, property_name)
 
 class TimelineObjectPropertyChanged(UndoableAction):
     def __init__(self, timeline_object, property_name, old_value, new_value):

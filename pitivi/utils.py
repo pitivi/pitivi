@@ -239,19 +239,27 @@ def uri_is_reachable(uri):
 class PropertyChangeTracker(Signallable):
     def __init__(self):
         self.properties = {}
+        self.obj = None
 
     def connectToObject(self, obj):
+        self.obj = obj
+        self.properties = self._takeCurrentSnapshot(obj)
         for property_name in self.property_names:
-            self.properties[property_name] = \
-                    getattr(obj, property_name.replace("-", "_"))
-
             signal_name = property_name + '-changed'
             self.__signals__[signal_name] = []
             obj.connect(signal_name,
                     self._propertyChangedCb, property_name)
 
+    def _takeCurrentSnapshot(self, obj):
+        properties = {}
+        for property_name in self.property_names:
+            properties[property_name] = \
+                    getattr(obj, property_name.replace("-", "_"))
+
+        return properties
 
     def disconnectFromObject(self, obj):
+        self.obj = None
         obj.disconnect_by_func(self._propertyChangedCb)
 
     def _propertyChangedCb(self, object, value, property_name):
