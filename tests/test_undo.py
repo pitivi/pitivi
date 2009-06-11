@@ -391,3 +391,7 @@ class TestUndoableActionLog(TestCase):
         self.log.redo()
         self.failUnlessEqual(call_sequence, ["do1", "do2", "do3"])
 
+        call_sequence[:] = []
+        self.log.undo()
+        self.failUnlessEqual(call_sequence, ["undo3", "undo2", "undo1"])
+
