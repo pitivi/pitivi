@@ -37,6 +37,11 @@ class TestCase(unittest.TestCase):
         del objs
         gc.collect()
 
+        for elt in new:
+            print elt
+            for i in gc.get_referrers(elt):
+                print "   ", i
+
         self.failIf(new, new)
         del self._tracked
 
