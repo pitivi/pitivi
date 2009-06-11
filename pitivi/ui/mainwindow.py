@@ -183,6 +183,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.app.action_log.connect("commit", self._actionLogCommit)
         self.app.action_log.connect("undo", self._actionLogUndo)
         self.app.action_log.connect("redo", self._actionLogRedo)
+        self.app.action_log.connect("cleaned", self._actionLogCleaned)
 
         # if no webcams available, hide the webcam action
         self.app.deviceprobe.connect("device-added", self._deviceChangeCb)
@@ -740,6 +741,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if nested:
             return
 
+        self._syncDoUndo(action_log)
+
+    def _actionLogCleaned(self, action_log):
         self._syncDoUndo(action_log)
 
     def _actionLogUndo(self, action_log, stack):

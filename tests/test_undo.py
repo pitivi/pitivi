@@ -112,12 +112,9 @@ class TestUndoableActionStack(TestCase):
         """
         Undo a stack containing a failing action.
         """
-        state = {"done": True, "error": None}
+        state = {"done": True}
         def doneCb(action, value):
             state["done"] = value
-
-        def errorCb(action, exception):
-            state["error"] = exception
 
         state["actions"] = 2
         class Action(UndoableAction):
@@ -129,57 +126,18 @@ class TestUndoableActionStack(TestCase):
                 self._undone()
 
             def undo_fail(self):
-                self._error(UndoError("boom"))
+                raise UndoError("meh")
 
         stack = UndoableActionStack("meh")
         stack.connect("done", doneCb)
-        stack.connect("error", errorCb)
         action1 = Action()
         action2 = Action()
         stack.push(action1)
         stack.push(action2)
 
-        stack.undo()
+        self.failUnlessRaises(UndoError, stack.undo)
         self.failUnlessEqual(state["actions"], 1)
         self.failUnless(state["done"])
-        self.failUnless(state["error"])
-
-    def testUndoBrokenAction(self):
-        """
-        Undo a stack containing a broken action (raises an exception whereas it
-        should be emitting the "error" signal.
-        """
-        state = {"done": True, "error": None}
-        def doneCb(action, value):
-            state["done"] = value
-
-        def errorCb(action, exception):
-            state["error"] = exception
-
-        state["actions"] = 2
-        class Action(UndoableAction):
-            def undo(self):
-                state["actions"] -= 1
-                if state["actions"] == 1:
-                    self.__class__.undo = self.__class__.undo_fail
-
-                self._undone()
-
-            def undo_fail(self):
-                raise Exception("boom")
-
-        stack = UndoableActionStack("meh")
-        stack.connect("undone", doneCb, False)
-        stack.connect("error", errorCb)
-        action1 = Action()
-        action2 = Action()
-        stack.push(action1)
-        stack.push(action2)
-
-        stack.undo()
-        self.failUnlessEqual(state["actions"], 1)
-        self.failUnless(state["done"])
-        self.failUnless(state["error"])
 
 
 class TestUndoableActionLog(TestCase):
@@ -198,46 +156,27 @@ class TestUndoableActionLog(TestCase):
 
     def _connectToUndoableActionLog(self, log):
         for signalName in ("begin", "push", "rollback", "commit",
-                    "undo", "redo", "error"):
+                    "undo", "redo"):
             log.connect(signalName, self._undoActionLogSignalCb, signalName)
 
     def _disconnectFromUndoableActionLog(self, log):
         self.log.disconnect_by_func(self._undoActionLogSignalCb)
 
     def testRollbackWrongState(self):
-        self.log.rollback()
-        self.failUnlessEqual(len(self.signals), 1)
-        name, (exception,) = self.signals[0]
-        self.failUnlessEqual(name, "error")
-        self.failUnless(isinstance(exception, UndoWrongStateError))
+        self.failUnlessRaises(UndoWrongStateError, self.log.rollback)
 
     def testCommitWrongState(self):
-        self.log.commit()
-        self.failUnlessEqual(len(self.signals), 1)
-        name, (exception,) = self.signals[0]
-        self.failUnlessEqual(name, "error")
-        self.failUnless(isinstance(exception, UndoWrongStateError))
+        self.failUnlessRaises(UndoWrongStateError, self.log.commit)
 
     def testPushWrongState(self):
+        # no error in this case
         self.log.push(None)
-        self.failUnlessEqual(len(self.signals), 1)
-        name, (exception,) = self.signals[0]
-        self.failUnlessEqual(name, "error")
-        self.failUnless(isinstance(exception, UndoWrongStateError))
 
     def testUndoWrongState(self):
-        self.log.undo()
-        self.failUnlessEqual(len(self.signals), 1)
-        name, (exception,) = self.signals[0]
-        self.failUnlessEqual(name, "error")
-        self.failUnless(isinstance(exception, UndoWrongStateError))
+        self.failUnlessRaises(UndoWrongStateError, self.log.undo)
 
     def testRedoWrongState(self):
-        self.log.redo()
-        self.failUnlessEqual(len(self.signals), 1)
-        name, (exception,) = self.signals[0]
-        self.failUnlessEqual(name, "error")
-        self.failUnless(isinstance(exception, UndoWrongStateError))
+        self.failUnlessRaises(UndoWrongStateError, self.log.redo)
 
     def testCommit(self):
         """

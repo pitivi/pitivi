@@ -33,7 +33,6 @@ class UndoableAction(Signallable):
         "done": [],
         "undone": [],
         "undone": [],
-        "error": ["exception"]
     }
 
     def do(self):
@@ -48,14 +47,11 @@ class UndoableAction(Signallable):
     def _undone(self):
         self.emit("undone")
 
-    def _error(self, exception):
-        self.emit("error", exception)
-
 class UndoableActionStack(UndoableAction):
     __signals__ = {
         "done": [],
         "undone": [],
-        "error": ["exception"],
+        "cleaned": [],
     }
 
     def __init__(self, action_group_name):
@@ -67,69 +63,28 @@ class UndoableActionStack(UndoableAction):
     def push(self, action):
         self.done_actions.append(action)
 
-    def _runAction(self, action_list, methodName, signalName,
-            continueCallback, finishCallback):
-        try:
-            action = action_list.pop(-1)
-        except IndexError:
-            finishCallback()
-            return
-
-        if action_list is self.done_actions:
-            self.undone_actions.append(action)
-        else:
-            self.done_actions.append(action)
-
-        self._connectToAction(action, action_list,
-                signalName, continueCallback, finishCallback)
-
-        method = getattr(action, methodName)
-        try:
+    def _runAction(self, action_list, method_name):
+        for action in action_list[::-1]:
+            method = getattr(action, method_name)
             method()
-        except Exception, e:
-            self._actionErrorCb(action, e, finishCallback)
 
     def do(self):
-        self._runAction(self.undone_actions, "do", "done",
-                continueCallback=self.do, finishCallback=self._done)
-
-    def undo(self):
-        self._runAction(self.done_actions, "undo", "undone",
-                continueCallback=self.undo, finishCallback=self._undone)
-
-    def _connectToAction(self, action, action_list, signalName,
-            continueCallback, finishCallback):
-        action.connect(signalName, self._actionDoneOrUndoneCb,
-                action_list, continueCallback, finishCallback)
-        action.connect("error", self._actionErrorCb, finishCallback)
-
-    def _disconnectFromAction(self, action):
-        action.disconnect_by_func(self._actionDoneOrUndoneCb)
-        action.disconnect_by_func(self._actionErrorCb)
-
-    def _actionDoneOrUndoneCb(self, action, action_list,
-            continueCallback, finishCallback):
-        self._disconnectFromAction(action)
-
-        if not action_list:
-            finishCallback()
-            return
-
-        continueCallback()
-
-    def _actionErrorCb(self, action, exception, finishCallback):
-        self._disconnectFromAction(action)
-
-        self._error(exception)
-
-    def _done(self):
+        self._runAction(self.undone_actions, "do")
+        self.done_actions = self.undone_actions[::-1]
         self.emit("done")
 
-    def _undone(self):
+    def undo(self):
+        self._runAction(self.done_actions, "undo")
+        self.undone_actions = self.done_actions[::-1]
         self.emit("undone")
 
-    def _error(self, exception):
-        self.emit("error", exception)
+    def clean(self):
+        actions = self.done_actions + self.undone_actions
+        self.undone_actions = []
+        self.done_actions = []
+        self._runAction(actions, "clean")
+        self.emit("cleaned")
+
 
 class UndoableActionLog(Signallable):
     __signals__ = {
@@ -139,7 +94,7 @@ class UndoableActionLog(Signallable):
         "commit": ["stack", "nested"],
         "undo": ["stack"],
         "redo": ["stack"],
-        "error": ["exception"]
+        "cleaned": [],
     }
     def __init__(self):
         self.undo_stacks = []
@@ -160,9 +115,11 @@ class UndoableActionLog(Signallable):
         if self.running:
             return
 
-        stack = self._getTopmostStack()
-        if stack is None:
+        try:
+            stack = self._getTopmostStack()
+        except UndoWrongStateError:
             return
+
         stack.push(action)
         self.emit("push", stack, action)
 
@@ -197,8 +154,7 @@ class UndoableActionLog(Signallable):
 
     def undo(self):
         if self.stacks or not self.undo_stacks:
-            self._error(UndoWrongStateError())
-            return
+            raise UndoWrongStateError()
 
         stack = self.undo_stacks.pop(-1)
 
@@ -209,7 +165,7 @@ class UndoableActionLog(Signallable):
 
     def redo(self):
         if self.stacks or not self.redo_stacks:
-            return self._error(UndoWrongStateError())
+            raise UndoWrongStateError()
 
         stack = self.redo_stacks.pop(-1)
 
@@ -217,34 +173,21 @@ class UndoableActionLog(Signallable):
         self.undo_stacks.append(stack)
         self.emit("redo", stack)
 
+    def clean(self):
+        stacks = self.redo_stacks + self.undo_stacks
+        self.redo_stacks = []
+        self.undo_stacks = []
+
+        for stack in stacks:
+            self._runStack(stack, stack.clean)
+        self.emit("cleaned")
+
     def _runStack(self, stack, run):
-        self._connectToRunningStack(stack)
         self.running = True
-        run()
-
-    def _connectToRunningStack(self, stack):
-        stack.connect("done", self._stackDoneCb)
-        stack.connect("undone", self._stackUndoneCb)
-        stack.connect("error", self._stackErrorCb)
-
-    def _disconnectFromRunningStack(self, stack):
-        for method in (self._stackDoneCb, self._stackUndoneCb,
-                self._stackErrorCb):
-            stack.disconnect_by_func(method)
-
-    def _stackDoneCb(self, stack):
-        self.running = False
-        self._disconnectFromRunningStack(stack)
-
-    def _stackUndoneCb(self, stack):
-        self.running = False
-        self._disconnectFromRunningStack(stack)
-
-    def _stackErrorCb(self, stack, exception):
-        self.running = False
-        self._disconnectFromRunningStack(stack)
-
-        self.emit("error", exception)
+        try:
+            run()
+        finally:
+            self.running = False
 
     def _getTopmostStack(self, pop=False):
         stack = None
@@ -254,15 +197,12 @@ class UndoableActionLog(Signallable):
             else:
                 stack = self.stacks[-1]
         except IndexError:
-            return self._error(UndoWrongStateError())
+            raise UndoWrongStateError()
 
         return stack
 
     def _stackIsNested(self, stack):
         return bool(len(self.stacks))
-
-    def _error(self, exception):
-        self.emit("error", exception)
 
 class DebugActionLogObserver(Loggable):
     def startObserving(self, log):
@@ -276,7 +216,6 @@ class DebugActionLogObserver(Loggable):
         log.connect("commit", self._actionLogCommitCb)
         log.connect("rollback", self._actionLogRollbackCb)
         log.connect("push", self._actionLogPushCb)
-        log.connect("error", self._actionLogErrorCb)
 
     def _disconnectFromActionLog(self, log):
         for method in (self._actionLogBeginCb, self._actionLogCommitCb,
@@ -297,6 +236,3 @@ class DebugActionLogObserver(Loggable):
 
     def _actionLogPushCb(self, log, stack, action):
         self.debug("push %s in %s", action, stack.action_group_name)
-
-    def _actionLogErrorCb(self, log, exception):
-        self.warning("error %r: %s", exception, exception)
