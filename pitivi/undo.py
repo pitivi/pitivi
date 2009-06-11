@@ -41,6 +41,9 @@ class UndoableAction(Signallable):
     def undo(self):
         raise NotImplementedError()
 
+    def clean(self):
+        pass
+
     def _done(self):
         self.emit("done")
 
