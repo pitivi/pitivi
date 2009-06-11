@@ -316,6 +316,7 @@ class SourceList(gtk.VBox, Loggable):
         self._removeSources()
 
     def _insertEndCb(self, unused_action):
+        self.app.action_log.begin("add clip")
         timeline = self.app.current.timeline
         sources = self.app.current.sources
         start = timeline.duration
@@ -324,6 +325,7 @@ class SourceList(gtk.VBox, Loggable):
             source = timeline.addSourceFactory(factory)
             source.setStart(start)
             start += source.duration
+        self.app.action_log.commit()
 
     def _getIcon(self, iconname, alternate):
         icontheme = gtk.icon_theme_get_default()
