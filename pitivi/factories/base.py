@@ -261,6 +261,7 @@ class SourceFactory(ObjectFactory):
         """
         bin.set_state(gst.STATE_NULL)
         self._releaseBin(bin)
+        self.debug("Finally releasing %r", bin)
         self.current_bins -= 1
         if bin in self.bins:
             self.bins.remove(bin)
@@ -583,6 +584,19 @@ class URISourceFactoryMixin(object):
         ghost_pad = bin.get_pad(pad.get_name())
         bin.remove_pad(ghost_pad)
 
+    def _releaseBin(self, bin):
+        if hasattr(bin, "dbin"):
+            self.debug("has dbin")
+            bin.dbin.disconnect_by_func(self._singlePadAddedCb)
+            bin.dbin.disconnect_by_func(self._singlePadRemovedCb)
+            del bin.dbin
+        if hasattr(bin, "volume"):
+            bin.volume.set_state(gst.STATE_NULL)
+            bin.remove(bin.volume)
+            del bin.volume
+        if hasattr(bin, "ghostpad"):
+            del bin.ghostpad
+
     def _makeStreamBin(self, output_stream):
         self.debug("output_stream:%r", output_stream)
         b = gst.Bin()
@@ -613,9 +627,12 @@ class URISourceFactoryMixin(object):
     def _singlePadRemovedCb(self, dbin, pad, topbin):
         self.debug("dbin:%r, pad:%r, topbin:%r", dbin, pad, topbin)
         topbin.remove_pad(topbin.ghostpad)
-        topbin.ghostpad = None
+        del topbin.ghostpad
         if hasattr(topbin, "volume"):
             pad.unlink(topbin.volume.get_pad("sink"))
+            topbin.volume.set_state(gst.STATE_NULL)
+            topbin.remove(topbin.volume)
+            del topbin.volume
 
 class LiveURISourceFactory(URISourceFactoryMixin, LiveSourceFactory):
     """

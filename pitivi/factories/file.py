@@ -51,6 +51,7 @@ class FileSourceFactory(URISourceFactoryMixin, RandomAccessSourceFactory):
                 bin.decodebin.disconnect_by_func(self._dbinPadRemovedCb)
             except:
                 pass
+        URISourceFactoryMixin._releaseBin(self, bin)
         RandomAccessSourceFactory._releaseBin(self, bin)
 
 class PictureFileSourceFactory(FileSourceFactory):
@@ -109,6 +110,15 @@ class PictureFileSourceFactory(FileSourceFactory):
         target.unlink(peer)
         container.remove_pad(ghost)
         pad.unlink(scale.get_pad("sink"))
+
+    def _releaseBin(self, bin):
+        if hasattr(bin, "decodebin"):
+            try:
+                bin.decodebin.disconnect_by_func(self._dbinPadAddedCb)
+                bin.decodebin.disconnect_by_func(self._dbinPadRemovedCb)
+            except:
+                pass
+        FileSourceFactory._releaseBin(self, bin.decodebin)
 
 class URISinkFactory(SinkFactory):
     """ A simple sink factory """
