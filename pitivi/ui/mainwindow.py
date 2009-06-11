@@ -292,6 +292,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         # deactivating non-functional actions
         # FIXME : reactivate them
+        save_action = self.actiongroup.get_action("SaveProject")
+        save_action.set_sensitive(False)
 
         for action in self.actiongroup.list_actions():
             action_name = action.get_name()
@@ -761,6 +763,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
             undo_action.props.label = _("Undo %s") % stack.action_group_name
         else:
             undo_action.props.label = _("Undo")
+
+        save_action = self.actiongroup.get_action("SaveProject")
+        save_action.set_sensitive(can_undo)
 
         redo_action = self.actiongroup.get_action("Redo")
         can_redo = bool(action_log.redo_stacks)
