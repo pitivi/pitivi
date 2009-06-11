@@ -76,10 +76,11 @@ class TestFileSourceFactory(TestCase):
         self.factory.addOutputStream(audio)
 
         bin = self.factory.makeBin(video)
-        self.failUnless(isinstance(bin, StubSingleDecodeBin))
-        self.failUnlessEqual(bin.uri, 'file:///path/to/file')
-        self.failUnlessEqual(video.caps, bin.caps)
-        self.failUnlessEqual(video, bin.stream)
+        self.failUnless(hasattr(bin, "dbin"))
+        self.failUnless(isinstance(bin.dbin, StubSingleDecodeBin))
+        self.failUnlessEqual(bin.dbin.uri, 'file:///path/to/file')
+        self.failUnlessEqual(video.caps, bin.dbin.caps)
+        self.failUnlessEqual(video, bin.dbin.stream)
         self.factory.releaseBin(bin)
 
 class StubPictureFileSourceFactory(PictureFileSourceFactory):
