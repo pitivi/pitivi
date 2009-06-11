@@ -6,7 +6,9 @@ tests = \
 	test_signallable.py		\
 	testcomplex.py			\
 	test_pipeline.py		\
-	test_action.py
+	test_action.py			\
+	test_undo.py			\
+	test_timeline_undo.py
 
 EXTRA_DIST = $(tests) runtests.py common.py
 
