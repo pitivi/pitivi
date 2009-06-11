@@ -185,3 +185,15 @@ class  TestTimelineUndo(TestCase):
         self.failUnlessEqual(self.timeline_object1.start, 5 * gst.SECOND)
         self.action_log.redo()
         self.failUnlessEqual(self.timeline_object1.start, 10 * gst.SECOND)
+
+        self.timeline_object1.priority = 10
+        self.action_log.begin("priority change")
+        self.timeline_object1.priority = 20
+        self.action_log.commit()
+
+        self.failUnlessEqual(self.timeline_object1.priority, 20)
+        self.action_log.undo()
+        self.failUnlessEqual(self.timeline_object1.priority, 10)
+        self.action_log.redo()
+        self.failUnlessEqual(self.timeline_object1.priority, 20)
+
