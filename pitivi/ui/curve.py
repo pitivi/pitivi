@@ -40,6 +40,11 @@ def intersect(b1, b2):
     return goocanvas.Bounds(max(b1.x1, b2.x1), max(b1.y1, b2.y1),
         min(b1.x2, b2.x2), min(b1.y2, b2.y2))
 
+KW_WIDTH = 10
+KW_HEIGHT = 10
+KW_WIDTH2 = KW_WIDTH / 2
+KW_HEIGHT2 = KW_HEIGHT / 2
+
 class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
     __gtype_name__ = 'Curve'
@@ -161,22 +166,23 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     def _controlPoint(self, cr, kf):
         pos = self._getKeyframeXY(kf)
         x, y = pos
-        cr.rectangle(x - 5, y - 5, 10, 10)
+        cr.rectangle(x - KW_WIDTH2, y - KW_HEIGHT2, KW_WIDTH, KW_HEIGHT)
         self.keyframes[kf] = pos
 
     def do_simple_paint(self, cr, bounds):
         bounds = intersect(self.bounds, bounds)
         cr.identity_matrix()
-        cr.set_line_width(self.line_width)
         if self.interpolator:
             height = bounds.y2 - bounds.y1
             width = bounds.x2 - bounds.x1
             cr.rectangle(bounds.x1, bounds.y1, width, height)
             cr.clip()
             self.make_curve(cr)
+            cr.set_line_width(self.line_width)
             cr.set_source_rgb(1, 0, 0)
             cr.stroke()
             self.make_keyframes(cr)
+            cr.set_line_width(1.0)
             cr.set_source_rgb(1, 1, 1)
             cr.fill_preserve()
             cr.set_source_rgb(1, 0, 0)
@@ -218,7 +224,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         x, y = pos
         for keyframe, value in self.keyframes.iteritems():
             kx, ky = value
-            if (between(kx - 5, x, kx + 5) and
-                between(ky - 5, y, ky + 5)):
+            if (between(kx - KW_WIDTH2, x, kx + KW_HEIGHT2) and
+                between(ky - KW_HEIGHT2, y, ky + KW_HEIGHT2)):
                 return keyframe
         return None
