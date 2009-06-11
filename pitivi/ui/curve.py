@@ -154,7 +154,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             Zoomable.nsToPixel(self.element.duration), self.height)
 
     def _getKeyframeXY(self, kf):
-        x = self.nsToPixel(kf.time)
+        x = self.nsToPixel(kf.time - self.element.in_point)
         y = kf.value * self._height
         return point.Point(x + self.bounds.x1, y + self.bounds.y1)
 
