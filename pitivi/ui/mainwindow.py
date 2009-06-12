@@ -543,8 +543,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _saveProjectAsCb(self, unused_action):
         uri = self._showSaveAsDialog(self.app.current)
-        if uri:
-            self.app.projectManager.saveProject(self.project, uri, overwrite=True)
+        if uri is not None:
+            return self.app.projectManager.saveProject(self.project, uri, overwrite=True)
+
+        return False
 
     def _projectSettingsCb(self, unused_action):
         from projectsettings import ProjectSettingsDialog
@@ -684,15 +686,20 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if not project.hasUnsavedModifications():
             return True
 
+        if project.uri:
+            save = gtk.STOCK_SAVE
+        else:
+            save = gtk.STOCK_SAVE_AS
         dialog = gtk.Dialog(_("Close project"),
             self, gtk.DIALOG_MODAL | gtk.DIALOG_NO_SEPARATOR,
-            (gtk.STOCK_DISCARD, gtk.RESPONSE_REJECT,
+            (_("Close without saving"), gtk.RESPONSE_REJECT,
                     gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
-                    gtk.STOCK_SAVE, gtk.RESPONSE_YES))
+                    save, gtk.RESPONSE_YES))
         dialog.set_border_width(5)
         dialog.set_resizable(False)
         dialog.set_has_separator(False)
         dialog.set_skip_taskbar_hint(False)
+        dialog.set_default_response(gtk.RESPONSE_YES)
 
         primary = gtk.Label()
         primary.set_line_wrap(True)
@@ -725,7 +732,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         response = dialog.run()
         dialog.destroy()
         if response == gtk.RESPONSE_YES:
-            res = self.app.projectManager.saveProject(project, overwrite=True)
+            if project.uri is not None:
+                res = self.app.projectManager.saveProject(project, overwrite=True)
+            else:
+                res = self._saveProjectAsCb(None)
         elif response == gtk.RESPONSE_REJECT:
             res = True
         else:
