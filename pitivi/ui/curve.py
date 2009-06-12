@@ -207,6 +207,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             x += self.bounds.x1
             y += self.bounds.y1
             self.make_curve(cr)
+            cr.set_line_width(10.0)
             return cr.in_stroke(x, y) or bool(self.findKeyframe((x, y)))
         return False
 
