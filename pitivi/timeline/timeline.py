@@ -890,7 +890,10 @@ class Timeline(Signallable, Loggable):
                 track = track_object.track
                 track.removeTrackObject(track_object)
 
-    # FIXME : shouldn't this be made more generic (i.e. not specific to source facotires) ?
+    # FIXME : shouldn't this be made more generic (i.e. not specific to source factories) ?
+    # FIXME : Maybe it should be up to the ObjectFactory to create the TimelineObject since
+    #    it would know the exact type of TimelineObject to create with what properties (essential
+    #    for being able to create Groups and importing Timelines within Timelines.
     def addSourceFactory(self, factory, stream_map=None, strict=False):
         """
         Creates a TimelineObject for the given SourceFactory and adds it to the timeline.
