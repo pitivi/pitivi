@@ -541,6 +541,8 @@ class ElementTreeFormatter(Formatter):
         f.write(tostring(root))
         f.close()
 
+        return True
+
     def _loadProject(self, location, project):
         self.debug("location:%s, project:%r", location, project)
         # open the given location
@@ -598,12 +600,13 @@ class ElementTreeFormatter(Formatter):
         old_streams = old_factory.getOutputStreams()
         new_streams = {}
         for stream_id, old_stream in self._context.streams.iteritems():
-            if old_stream not in old_streams:
-                continue
+            try:
+                new_stream = old_stream_to_new_stream[old_stream]
+            except KeyError:
+                new_stream = old_stream
+            new_streams[stream_id] = new_stream
 
-            new_stream = old_stream_to_new_stream[old_stream]
-
-        self._context.streams.update(new_streams)
+        self._context.streams = new_streams
 
     def _replaceMatchingOldFactory(self, factory, old_factories):
         old_factory = None
