@@ -230,7 +230,7 @@ class Interpolator(Signallable, Loggable):
         # FIXME: uncomment this when back-end support works
         if kf.time != ptime:
             self._controller.unset(self._property.name, kf.time)
-        self._controller.set(self._property.name, kf.time, value)
+        self._controller.set(self._property.name, ptime, value)
         self.emit("keyframe-moved", kf)
 
     def getKeyframes(self):
