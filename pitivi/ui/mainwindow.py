@@ -713,6 +713,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         hbox.pack_start(vbox)
         content_area = dialog.get_content_area()
         content_area.pack_start(hbox)
+        action_area = dialog.get_action_area()
+        action_area.set_layout(gtk.BUTTONBOX_SPREAD)
         hbox.show_all()
 
         response = dialog.run()
