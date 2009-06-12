@@ -173,6 +173,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 self._projectManagerNewProjectLoadedCb)
         self.app.projectManager.connect("new-project-failed",
                 self._projectManagerNewProjectFailedCb)
+        self.app.projectManager.connect("save-project-failed",
+                self._projectManagerSaveProjectFailedCb)
+        self.app.projectManager.connect("project-saved",
+                self._projectManagerProjectSavedCb)
         self.app.projectManager.connect("closing-project",
                 self._projectManagerClosingProjectCb)
         self.app.projectManager.connect("project-closed",
@@ -535,13 +539,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if not self.project.uri:
             self._saveProjectAsCb(unused_action)
         else:
-            self.project.save(overwrite=True)
+            self.app.projectManager.saveProject(self.project, overwrite=True)
 
     def _saveProjectAsCb(self, unused_action):
         uri = self._showSaveAsDialog(self.app.current)
         if uri:
-            self.project.save(uri, overwrite=True)
-            self.project.uri = uri
+            self.app.projectManager.saveProject(self.project, uri, overwrite=True)
 
     def _projectSettingsCb(self, unused_action):
         from projectsettings import ProjectSettingsDialog
@@ -668,6 +671,15 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
         self.log("A NEW project is being loaded, deactivate UI")
 
+    def _projectManagerSaveProjectFailedCb(self, projectManager,
+            project, uri, exception):
+        # FIXME: do something here
+        self.error("failed to save project")
+
+    def _projectManagerProjectSavedCb(self, projectManager, project, uri):
+        self.app.action_log.checkpoint()
+        self._syncDoUndo(self.app.action_log)
+
     def _projectManagerClosingProjectCb(self, projectManager, project):
         if not project.hasUnsavedModifications():
             return True
@@ -764,8 +776,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         else:
             undo_action.props.label = _("Undo")
 
+        dirty = action_log.dirty()
         save_action = self.actiongroup.get_action("SaveProject")
-        save_action.set_sensitive(can_undo)
+        save_action.set_sensitive(dirty)
 
         redo_action = self.actiongroup.get_action("Redo")
         can_redo = bool(action_log.redo_stacks)

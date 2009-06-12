@@ -29,34 +29,6 @@ from gettext import gettext as _
 
 _formatters = []
 
-def save_project(project, uri, formatter=None, overwrite=False):
-    """
-    Save the L{Project} to the given location.
-
-    If specified, use the given formatter.
-
-    @type project: L{Project}
-    @param project: The L{Project} to save.
-    @type uri: L{str}
-    @param uri: The location to store the project to. Needs to
-    be an absolute URI.
-    @type formatter: L{Formatter}
-    @param formatter: The L{Formatter} to use to store the project if specified.
-    If it is not specified, then it will be saved at its original format.
-    @param overwrite: Whether to overwrite existing location.
-    @type overwrite: C{bool}
-    @raise FormatterSaveError: If the file couldn't be properly stored.
-
-    @see: L{Formatter.saveProject}
-    """
-    if formatter == None:
-        if project.format:
-            formatter == project.format
-        else:
-            from pitivi.formatters.etree import ElementTreeFormatter
-            formatter = ElementTreeFormatter()
-    formatter.saveProject(project, uri, overwrite)
-
 def can_handle_location(uri):
     """
     Detects whether the project at the given location can be loaded.

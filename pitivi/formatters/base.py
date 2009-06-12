@@ -66,6 +66,8 @@ class Formatter(Signallable, Loggable):
         "new-project-created": ["project"],
         "new-project-loaded": ["project"],
         "new-project-failed": ["uri", "exception"],
+        "save-project-failed": ["project", "uri", "exception"],
+        "project-saved": ["project", "uri"],
         "missing-uri" : ["uri"]
         }
 
@@ -185,7 +187,11 @@ class Formatter(Signallable, Loggable):
             raise FormatterURIError()
         if overwrite == False and uri_is_reachable(location):
             raise FormatterOverwriteError()
-        self._saveProject(project, location)
+        if self._saveProject(project, location):
+            self.emit("project-saved", project, location)
+            return True
+
+        return False
 
     #}
 

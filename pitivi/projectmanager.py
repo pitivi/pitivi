@@ -26,7 +26,7 @@ import gst
 
 from pitivi.project import Project
 from pitivi.formatters.format import get_formatter_for_uri
-from pitivi.formatters.base import FormatterLoadError
+from pitivi.formatters.base import FormatterLoadError, FormatterSaveError
 
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
@@ -39,6 +39,8 @@ class ProjectManager(Signallable, Loggable):
         "new-project-created": ["project"],
         "new-project-failed": ["uri", "exception"],
         "new-project-loaded": ["project"],
+        "save-project-failed": ["project", "uri", "exception"],
+        "project-saved": ["project", "uri"],
         "closing-project": ["project"],
         "project-closed": ["project"],
         "missing-uri": ["formatter", "uri"],
@@ -69,6 +71,44 @@ class ProjectManager(Signallable, Loggable):
         # start loading the project, from now on everything is async
         formatter.loadProject(uri)
 
+    def saveProject(self, project, uri=None, overwrite=False, formatter=None):
+        """
+        Save the L{Project} to the given location.
+
+        If specified, use the given formatter.
+
+        @type project: L{Project}
+        @param project: The L{Project} to save.
+        @type uri: L{str}
+        @param uri: The location to store the project to. Needs to
+        be an absolute URI.
+        @type formatter: L{Formatter}
+        @param formatter: The L{Formatter} to use to store the project if specified.
+        If it is not specified, then it will be saved at its original format.
+        @param overwrite: Whether to overwrite existing location.
+        @type overwrite: C{bool}
+        @raise FormatterSaveError: If the file couldn't be properly stored.
+
+        @see: L{Formatter.saveProject}
+        """
+        if formatter is None:
+            if project.format:
+                formatter == project.format
+            else:
+                from pitivi.formatters.etree import ElementTreeFormatter
+                formatter = ElementTreeFormatter()
+
+        if uri is None:
+            if project.uri is None:
+                self.emit("save-project-failed", project, uri,
+                        FormatterSaveError(_("No URI specified.")))
+                return
+
+            uri = project.uri
+
+        self._connectToFormatter(formatter)
+        return formatter.saveProject(project, uri, overwrite)
+
     def closeRunningProject(self):
         """ close the current project """
         self.info("closing running project")
@@ -77,7 +117,7 @@ class ProjectManager(Signallable, Loggable):
             return True
 
         if self.current.hasUnsavedModifications():
-            if not self.current.save():
+            if not self.saveProject(self.current):
                 return False
 
         if self.emit("closing-project", self.current) == False:
@@ -126,12 +166,18 @@ class ProjectManager(Signallable, Loggable):
                 self._formatterNewProjectLoaded)
         formatter.connect("new-project-failed",
                 self._formatterNewProjectFailed)
+        formatter.connect("save-project-failed",
+                self._formatterSaveProjectFailed)
+        formatter.connect("project-saved",
+                self._formatterProjectSaved)
 
     def _disconnectFromFormatter(self, formatter):
         formatter.disconnect_by_function(self._formatterMissingURICb)
         formatter.disconnect_by_function(self._formatterNewProjectCreated)
         formatter.disconnect_by_function(self._formatterNewProjectLoaded)
         formatter.disconnect_by_function(self._formatterNewProjectFailed)
+        formatter.disconnect_by_function(self._formatterSaveProjectFailed)
+        formatter.disconnect_by_function(self._formatterProjectSaved)
 
     def _formatterNewProjectCreated(self, formatter, project):
         self.emit("new-project-created", project)
@@ -149,3 +195,11 @@ class ProjectManager(Signallable, Loggable):
 
     def _formatterMissingURICb(self, formatter, uri):
         return self.emit("missing-uri", formatter, uri)
+
+    def _formatterSaveProjectFailed(self, formatter, project, uri, exception):
+        self._disconnectFromFormatter(formatter)
+        self.emit("save-project-failed", project, uri, exception)
+
+    def _formatterProjectSaved(self, formatter, project, uri):
+        self._disconnectFromFormatter(formatter)
+        self.emit("project-saved", project, uri)

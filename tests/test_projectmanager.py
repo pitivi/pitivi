@@ -26,11 +26,13 @@ from pitivi.formatters.base import Formatter, \
         FormatterError, FormatterLoadError
 
 class MockProject(object):
-    def hasUnsavedModifications(self):
-        return True
+    settings = None
+    format = None
+    uri = None
+    has_mods = True
 
-    def save(self):
-        return True
+    def hasUnsavedModifications(self):
+        return self.has_mods
 
     def release(self):
         pass
@@ -228,6 +230,8 @@ class TestProjectManager(TestCase):
             return False
 
         self.manager.current = MockProject()
+        self.manager.current.has_mods = False
+        self.manager.current.uri = "file:///ciao"
         self.manager.connect("closing-project", closing)
 
         self.failIf(self.manager.closeRunningProject())
@@ -239,6 +243,7 @@ class TestProjectManager(TestCase):
 
     def testCloseRunningProject(self):
         current = self.manager.current = MockProject()
+        self.manager.current.has_mods = False
         self.failUnless(self.manager.closeRunningProject())
         self.failUnlessEqual(len(self.signals), 2)
 
