@@ -116,10 +116,6 @@ class ProjectManager(Signallable, Loggable):
         if self.current is None:
             return True
 
-        if self.current.hasUnsavedModifications():
-            if not self.saveProject(self.current):
-                return False
-
         if self.emit("closing-project", self.current) == False:
             return False
 

@@ -219,12 +219,6 @@ class TestProjectManager(TestCase):
         self.failUnless(self.manager.closeRunningProject())
         self.failIf(self.signals)
 
-    def testCloseRunningProjectCantSaveModifications(self):
-        self.manager.current = MockProject()
-        self.manager.current.save = lambda: False
-        self.failIf(self.manager.closeRunningProject())
-        self.failIf(self.signals)
-
     def testCloseRunningProjectRefuseFromSignal(self):
         def closing(manager, project):
             return False
@@ -260,11 +254,17 @@ class TestProjectManager(TestCase):
         self.failUnlessEqual(self.manager.current, None)
 
     def testNewBlankProjectCantCloseCurrent(self):
-        current = self.manager.current = MockProject()
-        current.save = lambda: False
+        def closing(manager, project):
+            return False
 
+        self.manager.current = MockProject()
+        self.manager.current.has_mods = False
+        self.manager.current.uri = "file:///ciao"
+        self.manager.connect("closing-project", closing)
         self.failIf(self.manager.newBlankProject())
-        self.failIf(self.signals)
+        self.failUnlessEqual(len(self.signals), 1)
+        signal, args = self.signals[0]
+        self.failUnlessEqual(signal, "closing-project")
 
     def testNewBlankProject(self):
         self.failUnless(self.manager.newBlankProject())

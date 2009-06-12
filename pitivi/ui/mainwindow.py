@@ -779,6 +779,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dirty = action_log.dirty()
         save_action = self.actiongroup.get_action("SaveProject")
         save_action.set_sensitive(dirty)
+        self.app.current.setModificationState(dirty)
 
         redo_action = self.actiongroup.get_action("Redo")
         can_redo = bool(action_log.redo_stacks)
