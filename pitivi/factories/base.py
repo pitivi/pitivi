@@ -236,8 +236,10 @@ class SourceFactory(ObjectFactory):
         self.debug("stream %r", output_stream)
 
         if output_stream is not None:
+            self.debug("output_streams:%r", self.output_streams)
             stream_map = match_stream_groups_map([output_stream], self.output_streams)
             if output_stream not in stream_map:
+                self.warning("stream not available in map %r", stream_map)
                 raise ObjectFactoryError("can not create stream")
 
             compatible_stream = stream_map[output_stream]
