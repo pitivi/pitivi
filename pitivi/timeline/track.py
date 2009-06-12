@@ -23,7 +23,7 @@ import gst
 import weakref
 
 from pitivi.signalinterface import Signallable
-from pitivi.utils import UNKNOWN_DURATION
+from pitivi.utils import UNKNOWN_DURATION, get_controllable_properties
 from pitivi.log.loggable import Loggable
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.test import VideoTestSourceFactory, \
@@ -111,7 +111,7 @@ class FixedKeyframe(Keyframe):
 
     time = property(Keyframe.getTime, setTime)
 
-class Interpolator(Signallable):
+class Interpolator(Signallable, Loggable):
 
     """The bridge between the gstreamer dynamic property API and pitivi track
     objects.
@@ -120,7 +120,7 @@ class Interpolator(Signallable):
     * binds controller to track object's gnlobject
     * allows client code to manipulate the interpolation curve by adding,
       removing, and mutating discrete keyframe objects
-    
+
     There are two special control points: the start and end points, which are
     "fixed" to the start and end of the clip in the timeline. 
 
@@ -135,11 +135,13 @@ class Interpolator(Signallable):
         'keyframe-moved' : ['keyframe'],
     }
 
-    def __init__(self, trackobject, property):
-        self._element = trackobject.gnl_object
-        #self._default = self._element.get_property(property)
-        self._default = 0
-        self._property = property
+    def __init__(self, trackobject, element, prop):
+        Loggable.__init__(self)
+        self.debug("track:%r, element:%r, property:%r", trackobject, element, prop)
+        self._element = element
+        self._default = self._element.get_property(prop.name)
+        #self._default = 0
+        self._property = prop
         self._keyframes = []
         # FIXME: get this from the property's param spec
         # NOTE: keyframes necessarily work only on a closed range
@@ -148,7 +150,7 @@ class Interpolator(Signallable):
 
         # FIXME: don't create separate controllers for each Interpolator
         # FIXME: uncomment this when back-end support works
-        #self._controller = gst.Controller(self._element, property)
+        self._controller = gst.Controller(self._element, prop.name)
 
         self.start = FixedKeyframe(self)
         self.end = FixedKeyframe(self)
@@ -165,7 +167,7 @@ class Interpolator(Signallable):
         """add a new keyframe at the specified time, optionally with specified
         value and specified mode. If not specified, these will be computed so
         that the new keyframe likes on the existing curve at that timestampi
-        
+
         returns: the keyframe object"""
 
         #TODO: calculate value
@@ -173,7 +175,7 @@ class Interpolator(Signallable):
             value = self._default
         if not mode:
             # FIXME: uncomment this when back-end support works
-            # mode = self._controller.get_interpolation_mode()
+            #mode = self._controller.get_interpolation_mode()
             mode = gst.INTERPOLATE_LINEAR
 
         kf = Keyframe(self)
@@ -189,7 +191,7 @@ class Interpolator(Signallable):
 
     def removeKeyFrame(self, keyframe):
         # FIXME: uncomment this when back-end support works
-        # self._controller.unset(keyframe.time)
+        self._controller.unset(self._property.name, keyframe.time)
         if keyframe is not self.start and keyframe is not self.end:
             self._keyframes.remove(keyframe)
             self.emit("keyframe-removed", keyframe)
@@ -203,7 +205,7 @@ class Interpolator(Signallable):
         for keyframe in self.keyframes:
             keyframe.setObjectMode(mode)
         # FIXME: uncomment when backend works
-        # self._controller.set_interpolation_mode(mode)
+        #self._controller.set_interpolation_mode(mode)
 
     def setKeyframeTime(self, kf, time):
         time = max(self.start.time, min(self.end.time, time))
@@ -217,8 +219,8 @@ class Interpolator(Signallable):
 
     def _keyframeTimeValueChanged(self, kf, time, value):
         # FIXME: uncomment this when back-end support works
-        #self._controller.unset(kf.time)
-        #self._controller.set(kf.time, value)
+        self._controller.unset(self._property.name, kf.time)
+        self._controller.set(self._property.name, kf.time, value)
         self.emit("keyframe-moved", kf)
 
     def getKeyframes(self):
@@ -252,6 +254,7 @@ class TrackObject(Signallable, Loggable):
         self.track = None
         self.timeline_object = None
         self.gnl_object = obj = self._makeGnlObject()
+        self.makeBin()
         self.trimmed_start = 0
         self.keyframes = []
 
@@ -277,9 +280,12 @@ class TrackObject(Signallable, Loggable):
         self._connectToSignals(obj)
 
         self.interpolators = {}
+
+        wprops = factory.getInterpolatedProperties(stream).keys()
         if stream:
-            for prop in factory.getInterpolatedProperties(stream):
-                self.interpolators[prop] = Interpolator(self, prop)
+            for sobj, prop in get_controllable_properties(self.gnl_object):
+                if prop.name in wprops:
+                    self.interpolators[prop] = Interpolator(self, sobj, prop)
 
     def release(self):
         self._disconnectFromSignals()
@@ -441,8 +447,10 @@ class TrackObject(Signallable, Loggable):
     selected = property(_getSelected)
 
     def makeBin(self):
-        if self.track is None:
-            raise TrackError()
+        if self.stream is None:
+            raise TrackError
+        if self.gnl_object is None:
+            raise TrackError
 
         bin = self.factory.makeBin(self.stream)
         self.gnl_object.add(bin)
@@ -619,7 +627,6 @@ class Track(Signallable):
         track_object.track = weakref.proxy(self)
         self.track_objects.append(track_object)
 
-        track_object.makeBin()
         self._connectToTrackObjectSignals(track_object)
 
         self._updateMaxPriority()

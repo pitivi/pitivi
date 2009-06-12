@@ -110,6 +110,7 @@ class TestFormatterSave(TestCase):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
         audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
         source1 = FileSourceFactory("file1.ogg")
+        source1.addOutputStream(video_stream)
 
         # these two calls are needed to populate the context for the -ref
         # elements
@@ -139,6 +140,7 @@ class TestFormatterSave(TestCase):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
         audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
         source1 = FileSourceFactory("file1.ogg")
+        source1.addOutputStream(video_stream)
 
         # these two calls are needed to populate the context for the -ref
         # elements
@@ -182,6 +184,7 @@ class TestFormatterSave(TestCase):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
         audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
         source1 = FileSourceFactory("file1.ogg")
+        source1.addOutputStream(video_stream)
 
         # these two calls are needed to populate the context for the -ref
         # elements
@@ -208,6 +211,7 @@ class TestFormatterSave(TestCase):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
         audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
         source1 = FileSourceFactory("file1.ogg")
+        source1.addOutputStream(video_stream)
 
         # these two calls are needed to populate the context for the -ref
         # elements
@@ -231,6 +235,7 @@ class TestFormatterSave(TestCase):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
         audio_stream = AudioStream(gst.Caps("audio/x-raw-int"))
         source1 = VideoTestSourceFactory()
+        source1.addOutputStream(video_stream)
 
         self.formatter._saveSource(source1)
         self.formatter._saveStream(video_stream)
@@ -371,7 +376,7 @@ class TestFormatterLoad(TestCase):
         self.formatter._context.factories["1"] = factory
 
         # insert fake stream into the context
-        stream = VideoStream(gst.Caps("meh"))
+        stream = VideoStream(gst.Caps("video/x-raw-yuv"))
         self.formatter._context.streams["1"] = stream
 
         # point gun at foot; pull trigger
