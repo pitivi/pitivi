@@ -685,7 +685,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             return True
 
         dialog = gtk.Dialog(_("Close project"),
-            self, gtk.DIALOG_MODAL,
+            self, gtk.DIALOG_MODAL | gtk.DIALOG_NO_SEPARATOR,
             (gtk.STOCK_DISCARD, gtk.RESPONSE_REJECT,
                     gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                     gtk.STOCK_SAVE, gtk.RESPONSE_YES))
