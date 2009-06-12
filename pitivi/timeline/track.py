@@ -150,7 +150,10 @@ class Interpolator(Signallable, Loggable):
 
         # FIXME: don't create separate controllers for each Interpolator
         # FIXME: uncomment this when back-end support works
+        self.debug("Creating a GstController for element %r and property %s",
+                   self._element, prop.name)
         self._controller = gst.Controller(self._element, prop.name)
+        self._controller.set_interpolation_mode(prop.name, gst.INTERPOLATE_LINEAR)
 
         self.start = FixedKeyframe(self)
         self.end = FixedKeyframe(self)
@@ -159,9 +162,9 @@ class Interpolator(Signallable, Loggable):
         self.end.value = self._default
         self.end.setObjectTime(trackobject.factory.duration)
 
-        data = [(self.start.time, self.start.value), (self.end.time,
-            self.end.value)]
-        #self._controller.set_from_list(property, data)
+        #data = ((self.start.time, self.start.value), (self.end.time,
+        #    self.end.value))
+        #self._controller.set_from_list(prop.name, data)
 
     def newKeyFrame(self, time, value=None, mode=None):
         """add a new keyframe at the specified time, optionally with specified
@@ -169,7 +172,8 @@ class Interpolator(Signallable, Loggable):
         that the new keyframe likes on the existing curve at that timestampi
 
         returns: the keyframe object"""
-
+        self.debug("time:%s, value:%r, mode:%r",
+                   gst.TIME_ARGS(time), value, mode)
         #TODO: calculate value
         if not value:
             value = self._default
@@ -179,11 +183,13 @@ class Interpolator(Signallable, Loggable):
             mode = gst.INTERPOLATE_LINEAR
 
         kf = Keyframe(self)
+        kf._time = time
+        kf._value = value
+        kf._mode = mode
+
         self._keyframes.append(kf)
 
-        kf.time = time
-        kf.value = value
-        kf.mode = mode
+        self._controller.set(self._property.name, kf.time, kf.value)
 
         self.emit("keyframe-added", kf)
 
@@ -217,9 +223,13 @@ class Interpolator(Signallable, Loggable):
         self._keyframeTimeValueChanged(kf, kf.time, value)
         kf.setObjectValue(value)
 
-    def _keyframeTimeValueChanged(self, kf, time, value):
+    def _keyframeTimeValueChanged(self, kf, ptime, value):
+        self.debug("kf.time:%s, ptime:%s, value:%r",
+                   gst.TIME_ARGS(kf.time),
+                   gst.TIME_ARGS(ptime), value)
         # FIXME: uncomment this when back-end support works
-        self._controller.unset(self._property.name, kf.time)
+        if kf.time != ptime:
+            self._controller.unset(self._property.name, kf.time)
         self._controller.set(self._property.name, kf.time, value)
         self.emit("keyframe-moved", kf)
 
