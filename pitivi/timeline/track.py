@@ -24,6 +24,7 @@ import weakref
 
 from pitivi.signalinterface import Signallable
 from pitivi.utils import UNKNOWN_DURATION
+from pitivi.log.loggable import Loggable
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.test import VideoTestSourceFactory, \
         AudioTestSourceFactory
@@ -229,7 +230,7 @@ class Interpolator(Signallable):
 
     keyframes = property(getKeyframes)
 
-class TrackObject(Signallable):
+class TrackObject(Signallable, Loggable):
 
     __signals__ = {
         'start-changed': ['start'],
@@ -244,6 +245,8 @@ class TrackObject(Signallable):
     def __init__(self, factory, stream, start=0,
             duration=0, in_point=0,
             media_duration=0, priority=0):
+        Loggable.__init__(self)
+        self.debug("factory:%r", factory)
         self.factory = factory
         self.stream = stream
         self.track = None
