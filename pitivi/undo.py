@@ -104,6 +104,7 @@ class UndoableActionLog(Signallable):
         self.redo_stacks = []
         self.stacks = []
         self.running = False
+        self._checkpoint = self._takeSnapshot()
 
     def begin(self, action_group_name):
         if self.running:
@@ -184,6 +185,19 @@ class UndoableActionLog(Signallable):
         for stack in stacks:
             self._runStack(stack, stack.clean)
         self.emit("cleaned")
+
+    def _takeSnapshot(self):
+        return list(self.undo_stacks)
+
+    def checkpoint(self):
+        if self.stacks:
+            raise UndoWrongStateError()
+
+        self._checkpoint = self._takeSnapshot()
+
+    def dirty(self):
+        current_snapshot = self._takeSnapshot()
+        return current_snapshot != self._checkpoint
 
     def _runStack(self, stack, run):
         self.running = True

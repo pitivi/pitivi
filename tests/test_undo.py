@@ -178,6 +178,27 @@ class TestUndoableActionLog(TestCase):
     def testRedoWrongState(self):
         self.failUnlessRaises(UndoWrongStateError, self.log.redo)
 
+    def testCheckpoint(self):
+        self.log.begin("meh")
+        self.log.push(DummyUndoableAction())
+        self.failUnlessRaises(UndoWrongStateError, self.log.checkpoint)
+        self.log.rollback()
+        self.log.checkpoint()
+        self.failIfEqual(self.log._checkpoint, None)
+
+    def testDirty(self):
+        self.failIf(self.log.dirty())
+        self.log.begin("meh")
+        self.log.push(DummyUndoableAction())
+        self.log.commit()
+        self.failUnless(self.log.dirty())
+        self.log.checkpoint()
+        self.failIf(self.log.dirty())
+        self.log.undo()
+        self.failUnless(self.log.dirty())
+        self.log.redo()
+        self.failIf(self.log.dirty())
+
     def testCommit(self):
         """
         Commit a stack.
