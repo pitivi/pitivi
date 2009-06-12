@@ -684,17 +684,47 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if not project.hasUnsavedModifications():
             return True
 
-        dialog = gtk.MessageDialog(
-            self,
-            gtk.DIALOG_MODAL,
-            gtk.MESSAGE_QUESTION,
-            gtk.BUTTONS_YES_NO,
-            _("The project has unsaved changes. Do you wish to close the project?"))
+        dialog = gtk.Dialog(_("Close project"),
+            self, gtk.DIALOG_MODAL,
+            (gtk.STOCK_DISCARD, gtk.RESPONSE_REJECT,
+                    gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
+                    gtk.STOCK_SAVE, gtk.RESPONSE_YES))
+
+        primary = gtk.Label()
+        primary.set_line_wrap(True)
+        primary.set_use_markup(True)
+        primary.set_alignment(0, 0.5)
+
+        message = _("Save changes to the current project before closing?")
+        primary.set_markup("<span weight=\"bold\" size=\"larger\">" +
+                message + "</span>")
+        secondary = gtk.Label(_("If you don't save some of your "
+                "changes will be lost"))
+        secondary.set_line_wrap(True)
+        vbox = gtk.VBox(False, 12)
+        vbox.pack_start(primary)
+        vbox.pack_start(secondary)
+
+        image = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
+               gtk.ICON_SIZE_DIALOG)
+        hbox = gtk.HBox(False, 12)
+        hbox.set_border_width(5)
+        hbox.pack_start(image)
+        hbox.pack_start(vbox)
+        content_area = dialog.get_content_area()
+        content_area.pack_start(hbox)
+        hbox.show_all()
+
         response = dialog.run()
         dialog.destroy()
         if response == gtk.RESPONSE_YES:
-            return True
-        return False
+            res = self.app.projectManager.saveProject(project)
+        elif response == gtk.RESPONSE_REJECT:
+            res = True
+        else:
+            res = False
+
+        return res
 
     def _projectManagerProjectClosedCb(self, projectManager, project):
         # we must disconnect from the project pipeline before it is released
