@@ -689,6 +689,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
             (gtk.STOCK_DISCARD, gtk.RESPONSE_REJECT,
                     gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                     gtk.STOCK_SAVE, gtk.RESPONSE_YES))
+        dialog.set_border_width(5)
+        dialog.set_resizable(False)
+        dialog.set_has_separator(False)
+        dialog.set_skip_taskbar_hint(False)
 
         primary = gtk.Label()
         primary.set_line_wrap(True)
@@ -713,8 +717,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         hbox.pack_start(vbox)
         content_area = dialog.get_content_area()
         content_area.pack_start(hbox)
+        content_area.set_spacing(14)
         action_area = dialog.get_action_area()
-        action_area.set_layout(gtk.BUTTONBOX_SPREAD)
+        action_area.set_layout(gtk.BUTTONBOX_DEFAULT_STYLE)
         hbox.show_all()
 
         response = dialog.run()
