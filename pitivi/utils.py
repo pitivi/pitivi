@@ -304,3 +304,24 @@ class Seeker(Signallable):
 
 def get_filesystem_encoding():
     return sys.getfilesystemencoding() or "utf-8"
+
+def get_controllable_properties(element):
+    """
+    Returns a list of controllable properties for the given
+    element (and child if it's a container).
+
+    The list is made of tuples containing:
+    * The GstObject
+    * The GParamspec
+    """
+    log.debug("utils", "element %r, %d", element, isinstance(element, gst.Bin))
+    res = []
+    if isinstance(element, gst.Bin):
+        for child in element.elements():
+            res.extend(get_controllable_properties(child))
+    else:
+        for prop in gobject.list_properties(element):
+            if prop.flags & gst.PARAM_CONTROLLABLE:
+                log.debug("utils", "adding property %r", prop)
+                res.append((element, prop))
+    return res
