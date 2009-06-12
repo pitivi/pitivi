@@ -718,7 +718,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         response = dialog.run()
         dialog.destroy()
         if response == gtk.RESPONSE_YES:
-            res = self.app.projectManager.saveProject(project)
+            res = self.app.projectManager.saveProject(project, overwrite=True)
         elif response == gtk.RESPONSE_REJECT:
             res = True
         else:
