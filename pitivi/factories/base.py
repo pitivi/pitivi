@@ -321,9 +321,11 @@ class SourceFactory(ObjectFactory):
 
         if hasattr(bin, "volume"):
             # only audio bins have a volume element
-            bin.volume.set_state(gst.STATE_NULL)
-            bin.remove(bin.volume)
+            for elt in [bin.aconv, bin.volume]:
+                elt.set_state(gst.STATE_NULL)
+                bin.remove(elt)
             del bin.volume
+            del bin.aconv
 
         if hasattr(bin, "ghostpad"):
             # singledecodebin found something on this pad
@@ -342,8 +344,10 @@ class SourceFactory(ObjectFactory):
         if isinstance(output_stream, AudioStream):
             self.debug("Adding volume element")
             # add a volume element
+            b.aconv = gst.element_factory_make("audioconvert", "internal-aconv")
             b.volume = gst.element_factory_make("volume", "internal-volume")
-            b.add(b.volume)
+            b.add(b.volume, b.aconv)
+            b.aconv.link(b.volume)
 
         b.add(b.decodebin)
         return b
@@ -351,7 +355,7 @@ class SourceFactory(ObjectFactory):
     def _singlePadAddedCb(self, dbin, pad, topbin):
         self.debug("dbin:%r, pad:%r, topbin:%r", dbin, pad, topbin)
         if hasattr(topbin, "volume"):
-            pad.link(topbin.volume.get_pad("sink"))
+            pad.link(topbin.aconv.get_pad("sink"))
             topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
         else:
             topbin.ghostpad = gst.GhostPad("src", pad)
@@ -363,10 +367,13 @@ class SourceFactory(ObjectFactory):
         topbin.remove_pad(topbin.ghostpad)
         del topbin.ghostpad
         if hasattr(topbin, "volume"):
-            pad.unlink(topbin.volume.get_pad("sink"))
+            pad.unlink(topbin.aconv.get_pad("sink"))
             topbin.volume.set_state(gst.STATE_NULL)
+            topbin.aconv.set_state(gst.STATE_NULL)
             topbin.remove(topbin.volume)
+            topbin.remove(topbin.aconv)
             del topbin.volume
+            del topbin.aconv
 
     def addInputStream(self, stream):
         raise AssertionError("source factories can't have input streams")
