@@ -681,6 +681,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _projectManagerProjectSavedCb(self, projectManager, project, uri):
         self.app.action_log.checkpoint()
         self._syncDoUndo(self.app.action_log)
+        if project.uri is None:
+            project.uri = uri
 
     def _projectManagerClosingProjectCb(self, projectManager, project):
         if not project.hasUnsavedModifications():
