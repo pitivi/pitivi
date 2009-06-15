@@ -669,6 +669,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _projectManagerNewProjectLoadedCb(self, projectManager, project):
         self.log("A NEW project is loaded, update the UI!")
         self.project = project
+        if project.timeline.duration > 0:
+            self.render_button.set_sensitive(True)
 
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
         self.log("A NEW project is being loaded, deactivate UI")
