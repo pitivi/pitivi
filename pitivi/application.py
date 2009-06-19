@@ -50,6 +50,7 @@ from pitivi.ui.mainwindow import PitiviMainWindow
 from pitivi.projectmanager import ProjectManager
 from pitivi.undo import UndoableActionLog, DebugActionLogObserver
 from pitivi.timeline.timeline_undo import TimelineLogObserver
+from pitivi.sourcelist_undo import SourceListLogObserver
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
@@ -140,6 +141,7 @@ class Pitivi(Loggable, Signallable):
         self.debug_action_log_observer = DebugActionLogObserver()
         self.debug_action_log_observer.startObserving(self.action_log)
         self.timelineLogObserver = TimelineLogObserver(self.action_log)
+        self.sourcelist_log_observer = SourceListLogObserver(self.action_log)
 
     #{ Shutdown methods
 
@@ -190,7 +192,9 @@ class Pitivi(Loggable, Signallable):
 
     def _projectManagerNewProjectLoaded(self, projectManager, project):
         self.current = project
+        self.action_log.clean()
         self.timelineLogObserver.startObserving(project.timeline)
+        self.sourcelist_log_observer.startObserving(project.sources)
         self.emit("new-project-loaded", project)
 
     def _projectManagerNewProjectFailed(self, projectManager, uri, exception):
@@ -200,7 +204,6 @@ class Pitivi(Loggable, Signallable):
         return self.emit("closing-project", project)
 
     def _projectManagerProjectClosed(self, projectManager, project):
-        self.action_log.clean()
         self.timelineLogObserver.stopObserving(project.timeline)
         self.current = None
         self.emit("project-closed", project)
@@ -254,11 +257,11 @@ class InteractivePitivi(Pitivi):
             self.projectManager.newBlankProject()
             uris = ["file://" + os.path.abspath(path) for path in args]
             if options.add_to_timeline:
-                self.current.sources.connect("file_added",
-                        self._addSourceCb, uris)
+                self.current.sources.connect("source-added",
+                        self._sourceAddedCb, uris)
                 self.current.sources.connect("discovery-error",
                         self._discoveryErrorCb, uris)
-            self.current.sources.addUris(uris)
+                self.current.sources.addUris(uris)
 
         # run the mainloop
         self.mainloop.run()
@@ -294,7 +297,7 @@ class InteractivePitivi(Pitivi):
 
         return True
 
-    def _addSourceCb(self, unused_sourcelist, factory, startup_uris):
+    def _sourceAddedCb(self, unused_sourcelist, factory, startup_uris):
         if self._maybePopStartupUri(startup_uris, factory.uri):
             self.current.timeline.addSourceFactory(factory)
 
@@ -311,7 +314,7 @@ class InteractivePitivi(Pitivi):
             return False
 
         if not startup_uris:
-            self.current.sources.disconnect_by_function(self._addSourceCb)
+            self.current.sources.disconnect_by_function(self._sourceAddedCb)
             self.current.sources.disconnect_by_function(self._discoveryErrorCb)
 
         return True

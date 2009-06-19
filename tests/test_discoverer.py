@@ -365,7 +365,6 @@ class TestStateChange(TestCase):
         self.error_detail = debug
 
     def discoveryDoneCb(self, disc, uri, factory):
-        self.failUnlessEqual(factory.duration, 10 * gst.SECOND)
         self.factories.append(factory)
 
     def testBusStateChangedIgnored(self):
@@ -457,3 +456,33 @@ class TestStateChange(TestCase):
         self.failUnless(isinstance(factory, PictureFileSourceFactory))
         self.failUnlessEqual(len(factory.output_streams), 1)
 
+    def testDurationCheckImage(self):
+        self.discoverer.current_duration = gst.CLOCK_TIME_NONE
+        pngdec = gst.element_factory_make('pngdec')
+        self.discoverer.pipeline.add(pngdec)
+        pad = pngdec.get_pad('src')
+        caps = gst.Caps(pad.get_caps()[0])
+        caps[0]['width'] = 320
+        caps[0]['height'] = 240
+        caps[0]['framerate'] = gst.Fraction(0, 1)
+        pad.set_caps(caps)
+        self.discoverer._newDecodedPadCb(None, pad, False)
+        self.discoverer.addUri('illbepopped')
+        self.discoverer._finishAnalysis()
+
+        self.failUnlessEqual(self.error, None)
+        self.failUnlessEqual(self.discoverer.current_duration,
+                gst.CLOCK_TIME_NONE)
+
+    def testDurationCheckNonImage(self):
+        self.discoverer.current_duration = gst.CLOCK_TIME_NONE
+        pad = gst.Pad('src', gst.PAD_SRC)
+        pad.set_caps(gst.Caps('audio/x-raw-int'))
+        self.discoverer._newDecodedPadCb(None, pad, False)
+        self.discoverer.addUri('illbepopped')
+        self.discoverer._finishAnalysis()
+
+        self.failUnlessEqual(self.error,
+                "Could not establish the duration of the file.")
+        self.failUnlessEqual(self.discoverer.current_duration,
+                gst.CLOCK_TIME_NONE)

@@ -59,13 +59,11 @@ class Project(Signallable, Loggable):
     @type loaded: C{bool}
 
     Signals:
-     - C{missing-plugins} : A plugin is missing for the given uri
      - C{loaded} : The project is now fully loaded.
     """
 
     __signals__ = {
         "settings-changed" : None,
-        "missing-plugins": ["uri", "detail", "description"],
         }
 
     def __init__(self, name="", uri=None, **kwargs):
@@ -81,12 +79,10 @@ class Project(Signallable, Loggable):
         self.uri = uri
         self.urichanged = False
         self.format = None
-        self.sources = SourceList(self)
+        self.sources = SourceList()
 
         self.settingssigid = 0
         self._dirty = False
-
-        self.sources.connect('missing-plugins', self._sourceListMissingPluginsCb)
 
         self.timeline = Timeline()
 
@@ -160,9 +156,6 @@ class Project(Signallable, Loggable):
         return settings
 
     #}
-
-    def _sourceListMissingPluginsCb(self, source_list, uri, detail, description):
-        return self.emit('missing-plugins', uri, detail, description)
 
     #{ Save and Load features
 

@@ -3,6 +3,7 @@
 #       pitivi/sourcelist.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -22,167 +23,143 @@
 """
 Handles the list of source for a project
 """
+
 import urllib
 from pitivi.discoverer import Discoverer
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 
-class SourceList(Signallable, Loggable):
-    """
-    Contains the sources for a project, stored as FileSourceFactory
+class SourceListError(Exception):
+    pass
 
-    @ivar project: The owner project
-    @type project: L{Project}
-    @ivar discoverer: The discoverer used
+class SourceList(Signallable, Loggable):
+    discovererClass = Discoverer
+
+    """
+    Contains the sources for a project, stored as SourceFactory objects.
+
+    @ivar discoverer: The discoverer object used internally
     @type discoverer: L{Discoverer}
-    @ivar sources: The sources
-    @type sources: Dictionnary of uri => factory
 
     Signals:
-     - C{file_added} : A file has been completely discovered and is valid.
-     - C{file_removed} : A file was removed from the SourceList.
+     - C{source-added} : A source has been discovered and added to the SourceList.
+     - C{source-removed} : A source was removed from the SourceList.
+     - C{missing-plugins} : A source has been discovered but some plugins are
+       missing in order to decode all of its streams.
      - C{discovery-error} : The given uri is not a media file.
-     - C{tmp_is_ready} : The temporary uri given to the SourceList is ready to use.
      - C{ready} : No more files are being discovered/added.
      - C{starting} : Some files are being discovered/added.
     """
 
     __signals__ = {
-        "file_added" : ["factory"],
-        "file_removed" : ["uri"],
+        "ready" : [],
+        "starting" : [],
+        "missing-plugins": ["uri", "factory", "details", "descriptions"],
+        "source-added" : ["factory"],
+        "source-removed" : ["uri"],
         "discovery-error" : ["uri", "reason"],
-        "tmp_is_ready": ["factory"],
-        "ready" : None,
-        "starting" : None,
-        "missing-plugins": ["uri", "detail", "description"]
         }
 
-    def __init__(self, project=None):
+    def __init__(self):
         Loggable.__init__(self)
-        self.log("new sourcelist for project %s", project)
-        self.project = project
-        self.sources = {}
-        self._sourceindex = []
-        self.tempsources = {}
-        self.discoverer = Discoverer()
+        Signallable.__init__(self)
+        self._sources = {}
+        self._ordered_sources = []
+
+        self.discoverer = self.discovererClass()
         self.discoverer.connect("discovery-error", self._discoveryErrorCb)
         self.discoverer.connect("discovery-done", self._discoveryDoneCb)
         self.discoverer.connect("starting", self._discovererStartingCb)
         self.discoverer.connect("ready", self._discovererReadyCb)
         self.discoverer.connect("missing-plugins",
                 self._discovererMissingPluginsCb)
-        self.missing_plugins = {}
 
-    def __contains__(self, uri):
-        return self.sources.__contains__(uri)
-
-    def __delitem__(self, uri):
-        try:
-            self.sources.__delitem__(uri)
-            self._sourceindex.remove(uri)
-        except KeyError:
-            pass
-        else:
-            # emit deleted item signal
-            self.emit("file_removed", uri)
-
-    def __getitem__(self, uri):
-        try:
-            res = self.sources.__getitem__(uri)
-        except KeyError:
-            res = None
-        return res
-
-    def __iter__(self):
-        """ returns an (uri, factory) iterator over the sources """
-        return self.sources.iteritems()
 
     def addUri(self, uri):
-        """ Add the uri to the list of sources, will be discovered """
-        # here we add the uri and emit a signal
-        # later on the existence of the file will be confirmed or not
-        # Until it's confirmed, the uri stays in the temporary list
-        # for the moment, we pass it on to the Discoverer
-        if uri in self.sources.keys():
-            return
-        self.sources[uri] = None
+        """
+        Add c{uri} to the source list.
+
+        The uri will be analyzed before being added.
+        """
+        if uri in self._sources:
+            raise SourceListError("URI already present in the source list", uri)
+
+        uri = urllib.unquote(uri)
+        self._sources[uri] = None
+
         self.discoverer.addUri(uri)
 
     def addUris(self, uris):
-        """ Add the list of uris to the list of sources, they will be discovered """
-        # same as above but for a list
-        rlist = []
+        """
+        Add c{uris} to the source list.
+
+        The uris will be analyzed before being added.
+        """
         for uri in uris:
-            uri = urllib.unquote(uri)
-            if not uri in self.sources.keys():
-                self.sources[uri] = None
-                rlist.append(uri)
+            self.addUri(uri)
 
-        self.discoverer.addUris(rlist)
+    def removeUri(self, uri):
+        """
+        Remove the factory for c{uri} from the source list.
+        """
+        try:
+            factory = self._sources.pop(uri)
+        except KeyError:
+            raise SourceListError("URI not in the sourcelist", uri)
 
-    def addTmpUri(self, uri):
-        """ Adds a temporary uri, will not be saved """
-        uri = urllib.unquote(uri)
-        if uri in self.sources.keys():
-            return
-        self.tempsources[uri] = None
-        self.discoverer.addUri(uri)
+        try:
+            self._ordered_sources.remove(factory)
+        except ValueError:
+            # this can only happen if discoverer hasn't finished scanning the
+            # source, so factory must be None
+            assert factory is None
 
-    def removeFactory(self, factory):
-        """ Remove a file using it's objectfactory """
-        # TODO
-        # remove an item using the factory as a key
-        # otherwise just use the __delitem__
-        # del self[uri]
-        rmuri = []
-        for uri, fact in self.sources.iteritems():
-            if fact == factory:
-                rmuri.append(uri)
-        for uri in rmuri:
-            del self[uri]
+        self.emit("source-removed", uri, factory)
 
-    # FIXME : Invert the order of the arguments so we can just have:
-    # addFactory(self, factory, uri=None)
-    def addFactory(self, uri=None, factory=None):
+    def getUri(self, uri):
+        """
+        Get the source corresponding to C{uri}.
+        """
+        factory = self._sources.get(uri, None)
+        if factory is None:
+            raise SourceListError("URI not in the sourcelist", uri)
+
+        return factory
+
+    def addFactory(self, factory):
         """
         Add an objectfactory for the given uri.
         """
-        if uri==None:
-            uri = factory.uri
-        if uri in self and self[uri]:
-            raise Exception("We already have an objectfactory for uri %s", uri)
-        self.sources[uri] = factory
-        self._sourceindex.append(uri)
-        self.emit("file_added", factory)
+        if self._sources.get(factory.uri, None) is not None:
+            raise SourceListError("We already have a factory for this uri",
+                    factory.uri)
+
+        self._sources[factory.uri] = factory
+        self._ordered_sources.append(factory)
+        self.emit("source-added", factory)
 
     def getSources(self):
         """ Returns the list of sources used.
 
         The list will be ordered by the order in which they were added
         """
-        res = []
-        for i in self._sourceindex:
-            res.append(self[i])
-        return res
+        return self._ordered_sources
 
-    def _discoveryDoneCb(self, unused_discoverer, uri, factory):
-        # callback from finishing analyzing factory
-        if uri in self.tempsources:
-            self.tempsources[uri] = factory
-            self.emit("tmp_is_ready", factory)
-        elif uri in self.sources:
-            self.addFactory(uri, factory)
+    def _discoveryDoneCb(self, discoverer, uri, factory):
+        if factory.uri not in self._sources:
+            # the source was removed while it was being scanned
+            return
 
-    def _discoveryErrorCb(self, unused_discoverer, uri, reason, extra):
-        if self.missing_plugins.pop(uri, None) is None:
-            # callback from the discoverer's 'discovery-error' signal
-            # remove it from the list
-            self.emit("discovery-error", uri, reason, extra)
+        self.addFactory(factory)
 
-        if uri in self.sources and not self.sources[uri]:
-            del self.sources[uri]
-        elif uri in self.tempsources:
-            del self.tempsources[uri]
+    def _discoveryErrorCb(self, discoverer, uri, reason, extra):
+        try:
+            del self._sources[uri]
+        except KeyError:
+            # the source was removed while it was being scanned
+            pass
+
+        self.emit("discovery-error", uri, reason, extra)
 
     def _discovererStartingCb(self, unused_discoverer):
         self.emit("starting")
@@ -190,6 +167,11 @@ class SourceList(Signallable, Loggable):
     def _discovererReadyCb(self, unused_discoverer):
         self.emit("ready")
 
-    def _discovererMissingPluginsCb(self, discoverer, uri, detail, description):
-        self.missing_plugins[uri] = True
-        return self.emit('missing-plugins', uri, detail, description)
+    def _discovererMissingPluginsCb(self, discoverer, uri, factory,
+            details, descriptions, missingPluginsCallback):
+        if factory.uri not in self._sources:
+            # the source was removed while it was being scanned
+            return None
+
+        return self.emit('missing-plugins', uri, factory,
+                details, descriptions, missingPluginsCallback)

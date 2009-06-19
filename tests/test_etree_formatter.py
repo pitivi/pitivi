@@ -294,7 +294,7 @@ class TestFormatterSave(TestCase):
 
         project = Project()
         project.timeline = timeline
-        project.sources.addFactory("meh", source1)
+        project.sources.addFactory(source1)
 
         element = self.formatter._serializeProject(project)
 
@@ -516,7 +516,7 @@ class TestFormatterLoad(TestCase):
 
         project = Project()
         project.timeline = timeline
-        project.sources.addFactory("meh", source1)
+        project.sources.addFactory(source1)
 
         element = self.formatter._serializeProject(project)
 

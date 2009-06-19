@@ -159,7 +159,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.error_dialogbox = None
         self.settings = instance.settings
         self.is_fullscreen = self.settings.mainWindowFullScreen
-        self.missing_plugins = []
         self.timelinepos = 0
         self.prefsdialog = None
         create_stock_icons()
@@ -453,22 +452,13 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
 ## Missing Plugin Support
 
-    def _installPlugins(self, details):
+    def _installPlugins(self, details, missingPluginsCallback):
         context = gst.pbutils.InstallPluginsContext()
         context.set_xid(self.window.xid)
 
         res = gst.pbutils.install_plugins_async(details, context,
-                self._installPluginsAsyncCb)
+                missingPluginsCallback)
         return res
-
-    def _installPluginsAsyncCb(self, result):
-        missing_plugins, self.missing_plugins = self.missing_plugins, []
-
-        if result != gst.pbutils.INSTALL_PLUGINS_SUCCESS:
-            return
-
-        gst.update_registry()
-        self.app.current.sources.addUris(missing_plugins)
 
 ## UI Callbacks
 
@@ -669,6 +659,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _projectManagerNewProjectLoadedCb(self, projectManager, project):
         self.log("A NEW project is loaded, update the UI!")
         self.project = project
+        self._connectToProjectSources(project.sources)
         if project.timeline.duration > 0:
             self.render_button.set_sensitive(True)
 
@@ -749,6 +740,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
     def _projectManagerProjectClosedCb(self, projectManager, project):
         # we must disconnect from the project pipeline before it is released
+        self._disconnectFromProjectSources(project.sources)
         self.viewer.setAction(None)
         self.viewer.setPipeline(None)
         return False
@@ -801,6 +793,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
             pass
 
         dialog.destroy()
+
+    def _connectToProjectSources(self, sourcelist):
+        sourcelist.connect("missing-plugins", self._sourceListMissingPluginsCb)
+
+    def _disconnectFromProjectSources(self, sourcelist):
+        sourcelist.disconnect_by_func(self._sourceListMissingPluginsCb)
 
     def _actionLogCommit(self, action_log, stack, nested):
         if nested:
@@ -858,10 +856,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
             sett = self.project.getSettings()
             self.viewer.setDisplayAspectRatio(float(sett.videopar * sett.videowidth) / float(sett.videoheight))
 
-    @handler(project, "missing-plugins")
-    def _projectMissingPluginsCb(self, project, uri, detail, message):
-        self.missing_plugins.append(uri)
-        return self._installPlugins(detail)
+    def _sourceListMissingPluginsCb(self, project, uri, factory,
+            details, descriptions, missingPluginsCallback):
+        res = self._installPlugins(details, missingPluginsCallback)
+        return res
 
 ## Current Project Pipeline
 

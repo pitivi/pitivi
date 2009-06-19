@@ -31,6 +31,9 @@ import gobject
 gobject.threads_init()
 import gst
 import gst.pbutils
+from gst.pbutils import INSTALL_PLUGINS_SUCCESS, \
+        INSTALL_PLUGINS_PARTIAL_SUCCESS, INSTALL_PLUGINS_USER_ABORT, \
+        INSTALL_PLUGINS_STARTED_OK
 import tempfile
 from base64 import urlsafe_b64encode
 
@@ -90,6 +93,8 @@ class Discoverer(Signallable, Loggable):
         self.missing_plugin_messages = []
         self.dynamic_elements = []
         self.thumbnails = {}
+        self.missing_plugin_details = []
+        self.missing_plugin_descriptions = []
 
     def _resetPipeline(self):
         # finish current, cleanup
@@ -152,33 +157,105 @@ class Discoverer(Signallable, Loggable):
         if not self.missing_plugin_messages:
             return False
 
-        missing_plugin_details = []
-        missing_plugin_descriptions = []
         for message in self.missing_plugin_messages:
             detail = \
                     gst.pbutils.missing_plugin_message_get_installer_detail(message)
             description = \
                     gst.pbutils.missing_plugin_message_get_description(message)
 
-            missing_plugin_details.append(detail)
-            missing_plugin_descriptions.append(description)
+            self.missing_plugin_details.append(detail)
+            self.missing_plugin_descriptions.append(description)
 
-        result = self.emit('missing-plugins', self.current_uri,
-                missing_plugin_details, missing_plugin_descriptions)
+        return True
 
-        if result == gst.pbutils.INSTALL_PLUGINS_STARTED_OK:
-            # don't emit an error yet
-            self.error = None
-            self.error_detail = None
-            res = True
+    def _installMissingPluginsCallback(self, result, factory):
+        rescan = False
+
+        if result in (INSTALL_PLUGINS_SUCCESS,
+                INSTALL_PLUGINS_PARTIAL_SUCCESS):
+            gst.update_registry()
+            rescan = True
+        elif result == INSTALL_PLUGINS_USER_ABORT \
+                and factory.getOutputStreams():
+            self._emitDone(factory)
         else:
-            if self.error is None:
-                self.error = _('Missing plugins:\n%s') % \
-                             '\n'.join(missing_plugin_descriptions)
-                self.error_detail = ''
-            res = False
+            self._emitErrorMissingPlugins()
 
-        return res
+        self._finishAnalysisAfterResult(rescan=rescan)
+
+    def _emitError(self):
+        self.emit("discovery-error", self.current_uri, self.error, self.error_detail)
+
+    def _emitErrorMissingPlugins(self):
+        self.error = _("Missing plugins:\n%s") % \
+                "\n".join(self.missing_plugin_descriptions)
+        self.error_detail = ""
+        self._emitError()
+
+    def _emitDone(self, factory):
+        self.emit("discovery-done", self.current_uri, factory)
+
+    def _emitResult(self):
+        # we got a gst error, error out ASAP
+        if self.error:
+            self._emitError()
+            return True
+
+        have_video, have_audio, have_image = self._getCurrentStreamTypes()
+        missing_plugins = bool(self.missing_plugin_details)
+
+        if not self.current_streams and not missing_plugins:
+            # woot, nothing decodable
+            self.error = _('Can not decode file.')
+            self.error_detail = _("The given file does not contain audio, "
+                    "video or picture streams.")
+            self._emitError()
+            return True
+
+        # construct the factory with the streams we found
+        if have_image:
+            factory = PictureFileSourceFactory(self.current_uri)
+        else:
+            factory = FileSourceFactory(self.current_uri)
+
+        factory.duration = self.current_duration
+        for stream in self.current_streams:
+            factory.addOutputStream(stream)
+
+        if not missing_plugins:
+            # make sure that we could query the duration (if it's an image, we
+            # assume it's got infinite duration)
+            is_image = have_image and len(self.current_streams) == 1
+            if self.current_duration == gst.CLOCK_TIME_NONE and not is_image:
+                self.error =_("Could not establish the duration of the file.")
+                self.error_detail = _("This clip seems to be in a format "
+                        "which cannot be accessed in a random fashion.")
+                self._emitError()
+                return True
+
+            self._emitDone(factory)
+            return True
+
+        def callback(result):
+            self._installMissingPluginsCallback(result, factory)
+
+        res = self.emit("missing-plugins", self.current_uri, factory,
+                self.missing_plugin_details,
+                self.missing_plugin_descriptions,
+                callback)
+        if res is None or res != INSTALL_PLUGINS_STARTED_OK:
+            # no missing-plugins handlers
+            if factory.getOutputStreams():
+                self._emitDone(factory)
+            else:
+                self._emitErrorMissingPlugins()
+
+            return True
+
+
+        # plugins are being installed, processing will continue when
+        # self._installMissingPluginsCallback is called by the application
+        return False
 
     def _finishAnalysis(self):
         """
@@ -188,49 +265,21 @@ class Discoverer(Signallable, Loggable):
         if self.timeout_id:
             self._removeTimeout()
 
-        missing_plugins = self._checkMissingPlugins()
+        # check if there are missing plugins before calling _resetPipeline as we
+        # are going to pop messagess off the bus
+        self._checkMissingPlugins()
         self._resetPipeline()
-        if not self.current_streams and self.error is None:
-            # EOS and no decodable streams?
-            self.error = _('No streams found')
-            self.error_detail = ""
 
-        if len(self.current_streams) == 1:
-            stream = self.current_streams[0]
-            is_image = isinstance(stream, VideoStream) and stream.is_image
-        else:
-            is_image = False
+        # emit discovery-done, discovery-error or missing-plugins
+        if self._emitResult():
+            self._finishAnalysisAfterResult()
 
-        if self.error:
-            self.emit('discovery-error', self.current_uri, self.error, self.error_detail)
-        elif self.current_duration == gst.CLOCK_TIME_NONE and not is_image:
-            self.emit('discovery-error', self.current_uri,
-                      _("Could not establish the duration of the file."),
-                      _("This clip seems to be in a format which cannot be accessed in a random fashion."))
-        else:
-            have_video, have_audio, have_image = self._getCurrentStreamTypes()
-            if have_video or have_audio:
-                factory = FileSourceFactory(self.current_uri)
-            elif have_image:
-                factory = PictureFileSourceFactory(self.current_uri)
-            else:
-                # woot, nothing decodable
-                self.error = _('Can not decode file.')
-                self.error_detail = _('The given file does not contain audio, video or picture streams.')
-                factory = None
-
-            if factory is not None:
-                factory.duration = self.current_duration
-
-                for stream in self.current_streams:
-                    factory.addOutputStream(stream)
-
-            self.emit('discovery-done', self.current_uri, factory)
-
+    def _finishAnalysisAfterResult(self, rescan=False):
         self.info("Cleaning up after finished analyzing %s", self.current_uri)
         self._resetState()
 
-        self.queue.pop(0)
+        if not rescan:
+            self.queue.pop(0)
         # restart an analysis if there's more...
         if self.queue:
             self._scheduleAnalysis()

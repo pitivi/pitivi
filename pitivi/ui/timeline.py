@@ -277,7 +277,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.warning("self._factories:%r, self._temp_objects:%r",
                      not not self._factories,
                      not not self._temp_objects)
-        if not self._factories:
+        if self._factories is None:
             atom = gtk.gdk.atom_intern(dnd.FILESOURCE_TUPLE[0])
             self.drag_get_data(context, atom, timestamp)
             self.drag_highlight()
@@ -324,7 +324,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             uris = selection.data.split("\n")
         else:
             context.finish(False, False, timestamp)
-        self._factories = [self.project.sources[uri] for uri in uris]
+        self._factories = [self.project.sources.getUri(uri) for uri in uris]
         context.drag_status(gtk.gdk.ACTION_COPY, timestamp)
         return True
 

@@ -639,7 +639,7 @@ class ElementTreeFormatter(Formatter):
             return
 
         self._replaceMatchingOldFactory(factory, old_factories)
-        project.sources.addFactory(factory=factory)
+        project.sources.addFactory(factory)
 
         closure["rediscovered"] += 1
         if closure["rediscovered"] == len(old_factories):

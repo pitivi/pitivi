@@ -348,13 +348,13 @@ class SourceList(gtk.VBox, Loggable):
 
         """
         self.project_signals.connect(
-            project.sources, "file_added", None, self._fileAddedCb)
+            project.sources, "source-added", None, self._sourceAddedCb)
         self.project_signals.connect(
-            project.sources, "file_removed", None, self._fileRemovedCb)
+            project.sources, "source-removed", None, self._sourceRemovedCb)
         self.project_signals.connect(
             project.sources, "discovery-error", None, self._discoveryErrorCb)
-        self.project_signals.connect(
-            project.sources, "missing-plugins", None, self._missingPluginsCb)
+        #self.project_signals.connect(
+        #    project.sources, "missing-plugins", None, self._missingPluginsCb)
         self.project_signals.connect(
             project.sources, "ready", None, self._sourcesStoppedImportingCb)
         self.project_signals.connect(
@@ -472,11 +472,11 @@ class SourceList(gtk.VBox, Loggable):
 
     # sourcelist callbacks
 
-    def _fileAddedCb(self, unused_sourcelist, factory):
+    def _sourceAddedCb(self, unused_sourcelist, factory):
         """ a file was added to the sourcelist """
         self._addFactory(factory)
 
-    def _fileRemovedCb(self, unused_sourcelist, uri):
+    def _sourceRemovedCb(self, sourcelist, uri, factory):
         """ the given uri was removed from the sourcelist """
         # find the good line in the storemodel and remove it
         model = self.storemodel
