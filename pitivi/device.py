@@ -272,7 +272,7 @@ class AlsaSinkDeviceFactory(SinkDeviceFactory):
         alsa.set_property("device", "hw:%d,%d" % (self._card, self._device))
         return alsa
 
-    def __repr__(self):
+    def __str__(self):
         return "<%s: %s [hw:%s,%s]>" % (self.__class__.__name__,
                                         self.displayname or self.name,
                                         self._card, self._device)
