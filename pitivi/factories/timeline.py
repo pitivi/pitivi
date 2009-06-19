@@ -59,7 +59,7 @@ gobject.type_register(FixSeekStart)
 
 class TimelineSourceFactory(SourceFactory):
     def __init__(self, timeline):
-        SourceFactory.__init__(self, 'timeline', 'timeline')
+        SourceFactory.__init__(self, 'timeline')
         self.bin = gst.Bin()
         self.max_bins = 1
         self.timeline = timeline

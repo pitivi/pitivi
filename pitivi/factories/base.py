@@ -46,8 +46,6 @@ class ObjectFactory(Signallable, Loggable):
 
     @ivar name: Factory name.
     @type name: C{str}
-    @ivar displayname: Nicer name for the factory that could be used in an UI.
-    @type displayname: C{str}
     @ivar input_streams: List of input streams.
     @type input_streams: C{list}
     @ivar output_streams: List of output streams.
@@ -65,12 +63,11 @@ class ObjectFactory(Signallable, Loggable):
     @type bins: List of C{gst.Bin}
     """
 
-    def __init__(self, name="", displayname=""):
+    def __init__(self, name=""):
         Loggable.__init__(self)
         self.info("name:%s", name)
         self.parent = None
         self.name = name
-        self.displayname = displayname
         self.input_streams = []
         self.output_streams = []
         self.duration = gst.CLOCK_TIME_NONE
@@ -191,7 +188,7 @@ class ObjectFactory(Signallable, Loggable):
         """
 
     def __str__(self):
-        return "<%s: %s>" % (self.__class__.__name__, self.displayname or self.name)
+        return "<%s: %s>" % (self.__class__.__name__, self.name)
 
 class SourceFactory(ObjectFactory):
     """
@@ -208,8 +205,8 @@ class SourceFactory(ObjectFactory):
         'bin-released': ['bin']
     }
 
-    def __init__(self, name='', displayname=''):
-        ObjectFactory.__init__(self, name, displayname)
+    def __init__(self, name=''):
+        ObjectFactory.__init__(self, name)
         self.max_bins = -1
         self.current_bins = 0
 
@@ -290,8 +287,8 @@ class SinkFactory(ObjectFactory):
         'bin-released': ['bin']
     }
 
-    def __init__(self, name='', displayname=''):
-        ObjectFactory.__init__(self, name, displayname)
+    def __init__(self, name=''):
+        ObjectFactory.__init__(self, name)
         self.max_bins = -1
         self.current_bins = 0
 
@@ -393,8 +390,8 @@ class OperationFactory(ObjectFactory):
         'bin-released': ['bin']
     }
 
-    def __init__(self, name='', displayname=''):
-        ObjectFactory.__init__(self, name, displayname)
+    def __init__(self, name=''):
+        ObjectFactory.__init__(self, name)
         self.max_bins = -1
         self.current_bins = 0
 
@@ -479,8 +476,8 @@ class LiveSourceFactory(SourceFactory):
     timeline.
     """
 
-    def __init__(self, name, displayname, default_duration=None):
-        SourceFactory.__init__(self, name, displayname)
+    def __init__(self, name, default_duration=None):
+        SourceFactory.__init__(self, name)
         if default_duration is None:
             default_duration = 5 * gst.SECOND
 
@@ -501,12 +498,12 @@ class RandomAccessSourceFactory(SourceFactory):
     @type abs_offset_length: C{int}
     """
 
-    def __init__(self, name='', displayname='',
+    def __init__(self, name='',
             offset=0, offset_length=gst.CLOCK_TIME_NONE):
         self.offset = offset
         self.offset_length = offset_length
 
-        SourceFactory.__init__(self, name, displayname)
+        SourceFactory.__init__(self, name)
 
     def _getAbsOffset(self):
         if self.parent is None:
@@ -545,7 +542,7 @@ class URISourceFactoryMixin(object):
 
     def __init__(self, uri):
         self.uri = uri
-        self.displayname = os.path.basename(unquote(uri))
+        self.name = os.path.basename(unquote(uri))
 
     def _makeBin(self, output_stream):
         if output_stream is None:
@@ -640,6 +637,6 @@ class LiveURISourceFactory(URISourceFactoryMixin, LiveSourceFactory):
 
     @see L{LiveSourceFactory}.
     """
-    def __init__(self, uri, name='', displayname='', default_duration=None):
+    def __init__(self, uri, name='', default_duration=None):
         URISourceFactoryMixin.__init__(self, uri)
-        LiveSourceFactory.__init__(self, name, displayname, default_duration)
+        LiveSourceFactory.__init__(self, name, default_duration)

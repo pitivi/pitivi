@@ -48,7 +48,7 @@ class TestFileSourceFactory(TestCase):
 
     def testFileSourceFilename(self):
         self.failUnlessEqual(self.factory.filename, 'file:///path/to/file')
-        self.failUnlessEqual(self.factory.displayname, 'file')
+        self.failUnlessEqual(self.factory.name, 'file')
 
     def testDefaultMakeBin(self):
         # the default bin for FileSource is a bin containing decodebin
@@ -100,7 +100,7 @@ class TestPictureFileSourceFactory(TestCase):
 
     def testFileSourceFilename(self):
         self.failUnlessEqual(self.factory.filename, 'file:///path/to/file')
-        self.failUnlessEqual(self.factory.displayname, 'file')
+        self.failUnlessEqual(self.factory.name, 'file')
 
     def testDefaultMakeBin(self):
         # the default bin for FileSource is a bin containing decodebin

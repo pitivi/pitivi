@@ -36,12 +36,11 @@ class FileSourceFactory(URISourceFactoryMixin, RandomAccessSourceFactory):
     @see: L{RandomAccessSourceFactory}.
     """
 
-    def __init__(self, filename, name='', displayname=''):
-        name = name or filename
-        displayname = displayname or os.path.basename(filename)
+    def __init__(self, filename, name=''):
+        name = name or os.path.basename(filename)
         self.filename = filename
         URISourceFactoryMixin.__init__(self, filename)
-        RandomAccessSourceFactory.__init__(self, name, displayname)
+        RandomAccessSourceFactory.__init__(self, name)
 
     def _releaseBin(self, bin):
         self.debug("releasing %r", bin)

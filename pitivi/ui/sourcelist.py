@@ -119,7 +119,7 @@ def beautify_factory(factory):
 
     streams = factory.getOutputStreams()
     streams.sort(key=stream_sort_key)
-    return ("<b>" + escape(unquote(factory.displayname)) + "</b>\n" +
+    return ("<b>" + escape(unquote(factory.name)) + "</b>\n" +
         "\n".join((beautify_stream(stream) for stream in streams)))
 
 class SourceList(gtk.VBox, Loggable):

@@ -185,8 +185,7 @@ class HalDeviceProbe(DeviceProbe):
         if devobject.QueryCapability("video4linux"):
             location = devobject.GetProperty("video4linux.device")
             info = devobject.GetProperty("info.product")
-            srcdev = V4LSourceDeviceFactory(device=location,
-                                            displayname=info)
+            srcdev = V4LSourceDeviceFactory(name=info, device=location)
             self.debug("Valid source %r", dev)
             self._sources['video'][device_udi] = srcdev
             self.emit("device-added", srcdev)
@@ -198,15 +197,14 @@ class HalDeviceProbe(DeviceProbe):
                 info = devobject.GetProperty("alsa.card_id")
                 if alsatype == "capture":
                     self.debug("Valid source %r", dev)
-                    self._sources['audio'][device_udi] = AlsaSourceDeviceFactory(card=card,
-                                                                  device=device,
-                                                                  displayname=info)
+                    self._sources['audio'][device_udi] = \
+                            AlsaSourceDeviceFactory(name=info, card=card,
+                                    device=device)
                     self.emit("device-added", self._sources['audio'][device_udi])
                 elif alsatype == "playback":
                     self.debug("Valid sink %r", dev)
-                    self._sinks[device_udi] = AlsaSinkDeviceFactory(card=card,
-                                                              device=device,
-                                                              displayname=info)
+                    self._sinks[device_udi] = AlsaSinkDeviceFactory(name=info,
+                            card=card, device=device)
                     self.emit("device-added", self._sinks[device_udi])
 
     def _deviceAddedCb(self, device_udi, *unused_args):
@@ -254,8 +252,7 @@ class AlsaSourceDeviceFactory(SourceDeviceFactory):
         return alsa
 
     def __str__(self):
-        return "<%s: %s [hw:%s,%s]>" % (self.__class__.__name__,
-                                        self.displayname or self.name,
+        return "<%s: %s [hw:%s,%s]>" % (self.__class__.__name__, self.name,
                                         self._card, self._device)
 
 class AlsaSinkDeviceFactory(SinkDeviceFactory):
@@ -273,8 +270,7 @@ class AlsaSinkDeviceFactory(SinkDeviceFactory):
         return alsa
 
     def __str__(self):
-        return "<%s: %s [hw:%s,%s]>" % (self.__class__.__name__,
-                                        self.displayname or self.name,
+        return "<%s: %s [hw:%s,%s]>" % (self.__class__.__name__, self.name,
                                         self._card, self._device)
 
 

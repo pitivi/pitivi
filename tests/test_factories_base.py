@@ -31,7 +31,7 @@ from common import SignalMonitor, TestCase
 class TestObjectFactory(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.factory = ObjectFactory('name', 'displayname')
+        self.factory = ObjectFactory('name')
 
     def tearDown(self):
         self.factory = None
@@ -47,7 +47,7 @@ class TestObjectFactory(TestCase):
         self.failUnlessEqual(self.factory.icon, 'icon')
 
         # icon is inherited from parents
-        factory1 = ObjectFactory('name', 'displayname')
+        factory1 = ObjectFactory('name')
         self.failUnlessEqual(factory1.icon, None)
         factory1.parent = self.factory
         self.failUnlessEqual(factory1.icon, 'icon')
@@ -76,7 +76,7 @@ class StubSourceFactory(SourceFactory):
 class TestSourceFactory(TestCase):
     def setUp(self):
         TestCase.setUp(self)
-        self.factory = StubSourceFactory('name', 'displayname')
+        self.factory = StubSourceFactory('name')
         caps = gst.Caps('video/x-raw-rgb')
         self.stream = VideoStream(caps, pad_name='src0')
         # source factories can't have input streams
@@ -122,19 +122,19 @@ class TestSourceFactory(TestCase):
 class TestLiveSourceFactory(TestCase):
     def testDefaultDuration(self):
         # pass an explicit default_duration
-        factory = LiveSourceFactory('name', 'displayname', 10 * gst.SECOND)
+        factory = LiveSourceFactory('name', 10 * gst.SECOND)
         self.failUnlessEqual(factory.default_duration, 10 * gst.SECOND)
         
         # check that if a LiveSourceFactory derived class doesn't pass a
         # default_duration it's still set to 5 seconds
-        factory = LiveSourceFactory('name', 'displayname')
+        factory = LiveSourceFactory('name')
         self.failUnlessEqual(factory.duration, gst.CLOCK_TIME_NONE)
         self.failUnlessEqual(factory.default_duration, 5 * gst.SECOND)
 
 class TestRandomAccessSourceFactory(TestCase):
     def testOffsetAndLength(self):
         # no offset and length
-        factory = RandomAccessSourceFactory('name', 'displayname')
+        factory = RandomAccessSourceFactory('name')
         self.failUnlessEqual(factory.offset, 0)
         self.failUnlessEqual(factory.offset_length, gst.CLOCK_TIME_NONE)
         self.failUnlessEqual(factory.abs_offset, 0)
@@ -149,7 +149,7 @@ class TestRandomAccessSourceFactory(TestCase):
         self.failUnlessEqual(factory.abs_offset_length, 10 * gst.SECOND)
 
         # parent offset
-        relative = RandomAccessSourceFactory('name1', 'displayname1')
+        relative = RandomAccessSourceFactory('name1')
         relative.parent = factory
         self.failUnlessEqual(relative.offset, 0)
         self.failUnlessEqual(relative.offset_length, gst.CLOCK_TIME_NONE)

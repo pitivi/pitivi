@@ -220,7 +220,7 @@ class WebcamManagerDialog(GladeWindow):
             return
         model.clear()
         for dev in devices:
-            model.append([dev.displayname, dev])
+            model.append([dev.name, dev])
 
     def _updateAudioCombo(self):
         self._updateCombo(self._adevcombo,
