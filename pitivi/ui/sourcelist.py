@@ -466,7 +466,7 @@ class SourceList(gtk.VBox, Loggable):
         self.storemodel.append([thumbnail,
             beautify_factory(factory),
             factory,
-            factory.name,
+            factory.uri,
             duration])
         self._displayTreeView()
 
@@ -571,7 +571,7 @@ class SourceList(gtk.VBox, Loggable):
             return
         path = paths[0]
         factory = model[path][COL_FACTORY]
-        self.debug("Let's play %s", factory.name)
+        self.debug("Let's play %s", factory.uri)
         self.emit('play', factory)
 
     _dragStarted = False

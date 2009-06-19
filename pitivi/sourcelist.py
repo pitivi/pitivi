@@ -168,11 +168,11 @@ class SourceList(Signallable, Loggable):
 
     def _discoveryDoneCb(self, unused_discoverer, uri, factory):
         # callback from finishing analyzing factory
-        if factory.name in self.tempsources:
-            self.tempsources[factory.name] = factory
+        if uri in self.tempsources:
+            self.tempsources[uri] = factory
             self.emit("tmp_is_ready", factory)
-        elif factory.name in self.sources:
-            self.addFactory(factory.name, factory)
+        elif uri in self.sources:
+            self.addFactory(uri, factory)
 
     def _discoveryErrorCb(self, unused_discoverer, uri, reason, extra):
         if self.missing_plugins.pop(uri, None) is None:

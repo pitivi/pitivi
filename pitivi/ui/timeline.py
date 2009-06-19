@@ -24,6 +24,7 @@ Timeline widgets for the complex view
 """
 
 import gtk
+import urllib
 
 from pitivi.log.loggable import Loggable
 import ruler
