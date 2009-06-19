@@ -56,7 +56,7 @@ class FactoryEntry(object):
         self.factory = factory
         self.streams = {}
 
-    def __repr__(self):
+    def __str__(self):
         return "<FactoryEntry %s>" % self.factory
 
 class StreamEntry(object):
@@ -81,7 +81,7 @@ class StreamEntry(object):
 
         return entry
 
-    def __repr__(self):
+    def __str__(self):
         return "<StreamEntry %s '%s'>" % (self.factory_entry.factory, self.stream)
 
 class Pipeline(Signallable, Loggable):

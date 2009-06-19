@@ -407,7 +407,7 @@ class StreamEncodeSettings(object):
                     self.output_stream = get_stream_for_caps(p.get_caps().copy())
                     self.output_stream.pad_name = p.name_template
 
-    def __repr__(self):
+    def __str__(self):
         return "<StreamEncodeSettings %s>" % self.encoder
 
 class RenderSettings(object):
@@ -427,7 +427,7 @@ class RenderSettings(object):
         self.muxer = muxer
         self.muxersettings = muxersettings
 
-    def __repr__(self):
+    def __str__(self):
         return "<RenderSettings %s [%d streams]>" % (self.muxer, len(self.settings))
 
 class ExportSettings(Signallable, Loggable):
