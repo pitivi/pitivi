@@ -93,12 +93,8 @@ class MultimediaStream(Loggable):
         return self.pad_name == other.pad_name and self.isCompatible(other)
         #return self.isCompatible(other)
 
-    def __repr__(self):
-        return "<%s(%s) '%s'>" % (self.__class__.__name__,
-                                  self.pad_name, self.caps.to_string()[:30])
-
     def __str__(self):
-        return "%s" % self.caps
+        return "<%s(%s) '%s'>" % (self.__class__.__name__, self.pad_name, self.caps)
 
 class VideoStream(MultimediaStream):
     """

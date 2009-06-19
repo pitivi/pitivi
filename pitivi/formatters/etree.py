@@ -584,10 +584,13 @@ class ElementTreeFormatter(Formatter):
     def _matchFactoryStreams(self, factory, old_factory):
         old_streams = old_factory.getOutputStreams()
         streams = factory.getOutputStreams()
+        self.debug("matching factory streams old (%s) %s new (%s) %s",
+                len(old_streams), old_streams, len(streams), streams)
         if len(old_streams) != len(streams):
             raise FormatterError("cant find all streams")
 
         stream_map = match_stream_groups_map(old_streams, streams)
+        self.debug("stream map (%s) %s", len(stream_map), stream_map)
         if len(stream_map) != len(old_streams):
             raise FormatterError("streams don't match")
 
