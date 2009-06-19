@@ -26,20 +26,13 @@ from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
 from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
-from pitivi.factories.base import SourceFactory
 
-from common import SignalMonitor, TestCase
+from common import SignalMonitor, TestCase, StubFactory
 
 class TimelineSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
         SignalMonitor.__init__(self, track_object, 'start-changed',
                 'duration-changed', 'in-point-changed', 'media-duration-changed')
-
-class StubFactory(SourceFactory):
-    duration = 42 * gst.SECOND
-
-    def _makeBin(self, stream=None):
-        return gst.element_factory_make('fakesrc')
 
 class TestTimelineObjectAddRemoveTrackObjects(TestCase):
     def testAddRemoveTrackObjects(self):

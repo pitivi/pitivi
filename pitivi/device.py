@@ -241,7 +241,8 @@ class AlsaSourceDeviceFactory(SourceDeviceFactory):
     """ObjectFactory for Alsa source devices"""
 
     def __init__(self, card, device, *args, **kwargs):
-        SourceDeviceFactory.__init__(self, *args, **kwargs)
+        # FIXME: create an URI handler for this
+        SourceDeviceFactory.__init__(self, "alsasrc://", *args, **kwargs)
         self.is_audio = True
         self._card = card
         self._device = device
@@ -279,7 +280,8 @@ class V4LSourceDeviceFactory(SourceDeviceFactory):
     """ObjectFactory for Video4Linux source devices"""
 
     def __init__(self, device, *args, **kwargs):
-        SourceDeviceFactory.__init__(self, *args, **kwargs)
+        # FIXME: create an URI handler for this
+        SourceDeviceFactory.__init__(self, "v4lsrc://", *args, **kwargs)
         self.is_video = True
         self._device = device
         self.__probed = False

@@ -74,13 +74,12 @@ class TestFileSourceFactory(TestCase):
         audio = AudioStream(gst.Caps('audio/x-raw-int'), pad_name='src1')
         self.factory.addOutputStream(video)
         self.factory.addOutputStream(audio)
-
         bin = self.factory.makeBin(video)
-        self.failUnless(hasattr(bin, "dbin"))
-        self.failUnless(isinstance(bin.dbin, StubSingleDecodeBin))
-        self.failUnlessEqual(bin.dbin.uri, 'file:///path/to/file')
-        self.failUnlessEqual(video.caps, bin.dbin.caps)
-        self.failUnlessEqual(video, bin.dbin.stream)
+        self.failUnless(hasattr(bin, "decodebin"))
+        self.failUnless(isinstance(bin.decodebin, StubSingleDecodeBin))
+        self.failUnlessEqual(bin.decodebin.uri, 'file:///path/to/file')
+        self.failUnlessEqual(video.caps, bin.decodebin.caps)
+        self.failUnlessEqual(video, bin.decodebin.stream)
         self.factory.releaseBin(bin)
 
 class StubPictureFileSourceFactory(PictureFileSourceFactory):
@@ -104,7 +103,7 @@ class TestPictureFileSourceFactory(TestCase):
 
     def testDefaultMakeBin(self):
         # the default bin for FileSource is a bin containing decodebin
-        # TODO?: what we're testing here is that the method does return a bin and
+        # what we're testing here is that the method does return a bin and
         # doesn't rise exceptions. We're NOT changing the state of the bin.
         bin = self.factory.makeBin()
         self.failUnless(isinstance(bin, gst.Bin))

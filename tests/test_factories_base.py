@@ -73,6 +73,9 @@ class StubSourceFactory(SourceFactory):
     def _makeBin(self, output_stream=None):
         return gst.Bin()
 
+    def _releaseBin(self, bin):
+        pass
+
 class TestSourceFactory(TestCase):
     def setUp(self):
         TestCase.setUp(self)
@@ -122,7 +125,7 @@ class TestSourceFactory(TestCase):
 class TestLiveSourceFactory(TestCase):
     def testDefaultDuration(self):
         # pass an explicit default_duration
-        factory = LiveSourceFactory('name', 10 * gst.SECOND)
+        factory = LiveSourceFactory('live://', 'name', 10 * gst.SECOND)
         self.failUnlessEqual(factory.default_duration, 10 * gst.SECOND)
         
         # check that if a LiveSourceFactory derived class doesn't pass a

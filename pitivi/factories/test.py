@@ -27,7 +27,7 @@ from pitivi.stream import VideoStream, AudioStream
 
 class VideoTestSourceFactory(SourceFactory):
     def __init__(self, pattern=0):
-        SourceFactory.__init__(self)
+        SourceFactory.__init__(self, "videotestsrc://")
         self.pattern = pattern
 
         caps = gst.Caps('video/x-raw-yuv; video/x-raw-rgb')
@@ -53,9 +53,12 @@ class VideoTestSourceFactory(SourceFactory):
 
         return bin
 
+    def _releaseBin(self, bin):
+        pass
+
 class AudioTestSourceFactory(SourceFactory):
     def __init__(self, wave=0):
-        SourceFactory.__init__(self)
+        SourceFactory.__init__(self, "audiotestsrc://")
         self.wave = wave
 
         caps = gst.Caps('audio/x-raw-int; audio/x-raw-float')
@@ -81,3 +84,6 @@ class AudioTestSourceFactory(SourceFactory):
         bin.add_pad(ghost)
 
         return bin
+
+    def _releaseBin(self, bin):
+        pass

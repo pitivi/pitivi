@@ -59,7 +59,7 @@ gobject.type_register(FixSeekStart)
 
 class TimelineSourceFactory(SourceFactory):
     def __init__(self, timeline):
-        SourceFactory.__init__(self, 'timeline')
+        SourceFactory.__init__(self, "timeline://", "timeline")
         self.bin = gst.Bin()
         self.max_bins = 1
         self.timeline = timeline
@@ -85,6 +85,9 @@ class TimelineSourceFactory(SourceFactory):
             raise ObjectFactoryError('not implemented yet')
 
         return self.bin
+
+    def _releaseBin(self, bin):
+        pass
 
     def _connectTimeline(self):
         self.timeline.connect('track-added', self._timelineTrackAddedCb)

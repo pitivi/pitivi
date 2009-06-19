@@ -4,7 +4,7 @@
 #       :base.py
 #
 # Copyright (c) 2005-2008, Edward Hervey <bilboed@bilboed.com>
-#               2008, Alessandro Decina <alessandro.decina@collabora.co.uk>
+#               2008,2009 Alessandro Decina <alessandro.decina@collabora.co.uk>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -25,22 +25,22 @@ import gst
 import os
 
 from pitivi.factories.base import RandomAccessSourceFactory, \
-        URISourceFactoryMixin, SinkFactory
+        SinkFactory
 from pitivi.elements.imagefreeze import ImageFreeze
 from pitivi.stream import MultimediaStream
 
-class FileSourceFactory(URISourceFactoryMixin, RandomAccessSourceFactory):
+class FileSourceFactory(RandomAccessSourceFactory):
     """
     Factory for local files.
 
     @see: L{RandomAccessSourceFactory}.
     """
 
-    def __init__(self, filename, name=''):
-        name = name or os.path.basename(filename)
-        self.filename = filename
-        URISourceFactoryMixin.__init__(self, filename)
-        RandomAccessSourceFactory.__init__(self, name)
+    def __init__(self, uri, name=''):
+        name = name or os.path.basename(uri)
+        RandomAccessSourceFactory.__init__(self, uri, name)
+        # FIXME: backward compatibility
+        self.filename = uri
 
 class PictureFileSourceFactory(FileSourceFactory):
     """
@@ -54,6 +54,17 @@ class PictureFileSourceFactory(FileSourceFactory):
 
     # make this overridable in tests
     ffscale_factory = 'ffvideoscale'
+
+    def _makeDefaultBin(self):
+        # we override this so we always return a bin having
+        # bin.decodebin = <bin as returned by FileSourceFactory>
+        # this makes our _releaseBin simpler
+        bin = gst.Bin()
+        dbin = FileSourceFactory._makeDefaultBin(self)
+        bin.add(dbin)
+        bin.decodebin = dbin
+
+        return bin
 
     def _makeStreamBin(self, output_stream):
         self.debug("making picture bin for %s", self.name)
@@ -100,12 +111,12 @@ class PictureFileSourceFactory(FileSourceFactory):
         pad.unlink(scale.get_pad("sink"))
 
     def _releaseBin(self, bin):
-        if hasattr(bin, "decodebin"):
-            try:
-                bin.decodebin.disconnect_by_func(self._dbinPadAddedCb)
-                bin.decodebin.disconnect_by_func(self._dbinPadRemovedCb)
-            except:
-                pass
+        try:
+            bin.decodebin.disconnect_by_func(self._dbinPadAddedCb)
+            bin.decodebin.disconnect_by_func(self._dbinPadRemovedCb)
+        except TypeError:
+            # bin is a bin returned from makeDefaultBin
+            pass
         FileSourceFactory._releaseBin(self, bin.decodebin)
 
 class URISinkFactory(SinkFactory):

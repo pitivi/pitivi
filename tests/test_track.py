@@ -23,18 +23,8 @@ from common import TestCase
 import gst
 
 from pitivi.timeline.track import Track, SourceTrackObject, TrackError
-from pitivi.factories.base import SourceFactory
 from pitivi.stream import AudioStream, VideoStream
-from pitivi.utils import UNKNOWN_DURATION
-from common import SignalMonitor
-
-class StubFactory(SourceFactory):
-    def __init__(self, *args, **kwargs):
-        SourceFactory.__init__(self, *args, **kwargs)
-        self.duration = 42 * gst.SECOND
-
-    def _makeBin(self, stream=None):
-        return gst.element_factory_make('audiotestsrc')
+from common import SignalMonitor, StubFactory
 
 class TrackSignalMonitor(SignalMonitor):
     def __init__(self, track_object):

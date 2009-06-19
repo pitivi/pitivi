@@ -55,11 +55,14 @@ class TestCase(unittest.TestCase):
 # Some fake factories
 class FakeSourceFactory(SourceFactory):
     def __init__(self, factoryname="fakesrc", *args, **kwargs):
-        SourceFactory.__init__(self, *args, **kwargs)
-        self.__factoryname=factoryname
+        SourceFactory.__init__(self, "fakesrc://", *args, **kwargs)
+        self._factoryname = factoryname
 
     def _makeBin(self, output_stream=None):
-        return gst.element_factory_make(self.__factoryname)
+        return gst.element_factory_make(self._factoryname)
+
+    def _releaseBin(self, bin):
+        pass
 
 class FakeSinkFactory(SinkFactory):
     def __init__(self, factoryname="fakesink", *args, **kwargs):
@@ -75,7 +78,7 @@ class FakeGnlFactory(SourceFactory):
                  *args, **kwargs):
         self.__duration = duration
         self.__media_duration = media_duration
-        SourceFactory.__init__(self, *args, **kwargs)
+        SourceFactory.__init__(self, "fakegnl://", *args, **kwargs)
 
     def _makeBin(self, output_stream=None):
         # let's make a gnlsource with videotestsrc inside of it
@@ -86,6 +89,8 @@ class FakeGnlFactory(SourceFactory):
         gnl.props.media_duration=self.__media_duration
         return gnl
 
+    def _releaseBin(self, bin):
+        pass
 
 class SignalMonitor(object):
     def __init__(self, obj, *signals):
@@ -118,3 +123,13 @@ class SignalMonitor(object):
         field = self._getSignalCollectName(name)
         setattr(self, field, getattr(self, field, []) + [args[:-1]])
 
+class StubFactory(SourceFactory):
+    def __init__(self):
+        SourceFactory.__init__(self, "stub://")
+        self.duration = 42 * gst.SECOND
+
+    def _makeBin(self, stream=None):
+        return gst.element_factory_make('fakesrc')
+
+    def _releaseBin(self, bin):
+        pass

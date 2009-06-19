@@ -205,8 +205,13 @@ class SourceFactory(ObjectFactory):
         'bin-released': ['bin']
     }
 
-    def __init__(self, name=''):
+    # make this an attribute to inject it from tests
+    singleDecodeBinClass = SingleDecodeBin
+
+    def __init__(self, uri, name=''):
+        name = name or os.path.basename(unquote(uri))
         ObjectFactory.__init__(self, name)
+        self.uri = uri
         self.max_bins = -1
         self.current_bins = 0
 
@@ -239,15 +244,11 @@ class SourceFactory(ObjectFactory):
 
         bin = self._makeBin(compatible_stream)
         bin.factory = self
-        if not bin in self.bins:
-            self.bins.append(bin)
+        self.bins.append(bin)
         self.current_bins += 1
         self.emit('bin-created', bin)
 
         return bin
-
-    def _makeBin(self, output_stream=None):
-        raise NotImplementedError()
 
     def releaseBin(self, bin):
         """
@@ -260,14 +261,107 @@ class SourceFactory(ObjectFactory):
         self._releaseBin(bin)
         self.debug("Finally releasing %r", bin)
         self.current_bins -= 1
-        if bin in self.bins:
-            self.bins.remove(bin)
+        self.bins.remove(bin)
         self.emit('bin-released', bin)
         del bin.factory
 
+    def _makeBin(self, output_stream):
+        if output_stream is None:
+            return self._makeDefaultBin()
+
+        return self._makeStreamBin(output_stream)
+
+    def _makeDefaultBin(self):
+        """
+        Return a bin that decodes all the available streams.
+
+        This is generally used to get an overview of the source media before
+        splitting it in separate streams.
+        """
+        bin = gst.Bin("%s" % self.name)
+        src = gst.element_make_from_uri(gst.URI_SRC, self.uri)
+        try:
+            dbin = gst.element_factory_make("decodebin2")
+        except:
+            dbin = gst.element_factory_make("decodebin")
+        bin.add(src, dbin)
+        src.link(dbin)
+
+        dbin.connect("new-decoded-pad", self._binNewDecodedPadCb, bin)
+        dbin.connect("removed-decoded-pad", self._binRemovedDecodedPadCb, bin)
+
+        bin.decodebin = dbin
+        return bin
+
+    def _binNewDecodedPadCb(self, unused_dbin, pad, unused_is_last, bin):
+        ghost_pad = gst.GhostPad(pad.get_name(), pad)
+        ghost_pad.set_active(True)
+        bin.add_pad(ghost_pad)
+
+    def _binRemovedDecodedPadCb(self, unused_dbin, pad, bin):
+        ghost_pad = bin.get_pad(pad.get_name())
+        bin.remove_pad(ghost_pad)
+
     def _releaseBin(self, bin):
-        # default implementation does nothing
-        pass
+        try:
+            # bin is a bin returned from makeDefaultBin
+            bin.decodebin.disconnect_by_func(self._binNewDecodedPadCb)
+            bin.decodebin.disconnect_by_func(self._binRemovedDecodedPadCb)
+        except TypeError:
+            # bin is a stream bin
+            bin.decodebin.disconnect_by_func(self._singlePadAddedCb)
+            bin.decodebin.disconnect_by_func(self._singlePadRemovedCb)
+
+        del bin.decodebin
+
+        if hasattr(bin, "volume"):
+            # only audio bins have a volume element
+            bin.volume.set_state(gst.STATE_NULL)
+            bin.remove(bin.volume)
+            del bin.volume
+
+        if hasattr(bin, "ghostpad"):
+            # singledecodebin found something on this pad
+            bin.ghostpad.set_active(False)
+            bin.remove_pad(bin.ghostpad)
+            del bin.ghostpad
+
+    def _makeStreamBin(self, output_stream):
+        self.debug("output_stream:%r", output_stream)
+        b = gst.Bin()
+        b.decodebin = self.singleDecodeBinClass(uri=self.uri, caps=output_stream.caps,
+                                           stream=output_stream)
+        b.decodebin.connect("pad-added", self._singlePadAddedCb, b)
+        b.decodebin.connect("pad-removed", self._singlePadRemovedCb, b)
+
+        if isinstance(output_stream, AudioStream):
+            self.debug("Adding volume element")
+            # add a volume element
+            b.volume = gst.element_factory_make("volume", "internal-volume")
+            b.add(b.volume)
+
+        b.add(b.decodebin)
+        return b
+
+    def _singlePadAddedCb(self, dbin, pad, topbin):
+        self.debug("dbin:%r, pad:%r, topbin:%r", dbin, pad, topbin)
+        if hasattr(topbin, "volume"):
+            pad.link(topbin.volume.get_pad("sink"))
+            topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
+        else:
+            topbin.ghostpad = gst.GhostPad("src", pad)
+        topbin.ghostpad.set_active(True)
+        topbin.add_pad(topbin.ghostpad)
+
+    def _singlePadRemovedCb(self, dbin, pad, topbin):
+        self.debug("dbin:%r, pad:%r, topbin:%r", dbin, pad, topbin)
+        topbin.remove_pad(topbin.ghostpad)
+        del topbin.ghostpad
+        if hasattr(topbin, "volume"):
+            pad.unlink(topbin.volume.get_pad("sink"))
+            topbin.volume.set_state(gst.STATE_NULL)
+            topbin.remove(topbin.volume)
+            del topbin.volume
 
     def addInputStream(self, stream):
         raise AssertionError("source factories can't have input streams")
@@ -323,8 +417,7 @@ class SinkFactory(ObjectFactory):
 
         bin = self._makeBin(input_stream)
         bin.factory = self
-        if not bin in self.bins:
-            self.bins.append(bin)
+        self.bins.append(bin)
         self.current_bins += 1
         self.emit('bin-created', bin)
 
@@ -363,8 +456,7 @@ class SinkFactory(ObjectFactory):
         """
         bin.set_state(gst.STATE_NULL)
         self._releaseBin(bin)
-        if bin in self.bins:
-            self.bins.remove(bin)
+        self.bins.remove(bin)
         self.current_bins -= 1
         del bin.factory
         self.emit('bin-released', bin)
@@ -416,8 +508,7 @@ class OperationFactory(ObjectFactory):
 
         bin = self._makeBin(input_stream)
         bin.factory = self
-        if not bin in self.bins:
-            self.bins.append(bin)
+        self.bins.append(bin)
         self.current_bins += 1
         self.emit('bin-created', bin)
 
@@ -456,8 +547,7 @@ class OperationFactory(ObjectFactory):
         """
         bin.set_state(gst.STATE_NULL)
         self._releaseBin(bin)
-        if bin in self.bins:
-            self.bins.remove(bin)
+        self.bins.remove(bin)
         self.current_bins -= 1
         del bin.factory
         self.emit('bin-released', bin)
@@ -476,8 +566,8 @@ class LiveSourceFactory(SourceFactory):
     timeline.
     """
 
-    def __init__(self, name, default_duration=None):
-        SourceFactory.__init__(self, name)
+    def __init__(self, uri, name='', default_duration=None):
+        SourceFactory.__init__(self, uri, name)
         if default_duration is None:
             default_duration = 5 * gst.SECOND
 
@@ -498,12 +588,12 @@ class RandomAccessSourceFactory(SourceFactory):
     @type abs_offset_length: C{int}
     """
 
-    def __init__(self, name='',
+    def __init__(self, uri, name='',
             offset=0, offset_length=gst.CLOCK_TIME_NONE):
         self.offset = offset
         self.offset_length = offset_length
 
-        SourceFactory.__init__(self, name)
+        SourceFactory.__init__(self, uri, name)
 
     def _getAbsOffset(self):
         if self.parent is None:
@@ -531,112 +621,3 @@ class RandomAccessSourceFactory(SourceFactory):
         return offset_length
 
     abs_offset_length = property(_getAbsOffsetLength)
-
-class URISourceFactoryMixin(object):
-    """
-    Abstract mixin for sources that access an URI.
-    """
-
-    # make this an attribute to inject it from tests
-    singleDecodeBinClass = SingleDecodeBin
-
-    def __init__(self, uri):
-        self.uri = uri
-        self.name = os.path.basename(unquote(uri))
-
-    def _makeBin(self, output_stream):
-        if output_stream is None:
-            return self._makeDefaultBin()
-
-        return self._makeStreamBin(output_stream)
-
-    def _makeDefaultBin(self):
-        """
-        Return a bin that decodes all the available streams.
-
-        This is generally used to get an overview of the source media before
-        splitting it in separate streams.
-        """
-        bin = gst.Bin("%s" % self.name)
-        src = gst.element_make_from_uri(gst.URI_SRC, self.uri)
-        try:
-            dbin = gst.element_factory_make("decodebin2")
-        except:
-            dbin = gst.element_factory_make("decodebin")
-        bin.add(src, dbin)
-        src.link(dbin)
-
-        dbin.connect("new-decoded-pad", self._binNewDecodedPadCb, bin)
-        dbin.connect("removed-decoded-pad", self._binRemovedDecodedPadCb, bin)
-
-        bin.decodebin = dbin
-        return bin
-
-    def _binNewDecodedPadCb(self, unused_dbin, pad, unused_is_last, bin):
-        ghost_pad = gst.GhostPad(pad.get_name(), pad)
-        ghost_pad.set_active(True)
-        bin.add_pad(ghost_pad)
-
-    def _binRemovedDecodedPadCb(self, unused_dbin, pad, bin):
-        ghost_pad = bin.get_pad(pad.get_name())
-        bin.remove_pad(ghost_pad)
-
-    def _releaseBin(self, bin):
-        if hasattr(bin, "dbin"):
-            self.debug("has dbin")
-            bin.dbin.disconnect_by_func(self._singlePadAddedCb)
-            bin.dbin.disconnect_by_func(self._singlePadRemovedCb)
-            del bin.dbin
-        if hasattr(bin, "volume"):
-            bin.volume.set_state(gst.STATE_NULL)
-            bin.remove(bin.volume)
-            del bin.volume
-        if hasattr(bin, "ghostpad"):
-            del bin.ghostpad
-
-    def _makeStreamBin(self, output_stream):
-        self.debug("output_stream:%r", output_stream)
-        b = gst.Bin()
-        b.dbin = self.singleDecodeBinClass(uri=self.uri, caps=output_stream.caps,
-                                           stream=output_stream)
-        b.dbin.connect("pad-added", self._singlePadAddedCb, b)
-        b.dbin.connect("pad-removed", self._singlePadRemovedCb, b)
-
-        if isinstance(output_stream, AudioStream):
-            self.debug("Adding volume element")
-            # add a volume element
-            b.volume = gst.element_factory_make("volume", "internal-volume")
-            b.add(b.volume)
-
-        b.add(b.dbin)
-        return b
-
-    def _singlePadAddedCb(self, dbin, pad, topbin):
-        self.debug("dbin:%r, pad:%r, topbin:%r", dbin, pad, topbin)
-        if hasattr(topbin, "volume"):
-            pad.link(topbin.volume.get_pad("sink"))
-            topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
-        else:
-            topbin.ghostpad = gst.GhostPad("src", pad)
-        topbin.ghostpad.set_active(True)
-        topbin.add_pad(topbin.ghostpad)
-
-    def _singlePadRemovedCb(self, dbin, pad, topbin):
-        self.debug("dbin:%r, pad:%r, topbin:%r", dbin, pad, topbin)
-        topbin.remove_pad(topbin.ghostpad)
-        del topbin.ghostpad
-        if hasattr(topbin, "volume"):
-            pad.unlink(topbin.volume.get_pad("sink"))
-            topbin.volume.set_state(gst.STATE_NULL)
-            topbin.remove(topbin.volume)
-            del topbin.volume
-
-class LiveURISourceFactory(URISourceFactoryMixin, LiveSourceFactory):
-    """
-    Factory for live sources accessible at a given URI.
-
-    @see L{LiveSourceFactory}.
-    """
-    def __init__(self, uri, name='', default_duration=None):
-        URISourceFactoryMixin.__init__(self, uri)
-        LiveSourceFactory.__init__(self, name, default_duration)
