@@ -42,17 +42,6 @@ class FileSourceFactory(URISourceFactoryMixin, RandomAccessSourceFactory):
         URISourceFactoryMixin.__init__(self, filename)
         RandomAccessSourceFactory.__init__(self, name)
 
-    def _releaseBin(self, bin):
-        self.debug("releasing %r", bin)
-        if hasattr(bin, 'decodebin'):
-            try:
-                bin.decodebin.disconnect_by_func(self._dbinPadAddedCb)
-                bin.decodebin.disconnect_by_func(self._dbinPadRemovedCb)
-            except:
-                pass
-        URISourceFactoryMixin._releaseBin(self, bin)
-        RandomAccessSourceFactory._releaseBin(self, bin)
-
 class PictureFileSourceFactory(FileSourceFactory):
     """
     Factory for image sources.
