@@ -172,7 +172,10 @@ def data_probe(pad, data, section=""):
     else:
         log.debug("probe","%s EVENT %s", section, data.type)
         if data.type == gst.EVENT_NEWSEGMENT:
-            log.debug("probe","%s %r", section, list(data.parse_new_segment()))
+            upd, rat, fmt, start, stop, pos = data.parse_new_segment()
+            log.debug("probe","%s Update:%r rate:%f fmt:%s, start:%s, stop:%s, pos:%s",
+                      section, upd, rat, fmt, gst.TIME_ARGS(start),
+                      gst.TIME_ARGS(stop), gst.TIME_ARGS(pos))
     return True
 
 def linkDynamic(element, target):
