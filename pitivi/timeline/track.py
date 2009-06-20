@@ -330,7 +330,8 @@ class TrackObject(Signallable, Loggable):
             self.setObjectStart(position)
 
     def setObjectStart(self, position):
-        self.gnl_object.props.start = position
+        if self.gnl_object.props.start != position:
+            self.gnl_object.props.start = position
 
     start = property(_getStart, setStart)
 
@@ -347,7 +348,8 @@ class TrackObject(Signallable, Loggable):
             self.setObjectDuration(position)
 
     def setObjectDuration(self, position):
-        self.gnl_object.props.duration = position
+        if self.gnl_object.props.duration != position:
+            self.gnl_object.props.duration = position
 
     duration = property(_getDuration, setDuration)
 
@@ -361,7 +363,8 @@ class TrackObject(Signallable, Loggable):
             self.setObjectInPoint(position)
 
     def setObjectInPoint(self, value):
-        self.gnl_object.props.media_start = value
+        if self.gnl_object.props.media_sart != value:
+            self.gnl_object.props.media_start = value
 
     in_point = property(_getInPoint, setInPoint)
 
@@ -380,7 +383,8 @@ class TrackObject(Signallable, Loggable):
             self.setObjectMediaDuration(position)
 
     def setObjectMediaDuration(self, position):
-        self.gnl_object.props.media_duration = position
+        if self.gnl_object.props.media_duration != position:
+            self.gnl_object.props.media_duration = position
 
     media_duration = property(_getMediaDuration, setMediaDuration)
 
@@ -399,7 +403,8 @@ class TrackObject(Signallable, Loggable):
             self.setObjectPriority(priority)
 
     def setObjectPriority(self, priority):
-        self.gnl_object.props.priority = priority
+        if self.gnl_object.props.priority != priority:
+            self.gnl_object.props.priority = priority
 
     priority = property(_getPriority, setPriority)
 
