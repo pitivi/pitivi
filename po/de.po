@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-06-12 20:12+0200\n"
-"PO-Revision-Date: 2009-06-12 20:16+0100\n"
+"POT-Creation-Date: 2009-06-22 22:07+0200\n"
+"PO-Revision-Date: 2009-06-22 22:07+0100\n"
 "Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -831,11 +831,11 @@ msgstr "Datei öffnen …"
 msgid "All Supported Formats"
 msgstr "Alle unterstützten Formate"
 
-#: ../pitivi/ui/mainwindow.py:588
+#: ../pitivi/ui/mainwindow.py:590
 msgid "Contributors:"
 msgstr "Mitwirkende:"
 
-#: ../pitivi/ui/mainwindow.py:600
+#: ../pitivi/ui/mainwindow.py:602
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -843,63 +843,67 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Siehe http://www.gnu.org/copyleft/lesser.html für nähere Informationen."
 
-#: ../pitivi/ui/mainwindow.py:687
+#: ../pitivi/ui/mainwindow.py:693
 msgid "Close project"
 msgstr "Projekt schließen"
 
-#: ../pitivi/ui/mainwindow.py:702
+#: ../pitivi/ui/mainwindow.py:695
+msgid "Close without saving"
+msgstr "Schließen, ohne zu speichern"
+
+#: ../pitivi/ui/mainwindow.py:709
 msgid "Save changes to the current project before closing?"
 msgstr "Aktuelle Änderungen vor dem Schließen des Projekts speichern?"
 
-#: ../pitivi/ui/mainwindow.py:705
+#: ../pitivi/ui/mainwindow.py:712
 msgid "If you don't save some of your changes will be lost"
 msgstr "Falls Sie nicht speichern, werden einige Ihrer Änderungen verlorengehen"
 
-#: ../pitivi/ui/mainwindow.py:748
+#: ../pitivi/ui/mainwindow.py:758
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi  kann die Datei »%s« nicht laden"
 
-#: ../pitivi/ui/mainwindow.py:750
+#: ../pitivi/ui/mainwindow.py:760
 msgid "Error Loading File"
 msgstr "Fehler beim Laden einer Datei"
 
-#: ../pitivi/ui/mainwindow.py:757
+#: ../pitivi/ui/mainwindow.py:767
 msgid "Locate missing file..."
 msgstr "Fehlende Datei suchen …"
 
-#: ../pitivi/ui/mainwindow.py:765
+#: ../pitivi/ui/mainwindow.py:775
 #, python-format
 msgid "Please locate the missing file, '%s'"
 msgstr "Bitte suchen Sie nach der fehlenden Datei »%s«"
 
-#: ../pitivi/ui/mainwindow.py:812
+#: ../pitivi/ui/mainwindow.py:822
 #, python-format
 msgid "Undo %s"
 msgstr "%s rückgängig machen"
 
-#: ../pitivi/ui/mainwindow.py:814
+#: ../pitivi/ui/mainwindow.py:824
 msgid "Undo"
 msgstr "Rückgängig"
 
-#: ../pitivi/ui/mainwindow.py:826
+#: ../pitivi/ui/mainwindow.py:836
 #, python-format
 msgid "Redo %s"
 msgstr "%s wiederholen"
 
-#: ../pitivi/ui/mainwindow.py:828
+#: ../pitivi/ui/mainwindow.py:838
 msgid "Redo"
 msgstr "Wiederholen"
 
-#: ../pitivi/ui/mainwindow.py:902
+#: ../pitivi/ui/mainwindow.py:912
 msgid "Save As..."
 msgstr "Speichern unter …"
 
-#: ../pitivi/ui/mainwindow.py:909
+#: ../pitivi/ui/mainwindow.py:919
 msgid "Untitled.xptv"
 msgstr "Unbenannt.xptv"
 
-#: ../pitivi/ui/mainwindow.py:920 ../pitivi/ui/mainwindow.py:933
+#: ../pitivi/ui/mainwindow.py:930 ../pitivi/ui/mainwindow.py:943
 msgid "Detect Automatically"
 msgstr "Automatisch erkennen"
 
