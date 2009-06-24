@@ -970,9 +970,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
             return
 
         # Use factory from our source list if we have the given uri
-        if uri in self.project.sources:
-            fact = self.project.sources[uri]
-        else:
+        try:
+            fact = self.project.sources.getUri(uri)
+        except:
             from pitivi.factories.file import FileSourceFactory
             fact = FileSourceFactory(uri)
         self._viewFactory(fact)
