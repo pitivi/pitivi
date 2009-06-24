@@ -339,7 +339,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         """ Create the graphical interface """
         self.set_title("%s v%s" % (APPNAME, pitivi_version))
         self.set_geometry_hints(min_width=800, min_height=480)
-        self.connect("destroy", self._destroyCb)
+        self.connect("delete-event", self._deleteCb)
         self.connect("configure-event", self._configureCb)
 
         # main menu & toolbar
@@ -467,9 +467,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.settings.mainWindowWidth = event.width
             self.settings.mainWindowHeight = event.height
 
-    def _destroyCb(self, unused_widget, unused_data=None):
+    def _deleteCb(self, unused_widget, unused_data=None):
+        if not self.app.shutdown():
+            return True
+
         self._saveWindowSettings()
-        self.app.shutdown()
+        return False
 
     def _exposeEventCb(self, unused_widget, event):
         if self._do_pending_fullscreen:
