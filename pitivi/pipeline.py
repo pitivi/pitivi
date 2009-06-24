@@ -413,6 +413,7 @@ class Pipeline(Signallable, Loggable):
                                   gst.SEEK_TYPE_SET, position,
                                   gst.SEEK_TYPE_NONE, -1)
         if not res:
+            self.debug("seeking failed")
             raise PipelineError("seek failed")
         self.debug("seeking succesfull")
         self.emit('position', position)
