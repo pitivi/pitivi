@@ -434,6 +434,8 @@ class TestStateChange(TestCase):
         # only image
         pngdec = gst.element_factory_make('pngdec')
         self.discoverer.pipeline.add(pngdec)
+        # images don't have duration
+        self.discoverer.current_duration = gst.CLOCK_TIME_NONE
         pad = pngdec.get_pad('src')
         caps = gst.Caps(pad.get_caps()[0])
         caps[0]['width'] = 320
