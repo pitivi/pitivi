@@ -53,6 +53,7 @@ from pitivi.action import ViewAction
 from pitivi.settings import GlobalSettings
 from pitivi.receiver import receiver, handler
 import pitivi.formatters.format as formatter
+from pitivi.sourcelist import SourceListError
 
 if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -972,7 +973,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # Use factory from our source list if we have the given uri
         try:
             fact = self.project.sources.getUri(uri)
-        except:
+        except SourceListError:
             from pitivi.factories.file import FileSourceFactory
             fact = FileSourceFactory(uri)
         self._viewFactory(fact)
