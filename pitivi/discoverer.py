@@ -489,9 +489,9 @@ class Discoverer(Signallable, Loggable):
         self.dynamic_elements.extend([queue, vscale, csp, pngenc, pngsink])
 
         self.pipeline.add(queue, vscale, csp, pngenc, pngsink)
-        queue.link(vscale)
-        vscale.link(csp, gst.Caps("video/x-raw-rgb,width=[1,96],height=[1,96];video/x-raw-yuv,width=[1,96],height=[1,96]"))
-        gst.element_link_many(csp, pngenc, pngsink)
+        gst.element_link_many(queue, csp, vscale)
+        vscale.link(pngenc, gst.Caps("video/x-raw-rgb,width=[1,96],height=[1,96];video/x-raw-yuv,width=[1,96],height=[1,96]"))
+        gst.element_link_many(pngenc, pngsink)
         pad.link(queue.get_pad("sink"))
 
         for element in [queue, vscale, csp, pngenc, pngsink]:
