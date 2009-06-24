@@ -321,7 +321,7 @@ class SourceList(gtk.VBox, Loggable):
         sources = self.app.current.sources
         start = timeline.duration
         for uri in self.getSelectedItems():
-            factory = sources[uri]
+            factory = sources.getUri(uri)
             source = timeline.addSourceFactory(factory)
             source.setStart(start)
             start += source.duration
@@ -551,7 +551,7 @@ class SourceList(gtk.VBox, Loggable):
         selected.sort(reverse=True)
         for path in selected:
             uri = model[path][COL_URI]
-            del self.app.current.sources[uri]
+            self.app.removeUri(uri)
 
     ## UI Button callbacks
 
