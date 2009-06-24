@@ -467,15 +467,14 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
         # generate points
         cr.set_source_rgba(0, 0, 0, 1.0)
-        points = ((x * scale, hscale - (y * hscale)) for x, y in enumerate(samples))
 
-        self._plot_points(cr, 0, hscale, points)
-        cr.stroke()
-
-    def _plot_points(self, cr, x0, y0, points):
-        cr.move_to(x0, y0)
-        for x, y in points:
+        cr.move_to(0, hscale)
+        for x, y in enumerate(samples):
+            x = x * scale
+            y = hscale - (y * hscale)
             cr.line_to(x, y)
+
+        cr.stroke()
 
     def _connectSettings(self, settings):
         RandomAccessPreviewer._connectSettings(self, settings)
