@@ -213,7 +213,7 @@ class Discoverer(Signallable, Loggable):
             return True
 
         # construct the factory with the streams we found
-        if have_image:
+        if have_image and self.current_duration == gst.CLOCK_TIME_NONE:
             factory = PictureFileSourceFactory(self.current_uri)
         else:
             factory = FileSourceFactory(self.current_uri)
