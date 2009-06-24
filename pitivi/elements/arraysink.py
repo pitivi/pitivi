@@ -66,7 +66,7 @@ class ArraySink(gst.BaseSink):
         return True
 
     def do_render(self, buf):
-        self.samples.fromstring(buf[:buf.size])
+        self.samples.fromstring(buf)
         self.duration += buf.duration
         return gst.FLOW_OK
 
