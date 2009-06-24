@@ -158,9 +158,10 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(obj.in_point, 0)
         self.failUnlessEqual(obj.duration, 10 * gst.SECOND)
         self.failUnlessEqual(obj.rate, 1)
-        self.failUnlessEqual(monitor.start_changed_count, 1)
-        self.failUnlessEqual(monitor.in_point_changed_count, 1)
-        self.failUnlessEqual(monitor.duration_changed_count, 1)
+        # we didn't change the start/in-point/duration (it was the same as before)
+        self.failUnlessEqual(monitor.start_changed_count, 0)
+        self.failUnlessEqual(monitor.in_point_changed_count, 0)
+        self.failUnlessEqual(monitor.duration_changed_count, 0)
 
         # trim at upper edge
         monitor = TrackSignalMonitor(obj)
