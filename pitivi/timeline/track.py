@@ -363,7 +363,7 @@ class TrackObject(Signallable, Loggable):
             self.setObjectInPoint(position)
 
     def setObjectInPoint(self, value):
-        if self.gnl_object.props.media_sart != value:
+        if self.gnl_object.props.media_start != value:
             self.gnl_object.props.media_start = value
 
     in_point = property(_getInPoint, setInPoint)
