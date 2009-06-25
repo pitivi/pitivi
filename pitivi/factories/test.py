@@ -87,3 +87,9 @@ class AudioTestSourceFactory(SourceFactory):
 
     def _releaseBin(self, bin):
         pass
+
+    def getInterpolatedProperties(self, stream):
+        props = SourceFactory.getInterpolatedProperties(self, stream)
+        props.update({"volume": 1.0})
+        return props
+
