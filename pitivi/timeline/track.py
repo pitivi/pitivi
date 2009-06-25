@@ -175,9 +175,9 @@ class Interpolator(Signallable, Loggable):
         self.debug("time:%s, value:%r, mode:%r",
                    gst.TIME_ARGS(time), value, mode)
         #TODO: calculate value
-        if not value:
+        if value is None:
             value = self._default
-        if not mode:
+        if mode is None:
             # FIXME: uncomment this when back-end support works
             #mode = self._controller.get_interpolation_mode()
             mode = gst.INTERPOLATE_LINEAR
