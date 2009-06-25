@@ -29,10 +29,12 @@ from pitivi.formatters.etree import ElementTreeFormatter, version, \
      ElementTreeFormatterContext, indent, tostring
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.file import FileSourceFactory
-from pitivi.factories.test import VideoTestSourceFactory
-from pitivi.timeline.track import Track, SourceTrackObject
+from pitivi.factories.test import VideoTestSourceFactory, \
+    AudioTestSourceFactory
+from pitivi.timeline.track import Track, SourceTrackObject, Interpolator
 from pitivi.timeline.timeline import Timeline, TimelineObject
 from pitivi.project import Project
+from pitivi.utils import get_controllable_properties
 
 class FakeElementTreeFormatter(ElementTreeFormatter):
     pass
@@ -122,6 +124,22 @@ class TestFormatterSave(TestCase):
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
 
+        # create an interpolator and insert it into the track object
+        fakevol = gst.element_factory_make("volume")
+        prop = get_controllable_properties(fakevol)[1][1]
+        volcurve = Interpolator(track_object, fakevol, prop)
+        track_object.interpolators[prop] = volcurve
+
+        # add some points to the interpolator 
+        value = float(0)
+        volcurve.start.setObjectTime(0)
+        volcurve.start.value = 0
+        for t in xrange(3, 15, 3):
+            value = int(t % 2)
+            volcurve.newKeyFrame(time=t * gst.SECOND, value=value)
+        volcurve.end.setObjectTime(15 * gst.SECOND)
+        volcurve.end.value = 15 % 2
+
         element = self.formatter._saveTrackObject(track_object)
         self.failUnlessEqual(element.tag, "track-object")
         self.failUnlessEqual(element.attrib["type"],
@@ -135,6 +153,22 @@ class TestFormatterSave(TestCase):
 
         self.failIfEqual(element.find("factory-ref"), None)
         self.failIfEqual(element.find("stream-ref"), None)
+
+        # find the interpolation keyframes
+        curves = element.find("curves")
+        self.failIfEqual(curves, None)
+        curve = curves.find("curve")
+        self.failIfEqual(curve, None)
+        self.failUnlessEqual(curve.attrib["property"], "volume")
+        
+        # compute a dictionary of keyframes
+        saved_points = dict(((obj.attrib["time"], (obj.attrib["value"],
+            obj.attrib["mode"])) for obj in curve.getiterator("keyframe")))
+
+        # compare this with the expected values
+        expected = dict(((str(t * gst.SECOND), ("(gdouble)%s" % (t % 2), "2")) for t in
+            xrange(3, 15, 3)))
+        self.failUnlessEqual(expected, saved_points)
 
     def testSaveTrackObjectRef(self):
         video_stream = VideoStream(gst.Caps("video/x-raw-yuv"))
@@ -372,12 +406,24 @@ class TestFormatterLoad(TestCase):
         stream_ref = SubElement(element, "stream-ref", id="1")
 
         # insert our fake factory into the context
-        factory = VideoTestSourceFactory()
+        factory = AudioTestSourceFactory()
+        factory.duration = 10 * gst.SECOND
         self.formatter._context.factories["1"] = factory
 
         # insert fake stream into the context
-        stream = VideoStream(gst.Caps("video/x-raw-yuv"))
+        stream = AudioStream(gst.Caps("audio/x-raw-int"))
         self.formatter._context.streams["1"] = stream
+
+        # add a volume curve
+        curves = SubElement(element, "curves")
+        curve = SubElement(curves, "curve", property="volume")
+        expected = dict((long(t * gst.SECOND), (float(t % 2), gst.INTERPOLATE_LINEAR)) 
+            for t in xrange(1, 10))
+        start = SubElement(curve, "start", value="0.0", mode="2")
+        for time, (value, mode) in expected.iteritems():
+            SubElement(curve, "keyframe", time=str(time), value=str(value), 
+                mode=str(mode))
+        end = SubElement(curve, "end", value=str(10 % 2), mode="2")
 
         # point gun at foot; pull trigger
         track_object = self.formatter._loadTrackObject(element)
@@ -390,6 +436,13 @@ class TestFormatterLoad(TestCase):
         self.failUnlessEqual(track_object.in_point, 5 * gst.SECOND)
         self.failUnlessEqual(track_object.media_duration, 15 * gst.SECOND)
         self.failUnlessEqual(track_object.priority, 5)
+
+        self.failIfEqual(track_object.interpolators, None)
+        interpolator = track_object.getInterpolator("volume")
+        self.failIfEqual(interpolator, None)
+        curve = dict(((kf.time, (kf.value, kf.mode)) for kf in
+            interpolator.getInteriorKeyframes()))
+        self.failUnlessEqual(curve, expected)
 
     def testLoadTrackObjectRef(self):
         class Tag(object):
