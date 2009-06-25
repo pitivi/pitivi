@@ -240,6 +240,11 @@ class Interpolator(Signallable, Loggable):
             yield kf
         yield self.end
 
+    def getInteriorKeyframes(self):
+        """Same as above but does not include start, or end points"""
+        for kf in sorted(self._keyframes):
+            yield kf
+
     keyframes = property(getKeyframes)
 
 class TrackObject(Signallable, Loggable):
@@ -296,6 +301,12 @@ class TrackObject(Signallable, Loggable):
             for sobj, prop in get_controllable_properties(self.gnl_object):
                 if prop.name in wprops:
                     self.interpolators[prop] = Interpolator(self, sobj, prop)
+
+    def getInterpolator(self, property_name):
+        for prop, interpolator in self.interpolators.iteritems():
+            if property_name == prop.name:
+                return interpolator
+        return None
 
     def release(self):
         self._disconnectFromSignals()
