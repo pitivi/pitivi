@@ -333,7 +333,7 @@ class ElementTreeFormatter(Formatter):
             curves = Element("curves")
             for property, interpolator in track_object.interpolators.iteritems():
                 curves.append(self._saveInterpolator(interpolator, property))
-            element.append("curves")
+            element.append(curves)
 
         self._context.track_objects[track_object] = element
 
@@ -366,10 +366,10 @@ class ElementTreeFormatter(Formatter):
         start = Element("start", value=interpolator.start.value,
             mode=interpolator.start.mode)
         element.append(start)
-        for kf in interpolator.getKeyframes:
-            kfel = Element("keyframe", time=keyframe.time, value=kf.value,
-                mode=kf.mode)
-            element.append(kf)
+        for kf in interpolator.keyframes:
+            kfel = Element("keyframe", time=str(kf.time), value=str(kf.value), 
+                mode=str(int(kf.mode)))
+            element.append(kfel)
         end = Element("end", value=interpolator.end.value,
             mode=interpolator.end.mode)
         element.append(end)
@@ -381,9 +381,9 @@ class ElementTreeFormatter(Formatter):
         interpolator.start.value = start.attrib["value"]
         interpolator.start.mode = start.attrib["mode"]
         for keyframe in element.getchildren():
-            interpolator.newKeyFrame(kf.attrib["time"], 
-                value=kf.attrib["value"],
-                mode=kf.attrib["mode"])
+            interpolator.newKeyFrame(long(kf.attrib["time"]), 
+                value=float(kf.attrib["value"]),
+                mode=int(kf.attrib["mode"]))
         end = element.find("end")
         interpolator.end.value = end.attrib["value"]
         interpolator.end.mode = end.attrib["mode"]
