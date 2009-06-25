@@ -362,31 +362,46 @@ class ElementTreeFormatter(Formatter):
         return track_object
 
     def _saveInterpolator(self, interpolator, prop):
-        element = Element("curve", property=prop)
-        start = Element("start", value=interpolator.start.value,
-            mode=interpolator.start.mode)
+        typename = prop.value_type.name
+        element = Element("curve", property=prop.name, type=typename)
+
+        start = self._saveKeyframe(interpolator.start, typename, False)
+        start.tag = "start"
         element.append(start)
-        for kf in interpolator.keyframes:
-            kfel = Element("keyframe", time=str(kf.time), value=str(kf.value), 
-                mode=str(int(kf.mode)))
+
+        for kf in interpolator.getInteriorKeyframes():
+            kfel = self._saveKeyframe(kf, typename)
             element.append(kfel)
-        end = Element("end", value=interpolator.end.value,
-            mode=interpolator.end.mode)
+
+        end = self._saveKeyframe(interpolator.end, typename, False)
+        end.tag = "end"
         element.append(end)
         return element
 
+    def _saveKeyframe(self, keyframe, typename, time=True):
+        element = Element("keyframe")
+        element.attrib["value"] = "(%s)%r" % (typename, keyframe.value)
+        element.attrib["mode"] = str(keyframe.mode)
+        if not time:
+            return element
+        element.attrib["time"] = str(keyframe.time)
+        return element
+
     def _loadInterpolator(self, element, trackobject):
-        interpolator = trackobject.interpolator[element.attrib["prop"]]
+        interpolator = trackobject.getInterpolator(element.attrib["property"])
+
         start = element.find("start")
-        interpolator.start.value = start.attrib["value"]
-        interpolator.start.mode = start.attrib["mode"]
-        for keyframe in element.getchildren():
+        interpolator.start.value = self._parsePropertyValue(
+            start.attrib["value"])
+        interpolator.start.mode = int(start.attrib["mode"])
+
+        for kf in element.getiterator("keyframe"):
             interpolator.newKeyFrame(long(kf.attrib["time"]), 
-                value=float(kf.attrib["value"]),
+                value=self._parsePropertyValue(kf.attrib["value"]),
                 mode=int(kf.attrib["mode"]))
         end = element.find("end")
-        interpolator.end.value = end.attrib["value"]
-        interpolator.end.mode = end.attrib["mode"]
+        interpolator.end.value = self._parsePropertyValue(end.attrib["value"])
+        interpolator.end.mode = int(end.attrib["mode"])
 
     def _saveTrackObjectRef(self, track_object):
         element = Element("track-object-ref")
