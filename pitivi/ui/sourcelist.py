@@ -551,7 +551,7 @@ class SourceList(gtk.VBox, Loggable):
         selected.sort(reverse=True)
         for path in selected:
             uri = model[path][COL_URI]
-            self.app.removeUri(uri)
+            self.app.current.sources.removeUri(uri)
 
     ## UI Button callbacks
 

@@ -41,11 +41,11 @@ class SourceListSourceRemovedAction(UndoableAction):
         self.source = source
 
     def undo(self):
-        self.sourcelist.addFactory(self.source.uri, self.source)
+        self.sourcelist.addFactory(self.source)
         self._undone()
 
     def do(self):
-        del self.sourcelist[self.source.uri]
+        self.sourcelist.removeUri(self.source.uri)
         self._done()
 
 class SourceListLogObserver(object):
