@@ -109,13 +109,12 @@ class VideoModifierFactory(StreamModifierFactory):
         b.add_pad(gsink)
 
         # if we have an output stream specified, we add a capsfilter
+        vscale = SmartVideoScale()
+        vscale.set_caps(self.output_streams[0].caps)
+        b.add(vscale)
+        vrate.link(vscale)
         self.debug("output_streams:%d", len(self.output_streams))
         if len(self.output_streams) and self.output_streams[0].caps.is_fixed():
-            vscale = SmartVideoScale()
-            vscale.set_caps(self.output_streams[0].caps)
-            b.add(vscale)
-            vrate.link(vscale)
-
             idt = gst.element_factory_make("capsfilter")
             idt.props.caps = self.output_streams[0].caps
             b.add(idt)
@@ -123,7 +122,7 @@ class VideoModifierFactory(StreamModifierFactory):
 
             gsrc = gst.GhostPad("src", idt.get_pad("src"))
         else:
-            gsrc = gst.GhostPad("src", vrate.get_pad("src"))
+            gsrc = gst.GhostPad("src", vscale.get_pad("src"))
 
         gsrc.set_active(True)
         b.add_pad(gsrc)
