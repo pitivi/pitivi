@@ -321,6 +321,17 @@ class TrackObject(Signallable, Loggable):
             media_duration=self.media_duration, priority=self.priority)
         other.trimmed_start = self.trimmed_start
 
+        for property, interpolator in self.interpolators.iteritems():
+            other_interpolator = other.getInterpolator(property.name)
+            other_interpolator.start.value = interpolator.start.value
+            other_interpolator.start.mode = interpolator.start.mode
+            other_interpolator.end.value = interpolator.end.value
+            other_interpolator.end.mode = interpolator.end.mode
+            for kf in interpolator.getInteriorKeyframes():
+                other_interpolator.newKeyFrame(kf.time,
+                    kf.value,
+                    kf.mode)
+
         return other
 
     def snapStartDurationTime(self, *args):
