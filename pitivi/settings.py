@@ -502,7 +502,7 @@ class ExportSettings(Signallable, Loggable):
     def getAudioDescription(self):
         """ Returns a human-readable markup-ed string describing the audio properties """
         res = "%d channels at %d <i>Hz</i> (%d <i>bits</i>) <i>(%s)</i>"
-        return res % (self.audiochannels, self.audiorate, self.audiodepth, self.aencoder)
+        return res % (self.audiochannels, self.audiorate, self.audiodepth, self.aencoder or "raw")
 
     def getAudioCaps(self):
         """ Returns the GstCaps corresponding to the audio settings """

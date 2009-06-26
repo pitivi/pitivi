@@ -83,10 +83,10 @@ class EncodingDialog(GladeWindow, Loggable):
         self.destroy()
 
     def _displaySettings(self):
-        if self.settings.vencoder:
+        if self.settings.vencoder is not None:
             self.vinfo.set_markup(self.settings.getVideoDescription())
 
-        if self.settings.aencoder:
+        if self.settings.aencoder is not None:
             self.ainfo.set_markup(self.settings.getAudioDescription())
 
     def _fileButtonClickedCb(self, button):

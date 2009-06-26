@@ -268,8 +268,8 @@ class ElementTreeFormatter(Formatter):
         element.attrib["audiochannels"] = str(int(settings.audiochannels))
         element.attrib["audiorate"] = str(int(settings.audiorate))
         element.attrib["audiodepth"] = str(int(settings.audiodepth))
-        element.attrib["vencoder"] = settings.vencoder
-        element.attrib["aencoder"] = settings.aencoder
+        element.attrib["vencoder"] = settings.vencoder or ""
+        element.attrib["aencoder"] = settings.aencoder or ""
         element.attrib["muxer"] = settings.muxer
 
         # container/encoder settings
