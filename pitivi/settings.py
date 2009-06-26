@@ -495,14 +495,21 @@ class ExportSettings(Signallable, Loggable):
 
     def getVideoDescription(self):
         """ Returns a human-readable markup-ed string describing the video properties """
-        res = "%d x %d <i>pixels</i> at %.2f <i>fps</i> <i>(%s)</i>"
-        return res % (self.videowidth, self.videoheight,
-                      float(self.videorate), self.vencoder)
+        res = "%d x %d <i>pixels</i> at %.2f <i>fps</i>" % (self.videowidth,
+                self.videoheight, float(self.videorate))
+        if self.vencoder is not None:
+            res += " <i>(%s)</i>" % self.vencoder
+
+        return res
 
     def getAudioDescription(self):
         """ Returns a human-readable markup-ed string describing the audio properties """
-        res = "%d channels at %d <i>Hz</i> (%d <i>bits</i>) <i>(%s)</i>"
-        return res % (self.audiochannels, self.audiorate, self.audiodepth, self.aencoder or "raw")
+        res = "%d channels at %d <i>Hz</i> (%d <i>bits</i>)" % \
+                (self.audiochannels, self.audiorate, self.audiodepth)
+        if self.aencoder is not None:
+            res += " <i>(%s)</i>" % self.aencoder
+
+        return res
 
     def getAudioCaps(self):
         """ Returns the GstCaps corresponding to the audio settings """

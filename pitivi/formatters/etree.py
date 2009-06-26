@@ -296,8 +296,8 @@ class ElementTreeFormatter(Formatter):
         settings.audiochannels = int(element.attrib["audiochannels"])
         settings.audiorate = int(element.attrib["audiorate"])
         settings.audiodepth = int(element.attrib["audiodepth"])
-        settings.aencoder = element.attrib["aencoder"]
-        settings.vencoder = element.attrib["vencoder"]
+        settings.aencoder = element.attrib["aencoder"] or None
+        settings.vencoder = element.attrib["vencoder"] or None
         settings.muxer = element.attrib["muxer"]
 
         sett = element.find("container-settings")

@@ -83,11 +83,8 @@ class EncodingDialog(GladeWindow, Loggable):
         self.destroy()
 
     def _displaySettings(self):
-        if self.settings.vencoder is not None:
-            self.vinfo.set_markup(self.settings.getVideoDescription())
-
-        if self.settings.aencoder is not None:
-            self.ainfo.set_markup(self.settings.getAudioDescription())
+        self.vinfo.set_markup(self.settings.getVideoDescription())
+        self.ainfo.set_markup(self.settings.getAudioDescription())
 
     def _fileButtonClickedCb(self, button):
         dialog = gtk.FileChooserDialog(title=_("Choose file to render to"),
