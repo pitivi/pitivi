@@ -25,6 +25,7 @@ import gst
 from pitivi.timeline.track import Track, SourceTrackObject, TrackError
 from pitivi.stream import AudioStream, VideoStream
 from common import SignalMonitor, StubFactory
+from pitivi.factories.test import AudioTestSourceFactory
 
 class TrackSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
@@ -212,10 +213,26 @@ class TestTrackObject(TestCase):
         self.failUnlessEqual(monitor.duration_changed_count, 1)
 
     def testSplitObject(self):
-        obj = self.track_object
+        DURATION = 10 * gst.SECOND
+
+        factory = AudioTestSourceFactory()
+        factory.duration = DURATION
+        stream_ = AudioStream(gst.Caps("audio/x-raw-int"))
+        obj = SourceTrackObject(factory, stream_)
 
         obj.start = 3 * gst.SECOND
-        obj.duration = 10 * gst.SECOND
+        obj.duration = DURATION
+
+        # create a zig-zag volume curve
+        interpolator = obj.getInterpolator("volume")
+        expected = dict(((t * gst.SECOND, (t % 2, gst.INTERPOLATE_LINEAR))
+            for t in xrange(3, 10, 3)))
+        for time, (value, mode) in expected.iteritems():
+            interpolator.newKeyFrame(time, value, mode)
+
+        def getKeyframes(obj):
+            keyframes = obj.getInterpolator("volume").getInteriorKeyframes()
+            return dict(((kf.time, (kf.value, kf.mode)) for kf in keyframes))
 
         monitor = TrackSignalMonitor(obj)
 
@@ -229,6 +246,7 @@ class TestTrackObject(TestCase):
         # splitObject at 4s should result in:
         # obj (start 3, end 4) other1 (start 4, end 13)
         other1 = obj.splitObject(4 * gst.SECOND)
+        self.failUnlessEqual(expected, getKeyframes(other1))
 
         self.failUnlessEqual(obj.start, 3 * gst.SECOND)
         self.failUnlessEqual(obj.in_point, 0 * gst.SECOND)
@@ -250,6 +268,7 @@ class TestTrackObject(TestCase):
         monitor = TrackSignalMonitor(other1)
 
         other2 = other1.splitObject(6 * gst.SECOND)
+        self.failUnlessEqual(expected, getKeyframes(other2))
         self.failUnlessEqual(other1.start, 1 * gst.SECOND)
         self.failUnlessEqual(other1.in_point, 1 * gst.SECOND)
         self.failUnlessEqual(other1.duration, 5 * gst.SECOND)
