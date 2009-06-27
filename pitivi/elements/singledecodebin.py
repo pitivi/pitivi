@@ -282,7 +282,7 @@ class SingleDecodeBin(gst.Bin):
         if self._srcpad:
             return
         self._markValidElements(element)
-        self._removeUnusedElements(self.typefind)
+        gobject.idle_add(self._removeUnusedElements, self.typefind)
         self.log("ghosting pad %s" % pad.get_name())
         self._srcpad = gst.GhostPad("src", pad)
         self._srcpad.set_active(True)
@@ -310,12 +310,13 @@ class SingleDecodeBin(gst.Bin):
         for pad in element.src_pads():
             if pad.is_linked():
                 peer = pad.get_peer().get_parent()
-                self._removeUnusedElements(peer)
-                if not peer in self._validelements:
-                    self.log("removing %s" % peer.get_name())
-                    pad.unlink(pad.get_peer())
-                    peer.set_state(gst.STATE_NULL)
-                    self.remove(peer)
+                if isinstance(peer, gst.Element):
+                    self._removeUnusedElements(peer)
+                    if not peer in self._validelements:
+                        self.log("removing %s" % peer.get_name())
+                        pad.unlink(pad.get_peer())
+                        peer.set_state(gst.STATE_NULL)
+                        self.remove(peer)
 
     def _cleanUp(self):
         self.log("")
