@@ -299,7 +299,9 @@ class InteractivePitivi(Pitivi):
 
     def _sourceAddedCb(self, unused_sourcelist, factory, startup_uris):
         if self._maybePopStartupUri(startup_uris, factory.uri):
+            self.action_log.begin("add clip")
             self.current.timeline.addSourceFactory(factory)
+            self.action_log.commit()
 
     def _discoveryErrorCb(self, sourcelist, uri, error, debug, startup_uris):
         self._maybePopStartupUri(startup_uris, uri)
