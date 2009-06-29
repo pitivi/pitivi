@@ -28,7 +28,7 @@ from pitivi.log.loggable import Loggable
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.test import VideoTestSourceFactory, \
         AudioTestSourceFactory
-from pitivi.elements.mixer import SmartAdderBin
+from pitivi.elements.mixer import SmartAdderBin, SmartVideomixerBin
 
 class TrackError(Exception):
     pass
@@ -649,6 +649,13 @@ class Track(Signallable):
         if isinstance(stream, AudioStream):
             gnl = gst.element_factory_make("gnloperation", "top-level-audio-mixer")
             m = SmartAdderBin()
+            gnl.add(m)
+            gnl.props.expandable = True
+            gnl.props.priority = 0
+            return gnl
+        elif isinstance(stream, VideoStream):
+            gnl = gst.element_factory_make("gnloperation", "top-level-video-mixer")
+            m = SmartVideomixerBin()
             gnl.add(m)
             gnl.props.expandable = True
             gnl.props.priority = 0
