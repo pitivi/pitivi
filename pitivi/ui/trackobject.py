@@ -189,6 +189,11 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             self._offsets = {}
             self._min_start = 0
             self._min_pri = 0
+
+            if len(self._view.timeline.selection) <= 1:
+                self._view.timeline.setSelectionToObj(self._view.element,
+                        SELECT)
+
             # calculate offsets to selected clips
             if element.selected:
                 for obj in timeline.selection.getSelectedTrackObjs():
