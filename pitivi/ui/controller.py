@@ -52,6 +52,8 @@ class Controller(object):
     _initial = None
     _mousedown = None
     _last_event = None
+    _pending_drag_start = None
+    _pending_drag_end = False
 
     def __init__(self, view=None):
         object.__init__(self)
@@ -105,13 +107,19 @@ class Controller(object):
             item, event))
         self._dragging = target
         self._initial = self.pos(target)
-        self._drag_start(item, target, event)
+        self._pending_drag_start = (item, target, event)
         return True
 
     @handler(_view, "motion_notify_event")
     def motion_notify_event(self, item, target, event):
         self._event_common(item, target, event)
         if self._dragging:
+            if self._pending_drag_start is not None:
+                pending_drag_start, self._pending_drag_start = \
+                        self._pending_drag_start, None
+                self._pending_drag_end = True
+                self._drag_start(*pending_drag_start)
+
             self.set_pos(self._dragging,
                 self.transform(self._mousedown + self.from_item_event(item,
                     event)))
@@ -136,7 +144,11 @@ class Controller(object):
         self.drag_start()
 
     def _drag_end(self, item, target, event):
-        self.drag_end()
+        self._pending_drag_start = None
+        pending_drag_end, self._pending_drag_end = self._pending_drag_end, False
+        if pending_drag_end:
+            self.drag_end()
+
         if self._ptr_within and self._drag_threshold():
             point = self.from_item_event(item, event)
             if self._last_click and (event.time - self._last_click < 400):
