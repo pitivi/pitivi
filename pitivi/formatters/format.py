@@ -75,4 +75,4 @@ from pitivi.formatters.etree import ElementTreeFormatter
 from pitivi.formatters.playlist import PlaylistFormatter
 
 register_formatter(ElementTreeFormatter, _("PiTiVi Native (XML)"), ('xptv',))
-register_formatter(PlaylistFormatter, _("Playlist format"), ('pls', ))
+register_formatter(PlaylistFormatter, _("Playlist format"), ('pls', 'm3u'))

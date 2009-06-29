@@ -20,6 +20,7 @@
 # Boston, MA 02111-1307, USA.
 
 import os.path
+import ConfigParser
 import gst
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.formatters.base import LoadOnlyFormatter
@@ -35,26 +36,45 @@ class PlaylistFormatter(LoadOnlyFormatter):
         self._uris = []
         self._basedir = None
 
+    def _loadProject(self, location, project):
+        path = location.split('file://', 1)[1]
+        self._basedir = os.path.dirname(path)
+        if path.endswith('.pls'):
+            self._parsePLS(path)
+        else:
+            self._parseM3U(path)
+        self._finishLoadingProject(project)
+
     def _parseLine(self, ln):
-        if ln.startswith('/'):
+        if ln.startswith('#'):
+            return
+        elif ln.startswith('/'):
             # absolute path
             return 'file://' + ln.strip()
         return 'file://' + os.path.join(self._basedir, ln.strip())
 
-    def _loadProject(self, location, project):
-        path = location.split('file://', 1)[1]
-        self._basedir = os.path.dirname(path)
+    def _parseM3U(self, path):
         res = []
         # simple list of location/uri
         f = file(path)
         for ln in f.readlines():
             val = self.validateSourceURI(self._parseLine(ln))
             # FIXME : if the loading failed, we should insert a blank source
-            if val:
-                res.append(val)
+            res.append(val)
         self._uris = res
 
-        self._finishLoadingProject(project)
+    def _parsePLS(self, filename):
+        # load and parse pls format
+        # http://en.wikipedia.org/wiki/PLS_%28file_format%29
+        config = ConfigParser.ConfigParser()
+        config.read((filename, ))
+        res = []
+        for i in range(config.getint('playlist', 'NumberOfEntries')):
+            ln = config.get('playlist', 'File%d' % (i+1))
+            val = self.validateSourceURI(self._parseLine(ln))
+            # FIXME : if the loading failed, we should insert a blank source
+            res.append(val)
+        self._uris = res
 
     def _getSources(self):
         return self._uris
@@ -67,10 +87,10 @@ class PlaylistFormatter(LoadOnlyFormatter):
         audio = AudioStream(gst.Caps('audio/x-raw-int; audio/x-raw-float'))
         track = Track(audio)
         self.project.timeline.addTrack(track)
-        for u in self._uris:
-            if u in self.project.sources:
-                self.project.timeline.addSourceFactory(self.project.sources[u])
+        for uri in self._uris:
+            factory = self.project.sources.getUri(uri)
+            self.project.timeline.addSourceFactory(factory)
 
     @classmethod
     def canHandle(cls, uri):
-        return uri.endswith('.pls')
+        return os.path.splitext(uri)[-1] in ('.pls', '.m3u')
