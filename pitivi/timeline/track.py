@@ -71,7 +71,7 @@ class Keyframe(Signallable):
         if self.parent:
             self.parent.setKeyframeTime(self, time)
         else:
-            self.setObjectMode(mode)
+            self.setObjectTime(time)
 
     def setObjectTime(self, time):
         self._time = time
@@ -88,7 +88,7 @@ class Keyframe(Signallable):
         if self.parent:
             self.parent.setKeyframeValue(self, value)
         else:
-            self.setObjectMode(mode)
+            self.setObjectValue(value)
 
     def setObjectValue(self, value):
         self._value = value
