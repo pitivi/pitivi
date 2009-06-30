@@ -89,7 +89,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
         def xyToTimeValue(self, pos):
             bounds = self._view.bounds
-            time = Zoomable.pixelToNs(pos[0] - bounds.x1)
+            time = (Zoomable.pixelToNs(pos[0] - bounds.x1) +
+                self._view.element.in_point)
             value = 1 - (pos[1] - bounds.y1) /  LAYER_HEIGHT_EXPANDED
             return time, value
 
