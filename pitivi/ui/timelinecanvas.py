@@ -236,13 +236,19 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
             for item in items:
                 if isinstance(item, TrackObject):
                     self.app.action_log.begin("split object")
-                    item.element.split(self.pixelToNs(x))
+                    item.element.split(self._snapToPlayhead(self.pixelToNs(x)))
                     self.app.action_log.commit()
 
         return True
 
     def _razorClickedCb(self, unused_canvas, unused_event):
         return True
+
+    def _snapToPlayhead(self, time):
+        thresh = self.pixelToNs(self.settings.edgeSnapDeadband)
+        if abs(time - self._position) <= thresh:
+            return self._position
+        return time
 
     max_duration = 0
 
