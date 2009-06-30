@@ -2,7 +2,8 @@
 #
 #       pitivi/pitivi.py
 #
-# Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2005-2009 Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2008-2009 Alessandro Decina <alessandro.d@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -256,12 +257,11 @@ class InteractivePitivi(Pitivi):
             # (useful during development)
             self.projectManager.newBlankProject()
             uris = ["file://" + os.path.abspath(path) for path in args]
-            if options.add_to_timeline:
-                self.current.sources.connect("source-added",
-                        self._sourceAddedCb, uris)
-                self.current.sources.connect("discovery-error",
-                        self._discoveryErrorCb, uris)
-                self.current.sources.addUris(uris)
+            self.current.sources.connect("source-added",
+                    self._sourceAddedCb, uris, options.add_to_timeline)
+            self.current.sources.connect("discovery-error",
+                    self._discoveryErrorCb, uris)
+            self.current.sources.addUris(uris)
 
         # run the mainloop
         self.mainloop.run()
@@ -297,8 +297,10 @@ class InteractivePitivi(Pitivi):
 
         return True
 
-    def _sourceAddedCb(self, unused_sourcelist, factory, startup_uris):
-        if self._maybePopStartupUri(startup_uris, factory.uri):
+    def _sourceAddedCb(self, sourcelist, factory,
+            startup_uris, add_to_timeline):
+        if self._maybePopStartupUri(startup_uris, factory.uri) \
+                and add_to_timeline:
             self.action_log.begin("add clip")
             self.current.timeline.addSourceFactory(factory)
             self.action_log.commit()
