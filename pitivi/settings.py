@@ -76,7 +76,7 @@ def get_env_default(var, default):
 
 def get_dir(path, autocreate=True):
     if autocreate and not os.path.exists(path):
-        os.mkdir(path)
+        os.makedirs(path)
     return path
 
 def get_dirs(glob):
