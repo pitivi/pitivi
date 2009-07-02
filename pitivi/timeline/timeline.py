@@ -777,6 +777,217 @@ class TimelineEdges(object):
             return self.by_start[end]
         return []
 
+class EditingContext(object):
+
+    DEFAULT = 0
+    ROLL = 1
+    RIPPLE = 2
+    SLIP_SLIDE = 3
+
+    """Encapsulates interactive editing.
+    
+    This is the base class for interactive editing contexts.
+    """
+
+    def __init__(self, timeline, focus, other):
+        """
+        @param timeline: the timeline to edit
+        @type timeline: instance of L{pitivi.timeline.timeline.Timeline}
+
+        @param focus: the TimelineObject or TrackObject which is to be the the
+        main target of interactive editing, such as the object directly under the
+        mouse pointer
+        @type focus: L{pitivi.timeline.timeline.TimelineObject} or
+        L{pitivi.timeline.trackTrackObject}
+
+        @param other: a set of objects which are the secondary targets of
+        interactive editing, such as objects in the current selection.
+        @type other: a set() of L{TimelineObject}s or L{TrackObject}s
+
+        @returns: An instance of L{pitivi.timeline.timeline.TimelineEditContex}
+        """
+
+        # make sure focus is not in secondary object list
+        other.difference_update(set((focus,)))
+
+        self.other = other 
+        self.focus = focus
+        self.timeline = timeline
+        self._snap = True
+        self._mode = self.DEFAULT
+        self._last_position = 0
+
+        self.timeline.disableUpdates()
+
+    def _getOffsets(self, start_offset, priority_offset, objs):
+        return dict(((obj, (obj.start - start_offset, obj.priority -
+            priority_offset)) for obj in objs))
+
+    def _saveValues(self, objs):
+        return dict(((obj, (obj.start, obj.duration, obj.in_point,
+            obj.media_duration, obj.priority)) for obj in objs))
+
+    def _restoreValues(self, values):
+        for obj, start, duration, in_point, media_dur, pri in \
+            values.iteritems():
+            obj.start = start
+            obj.duration = duration
+            obj.duration = duration
+            obj.in_point = in_point
+            obj.media_duration = media_dur
+            obj.priority = pri
+
+    def finish(self):
+        """Clean up timeline for normal editing"""
+        # TODO: post undo / redo action here
+        self.timeline.rebuildEdges()
+        self.timeline.enableUpdates()
+
+    def setMode(self, mode):
+        """Set the current editing mode.
+        @param mode: the editing mode. Must be one of DEFAULT, ROLL, or
+        RIPPLE.
+        """
+        if mode != self.mode:
+            self._finishMode(self.mode)
+            self._startMode(mode)
+            self.mode = mode
+
+    def _finishMode(self, mode):
+        if mode == self.DEFAULT:
+            self._finishDefault()
+        elif mode == self.ROLL:
+            self._finishRoll()
+        elif mode == self.RIPPLE:
+            self._finishRipple()
+
+    def _beginMode(self, mode):
+        if mode == self.DEFAULT:
+            self._defaultTo(self._last_position)
+        elif mode == self.ROLL:
+            self._rollTo(self._last_position)
+        elif mode == self.RIPPLE:
+            self._rippleTo(self._last_position)
+
+    def _finishDefault(self):
+        pass
+
+    def _finishRipple(self):
+        pass
+
+    def _finishRoll(self):
+        pass
+
+    def _rollTo(self, position):
+        pass
+
+    def snap(self, snap):
+        """Set whether edge snapping is currently enabled"""
+        self._snap = snap
+
+    def editTo(self, position, priority):
+        self._last_position = position
+        self._editFocus(position, priority)
+        if self._mode == self.DEFAULT:
+            self._defaultTo(position, priority)
+        if self._mode == self.ROLL:
+            self._rollTo(position)
+        elif self._mode == self.RIPPLE:
+            self._rippleTo(position)
+
+class MoveContext(EditingContext):
+
+    """An editing context which sets the start point of the editing targets.
+    It has support for ripple, slip-and-slide editing modes."""
+
+    def __init__(self, timeline, focus, other):
+        EditingContext.__init__(self, timeline, focus, other)
+
+        # calculate minimum start time and priority
+        self.earliest = focus.start
+        self.min_priority = focus.priority
+        if other:
+            self.earliest = min(self.earliest, min((obj.start for obj in other)))
+            self.min_priority = min(self.min_priority, min((obj.priority for obj in
+                other)))
+        
+        # calculate offsets of clips relative to earliest time, min priority
+        self.offsets = self._getOffsets(self.earliest, self.min_priority,
+            other)
+        self.focal_offset = (focus.start - self.earliest, 
+            focus.priority - self.min_priority)
+
+        # save default values
+        self.default_originals = self._saveValues(other)
+
+    def setMode(self, mode):
+        if mode == self.ROLL:
+            raise Exception("invalid mode ROLL")
+        EditingContext.setMode(self, mode)
+
+    def _finishRoll(self):
+        pass
+
+    def _rollTo(self):
+        pass
+
+    def _finishRipple(self):
+        pass
+
+    def _rippleTo(self):
+        pass
+
+    def _finishDefault(self):
+        self._restoreValues(self.default_originals)
+
+    def _defaultTo(self, position, priority):
+        for obj, (s_offset, p_offset) in self.offsets.iteritems():
+            obj.setStart(position + s_offset, snap=self._snap)
+            obj.priority = priority + p_offset
+
+    def _editFocus(self, position, priority):
+        """Set the strart, priority of context objects relative to the focus
+        object. 
+        
+        @param position: the start time relative to the focal object
+        @type postion: C{long}
+
+        @param priority: the priority relative to thefocal object
+        @type priority: C{long}
+        """
+
+        position = max(0, position - self.focal_offset[0])
+        priority = max(0, priority - self.focal_offset[1])
+        self.focus.setStart(position, snap = self._snap)
+        self.focus.priority = priority
+
+class TrimStartContext(EditingContext):
+
+    def _editFocus(self, position, priority):
+        self.focus.trimmedStart(position, snap=self.snap)
+
+    def _rollTo(self, position):
+        pass
+
+    def _rippleTo(self, position):
+        pass
+
+    def _finishRipple(self):
+        pass
+
+class TrimEndContext(EditingContext):
+
+    def _editFocus(self, position, priority):
+        self.focus.trimEnd(position, snap=self.snap)
+
+    def _rollto(self, position):
+        pass
+
+    def _rippleTo(self, position):
+        pass
+
+    def _finishRipple(self):
+        pass
 
 class Timeline(Signallable, Loggable):
     """
@@ -1141,3 +1352,13 @@ class Timeline(Signallable, Loggable):
             track.enableUpdates()
 
         self.emit("disable-updates", False)
+
+    def getObjsAfterObj(self, obj):
+        target = obj.start + obj.duration
+        return [to for to in self.timeline_objects 
+            if to.start >= target]
+
+    def getObjsBeforeObj(self, obj):
+        target = obj.start
+        return [to for to in self.timeline_objects 
+            if to.start + to.duration <=target]

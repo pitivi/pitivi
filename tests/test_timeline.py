@@ -22,7 +22,8 @@
 import gst
 
 from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
-        Selection, Link, TimelineEdges
+        Selection, Link, TimelineEdges, MoveContext, TrimStartContext, \
+        TrimEndContext
 from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.utils import UNKNOWN_DURATION
@@ -646,3 +647,62 @@ class TestTimelineAddFactory(TestCase):
         self.failUnlessEqual(len(self.audio_track2.track_objects), 1)
         self.failUnlessEqual(len(self.video_track1.track_objects), 1)
         self.failUnlessEqual(len(self.video_track2.track_objects), 1)
+
+class TestContexts(TestCase):
+
+    def setUp(self):
+        TestCase.setUp(self)
+        self.timeline = Timeline()
+        self.factory = StubFactory()
+        self.stream = AudioStream(gst.Caps('audio/x-raw-int'))
+        self.factory.addOutputStream(self.stream)
+        self.track1 = Track(self.stream)
+        self.track2 = Track(self.stream)
+        self.track_object1 = SourceTrackObject(self.factory, self.stream)
+        self.track_object2 = SourceTrackObject(self.factory, self.stream)
+        self.track_object3 = SourceTrackObject(self.factory, self.stream)
+        self.track1.addTrackObject(self.track_object1)
+        self.track1.addTrackObject(self.track_object2)
+        self.track2.addTrackObject(self.track_object3)
+        self.timeline_object1 = TimelineObject(self.factory)
+        self.timeline_object1.addTrackObject(self.track_object1)
+        self.timeline_object2 = TimelineObject(self.factory)
+        self.timeline_object2.addTrackObject(self.track_object2)
+        self.timeline_object3 = TimelineObject(self.factory)
+        self.timeline_object3.addTrackObject(self.track_object3)
+        self.timeline.addTimelineObject(self.timeline_object1)
+        self.timeline.addTimelineObject(self.timeline_object2)
+        self.timeline.addTimelineObject(self.timeline_object3)
+        self.focus = self.track_object1
+        self.other = set([self.track_object2, self.track_object3])
+
+    def testMoveContext(self):
+        context = MoveContext(self.timeline, self.focus, self.other)
+
+        context.finish()
+
+    def testTrimStartContext(self):
+        context = TrimStartContext(self.timeline, self.focus, self.other)
+
+        context.finish()
+
+    def testTrimEndContext(self):
+        context = TrimEndContext(self.timeline, self.focus, self.other)
+
+        context.finish()
+
+    def tearDown(self):
+        del self.timeline_object1
+        del self.timeline_object2
+        del self.timeline_object3
+        del self.track_object1
+        del self.track_object2
+        del self.track_object3
+        del self.track1
+        del self.track2
+        del self.factory
+        del self.stream
+        del self.timeline
+        del self.focus
+        del self.other
+        TestCase.tearDown(self)
