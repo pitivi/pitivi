@@ -828,7 +828,7 @@ class EditingContext(object):
             obj.media_duration, obj.priority)) for obj in objs))
 
     def _restoreValues(self, values):
-        for obj, start, duration, in_point, media_dur, pri in \
+        for obj, (start, duration, in_point, media_dur, pri) in \
             values.iteritems():
             obj.start = start
             obj.duration = duration
@@ -848,10 +848,10 @@ class EditingContext(object):
         @param mode: the editing mode. Must be one of DEFAULT, ROLL, or
         RIPPLE.
         """
-        if mode != self.mode:
-            self._finishMode(self.mode)
-            self._startMode(mode)
-            self.mode = mode
+        if mode != self._mode:
+            self._finishMode(self._mode)
+            self._beginMode(mode)
+            self._mode = mode
 
     def _finishMode(self, mode):
         if mode == self.DEFAULT:
@@ -863,22 +863,28 @@ class EditingContext(object):
 
     def _beginMode(self, mode):
         if mode == self.DEFAULT:
-            self._defaultTo(self._last_position)
+            self._defaultTo(self._last_position, self._last_priority)
         elif mode == self.ROLL:
-            self._rollTo(self._last_position)
+            self._rollTo(self._last_position, self._last_priority)
         elif mode == self.RIPPLE:
-            self._rippleTo(self._last_position)
+            self._rippleTo(self._last_position, self._last_priority)
 
-    def _finishDefault(self):
+    def _finishRoll(self):
+        pass
+
+    def _rollTo(self, position, priority):
         pass
 
     def _finishRipple(self):
         pass
 
-    def _finishRoll(self):
+    def _rippleTo(self, position, priority):
         pass
 
-    def _rollTo(self, position):
+    def _finishDefault(self):
+        pass
+
+    def _defaultTo(self, position, priority):
         pass
 
     def snap(self, snap):
@@ -887,13 +893,14 @@ class EditingContext(object):
 
     def editTo(self, position, priority):
         self._last_position = position
+        self._last_priority = priority
         self._editFocus(position, priority)
         if self._mode == self.DEFAULT:
             self._defaultTo(position, priority)
         if self._mode == self.ROLL:
-            self._rollTo(position)
+            self._rollTo(position, priority)
         elif self._mode == self.RIPPLE:
-            self._rippleTo(position)
+            self._rippleTo(position, priority)
 
 class MoveContext(EditingContext):
 
@@ -925,18 +932,6 @@ class MoveContext(EditingContext):
             raise Exception("invalid mode ROLL")
         EditingContext.setMode(self, mode)
 
-    def _finishRoll(self):
-        pass
-
-    def _rollTo(self):
-        pass
-
-    def _finishRipple(self):
-        pass
-
-    def _rippleTo(self):
-        pass
-
     def _finishDefault(self):
         self._restoreValues(self.default_originals)
 
@@ -964,30 +959,13 @@ class MoveContext(EditingContext):
 class TrimStartContext(EditingContext):
 
     def _editFocus(self, position, priority):
-        self.focus.trimmedStart(position, snap=self.snap)
-
-    def _rollTo(self, position):
-        pass
-
-    def _rippleTo(self, position):
-        pass
-
-    def _finishRipple(self):
-        pass
+        self.focus.trimStart(position, snap=self.snap)
 
 class TrimEndContext(EditingContext):
 
     def _editFocus(self, position, priority):
-        self.focus.trimEnd(position, snap=self.snap)
-
-    def _rollto(self, position):
-        pass
-
-    def _rippleTo(self, position):
-        pass
-
-    def _finishRipple(self):
-        pass
+        duration = position - self.focus.start
+        self.focus.setDuration(duration, snap=self.snap)
 
 class Timeline(Signallable, Loggable):
     """

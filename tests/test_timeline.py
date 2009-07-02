@@ -678,17 +678,30 @@ class TestContexts(TestCase):
 
     def testMoveContext(self):
         context = MoveContext(self.timeline, self.focus, self.other)
-
+        context.editTo(gst.SECOND * 10, 0)
+        context.setMode(context.RIPPLE)
+        context.editTo(gst.SECOND * 20, 10)
+        context.setMode(context.DEFAULT)
         context.finish()
 
     def testTrimStartContext(self):
         context = TrimStartContext(self.timeline, self.focus, self.other)
-
+        context.editTo(gst.SECOND * 10, 0)
+        context.setMode(context.RIPPLE)
+        context.editTo(gst.SECOND * 20, 10)
+        context.setMode(context.ROLL)
+        context.editTo(gst.SECOND * 10, 0)
+        context.setMode(context.DEFAULT)
         context.finish()
 
     def testTrimEndContext(self):
         context = TrimEndContext(self.timeline, self.focus, self.other)
-
+        context.editTo(gst.SECOND * 10, 0)
+        context.setMode(context.RIPPLE)
+        context.editTo(gst.SECOND * 20, 10)
+        context.setMode(context.ROLL)
+        context.editTo(gst.SECOND * 10, 0)
+        context.setMode(context.DEFAULT)
         context.finish()
 
     def tearDown(self):
