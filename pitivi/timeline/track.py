@@ -148,10 +148,12 @@ class Interpolator(Signallable, Loggable):
         self.lower = 0
         self.upper = 1
 
-        # FIXME: don't create separate controllers for each Interpolator
-        # FIXME: uncomment this when back-end support works
+        # FIXME: don't necessarily want to create separate controllers for
+        # each Interpolator. We should instead create a ControlSource for each
+        # element. We can't do this until the new controller interface is
+        # exposed in gst-python.
         self.debug("Creating a GstController for element %r and property %s",
-                   self._element, prop.name)
+            self._element, prop.name) 
         self._controller = gst.Controller(self._element, prop.name)
         self._controller.set_interpolation_mode(prop.name, gst.INTERPOLATE_LINEAR)
 
@@ -174,12 +176,18 @@ class Interpolator(Signallable, Loggable):
         returns: the keyframe object"""
         self.debug("time:%s, value:%r, mode:%r",
                    gst.TIME_ARGS(time), value, mode)
-        #TODO: calculate value
+        # TODO: calculate value so that the new point doesn't change the shape
+        # of the curve when added. This might be tricky to achieve with cubic
+        # interpolation, but should work fine for linear and step
+        # interpolation.
         if value is None:
             value = self._default
         if mode is None:
-            # FIXME: uncomment this when back-end support works
-            #mode = self._controller.get_interpolation_mode()
+            # FIXME: Controller.get_interpolation_mode is not wrapped in
+            # gst-python, so for now we assume the default is linear.
+            # Use the following code to get the current mode when this method becomes
+            # available.
+            # mode = self._controller.get_interpolation_mode()
             mode = gst.INTERPOLATE_LINEAR
 
         kf = Keyframe(self)
@@ -196,7 +204,6 @@ class Interpolator(Signallable, Loggable):
         return kf
 
     def removeKeyFrame(self, keyframe):
-        # FIXME: uncomment this when back-end support works
         self._controller.unset(self._property.name, keyframe.time)
         if keyframe is not self.start and keyframe is not self.end:
             self._keyframes.remove(keyframe)
@@ -207,11 +214,10 @@ class Interpolator(Signallable, Loggable):
         # single mode. Suporting per-keyframe modes would require implementing
         # a custom interplation source controller.
         # For now, whenever one keyframe's mode changes, we'll set the mode
-        # globally
+        # globally.
         for keyframe in self.keyframes:
             keyframe.setObjectMode(mode)
-        # FIXME: uncomment when backend works
-        #self._controller.set_interpolation_mode(mode)
+        self._controller.set_interpolation_mode(self._property.name, mode)
 
     def setKeyframeTime(self, kf, time):
         time = max(self.start.time, min(self.end.time, time))
@@ -227,14 +233,15 @@ class Interpolator(Signallable, Loggable):
         self.debug("kf.time:%s, ptime:%s, value:%r",
                    gst.TIME_ARGS(kf.time),
                    gst.TIME_ARGS(ptime), value)
-        # FIXME: uncomment this when back-end support works
         if kf.time != ptime:
             self._controller.unset(self._property.name, kf.time)
         self._controller.set(self._property.name, ptime, value)
         self.emit("keyframe-moved", kf)
 
     def getKeyframes(self):
-        # FIXME: make this more efficient
+        # TODO: This could be more efficient. We are re-sorting all the keyframes
+        # every time we iterate over them. One thought would be to keep the
+        # list sorted in-place as keyframes are added and moved.
         yield self.start
         for kf in sorted(self._keyframes):
             yield kf
@@ -337,8 +344,6 @@ class TrackObject(Signallable, Loggable):
     def snapStartDurationTime(self, *args):
         return
 
-    # FIXME: there's a lot of boilerplate here that could be factored in a
-    # metaclass.  Do we like metaclasses in pitivi?
     def _getStart(self):
         return self.gnl_object.props.start
 
@@ -612,7 +617,6 @@ class Track(Signallable):
             self.removeTrackObject(self.default_track_object)
 
         self.default_track_object = None
-        # FIXME: implement TrackObject.priority
         track_object.gnl_object.props.priority = 2**32-1
         self.default_track_object = track_object
         try:
