@@ -932,6 +932,7 @@ class EditingContext(object):
         self._snap = True
         self._mode = self.DEFAULT
         self._last_position = 0
+        self._last_priority = 0
 
         self.timeline.disableUpdates()
 
@@ -1089,10 +1090,35 @@ class MoveContext(EditingContext):
 
 class TrimStartContext(EditingContext):
 
+    def __init__(self, timeline, focus, other):
+        EditingContext.__init__(self, timeline, focus, other)
+        self.adjacent = timeline.edges.getObjsAdjacentToStart(focus)
+        self.adjacent_originals = self._saveValues(self.adjacent)
+
+    def _rollTo(self, position, priority):
+        for obj in self.adjacent:
+            duration = max(0, position - obj.start)
+            obj.setDuration(duration, snap=False)
+
+    def _finishRoll(self):
+        self._restoreValues(self.adjacent_originals)
+
     def _editFocus(self, position, priority):
         self.focus.trimStart(position, snap=self.snap)
 
 class TrimEndContext(EditingContext):
+
+    def __init__(self, timeline, focus, other):
+        EditingContext.__init__(self, timeline, focus, other)
+        self.adjacent = timeline.edges.getObjsAdjacentToEnd(focus)
+        self.adjacent_originals = self._saveValues(self.adjacent)
+
+    def _rollTo(self, position, priority):
+        for obj in self.adjacent:
+            obj.trimStart(position, snap=False)
+
+    def _finishRoll(self):
+        self._restoreValues(self.adjacent_originals)
 
     def _editFocus(self, position, priority):
         duration = max(0, position - self.focus.start)
