@@ -12,7 +12,8 @@ from view import View
 import controller
 from zoominterface import Zoomable
 from pitivi.timeline.track import TrackError
-from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT
+from pitivi.timeline.timeline import SELECT, SELECT_ADD, UNSELECT, \
+    MoveContext, TrimStartContext, TrimEndContext
 from preview import Preview
 from pitivi.ui.curve import Curve
 import gst
@@ -104,6 +105,23 @@ class TimelineController(controller.Controller):
     def drag_end(self, item, target, event):
         self._view.timeline.rebuildEdges()
 
+    def drag_start(self, item, target, event):
+        tx = self._view.props.parent.get_transform()
+        # store y offset for later priority calculation
+        self._y_offset = tx[5]
+        # zero y component of mousdown coordiante
+        self._mousedown = Point(self._mousedown[0], 0)
+
+    def drag_end(self, item, target, event):
+        self._context.finish()
+        self._view.app.action_log.commit()
+
+    def set_pos(self, item, pos):
+        x, y = pos
+        position = Zoomable.pixelToNs(x)
+        priority = int((y - self._y_offset) // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
+        self._context.editTo(position, priority)
+
 class TrimHandle(View, goocanvas.Image, Zoomable):
 
     """A component of a TrackObject which manage's the source's edit
@@ -139,15 +157,10 @@ class StartHandle(TrimHandle):
 
         def drag_start(self, item, target, event):
             TimelineController.drag_start(self, item, target, event)
+            self._context = TrimStartContext(self._view.timeline,
+                self._view.element,
+                self._view.timeline.selection.getSelectedTrackObjs())
             self._view.app.action_log.begin("trim object")
-
-        def drag_end(self, item, target, event):
-            TimelineController.drag_end(self, item, target, event)
-            self._view.app.action_log.commit()
-
-        def set_pos(self, obj, pos):
-            new_start = max(self._view.pixelToNs(pos[0]), 0)
-            self._view.element.trimStart(new_start, snap=True)
 
 class EndHandle(TrimHandle):
 
@@ -159,17 +172,10 @@ class EndHandle(TrimHandle):
 
         def drag_start(self, item, target, event):
             TimelineController.drag_start(self, item, target, event)
+            self._context = TrimEndContext(self._view.timeline,
+                self._view.element,
+                self._view.timeline.selection.getSelectedTrackObjs())
             self._view.app.action_log.begin("trim object")
-
-        def drag_end(self, item, target, event):
-            TimelineController.drag_end(self, item, target, event)
-            self._view.app.action_log.commit()
-
-        def set_pos(self, obj, pos):
-            start = self._view.element.start
-            abs_pos = self._view.pixelToNs(pos[0])
-            duration = max(abs_pos - start, 0)
-            self._view.element.setDuration(duration, snap=True)
 
 class TrackObject(View, goocanvas.Group, Zoomable):
 
@@ -178,38 +184,11 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         def drag_start(self, item, target, event):
             TimelineController.drag_start(self, item, target, event)
-            self._view.app.action_log.begin("move clip")
-            self._view.timeline.disableUpdates()
             self._view.raise_(None)
-            tx = self._view.props.parent.get_transform()
-            self._y_offset = tx[5]
-            self._mousedown = Point(self._mousedown[0], 0)
-            element = self._view.element
-            timeline = self._view.timeline
-            self._offsets = {}
-            self._min_start = 0
-            self._min_pri = 0
-
-            if len(self._view.timeline.selection) <= 1:
-                self._view.timeline.setSelectionToObj(self._view.element,
-                        SELECT)
-
-            # calculate offsets to selected clips
-            if element.selected:
-                for obj in timeline.selection.getSelectedTrackObjs():
-                    start = obj.start - element.start
-                    if start < 0:
-                        self._min_start = max(self._min_start, -start)
-                    priority = obj.priority - element.priority
-                    if priority < 0:
-                        self._min_pri = max(self._min_pri, -priority)
-                    self._offsets[obj] = start, priority
-                del self._offsets[element]
-
-        def drag_end(self, item, target, event):
-            TimelineController.drag_end(self, item, target, event)
-            self._view.timeline.enableUpdates()
-            self._view.app.action_log.commit()
+            self._context = MoveContext(self._view.timeline,
+                self._view.element,
+                self._view.timeline.selection.getSelectedTrackObjs())
+            self._view.app.action_log.begin("move object")
 
         def click(self, pos):
             mode = SELECT
@@ -219,18 +198,6 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 mode = UNSELECT
             self._view.timeline.setSelectionToObj(
                 self._view.element, mode)
-
-        def set_pos(self, item, pos):
-            x, y = pos
-            self._view.element.setStart(max(self._view.pixelToNs(x),
-                self._min_start), snap=True)
-            start = self._view.element.start
-            priority = int(max(self._min_pri, (y - self._y_offset) // 
-                (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
-            self._view.element.setObjectPriority(priority)
-            for obj, (s, p) in self._offsets.iteritems():
-                obj.setStart(start + s)
-                obj.setPriority(priority + p)
 
     def __init__(self, instance, element, track, timeline):
         goocanvas.Group.__init__(self)
