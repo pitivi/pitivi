@@ -913,14 +913,17 @@ class MoveContext(EditingContext):
         # calculate minimum start time and priority
         self.earliest = focus.start
         self.min_priority = focus.priority
+        
+        tlobjs = set((obj.timeline_object for obj in other))
         if other:
-            self.earliest = min(self.earliest, min((obj.start for obj in other)))
+            self.earliest = min(self.earliest, min((obj.start for obj in
+                tlobjs)))
             self.min_priority = min(self.min_priority, min((obj.priority for obj in
-                other)))
+                tlobjs)))
         
         # calculate offsets of clips relative to earliest time, min priority
         self.offsets = self._getOffsets(self.earliest, self.min_priority,
-            other)
+            tlobjs)
         self.focal_offset = (focus.start - self.earliest, 
             focus.priority - self.min_priority)
 
@@ -936,6 +939,8 @@ class MoveContext(EditingContext):
         self._restoreValues(self.default_originals)
 
     def _defaultTo(self, position, priority):
+        position = max(0, position - self.focal_offset[0])
+        priority = max(0, priority - self.focal_offset[1])
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
             obj.setStart(position + s_offset, snap=self._snap)
             obj.priority = priority + p_offset
@@ -964,7 +969,7 @@ class TrimStartContext(EditingContext):
 class TrimEndContext(EditingContext):
 
     def _editFocus(self, position, priority):
-        duration = position - self.focus.start
+        duration = max(0, position - self.focus.start)
         self.focus.setDuration(duration, snap=self.snap)
 
 class Timeline(Signallable, Loggable):
