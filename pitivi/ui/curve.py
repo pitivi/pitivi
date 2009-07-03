@@ -52,6 +52,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     class Controller(Controller):
 
         def drag_start(self, item, target, event):
+            self._view.app.action_log.begin("volume change")
             initial = self.from_item_event(item, event)
             self._kf = self._view.findKeyframe(initial)
             if self._kf:
@@ -63,6 +64,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
         def drag_end(self, item, target, event):
             self._kf = None
+            self._view.app.action_log.commit()
 
         def set_pos(self, obj, pos):
             interpolator = self._view.interpolator
@@ -81,9 +83,13 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             kf = self._view.findKeyframe(pos)
             if kf is None:
                 time, value = self.xyToTimeValue(pos)
+                self._view.app.action_log.begin("add volume point")
                 interpolator.newKeyframe(time, value)
+                self._view.app.action_log.commit()
             else:
+                self._view.app.action_log.begin("remove volume point")
                 self._view.interpolator.removeKeyframe(kf)
+                self._view.app.action_log.commit()
 
         def xyToTimeValue(self, pos):
             bounds = self._view.bounds
@@ -98,11 +104,12 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         def leave(self, item, target):
             self._view.normal()
 
-    def __init__(self, element, interpolator, height=LAYER_HEIGHT_EXPANDED,
+    def __init__(self, instance, element, interpolator, height=LAYER_HEIGHT_EXPANDED,
         **kwargs):
         super(Curve, self).__init__(**kwargs)
         View.__init__(self)
         Zoomable.__init__(self)
+        self.app = instance
         self.keyframes = {}
         self.height = float(height)
         self.element = element

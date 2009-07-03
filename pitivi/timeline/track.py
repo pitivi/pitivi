@@ -165,40 +165,45 @@ class Interpolator(Signallable, Loggable):
         self._controller = gst.Controller(self._element, prop.name)
         self._controller.set_interpolation_mode(prop.name, gst.INTERPOLATE_LINEAR)
 
-    def newKeyframe(self, time, value=None, mode=None):
+    def newKeyframe(self, time_or_keyframe, value=None, mode=None):
         """add a new keyframe at the specified time, optionally with specified
         value and specified mode. If not specified, these will be computed so
         that the new keyframe likes on the existing curve at that timestampi
 
         returns: the keyframe object"""
+
+        if isinstance(time_or_keyframe, Keyframe):
+            keyframe = time_or_keyframe
+        else:
+            # TODO: calculate value so that the new point doesn't change the shape
+            # of the curve when added. This might be tricky to achieve with cubic
+            # interpolation, but should work fine for linear and step
+            # interpolation.
+            if value is None:
+                value = self._default
+            if mode is None:
+                # FIXME: Controller.get_interpolation_mode is not wrapped in
+                # gst-python, so for now we assume the default is linear.
+                # Use the following code to get the current mode when this method becomes
+                # available.
+                # mode = self._controller.get_interpolation_mode()
+                mode = gst.INTERPOLATE_LINEAR
+
+            keyframe = Keyframe(self)
+            keyframe._time = time_or_keyframe
+            keyframe._value = value
+            keyframe._mode = mode
+
         self.debug("time:%s, value:%r, mode:%r",
-                   gst.TIME_ARGS(time), value, mode)
-        # TODO: calculate value so that the new point doesn't change the shape
-        # of the curve when added. This might be tricky to achieve with cubic
-        # interpolation, but should work fine for linear and step
-        # interpolation.
-        if value is None:
-            value = self._default
-        if mode is None:
-            # FIXME: Controller.get_interpolation_mode is not wrapped in
-            # gst-python, so for now we assume the default is linear.
-            # Use the following code to get the current mode when this method becomes
-            # available.
-            # mode = self._controller.get_interpolation_mode()
-            mode = gst.INTERPOLATE_LINEAR
+                   gst.TIME_ARGS(keyframe.time), keyframe.value, keyframe.mode)
 
-        kf = Keyframe(self)
-        kf._time = time
-        kf._value = value
-        kf._mode = mode
+        self._keyframes.append(keyframe)
 
-        self._keyframes.append(kf)
+        self._controller.set(self._property.name, keyframe.time, keyframe.value)
 
-        self._controller.set(self._property.name, kf.time, kf.value)
+        self.emit("keyframe-added", keyframe)
 
-        self.emit("keyframe-added", kf)
-
-        return kf
+        return keyframe
 
     def removeKeyframe(self, keyframe):
         self._controller.unset(self._property.name, keyframe.time)
@@ -322,13 +327,29 @@ class TrackObject(Signallable, Loggable):
 
         factory_properties = self.factory.getInterpolatedProperties(self.stream).keys()
 
+        old_interpolators = self.interpolators
+        self.interpolators = {}
         for gst_object, gst_object_property in \
                 get_controllable_properties(self.gnl_object):
             if gst_object_property.name not in factory_properties:
                 continue
 
-            self.interpolators[gst_object_property.name] = (gst_object_property,
-                    Interpolator(self, gst_object, gst_object_property))
+            try:
+                interpolator = old_interpolators[gst_object_property.name][1]
+            except KeyError:
+                interpolator = Interpolator(self, gst_object, gst_object_property)
+            else:
+                interpolator.attachToElementProperty(gst_object_property,
+                        gst_object)
+
+                # remove and add again the keyframes so they are set on the
+                # current controller
+                for keyframe in list(interpolator.keyframes):
+                    interpolator.removeKeyframe(keyframe)
+                    interpolator.newKeyframe(keyframe)
+
+            self.interpolators[gst_object_property.name] = \
+                    (gst_object_property, interpolator)
 
     def release(self):
         self._disconnectFromSignals()

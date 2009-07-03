@@ -19,6 +19,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+from pitivi.signalinterface import Signallable
 from pitivi.utils import PropertyChangeTracker
 from pitivi.undo import UndoableAction
 
@@ -53,6 +54,50 @@ class TimelineObjectPropertyChangeTracker(PropertyChangeTracker):
         if not self._disabled:
             PropertyChangeTracker._propertyChangedCb(self,
                     timeline_object, value, property_name)
+
+class KeyframeChangeTracker(Signallable):
+    __signals__ = {
+        "keyframe-moved": ["keyframe"]
+    }
+
+    def __init__(self):
+        self.keyframes = None
+        self.obj = None
+
+    def connectToObject(self, obj):
+        self.obj = obj
+        self.keyframes = self._takeCurrentSnapshot(obj)
+        obj.connect("keyframe-added", self._keyframeAddedCb)
+        obj.connect("keyframe-removed", self._keyframeRemovedCb)
+        obj.connect("keyframe-moved", self._keyframeMovedCb)
+
+    def _takeCurrentSnapshot(self, obj):
+        keyframes = {}
+        for keyframe in self.obj.getKeyframes():
+            keyframes[keyframe] = self._getKeyframeSnapshot(keyframe)
+
+        return keyframes
+
+    def disconnectFromObject(self, obj):
+        self.obj = None
+        obj.disconnect_by_func(self._keyframeMovedCb)
+
+    def _keyframeAddedCb(self, interpolator, keyframe):
+        self.keyframes[keyframe] = self._getKeyframeSnapshot(keyframe)
+
+    def _keyframeRemovedCb(self, interpolator, keyframe):
+        pass
+
+    def _keyframeMovedCb(self, interpolator, keyframe):
+        old_snapshot = self.keyframes[keyframe]
+        new_snapshot = self._getKeyframeSnapshot(keyframe)
+        self.keyframes[keyframe] = new_snapshot
+
+        self.emit("keyframe-moved", interpolator,
+                keyframe, old_snapshot, new_snapshot)
+
+    def _getKeyframeSnapshot(self, keyframe):
+        return (keyframe.mode, keyframe.time, keyframe.value)
 
 class TimelineObjectPropertyChanged(UndoableAction):
     def __init__(self, timeline_object, property_name, old_value, new_value):
@@ -107,24 +152,80 @@ class TimelineObjectRemoved(UndoableAction):
         self.timeline.addTimelineObject(self.timeline_object)
         self._undone()
 
+class InterpolatorKeyframeAdded(UndoableAction):
+    def __init__(self, track_object, keyframe):
+        self.track_object = track_object
+        self.keyframe = keyframe
+
+    def do(self):
+        self.track_object.newKeyframe(self.keyframe)
+        self._done()
+
+    def undo(self):
+        self.track_object.removeKeyframe(self.keyframe)
+        self._undone()
+
+class InterpolatorKeyframeRemoved(UndoableAction):
+    def __init__(self, track_object, keyframe):
+        self.track_object = track_object
+        self.keyframe = keyframe
+
+    def do(self):
+        self.track_object.removeKeyframe(self.keyframe)
+        self._undone()
+
+    def undo(self):
+        self.track_object.newKeyframe(self.keyframe.time,
+                self.keyframe.value, self.keyframe.mode)
+        self._done()
+
+class InterpolatorKeyframeChanged(UndoableAction):
+    def __init__(self, track_object, keyframe, old_snapshot, new_snapshot):
+        self.track_object = track_object
+        self.keyframe = keyframe
+        self.old_snapshot = old_snapshot
+        self.new_snapshot = new_snapshot
+
+    def do(self):
+        self._setSnapshot(self.new_snapshot)
+        self._done()
+
+    def undo(self):
+        self._setSnapshot(self.old_snapshot)
+        self._undone()
+
+    def _setSnapshot(self, snapshot):
+        mode, time, value = snapshot
+        self.keyframe.setMode(mode)
+        self.keyframe.setTime(time)
+        self.keyframe.setValue(value)
+
 class TimelineLogObserver(object):
-    propertyChangedAction = TimelineObjectPropertyChanged
+    timelinePropertyChangedAction = TimelineObjectPropertyChanged
     timelineObjectAddedAction = TimelineObjectAdded
     timelineObjectRemovedAction = TimelineObjectRemoved
+    interpolatorKeyframeAddedAction = InterpolatorKeyframeAdded
+    interpolatorKeyframeRemovedAction = InterpolatorKeyframeRemoved
+    interpolatorKeyframeChangedAction = InterpolatorKeyframeChanged
 
     def __init__(self, log):
         self.log = log
-        self.property_trackers = {}
+        self.timeline_object_property_trackers = {}
+        self.interpolator_keyframe_trackers = {}
 
     def startObserving(self, timeline):
         self._connectToTimeline(timeline)
         for timeline_object in timeline.timeline_objects:
             self._connectToTimelineObject(timeline_object)
+            for track_object in timeline_object.track_objects:
+                self._connectToTrackObject(track_object)
 
     def stopObserving(self, timeline):
         self._disconnectFromTimeline(timeline)
         for timeline_object in timeline.timeline_objects:
             self._disconnectFromTimelineObject(timeline_object)
+            for track_object in timeline_object.track_objects:
+                self._disconnectFromTrackObject(track_object)
 
     def _connectToTimeline(self, timeline):
         timeline.connect("timeline-object-added", self._timelineObjectAddedCb)
@@ -140,12 +241,38 @@ class TimelineLogObserver(object):
         for property_name in tracker.property_names:
             tracker.connect(property_name + "-changed",
                     self._timelineObjectPropertyChangedCb, property_name)
-        self.property_trackers[timeline_object] = tracker
+        self.timeline_object_property_trackers[timeline_object] = tracker
+
+        timeline_object.connect("track-object-added", self._timelineObjectTrackObjectAddedCb)
+        timeline_object.connect("track-object-removed", self._timelineObjectTrackObjectRemovedCb)
 
     def _disconnectFromTimelineObject(self, timeline_object):
-        tracker = self.property_trackers.pop(timeline_object)
+        tracker = self.timeline_object_property_trackers.pop(timeline_object)
         tracker.disconnectFromObject(timeline_object)
         tracker.disconnect_by_func(self._timelineObjectPropertyChangedCb)
+
+    def _connectToTrackObject(self, track_object):
+        for prop, interpolator in track_object.getInterpolators().itervalues():
+            self._connectToInterpolator(interpolator)
+
+    def _disconnectFromTrackObject(self, track_object):
+        for prop, interpolator in track_object.getInterpolators().itervalues():
+            self._disconnectToInterpolator(interpolator)
+
+    def _connectToInterpolator(self, interpolator):
+        interpolator.connect("keyframe-added", self._interpolatorKeyframeAddedCb)
+        interpolator.connect("keyframe-removed",
+                self._interpolatorKeyframeRemovedCb)
+
+        tracker = KeyframeChangeTracker()
+        tracker.connectToObject(interpolator)
+        tracker.connect("keyframe-moved", self._interpolatorKeyframeMovedCb)
+        self.interpolator_keyframe_trackers[interpolator] = tracker
+
+    def _disconnectFromInterpolator(self, interpolator):
+        tracker = self.interpolator_keyframe_trackers.pop(interpolator)
+        tracker.disconnectFromObject(interpolator)
+        tracker.disconnect_by_func(self._interpolatorKeyframeMovedCb)
 
     def _timelineObjectAddedCb(self, timeline, timeline_object):
         self._connectToTimelineObject(timeline_object)
@@ -159,6 +286,27 @@ class TimelineLogObserver(object):
 
     def _timelineObjectPropertyChangedCb(self, tracker, timeline_object,
             old_value, new_value, property_name):
-        action = self.propertyChangedAction(timeline_object,
+        action = self.timelinePropertyChangedAction(timeline_object,
                 property_name, old_value, new_value)
+        self.log.push(action)
+
+    def _timelineObjectTrackObjectAddedCb(self, timeline_object, track_object):
+        self._connectToTrackObject(track_object)
+
+    def _timelineObjectTrackObjectRemovedCb(self, timeline_object,
+            track_object):
+        self._disconnectFromTrackObject(track_object)
+
+    def _interpolatorKeyframeAddedCb(self, track_object, keyframe):
+        action = self.interpolatorKeyframeAddedAction(track_object, keyframe)
+        self.log.push(action)
+
+    def _interpolatorKeyframeRemovedCb(self, track_object, keyframe):
+        action = self.interpolatorKeyframeRemovedAction(track_object, keyframe)
+        self.log.push(action)
+
+    def _interpolatorKeyframeMovedCb(self, tracker, track_object,
+            keyframe, old_snapshot, new_snapshot):
+        action = self.interpolatorKeyframeChangedAction(track_object,
+                keyframe, old_snapshot, new_snapshot)
         self.log.push(action)
