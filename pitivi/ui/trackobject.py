@@ -274,7 +274,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             self.start_handle, self.end_handle, self.namebg, self.name):
             self.add_child(thing)
 
-        for interpolator in element.interpolators.itervalues():
+        for prop, interpolator in element.getInterpolators().itervalues():
             self.add_child(Curve(element, interpolator, 50))
 
         self.element = element

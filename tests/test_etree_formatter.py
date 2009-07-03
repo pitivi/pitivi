@@ -128,7 +128,7 @@ class TestFormatterSave(TestCase):
         fakevol = gst.element_factory_make("volume")
         prop = get_controllable_properties(fakevol)[1][1]
         volcurve = Interpolator(track_object, fakevol, prop)
-        track_object.interpolators[prop] = volcurve
+        track_object.interpolators[prop.name] = (prop, volcurve)
 
         # add some points to the interpolator 
         value = float(0)
@@ -136,7 +136,7 @@ class TestFormatterSave(TestCase):
         volcurve.start.value = 0
         for t in xrange(3, 15, 3):
             value = int(t % 2)
-            volcurve.newKeyFrame(time=t * gst.SECOND, value=value)
+            volcurve.newKeyFrame(t * gst.SECOND, value)
         volcurve.end.setObjectTime(15 * gst.SECOND)
         volcurve.end.value = 15 % 2
 

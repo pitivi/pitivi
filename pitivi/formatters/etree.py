@@ -329,11 +329,11 @@ class ElementTreeFormatter(Formatter):
 
         element.append(factory_ref)
         element.append(stream_ref)
-        if track_object.interpolators:
-            curves = Element("curves")
-            for property, interpolator in track_object.interpolators.iteritems():
-                curves.append(self._saveInterpolator(interpolator, property))
-            element.append(curves)
+        interpolators = track_object.getInterpolators()
+        curves = Element("curves")
+        for property, interpolator in interpolators.itervalues():
+            curves.append(self._saveInterpolator(interpolator, property))
+        element.append(curves)
 
         self._context.track_objects[track_object] = element
 

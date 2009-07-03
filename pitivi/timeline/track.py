@@ -138,10 +138,6 @@ class Interpolator(Signallable, Loggable):
     def __init__(self, trackobject, element, prop):
         Loggable.__init__(self)
         self.debug("track:%r, element:%r, property:%r", trackobject, element, prop)
-        self._element = element
-        self._default = self._element.get_property(prop.name)
-        #self._default = 0
-        self._property = prop
         self._keyframes = []
         # FIXME: get this from the property's param spec
         # NOTE: keyframes necessarily work only on a closed range
@@ -152,11 +148,8 @@ class Interpolator(Signallable, Loggable):
         # each Interpolator. We should instead create a ControlSource for each
         # element. We can't do this until the new controller interface is
         # exposed in gst-python.
-        self.debug("Creating a GstController for element %r and property %s",
-            self._element, prop.name) 
-        self._controller = gst.Controller(self._element, prop.name)
-        self._controller.set_interpolation_mode(prop.name, gst.INTERPOLATE_LINEAR)
-
+        self.attachToElementProperty(prop, element)
+        self._default = self._element.get_property(prop.name)
         self.start = FixedKeyframe(self)
         self.end = FixedKeyframe(self)
         self.start.value = self._default
@@ -164,9 +157,13 @@ class Interpolator(Signallable, Loggable):
         self.end.value = self._default
         self.end.setObjectTime(trackobject.factory.duration)
 
-        #data = ((self.start.time, self.start.value), (self.end.time,
-        #    self.end.value))
-        #self._controller.set_from_list(prop.name, data)
+    def attachToElementProperty(self, prop, element):
+        self._element = element
+        self._property = prop
+        self.debug("Creating a GstController for element %r and property %s",
+            self._element, prop.name)
+        self._controller = gst.Controller(self._element, prop.name)
+        self._controller.set_interpolation_mode(prop.name, gst.INTERPOLATE_LINEAR)
 
     def newKeyFrame(self, time, value=None, mode=None):
         """add a new keyframe at the specified time, optionally with specified
@@ -275,6 +272,8 @@ class TrackObject(Signallable, Loggable):
         self.stream = stream
         self.track = None
         self.timeline_object = None
+        self.interpolators = {}
+        self._rebuild_interpolators = True
         self.gnl_object = obj = self._makeGnlObject()
         self.makeBin()
         self.trimmed_start = 0
@@ -301,19 +300,36 @@ class TrackObject(Signallable, Loggable):
 
         self._connectToSignals(obj)
 
-        self.interpolators = {}
-
-        wprops = factory.getInterpolatedProperties(stream).keys()
-        if stream:
-            for sobj, prop in get_controllable_properties(self.gnl_object):
-                if prop.name in wprops:
-                    self.interpolators[prop] = Interpolator(self, sobj, prop)
-
     def getInterpolator(self, property_name):
-        for prop, interpolator in self.interpolators.iteritems():
-            if property_name == prop.name:
-                return interpolator
-        return None
+        self._maybeBuildInterpolators()
+
+        try:
+            return self.interpolators[property_name][1]
+        except KeyError:
+            raise TrackError("no interpolator for '%s'" % property_name)
+
+    def getInterpolators(self):
+        self._maybeBuildInterpolators()
+        return self.interpolators
+
+    def _maybeBuildInterpolators(self):
+        if not list(self.gnl_object.elements()):
+            raise TrackError("makeBin hasn't been called yet")
+
+        if not self._rebuild_interpolators:
+            return
+
+        self._rebuild_interpolators = False
+
+        factory_properties = self.factory.getInterpolatedProperties(self.stream).keys()
+
+        for gst_object, gst_object_property in \
+                get_controllable_properties(self.gnl_object):
+            if gst_object_property.name not in factory_properties:
+                continue
+
+            self.interpolators[gst_object_property.name] = (gst_object_property,
+                    Interpolator(self, gst_object, gst_object_property))
 
     def release(self):
         self._disconnectFromSignals()
@@ -328,7 +344,8 @@ class TrackObject(Signallable, Loggable):
             media_duration=self.media_duration, priority=self.priority)
         other.trimmed_start = self.trimmed_start
 
-        for property, interpolator in self.interpolators.iteritems():
+        interpolators = self.getInterpolators()
+        for property, interpolator in interpolators.itervalues():
             other_interpolator = other.getInterpolator(property.name)
             other_interpolator.start.value = interpolator.start.value
             other_interpolator.start.mode = interpolator.start.mode
@@ -496,6 +513,7 @@ class TrackObject(Signallable, Loggable):
 
         bin = self.factory.makeBin(self.stream)
         self.gnl_object.add(bin)
+        self._maybeBuildInterpolators()
 
     def releaseBin(self):
         elts = list(self.gnl_object.elements())
@@ -504,6 +522,7 @@ class TrackObject(Signallable, Loggable):
             self.gnl_object.remove(bin)
             bin.set_state(gst.STATE_NULL)
             self.factory.releaseBin(bin)
+        self._rebuild_interpolators = True
 
     def _notifyStartCb(self, obj, pspec):
         self.emit('start-changed', obj.props.start)
