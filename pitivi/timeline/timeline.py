@@ -81,7 +81,9 @@ class TimelineObject(Signallable, Loggable):
         'out-point-changed': ['in-point'],
         'media-duration-changed': ['media-duration'],
         'priority-changed': ['priority'],
-        'selected-changed' : ['state']
+        'selected-changed' : ['state'],
+        'track-object-added': ["track_object"],
+        'track-object-removed': ["track_object"],
     }
 
     DEFAULT_START = 0
@@ -413,6 +415,8 @@ class TimelineObject(Signallable, Loggable):
         obj.timeline_object = self
         self.track_objects.append(obj)
 
+        self.emit("track-object-added", obj)
+
     def removeTrackObject(self, obj):
         """
         Remove the given object from the list of controlled C{TrackObject}.
@@ -429,6 +433,8 @@ class TimelineObject(Signallable, Loggable):
             obj.timeline_object = None
         except ValueError:
             raise TimelineError()
+
+        self.emit("track-object-removed", obj)
 
 class Selection(Signallable):
     """
