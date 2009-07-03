@@ -339,7 +339,7 @@ class ElementTreeFormatter(Formatter):
 
         return element
 
-    def _loadTrackObject(self, element):
+    def _loadTrackObject(self, track, element):
         self.debug("%r", element)
         klass = namedAny(element.attrib["type"])
 
@@ -353,6 +353,7 @@ class ElementTreeFormatter(Formatter):
         for name, value_string in self._filterElementProperties(element):
             value = self._parsePropertyValue(value_string)
             setattr(track_object, name, value)
+        track.addTrackObject(track_object)
         curves_element = element.find("curves")
         if curves_element:
             for curve in curves_element.getchildren():
@@ -389,7 +390,6 @@ class ElementTreeFormatter(Formatter):
 
     def _loadInterpolator(self, element, trackobject):
         interpolator = trackobject.getInterpolator(element.attrib["property"])
-
         start = element.find("start")
         interpolator.start.value = self._parsePropertyValue(
             start.attrib["value"])
@@ -455,8 +455,7 @@ class ElementTreeFormatter(Formatter):
 
         track_objects_element  = element.find("track-objects")
         for track_object_element in track_objects_element:
-            track_object = self._loadTrackObject(track_object_element)
-            track.addTrackObject(track_object)
+            self._loadTrackObject(track, track_object_element)
 
         return track
 

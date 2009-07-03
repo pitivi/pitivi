@@ -142,7 +142,7 @@ class  TestTimelineUndo(TestCase):
 
         self.timeline.addTimelineObject(self.timeline_object1)
         self.action_log.begin("remove clip")
-        self.timeline.removeTimelineObject(self.timeline_object1)
+        self.timeline.removeTimelineObject(self.timeline_object1, deep=True)
         self.action_log.commit()
 
         self.failUnlessEqual(len(stacks), 1)

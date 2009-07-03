@@ -123,6 +123,8 @@ class TestFormatterSave(TestCase):
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
+        track = Track(video_stream)
+        track.addTrackObject(track_object)
 
         # create an interpolator and insert it into the track object
         fakevol = gst.element_factory_make("volume")
@@ -185,6 +187,8 @@ class TestFormatterSave(TestCase):
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
+        track = Track(video_stream)
+        track.addTrackObject(track_object)
 
         element = self.formatter._saveTrackObject(track_object)
         element_ref = self.formatter._saveTrackObjectRef(track_object)
@@ -229,6 +233,8 @@ class TestFormatterSave(TestCase):
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
+        track = Track(video_stream)
+        track.addTrackObject(track_object)
 
         self.formatter._saveTrackObject(track_object)
 
@@ -256,7 +262,8 @@ class TestFormatterSave(TestCase):
                 start=10 * gst.SECOND, duration=20 * gst.SECOND,
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
-
+        track = Track(video_stream)
+        track.addTrackObject(track_object)
         self.formatter._saveTrackObject(track_object)
 
         timeline_object = TimelineObject(source1)
@@ -279,10 +286,10 @@ class TestFormatterSave(TestCase):
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
 
-        self.formatter._saveTrackObject(track_object)
-
         track = Track(video_stream)
         track.addTrackObject(track_object)
+
+        self.formatter._saveTrackObject(track_object)
 
         timeline_object = TimelineObject(source1)
         timeline_object.addTrackObject(track_object)
@@ -316,10 +323,10 @@ class TestFormatterSave(TestCase):
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
 
-        self.formatter._saveTrackObject(track_object)
-
         track = Track(video_stream)
         track.addTrackObject(track_object)
+
+        self.formatter._saveTrackObject(track_object)
 
         timeline_object = TimelineObject(source1)
         timeline_object.addTrackObject(track_object)
@@ -425,8 +432,9 @@ class TestFormatterLoad(TestCase):
                 mode=str(mode))
         end = SubElement(curve, "end", value=str(10 % 2), mode="2")
 
+        track = Track(stream)
         # point gun at foot; pull trigger
-        track_object = self.formatter._loadTrackObject(element)
+        track_object = self.formatter._loadTrackObject(track, element)
         self.failUnless(isinstance(track_object, SourceTrackObject))
         self.failUnlessEqual(track_object.factory, factory)
         self.failUnlessEqual(track_object.stream, stream)
@@ -557,10 +565,10 @@ class TestFormatterLoad(TestCase):
                 in_point=5 * gst.SECOND, media_duration=15 * gst.SECOND,
                 priority=10)
 
-        self.formatter._saveTrackObject(track_object)
-
         track = Track(video_stream)
         track.addTrackObject(track_object)
+
+        self.formatter._saveTrackObject(track_object)
 
         timeline_object = TimelineObject(source1)
         timeline_object.addTrackObject(track_object)

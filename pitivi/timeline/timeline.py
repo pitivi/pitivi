@@ -355,7 +355,6 @@ class TimelineObject(Signallable, Loggable):
                 raise TimelineError(str(e))
 
             other.addTrackObject(other_track_object)
-            track_object.track.addTrackObject(other_track_object)
 
         if self.timeline is not None:
             # if self is not yet in a timeline, the caller needs to add "other"

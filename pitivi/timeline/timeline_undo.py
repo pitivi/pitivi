@@ -75,16 +75,12 @@ class TimelineObjectAdded(UndoableAction):
     def __init__(self, timeline, timeline_object):
         self.timeline = timeline
         self.timeline_object = timeline_object
-        self.timeline_object_copy = self._copyTimelineObject(timeline_object)
+        self.tracks = dict((track_object, track_object.track)
+                for track_object in timeline_object.track_objects)
 
     def do(self):
-        temporary_timeline_object = \
-                self._copyTimelineObject(self.timeline_object_copy)
-        self.timeline_object.track_objects = []
-        for track_object in temporary_timeline_object.track_objects:
-            track, track_object.track = track_object.track, None
+        for track_object, track in self.tracks.iteritems():
             track.addTrackObject(track_object)
-            self.timeline_object.addTrackObject(track_object)
 
         self.timeline.addTimelineObject(self.timeline_object)
         self._done()
@@ -92,43 +88,24 @@ class TimelineObjectAdded(UndoableAction):
     def undo(self):
         self.timeline.removeTimelineObject(self.timeline_object, deep=True)
         self._undone()
-
-    def _copyTimelineObject(self, timeline_object):
-        copy = timeline_object.copy()
-        for (track_object_copy, track_object) in \
-                    zip(copy.track_objects, timeline_object.track_objects):
-            track_object_copy.track = track_object.track
-
-        return copy
 
 class TimelineObjectRemoved(UndoableAction):
     def __init__(self, timeline, timeline_object):
         self.timeline = timeline
         self.timeline_object = timeline_object
-        self.timeline_object_copy = self._copyTimelineObject(timeline_object)
+        self.tracks = dict((track_object, track_object.track)
+                for track_object in timeline_object.track_objects)
 
     def do(self):
         self.timeline.removeTimelineObject(self.timeline_object, deep=True)
         self._done()
 
     def undo(self):
-        temporary_timeline_object = \
-                self._copyTimelineObject(self.timeline_object_copy)
-        for track_object in temporary_timeline_object.track_objects:
-            track, track_object.track = track_object.track, None
+        for track_object, track in self.tracks.iteritems():
             track.addTrackObject(track_object)
 
-        self.timeline_object.track_objects = temporary_timeline_object.track_objects
         self.timeline.addTimelineObject(self.timeline_object)
         self._undone()
-
-    def _copyTimelineObject(self, timeline_object):
-        copy = timeline_object.copy()
-        for (track_object_copy, track_object) in \
-                    zip(copy.track_objects, timeline_object.track_objects):
-            track_object_copy.track = track_object.track
-
-        return copy
 
 class TimelineLogObserver(object):
     propertyChangedAction = TimelineObjectPropertyChanged

@@ -219,9 +219,12 @@ class TestTrackObject(TestCase):
         factory.duration = DURATION
         stream_ = AudioStream(gst.Caps("audio/x-raw-int"))
         obj = SourceTrackObject(factory, stream_)
+        track = Track(stream_)
+        track.addTrackObject(obj)
 
         obj.start = 3 * gst.SECOND
         obj.duration = DURATION
+
 
         # create a zig-zag volume curve
         interpolator = obj.getInterpolator("volume")

@@ -275,7 +275,6 @@ class TrackObject(Signallable, Loggable):
         self.interpolators = {}
         self._rebuild_interpolators = True
         self.gnl_object = obj = self._makeGnlObject()
-        self.makeBin()
         self.trimmed_start = 0
         self.keyframes = []
 
@@ -343,6 +342,9 @@ class TrackObject(Signallable, Loggable):
             duration=self.duration, in_point=self.in_point,
             media_duration=self.media_duration, priority=self.priority)
         other.trimmed_start = self.trimmed_start
+
+        if self.track is not None:
+            self.track.addTrackObject(other)
 
         interpolators = self.getInterpolators()
         for property, interpolator in interpolators.itervalues():
@@ -507,18 +509,16 @@ class TrackObject(Signallable, Loggable):
 
     def makeBin(self):
         if self.stream is None:
-            raise TrackError
+            raise TrackError()
         if self.gnl_object is None:
-            raise TrackError
+            raise TrackError()
 
         bin = self.factory.makeBin(self.stream)
         self.gnl_object.add(bin)
         self._maybeBuildInterpolators()
 
     def releaseBin(self):
-        elts = list(self.gnl_object.elements())
-        if elts:
-            bin = elts[0]
+        for bin in list(self.gnl_object.elements()):
             self.gnl_object.remove(bin)
             bin.set_state(gst.STATE_NULL)
             self.factory.releaseBin(bin)
@@ -684,6 +684,8 @@ class Track(Signallable):
         except gst.AddError:
             raise TrackError()
 
+        track_object.makeBin()
+
         track_object.track = weakref.proxy(self)
         self.track_objects.append(track_object)
 
@@ -705,7 +707,7 @@ class Track(Signallable):
             raise TrackError()
 
         self._disconnectFromTrackObject(track_object)
-        track_object.release()
+        track_object.releaseBin()
 
         self.track_objects.remove(track_object)
         track_object.track = None
