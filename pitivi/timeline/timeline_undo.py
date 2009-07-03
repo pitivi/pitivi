@@ -245,6 +245,8 @@ class TimelineLogObserver(object):
 
         timeline_object.connect("track-object-added", self._timelineObjectTrackObjectAddedCb)
         timeline_object.connect("track-object-removed", self._timelineObjectTrackObjectRemovedCb)
+        for obj in timeline_object.track_objects:
+            self._connectToTrackObject(obj)
 
     def _disconnectFromTimelineObject(self, timeline_object):
         tracker = self.timeline_object_property_trackers.pop(timeline_object)
