@@ -83,9 +83,9 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             kf = self._view.findKeyframe(pos)
             if kf is None:
                 time, value = self.xyToTimeValue(pos)
-                interpolator.newKeyFrame(time, value)
+                interpolator.newKeyframe(time, value)
             else:
-                self._view.interpolator.removeKeyFrame(kf)
+                self._view.interpolator.removeKeyframe(kf)
 
         def xyToTimeValue(self, pos):
             bounds = self._view.bounds

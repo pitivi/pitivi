@@ -165,7 +165,7 @@ class Interpolator(Signallable, Loggable):
         self._controller = gst.Controller(self._element, prop.name)
         self._controller.set_interpolation_mode(prop.name, gst.INTERPOLATE_LINEAR)
 
-    def newKeyFrame(self, time, value=None, mode=None):
+    def newKeyframe(self, time, value=None, mode=None):
         """add a new keyframe at the specified time, optionally with specified
         value and specified mode. If not specified, these will be computed so
         that the new keyframe likes on the existing curve at that timestampi
@@ -200,7 +200,7 @@ class Interpolator(Signallable, Loggable):
 
         return kf
 
-    def removeKeyFrame(self, keyframe):
+    def removeKeyframe(self, keyframe):
         self._controller.unset(self._property.name, keyframe.time)
         if keyframe is not self.start and keyframe is not self.end:
             self._keyframes.remove(keyframe)
@@ -354,7 +354,7 @@ class TrackObject(Signallable, Loggable):
             other_interpolator.end.value = interpolator.end.value
             other_interpolator.end.mode = interpolator.end.mode
             for kf in interpolator.getInteriorKeyframes():
-                other_interpolator.newKeyFrame(kf.time,
+                other_interpolator.newKeyframe(kf.time,
                     kf.value,
                     kf.mode)
 

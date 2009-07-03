@@ -138,7 +138,7 @@ class TestFormatterSave(TestCase):
         volcurve.start.value = 0
         for t in xrange(3, 15, 3):
             value = int(t % 2)
-            volcurve.newKeyFrame(t * gst.SECOND, value)
+            volcurve.newKeyframe(t * gst.SECOND, value)
         volcurve.end.setObjectTime(15 * gst.SECOND)
         volcurve.end.value = 15 % 2
 

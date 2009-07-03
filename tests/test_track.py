@@ -231,7 +231,7 @@ class TestTrackObject(TestCase):
         expected = dict(((t * gst.SECOND, (t % 2, gst.INTERPOLATE_LINEAR))
             for t in xrange(3, 10, 3)))
         for time, (value, mode) in expected.iteritems():
-            interpolator.newKeyFrame(time, value, mode)
+            interpolator.newKeyframe(time, value, mode)
 
         def getKeyframes(obj):
             keyframes = obj.getInterpolator("volume").getInteriorKeyframes()
