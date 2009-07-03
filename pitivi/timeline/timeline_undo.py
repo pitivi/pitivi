@@ -257,7 +257,7 @@ class TimelineLogObserver(object):
 
     def _disconnectFromTrackObject(self, track_object):
         for prop, interpolator in track_object.getInterpolators().itervalues():
-            self._disconnectToInterpolator(interpolator)
+            self._disconnectFromInterpolator(interpolator)
 
     def _connectToInterpolator(self, interpolator):
         interpolator.connect("keyframe-added", self._interpolatorKeyframeAddedCb)
