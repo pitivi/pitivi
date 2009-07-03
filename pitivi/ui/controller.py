@@ -141,13 +141,13 @@ class Controller(object):
         self._last_event = event
 
     def _drag_start(self, item, target, event):
-        self.drag_start()
+        self.drag_start(item, target, event)
 
     def _drag_end(self, item, target, event):
         self._pending_drag_start = None
         pending_drag_end, self._pending_drag_end = self._pending_drag_end, False
         if pending_drag_end:
-            self.drag_end()
+            self.drag_end(item, target, event)
 
         if self._ptr_within and self._drag_threshold():
             point = self.from_item_event(item, event)
@@ -172,10 +172,10 @@ class Controller(object):
     def double_click(self, pos):
         pass
 
-    def drag_start(self):
+    def drag_start(self, item, target, event):
         pass
 
-    def drag_end(self):
+    def drag_end(self, item, target, event):
         pass
 
     def set_pos(self, obj, pos):

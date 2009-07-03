@@ -51,7 +51,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
     class Controller(Controller):
 
-        def _drag_start(self, item, target, event):
+        def drag_start(self, item, target, event):
             initial = self.from_item_event(item, event)
             self._kf = self._view.findKeyframe(initial)
             if self._kf:
@@ -60,10 +60,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                 # we are moving the entire curve, so we need to know the
                 # inital position of each keyframe
                 self._offsets = dict(self._view.keyframes)
-            Controller._drag_start(self, item, target, event)
 
-        def _drag_end(self, item, target, event):
-            Controller._drag_end(self, item, target, event)
+        def drag_end(self, item, target, event):
             self._kf = None
 
         def set_pos(self, obj, pos):

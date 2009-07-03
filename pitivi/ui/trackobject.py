@@ -98,10 +98,10 @@ class TimelineController(controller.Controller):
     def leave(self, unused, unused2):
         self._view.unfocus()
 
-    def drag_start(self):
+    def drag_start(self, item, target, event):
         pass
 
-    def drag_end(self):
+    def drag_end(self, item, target, event):
         self._view.timeline.rebuildEdges()
 
 class TrimHandle(View, goocanvas.Image, Zoomable):
@@ -137,12 +137,12 @@ class StartHandle(TrimHandle):
 
         _cursor = LEFT_SIDE
 
-        def drag_start(self):
-            TimelineController.drag_start(self)
+        def drag_start(self, item, target, event):
+            TimelineController.drag_start(self, item, target, event)
             self._view.app.action_log.begin("trim object")
 
-        def drag_end(self):
-            TimelineController.drag_end(self)
+        def drag_end(self, item, target, event):
+            TimelineController.drag_end(self, item, target, event)
             self._view.app.action_log.commit()
 
         def set_pos(self, obj, pos):
@@ -157,12 +157,12 @@ class EndHandle(TrimHandle):
 
         _cursor = RIGHT_SIDE
 
-        def drag_start(self):
-            TimelineController.drag_start(self)
+        def drag_start(self, item, target, event):
+            TimelineController.drag_start(self, item, target, event)
             self._view.app.action_log.begin("trim object")
 
-        def drag_end(self):
-            TimelineController.drag_end(self)
+        def drag_end(self, item, target, event):
+            TimelineController.drag_end(self, item, target, event)
             self._view.app.action_log.commit()
 
         def set_pos(self, obj, pos):
@@ -176,8 +176,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
     class Controller(TimelineController):
 
-        def drag_start(self):
-            TimelineController.drag_start(self)
+        def drag_start(self, item, target, event):
+            TimelineController.drag_start(self, item, target, event)
             self._view.app.action_log.begin("move clip")
             self._view.timeline.disableUpdates()
             self._view.raise_(None)
@@ -206,8 +206,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                     self._offsets[obj] = start, priority
                 del self._offsets[element]
 
-        def drag_end(self):
-            TimelineController.drag_end(self)
+        def drag_end(self, item, target, event):
+            TimelineController.drag_end(self, item, target, event)
             self._view.timeline.enableUpdates()
             self._view.app.action_log.commit()
 
