@@ -103,8 +103,8 @@ class TimelineObject(Signallable, Loggable):
     def copy(self):
         cls = self.__class__
         other = cls(self.factory)
-        other.track_objects = [track_object.copy() for track_object in
-                self.track_objects]
+        for track_object in self.track_objects:
+            other.addTrackObject(track_object.copy())
 
         return other
 
