@@ -105,8 +105,8 @@ class TimelineObject(Signallable, Loggable):
         other = cls(self.factory)
         other.track_objects = []
         if copy_track_objects:
-            other.track_objects.extend(track_object.copy() for track_object in
-                    self.track_objects)
+            for track_object in self.track_objects:
+                other.addTrackObject(track_object.copy())
 
         return other
 
