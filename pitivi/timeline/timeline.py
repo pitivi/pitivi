@@ -100,11 +100,13 @@ class TimelineObject(Signallable, Loggable):
         self.link = None
         self._selected = False
 
-    def copy(self):
+    def copy(self, copy_track_objects=True):
         cls = self.__class__
         other = cls(self.factory)
-        for track_object in self.track_objects:
-            other.addTrackObject(track_object.copy())
+        other.track_objects = []
+        if copy_track_objects:
+            other.track_objects.extend(track_object.copy() for track_object in
+                    self.track_objects)
 
         return other
 
@@ -344,10 +346,7 @@ class TimelineObject(Signallable, Loggable):
         if not self.track_objects:
             raise TimelineError()
 
-        other = self.copy()
-        # ditch track objects. This is a bit weird, will be more clear when we
-        # use other uses of TimelineObject.copy
-        other.track_objects = []
+        other = self.copy(copy_track_objects=False)
 
         for track_object in self.track_objects:
             try:
