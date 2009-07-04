@@ -344,26 +344,17 @@ class TimelineObject(Signallable, Loggable):
         if not self.track_objects:
             raise TimelineError()
 
+        if position <= self.start or position >= self.start + self.duration:
+            raise TimelineError("can't split at position %s")
+
         other = self.copy()
-        # ditch track objects. This is a bit weird, will be more clear when we
-        # use other uses of TimelineObject.copy
-        other.track_objects = []
-
-        for track_object in self.track_objects:
-            try:
-                other_track_object = track_object.splitObject(position)
-            except TrackError, e:
-                # FIXME: hallo exception hierarchy?
-                raise TimelineError(str(e))
-
-            other.addTrackObject(other_track_object)
-
         if self.timeline is not None:
             # if self is not yet in a timeline, the caller needs to add "other"
             # as well when it adds self
             self.timeline.addTimelineObject(other)
 
-        self.emit('duration-changed', self.duration)
+        self.setDuration(position - self.start, set_media_stop=True)
+        other.trimStart(position)
 
         return other
 
