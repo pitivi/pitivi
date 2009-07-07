@@ -135,6 +135,18 @@ class Controller(object):
         self._dragging = None
         return True
 
+    @handler(_view, "key_press_event")
+    def key_press_event(self, item, target, event):
+        self._event_common(item, target, event)
+        kv = event.keyval
+        return self.key_press(kv)
+
+    @handler(_view, "key_release_event")
+    def key_release_event(self, item, target, event):
+        self._event_common(item, target, event)
+        kv = event.keyval
+        return self.key_release(kv)
+
 ## internal callbacks
 
     def _event_common(self, item, target, event):
@@ -193,4 +205,10 @@ class Controller(object):
         pass
 
     def leave(self, item, target):
+        pass
+
+    def key_press(self, keyval):
+        pass
+
+    def key_release(self, keyval):
         pass
