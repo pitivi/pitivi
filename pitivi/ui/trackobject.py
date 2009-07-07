@@ -120,12 +120,19 @@ class TimelineController(controller.Controller):
         self._context.editTo(position, priority)
 
     def _getMode(self):
-        s = self._last_event.get_state()
-        if s & gtk.gdk.SHIFT_MASK:
+        if self._shift_down:
             return self._context.RIPPLE
-        elif s & gtk.gdk.CONTROL_MASK:
+        elif self._control_down:
             return self._context.ROLL
         return self._context.DEFAULT
+
+    def key_press(self, keyval):
+        if self._dragging:
+            self._context.setMode(self._getMode())
+
+    def key_release(self, keyval):
+        if self._dragging:
+            self._context.setMode(self._getMode())
 
 class TrimHandle(View, goocanvas.Image, Zoomable):
 
@@ -196,8 +203,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             self._view.app.action_log.begin("move object")
 
         def _getMode(self):
-            s = self._last_event.get_state()
-            if s & gtk.gdk.SHIFT_MASK:
+            if self._shift_down:
                 return self._context.RIPPLE
             return self._context.DEFAULT
 
