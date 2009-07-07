@@ -54,6 +54,8 @@ class Controller(object):
     _last_event = None
     _pending_drag_start = None
     _pending_drag_end = False
+    _shift_down = False
+    _control_down = False
 
     def __init__(self, view=None):
         object.__init__(self)
@@ -139,6 +141,9 @@ class Controller(object):
         if not self._canvas:
             self._canvas = item.get_canvas()
         self._last_event = event
+        s = event.get_state()
+        self._shift_down = s & gtk.gdk.SHIFT_MASK
+        self._control_down = s & gtk.gdk.CONTROL_MASK
 
     def _drag_start(self, item, target, event):
         self.drag_start(item, target, event)
