@@ -99,13 +99,12 @@ class TimelineController(controller.Controller):
     def leave(self, unused, unused2):
         self._view.unfocus()
 
-    def drag_start(self, item, target, event):
-        pass
-
     def drag_end(self, item, target, event):
         self._view.timeline.rebuildEdges()
 
     def drag_start(self, item, target, event):
+        if not self._view.element.selected:
+            self._view.timeline.selection.setToObj(self._view.element, SELECT)
         tx = self._view.props.parent.get_transform()
         # store y offset for later priority calculation
         self._y_offset = tx[5]
@@ -113,9 +112,6 @@ class TimelineController(controller.Controller):
         self._mousedown = Point(self._mousedown[0], 0)
 
     def drag_end(self, item, target, event):
-        if not self._view.element.selected:
-            self._view.timeline.selection.setToObj(self._view.element, SELECT)
-
         self._context.finish()
         self._view.app.action_log.commit()
 
