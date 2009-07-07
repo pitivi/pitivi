@@ -116,7 +116,16 @@ class TimelineController(controller.Controller):
         x, y = pos
         position = Zoomable.pixelToNs(x)
         priority = int((y - self._y_offset) // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING))
+        self._context.setMode(self._getMode())
         self._context.editTo(position, priority)
+
+    def _getMode(self):
+        s = self._last_event.get_state()
+        if s & gtk.gdk.SHIFT_MASK:
+            return self._context.RIPPLE
+        elif s & gtk.gdk.CONTROL_MASK:
+            return self._context.ROLL
+        return self._context.DEFAULT
 
 class TrimHandle(View, goocanvas.Image, Zoomable):
 
@@ -185,6 +194,12 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self._view.element,
                 self._view.timeline.selection.getSelectedTrackObjs())
             self._view.app.action_log.begin("move object")
+
+        def _getMode(self):
+            s = self._last_event.get_state()
+            if s & gtk.gdk.SHIFT_MASK:
+                return self._context.RIPPLE
+            return self._context.DEFAULT
 
         def click(self, pos):
             mode = SELECT
