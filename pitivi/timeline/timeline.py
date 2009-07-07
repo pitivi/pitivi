@@ -963,6 +963,9 @@ class EditingContext(object):
             timeline_object.media_duration = media_dur
             timeline_object.priority = pri
 
+    def _getSpan(self, earliest, objs):
+        return max((obj.start + obj.duration for obj in objs)) - earliest
+
     def finish(self):
         """Clean up timeline for normal editing"""
         # TODO: post undo / redo action here
@@ -1014,6 +1017,8 @@ class EditingContext(object):
 
     def snap(self, snap):
         """Set whether edge snapping is currently enabled"""
+        if snap != self._snap:
+            self.editTo(self._last_position, self._last_priority)
         self._snap = snap
 
     def editTo(self, position, priority):
@@ -1052,6 +1057,9 @@ class MoveContext(EditingContext):
 
         self.default_originals = self._saveValues(timeline_objects)
 
+        # get list clips for ripple editing
+        ripple = set(timeline.getObjsAfterObj(focus))
+        
         # calculate offsets of clips relative to earliest time, min priority
         self.offsets = self._getOffsets(self.focus.start, self.focus.priority,
                 timeline_objects)
@@ -1064,6 +1072,14 @@ class MoveContext(EditingContext):
         self.ripple_offsets = self._getOffsets(self.earliest,
             self.min_priority, ripple)
 
+        # get the span over all clips for edge snapping
+        self.default_span = self._getSpan(self.earliest,
+            set(timeline_objects) | set((focus,)))
+        self.ripple_span = self._getSpan(self.earliest,
+            set(ripple) | set((focus,)))
+
+        # save default values
+        self.default_originals = self._saveValues(other)
         self.ripple_originals = self._saveValues(ripple)
 
     def setMode(self, mode):
@@ -1077,22 +1093,32 @@ class MoveContext(EditingContext):
     def _defaultTo(self, position, priority):
         position = max(0, position, self.focal_offset[0])
         priority = max(0, priority, self.focal_offset[1])
-        self.focus.setStart(position, snap = self._snap)
+        if self._snap:
+            position = self.timeline.snapToEdge(position, 
+                position + self.default_span)
+        self.focus.setStart(position)
         self.focus.priority = priority
 
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
-            obj.setStart(position + s_offset, snap=self._snap)
+            obj.setStart(position + s_offset)
             obj.priority = priority + p_offset
 
     def _finishRipple(self):
         self._restoreValues(self.ripple_originals)
 
     def _rippleTo(self, position, priority):
-        self.focus.setStart(position, snap = self._snap)
+        position = max(0, position - self.focal_offset[0])
+        priority = max(0, priority - self.focal_offset[1])
+        if self._snap:
+            position = self.timeline.snapToEdge(position, 
+                position + self.ripple_span)
+        self.focus.setStart(position)
         self.focus.priority = priority
-
+        for obj, (s_offset, p_offset) in self.offsets.iteritems():
+            obj.setStart(position + s_offset)
+            obj.priority = priority + p_offset
         for obj, (s_offset, p_offset) in self.ripple_offsets.iteritems():
-            obj.setStart(position + s_offset, snap=self._snap)
+            obj.setStart(position + s_offset)
             obj.priority = priority + p_offset
 
 class TrimStartContext(EditingContext):
