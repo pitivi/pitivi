@@ -640,6 +640,14 @@ class Link(object):
 # end values.
 # Bonus : GnlComposition already has all this information, we could maybe add
 # an action signal to it to drastically speed up this process.
+#
+# Alessandro: this is faster than having two separate lists. By keeping start
+# and end edges in the same list, we reduce the time we scan the list
+# of edges. In fact once we find a start edge at pos X, we then scan for an end
+# edge by starting at edges[X] and going forward, avoiding to rescan the edges
+# from 0 to X.
+# I don't see how exposing the gnl lists would make things faster, what's taking
+# time here is scanning the lists, and it's something you'd have to do anyway.
 class TimelineEdges(object):
     """
     Tracks start/stop values and offers convenience methods to find the
