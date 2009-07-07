@@ -139,12 +139,20 @@ class Controller(object):
     def key_press_event(self, item, target, event):
         self._event_common(item, target, event)
         kv = event.keyval
+        if kv in (gtk.keysyms.Shift_L, gtk.keysyms.Shift_R):
+            self._shift_down = True
+        elif kv in (gtk.keysyms.Control_L, gtk.keysyms.Control_R):
+            self._control_down = True
         return self.key_press(kv)
 
     @handler(_view, "key_release_event")
     def key_release_event(self, item, target, event):
         self._event_common(item, target, event)
         kv = event.keyval
+        if kv in (gtk.keysyms.Shift_L, gtk.keysyms.Shift_R):
+            self._shift_down = False
+        elif kv in (gtk.keysyms.Control_L, gtk.keysyms.Control_R):
+            self._control_down = False
         return self.key_release(kv)
 
 ## internal callbacks
