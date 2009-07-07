@@ -1130,7 +1130,7 @@ class TrimStartContext(EditingContext):
 
     def _rollTo(self, position, priority):
         earliest = self.focus.start - self.focus.in_point
-        self.focus.trimStart(max(position, earliest), snap=self.snap)
+        self.focus.trimStart(max(position, earliest))
         for obj in self.adjacent:
             duration = max(0, position - obj.start)
             obj.setDuration(duration, snap=False)
@@ -1150,10 +1150,12 @@ class TrimEndContext(EditingContext):
         self.adjacent_originals = self._saveValues(self.adjacent)
 
     def _rollTo(self, position, priority):
+        if self._snap:
+            position = self.timeline.snapToEdge(position)
         duration = max(0, position - self.focus.start)
-        self.focus.setDuration(duration, snap=self.snap)
+        self.focus.setDuration(duration)
         for obj in self.adjacent:
-            obj.trimStart(position, snap=False)
+            obj.trimStart(position)
 
     def _finishRoll(self):
         self._restoreValues(self.adjacent_originals)
