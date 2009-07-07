@@ -944,20 +944,24 @@ class EditingContext(object):
 
         return offsets
 
-    def _getTrackObjectValues(self, track_object):
-        return (track_object.start, track_object.duration,
-                track_object.in_point, track_object.media_duration,
-                track_object.priority)
+    def _getTimelineObjectValues(self, timeline_object):
+        return (timeline_object.start, timeline_object.duration,
+                timeline_object.in_point, timeline_object.media_duration,
+                timeline_object.priority)
 
-    def _restoreTrackObjectValues(self, values):
-        for track_object, (start, duration, in_point, media_dur, pri) in \
+    def _saveValues(self, timeline_objects):
+        return dict(((timeline_object,
+            self._getTimelineObjectValues(timeline_object))
+                for timeline_object in timeline_objects))
+
+    def _restoreValues(self, values):
+        for timeline_object, (start, duration, in_point, media_dur, pri) in \
             values.iteritems():
-            track_object.start = start
-            track_object.duration = duration
-            track_object.duration = duration
-            track_object.in_point = in_point
-            track_object.media_duration = media_dur
-            track_object.priority = pri
+            timeline_object.start = start
+            timeline_object.duration = duration
+            timeline_object.in_point = in_point
+            timeline_object.media_duration = media_dur
+            timeline_object.priority = pri
 
     def finish(self):
         """Clean up timeline for normal editing"""
@@ -1047,8 +1051,7 @@ class MoveContext(EditingContext):
             if timeline_object.priority < self.min_priority:
                 self.min_priority = timeline_object.min_priority
 
-            self.default_originals[track_object] = \
-                    self._getTrackObjectValues(track_object)
+        self.default_originals = self._saveValues(timeline_objects)
 
         # calculate offsets of clips relative to earliest time, min priority
         self.offsets = self._getOffsets(self.focus.start, self.focus.priority,
@@ -1057,18 +1060,33 @@ class MoveContext(EditingContext):
         self.focal_offset = (focus.start - self.earliest,
                 focus.priority - self.min_priority)
 
+        ripple = timeline.getObjsAfterObj(focus)
+
+        self.ripple_offsets = self._getOffsets(self.earliest,
+            self.min_priority, ripple)
+
+        self.ripple_originals = self._saveValues(ripple)
+
     def setMode(self, mode):
         if mode == self.ROLL:
             raise Exception("invalid mode ROLL")
         EditingContext.setMode(self, mode)
 
     def _finishDefault(self):
-        self._restoreTrackObjectValues(self.default_originals)
+        self._restoreValues(self.default_originals)
 
     def _defaultTo(self, position, priority):
-        position = max(position, self.focal_offset[0])
-        priority = max(priority, self.focal_offset[1])
+        position = max(0, position, self.focal_offset[0])
+        priority = max(0, priority, self.focal_offset[1])
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
+            obj.setStart(position + s_offset, snap=self._snap)
+            obj.priority = priority + p_offset
+
+    def _finishRipple(self):
+        self._restoreValues(self.ripple_originals)
+
+    def _rippleTo(self, position, priority):
+        for obj, (s_offset, p_offset) in self.ripple_offsets.iteritems():
             obj.setStart(position + s_offset, snap=self._snap)
             obj.priority = priority + p_offset
 
