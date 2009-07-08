@@ -20,7 +20,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
-from bisect import bisect_right
+from bisect import bisect_left
 
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
@@ -157,18 +157,18 @@ class TimelineObject(Signallable, Loggable):
 
         return self.track_objects[0].duration
 
-    def setDuration(self, position, snap=False, set_media_stop=True):
+    def setDuration(self, duration, snap=False, set_media_stop=True):
         """
         Sets the duration of the object.
 
-        If snap is L{True}, then L{position} will be modified if it is close
+        If snap is L{True}, then L{duration} will be modified if it is close
         to a timeline edge.
 
         If set_media_stop is L{False} then the change will not be propagated
         to the C{TrackObject}s this object controls.
 
-        @param position: The duration in nanoseconds.
-        @type position: L{long}
+        @param duration: The duration in nanoseconds.
+        @type duration: L{long}
         @param snap: Whether to snap to the nearest edge or not.
         @type snap: L{bool}
         @param set_media_stop: propagate changes to track objects.
@@ -179,17 +179,19 @@ class TimelineObject(Signallable, Loggable):
             raise TimelineError()
 
         if snap:
+            position = self.start + duration
             position = self.timeline.snapToEdge(position)
+            duration = position - self.start
 
-        position = min(position, self.factory.duration -
+        duration = min(duration, self.factory.duration -
                 self.track_objects[0].in_point)
 
         for track_object in self.track_objects:
-            track_object.setObjectDuration(position)
+            track_object.setObjectDuration(duration)
             if set_media_stop:
-                track_object.setObjectMediaDuration(position)
+                track_object.setObjectMediaDuration(duration)
 
-        self.emit('duration-changed', position)
+        self.emit('duration-changed', duration)
 
     def _getInPoint(self):
         if not self.track_objects:
@@ -361,7 +363,6 @@ class TimelineObject(Signallable, Loggable):
             # if self is not yet in a timeline, the caller needs to add "other"
             # as well when it adds self
             self.timeline.addTimelineObject(other)
-            self.timeline.rebuildEdges()
 
         self.emit('duration-changed', self.duration)
 
@@ -586,7 +587,6 @@ class Link(object):
 
         tracker = self.property_trackers.pop(timeline_object)
         tracker.disconnectFromObject(timeline_object)
-        tracker.disconnect_by_function(self._startChangedCb)
 
         timeline_object.link = None
 
@@ -659,6 +659,9 @@ class TimelineEdges(object):
         self.by_start = {}
         self.by_end = {}
         self.by_time = {}
+        self.by_object = {}
+        self.changed_objects = {}
+        self.enable_updates = True
 
     def addTimelineObject(self, timeline_object):
         """
@@ -670,6 +673,8 @@ class TimelineEdges(object):
         for obj in timeline_object.track_objects:
             self.addTrackObject(obj)
 
+        self._connectToTimelineObject(timeline_object)
+
     def removeTimelineObject(self, timeline_object):
         """
         Remove this object's start/stop values from the edges.
@@ -678,46 +683,151 @@ class TimelineEdges(object):
         to track.
         @type timeline_object: L{TimelineObject}
         """
+        self._disconnectFromTimelineObject(timeline_object)
         for obj in timeline_object.track_objects:
              self.removeTrackObject(obj)
 
+    def _connectToTimelineObject(self, timeline_object):
+        timeline_object.connect("track-object-added", self._trackObjectAddedCb)
+        timeline_object.connect("track-object-removed", self._trackObjectRemovedCb)
+
+    def _disconnectFromTimelineObject(self, timeline_object):
+        timeline_object.disconnect_by_func(self._trackObjectAddedCb)
+        timeline_object.disconnect_by_func(self._trackObjectRemovedCb)
+
+    def _trackObjectAddedCb(self, timeline_object, track_object):
+        self.addTrackObject(track_object)
+
+    def _trackObjectRemovedCb(self, timeline_object, track_object):
+        self.removeTrackObject(track_object)
+
     def addTrackObject(self, track_object):
+        if track_object in self.by_object:
+            raise TimelineError()
+
         start = track_object.start
         end = track_object.start + track_object.duration
-        self.addStart(start)
-        self.addEnd(end)
-        self.by_start[start].append(track_object)
-        self.by_end[end].append(track_object)
-        self.by_time[start].append(track_object)
-        self.by_time[end].append(track_object)
+
+        self.addStartEnd(start, end)
+
+        self.by_start.setdefault(start, []).append(track_object)
+        self.by_end.setdefault(end, []).append(track_object)
+        self.by_time.setdefault(start, []).append(track_object)
+        self.by_time.setdefault(end, []).append(track_object)
+        self.by_object[track_object] = (start, end)
+        self._connectToTrackObject(track_object)
 
     def removeTrackObject(self, track_object):
+        try:
+            del self.by_object[track_object]
+        except KeyError:
+            raise TimelineError()
+
         start = track_object.start
         end = track_object.start + track_object.duration
+        self.removeStartEnd(start, end)
 
-        self.by_start[start].remove(track_object)
-        self.by_end[end].remove(track_object)
-        if not self.by_start[start]:
-            if not self.by_end[end]:
-                self.removeStartEnd(start, end)
-            else:
-                self.removeStartEnd(start)
+        # remove start and end from self.by_start, self.by_end and self.by_time
+        for time, time_dict in ((start, self.by_start), (end, self.by_end),
+                (start, self.by_time), (end, self.by_time)):
+            time_dict[time].remove(track_object)
+            if not time_dict[time]:
+                del time_dict[time]
 
-    def addStart(self, start):
-        self.addEdge(start)
-        if start not in self.by_start:
-            self.by_start[start] = []
+        self._disconnectFromTrackObject(track_object)
 
-    def addEnd(self, end):
-        if end not in self.by_end:
-            self.addEdge(end)
-            self.by_end[end] = []
+    def _connectToTrackObject(self, track_object):
+        track_object.connect("start-changed", self._trackObjectStartChangedCb)
+        track_object.connect("duration-changed", self._trackObjectDurationChangedCb)
 
-    def addEdge(self, edge):
-         if edge not in self.by_time:
-            index = bisect_right(self.edges, edge)
-            self.edges.insert(index, edge)
-            self.by_time[edge] = []
+    def _disconnectFromTrackObject(self, track_object):
+        track_object.disconnect_by_func(self._trackObjectStartChangedCb)
+        track_object.disconnect_by_func(self._trackObjectDurationChangedCb)
+
+    def _trackObjectStartChangedCb(self, track_object, start):
+        start = track_object.start
+        end = start + track_object.duration
+
+        self.changed_objects[track_object] = (start, end)
+
+        self._maybeProcessChanges()
+
+    def _trackObjectDurationChangedCb(self, track_object, duration):
+        start = track_object.start
+        end = start + track_object.duration
+
+        self.changed_objects[track_object] = (start, end)
+
+        self._maybeProcessChanges()
+
+    def addStartEnd(self, start, end=None):
+        lo = 0
+        index = bisect_left(self.edges, start, lo=lo)
+        lo = index
+        self.edges.insert(index, start)
+
+        if end is not None:
+            index = bisect_left(self.edges, end, lo=lo)
+            self.edges.insert(index, end)
+
+    def removeStartEnd(self, start, end=None):
+        lo = 0
+        index = bisect_left(self.edges, start, lo=lo)
+        # check if start is a valid edge
+        if index == len(self.edges) or self.edges[index] != start:
+            raise TimelineError()
+
+        del self.edges[index]
+        lo = index
+
+        if end is not None:
+            index = bisect_left(self.edges, end, lo=lo)
+            # check if end is a valid edge
+            if index == len(self.edges) or self.edges[index] != end:
+                raise TimelineError()
+
+            del self.edges[index]
+
+    def enableUpdates(self):
+        self.enable_updates = True
+        self._maybeProcessChanges()
+
+    def _maybeProcessChanges(self):
+        if not self.enable_updates:
+            return
+
+        changed, self.changed_objects = self.changed_objects, {}
+
+        for track_object, (start, end) in changed.iteritems():
+            old_start, old_end = self.by_object[track_object]
+
+            for old_time, time, time_dict in ((old_start, start, self.by_start),
+                    (old_end, end, self.by_end), (old_start, start, self.by_time),
+                    (old_end, end, self.by_time)):
+                time_dict[old_time].remove(track_object)
+                if not time_dict[old_time]:
+                    del time_dict[old_time]
+                time_dict.setdefault(time, []).append(track_object)
+
+            old_edges = []
+            new_edges = []
+            if start != old_start:
+                old_edges.append(old_start)
+                new_edges.append(start)
+
+            if end != old_end:
+                old_edges.append(old_end)
+                new_edges.append(end)
+
+            if old_edges:
+                self.removeStartEnd(*old_edges)
+            if new_edges:
+                self.addStartEnd(*new_edges)
+
+            self.by_object[track_object] = (start, end)
+
+    def disableUpdates(self):
+        self.enable_updates = False
 
     def snapToEdge(self, start, end=None):
         """
@@ -840,7 +950,6 @@ class EditingContext(object):
     def finish(self):
         """Clean up timeline for normal editing"""
         # TODO: post undo / redo action here
-        self.timeline.rebuildEdges()
         self.timeline.enableUpdates()
 
     def setMode(self, mode):
@@ -1108,7 +1217,8 @@ class Timeline(Signallable, Loggable):
             obj.link.removeTimelineObject(obj)
 
         obj.timeline = None
-        self.rebuildEdges()
+
+        self.edges.removeTimelineObject(obj)
 
         self.emit("timeline-object-removed", obj)
 
@@ -1325,6 +1435,8 @@ class Timeline(Signallable, Loggable):
         for track in self.tracks:
             track.disableUpdates()
 
+        self.edges.disableUpdates()
+
         self.emit("disable-updates", True)
 
     def enableUpdates(self):
@@ -1333,6 +1445,8 @@ class Timeline(Signallable, Loggable):
         """
         for track in self.tracks:
             track.enableUpdates()
+
+        self.edges.enableUpdates()
 
         self.emit("disable-updates", False)
 

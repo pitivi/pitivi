@@ -100,7 +100,7 @@ class TimelineController(controller.Controller):
         self._view.unfocus()
 
     def drag_end(self, item, target, event):
-        self._view.timeline.rebuildEdges()
+        pass
 
     def drag_start(self, item, target, event):
         if not self._view.element.selected:

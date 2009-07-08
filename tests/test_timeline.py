@@ -21,6 +21,7 @@
 
 import gst
 
+from tests.common import FakeSourceFactory
 from pitivi.timeline.timeline import Timeline, TimelineObject, TimelineError, \
         Selection, Link, TimelineEdges, MoveContext, TrimStartContext, \
         TrimEndContext
@@ -487,32 +488,52 @@ class TestLink(TestCase):
         self.failUnlessEqual(timeline_object3.start, 8 * gst.SECOND)
 
 class TestTimelineEdges(TestCase):
-
     def setUp(self):
         TestCase.setUp(self)
         self.timeline_edges = TimelineEdges()
-        self.factory = StubFactory()
-        self.stream = AudioStream(gst.Caps('audio/x-raw-int'))
-        self.factory.addOutputStream(self.stream)
-        self.t1 = SourceTrackObject(self.factory, self.stream)
-        self.t2 = SourceTrackObject(self.factory, self.stream)
 
-    def tearDown(self):
-        del self.t1
-        del self.t2
-        del self.stream
-        del self.factory
-        del self.timeline_edges
-        TestCase.tearDown(self)
+    def testRemove(self):
+        self.timeline_edges.addStartEnd(0, 2000)
+        self.timeline_edges.removeStartEnd(0, 2000)
+
+    def testRemoveNotExisting(self):
+        self.failUnlessRaises(TimelineError,
+                self.timeline_edges.removeStartEnd, 1, 2000)
+
+        self.timeline_edges.addStartEnd(0, 2000)
+        self.failUnlessRaises(TimelineError,
+                self.timeline_edges.removeStartEnd, 1, 2000)
+        self.failUnlessRaises(TimelineError,
+                self.timeline_edges.removeStartEnd, 0, 2001)
 
     def testNoEdges(self):
-        # test that edges object returns (start, 0)
         self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (500, 0))
 
-    def testSingleEdge(self):
-        self.t1.start = 1000
-        self.t1.duration = 1000
-        self.timeline_edges.addTrackObject(self.t1)
+    def testSimple(self):
+        self.timeline_edges.addStartEnd(0, 2000)
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (0, 500))
+
+        self.timeline_edges.removeStartEnd(0, 2000)
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (500, 0))
+
+    def testSamePosition(self):
+        self.timeline_edges.addStartEnd(0, 2000)
+        self.timeline_edges.addStartEnd(0, 2000)
+
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (0, 500))
+
+        self.timeline_edges.removeStartEnd(0, 2000)
+
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (0, 500))
+
+        self.timeline_edges.removeStartEnd(0, 2000)
+    
+        self.failUnlessEqual(self.timeline_edges.snapToEdge(500, 1000), (500, 0))
+
+    def testSnapStart(self):
+        self.timeline_edges = TimelineEdges()
+
+        self.timeline_edges.addStartEnd(1000, 2000)
 
         # match start-left
         self.failUnlessEqual(self.timeline_edges.snapToEdge(900, 1400), (1000, 100))
@@ -535,6 +556,9 @@ class TestTimelineEdges(TestCase):
         # match both start and end, start is returned
         self.failUnlessEqual(self.timeline_edges.snapToEdge(1000, 2000), (1000, 0))
 
+    def testSnapDuration(self):
+        self.timeline_edges.addStartEnd(1000, 2000)
+
         # match start-left
         self.failUnlessEqual(self.timeline_edges.snapToEdge(900), (1000, 100))
 
@@ -553,26 +577,34 @@ class TestTimelineEdges(TestCase):
         # match end-right
         self.failUnlessEqual(self.timeline_edges.snapToEdge(3000), (2000, 1000))
 
-    def testSamePosition(self):
-        self.t2.start = 1000
-        self.t2.duration = 1000
-        self.timeline_edges.addTrackObject(self.t2)
-        self.testSingleEdge()
+    def testAdjacenctObjs(self):
+        factory = FakeSourceFactory()
+        stream = AudioStream(gst.Caps("meh"))
+        track_object1 = SourceTrackObject(factory, stream)
+        track_object2 = SourceTrackObject(factory, stream)
+        track_object1.start = 500 
+        track_object1.duration = 500
+        track_object2.start = 1000
+        track_object2.duration = 500
+        self.timeline_edges.addTrackObject(track_object1)
+        self.timeline_edges.addTrackObject(track_object2)
+        self.assertEquals(self.timeline_edges.getObjsIncidentOnTime(1000),
+            [track_object1, track_object2])
+        self.assertEquals(self.timeline_edges.getObjsAdjacentToStart(track_object2),
+            [track_object1])
+        self.assertEquals(self.timeline_edges.getObjsAdjacentToEnd(track_object1),
+            [track_object2])
 
-    def testGetAdjacenctObjs(self):
-        self.t1.start = 500 
-        self.t1.duration = 500
-        self.t2.start = 1000
-        self.t2.duration = 500
-        self.timeline_edges.addTrackObject(self.t1)
-        self.timeline_edges.addTrackObject(self.t2)
-        self.assertEquals(set(self.timeline_edges.getObjsIncidentOnTime(1000)),
-            set([self.t1, self.t2]))
-        self.assertEquals(set(self.timeline_edges.getObjsAdjacentToStart(self.t2)),
-            set([self.t1]))
-        self.assertEquals(set(self.timeline_edges.getObjsAdjacentToEnd(self.t1)),
-            set([self.t2]))
+        self.timeline_edges.removeTrackObject(track_object2)
+        self.assertEquals(self.timeline_edges.getObjsIncidentOnTime(1000),
+                [track_object1])
 
+        self.timeline_edges.removeTrackObject(track_object1)
+        self.assertEquals(self.timeline_edges.getObjsIncidentOnTime(1000), [])
+
+        track_object1.release()
+        track_object2.release()
+        del factory
 
 class TestTimelineAddFactory(TestCase):
     def setUp(self):
