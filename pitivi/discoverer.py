@@ -463,8 +463,15 @@ class Discoverer(Signallable, Loggable):
                 if format == gst.FORMAT_TIME:
                     self.current_duration = duration
 
-    def _getThumbnailFilenameFromPad(self, pad):
+    def _gettempdir(self):
         tmp = tempfile.gettempdir()
+        tmp = os.path.join(tmp, 'pitivi-%s' % os.getenv('USER'))
+        if not os.path.exists(tmp):
+            os.mkdir(tmp)
+        return tmp
+
+    def _getThumbnailFilenameFromPad(self, pad):
+        tmp = self._gettempdir()
         name = '%s.%s' % (self.current_uri, pad.get_name())
         name = urlsafe_b64encode(name) + '.png'
         filename = os.path.join(tmp, name)
