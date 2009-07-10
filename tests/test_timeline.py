@@ -709,32 +709,61 @@ class TestContexts(TestCase):
         self.other = set([self.track_object2, self.track_object3])
 
     def testMoveContext(self):
+        self.focus.start = 1 * gst.SECOND
+        self.track_object2.start = 10 * gst.SECOND
+        self.track_object3.start = 20 * gst.SECOND
         context = MoveContext(self.timeline, self.focus, self.other)
         context.editTo(gst.SECOND * 10, 0)
-        context.setMode(context.RIPPLE)
-        context.editTo(gst.SECOND * 20, 10)
-        context.setMode(context.DEFAULT)
         context.finish()
+
+        self.failUnlessEqual(self.focus.start, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 19 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 29 * gst.SECOND)
 
     def testTrimStartContext(self):
+        self.focus.start = 1 * gst.SECOND
+        self.focus.in_point = 3 * gst.SECOND
+        self.track_object2.start = 1 * gst.SECOND
+        self.track_object2.in_point = 10 * gst.SECOND
+        self.track_object3.start = 15 * gst.SECOND
+        self.track_object3.in_point = 20 * gst.SECOND
+
         context = TrimStartContext(self.timeline, self.focus, self.other)
         context.editTo(gst.SECOND * 10, 0)
-        context.setMode(context.RIPPLE)
-        context.editTo(gst.SECOND * 20, 10)
-        context.setMode(context.ROLL)
-        context.editTo(gst.SECOND * 10, 0)
-        context.setMode(context.DEFAULT)
         context.finish()
 
+        self.failUnlessEqual(self.focus.start, 10 * gst.SECOND)
+        self.failUnlessEqual(self.focus.in_point, 12 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.in_point, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 15 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.in_point, 20 * gst.SECOND)
+
+
     def testTrimEndContext(self):
+        self.focus.start = 1 * gst.SECOND
+        self.focus.in_point = 3 * gst.SECOND
+        self.focus.duration = 15 * gst.SECOND
+        self.track_object2.start = 1 * gst.SECOND
+        self.track_object2.in_point = 10 * gst.SECOND
+        self.track_object2.duration = 16 * gst.SECOND
+        self.track_object3.start = 15 * gst.SECOND
+        self.track_object3.in_point = 19 * gst.SECOND
+        self.track_object3.duration = 23 * gst.SECOND
+
         context = TrimEndContext(self.timeline, self.focus, self.other)
         context.editTo(gst.SECOND * 10, 0)
-        context.setMode(context.RIPPLE)
-        context.editTo(gst.SECOND * 20, 10)
-        context.setMode(context.ROLL)
-        context.editTo(gst.SECOND * 10, 0)
-        context.setMode(context.DEFAULT)
         context.finish()
+
+        self.failUnlessEqual(self.focus.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.focus.in_point, 3 * gst.SECOND)
+        self.failUnlessEqual(self.focus.duration, 9 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.in_point, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration, 16 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 15 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.in_point, 19 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration, 23 * gst.SECOND)
 
     def tearDown(self):
         del self.timeline_object1
