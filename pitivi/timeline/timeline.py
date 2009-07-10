@@ -1044,7 +1044,7 @@ class MoveContext(EditingContext):
                     self._getTrackObjectValues(track_object)
 
         # calculate offsets of clips relative to earliest time, min priority
-        self.offsets = self._getOffsets(self.earliest, self.min_priority,
+        self.offsets = self._getOffsets(self.focus.start, self.focus.priority,
                 timeline_objects)
 
         self.focal_offset = (focus.start - self.earliest,
@@ -1059,8 +1059,8 @@ class MoveContext(EditingContext):
         self._restoreTrackObjectValues(self.default_originals)
 
     def _defaultTo(self, position, priority):
-        position = max(0, position - self.focal_offset[0])
-        priority = max(0, priority - self.focal_offset[1])
+        position = max(position, self.focal_offset[0])
+        priority = max(priority, self.focal_offset[1])
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
             obj.setStart(position + s_offset, snap=self._snap)
             obj.priority = priority + p_offset
@@ -1076,8 +1076,8 @@ class MoveContext(EditingContext):
         @type priority: C{long}
         """
 
-        position = max(0, position - self.focal_offset[0])
-        priority = max(0, priority - self.focal_offset[1])
+        position = max(position, self.focal_offset[0])
+        priority = max(priority, self.focal_offset[1])
         self.focus.setStart(position, snap = self._snap)
         self.focus.priority = priority
 

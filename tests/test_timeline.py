@@ -720,6 +720,21 @@ class TestContexts(TestCase):
         self.failUnlessEqual(self.track_object2.start, 19 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.start, 29 * gst.SECOND)
 
+    def testMoveContextFocusNotEarliest(self):
+        self.focus.start = 10 * gst.SECOND
+        self.focus.duration = 5 * gst.SECOND
+        self.track_object2.start = 1 * gst.SECOND
+        self.track_object2.duration = 9 * gst.SECOND
+        self.track_object3.start = 11 * gst.SECOND
+        self.track_object3.duration = 10 * gst.SECOND
+        context = MoveContext(self.timeline, self.focus, self.other)
+        context.editTo(20 * gst.SECOND, 0)
+        context.finish()
+
+        self.failUnlessEqual(self.focus.start, 20 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 21 * gst.SECOND)
+
     def testTrimStartContext(self):
         self.focus.start = 1 * gst.SECOND
         self.focus.in_point = 3 * gst.SECOND
