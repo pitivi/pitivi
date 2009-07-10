@@ -31,6 +31,13 @@ from pitivi.utils import UNKNOWN_DURATION
 
 from common import SignalMonitor, TestCase, StubFactory
 
+def scrubTo(lower, upper, steps, final):
+    """Simulate the user scrubbing the cursor by generating a stream of random
+    integers, enter """
+    for i in xrange(0, steps):
+        yield random.randint(lower, upper)
+    yield final
+
 class TimelineSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
         SignalMonitor.__init__(self, track_object, 'start-changed',
@@ -736,40 +743,96 @@ class TestContexts(TestCase):
         self.other = set([self.track_object2, self.track_object3])
 
     def testMoveContext(self):
-        self.focus.start = 1 * gst.SECOND
-        self.track_object2.start = 10 * gst.SECOND
-        self.track_object3.start = 20 * gst.SECOND
-        context = MoveContext(self.timeline, self.focus, self.other)
+        # set up the initial state of the timeline and create the track object
+        # [focus]     [t2   ]     [t3     ]
+        self.focus.start = 0
+        self.focus.duration = gst.SECOND * 5
+        self.track_object2.start = 15 * gst.SECOND
+        self.track_object3.start = 25 * gst.SECOND
+        context = MoveContext(self.timeline, self.focus, set())
+
+        # make an edit, check that the edit worked as expected
+        #    [focus]  [t2   ]     [t3     ]
         context.editTo(gst.SECOND * 10, 0)
+        self.failUnlessEqual(self.focus.start, gst.SECOND * 10)
+        self.failUnlessEqual(self.focus.duration,  gst.SECOND * 5)
+        self.failUnlessEqual(self.focus.in_point, 0)
+        self.failUnlessEqual(self.track_object2.start, gst.SECOND * 15)
+        self.failUnlessEqual(self.track_object3.start, gst.SECOND * 25)
+
+        # change to the ripple mode, check that the edit worked as expected
+        #            [focus]  [t2   ]     [t3     ]
+        context.setMode(context.RIPPLE)
+        context.editTo(gst.SECOND * 20, 0)
+        self.failUnlessEqual(self.focus.start, gst.SECOND * 20)
+        self.failUnlessEqual(self.focus.duration,  gst.SECOND * 5)
+        self.failUnlessEqual(self.focus.in_point, 0)
+        self.failUnlessEqual(self.track_object2.start, gst.SECOND * 35)
+        self.failUnlessEqual(self.track_object3.start, gst.SECOND * 45)
+
+        # change back to default mode, and make sure this works as expected
+        #             [t2   ]     [t3     ]
+        #            [focus]
+        context.setMode(context.DEFAULT)
+        self.failUnlessEqual(self.focus.start, gst.SECOND * 20)
+        self.failUnlessEqual(self.focus.duration,  gst.SECOND * 5)
+        self.failUnlessEqual(self.focus.in_point, 0)
+        self.failUnlessEqual(self.track_object2.start, gst.SECOND * 15)
+        self.failUnlessEqual(self.track_object3.start, gst.SECOND * 25)
+
         context.finish()
 
-        self.failUnlessEqual(self.focus.start, 10 * gst.SECOND)
-        self.failUnlessEqual(self.track_object2.start, 19 * gst.SECOND)
-        self.failUnlessEqual(self.track_object3.start, 29 * gst.SECOND)
+        self.failUnlessEqual(self.focus.start, 20 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 15 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 25 * gst.SECOND)
 
     def testMoveContextFocusNotEarliest(self):
+        #     [t2  ][focus]  [t3     ]
         self.focus.start = 10 * gst.SECOND
         self.focus.duration = 5 * gst.SECOND
         self.track_object2.start = 1 * gst.SECOND
         self.track_object2.duration = 9 * gst.SECOND
-        self.track_object3.start = 11 * gst.SECOND
+        self.track_object3.start = 15 * gst.SECOND
         self.track_object3.duration = 10 * gst.SECOND
-        context = MoveContext(self.timeline, self.focus, self.other)
-        context.editTo(20 * gst.SECOND, 0)
-        context.finish()
+        other = set([self.track_object2])
 
+        context = MoveContext(self.timeline, self.focus, other)
+        context.editTo(20 * gst.SECOND, 0)
+
+        #                           [t2  ][focus] 
+        #                    [t3     ]
         self.failUnlessEqual(self.focus.start, 20 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)
-        self.failUnlessEqual(self.track_object3.start, 21 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 15 * gst.SECOND)
+
+        context.setMode(context.RIPPLE)
+
+        #                            [t2  ][focus]  [t3     ]
+        self.failUnlessEqual(self.focus.start, 20 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 25 * gst.SECOND)
+
+        context.setMode(context.DEFAULT)
+
+        #                           [t2  ][focus] 
+        #                    [t3     ]
+        self.failUnlessEqual(self.focus.start, 20 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 15 * gst.SECOND)
+
+        context.finish()
 
     def testTrimStartContext(self):
         self.focus.start = 1 * gst.SECOND
         self.focus.in_point = 3 * gst.SECOND
+        self.focus.duration = 20 * gst.SECOND
         self.track_object2.start = 1 * gst.SECOND
         self.track_object2.in_point = 10 * gst.SECOND
         self.track_object3.start = 15 * gst.SECOND
         self.track_object3.in_point = 20 * gst.SECOND
 
+        # set up the initial state of the timeline and create the track object
+        # [focus]     [t2   ]     [t3     ]
         context = TrimStartContext(self.timeline, self.focus, self.other)
         context.editTo(gst.SECOND * 10, 0)
         context.finish()
