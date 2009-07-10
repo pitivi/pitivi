@@ -99,9 +99,6 @@ class TimelineController(controller.Controller):
     def leave(self, unused, unused2):
         self._view.unfocus()
 
-    def drag_end(self, item, target, event):
-        pass
-
     def drag_start(self, item, target, event):
         if not self._view.element.selected:
             self._view.timeline.selection.setToObj(self._view.element, SELECT)
