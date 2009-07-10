@@ -920,7 +920,7 @@ class EditingContext(object):
         # make sure focus is not in secondary object list
         other.difference_update(set((focus,)))
 
-        self.other = other 
+        self.other = other
         self.focus = focus
         self.timeline = timeline
         self._snap = True
@@ -929,23 +929,28 @@ class EditingContext(object):
 
         self.timeline.disableUpdates()
 
-    def _getOffsets(self, start_offset, priority_offset, objs):
-        return dict(((obj, (obj.start - start_offset, obj.priority -
-            priority_offset)) for obj in objs))
+    def _getOffsets(self, start_offset, priority_offset, timeline_objects):
+        offsets = {}
+        for timeline_object in timeline_objects:
+            offsets[timeline_object] = (timeline_object.start - start_offset,
+                        timeline_object.priority - priority_offset)
 
-    def _saveValues(self, objs):
-        return dict(((obj, (obj.start, obj.duration, obj.in_point,
-            obj.media_duration, obj.priority)) for obj in objs))
+        return offsets
 
-    def _restoreValues(self, values):
-        for obj, (start, duration, in_point, media_dur, pri) in \
+    def _getTrackObjectValues(self, track_object):
+        return (track_object.start, track_object.duration,
+                track_object.in_point, track_object.media_duration,
+                track_object.priority)
+
+    def _restoreTrackObjectValues(self, values):
+        for track_object, (start, duration, in_point, media_dur, pri) in \
             values.iteritems():
-            obj.start = start
-            obj.duration = duration
-            obj.duration = duration
-            obj.in_point = in_point
-            obj.media_duration = media_dur
-            obj.priority = pri
+            track_object.start = start
+            track_object.duration = duration
+            track_object.duration = duration
+            track_object.in_point = in_point
+            track_object.media_duration = media_dur
+            track_object.priority = pri
 
     def finish(self):
         """Clean up timeline for normal editing"""
@@ -1023,21 +1028,27 @@ class MoveContext(EditingContext):
         self.earliest = focus.start
         self.min_priority = focus.priority
         
-        tlobjs = set((obj.timeline_object for obj in other))
-        if other:
-            self.earliest = min(self.earliest, min((obj.start for obj in
-                tlobjs)))
-            self.min_priority = min(self.min_priority, min((obj.priority for obj in
-                tlobjs)))
-        
+        timeline_objects = []
+        self.default_originals = {}
+        for track_object in other:
+            timeline_object = track_object.timeline_object
+            timeline_objects.append(timeline_object)
+
+            if timeline_object.start < self.earliest:
+                self.earliest = timeline_object.start
+
+            if timeline_object.priority < self.min_priority:
+                self.min_priority = timeline_object.min_priority
+
+            self.default_originals[track_object] = \
+                    self._getTrackObjectValues(track_object)
+
         # calculate offsets of clips relative to earliest time, min priority
         self.offsets = self._getOffsets(self.earliest, self.min_priority,
-            tlobjs)
-        self.focal_offset = (focus.start - self.earliest, 
-            focus.priority - self.min_priority)
+                timeline_objects)
 
-        # save default values
-        self.default_originals = self._saveValues(other)
+        self.focal_offset = (focus.start - self.earliest,
+                focus.priority - self.min_priority)
 
     def setMode(self, mode):
         if mode == self.ROLL:
@@ -1045,7 +1056,7 @@ class MoveContext(EditingContext):
         EditingContext.setMode(self, mode)
 
     def _finishDefault(self):
-        self._restoreValues(self.default_originals)
+        self._restoreTrackObjectValues(self.default_originals)
 
     def _defaultTo(self, position, priority):
         position = max(0, position - self.focal_offset[0])
