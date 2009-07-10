@@ -280,7 +280,6 @@ class TrackObject(Signallable, Loggable):
         self.interpolators = {}
         self._rebuild_interpolators = True
         self.gnl_object = obj = self._makeGnlObject()
-        self.trimmed_start = 0
         self.keyframes = []
 
         if start != 0:
@@ -362,7 +361,6 @@ class TrackObject(Signallable, Loggable):
         other = cls(self.factory, self.stream, start=self.start,
             duration=self.duration, in_point=self.in_point,
             media_duration=self.media_duration, priority=self.priority)
-        other.trimmed_start = self.trimmed_start
 
         if self.track is not None:
             self.track.addTrackObject(other)
@@ -483,15 +481,16 @@ class TrackObject(Signallable, Loggable):
 
     def trimObjectStart(self, position):
         # clamp position to be inside the object
-        position = max(self.start - self.trimmed_start, position)
+        position = max(self.start - self.in_point, position)
         position = min(position, self.start + self.duration)
         new_duration = max(0, self.start + self.duration - position)
 
         delta = position - self.start
-        self.trimmed_start += delta
+        in_point = self.in_point
+        in_point += delta
         self.setObjectStart(position)
         self.setObjectDuration(new_duration)
-        self.setObjectInPoint(self.trimmed_start)
+        self.setObjectInPoint(in_point)
         self.setObjectMediaDuration(new_duration)
 
     def split(self, position, snap=False):

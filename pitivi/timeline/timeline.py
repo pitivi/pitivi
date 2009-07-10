@@ -181,8 +181,8 @@ class TimelineObject(Signallable, Loggable):
         if snap:
             position = self.timeline.snapToEdge(position)
 
-        trimmed_start = self.track_objects[0].trimmed_start
-        position = min(position, self.factory.duration - trimmed_start)
+        position = min(position, self.factory.duration -
+                self.track_objects[0].in_point)
 
         for track_object in self.track_objects:
             track_object.setObjectDuration(position)

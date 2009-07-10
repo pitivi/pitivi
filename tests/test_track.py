@@ -147,6 +147,7 @@ class TestTrackObject(TestCase):
 
         # start at 2 seconds with length 10 seconds
         obj.start = 2 * gst.SECOND
+        obj.in_point = 1 * gst.SECOND
         obj.duration = 10 * gst.SECOND
 
         self.failUnlessEqual(self.monitor.duration_changed_count, 1)
@@ -156,7 +157,7 @@ class TestTrackObject(TestCase):
         time = 2 * gst.SECOND
         obj.trimStart(time)
         self.failUnlessEqual(obj.start, time)
-        self.failUnlessEqual(obj.in_point, 0)
+        self.failUnlessEqual(obj.in_point, 1 * gst.SECOND)
         self.failUnlessEqual(obj.duration, 10 * gst.SECOND)
         self.failUnlessEqual(obj.rate, 1)
         # we didn't change the start/in-point/duration (it was the same as before)
@@ -169,7 +170,7 @@ class TestTrackObject(TestCase):
         time = 12 * gst.SECOND
         obj.trimStart(time)
         self.failUnlessEqual(obj.start, time)
-        self.failUnlessEqual(obj.in_point, 10 * gst.SECOND)
+        self.failUnlessEqual(obj.in_point, 11 * gst.SECOND)
         self.failUnlessEqual(obj.duration, 0)
         self.failUnlessEqual(obj.rate, 1)
         self.failUnlessEqual(monitor.start_changed_count, 1)
@@ -178,11 +179,11 @@ class TestTrackObject(TestCase):
 
         # trim before lower edge, should clamp
         monitor = TrackSignalMonitor(obj)
-        time = 1 * gst.SECOND
+        time = 0 * gst.SECOND
         obj.trimStart(time)
-        self.failUnlessEqual(obj.start, 2 * gst.SECOND)
+        self.failUnlessEqual(obj.start, 1 * gst.SECOND)
         self.failUnlessEqual(obj.in_point, 0)
-        self.failUnlessEqual(obj.duration, 10 * gst.SECOND)
+        self.failUnlessEqual(obj.duration, 11 * gst.SECOND)
         self.failUnlessEqual(obj.rate, 1)
         self.failUnlessEqual(monitor.start_changed_count, 1)
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
@@ -193,7 +194,7 @@ class TestTrackObject(TestCase):
         time = 13 * gst.SECOND
         obj.trimStart(time)
         self.failUnlessEqual(obj.start, 12 * gst.SECOND)
-        self.failUnlessEqual(obj.in_point, 10 * gst.SECOND)
+        self.failUnlessEqual(obj.in_point, 11 * gst.SECOND)
         self.failUnlessEqual(obj.duration, 0)
         self.failUnlessEqual(obj.rate, 1)
         self.failUnlessEqual(monitor.start_changed_count, 1)
@@ -205,7 +206,7 @@ class TestTrackObject(TestCase):
         time = 4 * gst.SECOND
         obj.trimStart(time)
         self.failUnlessEqual(obj.start, time)
-        self.failUnlessEqual(obj.in_point, 2 * gst.SECOND)
+        self.failUnlessEqual(obj.in_point, 3 * gst.SECOND)
         self.failUnlessEqual(obj.duration, 8 * gst.SECOND)
         self.failUnlessEqual(obj.rate, 1)
         self.failUnlessEqual(monitor.start_changed_count, 1)
