@@ -80,6 +80,7 @@ class Project(Signallable, Loggable):
         self.urichanged = False
         self.format = None
         self.sources = SourceList()
+        self.sources.connect("source-removed", self._sourceRemovedCb)
 
         self.settingssigid = 0
         self._dirty = False
@@ -189,3 +190,6 @@ class Project(Signallable, Loggable):
 
     def hasUnsavedModifications(self):
         return self._dirty
+
+    def _sourceRemovedCb(self, sourclist, uri, factory):
+        pass
