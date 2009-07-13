@@ -719,14 +719,18 @@ class TimelineEdges(object):
 
     def removeTrackObject(self, track_object):
         try:
-            del self.by_object[track_object]
+            old_start, old_end = self.by_object[track_object]
         except KeyError:
             raise TimelineError()
 
-        self.changed_objects.pop(track_object, None)
+        try:
+            del self.changed_objects[track_object]
+            start = old_start
+            end = old_end
+        except KeyError:
+            start = track_object.start
+            end = track_object.start + track_object.duration
 
-        start = track_object.start
-        end = track_object.start + track_object.duration
         self.removeStartEnd(start, end)
 
         # remove start and end from self.by_start, self.by_end and self.by_time
