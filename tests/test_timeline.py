@@ -312,6 +312,33 @@ class TestTimelineAddRemoveTimelineObjects(TestCase):
 
         timeline.removeTimelineObject(timeline_object2)
 
+    def testRemoveFactory(self):
+        factory = StubFactory()
+        stream = AudioStream(gst.Caps("audio/x-raw-int"))
+        factory.addOutputStream(stream)
+        track = Track(stream)
+        track_object1 = SourceTrackObject(factory, stream)
+        track.addTrackObject(track_object1)
+        track_object2 = SourceTrackObject(factory, stream)
+        track.addTrackObject(track_object2)
+        track_object3 = SourceTrackObject(factory, stream)
+        track.addTrackObject(track_object3)
+        timeline_object1 = TimelineObject(factory)
+        timeline_object1.addTrackObject(track_object1)
+        timeline_object2 = TimelineObject(factory)
+        timeline_object2.addTrackObject(track_object2)
+        timeline_object3 = TimelineObject(factory)
+        timeline_object3.addTrackObject(track_object3)
+        timeline = Timeline()
+        timeline.addTrack(track)
+        timeline.addTimelineObject(timeline_object1)
+        timeline.addTimelineObject(timeline_object2)
+        timeline.addTimelineObject(timeline_object3)
+
+        self.failUnlessEqual(len(timeline.timeline_objects), 3)
+        timeline.removeFactory(factory)
+        self.failUnlessEqual(len(timeline.timeline_objects), 0)
+
 class TestLink(TestCase):
 
     def test(self):
