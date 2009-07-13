@@ -723,6 +723,8 @@ class TimelineEdges(object):
         except KeyError:
             raise TimelineError()
 
+        self.changed_objects.pop(track_object, None)
+
         start = track_object.start
         end = track_object.start + track_object.duration
         self.removeStartEnd(start, end)
