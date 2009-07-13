@@ -37,6 +37,7 @@ from timelinecanvas import TimelineCanvas
 from timelinecontrols import TimelineControls
 from pitivi.receiver import receiver, handler
 from zoominterface import Zoomable
+from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
@@ -336,9 +337,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         x1, y1, x2, y2 = self._controls.get_allocation()
         offset = 10 + (x2 - x1)
         x, y = self._canvas.convert_from_pixels(x - offset, y)
+        priority = int((y // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
         delta = Zoomable.pixelToNs(x)
         for obj in self._temp_objects:
             obj.setStart(max(0, delta), snap=True)
+            obj.priority = priority
             delta += obj.duration
 
 
