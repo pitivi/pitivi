@@ -5,6 +5,7 @@ pitivi/check.py
 pitivi/discoverer.py
 pitivi/application.py
 pitivi/project.py
+pitivi/projectmanager.py
 pitivi/settings.py
 pitivi/stream.py
 pitivi/utils.py
