@@ -1019,7 +1019,6 @@ class EditingContext(object):
     def editTo(self, position, priority):
         self._last_position = position
         self._last_priority = priority
-        self._editFocus(position, priority)
         if self._mode == self.DEFAULT:
             self._defaultTo(position, priority)
         if self._mode == self.ROLL:
@@ -1078,6 +1077,9 @@ class MoveContext(EditingContext):
     def _defaultTo(self, position, priority):
         position = max(0, position, self.focal_offset[0])
         priority = max(0, priority, self.focal_offset[1])
+        self.focus.setStart(position, snap = self._snap)
+        self.focus.priority = priority
+
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
             obj.setStart(position + s_offset, snap=self._snap)
             obj.priority = priority + p_offset
@@ -1086,25 +1088,12 @@ class MoveContext(EditingContext):
         self._restoreValues(self.ripple_originals)
 
     def _rippleTo(self, position, priority):
+        self.focus.setStart(position, snap = self._snap)
+        self.focus.priority = priority
+
         for obj, (s_offset, p_offset) in self.ripple_offsets.iteritems():
             obj.setStart(position + s_offset, snap=self._snap)
             obj.priority = priority + p_offset
-
-    def _editFocus(self, position, priority):
-        """Set the strart, priority of context objects relative to the focus
-        object. 
-        
-        @param position: the start time relative to the focal object
-        @type postion: C{long}
-
-        @param priority: the priority relative to thefocal object
-        @type priority: C{long}
-        """
-
-        position = max(position, self.focal_offset[0])
-        priority = max(priority, self.focal_offset[1])
-        self.focus.setStart(position, snap = self._snap)
-        self.focus.priority = priority
 
 class TrimStartContext(EditingContext):
 
@@ -1114,6 +1103,8 @@ class TrimStartContext(EditingContext):
         self.adjacent_originals = self._saveValues(self.adjacent)
 
     def _rollTo(self, position, priority):
+        earliest = self.focus.start - self.focus.in_point
+        self.focus.trimStart(max(position, earliest), snap=self.snap)
         for obj in self.adjacent:
             duration = max(0, position - obj.start)
             obj.setDuration(duration, snap=False)
@@ -1121,8 +1112,9 @@ class TrimStartContext(EditingContext):
     def _finishRoll(self):
         self._restoreValues(self.adjacent_originals)
 
-    def _editFocus(self, position, priority):
-        self.focus.trimStart(position, snap=self.snap)
+    def _defaultTo(self, position, priority):
+        earliest = self.focus.start - self.focus.in_point
+        self.focus.trimStart(max(position, earliest), snap=self.snap)
 
 class TrimEndContext(EditingContext):
 
@@ -1132,13 +1124,15 @@ class TrimEndContext(EditingContext):
         self.adjacent_originals = self._saveValues(self.adjacent)
 
     def _rollTo(self, position, priority):
+        duration = max(0, position - self.focus.start)
+        self.focus.setDuration(duration, snap=self.snap)
         for obj in self.adjacent:
             obj.trimStart(position, snap=False)
 
     def _finishRoll(self):
         self._restoreValues(self.adjacent_originals)
 
-    def _editFocus(self, position, priority):
+    def _defaultTo(self, position, priority):
         duration = max(0, position - self.focus.start)
         self.focus.setDuration(duration, snap=self.snap)
 
