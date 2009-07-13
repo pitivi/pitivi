@@ -192,4 +192,4 @@ class Project(Signallable, Loggable):
         return self._dirty
 
     def _sourceRemovedCb(self, sourclist, uri, factory):
-        pass
+        self.timeline.removeFactory(factory)
