@@ -1244,6 +1244,15 @@ class Timeline(Signallable, Loggable):
                 track = track_object.track
                 track.removeTrackObject(track_object)
 
+    def removeFactory(self, factory):
+        """Remove every instance factory in the timeline
+        @param factory: the factory to remove from the timeline
+        """
+        objs = [obj for obj in self.timeline_objects if obj.factory is
+            factory]
+        for obj in objs:
+            self.removeTimelineObject(obj, deep=True)
+
     # FIXME : shouldn't this be made more generic (i.e. not specific to source factories) ?
     # FIXME : Maybe it should be up to the ObjectFactory to create the TimelineObject since
     #    it would know the exact type of TimelineObject to create with what properties (essential
