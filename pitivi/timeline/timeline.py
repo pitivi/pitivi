@@ -719,7 +719,7 @@ class TimelineEdges(object):
 
     def removeTrackObject(self, track_object):
         try:
-            old_start, old_end = self.by_object[track_object]
+            old_start, old_end = self.by_object.pop(track_object)
         except KeyError:
             raise TimelineError()
 
