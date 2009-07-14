@@ -1276,7 +1276,7 @@ class Timeline(Signallable, Loggable):
             raise TimelineError()
 
         if stream_map is None:
-            stream_map = self.getSourceFactoryStreamMap(factory)
+            stream_map = self._getSourceFactoryStreamMap(factory)
             if len(stream_map) < len(output_streams):
                 # we couldn't assign each stream to a track automatically,
                 # error out and require the caller to pass a stream_map
@@ -1297,8 +1297,7 @@ class Timeline(Signallable, Loggable):
         self.addTimelineObject(timeline_object)
         return timeline_object
 
-    # FIXME : Shouldn't this be a private method ??
-    def getSourceFactoryStreamMap(self, factory):
+    def _getSourceFactoryStreamMap(self, factory):
         # track.stream -> track
         track_stream_to_track_map = dict((track.stream, track)
                 for track in self.tracks)
