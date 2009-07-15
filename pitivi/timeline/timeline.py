@@ -1043,6 +1043,7 @@ class MoveContext(EditingContext):
         # calculate minimum start time and priority
         self.earliest = focus.start
         self.min_priority = focus.priority
+        self.latest = focus.start + focus.duration
         
         timeline_objects = []
         self.default_originals = {}
@@ -1053,15 +1054,14 @@ class MoveContext(EditingContext):
             if timeline_object.start < self.earliest:
                 self.earliest = timeline_object.start
 
+            self.latest = max(self.latest, timeline_object.start +
+                timeline_object.duration)
+
             if timeline_object.priority < self.min_priority:
                 self.min_priority = timeline_object.min_priority
 
         self.default_originals = self._saveValues(timeline_objects)
 
-        # get list clips for ripple editing
-        ripple = set(timeline.getObjsAfterObj(focus))
-        
-        # calculate offsets of clips relative to earliest time, min priority
         self.offsets = self._getOffsets(self.focus.start, self.focus.priority,
                 timeline_objects)
 
@@ -1069,15 +1069,10 @@ class MoveContext(EditingContext):
                 focus.priority - self.min_priority)
 
         ripple = timeline.getObjsAfterObj(focus)
-
-        self.ripple_offsets = self._getOffsets(self.earliest,
-            self.min_priority, ripple)
-
         # get the span over all clips for edge snapping
-        self.default_span = self._getSpan(self.earliest,
-            set(timeline_objects) | set((focus,)))
-        self.ripple_span = self._getSpan(self.earliest,
-            set(ripple) | set((focus,)))
+        self.default_span = self.latest - self.earliest
+
+
 
         # save default values
         self.default_originals = self._saveValues(other)
