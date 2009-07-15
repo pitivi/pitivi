@@ -1076,8 +1076,12 @@ class MoveContext(EditingContext):
             self.focus.priority, ripple)
 
         # get the span over all clips for ripple editing
-        self.ripple_span = (max((obj.start + obj.duration for obj in ripple)) -
-            self.earliest)
+
+        latest = self.latest
+        for timeline_object in ripple:
+            latest = max(latest, timeline_object.start +
+                timeline_object.duration)
+        self.ripple_span = latest - self.earliest
 
         # save default values
         self.default_originals = self._saveValues(other)
