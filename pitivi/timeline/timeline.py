@@ -1108,8 +1108,8 @@ class MoveContext(EditingContext):
         self._restoreValues(self.ripple_originals)
 
     def _rippleTo(self, position, priority):
-        position = max(0, position - self.focal_offset[0])
-        priority = max(0, priority - self.focal_offset[1])
+        position = max(0, position, self.focal_offset[0])
+        priority = max(0, priority, self.focal_offset[1])
         if self._snap:
             position = self.timeline.snapToEdge(position, 
                 position + self.ripple_span)
