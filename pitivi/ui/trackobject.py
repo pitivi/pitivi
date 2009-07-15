@@ -92,6 +92,7 @@ def text_size(text):
 class TimelineController(controller.Controller):
 
     _cursor = ARROW
+    _context = None
 
     def enter(self, unused, unused2):
         self._view.focus()
@@ -110,6 +111,7 @@ class TimelineController(controller.Controller):
 
     def drag_end(self, item, target, event):
         self._context.finish()
+        self._context = None
         self._view.app.action_log.commit()
 
     def set_pos(self, item, pos):
@@ -127,11 +129,11 @@ class TimelineController(controller.Controller):
         return self._context.DEFAULT
 
     def key_press(self, keyval):
-        if self._dragging:
+        if self._context:
             self._context.setMode(self._getMode())
 
     def key_release(self, keyval):
-        if self._dragging:
+        if self._context:
             self._context.setMode(self._getMode())
 
 class TrimHandle(View, goocanvas.Image, Zoomable):
