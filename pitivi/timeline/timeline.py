@@ -1068,11 +1068,16 @@ class MoveContext(EditingContext):
         self.focal_offset = (focus.start - self.earliest,
                 focus.priority - self.min_priority)
 
-        ripple = timeline.getObjsAfterObj(focus)
         # get the span over all clips for edge snapping
         self.default_span = self.latest - self.earliest
 
+        ripple = timeline.getObjsAfterTime(self.latest)
+        self.ripple_offsets = self._getOffsets(self.focus.start,
+            self.focus.priority, ripple)
 
+        # get the span over all clips for ripple editing
+        self.ripple_span = (max((obj.start + obj.duration for obj in ripple)) -
+            self.earliest)
 
         # save default values
         self.default_originals = self._saveValues(other)
