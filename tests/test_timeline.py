@@ -822,6 +822,25 @@ class TestContexts(TestCase):
 
         context.finish()
 
+    def testNothingToRipple(self):
+        self.focus.start = 20 * gst.SECOND
+        self.focus.duration = 5 * gst.SECOND
+        self.track_object2.start = 10 * gst.SECOND
+        self.track_object2.duration = 1 * gst.SECOND
+        self.track_object3.start = 11 * gst.SECOND
+        self.track_object3.duration = 1 * gst.SECOND
+
+        context = MoveContext(self.timeline, self.focus, set())
+        context.setMode(context.RIPPLE)
+        context.editTo(10 * gst.SECOND, 0)
+
+        self.failUnlessEqual(self.focus.start, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 11 * gst.SECOND)
+
+
+        #TODO: test trim context ripple modes when implemented
+
     def testTrimStartContext(self):
         self.focus.start = 1 * gst.SECOND
         self.focus.in_point = 3 * gst.SECOND
@@ -869,6 +888,14 @@ class TestContexts(TestCase):
         self.failUnlessEqual(self.track_object3.start, 15 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.in_point, 19 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.duration, 23 * gst.SECOND)
+
+    def testEmptyOther(self):
+        context = MoveContext(self.timeline, self.focus, set())
+        context.finish()
+        context = TrimStartContext(self.timeline, self.focus, set())
+        context.finish()
+        context = TrimEndContext(self.timeline, self.focus, set())
+        context.finish()
 
     def tearDown(self):
         del self.timeline_object1
