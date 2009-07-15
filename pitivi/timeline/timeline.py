@@ -931,8 +931,8 @@ class EditingContext(object):
         self.timeline = timeline
         self._snap = True
         self._mode = self.DEFAULT
-        self._last_position = 0
-        self._last_priority = 0
+        self._last_position = None
+        self._last_priority = None
 
         self.timeline.disableUpdates()
 
@@ -990,12 +990,13 @@ class EditingContext(object):
             self._finishRipple()
 
     def _beginMode(self, mode):
-        if mode == self.DEFAULT:
-            self._defaultTo(self._last_position, self._last_priority)
-        elif mode == self.ROLL:
-            self._rollTo(self._last_position, self._last_priority)
-        elif mode == self.RIPPLE:
-            self._rippleTo(self._last_position, self._last_priority)
+        if self._last_position:
+            if mode == self.DEFAULT:
+                self._defaultTo(self._last_position, self._last_priority)
+            elif mode == self.ROLL:
+                self._rollTo(self._last_position, self._last_priority)
+            elif mode == self.RIPPLE:
+                self._rippleTo(self._last_position, self._last_priority)
 
     def _finishRoll(self):
         pass
