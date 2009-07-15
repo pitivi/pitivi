@@ -1538,11 +1538,15 @@ class Timeline(Signallable, Loggable):
         self.emit("disable-updates", False)
 
     def getObjsAfterObj(self, obj):
-        target = obj.start + obj.duration
+        return self.getObjsAfterTime(obj.start + obj.duration)
+
+    def getObjsAfterTime(self, target):
         return [to for to in self.timeline_objects 
             if to.start >= target]
 
     def getObjsBeforeObj(self, obj):
-        target = obj.start
+        return self.getObjsBeforeTime(obj.start)
+
+    def getObjsBeforeTime(self, target):
         return [to for to in self.timeline_objects 
             if to.start + to.duration <=target]
