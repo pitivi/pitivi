@@ -321,11 +321,12 @@ class SourceFactory(ObjectFactory):
 
         if hasattr(bin, "volume"):
             # only audio bins have a volume element
-            for elt in [bin.aconv, bin.volume]:
+            for elt in [bin.aconv, bin.ares, bin.volume]:
                 elt.set_state(gst.STATE_NULL)
                 bin.remove(elt)
             del bin.volume
             del bin.aconv
+            del bin.ares
 
         if hasattr(bin, "ghostpad"):
             # singledecodebin found something on this pad
@@ -345,9 +346,10 @@ class SourceFactory(ObjectFactory):
             self.debug("Adding volume element")
             # add a volume element
             b.aconv = gst.element_factory_make("audioconvert", "internal-aconv")
+            b.ares = gst.element_factory_make("audioresample", "internal-audioresample")
             b.volume = gst.element_factory_make("volume", "internal-volume")
-            b.add(b.volume, b.aconv)
-            b.aconv.link(b.volume)
+            b.add(b.volume, b.ares, b.aconv)
+            gst.element_link_many(b.aconv, b.ares, b.volume)
 
         b.add(b.decodebin)
         return b
@@ -368,12 +370,13 @@ class SourceFactory(ObjectFactory):
         del topbin.ghostpad
         if hasattr(topbin, "volume"):
             pad.unlink(topbin.aconv.get_pad("sink"))
-            topbin.volume.set_state(gst.STATE_NULL)
-            topbin.aconv.set_state(gst.STATE_NULL)
-            topbin.remove(topbin.volume)
-            topbin.remove(topbin.aconv)
+            for elt in [topbin.volume, topbin.aconv, topbin.ares]:
+                elt.set_state(gst.STATE_NULL)
+            for elt in [topbin.volume, topbin.aconv, topbin.ares]:
+                topbin.remove(elt)
             del topbin.volume
             del topbin.aconv
+            del topbin.ares
 
     def addInputStream(self, stream):
         raise AssertionError("source factories can't have input streams")
