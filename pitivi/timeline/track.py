@@ -699,15 +699,17 @@ class Track(Signallable):
         if track_object.track is not None:
             raise TrackError()
 
-        try:
-            self.composition.add(track_object.gnl_object)
-        except gst.AddError:
+        if track_object.gnl_object in list(self.composition):
             raise TrackError()
-
         track_object.makeBin()
 
         track_object.track = weakref.proxy(self)
         self.track_objects.append(track_object)
+
+        try:
+            self.composition.add(track_object.gnl_object)
+        except gst.AddError:
+            raise TrackError()
 
         self._connectToTrackObjectSignals(track_object)
 
