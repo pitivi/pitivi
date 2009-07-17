@@ -31,6 +31,10 @@ TRIMBAR_PIXBUF = gtk.gdk.pixbuf_new_from_file(
     os.path.join(configure.get_pixmap_dir(), "trimbar-normal.png"))
 TRIMBAR_PIXBUF_FOCUS = gtk.gdk.pixbuf_new_from_file(
     os.path.join(configure.get_pixmap_dir(), "trimbar-focused.png"))
+NAME_HOFFSET = 10
+NAME_VOFFSET = 5
+NAME_PADDING = 2
+NAME_PADDING2X = 2 * NAME_PADDING
 
 import gst
 
@@ -226,6 +230,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.track = track
         self.timeline = timeline
         self.namewidth = 0
+        self.nameheight = 0
 
         self.bg = goocanvas.Rect(
             height=self.height, 
@@ -234,16 +239,15 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.content = Preview(element)
 
         self.name = goocanvas.Text(
-            x=10,
-            y=5,
-            
+            x= NAME_HOFFSET + NAME_PADDING,
+            y= NAME_VOFFSET + NAME_PADDING,
             operator = cairo.OPERATOR_ADD,
             alignment=pango.ALIGN_LEFT)
         self.namebg = goocanvas.Rect(
             radius_x = 2,
             radius_y = 2,
-            x = 8,
-            y = 3,
+            x = NAME_HOFFSET,
+            y = NAME_VOFFSET,
             line_width = 0)
 
         self.start_handle = StartHandle(self.app, element, timeline,
@@ -298,7 +302,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
             self.bg.props.height = LAYER_HEIGHT_EXPANDED
             self.height = LAYER_HEIGHT_EXPANDED
-            self.name.props.y = 5
+            self.name.props.y = NAME_VOFFSET + NAME_PADDING
 
     def getExpanded(self):
         return self._expanded
@@ -346,6 +350,10 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.name.props.font = self.settings.clipFontDesc
         self.name.props.fill_pattern = unpack_cairo_pattern(
             self.settings.clipFontColor)
+        twidth, theight = text_size(self.name)
+        self.namewidth = twidth
+        self.nameheight = theight
+        self._update()
 
 ## element signals
 
@@ -355,8 +363,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
                 self.element.factory.name))
             twidth, theight = text_size(self.name)
             self.namewidth = twidth
-            self.namebg.props.width = twidth + 6.0
-            self.namebg.props.height = theight + 4.0
+            self.nameheight = theight
             self._update()
 
     element = receiver(_setElement)
@@ -394,8 +401,10 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         self.selection_indicator.props.width = width
         self.end_handle.props.x = w
         if self.expanded:
-            if w - 10 > 0:
-                self.namebg.props.width = min(w - 8, self.namewidth)
+            if w - NAME_HOFFSET > 0:
+                self.namebg.props.height = self.nameheight + NAME_PADDING2X
+                self.namebg.props.width = min(w - NAME_HOFFSET, 
+                    self.namewidth + NAME_PADDING2X)
                 self.namebg.props.visibility = goocanvas.ITEM_VISIBLE
             else:
                 self.namebg.props.visibility = goocanvas.ITEM_INVISIBLE
