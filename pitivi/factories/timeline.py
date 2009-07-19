@@ -131,7 +131,7 @@ class TimelineSourceFactory(SourceFactory):
         self.bin.add(seek)
         seek.set_state(gst.STATE_PLAYING)
         pad.link(seek.get_pad('sink'))
-        ghost = gst.GhostPad('src%d' % self.pad_num, seek.get_pad('src'))
+        ghost = gst.GhostPad('src%d' % self.pad_num + str(id(pad)), seek.get_pad('src'))
         ghost.set_active(True)
         self.ghosts[pad_id] = ghost
         self.seek_checkers[pad_id] = seek
