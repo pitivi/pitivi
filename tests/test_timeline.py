@@ -2,7 +2,7 @@
 #
 #       tests/test_timeline.py
 #
-# Copyright (c) 2008, Alessandro Decina <alessandro.decina@collabora.co.uk>
+# Copyright (c) 2008,2009, Alessandro Decina <alessandro.decina@collabora.co.uk>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -345,6 +345,114 @@ class TestTimelineAddRemoveTimelineObjects(TestCase):
         self.failUnlessEqual(len(timeline.timeline_objects), 3)
         timeline.removeFactory(factory)
         self.failUnlessEqual(len(timeline.timeline_objects), 0)
+
+class TestTimeline(TestCase):
+    def setUp(self):
+        self.factory = StubFactory()
+        self.stream = AudioStream(gst.Caps('audio/x-raw-int'))
+        self.factory.addOutputStream(self.stream)
+        self.track1 = Track(self.stream)
+        self.timeline = Timeline()
+        TestCase.setUp(self)
+
+    def tearDown(self):
+        del self.factory
+        del self.stream
+        del self.track1
+        del self.timeline
+
+    def makeTimelineObject(self):
+        track_object = SourceTrackObject(self.factory, self.stream)
+        self.track1.addTrackObject(track_object)
+        timeline_object = TimelineObject(self.factory)
+        timeline_object.addTrackObject(track_object)
+        self.timeline.addTimelineObject(timeline_object)
+
+        return timeline_object
+
+    def testGetPreviousTimelineObject(self):
+        timeline_object1 = self.makeTimelineObject()
+        timeline_object2 = self.makeTimelineObject()
+        timeline_object3 = self.makeTimelineObject()
+        timeline_object4 = self.makeTimelineObject()
+
+        timeline_object1.start = 1 * gst.SECOND
+        timeline_object1.duration = 5 * gst.SECOND
+        timeline_object1.priority = 1
+
+        timeline_object2.start = 8 * gst.SECOND
+        timeline_object2.duration = 5 * gst.SECOND
+        timeline_object2.priority = 1
+
+        timeline_object3.start = 6 * gst.SECOND
+        timeline_object3.duration = 5 * gst.SECOND
+        timeline_object3.priority = 2
+
+        timeline_object4.start = 7 * gst.SECOND
+        timeline_object4.duration = 5 * gst.SECOND
+        timeline_object4.priority = 3
+
+        timeline = self.timeline
+
+        # no previous track_objectect
+        self.failUnlessRaises(TimelineError,
+                timeline.getPreviousTimelineObject, timeline_object4)
+
+        # same priority
+        prev = timeline.getPreviousTimelineObject(timeline_object2)
+        self.failUnlessEqual(prev, timeline_object1)
+
+        # given priority
+        prev = timeline.getPreviousTimelineObject(timeline_object2, priority=2)
+        self.failUnlessEqual(prev, timeline_object3)
+
+        # any priority
+        prev = timeline.getPreviousTimelineObject(timeline_object2, priority=None)
+        self.failUnlessEqual(prev, timeline_object4)
+
+        timeline_object3.start = 8 * gst.SECOND
+        # same start
+        prev = timeline.getPreviousTimelineObject(timeline_object2, priority=None)
+        self.failUnlessEqual(prev, timeline_object3)
+
+    def testGetNextTrackObject(self):
+        timeline_object1 = self.makeTimelineObject()
+        timeline_object2 = self.makeTimelineObject()
+        timeline_object3 = self.makeTimelineObject()
+        timeline_object4 = self.makeTimelineObject()
+
+        timeline_object1.start = 1 * gst.SECOND
+        timeline_object1.duration = 5 * gst.SECOND
+        timeline_object1.priority = 1
+
+        timeline_object2.start = 8 * gst.SECOND
+        timeline_object2.duration = 5 * gst.SECOND
+        timeline_object2.priority = 1
+
+        timeline_object3.start = 6 * gst.SECOND
+        timeline_object3.duration = 5 * gst.SECOND
+        timeline_object3.priority = 2
+
+        timeline_object4.start = 7 * gst.SECOND
+        timeline_object4.duration = 5 * gst.SECOND
+        timeline_object4.priority = 3
+
+        timeline = self.timeline
+
+        # no next timeline_objectect
+        self.failUnlessRaises(TimelineError, timeline.getNextTimelineObject, timeline_object2)
+
+        # same priority
+        prev = timeline.getNextTimelineObject(timeline_object1)
+        self.failUnlessEqual(prev, timeline_object2)
+
+        # given priority
+        prev = timeline.getNextTimelineObject(timeline_object1, priority=2)
+        self.failUnlessEqual(prev, timeline_object3)
+
+        # any priority
+        prev = timeline.getNextTimelineObject(timeline_object3, priority=None)
+        self.failUnlessEqual(prev, timeline_object4)
 
 class TestLink(TestCase):
 

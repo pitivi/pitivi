@@ -27,6 +27,8 @@ from pitivi.log.loggable import Loggable
 from pitivi.utils import UNKNOWN_DURATION, closest_item, PropertyChangeTracker
 from pitivi.timeline.track import SourceTrackObject, TrackError
 from pitivi.stream import match_stream_groups_map
+from pitivi.utils import start_insort_right, infinity, getPreviousObject, \
+        getNextObject
 
 # Selection modes
 SELECT = 0
@@ -414,7 +416,7 @@ class TimelineObject(Signallable, Loggable):
 
         # FIXME: cycle
         obj.timeline_object = self
-        self.track_objects.append(obj)
+        start_insort_right(self.track_objects, obj)
 
         self.emit("track-object-added", obj)
 
@@ -1279,7 +1281,9 @@ class Timeline(Signallable, Loggable):
         if not obj.track_objects:
             raise TimelineError()
 
-        self.timeline_objects.append(obj)
+        self._connectToTimelineObject(obj)
+
+        start_insort_right(self.timeline_objects, obj)
         obj.timeline = self
 
         self.edges.addTimelineObject(obj)
@@ -1304,6 +1308,8 @@ class Timeline(Signallable, Loggable):
         if obj.link is not None:
             obj.link.removeTimelineObject(obj)
 
+        self._disconnectFromTimelineObject(obj)
+
         obj.timeline = None
 
         self.edges.removeTimelineObject(obj)
@@ -1323,6 +1329,23 @@ class Timeline(Signallable, Loggable):
             factory]
         for obj in objs:
             self.removeTimelineObject(obj, deep=True)
+
+    def _timelineObjectStartChangedCb(self, timeline_object, start):
+        self.timeline_objects.remove(timeline_object)
+        start_insort_right(self.timeline_objects, timeline_object)
+
+    def _timelineObjectDurationChangedCb(self, timeline_object, duration):
+        pass
+
+    def _connectToTimelineObject(self, timeline_object):
+        timeline_object.connect('start-changed',
+                self._timelineObjectStartChangedCb)
+        timeline_object.connect('duration-changed',
+                self._timelineObjectDurationChangedCb)
+
+    def _disconnectFromTimelineObject(self, timeline_object):
+        timeline_object.disconnect_by_function(self._timelineObjectStartChangedCb)
+        timeline_object.disconnect_by_function(self._timelineObjectDurationChangedCb)
 
     # FIXME : shouldn't this be made more generic (i.e. not specific to source factories) ?
     # FIXME : Maybe it should be up to the ObjectFactory to create the TimelineObject since
@@ -1385,6 +1408,20 @@ class Timeline(Signallable, Loggable):
                     track_stream_to_track_map[track_stream]
 
         return output_stream_to_track_map
+
+    def getPreviousTimelineObject(self, obj, priority=-1):
+        prev = getPreviousObject(obj, self.timeline_objects, priority)
+        if prev is None:
+            raise TimelineError("no previous timeline object", obj)
+
+        return prev
+
+    def getNextTimelineObject(self, obj, priority=-1):
+        next = getNextObject(obj, self.timeline_objects, priority)
+        if next is None:
+            raise TimelineError("no next timeline object", obj)
+
+        return next
 
     def setSelectionToObj(self, obj, mode):
         """
