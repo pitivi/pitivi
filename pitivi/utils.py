@@ -328,3 +328,113 @@ def get_controllable_properties(element):
                 log.debug("utils", "adding property %r", prop)
                 res.append((element, prop))
     return res
+
+def start_insort_left(a, x, lo=0, hi=None):
+    if hi is None:
+        hi = len(a)
+    while lo < hi:
+        mid = (lo+hi)//2
+        if a[mid].start < x.start: lo = mid+1
+        else: hi = mid
+    a.insert(lo, x)
+
+def start_insort_right(a, x, lo=0, hi=None):
+    if hi is None:
+        hi = len(a)
+    while lo < hi:
+        mid = (lo+hi)//2
+        if x.start < a[mid].start: hi = mid
+        else: lo = mid+1
+    a.insert(lo, x)
+
+def start_bisect_left(a, x, lo=0, hi=None):
+    if hi is None:
+        hi = len(a)
+    while lo < hi:
+        mid = (lo+hi)//2
+        if a[mid].start < x.start: lo = mid+1
+        else: hi = mid
+    return lo
+
+class Infinity(object):
+    def __cmp__(self, other):
+        if isinstance(other, Infinity):
+            return 0
+
+        return 1
+
+infinity = Infinity()
+
+def findObject(obj, objects):
+    low = 0
+    high = len(objects)
+    while low < high:
+        low = start_bisect_left(objects, obj, lo=low)
+        if low == high:
+            break
+
+        if objects[low] is obj:
+            return low
+        else:
+            low = low + 1
+
+    return low
+
+def getPreviousObject(obj, objects, priority=-1, exclude=None):
+    if priority == -1:
+        priority = obj.priority
+
+    if exclude is None:
+        exclude = []
+
+    obj_index = findObject(obj, objects)
+    if obj_index is None:
+        import pdb; pdb.set_trace()
+    # check if there are same-start objects
+    prev_obj_index = obj_index + 1
+    while prev_obj_index < len(objects):
+        prev_obj = objects[prev_obj_index]
+        if prev_obj in exclude:
+            continue
+
+        if prev_obj.start != obj.start:
+            break
+
+        if priority is None or prev_obj.priority == priority:
+            return prev_obj
+
+        prev_obj_index += 1
+
+    # check if there are objects with start < obj.start
+    prev_obj_index = obj_index - 1
+    while prev_obj_index >= 0:
+        prev_obj = objects[prev_obj_index]
+        if prev_obj not in exclude and \
+                (priority is None or \
+                    prev_obj.priority == priority):
+            return prev_obj
+
+        prev_obj_index -= 1
+
+    return None
+
+def getNextObject(obj, objects, priority=-1, exclude=None):
+    if priority == -1:
+        priority = obj.priority
+
+    if exclude is None:
+        exclude = []
+
+    obj_index = findObject(obj, objects)
+    next_obj_index = obj_index + 1
+    objs_len = len(objects)
+    while next_obj_index < objs_len:
+        next_obj = objects[next_obj_index]
+        if next_obj not in exclude and \
+                (priority is None or \
+                    next_obj.priority == priority):
+            return next_obj
+
+        next_obj_index += 1
+
+    return None

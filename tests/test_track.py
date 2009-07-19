@@ -393,3 +393,104 @@ class TestTrack(TestCase):
 
         track.removeTrackObject(obj3)
         self.failUnlessEqual(track.max_priority, 0)
+
+    def testGetPreviousTrackObject(self):
+        factory = self.factory
+        stream = self.stream
+        track1 = self.track1
+
+        obj1 = SourceTrackObject(factory, stream)
+        track1.addTrackObject(obj1)
+
+        obj2 = SourceTrackObject(factory, stream)
+        track1.addTrackObject(obj2)
+
+        obj3 = SourceTrackObject(factory, stream)
+        track1.addTrackObject(obj3)
+
+        obj4 = SourceTrackObject(factory, stream)
+        track1.addTrackObject(obj4)
+
+        obj1.start = 1 * gst.SECOND
+        obj1.duration = 5 * gst.SECOND
+        obj1.priority = 1
+
+        obj2.start = 8 * gst.SECOND
+        obj2.duration = 5 * gst.SECOND
+        obj2.priority = 1
+
+        obj3.start = 6 * gst.SECOND
+        obj3.duration = 5 * gst.SECOND
+        obj3.priority = 2
+
+        obj4.start = 7 * gst.SECOND
+        obj4.duration = 5 * gst.SECOND
+        obj4.priority = 3
+
+        # no previous object
+        self.failUnlessRaises(TrackError, track1.getPreviousTrackObject, obj4)
+
+        # same priority
+        prev = track1.getPreviousTrackObject(obj2)
+        self.failUnlessEqual(prev, obj1)
+
+        # given priority
+        prev = track1.getPreviousTrackObject(obj2, priority=2)
+        self.failUnlessEqual(prev, obj3)
+
+        # any priority
+        prev = track1.getPreviousTrackObject(obj2, priority=None)
+        self.failUnlessEqual(prev, obj4)
+
+        obj3.start = 8 * gst.SECOND
+        # same start
+        prev = track1.getPreviousTrackObject(obj2, priority=None)
+        self.failUnlessEqual(prev, obj3)
+
+    def testGetNextTrackObject(self):
+        factory = self.factory
+        stream = self.stream
+        track1 = self.track1
+
+        obj1 = SourceTrackObject(factory, stream)
+        track1.addTrackObject(obj1)
+
+        obj2 = SourceTrackObject(factory, stream)
+        track1.addTrackObject(obj2)
+
+        obj3 = SourceTrackObject(factory, stream)
+        track1.addTrackObject(obj3)
+
+        obj4 = SourceTrackObject(factory, stream)
+        track1.addTrackObject(obj4)
+
+        obj1.start = 1 * gst.SECOND
+        obj1.duration = 5 * gst.SECOND
+        obj1.priority = 1
+
+        obj2.start = 8 * gst.SECOND
+        obj2.duration = 5 * gst.SECOND
+        obj2.priority = 1
+
+        obj3.start = 6 * gst.SECOND
+        obj3.duration = 5 * gst.SECOND
+        obj3.priority = 2
+
+        obj4.start = 7 * gst.SECOND
+        obj4.duration = 5 * gst.SECOND
+        obj4.priority = 3
+
+        # no next object
+        self.failUnlessRaises(TrackError, track1.getNextTrackObject, obj2)
+
+        # same priority
+        prev = track1.getNextTrackObject(obj1)
+        self.failUnlessEqual(prev, obj2)
+
+        # given priority
+        prev = track1.getNextTrackObject(obj1, priority=2)
+        self.failUnlessEqual(prev, obj3)
+
+        # any priority
+        prev = track1.getNextTrackObject(obj3, priority=None)
+        self.failUnlessEqual(prev, obj4)

@@ -23,7 +23,8 @@ import gst
 import weakref
 
 from pitivi.signalinterface import Signallable
-from pitivi.utils import UNKNOWN_DURATION, get_controllable_properties
+from pitivi.utils import get_controllable_properties, getPreviousObject, \
+        getNextObject, start_insort_right
 from pitivi.log.loggable import Loggable
 from pitivi.stream import VideoStream, AudioStream
 from pitivi.factories.test import VideoTestSourceFactory, \
@@ -585,7 +586,6 @@ class TrackObject(Signallable, Loggable):
     def _makeGnlObject(self):
         raise NotImplementedError()
 
-
 class SourceTrackObject(TrackObject):
     def _makeGnlObject(self):
         source = gst.element_factory_make('gnlsource')
@@ -664,6 +664,22 @@ class Track(Signallable):
             self.default_track_object = None
             raise
 
+    def getPreviousTrackObject(self, obj, priority=-1):
+        prev = getPreviousObject(obj, self.track_objects, priority,
+                [self.default_track_object])
+        if prev is None:
+            raise TrackError("no previous track object", obj)
+
+        return prev
+
+    def getNextTrackObject(self, obj, priority=-1):
+        next = getNextObject(obj, self.track_objects, priority,
+                [self.default_track_object])
+        if next is None:
+            raise TrackError("no next track object", obj)
+
+        return next
+
     start = property(_getStart)
 
     def _getDuration(self):
@@ -704,7 +720,8 @@ class Track(Signallable):
         track_object.makeBin()
 
         track_object.track = weakref.proxy(self)
-        self.track_objects.append(track_object)
+
+        start_insort_right(self.track_objects, track_object)
 
         try:
             self.composition.add(track_object.gnl_object)
@@ -765,12 +782,25 @@ class Track(Signallable):
     def _trackObjectPriorityChangedCb(self, track_object, priority):
         self._updateMaxPriority()
 
+    def _trackObjectStartChangedCb(self, track_object, start):
+        self.track_objects.remove(track_object)
+        start_insort_right(self.track_objects, track_object)
+
+    def _trackObjectDurationChangedCb(self, track_object, duration):
+        pass
+
     def _connectToTrackObject(self, track_object):
         track_object.connect('priority-changed',
                 self._trackObjectPriorityChangedCb)
+        track_object.connect('start-changed',
+                self._trackObjectStartChangedCb)
+        track_object.connect('duration-changed',
+                self._trackObjectDurationChangedCb)
 
     def _disconnectFromTrackObject(self, track_object):
         track_object.disconnect_by_function(self._trackObjectPriorityChangedCb)
+        track_object.disconnect_by_function(self._trackObjectStartChangedCb)
+        track_object.disconnect_by_function(self._trackObjectDurationChangedCb)
 
     def enableUpdates(self):
         self.composition.props.update = True
