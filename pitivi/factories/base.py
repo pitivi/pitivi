@@ -350,6 +350,9 @@ class SourceFactory(ObjectFactory):
             b.volume = gst.element_factory_make("volume", "internal-volume")
             b.add(b.volume, b.ares, b.aconv)
             gst.element_link_many(b.aconv, b.ares, b.volume)
+            b.aconv.sync_state_with_parent()
+            b.ares.sync_state_with_parent()
+            b.volume.sync_state_with_parent()
 
         b.add(b.decodebin)
         return b
