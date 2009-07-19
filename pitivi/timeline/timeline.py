@@ -29,6 +29,7 @@ from pitivi.timeline.track import SourceTrackObject, TrackError
 from pitivi.stream import match_stream_groups_map
 from pitivi.utils import start_insort_right, infinity, getPreviousObject, \
         getNextObject
+from pitivi.timeline.gap import Gap, SmallestGapsFinder, invalid_gap
 
 # Selection modes
 SELECT = 0
@@ -933,8 +934,8 @@ class EditingContext(object):
         self.timeline = timeline
         self._snap = True
         self._mode = self.DEFAULT
-        self._last_position = None
-        self._last_priority = None
+        self._last_position = focus.start
+        self._last_priority = focus.priority
 
         self.timeline.disableUpdates()
 
@@ -1004,7 +1005,7 @@ class EditingContext(object):
         pass
 
     def _rollTo(self, position, priority):
-        pass
+        return position, priority
 
     def _finishRipple(self):
         pass
@@ -1016,7 +1017,7 @@ class EditingContext(object):
         pass
 
     def _defaultTo(self, position, priority):
-        pass
+        return position, priority
 
     def snap(self, snap):
         """Set whether edge snapping is currently enabled"""
@@ -1025,14 +1026,16 @@ class EditingContext(object):
         self._snap = snap
 
     def editTo(self, position, priority):
+        if self._mode == self.DEFAULT:
+            position, priority = self._defaultTo(position, priority)
+        if self._mode == self.ROLL:
+            position, priority = self._rollTo(position, priority)
+        elif self._mode == self.RIPPLE:
+            position, priority = self._rippleTo(position, priority)
         self._last_position = position
         self._last_priority = priority
-        if self._mode == self.DEFAULT:
-            self._defaultTo(position, priority)
-        if self._mode == self.ROLL:
-            self._rollTo(position, priority)
-        elif self._mode == self.RIPPLE:
-            self._rippleTo(position, priority)
+
+        return position, priority
 
 class MoveContext(EditingContext):
 
@@ -1042,52 +1045,60 @@ class MoveContext(EditingContext):
     def __init__(self, timeline, focus, other):
         EditingContext.__init__(self, timeline, focus, other)
 
-        # calculate minimum start time and priority
-        self.earliest = focus.start
-        self.min_priority = focus.priority
-        self.latest = focus.start + focus.duration
-        
-        timeline_objects = []
+        self.timeline_objects = set(track_object.timeline_object
+                for track_object in other)
+        self.timeline_objects.add(focus.timeline_object)
+
+        min_priority = infinity
+        earliest = infinity
+        latest = 0
         self.default_originals = {}
-        for track_object in other:
-            timeline_object = track_object.timeline_object
-            timeline_objects.append(timeline_object)
+        for timeline_object in self.timeline_objects:
+            self.default_originals[timeline_object] = \
+                    self._getTimelineObjectValues(timeline_object)
 
-            if timeline_object.start < self.earliest:
-                self.earliest = timeline_object.start
-
-            self.latest = max(self.latest, timeline_object.start +
-                timeline_object.duration)
-
-            if timeline_object.priority < self.min_priority:
-                self.min_priority = timeline_object.min_priority
-
-        self.default_originals = self._saveValues(timeline_objects)
+            earliest = min(earliest, timeline_object.start)
+            latest = max(latest,
+                    timeline_object.start + timeline_object.duration)
+            min_priority = min(min_priority, timeline_object.priority)
 
         self.offsets = self._getOffsets(self.focus.start, self.focus.priority,
-                timeline_objects)
+                self.timeline_objects)
 
-        self.focal_offset = (focus.start - self.earliest,
-                focus.priority - self.min_priority)
+        self.min_priority = focus.priority - min_priority
 
         # get the span over all clips for edge snapping
-        self.default_span = self.latest - self.earliest
+        self.default_span = latest - earliest
 
-        ripple = timeline.getObjsAfterTime(self.latest)
+        ripple = timeline.getObjsAfterTime(latest)
         self.ripple_offsets = self._getOffsets(self.focus.start,
             self.focus.priority, ripple)
 
         # get the span over all clips for ripple editing
-
-        latest = self.latest
         for timeline_object in ripple:
             latest = max(latest, timeline_object.start +
                 timeline_object.duration)
-        self.ripple_span = latest - self.earliest
+        self.ripple_span = latest - earliest
 
         # save default values
-        self.default_originals = self._saveValues(other)
         self.ripple_originals = self._saveValues(ripple)
+
+        self.timeline_objects_plus_ripple = set(self.timeline_objects)
+        self.timeline_objects_plus_ripple.update(ripple)
+
+    def _getGapsAtPriority(self, priority):
+        if self._mode == self.RIPPLE:
+            timeline_objects = self.timeline_objects_plus_ripple
+        else:
+            timeline_objects = self.timeline_objects
+        gaps = SmallestGapsFinder(timeline_objects)
+        prio_diff = priority - self.focus.priority
+
+        for timeline_object in timeline_objects:
+            gaps.update(*Gap.findAroundObject(timeline_object,
+                    timeline_object.priority + prio_diff))
+
+        return gaps.left_gap, gaps.right_gap
 
     def setMode(self, mode):
         if mode == self.ROLL:
@@ -1098,27 +1109,61 @@ class MoveContext(EditingContext):
         self._restoreValues(self.default_originals)
 
     def _defaultTo(self, position, priority):
-        position = max(0, position, self.focal_offset[0])
-        priority = max(0, priority, self.focal_offset[1])
         if self._snap:
-            position = self.timeline.snapToEdge(position, 
+            position = self.timeline.snapToEdge(position,
                 position + self.default_span)
-        self.focus.setStart(position)
+
+        priority = max(self.min_priority, priority)
+        left_gap, right_gap = self._getGapsAtPriority(priority)
+
+        if left_gap is invalid_gap or right_gap is invalid_gap:
+            if priority == self._last_priority:
+                # abort move
+                return self._last_position, self._last_priority
+
+            # try to do the same time move, using the current priority
+            return self._defaultTo(position, self._last_priority)
+
+        delta = position - self.focus.start
+        if delta > 0 and right_gap.duration < delta:
+            position = self.focus.start + right_gap.duration
+        elif delta < 0 and left_gap.duration < abs(delta):
+            position = self.focus.start - left_gap.duration
+
         self.focus.priority = priority
+        self.focus.setStart(position, snap = self._snap)
 
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
             obj.setStart(position + s_offset)
             obj.priority = priority + p_offset
 
+        return position, priority
+
     def _finishRipple(self):
         self._restoreValues(self.ripple_originals)
 
     def _rippleTo(self, position, priority):
-        position = max(0, position, self.focal_offset[0])
-        priority = max(0, priority, self.focal_offset[1])
         if self._snap:
-            position = self.timeline.snapToEdge(position, 
+            position = self.timeline.snapToEdge(position,
                 position + self.ripple_span)
+
+        priority = max(self.min_priority, priority)
+        left_gap, right_gap = self._getGapsAtPriority(priority)
+
+        if left_gap is invalid_gap or right_gap is invalid_gap:
+            if priority == self._last_priority:
+                # abort move
+                return self._last_position, self._last_priority
+
+            # try to do the same time move, using the current priority
+            return self._defaultTo(position, self._last_priority)
+
+        delta = position - self.focus.start
+        if delta > 0 and right_gap.duration < delta:
+            position = self.focus.start + right_gap.duration
+        elif delta < 0 and left_gap.duration < abs(delta):
+            position = self.focus.start - left_gap.duration
+
         self.focus.setStart(position)
         self.focus.priority = priority
         for obj, (s_offset, p_offset) in self.offsets.iteritems():
@@ -1127,6 +1172,8 @@ class MoveContext(EditingContext):
         for obj, (s_offset, p_offset) in self.ripple_offsets.iteritems():
             obj.setStart(position + s_offset)
             obj.priority = priority + p_offset
+
+        return position, priority
 
 class TrimStartContext(EditingContext):
 
@@ -1149,6 +1196,8 @@ class TrimStartContext(EditingContext):
         earliest = self.focus.start - self.focus.in_point
         self.focus.trimStart(max(position, earliest), snap=self.snap)
 
+        return position, priority
+
 class TrimEndContext(EditingContext):
 
     def __init__(self, timeline, focus, other):
@@ -1170,6 +1219,8 @@ class TrimEndContext(EditingContext):
     def _defaultTo(self, position, priority):
         duration = max(0, position - self.focus.start)
         self.focus.setDuration(duration, snap=self.snap)
+
+        return position, priority
 
 class Timeline(Signallable, Loggable):
     """
