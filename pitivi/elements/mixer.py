@@ -85,13 +85,19 @@ class SmartAdderBin(gst.Bin):
         name = pad.get_name()
         if name in self.inputs.keys():
             sinkpad, aconv, aresample, adderpad = self.inputs.pop(name)
-            self.remove_pad(sinkpad)
-            aconv.unlink(aresample)
-            aresample.get_pad("src").unlink(adderpad)
+            # we deactivate this pad to make sure that if ever the streaming
+            # thread was doing something downstream (like getting caps) it will
+            # return with GST_FLOW_WRONG_STATE and not GST_FLOW_NOT_LINKED (which is
+            # a fatal return flow).
+            aresample.get_pad("src").set_active(False)
+
             self.adder.release_request_pad(adderpad)
+            aresample.get_pad("src").unlink(adderpad)
+            aconv.unlink(aresample)
             aconv.set_state(gst.STATE_NULL)
             aresample.set_state(gst.STATE_NULL)
             self.remove(aconv, aresample)
+            self.remove_pad(sinkpad)
         self.debug("done")
 
 
