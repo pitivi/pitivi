@@ -305,6 +305,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 self.render_button = action
                 # this will be set sensitive when the timeline duration changes
                 action.set_sensitive(False)
+                action.props.is_important = True
             elif action_name == "ImportfromCam":
                 self.webcam_button = action
                 action.set_sensitive(False)
@@ -315,7 +316,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 action.set_visible(False)
             elif action_name in [
                 "ProjectSettings", "Quit", "File", "Edit", "Help", "About",
-                "View", "FullScreen", "FullScreenAlternate", "ImportSources",
+                "View", "FullScreen", "FullScreenAlternate",
                 "ImportSourcesFolder", "PluginManager", "PlayPause",
                 "Project", "FrameForward", "FrameBackward",
                 "ShowHideMainToolbar", "ShowHideTimelineToolbar", "Library",
@@ -323,10 +324,16 @@ class PitiviMainWindow(gtk.Window, Loggable):
                 "SecondForward", "SecondBackward", "EdgeForward",
                 "EdgeBackward", "Preferences"]:
                 action.set_sensitive(True)
-            elif action_name in ["SaveProject", "SaveProjectAs",
-                    "NewProject", "OpenProject"]:
+            elif action_name in ["NewProject", "SaveProjectAs", "OpenProject"]:
                 if instance.settings.fileSupportEnabled:
                     action.set_sensitive(True)
+            elif action_name == "SaveProject":
+                if instance.settings.fileSupportEnabled:
+                    action.set_sensitive(True)
+                action.props.is_important = True
+            elif action_name == "Undo":
+                action.set_sensitive(True)
+                action.props.is_important = True
             else:
                 action.set_sensitive(False)
 

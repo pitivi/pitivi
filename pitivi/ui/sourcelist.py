@@ -298,6 +298,7 @@ class SourceList(gtk.VBox, Loggable):
 
         actiongroup = gtk.ActionGroup("sourcelistpermanent")
         actiongroup.add_actions(actions)
+        actiongroup.get_action("ImportSources").props.is_important = True
         uiman.insert_action_group(actiongroup, 0)
 
         self.selection_actions = gtk.ActionGroup("sourcelistselection")
