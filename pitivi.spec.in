@@ -43,7 +43,7 @@ PiTiVi non-linear video editor
 %{_bindir}/pitivi
 %{_libdir}/pitivi
 %{_datadir}/pitivi/pixmaps/*
-%{_datadir}/icons/hicolor/48x48/apps/pitivi.png
+%{_datadir}/icons
 %{_datadir}/applications/pitivi.desktop
 %{_datadir}/locale
 
