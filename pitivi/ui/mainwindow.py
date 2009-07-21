@@ -435,8 +435,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             ttb.props.visible = False
 
         #application icon
-        self.set_icon_from_file(get_global_pixmap_dir()
-            + "/pitivi.png")
+        self.set_icon_name("pitivi")
 
     def _connectToSourceList(self):
         # FIXME: projecttabs creates the "components" but then has no API to get
@@ -617,7 +616,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         abt.set_authors(authors)
         abt.set_license(_("GNU Lesser General Public License\n"
                           "See http://www.gnu.org/copyleft/lesser.html for more details"))
-        abt.set_icon_from_file(get_global_pixmap_dir() + "/pitivi.png")
+        abt.set_icon_name("pitivi")
+        abt.set_logo_icon_name("pitivi")
         abt.connect("response", self._aboutResponseCb)
         abt.show()
 

@@ -3,9 +3,11 @@ AUTOMAKE_OPTIONS = dist-bzip2
 SUBDIRS	= bin pitivi common po tests icons
 
 desktopdir = $(datadir)/applications
-desktop_DATA = pitivi.desktop
+desktop_in_files = pitivi.desktop.in
+desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+@INTLTOOL_DESKTOP_RULE@
 
-icondir = $(datadir)/pixmaps
+icondir = $(datadir)/icons/hicolor/48x48/apps
 icon_DATA = pitivi.png
 
 mimedir = $(datadir)/mime/packages
@@ -20,7 +22,7 @@ EXTRA_DIST = \
 	AUTHORS \
 	RELEASE \
 	ABOUT-NLS \
-	pitivi.png \
+	$(ICON_DATA) \
     pitivi.xml
 
 
@@ -30,10 +32,29 @@ DISTCLEANFILES =                \
         intltool-update
 
 
-EXTRA_DIST +=                    \
+CLEANFILES =                    \
+        $(desktop_DATA)
+
+
+EXTRA_DIST +=                   \
         intltool-extract.in     \
         intltool-merge.in       \
-        intltool-update.in
+        intltool-update.in      \
+        $(desktop_in_files)
+
+
+gtk_update_icon_cache = gtk-update-icon-cache -f -t $(datadir)/icons/hicolor
+install-data-hook: update-icon-cache
+uinstall-hook: update-icon-cache
+update-icon-cache:
+	@-if test -z "$(DESTDIR)"; then \
+		echo "Updating Gtk icon cache."; \
+		$(gtk_update_icon_cache); \
+	else \
+		echo "*** Icon cache not updated.  After (un)install, run this:"; \
+		echo "***   $(gtk_update_icon_cache)"; \
+	fi
+
 
 locale-uninstalled:
 	if test -d po; then \

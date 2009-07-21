@@ -83,7 +83,7 @@ pitivi/formatters/Makefile
 pitivi/pixmaps/Makefile
 pitivi/timeline/Makefile
 pitivi.spec
-pitivi.desktop
+pitivi.desktop.in
 po/Makefile.in
 tests/Makefile
 icons/Makefile

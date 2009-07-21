@@ -1,6 +1,7 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
 # [encoding: UTF-8]
+pitivi.desktop.in.in
 pitivi/check.py
 pitivi/discoverer.py
 pitivi/application.py
