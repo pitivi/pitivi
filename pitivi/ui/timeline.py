@@ -146,6 +146,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         controlwindow = gtk.ScrolledWindow(None, self.vadj)
         controlwindow.set_policy(gtk.POLICY_NEVER, gtk.POLICY_NEVER)
         controlwindow.add_with_viewport(self._controls)
+        controlwindow.set_size_request(-1, 1)
         self.attach(controlwindow, 0, 1, 1, 2, xoptions=0)
 
         # timeline ruler
