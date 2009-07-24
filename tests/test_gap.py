@@ -25,7 +25,7 @@ import gobject
 gobject.threads_init()
 import gst
 
-from tests.common import StubFactory
+from common import StubFactory
 from pitivi.stream import AudioStream
 from pitivi.timeline.track import Track, SourceTrackObject
 from pitivi.timeline.timeline import Timeline, TimelineObject
