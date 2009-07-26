@@ -1066,6 +1066,7 @@ class MoveContext(EditingContext):
                 self.timeline_objects)
 
         self.min_priority = focus.priority - min_priority
+        self.min_position = focus.start - earliest
 
         # get the span over all clips for edge snapping
         self.default_span = latest - earliest
@@ -1160,6 +1161,7 @@ class MoveContext(EditingContext):
                 position + self.default_span)
 
         priority = max(self.min_priority, priority)
+        position = max(self.min_position, position)
 
         self.focus.priority = priority
         self.focus.setStart(position, snap = self._snap)
