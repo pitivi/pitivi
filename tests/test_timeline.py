@@ -959,6 +959,7 @@ class TestContexts(TestCase):
         # move past right margin, should clamp
         context = MoveContext(self.timeline, self.track_object2, self.other)
         context.editTo(20 * gst.SECOND, 0)
+        context.finish()
 
         self.failUnlessEqual(self.track_object1.start, 16 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)

@@ -1108,27 +1108,58 @@ class MoveContext(EditingContext):
     def _finishDefault(self):
         self._restoreValues(self.default_originals)
 
+    def finish(self):
+        EditingContext.finish(self)
+
+        initial_position = self.default_originals[self.focus.timeline_object][0]
+        initial_priority = self.default_originals[self.focus.timeline_object][-1]
+
+        final_priority = self.focus.priority
+        final_position = self.focus.start
+
+        # adjust priority
+        priority = final_priority
+        overlap = False
+        while True:
+            left_gap, right_gap = self._getGapsAtPriority(priority)
+
+            if left_gap is invalid_gap or right_gap is invalid_gap:
+                overlap = True
+
+                if priority == initial_priority:
+                    break
+
+                if priority > initial_priority:
+                    priority -= 1
+                else:
+                    priority += 1
+
+
+                self._defaultTo(final_position, priority)
+            else:
+                overlap = False
+                break
+
+        if not overlap:
+            return
+
+        self._defaultTo(initial_position, priority)
+        left_gap, right_gap = self._getGapsAtPriority(priority)
+
+        delta = final_position - initial_position
+        if delta > 0 and right_gap.duration < delta:
+            final_position = initial_position + right_gap.duration
+        elif delta < 0 and left_gap.duration < abs(delta):
+            final_position = initial_position - left_gap.duration
+
+        self._defaultTo(final_position, priority)
+
     def _defaultTo(self, position, priority):
         if self._snap:
             position = self.timeline.snapToEdge(position,
                 position + self.default_span)
 
         priority = max(self.min_priority, priority)
-        left_gap, right_gap = self._getGapsAtPriority(priority)
-
-        if left_gap is invalid_gap or right_gap is invalid_gap:
-            if priority == self._last_priority:
-                # abort move
-                return self._last_position, self._last_priority
-
-            # try to do the same time move, using the current priority
-            return self._defaultTo(position, self._last_priority)
-
-        delta = position - self.focus.start
-        if delta > 0 and right_gap.duration < delta:
-            position = self.focus.start + right_gap.duration
-        elif delta < 0 and left_gap.duration < abs(delta):
-            position = self.focus.start - left_gap.duration
 
         self.focus.priority = priority
         self.focus.setStart(position, snap = self._snap)
