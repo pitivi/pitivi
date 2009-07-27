@@ -136,14 +136,19 @@ class Interpolator(Signallable, Loggable):
         'keyframe-moved' : ['keyframe'],
     }
 
-    def __init__(self, trackobject, element, prop):
+    def __init__(self, trackobject, element, prop, minimum=None, maximum=None):
         Loggable.__init__(self)
         self.debug("track:%r, element:%r, property:%r", trackobject, element, prop)
         self._keyframes = []
-        # FIXME: get this from the property's param spec
-        # NOTE: keyframes necessarily work only on a closed range
-        self.lower = 0
-        self.upper = 1
+
+        if minimum is None:
+            minimum = prop.minimum
+        if maximum is None:
+            maximum = prop.maximum
+        assert not ((minimum is None) or (maximum is None))
+        self.lower = minimum
+        self.upper = maximum
+        self.range = maximum - minimum
 
         # FIXME: don't necessarily want to create separate controllers for
         # each Interpolator. We should instead create a ControlSource for each
