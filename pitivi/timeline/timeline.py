@@ -36,7 +36,7 @@ SELECT = 0
 """Set the selection to the given set."""
 UNSELECT = 1
 """Remove the given set from the selection."""
-SELECT_ADD = 1
+SELECT_ADD = 2
 """Extend the selection with the given set"""
 
 class TimelineError(Exception):
@@ -1581,9 +1581,6 @@ class Timeline(Signallable, Loggable):
                 new_track_object = track_object.copy()
                 tracks.append(track_object.track)
                 new_timeline_object.addTrackObject(new_track_object)
-
-        for i, track_object in enumerate(new_timeline_object.track_objects):
-            tracks[i].addTrackObject(track_object)
 
         self.addTimelineObject(new_timeline_object)
 
