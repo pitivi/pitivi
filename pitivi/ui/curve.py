@@ -92,10 +92,12 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                 self._view.app.action_log.commit()
 
         def xyToTimeValue(self, pos):
+            interpolator = self._view.interpolator
             bounds = self._view.bounds
             time = (Zoomable.pixelToNs(pos[0] - bounds.x1) +
                 self._view.element.in_point)
-            value = 1 - (pos[1] - bounds.y1) /  LAYER_HEIGHT_EXPANDED
+            value = ((1 - (pos[1] - bounds.y1) /  LAYER_HEIGHT_EXPANDED) *
+                interpolator.range) + interpolator.lower
             return time, value
 
         def enter(self, item ,target):
@@ -166,8 +168,10 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             Zoomable.nsToPixel(self.element.duration), self.height)
 
     def _getKeyframeXY(self, kf):
+        interp = self.interpolator
         x = self.nsToPixel(kf.time - self.element.in_point)
-        y = self._height - (kf.value * self._height)
+        y = self._height - (((kf.value - interp.lower) / interp.range) *
+            self._height)
         return point.Point(x + self.bounds.x1, y + self.bounds.y1)
 
     def _controlPoint(self, cr, kf):
