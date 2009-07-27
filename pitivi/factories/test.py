@@ -90,6 +90,6 @@ class AudioTestSourceFactory(SourceFactory):
 
     def getInterpolatedProperties(self, stream):
         props = SourceFactory.getInterpolatedProperties(self, stream)
-        props.update({"volume": 1.0})
+        props.update({"volume": None})
         return props
 
