@@ -585,7 +585,10 @@ class SourceList(gtk.VBox, Loggable):
         result = treeview.get_path_at_pos(int(event.x), int(event.y))
         if result:
             path = result[0]
-            return treeview.get_selection().path_is_selected(path)
+            selection = treeview.get_selection()
+
+            return selection.path_is_selected(path) and selection.count_selected_rows() > 1
+
         return False
 
     def _nothingUnderMouse(self, treeview, event):
