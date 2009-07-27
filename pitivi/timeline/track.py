@@ -330,19 +330,25 @@ class TrackObject(Signallable, Loggable):
 
         self._rebuild_interpolators = False
 
-        factory_properties = self.factory.getInterpolatedProperties(self.stream).keys()
+        factory_properties = self.factory.getInterpolatedProperties(self.stream)
 
         old_interpolators = self.interpolators
         self.interpolators = {}
         for gst_object, gst_object_property in \
                 get_controllable_properties(self.gnl_object):
-            if gst_object_property.name not in factory_properties:
+            prop_name = gst_object_property.name
+            if prop_name not in factory_properties:
                 continue
 
             try:
-                interpolator = old_interpolators[gst_object_property.name][1]
+                interpolator = old_interpolators[prop_name][1]
             except KeyError:
-                interpolator = Interpolator(self, gst_object, gst_object_property)
+                if factory_properties[prop_name]:
+                    lower, upper = factory_properties[prop_name]
+                else:
+                    lower, upper = None, None
+                interpolator = Interpolator(self, gst_object,
+                    gst_object_property, lower, upper)
             else:
                 interpolator.attachToElementProperty(gst_object_property,
                         gst_object)
