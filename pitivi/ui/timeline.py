@@ -38,6 +38,7 @@ from timelinecontrols import TimelineControls
 from pitivi.receiver import receiver, handler
 from zoominterface import Zoomable
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
+from pitivi.timeline.timeline import MoveContext
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
@@ -288,6 +289,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             if not self._temp_objects:
                 self.timeline.disableUpdates()
                 self._add_temp_source()
+                focus = self._temp_objects[0]
+                self._move_context = MoveContext(self.timeline,
+                        focus, set(self._temp_objects[1:]))
             self._move_temp_source(x, y)
         return True
 
@@ -304,7 +308,11 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _dragDropCb(self, widget, context, x, y, timestamp):
         self.app.action_log.begin("add clip")
         self._add_temp_source()
+        focus = self._temp_objects[0]
+        self._move_context = MoveContext(self.timeline,
+                focus, set(self._temp_objects[1:]))
         self._move_temp_source(x, y)
+        self._move_context.finish()
         self.app.action_log.commit()
         context.drop_finish(True, timestamp)
         self._factories = None
@@ -340,11 +348,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         x, y = self._canvas.convert_from_pixels(x - offset, y)
         priority = int((y // (LAYER_HEIGHT_EXPANDED + LAYER_SPACING)))
         delta = Zoomable.pixelToNs(x)
-        for obj in self._temp_objects:
-            obj.setStart(max(0, delta), snap=True)
-            obj.priority = priority
-            delta += obj.duration
-
+        self._move_context.editTo(delta, priority)
 
 ## Zooming and Scrolling
 

@@ -25,7 +25,7 @@ from bisect import bisect_left
 from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.utils import UNKNOWN_DURATION, closest_item, PropertyChangeTracker
-from pitivi.timeline.track import SourceTrackObject, TrackError
+from pitivi.timeline.track import TrackObject, SourceTrackObject, TrackError
 from pitivi.stream import match_stream_groups_map
 from pitivi.utils import start_insort_right, infinity, getPreviousObject, \
         getNextObject
@@ -1045,15 +1045,21 @@ class MoveContext(EditingContext):
     def __init__(self, timeline, focus, other):
         EditingContext.__init__(self, timeline, focus, other)
 
-        self.timeline_objects = set(track_object.timeline_object
-                for track_object in other)
-        self.timeline_objects.add(focus.timeline_object)
-
         min_priority = infinity
         earliest = infinity
         latest = 0
         self.default_originals = {}
-        for timeline_object in self.timeline_objects:
+        self.timeline_objects = set([])
+        all_objects = set(other)
+        all_objects.add(focus)
+        for obj in all_objects:
+            if isinstance(obj, TrackObject):
+                timeline_object = obj.timeline_object
+            else:
+                timeline_object = obj
+
+            self.timeline_objects.add(timeline_object)
+
             self.default_originals[timeline_object] = \
                     self._getTimelineObjectValues(timeline_object)
 
@@ -1112,8 +1118,12 @@ class MoveContext(EditingContext):
     def finish(self):
         EditingContext.finish(self)
 
-        initial_position = self.default_originals[self.focus.timeline_object][0]
-        initial_priority = self.default_originals[self.focus.timeline_object][-1]
+        if isinstance(self.focus, TrackObject):
+            focus_timeline_object = self.focus.timeline_object
+        else:
+            focus_timeline_object = self.focus
+        initial_position = self.default_originals[focus_timeline_object][0]
+        initial_priority = self.default_originals[focus_timeline_object][-1]
 
         final_priority = self.focus.priority
         final_position = self.focus.start
