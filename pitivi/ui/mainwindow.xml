@@ -51,6 +51,9 @@
     <toolitem action="OpenProject" />
     <toolitem action="SaveProject" />
     <separator />
+    <toolitem action="Undo" />
+    <toolitem action="Redo" />
+    <separator />
     <placeholder name="SourceList" />
     <separator />
     <toolitem action="RenderProject" />

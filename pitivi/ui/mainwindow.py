@@ -830,11 +830,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         undo_action = self.actiongroup.get_action("Undo")
         can_undo = bool(action_log.undo_stacks)
         undo_action.set_sensitive(can_undo)
-        if can_undo:
-            stack = action_log.undo_stacks[-1]
-            undo_action.props.label = _("Undo %s") % stack.action_group_name
-        else:
-            undo_action.props.label = _("Undo")
 
         dirty = action_log.dirty()
         save_action = self.actiongroup.get_action("SaveProject")
@@ -844,11 +839,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         redo_action = self.actiongroup.get_action("Redo")
         can_redo = bool(action_log.redo_stacks)
         redo_action.set_sensitive(can_redo)
-        if can_redo:
-            stack = action_log.redo_stacks[-1]
-            redo_action.props.label = _("Redo %s") % stack.action_group_name
-        else:
-            redo_action.props.label = _("Redo")
 
 ## PiTiVi current project callbacks
 
