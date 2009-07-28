@@ -55,6 +55,8 @@ from pitivi.receiver import receiver, handler
 import pitivi.formatters.format as formatter
 from pitivi.sourcelist import SourceListError
 from pitivi.ui.sourcelist import SourceList
+from pitivi.ui.common import beautify_factory
+from pitivi.utils import beautify_length
 
 if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -793,7 +795,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.set_border_width(12)
         dialog.get_content_area().set_spacing(6)
 
-        label = gtk.Label(_("Please locate the missing file, '%s'" % uri))
+        text = _("The following file has moved," +
+            " please tell PiTiVi where to find it.") + "\n\n" + \
+            beautify_factory(factory) + "\n" +\
+            _("<b>Duration:</b>") + beautify_length(factory.duration)
+
+        label = gtk.Label()
+        label.set_markup(text)
+        label.set_justify(gtk.JUSTIFY_CENTER)
         dialog.get_content_area().pack_start(label, False, False)
         label.show()
 
