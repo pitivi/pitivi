@@ -155,7 +155,7 @@ class TestProjectManager(TestCase):
 
             def _getSources(self):
                 # this will emit missing-uri
-                self.validateSourceURI("file:///icantpossiblyexist")
+                self.validateSourceURI("file:///icantpossiblyexist", None)
                 return []
 
             def _fillTimeline(self):
@@ -178,7 +178,7 @@ class TestProjectManager(TestCase):
         # failed
         name, args = self.signals[2]
         self.failUnlessEqual(name, "missing-uri")
-        formatter, signalUri = args
+        formatter, signalUri, unused_factory = args
         self.failUnlessEqual(signalUri, "file:///icantpossiblyexist")
 
 
