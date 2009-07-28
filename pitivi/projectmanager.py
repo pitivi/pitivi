@@ -43,7 +43,7 @@ class ProjectManager(Signallable, Loggable):
         "project-saved": ["project", "uri"],
         "closing-project": ["project"],
         "project-closed": ["project"],
-        "missing-uri": ["formatter", "uri"],
+        "missing-uri": ["formatter", "uri", "factory"],
     }
 
     def __init__(self):
@@ -190,7 +190,7 @@ class ProjectManager(Signallable, Loggable):
         self.emit("new-project-failed", uri, exception)
 
     def _formatterMissingURICb(self, formatter, uri, factory):
-        return self.emit("missing-uri", formatter, uri)
+        return self.emit("missing-uri", formatter, uri, factory)
 
     def _formatterSaveProjectFailed(self, formatter, project, uri, exception):
         self._disconnectFromFormatter(formatter)

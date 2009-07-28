@@ -784,7 +784,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.destroy()
         self.set_sensitive(True)
 
-    def _projectManagerMissingUriCb(self, instance, formatter, uri):
+    def _projectManagerMissingUriCb(self, instance, formatter, uri, factory):
         dialog = gtk.Dialog(_("Locate missing file..."),
             self,
             gtk.DIALOG_MODAL,
