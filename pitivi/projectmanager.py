@@ -189,7 +189,7 @@ class ProjectManager(Signallable, Loggable):
         self.current = None
         self.emit("new-project-failed", uri, exception)
 
-    def _formatterMissingURICb(self, formatter, uri):
+    def _formatterMissingURICb(self, formatter, uri, factory):
         return self.emit("missing-uri", formatter, uri)
 
     def _formatterSaveProjectFailed(self, formatter, project, uri, exception):

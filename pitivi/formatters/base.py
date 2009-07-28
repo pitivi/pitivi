@@ -69,7 +69,7 @@ class Formatter(Signallable, Loggable):
         "new-project-failed": ["uri", "exception"],
         "save-project-failed": ["project", "uri", "exception"],
         "project-saved": ["project", "uri"],
-        "missing-uri" : ["uri"]
+        "missing-uri" : ["uri", "factory"]
         }
 
     description = "Description of the format"
@@ -322,7 +322,7 @@ class Formatter(Signallable, Loggable):
 
         self.directorymapping[oldprefix] = newprefix
 
-    def validateSourceURI(self, uri):
+    def validateSourceURI(self, uri, factory):
         """
         Makes sure the given uri is accessible for reading.
 
@@ -361,7 +361,7 @@ class Formatter(Signallable, Loggable):
                     return probable
 
         # else, let's fire the signal...
-        self.emit('missing-uri', uri)
+        self.emit('missing-uri', uri, factory)
 
         # and check again
         for k, v in self.directorymapping.iteritems():
