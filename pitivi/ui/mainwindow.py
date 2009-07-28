@@ -789,6 +789,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         dialog.get_content_area().pack_start(chooser, True, True)
         chooser.show()
 
+        dialog.set_size_request(640, 480)
         response = dialog.run()
 
         if response == gtk.RESPONSE_OK:
