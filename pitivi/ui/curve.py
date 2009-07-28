@@ -45,6 +45,8 @@ KW_HEIGHT = 7
 KW_WIDTH2 = KW_WIDTH / 2
 KW_HEIGHT2 = KW_HEIGHT / 2
 
+CURVE_STROKE_WIDTH = 2.0
+
 class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
     __gtype_name__ = 'Curve'
@@ -92,11 +94,12 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                 self._view.app.action_log.commit()
 
         def xyToTimeValue(self, pos):
-            interpolator = self._view.interpolator
-            bounds = self._view.bounds
+            view = self._view
+            interpolator = view.interpolator
+            bounds = view.bounds
             time = (Zoomable.pixelToNs(pos[0] - bounds.x1) +
-                self._view.element.in_point)
-            value = ((1 - (pos[1] - bounds.y1) /  LAYER_HEIGHT_EXPANDED) *
+                view.element.in_point)
+            value = ((1 - (pos[1] - bounds.y1 - view._min) / view._range) *
                 interpolator.range) + interpolator.lower
             return time, value
 
@@ -125,6 +128,9 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         return self._height
     def _set_height (self, value):
         self._height = value
+        self._min = CURVE_STROKE_WIDTH / 2
+        self._max = value - (CURVE_STROKE_WIDTH / 2)
+        self._range = self._max - self._min
         self.changed(True)
     height = gobject.property(_get_height, _set_height, type=float)
 
@@ -170,9 +176,9 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     def _getKeyframeXY(self, kf):
         interp = self.interpolator
         x = self.nsToPixel(kf.time - self.element.in_point)
-        y = self._height - (((kf.value - interp.lower) / interp.range) *
-            self._height)
-        return point.Point(x + self.bounds.x1, y + self.bounds.y1)
+        y = self._range - (((kf.value - interp.lower) / interp.range) *
+            self._range)
+        return point.Point(x + self.bounds.x1, y + self.bounds.y1 + self._min)
 
     def _controlPoint(self, cr, kf):
         pos = self._getKeyframeXY(kf)
@@ -225,11 +231,11 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 ## public
 
     def focus(self):
-        self.line_width = 3.0
+        self.line_width = CURVE_STROKE_WIDTH * 1.5
         self.changed(False)
 
     def normal(self):
-        self.line_width = 2.0
+        self.line_width = CURVE_STROKE_WIDTH
         self.changed(False)
 
     def findKeyframe(self, pos):
