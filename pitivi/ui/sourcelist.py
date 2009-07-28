@@ -57,7 +57,8 @@ GlobalSettings.addConfigOption('closeImportDialog',
  COL_INFOTEXT,
  COL_FACTORY,
  COL_URI,
- COL_LENGTH) = range(5)
+ COL_LENGTH,
+ COL_SEARCH_TEXT) = range(6)
 
 ui = '''
 <ui>
@@ -122,6 +123,9 @@ def beautify_factory(factory):
     return ("<b>" + escape(unquote(factory.name)) + "</b>\n" +
         "\n".join((beautify_stream(stream) for stream in streams)))
 
+def factory_name(factory):
+    return escape(unquote(factory.name))
+
 class SourceList(gtk.VBox, Loggable):
     """ Widget for listing sources """
 
@@ -138,7 +142,8 @@ class SourceList(gtk.VBox, Loggable):
 
         # Store
         # icon, infotext, objectfactory, uri, length
-        self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, object, str, str)
+        self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, object, str, str,
+            str)
 
         self.set_border_width(5)
         self.set_spacing(6)
@@ -180,6 +185,7 @@ class SourceList(gtk.VBox, Loggable):
         self.treeview.connect("row-activated", self._rowActivatedCb)
         self.treeview.set_property("rules_hint", True)
         self.treeview.set_headers_visible(False)
+        self.treeview.set_property("search_column", COL_SEARCH_TEXT)
         tsel = self.treeview.get_selection()
         tsel.set_mode(gtk.SELECTION_MULTIPLE)
         tsel.connect("changed", self._treeSelectionChanged)
@@ -468,7 +474,8 @@ class SourceList(gtk.VBox, Loggable):
             beautify_factory(factory),
             factory,
             factory.uri,
-            duration])
+            duration,
+            factory_name(factory)])
         self._displayTreeView()
 
     # sourcelist callbacks
