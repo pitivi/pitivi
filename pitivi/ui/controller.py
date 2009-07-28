@@ -95,9 +95,9 @@ class Controller(object):
         self._event_common(item, target, event)
         self._canvas.keyboard_ungrab(item, event.time)
         self._ptr_within = False
-        event.window.set_cursor(ARROW)
         if not self._dragging:
             self.leave(item, target)
+            event.window.set_cursor(ARROW)
         return True
 
     @handler(_view, "button_press_event")
@@ -181,6 +181,9 @@ class Controller(object):
             else:
                 self.click(point)
             self._last_click = event.time
+            event.window.set_cursor(self._cursor)
+        else:
+            event.window.set_cursor(ARROW)
 
     def _drag_threshold(self):
         last = self.pos(self._dragging)
