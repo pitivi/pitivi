@@ -492,6 +492,14 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
         cr.stroke()
 
+    def _thumbForTime(self, cr, time, x, y):
+        RandomAccessPreviewer._thumbForTime(self, cr, time, x, y)
+        x_scale = float(self.base_width) / self.twidth
+        matrix = cairo.Matrix()
+        matrix.scale(x_scale, 1.0)
+        matrix.translate(-x, -y)
+        cr.get_source().set_matrix(matrix)
+
     def _connectSettings(self, settings):
         RandomAccessPreviewer._connectSettings(self, settings)
         self._view = settings.showWaveforms
