@@ -1248,15 +1248,44 @@ class TrimStartContext(EditingContext):
         self.focus_timeline_object = focus_timeline_object
         self.default_originals = self._saveValues([focus_timeline_object])
 
+        ripple = self.timeline.getObjsBeforeTime(focus.start)
+        assert not focus.timeline_object in ripple
+        self.ripple_originals = self._saveValues(ripple)
+        self.ripple_offsets = self._getOffsets(focus.start, focus.priority,
+            ripple)
+        if ripple:
+            self.ripple_min = focus.start - min((obj.start for obj in ripple))
+        else:
+            self.ripple_min = 0
+
     def _rollTo(self, position, priority):
         earliest = self.focus.start - self.focus.in_point
         self.focus.trimStart(max(position, earliest))
         for obj in self.adjacent:
             duration = max(0, position - obj.start)
             obj.setDuration(duration, snap=False)
+        return position, priority
 
     def _finishRoll(self):
         self._restoreValues(self.adjacent_originals)
+
+    def _rippleTo(self, position, priority):
+        earliest = self.focus.start - self.focus.in_point
+        latest = earliest + self.focus.factory.duration
+
+        if self.snap:
+            position = self.timeline.snapToEdge(position)
+
+        position = min(latest, max(position, earliest))
+        self.focus.trimStart(position)
+        r_position = max(position, self.ripple_min)
+        for obj, (s_offset, p_offset) in self.ripple_offsets.iteritems():
+            obj.setStart(r_position + s_offset)
+
+        return position, priority
+
+    def _finishRipple(self):
+        self._restoreValues(self.ripple_originals)
 
     def _defaultTo(self, position, priority):
         earliest = max(0, self.focus.start - self.focus.in_point)
@@ -1297,6 +1326,13 @@ class TrimEndContext(EditingContext):
         self.focus_timeline_object = focus_timeline_object
         self.default_originals = self._saveValues([focus_timeline_object])
 
+        reference = focus.start + focus.duration
+        ripple = self.timeline.getObjsAfterTime(reference)
+
+        self.ripple_originals = self._saveValues(ripple)
+        self.ripple_offsets = self._getOffsets(reference, self.focus.priority,
+            ripple)
+
     def _rollTo(self, position, priority):
         if self._snap:
             position = self.timeline.snapToEdge(position)
@@ -1304,9 +1340,26 @@ class TrimEndContext(EditingContext):
         self.focus.setDuration(duration)
         for obj in self.adjacent:
             obj.trimStart(position)
+        return position, priority
 
     def _finishRoll(self):
         self._restoreValues(self.adjacent_originals)
+
+    def _rippleTo(self, position, priority):
+        earliest = self.focus.start - self.focus.in_point
+        latest = earliest + self.focus.factory.duration
+        if self.snap:
+            position = self.timeline.snapToEdge(position)
+        position = min(latest, max(position, earliest))
+        duration = position - self.focus.start
+        self.focus.setDuration(duration)
+        for obj, (s_offset, p_offset) in self.ripple_offsets.iteritems():
+            obj.setStart(position + s_offset)
+
+        return position, priority
+
+    def _finishRipple(self):
+        self._restoreValues(self.ripple_originals)
 
     def _defaultTo(self, position, priority):
         duration = max(0, position - self.focus.start)
