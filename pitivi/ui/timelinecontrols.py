@@ -21,6 +21,7 @@ class TrackControls(gtk.Label):
 
     def __init__(self, track):
         gtk.Label.__init__(self)
+        self.set_alignment(0.5, 0)
         self.set_markup(track_name(track))
         self.track = track
         self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
