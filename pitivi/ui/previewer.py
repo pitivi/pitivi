@@ -230,7 +230,6 @@ class RandomAccessPreviewer(Previewer):
 
         # tdur = duration in ns of thumbnail
         # sof  = start of file in pixel coordinates
-        tdur = Zoomable.pixelToNs(self.twidth + self._spacing())
         x1 = bounds.x1;
         sof = Zoomable.nsToPixel(element.start - element.in_point)
 
@@ -257,7 +256,7 @@ class RandomAccessPreviewer(Previewer):
             self._thumbForTime(cr, j, i, y1)
             cr.rectangle(i - 1, y1, self.twidth + 2, self.theight)
             i += self.twidth + self._spacing()
-            j += tdur
+            j += self.tdur
             cr.fill()
 
     def _spacing(self):
@@ -343,6 +342,10 @@ class RandomAccessPreviewer(Previewer):
 
 class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
+    @property
+    def tdur(self):
+        return Zoomable.pixelToNs(self.twidth)
+
     def __init__(self, factory, stream_):
         if stream_.dar and stream_.par:
             self.aspect = float(stream_.dar)
@@ -396,6 +399,12 @@ class StillImagePreviewer(RandomAccessVideoPreviewer):
         return RandomAccessVideoPreviewer._thumbForTime(self, 0L)
 
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
+
+    def __init__(self, factory, stream_):
+        RandomAccessPreviewer.__init__(self, factory, stream_)
+        self.theight = 50
+        self.tdur = gst.SECOND / 10
+        self.base_width = 50
 
     def _pipelineInit(self, factory, sbin):
         self.spacing = 0
