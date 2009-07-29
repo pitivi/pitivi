@@ -16,32 +16,14 @@ def track_name(track):
     elif stream_type == stream.TextStream:
         return _("<b>Text:</b>")
 
-class TrackControls(gtk.Expander):
-
+class TrackControls(gtk.Label):
     __gtype_name__ = 'TrackControls'
 
-    __gsignals__ = {
-        "activate" : "override",
-    }
-
     def __init__(self, track):
-        gtk.Expander.__init__(self, track_name(track))
-        self.props.use_markup = True
-        self.set_expanded(True)
-        self.set_sensitive(False)
+        gtk.Label.__init__(self)
+        self.set_markup(track_name(track))
         self.track = track
-
-    def set_expanded(self, expanded):
-        if expanded != self.props.expanded:
-            if expanded:
-                self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
-            else:
-                self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_COLLAPSED)
-
-        gtk.Expander.set_expanded(self, expanded)
-
-    def do_activate(self):
-        self.props.expanded = not self.props.expanded
+        self.set_size_request(TRACK_CONTROL_WIDTH, LAYER_HEIGHT_EXPANDED)
 
     def _setTrack(self):
         if self.track:
@@ -56,11 +38,6 @@ class TrackControls(gtk.Expander):
             LAYER_SPACING))
 
 class TimelineControls(gtk.VBox):
-    __gsignals__ = {
-        "track-expanded" : (gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE,
-                (gobject.TYPE_PYOBJECT, gobject.TYPE_BOOLEAN))
-    }
-
     def __init__(self):
         gtk.VBox.__init__(self)
         self._tracks = []
@@ -81,7 +58,6 @@ class TimelineControls(gtk.VBox):
     @handler(timeline, "track-added")
     def _trackAdded(self, timeline, track):
         track = TrackControls(track)
-        self._connectToTrackControls(track)
         self._tracks.append(track)
         self.pack_start(track, False, False)
         track.show()
@@ -89,17 +65,5 @@ class TimelineControls(gtk.VBox):
     @handler(timeline, "track-removed")
     def _trackRemoved(self, unused_timeline, position):
         track = self._tracks[position]
-        self._disconnectFromTrackControls(track)
         del self._tracks[position]
         self.remove(track)
-
-    def _connectToTrackControls(self, track_controls):
-        track_controls.connect("notify::expanded",
-                self._trackControlsExpandedCb)
-
-    def _disconnectFromTrackControls(self, track_controls):
-        track_controls.disconnect_by_func(self._trackControlsExpandedCb)
-
-    def _trackControlsExpandedCb(self, track_controls, pspec):
-        self.emit('track-expanded', track_controls.track,
-                track_controls.props.expanded)

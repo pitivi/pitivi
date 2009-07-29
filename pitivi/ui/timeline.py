@@ -142,8 +142,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # controls for tracks and layers
         self._controls = TimelineControls()
-        self._controls.connect('track-expanded',
-                self._timelineControlsTrackExpandedCb)
         controlwindow = gtk.ScrolledWindow(None, self.vadj)
         controlwindow.set_policy(gtk.POLICY_NEVER, gtk.POLICY_NEVER)
         controlwindow.add_with_viewport(self._controls)
@@ -230,10 +228,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._canvas.connect("button-press-event", self._buttonPress)
         self._canvas.connect("button-release-event", self._buttonRelease)
         self._canvas.connect("key-press-event", self._keyPressEventCb)
-
-    def _timelineControlsTrackExpandedCb(self, timeline_controls,
-            track, expanded):
-        self._canvas.setExpanded(track, expanded)
 
 
 ## Event callbacks
