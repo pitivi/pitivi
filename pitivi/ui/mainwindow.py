@@ -476,10 +476,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self.settings.mainWindowHeight = event.height
 
     def _deleteCb(self, unused_widget, unused_data=None):
+        self._saveWindowSettings()
         if not self.app.shutdown():
             return True
 
-        self._saveWindowSettings()
         return False
 
     def _exposeEventCb(self, unused_widget, event):
