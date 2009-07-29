@@ -254,7 +254,7 @@ class RandomAccessPreviewer(Previewer):
         j = Zoomable.pixelToNs(i - sof)
 
         while i < bounds.x2:
-            cr.set_source_surface(self._thumbForTime(j), i, y1)
+            self._thumbForTime(cr, j, i, y1)
             cr.rectangle(i - 1, y1, self.twidth + 2, self.theight)
             i += self.twidth + self._spacing()
             j += tdur
@@ -272,13 +272,14 @@ class RandomAccessPreviewer(Previewer):
 
         raise NotImplementedError
 
-    def _thumbForTime(self, time):
+    def _thumbForTime(self, cr, time, x, y):
         segment = self._segment_for_time(time)
         if segment in self._cache:
-            return self._cache[segment]
-
-        self._requestThumbnail(segment)
-        return self.default_thumb
+            surface = self._cache[segment]
+        else:
+            self._requestThumbnail(segment)
+            surface = self.default_thumb
+        cr.set_source_surface(surface, x, y)
 
     def _finishThumbnail(self, surface, segment):
         """Notifies the preview object that the a new thumbnail is ready to be
