@@ -196,7 +196,6 @@ class RandomAccessPreviewer(Previewer):
 
         # assume 50 pixel height
         self.theight = 50
-        self.twidth = int(self.aspect * self.theight)
         self.waiting_timestamp = None
 
         self._pipelineInit(factory, bin)
@@ -343,6 +342,10 @@ class RandomAccessPreviewer(Previewer):
 class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
     @property
+    def twidth(self):
+        return int(self.aspect * self.theight)
+
+    @property
     def tdur(self):
         return Zoomable.pixelToNs(self.twidth)
 
@@ -401,10 +404,13 @@ class StillImagePreviewer(RandomAccessVideoPreviewer):
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def __init__(self, factory, stream_):
-        RandomAccessPreviewer.__init__(self, factory, stream_)
-        self.theight = 50
-        self.tdur = gst.SECOND / 10
+        self.tdur = gst.SECOND
         self.base_width = 50
+        RandomAccessPreviewer.__init__(self, factory, stream_)
+
+    @property
+    def twidth(self):
+        return Zoomable.nsToPixel(self.tdur)
 
     def _pipelineInit(self, factory, sbin):
         self.spacing = 0
