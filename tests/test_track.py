@@ -203,15 +203,32 @@ class TestTrackObject(TestCase):
 
         # trim somewhere in the middle
         monitor = TrackSignalMonitor(obj)
-        time = 4 * gst.SECOND
+        time = 7 * gst.SECOND
         obj.trimStart(time)
         self.failUnlessEqual(obj.start, time)
-        self.failUnlessEqual(obj.in_point, 3 * gst.SECOND)
-        self.failUnlessEqual(obj.duration, 8 * gst.SECOND)
+        self.failUnlessEqual(obj.in_point, 6 * gst.SECOND)
+        self.failUnlessEqual(obj.duration, 5 * gst.SECOND)
         self.failUnlessEqual(obj.rate, 1)
         self.failUnlessEqual(monitor.start_changed_count, 1)
         self.failUnlessEqual(monitor.in_point_changed_count, 1)
         self.failUnlessEqual(monitor.duration_changed_count, 1)
+
+        obj.start = 10 * gst.SECOND
+        obj.in_point = 11 * gst.SECOND
+        obj.duration = 15 * gst.SECOND
+
+        # this should be possible
+        monitor = TrackSignalMonitor(obj)
+        time = 0 * gst.SECOND
+        obj.trimStart(time)
+        self.failUnlessEqual(obj.start, 0 * gst.SECOND)
+        self.failUnlessEqual(obj.in_point, 1 * gst.SECOND)
+        self.failUnlessEqual(obj.duration, 25 * gst.SECOND)
+        self.failUnlessEqual(obj.rate, 1)
+        self.failUnlessEqual(monitor.start_changed_count, 1)
+        self.failUnlessEqual(monitor.in_point_changed_count, 1)
+        self.failUnlessEqual(monitor.duration_changed_count, 1)
+
 
     def testSplitObject(self):
         DURATION = 10 * gst.SECOND

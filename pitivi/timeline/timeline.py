@@ -1011,7 +1011,7 @@ class EditingContext(object):
         pass
 
     def _rippleTo(self, position, priority):
-        pass
+        return position, priority
 
     def _finishDefault(self):
         pass
@@ -1036,6 +1036,17 @@ class EditingContext(object):
         self._last_priority = priority
 
         return position, priority
+
+    def _getGapsAtPriority(self, priority, timeline_objects):
+        gaps = SmallestGapsFinder(timeline_objects)
+        prio_diff = priority - self.focus.priority
+
+        for timeline_object in timeline_objects:
+            gaps.update(*Gap.findAroundObject(timeline_object,
+                    timeline_object.priority + prio_diff))
+
+        return gaps.left_gap, gaps.right_gap
+
 
 class MoveContext(EditingContext):
 
@@ -1098,14 +1109,9 @@ class MoveContext(EditingContext):
             timeline_objects = self.timeline_objects_plus_ripple
         else:
             timeline_objects = self.timeline_objects
-        gaps = SmallestGapsFinder(timeline_objects)
-        prio_diff = priority - self.focus.priority
 
-        for timeline_object in timeline_objects:
-            gaps.update(*Gap.findAroundObject(timeline_object,
-                    timeline_object.priority + prio_diff))
-
-        return gaps.left_gap, gaps.right_gap
+        return EditingContext._getGapsAtPriority(self,
+                priority, timeline_objects)
 
     def setMode(self, mode):
         if mode == self.ROLL:
@@ -1224,6 +1230,12 @@ class TrimStartContext(EditingContext):
         EditingContext.__init__(self, timeline, focus, other)
         self.adjacent = timeline.edges.getObjsAdjacentToStart(focus)
         self.adjacent_originals = self._saveValues(self.adjacent)
+        if isinstance(self.focus, TrackObject):
+            focus_timeline_object = self.focus.timeline_object
+        else:
+            focus_timeline_object = self.focus
+        self.focus_timeline_object = focus_timeline_object
+        self.default_originals = self._saveValues([focus_timeline_object])
 
     def _rollTo(self, position, priority):
         earliest = self.focus.start - self.focus.in_point
@@ -1236,10 +1248,25 @@ class TrimStartContext(EditingContext):
         self._restoreValues(self.adjacent_originals)
 
     def _defaultTo(self, position, priority):
-        earliest = self.focus.start - self.focus.in_point
+        earliest = max(0, self.focus.start - self.focus.in_point)
         self.focus.trimStart(max(position, earliest), snap=self.snap)
 
         return position, priority
+
+    def finish(self):
+        EditingContext.finish(self)
+
+        initial_position = self.default_originals[self.focus_timeline_object][0]
+
+        timeline_objects = [self.focus_timeline_object]
+        left_gap, right_gap = self._getGapsAtPriority(self.focus.priority,
+                timeline_objects)
+
+        if left_gap is invalid_gap:
+            self._defaultTo(initial_position, self.focus.priority)
+            left_gap, right_gap = Gap.findAroundObject(self.focus_timeline_object)
+            position = initial_position - left_gap.duration
+            self._defaultTo(position, self.focus.priority)
 
 class TrimEndContext(EditingContext):
 
@@ -1247,6 +1274,12 @@ class TrimEndContext(EditingContext):
         EditingContext.__init__(self, timeline, focus, other)
         self.adjacent = timeline.edges.getObjsAdjacentToEnd(focus)
         self.adjacent_originals = self._saveValues(self.adjacent)
+        if isinstance(self.focus, TrackObject):
+            focus_timeline_object = self.focus.timeline_object
+        else:
+            focus_timeline_object = self.focus
+        self.focus_timeline_object = focus_timeline_object
+        self.default_originals = self._saveValues([focus_timeline_object])
 
     def _rollTo(self, position, priority):
         if self._snap:
@@ -1264,6 +1297,23 @@ class TrimEndContext(EditingContext):
         self.focus.setDuration(duration, snap=self.snap)
 
         return position, priority
+
+    def finish(self):
+        EditingContext.finish(self)
+
+        initial_position, initial_duration = \
+                self.default_originals[self.focus_timeline_object][0:2]
+        absolute_initial_duration = initial_position + initial_duration
+
+        timeline_objects = [self.focus_timeline_object]
+        left_gap, right_gap = self._getGapsAtPriority(self.focus.priority,
+                timeline_objects)
+
+        if right_gap is invalid_gap:
+            self._defaultTo(absolute_initial_duration, self.focus.priority)
+            left_gap, right_gap = Gap.findAroundObject(self.focus_timeline_object)
+            duration = absolute_initial_duration + right_gap.duration
+            self._defaultTo(duration, self.focus.priority)
 
 class Timeline(Signallable, Loggable):
     """
