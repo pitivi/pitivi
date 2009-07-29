@@ -475,21 +475,23 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         cr.rectangle(0, 0, self.base_width, self.theight)
         cr.fill()
 
-        # resample for improved speed
-        stride = 100
-        samples = [max(samples[i:i + stride]) for i in
-            xrange(0, len(samples), stride)]
-        scale = float(self.base_width) / len(samples)
+        # find the samples-per-pixel ratio
+        spp = len(samples) / self.base_width
 
-        # generate points
+        # plot points from min to max over a given hunk
+        i = 0
+        x= 0
+        while i < len(samples):
+            slice = samples[i:i + spp]
+            min_ = min(slice)
+            max_ = max(slice)
+            cr.move_to(x, hscale - (min_ * hscale))
+            cr.line_to(x, hscale - (max_ * hscale))
+            i += spp
+            x += 1
+
+        # Draw!
         cr.set_source_rgba(0, 0, 0, 1.0)
-
-        cr.move_to(0, hscale)
-        for x, y in enumerate(samples):
-            x = x * scale
-            y = hscale - (y * hscale)
-            cr.line_to(x, y)
-
         cr.stroke()
 
     def _thumbForTime(self, cr, time, x, y):
