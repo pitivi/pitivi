@@ -489,6 +489,7 @@ class Discoverer(Signallable, Loggable):
         vscale.props.method = 0
         csp = gst.element_factory_make("ffmpegcolorspace")
         pngenc = gst.element_factory_make("pngenc")
+        pngenc.props.snapshot = True
         pngsink = gst.element_factory_make("filesink")
         self.thumbnails[pad] = thumbnail = self._getThumbnailFilenameFromPad(pad)
         pngsink.props.location = thumbnail
