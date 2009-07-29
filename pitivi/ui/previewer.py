@@ -431,7 +431,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def _segment_for_time(self, time):
         # for audio files, we need to know the duration the segment spans
-        return time, Zoomable.pixelToNs(self.twidth)
+        return time, self.tdur
 
     def _bus_message(self, bus, message):
         if message.type == gst.MESSAGE_SEGMENT_DONE:
@@ -456,7 +456,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def _finishWaveform(self):
         surface = cairo.ImageSurface(cairo.FORMAT_A8,
-            int(self.twidth) + 2, self.theight)
+            self.base_width, self.theight)
         cr = cairo.Context(surface)
         self._plotWaveform(cr, self.audioSink.samples)
         self.audioSink.reset()
@@ -472,14 +472,14 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
         # clear background
         cr.set_source_rgba(1, 1, 1, 0.0)
-        cr.rectangle(0, 0, self.twidth, self.theight)
+        cr.rectangle(0, 0, self.base_width, self.theight)
         cr.fill()
 
         # resample for improved speed
         stride = 100
         samples = [max(samples[i:i + stride]) for i in
             xrange(0, len(samples), stride)]
-        scale = float(self.twidth) / len(samples)
+        scale = float(self.base_width) / len(samples)
 
         # generate points
         cr.set_source_rgba(0, 0, 0, 1.0)
