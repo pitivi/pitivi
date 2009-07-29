@@ -1330,6 +1330,154 @@ class TestContexts(TestCase):
         self.failUnlessEqual(self.track_object3.start, 25 * gst.SECOND)
         self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
 
+    def testTrimStartRipple(self):
+        # [t2]  [t3]  [t1]
+
+        self.track_object2.start = 1 * gst.SECOND
+        self.track_object2.duration = 4 * gst.SECOND
+
+        self.track_object3.start = 10 * gst.SECOND
+        self.track_object3.duration = 5 * gst.SECOND
+
+        self.track_object1.start = 15 * gst.SECOND
+        self.track_object1.duration = 10 * gst.SECOND
+        self.track_object1.trimStart(20 * gst.SECOND)
+        # set maximum duration on focus
+        self.track_object1.factory.duration = 10 * gst.SECOND
+
+        self.failUnlessEqual(self.track_object1.start,20 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.in_point, 5 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration, 5 * gst.SECOND)
+
+        # test basic trim
+
+        context = TrimStartContext(self.timeline, self.track_object1, self.other)
+        context.editTo(gst.SECOND * 15, 0)
+
+        self.failUnlessEqual(self.track_object1.start, 15 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.in_point, 0 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.in_point, 0 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.in_point, 0 * gst.SECOND)
+
+        # switch to ripple mode
+
+        context.setMode(context.RIPPLE)
+
+        self.failUnlessEqual(self.track_object1.start, 15 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.in_point, 0 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 0 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.in_point, 0 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 9 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.in_point, 0 * gst.SECOND)
+
+        # ripple right
+
+        context.editTo(25 * gst.SECOND, 0)
+        self.failUnlessEqual(self.track_object1.start, 25 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.in_point, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 6 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 15 * gst.SECOND)
+
+        # check that ripple is clamped to object duration
+
+        context.editTo(30 * gst.SECOND, 0)
+        self.failUnlessEqual(self.track_object1.start, 25 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.in_point, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 6 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 15 * gst.SECOND)
+
+        # test switch back to default
+
+        context.setMode(context.DEFAULT)
+        self.failUnlessEqual(self.track_object1.start, 25 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.in_point, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 10 * gst.SECOND)
+
+        # test switch back to ripple
+
+        context.setMode(context.RIPPLE)
+        self.failUnlessEqual(self.track_object1.start, 25 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.in_point, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 6 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 15 * gst.SECOND)
+
+        context.finish()
+
+    def testTrimEndContextRipple(self):
+        # [t1][t2][t3]
+
+        self.track_object1.start = 1 * gst.SECOND
+        self.track_object1.duration = 4 * gst.SECOND
+        self.track_object1.factory.duration = 10 * gst.SECOND
+        self.track_object2.start = 5 * gst.SECOND
+        self.track_object2.duration = 5 * gst.SECOND
+        self.track_object3.start = 10 * gst.SECOND
+        self.track_object3.duration = 5 * gst.SECOND
+
+        # test default trim
+
+        context = TrimEndContext(self.timeline, self.track_object1, self.other)
+        context.editTo(gst.SECOND * 10, 0)
+
+        self.failUnlessEqual(self.track_object1.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration, 9 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 5 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration, 5 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration, 5 * gst.SECOND)
+
+        # switch to ripple mode
+
+        context.setMode(context.RIPPLE)
+
+        self.failUnlessEqual(self.track_object1.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration, 9 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration, 5 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 15 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration, 5 * gst.SECOND)
+
+        context.editTo(gst.SECOND * 10, 0)
+
+        # check that we can't ripple past focal object duration
+
+        context.editTo(gst.SECOND * 15, 0)
+        self.failUnlessEqual(self.track_object1.duration, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 16 * gst.SECOND)
+
+        # check that we can't ripple before initial start of focal object
+
+        context.editTo(0, 0)
+        self.failUnlessEqual(self.track_object1.duration, 0 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 6 * gst.SECOND)
+
+        # switch back to default mode
+
+        context.setMode(context.DEFAULT)
+
+        self.failUnlessEqual(self.track_object1.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration, 0 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 5 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration, 5 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration, 5 * gst.SECOND)
+
+        # switch back to ripple mode
+
+        context.setMode(context.RIPPLE)
+
+        self.failUnlessEqual(self.track_object1.duration, 0 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 6 * gst.SECOND)
+
+        context.finish()
+
     def testEmptyOther(self):
         context = MoveContext(self.timeline, self.track_object1, set())
         context.finish()
