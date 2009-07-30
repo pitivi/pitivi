@@ -26,6 +26,8 @@ Audio and Video mixers
 import gobject
 import gst
 
+from pitivi.elements.audioclipper import ClipperProbe
+
 class SmartAdderBin(gst.Bin):
 
     __gstdetails__ = (
@@ -73,10 +75,12 @@ class SmartAdderBin(gst.Bin):
         adderpad = self.adder.get_request_pad("sink%d")
         aresample.get_pad("src").link(adderpad)
 
+        clipper = ClipperProbe(aresample.get_pad("src"))
+
         pad = gst.GhostPad(name, aconv.get_pad("sink"))
         pad.set_active(True)
         self.add_pad(pad)
-        self.inputs[name] = (pad, aconv, aresample, adderpad)
+        self.inputs[name] = (pad, aconv, aresample, clipper, adderpad)
         self.pad_count += 1
         return pad
 
@@ -84,7 +88,7 @@ class SmartAdderBin(gst.Bin):
         self.debug("pad:%r" % pad)
         name = pad.get_name()
         if name in self.inputs.keys():
-            sinkpad, aconv, aresample, adderpad = self.inputs.pop(name)
+            sinkpad, aconv, aresample, clipper, adderpad = self.inputs.pop(name)
             # we deactivate this pad to make sure that if ever the streaming
             # thread was doing something downstream (like getting caps) it will
             # return with GST_FLOW_WRONG_STATE and not GST_FLOW_NOT_LINKED (which is

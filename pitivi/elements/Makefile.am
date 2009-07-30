@@ -3,6 +3,7 @@ elementsdir = $(libdir)/pitivi/python/pitivi/elements
 elements_PYTHON = 		\
 	__init__.py 		\
 	arraysink.py 		\
+	audioclipper.py		\
 	imagefreeze.py 		\
 	mixer.py		\
 	singledecodebin.py 	\
