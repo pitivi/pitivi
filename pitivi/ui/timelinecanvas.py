@@ -31,7 +31,8 @@ from pitivi.ui.point import Point
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.settings import GlobalSettings
 from pitivi.ui.prefs import PreferencesDialog
-from pitivi.ui.common import TRACK_SPACING, unpack_cairo_pattern
+from pitivi.ui.common import TRACK_SPACING, unpack_cairo_pattern, \
+        LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 
 # cursors to be used for resizing objects
 ARROW = gtk.gdk.Cursor(gtk.gdk.ARROW)
@@ -96,6 +97,10 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         root.connect("motion-notify-event", self._selectionDrag)
         root.connect("button-press-event", self._selectionStart)
         root.connect("button-release-event", self._selectionEnd)
+        height = (LAYER_HEIGHT_EXPANDED + TRACK_SPACING + LAYER_SPACING) * 2
+        # add some padding for the horizontal scrollbar
+        height += 21
+        self.set_size_request(-1, height)
 
     def from_event(self, event):
         return Point(*self.convert_from_pixels(event.x, event.y))
