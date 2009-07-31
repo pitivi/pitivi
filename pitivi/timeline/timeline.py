@@ -1037,13 +1037,14 @@ class EditingContext(object):
 
         return position, priority
 
-    def _getGapsAtPriority(self, priority, timeline_objects):
+    def _getGapsAtPriority(self, priority, timeline_objects, tracks=None):
         gaps = SmallestGapsFinder(timeline_objects)
         prio_diff = priority - self.focus.priority
 
         for timeline_object in timeline_objects:
-            gaps.update(*Gap.findAroundObject(timeline_object,
-                    timeline_object.priority + prio_diff))
+            left_gap, right_gap = Gap.findAroundObject(timeline_object,
+                    timeline_object.priority + prio_diff, tracks)
+            gaps.update(left_gap, right_gap)
 
         return gaps.left_gap, gaps.right_gap
 
@@ -1061,13 +1062,18 @@ class MoveContext(EditingContext):
         latest = 0
         self.default_originals = {}
         self.timeline_objects = set([])
+        self.tracks = set([])
         all_objects = set(other)
         all_objects.add(focus)
         for obj in all_objects:
             if isinstance(obj, TrackObject):
                 timeline_object = obj.timeline_object
+                self.tracks.add(obj.track)
             else:
                 timeline_object = obj
+                timeline_object_tracks = set(track_object.track for track_object
+                        in timeline_object.track_objects)
+                self.tracks.update(timeline_object_tracks)
 
             self.timeline_objects.add(timeline_object)
 
@@ -1111,7 +1117,7 @@ class MoveContext(EditingContext):
             timeline_objects = self.timeline_objects
 
         return EditingContext._getGapsAtPriority(self,
-                priority, timeline_objects)
+                priority, timeline_objects, self.tracks)
 
     def setMode(self, mode):
         if mode == self.ROLL:
@@ -1230,10 +1236,15 @@ class TrimStartContext(EditingContext):
         EditingContext.__init__(self, timeline, focus, other)
         self.adjacent = timeline.edges.getObjsAdjacentToStart(focus)
         self.adjacent_originals = self._saveValues(self.adjacent)
+        self.tracks = set([])
         if isinstance(self.focus, TrackObject):
             focus_timeline_object = self.focus.timeline_object
+            self.tracks.add(self.focus.track)
         else:
             focus_timeline_object = self.focus
+            tracks = set(track_object.track for track_object in
+                    focus.track_objects)
+            self.tracks.update(tracks)
         self.focus_timeline_object = focus_timeline_object
         self.default_originals = self._saveValues([focus_timeline_object])
 
@@ -1260,7 +1271,7 @@ class TrimStartContext(EditingContext):
 
         timeline_objects = [self.focus_timeline_object]
         left_gap, right_gap = self._getGapsAtPriority(self.focus.priority,
-                timeline_objects)
+                timeline_objects, self.tracks)
 
         if left_gap is invalid_gap:
             self._defaultTo(initial_position, self.focus.priority)
@@ -1274,10 +1285,15 @@ class TrimEndContext(EditingContext):
         EditingContext.__init__(self, timeline, focus, other)
         self.adjacent = timeline.edges.getObjsAdjacentToEnd(focus)
         self.adjacent_originals = self._saveValues(self.adjacent)
+        self.tracks = set([])
         if isinstance(self.focus, TrackObject):
             focus_timeline_object = self.focus.timeline_object
+            self.tracks.add(focus.track)
         else:
             focus_timeline_object = self.focus
+            tracks = set(track_object.track for track_object in
+                    focus.track_objects)
+            self.tracks.update(tracks)
         self.focus_timeline_object = focus_timeline_object
         self.default_originals = self._saveValues([focus_timeline_object])
 
@@ -1307,7 +1323,7 @@ class TrimEndContext(EditingContext):
 
         timeline_objects = [self.focus_timeline_object]
         left_gap, right_gap = self._getGapsAtPriority(self.focus.priority,
-                timeline_objects)
+                timeline_objects, self.tracks)
 
         if right_gap is invalid_gap:
             self._defaultTo(absolute_initial_duration, self.focus.priority)
@@ -1553,19 +1569,41 @@ class Timeline(Signallable, Loggable):
 
         return output_stream_to_track_map
 
-    def getPreviousTimelineObject(self, obj, priority=-1):
-        prev = getPreviousObject(obj, self.timeline_objects, priority)
+    def getPreviousTimelineObject(self, obj, priority=-1, tracks=None):
+        if tracks is None:
+            skip = None
+        else:
+            def skipIfNotInTheseTracks(timeline_object):
+                return self._skipIfNotInTracks(timeline_object, tracks)
+            skip = skipIfNotInTheseTracks
+
+        prev = getPreviousObject(obj, self.timeline_objects,
+                priority, skip=skip)
+
         if prev is None:
             raise TimelineError("no previous timeline object", obj)
 
         return prev
 
-    def getNextTimelineObject(self, obj, priority=-1):
-        next = getNextObject(obj, self.timeline_objects, priority)
+    def getNextTimelineObject(self, obj, priority=-1, tracks=None):
+        if tracks is None:
+            skip = None
+        else:
+            def skipIfNotInTheseTracks(timeline_object):
+                return self._skipIfNotInTracks(timeline_object, tracks)
+            skip = skipIfNotInTheseTracks
+
+        next = getNextObject(obj, self.timeline_objects, priority, skip)
         if next is None:
             raise TimelineError("no next timeline object", obj)
 
         return next
+
+    def _skipIfNotInTracks(self, timeline_object, tracks):
+        timeline_object_tracks = set(track_object.track for track_object in
+                timeline_object.track_objects)
+
+        return not tracks.intersection(timeline_object_tracks)
 
     def setSelectionToObj(self, obj, mode):
         """

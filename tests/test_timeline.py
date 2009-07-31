@@ -886,8 +886,49 @@ class TestContexts(TestCase):
         self.failUnlessEqual(self.track_object1.in_point, 0)
         self.failUnlessEqual(self.track_object2.start, gst.SECOND * 15)
         self.failUnlessEqual(self.track_object3.start, gst.SECOND * 25)
-
         context.finish()
+
+    def testMoveContextOverlapDifferentTracks(self):
+        # start
+        # track1:          [focus][t2]
+        # track2:  [t3 ]
+        self.track_object1.start = 20 * gst.SECOND
+        self.track_object1.duration = 10 * gst.SECOND
+        self.track_object1.priority = 1
+        self.track_object2.start = 30 * gst.SECOND
+        self.track_object2.duration = 10 * gst.SECOND
+        self.track_object2.priority = 1
+        self.track_object3.start = 1 * gst.SECOND
+        self.track_object3.duration = 10 * gst.SECOND
+        self.track_object3.priority = 1
+
+        # move to
+        # track1:     [focus][t2]
+        # track2:  [t3 ]
+        context = MoveContext(self.timeline, self.track_object1,
+                set([self.track_object2]))
+        context.editTo(gst.SECOND * 1, 0)
+        context.finish()
+        self.failUnlessEqual(self.track_object1.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
+        
+        # move to
+        # track1:     [focus][t2]
+        # track2:             [t3 ]
+        context = MoveContext(self.timeline, self.track_object3,
+                set([]))
+        context.editTo(gst.SECOND * 10, 0)
+        context.finish()
+        self.failUnlessEqual(self.track_object1.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 11 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
 
     def testMoveContextFocusNotEarliest(self):
         #     [t2  ][focus]  [t3     ]
@@ -1189,6 +1230,34 @@ class TestContexts(TestCase):
         self.failUnlessEqual(self.track_object2.in_point, 2 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.duration, 11 * gst.SECOND)
 
+    def testTrimStartContextMarginsDifferentTracks(self):
+        # start
+        # track1:        [focus][t2]
+        # track2:  [t3 ]
+        self.track_object1.start = 20 * gst.SECOND
+        self.track_object1.in_point = 15 * gst.SECOND
+        self.track_object1.duration = 10 * gst.SECOND
+        self.track_object1.priority = 1
+        self.track_object2.start = 30 * gst.SECOND
+        self.track_object2.duration = 10 * gst.SECOND
+        self.track_object2.priority = 1
+        self.track_object3.start = 1 * gst.SECOND
+        self.track_object3.duration = 10 * gst.SECOND
+        self.track_object3.priority = 1
+
+        # trim back to
+        # track1:    [     focus][t2]
+        # track2:  [t3 ]
+        context = TrimStartContext(self.timeline, self.track_object1, set([]))
+        context.editTo(gst.SECOND * 5, 0)
+        context.finish()
+        self.failUnlessEqual(self.track_object1.start, 5 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration,  25 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 30 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
+
     def testTrimEndContext(self):
         self.track_object1.start = 1 * gst.SECOND
         self.track_object1.in_point = 3 * gst.SECOND
@@ -1232,6 +1301,34 @@ class TestContexts(TestCase):
         self.failUnlessEqual(self.track_object2.start, 12 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.in_point, 3 * gst.SECOND)
         self.failUnlessEqual(self.track_object2.duration, 10 * gst.SECOND)
+
+    def testTrimEndContextMarginsDifferentTracks(self):
+        # start
+        # track1:  [t1][t2 ]
+        # track2:             [t3 ]
+        self.track_object1.start = 1 * gst.SECOND
+        self.track_object1.duration = 10 * gst.SECOND
+        self.track_object1.priority = 1
+        self.track_object2.start = 10 * gst.SECOND
+        self.track_object2.duration = 10 * gst.SECOND
+        self.track_object2.timeline_object.factory.duration = 30 * gst.SECOND
+        self.track_object2.priority = 1
+        self.track_object3.start = 25 * gst.SECOND
+        self.track_object3.duration = 10 * gst.SECOND
+        self.track_object3.priority = 1
+
+        # extend to
+        # track1:  [t1][t2    ]
+        # track2:           [t3 ]
+        context = TrimEndContext(self.timeline, self.track_object2, set([]))
+        context.editTo(gst.SECOND * 30, 0)
+        context.finish()
+        self.failUnlessEqual(self.track_object1.start, 1 * gst.SECOND)
+        self.failUnlessEqual(self.track_object1.duration,  10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.start, 10 * gst.SECOND)
+        self.failUnlessEqual(self.track_object2.duration,  20 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.start, 25 * gst.SECOND)
+        self.failUnlessEqual(self.track_object3.duration,  10 * gst.SECOND)
 
     def testEmptyOther(self):
         context = MoveContext(self.timeline, self.track_object1, set())

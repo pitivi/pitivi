@@ -34,12 +34,13 @@ class Gap(object):
         return cmp(self.duration, other.duration)
 
     @classmethod
-    def findAroundObject(self, timeline_object, priority=-1):
+    def findAroundObject(self, timeline_object, priority=-1, tracks=None):
         from pitivi.timeline.timeline import TimelineError
 
         timeline = timeline_object.timeline
         try:
-            prev = timeline.getPreviousTimelineObject(timeline_object, priority)
+            prev = timeline.getPreviousTimelineObject(timeline_object,
+                    priority, tracks)
         except TimelineError:
             left_object = None
             right_object = timeline_object
@@ -54,7 +55,8 @@ class Gap(object):
         left_gap = Gap(left_object, right_object, start, duration)
 
         try:
-            next = timeline.getNextTimelineObject(timeline_object, priority)
+            next = timeline.getNextTimelineObject(timeline_object,
+                    priority, tracks)
         except TimelineError:
             left_object = timeline_object
             right_object = None

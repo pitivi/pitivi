@@ -20,7 +20,6 @@
 # Boston, MA 02111-1307, USA.
 
 import gst
-import weakref
 
 from pitivi.signalinterface import Signallable
 from pitivi.utils import get_controllable_properties, getPreviousObject, \
@@ -675,9 +674,12 @@ class Track(Signallable):
             self.default_track_object = None
             raise
 
+    def _skipDefaultTrackObject(self, timeline_object):
+        return timeline_object is self.default_track_object
+
     def getPreviousTrackObject(self, obj, priority=-1):
         prev = getPreviousObject(obj, self.track_objects, priority,
-                [self.default_track_object])
+                self._skipDefaultTrackObject)
         if prev is None:
             raise TrackError("no previous track object", obj)
 
@@ -685,7 +687,7 @@ class Track(Signallable):
 
     def getNextTrackObject(self, obj, priority=-1):
         next = getNextObject(obj, self.track_objects, priority,
-                [self.default_track_object])
+                self._skipDefaultTrackObject)
         if next is None:
             raise TrackError("no next track object", obj)
 
@@ -730,7 +732,7 @@ class Track(Signallable):
             raise TrackError()
         track_object.makeBin()
 
-        track_object.track = weakref.proxy(self)
+        track_object.track = self
 
         start_insort_right(self.track_objects, track_object)
 

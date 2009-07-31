@@ -380,21 +380,19 @@ def findObject(obj, objects):
 
     return low
 
-def getPreviousObject(obj, objects, priority=-1, exclude=None):
+def getPreviousObject(obj, objects, priority=-1, skip=None):
     if priority == -1:
         priority = obj.priority
 
-    if exclude is None:
-        exclude = []
-
     obj_index = findObject(obj, objects)
     if obj_index is None:
-        import pdb; pdb.set_trace()
+        raise Exception("woot this should never happen")
     # check if there are same-start objects
     prev_obj_index = obj_index + 1
     while prev_obj_index < len(objects):
         prev_obj = objects[prev_obj_index]
-        if prev_obj in exclude:
+        prev_obj_index += 1
+        if skip is not None and skip(prev_obj):
             continue
 
         if prev_obj.start != obj.start:
@@ -403,36 +401,30 @@ def getPreviousObject(obj, objects, priority=-1, exclude=None):
         if priority is None or prev_obj.priority == priority:
             return prev_obj
 
-        prev_obj_index += 1
 
     # check if there are objects with start < obj.start
     prev_obj_index = obj_index - 1
     while prev_obj_index >= 0:
         prev_obj = objects[prev_obj_index]
-        if prev_obj not in exclude and \
-                (priority is None or \
-                    prev_obj.priority == priority):
+        if (priority is None or prev_obj.priority == priority) \
+                and (skip is None or not skip(prev_obj)):
             return prev_obj
 
         prev_obj_index -= 1
 
     return None
 
-def getNextObject(obj, objects, priority=-1, exclude=None):
+def getNextObject(obj, objects, priority=-1, skip=None):
     if priority == -1:
         priority = obj.priority
-
-    if exclude is None:
-        exclude = []
 
     obj_index = findObject(obj, objects)
     next_obj_index = obj_index + 1
     objs_len = len(objects)
     while next_obj_index < objs_len:
         next_obj = objects[next_obj_index]
-        if next_obj not in exclude and \
-                (priority is None or \
-                    next_obj.priority == priority):
+        if (priority is None or next_obj.priority == priority) and \
+                (skip is None or not skip(next_obj)):
             return next_obj
 
         next_obj_index += 1
