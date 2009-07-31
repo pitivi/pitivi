@@ -224,6 +224,7 @@ class InteractivePitivi(Pitivi):
     import_help = _("""Import each MEDIA_FILE into the project.""")
 
     add_help = _("""Add each MEDIA_FILE to timeline after importing.""")
+    debug_help = _("""Run pitivi in the Python Debugger""")
 
     def run(self, argv):
         # check for dependencies
@@ -238,6 +239,9 @@ class InteractivePitivi(Pitivi):
         # parse cmdline options
         parser = self._createOptionParser()
         options, args = parser.parse_args(argv)
+
+        if options.debug:
+            sys.excepthook = self._excepthook
 
         # validate options
         if not options.import_sources and options.add_to_timeline:
@@ -278,6 +282,8 @@ class InteractivePitivi(Pitivi):
         parser.add_option("-i", "--import", help=self.import_help,
                 dest="import_sources", action="store_true", default=False)
         parser.add_option("-a", "--add-to-timeline", help=self.add_help,
+                action="store_true", default=False)
+        parser.add_option("-d", "--debug", help=self.debug_help,
                 action="store_true", default=False)
 
         return parser
@@ -322,6 +328,12 @@ class InteractivePitivi(Pitivi):
             self.current.sources.disconnect_by_function(self._discoveryErrorCb)
 
         return True
+
+    def _excepthook(self, exc_type, value, tback):
+        import traceback
+        import pdb
+        traceback.print_tb(tback)
+        pdb.post_mortem(tback)
 
 def main(argv):
     ptv = InteractivePitivi()
