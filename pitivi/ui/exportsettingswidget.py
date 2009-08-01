@@ -29,7 +29,7 @@ from pitivi.log.loggable import Loggable
 from pitivi.encode import encoders_muxer_compatible, muxer_can_sink_raw_audio, muxer_can_sink_raw_video
 from glade import GladeWidget
 from gstwidget import GstElementSettingsDialog
-
+import gobject
 from gettext import gettext as _
 
 class ExportSettingsWidget(GladeWidget, Loggable):
@@ -315,7 +315,22 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         self.acodeccbox.set_active(selected)
 
     def runSettingsDialog(self, factory, settings={}):
+        def configureEventCb(window, event):
+            self.app.settings.elementSettingsDialogWidth = event.width
+            self.app.settings.elementSettingsDialogHeight = event.height
+
+        def mapEventCb(window, event):
+            def reallySetWindowSize():
+                dialog.window.resize(self.app.settings.elementSettingsDialogWidth,
+                    self.app.settings.elementSettingsDialogHeight)
+                dialog.window.disconnect(mapEventId)
+                window.connect("configure-event", configureEventCb)
+                return False
+            gobject.idle_add(reallySetWindowSize)
+
         dialog = GstElementSettingsDialog(factory, settings)
+        mapEventId = dialog.window.connect("map-event", mapEventCb)
+
         if dialog.run() == gtk.RESPONSE_OK:
             dialog.hide()
             settings = dialog.getSettings()
