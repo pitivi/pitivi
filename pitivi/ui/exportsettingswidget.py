@@ -63,7 +63,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
                      ("32 bit", 32) )
 
 
-    def __init__(self):
+    def __init__(self, app):
         GladeWidget.__init__(self)
         Loggable.__init__(self)
         self.settings = None
@@ -76,6 +76,7 @@ class ExportSettingsWidget(GladeWidget, Loggable):
         self.muxer = None
         self.vencoder = None
         self.aencoder = None
+        self.app = app
         self._loading = False
 
     def setSettings(self, settings):
@@ -414,13 +415,13 @@ class ExportSettingsWidget(GladeWidget, Loggable):
 
 class ExportSettingsDialog(gtk.Dialog):
 
-    def __init__(self, settings):
+    def __init__(self, app, settings):
         gtk.Dialog.__init__(self, parent=None,
                             title=_("Export settings"),
                             flags=gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT,
                             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
                                      gtk.STOCK_OK, gtk.RESPONSE_ACCEPT))
-        self.setwidget = ExportSettingsWidget()
+        self.setwidget = ExportSettingsWidget(app)
         self.vbox.pack_start(self.setwidget)
         self.setwidget.setSettings(settings)
         self.setwidget.show_all()

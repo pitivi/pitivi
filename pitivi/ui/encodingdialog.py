@@ -135,7 +135,7 @@ class EncodingDialog(GladeWindow, Loggable):
             self.settingsbutton.set_sensitive(False)
 
     def _settingsButtonClickedCb(self, unused_button):
-        dialog = ExportSettingsDialog(self.settings)
+        dialog = ExportSettingsDialog(self.app, self.settings)
         res = dialog.run()
         dialog.hide()
         if res == gtk.RESPONSE_ACCEPT:
