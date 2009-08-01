@@ -105,6 +105,14 @@ GlobalSettings.addConfigOption('lastExportFolder',
                                 key="last-export-folder",
                                 environment="PITIVI_EXPORT_FOLDER",
                                 default=os.path.expanduser("~"))
+GlobalSettings.addConfigOption('elementSettingsDialogWidth',
+    section='export',
+    key='element-settings-dialog-width',
+    default = 620)
+GlobalSettings.addConfigOption('elementSettingsDialogHeight',
+    section='export',
+    key='element-settings-dialog-height',
+    default = 460)
 
 def supported(info):
     return formatter.can_handle_location(info[1])
