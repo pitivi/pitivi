@@ -180,12 +180,9 @@ class Interpolator(Signallable, Loggable):
         if isinstance(time_or_keyframe, Keyframe):
             keyframe = time_or_keyframe
         else:
-            # TODO: calculate value so that the new point doesn't change the shape
-            # of the curve when added. This might be tricky to achieve with cubic
-            # interpolation, but should work fine for linear and step
-            # interpolation.
             if value is None:
-                value = self._default
+                value = self._controller.get(self._property.name,
+                    time_or_keyframe)
             if mode is None:
                 # FIXME: Controller.get_interpolation_mode is not wrapped in
                 # gst-python, so for now we assume the default is linear.
