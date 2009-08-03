@@ -24,6 +24,7 @@ Custom canvas item for track object keyframe curves."""
 
 import goocanvas
 import gobject
+import gtk
 
 from pitivi.receiver import receiver, handler
 from pitivi.ui.zoominterface import Zoomable
@@ -46,12 +47,15 @@ KW_WIDTH2 = KW_WIDTH / 2
 KW_HEIGHT2 = KW_HEIGHT / 2
 
 CURVE_STROKE_WIDTH = 2.0
+HAND = gtk.gdk.Cursor(gtk.gdk.HAND2)
 
 class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
     __gtype_name__ = 'Curve'
 
     class Controller(Controller):
+
+        _cursor = HAND
 
         def drag_start(self, item, target, event):
             self._view.app.action_log.begin("volume change")
