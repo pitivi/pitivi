@@ -101,7 +101,7 @@ class ImageFreeze(gst.Element):
 
         # methodology
         # 1. We override any incoming framerate
-        ccaps = caps.make_writable()
+        ccaps = gst.Caps(caps)
         for struct in ccaps:
             if struct.has_key("framerate"):
                 try:
