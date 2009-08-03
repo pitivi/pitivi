@@ -67,6 +67,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                 # we are moving the entire curve, so we need to know the
                 # inital position of each keyframe
                 self._offsets = dict(self._view.keyframes)
+                self._segment = self._view.findSegment(
+                    self.xyToTimeValue(initial)[0])
 
         def drag_end(self, item, target, event):
             self._kf = None
@@ -79,7 +81,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                 self._kf.time = time
                 self._kf.value = value
             else:
-                for kf in interpolator.keyframes:
+                for kf in self._segment:
                     time, value = self.xyToTimeValue(self._offsets[kf] + pos
                         - self.pos(self._view))
                     kf.value = value
@@ -250,3 +252,14 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                 between(ky - KW_HEIGHT2, y, ky + KW_HEIGHT2)):
                 return keyframe
         return None
+
+    def findSegment(self, time):
+        before = self.interpolator.start
+        after = self.interpolator.end
+        for keyframe in self.keyframes.iterkeys():
+            if between(before.time, keyframe.time, time):
+                before = keyframe
+            if between(time, keyframe.time, after.time):
+                after = keyframe
+        assert before.time <= after.time
+        return before, after
