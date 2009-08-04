@@ -905,6 +905,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.timeline.timelinePositionChanged(position)
         self.timelinepos = position
 
+    @handler(project_pipeline, "state-changed")
+    def _timelinePipelineStateChangedCb(self, pipeline, state):
+        self.timeline.stateChanged(state)
+
 ## Project Timeline (not to be confused with UI timeline)
 
     project_timeline = receiver()
