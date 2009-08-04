@@ -131,6 +131,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._factories = None
         self._finish_drag = False
         self._position = 0
+        self._state = gst.STATE_NULL
         self._createUI()
         self._prev_duration = 0
         self.shrink = True
@@ -356,6 +357,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ruler.timelinePositionChanged(position)
         self._canvas._position = position
         self.scrollToPlayhead()
+
+    def stateChanged(self, state):
+        self._state = state
 
     def scrollToPlayhead(self):
         width = self.get_allocation().width
