@@ -114,9 +114,14 @@ class PictureFileSourceFactory(FileSourceFactory):
 
     def _dbinPadRemovedCb(self, unused_dbin, pad, scale, freeze, container):
         ghost = container.get_pad("src")
-        target = ghost.get_target()
-        peer = target.get_peer()
-        target.unlink(peer)
+        # FIXME: what we want to do here is ghost.set_target(None). Since that
+        # isn't possible as of pygst 0.10.15
+        # (http://bugzilla.gnome.org/show_bug.cgi?id=590735) we create a
+        # throw away srcpad and retarget the ghostpad we are removing to it.
+        # This hopefully fixes deadlocks, abort() and other weird stuff we're
+        # having with freeze.
+        die = gst.Pad("die", gst.PAD_SRC)
+        ghost.set_target(die)
         container.remove_pad(ghost)
         pad.unlink(scale.get_pad("sink"))
 
