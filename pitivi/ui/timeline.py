@@ -370,6 +370,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         return False
 
     def scrollToPosition(self, position):
+        if not self._state == gst.STATE_PLAYING:
+            return
         if position > self.hadj.upper:
             # we can't perform the scroll because the canvas needs to be
             # updated
