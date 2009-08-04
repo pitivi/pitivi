@@ -75,7 +75,9 @@ class MultimediaStream(Loggable):
         @return: C{True} if the stream is compatible.
         @rtype: C{bool}
         """
-        return not self.caps.intersect(other.caps).is_empty()
+        classes = [type(self), type(other)]
+        compatible_classes = issubclass(*classes) or issubclass(*classes[::-1])
+        return compatible_classes and not self.caps.intersect(other.caps).is_empty()
 
     def isCompatibleWithName(self, other):
         """
