@@ -32,8 +32,8 @@ dnl For a more exhaustive list of checks, you can have a look at
 dnl the runtime checks in pitivi/check.py
 
 AC_SUBST(PYGTK_REQ, 2.14.0)
-AC_SUBST(PYGST_REQ, 0.10.15)
-AC_SUBST(GST_REQ, 0.10.23.1)
+AC_SUBST(PYGST_REQ, 0.10.16)
+AC_SUBST(GST_REQ, 0.10.24)
 AC_SUBST(GNONLIN_REQ, 0.10.11.3)
 AC_SUBST(PYCAIRO_REQ, 1.0.0)
 
