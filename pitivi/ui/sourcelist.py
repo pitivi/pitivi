@@ -41,6 +41,7 @@ from pitivi.stream import VideoStream, AudioStream, TextStream, \
 from pitivi.settings import GlobalSettings
 from pitivi.utils import beautify_length
 from pitivi.log.loggable import Loggable
+from pitivi.sourcelist import SourceListError
 
 GlobalSettings.addConfigSection('clip-library')
 GlobalSettings.addConfigOption('lastImportFolder',
@@ -713,7 +714,11 @@ class SourceList(gtk.VBox, Loggable):
                 directories = [incoming]
         if directories:
             self.addFolders(directories)
-        self.addUris(filenames)
+        try:
+            self.addUris(filenames)
+        except SourceListError:
+            # filenames already present in the sourcelist
+            pass
 
     def _dndTreeBeginCb(self, unused_widget, context):
         self.info("tree drag_begin")
