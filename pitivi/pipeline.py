@@ -821,7 +821,21 @@ class Pipeline(Signallable, Loggable):
         return gst.BUS_PASS
 
     def _binPadAddedCb(self, bin, pad):
-        self.debug("bin:%r, pad:%r (%s)", bin, pad, pad.get_caps().to_string())
+        # Our (semi)automatic linking logic is based on caps.
+        # gst_pad_get_caps returns all the caps a pad can handle, not
+        # necessarily those set with gst_pad_set_caps.
+        # Some of our utility elements (like ImageFreeze and FixSeekStart) have
+        # template caps ANY but they do caps negotiation (call gst_pad_set_caps)
+        # asap, before pushing anything. Therefore we try to get the negotiated
+        # caps first here, and fallback on the template caps.
+        caps = pad.props.caps
+        if caps is None:
+            caps = pad.get_caps()
+
+        if caps.is_any():
+            self.error("got ANY caps, this should never happen")
+
+        self.debug("bin:%r, pad:%r (%s)", bin, pad, caps.to_string())
         self._lock.acquire()
 
         try:
@@ -840,7 +854,7 @@ class Pipeline(Signallable, Loggable):
             if factory is None:
                 raise PipelineError("New pad on an element we don't control ??")
 
-            stream = get_stream_for_caps(pad.get_caps(), pad)
+            stream = get_stream_for_caps(caps, pad)
             if stream not in factory_entry.streams:
                 factory_entry.streams[stream] = StreamEntry(factory_entry,
                         stream, parent=stream_entry)

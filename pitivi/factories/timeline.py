@@ -132,6 +132,14 @@ class TimelineSourceFactory(SourceFactory):
         seek.set_state(gst.STATE_PLAYING)
         pad.link(seek.get_pad('sink'))
         ghost = gst.GhostPad('src%d' % self.pad_num + str(id(pad)), seek.get_pad('src'))
+
+        # if the target pad has negotiated caps, set them on the ghost as well
+        caps = pad.props.caps
+        if caps is None:
+            caps = pad.get_caps()
+        if caps.is_fixed():
+            seek.get_pad("sink").set_caps(caps)
+            ghost.set_caps(caps)
         ghost.set_active(True)
         self.ghosts[pad_id] = ghost
         self.seek_checkers[pad_id] = seek
