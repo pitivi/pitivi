@@ -822,7 +822,7 @@ class Pipeline(Signallable, Loggable):
 
     def _binPadAddedCb(self, bin, pad):
         # Our (semi)automatic linking logic is based on caps.
-        # gst_pad_get_caps returns all the caps a pad can handle, not
+        # gst_pad_get_caps returns all the caps a pad can handle, not
         # necessarily those set with gst_pad_set_caps.
         # Some of our utility elements (like ImageFreeze and FixSeekStart) have
         # template caps ANY but they do caps negotiation (call gst_pad_set_caps)
