@@ -142,6 +142,9 @@ class ClipperProbe(object):
 
     def _bufferprobe(self, pad, inbuf):
         start = inbuf.timestamp
+        if start == gst.CLOCK_TIME_NONE:
+            pad.warning("Got buffer without timestamp ! Forwarding")
+            return True
         if inbuf.duration == gst.CLOCK_TIME_NONE:
             stop = inbuf.timestamp + (inbuf.size * gst.SECOND) / self.bitrate
         else:
