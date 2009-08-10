@@ -372,9 +372,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self.timeline = Timeline(instance, self.uimanager)
         self.timeline.project = self.project
 
-        vpaned.pack2(self.timeline, resize=True, shrink=False)
+        vpaned.pack2(self.timeline, resize=False, shrink=False)
         hpaned = gtk.HPaned()
-        vpaned.pack1(hpaned, resize=False, shrink=True)
+        vpaned.pack1(hpaned, resize=True, shrink=False)
         self.projecttabs = ProjectTabs(instance, self.uimanager)
         self._connectToSourceList()
 
