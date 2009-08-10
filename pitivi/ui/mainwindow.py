@@ -406,6 +406,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
         if self.settings.mainWindowHeight:
             height = self.settings.mainWindowHeight
         self.set_default_size(width, height)
+        if height == -1 and width == -1:
+            self.maximize()
         self._do_pending_fullscreen = False
         # FIXME: don't know why this doesn't work
         #if self.settings.mainWindowFullScreen:
