@@ -102,6 +102,8 @@ class PictureFileSourceFactory(FileSourceFactory):
         pad.link(scale.get_pad("sink"))
         ghost = gst.GhostPad("src", freeze.get_pad("src"))
         ghost.set_active(True)
+        if pad.props.caps is not None:
+            ghost.set_caps(pad.props.caps)
         container.add_pad(ghost)
 
     def _dbinPadRemovedCb(self, unused_dbin, pad, scale, freeze, container):

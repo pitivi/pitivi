@@ -364,6 +364,9 @@ class SourceFactory(ObjectFactory):
             topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
         else:
             topbin.ghostpad = gst.GhostPad("src", pad)
+
+        if pad.props.caps is not None:
+            topbin.ghostpad.set_caps(pad.props.caps)
         topbin.ghostpad.set_active(True)
         topbin.add_pad(topbin.ghostpad)
 
