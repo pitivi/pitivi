@@ -121,15 +121,17 @@ class ImageFreeze(gst.Element):
         for candidate in intersect:
             self.debug("Trying %s" % candidate.to_string())
             if self.srcpad.peer_accept_caps(candidate):
-                self.debug("accepted !")
+                self.debug("accepted ! %s" % candidate.to_string())
                 # 4. When we have an accepted caps downstream, we store the negotiated
                 #    framerate and return
-                if not candidate.has_key("framerate"):
+                if not candidate.has_key("framerate") or \
+                        not isinstance(candidate["framerate"], gst.Fraction):
                     candidate["framerate"] = gst.Fraction(25, 1)
                 self._outputrate = candidate["framerate"]
                 self._bufferduration = gst.SECOND * self._outputrate.denom / self._outputrate.num
                 self._srccaps = candidate.copy()
-                return self.srcpad.set_caps(self._srccaps)
+                res = self.srcpad.set_caps(self._srccaps)
+                return res
 
         # 5. If we can't find an accepted candidate, we return False
         return False
