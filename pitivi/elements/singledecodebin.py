@@ -89,6 +89,8 @@ class SingleDecodeBin(gst.Bin):
 
         self.debug("stream:%r" % self.stream)
 
+        self.pending_newsegment = False
+        self.eventProbeId = None
 
     ## internal methods
 
@@ -283,11 +285,53 @@ class SingleDecodeBin(gst.Bin):
             return
         self._markValidElements(element)
         gobject.idle_add(self._removeUnusedElements, self.typefind)
-        self.log("ghosting pad %s" % pad.get_name())
+        if pad.props.caps is not None:
+            caps = pad.props.caps
+        else:
+            caps = pad.get_caps()
+
         self._srcpad = gst.GhostPad("src", pad)
         self._srcpad.set_active(True)
+
+        if caps.is_fixed():
+            self._exposePad(target=pad)
+        else:
+            self._blockPad(target=pad)
+
+    def _exposePad(self, target):
+        self.log("ghosting pad %s" % target.get_name())
         self.add_pad(self._srcpad)
         self.post_message(gst.message_new_state_dirty(self))
+
+    def _blockPad(self, target):
+        self._eventProbeId = target.add_event_probe(self._padEventCb)
+        self._srcpad.set_blocked_async(True, self._padBlockedCb, target)
+
+    def _unblockPad(self, target):
+        target.remove_event_probe(self._eventProbeId)
+        self._eventProbeId = None
+        self._srcpad.set_blocked_async(False, self._padBlockedCb, target)
+
+    def _padBlockedCb(self, ghost, blocked, target):
+        if not blocked:
+            if self.pending_newsegment is not None:
+                self._srcpad.push_event(self.pending_newsegment)
+                self.pending_newsegment = None
+            return
+
+        self._exposePad(target=target)
+        self._unblockPad(target=target)
+
+    def _padEventCb(self, pad, event):
+        if event.type != gst.EVENT_NEWSEGMENT:
+            self.warning("first event: %s is not a NEWSEGMENT, bailing out" %
+                    event)
+            self._exposePad(target=pad)
+            self._unblockPad(target=pad)
+            return True
+
+        self.pending_newsegment = event
+        return False
 
     def _markValidElements(self, element):
         """
