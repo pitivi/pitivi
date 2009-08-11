@@ -66,15 +66,7 @@ class PictureFileSourceFactory(FileSourceFactory):
     ffscale_factory = 'ffvideoscale'
 
     def _makeDefaultBin(self):
-        # we override this so we always return a bin having
-        # bin.decodebin = <bin as returned by FileSourceFactory>
-        # this makes our _releaseBin simpler
-        bin = gst.Bin()
-        dbin = FileSourceFactory._makeDefaultBin(self)
-        bin.add(dbin)
-        bin.decodebin = dbin
-
-        return bin
+        return self._makeStreamBin(self.output_streams[0])
 
     def _makeStreamBin(self, output_stream):
         self.debug("making picture bin for %s", self.name)
