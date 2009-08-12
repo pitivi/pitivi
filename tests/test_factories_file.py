@@ -105,6 +105,9 @@ class TestPictureFileSourceFactory(TestCase):
         # the default bin for FileSource is a bin containing decodebin
         # what we're testing here is that the method does return a bin and
         # doesn't rise exceptions. We're NOT changing the state of the bin.
+        video1 = VideoStream(gst.Caps('video/x-raw-rgb, width=2048'),
+                pad_name='src0')
+        self.factory.addOutputStream(video1)
         bin = self.factory.makeBin()
         self.failUnless(isinstance(bin, gst.Bin))
         self.factory.releaseBin(bin)
