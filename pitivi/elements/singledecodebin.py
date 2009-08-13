@@ -304,23 +304,27 @@ class SingleDecodeBin(gst.Bin):
         self.post_message(gst.message_new_state_dirty(self))
 
     def _blockPad(self, target):
+        # don't pass target as an argument to set_blocked_async. Avoids
+        # triggering a bug in gst-python where pad_block_destroy_data calls
+        # CPython without acquiring the GIL
+        self._target = target
         self._eventProbeId = target.add_event_probe(self._padEventCb)
-        self._srcpad.set_blocked_async(True, self._padBlockedCb, target)
+        self._srcpad.set_blocked_async(True, self._padBlockedCb)
 
     def _unblockPad(self, target):
         target.remove_event_probe(self._eventProbeId)
         self._eventProbeId = None
-        self._srcpad.set_blocked_async(False, self._padBlockedCb, target)
+        self._srcpad.set_blocked_async(False, self._padBlockedCb)
 
-    def _padBlockedCb(self, ghost, blocked, target):
+    def _padBlockedCb(self, ghost, blocked):
         if not blocked:
             if self.pending_newsegment is not None:
                 self._srcpad.push_event(self.pending_newsegment)
                 self.pending_newsegment = None
             return
 
-        self._exposePad(target=target)
-        self._unblockPad(target=target)
+        self._exposePad(target=self._target)
+        self._unblockPad(target=self._target)
 
     def _padEventCb(self, pad, event):
         if event.type != gst.EVENT_NEWSEGMENT:
@@ -367,6 +371,7 @@ class SingleDecodeBin(gst.Bin):
         if self._srcpad:
             self.remove_pad(self._srcpad)
         self._srcpad = None
+        self._target = None
         for element in self._validelements:
             element.set_state(gst.STATE_NULL)
             self.remove(element)
