@@ -1,3 +1,2000 @@
+2009-08-13  Edward Hervey <bilboed@bilboed.com>
+
+	* ChangeLog:
+	* NEWS:
+	* RELEASE:
+	* configure.ac:
+	  Release 0.13.2 "Jailbreak (out of deadlock city)"
+
+2009-08-13  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/singledecodebin.py:
+	  Workaround a bug in gst.Pad.set_blocked_async that causes a segfault.
+	  pad_block_destroy_data used to call CPython without acquiring the GIL. This is
+	  now fixed in gst-python git, but we add this workaround so that we don't have to
+	  bump the dependency.
+
+2009-08-12  Gil Forcada <gforcada@gnome.org>
+
+	* po/ca.po:
+	  Updated Catalan translation
+
+2009-08-12  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_factories_file.py:
+	  Fix tests/test_factories_file.py
+
+2009-08-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/base.py:
+	* pitivi/factories/file.py:
+	  When ghosting pads with negotiaged caps, set the caps to the ghosts.
+
+2009-08-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/singledecodebin.py:
+	  Try to expose singledecodebin pads when they get fixed caps.
+
+2009-08-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/imagefreeze.py:
+	  Avoid an exception in imagefreeze if the incoming caps don't have a framerate.
+
+2009-08-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/file.py:
+	  Remove insanity from PictureFileSource._makeDefaultBin.
+	  Fixes a not-linked error dragging pictures from the sourcelist onto the viewer.
+
+2009-08-10  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/projectsettings.glade:
+	* pitivi/ui/projectsettings.py:
+	  ProjectSettings: Manually create/add Widget. Fixes #591149
+	  The problem was introduced by commit d957370, which required an extra
+	  __init__ argument to ExportSettingsWidget... which glade didn't have.
+
+2009-08-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Maximize the main window by default. Fixes #589784.
+
+2009-08-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Make the HPaned resize by default in the main window.
+	  Make it so that when you maximize the window, extra space is allocated for
+	  the sourcelist and the viewer.
+
+2009-08-09  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/audioclipper.py:
+	  AudioClipper: Forward buffers that have no timestamp.
+	  This avoids having excptions being raised when non-timestamped buffers
+	  come through.
+
+2009-08-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/pipeline.py:
+	  Remove an unicode blank from a comment. Oops.
+
+2009-08-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/timeline.py:
+	* pitivi/pipeline.py:
+	  Do linking decisions based on negotiated caps when possible.
+
+2009-08-05  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure.ac: 0.13.1.3 pre-release
+
+2009-08-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* configure.ac:
+	  Bump dependencies.
+	  Depend on core & base 0.10.24 and gst-python 0.10.16.
+
+2009-08-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Fix a traceback dragging source list items on the source list itself.
+
+2009-08-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* configure.ac:
+	  Bump gnonlin dependency to 0.10.11.3.
+
+2009-08-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/stream.py:
+	  Make Stream.isCompatible check that stream classes are compatible as well.
+
+2009-08-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/file.py:
+	  Add a workaround for some deadlocks involving PictureFileSource and ghostpads.
+
+2009-08-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow.py: handle state-changed signal from project pipeline fixes bug 582327
+
+2009-08-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: only set scroll position when state == gst.STATE playing
+
+2009-08-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: add method setState() which records pipeline state
+
+2009-08-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	* pitivi/ui/curve.py:
+	  track.py, curve.py: when creating keyframes, calculate value so that it lies on the existing curve. fixes bug 589815
+
+2009-08-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: only move the current segment when user clicks and drags on a curve fixes bug 589813
+
+2009-08-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: set cursor to hand shape when hovering over interpolation curve fixes bug 589812
+
+2009-08-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/imagefreeze.py:
+	  Don't call caps.make_writable() in imagefreeze.
+	  make_writable() should never be called from python since it breaks refcounting.
+
+2009-08-03  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge commit 'gnome/master'
+
+2009-08-01  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/exportsettingswidget.py:
+	  exportsettingswidget.py: remember window size closes bug 579237
+	  This commit is a little complicated because the glade dialogs seemed to be
+	  ignoring set_default_size. We connect to map event and use that to install
+	  an idle handler which actually sets the dialog size. This seems to be the only
+	  reliable way to set the size of this dialog.
+	  The idle handler also connects to the configure event -- we don't want to do this
+	  any earlier or the saved dialog size will be overwritten before the dialog is
+	  shown.
+
+2009-08-01  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/exportsettingswidget.py:
+	  encodingdialog.py, exportesttingswidget.py: pass application instance in constructor
+
+2009-07-31  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow.py: add config file entries for element settings widget squash into mainwindow commit
+
+2009-08-01  Claude Paroz <claude@2xlibre.net>
+
+	* po/fr.po:
+	  Updated French translation
+
+2009-07-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: implementation of ripple trimming of clips closes bug 589715
+
+2009-07-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* tests/test_timeline.py:
+	  test_timeline.py: check in test cases for ripple trims
+
+2009-07-31  António Lima <amrlima@gmail.com>
+
+	* po/pt.po:
+	  Updated Portuguese translation
+
+2009-07-31  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/gap.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	* pitivi/utils.py:
+	* tests/test_timeline.py:
+	  Fix some overlap checks.
+	  This commit makes Timeline.get(Next|Prev)TimelineObject aware of tracks, fixing
+	  overlap checks editing objects having the same priority but different track.
+
+2009-07-31  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	  Add the -d command line option to start a post mortem pdb on uncaught exceptions.
+
+2009-07-30  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/Makefile.am:
+	* pitivi/elements/audioclipper.py:
+	* pitivi/elements/mixer.py:
+	  elements: Use audio-clipping probe before adder.
+	  This ensures that we're not sending too much data to adder which would
+	  result in weird 'clipping' sound.
+	  THIS IS A HACK ! It should be fixed in adder (see #590265)
+
+2009-07-30  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timelinecanvas.py:
+	* pitivi/ui/timelinecontrols.py:
+	* pitivi/ui/track.py:
+	  Make the timeline canvas request enough space to show two single-layer tracks.
+
+2009-07-30  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure.ac: We require pygtk >= 2.14. Fixes #590195
+
+2009-07-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/discoverer.py:
+	  Set pngenc in snapshot mode inside discoverer.
+
+2009-07-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	* tests/test_track.py:
+	  Avoid collapses when trimming. Fixes #589694.
+
+2009-07-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Save windows settings when closed from a delete-event. Fixes #580680.
+
+2009-07-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timelinecontrols.py:
+	  Set the alignment of timeline controls.
+
+2009-07-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/timelinecontrols.py:
+	  Make TrackControls be a Label and not an Expander.
+	  We made the expander unsensitive in the last release since expanding/collapsing
+	  didn't look that good. Now i'm removing the expander altogether.
+
+2009-07-29  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge commit 'gnome/master'
+
+2009-07-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow.py: increase size of missing file dialog.
+	  closes bug 583241
+
+2009-07-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: take curve line width into account when calculating the XY position keyframes.
+	  fixes bug 589689
+
+2009-07-28  Per Kongstad <p_kongstad@op.pl>
+
+	* po/da.po:
+	  Updated Danish translation
+
+2009-07-27  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: pass along interpolator property overrides when given fixes bug 589820 by allowing volume to be set from 0 - 5. Up to a factor 10 is possible with the volume element, but this makes the scale unusably small with the current clip height.
+
+2009-07-27  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/factories/file.py:
+	* pitivi/factories/test.py:
+	  test.py, base.py: keys in interpolated property dict now represent min/max value overrides. override volume property max
+
+2009-07-27  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: scale keyframe values using lower and range properties
+
+2009-07-27  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: interpolator now has public lower, upper, and range properties
+
+2009-07-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/controller.py:
+	  controller.py: don't change cursor back to arrow while dragging to avoid jitter. Set the cursor as appropriate when the drag ends.
+
+2009-07-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/sourcelist.py:
+	  ui.sourcelist.py: add a column containing the escaped, unquoted factory base name and use this as the search_column. fixes bug 579237
+
+2009-07-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/timeline.py:
+	  Use MoveContext when dragging clips from the sourcelist to the timeline. Fixes #589695.
+
+2009-07-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Fix clip selection and grouping. Fixes #589803.
+
+2009-07-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Fix double clicking in the source list. Fixes #589807.
+	  Double clicking was broken in 6f623e01, which fixed #572327. Hopefully I didn't
+	  break it again.
+
+2009-07-27  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge commit 'gnome/master'
+
+2009-07-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/mainwindow.xml:
+	  Add Undo and Redo buttons to the toolbar. Fixes #588258.
+
+2009-07-26  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Don't allow clip start times to go < 0.
+
+2009-07-26  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  Use an alternate, less annoying approach to avoid clip overlaps.
+
+2009-07-24  Daniel Nylander <po@danielnylander.se>
+
+	* po/sv.po:
+	  Updated Swedish translation
+
+2009-07-24  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  0.13.1.2 pre-release
+
+2009-07-24  Edward Hervey <bilboed@bilboed.com>
+
+	* tests/test_gap.py:
+	  test_gap: Fix import (else it doesn't work with make distcheck)
+
+2009-07-16  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  ui.trackobject: fix clip backround size closes bug 577451 also fixes another bug in which the trackobject name background rect was not properly clipped to the size of the trackobject
+
+2009-07-23  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: prevent timeline controlls from claiming too much height by requesting exactly one pixel of height
+	  closes bug 589513
+
+2009-07-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  Make MoveContext avoid clip overlaps.
+
+2009-07-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/Makefile.am:
+	* pitivi/timeline/gap.py:
+	* tests/Makefile.am:
+	* tests/test_gap.py:
+	  Add code to represent and find gaps between timeline objects.
+
+2009-07-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  Keep TimelineObjects sorted by start time in the Timeline.
+	  Do the same as for Track, so that we can implement fast enough
+	  Timeline.getPreviousTimelineObject and Timeline.getNextTimelineObject.
+
+2009-07-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/track.py:
+	* pitivi/utils.py:
+	* tests/test_track.py:
+	  Keep TrackObjects sorted by start time inside Track.
+	  Keep TrackObjects sorted by start inside Track so that we can implement decently
+	  fast getPreviousTrackObject and getNextTrackObject.
+
+2009-07-21  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcelist.py:
+	  UI: set is_important property of Save, Import, Render, and Undo actions closes bug 575963
+
+2009-07-19  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/base.py:
+	  SourceFactory: Synchronize the state of newly added elements with parent.
+
+2009-07-19  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/mixer.py:
+	  SmartAdderBin: Reorganize request pad removal to avoid errors.
+	  There is a corner case by which the streaming thread will currently
+	  be doing caps negotiation downstream (which is not aborted by the
+	  flush start/stop events that went through from gnonlin).
+	  In order to avoid the streaming thread from returning with GST_FLOW_NOT_LINKED
+	  once it has finished its business downstream, we deactivate the source pad
+	  of audioresample so that the streaming thread will return GST_FLOW_WRONG_STATE.
+
+2009-07-19  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/timeline.py:
+	  TimelineFactory: Guarantee a unique pad name
+	  Due to this code being called from two different threads, we need a better
+	  way to guarantee a unique pad name. Taking the python id of the pad (which will
+	  be unique) is a simple and effective way.
+
+2009-07-19  Jesse Aviles <jesseaviles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2009-07-16  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/base.py:
+	  SourceFactory: Also add an audioresample before volume.
+	  This ensures we can handle any kind of audio.
+
+2009-07-16  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/track.py:
+	  timeline.Track: Fill in GnlSource before putting it in a GnlComposition.
+	  This avoids a race-condition where the GnlSource wouldn't be ready before the
+	  moment GnlComposition tries to use it.
+
+2009-07-15  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge commit 'gnome/master'
+
+2009-07-14  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* tests/test_timeline.py:
+	  test_timeline.py: add a couple regression tests
+
+2009-07-14  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: fix ripple span calculation when there is nothign to ripple
+
+2009-07-14  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  ui.trackobject: only set context mode during a key_press when context is not None
+
+2009-07-14  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: fix clamping of position in MoveContext._rippleTo
+
+2009-07-14  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: only ripple clips whose start > latest clip in the context
+
+2009-07-14  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: add getObjs{Before,After} time methods
+
+2009-07-14  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: fix calculation of span
+
+2009-07-14  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: don't move clips on mode change if we haven't already made an edit
+
+2009-07-09  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* tests/test_timeline.py:
+	  test_timeline.py: test MoveContext ripple mode
+
+2009-07-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: handle edge snapping directly in roll modes of trim contexts
+
+2009-07-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: handle edge snapping directly in MoveContext
+
+2009-07-13  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  eliminate editFocus method of trimming contexts
+
+2009-07-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: implement ripple mode for moving clips
+
+2009-07-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  ui.trackobject.py: use controller modifer state to determine context mode; set context mode after keyboard events
+
+2009-07-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/controller.py:
+	  ui.controller.py: also set modifier state appropriately after keyboard events
+
+2009-07-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/controller.py:
+	  ui.controller.py: connect to and handle key_{press,release}_event signals
+
+2009-07-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/controller.py:
+	  ui.controller.py: remember state of modifier keys when we receive an event
+
+2009-07-06  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  ui.trackobject.py: activate roll mode when shift is held down during drag
+
+2009-07-02  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: buggy first stab at roll editing
+
+2009-07-14  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  Updated German translation
+
+2009-07-14  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Make Timeline.getSourceFactoryStreamMap a private method.
+
+2009-07-14  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Fix a bug in timeline edges that I added in c585ee
+
+2009-07-12  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* tests/test_timeline.py:
+	  test_timeline.py: add test case for removeFactory()
+
+2009-07-12  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/project.py:
+	  project.py: call removeFactory() from _sourceRemovedCb fixes 582351
+
+2009-07-12  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: add removeFactory method which removes all instances of a given factory
+
+2009-07-12  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/project.py:
+	  project.py: connect to SourceList source-removed signal
+
+2009-07-12  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: set object priority while dragging temporary clips
+	  fixes bug 576575
+
+2009-07-13  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Fix removal of timeline edges when updates are disabled.
+
+2009-07-13  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Fix an exception tracking edges of a newly dragged clip.
+
+2009-07-13  Edward Hervey <bilboed@bilboed.com>
+
+	* po/POTFILES.in:
+	  POTFILES: Add missing file
+
+2009-07-13  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge commit 'gnome/master'
+
+2009-07-12  António Lima <amrlima@gmail.com>
+
+	* po/pt.po:
+	  Updated Portuguese translation
+
+2009-07-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/trackobject.py:
+	  Remove redefinition of drag_end
+
+2009-07-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  Fix moving multiple objects when the focus is not the earliest object.
+
+2009-07-10  Jan Gerber <j@bootlab.org>
+
+	* pitivi/discoverer.py:
+	  tempfiles: Use a /tmp subdirectory for temporary files.
+
+2009-07-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_timeline.py:
+	  Fix tests for editing contexts.
+
+2009-07-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Remove 4 unnecessary loops over the same sequence in MoveContext.
+
+2009-07-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/ui/trackobject.py:
+	* tests/test_timeline.py:
+	  Add back addStartEnd and removeStartEnd to timeline edges.
+	  I added addStartEnd and removeStartEnd back. In the process, i fixed
+	  removeStartEnd so that now calling rebuildEdges isn't needed anymore.
+	  Finally i restored the tests removed in b8d13554440b24237d14b9f29de4b8eedf146dfa.
+
+2009-07-06  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  ui.trackobject.py: fix some rebasing mistakes
+
+2009-07-01  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  ui.trackobject.py: select track object on mouse down if it is not currently selected
+
+2009-07-01  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: clamp values properly in editing context
+
+2009-07-01  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  ui.trackobject.py: use editing context interface
+
+2009-05-30  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/trackobject.py:
+	* pitivi/ui/zoominterface.py:
+	  ui: expose rage and hatred at gst.CLOCK_TIME_NONE
+
+2009-07-01  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  timeline.py: test_timeline.py: exercise the primary methods of each context, and make sure that they at least don't raise an exception
+
+2009-07-01  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  timeline.py, test_timeline.py: major refactor of EditingContext code
+	  The previous monolithic context was proving to be too unwieldy and difficult
+	  to implement. Moreover, there were some performance problems related to all
+	  the intialization. Finally, mode switching was akward with the old design.
+	  This commit refactors InteractiveEditingContext into EditingContext and
+	  several subclasses which implement the different operations of moving, triming
+	  the start point, and trimming the end point. Also adding new test case to test
+	  implementation.
+
+2009-05-21  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  test_timeline: add test cases for adjacency functions
+
+2009-05-21  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  fix timelineedges unit tests
+
+2009-04-21  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timelineedges: add methods to get lists of incident objects
+
+2009-04-21  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timelineedges: keep track of which track objects are associated with particular edges
+
+2009-04-21  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  ui.timelineedges: handle case where not all track objects in a timelineobj have same start/end
+
+2009-04-21  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  ui.timelineedges: only allow one instance of the same time in the list of edges
+
+2009-07-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	* tests/test_track.py:
+	  Fix trimStart to take into account the in_point.
+
+2009-07-08  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge commit 'gnome/master'
+
+2009-07-07  Daniel Nylander <po@danielnylander.se>
+
+	* po/sv.po:
+	  Updated Swedish translation
+
+2009-07-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Add a comment explaining why TimelineEdges does what it does.
+
+2009-07-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Put back bits of 12b1a30974f081ed034910e98990480c1546a26c that i accidentally reverted in 477d039fbb05f5aeb4a21582be8ce7d23d835623. Oops.
+
+2009-07-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Fix splitting objects, which was broken in 9122088baac0e760567c3c931c9ed6580c852a85.
+
+2009-07-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Revert "timeline.py: fix TimelineObject.split() which was broken by commit"
+	  This reverts commit 0599fd6ea6db60f0277047787bd1512d6946b7da.
+
+2009-07-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: fix TimelineObject.split() which was broken by commit 9122088baac0e760567c3c931c9ed6580c852a85
+	  The problem is that the track objects created by TimelineObjectcopy() were not properly
+	  removed from the timeline. Now instead of calling trackObject.split() for each
+	  track object, we simply call setDuration() and trimStart on the timeline
+	  object copies.
+
+2009-07-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.py: TimelineObject.copy() now adds timeline objects to the copy with addTimlineObject(). This ensures that the timeline field is properly set and that track-object-added is emitted.
+	  git add -i FTW
+
+2009-07-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline_undo.py:
+	  timeline_undo.py: don't forget to connect to existing track objects in _connectToTimelineObject
+
+2009-07-03  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/timeline_undo.py:
+	  timeline_undo.py: fix a typo in _disconnectFromTrackObject
+
+2009-07-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/timeline/track.py:
+	* pitivi/ui/curve.py:
+	* pitivi/ui/trackobject.py:
+	  Add undo/redo support for keyframes.
+
+2009-07-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/controller.py:
+	* pitivi/ui/curve.py:
+	* pitivi/ui/trackobject.py:
+	  Pass event args to drag_start and drag_end.
+
+2009-07-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Add track-object-added and track-object-removed signals to TimelineObject.
+
+2009-07-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	* pitivi/timeline/track.py:
+	* pitivi/ui/curve.py:
+	* tests/test_etree_formatter.py:
+	* tests/test_track.py:
+	  Rename newKeyFrame/removeKeyFrame to newKeyframe and removeKeyframe.
+
+2009-07-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/timeline/track.py:
+	* tests/test_etree_formatter.py:
+	* tests/test_timeline_undo.py:
+	* tests/test_track.py:
+	  Make TrackObjects reusable once they have been removed from a Track.
+	  This change makes TrackObjects reusable by decoupling construction and
+	  initialization. Now you can call makeBin() and releaseBin() in pairs on the same
+	  object to create/destroy bins keeping the same track object instance (with the
+	  associated data, eg keyframes).
+	  With this change, bins are now created when objects are added to a Track
+	  (Track.addTrackObject) and destroyed when removed from a track
+	  (Track.removeTrackObject)
+	  The first visible benefit of this change is that it simplifies TimelineObject
+	  do/undo operations a lot.
+
+2009-07-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	* pitivi/timeline/track.py:
+	* pitivi/ui/trackobject.py:
+	* tests/test_etree_formatter.py:
+	  Refactor interpolator code slightly.
+	  Make track_object.interpolators a dictionary of the form property_name ->
+	  (property, interpolator) so that we can lookup interpolators by property_name
+	  without having to iterate all the keys every time.
+	  Make it possible to rebuild interpolators when the content of a track_object's
+	  bin changes.  This commit is part of a larger change to make interpolator operations undoable.
+
+2009-07-01  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track.py: remove obsolete FIXME/TODO comments and clarify the remaining ones
+
+2009-06-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: take in_point into account in xyToTimeValue
+
+2009-06-26  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* tests/test_track.py:
+	  tests/test_track.py: check that keyframe curves are preserved when splitting in testSplitObject
+
+2009-06-26  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  track: duplicate keyframe curves in trackobject.copy(), which in turn means that splitting clips properly preserves keyframes
+
+2009-06-25  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* tests/test_etree_formatter.py:
+	  checkpoint: keyframe curves are now handled in etree formatter.
+	  test_etree_formatter: update test{Save,Load}TrackObject to handle keyframe curves when present
+
+2009-06-25  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/formatters/etree.py:
+	  etree: use the correct type for value when saving and loading keyframes
+
+2009-06-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/factories/test.py:
+	  AudioTestSourceFactory: return volume in list of interpolated properties
+
+2009-06-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  timeline.track: add Interpolator.getInteriorKeyframes(), and TrackObject.getInterpolator() methods
+
+2009-06-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/formatters/etree.py:
+	  etree: fix some typos in keyframe serialization code
+
+2009-06-24  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  Interpolator: check keyword arguments against None, not falsehood
+
+2009-06-23  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/formatters/etree.py:
+	  etree: add support for keyframe curves
+
+2009-06-30  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/curve.py:
+	  Fix keyframe removal. Fixes #587333.
+
+2009-06-30  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/settings.py:
+	  Fix crash if $HOME/.local/share doesn't exist. Fixes #587371.
+
+2009-06-30  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	  Make the -i option work when -a isn't specified. Fixes #587377.
+
+2009-06-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timelinecanvas.py:
+	  timelinecanvas: make sure razor actually splits at playhead position when razor is snapped to the playhead
+
+2009-06-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/track.py:
+	  Fix a couple of copy and paste screwups in timeline/track.py.
+
+2009-06-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/trackobject.py:
+	  Make dragging a single item select it first.
+	  This makes dragging more intuitive, at least to me.
+
+2009-06-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/controller.py:
+	  Emit drag_start/drag_end only when an object is actually moved.
+
+2009-06-29  Jan Gerber <j@bootlab.org>
+
+	* pitivi/formatters/format.py:
+	* pitivi/formatters/playlist.py:
+	  Fix .pls/.m3u formatters. Fixes #584899.
+
+2009-06-29  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	  Make importing clips from the command line with -i -a undoable (just for the sake of it).
+
+2009-06-27  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/singledecodebin.py:
+	  SingleDecodeBin: Don't deactivate elements from a streaming thread.
+	  This cause many issues like elements being unreffed before they were set
+	  to gst.STATE_NULL.
+	  Funnily enough... it also seems to make loading the timeline faster.
+
+2009-06-26  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/operation.py:
+	  Always add SmartScale to the rendering pipeline.
+	  This is needed to make DV rendering work, since the ffmpeg dv muxer accepts only some specific resolutions.
+
+2009-06-26  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/sourcelist_undo.py:
+	* pitivi/ui/sourcelist.py:
+	  Fix removal of clips from the sourcelist.
+
+2009-06-26  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Fix sensitiveness of the Render button.
+
+2009-06-26  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	* pitivi/settings.py:
+	* pitivi/ui/encodingdialog.py:
+	  Fix the encoding dialog a bit more. The code needs major love though.
+
+2009-06-26  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	* pitivi/settings.py:
+	* pitivi/ui/encodingdialog.py:
+	  Fix the etree formatter, settings and encoding dialog when working with raw streams.
+
+2009-06-24  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/Makefile.am:
+	  Dist pitivi/sourcelist_undo.py
+
+2009-06-24  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/arraysink.py:
+	  Remove an hopefully unneeded slice from ArraySink.
+
+2009-06-24  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Replace catch-all try/except: statement, trap the expected exception.
+
+2009-06-24  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/discoverer.py:
+	  Discoverer: unbreak to accept any kind of raw video
+
+2009-06-24  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow: Other fix for change in SourceList API
+
+2009-06-24  Edward Hervey <bilboed@bilboed.com>
+
+	* tests/test_discoverer.py:
+	  tests/test_discoverer: Really simulate a picture source.
+
+2009-06-24  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/pipeline.py:
+	  pipeline: Add a debugging statement to know when seeking failed
+
+2009-06-24  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/mixer.py:
+	  mixer: add debugging
+
+2009-06-24  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/sourcelist.py:
+	  ui.sourcelist: Fix for changes in sourcelist API
+
+2009-06-24  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/discoverer.py:
+	  Discoverer: fix Picture detection. If we get a duration it's not a static picture.
+
+2009-06-24  Edward Hervey <bilboed@bilboed.com>
+
+	* tests/test_track.py:
+	  test_track: Fix for latest change
+
+2009-06-24  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/track.py:
+	  TrackObject: Fix typo
+
+2009-06-20  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/utils.py:
+	  utils: Clean up the probe event handler
+
+2009-06-20  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/track.py:
+	  TrackObject: Don't set unchanged properties on gstreamer objects.
+	  Basically it's a bug at the GObject level. If you set a property to the
+	  same value it was previously set to... the 'notify' signal will be
+	  emitted...
+	  ... and since several things (like gnlcomposition and the timeline ui)
+	  are listening to those notify expecting changes we were just wasting
+	  cpu time for nothing.
+
+2009-06-14  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/base.py:
+	  URISourceFactoryMixin: Insert audioconvert before volume element.
+	  This fixes the cases where the raw audio stream is unsigned which volume
+	  can't handle.
+
+2009-06-14  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure.ac: Update requirements for gnonlin/gstreamer
+	  We need latest gnonlin git for gnlcomposition/gnloperation fixes.
+	  We need latest -base for adder fixes.
+
+2009-06-12  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/track.py:
+	  track: whooops, actually set the proper time :)
+
+2009-06-12  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/base.py:
+	  SourceFactoryObject: add some debugging statements
+
+2009-06-12  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/track.py:
+	  timeline.track: Fix gst.Controller usage some more.
+	  The problem was that we were trying to set keyframes... before they had any
+	  useful content.
+
+2009-06-12  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/track.py:
+	* tests/test_etree_formatter.py:
+	  timeline.track: Actually use the gst.Controller
+
+2009-06-12  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/track.py:
+	  TrackObject: add logging capability
+
+2009-06-12  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/timeline.py:
+	  timeline.track: Add a comment about factories and timeline objects
+
+2009-06-12  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/utils.py:
+	  utils: Add a method to get the controllable properties of a GstObject
+	  Will recursively go down into the childs.
+
+2009-06-12  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  Curve: invert scale on the y-axis so that up is higher
+
+2009-06-12  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  Curve: make the curve easier mouse traget by increasing line width
+
+2009-06-12  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  Curve: make keyframes a little smaller
+
+2009-06-12  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  Curve: use constants for keyframe width / height
+
+2009-06-12  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  Curve: add bounds to x, y coordinates before checking if they are in the path
+
+2009-06-12  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  Curve: treat start of stream as left edge of clip
+
+2009-05-30  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/Makefile.am:
+	  pitivi.ui: Dist curve.py
+
+2009-05-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve: fix time, value <-> x, y functions
+
+2009-05-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve: fix getKeyframeXY
+
+2009-05-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  interpolator: doubleclick adds/removes keyframes, click-and drag moves keyframes, fix drawing
+
+2009-05-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  interpolator: fix removeKeyframe
+
+2009-05-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  interpolator: getKeyframes yields star, end as well
+
+2009-05-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  interpolator: clamp keyframe values between lower and upper. don't do clamping in UI
+
+2009-05-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve: handle click-and-drag on keyframes
+
+2009-05-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve: draw keyframes directly
+
+2009-05-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve: curve is now a view, with its own controller
+
+2009-05-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  keyframe: handle comparison with None more gracefully, interpolator: use setObjectTime on start/end keyframes
+
+2009-05-29  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/receiver.py:
+	  reciever: use is to compare with None, using != throws exception in some cases
+
+2009-05-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  ui.curve: draw keyframes as boxes
+
+2009-05-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve: complete redraw when curve changes
+
+2009-05-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  interpolator: add keyframe-moved signal
+
+2009-05-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/trackobject.py:
+	  ui.trackobject: add a curve for each interpolator
+
+2009-05-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  interpolator: make start, end public
+
+2009-05-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  ui.curve: check in curve canvas item module
+
+2009-05-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  fix typos in interpolator / keyframe
+
+2009-05-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/factories/file.py:
+	* pitivi/timeline/track.py:
+	  fix typos in factories
+
+2009-05-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  trackobject: finish api, add comments, disable actual controller code
+
+2009-05-27  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/timeline/track.py:
+	  trackobject: base implementation of interpolators and keyframes
+
+2009-05-27  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/factories/base.py:
+	* pitivi/factories/file.py:
+	  factories: add methods to get list of interpolated properties from factories based on stream
+
+2009-06-24  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge commit 'gnome/master'
+
+2009-06-24  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/previewer.py:
+	  Remove an avoidable loop plotting waveforms. Micro optimization that removes ~30ms to each _plotWaveform call.
+
+2009-06-24  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Connect to the delete-event so we can stop pitivi from closing if there are unsaved changes.
+
+2009-06-24  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/sourcelist_undo.py:
+	  git add pitivi/sourcelist_undo.py
+
+2009-06-22  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  Updated German translation
+
+2009-06-21  Jesse Avilés <jesseaviles@gmail.com>
+
+	* po/es.po:
+	  Updated Spanish translation Signed-off-by: Jorge Gonzalez <jorgegonz@svn.gnome.org>
+	  Author:    Jesse Avilés <jesseaviles@gmail.com>
+
+2009-06-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/discoverer.py:
+	* pitivi/formatters/etree.py:
+	* pitivi/project.py:
+	* pitivi/sourcelist.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcelist.py:
+	* pitivi/ui/timeline.py:
+	* tests/test_discoverer.py:
+	* tests/test_etree_formatter.py:
+	* tests/test_sourcelist.py:
+	  Refactor pitivi.sourcelist. Tweak missing-plugin handling.
+	  Refactor pitivi.sourcelist so that it removes the (broken) mapping methods and
+	  emits saner signals (source-added, source-removed rather than file_added and
+	  file_removed).
+	  Also tweak missing-plugin handling in discoverer so that we can rediscover a
+	  source more quickly after installing missing plugins.
+
+2009-06-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/device.py:
+	* pitivi/factories/base.py:
+	* pitivi/factories/file.py:
+	* pitivi/factories/test.py:
+	* pitivi/factories/timeline.py:
+	* pitivi/sourcelist.py:
+	* tests/common.py:
+	* tests/test_factories_base.py:
+	* tests/test_factories_file.py:
+	* tests/test_timeline.py:
+	* tests/test_track.py:
+	  Refactor source factories a bit.
+	  This change makes SourceFactory derived factories have an URI. This simplifies
+	  the code that deals with source factories, as it can assume factory.uri to be
+	  always there.
+	  It also removes ObjectFactory.displayname, changing it to ObjectFactory.name
+	  (ObjectFactory.name was previously either unused or used to store an URI...).
+	  I also removed some "Just In Case" code (try/except: and the like) from
+	  PictureFileSourceFactory._releaseBin.
+
+2009-06-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/sourcelist.py:
+	* pitivi/ui/sourcelist.py:
+	* pitivi/ui/timeline.py:
+	  Fix a bug adding clips to the timeline introduced by 4215225a2f334c69bafeb846d26db2c97fbd7eb9.
+
+2009-06-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/file.py:
+	  Remove bogus FileSourceFactory._releaseBin.
+
+2009-06-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/device.py:
+	* pitivi/factories/base.py:
+	* pitivi/factories/file.py:
+	* pitivi/factories/timeline.py:
+	* pitivi/ui/sourcelist.py:
+	* pitivi/ui/webcam_managerdialog.py:
+	* tests/test_factories_base.py:
+	* tests/test_factories_file.py:
+	  Remove ObjectFactory.displayname. YAGNI.
+
+2009-06-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/device.py:
+	  Ooops looks like i missed a __repr__.
+
+2009-06-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/device.py:
+	* pitivi/pipeline.py:
+	* pitivi/settings.py:
+	  Change a bunch of __repr__ to __str__.
+
+2009-06-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	* pitivi/stream.py:
+	  Add some debugging to the ETree formatter.
+
+2009-06-15  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Sync sensitiveness of the render button when a project is loaded. Fixes #585794.
+
+2009-06-15  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Set project.uri the first time we save a new project.
+
+2009-06-13  Gianvito Cavasoli <gianvito@gmx.it>
+
+	* po/it.po:
+	  Update Italian translation
+
+2009-06-12  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge commit 'gnome/master'
+
+2009-06-12  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Fix the unsaved changes dialog to show Save As if we're closing a new project.
+
+2009-06-12  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  Updated German translation
+
+2009-06-12  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  More fixes to the unsaved changes dialog.
+
+2009-06-12  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Make the buttons spread horizontally in the unsaved changes dialog.
+
+2009-06-12  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Remove the separator from the unsaved changes dialog.
+
+2009-06-12  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Overwrite the project file when saving from the unsaved changes dialog.
+
+2009-06-12  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Make the unsaved changes dialog a bit prettier (make it match gedit's).
+
+2009-06-12  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/projectmanager.py:
+	* pitivi/ui/mainwindow.py:
+	* tests/test_projectmanager.py:
+	  Show a dialog if a project is being closed and there are unsaved changes.
+
+2009-06-12  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Fix a bug in loading xptv files i introduced in 5796420d0da050d3cb268de35346132eee1dae7a.
+
+2009-06-12  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/base.py:
+	* pitivi/formatters/format.py:
+	* pitivi/projectmanager.py:
+	* pitivi/ui/mainwindow.py:
+	* tests/test_projectmanager.py:
+	  Move saveProject to ProjectManager, implement the project-saved signal and hook that up with the action_log.
+
+2009-06-12  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/undo.py:
+	* tests/test_undo.py:
+	  Add checkpoint() and dirty() to UndoableActionLog.
+	  The methods can be used to save the current state of the log and check if it's
+	  been modified.
+
+2009-06-11  Edward Hervey <bilboed@bilboed.com>
+
+	* tests/test_factories_file.py:
+	  test_factories_file: Fix check due to my latest commits
+
+2009-06-11  Edward Hervey <bilboed@bilboed.com>
+
+	* tests/common.py:
+	  tests/common: Be more verbose when we have a leak.
+
+2009-06-11  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/base.py:
+	* pitivi/factories/file.py:
+	  factories: Fix leak introduce by one of my previous commit
+
+2009-06-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/Makefile.am:
+	* tests/Makefile.am:
+	  dist *undo*py files.
+
+2009-06-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Make the Save button sensitive or insensitive based on context
+
+2009-06-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  ui.sourcelist. Implement do/undo for the InsertEnd action
+
+2009-06-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/utils.py:
+	  Use the disable-updates signal to reduce the number of undo/redo actions.
+
+2009-06-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/timeline_undo.py:
+	  Rename the object-added signal to timeline-object-added.
+
+2009-06-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_undo.py:
+	  Add a check for undo() do() undo().
+
+2009-06-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_timeline_undo.py:
+	  Add a check for doing/undoing timeline objects priority changes.
+
+2009-06-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/undo.py:
+	  undo: clean the log when a project is closed.
+
+2009-06-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/undo.py:
+	* tests/test_undo.py:
+	  undo: remove some of the complexity by removing support for async actions.
+
+2009-06-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Add keyboard shortcuts for undo and redo.
+
+2009-06-11  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline_undo.py:
+	* tests/test_timeline_undo.py:
+	  Add tests for undoing/redoing timeline actions. Fix redoing split.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/ui/timelinecanvas.py:
+	  Add undo support for splitting object. Redo still broken.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/trackobject.py:
+	  Add undo/redo support for trimming objects at end.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/trackobject.py:
+	  Add undo/redo support for trimming clips at start.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline_undo.py:
+	  Fix undo of deleted clips.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/timeline_undo.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/timeline.py:
+	* pitivi/undo.py:
+	  Add support to undo/redo deletion of clips.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/undo.py:
+	  Show the names of the actions that can be undone/redone.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/trackobject.py:
+	  Make moving a clip in the timeline undoable.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/mainwindow.xml:
+	  Add Undo and Redo actions.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	  Add undo action log to Application.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/utils.py:
+	  Make PropertyChangeTracker add signals to itself for the signals it's proxying.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/undo.py:
+	  Ignore changes while we are redoing/undoing. Add can-undo can-redo signals.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Add object-added and object-removed signals to Timeline.
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/Makefile.am:
+	  dist pitivi/timeline/timeline_undo.py
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline_undo.py:
+	  git add pitivi/timeline/timeline_undo.py
+
+2009-06-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/undo.py:
+	* tests/test_undo.py:
+	  Pass the name of the action group to UndoableActionLog.begin.
+
+2009-06-09  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/utils.py:
+	  Make PropertyChangeTracker reusable.
+
+2009-06-09  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Remove unused import gst.
+
+2009-06-09  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/undo.py:
+	* tests/test_undo.py:
+	  Add simple undo/redo system.
+
+2009-06-10  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/mixer.py:
+	* pitivi/factories/base.py:
+	  mixer/factory: Several fixes for the smart mixer element.
+
+2009-06-09  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	  Remove unused import from pitivi.timeline.timeline
+
+2009-06-09  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/projectmanager.py:
+	* tests/test_projectmanager.py:
+	  Emit new-project-created in ProjectManager.newBlankProject.
+
+2009-06-09  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/Makefile.am:
+	  Makefile.am: don't forget to dist new files
+
+2009-06-09  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/Makefile.am:
+	* pitivi/elements/mixer.py:
+	* pitivi/factories/test.py:
+	* pitivi/timeline/track.py:
+	  Timeline: Add new smart audio mixing.
+	  Currently it's using a fixed output caps, it should be changed to be the
+	  audio caps from the project output audio settings.
+
+2009-06-09  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge commit 'gnome/master'
+
+2009-06-08  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  Updated German translation
+
+2009-06-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/settings.py:
+	  Really fix Signallable so that tests/test_signallable.py passes.
+
+2009-06-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_signallable.py:
+	  Enough! Fix tests.test_signallable which has been broken forever.
+
+2009-06-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_etree_formatter.py:
+	* tests/test_formatter.py:
+	  Move tests/test_formatter.py to tests/test_etree_formatter.py.
+
+2009-06-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Move the factory rediscovering bits in separate methods. Tests coming next.
+
+2009-06-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/formatters/base.py:
+	* pitivi/formatters/etree.py:
+	* pitivi/project.py:
+	* pitivi/projectmanager.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcelist.py:
+	* tests/test_basic.py:
+	  Make project loading suck less by calling addFactory every time we rescan a factory.
+
+2009-06-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/sourcelist.py:
+	  Call newBlankProject() only once the UI has been initialized.
+
+2009-06-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/base.py:
+	* pitivi/formatters/etree.py:
+	* pitivi/projectmanager.py:
+	* pitivi/ui/mainwindow.py:
+	  Connect to ProjectManager signals from the main window.
+
+2009-06-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Fix a NameError introduced in the previous commit.
+
+2009-06-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/base.py:
+	* pitivi/formatters/etree.py:
+	* pitivi/formatters/playlist.py:
+	* tests/test_projectmanager.py:
+	  Reload factories when loading xptv projects.
+
+2009-06-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/base.py:
+	* pitivi/formatters/etree.py:
+	* pitivi/formatters/playlist.py:
+	* pitivi/projectmanager.py:
+	* tests/test_projectmanager.py:
+	  Rename Formatter._parse to Formatter._loadProject for consistency with Formatter._saveProject.
+	  Also, remove the optional project argument from _loadProject (it was unused).
+
+2009-06-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/projectmanager.py:
+	* tests/test_projectmanager.py:
+	  Add tests for ProjectManager.newBlankProject.
+
+2009-06-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_projectmanager.py:
+	  Add tests for ProjectManager.closeRunningProject.
+
+2009-06-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_projectmanager.py:
+	  Oops, git add some more hunks that should have gone with the previous commit.
+
+2009-06-05  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_projectmanager.py:
+	  Cosmetic changes to test_projectmanager.py
+
+2009-06-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/formatters/base.py:
+	* pitivi/project.py:
+	* pitivi/projectmanager.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/propertyeditor.py:
+	* tests/test_projectmanager.py:
+	  Add tests for ProjectManager.loadProject and fix things in the process.
+
+2009-06-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/format.py:
+	* pitivi/project.py:
+	  Make registering formatters a bit more dynamic.
+	  Add pitivi.format.register_formatter so i can register dummy formatters in unit
+	  tests.
+
+2009-06-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/format.py:
+	  Remove unused import
+
+2009-06-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/projectmanager.py:
+	* pitivi/ui/mainwindow.py:
+	  Move project methods from pitivi.application to pitivi.projectmanager.
+
+2009-06-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	  Remove dead code (addProject)
+
+2009-06-02  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/formatters/base.py:
+	* pitivi/ui/mainwindow.py:
+	  Make project loading look async to Formatter clients.
+
+2009-06-02  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/mainwindow.py:
+	  Make Pitivi.loadProject always take an URI.
+
+2009-06-02  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/check.py:
+	  Refactor the application launcher.
+
+2009-06-02  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge commit 'gnome/master'
+
+2009-06-01  Per Kongstad <p_kongstad@op.pl>
+
+	* po/da.po:
+	  Updated Danish translation
+
+2009-06-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/base.py:
+	  Use match_stream_groups in SourceFactory.makeBin.
+
+2009-06-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/timeline/timeline.py:
+	* tests/test_timeline.py:
+	  Use match_stream_groups in Timeline.addSourceFactory.
+
+2009-06-01  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/stream.py:
+	* tests/test_stream.py:
+	  Add stream matching code.
+	  Add match_stream_groups and match_stream_groups_map to pitivi.stream.
+
+2009-06-01  Per Kongstad <p_kongstad@op.pl>
+
+	* po/da.po:
+	  Updated Danish translation
+
+2009-06-01  Mario Blättermann <mariobl@gnome.org>
+
+	* po/de.po:
+	  Updated German translation
+
+2009-06-01  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/exportsettingswidget.py:
+	  ui: Add comments for translators. Fixes #584416
+
+2009-06-01  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/check.py:
+	  check.py: Fix string (Cairo=>cairo). Fixes #584415
+
+2009-05-31  Per Kongstad <p_kongstad@op.pl>
+
+	* po/LINGUAS:
+	* po/da.po:
+	  Added Danish translation
+
+2009-05-21  Claude Paroz <claude@2xlibre.net>
+
+	* pitivi/ui/pluginmanagerdialog.py:
+	  PluginManagerDialog: Use named placeholder. Fixes #583474
+
+2009-05-28  Claude Paroz <claude@2xlibre.net>
+
+	* pitivi/utils.py:
+	  utils: Add translator comment. Fixes #583861
+	  This helps translators to know what "non local" means.
+
+2009-05-28  Bruce Cowan <bcowan@fastmail.co.uk>
+
+	* pitivi/application.py:
+	* pitivi/check.py:
+	* pitivi/discoverer.py:
+	* pitivi/ui/exportsettingswidget.glade:
+	* pitivi/ui/net_capture.glade:
+	* pitivi/ui/pluginmanagerdialog.py:
+	* pitivi/ui/screencast_manager.glade:
+	* pitivi/ui/sourcelist.py:
+	  Minor string fixes. Fixes #584056
+
+2009-05-28  Claude Paroz <claude@2xlibre.net>
+
+	* pitivi/formatters/format.py:
+	* po/POTFILES.in:
+	  Formatters: Translate file filter menu. Fixes #584084
+
+2009-05-28  Claude Paroz <claude@2xlibre.net>
+
+	* pitivi/ui/mainwindow.py:
+	  MainWindow: Make button labels translatable. Fixes #584086
+
+2009-05-28  Claude Paroz <claude@2xlibre.net>
+
+	* pitivi/ui/encodingdialog.glade:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/gstwidget.py:
+	  EncodingDialog: Make strings translatable. Fixes #584123
+
+2009-05-28  Claude Paroz <claude@2xlibre.net>
+
+	* pitivi/ui/prefs.py:
+	* pitivi/ui/previewer.py:
+	* pitivi/ui/timelinecanvas.py:
+	* pitivi/ui/trackobject.py:
+	* po/POTFILES.in:
+	  UI: Make Preferences labels translatable. Fixes #584128
+
+2009-05-28  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/timeline.py:
+	  Timeline*: more documentation.
+	  I also added some comments which the code author's should review.
+
+2009-04-25  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/timeline.py:
+	  TimelineObject/Selection : Add documentation.
+
+2009-04-30  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/timeline.py:
+	  timeline: more documentation
+
+2009-04-25  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/timeline.py:
+	  TimelineObject: Cleanup selected property.
+
+2009-05-28  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/timeline/timeline.py:
+	* pitivi/timeline/track.py:
+	  timeline: Don't use time as variable name
+
+2009-05-29  António Lima <amrlima@gmail.com>
+
+	* po/pt.po:
+	  Updated Portuguese translation
+
+2009-05-29  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure.ac: And back to development we go !
+
 2009-05-27  Edward Hervey <bilboed@bilboed.com>
 
 	* AUTHORS:
