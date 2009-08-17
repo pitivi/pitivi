@@ -214,6 +214,13 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             cr.fill_preserve()
             cr.set_source_rgb(1, 0, 0)
             cr.stroke()
+            # re-draw the focused keyframe, if it exists, inverted
+            if self._focused_kf:
+                self._controlPoint(cr, self._focused_kf)
+                cr.set_source_rgb(1, 0, 0)
+                cr.fill_preserve()
+                cr.set_source_rgb(1, 1, 1)
+                cr.stroke()
 
     def make_curve(self, cr):
         if not self.interpolator:
@@ -240,12 +247,18 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
 ## public
 
+    def setFocusedKf(self, kf):
+        if self._focused_kf is not kf:
+            self.changed(False)
+        self._focused_kf = kf
+
     def focus(self):
         self.line_width = CURVE_STROKE_WIDTH * 1.5
         self.changed(False)
 
     def normal(self):
         self.line_width = CURVE_STROKE_WIDTH
+        self.setFocusedKf(None)
         self.changed(False)
 
     def findKeyframe(self, pos):
