@@ -135,7 +135,8 @@ class Interpolator(Signallable, Loggable):
         'keyframe-moved' : ['keyframe'],
     }
 
-    def __init__(self, trackobject, element, prop, minimum=None, maximum=None):
+    def __init__(self, trackobject, element, prop, minimum=None, maximum=None,
+        format=None):
         Loggable.__init__(self)
         self.debug("track:%r, element:%r, property:%r", trackobject, element, prop)
         self._keyframes = []
@@ -167,6 +168,7 @@ class Interpolator(Signallable, Loggable):
         else:
             self.end.setObjectTime(trackobject.out_point)
         self._keyframeTimeValueChanged(self.end, self.end.time, self.end.value)
+        self.format = format if format else str
 
     def attachToElementProperty(self, prop, element):
         self._element = element
@@ -282,6 +284,9 @@ class Interpolator(Signallable, Loggable):
 
     def valueAt(self, time):
         return self._controller.get(self._property.name, time)
+
+    def formatValue(self, value):
+        return self.format(value)
 
     keyframes = property(getKeyframes)
 
