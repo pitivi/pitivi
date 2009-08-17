@@ -45,7 +45,8 @@ KW_WIDTH = 7
 KW_HEIGHT = 7
 KW_WIDTH2 = KW_WIDTH / 2
 KW_HEIGHT2 = KW_HEIGHT / 2
-
+KW_MOUSE_WIDTH = KW_WIDTH2 + 1
+KW_MOUSE_HEIGHT = KW_HEIGHT2 + 1
 CURVE_STROKE_WIDTH = 2.0
 HAND = gtk.gdk.Cursor(gtk.gdk.HAND2)
 
@@ -248,8 +249,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         x, y = pos
         for keyframe, value in self.keyframes.iteritems():
             kx, ky = value
-            if (between(kx - KW_WIDTH2, x, kx + KW_HEIGHT2) and
-                between(ky - KW_HEIGHT2, y, ky + KW_HEIGHT2)):
+            if (between(kx - KW_MOUSE_WIDTH, x, kx + KW_MOUSE_WIDTH) and
+                between(ky - KW_MOUSE_HEIGHT, y, ky + KW_MOUSE_HEIGHT)):
                 return keyframe
         return None
 
