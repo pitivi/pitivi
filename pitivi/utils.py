@@ -439,6 +439,7 @@ def getNextObject(obj, objects, priority=-1, skip=None):
 
     return None
 
+
 class CachedFactoryList(object):
     def __init__(self, factoryFilter=None):
         self._factoryFilter = factoryFilter
@@ -485,3 +486,6 @@ def profile(func, profiler_filename="result.prof"):
         return locals()["result"]
 
     return _wrapper
+
+def formatPercent(value):
+    return "%3d%%" % (value * 100)
