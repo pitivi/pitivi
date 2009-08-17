@@ -3,15 +3,15 @@
 # This file is distributed under the same license as the pitivi package.
 # Andreas Volz <andreas.volz@tux-style.de>, 2007.
 # Mario Blättermann <mariobl@gnome.org>, 2008, 2009.
-#
+# Hendrik Richter <hendrikr@gnome.org>, 2009.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-07-14 19:02+0200\n"
-"PO-Revision-Date: 2009-07-14 19:03+0100\n"
-"Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
+"PO-Revision-Date: 2009-08-17 08:58+0200\n"
+"Last-Translator: Hendrik Richter <hendrikr@gnome.org>\n"
 "Language-Team: German <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -462,7 +462,7 @@ msgstr "Eine Datei für das zu erzeugende Video auswählen"
 #: ../pitivi/ui/encodingdialog.py:122
 #, python-format
 msgid "About %s left"
-msgstr "Mehr als %s vergangen"
+msgstr "Noch %s"
 
 #: ../pitivi/ui/encodingdialog.py:132
 msgid "Rendering"

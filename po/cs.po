@@ -1,121 +1,113 @@
-# translation of pitivi to Spanish
-# Copyright (C) 2008 THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-#
-# Francisco Javier F. Serrador <serrador@cvs.gnome.org>, 2006.
-# Jorge González <jorgegonz@svn.gnome.org>, 2007.
-# Jesse Aviles <jesseaviles@gmail.com>, 2008, 2009.
-# Jorge González <jorgegonz@svn.gnome.org>, 2009.
+# Czech translation of pitivi.
+# Copyright (C) 2009 the author(s) of pitivi.
+# This file is distributed under the same license as the pitivi package.
+# Jan Drábek <repli2dev@gmail.com>, 2009.
+# Petr Kovar <pknbe@volny.cz>, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: pitivi.HEAD.es\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
-"product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-08-03 08:51+0000\n"
-"PO-Revision-Date: 2009-08-14 16:37+0200\n"
-"Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
-"Language-Team: Español <gnome-es-list@gnome.org>\n"
+"Project-Id-Version: PiTiVi\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-17 00:03+0200\n"
+"PO-Revision-Date: 2009-08-16 23:59+0200\n"
+"Last-Translator: Petr Kovar <pknbe@volny.cz>\n"
+"Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.11.4\n"
-"Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Poedit-Language: Czech\n"
+"X-Poedit-Country: CZECH REPUBLIC\n"
+"X-Language: cs_CZ\n"
+"X-Generator: Lokalize 1.0\n"
 
 #: ../pitivi/check.py:102
 #, python-format
 msgid "%s is already running!"
-msgstr "%s ya se está ejecutando."
+msgstr "%s již běží!"
 
 #: ../pitivi/check.py:103
 #, python-format
 msgid "An instance of %s is already running in this script."
-msgstr "Ya se está ejecutando una instancia de %s en este script."
+msgstr "Instance %s již byla v tomto skriptu spuštěna."
 
 #: ../pitivi/check.py:105
 msgid "Could not find the GNonLin plugins!"
-msgstr "No se pudo encontrar los complementos GNOnLin"
+msgstr "Nelze najít zásuvné moduly GNonLin!"
 
 #: ../pitivi/check.py:106
 msgid ""
 "Make sure the plugins were installed and are available in the GStreamer "
 "plugins path."
 msgstr ""
-"Asegúrese de que los complementos fueron instalados y están disponibles en "
-"la ruta de complementos de GStreamer."
+"Ujistěte se, že zásuvné moduly byly správně nainstalovány a jsou dostupné v "
+"adresáři zásuvných modulů GStreamer."
 
 #: ../pitivi/check.py:108
 msgid "Could not find the autodetect plugins!"
-msgstr "No se pudieron encontrar los complementos de autodetección."
+msgstr "Nelze najít zásuvné moduly automatického rozpoznávání!"
 
 #: ../pitivi/check.py:109
 msgid ""
 "Make sure you have installed gst-plugins-good and is available in the "
 "GStreamer plugin path."
-msgstr ""
-"Asegúrese de que ha instalado los complementos gst-plugins-good y que están "
-"disponibles en la ruta de complementos de GStreamer."
+msgstr "Ujistěte se, že gst-plugins-good je správně nainstalován."
 
 #: ../pitivi/check.py:111
 msgid "PyGTK doesn't have cairo support!"
-msgstr "PyGTK no tiene soporte para Cairo"
+msgstr "PyGTK nemá cairo podporu!"
 
 #: ../pitivi/check.py:112
 msgid ""
 "Please use a version of the GTK+ Python bindings built with cairo support."
-msgstr ""
-"Use una versión de los bindings de Python para GTK+ compilados con soporte "
-"para Cairo."
+msgstr "Použijte prosím verzi GTK+ Python bindings, která má podporu cairo."
 
 #: ../pitivi/check.py:114
 msgid "Could not initiate the video output plugins"
-msgstr "No se pudo iniciar los complementos de salida de vídeo"
+msgstr "Nelze iniciovat video výstup zásuvných modulů"
 
 #: ../pitivi/check.py:115
 msgid ""
 "Make sure you have at least one valid video output sink available "
 "(xvimagesink or ximagesink)"
 msgstr ""
-"Asegúrese de que al menos un sumidero válido de salida de vídeo está "
-"disponible (xvimagesink o ximagesink)"
+"Ujistěte se, že máte dostupný alespoň jeden použitelný výstup (xvimagesink "
+"nebo ximagesink)"
 
 #: ../pitivi/check.py:117
 msgid "Could not initiate the audio output plugins"
-msgstr "No se pudo iniciar los complementos de salida de sonido"
+msgstr "Nelze iniciovat audio výstup zásuvných modulů"
 
 #: ../pitivi/check.py:118
 msgid ""
 "Make sure you have at least one valid audio output sink available (alsasink "
 "or osssink)"
 msgstr ""
-"Asegúrese de que tiene al menos un sumidero de salida de audio disponible "
-"(alsasink o osssink)"
+"Ujistěte se, že máte dostupný alespoň jeden použitelný audio výstup "
+"(alsasink or osssink)"
 
 #: ../pitivi/check.py:120
 msgid "Could not import the cairo Python bindings"
-msgstr "No se pudieron importar los bindings de Python para Cairo"
+msgstr "Nelze načíst cairo Python bindings"
 
 #: ../pitivi/check.py:121
 msgid "Make sure you have the cairo Python bindings installed"
-msgstr ""
-"Asegúrese de que tiene instalados los bindings de Python para Cairo "
-"instalados"
+msgstr "Ujistěte se, že máte nainstalovány cairo Python bindings"
 
 #: ../pitivi/check.py:123
 msgid "Could not import the libglade Python bindings"
-msgstr "No se pudieron importar los bindings de Python para libglade"
+msgstr "Nelze načíst libglade Python bindings"
 
 #: ../pitivi/check.py:124
 msgid "Make sure you have the libglade Python bindings installed"
-msgstr "Asegúrese de que tiene instalados los bindings de Python para libglade"
+msgstr "Ujistěte se, že máte nainstalovány libglade Python bindings"
 
 #: ../pitivi/check.py:126
 msgid "Could not import the goocanvas Python bindings"
-msgstr "No se pudieron importar los bindings de Python para goocanvas"
+msgstr "Nelze načíst goocanvas Python bindings"
 
 #: ../pitivi/check.py:127
 msgid "Make sure you have the goocanvas Python bindings installed"
-msgstr ""
-"Asegúrese de que tiene instalados los bindings de Python para goocanvas."
+msgstr "Ujistěte se, že máte nainstalovány goocanvas Python bindings"
 
 #: ../pitivi/check.py:130
 #, python-format
@@ -123,7 +115,8 @@ msgid ""
 "You do not have a recent enough version of the GTK+ Python bindings "
 "(currently %s)"
 msgstr ""
-"No tiene una versión reciente de los bindings de Python para GTK+ (actual %s)"
+"Současná verze GTK+ Python bindings (%s) je zastaralá, aktualizujte svůj "
+"systém"
 
 #: ../pitivi/check.py:134
 #, python-format
@@ -131,13 +124,13 @@ msgid ""
 "You do not have a recent enough version of the GStreamer Python bindings "
 "(currently %s)"
 msgstr ""
-"No tiene una versión reciente de los bindings de Python para GStreamer "
-"(actual %s)"
+"Současná verze GStreamer Python bindings (%s) je zastaralá, aktualizujte "
+"svůj systém"
 
 #: ../pitivi/check.py:138
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
-msgstr "No tiene una versión reciente de GStreamer (actual %s)"
+msgstr "Současná verze GStreameru (%s) je zastaralá, aktualizujte svůj systém"
 
 #: ../pitivi/check.py:142
 #, python-format
@@ -145,8 +138,8 @@ msgid ""
 "You do not have a recent enough version of the cairo Python bindings "
 "(currently %s)"
 msgstr ""
-"No tiene una versión reciente de los bindings de Python para Cairo (actual %"
-"s)"
+"Současná verze cairo Python bindings (%s) je zastaralá, aktualizujte svůj "
+"systém"
 
 #: ../pitivi/check.py:146
 #, python-format
@@ -154,24 +147,24 @@ msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
 "(currently %s)"
 msgstr ""
-"No tiene una versión reciente del complemento de GStreamer GNonLin (actual %"
-"s)"
+"Současná verze zásuvného modulu GNonLin GStreamer (%s) je zastaralá, "
+"aktualizujte svůj systém"
 
 #: ../pitivi/check.py:149
 msgid "Could not import the Zope interface module"
-msgstr "No se pudo importar el módulo de interfaz de Zope"
+msgstr "Nelze načíst rozhraní modulu Zope"
 
 #: ../pitivi/check.py:150
 msgid "Make sure you have the zope.interface module installed"
-msgstr "Asegúrese de que tiene el módulo zope.interface instalado"
+msgstr "Ujistěte se, že máte nainstalováno rozhraní modulu zope"
 
 #: ../pitivi/check.py:152
 msgid "Could not import the distutils modules"
-msgstr "No se pudieron importar los módulos distutils"
+msgstr "Nelze načíst modul distutils"
 
 #: ../pitivi/check.py:153
 msgid "Make sure you have the distutils python module installed"
-msgstr "Asegúrese de que tiene instalado el módulo de pyton distutils"
+msgstr "Ujistěte se, že máte nainstalován modul distutils python"
 
 #: ../pitivi/discoverer.py:190
 #, python-format
@@ -179,64 +172,63 @@ msgid ""
 "Missing plugins:\n"
 "%s"
 msgstr ""
-"Faltan los complementos:\n"
+"Chybějící zásuvné moduly:\n"
 "%s"
 
 #. woot, nothing decodable
 #: ../pitivi/discoverer.py:209
 msgid "Can not decode file."
-msgstr "No se puede descodificar el archivo."
+msgstr "Nelze dekódovat soubor."
 
 #: ../pitivi/discoverer.py:210
 msgid "The given file does not contain audio, video or picture streams."
-msgstr ""
-"El archivo proporconado no contiene flujo de datos de sonido, vídeo o foto."
+msgstr "Vybraný soubor neobsahuje audio, video ani obrázková data."
 
 #: ../pitivi/discoverer.py:230
 msgid "Could not establish the duration of the file."
-msgstr "No se pudo establecer la duración del archivo."
+msgstr "Nepodařilo se zjistit trvání souboru."
 
 #: ../pitivi/discoverer.py:231
 msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
-msgstr ""
-"Este vídeo parece estar en un formato que no puede ser accedido de una "
-"manera aleatoria."
+msgstr "K tomuto klipu nelze přistupovat v nahodilém pořadí."
 
 #: ../pitivi/discoverer.py:295
 msgid "Timeout while analyzing file."
-msgstr "Se sobrepasó el límite de tiempo al analizar el archivo."
+msgstr "Analýza souboru selhala, vypršel časový limit."
 
 #: ../pitivi/discoverer.py:296
 msgid "Analyzing the file took too long."
-msgstr "Llevó demasiado tiempo analizar el archivo."
+msgstr "Analyzování souboru trvalo příliš dlouho."
 
 #: ../pitivi/discoverer.py:325
 msgid "No available source handler."
-msgstr "No hay disponible un manejador de la fuente."
+msgstr "Obsluha vstupu není dostupná."
 
 #: ../pitivi/discoverer.py:326
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
-msgstr "No tiene un elemento fuente de GStreamer para manejar el protocolo «%s»"
+msgstr ""
+"GStreamer nemůže zpracovat protokol '%s'. Máte nainstalovány příslušné "
+"balíčky?"
 
 #: ../pitivi/discoverer.py:390
 msgid "Pipeline didn't want to go to PAUSED."
-msgstr "La tubería no quiso PAUSAR."
+msgstr "Roura nechce přejít do stavu POZASTAVENO."
 
 #: ../pitivi/discoverer.py:413
 #, python-format
 msgid "An internal error occurred while analyzing this file: %s"
-msgstr "Ocurrió un error interno al analizar este archivo: %s"
+msgstr "Při analyzování souboru %s se vyskytla vnitřní chyba."
 
 #: ../pitivi/discoverer.py:423
 msgid "File contains a redirection to another clip."
-msgstr "El archivo contiene una redirección a otro vídeo."
+msgstr "Soubor obsahuje přesměrování na jiný klip."
 
 #: ../pitivi/discoverer.py:424
 msgid "PiTiVi currently does not handle redirection files."
-msgstr "PiTiVi no puede manejar archivos de redirección actualmente."
+msgstr "PiTiVi momentálně neumí pracovat s přesměrováním souborů."
 
 #: ../pitivi/application.py:120
 #, python-format
@@ -244,8 +236,8 @@ msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
 "at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 msgstr ""
-"Ya hay una instancia de %s, informe a los desarrolladores rellenando un "
-"informe de error en http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
+"Již existuje instance %s, informujte prosím vývojáře nahlášením chyby na "
+"http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
 #: ../pitivi/application.py:214
 msgid ""
@@ -254,8 +246,8 @@ msgid ""
 "      %prog -i [-a] [MEDIA_FILE]..."
 msgstr ""
 "\n"
-"      %prog [-p ARCHIVO_DE_PROYECTO]\n"
-"      %prog -i [-a] [ARCHIVO_MULTIMEDIA]..."
+"      %prog [PROJECT_FILE]\n"
+"      %prog -i [-a] [MEDIA_FILE]..."
 
 #: ../pitivi/application.py:218
 msgid ""
@@ -267,47 +259,48 @@ msgid ""
 "added to\n"
 "    the end of the project timeline."
 msgstr ""
-"Inicia el editor de vídeo, cargando opcionalmente ARCHIVO_DE_PROYECTO.  Si "
-"no se proporciona ningún proyecto, %prog crea un nuevo proyecto. Los "
-"argumentos faltantes se tratan como vídeos para ser importados dentro del "
-"proyecto. Si se especifica -a, estos vídeos se añadirán al final de la "
-"cronología."
+"Spustí video editor, volitelně načte PROJEKTOVÝ_SOUBOR. Pokud\n"
+"    není předán soubor projekt, %prog vytvoří nový projekt.\n"
+"    Eventuálně můžete použít -i a zatím soubory, které se mají importovat\n"
+"    do projektu. Pokud uvedete -a, budou tyto klipy přidány na konec časové\n"
+"osy."
 
 #: ../pitivi/application.py:224
 msgid "Import each MEDIA_FILE into the project."
-msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
+msgstr "Importuje každý multimediální soubor (MEDIA_FILE) do projektu."
 
 #: ../pitivi/application.py:226
 msgid "Add each MEDIA_FILE to timeline after importing."
-msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
+msgstr ""
+"Po importu přidá každý multimediální soubor (MEDIA_FILE) do časové osy."
 
 #: ../pitivi/application.py:227
 msgid "Run pitivi in the Python Debugger"
-msgstr "Ejecutar Pitivi en el depurador de Python"
+msgstr "Spustit pitivi v Python debugeru"
 
 #: ../pitivi/projectmanager.py:62
 msgid "Not a valid project file."
-msgstr "No es un archivo de proyecto válido."
+msgstr "Projektový soubor nemá správný formát."
 
 #: ../pitivi/projectmanager.py:67
 msgid "Couldn't close current project"
-msgstr "No se pudo cerrar el proyecto actual"
+msgstr "Nelze zavřít současný projekt"
 
 #: ../pitivi/projectmanager.py:104
 msgid "No URI specified."
-msgstr "No se especificó el URI."
+msgstr "Nebyla zadána adresa."
 
 #: ../pitivi/projectmanager.py:136
 msgid "New Project"
-msgstr "Proyecto nuevo"
+msgstr "Nový projekt"
 
 #: ../pitivi/settings.py:473
 msgid "Export Settings\n"
-msgstr "Exportar ajustes\n"
+msgstr "Nastavení exportu\n"
 
 #: ../pitivi/settings.py:474
 msgid "Video: "
-msgstr "Vídeo:"
+msgstr "Video: "
 
 #: ../pitivi/settings.py:477
 msgid ""
@@ -315,7 +308,7 @@ msgid ""
 "Audio: "
 msgstr ""
 "\n"
-"Audio:"
+"Audio: "
 
 #: ../pitivi/settings.py:480
 msgid ""
@@ -323,83 +316,87 @@ msgid ""
 "Muxer: "
 msgstr ""
 "\n"
-"Mezclador:"
+"Muxer: "
 
 #: ../pitivi/utils.py:66
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
-msgstr[0] "%d hora"
-msgstr[1] "%d horas"
+msgstr[0] "%d hodina"
+msgstr[1] "%d hodiny"
+msgstr[2] "%d #hodin"
 
 #: ../pitivi/utils.py:69
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
-msgstr[0] "%d minuto"
-msgstr[1] "%d minutos"
+msgstr[0] "%d minuta"
+msgstr[1] "%d minuty"
+msgstr[2] "%d minut"
 
 #: ../pitivi/utils.py:72
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
-msgstr[0] "%d segundo"
-msgstr[1] "%d segundos"
+msgstr[0] "%d sekunda"
+msgstr[1] "%d sekundy"
+msgstr[2] "%d sekund"
 
 #. Translators: "non local" means the project is not stored
 #. on a local filesystem
 #: ../pitivi/utils.py:239
 #, python-format
 msgid "%s doesn't yet handle non local projects"
-msgstr "%s no puede manipular aún proyectos no locales"
+msgstr "%s zatím nedokáže pracovat s jinými než místními projekty"
 
 #: ../pitivi/formatters/format.py:77
 msgid "PiTiVi Native (XML)"
-msgstr "PiTiVi nativo (XML)"
+msgstr "PiTiVi formát (XML)"
 
 #: ../pitivi/formatters/format.py:78
 msgid "Playlist format"
-msgstr "Formato de la lista de reproducción"
+msgstr "Formát playlistu"
 
 #: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/videofxlist.py:53
 msgid "Name"
-msgstr "Nombre"
+msgstr "Název"
 
 #: ../pitivi/ui/audiofxlist.py:55 ../pitivi/ui/elementsettingsdialog.glade.h:6
 #: ../pitivi/ui/videofxlist.py:59
 msgid "Description"
-msgstr "Descripción"
+msgstr "Popis"
 
 #: ../pitivi/ui/cam_capture.glade.h:1
 msgid "Audio Capture Device:"
-msgstr "Dispositivo de entrada de sonido:"
+msgstr "Audio nahrávací zařízení:"
 
 #: ../pitivi/ui/cam_capture.glade.h:2
 msgid "No device available"
-msgstr "No hay ningún dispositivo disponible"
+msgstr "Není dostupné žádné zařízení"
 
 #: ../pitivi/ui/cam_capture.glade.h:3
 msgid "Video Capture Device:"
-msgstr "El dispositivo de entrada de vídeo:"
+msgstr "Video nahrávací zařízení:"
 
 #: ../pitivi/ui/defaultpropertyeditor.py:104
 #, python-format
 msgid "Properties For: %d object"
 msgid_plural "Properties For: %d objects"
-msgstr[0] "Propiedades para: %d objeto"
-msgstr[1] "Propiedades para: %d objetos"
+msgstr[0] "Vlastnosti: %d objektu"
+msgstr[1] "Vlastnosti: %d objektů"
+msgstr[2] "Vlastnosti: %d objektů"
 
 #: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:140
 msgid "No properties..."
-msgstr "No hay propiedades…"
+msgstr "Žádné vlastnosti..."
 
 #: ../pitivi/ui/dynamic.py:52
 msgid "Implement Me"
-msgstr "Impleméntame"
+msgstr "Čeká na implementaci"
 
 #: ../pitivi/ui/dynamic.py:237
 msgid "Choose..."
-msgstr "Elija un archivo"
+msgstr "Vybrat..."
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 msgid "<b>Author:</b>"
@@ -407,15 +404,15 @@ msgstr "<b>Autor:</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:2
 msgid "<b>Description:</b>"
-msgstr "<b>Descripción:</b>"
+msgstr "<b>Popis:</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:3
 msgid "<b>Plugin Name</b>"
-msgstr "<b>Nombre del complemento</b>"
+msgstr "<b>Název zásuvného modulu</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:4
 msgid "<b>Properties</b>"
-msgstr "<b>Propiedades</b>"
+msgstr "<b>Vlastnosti</b>"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:5
 msgid "Author"
@@ -423,7 +420,7 @@ msgstr "Autor"
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:7
 msgid "Properties for <element>"
-msgstr "Propiedades para <element>"
+msgstr "Vlastnosti - <element>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:1 ../pitivi/ui/timelinecontrols.py:13
 msgid "<b>Audio:</b>"
@@ -431,52 +428,52 @@ msgstr "<b>Audio:</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:2
 msgid "<b>Nothing yet</b>"
-msgstr "<b>Nada aún</b>"
+msgstr "<b>Zatím nic</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:3
 msgid "<b>Settings</b>"
-msgstr "<b>Ajustes</b>"
+msgstr "<b>Nastavení</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:4 ../pitivi/ui/timelinecontrols.py:15
 msgid "<b>Video:</b>"
-msgstr "<b>Vídeo:</b>"
+msgstr "<b>Video:</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:5
 msgid "Choose File"
-msgstr "Elegir un archivo"
+msgstr "Vybrat soubor"
 
 #: ../pitivi/ui/encodingdialog.glade.h:6
 msgid "Modify"
-msgstr "Modificar"
+msgstr "Změnit"
 
 #: ../pitivi/ui/encodingdialog.glade.h:7
 msgid "Output file:"
-msgstr "Archivo de salida:"
+msgstr "Výstupní soubor:"
 
 #: ../pitivi/ui/encodingdialog.glade.h:8
 msgid "Please choose an output file"
-msgstr "Elegir un archivo de salida"
+msgstr "Vyberte prosím výstupní soubor"
 
 #: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:250
 msgid "Render project"
-msgstr "Renderizar proyecto"
+msgstr "Vykreslit projekt"
 
 #: ../pitivi/ui/encodingdialog.py:90
 msgid "Choose file to render to"
-msgstr "Elegir un archivo que renderizar"
+msgstr "Vyberte soubor, do kterého se má vykreslit výstup"
 
 #: ../pitivi/ui/encodingdialog.py:122
 #, python-format
 msgid "About %s left"
-msgstr "Quedan alrededor de %s"
+msgstr "Zbývá přibližně %s"
 
 #: ../pitivi/ui/encodingdialog.py:132
 msgid "Rendering"
-msgstr "Renderizando"
+msgstr "Vykreslování"
 
 #: ../pitivi/ui/encodingdialog.py:149
 msgid "Rendering Complete"
-msgstr "Renderizado completo"
+msgstr "Vykreslování dokončeno"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:1
 msgid ""
@@ -489,10 +486,10 @@ msgid ""
 "60 fps"
 msgstr ""
 "12 fps\n"
-"23,97 fps\n"
+"23.97 fps\n"
 "24 fps\n"
 "25 fps\n"
-"29,97 fps\n"
+"29.97 fps\n"
 "30 fps\n"
 "60 fps"
 
@@ -526,47 +523,47 @@ msgstr ""
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:18
 msgid "<b>Audio Output</b>"
-msgstr "<b>Salida de sonido</b>"
+msgstr "<b>Audio výstup</b>"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:19
 msgid "<b>Export to</b>"
-msgstr "<b>Exportar a</b>"
+msgstr "<b>Exportovat do</b>"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:20
 msgid "<b>Video Output</b>"
-msgstr "<b>Salida de vídeo</b>"
+msgstr "<b>Video výstup</b>"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:21
 msgid "Audio Codec"
-msgstr "Códec de sonido"
+msgstr "Audio kodek"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:22
 msgid "Audio Codec:"
-msgstr "Códec de sonido:"
+msgstr "Audio kodek:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:23
 msgid "Audio Preset"
-msgstr "Preset de audio"
+msgstr "Audio nastavení"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:24
 msgid "Channels:"
-msgstr "Canales:"
+msgstr "Kanály:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:25
 msgid "Container:"
-msgstr "Contenedor:"
+msgstr "Kontejner:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:26
 msgid "Depth:"
-msgstr "Profundidad:"
+msgstr "Hloubka:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:27
 msgid "Frame rate:"
-msgstr "Tasa de fotogramas:"
+msgstr "Snímková frekvence:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:28
 msgid "Height:"
-msgstr "Altura:"
+msgstr "Výška:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:29
 msgid ""
@@ -574,35 +571,35 @@ msgid ""
 "Stereo (2)"
 msgstr ""
 "Mono (1)\n"
-"Estéreo (2)"
+"Stereo (2)"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:31
 msgid "Muxer"
-msgstr "Mezclador"
+msgstr "Muxer"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:32
 msgid "Rate:"
-msgstr "Tasa:"
+msgstr "Frekvence:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:33
 msgid "Settings"
-msgstr "Ajustes"
+msgstr "Nastavení"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:34
 msgid "Video Codec"
-msgstr "Códec de vídeo"
+msgstr "Video kodek"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:35
 msgid "Video Codec:"
-msgstr "Códec de vídeo:"
+msgstr "Video kodek:"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:36
 msgid "Video Preset"
-msgstr "Configuración del vídeo"
+msgstr "Video nastavení"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:37
 msgid "Width:"
-msgstr "Anchura:"
+msgstr "Šířka:"
 
 #: ../pitivi/ui/exportsettingswidget.py:37
 msgid "576p (PAL DV/DVD)"
@@ -641,294 +638,295 @@ msgstr "XGA (1024x768)"
 #: ../pitivi/ui/exportsettingswidget.py:112
 #: ../pitivi/ui/exportsettingswidget.py:146
 msgid "Custom"
-msgstr "Personalizado"
+msgstr "Vlastní"
 
 #: ../pitivi/ui/exportsettingswidget.py:297
 msgid "Raw Video"
-msgstr "Vídeo RAW"
+msgstr "Neupravené video"
 
 #: ../pitivi/ui/exportsettingswidget.py:312
 msgid "Raw Audio"
-msgstr "Sonido RAW"
+msgstr "Neupravené audio"
 
 #: ../pitivi/ui/exportsettingswidget.py:435
 msgid "Export settings"
-msgstr "Ajustes de exportación"
+msgstr "Nastavení exportu"
 
 #: ../pitivi/ui/filelisterrordialog.py:52
 msgid "Unknown reason"
-msgstr "Razón desconocida"
+msgstr "Neznámá příčina"
 
 #: ../pitivi/ui/filelisterrordialog.py:76
 msgid "URI:"
-msgstr "URI: "
+msgstr "Adresa:"
 
 #: ../pitivi/ui/filelisterrordialog.py:82
 msgid "Problem:"
-msgstr "Problema: "
+msgstr "Problém:"
 
 #: ../pitivi/ui/filelisterrordialog.py:89
 msgid "Extra information:"
-msgstr "Información extra: "
+msgstr "Další informace:"
 
 #. set title and frame label
 #: ../pitivi/ui/gstwidget.py:195
 #, python-format
 msgid "Properties for %s"
-msgstr "Propiedades para %s"
+msgstr "Vlastnosti - %s"
 
 #: ../pitivi/ui/mainwindow.py:123
 msgid "Render"
-msgstr "Renderizando"
+msgstr "Vykreslit"
 
 #: ../pitivi/ui/mainwindow.py:124
 msgid "Split"
-msgstr "Dividir"
+msgstr "Rozdělit"
 
 #: ../pitivi/ui/mainwindow.py:125
 msgid "Unlink"
-msgstr "Desunir"
+msgstr "Rozpojit"
 
 #. Translators: This is an action, the title of a button
 #: ../pitivi/ui/mainwindow.py:127
 msgid "Link"
-msgstr "Unir"
+msgstr "Spojit"
 
 #: ../pitivi/ui/mainwindow.py:128
 msgid "Ungroup"
-msgstr "Desagrupar"
+msgstr "Odseskupit"
 
 #. Translators: This is an action, the title of a button
 #: ../pitivi/ui/mainwindow.py:130
 msgid "Group"
-msgstr "Agrupar"
+msgstr "Seskupit"
 
 #: ../pitivi/ui/mainwindow.py:233
 msgid "Start Playback"
-msgstr "Iniciar reproducción"
+msgstr "Spustit přehrávání"
 
 #: ../pitivi/ui/mainwindow.py:234
 msgid "Stop Playback"
-msgstr "Parar reproducción"
+msgstr "Zastavit přehrávání"
 
 #: ../pitivi/ui/mainwindow.py:235
 msgid "Loop over selected area"
-msgstr "Circular sobre el área seleccionada"
+msgstr "Opakovat vybrané pásmo"
 
 #: ../pitivi/ui/mainwindow.py:240
 msgid "Create a new project"
-msgstr "Crea un proyecto nuevo"
+msgstr "Vytvořit nový projekt"
 
 #: ../pitivi/ui/mainwindow.py:242
 msgid "Open an existing project"
-msgstr "Abre un proyecto existente"
+msgstr "Otevřít existující projekt"
 
 #: ../pitivi/ui/mainwindow.py:244 ../pitivi/ui/mainwindow.py:246
 msgid "Save the current project"
-msgstr "Guarda el proyecto actual"
+msgstr "Uložit současný projekt"
 
 #: ../pitivi/ui/mainwindow.py:247 ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
-msgstr "Ajustes del proyecto"
+msgstr "Nastavení projektu"
 
 #: ../pitivi/ui/mainwindow.py:248
 msgid "Edit the project settings"
-msgstr "Edita los ajustes del proyecto"
+msgstr "Upravit nastavení projektu"
 
 #: ../pitivi/ui/mainwindow.py:249
 msgid "_Render project"
-msgstr "_Renderizar proyecto"
+msgstr "Vykr_eslit projekt"
 
 #: ../pitivi/ui/mainwindow.py:252
 msgid "_Undo"
-msgstr "_Deshacer"
+msgstr "_Zpět"
 
 #: ../pitivi/ui/mainwindow.py:253
 msgid "Undo the last operation"
-msgstr "Deshacer la última operación"
+msgstr "Vrátí poslední operaci"
 
 #: ../pitivi/ui/mainwindow.py:255
 msgid "_Redo"
-msgstr "_Rehacer"
+msgstr "Zn_ovu"
 
 #: ../pitivi/ui/mainwindow.py:256
 msgid "Redo the last operation that was undone"
-msgstr "Rehacer la última operación deshecha"
+msgstr "Provede znovu poslední vrácenou operaci"
 
 #: ../pitivi/ui/mainwindow.py:258
 msgid "_Plugins..."
-msgstr "Co_mplementos…"
+msgstr "Zásuvné _moduly..."
 
 #: ../pitivi/ui/mainwindow.py:259
 msgid "Manage plugins"
-msgstr "Gestionar los complementos"
+msgstr "Spravovat zásuvné moduly"
 
 #: ../pitivi/ui/mainwindow.py:260
 msgid "_Preferences"
-msgstr "Prefere_ncias"
+msgstr "_Nastavení"
 
 #: ../pitivi/ui/mainwindow.py:263
 msgid "Import from _Webcam..."
-msgstr "Importar de la cámara _web…"
+msgstr "Importovat z _webové kamery..."
 
 #: ../pitivi/ui/mainwindow.py:264
 msgid "Import Camera stream"
-msgstr "Importar flujo de datos de la cámara"
+msgstr "Importovat proud z kamery"
 
 #: ../pitivi/ui/mainwindow.py:266
 msgid "_Make screencast..."
-msgstr "Crear un _screencast…"
+msgstr "Natočit _screencast..."
 
 #: ../pitivi/ui/mainwindow.py:267
 msgid "Capture the desktop"
-msgstr "Capturar el escritorio"
+msgstr "Nahrávat dění na obrazovce"
 
 #: ../pitivi/ui/mainwindow.py:269
 msgid "_Capture Network Stream..."
-msgstr "_Capturar flujo de datos de la red…"
+msgstr "Nah_rávat síťový proud..."
 
 #: ../pitivi/ui/mainwindow.py:270
 msgid "Capture Network Stream"
-msgstr "Capturar flujo de datos de la red…"
+msgstr "Nahrávat síťový proud"
 
 #: ../pitivi/ui/mainwindow.py:273
 #, python-format
 msgid "Information about %s"
-msgstr "Información acerca de %s"
+msgstr "Informace o %s"
 
 #: ../pitivi/ui/mainwindow.py:274
 msgid "_File"
-msgstr "_Archivo"
+msgstr "_Soubor"
 
 #: ../pitivi/ui/mainwindow.py:275
 msgid "_Edit"
-msgstr "_Editar"
+msgstr "_Upravit"
 
 #: ../pitivi/ui/mainwindow.py:276
 msgid "_View"
-msgstr "_Ver"
+msgstr "_Zobrazení"
 
 #: ../pitivi/ui/mainwindow.py:277
 msgid "_Project"
-msgstr "_Proyecto"
+msgstr "_Projekt"
 
 #: ../pitivi/ui/mainwindow.py:278
 msgid "_Timeline"
-msgstr "Crono_logía"
+msgstr "Časo_vá osa"
 
 #: ../pitivi/ui/mainwindow.py:279
 msgid "Previe_w"
-msgstr "Revisa_r"
+msgstr "Ná_hled"
 
 #: ../pitivi/ui/mainwindow.py:282
 msgid "Loop"
-msgstr "Circular"
+msgstr "Smyčka"
 
 #: ../pitivi/ui/mainwindow.py:284
 msgid "_Help"
-msgstr "Ay_uda"
+msgstr "Ná_pověda"
 
 #: ../pitivi/ui/mainwindow.py:289
 msgid "View the main window on the whole screen"
-msgstr "Ver la ventana principal en la pantalla completa"
+msgstr "Zobrazit hlavní okno na celé obrazovce"
 
 #: ../pitivi/ui/mainwindow.py:293
 msgid "Main Toolbar"
-msgstr "Barra de herramientas principal"
+msgstr "Hlavní nástrojová lišta"
 
 #: ../pitivi/ui/mainwindow.py:296
 msgid "Timeline Toolbar"
-msgstr "Barra de herraminetas de la cronología"
+msgstr "Nástrojová lišta časové osy"
 
-#: ../pitivi/ui/mainwindow.py:518
+#: ../pitivi/ui/mainwindow.py:520
 msgid "Open File..."
-msgstr "Abrir archivo…"
+msgstr "Otevřít soubor..."
 
-#: ../pitivi/ui/mainwindow.py:533
+#: ../pitivi/ui/mainwindow.py:535
 msgid "All Supported Formats"
-msgstr "Todos los formatos soportados"
+msgstr "Všechny podporované formáty"
 
-#: ../pitivi/ui/mainwindow.py:599
+#: ../pitivi/ui/mainwindow.py:601
 msgid "Contributors:"
-msgstr "Contribuidores:"
+msgstr "Přispěvatelé:"
 
-#: ../pitivi/ui/mainwindow.py:611
+#: ../pitivi/ui/mainwindow.py:613
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
 msgstr ""
 "GNU Lesser General Public License\n"
-"Vea http://www.gnu.org/copyleft/lesser.html para más detalles"
-
-#: ../pitivi/ui/mainwindow.py:707
-msgid "Close project"
-msgstr "Cerrar proyecto"
+"Pokud se chcete dozvědět více, navštivte stránku http://www.gnu.org/copyleft/"
+"lesser.html"
 
 #: ../pitivi/ui/mainwindow.py:709
+msgid "Close project"
+msgstr "Zavřít projekt"
+
+#: ../pitivi/ui/mainwindow.py:711
 msgid "Close without saving"
-msgstr "Cerrar sin guardar"
+msgstr "Zavřít bez uložení"
 
-#: ../pitivi/ui/mainwindow.py:723
+#: ../pitivi/ui/mainwindow.py:725
 msgid "Save changes to the current project before closing?"
-msgstr "¿Guardar el proyecto actual antes de cerrar?"
+msgstr "Chcete před zavřením uložit změny v současném projektu?"
 
-#: ../pitivi/ui/mainwindow.py:726
+#: ../pitivi/ui/mainwindow.py:728
 msgid "If you don't save some of your changes will be lost"
-msgstr "Si no guarda se perderán algunos de sus cambios"
-
-#: ../pitivi/ui/mainwindow.py:773
-#, python-format
-msgid "PiTiVi is unable to load file \"%s\""
-msgstr "PiTiVi no puede cargar el archivo «%s»"
+msgstr "V případě neuložení budou veškeré změny ztraceny"
 
 #: ../pitivi/ui/mainwindow.py:775
+#, python-format
+msgid "PiTiVi is unable to load file \"%s\""
+msgstr "PiTiVi nemůže načíst soubor \"%s\""
+
+#: ../pitivi/ui/mainwindow.py:777
 msgid "Error Loading File"
-msgstr "Error al cargar el archivo"
+msgstr "Chyba při načítání souboru"
 
-#: ../pitivi/ui/mainwindow.py:782
+#: ../pitivi/ui/mainwindow.py:784
 msgid "Locate missing file..."
-msgstr "Encontrar archivo perdido..."
+msgstr "Hledat chybějící soubor..."
 
-#: ../pitivi/ui/mainwindow.py:790
+#: ../pitivi/ui/mainwindow.py:792
 #, python-format
 msgid "Please locate the missing file, '%s'"
-msgstr "Encuentra el archivo perdido, «%s»"
+msgstr "Vyhledejte prosím chybějící soubor, '%s'"
 
-#: ../pitivi/ui/mainwindow.py:924
+#: ../pitivi/ui/mainwindow.py:930
 msgid "Save As..."
-msgstr "Guardar como…"
+msgstr "Uložit jako..."
 
-#: ../pitivi/ui/mainwindow.py:931
+#: ../pitivi/ui/mainwindow.py:937
 msgid "Untitled.xptv"
-msgstr "Sin título.xptv"
+msgstr "Nepojmenovaný.xptv"
 
-#: ../pitivi/ui/mainwindow.py:942 ../pitivi/ui/mainwindow.py:955
+#: ../pitivi/ui/mainwindow.py:948 ../pitivi/ui/mainwindow.py:961
 msgid "Detect Automatically"
-msgstr "Detectar automáticamente"
+msgstr "Rozpoznat automaticky"
 
 #: ../pitivi/ui/net_capture.glade.h:1
 msgid "Address"
-msgstr "Dirección"
+msgstr "Adresa"
 
 #: ../pitivi/ui/net_capture.glade.h:2
 msgid "Capture"
-msgstr "Capturar"
+msgstr "Nahrávat"
 
 #: ../pitivi/ui/net_capture.glade.h:3
 msgid "Capture Stream from URI"
-msgstr "Capturar flujo de datos de un URI"
+msgstr "Nahrávat proud ze zadané adresy"
 
 #: ../pitivi/ui/net_capture.glade.h:4
 msgid "Capture network stream"
-msgstr "Capturar flujo de datos de la red"
+msgstr "Nahrávat síťový proud"
 
 #: ../pitivi/ui/net_capture.glade.h:5
 msgid "Close"
-msgstr "Cerrar"
+msgstr "Zavřít"
 
 #: ../pitivi/ui/net_capture.glade.h:6
 msgid "Customize:"
-msgstr "Personalizar:"
+msgstr "Přizpůsobit:"
 
 #: ../pitivi/ui/net_capture.glade.h:7
 msgid "HTTP / HTTPS"
@@ -936,27 +934,27 @@ msgstr "HTTP / HTTPS"
 
 #: ../pitivi/ui/net_capture.glade.h:8
 msgid "Network stream video"
-msgstr "Vídeo de flujo de la red"
+msgstr "Video vysílané po síti"
 
 #: ../pitivi/ui/net_capture.glade.h:9
 msgid "Other protocol"
-msgstr "Otro protocolo"
+msgstr "Jiné protokoly"
 
 #: ../pitivi/ui/net_capture.glade.h:10
 msgid "Port"
-msgstr "Puerto"
+msgstr "Port"
 
 #: ../pitivi/ui/net_capture.glade.h:11
 msgid "Preview"
-msgstr "Revisar"
+msgstr "Náhled"
 
 #: ../pitivi/ui/net_capture.glade.h:12
 msgid "Preview Stream from URI"
-msgstr "Revisar flujo de datos de el URI"
+msgstr "Náhled proudu z adresy"
 
 #: ../pitivi/ui/net_capture.glade.h:13
 msgid "Protocol"
-msgstr "Protocolo"
+msgstr "Protokol"
 
 #: ../pitivi/ui/net_capture.glade.h:14
 msgid "RTSP"
@@ -973,57 +971,56 @@ msgstr "http://"
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:1
 #: ../pitivi/ui/pluginmanagerdialog.py:173
 msgid "All categories"
-msgstr "Todas las categorías"
+msgstr "Všechny kategorie"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:2
 msgid "Plugin manager"
-msgstr "Gestor de complementos"
+msgstr "Správce zásuvných modulů"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:3
 msgid "Search:"
-msgstr "Buscar:"
+msgstr "Hledat:"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:4
 msgid "Show:"
-msgstr "Mostrar:"
+msgstr "Zobrazit:"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:5
 msgid ""
 "You may drag plugin files into the list to install them,\n"
 "or type text to search for a specific plugin."
 msgstr ""
-"Puede arrastrar los archivos de los complementos a la lista para "
-"instalarlos\n"
-"o introducir texto para buscar un complemento específico."
+"Chcete-li nainstalovat zásuvný modul, přetáhněte jej do seznamu,\n"
+"nebo vyhledejte určitý zásuvný modul zadáním textu."
 
 #: ../pitivi/ui/pluginmanagerdialog.py:89
 msgid "Enabled"
-msgstr "Activado"
+msgstr "Povoleno"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:99
 msgid "Plugin"
-msgstr "Complemento"
+msgstr "Zásuvný modul"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:109
 msgid "Category"
-msgstr "Categoría"
+msgstr "Kategorie"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:271
 msgid "Are you sure you want to remove the selected plugins?"
-msgstr "¿Está seguro que quiere quitar los complementos seleccionados?"
+msgstr "Opravdu chcete odebrat vybrané zásuvné moduly?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:272
 msgid "Confirm remove operation"
-msgstr "Confirmar la operación de eliminación"
+msgstr "Potvrdit odebrání"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:289
 #, python-format
 msgid "Cannot remove %s"
-msgstr "No se puede eliminar %s"
+msgstr "Nelze odebrat %s"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:321
 msgid "Update the existing plugin?"
-msgstr "¿Actualizar el complemento existente?"
+msgstr "Chcete aktualizovat existující zásuvný modul?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:324
 #, python-format
@@ -1031,12 +1028,12 @@ msgid ""
 "This plugin is already installed in your system.\n"
 "If you agree, version %(v1)s will be replaced with version %(v2)s"
 msgstr ""
-"Este complemento ya está instalado en su sistema.\n"
-"Si está de acuerdo, la versión %(v1)s se reemplazará por la versión %(v2)s"
+"Tento zásuvný modul je již v systému nainstalován.\n"
+"Pokud budete pokračovat, verze %(v1)s bude nahrazena verzí %(v2)s"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:327
 msgid "Duplicate plugin found"
-msgstr "Se encontró un complemento duplicado"
+msgstr "Nalezen duplicitní zásuvný modul"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:341
 #, python-format
@@ -1044,556 +1041,311 @@ msgid ""
 "Cannot install %s\n"
 "The file is not a valid plugin"
 msgstr ""
-"No se pudo instalar %s.\n"
-"El archivo no es un complemento válido."
+"Nelze nainstalovat %s\n"
+"Soubor není zásuvným modulem"
 
 #: ../pitivi/ui/prefs.py:57
 msgid "Preferences"
-msgstr "Preferencias"
+msgstr "Nastavení"
 
 #: ../pitivi/ui/prefs.py:83
 msgid "Section"
-msgstr "Sección"
+msgstr "Sekce"
 
 #. revert, close buttons
 #: ../pitivi/ui/prefs.py:104
 msgid "Reset to Factory Settings"
-msgstr "Restaurar a los ajustes de fábrica"
+msgstr "Obnovit tovární nastavení"
 
 #: ../pitivi/ui/prefs.py:108
 msgid "Revert"
-msgstr "Revertir"
+msgstr "Vrátit"
 
 #: ../pitivi/ui/prefs.py:123
 msgid "Some changes will not take effect until you restart PiTiVi"
-msgstr "Algunos cambios no tendrán efecto hasta que reinicie PiTiVi"
+msgstr "Některé změny se projeví až po restartu PiTiVi"
 
 #: ../pitivi/ui/prefs.py:318
 msgid "Reset"
-msgstr "Reiniciar"
+msgstr "Restartovat"
 
 #: ../pitivi/ui/previewer.py:56 ../pitivi/ui/previewer.py:84
 #: ../pitivi/ui/previewer.py:95 ../pitivi/ui/trackobject.py:48
 #: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
 #: ../pitivi/ui/trackobject.py:81
 msgid "Appearance"
-msgstr "Apariencia"
+msgstr "Vzhled"
 
 #: ../pitivi/ui/previewer.py:57
 msgid "Thumbnail Gap (pixels)"
-msgstr "Apertura de miniaturas (píxeles)"
+msgstr "Mezera u zmenšenin (v pixelech)"
 
 #: ../pitivi/ui/previewer.py:59
 msgid "The gap between thumbnails"
-msgstr "El espacio entre las miniaturas"
+msgstr "Mezera mezi miniaturami"
 
 #: ../pitivi/ui/previewer.py:85
 msgid "Show Thumbnails (Video)"
-msgstr "Mostrar miniaturas (vídeo)"
+msgstr "Zobrazit miniatury u videa"
 
 #: ../pitivi/ui/previewer.py:86
 msgid "Show Thumbnails on Video Clips"
-msgstr "Mostrar miniaturas en los vídeos"
+msgstr "Zobrazí miniatury u video klipů"
 
 #: ../pitivi/ui/previewer.py:96
 msgid "Show Waveforms (Audio)"
-msgstr "Mostrar formas de onda (sonido)"
+msgstr "Zobrazit zvukovou stopu graficky"
 
 #: ../pitivi/ui/previewer.py:97
 msgid "Show Waveforms on Audio Clips"
-msgstr "Mostrar formas de onda en los audio clips"
+msgstr "Zobrazit průběh audia graficky (v křivkách)"
 
 #: ../pitivi/ui/projecttabs.py:65
 msgid "Clip Library"
-msgstr "Videoteca"
+msgstr "Klipy"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
-msgstr "Una breve descripción de su proyecto."
+msgstr "Krátký popis svého projektu."
 
 #: ../pitivi/ui/projectsettings.glade.h:2
 msgid "Description:"
-msgstr "Descripción:"
+msgstr "Popis:"
 
 #: ../pitivi/ui/projectsettings.glade.h:3
 msgid "Name:"
-msgstr "Nombre:"
+msgstr "Název:"
 
 #: ../pitivi/ui/projectsettings.glade.h:5
 msgid "The name of your project."
-msgstr "El nombre de su proyecto."
+msgstr "Název vašeho projektu."
 
 #: ../pitivi/ui/propertyeditor.py:54
 msgid "No Objects Selected"
-msgstr "No hay objetos seleccionados"
+msgstr "Nebyly vybrány žádné objekty"
 
 #: ../pitivi/ui/screencast_manager.glade.h:1
 msgid "Screencast"
-msgstr "Screencast"
+msgstr "Záznam obrazovky"
 
 #: ../pitivi/ui/screencast_manager.glade.h:2
 msgid "Screencast Desktop"
-msgstr "Screencast al escritorio"
+msgstr "Záznam obrazovky"
 
 #: ../pitivi/ui/screencast_manager.glade.h:3
 msgid "Start Istanbul"
-msgstr "Iniciar Istanbul"
+msgstr "Spustit Istanbul"
 
-#: ../pitivi/ui/sourcelist.py:91
+#: ../pitivi/ui/sourcelist.py:92
 #, python-format
 msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
 msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] "<b>Audio:</b> %d canal a %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[1] "<b>Audio:</b> %d canales a %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[0] "<b>Audio:</b> %d kanál @ %d <i>Hz</i> (%d <i>bitů</i>)"
+msgstr[1] "<b>Audio:</b> %d kanály @ %d <i>Hz</i> (%d <i>bitů</i>)"
+msgstr[2] "<b>Audio:</b> %d kanálů @ %d <i>Hz</i> (%d <i>bitů</i>)"
 
-#: ../pitivi/ui/sourcelist.py:97
+#: ../pitivi/ui/sourcelist.py:98
 #, python-format
 msgid "<b>Unknown Audio format:</b> %s"
-msgstr "<b>Formato de audio desconocido:</b> %s"
+msgstr "<b>Neznámý audio formát:</b> %s"
 
-#: ../pitivi/ui/sourcelist.py:102
+#: ../pitivi/ui/sourcelist.py:103
 #, python-format
 msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
-msgstr "<b>Vídeo:</b> %d x %d <i>pixeles</i> at %.2f<i>fps</i>"
+msgstr "<b>Video:</b> %d x %d <i>pixelů</i> @ %.2f<i>fps</i>"
 
-#: ../pitivi/ui/sourcelist.py:106
+#: ../pitivi/ui/sourcelist.py:107
 #, python-format
 msgid "<b>Image:</b> %d x %d <i>pixels</i>"
-msgstr "<b>Imagen:</b> %d x %d <i>píxeles</i>"
+msgstr "<b>Obrázek:</b> %d x %d <i>pixelů</i>"
 
-#: ../pitivi/ui/sourcelist.py:109
+#: ../pitivi/ui/sourcelist.py:110
 #, python-format
 msgid "<b>Unknown Video format:</b> %s"
-msgstr "<b>Formato de vídeo desconocido:</b> %s"
+msgstr "<b>Neznámý video formát:</b> %s"
 
-#: ../pitivi/ui/sourcelist.py:112
+#: ../pitivi/ui/sourcelist.py:113
 #, python-format
 msgid "<b>Text:</b> %s"
-msgstr "<b>Texto:</b> %s"
+msgstr "<b>Text:</b> %s"
 
-#: ../pitivi/ui/sourcelist.py:158
+#: ../pitivi/ui/sourcelist.py:159
 msgid "Add Clips..."
-msgstr "Añadir vídeos…"
+msgstr "Přidat klipy..."
 
-#: ../pitivi/ui/sourcelist.py:163
+#: ../pitivi/ui/sourcelist.py:164
 msgid "Remove Clip"
-msgstr "Quitar vídeo"
+msgstr "Odebrat klip"
 
-#: ../pitivi/ui/sourcelist.py:167
+#: ../pitivi/ui/sourcelist.py:168
 msgid "Play Clip"
-msgstr "Reproducir vídeo"
+msgstr "Přehrát klip"
 
-#: ../pitivi/ui/sourcelist.py:193
+#: ../pitivi/ui/sourcelist.py:194
 msgid "Icon"
-msgstr "Icono"
+msgstr "Ikona"
 
-#: ../pitivi/ui/sourcelist.py:202
+#: ../pitivi/ui/sourcelist.py:203
 msgid "Information"
-msgstr "Información"
+msgstr "Informace"
 
-#: ../pitivi/ui/sourcelist.py:213
+#: ../pitivi/ui/sourcelist.py:214
 msgid "Duration"
-msgstr "Duración"
+msgstr "Trvání"
 
-#: ../pitivi/ui/sourcelist.py:235
+#: ../pitivi/ui/sourcelist.py:236
 msgid ""
 "<span size='x-large'>Import your clips by dragging them here or by using the "
 "buttons above.</span>"
 msgstr ""
-"<span size='x-large'>Importe sus vídeos arrastrándolos aquí o usando los "
-"botones de abajo.</span>"
-
-#: ../pitivi/ui/sourcelist.py:288
-msgid "_Import clips..."
-msgstr "_Importar vídeos…"
+"<span size='x-large'>Importujte své klipy přetažením sem nebo použitím "
+"tlačítka nad tímto textem.</span>"
 
 #: ../pitivi/ui/sourcelist.py:289
-msgid "Import clips to use"
-msgstr "Importar vídeos a usar"
+msgid "_Import clips..."
+msgstr "_Importovat klipy..."
 
-#: ../pitivi/ui/sourcelist.py:291
-msgid "Import _folder of clips..."
-msgstr "_Importar carpeta de vídeos…"
+#: ../pitivi/ui/sourcelist.py:290
+msgid "Import clips to use"
+msgstr "Importovat klipy"
 
 #: ../pitivi/ui/sourcelist.py:292
+msgid "Import _folder of clips..."
+msgstr "Importovat slož_ku klipů..."
+
+#: ../pitivi/ui/sourcelist.py:293
 msgid "Import folder of clips to use"
-msgstr "Importar carpeta de vídeos a usar"
+msgstr "Importovat složku klipů"
 
-#: ../pitivi/ui/sourcelist.py:298
+#: ../pitivi/ui/sourcelist.py:299
 msgid "_Remove from project"
-msgstr "_Quitar del proyecto"
+msgstr "O_debrat z projektu"
 
-#: ../pitivi/ui/sourcelist.py:301
+#: ../pitivi/ui/sourcelist.py:302
 msgid "Insert at _end of timeline"
-msgstr "Insertar al _final de la cronología"
+msgstr "Vložit na _konec časové osy"
 
-#: ../pitivi/ui/sourcelist.py:417
+#: ../pitivi/ui/sourcelist.py:418
 msgid "Import a folder"
-msgstr "Importa una carpeta"
-
-#: ../pitivi/ui/sourcelist.py:420
-msgid "Import a clip"
-msgstr "Importar un vídeo"
+msgstr "Importovat složku"
 
 #: ../pitivi/ui/sourcelist.py:421
+msgid "Import a clip"
+msgstr "Importovat klip"
+
+#: ../pitivi/ui/sourcelist.py:422
 msgid "Close after importing files"
-msgstr "Cerrar después de importar los archivos"
+msgstr "Zavřít po dokončení importu"
 
-#: ../pitivi/ui/sourcelist.py:757
+#: ../pitivi/ui/sourcelist.py:762
 msgid "Importing clips..."
-msgstr "Importando vídeos…"
+msgstr "Načítání klipů..."
 
-#: ../pitivi/ui/sourcelist.py:758
+#: ../pitivi/ui/sourcelist.py:763
 msgid "Error(s) occurred while importing"
-msgstr "Hubo algún error al importar"
+msgstr "Nastaly chyby během importování"
 
-#: ../pitivi/ui/sourcelist.py:759
+#: ../pitivi/ui/sourcelist.py:764
 msgid "An error occurred while importing"
-msgstr "Ocurrió un error al importar"
+msgstr "Při importování nastala chyba"
 
-#: ../pitivi/ui/sourcelist.py:844
+#: ../pitivi/ui/sourcelist.py:849
 msgid "Error while analyzing files"
-msgstr "Error al analizar los archivos"
+msgstr "Nastala chyba při analyzování souborů"
 
-#: ../pitivi/ui/sourcelist.py:845
+#: ../pitivi/ui/sourcelist.py:850
 msgid "The following files can not be used with PiTiVi."
-msgstr "Los siguientes archivos no se pueden usar con PiTiVi."
+msgstr "Následující soubory nemůžou být použity v PiTiVi."
 
-#: ../pitivi/ui/sourcelist.py:847
+#: ../pitivi/ui/sourcelist.py:852
 msgid "Error while analyzing a file"
-msgstr "Error al analizar un archivo"
+msgstr "Nastala chyba při analyzování souborů"
 
-#: ../pitivi/ui/sourcelist.py:848
+#: ../pitivi/ui/sourcelist.py:853
 msgid "The following file can not be used with PiTiVi."
-msgstr "El siguiente archivo no se puede usar con PiTiVi."
+msgstr "Následující soubor nemůže být použit v PiTiVi."
 
 #. tooltip text for toolbar
 #: ../pitivi/ui/timeline.py:44
 msgid "Delete Selected"
-msgstr "Borrar los seleccionados"
+msgstr "Smazat vybrané"
 
 #: ../pitivi/ui/timeline.py:45
 msgid "Cut clip at mouse position"
-msgstr "Cortar vídeo en la posición del ratón"
+msgstr "Rozdělit klip na pozice kurzoru"
 
 #: ../pitivi/ui/timeline.py:46
 msgid "Zoom In"
-msgstr "Ampliar"
+msgstr "Přiblížit"
 
 #: ../pitivi/ui/timeline.py:47
 msgid "Zoom Out"
-msgstr "Alejar"
+msgstr "Oddálit"
 
 #: ../pitivi/ui/timeline.py:48
 msgid "Break links between clips"
-msgstr "Romper enlaces entre los vídeos"
+msgstr "Zrušit spojení mezi klipy"
 
 #: ../pitivi/ui/timeline.py:49
 msgid "Link together arbitrary clips"
-msgstr "Enlazar vídeos arbitrariamente"
+msgstr "Spojit klipy dohromady"
 
 #: ../pitivi/ui/timeline.py:50
 msgid "Ungroup clips"
-msgstr "Desagrupar vídeos"
+msgstr "Zrušit seskupení klipů"
 
 #: ../pitivi/ui/timeline.py:51
 msgid "Group clips"
-msgstr "Agrupar vídeos"
+msgstr "Seskupit klipy"
 
-#: ../pitivi/ui/timeline.py:198
+#: ../pitivi/ui/timeline.py:199
 msgid "Razor"
-msgstr "Navaja"
+msgstr "Nástroj střihu"
 
 #: ../pitivi/ui/timelinecanvas.py:49
 msgid "Behavior"
-msgstr "Comportamiento"
+msgstr "Chování"
 
 #: ../pitivi/ui/timelinecanvas.py:50
 msgid "Snap Distance (pixels)"
-msgstr "Distancia de ajuste a la rejilla (píxeles)"
+msgstr "Vzdálenost přichytávání (v pixelech)"
 
 #: ../pitivi/ui/timelinecanvas.py:51
 msgid "Threshold distance (in pixels) used for all snapping operations"
-msgstr ""
-"Umbral de distancia (en píxeles) usado para todas las operaciones de ajuste "
-"a la rejilla"
+msgstr "Práh (v pixelech) přichytávání"
 
 #: ../pitivi/ui/timelinecontrols.py:17
 msgid "<b>Text:</b>"
-msgstr "<b>Texto:</b>"
+msgstr "<b>Text:</b>"
 
 #: ../pitivi/ui/trackobject.py:49
 msgid "Clip Background (Video)"
-msgstr "Fondo del vídeo (vídeo)"
+msgstr "Pozadí video klipu"
 
 #: ../pitivi/ui/trackobject.py:50
 msgid "The background color for clips in video tracks."
-msgstr "El color de fondo para vídeos en las pistas de vídeo."
+msgstr "Barva pozadí klipů ve video stopách."
 
 #: ../pitivi/ui/trackobject.py:60
 msgid "Clip Background (Audio)"
-msgstr "Fondo del vídeo (sonido)"
+msgstr "Pozadí audio klipů"
 
 #: ../pitivi/ui/trackobject.py:61
 msgid "The background color for clips in audio tracks."
-msgstr "El color de fondo para vídeos en las pistas de sonido."
+msgstr "Barva pozadí audio klipů v audio stopách."
 
 #: ../pitivi/ui/trackobject.py:71
 msgid "Selection Color"
-msgstr "Selección de color"
+msgstr "Barva výběru"
 
 #: ../pitivi/ui/trackobject.py:72
 msgid "Selected clips will be tinted with this color."
-msgstr "Vídeos seleccionados se colorearán con este color."
+msgstr "Vybrané klipy budou zbarveny do této barvy."
 
 #: ../pitivi/ui/trackobject.py:82
 msgid "Clip Font"
-msgstr "Fuente de texto del vídeo"
+msgstr "Písmo klipu"
 
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
-msgstr "La fuente para usar en los títulos del vídeo"
-
-#~ msgid "Undo %s"
-#~ msgstr "Deshacer %s"
-
-#~ msgid "Undo"
-#~ msgstr "Deshacer"
-
-#~ msgid "Redo %s"
-#~ msgstr "Rehacer %s"
-
-#~ msgid "Redo"
-#~ msgstr "Rehacer"
-
-#~ msgid "No streams found"
-#~ msgstr "No se encontró ningún flujo"
-
-#~ msgid "FIXME: no output streams"
-#~ msgstr "FIXME: no hay flujo de datos de salida"
-
-#~ msgid "see above"
-#~ msgstr "ver arriba"
-
-#~ msgid "No location given."
-#~ msgstr "No se proporcionó una ubicación."
-
-#~ msgid "File does not exist"
-#~ msgstr "El archivo no existe"
-
-#~ msgid "There was an error loading the file."
-#~ msgstr "Ocurrió un error al cargar el archivo."
-
-#~ msgid ""
-#~ "Open project file specified by PROJECT instead of creating a\n"
-#~ "new project."
-#~ msgstr ""
-#~ "Abre el archivo del proyecto especificado por PROYECTO en vez de crear\n"
-#~ "un proyecto nuevo."
-
-#~ msgid "Finished in %dm%ds"
-#~ msgstr "Terminado en %dm%ds"
-
-#~ msgid "Forward one frame"
-#~ msgstr "Adelantar un fotograma"
-
-#~ msgid "Fast Forward"
-#~ msgstr "Adelantar"
-
-#~ msgid "Back one frame"
-#~ msgstr "Retroceder un fotograma"
-
-#~| msgid "Frame rate:"
-#~ msgid "Frame Forward"
-#~ msgstr "Fotograma adelante"
-
-#~ msgid "Frame Backward"
-#~ msgstr "Fotograma atrás"
-
-#~ msgid "1 Second Forward"
-#~ msgstr "1 segundo hacia adelante"
-
-#~ msgid "1 Second Backward"
-#~ msgstr "1 segundo hacia atrás"
-
-#~ msgid "End of Clip"
-#~ msgstr "Fín del vídeo"
-
-#~ msgid "Start of Clip"
-#~ msgstr "Comienzo del vídeo"
-
-#~ msgid "The project has unsaved changes. Do you wish to close the project?"
-#~ msgstr "El proyecto tiene cambios sin guardar. ¿Quiere cerrar el proyecto?"
-
-#~ msgid "http / https"
-#~ msgstr "http / https"
-
-#~ msgid "rtsp"
-#~ msgstr "rtsp"
-
-#~ msgid "udp / rtp"
-#~ msgstr "udp / rtp"
-
-#~ msgid "Could not import the Python bindings for libglade"
-#~ msgstr "No se pudieron importar los bindings de Python para libglade"
-
-#~ msgid "Make sure you have the Python bindings for libglade installed"
-#~ msgstr ""
-#~ "Asegúrese de que tiene instalados los bindings de Python para libglade"
-
-#, fuzzy
-#~ msgid "Could not import the Python bindings for goocanvas"
-#~ msgstr "No se pudieron importar los bindings de Python para Cairo"
-
-#, fuzzy
-#~ msgid "Make sure you have the Python bindings for goocanvas installed"
-#~ msgstr "Asegúrese de que tiene los bindings de Python para Cairo instalados"
-
-#~ msgid "Couldn't construct pipeline."
-#~ msgstr "No se pudo construir la tubería."
-
-#~ msgid ""
-#~ "GStreamer does not have an element to handle files coming from this type "
-#~ "of file system."
-#~ msgstr ""
-#~ "GStreamer no tiene un elemento para manejar archivos con este tipo de "
-#~ "sistema de archivo."
-
-#~ msgid "Pipeline didn't want to go to PLAYING."
-#~ msgstr "La tubería no quiso REPRODUCIR."
-
-#~ msgid "Got unknown stream type : %s"
-#~ msgstr "Se obtuvo un tipo de flujo desconocido: %s"
-
-#~ msgid "You are missing an element to handle this media type."
-#~ msgstr "Le falta un elemento para manejar este tipo de medio."
-
-#~ msgid "<b>%s</b><small>"
-#~ msgstr "<b>%s</b><small>"
-
-#~ msgid "<b>%s</b> (%s)"
-#~ msgstr "<b>%s</b> (%s)"
-
-#~ msgid "<b>%s</b>"
-#~ msgstr "<b>%s</b>"
-
-#~ msgid "<small><b>File:</b> %s"
-#~ msgstr "<small><b>Archivo:</b> %s"
-
-#~ msgid "Video output is busy"
-#~ msgstr "La salida de vídeo está ocupada"
-
-#~ msgid ""
-#~ "Please check that your video output device isn't already used by another "
-#~ "application"
-#~ msgstr ""
-#~ "Compruebe que su dispositivo de salida de vídeo no lo esté usando ya otra "
-#~ "aplicación"
-
-#~ msgid "Video output problem"
-#~ msgstr "Problema de salida de vídeo"
-
-#~ msgid "There is a problem with your video output device"
-#~ msgstr "Hay un problema con su dispositivo de salida de vídeo"
-
-#~ msgid "Audio output device is busy"
-#~ msgstr "El dispositivo de salida de audio"
-
-#~ msgid ""
-#~ "Please check that your audio output device isn't already used by another "
-#~ "application."
-#~ msgstr ""
-#~ "Compruebe que su dispositivo de salida de audio no lo esté usando ya otra "
-#~ "aplicación."
-
-#~ msgid "Audio output problem"
-#~ msgstr "Problema con la salida de sonido"
-
-#~ msgid "There is a problem with your audio output device"
-#~ msgstr "Hay un problema con su dispositivo de salida de audio"
-
-#~ msgid " <i>(%s)</i>"
-#~ msgstr " <i>(%s)</i>"
-
-#~ msgid "gtk-close"
-#~ msgstr "gtk-close"
-
-#~ msgid "Project settings"
-#~ msgstr "Ajustes del proyecto"
-
-#~ msgid "Do you wish to overwrite existing file \"%s\"?"
-#~ msgstr "¿Quiere sobreescribir el archivo existente «%s»?"
-
-#~ msgid "Overwrite Existing File?"
-#~ msgstr "¿Sobreescribir el archivo ya existente?"
-
-#~ msgid "Couldn't start rendering"
-#~ msgstr "No se pudo empezar el renderizado"
-
-#~ msgid "This plugin is already installed in your system.\n"
-#~ msgstr "Este complemento ya está instalado en su sistema.\n"
-
-#~ msgid "Cannot install %s\n"
-#~ msgstr "No se puede instalar %s\n"
-
-#, fuzzy
-#~ msgid "Properties"
-#~ msgstr "Propiedades para"
-
-#~ msgid "Audio Track"
-#~ msgstr "Pista de audio"
-
-#~ msgid "Video Track"
-#~ msgstr "Pista de vídeo"
-
-#~ msgid "Empty"
-#~ msgstr "Vacío"
-
-#~ msgid "Advanced vie_w"
-#~ msgstr "Vista _avanzada"
-
-#~ msgid "Switch to advanced view"
-#~ msgstr "Cambia a la vista avanzada"
-
-#~ msgid "Clips"
-#~ msgstr "Vídeos"
-
-#~ msgid "Done"
-#~ msgstr "Hecho"
-
-#~ msgid "Cancel"
-#~ msgstr "Cancelar"
-
-#~ msgid "Start"
-#~ msgstr "Iniciar"
-
-#~ msgid "Trim"
-#~ msgstr "Compensador"
-
-#~ msgid "End"
-#~ msgstr "Fin"
-
-#~ msgid "Edit"
-#~ msgstr "Editar"
-
-#~ msgid "Effect"
-#~ msgstr "Efecto"
-
-#~ msgid "Sound"
-#~ msgstr "Sonido"
-
-#~ msgid "Cut"
-#~ msgstr "Cortar"
-
-#~ msgid "gtk-about"
-#~ msgstr "gtk-about"
-
-#~ msgid "gtk-delete"
-#~ msgstr "gtk-delete"
-
-#~ msgid ""
-#~ "<span size='x-large'>Add clips to the timeline by dragging them here.</"
-#~ "span>"
-#~ msgstr ""
-#~ "<span size='x-large'>Añada vídeos a la línea de tiempos arrastrándolos "
-#~ "aquí.</span>"
+msgstr "Písmo používané v titulkových klipech"
