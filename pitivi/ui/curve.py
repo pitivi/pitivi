@@ -127,6 +127,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
         self.element = element
         self.props.pointer_events = goocanvas.EVENTS_STROKE
         self.interpolator = interpolator
+        self._focused_kf = None
         self.normal()
 
 ## properties
@@ -160,6 +161,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     def keyframeRemoved(self, unused_interpolator, keyframe):
         if keyframe in self.keyframes:
             del self.keyframes[keyframe]
+            if keyframe is self._focused_kf:
+                self._focused_kf = None
         self.changed(False)
 
     @handler(interpolator, "keyframe-added")
