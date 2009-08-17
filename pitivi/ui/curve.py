@@ -97,7 +97,8 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             if kf is None:
                 time, value = self.xyToTimeValue(pos)
                 self._view.app.action_log.begin("add volume point")
-                interpolator.newKeyframe(time)
+                kf = interpolator.newKeyframe(time)
+                self._view.setFocusedKf(kf)
                 self._view.app.action_log.commit()
             else:
                 self._view.app.action_log.begin("remove volume point")
