@@ -57,11 +57,11 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
     class Controller(Controller):
 
         _cursor = HAND
+        _kf = None
 
         def drag_start(self, item, target, event):
             self._view.app.action_log.begin("volume change")
             initial = self.from_item_event(item, event)
-            self._kf = self._view.findKeyframe(initial)
             if self._kf:
                 self._mousedown = self._view.keyframes[self._kf] - initial
             if not self._kf:
@@ -72,7 +72,6 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                     self.xyToTimeValue(initial)[0])
 
         def drag_end(self, item, target, event):
-            self._kf = None
             self._view.app.action_log.commit()
 
         def set_pos(self, obj, pos):
@@ -86,6 +85,11 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                     time, value = self.xyToTimeValue(self._offsets[kf] + pos
                         - self.pos(self._view))
                     kf.value = value
+
+        def hover(self, item, target, event):
+            coords = self.from_item_event(item, event)
+            self._kf = self._view.findKeyframe(coords)
+            self._view.setFocusedKf(self._kf)
 
         def double_click(self, pos):
             interpolator = self._view.interpolator
