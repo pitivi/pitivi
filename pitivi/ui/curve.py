@@ -116,6 +116,9 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
             return time, value
 
         def enter(self, item ,target):
+            coords = self.from_item_event(item, self._last_event)
+            self._kf = self._view.findKeyframe(coords)
+            self._view.setFocusedKf(self._kf)
             self._view.focus()
 
         def leave(self, item, target):
