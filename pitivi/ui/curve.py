@@ -31,7 +31,7 @@ from pitivi.ui.zoominterface import Zoomable
 import pitivi.ui.previewer as previewer
 from pitivi.ui.view import View
 from pitivi.ui.controller import Controller
-from pitivi.ui.common import LAYER_HEIGHT_EXPANDED
+from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, roundedrec
 import pitivi.ui.point as point
 from pitivi.utils import between
 
@@ -45,6 +45,13 @@ KW_WIDTH2 = KW_WIDTH / 2
 KW_HEIGHT2 = KW_HEIGHT / 2
 KW_MOUSE_WIDTH = KW_WIDTH2 + 1
 KW_MOUSE_HEIGHT = KW_HEIGHT2 + 1
+KW_LABEL_X_OFFSET = KW_WIDTH2 + 5
+KW_LABEL_Y_OFFSET = -10
+KW_LABEL_HPAD = 4
+KW_LABEL_VPAD = 4
+KW_LABEL_HPAD2 = KW_LABEL_VPAD / 2
+KW_LABEL_VPAD2 = KW_LABEL_VPAD / 2
+
 CURVE_STROKE_WIDTH = 2.0
 HAND = gtk.gdk.Cursor(gtk.gdk.HAND2)
 
@@ -226,6 +233,19 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
                 cr.fill_preserve()
                 cr.set_source_rgb(1, 1, 1)
                 cr.stroke()
+
+                x, y = self.keyframes[self._focused_kf]
+                x += KW_LABEL_X_OFFSET
+                y += KW_LABEL_Y_OFFSET
+                text = self.interpolator.formatValue(self._focused_kf.value)
+                w, h = cr.text_extents("0" * len(text))[2:4]
+
+                roundedrec(cr, x - KW_LABEL_HPAD2, y - KW_LABEL_VPAD2, 
+                    w + KW_LABEL_HPAD, h + KW_LABEL_VPAD, r=10)
+                cr.fill()
+                cr.set_source_rgb(1, 0, 0)
+                cr.move_to(x, y + h)
+                cr.show_text(text)
 
     def make_curve(self, cr):
         if not self.interpolator:
