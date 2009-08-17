@@ -372,11 +372,11 @@ class TrackObject(Signallable, Loggable):
                 interpolator = old_interpolators[prop_name][1]
             except KeyError:
                 if factory_properties[prop_name]:
-                    lower, upper = factory_properties[prop_name]
+                    lower, upper, formatstr = factory_properties[prop_name]
                 else:
-                    lower, upper = None, None
+                    lower, upper, formatstr = None, None, None
                 interpolator = Interpolator(self, gst_object,
-                    gst_object_property, lower, upper)
+                    gst_object_property, lower, upper, formatstr)
             else:
                 interpolator.attachToElementProperty(gst_object_property,
                         gst_object)

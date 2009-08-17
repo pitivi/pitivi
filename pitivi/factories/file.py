@@ -28,6 +28,7 @@ from pitivi.factories.base import RandomAccessSourceFactory, \
         SinkFactory
 from pitivi.elements.imagefreeze import ImageFreeze
 from pitivi.stream import MultimediaStream, AudioStream, VideoStream
+from pitivi.utils import formatPercent
 
 class FileSourceFactory(RandomAccessSourceFactory):
     """
@@ -48,9 +49,9 @@ class FileSourceFactory(RandomAccessSourceFactory):
         props = RandomAccessSourceFactory.getInterpolatedProperties(self, 
             stream)
         if isinstance(stream, AudioStream):
-            props.update({"volume" : (0.0, 2.0)})
+            props.update({"volume" : (0.0, 2.0, formatPercent)})
         elif isinstance(stream, VideoStream):
-            props.update({"alpha" : (0.0, 1.0)})
+            props.update({"alpha" : (0.0, 1.0, formatPercent)})
         self.debug("returning %r", props)
         return props
 
