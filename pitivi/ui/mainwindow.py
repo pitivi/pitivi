@@ -683,6 +683,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._connectToProjectSources(project.sources)
         can_render = project.timeline.duration > 0
         self.render_button.set_sensitive(can_render)
+        self._syncDoUndo(self.app.action_log)
 
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
         self.log("A NEW project is being loaded, deactivate UI")
@@ -850,6 +851,14 @@ class PitiviMainWindow(gtk.Window, Loggable):
         redo_action = self.actiongroup.get_action("Redo")
         can_redo = bool(action_log.redo_stacks)
         redo_action.set_sensitive(can_redo)
+
+        if self.project is not None:
+            app_name = "%s %s" % (APPNAME, pitivi_version)
+            title = u"%s \u2014 %s" % (self.project.name, app_name)
+            if dirty:
+                title = "*" + title
+            title = title.encode("utf8")
+            self.set_title(title)
 
 ## PiTiVi current project callbacks
 
