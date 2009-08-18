@@ -618,6 +618,9 @@ class ElementTreeFormatter(Formatter):
         discoverer.connect("discovery-error", self._discovererDiscoveryErrorCb,
                 project, sources, uris, closure)
 
+        if not sources:
+            self._finishLoadingProject(project)
+            return
         # start the rediscovering from the first source
         source = sources[0]
         discoverer.addUri(source.uri)
