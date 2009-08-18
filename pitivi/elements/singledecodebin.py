@@ -334,6 +334,7 @@ class SingleDecodeBin(gst.Bin):
             self._unblockPad(target=pad)
             return True
 
+        self.debug("stored pending newsegment")
         self.pending_newsegment = event
         return False
 

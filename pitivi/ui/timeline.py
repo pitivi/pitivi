@@ -39,6 +39,7 @@ from pitivi.receiver import receiver, handler
 from zoominterface import Zoomable
 from pitivi.ui.common import LAYER_HEIGHT_EXPANDED, LAYER_SPACING
 from pitivi.timeline.timeline import MoveContext
+from pitivi.utils import Seeker
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
@@ -135,6 +136,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._createUI()
         self._prev_duration = 0
         self.shrink = True
+        self._seeker = Seeker(80)
+        self._seeker.connect('seek', self._seekerSeekCb)
 
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
@@ -246,20 +249,29 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
             if kv == gtk.keysyms.Left:
                 if mod & gtk.gdk.SHIFT_MASK:
-                    self.project.pipeline.seekRelative(-gst.SECOND)
+                    self._seekRelative(-gst.SECOND)
                 elif mod & gtk.gdk.CONTROL_MASK:
-                    self.project.pipeline.seek(ltime+1)
+                    self._seeker.seek(ltime+1)
                 else:
-                    self.project.pipeline.seekRelative(-long(self.rate * gst.SECOND))
+                    self._seekRelative(-long(self.rate * gst.SECOND))
             elif kv == gtk.keysyms.Right:
                 if mod & gtk.gdk.SHIFT_MASK:
-                    self.project.pipeline.seekRelative(gst.SECOND)
+                    self._seekRelative(gst.SECOND)
                 elif mod & gtk.gdk.CONTROL_MASK:
-                    self.project.pipeline.seek(rtime+1)
+                    self._seeker.seek(rtime+1)
                 else:
-                    self.project.pipeline.seekRelative(long(self.rate * gst.SECOND))
+                    self._seekRelative(long(self.rate * gst.SECOND))
         finally:
             return True
+
+    def _seekRelative(self, time):
+        pipeline = self.project.pipeline
+        seekvalue = max(0, min(pipeline.getPosition() + time,
+            pipeline.getDuration()))
+        self._seeker.seek(seekvalue)
+
+    def _seekerSeekCb(self, seeker, position, format):
+        self.project.pipeline.seek(position, format)
 
     def _buttonPress(self, window, event):
         self.shrink = False
