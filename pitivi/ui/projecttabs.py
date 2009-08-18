@@ -36,24 +36,35 @@ class ProjectTabs(gtk.Notebook):
 
     def append_page(self, child, label):
         gtk.Notebook.append_page(self, child, label)
-        self.child_set_property(child, "detachable", True)
+        self._set_child_properties(child, label)
 
-    def _detachedComponentWindowDestroyCb(self, window, component,
+    def _set_child_properties(self, child, label):
+        self.child_set_property(child, "detachable", True)
+        self.child_set_property(child, "tab-expand", True)
+        self.child_set_property(child, "tab-fill", True)
+        label.set_padding(5, 5)
+        label.props.xalign = 0.0
+        label.props.yalign = 0.5
+
+    def _detachedComponentWindowDestroyCb(self, window, child,
             original_position, label):
         notebook = window.child
-        position = notebook.child_get_property(component, "position")
+        position = notebook.child_get_property(child, "position")
         notebook.remove_page(position)
         label = gtk.Label(label)
-        self.insert_page(component, label, original_position)
-        self.child_set_property(component, "detachable", True)
+        self.insert_page(child, label, original_position)
+        self._set_child_properties(child, label)
+        self.child_set_property(child, "detachable", True)
 
-    def _createWindowCb(self, from_notebook, component, x, y):
-        original_position = self.child_get_property(component, "position")
-        label = self.child_get_property(component, "tab-label")
+    def _createWindowCb(self, from_notebook, child, x, y):
+        original_position = self.child_get_property(child, "position")
+        label = self.child_get_property(child, "tab-label")
         window = gtk.Window()
+        window.set_title(label)
         window.connect("destroy", self._detachedComponentWindowDestroyCb,
-                component, original_position, label)
+                child, original_position, label)
         notebook = gtk.Notebook()
+        notebook.props.show_tabs = False
         window.add(notebook)
 
         window.show_all()
