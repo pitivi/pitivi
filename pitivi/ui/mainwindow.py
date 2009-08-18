@@ -54,6 +54,7 @@ from pitivi.settings import GlobalSettings
 from pitivi.receiver import receiver, handler
 import pitivi.formatters.format as formatter
 from pitivi.sourcelist import SourceListError
+from pitivi.ui.sourcelist import SourceList
 
 if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -375,7 +376,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
         vpaned.pack2(self.timeline, resize=False, shrink=False)
         hpaned = gtk.HPaned()
         vpaned.pack1(hpaned, resize=True, shrink=False)
-        self.projecttabs = ProjectTabs(instance, self.uimanager)
+        self.projecttabs = ProjectTabs()
+
+        self.sourcelist = SourceList(instance, self.uimanager)
+        self.projecttabs.append_page(self.sourcelist, gtk.Label(_("Clip Library")))
         self._connectToSourceList()
 
         hpaned.pack1(self.projecttabs, resize=True, shrink=False)
@@ -435,8 +439,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _connectToSourceList(self):
         # FIXME: projecttabs creates the "components" but then has no API to get
         # them back
-        sourcelist = self.projecttabs._full_list[0]
-        sourcelist.connect('play', self._sourceListPlayCb)
+        self.sourcelist.connect('play', self._sourceListPlayCb)
 
     def toggleFullScreen(self):
         """ Toggle the fullscreen mode of the application """
