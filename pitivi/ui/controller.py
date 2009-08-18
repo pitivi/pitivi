@@ -86,7 +86,8 @@ class Controller(object):
         self._canvas.grab_focus(item)
         if self._cursor:
             event.window.set_cursor(self._cursor)
-        self.enter(item, target)
+        if not self._dragging:
+            self.enter(item, target)
         self._ptr_within = True
         return True
 
