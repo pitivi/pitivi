@@ -126,6 +126,8 @@ class Controller(object):
                 self.transform(self._mousedown + self.from_item_event(item,
                     event)))
             return True
+        else:
+            self.hover(item, target, event)
         return False
 
     @handler(_view, "button_release_event")
@@ -222,4 +224,7 @@ class Controller(object):
         pass
 
     def key_release(self, keyval):
+        pass
+
+    def hover(self, item, target, event):
         pass
