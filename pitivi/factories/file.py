@@ -47,7 +47,7 @@ class FileSourceFactory(RandomAccessSourceFactory):
         props = RandomAccessSourceFactory.getInterpolatedProperties(self, 
             stream)
         if isinstance(stream, AudioStream):
-            props.update({"volume" : (0.0, 5.0)})
+            props.update({"volume" : (0.0, 2.0)})
         elif isinstance(stream, VideoStream):
             props.update({"alpha" : None})
         return props
