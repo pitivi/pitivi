@@ -146,9 +146,6 @@ class SourceList(gtk.VBox, Loggable):
         self.storemodel = gtk.ListStore(gtk.gdk.Pixbuf, str, object, str, str,
             str)
 
-        self.set_border_width(5)
-        self.set_spacing(6)
-
         # Scrolled Window
         self.scrollwin = gtk.ScrolledWindow()
         self.scrollwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
