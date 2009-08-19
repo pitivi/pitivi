@@ -258,9 +258,8 @@ class PitiviViewer(gtk.VBox, Loggable):
 
         # current time
         self.timelabel = gtk.Label()
-        self.timelabel.set_markup("<tt>00:00:00.000 / --:--:--.---</tt>")
+        self.timelabel.set_markup("<tt>00:00:00.000</tt>")
         self.timelabel.set_alignment(1.0, 0.5)
-        self.timelabel.set_padding(5, 5)
         bbox.pack_start(self.timelabel, expand=False, padding=10)
         self._haveUI = True
 
@@ -361,12 +360,7 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.info("value:%s, frame:%d", gst.TIME_ARGS(value), frame)
         self.current_time = value
         self.current_frame = frame
-        try:
-            duration = self.pipeline.getDuration()
-        except:
-            duration = gst.CLOCK_TIME_NONE
-        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(value),
-                                                        time_to_string(duration)))
+        self.timelabel.set_markup("<tt>%s</tt>" % time_to_string(value))
         if not self.moving_slider:
             self.posadjust.set_value(float(value))
         return False
@@ -380,9 +374,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         if duration < position:
             self.posadjust.set_value(float(duration))
         self.posadjust.upper = float(duration)
-
-        self.timelabel.set_markup("<tt>%s / %s</tt>" % (time_to_string(self.current_time),
-                                                        time_to_string(duration)))
 
         if duration == 0:
             self._setUiActive(False)
