@@ -42,9 +42,7 @@ class ProjectTabs(gtk.Notebook):
         self.child_set_property(child, "detachable", True)
         self.child_set_property(child, "tab-expand", True)
         self.child_set_property(child, "tab-fill", True)
-        label.set_padding(5, 5)
         label.props.xalign = 0.0
-        label.props.yalign = 0.5
 
     def _detachedComponentWindowDestroyCb(self, window, child,
             original_position, label):
