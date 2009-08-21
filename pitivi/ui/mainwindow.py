@@ -357,7 +357,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _createUi(self, instance):
         """ Create the graphical interface """
         self.set_title("%s v%s" % (APPNAME, pitivi_version))
-        self.set_geometry_hints(min_width=800, min_height=480)
         self.connect("delete-event", self._deleteCb)
         self.connect("configure-event", self._configureCb)
 
@@ -424,7 +423,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         # toolbar buttons should be clickable with the mouse cursor at the
         # very bottom of the screen.
         ttb = self.uimanager.get_widget("/TimelineToolBar")
-        vbox.pack_start(ttb, False)
+        vbox.pack_start(ttb, expand=False)
 
         self.show_all()
 
