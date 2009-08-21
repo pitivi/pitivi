@@ -263,6 +263,14 @@ class PitiviViewer(gtk.VBox, Loggable):
         bbox.pack_start(self.timelabel, expand=False, padding=10)
         self._haveUI = True
 
+        # show the controls and force the aspect frame to have at least the same
+        # width (+110, which is a magic number to minimize dead padding).
+        bbox.show_all()
+        width, height = bbox.size_request()
+        width += 110
+        height = width / self.aframe.props.ratio
+        self.aframe.set_size_request(width , height)
+
     def showControls(self):
         if not self.action:
             return
