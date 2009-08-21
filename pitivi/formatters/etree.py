@@ -192,7 +192,7 @@ class ElementTreeFormatter(Formatter):
             filename1 = self.validateSourceURI(filename, factory)
             if filename != filename1:
                 # the file was moved
-                factory.uri = factory.filename = filename
+                factory.uri = factory.filename = filename1
 
         self._context.factories[element.attrib["id"]] = factory
         return factory
