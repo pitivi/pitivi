@@ -167,8 +167,10 @@ class ElementTreeFormatter(Formatter):
         # FIXME : we should check if the given ObjectFactory
         # requires a filename !
         filename = element.attrib.get("filename", None)
-
         if filename is not None:
+            if isinstance(filename, unicode):
+                filename = filename.encode("utf-8")
+
             factory = klass(filename)
         else:
             factory = klass()
@@ -187,9 +189,10 @@ class ElementTreeFormatter(Formatter):
             factory.addOutputStream(stream)
 
         if filename is not None:
-            if isinstance(filename, unicode):
-                filename = filename.encode("utf-8")
-            filename = self.validateSourceURI(filename, factory)
+            filename1 = self.validateSourceURI(filename, factory)
+            if filename != filename1:
+                # the file was moved
+                factory.uri = factory.filename = filename
 
         self._context.factories[element.attrib["id"]] = factory
         return factory
