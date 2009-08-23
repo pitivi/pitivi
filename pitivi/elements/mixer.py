@@ -128,6 +128,8 @@ class SmartVideomixerBin(gst.Bin):
     def __init__(self):
         gst.Bin.__init__(self)
         self.videomixer = gst.element_factory_make("videomixer", "real-videomixer")
+        # black background
+        self.videomixer.props.background = 1
         # FIXME : USE THE PROJECT SETTINGS FOR THESE CAPS !
         csp = gst.element_factory_make("ffmpegcolorspace")
         self.add(self.videomixer, csp)
@@ -136,7 +138,8 @@ class SmartVideomixerBin(gst.Bin):
         srcpad.set_active(True)
         self.add_pad(srcpad)
         self.pad_count = 0
-        self.inputs = {} # key:pad_name, value:(sinkpad, ffmpegcolorspace, videomixerpad)
+        self.inputs = {} # key : pad_name,
+                         # value : (sinkpad, ffmpegcolorspace, capsfilter, videomixerpad)
 
     def do_request_new_pad(self, template, name=None):
         self.debug("template:%r, name:%r" % (template, name))
@@ -146,16 +149,23 @@ class SmartVideomixerBin(gst.Bin):
             return None
 
         csp = gst.element_factory_make("ffmpegcolorspace", "csp-%d" % self.pad_count)
+        capsfilter = gst.element_factory_make("capsfilter", "capsfilter-%d" % self.pad_count)
+        capsfilter.props.caps = gst.Caps("video/x-raw-yuv,format=(fourcc)AYUV")
 
-        self.add(csp)
+        self.add(csp, capsfilter)
+
+        csp.link(capsfilter)
         csp.sync_state_with_parent()
+        capsfilter.sync_state_with_parent()
+
         videomixerpad = self.videomixer.get_request_pad("sink_%d")
-        csp.get_pad("src").link(videomixerpad)
+
+        capsfilter.get_pad("src").link(videomixerpad)
 
         pad = gst.GhostPad(name, csp.get_pad("sink"))
         pad.set_active(True)
         self.add_pad(pad)
-        self.inputs[name] = (pad, csp, videomixerpad)
+        self.inputs[name] = (pad, csp, capsfilter, videomixerpad)
         self.pad_count += 1
         return pad
 
@@ -163,12 +173,14 @@ class SmartVideomixerBin(gst.Bin):
         self.debug("pad:%r" % pad)
         name = pad.get_name()
         if name in self.inputs.keys():
-            sinkpad, csp, videomixerpad = self.inputs.pop(name)
+            sinkpad, csp, capsfilter, videomixerpad = self.inputs.pop(name)
             self.remove_pad(sinkpad)
-            csp.get_pad("src").unlink(videomixerpad)
+            capsfilter.get_pad("src").unlink(videomixerpad)
             self.videomixer.release_request_pad(videomixerpad)
             csp.set_state(gst.STATE_NULL)
+            capsfilter.set_state(gst.STATE_NULL)
             self.remove(csp)
+            self.remove(capsfilter)
         self.debug("done")
 
 
