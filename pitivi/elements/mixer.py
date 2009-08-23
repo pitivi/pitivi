@@ -158,7 +158,7 @@ class SmartVideomixerBin(gst.Bin):
         csp.sync_state_with_parent()
         capsfilter.sync_state_with_parent()
 
-        videomixerpad = self.videomixer.get_request_pad("sink_%d")
+        videomixerpad = self.videomixer.get_request_pad("sink_%d" % self.pad_count)
 
         capsfilter.get_pad("src").link(videomixerpad)
 
