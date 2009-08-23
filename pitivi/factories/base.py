@@ -328,9 +328,10 @@ class SourceFactory(ObjectFactory):
             del bin.aconv
             del bin.ares
         elif hasattr(bin, "alpha"):
-            for elt in [bin.csp, bin.alpha]:
+            for elt in [bin.csp, bin.queue, bin.alpha]:
                 elt.set_state(gst.STATE_NULL)
                 bin.remove(elt)
+            del bin.queue
             del bin.csp
             del bin.alpha
 
@@ -361,10 +362,15 @@ class SourceFactory(ObjectFactory):
             b.volume.sync_state_with_parent()
         elif isinstance(output_stream, VideoStream):
             self.debug("Adding alpha element")
+            b.queue = gst.element_factory_make("queue", "internal-queue")
+            b.queue.props.max_size_bytes = 0
+            b.queue.props.max_size_time = 0
+            b.queue.props.max_size_buffers = 3
             b.csp = gst.element_factory_make("ffmpegcolorspace", "internal-colorspace")
             b.alpha = gst.element_factory_make("alpha", "internal-alpha")
-            b.add(b.csp, b.alpha)
-            b.csp.link(b.alpha)
+            b.add(b.queue, b.csp, b.alpha)
+            gst.element_link_many(b.queue, b.csp, b.alpha)
+            b.queue.sync_state_with_parent()
             b.csp.sync_state_with_parent()
             b.alpha.sync_state_with_parent()
 
@@ -384,7 +390,7 @@ class SourceFactory(ObjectFactory):
             pad.link(topbin.aconv.get_pad("sink"))
             topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
         elif hasattr(topbin, "alpha"):
-            pad.link(topbin.csp.get_pad("sink"))
+            pad.link(topbin.queue.get_pad("sink"))
             topbin.ghostpad = gst.GhostPad("src", topbin.alpha.get_pad("src"))
         else:
             topbin.ghostpad = gst.GhostPad("src", pad)
@@ -401,7 +407,7 @@ class SourceFactory(ObjectFactory):
         if hasattr(topbin, "volume"):
             pad.unlink(topbin.aconv.get_pad("sink"))
         elif hasattr(topbin, "alpha"):
-            pad.unlink(topbin.csp.get_pad("sink"))
+            pad.unlink(topbin.queue.get_pad("sink"))
 
     def addInputStream(self, stream):
         raise AssertionError("source factories can't have input streams")
