@@ -43,13 +43,15 @@ class FileSourceFactory(RandomAccessSourceFactory):
         self.filename = uri
 
     def getInterpolatedProperties(self, stream):
+        self.debug("stream:%r", stream)
         # FIXME: dummy implementation
         props = RandomAccessSourceFactory.getInterpolatedProperties(self, 
             stream)
         if isinstance(stream, AudioStream):
             props.update({"volume" : (0.0, 2.0)})
         elif isinstance(stream, VideoStream):
-            props.update({"alpha" : None})
+            props.update({"alpha" : (0.0, 1.0)})
+        self.debug("returning %r", props)
         return props
 
 class PictureFileSourceFactory(FileSourceFactory):

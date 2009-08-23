@@ -28,7 +28,7 @@ import gst
 from pitivi.log.loggable import Loggable
 from pitivi.elements.singledecodebin import SingleDecodeBin
 from pitivi.signalinterface import Signallable
-from pitivi.stream import match_stream_groups_map, AudioStream
+from pitivi.stream import match_stream_groups_map, AudioStream, VideoStream
 
 # FIXME: define a proper hierarchy
 class ObjectFactoryError(Exception):
@@ -327,6 +327,12 @@ class SourceFactory(ObjectFactory):
             del bin.volume
             del bin.aconv
             del bin.ares
+        elif hasattr(bin, "alpha"):
+            for elt in [bin.csp, bin.alpha]:
+                elt.set_state(gst.STATE_NULL)
+                bin.remove(elt)
+            del bin.csp
+            del bin.alpha
 
         if hasattr(bin, "ghostpad"):
             # singledecodebin found something on this pad
@@ -353,6 +359,14 @@ class SourceFactory(ObjectFactory):
             b.aconv.sync_state_with_parent()
             b.ares.sync_state_with_parent()
             b.volume.sync_state_with_parent()
+        elif isinstance(output_stream, VideoStream):
+            self.debug("Adding alpha element")
+            b.csp = gst.element_factory_make("ffmpegcolorspace", "internal-colorspace")
+            b.alpha = gst.element_factory_make("alpha", "internal-alpha")
+            b.add(b.csp, b.alpha)
+            b.csp.link(b.alpha)
+            b.csp.sync_state_with_parent()
+            b.alpha.sync_state_with_parent()
 
         b.add(b.decodebin)
         return b
@@ -369,6 +383,9 @@ class SourceFactory(ObjectFactory):
 
             pad.link(topbin.aconv.get_pad("sink"))
             topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
+        elif hasattr(topbin, "alpha"):
+            pad.link(topbin.csp.get_pad("sink"))
+            topbin.ghostpad = gst.GhostPad("src", topbin.alpha.get_pad("src"))
         else:
             topbin.ghostpad = gst.GhostPad("src", pad)
 
@@ -383,6 +400,8 @@ class SourceFactory(ObjectFactory):
         del topbin.ghostpad
         if hasattr(topbin, "volume"):
             pad.unlink(topbin.aconv.get_pad("sink"))
+        elif hasattr(topbin, "alpha"):
+            pad.unlink(topbin.csp.get_pad("sink"))
 
     def addInputStream(self, stream):
         raise AssertionError("source factories can't have input streams")
