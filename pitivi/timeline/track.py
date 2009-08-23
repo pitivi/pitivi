@@ -659,8 +659,13 @@ class Track(Signallable):
             gnl.add(m)
             gnl.props.expandable = True
             gnl.props.priority = 0
+            gnl.connect("input-priority-changed",
+                        self._videoInputPriorityChangedCb, m)
             return gnl
         return None
+
+    def _videoInputPriorityChangedCb(self, operation, pad, priority, mixer):
+        mixer.update_priority(pad, priority)
 
     def _getStart(self):
         return self.composition.props.start
