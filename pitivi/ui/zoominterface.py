@@ -77,7 +77,12 @@ class Zoomable(object):
     @classmethod
     def setZoomRatio(cls, ratio):
         cls.zoomratio = ratio
+        cls._cur_zoom = cls.zoom_levels.index(ratio)
         cls._zoomChanged()
+
+    @classmethod
+    def getCurrentZoomLevel(cls):
+        return cls._cur_zoom
 
     @classmethod
     def zoomIn(cls):

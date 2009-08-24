@@ -42,9 +42,9 @@ from gettext import gettext as _
 
 from pitivi.log.loggable import Loggable
 
-from timeline import Timeline
-from projecttabs import ProjectTabs
-from viewer import PitiviViewer
+from pitivi.ui.timeline import Timeline
+from pitivi.ui.projecttabs import ProjectTabs
+from pitivi.ui.viewer import PitiviViewer
 from pitivi.configure import pitivi_version, APPNAME, get_pixmap_dir, \
      get_global_pixmap_dir
 from pitivi.ui import dnd
@@ -57,6 +57,7 @@ from pitivi.sourcelist import SourceListError
 from pitivi.ui.sourcelist import SourceList
 from pitivi.ui.common import beautify_factory
 from pitivi.utils import beautify_length
+from pitivi.ui.zoominterface import Zoomable
 
 if HAVE_GCONF:
     D_G_INTERFACE = "/desktop/gnome/interface"
@@ -688,6 +689,39 @@ class PitiviMainWindow(gtk.Window, Loggable):
         can_render = project.timeline.duration > 0
         self.render_button.set_sensitive(can_render)
         self._syncDoUndo(self.app.action_log)
+
+        if project.timeline.duration != 0:
+            self._setBestZoomRatio()
+
+    def _setBestZoomRatio(self):
+        # reset the default zoom ratio
+        Zoomable.setZoomRatio(2)
+
+        ruler_width = self.timeline.ruler.get_allocation()[2]
+        while True:
+            timeline_width = Zoomable.nsToPixel(self.project.timeline.duration)
+
+            if ruler_width == timeline_width:
+                # perfect
+                break
+
+            current_level = Zoomable.getCurrentZoomLevel()
+
+            if ruler_width > timeline_width:
+                if current_level == Zoomable.zoom_levels[-1]:
+                    break
+
+                Zoomable.zoomIn()
+                timeline_width = Zoomable.nsToPixel(self.project.timeline.duration)
+                if timeline_width > ruler_width:
+                    Zoomable.zoomOut()
+                    break
+
+            else:
+                if current_level == Zoomable.zoom_levels[0]:
+                    break
+
+                Zoomable.zoomOut()
 
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
         self.log("A NEW project is being loaded, deactivate UI")
