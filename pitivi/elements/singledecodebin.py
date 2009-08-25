@@ -327,6 +327,10 @@ class SingleDecodeBin(gst.Bin):
         self._unblockPad(target=self._target)
 
     def _padEventCb(self, pad, event):
+        if event.type == gst.EVENT_TAG:
+            self.debug("dropping TAG event")
+            return False
+
         if event.type != gst.EVENT_NEWSEGMENT:
             self.warning("first event: %s is not a NEWSEGMENT, bailing out" %
                     event)
