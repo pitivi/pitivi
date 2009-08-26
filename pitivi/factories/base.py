@@ -360,6 +360,13 @@ class SourceFactory(ObjectFactory):
     def _singlePadAddedCb(self, dbin, pad, topbin):
         self.debug("dbin:%r, pad:%r, topbin:%r", dbin, pad, topbin)
         if hasattr(topbin, "volume"):
+            # make sure audio elements reach our same state. This is needed
+            # since those elements are still unlinked downstream at this point,
+            # so state change order doesn't happen in the usual
+            # downstream-to-upstream way.
+            for element in [topbin.aconv, topbin.ares, topbin.volume]:
+                element.sync_state_with_parent()
+
             pad.link(topbin.aconv.get_pad("sink"))
             topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
         else:
