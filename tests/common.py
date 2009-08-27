@@ -5,10 +5,13 @@ A collection of objects to use for testing
 import gobject
 gobject.threads_init()
 import gst
+import os
 import gc
 import unittest
 from pitivi.factories.base import ObjectFactory, SourceFactory, SinkFactory
 from pitivi.pipeline import Pipeline
+
+detect_leaks = os.environ.get("PITIVI_TEST_DETECT_LEAKS", "1") not in ("0", "")
 
 class TestCase(unittest.TestCase):
     _tracked_types = (gst.MiniObject, gst.Element, gst.Pad, gst.Caps,
@@ -55,11 +58,13 @@ class TestCase(unittest.TestCase):
         del self._tracked
 
     def setUp(self):
-        self.gctrack()
+        if detect_leaks:
+            self.gctrack()
 
     def tearDown(self):
-        self.gccollect()
-        self.gcverify()
+        if detect_leaks:
+            self.gccollect()
+            self.gcverify()
 
 # Some fake factories
 class FakeSourceFactory(SourceFactory):
