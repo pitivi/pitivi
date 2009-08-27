@@ -11,14 +11,17 @@ from pitivi.factories.base import ObjectFactory, SourceFactory, SinkFactory
 from pitivi.pipeline import Pipeline
 
 class TestCase(unittest.TestCase):
-
-    _tracked_types = [gst.MiniObject, gst.Element, gst.Pad, gst.Caps, ObjectFactory, Pipeline]
+    _tracked_types = (gst.MiniObject, gst.Element, gst.Pad, gst.Caps,
+            ObjectFactory, Pipeline)
 
     def gctrack(self):
         self.gccollect()
-        self._tracked = {}
-        for c in self._tracked_types:
-            self._tracked[c] = [o for o in gc.get_objects() if isinstance(o, c)]
+        self._tracked = []
+        for obj in gc.get_objects():
+            if not isinstance(obj, self._tracked_types):
+                continue
+
+            self._tracked.append(obj)
 
     def gccollect(self):
         ret = 0
@@ -31,18 +34,24 @@ class TestCase(unittest.TestCase):
 
     def gcverify(self):
         new = []
-        objs = gc.get_objects()
-        for c in self._tracked_types:
-            new.extend([o for o in objs if isinstance(o, c) and not o in self._tracked[c]])
-        del objs
-        gc.collect()
+        leaked = []
+        for obj in gc.get_objects():
+            if not isinstance(obj, self._tracked_types) or \
+                    obj in self._tracked:
+                continue
 
-        for elt in new:
+            leaked.append(obj)
+
+        # we collect again here to get rid of temporary objects created in the
+        # above loop
+        self.gccollect()
+
+        for elt in leaked:
             print elt
             for i in gc.get_referrers(elt):
                 print "   ", i
 
-        self.failIf(new, new)
+        self.failIf(leaked, leaked)
         del self._tracked
 
     def setUp(self):
