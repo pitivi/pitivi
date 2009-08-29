@@ -390,6 +390,9 @@ class SourceFactory(ObjectFactory):
             pad.link(topbin.aconv.get_pad("sink"))
             topbin.ghostpad = gst.GhostPad("src", topbin.volume.get_pad("src"))
         elif hasattr(topbin, "alpha"):
+            for element in [topbin.queue, topbin.csp, topbin.alpha]:
+                element.sync_state_with_parent()
+
             pad.link(topbin.queue.get_pad("sink"))
             topbin.ghostpad = gst.GhostPad("src", topbin.alpha.get_pad("src"))
         else:
