@@ -14,6 +14,7 @@ pitivi/factories/file.py
 pitivi/formatters/format.py
 pitivi/ui/audiofxlist.py
 pitivi/ui/cam_capture.glade
+pitivi/ui/common.py
 pitivi/ui/defaultpropertyeditor.py
 pitivi/ui/dynamic.py
 pitivi/ui/elementsettingsdialog.glade
