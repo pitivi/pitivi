@@ -251,20 +251,19 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         return 0
 
     def drawBackground(self, context, allocation):
-        context.save()
-
-        context.set_source_rgb(0.5, 0.5, 0.5)
-        context.rectangle(0, 0, allocation.width, allocation.height)
-        context.fill()
-        context.stroke()
+        self.pixmap.draw_rectangle(
+            self.style.bg_gc[gtk.STATE_NORMAL],
+            True,
+            0, 0,
+            allocation.width, allocation.height)
 
         if self.getShadedDuration() > 0:
-            context.set_source_rgb(0.8, 0.8, 0.8)
-            context.rectangle(0, 0, self.getShadedDurationWidth(), allocation.height)
-            context.fill()
-            context.stroke()
-
-        context.restore()
+            self.pixmap.draw_rectangle(
+                self.style.bg_gc[gtk.STATE_ACTIVE],
+                True,
+                0, 0,
+                self.getShadedDurationWidth(),
+                allocation.height)
 
     def drawRuler(self, context, allocation):
         # there are 4 lengths of tick mark:
@@ -280,19 +279,12 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         # only appears when there is enough space between tics for it to be
         # readable.
 
-        def textSize(text):
-            return context.text_extents(text)[2:4]
-
         def drawTick(paintpos, height):
-            context.move_to(paintpos, 0)
-            context.line_to(paintpos, allocation.height * height)
-
-        def drawText(paintpos, time, txtwidth, txtheight):
-            # draw the text position
-            time = time_to_string(time)
-            context.move_to( paintpos - txtwidth / 2.0,
-                             allocation.height - 2 )
-            context.show_text( time )
+            paintpos = int(paintpos)
+            self.pixmap.draw_line(
+                self.style.fg_gc[gtk.STATE_NORMAL],
+                paintpos, 0, paintpos, 
+                int(allocation.height * height))
 
         def drawTicks(interval, height):
             spacing = zoomRatio * interval
@@ -314,29 +306,30 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
             if offset > 0:
                 seconds += self.pixelToNs(spacing - offset)
                 paintpos += spacing - offset
-            textwidth, textheight = textSize(time_to_string(0))
+            layout = self.create_pango_layout(time_to_string(0))
+            textwidth, textheight = layout.get_pixel_size()
+            shaded = self.getShadedDurationWidth()
             if spacing > textwidth:
                 while paintpos < allocation.width:
-                    timevalue = long(seconds)
-                    drawText(paintpos, timevalue, textwidth, textheight)
+                    timevalue = time_to_string(long(seconds))
+                    layout.set_text(timevalue)
+                    if paintpos < shaded:
+                        state = gtk.STATE_ACTIVE
+                    else:
+                        state = gtk.STATE_NORMAL
+                    self.pixmap.draw_layout(
+                        self.style.fg_gc[state],
+                        int(paintpos - textwidth / 2), int(allocation.height -
+                            textheight), layout)
                     paintpos += spacing
                     seconds += long(interval * gst.SECOND)
 
-
-        context.save()
         zoomRatio = self.zoomratio
         # looks better largest tick doesn't run into the text label
         interval_sizes = ((60, 0.80), (10, 0.75), (1, 0.5), (0.1, 0.25))
         for interval, height in interval_sizes:
             drawTicks(interval, height)
             drawTimes(interval)
-
-        #set a slightly thicker line. This forces anti-aliasing, and gives the
-        #a softer appearance
-        context.set_line_width(1.1)
-        context.set_source_rgb(0.4, 0.4, 0.4)
-        context.stroke()
-        context.restore()
 
     def drawPosition(self, context, allocation):
         if self.getShadedDuration() <= 0:
