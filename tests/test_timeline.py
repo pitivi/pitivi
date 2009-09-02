@@ -31,13 +31,6 @@ from pitivi.utils import UNKNOWN_DURATION
 
 from common import SignalMonitor, TestCase, StubFactory
 
-def scrubTo(lower, upper, steps, final):
-    """Simulate the user scrubbing the cursor by generating a stream of random
-    integers, enter """
-    for i in xrange(0, steps):
-        yield random.randint(lower, upper)
-    yield final
-
 class TimelineSignalMonitor(SignalMonitor):
     def __init__(self, track_object):
         SignalMonitor.__init__(self, track_object, 'start-changed',
