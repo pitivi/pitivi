@@ -128,23 +128,23 @@ def initial_checks():
     req, inst = check_required_version("gtk")
     if req:
         return (_("You do not have a recent enough version of the GTK+ Python bindings (currently %s)") % inst,
-                ("Install a version of the GTK+ Python bindings greater or equal to %s") % req)
+                _("Install a version of the GTK+ Python bindings greater or equal to %s") % req)
     req, inst = check_required_version("pygst")
     if req:
         return (_("You do not have a recent enough version of the GStreamer Python bindings (currently %s)") % inst,
-                ("Install a version of the GStreamer Python bindings greater or equal to %s") % req)
+                _("Install a version of the GStreamer Python bindings greater or equal to %s") % req)
     req, inst = check_required_version("gst")
     if req:
         return (_("You do not have a recent enough version of GStreamer (currently %s)") % inst,
-                ("Install a version of the GStreamer greater or equal to %s") % req)
+                _("Install a version of the GStreamer greater or equal to %s") % req)
     req, inst = check_required_version("cairo")
     if req:
         return (_("You do not have a recent enough version of the cairo Python bindings (currently %s)") % inst,
-                ("Install a version of the cairo Python bindings greater or equal to %s") % req)
+                _("Install a version of the cairo Python bindings greater or equal to %s") % req)
     req, inst = check_required_version("gnonlin")
     if req:
         return (_("You do not have a recent enough version of the GNonLin GStreamer plugin (currently %s)") % inst,
-                ("Install a version of the GNonLin GStreamer plugin greater or equal to %s") % req)
+                _("Install a version of the GNonLin GStreamer plugin greater or equal to %s") % req)
     if not __try_import__("zope.interface"):
         return (_("Could not import the Zope interface module"),
                 _("Make sure you have the zope.interface module installed"))
