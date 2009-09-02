@@ -136,6 +136,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._createUI()
         self._prev_duration = 0
         self.shrink = True
+        self.rate = gst.Fraction(1,1)
         self._seeker = Seeker(80)
         self._seeker.connect('seek', self._seekerSeekCb)
 
@@ -402,6 +403,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._controls.timeline = self.timeline
             self._canvas.timeline = self.timeline
             self._canvas.zoomChanged()
+            self.ruler.setProjectFrameRate(self.project.getSettings().videorate)
             self.ruler.zoomChanged()
             self._settingsChangedCb(self.project)
 
@@ -409,7 +411,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     @handler(project, "settings-changed")
     def _settingsChangedCb(self, project):
-        self.rate = float(1 / self.project.getSettings().videorate)
+        rate = self.project.getSettings().videorate
+        self.rate = float(1 / self.rate)
+        self.ruler.setProjectFrameRate(rate)
 
 ## Timeline callbacks
 
