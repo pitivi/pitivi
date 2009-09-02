@@ -428,8 +428,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _timelineStartDurationChanged(self, unused_timeline, duration):
         if self.shrink:
             self._prev_duration = duration
-            self.ruler.setMaxDuration(duration)
-            self._canvas.setMaxDuration(duration)
+            self.ruler.setMaxDuration(duration + 60 * gst.SECOND)
+            self._canvas.setMaxDuration(duration + 60 * gst.SECOND)
             self.ruler.setShadedDuration(duration)
         else:
             # only resize if new size is larger
