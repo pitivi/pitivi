@@ -78,6 +78,8 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         self._block_size_request = False
         self.props.integer_layout = True
         self.props.automatic_bounds = False
+        self.props.clear_background = False
+        self.get_root_item().set_simple_transform(0, 2.0, 1.0, 0)
 
         self._createUI()
         self.timeline = timeline
@@ -150,6 +152,19 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         return True
 
     def do_expose_event(self, event):
+        allocation = self.get_allocation()
+        width = allocation.width
+        height = allocation.height
+        # draw the canvas background
+        # we must have props.clear_background set to False
+
+        self.style.apply_default_background(event.window,
+            True,
+            gtk.STATE_ACTIVE,
+            event.area,
+            event.area.x, event.area.y,
+            event.area.width, event.area.height)
+
         goocanvas.Canvas.do_expose_event(self, event)
 
 ## implements selection marquee
