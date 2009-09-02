@@ -214,9 +214,8 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                                          allocation.height)
             self.pixmap_old_allocated_width = allocation.width
 
-        context = self.pixmap.cairo_create()
-        self.drawBackground(context, allocation)
-        self.drawRuler(context, allocation)
+        self.drawBackground(allocation)
+        self.drawRuler(allocation)
 
     def setShadedDuration(self, duration):
         self.info("start/duration changed")
@@ -250,7 +249,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
     def getPixelPosition(self):
         return 0
 
-    def drawBackground(self, context, allocation):
+    def drawBackground(self, allocation):
         self.pixmap.draw_rectangle(
             self.style.bg_gc[gtk.STATE_NORMAL],
             True,
@@ -265,7 +264,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                 self.getShadedDurationWidth(),
                 allocation.height)
 
-    def drawRuler(self, context, allocation):
+    def drawRuler(self, allocation):
         # there are 4 lengths of tick mark:
         # full height: largest increments, 1 minute
         # 3/4 height: 10 seconds
