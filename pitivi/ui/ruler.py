@@ -26,6 +26,7 @@ Widget for the complex view ruler
 import gobject
 import gtk
 import gst
+import cairo
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.log.loggable import Loggable
 from pitivi.utils import time_to_string, Seeker
@@ -73,6 +74,9 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         self.max_duration = gst.CLOCK_TIME_NONE
         self.seeker = Seeker(80)
         self.seeker.connect('seek', self._seekerSeekCb)
+        self.min_frame_spacing = 5.0
+        self.frame_height = 5.0
+        self.frame_rate = gst.Fraction(1/1)
 
 ## Zoomable interface override
 
@@ -217,6 +221,10 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         self.drawBackground(allocation)
         self.drawRuler(allocation)
 
+    def setProjectFrameRate(self, rate):
+        self.frame_rate = rate
+        self.queue_resize()
+
     def setShadedDuration(self, duration):
         self.info("start/duration changed")
         self.queue_resize()
@@ -323,9 +331,28 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                     paintpos += spacing
                     seconds += long(interval * gst.SECOND)
 
+        def drawFrameBoundaries():
+            ns_per_frame = float(1 / self.frame_rate) * gst.SECOND
+            frame_width = self.nsToPixel(ns_per_frame)
+            if frame_width >= self.min_frame_spacing:
+                offset = self.pixmap_offset % frame_width
+                paintpos = float(self.border) + 0.5
+                height = self.frame_height
+                states = [gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT]
+                paintpos += frame_width - offset
+                frame_num = int(paintpos // frame_width) % 2
+                while paintpos < allocation.width:
+                    self.pixmap.draw_rectangle(
+                        self.style.bg_gc[states[frame_num]],
+                        True,
+                        int(paintpos), 0, frame_width, height)
+                    frame_num = (frame_num + 1) % 2
+                    paintpos += frame_width
+
+
         zoomRatio = self.zoomratio
-        # looks better largest tick doesn't run into the text label
-        interval_sizes = ((60, 0.80), (10, 0.75), (1, 0.5), (0.1, 0.25))
+        interval_sizes = ((60, 0.70), (10, 0.5), (1, 0.25), (0.1, 0.15))
+        drawFrameBoundaries()
         for interval, height in interval_sizes:
             drawTicks(interval, height)
             drawTimes(interval)
