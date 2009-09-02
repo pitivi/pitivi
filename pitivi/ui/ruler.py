@@ -218,12 +218,6 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         self.drawBackground(context, allocation)
         self.drawRuler(context, allocation)
 
-    def draw(self, context):
-        rect = self.get_allocation()
-        self.debug("Ruler draw %s", list(rect))
-        self.drawBackground(context, rect)
-        self.drawRuler(context, rect)
-
     def setShadedDuration(self, duration):
         self.info("start/duration changed")
         self.queue_resize()
