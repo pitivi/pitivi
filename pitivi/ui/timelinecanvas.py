@@ -58,6 +58,11 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         "scroll-event":"override"
         }
 
+    __gtype_name__ = 'TimelineCanvas'
+    __gsignals__ = {
+        "expose-event" : "override",
+    }
+
     _tracks = None
 
     def __init__(self, instance, timeline=None):
@@ -143,6 +148,9 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
     def _mouseEnterCb(self, unused_item, unused_target, event):
         event.window.set_cursor(self._cursor)
         return True
+
+    def do_expose_event(self, event):
+        goocanvas.Canvas.do_expose_event(self, event)
 
 ## implements selection marquee
 
