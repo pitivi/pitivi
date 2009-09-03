@@ -71,6 +71,9 @@ class SingleDecodeBin(gst.Bin):
             self.log("created urisrc %s / %r" % (self.urisrc.get_name(),
                                                  self.urisrc))
             self.add(self.urisrc)
+            # Set the blocksize to 512kbytes, this will only matter for push-based sources
+            if hasattr(self.urisrc.props, "blocksize"):
+                self.urisrc.props.blocksize = 524288
             self.urisrc.link(self.typefind)
         else:
             self._sinkpad = gst.GhostPad("sink", self.typefind.get_pad("sink"))
