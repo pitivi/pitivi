@@ -56,6 +56,9 @@ class SingleDecodeBin(gst.Bin):
                          gst.PAD_SOMETIMES,
                          gst.caps_new_any())
         )
+
+    _factories = []
+
     def __init__(self, caps=None, uri=None, stream=None, *args, **kwargs):
         gst.Bin.__init__(self, *args, **kwargs)
         if not caps:
@@ -88,7 +91,8 @@ class SingleDecodeBin(gst.Bin):
 
         self._validelements = [] #added elements
 
-        self._factories = self._getSortedFactoryList()
+        if self._factories == []:
+            self._factories = self._getSortedFactoryList()
 
         self.debug("stream:%r" % self.stream)
 
@@ -108,6 +112,7 @@ class SingleDecodeBin(gst.Bin):
         Returns the list of demuxers, decoders and parsers available, sorted
         by rank
         """
+        self.debug("getting factory list")
         def _myfilter(fact):
             if fact.get_rank() < 64 :
                 return False
