@@ -155,6 +155,7 @@ class TrimHandle(View, goocanvas.Image, Zoomable):
         goocanvas.Image.__init__(self,
             pixbuf = TRIMBAR_PIXBUF,
             line_width=0,
+            pointer_events=goocanvas.EVENTS_FILL,
             **kwargs
         )
         View.__init__(self)
@@ -272,7 +273,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         self.element = element
         self.settings = instance.settings
-        self.normal()
+        self.unfocus()
 
 ## Properties
 
@@ -315,12 +316,12 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 ## Public API
 
     def focus(self):
-        self.start_handle.focus()
-        self.end_handle.focus()
+        self.start_handle.props.visibility = goocanvas.ITEM_VISIBLE
+        self.end_handle.props.visibility = goocanvas.ITEM_VISIBLE
 
     def unfocus(self):
-        self.start_handle.unfocus()
-        self.end_handle.unfocus()
+        self.start_handle.props.visibility = goocanvas.ITEM_INVISIBLE
+        self.end_handle.props.visibility = goocanvas.ITEM_INVISIBLE
 
     def zoomChanged(self):
         self._update()
