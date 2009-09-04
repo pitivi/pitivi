@@ -56,6 +56,9 @@ class Controller(object):
     _pending_drag_end = False
     _shift_down = False
     _control_down = False
+    _handle_enter_leave = True
+    _handle_mouse_up_down = True
+    _handle_motion_notify = True
 
     def __init__(self, view=None):
         object.__init__(self)
@@ -89,7 +92,7 @@ class Controller(object):
         if not self._dragging:
             self.enter(item, target)
         self._ptr_within = True
-        return True
+        return self._handle_enter_leave
 
     @handler(_view, "leave_notify_event")
     def leave_notify_event(self, item, target, event):
@@ -99,7 +102,7 @@ class Controller(object):
         if not self._dragging:
             self.leave(item, target)
             event.window.set_cursor(ARROW)
-        return True
+        return self._handle_enter_leave
 
     @handler(_view, "button_press_event")
     def button_press_event(self, item, target, event):
@@ -111,7 +114,7 @@ class Controller(object):
         self._dragging = target
         self._initial = self.pos(target)
         self._pending_drag_start = (item, target, event)
-        return True
+        return self._handle_mouse_up_down
 
     @handler(_view, "motion_notify_event")
     def motion_notify_event(self, item, target, event):
@@ -126,7 +129,7 @@ class Controller(object):
             self.set_pos(self._dragging,
                 self.transform(self._mousedown + self.from_item_event(item,
                     event)))
-            return True
+            return self._handle_motion_notify
         else:
             self.hover(item, target, event)
         return False
@@ -136,7 +139,7 @@ class Controller(object):
         self._event_common(item, target, event)
         self._drag_end(item, self._dragging, event)
         self._dragging = None
-        return True
+        return self._handle_mouse_up_down
 
     @handler(_view, "key_press_event")
     def key_press_event(self, item, target, event):
