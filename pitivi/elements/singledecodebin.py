@@ -26,6 +26,7 @@ Single-stream queue-less decodebin
 import gobject
 import gst
 from pitivi.stream import get_pad_id, pad_compatible_stream
+from pitivi.utils import CachedFactoryList
 
 def is_raw(caps):
     """ returns True if the caps are RAW """
@@ -35,6 +36,19 @@ def is_raw(caps):
         if rep.startswith(val):
             return True
     return False
+
+def factoryFilter(factory):
+    if factory.get_rank() < 64 :
+        return False
+
+    klass = factory.get_klass()
+    for cat in ("Demuxer", "Decoder", "Parse"):
+        if cat in klass:
+            return True
+
+    return False
+
+_factoryCache = CachedFactoryList(factoryFilter)
 
 class SingleDecodeBin(gst.Bin):
     """
@@ -56,8 +70,6 @@ class SingleDecodeBin(gst.Bin):
                          gst.PAD_SOMETIMES,
                          gst.caps_new_any())
         )
-
-    _factories = []
 
     def __init__(self, caps=None, uri=None, stream=None, *args, **kwargs):
         gst.Bin.__init__(self, *args, **kwargs)
@@ -91,9 +103,6 @@ class SingleDecodeBin(gst.Bin):
 
         self._validelements = [] #added elements
 
-        if self._factories == []:
-            self._factories = self._getSortedFactoryList()
-
         self.debug("stream:%r" % self.stream)
 
         self.pending_newsegment = False
@@ -107,24 +116,6 @@ class SingleDecodeBin(gst.Bin):
         element.connect("pad-added", self._dynamicPadAddedCb)
         element.connect("no-more-pads", self._dynamicNoMorePadsCb)
 
-    def _getSortedFactoryList(self):
-        """
-        Returns the list of demuxers, decoders and parsers available, sorted
-        by rank
-        """
-        self.debug("getting factory list")
-        def _myfilter(fact):
-            if fact.get_rank() < 64 :
-                return False
-            klass = fact.get_klass()
-            if not ("Demuxer" in klass or "Decoder" in klass or "Parse" in klass):
-                return False
-            return True
-        reg = gst.registry_get_default()
-        res = [x for x in reg.get_feature_list(gst.ElementFactory) if _myfilter(x)]
-        res.sort(lambda a, b: int(b.get_rank() - a.get_rank()))
-        return res
-
     def _findCompatibleFactory(self, caps):
         """
         Returns a list of factories (sorted by rank) which can take caps as
@@ -132,7 +123,7 @@ class SingleDecodeBin(gst.Bin):
         """
         self.debug("caps:%s" % caps.to_string())
         res = []
-        for factory in self._factories:
+        for factory in _factoryCache.get():
             for template in factory.get_static_pad_templates():
                 if template.direction == gst.PAD_SINK:
                     intersect = caps.intersect(template.static_caps.get())

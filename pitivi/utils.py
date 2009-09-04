@@ -4,6 +4,7 @@
 #       utils.py
 #
 # Copyright (c) 2005, Edward Hervey <bilboed@bilboed.com>
+# Copyright (c) 2009, Alessandro Decina <alessandro.d@gmail.com>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -430,3 +431,29 @@ def getNextObject(obj, objects, priority=-1, skip=None):
         next_obj_index += 1
 
     return None
+
+class CachedFactoryList(object):
+    def __init__(self, factoryFilter=None):
+        self._factoryFilter = factoryFilter
+        self._factories = None
+        self._registry = gst.registry_get_default()
+        self._registry.connect("feature-added", self._registryFeatureAddedCb)
+
+    def get(self):
+        if self._factories is None:
+            self._buildFactories()
+
+        return self._factories
+
+    def _buildFactories(self):
+        # build the cache
+        factories = self._registry.get_feature_list(gst.ElementFactory)
+        if self._factoryFilter is not None:
+            factories = filter(self._factoryFilter, factories)
+
+        factories.sort(key=lambda factory: factory.get_rank())
+        self._factories = factories
+
+    def _registryFeatureAddedCb(self, registry, feature):
+        # invalidate the cache
+        self._factories = None
