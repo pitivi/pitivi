@@ -58,6 +58,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
         _cursor = HAND
         _kf = None
+        _handle_enter_leave = False
 
         def drag_start(self, item, target, event):
             self._view.app.action_log.begin("volume change")

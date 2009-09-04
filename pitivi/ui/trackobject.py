@@ -97,6 +97,7 @@ class TimelineController(controller.Controller):
 
     _cursor = ARROW
     _context = None
+    _handle_enter_leave = False
 
     def enter(self, unused, unused2):
         self._view.focus()
@@ -199,6 +200,8 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
 
     class Controller(TimelineController):
+
+        _handle_enter_leave = True
 
         def drag_start(self, item, target, event):
             TimelineController.drag_start(self, item, target, event)
