@@ -368,7 +368,7 @@ class SingleDecodeBin(gst.Bin):
         Remove unused elements connected to srcpad(s) of element
         """
         self.log("element:%r" % element)
-        for pad in element.src_pads():
+        for pad in list(element.src_pads()):
             if pad.is_linked():
                 peer = pad.get_peer().get_parent()
                 if isinstance(peer, gst.Element):
