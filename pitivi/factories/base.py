@@ -383,13 +383,6 @@ class SourceFactory(ObjectFactory):
         del topbin.ghostpad
         if hasattr(topbin, "volume"):
             pad.unlink(topbin.aconv.get_pad("sink"))
-            for elt in [topbin.volume, topbin.aconv, topbin.ares]:
-                elt.set_state(gst.STATE_NULL)
-            for elt in [topbin.volume, topbin.aconv, topbin.ares]:
-                topbin.remove(elt)
-            del topbin.volume
-            del topbin.aconv
-            del topbin.ares
 
     def addInputStream(self, stream):
         raise AssertionError("source factories can't have input streams")
