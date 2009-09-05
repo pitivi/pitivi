@@ -23,6 +23,7 @@
 import gobject
 import gtk
 from gtk import gdk
+gdk.threads_init()
 import gst
 
 from pitivi.action import ViewAction
@@ -476,7 +477,9 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         self.log("...")
         if self.have_set_xid:
             return
+        gtk.gdk.threads_enter()
         self.action.set_window_xid(self.window.xid)
+        gtk.gdk.threads_leave()
         self.unset_flags(gtk.DOUBLE_BUFFERED)
         self.have_set_xid = True
 
