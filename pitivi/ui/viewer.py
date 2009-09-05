@@ -272,7 +272,7 @@ class PitiviViewer(gtk.VBox, Loggable):
             bbox.show_all()
             width, height = bbox.size_request()
             width += 110
-            height = width / self.aframe.props.ratio
+            height = int(width / self.aframe.props.ratio)
             self.aframe.set_size_request(width , height)
 
     def showControls(self):
