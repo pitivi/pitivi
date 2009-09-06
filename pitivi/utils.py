@@ -30,6 +30,7 @@ import os
 from pitivi.signalinterface import Signallable
 import pitivi.log.log as log
 from gettext import ngettext
+import cProfile
 
 UNKNOWN_DURATION = 2 ** 63 - 1
 
@@ -462,3 +463,19 @@ class CachedFactoryList(object):
         # invalidate the cache
         log.warning("utils", "New feature added, invalidating cached factories")
         self._factories = None
+
+def profile(func, profiler_filename="result.prof"):
+    import os.path
+    counter = 1
+    output_filename = profiler_filename
+    while os.path.exists(output_filename):
+        output_filename = profiler_filename + str(counter)
+        counter += 1
+
+    def _wrapper(*args,**kwargs):
+        local_func = func
+        cProfile.runctx("result = local_func(*args, **kwargs)", globals(), locals(),
+                        filename=output_filename)
+        return locals()["result"]
+
+    return _wrapper
