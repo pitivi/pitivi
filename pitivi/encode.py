@@ -284,71 +284,123 @@ def list_compat(a1, b1):
             return False
     return True
 
-def my_can_sink_caps(muxer, ocaps):
+def my_can_sink_caps(muxer, ocaps, muxsinkcaps=[]):
     """ returns True if the given caps intersect with some of the muxer's
     sink pad templates' caps.
     """
-    sinkcaps = [x.get_caps() for x in muxer.get_static_pad_templates() if x.direction == gst.PAD_SINK]
-    for x in sinkcaps:
-        if not x.intersect(ocaps).is_empty():
-            return True
+    # fast version
+    if muxsinkcaps != []:
+        for c in muxsinkcaps:
+            if not c.intersect(ocaps).is_empty():
+                return True
+        return False
+    # slower default
+    for x in muxer.get_static_pad_templates():
+        if x.direction == gst.PAD_SINK:
+            if not x.get_caps().intersect(ocaps).is_empty():
+                return True
     return False
+
+    # sinkcaps = (x.get_caps() for x in muxer.get_static_pad_templates() if x.direction == gst.PAD_SINK)
+    # for x in sinkcaps:
+    #     if not x.intersect(ocaps).is_empty():
+    #         return True
+    # return False
+
+class CachedEncoderList(object):
+    def __init__(self):
+        self._audioEncoders = []
+        self._videoEncoders = []
+        self._muxers = []
+        self._compatibleMuxers = []
+        self._factories = None
+        self._registry = gst.registry_get_default()
+        self._registry.connect("feature-added", self._registryFeatureAddedCb)
+
+    def _ensure_factories(self):
+        if self._factories is None:
+            self._buildFactories()
+
+    def _buildFactories(self):
+        self._factories = self._registry.get_feature_list(gst.ElementFactory)
+        for fact in self._factories:
+            klist = fact.get_klass().split('/')
+            if list_compat(("Codec", "Muxer"), klist):
+                self._muxers.append(fact)
+            elif list_compat(("Codec", "Encoder", "Video"), klist) or list_compat(("Codec", "Encoder", "Image"), klist):
+                self._videoEncoders.append(fact)
+            elif list_compat(("Codec", "Encoder", "Audio"), klist):
+                self._audioEncoders.append(fact)
+
+    def available_muxers(self):
+        if self._factories is None:
+            self._buildFactories()
+        return self._muxers
+
+    def available_audio_encoders(self):
+        if self._factories is None:
+            self._buildFactories()
+        return self._audioEncoders
+
+    def available_video_encoders(self):
+        if self._factories is None:
+            self._buildFactories()
+        return self._videoEncoders
+
+    def _registryFeatureAddedCb(self, registry, feature):
+        self._factories = None
+
+_cached_encoder_list = None
+def encoderlist():
+    global _cached_encoder_list
+    if _cached_encoder_list == None:
+        _cached_encoder_list = CachedEncoderList()
+    return _cached_encoder_list
 
 def available_muxers():
     """ return all available muxers """
-    flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
-    res = []
-    for fact in flist:
-        if list_compat(["Codec", "Muxer"], fact.get_klass().split('/')):
-            res.append(fact)
-    log.log("encode", str(res))
-    return res
+    enclist = encoderlist()
+    return enclist.available_muxers()
 
 def available_video_encoders():
     """ returns all available video encoders """
-    flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
-    res = []
-    for fact in flist:
-        if list_compat(["Codec", "Encoder", "Video"], fact.get_klass().split('/')):
-            res.append(fact)
-        elif list_compat(["Codec", "Encoder", "Image"], fact.get_klass().split('/')):
-            res.append(fact)
-    log.log("encode", str(res))
-    return res
+    enclist = encoderlist()
+    return enclist.available_video_encoders()
 
 def available_audio_encoders():
     """ returns all available audio encoders """
-    flist = gst.registry_get_default().get_feature_list(gst.ElementFactory)
-    res = []
-    for fact in flist:
-        if list_compat(["Codec", "Encoder", "Audio"], fact.get_klass().split('/')):
-            res.append(fact)
-    log.log("encode", str(res))
-    return res
+    enclist = encoderlist()
+    return enclist.available_audio_encoders()
 
-def encoders_muxer_compatible(encoders, muxer):
+def encoders_muxer_compatible(encoders, muxer, muxsinkcaps=[]):
     """ returns the list of encoders compatible with the given muxer """
     res = []
+    if muxsinkcaps == []:
+        muxsinkcaps = [x.get_caps() for x in muxer.get_static_pad_templates() if x.direction == gst.PAD_SINK]
     for encoder in encoders:
-        for caps in [x.get_caps() for x in encoder.get_static_pad_templates() if x.direction == gst.PAD_SRC]:
-            if my_can_sink_caps(muxer, caps):
-                res.append(encoder)
-                break
+        for tpl in encoder.get_static_pad_templates():
+            if tpl.direction == gst.PAD_SRC:
+                if my_can_sink_caps(muxer, tpl.get_caps(), muxsinkcaps):
+                    res.append(encoder)
+                    break
     return res
 
+raw_audio_caps = gst.Caps("audio/x-raw-float;audio/x-raw-int")
+raw_video_caps = gst.Caps("video/x-raw-yuv;video/x-raw-rgb")
 def muxer_can_sink_raw_audio(muxer):
     """ Returns True if given muxer can accept raw audio """
-    return my_can_sink_caps(muxer, gst.Caps("audio/x-raw-float;audio/x-raw-int"))
+    return my_can_sink_caps(muxer, raw_audio_caps)
 
 def muxer_can_sink_raw_video(muxer):
     """ Returns True if given muxer can accept raw video """
-    return my_can_sink_caps(muxer, gst.Caps("video/x-raw-yuv;video/x-raw-rgb"))
+    return my_can_sink_caps(muxer, raw_video_caps)
 
 def available_combinations(muxers, vencoders, aencoders):
     res = []
     for mux in muxers:
-        noaudio = (encoders_muxer_compatible(aencoders, mux) == []) and not muxer_can_sink_raw_audio(mux)
-        novideo = (encoders_muxer_compatible(vencoders, mux) == []) and not muxer_can_sink_raw_video(mux)
+        muxsinkcaps = [x.get_caps() for x in mux.get_static_pad_templates() if x.direction == gst.PAD_SINK]
+        noaudio = (encoders_muxer_compatible(aencoders, mux, muxsinkcaps) == []) and not my_can_sink_caps(mux, raw_audio_caps, muxsinkcaps)
+        novideo = (encoders_muxer_compatible(vencoders, mux, muxsinkcaps) == []) and not my_can_sink_caps(mux, raw_video_caps, muxsinkcaps)
         if (noaudio == False) and (novideo == False):
             res.append(mux)
     return res
