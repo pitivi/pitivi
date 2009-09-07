@@ -196,8 +196,8 @@ class Formatter(Signallable, Loggable):
             raise FormatterOverwriteError()
         old_uri = project.uri
         if self._saveProject(project, location):
-            if old_uri is None:
-                project.name = self._projectNameFromURI(location)
+            project.uri = location
+            project.name = self._projectNameFromURI(location)
             self.emit("project-saved", project, location)
             return True
 
