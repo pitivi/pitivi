@@ -169,7 +169,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
     def _seekerSeekCb(self, seeker, position, format):
         # clamping values within acceptable range
         duration = self.getShadedDuration()
-        if duration == gst.CLOCK_TIME_NONE:
+        if duration in (0, gst.CLOCK_TIME_NONE):
             return
         if position > duration:
             position = duration - (1 * gst.MSECOND)
