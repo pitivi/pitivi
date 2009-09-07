@@ -26,7 +26,6 @@ Main application
 import gobject
 gobject.threads_init()
 import gtk
-gtk.gdk.threads_init()
 from optparse import OptionParser
 import os
 import sys

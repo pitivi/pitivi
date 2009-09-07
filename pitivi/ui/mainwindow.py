@@ -856,9 +856,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         chooser.show()
 
         dialog.set_size_request(640, 480)
-        gtk.gdk.threads_enter()
         response = dialog.run()
-        gtk.gdk.threads_leave()
 
         if response == gtk.RESPONSE_OK:
             self.log("User chose a URI to save project to")

@@ -23,7 +23,6 @@
 import gobject
 import gtk
 from gtk import gdk
-gdk.threads_init()
 import gst
 
 from pitivi.action import ViewAction
@@ -172,7 +171,6 @@ class PitiviViewer(gtk.VBox, Loggable):
         self.action = action
         # FIXME: fix this properly?
         self.drawingarea.action = action
-        self.drawingarea.have_set_xid = False
         dar = float(4/3)
         try:
             producer = action.producers[0]
@@ -213,7 +211,6 @@ class PitiviViewer(gtk.VBox, Loggable):
                                       obey_child=False)
         self.pack_start(self.aframe, expand=True)
         self.drawingarea = ViewerWidget(self.action)
-        self.drawingarea.connect_after("expose-event", self._drawingAreaExposeCb)
         self.aframe.add(self.drawingarea)
 
         # Slider
@@ -306,20 +303,6 @@ class PitiviViewer(gtk.VBox, Loggable):
             self.aframe.set_property("ratio", float(ratio))
         except:
             self.warning("could not set ratio !")
-
-    def _drawingAreaExposeCb(self, drawingarea, event):
-        drawingarea.disconnect_by_func(self._drawingAreaExposeCb)
-        for state in range(gtk.STATE_INSENSITIVE + 1):
-            drawingarea.modify_bg(state, drawingarea.style.black)
-        self.debug("yay, we are exposed !")
-        if self.pipeline:
-            try:
-                self.pipeline.paused()
-            except:
-                self.currentState = gst.STATE_NULL
-            else:
-                self.currentState = gst.STATE_PAUSED
-        return False
 
     ## gtk.HScale callbacks for self.slider
 
@@ -455,7 +438,8 @@ class PitiviViewer(gtk.VBox, Loggable):
         name = message.structure.get_name()
         self.log('message:%s / %s', message, name)
         if name == 'prepare-xwindow-id':
-            self.drawingarea.set_xwindow_id()
+            sink = message.src
+            sink.set_xwindow_id(self.drawingarea.window_xid)
 
 
 class ViewerWidget(gtk.DrawingArea, Loggable):
@@ -469,20 +453,14 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         gtk.DrawingArea.__init__(self)
         Loggable.__init__(self)
         self.action = action # FIXME : Check if it's a view action
-        self.have_set_xid = False
         self.unset_flags(gtk.SENSITIVE)
-
-    def set_xwindow_id(self):
-        """ set the widget's XID on the configured videosink. """
-        self.log("...")
-        if self.have_set_xid:
-            return
-        gtk.gdk.threads_enter()
-        self.action.set_window_xid(self.window.xid)
-        gtk.gdk.threads_leave()
         self.unset_flags(gtk.DOUBLE_BUFFERED)
-        self.have_set_xid = True
+        for state in range(gtk.STATE_INSENSITIVE + 1):
+            self.modify_bg(state, self.style.black)
 
+    def do_realize(self):
+        gtk.DrawingArea.do_realize(self)
+        self.window_xid = self.window.xid
 
 class PlayPauseButton(gtk.Button, Loggable):
     """ Double state gtk.Button which displays play/pause """

@@ -705,7 +705,6 @@ class ViewAction(Action):
         self.videosink = None
         self.audiosink = None
         self.sync = True
-        self.xid = 0
 
     def getDynamicLinks(self, producer, stream):
         self.debug("producer:%r, stream:%r, sync:%r",
@@ -717,8 +716,6 @@ class ViewAction(Action):
             consumer = DefaultVideoSink()
             self.videosink = consumer
             self.videosink.setSync(self.sync)
-            if self.xid != 0:
-                self.videosink.set_window_xid(self.xid)
 
             res.append((producer, consumer, stream, None))
         # only link audio streams if we're synchronized
@@ -728,17 +725,6 @@ class ViewAction(Action):
             self.audiosink.setSync(self.sync)
             res.append((producer, consumer, stream, None))
         return res
-
-    def set_window_xid(self, xid):
-        """
-        Set the XID where the video consumer should display.
-        """
-        self.debug("xid:%r", xid)
-        # FIXME : What if we have several video sinks ???
-        self.xid = xid
-        if self.videosink:
-            self.videosink.set_window_xid(self.xid)
-
 
     def setSync(self, sync=True):
         """

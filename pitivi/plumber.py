@@ -41,7 +41,6 @@ class DefaultVideoSink(SinkFactory):
     def __init__(self, *args, **kwargs):
         SinkFactory.__init__(self, *args, **kwargs)
         self.max_bins = 1
-        self._xid = 0
         self._cachedsink = None
         self._realsink = None
         self.sync = True
@@ -69,18 +68,16 @@ class DefaultVideoSink(SinkFactory):
 
         if not autovideosink.implements_interface(interfaces.XOverlay):
             autovideosink.info("doesn't implement XOverlay interface")
+
             self._realsink = autovideosink.get_by_interface(interfaces.XOverlay)
             if not self._realsink:
                 self.info("%s", list(autovideosink.elements()))
                 autovideosink.warning("couldn't even find an XOverlay within!!!")
             else:
                 self._realsink.info("implements XOverlay interface")
-                autovideosink.set_xwindow_id = self._realsink.set_xwindow_id
-                autovideosink.expose = self._realsink.expose
         else:
             self._realsink = autovideosink
-        # FIXME : YUCK, I'm guessing most of these issues (qos/max-lateness)
-        # have been solved since
+
         if self._realsink:
             props = list(self._realsink.props)
             if "force-aspect-ratio"in [prop.name for prop in props]:
@@ -89,9 +86,6 @@ class DefaultVideoSink(SinkFactory):
             self._realsink.props.sync = self.sync
             self._realsink.props.qos = self.sync
 
-        if self._xid != 0:
-            self._realsink.set_xwindow_id(self._xid)
-
         self._cachedsink = autovideosink
         return bin
 
@@ -99,14 +93,6 @@ class DefaultVideoSink(SinkFactory):
         if bin == self._cachedsink:
             self._realsink = None
             self._cachedsink = None
-            self._xid = 0
-
-    def set_window_xid(self, xid):
-        if self._xid != 0:
-            return
-        self._xid = xid
-        if self._cachedsink:
-            self._cachedsink.set_xwindow_id(self._xid)
 
     def setSync(self, sync=True):
         self.debug("sync:%r", sync)
