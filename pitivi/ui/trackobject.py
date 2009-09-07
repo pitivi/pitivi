@@ -238,7 +238,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         self.bg = goocanvas.Rect(
             height=self.height, 
-            line_width=0)
+            line_width=1)
 
         self.content = Preview(element)
 
