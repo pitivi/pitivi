@@ -454,7 +454,6 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
         Loggable.__init__(self)
         self.action = action # FIXME : Check if it's a view action
         self.unset_flags(gtk.SENSITIVE)
-        self.unset_flags(gtk.DOUBLE_BUFFERED)
         for state in range(gtk.STATE_INSENSITIVE + 1):
             self.modify_bg(state, self.style.black)
 

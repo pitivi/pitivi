@@ -80,8 +80,15 @@ class DefaultVideoSink(SinkFactory):
 
         if self._realsink:
             props = list(self._realsink.props)
-            if "force-aspect-ratio"in [prop.name for prop in props]:
-                self._realsink.set_property("force-aspect-ratio", True)
+            try:
+                self._realsink.props.force_aspect_ratio = True
+            except AttributeError:
+                pass
+
+            try:
+                self._realsink.props.double_buffer = False
+            except AttributeError:
+                pass
 
             self._realsink.props.sync = self.sync
             self._realsink.props.qos = self.sync
