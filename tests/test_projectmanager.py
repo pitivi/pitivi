@@ -24,6 +24,10 @@ from unittest import TestCase
 from pitivi.projectmanager import ProjectManager
 from pitivi.formatters.base import Formatter, \
         FormatterError, FormatterLoadError
+import os
+import gst
+from pitivi.utils import uri_is_reachable
+import time
 
 class MockProject(object):
     settings = None
@@ -284,3 +288,58 @@ class TestProjectManager(TestCase):
         self.failUnlessEqual(name, "new-project-loaded")
         project = args[0]
         self.failUnless(project is self.manager.current)
+
+
+    def testSaveProject(self):
+        uri = "file://" + os.path.abspath("testproject.xptv")
+        uri2 ="file://" + os.path.abspath("testproject2.xptv")
+        path = gst.uri_get_location(uri)
+        path2 = gst.uri_get_location(uri2)
+
+        # unlink any existing project files
+        try:
+            os.unlink(path)
+            os.unlink(path2)
+        except OSError:
+            pass
+
+        # save a project
+        self.failUnless(self.manager.newBlankProject())
+        self.failUnless(self.manager.saveProject(
+            self.manager.current, uri, True))
+        self.failUnless(uri_is_reachable(uri))
+
+        # wait a bit
+        time.sleep(0.01)
+
+        # save project under new path
+        self.failUnless(self.manager.saveProject(
+            self.manager.current, uri2, True))
+        self.failUnless(uri_is_reachable(uri2))
+
+        # make sure the old path and the new path have different mtime
+        mtime = os.path.getmtime(path)
+        mtime2 = os.path.getmtime(path2)
+        self.failUnless(mtime < mtime2)
+
+        # wait a bit more
+        time.sleep(0.01)
+
+        # save project again under new path (by omitting uri arg)
+        self.failUnless(self.manager.saveProject(
+            self.manager.current, overwrite=True))
+
+        # regression test for bug 594396
+        # make sure we didn't save to the old URI
+        self.failUnlessEqual(mtime, os.path.getmtime(path))
+        # make sure we did save to the new URI
+        self.failUnless(mtime2 < os.path.getmtime(path2))
+
+        # unlink any existing project files
+        try:
+            os.unlink(path)
+            os.unlink(path2)
+        except OSError:
+            pass
+
+
