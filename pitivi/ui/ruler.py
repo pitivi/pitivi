@@ -288,10 +288,11 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
         def drawTick(paintpos, height):
             paintpos = int(paintpos)
+            height = allocation.height - int(allocation.height * height)
             self.pixmap.draw_line(
                 self.style.fg_gc[gtk.STATE_NORMAL],
-                paintpos, 0, paintpos, 
-                int(allocation.height * height))
+                paintpos, height, paintpos, 
+                allocation.height)
 
         def drawTicks(interval, height):
             spacing = zoomRatio * interval
@@ -326,8 +327,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                         state = gtk.STATE_NORMAL
                     self.pixmap.draw_layout(
                         self.style.fg_gc[state],
-                        int(paintpos - textwidth / 2), int(allocation.height -
-                            textheight), layout)
+                        int(paintpos - textwidth / 2), 0, layout)
                     paintpos += spacing
                     seconds += long(interval * gst.SECOND)
 
@@ -337,7 +337,8 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
             if frame_width >= self.min_frame_spacing:
                 offset = self.pixmap_offset % frame_width
                 paintpos = float(self.border) + 0.5
-                height = self.frame_height
+                height = allocation.height
+                y = height - self.frame_height
                 states = [gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT]
                 paintpos += frame_width - offset
                 frame_num = int(paintpos // frame_width) % 2
@@ -345,7 +346,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                     self.pixmap.draw_rectangle(
                         self.style.bg_gc[states[frame_num]],
                         True,
-                        int(paintpos), 0, frame_width, height)
+                        int(paintpos), y, frame_width, height)
                     frame_num = (frame_num + 1) % 2
                     paintpos += frame_width
 
