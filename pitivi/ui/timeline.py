@@ -368,7 +368,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self._position = position
         self.ruler.timelinePositionChanged(position)
         self._canvas._position = position
-        self.scrollToPlayhead()
+        if self._state == gst.STATE_PLAYING:
+            self.scrollToPlayhead()
 
     def stateChanged(self, state):
         self._state = state
@@ -382,8 +383,6 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         return False
 
     def scrollToPosition(self, position):
-        if not self._state == gst.STATE_PLAYING:
-            return
         if position > self.hadj.upper:
             # we can't perform the scroll because the canvas needs to be
             # updated
