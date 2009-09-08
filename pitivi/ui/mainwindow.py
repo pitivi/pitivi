@@ -526,6 +526,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             action=gtk.FILE_CHOOSER_ACTION_OPEN,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                 gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
         chooser.set_current_folder(self.settings.lastProjectFolder)
         formats = formatter.list_formats()
@@ -832,6 +833,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             gtk.BUTTONS_OK,
             _("PiTiVi is unable to load file \"%s\"") %
                 uri)
+        dialog.set_icon_name("pitivi")
         dialog.set_title(_("Error Loading File"))
         dialog.set_property("secondary-text", str(exception))
         dialog.run()
@@ -844,6 +846,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             gtk.DIALOG_MODAL,
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
             gtk.STOCK_OPEN, gtk.RESPONSE_OK))
+        dialog.set_icon_name("pitivi")
         dialog.set_border_width(12)
         dialog.get_content_area().set_spacing(6)
 
@@ -1006,6 +1009,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
             buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
             gtk.STOCK_SAVE, gtk.RESPONSE_OK))
 
+        chooser.set_icon_name("pitivi")
         chooser.set_select_multiple(False)
         chooser.set_current_name(_("Untitled.xptv"))
         chooser.set_current_folder(self.settings.lastProjectFolder)

@@ -295,6 +295,7 @@ class InteractivePitivi(Pitivi):
             message, detail = missing_deps
             dialog = gtk.MessageDialog(type=gtk.MESSAGE_ERROR,
                                        buttons=gtk.BUTTONS_OK)
+            dialog.set_icon_name("pitivi")
             dialog.set_markup("<b>"+message+"</b>")
             dialog.format_secondary_text(detail)
             dialog.run()

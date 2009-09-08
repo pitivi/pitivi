@@ -92,6 +92,7 @@ class EncodingDialog(GladeWindow, Loggable):
                                        buttons=(gtk.STOCK_CANCEL, gtk.RESPONSE_REJECT,
                                                 gtk.STOCK_OK, gtk.RESPONSE_ACCEPT),
                                        action=gtk.FILE_CHOOSER_ACTION_SAVE)
+        dialog.set_icon_name("pitivi")
         if self.outfile:
             dialog.set_uri(self.outfile)
             dialog.set_current_name(os.path.basename(self.outfile))

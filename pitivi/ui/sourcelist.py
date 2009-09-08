@@ -382,6 +382,7 @@ class SourceList(gtk.VBox, Loggable):
                                                    chooser_action,
                                                    (gtk.STOCK_CLOSE, gtk.RESPONSE_CLOSE,
                                                     gtk.STOCK_ADD, gtk.RESPONSE_OK))
+        self._importDialog.set_icon_name("pitivi")
         self._importDialog.props.extra_widget = close_after
         self._importDialog.set_default_response(gtk.RESPONSE_OK)
         self._importDialog.set_select_multiple(True)
