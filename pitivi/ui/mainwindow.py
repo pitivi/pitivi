@@ -755,15 +755,15 @@ class PitiviMainWindow(gtk.Window, Loggable):
             save = gtk.STOCK_SAVE
         else:
             save = gtk.STOCK_SAVE_AS
-        dialog = gtk.Dialog(_("Close project"),
+
+        dialog = gtk.Dialog("",
             self, gtk.DIALOG_MODAL | gtk.DIALOG_NO_SEPARATOR,
             (_("Close without saving"), gtk.RESPONSE_REJECT,
                     gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL,
                     save, gtk.RESPONSE_YES))
-        dialog.set_border_width(5)
+        dialog.set_icon_name("pitivi")
         dialog.set_resizable(False)
         dialog.set_has_separator(False)
-        dialog.set_skip_taskbar_hint(False)
         dialog.set_default_response(gtk.RESPONSE_YES)
 
         primary = gtk.Label()
@@ -772,26 +772,35 @@ class PitiviMainWindow(gtk.Window, Loggable):
         primary.set_alignment(0, 0.5)
 
         message = _("Save changes to the current project before closing?")
-        primary.set_markup("<span weight=\"bold\" size=\"larger\">" +
-                message + "</span>")
-        secondary = gtk.Label(_("If you don't save some of your "
-                "changes will be lost"))
-        secondary.set_line_wrap(True)
-        vbox = gtk.VBox(False, 12)
-        vbox.pack_start(primary)
-        vbox.pack_start(secondary)
+        primary.set_markup("<span weight=\"bold\">" + message + "</span>")
 
+        secondary = gtk.Label()
+        secondary.set_line_wrap(True)
+        secondary.set_use_markup(True)
+        secondary.set_alignment(0, 0.5)
+        secondary.props.label = _("If you don't save some of your "
+                "changes will be lost")
+
+        # put the text in a vbox
+        vbox = gtk.VBox(False, 12)
+        vbox.pack_start(primary, expand=True, fill=True)
+        vbox.pack_start(secondary, expand=True, fill=True)
+
+        # make the [[image] text] hbox
         image = gtk.image_new_from_stock(gtk.STOCK_DIALOG_WARNING,
                gtk.ICON_SIZE_DIALOG)
         hbox = gtk.HBox(False, 12)
-        hbox.set_border_width(5)
-        hbox.pack_start(image)
-        hbox.pack_start(vbox)
-        content_area = dialog.get_content_area()
-        content_area.pack_start(hbox)
-        content_area.set_spacing(14)
+        hbox.pack_start(image, expand=False)
+        hbox.pack_start(vbox, expand=True, fill=True)
         action_area = dialog.get_action_area()
-        action_area.set_layout(gtk.BUTTONBOX_DEFAULT_STYLE)
+        # FIXME: find out where this "6" comes from. It's needed to align our
+        # hbox with the action area button box
+        hbox.set_border_width(6)
+
+        # stuff the hbox in the dialog
+        content_area = dialog.get_content_area()
+        content_area.pack_start(hbox, expand=True, fill=True)
+        content_area.set_spacing(14)
         hbox.show_all()
 
         response = dialog.run()
