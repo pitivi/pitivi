@@ -310,7 +310,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
             spacing = zoomRatio * interval
             offset = self.pixmap_offset % spacing
             seconds = self.pixelToNs(self.pixmap_offset)
-            paintpos = float(self.border) + 0.5
+            paintpos = float(self.border) + 2
             if offset > 0:
                 seconds += self.pixelToNs(spacing - offset)
                 paintpos += spacing - offset
@@ -327,7 +327,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                         state = gtk.STATE_NORMAL
                     self.pixmap.draw_layout(
                         self.style.fg_gc[state],
-                        int(paintpos - textwidth / 2), 0, layout)
+                        int(paintpos), 0, layout)
                     paintpos += spacing
                     seconds += long(interval * gst.SECOND)
 
