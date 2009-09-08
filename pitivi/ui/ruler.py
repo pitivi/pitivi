@@ -47,7 +47,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
     border = 0
     min_tick_spacing = 3
-    scale = [0.25, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 3600]
+    scale = [0, 0, 0, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 3600]
     subdivide = ((1, 1.0), (2, 0.5), (10, .25))
 
     def __init__(self, hadj):
@@ -225,6 +225,11 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
     def setProjectFrameRate(self, rate):
         self.frame_rate = rate
+
+        # set the lowest scale based on project framerate
+        self.scale[0] = float(2 / rate)
+        self.scale[1] = float(5 / rate)
+        self.scale[2] = float(10 / rate)
         self.queue_resize()
 
     def setShadedDuration(self, duration):
@@ -275,18 +280,6 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                 allocation.height)
 
     def drawRuler(self, allocation):
-        # there are 4 lengths of tick mark:
-        # full height: largest increments, 1 minute
-        # 3/4 height: 10 seconds
-        # 1/2 height: 1 second
-        # 1/4 height: 1/10 second (might later be changed to 1 frame in
-        #   project framerate)
-
-        # At the highest level of magnification, all ticmarks are visible. At
-        # the lowest, only the full height tic marks are visible. The
-        # appearance of text is dependent on the spacing between tics: text
-        # only appears when there is enough space between tics for it to be
-        # readable.
 
         def drawTick(paintpos, height):
             paintpos = int(paintpos)
@@ -355,7 +348,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         layout = self.create_pango_layout(time_to_string(0))
         textwidth, textheight = layout.get_pixel_size()
 
-        for s in self.scale:
+        for s in sorted(self.scale):
             spacing = Zoomable.zoomratio * s
             if spacing >= textwidth * 1.5:
                 break
