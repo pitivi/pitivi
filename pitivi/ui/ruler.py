@@ -308,7 +308,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
             seconds = self.pixelToNs(self.pixmap_offset)
             paintpos = float(self.border) + 2
             if offset > 0:
-                seconds += self.pixelToNs(spacing - offset)
+                seconds = seconds - (seconds % interval) + interval
                 paintpos += spacing - offset
             shaded = self.getShadedDurationWidth()
 
