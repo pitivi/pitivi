@@ -47,6 +47,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
     border = 0
     min_tick_spacing = 3
+    scale = [0.1, 0.25, 0.5, 1, 2, 5, 10, 60, 300, 600, 3600]
 
     def __init__(self, hadj):
         gtk.Layout.__init__(self)
@@ -305,31 +306,39 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                     drawTick(paintpos, height)
                     paintpos += zoomRatio * interval
 
-        def drawTimes(interval):
+        def drawTimes():
             # figure out what the optimal offset is
-            spacing = zoomRatio * interval
+
+            layout = self.create_pango_layout(time_to_string(0))
+            textwidth, textheight = layout.get_pixel_size()
+
+            for s in self.scale:
+                spacing = Zoomable.zoomratio * s
+                if spacing > 2 * textwidth:
+                    break
+
+            interval = long(gst.SECOND * s)
+
             offset = self.pixmap_offset % spacing
             seconds = self.pixelToNs(self.pixmap_offset)
             paintpos = float(self.border) + 2
             if offset > 0:
                 seconds += self.pixelToNs(spacing - offset)
                 paintpos += spacing - offset
-            layout = self.create_pango_layout(time_to_string(0))
-            textwidth, textheight = layout.get_pixel_size()
             shaded = self.getShadedDurationWidth()
-            if spacing > textwidth:
-                while paintpos < allocation.width:
-                    timevalue = time_to_string(long(seconds))
-                    layout.set_text(timevalue)
-                    if paintpos < shaded:
-                        state = gtk.STATE_ACTIVE
-                    else:
-                        state = gtk.STATE_NORMAL
-                    self.pixmap.draw_layout(
-                        self.style.fg_gc[state],
-                        int(paintpos), 0, layout)
-                    paintpos += spacing
-                    seconds += long(interval * gst.SECOND)
+
+            while paintpos < allocation.width:
+                timevalue = time_to_string(long(seconds))
+                layout.set_text(timevalue)
+                if paintpos < shaded:
+                    state = gtk.STATE_ACTIVE
+                else:
+                    state = gtk.STATE_NORMAL
+                self.pixmap.draw_layout(
+                    self.style.fg_gc[state],
+                    int(paintpos), 0, layout)
+                paintpos += spacing
+                seconds += interval
 
         def drawFrameBoundaries():
             ns_per_frame = float(1 / self.frame_rate) * gst.SECOND
@@ -354,9 +363,9 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         zoomRatio = self.zoomratio
         interval_sizes = ((60, 0.70), (10, 0.5), (1, 0.25), (0.1, 0.15))
         drawFrameBoundaries()
+        drawTimes()
         for interval, height in interval_sizes:
             drawTicks(interval, height)
-            drawTimes(interval)
 
     def drawPosition(self, context, allocation):
         if self.getShadedDuration() <= 0:
