@@ -47,7 +47,8 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
 
     border = 0
     min_tick_spacing = 3
-    scale = [0.1, 0.25, 0.5, 1, 2, 5, 10, 60, 300, 600, 3600]
+    scale = [0.25, 0.5, 1, 2, 5, 10, 15, 30, 60, 120, 300, 600, 3600]
+    subdivide = ((1, 1.0), (2, 0.5), (10, .25))
 
     def __init__(self, hadj):
         gtk.Layout.__init__(self)
@@ -295,31 +296,22 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                 paintpos, height, paintpos, 
                 allocation.height)
 
-        def drawTicks(interval, height):
-            spacing = zoomRatio * interval
-            offset = self.pixmap_offset % spacing
-            paintpos = float(self.border) + 0.5
-            if offset > 0:
-                paintpos += spacing - offset
-            if spacing >= self.min_tick_spacing:
+        def drawTicks():
+            for subdivide, height in self.subdivide:
+                spc = spacing / float(subdivide)
+                dur = s / float(subdivide)
+                if spc < self.min_tick_spacing:
+                    break
+                paintpos = float(self.border) + 0.5
+                if offset > 0:
+                    paintpos += spacing - offset
                 while paintpos < allocation.width:
                     drawTick(paintpos, height)
-                    paintpos += zoomRatio * interval
+                    paintpos += spc
 
         def drawTimes():
             # figure out what the optimal offset is
-
-            layout = self.create_pango_layout(time_to_string(0))
-            textwidth, textheight = layout.get_pixel_size()
-
-            for s in self.scale:
-                spacing = Zoomable.zoomratio * s
-                if spacing > 2 * textwidth:
-                    break
-
             interval = long(gst.SECOND * s)
-
-            offset = self.pixmap_offset % spacing
             seconds = self.pixelToNs(self.pixmap_offset)
             paintpos = float(self.border) + 2
             if offset > 0:
@@ -347,7 +339,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                 offset = self.pixmap_offset % frame_width
                 paintpos = float(self.border) + 0.5
                 height = allocation.height
-                y = height - self.frame_height
+                y = int(height - self.frame_height)
                 states = [gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT]
                 paintpos += frame_width - offset
                 frame_num = int(paintpos // frame_width) % 2
@@ -360,12 +352,20 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                     paintpos += frame_width
 
 
+        layout = self.create_pango_layout(time_to_string(0))
+        textwidth, textheight = layout.get_pixel_size()
+
+        for s in self.scale:
+            spacing = Zoomable.zoomratio * s
+            if spacing >= textwidth * 1.5:
+                break
+
+        offset = self.pixmap_offset % spacing
+
         zoomRatio = self.zoomratio
-        interval_sizes = ((60, 0.70), (10, 0.5), (1, 0.25), (0.1, 0.15))
         drawFrameBoundaries()
+        drawTicks()
         drawTimes()
-        for interval, height in interval_sizes:
-            drawTicks(interval, height)
 
     def drawPosition(self, context, allocation):
         if self.getShadedDuration() <= 0:
