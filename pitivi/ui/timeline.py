@@ -155,7 +155,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # timeline ruler
         self.ruler = ruler.ScaleRuler(self.hadj)
-        self.ruler.set_size_request(0, 35)
+        self.ruler.set_size_request(0, 25)
         self.ruler.set_border_width(2)
         self.ruler.connect("key-press-event", self._keyPressEventCb)
         self.attach(self.ruler, 1, 2, 0, 1, yoptions=0)
