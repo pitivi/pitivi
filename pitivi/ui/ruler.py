@@ -271,12 +271,13 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
             0, 0,
             allocation.width, allocation.height)
 
-        if self.getShadedDuration() > 0:
+        offset = int(Zoomable.nsToPixel(self.getShadedDuration())) - self.pixmap_offset
+        if offset > 0:
             self.pixmap.draw_rectangle(
                 self.style.bg_gc[gtk.STATE_ACTIVE],
                 True,
                 0, 0,
-                self.getShadedDurationWidth(),
+                offset,
                 allocation.height)
 
     def drawRuler(self, allocation):
