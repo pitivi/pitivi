@@ -349,7 +349,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         layout = self.create_pango_layout(time_to_string(0))
         textwidth, textheight = layout.get_pixel_size()
 
-        for s in sorted(self.scale):
+        for s in self.scale:
             spacing = Zoomable.zoomratio * s
             if spacing >= textwidth * 1.5:
                 break
