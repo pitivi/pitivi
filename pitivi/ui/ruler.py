@@ -281,85 +281,83 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
                 allocation.height)
 
     def drawRuler(self, allocation):
-
-        def drawTick(paintpos, height):
-            paintpos = int(paintpos)
-            height = allocation.height - int(allocation.height * height)
-            self.pixmap.draw_line(
-                self.style.fg_gc[gtk.STATE_NORMAL],
-                paintpos, height, paintpos, 
-                allocation.height)
-
-        def drawTicks():
-            for subdivide, height in self.subdivide:
-                spc = spacing / float(subdivide)
-                dur = s / float(subdivide)
-                if spc < self.min_tick_spacing:
-                    break
-                paintpos = float(self.border) + 0.5
-                if offset > 0:
-                    paintpos += spacing - offset
-                while paintpos < allocation.width:
-                    drawTick(paintpos, height)
-                    paintpos += spc
-
-        def drawTimes():
-            # figure out what the optimal offset is
-            interval = long(gst.SECOND * s)
-            seconds = self.pixelToNs(self.pixmap_offset)
-            paintpos = float(self.border) + 2
-            if offset > 0:
-                seconds = seconds - (seconds % interval) + interval
-                paintpos += spacing - offset
-            shaded = self.getShadedDurationWidth()
-
-            while paintpos < allocation.width:
-                timevalue = time_to_string(long(seconds))
-                layout.set_text(timevalue)
-                if paintpos < shaded:
-                    state = gtk.STATE_ACTIVE
-                else:
-                    state = gtk.STATE_NORMAL
-                self.pixmap.draw_layout(
-                    self.style.fg_gc[state],
-                    int(paintpos), 0, layout)
-                paintpos += spacing
-                seconds += interval
-
-        def drawFrameBoundaries():
-            ns_per_frame = float(1 / self.frame_rate) * gst.SECOND
-            frame_width = self.nsToPixel(ns_per_frame)
-            if frame_width >= self.min_frame_spacing:
-                offset = self.pixmap_offset % frame_width
-                paintpos = float(self.border) + 0.5
-                height = allocation.height
-                y = int(height - self.frame_height)
-                states = [gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT]
-                paintpos += frame_width - offset
-                frame_num = int(paintpos // frame_width) % 2
-                while paintpos < allocation.width:
-                    self.pixmap.draw_rectangle(
-                        self.style.bg_gc[states[frame_num]],
-                        True,
-                        int(paintpos), y, frame_width, height)
-                    frame_num = (frame_num + 1) % 2
-                    paintpos += frame_width
-
-
         layout = self.create_pango_layout(time_to_string(0))
         textwidth, textheight = layout.get_pixel_size()
 
-        for s in self.scale:
-            spacing = Zoomable.zoomratio * s
+        for scale in self.scale:
+            spacing = Zoomable.zoomratio * scale
             if spacing >= textwidth * 1.5:
                 break
 
         offset = self.pixmap_offset % spacing
 
         zoomRatio = self.zoomratio
-        drawFrameBoundaries()
-        drawTicks()
-        drawTimes()
+        self.drawFrameBoundaries(allocation)
+        self.drawTicks(allocation, offset, spacing, scale)
+        self.drawTimes(allocation, offset, spacing, scale, layout)
+
+    def drawTick(self, allocation, paintpos, height):
+        paintpos = int(paintpos)
+        height = allocation.height - int(allocation.height * height)
+        self.pixmap.draw_line(
+            self.style.fg_gc[gtk.STATE_NORMAL],
+            paintpos, height, paintpos,
+            allocation.height)
+
+    def drawTicks(self, allocation, offset, spacing, scale):
+        for subdivide, height in self.subdivide:
+            spc = spacing / float(subdivide)
+            dur = scale / float(subdivide)
+            if spc < self.min_tick_spacing:
+                break
+            paintpos = float(self.border) + 0.5
+            if offset > 0:
+                paintpos += spacing - offset
+            while paintpos < allocation.width:
+                self.drawTick(allocation, paintpos, height)
+                paintpos += spc
+
+    def drawTimes(self, allocation, offset, spacing, scale, layout):
+        # figure out what the optimal offset is
+        interval = long(gst.SECOND * scale)
+        seconds = self.pixelToNs(self.pixmap_offset)
+        paintpos = float(self.border) + 2
+        if offset > 0:
+            seconds = seconds - (seconds % interval) + interval
+            paintpos += spacing - offset
+        shaded = self.getShadedDurationWidth()
+
+        while paintpos < allocation.width:
+            timevalue = time_to_string(long(seconds))
+            layout.set_text(timevalue)
+            if paintpos < shaded:
+                state = gtk.STATE_ACTIVE
+            else:
+                state = gtk.STATE_NORMAL
+            self.pixmap.draw_layout(
+                self.style.fg_gc[state],
+                int(paintpos), 0, layout)
+            paintpos += spacing
+            seconds += interval
+
+    def drawFrameBoundaries(self, allocation):
+        ns_per_frame = float(1 / self.frame_rate) * gst.SECOND
+        frame_width = self.nsToPixel(ns_per_frame)
+        if frame_width >= self.min_frame_spacing:
+            offset = self.pixmap_offset % frame_width
+            paintpos = float(self.border) + 0.5
+            height = allocation.height
+            y = int(height - self.frame_height)
+            states = [gtk.STATE_ACTIVE, gtk.STATE_PRELIGHT]
+            paintpos += frame_width - offset
+            frame_num = int(paintpos // frame_width) % 2
+            while paintpos < allocation.width:
+                self.pixmap.draw_rectangle(
+                    self.style.bg_gc[states[frame_num]],
+                    True,
+                    int(paintpos), y, frame_width, height)
+                frame_num = (frame_num + 1) % 2
+                paintpos += frame_width
 
     def drawPosition(self, context, allocation):
         if self.getShadedDuration() <= 0:
