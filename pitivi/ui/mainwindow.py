@@ -695,44 +695,12 @@ class PitiviMainWindow(gtk.Window, Loggable):
             self._setBestZoomRatio()
 
     def _setBestZoomRatio(self):
-        # reset the default zoom ratio
-        Zoomable.setZoomRatio(2)
-
         ruler_width = self.timeline.ruler.get_allocation()[2]
-        # FIXME : The problem with this algorithm is that all widget classes using
-        # the Zoomable interface will be redrawn when doing ZoomIn/Out.
-        # We should ideally figure out the optimal zoom level without redrawing widgets
-        while True:
-            current_level = Zoomable.getCurrentZoomLevel()
+        timeline_duration = self.project.timeline.duration
 
-            self.log("Setting best zoom ratio. Current level %r",
-                     current_level)
-            timeline_width = Zoomable.nsToPixel(self.project.timeline.duration)
-
-            if ruler_width == timeline_width:
-                # perfect
-                break
-
-            if ruler_width > timeline_width:
-                self.log("Trying to zoom in")
-                if current_level == len(Zoomable.zoom_levels) - 1:
-                    self.log("Reached maximum zoom level, breaking out")
-                    break
-
-                Zoomable.zoomIn()
-                timeline_width = Zoomable.nsToPixel(self.project.timeline.duration)
-                if timeline_width > ruler_width:
-                    self.log("too big, zooming out and breaking out")
-                    Zoomable.zoomOut()
-                    break
-
-            else:
-                if current_level == 0:
-                    self.log("Reached minimum zoom level, breaking out")
-                    break
-
-                self.log("zooming out")
-                Zoomable.zoomOut()
+        ideal_zoom_ratio = ruler_width / float(timeline_duration / gst.SECOND)
+        nearest_zoom_level = Zoomable.computeZoomLevel(ideal_zoom_ratio)
+        Zoomable.setZoomLevel(nearest_zoom_level)
 
     def _projectManagerNewProjectLoadingCb(self, projectManager, uri):
         self.log("A NEW project is being loaded, deactivate UI")
