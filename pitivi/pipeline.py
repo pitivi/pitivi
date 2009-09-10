@@ -774,35 +774,39 @@ class Pipeline(Signallable, Loggable):
     ## Private methods
 
     def _busMessageCb(self, unused_bus, message):
-        self.info("%s [%r]" , message.type, message.src)
         if message.type == gst.MESSAGE_EOS:
             self.emit('eos')
-        elif message.type == gst.MESSAGE_STATE_CHANGED and message.src == self._pipeline:
+        elif message.type == gst.MESSAGE_STATE_CHANGED:
             prev, new, pending = message.parse_state_changed()
-            self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
+            self.debug("element %s state change %s" % (message.src,
+                    (prev, new, pending)))
 
-            emit_state_change = pending == gst.STATE_VOID_PENDING
-            if prev == STATE_READY and new == STATE_PAUSED:
-                # trigger duration-changed
-                try:
-                    self.getDuration()
-                except PipelineError:
-                    # no sinks??
-                    pass
-            elif prev == STATE_PAUSED and new == STATE_PLAYING:
-                self._listenToPosition(True)
-            elif prev == STATE_PLAYING and new == STATE_PAUSED:
-                self._listenToPosition(False)
+            if message.src == self._pipeline:
+                self.debug("Pipeline change state prev:%r, new:%r, pending:%r", prev, new, pending)
 
-            if emit_state_change:
-                self.emit('state-changed', new)
+                emit_state_change = pending == gst.STATE_VOID_PENDING
+                if prev == STATE_READY and new == STATE_PAUSED:
+                    # trigger duration-changed
+                    try:
+                        self.getDuration()
+                    except PipelineError:
+                        # no sinks??
+                        pass
+                elif prev == STATE_PAUSED and new == STATE_PLAYING:
+                    self._listenToPosition(True)
+                elif prev == STATE_PLAYING and new == STATE_PAUSED:
+                    self._listenToPosition(False)
 
+                if emit_state_change:
+                    self.emit('state-changed', new)
         elif message.type == gst.MESSAGE_ERROR:
             error, detail = message.parse_error()
             self._handleErrorMessage(error, detail, message.src)
         elif message.type == gst.MESSAGE_DURATION:
             self.debug("Duration might have changed, querying it")
             gobject.idle_add(self._queryDurationAsync)
+        else:
+            self.info("%s [%r]" , message.type, message.src)
 
     def _queryDurationAsync(self, *args, **kwargs):
         try:
@@ -812,6 +816,7 @@ class Pipeline(Signallable, Loggable):
         return False
 
     def _handleErrorMessage(self, error, detail, source):
+        self.error("error from %s: %s (%s)" % (source, error, detail))
         self.emit('error', error, detail)
 
     def _busSyncMessageHandler(self, unused_bus, message):
