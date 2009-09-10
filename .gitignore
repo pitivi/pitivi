@@ -25,6 +25,7 @@ INSTALL
 *.pyc
 *~
 .*.swp
+.*.swo
 *.tar.*
 .coverage
 *,cover
