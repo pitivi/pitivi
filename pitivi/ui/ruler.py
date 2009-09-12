@@ -58,6 +58,9 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         self.add_events(gtk.gdk.POINTER_MOTION_MASK |
             gtk.gdk.BUTTON_PRESS_MASK | gtk.gdk.BUTTON_RELEASE_MASK)
         self.set_hadjustment(hadj)
+        self.hadj = hadj
+        self.pixel_position_offset = 0
+        hadj.connect("value-changed", self._hadjValueChangedCb)
 
         # double-buffering properties
         self.pixmap = None
@@ -80,6 +83,9 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         self.frame_height = 5.0
         self.frame_rate = gst.Fraction(1/1)
 
+    def _hadjValueChangedCb(self, hadj):
+        self.pixel_position_offset = Zoomable.nsToPixel(self.position) - hadj.get_value()
+
 ## Zoomable interface override
 
     def zoomChanged(self):
@@ -94,6 +100,7 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         ppos = max(self.nsToPixel(self.position) - 1, 0)
         self.position = value
         npos = max(self.nsToPixel(self.position) - 1, 0)
+        self._hadjValueChangedCb(self.hadj)
         height = self.get_allocation().height
         self.bin_window.invalidate_rect((ppos, 0, 2, height), True)
         self.bin_window.invalidate_rect((npos, 0, 2, height), True)
@@ -107,6 +114,9 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         self.debug("Setting layout size to %d x %d",
                    width, allocation.height)
         self.set_size(width, allocation.height)
+        new_pos = Zoomable.nsToPixel(self.position) -\
+            self.pixel_position_offset
+        self.hadj.set_value(new_pos)
         # the size has changed, therefore we want to redo our pixmap
         self.doPixmap()
 
