@@ -158,6 +158,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ruler.set_size_request(0, 25)
         self.ruler.set_border_width(2)
         self.ruler.connect("key-press-event", self._keyPressEventCb)
+        self.ruler.connect("size-allocate", self._rulerSizeAllocateCb)
         self.attach(self.ruler, 1, 2, 0, 1, yoptions=0)
 
         # proportional timeline
@@ -361,9 +362,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 ## Zooming and Scrolling
 
     def zoomChanged(self):
-        # this has to be in a timeout, because the resize hasn't actually
-        # completed yet, and so the canvas can't actually complete the scroll
-        gobject.idle_add(self.scrollToPlayhead)
+        self._canvas.props.redraw_when_scrolled = True
+        self.ruler.queue_resize()
+        self.ruler.queue_draw()
 
     def timelinePositionChanged(self, position):
         self._position = position
@@ -394,6 +395,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
     def _scrollToPosition(self, position):
         self.hadj.set_value(position)
         return False
+
+    def _rulerSizeAllocateCb(self, ruler, allocation):
+        self._canvas.props.redraw_when_scrolled = False
 
 ## Project callbacks
 
