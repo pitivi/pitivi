@@ -310,7 +310,7 @@ class TestProjectManager(TestCase):
         self.failUnless(uri_is_reachable(uri))
 
         # wait a bit
-        time.sleep(0.01)
+        time.sleep(1.0)
 
         # save project under new path
         self.failUnless(self.manager.saveProject(
@@ -323,7 +323,7 @@ class TestProjectManager(TestCase):
         self.failUnless(mtime < mtime2)
 
         # wait a bit more
-        time.sleep(0.01)
+        time.sleep(1.0)
 
         # save project again under new path (by omitting uri arg)
         self.failUnless(self.manager.saveProject(
