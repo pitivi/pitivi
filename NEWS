@@ -1,3 +1,11 @@
+2009 September 12 - PiTiVi 0.13.3
+
+ * Fix rendering failures
+ * UI beautifications
+ * Switch to themeable ruler
+ * Speed optimisations
+ * Show the project name in the window title
+
 2009 August 13 - PiTiVi 0.13.2
 
  * Undo/Redo support

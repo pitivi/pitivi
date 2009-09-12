@@ -1,26 +1,31 @@
-0.13.3 Release "Jailbreak (out of Deadlock City)" 
--------------------------------------------------
+0.13.3 Release "... we shall never (sur)render"
+-----------------------------------------------
 
-The PiTiVi team is proud to announce the second release in the unstable 0.13
+The PiTiVi team is proud to announce the third release in the unstable 0.13
 PiTiVi series.
 
 Due to its dependency on GStreamer, The PiTiVi team strongly recommends users have
 all official latest gstreamer libraries and plugins installed for the best user
 experience.
 
+Title is from a quote by Winston Churchill “We shall defend our island, whatever
+the cost may be, we shall fight on the beaches, we shall fight on the landing
+grounds, we shall fight in the fields and in the streets, we shall fight in the
+hills; we shall never surrender.”
+
 
 * Features of this release
-
- * Undo/Redo support
- * Audio mixing
- * Ripple/Roll edit
- * misc fixes everywhere
+ * Fix rendering failures
+ * UI beautifications
+ * Switch to themeable ruler
+ * Speed optimisations
+ * Show the project name in the window title
 
 * Requirements
 
  * gstreamer >= 0.10.24
  * gst-python >= 0.10.16
- * gnonlin >= 0.10.12
+ * gnonlin >= 0.10.13
  * pygtk >= 2.14.0
  * Python >= 2.5
  * zope.interface (http://www.zope.org/Products/ZopeInterface)
@@ -31,20 +36,16 @@ experience.
 
 * Contributors
 
-   148  Alessandro Decina
-   102  Brandon Lewis
-    61  Edward Hervey
-     7  Claude Paroz
-     5  Mario Blättermann
-     4  Per Kongstad
-     3  António Lima
-     2  Daniel Nylander
-     2  Jan Gerber
-     1  Bruce Cowan
-     1  Gianvito Cavasoli
-     1  Gil Forcada
-     1  Jesse Aviles
-     1  Jesse Avilés
+    39  Alessandro Decina
+    32  Brandon Lewis
+    22  Edward Hervey
+     2  Hendrik Richter
+     2  Jorge González
+     2  Michael Terry
+     1  Antón Méixome
+     1  Claude Paroz
+     1  Daniel Nylander
+     1  Petr Kovar
 
 * Download
 
@@ -63,72 +64,21 @@ experience.
 
 * Bugs Fixed
 
- * 584023 : Import Folder of Clips menu item not working
- * 589814 : [keyframe] should have percentage labels
- * 566486 : [Segmentation fault] (py)goocanvas 0.13 and python 2.6
- * 576276 : contextual toolbar buttons should be insensitive when not...
- * 579536 : source list thumbnails are not shown when loading a project
- * 583637 : Change command line interface to be more compatible with ...
- * 584049 : PiTiVi doesn't keep the &quot; Nothing yet &quot; status on render wi...
- * 584093 : selecting overlapping clips selected clips moves to top
- * 584899 : [Formatter] Fix .pls/.m3u Formatters
- * 585181 : no thumbnails for existing sources after loading .xptv
- * 586786 : Trying to dispose element pngenc0, but it is not in the N...
- * 587332 : undo forgets about volume keyframes
- * 587333 : no way to remove volume node/keyframe
- * 587334 : volume operations can not be undone
- * 587371 : crash on start if ~/.local does not exist
- * 587377 : Command line -i flag broken
- * 587411 : keyframes broken with trimmed clips
- * 587945 : editing_context and advanced_editing_modes branches
- * 588258 : undo and redo should be in the main toolbar
- * 588415 : Traceback after dropping new clips onto the timeline
- * 589694 : trimmed clips can be extended under/over clips next to them
- * 589695 : adding several clips with mouse, they overlap if moving t...
- * 589725 : don't block the user from overlapping clips
- * 589784 : default pane positions are fail sauce
- * 589803 : Problems while moving a clip to a different layer
- * 589807 : Double-clicking a clip in source-list has no effect
- * 378597 : Multiple-resolution logo
- * 518689 :  &quot; Internal data stream error &quot; with OGG video
- * 568749 : Choppy Audio with some .avi files
- * 575945 : mix concurrent audio clips on different layers
- * 575952 : better spacing around thumbnail frames in the timeline
- * 576575 : clips can only be added to first layer
- * 577451 : Text doesn't fit into the box
- * 583226 : can't render, clowns will eat me
- * 583241 : better default filechooser size for the &quot; missing media &quot; d...
- * 583474 : Use named placeholders when string contains more than one
- * 583861 : Translation of /pitivi/utils.py:234
- * 584056 : Minor string fixes
- * 584084 : File filter menu not translated in open dialog
- * 584086 : Button labels not translatable
- * 584123 : Some strings in encoding dialog are not translatable
- * 584128 : Most labels in Preferences are untranslatable
- * 584415 : Cairo - &gt; cairo
- * 584416 : Ambigous string
- * 586184 : formatter cant find all streams on project load
- * 587327 : write all temp files into one folder in /tmp
- * 587378 : Ctrl + Click broken
- * 589513 : timeline requests too much space when loading files
- * 589628 : Media clip thumbnails not loaded if you re-open a project
- * 589689 : keyframe curves go through the roof
- * 589715 : implement ripple trims
- * 589799 : Sound cuts out replaying mp4
- * 589820 : [keyframes] audio volume curves don't allow amplifying th...
- * 590195 : 0.13.1.1 - &gt; 0.13.1.2 needs newer python-gtk
- * 591149 : regression in the project settings dialog
- * 579323 : save button should be insensitive when no changes have be...
- * 579531 : warn about unsaved changes on close
- * 580680 : toolbar settings not applied on startup
- * 585653 : regression: simple save has been replaced by save as
- * 585794 : regression: render button/menu item is insensitive
- * 582327 : playhead resets the timeline scroll position on clicking ...
- * 575364 : [LGM2009] first 4 seconds of OGV (theora) clips cannot be...
- * 579237 : search as you type doesn't work in the media library
- * 585926 : importing a DV-in-avi file fails
- * 587008 : keyframes not saved
- * 589812 : the mouse cursor should change when over a curve/keyframe
- * 589813 : [keyframe] dragging a curve segment between two keyframes...
- * 589817 : cancel accidental movement when double-clicking on a curve
-
+ * 520653 : pitivi.desktop fixes and more
+ * 575311 : clips appear to be duplicated at high zoom levels when the timeline cursor is near the edge
+ * 576576 : not possible to add clip at end of timeline
+ * 584170 : Video Playback Fails, Without Program Crash
+ * 590114 : rendering never finishes
+ * 590153 : Zoom to optimum level when loading projects
+ * 590203 : image hang during playback (auriga)
+ * 590440 : Strings not marked for translation in check.py
+ * 591571 : Removing a keyframe is not easy
+ * 591616 : crashes when creating a new project after loading a project
+ * 591617 : regression: centering on playhead when zooming broke
+ * 593736 : play button is empty
+ * 594114 : Sound curves not taken into account when rendering
+ * 594311 : Clicking the timeline leads to a TypeError
+ * 575975 : project-centric window title
+ * 582363 : huge tabs the size of a hallway
+ * 594181 : playhead/seeking broken by latest changes to factory cache in singledecodebin
+ * 594396 :  " save as " confuses pitivi; subsequent saves are on the original project file

@@ -1,3 +1,602 @@
+2009-09-12  Edward Hervey <bilboed@bilboed.com>
+
+	* ChangeLog:
+	* NEWS:
+	* RELEASE:
+	* configure.ac:
+	  0.13.3 release "... we shall never (sur)render"
+
+2009-09-12  Edward Hervey <bilboed@bilboed.com>
+
+	* docs/bugzilla:
+	  docs: Add a tool for getting list of bugs fixed for releases.
+	  Adapted from the script in gstreamer's www module
+
+2009-09-12  Edward Hervey <bilboed@bilboed.com>
+
+	* tests/test_projectmanager.py:
+	  test_projectmanager: Increase sleep to 1s to make test reliable.
+	  On some (file)systems, mtime is returned as multiples of seconds :(
+
+2009-09-12  Edward Hervey <bilboed@bilboed.com>
+
+	* tests/Makefile.am:
+	  tests: Clean up more remnants of test files
+
+2009-09-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Fix stepping by frame with left and right arrows.
+
+2009-09-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/pipeline.py:
+	  Add some debugging of state changes.
+
+2009-09-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* icons/scalable/Makefile.am:
+	  Don't install a 48x48 png as a scalable icon. HEH.
+
+2009-09-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* configure.ac:
+	* icons/Makefile.am:
+	* icons/scalable/Makefile.am:
+	* icons/scalable/pitivi.svg:
+	* pitivi.desktop.in:
+	  Install a scalable icon.
+
+2009-09-10  Alessandro Decina <alessandro.d@gmail.com>
+
+	* .gitignore:
+	  Add .*.swo to .gitignore
+
+2009-09-09  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/ruler.py:
+	  ruler: make draw* functions toplevel methods.
+	  drawTick drawTicks drawTimes drawFrameBoundaries and drawPosition were nested
+	  functions. This change makes them toplevel methods since they are in an hot path
+	  (Ruler.drawRuler is called every time the zoom level changes).
+
+2009-09-09  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/ruler.py:
+	  ruler: don't sort self.scale, it's always kept sorted.
+
+2009-09-08  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: take pixmap offset into account when drawing shaded area
+
+2009-09-08  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  mainwindow.py: simplify implementation of setBestZoomRatio
+
+2009-03-11  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	* pitivi/ui/zoominterface.py:
+	  zoominterface.py: use a cubic function to compute zoom level instead of discrete list
+
+2009-09-08  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  timeline.py: previous changes allow making the ruler shorter
+
+2009-09-08  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: fix rounding error in scale text
+
+2009-09-08  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: set lowest scale ticks according to project framerate
+	  ruler.py: set lowest scale values based on project frame rate
+
+2009-09-08  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: tick spacing and subdivision insipired by gtk.Ruler
+
+2009-09-08  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: draw times using gtk.Ruler method of determining scale/interval
+
+2009-09-08  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: draw text next to ticks, rather than centered over them
+
+2009-09-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: draw ticks from bottom up
+
+2009-09-02  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  timeline.py: set ruler framerate when project settings change
+
+2009-09-02  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: draw frame boundaries when zoom is high enough
+
+2009-09-02  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: context parameter to draw functions no longer needed
+
+2009-09-02  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: use pixmap routines for drawing instead of cairo routines
+
+2009-09-02  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/ruler.py:
+	  ruler.py: remove draw() function which isn't called from anywhere
+
+2009-09-08  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  0.13.2.4 pre-release
+
+2009-09-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/encodingdialog.py:
+	* pitivi/ui/exportsettingswidget.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/sourcelist.py:
+	  Set the stock pitivi icon on dialogs that didn't have an icon.
+
+2009-09-08  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Make the "unsaved changes" dialog less ugly.
+
+2009-09-07  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure.ac: Depend on GNonLin 0.10.13
+
+2009-09-06  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/encode.py:
+	  encode: Speed up encoder/muxer lists:
+	  This uses several tricks:
+	  * A class to store the list of encoders/muxers (resetted if registry changes)
+	  * That class sorts encoders/muxers faster
+	  * Use cached values of muxer sink caps when lookign for compatible encoders
+
+2009-09-06  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/utils.py:
+	  utils: New profiling decorator
+	  Use as such:
+	  @profile
+	  def my_function_or_method(blah):
+	  ....
+
+2009-09-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/timeline.py:
+	  ui.timeline.py: set scroll position when zoom changes closes bug 591617
+
+2009-09-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* tests/test_projectmanager.py:
+	  test_projectmanager.py: test save and load with regression test for 594396
+
+2009-09-07  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/formatters/base.py:
+	  formatters.base.py: always set project name and uri after saving. closes bug 594396
+
+2009-09-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/plumber.py:
+	* pitivi/ui/viewer.py:
+	  If the sink has a double-buffer property set that to False.
+
+2009-09-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/action.py:
+	* pitivi/application.py:
+	* pitivi/plumber.py:
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/viewer.py:
+	  Make setting the XID on the videosink threadsafe.
+	  Fix some DRY violations in the process.
+
+2009-09-07  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/ruler.py:
+	  Fix a traceback seeking in an empty timeline. Fixes #594311.
+
+2009-09-07  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/mainwindow.py:
+	  MainWindow: Release gdk lock when running MissingURI dialog.
+
+2009-07-20  Michael Terry <michael.terry@canonical.com>
+
+	* Makefile.am:
+	* icons/Makefile.am:
+	* pitivi.png:
+	* pitivi.spec.in:
+	  Remove duplicate icon file
+	  http://bugzilla.gnome.org/show_bug.cgi?id=520653
+
+2009-07-20  Michael Terry <michael.terry@canonical.com>
+
+	* Makefile.am:
+	* configure.ac:
+	* pitivi.desktop.in.in:
+	* pitivi.spec.in:
+	* pitivi/ui/mainwindow.py:
+	* po/POTFILES.in:
+	  Update desktop file, use icon theme
+	  http://bugzilla.gnome.org/show_bug.cgi?id=520653
+
+2009-09-05  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/factories/base.py:
+	  SourecFactory: Don't remove the volume elements when a pad goes away. Fixes #594114
+	  We only need to remove those elements when the bin is released, there's code that
+	  takes care of that already.
+
+2009-09-05  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/mainwindow.py:
+	  MainWindow: Fix algorithm for finding best zoom ratio.
+	  Zoomable.getCurrentZoomLevel is an index in the zoom_levels table and not
+	  the actual zoom ratio.
+
+2009-09-05  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/application.py:
+	* pitivi/ui/viewer.py:
+	  application/viewer: Use GDK lock when getting/settings XID.
+	  so yes... not only do you need to use gobject.threads_init(), but also
+	  gtk.gdk.threads_init() and gtk.gdk.threads_{enter|leave}.
+	  pyg* devs hate multi-threaded app developers it seems... or are scared of them.
+
+2009-09-05  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/ui/viewer.py:
+	  viewer: set_size_request() takes integers.
+	  Removes a stupid little warning
+
+2009-09-05  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/utils.py:
+	  CachedFactoryList: We sort factories by reverse order of rank. Fixes #594181
+	  Also add some debugging.
+
+2009-09-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/singledecodebin.py:
+	* pitivi/utils.py:
+	  Fix the factory cache in singledecodebin.
+
+2009-09-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  Force the play button to be visible, regardless of the gtk-button-images setting.
+
+2009-09-04  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/singledecodebin.py:
+	  Avoid an iterator Resync exception in singledecodebin.
+
+2009-09-04  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/singledecodebin.py:
+	  SingleDecodeBin: Cache globally the list of usable gst.ElementFactory
+	  Otherwise this list gets recomputed/stored for every single instance of
+	  singledecodebin used in the pitivi.
+	  This is a speed and memory optimization.
+
+2009-09-03  Edward Hervey <bilboed@bilboed.com>
+
+	* pitivi/elements/singledecodebin.py:
+	  SingleDecodeBin: Set the uri source block size to 512kbytes.
+	  This will only affect sources used in push-based mode, like when used in combination
+	  with jpegdec. This speeds up considerably decoding/usage of jpeg images.
+
+2009-09-03  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Take into account the horizontal adjustment position when dropping clips on the timeline.
+
+2009-09-02  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/test_timeline.py:
+	  Remove dead code from tests.test_timelin
+
+2009-09-02  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure.ac: 0.13.2.3 pre-release
+
+2009-09-02  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure.ac: Depend on latest gnonlin. Fixes #590203
+
+2009-09-02  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/timeline.py:
+	  Add some padding at the end of the timeline. Fixes #576576.
+
+2009-09-02  Claude Paroz <claude@2xlibre.net>
+
+	* pitivi/check.py:
+	  Fix some strings not marked for translation in  check.py. Fixes #590440.
+
+2009-09-02  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  Force a minimum size on the viewer only when running at resolution >= Xx800
+
+2009-08-30  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
+2009-08-29  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure.ac: 0.13.2.2 pre-release
+
+2009-08-29  Edward Hervey <bilboed@bilboed.com>
+
+	* po/POTFILES.in:
+	  po:Add pitivi.ui.common to translatable files.
+
+2009-08-29  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure.ac: Depend on latest gnonlin for race condition fix.
+
+2009-08-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/common.py:
+	  Add an env variable to turn off reference leaks.
+
+2009-08-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* tests/common.py:
+	  Performance fix in common.TestCase which makes running all the tests 30 seconds faster.
+
+2009-08-27  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/base.py:
+	  Remove an unicode (\xc2) blank from a comment.
+
+2009-08-26  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/factories/base.py:
+	  SourceFactory: make sure audio elements reach the right state before dataflow starts. Finally fixes #590114.
+
+2009-08-25  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/singledecodebin.py:
+	  Drop TAG events in singledecodebin if they arrive before a NEWSEGMENT.
+
+2009-08-24  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/zoominterface.py:
+	  Find an optimum zoom level when loading a project. Fixes #590153.
+
+2009-08-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  Constrain the viewer to a decent minimum size (where decent == good looking).
+
+2009-08-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Remove geometry hints and let the natural size be the minimum size.
+
+2009-08-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/base.py:
+	* pitivi/formatters/etree.py:
+	  Update factory.filename to point to the new filename when a file is moved.
+
+2009-08-21  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Fix loading of utf8 encoded source filenames.
+
+2009-07-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* tests/test_projectmanager.py:
+	  test_projectmanager.py: fix test cases
+
+2009-07-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/mainwindow.py:
+	  ui.mainwindow.py: show metadata in missing uri dialog
+	  fixes bug 583243 (except for thumbnail)
+
+2009-07-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/projectmanager.py:
+	* pitivi/ui/mainwindow.py:
+	  ui.mainwindow.py, projectmanager.py: pass factory in missing-uri signal
+
+2009-07-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/common.py:
+	* pitivi/ui/sourcelist.py:
+	  ui.sourcelist.py, ui.common.py: move beautify_* functions to ui.common.py
+
+2009-07-28  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/formatters/base.py:
+	* pitivi/formatters/etree.py:
+	* pitivi/projectmanager.py:
+	  formatters, projectmanager.py: pass instance of factory in missing-uri signal
+
+2009-08-20  Daniel Nylander <po@danielnylander.se>
+
+	* po/sv.po:
+	  Updated Swedish translation
+
+2009-08-20  Antón Méixome <meixome@mancomun.org>
+
+	* po/gl.po:
+	  Updated Galician Translation
+
+2009-08-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  Don't display the duration of the current pipeline in the viewer.
+	  The viewer used to display a "position / duration" label. This change removes
+	  the duration part, thus halving the horizontal space required for the viewer
+	  controls.
+	  The duration is still displayed in the sourcelist when playing a clip and in
+	  the ruler when working with the timeline.
+
+2009-08-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/projecttabs.py:
+	  Remove padding from ProjectTabs.
+
+2009-08-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/viewer.py:
+	  Remove border and spacing from the viewer.
+	  Die dead space die!
+
+2009-08-19  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/sourcelist.py:
+	  Remove border and spacing in the sourcelist.
+
+2009-08-18  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/factories/file.py:
+	  limit maximum volume amplification to 200% of original closes bug 589820
+
+2009-08-17  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: also set focus keyframe on enter events keyframes should now be much easier to manipulate which should close bug 591571
+
+2009-08-17  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  focus the new keyframe after adding a keyframe via double-clicking
+
+2009-08-17  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: find focused keyframe during hover events, use this keyframe when dragging begins
+
+2009-08-17  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: draw focused keyframe in inverted colors
+
+2009-08-17  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: unset focused keyframe if this keyframe is removed
+
+2009-08-17  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/curve.py:
+	  curve.py: make keyframes slightly larger mouse targets
+
+2009-08-18  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/controller.py:
+	  controller.py: don't call enter during drag either
+
+2009-08-18  Brandon Lewis <brandon_lewis@berkeley.edu>
+
+	* pitivi/ui/controller.py:
+	  controller.py: add hover() method
+
+2009-08-18  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/projecttabs.py:
+	  ProjectTabs tweaks.
+	  Make tabs expand. Set the window title on detached tabs.
+
+2009-08-18  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	* pitivi/ui/projecttabs.py:
+	  Replace our custom detachable tabs with regular gtk (detachable) tabs.
+	  Gtk now supports detachable tabs so we can remove our custom code. This makes us
+	  look more consistent with other apps like empathy epiphany etc that have the
+	  same functionality.
+
+2009-08-18  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/ui/mainwindow.py:
+	  Show the project name in the window title. Fixes #575975.
+
+2009-08-18  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/etree.py:
+	  Fix a traceback loading a project with no sources.
+
+2009-08-18  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/formatters/base.py:
+	  Set the project name from the project filename.
+
+2009-08-18  Alessandro Decina <alessandro.d@gmail.com>
+
+	* pitivi/elements/singledecodebin.py:
+	* pitivi/ui/timeline.py:
+	  Use Seeker to compress seek events generated with the Left and Right keys.
+
+2009-08-17  Edward Hervey <bilboed@bilboed.com>
+
+	  Merging translations
+	  Merge commit 'gnome/master'
+
+2009-08-17  Edward Hervey <bilboed@bilboed.com>
+
+	* configure.ac:
+	  configure.ac: and back to development we go...
+
+2009-08-17  Hendrik Richter <hendrikr@gnome.org>
+
+	* po/de.po:
+	  Updated German translation.
+
+2009-08-17  Hendrik Richter <hendrikr@gnome.org>
+
+	* po/de.po:
+	  Fix #589908
+
+2009-08-17  Petr Kovar <pknbe@volny.cz>
+
+	* po/LINGUAS:
+	* po/cs.po:
+	  Added Czech translation by Jan Drabek
+	  Reviewed by: Petr Kovar.
+
+2009-08-14  Jorge González <jorgegonz@svn.gnome.org>
+
+	* po/es.po:
+	  Updated Spanish translation
+
 2009-08-13  Edward Hervey <bilboed@bilboed.com>
 
 	* ChangeLog:
