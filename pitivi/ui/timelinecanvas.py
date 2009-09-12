@@ -265,7 +265,6 @@ class TimelineCanvas(goocanvas.Canvas, Zoomable, Loggable):
         w = Zoomable.nsToPixel(self.max_duration)
         self.set_bounds(0, 0, w, self._height)
         self._razor.props.height = self._height
-        self.get_root_item().changed(True)
 
 ## Zoomable Override
 
