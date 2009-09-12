@@ -1,0 +1,201 @@
+#!/usr/bin/env python
+# -*- Mode: Python -*-
+# vi:si:et:sw=4:sts=4:ts=4
+
+
+# parse HTML from bugzilla.gnome.org to create a list of bugs for a given
+# product, component and target_milestone
+
+import re
+import os
+import sys
+import codecs
+import urllib
+import HTMLParser
+
+# a sample bug line we parse for future reference:
+#<TR VALIGN=TOP ALIGN=LEFT CLASS="Nor" ><TD><A HREF="show_bug.cgi?id=78267">78267</A> <td class=severity><nobr>min</nobr></td><td class=priority><nobr>Nor</nobr></td><td class=owner><nobr>thomas@apestaart.org</nobr></td><td class=status><nobr>RESO</nobr></td><td class=resolution><nobr>FIXE</nobr></td><td class=summary>autogen.sh doesn't take --prefix and similar to configure</td></TR>
+
+# a sample bug section after olav's updating of bugzilla
+#    <td class="first-child">
+#      <a href="show_bug.cgi?id=147641">147641</a>
+#      <span style="display: none"></span>
+#    </td>
+#
+#    <td style="white-space: nowrap">nor
+#    </td>
+#    <td style="white-space: nowrap">Nor
+#    </td>
+#    <td style="white-space: nowrap">Linu
+#    </td>
+#    <td style="white-space: nowrap">GStreamer
+#    </td>
+#    <td style="white-space: nowrap">RESO
+#    </td>
+#    <td style="white-space: nowrap">FIXE
+#    </td>
+#    <td >[docs] pydoc segfaults when viewing gst package doc
+#    </td>
+#
+#  </tr>
+
+
+URL = 'http://bugzilla.gnome.org/buglist.cgi?product=%s&target_milestone=%s'
+
+# reg = re.compile('<TR.*id=(\d+)".*summary>(.*)<\/td')
+
+HEADER = '  <bugs>'
+ITEM = """    <bug>
+      <id>%s</id>
+      <summary>%s</summary>
+    </bug>"""
+FOOTER = '  </bugs>'
+
+default_product = "pitivi"
+
+TD_ID = 1
+TD_SUMMARY = 7
+# after Olav's changes, it's now number 8
+TD_SUMMARY = 8
+
+def unescape(text):
+   """Removes HTML or XML character references 
+      and entities from a text string.
+      keep &amp;, &gt;, &lt; in the source code.
+   from Fredrik Lundh
+   http://effbot.org/zone/re-sub.htm#unescape-html
+   """
+   import htmlentitydefs
+   def fixup(m):
+      text = m.group(0)
+      if text[:2] == "&#":
+         # character reference
+         try:
+            if text[:3] == "&#x":
+               return unichr(int(text[3:-1], 16))
+            else:
+               return unichr(int(text[2:-1]))
+         except ValueError:
+            print "erreur de valeur"
+            pass
+      else:
+         # named entity
+         try:
+            if text[1:-1] == "amp":
+               text = "&amp;amp;"
+            elif text[1:-1] == "gt":
+               text = "&amp;gt;"
+            elif text[1:-1] == "lt":
+               text = "&amp;lt;"
+            else:
+               print text[1:-1]
+               text = unichr(htmlentitydefs.name2codepoint[text[1:-1]])
+         except KeyError:
+            print "keyerror"
+            pass
+      return text # leave as is
+   return re.sub("&#?\w+;", fixup, text)
+
+
+# Horrible, don't look here
+class HP(HTMLParser.HTMLParser):
+    def __init__(self):
+        HTMLParser.HTMLParser.__init__(self)
+        self.tr = 0
+        self.td = 0
+        self.bugs = []
+        self.bugno = 0
+        self.descr = ""
+
+    def handle_starttag(self, tag, data):
+        if tag == 'tr':
+            self.tr = 1
+            return
+        # count td's
+        elif self.tr and tag.startswith('td'):
+            self.td += 1
+
+    # all &gt; refs are handled through this method; append them to self.descr
+    def handle_entityref(self, name):
+        self.descr += " &%s; " % name
+
+    # can be called more than once for one td
+    def handle_data(self, data):
+        if not self.tr:
+            return
+        data = data.strip()
+        if not data:
+            return
+
+        # print self.td, self.tr, repr(data)
+
+        # clear self.descr if we're not in the correct td
+        if self.td != TD_SUMMARY:
+            self.descr = ""
+
+        # check what td it is in
+        if self.td == TD_ID:
+            try:
+                self.bugno = int(data)
+            except ValueError:
+                self.bugno = 0
+        elif self.td == TD_SUMMARY:
+            # the summary td
+            self.descr += data
+
+    def handle_endtag(self, tag):
+        if tag == 'tr':
+            self.tr = 0
+            self.td = 0
+            if self.bugno != 0:
+                self.bugs.append((self.bugno, self.descr))
+                self.bugno = 0
+
+def main(args):
+    if len(args) < 2:
+        print 'Usage: %s milestone [product] [file]' % args[0]
+        return 2
+
+    milestone = args[1]
+
+    if len(args) <= 2:
+        product = default_product
+    else:
+        product = args[2]
+
+    if len(args) <= 3:
+        output = None
+    else:
+        output = args[3]
+
+    url = URL % (product, milestone)
+    fd = urllib.urlopen(url)
+
+    hp = HP()
+    hp.feed(fd.read())
+
+    lines = ["\n", ]
+    for bug_id, summary in hp.bugs:
+        lines.append(" * %d : %s" % (bug_id, unescape(summary)))
+        #lines.append("* [http://bugzilla.gnome.org/show_bug.cgi?id=%d %d] : %s" % (bug_id, bug_id, summary))
+    bugs = "\n".join(lines)
+
+    if not output:
+        print bugs
+    else:
+        # get original
+        #doc = codecs.open(output, "r", encoding='utf-8').read()
+        doc = open(output, "r").read()
+        matcher = re.compile('(.*)<bugs>.*</bugs>(.*)',
+            re.DOTALL)
+        match = matcher.search(doc)
+        pre = match.expand('\\1')
+        post = match.expand('\\2')
+
+        backup = output + ".bugs.bak"
+        os.rename(output, backup)
+        handle = open(output, "w")
+        handle.write(pre + bugs + post)
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv))
