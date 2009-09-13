@@ -11,8 +11,8 @@ msgstr ""
 "Project-Id-Version: pitivi.HEAD.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-08-29 09:48+0000\n"
-"PO-Revision-Date: 2009-08-30 11:12+0200\n"
+"POT-Creation-Date: 2009-09-12 15:51+0000\n"
+"PO-Revision-Date: 2009-09-13 08:22-0400\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,6 +20,14 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
+
+#: ../pitivi.desktop.in.in.h:1
+msgid "Create and edit your own movies"
+msgstr "Crea y edita tus propias películas"
+
+#: ../pitivi.desktop.in.in.h:2
+msgid "Pitivi Video Editor"
+msgstr "Pitivi Video Editor"
 
 #: ../pitivi/check.py:102
 #, python-format
@@ -125,6 +133,12 @@ msgid ""
 msgstr ""
 "No tiene una versión reciente de los bindings de Python para GTK+ (actual %s)"
 
+#: ../pitivi/check.py:131
+#, python-format
+msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
+msgstr ""
+"Instale una versión de los bindings de Python para GTK+ mayor o igual a %s"
+
 #: ../pitivi/check.py:134
 #, python-format
 msgid ""
@@ -134,10 +148,23 @@ msgstr ""
 "No tiene una versión reciente de los bindings de Python para GStreamer "
 "(actual %s)"
 
+#: ../pitivi/check.py:135
+#, python-format
+msgid ""
+"Install a version of the GStreamer Python bindings greater or equal to %s"
+msgstr ""
+"Instale una versión de los bindings de Python para GStreamer mayor o igual a "
+"%s"
+
 #: ../pitivi/check.py:138
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
 msgstr "No tiene una versión reciente de GStreamer (actual %s)"
+
+#: ../pitivi/check.py:139
+#, python-format
+msgid "Install a version of the GStreamer greater or equal to %s"
+msgstr "Instale una versión de GStreamer mayor o igual a %s"
 
 #: ../pitivi/check.py:142
 #, python-format
@@ -148,6 +175,12 @@ msgstr ""
 "No tiene una versión reciente de los bindings de Python para Cairo (actual %"
 "s)"
 
+#: ../pitivi/check.py:143
+#, python-format
+msgid "Install a version of the cairo Python bindings greater or equal to %s"
+msgstr ""
+"Instale una versión de los bindings de Python para Cairo mayor o igual a %s"
+
 #: ../pitivi/check.py:146
 #, python-format
 msgid ""
@@ -156,6 +189,13 @@ msgid ""
 msgstr ""
 "No tiene una versión reciente del complemento de GStreamer GNonLin (actual %"
 "s)"
+
+#: ../pitivi/check.py:147
+#, python-format
+msgid ""
+"Install a version of the GNonLin GStreamer plugin greater or equal to %s"
+msgstr ""
+"Instale una versión del complemento GNonLin para GStreamer mayor o igual a %s"
 
 #: ../pitivi/check.py:149
 msgid "Could not import the Zope interface module"
@@ -325,21 +365,21 @@ msgstr ""
 "\n"
 "Mezclador:"
 
-#: ../pitivi/utils.py:66
+#: ../pitivi/utils.py:68
 #, python-format
 msgid "%d hour"
 msgid_plural "%d hours"
 msgstr[0] "%d hora"
 msgstr[1] "%d horas"
 
-#: ../pitivi/utils.py:69
+#: ../pitivi/utils.py:71
 #, python-format
 msgid "%d minute"
 msgid_plural "%d minutes"
 msgstr[0] "%d minuto"
 msgstr[1] "%d minutos"
 
-#: ../pitivi/utils.py:72
+#: ../pitivi/utils.py:74
 #, python-format
 msgid "%d second"
 msgid_plural "%d seconds"
@@ -348,7 +388,7 @@ msgstr[1] "%d segundos"
 
 #. Translators: "non local" means the project is not stored
 #. on a local filesystem
-#: ../pitivi/utils.py:239
+#: ../pitivi/utils.py:241
 #, python-format
 msgid "%s doesn't yet handle non local projects"
 msgstr "%s no puede manipular aún proyectos no locales"
@@ -497,16 +537,16 @@ msgstr "Renderizar proyecto"
 msgid "Choose file to render to"
 msgstr "Elegir un archivo que renderizar"
 
-#: ../pitivi/ui/encodingdialog.py:122
+#: ../pitivi/ui/encodingdialog.py:123
 #, python-format
 msgid "About %s left"
 msgstr "Quedan alrededor de %s"
 
-#: ../pitivi/ui/encodingdialog.py:132
+#: ../pitivi/ui/encodingdialog.py:133
 msgid "Rendering"
 msgstr "Renderizando"
 
-#: ../pitivi/ui/encodingdialog.py:149
+#: ../pitivi/ui/encodingdialog.py:150
 msgid "Rendering Complete"
 msgstr "Renderizado completo"
 
@@ -876,7 +916,7 @@ msgstr "Barra de herraminetas de la cronología"
 msgid "Clip Library"
 msgstr "Videoteca"
 
-#: ../pitivi/ui/mainwindow.py:525
+#: ../pitivi/ui/mainwindow.py:524
 msgid "Open File..."
 msgstr "Abrir archivo…"
 
@@ -896,54 +936,48 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Vea http://www.gnu.org/copyleft/lesser.html para más detalles"
 
-#: ../pitivi/ui/mainwindow.py:748
-msgid "Close project"
-msgstr "Cerrar proyecto"
-
-#: ../pitivi/ui/mainwindow.py:750
+#: ../pitivi/ui/mainwindow.py:730
 msgid "Close without saving"
 msgstr "Cerrar sin guardar"
 
-#: ../pitivi/ui/mainwindow.py:764
+#: ../pitivi/ui/mainwindow.py:743
 msgid "Save changes to the current project before closing?"
 msgstr "¿Guardar el proyecto actual antes de cerrar?"
 
-#: ../pitivi/ui/mainwindow.py:767
+#: ../pitivi/ui/mainwindow.py:750
 msgid "If you don't save some of your changes will be lost"
 msgstr "Si no guarda se perderán algunos de sus cambios"
 
-#: ../pitivi/ui/mainwindow.py:814
+#: ../pitivi/ui/mainwindow.py:802
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi no puede cargar el archivo «%s»"
 
-#: ../pitivi/ui/mainwindow.py:816
+#: ../pitivi/ui/mainwindow.py:805
 msgid "Error Loading File"
 msgstr "Error al cargar el archivo"
 
-#: ../pitivi/ui/mainwindow.py:823
+#: ../pitivi/ui/mainwindow.py:812
 msgid "Locate missing file..."
 msgstr "Encontrar archivo perdido..."
 
-#: ../pitivi/ui/mainwindow.py:831
-#| msgid "The following file can not be used with PiTiVi."
+#: ../pitivi/ui/mainwindow.py:821
 msgid "The following file has moved,"
 msgstr "Se ha movido el siguiente archivo,"
 
-#: ../pitivi/ui/mainwindow.py:834
-#| msgid "<b>Description:</b>"
+#: ../pitivi/ui/mainwindow.py:824
 msgid "<b>Duration:</b>"
 msgstr "<b>Duración:</b>"
 
-#: ../pitivi/ui/mainwindow.py:984
+#: ../pitivi/ui/mainwindow.py:974
 msgid "Save As..."
 msgstr "Guardar como…"
 
-#: ../pitivi/ui/mainwindow.py:991
+#: ../pitivi/ui/mainwindow.py:982
 msgid "Untitled.xptv"
 msgstr "Sin título.xptv"
 
-#: ../pitivi/ui/mainwindow.py:1002 ../pitivi/ui/mainwindow.py:1015
+#: ../pitivi/ui/mainwindow.py:993 ../pitivi/ui/mainwindow.py:1006
 msgid "Detect Automatically"
 msgstr "Detectar automáticamente"
 
@@ -1244,31 +1278,31 @@ msgstr "Importar un vídeo"
 msgid "Close after importing files"
 msgstr "Cerrar después de importar los archivos"
 
-#: ../pitivi/ui/sourcelist.py:718
+#: ../pitivi/ui/sourcelist.py:719
 msgid "Importing clips..."
 msgstr "Importando vídeos…"
 
-#: ../pitivi/ui/sourcelist.py:719
+#: ../pitivi/ui/sourcelist.py:720
 msgid "Error(s) occurred while importing"
 msgstr "Hubo algún error al importar"
 
-#: ../pitivi/ui/sourcelist.py:720
+#: ../pitivi/ui/sourcelist.py:721
 msgid "An error occurred while importing"
 msgstr "Ocurrió un error al importar"
 
-#: ../pitivi/ui/sourcelist.py:805
+#: ../pitivi/ui/sourcelist.py:806
 msgid "Error while analyzing files"
 msgstr "Error al analizar los archivos"
 
-#: ../pitivi/ui/sourcelist.py:806
+#: ../pitivi/ui/sourcelist.py:807
 msgid "The following files can not be used with PiTiVi."
 msgstr "Los siguientes archivos no se pueden usar con PiTiVi."
 
-#: ../pitivi/ui/sourcelist.py:808
+#: ../pitivi/ui/sourcelist.py:809
 msgid "Error while analyzing a file"
 msgstr "Error al analizar un archivo"
 
-#: ../pitivi/ui/sourcelist.py:809
+#: ../pitivi/ui/sourcelist.py:810
 msgid "The following file can not be used with PiTiVi."
 msgstr "El siguiente archivo no se puede usar con PiTiVi."
 
@@ -1305,7 +1339,7 @@ msgstr "Desagrupar vídeos"
 msgid "Group clips"
 msgstr "Agrupar vídeos"
 
-#: ../pitivi/ui/timeline.py:202
+#: ../pitivi/ui/timeline.py:203
 msgid "Razor"
 msgstr "Navaja"
 
@@ -1358,6 +1392,9 @@ msgstr "Fuente de texto del vídeo"
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
 msgstr "La fuente para usar en los títulos del vídeo"
+
+#~ msgid "Close project"
+#~ msgstr "Cerrar proyecto"
 
 #~ msgid "Please locate the missing file, '%s'"
 #~ msgstr "Encuentra el archivo perdido, «%s»"
