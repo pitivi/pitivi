@@ -252,7 +252,7 @@ class SourceList(gtk.VBox, Loggable):
         # only available when selection is non-empty 
         selection_actions = (
             ("RemoveSources", gtk.STOCK_DELETE,
-                _("_Remove from project"), None, None,
+                _("_Remove from project"), "Delete", None,
                 self._removeSourcesCb),
             ("InsertEnd", gtk.STOCK_COPY,
                 _("Insert at _end of timeline"), "Insert", None,
