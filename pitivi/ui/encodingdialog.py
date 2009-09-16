@@ -27,6 +27,8 @@ import os
 import time
 import gtk
 import gst
+from urlparse import urlparse
+import urllib
 
 from gettext import gettext as _
 
@@ -94,8 +96,9 @@ class EncodingDialog(GladeWindow, Loggable):
                                        action=gtk.FILE_CHOOSER_ACTION_SAVE)
         dialog.set_icon_name("pitivi")
         if self.outfile:
-            dialog.set_uri(self.outfile)
-            dialog.set_current_name(os.path.basename(self.outfile))
+            fullfilename = urlparse(self.outfile).path
+            dialog.set_filename(urllib.url2pathname(fullfilename))
+            dialog.set_current_name(urllib.url2pathname(os.path.basename(fullfilename)))
         else:
             dialog.set_current_folder(self.app.settings.lastExportFolder)
 
@@ -103,7 +106,8 @@ class EncodingDialog(GladeWindow, Loggable):
         dialog.hide()
         if res == gtk.RESPONSE_ACCEPT:
             self.outfile = dialog.get_uri()
-            button.set_label(os.path.basename(self.outfile))
+            shortfilename = os.path.basename(urlparse(self.outfile).path)
+            button.set_label(urllib.url2pathname(shortfilename))
             self.recordbutton.set_sensitive(True)
             self.progressbar.set_text("")
             self.app.settings.lastExportFolder = dialog.get_current_folder()
