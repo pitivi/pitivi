@@ -124,7 +124,7 @@ msgid ""
 "(currently %s)"
 msgstr ""
 "You do not have a recent enough version of the GTK+ Python bindings "
-"(currently %s)"
+"(your version %s)"
 
 #: ../pitivi/check.py:131
 #, python-format
@@ -138,7 +138,7 @@ msgid ""
 "(currently %s)"
 msgstr ""
 "You do not have a recent enough version of the GStreamer Python bindings "
-"(currently %s)"
+"(your version %s)"
 
 #: ../pitivi/check.py:135
 #, python-format
@@ -150,7 +150,7 @@ msgstr ""
 #: ../pitivi/check.py:138
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
-msgstr "You do not have a recent enough version of GStreamer (currently %s)"
+msgstr "You do not have a recent enough version of GStreamer (your version %s)"
 
 #: ../pitivi/check.py:139
 #, python-format
@@ -164,7 +164,7 @@ msgid ""
 "(currently %s)"
 msgstr ""
 "You do not have a recent enough version of the Cairo Python bindings "
-"(currently %s)"
+"(your version %s)"
 
 #: ../pitivi/check.py:143
 #, python-format
@@ -178,7 +178,7 @@ msgid ""
 "(currently %s)"
 msgstr ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
-"(currently %s)"
+"(your version %s)"
 
 #: ../pitivi/check.py:147
 #, python-format
