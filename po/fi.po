@@ -7,31 +7,38 @@ msgid ""
 msgstr ""
 "Project-Id-Version: pitivi\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-04-19 15:27+0300\n"
-"PO-Revision-Date: 2009-04-19 15:26+0300\n"
+"POT-Creation-Date: 2009-09-16 18:46+0300\n"
+"PO-Revision-Date: 2009-09-16 18:46+0300\n"
 "Last-Translator: Timo Jyrinki <timo.jyrinki@iki.fi>\n"
 "Language-Team: Finnish <gnome-fi-laatu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: KBabel 1.11.2\n"
 
-#: ../pitivi/check.py:121
+#: ../pitivi.desktop.in.in.h:1
+msgid "Create and edit your own movies"
+msgstr "Luo ja muokkaa elokuvia"
+
+#: ../pitivi.desktop.in.in.h:2
+msgid "Pitivi Video Editor"
+msgstr "Pitivi-videomuokkain"
+
+#: ../pitivi/check.py:102
 #, python-format
 msgid "%s is already running!"
 msgstr "%s on jo käynnissä!"
 
-#: ../pitivi/check.py:122
+#: ../pitivi/check.py:103
 #, python-format
 msgid "An instance of %s is already running in this script."
 msgstr "Tehtävän %s instanssi on jo käynnissä tässä komentojonossa."
 
-#: ../pitivi/check.py:124
+#: ../pitivi/check.py:105
 msgid "Could not find the GNonLin plugins!"
 msgstr "GnonLin-liitännäisiä ei löydy!"
 
-#: ../pitivi/check.py:125
+#: ../pitivi/check.py:106
 msgid ""
 "Make sure the plugins were installed and are available in the GStreamer "
 "plugins path."
@@ -39,11 +46,11 @@ msgstr ""
 "Varmista että liitännäiset on asennettu ja saatavilla GStreamerin "
 "liitännäispolulta."
 
-#: ../pitivi/check.py:127
+#: ../pitivi/check.py:108
 msgid "Could not find the autodetect plugins!"
 msgstr "Automaattitunnistuksen liitännäistä ei löydy!"
 
-#: ../pitivi/check.py:128
+#: ../pitivi/check.py:109
 msgid ""
 "Make sure you have installed gst-plugins-good and is available in the "
 "GStreamer plugin path."
@@ -51,22 +58,23 @@ msgstr ""
 "Varmista että paketti gst-plugins-good on asennettu ja saatavilla "
 "GStreamerin liitännäispolulta."
 
-#: ../pitivi/check.py:130
-msgid "PyGTK doesn't have Cairo support!"
+#: ../pitivi/check.py:111
+#, fuzzy
+msgid "PyGTK doesn't have cairo support!"
 msgstr "PyGTK ei sisällä Cairo-tukea!"
 
-#: ../pitivi/check.py:131
+#: ../pitivi/check.py:112
 #, fuzzy
 msgid ""
-"Please use a version of the GTK+ Python Bindings built with Cairo support."
+"Please use a version of the GTK+ Python bindings built with cairo support."
 msgstr ""
 "Käytä pythonin GTK-sidoksista versiota, joka on käännetty Cairo-tuen kanssa."
 
-#: ../pitivi/check.py:133
+#: ../pitivi/check.py:114
 msgid "Could not initiate the video output plugins"
 msgstr "Videon ulostuloliitännäisiä ei voitu alustaa"
 
-#: ../pitivi/check.py:134
+#: ../pitivi/check.py:115
 msgid ""
 "Make sure you have at least one valid video output sink available "
 "(xvimagesink or ximagesink)"
@@ -74,11 +82,11 @@ msgstr ""
 "Varmista että ainakin yksi toimiva videon ulostulo on saatavilla "
 "(xvimagesink tai ximagesink)"
 
-#: ../pitivi/check.py:136
+#: ../pitivi/check.py:117
 msgid "Could not initiate the audio output plugins"
 msgstr "Äänen ulostuloliitännäisiä ei voitu alustaa"
 
-#: ../pitivi/check.py:137
+#: ../pitivi/check.py:118
 msgid ""
 "Make sure you have at least one valid audio output sink available (alsasink "
 "or osssink)"
@@ -86,86 +94,115 @@ msgstr ""
 "Varmista että ainakin yksi toimiva äänen ulostulo on saatavilla (alsasink "
 "tai osssink)"
 
-#: ../pitivi/check.py:139
+#: ../pitivi/check.py:120
 #, fuzzy
-msgid "Could not import the Cairo Python Bindings"
+msgid "Could not import the cairo Python bindings"
 msgstr "Cairon python-sidoksia ei voitu tuoda"
 
-#: ../pitivi/check.py:140
+#: ../pitivi/check.py:121
 #, fuzzy
-msgid "Make sure you have the Cairo Python Bindings installed"
+msgid "Make sure you have the cairo Python bindings installed"
 msgstr "Varmista, että Pythonin Cairo-sidokset on asennettu"
 
-#: ../pitivi/check.py:142
+#: ../pitivi/check.py:123
 #, fuzzy
-msgid "Could not import the libglade Python Bindings"
+msgid "Could not import the libglade Python bindings"
 msgstr "Cairon python-sidoksia ei voitu tuoda"
 
-#: ../pitivi/check.py:143
+#: ../pitivi/check.py:124
 #, fuzzy
 msgid "Make sure you have the libglade Python bindings installed"
 msgstr "Varmista, että Pythonin Cairo-sidokset on asennettu"
 
-#: ../pitivi/check.py:145
+#: ../pitivi/check.py:126
 #, fuzzy
-msgid "Could not import the goocanvas Python Bindings"
+msgid "Could not import the goocanvas Python bindings"
 msgstr "Cairon python-sidoksia ei voitu tuoda"
 
-#: ../pitivi/check.py:146
+#: ../pitivi/check.py:127
 #, fuzzy
-msgid "Make sure you have the goocanvas Python Bindings installed"
+msgid "Make sure you have the goocanvas Python bindings installed"
 msgstr "Varmista, että Pythonin Cairo-sidokset on asennettu"
 
-#: ../pitivi/check.py:149
-#, python-format
+#: ../pitivi/check.py:130
+#, fuzzy, python-format
 msgid ""
-"You do not have a recent enough version of the GTK+ Python Bindings "
+"You do not have a recent enough version of the GTK+ Python bindings "
 "(currently %s)"
 msgstr "GTK+ python-sidosten versiosi on liian vanha (versio on %s)"
 
-#: ../pitivi/check.py:153
-#, python-format
+#: ../pitivi/check.py:131
+#, fuzzy, python-format
+msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
+msgstr ""
+"Käytä pythonin GTK-sidoksista versiota, joka on käännetty Cairo-tuen kanssa."
+
+#: ../pitivi/check.py:134
+#, fuzzy, python-format
 msgid ""
-"You do not have a recent enough version of the GStreamer Python Bindings "
+"You do not have a recent enough version of the GStreamer Python bindings "
 "(currently %s)"
 msgstr "GStreamerin python-sidosten versiosi on liian vanha (versio on %s)"
 
-#: ../pitivi/check.py:157
+#: ../pitivi/check.py:135
+#, fuzzy, python-format
+msgid ""
+"Install a version of the GStreamer Python bindings greater or equal to %s"
+msgstr "GStreamerin python-sidosten versiosi on liian vanha (versio on %s)"
+
+#: ../pitivi/check.py:138
 #, python-format
 msgid "You do not have a recent enough version of GStreamer (currently %s)"
 msgstr "GStreamerin versiosi on liian vanha (versio on %s)"
 
-#: ../pitivi/check.py:161
+#: ../pitivi/check.py:139
 #, python-format
+msgid "Install a version of the GStreamer greater or equal to %s"
+msgstr ""
+
+#: ../pitivi/check.py:142
+#, fuzzy, python-format
 msgid ""
-"You do not have a recent enough version of the Cairo Python Bindings "
+"You do not have a recent enough version of the cairo Python bindings "
 "(currently %s)"
 msgstr "Cairon python-sidosten versiosi on liian vanha (versio on %s)"
 
-#: ../pitivi/check.py:165
+#: ../pitivi/check.py:143
+#, fuzzy, python-format
+msgid "Install a version of the cairo Python bindings greater or equal to %s"
+msgstr "Cairon python-sidosten versiosi on liian vanha (versio on %s)"
+
+#: ../pitivi/check.py:146
 #, python-format
 msgid ""
 "You do not have a recent enough version of the GNonLin GStreamer plugin "
 "(currently %s)"
 msgstr "GNonLin gstreamer-liitännäisen versiosi on liian vanha (versio on %s)"
 
-#: ../pitivi/check.py:168
-msgid "Could not import the Zope Interface module"
+#: ../pitivi/check.py:147
+#, fuzzy, python-format
+msgid ""
+"Install a version of the GNonLin GStreamer plugin greater or equal to %s"
+msgstr "GNonLin gstreamer-liitännäisen versiosi on liian vanha (versio on %s)"
+
+#: ../pitivi/check.py:149
+#, fuzzy
+msgid "Could not import the Zope interface module"
 msgstr "Zope.interface-moduulia ei voitu tuoda"
 
-#: ../pitivi/check.py:169
+#: ../pitivi/check.py:150
 msgid "Make sure you have the zope.interface module installed"
 msgstr "Varmista, että zope.interface-moduuli on asennettu"
 
-#: ../pitivi/check.py:171
+#: ../pitivi/check.py:152
 msgid "Could not import the distutils modules"
 msgstr "Ei voitu tuoda distutils-moduulia"
 
-#: ../pitivi/check.py:172
+#: ../pitivi/check.py:153
 msgid "Make sure you have the distutils python module installed"
 msgstr "Varmista, että pythonin distutils-moduuli on asennettu"
 
-#: ../pitivi/discoverer.py:166
+#: ../pitivi/discoverer.py:190
 #, python-format
 msgid ""
 "Missing plugins:\n"
@@ -174,20 +211,21 @@ msgstr ""
 "Puuttuvia liitännäisiä:\n"
 "%s"
 
-#. EOS and no decodable streams?
-#: ../pitivi/discoverer.py:185
-msgid "FIXME: no output streams"
+#. woot, nothing decodable
+#: ../pitivi/discoverer.py:209
+#, fuzzy
+msgid "Can not decode file."
+msgstr "Liitännäistä %s ei voi poistaa"
+
+#: ../pitivi/discoverer.py:210
+msgid "The given file does not contain audio, video or picture streams."
 msgstr ""
 
-#: ../pitivi/discoverer.py:186
-msgid "see above"
-msgstr ""
-
-#: ../pitivi/discoverer.py:198
+#: ../pitivi/discoverer.py:230
 msgid "Could not establish the duration of the file."
 msgstr "Tiedoston kestoa ei voitua määrittää."
 
-#: ../pitivi/discoverer.py:199
+#: ../pitivi/discoverer.py:231
 msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
@@ -195,114 +233,105 @@ msgstr ""
 "Tämä leike näyttää olevan muodossa, jossa sitä ei voi lukea satunnaisesti "
 "kohdasta."
 
-#. woot, nothing decodable
-#: ../pitivi/discoverer.py:208
-#, fuzzy
-msgid "Can not decode file."
-msgstr "Liitännäistä %s ei voi poistaa"
-
-#: ../pitivi/discoverer.py:209
-msgid "The given file does not contain audio, video or picture streams."
-msgstr ""
-
-#: ../pitivi/discoverer.py:238
+#: ../pitivi/discoverer.py:295
 #, fuzzy
 msgid "Timeout while analyzing file."
 msgstr "Virhe analysoitaessa tiedostoja"
 
-#: ../pitivi/discoverer.py:239
+#: ../pitivi/discoverer.py:296
 msgid "Analyzing the file took too long."
 msgstr ""
 
-#: ../pitivi/discoverer.py:286
+#: ../pitivi/discoverer.py:325
 msgid "No available source handler."
 msgstr ""
 
-#: ../pitivi/discoverer.py:287
+#: ../pitivi/discoverer.py:326
 #, python-format
 msgid "You do not have a GStreamer source element to handle protocol '%s'"
 msgstr ""
 
-#: ../pitivi/discoverer.py:314
+#: ../pitivi/discoverer.py:390
 msgid "Pipeline didn't want to go to PAUSED."
 msgstr "Liukuhihna kieltäytyi pysäyttämisestä."
 
-#: ../pitivi/discoverer.py:337
+#: ../pitivi/discoverer.py:413
 #, fuzzy, python-format
-msgid "An internal error occured while analyzing this file: %s"
+msgid "An internal error occurred while analyzing this file: %s"
 msgstr "Tapahtui virhe analysoitaessa tätä tiedostoa: %s"
 
-#: ../pitivi/discoverer.py:347
+#: ../pitivi/discoverer.py:423
 msgid "File contains a redirection to another clip."
 msgstr "Tiedosto sisältää uudelleenohjauksen toiseen leikkeeseen."
 
-#: ../pitivi/discoverer.py:348
+#: ../pitivi/discoverer.py:424
 #, fuzzy
 msgid "PiTiVi currently does not handle redirection files."
 msgstr "PiTiVi ei tällä hetkellä käsittele uudelleenohjaustiedostoja."
 
-#: ../pitivi/application.py:111
+#: ../pitivi/application.py:120
 #, fuzzy, python-format
 msgid ""
-"There is already a %s instance, please inform developers by filing a bug at "
-"http://bugzilla.gnome.org/"
+"There is already a %s instance, please inform the developers by filing a bug "
+"at http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 msgstr "Instanssi %s on jo olemassa, raportoi vika kehittäjille"
 
-#. FIXME: don't assume the user wishes to create  the default project
-#. class
-#: ../pitivi/application.py:128 ../pitivi/application.py:217
-msgid "New Project"
-msgstr "Uusi projekti"
-
-#: ../pitivi/application.py:168
-msgid "No location given."
-msgstr "Sijaintia ei annettu."
-
-#: ../pitivi/application.py:174
-msgid "File does not exist"
-msgstr "Tiedostoa ei ole olemassa"
-
-#: ../pitivi/application.py:180
-msgid "Not a valid project file."
-msgstr "Ei ole kelvollinen projektitiedosto.n"
-
-#: ../pitivi/application.py:197
-msgid "There was an error loading the file."
-msgstr "Virhe ladattaessa tiedostoa."
-
-#: ../pitivi/application.py:321
-msgid "%prog [-p PROJECT_FILE] [-a] [MEDIA_FILE]..."
-msgstr ""
-
-#: ../pitivi/application.py:323
+#: ../pitivi/application.py:214
 msgid ""
-"Starts the video editor, optionally loading PROJECT_FILE. If no\n"
-"project is given, %prog creates a new project. Remaining arguments are "
-"treated\n"
-"as clips to be imported into the project. If -a is specified, these clips "
-"will\n"
-"also be added to the end of the project timeline."
+"\n"
+"      %prog [PROJECT_FILE]\n"
+"      %prog -i [-a] [MEDIA_FILE]..."
 msgstr ""
 
-#: ../pitivi/application.py:328
+#: ../pitivi/application.py:218
 msgid ""
-"Open project file specified by PROJECT instead of creating a\n"
-"new project."
+"Starts the video editor, optionally loading PROJECT_FILE. If\n"
+"    no project is given, %prog creates a new project.\n"
+"    Alternatively, when -i is specified, arguments are treated as clips to "
+"be\n"
+"    imported into the project. If -a is specified, these clips will also be "
+"added to\n"
+"    the end of the project timeline."
 msgstr ""
 
-#: ../pitivi/application.py:331
+#: ../pitivi/application.py:224
+msgid "Import each MEDIA_FILE into the project."
+msgstr ""
+
+#: ../pitivi/application.py:226
 msgid "Add each MEDIA_FILE to timeline after importing."
 msgstr ""
 
-#: ../pitivi/settings.py:435
+#: ../pitivi/application.py:227
+msgid "Run pitivi in the Python Debugger"
+msgstr ""
+
+#: ../pitivi/projectmanager.py:62
+msgid "Not a valid project file."
+msgstr "Ei ole kelvollinen projektitiedosto.n"
+
+#: ../pitivi/projectmanager.py:67
+#, fuzzy
+msgid "Couldn't close current project"
+msgstr "Tallenna nykyinen projekti"
+
+#: ../pitivi/projectmanager.py:104
+msgid "No URI specified."
+msgstr ""
+
+#: ../pitivi/projectmanager.py:136
+msgid "New Project"
+msgstr "Uusi projekti"
+
+#: ../pitivi/settings.py:473
 msgid "Export Settings\n"
 msgstr "Vientiasetukset\n"
 
-#: ../pitivi/settings.py:436
+#: ../pitivi/settings.py:474
 msgid "Video: "
 msgstr "Video: "
 
-#: ../pitivi/settings.py:439
+#: ../pitivi/settings.py:477
 msgid ""
 "\n"
 "Audio: "
@@ -310,13 +339,49 @@ msgstr ""
 "\n"
 "Ääni: "
 
-#: ../pitivi/settings.py:442
+#: ../pitivi/settings.py:480
 msgid ""
 "\n"
 "Muxer: "
 msgstr ""
 "\n"
 "Muksaaja: "
+
+#: ../pitivi/utils.py:68
+#, python-format
+msgid "%d hour"
+msgid_plural "%d hours"
+msgstr[0] "%d tunti"
+msgstr[1] "%d tuntia"
+
+#: ../pitivi/utils.py:71
+#, python-format
+msgid "%d minute"
+msgid_plural "%d minutes"
+msgstr[0] "%d minuutti"
+msgstr[1] "%d minuuttia"
+
+#: ../pitivi/utils.py:74
+#, python-format
+msgid "%d second"
+msgid_plural "%d seconds"
+msgstr[0] "%d sekunti"
+msgstr[1] "%d sekuntia"
+
+#. Translators: "non local" means the project is not stored
+#. on a local filesystem
+#: ../pitivi/utils.py:241
+#, python-format
+msgid "%s doesn't yet handle non local projects"
+msgstr "%s ei vielä voi käsitellä etäprojekteja"
+
+#: ../pitivi/formatters/format.py:77
+msgid "PiTiVi Native (XML)"
+msgstr "PiTiVin oma muoto (XML)"
+
+#: ../pitivi/formatters/format.py:78
+msgid "Playlist format"
+msgstr "Soittolistan muoto"
 
 #: ../pitivi/ui/audiofxlist.py:49 ../pitivi/ui/videofxlist.py:53
 msgid "Name"
@@ -339,6 +404,40 @@ msgstr "Laitetta ei saatavilla"
 msgid "Video Capture Device:"
 msgstr "Videonkaappauslaite:"
 
+#: ../pitivi/ui/common.py:86 ../pitivi/ui/common.py:128
+#, python-format
+msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
+msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
+msgstr[0] ""
+"<b>Ääni:</b> %d kanava näytetaajuudella %d <i>Hz</i> (%d <i>bittiä</i>)"
+msgstr[1] ""
+"<b>Ääni:</b> %d kanavaa näytetaajuudella %d <i>Hz</i> (%d <i>bittiä</i>)"
+
+#: ../pitivi/ui/common.py:92 ../pitivi/ui/common.py:134
+#, python-format
+msgid "<b>Unknown Audio format:</b> %s"
+msgstr "<b>Tuntematon äänimuoto:</b> %s"
+
+#: ../pitivi/ui/common.py:97 ../pitivi/ui/common.py:139
+#, python-format
+msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
+msgstr "<b>Video:</b> %d x %d <i>pikseliä</i> nopeudella %.2f<i>fps</i>"
+
+#: ../pitivi/ui/common.py:101 ../pitivi/ui/common.py:143
+#, python-format
+msgid "<b>Image:</b> %d x %d <i>pixels</i>"
+msgstr "<b>Kuva:</b> %d x %d <i>pikseliä</i>"
+
+#: ../pitivi/ui/common.py:104 ../pitivi/ui/common.py:146
+#, python-format
+msgid "<b>Unknown Video format:</b> %s"
+msgstr "<b>Tuntematon videomuoto:</b> %s"
+
+#: ../pitivi/ui/common.py:107 ../pitivi/ui/common.py:149
+#, python-format
+msgid "<b>Text:</b> %s"
+msgstr "<b>Teksti:</b> %s"
+
 #: ../pitivi/ui/defaultpropertyeditor.py:104
 #, python-format
 msgid "Properties For: %d object"
@@ -346,9 +445,17 @@ msgid_plural "Properties For: %d objects"
 msgstr[0] "Ominaisuudet: %d objekti"
 msgstr[1] "Ominaisuudet: %d objektia"
 
-#: ../pitivi/ui/defaultpropertyeditor.py:119
+#: ../pitivi/ui/defaultpropertyeditor.py:119 ../pitivi/ui/gstwidget.py:140
 msgid "No properties..."
 msgstr "Ei ominaisuuksia..."
+
+#: ../pitivi/ui/dynamic.py:52
+msgid "Implement Me"
+msgstr ""
+
+#: ../pitivi/ui/dynamic.py:237
+msgid "Choose..."
+msgstr "Valitse..."
 
 #: ../pitivi/ui/elementsettingsdialog.glade.h:1
 msgid "<b>Author:</b>"
@@ -402,30 +509,38 @@ msgstr "Muokkaa"
 msgid "Output file:"
 msgstr "Tulostiedosto:"
 
-#: ../pitivi/ui/encodingdialog.py:89
+#: ../pitivi/ui/encodingdialog.glade.h:8
+msgid "Please choose an output file"
+msgstr "Valitse tulostiedosto"
+
+#: ../pitivi/ui/encodingdialog.glade.h:9 ../pitivi/ui/mainwindow.py:254
+msgid "Render project"
+msgstr "Tuota projekti"
+
+#: ../pitivi/ui/encodingdialog.py:90
 msgid "Choose file to render to"
 msgstr "Valitse tiedosto, johon tuotetaan"
 
-#: ../pitivi/ui/encodingdialog.py:115
+#: ../pitivi/ui/encodingdialog.py:123
 #, python-format
-msgid "Finished in %dm%ds"
-msgstr "Valmistui ajassa %dmin %ds"
+msgid "About %s left"
+msgstr "Noin %s jäljellä"
 
-#: ../pitivi/ui/encodingdialog.py:126
+#: ../pitivi/ui/encodingdialog.py:133
 msgid "Rendering"
 msgstr "Tuotetaan"
 
-#: ../pitivi/ui/encodingdialog.py:143
+#: ../pitivi/ui/encodingdialog.py:150
 msgid "Rendering Complete"
 msgstr "Tuottaminen valmistui"
 
 #: ../pitivi/ui/exportsettingswidget.glade.h:1
 msgid ""
 "12 fps\n"
-"23,97 fps\n"
+"23.97 fps\n"
 "24 fps\n"
 "25 fps\n"
-"29,97 fps\n"
+"29.97 fps\n"
 "30 fps\n"
 "60 fps"
 msgstr ""
@@ -545,7 +660,54 @@ msgstr "Videon esivalinta"
 msgid "Width:"
 msgstr "Leveys"
 
-#: ../pitivi/ui/exportsettingswidget.py:362
+#: ../pitivi/ui/exportsettingswidget.py:37
+msgid "576p (PAL DV/DVD)"
+msgstr "576p (PAL DV/DVD)"
+
+#: ../pitivi/ui/exportsettingswidget.py:38
+msgid "480p (NTSC DV/DVD)"
+msgstr "480p (NTSC DV/DVD)"
+
+#: ../pitivi/ui/exportsettingswidget.py:39
+msgid "720p HD"
+msgstr "720p HD"
+
+#: ../pitivi/ui/exportsettingswidget.py:40
+msgid "1080p full HD"
+msgstr "1080p Full HD"
+
+#: ../pitivi/ui/exportsettingswidget.py:41
+msgid "QVGA (320x240)"
+msgstr "QVGA (320x240)"
+
+#: ../pitivi/ui/exportsettingswidget.py:42
+msgid "VGA (640x480)"
+msgstr "VGA (640x480)"
+
+#: ../pitivi/ui/exportsettingswidget.py:43
+msgid "SVGA (800x600)"
+msgstr "SVGA (800x600)"
+
+#: ../pitivi/ui/exportsettingswidget.py:44
+msgid "XGA (1024x768)"
+msgstr "XGA (1024x768)"
+
+#. i18n: string for custom video width/height/framerate settings
+#. i18n: string for custom audio rate/depth/channels settings
+#: ../pitivi/ui/exportsettingswidget.py:112
+#: ../pitivi/ui/exportsettingswidget.py:146
+msgid "Custom"
+msgstr "Mukauta"
+
+#: ../pitivi/ui/exportsettingswidget.py:297
+msgid "Raw Video"
+msgstr "Raakavideo"
+
+#: ../pitivi/ui/exportsettingswidget.py:312
+msgid "Raw Audio"
+msgstr "Raakaääni"
+
+#: ../pitivi/ui/exportsettingswidget.py:435
 msgid "Export settings"
 msgstr "Viennin asetukset"
 
@@ -566,185 +728,191 @@ msgid "Extra information:"
 msgstr "Lisätietoja:"
 
 #. set title and frame label
-#: ../pitivi/ui/gstwidget.py:191
+#: ../pitivi/ui/gstwidget.py:195
 #, python-format
 msgid "Properties for %s"
 msgstr "Ominaisuudet kohteelle %s"
 
-#: ../pitivi/ui/mainwindow.py:194
+#: ../pitivi/ui/mainwindow.py:127
+msgid "Render"
+msgstr "Tuota"
+
+#: ../pitivi/ui/mainwindow.py:128
+msgid "Split"
+msgstr "Jaa"
+
+#: ../pitivi/ui/mainwindow.py:129
+msgid "Unlink"
+msgstr ""
+
+#. Translators: This is an action, the title of a button
+#: ../pitivi/ui/mainwindow.py:131
+msgid "Link"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:132
+msgid "Ungroup"
+msgstr ""
+
+#. Translators: This is an action, the title of a button
+#: ../pitivi/ui/mainwindow.py:134
+msgid "Group"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:237
 msgid "Start Playback"
 msgstr "Aloita toisto"
 
-#: ../pitivi/ui/mainwindow.py:195
+#: ../pitivi/ui/mainwindow.py:238
 msgid "Stop Playback"
 msgstr "Pysäytä toisto"
 
-#: ../pitivi/ui/mainwindow.py:196
-msgid "Forward one frame"
-msgstr "Eteenpäin yksi ruutu"
-
-#: ../pitivi/ui/mainwindow.py:197
-msgid "Fast Forward"
-msgstr "Kelaus eteenpäin"
-
-#: ../pitivi/ui/mainwindow.py:198
+#: ../pitivi/ui/mainwindow.py:239
 msgid "Loop over selected area"
 msgstr "Kertaa valittua aluetta"
 
-#: ../pitivi/ui/mainwindow.py:199
-msgid "Rewind"
-msgstr "Kelaus taaksepäin"
-
-#: ../pitivi/ui/mainwindow.py:200
-msgid "Back one frame"
-msgstr "Taakse yksi ruutu"
-
-#: ../pitivi/ui/mainwindow.py:205
+#: ../pitivi/ui/mainwindow.py:244
 msgid "Create a new project"
 msgstr "Luo uusi projekti"
 
-#: ../pitivi/ui/mainwindow.py:207
+#: ../pitivi/ui/mainwindow.py:246
 msgid "Open an existing project"
 msgstr "Avaa olemassa oleva projekti"
 
-#: ../pitivi/ui/mainwindow.py:209 ../pitivi/ui/mainwindow.py:211
+#: ../pitivi/ui/mainwindow.py:248 ../pitivi/ui/mainwindow.py:250
 msgid "Save the current project"
 msgstr "Tallenna nykyinen projekti"
 
-#: ../pitivi/ui/mainwindow.py:212 ../pitivi/ui/projectsettings.glade.h:4
+#: ../pitivi/ui/mainwindow.py:251 ../pitivi/ui/projectsettings.glade.h:4
 msgid "Project Settings"
 msgstr "Projektin asetukset"
 
-#: ../pitivi/ui/mainwindow.py:213
+#: ../pitivi/ui/mainwindow.py:252
 msgid "Edit the project settings"
 msgstr "Muokkaa projektin asetuksia"
 
-#: ../pitivi/ui/mainwindow.py:214
+#: ../pitivi/ui/mainwindow.py:253
 msgid "_Render project"
 msgstr "_Tuota projekti"
 
-#: ../pitivi/ui/mainwindow.py:215
-msgid "Render project"
-msgstr "Tuota projekti"
+#: ../pitivi/ui/mainwindow.py:256
+msgid "_Undo"
+msgstr "K_umoa"
 
-#: ../pitivi/ui/mainwindow.py:217
+#: ../pitivi/ui/mainwindow.py:257
+msgid "Undo the last operation"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:259
+msgid "_Redo"
+msgstr "_Tee uudelleen"
+
+#: ../pitivi/ui/mainwindow.py:260
+msgid "Redo the last operation that was undone"
+msgstr ""
+
+#: ../pitivi/ui/mainwindow.py:262
 msgid "_Plugins..."
 msgstr "_Liitännäiset..."
 
-#: ../pitivi/ui/mainwindow.py:218
+#: ../pitivi/ui/mainwindow.py:263
 msgid "Manage plugins"
 msgstr "Hallitse liitännäisiä"
 
-#: ../pitivi/ui/mainwindow.py:220
+#: ../pitivi/ui/mainwindow.py:264
+msgid "_Preferences"
+msgstr "_Asetukset"
+
+#: ../pitivi/ui/mainwindow.py:267
 msgid "Import from _Webcam..."
 msgstr "Tuo _webkamerasta..."
 
-#: ../pitivi/ui/mainwindow.py:221
+#: ../pitivi/ui/mainwindow.py:268
 msgid "Import Camera stream"
 msgstr "Tuo kameravirta"
 
-#: ../pitivi/ui/mainwindow.py:223
+#: ../pitivi/ui/mainwindow.py:270
 msgid "_Make screencast..."
 msgstr "_Tee näyttölähetys..."
 
-#: ../pitivi/ui/mainwindow.py:224
+#: ../pitivi/ui/mainwindow.py:271
 msgid "Capture the desktop"
 msgstr "Kaappaa työpöytä"
 
-#: ../pitivi/ui/mainwindow.py:226
+#: ../pitivi/ui/mainwindow.py:273
 msgid "_Capture Network Stream..."
 msgstr "_Kaappaa verkkovirta..."
 
-#: ../pitivi/ui/mainwindow.py:227
+#: ../pitivi/ui/mainwindow.py:274
 msgid "Capture Network Stream"
 msgstr "Kaappa verkkovirta"
 
-#: ../pitivi/ui/mainwindow.py:230
+#: ../pitivi/ui/mainwindow.py:277
 #, python-format
 msgid "Information about %s"
 msgstr "Tietoja tiedostosta %s"
 
-#: ../pitivi/ui/mainwindow.py:231
+#: ../pitivi/ui/mainwindow.py:278
 msgid "_File"
 msgstr "_Tiedosto"
 
-#: ../pitivi/ui/mainwindow.py:232
+#: ../pitivi/ui/mainwindow.py:279
 msgid "_Edit"
 msgstr "_Muokkaa"
 
-#: ../pitivi/ui/mainwindow.py:233
+#: ../pitivi/ui/mainwindow.py:280
 msgid "_View"
 msgstr "_Näytä"
 
-#: ../pitivi/ui/mainwindow.py:234
+#: ../pitivi/ui/mainwindow.py:281
 msgid "_Project"
 msgstr "_Projekti"
 
-#: ../pitivi/ui/mainwindow.py:235
+#: ../pitivi/ui/mainwindow.py:282
 msgid "_Timeline"
 msgstr "_Aikajana"
 
-#: ../pitivi/ui/mainwindow.py:236
+#: ../pitivi/ui/mainwindow.py:283
 msgid "Previe_w"
 msgstr "Esikatsel_u"
 
-#: ../pitivi/ui/mainwindow.py:243
-msgid "Frame Forward"
-msgstr "Ruutu eteenpäin"
-
-#: ../pitivi/ui/mainwindow.py:245
-msgid "Frame Backward"
-msgstr "Ruutu taaksepäin"
-
-#: ../pitivi/ui/mainwindow.py:247
-msgid "1 Second Forward"
-msgstr "1 sekunti eteenpäin"
-
-#: ../pitivi/ui/mainwindow.py:249
-msgid "1 Second Backward"
-msgstr "1 sekunti taaksepäin"
-
-#: ../pitivi/ui/mainwindow.py:251
-msgid "End of Clip"
-msgstr "Leikkeen loppuun"
-
-#: ../pitivi/ui/mainwindow.py:253
-msgid "Start of Clip"
-msgstr "Leikkeen alkuun"
-
-#: ../pitivi/ui/mainwindow.py:255
+#: ../pitivi/ui/mainwindow.py:286
 msgid "Loop"
 msgstr "Kertaustila"
 
-#: ../pitivi/ui/mainwindow.py:257
+#: ../pitivi/ui/mainwindow.py:288
 msgid "_Help"
 msgstr "O_hje"
 
-#: ../pitivi/ui/mainwindow.py:262
+#: ../pitivi/ui/mainwindow.py:293
 msgid "View the main window on the whole screen"
 msgstr "Näytä pääikkuna kokoruudun kokoisena"
 
-#: ../pitivi/ui/mainwindow.py:266
+#: ../pitivi/ui/mainwindow.py:297
 msgid "Main Toolbar"
 msgstr "Päätyökalupalkki"
 
-#: ../pitivi/ui/mainwindow.py:269
+#: ../pitivi/ui/mainwindow.py:300
 msgid "Timeline Toolbar"
 msgstr "Aikajanatyökalupalkki"
 
-#: ../pitivi/ui/mainwindow.py:517
+#: ../pitivi/ui/mainwindow.py:384
+msgid "Clip Library"
+msgstr "Leikekirjasto"
+
+#: ../pitivi/ui/mainwindow.py:524
 msgid "Open File..."
 msgstr "Avaa tiedosto..."
 
-#: ../pitivi/ui/mainwindow.py:532
+#: ../pitivi/ui/mainwindow.py:540
 msgid "All Supported Formats"
 msgstr "Kaikki tuetut muodot"
 
-#: ../pitivi/ui/mainwindow.py:602
+#: ../pitivi/ui/mainwindow.py:606
 msgid "Contributors:"
 msgstr "Avustajat:"
 
-#: ../pitivi/ui/mainwindow.py:614
+#: ../pitivi/ui/mainwindow.py:618
 msgid ""
 "GNU Lesser General Public License\n"
 "See http://www.gnu.org/copyleft/lesser.html for more details"
@@ -752,28 +920,49 @@ msgstr ""
 "GNU Lesser General Public License\n"
 "Lue lisää osoitteesta http://www.gnu.org/copyleft/lesser.html"
 
-#: ../pitivi/ui/mainwindow.py:693
-msgid "The project has unsaved changes. Do you wish to close the project?"
-msgstr "Projektissa on tallentamattomia muutoksia. Haluatko sulkea projektin?"
+#: ../pitivi/ui/mainwindow.py:730
+msgid "Close without saving"
+msgstr ""
 
-#: ../pitivi/ui/mainwindow.py:714
+#: ../pitivi/ui/mainwindow.py:743
+msgid "Save changes to the current project before closing?"
+msgstr "Tallenna muutokset nykyiseen projektiin ennen sulkemista?"
+
+#: ../pitivi/ui/mainwindow.py:750
+msgid "If you don't save some of your changes will be lost"
+msgstr "Jos et tallenna, jotkin muutokset häviävät"
+
+#: ../pitivi/ui/mainwindow.py:802
 #, python-format
 msgid "PiTiVi is unable to load file \"%s\""
 msgstr "PiTiVi ei voi ladata tiedostoa ”%s”"
 
-#: ../pitivi/ui/mainwindow.py:716
+#: ../pitivi/ui/mainwindow.py:805
 msgid "Error Loading File"
 msgstr "Virhe ladattaessa tiedostoa"
 
-#: ../pitivi/ui/mainwindow.py:793
+#: ../pitivi/ui/mainwindow.py:812
+msgid "Locate missing file..."
+msgstr "Paikallista puuttuva tiedosto..."
+
+#: ../pitivi/ui/mainwindow.py:821
+#, fuzzy
+msgid "The following file has moved,"
+msgstr "Seuraavaa tiedostoa ei voi käyttää PiTiVissä."
+
+#: ../pitivi/ui/mainwindow.py:824
+msgid "<b>Duration:</b>"
+msgstr "<b>Kesto:</b>"
+
+#: ../pitivi/ui/mainwindow.py:974
 msgid "Save As..."
 msgstr "Tallenna nimellä..."
 
-#: ../pitivi/ui/mainwindow.py:800
+#: ../pitivi/ui/mainwindow.py:982
 msgid "Untitled.xptv"
 msgstr "Nimetön.xptv"
 
-#: ../pitivi/ui/mainwindow.py:811 ../pitivi/ui/mainwindow.py:824
+#: ../pitivi/ui/mainwindow.py:993 ../pitivi/ui/mainwindow.py:1006
 msgid "Detect Automatically"
 msgstr "Tunnista automaattisesti"
 
@@ -802,44 +991,44 @@ msgid "Customize:"
 msgstr "Mukauta:"
 
 #: ../pitivi/ui/net_capture.glade.h:7
+msgid "HTTP / HTTPS"
+msgstr ""
+
+#: ../pitivi/ui/net_capture.glade.h:8
 msgid "Network stream video"
 msgstr "Verkkovirtavideo"
 
-#: ../pitivi/ui/net_capture.glade.h:8
+#: ../pitivi/ui/net_capture.glade.h:9
+msgid "Other protocol"
+msgstr "Muu yhteyskäytäntö"
+
+#: ../pitivi/ui/net_capture.glade.h:10
 msgid "Port"
 msgstr "Portti"
 
-#: ../pitivi/ui/net_capture.glade.h:9
+#: ../pitivi/ui/net_capture.glade.h:11
 msgid "Preview"
 msgstr "Esikatselu"
 
-#: ../pitivi/ui/net_capture.glade.h:10
+#: ../pitivi/ui/net_capture.glade.h:12
 msgid "Preview Stream from URI"
 msgstr "Esikatseluvirta URI-osoitteesta"
 
-#: ../pitivi/ui/net_capture.glade.h:11
+#: ../pitivi/ui/net_capture.glade.h:13
 msgid "Protocol"
 msgstr "Yhteyskäytäntö"
 
-#: ../pitivi/ui/net_capture.glade.h:12
-msgid "http / https"
-msgstr "http / https"
-
-#: ../pitivi/ui/net_capture.glade.h:13
-msgid "http://"
-msgstr "http://"
-
 #: ../pitivi/ui/net_capture.glade.h:14
-msgid "other protocol"
-msgstr "muu yhteyskäytäntö"
+msgid "RTSP"
+msgstr "RTSP"
 
 #: ../pitivi/ui/net_capture.glade.h:15
-msgid "rtsp"
-msgstr "rtsp"
+msgid "UDP / RDP"
+msgstr "UDP / RDP"
 
 #: ../pitivi/ui/net_capture.glade.h:16
-msgid "udp / rtp"
-msgstr "udp / rtp"
+msgid "http://"
+msgstr "http://"
 
 #: ../pitivi/ui/pluginmanagerdialog.glade.h:1
 #: ../pitivi/ui/pluginmanagerdialog.py:173
@@ -879,7 +1068,7 @@ msgid "Category"
 msgstr "Luokka"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:271
-msgid "Are you sure you want to remove selected plugins?"
+msgid "Are you sure you want to remove the selected plugins?"
 msgstr "Haluatko varmasti poistaa valitut liitännäiset?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:272
@@ -892,14 +1081,14 @@ msgid "Cannot remove %s"
 msgstr "Liitännäistä %s ei voi poistaa"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:321
-msgid "Update the existent plugin?"
+msgid "Update the existing plugin?"
 msgstr "Päivitetäänkö olemassa oleva liitännäinen?"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:324
 #, fuzzy, python-format
 msgid ""
 "This plugin is already installed in your system.\n"
-"If you agree, version %s will be replaced with version %s"
+"If you agree, version %(v1)s will be replaced with version %(v2)s"
 msgstr "Jos haluat, versio %s korvataan versiolla %s"
 
 #: ../pitivi/ui/pluginmanagerdialog.py:327
@@ -913,13 +1102,67 @@ msgid ""
 "The file is not a valid plugin"
 msgstr "Tiedosto ei ole kelvollinen liitännäinen."
 
-#: ../pitivi/ui/projecttabs.py:65
-msgid "Clip Library"
-msgstr "Leikekirjasto"
+#: ../pitivi/ui/prefs.py:57
+msgid "Preferences"
+msgstr "Asetukset"
+
+#: ../pitivi/ui/prefs.py:83
+msgid "Section"
+msgstr "Osio"
+
+#. revert, close buttons
+#: ../pitivi/ui/prefs.py:104
+msgid "Reset to Factory Settings"
+msgstr "Palauta oletusasetuksiin"
+
+#: ../pitivi/ui/prefs.py:108
+msgid "Revert"
+msgstr "Palauta"
+
+#: ../pitivi/ui/prefs.py:123
+msgid "Some changes will not take effect until you restart PiTiVi"
+msgstr ""
+"Jotkin muutoksista eivät tule voimaa, ennen kuin PiTiVi käynnistetään "
+"uudelleen"
+
+#: ../pitivi/ui/prefs.py:318
+msgid "Reset"
+msgstr "Palauta oletuksiin"
+
+#: ../pitivi/ui/previewer.py:56 ../pitivi/ui/previewer.py:84
+#: ../pitivi/ui/previewer.py:95 ../pitivi/ui/trackobject.py:48
+#: ../pitivi/ui/trackobject.py:59 ../pitivi/ui/trackobject.py:70
+#: ../pitivi/ui/trackobject.py:81
+msgid "Appearance"
+msgstr "Ulkoasu"
+
+#: ../pitivi/ui/previewer.py:57
+msgid "Thumbnail Gap (pixels)"
+msgstr "Pienoiskuvien väli (pikseleinä)"
+
+#: ../pitivi/ui/previewer.py:59
+msgid "The gap between thumbnails"
+msgstr "Väli pienoiskuvien välissä"
+
+#: ../pitivi/ui/previewer.py:85
+msgid "Show Thumbnails (Video)"
+msgstr "Näytä pienoiskuvat (video)"
+
+#: ../pitivi/ui/previewer.py:86
+msgid "Show Thumbnails on Video Clips"
+msgstr "Näytä videoleikkeiden pienoiskuvat"
+
+#: ../pitivi/ui/previewer.py:96
+msgid "Show Waveforms (Audio)"
+msgstr "Näytä aaltomuodot (ääni)"
+
+#: ../pitivi/ui/previewer.py:97
+msgid "Show Waveforms on Audio Clips"
+msgstr "Näytä äänileikkeiden aaltomuodot"
 
 #: ../pitivi/ui/projectsettings.glade.h:1
 msgid "A short description of your project."
-msgstr "Lyhyt kuvaus projektista"
+msgstr "Lyhyt kuvaus projektista."
 
 #: ../pitivi/ui/projectsettings.glade.h:2
 msgid "Description:"
@@ -938,7 +1181,7 @@ msgid "No Objects Selected"
 msgstr "Objekteja ei valittu"
 
 #: ../pitivi/ui/screencast_manager.glade.h:1
-msgid "Screen Cast"
+msgid "Screencast"
 msgstr "Näyttölähetys"
 
 #: ../pitivi/ui/screencast_manager.glade.h:2
@@ -949,65 +1192,31 @@ msgstr "Tee näyttölähetys työpöydästä"
 msgid "Start Istanbul"
 msgstr "Käynnistä Istanbul"
 
-#: ../pitivi/ui/sourcelist.py:88
-#, python-format
-msgid "<b>Audio:</b> %d channel at %d <i>Hz</i> (%d <i>bits</i>)"
-msgid_plural "<b>Audio:</b> %d channels at %d <i>Hz</i> (%d <i>bits</i>)"
-msgstr[0] ""
-"<b>Ääni:</b> %d kanava näytetaajuudella %d <i>Hz</i> (%d <i>bittiä</i>)"
-msgstr[1] ""
-"<b>Ääni:</b> %d kanavaa näytetaajuudella %d <i>Hz</i> (%d <i>bittiä</i>)"
-
-#: ../pitivi/ui/sourcelist.py:97
-#, python-format
-msgid "<b>Unknown Audio format:</b> %s"
-msgstr "<b>Tuntematon äänimuoto:</b> %s"
-
-#: ../pitivi/ui/sourcelist.py:102
-#, python-format
-msgid "<b>Video:</b> %d x %d <i>pixels</i> at %.2f<i>fps</i>"
-msgstr "<b>Video:</b> %d x %d <i>pikseliä</i> nopeudella %.2f<i>fps</i>"
-
-#: ../pitivi/ui/sourcelist.py:106
-#, python-format
-msgid "<b>Image:</b> %d x %d <i>pixels</i>"
-msgstr "<b>Kuva:</b> %d x %d <i>pikseliä</i>"
-
-#: ../pitivi/ui/sourcelist.py:109
-#, python-format
-msgid "<b>Unknown Video format:</b> %s"
-msgstr "<b>Tuntematon videomuoto:</b> %s"
-
-#: ../pitivi/ui/sourcelist.py:112
-#, python-format
-msgid "<b>Text:</b> %s"
-msgstr "<b>Teksti:</b> %s"
-
-#: ../pitivi/ui/sourcelist.py:154
+#: ../pitivi/ui/sourcelist.py:115
 msgid "Add Clips..."
 msgstr "Lisää leikkeitä..."
 
-#: ../pitivi/ui/sourcelist.py:159
+#: ../pitivi/ui/sourcelist.py:120
 msgid "Remove Clip"
 msgstr "Poista leike"
 
-#: ../pitivi/ui/sourcelist.py:163
+#: ../pitivi/ui/sourcelist.py:124
 msgid "Play Clip"
 msgstr "Toista leike"
 
-#: ../pitivi/ui/sourcelist.py:188
+#: ../pitivi/ui/sourcelist.py:150
 msgid "Icon"
 msgstr "Kuvake"
 
-#: ../pitivi/ui/sourcelist.py:197
+#: ../pitivi/ui/sourcelist.py:159
 msgid "Information"
 msgstr "Tietoja"
 
-#: ../pitivi/ui/sourcelist.py:208
+#: ../pitivi/ui/sourcelist.py:170
 msgid "Duration"
 msgstr "Kesto"
 
-#: ../pitivi/ui/sourcelist.py:230
+#: ../pitivi/ui/sourcelist.py:192
 msgid ""
 "<span size='x-large'>Import your clips by dragging them here or by using the "
 "buttons above.</span>"
@@ -1015,113 +1224,209 @@ msgstr ""
 "<span size='x-large'>Tuo leikkeet raahaamalla tähän tai käyttämällä yllä "
 "olevia painikkeita.</span>"
 
-#: ../pitivi/ui/sourcelist.py:282
+#: ../pitivi/ui/sourcelist.py:245
 msgid "_Import clips..."
 msgstr "_Tuo leikkeitä..."
 
-#: ../pitivi/ui/sourcelist.py:283
+#: ../pitivi/ui/sourcelist.py:246
 msgid "Import clips to use"
 msgstr "Tuo leikkeitä käytettäväksi"
 
-#: ../pitivi/ui/sourcelist.py:285
+#: ../pitivi/ui/sourcelist.py:248
 msgid "Import _folder of clips..."
 msgstr "Tuo _kansiollinen leikkeitä..."
 
-#: ../pitivi/ui/sourcelist.py:286
+#: ../pitivi/ui/sourcelist.py:249
 msgid "Import folder of clips to use"
 msgstr "Tuo kansiollinen leikkeitä käytettäväksi"
 
-#: ../pitivi/ui/sourcelist.py:292
+#: ../pitivi/ui/sourcelist.py:255
 msgid "_Remove from project"
 msgstr "Poista p_rojektista"
 
-#: ../pitivi/ui/sourcelist.py:295
+#: ../pitivi/ui/sourcelist.py:258
 msgid "Insert at _end of timeline"
 msgstr "Lisää aikajanan l_oppuun"
 
-#: ../pitivi/ui/sourcelist.py:408
+#: ../pitivi/ui/sourcelist.py:374
 msgid "Import a folder"
 msgstr "Tuo kansio"
 
-#: ../pitivi/ui/sourcelist.py:411
+#: ../pitivi/ui/sourcelist.py:377
 msgid "Import a clip"
 msgstr "Tuo leike"
 
-#: ../pitivi/ui/sourcelist.py:412
+#: ../pitivi/ui/sourcelist.py:378
 msgid "Close after importing files"
 msgstr "Sulje tiedostojen tuonnin jälkeen"
 
-#: ../pitivi/ui/sourcelist.py:739
+#: ../pitivi/ui/sourcelist.py:719
 msgid "Importing clips..."
 msgstr "Tuodaan leikkeitä..."
 
-#: ../pitivi/ui/sourcelist.py:740
-msgid "Error(s) occured while importing"
+#: ../pitivi/ui/sourcelist.py:720
+msgid "Error(s) occurred while importing"
 msgstr "Tuotaessa tapahtui virheitä"
 
-#: ../pitivi/ui/sourcelist.py:741
-msgid "An error occured while importing"
+#: ../pitivi/ui/sourcelist.py:721
+msgid "An error occurred while importing"
 msgstr "Tuotaessa tapahtui virhe"
 
-#: ../pitivi/ui/sourcelist.py:826
+#: ../pitivi/ui/sourcelist.py:806
 msgid "Error while analyzing files"
 msgstr "Virhe analysoitaessa tiedostoja"
 
-#: ../pitivi/ui/sourcelist.py:827
+#: ../pitivi/ui/sourcelist.py:807
 msgid "The following files can not be used with PiTiVi."
 msgstr "Seuraavia tiedostoja ei voi käyttää PiTiVin kanssa."
 
-#: ../pitivi/ui/sourcelist.py:829
+#: ../pitivi/ui/sourcelist.py:809
 msgid "Error while analyzing a file"
 msgstr "Virhe analysoitaessa tiedostoa"
 
-#: ../pitivi/ui/sourcelist.py:830
+#: ../pitivi/ui/sourcelist.py:810
 msgid "The following file can not be used with PiTiVi."
 msgstr "Seuraavaa tiedostoa ei voi käyttää PiTiVissä."
 
 #. tooltip text for toolbar
-#: ../pitivi/ui/timeline.py:41
+#: ../pitivi/ui/timeline.py:45
 msgid "Delete Selected"
 msgstr "Poista valitut"
 
-#: ../pitivi/ui/timeline.py:42
+#: ../pitivi/ui/timeline.py:46
 msgid "Cut clip at mouse position"
 msgstr "Leikkaa leike hiiren sijainnista"
 
-#: ../pitivi/ui/timeline.py:43
+#: ../pitivi/ui/timeline.py:47
 msgid "Zoom In"
 msgstr "Lähennä"
 
-#: ../pitivi/ui/timeline.py:44
+#: ../pitivi/ui/timeline.py:48
 msgid "Zoom Out"
 msgstr "Loitonna"
 
-#: ../pitivi/ui/timeline.py:45
+#: ../pitivi/ui/timeline.py:49
 msgid "Break links between clips"
 msgstr ""
 
-#: ../pitivi/ui/timeline.py:46
+#: ../pitivi/ui/timeline.py:50
 msgid "Link together arbitrary clips"
 msgstr ""
 
-#: ../pitivi/ui/timeline.py:47
+#: ../pitivi/ui/timeline.py:51
 msgid "Ungroup clips"
 msgstr ""
 
-#: ../pitivi/ui/timeline.py:48
+#: ../pitivi/ui/timeline.py:52
 msgid "Group clips"
 msgstr ""
 
-#: ../pitivi/ui/timeline.py:188
+#: ../pitivi/ui/timeline.py:203
 msgid "Razor"
+msgstr ""
+
+#: ../pitivi/ui/timelinecanvas.py:49
+msgid "Behavior"
+msgstr "Käyttäytyminen"
+
+#: ../pitivi/ui/timelinecanvas.py:50
+msgid "Snap Distance (pixels)"
+msgstr ""
+
+#: ../pitivi/ui/timelinecanvas.py:51
+msgid "Threshold distance (in pixels) used for all snapping operations"
 msgstr ""
 
 #: ../pitivi/ui/timelinecontrols.py:17
 msgid "<b>Text:</b>"
 msgstr "<b>Teksti:</b>"
 
-#~ msgid "%s doesn't yet handle non local projects"
-#~ msgstr "%s ei vielä voi käsitellä etäprojekteja"
+#: ../pitivi/ui/trackobject.py:49
+msgid "Clip Background (Video)"
+msgstr ""
+
+#: ../pitivi/ui/trackobject.py:50
+msgid "The background color for clips in video tracks."
+msgstr ""
+
+#: ../pitivi/ui/trackobject.py:60
+msgid "Clip Background (Audio)"
+msgstr ""
+
+#: ../pitivi/ui/trackobject.py:61
+msgid "The background color for clips in audio tracks."
+msgstr ""
+
+#: ../pitivi/ui/trackobject.py:71
+msgid "Selection Color"
+msgstr "Valinnan väri"
+
+#: ../pitivi/ui/trackobject.py:72
+msgid "Selected clips will be tinted with this color."
+msgstr "Valitut leikkeet väritetään tällä värillä."
+
+#: ../pitivi/ui/trackobject.py:82
+msgid "Clip Font"
+msgstr "Leikkeiden kirjasin"
+
+#: ../pitivi/ui/trackobject.py:83
+msgid "The font to use for clip titles"
+msgstr "Leikkeiden teksteissä käytettävä kirjasin"
+
+#~ msgid "No location given."
+#~ msgstr "Sijaintia ei annettu."
+
+#~ msgid "File does not exist"
+#~ msgstr "Tiedostoa ei ole olemassa"
+
+#~ msgid "There was an error loading the file."
+#~ msgstr "Virhe ladattaessa tiedostoa."
+
+#~ msgid "Finished in %dm%ds"
+#~ msgstr "Valmistui ajassa %dmin %ds"
+
+#~ msgid "Forward one frame"
+#~ msgstr "Eteenpäin yksi ruutu"
+
+#~ msgid "Fast Forward"
+#~ msgstr "Kelaus eteenpäin"
+
+#~ msgid "Rewind"
+#~ msgstr "Kelaus taaksepäin"
+
+#~ msgid "Back one frame"
+#~ msgstr "Taakse yksi ruutu"
+
+#~ msgid "Frame Forward"
+#~ msgstr "Ruutu eteenpäin"
+
+#~ msgid "Frame Backward"
+#~ msgstr "Ruutu taaksepäin"
+
+#~ msgid "1 Second Forward"
+#~ msgstr "1 sekunti eteenpäin"
+
+#~ msgid "1 Second Backward"
+#~ msgstr "1 sekunti taaksepäin"
+
+#~ msgid "End of Clip"
+#~ msgstr "Leikkeen loppuun"
+
+#~ msgid "Start of Clip"
+#~ msgstr "Leikkeen alkuun"
+
+#~ msgid "The project has unsaved changes. Do you wish to close the project?"
+#~ msgstr ""
+#~ "Projektissa on tallentamattomia muutoksia. Haluatko sulkea projektin?"
+
+#~ msgid "http / https"
+#~ msgstr "http / https"
+
+#~ msgid "rtsp"
+#~ msgstr "rtsp"
+
+#~ msgid "udp / rtp"
+#~ msgstr "udp / rtp"
 
 #~ msgid "Project settings"
 #~ msgstr "Projektin asetukset"
@@ -1267,9 +1572,6 @@ msgstr "<b>Teksti:</b>"
 #~ msgid "End"
 #~ msgstr "Loppu"
 
-#~ msgid "Remove"
-#~ msgstr "Poista"
-
 #~ msgid "Edit"
 #~ msgstr "Muokkaa"
 
@@ -1287,9 +1589,6 @@ msgstr "<b>Teksti:</b>"
 
 #~ msgid "gtk-delete"
 #~ msgstr "gtk-delete"
-
-#~ msgid "gtk-preferences"
-#~ msgstr "gtk-preferences"
 
 #~ msgid ""
 #~ "<span size='x-large'>Add clips to the timeline by dragging them here.</"
@@ -1321,6 +1620,3 @@ msgstr "<b>Teksti:</b>"
 
 #~ msgid "Settings:"
 #~ msgstr "Asetukset:"
-
-#~ msgid "Please choose an output file"
-#~ msgstr "Valitse tulostiedosto"
