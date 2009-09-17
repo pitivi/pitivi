@@ -30,7 +30,10 @@ import os
 from pitivi.signalinterface import Signallable
 import pitivi.log.log as log
 from gettext import ngettext
-import cProfile
+try:
+    import cProfile
+except ImportError:
+    pass
 
 UNKNOWN_DURATION = 2 ** 63 - 1
 
