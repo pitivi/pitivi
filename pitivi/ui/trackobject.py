@@ -100,6 +100,7 @@ class TimelineController(controller.Controller):
     _handle_enter_leave = False
 
     def enter(self, unused, unused2):
+        self._view.raise_(None)
         self._view.focus()
 
     def leave(self, unused, unused2):
@@ -206,7 +207,6 @@ class TrackObject(View, goocanvas.Group, Zoomable):
 
         def drag_start(self, item, target, event):
             TimelineController.drag_start(self, item, target, event)
-            self._view.raise_(None)
             self._context = MoveContext(self._view.timeline,
                 self._view.element,
                 self._view.timeline.selection.getSelectedTrackObjs())
