@@ -42,7 +42,7 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 
     __gtype_name__ = 'Preview'
 
-    def __init__(self, element, height=50, **kwargs):
+    def __init__(self, element, height=46, **kwargs):
         super(Preview, self).__init__(**kwargs)
         Zoomable.__init__(self)
         self.height = float(height)
@@ -75,7 +75,12 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 
     @handler(previewer, "update")
     def _update_preview(self, previewer, segment):
-        self.changed(False)
+        # if segment is none we are not just drawing a new thumbnail, so we
+        # should update bounds
+        if segment == None:
+            self.changed(True)
+        else:
+            self.changed(False)
 
 ## Zoomable interface overries
 
@@ -87,10 +92,14 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
     def do_simple_update(self, cr):
         cr.identity_matrix()
         if self.element.factory:
-            self.bounds = goocanvas.Bounds(0, 0,
-            Zoomable.nsToPixel(self.element.duration), self.height)
+            border_width = self.previewer._spacing()
+            self.bounds = goocanvas.Bounds(border_width, 4,
+            max(0, Zoomable.nsToPixel(self.element.duration) -
+                border_width), self.height)
 
     def do_simple_paint(self, cr, bounds):
+
+
         cr.identity_matrix()
         if self.element.factory:
             self.previewer.render_cairo(cr, intersect(self.bounds, bounds),
