@@ -18,6 +18,7 @@ pitivi.spec
 py-compile
 stamp-h.in
 pitivi.desktop
+pitivi.desktop.in
 prepare-ChangeLog.pl
 autom4te.cache
 aclocal.m4
