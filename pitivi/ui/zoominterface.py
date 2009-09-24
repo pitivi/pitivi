@@ -120,6 +120,14 @@ class Zoomable(object):
         return long(pixel * gst.SECOND / cls.zoomratio)
 
     @classmethod
+    def pixelToNsAt(cls, pixel, ratio):
+        """
+        Returns the pixel equivalent in nanoseconds according to the zoomratio
+        """
+        return long(pixel * gst.SECOND / ratio)
+
+
+    @classmethod
     def nsToPixel(cls, duration):
         """
         Returns the pixel equivalent of the given duration, according to the
