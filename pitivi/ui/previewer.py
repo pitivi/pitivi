@@ -250,12 +250,14 @@ class RandomAccessPreviewer(Previewer):
         # further, which would result in fewer thumbnails needing to be
         # generated.
         j = Zoomable.pixelToNs(i - sof)
+        istep = self.twidth + self._spacing()
+        jstep = self.tdur + Zoomable.pixelToNs(self.spacing)
 
         while i < bounds.x2:
             self._thumbForTime(cr, j, i, y1)
             cr.rectangle(i - 1, y1, self.twidth + 2, self.theight)
-            i += self.twidth + self._spacing()
-            j += self.tdur
+            i += istep
+            j += jstep
             cr.fill()
 
     def _spacing(self):
