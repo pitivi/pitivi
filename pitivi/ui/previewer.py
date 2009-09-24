@@ -354,7 +354,11 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
     def __init__(self, factory, stream_):
         if stream_.dar and stream_.par:
             self.aspect = float(stream_.dar)
+        rate = stream_.framerate
         RandomAccessPreviewer.__init__(self, factory, stream_)
+        self.frame_duration = (gst.SECOND * rate.denom) / rate.num
+        self.tstep = max(self.frame_duration, 
+            Zoomable.pixelToNsAt(self.twidth, Zoomable.max_zoom))
 
     def _pipelineInit(self, factory, sbin):
         csp = gst.element_factory_make("ffmpegcolorspace")
@@ -375,8 +379,8 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
         self.videopipeline.set_state(gst.STATE_PAUSED)
 
     def _segment_for_time(self, time):
-        # for video thumbnails, the duration doesn't matter
-        return time
+        # quantize thumbnail timestamps to maximum granularity
+        return time - (time % self.tstep)
 
     def _thumbnailCb(self, unused_thsink, pixbuf, timestamp):
         gobject.idle_add(self._finishThumbnail, pixbuf, timestamp)
