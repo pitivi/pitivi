@@ -171,6 +171,7 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         timelinewindow = gtk.ScrolledWindow(self.hadj, self.vadj)
         timelinewindow.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         timelinewindow.add(self._canvas)
+        timelinewindow.set_shadow_type(gtk.SHADOW_IN)
         #FIXME: remove padding between scrollbar and scrolled window
         self.attach(timelinewindow, 1, 2, 1, 2)
 
