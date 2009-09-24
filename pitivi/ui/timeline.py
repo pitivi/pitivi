@@ -149,10 +149,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
         # controls for tracks and layers
         self._controls = TimelineControls()
-        controlwindow = gtk.ScrolledWindow(None, self.vadj)
-        controlwindow.set_policy(gtk.POLICY_NEVER, gtk.POLICY_NEVER)
-        controlwindow.add_with_viewport(self._controls)
+        controlwindow = gtk.Viewport(None, self.vadj)
+        controlwindow.add(self._controls)
         controlwindow.set_size_request(-1, 1)
+        controlwindow.set_shadow_type(gtk.SHADOW_OUT)
         self.attach(controlwindow, 0, 1, 1, 2, xoptions=0)
 
         # timeline ruler
@@ -161,7 +161,10 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         self.ruler.set_border_width(2)
         self.ruler.connect("key-press-event", self._keyPressEventCb)
         self.ruler.connect("size-allocate", self._rulerSizeAllocateCb)
-        self.attach(self.ruler, 1, 2, 0, 1, yoptions=0)
+        rulerframe = gtk.Frame()
+        rulerframe.set_shadow_type(gtk.SHADOW_OUT)
+        rulerframe.add(self.ruler)
+        self.attach(rulerframe, 1, 2, 0, 1, yoptions=0)
 
         # proportional timeline
         self._canvas = TimelineCanvas(self.app)
