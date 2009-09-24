@@ -404,8 +404,8 @@ class StillImagePreviewer(RandomAccessVideoPreviewer):
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def __init__(self, factory, stream_):
-        self.tdur = gst.SECOND
-        self.base_width = 50
+        self.tdur = 10 * gst.SECOND
+        self.base_width = int(2.5 * Zoomable.max_zoom)
         RandomAccessPreviewer.__init__(self, factory, stream_)
 
     @property
@@ -431,7 +431,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def _segment_for_time(self, time):
         # for audio files, we need to know the duration the segment spans
-        return time, self.tdur
+        return time - (time % self.tdur), self.tdur
 
     def _bus_message(self, bus, message):
         if message.type == gst.MESSAGE_SEGMENT_DONE:
