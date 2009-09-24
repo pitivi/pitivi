@@ -142,6 +142,8 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def _createUI(self):
         self.leftSizeGroup = gtk.SizeGroup(gtk.SIZE_GROUP_HORIZONTAL)
+        self.props.row_spacing = 2
+        self.props.column_spacing = 2
         self.hadj = gtk.Adjustment()
         self.vadj = gtk.Adjustment()
 
