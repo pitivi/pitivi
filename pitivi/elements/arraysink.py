@@ -36,7 +36,7 @@ class ArraySink(gst.BaseSink):
     caps = gst.Caps(
         "audio/x-raw-float, width=(int) 32, "
         "endianness = (int) LITTLE_ENDIAN, "
-        "channels = (int) 1, "
+        "channels = (int) [1, 6],"
         "rate = (int) [1, 96000]"
     )
 
@@ -53,6 +53,7 @@ class ArraySink(gst.BaseSink):
         gst.BaseSink.__init__(self)
         self.props.sync = False
         self.rate = 0
+        self.channels = 0
         self.duration = 0L
         self.reset()
 
@@ -63,6 +64,7 @@ class ArraySink(gst.BaseSink):
         if not caps[0].get_name() == "audio/x-raw-float":
             return False
         self.rate = caps[0]["rate"]
+        self.channels = caps[0]["channels"]
         return True
 
     def do_render(self, buf):

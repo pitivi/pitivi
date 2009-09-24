@@ -458,37 +458,46 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         surface = cairo.ImageSurface(cairo.FORMAT_A8,
             self.base_width, self.theight)
         cr = cairo.Context(surface)
-        self._plotWaveform(cr, self.audioSink.samples)
+        self._plotWaveform(cr)
         self.audioSink.reset()
         gobject.idle_add(self._finishThumbnail, surface, self._audio_cur)
 
-    def _plotWaveform(self, cr, samples):
-        hscale = 25
+    def _plotWaveform(self, cr):
+        # clear background
+        cr.set_source_rgba(1, 1, 1, 0.0)
+        cr.rectangle(0, 0, self.base_width, self.theight)
+        cr.fill()
+
+        samples = self.audioSink.samples
+
         if not samples:
             cr.move_to(0, hscale)
             cr.line_to(self.twidth, hscale)
             cr.stroke()
             return
 
-        # clear background
-        cr.set_source_rgba(1, 1, 1, 0.0)
-        cr.rectangle(0, 0, self.base_width, self.theight)
-        cr.fill()
-
         # find the samples-per-pixel ratio
         spp = len(samples) / self.base_width
+        channels = self.audioSink.channels
+        stride = spp * channels
+        hscale = self.theight / (2 * channels)
 
         # plot points from min to max over a given hunk
-        i = 0
-        x= 0
-        while i < len(samples):
-            slice = samples[i:i + spp]
-            min_ = min(slice)
-            max_ = max(slice)
-            cr.move_to(x, hscale - (min_ * hscale))
-            cr.line_to(x, hscale - (max_ * hscale))
-            i += spp
-            x += 1
+        chan = 0
+        y = hscale
+        while chan < channels:
+            i = chan
+            x = 0
+            while i < len(samples):
+                slice = samples[i:i + stride:channels]
+                min_ = min(slice)
+                max_ = max(slice)
+                cr.move_to(x, y - (min_ * hscale))
+                cr.line_to(x, y - (max_ * hscale))
+                i += spp
+                x += 1
+            y += 2 * hscale
+            chan += 1
 
         # Draw!
         cr.set_source_rgba(0, 0, 0, 1.0)
