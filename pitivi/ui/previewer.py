@@ -477,9 +477,6 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         samples = self.audioSink.samples
 
         if not samples:
-            cr.move_to(0, hscale)
-            cr.line_to(self.twidth, hscale)
-            cr.stroke()
             return
 
         # find the samples-per-pixel ratio
