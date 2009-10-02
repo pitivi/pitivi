@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: PiTiVi\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-09-10 12:06+0000\n"
-"PO-Revision-Date: 2009-09-12 11:17+0200\n"
+"POT-Creation-Date: 2009-09-30 09:24+0000\n"
+"PO-Revision-Date: 2009-09-12 19:28+0200\n"
 "Last-Translator: Gianvito Cavasoli <janvitus@ubuntu-it.org>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -21,11 +21,11 @@ msgstr ""
 
 #: ../pitivi.desktop.in.in.h:1
 msgid "Create and edit your own movies"
-msgstr ""
+msgstr "Crea e modifica i propri filmati"
 
 #: ../pitivi.desktop.in.in.h:2
 msgid "Pitivi Video Editor"
-msgstr ""
+msgstr "Editor video Pitivi"
 
 #: ../pitivi/check.py:102
 #, python-format
@@ -130,13 +130,10 @@ msgstr ""
 "(attualmente %s)"
 
 #: ../pitivi/check.py:131
-#, fuzzy, python-format
-#| msgid ""
-#| "Please use a version of the GTK+ Python bindings built with cairo support."
+#, python-format
 msgid "Install a version of the GTK+ Python bindings greater or equal to %s"
 msgstr ""
-"Usare una versione dei binding Python per GTK+ creati con il supporto a "
-"Cairo."
+"Installare una versione dei binding di Python per GTK+ uguale o maggiore a %s"
 
 #: ../pitivi/check.py:134
 #, python-format
@@ -148,15 +145,12 @@ msgstr ""
 "aggiornata (attualmente %s)"
 
 #: ../pitivi/check.py:135
-#, fuzzy, python-format
-#| msgid ""
-#| "You do not have a recent enough version of the GStreamer Python bindings "
-#| "(currently %s)"
+#, python-format
 msgid ""
 "Install a version of the GStreamer Python bindings greater or equal to %s"
 msgstr ""
-"La versione dei binding Python per GStreamer non è sufficientemente "
-"aggiornata (attualmente %s)"
+"Installare una versione dei binding di Python per GStreamer uguale o "
+"maggiore a %s"
 
 #: ../pitivi/check.py:138
 #, python-format
@@ -167,7 +161,7 @@ msgstr ""
 #: ../pitivi/check.py:139
 #, python-format
 msgid "Install a version of the GStreamer greater or equal to %s"
-msgstr ""
+msgstr "Installare una versione di GStreamer uguale o maggiore a %s"
 
 #: ../pitivi/check.py:142
 #, python-format
@@ -179,14 +173,11 @@ msgstr ""
 "(attualmente %s)"
 
 #: ../pitivi/check.py:143
-#, fuzzy, python-format
-#| msgid ""
-#| "You do not have a recent enough version of the cairo Python bindings "
-#| "(currently %s)"
+#, python-format
 msgid "Install a version of the cairo Python bindings greater or equal to %s"
 msgstr ""
-"La versione dei binding Python per Cairo non è sufficientemente aggiornata "
-"(attualmente %s)"
+"Installare una versione dei binding di Python per Cairo uguale o maggiore a %"
+"s"
 
 #: ../pitivi/check.py:146
 #, python-format
@@ -198,15 +189,12 @@ msgstr ""
 "aggiornata (attualmente %s)"
 
 #: ../pitivi/check.py:147
-#, fuzzy, python-format
-#| msgid ""
-#| "You do not have a recent enough version of the GNonLin GStreamer plugin "
-#| "(currently %s)"
+#, python-format
 msgid ""
 "Install a version of the GNonLin GStreamer plugin greater or equal to %s"
 msgstr ""
-"La versione dei plugin di GNonLin per GStreamer non è sufficientemente "
-"aggiornata (attualmente %s)"
+"Installare una versione del plugin GNonLin di GStreamer uguale o maggiore a %"
+"s"
 
 #: ../pitivi/check.py:149
 msgid "Could not import the Zope interface module"
@@ -240,7 +228,7 @@ msgstr "Impossibile decodificare il file."
 
 #: ../pitivi/discoverer.py:210
 msgid "The given file does not contain audio, video or picture streams."
-msgstr "Il file fornito non contiene flusso audio, video o immagine."
+msgstr "Il file fornito non contiene flussi audio, video o immagine."
 
 #: ../pitivi/discoverer.py:230
 msgid "Could not establish the duration of the file."
@@ -251,7 +239,7 @@ msgid ""
 "This clip seems to be in a format which cannot be accessed in a random "
 "fashion."
 msgstr ""
-"Questa clip sembra essere in un ormato a cui non è possibile accedere in "
+"Questa clip sembra essere in un formato a cui non è possibile accedere in "
 "modo casuale."
 
 #: ../pitivi/discoverer.py:295
@@ -338,7 +326,7 @@ msgstr ""
 
 #: ../pitivi/application.py:227
 msgid "Run pitivi in the Python Debugger"
-msgstr ""
+msgstr "Esegue l'applicazione nello strumento di debug di Python"
 
 #: ../pitivi/projectmanager.py:62
 msgid "Not a valid project file."
@@ -518,7 +506,7 @@ msgstr "<b>Audio:</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:2
 msgid "<b>Nothing yet</b>"
-msgstr "<b>Niente di fatto</b>"
+msgstr "<b>Ancora nulla</b>"
 
 #: ../pitivi/ui/encodingdialog.glade.h:3
 msgid "<b>Settings</b>"
@@ -548,20 +536,20 @@ msgstr "Scegliere un file di uscita"
 msgid "Render project"
 msgstr "Rendering del progetto"
 
-#: ../pitivi/ui/encodingdialog.py:90
+#: ../pitivi/ui/encodingdialog.py:92
 msgid "Choose file to render to"
 msgstr "Scelta del file per il rendering"
 
-#: ../pitivi/ui/encodingdialog.py:123
+#: ../pitivi/ui/encodingdialog.py:127
 #, python-format
 msgid "About %s left"
 msgstr "Circa %s rimanenti"
 
-#: ../pitivi/ui/encodingdialog.py:133
+#: ../pitivi/ui/encodingdialog.py:137
 msgid "Rendering"
 msgstr "Rendering"
 
-#: ../pitivi/ui/encodingdialog.py:150
+#: ../pitivi/ui/encodingdialog.py:154
 msgid "Rendering Complete"
 msgstr "Rendering completato"
 
@@ -860,11 +848,11 @@ msgstr "Importa dalla _webcam..."
 
 #: ../pitivi/ui/mainwindow.py:268
 msgid "Import Camera stream"
-msgstr "Importa flusso della camera"
+msgstr "Importa flusso della videocamera"
 
 #: ../pitivi/ui/mainwindow.py:270
 msgid "_Make screencast..."
-msgstr "_Crea screencast..."
+msgstr "_Crea registrazione..."
 
 #: ../pitivi/ui/mainwindow.py:271
 msgid "Capture the desktop"
@@ -941,7 +929,7 @@ msgstr "Tutti i formati supportati"
 
 #: ../pitivi/ui/mainwindow.py:606
 msgid "Contributors:"
-msgstr "Contributori:"
+msgstr "Collaboratori:"
 
 #: ../pitivi/ui/mainwindow.py:618
 msgid ""
@@ -976,17 +964,14 @@ msgstr "Errore nel caricare il file"
 msgid "Locate missing file..."
 msgstr "Individua file mancante..."
 
+# NdT: quella virgola finale spero abbia una storia...
 #: ../pitivi/ui/mainwindow.py:821
-#, fuzzy
-#| msgid "The following file can not be used with PiTiVi."
 msgid "The following file has moved,"
-msgstr "Il file seguente non può essere usato dall'applicazione."
+msgstr "Il seguente file è stato spostato,"
 
 #: ../pitivi/ui/mainwindow.py:824
-#, fuzzy
-#| msgid "<b>Description:</b>"
 msgid "<b>Duration:</b>"
-msgstr "<b>Descrizione:</b>"
+msgstr "<b>Durata:</b>"
 
 #: ../pitivi/ui/mainwindow.py:974
 msgid "Save As..."
@@ -1219,11 +1204,11 @@ msgstr "Nessun oggetto selezionato"
 
 #: ../pitivi/ui/screencast_manager.glade.h:1
 msgid "Screencast"
-msgstr "Screencast"
+msgstr "Registrazione"
 
 #: ../pitivi/ui/screencast_manager.glade.h:2
 msgid "Screencast Desktop"
-msgstr "Screencast scrivania"
+msgstr "Registrazione scrivania"
 
 #: ../pitivi/ui/screencast_manager.glade.h:3
 msgid "Start Istanbul"
@@ -1231,7 +1216,7 @@ msgstr "Avvia Istanbul"
 
 #: ../pitivi/ui/sourcelist.py:115
 msgid "Add Clips..."
-msgstr "Aggiungi clip.."
+msgstr "Aggiungi clip..."
 
 #: ../pitivi/ui/sourcelist.py:120
 msgid "Remove Clip"
@@ -1259,7 +1244,7 @@ msgid ""
 "buttons above.</span>"
 msgstr ""
 "<span size='x-large'>Importare una clip trascinandola qui oppure usare i "
-"pulsanti qui sopra.</span>"
+"pulsanti sopra.</span>"
 
 #: ../pitivi/ui/sourcelist.py:245
 msgid "_Import clips..."
@@ -1352,13 +1337,13 @@ msgstr "Collega insieme le clip arbitrarie"
 
 #: ../pitivi/ui/timeline.py:51
 msgid "Ungroup clips"
-msgstr "Separa filmati"
+msgstr "Separa le clip"
 
 #: ../pitivi/ui/timeline.py:52
 msgid "Group clips"
-msgstr "Raggruppa clip"
+msgstr "Raggruppa le clip"
 
-#: ../pitivi/ui/timeline.py:203
+#: ../pitivi/ui/timeline.py:210
 msgid "Razor"
 msgstr "Forbice"
 
@@ -1368,11 +1353,12 @@ msgstr "Comportamento"
 
 #: ../pitivi/ui/timelinecanvas.py:50
 msgid "Snap Distance (pixels)"
-msgstr "Distanza rottura (pixel)"
+msgstr "Distanza aggancio (pixel)"
 
 #: ../pitivi/ui/timelinecanvas.py:51
 msgid "Threshold distance (in pixels) used for all snapping operations"
-msgstr "Soglia di distanza (in pixel) usata per tutte le operazioni di rottura"
+msgstr ""
+"Soglia di distanza (in pixel) usata per tutte le operazioni di aggancio"
 
 #: ../pitivi/ui/timelinecontrols.py:17
 msgid "<b>Text:</b>"
@@ -1400,7 +1386,7 @@ msgstr "Selezionare colore"
 
 #: ../pitivi/ui/trackobject.py:72
 msgid "Selected clips will be tinted with this color."
-msgstr "Le clip selezionatie saranno tinte con questo colore."
+msgstr "Le clip selezionate saranno tinte con questo colore."
 
 #: ../pitivi/ui/trackobject.py:82
 msgid "Clip Font"
@@ -1409,23 +1395,3 @@ msgstr "Carattere della clip"
 #: ../pitivi/ui/trackobject.py:83
 msgid "The font to use for clip titles"
 msgstr "Il carattere da usare per i titoli delle clip"
-
-#~| msgid "New Project"
-#~ msgid "Close project"
-#~ msgstr "Chiudi progetto"
-
-#~ msgid "Please locate the missing file, '%s'"
-#~ msgstr "Individuare il file mancante, «%s»"
-
-#~ msgid "Undo %s"
-#~ msgstr "Annulla %s"
-
-#~ msgid "Undo"
-#~ msgstr "Annulla"
-
-#~ msgid "Redo %s"
-#~ msgstr "Ripeti %s"
-
-#~| msgid "Rewind"
-#~ msgid "Redo"
-#~ msgstr "Ripeti"
