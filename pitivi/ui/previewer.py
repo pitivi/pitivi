@@ -356,9 +356,10 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
             self.aspect = float(stream_.dar)
         rate = stream_.framerate
         RandomAccessPreviewer.__init__(self, factory, stream_)
-        self.frame_duration = (gst.SECOND * rate.denom) / rate.num
-        self.tstep = max(self.frame_duration, 
-            Zoomable.pixelToNsAt(self.twidth, Zoomable.max_zoom))
+        self.tstep = Zoomable.pixelToNsAt(self.twidth, Zoomable.max_zoom)
+        if rate.num:
+            frame_duration = (gst.SECOND * rate.denom) / rate.num
+            self.tstep = max(frame_duration, self.tstep)
 
     def _pipelineInit(self, factory, sbin):
         csp = gst.element_factory_make("ffmpegcolorspace")
