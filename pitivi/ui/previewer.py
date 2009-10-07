@@ -405,8 +405,8 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
 
 class StillImagePreviewer(RandomAccessVideoPreviewer):
 
-    def _thumbForTime(self, time):
-        return RandomAccessVideoPreviewer._thumbForTime(self, 0L)
+    def _thumbForTime(self, cr, time, x, y):
+        return RandomAccessVideoPreviewer._thumbForTime(self, cr, 0L, x, y)
 
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
