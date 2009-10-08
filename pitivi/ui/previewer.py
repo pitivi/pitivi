@@ -482,6 +482,8 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
         # find the samples-per-pixel ratio
         spp = len(samples) / self.base_width
+        if spp == 0:
+            spp = 1
         channels = self.audioSink.channels
         stride = spp * channels
         hscale = self.theight / (2 * channels)
