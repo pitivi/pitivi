@@ -516,7 +516,9 @@ class Timeline(gtk.Table, Loggable, Zoomable):
 
     def ungroupSelected(self, unused_action):
         if self.timeline:
+            self.app.action_log.begin("ungroup")
             self.timeline.ungroupSelection()
+            self.app.action_log.commit()
 
     def groupSelected(self, unused_action):
         if self.timeline:

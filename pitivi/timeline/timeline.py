@@ -1752,13 +1752,13 @@ class Timeline(Signallable, Loggable):
             self.selection.setTo(timeline_object.track_objects, UNSELECT)
 
             for track_object in list(timeline_object.track_objects):
-                timeline_object.removeTrackObject(track_object)
-                new_timeline_object = TimelineObject(track_object.factory)
-                new_timeline_object.addTrackObject(track_object)
+                new_track_object = track_object.copy()
+                new_timeline_object = TimelineObject(new_track_object.factory)
+                new_timeline_object.addTrackObject(new_track_object)
                 self.addTimelineObject(new_timeline_object)
                 new_track_objects.extend(new_timeline_object.track_objects)
 
-            self.removeTimelineObject(timeline_object)
+            self.removeTimelineObject(timeline_object, deep=True)
 
         self.selection.setTo(new_track_objects, SELECT_ADD)
 
