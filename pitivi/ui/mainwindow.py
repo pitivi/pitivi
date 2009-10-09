@@ -449,8 +449,6 @@ class PitiviMainWindow(gtk.Window, Loggable):
         os.environ["PULSE_PROP_media.role"] = "production"
 
     def _connectToSourceList(self):
-        # FIXME: projecttabs creates the "components" but then has no API to get
-        # them back
         self.sourcelist.connect('play', self._sourceListPlayCb)
 
     def toggleFullScreen(self):
