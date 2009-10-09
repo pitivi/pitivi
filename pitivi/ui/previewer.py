@@ -496,12 +496,6 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
             x = 0
             while i < len(samples):
                 slice = samples[i:i + stride:channels]
-                if not slice:
-                    self.warning("empty slice??")
-                    i += spp
-                    x += 1
-                    continue
-
                 min_ = min(slice)
                 max_ = max(slice)
                 cr.move_to(x, y - (min_ * hscale))
