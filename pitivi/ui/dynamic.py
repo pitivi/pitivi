@@ -138,6 +138,7 @@ class NumericWidget(gtk.HBox):
             self.slider = gtk.HScale(self.adjustment)
             self.pack_end(self.slider)
             self.slider.show()
+            self.slider.props.draw_value = False
 
         if upper is None:
             upper = gobject.G_MAXDOUBLE
