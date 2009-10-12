@@ -167,6 +167,7 @@ class NumericWidget(gtk.HBox):
             minimum, maximum = (gobject.G_MINDOUBLE, gobject.G_MAXDOUBLE)
             step = 0.00001
             page = 0.01
+            self.spinner.props.digits = 2
         if self.lower is not None:
             minimum = self.lower
         if self.upper is not None:
