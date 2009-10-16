@@ -272,6 +272,8 @@ class ChoiceWidget(gtk.VBox):
         self.contents = gtk.combo_box_new_text()
         for choice, value in choices:
             self.contents.append_text(_(choice))
+        if len(choices) <= 1:
+            self.contents.set_sensitive(False)
         self.pack_start(self.contents)
         self.contents.show()
 
