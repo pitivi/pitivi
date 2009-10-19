@@ -48,10 +48,11 @@ from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.log import log
 from pitivi.ui.mainwindow import PitiviMainWindow
-from pitivi.projectmanager import ProjectManager
+from pitivi.projectmanager import ProjectManager, ProjectLogObserver
 from pitivi.undo import UndoableActionLog, DebugActionLogObserver
 from pitivi.timeline.timeline_undo import TimelineLogObserver
 from pitivi.sourcelist_undo import SourceListLogObserver
+from pitivi.undo import UndoableAction
 
 # FIXME : Speedup loading time
 # Currently we load everything in one go
@@ -142,6 +143,7 @@ class Pitivi(Loggable, Signallable):
         self.debug_action_log_observer = DebugActionLogObserver()
         self.debug_action_log_observer.startObserving(self.action_log)
         self.timelineLogObserver = TimelineLogObserver(self.action_log)
+        self.projectLogObserver = ProjectLogObserver(self.action_log)
         self.sourcelist_log_observer = SourceListLogObserver(self.action_log)
 
     #{ Shutdown methods
@@ -195,6 +197,7 @@ class Pitivi(Loggable, Signallable):
         self.current = project
         self.action_log.clean()
         self.timelineLogObserver.startObserving(project.timeline)
+        self.projectLogObserver.startObserving(project)
         self.sourcelist_log_observer.startObserving(project.sources)
         self.emit("new-project-loaded", project)
 
@@ -206,6 +209,7 @@ class Pitivi(Loggable, Signallable):
 
     def _projectManagerProjectClosed(self, projectManager, project):
         self.timelineLogObserver.stopObserving(project.timeline)
+        self.projectLogObserver.stopObserving(project)
         self.current = None
         self.emit("project-closed", project)
 
