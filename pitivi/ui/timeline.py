@@ -415,13 +415,13 @@ class Timeline(gtk.Table, Loggable, Zoomable):
             self._canvas.zoomChanged()
             self.ruler.setProjectFrameRate(self.project.getSettings().videorate)
             self.ruler.zoomChanged()
-            self._settingsChangedCb(self.project)
+            self._settingsChangedCb(self.project, None, self.project.getSettings())
 
     project = receiver(_setProject)
 
     @handler(project, "settings-changed")
-    def _settingsChangedCb(self, project):
-        rate = self.project.getSettings().videorate
+    def _settingsChangedCb(self, project, old, new):
+        rate = new.videorate
         self.rate = float(1 / rate)
         self.ruler.setProjectFrameRate(rate)
 

@@ -63,7 +63,7 @@ class Project(Signallable, Loggable):
     """
 
     __signals__ = {
-        "settings-changed" : None,
+        "settings-changed" : ['old', 'new'],
         }
 
     def __init__(self, name="", uri=None, **kwargs):
@@ -112,8 +112,9 @@ class Project(Signallable, Loggable):
         If settings is None, the current settings will be unset
         """
         self.log("Setting %s as the project's settings", settings)
+        oldsettings = self.settings
         self.settings = settings
-        self.emit('settings-changed')
+        self.emit('settings-changed', oldsettings, settings)
 
     def unsetSettings(self, unused_settings):
         """ Remove the currently configured settings."""

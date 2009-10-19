@@ -907,10 +907,10 @@ class PitiviMainWindow(gtk.Window, Loggable):
     project = receiver(_setProject)
 
     @handler(project, "settings-changed")
-    def _settingsChangedCb(self, project):
+    def _settingsChangedCb(self, project, old, new):
         if self.viewer.action == self.project.view_action:
-            sett = self.project.getSettings()
-            self.viewer.setDisplayAspectRatio(float(sett.videopar * sett.videowidth) / float(sett.videoheight))
+            self.viewer.setDisplayAspectRatio(float(new.videopar *
+            new.videowidth) / float(new.videoheight))
 
     def _sourceListMissingPluginsCb(self, project, uri, factory,
             details, descriptions, missingPluginsCallback):
