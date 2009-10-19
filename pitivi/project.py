@@ -82,7 +82,6 @@ class Project(Signallable, Loggable):
         self.sources = SourceList()
         self.sources.connect("source-removed", self._sourceRemovedCb)
 
-        self.settingssigid = 0
         self._dirty = False
 
         self.timeline = Timeline()
@@ -97,9 +96,6 @@ class Project(Signallable, Loggable):
         self.pipeline = None
 
     #{ Settings methods
-
-    def _settingsChangedCb(self, unused_settings):
-        self.emit('settings-changed')
 
     def getSettings(self):
         """
@@ -116,12 +112,8 @@ class Project(Signallable, Loggable):
         If settings is None, the current settings will be unset
         """
         self.log("Setting %s as the project's settings", settings)
-        if self.settings:
-            self.settings.disconnect(self.settingssigid)
         self.settings = settings
         self.emit('settings-changed')
-        self.settingssigid = self.settings.connect('settings-changed',
-            self._settingsChangedCb)
 
     def unsetSettings(self, unused_settings):
         """ Remove the currently configured settings."""
