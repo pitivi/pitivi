@@ -469,6 +469,23 @@ class ExportSettings(Signallable, Loggable):
         self.aencoders = available_audio_encoders()
         self.muxers = available_combinations(self.muxers, self.vencoders, self.aencoders)
 
+    def copy(self):
+        ret = ExportSettings()
+        ret.videowidth = self.videowidth
+        ret.videoheight = self.videoheight
+        ret.videorate = gst.Fraction(self.videorate.num, self.videorate.denom)
+        ret.videopar = gst.Fraction(self.videopar.num, self.videopar.denom)
+        ret.audiochannels = self.audiochannels
+        ret.audiorate = self.audiorate
+        ret.audiodepth = self.audiodepth
+        ret.vencoder = self.vencoder
+        ret.aencoder = self.aencoder
+        ret.muxer = self.muxer
+        ret.containersettings = dict(self.containersettings)
+        ret.acodecsettings = dict(self.acodecsettings)
+        ret.vcodecsettings = dict(self.vcodecsettings)
+        return ret
+
     def __str__(self):
         msg = _("Export Settings\n")
         msg += _("Video: ") + str(self.videowidth) + " " + str(self.videoheight) +\
