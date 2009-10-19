@@ -32,6 +32,39 @@ from pitivi.signalinterface import Signallable
 from pitivi.log.loggable import Loggable
 from pitivi.stream import AudioStream, VideoStream
 from pitivi.timeline.track import Track
+from pitivi.undo import UndoableAction
+
+class ProjectSettingsChanged(UndoableAction):
+
+    def __init__(self, project, old, new):
+        self.project = project
+        self.oldsettings = old
+        self.newsettings = new
+
+    def do(self):
+        self.project.setSettings(self.newsettings)
+        self._done()
+
+    def undo(self):
+        self.project.setSettings(self.oldsettings)
+        self._undone()
+
+class ProjectLogObserver(UndoableAction):
+
+    def __init__(self, log):
+        self.log = log
+
+    def startObserving(self, project):
+        project.connect("settings-changed", self._settingsChangedCb)
+
+    def stopObserving(self, project):
+        project.disconnect_by_function(self._settingsChangedCb)
+
+    def _settingsChangedCb(self, project, old, new):
+        action = ProjectSettingsChanged(project, old, new)
+        self.log.begin("change project settings")
+        self.log.push(action)
+        self.log.commit()
 
 class ProjectManager(Signallable, Loggable):
     __signals__ = {
