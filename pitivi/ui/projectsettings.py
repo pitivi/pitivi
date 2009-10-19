@@ -36,7 +36,7 @@ class ProjectSettingsDialog(GladeWindow):
         self.expwidget = ExportSettingsWidget(parent)
         self.widgets["vbox1"].pack_start(self.expwidget)
         self.expwidget.show()
-        self.expwidget.setSettings(self.project.getSettings())
+        self.expwidget.setSettings(self.project.getSettings().copy())
         self._fillSettings()
 
     def _fillSettings(self):
