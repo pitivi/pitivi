@@ -78,14 +78,26 @@ class TextWidget(gtk.HBox):
     __INVALID__ = gtk.gdk.Color(0xFFFF, 0, 0)
     __NORMAL__ = gtk.gdk.Color(0, 0, 0)
 
-    def __init__(self, matches = None):
+    def __init__(self, matches = None, choices = None):
         gtk.HBox.__init__(self)
-        self.text = gtk.Entry()
-        self.text.show()
-        self.pack_start(self.text)
+        if choices:
+            self.combo = gtk.ComboBoxEntry()
+            self.text = self.combo.child
+            self.combo.show()
+            self.pack_start(self.combo)
+            model = gtk.ListStore(str)
+            for choice in choices:
+                model.append((choice,))
+            self.combo.set_model(model)
+            self.combo.set_text_column(0)
+            self.combo.set_active(0)
+        else:
+            self.text = gtk.Entry()
+            self.text.show()
+            self.pack_start(self.text)
         self.matches = None
         self.last_valid = None
-        self.valid = True
+        self.valid = False
         self.image = gtk.Image()
         self.image.set_from_stock(gtk.STOCK_DIALOG_WARNING, 
             gtk.ICON_SIZE_BUTTON)
@@ -109,7 +121,8 @@ class TextWidget(gtk.HBox):
     def _filter(self, unused_widget):
         text = self.text.get_text()
         if self.matches:
-            if self.matches.match(text):
+            match = self.matches.match(text)
+            if match is not None:
                 self.last_valid = text
                 self.emit("value-changed")
                 if not self.valid:
