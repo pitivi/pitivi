@@ -81,16 +81,12 @@ class TextWidget(gtk.HBox):
     def __init__(self, matches = None, choices = None):
         gtk.HBox.__init__(self)
         if choices:
-            self.combo = gtk.ComboBoxEntry()
+            self.combo = gtk.combo_box_entry_new_text()
             self.text = self.combo.child
             self.combo.show()
             self.pack_start(self.combo)
-            model = gtk.ListStore(str)
             for choice in choices:
-                model.append((choice,))
-            self.combo.set_model(model)
-            self.combo.set_text_column(0)
-            self.combo.set_active(0)
+                self.combo.append_text(choice)
         else:
             self.text = gtk.Entry()
             self.text.show()
@@ -102,10 +98,13 @@ class TextWidget(gtk.HBox):
         self.image.set_from_stock(gtk.STOCK_DIALOG_WARNING, 
             gtk.ICON_SIZE_BUTTON)
         self.pack_start(self.image)
-        self.text.connect("changed", self._filter)
+        self.text.connect("changed", self._textChanged)
         if matches:
-            self.matches = re.compile(matches)
-            self._filter(None)
+            if type(matches) is str:
+                self.matches = re.compile(matches)
+            else:
+                self.matches = matches
+            self._textChanged(None)
 
     def connectValueChanged(self, callback, *args):
         return self.connect("value-changed", callback, *args)
@@ -118,11 +117,10 @@ class TextWidget(gtk.HBox):
             return self.last_valid
         return self.text.get_text()
 
-    def _filter(self, unused_widget):
+    def _textChanged(self, unused_widget):
         text = self.text.get_text()
         if self.matches:
-            match = self.matches.match(text)
-            if match is not None:
+            if self._filter(text):
                 self.last_valid = text
                 self.emit("value-changed")
                 if not self.valid:
@@ -134,6 +132,12 @@ class TextWidget(gtk.HBox):
                 self.valid = False
         else:
             self.emit("value-changed")
+
+    def _filter(self, text):
+        match = self.matches.match(text)
+        if match is not None:
+            return True
+        return False
 
 class NumericWidget(gtk.HBox):
 
