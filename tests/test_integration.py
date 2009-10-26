@@ -27,6 +27,12 @@ TestCase = unittest.TestCase
 from pitivi.application import InteractivePitivi
 import pitivi.instance
 import gobject
+import os.path
+
+base_uri = "file:///" + os.getcwd() + "/"
+test1 = base_uri + "test1.ogg"
+test2 = base_uri + "test2.ogg"
+test3 = base_uri + "test3.ogg"
 
 class WatchDog(object):
 
@@ -148,6 +154,38 @@ class Base(TestCase):
         self.assertEquals(pitivi.instance.PiTiVi, None)
         del self.ptv
         TestCase.tearDown(self)
+
+class TestImport(Base):
+
+    """Test discoverer, sourcelist, and project integration. When the new
+    project loads, attempt to add both existing and non-existing sources. Make
+    sure that an error is emitted when a source fails to load, and that
+    source-added is emitted when sources are loaded successfully."""
+
+    def setUp(self):
+        self.factories = set()
+        self.errors = set()
+        Base.setUp(self)
+
+    def _sourceAdded(self, sourcelist, factory):
+        self.factories.add(factory.uri)
+
+    def _discoveryError(self, sourcelist, uri, reason, unused):
+        self.errors.add(uri)
+
+    def _readyCb(self, soucelist):
+        self.failUnlessEqual(self.factories, set((test1, test2)))
+        self.failUnlessEqual(self.errors, set((test3,)))
+        self.ptv.current._dirty = False
+        self.ptv.shutdown()
+
+    def _projectLoadedCb(self, pitivi, project):
+        self.ptv.current.sources.connect("source-added", self._sourceAdded)
+        self.ptv.current.sources.connect("discovery-error", self._discoveryError)
+        self.ptv.current.sources.connect("ready", self._readyCb)
+        self.ptv.current.sources.addUri(test1)
+        self.ptv.current.sources.addUri(test2)
+        self.ptv.current.sources.addUri(test3)
 
 if __name__ == "__main__":
     unittest.main()
