@@ -25,9 +25,13 @@ QA scenarios """
 import unittest
 TestCase = unittest.TestCase
 from pitivi.application import InteractivePitivi
+from pitivi.timeline.timeline import MoveContext, TrimStartContext,\
+    TrimEndContext
 import pitivi.instance
 import gobject
 import os.path
+import gst
+import random
 
 base_uri = "file:///" + os.getcwd() + "/"
 test1 = base_uri + "test1.ogg"
@@ -186,6 +190,79 @@ class TestImport(Base):
         self.ptv.current.sources.addUri(test1)
         self.ptv.current.sources.addUri(test2)
         self.ptv.current.sources.addUri(test3)
+
+class TestTimeline(Base):
+
+    """Base test case for tests involving the timeline. Imports several
+    sources to the project and adds them to the timeline, optionally setting
+    their start, media-start, and duration properties."""
+
+    sources = (
+        (
+            "timelineObject1", 
+            test1, 
+            {
+                "start" : 0,
+                "duration" : gst.SECOND,
+                "media-start" : gst.SECOND,
+            }
+        ),
+        (
+            "timelineObject2", 
+            test2,
+            {
+                "start" : gst.SECOND,
+                "duration" : gst.SECOND,
+            }
+        ),
+    )
+
+    def setUp(self):
+        self.timelineObjects = set()
+        Base.setUp(self)
+
+    def _projectLoadedCb(self, pitivi, project):
+        self.ptv.current.sources.connect("ready", self._readyCb)
+        for name, uri, props in self.sources:
+            self.ptv.current.sources.addUri(uri)
+
+    def _timelineSetup(self):
+        self.ptv.current.timeline.connect("timeline-object-added",
+            self._timelineObjectAddedCb)
+
+        for name, uri, props in self.sources:
+            factory = self.ptv.current.sources.getUri(uri)
+            if not factory:
+                raise Exception("Could not find '%s' in sourcelist" %
+                    source)
+            timelineObject = self.ptv.current.timeline.addSourceFactory(factory)
+            setattr(self, name, timelineObject)
+            if not timelineObject:
+                raise Exception("Could not add source '%s' to timeline" %
+                    source)
+            if props:
+                for prop, value in props.iteritems():
+                    setattr(timelineObject, prop, value)
+
+    def _timelineObjectAddedCb(self, timeline, object):
+        self.timelineObjects.add(object)
+
+    def _readyCb(self, unused_sourcelist):
+        self._timelineSetup()
+        self._verifyTimeline()
+        self._interactiveTest()
+
+    def _interactiveTest(self):
+        self.ptv.current._dirty = False
+        self.ptv.shutdown()
+
+    def _verifyTimeline(self):
+        for name, uri, props in self.sources:
+            timelineObject = getattr(self, name)
+            if timelineObject:
+                for prop, value in props.iteritems():
+                    if not getattr(timelineObject, prop) == value:
+                        raise Exception("'%s'.%s != %r" % (uri, prop, value))
 
 if __name__ == "__main__":
     unittest.main()
