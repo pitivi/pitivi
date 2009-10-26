@@ -230,15 +230,16 @@ class InteractivePitivi(Pitivi):
     add_help = _("""Add each MEDIA_FILE to timeline after importing.""")
     debug_help = _("""Run pitivi in the Python Debugger""")
 
+    no_ui_help = _("""Run pitivi with no gui""")
+
+    def __init__(self):
+        Pitivi.__init__(self)
+        self.mainloop = gobject.MainLoop()
+
     def run(self, argv):
         # check for dependencies
         if not self._checkDependencies():
             return
-
-        # create the ui
-        self.mainloop = gobject.MainLoop()
-        self.gui = PitiviMainWindow(self)
-        self.gui.show()
 
         # parse cmdline options
         parser = self._createOptionParser()
@@ -248,6 +249,12 @@ class InteractivePitivi(Pitivi):
             sys.excepthook = self._excepthook
 
         # validate options
+
+        if not options.no_ui:
+            # create the ui
+            self.gui = PitiviMainWindow(self)
+            self.gui.show()
+
         if not options.import_sources and options.add_to_timeline:
             parser.error("-a requires -i")
             return
@@ -288,6 +295,8 @@ class InteractivePitivi(Pitivi):
         parser.add_option("-a", "--add-to-timeline", help=self.add_help,
                 action="store_true", default=False)
         parser.add_option("-d", "--debug", help=self.debug_help,
+                action="store_true", default=False)
+        parser.add_option("-n", "--no-ui", help=self.no_ui_help,
                 action="store_true", default=False)
 
         return parser
