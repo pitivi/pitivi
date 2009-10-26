@@ -100,5 +100,54 @@ class TestWatchdog(TestCase):
         self.timeout_called = True
         return False
 
+class Base(TestCase):
+    """
+    Creates and runs an InteractivePitivi object, then starts the mainloop.
+    Uses a WatchDog to ensure that test cases will eventually terminate with an
+    assertion failure if runtime errors occur inside the mainloop."""
+
+    watchdog_timeout = 1000
+    no_ui = True
+
+    def setUp(self):
+        TestCase.setUp(self)
+        ptv = InteractivePitivi()
+        # was the pitivi object created
+        self.assert_(ptv)
+
+        # were the contents of pitivi properly created
+        self.assertEqual(ptv.current, None)
+
+        # was the unique instance object properly set
+        self.assertEquals(pitivi.instance.PiTiVi, ptv)
+        self.ptv = ptv
+
+        # setup a watchdog timer
+        self.watchdog = WatchDog(ptv.mainloop, self.watchdog_timeout)
+
+        # connect to the new-project-loaded signal
+        self.ptv.connect("new-project-loaded", self._projectLoadedCb)
+
+    def testPiTiVi(self):
+        self.runPitivi()
+
+    def runPitivi(self):
+        self.watchdog.start()
+        if self.no_ui:
+            self.ptv.run(["--no-ui"])
+        else:
+            self.ptv.run([])
+
+    def _projectLoadedCb(self, pitivi, project):
+        gobject.idle_add(self.ptv.shutdown)
+
+    def tearDown(self):
+        # make sure we aren't exiting because our watchdog activated
+        self.assertFalse(self.watchdog.activated)
+        # make sure the instance has been unset
+        self.assertEquals(pitivi.instance.PiTiVi, None)
+        del self.ptv
+        TestCase.tearDown(self)
+
 if __name__ == "__main__":
     unittest.main()
