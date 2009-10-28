@@ -264,5 +264,36 @@ class TestTimeline(Base):
                     if not getattr(timelineObject, prop) == value:
                         raise Exception("'%s'.%s != %r" % (uri, prop, value))
 
+    def scrubContext(self, context, finalTime, finalPriority, callback=None,
+        delay=100, maxtime = 7200 * gst.SECOND, maxpriority =10, steps = 10):
+        """ Scrubs an editing context as if a user were frantically dragging a
+        clips with the mouse """
+
+        self._scrubContext = context
+        self._scrubTime = finalTime
+        self._scrubPriority = finalPriority
+        self._scrubMaxPriority = maxpriority
+        self._scrubMaxTime = maxtime
+        self._scrubCount = 0
+        self._scrubSteps = steps
+        self._scrubCallback = callback
+
+        self.watchdog.keepAlive()
+        gobject.timeout_add(delay, self._scrubTimeoutCb)
+
+    def _scrubTimeoutCb(self):
+        time_ = random.randint(0, self._scrubMaxTime)
+        priority = random.randint(0, self._scrubMaxPriority)
+        self._scrubContext.editTo(time_, priority)
+        self._scrubCount += 1
+        self.watchdog.keepAlive()
+
+        if self._scrubCount < self._scrubSteps:
+            return True
+        else:
+            self._scrubContext.editTo(self._scrubTime, self._scrubPriority)
+            self._scrubCallback()
+            return False
+
 if __name__ == "__main__":
     unittest.main()
