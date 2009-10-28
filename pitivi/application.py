@@ -163,7 +163,8 @@ class Pitivi(Loggable, Signallable):
             return False
         self.threads.stopAllThreads()
         self.settings.storeSettings()
-        self.deviceprobe.release()
+        if self.deviceprobe:
+            self.deviceprobe.release()
         self.deviceprobe = None
         self.current = None
         instance.PiTiVi = None
@@ -212,7 +213,6 @@ class Pitivi(Loggable, Signallable):
         self.projectLogObserver.stopObserving(project)
         self.current = None
         self.emit("project-closed", project)
-
 
 class InteractivePitivi(Pitivi):
     usage = _("""
