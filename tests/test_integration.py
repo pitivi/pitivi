@@ -295,5 +295,22 @@ class TestTimeline(Base):
             self._scrubCallback()
             return False
 
+class TestMoveSources(TestTimeline):
+
+    def _finish(self):
+        self.context.finish()
+        self.assertEquals(self.timelineObject1.start, 10 * gst.SECOND)
+        self.assertEquals(self.timelineObject1.priority, 2)
+        self.assertEquals(self.timelineObject2.start, 11 * gst.SECOND)
+        self.assertEquals(self.timelineObject2.priority, 2)
+        self.ptv.current.dirty = False
+        self.ptv.shutdown()
+
+    def _interactiveTest(self):
+        timeline = self.ptv.current.timeline
+        self.context = MoveContext(timeline, self.timelineObject1,
+            set((self.timelineObject2,)))
+        self.scrubContext(self.context, 10 * gst.SECOND, 2, self._finish)
+
 if __name__ == "__main__":
     unittest.main()
