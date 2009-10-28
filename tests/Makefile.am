@@ -9,6 +9,7 @@ tests = \
 	test_action.py			\
 	test_undo.py			\
 	test_timeline_undo.py		\
+	test_integration.py			\
 	test_gap.py
 
 EXTRA_DIST = $(tests) runtests.py common.py
