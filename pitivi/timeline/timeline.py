@@ -1260,7 +1260,7 @@ class TrimStartContext(EditingContext):
         self.default_originals = self._saveValues([focus_timeline_object])
 
         ripple = self.timeline.getObjsBeforeTime(focus.start)
-        assert not focus.timeline_object in ripple
+        assert not focus.timeline_object in ripple or focus.duration == 0
         self.ripple_originals = self._saveValues(ripple)
         self.ripple_offsets = self._getOffsets(focus.start, focus.priority,
             ripple)

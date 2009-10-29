@@ -406,6 +406,9 @@ class TrackObject(View, goocanvas.Group, Zoomable):
         y = (self.height + LAYER_SPACING) * self.element.priority
         self.set_simple_transform(x, y, 1, 0)
         width = self.nsToPixel(self.element.duration)
+        min_width = self.start_handle.props.width * 2
+        if width < min_width:
+            width = min_width
         w = width - self.end_handle.props.width
         self.name.props.clip_path = "M%g,%g h%g v%g h-%g z" % (
             0, 0, w, self.height, w)
