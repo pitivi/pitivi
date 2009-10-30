@@ -27,13 +27,14 @@ TestCase = unittest.TestCase
 from pitivi.application import InteractivePitivi
 from pitivi.timeline.timeline import MoveContext, TrimStartContext,\
     TrimEndContext
+from pitivi.signalinterface import Signallable
 import pitivi.instance
 import gobject
 import os.path
 import gst
 import random
 
-base_uri = "file:///" + os.getcwd() + "/"
+base_uri = "file:///" + os.getcwd() + "/media/"
 test1 = base_uri + "test1.ogg"
 test2 = base_uri + "test2.ogg"
 test3 = base_uri + "test3.ogg"
