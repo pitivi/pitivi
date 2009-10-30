@@ -177,6 +177,7 @@ class PitiviMainWindow(gtk.Window, Loggable):
         self._setActions(instance)
         self._createUi(instance)
         self.app = instance
+        self._zoom_duration_changed = False
 
         self.app.projectManager.connect("new-project-loading",
                 self._projectManagerNewProjectLoadingCb)
@@ -689,6 +690,8 @@ class PitiviMainWindow(gtk.Window, Loggable):
 
         if project.timeline.duration != 0:
             self._setBestZoomRatio()
+        else:
+            self._zoom_duration_changed = True
 
     def _setBestZoomRatio(self):
         ruler_width = self.timeline.ruler.get_allocation()[2]
@@ -946,6 +949,9 @@ class PitiviMainWindow(gtk.Window, Loggable):
     def _timelineDurationChangedCb(self, timeline, duration):
         if duration > 0:
             sensitive = True
+            if self._zoom_duration_changed:
+                self._setBestZoomRatio()
+                self._zoom_duration_changed = False
         else:
             sensitive = False
         self.render_button.set_sensitive(sensitive)
