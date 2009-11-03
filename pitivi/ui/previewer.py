@@ -461,17 +461,31 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         self.audioPipeline.set_state(gst.STATE_PLAYING)
 
     def _finishWaveform(self):
+        surfaces = []
         surface = cairo.ImageSurface(cairo.FORMAT_A8,
             self.base_width, self.theight)
         cr = cairo.Context(surface)
-        self._plotWaveform(cr)
+        self._plotWaveform(cr, self.base_width)
         self.audioSink.reset()
-        gobject.idle_add(self._finishThumbnail, surface, self._audio_cur)
 
-    def _plotWaveform(self, cr):
+        for width in [25, 100, 200]:
+            scaled = cairo.ImageSurface(cairo.FORMAT_A8,
+               width, self.theight)
+            cr = cairo.Context(scaled)
+            matrix = cairo.Matrix()
+            matrix.scale(self.base_width/width, 1.0)
+            cr.set_source_surface(surface)
+            cr.get_source().set_matrix(matrix)
+            cr.rectangle(0, 0, width, self.theight)
+            cr.fill()
+            surfaces.append(scaled)
+        surfaces.append(surface)
+        gobject.idle_add(self._finishThumbnail, surfaces, self._audio_cur)
+
+    def _plotWaveform(self, cr, base_width):
         # clear background
         cr.set_source_rgba(1, 1, 1, 0.0)
-        cr.rectangle(0, 0, self.base_width, self.theight)
+        cr.rectangle(0, 0, base_width, self.theight)
         cr.fill()
 
         samples = self.audioSink.samples
@@ -480,7 +494,7 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
             return
 
         # find the samples-per-pixel ratio
-        spp = len(samples) / self.base_width
+        spp = len(samples) / base_width
         if spp == 0:
             spp = 1
         channels = self.audioSink.channels
@@ -509,12 +523,31 @@ class RandomAccessAudioPreviewer(RandomAccessPreviewer):
         cr.stroke()
 
     def _thumbForTime(self, cr, time, x, y):
-        RandomAccessPreviewer._thumbForTime(self, cr, time, x, y)
-        x_scale = float(self.base_width) / self.twidth
-        matrix = cairo.Matrix()
-        matrix.scale(x_scale, 1.0)
-        matrix.translate(-x, -y)
-        cr.get_source().set_matrix(matrix)
+        segment = self._segment_for_time(time)
+        twidth = self.twidth
+        if segment in self._cache:
+            surfaces = self._cache[segment]
+            if twidth > 200:
+                surface = surfaces[3]
+                base_width = self.base_width
+            elif twidth <= 200:
+                surface = surfaces[2]
+                base_width = 200
+            elif twidth <= 100:
+                surface = surfaces[1]
+                base_width = 100
+            elif twidth <= 25:
+                surface = surfaces[0]
+                base_width = 25
+            x_scale = float(base_width) / self.twidth
+            cr.set_source_surface(surface)
+            matrix = cairo.Matrix()
+            matrix.scale(x_scale, 1.0)
+            matrix.translate(-x, -y)
+            cr.get_source().set_matrix(matrix)
+        else:
+            self._requestThumbnail(segment)
+            cr.set_source_rgba(0.0, 0.0, 0.0, 0.0)
 
     def _connectSettings(self, settings):
         RandomAccessPreviewer._connectSettings(self, settings)
