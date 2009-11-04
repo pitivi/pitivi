@@ -410,8 +410,8 @@ class StillImagePreviewer(RandomAccessVideoPreviewer):
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
     def __init__(self, instance, factory, stream_):
-        self.tdur = 10 * gst.SECOND
-        self.base_width = int(2.5 * Zoomable.max_zoom)
+        self.tdur = 30 * gst.SECOND
+        self.base_width = int(Zoomable.max_zoom)
         RandomAccessPreviewer.__init__(self, instance, factory, stream_)
 
     @property
