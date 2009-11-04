@@ -11,13 +11,13 @@ msgstr ""
 "Project-Id-Version: pitivi.HEAD.es\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?"
 "product=pitivi&component=general\n"
-"POT-Creation-Date: 2009-09-12 15:51+0000\n"
-"PO-Revision-Date: 2009-09-13 14:36+0200\n"
+"POT-Creation-Date: 2009-11-04 15:44+0000\n"
+"PO-Revision-Date: 2009-11-04 22:22+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.11.4\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
@@ -278,7 +278,7 @@ msgstr "El archivo contiene una redirección a otro vídeo."
 msgid "PiTiVi currently does not handle redirection files."
 msgstr "PiTiVi no puede manejar archivos de redirección actualmente."
 
-#: ../pitivi/application.py:120
+#: ../pitivi/application.py:121
 #, python-format
 msgid ""
 "There is already a %s instance, please inform the developers by filing a bug "
@@ -287,7 +287,7 @@ msgstr ""
 "Ya hay una instancia de %s, informe a los desarrolladores rellenando un "
 "informe de error en http://bugzilla.gnome.org/enter_bug.cgi?product=pitivi"
 
-#: ../pitivi/application.py:214
+#: ../pitivi/application.py:218
 msgid ""
 "\n"
 "      %prog [PROJECT_FILE]\n"
@@ -297,7 +297,7 @@ msgstr ""
 "      %prog [-p ARCHIVO_DE_PROYECTO]\n"
 "      %prog -i [-a] [ARCHIVO_MULTIMEDIA]..."
 
-#: ../pitivi/application.py:218
+#: ../pitivi/application.py:222
 msgid ""
 "Starts the video editor, optionally loading PROJECT_FILE. If\n"
 "    no project is given, %prog creates a new project.\n"
@@ -313,43 +313,48 @@ msgstr ""
 "proyecto. Si se especifica -a, estos vídeos se añadirán al final de la "
 "cronología."
 
-#: ../pitivi/application.py:224
+#: ../pitivi/application.py:228
 msgid "Import each MEDIA_FILE into the project."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:226
+#: ../pitivi/application.py:230
 msgid "Add each MEDIA_FILE to timeline after importing."
 msgstr "Añada cada ARCHIVO_MULTIMEDIA a la cronología después de importarla."
 
-#: ../pitivi/application.py:227
+#: ../pitivi/application.py:231
 msgid "Run pitivi in the Python Debugger"
 msgstr "Ejecutar Pitivi en el depurador de Python"
 
-#: ../pitivi/projectmanager.py:62
+#: ../pitivi/application.py:233
+#| msgid "Run pitivi in the Python Debugger"
+msgid "Run pitivi with no gui"
+msgstr "Ejecutar Pitivi sin IGU"
+
+#: ../pitivi/projectmanager.py:95
 msgid "Not a valid project file."
 msgstr "No es un archivo de proyecto válido."
 
-#: ../pitivi/projectmanager.py:67
+#: ../pitivi/projectmanager.py:100
 msgid "Couldn't close current project"
 msgstr "No se pudo cerrar el proyecto actual"
 
-#: ../pitivi/projectmanager.py:104
+#: ../pitivi/projectmanager.py:137
 msgid "No URI specified."
 msgstr "No se especificó el URI."
 
-#: ../pitivi/projectmanager.py:136
+#: ../pitivi/projectmanager.py:169
 msgid "New Project"
 msgstr "Proyecto nuevo"
 
-#: ../pitivi/settings.py:473
+#: ../pitivi/settings.py:490
 msgid "Export Settings\n"
 msgstr "Exportar ajustes\n"
 
-#: ../pitivi/settings.py:474
+#: ../pitivi/settings.py:491
 msgid "Video: "
 msgstr "Vídeo:"
 
-#: ../pitivi/settings.py:477
+#: ../pitivi/settings.py:494
 msgid ""
 "\n"
 "Audio: "
@@ -357,7 +362,7 @@ msgstr ""
 "\n"
 "Audio:"
 
-#: ../pitivi/settings.py:480
+#: ../pitivi/settings.py:497
 msgid ""
 "\n"
 "Muxer: "
@@ -533,20 +538,20 @@ msgstr "Elegir un archivo de salida"
 msgid "Render project"
 msgstr "Renderizar proyecto"
 
-#: ../pitivi/ui/encodingdialog.py:90
+#: ../pitivi/ui/encodingdialog.py:92
 msgid "Choose file to render to"
 msgstr "Elegir un archivo que renderizar"
 
-#: ../pitivi/ui/encodingdialog.py:123
+#: ../pitivi/ui/encodingdialog.py:127
 #, python-format
 msgid "About %s left"
 msgstr "Quedan alrededor de %s"
 
-#: ../pitivi/ui/encodingdialog.py:133
+#: ../pitivi/ui/encodingdialog.py:137
 msgid "Rendering"
 msgstr "Renderizando"
 
-#: ../pitivi/ui/encodingdialog.py:150
+#: ../pitivi/ui/encodingdialog.py:154
 msgid "Rendering Complete"
 msgstr "Renderizado completo"
 
@@ -1339,7 +1344,7 @@ msgstr "Desagrupar vídeos"
 msgid "Group clips"
 msgstr "Agrupar vídeos"
 
-#: ../pitivi/ui/timeline.py:203
+#: ../pitivi/ui/timeline.py:210
 msgid "Razor"
 msgstr "Navaja"
 
