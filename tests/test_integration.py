@@ -157,7 +157,6 @@ class InstanceRunner(Signallable):
     __signals__ = {
         "sources-loaded" : [],
         "timeline-configured" : [],
-        "scrub-done" : [],
     }
 
     def __init__(self, instance):
@@ -169,13 +168,6 @@ class InstanceRunner(Signallable):
         self.timeline = None
         self.tracks = {}
         self.pending_configuration = None
-        self.scrubContext = None
-        self.scrubTime = 0
-        self.scrubPriority = 0
-        self.scrubMaxPriority = 0
-        self.scrubMaxTime = 0
-        self.scrubCount = 0
-        self.scrubSteps = 0
         self.audioTracks = 0
         self.videoTracks = 0
         instance.connect("new-project-loaded", self._newProjectLoadedCb)
@@ -245,43 +237,57 @@ class InstanceRunner(Signallable):
             for prop, value in props.iteritems():
                 setattr(timelineObject, prop, value)
         self.emit("timeline-configured")
-
-    def scrub(self, context, finalTime, finalPriority, delay=100, maxtime = 7200 * gst.SECOND, maxpriority =10, steps = 10):
-        """ Scrubs an editing context as if a user were frantically dragging a
-        clips with the mouse """
- 
-        self.scrubContext = context
-        self.scrubTime = finalTime
-        self.scrubPriority = finalPriority
-        self.scrubMaxPriority = maxpriority
-        self.scrubMaxTime = maxtime
-        self.scrubCount = 0
-        self.scrubSteps = steps
- 
-        self.watchdog.keepAlive()
-        gobject.timeout_add(delay, self._scrubTimeoutCb)
- 
-    def _scrubTimeoutCb(self):
-        time_ = random.randint(0, self.scrubMaxTime)
-        priority = random.randint(0, self.scrubMaxPriority)
-        self.scrubContext.editTo(time_, priority)
-        self.scrubCount += 1
-        self.watchdog.keepAlive()
- 
-        if self.scrubCount < self.scrubSteps:
-            return True
-        else:
-            self.scrubContext.editTo(self.scrubTime, self.scrubPriority)
-            self.scrubContext.finish()
-            self.emit("scrub-done")
-            return False
-
     def run(self):
         self.watchdog.start()
         if self.no_ui:
             self.instance.run(["--no-ui"])
         else:
             self.instance.run([])
+
+class Brush(Signallable):
+    """Scrubs your timelines until they're squeaky clean."""
+
+    __signals__ = {
+        "scrub-step" : ["time", "priority"],
+        "scrub-done" : [],
+    }
+
+    def __init__(self, runner, delay=100, maxtime=7200, maxpriority=10):
+        self.context = None
+        self.time = 0
+        self.priority = 0
+        self.maxPriority = maxpriority
+        self.maxTime = maxtime
+        self.count = 0
+        self.steps = 0
+        self.delay = delay
+        self.runner = runner
+        self.watchdog = runner.watchdog
+
+    def scrub(self, context, finalTime, finalPriority, steps=10):
+        self.context = context
+        self.time = finalTime
+        self.priority = finalPriority
+        self.count = 0
+        self.steps = steps
+        gobject.timeout_add(self.delay, self._scrubTimeoutCb)
+
+    def _scrubTimeoutCb(self):
+        time_ = random.randint(0, self.maxTime)
+        priority = random.randint(0, self.maxPriority)
+        self.context.editTo(time_, priority)
+        self.count += 1
+        self.watchdog.keepAlive()
+
+        if self.count < self.steps:
+            self.emit("scrub-step", time_, priority)
+            return True
+        else:
+            self.context.editTo(self.time, self.priority)
+            self.emit("scrub-step", self.time, self.maxPriority)
+            self.context.finish()
+            self.emit("scrub-done")
+            return False
 
 class Base(TestCase):
     """
@@ -416,15 +422,21 @@ class Base(TestCase):
             context = MoveContext(self.runner.timeline, 
                 self.runner.video1.object1,
                 set((self.runner.audio1.object2,)))
-            self.runner.scrub(context, 10 * gst.SECOND, 1, steps=10)
+            brush.scrub(context, 10 * gst.SECOND, 1, steps=10)
 
-        def scrubDone(runner):
-            final.matches(runner)
+        def scrubStep(brush, time, priority):
+            pass
+
+        def scrubDone(brush):
+            final.matches(self.runner)
             gobject.idle_add(self.ptv.shutdown)
 
         self.runner.loadConfiguration(initial)
         self.runner.connect("timeline-configured", timelineConfigured)
-        self.runner.connect("scrub-done", scrubDone)
+
+        brush = Brush(self.runner)
+        brush.connect("scrub-step", scrubStep)
+        brush.connect("scrub-done", scrubDone)
 
         self.runner.run()
 
