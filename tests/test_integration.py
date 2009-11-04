@@ -132,8 +132,13 @@ class Configuration(object):
         return set((source[1] for source in self.sources if
             len(source) > 2))
 
+    def getGoodSources(self):
+        return (source for source in self.sources if len(source) > 2)
+
     def matches(self, instance_runner):
-        for name, uri, props in self.sources:
+        for name, uri, props in self.getGoodSources():
+            if not hasattr(instance_runner, name):
+                raise Exception("Project missing source %s" % name)
             timelineObject = getattr(instance_runner, name)
             if timelineObject.factory.uri != uri:
                 raise Exception("%s has wrong factory type!" % name)
@@ -141,6 +146,12 @@ class Configuration(object):
                 for prop, value in props.iteritems():
                     if not getattr(timelineObject, prop) == value:
                         raise Exception("'%s'.%s != %r" % (uri, prop, value))
+
+        names = set((source[0] for source in self.getGoodSources()))
+        timelineObjects = set(instance_runner.timelineObjects.iterkeys())
+        if names != timelineObjects:
+            raise Exception("Project has extra sources: %r" % (timelineObjects -
+                names))
 
     def __iter__(self):
         return (source for source in self.sources if len(source) > 2)
@@ -167,6 +178,7 @@ class InstanceRunner(Signallable):
         self.project = None
         self.timeline = None
         self.tracks = {}
+        self.timelineObjects = {}
         self.pending_configuration = None
         self.audioTracks = 0
         self.videoTracks = 0
@@ -227,6 +239,7 @@ class InstanceRunner(Signallable):
 
             timelineObject = self.timeline.addSourceFactory(factory)
             setattr(self, name, timelineObject)
+            self.timelineObjects[name] = timelineObject
             for trackObject in timelineObject.track_objects:
                 track = self.tracks[trackObject.track]
                 setattr(track, name, trackObject)
