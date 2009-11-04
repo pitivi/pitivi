@@ -47,15 +47,12 @@
     </menu>
   </menubar>
   <toolbar name="MainToolBar">
-    <toolitem action="NewProject" />
-    <toolitem action="OpenProject" />
-    <toolitem action="SaveProject" />
-    <separator />
     <toolitem action="Undo" />
     <toolitem action="Redo" />
     <separator />
     <placeholder name="SourceList" />
     <separator />
+    <toolitem action="SaveProject" />
     <toolitem action="RenderProject" />
     <separator />
     <toolitem action="FullScreen" />
