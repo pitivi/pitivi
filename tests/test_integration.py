@@ -335,6 +335,8 @@ class Base(TestCase):
         del self.runner
         TestCase.tearDown(self)
 
+class TestBasic(Base):
+
     def testWatchdog(self):
         self.runner.run()
         self.assertTrue(self.runner.watchdog.activated)
