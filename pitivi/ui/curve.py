@@ -153,9 +153,7 @@ class Curve(goocanvas.ItemSimple, goocanvas.Item, View, Zoomable):
 
 ## element callbacks
 
-    def _set_element(self):
-        self.previewer = previewer.get_preview_for_object(self.element)
-    element = receiver(setter=_set_element)
+    element = receiver()
 
     @handler(element, "in-point-changed")
     @handler(element, "media-duration-changed")
