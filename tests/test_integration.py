@@ -144,8 +144,10 @@ class Configuration(object):
                 raise Exception("%s has wrong factory type!" % name)
             if timelineObject:
                 for prop, value in props.iteritems():
-                    if not getattr(timelineObject, prop) == value:
-                        raise Exception("'%s'.%s != %r" % (uri, prop, value))
+                    actual = getattr(timelineObject, prop)
+                    if not actual == value:
+                        raise Exception("%s.%s: %r != %r" % (name, prop,
+                            actual, value))
 
         names = set((source[0] for source in self.getGoodSources()))
         timelineObjects = set(instance_runner.timelineObjects.iterkeys())
