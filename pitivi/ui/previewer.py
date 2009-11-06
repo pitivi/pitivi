@@ -37,7 +37,6 @@ from pitivi.elements.arraysink import ArraySink
 from pitivi.signalinterface import Signallable
 import pitivi.stream as stream
 from pitivi.settings import GlobalSettings
-import pitivi.instance as instance
 from pitivi.ui.zoominterface import Zoomable
 from pitivi.log.loggable import Loggable
 from pitivi.factories.file import PictureFileSourceFactory
@@ -108,7 +107,7 @@ PreferencesDialog.addTogglePreference('showWaveforms',
 
 previewers = {}
 
-def get_preview_for_object(trackobject):
+def get_preview_for_object(instance, trackobject):
     factory = trackobject.factory
     for stream_ in factory.getOutputStreams():
         if stream_.isCompatible(trackobject.track.stream):
@@ -124,14 +123,14 @@ def get_preview_for_object(trackobject):
         # note that we switch on the stream_type, but we hash on the stream
         # itself.
         if stream_type == stream.AudioStream:
-            previewers[key] = RandomAccessAudioPreviewer(factory, stream_)
+            previewers[key] = RandomAccessAudioPreviewer(instance, factory, stream_)
         elif stream_type == stream.VideoStream:
             if type(factory) == PictureFileSourceFactory:
-                previewers[key] = StillImagePreviewer(factory, stream_)
+                previewers[key] = StillImagePreviewer(instance, factory, stream_)
             else:
-                previewers[key] = RandomAccessVideoPreviewer(factory, stream_)
+                previewers[key] = RandomAccessVideoPreviewer(instance, factory, stream_)
         else:
-            previewers[key] = DefaultPreviewer(factory, stream_)
+            previewers[key] = DefaultPreviewer(instance, factory, stream_)
     return previewers[key]
 
 class Previewer(Signallable, Loggable):
@@ -148,12 +147,12 @@ class Previewer(Signallable, Loggable):
 
     aspect = 4.0 / 3.0
 
-    def __init__(self, factory, stream_):
+    def __init__(self, instance, factory, stream_):
         Loggable.__init__(self)
         # create default thumbnail
         path = os.path.join(get_pixmap_dir(), self.__DEFAULT_THUMB__)
         self.default_thumb = cairo.ImageSurface.create_from_png(path)
-        self._connectSettings(instance.PiTiVi.settings)
+        self._connectSettings(instance.settings)
 
     def render_cairo(self, cr, bounds, element, y1):
         """Render a preview of element onto a cairo context within the current
@@ -182,9 +181,9 @@ class RandomAccessPreviewer(Previewer):
     the stream, and time segments. This allows the UI to re-draw the affected
     portion of a thumbnail sequence or audio waveform."""
 
-    def __init__(self, factory, stream_):
+    def __init__(self, instance, factory, stream_):
         self._view = True
-        Previewer.__init__(self, factory, stream_)
+        Previewer.__init__(self, instance, factory, stream_)
         self._queue = []
 
         # FIXME:
@@ -351,11 +350,11 @@ class RandomAccessVideoPreviewer(RandomAccessPreviewer):
     def tdur(self):
         return Zoomable.pixelToNs(self.twidth)
 
-    def __init__(self, factory, stream_):
+    def __init__(self, instance, factory, stream_):
         if stream_.dar and stream_.par:
             self.aspect = float(stream_.dar)
         rate = stream_.framerate
-        RandomAccessPreviewer.__init__(self, factory, stream_)
+        RandomAccessPreviewer.__init__(self, instance, factory, stream_)
         self.tstep = Zoomable.pixelToNsAt(self.twidth, Zoomable.max_zoom)
         if rate.num:
             frame_duration = (gst.SECOND * rate.denom) / rate.num
@@ -410,10 +409,10 @@ class StillImagePreviewer(RandomAccessVideoPreviewer):
 
 class RandomAccessAudioPreviewer(RandomAccessPreviewer):
 
-    def __init__(self, factory, stream_):
+    def __init__(self, instance, factory, stream_):
         self.tdur = 10 * gst.SECOND
         self.base_width = int(2.5 * Zoomable.max_zoom)
-        RandomAccessPreviewer.__init__(self, factory, stream_)
+        RandomAccessPreviewer.__init__(self, instance, factory, stream_)
 
     @property
     def twidth(self):

@@ -240,7 +240,7 @@ class TrackObject(View, goocanvas.Group, Zoomable):
             height=self.height, 
             line_width=1)
 
-        self.content = Preview(element)
+        self.content = Preview(self.app, element)
 
         self.name = goocanvas.Text(
             x= NAME_HOFFSET + NAME_PADDING,

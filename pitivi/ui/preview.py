@@ -42,9 +42,10 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 
     __gtype_name__ = 'Preview'
 
-    def __init__(self, element, height=46, **kwargs):
+    def __init__(self, instance, element, height=46, **kwargs):
         super(Preview, self).__init__(**kwargs)
         Zoomable.__init__(self)
+        self.app = instance
         self.height = float(height)
         self.element = element
         self.props.pointer_events = False
@@ -61,7 +62,8 @@ class Preview(goocanvas.ItemSimple, goocanvas.Item, Zoomable):
 ## element callbacks
 
     def _set_element(self):
-        self.previewer = previewer.get_preview_for_object(self.element)
+        self.previewer = previewer.get_preview_for_object(self.app,
+            self.element)
     element = receiver(setter=_set_element)
 
     @handler(element, "in-point-changed")
