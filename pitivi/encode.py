@@ -309,10 +309,6 @@ def my_can_sink_caps(muxer, ocaps, muxsinkcaps=[]):
 
 class CachedEncoderList(object):
     def __init__(self):
-        self._audioEncoders = []
-        self._videoEncoders = []
-        self._muxers = []
-        self._compatibleMuxers = []
         self._factories = None
         self._registry = gst.registry_get_default()
         self._registry.connect("feature-added", self._registryFeatureAddedCb)
@@ -323,6 +319,9 @@ class CachedEncoderList(object):
 
     def _buildFactories(self):
         self._factories = self._registry.get_feature_list(gst.ElementFactory)
+        self._audioEncoders = []
+        self._videoEncoders = []
+        self._muxers = []
         for fact in self._factories:
             klist = fact.get_klass().split('/')
             if list_compat(("Codec", "Muxer"), klist):
@@ -353,7 +352,7 @@ class CachedEncoderList(object):
 _cached_encoder_list = None
 def encoderlist():
     global _cached_encoder_list
-    if _cached_encoder_list == None:
+    if _cached_encoder_list is None:
         _cached_encoder_list = CachedEncoderList()
     return _cached_encoder_list
 
