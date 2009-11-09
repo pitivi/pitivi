@@ -288,18 +288,17 @@ class Brush(Signallable):
         gobject.timeout_add(self.delay, self._scrubTimeoutCb)
 
     def _scrubTimeoutCb(self):
-        time_ = random.randint(0, self.maxTime)
-        priority = random.randint(0, self.maxPriority)
-        self.context.editTo(time_, priority)
-        self.count += 1
         self.watchdog.keepAlive()
-
+        self.count += 1
         if self.count < self.steps:
+            time_ = random.randint(0, self.maxTime)
+            priority = random.randint(0, self.maxPriority)
+            self.context.editTo(time_, priority)
             self.emit("scrub-step", time_, priority)
             return True
         else:
             self.context.editTo(self.time, self.priority)
-            self.emit("scrub-step", self.time, self.maxPriority)
+            self.emit("scrub-step", self.time, self.priority)
             self.context.finish()
             self.emit("scrub-done")
             return False
