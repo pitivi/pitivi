@@ -456,5 +456,41 @@ class TestBasic(Base):
 
         self.runner.run()
 
+    def testRippleMoveSimple(self):
+
+        initial = Configuration()
+        initial.addSource('clip1', test1, { 
+            "duration" : gst.SECOND,
+            "start" : gst.SECOND,
+            "priority" : 2})
+        initial.addSource('clip2', test1, {
+            "duration" : gst.SECOND,
+            "start" : 2 * gst.SECOND,
+            "priority" : 5})
+        final = Configuration()
+        final.addSource('clip1', test1, {
+            "duration" : gst.SECOND,
+            "start" : 11 * gst.SECOND,
+            "priority" : 0})
+        final.addSource('clip2', test1, {
+            "duration" : gst.SECOND,
+            "start" : 12 * gst.SECOND,
+            "priority" : 3})
+
+        def timelineConfigured(runner):
+            initial.matches(self.runner)
+            context = MoveContext(self.runner.timeline,
+                self.runner.video1.clip1, set())
+            context.editTo(11 * gst.SECOND, 0)
+            context.setMode(context.RIPPLE)
+            context.finish()
+            final.matches(self.runner)
+            gobject.idle_add(self.ptv.shutdown)
+
+        self.runner.connect("timeline-configured", timelineConfigured)
+
+        self.runner.loadConfiguration(initial)
+        self.runner.run()
+
 if __name__ == "__main__":
     unittest.main()
