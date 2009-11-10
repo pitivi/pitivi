@@ -492,7 +492,58 @@ class TestBasic(Base):
         self.runner.loadConfiguration(initial)
         self.runner.run()
 
-class TestRippleComplex(Base):
+    def testRippleTrimStartSimple(self):
+        initial = Configuration()
+        initial.addSource('clip1', test1,
+            {
+                "start" : gst.SECOND,
+                "duration" : gst.SECOND,
+            })
+        initial.addSource('clip2', test1,
+            {
+                "start" : 2 * gst.SECOND,
+                "duration" : gst.SECOND,
+            })
+        initial.addSource('clip3', test1,
+            {
+                "start" : 5 * gst.SECOND,
+                "duration" : 10 * gst.SECOND,
+            })
+
+        final = Configuration()
+        final.addSource('clip1', test1,
+            {
+                "start" : 6 * gst.SECOND,
+                "duration": gst.SECOND,
+            })
+        final.addSource('clip2', test1,
+            {
+                "start" : 7 * gst.SECOND,
+                "duration" : gst.SECOND,
+            })
+        final.addSource('clip3', test1,
+            {
+                "start" : 10 * gst.SECOND,
+                "duration" : 5 * gst.SECOND,
+            })
+
+        self.runner.loadConfiguration(initial)
+        def timelineConfigured(runner):
+            context = TrimStartContext(self.runner.timeline,
+                self.runner.video1.clip3, set())
+            context.setMode(context.RIPPLE)
+            brush.scrub(context, 10 * gst.SECOND, 0)
+        self.runner.connect("timeline-configured", timelineConfigured)
+
+        def scrubDone(brush):
+            final.matches(self.runner)
+            gobject.idle_add(self.ptv.shutdown)
+
+        brush = Brush(self.runner)
+        brush.connect("scrub-done", scrubDone)
+        self.runner.run()
+
+class TestRippleExtensive(Base):
 
     """Test suite for ripple editing minutia and corner-cases"""
 
