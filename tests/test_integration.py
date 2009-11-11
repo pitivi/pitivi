@@ -116,14 +116,21 @@ class Configuration(object):
 
     def __init__(self, *sources):
         self.sources = []
+        self.source_map = {}
         for source in sources:
             self.addSource(*source)
 
     def addSource(self, name, uri, props=None, error=False):
+        if name in self.source_map:
+            raise Exception("Duplicate source: '%d' already defined" % name)
         self.sources.append((name, uri, props))
+        self.source_map[name] = uri, props
 
     def addBadSource(self, name, uri):
+        if name in self.source_map:
+            raise Exception("Duplicate source: '%d' already defined" % name)
         self.sources.append((name, uri))
+        self.source_map[name] = uri, None
 
     def getUris(self):
         return set((source[1] for source in self.sources))
