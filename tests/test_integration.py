@@ -259,12 +259,17 @@ class InstanceRunner(Signallable):
             for prop, value in props.iteritems():
                 setattr(timelineObject, prop, value)
         self.emit("timeline-configured")
+
     def run(self):
         self.watchdog.start()
         if self.no_ui:
             self.instance.run(["--no-ui"])
         else:
             self.instance.run([])
+
+    def shutDown(self):
+        gobject.idle_add(self.instance.shutdown)
+        self.project._dirty = False
 
 class Brush(Signallable):
     """Scrubs your timelines until they're squeaky clean."""
@@ -351,7 +356,7 @@ class TestBasic(Base):
     def testBasic(self):
 
         def newProjectLoaded(pitivi, project):
-            gobject.idle_add(self.ptv.shutdown)
+            self.runner.shutDown()
 
         self.ptv.connect("new-project-loaded", newProjectLoaded)
         self.runner.run()
@@ -359,7 +364,7 @@ class TestBasic(Base):
     def testImport(self):
 
         def sourcesLoaded(runner):
-            gobject.idle_add(self.ptv.shutdown)
+            self.runner.shutDown()
 
         config = Configuration()
         config.addSource("test1", test1)
@@ -396,7 +401,7 @@ class TestBasic(Base):
  
         def timelineConfigured(runner):
             config.matches(self.runner)
-            gobject.idle_add(self.ptv.shutdown)
+            self.runner.shutDown()
  
         self.runner.loadConfiguration(config)
         self.runner.connect("timeline-configured", timelineConfigured)
@@ -452,7 +457,7 @@ class TestBasic(Base):
 
         def scrubDone(brush):
             final.matches(self.runner)
-            gobject.idle_add(self.ptv.shutdown)
+            self.runner.shutDown()
 
         self.runner.loadConfiguration(initial)
         self.runner.connect("timeline-configured", timelineConfigured)
@@ -492,7 +497,7 @@ class TestBasic(Base):
             context.setMode(context.RIPPLE)
             context.finish()
             final.matches(self.runner)
-            gobject.idle_add(self.ptv.shutdown)
+            self.runner.shutDown()
 
         self.runner.connect("timeline-configured", timelineConfigured)
 
@@ -544,7 +549,7 @@ class TestBasic(Base):
 
         def scrubDone(brush):
             final.matches(self.runner)
-            gobject.idle_add(self.ptv.shutdown)
+            self.runner.shutDown()
 
         brush = Brush(self.runner)
         brush.connect("scrub-done", scrubDone)
@@ -630,7 +635,7 @@ class TestRippleExtensive(Base):
         if self.cur < 10:
             self.nextScenario()
         else:
-            gobject.idle_add(self.ptv.shutdown)
+            self.runner.shutDown()
 
     def testRippleMoveComplex(self):
         # in this test we move directly to the given position (steps=0)
