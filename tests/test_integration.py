@@ -265,6 +265,10 @@ class InstanceRunner(Signallable):
         if self.no_ui:
             self.instance.run(["--no-ui"])
         else:
+            from pitivi.ui.zoominterface import Zoomable
+            # set a common zoom ratio so that things like edge snapping values
+            # are consistent
+            Zoomable.setZoomLevel((3 * Zoomable.zoom_steps) / 4)
             self.instance.run([])
 
     def shutDown(self):
@@ -493,13 +497,16 @@ class TestBasic(Base):
             initial.matches(self.runner)
             context = MoveContext(self.runner.timeline,
                 self.runner.video1.clip1, set())
-            context.editTo(11 * gst.SECOND, 0)
             context.setMode(context.RIPPLE)
-            context.finish()
+            brush.scrub(context, 11 * gst.SECOND, 0, steps=0)
+
+        def scrubDone(brush):
             final.matches(self.runner)
             self.runner.shutDown()
 
         self.runner.connect("timeline-configured", timelineConfigured)
+        brush = Brush(self.runner)
+        brush.connect("scrub-done", scrubDone)
 
         self.runner.loadConfiguration(initial)
         self.runner.run()
@@ -611,6 +618,7 @@ class TestRippleExtensive(Base):
         clipname = "clip%d" % cur
         context = MoveContext(self.runner.timeline,
             getattr(self.runner.video1, clipname), set())
+        context.snap(False)
         context.setMode(context.RIPPLE)
         self.context = context
         # this isn't a method, but an attribute that will be set by specific

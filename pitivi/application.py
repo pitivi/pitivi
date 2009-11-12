@@ -249,8 +249,9 @@ class InteractivePitivi(Pitivi):
             sys.excepthook = self._excepthook
 
         # validate options
-
-        if not options.no_ui:
+        if options.no_ui:
+            self.gui = None
+        else:
             # create the ui
             self.gui = PitiviMainWindow(self)
             self.gui.show()
@@ -283,6 +284,8 @@ class InteractivePitivi(Pitivi):
 
     def shutdown(self):
         if Pitivi.shutdown(self):
+            if self.gui:
+                self.gui.destroy()
             self.mainloop.quit()
             return True
 
