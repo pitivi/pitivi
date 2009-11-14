@@ -20,6 +20,7 @@
 # Free Software Foundation, Inc., 59 Temple Place - Suite 330,
 # Boston, MA 02111-1307, USA.
 
+import platform
 import gobject
 import gtk
 from gtk import gdk
@@ -475,7 +476,10 @@ class ViewerWidget(gtk.DrawingArea, Loggable):
 
     def do_realize(self):
         gtk.DrawingArea.do_realize(self)
-        self.window_xid = self.window.xid
+        if platform.system() == 'Windows':
+            self.window_xid = self.window.handle
+        else:
+            self.window_xid  = self.window.xid
 
 class PlayPauseButton(gtk.Button, Loggable):
     """ Double state gtk.Button which displays play/pause """
