@@ -60,6 +60,8 @@ def get_env_by_type(type_, var):
     @returns: The content of the environment variable, or C{None} if it doesn't
     exist.
     """
+    if var is None:
+        return None
     if type_ == bool:
         return get_bool_env(var)
     else:
