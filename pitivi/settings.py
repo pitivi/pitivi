@@ -25,6 +25,7 @@ Settings
 """
 
 import os
+import platform
 import gst
 from ConfigParser import SafeConfigParser, ParsingError
 
@@ -36,6 +37,11 @@ from pitivi.encode import available_muxers, available_video_encoders, \
      get_compatible_sink_caps
 from pitivi.stream import get_stream_for_caps
 from pitivi.log.loggable import Loggable
+
+if platform.system() == 'Windows':
+    HOME = 'USERPROFILE'
+else:
+    HOME = 'HOME'
 
 def get_bool_env(var):
     value = os.getenv(var)
@@ -92,11 +98,11 @@ def get_env_dirs(var, default):
 
 def xdg_config_home(autocreate=True):
     return get_dir(get_env_default("XDG_CONFIG_HOME",
-        os.path.join(os.getenv("HOME"), ".config")), autocreate)
+        os.path.join(os.getenv(HOME), ".config")), autocreate)
 
 def xdg_data_home(autocreate=True):
     return get_dir(get_env_default("XDG_DATA_HOME",
-        os.path.join(os.getenv("HOME"), ".local", "share")), autocreate)
+        os.path.join(os.getenv(HOME), ".local", "share")), autocreate)
 
 def xdg_cache_home(autocreate=True):
     return get_dir(get_env_default("XDG_CACHE_HOME",
