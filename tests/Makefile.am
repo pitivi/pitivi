@@ -22,3 +22,7 @@ check-local:
 
 %.check: %
 	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) $(PYTHON) $(srcdir)/runtests.py $*
+
+check-integration:
+	@PYTHONPATH=$(top_srcdir):$(PYTHONPATH) $(PYTHON)\
+        $(srcdir)/test_integration.py

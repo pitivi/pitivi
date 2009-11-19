@@ -51,3 +51,6 @@ locale-uninstalled-clean:
 
 all-local: locale-uninstalled
 clean-local: locale-uninstalled-clean
+
+check-integration:
+	cd tests; make check-integration
