@@ -492,5 +492,102 @@ class TestBasic(Base):
         self.runner.loadConfiguration(initial)
         self.runner.run()
 
+class TestRippleComplex(Base):
+
+    """Test suite for ripple editing minutia and corner-cases"""
+
+    def __init__(self, unknown):
+        # The following set of tests share common configuration, harness, and
+        # business logic. We create the configurations in the constructor to
+        # avoid having to re-create them for every test.
+
+        # create a seqence of adjacent clips in staggered formation, each one
+        # second long
+        self.initial = Configuration()
+        self.finals = []
+        for i in xrange(0, 10):
+            self.initial.addSource('clip%d' % i, test1,
+                { 'start' : gst.SECOND * i, 'duration' : gst.SECOND,
+                    'priority' : i % 2 })
+            # we're going to repeat the same operation using each clip as the
+            # focus of the editing context. We create one final
+            # configuration for the expected result of each scenario.
+            final = Configuration()
+            for j in xrange(0, 10):
+                if j < i:
+                    final.addSource('clip%d' % j, test1,
+                        { 'start' : gst.SECOND * j, 
+                          'duration' : gst.SECOND,
+                          'priority' : j % 2})
+                else:
+                    final.addSource('clip%d' % j, test1,
+                        { 'start' : gst.SECOND * (j + 10), 
+                          'duration' : gst.SECOND, 
+                          'priority' : (j % 2) + 1})
+            self.finals.append(final)
+        Base.__init__(self, unknown)
+
+    def setUp(self):
+        Base.setUp(self)
+        self.cur = 0
+        self.context = None
+        self.brush = Brush(self.runner)
+        self.runner.loadConfiguration(self.initial)
+        self.runner.connect("timeline-configured", self.timelineConfigured)
+        self.brush.connect("scrub-done", self.scenarioDone)
+
+    # when the timeline is configured, kick off the test by starting the
+    # first scenario
+    def timelineConfigured(self, runner):
+        self.nextScenario()
+
+    # for each scenario, create the context using the specified clip as
+    # focus, and not specifying any other clips.
+    def nextScenario(self):
+        cur = self.cur
+        clipname = "clip%d" % cur
+        context = MoveContext(self.runner.timeline,
+            getattr(self.runner.video1, clipname), set())
+        context.setMode(context.RIPPLE)
+        self.context = context
+        # this isn't a method, but an attribute that will be set by specific
+        # test cases
+        self.scrub_func(context, (cur + 10) * gst.SECOND, (cur % 2) + 1)
+
+    # when each scrub has finished, verify the current configuration is
+    # correct, reset the timeline, and kick off the next scenario. Shut down
+    # pitivi when we have finished the last scenario.
+    def scenarioDone(self, brush):
+        cur = self.cur
+        config = self.finals[cur]
+        context = self.context
+        context.finish()
+        config.matches(self.runner)
+        restore = MoveContext(self.runner.timeline, context.focus, set())
+        restore.setMode(restore.RIPPLE)
+        restore.editTo(cur * gst.SECOND, (cur % 2))
+        restore.finish()
+        self.initial.matches(self.runner)
+        self.cur += 1
+        if self.cur < 10:
+            self.nextScenario()
+        else:
+            gobject.idle_add(self.ptv.shutdown)
+
+    def testRippleMoveComplex(self):
+        # in this test we move directly to the given position (steps=0)
+        def rippleMoveComplexScrubFunc(context, position, priority):
+            self.brush.scrub(context, position, priority, steps=0)
+        self.scrub_func = rippleMoveComplexScrubFunc
+        self.runner.run()
+
+    def testRippleMoveComplexRandom(self):
+        # same as above test, but scrub randomly (steps=100)
+        # FIXME: this test fails for unknown reasons
+        def rippleMoveComplexRandomScrubFunc(context, position, priority):
+            self.brush.scrub(context, position, priority, steps=100)
+        self.scrub_func = rippleMoveComplexRandomScrubFunc
+        self.runner.run()
+
 if __name__ == "__main__":
     unittest.main()
