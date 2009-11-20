@@ -11,7 +11,6 @@
     <menu action="Edit">
       <menuitem action="Undo" />
       <menuitem action="Redo" />
-      <menuitem action="PluginManager" />
       <menuitem action="Preferences" />
     </menu>
     <menu action="View">
