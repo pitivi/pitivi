@@ -167,7 +167,7 @@ class Configuration(object):
 
 class InstanceRunner(Signallable):
 
-    no_ui = True
+    no_ui = not(os.getenv("ENABLE_UI"))
 
     class container(object):
 
