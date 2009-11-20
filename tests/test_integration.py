@@ -562,6 +562,70 @@ class TestBasic(Base):
         brush.connect("scrub-done", scrubDone)
         self.runner.run()
 
+from pitivi.pipeline import PipelineError
+
+class TestSeeking(Base):
+
+    count = 0
+    steps = 0
+    cur_pos = 0
+
+    config = Configuration()
+    for i in xrange(0, 10):
+        config.addSource("clip%d" % i, test1, {
+            "start" : i * gst.SECOND,
+            "duration" : gst.SECOND,
+            "priority" : i % 2,
+        })
+        
+
+    def _startSeeking(self, interval, steps=10):
+        self.count = 0
+        self.steps = steps
+        self.positions = 0
+        self.runner.project.pipeline.connect("position", self._positionCb)
+        gobject.timeout_add(interval, self._seekTimeoutCb)
+
+    def _seekTimeoutCb(self):
+        if self.count < self.steps:
+            self.runner.watchdog.keepAlive()
+            self.count += 1
+            self.cur_pos = random.randint(0, 
+                self.runner.timeline.duration)
+            self.runner.project.pipeline.seek(self.cur_pos)
+            return True
+        self.failUnlessEqual(self.positions, self.count)
+        self.runner.shutDown()
+        return False
+
+    def _positionCb(self, pipeline, position):
+        self.positions += 1
+        self.failUnlessEqual(position,
+            self.cur_pos)
+
+    def testSeeking(self):
+
+        self.runner.loadConfiguration(self.config)
+
+        def timelineConfigured(runner):
+            self.runner.instance.gui._timelineRulerSeekCb(
+                self.runner.instance.gui.timeline.ruler,
+                gst.SECOND)
+            gobject.timeout_add(1000, self._startSeeking, 100, 10)
+
+        def timelineConfiguredNoUI(runner):
+            self.runner.shutDown()
+
+        if self.runner.no_ui:
+            print "UI Disabled: Skipping Seeking Test. " \
+                "Use ENABLE_UI to test" \
+                " seeking"
+            self.runner.connect("timeline-configured", timelineConfiguredNoUI)
+        else:
+            self.runner.connect("timeline-configured", timelineConfigured)
+
+        self.runner.run()
+
 class TestRippleExtensive(Base):
 
     """Test suite for ripple editing minutia and corner-cases"""
