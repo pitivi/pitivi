@@ -447,6 +447,45 @@ class TestTimeline(TestCase):
         prev = timeline.getNextTimelineObject(timeline_object3, priority=None)
         self.failUnlessEqual(prev, timeline_object4)
 
+    def testGetObjsAtTime(self):
+        # we're going use this time as our test time
+        time1 = 0
+        time2 = 3 * gst.SECOND
+        time3 = 6 * gst.SECOND
+        time4 = 10 * gst.SECOND
+
+        clip1 = self.makeTimelineObject()
+        clip1.start = 2 * gst.SECOND
+        clip1.duration = 5 * gst.SECOND
+
+        # clip2 -- overlaps left edge of clip1
+        clip2 = self.makeTimelineObject()
+        clip2.start = 1 * gst.SECOND
+        clip2.duration = 4 * gst.SECOND
+
+        # clip 3 -- overlaps right edge of clip1
+        clip3 = self.makeTimelineObject()
+        clip3.start = long(2.5 * gst.SECOND)
+        clip3.duration = 5 * gst.SECOND
+
+        # clip 4 -- doesn't overlap at all
+        clip4 = self.makeTimelineObject()
+        clip4.start = 10 * gst.SECOND
+        clip4.duration = 4 * gst.SECOND
+
+        result = set(self.timeline.getObjsAtTime(time1))
+        self.failUnlessEqual(result, set())
+
+        result = set(self.timeline.getObjsAtTime(time2))
+        self.failUnlessEqual(result, set((clip1, clip2, clip3)))
+
+        result = set(self.timeline.getObjsAtTime(time3))
+        self.failUnlessEqual(result, set((clip1, clip3)))
+
+        result = set(self.timeline.getObjsAtTime(time4))
+        self.failUnlessEqual(result, set())
+
+
 class TestLink(TestCase):
 
     def test(self):
