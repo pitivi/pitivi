@@ -1771,6 +1771,17 @@ class Timeline(Signallable, Loggable):
             self.removeTimelineObject(timeline_object, deep=True)
         self.selection.setTo(set([]), SELECT)
 
+    def split(self, time):
+        """
+        Splits objects under the playehad. If the selection is not empty, the
+        split only applies to selected clips. Otherwise it applies to all
+        clips"""
+        objs = set(self.getObjsAtTime(time))
+        if len(self.selection):
+            objs = self.selection.selected.intersection(objs)
+        for obj in objs:
+            obj.split(time)
+
     def rebuildEdges(self):
         self.edges = TimelineEdges()
         for timeline_object in self.timeline_objects:

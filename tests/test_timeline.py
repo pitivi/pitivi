@@ -485,6 +485,62 @@ class TestTimeline(TestCase):
         result = set(self.timeline.getObjsAtTime(time4))
         self.failUnlessEqual(result, set())
 
+    def testSplitSelection(self):
+        # we're going use this time as our test time
+        noclips = 7 * gst.SECOND
+        oneclip = long(6.5 * gst.SECOND)
+        threeclips = long(4.5 * gst.SECOND)
+        fourclipsoneselected = long(2.5 * gst.SECOND)
+
+        clip1 = self.makeTimelineObject()
+        clip1.start = 2 * gst.SECOND
+        clip1.duration = 5 * gst.SECOND
+
+        clip2 = self.makeTimelineObject()
+        clip2.start = 2 * gst.SECOND
+        clip2.duration = 4 * gst.SECOND
+
+        clip3 = self.makeTimelineObject()
+        clip3.start = 2 * gst.SECOND
+        clip3.duration = 3 * gst.SECOND
+
+        clip4 = self.makeTimelineObject()
+        clip4.start = 2 * gst.SECOND
+        clip4.duration = 2 * gst.SECOND
+
+        # test split no clips
+        self.timeline.split(noclips)
+        for i, clip in enumerate([clip1,clip2,clip3,clip4]):
+            self.failUnlessEqual(clip.start, 2 * gst.SECOND)
+            self.failUnlessEqual(clip.duration,
+                (5 - i) * gst.SECOND)
+
+        # test split one clip
+        self.timeline.split(oneclip)
+        self.failUnlessEqual(clip1.start, 2 * gst.SECOND)
+        self.failUnlessEqual(clip1.duration, oneclip - 2 * gst.SECOND)
+        for i, clip in enumerate([clip2,clip3,clip4]):
+            self.failUnlessEqual(clip.start, 2 * gst.SECOND)
+            self.failUnlessEqual(clip.duration,
+                (5 - (i + 1)) * gst.SECOND)
+
+        # test split three clips
+        self.timeline.split(threeclips)
+        for i, clip in enumerate([clip1,clip2,clip3]):
+            self.failUnlessEqual(clip.start, 2 * gst.SECOND)
+            self.failUnlessEqual(clip.start + clip.duration, threeclips)
+        self.failUnlessEqual(clip4.start, 2 * gst.SECOND)
+        self.failUnlessEqual(clip4.duration, 2 * gst.SECOND)
+
+        # test split three clips, one selected
+        self.timeline.selection.selected = set((clip4,))
+        self.timeline.split(fourclipsoneselected)
+        for i, clip in enumerate([clip1,clip2,clip3]):
+            self.failUnlessEqual(clip.start, 2 * gst.SECOND)
+            self.failUnlessEqual(clip.start + clip.duration, threeclips)
+        self.failUnlessEqual(clip4.start, 2 * gst.SECOND)
+        self.failUnlessEqual(clip4.duration + clip4.start, 
+            fourclipsoneselected)
 
 class TestLink(TestCase):
 
