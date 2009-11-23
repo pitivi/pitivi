@@ -43,7 +43,7 @@ from pitivi.utils import Seeker
 
 # tooltip text for toolbar
 DELETE = _("Delete Selected")
-RAZOR = _("Cut clip at mouse position")
+SPLIT = _("Split clip at playhead position")
 ZOOM_IN =  _("Zoom In")
 ZOOM_OUT =  _("Zoom Out")
 UNLINK = _("Break links between clips")
@@ -64,7 +64,7 @@ ui = '''
         </menu>
         <menu action="Timeline">
             <placeholder name="Timeline">
-                <menuitem action="Razor" />
+                <menuitem action="Split" />
                 <separator />
                 <menuitem action="DeleteObj" />
                 <menuitem action="LinkObj" />
@@ -79,7 +79,7 @@ ui = '''
             <toolitem action="ZoomOut" />
             <toolitem action="ZoomIn" />
             <separator />
-            <toolitem action="Razor" />
+            <toolitem action="Split" />
             <separator />
             <toolitem action="DeleteObj" />
             <toolitem action="UnlinkObj" />
@@ -206,14 +206,14 @@ class Timeline(gtk.Table, Loggable, Zoomable):
                 self.groupSelected),
         )
 
-        toggle_actions = (
-            ("Razor", "pitivi-split", _("Razor"), "<Ctrl>R", RAZOR,
-                self.toggleRazor),
+        playhead_actions = (
+            ("Split", "pitivi-split", _("Split"), "S", SPLIT,
+                self.split),
         )
 
         actiongroup = gtk.ActionGroup("timelinepermanent")
         actiongroup.add_actions(actions)
-        actiongroup.add_toggle_actions(toggle_actions)
+        actiongroup.add_actions(playhead_actions)
         self.ui_manager.insert_action_group(actiongroup, 0)
 
         actiongroup = gtk.ActionGroup("timelineselection")
@@ -524,8 +524,5 @@ class Timeline(gtk.Table, Loggable, Zoomable):
         if self.timeline:
             self.timeline.groupSelection()
 
-    def toggleRazor(self, action):
-        if action.props.active:
-            self._canvas.activateRazor(action)
-        else:
-            self._canvas.deactivateRazor()
+    def split(self, action):
+        self.timeline.split(self._position)
