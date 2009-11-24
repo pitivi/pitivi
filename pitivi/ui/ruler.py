@@ -253,8 +253,6 @@ class ScaleRuler(gtk.Layout, Zoomable, Loggable):
         else:
             position = self.position
 
-        self._doSeek(position, gst.FORMAT_TIME, on_idle=True)
-
     def getShadedDuration(self):
         return self.shaded_duration
 
